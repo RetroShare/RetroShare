@@ -35,8 +35,6 @@ class TransferPage: public ConfigPage
 		TransferPage(QWidget * parent = 0, Qt::WindowFlags flags = 0);
 		~TransferPage() {}
 
-		/** Saves the changes on this page */
-		virtual bool save(QString &/*errmsg*/) { return true ; }
 		/** Loads the settings for this page */
 		virtual void load() {}
 

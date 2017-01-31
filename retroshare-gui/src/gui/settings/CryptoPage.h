@@ -35,8 +35,6 @@ class CryptoPage : public ConfigPage
       /** Default Destructor */
       ~CryptoPage();
 
-      /** Saves the changes on this page */
-      virtual bool save(QString &errmsg);
       /** Loads the settings for this page */
 
 		virtual QPixmap iconPixmap() const { return QPixmap(":/icons/settings/profile.svg") ; }
@@ -46,9 +44,9 @@ class CryptoPage : public ConfigPage
   private slots:
       virtual void load();
       void copyPublicKey();
-		void copyRSLink() ;
-		virtual void showEvent ( QShowEvent * event );
-		void profilemanager();
+	  void copyRSLink() ;
+	  virtual void showEvent ( QShowEvent * event );
+	  void profilemanager();
       bool fileSave();
       bool fileSaveAs();
       void showStats();

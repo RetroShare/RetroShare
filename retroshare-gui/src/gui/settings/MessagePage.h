@@ -37,8 +37,6 @@ public:
     MessagePage(QWidget * parent = 0, Qt::WindowFlags flags = 0);
     ~MessagePage();
 
-    /** Saves the changes on this page */
-    virtual bool save(QString &errmsg);
     /** Loads the settings for this page */
     virtual void load();
 
@@ -56,6 +54,11 @@ private slots:
     void currentRowChangedTag(int row);
     void distantMsgsComboBoxChanged(int);
 	 
+	void updateMsgToReadOnActivate() ;
+	void updateLoadEmbededImages()       ;
+	void updateMsgOpen()                 ;
+	void updateDistantMsgs()             ;
+	void updateMsgTags()    ;
 
 private:
     void fillTags();

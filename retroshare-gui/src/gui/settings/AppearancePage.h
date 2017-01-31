@@ -34,8 +34,6 @@ public:
 	/** Default Constructor */
 	AppearancePage(QWidget * parent = 0, Qt::WindowFlags flags = 0);
 
-	/** Saves the changes on this page */
-	virtual bool save(QString &errmsg);
 	/** Loads the settings for this page */
 	virtual void load();
 
@@ -60,8 +58,20 @@ private slots:
     void switch_status_ShowToaster(bool) ;
     void switch_status_ShowSystray(bool) ;
 
+    void updateLanguageCode()    ;
+    void updateInterfaceStyle()  ;
+    void updateSheetName()       ;
+    void updateRbtPageOnToolBar();
+    void updateActionButtonLoc() ;
+    void updateStatusToolTip()   ;
+
+	void updateCmboToolButtonStyle();
+	void updateCmboToolButtonSize();
+	void updateCmboListItemSize();
+
+	void updateStyle() ;
 private:
-	void switch_status(MainWindow::StatusElement s,bool b);
+	void switch_status(MainWindow::StatusElement s,const QString& key,bool b);
 
 	/** Qt Designer generated object */
 	Ui::AppearancePage ui;

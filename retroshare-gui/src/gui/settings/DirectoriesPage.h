@@ -32,8 +32,6 @@ class DirectoriesPage: public ConfigPage
 public:
     DirectoriesPage(QWidget * parent = 0, Qt::WindowFlags flags = 0);
 
-    /** Saves the changes on this page */
-    virtual bool save(QString &errmsg);
     /** Loads the settings for this page */
     virtual void load();
 
@@ -46,6 +44,11 @@ private slots:
     void setIncomingDirectory();
     void setPartialsDirectory();
 	void toggleAutoCheckDirectories(bool);
+
+    void updateAutoCheckDirectories()       ;
+    void updateAutoScanDirectoriesPeriod()  ;
+    void updateShareDownloadDirectory()     ;
+    void updateFollowSymLinks()             ;
 
 private:
    Ui::DirectoriesPage ui;

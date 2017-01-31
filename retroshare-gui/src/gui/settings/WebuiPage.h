@@ -20,8 +20,6 @@ public:
     /** Default Destructor */
   ~WebuiPage();
 
-  /** Saves the changes on this page */
-  virtual bool save(QString &errmsg);
   /** Loads the settings for this page */
   virtual void load();
 
@@ -46,6 +44,8 @@ public slots:
 private:
   /** Qt Designer generated object */
   Ui::WebuiPage ui;
+
+  bool updateParams(QString &errmsg);
 
   static resource_api::ApiServer* apiServer;
   static resource_api::ApiServerMHD* apiServerMHD;

@@ -29,26 +29,24 @@ PeoplePage::PeoplePage(QWidget * parent, Qt::WindowFlags flags)
 {
 	ui.setupUi(this);
 	setAttribute(Qt::WA_QuitOnClose, false);
+
+    connect(ui.autoPositiveOpinion_CB,SIGNAL(toggled(bool)),this,SLOT(updateAutoPositiveOpinion())) ;
+    connect(ui.thresholdForPositive_SB,SIGNAL(valueChanged(int)),this,SLOT(updateThresholdForRemotelyPositiveReputation()));
+    connect(ui.thresholdForNegative_SB,SIGNAL(valueChanged(int)),this,SLOT(updateThresholdForRemotelyNegativeReputation()));
+    connect(ui.preventReloadingBannedIdentitiesFor_SB,SIGNAL(valueChanged(int)),this,SLOT(updateRememberDeletedNodes()));
+    connect(ui.deleteBannedIdentitiesAfter_SB,SIGNAL(valueChanged(int)),this,SLOT(updateDeleteBannedNodesThreshold()));
 }
+
+void PeoplePage::updateAutoPositiveOpinion() {  rsReputations->setNodeAutoPositiveOpinionForContacts(ui.autoPositiveOpinion_CB->isChecked()) ; }
+
+void PeoplePage::updateThresholdForRemotelyPositiveReputation() {  rsReputations->setThresholdForRemotelyPositiveReputation(ui.thresholdForPositive_SB->value()); }
+void PeoplePage::updateThresholdForRemotelyNegativeReputation() {  rsReputations->setThresholdForRemotelyNegativeReputation(ui.thresholdForNegative_SB->value()); }
+
+void PeoplePage::updateRememberDeletedNodes()       {    rsReputations->setRememberDeletedNodesThreshold(ui.preventReloadingBannedIdentitiesFor_SB->value()); }
+void PeoplePage::updateDeleteBannedNodesThreshold() {    rsIdentity->setDeleteBannedNodesThreshold(ui.deleteBannedIdentitiesAfter_SB->value());}
 
 PeoplePage::~PeoplePage()
 {
-}
-
-/** Saves the changes on this page */
-bool PeoplePage::save(QString &/*errmsg*/)
-{
-    if(ui.autoPositiveOpinion_CB->isChecked())
-        rsReputations->setNodeAutoPositiveOpinionForContacts(true) ;
-    else
-        rsReputations->setNodeAutoPositiveOpinionForContacts(false) ;
-
-    rsReputations->setThresholdForRemotelyPositiveReputation(ui.thresholdForPositive_SB->value());
-    rsReputations->setThresholdForRemotelyNegativeReputation(ui.thresholdForNegative_SB->value());
-    rsReputations->setRememberDeletedNodesThreshold(ui.preventReloadingBannedIdentitiesFor_SB->value());
-    rsIdentity->setDeleteBannedNodesThreshold(ui.deleteBannedIdentitiesAfter_SB->value());
-
-    return true;
 }
 
 /** Loads the settings for this page */

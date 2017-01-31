@@ -37,6 +37,11 @@ DirectoriesPage::DirectoriesPage(QWidget * parent, Qt::WindowFlags flags)
     connect(ui.partialButton, SIGNAL(clicked( bool ) ), this , SLOT( setPartialsDirectory() ) );
     connect(ui.editShareButton, SIGNAL(clicked()), this, SLOT(editDirectories()));
     connect(ui.autoCheckDirectories_CB, SIGNAL(clicked(bool)), this, SLOT(toggleAutoCheckDirectories(bool)));
+
+    connect(ui.autoCheckDirectories_CB,     SIGNAL(toggled(bool)),    this,SLOT(updateAutoCheckDirectories())) ;
+    connect(ui.autoCheckDirectoriesDelay_SB,SIGNAL(valueChanged(int)),this,SLOT(updateAutoScanDirectoriesPeriod())) ;
+    connect(ui.shareDownloadDirectoryCB,    SIGNAL(toggled(bool)),    this,SLOT(updateShareDownloadDirectory())) ;
+    connect(ui.followSymLinks_CB,           SIGNAL(toggled(bool)),    this,SLOT(updateFollowSymLinks())) ;
 }
 
 void DirectoriesPage::toggleAutoCheckDirectories(bool b)
@@ -49,29 +54,10 @@ void DirectoriesPage::editDirectories()
 	ShareManager::showYourself() ;
 }
 
-/** Saves the changes on this page */
-bool DirectoriesPage::save(QString &/*errmsg*/)
-{
-	std::string dir = ui.incomingDir->text().toUtf8().constData();
-	if (!dir.empty())
-	{
-		rsFiles->setDownloadDirectory(dir);
-	}
-
-	dir = ui.partialsDir->text().toUtf8().constData();
-	if (!dir.empty())
-	{
-		rsFiles->setPartialsDirectory(dir);
-	}
-
-    rsFiles->setWatchEnabled(ui.autoCheckDirectories_CB->isChecked()) ;
-    rsFiles->setWatchPeriod(ui.autoCheckDirectoriesDelay_SB->value());
-
-	rsFiles->shareDownloadDirectory(ui.shareDownloadDirectoryCB->isChecked());
-	rsFiles->setFollowSymLinks(ui.followSymLinks_CB->isChecked());
-
-	return true;
-}
+void DirectoriesPage::updateAutoCheckDirectories()       {    rsFiles->setWatchEnabled(ui.autoCheckDirectories_CB->isChecked()) ; }
+void DirectoriesPage::updateAutoScanDirectoriesPeriod()  {    rsFiles->setWatchPeriod(ui.autoCheckDirectoriesDelay_SB->value()); }
+void DirectoriesPage::updateShareDownloadDirectory()     {    rsFiles->shareDownloadDirectory(ui.shareDownloadDirectoryCB->isChecked());}
+void DirectoriesPage::updateFollowSymLinks()             {    rsFiles->setFollowSymLinks(ui.followSymLinks_CB->isChecked()); }
 
 /** Loads the settings for this page */
 void DirectoriesPage::load()
@@ -95,6 +81,10 @@ void DirectoriesPage::setIncomingDirectory()
 	}
 
 	ui.incomingDir->setText(qdir);
+	std::string dir = ui.incomingDir->text().toUtf8().constData();
+
+    if(!dir.empty())
+		rsFiles->setDownloadDirectory(dir);
 }
 
 void DirectoriesPage::setPartialsDirectory()
@@ -105,4 +95,7 @@ void DirectoriesPage::setPartialsDirectory()
 	}
 
 	ui.partialsDir->setText(qdir);
+    std::string	dir = ui.partialsDir->text().toUtf8().constData();
+	if (!dir.empty())
+		rsFiles->setPartialsDirectory(dir);
 }

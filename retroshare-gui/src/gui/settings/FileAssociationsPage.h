@@ -52,7 +52,6 @@ public:
     virtual ~FileAssociationsPage();
 
     virtual void load();
-    virtual bool save (QString &errmsg);
 	 virtual QPixmap iconPixmap() const { return QPixmap(":/images/filetype-association.png") ; }
 	 virtual QString pageName() const { return tr("Associations") ; }
 

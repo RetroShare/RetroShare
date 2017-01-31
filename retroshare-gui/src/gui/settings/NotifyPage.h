@@ -76,8 +76,6 @@ public:
     /** Default Destructor */
     ~NotifyPage();
 
-    /** Saves the changes on this page */
-    virtual bool save(QString &errmsg);
     /** Loads the settings for this page */
     virtual void load();
 
@@ -89,6 +87,20 @@ private slots:
 	void notifyToggled();
 	void testToaster();
 	void testFeed();
+
+	void updateFeedNotifySettings();
+	void updateToasterNotifySettings();
+	void updateUserNotifySettings();
+	void updateMessageFlags() ;
+	void updateNotifyFlags()  ;
+	void updateNewsFeedFlags();
+
+	void updateSystrayChatLobby();
+	void updateSystrayGroupChat();
+	void updateToasterMargin();
+
+	void updateToasterPosition();
+	void updateChatLobbyUserNotify();
 
 private:
 	uint getNewsFlags();
