@@ -1978,7 +1978,7 @@ bool p3GxsCircles::processMembershipRequests(uint32_t token)
 #ifdef DEBUG_CIRCLES
     std::cerr << "Processing circle membership requests." << std::endl;
 #endif
-    GxsMsgDataMap msgItems ;
+    RsGxsMetaDataTemporaryMapVector<RsGxsMsgItem> msgItems;
 
     if(!RsGenExchange::getMsgData(token, msgItems))
     {
