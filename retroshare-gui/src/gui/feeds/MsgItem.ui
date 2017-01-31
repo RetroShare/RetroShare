@@ -146,6 +146,7 @@
            </property>
            <property name="font">
             <font>
+             <pointsize>12</pointsize>
              <weight>75</weight>
              <italic>true</italic>
              <bold>true</bold>
@@ -165,7 +166,7 @@
             <enum>Qt::Horizontal</enum>
            </property>
            <property name="sizeType">
-            <enum>QSizePolicy::Preferred</enum>
+            <enum>QSizePolicy::Expanding</enum>
            </property>
            <property name="sizeHint" stdset="0">
             <size>
@@ -207,6 +208,13 @@
          <item row="2" column="1" colspan="3">
           <layout class="QHBoxLayout" name="buttonHLayout">
            <item>
+            <widget class="QPushButton" name="sendinviteButton">
+             <property name="text">
+              <string>Send Invite</string>
+             </property>
+            </widget>
+           </item>
+           <item>
             <widget class="QToolButton" name="replyButton">
              <property name="focusPolicy">
               <enum>Qt::NoFocus</enum>
@@ -225,7 +233,7 @@
               <enum>Qt::ToolButtonTextBesideIcon</enum>
              </property>
              <property name="autoRaise">
-              <bool>true</bool>
+              <bool>false</bool>
              </property>
             </widget>
            </item>

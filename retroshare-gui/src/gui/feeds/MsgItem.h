@@ -56,6 +56,7 @@ private slots:
 	void playMedia();
 	void deleteMsg();
 	void replyMsg();
+	void sendInvite();
 	void checkMessageReadStatus();
 
 	void updateItem();
