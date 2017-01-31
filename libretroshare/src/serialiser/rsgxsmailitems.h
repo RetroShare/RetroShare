@@ -38,7 +38,8 @@ struct RsGxsMailBaseItem : RsGxsMsgItem
 {
 	RsGxsMailBaseItem(GxsMailItemsSubtypes subtype) :
 	    RsGxsMsgItem( RS_SERVICE_TYPE_GXS_MAIL,
-	                  static_cast<uint8_t>(subtype) ) {}
+	                  static_cast<uint8_t>(subtype) ),
+	    cryptoType(UNDEFINED_ENCRYPTION) {}
 
 	/// Values must fit into uint8_t
 	enum EncryptionMode
@@ -86,11 +87,10 @@ struct RsGxsMailBaseItem : RsGxsMsgItem
 	 */
 	RsGxsId recipientsHint;
 
-	void inline saltRecipientHint(const RsGxsId& salt)
-	{ saltRecipientHint(recipientsHint, salt); }
-
 	void static inline saltRecipientHint(RsGxsId& hint, const RsGxsId& salt)
 	{ hint = hint | salt; }
+	void inline saltRecipientHint(const RsGxsId& salt)
+	{ saltRecipientHint(recipientsHint, salt); }
 
 	/**
 	 * @brief maybeRecipient given an id and an hint check if they match
@@ -102,6 +102,8 @@ struct RsGxsMailBaseItem : RsGxsMsgItem
 	 */
 	bool static inline maybeRecipient(const RsGxsId& hint, const RsGxsId& id)
 	{ return (~id|hint) == allRecipientsHint; }
+	bool inline maybeRecipient(const RsGxsId& id) const
+	{ return maybeRecipient(recipientsHint, id); }
 
 	const static RsGxsId allRecipientsHint;
 
@@ -137,9 +139,12 @@ struct RsGxsMailItem : RsGxsMailBaseItem
 	uint32_t size() const { return RsGxsMailBaseItem::size() + payload.size(); }
 	bool serialize(uint8_t* data, uint32_t size, uint32_t& offset) const
 	{
-		return size < MAX_SIZE
-		        && RsGxsMailBaseItem::serialize(data, size, offset)
-		        && memcpy(data+offset, &payload[0], payload.size());
+		bool ok = size < MAX_SIZE;
+		ok = ok && RsGxsMailBaseItem::serialize(data, size, offset);
+		uint32_t psz = payload.size();
+		ok = ok && memcpy(data+offset, &payload[0], psz);
+		offset += psz;
+		return ok;
 	}
 	bool deserialize(const uint8_t* data, uint32_t& size, uint32_t& offset)
 	{

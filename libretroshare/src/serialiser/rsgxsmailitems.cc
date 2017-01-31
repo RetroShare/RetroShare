@@ -25,7 +25,7 @@ bool RsGxsMailBaseItem::serialize(uint8_t* data, uint32_t size,
                                   uint32_t& offset) const
 {
 	bool ok = setRsItemHeader(data, size, PacketId(), size);
-	ok = ok && (offset += 8); // Take in account the header
+	ok = ok && (offset += 8); // Take header in account
 	ok = ok && setRawUInt8(data, size, &offset, cryptoType);
 	ok = ok && recipientsHint.serialise(data, size, offset);
 	return ok;
@@ -36,10 +36,10 @@ bool RsGxsMailBaseItem::deserialize(const uint8_t* data, uint32_t& size,
 {
 	void* dataPtr = reinterpret_cast<void*>(const_cast<uint8_t*>(data));
 	uint32_t rssize = getRsItemSize(dataPtr);
-	uint32_t roffset = offset + 8;
+	uint32_t roffset = offset + 8; // Take header in account
 	bool ok = rssize <= size;
 	uint8_t crType;
-	ok = ok && getRawUInt8(dataPtr, rssize, &offset, &crType);
+	ok = ok && getRawUInt8(dataPtr, rssize, &roffset, &crType);
 	cryptoType = static_cast<EncryptionMode>(crType);
 	ok = ok && recipientsHint.deserialise(dataPtr, rssize, roffset);
 	if(ok) { size = rssize; offset = roffset; }

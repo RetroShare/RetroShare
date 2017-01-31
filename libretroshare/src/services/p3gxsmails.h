@@ -125,8 +125,13 @@ private:
 	/// @brief AuthenPolicy check nothing ATM TODO talk with Cyril how this should be
 	static uint32_t AuthenPolicy() { return 0; }
 
-	/// Types to mark GXS queries and answhers
-	enum GxsReqResTypes { GROUPS_LIST, GROUP_CREATE, MAILS_UPDATE };
+	/// Types to mark queries in tokens queue
+	enum GxsReqResTypes
+	{
+		GROUPS_LIST        = 1,
+		GROUP_CREATE       = 2,
+		MAILS_UPDATE       = 3
+	};
 
 	/// Store the id of the preferred GXS group to send emails
 	RsGxsGroupId preferredGroupId;
