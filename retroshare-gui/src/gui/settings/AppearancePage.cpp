@@ -84,12 +84,12 @@ AppearancePage::AppearancePage(QWidget * parent, Qt::WindowFlags flags)
 		ui.cmboStyleSheet->addItem(name, styleSheets[name]);
 	}
 
-	connect(ui.cmboTollButtonsSize,           SIGNAL(currentItemChanged(int)), this, SLOT(updateCmboToolButtonSize() ));
-	connect(ui.cmboListItemSize,              SIGNAL(currentItemChanged(int)), this, SLOT(updateCmboListItemSize()   ));
-	connect(ui.cmboTollButtonsStyle,          SIGNAL(currentItemChanged(int)), this, SLOT(updateCmboToolButtonStyle()));
-	connect(ui.cmboLanguage,                  SIGNAL(currentItemChanged(int)), this, SLOT(updateLanguageCode()       ));
-	connect(ui.cmboStyle,                     SIGNAL(currentItemChanged(int)), this, SLOT(updateInterfaceStyle()     ));
-	connect(ui.cmboStyleSheet,                SIGNAL(currentItemChanged(int)), this, SLOT(updateSheetName()          ));
+	connect(ui.cmboTollButtonsSize,           SIGNAL(currentIndexChanged(int)), this, SLOT(updateCmboToolButtonSize() ));
+	connect(ui.cmboListItemSize,              SIGNAL(currentIndexChanged(int)), this, SLOT(updateCmboListItemSize()   ));
+	connect(ui.cmboTollButtonsStyle,          SIGNAL(currentIndexChanged(int)), this, SLOT(updateCmboToolButtonStyle()));
+	connect(ui.cmboLanguage,                  SIGNAL(currentIndexChanged(int)), this, SLOT(updateLanguageCode()       ));
+	connect(ui.cmboStyle,                     SIGNAL(currentIndexChanged(int)), this, SLOT(updateInterfaceStyle()     ));
+	connect(ui.cmboStyleSheet,                SIGNAL(currentIndexChanged(int)), this, SLOT(updateSheetName()          ));
 	connect(ui.rbtPageOnToolBar,              SIGNAL(toggled(bool)),           this, SLOT(updateRbtPageOnToolBar() ));
 	connect(ui.rbtActionOnToolBar,            SIGNAL(toggled(bool)),           this, SLOT(updateActionButtonLoc()  ));
 	connect(ui.checkBoxDisableSysTrayToolTip, SIGNAL(toggled(bool)),           this, SLOT(updateStatusToolTip()    ));
@@ -122,7 +122,11 @@ void AppearancePage::switch_status(MainWindow::StatusElement s,const QString& ke
 }
 
 void AppearancePage::updateLanguageCode()     { Settings->setLanguageCode(LanguageSupport::languageCode(ui.cmboLanguage->currentText())); }
-void AppearancePage::updateInterfaceStyle()   { Settings->setInterfaceStyle(ui.cmboStyle->currentText()); }
+void AppearancePage::updateInterfaceStyle()
+{
+    Rshare::setStyle(ui.cmboStyle->currentText());
+    Settings->setInterfaceStyle(ui.cmboStyle->currentText());
+}
 void AppearancePage::updateSheetName()        { Settings->setSheetName(ui.cmboStyleSheet->itemData(ui.cmboStyleSheet->currentIndex()).toString()); }
 void AppearancePage::updateRbtPageOnToolBar() { Settings->setPageButtonLoc(ui.rbtPageOnToolBar->isChecked());}
 void AppearancePage::updateActionButtonLoc()  {	Settings->setActionButtonLoc(ui.rbtActionOnToolBar->isChecked()); }

@@ -82,8 +82,17 @@ GeneralPage::GeneralPage(QWidget * parent, Qt::WindowFlags flags) :
 #endif // RS_AUTOLOGIN
 
     /* Connect signals */
-    connect(ui.runStartWizard_PB,SIGNAL(clicked()), this,SLOT(runStartWizard())) ;
-    connect(ui.checkAdvanced,SIGNAL(toggled(bool)), this,SLOT(updateAdvancedMode())) ;
+    connect(ui.useLocalServer,                              SIGNAL(toggled(bool)),     this,SLOT(updateUseLocalServer())) ;
+    connect(ui.idleSpinBox,                                 SIGNAL(valueChanged(int)), this,SLOT(updateMaxTimeBeforeIdle())) ;
+    connect(ui.checkStartMinimized,                         SIGNAL(toggled(bool)),     this,SLOT(updateStartMinimized())) ;
+    connect(ui.checkQuit,                                   SIGNAL(toggled(bool)),     this,SLOT(updateDoQuit())) ;
+    connect(ui.checkCloseToTray,                            SIGNAL(toggled(bool)),     this,SLOT(updateCloseToTray())) ;
+    connect(ui.autoLogin,                                   SIGNAL(toggled(bool)),     this,SLOT(updateAutoLogin())) ;
+    connect(ui.chkRunRetroshareAtSystemStartup,             SIGNAL(toggled(bool)),     this,SLOT(updateRunRSOnBoot())) ;
+    connect(ui.chkRunRetroshareAtSystemStartupMinimized,    SIGNAL(toggled(bool)),     this,SLOT(updateRunRSOnBoot())) ;
+    connect(ui.runStartWizard_PB,                           SIGNAL(clicked()),         this,SLOT(runStartWizard())) ;
+    connect(ui.checkAdvanced,                               SIGNAL(toggled(bool)),     this,SLOT(updateAdvancedMode())) ;
+    connect(ui.registerRetroShareProtocol,                  SIGNAL(toggled(bool)),     this,SLOT(updateRegisterRSProtocol())) ;
 }
 
 /** Destructor */
