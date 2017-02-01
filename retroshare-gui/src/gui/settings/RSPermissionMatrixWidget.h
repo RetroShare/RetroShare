@@ -57,7 +57,7 @@ class RSPermissionMatrixWidget: public QFrame
     Q_OBJECT
 
 public:
-    RSPermissionMatrixWidget(QWidget *parent=NULL);
+    explicit RSPermissionMatrixWidget(QWidget *parent=NULL);
     virtual ~RSPermissionMatrixWidget() ;
 
 public slots:

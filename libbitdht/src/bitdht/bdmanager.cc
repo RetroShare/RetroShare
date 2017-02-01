@@ -104,7 +104,7 @@ int	bdNodeManager::stopDht()
 	/* flag queries as inactive */
 	/* check if exists already */
 	std::map<bdNodeId, bdQueryPeer>::iterator it;	
-	for(it = mActivePeers.begin(); it != mActivePeers.end(); it++)
+	for(it = mActivePeers.begin(); it != mActivePeers.end(); ++it)
 	{
 		it->second.mStatus = BITDHT_QUERY_READY;
 	}
@@ -232,7 +232,7 @@ void bdNodeManager::startQueries()
 #endif
 	/* check if exists already */
 	std::map<bdNodeId, bdQueryPeer>::iterator it;	
-	for(it = mActivePeers.begin(); it != mActivePeers.end(); it++)
+	for(it = mActivePeers.begin(); it != mActivePeers.end(); ++it)
 	{
 		if (it->second.mStatus == BITDHT_QUERY_READY)
 		{
@@ -587,7 +587,7 @@ void bdNodeManager::SearchForLocalNet()
 	mQueryMgr->QueryStatus(queryStatus);
 
 	int numSearchQueries = 0;
-	for(it = queryStatus.begin(); it != queryStatus.end(); it++)
+	for(it = queryStatus.begin(); it != queryStatus.end(); ++it)
 	{
 		if (it->second.mQFlags & BITDHT_QFLAGS_INTERNAL)
 		{
@@ -694,7 +694,7 @@ int bdNodeManager::checkStatus()
 
 	mQueryMgr->QueryStatus(queryStatus);
 
-	for(it = queryStatus.begin(); it != queryStatus.end(); it++)
+	for(it = queryStatus.begin(); it != queryStatus.end(); ++it)
 	{
 		bool doPing = false;
 		bool doRemove = false;
@@ -991,7 +991,7 @@ int bdNodeManager::SearchOutOfDate()
 	std::map<bdNodeId, bdQueryPeer>::iterator it;
 
 	/* search for out-of-date peers */
-	for(it = mActivePeers.begin(); it != mActivePeers.end(); it++)
+	for(it = mActivePeers.begin(); it != mActivePeers.end(); ++it)
 	{
 #if 0
 		if (old)
@@ -1151,7 +1151,7 @@ void bdNodeManager::doNodeCallback(const bdId *id, uint32_t peerflags)
 
         /* search list */
         std::list<BitDhtCallback *>::iterator it;
-        for(it = mCallbacks.begin(); it != mCallbacks.end(); it++)
+        for(it = mCallbacks.begin(); it != mCallbacks.end(); ++it)
         {
                 (*it)->dhtNodeCallback(id, peerflags);
         }
@@ -1170,7 +1170,7 @@ void bdNodeManager::doPeerCallback(const bdId *id, uint32_t status)
 
         /* search list */
         std::list<BitDhtCallback *>::iterator it;
-        for(it = mCallbacks.begin(); it != mCallbacks.end(); it++)
+        for(it = mCallbacks.begin(); it != mCallbacks.end(); ++it)
         {
                 (*it)->dhtPeerCallback(id, status);
         }
@@ -1185,7 +1185,7 @@ void bdNodeManager::doValueCallback(const bdNodeId *id, std::string key, uint32_
 #endif
         /* search list */
         std::list<BitDhtCallback *>::iterator it;
-        for(it = mCallbacks.begin(); it != mCallbacks.end(); it++)
+        for(it = mCallbacks.begin(); it != mCallbacks.end(); ++it)
         {
                 (*it)->dhtValueCallback(id, key, status);
         }
@@ -1201,7 +1201,7 @@ void bdNodeManager::doInfoCallback(const bdId *id, uint32_t type, uint32_t flags
 #endif
         /* search list */
         std::list<BitDhtCallback *>::iterator it;
-        for(it = mCallbacks.begin(); it != mCallbacks.end(); it++)
+        for(it = mCallbacks.begin(); it != mCallbacks.end(); ++it)
         {
                 (*it)->dhtInfoCallback(id, type, flags, info);
         }
@@ -1218,7 +1218,7 @@ void bdNodeManager::doIsBannedCallback(const sockaddr_in *addr, bool *isAvailabl
 	std::list<BitDhtCallback *>::iterator it;
 	*isBanned = false;
 	*isAvailable = false;
-	for(it = mCallbacks.begin(); it != mCallbacks.end(); it++)
+	for(it = mCallbacks.begin(); it != mCallbacks.end(); ++it)
 	{
 		// set isBanned to true as soon as one callback answers with true
 		bool banned;
@@ -1427,7 +1427,7 @@ void bdNodeManager::callbackConnect(bdId *srcId, bdId *proxyId, bdId *destId, in
 #endif
         /* search list */
         std::list<BitDhtCallback *>::iterator it;
-        for(it = mCallbacks.begin(); it != mCallbacks.end(); it++)
+        for(it = mCallbacks.begin(); it != mCallbacks.end(); ++it)
         {
                 (*it)->dhtConnectCallback(srcId, proxyId, destId, mode, point, param, cbtype, errcode);
         }

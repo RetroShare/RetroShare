@@ -127,7 +127,7 @@ class UdpRelayReceiver: public UdpSubReceiver
 {
 	public:
 
-	UdpRelayReceiver(UdpPublisher *pub);
+	explicit UdpRelayReceiver(UdpPublisher *pub);
 virtual ~UdpRelayReceiver();
 
 	/* add a TCPonUDP stream (ENDs) */

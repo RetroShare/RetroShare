@@ -84,9 +84,8 @@ class RsGroupNetworkStats
 {
 public:
     RsGroupNetworkStats()
-    {
-        mMaxVisibleCount = 0 ;
-    }
+      : mSuppliers(0), mMaxVisibleCount(0), mGrpAutoSync(false), mAllowMsgSync(false)
+    {}
 
     uint32_t mSuppliers ;
     uint32_t mMaxVisibleCount ;

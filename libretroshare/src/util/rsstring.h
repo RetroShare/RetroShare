@@ -24,6 +24,7 @@
 
 #include <string>
 #include <stdarg.h>
+#include <sstream>
 
 namespace librs { namespace util {
 
@@ -49,5 +50,17 @@ void stringToUpperCase(const std::string& s, std::string &upper);
 void stringToLowerCase(const std::string& s, std::string &lower);
 
 bool isHexaString(const std::string& s);
+
+template < typename T > std::string rs_to_string( const T& n )
+{
+#if _GLIBCXX_USE_C99_STDIO
+	return std::to_string(n);
+#else
+	std::ostringstream stm ;
+	stm << n ;
+	return stm.str() ;
+#endif
+}
+
 
 #endif // RSSTRING_H_

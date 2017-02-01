@@ -20,7 +20,7 @@ class FakeLinkMgr: public p3LinkMgrIMPL
 			: p3LinkMgrIMPL(NULL,NULL), mOwnId(own_id), mFriends()
 		{
 			std::list<RsPeerId>::const_iterator it;
-			for(it = friends.begin(); it != friends.end(); it++)
+			for(it = friends.begin(); it != friends.end(); ++it)
 			{
 				setOnlineStatus(*it, peersOnline);
 			}
@@ -30,7 +30,7 @@ class FakeLinkMgr: public p3LinkMgrIMPL
 		virtual void getOnlineList(std::list<RsPeerId>& lst)
 		{ 
 			std::map<RsPeerId, FakePeerListStatus>::iterator it;
-			for(it = mFriends.begin(); it != mFriends.end(); it++)
+			for(it = mFriends.begin(); it != mFriends.end(); ++it)
 			{
 				if (it->second.mOnline)
 				{
@@ -42,7 +42,7 @@ class FakeLinkMgr: public p3LinkMgrIMPL
 		virtual void  getFriendList(std::list<RsPeerId> &ssl_peers)
 		{
 			std::map<RsPeerId, FakePeerListStatus>::iterator it;
-			for(it = mFriends.begin(); it != mFriends.end(); it++)
+			for(it = mFriends.begin(); it != mFriends.end(); ++it)
 			{
 				ssl_peers.push_back(it->first);
 			}

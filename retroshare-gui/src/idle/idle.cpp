@@ -115,7 +115,7 @@ int Idle::secondsIdle()
 		d->startTime = beginIdle;
 	}
 	// beginIdle earlier than startTime?
-	else if(t > 0) {
+	else {
 		// do nothing
 	}
 	

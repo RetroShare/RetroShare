@@ -36,7 +36,7 @@ class HelpDialog : public QDialog
 
 public:
 	/** Default Constructor */
-	HelpDialog(QWidget *parent = 0);
+	explicit HelpDialog(QWidget *parent = 0);
 	/** Default Destructor */
 	virtual ~HelpDialog();
 

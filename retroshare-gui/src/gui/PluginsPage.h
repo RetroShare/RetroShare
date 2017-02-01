@@ -52,7 +52,7 @@ class PluginsPage : public MainPage
 
 public:
   /** Default Constructor */
-    PluginsPage(QWidget *parent = 0);
+    explicit PluginsPage(QWidget *parent = 0);
   /** Default Destructor */
     virtual ~PluginsPage() ;
 

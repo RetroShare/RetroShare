@@ -45,7 +45,6 @@ char *getpass (const char *prompt)
 {
     static char getpassbuf [PASS_MAX + 1];
     size_t i = 0;
-    int c;
 
     if (prompt) {
         fputs (prompt, stderr);
@@ -53,7 +52,7 @@ char *getpass (const char *prompt)
     }
 
     for (;;) {
-        c = _getch ();
+        int c = _getch ();
         if (c == '\r') {
             getpassbuf [i] = '\0';
             break;

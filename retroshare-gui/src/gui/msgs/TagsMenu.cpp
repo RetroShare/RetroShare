@@ -98,7 +98,6 @@ void TagsMenu::fillTags()
 	rsMail->getMessageTagTypes(tags);
 	std::map<uint32_t, std::pair<std::string, uint32_t> >::iterator tag;
 
-	bool user = false;
 
 	QString text;
 	QAction *action;
@@ -114,6 +113,7 @@ void TagsMenu::fillTags()
 
 		addSeparator();
 
+		bool user = false;
 		for (tag = tags.types.begin(); tag != tags.types.end(); ++tag) {
 			text = TagDefs::name(tag->first, tag->second.first);
 

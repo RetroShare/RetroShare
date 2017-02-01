@@ -25,7 +25,7 @@
 
 #include <iostream>
 
-framecatcher::framecatcher(): xine(NULL), stream(NULL), vo_port(NULL){
+framecatcher::framecatcher(): xine(NULL), stream(NULL), vo_port(NULL), length(0){
 
 	// start up drivers
 	std::string vo_driver = "auto";
@@ -231,14 +231,6 @@ unsigned char * framecatcher::yv12ToRgb (uint8_t *src_y, uint8_t *src_u, uint8_t
       if (val > 255) val = 255;      \
 }
 
-	int     i, j;
-
-	int     y, u, v;
-	int     r, g, b;
-
-	int     sub_i_uv;
-	int     sub_j_uv;
-
 	int     uv_width, uv_height;
 
 	unsigned char *rgb;
@@ -251,17 +243,17 @@ unsigned char * framecatcher::yv12ToRgb (uint8_t *src_y, uint8_t *src_u, uint8_t
 		return NULL;
 	
 
-	for (i = 0; i < height; ++i){
+	for (int i = 0; i < height; ++i){
 		/*
 		 * calculate u & v rows
 		 */
-		sub_i_uv = ((i * uv_height) / height);
+		int sub_i_uv = ((i * uv_height) / height);
 
-		for (j = 0; j < width; ++j){
+		for (int j = 0; j < width; ++j){
 			/*
 			 * calculate u & v columns
 			 */
-			sub_j_uv = ((j * uv_width) / width);
+			int sub_j_uv = ((j * uv_width) / width);
 
 			/***************************************************
 			 *
@@ -283,13 +275,13 @@ unsigned char * framecatcher::yv12ToRgb (uint8_t *src_y, uint8_t *src_u, uint8_t
 			 *
 			 ***************************************************/
 
-			y = src_y[(i * width) + j] - 16;
-			u = src_u[(sub_i_uv * uv_width) + sub_j_uv] - 128;
-			v = src_v[(sub_i_uv * uv_width) + sub_j_uv] - 128;
+			int y = src_y[(i * width) + j] - 16;
+			int u = src_u[(sub_i_uv * uv_width) + sub_j_uv] - 128;
+			int v = src_v[(sub_i_uv * uv_width) + sub_j_uv] - 128;
 
-			r = (int)((1.1644 * (double)y) + (1.5960 * (double)v));
-			g = (int)((1.1644 * (double)y) - (0.3918 * (double)u) - (0.8130 * (double)v));
-			b = (int)((1.1644 * (double)y) + (2.0172 * (double)u));
+			int r = (int)((1.1644 * (double)y) + (1.5960 * (double)v));
+			int g = (int)((1.1644 * (double)y) - (0.3918 * (double)u) - (0.8130 * (double)v));
+			int b = (int)((1.1644 * (double)y) + (2.0172 * (double)u));
 
 			clip_8_bit (r);
 			clip_8_bit (g);

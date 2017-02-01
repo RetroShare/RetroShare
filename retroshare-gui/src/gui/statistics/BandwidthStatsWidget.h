@@ -6,7 +6,7 @@ class BandwidthStatsWidget: public QWidget
     Q_OBJECT
 
 public:
-    BandwidthStatsWidget(QWidget *parent) ;
+    explicit BandwidthStatsWidget(QWidget *parent) ;
 
 protected slots:
     void updateFriendSelection(int n);

@@ -111,10 +111,9 @@ static void print_tree(element * elt, int indent) {
  * the result of parsing them as markdown text, and recursing into the children
  * of parent elements.  The result should be a tree of elements without any RAWs. */
 static element * process_raw_blocks(element *input, int extensions, element *references, element *notes) {
-    element *current = NULL;
     element *last_child = NULL;
     char *contents;
-    current = input;
+    element *current = input;
 
     while (current != NULL) {
         if (current->key == RAW) {

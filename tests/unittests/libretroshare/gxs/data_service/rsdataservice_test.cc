@@ -72,7 +72,7 @@ void test_groupStoreAndRetrieve(){
 
     bool grpMatch = true, grpMetaMatch = true;
 
-    for(; mit != grps.end(); mit++)
+    for(; mit != grps.end(); ++mit)
     {
         const RsGxsGroupId grpId = mit->first->grpId;
 

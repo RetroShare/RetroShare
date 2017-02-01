@@ -110,7 +110,7 @@ int UdpStack::recvPkt(void *data, int size, struct sockaddr_in &from)
         bdStackMutex stack(stackMtx);   /********** LOCK MUTEX *********/
 
         std::list<UdpReceiver *>::iterator it;
-	for(it = mReceivers.begin(); it != mReceivers.end(); it++)
+	for(it = mReceivers.begin(); it != mReceivers.end(); ++it)
 	{
 		// See if they want the packet.
 		if ((*it)->recvPkt(data, size, from))
@@ -148,7 +148,7 @@ int     UdpStack::status(std::ostream &out)
 		out << "UdpStack::SubReceivers:" << std::endl;
         	std::list<UdpReceiver *>::iterator it;
 		int i = 0;
-		for(it = mReceivers.begin(); it != mReceivers.end(); it++, i++)
+		for(it = mReceivers.begin(); it != mReceivers.end(); ++it, ++i)
 		{
 			out << "\tReceiver " << i << " --------------------" << std::endl;
 			(*it)->status(out);

@@ -38,7 +38,7 @@ class p3History : public RsHistory
 {
 public:
 
-	p3History(p3HistoryMgr* historyMgr);
+	explicit p3History(p3HistoryMgr* historyMgr);
 	virtual ~p3History();
 
     virtual bool getMessages(const ChatId &chatPeerId, std::list<HistoryMsg> &msgs, uint32_t loadCount);

@@ -150,9 +150,9 @@ void CirclesDialog::reloadAll()
 	/* grab all ids */
     std::list<RsPgpId> friend_pgpIds;
     std::list<RsPgpId> all_pgpIds;
-    std::list<RsPgpId>::iterator it;
+    //std::list<RsPgpId>::iterator it;
 
-    std::set<RsPgpId> friend_set;
+    //std::set<RsPgpId> friend_set;
 
 	rsPeers->getGPGAcceptedList(friend_pgpIds);
 	rsPeers->getGPGAllList(all_pgpIds);

@@ -33,7 +33,7 @@ template<typename T>
 void copy_all_but(T& ex, const std::list<T>& s, std::list<T>& d)
 {
 	typename std::list<T>::const_iterator cit = s.begin();
-	for(; cit != s.end(); cit++)
+	for(; cit != s.end(); ++cit)
 		if(*cit != ex)
 			d.push_back(*cit);
 }

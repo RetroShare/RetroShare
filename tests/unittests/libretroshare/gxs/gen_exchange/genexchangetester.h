@@ -116,7 +116,7 @@ protected:
     void deleteResVector(std::vector<Item*>& v) const
     {
     	typename std::vector<Item*>::iterator vit = v.begin();
-    	for(; vit != v.end(); vit++)
+    	for(; vit != v.end(); ++vit)
     		delete *vit;
     	v.clear();
     }
@@ -141,8 +141,8 @@ protected:
 				const Item& item2 = (*vit2);
 				if(!(item1 == item2)) return false;
 
-				vit1++;
-				vit2++;
+				++vit1;
+				++vit2;
 			}
 			return true;
 		}

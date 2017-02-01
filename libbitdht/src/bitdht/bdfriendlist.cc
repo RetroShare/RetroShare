@@ -172,7 +172,7 @@ bool    bdFriendList::findPeersWithFlags(uint32_t flags, std::list<bdNodeId> &pe
 
 	/* see if it exists... */
 	std::map<bdNodeId, bdFriendEntry>::iterator it;
-	for(it = mPeers.begin(); it != mPeers.end(); it++)
+	for(it = mPeers.begin(); it != mPeers.end(); ++it)
 	{
 		/* if they have ALL of the flags we specified */
 		if ((it->second.getPeerFlags() & flags) == flags)
@@ -198,7 +198,7 @@ bool	bdFriendList::print(std::ostream &out)
 	out << std::endl;
 
 	std::map<bdNodeId, bdFriendEntry>::iterator it;
-	for(it = mPeers.begin(); it != mPeers.end(); it++)
+	for(it = mPeers.begin(); it != mPeers.end(); ++it)
 	{
 		bdStdPrintId(out, &(it->second.mPeerId));
 		out << " Flags: " << it->second.mFlags;

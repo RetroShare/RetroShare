@@ -137,7 +137,7 @@ public:
      * @param cv Values used to replace current values in accessed record
      * @return true if update was successful, false otherwise
      */
-    bool sqlUpdate(const std::string& tableName, const std::string whereClause, const ContentValue& cv);
+    bool sqlUpdate(const std::string& tableName, const std::string &whereClause, const ContentValue& cv);
 
     /*!
      * Query the given table, returning a Cursor over the result set
@@ -189,7 +189,7 @@ private:
      * @param parameter contains place holder query
      * @param paramBindings
      */
-    void buildInsertQueryValue(const std::map<std::string, uint8_t> keyMap, const ContentValue& cv,
+    void buildInsertQueryValue(const std::map<std::string, uint8_t> &keyTypeMap, const ContentValue& cv,
             std::string& parameter, std::list<RetroBind*>& paramBindings);
 
     /*!
@@ -197,7 +197,7 @@ private:
      * @param parameter contains place holder query
      * @param paramBindings
      */
-    void buildUpdateQueryValue(const std::map<std::string, uint8_t> keyMap, const ContentValue& cv,
+    void buildUpdateQueryValue(const std::map<std::string, uint8_t> &keyTypeMap, const ContentValue& cv,
             std::string& parameter, std::list<RetroBind*>& paramBindings);
 
 private:
@@ -217,7 +217,7 @@ public:
      * Initialises a null cursor
      * @warning cursor takes ownership of statement passed to it
      */
-    RetroCursor(sqlite3_stmt*);
+    explicit RetroCursor(sqlite3_stmt*);
 
     ~RetroCursor();
 

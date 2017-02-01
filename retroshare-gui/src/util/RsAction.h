@@ -29,9 +29,9 @@ class  RsAction : public QAction {
 	Q_OBJECT
 public:
 
-	RsAction(QWidget * parent, std::string rsid);
-	RsAction(const QString & text, QObject * parent, std::string rsid);
-	RsAction(const QIcon & icon, const QString & text, QObject * parent , std::string rsid);
+	RsAction(QWidget * parent, std::string &rsid);
+	RsAction(const QString & text, QObject * parent, std::string &rsid);
+	RsAction(const QIcon & icon, const QString & text, QObject * parent , std::string &rsid);
 
 public Q_SLOTS:
 

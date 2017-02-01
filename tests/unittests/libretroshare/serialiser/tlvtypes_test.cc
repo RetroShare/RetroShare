@@ -165,12 +165,12 @@ TEST(libretroshare_serialiser, test_RsTlvPeerIdSet)
 
 	RsPeerId testId;
 
-	std::string randString[5];
-	randString[0] = "e$424!�!�";
-	randString[1] = "e~:@L{L{KHKG";
-	randString[2] = "e{@O**/*/*";
-	randString[3] = "e?<<BNMB>HG�!�%$";
-	randString[4] = "e><?<NVBCEE�$$%*^";
+	//std::string randString[5];
+	//randString[0] = "e$424!�!�";
+	//randString[1] = "e~:@L{L{KHKG";
+	//randString[2] = "e{@O**/*/*";
+	//randString[3] = "e?<<BNMB>HG�!�%$";
+	//randString[4] = "e><?<NVBCEE�$$%*^";
 
 	/* store a number of random ids */
 
@@ -240,11 +240,10 @@ TEST(libretroshare_serialiser, test_RsTlvKeyValueSet)
 TEST(libretroshare_serialiser, test_RsTlvBinData)
 {
 	RsTlvBinaryData b1(TLV_TYPE_BIN_IMAGE), b2(TLV_TYPE_BIN_IMAGE);
-	unsigned char* data = NULL;
 	const uint32_t bin_size = 16000;
 	char alpha  = 'a';
 
-	data = new unsigned char[bin_size];
+	unsigned char* data = new unsigned char[bin_size];
 	srand(RAND_SEED);
 
 
@@ -264,11 +263,10 @@ TEST(libretroshare_serialiser, test_RsTlvImage)
 {
 
 	RsTlvImage image1, image2;
-	unsigned char* image_data = NULL;
 	const uint32_t bin_size = 16000;
 	char alpha  = 'a';
 
-	image_data = new unsigned char[bin_size];
+	unsigned char* image_data = new unsigned char[bin_size];
 	srand(RAND_SEED);
 
 

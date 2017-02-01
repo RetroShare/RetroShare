@@ -117,7 +117,7 @@ void bdConnectManager::printConnections()
 	std::cerr << std::endl;
 
 	std::map<bdNodeId, bdConnectionRequest>::iterator it;
-	for(it = mConnectionRequests.begin(); it != mConnectionRequests.end(); it++)
+	for(it = mConnectionRequests.begin(); it != mConnectionRequests.end(); ++it)
 	{
 		std::cerr << "bdConnectManager::printConnections() Connect Request:";
 		std::cerr << std::endl;
@@ -126,7 +126,7 @@ void bdConnectManager::printConnections()
 	}
 
 	std::map<bdProxyTuple, bdConnection>::iterator tit;
-	for(tit = mConnections.begin(); tit != mConnections.end(); tit++)
+	for(tit = mConnections.begin(); tit != mConnections.end(); ++tit)
 	{
 		std::cerr << "bdConnectManager::printConnections() ConnectAttempt:";
 		std::cerr << std::endl;
@@ -303,7 +303,7 @@ int bdConnectManager::requestConnection_direct(struct sockaddr_in *laddr, bdNode
 	std::list<bdId> goodProxies;
 	std::list<bdId>::iterator pit;
 	mQueryMgr->result(target, goodProxies);
-	for(pit = goodProxies.begin(); pit != goodProxies.end(); pit++)
+	for(pit = goodProxies.begin(); pit != goodProxies.end(); ++pit)
 	{
 		connreq.mGoodProxies.push_back(bdProxyId(*pit, BD_PI_SRC_QUERYRESULT, 0));
 	}
@@ -320,9 +320,9 @@ int bdConnectManager::requestConnection_direct(struct sockaddr_in *laddr, bdNode
 		mNodeSpace->find_node(target, number, matchIds, with_flag);
 
 		/* merge lists (costly should use sets or something) */
-		for(it = matchIds.begin(); it != matchIds.end(); it++)
+		for(it = matchIds.begin(); it != matchIds.end(); ++it)
 		{
-			for(git = connreq.mGoodProxies.begin(); git != connreq.mGoodProxies.end(); git++)
+			for(git = connreq.mGoodProxies.begin(); git != connreq.mGoodProxies.end(); ++git)
 			{
 				if (git->id == *it)
 					break;
@@ -422,14 +422,14 @@ int bdConnectManager::requestConnection_proxy(struct sockaddr_in *laddr, bdNodeI
 		}
 		else
 		{
-			pit++;
+			++pit;
 		}
 	}
 
 	/* in proxy mode - put Good Proxies First */
 	if (mode == BITDHT_CONNECT_MODE_PROXY)
 	{
-		for(pit = goodProxies.begin(); pit != goodProxies.end(); pit++)
+		for(pit = goodProxies.begin(); pit != goodProxies.end(); ++pit)
 		{
 #ifdef DEBUG_PROXY_CONNECTION
 			std::cerr << "bdConnectManager::requestConnection_proxy() Adding Good Proxy: ";
@@ -457,7 +457,7 @@ int bdConnectManager::requestConnection_proxy(struct sockaddr_in *laddr, bdNodeI
 				BITDHT_PEER_STATUS_DHT_RELAY_SERVER);
 
 		std::multimap<bdMetric, bdId>::iterator it;
-		for(it = nearest.begin(); it != nearest.end(); it++)
+		for(it = nearest.begin(); it != nearest.end(); ++it)
 		{
 #ifdef DEBUG_PROXY_CONNECTION
 			std::cerr << "bdConnectManager::requestConnection_proxy() Adding Relay Server: ";
@@ -478,7 +478,7 @@ int bdConnectManager::requestConnection_proxy(struct sockaddr_in *laddr, bdNodeI
 				BITDHT_PEER_STATUS_DHT_FRIEND);
 
 		std::multimap<bdMetric, bdId>::iterator it;
-		for(it = nearest.begin(); it != nearest.end(); it++)
+		for(it = nearest.begin(); it != nearest.end(); ++it)
 		{
 #ifdef DEBUG_PROXY_CONNECTION
 			std::cerr << "bdConnectManager::requestConnection_proxy() Adding Friend: ";
@@ -493,7 +493,7 @@ int bdConnectManager::requestConnection_proxy(struct sockaddr_in *laddr, bdNodeI
 	/* in relay mode - Good Proxies are the BackUp */
 	if (mode == BITDHT_CONNECT_MODE_RELAY)
 	{
-		for(pit = goodProxies.begin(); pit != goodProxies.end(); pit++)
+		for(pit = goodProxies.begin(); pit != goodProxies.end(); ++pit)
 		{
 #ifdef DEBUG_PROXY_CONNECTION
 			std::cerr << "bdConnectManager::requestConnection_proxy() Adding Good Proxy: ";
@@ -516,7 +516,7 @@ int bdConnectManager::requestConnection_proxy(struct sockaddr_in *laddr, bdNodeI
 				BITDHT_PEER_STATUS_DHT_FOF);
 
 		std::multimap<bdMetric, bdId>::iterator it;
-		for(it = nearest.begin(); it != nearest.end(); it++)
+		for(it = nearest.begin(); it != nearest.end(); ++it)
 		{
 #ifdef DEBUG_PROXY_CONNECTION
 			std::cerr << "bdConnectManager::requestConnection_proxy() Querying FOF: ";
@@ -533,7 +533,7 @@ int bdConnectManager::requestConnection_proxy(struct sockaddr_in *laddr, bdNodeI
 	if (connreq.mGoodProxies.size() < MED_START_PROXY_COUNT)
 	{
 		/* unknown, add to potential list, and ping! */
-		for(pit = potentialProxies.begin(); pit != potentialProxies.end(); pit++)
+		for(pit = potentialProxies.begin(); pit != potentialProxies.end(); ++pit)
 		{
 
 			connreq.mPotentialProxies.push_back(*pit);
@@ -747,7 +747,7 @@ void bdConnectManager::updatePotentialConnectionProxy(const bdId *id, uint32_t m
 #endif
 		/* good peer, see if any of our connectionrequests can use it */
 		std::map<bdNodeId, bdConnectionRequest>::iterator it;
-		for(it = mConnectionRequests.begin(); it != mConnectionRequests.end(); it++)
+		for(it = mConnectionRequests.begin(); it != mConnectionRequests.end(); ++it)
 		{
 			it->second.checkGoodProxyPeer(id);
 		}
@@ -772,7 +772,7 @@ void bdConnectManager::iterateConnectionRequests()
 	std::list<bdNodeId>::iterator eit;
 
 	std::map<bdNodeId, bdConnectionRequest>::iterator it;
-	for(it = mConnectionRequests.begin(); it != mConnectionRequests.end(); it++)
+	for(it = mConnectionRequests.begin(); it != mConnectionRequests.end(); ++it)
 	{
 		bool erase = false;
 
@@ -930,7 +930,7 @@ void bdConnectManager::iterateConnectionRequests()
 		}
 	}
 	
-	for(eit = eraseList.begin(); eit != eraseList.end(); eit++)
+	for(eit = eraseList.begin(); eit != eraseList.end(); ++eit)
 	{
 		it = mConnectionRequests.find(*eit);
 		if (it != mConnectionRequests.end())
@@ -1706,7 +1706,7 @@ void bdConnectManager::iterateConnections()
 	std::list<bdProxyTuple> eraseList;
 	time_t now = time(NULL);
 	
-	for(it = mConnections.begin(); it != mConnections.end(); it++)
+	for(it = mConnections.begin(); it != mConnections.end(); ++it)
 	{
 		if (now - it->second.mLastEvent > BD_CONNECTION_MAX_TIMEOUT)
 		{
@@ -1918,7 +1918,7 @@ bdConnection::bdConnection()
 bdConnection *bdConnectManager::findSimilarConnection(bdNodeId *srcId, bdNodeId *destId)
 {
 	std::map<bdProxyTuple, bdConnection>::iterator it;
-	for(it = mConnections.begin(); it != mConnections.end(); it++)
+	for(it = mConnections.begin(); it != mConnections.end(); ++it)
 	{
 		if ((it->first.srcId == *srcId) && (it->first.destId == *destId))
 		{
@@ -2283,7 +2283,7 @@ int bdConnectManager::recvedConnectionRequest(bdId *id, bdId *srcConnAddr, bdId 
 			std::cerr << std::endl;
 #endif
 
-			point = BD_PROXY_CONNECTION_END_POINT;
+			//point = BD_PROXY_CONNECTION_END_POINT;
 
 			conn->ConnectionRequestEnd(id, srcConnAddr, destConnAddr, mode);
 
@@ -3177,7 +3177,7 @@ int bdConnectionRequest::addGoodProxy(const bdId *srcId)
 	}
 
 	std::list<bdProxyId>::iterator it;
-	for(it = mPeersTried.begin(); it != mPeersTried.end(); it++)
+	for(it = mPeersTried.begin(); it != mPeersTried.end(); ++it)
 	{
 		if (*srcId == it->id)
 			break;
@@ -3185,7 +3185,7 @@ int bdConnectionRequest::addGoodProxy(const bdId *srcId)
 	
 	if (it == mPeersTried.end())
 	{
-		for(it = mGoodProxies.begin(); it != mGoodProxies.end(); it++)
+		for(it = mGoodProxies.begin(); it != mGoodProxies.end(); ++it)
 		{
 			if (*srcId == it->id)
 				break;
@@ -3260,7 +3260,7 @@ std::ostream &operator<<(std::ostream &out, const bdConnectionRequest &req)
 
 	std::list<bdProxyId>::const_iterator it;
 	std::list<bdId>::const_iterator pit;
-	for(it = req.mGoodProxies.begin(); it != req.mGoodProxies.end(); it++)
+	for(it = req.mGoodProxies.begin(); it != req.mGoodProxies.end(); ++it)
 	{
 		out << "\t";
 		bdStdPrintId(out, &(it->id));
@@ -3272,7 +3272,7 @@ std::ostream &operator<<(std::ostream &out, const bdConnectionRequest &req)
 	out << "PotentialProxies:";
 	out << std::endl;
 
-	for(pit = req.mPotentialProxies.begin(); pit != req.mPotentialProxies.end(); pit++)
+	for(pit = req.mPotentialProxies.begin(); pit != req.mPotentialProxies.end(); ++pit)
 	{
 		out << "\t";
 		bdStdPrintId(out, &(*pit));
@@ -3282,7 +3282,7 @@ std::ostream &operator<<(std::ostream &out, const bdConnectionRequest &req)
 	out << "PeersTried:";
 	out << std::endl;
 
-	for(it = req.mPeersTried.begin(); it != req.mPeersTried.end(); it++)
+	for(it = req.mPeersTried.begin(); it != req.mPeersTried.end(); ++it)
 	{
 		out << "\t";
 		bdStdPrintId(out, &(it->id));

@@ -87,7 +87,7 @@ class AudioWizard: public QWizard, public Ui::AudioWizard {
                 void on_qcbHighContrast_clicked(bool);
                 void updateTriggerWidgets(bool);
 	public:
-                AudioWizard(QWidget *parent);
+                explicit AudioWizard(QWidget *parent);
                 ~AudioWizard();
 
         private slots :

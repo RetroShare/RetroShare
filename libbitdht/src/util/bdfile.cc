@@ -25,7 +25,7 @@ bool bdFile::renameFile(const std::string& from, const std::string& to)
 
 	while (!MoveFileEx(f.c_str(), t.c_str(), MOVEFILE_REPLACE_EXISTING))
 #else
-	std::string f(from),t(to) ;
+	//std::string f(from),t(to) ;
 
 	while (rename(from.c_str(), to.c_str()) < 0)
 #endif

@@ -54,7 +54,7 @@ public:
   };
   
   /** Default constructor. */
-  VMessageBox(QWidget *parent = 0);
+  explicit VMessageBox(QWidget *parent = 0);
 
   /** Displays an critical message box with the given caption, message text,
    * and visible buttons. To specify a button as a default button or an escape

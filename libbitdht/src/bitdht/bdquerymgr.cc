@@ -61,7 +61,7 @@ void bdQueryManager::shutdownQueries()
 {
 	/* clear the queries */
 	std::list<bdQuery *>::iterator it;
-	for(it = mLocalQueries.begin(); it != mLocalQueries.end();it++)
+	for(it = mLocalQueries.begin(); it != mLocalQueries.end();++it)
 	{
 		delete (*it);
 	}
@@ -77,7 +77,7 @@ void bdQueryManager::printQueries()
 
 	int i = 0;
 	std::list<bdQuery *>::iterator it;
-	for(it = mLocalQueries.begin(); it != mLocalQueries.end(); it++, i++)
+	for(it = mLocalQueries.begin(); it != mLocalQueries.end(); ++it, ++i)
 	{
 		fprintf(stderr, "Query #%d:\n", i);
 		(*it)->printQuery();
@@ -144,7 +144,7 @@ bool bdQueryManager::checkPotentialPeer(bdId *id, bdId *src)
 	bool isWorthyPeer = false;
 	/* also push to queries */
 	std::list<bdQuery *>::iterator it;
-	for(it = mLocalQueries.begin(); it != mLocalQueries.end(); it++)
+	for(it = mLocalQueries.begin(); it != mLocalQueries.end(); ++it)
 	{
 		if ((*it)->addPotentialPeer(id, src, 0))
 		{
@@ -172,7 +172,7 @@ void bdQueryManager::addPeer(const bdId *id, uint32_t peerflags)
 
 	/* iterate through queries */
 	std::list<bdQuery *>::iterator it;
-	for(it = mLocalQueries.begin(); it != mLocalQueries.end(); it++)
+	for(it = mLocalQueries.begin(); it != mLocalQueries.end(); ++it)
 	{
 		(*it)->addPeer(id, peerflags);
 	}
@@ -195,7 +195,7 @@ void bdQueryManager::addQuery(const bdNodeId *id, uint32_t qflags)
 	fprintf(stderr, ")\n");
 #endif
 
-	for(it = nearest.begin(); it != nearest.end(); it++)
+	for(it = nearest.begin(); it != nearest.end(); ++it)
 	{
 		startList.push_back(it->second);
 	}
@@ -218,7 +218,7 @@ void bdQueryManager::clearQuery(const bdNodeId *rmId)
 		}
 		else
 		{
-			it++;
+			++it;
 		}
 	}
 }
@@ -226,7 +226,7 @@ void bdQueryManager::clearQuery(const bdNodeId *rmId)
 void bdQueryManager::QueryStatus(std::map<bdNodeId, bdQueryStatus> &statusMap)
 {
 	std::list<bdQuery *>::iterator it;
-	for(it = mLocalQueries.begin(); it != mLocalQueries.end(); it++)
+	for(it = mLocalQueries.begin(); it != mLocalQueries.end(); ++it)
 	{
 		bdQueryStatus status;
 		status.mStatus = (*it)->mState;
@@ -239,7 +239,7 @@ void bdQueryManager::QueryStatus(std::map<bdNodeId, bdQueryStatus> &statusMap)
 int bdQueryManager::QuerySummary(const bdNodeId *id, bdQuerySummary &query)
 {
 	std::list<bdQuery *>::iterator it;
-	for(it = mLocalQueries.begin(); it != mLocalQueries.end(); it++)
+	for(it = mLocalQueries.begin(); it != mLocalQueries.end(); ++it)
 	{
 		if ((*it)->mId == *id)
 		{
@@ -273,7 +273,7 @@ int  bdQueryManager::getResults(bdNodeId *target, std::list<bdId> &answer, int q
 	/* grab any peers from any existing query */
 	int results = 0;
 	std::list<bdQuery *>::iterator qit;
-	for(qit = mLocalQueries.begin(); qit != mLocalQueries.end(); qit++)
+	for(qit = mLocalQueries.begin(); qit != mLocalQueries.end(); ++qit)
 	{
 		if (!((*qit)->mId == (*target)))
 		{
@@ -372,7 +372,7 @@ bool bdQueryManager::checkWorthyPeerSources(bdId *src)
 
 				return true;
 			}
-			it++;
+			++it;
 		}
 	}
 	return false;

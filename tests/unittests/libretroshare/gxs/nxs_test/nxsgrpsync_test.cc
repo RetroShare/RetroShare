@@ -29,7 +29,7 @@ NxsGrpSync::NxsGrpSync(RsGcxs* circle, RsGixsReputation* reputation):
 
 
 	std::list<RsPeerId>::iterator it = mPeerIds.begin();
-	for(; it != mPeerIds.end(); it++)
+	for(; it != mPeerIds.end(); ++it)
 	{
 		// data stores
 		RsGeneralDataService* ds = createDataStore(*it, mServType);
@@ -64,7 +64,7 @@ NxsGrpSync::NxsGrpSync(RsGcxs* circle, RsGixsReputation* reputation):
 
 	// lets create some a group each for all peers
 	DataMap::iterator mit = mDataServices.begin();
-	for(; mit != mDataServices.end(); mit++)
+	for(; mit != mDataServices.end(); ++mit)
 	{
 		RsNxsGrp* grp = new RsNxsGrp(mServType);
 
@@ -88,7 +88,7 @@ NxsGrpSync::NxsGrpSync(RsGcxs* circle, RsGixsReputation* reputation):
 
 		// the expected result is that each peer has the group of the others
 		it = mPeerIds.begin();
-		for(; it != mPeerIds.end(); it++)
+		for(; it != mPeerIds.end(); ++it)
 		{
 			mExpectedResult[*it].push_back(grpId);
 		}
@@ -133,7 +133,7 @@ rs_nxs_test::NxsGrpSync::~NxsGrpSync()
 {
 	// clean up data stores
 	DataMap::iterator mit = mDataServices.begin();
-	for(; mit != mDataServices.end(); mit++)
+	for(; mit != mDataServices.end(); ++mit)
 	{
 		RsGxsGroupId::std_vector grpIds;
 		mit->second->resetDataStore();

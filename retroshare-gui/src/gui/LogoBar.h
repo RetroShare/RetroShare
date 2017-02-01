@@ -45,7 +45,7 @@ class LogoBar : public QFrame {
 	Q_OBJECT
 public:
 
-	LogoBar(QWidget * parent);
+	explicit LogoBar(QWidget * parent);
 
 	~LogoBar();
 

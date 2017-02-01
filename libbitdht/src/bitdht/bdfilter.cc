@@ -106,7 +106,7 @@ void bdFilter::loadBannedIpFile()
         unsigned long long int filter_ts ;
         unsigned long long int last_seen ;
 
-            if (4 == sscanf(line, "%s %u %llu %llu", addr_str, &filter_flags,&filter_ts,&last_seen))
+            if (4 == sscanf(line, "%10239s %u %llu %llu", addr_str, &filter_flags,&filter_ts,&last_seen))
             {
                 if (bdnet_inet_aton(addr_str, &(addr.sin_addr)))
                 {
@@ -139,7 +139,7 @@ void bdFilter::loadBannedIpFile()
 bool bdFilter::filteredIPs(std::list<struct sockaddr_in> &answer)
 {
     std::map<uint32_t,bdFilteredPeer>::iterator it;
-	for(it = mFiltered.begin(); it != mFiltered.end(); it++)
+	for(it = mFiltered.begin(); it != mFiltered.end(); ++it)
 	{
         answer.push_back(it->second.mAddr);
 	}
@@ -312,7 +312,7 @@ bool bdFilter::cleanupFilter()
 #ifdef DEBUG_FILTER
             std::cerr << " OK" << std::endl;
 #endif
-            it++;
+            ++it;
         }
     }
 

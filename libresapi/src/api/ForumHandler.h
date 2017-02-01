@@ -11,7 +11,7 @@ namespace resource_api
 class ForumHandler : public ResourceRouter
 {
 public:
-    ForumHandler(RsGxsForums* forums);
+    explicit ForumHandler(RsGxsForums* forums);
 private:
     RsGxsForums* mRsGxsForums;
     void handleWildcard(Request& req, Response& resp);

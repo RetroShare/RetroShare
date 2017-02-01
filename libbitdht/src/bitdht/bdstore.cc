@@ -74,7 +74,7 @@ int bdStore::reloadFromStore()
 
 	while(line == fgets(line, 10240, fd))
 	{
-		if (2 == sscanf(line, "%s %hd", addr_str, &port))
+		if (2 == sscanf(line, "%10239s %hu", addr_str, &port))
 		{
 			if (bdnet_inet_aton(addr_str, &(addr.sin_addr)))
 			{
@@ -111,7 +111,7 @@ int 	bdStore::getPeer(bdPeer *peer)
 
 	std::list<bdPeer>::iterator it;
 	int i = 0;
-	for(it = store.begin(); (it != store.end()) && (i < mIndex); it++, i++) ; /* empty loop */
+	for(it = store.begin(); (it != store.end()) && (i < mIndex); ++it, ++i) ; /* empty loop */
 	if (it != store.end())
 	{
 		*peer = *it;
@@ -127,7 +127,7 @@ int     bdStore::filterIpList(const std::list<struct sockaddr_in> &filteredIPs)
 	// hope its not used to often.
 
 	std::list<struct sockaddr_in>::const_iterator it;
-	for(it = filteredIPs.begin(); it != filteredIPs.end(); it++)
+	for(it = filteredIPs.begin(); it != filteredIPs.end(); ++it)
 	{
 		std::list<bdPeer>::iterator sit;
 		for(sit = store.begin(); sit != store.end();)
@@ -141,7 +141,7 @@ int     bdStore::filterIpList(const std::list<struct sockaddr_in> &filteredIPs)
 			}
 			else
 			{
-				sit++;
+				++sit;
 			}
 		}
 	}
@@ -178,7 +178,7 @@ void	bdStore::addStore(bdPeer *peer)
 		}
 		else
 		{
-			it++;
+			++it;
 		}
 	}
 
@@ -227,7 +227,7 @@ void	bdStore::writeStore(std::string file)
 	}
 	
 	std::list<bdPeer>::iterator it;
-	for(it = store.begin(); it != store.end(); it++)
+	for(it = store.begin(); it != store.end(); ++it)
 	{
 		fprintf(fd, "%s %d\n", bdnet_inet_ntoa(it->mPeerId.addr.sin_addr).c_str(), ntohs(it->mPeerId.addr.sin_port));
 #ifdef DEBUG_STORE

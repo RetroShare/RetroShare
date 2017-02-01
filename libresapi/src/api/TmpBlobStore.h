@@ -10,7 +10,7 @@ namespace resource_api{
 class TmpBlobStore: private Tickable
 {
 public:
-    TmpBlobStore(StateTokenServer* sts);
+    explicit TmpBlobStore(StateTokenServer* sts);
     virtual ~TmpBlobStore();
 
     // from Tickable

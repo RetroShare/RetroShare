@@ -28,8 +28,8 @@
 #include "rsscopetimer.h"
 
 RsScopeTimer::RsScopeTimer(const std::string& name)
+  : _name(name)
 {
-	_name = name ;
 	start();
 }
 

@@ -45,7 +45,7 @@ class GxsIdChooser : public QComboBox
 
 public:
 	GxsIdChooser(RsGxsIfaceHelper* ifaceImpl, QWidget *parent = NULL);
-	GxsIdChooser(QWidget *parent = NULL);
+	explicit GxsIdChooser(QWidget *parent = NULL);
 	virtual ~GxsIdChooser();
 
 	void setFlags(uint32_t flags) ;

@@ -19,6 +19,9 @@ namespace librs { namespace util {
 
 FolderIterator::FolderIterator(const std::string& folderName, bool allow_symlinks, bool allow_files_from_the_future)
     : mFolderName(folderName),mAllowSymLinks(allow_symlinks),mAllowFilesFromTheFuture(allow_files_from_the_future)
+#ifdef WINDOWS_SYS
+    , isFirstCall(false)
+#endif
 {
     is_open = false ;
     validity = false ;

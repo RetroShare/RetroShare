@@ -12,8 +12,8 @@ class RsSyntaxHighlighter : public QSyntaxHighlighter
 	Q_PROPERTY(QColor textColorQuote READ textColorQuote WRITE setTextColorQuote)
 
 public:
-	RsSyntaxHighlighter(QTextEdit *parent = 0);
-	QColor textColorQuote() const { return quotationFormat.foreground().color(); };
+	explicit RsSyntaxHighlighter(QTextEdit *parent = 0);
+	QColor textColorQuote() const { return quotationFormat.foreground().color(); }
 
 protected:
 	void highlightBlock(const QString &text);

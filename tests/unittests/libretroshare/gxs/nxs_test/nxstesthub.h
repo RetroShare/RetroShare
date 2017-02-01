@@ -44,7 +44,7 @@ namespace rs_nxs_test
 		 * This constructs the test hub
 		 * for a give scenario in mind
 		 */
-		NxsTestHub(NxsTestScenario::pointer testScenario);
+		explicit NxsTestHub(NxsTestScenario::pointer testScenario);
 
 		/*!
 		 * This cleans up what ever testing resources are left

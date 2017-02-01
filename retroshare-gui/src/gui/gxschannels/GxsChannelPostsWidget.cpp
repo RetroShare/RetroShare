@@ -547,7 +547,7 @@ void GxsChannelPostsWidget::insertPosts(const uint32_t &token)
 class GxsChannelPostsReadData
 {
 public:
-	GxsChannelPostsReadData(bool read)
+	explicit GxsChannelPostsReadData(bool read)
 	{
 		mRead = read;
 		mLastToken = 0;
@@ -565,7 +565,7 @@ static void setAllMessagesReadCallback(FeedItem *feedItem, void *data)
 		return;
 	}
 
-	GxsChannelPostsReadData *readData = (GxsChannelPostsReadData*) data;
+	GxsChannelPostsReadData *readData = reinterpret_cast<GxsChannelPostsReadData*>(data);
 	bool is_not_new = !channelPostItem->isUnread() ;
 
 	if(is_not_new == readData->mRead)

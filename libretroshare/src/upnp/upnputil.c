@@ -227,7 +227,6 @@ int SetRedirectAndTest(struct UPNPUrls * urls,
 	char externalIPAddress[40];
 	char intClient[40];
 	char intPort[6];
-	char reservedPort[6];
 	char duration[16];
 	int r;
 	int ok = 1;
@@ -275,6 +274,7 @@ int SetRedirectAndTest(struct UPNPUrls * urls,
 
 #if MINIUPNPC_API_VERSION >= 11
 	if (addAny) {
+		char reservedPort[6];
 		r = UPNP_AddAnyPortMapping(urls->controlURL, data->first.servicetype,
 					   eport, iport, iaddr, description,
 					   proto, 0, leaseDuration, reservedPort);

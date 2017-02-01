@@ -390,7 +390,6 @@ static int process_dash_escaped(dearmour_arg_t *arg,ops_error_t **errors,
 	for( ; ; )
 	{
 		int c;
-		unsigned count;
 
 		if((c=read_char(arg,errors,rinfo,cbinfo,ops_true)) < 0)
 			return -1;
@@ -403,6 +402,8 @@ static int process_dash_escaped(dearmour_arg_t *arg,ops_error_t **errors,
 				/* then this had better be a trailer! */
 				if(c != '-')
 					OPS_ERROR(errors,OPS_E_R_BAD_FORMAT,"Bad dash-escaping");
+
+				unsigned count = 0;
 				for(count=2 ; count < 5 ; ++count)
 				{
 					if((c=read_char(arg,errors,rinfo,cbinfo,ops_false)) < 0)

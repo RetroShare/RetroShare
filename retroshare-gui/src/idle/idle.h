@@ -52,6 +52,8 @@ private:
 	Private *d;
 };
 
+#warning: Cppcheck(noCopyConstructor): class 'IdlePlatform' does not have a copy constructor which is recommended since the class contains a pointer to allocated memory.
+// cppcheck-suppress noCopyConstructor
 class IdlePlatform
 {
 public:
@@ -69,7 +71,7 @@ private:
 class Idle::Private
 {
 public:
-	Private() {}
+	Private() : active(false), idleTime(0) {}
 
 	QPoint lastMousePos;
 	QDateTime idleSince;

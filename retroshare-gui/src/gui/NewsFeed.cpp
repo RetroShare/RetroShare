@@ -920,7 +920,7 @@ struct AddFeedItemIfUniqueData
 
 static bool addFeedItemIfUniqueCallback(FeedItem *feedItem, void *data)
 {
-	AddFeedItemIfUniqueData *findData = (AddFeedItemIfUniqueData*) data;
+	AddFeedItemIfUniqueData *findData = reinterpret_cast<AddFeedItemIfUniqueData*>(data);
 	if (!findData || findData->mSslId.isNull()) {
 		return false;
 	}

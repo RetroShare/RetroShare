@@ -30,7 +30,7 @@ class RSTreeWidget : public QTreeWidget
 	Q_OBJECT
 
 public:
-	RSTreeWidget(QWidget *parent = 0);
+	explicit RSTreeWidget(QWidget *parent = 0);
 
 	QString placeholderText() { return mPlaceholderText; }
 	void setPlaceholderText(const QString &text);

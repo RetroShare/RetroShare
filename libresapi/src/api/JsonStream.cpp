@@ -33,9 +33,9 @@ std::string JsonStream::getJsonString()
         case TYPE_UNDEFINED:
             return "";
         case TYPE_ARRAY:
-            return json::Serialize(mArray);
+            return json::Serialize(json::Value(mArray));
         case TYPE_OBJECT:
-            return json::Serialize(mObject);
+            return json::Serialize(json::Value(mObject));
         case TYPE_RAW:
             return mRawString;
         default:
@@ -61,7 +61,7 @@ StreamBase& JsonStream::operator<<(ValueReference<bool> value)
     if(serialise())
     {
         setType(TYPE_ARRAY);
-        mArray.push_back(value.value);
+        mArray.push_back(json::Value(value.value));
     }
     else
     {
@@ -79,7 +79,7 @@ StreamBase& JsonStream::operator<<(ValueReference<int> value)
     if(serialise())
     {
         setType(TYPE_ARRAY);
-        mArray.push_back(value.value);
+        mArray.push_back(json::Value(value.value));
     }
     else
     {
@@ -97,7 +97,7 @@ StreamBase& JsonStream::operator<<(ValueReference<double> value)
     if(serialise())
     {
         setType(TYPE_ARRAY);
-        mArray.push_back(value.value);
+        mArray.push_back(json::Value(value.value));
     }
     else
     {
@@ -115,7 +115,7 @@ StreamBase& JsonStream::operator<<(ValueReference<std::string> value)
     if(serialise())
     {
         setType(TYPE_ARRAY);
-        mArray.push_back(value.value);
+        mArray.push_back(json::Value(value.value));
     }
     else
     {
@@ -151,7 +151,7 @@ StreamBase& JsonStream::operator<<(KeyValueReference<bool> keyValue)
     if(serialise())
     {
         setType(TYPE_OBJECT);
-        mObject[keyValue.key] = keyValue.value;
+        mObject[keyValue.key] = json::Value(keyValue.value);
     }
     else
     {
@@ -168,7 +168,7 @@ StreamBase& JsonStream::operator<<(KeyValueReference<int> keyValue)
     if(serialise())
     {
         setType(TYPE_OBJECT);
-        mObject[keyValue.key] = keyValue.value;
+        mObject[keyValue.key] = json::Value(keyValue.value);
     }
     else
     {
@@ -185,7 +185,7 @@ StreamBase& JsonStream::operator<<(KeyValueReference<double> keyValue)
     if(serialise())
     {
         setType(TYPE_OBJECT);
-        mObject[keyValue.key] = keyValue.value;
+        mObject[keyValue.key] = json::Value(keyValue.value);
     }
     else
     {
@@ -202,7 +202,7 @@ StreamBase& JsonStream::operator<<(KeyValueReference<std::string> keyValue)
     if(serialise())
     {
         setType(TYPE_OBJECT);
-        mObject[keyValue.key] = keyValue.value;
+        mObject[keyValue.key] = json::Value(keyValue.value);
     }
     else
     {
@@ -511,11 +511,11 @@ json::Value JsonStream::getJsonValue()
     case TYPE_UNDEFINED:
         return json::Value();
     case TYPE_ARRAY:
-        return mArray;
+        return json::Value(mArray);
     case TYPE_OBJECT:
-        return mObject;
+        return json::Value(mObject);
     case TYPE_RAW:
-        return mRawString;
+        return json::Value(mRawString);
     default:
         return json::Value();
     }

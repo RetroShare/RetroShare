@@ -50,9 +50,6 @@ int p3BitDht::InfoCallback(const bdId *id, uint32_t /*type*/, uint32_t /*flags*/
 	/* translate info */
 	RsPeerId rsid;
 	struct sockaddr_in addr = id->addr;
-	int outtype = PNASS_TYPE_BADPEER;
-	int outreason = PNASS_REASON_UNKNOWN;
-	int outage = 0;
 
 #ifdef DEBUG_BITDHT_COMMON
 	std::cerr << "p3BitDht::InfoCallback() likely BAD_PEER: ";
@@ -72,6 +69,10 @@ int p3BitDht::InfoCallback(const bdId *id, uint32_t /*type*/, uint32_t /*flags*/
 
 	if (mPeerSharer)
 	{
+		int outtype = PNASS_TYPE_BADPEER;
+		int outreason = PNASS_REASON_UNKNOWN;
+		int outage = 0;
+
 		struct sockaddr_storage tmpaddr;
 		struct sockaddr_in *ap = (struct sockaddr_in *) &tmpaddr;
 		ap->sin_family = AF_INET;
@@ -689,7 +690,6 @@ int p3BitDht::ConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId
 				sockaddr_clear(&extaddr);
 
 				bool connectOk = false;
-				bool proxyPort = false; 
 				bool exclusivePort = false;
 #ifdef DEBUG_PEERNET
 				std::cerr << "dhtConnectionCallback():  Proxy... deciding which port to use.";
@@ -699,8 +699,8 @@ int p3BitDht::ConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId
 				DhtPeerDetails *dpd = findInternalDhtPeer_locked(&(peerId.id), RSDHT_PEERTYPE_FRIEND);
 				if (dpd)
 				{
-					proxyPort = dpd->mConnectLogic.shouldUseProxyPort(
-						mNetMgr->getNetworkMode(), mNetMgr->getNatHoleMode(), mNetMgr->getNatTypeMode());
+					bool proxyPort = dpd->mConnectLogic.shouldUseProxyPort(
+					        mNetMgr->getNetworkMode(), mNetMgr->getNatHoleMode(), mNetMgr->getNatTypeMode());
 
 					dpd->mConnectLogic.storeProxyPortChoice(0, proxyPort);
 
@@ -1185,7 +1185,9 @@ int p3BitDht::doActions()
 				// Parameters that will be used for the Connect Request.
 				struct sockaddr_in connAddr; // We zero this address. (DHT Layer handles most cases)
 				sockaddr_clear(&connAddr);
+				// cppcheck-suppress variableScope
 				uint32_t connStart = 1; /* > 0 indicates GO (number indicates required startup delay) */
+				// cppcheck-suppress variableScope
 				uint32_t connDelay = 0;
 
 				uint32_t failReason = CSB_UPDATE_MODE_UNAVAILABLE;
@@ -1199,7 +1201,9 @@ int p3BitDht::doActions()
 				{
 					struct sockaddr_in extaddr;
 					sockaddr_clear(&extaddr);
+					// cppcheck-suppress variableScope
 					bool proxyPort = true;
+					// cppcheck-suppress variableScope
 					bool exclusivePort = false;
 					bool connectOk = false;
 

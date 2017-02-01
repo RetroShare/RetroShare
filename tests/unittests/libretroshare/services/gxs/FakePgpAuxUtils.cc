@@ -36,7 +36,7 @@ FakePgpAuxUtils::FakePgpAuxUtils(const RsPeerId& ownId)
 void FakePgpAuxUtils::addPeerListToPgpList(const std::list<RsPeerId> &ids)
 {
 	std::list<RsPeerId>::const_iterator it;
-	for(it = ids.begin(); it != ids.end(); it++)
+	for(it = ids.begin(); it != ids.end(); ++it)
 	{
 		addPeerIdToPgpList(*it);
 	}

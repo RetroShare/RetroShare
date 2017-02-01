@@ -76,7 +76,7 @@ bool operator ==(const RsGxsMsgUpdateItem& l, const RsGxsMsgUpdateItem& r)
 
     std::map<RsGxsGroupId, RsGxsMsgUpdateItem::MsgUpdateInfo>::const_iterator lit = lUp.begin(), rit;
 
-	for(; lit != lUp.end(); lit++)
+	for(; lit != lUp.end(); ++lit)
 	{
 		RsGxsGroupId key = lit->first;
 		if((rit = rUp.find(key)) != rUp.end())

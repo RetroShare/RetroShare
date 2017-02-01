@@ -64,7 +64,7 @@ void ServiceControlHandler::handleWildcard(Request &req, Response &resp)
             ok = true;
             RsPeerServiceInfo psi;
             ok &= mRsServiceControl->getOwnServices(psi);
-            for(std::map<uint32_t, RsServiceInfo>::iterator mit = psi.mServiceList.begin(); mit != psi.mServiceList.end(); mit++)
+            for(std::map<uint32_t, RsServiceInfo>::iterator mit = psi.mServiceList.begin(); mit != psi.mServiceList.end(); ++mit)
             {
                 RsServicePermissions perms;
                 ok &= mRsServiceControl->getServicePermissions(mit->first, perms);

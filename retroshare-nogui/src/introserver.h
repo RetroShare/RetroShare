@@ -34,6 +34,8 @@
 
 class RsIntroStore;
 
+#warning: Cppcheck(noCopyConstructor): class 'RsIntroServer' does not have a copy constructor which is recommended since the class contains a pointer to allocated memory.
+// cppcheck-suppress noCopyConstructor
 class RsIntroServer
 {
 	public:
@@ -48,7 +50,7 @@ int 	displayPeers();
 int 	addCertificateFile(std::string);
 int 	addNewUser(std::string certificate);
 int 	setupChatLobbies(std::string &genericLobbyName);
-int 	createConfigFiles(std::string peersDir, std::string lobbyName);
+int 	createConfigFiles(std::string &peersDir, std::string &lobbyName);
 int 	restoreStoredPeers();
 int 	removeAllPeers();
 
@@ -83,7 +85,7 @@ class storeData
 class RsIntroStore
 {
 	public:
-	RsIntroStore(std::string storefile);
+	explicit RsIntroStore(std::string &storefile);
 bool	loadPeers();
 bool	addPeer(const RsPeerDetails &pd);
 bool	removePeer(std::string gpgId);

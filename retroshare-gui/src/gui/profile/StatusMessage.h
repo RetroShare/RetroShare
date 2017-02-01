@@ -32,7 +32,7 @@ class StatusMessage : public QDialog
 
 public:
   /** Default constructor */
-  StatusMessage(QWidget *parent = 0);
+  explicit StatusMessage(QWidget *parent = 0);
 
 private slots:
 

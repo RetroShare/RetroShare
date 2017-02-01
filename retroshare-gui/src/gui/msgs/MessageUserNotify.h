@@ -29,7 +29,7 @@ class MessageUserNotify : public UserNotify
 	Q_OBJECT
 
 public:
-	MessageUserNotify(QObject *parent = 0);
+	explicit MessageUserNotify(QObject *parent = 0);
 
 	virtual bool hasSetting(QString *name, QString *group);
 

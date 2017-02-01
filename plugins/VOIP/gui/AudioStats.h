@@ -41,7 +41,7 @@ class AudioBar : public QWidget {
 	protected:
 		void paintEvent(QPaintEvent *event);
 	public:
-		AudioBar(QWidget *parent = NULL);
+		explicit AudioBar(QWidget *parent = NULL);
 		int iMin, iMax;
 		int iBelow, iAbove;
 		int iValue, iPeak;

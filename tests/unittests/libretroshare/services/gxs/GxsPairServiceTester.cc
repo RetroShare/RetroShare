@@ -93,7 +93,7 @@ GxsPairServiceTester::~GxsPairServiceTester()
 
 GxsPeerNode *GxsPairServiceTester::getGxsPeerNode(const RsPeerId &id)
 {
-	return (GxsPeerNode *) getPeerNode(id);
+	return reinterpret_cast<GxsPeerNode *>(getPeerNode(id));
 }
 
 

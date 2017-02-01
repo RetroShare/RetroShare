@@ -576,7 +576,7 @@ bool LocalDirectoryStorage::getFileInfo(DirectoryStorage::EntryIndex i,FileInfo&
     info.transfered = 0;
     info.tfRate = 0; /* in kbytes */
     info.downloadStatus = FT_STATE_COMPLETE ;
-    std::list<TransferInfo> peers;
+    //std::list<TransferInfo> peers;
 
     info.priority  = SPEED_NORMAL;
     info.lastTS = 0;
@@ -654,6 +654,8 @@ std::string LocalDirectoryStorage::locked_getVirtualDirName(EntryIndex indx) con
 
    return it->second.virtualname ;
 }
+
+/* UNUSED
 std::string LocalDirectoryStorage::locked_getVirtualPath(EntryIndex indx) const
 {
     if(indx == 0)
@@ -677,6 +679,7 @@ std::string LocalDirectoryStorage::locked_getVirtualPath(EntryIndex indx) const
    }
    return it->second.virtualname + "/" + res;
 }
+*/
 
 bool LocalDirectoryStorage::serialiseDirEntry(const EntryIndex& indx,RsTlvBinaryData& bindata,const RsPeerId& client_id)
 {

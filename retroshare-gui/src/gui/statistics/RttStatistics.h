@@ -42,13 +42,13 @@ public:
 class RttStatisticsGraph: public RSGraphWidget
 {
 public:
-    RttStatisticsGraph(QWidget *parent);
+    explicit RttStatisticsGraph(QWidget *parent);
 };
 
 class RttStatistics: public MainPage, public Ui::RttStatistics
 {
 public:
-    RttStatistics(QWidget *parent = NULL) ;
+    explicit RttStatistics(QWidget *parent = NULL) ;
     ~RttStatistics();
 
 private:

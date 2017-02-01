@@ -35,6 +35,8 @@ protected:
 	virtual void showEvent(QShowEvent *event);
 
 	// This is overloaded in subclasses.
+#warning: Cppcheck(pureVirtualCall): Call of pure virtual function 'updateDisplay' in constructor.
+// cppcheck-suppress pureVirtualCall
 	virtual void updateDisplay(bool complete) = 0;
 
 private slots:

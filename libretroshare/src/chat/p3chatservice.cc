@@ -163,6 +163,8 @@ class p3ChatService::AvatarInfo
 
 	  AvatarInfo(const AvatarInfo& ai)
 	  {
+		  _peer_is_new = false ;			// true when the peer has a new avatar
+		  _own_is_new = false ;				// true when I myself a new avatar to send to this peer.
 		  init(ai._image_data,ai._image_size) ;
 	  }
 
@@ -174,6 +176,8 @@ class p3ChatService::AvatarInfo
 	  }
 	  AvatarInfo(const unsigned char *jpeg_data,int size)
 	  {
+		  _peer_is_new = false ;			// true when the peer has a new avatar
+		  _own_is_new = false ;				// true when I myself a new avatar to send to this peer.
 		  init(jpeg_data,size) ;
 	  }
 
@@ -964,7 +968,6 @@ void p3ChatService::getOwnAvatarJpegData(unsigned char *& data,int& size)
 	// should be a Mutex here.
 	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
 
-	uint32_t s = 0 ;
 #ifdef CHAT_DEBUG
 	std::cerr << "p3chatservice:: own avatar requested from above. " << std::endl ;
 #endif
@@ -972,7 +975,8 @@ void p3ChatService::getOwnAvatarJpegData(unsigned char *& data,int& size)
 	//
 	if(_own_avatar != NULL)
 	{
-	   _own_avatar->toUnsignedChar(data,s) ;
+		uint32_t s = 0 ;
+		_own_avatar->toUnsignedChar(data,s);
 		size = s ;
 	}
 	else
@@ -1236,7 +1240,7 @@ bool p3ChatService::saveList(bool& cleanup, std::list<RsItem*>& list)
 
 	/* save outgoing private chat messages */
     std::list<RsChatMsgItem *>::iterator it;
-	for (it = privateOutgoingList.begin(); it != privateOutgoingList.end(); it++) {
+	for (it = privateOutgoingList.begin(); it != privateOutgoingList.end(); ++it) {
 		RsPrivateChatMsgConfigItem *ci = new RsPrivateChatMsgConfigItem;
 
 		ci->set(*it, (*it)->PeerId(), 0);

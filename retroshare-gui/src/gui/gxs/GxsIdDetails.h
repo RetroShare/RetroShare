@@ -52,7 +52,7 @@ typedef void (*GxsIdDetailsCallbackFunction)(GxsIdDetailsType type, const RsIden
 class ReputationItemDelegate: public QStyledItemDelegate
 {
 public:
-    ReputationItemDelegate(RsReputations::ReputationLevel max_level_to_display) : mMaxLevelToDisplay(max_level_to_display) {}
+    explicit ReputationItemDelegate(RsReputations::ReputationLevel max_level_to_display) : mMaxLevelToDisplay(max_level_to_display) {}
 
     virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 

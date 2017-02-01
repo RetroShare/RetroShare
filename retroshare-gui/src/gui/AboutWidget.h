@@ -44,7 +44,7 @@ class AboutWidget : public QWidget, public Ui::AboutWidget
 {
     Q_OBJECT
 public:
-    AboutWidget(QWidget *parent = 0);
+    explicit AboutWidget(QWidget *parent = 0);
 
 private slots:
     void sl_scoreChanged(int);
@@ -152,7 +152,7 @@ class TBoard : public QWidget {
     Q_OBJECT
 
 public:
-    TBoard(QWidget *parent = 0);
+    explicit TBoard(QWidget *parent = 0);
     ~TBoard();
     int heightForWidth ( int w ) const;
     int getScore() const {return score;}
@@ -213,7 +213,7 @@ private:
 
 class NextPieceLabel : public QLabel {
 public:
-    NextPieceLabel(QWidget* parent = 0);
+    explicit NextPieceLabel(QWidget* parent = 0);
 };
 
 

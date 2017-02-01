@@ -28,7 +28,7 @@
 class RSTabWidget : public QTabWidget
 {
 public:
-	RSTabWidget(QWidget *parent = 0);
+	explicit RSTabWidget(QWidget *parent = 0);
 
 	void hideCloseButton(int index);
 	void setHideTabBarWithOneTab(bool hideTabBar);

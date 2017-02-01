@@ -60,7 +60,7 @@ static ops_boolean_t dash_escaped_writer(const unsigned char *src,
     if (debug)
         {
         unsigned int i=0;
-        fprintf(stderr,"dash_escaped_writer writing %d:\n", length);
+        fprintf(stderr,"dash_escaped_writer writing %u:\n", length);
         for (i=0; i<length; i++)
             {
             fprintf(stderr,"0x%02x ", src[i]);
@@ -75,7 +75,6 @@ static ops_boolean_t dash_escaped_writer(const unsigned char *src,
     // XXX: make this efficient
     for(n=0 ; n < length ; ++n)
 	{
-	unsigned l;
 
 	if(arg->seen_nl)
 	    {
@@ -103,7 +102,8 @@ static ops_boolean_t dash_escaped_writer(const unsigned char *src,
 	    ops_memory_add(arg->trailing,&src[n],1);
 	else
 	    {
-	    if((l=ops_memory_get_length(arg->trailing)))
+			size_t l=ops_memory_get_length(arg->trailing);
+			if(l)
 		{
 		if(!arg->seen_nl && !arg->seen_cr)
 		    ops_signature_add_data(arg->sig,

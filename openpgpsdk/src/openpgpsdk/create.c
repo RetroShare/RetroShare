@@ -1345,14 +1345,13 @@ ops_boolean_t ops_write_symmetrically_encrypted_data(const unsigned char *data,
     int done=0;
     ops_crypt_t crypt_info;
     int encrypted_sz=0;// size of encrypted data
-    unsigned char *encrypted=NULL; // buffer to write encrypted data to
     
     // \todo assume AES256 for now
     ops_crypt_any(&crypt_info, OPS_SA_AES_256);
     ops_encrypt_init(&crypt_info);
 
     encrypted_sz=len+crypt_info.blocksize+2;
-    encrypted=ops_mallocz(encrypted_sz);
+    unsigned char *encrypted=ops_mallocz(encrypted_sz); // buffer to write encrypted data to
 
     done=ops_encrypt_se(&crypt_info, encrypted, data, len);
     assert(done==len);

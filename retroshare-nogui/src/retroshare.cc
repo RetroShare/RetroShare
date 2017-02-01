@@ -203,10 +203,10 @@ int main(int argc, char **argv)
 		rsIS.tick();
 #endif
 
-		int rt = 0;
+		//int rt = 0;
 		// If we have a MenuTerminal ...
 		// only want to sleep if there is no input. (rt == 0).
-		if (rt == 0)
+		//if (rt == 0)
 		{
 #ifndef WINDOWS_SYS
 			sleep(1);

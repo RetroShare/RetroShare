@@ -22,7 +22,7 @@ public:
     template <class T>
     void addResourceHandler(std::string name, T* instance, void (T::*callback)(Request& req, Response& resp));
 
-    bool isNameUsed(std::string name);
+    bool isNameUsed(std::string &name);
 private:
     class HandlerBase
     {

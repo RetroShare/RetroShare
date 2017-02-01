@@ -64,7 +64,7 @@ public:
 
 	/**
 	 */
-        p3ServiceControl(p3LinkMgr *linkMgr);
+        explicit p3ServiceControl(p3LinkMgr *linkMgr);
 
         /**
          * checks and update all added configurations

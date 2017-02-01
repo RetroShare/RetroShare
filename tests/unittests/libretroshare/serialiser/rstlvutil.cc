@@ -163,7 +163,7 @@ int test_CreateTlvStack(std::ostream &str,
 	return 0;
 }
 
-int test_TlvSet(std::vector<RsTlvItem *> items, int maxsize)
+int test_TlvSet(std::vector<RsTlvItem *> &items, int maxsize)
 {
 	int totalsize = maxsize;
 	void *data = malloc(totalsize);

@@ -61,7 +61,7 @@ namespace rs_nxs_test
 		 * @param membership
 		 * @param countBeforePresent how many times a pgpid is checked before it becomes present
 		 */
-		RsNxsDelayedDummyCircles(int countBeforePresent);
+		explicit RsNxsDelayedDummyCircles(int countBeforePresent);
 		virtual ~RsNxsDelayedDummyCircles();
 
 		/* GXS Interface - for working out who can receive */
@@ -134,7 +134,7 @@ namespace rs_nxs_test
 		{
 			RsPeerId::std_list::iterator lit = mPeers.begin();
 
-			for(; lit != mPeers.end(); lit++)
+			for(; lit != mPeers.end(); ++lit)
 				ssl_peers.insert(*lit);
 		}
 

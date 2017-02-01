@@ -41,7 +41,7 @@
 #include "retroshare/rstypes.h"
 
 /** Pointer to this RetroShare application instance. */
-#define rApp  ((Rshare *)qApp)
+#define rApp  (reinterpret_cast<Rshare *>(qApp))
 
 #define rDebug(fmt)   (rApp->log(Log::Debug, (fmt)))
 #define rInfo(fmt)    (rApp->log(Log::Info, (fmt)))

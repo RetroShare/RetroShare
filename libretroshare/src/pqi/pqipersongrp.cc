@@ -296,7 +296,7 @@ void    pqipersongrp::statusChange(const std::list<pqipeer> &plist)
 // hack for too many connections
 void pqipersongrp::statusChanged()
 {
-#warning "Windows connection limited hacked together - please fix"
+#warning "thunder2 2010-10-07: Windows connection limited hacked together - please fix"
 
 	if (RsInit::isWindowsXP() == false) {
 		/* the problem only exist in Windows XP */
@@ -315,10 +315,10 @@ void pqipersongrp::statusChanged()
 	}
 
 	/* check for active connections and start waiting id's */
-	long connect_count = 0;
 	std::list<RsPeerId> toConnect;
 
 	{
+		long connect_count = 0;
 		RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
 
 		/* get address from p3connmgr */

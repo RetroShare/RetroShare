@@ -630,7 +630,7 @@ void FeedReaderMessageWidget::setMsgAsReadUnread(QList<QTreeWidgetItem *> &rows,
 		return;
 	}
 
-	for (rowIt = rows.begin(); rowIt != rows.end(); rowIt++) {
+	for (rowIt = rows.begin(); rowIt != rows.end(); ++rowIt) {
 		QTreeWidgetItem *item = *rowIt;
 		bool rowRead = item->data(COLUMN_MSG_DATA, ROLE_MSG_READ).toBool();
 		bool rowNew = item->data(COLUMN_MSG_DATA, ROLE_MSG_NEW).toBool();

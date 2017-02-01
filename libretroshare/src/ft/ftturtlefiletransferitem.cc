@@ -287,6 +287,7 @@ RsTurtleFileMapRequestItem::RsTurtleFileMapRequestItem(void *data,uint32_t pktsi
 	bool ok = true ;
 	ok &= getRawUInt32(data, pktsize, &offset, &tunnel_id);
 	ok &= getRawUInt32(data, pktsize, &offset, &direction);
+	if (ok) {;}
 
 #ifdef WINDOWS_SYS // No Exceptions in Windows compile. (drbobs).
 #else
@@ -312,6 +313,7 @@ RsTurtleChunkCrcItem::RsTurtleChunkCrcItem(void *data,uint32_t pktsize)
 	ok &= getRawUInt32(data, pktsize, &offset, &tunnel_id) ;
 	ok &= getRawUInt32(data, pktsize, &offset, &chunk_number) ;
 	ok &= check_sum.deserialise(data, pktsize, offset) ;
+	if (ok) {;}
 
 #ifdef WINDOWS_SYS // No Exceptions in Windows compile. (drbobs).
 #else
@@ -336,6 +338,7 @@ RsTurtleChunkCrcRequestItem::RsTurtleChunkCrcRequestItem(void *data,uint32_t pkt
 	bool ok = true ;
 	ok &= getRawUInt32(data, pktsize, &offset, &tunnel_id) ;
 	ok &= getRawUInt32(data, pktsize, &offset, &chunk_number) ;
+	if (ok) {;}
 
 #ifdef WINDOWS_SYS // No Exceptions in Windows compile. (drbobs).
 #else
@@ -395,6 +398,8 @@ RsTurtleFileRequestItem::RsTurtleFileRequestItem(void *data,uint32_t pktsize)
 	ok &= getRawUInt32(data, pktsize, &offset, &tunnel_id) ;
 	ok &= getRawUInt64(data, pktsize, &offset, &chunk_offset);
 	ok &= getRawUInt32(data, pktsize, &offset, &chunk_size);
+	if (ok){;}
+
 #ifdef P3TURTLE_DEBUG
 	std::cerr << "  tunnel_id=" << (void*)tunnel_id << ", chunk_offset=" << chunk_offset << ", chunk_size=" << chunk_size << std::endl ;
 #endif
@@ -432,6 +437,7 @@ RsTurtleFileDataItem::RsTurtleFileDataItem(void *data,uint32_t pktsize)
 	ok &= getRawUInt32(data, pktsize, &offset, &tunnel_id) ;
 	ok &= getRawUInt64(data, pktsize, &offset, &chunk_offset);
 	ok &= getRawUInt32(data, pktsize, &offset, &chunk_size);
+	if(ok){;}
 
     	if(chunk_size > rssize || rssize - chunk_size < offset)
 	    throw std::runtime_error("RsTurtleFileDataItem::() error while deserializing.") ;

@@ -89,7 +89,7 @@ static void get_frame_defaults(AVFrame *frame)
 
 AVFrame *av_frame_alloc(void)
 {
-    AVFrame *frame = (AVFrame *)av_mallocz(sizeof(*frame));
+    AVFrame *frame = reinterpret_cast<AVFrame *>(av_mallocz(sizeof(*frame)));
 
     if (!frame)
         return NULL;
@@ -577,6 +577,8 @@ FFmpegVideo::FFmpegVideo()
 #ifdef DEBUG_MPEG_VIDEO
     std::cerr << "Dumping captured data to file tmpvideo.mpg" << std::endl;
     encoding_debug_file = fopen("tmpvideo.mpg","w") ;
+#else
+    encoding_debug_file = NULL;
 #endif
 }
 
@@ -739,6 +741,7 @@ bool FFmpegVideo::decodeData(const RsVOIPDataChunk& chunk,QImage& image)
 	//Mac OS X appears to be 16-byte mem aligned.
 	unsigned char *tmp = (unsigned char*)malloc(s + AV_INPUT_BUFFER_PADDING_SIZE) ;
 #else //MAC
+	//cppcheck-suppress ConfigurationNotChecked
 	unsigned char *tmp = (unsigned char*)memalign(16, s + AV_INPUT_BUFFER_PADDING_SIZE) ;
 #endif //MAC
 #endif //MINGW
@@ -750,6 +753,7 @@ bool FFmpegVideo::decodeData(const RsVOIPDataChunk& chunk,QImage& image)
 	memcpy(tmp, &((unsigned char*)chunk.data)[HEADER_SIZE], s);
 
 	/* set end of buffer to 0 (this ensures that no overreading happens for damaged mpeg streams) */
+	//cppcheck-suppress ConfigurationNotChecked
 	memset(&tmp[s], 0, AV_INPUT_BUFFER_PADDING_SIZE) ;
 
 	decoding_buffer.size = s ;

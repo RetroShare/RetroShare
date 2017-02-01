@@ -54,7 +54,7 @@ public:
 class HashStorage: public RsTickingThread
 {
 public:
-    HashStorage(const std::string& save_file_name) ;
+    explicit HashStorage(const std::string& save_file_name) ;
 
     /*!
      * \brief requestHash  Requests the hash for the given file, assuming size and mod_time are the same.

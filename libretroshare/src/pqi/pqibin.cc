@@ -223,11 +223,11 @@ int BinEncryptedFileInterface::readdata(void* data, int len)
 	// to respect the inherited behavior of BinInterface
 	// the whole file is read and decryped and store to be read by subsequent calls
 	char* encryptedData = NULL;
-	int encrypDataLen = 0;
 
 
 	if(!haveData) // read whole data for first call, or first call after close()
 	{
+		int encrypDataLen = 0;
 
                 uint64_t encrypDataLen64 = BinFileInterface::getFileSize();
                 

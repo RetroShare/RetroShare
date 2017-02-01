@@ -29,7 +29,7 @@ class DHTStatus : public QWidget
 {
     Q_OBJECT
 public:
-    DHTStatus(QWidget *parent = 0);
+    explicit DHTStatus(QWidget *parent = 0);
 
     void getDHTStatus( );
     void setCompactMode(bool compact) {_compactMode = compact; }

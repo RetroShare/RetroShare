@@ -33,7 +33,7 @@ const uint8_t RS_TURTLE_SUBTYPE_CHUNK_CRC_REQUEST     = 0x15 ;
 class RsTurtleItem: public RsItem
 {
 	public:
-		RsTurtleItem(uint8_t turtle_subtype) : RsItem(RS_PKT_VERSION_SERVICE,RS_SERVICE_TYPE_TURTLE,turtle_subtype) {}
+		explicit RsTurtleItem(uint8_t turtle_subtype) : RsItem(RS_PKT_VERSION_SERVICE,RS_SERVICE_TYPE_TURTLE,turtle_subtype) {}
 
         virtual bool serialize(void *data,uint32_t& size) const = 0 ;	// Isn't it better that items can serialize themselves ?
         virtual uint32_t serial_size() const = 0 ; 							// deserialise is handled using a constructor
@@ -70,7 +70,7 @@ class RsTurtleSearchResultItem: public RsTurtleItem
 class RsTurtleSearchRequestItem: public RsTurtleItem
 {
 	public:
-        RsTurtleSearchRequestItem(uint32_t subtype) : RsTurtleItem(subtype), request_id(0), depth(0) { setPriorityLevel(QOS_PRIORITY_RS_TURTLE_SEARCH_REQUEST) ;}
+	explicit RsTurtleSearchRequestItem(uint32_t subtype) : RsTurtleItem(subtype), request_id(0), depth(0) { setPriorityLevel(QOS_PRIORITY_RS_TURTLE_SEARCH_REQUEST) ;}
 
 		virtual RsTurtleSearchRequestItem *clone() const = 0 ;						// used for cloning in routing methods
 		virtual void performLocalSearch(std::list<TurtleFileInfo>&) const = 0 ;	// abstracts the search method
@@ -120,7 +120,10 @@ class RsTurtleRegExpSearchRequestItem: public RsTurtleSearchRequestItem
 class RsTurtleOpenTunnelItem: public RsTurtleItem
 {
 	public:
-        RsTurtleOpenTunnelItem() : RsTurtleItem(RS_TURTLE_SUBTYPE_OPEN_TUNNEL), request_id(0), partial_tunnel_id(0), depth(0) { setPriorityLevel(QOS_PRIORITY_RS_TURTLE_OPEN_TUNNEL) ;}
+		RsTurtleOpenTunnelItem()
+		  : RsTurtleItem(RS_TURTLE_SUBTYPE_OPEN_TUNNEL)
+		  , request_id(0), partial_tunnel_id(0), depth(0)
+		{ setPriorityLevel(QOS_PRIORITY_RS_TURTLE_OPEN_TUNNEL) ;}
 		RsTurtleOpenTunnelItem(void *data,uint32_t size) ;		// deserialization
 
 		TurtleFileHash file_hash ;	  // hash to match
@@ -138,7 +141,10 @@ class RsTurtleOpenTunnelItem: public RsTurtleItem
 class RsTurtleTunnelOkItem: public RsTurtleItem
 {
 	public:
-        RsTurtleTunnelOkItem() : RsTurtleItem(RS_TURTLE_SUBTYPE_TUNNEL_OK), tunnel_id(0), request_id(0) { setPriorityLevel(QOS_PRIORITY_RS_TURTLE_TUNNEL_OK) ;}
+		RsTurtleTunnelOkItem()
+		  : RsTurtleItem(RS_TURTLE_SUBTYPE_TUNNEL_OK)
+		  , tunnel_id(0), request_id(0)
+		{ setPriorityLevel(QOS_PRIORITY_RS_TURTLE_TUNNEL_OK) ;}
 		RsTurtleTunnelOkItem(void *data,uint32_t size) ;		// deserialization
 
 		uint32_t tunnel_id ;		// id of the tunnel. Should be identical for a tunnel between two same peers for the same hash.
@@ -158,8 +164,8 @@ class RsTurtleTunnelOkItem: public RsTurtleItem
 class RsTurtleGenericTunnelItem: public RsTurtleItem
 {
 	public:
-        RsTurtleGenericTunnelItem(uint8_t sub_packet_id) : RsTurtleItem(sub_packet_id), direction(0), tunnel_id(0) { setPriorityLevel(QOS_PRIORITY_RS_TURTLE_GENERIC_ITEM);}
-        virtual ~RsTurtleGenericTunnelItem() {}
+		explicit RsTurtleGenericTunnelItem(uint8_t sub_packet_id) : RsTurtleItem(sub_packet_id), direction(0), tunnel_id(0) { setPriorityLevel(QOS_PRIORITY_RS_TURTLE_GENERIC_ITEM);}
+		virtual ~RsTurtleGenericTunnelItem() {}
 
 		typedef uint32_t Direction ;
 		static const Direction DIRECTION_CLIENT = 0x001 ;

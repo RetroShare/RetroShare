@@ -22,10 +22,10 @@ public:
 private:
 
     // group tests
-    bool testGrpSubmissionRetrieval();
-    bool testSpecificGrpRetrieval();
-    bool testGrpIdRetrieval();
-    bool testGrpMetaRetrieval();
+//UNUSED    bool testGrpSubmissionRetrieval();
+//UNUSED    bool testSpecificGrpRetrieval();
+//UNUSED    bool testGrpIdRetrieval();
+//UNUSED    bool testGrpMetaRetrieval();
     bool testUpdateGroup();
 
 

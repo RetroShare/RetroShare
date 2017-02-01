@@ -472,7 +472,7 @@ bool ChatWidget::eventFilter(QObject *obj, QEvent *event)
 							bTextselected=true;
 						}
 					}
-					ui->searchButton->setChecked(!ui->searchButton->isChecked() | bTextselected);
+					ui->searchButton->setChecked(!ui->searchButton->isChecked() || bTextselected);
 					ui->leSearch->setVisible(bTextselected);//To discard re-selection of text
 					on_searchButton_clicked(ui->searchButton->isChecked());
 					return true; // eat event
@@ -1249,7 +1249,6 @@ bool ChatWidget::findText(const QString& qsStringToFind, bool bBackWard, bool bF
 {
 	QTextDocument *qtdDocument = ui->textBrowser->document();
 	bool bFound = false;
-	bool bFirstFound = true;
 	uint uiFoundCount = 0;
 
 	removeFoundText();
@@ -1260,6 +1259,7 @@ bool ChatWidget::findText(const QString& qsStringToFind, bool bBackWard, bool bF
 
 	if (!qsStringToFind.isEmpty())
 	{
+		bool bFirstFound = true;
 		QPalette qpBackGround=ui->leSearch->palette();
 
 		QTextCursor qtcHighLight(qtdDocument);

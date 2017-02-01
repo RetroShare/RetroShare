@@ -456,14 +456,13 @@ bool p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
 		/* peer is connected - determine how and set proper connectState */
 		if(mPeerMgr->isHidden())
 		{
-			uint32_t type;
 			/* hidden location */
 			/* use connection direction to determine connection type */
 			if(pcs.actAsServer)
 			{
 				/* incoming connection */
 				/* use own type to set connectState */
-				type = mPeerMgr->getHiddenType(AuthSSL::getAuthSSL()->OwnId());
+				uint32_t type = mPeerMgr->getHiddenType(AuthSSL::getAuthSSL()->OwnId());
 				switch (type) {
 				case RS_HIDDEN_TYPE_TOR:
 					d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_TOR;

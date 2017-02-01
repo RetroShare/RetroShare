@@ -30,7 +30,7 @@ class StartDialog : public QDialog
 
 public:
 	/** Default constructor */
-	StartDialog(QWidget *parent = 0);
+	explicit StartDialog(QWidget *parent = 0);
 
 	bool requestedNewCert();
 

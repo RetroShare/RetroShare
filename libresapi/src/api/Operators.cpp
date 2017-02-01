@@ -8,10 +8,10 @@ StreamBase& operator <<(StreamBase& left, KeyValueReference<uint32_t> ref)
     if(left.serialise())
     {
         uint32_t num = ref.value;
-        uint8_t digit;
         std::string str;
         while(num >= 10)
         {
+            uint8_t digit;
             digit = num % 10;
             num   = num / 10;
             str = (char)(digit + '0') + str;
@@ -24,7 +24,7 @@ StreamBase& operator <<(StreamBase& left, KeyValueReference<uint32_t> ref)
         std::string str;
         left << makeKeyValueReference(ref.key, str);
         uint32_t num = 0;
-        for(std::string::iterator sit = str.begin(); sit != str.end(); sit++)
+        for(std::string::iterator sit = str.begin(); sit != str.end(); ++sit)
         {
             uint32_t numbefore = num;
             num = num * 10;

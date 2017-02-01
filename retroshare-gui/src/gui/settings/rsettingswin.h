@@ -36,7 +36,7 @@ class SettingsPage: public MainPage
 	Q_OBJECT
 
 public:
-	SettingsPage(QWidget *parent = 0);
+	explicit SettingsPage(QWidget *parent = 0);
 
 	enum PageType { LastPage = -1, General = 0, Server, Transfer,Relay,
 					Directories, Plugins, Notify, Security, Message, Forum, Chat, Appearance, Sound, Fileassociations };

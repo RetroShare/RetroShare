@@ -39,7 +39,7 @@ class WireDialog : public MainPage, public PulseHolder
   Q_OBJECT
 
 public:
-	WireDialog(QWidget *parent = 0);
+	explicit WireDialog(QWidget *parent = 0);
 
 virtual void deletePulseItem(PulseItem *, uint32_t type);
 virtual void notifySelection(PulseItem *item, int ptype);

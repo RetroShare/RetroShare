@@ -68,6 +68,7 @@ DistributedChatService::DistributedChatService(uint32_t serv_type,p3ServiceContr
 {
     _time_shift_average = 0.0f ;
     _should_reset_lobby_counts = false ;
+    last_lobby_challenge_time = 0;
     last_visible_lobby_info_request_time = 0 ;
 }
 

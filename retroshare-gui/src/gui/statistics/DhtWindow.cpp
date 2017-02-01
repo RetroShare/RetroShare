@@ -24,9 +24,10 @@
 #include "util/QtVersion.h"
 
 #include <QClipboard>
-#include <QTimer>
 #include <QDateTime>
 #include <QMenu>
+#include <QTimer>
+#include <QTreeWidgetItem>
 
 #include <algorithm>
 #include <iostream>
@@ -351,9 +352,9 @@ void DhtWindow::updateNetPeers()
 				break;
 			}
 		}
-#endif
 
 		if (!peer_item)
+#endif
 		{
 			/* insert */
 			peer_item = new QTreeWidgetItem();
@@ -438,7 +439,6 @@ void DhtWindow::updateNetPeers()
 			case RSDHT_PEERCONN_CONNECTED:
 			{
 				cpsstr = tr("Connected");
-				break;
 				switch(status.mPeerConnectMode)
 				{
 					default:
@@ -662,10 +662,9 @@ void DhtWindow::updateDhtPeers()
 	for(it = allpeers.begin(); it != allpeers.end(); ++it)
 	{
 		/* find the entry */
-		QTreeWidgetItem *dht_item = NULL;
 
 		/* insert */
-		dht_item = new DhtTreeWidgetItem();
+		QTreeWidgetItem *dht_item = new DhtTreeWidgetItem();
 
 		QString buckstr = QString::number(it->mBucket);
 		QString ipstr = QString::fromStdString(it->mAddr);

@@ -113,12 +113,12 @@ class RetroshareDirModel : public QAbstractItemModel
 		{
 			public:
 				RemoteIndex() {}
-				RemoteIndex(std::string in_person,
-						std::string in_path,
+				RemoteIndex(std::string &in_person,
+						std::string &in_path,
 						int in_idx,
 						int in_row,
 						int in_column,
-						std::string in_name,
+						std::string &in_name,
 						int in_size,
 						int in_type,
 						int in_ts, int in_rank)
@@ -168,7 +168,7 @@ class TreeStyle_RDM: public RetroshareDirModel
 	Q_OBJECT
 
 	public:
-		TreeStyle_RDM(bool mode)
+		explicit TreeStyle_RDM(bool mode)
 			: RetroshareDirModel(mode)
 		{
 		}
@@ -200,7 +200,7 @@ class FlatStyle_RDM: public RetroshareDirModel
 	Q_OBJECT 
 
 	public:
-		FlatStyle_RDM(bool mode);
+		explicit FlatStyle_RDM(bool mode);
 
 		virtual ~FlatStyle_RDM() ;
 

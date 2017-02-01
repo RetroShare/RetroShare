@@ -62,7 +62,7 @@ void RsGxsServerGrpUpdateItem::clear()
 std::ostream& RsGxsMsgUpdateItem::print(std::ostream& out, uint16_t indent)
 {
     RsPeerId peerId;
-    std::map<RsGxsGroupId, uint32_t> msgUpdateTS;
+    //std::map<RsGxsGroupId, uint32_t> msgUpdateTS;
 
     printRsItemBase(out, "RsGxsMsgUpdateItem", indent);
     uint16_t int_Indent = indent + 2;

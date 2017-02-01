@@ -387,15 +387,15 @@ namespace json
 
 		public:
 
-			Value() 					: mValueType(NULLVal), mIntVal(0), mFloatVal(0), mDoubleVal(0), mBoolVal(false) {}
-			Value(int v)				: mValueType(IntVal), mIntVal(v), mFloatVal((float)v), mDoubleVal((double)v), mBoolVal(false) {}
-			Value(float v)				: mValueType(FloatVal), mIntVal((int)v), mFloatVal(v), mDoubleVal((double)v), mBoolVal(false) {}
-			Value(double v)				: mValueType(DoubleVal), mIntVal((int)v), mFloatVal((float)v), mDoubleVal(v), mBoolVal(false) {}
-			Value(const std::string& v) : mValueType(StringVal), mIntVal(), mFloatVal(), mDoubleVal(), mStringVal(v), mBoolVal(false) {}
-			Value(const char* v)		: mValueType(StringVal), mIntVal(), mFloatVal(), mDoubleVal(), mStringVal(v), mBoolVal(false) {}
-			Value(const Object& v)		: mValueType(ObjectVal), mIntVal(), mFloatVal(), mDoubleVal(), mObjectVal(v), mBoolVal(false) {}
-			Value(const Array& v)		: mValueType(ArrayVal), mIntVal(), mFloatVal(), mDoubleVal(), mArrayVal(v), mBoolVal(false) {}
-			Value(bool v)				: mValueType(BoolVal), mIntVal(), mFloatVal(), mDoubleVal(), mBoolVal(v) {}
+			Value()                              : mValueType(NULLVal), mIntVal(0), mFloatVal(0), mDoubleVal(0), mBoolVal(false) {}
+			explicit Value(int v)                : mValueType(IntVal), mIntVal(v), mFloatVal((float)v), mDoubleVal((double)v), mBoolVal(false) {}
+			explicit Value(float v)              : mValueType(FloatVal), mIntVal((int)v), mFloatVal(v), mDoubleVal((double)v), mBoolVal(false) {}
+			explicit Value(double v)             : mValueType(DoubleVal), mIntVal((int)v), mFloatVal((float)v), mDoubleVal(v), mBoolVal(false) {}
+			explicit Value(const std::string& v) : mValueType(StringVal), mIntVal(), mFloatVal(), mDoubleVal(), mStringVal(v), mBoolVal(false) {}
+			explicit Value(const char* v)        : mValueType(StringVal), mIntVal(), mFloatVal(), mDoubleVal(), mStringVal(v), mBoolVal(false) {}
+			explicit Value(const Object& v)      : mValueType(ObjectVal), mIntVal(), mFloatVal(), mDoubleVal(), mObjectVal(v), mBoolVal(false) {}
+			explicit Value(const Array& v)       : mValueType(ArrayVal), mIntVal(), mFloatVal(), mDoubleVal(), mArrayVal(v), mBoolVal(false) {}
+			explicit Value(bool v)               : mValueType(BoolVal), mIntVal(), mFloatVal(), mDoubleVal(), mBoolVal(v) {}
 			Value(const Value& v);
 
 			// Use this to determine the underlying type that this Value class represents. It will be one of the

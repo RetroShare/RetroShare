@@ -88,6 +88,8 @@ static char *_be_decode_str(const char **data, long long *data_len)
 	/* reject attempts to allocate large values that overflow the
 	 * size_t type which is used with malloc()
 	 */
+	// cppcheck-suppress knownConditionTrueFalse
+	// cppcheck-suppress duplicateExpression
 	if (sizeof(long long) != sizeof(long))
 		if (sllen != slen)
 		{
@@ -116,7 +118,7 @@ static char *_be_decode_str(const char **data, long long *data_len)
 		{
 			fprintf(stderr, "(EE) bencode::_be_decode_str(): "
 			                "ERROR. cannot allocate memory for %lu bytes.\n"
-			        , len+1+sizeof(sllen) );
+			        , len+1+(unsigned long)sizeof(sllen) );
 			return ret;
 		}
 
@@ -128,7 +130,7 @@ static char *_be_decode_str(const char **data, long long *data_len)
 		*data_len -= len + 1;
 
 #ifdef BE_DEBUG_DECODE 
-		fprintf(stderr, "bencode::_be_decode_str() read %ld bytes\n", len+1);
+		fprintf(stderr, "bencode::_be_decode_str() read %lu bytes\n", len+1);
 #endif
 	}
 	else
@@ -169,7 +171,7 @@ static be_node *_be_decode(const char **data, long long *data_len)
 			++(*data);
 			while (**data != 'e') {
 #ifdef BE_DEBUG_DECODE 
-			fprintf(stderr, "bencode::_be_decode() list get item (%d)\n", i);
+			fprintf(stderr, "bencode::_be_decode() list get item (%u)\n", i);
 #endif
 				ret->val.l = (be_node **) realloc(ret->val.l, (i + 2) * sizeof(*ret->val.l));
 				ret->val.l[i] = _be_decode(data, data_len);
@@ -211,7 +213,7 @@ static be_node *_be_decode(const char **data, long long *data_len)
 			++(*data);
 			while (**data != 'e') {
 #ifdef BE_DEBUG_DECODE 
-			fprintf(stderr, "bencode::_be_decode() dictionary get key (%d)\n", i);
+			fprintf(stderr, "bencode::_be_decode() dictionary get key (%u)\n", i);
 #endif
 				ret->val.d = (be_dict *) realloc(ret->val.d, (i + 2) * sizeof(*ret->val.d));
 				ret->val.d[i].key = _be_decode_str(data, data_len);
@@ -513,14 +515,13 @@ be_node *be_create_str(const char *str)
 	{
 		fprintf(stderr, "(EE) bencode::be_create_str(): "
 		                "ERROR. cannot allocate memory for %lu bytes.\n"
-		        , len+1+sizeof(sllen) );
+		        , len+1+(unsigned long)sizeof(sllen) );
 		return n;
 	}
-	char *ret = NULL;
 	n = be_alloc(BE_STR);
 
 	memcpy(_ret, &sllen, sizeof(sllen));
-	ret = _ret + sizeof(sllen);
+	char *ret = _ret + sizeof(sllen);
 	memcpy(ret, str, len);
 	ret[len] = '\0';
 
@@ -540,14 +541,13 @@ be_node *be_create_str_wlen(const char *str, int len) /* not including \0 */
 	{
 		fprintf(stderr, "(EE) bencode::be_create_str_wlen(): "
 		                "ERROR. cannot allocate memory for %lu bytes.\n"
-		        , len+1+sizeof(sllen) );
+		        , len+1+(unsigned long)sizeof(sllen) );
 		return n;
 	}
-	char *ret = NULL;
 	n = be_alloc(BE_STR);
 
 	memcpy(_ret, &sllen, sizeof(sllen));
-	ret = _ret + sizeof(sllen);
+	char *ret = _ret + sizeof(sllen);
 	memcpy(ret, str, len);
 	ret[len] = '\0';
 
@@ -591,15 +591,14 @@ int be_add_keypair(be_node *dict, const char *str, be_node *node)
 	{
 		fprintf(stderr, "(EE) bencode::be_create_str_wlen(): "
 		                "ERROR. cannot allocate memory for %lu bytes.\n"
-		        , len+1+sizeof(sllen) );
+		        , len+1+(unsigned long)sizeof(sllen) );
 		return 0;
 	}
-	char *ret = NULL;
 
 	//fprintf(stderr, "be_add_keypair() key len = %d\n",len);
 
 	memcpy(_ret, &sllen, sizeof(sllen));
-	ret = _ret + sizeof(sllen);
+	char *ret = _ret + sizeof(sllen);
 	memcpy(ret, str, len);
 	ret[len] = '\0';
 

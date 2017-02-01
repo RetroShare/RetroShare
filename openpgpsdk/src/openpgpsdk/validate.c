@@ -633,7 +633,7 @@ void ops_validate_result_free(ops_validate_result_t *result)
 		free_signature_info(result->unknown_sigs,result->unknown_signer_count);
 
 	free(result);
-	result=NULL;
+	//result=NULL; //This is not reference and this file is in C
 }
 
 /**

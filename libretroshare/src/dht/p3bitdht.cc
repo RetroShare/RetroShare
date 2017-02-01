@@ -51,7 +51,7 @@ class p3BdCallback: public BitDhtCallback
 {
 	public:
 
-	p3BdCallback(p3BitDht *parent)
+	explicit p3BdCallback(p3BitDht *parent)
 	:mParent(parent) { return; }
 
 virtual int dhtNodeCallback(const bdId *id, uint32_t peerflags)

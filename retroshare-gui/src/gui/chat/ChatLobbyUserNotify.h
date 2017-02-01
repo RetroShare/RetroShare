@@ -45,7 +45,7 @@ class ChatLobbyUserNotify : public UserNotify
 	Q_OBJECT
 
 public:
-	ChatLobbyUserNotify(QObject *parent = 0);
+	explicit ChatLobbyUserNotify(QObject *parent = 0);
 
 	virtual bool hasSetting(QString *name, QString *group);
 	void makeSubMenu(QMenu* parentMenu, QIcon icoLobby, QString strLobbyName, ChatLobbyId id);

@@ -55,10 +55,10 @@ StartDialog::StartDialog(QWidget *parent)
 	RsPeerId preferedId;
 	RsAccounts::GetPreferredAccountId(preferedId);
 	int pidx = -1;
-	int i;
 
 	if (RsAccounts::GetAccountIds(accountIds))
 	{
+		int i;
 		for(it = accountIds.begin(), i = 0; it != accountIds.end(); ++it, ++i)
 		{
 			const QVariant & userData = QVariant(QString::fromStdString((*it).toStdString()));

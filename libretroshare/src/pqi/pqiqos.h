@@ -59,10 +59,9 @@ public:
 	class ItemQueue 
 	{
 	public:
-		ItemQueue()
-		{
-			_item_count =0 ;
-		}
+		ItemQueue() : _threshold(0.0), _counter(0.0), _inc(0.0), _item_count(0)
+		{}
+
 		void *pop() 
 		{
 			if(_items.empty())

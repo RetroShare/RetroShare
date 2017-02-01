@@ -62,7 +62,7 @@ class RsCollectionFile : public QObject
 
 public:
 
-	RsCollectionFile(QObject *parent = 0) ;
+	explicit RsCollectionFile(QObject *parent = 0) ;
 		// create from list of files and directories
 	RsCollectionFile(const std::vector<DirDetails>& file_entries, QObject *parent = 0) ;
 	virtual ~RsCollectionFile() ;

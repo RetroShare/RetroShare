@@ -107,7 +107,9 @@ public:
  
   inline LogMessage(Log::LogLevel t, QIODevice *o)
     : stream(new Stream(t,o)) {}
-  inline LogMessage(const LogMessage &o) 
+  inline LogMessage(const LogMessage &o)
+#warning: Cppcheck(copyCtorPointerCopying): Value of pointer 'stream', which points to allocated memory, is copied in copy constructor instead of allocating new memory.
+// cppcheck-suppress copyCtorPointerCopying
     : stream(o.stream) { ++stream->ref; }
   inline QString toString() const;
   ~LogMessage();

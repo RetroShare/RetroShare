@@ -43,7 +43,7 @@ extern "C" int xerrhandler(Display* dpy, XErrorEvent* err)
 class IdlePlatform::Private
 {
 public:
-	Private() {}
+	Private() : ss_info(NULL) {}
 
 	XScreenSaverInfo *ss_info;
 };
@@ -113,7 +113,7 @@ typedef struct __tagLASTINPUTINFO {
 class IdlePlatform::Private
 {
 public:
-	Private()
+	Private() : IdleUIGetLastInputTime(NULL)
 	{
 		GetLastInputInfo = NULL;
 		lib = 0;
@@ -332,7 +332,7 @@ int IdlePlatform::secondsIdle() {
 
 #else
 
-IdlePlatform::IdlePlatform() {}
+IdlePlatform::IdlePlatform() : d(NULL){}
 IdlePlatform::~IdlePlatform() {}
 bool IdlePlatform::init() { return false; }
 int IdlePlatform::secondsIdle() { return 0; }

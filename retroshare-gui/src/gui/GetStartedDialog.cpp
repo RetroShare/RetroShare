@@ -106,8 +106,7 @@ void GetStartedDialog::showEvent ( QShowEvent * /*event*/ )
 
 void GetStartedDialog::updateFromUserLevel()
 {
-	uint32_t userLevel = RSCONFIG_USER_LEVEL_NEW;
-	userLevel = rsConfig->getUserLevel();
+	uint32_t userLevel = rsConfig->getUserLevel();
 
 	ui.inviteCheckBox->setChecked(false);
 	ui.addCheckBox->setChecked(false);

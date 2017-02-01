@@ -104,7 +104,7 @@ bool GxsTestService::getTestGroups(const uint32_t &token, std::vector<RsTestGrou
 	{
 		std::vector<RsGxsGrpItem*>::iterator vit = grpData.begin();
 		
-		for(; vit != grpData.end(); vit++)
+		for(; vit != grpData.end(); ++vit)
 		{
 			RsGxsTestGroupItem* item = dynamic_cast<RsGxsTestGroupItem*>(*vit);
 
@@ -141,13 +141,13 @@ bool GxsTestService::getTestMsgs(const uint32_t &token, std::vector<RsTestMsg> &
 	{
 		GxsMsgDataMap::iterator mit = msgData.begin();
 		
-		for(; mit != msgData.end();  mit++)
+		for(; mit != msgData.end();  ++mit)
 		{
 			RsGxsGroupId grpId = mit->first;
 			std::vector<RsGxsMsgItem*>& msgItems = mit->second;
 			std::vector<RsGxsMsgItem*>::iterator vit = msgItems.begin();
 			
-			for(; vit != msgItems.end(); vit++)
+			for(; vit != msgItems.end(); ++vit)
 			{
 				RsGxsTestMsgItem* item = dynamic_cast<RsGxsTestMsgItem*>(*vit);
 				
@@ -180,12 +180,12 @@ bool GxsTestService::getRelatedMsgs(const uint32_t &token, std::vector<RsTestMsg
 	{
 		GxsMsgRelatedDataMap::iterator mit = msgData.begin();
 		
-		for(; mit != msgData.end();  mit++)
+		for(; mit != msgData.end();  ++mit)
 		{
 			std::vector<RsGxsMsgItem*>& msgItems = mit->second;
 			std::vector<RsGxsMsgItem*>::iterator vit = msgItems.begin();
 			
-			for(; vit != msgItems.end(); vit++)
+			for(; vit != msgItems.end(); ++vit)
 			{
 				RsGxsTestMsgItem* item = dynamic_cast<RsGxsTestMsgItem*>(*vit);
 				

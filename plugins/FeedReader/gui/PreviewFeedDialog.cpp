@@ -693,7 +693,6 @@ static void buildNodeText(HTMLWrapper &html, xmlNodePtr node, QString &text)
 static void examineChildElements(QTreeWidget *treeWidget, HTMLWrapper &html, QList<xmlNodePtr> &nodes, QTreeWidgetItem *parentItem)
 {
 	int childIndex = 0;
-	int childCount;
 
 	QList<QPair<xmlNodePtr, QTreeWidgetItem*> > nodeItems;
 	foreach (xmlNodePtr node, nodes) {
@@ -703,7 +702,7 @@ static void examineChildElements(QTreeWidget *treeWidget, HTMLWrapper &html, QLi
 		QList<QTreeWidgetItem*> itemsToDelete;
 		QTreeWidgetItem *item = NULL;
 
-		childCount = parentItem->childCount();
+		int childCount = parentItem->childCount();
 		for (int index = childIndex; index < childCount; ++index) {
 			QTreeWidgetItem *childItem = parentItem->child(index);
 			if (childItem->text(0) == text) {

@@ -37,7 +37,7 @@ class bdMutex
 {
 	public:
 
-		bdMutex(bool recursive = false) 
+		explicit bdMutex(bool recursive = false)
 		{
 			/* remove unused parameter warnings */
 			(void) recursive;
@@ -71,7 +71,7 @@ class bdStackMutex
 {
 	public:
 
-	bdStackMutex(bdMutex &mtx): mMtx(mtx) { mMtx.lock(); }
+	explicit bdStackMutex(bdMutex &mtx): mMtx(mtx) { mMtx.lock(); }
         ~bdStackMutex() { mMtx.unlock(); }
 
 	private:

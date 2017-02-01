@@ -696,44 +696,44 @@ int 	pqissl::Initiate_Connection()
 	int size = sizeof(int);
 
 	err = getsockopt(osock, SOL_SOCKET, SO_RCVBUF, (char *)&sockbufsize, &size);
-#ifdef PQISSL_DEBUG
 	if (err == 0) {
+#ifdef PQISSL_DEBUG
 		std::cerr << "pqissl::Initiate_Connection: Current TCP receive buffer size " << sockbufsize << std::endl;
 	} else {
 		std::cerr << "pqissl::Initiate_Connection: Error getting TCP receive buffer size. Error " << err << std::endl;
-	}
 #endif
+	}
 
 	sockbufsize = 0;
 
 	err = getsockopt(osock, SOL_SOCKET, SO_SNDBUF, (char *)&sockbufsize, &size);
-#ifdef PQISSL_DEBUG
 	if (err == 0) {
+#ifdef PQISSL_DEBUG
 		std::cerr << "pqissl::Initiate_Connection: Current TCP send buffer size " << sockbufsize << std::endl;
 	} else {
 		std::cerr << "pqissl::Initiate_Connection: Error getting TCP send buffer size. Error " << err << std::endl;
-	}
 #endif
+	}
 
 	sockbufsize = WINDOWS_TCP_BUFFER_SIZE;
 
 	err = setsockopt(osock, SOL_SOCKET, SO_RCVBUF, (char *)&sockbufsize, sizeof(sockbufsize));
-#ifdef PQISSL_DEBUG
 	if (err == 0) {
+#ifdef PQISSL_DEBUG
 		std::cerr << "pqissl::Initiate_Connection: TCP receive buffer size set to " << sockbufsize << std::endl;
 	} else {
 		std::cerr << "pqissl::Initiate_Connection: Error setting TCP receive buffer size. Error " << err << std::endl;
-	}
 #endif
+	}
 
 	err = setsockopt(osock, SOL_SOCKET, SO_SNDBUF, (char *)&sockbufsize, sizeof(sockbufsize));
-#ifdef PQISSL_DEBUG
 	if (err == 0) {
+#ifdef PQISSL_DEBUG
 		std::cerr << "pqissl::Initiate_Connection: TCP send buffer size set to " << sockbufsize << std::endl;
 	} else {
 		std::cerr << "pqissl::Initiate_Connection: Error setting TCP send buffer size. Error " << err << std::endl;
-	}
 #endif
+	}
 #endif // WINDOWS_SYS
 
 	mTimeoutTS = time(NULL) + mConnectTimeout;

@@ -144,22 +144,23 @@ int RsIntroServer::setupChatLobbies(std::string &genericLobbyName)
 	frenchLobbyName  += " (FR) " + trimmedstr;
 	spanishLobbyName += " (ES) " + trimmedstr;
 
-	std::string englishTopic = "Connect to this lobby to meet new friends" ;
-	std::string frenchTopic = "Connectez vous a ce lobby pour rencontrer de nouveaux amis" ;
-	std::string germanTopic = englishTopic ;
+	//std::string englishTopic = "Connect to this lobby to meet new friends" ;
+	//std::string frenchTopic = "Connectez vous a ce lobby pour rencontrer de nouveaux amis" ;
+	//std::string germanTopic = englishTopic ;
 
 	std::list<std::string> emptyList;
 	uint32_t lobby_privacy_type = RS_CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC;
+	std::set<RsPeerId> invited_friends;
 	
-	mEnglishLobby = rsMsgs->createChatLobby(englishLobbyName, englishLobbyTopic, emptyList, lobby_privacy_type);
-	mFrenchLobby = rsMsgs->createChatLobby(frenchLobbyName, frenchLobbyTopic, emptyList, lobby_privacy_type);
-	mGermanLobby = rsMsgs->createChatLobby(germanLobbyName, germanLobbyTopic, emptyList, lobby_privacy_type);
-	mSpanishLobby = rsMsgs->createChatLobby(spanishLobbyName, spanishLobbyTopic, emptyList, lobby_privacy_type);
+	mEnglishLobby = rsMsgs->createChatLobby(englishLobbyName, englishLobbyTopic, emptyList, invited_friends, lobby_privacy_type);
+	mFrenchLobby = rsMsgs->createChatLobby(frenchLobbyName, frenchLobbyTopic, emptyList, invited_friends, lobby_privacy_type);
+	mGermanLobby = rsMsgs->createChatLobby(germanLobbyName, germanLobbyTopic, emptyList, invited_friends, lobby_privacy_type);
+	mSpanishLobby = rsMsgs->createChatLobby(spanishLobbyName, spanishLobbyTopic, emptyList, invited_friends, lobby_privacy_type);
 
 	return 1;
 }
 
-int RsIntroServer::createConfigFiles(std::string peersDir, std::string lobbyName)
+int RsIntroServer::createConfigFiles(std::string &peersDir, std::string &lobbyName)
 {
 	/* write three files: server key, hyperlink & lobbyname */
 
@@ -342,7 +343,7 @@ int RsIntroServer::checkForNewCerts()
 	}
 
 
-	for(it = newCertFiles.begin(); it != newCertFiles.end(); it++)
+	for(it = newCertFiles.begin(); it != newCertFiles.end(); ++it)
 	{
 		std::cerr << "RsIntroServer::checkForNewCerts() adding: " << *it;
 		std::cerr <<  std::endl;
@@ -373,7 +374,7 @@ int RsIntroServer::cleanOldPeers()
 
 	mStorePeers->getPeersBeforeTS(before, oldIds);
 
-	for(it = oldIds.begin(); it != oldIds.end(); it++)
+	for(it = oldIds.begin(); it != oldIds.end(); ++it)
 	{
 		std::cerr << "RsIntroServer::cleanOldPeers() Removing: " << *it;
 		std::cerr << std::endl;
@@ -400,7 +401,7 @@ int RsIntroServer::restoreStoredPeers()
 
 	mStorePeers->getPeersBeforeTS(now, oldIds);
 
-	for(it = oldIds.begin(); it != oldIds.end(); it++)
+	for(it = oldIds.begin(); it != oldIds.end(); ++it)
 	{
 		std::cerr << "RsIntroServer::restoreStoredPeers() Restoring: " << *it;
 		std::cerr << std::endl;
@@ -422,7 +423,7 @@ int RsIntroServer::removeAllPeers()
 
 	rsPeers->getGPGAcceptedList(oldIds);
 
-	for(it = oldIds.begin(); it != oldIds.end(); it++)
+	for(it = oldIds.begin(); it != oldIds.end(); ++it)
 	{
 		std::cerr << "RsIntroServer::removeAllPeers() Removing: " << *it;
 		std::cerr << std::endl;
@@ -445,7 +446,7 @@ int RsIntroServer::displayPeers()
 
 	rsPeers->getGPGAcceptedList(ids);
 
-	for(it = ids.begin(); it != ids.end(); it++)
+	for(it = ids.begin(); it != ids.end(); ++it)
 	{
 		std::cerr << "GPGID: " << *it;
 
@@ -463,7 +464,7 @@ int RsIntroServer::displayPeers()
 		std::list<std::string>::iterator sit;
 		rsPeers->getAssociatedSSLIds(*it, sslIds);
 
-		for(sit = sslIds.begin(); sit != sslIds.end(); sit++)
+		for(sit = sslIds.begin(); sit != sslIds.end(); ++sit)
 		{
 			std::cerr << *sit;
 			if (rsPeers->isOnline(*sit))
@@ -485,13 +486,11 @@ int RsIntroServer::displayPeers()
 /*****************************************************************************************/
 
 
-RsIntroStore::RsIntroStore(std::string storefile)
+RsIntroStore::RsIntroStore(std::string &storefile)
+: mStoreFile(storefile), mTempStoreFile(storefile + ".tmp")
 {
 	std::cerr << "RsIntroStore::RsIntroStore(" << storefile << ")";
 	std::cerr << std::endl;
-
-	mStoreFile = storefile;
-	mTempStoreFile = storefile + ".tmp";
 }
 
 
@@ -567,7 +566,7 @@ bool    RsIntroStore::getPeersBeforeTS(time_t ts, std::list<std::string> &plist)
 	std::cerr << std::endl;
 
         std::map<std::string, storeData>::iterator it;
-	for(it = mGpgData.begin(); it != mGpgData.end(); it++)
+	for(it = mGpgData.begin(); it != mGpgData.end(); ++it)
 	{
 		std::cerr << "\t Checking: " << it->first << " Added: " << it->second.mAdded << "  vs TS: " << ts;
 		std::cerr << std::endl;
@@ -600,7 +599,7 @@ bool	RsIntroStore::savePeers()
 
         std::map<std::string, storeData>::iterator it;
 
-	for(it = mGpgData.begin(); it != mGpgData.end(); it++)
+	for(it = mGpgData.begin(); it != mGpgData.end(); ++it)
 	{
 		fprintf(fd, "%s %d %u\n", it->first.c_str(), (int) it->second.mAdded, it->second.mFlags);
 	}
@@ -641,7 +640,9 @@ bool	RsIntroStore::loadPeers()
 	{
 		int addTs;
 		uint32_t flags;
-		if (3 == sscanf(BUFFER, "%s %d %u", certId, &addTs, &flags))
+    //sscanf() without field width limits can crash with huge input data.
+    std::string s1 = "%"; s1.append(rs_to_string(MAX_BUFFER)).append("s %d %u");
+		if (3 == sscanf(BUFFER, s1, certId, &addTs, &flags))
 		{
 			storeData sd;
 			sd.mAdded = addTs;

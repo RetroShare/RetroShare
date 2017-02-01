@@ -81,6 +81,8 @@ int dumpPacket(std::ostream &out, unsigned char *pkt, uint32_t size);
 // platform independent fractional timestamp.
 static double getCurrentTS();
 
+#warning: Cppcheck(uninitMemberVar): Member variable 'TcpStream::inData' is not initialized in the constructor.
+// cppcheck-suppress uninitMemberVar
 TcpStream::TcpStream(UdpSubReceiver *lyr)
 	: tcpMtx("TcpStream"), inSize(0), outSizeRead(0), outSizeNet(0), 
 	state(TCP_CLOSED), 
@@ -2457,16 +2459,16 @@ int TcpStream::send()
 #endif
 		inSize = 0;
 		sent++;
-		maxsend -= inSize;
+		//maxsend -= inSize;
 		toSend(pkt);
 	}
 
 	/* if send nothing */
-	bool needsAck = false;
-
 	if (!sent)
 	{
 		double cts = getCurrentTS();
+		bool needsAck = false;
+
 		/* if needs ack */
 		if (isOldSequence(lastSentAck,inAckno))
 		{
@@ -2653,7 +2655,7 @@ int	setupBinaryCheck(std::string fname)
 /* uses seq number to track position -> ensure no rollover */
 int	checkData(uint8 *data, int size, int idx)
 {
-	if (bc_fd <= 0)
+	if (bc_fd = 0)
 	{
 		return -1;
 	}

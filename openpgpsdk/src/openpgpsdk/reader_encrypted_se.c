@@ -107,6 +107,8 @@ static int encrypted_data_reader(void *dest,size_t length,ops_error_t **errors,
 			arg->decrypted_count-=n;
 			arg->decrypted_offset+=n;
 			length-=n;
+#warning: Cppcheck(arithOperationsOnVoidPointer): 'dest' is of type 'void *'. When using void pointers in calculations, the behaviour is undefined.
+			// cppcheck-suppress arithOperationsOnVoidPointer
 			dest+=n;
 		}
 		else

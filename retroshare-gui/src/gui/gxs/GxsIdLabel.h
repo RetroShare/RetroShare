@@ -32,7 +32,7 @@ class GxsIdLabel : public QLabel
 	Q_OBJECT
 
 public:
-	GxsIdLabel(QWidget *parent = NULL);
+	explicit GxsIdLabel(QWidget *parent = NULL);
 
 	void setId(const RsGxsId &id);
 	bool getId(RsGxsId &id);

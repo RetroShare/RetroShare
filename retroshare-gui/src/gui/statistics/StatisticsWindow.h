@@ -48,7 +48,7 @@ public:
     static void releaseInstance();
 
 
-    StatisticsWindow(QWidget *parent = 0);
+    explicit StatisticsWindow(QWidget *parent = 0);
     ~StatisticsWindow();
 
   DhtWindow *dhtw;

@@ -45,7 +45,7 @@ class WikiDialog : public RsGxsUpdateBroadcastPage, public TokenResponse
   Q_OBJECT
 
 public:
-	WikiDialog(QWidget *parent = 0);
+	explicit WikiDialog(QWidget *parent = 0);
 	~WikiDialog();
 	
 	virtual QIcon iconPixmap() const { return QIcon(IMAGE_WIKI) ; } //MainPage

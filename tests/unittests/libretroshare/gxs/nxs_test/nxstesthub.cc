@@ -70,7 +70,7 @@ rs_nxs_test::NxsTestHub::NxsTestHub(NxsTestScenario::pointer testScenario)
 
 	std::list<RsPeerId>::const_iterator cit = peers.begin();
 
-	for(; cit != peers.end(); cit++)
+	for(; cit != peers.end(); ++cit)
 	{
 		RsGxsNetService::pointer ns = RsGxsNetService::pointer(
 				new RsGxsNetService(
@@ -109,7 +109,7 @@ void rs_nxs_test::NxsTestHub::StartTest()
 {
 	// get all services up and running
 	PeerNxsMap::iterator mit = mPeerNxsMap.begin();
-	for(; mit != mPeerNxsMap.end(); mit++)
+	for(; mit != mPeerNxsMap.end(); ++mit)
 	{
         (mit->second)->start() ;
 	}
@@ -125,7 +125,7 @@ void rs_nxs_test::NxsTestHub::EndTest()
 
 	// stop services
 	PeerNxsMap::iterator mit = mPeerNxsMap.begin();
-	for(; mit != mPeerNxsMap.end(); mit++)
+	for(; mit != mPeerNxsMap.end(); ++mit)
 	{
 		mit->second->join();
 	}
@@ -138,7 +138,7 @@ void rs_nxs_test::NxsTestHub::notifyNewMessages(const RsPeerId& pid,
 
 	std::map<RsNxsMsg*, RsGxsMsgMetaData*> toStore;
 	std::vector<RsNxsMsg*>::iterator it = messages.begin();
-	for(; it != messages.end(); it++)
+	for(; it != messages.end(); ++it)
 	{
 		RsNxsMsg* msg = *it;
 		RsGxsMsgMetaData* meta = new RsGxsMsgMetaData();
@@ -164,7 +164,7 @@ void rs_nxs_test::NxsTestHub::notifyNewGroups(const RsPeerId& pid, std::vector<R
 
 	std::map<RsNxsGrp*, RsGxsGrpMetaData*> toStore;
 	std::vector<RsNxsGrp*>::iterator it = groups.begin();
-	for(; it != groups.end(); it++)
+	for(; it != groups.end(); ++it)
 	{
 		RsNxsGrp* grp = *it;
 		RsGxsGrpMetaData* meta = new RsGxsGrpMetaData();
@@ -224,7 +224,7 @@ void rs_nxs_test::NxsTestHub::data_tick()
     mMtx.unlock();
 
 	// then tick net services
-	for(; it != mPeerNxsMap.end(); it++)
+	for(; it != mPeerNxsMap.end(); ++it)
 	{
 		RsGxsNetService::pointer s = it->second;
 		s->tick();

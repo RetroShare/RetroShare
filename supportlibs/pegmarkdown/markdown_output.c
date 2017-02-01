@@ -64,9 +64,8 @@ static void pad(GString *out, int num) {
 
 /* determine whether a certain element is contained within a given list */
 static bool list_contains_key(element *list, int key) {
-    element *step = NULL;
 
-    step = list;
+    element *step = list;
     while ( step != NULL ) {
         if (step->key == key) {
             return TRUE;
@@ -313,13 +312,12 @@ static void print_html_element(GString *out, element *elt, bool obfuscate) {
 static void print_html_endnotes(GString *out) {
     int counter = 0;
     GSList *note;
-    element *note_elt;
     if (endnotes == NULL) 
         return;
     note = g_slist_reverse(endnotes);
     g_string_append_printf(out, "<hr/>\n<ol id=\"notes\">");
     while (note != NULL) {
-        note_elt = note->data;
+        element *note_elt = note->data;
         counter++;
         pad(out, 1);
         g_string_append_printf(out, "<li id=\"fn%d\">\n", counter);
@@ -1075,7 +1073,7 @@ static void print_odf_element(GString *out, element *elt) {
         elt->children = NULL;
         odf_type = old_type;
         break;
-        break;  default:
+    default:
         fprintf(stderr, "print_odf_element encountered unknown element key = %d\n", elt->key);
         exit(EXIT_FAILURE);
     }

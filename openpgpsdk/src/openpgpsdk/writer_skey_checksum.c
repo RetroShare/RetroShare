@@ -38,13 +38,12 @@ typedef struct
 static ops_boolean_t skey_checksum_writer(const unsigned char *src, const unsigned length, ops_error_t **errors, ops_writer_info_t *winfo)
     {
     skey_checksum_arg_t *arg=ops_writer_get_arg(winfo);
-    ops_boolean_t rtn=ops_true;
 
     // add contents to hash
     arg->hash.add(&arg->hash, src, length);
 
     // write to next stacked writer
-    rtn=ops_stacked_write(src,length,errors,winfo);
+    ops_boolean_t rtn=ops_stacked_write(src,length,errors,winfo);
 
     // tidy up and return
     return rtn;

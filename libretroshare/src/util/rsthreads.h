@@ -43,7 +43,7 @@ class RsMutex
 {
 	public:
 
-	RsMutex(const std::string& name)
+	explicit RsMutex(const std::string& name)
 	{
 		/* remove unused parameter warnings */
 
@@ -91,7 +91,7 @@ class RsStackMutex
 {
 	public:
 
-		RsStackMutex(RsMutex &mtx)
+		explicit RsStackMutex(RsMutex &mtx)
 			: mMtx(mtx) 
 		{ 
 			mMtx.lock(); 
@@ -171,6 +171,8 @@ class RsStackMutex
 #define RS_STACK_MUTEX(m) RsStackMutex __local_retroshare_mutex(m,__PRETTY_FUNCTION__,__FILE__,__LINE__) 
 
 // This class handles a Mutex-based semaphore, that makes it cross plateform.
+#warning: Cppcheck(noCopyConstructor): class 'RsSemaphore' does not have a copy constructor which is recommended since the class contains a pointer to allocated memory.
+// cppcheck-suppress noCopyConstructor
 class RsSemaphore
 {
     class RsSemStruct

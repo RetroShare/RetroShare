@@ -655,9 +655,9 @@ bool RsLoginHandler::clearAutoLogin(const RsPeerId& ssl_id)
 #endif
 }
 
-std::string RsLoginHandler::getAutologinFileName(const RsPeerId& /*ssl_id*/)
-{
-	return rsAccounts->PathAccountKeysDirectory() + "/" + "help.dta" ;
-}
+//std::string RsLoginHandler::getAutologinFileName(const RsPeerId& /*ssl_id*/)
+//{
+//	return rsAccounts->PathAccountKeysDirectory() + "/" + "help.dta" ;
+//}
 
 #endif // RS_AUTOLOGIN

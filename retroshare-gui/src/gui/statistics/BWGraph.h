@@ -72,9 +72,9 @@ private:
 
 class BWGraph: public RSGraphWidget
 {
-	public:
-        BWGraph(QWidget *parent);
-        ~BWGraph();
+public:
+    explicit BWGraph(QWidget *parent);
+    ~BWGraph();
 
     void setSelector(int selector_type, int graph_type, const std::string& selector_client_string = std::string())  { _local_source->setSelector(selector_type,graph_type,selector_client_string) ; }
     void setDirection(int dir) { _local_source->setDirection(dir); }

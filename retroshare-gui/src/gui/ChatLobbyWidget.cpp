@@ -213,8 +213,7 @@ UserNotify *ChatLobbyWidget::getUserNotify(QObject *parent)
 
 void ChatLobbyWidget::updateNotify(ChatLobbyId id, unsigned int count)
 {
-	ChatLobbyDialog *dialog=NULL;
-	dialog=_lobby_infos[id].dialog;
+	ChatLobbyDialog *dialog=_lobby_infos[id].dialog;
 	if(!dialog) return;
 
 	QToolButton* notifyButton=dialog->getChatWidget()->getNotifyButton();

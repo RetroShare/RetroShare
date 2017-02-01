@@ -30,7 +30,7 @@
 class FakePgpAuxUtils: public PgpAuxUtils
 {
 public:
-	FakePgpAuxUtils(const RsPeerId& ownId);
+	explicit FakePgpAuxUtils(const RsPeerId& ownId);
 
 	virtual const RsPgpId &getPGPOwnId();
 	virtual RsPgpId getPGPId(const RsPeerId& sslid);

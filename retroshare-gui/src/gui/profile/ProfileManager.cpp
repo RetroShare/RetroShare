@@ -91,8 +91,6 @@ void ProfileManager::fillIdentities()
 
 	QTreeWidget *identityTreeWidget = ui.identityTreeWidget;
 
-	QTreeWidgetItem *item;
-
     std::list<RsPgpId> pgpIds;
     std::list<RsPgpId>::iterator it;
 
@@ -103,7 +101,7 @@ void ProfileManager::fillIdentities()
 			std::cerr << "Adding PGPUser: " << name << " id: " << *it << std::endl;
             QString gid = QString::fromStdString((*it).toStdString());
 
-			item = new RSTreeWidgetItem(NULL, 0);
+			QTreeWidgetItem *item = new RSTreeWidgetItem(NULL, 0);
 			item -> setText(COLUMN_NAME, QString::fromUtf8(name.c_str()));
 			item -> setText(COLUMN_EMAIL, QString::fromUtf8(email.c_str()));
 			item -> setText(COLUMN_GID, gid);

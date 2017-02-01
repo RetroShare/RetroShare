@@ -91,8 +91,10 @@ public:
 class RsGxsGrpConfigItem : public RsGxsNetServiceItem, public RsGxsGrpConfig
 {
 public:
-    RsGxsGrpConfigItem(uint16_t servType) : RsGxsNetServiceItem(servType, RS_PKT_SUBTYPE_GXS_GRP_CONFIG) {}
-    RsGxsGrpConfigItem(const RsGxsGrpConfig& m,uint16_t servType) : RsGxsNetServiceItem(servType, RS_PKT_SUBTYPE_GXS_GRP_CONFIG),RsGxsGrpConfig(m) {}
+    explicit RsGxsGrpConfigItem(uint16_t servType)
+      : RsGxsNetServiceItem(servType, RS_PKT_SUBTYPE_GXS_GRP_CONFIG) {}
+    RsGxsGrpConfigItem(const RsGxsGrpConfig& m,uint16_t servType)
+      : RsGxsNetServiceItem(servType, RS_PKT_SUBTYPE_GXS_GRP_CONFIG),RsGxsGrpConfig(m) {}
     virtual ~RsGxsGrpConfigItem() {}
 
     virtual void clear() {}
@@ -115,8 +117,10 @@ public:
 class RsGxsGrpUpdateItem : public RsGxsNetServiceItem, public RsGxsGrpUpdate
 {
 public:
-    RsGxsGrpUpdateItem(uint16_t servType) : RsGxsNetServiceItem(servType, RS_PKT_SUBTYPE_GXS_GRP_UPDATE) {clear();}
-    RsGxsGrpUpdateItem(const RsGxsGrpUpdate& u,uint16_t serv_type) : RsGxsNetServiceItem(serv_type, RS_PKT_SUBTYPE_GXS_GRP_UPDATE), RsGxsGrpUpdate(u) {}
+    explicit RsGxsGrpUpdateItem(uint16_t servType)
+      : RsGxsNetServiceItem(servType, RS_PKT_SUBTYPE_GXS_GRP_UPDATE) {clear();}
+    RsGxsGrpUpdateItem(const RsGxsGrpUpdate& u,uint16_t serv_type)
+      : RsGxsNetServiceItem(serv_type, RS_PKT_SUBTYPE_GXS_GRP_UPDATE), RsGxsGrpUpdate(u) {}
 
     virtual ~RsGxsGrpUpdateItem() {}
 
@@ -140,8 +144,10 @@ public:
 class RsGxsServerGrpUpdateItem : public RsGxsNetServiceItem, public RsGxsServerGrpUpdate
 {
 public:
-    RsGxsServerGrpUpdateItem(uint16_t servType) : RsGxsNetServiceItem(servType, RS_PKT_SUBTYPE_GXS_SERVER_GRP_UPDATE) { clear();}
-    RsGxsServerGrpUpdateItem(const RsGxsServerGrpUpdate& u,uint16_t serv_type) : RsGxsNetServiceItem(serv_type, RS_PKT_SUBTYPE_GXS_SERVER_GRP_UPDATE), RsGxsServerGrpUpdate(u) {}
+    explicit RsGxsServerGrpUpdateItem(uint16_t servType)
+      : RsGxsNetServiceItem(servType, RS_PKT_SUBTYPE_GXS_SERVER_GRP_UPDATE) { clear();}
+    RsGxsServerGrpUpdateItem(const RsGxsServerGrpUpdate& u,uint16_t serv_type)
+      : RsGxsNetServiceItem(serv_type, RS_PKT_SUBTYPE_GXS_SERVER_GRP_UPDATE), RsGxsServerGrpUpdate(u) {}
 
     virtual ~RsGxsServerGrpUpdateItem() {}
 
@@ -169,8 +175,10 @@ public:
 class RsGxsMsgUpdateItem : public RsGxsNetServiceItem, public RsGxsMsgUpdate
 {
 public:
-    RsGxsMsgUpdateItem(uint16_t servType) : RsGxsNetServiceItem(servType, RS_PKT_SUBTYPE_GXS_MSG_UPDATE) { clear();}
-    RsGxsMsgUpdateItem(const RsGxsMsgUpdate& m,uint16_t servType) : RsGxsNetServiceItem(servType, RS_PKT_SUBTYPE_GXS_MSG_UPDATE), RsGxsMsgUpdate(m) {}
+    explicit RsGxsMsgUpdateItem(uint16_t servType)
+      : RsGxsNetServiceItem(servType, RS_PKT_SUBTYPE_GXS_MSG_UPDATE) { clear();}
+    RsGxsMsgUpdateItem(const RsGxsMsgUpdate& m,uint16_t servType)
+      : RsGxsNetServiceItem(servType, RS_PKT_SUBTYPE_GXS_MSG_UPDATE), RsGxsMsgUpdate(m) {}
 
     virtual ~RsGxsMsgUpdateItem() {}
 
@@ -194,8 +202,10 @@ public:
 class RsGxsServerMsgUpdateItem : public RsGxsNetServiceItem, public RsGxsServerMsgUpdate
 {
 public:
-    RsGxsServerMsgUpdateItem(uint16_t servType) : RsGxsNetServiceItem(servType, RS_PKT_SUBTYPE_GXS_SERVER_MSG_UPDATE) { clear();}
-    RsGxsServerMsgUpdateItem(const RsGxsServerMsgUpdate& m,uint16_t servType) : RsGxsNetServiceItem(servType, RS_PKT_SUBTYPE_GXS_SERVER_MSG_UPDATE),RsGxsServerMsgUpdate(m) {}
+    explicit RsGxsServerMsgUpdateItem(uint16_t servType)
+      : RsGxsNetServiceItem(servType, RS_PKT_SUBTYPE_GXS_SERVER_MSG_UPDATE) { clear();}
+    RsGxsServerMsgUpdateItem(const RsGxsServerMsgUpdate& m,uint16_t servType)
+      : RsGxsNetServiceItem(servType, RS_PKT_SUBTYPE_GXS_SERVER_MSG_UPDATE),RsGxsServerMsgUpdate(m) {}
     virtual ~RsGxsServerMsgUpdateItem() {}
 
 	virtual void clear();
@@ -212,7 +222,8 @@ class RsGxsUpdateSerialiser : public RsSerialType
 {
 public:
 
-	RsGxsUpdateSerialiser(uint16_t servtype) : RsSerialType(RS_PKT_VERSION_SERVICE, servtype), SERVICE_TYPE(servtype) {}
+	explicit RsGxsUpdateSerialiser(uint16_t servtype)
+	  : RsSerialType(RS_PKT_VERSION_SERVICE, servtype), SERVICE_TYPE(servtype) {}
 
 	virtual ~RsGxsUpdateSerialiser() {}
 

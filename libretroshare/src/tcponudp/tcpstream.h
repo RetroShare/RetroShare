@@ -80,7 +80,7 @@ class TcpStream: public UdpPeer
 	public:
 	/* Top-Level exposed */
 
-	TcpStream(UdpSubReceiver *udp);
+	explicit TcpStream(UdpSubReceiver *udp);
 virtual ~TcpStream() { return; }
 
 	/* user interface */

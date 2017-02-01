@@ -303,11 +303,12 @@ bool p3HistoryMgr::loadList(std::list<RsItem*>& load)
 {
 	RsStackMutex stack(mHistoryMtx); /********** STACK LOCKED MTX ******/
 
-	RsHistoryMsgItem *msgItem;
 	std::list<RsItem*>::iterator it;
 
 	for (it = load.begin(); it != load.end(); ++it) 
-   	 {
+	{
+		RsHistoryMsgItem *msgItem;
+
 		if (NULL != (msgItem = dynamic_cast<RsHistoryMsgItem*>(*it))) {
 
 			std::map<RsPeerId, std::map<uint32_t, RsHistoryMsgItem*> >::iterator mit = mMessages.find(msgItem->chatPeerId);
@@ -350,7 +351,7 @@ bool p3HistoryMgr::loadList(std::list<RsItem*>& load)
 
 				if (kit->key == "MAX_STORAGE_TIME") {
 					uint32_t val ;
-					if (sscanf(kit->value.c_str(), "%d", &val) == 1)
+					if (sscanf(kit->value.c_str(), "%ud", &val) == 1)
 						mMaxStorageDurationSeconds = val ;
 
 #ifdef HISTMGR_DEBUG
@@ -462,16 +463,16 @@ bool p3HistoryMgr::getMessages(const ChatId &chatId, std::list<HistoryMsg> &msgs
     std::cerr << "Getting history for virtual peer " << chatPeerId << std::endl;
 #endif
 
-	uint32_t foundCount = 0;
-
 	std::map<RsPeerId, std::map<uint32_t, RsHistoryMsgItem*> >::iterator mit = mMessages.find(chatPeerId);
 
 	if (mit != mMessages.end()) 
 	{
 		std::map<uint32_t, RsHistoryMsgItem*>::reverse_iterator lit;
+		uint32_t foundCount = 0;
 
 		for (lit = mit->second.rbegin(); lit != mit->second.rend(); ++lit)
 		{
+
 			HistoryMsg msg;
 			convertMsg(lit->second, msg);
 			msgs.insert(msgs.begin(), msg);

@@ -54,7 +54,7 @@ class UIStateHelper : public QObject
 	Q_OBJECT
 
 public:
-	UIStateHelper(QObject *parent = 0);
+	explicit UIStateHelper(QObject *parent = 0);
 	~UIStateHelper();
 
 	/* Add widgets */

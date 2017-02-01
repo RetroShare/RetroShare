@@ -186,6 +186,7 @@ int	pqiperson::tick()
 
 			std::cerr << "pqiperson::tick() Id: " << PeerId().toStdString()
 					  << "activepqi: " << activepqi << " inConnectAttempt:"
+					  << statusStr <<
 					  << connectStr << std::endl;
 #endif
 	
@@ -235,12 +236,12 @@ int pqiperson::notifyEvent(NetInterface *ni, int newState,
 
 void pqiperson::processNotifyEvents()
 {
-	NetInterface *ni;
-	int state;
-	sockaddr_storage addr;
-
 	while(1) // While there is notification to handle
 	{
+		NetInterface *ni;
+		int state;
+		sockaddr_storage addr;
+
 		{
 			RS_STACK_MUTEX(mNotifyMtx);
 

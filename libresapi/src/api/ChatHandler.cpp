@@ -102,7 +102,7 @@ StreamBase& operator << (StreamBase& left, ChatHandler::ChatInfo& info)
 class SendLobbyParticipantsTask: public GxsResponseTask
 {
 public:
-    SendLobbyParticipantsTask(RsIdentity* idservice, ChatHandler::LobbyParticipantsInfo pi):
+    SendLobbyParticipantsTask(RsIdentity* idservice, const ChatHandler::LobbyParticipantsInfo &pi):
         GxsResponseTask(idservice, 0), mParticipantsInfo(pi)
     {
         const std::map<RsGxsId, time_t>& map = mParticipantsInfo.participants;

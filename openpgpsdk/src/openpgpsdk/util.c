@@ -118,7 +118,7 @@ void *ops_mallocz(size_t n)
 	void *m=malloc(n);
 
 	if(m == NULL)
-		fprintf(stderr,"(EE) Cannot allocate %lu bytes of memory in %s\n",n,__PRETTY_FUNCTION__) ;
+		fprintf(stderr,"(EE) Cannot allocate %zu bytes of memory in %s\n",n,__PRETTY_FUNCTION__) ;
 	else
 		memset(m,'\0',n);
 

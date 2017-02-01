@@ -187,7 +187,7 @@ bool GenExchangeTest::compareMsgDataMaps()
 	DummyMsgMap::iterator mit = mMsgDataOut.begin();
 
 	bool ok = true;
-	for(; mit != mMsgDataOut.end(); mit++)
+	for(; mit != mMsgDataOut.end(); ++mit)
 	{
 		const RsGxsGroupId& grpId = mit->first;
 		std::vector<RsDummyMsg*>& v1 = mit->second,
@@ -210,7 +210,7 @@ bool GenExchangeTest::compareMsgIdMaps()
 {
 	GxsMsgIdResult::const_iterator mit = mMsgIdsOut.begin();
 	bool ok = true;
-	for(; mit != mMsgIdsOut.end(); mit++)
+	for(; mit != mMsgIdsOut.end(); ++mit)
 	{
 		const RsGxsGroupId& grpId = mit->first;
 		const std::vector<RsGxsMessageId>& v1 = mit->second,
@@ -226,7 +226,7 @@ bool GenExchangeTest::compareMsgMetaMaps()
 {
 	GxsMsgMetaMap::iterator mit = mMsgMetaDataOut.begin();
 	bool ok = true;
-	for(; mit != mMsgMetaDataOut.end(); mit++)
+	for(; mit != mMsgMetaDataOut.end(); ++mit)
 	{
 		const RsGxsGroupId& grpId = mit->first;
 		const std::vector<RsMsgMetaData>& v1 = mit->second,
@@ -465,7 +465,7 @@ void GenExchangeTest::clearMsgDataMap(DummyMsgMap& msgDataMap) const
 {
 	DummyMsgMap::iterator it = msgDataMap.begin();
 
-	for(; it != msgDataMap.end(); it++)
+	for(; it != msgDataMap.end(); ++it)
 	{
 		deleteResVector<RsDummyMsg>(it->second);
 	}

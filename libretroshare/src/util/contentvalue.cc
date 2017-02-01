@@ -58,7 +58,6 @@ ContentValue::ContentValue(const ContentValue &from){
     std::map<std::string, uint8_t>::const_iterator cit =
             keyTypeMap.begin();
 
-    uint8_t type = 0;
     std::string currKey;
     std::string val = "";
     char *src = NULL;
@@ -66,7 +65,7 @@ ContentValue::ContentValue(const ContentValue &from){
 
     for(; cit != keyTypeMap.end(); ++cit){
 
-        type = cit->second;
+        uint8_t type = cit->second;
         currKey = cit->first;
 
         switch(type){

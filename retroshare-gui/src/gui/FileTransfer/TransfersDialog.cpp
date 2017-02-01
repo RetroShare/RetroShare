@@ -94,7 +94,7 @@ Q_DECLARE_METATYPE(FileProgressInfo)
 class SortByNameItem : public QStandardItem
 {
 public:
-	SortByNameItem(QHeaderView *header) : QStandardItem()
+	explicit SortByNameItem(QHeaderView *header) : QStandardItem()
 	{
 		this->header = header;
 	}
@@ -132,7 +132,7 @@ private:
 class ProgressItem : public SortByNameItem
 {
 public:
-	ProgressItem(QHeaderView *header) : SortByNameItem(header) {}
+	explicit ProgressItem(QHeaderView *header) : SortByNameItem(header) {}
 
 	virtual bool operator<(const QStandardItem &other) const
 	{
@@ -155,7 +155,7 @@ public:
 class PriorityItem : public SortByNameItem
 {
 	public:
-		PriorityItem(QHeaderView *header) : SortByNameItem(header) {}
+		explicit PriorityItem(QHeaderView *header) : SortByNameItem(header) {}
 
 		virtual bool operator<(const QStandardItem &other) const
 		{
@@ -1514,7 +1514,7 @@ void TransfersDialog::updateDetailsDialog()
 {
     RsFileHash file_hash ;
     std::set<int> rows;
-    std::set<int>::iterator it;
+    //std::set<int>::iterator it;
     getSelectedItems(NULL, &rows);
 
     if (rows.size()) {

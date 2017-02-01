@@ -13,7 +13,9 @@ public:
     void runTests();
 private:
 
+/* UNUSED
     void testGroupStatistics();
+*/
     void testServiceStatistics();
 };
 

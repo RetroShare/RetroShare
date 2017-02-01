@@ -47,7 +47,6 @@ std::string RsServer::getSQLCipherVersion()
 {
 	sqlite3* mDb;
 	std::string versionstring("");
-	const char* version;
 	int rc = sqlite3_open_v2("", &mDb, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE , NULL); //create DB in a temp file
 
 	if(rc){
@@ -63,6 +62,7 @@ std::string RsServer::getSQLCipherVersion()
 	rc = sqlite3_prepare_v2(mDb, sqlQuery.c_str(), sqlQuery.length(), &stmt, NULL);
 	if (rc == SQLITE_OK) {
 		rc = sqlite3_step(stmt);
+		const char* version = NULL;
 		switch (rc) {
 		case SQLITE_ROW:
 			version = (const char *)sqlite3_column_text(stmt, 0); //not needed to free

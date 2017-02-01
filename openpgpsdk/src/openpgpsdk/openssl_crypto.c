@@ -115,7 +115,7 @@ static void sha1_add(ops_hash_t *hash,const unsigned char *data,
     if (debug)
         {
         unsigned int i=0;
-        fprintf(stderr,"adding %d to hash:\n ", length);
+        fprintf(stderr,"adding %ud to hash:\n ", length);
         for (i=0; i<length; i++)
             {
             fprintf(stderr,"0x%02x ", data[i]);
@@ -175,7 +175,7 @@ static void sha256_add(ops_hash_t *hash,const unsigned char *data,
     if (debug)
         {
         unsigned int i=0;
-        fprintf(stderr,"adding %d to hash:\n ", length);
+        fprintf(stderr,"adding %ud to hash:\n ", length);
         for (i=0; i<length; i++)
             {
             fprintf(stderr,"0x%02x ", data[i]);
@@ -234,7 +234,7 @@ static void sha384_add(ops_hash_t *hash,const unsigned char *data,
     if (debug)
         {
         unsigned int i=0;
-        fprintf(stderr,"adding %d to hash:\n ", length);
+        fprintf(stderr,"adding %ud to hash:\n ", length);
         for (i=0; i<length; i++)
             {
             fprintf(stderr,"0x%02x ", data[i]);
@@ -293,7 +293,7 @@ static void sha512_add(ops_hash_t *hash,const unsigned char *data,
     if (debug)
         {
         unsigned int i=0;
-        fprintf(stderr,"adding %d to hash:\n ", length);
+        fprintf(stderr,"adding %ud to hash:\n ", length);
         for (i=0; i<length; i++)
             {
             fprintf(stderr,"0x%02x ", data[i]);
@@ -352,7 +352,7 @@ static void sha224_add(ops_hash_t *hash,const unsigned char *data,
     if (debug)
         {
         unsigned int i=0;
-        fprintf(stderr,"adding %d to hash:\n ", length);
+        fprintf(stderr,"adding %ud to hash:\n ", length);
         for (i=0; i<length; i++)
             {
             fprintf(stderr,"0x%02x ", data[i]);
@@ -466,7 +466,7 @@ ops_boolean_t ops_dsa_verify(const unsigned char *hash,size_t hash_length,
 		 ERR_load_crypto_strings() ;
 		 unsigned long err = 0 ;
          while((err = ERR_get_error()) > 0)
-			 fprintf(stderr,"DSA_do_verify(): ERR = %ld. lib error:\"%s\", func_error:\"%s\", reason:\"%s\"\n",err,ERR_lib_error_string(err),ERR_func_error_string(err),ERR_reason_error_string(err)) ;
+			 fprintf(stderr,"DSA_do_verify(): ERR = %lu. lib error:\"%s\", func_error:\"%s\", reason:\"%s\"\n",err,ERR_lib_error_string(err),ERR_func_error_string(err),ERR_reason_error_string(err)) ;
     	//assert(ret >= 0);
 		return ops_false ;
 	 }
@@ -724,13 +724,12 @@ const char *ops_text_from_hash(ops_hash_t *hash)
 ops_boolean_t ops_rsa_generate_keypair(const int numbits, const unsigned long e,
 				       ops_keydata_t* keydata)
     {
-    ops_secret_key_t *skey=NULL;
     RSA *rsa=RSA_new();
     BN_CTX *ctx=BN_CTX_new();
     BIGNUM *ebn=BN_new();
 
     ops_keydata_init(keydata,OPS_PTAG_CT_SECRET_KEY);
-    skey=ops_get_writable_secret_key_from_data(keydata);
+    ops_secret_key_t *skey=ops_get_writable_secret_key_from_data(keydata);
 
     // generate the key pair
 
@@ -847,9 +846,8 @@ ops_boolean_t ops_rsa_generate_keypair(const int numbits, const unsigned long e,
 */
 ops_keydata_t* ops_rsa_create_selfsigned_keypair(const int numbits, const unsigned long e, ops_user_id_t * userid)
     {
-    ops_keydata_t *keydata=NULL;
 
-    keydata=ops_keydata_new();
+    ops_keydata_t *keydata=ops_keydata_new();
 
     if (ops_rsa_generate_keypair(numbits, e, keydata) != ops_true
         || ops_add_selfsigned_userid_to_keydata(keydata, userid) != ops_true)

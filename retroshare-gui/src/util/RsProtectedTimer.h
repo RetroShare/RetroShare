@@ -26,7 +26,7 @@
 class RsProtectedTimer : public QTimer
 {
 public:
-	RsProtectedTimer(QObject *parent);
+	explicit RsProtectedTimer(QObject *parent);
 
 protected:
 	virtual void timerEvent(QTimerEvent *e);

@@ -44,7 +44,7 @@ public:
 	};
 
 public:
-	AvatarWidget(QWidget *parent = 0);
+	explicit AvatarWidget(QWidget *parent = 0);
 	~AvatarWidget();
 
 	QString frameState();

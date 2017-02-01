@@ -40,7 +40,7 @@ bool peerInfoToStream(StreamBase& stream, RsPeerDetails& details, RsPeers* peers
 
     StreamBase& grpStream = stream.getStreamToMember("groups");
 
-    for(std::list<RsGroupInfo>::iterator lit = grpInfo.begin(); lit != grpInfo.end(); lit++)
+    for(std::list<RsGroupInfo>::iterator lit = grpInfo.begin(); lit != grpInfo.end(); ++lit)
     {
         RsGroupInfo& grp = *lit;
         if(std::find(grp.peerIds.begin(), grp.peerIds.end(), details.gpg_id) != grp.peerIds.end())

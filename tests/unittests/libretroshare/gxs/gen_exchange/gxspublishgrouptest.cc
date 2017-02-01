@@ -21,6 +21,7 @@ GxsPublishGroupTest::~GxsPublishGroupTest()
 {
 }
 
+/*UNUSED
 bool GxsPublishGroupTest::testGrpSubmissionRetrieval()
 {
 
@@ -72,7 +73,7 @@ bool GxsPublishGroupTest::testGrpSubmissionRetrieval()
 	storeToGrpDataOutList(groupsPublished);
 
 	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
-	std::list<RsGxsGroupId> grpIds;
+	//std::list<RsGxsGroupId> grpIds;
 	tokenService->requestGroupInfo(token, 0, opts);
 
 	pollForToken(token, opts, true);
@@ -84,7 +85,9 @@ bool GxsPublishGroupTest::testGrpSubmissionRetrieval()
 
 	return ok;
 }
+*/
 
+/*UNUSED
 bool GxsPublishGroupTest::testSpecificGrpRetrieval()
 {
 	setUp();
@@ -147,7 +150,9 @@ bool GxsPublishGroupTest::testSpecificGrpRetrieval()
 
 	return ok;
 }
+*/
 
+/*UNUSED
 bool GxsPublishGroupTest::testGrpIdRetrieval()
 {
     setUp();
@@ -169,6 +174,7 @@ bool GxsPublishGroupTest::testGrpIdRetrieval()
 
     return ok;
 }
+*/
 
 bool GxsPublishGroupTest::testUpdateGroup()
 {
@@ -228,6 +234,7 @@ bool GxsPublishGroupTest::testUpdateGroup()
 
 }
 
+/*UNUSED
 bool GxsPublishGroupTest::testGrpMetaRetrieval()
 {
 
@@ -274,7 +281,7 @@ bool GxsPublishGroupTest::testGrpMetaRetrieval()
 	storeToGrpMetaOutList(groupsMetaPublished);
 
 	opts.mReqType = GXS_REQUEST_TYPE_GROUP_META;
-	std::list<RsGxsGroupId> grpIds;
+	//std::list<RsGxsGroupId> grpIds;
 
 	getTokenService()->requestGroupInfo(token, 0, opts);
 
@@ -286,13 +293,14 @@ bool GxsPublishGroupTest::testGrpMetaRetrieval()
 
    return ok;
 }
+*/
 
 void GxsPublishGroupTest::runTests()
 {
 //        CHECK(testGrpSubmissionRetrieval());
 //        CHECK(testGrpIdRetrieval());
 //        CHECK(testGrpMetaRetrieval());
-    //   CHECK(testSpecificGrpRetrieval());
+//        CHECK(testSpecificGrpRetrieval());
         EXPECT_TRUE(testUpdateGroup());
 }
 

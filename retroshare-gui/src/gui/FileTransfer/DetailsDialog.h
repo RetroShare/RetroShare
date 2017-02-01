@@ -34,7 +34,7 @@ class DetailsDialog : public QDialog
 
 public:
   /** Default constructor */
-  DetailsDialog(QWidget *parent = 0);
+  explicit DetailsDialog(QWidget *parent = 0);
   /** Default destructor */
   ~DetailsDialog() {}
   

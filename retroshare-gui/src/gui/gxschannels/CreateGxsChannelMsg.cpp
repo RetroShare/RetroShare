@@ -655,6 +655,7 @@ void CreateGxsChannelMsg::sendMessage(const std::string &subject, const std::str
 		}
 #endif
 
+		// cppcheck-suppress variableScope
 		uint32_t token;
 		if (generateCount) {
 #ifdef ENABLE_GENERATE

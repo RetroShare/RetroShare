@@ -45,7 +45,7 @@ extern "C" void* bdthread_init(void* p)
 	std::cerr << std::endl;
 #endif
 
-  bdThread *thread = (bdThread *) p;
+  bdThread *thread = reinterpret_cast<bdThread *>(p);
   if (!thread)
   {
 #ifdef DEBUG_THREADS

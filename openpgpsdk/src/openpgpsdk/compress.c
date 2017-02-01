@@ -536,7 +536,7 @@ static ops_boolean_t stream_compress_finaliser(ops_error_t **errors,
 	    }
 	int bytes_to_write = output_size - compress->stream.avail_out;
 	if (debug)
-	    fprintf(stderr, "At end, bytes_to_write = %u\n", bytes_to_write);
+	    fprintf(stderr, "At end, bytes_to_write = %u\n", (unsigned int)bytes_to_write);
 	compress->bytes_out += bytes_to_write;
 	result = ops_stacked_write(compress->dst, bytes_to_write, errors,
 				   winfo);
@@ -547,7 +547,7 @@ static ops_boolean_t stream_compress_finaliser(ops_error_t **errors,
 	if (retcode != Z_STREAM_END)
 	    {
 	    if (debug)
-		fprintf(stderr, "Reallocating %u\n", output_size * 2);
+		fprintf(stderr, "Reallocating %u\n", (unsigned int)output_size * 2);
 	    output_size *= 2;
 	    compress->dst = realloc(compress->dst, output_size);
 	    }

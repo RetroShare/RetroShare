@@ -40,7 +40,8 @@ PeerNode::PeerNode(const RsPeerId& id,const std::list<RsPeerId>& friends, bool o
 
 PeerNode::~PeerNode()
 {
-	delete _service_server ;
+	delete _service_server;
+	delete _service_control;
 	delete mPublisher;
 	delete mPeerMgr;
 	delete mLinkMgr;
@@ -61,6 +62,7 @@ void PeerNode::AddPqiServiceMonitor(pqiServiceMonitor *service)
 	mPqiServiceMonitors.push_back(service);
 }
 
+/*UNUSED
 p3NetMgr *PeerNode::getNetMgr()
 { 
 	return mNetMgr; 
@@ -76,7 +78,7 @@ p3PeerMgr *PeerNode::getPeerMgr()
 { 
 	return mPeerMgr; 
 }
-
+*/
 
 RsNxsNetMgr *PeerNode::getNxsNetMgr()
 { 
@@ -89,7 +91,7 @@ void PeerNode::notifyOfFriends()
 	mLinkMgr->getFriendList(friendList);
 
 	std::list<RsPeerId>::iterator it;
-	for(it = friendList.begin(); it != friendList.end(); it++)
+	for(it = friendList.begin(); it != friendList.end(); ++it)
 	{
 		pqipeer peer;
 		peer.id = *it;
@@ -104,7 +106,7 @@ void PeerNode::bringOnline(std::list<RsPeerId> &onlineList)
 	std::list<pqipeer> pqiMonitorChanges;
 	std::list<pqiServicePeer> pqiServiceMonitorChanges;
 
-	for(it = onlineList.begin(); it != onlineList.end(); it++)
+	for(it = onlineList.begin(); it != onlineList.end(); ++it)
 	{
 		mLinkMgr->setOnlineStatus(*it, true);
 
@@ -123,13 +125,13 @@ void PeerNode::bringOnline(std::list<RsPeerId> &onlineList)
 	}
 
         std::list<pqiMonitor *>::iterator pit;
-	for(pit = mPqiMonitors.begin(); pit != mPqiMonitors.end(); pit++)
+	for(pit = mPqiMonitors.begin(); pit != mPqiMonitors.end(); ++pit)
 	{
 		(*pit)->statusChange(pqiMonitorChanges);
 	}
 
         std::list<pqiServiceMonitor *>::iterator spit;
-	for(spit = mPqiServiceMonitors.begin(); spit != mPqiServiceMonitors.end(); spit++)
+	for(spit = mPqiServiceMonitors.begin(); spit != mPqiServiceMonitors.end(); ++spit)
 	{
 		(*spit)->statusChange(pqiServiceMonitorChanges);
 	}
@@ -142,7 +144,7 @@ void PeerNode::takeOffline(std::list<RsPeerId> &offlineList)
 	std::list<pqipeer> pqiMonitorChanges;
 	std::list<pqiServicePeer> pqiServiceMonitorChanges;
 
-	for(it = offlineList.begin(); it != offlineList.end(); it++)
+	for(it = offlineList.begin(); it != offlineList.end(); ++it)
 	{
 		mLinkMgr->setOnlineStatus(*it, false);
 
@@ -161,13 +163,13 @@ void PeerNode::takeOffline(std::list<RsPeerId> &offlineList)
 	}
 
         std::list<pqiMonitor *>::iterator pit;
-	for(pit = mPqiMonitors.begin(); pit != mPqiMonitors.end(); pit++)
+	for(pit = mPqiMonitors.begin(); pit != mPqiMonitors.end(); ++pit)
 	{
 		(*pit)->statusChange(pqiMonitorChanges);
 	}
 
         std::list<pqiServiceMonitor *>::iterator spit;
-	for(spit = mPqiServiceMonitors.begin(); spit != mPqiServiceMonitors.end(); spit++)
+	for(spit = mPqiServiceMonitors.begin(); spit != mPqiServiceMonitors.end(); ++spit)
 	{
 		(*spit)->statusChange(pqiServiceMonitorChanges);
 	}

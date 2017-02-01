@@ -104,22 +104,21 @@ string_wrap(const QString &str, int width,
             const QString &sep, const QString &le)
 {
   QString wrapped;
-  int pos, nextsep, wordlen, n;
   int seplen = sep.length();
  
   if (str.length() < width) {
     return str;
   }
 
-  pos = 0; 
-  n = width;
+  int pos = 0;
+  int n = width;
   while (pos < str.length()) {
     /* Get the length of a "word" */
-    nextsep = str.indexOf(sep, pos);
+    int nextsep = str.indexOf(sep, pos);
     if (nextsep < 0) {
       nextsep = str.length();
     }
-    wordlen = nextsep-pos;
+    int wordlen = nextsep-pos;
 
     /* Check if there is room for the word on this line */
     if (wordlen > n) {

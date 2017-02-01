@@ -58,7 +58,7 @@ static const int UDP_DEF_TTL = 64;
 
 #define OPEN_UNIVERSAL_PORT 1
 
-
+/* UNUSED
 class   udpPacket
 {
 	public:
@@ -87,6 +87,7 @@ class   udpPacket
 	void *data;
 	int len;
 };
+*/
 
 //std::ostream &operator<<(std::ostream &out, const struct sockaddr_in &addr)
 std::ostream &operator<<(std::ostream &out, struct sockaddr_in &addr)
@@ -639,7 +640,7 @@ int RestrictedUdpLayer::receiveUdpPacket(void *data, int *size, struct sockaddr_
 		uint16_t inPort = ntohs(from.sin_port);
 
 		std::list<PortRange>::iterator it;
-		for(it = mLostPorts.begin(); it != mLostPorts.end(); it++)
+		for(it = mLostPorts.begin(); it != mLostPorts.end(); ++it)
 		{
 			if (it->inRange(inPort))
 			{
@@ -675,7 +676,7 @@ int RestrictedUdpLayer::sendUdpPacket(const void *data, int size, const struct s
 	uint16_t outPort = ntohs(to.sin_port);
 
 	std::list<PortRange>::iterator it;
-	for(it = mLostPorts.begin(); it != mLostPorts.end(); it++)
+	for(it = mLostPorts.begin(); it != mLostPorts.end(); ++it)
 	{
 		if (it->inRange(outPort))
 		{

@@ -326,7 +326,7 @@ void p3VOIP::sendPingMeasurements()
 
 	/* prepare packets */
     std::set<RsPeerId>::iterator it;
-    for(it = onlineIds.begin(); it != onlineIds.end(); it++)
+    for(it = onlineIds.begin(); it != onlineIds.end(); ++it)
 	{
 #ifdef DEBUG_VOIP
 		std::cerr << "p3VOIP::sendPingMeasurements() Pinging: " << *it;
@@ -639,7 +639,7 @@ uint32_t p3VOIP::getPongResults(const RsPeerId& id, int n, std::list<RsVOIPPongR
 
 	std::list<RsVOIPPongResult>::reverse_iterator it;
 	int i = 0;
-	for(it = peer->mPongResults.rbegin(); (it != peer->mPongResults.rend()) && (i < n); it++, i++)
+	for(it = peer->mPongResults.rbegin(); (it != peer->mPongResults.rend()) && (i < n); ++it, ++i)
 	{
 		/* reversing order - so its easy to trim later */
 		results.push_back(*it);

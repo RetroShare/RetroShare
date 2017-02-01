@@ -13,7 +13,7 @@ class GxsIsolatedServiceTester: public IsolatedServiceTester
 {
 public:
 
-	GxsIsolatedServiceTester(const RsPeerId &ownId, const RsPeerId &friendId, std::list<RsPeerId> peers, int testMode);
+	GxsIsolatedServiceTester(const RsPeerId &ownId, const RsPeerId &friendId, std::list<RsPeerId> &peers, int testMode);
 	~GxsIsolatedServiceTester();
 
 	uint32_t mTestMode;

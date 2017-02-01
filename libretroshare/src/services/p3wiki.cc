@@ -243,7 +243,7 @@ bool p3Wiki::getComments(const uint32_t &token, std::vector<RsWikiComment> &comm
 			std::vector<RsGxsMsgItem*>& msgItems = mit->second;
 			std::vector<RsGxsMsgItem*>::iterator vit = msgItems.begin();
 			
-			for(; vit != msgItems.end(); vit++)
+			for(; vit != msgItems.end(); ++vit)
 			{
 				RsGxsWikiCommentItem* item = dynamic_cast<RsGxsWikiCommentItem*>(*vit);
 				
@@ -264,7 +264,7 @@ bool p3Wiki::getComments(const uint32_t &token, std::vector<RsWikiComment> &comm
 	}
 
 	return ok;
-	return false;
+	//return false;
 }
 
 
@@ -499,7 +499,7 @@ bool generateNextDummyPage(const RsGxsMessageId &threadId, const int lines, cons
 		snapshot.mMeta.mThreadId = threadId;
 	}
 
-	std::string page;
+	//std::string page;
 	for(int i = 0; (i < lines) && (i < num_pagelines); i++)
 	{
 		snapshot.mPage += page_lines[i];

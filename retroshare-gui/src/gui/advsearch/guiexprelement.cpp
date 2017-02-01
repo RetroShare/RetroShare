@@ -399,11 +399,10 @@ void ExprParamElement::adjustForSearchType(ExprSearchType type)
     
     // remove all elements
     QList<QWidget*> children = internalframe->findChildren<QWidget*>();
-    QWidget* child;
     QLayout * lay_out = internalframe->layout();
      while (!children.isEmpty())
     {
-        child = children.takeLast();
+        QWidget* child = children.takeLast();
         child->hide();
         lay_out->removeWidget(child);
         delete child;

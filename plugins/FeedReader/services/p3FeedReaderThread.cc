@@ -226,7 +226,7 @@ static std::string calculateLink(const std::string &baseLink, const std::string 
 	} else {
 		/* check for "/" at the end */
 		std::string::reverse_iterator it = resultLink.rend ();
-		it--;
+		--it;
 		if (*it != '/') {
 			resultLink += "/";
 		}
@@ -346,7 +346,10 @@ static xmlNodePtr getNextItem(FeedFormat feedFormat, xmlNodePtr channel, xmlNode
 		item = item->next;
 	}
 	for (; item; item = item->next) {
-		if (item->type == XML_ELEMENT_NODE && xmlStrcasecmp(item->name, (feedFormat == FORMAT_ATOM) ? BAD_CAST"entry" : BAD_CAST"item") == 0) {
+		if ( (item->type == XML_ELEMENT_NODE)
+		  // cppcheck-suppress duplicateExpressionTernary
+		  && (xmlStrcasecmp(item->name, (feedFormat == FORMAT_ATOM) ? BAD_CAST"entry" : BAD_CAST"item") == 0)
+		  ) {
 			break;
 		}
 	}
@@ -1173,14 +1176,12 @@ RsFeedReaderErrorState p3FeedReaderThread::processMsg(const RsFeedReaderFeed &fe
 				nodesToDelete.clear();
 
 				if (isRunning() && result == RS_FEED_ERRORSTATE_OK) {
-					unsigned int xpathCount;
-					unsigned int xpathIndex;
 					XPathWrapper *xpath = html.createXPath();
 					if (xpath) {
 						/* process images */
 						if (xpath->compile("//img")) {
-							xpathCount = xpath->count();
-							for (xpathIndex = 0; xpathIndex < xpathCount; ++xpathIndex) {
+							unsigned int xpathCount = xpath->count();
+							for (unsigned int xpathIndex = 0; xpathIndex < xpathCount; ++xpathIndex) {
 								if (!isRunning()) {
 									break;
 								}

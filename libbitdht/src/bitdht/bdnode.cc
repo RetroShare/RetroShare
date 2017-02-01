@@ -422,7 +422,7 @@ void bdNode::iteration()
 	std::list<bdId>::iterator oit;
 	mNodeSpace.scanOutOfDatePeers(peerIds);
 
-	for(oit = peerIds.begin(); oit != peerIds.end(); oit++)
+	for(oit = peerIds.begin(); oit != peerIds.end(); ++oit)
 	{
 		send_ping(&(*oit));
 		mAccount.incCounter(BDACCOUNT_MSG_OUTOFDATEPING, true);
@@ -724,7 +724,7 @@ void bdNode::processRemoteQuery()
 						}
 					}
 
-        				for(it = nearest.begin(); it != nearest.end(); it++)
+        				for(it = nearest.begin(); it != nearest.end(); ++it)
         				{
                 				nearList.push_back(it->second);
         				}
@@ -979,7 +979,7 @@ void bdNode::msgout_reply_find_node(bdId *id, bdToken *transId, std::list<bdId> 
 	mFns->bdPrintId(std::cerr, id);
 	std::cerr << " Peers:";
 	std::list<bdId>::iterator it;
-	for(it = peers.begin(); it != peers.end(); it++)
+	for(it = peers.begin(); it != peers.end(); ++it)
 	{
 		std::cerr << " ";
 		mFns->bdPrintId(std::cerr, &(*it));
@@ -1031,7 +1031,7 @@ void bdNode::msgout_reply_hash(bdId *id, bdToken *transId, bdToken *token, std::
 
 	std::cerr << " Peers: ";
 	std::list<std::string>::iterator it;
-	for(it = values.begin(); it != values.end(); it++)
+	for(it = values.begin(); it != values.end(); ++it)
 	{
 		std::cerr << " ";
 		bdPrintCompactPeerId(std::cerr, *it);
@@ -1064,7 +1064,7 @@ void bdNode::msgout_reply_nearest(bdId *id, bdToken *transId, bdToken *token, st
 	std::cerr << " Nodes:";
 
 	std::list<bdId>::iterator it;
-	for(it = nodes.begin(); it != nodes.end(); it++)
+	for(it = nodes.begin(); it != nodes.end(); ++it)
 	{
 		std::cerr << " ";
 		mFns->bdPrintId(std::cerr, &(*it));
@@ -1931,7 +1931,7 @@ void bdNode::msgin_reply_find_node(bdId *id, bdToken *transId, std::list<bdId> &
 	std::cerr << " From: ";
 	mFns->bdPrintId(std::cerr, id);
 	std::cerr << " Peers:";
-	for(it = nodes.begin(); it != nodes.end(); it++)
+	for(it = nodes.begin(); it != nodes.end(); ++it)
 	{
 		std::cerr << " ";
 		mFns->bdPrintId(std::cerr, &(*it));
@@ -1944,7 +1944,7 @@ void bdNode::msgin_reply_find_node(bdId *id, bdToken *transId, std::list<bdId> &
 	mAccount.incCounter(BDACCOUNT_MSG_REPLYFINDNODE, false);
 
 	/* add neighbours to the potential list */
-	for(it = nodes.begin(); it != nodes.end(); it++)
+	for(it = nodes.begin(); it != nodes.end(); ++it)
 	{
 		checkPotentialPeer(&(*it), id);
 	}
@@ -1994,7 +1994,7 @@ void bdNode::msgin_reply_hash(bdId *id, bdToken *transId, bdToken *token, std::l
 
 	std::cerr << " Peers: ";
 	std::list<std::string>::iterator it;
-	for(it = values.begin(); it != values.end(); it++)
+	for(it = values.begin(); it != values.end(); ++it)
 	{
 		std::cerr << " ";
 		bdPrintCompactPeerId(std::cerr, *it);
@@ -2022,7 +2022,7 @@ void bdNode::msgin_reply_nearest(bdId *id, bdToken *transId, bdToken *token, std
 	std::cerr << " Nodes:";
 
 	std::list<bdId>::iterator it;
-	for(it = nodes.begin(); it != nodes.end(); it++)
+	for(it = nodes.begin(); it != nodes.end(); ++it)
 	{
 		std::cerr << " ";
 		mFns->bdPrintId(std::cerr, &(*it));
@@ -2437,7 +2437,7 @@ void bdNode::dropRelayServers()
 	std::list<bdNodeId>::iterator it;
 
 	mFriendList.findPeersWithFlags(flags, peerList);
-	for(it = peerList.begin(); it != peerList.end(); it++)
+	for(it = peerList.begin(); it != peerList.end(); ++it)
 	{
 		mFriendList.removePeer(&(*it));
 	}
@@ -2460,7 +2460,7 @@ void bdNode::pingRelayServers()
 	std::list<bdNodeId>::iterator it;
 
 	mFriendList.findPeersWithFlags(flags, peerList);
-	for(it = peerList.begin(); it != peerList.end(); it++)
+	for(it = peerList.begin(); it != peerList.end(); ++it)
 	{
 		if (doSearch)
 		{

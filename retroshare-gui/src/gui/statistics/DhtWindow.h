@@ -30,7 +30,7 @@ class DhtWindow : public RsAutoUpdatePage/*,  public Ui::DhtWindow*/ {
     Q_OBJECT
 public:
 
-    DhtWindow(QWidget *parent = 0);
+    explicit DhtWindow(QWidget *parent = 0);
     ~DhtWindow();
 
 	void updateNetStatus();

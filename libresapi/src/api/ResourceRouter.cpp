@@ -21,7 +21,7 @@ public:
 ResourceRouter::~ResourceRouter()
 {
     std::vector<std::pair<std::string, HandlerBase*> >::iterator vit;
-    for(vit = mHandlers.begin(); vit != mHandlers.end(); vit++)
+    for(vit = mHandlers.begin(); vit != mHandlers.end(); ++vit)
     {
         delete vit->second;
     }
@@ -32,7 +32,7 @@ ResponseTask* ResourceRouter::handleRequest(Request& req, Response& resp)
     std::vector<std::pair<std::string, HandlerBase*> >::iterator vit;
     if(!req.mPath.empty())
     {
-        for(vit = mHandlers.begin(); vit != mHandlers.end(); vit++)
+        for(vit = mHandlers.begin(); vit != mHandlers.end(); ++vit)
         {
             if(vit->first == req.mPath.top())
             {
@@ -42,7 +42,7 @@ ResponseTask* ResourceRouter::handleRequest(Request& req, Response& resp)
         }
     }
     // not found, search for wildcard handler
-    for(vit = mHandlers.begin(); vit != mHandlers.end(); vit++)
+    for(vit = mHandlers.begin(); vit != mHandlers.end(); ++vit)
     {
         if(vit->first == "*")
         {
@@ -55,10 +55,10 @@ ResponseTask* ResourceRouter::handleRequest(Request& req, Response& resp)
     return 0;
 }
 
-bool ResourceRouter::isNameUsed(std::string name)
+bool ResourceRouter::isNameUsed(std::string &name)
 {
     std::vector<std::pair<std::string, HandlerBase*> >::iterator vit;
-    for(vit = mHandlers.begin(); vit != mHandlers.end(); vit++)
+    for(vit = mHandlers.begin(); vit != mHandlers.end(); ++vit)
     {
         if(vit->first == name)
         {

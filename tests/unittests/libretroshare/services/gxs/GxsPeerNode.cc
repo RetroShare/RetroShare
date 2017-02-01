@@ -169,7 +169,7 @@ bool GxsPeerNode::checkTestServiceAllowedGroups(const RsPeerId &/*peerId*/)
 {
 #ifdef USER_NETSERVICE_WRAPPER
 	std::vector<RsGxsGroupId> groups;
-	return ((RsGxsNetServiceTester *) mTestNs)->fetchAllowedGroups(peerId, groups);
+	return (reinterpret_cast<RsGxsNetServiceTester *>(mTestNs))->fetchAllowedGroups(peerId, groups);
 #else
 	std::cerr << "GxsPeerNode::checkTestServiceAllowedGroups() not available";
 	std::cerr << std::endl;
@@ -182,7 +182,7 @@ bool GxsPeerNode::checkCircleServiceAllowedGroups(const RsPeerId &/*peerId*/)
 {
 #ifdef USER_NETSERVICE_WRAPPER
 	std::vector<RsGxsGroupId> groups;
-	return ((RsGxsNetServiceTester *) mGxsCirclesNs)->fetchAllowedGroups(peerId, groups);
+	return (reinterpret_cast<RsGxsNetServiceTester *>(mGxsCirclesNs))->fetchAllowedGroups(peerId, groups);
 #else
 	std::cerr << "GxsPeerNode::checkCircleServiceAllowedGroups() not available";
 	std::cerr << std::endl;
@@ -511,7 +511,7 @@ bool GxsPeerNode::getMsgList(const RsGxsGroupId &id, std::list<RsGxsMessageId> &
 	if (mTestService->RsGenExchange::getMsgList(token, msgResult))
 	{
 		std::vector<RsGxsMessageId>::iterator vit;
-		for(vit = msgResult[id].begin(); vit != msgResult[id].end(); vit++)
+		for(vit = msgResult[id].begin(); vit != msgResult[id].end(); ++vit)
 		{
 			msgIds.push_back(*vit);
 		}

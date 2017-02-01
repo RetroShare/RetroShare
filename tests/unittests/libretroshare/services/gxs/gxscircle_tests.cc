@@ -40,7 +40,7 @@ TEST(libretroshare_services, DISABLED_GxsCircles1)
 	RsGxsCircleId nullCircleId;
 	RsGxsId	      nullAuthorId;
         std::set<RsPgpId> nullLocalMembers;
-        std::list<RsGxsId> nullExtMembers;
+        //std::list<RsGxsId> nullExtMembers;
 
 	RsPeerId p1 = RsPeerId::random();
 	RsPeerId p2 = RsPeerId::random();
@@ -296,7 +296,7 @@ TEST(libretroshare_services, DISABLED_GxsCircles1)
 
 	// Expected Results.
 	std::map<RsPeerId, std::map<RsGxsGroupId, uint32_t> > mExpectedPeerMsgs;
-	std::list<RsGxsMessageId> emptyList;
+	//std::list<RsGxsMessageId> emptyList;
 	uint32_t expectedMsgCount = 0;
 
 	// First Group - everyone is subscribed. 4 msgs + 1.
@@ -388,7 +388,7 @@ TEST(libretroshare_services, DISABLED_GxsCircles1)
 
 	{
         	std::map<RsPeerId, RsGxsId>::iterator nit;
-		for(nit = NodeIdMap.begin(); nit != NodeIdMap.end(); nit++)
+		for(nit = NodeIdMap.begin(); nit != NodeIdMap.end(); ++nit)
 		{
 			GxsPeerNode *peerNode = tester.getGxsPeerNode(nit->first);
 
@@ -398,7 +398,7 @@ TEST(libretroshare_services, DISABLED_GxsCircles1)
 
 			std::cerr << "peer: " << nit->first << " has #Groups: " << groupList.size();
 			std::cerr << std::endl;
-			for(it = groupList.begin(); it != groupList.end(); it++)
+			for(it = groupList.begin(); it != groupList.end(); ++it)
 			{
 				std::cerr << "\t groupId: " << *it;
 				std::cerr << std::endl;
@@ -408,7 +408,7 @@ TEST(libretroshare_services, DISABLED_GxsCircles1)
 
 
 		// Now we Subscribe / Create a Msg per Group that they have
-		for(nit = NodeIdMap.begin(); nit != NodeIdMap.end(); nit++)
+		for(nit = NodeIdMap.begin(); nit != NodeIdMap.end(); ++nit)
 		{
 			GxsPeerNode *peerNode = tester.getGxsPeerNode(nit->first);
 
@@ -416,7 +416,7 @@ TEST(libretroshare_services, DISABLED_GxsCircles1)
 			std::list<RsGxsGroupId>::iterator it;
 			EXPECT_TRUE(peerNode->getGroupList(groupList));
 
-			for(it = groupList.begin(); it != groupList.end(); it++)
+			for(it = groupList.begin(); it != groupList.end(); ++it)
 			{
 				RsGxsMessageId   msgId;
 				EXPECT_TRUE(peerNode->subscribeToGroup(*it, true));
@@ -453,7 +453,7 @@ TEST(libretroshare_services, DISABLED_GxsCircles1)
 		std::cerr << std::endl;
 		// Check messages.
 		std::map<RsPeerId, std::map<RsGxsGroupId, uint32_t> >::iterator nit;
-		for(nit = mExpectedPeerMsgs.begin(); nit != mExpectedPeerMsgs.end(); nit++)
+		for(nit = mExpectedPeerMsgs.begin(); nit != mExpectedPeerMsgs.end(); ++nit)
 		{
 			std::cerr << "Node Id: " << nit->first;
 			std::cerr << std::endl;
@@ -465,7 +465,7 @@ TEST(libretroshare_services, DISABLED_GxsCircles1)
 			std::list<RsGxsGroupId>::iterator lit;
 			EXPECT_TRUE(peerNode->getGroupList(groupList));
 
-			for(git = groupMap.begin(); git != groupMap.end(); git++)
+			for(git = groupMap.begin(); git != groupMap.end(); ++git)
 			{
 				if (git->second)
 				{
@@ -485,7 +485,7 @@ TEST(libretroshare_services, DISABLED_GxsCircles1)
 						std::cerr << std::endl;
 
 						std::list<RsGxsMessageId>::iterator mit;
-						for(mit = msgList.begin(); mit != msgList.end(); mit++)
+						for(mit = msgList.begin(); mit != msgList.end(); ++mit)
 						{
 							std::cerr << "\t\tMsgId: " << *mit;
 							std::cerr << std::endl;

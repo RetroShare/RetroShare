@@ -287,7 +287,7 @@ ops_print_secret_keydata_verbose(const ops_keydata_t *key)
 static void print_unsigned_int(char *name, unsigned int val)
     {
     print_name(name);
-    printf("%d\n", val);
+    printf("%ud\n", val);
     }
 
 static void print_time( char *name, time_t time)
@@ -338,7 +338,7 @@ static void print_hexdump(const char *name,
     {
     print_name(name);
 
-    printf("len=%d, data=0x", len);
+    printf("len=%ud, data=0x", len);
     print_hex(data,len);
     printf("\n");
     }
@@ -406,19 +406,19 @@ static void print_packet_hex(const ops_packet_t *packet)
     {
     unsigned char *cur;
     int i;
-    int rem;
     int blksz=4;
 
     printf("\nhexdump of packet contents follows:\n");
 
 
-    for (i=1,cur=packet->raw; cur<(packet->raw+packet->length); cur+=blksz,i++)
+	for (i=1,cur=packet->raw; cur<(packet->raw+packet->length); cur+=blksz, i++)
 	{
-	rem = packet->raw+packet->length-cur;
-	hexdump(cur,rem<=blksz ? rem : blksz);
-	printf(" ");
-	if (!(i%8))
-	    printf("\n");
+
+		int rem = packet->raw+packet->length-cur ;
+		hexdump(cur,rem<=blksz ? rem : blksz) ;
+		printf(" ") ;
+		if ( !(i%8) )
+			printf("\n") ;
 	
 	}
     

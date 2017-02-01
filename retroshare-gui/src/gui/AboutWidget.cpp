@@ -302,12 +302,14 @@ void AWidget::drawBitField()
 AWidget::AWidget() {
     setMouseTracking(true);
 
-	density = 5;
     page = 0;
+    density = 5;
     mMaxStep = QFontMetricsF(font()).width(' ') ;
-    mStep = 1.0f ;
-    mState = 0 ;
     mImagesReady = false ;
+    mState = 0 ;
+    mTimerId = 0 ;
+    mStep = 1.0f ;
+    mMaxStep = 0 ;
 
 //    startTimer(15);
 }

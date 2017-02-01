@@ -62,7 +62,6 @@ void ops_writer_push_encrypt_se_ip(ops_create_info_t *cinfo,
 				   const ops_keydata_t *pub_key)
     {
     ops_crypt_t *encrypt;
-    unsigned char *iv=NULL;
 
     // Create arg to be used with this writer
     // Remember to free this in the destroyer
@@ -76,7 +75,7 @@ void ops_writer_push_encrypt_se_ip(ops_create_info_t *cinfo,
     // Setup the arg
     encrypt=ops_mallocz(sizeof *encrypt);
     ops_crypt_any(encrypt, encrypted_pk_session_key->symmetric_algorithm);
-    iv=ops_mallocz(encrypt->blocksize);
+    unsigned char *iv=ops_mallocz(encrypt->blocksize);
     encrypt->set_iv(encrypt, iv);
     encrypt->set_key(encrypt, &encrypted_pk_session_key->key[0]);
     ops_encrypt_init(encrypt);
@@ -98,8 +97,6 @@ static ops_boolean_t encrypt_se_ip_writer(const unsigned char *src,
                                           ops_writer_info_t *winfo)
     {
     encrypt_se_ip_arg_t *arg=ops_writer_get_arg(winfo);
-
-    ops_boolean_t rtn=ops_true;
 
     ops_memory_t *mem_literal;
     ops_create_info_t *cinfo_literal;
@@ -132,7 +129,7 @@ static ops_boolean_t encrypt_se_ip_writer(const unsigned char *src,
 	   > ops_memory_get_length(mem_compressed));
 
     // now write memory to next writer
-    rtn=ops_stacked_write(ops_memory_get_data(my_mem),
+    ops_boolean_t rtn=ops_stacked_write(ops_memory_get_data(my_mem),
                           ops_memory_get_length(my_mem),
                           errors, winfo);
     
@@ -223,8 +220,8 @@ ops_boolean_t ops_write_se_ip_pktset(const unsigned char *data,
 #ifdef DEBUG
     if (debug)
         {
-        fprintf(stderr,"writing %ld + %d + %ld\n", sz_preamble, len,
-		ops_memory_get_length(mem_mdc));
+        fprintf(stderr,"writing %zu + %u + %zu\n", sz_preamble, len
+                       , ops_memory_get_length(mem_mdc));
         }
 #endif /*DEBUG*/
 

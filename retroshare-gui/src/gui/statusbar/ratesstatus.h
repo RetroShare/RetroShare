@@ -30,7 +30,7 @@ class RatesStatus : public QWidget
     Q_OBJECT
 
 public:
-    RatesStatus(QWidget *parent = 0);
+    explicit RatesStatus(QWidget *parent = 0);
 
     void getRatesStatus(float downKb, float upKb);
     void setCompactMode(bool compact) {_compactMode = compact; }

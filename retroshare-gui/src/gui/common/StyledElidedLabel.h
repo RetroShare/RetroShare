@@ -30,7 +30,7 @@ class StyledElidedLabel : public ElidedLabel
 	Q_PROPERTY(int fontSizeFactor READ fontSizeFactor WRITE setFontSizeFactor)
 
 public:
-	StyledElidedLabel(QWidget *parent = NULL);
+	explicit StyledElidedLabel(QWidget *parent = NULL);
 	StyledElidedLabel(const QString &text, QWidget *parent = NULL);
 
 	void setFontSizeFactor(int factor);

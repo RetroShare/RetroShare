@@ -129,7 +129,10 @@ private slots:
 	void loadComment(const RsGxsGroupId &grpId, const RsGxsMessageId &msgId, const QString &title);
 
 private:
+#warning: Cppcheck(pureVirtualCall): Call of pure virtual function 'text' in constructor.
+// cppcheck-suppress pureVirtualCall
 	virtual QString text(TextType type) = 0;
+// cppcheck-suppress pureVirtualCall
 	virtual QString icon(IconType type) = 0;
 	virtual QString settingsGroupName() = 0;
 

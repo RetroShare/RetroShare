@@ -63,7 +63,7 @@ int RS_pthread_setname_np(pthread_t __target_thread, const char *__buf) {
 
 void *RsThread::rsthread_init(void* p)
 {
-  RsThread *thread = (RsThread *) p;
+  RsThread *thread = reinterpret_cast<RsThread *>(p);
   if (!thread)
   {
     return NULL;

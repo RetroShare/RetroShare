@@ -53,7 +53,7 @@ public:
 	virtual bool     getSaveInBackground();
 	virtual void     setSaveInBackground(bool saveInBackground);
 
-	virtual RsFeedAddResult addFolder(const std::string parentId, const std::string &name, std::string &feedId);
+	virtual RsFeedAddResult addFolder(const std::string &parentId, const std::string &name, std::string &feedId);
 	virtual RsFeedAddResult setFolder(const std::string &feedId, const std::string &name);
 	virtual RsFeedAddResult addFeed(const FeedInfo &feedInfo, std::string &feedId);
 	virtual RsFeedAddResult setFeed(const std::string &feedId, const FeedInfo &feedInfo);

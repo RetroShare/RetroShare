@@ -325,7 +325,6 @@ void    p3LinkMgrIMPL::statusTick()
 	std::cerr << "p3LinkMgrIMPL::statusTick()" << std::endl;
 #endif
 	std::list<RsPeerId> retryIds;
-	std::list<RsPeerId>::iterator it2;
         //std::list<std::string> dummyToRemove;
 
       {
@@ -362,18 +361,19 @@ void    p3LinkMgrIMPL::statusTick()
 
 #ifndef P3CONNMGR_NO_AUTO_CONNECTION 
 
-        for(it2 = retryIds.begin(); it2 != retryIds.end(); ++it2)
+	std::list<RsPeerId>::iterator it2;
+	for(it2 = retryIds.begin(); it2 != retryIds.end(); ++it2)
 	{
 #ifdef LINKMGR_DEBUG_TICK
 		std::cerr << "p3LinkMgrIMPL::statusTick() RETRY TIMEOUT for: ";
 		std::cerr << *it2;
 		std::cerr << std::endl;
-#endif
+#endif // LINKMGR_DEBUG_TICK
 		/* retry it! */
 		retryConnect(*it2);
 	}
 
-#endif
+#endif // P3CONNMGR_NO_AUTO_CONNECTION
 
 }
 
@@ -1076,7 +1076,6 @@ void    p3LinkMgrIMPL::peerStatus(const RsPeerId& id, const pqiIpAddrSet &addrs,
 	/* HACKED UP FIX ****/
 
         std::map<RsPeerId, peerConnectState>::iterator it;
-	bool isFriend = true;
 
 	time_t now = time(NULL);
 
@@ -1094,6 +1093,7 @@ void    p3LinkMgrIMPL::peerStatus(const RsPeerId& id, const pqiIpAddrSet &addrs,
 	uint32_t ownNetMode = mNetMgr->getNetworkMode();
 	
 	{
+		bool isFriend = true;
 		RsStackMutex stack(mLinkMtx); /****** STACK LOCK MUTEX *******/
 
 	{
@@ -1301,7 +1301,7 @@ void    p3LinkMgrIMPL::peerStatus(const RsPeerId& id, const pqiIpAddrSet &addrs,
 	}
 
 
-      } /****** STACK UNLOCK MUTEX *******/
+	} /****** STACK UNLOCK MUTEX  *******/
 	
 	bool newAddrs = mPeerMgr->updateAddressList(id, addrs);
 	if (updateNetConfig)

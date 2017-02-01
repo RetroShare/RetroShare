@@ -38,7 +38,7 @@ static const int MAX_TUNNEL_REQUESTS_DISPLAY = 10 ;
 class TRHistogram
 {
 	public:
-		TRHistogram(const std::vector<TurtleRequestDisplayInfo >& info) :_infos(info) {}
+		explicit TRHistogram(const std::vector<TurtleRequestDisplayInfo >& info) :_infos(info) {}
 
 		QColor colorScale(float f)
 		{

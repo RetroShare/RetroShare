@@ -82,7 +82,7 @@ const char* STATIC_FILES_ENTRY_PATH = "/static/";
 const char* UPLOAD_ENTRY_PATH = "/upload/";
 
 static void secure_queue_response(MHD_Connection *connection, unsigned int status_code, struct MHD_Response* response);
-static void sendMessage(MHD_Connection *connection, unsigned int status, std::string message);
+static void sendMessage(MHD_Connection *connection, unsigned int status, const std::string &message);
 
 // interface for request handler classes
 class MHDHandlerBase
@@ -101,7 +101,7 @@ public:
 class MHDUploadHandler: public MHDHandlerBase
 {
 public:
-    MHDUploadHandler(ApiServer* s): mState(BEGIN), mApiServer(s){}
+    explicit MHDUploadHandler(ApiServer* s): mState(BEGIN), mApiServer(s){}
     virtual ~MHDUploadHandler(){}
     // return MHD_NO or MHD_YES
     virtual int handleRequest(  struct MHD_Connection *connection,
@@ -160,7 +160,7 @@ public:
 class MHDApiHandler: public MHDHandlerBase
 {
 public:
-    MHDApiHandler(ApiServer* s): mState(BEGIN), mApiServer(s){}
+    explicit MHDApiHandler(ApiServer* s): mState(BEGIN), mApiServer(s){}
     virtual ~MHDApiHandler(){}
     // return MHD_NO or MHD_YES
     virtual int handleRequest(  struct MHD_Connection *connection,
@@ -388,7 +388,7 @@ static void secure_queue_response(MHD_Connection *connection, unsigned int statu
 }
 
 // wraps the given string in a html page and sends it as response with the given status code
-static void sendMessage(MHD_Connection *connection, unsigned int status, std::string message)
+static void sendMessage(MHD_Connection *connection, unsigned int status, const std::string &message)
 {
     std::string page = "<html><body><p>"+message+"</p></body></html>";
     struct MHD_Response* resp = MHD_create_response_from_data(page.size(), (void*)page.data(), 0, 1);
@@ -500,7 +500,7 @@ void ApiServerMHD::stop()
 
 int ApiServerMHD::static_acceptPolicyCallback(void *cls, const sockaddr *addr, socklen_t addrlen)
 {
-    return ((ApiServerMHD*)cls)->acceptPolicyCallback(addr, addrlen);
+    return (reinterpret_cast<ApiServerMHD*>(cls))->acceptPolicyCallback(addr, addrlen);
 }
 
 int ApiServerMHD::static_accessHandlerCallback(void* cls, struct MHD_Connection * connection,
@@ -508,14 +508,14 @@ int ApiServerMHD::static_accessHandlerCallback(void* cls, struct MHD_Connection 
                                               const char *upload_data, size_t *upload_data_size,
                                               void **con_cls)
 {
-    return ((ApiServerMHD*)cls)->accessHandlerCallback(connection, url, method, version,
+    return (reinterpret_cast<ApiServerMHD*>(cls))->accessHandlerCallback(connection, url, method, version,
                                                upload_data, upload_data_size, con_cls);
 }
 
 void ApiServerMHD::static_requestCompletedCallback(void *cls, MHD_Connection* connection,
                                                    void **con_cls, MHD_RequestTerminationCode toe)
 {
-    ((ApiServerMHD*)cls)->requestCompletedCallback(connection, con_cls, toe);
+    reinterpret_cast<ApiServerMHD*>(cls)->requestCompletedCallback(connection, con_cls, toe);
 }
 
 
@@ -592,6 +592,7 @@ int ApiServerMHD::accessHandlerCallback(MHD_Connection *connection,
         // important: binary open mode (windows)
         // else libmicrohttpd will replace crlf with lf and add garbage at the end of the file
 #ifdef O_BINARY
+        // cppcheck-suppress ConfigurationNotChecked
         int fd = open(filename.c_str(), O_RDONLY | O_BINARY);
 #else
         int fd = open(filename.c_str(), O_RDONLY);

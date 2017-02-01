@@ -30,7 +30,7 @@ class FeedItem : public QWidget
 
 public:
 	/** Default Constructor */
-	FeedItem(QWidget *parent = 0);
+	explicit FeedItem(QWidget *parent = 0);
 	/** Default Destructor */
 	virtual ~FeedItem();
 

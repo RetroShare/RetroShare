@@ -35,7 +35,7 @@ class PulseAddDialog : public QWidget
   Q_OBJECT
 
 public:
-	PulseAddDialog(QWidget *parent = 0);
+	explicit PulseAddDialog(QWidget *parent = 0);
 
 private slots:
 	void showPhotoDetails();

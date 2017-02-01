@@ -10,7 +10,7 @@ namespace resource_api
 class ChannelsHandler : public ResourceRouter
 {
 public:
-    ChannelsHandler(RsGxsChannels* channels);
+    explicit ChannelsHandler(RsGxsChannels* channels);
 
 private:
     ResponseTask* handleCreatePost(Request& req, Response& resp);

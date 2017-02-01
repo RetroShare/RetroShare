@@ -183,8 +183,8 @@ SearchDialog::SearchDialog(QWidget *parent)
 
     // set header text aligment
     QTreeWidgetItem * headerItem = ui.searchResultWidget->headerItem();
-    headerItem->setTextAlignment(SR_NAME_COL, Qt::AlignRight   | Qt::AlignRight);
-    headerItem->setTextAlignment(SR_SIZE_COL, Qt::AlignRight | Qt::AlignRight);
+    headerItem->setTextAlignment(SR_NAME_COL, Qt::AlignRight);
+    headerItem->setTextAlignment(SR_SIZE_COL, Qt::AlignRight);
 
     ui.searchResultWidget->sortItems(SR_NAME_COL, Qt::AscendingOrder);
 
@@ -380,11 +380,10 @@ void SearchDialog::download()
 	/* should also be able to handle multi-selection  */
 	QList<QTreeWidgetItem*> itemsForDownload = ui.searchResultWidget->selectedItems() ;
 	int numdls = itemsForDownload.size() ;
-	QTreeWidgetItem * item ;
 	bool attemptDownloadLocal = false ;
 
 	for (int i = 0; i < numdls; ++i) {
-		item = itemsForDownload.at(i) ;
+		QTreeWidgetItem *item = itemsForDownload.at(i) ;
 		 //  call the download
 		// *
 		if (item->text(SR_HASH_COL).isEmpty()) { // we have a folder
@@ -1166,7 +1165,6 @@ void SearchDialog::insertFile(qulonglong searchId, const FileDetail& file, int s
 	// 1 - look in result window whether the file already exists.
 	//
 	bool found = false ;
-	int sources;
 	int friendSource = 0;
 	int anonymousSource = 0;
 	QString modifiedResult;
@@ -1286,7 +1284,7 @@ void SearchDialog::insertFile(qulonglong searchId, const FileDetail& file, int s
 		} else {
 			item->setData(SR_DATA_COL, SR_ROLE_LOCAL, false);
 
-			sources = item->text(SR_SOURCES_COL).toInt();
+			int sources = item->text(SR_SOURCES_COL).toInt();
 			if (sources == 1)
 			{
 				foreground = ui.searchResultWidget->palette().color(QPalette::Text);

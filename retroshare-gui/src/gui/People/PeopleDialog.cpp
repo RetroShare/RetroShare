@@ -690,13 +690,13 @@ void PeopleDialog::cw_imageUpdatedExt()
 void PeopleDialog::fl_flowLayoutItemDroppedExt(QList<FlowLayoutItem *>flListItem, bool &bAccept)
 {
 	bAccept=false;
-	bool bCreateNewCircle=false;
 	QApplication::restoreOverrideCursor();
 
 	FlowLayoutItem *dest =
 	    qobject_cast<FlowLayoutItem *>(QObject::sender());
 	if (dest) {
 		CreateCircleDialog dlg;
+		bool bCreateNewCircle=false;
 
 		CircleWidget* cirDest = qobject_cast<CircleWidget*>(dest);
 		if (cirDest) {
@@ -752,13 +752,13 @@ void PeopleDialog::fl_flowLayoutItemDroppedExt(QList<FlowLayoutItem *>flListItem
 void PeopleDialog::fl_flowLayoutItemDroppedInt(QList<FlowLayoutItem *>flListItem, bool &bAccept)
 {
 	bAccept=false;
-	bool bCreateNewCircle=false;
 	QApplication::restoreOverrideCursor();
 
 	FlowLayoutItem *dest =
 	    qobject_cast<FlowLayoutItem *>(QObject::sender());
 	if (dest) {
 		CreateCircleDialog dlg;
+		bool bCreateNewCircle=false;
 
 		CircleWidget* cirDest = qobject_cast<CircleWidget*>(dest);
 		if (cirDest) {
@@ -864,14 +864,14 @@ void PeopleDialog::pf_dragMoveEventOccurs(QDragMoveEvent *event)
 
 void PeopleDialog::pf_dropEventOccursExt(QDropEvent *event)
 {
-	bool bCreateNewCircle=false;
-	bool atLeastOne = false;
 	QApplication::restoreOverrideCursor();
 
 	int index = pictureFlowWidgetExternal->centerIndex();
 	CircleWidget* cirDest = _extListCir[index];
 	if (cirDest) {
 		CreateCircleDialog dlg;
+		bool bCreateNewCircle=false;
+		bool atLeastOne = false;
 
 		dlg.addCircle(cirDest->circleDetails());
 
@@ -901,7 +901,7 @@ void PeopleDialog::pf_dropEventOccursExt(QDropEvent *event)
 
 		QWidget *wid =
 		    qobject_cast<QWidget *>(event->source());//QT5 return QObject
-		FlowLayout *layout;
+		FlowLayout *layout = NULL;
 		if (wid) layout =
 		    qobject_cast<FlowLayout *>(wid->layout());
 		if (layout) {
@@ -954,14 +954,14 @@ void PeopleDialog::pf_dropEventOccursExt(QDropEvent *event)
 
 void PeopleDialog::pf_dropEventOccursInt(QDropEvent *event)
 		{
-	bool bCreateNewCircle=false;
-	bool atLeastOne = false;
 	QApplication::restoreOverrideCursor();
 
 	int index = pictureFlowWidgetInternal->centerIndex();
 	CircleWidget* cirDest = _intListCir[index];
 	if (cirDest) {
 		CreateCircleDialog dlg;
+		bool bCreateNewCircle=false;
+		bool atLeastOne = false;
 
 		dlg.addCircle(cirDest->circleDetails());
 
@@ -991,7 +991,7 @@ void PeopleDialog::pf_dropEventOccursInt(QDropEvent *event)
 
 		QWidget *wid =
 		    qobject_cast<QWidget *>(event->source());//QT5 return QObject
-		FlowLayout *layout;
+		FlowLayout *layout = NULL;
 		if (wid) layout =
 		    qobject_cast<FlowLayout *>(wid->layout());
 		if (layout) {

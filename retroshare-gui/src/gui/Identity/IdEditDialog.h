@@ -42,7 +42,7 @@ class IdEditDialog : public QDialog, public TokenResponse
 	Q_OBJECT
 
 public:
-	IdEditDialog(QWidget *parent = 0);
+	explicit IdEditDialog(QWidget *parent = 0);
 	~IdEditDialog();
 
 	void setupNewId(bool pseudo, bool enable_anon = true);

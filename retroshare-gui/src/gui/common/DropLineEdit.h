@@ -30,7 +30,7 @@ class DropLineEdit : public QLineEdit
 	Q_OBJECT
 
 public:
-	DropLineEdit(QWidget *parent = 0);
+	explicit DropLineEdit(QWidget *parent = 0);
 
 	void setAcceptText(bool on);
 	void setAcceptFile(bool on);

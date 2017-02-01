@@ -36,7 +36,7 @@ class GetStartedDialog : public MainPage
 
 public:
 	/** Default Constructor */
-	GetStartedDialog(QWidget *parent = 0);
+	explicit GetStartedDialog(QWidget *parent = 0);
 	/** Default Destructor */
 	~GetStartedDialog();
 

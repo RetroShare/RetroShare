@@ -145,6 +145,8 @@ void NotifyQt::notifyOwnAvatarChanged()
 	emit ownAvatarChanged() ;
 }
 
+#warning: Cppcheck(noCopyConstructor): class 'SignatureEventData' does not have a copy constructor which is recommended since the class contains a pointer to allocated memory.
+// cppcheck-suppress noCopyConstructor
 class SignatureEventData
 {
 	public:
@@ -490,7 +492,7 @@ void NotifyQt::notifyChatLobbyTimeShift(int shift)
 void NotifyQt::handleChatLobbyTimeShift(int /*shift*/)
 {
 	return ; // we say nothing. The help dialog of lobbies explains this already.
-	static bool already = false ;
+/*	static bool already = false ;
 
 	if(!already)
 	{
@@ -500,6 +502,7 @@ void NotifyQt::handleChatLobbyTimeShift(int /*shift*/)
 
 		QMessageBox::warning(NULL,tr("Please check your system clock."),string) ;
 	}
+*/
 }
 
 void NotifyQt::notifyChatLobbyEvent(uint64_t lobby_id,uint32_t event_type,const RsGxsId& nickname,const std::string& str)

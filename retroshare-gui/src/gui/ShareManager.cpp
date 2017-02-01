@@ -401,6 +401,7 @@ void ShareManager::dropEvent(QDropEvent *event)
 	QStringList formats = event->mimeData()->formats();
 	QStringList::iterator it;
 
+// cppcheck-suppress variableScope
 	bool errorShown = false;
 
 	if (event->mimeData()->hasUrls()) {

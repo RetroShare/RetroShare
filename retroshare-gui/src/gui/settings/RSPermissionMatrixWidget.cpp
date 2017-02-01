@@ -189,7 +189,7 @@ void RSPermissionMatrixWidget::mouseMoveEvent(QMouseEvent *e)
     }
     else
     {
-        service_id = ~0 ;
+        //service_id = ~0 ;
         peer_id.clear() ;
     }
 }
@@ -262,7 +262,7 @@ void RSPermissionMatrixWidget::paintEvent(QPaintEvent *)
                   it = ssllist.erase(it);
                   break;
               default:
-                  it++;
+                  ++it;
                   break;
               }
           }
@@ -515,7 +515,7 @@ void RSPermissionMatrixWidget::paintEvent(QPaintEvent *)
       _painter->drawText(QPointF(x,y), peer_name)     ; y += line_height ;
       _painter->drawText(QPointF(x,y), peer_id)       ; y += line_height ;
       _painter->drawText(QPointF(x,y), remote_status) ; y += line_height ;
-      _painter->drawText(QPointF(x,y), local_status)  ; y += line_height ;
+      _painter->drawText(QPointF(x,y), local_status)  ; //y += line_height ;
   }
 
   _max_height = S*fMATRIX_START_Y + (peer_ids.size()+3) * S*fROW_SIZE ;

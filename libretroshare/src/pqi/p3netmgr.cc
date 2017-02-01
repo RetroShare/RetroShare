@@ -696,7 +696,6 @@ void p3NetMgrIMPL::netExtCheck()
 
 	{
 		RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
-		bool isStable = false;
 		struct sockaddr_storage tmpip ;
 
 		std::map<sockaddr_storage,ZeroInt> address_votes ;
@@ -719,11 +718,10 @@ void p3NetMgrIMPL::netExtCheck()
 				{
 					if(rsBanList->isAddressAccepted(tmpip,RSBANLIST_CHECKING_FLAGS_BLACKLIST))
 					{
-						// must be stable???
-						isStable = true;
 						//mNetFlags.mExtAddr = tmpip;
 						mNetFlags.mExtAddrOk = true;
-						mNetFlags.mExtAddrStableOk = isStable;
+						// must be stable???
+						mNetFlags.mExtAddrStableOk = true;
 
 						address_votes[tmpip].n++ ;
                         
@@ -751,22 +749,21 @@ void p3NetMgrIMPL::netExtCheck()
 #if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
 			std::cerr << "p3NetMgrIMPL::netExtCheck() Ext Not Ok, Checking DhtStunner" << std::endl;
 #endif
-			uint8_t isstable = 0;
 			struct sockaddr_storage tmpaddr;
 			sockaddr_storage_clear(tmpaddr);
 
 			if (mDhtStunner)
 			{
+				uint8_t isstable = 0;
 				/* input network bits */
 				if (mDhtStunner->getExternalAddr(tmpaddr, isstable))
 				{
 					if(rsBanList->isAddressAccepted(tmpaddr,RSBANLIST_CHECKING_FLAGS_BLACKLIST))
 					{
-						// must be stable???
-						isStable = (isstable == 1);
 						//mNetFlags.mExtAddr = tmpaddr;
+						// must be stable???
 						mNetFlags.mExtAddrOk = true;
-						mNetFlags.mExtAddrStableOk = isStable;
+						mNetFlags.mExtAddrStableOk = (isstable == 1);
 
 						address_votes[tmpaddr].n++ ;
 #ifdef	NETMGR_DEBUG_STATEBOX
@@ -922,8 +919,8 @@ void p3NetMgrIMPL::netExtCheck()
 				//pqiNotify *notify = getPqiNotify();
 				//if (notify)
 				{
-					std::string title =
-					                "Warning: Bad Firewall Configuration";
+					//std::string title =
+					//                "Warning: Bad Firewall Configuration";
 
 					std::string msg;
 					msg +=  "               **** WARNING ****     \n";
@@ -1813,7 +1810,7 @@ void p3NetMgrIMPL::updateNetStateBox_temporal()
 		std::cerr << std::endl;
 		std::cerr << "\tNetState: " << netstatestr;
 		std::cerr << std::endl;
-		std::cerr << "\tConnectModes: " << netstatestr;
+		std::cerr << "\tConnectModes: " << connectstr;
 		std::cerr << std::endl;
 		std::cerr << "\tNetworkMode: " << netmodestr;
 		std::cerr << std::endl;

@@ -1027,7 +1027,7 @@ static Value DeserializeArray(std::string& str, std::stack<StackDepthType>& dept
 		}
 	}
 
-	return a;
+	return Value(a);
 }
 
 static Value DeserializeObj(const std::string& _str, std::stack<StackDepthType>& depth_stack)
@@ -1066,7 +1066,7 @@ static Value DeserializeObj(const std::string& _str, std::stack<StackDepthType>&
 			return Value();
 	}
 
-	return obj;
+	return Value(obj);
 }
 
 Value json::Deserialize(const std::string &str)

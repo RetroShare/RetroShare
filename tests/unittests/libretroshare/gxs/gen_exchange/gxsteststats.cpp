@@ -17,6 +17,7 @@ void GxsTestStats::runTests()
     testServiceStatistics();
 }
 
+#ifdef UNUSED
 void GxsTestStats::testGroupStatistics()
 {
     setUp();
@@ -67,6 +68,7 @@ void GxsTestStats::testGroupStatistics()
 
 
 }
+#endif
 
 void GxsTestStats::testServiceStatistics()
 {

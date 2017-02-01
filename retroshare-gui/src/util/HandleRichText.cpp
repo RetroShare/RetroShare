@@ -56,7 +56,7 @@ enum EmbeddedType
 class EmbedInHtml
 {
 protected:
-	EmbedInHtml(EmbeddedType newType) : myType(newType) {}
+	explicit EmbedInHtml(EmbeddedType newType) : myType(newType) {}
 
 public:
 	const EmbeddedType myType;

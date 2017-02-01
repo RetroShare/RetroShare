@@ -33,7 +33,7 @@ class GxsCircleChooser : public QComboBox
         Q_OBJECT
 
 public:
-	GxsCircleChooser(QWidget *parent = NULL);
+	explicit GxsCircleChooser(QWidget *parent = NULL);
 
     void loadCircles(const RsGxsCircleId &defaultId);
 	bool getChosenCircle(RsGxsCircleId &id);

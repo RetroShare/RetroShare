@@ -35,7 +35,7 @@ class GxsCommentTreeWidget : public QTreeWidget, public TokenResponse
     Q_OBJECT
         
 public:
-    GxsCommentTreeWidget(QWidget *parent = 0);
+    explicit GxsCommentTreeWidget(QWidget *parent = 0);
     ~GxsCommentTreeWidget();
     void setup(RsTokenService *token_service, RsGxsCommentService *comment_service);
 

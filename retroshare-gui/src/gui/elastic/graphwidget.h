@@ -55,7 +55,7 @@ class GraphWidget : public QGraphicsView
     Q_OBJECT
 
 public:
-    GraphWidget(QWidget * = NULL);
+	explicit GraphWidget(QWidget * = NULL);
 
 	 typedef int NodeId ;
 	 typedef int EdgeId ;

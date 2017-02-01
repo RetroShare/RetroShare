@@ -10,7 +10,7 @@
 class FakeServiceControl: public p3ServiceControl
 {
     public:
-        FakeServiceControl(p3LinkMgr *lm)
+        explicit FakeServiceControl(p3LinkMgr *lm)
             : p3ServiceControl(lm),mLink(lm)
         {
         }

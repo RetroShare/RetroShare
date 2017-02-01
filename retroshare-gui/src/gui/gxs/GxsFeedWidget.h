@@ -33,7 +33,7 @@ class GxsFeedWidget : public RSFeedWidget
 	Q_OBJECT
 
 public:
-	GxsFeedWidget(QWidget *parent = 0);
+	explicit GxsFeedWidget(QWidget *parent = 0);
 	virtual ~GxsFeedWidget();
 
 	GxsFeedItem *findGxsFeedItem(const RsGxsGroupId &groupId, const RsGxsMessageId &messageId);

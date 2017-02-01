@@ -12,6 +12,8 @@ class PeerNode;
 class RsSerialType;
 class RsSerialiser;
 
+#warning: Cppcheck(noCopyConstructor): class 'SetServiceTester' does not have a copy constructor which is recommended since the class contains a pointer to allocated memory.
+// cppcheck-suppress noCopyConstructor
 class SetServiceTester
 {
 public:
@@ -61,7 +63,7 @@ private:
 	bool tickUntilEvent(int max_ticks, EventType eventType);
 
 	RsItem *convertToRsItem(RsRawItem *rawitem, bool toDelete);
-	RsRawItem *convertToRsRawItem(RsItem *item, bool toDelete);
+//UNUSED	RsRawItem *convertToRsRawItem(RsItem *item, bool toDelete);
 
 
 	time_t mRefTime;	
