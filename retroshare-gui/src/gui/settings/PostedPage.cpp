@@ -32,18 +32,11 @@ PostedPage::PostedPage(QWidget * parent, Qt::WindowFlags flags)
 
 	/* Initialize GroupFrameSettingsWidget */
 	ui->groupFrameSettingsWidget->setOpenAllInNewTabText(tr("Open each topic in a new tab"));
+	ui->groupFrameSettingsWidget->setType(GroupFrameSettings::Posted);
 }
 
 PostedPage::~PostedPage()
 {
-}
-
-/** Saves the changes on this page */
-bool PostedPage::save(QString &/*errmsg*/)
-{
-	ui->groupFrameSettingsWidget->saveSettings(GroupFrameSettings::Posted);
-
-	return true;
 }
 
 /** Loads the settings for this page */

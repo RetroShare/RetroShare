@@ -33,14 +33,21 @@ public:
 	PeoplePage(QWidget * parent = 0, Qt::WindowFlags flags = 0);
 	~PeoplePage();
 
-	/** Saves the changes on this page */
-	virtual bool save(QString &errmsg);
 	/** Loads the settings for this page */
 	virtual void load();
 
 	virtual QPixmap iconPixmap() const { return QPixmap(":/icons/settings/people.svg") ; }
 	virtual QString pageName() const { return tr("People") ; }
 	virtual QString helpText() const { return ""; }
+
+protected slots:
+    void updateAutoPositiveOpinion() ;
+
+    void updateThresholdForRemotelyPositiveReputation();
+    void updateThresholdForRemotelyNegativeReputation();
+
+    void updateRememberDeletedNodes();
+    void updateDeleteBannedNodesThreshold() ;
 
 private:
 	Ui::PeoplePage ui;

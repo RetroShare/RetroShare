@@ -24,24 +24,32 @@
 
 #include <QDialog>
 #include <retroshare-gui/configpage.h>
-#include "ui_settings.h"
+#include "ui_settingsw.h"
+#include "mainpage.h"
 
 class FloatingHelpBrowser;
 
-class RSettingsWin: public QDialog
+#define IMAGE_PREFERENCES       ":/icons/png/options.png"
+
+class SettingsPage: public MainPage
 {
 	Q_OBJECT
 
 public:
+	SettingsPage(QWidget *parent = 0);
+
 	enum PageType { LastPage = -1, General = 0, Server, Transfer,Relay,
 					Directories, Plugins, Notify, Security, Message, Forum, Chat, Appearance, Sound, Fileassociations };
 
 	static void showYourself(QWidget *parent, PageType page = LastPage);
-	static void postModDirectories(bool update_local);
+
+	void postModDirectories(bool update_local);
+
+	virtual QIcon iconPixmap() const { return QIcon(IMAGE_PREFERENCES) ; } //MainPage
+	virtual QString pageName() const { return tr("Preferences") ; } //MainPage
 
 protected:
-	RSettingsWin(QWidget *parent = 0);
-	~RSettingsWin();
+	~SettingsPage();
 
 	void addPage(ConfigPage*) ;
 
@@ -50,16 +58,17 @@ public slots:
 	void setNewPage(int page);
 
 private slots:
-	/** Called when user clicks "Save Settings" */
-	void saveChanges();
-	void dialogFinished(int result);
+	void notifySettingsChanged();
+
+	// Called when user clicks "Save Settings"
+	//void saveChanges();
+	//void dialogFinished(int result);
 
 private:
 	void initStackedWidget();
 
 private:
 	FloatingHelpBrowser *mHelpBrowser;
-	static RSettingsWin *_instance;
 	static int lastPage;
 
 	/* UI - from Designer */

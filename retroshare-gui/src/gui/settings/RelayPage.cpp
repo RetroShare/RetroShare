@@ -51,6 +51,16 @@ RelayPage::RelayPage(QWidget * parent, Qt::WindowFlags flags)
 
 	QObject::connect(ui.enableCheckBox,SIGNAL(stateChanged(int)),this,SLOT(updateEnabled()));
 	QObject::connect(ui.serverCheckBox,SIGNAL(stateChanged(int)),this,SLOT(updateEnabled()));
+
+	QObject::connect(ui.noFriendSpinBox,SIGNAL(valueChanged(int)),this,SLOT(updateTotals()));
+	QObject::connect(ui.bandFriendSpinBox,SIGNAL(valueChanged(int)),this,SLOT(updateTotals()));
+	QObject::connect(ui.noFOFSpinBox,SIGNAL(valueChanged(int)),this,SLOT(updateTotals()));
+	QObject::connect(ui.bandFOFSpinBox,SIGNAL(valueChanged(int)),this,SLOT(updateTotals()));
+	QObject::connect(ui.noGeneralSpinBox,SIGNAL(valueChanged(int)),this,SLOT(updateTotals()));
+	QObject::connect(ui.bandGeneralSpinBox,SIGNAL(valueChanged(int)),this,SLOT(updateTotals()));
+
+	QObject::connect(ui.enableCheckBox,SIGNAL(toggled(bool)),this,SLOT(updateRelayMode()));
+	QObject::connect(ui.serverCheckBox,SIGNAL(toggled(bool)),this,SLOT(updateRelayMode()));
 }
 
 QString RelayPage::helpText() const
@@ -66,10 +76,8 @@ QString RelayPage::helpText() const
 				  is encrypted and authenticated by the two relayed nodes.</p>") ;
 }
 
-	/** Saves the changes on this page */
-bool RelayPage::save(QString &/*errmsg*/)
+void RelayPage::updateTotals()
 {
-
 	int nFriends = ui.noFriendSpinBox->value();
 	int friendBandwidth = ui.bandFriendSpinBox->value();
 
@@ -85,7 +93,12 @@ bool RelayPage::save(QString &/*errmsg*/)
 	rsDht->setRelayAllowance(RSDHT_RELAY_CLASS_FRIENDS, nFriends, 1024 * friendBandwidth);
 	rsDht->setRelayAllowance(RSDHT_RELAY_CLASS_FOF, nFOF, 1024 * fofBandwidth);
 	rsDht->setRelayAllowance(RSDHT_RELAY_CLASS_GENERAL, nGeneral, 1024 * genBandwidth);
+}
 
+/** Saves the changes on this page */
+
+void RelayPage::updateRelayMode()
+{
 	uint32_t relayMode = 0;
 	if (ui.enableCheckBox->isChecked())
 	{
@@ -106,7 +119,6 @@ bool RelayPage::save(QString &/*errmsg*/)
 	}
 
 	rsDht->setRelayMode(relayMode);
-	return true;
 }
 
 	/** Loads the settings for this page */
@@ -182,13 +194,9 @@ void RelayPage::updateRelayOptions()
 	int genBandwidth = ui.bandGeneralSpinBox->value();
 
 	ui.totalFriendLineEdit->setText(QString::number(nFriends * friendBandwidth * 2));
-
 	ui.totalFOFLineEdit->setText(QString::number(nFOF * fofBandwidth * 2));
-
 	ui.totalGeneralLineEdit->setText(QString::number(nGeneral * genBandwidth * 2));
-
 	ui.totalBandwidthLineEdit->setText(QString::number((nFriends * friendBandwidth + nFOF * fofBandwidth + nGeneral * genBandwidth) * 2));
-
 	ui.noTotalLineEdit->setText(QString::number(nFriends + nFOF + nGeneral));
 }
 

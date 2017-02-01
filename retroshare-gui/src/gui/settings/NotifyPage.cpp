@@ -37,106 +37,151 @@
 NotifyPage::NotifyPage(QWidget * parent, Qt::WindowFlags flags)
   : ConfigPage(parent, flags)
 {
-  /* Invoke the Qt Designer generated object setup routine */
-  ui.setupUi(this);
+	/* Invoke the Qt Designer generated object setup routine */
+	ui.setupUi(this);
 
-  connect(ui.testFeedButton, SIGNAL(clicked()), this, SLOT(testFeed()));
-  connect(ui.testToasterButton, SIGNAL(clicked()), this, SLOT(testToaster()));
-  connect(ui.pushButtonDisableAll,SIGNAL(toggled(bool)), NotifyQt::getInstance(), SLOT(SetDisableAll(bool)));
-  connect(NotifyQt::getInstance(),SIGNAL(disableAllChanged(bool)), ui.pushButtonDisableAll, SLOT(setChecked(bool)));
-  connect(ui.chatLobbies_CountFollowingText,SIGNAL(toggled(bool)),ui.chatLobbies_TextToNotify,SLOT(setEnabled(bool)));
+	connect(ui.testFeedButton, SIGNAL(clicked()), this, SLOT(testFeed()));
+	connect(ui.testToasterButton, SIGNAL(clicked()), this, SLOT(testToaster()));
+	connect(ui.pushButtonDisableAll,SIGNAL(toggled(bool)), NotifyQt::getInstance(), SLOT(SetDisableAll(bool)));
+	connect(NotifyQt::getInstance(),SIGNAL(disableAllChanged(bool)), ui.pushButtonDisableAll, SLOT(setChecked(bool)));
+	connect(ui.chatLobbies_CountFollowingText,SIGNAL(toggled(bool)),ui.chatLobbies_TextToNotify,SLOT(setEnabled(bool)));
 
-  ui.notify_Blogs->hide();
+	ui.notify_Blogs->hide();
 
-  QFont font = ui.notify_Peers->font(); // use font from existing checkbox
+	QFont font = ui.notify_Peers->font(); // use font from existing checkbox
 
-  /* add feed and Toaster notify */
-  int rowFeed = 0;
-  int rowToaster = 0;
-  int pluginCount = rsPlugins->nbPlugins();
-  for (int i = 0; i < pluginCount; ++i) {
-      RsPlugin *rsPlugin = rsPlugins->plugin(i);
-      if (rsPlugin) {
-          FeedNotify *feedNotify = rsPlugin->qt_feedNotify();
-          if (feedNotify) {
-              QString name;
-              if (feedNotify->hasSetting(name)) {
+	/* add feed and Toaster notify */
+	int rowFeed = 0;
+	int rowToaster = 0;
+	int pluginCount = rsPlugins->nbPlugins();
+	for (int i = 0; i < pluginCount; ++i)
+	{
+		RsPlugin *rsPlugin = rsPlugins->plugin(i);
+		if (rsPlugin) {
+			FeedNotify *feedNotify = rsPlugin->qt_feedNotify();
+			if (feedNotify) {
+				QString name;
+				if (feedNotify->hasSetting(name)) {
 
-                  QCheckBox *enabledCheckBox = new QCheckBox(name, this);
-                  enabledCheckBox->setFont(font);
-                  ui.feedLayout->addWidget(enabledCheckBox, rowFeed++);
+					QCheckBox *enabledCheckBox = new QCheckBox(name, this);
+					enabledCheckBox->setFont(font);
+					ui.feedLayout->addWidget(enabledCheckBox, rowFeed++);
 
-                  mFeedNotifySettingList.push_back(FeedNotifySetting(feedNotify, enabledCheckBox));
-              }
-          }
+					mFeedNotifySettingList.push_back(FeedNotifySetting(feedNotify, enabledCheckBox));
 
-          ToasterNotify *toasterNotify = rsPlugin->qt_toasterNotify();
-          if (toasterNotify) {
-              QString name;
-              if (toasterNotify->hasSetting(name)) {
+                    connect(enabledCheckBox,SIGNAL(toggled(bool)),this,SLOT(updateFeedNotifySettings())) ;
+				}
+			}
 
-                  QCheckBox *enabledCheckBox = new QCheckBox(name, this);
-                  enabledCheckBox->setFont(font);
-                  ui.toasterLayout->addWidget(enabledCheckBox, rowToaster++);
+			ToasterNotify *toasterNotify = rsPlugin->qt_toasterNotify();
+			if (toasterNotify) {
+				QString name;
+				if (toasterNotify->hasSetting(name)) {
 
-                  mToasterNotifySettingList.push_back(ToasterNotifySetting(toasterNotify, enabledCheckBox));
-              }
+					QCheckBox *enabledCheckBox = new QCheckBox(name, this);
+					enabledCheckBox->setFont(font);
+					ui.toasterLayout->addWidget(enabledCheckBox, rowToaster++);
 
-              QMap<QString, QString> map;
-              if (toasterNotify->hasSettings(name, map)) {
-                  if (!map.empty()){
-                      QWidget* widget = new QWidget();
-                      QVBoxLayout* vbLayout = new QVBoxLayout(widget);
-                      QLabel *label = new QLabel(name, this);
-                      QFont fontBold = QFont(font);
-                      fontBold.setBold(true);
-                      label->setFont(fontBold);
-                      vbLayout->addWidget(label);
-                      for (QMap<QString, QString>::const_iterator it = map.begin(); it != map.end(); ++it){
-                          QCheckBox *enabledCheckBox = new QCheckBox(it.value(), this);
-                          enabledCheckBox->setAccessibleName(it.key());
-                          enabledCheckBox->setFont(font);
-                          vbLayout->addWidget(enabledCheckBox);
-                          mToasterNotifySettingList.push_back(ToasterNotifySetting(toasterNotify, enabledCheckBox));
-                      }
-                      ui.toasterLayout->addWidget(widget, rowToaster++);
-                  }
-              }
-          }
-      }
-  }
+					mToasterNotifySettingList.push_back(ToasterNotifySetting(toasterNotify, enabledCheckBox));
 
-  /* add user notify */
-  const QList<UserNotify*> &userNotifyList = MainWindow::getInstance()->getUserNotifyList();
-  QList<UserNotify*>::const_iterator it;
-  rowFeed = 0;
-  mChatLobbyUserNotify = 0;
-  for (it = userNotifyList.begin(); it != userNotifyList.end(); ++it) {
-      UserNotify *userNotify = *it;
+                    connect(enabledCheckBox,SIGNAL(toggled(bool)),this,SLOT(updateToasterNotifySettings())) ;
+				}
 
-      QString name;
-      if (!userNotify->hasSetting(&name, NULL)) {
-          continue;
-      }
+				QMap<QString, QString> map;
+				if (toasterNotify->hasSettings(name, map)) {
+					if (!map.empty()){
+						QWidget* widget = new QWidget();
+						QVBoxLayout* vbLayout = new QVBoxLayout(widget);
+						QLabel *label = new QLabel(name, this);
+						QFont fontBold = QFont(font);
+						fontBold.setBold(true);
+						label->setFont(fontBold);
+						vbLayout->addWidget(label);
+						for (QMap<QString, QString>::const_iterator it = map.begin(); it != map.end(); ++it){
+							QCheckBox *enabledCheckBox = new QCheckBox(it.value(), this);
+							enabledCheckBox->setAccessibleName(it.key());
+							enabledCheckBox->setFont(font);
+							vbLayout->addWidget(enabledCheckBox);
+							mToasterNotifySettingList.push_back(ToasterNotifySetting(toasterNotify, enabledCheckBox));
 
-      QCheckBox *enabledCheckBox = new QCheckBox(name, this);
-      enabledCheckBox->setFont(font);
-      ui.notifyLayout->addWidget(enabledCheckBox, rowFeed, 0, 0);
-      connect(enabledCheckBox, SIGNAL(toggled(bool)), this, SLOT(notifyToggled()));
+							connect(enabledCheckBox,SIGNAL(toggled(bool)),this,SLOT(updateToasterNotifySettings())) ;
+						}
+						ui.toasterLayout->addWidget(widget, rowToaster++);
+					}
+				}
+			}
+		}
 
-      QCheckBox *combinedCheckBox = new QCheckBox(tr("Combined"), this);
-      combinedCheckBox->setFont(font);
-      ui.notifyLayout->addWidget(combinedCheckBox, rowFeed, 1);
+	}
 
-      QCheckBox *blinkCheckBox = new QCheckBox(tr("Blink"), this);
-      blinkCheckBox->setFont(font);
-      ui.notifyLayout->addWidget(blinkCheckBox, rowFeed++, 2);
+	        /* add user notify */
+	        const QList<UserNotify*> &userNotifyList = MainWindow::getInstance()->getUserNotifyList();
+	QList<UserNotify*>::const_iterator it;
+	rowFeed = 0;
+	mChatLobbyUserNotify = 0;
+	for (it = userNotifyList.begin(); it != userNotifyList.end(); ++it) {
+		UserNotify *userNotify = *it;
 
-      mUserNotifySettingList.push_back(UserNotifySetting(userNotify, enabledCheckBox, combinedCheckBox, blinkCheckBox));
+		QString name;
+		if (!userNotify->hasSetting(&name, NULL)) {
+			continue;
+		}
 
-      //To get ChatLobbyUserNotify Settings
-      if (!mChatLobbyUserNotify) mChatLobbyUserNotify = dynamic_cast<ChatLobbyUserNotify*>(*it);
-  }
+		QCheckBox *enabledCheckBox = new QCheckBox(name, this);
+		enabledCheckBox->setFont(font);
+		ui.notifyLayout->addWidget(enabledCheckBox, rowFeed, 0, 0);
+		connect(enabledCheckBox, SIGNAL(toggled(bool)), this, SLOT(notifyToggled()));
+
+		QCheckBox *combinedCheckBox = new QCheckBox(tr("Combined"), this);
+		combinedCheckBox->setFont(font);
+		ui.notifyLayout->addWidget(combinedCheckBox, rowFeed, 1);
+
+		QCheckBox *blinkCheckBox = new QCheckBox(tr("Blink"), this);
+		blinkCheckBox->setFont(font);
+		ui.notifyLayout->addWidget(blinkCheckBox, rowFeed++, 2);
+
+		mUserNotifySettingList.push_back(UserNotifySetting(userNotify, enabledCheckBox, combinedCheckBox, blinkCheckBox));
+
+		connect(enabledCheckBox,SIGNAL(toggled(bool)),this,SLOT(updateUserNotifySettings())) ;
+		connect(blinkCheckBox,SIGNAL(toggled(bool)),this,SLOT(updateUserNotifySettings())) ;
+		connect(combinedCheckBox,SIGNAL(toggled(bool)),this,SLOT(updateUserNotifySettings())) ;
+
+		//To get ChatLobbyUserNotify Settings
+		if (!mChatLobbyUserNotify) mChatLobbyUserNotify = dynamic_cast<ChatLobbyUserNotify*>(*it);
+	}
+
+	connect(ui.popup_Connect,           SIGNAL(toggled(bool)), this, SLOT(updateNotifyFlags())) ;
+	connect(ui.popup_NewMsg,            SIGNAL(toggled(bool)), this, SLOT(updateNotifyFlags())) ;
+	connect(ui.popup_DownloadFinished,  SIGNAL(toggled(bool)), this, SLOT(updateNotifyFlags())) ;
+	connect(ui.popup_PrivateChat,       SIGNAL(toggled(bool)), this, SLOT(updateNotifyFlags())) ;
+	connect(ui.popup_GroupChat,         SIGNAL(toggled(bool)), this, SLOT(updateNotifyFlags())) ;
+	connect(ui.popup_ChatLobby,         SIGNAL(toggled(bool)), this, SLOT(updateNotifyFlags())) ;
+	connect(ui.popup_ConnectAttempt,    SIGNAL(toggled(bool)), this, SLOT(updateNotifyFlags())) ;
+
+	connect(ui.message_ConnectAttempt,  SIGNAL(toggled(bool)), this, SLOT(updateMessageFlags())) ;
+
+	connect(ui.notify_Peers,        SIGNAL(toggled(bool)), this, SLOT(updateNewsFeedFlags()));
+	connect(ui.notify_Channels,     SIGNAL(toggled(bool)), this, SLOT(updateNewsFeedFlags()));
+	connect(ui.notify_Forums,       SIGNAL(toggled(bool)), this, SLOT(updateNewsFeedFlags()));
+	connect(ui.notify_Posted,       SIGNAL(toggled(bool)), this, SLOT(updateNewsFeedFlags()));
+	connect(ui.notify_Messages,     SIGNAL(toggled(bool)), this, SLOT(updateNewsFeedFlags()));
+	connect(ui.notify_Chat,         SIGNAL(toggled(bool)), this, SLOT(updateNewsFeedFlags()));
+	connect(ui.notify_Security,     SIGNAL(toggled(bool)), this, SLOT(updateNewsFeedFlags()));
+	connect(ui.notify_SecurityIp,   SIGNAL(toggled(bool)), this, SLOT(updateNewsFeedFlags()));
+
+    connect(ui.systray_ChatLobby,   SIGNAL(toggled(bool)),this,SLOT(updateSystrayChatLobby()));
+    connect(ui.systray_GroupChat,   SIGNAL(toggled(bool)),this,SLOT(updateSystrayGroupChat()));
+
+    connect(ui.spinBoxToasterXMargin, SIGNAL(valueChanged(int)),this, SLOT(updateToasterMargin())) ;
+    connect(ui.spinBoxToasterYMargin, SIGNAL(valueChanged(int)),this, SLOT(updateToasterMargin())) ;
+
+	connect(ui.comboBoxToasterPosition,  SIGNAL(currentIndexChanged(int)),this, SLOT(updateToasterPosition())) ;
+
+	connect(ui.chatLobbies_CountUnRead,        SIGNAL(toggled(bool)),this, SLOT(updateChatLobbyUserNotify())) ;
+	connect(ui.chatLobbies_CheckNickName,      SIGNAL(toggled(bool)),this, SLOT(updateChatLobbyUserNotify())) ;
+	connect(ui.chatLobbies_CountFollowingText, SIGNAL(toggled(bool)),this, SLOT(updateChatLobbyUserNotify())) ;
+	connect(ui.chatLobbies_TextToNotify,       SIGNAL(textChanged(QString)),this, SLOT(updateChatLobbyUserNotify()));
+	connect(ui.chatLobbies_TextCaseSensitive,  SIGNAL(toggled(bool)),this, SLOT(updateChatLobbyUserNotify())) ;
 }
 
 NotifyPage::~NotifyPage()
@@ -203,64 +248,62 @@ uint NotifyPage::getNotifyFlags()
     return notifyFlags;
 }
 
-/** Saves the changes on this page */
-bool
-NotifyPage::save(QString &/*errmsg*/)
+
+void NotifyPage::updateFeedNotifySettings()
 {
-    /* extract from rsNotify the flags */
+	/* save feed notify */
+	QList<FeedNotifySetting>::iterator feedNotifyIt;
+	for (feedNotifyIt = mFeedNotifySettingList.begin(); feedNotifyIt != mFeedNotifySettingList.end(); ++feedNotifyIt)
+		feedNotifyIt->mFeedNotify->setNotifyEnabled(feedNotifyIt->mEnabledCheckBox->isChecked());
+}
 
-    uint messageflags = 0;
-
-    if (ui.message_ConnectAttempt->isChecked())
-        messageflags |= RS_MESSAGE_CONNECT_ATTEMPT;
-
-    /* save feed notify */
-    QList<FeedNotifySetting>::iterator feedNotifyIt;
-    for (feedNotifyIt = mFeedNotifySettingList.begin(); feedNotifyIt != mFeedNotifySettingList.end(); ++feedNotifyIt) {
-        feedNotifyIt->mFeedNotify->setNotifyEnabled(feedNotifyIt->mEnabledCheckBox->isChecked());
-    }
-
+void NotifyPage::updateToasterNotifySettings()
+{
     /* save toaster notify */
     QList<ToasterNotifySetting>::iterator toasterNotifyIt;
     for (toasterNotifyIt = mToasterNotifySettingList.begin(); toasterNotifyIt != mToasterNotifySettingList.end(); ++toasterNotifyIt) {
-        if(toasterNotifyIt->mEnabledCheckBox->accessibleName().isEmpty()){
+        if(toasterNotifyIt->mEnabledCheckBox->accessibleName().isEmpty())
             toasterNotifyIt->mToasterNotify->setNotifyEnabled(toasterNotifyIt->mEnabledCheckBox->isChecked()) ;
-        } else {
+        else
             toasterNotifyIt->mToasterNotify->setNotifyEnabled(toasterNotifyIt->mEnabledCheckBox->accessibleName(), toasterNotifyIt->mEnabledCheckBox->isChecked()) ;
-        }
     }
+}
 
-    /* save user notify */
-    QList<UserNotifySetting>::iterator notifyIt;
-    for (notifyIt = mUserNotifySettingList.begin(); notifyIt != mUserNotifySettingList.end(); ++notifyIt) {
-        notifyIt->mUserNotify->setNotifyEnabled(notifyIt->mEnabledCheckBox->isChecked(), notifyIt->mCombinedCheckBox->isChecked(), notifyIt->mBlinkCheckBox->isChecked());
-    }
+void NotifyPage::updateUserNotifySettings()
+{
+	/* save user notify */
+	QList<UserNotifySetting>::iterator notifyIt;
+	for (notifyIt = mUserNotifySettingList.begin(); notifyIt != mUserNotifySettingList.end(); ++notifyIt)
+		notifyIt->mUserNotify->setNotifyEnabled(notifyIt->mEnabledCheckBox->isChecked(), notifyIt->mCombinedCheckBox->isChecked(), notifyIt->mBlinkCheckBox->isChecked());
 
-    Settings->setNotifyFlags(getNotifyFlags());
-    Settings->setNewsFeedFlags(getNewsFlags());
-    Settings->setMessageFlags(messageflags);
+	MainWindow::installNotifyIcons();
+}
 
-    Settings->setDisplayTrayChatLobby(ui.systray_ChatLobby->isChecked());
-    Settings->setDisplayTrayGroupChat(ui.systray_GroupChat->isChecked());
-    MainWindow::installGroupChatNotifier();
-    MainWindow::installNotifyIcons();
+void NotifyPage::updateMessageFlags() {  Settings->setMessageFlags( ui.message_ConnectAttempt->isChecked()? RS_MESSAGE_CONNECT_ATTEMPT : 0); }
+void NotifyPage::updateNotifyFlags()  {	 Settings->setNotifyFlags(getNotifyFlags()); }
+void NotifyPage::updateNewsFeedFlags(){  Settings->setNewsFeedFlags(getNewsFlags()); }
 
+void NotifyPage::updateSystrayChatLobby() { Settings->setDisplayTrayChatLobby(ui.systray_ChatLobby->isChecked()); }
+void NotifyPage::updateSystrayGroupChat() { Settings->setDisplayTrayGroupChat(ui.systray_GroupChat->isChecked()); MainWindow::installGroupChatNotifier(); }
+void NotifyPage::updateToasterMargin()    { Settings->setToasterMargin(QPoint(ui.spinBoxToasterXMargin->value(), ui.spinBoxToasterYMargin->value())); }
+
+void NotifyPage::updateToasterPosition()
+{
     int index = ui.comboBoxToasterPosition->currentIndex();
-    if (index != -1) {
+    if (index != -1)
         Settings->setToasterPosition((RshareSettings::enumToasterPosition) ui.comboBoxToasterPosition->itemData(index).toInt());
-    }
+}
 
-    Settings->setToasterMargin(QPoint(ui.spinBoxToasterXMargin->value(), ui.spinBoxToasterYMargin->value()));
+void NotifyPage::updateChatLobbyUserNotify()
+{
+	if(!mChatLobbyUserNotify)
+		return ;
 
-    if (mChatLobbyUserNotify){
-        mChatLobbyUserNotify->setCountUnRead(ui.chatLobbies_CountUnRead->isChecked()) ;
-        mChatLobbyUserNotify->setCheckForNickName(ui.chatLobbies_CheckNickName->isChecked()) ;
-        mChatLobbyUserNotify->setCountSpecificText(ui.chatLobbies_CountFollowingText->isChecked()) ;
-        mChatLobbyUserNotify->setTextToNotify(ui.chatLobbies_TextToNotify->document()->toPlainText());
-        mChatLobbyUserNotify->setTextCaseSensitive(ui.chatLobbies_TextCaseSensitive->isChecked());
-    }
-    load();
-    return true;
+	mChatLobbyUserNotify->setCountUnRead(ui.chatLobbies_CountUnRead->isChecked()) ;
+	mChatLobbyUserNotify->setCheckForNickName(ui.chatLobbies_CheckNickName->isChecked()) ;
+	mChatLobbyUserNotify->setCountSpecificText(ui.chatLobbies_CountFollowingText->isChecked()) ;
+	mChatLobbyUserNotify->setTextToNotify(ui.chatLobbies_TextToNotify->document()->toPlainText());
+	mChatLobbyUserNotify->setTextCaseSensitive(ui.chatLobbies_TextCaseSensitive->isChecked());
 }
 
 /** Loads the settings for this page */

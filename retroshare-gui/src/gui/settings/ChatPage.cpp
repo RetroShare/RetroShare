@@ -93,6 +93,117 @@ static QString loadStyleInfo(ChatStyle::enumStyleType type, QListWidget *listWid
     }
     return stylePath;
 }
+void ChatPage::updateFontsAndEmotes()
+{
+    Settings->beginGroup(QString("Chat"));
+    Settings->setValue("Emoteicons_PrivatChat", ui.checkBox_emoteprivchat->isChecked());
+    Settings->setValue("Emoteicons_GroupChat", ui.checkBox_emotegroupchat->isChecked());
+    Settings->setValue("EnableCustomFonts", ui.checkBox_enableCustomFonts->isChecked());
+    Settings->setValue("EnableCustomFontSize", ui.checkBox_enableCustomFontSize->isChecked());
+	Settings->setValue("MinimumFontSize", ui.minimumFontSize->value());
+    Settings->setValue("EnableBold", ui.checkBox_enableBold->isChecked());
+    Settings->setValue("EnableItalics", ui.checkBox_enableItalics->isChecked());
+    Settings->setValue("MinimumContrast", ui.minimumContrast->value());
+    Settings->endGroup();
+}
+
+/** Saves the changes on this page */
+void ChatPage::updateChatParams()
+{
+	// state of distant Chat combobox
+	Settings->setValue("DistantChat", ui.distantChatComboBox->currentIndex());
+
+	Settings->setChatScreenFont(fontTempChat.toString());
+	NotifyQt::getInstance()->notifyChatFontChanged();
+
+	Settings->setChatSendMessageWithCtrlReturn(ui.sendMessageWithCtrlReturn->isChecked());
+	Settings->setChatSendAsPlainTextByDef(ui.sendAsPlainTextByDef->isChecked());
+	Settings->setChatLoadEmbeddedImages(ui.loadEmbeddedImages->isChecked());
+	Settings->setChatDoNotSendIsTyping(ui.DontSendTyping->isChecked());
+}
+
+void ChatPage::updateChatSearchParams()
+{
+	Settings->setChatSearchCharToStartSearch(ui.sbSearch_CharToStart->value());
+	Settings->setChatSearchCaseSensitively(ui.cbSearch_CaseSensitively->isChecked());
+	Settings->setChatSearchWholeWords(ui.cbSearch_WholeWords->isChecked());
+	Settings->setChatSearchMoveToCursor(ui.cbSearch_MoveToCursor->isChecked());
+	Settings->setChatSearchSearchWithoutLimit(ui.cbSearch_WithoutLimit->isChecked());
+	Settings->setChatSearchMaxSearchLimitColor(ui.sbSearch_MaxLimitColor->value());
+	Settings->setChatSearchFoundColor(rgbChatSearchFoundColor);
+}
+
+void ChatPage::updateDefaultLobbyIdentity()
+{
+    RsGxsId chosen_id ;
+	switch(ui.chatLobbyIdentity_IC->getChosenId(chosen_id))
+	{
+	case GxsIdChooser::KnowId:
+	case GxsIdChooser::UnKnowId:
+		rsMsgs->setDefaultIdentityForChatLobby(chosen_id) ;
+		break ;
+
+	default:;
+	}
+}
+
+
+void ChatPage::updateHistoryParams()
+{
+	Settings->setPublicChatHistoryCount(ui.publicChatLoadCount->value());
+	Settings->setPrivateChatHistoryCount(ui.privateChatLoadCount->value());
+	Settings->setLobbyChatHistoryCount(ui.lobbyChatLoadCount->value());
+
+	rsHistory->setEnable(RS_HISTORY_TYPE_PUBLIC , ui.publicChatEnable->isChecked());
+	rsHistory->setEnable(RS_HISTORY_TYPE_PRIVATE, ui.privateChatEnable->isChecked());
+	rsHistory->setEnable(RS_HISTORY_TYPE_LOBBY  , ui.lobbyChatEnable->isChecked());
+
+	rsHistory->setSaveCount(RS_HISTORY_TYPE_PUBLIC , ui.publicChatSaveCount->value());
+    rsHistory->setSaveCount(RS_HISTORY_TYPE_PRIVATE, ui.privateChatSaveCount->value());
+    rsHistory->setSaveCount(RS_HISTORY_TYPE_LOBBY  , ui.lobbyChatSaveCount->value());
+}
+
+void ChatPage::updatePublicStyle()
+{
+	ChatStyleInfo info;
+	QListWidgetItem *item = ui.publicList->currentItem();
+	if (item) {
+		info = item->data(Qt::UserRole).value<ChatStyleInfo>();
+		if (publicStylePath != info.stylePath || publicStyleVariant != ui.publicComboBoxVariant->currentText()) {
+			Settings->setPublicChatStyle(info.stylePath, ui.publicComboBoxVariant->currentText());
+			NotifyQt::getInstance()->notifyChatStyleChanged(ChatStyle::TYPE_PUBLIC);
+		}
+	}
+}
+
+void ChatPage::updatePrivateStyle()
+{
+	ChatStyleInfo info;
+	QListWidgetItem *item = ui.privateList->currentItem();
+	if (item) {
+		info = item->data(Qt::UserRole).value<ChatStyleInfo>();
+		if (privateStylePath != info.stylePath || privateStyleVariant != ui.privateComboBoxVariant->currentText()) {
+			Settings->setPrivateChatStyle(info.stylePath, ui.privateComboBoxVariant->currentText());
+			NotifyQt::getInstance()->notifyChatStyleChanged(ChatStyle::TYPE_PRIVATE);
+		}
+	}
+}
+
+void ChatPage::updateHistoryStyle()
+{
+	ChatStyleInfo info;
+	QListWidgetItem *item = ui.historyList->currentItem();
+	if (item) {
+		info = item->data(Qt::UserRole).value<ChatStyleInfo>();
+		if (historyStylePath != info.stylePath || historyStyleVariant != ui.historyComboBoxVariant->currentText()) {
+			Settings->setHistoryChatStyle(info.stylePath, ui.historyComboBoxVariant->currentText());
+			NotifyQt::getInstance()->notifyChatStyleChanged(ChatStyle::TYPE_HISTORY);
+		}
+	}
+}
+
+void ChatPage::updateHistoryStorage() { rsHistory->setMaxStorageDuration(ui.max_storage_period->value() * 86400) ; }
+
 
 /** Constructor */
 ChatPage::ChatPage(QWidget * parent, Qt::WindowFlags flags)
@@ -101,121 +212,87 @@ ChatPage::ChatPage(QWidget * parent, Qt::WindowFlags flags)
     /* Invoke the Qt Designer generated object setup routine */
     ui.setupUi(this);
 
-       connect(ui.distantChatComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(distantChatComboBoxChanged(int)));
-
 #if QT_VERSION < 0x040600
     ui.minimumContrastLabel->hide();
     ui.minimumContrast->hide();
 #endif
+	connect(ui.distantChatComboBox,        SIGNAL(currentIndexChanged(int)), this, SLOT(distantChatComboBoxChanged(int)));
+
+	connect(ui.checkBox_emoteprivchat,     SIGNAL(toggled(bool)),            this, SLOT(updateFontsAndEmotes()));
+	connect(ui.checkBox_emotegroupchat,    SIGNAL(toggled(bool)),            this, SLOT(updateFontsAndEmotes()));
+	connect(ui.checkBox_enableCustomFonts, SIGNAL(toggled(bool)),            this, SLOT(updateFontsAndEmotes()));
+	connect(ui.minimumFontSize,            SIGNAL(valueChanged(int)),        this, SLOT(updateFontsAndEmotes()));
+	connect(ui.checkBox_enableBold,        SIGNAL(toggled(bool)),            this, SLOT(updateFontsAndEmotes()));
+	connect(ui.checkBox_enableItalics,     SIGNAL(toggled(bool)),            this, SLOT(updateFontsAndEmotes()));
+	connect(ui.minimumContrast,            SIGNAL(valueChanged(int)),        this, SLOT(updateFontsAndEmotes()));
+
+	connect(ui.distantChatComboBox,        SIGNAL(currentIndexChanged(int)), this, SLOT(updateChatParams()));
+	connect(ui.sendMessageWithCtrlReturn,  SIGNAL(toggled(bool)),            this, SLOT(updateChatParams()));
+	connect(ui.sendAsPlainTextByDef,       SIGNAL(toggled(bool)),            this, SLOT(updateChatParams()));
+	connect(ui.loadEmbeddedImages,         SIGNAL(toggled(bool)),            this, SLOT(updateChatParams()));
+	connect(ui.DontSendTyping,             SIGNAL(toggled(bool)),            this, SLOT(updateChatParams()));
+
+	connect(ui.sbSearch_CharToStart,       SIGNAL(valueChanged(int)),        this, SLOT(updateChatSearchParams()));
+	connect(ui.cbSearch_CaseSensitively,   SIGNAL(toggled(bool)),            this, SLOT(updateChatSearchParams()));
+	connect(ui.cbSearch_WholeWords,        SIGNAL(toggled(bool)),            this, SLOT(updateChatSearchParams()));
+	connect(ui.cbSearch_MoveToCursor,      SIGNAL(toggled(bool)),            this, SLOT(updateChatSearchParams()));
+	connect(ui.cbSearch_WithoutLimit,      SIGNAL(toggled(bool)),            this, SLOT(updateChatSearchParams()));
+	connect(ui.sbSearch_MaxLimitColor,     SIGNAL(valueChanged(int)),        this, SLOT(updateChatSearchParams()));
+
+	connect(ui.chatLobbyIdentity_IC,       SIGNAL(currentIndexChanged(int)), this, SLOT(updateDefaultLobbyIdentity()));
+
+	connect(ui.publicChatLoadCount,        SIGNAL(valueChanged(int)),        this, SLOT(updateHistoryParams()));
+	connect(ui.privateChatLoadCount,       SIGNAL(valueChanged(int)),        this, SLOT(updateHistoryParams()));
+	connect(ui.lobbyChatLoadCount,         SIGNAL(valueChanged(int)),        this, SLOT(updateHistoryParams()));
+	connect(ui.publicChatEnable,           SIGNAL(toggled(bool)),            this, SLOT(updateHistoryParams()));
+	connect(ui.privateChatEnable,          SIGNAL(toggled(bool)),            this, SLOT(updateHistoryParams()));
+	connect(ui.lobbyChatEnable,            SIGNAL(toggled(bool)),            this, SLOT(updateHistoryParams()));
+	connect(ui.publicChatSaveCount,        SIGNAL(valueChanged(int)),        this, SLOT(updateHistoryParams()));
+	connect(ui.privateChatSaveCount,       SIGNAL(valueChanged(int)),        this, SLOT(updateHistoryParams()));
+	connect(ui.lobbyChatSaveCount,         SIGNAL(valueChanged(int)),        this, SLOT(updateHistoryParams()));
+
+    connect(ui.publicList,                 SIGNAL(currentRowChanged(int)),   this, SLOT(updatePublicStyle())) ;
+    connect(ui.publicComboBoxVariant,      SIGNAL(currentIndexChanged(int)), this, SLOT(updatePublicStyle())) ;
+
+    connect(ui.privateList,                SIGNAL(currentRowChanged(int)),   this, SLOT(updatePrivateStyle())) ;
+    connect(ui.privateComboBoxVariant,     SIGNAL(currentIndexChanged(int)), this, SLOT(updatePrivateStyle())) ;
+
+    connect(ui.historyList,                SIGNAL(currentRowChanged(int)),   this, SLOT(updateHistoryStyle())) ;
+    connect(ui.historyComboBoxVariant,     SIGNAL(currentIndexChanged(int)), this, SLOT(updateHistoryStyle())) ;
+
+    connect(ui.max_storage_period,         SIGNAL(valueChanged(int)),        this, SLOT(updateHistoryStorage())) ;
+
+	connect(ui.chat_NewWindow,             SIGNAL(toggled(bool)),            this, SLOT(updateChatFlags()));
+	connect(ui.chat_Focus,                 SIGNAL(toggled(bool)),            this, SLOT(updateChatFlags()));
+	connect(ui.chat_tabbedWindow,          SIGNAL(toggled(bool)),            this, SLOT(updateChatFlags()));
+	connect(ui.chat_Blink,                 SIGNAL(toggled(bool)),            this, SLOT(updateChatFlags()));
+
+	connect(ui.chatLobby_Blink,            SIGNAL(toggled(bool)),            this, SLOT(updateChatLobbyFlags()));
+}
+void ChatPage::updateChatFlags()
+{
+	uint chatflags   = 0;
+
+	if (ui.chat_NewWindow->isChecked())
+		chatflags |= RS_CHAT_OPEN;
+	if (ui.chat_Focus->isChecked())
+		chatflags |= RS_CHAT_FOCUS;
+	if (ui.chat_tabbedWindow->isChecked())
+		chatflags |= RS_CHAT_TABBED_WINDOW;
+	if (ui.chat_Blink->isChecked())
+		chatflags |= RS_CHAT_BLINK;
+
+	Settings->setChatFlags(chatflags);
 }
 
-/** Saves the changes on this page */
-bool
-ChatPage::save(QString &/*errmsg*/)
+void ChatPage::updateChatLobbyFlags()
 {
-    Settings->beginGroup(QString("Chat"));
-    Settings->setValue("Emoteicons_PrivatChat", ui.checkBox_emoteprivchat->isChecked());
-    Settings->setValue("Emoteicons_GroupChat", ui.checkBox_emotegroupchat->isChecked());
-    Settings->setValue("EnableCustomFonts", ui.checkBox_enableCustomFonts->isChecked());
-    Settings->setValue("EnableCustomFontSize", ui.checkBox_enableCustomFontSize->isChecked());
-		Settings->setValue("MinimumFontSize", ui.minimumFontSize->value());
-    Settings->setValue("EnableBold", ui.checkBox_enableBold->isChecked());
-    Settings->setValue("EnableItalics", ui.checkBox_enableItalics->isChecked());
-    Settings->setValue("MinimumContrast", ui.minimumContrast->value());
-    Settings->endGroup();
-    // state of distant Chat combobox
-    Settings->setValue("DistantChat", ui.distantChatComboBox->currentIndex());
+	uint chatLobbyFlags = 0;
 
-    Settings->setChatScreenFont(fontTempChat.toString());
-    NotifyQt::getInstance()->notifyChatFontChanged();
+	if (ui.chatLobby_Blink->isChecked())
+		chatLobbyFlags |= RS_CHATLOBBY_BLINK;
 
-    Settings->setChatSendMessageWithCtrlReturn(ui.sendMessageWithCtrlReturn->isChecked());
-    Settings->setChatSendAsPlainTextByDef(ui.sendAsPlainTextByDef->isChecked());
-    Settings->setChatLoadEmbeddedImages(ui.loadEmbeddedImages->isChecked());
-    Settings->setChatDoNotSendIsTyping(ui.DontSendTyping->isChecked());	
-	
-    Settings->setChatSearchCharToStartSearch(ui.sbSearch_CharToStart->value());
-    Settings->setChatSearchCaseSensitively(ui.cbSearch_CaseSensitively->isChecked());
-    Settings->setChatSearchWholeWords(ui.cbSearch_WholeWords->isChecked());
-    Settings->setChatSearchMoveToCursor(ui.cbSearch_MoveToCursor->isChecked());
-    Settings->setChatSearchSearchWithoutLimit(ui.cbSearch_WithoutLimit->isChecked());
-    Settings->setChatSearchMaxSearchLimitColor(ui.sbSearch_MaxLimitColor->value());
-    Settings->setChatSearchFoundColor(rgbChatSearchFoundColor);
-
-    Settings->setPublicChatHistoryCount(ui.publicChatLoadCount->value());
-    Settings->setPrivateChatHistoryCount(ui.privateChatLoadCount->value());
-    Settings->setLobbyChatHistoryCount(ui.lobbyChatLoadCount->value());
-
-    rsHistory->setEnable(RS_HISTORY_TYPE_PUBLIC , ui.publicChatEnable->isChecked());
-    rsHistory->setEnable(RS_HISTORY_TYPE_PRIVATE, ui.privateChatEnable->isChecked());
-    rsHistory->setEnable(RS_HISTORY_TYPE_LOBBY  , ui.lobbyChatEnable->isChecked());
-
-    rsHistory->setSaveCount(RS_HISTORY_TYPE_PUBLIC , ui.publicChatSaveCount->value());
-    rsHistory->setSaveCount(RS_HISTORY_TYPE_PRIVATE, ui.privateChatSaveCount->value());
-    rsHistory->setSaveCount(RS_HISTORY_TYPE_LOBBY  , ui.lobbyChatSaveCount->value());
-
-    RsGxsId chosen_id ;
-    switch(ui.chatLobbyIdentity_IC->getChosenId(chosen_id))
-    {
-        case GxsIdChooser::KnowId:
-        case GxsIdChooser::UnKnowId:
-        rsMsgs->setDefaultIdentityForChatLobby(chosen_id) ;
-        break ;
-
-        default:;
-    }
-
-    ChatStyleInfo info;
-    QListWidgetItem *item = ui.publicList->currentItem();
-    if (item) {
-        info = item->data(Qt::UserRole).value<ChatStyleInfo>();
-        if (publicStylePath != info.stylePath || publicStyleVariant != ui.publicComboBoxVariant->currentText()) {
-            Settings->setPublicChatStyle(info.stylePath, ui.publicComboBoxVariant->currentText());
-            NotifyQt::getInstance()->notifyChatStyleChanged(ChatStyle::TYPE_PUBLIC);
-        }
-    }
-
-    item = ui.privateList->currentItem();
-    if (item) {
-        info = item->data(Qt::UserRole).value<ChatStyleInfo>();
-        if (privateStylePath != info.stylePath || privateStyleVariant != ui.privateComboBoxVariant->currentText()) {
-            Settings->setPrivateChatStyle(info.stylePath, ui.privateComboBoxVariant->currentText());
-            NotifyQt::getInstance()->notifyChatStyleChanged(ChatStyle::TYPE_PRIVATE);
-        }
-    }
-
-    item = ui.historyList->currentItem();
-    if (item) {
-        info = item->data(Qt::UserRole).value<ChatStyleInfo>();
-        if (historyStylePath != info.stylePath || historyStyleVariant != ui.historyComboBoxVariant->currentText()) {
-            Settings->setHistoryChatStyle(info.stylePath, ui.historyComboBoxVariant->currentText());
-            NotifyQt::getInstance()->notifyChatStyleChanged(ChatStyle::TYPE_HISTORY);
-        }
-    }
-
-	 rsHistory->setMaxStorageDuration(ui.max_storage_period->value() * 86400) ;
-
-    uint chatflags   = 0;
-
-    if (ui.chat_NewWindow->isChecked())
-        chatflags |= RS_CHAT_OPEN;
-    if (ui.chat_Focus->isChecked())
-        chatflags |= RS_CHAT_FOCUS;
-    if (ui.chat_tabbedWindow->isChecked())
-        chatflags |= RS_CHAT_TABBED_WINDOW;
-    if (ui.chat_Blink->isChecked())
-        chatflags |= RS_CHAT_BLINK;
-
-    Settings->setChatFlags(chatflags);
-
-    uint chatLobbyFlags = 0;
-
-    if (ui.chatLobby_Blink->isChecked())
-        chatLobbyFlags |= RS_CHATLOBBY_BLINK;
-
-    Settings->setChatLobbyFlags(chatLobbyFlags);
-
-    return true;
+	Settings->setChatLobbyFlags(chatLobbyFlags);
 }
 
 /** Loads the settings for this page */

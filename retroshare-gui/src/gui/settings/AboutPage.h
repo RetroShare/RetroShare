@@ -1,7 +1,7 @@
 /****************************************************************
  *  RetroShare is distributed under the following license:
  *
- *  Copyright (C) 2006, crypton
+ *  Copyright (C) 2006 - 2009 RetroShare Team
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU General Public License
@@ -19,20 +19,32 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#include "NetworkPage.h"
-#include "rshare.h"
+#pragma once
 
-NetworkPage::NetworkPage(QWidget * parent, Qt::WindowFlags flags)
-    : ConfigPage(parent, flags)
+#include <QFileDialog>
+
+#include <retroshare-gui/configpage.h>
+#include "ui_AboutPage.h"
+
+class AboutPage : public ConfigPage
 {
-    ui.setupUi(this);
-    setAttribute(Qt::WA_QuitOnClose, false);
+	Q_OBJECT
 
-}
+public:
+	/** Default Constructor */
+	AboutPage(QWidget * parent = 0, Qt::WindowFlags flags = 0);
+	/** Default Destructor */
+	~AboutPage();
 
-/** Loads the settings for this page */
-void
-NetworkPage::load()
-{
-}
+	/** Loads the settings for this page */
+	virtual void load();
 
+	virtual QPixmap iconPixmap() const { return QPixmap(":/icons/settings/sound.svg") ; }
+	virtual QString pageName() const { return tr("About") ; }
+	virtual QString helpText() const { return ""; }
+
+private:
+
+	/** Qt Designer generated object */
+	Ui::AboutPage ui;
+};

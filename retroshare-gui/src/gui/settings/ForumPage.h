@@ -33,14 +33,18 @@ public:
 	ForumPage(QWidget * parent = 0, Qt::WindowFlags flags = 0);
 	~ForumPage();
 
-	/** Saves the changes on this page */
-	virtual bool save(QString &errmsg);
 	/** Loads the settings for this page */
 	virtual void load();
 
 	virtual QPixmap iconPixmap() const { return QPixmap(":/icons/settings/forums.svg") ; }
 	virtual QString pageName() const { return tr("Forum") ; }
 	virtual QString helpText() const { return ""; }
+
+protected slots:
+    void updateMsgReadOnActivate();
+    void updateExpandNewMessages();
+    void updateLoadEmbeddedImages();
+    void updateLoadEmoticons();
 
 private:
 	Ui::ForumPage ui;

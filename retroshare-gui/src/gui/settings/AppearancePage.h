@@ -23,6 +23,7 @@
 #define _APPERARANCEPAGE_H
 
 #include <retroshare-gui/configpage.h>
+#include "gui/MainWindow.h"
 #include "ui_AppearancePage.h"
 
 class AppearancePage : public ConfigPage
@@ -33,8 +34,6 @@ public:
 	/** Default Constructor */
 	AppearancePage(QWidget * parent = 0, Qt::WindowFlags flags = 0);
 
-	/** Saves the changes on this page */
-	virtual bool save(QString &errmsg);
 	/** Loads the settings for this page */
 	virtual void load();
 
@@ -45,7 +44,35 @@ public:
 private slots:
 	void loadStyleSheet(int index);
 
+    void switch_status_grpStatus(bool b)   ;
+    void switch_status_compactMode(bool b) ;
+    void switch_status_showToolTip(bool b) ;
+    void switch_status_ShowStatus(bool)  ;
+    void switch_status_ShowPeer(bool)    ;
+    void switch_status_ShowDHT(bool)    ;
+    void switch_status_ShowHashing(bool) ;
+    void switch_status_ShowDisc(bool)    ;
+    void switch_status_ShowRate(bool)    ;
+    void switch_status_ShowOpMode(bool)  ;
+    void switch_status_ShowSound(bool)   ;
+    void switch_status_ShowToaster(bool) ;
+    void switch_status_ShowSystray(bool) ;
+
+    void updateLanguageCode()    ;
+    void updateInterfaceStyle()  ;
+    void updateSheetName()       ;
+    void updateRbtPageOnToolBar();
+    void updateActionButtonLoc() ;
+    void updateStatusToolTip()   ;
+
+	void updateCmboToolButtonStyle();
+	void updateCmboToolButtonSize();
+	void updateCmboListItemSize();
+
+	void updateStyle() ;
 private:
+	void switch_status(MainWindow::StatusElement s,const QString& key,bool b);
+
 	/** Qt Designer generated object */
 	Ui::AppearancePage ui;
 };

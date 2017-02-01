@@ -47,8 +47,6 @@ public:
     ServerPage(QWidget * parent = 0, Qt::WindowFlags flags = 0);
     ~ServerPage() {}
 
-    /** Saves the changes on this page */
-    virtual bool save(QString &errmsg);
     /** Loads the settings for this page */
     virtual void load();
 
@@ -81,6 +79,8 @@ private slots:
 
     // server
     void saveAddresses();
+    void saveRates();
+	void updateShowDiscStatusBar() ;
     void toggleUPnP();
     void toggleIpDetermination(bool) ;
     void toggleTunnelConnection(bool) ;
