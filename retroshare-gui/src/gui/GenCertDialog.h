@@ -41,9 +41,8 @@ private slots:
 	void genPerson();
 	void importIdentity();
 	void exportIdentity();
-	void newGPGKeyGenUiSetup();
+	void setupState();
 	void grabMouse();
-    void updateUiSetup();
 
 private:
 	void init();
