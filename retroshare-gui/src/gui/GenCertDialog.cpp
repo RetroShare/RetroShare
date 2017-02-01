@@ -136,7 +136,7 @@ GenCertDialog::GenCertDialog(bool onlyGenerateIdentity, QWidget *parent)
 	ui.headerFrame->setHeaderImage(QPixmap(":/icons/svg/profile.svg"));
 	ui.headerFrame->setHeaderText(tr("Create a new profile"));
 
-	connect(ui.reuse_existing_node_CB, SIGNAL(clicked()), this, SLOT(setupState()));
+	connect(ui.reuse_existing_node_CB, SIGNAL(clicked()), this, SLOT(switchReuseExistingNode()));
 	connect(ui.adv_checkbox, SIGNAL(clicked()), this, SLOT(setupState()));
 	connect(ui.nodeType_CB, SIGNAL(currentIndexChanged(int)), this, SLOT(setupState()));
 
@@ -172,7 +172,8 @@ GenCertDialog::GenCertDialog(bool onlyGenerateIdentity, QWidget *parent)
 	 * mark last one as default.
 	 */
 
-	init();
+	initKeyList();
+    setupState();
 }
 
 GenCertDialog::~GenCertDialog()
@@ -180,7 +181,21 @@ GenCertDialog::~GenCertDialog()
 	entropy_timer->stop() ;
 }
 
-void GenCertDialog::init()
+void GenCertDialog::switchReuseExistingNode()
+{
+    if(ui.reuse_existing_node_CB->isChecked())
+    {
+        // import an existing identity if needed. If none is available, keep the box unchecked.
+
+        if(!haveGPGKeys && !importIdentity())
+			ui.reuse_existing_node_CB->setChecked(false);
+    }
+
+	initKeyList();
+    setupState();
+}
+
+void GenCertDialog::initKeyList()
 {
 	std::cerr << "Finding PGPUsers" << std::endl;
 
@@ -189,62 +204,19 @@ void GenCertDialog::init()
 	std::list<RsPgpId> pgpIds;
 	std::list<RsPgpId>::iterator it;
 	haveGPGKeys = false;
-#ifdef TO_REMOVE
-	/* replace with true/false below */
-	if (!mOnlyGenerateIdentity) {
-#endif
-		if (RsAccounts::GetPGPLogins(pgpIds)) {
-			for(it = pgpIds.begin(); it != pgpIds.end(); ++it)
-			{
-				QVariant userData(QString::fromStdString( (*it).toStdString() ));
-				std::string name, email;
-				RsAccounts::GetPGPLoginDetails(*it, name, email);
-				std::cerr << "Adding PGPUser: " << name << " id: " << *it << std::endl;
-				QString gid = QString::fromStdString( (*it).toStdString()).right(8) ;
-				ui.genPGPuser->addItem(QString::fromUtf8(name.c_str()) + " <" + QString::fromUtf8(email.c_str()) + "> (" + gid + ")", userData);
-				haveGPGKeys = true;
-			}
+
+	if (RsAccounts::GetPGPLogins(pgpIds)) {
+		for(it = pgpIds.begin(); it != pgpIds.end(); ++it)
+		{
+			QVariant userData(QString::fromStdString( (*it).toStdString() ));
+			std::string name, email;
+			RsAccounts::GetPGPLoginDetails(*it, name, email);
+			std::cerr << "Adding PGPUser: " << name << " id: " << *it << std::endl;
+			QString gid = QString::fromStdString( (*it).toStdString()).right(8) ;
+			ui.genPGPuser->addItem(QString::fromUtf8(name.c_str()) + " <" + QString::fromUtf8(email.c_str()) + "> (" + gid + ")", userData);
+			haveGPGKeys = true;
 		}
-#ifdef TO_REMOVE
 	}
-#endif
-	if (haveGPGKeys) {
-		ui.no_gpg_key_label->hide();
-		ui.header_label->show();
-		ui.reuse_existing_node_CB->setChecked(false);
-		setWindowTitle(tr("Create new node"));
-		ui.genButton->setText(tr("Generate new node"));
-		ui.headerFrame->setHeaderText(tr("Create a new node"));
-		genNewGPGKey = false;
-	} else {
-		ui.no_gpg_key_label->setVisible(!mOnlyGenerateIdentity);
-		ui.header_label->setVisible(mOnlyGenerateIdentity);
-		ui.reuse_existing_node_CB->setChecked(true);
-		ui.reuse_existing_node_CB->setEnabled(true);
-		setWindowTitle(tr("Create new profile"));
-		ui.genButton->setText(tr("Generate new profile and node"));
-		ui.headerFrame->setHeaderText(tr("Create a new profile and node"));
-		genNewGPGKey = true;
-	}
-
-#ifdef TO_REMOVE
-	QString text; /* = ui.header_label->text() + "\n";*/
-	text += tr("You can create a new profile with this form.");
-
-	if (mOnlyGenerateIdentity) {
-		ui.new_gpg_key_checkbox->setChecked(true);
-		ui.new_gpg_key_checkbox->hide();
-#endif
-		ui.genprofileinfo_label->hide();
-#ifdef TO_REMOVE
-	} else {
-		text += "\n";
-		text += tr("Alternatively you can use an existing profile. Just uncheck \"Create a new profile\"");
-	}
-	ui.header_label->setText(text);
-#endif
-	setupState();
-    //updateUiSetup();
 }
 
 void GenCertDialog::mouseMoveEvent(QMouseEvent *e)
@@ -257,6 +229,13 @@ void GenCertDialog::mouseMoveEvent(QMouseEvent *e)
 void GenCertDialog::setupState()
 {
 	bool adv_state    = ui.adv_checkbox->isChecked();
+
+    if(!adv_state)
+    {
+        ui.reuse_existing_node_CB->setChecked(false) ;
+        ui.nodeType_CB->setCurrentIndex(0) ;
+        ui.keylength_comboBox->setCurrentIndex(0) ;
+    }
 	bool hidden_state = ui.nodeType_CB->currentIndex()==1;
     bool generate_new = !ui.reuse_existing_node_CB->isChecked();
 
@@ -270,10 +249,10 @@ void GenCertDialog::setupState()
     ui.label_nodeType->setVisible(adv_state) ;
     ui.nodeType_CB->setVisible(adv_state) ;
     ui.reuse_existing_node_CB->setVisible(adv_state) ;
-    ui.importIdentity_PB->setVisible(adv_state) ;
-    ui.exportIdentity_PB->setVisible(adv_state) ;
+    ui.importIdentity_PB->setVisible(adv_state && !generate_new) ;
+    ui.exportIdentity_PB->setVisible(adv_state && !generate_new) ;
 
-    ui.genPGPuser->setVisible(adv_state && haveGPGKeys) ;
+    ui.genPGPuser->setVisible(adv_state && haveGPGKeys && !generate_new) ;
 
 	ui.genprofileinfo_label->setVisible(false);
 	ui.no_gpg_key_label->setText(tr("Welcome to Retroshare. Before you can proceed you need to create a profile and associate a node with it. To do so please fill out this form.\nAlternatively you can import a (previously exported) profile. Just uncheck \"Create a new profile\""));
@@ -282,8 +261,10 @@ void GenCertDialog::setupState()
 	ui.nickname_label->setVisible(adv_state) ;
 	ui.nickname_input->setVisible(adv_state) ;
 
-	ui.name_label->setVisible(!generate_new);
-	ui.name_input->setVisible(!generate_new);
+	ui.name_label->setVisible(true);
+	ui.name_input->setVisible(generate_new);
+
+    ui.header_label->setVisible(false) ;
 
 	ui.nickname_label->setVisible(adv_state && !mOnlyGenerateIdentity);
 	ui.nickname_input->setVisible(adv_state && !mOnlyGenerateIdentity);
@@ -328,14 +309,14 @@ void GenCertDialog::exportIdentity()
 		QMessageBox::information(this,tr("Profile not saved"),tr("Your profile was not saved. An error occurred.")) ;
 }
 
-void GenCertDialog::importIdentity()
+bool GenCertDialog::importIdentity()
 {
 	QString fname ;
 	if(!misc::getOpenFileName(this,RshareSettings::LASTDIR_CERT,tr("Import profile"), tr("RetroShare profile files (*.asc);;All files (*)"),fname))
-		return ;
+		return false;
 
 	if(fname.isNull())
-		return ;
+		return false;
 
 	RsPgpId gpg_id ;
 	std::string err_string ;
@@ -343,7 +324,7 @@ void GenCertDialog::importIdentity()
 	if(!RsAccounts::ImportIdentity(fname.toStdString(),gpg_id,err_string))
 	{
 		QMessageBox::information(this,tr("Profile not loaded"),tr("Your profile was not loaded properly:")+" \n    "+QString::fromStdString(err_string)) ;
-		return ;
+		return false;
 	}
 	else
 	{
@@ -353,9 +334,9 @@ void GenCertDialog::importIdentity()
 		std::cerr << "Adding PGPUser: " << name << " id: " << gpg_id << std::endl;
 
 		QMessageBox::information(this,tr("New profile imported"),tr("Your profile was imported successfully:")+" \n"+"\nName :"+QString::fromStdString(name)+"\nemail: " + QString::fromStdString(email)+"\nKey ID: "+QString::fromStdString(gpg_id.toStdString())+"\n\n"+tr("You can use it now to create a new node.")) ;
-	}
 
-	init() ;
+        return true ;
+	}
 }
 
 void GenCertDialog::genPerson()

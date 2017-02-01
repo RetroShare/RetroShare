@@ -39,13 +39,14 @@ public:
 	QString getGXSNickname() {return mGXSNickname;}
 private slots:
 	void genPerson();
-	void importIdentity();
+	bool importIdentity();
 	void exportIdentity();
 	void setupState();
+    void switchReuseExistingNode();
 	void grabMouse();
 
 private:
-	void init();
+	void initKeyList();
 
 	/** Qt Designer generated object */
 	Ui::GenCertDialog ui;
