@@ -4179,6 +4179,7 @@ void RsGxsNetService::handleRecvSyncMessage(RsNxsSyncMsgReqItem *item,bool item_
 						delete *it ;
 
 					itemL.clear() ;
+					delete mItem ;
 					break ;
 				}
 			}
