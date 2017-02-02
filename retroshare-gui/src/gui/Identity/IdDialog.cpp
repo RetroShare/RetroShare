@@ -2463,10 +2463,14 @@ void IdDialog::sendInvite()
 
     RsGxsId id(ui->lineEdit_KeyId->text().toStdString());
     
-    MessageComposer::sendInvite(id);
+    if ((QMessageBox::question(this, tr("Send invite?"),tr("Do you really want send a invite with your Certificate?"),QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes))== QMessageBox::Yes)
+	{
+        MessageComposer::sendInvite(id);
+        ui->inviteFrame->show();
+        ui->inviteButton->setEnabled(false);
+	}
     
-    ui->inviteFrame->show();
-    ui->inviteButton->setEnabled(false);
+
 }
 
 void IdDialog::negativePerson()
