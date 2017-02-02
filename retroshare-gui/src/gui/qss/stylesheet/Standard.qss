@@ -614,6 +614,10 @@ IdDialog QLabel#headerTextLabel {
 	color: rgb(255, 255, 255);
 }
 
+IdDialog QLabel#headerTextLabel_Person {
+	color: rgb(255, 255, 255);
+}
+
 IdDialog QLabel#headerTextLabel_Circles {
 	color: rgb(255, 255, 255);
 }
