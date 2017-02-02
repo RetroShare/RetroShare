@@ -295,13 +295,14 @@ GetStartedDialog QTextEdit {
 
 /* GenCertDialog */
 
-GenCertDialog > QFrame#headerFrame {
+/* GenCertDialog > QFrame#headerFrame {
 	background-image: url(:/images/genbackground.png);
 }
 
 GenCertDialog > QFrame#headerFrame > QLabel#headerLabel {
 	color: rgb(255, 255, 255);
 }
+*/
 
 /* ConnectFriendWizard */
 
@@ -642,8 +643,8 @@ IdEditDialog QLabel#info_label
 GenCertDialog QPushButton#genButton { 
 	border-image: url(:/images/btn_blue.png) 4;
 	border-width: 4;
-	padding: 0px 6px;
-	font-size: 16px;
+/*	padding: 0px 6px;*/
+/*	font-size: 16px; */
 	font: bold;
 	color: white;
 }

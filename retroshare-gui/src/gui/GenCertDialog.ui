@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1745</width>
-    <height>1193</height>
+    <height>1296</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -36,7 +36,7 @@
    <item>
     <widget class="HeaderFrame" name="headerFrame">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+      <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -358,13 +358,6 @@ Alternatively you can use an existing profile. Just uncheck &quot;Create a new p
           </property>
          </widget>
         </item>
-        <item row="14" column="2">
-         <widget class="QProgressBar" name="entropy_bar">
-          <property name="value">
-           <number>24</number>
-          </property>
-         </widget>
-        </item>
         <item row="6" column="2">
          <widget class="QLineEdit" name="nickname_input">
           <property name="toolTip">
@@ -478,6 +471,12 @@ Alternatively you can use an existing profile. Just uncheck &quot;Create a new p
         </item>
         <item row="11" column="2">
          <widget class="QLabel" name="label_hiddenaddr">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="text">
            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This can be a Tor Onion address of the form: xa76giaf6ifda7ri63i263.onion &lt;br/&gt;or an I2P address in the form: [52 characters].b32.i2p &lt;/p&gt;&lt;p&gt;In order to get one, you must configure either Tor or I2P to create a new hidden service / server tunnel. If you do not yet have one, you can still go on, and make it right later in RetroShare's Options-&amp;gt;Network-&amp;gt;Hidden Service configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
@@ -506,16 +505,6 @@ Alternatively you can use an existing profile. Just uncheck &quot;Create a new p
           </property>
           <property name="maxLength">
            <number>64</number>
-          </property>
-         </widget>
-        </item>
-        <item row="15" column="2">
-         <widget class="QPushButton" name="genButton">
-          <property name="styleSheet">
-           <string notr="true"/>
-          </property>
-          <property name="text">
-           <string>Go!</string>
           </property>
          </widget>
         </item>
@@ -621,6 +610,19 @@ Alternatively you can use an existing profile. Just uncheck &quot;Create a new p
        </layout>
       </item>
       <item>
+       <spacer name="verticalSpacer">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
        <widget class="StyledLabel" name="entropy_label">
         <property name="palette">
          <palette>
@@ -700,21 +702,25 @@ Alternatively you can use an existing profile. Just uncheck &quot;Create a new p
         </property>
        </widget>
       </item>
+      <item>
+       <widget class="QProgressBar" name="entropy_bar">
+        <property name="value">
+         <number>24</number>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="genButton">
+        <property name="styleSheet">
+         <string notr="true"/>
+        </property>
+        <property name="text">
+         <string>Go!</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
-   </item>
-   <item>
-    <spacer name="mainVSpacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>40</height>
-      </size>
-     </property>
-    </spacer>
    </item>
   </layout>
  </widget>
