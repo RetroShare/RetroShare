@@ -133,8 +133,8 @@ GenCertDialog::GenCertDialog(bool onlyGenerateIdentity, QWidget *parent)
 	/* Invoke Qt Designer generated QObject setup routine */
 	ui.setupUi(this);
 	
-	ui.headerFrame->setHeaderImage(QPixmap(":/icons/svg/profile.svg"));
-	ui.headerFrame->setHeaderText(tr("Create a new profile"));
+	//ui.headerFrame->setHeaderImage(QPixmap(":/icons/svg/profile.svg"));
+	//ui.headerFrame->setHeaderText(tr("Create a new profile"));
 
 	connect(ui.reuse_existing_node_CB, SIGNAL(clicked()), this, SLOT(switchReuseExistingNode()));
 	connect(ui.adv_checkbox, SIGNAL(clicked()), this, SLOT(setupState()));
@@ -158,15 +158,15 @@ GenCertDialog::GenCertDialog(bool onlyGenerateIdentity, QWidget *parent)
 #if QT_VERSION >= 0x040700
 	ui.node_input->setPlaceholderText(tr("[Required] Examples: Home, Laptop,...")) ;
 	ui.hiddenaddr_input->setPlaceholderText(tr("[Required] Tor/I2P address - Examples: xa76giaf6ifda7ri63i263.onion (obtained by you from Tor)")) ;
-	ui.name_input->setPlaceholderText(tr("[Required] Visible to your friends, and friends of friends."));
+	ui.name_input->setPlaceholderText(tr("[Required] Identifies your Retrohare node(s). Visible to your friends, and friends of friends."));
 	ui.nickname_input->setPlaceholderText(tr("[Optional] Used when you write in chat lobbies, forums and channel comments. Can be setup later if you need one."));
-	ui.password_input->setPlaceholderText(tr("[Required] This password protects your node key."));
+	ui.password_input->setPlaceholderText(tr("[Required] This password protects your data and is required when re-start."));
 	ui.password_input_2->setPlaceholderText(tr("[Required] Type the same password again here."));
 #endif
 
 	ui.nickname_input->setMaxLength(RSID_MAXIMUM_NICKNAME_SIZE);
 
-	ui.node_input->setToolTip(tr("Enter a meaningful node description. e.g. : home, laptop, etc. \nThis field will be used to differentiate different installations with\nthe same profile (PGP key pair).")) ;
+	ui.node_input->setToolTip(tr("Enter a meaningful node description. e.g. : home, laptop, etc. \nThis field will be used to differentiate different Retroshare nodes for\nthe same profile.")) ;
 
 	/* get all available pgp private certificates....
 	 * mark last one as default.
@@ -243,8 +243,8 @@ void GenCertDialog::setupState()
 
 	ui.no_node_label->setVisible(false);
 
-	setWindowTitle(generate_new?tr("Create new profile and node"):tr("Create new node"));
-	ui.headerFrame->setHeaderText(generate_new?tr("Create a new profile and node"):tr("Create a new node"));
+	setWindowTitle(generate_new?tr("Create new profile and new Retroshare node"):tr("Create new Retroshare node"));
+	//ui.headerFrame->setHeaderText(generate_new?tr("Create a new profile and node"):tr("Create a new node"));
 
     ui.label_nodeType->setVisible(adv_state) ;
     ui.nodeType_CB->setVisible(adv_state) ;
