@@ -49,8 +49,8 @@
 //#define ENABLE_GENERATE
 
 /** Constructor */
-CreateGxsForumMsg::CreateGxsForumMsg(const RsGxsGroupId &fId, const RsGxsMessageId &pId)
-: QDialog(NULL, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint), mForumId(fId), mParentId(pId)
+CreateGxsForumMsg::CreateGxsForumMsg(const RsGxsGroupId &fId, const RsGxsMessageId &pId,const RsGxsMessageId& mOId)
+: QDialog(NULL, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint), mForumId(fId), mParentId(pId), mOrigMsgId(mOId)
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	ui.setupUi(this);
@@ -75,7 +75,7 @@ CreateGxsForumMsg::CreateGxsForumMsg(const RsGxsGroupId &fId, const RsGxsMessage
 	mStateHelper->addLoadPlaceholder(CREATEGXSFORUMMSG_PARENTMSG, ui.forumSubject);
 	mStateHelper->addClear(CREATEGXSFORUMMSG_PARENTMSG, ui.forumName);
 
-	QString text = pId.isNull() ? tr("Start New Thread") : tr("Post Forum Message");
+	QString text = mOId.isNull()?(pId.isNull() ? tr("Start New Thread") : tr("Post Forum Message")):tr("Edit Message");
 	setWindowTitle(text);
 
 	ui.headerFrame->setHeaderImage(QPixmap(":/images/konversation64.png"));
@@ -103,7 +103,7 @@ CreateGxsForumMsg::CreateGxsForumMsg(const RsGxsGroupId &fId, const RsGxsMessage
 
 	mParentMsgLoaded = false;
 	mForumMetaLoaded = false;
-    	mForumCircleLoaded = false;
+	mForumCircleLoaded = false;
 
 	newMsg();
 
@@ -285,6 +285,7 @@ void  CreateGxsForumMsg::createMsg()
 	RsGxsForumMsg msg;
 	msg.mMeta.mGroupId = mForumId;
 	msg.mMeta.mParentId = mParentId;
+	msg.mMeta.mOrigMsgId = mOrigMsgId;
 	msg.mMeta.mMsgId.clear() ;
 	if (mParentMsgLoaded) {
 		msg.mMeta.mThreadId = mParentMsg.mMeta.mThreadId;
@@ -376,9 +377,9 @@ void CreateGxsForumMsg::reject()
 {
     if (ui.forumMessage->document()->isModified()) {
         QMessageBox::StandardButton ret;
-        ret = QMessageBox::warning(this, tr("Forum Message"),
-                                   tr("Forum Message has not been Sent.\n"
-                                      "Do you want to reject this message?"),
+        ret = QMessageBox::warning(this, tr("Cancel Forum Message"),
+                                   tr("Forum Message has not been sent yet!\n"
+                                      "Please confirm that you want to discard this message?"),
                                    QMessageBox::Yes | QMessageBox::No);
         switch (ret) {
         case QMessageBox::Yes:

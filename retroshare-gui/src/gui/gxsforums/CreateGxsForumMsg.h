@@ -36,7 +36,7 @@ class CreateGxsForumMsg : public QDialog, public TokenResponse
 	Q_OBJECT
 
 public:
-        CreateGxsForumMsg(const RsGxsGroupId &fId, const RsGxsMessageId &pId);
+        CreateGxsForumMsg(const RsGxsGroupId &fId, const RsGxsMessageId &pId, const RsGxsMessageId &moId);
 	~CreateGxsForumMsg();
 
 	void newMsg(); /* cleanup */
@@ -64,15 +64,17 @@ private:
     	void loadForumCircleInfo(const uint32_t &token);
 
 	 RsGxsGroupId mForumId;
-     	RsGxsCircleId mCircleId ;
-        RsGxsMessageId mParentId;
+	 RsGxsCircleId mCircleId ;
+	 RsGxsMessageId mParentId;
+	 RsGxsMessageId mOrigMsgId;
 
 	bool mParentMsgLoaded;
 	bool mForumMetaLoaded;
-    	bool mForumCircleLoaded ;
+	bool mForumCircleLoaded ;
+
 	RsGxsForumMsg mParentMsg;
 	RsGroupMetaData mForumMeta;
-    	RsGxsCircleGroup mForumCircleData ;
+	RsGxsCircleGroup mForumCircleData ;
 
 	TokenQueue *mForumQueue;
 	TokenQueue *mCirclesQueue;
