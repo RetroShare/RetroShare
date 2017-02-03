@@ -296,7 +296,7 @@
            </property>
           </widget>
          </item>
-         <item row="0" column="12">
+         <item row="0" column="13">
           <widget class="QPushButton" name="nextUnreadButton">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
@@ -332,7 +332,7 @@
            </property>
           </widget>
          </item>
-         <item row="0" column="14">
+         <item row="0" column="15">
           <widget class="QPushButton" name="expandButton">
            <property name="maximumSize">
             <size>
@@ -372,7 +372,7 @@
            </property>
           </widget>
          </item>
-         <item row="0" column="11">
+         <item row="0" column="12">
           <spacer name="postHSpacer">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
@@ -464,19 +464,22 @@
            </property>
           </widget>
          </item>
-         <item row="0" column="10">
+         <item row="0" column="11">
           <widget class="GxsIdLabel" name="by_label">
            <property name="text">
             <string notr="true"/>
            </property>
           </widget>
          </item>
-         <item row="0" column="9">
+         <item row="0" column="10">
           <widget class="QLabel" name="by_text_label">
            <property name="text">
             <string>By </string>
            </property>
           </widget>
+         </item>
+         <item row="0" column="9">
+          <widget class="QSpinBox" name="version_SB"/>
          </item>
         </layout>
        </item>

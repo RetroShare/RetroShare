@@ -212,14 +212,19 @@ void  CreateGxsForumMsg::loadFormInformation()
 
 	//std::cerr << "CreateGxsForumMsg::loadMsgInformation() using signFlags=" << std::hex << mForumMeta.mSignFlags << std::dec << std::endl;
     
-    	if( (mForumMeta.mSignFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG) || (mForumMeta.mSignFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG_KNOWN))
+	if( (mForumMeta.mSignFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG) || (mForumMeta.mSignFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG_KNOWN))
 		ui.idChooser->setFlags(IDCHOOSER_ID_REQUIRED | IDCHOOSER_NON_ANONYMOUS) ;
-        else
+	else
 		ui.idChooser->setFlags(IDCHOOSER_ID_REQUIRED) ;
     	
 	QString name = QString::fromUtf8(mForumMeta.mGroupName.c_str());
 	QString subj;
-        if (!mParentId.isNull())
+
+    if(!mOrigMsgId.isNull())
+    {
+        subj = QString::fromUtf8(mParentMsg.mMeta.mMsgName.c_str());
+    }
+	else if (!mParentId.isNull())
 	{
 		QString title = QString::fromUtf8(mParentMsg.mMeta.mMsgName.c_str());
 		name += " " + tr("In Reply to") + ": ";
@@ -228,13 +233,9 @@ void  CreateGxsForumMsg::loadFormInformation()
 		QString text = title;
 
 		if (text.startsWith("Re:", Qt::CaseInsensitive))
-		{
 			subj = title;
-		}
 		else
-		{
 			subj = "Re: " + title;
-		}
 	}
 
 	ui.forumName->setText(misc::removeNewLine(name));
