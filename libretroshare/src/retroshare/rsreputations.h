@@ -48,7 +48,7 @@ public:
 
 	struct ReputationInfo
 	{
-		ReputationInfo() : mOwnOpinion(OPINION_NEUTRAL), mFriendAverageScore(REPUTATION_THRESHOLD_DEFAULT),mOverallReputationLevel(REPUTATION_NEUTRAL){}
+		ReputationInfo() : mOwnOpinion(OPINION_NEUTRAL),mFriendsPositiveVotes(0),mFriendsNegativeVotes(0), mFriendAverageScore(REPUTATION_THRESHOLD_DEFAULT),mOverallReputationLevel(REPUTATION_NEUTRAL){}
             
 		RsReputations::Opinion mOwnOpinion ;
 
