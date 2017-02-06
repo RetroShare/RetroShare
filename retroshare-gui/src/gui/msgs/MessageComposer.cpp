@@ -2200,7 +2200,13 @@ void MessageComposer::smileyWidget()
 
 void MessageComposer::addSmileys()
 {
-    ui.msgText->textCursor().insertText(qobject_cast<QPushButton*>(sender())->toolTip().split("|").first());
+	QString smiley = qobject_cast<QPushButton*>(sender())->toolTip().split("|").first();
+	// add trailing space
+	smiley += QString(" ");
+	// add preceding space when needed (not at start of text or preceding space already exists)
+	if(!ui.msgText->textCursor().atStart() && ui.msgText->toPlainText()[ui.msgText->textCursor().position() - 1] != QChar(' '))
+		smiley = QString(" ") + smiley;
+	ui.msgText->textCursor().insertText(smiley);
 }
 
 void MessageComposer::currentCharFormatChanged(const QTextCharFormat &format)

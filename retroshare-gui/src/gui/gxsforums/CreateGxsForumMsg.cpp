@@ -400,7 +400,13 @@ void CreateGxsForumMsg::smileyWidgetForums()
 
 void CreateGxsForumMsg::addSmileys()
 {
-	ui.forumMessage->textCursor().insertText(qobject_cast<QPushButton*>(sender())->toolTip().split("|").first());
+	QString smiley = qobject_cast<QPushButton*>(sender())->toolTip().split("|").first();
+	// add trailing space
+	smiley += QString(" ");
+	// add preceding space when needed (not at start of text or preceding space already exists)
+	if(!ui.forumMessage->textCursor().atStart() && ui.forumMessage->toPlainText()[ui.forumMessage->textCursor().position() - 1] != QChar(' '))
+		smiley = QString(" ") + smiley;
+	ui.forumMessage->textCursor().insertText(smiley);
 }
 
 void CreateGxsForumMsg::addFile()
