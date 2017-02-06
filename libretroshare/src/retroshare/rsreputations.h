@@ -63,7 +63,10 @@ public:
 	virtual bool setOwnOpinion(const RsGxsId& key_id, const Opinion& op) =0;
 	virtual bool getOwnOpinion(const RsGxsId& key_id, Opinion& op) =0;
     virtual bool getReputationInfo(const RsGxsId& id, const RsPgpId &ownerNode, ReputationInfo& info,bool stamp=true) =0;
-    virtual ReputationLevel overallReputationLevel(const RsGxsId& id)=0;
+
+    // This returns the reputation level and also the flags of the identity service for that id. This is useful in order to get these flags without relying on the async method of p3Identity
+
+    virtual ReputationLevel overallReputationLevel(const RsGxsId& id,uint32_t *identity_flags=NULL)=0;
 
     // parameters
 

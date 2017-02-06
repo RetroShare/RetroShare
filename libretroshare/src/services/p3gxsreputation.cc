@@ -768,12 +768,43 @@ bool p3GxsReputation::updateLatestUpdate(RsPeerId peerid,time_t latest_update)
  * Opinion
  ****/
 
-RsReputations::ReputationLevel p3GxsReputation::overallReputationLevel(const RsGxsId& id)
+RsReputations::ReputationLevel p3GxsReputation::overallReputationLevel(const RsGxsId& id,uint32_t *identity_flags)
 {
     ReputationInfo info ;
     getReputationInfo(id,RsPgpId(),info) ;
 
+    RsPgpId owner_id ;
+
+    if(identity_flags)
+        getIdentityFlagsAndOwnerId(id,*identity_flags,owner_id);
+
     return info.mOverallReputationLevel ;
+}
+
+bool p3GxsReputation::getIdentityFlagsAndOwnerId(const RsGxsId& gxsid, uint32_t& identity_flags,RsPgpId& owner_id)
+{
+    if(gxsid.isNull())
+        return false ;
+
+   RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
+
+   std::map<RsGxsId,Reputation>::iterator it = mReputations.find(gxsid) ;
+
+   if(it == mReputations.end())
+       return false ;
+
+   if(!(it->second.mIdentityFlags & REPUTATION_IDENTITY_FLAG_UP_TO_DATE))
+       return false ;
+
+   if(it->second.mIdentityFlags & REPUTATION_IDENTITY_FLAG_PGP_LINKED)
+       identity_flags |= RS_IDENTITY_FLAGS_PGP_LINKED ;
+
+   if(it->second.mIdentityFlags & REPUTATION_IDENTITY_FLAG_PGP_KNOWN)
+       identity_flags |= RS_IDENTITY_FLAGS_PGP_KNOWN ;
+
+   owner_id = it->second.mOwnerNode ;
+
+   return true ;
 }
 
 bool p3GxsReputation::getReputationInfo(const RsGxsId& gxsid, const RsPgpId& ownerNode, RsReputations::ReputationInfo& info, bool stamp)

@@ -31,7 +31,7 @@
 #include <iostream>
 #include <algorithm>
 
-#define DEBUG_FORUMS
+//#define DEBUG_FORUMS
 
 #define PROGRESSBAR_MAX 100
 
@@ -158,7 +158,9 @@ void GxsForumsFillThread::run()
 
 		for(uint32_t i=0;i<msgs_array.size();++i)
         {
+#ifdef DEBUG_FORUMS
             std::cerr << "Adding message " << msgs_array[i].mMeta.mMsgId << " with parent " << msgs_array[i].mMeta.mParentId << " to message map" << std::endl;
+#endif
 			msgs[msgs_array[i].mMeta.mMsgId] = msgs_array[i] ;
         }
 	}

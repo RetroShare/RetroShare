@@ -115,7 +115,7 @@ public:
 
     virtual bool isNodeBanned(const RsPgpId& id);
     virtual void banNode(const RsPgpId& id,bool b) ;
-    virtual ReputationLevel overallReputationLevel(const RsGxsId& id);
+    virtual ReputationLevel overallReputationLevel(const RsGxsId& id,uint32_t *identity_flags=NULL);
 
     virtual void setNodeAutoPositiveOpinionForContacts(bool b) ;
     virtual bool nodeAutoPositiveOpinionForContacts() ;
@@ -143,6 +143,7 @@ public:
     virtual bool loadList(std::list<RsItem*>& load) ;
 
 private:
+	bool getIdentityFlagsAndOwnerId(const RsGxsId& gxsid, uint32_t& identity_flags, RsPgpId &owner_id);
 
     bool 	processIncoming();
 

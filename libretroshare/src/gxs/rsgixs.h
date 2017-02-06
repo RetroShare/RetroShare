@@ -177,7 +177,7 @@ class RsGixsReputation
 {
 public:
 	// get Reputation.
-    virtual RsReputations::ReputationLevel overallReputationLevel(const RsGxsId& id) = 0;
+    virtual RsReputations::ReputationLevel overallReputationLevel(const RsGxsId& id,uint32_t *identity_flags=NULL) = 0;
 };
 
 /*** This Class pulls all the GXS Interfaces together ****/
