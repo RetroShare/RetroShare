@@ -1274,7 +1274,7 @@ bool p3IdService::opinion_handlerequest(uint32_t token)
     }
 
     // update IdScore too.
-    bool pgpId = (meta.mGroupFlags & RSGXSID_GROUPFLAG_REALID_deprecated);
+    bool pgpId = (meta.mGroupFlags & RSGXSID_GROUPFLAG_REALID_kept_for_compatibility);
     ssdata.score.rep.updateIdScore(pgpId, ssdata.pgp.validatedSignature);
     ssdata.score.rep.update();
 
@@ -1890,7 +1890,7 @@ void RsGxsIdCache::init(const RsGxsIdGroupItem *item, const RsTlvPublicRSAKey& i
     details.mFlags = 0 ;
 
     if(item->meta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)		details.mFlags |= RS_IDENTITY_FLAGS_IS_OWN_ID;
-    if(item->meta.mGroupFlags     & RSGXSID_GROUPFLAG_REALID_deprecated)			details.mFlags |= RS_IDENTITY_FLAGS_PGP_LINKED;
+    if(item->meta.mGroupFlags     & RSGXSID_GROUPFLAG_REALID_kept_for_compatibility)			details.mFlags |= RS_IDENTITY_FLAGS_PGP_LINKED;
 
     // do some tests
     if(details.mFlags & RS_IDENTITY_FLAGS_IS_OWN_ID)
@@ -2844,7 +2844,7 @@ RsGenExchange::ServiceCreate_Return p3IdService::service_CreateGroup(RsGxsGrpIte
 
     ServiceCreate_Return createStatus;
 
-    if (item->meta.mGroupFlags & RSGXSID_GROUPFLAG_REALID_deprecated)
+    if (item->meta.mGroupFlags & RSGXSID_GROUPFLAG_REALID_kept_for_compatibility)
     {
         /* create the hash */
         Sha1CheckSum hash;
@@ -3047,7 +3047,7 @@ bool p3IdService::pgphash_handlerequest(uint32_t token)
 #endif // DEBUG_IDS
 
 			/* Filter based on IdType */
-			if (!(vit->mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID_deprecated))
+			if (!(vit->mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID_kept_for_compatibility))
 			{
 #ifdef DEBUG_IDS
 				std::cerr << "p3IdService::pgphash_request() discarding AnonID";
@@ -3623,7 +3623,7 @@ bool p3IdService::recogn_process()
 	ssdata.recogntags.publishTs = item->meta.mPublishTs;
 
 	// update IdScore too.
-	bool pgpId = (item->meta.mGroupFlags & RSGXSID_GROUPFLAG_REALID_deprecated);
+	bool pgpId = (item->meta.mGroupFlags & RSGXSID_GROUPFLAG_REALID_kept_for_compatibility);
 	ssdata.score.rep.updateIdScore(pgpId, ssdata.pgp.validatedSignature);
 	ssdata.score.rep.update();
 
@@ -3844,7 +3844,7 @@ void p3IdService::generateDummy_FriendPGP()
 
 	RsGxsIdGroup id;
 
-	id.mMeta.mGroupFlags = RSGXSID_GROUPFLAG_REALID_deprecated;
+	id.mMeta.mGroupFlags = RSGXSID_GROUPFLAG_REALID_kept_for_compatibility;
 
 	int idx = RSRandom::random_f32() * (gpgids.size() - 1);
 	it = gpgids.begin();
@@ -3881,7 +3881,7 @@ void p3IdService::generateDummy_UnknownPGP()
 	RsGxsIdGroup id;
 
 	// FAKE DATA.
-	id.mMeta.mGroupFlags = RSGXSID_GROUPFLAG_REALID_deprecated;
+	id.mMeta.mGroupFlags = RSGXSID_GROUPFLAG_REALID_kept_for_compatibility;
 	id.mPgpIdHash = Sha1CheckSum::random() ;
 	id.mPgpIdSign = RSRandom::random_alphaNumericString(20) ;
 	id.mMeta.mGroupName = RSRandom::random_alphaNumericString(10) ;

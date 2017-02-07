@@ -47,8 +47,8 @@ extern RsIdentity *rsIdentity;
 // The deprecated flag overlaps the privacy flags for mGroupFlags. This is an error that should be fixed. For the sake of keeping some
 // backward compatibility, we need to make the change step by step.
 
-#define RSGXSID_GROUPFLAG_REALID_deprecated  0x0001
-#define RSGXSID_GROUPFLAG_REALID             0x0100
+#define RSGXSID_GROUPFLAG_REALID_kept_for_compatibility  0x0001
+#define RSGXSID_GROUPFLAG_REALID                         0x0100
 
 // THESE ARE FLAGS FOR INTERFACE.
 #define RSID_TYPE_MASK		0xff00
