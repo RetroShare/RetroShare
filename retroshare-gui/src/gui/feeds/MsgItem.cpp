@@ -67,6 +67,7 @@ MsgItem::MsgItem(FeedHolder *parent, uint32_t feedId, const std::string &msgId, 
 
 
   expandFrame->hide();
+  inviteFrame->hide();
 
   updateItemStatic();
   updateItem();
@@ -119,12 +120,15 @@ void MsgItem::updateItemStatic()
       if (mi.msgflags & RS_MSG_USER_REQUEST)
       {
         title = QString::fromUtf8(mi.title.c_str()) + " " + tr("from") + " " + srcName;
+        replyButton->setText(tr("Reply to invite"));
         subjectLabel->hide();
+        inviteFrame->show();
       }
       else
       {
         title = tr("Message From") + ": " + srcName;
         sendinviteButton->hide();
+        inviteFrame->hide();
       }
 	}
 	else
