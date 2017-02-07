@@ -41,14 +41,16 @@ struct GxsMailsClient
 
 	/**
 	 * This will be called by p3GxsMails to dispatch mails to the subservice
-	 * @param destinationId
-	 * @param signingKey
-	 * @param data
-	 * @param dataSize
+	 * @param originalMessage message as received from GXS backend (encrypted)
+	 *   GxsMailsClient take ownership of it ( aka should take free/delete it
+	 *   when not needed anymore )
+	 * @param data buffer containing the decrypted data
+	 *   GxsMailsClient take ownership of it ( aka should take free/delete it
+	 *   when not needed anymore )
+	 * @param dataSize size of the buffer
 	 * @return true if dispatching goes fine, false otherwise
 	 */
-	virtual bool receiveGxsMail( const RsGxsId& destinationId,
-	                             const RsGxsId& signingKey,
+	virtual bool receiveGxsMail( RsGxsMailItem* originalMessage,
 	                             uint8_t* data, uint32_t dataSize ) = 0;
 };
 
@@ -60,7 +62,8 @@ struct p3GxsMails : RsGenExchange, GxsTokenQueue
 	                   RS_SERVICE_TYPE_GXS_MAIL, &identities,
 	                   AuthenPolicy(),
 	                   RS_GXS_DEFAULT_MSG_STORE_PERIOD ), // TODO: Discuss with Cyril about this
-	    GxsTokenQueue(this), idService(identities) {}
+	    GxsTokenQueue(this), idService(identities),
+	    servClientsMutex("p3GxsMails client services map mutex") {}
 
 	/**
 	 * Send an email to recipient, in the process author of the email is
@@ -94,11 +97,9 @@ struct p3GxsMails : RsGenExchange, GxsTokenQueue
 	/**
 	 * Register a client service to p3GxsMails to receive mails via
 	 * GxsMailsClient::receiveGxsMail(...) callback
-	 * This is NOT thread safe!
 	 */
 	void registerGxsMailsClient( GxsMailsClient::GxsMailSubServices serviceType,
-	                             GxsMailsClient* service )
-	{ servClients[serviceType] = service; }
+	                             GxsMailsClient* service );
 
 	/**
 	 * @see GxsTokenQueue::handleResponse(uint32_t token, uint32_t req_type)
@@ -141,6 +142,8 @@ private:
 
 	/// Stores pointers to client services to notify them about new mails
 	std::map<GxsMailsClient::GxsMailSubServices, GxsMailsClient*> servClients;
+	RsMutex servClientsMutex;
+
 
 	/// Request groups list to GXS backend. Async method.
 	bool requestGroupsData(const std::list<RsGxsGroupId>* groupIds = NULL);
@@ -169,5 +172,14 @@ private:
 	/// @return true if has passed more then interval seconds time since timeStamp
 	bool static inline olderThen(time_t timeStamp, int32_t interval)
 	{ return (timeStamp + interval) < time(NULL); }
+
+
+	/// Decrypt email content and pass it to dispatchDecryptedMail(...)
+	bool handleEcryptedMail(RsGxsMailItem* mail);
+
+	/// Dispatch the message to the recipient service
+	bool dispatchDecryptedMail( RsGxsMailItem* received_msg,
+	                            uint8_t* decrypted_data,
+	                            uint32_t decrypted_data_size );
 };
 

@@ -149,6 +149,13 @@ bool p3GxsMails::sendMail( GxsMailsClient::GxsMailSubServices service,
 	return true;
 }
 
+void p3GxsMails::registerGxsMailsClient(
+        GxsMailsClient::GxsMailSubServices serviceType, GxsMailsClient* service)
+{
+	RS_STACK_MUTEX(servClientsMutex);
+	servClients[serviceType] = service;
+}
+
 
 void p3GxsMails::handleResponse(uint32_t token, uint32_t req_type)
 {
@@ -239,81 +246,7 @@ void p3GxsMails::handleResponse(uint32_t token, uint32_t req_type)
 						break;
 					}
 
-
-					std::cout << "p3GxsMails::handleResponse(...) "
-					          << "GXS_MAIL_SUBTYPE_MAIL got from: "
-					          << msg->meta.mAuthorId
-					          << " recipientsHint: "
-					          << msg->recipientsHint << " cryptoType: "
-					          << (uint32_t)msg->cryptoType
-					          <<  " payload size: " << msg->payload.size()
-					          << std::endl;
-
-					std::set<RsGxsId> decryptIds;
-					std::list<RsGxsId> ownIds;
-					idService.getOwnIds(ownIds);
-					for(auto it = ownIds.begin(); it != ownIds.end(); ++it)
-						if(msg->maybeRecipient(*it)) decryptIds.insert(*it);
-
-					if(decryptIds.empty())
-					{
-						std::cout << "p3GxsMails::handleResponse(...) "
-						          << "GXS_MAIL_SUBTYPE_MAIL hint match none"
-						          << " of our own ids" << msg->recipientsHint
-						          << std::endl;
-
-						break;
-					}
-
-					std::cout << "p3GxsMails::handleResponse(...) "
-					          << "GXS_MAIL_SUBTYPE_MAIL hint: "
-					          << msg->recipientsHint
-					          << " match with own ids: ";
-					for(auto it=decryptIds.begin(); it != decryptIds.end(); ++it)
-						std::cout << *it;
-					std::cout << std::endl;
-
-					switch (msg->cryptoType)
-					{
-					case RsGxsMailBaseItem::CLEAR_TEXT:
-					{
-						uint16_t csri = 0;
-						uint32_t off;
-						getRawUInt16(&msg->payload[0], 2, &off, &csri);
-						std::string str(reinterpret_cast<const char*>(&msg->payload[2]), msg->payload.size()-2);
-						std::cout << "service: " << csri
-						          << " got CLEAR_TEXT message: "
-						          << str << std::endl;
-						break;
-					}
-					case RsGxsMailBaseItem::RSA:
-					{
-						uint8_t* decrypted_data = NULL;
-						uint32_t decrypted_data_size = 0;
-						uint32_t decryption_error;
-						if( idService.decryptData(
-						            &msg->payload[0],
-						            msg->payload.size(), decrypted_data,
-						            decrypted_data_size, decryptIds,
-						            decryption_error ) )
-						{
-							uint16_t csri = *reinterpret_cast<uint16_t*>(decrypted_data);
-							std::string str(reinterpret_cast<char const*>(decrypted_data+2), decrypted_data_size-2);
-							std::cout << "service: " << csri
-							          << " got RSA message: "
-							          << str << std::endl;
-						}
-						else std::cout << "p3GxsMails::handleResponse(...) "
-						               << "GXS_MAIL_SUBTYPE_MAIL RSA decryption"
-						               << " failed" << std::endl;
-						free(decrypted_data);
-						break;
-					}
-					default:
-						std::cout << "Unknown encryption type:"
-						          << msg->cryptoType << std::endl;
-						break;
-					}
+					handleEcryptedMail(msg);
 					break;
 				}
 				default:
@@ -419,5 +352,95 @@ bool p3GxsMails::requestGroupsData(const std::list<RsGxsGroupId>* groupIds)
 	else getTokenService()->requestGroupInfo(token, 0xcaca, opts, *groupIds);
 	GxsTokenQueue::queueRequest(token, GROUPS_LIST);
 	return true;
+}
+
+bool p3GxsMails::handleEcryptedMail(RsGxsMailItem* mail)
+{
+	std::set<RsGxsId> decryptIds;
+	std::list<RsGxsId> ownIds;
+	idService.getOwnIds(ownIds);
+	for(auto it = ownIds.begin(); it != ownIds.end(); ++it)
+		if(mail->maybeRecipient(*it)) decryptIds.insert(*it);
+
+	// Hint match none of our own ids
+	if(decryptIds.empty()) goto hFail;
+
+	for(auto it=decryptIds.begin(); it != decryptIds.end(); ++it)
+		std::cout << *it;
+	std::cout << std::endl;
+
+	switch (mail->cryptoType)
+	{
+	case RsGxsMailBaseItem::CLEAR_TEXT:
+	{
+		uint16_t csri;
+		uint32_t off = 0;
+		getRawUInt16(&mail->payload[0], 2, &off, &csri);
+		std::cerr << "service: " << csri << " got CLEAR_TEXT mail!"
+		          << std::endl;
+		if( !dispatchDecryptedMail( mail, &mail->payload[2],
+		                            mail->payload.size()-2 ) )
+			goto hFail;
+		break;
+	}
+	case RsGxsMailBaseItem::RSA:
+	{
+		uint8_t* decrypted_data = NULL;
+		uint32_t decrypted_data_size = 0;
+		uint32_t decryption_error;
+		bool ok = idService.decryptData( &mail->payload[0],
+		        mail->payload.size(), decrypted_data,
+		        decrypted_data_size, decryptIds,
+		        decryption_error );
+		ok = ok && dispatchDecryptedMail( mail, decrypted_data,
+		                                  decrypted_data_size );
+		if(!ok)
+		{
+			std::cout << "p3GxsMails::handleEcryptedMail(...) "
+			          << "RSA decryption failed" << std::endl;
+			free(decrypted_data);
+			goto hFail;
+		}
+		break;
+	}
+	default:
+		std::cout << "Unknown encryption type:"
+		          << mail->cryptoType << std::endl;
+		goto hFail;
+	}
+
+	return true;
+
+hFail:
+	delete mail;
+	return false;
+}
+
+bool p3GxsMails::dispatchDecryptedMail( RsGxsMailItem* received_msg,
+                                        uint8_t* decrypted_data,
+                                        uint32_t decrypted_data_size )
+{
+	uint16_t csri;
+	uint32_t off;
+	getRawUInt16(decrypted_data, decrypted_data_size, &off, &csri);
+	GxsMailsClient::GxsMailSubServices rsrvc;
+	rsrvc = static_cast<GxsMailsClient::GxsMailSubServices>(csri);
+
+	GxsMailsClient* reecipientService = NULL;
+	{
+		RS_STACK_MUTEX(servClientsMutex);
+		reecipientService = servClients[rsrvc];
+	}
+	if(reecipientService)
+		return reecipientService->receiveGxsMail( received_msg,
+		                                          &decrypted_data[2],
+		                                          decrypted_data_size-2 );
+	else
+	{
+		std::cerr << "p3GxsMails::dispatchReceivedMail(...) "
+		          << "got message for unknown service: "
+		          << csri << std::endl;
+		return false;
+	}
 }
 
