@@ -1416,7 +1416,7 @@ bool IdDialog::fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, 
 
 	/* do filtering */
 	bool ok = false;
-	if (data.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID)
+	if (data.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID_kept_for_compatibility)
     {
         if (isLinkedToOwnNode && (accept & RSID_FILTER_YOURSELF))
         {
@@ -1518,7 +1518,7 @@ bool IdDialog::fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, 
 
     QString tooltip;
 
-	if (data.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID)
+	if (data.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID_kept_for_compatibility)
 	{
 		if (data.mPgpKnown)
 		{
@@ -1760,7 +1760,7 @@ void IdDialog::insertIdDetails(uint32_t token)
 	}
 	else
 	{
-		if (data.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID)
+		if (data.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID_kept_for_compatibility)
 			ui->lineEdit_GpgName->setText(tr("[Unknown node]"));
 		else
 			ui->lineEdit_GpgName->setText(tr("Anonymous Id"));
@@ -1796,7 +1796,7 @@ void IdDialog::insertIdDetails(uint32_t token)
             ui->lineEdit_Type->setText(tr("Identity owned by you, linked to your Retroshare node")) ;
         else
             ui->lineEdit_Type->setText(tr("Anonymous identity, owned by you")) ;
-    else if (data.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID)
+    else if (data.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID_kept_for_compatibility)
     {
         if (data.mPgpKnown)
             if (rsPeers->isGPGAccepted(data.mPgpId))

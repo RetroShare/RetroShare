@@ -695,12 +695,26 @@ bool p3IdService::createIdentity(uint32_t& token, RsIdentityParameters &params)
 
     if (params.isPgpLinked)
     {
-        id.mMeta.mGroupFlags = RSGXSID_GROUPFLAG_REALID;
+#warning Backward compatibility issue to fix here in v0.7.0
+
+        // This is a hack, because a bad decision led to having RSGXSID_GROUPFLAG_REALID be equal to GXS_SERV::FLAG_PRIVACY_PRIVATE.
+        // In order to keep backward compatibility, we'll also add the new value
+        // When the ID is not PGP linked, the group flag cannot be let empty, so we use PUBLIC.
+        //
+        // The correct combination of flags should be:
+        //		PGP-linked:		GXS_SERV::FLAGS_PRIVACY_PUBLIC | RSGXSID_GROUPFLAG_REALID
+        //		Anonymous :		GXS_SERV::FLAGS_PRIVACY_PUBLIC
+
+        id.mMeta.mGroupFlags |= GXS_SERV::FLAG_PRIVACY_PRIVATE;	// this is also equal to RSGXSID_GROUPFLAG_REALID_deprecated
+        id.mMeta.mGroupFlags |= RSGXSID_GROUPFLAG_REALID;
+
+        // The current version should be able to produce new identities that old peers will accept as well.
+        // In the future, we need to:
+        //     - set the current group flags here (see above)
+        //	   - replace all occurences of RSGXSID_GROUPFLAG_REALID_deprecated by RSGXSID_GROUPFLAG_REALID in the code.
     }
     else
-    {
-        id.mMeta.mGroupFlags = 0;
-    }
+        id.mMeta.mGroupFlags |= GXS_SERV::FLAG_PRIVACY_PUBLIC;
 
     createGroup(token, id);
 
@@ -1260,7 +1274,7 @@ bool p3IdService::opinion_handlerequest(uint32_t token)
     }
 
     // update IdScore too.
-    bool pgpId = (meta.mGroupFlags & RSGXSID_GROUPFLAG_REALID);
+    bool pgpId = (meta.mGroupFlags & RSGXSID_GROUPFLAG_REALID_deprecated);
     ssdata.score.rep.updateIdScore(pgpId, ssdata.pgp.validatedSignature);
     ssdata.score.rep.update();
 
@@ -1876,7 +1890,7 @@ void RsGxsIdCache::init(const RsGxsIdGroupItem *item, const RsTlvPublicRSAKey& i
     details.mFlags = 0 ;
 
     if(item->meta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)		details.mFlags |= RS_IDENTITY_FLAGS_IS_OWN_ID;
-    if(item->meta.mGroupFlags     & RSGXSID_GROUPFLAG_REALID)			details.mFlags |= RS_IDENTITY_FLAGS_PGP_LINKED;
+    if(item->meta.mGroupFlags     & RSGXSID_GROUPFLAG_REALID_deprecated)			details.mFlags |= RS_IDENTITY_FLAGS_PGP_LINKED;
 
     // do some tests
     if(details.mFlags & RS_IDENTITY_FLAGS_IS_OWN_ID)
@@ -2830,7 +2844,7 @@ RsGenExchange::ServiceCreate_Return p3IdService::service_CreateGroup(RsGxsGrpIte
 
     ServiceCreate_Return createStatus;
 
-    if (item->meta.mGroupFlags & RSGXSID_GROUPFLAG_REALID)
+    if (item->meta.mGroupFlags & RSGXSID_GROUPFLAG_REALID_deprecated)
     {
         /* create the hash */
         Sha1CheckSum hash;
@@ -3033,7 +3047,7 @@ bool p3IdService::pgphash_handlerequest(uint32_t token)
 #endif // DEBUG_IDS
 
 			/* Filter based on IdType */
-			if (!(vit->mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID))
+			if (!(vit->mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID_deprecated))
 			{
 #ifdef DEBUG_IDS
 				std::cerr << "p3IdService::pgphash_request() discarding AnonID";
@@ -3609,7 +3623,7 @@ bool p3IdService::recogn_process()
 	ssdata.recogntags.publishTs = item->meta.mPublishTs;
 
 	// update IdScore too.
-	bool pgpId = (item->meta.mGroupFlags & RSGXSID_GROUPFLAG_REALID);
+	bool pgpId = (item->meta.mGroupFlags & RSGXSID_GROUPFLAG_REALID_deprecated);
 	ssdata.score.rep.updateIdScore(pgpId, ssdata.pgp.validatedSignature);
 	ssdata.score.rep.update();
 
@@ -3830,7 +3844,7 @@ void p3IdService::generateDummy_FriendPGP()
 
 	RsGxsIdGroup id;
 
-	id.mMeta.mGroupFlags = RSGXSID_GROUPFLAG_REALID;
+	id.mMeta.mGroupFlags = RSGXSID_GROUPFLAG_REALID_deprecated;
 
 	int idx = RSRandom::random_f32() * (gpgids.size() - 1);
 	it = gpgids.begin();
@@ -3867,7 +3881,7 @@ void p3IdService::generateDummy_UnknownPGP()
 	RsGxsIdGroup id;
 
 	// FAKE DATA.
-	id.mMeta.mGroupFlags = RSGXSID_GROUPFLAG_REALID;
+	id.mMeta.mGroupFlags = RSGXSID_GROUPFLAG_REALID_deprecated;
 	id.mPgpIdHash = Sha1CheckSum::random() ;
 	id.mPgpIdSign = RSRandom::random_alphaNumericString(20) ;
 	id.mMeta.mGroupName = RSRandom::random_alphaNumericString(10) ;

@@ -109,7 +109,7 @@ void ForumHandler::handleWildcard(Request &req, Response &resp)
                 //KeyValueReference<RsPgpId> pgp_id("pgp_id",grp.mPgpId );
                 // not very happy about this, i think the flags should stay hidden in rsidentities
                 bool own = (grp.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN);
-                bool pgp_linked = (grp.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID);
+                bool pgp_linked = (grp.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID_kept_for_compatibility);
                 bool subscribed = IS_GROUP_SUBSCRIBED(grp.mMeta.mSubscribeFlags);
                 resp.mDataStream.getStreamToMember()
                         << id

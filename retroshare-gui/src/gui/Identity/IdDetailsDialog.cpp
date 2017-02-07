@@ -204,7 +204,7 @@ void IdDetailsDialog::insertIdDetails(uint32_t token)
 	}
 	else
 	{
-		if (data.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID)
+RSGXSID_GROUPFLAG_REALID_kept_for_compatibilitySID_GROUPFLAG_REALID_deprecated)
 		{
 			ui->lineEdit_GpgName->setText(tr("Unknown real name"));
 		}
@@ -236,9 +236,7 @@ void IdDetailsDialog::insertIdDetails(uint32_t token)
 			ui->lineEdit_Type->setText(tr("Identity owned by you, linked to your Retroshare node")) ;
 		else
 			ui->lineEdit_Type->setText(tr("Anonymous identity, owned by you")) ;
-	else if (data.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID)
-	{
-		if (data.mPgpKnown)
+	else if (data.mMeta.mGroupFlags & RSGXSID_GROUPFLRSGXSID_GROUPFLAG_REALID_kept_for_compatibility.mPgpKnown)
 			if (rsPeers->isGPGAccepted(data.mPgpId))
 				ui->lineEdit_Type->setText(tr("Owned by a friend Retroshare node")) ;
 			else
