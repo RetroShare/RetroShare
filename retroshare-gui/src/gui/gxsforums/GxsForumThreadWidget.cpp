@@ -1124,18 +1124,12 @@ QTreeWidgetItem *GxsForumThreadWidget::convertMsgToThreadWidget(const RsGxsForum
 	// Early check for a message that should be hidden because its author
 	// is flagged with a bad reputation
 
-	RsIdentityDetails iddetails;
 
-	RsReputations::ReputationLevel reputation_level = RsReputations::REPUTATION_NEUTRAL;
+    uint32_t idflags =0;
+	RsReputations::ReputationLevel reputation_level = rsReputations->overallReputationLevel(msg.mMeta.mAuthorId,&idflags) ;
 	bool redacted = false;
 
-	if( rsIdentity->getIdDetails(msg.mMeta.mAuthorId,iddetails) )
-	{
-		reputation_level = iddetails.mReputation.mOverallReputationLevel;
-		redacted = (reputation_level == RsReputations::REPUTATION_LOCALLY_NEGATIVE);
-	}
-	else
-		reputation_level = RsReputations::REPUTATION_UNKNOWN;
+	redacted = (reputation_level == RsReputations::REPUTATION_LOCALLY_NEGATIVE);
 
 	GxsIdRSTreeWidgetItem *item = new GxsIdRSTreeWidgetItem(mThreadCompareRole,GxsIdDetails::ICON_TYPE_AVATAR );
 	item->moveToThread(ui->threadTreeWidget->thread());
@@ -1158,7 +1152,7 @@ QTreeWidgetItem *GxsForumThreadWidget::convertMsgToThreadWidget(const RsGxsForum
         rep_warning_level = 2 ;
     	rep_tooltip_str = tr("You have banned this ID. The message will not be\ndisplayed nor forwarded to your friends.") ;
     }
-    else if(reputation_level < rsGxsForums->minReputationForForwardingMessages(mForumGroup.mMeta.mSignFlags,iddetails.mFlags))
+    else if(reputation_level < rsGxsForums->minReputationForForwardingMessages(mForumGroup.mMeta.mSignFlags,idflags))
     {
         rep_warning_level = 1 ;
     	rep_tooltip_str = tr("You have not set an opinion for this person,\n and your friends do not vote positively: Spam regulation \nprevents the message to be forwarded to your friends.") ;

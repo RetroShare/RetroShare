@@ -262,7 +262,7 @@ void IdEditDialog::loadExistingId(uint32_t token)
 
 	setAvatar(avatar);
 
-	bool realid = (mEditGroup.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID);
+	bool realid = (mEditGroup.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID_kept_for_compatibility);
 
 	if (realid)
 	{

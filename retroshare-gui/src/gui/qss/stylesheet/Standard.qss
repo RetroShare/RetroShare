@@ -439,10 +439,17 @@ PeerItem QLabel#peerNameLabel {
 	color: #990033
 }
 
-MsgItem > QFrame#frame {
-	border: 2px solid #3EA2FF; 
-	background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #2291E0, stop: 1 #3EB3FF);
-	border-radius: 10px;
+MsgItem QFrame#frame {
+	border: 2px solid #0099cc;
+	border-radius: 6px;
+	background: white;
+}
+
+MsgItem QFrame#inviteFrame {
+	border: 1px solid #DCDC41;
+	border-radius: 6px;
+	background: #FFFFD7;
+	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFFFD7, stop:1 #FFFFB2);
 }
 
 MsgItem QWidget#avatar {
@@ -553,6 +560,13 @@ MessageWidget QFrame#decryptFrame {
 	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #CCFFCC, stop:1 #AAFFAA);
 }
 
+MessageWidget QFrame#inviteFrame {
+	border: 1px solid #DCDC41;
+	border-radius: 6px;
+	background: #FFFFD7;
+	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFFFD7, stop:1 #FFFFB2);
+}
+
 /* Posted Links */
 
 PostedCreatePostDialog QLabel#info_label {
@@ -614,6 +628,10 @@ IdDialog QLabel#headerTextLabel {
 	color: rgb(255, 255, 255);
 }
 
+IdDialog QLabel#headerTextLabel_Person {
+	color: rgb(255, 255, 255);
+}
+
 IdDialog QLabel#headerTextLabel_Circles {
 	color: rgb(255, 255, 255);
 }
@@ -621,6 +639,13 @@ IdDialog QLabel#headerTextLabel_Circles {
 IdDialog QLabel#avlabel {
   border: 4px solid white; 
   border-radius: 10px;
+}
+
+IdDialog QFrame#inviteFrame {
+	border: 1px solid #DCDC41;
+	border-radius: 6px;
+	background: #FFFFD7;
+	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFFFD7, stop:1 #FFFFB2);
 }
 
 GxsChannelPostsWidget QFrame#infoFrame

@@ -1602,7 +1602,7 @@ void p3GxsCircles::checkDummyIdData()
 		std::vector<RsGxsIdGroup>::iterator it;
 		for(it = ids.begin(); it != ids.end(); ++it)
 		{
-                        if (it->mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID)
+                        if (it->mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID_kept_for_compatibility)
 			{
 #ifdef DEBUG_CIRCLES
 				std::cerr << "p3GxsCircles::checkDummyIdData() PgpLinkedId: " << it->mMeta.mGroupId;
@@ -1978,7 +1978,7 @@ bool p3GxsCircles::processMembershipRequests(uint32_t token)
 #ifdef DEBUG_CIRCLES
     std::cerr << "Processing circle membership requests." << std::endl;
 #endif
-    GxsMsgDataMap msgItems ;
+    RsGxsMetaDataTemporaryMapVector<RsGxsMsgItem> msgItems;
 
     if(!RsGenExchange::getMsgData(token, msgItems))
     {

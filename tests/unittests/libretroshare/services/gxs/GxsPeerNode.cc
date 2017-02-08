@@ -204,7 +204,7 @@ bool GxsPeerNode::createIdentity(const std::string &name,
 	id.mMeta.mGroupName = name;
         if (pgpLinked)
         {
-                id.mMeta.mGroupFlags = RSGXSID_GROUPFLAG_REALID;
+                id.mMeta.mGroupFlags = RSGXSID_GROUPFLAG_REALID_kept_for_compatibility;
         }
         else
         {

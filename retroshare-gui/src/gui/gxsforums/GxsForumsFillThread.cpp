@@ -144,9 +144,25 @@ void GxsForumsFillThread::run()
 	emit status(tr("Retrieving"));
 
 	/* get messages */
-	std::vector<RsGxsForumMsg> msgs;
-	if (!rsGxsForums->getMsgData(token, msgs)) {
-		return;
+	std::map<RsGxsMessageId,RsGxsForumMsg> msgs;
+
+	{	// This forces to delete msgs_array after the conversion to std::map.
+
+		std::vector<RsGxsForumMsg> msgs_array;
+
+		if (!rsGxsForums->getMsgData(token, msgs_array)) {
+			return;
+		}
+
+		// now put everything into a map in order to make search log(n)
+
+		for(uint32_t i=0;i<msgs_array.size();++i)
+        {
+#ifdef DEBUG_FORUMS
+            std::cerr << "Adding message " << msgs_array[i].mMeta.mMsgId << " with parent " << msgs_array[i].mMeta.mParentId << " to message map" << std::endl;
+#endif
+			msgs[msgs_array[i].mMeta.mMsgId] = msgs_array[i] ;
+        }
 	}
 
 	emit status(tr("Loading"));
@@ -155,131 +171,152 @@ void GxsForumsFillThread::run()
 	int pos = 0;
 	int steps = count / PROGRESSBAR_MAX;
 	int step = 0;
-	QList<QPair<std::string, QTreeWidgetItem*> > threadList;
-	QPair<std::string, QTreeWidgetItem*> threadPair;
+    
+    // ThreadList contains the list of parent threads. The algorithm below iterates through all messages
+    // and tries to establish parenthood relationships between them, given that we only know the
+    // immediate parent of a message and now its children. Some messages have a missing parent and for them
+    // a fake top level parent is generated.
+    
+    // In order to be efficient, we first create a structure that lists the children of every mesage ID in the list.
+    // Then the hierarchy of message is build by attaching the kids to every message until all of them have been processed.
+    // The messages with missing parents will be the last ones remaining in the list.
+    
+	std::list<std::pair< RsGxsMessageId, QTreeWidgetItem* > > threadStack;
+    std::map<RsGxsMessageId,std::list<RsGxsMessageId> > kids_array ;
+    std::set<RsGxsMessageId> missing_parents;
 
-	/* add all threads */
-	std::vector<RsGxsForumMsg>::iterator msgIt;
-	for (msgIt = msgs.begin(); msgIt != msgs.end(); ) {
-		if (wasStopped()) {
-			break;
-		}
+    // The first step is to find the top level thread messages. These are defined as the messages without
+    // any parent message ID.
+    
+    // this trick is needed because while we remove messages, the parents a given msg may already have been removed
+    // and wrongly understand as a missing parent.
 
-		const RsGxsForumMsg &msg = *msgIt;
+	std::map<RsGxsMessageId,RsGxsForumMsg> kept_msgs;
 
-		if (!mFlatView && !msg.mMeta.mParentId.isNull()) {
-			++msgIt;
-			continue;
-		}
+	for ( std::map<RsGxsMessageId,RsGxsForumMsg>::iterator msgIt = msgs.begin(); msgIt != msgs.end();++msgIt)
+        if(mFlatView || msgIt->second.mMeta.mParentId.isNull())
+		{
 
-#ifdef DEBUG_FORUMS
-		std::cerr << "GxsForumsFillThread::run() Adding TopLevel Thread: mId: " << msg.mMeta.mMsgId << std::endl;
-#endif
+			/* add all threads */
+			if (wasStopped())
+				return;
 
-		QTreeWidgetItem *item = mParent->convertMsgToThreadWidget(msg, mUseChildTS, mFilterColumn);
-		if (!mFlatView) {
-			threadList.push_back(QPair<std::string, QTreeWidgetItem*>(msg.mMeta.mMsgId.toStdString(), item));
-		}
-		calculateExpand(msg, item);
-
-		mItems.append(item);
-
-		if (++step >= steps) {
-			step = 0;
-			emit progress(++pos, PROGRESSBAR_MAX);
-		}
-
-		msgIt = msgs.erase(msgIt);
-	}
-
-	/* process messages */
-	while (msgs.size())
-    {
-		while (!threadList.empty())
-        {
-			if (wasStopped()) {
-				break;
-			}
-
-			threadPair = threadList.front();
-			threadList.pop_front();
+			const RsGxsForumMsg& msg = msgIt->second;
 
 #ifdef DEBUG_FORUMS
-			std::cerr << "GxsForumsFillThread::run() Getting Children of : " << threadPair.first << std::endl;
-#endif
-			/* iterate through child */
-			for (msgIt = msgs.begin(); msgIt != msgs.end(); ) {
-				const RsGxsForumMsg &msg = *msgIt;
-
-				if (msg.mMeta.mParentId.toStdString() != threadPair.first) {
-					++msgIt;
-					continue;
-				}
-
-#ifdef DEBUG_FORUMS
-				std::cerr << "GxsForumsFillThread::run() adding " << msg.mMeta.mMsgId << std::endl;
+			std::cerr << "GxsForumsFillThread::run() Adding TopLevel Thread: mId: " << msg.mMeta.mMsgId << std::endl;
 #endif
 
-				QTreeWidgetItem *item = mParent->convertMsgToThreadWidget(msg, mUseChildTS, mFilterColumn, threadPair.second);
+			QTreeWidgetItem *item = mParent->convertMsgToThreadWidget(msg, mUseChildTS, mFilterColumn,NULL);
 
-				calculateExpand(msg, item);
+			if (!mFlatView)
+				threadStack.push_back(std::make_pair(msg.mMeta.mMsgId,item)) ;
 
-				/* add item to process list */
-				threadList.push_back(QPair<std::string, QTreeWidgetItem*>(msg.mMeta.mMsgId.toStdString(), item));
-
-				if (++step >= steps) {
-					step = 0;
-					emit progress(++pos, PROGRESSBAR_MAX);
-				}
-
-				msgIt = msgs.erase(msgIt);
-			}
-		}
-
-		if (wasStopped()) {
-			break;
-		}
-
-		/* process missing messages */
-
-		/* search for a message with missing parent */
-		for (msgIt = msgs.begin(); msgIt != msgs.end(); ++msgIt) {
-			const RsGxsForumMsg &msg = *msgIt;
-
-			/* search for parent */
-			std::vector<RsGxsForumMsg>::iterator msgIt1;
-			for (msgIt1 = msgs.begin(); msgIt1 != msgs.end(); ++msgIt1) {
-				if (wasStopped()) {
-					break;
-				}
-
-				const RsGxsForumMsg &msg1 = *msgIt1;
-
-				if (msg.mMeta.mParentId == msg1.mMeta.mMsgId) {
-					/* found parent */
-					break;
-				}
-			}
-
-			if (wasStopped()) {
-				break;
-			}
-
-			if (msgIt1 != msgs.end()) {
-				/* parant found */
-				continue;
-			}
-
-			/* add dummy item */
-			QTreeWidgetItem *item = mParent->generateMissingItem(msg.mMeta.mParentId);
-			threadList.push_back(QPair<std::string, QTreeWidgetItem*>(msg.mMeta.mParentId.toStdString(), item));
+			calculateExpand(msg, item);
 
 			mItems.append(item);
-			break;
+
+			if (++step >= steps) {
+				step = 0;
+				emit progress(++pos, PROGRESSBAR_MAX);
+			}
 		}
+		else
+        {
+#ifdef DEBUG_FORUMS
+			std::cerr << "GxsForumsFillThread::run() Storing kid " << msgIt->first << " of message " << msgIt->second.mMeta.mParentId << std::endl;
+#endif
+            // The same missing parent may appear multiple times, so we first store them into a unique container.
+
+            if(msgs.find(msgIt->second.mMeta.mParentId) == msgs.end())
+				missing_parents.insert(msgIt->second.mMeta.mParentId);
+
+            kids_array[msgIt->second.mMeta.mParentId].push_back(msgIt->first) ;
+            kept_msgs.insert(*msgIt) ;
+        }
+
+    msgs = kept_msgs;
+
+    // Add a fake toplevel item for the parent IDs that we dont actually have.
+
+    for(std::set<RsGxsMessageId>::const_iterator it(missing_parents.begin());it!=missing_parents.end();++it)
+	{
+		// add dummy parent item
+		QTreeWidgetItem *parent = mParent->generateMissingItem(*it);
+		mItems.append( parent );
+
+		threadStack.push_back(std::make_pair(*it,parent)) ;
+	}
+#ifdef DEBUG_FORUMS
+	std::cerr << "GxsForumsFillThread::run() Processing stack:" << std::endl;
+#endif
+    // Now use a stack to go down the hierarchy
+
+	while (!threadStack.empty())
+    {
+		std::pair<RsGxsMessageId, QTreeWidgetItem*> threadPair = threadStack.front();
+		threadStack.pop_front();
+
+        std::map<RsGxsMessageId, std::list<RsGxsMessageId> >::iterator it = kids_array.find(threadPair.first) ;
+
+#ifdef DEBUG_FORUMS
+		std::cerr << "GxsForumsFillThread::run() Node: " << threadPair.first << std::endl;
+#endif
+        if(it == kids_array.end())
+            continue ;
+
+		if (wasStopped())
+			return;
+
+        for(std::list<RsGxsMessageId>::const_iterator it2(it->second.begin());it2!=it->second.end();++it2)
+        {
+            // We iterate through the top level thread items, and look for which message has the current item as parent.
+            // When found, the item is put in the thread list itself, as a potential new parent.
+            
+            std::map<RsGxsMessageId,RsGxsForumMsg>::iterator mit = msgs.find(*it2) ;
+
+            if(mit == msgs.end())
+			{
+				std::cerr << "GxsForumsFillThread::run()    Cannot find submessage " << *it2 << " !!!" << std::endl;
+				continue ;
+			}
+
+            const RsGxsForumMsg& msg(mit->second) ;
+#ifdef DEBUG_FORUMS
+			std::cerr << "GxsForumsFillThread::run()    adding sub_item " << msg.mMeta.mMsgId << std::endl;
+#endif
+
+			QTreeWidgetItem *item = mParent->convertMsgToThreadWidget(msg, mUseChildTS, mFilterColumn, threadPair.second);
+			calculateExpand(msg, item);
+
+			/* add item to process list */
+			threadStack.push_back(std::make_pair(msg.mMeta.mMsgId, item));
+
+			if (++step >= steps) {
+				step = 0;
+				emit progress(++pos, PROGRESSBAR_MAX);
+			}
+
+			msgs.erase(mit);
+		}
+
+#ifdef DEBUG_FORUMS
+		std::cerr << "GxsForumsFillThread::run() Erasing entry " << it->first << " from kids tab." << std::endl;
+#endif
+        kids_array.erase(it) ; // This is not strictly needed, but it improves performance by reducing the search space.
 	}
 
 #ifdef DEBUG_FORUMS
+    std::cerr << "Kids array now has " << kids_array.size() << " elements" << std::endl;
+    for(std::map<RsGxsMessageId,std::list<RsGxsMessageId> >::const_iterator it(kids_array.begin());it!=kids_array.end();++it)
+    {
+        std::cerr << "Node " << it->first << std::endl;
+        for(std::list<RsGxsMessageId>::const_iterator it2(it->second.begin());it2!=it->second.end();++it2)
+            std::cerr << "  " << *it2 << std::endl;
+    }
+
 	std::cerr << "GxsForumsFillThread::run() stopped: " << (wasStopped() ? "yes" : "no") << std::endl;
 #endif
 }
+
+

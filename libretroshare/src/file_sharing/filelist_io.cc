@@ -59,16 +59,16 @@ bool FileListIO::writeField(      unsigned char*&buff,uint32_t& buff_size,uint32
 
 bool FileListIO::readField (const unsigned char *buff,uint32_t  buff_size,uint32_t& offset,uint8_t check_section_tag, unsigned char *& val,uint32_t& size)
 {
-    if(!readSectionHeader(buff,buff_size,offset,check_section_tag,size))
+    uint32_t local_size ;
+
+    if(!readSectionHeader(buff,buff_size,offset,check_section_tag,local_size))
         return false;
 
-    val = (unsigned char *)rs_malloc(size) ;
-
-    if(!val)
+    if(!checkSectionSize(val,size,0,local_size))	// allocate val if needed to handle local_size bytes.
         return false;
 
-    memcpy(val,&buff[offset],size);
-    offset += size ;
+    memcpy(val,&buff[offset],local_size);
+    offset += local_size ;
 
     return true ;
 }

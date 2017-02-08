@@ -679,8 +679,6 @@ void MainWindow::updateStatus()
     // This call is essential to remove locks due to QEventLoop re-entrance while asking gpg passwds. Dont' remove it!
     if(RsAutoUpdatePage::eventsLocked())
         return;
-    if(Settings->valueFromGroup("StatusBar", "DisableSysTrayToolTip", QVariant(false)).toBool())
-        return;
     float downKb = 0;
     float upKb = 0;
     rsConfig->GetCurrentDataRates(downKb, upKb);
@@ -698,6 +696,8 @@ void MainWindow::updateStatus()
         discstatus->update();
     }
 
+    if(!Settings->valueFromGroup("StatusBar", "DisableSysTrayToolTip", QVariant(false)).toBool()) {
+
     QString tray = "RetroShare\n" + tr("Down: %1 (kB/s)").arg(downKb, 0, 'f', 2) + " | " + tr("Up: %1 (kB/s)").arg(upKb, 0, 'f', 2) + "\n";
 
     if (onlineCount == 1) {
@@ -713,6 +713,7 @@ void MainWindow::updateStatus()
         tray += notifyToolTip;
     }
     trayIcon->setToolTip(tray);
+    }
 }
 
 void MainWindow::updateFriends()

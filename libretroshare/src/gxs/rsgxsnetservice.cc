@@ -457,45 +457,6 @@ void RsGxsNetService::cleanRejectedMessages()
             ++it ;
 }
 
-// temporary holds a map of pointers to class T, and destroys all pointers on delete.
-
-template<class T>
-class RsGxsMetaDataTemporaryMap: public std::map<RsGxsGroupId,T*>
-{
-public:
-    virtual ~RsGxsMetaDataTemporaryMap()
-    {
-        clear() ;
-    }
-
-    virtual void clear()
-    {
-        for(typename RsGxsMetaDataTemporaryMap<T>::iterator it = this->begin();it!=this->end();++it)
-            if(it->second != NULL)
-		    delete it->second ;
-
-        std::map<RsGxsGroupId,T*>::clear() ;
-    }
-};
-
-template<class T>
-class RsGxsMetaDataTemporaryMapVector: public std::vector<T*>
-{
-public:
-    virtual ~RsGxsMetaDataTemporaryMapVector()
-    {
-        clear() ;
-    }
-
-    virtual void clear()
-    {
-        for(typename RsGxsMetaDataTemporaryMapVector<T>::iterator it = this->begin();it!=this->end();++it)
-            if(it->second != NULL)
-		    delete it->second ;
-        std::vector<T*>::clear() ;
-    }
-};
-
 RsGxsGroupId RsGxsNetService::hashGrpId(const RsGxsGroupId& gid,const RsPeerId& pid)
 {
     static const uint32_t SIZE = RsGxsGroupId::SIZE_IN_BYTES + RsPeerId::SIZE_IN_BYTES ;
@@ -2973,9 +2934,8 @@ void RsGxsNetService::locked_genReqGrpTransaction(NxsTransaction* tr)
     GXSNETDEBUG_P_(tr->mTransaction->PeerId()) << "locked_genReqGrpTransaction(): " << std::endl;
 #endif
 
-    RsGxsMetaDataTemporaryMap<RsGxsGrpMetaData> grpMetaMap;
-
     std::list<RsNxsSyncGrpItem*> grpItemL;
+    RsGxsMetaDataTemporaryMap<RsGxsGrpMetaData> grpMetaMap;
 
     for(std::list<RsNxsItem*>::iterator lit = tr->mItems.begin(); lit != tr->mItems.end(); ++lit)
     {
@@ -2993,7 +2953,23 @@ void RsGxsNetService::locked_genReqGrpTransaction(NxsTransaction* tr)
     }
 
     if (grpItemL.empty())
-        return;
+	{
+		// Normally the client grp updateTS is set after the transaction, but if no transaction is to happen, we have to set it here.
+        // Possible change: always do the update of the grpClientTS here. Needs to be tested...
+
+		RsGxsGrpUpdate& item (mClientGrpUpdateMap[tr->mTransaction->PeerId()]);
+
+#ifdef NXS_NET_DEBUG_0
+		GXSNETDEBUG_P_(tr->mTransaction->PeerId()) << "    reqList is empty, updating anyway ClientGrpUpdate TS for peer " << tr->mTransaction->PeerId() << " to: " << tr->mTransaction->updateTS << std::endl;
+#endif
+
+        if(item.grpUpdateTS != tr->mTransaction->updateTS)
+        {
+			item.grpUpdateTS = tr->mTransaction->updateTS;
+			IndicateConfigChanged();
+        }
+		return;
+	}
 
     mDataStore->retrieveGxsGrpMetaData(grpMetaMap);
 
@@ -3038,16 +3014,23 @@ void RsGxsNetService::locked_genReqGrpTransaction(NxsTransaction* tr)
     if(!reqList.empty())
         locked_pushGrpTransactionFromList(reqList, tr->mTransaction->PeerId(), transN);
     else
-    {
-        RsGxsGrpUpdate& item (mClientGrpUpdateMap[tr->mTransaction->PeerId()]);
+	{
+		// Normally the client grp updateTS is set after the transaction, but if no transaction is to happen, we have to set it here.
+		// Possible change: always do the update of the grpClientTS here. Needs to be tested...
+
+		RsGxsGrpUpdate& item (mClientGrpUpdateMap[tr->mTransaction->PeerId()]);
 
 #ifdef NXS_NET_DEBUG_0
-        GXSNETDEBUG_P_(tr->mTransaction->PeerId()) << "    reqList is empty, updating anyway ClientGrpUpdate TS for peer " << tr->mTransaction->PeerId() << " to: " << tr->mTransaction->updateTS << std::endl;
+		GXSNETDEBUG_P_(tr->mTransaction->PeerId()) << "    reqList is empty, updating anyway ClientGrpUpdate TS for peer " << tr->mTransaction->PeerId() << " to: " << tr->mTransaction->updateTS << std::endl;
 #endif
-        item.grpUpdateTS = tr->mTransaction->updateTS;
 
-        IndicateConfigChanged();
-    }
+		if(item.grpUpdateTS != tr->mTransaction->updateTS)
+		{
+			item.grpUpdateTS = tr->mTransaction->updateTS;
+			IndicateConfigChanged();
+		}
+	}
+
 }
 
 void RsGxsNetService::locked_genSendGrpsTransaction(NxsTransaction* tr)
@@ -4196,6 +4179,7 @@ void RsGxsNetService::handleRecvSyncMessage(RsNxsSyncMsgReqItem *item,bool item_
 						delete *it ;
 
 					itemL.clear() ;
+					delete mItem ;
 					break ;
 				}
 			}
@@ -4793,6 +4777,7 @@ bool RsGxsNetService::removeGroups(const std::list<RsGxsGroupId>& groups)
     }
 
 	IndicateConfigChanged();
+    return true ;
 }
 
 bool RsGxsNetService::stampMsgServerUpdateTS(const RsGxsGroupId& gid)
