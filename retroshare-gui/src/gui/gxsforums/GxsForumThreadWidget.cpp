@@ -200,7 +200,7 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 
     ui->threadTreeWidget->setItemDelegateForColumn(COLUMN_THREAD_DISTRIBUTION,new DistributionItemDelegate()) ;
 
-	connect(ui->versions_CB, SIGNAL(currentItemChanged(int)), this, SLOT(updateCurrentPostVersion(int)));
+	connect(ui->versions_CB, SIGNAL(currentIndexChanged(int)), this, SLOT(changedThread()));
 	connect(ui->threadTreeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(threadListCustomPopupMenu(QPoint)));
 	connect(ui->postText, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuTextBrowser(QPoint)));
 
@@ -698,7 +698,13 @@ void GxsForumThreadWidget::changedThread()
 	if (!item || !item->isSelected()) {
 		mThreadId.clear();
 	} else {
-		mThreadId = RsGxsMessageId(item->data(COLUMN_THREAD_MSGID, Qt::DisplayRole).toString().toStdString());
+        mThreadId.clear();
+
+        if(ui->versions_CB->count() > 0)
+            mThreadId = RsGxsMessageId(ui->versions_CB->itemData(ui->versions_CB->currentIndex()).toString().toStdString()) ;
+
+        if(mThreadId.isNull())
+			mThreadId = RsGxsMessageId(item->data(COLUMN_THREAD_MSGID, Qt::DisplayRole).toString().toStdString());
 	}
 
 	if (mFillThread) {
@@ -1024,13 +1030,13 @@ void GxsForumThreadWidget::fillThreadFinished()
 				mLastViewType = thread->mViewType;
 				mLastForumID = groupId();
 				ui->threadTreeWidget->insertTopLevelItems(0, thread->mItems);
+                mPostVersions = thread->mPostVersions;
 
 				// clear list
 				thread->mItems.clear();
 			} else {
-				fillThreads(thread->mItems, thread->mExpandNewMessages, thread->mItemToExpand);
-
                 mPostVersions = thread->mPostVersions;
+				fillThreads(thread->mItems, thread->mExpandNewMessages, thread->mItemToExpand);
 
 				// cleanup list
 				cleanupItems(thread->mItems);
@@ -1520,6 +1526,7 @@ void GxsForumThreadWidget::insertMessage()
 		mStateHelper->clear(mTokenTypeMessageData);
 
         ui->versions_CB->hide();
+        ui->time_label->show();
 
 		ui->postText->clear();
         //ui->threadTitle->clear();
@@ -1532,6 +1539,7 @@ void GxsForumThreadWidget::insertMessage()
 		mStateHelper->clear(mTokenTypeMessageData);
 
         ui->versions_CB->hide();
+        ui->time_label->show();
 
         //ui->threadTitle->setText(tr("Forum Description"));
 		ui->postText->setText(mForumDescription);
@@ -1552,6 +1560,7 @@ void GxsForumThreadWidget::insertMessage()
 		mStateHelper->setWidgetEnabled(ui->previousButton, false);
 		mStateHelper->setWidgetEnabled(ui->nextButton, false);
         ui->versions_CB->hide();
+        ui->time_label->show();
 		return;
 	}
 
@@ -1568,19 +1577,33 @@ void GxsForumThreadWidget::insertMessage()
 
     // add/show combobox for versions, if applicable, and enable it. If no older versions of the post available, hide the combobox.
 
+    std::cerr << "Looking into existing versions  for post " << mThreadId << ", thread history: " << mPostVersions.size() << std::endl;
+
     QMap<RsGxsMessageId,QVector<QPair<time_t,RsGxsMessageId> > >::const_iterator it = mPostVersions.find(mThreadId) ;
 	ui->versions_CB->clear();
 
     if(it != mPostVersions.end())
     {
+		std::cerr << (*it).size() << " versions found " << std::endl;
+
 		ui->versions_CB->setVisible(true) ;
+        ui->time_label->hide();
+
+        ui->versions_CB->blockSignals(true) ;
 
         for(uint32_t i=0;i<(*it).size();++i)
-            ui->versions_CB->insertItem(i,QDateTime::fromTime_t( (*it)[i].first).toString()) ;
+        {
+            ui->versions_CB->insertItem(i,DateTime::formatLongDateTime( (*it)[i].first));
+            ui->versions_CB->setItemData(i,QString::fromStdString((*it)[i].second.toStdString()));
+
+            std::cerr << "  added new post version " << (*it)[i].first << " " << (*it)[i].second << std::endl;
+        }
+        ui->versions_CB->blockSignals(false) ;
     }
     else
     {
     	ui->versions_CB->hide();
+        ui->time_label->show();
     }
 
 	/* request Post */
@@ -2137,7 +2160,7 @@ void GxsForumThreadWidget::editForumMessageData(const RsGxsForumMsg& msg)
 
 	if (!msg.mMeta.mAuthorId.isNull())
 	{
-		CreateGxsForumMsg *cfm = new CreateGxsForumMsg(groupId(), mThreadId, msg.mMeta.mMsgId);
+		CreateGxsForumMsg *cfm = new CreateGxsForumMsg(groupId(), msg.mMeta.mParentId, msg.mMeta.mMsgId);
 
 		cfm->insertPastedText(QString::fromUtf8(msg.mMsg.c_str())) ;
 		cfm->show();

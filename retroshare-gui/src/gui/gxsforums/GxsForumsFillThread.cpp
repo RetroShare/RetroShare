@@ -89,6 +89,8 @@ void GxsForumsFillThread::calculateExpand(const RsGxsForumMsg &msg, QTreeWidgetI
 	}
 }
 
+static bool decreasing_time_comp(const QPair<time_t,RsGxsMessageId>& e1,const QPair<time_t,RsGxsMessageId>& e2) { return e2.first < e1.first ; }
+
 void GxsForumsFillThread::run()
 {
 	RsTokenService *service = rsGxsForums->getTokenService();
@@ -200,61 +202,75 @@ void GxsForumsFillThread::run()
 #ifdef DEBUG_FORUMS
 			std::cerr << "  Post " << msgIt->second.mMeta.mMsgId << " is a new version of " << msgIt->second.mMeta.mOrigMsgId << std::endl;
 #endif
-            mPostVersions[msgIt->second.mMeta.mOrigMsgId].push_back(QPair<time_t,RsGxsMessageId>(msgIt->second.mMeta.mPublishTs,msgIt->second.mMeta.mMsgId)) ;
+			std::map<RsGxsMessageId,RsGxsForumMsg>::iterator msgIt2 = msgs.find(msgIt->second.mMeta.mOrigMsgId);
+
+            // always add the post a a self version
+
+            if(msgIt2 != msgs.end())
+            {
+                // Ensuring that the post exists allows to only collect the existing data.
+
+				mPostVersions[msgIt->second.mMeta.mOrigMsgId].push_back(QPair<time_t,RsGxsMessageId>(msgIt2->second.mMeta.mPublishTs,msgIt2->second.mMeta.mMsgId)) ;
+				mPostVersions[msgIt->second.mMeta.mOrigMsgId].push_back(QPair<time_t,RsGxsMessageId>(msgIt->second.mMeta.mPublishTs,msgIt->second.mMeta.mMsgId)) ;
+            }
         }
+
+    // The following code assembles all new versions of a given post into the same array, indexed by the oldest version of the post.
 
     for(QMap<RsGxsMessageId,QVector<QPair<time_t,RsGxsMessageId> > >::iterator it(mPostVersions.begin());it!=mPostVersions.end();++it)
     {
 		QVector<QPair<time_t,RsGxsMessageId> >& v(*it) ;
 
         for(int32_t i=0;i<v.size();++i)
-        {
-            RsGxsMessageId sub_msg_id = v[i].second ;
+            if(v[i].second != it.key())
+			{
+				RsGxsMessageId sub_msg_id = v[i].second ;
 
-            // move the post in first position if it is more recent.
+				QMap<RsGxsMessageId,QVector<QPair<time_t,RsGxsMessageId> > >::iterator it2 = mPostVersions.find(sub_msg_id);
 
-            if(v[0].first < v[i].first)	// works if i==0
-            {
-				QPair<time_t,RsGxsMessageId> tmp(v[0]) ;
-				v[0] = v[i] ;
-				v[i] = tmp ;
-            }
+				if(it2 != mPostVersions.end())
+				{
+					for(uint32_t j=0;j<(*it2).size();++j)
+						if((*it2)[j].second != sub_msg_id)	// dont copy it, since it is already present at slot i
+							v.append((*it2)[j]) ;
 
-			QMap<RsGxsMessageId,QVector<QPair<time_t,RsGxsMessageId> > >::iterator it2 = mPostVersions.find(sub_msg_id);
-
-            if(it2 != mPostVersions.end())
-            {
-                for(uint32_t j=0;j<(*it2).size();++j)
-					v.append((*it2)[j]) ;
-
-				mPostVersions.erase(it2) ;	// it2 is never equal to it
-            }
-        }
+					mPostVersions.erase(it2) ;	// it2 is never equal to it
+				}
+			}
     }
 
-    // Now remove from msg ids, all posts except the most recent one.
+    // Now remove from msg ids, all posts except the most recent one. And make the mPostVersion be indexed by the most recent version of the post,
+    // which corresponds to the item in the tree widget.
 
 #ifdef DEBUG_FORUMS
 	std::cerr << "Final post versions: " << std::endl;
 #endif
+	QMap<RsGxsMessageId,QVector<QPair<time_t,RsGxsMessageId> > > mTmp;
+
     for(QMap<RsGxsMessageId,QVector<QPair<time_t,RsGxsMessageId> > >::iterator it(mPostVersions.begin());it!=mPostVersions.end();++it)
     {
 #ifdef DEBUG_FORUMS
         std::cerr << "Original post: " << it.key() << std::endl;
 #endif
-        if(!(*it).empty())
-            msgs.erase(it.key()) ;
+        // Finally, sort the posts from newer to older
 
-        for(uint32_t i=0;i<(*it).size();++i)
-        {
-            if(i > 0)
-                msgs.erase((*it)[i].second) ;
+        qSort((*it).begin(),(*it).end(),decreasing_time_comp) ;
 
 #ifdef DEBUG_FORUMS
-            std::cerr << "   new version " << (*it)[i].first << "  " << (*it)[i].second << std::endl;
+		std::cerr << "   most recent version " << (*it)[0].first << "  " << (*it)[0].second << std::endl;
+#endif
+        for(uint32_t i=1;i<(*it).size();++i)
+        {
+			msgs.erase((*it)[i].second) ;
+
+#ifdef DEBUG_FORUMS
+            std::cerr << "   older version " << (*it)[i].first << "  " << (*it)[i].second << std::endl;
 #endif
         }
+
+        mTmp[(*it)[0].second] = *it ;	// index the versions map by the ID of the most recent post.
     }
+    mPostVersions = mTmp ;
 
     // The first step is to find the top level thread messages. These are defined as the messages without
     // any parent message ID.
