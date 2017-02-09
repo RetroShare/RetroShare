@@ -701,10 +701,16 @@ void GxsForumThreadWidget::changedThread()
         mThreadId.clear();
 
         if(ui->versions_CB->count() > 0)
+        {
             mThreadId = RsGxsMessageId(ui->versions_CB->itemData(ui->versions_CB->currentIndex()).toString().toStdString()) ;
+            mOrigThreadId = RsGxsMessageId(ui->versions_CB->itemData(0).toString().toStdString()) ;
+        }
 
         if(mThreadId.isNull())
+        {
 			mThreadId = RsGxsMessageId(item->data(COLUMN_THREAD_MSGID, Qt::DisplayRole).toString().toStdString());
+            mOrigThreadId = mThreadId ;
+        }
 	}
 
 	if (mFillThread) {
@@ -1579,8 +1585,12 @@ void GxsForumThreadWidget::insertMessage()
 
     std::cerr << "Looking into existing versions  for post " << mThreadId << ", thread history: " << mPostVersions.size() << std::endl;
 
-    QMap<RsGxsMessageId,QVector<QPair<time_t,RsGxsMessageId> > >::const_iterator it = mPostVersions.find(mThreadId) ;
-	ui->versions_CB->clear();
+    QMap<RsGxsMessageId,QVector<QPair<time_t,RsGxsMessageId> > >::const_iterator it = mPostVersions.find(mOrigThreadId) ;
+
+	ui->versions_CB->blockSignals(true) ;
+
+    while(ui->versions_CB->count() > 0)
+		ui->versions_CB->removeItem(0);
 
     if(it != mPostVersions.end())
     {
@@ -1589,7 +1599,7 @@ void GxsForumThreadWidget::insertMessage()
 		ui->versions_CB->setVisible(true) ;
         ui->time_label->hide();
 
-        ui->versions_CB->blockSignals(true) ;
+        int current_index = 0 ;
 
         for(uint32_t i=0;i<(*it).size();++i)
         {
@@ -1597,14 +1607,20 @@ void GxsForumThreadWidget::insertMessage()
             ui->versions_CB->setItemData(i,QString::fromStdString((*it)[i].second.toStdString()));
 
             std::cerr << "  added new post version " << (*it)[i].first << " " << (*it)[i].second << std::endl;
+
+            if(mThreadId == (*it)[i].second)
+                current_index = i ;
         }
-        ui->versions_CB->blockSignals(false) ;
+
+        ui->versions_CB->setCurrentIndex(current_index) ;
     }
     else
     {
     	ui->versions_CB->hide();
         ui->time_label->show();
     }
+
+	ui->versions_CB->blockSignals(false) ;
 
 	/* request Post */
 	RsGxsGrpMsgIdPair msgId = std::make_pair(groupId(), mThreadId);

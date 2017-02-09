@@ -289,13 +289,6 @@
            </property>
           </widget>
          </item>
-         <item row="0" column="7">
-          <widget class="QLabel" name="time_label">
-           <property name="text">
-            <string notr="true"/>
-           </property>
-          </widget>
-         </item>
          <item row="0" column="13">
           <widget class="QPushButton" name="nextUnreadButton">
            <property name="sizePolicy">
@@ -480,6 +473,13 @@
          </item>
          <item row="0" column="9">
           <widget class="QComboBox" name="versions_CB"/>
+         </item>
+         <item row="0" column="7">
+          <widget class="QLabel" name="time_label">
+           <property name="text">
+            <string notr="true"/>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>

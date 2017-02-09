@@ -166,6 +166,7 @@ private:
 private:
 	RsGxsGroupId mLastForumID;
 	RsGxsMessageId mThreadId;
+	RsGxsMessageId mOrigThreadId;
     RsGxsForumGroup mForumGroup;
 	QString mForumDescription;
 	int mSubscribeFlags;
