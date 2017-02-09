@@ -200,7 +200,7 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 
     ui->threadTreeWidget->setItemDelegateForColumn(COLUMN_THREAD_DISTRIBUTION,new DistributionItemDelegate()) ;
 
-	connect(ui->versions_CB, SIGNAL(currentIndexChanged(int)), this, SLOT(changedThread()));
+	connect(ui->versions_CB, SIGNAL(currentIndexChanged(int)), this, SLOT(changedVersion()));
 	connect(ui->threadTreeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(threadListCustomPopupMenu(QPoint)));
 	connect(ui->postText, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuTextBrowser(QPoint)));
 
@@ -690,6 +690,17 @@ void GxsForumThreadWidget::togglethreadview_internal()
 	}
 }
 
+void GxsForumThreadWidget::changedVersion()
+{
+	mThreadId = RsGxsMessageId(ui->versions_CB->itemData(ui->versions_CB->currentIndex()).toString().toStdString()) ;
+
+	if (mFillThread) {
+		return;
+	}
+	ui->postText->resetImagesStatus(Settings->getForumLoadEmbeddedImages()) ;
+    insertMessage();
+}
+
 void GxsForumThreadWidget::changedThread()
 {
 	/* just grab the ids of the current item */
@@ -697,20 +708,10 @@ void GxsForumThreadWidget::changedThread()
 
 	if (!item || !item->isSelected()) {
 		mThreadId.clear();
+        mOrigThreadId.clear();
 	} else {
-        mThreadId.clear();
 
-        if(ui->versions_CB->count() > 0)
-        {
-            mThreadId = RsGxsMessageId(ui->versions_CB->itemData(ui->versions_CB->currentIndex()).toString().toStdString()) ;
-            mOrigThreadId = RsGxsMessageId(ui->versions_CB->itemData(0).toString().toStdString()) ;
-        }
-
-        if(mThreadId.isNull())
-        {
-			mThreadId = RsGxsMessageId(item->data(COLUMN_THREAD_MSGID, Qt::DisplayRole).toString().toStdString());
-            mOrigThreadId = mThreadId ;
-        }
+		mThreadId = mOrigThreadId = RsGxsMessageId(item->data(COLUMN_THREAD_MSGID, Qt::DisplayRole).toString().toStdString());
 	}
 
 	if (mFillThread) {
@@ -1603,7 +1604,7 @@ void GxsForumThreadWidget::insertMessage()
 
         for(uint32_t i=0;i<(*it).size();++i)
         {
-            ui->versions_CB->insertItem(i,DateTime::formatLongDateTime( (*it)[i].first));
+            ui->versions_CB->insertItem(i, ((i==0)?tr("(Latest) "):tr("(Old) "))+" "+DateTime::formatLongDateTime( (*it)[i].first));
             ui->versions_CB->setItemData(i,QString::fromStdString((*it)[i].second.toStdString()));
 
             std::cerr << "  added new post version " << (*it)[i].first << " " << (*it)[i].second << std::endl;
@@ -2176,7 +2177,7 @@ void GxsForumThreadWidget::editForumMessageData(const RsGxsForumMsg& msg)
 
 	if (!msg.mMeta.mAuthorId.isNull())
 	{
-		CreateGxsForumMsg *cfm = new CreateGxsForumMsg(groupId(), msg.mMeta.mParentId, msg.mMeta.mMsgId);
+		CreateGxsForumMsg *cfm = new CreateGxsForumMsg(groupId(), msg.mMeta.mParentId, msg.mMeta.mMsgId, msg.mMeta.mAuthorId);
 
 		cfm->insertPastedText(QString::fromUtf8(msg.mMsg.c_str())) ;
 		cfm->show();

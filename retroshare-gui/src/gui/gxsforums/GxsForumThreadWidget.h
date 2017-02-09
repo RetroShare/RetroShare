@@ -75,6 +75,7 @@ private slots:
 	void contextMenuTextBrowser(QPoint point);
 
 	void changedThread();
+	void changedVersion();
 	void clickedThread (QTreeWidgetItem *item, int column);
 
 	void reply_with_private_message();

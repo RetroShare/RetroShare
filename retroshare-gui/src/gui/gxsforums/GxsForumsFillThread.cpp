@@ -210,7 +210,9 @@ void GxsForumsFillThread::run()
             {
                 // Ensuring that the post exists allows to only collect the existing data.
 
-				mPostVersions[msgIt->second.mMeta.mOrigMsgId].push_back(QPair<time_t,RsGxsMessageId>(msgIt2->second.mMeta.mPublishTs,msgIt2->second.mMeta.mMsgId)) ;
+                if(mPostVersions[msgIt->second.mMeta.mOrigMsgId].empty())
+					mPostVersions[msgIt->second.mMeta.mOrigMsgId].push_back(QPair<time_t,RsGxsMessageId>(msgIt2->second.mMeta.mPublishTs,msgIt2->second.mMeta.mMsgId)) ;
+
 				mPostVersions[msgIt->second.mMeta.mOrigMsgId].push_back(QPair<time_t,RsGxsMessageId>(msgIt->second.mMeta.mPublishTs,msgIt->second.mMeta.mMsgId)) ;
             }
         }
