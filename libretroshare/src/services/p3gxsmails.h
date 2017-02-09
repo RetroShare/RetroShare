@@ -29,30 +29,19 @@ struct p3GxsMails;
 struct GxsMailsClient
 {
 	/// Subservices identifiers (like port for TCP)
-	enum GxsMailSubServices { MSG_SERVICE };
-
-	/**
-	 * This is usually used to save a pointer to the p3GxsMails service (e.g. by
-	 * coping it in a member variable), so as to be able to send mails, and to
-	 * register as a mail receiver via
-	 * p3GxsMails::registerGxsMailsClient(GxsMailSubServices, GxsMailsClient)
-	 */
-	//virtual void connectToGxsMails(p3GxsMails *pt) = 0 ;
+	enum GxsMailSubServices { TEST_SERVICE = 1 };
 
 	/**
 	 * This will be called by p3GxsMails to dispatch mails to the subservice
 	 * @param originalMessage message as received from GXS backend (encrypted)
-	 *   GxsMailsClient take ownership of it ( aka should take free/delete it
-	 *   when not needed anymore )
 	 * @param data buffer containing the decrypted data
-	 *   GxsMailsClient take ownership of it ( aka should take free/delete it
-	 *   when not needed anymore )
 	 * @param dataSize size of the buffer
 	 * @return true if dispatching goes fine, false otherwise
 	 */
-	virtual bool receiveGxsMail( RsGxsMailItem* originalMessage,
-	                             uint8_t* data, uint32_t dataSize ) = 0;
+	virtual bool receiveGxsMail( const RsGxsMailItem* originalMessage,
+	                             const uint8_t* data, uint32_t dataSize ) = 0;
 };
+
 
 struct p3GxsMails : RsGenExchange, GxsTokenQueue
 {
@@ -60,8 +49,7 @@ struct p3GxsMails : RsGenExchange, GxsTokenQueue
 	            p3IdService& identities ) :
 	    RsGenExchange( gds, nes, new RsGxsMailSerializer(),
 	                   RS_SERVICE_TYPE_GXS_MAIL, &identities,
-	                   AuthenPolicy(),
-	                   RS_GXS_DEFAULT_MSG_STORE_PERIOD ), // TODO: Discuss with Cyril about this
+	                   AuthenPolicy(), GXS_STORAGE_PERIOD ),
 	    GxsTokenQueue(this), idService(identities),
 	    servClientsMutex("p3GxsMails client services map mutex") {}
 
@@ -101,9 +89,8 @@ struct p3GxsMails : RsGenExchange, GxsTokenQueue
 	void registerGxsMailsClient( GxsMailsClient::GxsMailSubServices serviceType,
 	                             GxsMailsClient* service );
 
-	/**
-	 * @see GxsTokenQueue::handleResponse(uint32_t token, uint32_t req_type)
-	 */
+
+	/// @see GxsTokenQueue::handleResponse(uint32_t token, uint32_t req_type)
 	virtual void handleResponse(uint32_t token, uint32_t req_type);
 
 	/// @see RsGenExchange::service_tick()
@@ -120,11 +107,27 @@ protected:
 	void notifyChanges(std::vector<RsGxsNotify *> &changes);
 
 private:
-	/// Time interval of inactivity before a distribution group is unsubscribed
-	const static int32_t UNUSED_GROUP_UNSUBSCRIBE_INTERVAL = 0x76A700; // 3 months approx
+	/** Time interval of inactivity before a distribution group is unsubscribed.
+	 * Approximatively 3 months seems ok ATM. */
+	const static int32_t UNUSED_GROUP_UNSUBSCRIBE_INTERVAL = 0x76A700;
 
-	/// @brief AuthenPolicy check nothing ATM TODO talk with Cyril how this should be
-	static uint32_t AuthenPolicy() { return 0; }
+	/**
+	 * This should be as little as possible as the size of the database can grow
+	 * very fast taking in account we are handling mails for the whole network.
+	 * We do prefer to resend a not acknowledged yet mail after
+	 * GXS_STORAGE_PERIOD has passed and keep it little.
+	 * Tought it can't be too little as this may cause signed acknowledged to
+	 * get lost thus causing resend and fastly grow perceived async latency, in
+	 * case two sporadically connected users sends mails each other.
+	 * TODO: While it is ok for signed acknowledged to stays in the DB for a
+	 * full GXS_STORAGE_PERIOD, mails should be removed as soon as a valid
+	 * signed acknowledged is received for each of them.
+	 * Two weeks seems fair ATM.
+	 */
+	const static uint32_t GXS_STORAGE_PERIOD = 0x127500;
+
+	/// Define how the backend should handle authentication based on signatures
+	static uint32_t AuthenPolicy();
 
 	/// Types to mark queries in tokens queue
 	enum GxsReqResTypes
@@ -158,7 +161,6 @@ private:
 	 */
 	bool inline supersedePreferredGroup(const RsGxsGroupId& potentialGrId)
 	{
-		//std::cout << "supersedePreferredGroup(const RsGxsGroupId& potentialGrId) " << preferredGroupId << " <? " << potentialGrId << std::endl;
 		if(preferredGroupId < potentialGrId)
 		{
 			std::cerr << "supersedePreferredGroup(...) " << potentialGrId
@@ -169,17 +171,39 @@ private:
 		return false;
 	}
 
-	/// @return true if has passed more then interval seconds time since timeStamp
-	bool static inline olderThen(time_t timeStamp, int32_t interval)
-	{ return (timeStamp + interval) < time(NULL); }
+	/** @return true if has passed more then interval seconds between timeStamp
+	 * and ref. @param ref by default now is taked as reference. */
+	bool static inline olderThen(time_t timeStamp, int32_t interval,
+	                             time_t ref = time(NULL))
+	{ return (timeStamp + interval) < ref; }
 
 
 	/// Decrypt email content and pass it to dispatchDecryptedMail(...)
-	bool handleEcryptedMail(RsGxsMailItem* mail);
+	bool handleEcryptedMail(const RsGxsMailItem* mail);
 
 	/// Dispatch the message to the recipient service
-	bool dispatchDecryptedMail( RsGxsMailItem* received_msg,
-	                            uint8_t* decrypted_data,
+	bool dispatchDecryptedMail( const RsGxsMailItem* received_msg,
+	                            const uint8_t* decrypted_data,
 	                            uint32_t decrypted_data_size );
+};
+
+
+struct TestGxsMailClientService : GxsMailsClient
+{
+	TestGxsMailClientService(p3GxsMails& gmxMailService)
+	{
+		gmxMailService.registerGxsMailsClient( GxsMailSubServices::TEST_SERVICE,
+		                                       this );
+	}
+
+	/// @see GxsMailsClient::receiveGxsMail(...)
+	virtual bool receiveGxsMail( const RsGxsMailItem* originalMessage,
+	                             const uint8_t* data, uint32_t dataSize )
+	{
+		std::cout << "TestGxsMailClientService::receiveGxsMail(...) got message"
+		          << " from: " << originalMessage->meta.mAuthorId << std::endl
+		          << "\t" << std::string((char*)data, dataSize) << std::endl;
+		return true;
+	}
 };
 

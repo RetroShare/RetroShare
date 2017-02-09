@@ -51,7 +51,8 @@
 bool getRawUInt8(void *data, uint32_t size, uint32_t *offset, uint8_t *out);
 bool setRawUInt8(void *data, uint32_t size, uint32_t *offset, uint8_t in);
 
-bool getRawUInt16(void *data, uint32_t size, uint32_t *offset, uint16_t *out);
+bool getRawUInt16( const void* data, uint32_t size, uint32_t *offset,
+                   uint16_t *out );
 bool setRawUInt16(void *data, uint32_t size, uint32_t *offset, uint16_t in);
 
 bool getRawUInt32(void *data, uint32_t size, uint32_t *offset, uint32_t *out);

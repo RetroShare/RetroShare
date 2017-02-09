@@ -1499,6 +1499,8 @@ int RsServer::StartupRetroShare()
 	mGxsMails->setNetworkExchangeService(gxsmails_ns);
 	pqih->addService(gxsmails_ns, true);
 	mConfigMgr->addConfiguration("gxs_mail.cfg", gxsmails_ns);
+
+	new TestGxsMailClientService(*mGxsMails);
 #	endif // RS_GXS_MAIL
 
 	// remove pword from memory

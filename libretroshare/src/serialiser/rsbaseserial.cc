@@ -71,7 +71,8 @@ bool setRawUInt8(void *data, uint32_t size, uint32_t *offset, uint8_t in)
 }
 /* UInt16 get/set */
 
-bool getRawUInt16(void *data, uint32_t size, uint32_t *offset, uint16_t *out)
+bool getRawUInt16( const void *data, uint32_t size, uint32_t *offset,
+                   uint16_t *out )
 {
 	/* first check there is space */
 	if (size < *offset + 2)
