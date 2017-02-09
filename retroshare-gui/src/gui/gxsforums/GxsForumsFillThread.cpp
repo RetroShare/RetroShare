@@ -31,7 +31,7 @@
 #include <iostream>
 #include <algorithm>
 
-//#define DEBUG_FORUMS
+#define DEBUG_FORUMS
 
 #define PROGRESSBAR_MAX 100
 
@@ -171,7 +171,7 @@ void GxsForumsFillThread::run()
 	int pos = 0;
 	int steps = count / PROGRESSBAR_MAX;
 	int step = 0;
-    
+
     // ThreadList contains the list of parent threads. The algorithm below iterates through all messages
     // and tries to establish parenthood relationships between them, given that we only know the
     // immediate parent of a message and now its children. Some messages have a missing parent and for them
@@ -185,6 +185,77 @@ void GxsForumsFillThread::run()
     std::map<RsGxsMessageId,std::list<RsGxsMessageId> > kids_array ;
     std::set<RsGxsMessageId> missing_parents;
 
+    // First of all, remove all older versions of posts. This is done by first adding all posts into a hierarchy structure
+    // and then removing all posts which have a new versions available. The older versions are kept appart.
+
+#ifdef DEBUG_FORUMS
+	std::cerr << "GxsForumsFillThread::run() Collecting post versions" << std::endl;
+#endif
+    mPostVersions.clear();
+    std::list<RsGxsMessageId> msg_stack ;
+
+	for ( std::map<RsGxsMessageId,RsGxsForumMsg>::iterator msgIt = msgs.begin(); msgIt != msgs.end();++msgIt)
+        if(!msgIt->second.mMeta.mOrigMsgId.isNull() && msgIt->second.mMeta.mOrigMsgId != msgIt->second.mMeta.mMsgId)
+        {
+#ifdef DEBUG_FORUMS
+			std::cerr << "  Post " << msgIt->second.mMeta.mMsgId << " is a new version of " << msgIt->second.mMeta.mOrigMsgId << std::endl;
+#endif
+            mPostVersions[msgIt->second.mMeta.mOrigMsgId].push_back(QPair<time_t,RsGxsMessageId>(msgIt->second.mMeta.mPublishTs,msgIt->second.mMeta.mMsgId)) ;
+        }
+
+    for(QMap<RsGxsMessageId,QVector<QPair<time_t,RsGxsMessageId> > >::iterator it(mPostVersions.begin());it!=mPostVersions.end();++it)
+    {
+		QVector<QPair<time_t,RsGxsMessageId> >& v(*it) ;
+
+        for(int32_t i=0;i<v.size();++i)
+        {
+            RsGxsMessageId sub_msg_id = v[i].second ;
+
+            // move the post in first position if it is more recent.
+
+            if(v[0].first < v[i].first)	// works if i==0
+            {
+				QPair<time_t,RsGxsMessageId> tmp(v[0]) ;
+				v[0] = v[i] ;
+				v[i] = tmp ;
+            }
+
+			QMap<RsGxsMessageId,QVector<QPair<time_t,RsGxsMessageId> > >::iterator it2 = mPostVersions.find(sub_msg_id);
+
+            if(it2 != mPostVersions.end())
+            {
+                for(uint32_t j=0;j<(*it2).size();++j)
+					v.append((*it2)[j]) ;
+
+				mPostVersions.erase(it2) ;	// it2 is never equal to it
+            }
+        }
+    }
+
+    // Now remove from msg ids, all posts except the most recent one.
+
+#ifdef DEBUG_FORUMS
+	std::cerr << "Final post versions: " << std::endl;
+#endif
+    for(QMap<RsGxsMessageId,QVector<QPair<time_t,RsGxsMessageId> > >::iterator it(mPostVersions.begin());it!=mPostVersions.end();++it)
+    {
+#ifdef DEBUG_FORUMS
+        std::cerr << "Original post: " << it.key() << std::endl;
+#endif
+        if(!(*it).empty())
+            msgs.erase(it.key()) ;
+
+        for(uint32_t i=0;i<(*it).size();++i)
+        {
+            if(i > 0)
+                msgs.erase((*it)[i].second) ;
+
+#ifdef DEBUG_FORUMS
+            std::cerr << "   new version " << (*it)[i].first << "  " << (*it)[i].second << std::endl;
+#endif
+        }
+    }
+
     // The first step is to find the top level thread messages. These are defined as the messages without
     // any parent message ID.
     
@@ -194,6 +265,8 @@ void GxsForumsFillThread::run()
 	std::map<RsGxsMessageId,RsGxsForumMsg> kept_msgs;
 
 	for ( std::map<RsGxsMessageId,RsGxsForumMsg>::iterator msgIt = msgs.begin(); msgIt != msgs.end();++msgIt)
+    {
+
         if(mFlatView || msgIt->second.mMeta.mParentId.isNull())
 		{
 
@@ -234,8 +307,11 @@ void GxsForumsFillThread::run()
             kids_array[msgIt->second.mMeta.mParentId].push_back(msgIt->first) ;
             kept_msgs.insert(*msgIt) ;
         }
+    }
 
     msgs = kept_msgs;
+
+    // Also create a list of posts by time, when they are new versions of existing posts. Only the last one will have an item created.
 
     // Add a fake toplevel item for the parent IDs that we dont actually have.
 

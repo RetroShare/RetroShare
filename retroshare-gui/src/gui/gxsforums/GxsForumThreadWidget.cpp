@@ -200,6 +200,7 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 
     ui->threadTreeWidget->setItemDelegateForColumn(COLUMN_THREAD_DISTRIBUTION,new DistributionItemDelegate()) ;
 
+	connect(ui->versions_CB, SIGNAL(currentItemChanged(int)), this, SLOT(updateCurrentPostVersion(int)));
 	connect(ui->threadTreeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(threadListCustomPopupMenu(QPoint)));
 	connect(ui->postText, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuTextBrowser(QPoint)));
 
@@ -1029,6 +1030,8 @@ void GxsForumThreadWidget::fillThreadFinished()
 			} else {
 				fillThreads(thread->mItems, thread->mExpandNewMessages, thread->mItemToExpand);
 
+                mPostVersions = thread->mPostVersions;
+
 				// cleanup list
 				cleanupItems(thread->mItems);
 			}
@@ -1516,6 +1519,8 @@ void GxsForumThreadWidget::insertMessage()
 		mStateHelper->setActive(mTokenTypeMessageData, false);
 		mStateHelper->clear(mTokenTypeMessageData);
 
+        ui->versions_CB->hide();
+
 		ui->postText->clear();
         //ui->threadTitle->clear();
 		return;
@@ -1525,6 +1530,8 @@ void GxsForumThreadWidget::insertMessage()
 	{
 		mStateHelper->setActive(mTokenTypeMessageData, false);
 		mStateHelper->clear(mTokenTypeMessageData);
+
+        ui->versions_CB->hide();
 
         //ui->threadTitle->setText(tr("Forum Description"));
 		ui->postText->setText(mForumDescription);
@@ -1544,6 +1551,7 @@ void GxsForumThreadWidget::insertMessage()
 		// there is something wrong
 		mStateHelper->setWidgetEnabled(ui->previousButton, false);
 		mStateHelper->setWidgetEnabled(ui->nextButton, false);
+        ui->versions_CB->hide();
 		return;
 	}
 
@@ -1557,6 +1565,23 @@ void GxsForumThreadWidget::insertMessage()
 	ui->lineLeft->hide();
 	ui->by_text_label->hide();
 	ui->by_label->hide();
+
+    // add/show combobox for versions, if applicable, and enable it. If no older versions of the post available, hide the combobox.
+
+    QMap<RsGxsMessageId,QVector<QPair<time_t,RsGxsMessageId> > >::const_iterator it = mPostVersions.find(mThreadId) ;
+	ui->versions_CB->clear();
+
+    if(it != mPostVersions.end())
+    {
+		ui->versions_CB->setVisible(true) ;
+
+        for(uint32_t i=0;i<(*it).size();++i)
+            ui->versions_CB->insertItem(i,QDateTime::fromTime_t( (*it)[i].first).toString()) ;
+    }
+    else
+    {
+    	ui->versions_CB->hide();
+    }
 
 	/* request Post */
 	RsGxsGrpMsgIdPair msgId = std::make_pair(groupId(), mThreadId);

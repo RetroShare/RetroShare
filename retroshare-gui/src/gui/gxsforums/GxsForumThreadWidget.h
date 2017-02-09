@@ -1,6 +1,8 @@
 #ifndef GXSFORUMTHREADWIDGET_H
 #define GXSFORUMTHREADWIDGET_H
 
+#include <QMap>
+
 #include "gui/gxs/GxsMessageFrameWidget.h"
 #include <retroshare/rsgxsforums.h>
 #include "gui/gxs/GxsIdDetails.h"
@@ -196,6 +198,8 @@ private:
 
 	RsGxsMessageId mNavigatePendingMsgId;
 	QList<RsGxsMessageId> mIgnoredMsgId;
+
+    QMap<RsGxsMessageId,QVector<QPair<time_t,RsGxsMessageId> > > mPostVersions ;	// holds older versions of posts
 
     Ui::GxsForumThreadWidget *ui;
 };

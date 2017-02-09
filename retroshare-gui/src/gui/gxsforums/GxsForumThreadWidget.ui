@@ -479,7 +479,7 @@
           </widget>
          </item>
          <item row="0" column="9">
-          <widget class="QSpinBox" name="version_SB"/>
+          <widget class="QComboBox" name="versions_CB"/>
          </item>
         </layout>
        </item>
@@ -565,8 +565,8 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../images.qrc"/>
   <include location="../icons.qrc"/>
+  <include location="../images.qrc"/>
  </resources>
  <connections/>
 </ui>
