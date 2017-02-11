@@ -86,6 +86,8 @@ private:
     RsPeerId peerId;
     RsPgpId  pgpId;
 
+    QString nameAndLocation;
+
     /** Qt Designer generated object */
     Ui::ConfCertDialog ui;
 };

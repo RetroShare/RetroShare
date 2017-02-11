@@ -230,6 +230,8 @@ IdDialog::IdDialog(QWidget *parent) :
 	ui->mainSplitter->setStretchFactor(0, 0);
 	ui->mainSplitter->setStretchFactor(1, 1);
 	
+	ui->inviteFrame->hide();
+	
   /*remove
 	QList<int> sizes;
 	sizes << width() << 500; // Qt calculates the right sizes
@@ -1414,7 +1416,7 @@ bool IdDialog::fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, 
 
 	/* do filtering */
 	bool ok = false;
-	if (data.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID)
+	if (data.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID_kept_for_compatibility)
     {
         if (isLinkedToOwnNode && (accept & RSID_FILTER_YOURSELF))
         {
@@ -1516,7 +1518,7 @@ bool IdDialog::fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, 
 
     QString tooltip;
 
-	if (data.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID)
+	if (data.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID_kept_for_compatibility)
 	{
 		if (data.mPgpKnown)
 		{
@@ -1758,7 +1760,7 @@ void IdDialog::insertIdDetails(uint32_t token)
 	}
 	else
 	{
-		if (data.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID)
+		if (data.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID_kept_for_compatibility)
 			ui->lineEdit_GpgName->setText(tr("[Unknown node]"));
 		else
 			ui->lineEdit_GpgName->setText(tr("Anonymous Id"));
@@ -1794,7 +1796,7 @@ void IdDialog::insertIdDetails(uint32_t token)
             ui->lineEdit_Type->setText(tr("Identity owned by you, linked to your Retroshare node")) ;
         else
             ui->lineEdit_Type->setText(tr("Anonymous identity, owned by you")) ;
-    else if (data.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID)
+    else if (data.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID_kept_for_compatibility)
     {
         if (data.mPgpKnown)
             if (rsPeers->isGPGAccepted(data.mPgpId))
@@ -2458,27 +2460,16 @@ void IdDialog::sendInvite()
 	{
 		return;
 	}
-    /* create a message */
-    MessageComposer *composer = MessageComposer::newMsg();
 
-    composer->setTitleText(tr("You have a friend invite"));
+    RsGxsId id(ui->lineEdit_KeyId->text().toStdString());
     
-    RsPeerId ownId = rsPeers->getOwnId();
-    RetroShareLink link;
-    link.createCertificate(ownId);
+    if ((QMessageBox::question(this, tr("Send invite?"),tr("Do you really want send a invite with your Certificate?"),QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes))== QMessageBox::Yes)
+	{
+        MessageComposer::sendInvite(id);
+        ui->inviteFrame->show();
+        ui->inviteButton->setEnabled(false);
+	}
     
-    std::string keyId = item->text(RSID_COL_KEYID).toStdString();
-    
-    QString sMsgText = inviteMessage();
-    sMsgText += "<br><br>";
-    sMsgText += tr("Respond now:") + "<br>";
-    sMsgText += link.toHtml() + "<br>";
-    sMsgText += "<br>";
-    sMsgText += tr("Thanks, <br>") + QString::fromUtf8(rsPeers->getGPGName(rsPeers->getGPGOwnId()).c_str());
-    composer->setMsgText(sMsgText);
-    composer->addRecipient(MessageComposer::TO,  RsGxsId(keyId));
-
-    composer->show();
 
 }
 
@@ -2557,3 +2548,7 @@ QList<QTreeWidgetItem *> selected_items = ui->idTreeWidget->selectedItems();
 	requestIdList();
 }
 
+void IdDialog::on_closeInfoFrameButton_clicked()
+{
+	ui->inviteFrame->setVisible(false);
+}

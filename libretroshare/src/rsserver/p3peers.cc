@@ -1073,6 +1073,8 @@ std::string p3Peers::getPGPKey(const RsPgpId& pgp_id,bool include_signatures)
 
 	RsCertificate cert( Detail,mem_block,mem_block_size ) ;
 
+    delete[] mem_block ;
+
 	return cert.armouredPGPKey() ;
 }
 
@@ -1124,6 +1126,8 @@ std::string p3Peers::GetRetroshareInvite(const RsPeerId& ssl_id,bool include_sig
 		}
 
 		RsCertificate cert( Detail,mem_block,mem_block_size ) ;
+
+        delete[] mem_block ;
 
 		return cert.toStdString() ;
 

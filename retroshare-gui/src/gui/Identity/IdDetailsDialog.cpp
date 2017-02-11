@@ -24,6 +24,8 @@
 #include "gui/gxs/GxsIdDetails.h"
 #include "gui/settings/rsharesettings.h"
 #include "gui/common/UIStateHelper.h"
+#include "gui/msgs/MessageComposer.h"
+#include "gui/RetroShareLink.h"
 
 #include <retroshare/rspeers.h>
 
@@ -85,6 +87,9 @@ IdDetailsDialog::IdDetailsDialog(const RsGxsGroupId& id, QWidget *parent) :
 	//connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(changeGroup()));
 	connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 	connect(ui->ownOpinion_CB, SIGNAL(currentIndexChanged(int)), this, SLOT(modifyReputation()));
+	connect(ui->autoBanIdentities_CB, SIGNAL(toggled(bool)), this, SLOT(toggleAutoBanIdentities(bool)));
+	
+  connect(ui->inviteButton, SIGNAL(clicked()), this, SLOT(sendInvite()));
 	
 	requestIdDetails();
 }
@@ -96,6 +101,17 @@ IdDetailsDialog::~IdDetailsDialog()
 
 	delete(ui);
 	delete(mIdQueue);
+}
+
+void IdDetailsDialog::toggleAutoBanIdentities(bool b)
+{
+    RsPgpId id(ui->lineEdit_GpgId->text().left(16).toStdString());
+
+    if(!id.isNull())
+    {
+        rsReputations->banNode(id,b) ;
+        //requestIdList();
+    }
 }
 
 static QString getHumanReadableDuration(uint32_t seconds)
@@ -155,8 +171,13 @@ void IdDetailsDialog::insertIdDetails(uint32_t token)
 
 	ui->lineEdit_Nickname->setText(QString::fromUtf8(data.mMeta.mGroupName.c_str()));
 	ui->lineEdit_KeyId->setText(QString::fromStdString(data.mMeta.mGroupId.toStdString()));
-	//ui->lineEdit_GpgHash->setText(QString::fromStdString(data.mPgpIdHash.toStdString()));
-	ui->lineEdit_GpgId->setText(QString::fromStdString(data.mPgpId.toStdString()));
+    if(data.mPgpKnown)
+	    ui->lineEdit_GpgId->setText(QString::fromStdString(data.mPgpId.toStdString()));
+    else
+	    ui->lineEdit_GpgId->setText(QString::fromStdString(data.mPgpId.toStdString()) + tr(" [unverified]"));
+
+    ui->autoBanIdentities_CB->setVisible(!data.mPgpId.isNull()) ;
+    ui->banoption_label->setVisible(!data.mPgpId.isNull()) ;
 	
   time_t now = time(NULL) ;
   ui->lineEdit_LastUsed->setText(getHumanReadableDuration(now - data.mLastUsageTS)) ;
@@ -183,7 +204,7 @@ void IdDetailsDialog::insertIdDetails(uint32_t token)
 	}
 	else
 	{
-		if (data.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID)
+		if(data.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID_kept_for_compatibility)
 		{
 			ui->lineEdit_GpgName->setText(tr("Unknown real name"));
 		}
@@ -211,13 +232,15 @@ void IdDetailsDialog::insertIdDetails(uint32_t token)
 	bool isOwnId = (data.mPgpKnown && (data.mPgpId == ownPgpId)) || (data.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN);
 
 	if (isOwnId)
+    {
 		if (data.mPgpKnown)
 			ui->lineEdit_Type->setText(tr("Identity owned by you, linked to your Retroshare node")) ;
 		else
 			ui->lineEdit_Type->setText(tr("Anonymous identity, owned by you")) ;
-	else if (data.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID)
+    }
+	else if (data.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID_kept_for_compatibility)
 	{
-		if (data.mPgpKnown)
+		if(data.mPgpKnown)
 			if (rsPeers->isGPGAccepted(data.mPgpId))
 				ui->lineEdit_Type->setText(tr("Owned by a friend Retroshare node")) ;
 			else
@@ -238,6 +261,8 @@ void IdDetailsDialog::insertIdDetails(uint32_t token)
 		// No Reputation yet!
 		mStateHelper->setWidgetEnabled(ui->ownOpinion_CB, true);
 	}
+	
+	ui->autoBanIdentities_CB->setChecked(rsReputations->isNodeBanned(data.mPgpId));
 
 /* now fill in the reputation information */
 
@@ -265,8 +290,28 @@ void IdDetailsDialog::insertIdDetails(uint32_t token)
     rsReputations->getReputationInfo(RsGxsId(data.mMeta.mGroupId),data.mPgpId,info) ;
     
 #warning (csoler) Do we need to do this? This code is apparently not used.
-	ui->neighborNodesOpinion_TF->setText(QString::number(info.mFriendAverageScore));
-	ui->overallOpinion_TF->setText(QString::number(info.mOverallReputationLevel));
+
+    QString frep_string ;
+    if(info.mFriendsPositiveVotes > 0) frep_string += QString::number(info.mFriendsPositiveVotes) + tr(" positive ") ;
+    if(info.mFriendsNegativeVotes > 0) frep_string += QString::number(info.mFriendsNegativeVotes) + tr(" negative ") ;
+
+    if(info.mFriendsPositiveVotes==0 && info.mFriendsNegativeVotes==0)
+        frep_string = tr("No votes from friends") ;
+
+    ui->neighborNodesOpinion_TF->setText(frep_string) ;
+    
+    ui->label_positive->setText(QString::number(info.mFriendsPositiveVotes));
+    ui->label_negative->setText(QString::number(info.mFriendsNegativeVotes));
+
+    switch(info.mOverallReputationLevel)
+    {
+    	case RsReputations::REPUTATION_LOCALLY_POSITIVE:  ui->overallOpinion_TF->setText(tr("Positive")) ; break ;
+    	case RsReputations::REPUTATION_LOCALLY_NEGATIVE:  ui->overallOpinion_TF->setText(tr("Negative (Banned by you)")) ; break ;
+    	case RsReputations::REPUTATION_REMOTELY_POSITIVE: ui->overallOpinion_TF->setText(tr("Positive (according to your friends)")) ; break ;
+    	case RsReputations::REPUTATION_REMOTELY_NEGATIVE: ui->overallOpinion_TF->setText(tr("Negative (according to your friends)")) ; break ;
+    default:
+    	case RsReputations::REPUTATION_NEUTRAL:           ui->overallOpinion_TF->setText(tr("Neutral")) ; break ;
+    }
     
     switch(info.mOwnOpinion)
 	{
@@ -407,4 +452,35 @@ void IdDetailsDialog::loadRequest(const TokenQueue *queue, const TokenRequest &r
 		std::cerr << "IdDetailsDialog::loadRequest() ERROR";
 		std::cerr << std::endl;
 	}
+}
+
+QString IdDetailsDialog::inviteMessage()
+{
+    return tr("Hi,<br>I want to be friends with you on RetroShare.<br>");
+}
+
+void IdDetailsDialog::sendInvite()
+{
+    /* create a message */
+    MessageComposer *composer = MessageComposer::newMsg();
+
+    composer->setTitleText(tr("You have a friend invite"));
+    
+    RsPeerId ownId = rsPeers->getOwnId();
+    RetroShareLink link;
+    link.createCertificate(ownId);
+    
+    RsGxsId keyId(ui->lineEdit_KeyId->text().toStdString());
+    
+    QString sMsgText = inviteMessage();
+    sMsgText += "<br><br>";
+    sMsgText += tr("Respond now:") + "<br>";
+    sMsgText += link.toHtml() + "<br>";
+    sMsgText += "<br>";
+    sMsgText += tr("Thanks, <br>") + QString::fromUtf8(rsPeers->getGPGName(rsPeers->getGPGOwnId()).c_str());
+    composer->setMsgText(sMsgText);
+    composer->addRecipient(MessageComposer::TO,  RsGxsId(keyId));
+
+    composer->show();
+
 }
