@@ -31,7 +31,7 @@
 #include <iostream>
 #include <algorithm>
 
-#define DEBUG_FORUMS
+//#define DEBUG_FORUMS
 
 #define PROGRESSBAR_MAX 100
 
@@ -232,7 +232,7 @@ void GxsForumsFillThread::run()
 
 				if(it2 != mPostVersions.end())
 				{
-					for(uint32_t j=0;j<(*it2).size();++j)
+					for(int32_t j=0;j<(*it2).size();++j)
 						if((*it2)[j].second != sub_msg_id)	// dont copy it, since it is already present at slot i
 							v.append((*it2)[j]) ;
 
@@ -261,7 +261,7 @@ void GxsForumsFillThread::run()
 #ifdef DEBUG_FORUMS
 		std::cerr << "   most recent version " << (*it)[0].first << "  " << (*it)[0].second << std::endl;
 #endif
-        for(uint32_t i=1;i<(*it).size();++i)
+        for(int32_t i=1;i<(*it).size();++i)
         {
 			msgs.erase((*it)[i].second) ;
 
