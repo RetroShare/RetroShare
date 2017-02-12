@@ -36,6 +36,7 @@
 
 #include <retroshare/rsidentity.h>
 #include <retroshare/rsinit.h>
+#include <retroshare/rsnotify.h>
 #include <rsserver/rsaccounts.h>
 #include <util/rsrandom.h>
 
@@ -469,6 +470,10 @@ void GenCertDialog::genPerson()
 					err_string);
 
 		setCursor(Qt::ArrowCursor) ;
+
+        // now cache the PGP password so that it's not asked again for immediately signing the key
+
+        rsNotify->cachePgpPassphrase(ui.password_input->text().toUtf8().constData()) ;
 	}
 
 	//generate a random ssl password
@@ -483,6 +488,8 @@ void GenCertDialog::genPerson()
 	this->hide();//To show dialog asking password PGP Key.
 	std::cout << "RsAccounts::GenerateSSLCertificate" << std::endl;
 	bool okGen = RsAccounts::GenerateSSLCertificate(PGPId, "", genLoc, "", isHiddenLoc, sslPasswd, sslId, err);
+
+	rsNotify->clearPgpPassphrase() ;
 
 	if (okGen)
 	{

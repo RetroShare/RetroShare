@@ -245,8 +245,37 @@ void p3Notify::notifyDownloadComplete           (const std::string& fileHash )  
 void p3Notify::notifyDownloadCompleteCount      (uint32_t           count    )                                                  { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyDownloadCompleteCount      (count) ; }
 void p3Notify::notifyHistoryChanged             (uint32_t           msgId    , int type)                                        { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyHistoryChanged             (msgId,type) ; }
 
+bool p3Notify::cachePgpPassphrase(const std::string& s)
+{
+    clearPgpPassphrase() ;
+    cached_pgp_passphrase = s ;
+
+    std::cerr << "(WW) Caching PGP passphrase." << std::endl;
+    return true ;
+}
+bool p3Notify::clearPgpPassphrase()
+{
+    std::cerr << "(WW) Clearing PGP passphrase." << std::endl;
+
+    // Just whipe out the memory instead of just releasing it.
+
+    for(uint32_t i=0;i<cached_pgp_passphrase.length();++i)
+        cached_pgp_passphrase[i] = 0 ;
+
+    cached_pgp_passphrase.clear();
+    return true ;
+}
+
 bool p3Notify::askForPassword                   (const std::string& title    , const std::string& key_details    , bool               prev_is_bad , std::string& password,bool *cancelled)
 {
+    if(!prev_is_bad && !cached_pgp_passphrase.empty())
+    {
+        password = cached_pgp_passphrase ;
+        if(cancelled)
+			*cancelled = false ;
+        return true ;
+    }
+
 	FOR_ALL_NOTIFY_CLIENTS
         if( (*it)->askForPassword(title,key_details,prev_is_bad,password,*cancelled))
 			return true ;
