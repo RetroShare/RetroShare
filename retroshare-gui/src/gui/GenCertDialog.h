@@ -44,6 +44,7 @@ private slots:
 	void setupState();
     void switchReuseExistingNode();
 	void grabMouse();
+	void updateCheckLabels();
 
 private:
 	void initKeyList();

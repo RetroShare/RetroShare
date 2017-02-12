@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1745</width>
+    <width>1278</width>
     <height>1296</height>
    </rect>
   </property>
@@ -35,6 +35,12 @@
    </property>
    <item>
     <widget class="QFrame" name="frame">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
      </property>
@@ -42,6 +48,19 @@
       <enum>QFrame::Raised</enum>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="pixmap">
+         <pixmap resource="images.qrc">:/images/logo/logo_splash.png</pixmap>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
       <item>
        <layout class="QHBoxLayout" name="toolBarHLayout">
         <item>
@@ -87,19 +106,6 @@
          </widget>
         </item>
        </layout>
-      </item>
-      <item>
-       <widget class="QLabel" name="label">
-        <property name="text">
-         <string/>
-        </property>
-        <property name="pixmap">
-         <pixmap resource="images.qrc">:/images/logo/logo_splash.png</pixmap>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
-        </property>
-       </widget>
       </item>
       <item>
        <widget class="StyledLabel" name="header_label">
@@ -284,75 +290,10 @@ Alternatively you can use an existing profile. Just uncheck &quot;Create a new p
       </item>
       <item>
        <layout class="QGridLayout" name="profilGLayout">
-        <item row="0" column="0">
-         <widget class="QLabel" name="label_nodeType">
+        <item row="10" column="0">
+         <widget class="QLabel" name="hiddenaddr_label">
           <property name="text">
-           <string>Node type</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="8" column="0">
-         <widget class="QLabel" name="password_label_2">
-          <property name="toolTip">
-           <string>This password is for PGP</string>
-          </property>
-          <property name="text">
-           <string>Password (check)</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="8" column="2">
-         <widget class="QLineEdit" name="password_input_2">
-          <property name="minimumSize">
-           <size>
-            <width>0</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="toolTip">
-           <string>Put a strong password here. This password protects your private PGP key.</string>
-          </property>
-          <property name="inputMask">
-           <string/>
-          </property>
-          <property name="maxLength">
-           <number>1024</number>
-          </property>
-          <property name="echoMode">
-           <enum>QLineEdit::Password</enum>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="0">
-         <widget class="QLabel" name="name_label">
-          <property name="text">
-           <string>Profile name</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="6" column="2">
-         <widget class="QLineEdit" name="nickname_input">
-          <property name="toolTip">
-           <string>You can have one or more identities. They are used when you write in chat lobbies, forums and channel comments. They act as the destination for distant chat and the Retroshare distant mail system.</string>
-          </property>
-         </widget>
-        </item>
-        <item row="6" column="0">
-         <widget class="QLabel" name="nickname_label">
-          <property name="toolTip">
-           <string/>
-          </property>
-          <property name="text">
-           <string>Chat identity</string>
+           <string>hidden address</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -372,101 +313,93 @@ Alternatively you can use an existing profile. Just uncheck &quot;Create a new p
           </property>
          </widget>
         </item>
-        <item row="12" column="2">
-         <widget class="QComboBox" name="keylength_comboBox"/>
-        </item>
-        <item row="7" column="2">
-         <widget class="QLineEdit" name="password_input">
-          <property name="toolTip">
-           <string>Put a strong password here. This password protects your private PGP key.</string>
-          </property>
-          <property name="inputMask">
-           <string/>
-          </property>
-          <property name="maxLength">
-           <number>1024</number>
-          </property>
-          <property name="echoMode">
-           <enum>QLineEdit::Password</enum>
+        <item row="13" column="2">
+         <widget class="QComboBox" name="keylength_comboBox">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
           </property>
          </widget>
         </item>
-        <item row="10" column="0">
-         <widget class="QLabel" name="hiddenaddr_label">
+        <item row="8" column="0">
+         <widget class="QLabel" name="password_label_2">
+          <property name="toolTip">
+           <string>This password is for PGP</string>
+          </property>
           <property name="text">
-           <string>hidden address</string>
+           <string>Password (check)</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
           </property>
          </widget>
         </item>
-        <item row="10" column="2">
-         <layout class="QHBoxLayout" name="hiddenInfoHLayout">
-          <property name="spacing">
-           <number>6</number>
+        <item row="7" column="3">
+         <widget class="QLabel" name="password_check_LB">
+          <property name="text">
+           <string/>
           </property>
-          <item>
-           <widget class="QLineEdit" name="hiddenaddr_input">
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>16777215</width>
-              <height>32</height>
-             </size>
-            </property>
-            <property name="maxLength">
-             <number>64</number>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="hiddenport_label">
-            <property name="text">
-             <string>Port</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QSpinBox" name="hiddenport_spinBox">
-            <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is your connection port.&lt;/p&gt;&lt;p&gt;Any value between 1024 and 65535 &lt;/p&gt;&lt;p&gt;should be ok. You can change it later.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
-            <property name="minimum">
-             <number>1</number>
-            </property>
-            <property name="maximum">
-             <number>65535</number>
-            </property>
-            <property name="value">
-             <number>7812</number>
-            </property>
-           </widget>
-          </item>
-         </layout>
+         </widget>
         </item>
-        <item row="11" column="2">
-         <widget class="QLabel" name="label_hiddenaddr">
+        <item row="6" column="2">
+         <widget class="QLineEdit" name="nickname_input">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
-          <property name="text">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This can be a Tor Onion address of the form: xa76giaf6ifda7ri63i263.onion &lt;br/&gt;or an I2P address in the form: [52 characters].b32.i2p &lt;/p&gt;&lt;p&gt;In order to get one, you must configure either Tor or I2P to create a new hidden service / server tunnel. If you do not yet have one, you can still go on, and make it right later in RetroShare's Options-&amp;gt;Network-&amp;gt;Hidden Service configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-          </property>
-          <property name="wordWrap">
-           <bool>true</bool>
+          <property name="toolTip">
+           <string>You can have one or more identities. They are used when you write in chat lobbies, forums and channel comments. They act as the destination for distant chat and the Retroshare distant mail system.</string>
           </property>
          </widget>
         </item>
-        <item row="12" column="0">
+        <item row="14" column="2">
+         <widget class="QProgressBar" name="entropy_bar">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Please move your mouse around in order to collect as much randomness as possible. A minimum of 20% is needed to create your node keys.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="value">
+           <number>24</number>
+          </property>
+         </widget>
+        </item>
+        <item row="14" column="3">
+         <widget class="QLabel" name="randomness_check_LB">
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="3">
+         <widget class="QLabel" name="node_name_check_LB">
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item row="6" column="0">
+         <widget class="QLabel" name="nickname_label">
+          <property name="toolTip">
+           <string/>
+          </property>
+          <property name="text">
+           <string>Chat identity</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="13" column="0">
          <widget class="QLabel" name="keylength_label">
           <property name="text">
            <string>PGP key length</string>
@@ -478,6 +411,12 @@ Alternatively you can use an existing profile. Just uncheck &quot;Create a new p
         </item>
         <item row="5" column="2">
          <widget class="QLineEdit" name="node_input">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="minimumSize">
            <size>
             <width>0</width>
@@ -487,20 +426,6 @@ Alternatively you can use an existing profile. Just uncheck &quot;Create a new p
           <property name="maxLength">
            <number>64</number>
           </property>
-         </widget>
-        </item>
-        <item row="0" column="2">
-         <widget class="QComboBox" name="nodeType_CB">
-          <item>
-           <property name="text">
-            <string>Standard node</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>TOR/I2P Hidden node</string>
-           </property>
-          </item>
          </widget>
         </item>
         <item row="5" column="0">
@@ -513,12 +438,39 @@ Alternatively you can use an existing profile. Just uncheck &quot;Create a new p
           </property>
          </widget>
         </item>
+        <item row="4" column="3">
+         <widget class="QLabel" name="profile_name_check_LB">
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="2">
+         <widget class="QComboBox" name="nodeType_CB">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <item>
+           <property name="text">
+            <string>Standard node</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>TOR/I2P Hidden node</string>
+           </property>
+          </item>
+         </widget>
+        </item>
         <item row="4" column="2">
          <layout class="QHBoxLayout" name="horizontalLayout_2">
           <item>
            <widget class="QLineEdit" name="name_input">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
@@ -548,6 +500,12 @@ Alternatively you can use an existing profile. Just uncheck &quot;Create a new p
           </item>
           <item>
            <widget class="QComboBox" name="genPGPuser">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="toolTip">
              <string>Your profile is associated with a PGP key pair. RetroShare currently ignores DSA keys.</string>
             </property>
@@ -556,7 +514,7 @@ Alternatively you can use an existing profile. Just uncheck &quot;Create a new p
           <item>
            <widget class="QPushButton" name="exportIdentity_PB">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+             <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
@@ -569,7 +527,7 @@ Alternatively you can use an existing profile. Just uncheck &quot;Create a new p
           <item>
            <widget class="QPushButton" name="importIdentity_PB">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+             <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
@@ -581,12 +539,169 @@ Alternatively you can use an existing profile. Just uncheck &quot;Create a new p
           </item>
           <item>
            <widget class="QCheckBox" name="reuse_existing_node_CB">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="text">
              <string>Re-use an existing profile</string>
             </property>
            </widget>
           </item>
          </layout>
+        </item>
+        <item row="10" column="2">
+         <layout class="QHBoxLayout" name="hiddenInfoHLayout">
+          <property name="spacing">
+           <number>6</number>
+          </property>
+          <item>
+           <widget class="QLineEdit" name="hiddenaddr_input">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>32</height>
+             </size>
+            </property>
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This should be a Tor Onion address of the form: xa76giaf6ifda7ri63i263.onion &lt;br/&gt;or an I2P address in the form: [52 characters].b32.i2p &lt;/p&gt;&lt;p&gt;In order to get one, you must configure either Tor or I2P to create a new hidden service / server tunnel. &lt;/p&gt;&lt;p&gt;You can also leave this blank now, but your node will only work if you correctly set the Tor/I2P service address in Options-&amp;gt;Network-&amp;gt;Hidden Service configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="maxLength">
+             <number>64</number>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="hiddenport_label">
+            <property name="text">
+             <string>Port</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="hiddenport_spinBox">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is your connection port.&lt;/p&gt;&lt;p&gt;Any value between 1024 and 65535 &lt;/p&gt;&lt;p&gt;should be ok. You can change it later.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="minimum">
+             <number>1</number>
+            </property>
+            <property name="maximum">
+             <number>65535</number>
+            </property>
+            <property name="value">
+             <number>7812</number>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item row="8" column="2">
+         <widget class="QLineEdit" name="password_input_2">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="toolTip">
+           <string>Put a strong password here. This password protects your private PGP key.</string>
+          </property>
+          <property name="inputMask">
+           <string/>
+          </property>
+          <property name="maxLength">
+           <number>1024</number>
+          </property>
+          <property name="echoMode">
+           <enum>QLineEdit::Password</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="8" column="3">
+         <widget class="QLabel" name="password2_check_LB">
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item row="7" column="2">
+         <widget class="QLineEdit" name="password_input">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="toolTip">
+           <string>Put a strong password here. This password protects your private PGP key.</string>
+          </property>
+          <property name="inputMask">
+           <string/>
+          </property>
+          <property name="maxLength">
+           <number>1024</number>
+          </property>
+          <property name="echoMode">
+           <enum>QLineEdit::Password</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="0">
+         <widget class="QLabel" name="name_label">
+          <property name="text">
+           <string>Profile name</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_nodeType">
+          <property name="text">
+           <string>Node type</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="14" column="0">
+         <widget class="QLabel" name="label_2">
+          <property name="text">
+           <string>Randomness</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>
@@ -604,101 +719,70 @@ Alternatively you can use an existing profile. Just uncheck &quot;Create a new p
        </spacer>
       </item>
       <item>
-       <widget class="StyledLabel" name="entropy_label">
-        <property name="palette">
-         <palette>
-          <active>
-           <colorrole role="Base">
-            <brush brushstyle="SolidPattern">
-             <color alpha="255">
-              <red>255</red>
-              <green>255</green>
-              <blue>255</blue>
-             </color>
-            </brush>
-           </colorrole>
-           <colorrole role="Window">
-            <brush brushstyle="SolidPattern">
-             <color alpha="255">
-              <red>255</red>
-              <green>255</green>
-              <blue>178</blue>
-             </color>
-            </brush>
-           </colorrole>
-          </active>
-          <inactive>
-           <colorrole role="Base">
-            <brush brushstyle="SolidPattern">
-             <color alpha="255">
-              <red>255</red>
-              <green>255</green>
-              <blue>255</blue>
-             </color>
-            </brush>
-           </colorrole>
-           <colorrole role="Window">
-            <brush brushstyle="SolidPattern">
-             <color alpha="255">
-              <red>255</red>
-              <green>255</green>
-              <blue>178</blue>
-             </color>
-            </brush>
-           </colorrole>
-          </inactive>
-          <disabled>
-           <colorrole role="Base">
-            <brush brushstyle="SolidPattern">
-             <color alpha="255">
-              <red>255</red>
-              <green>255</green>
-              <blue>178</blue>
-             </color>
-            </brush>
-           </colorrole>
-           <colorrole role="Window">
-            <brush brushstyle="SolidPattern">
-             <color alpha="255">
-              <red>255</red>
-              <green>255</green>
-              <blue>178</blue>
-             </color>
-            </brush>
-           </colorrole>
-          </disabled>
-         </palette>
-        </property>
-        <property name="autoFillBackground">
-         <bool>true</bool>
-        </property>
-        <property name="frameShape">
-         <enum>QFrame::Box</enum>
-        </property>
-        <property name="text">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Before proceeding, move your mouse around to help Retroshare collect as much randomness as possible. Filling the progressbar to 20% is required, 100% is advised.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-        </property>
-        <property name="wordWrap">
-         <bool>true</bool>
-        </property>
-       </widget>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <spacer name="horizontalSpacer_2">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QPushButton" name="genButton">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="styleSheet">
+           <string notr="true"/>
+          </property>
+          <property name="text">
+           <string>Go!</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="go_check_LB">
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
       </item>
       <item>
-       <widget class="QProgressBar" name="entropy_bar">
-        <property name="value">
-         <number>24</number>
+       <spacer name="verticalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
         </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="genButton">
-        <property name="styleSheet">
-         <string notr="true"/>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
         </property>
-        <property name="text">
-         <string>Go!</string>
-        </property>
-       </widget>
+       </spacer>
       </item>
      </layout>
     </widget>
@@ -713,15 +797,25 @@ Alternatively you can use an existing profile. Just uncheck &quot;Create a new p
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>nickname_input</tabstop>
+  <tabstop>name_input</tabstop>
+  <tabstop>node_input</tabstop>
   <tabstop>password_input</tabstop>
   <tabstop>password_input_2</tabstop>
+  <tabstop>adv_checkbox</tabstop>
+  <tabstop>keylength_comboBox</tabstop>
+  <tabstop>nodeType_CB</tabstop>
+  <tabstop>exportIdentity_PB</tabstop>
+  <tabstop>reuse_existing_node_CB</tabstop>
+  <tabstop>nickname_input</tabstop>
+  <tabstop>genPGPuser</tabstop>
   <tabstop>hiddenaddr_input</tabstop>
   <tabstop>hiddenport_spinBox</tabstop>
+  <tabstop>genButton</tabstop>
+  <tabstop>importIdentity_PB</tabstop>
  </tabstops>
  <resources>
-  <include location="images.qrc"/>
   <include location="icons.qrc"/>
+  <include location="images.qrc"/>
  </resources>
  <connections/>
 </ui>

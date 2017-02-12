@@ -715,8 +715,6 @@ GenCertDialog QLineEdit#name_input {
 GenCertDialog QPushButton#genButton { 
 	border-image: url(:/images/btn_blue.png) 4;
 	border-width: 4;
-/*	padding: 0px 6px;*/
-/*	font-size: 16px; */
 	font: bold;
 	color: white;
 }
@@ -727,7 +725,7 @@ GenCertDialog QPushButton#genButton:hover {
 
 GenCertDialog QPushButton#genButton:disabled {
 	border-image: url(:/images/btn_27.png) 4;
-  font-size: 16px;
+/*  font-size: 16px; */
 	font: bold;
 	color: black;
 }

@@ -44,6 +44,9 @@
 #include <math.h>
 #include <iostream>
 
+#define IMAGE_GOOD ":/images/accepted16.png"
+#define IMAGE_BAD  ":/images/deletemail24.png"
+
 class EntropyCollectorWidget: public QTextBrowser
 {
 	public:
@@ -110,12 +113,15 @@ void GenCertDialog::grabMouse()
 		ui.genButton->setEnabled(false) ;
 		//ui.genButton->setIcon(QIcon(":/images/delete.png")) ;
 		ui.genButton->setToolTip(tr("Currently disabled. Please move your mouse around until you reach at least 20%")) ;
+
+        ui.randomness_check_LB->setPixmap(QPixmap(IMAGE_BAD)) ;
 	}
 	else
 	{
 		ui.genButton->setEnabled(true) ;
 		//ui.genButton->setIcon(QIcon(":/images/resume.png")) ;
 		ui.genButton->setToolTip(tr("Click to create your node and/or profile")) ;
+        ui.randomness_check_LB->setPixmap(QPixmap(IMAGE_GOOD)) ;
 	}
 
 	RsInit::collectEntropy(E+(F << 16)) ;
@@ -145,6 +151,11 @@ GenCertDialog::GenCertDialog(bool onlyGenerateIdentity, QWidget *parent)
 	connect(ui.importIdentity_PB, SIGNAL(clicked()), this, SLOT(importIdentity()));
 	connect(ui.exportIdentity_PB, SIGNAL(clicked()), this, SLOT(exportIdentity()));
 
+	connect(ui.password_input,   SIGNAL(textChanged(QString)), this, SLOT(updateCheckLabels()));
+	connect(ui.password_input_2, SIGNAL(textChanged(QString)), this, SLOT(updateCheckLabels()));
+	connect(ui.name_input,       SIGNAL(textChanged(QString)), this, SLOT(updateCheckLabels()));
+	connect(ui.node_input,       SIGNAL(textChanged(QString)), this, SLOT(updateCheckLabels()));
+
 	entropy_timer = new QTimer ;
 	entropy_timer->start(20) ;
 	QObject::connect(entropy_timer,SIGNAL(timeout()),this,SLOT(grabMouse())) ;
@@ -158,7 +169,7 @@ GenCertDialog::GenCertDialog(bool onlyGenerateIdentity, QWidget *parent)
 
 #if QT_VERSION >= 0x040700
 	ui.node_input->setPlaceholderText(tr("[Required] Examples: Home, Laptop,...")) ;
-	ui.hiddenaddr_input->setPlaceholderText(tr("[Required] Tor/I2P address - Examples: xa76giaf6ifda7ri63i263.onion (obtained by you from Tor)")) ;
+	ui.hiddenaddr_input->setPlaceholderText(tr("[Optional] Tor/I2P address - Examples: xa76giaf6ifda7ri63i263.onion (obtained by you from Tor)")) ;
 	ui.name_input->setPlaceholderText(tr("[Required] Identifies your Retrohare node(s). Visible to your friends, and friends of friends."));
 	ui.nickname_input->setPlaceholderText(tr("[Optional] Used when you write in chat lobbies, forums and channel comments. Can be setup later if you need one."));
 	ui.password_input->setPlaceholderText(tr("[Required] This password protects your data and is required when re-start."));
@@ -273,15 +284,15 @@ void GenCertDialog::setupState()
 	ui.node_label->setVisible(true);
 	ui.node_input->setVisible(true);
 
-	ui.password_label->setVisible(true);
-	ui.password_label_2->setVisible(true);
 	ui.password_input->setVisible(true);
-	ui.password_input_2->setVisible(true);
+	ui.password_label->setVisible(true);
+
+	ui.password_input_2->setVisible(generate_new);
+	ui.password_label_2->setVisible(generate_new);
 
 	ui.keylength_label->setVisible(adv_state);
 	ui.keylength_comboBox->setVisible(adv_state);
 
-	ui.entropy_label->setVisible(true);
 	ui.entropy_bar->setVisible(true);
 
 	ui.genButton->setVisible(true);
@@ -289,9 +300,10 @@ void GenCertDialog::setupState()
 
 	ui.hiddenaddr_input->setVisible(hidden_state);
 	ui.hiddenaddr_label->setVisible(hidden_state);
-	ui.label_hiddenaddr->setVisible(hidden_state);
 	ui.hiddenport_label->setVisible(hidden_state);
 	ui.hiddenport_spinBox->setVisible(hidden_state);
+
+    updateCheckLabels();
 }
 
 void GenCertDialog::exportIdentity()
@@ -308,6 +320,17 @@ void GenCertDialog::exportIdentity()
 		QMessageBox::information(this,tr("Profile saved"),tr("Your profile was successfully saved\nIt is encrypted\n\nYou can now copy it to another computer\nand use the import button to load it")) ;
 	else
 		QMessageBox::information(this,tr("Profile not saved"),tr("Your profile was not saved. An error occurred.")) ;
+}
+
+void GenCertDialog::updateCheckLabels()
+{
+    QPixmap good( IMAGE_GOOD ) ;
+    QPixmap bad ( IMAGE_BAD  ) ;
+
+    ui.node_name_check_LB   ->setPixmap( (ui.node_input->text().length() > 3)?good:bad ) ;
+    ui.profile_name_check_LB->setPixmap( (ui.name_input->text().length() > 3)?good:bad ) ;
+    ui.password_check_LB    ->setPixmap( (ui.password_input->text().length() > 3)?good:bad ) ;
+    ui.password2_check_LB   ->setPixmap( (ui.password_input->text().length() > 3 && ui.password_input->text() == ui.password_input_2->text())?good:bad) ;
 }
 
 bool GenCertDialog::importIdentity()
@@ -386,7 +409,9 @@ void GenCertDialog::genPerson()
 		isHiddenLoc = true;
 	}
 
-	if (!genNewGPGKey) {
+
+	if (!genNewGPGKey)
+    {
 		if (genLoc.length() < 3) {
 			/* Message Dialog */
 			QMessageBox::warning(this,
@@ -470,11 +495,9 @@ void GenCertDialog::genPerson()
 					err_string);
 
 		setCursor(Qt::ArrowCursor) ;
-
-        // now cache the PGP password so that it's not asked again for immediately signing the key
-
-        rsNotify->cachePgpPassphrase(ui.password_input->text().toUtf8().constData()) ;
 	}
+	// now cache the PGP password so that it's not asked again for immediately signing the key
+	rsNotify->cachePgpPassphrase(ui.password_input->text().toUtf8().constData()) ;
 
 	//generate a random ssl password
 	std::string sslPasswd = RSRandom::random_alphaNumericString(RsInit::getSslPwdLen()) ;
