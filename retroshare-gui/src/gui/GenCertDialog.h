@@ -55,6 +55,8 @@ private:
 	bool genNewGPGKey;
 	bool haveGPGKeys;
 	bool mOnlyGenerateIdentity;
+    bool mAllFieldsOk ;
+    bool mEntropyOk ;
 	QString mGXSNickname;
 
 	QTimer *entropy_timer ;

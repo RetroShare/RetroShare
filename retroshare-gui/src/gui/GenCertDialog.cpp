@@ -108,20 +108,10 @@ void GenCertDialog::grabMouse()
 
 	ui.entropy_bar->setValue(count*100/2048) ;
 
-	if(ui.entropy_bar->value() < 20)
+    if(!mEntropyOk && ui.entropy_bar->value() >= 20)
 	{
-		ui.genButton->setEnabled(false) ;
-		//ui.genButton->setIcon(QIcon(":/images/delete.png")) ;
-		ui.genButton->setToolTip(tr("Currently disabled. Please move your mouse around until you reach at least 20%")) ;
-
-        ui.randomness_check_LB->setPixmap(QPixmap(IMAGE_BAD)) ;
-	}
-	else
-	{
-		ui.genButton->setEnabled(true) ;
-		//ui.genButton->setIcon(QIcon(":/images/resume.png")) ;
-		ui.genButton->setToolTip(tr("Click to create your node and/or profile")) ;
-        ui.randomness_check_LB->setPixmap(QPixmap(IMAGE_GOOD)) ;
+		mEntropyOk = true ;
+		updateCheckLabels();
 	}
 
 	RsInit::collectEntropy(E+(F << 16)) ;
@@ -168,21 +158,22 @@ GenCertDialog::GenCertDialog(bool onlyGenerateIdentity, QWidget *parent)
 	ui.keylength_comboBox->addItem("Very high (4096 bits)", QVariant(4096));
 
 #if QT_VERSION >= 0x040700
-	ui.node_input->setPlaceholderText(tr("[Required] Examples: Home, Laptop,...")) ;
-	ui.hiddenaddr_input->setPlaceholderText(tr("[Optional] Tor/I2P address - Examples: xa76giaf6ifda7ri63i263.onion (obtained by you from Tor)")) ;
-	ui.name_input->setPlaceholderText(tr("[Required] Identifies your Retrohare node(s). Visible to your friends, and friends of friends."));
-	ui.nickname_input->setPlaceholderText(tr("[Optional] Used when you write in chat lobbies, forums and channel comments. Can be setup later if you need one."));
-	ui.password_input->setPlaceholderText(tr("[Required] This password protects your data and is required when re-start."));
+	ui.node_input->setPlaceholderText(tr("[Required] Examples: Home, Laptop,...(Visible to friends).")) ;
+	ui.hiddenaddr_input->setPlaceholderText(tr("[Optional] Tor/I2P address (Example: xa76giaf6ifda7ri63i263.onion)")) ;
+	ui.name_input->setPlaceholderText(tr("[Required] Visible to friends, and friends of friends."));
+	ui.nickname_input->setPlaceholderText(tr("[Optional] Used to write in chat rooms and forums. Can be set later."));
+	ui.password_input->setPlaceholderText(tr("[Required] This password protects your data. Dont forget it!"));
 	ui.password_input_2->setPlaceholderText(tr("[Required] Type the same password again here."));
 #endif
 
 	ui.nickname_input->setMaxLength(RSID_MAXIMUM_NICKNAME_SIZE);
 
-	ui.node_input->setToolTip(tr("Enter a meaningful node description. e.g. : home, laptop, etc. \nThis field will be used to differentiate different Retroshare nodes for\nthe same profile.")) ;
-
 	/* get all available pgp private certificates....
 	 * mark last one as default.
 	 */
+
+    mAllFieldsOk = false ;
+    mEntropyOk = false ;
 
 	initKeyList();
     setupState();
@@ -303,7 +294,18 @@ void GenCertDialog::setupState()
 	ui.hiddenport_label->setVisible(hidden_state);
 	ui.hiddenport_spinBox->setVisible(hidden_state);
 
-    updateCheckLabels();
+    if(mEntropyOk && mAllFieldsOk)
+	{
+		ui.genButton->setEnabled(true) ;
+		ui.genButton->setIcon(QIcon(":/images/resume.png")) ;
+		ui.genButton->setToolTip(tr("Click to create your node and/or profile")) ;
+	}
+    else
+    {
+		ui.genButton->setEnabled(false) ;
+		ui.genButton->setIcon(QIcon(":/images/delete.png")) ;
+		ui.genButton->setToolTip(tr("Disabled until all fields correctly set and enough randomness collected.")) ;
+    }
 }
 
 void GenCertDialog::exportIdentity()
@@ -327,10 +329,45 @@ void GenCertDialog::updateCheckLabels()
     QPixmap good( IMAGE_GOOD ) ;
     QPixmap bad ( IMAGE_BAD  ) ;
 
-    ui.node_name_check_LB   ->setPixmap( (ui.node_input->text().length() > 3)?good:bad ) ;
-    ui.profile_name_check_LB->setPixmap( (ui.name_input->text().length() > 3)?good:bad ) ;
-    ui.password_check_LB    ->setPixmap( (ui.password_input->text().length() > 3)?good:bad ) ;
-    ui.password2_check_LB   ->setPixmap( (ui.password_input->text().length() > 3 && ui.password_input->text() == ui.password_input_2->text())?good:bad) ;
+    mAllFieldsOk = true ;
+
+    if(ui.node_input->text().length() > 3)
+		ui.node_name_check_LB   ->setPixmap(good) ;
+    else
+    {
+        mAllFieldsOk = false ;
+		ui.node_name_check_LB   ->setPixmap(bad) ;
+    }
+
+    if(ui.name_input->text().length() > 3)
+		ui.profile_name_check_LB   ->setPixmap(good) ;
+    else
+    {
+        mAllFieldsOk = false ;
+		ui.profile_name_check_LB   ->setPixmap(bad) ;
+    }
+
+	if(ui.password_input->text().length() > 3)
+		ui.password_check_LB   ->setPixmap(good) ;
+    else
+    {
+        mAllFieldsOk = false ;
+		ui.password_check_LB   ->setPixmap(bad) ;
+    }
+    if(ui.password_input->text().length() > 3 && ui.password_input->text() == ui.password_input_2->text())
+		ui.password2_check_LB   ->setPixmap(good) ;
+    else
+    {
+        mAllFieldsOk = false ;
+		ui.password2_check_LB   ->setPixmap(bad) ;
+    }
+
+    if(mEntropyOk)
+		ui.randomness_check_LB->setPixmap(QPixmap(IMAGE_GOOD)) ;
+	else
+		ui.randomness_check_LB->setPixmap(QPixmap(IMAGE_BAD)) ;
+
+    setupState();
 }
 
 bool GenCertDialog::importIdentity()
