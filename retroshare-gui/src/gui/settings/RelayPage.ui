@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>486</width>
-    <height>360</height>
+    <width>794</width>
+    <height>546</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
@@ -64,7 +64,16 @@
       <string>Relay options</string>
      </property>
      <layout class="QGridLayout" name="gridLayout">
-      <property name="margin">
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
        <number>0</number>
       </property>
       <property name="spacing">
@@ -318,25 +327,6 @@
       <string>Relay Server Setup</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
-      <property name="horizontalSpacing">
-       <number>6</number>
-      </property>
-      <property name="verticalSpacing">
-       <number>0</number>
-      </property>
-      <property name="margin">
-       <number>0</number>
-      </property>
-      <item row="0" column="0">
-       <widget class="QLineEdit" name="DhtLineEdit">
-        <property name="inputMask">
-         <string notr="true">HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH; </string>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-       </widget>
-      </item>
       <item row="0" column="1">
        <widget class="QCheckBox" name="keyOkBox">
         <property name="enabled">
@@ -354,6 +344,16 @@
        <widget class="QPushButton" name="addPushButton">
         <property name="text">
          <string>Add Server</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLineEdit" name="DhtLineEdit">
+        <property name="inputMask">
+         <string notr="true">HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH</string>
+        </property>
+        <property name="text">
+         <string/>
         </property>
        </widget>
       </item>
@@ -375,6 +375,19 @@
       </item>
      </layout>
     </widget>
+   </item>
+   <item>
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
    </item>
   </layout>
  </widget>

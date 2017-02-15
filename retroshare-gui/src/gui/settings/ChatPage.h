@@ -70,7 +70,7 @@ class ChatPage : public ConfigPage
 
   private:
       void setPreviewMessages(QString &stylePath, QString styleVariant, QTextBrowser *textBrowser);
-      void fillPreview(QListWidget *listWidget, QComboBox *comboBox, QTextBrowser *textBrowser);
+      void fillPreview(QComboBox *listWidget, QComboBox *comboBox, QTextBrowser *textBrowser);
 
       QFont fontTempChat;
 

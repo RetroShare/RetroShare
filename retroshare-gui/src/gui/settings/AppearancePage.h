@@ -62,12 +62,12 @@ private slots:
     void updateInterfaceStyle()  ;
     void updateSheetName()       ;
     void updateRbtPageOnToolBar();
-    void updateActionButtonLoc() ;
+//    void updateActionButtonLoc() ;
     void updateStatusToolTip()   ;
 
 	void updateCmboToolButtonStyle();
 	void updateCmboToolButtonSize();
-	void updateCmboListItemSize();
+//	void updateCmboListItemSize();
 
 	void updateStyle() ;
 private:
