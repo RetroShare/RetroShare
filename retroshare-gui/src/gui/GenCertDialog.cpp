@@ -145,6 +145,7 @@ GenCertDialog::GenCertDialog(bool onlyGenerateIdentity, QWidget *parent)
 	connect(ui.password_input_2, SIGNAL(textChanged(QString)), this, SLOT(updateCheckLabels()));
 	connect(ui.name_input,       SIGNAL(textChanged(QString)), this, SLOT(updateCheckLabels()));
 	connect(ui.node_input,       SIGNAL(textChanged(QString)), this, SLOT(updateCheckLabels()));
+	connect(ui.reuse_existing_node_CB, SIGNAL(toggled(bool)), this, SLOT(updateCheckLabels()));
 
 	entropy_timer = new QTimer ;
 	entropy_timer->start(20) ;
@@ -177,6 +178,7 @@ GenCertDialog::GenCertDialog(bool onlyGenerateIdentity, QWidget *parent)
 
 	initKeyList();
     setupState();
+	updateCheckLabels();
 }
 
 GenCertDialog::~GenCertDialog()
@@ -278,6 +280,7 @@ void GenCertDialog::setupState()
 	ui.password_input->setVisible(true);
 	ui.password_label->setVisible(true);
 
+	ui.password2_check_LB->setVisible(generate_new);
 	ui.password_input_2->setVisible(generate_new);
 	ui.password_label_2->setVisible(generate_new);
 
@@ -297,13 +300,13 @@ void GenCertDialog::setupState()
     if(mEntropyOk && mAllFieldsOk)
 	{
 		ui.genButton->setEnabled(true) ;
-		ui.genButton->setIcon(QIcon(":/images/resume.png")) ;
+		ui.genButton->setIcon(QIcon(IMAGE_GOOD)) ;
 		ui.genButton->setToolTip(tr("Click to create your node and/or profile")) ;
 	}
     else
     {
 		ui.genButton->setEnabled(false) ;
-		ui.genButton->setIcon(QIcon(":/images/delete.png")) ;
+		ui.genButton->setIcon(QIcon(IMAGE_BAD)) ;
 		ui.genButton->setToolTip(tr("Disabled until all fields correctly set and enough randomness collected.")) ;
     }
 }
@@ -329,6 +332,7 @@ void GenCertDialog::updateCheckLabels()
     QPixmap good( IMAGE_GOOD ) ;
     QPixmap bad ( IMAGE_BAD  ) ;
 
+    bool generate_new = !ui.reuse_existing_node_CB->isChecked();
     mAllFieldsOk = true ;
 
     if(ui.node_input->text().length() > 3)
@@ -339,7 +343,7 @@ void GenCertDialog::updateCheckLabels()
 		ui.node_name_check_LB   ->setPixmap(bad) ;
     }
 
-    if(ui.name_input->text().length() > 3)
+    if(!generate_new || ui.name_input->text().length() > 3)
 		ui.profile_name_check_LB   ->setPixmap(good) ;
     else
     {
@@ -358,7 +362,9 @@ void GenCertDialog::updateCheckLabels()
 		ui.password2_check_LB   ->setPixmap(good) ;
     else
     {
-        mAllFieldsOk = false ;
+        if(generate_new)
+			mAllFieldsOk = false ;
+
 		ui.password2_check_LB   ->setPixmap(bad) ;
     }
 
@@ -498,6 +504,8 @@ void GenCertDialog::genPerson()
 		ui.nickname_input->hide();
 		ui.password_label_2->hide();
 		ui.password_input_2->hide();
+		ui.password2_check_LB->hide();
+		ui.password_check_LB->hide();
 		ui.password_label->hide();
 		ui.password_input->hide();
 		//ui.genPGPuserlabel->hide();
