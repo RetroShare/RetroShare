@@ -86,7 +86,7 @@ AppearancePage::AppearancePage(QWidget * parent, Qt::WindowFlags flags)
 	}
 
 	connect(ui.cmboTollButtonsSize,           SIGNAL(currentIndexChanged(int)), this, SLOT(updateCmboToolButtonSize() ));
-	connect(ui.cmboListItemSize,              SIGNAL(currentIndexChanged(int)), this, SLOT(updateCmboListItemSize()   ));
+//	connect(ui.cmboListItemSize,              SIGNAL(currentIndexChanged(int)), this, SLOT(updateCmboListItemSize()   ));
 	connect(ui.cmboTollButtonsStyle,          SIGNAL(currentIndexChanged(int)), this, SLOT(updateCmboToolButtonStyle()));
 	connect(ui.cmboLanguage,                  SIGNAL(currentIndexChanged(int)), this, SLOT(updateLanguageCode()       ));
 	connect(ui.cmboStyle,                     SIGNAL(currentIndexChanged(int)), this, SLOT(updateInterfaceStyle()     ));
@@ -94,7 +94,7 @@ AppearancePage::AppearancePage(QWidget * parent, Qt::WindowFlags flags)
 	connect(ui.checkBoxDisableSysTrayToolTip, SIGNAL(toggled(bool)),           this, SLOT(updateStatusToolTip()    ));
 
 	connect(ui.mainPageButtonType_CB,  SIGNAL(currentIndexChanged(int)),           this, SLOT(updateRbtPageOnToolBar()    ));
-	connect(ui.menuItemsButtonType_CB, SIGNAL(currentIndexChanged(int)),           this, SLOT(updateActionButtonLoc()    ));
+//	connect(ui.menuItemsButtonType_CB, SIGNAL(currentIndexChanged(int)),           this, SLOT(updateActionButtonLoc()    ));
 }
 
 void AppearancePage::switch_status_grpStatus(bool b)        { switch_status(MainWindow::StatusGrpStatus  ,"ShowStatusBar",         b) ; }
@@ -133,11 +133,7 @@ void AppearancePage::updateSheetName()        { Settings->setSheetName(ui.cmboSt
 void AppearancePage::updateRbtPageOnToolBar()
 {
     Settings->setPageButtonLoc(!ui.mainPageButtonType_CB->currentIndex());
-    NotifyQt::getInstance()->notifySettingsChanged();
-}
-void AppearancePage::updateActionButtonLoc()
-{
-    Settings->setActionButtonLoc(!ui.menuItemsButtonType_CB->currentIndex());
+    Settings->setActionButtonLoc(!ui.mainPageButtonType_CB->currentIndex());
     NotifyQt::getInstance()->notifySettingsChanged();
 }
 void AppearancePage::updateStatusToolTip()    { MainWindow::getInstance()->toggleStatusToolTip(ui.checkBoxDisableSysTrayToolTip->isChecked()); }
@@ -168,50 +164,56 @@ void AppearancePage::updateCmboToolButtonSize()
 	{
 		case 0:
 			Settings->setToolButtonSize(8);
-		break;
-		case 1:
-			Settings->setToolButtonSize(16);
-		break;
-		case 2:
-		default:
-			Settings->setToolButtonSize(24);
-		break;
-		case 3:
-			Settings->setToolButtonSize(32);
-        break;
-        case 4:
-            Settings->setToolButtonSize(64);
-        break;
-        case 5:
-            Settings->setToolButtonSize(128);
-    }
-    NotifyQt::getInstance()->notifySettingsChanged();
-}
-void AppearancePage::updateCmboListItemSize()
-{
-	switch (ui.cmboListItemSize->currentIndex())
-	{
-		case 0:
 			Settings->setListItemIconSize(8);
 		break;
 		case 1:
+			Settings->setToolButtonSize(16);
 			Settings->setListItemIconSize(16);
 		break;
 		case 2:
 		default:
+			Settings->setToolButtonSize(24);
 			Settings->setListItemIconSize(24);
 		break;
 		case 3:
+			Settings->setToolButtonSize(32);
 			Settings->setListItemIconSize(32);
         break;
         case 4:
-            Settings->setListItemIconSize(64);
+            Settings->setToolButtonSize(64);
+			Settings->setListItemIconSize(64);
         break;
         case 5:
-            Settings->setListItemIconSize(128);
+            Settings->setToolButtonSize(128);
+			Settings->setListItemIconSize(128);
     }
     NotifyQt::getInstance()->notifySettingsChanged();
 }
+// void AppearancePage::updateCmboListItemSize()
+// {
+// 	switch (ui.cmboListItemSize->currentIndex())
+// 	{
+// 		case 0:
+// 			Settings->setListItemIconSize(8);
+// 		break;
+// 		case 1:
+// 			Settings->setListItemIconSize(16);
+// 		break;
+// 		case 2:
+// 		default:
+// 			Settings->setListItemIconSize(24);
+// 		break;
+// 		case 3:
+// 			Settings->setListItemIconSize(32);
+//         break;
+//         case 4:
+//             Settings->setListItemIconSize(64);
+//         break;
+//         case 5:
+//             Settings->setListItemIconSize(128);
+//     }
+//     NotifyQt::getInstance()->notifySettingsChanged();
+// }
 
 void AppearancePage::updateStyle() { Rshare::setStyle(ui.cmboStyle->currentText()); }
 
@@ -232,7 +234,7 @@ void AppearancePage::load()
 	ui.cmboStyleSheet->setCurrentIndex(index);
 
 	ui.mainPageButtonType_CB->setCurrentIndex(!Settings->getPageButtonLoc());
-	ui.menuItemsButtonType_CB->setCurrentIndex(!Settings->getActionButtonLoc());
+//	ui.menuItemsButtonType_CB->setCurrentIndex(!Settings->getActionButtonLoc());
 
 	switch (Settings->getToolButtonStyle())
 	{
@@ -270,27 +272,27 @@ void AppearancePage::load()
         case 128:
             ui.cmboTollButtonsSize->setCurrentIndex(5);
     }
-	switch (Settings->getListItemIconSize())
-	{
-		case 8:
-			ui.cmboListItemSize->setCurrentIndex(0);
-		break;
-		case 16:
-			ui.cmboListItemSize->setCurrentIndex(1);
-		break;
-		case 24:
-		default:
-			ui.cmboListItemSize->setCurrentIndex(2);
-		break;
-		case 32:
-			ui.cmboListItemSize->setCurrentIndex(3);
-        break;
-        case 64:
-            ui.cmboListItemSize->setCurrentIndex(4);
-        break;
-        case 128:
-            ui.cmboListItemSize->setCurrentIndex(5);
-    }
+//	switch (Settings->getListItemIconSize())
+//	{
+//		case 8:
+//			ui.cmboListItemSize->setCurrentIndex(0);
+//		break;
+//		case 16:
+//			ui.cmboListItemSize->setCurrentIndex(1);
+//		break;
+//		case 24:
+//		default:
+//			ui.cmboListItemSize->setCurrentIndex(2);
+//		break;
+//		case 32:
+//			ui.cmboListItemSize->setCurrentIndex(3);
+//        break;
+//        case 64:
+//            ui.cmboListItemSize->setCurrentIndex(4);
+//        break;
+//        case 128:
+//            ui.cmboListItemSize->setCurrentIndex(5);
+//    }
 
 	ui.grpStatus->setChecked(Settings->valueFromGroup("StatusBar", "ShowStatusBar", QVariant(true)).toBool());
 	ui.checkBoxStatusCompactMode->setChecked(Settings->valueFromGroup("StatusBar", "CompactMode", QVariant(false)).toBool());
