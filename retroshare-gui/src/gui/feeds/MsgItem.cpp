@@ -19,6 +19,7 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
+#include <QMessageBox>
 #include <QDateTime>
 #include <QTimer>
 
@@ -62,8 +63,11 @@ MsgItem::MsgItem(FeedHolder *parent, uint32_t feedId, const std::string &msgId, 
   connect( playButton, SIGNAL( clicked( void ) ), this, SLOT( playMedia ( void ) ) );
   connect( deleteButton, SIGNAL( clicked( void ) ), this, SLOT( deleteMsg ( void ) ) );
   connect( replyButton, SIGNAL( clicked( void ) ), this, SLOT( replyMsg ( void ) ) );
+  connect( sendinviteButton, SIGNAL( clicked( void ) ), this, SLOT( sendInvite ( void ) ) );
+
 
   expandFrame->hide();
+  inviteFrame->hide();
 
   updateItemStatic();
   updateItem();
@@ -87,7 +91,7 @@ void MsgItem::updateItemStatic()
 
 	/* get peer Id  */
 
-	if (mi.msgflags & RS_MSG_SIGNED)
+	if (mi.msgflags & RS_MSG_DISTANT)
 		avatar->setGxsId(mi.rsgxsid_srcId) ;
 	else
 		avatar->setId(ChatId(mi.rspeerid_srcId)) ;
@@ -99,7 +103,7 @@ void MsgItem::updateItemStatic()
 		srcName = "RetroShare";
     else
     {
-        if(mi.msgflags & RS_MSG_SIGNED)
+        if(mi.msgflags & RS_MSG_DISTANT)
         {
             RsIdentityDetails details ;
             rsIdentity->getIdDetails(mi.rsgxsid_srcId, details) ;
@@ -110,11 +114,22 @@ void MsgItem::updateItemStatic()
             srcName = QString::fromUtf8(rsPeers->getPeerName(mi.rspeerid_srcId).c_str());
     }
 
-	timestampLabel->setText(DateTime::formatLongDateTime(mi.ts));
 
 	if (!mIsHome)
 	{
-		title = tr("Message From") + ": ";
+      if (mi.msgflags & RS_MSG_USER_REQUEST)
+      {
+        title = QString::fromUtf8(mi.title.c_str()) + " " + tr("from") + " " + srcName;
+        replyButton->setText(tr("Reply to invite"));
+        subjectLabel->hide();
+        inviteFrame->show();
+      }
+      else
+      {
+        title = tr("Message From") + ": " + srcName;
+        sendinviteButton->hide();
+        inviteFrame->hide();
+      }
 	}
 	else
 	{
@@ -141,11 +156,11 @@ void MsgItem::updateItemStatic()
 				break;
 		}
 	}
-	title += srcName;
 
 	titleLabel->setText(title);
 	subjectLabel->setText(QString::fromUtf8(mi.title.c_str()));
 	mMsg = QString::fromUtf8(mi.msg.c_str());
+	timestampLabel->setText(DateTime::formatLongDateTime(mi.ts));
 
 	if (wasExpanded() || expandFrame->isVisible()) {
 		fillExpandFrame();
@@ -343,4 +358,21 @@ void MsgItem::checkMessageReadStatus()
 	}
 
 	removeItem();
+}
+
+void MsgItem::sendInvite()
+{
+	MessageInfo mi;
+
+	if (!rsMail) 
+		return;
+
+	if (!rsMail->getMessage(mMsgId, mi))
+		return;
+
+    if ((QMessageBox::question(this, tr("Send invite?"),tr("Do you really want send a invite with your Certificate?"),QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes))== QMessageBox::Yes)
+	{
+      MessageComposer::sendInvite(mi.rsgxsid_srcId);
+	}    
+
 }

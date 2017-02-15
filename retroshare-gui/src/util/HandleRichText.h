@@ -86,6 +86,9 @@ protected:
 	virtual bool   canReplaceAnchor(QDomDocument &doc, QDomElement &element, const RetroShareLink &link);
 	virtual void   anchorTextForImg(QDomDocument &doc, QDomElement &element, const RetroShareLink &link, QString &text);
 	virtual void   anchorStylesheetForImg(QDomDocument &doc, QDomElement &element, const RetroShareLink &link, QString &styleSheet);
+
+private:
+	int indexInWithValidation(QRegExp &rx, const QString &text, EmbedInHtml &embedInfos, int pos = 0);
 };
 
 #endif // HANDLE_RICH_TEXT_H_

@@ -156,8 +156,8 @@ void IdentityHandler::handleWildcard(Request & /*req*/, Response &resp)
 			RsGxsIdGroup& grp = *vit;
 			//electron: not very happy about this, i think the flags should stay hidden in rsidentities
 			bool own = (grp.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN);
-			bool pgp_linked = (grp.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID);
-			resp.mDataStream.getStreamToMember()
+			bool pgp_linked = (grp.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID_kept_for_compatibility  ) ;
+            resp.mDataStream.getStreamToMember()
 			        << makeKeyValueReference("id", grp.mMeta.mGroupId) /// @deprecated using "id" as key can cause problems in some JS based languages like Qml @see gxs_id instead
 			        << makeKeyValueReference("gxs_id", grp.mMeta.mGroupId)
 			        << makeKeyValueReference("pgp_id",grp.mPgpId )

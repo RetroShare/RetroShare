@@ -168,6 +168,13 @@ RsHtml::RsHtml()
 
 void RsHtml::initEmoticons(const QHash<QString, QPair<QVector<QString>, QHash<QString, QString> > >& hash)
 {
+	//add rules for standard emoticons
+	QString genericpattern;
+	genericpattern += "(?:^|\\s)(:\\w{1,40}:)(?:$|\\s)|";		//generic rule for :emoji_name:
+	genericpattern += "(?:^|\\s)(\\(\\w{1,40}\\))(?:$|\\s)";	//generic rule for (emoji_name)
+	QRegExp genericrx(genericpattern);
+	genericrx.setMinimal(true);
+
 	QString newRE;
 	for(QHash<QString, QPair<QVector<QString>, QHash<QString, QString> > >::const_iterator groupit = hash.begin(); groupit != hash.end(); ++groupit) {
 		QHash<QString,QString> group = groupit.value().second;
@@ -177,38 +184,42 @@ void RsHtml::initEmoticons(const QHash<QString, QPair<QVector<QString>, QHash<QS
 					continue;
 				}
 				defEmbedImg.smileys.insert(smile, it.value());
-				// add space around smileys
-				newRE += "(?:^|\\s)(" + QRegExp::escape(smile) + ")(?:$|\\s)|";
-				// explanations:
-				//	(?:^|\s)(*smiley*)(?:$|\s)
-				//
-				//	(?:^|\s) Non-capturing group
-				//		1st Alternative: ^
-				//			^ assert position at start of the string
-				//		2nd Alternative: \s
-				//			\s match any white space character [\r\n\t\f ]
-				//
-				//	1st Capturing group (*smiley*)
-				//		*smiley* matches the characters *smiley* literally (case sensitive)
-				//
-				//	(?:$|\s) Non-capturing group
-				//		1st Alternative: $
-				//			$ assert position at end of the string
-				//		2nd Alternative: \s
-				//			\s match any white space character [\r\n\t\f ]
+				//check if smiley is using standard format :new-format: or (old-format) and don't make a new regexp for it
+				if(!genericrx.exactMatch(smile)) {
+					// add space around smileys
+					newRE += "(?:^|\\s)(" + QRegExp::escape(smile) + ")(?:$|\\s)|";
+					// explanations:
+					//	(?:^|\s)(*smiley*)(?:$|\s)
+					//
+					//	(?:^|\s) Non-capturing group
+					//		1st Alternative: ^
+					//			^ assert position at start of the string
+					//		2nd Alternative: \s
+					//			\s match any white space character [\r\n\t\f ]
+					//
+					//	1st Capturing group (*smiley*)
+					//		*smiley* matches the characters *smiley* literally (case sensitive)
+					//
+					//	(?:$|\s) Non-capturing group
+					//		1st Alternative: $
+					//			$ assert position at end of the string
+					//		2nd Alternative: \s
+					//			\s match any white space character [\r\n\t\f ]
 
-				/*
+					/*
 			 * TODO
 			 * a better version is:
 			 * (?<=^|\s)(*smile*)(?=$|\s) using the lookbehind/lookahead operator instead of non-capturing groups.
 			 * This solves the problem that spaces are matched, too (see workaround in RsHtml::embedHtml)
 			 * This is not supported by Qt4!
 			 */
+				}
 			}
 	}
 
-	newRE.chop(1);	// remove last |
-	defEmbedImg.myREs.append(QRegExp(newRE));
+	QRegExp emojimatcher(newRE + genericpattern);
+	emojimatcher.setMinimal(true);
+	defEmbedImg.myREs.append(emojimatcher);
 }
 
 bool RsHtml::canReplaceAnchor(QDomDocument &/*doc*/, QDomElement &/*element*/, const RetroShareLink &link)
@@ -311,6 +322,22 @@ void RsHtml::replaceAnchorWithImg(QDomDocument &doc, QDomElement &element, QText
 	element.appendChild(img);
 }
 
+int RsHtml::indexInWithValidation(QRegExp &rx, const QString &text, EmbedInHtml &embedInfos, int pos)
+{
+	int index = rx.indexIn(text, pos);
+	if(index == -1 || embedInfos.myType != Img) return index;
+
+	const EmbedInHtmlImg& embedImg = static_cast<const EmbedInHtmlImg&>(embedInfos);
+
+	while((index = rx.indexIn(text, pos)) != -1) {
+		if(embedImg.smileys.contains(rx.cap(0).trimmed()))
+			return index;
+		else
+			++pos;
+	}
+	return -1;
+}
+
 /**
  * Parses a DOM tree and replaces text by HTML tags.
  * The tree is traversed depth-first, but only through children of Element type
@@ -376,13 +403,13 @@ void RsHtml::embedHtml(QTextDocument *textDocument, QDomDocument& doc, QDomEleme
             if(myRE.pattern().length() == 0)	// we'll get stuck with an empty regexp
                 return;
 
-			if(myRE.indexIn(tempText) == -1)
+			int nextPos = 0;
+			if((nextPos = indexInWithValidation(myRE, tempText, embedInfos)) == -1)
 				continue;
 
 			// there is at least one link inside, we start replacing
 			int currentPos = 0;
-			int nextPos = 0;
-			while((nextPos = myRE.indexIn(tempText, currentPos)) != -1) {
+			do {
 				// if nextPos == 0 it means the text begins by a link
 				if(nextPos > 0) {
 					QDomText textPart = doc.createTextNode(tempText.mid(currentPos, nextPos - currentPos));
@@ -439,7 +466,7 @@ void RsHtml::embedHtml(QTextDocument *textDocument, QDomDocument& doc, QDomEleme
 				index++;
 
 				currentPos = nextPos + myRE.matchedLength();
-			}
+			} while((nextPos = indexInWithValidation(myRE, tempText, embedInfos, currentPos)) != -1);
 
 			// text after the last link, only if there's one, don't touch the index
 			// otherwise decrement the index because we're going to remove node
