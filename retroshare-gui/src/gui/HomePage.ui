@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>886</width>
-    <height>584</height>
+    <width>1558</width>
+    <height>699</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <item row="0" column="0" colspan="4">
     <widget class="QLabel" name="label">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+      <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -33,6 +33,71 @@
      </property>
     </widget>
    </item>
+   <item row="4" column="1">
+    <widget class="QFrame" name="addFrame">
+     <layout class="QGridLayout" name="gridLayout_3">
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+     </layout>
+    </widget>
+   </item>
+   <item row="2" column="1" colspan="2">
+    <widget class="QFrame" name="addframe">
+     <property name="styleSheet">
+      <string notr="true"/>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QLabel" name="label_3">
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+         </font>
+        </property>
+        <property name="styleSheet">
+         <string notr="true"/>
+        </property>
+        <property name="text">
+         <string>Did you receive a certificate from a friend?</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="addButton">
+        <property name="text">
+         <string>Add friends certificate</string>
+        </property>
+        <property name="icon">
+         <iconset resource="icons.qrc">
+          <normaloff>:/icons/png/invite.png</normaloff>:/icons/png/invite.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>24</width>
+          <height>24</height>
+         </size>
+        </property>
+        <property name="toolButtonStyle">
+         <enum>Qt::ToolButtonTextBesideIcon</enum>
+        </property>
+        <property name="autoRaise">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
    <item row="3" column="1" colspan="2">
     <layout class="QGridLayout" name="gridLayout">
      <property name="topMargin">
@@ -44,6 +109,33 @@
      <property name="verticalSpacing">
       <number>2</number>
      </property>
+     <item row="2" column="0" colspan="2">
+      <widget class="QPlainTextEdit" name="userCertEdit">
+       <property name="font">
+        <font>
+         <family>Courier New</family>
+        </font>
+       </property>
+       <property name="whatsThis">
+        <string/>
+       </property>
+       <property name="styleSheet">
+        <string notr="true"/>
+       </property>
+       <property name="lineWrapMode">
+        <enum>QPlainTextEdit::NoWrap</enum>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+       <property name="tabStopWidth">
+        <number>80</number>
+       </property>
+       <property name="centerOnScroll">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
      <item row="1" column="0">
       <widget class="QLabel" name="userCertLabel">
        <property name="sizePolicy">
@@ -58,7 +150,7 @@
         </font>
        </property>
        <property name="text">
-        <string>The text below is your Retroshare certificate. Copy and share it with your friends</string>
+        <string>The text below is your own Retroshare certificate. Send it to your friends</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
@@ -97,52 +189,7 @@
        </property>
       </widget>
      </item>
-     <item row="2" column="0" colspan="2">
-      <widget class="QPlainTextEdit" name="userCertEdit">
-       <property name="font">
-        <font>
-         <family>Courier New</family>
-        </font>
-       </property>
-       <property name="whatsThis">
-        <string/>
-       </property>
-       <property name="styleSheet">
-        <string notr="true"/>
-       </property>
-       <property name="lineWrapMode">
-        <enum>QPlainTextEdit::NoWrap</enum>
-       </property>
-       <property name="readOnly">
-        <bool>true</bool>
-       </property>
-       <property name="tabStopWidth">
-        <number>80</number>
-       </property>
-       <property name="centerOnScroll">
-        <bool>false</bool>
-       </property>
-      </widget>
-     </item>
     </layout>
-   </item>
-   <item row="4" column="1">
-    <widget class="QFrame" name="addFrame">
-     <layout class="QGridLayout" name="gridLayout_3">
-      <property name="leftMargin">
-       <number>0</number>
-      </property>
-      <property name="topMargin">
-       <number>0</number>
-      </property>
-      <property name="rightMargin">
-       <number>0</number>
-      </property>
-      <property name="bottomMargin">
-       <number>0</number>
-      </property>
-     </layout>
-    </widget>
    </item>
    <item row="1" column="1" colspan="2">
     <widget class="QLabel" name="label_2">
@@ -152,7 +199,7 @@
       </font>
      </property>
      <property name="text">
-      <string>RetroShare is an Open Source cross-platform, 
+      <string>Open Source cross-platform, 
 private and secure decentralized commmunication platform.	
 </string>
      </property>
@@ -161,58 +208,16 @@ private and secure decentralized commmunication platform.
      </property>
     </widget>
    </item>
-   <item row="2" column="1" colspan="2">
-    <widget class="QFrame" name="addframe">
-     <property name="styleSheet">
-      <string notr="true"/>
-     </property>
-     <layout class="QHBoxLayout" name="horizontalLayout">
-      <item>
-       <widget class="QLabel" name="label_3">
-        <property name="font">
-         <font>
-          <pointsize>11</pointsize>
-         </font>
-        </property>
-        <property name="styleSheet">
-         <string notr="true"/>
-        </property>
-        <property name="text">
-         <string>You get certificate from your friend?</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QToolButton" name="addButton">
-        <property name="text">
-         <string>Add friends certificate</string>
-        </property>
-        <property name="icon">
-         <iconset resource="icons.qrc">
-          <normaloff>:/icons/png/invite.png</normaloff>:/icons/png/invite.png</iconset>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>24</width>
-          <height>24</height>
-         </size>
-        </property>
-        <property name="toolButtonStyle">
-         <enum>Qt::ToolButtonTextBesideIcon</enum>
-        </property>
-        <property name="autoRaise">
-         <bool>false</bool>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
   </layout>
+  <zorder>label</zorder>
+  <zorder>addFrame</zorder>
+  <zorder>label_2</zorder>
+  <zorder>addframe</zorder>
+  <zorder>label_3</zorder>
  </widget>
  <resources>
-  <include location="images.qrc"/>
   <include location="icons.qrc"/>
+  <include location="images.qrc"/>
  </resources>
  <connections/>
 </ui>
