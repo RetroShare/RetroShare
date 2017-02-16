@@ -333,7 +333,7 @@
           </font>
          </property>
          <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This box expects your friend's Retroshare certificate. WARNING: this is different from your friend's PGP key. Do not paste your friend's PGP key here (not even a part of it). It's not going to work.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This box expects your friend's Retroshare certificate. WARNING: this is different from your friend's profile key. Do not paste your friend's profile key here (not even a part of it). It's not going to work.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="styleSheet">
           <string notr="true"/>
