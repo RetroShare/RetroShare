@@ -287,7 +287,7 @@ void ConfCertDialog::loadInvitePage()
     //infotext += tr("<p>Use this certificate to make new friends. Send it by email, or give it hand to hand.</p>") ;
     infotext += tr("<p>This certificate contains:") ;
     infotext += "<UL>" ;
-    infotext += "<li> a <b>PGP public key</b>";
+    infotext += "<li> a <b>Profile key</b>";
     infotext += " (" + QString::fromUtf8(detail.name.c_str())  + "@" + detail.gpg_id.toStdString().c_str()+") " ;
     if(ui._shouldAddSignatures_CB->isChecked())
         infotext += tr("with")+" "+QString::number(detail.gpgSigners.size()-1)+" "+tr("external signatures</li>") ;
