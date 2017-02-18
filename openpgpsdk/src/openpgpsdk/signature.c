@@ -302,9 +302,9 @@ static ops_boolean_t dsa_sign(ops_hash_t *hash, const ops_dsa_public_key_t *dsa,
 	ops_write_mpi(dsasig->r, cinfo);
 	ops_write_mpi(dsasig->s, cinfo);
 #else
-    BIGNUM *rr=NULL,*ss=NULL ;
+    const BIGNUM *rr=NULL,*ss=NULL ;
 
-    DSA_SIG_get0(&rr,&ss) ;
+    DSA_SIG_get0(dsasig,&rr,&ss) ;
 
 	ops_write_mpi(rr, cinfo);
 	ops_write_mpi(ss, cinfo);
