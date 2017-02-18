@@ -96,6 +96,20 @@ static void BIO_set_shutdown(BIO *a,int s) { a->shutdown=s; }
 static int  BIO_get_init(BIO *a) { return a->init; }
 static void BIO_set_init(BIO *a,int i) { a->init=i; }
 static void BIO_set_data(BIO *a,void *p) { a->ptr = p; }
+#else
+typedef struct bio_method_st {
+    int type;
+    const char *name;
+    int (*bwrite) (BIO *, const char *, int);
+    int (*bread) (BIO *, char *, int);
+    int (*bputs) (BIO *, const char *);
+    int (*bgets) (BIO *, char *, int);
+    long (*ctrl) (BIO *, int, long, void *);
+    int (*create) (BIO *);
+    int (*destroy) (BIO *);
+    long (*callback_ctrl) (BIO *, int, bio_info_cb *);
+} BIO_METHOD;
+
 #endif
 
 static BIO_METHOD methods_tou_sockp=
