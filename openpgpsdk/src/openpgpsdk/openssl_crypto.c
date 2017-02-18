@@ -406,7 +406,7 @@ ops_boolean_t ops_dsa_verify(const unsigned char *hash,size_t hash_length,
     osig->r=sig->r;
     osig->s=sig->s;
 #else
-    DSA_SIG_set0(osig,sig->r,sig->s) ;
+    DSA_SIG_set0(osig,BN_dup(sig->r),BN_dup(sig->s)) ;
 #endif
 
 	 if(BN_num_bits(dsa->q) != 160)
@@ -428,8 +428,8 @@ ops_boolean_t ops_dsa_verify(const unsigned char *hash,size_t hash_length,
 
     odsa->pub_key=dsa->y;
 #else
-    DSA_set0_pqg(odsa,dsa->p,dsa->q,dsa->g);
-    DSA_set0_key(odsa,dsa->y,NULL) ;
+    DSA_set0_pqg(odsa,BN_dup(dsa->p),BN_dup(dsa->q),BN_dup(dsa->g));
+    DSA_set0_key(odsa,BN_dup(dsa->y),NULL) ;
 #endif
 
     if (debug)
@@ -473,11 +473,6 @@ ops_boolean_t ops_dsa_verify(const unsigned char *hash,size_t hash_length,
     odsa->q=NULL;
     odsa->g=NULL;
     odsa->pub_key=NULL;
-#else
-    DSA_SIG_set0(osig,NULL,NULL) ;
-
-    DSA_set0_pqg(odsa,NULL,NULL,NULL);
-    DSA_set0_key(odsa,NULL,NULL) ;
 #endif
 
     DSA_free(odsa);
@@ -506,15 +501,13 @@ int ops_rsa_public_decrypt(unsigned char *out,const unsigned char *in,
     orsa->n=rsa->n;
     orsa->e=rsa->e;
 #else
-    RSA_set0_key(orsa,rsa->n,rsa->e,NULL) ;
+    RSA_set0_key(orsa,BN_dup(rsa->n),BN_dup(rsa->e),NULL) ;
 #endif
 
     n=RSA_public_decrypt(length,in,out,orsa,RSA_NO_PADDING);
 
 #if OPENSSL_VERSION_NUMBER < 0x10100000L
     orsa->n=orsa->e=NULL;
-#else
-    RSA_set0_key(orsa,NULL,NULL,NULL) ;
 #endif
     RSA_free(orsa);
 
@@ -553,12 +546,11 @@ int ops_rsa_private_encrypt(unsigned char *out,const unsigned char *in,
     // Use ops_decrypt_secret_key_from_data() to do that.
     assert(orsa->d);
 #else
-    RSA_set0_key(orsa,rsa->n,rsa->e,rsa->d) ;
-    RSA_set0_factors(orsa,rsa->p,rsa->q);
+    RSA_set0_key(orsa,BN_dup(rsa->n),BN_dup(rsa->e),BN_dup(srsa->d)) ;
+    RSA_set0_factors(orsa,BN_dup(srsa->p),BN_dup(srsa->q));
 #endif
 
     assert(RSA_check_key(orsa) == 1);
-    orsa->e=NULL;
     /* end debug */
 
     // WARNING: this function should *never* be called for direct encryption, because of the padding.
@@ -568,9 +560,7 @@ int ops_rsa_private_encrypt(unsigned char *out,const unsigned char *in,
 
 #if OPENSSL_VERSION_NUMBER < 0x10100000L
     orsa->n=orsa->d=orsa->p=orsa->q=NULL;
-#else
-    RSA_set0_key(orsa,NULL,NULL,NULL);
-    RSA_set0_factors(orsa,NULL,NULL);
+    orsa->e=NULL;
 #endif
     RSA_free(orsa);
 
@@ -858,15 +848,22 @@ DSA_SIG* ops_dsa_sign(unsigned char* hashbuf, unsigned hashsize, const ops_dsa_s
     DSA_SIG *dsasig;
 
     odsa=DSA_new();
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
     odsa->p=dsa->p;
     odsa->q=dsa->q;
     odsa->g=dsa->g;
     odsa->pub_key=dsa->y;
     odsa->priv_key=sdsa->x;
+#else
+    DSA_set0_pqg(odsa,BN_dup(dsa->p),BN_dup(dsa->q),BN_dup(dsa->g));
+    DSA_set0_key(odsa,BN_dup(dsa->y),BN_dup(sdsa->x));
+#endif
 
     dsasig=DSA_do_sign(hashbuf,hashsize,odsa);
 
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
     odsa->p=odsa->q=odsa->g=odsa->pub_key=odsa->priv_key=NULL;
+#endif
     DSA_free(odsa);
 
     return dsasig;
