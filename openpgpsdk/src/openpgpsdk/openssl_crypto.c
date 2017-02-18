@@ -444,7 +444,8 @@ ops_boolean_t ops_dsa_verify(const unsigned char *hash,size_t hash_length,
         }
     //printf("hash_length=%ld\n", hash_length);
     //printf("Q=%d\n", BN_num_bytes(odsa->q));
-    unsigned int qlen=BN_num_bytes(odsa->q);
+    unsigned int qlen=BN_num_bytes(dsa->q);
+
     if (qlen < hash_length)
         hash_length=qlen;
     //    ret=DSA_do_verify(hash,hash_length,osig,odsa);
@@ -538,6 +539,7 @@ int ops_rsa_private_encrypt(unsigned char *out,const unsigned char *in,
     int n;
 
     orsa=RSA_new();
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
     orsa->n=rsa->n;	// XXX: do we need n?
     orsa->d=srsa->d;
     orsa->p=srsa->q;
@@ -545,17 +547,31 @@ int ops_rsa_private_encrypt(unsigned char *out,const unsigned char *in,
 
     /* debug */
     orsa->e=rsa->e;
+
     // If this isn't set, it's very likely that the programmer hasn't
     // decrypted the secret key. RSA_check_key segfaults in that case.
     // Use ops_decrypt_secret_key_from_data() to do that.
     assert(orsa->d);
+#else
+    RSA_set0_key(orsa,rsa->n,rsa->e,rsa->d) ;
+    RSA_set0_factors(orsa,rsa->p,rsa->q);
+#endif
+
     assert(RSA_check_key(orsa) == 1);
     orsa->e=NULL;
     /* end debug */
 
+    // WARNING: this function should *never* be called for direct encryption, because of the padding.
+    // It's actually only called in the signature function now, where an adapted padding is placed.
+
     n=RSA_private_encrypt(length,in,out,orsa,RSA_NO_PADDING);
 
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
     orsa->n=orsa->d=orsa->p=orsa->q=NULL;
+#else
+    RSA_set0_key(orsa,NULL,NULL,NULL);
+    RSA_set0_factors(orsa,NULL,NULL);
+#endif
     RSA_free(orsa);
 
     return n;
