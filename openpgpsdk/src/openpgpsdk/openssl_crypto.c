@@ -45,10 +45,17 @@ void test_secret_key(const ops_secret_key_t *skey)
     {
     RSA* test=RSA_new();
 
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
     test->n=BN_dup(skey->public_key.key.rsa.n);
     test->e=BN_dup(skey->public_key.key.rsa.e);
-
     test->d=BN_dup(skey->key.rsa.d);
+#else
+    RSA_set0_key(test,
+		    BN_dup(skey->public_key.key.rsa.n),
+    		BN_dup(skey->public_key.key.rsa.e),
+		    BN_dup(skey->key.rsa.d));
+#endif
+
     test->p=BN_dup(skey->key.rsa.p);
     test->q=BN_dup(skey->key.rsa.q);
 
@@ -392,8 +399,13 @@ ops_boolean_t ops_dsa_verify(const unsigned char *hash,size_t hash_length,
     int ret;
 
     osig=DSA_SIG_new();
+
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
     osig->r=sig->r;
     osig->s=sig->s;
+#else
+    DSA_SIG_set0(osig,sig->r,sig->s) ;
+#endif
 
 	 if(BN_num_bits(dsa->q) != 160)
 	 {
