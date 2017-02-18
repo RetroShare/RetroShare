@@ -30,16 +30,60 @@
 enum GxsMailItemsSubtypes
 {
 	GXS_MAIL_SUBTYPE_MAIL    = 1,
-	GXS_MAIL_SUBTYPE_ACK     = 2,
+	GXS_MAIL_SUBTYPE_RECEIPT = 2,
 	GXS_MAIL_SUBTYPE_GROUP   = 3
 };
+
+struct RsNxsMailPresignedReceipt : RsNxsMsg
+{
+	RsNxsMailPresignedReceipt() : RsNxsMsg(RS_SERVICE_TYPE_GXS_MAIL) {}
+};
+
+struct RsGxsMailPresignedReceipt : RsGxsMsgItem
+{
+	RsGxsMailPresignedReceipt() :
+	    RsGxsMsgItem( RS_SERVICE_TYPE_GXS_MAIL,
+	                  static_cast<uint8_t>(GXS_MAIL_SUBTYPE_RECEIPT) ),
+	    receiptId(0) {}
+
+	uint64_t receiptId;
+
+	static uint32_t inline size()
+	{
+		return  8 + // Header
+		        8;  // receiptId
+	}
+	bool serialize(uint8_t* data, uint32_t size, uint32_t& offset) const
+	{
+		bool ok = setRsItemHeader(data, size, PacketId(), size);
+		ok = ok && (offset += 8); // Take header in account
+		ok = ok && setRawUInt64(data, size, &offset, receiptId);
+		return ok;
+	}
+	bool deserialize(const uint8_t* data, uint32_t& size, uint32_t& offset)
+	{
+		void* dataPtr = reinterpret_cast<void*>(const_cast<uint8_t*>(data));
+		uint32_t rssize = getRsItemSize(dataPtr);
+		uint32_t roffset = offset + 8; // Take header in account
+		bool ok = rssize <= size;
+		ok = ok && getRawUInt64(dataPtr, rssize, &roffset, &receiptId);
+		if(ok) { size = rssize; offset = roffset; }
+		else size = 0;
+		return ok;
+	}
+
+	void clear() { receiptId = 0; }
+	std::ostream &print(std::ostream &out, uint16_t /*indent = 0*/)
+	{ return out << receiptId; }
+};
+
 
 struct RsGxsMailBaseItem : RsGxsMsgItem
 {
 	RsGxsMailBaseItem(GxsMailItemsSubtypes subtype) :
 	    RsGxsMsgItem( RS_SERVICE_TYPE_GXS_MAIL,
 	                  static_cast<uint8_t>(subtype) ),
-	    cryptoType(UNDEFINED_ENCRYPTION) {}
+	    cryptoType(UNDEFINED_ENCRYPTION), receiptId(0) {}
 
 	/// Values must fit into uint8_t
 	enum EncryptionMode
@@ -107,10 +151,13 @@ struct RsGxsMailBaseItem : RsGxsMsgItem
 
 	const static RsGxsId allRecipientsHint;
 
+	uint64_t receiptId;
+
 	void inline clear()
 	{
 		cryptoType = UNDEFINED_ENCRYPTION;
 		recipientsHint.clear();
+		receiptId = 0;
 		meta = RsMsgMetaData();
 	}
 
@@ -118,7 +165,8 @@ struct RsGxsMailBaseItem : RsGxsMsgItem
 	{
 		return  8 + // Header
 		        1 + // cryptoType
-		        RsGxsId::serial_size(); // recipientsHint
+		        RsGxsId::serial_size() + // recipientsHint
+		        8; // receiptId
 	}
 	bool serialize(uint8_t* data, uint32_t size, uint32_t& offset) const;
 	bool deserialize(const uint8_t* data, uint32_t& size, uint32_t& offset);
@@ -160,16 +208,6 @@ struct RsGxsMailItem : RsGxsMailBaseItem
 	const static uint32_t MAX_SIZE = 10*8*1024*1024;
 };
 
-struct RsGxsMailAckItem : RsGxsMailBaseItem
-{
-	RsGxsMailAckItem() : RsGxsMailBaseItem(GXS_MAIL_SUBTYPE_ACK) {}
-	RsGxsId recipient;
-
-	void clear() { recipient.clear(); }
-	std::ostream &print(std::ostream &out, uint16_t /*indent = 0*/)
-	{ return out << recipient.toStdString(); }
-};
-
 struct RsGxsMailGroupItem : RsGxsGrpItem
 {
 	RsGxsMailGroupItem() :
@@ -202,18 +240,8 @@ struct RsGxsMailSerializer : RsSerialType
 			if(i) sz = i->size();
 			break;
 		}
-		case GXS_MAIL_SUBTYPE_ACK:
-		{
-			RsGxsMailAckItem* i = dynamic_cast<RsGxsMailAckItem*>(item);
-			if(i)
-			{
-				sz = 8; // Header
-				sz += 4; // RsGxsMailBaseItem::recipient_hint
-				sz += 1; // RsGxsMailAckItem::read
-				sz += i->recipient.serial_size();
-			}
-			break;
-		}
+		case GXS_MAIL_SUBTYPE_RECEIPT:
+			sz = RsGxsMailPresignedReceipt::size(); break;
 		case GXS_MAIL_SUBTYPE_GROUP: sz = 8; break;
 		default: break;
 		}
@@ -229,6 +257,7 @@ struct RsGxsMailSerializer : RsSerialType
 		uint32_t rssize = getRsItemSize(data);
 		uint8_t pktv = getRsItemVersion(rstype);
 		uint16_t srvc = getRsItemService(rstype);
+		const uint8_t* dataPtr = reinterpret_cast<uint8_t*>(data);
 
 		if ( (RS_PKT_VERSION_SERVICE != pktv) || // 0x02
 		     (RS_SERVICE_TYPE_GXS_MAIL != srvc) || // 0x0230 = 560
@@ -248,16 +277,15 @@ struct RsGxsMailSerializer : RsSerialType
 		{
 			RsGxsMailItem* i = new RsGxsMailItem();
 			uint32_t offset = 0;
-			const uint8_t* dataPtr = reinterpret_cast<uint8_t*>(data);
 			ok = ok && i->deserialize(dataPtr, *size, offset);
 			ret = i;
 			break;
 		}
-		case GXS_MAIL_SUBTYPE_ACK:
+		case GXS_MAIL_SUBTYPE_RECEIPT:
 		{
-			RsGxsMailAckItem* i = new RsGxsMailAckItem();
+			RsGxsMailPresignedReceipt* i = new RsGxsMailPresignedReceipt();
 			uint32_t offset = 0;
-			ok &= i->recipient.deserialise(data, *size, offset);
+			ok &= i->deserialize(dataPtr, *size, offset);
 			ret = i;
 			break;
 		}

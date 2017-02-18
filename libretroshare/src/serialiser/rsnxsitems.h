@@ -399,50 +399,39 @@ public:
  * Used to respond to a RsGrpMsgsReq
  * with message items satisfying request
  */
-class RsNxsMsg : public RsNxsItem
+struct RsNxsMsg : RsNxsItem
 {
-public:
+	RsNxsMsg(uint16_t servtype) :
+	    RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_MSG_ITEM), meta(servtype),
+	    msg(servtype), metaData(NULL) { clear(); }
+	virtual ~RsNxsMsg() { delete metaData; }
 
-    RsNxsMsg(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_MSG_ITEM), meta(servtype), msg(servtype),
-    metaData(NULL) {
-    //	std::cout << "\nrefcount++ : " << ++refcount << std::endl;
-    	clear(); return;
-    }
-    virtual ~RsNxsMsg()
-    {
-    	//std::cout << "\nrefcount-- : " << --refcount << std::endl;
-    	if(metaData){
-    		//std::cout << "\ndeleted\n";
-    		delete metaData;
-    	}
-    }
+	virtual uint32_t serial_size() const;
+	virtual bool serialise(void *data,uint32_t& size) const;
+	bool deserialize(const uint8_t* data, uint32_t& size, uint32_t& offset);
 
-	virtual bool serialise(void *data,uint32_t& size) const;	
-	virtual uint32_t serial_size() const; 			
-        
-    virtual void clear();
-    virtual std::ostream &print(std::ostream &out, uint16_t indent);
+	virtual void clear();
+	virtual std::ostream &print(std::ostream &out, uint16_t indent);
 
-    uint8_t pos; /// used for splitting up msg
-    uint8_t count; /// number of split up messages
-    RsGxsGroupId grpId; /// group id, forms part of version id
-    RsGxsMessageId msgId; /// msg id
-    static int refcount;
+	uint8_t pos; /// used for splitting up msg
+	uint8_t count; /// number of split up messages
+	RsGxsGroupId grpId; /// group id, forms part of version id
+	RsGxsMessageId msgId; /// msg id
+	static int refcount;
 
-    /*!
-     * This should contains all the data
-     * which is not specific to the Gxs service data
-     */
-    RsTlvBinaryData meta;
+	/*!
+	 * This should contains all the data
+	 * which is not specific to the Gxs service data
+	 */
+	RsTlvBinaryData meta;
 
-    /*!
-     * This contains Gxs specific data
-     * only client of API knows who to decode this
-     */
-    RsTlvBinaryData msg;
+	/*!
+	 * This contains Gxs specific data
+	 * only client of API knows how to decode this
+	 */
+	RsTlvBinaryData msg;
 
-    RsGxsMsgMetaData* metaData;
-
+	RsGxsMsgMetaData* metaData;
 };
 
 /*!

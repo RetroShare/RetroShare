@@ -199,6 +199,30 @@ bool RsNxsMsg::serialise(void *data, uint32_t& size) const
     return ok;
 }
 
+bool RsNxsMsg::deserialize( const uint8_t* data, uint32_t& size,
+                            uint32_t& offset )
+{
+	void* dataPtr = reinterpret_cast<void*>(const_cast<uint8_t*>(data+offset));
+
+	uint32_t rssize = getRsItemSize(dataPtr);
+	uint32_t roffset = 8; // Take header in account
+
+	bool ok = rssize+offset <= size;
+	ok = ok && getRawUInt32(dataPtr, rssize, &roffset, &transactionNumber);
+	ok = ok && getRawUInt8(dataPtr, rssize, &roffset, &pos);
+	ok = ok && msgId.deserialise(dataPtr, rssize, roffset);
+	ok = ok && grpId.deserialise(dataPtr, rssize, roffset);
+	ok = ok && msg.GetTlv(dataPtr, rssize, &roffset);
+	ok = ok && meta.GetTlv(dataPtr, rssize, &roffset);
+
+	if(ok) { size = rssize; offset += roffset; }
+	else std::cerr << "RsNxsMsg::deserialize(, " << size << ", " << offset
+	               << ") failed at: " << roffset << " rssize: " << rssize
+	               << std::endl;
+
+	return ok;
+}
+
 
 bool RsNxsGrp::serialise(void *data, uint32_t& size) const
 {
@@ -519,20 +543,13 @@ RsNxsGrp* RsNxsSerialiser::deserialNxsGrpItem(void *data, uint32_t *size)
 }
 
 
-RsNxsMsg* RsNxsSerialiser::deserialNxsMsgItem(void *data, uint32_t *size){
+RsNxsMsg* RsNxsSerialiser::deserialNxsMsgItem(void *data, uint32_t *size)
+{
+	if (!checkItemHeader(data, size, RS_PKT_SUBTYPE_NXS_MSG_ITEM)) return NULL;
 
-    bool ok = checkItemHeader(data,size,RS_PKT_SUBTYPE_NXS_MSG_ITEM);
-    uint32_t offset = 8;
-
-    RsNxsMsg* item = new RsNxsMsg(SERVICE_TYPE);
-    /* skip the header */
-
-    ok &= getRawUInt32(data, *size, &offset, &(item->transactionNumber));
-    ok &= getRawUInt8(data, *size, &offset, &(item->pos));
-    ok &= item->msgId.deserialise(data, *size, offset);
-    ok &= item->grpId.deserialise(data, *size, offset);
-    ok &= item->msg.GetTlv(data, *size, &offset);
-    ok &= item->meta.GetTlv(data, *size, &offset);
+	RsNxsMsg* item = new RsNxsMsg(SERVICE_TYPE);
+	uint32_t offset = 0;
+	bool ok = item->deserialize(static_cast<const uint8_t*>(data), *size, offset);
 
     if (offset != *size)
     {

@@ -718,18 +718,19 @@ private:
      */
     uint8_t createGroup(RsNxsGrp* grp, RsTlvSecurityKeySet& keySet);
 
+protected:
     /*!
      * This completes the creation of an instance on RsNxsMsg
      * by assigning it a groupId and signature via SHA1 and EVP_sign respectively
      * What signatures are calculated are based on the authentication policy
      * of the service
      * @param msg the Nxs message to create
-     * CREATE_FAIL, CREATE_SUCCESS, CREATE_ID_SIGN_NOT_AVAIL
      * @return CREATE_SUCCESS for success, CREATE_FAIL for fail,
      * 		   CREATE_FAIL_TRY_LATER for Id sign key not avail (but requested)
      */
     int createMessage(RsNxsMsg* msg);
 
+private:
     /*!
      * convenience function to create sign
      * @param signSet signatures are stored here
@@ -876,8 +877,7 @@ private:
     time_t mLastCheck;
     RsGxsIntegrityCheck* mIntegrityCheck;
 
-private:
-
+protected:
 	// TODO: cleanup this should be an enum!
     const uint8_t CREATE_FAIL, CREATE_SUCCESS, CREATE_FAIL_TRY_LATER, SIGN_MAX_WAITING_TIME;
     const uint8_t SIGN_FAIL, SIGN_SUCCESS, SIGN_FAIL_TRY_LATER;

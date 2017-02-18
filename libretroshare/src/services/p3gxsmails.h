@@ -68,21 +68,6 @@ struct p3GxsMails : RsGenExchange, GxsTokenQueue
 	        );
 
 	/**
-	 * Send an email to recipients, in the process author of the email is
-	 * disclosed to the network (because the sent GXS item is signed), while
-	 * recipients are not @see RsGxsMailBaseItem::recipientsHint for details on
-	 * recipient protection.
-	 * This method is part of the public interface of this service.
-	 * @return true if the mail will be sent, false if not
-	 */
-	bool sendMail( GxsMailsClient::GxsMailSubServices service,
-	               const RsGxsId& own_gxsid,
-	               const std::vector<const RsGxsId*>& recipients,
-	               const uint8_t* data, uint32_t size,
-	               RsGxsMailBaseItem::EncryptionMode cm = RsGxsMailBaseItem::RSA
-	        );
-
-	/**
 	 * Register a client service to p3GxsMails to receive mails via
 	 * GxsMailsClient::receiveGxsMail(...) callback
 	 */
@@ -185,6 +170,9 @@ private:
 	bool dispatchDecryptedMail( const RsGxsMailItem* received_msg,
 	                            const uint8_t* decrypted_data,
 	                            uint32_t decrypted_data_size );
+
+	bool preparePresignedReceipt( const RsGxsMailItem& mail,
+	                              RsNxsMailPresignedReceipt& receipt );
 };
 
 

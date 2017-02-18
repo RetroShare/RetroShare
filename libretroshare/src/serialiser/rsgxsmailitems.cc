@@ -28,6 +28,7 @@ bool RsGxsMailBaseItem::serialize(uint8_t* data, uint32_t size,
 	ok = ok && (offset += 8); // Take header in account
 	ok = ok && setRawUInt8(data, size, &offset, cryptoType);
 	ok = ok && recipientsHint.serialise(data, size, offset);
+	ok = ok && setRawUInt64(data, size, &offset, receiptId);
 	return ok;
 }
 
@@ -42,6 +43,7 @@ bool RsGxsMailBaseItem::deserialize(const uint8_t* data, uint32_t& size,
 	ok = ok && getRawUInt8(dataPtr, rssize, &roffset, &crType);
 	cryptoType = static_cast<EncryptionMode>(crType);
 	ok = ok && recipientsHint.deserialise(dataPtr, rssize, roffset);
+	ok = ok && getRawUInt64(dataPtr, rssize, &roffset, &receiptId);
 	if(ok) { size = rssize; offset = roffset; }
 	else size = 0;
 	return ok;
@@ -68,19 +70,19 @@ bool RsGxsMailSerializer::serialise(RsItem* item, void* data, uint32_t* size)
 	{
 		uint32_t offset = 0;
 		RsGxsMailItem* i = dynamic_cast<RsGxsMailItem*>(item);
-		ok = ok && i->serialize(dataPtr, itemSize, offset);
+		ok = i->serialize(dataPtr, itemSize, offset);
 		break;
 	}
-	case GXS_MAIL_SUBTYPE_ACK:
+	case GXS_MAIL_SUBTYPE_RECEIPT:
 	{
-		RsGxsMailAckItem* i = dynamic_cast<RsGxsMailAckItem*>(item);
-		ok = ok && setRsItemHeader(data, itemSize, item->PacketId(), itemSize);
-		uint32_t offset = 8;
-		ok = ok && i->recipient.serialise(data, itemSize, offset);
+		RsGxsMailPresignedReceipt* i =
+		        dynamic_cast<RsGxsMailPresignedReceipt*>(item);
+		uint32_t offset = 0;
+		ok = i->serialize(dataPtr, itemSize, offset);
 		break;
 	}
 	case GXS_MAIL_SUBTYPE_GROUP:
-		ok = ok && setRsItemHeader(data, itemSize, item->PacketId(), itemSize);
+		ok = setRsItemHeader(data, itemSize, item->PacketId(), itemSize);
 		break;
 	default: ok = false; break;
 	}
@@ -94,3 +96,4 @@ bool RsGxsMailSerializer::serialise(RsItem* item, void* data, uint32_t* size)
 	std::cout << "RsGxsMailSerializer::serialise(...) failed!" << std::endl;
 	return false;
 }
+

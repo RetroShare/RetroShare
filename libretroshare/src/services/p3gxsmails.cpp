@@ -25,17 +25,6 @@ bool p3GxsMails::sendMail( GxsMailsClient::GxsMailSubServices service,
                            const uint8_t* data, uint32_t size,
                            RsGxsMailBaseItem::EncryptionMode cm)
 {
-	std::vector<const RsGxsId*> recipients;
-	recipients.push_back(&recipient);
-	return sendMail(service, own_gxsid, recipients, data, size, cm);
-}
-
-bool p3GxsMails::sendMail( GxsMailsClient::GxsMailSubServices service,
-                           const RsGxsId& own_gxsid,
-                           const std::vector<const RsGxsId*>& recipients,
-                           const uint8_t* data, uint32_t size,
-                           RsGxsMailBaseItem::EncryptionMode cm )
-{
 	std::cout << "p3GxsMails::sendEmail(...)" << std::endl;
 
 	if(preferredGroupId.isNull())
@@ -53,25 +42,9 @@ bool p3GxsMails::sendMail( GxsMailsClient::GxsMailSubServices service,
 		return false;
 	}
 
-	std::set<RsGxsId> rcps;
-	typedef std::vector<const RsGxsId*>::const_iterator itT;
-	for(itT it = recipients.begin(); it != recipients.end(); it++)
+	if(recipient.isNull())
 	{
-		const RsGxsId* gId = *it;
-
-		if(!gId || gId->isNull())
-		{
-			std::cerr << "p3GxsMails::sendEmail(...) got invalid recipient"
-			          << std::endl;
-			print_stacktrace();
-			return false;
-		}
-
-		rcps.insert(*gId);
-	}
-	if(rcps.empty())
-	{
-		std::cerr << "p3GxsMails::sendEmail(...) got no recipients"
+		std::cerr << "p3GxsMails::sendEmail(...) got invalid recipient"
 		          << std::endl;
 		print_stacktrace();
 		return false;
@@ -83,25 +56,22 @@ bool p3GxsMails::sendMail( GxsMailsClient::GxsMailSubServices service,
 	item->meta.mAuthorId = own_gxsid;
 	item->meta.mGroupId = preferredGroupId;
 	item->cryptoType = cm;
+	item->saltRecipientHint(recipient);
+	item->saltRecipientHint(RsGxsId::random());
+	item->receiptId = RSRandom::random_u64();
 
-	typedef std::set<RsGxsId>::const_iterator siT;
-	for(siT it = rcps.begin(); it != rcps.end(); ++it)
-		item->saltRecipientHint(*it);
-
-	// If there is jut one recipient salt with a random id to avoid leaking it
-	if(rcps.size() == 1) item->saltRecipientHint(RsGxsId::random());
-
-	/* At this point we do a lot of memory copying, it doesn't look pretty but
-	 * ATM haven't thinked of an elegant way to have the GxsMailSubServices
-	 * travelling encrypted withuot copying memory around or responsabilize the
-	 * client service to embed it in data array that is awful */
+	RsNxsMailPresignedReceipt nrcpt;
+	preparePresignedReceipt(*item, nrcpt);
 
 	uint16_t serv = static_cast<uint16_t>(service);
-	uint32_t clearTextPldSize = size+2;
-	item->payload.resize(clearTextPldSize);
-	uint32_t _discard = 0;
-	setRawUInt16(&item->payload[0], 2, &_discard, serv);
-	memcpy(&item->payload[2], data, size);
+	uint32_t rcptsize = nrcpt.serial_size();
+	item->payload.resize(2 + rcptsize + size);
+	uint32_t offset = 0;
+	setRawUInt16(&item->payload[0], 2, &offset, serv);
+	nrcpt.serialise(&item->payload[offset], rcptsize); offset += rcptsize;
+	memcpy(&item->payload[offset], data, size); //offset += size;
+
+	std::cout << "p3GxsMails::sendMail(...) receipt size: " << rcptsize << std::endl;
 
 	switch (cm)
 	{
@@ -117,9 +87,9 @@ bool p3GxsMails::sendMail( GxsMailsClient::GxsMailSubServices service,
 		uint8_t* encryptedData = NULL;
 		uint32_t encryptedSize = 0;
 		uint32_t encryptError = 0;
-		if( idService.encryptData( &item->payload[0], clearTextPldSize,
+		if( idService.encryptData( &item->payload[0], item->payload.size(),
 		                           encryptedData, encryptedSize,
-		                           rcps, encryptError, true ) )
+		                           recipient, encryptError, true ) )
 		{
 			item->payload.resize(encryptedSize);
 			memcpy(&item->payload[0], encryptedData, encryptedSize);
@@ -143,8 +113,11 @@ bool p3GxsMails::sendMail( GxsMailsClient::GxsMailSubServices service,
 	}
 
 	uint32_t token;
-	std::cout << "p3GxsMails::sendEmail(...) sending mail to:"<< *recipients[0]
-	          << " payload size: : " << item->payload.size() << std::endl;
+	std::cout << "p3GxsMails::sendEmail(...) sending mail to: "<< recipient
+	          << " with cryptoType: " << item->cryptoType
+	          << " recipientHint: " << item->recipientsHint
+	          << " receiptId: " << item->receiptId
+	          << " payload size: " << item->payload.size() << std::endl;
 	publishMsg(token, item);
 	return true;
 }
@@ -230,8 +203,6 @@ void p3GxsMails::handleResponse(uint32_t token, uint32_t req_type)
 			for( vT::const_iterator mIt = mv.begin(); mIt != mv.end(); ++mIt )
 			{
 				RsGxsMsgItem* gItem = *mIt;
-				std::cout << "p3GxsMails::handleResponse(...) MAILS_UPDATE "
-				          << (uint32_t)gItem->PacketSubType() << std::endl;
 				switch(gItem->PacketSubType())
 				{
 				case GXS_MAIL_SUBTYPE_MAIL:
@@ -246,13 +217,48 @@ void p3GxsMails::handleResponse(uint32_t token, uint32_t req_type)
 						break;
 					}
 
+					std::cout << "p3GxsMails::handleResponse(...) MAILS_UPDATE "
+					          << "GXS_MAIL_SUBTYPE_MAIL handling: "
+					          << msg->meta.mMsgId
+					          << " with cryptoType: "<< msg->cryptoType
+					          << " recipientHint: " << msg->recipientsHint
+					          << " receiptId: "<< msg->receiptId
+					          << " payload.size(): " << msg->payload.size()
+					          << std::endl;
+
 					handleEcryptedMail(msg);
+					break;
+				}
+				case GXS_MAIL_SUBTYPE_RECEIPT:
+				{
+					RsGxsMailPresignedReceipt* msg =
+					        dynamic_cast<RsGxsMailPresignedReceipt*>(gItem);
+					if(!msg)
+					{
+						std::cerr << "p3GxsMails::handleResponse(...) "
+						          << "GXS_MAIL_SUBTYPE_RECEIPT cast error, "
+						          << "something really wrong is happening"
+						          << std::endl;
+						break;
+					}
+
+					std::cout << "p3GxsMails::handleResponse(...) MAILS_UPDATE "
+					          << "GXS_MAIL_SUBTYPE_RECEIPT handling: "
+					          << msg->meta.mMsgId
+					          << "with receiptId: "<< msg->receiptId
+					          << std::endl;
+
+					/* TODO: Notify client services if the original mail was
+					 *   sent from this node and mark for deletion, otherwise
+					 *   just mark original mail for deletion. */
+
 					break;
 				}
 				default:
 					std::cerr << "p3GxsMails::handleResponse(...) MAILS_UPDATE "
 					          << "Unknown mail subtype : "
-					          << gItem->PacketSubType() << std::endl;
+					          << static_cast<uint32_t>(gItem->PacketSubType())
+					          << std::endl;
 					break;
 				}
 				delete gItem;
@@ -262,7 +268,7 @@ void p3GxsMails::handleResponse(uint32_t token, uint32_t req_type)
 	}
 	default:
 		std::cerr << "p3GxsMails::handleResponse(...) Unknown req_type: "
-		         << req_type << std::endl;
+		          << req_type << std::endl;
 		break;
 	}
 }
@@ -285,13 +291,13 @@ void p3GxsMails::service_tick()
 			          reinterpret_cast<const uint8_t*>(ciao.data()),
 			          ciao.size(), RsGxsMailBaseItem::RSA );
 		}
-		else if(idService.isOwnId(gxsidB))
-		{
-			std::string ciao("CiBuono!");
-			sendMail( GxsMailsClient::TEST_SERVICE, gxsidB, gxsidA,
-			          reinterpret_cast<const uint8_t*>(ciao.data()),
-			          ciao.size(), RsGxsMailBaseItem::RSA );
-		}
+//		else if(idService.isOwnId(gxsidB))
+//		{
+//			std::string ciao("CiBuono!");
+//			sendMail( GxsMailsClient::TEST_SERVICE, gxsidB, gxsidA,
+//			          reinterpret_cast<const uint8_t*>(ciao.data()),
+//			          ciao.size(), RsGxsMailBaseItem::RSA );
+//		}
 	}
 
 	GxsTokenQueue::checkRequests();
@@ -386,6 +392,8 @@ bool p3GxsMails::requestGroupsData(const std::list<RsGxsGroupId>* groupIds)
 
 bool p3GxsMails::handleEcryptedMail(const RsGxsMailItem* mail)
 {
+	std::cout << "p3GxsMails::handleEcryptedMail(...)" << std::endl;
+
 	std::set<RsGxsId> decryptIds;
 	std::list<RsGxsId> ownIds;
 	idService.getOwnIds(ownIds);
@@ -393,7 +401,11 @@ bool p3GxsMails::handleEcryptedMail(const RsGxsMailItem* mail)
 		if(mail->maybeRecipient(*it)) decryptIds.insert(*it);
 
 	// Hint match none of our own ids
-	if(decryptIds.empty()) return true;
+	if(decryptIds.empty())
+	{
+		std::cout << "p3GxsMails::handleEcryptedMail(...) hint doesn't match" << std::endl;
+		return true;
+	}
 
 	switch (mail->cryptoType)
 	{
@@ -409,17 +421,21 @@ bool p3GxsMails::handleEcryptedMail(const RsGxsMailItem* mail)
 	}
 	case RsGxsMailBaseItem::RSA:
 	{
-		uint8_t* decrypted_data = NULL;
-		uint32_t decrypted_data_size = 0;
-		uint32_t decryption_error;
 		bool ok = true;
-		if( idService.decryptData( &mail->payload[0],
-		                            mail->payload.size(), decrypted_data,
-		                            decrypted_data_size, decryptIds,
-		                            decryption_error ) )
-			ok = dispatchDecryptedMail( mail, decrypted_data,
-			                                  decrypted_data_size );
-		free(decrypted_data);
+		for( std::set<RsGxsId>::const_iterator it = decryptIds.begin();
+		     it != decryptIds.end(); ++it )
+		{
+			uint8_t* decrypted_data = NULL;
+			uint32_t decrypted_data_size = 0;
+			uint32_t decryption_error;
+			if( idService.decryptData( &mail->payload[0],
+			                            mail->payload.size(), decrypted_data,
+			                            decrypted_data_size, *it,
+			                            decryption_error ) )
+				ok = ok && dispatchDecryptedMail( mail, decrypted_data,
+				                                  decrypted_data_size );
+			free(decrypted_data);
+		}
 		return ok;
 	}
 	default:
@@ -433,12 +449,36 @@ bool p3GxsMails::dispatchDecryptedMail( const RsGxsMailItem* received_msg,
                                         const uint8_t* decrypted_data,
                                         uint32_t decrypted_data_size )
 {
-	std::cout << "p3GxsMails::dispatchDecryptedMail(, , " << decrypted_data_size << ")" << std::endl;
+	std::cout << "p3GxsMails::dispatchDecryptedMail(, , " << decrypted_data_size
+	          << ")" << std::endl;
+
 	uint16_t csri = 0;
-	uint32_t off = 0;
-	getRawUInt16( decrypted_data, decrypted_data_size, &off, &csri);
+	uint32_t offset = 0;
+	if(!getRawUInt16( decrypted_data, decrypted_data_size, &offset, &csri))
+	{
+		std::cerr << "p3GxsMails::dispatchDecryptedMail(...) (EE) fatal error "
+		          << "deserializing service type, something really wrong is "
+		          << "happening!" << std::endl;
+		return false;
+	}
 	GxsMailsClient::GxsMailSubServices rsrvc;
 	rsrvc = static_cast<GxsMailsClient::GxsMailSubServices>(csri);
+
+	RsNxsMailPresignedReceipt* receipt = new RsNxsMailPresignedReceipt();
+	uint32_t rcptsize = decrypted_data_size;
+	if(!receipt->deserialize(decrypted_data, rcptsize, offset))
+	{
+		std::cerr << "p3GxsMails::dispatchDecryptedMail(...) (EE) fatal error "
+		          << "deserializing presigned return receipt , something really"
+		          << " wrong is happening!" << std::endl;
+		delete receipt;
+		return false;
+	}
+	std::cout << "p3GxsMails::dispatchDecryptedMail(...) dispatching receipt "
+	          << "with: msgId: " << receipt->msgId << std::endl;
+
+	std::vector<RsNxsMsg*> rcct; rcct.push_back(receipt);
+	RsGenExchange::notifyNewMessages(rcct);
 
 	GxsMailsClient* reecipientService = NULL;
 	{
@@ -448,8 +488,8 @@ bool p3GxsMails::dispatchDecryptedMail( const RsGxsMailItem* received_msg,
 
 	if(reecipientService)
 		return reecipientService->receiveGxsMail( received_msg,
-		                                          &decrypted_data[2],
-		                                          decrypted_data_size-2 );
+		                                          &decrypted_data[offset],
+		                                          decrypted_data_size-offset );
 	else
 	{
 		std::cerr << "p3GxsMails::dispatchReceivedMail(...) "
@@ -457,5 +497,41 @@ bool p3GxsMails::dispatchDecryptedMail( const RsGxsMailItem* received_msg,
 		          << csri << std::endl;
 		return false;
 	}
+}
+
+bool p3GxsMails::preparePresignedReceipt(const RsGxsMailItem& mail, RsNxsMailPresignedReceipt& receipt)
+{
+	RsGxsMailPresignedReceipt grcpt;
+	grcpt.meta = mail.meta;
+	grcpt.meta.mPublishTs = time(NULL);
+	grcpt.receiptId = mail.receiptId;
+	uint32_t groff = 0, grsz = grcpt.size();
+	std::vector<uint8_t> grsrz;
+	grsrz.resize(grsz);
+	grcpt.serialize(&grsrz[0], grsz, groff);
+	receipt.msg.setBinData(&grsrz[0], grsz);
+
+	receipt.grpId = preferredGroupId;
+	receipt.metaData = new RsGxsMsgMetaData();
+	*receipt.metaData = grcpt.meta;
+
+	if(createMessage(&receipt) != CREATE_SUCCESS)
+	{
+		std::cout << "p3GxsMails::preparePresignedReceipt(...) receipt creation"
+		          << " failed!" << std::endl;
+		return false;
+	}
+
+	uint32_t metaSize = receipt.metaData->serial_size();
+	std::vector<uint8_t> srx; srx.resize(metaSize);
+	receipt.metaData->serialise(&srx[0], &metaSize);
+	receipt.meta.setBinData(&srx[0], metaSize);
+
+	std::cout << "p3GxsMails::preparePresignedReceipt(...) prepared receipt"
+	          << "with: grcpt.meta.mMsgId: " << grcpt.meta.mMsgId
+	          << " msgId: " << receipt.msgId
+	          << " metaData.mMsgId: " << receipt.metaData->mMsgId
+	          << std::endl;
+	return true;
 }
 
