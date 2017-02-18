@@ -403,10 +403,10 @@ ops_boolean_t ops_dsa_verify(const unsigned char *hash,size_t hash_length,
     osig=DSA_SIG_new();
 
 #if OPENSSL_VERSION_NUMBER < 0x10100000L
-    osig->r=BN_dup(sig->r);
-    osig->s=BN_dup(sig->s);
+    osig->r=sig->r;
+    osig->s=sig->s;
 #else
-    DSA_SIG_set0(osig,BN_dup(sig->r),BN_dup(sig->s)) ;
+    DSA_SIG_set0(osig,sig->r,sig->s) ;
 #endif
 
 	 if(BN_num_bits(dsa->q) != 160)
@@ -422,13 +422,15 @@ ops_boolean_t ops_dsa_verify(const unsigned char *hash,size_t hash_length,
 
     odsa=DSA_new();
 #if OPENSSL_VERSION_NUMBER < 0x10100000L
-    odsa->p=BN_dup(dsa->p);
-    odsa->q=BN_dup(dsa->q);
-    odsa->g=BN_dup(dsa->g);
-#else
-    DSA_set0_pqg(BN_dup(dsa->p),BN_dup(dsa->q),BN_dup(dsa->g));
-#endif
+    odsa->p=dsa->p;
+    odsa->q=dsa->q;
+    odsa->g=dsa->g;
+
     odsa->pub_key=dsa->y;
+#else
+    DSA_set0_pqg(odsa,dsa->p,dsa->q,dsa->g);
+    DSA_set0_key(odsa,dsa->y,NULL) ;
+#endif
 
     if (debug)
         {
@@ -462,7 +464,21 @@ ops_boolean_t ops_dsa_verify(const unsigned char *hash,size_t hash_length,
 		return ops_false ;
 	 }
 
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
+    osig->r=NULL;
+    osig->s=NULL;
+
+    odsa->p=NULL;
+    odsa->q=NULL;
+    odsa->g=NULL;
     odsa->pub_key=NULL;
+#else
+    DSA_SIG_set0(osig,NULL,NULL) ;
+
+    DSA_set0_pqg(odsa,NULL,NULL,NULL);
+    DSA_set0_key(odsa,NULL,NULL) ;
+#endif
+
     DSA_free(odsa);
     DSA_SIG_free(osig);
 
@@ -485,12 +501,20 @@ int ops_rsa_public_decrypt(unsigned char *out,const unsigned char *in,
     int n;
 
     orsa=RSA_new();
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
     orsa->n=rsa->n;
     orsa->e=rsa->e;
+#else
+    RSA_set0_key(orsa,rsa->n,rsa->e,NULL) ;
+#endif
 
     n=RSA_public_decrypt(length,in,out,orsa,RSA_NO_PADDING);
 
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
     orsa->n=orsa->e=NULL;
+#else
+    RSA_set0_key(orsa,NULL,NULL,NULL) ;
+#endif
     RSA_free(orsa);
 
     return n;
