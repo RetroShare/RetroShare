@@ -738,8 +738,19 @@ ops_boolean_t ops_rsa_generate_keypair(const int numbits, const unsigned long e,
     skey->public_key.days_valid=0;
     skey->public_key.algorithm= OPS_PKA_RSA;
 
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
     skey->public_key.key.rsa.n=BN_dup(rsa->n);
     skey->public_key.key.rsa.e=BN_dup(rsa->e);
+    skey->key.rsa.d=BN_dup(rsa->d);
+#else
+    BIGNUM *nn=NULL,*ee=NULL,*dd=NULL ;
+
+    RSA_get0_key(rsa,&nn,&ee,&dd) ;
+
+    skey->public_key.key.rsa.n=BN_dup(nn) ;
+    skey->public_key.key.rsa.e=BN_dup(ee) ;
+    skey->public_key.key.rsa.e=BN_dup(dd) ;
+#endif
 
     skey->s2k_usage=OPS_S2KU_ENCRYPTED_AND_HASHED;
     skey->s2k_specifier=OPS_S2KS_SALTED;
@@ -749,10 +760,20 @@ ops_boolean_t ops_rsa_generate_keypair(const int numbits, const unsigned long e,
     skey->octet_count=0;
     skey->checksum=0;
 
-    skey->key.rsa.d=BN_dup(rsa->d);
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
     skey->key.rsa.p=BN_dup(rsa->p);
     skey->key.rsa.q=BN_dup(rsa->q);
     skey->key.rsa.u=BN_mod_inverse(NULL,rsa->p, rsa->q, ctx);
+#else
+    BIGNUM *pp=NULL,*qq=NULL ;
+
+    RSA_get0_factors(rsa,&pp,&qq) ;
+
+    skey->key.rsa.p=BN_dup(pp);
+    skey->key.rsa.q=BN_dup(qq);
+
+    skey->key.rsa.u=BN_mod_inverse(NULL,pp,qq, ctx);
+#endif
     assert(skey->key.rsa.u);
     BN_CTX_free(ctx);
 
