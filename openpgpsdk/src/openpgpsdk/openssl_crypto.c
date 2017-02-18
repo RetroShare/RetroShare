@@ -49,15 +49,17 @@ void test_secret_key(const ops_secret_key_t *skey)
     test->n=BN_dup(skey->public_key.key.rsa.n);
     test->e=BN_dup(skey->public_key.key.rsa.e);
     test->d=BN_dup(skey->key.rsa.d);
+
+    test->p=BN_dup(skey->key.rsa.p);
+    test->q=BN_dup(skey->key.rsa.q);
 #else
     RSA_set0_key(test,
 		    BN_dup(skey->public_key.key.rsa.n),
     		BN_dup(skey->public_key.key.rsa.e),
 		    BN_dup(skey->key.rsa.d));
-#endif
 
-    test->p=BN_dup(skey->key.rsa.p);
-    test->q=BN_dup(skey->key.rsa.q);
+    RSA_set0_factors(test, BN_dup(skey->key.rsa.p), BN_dup(skey->key.rsa.q));
+#endif
 
     assert(RSA_check_key(test)==1);
     RSA_free(test);
@@ -401,10 +403,10 @@ ops_boolean_t ops_dsa_verify(const unsigned char *hash,size_t hash_length,
     osig=DSA_SIG_new();
 
 #if OPENSSL_VERSION_NUMBER < 0x10100000L
-    osig->r=sig->r;
-    osig->s=sig->s;
+    osig->r=BN_dup(sig->r);
+    osig->s=BN_dup(sig->s);
 #else
-    DSA_SIG_set0(osig,sig->r,sig->s) ;
+    DSA_SIG_set0(osig,BN_dup(sig->r),BN_dup(sig->s)) ;
 #endif
 
 	 if(BN_num_bits(dsa->q) != 160)
@@ -414,15 +416,18 @@ ops_boolean_t ops_dsa_verify(const unsigned char *hash,size_t hash_length,
 			 fprintf(stderr,"(WW) ops_dsa_verify: openssl does only supports 'q' of 160 bits. Current is %d bits.\n",BN_num_bits(dsa->q)) ;
 			 already_said=ops_true ;
 		 }
-		 osig->r=osig->s=NULL;
 		 DSA_SIG_free(osig);
 		 return ops_false ;
 	 }
 
     odsa=DSA_new();
-    odsa->p=dsa->p;
-    odsa->q=dsa->q;
-    odsa->g=dsa->g;
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
+    odsa->p=BN_dup(dsa->p);
+    odsa->q=BN_dup(dsa->q);
+    odsa->g=BN_dup(dsa->g);
+#else
+    DSA_set0_pqg(BN_dup(dsa->p),BN_dup(dsa->q),BN_dup(dsa->g));
+#endif
     odsa->pub_key=dsa->y;
 
     if (debug)
@@ -457,10 +462,8 @@ ops_boolean_t ops_dsa_verify(const unsigned char *hash,size_t hash_length,
 		return ops_false ;
 	 }
 
-    odsa->p=odsa->q=odsa->g=odsa->pub_key=NULL;
+    odsa->pub_key=NULL;
     DSA_free(odsa);
- 
-    osig->r=osig->s=NULL;
     DSA_SIG_free(osig);
 
     return ret != 0;
