@@ -586,15 +586,19 @@ int ops_rsa_private_decrypt(unsigned char *out,const unsigned char *in,
     char errbuf[1024];
 
     orsa=RSA_new();
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
     orsa->n=rsa->n;	// XXX: do we need n?
     orsa->d=srsa->d;
     orsa->p=srsa->q;
     orsa->q=srsa->p;
+    orsa->e=rsa->e;
+#else
+    RSA_set0_key(orsa,BN_dup(rsa->n),BN_dup(rsa->e),BN_dup(srsa->d)) ;
+    RSA_set0_factors(orsa,BN_dup(srsa->p),BN_dup(srsa->q));
+#endif
 
     /* debug */
-    orsa->e=rsa->e;
     assert(RSA_check_key(orsa) == 1);
-    orsa->e=NULL;
     /* end debug */
 
     n=RSA_private_decrypt(length,in,out,orsa,RSA_NO_PADDING);
@@ -608,7 +612,10 @@ int ops_rsa_private_decrypt(unsigned char *out,const unsigned char *in,
         ERR_error_string(err,&errbuf[0]);
         fprintf(stderr,"openssl error : %s\n",errbuf);
         }
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
     orsa->n=orsa->d=orsa->p=orsa->q=NULL;
+    orsa->e=NULL;
+#endif
     RSA_free(orsa);
 
     return n;
@@ -631,8 +638,12 @@ int ops_rsa_public_encrypt(unsigned char *out,const unsigned char *in,
     //    printf("ops_rsa_public_encrypt: length=%ld\n", length);
 
     orsa=RSA_new();
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
     orsa->n=rsa->n;
     orsa->e=rsa->e;
+#else
+    RSA_set0_key(orsa,BN_dup(rsa->n),BN_dup(rsa->e),NULL);
+#endif
 
     //    printf("len: %ld\n", length);
     //    ops_print_bn("n: ", orsa->n);
@@ -647,7 +658,9 @@ int ops_rsa_public_encrypt(unsigned char *out,const unsigned char *in,
 	    BIO_free(fd_out) ;
     }
 
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
     orsa->n=orsa->e=NULL;
+#endif
     RSA_free(orsa);
 
     return n;
