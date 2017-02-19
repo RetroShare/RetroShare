@@ -583,6 +583,9 @@ bool AEAD_chacha20_sha256(uint8_t key[32], uint8_t nonce[12],uint8_t *data,uint3
        HMAC_Update(hmac_ctx,aad,aad_size) ;
        HMAC_Update(hmac_ctx,data,data_size) ;
        HMAC_Final(hmac_ctx,computed_tag,&md_size) ;
+
+       HMAC_CTX_free(hmac_ctx) ;
+       hmac_ctx=NULL;
 #endif
 
        // decrypt

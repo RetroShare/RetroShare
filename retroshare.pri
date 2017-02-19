@@ -60,6 +60,9 @@ rs_nodeprecatedwarning:CONFIG -= no_rs_nodeprecatedwarning
 CONFIG *= no_rs_nocppwarning
 rs_nocppwarning:CONFIG -= no_rs_nocppwarning
 
+INCLUDEPATH += /usr/local/openssl/include
+LIBS += -L/usr/local/openssl/lib
+
 unix {
 	isEmpty(PREFIX)   { PREFIX   = "/usr" }
 	isEmpty(BIN_DIR)  { BIN_DIR  = "$${PREFIX}/bin" }
