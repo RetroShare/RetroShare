@@ -814,14 +814,12 @@ X509 *AuthSSLimpl::SignX509ReqWithGPG(X509_REQ *req, long /*days*/)
         //EVP_PKEY *pkey = NULL;
         const EVP_MD *type = EVP_sha1();
 
-        EVP_MD_CTX *ctx = EVP_MD_CTX_new();
+        EVP_MD_CTX *ctx = EVP_MD_CTX_create();
         unsigned char *p,*buf_in=NULL;
         unsigned char *buf_hashout=NULL,*buf_sigout=NULL;
         int inl=0,hashoutl=0;
         int sigoutl=0;
         X509_ALGOR *a;
-
-        EVP_MD_CTX_init(ctx);
 
         /* FIX ALGORITHMS */
 
@@ -923,7 +921,7 @@ X509 *AuthSSLimpl::SignX509ReqWithGPG(X509_REQ *req, long /*days*/)
 
         std::cerr << "Certificate Complete" << std::endl;
 
-        EVP_MD_CTX_free(ctx) ;
+        EVP_MD_CTX_destroy(ctx) ;
 
         return x509;
 
@@ -994,7 +992,7 @@ bool AuthSSLimpl::AuthX509WithGPG(X509 *x509,uint32_t& diagnostic)
 
 	const EVP_MD *type = EVP_sha1();
 
-	EVP_MD_CTX *ctx = EVP_MD_CTX_new();
+	EVP_MD_CTX *ctx = EVP_MD_CTX_create();
 	unsigned char *p,*buf_in=NULL;
 	unsigned char *buf_hashout=NULL,*buf_sigout=NULL;
 	int inl=0,hashoutl=0;
@@ -1080,7 +1078,7 @@ bool AuthSSLimpl::AuthX509WithGPG(X509 *x509,uint32_t& diagnostic)
 #ifdef AUTHSSL_DEBUG
 	std::cerr << "AuthSSLimpl::AuthX509() X509 authenticated" << std::endl;
 #endif
-    EVP_MD_CTX_free(ctx) ;
+    EVP_MD_CTX_destroy(ctx) ;
 
 	OPENSSL_free(buf_in) ;
 	OPENSSL_free(buf_hashout) ;
