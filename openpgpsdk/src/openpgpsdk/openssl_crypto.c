@@ -416,6 +416,12 @@ ops_boolean_t ops_dsa_verify(const unsigned char *hash,size_t hash_length,
 			 fprintf(stderr,"(WW) ops_dsa_verify: openssl does only supports 'q' of 160 bits. Current is %d bits.\n",BN_num_bits(dsa->q)) ;
 			 already_said=ops_true ;
 		 }
+
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
+		 osig->r=NULL;			// in this case, the values are not copied.
+		 osig->s=NULL;
+#endif
+
 		 DSA_SIG_free(osig);
 		 return ops_false ;
 	 }
