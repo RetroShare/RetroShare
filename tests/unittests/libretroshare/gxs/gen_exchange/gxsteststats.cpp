@@ -81,6 +81,7 @@ void GxsTestStats::testServiceStatistics()
     RsDummyGrp* dgrp2 = new RsDummyGrp();
 
     init(*dgrp1);
+    init(*dgrp2);
     RsTokReqOptions opts;
     opts.mReqType = 45000;
     uint32_t token;
