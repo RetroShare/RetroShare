@@ -83,9 +83,6 @@ RsGenExchange::RsGenExchange(RsGeneralDataService *gds, RsNetworkExchangeService
   mChecking(false),
   mLastCheck((int)time(NULL) - (int)(RSRandom::random_u32() % INTEGRITY_CHECK_PERIOD) + 120),	// this helps unsynchronising the checks for the different services, with 2 min security to avoid checking right away before statistics come up.
   mIntegrityCheck(NULL),
-  CREATE_FAIL(0),
-  CREATE_SUCCESS(1),
-  CREATE_FAIL_TRY_LATER(2),
   SIGN_MAX_WAITING_TIME(60),
   SIGN_FAIL(0),
   SIGN_SUCCESS(1),
