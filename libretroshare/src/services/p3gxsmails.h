@@ -47,7 +47,7 @@ struct p3GxsMails;
 struct GxsMailsClient
 {
 	/// Subservices identifiers (like port for TCP)
-	enum GxsMailSubServices { TEST_SERVICE = 1 };
+	enum GxsMailSubServices : uint16_t { TEST_SERVICE = 1, P3_MSG_SERVICE = 2 };
 
 	/**
 	 * This will be called by p3GxsMails to dispatch mails to the subservice
