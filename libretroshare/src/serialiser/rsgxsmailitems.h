@@ -34,65 +34,55 @@ enum GxsMailItemsSubtypes
 	GXS_MAIL_SUBTYPE_GROUP   = 3
 };
 
+typedef uint64_t RsGxsMailId;
+
 struct RsNxsMailPresignedReceipt : RsNxsMsg
 {
 	RsNxsMailPresignedReceipt() : RsNxsMsg(RS_SERVICE_TYPE_GXS_MAIL) {}
 };
 
-struct RsGxsMailPresignedReceipt : RsGxsMsgItem
-{
-	RsGxsMailPresignedReceipt() :
-	    RsGxsMsgItem( RS_SERVICE_TYPE_GXS_MAIL,
-	                  static_cast<uint8_t>(GXS_MAIL_SUBTYPE_RECEIPT) ),
-	    receiptId(0) {}
-
-	uint64_t receiptId;
-
-	static uint32_t inline size()
-	{
-		return  8 + // Header
-		        8;  // receiptId
-	}
-	bool serialize(uint8_t* data, uint32_t size, uint32_t& offset) const
-	{
-		bool ok = setRsItemHeader(data, size, PacketId(), size);
-		ok = ok && (offset += 8); // Take header in account
-		ok = ok && setRawUInt64(data, size, &offset, receiptId);
-		return ok;
-	}
-	bool deserialize(const uint8_t* data, uint32_t& size, uint32_t& offset)
-	{
-		void* dataPtr = reinterpret_cast<void*>(const_cast<uint8_t*>(data));
-		uint32_t rssize = getRsItemSize(dataPtr);
-		uint32_t roffset = offset + 8; // Take header in account
-		bool ok = rssize <= size;
-		ok = ok && getRawUInt64(dataPtr, rssize, &roffset, &receiptId);
-		if(ok) { size = rssize; offset = roffset; }
-		else size = 0;
-		return ok;
-	}
-
-	void clear() { receiptId = 0; }
-	std::ostream &print(std::ostream &out, uint16_t /*indent = 0*/)
-	{ return out << receiptId; }
-};
-
-
 struct RsGxsMailBaseItem : RsGxsMsgItem
 {
 	RsGxsMailBaseItem(GxsMailItemsSubtypes subtype) :
 	    RsGxsMsgItem( RS_SERVICE_TYPE_GXS_MAIL,
-	                  static_cast<uint8_t>(subtype) ),
-	    cryptoType(UNDEFINED_ENCRYPTION), receiptId(0) {}
+	                  static_cast<uint8_t>(subtype) ), mailId(0) {}
 
-	/// Values must fit into uint8_t
-	enum EncryptionMode
+	RsGxsMailId mailId;
+
+	void inline clear()
 	{
-		CLEAR_TEXT                = 1,
-		RSA                       = 2,
-		UNDEFINED_ENCRYPTION      = 250
-	};
-	EncryptionMode cryptoType;
+		mailId = 0;
+		meta = RsMsgMetaData();
+	}
+
+	static uint32_t inline size()
+	{
+		return  8 + // Header
+		        8;  // mailId
+	}
+	bool serialize(uint8_t* data, uint32_t size, uint32_t& offset) const;
+	bool deserialize(const uint8_t* data, uint32_t& size, uint32_t& offset);
+	std::ostream &print(std::ostream &out, uint16_t /*indent = 0*/);
+};
+
+struct RsGxsMailPresignedReceipt : RsGxsMailBaseItem
+{
+	RsGxsMailPresignedReceipt() : RsGxsMailBaseItem(GXS_MAIL_SUBTYPE_RECEIPT) {}
+};
+
+enum class RsGxsMailEncryptionMode : uint8_t
+{
+	CLEAR_TEXT                = 1,
+	RSA                       = 2,
+	UNDEFINED_ENCRYPTION      = 250
+};
+
+struct RsGxsMailItem : RsGxsMailBaseItem
+{
+	RsGxsMailItem() : RsGxsMailBaseItem(GXS_MAIL_SUBTYPE_MAIL),
+	    cryptoType(RsGxsMailEncryptionMode::UNDEFINED_ENCRYPTION) {}
+
+	RsGxsMailEncryptionMode cryptoType;
 
 	/**
 	 * @brief recipientsHint used instead of plain recipient id, so sender can
@@ -130,65 +120,37 @@ struct RsGxsMailBaseItem : RsGxsMsgItem
 	 * corresponding hint may be fruit of a "luky" salting of another id.
 	 */
 	RsGxsId recipientsHint;
-
-	void static inline saltRecipientHint(RsGxsId& hint, const RsGxsId& salt)
-	{ hint = hint | salt; }
 	void inline saltRecipientHint(const RsGxsId& salt)
-	{ saltRecipientHint(recipientsHint, salt); }
+	{ recipientsHint = recipientsHint | salt; }
 
 	/**
 	 * @brief maybeRecipient given an id and an hint check if they match
 	 * @see recipientHint
-	 * @note this is not the final implementation as id and hint are not 32bit
-	 *   integers it is just to not forget how to verify the hint/id matching
-	 *   fastly with boolean ops
 	 * @return true if the id may be recipient of the hint, false otherwise
 	 */
-	bool static inline maybeRecipient(const RsGxsId& hint, const RsGxsId& id)
-	{ return (~id|hint) == allRecipientsHint; }
 	bool inline maybeRecipient(const RsGxsId& id) const
-	{ return maybeRecipient(recipientsHint, id); }
+	{ return (~id|recipientsHint) == allRecipientsHint; }
 
 	const static RsGxsId allRecipientsHint;
-
-	uint64_t receiptId;
-
-	void inline clear()
-	{
-		cryptoType = UNDEFINED_ENCRYPTION;
-		recipientsHint.clear();
-		receiptId = 0;
-		meta = RsMsgMetaData();
-	}
-
-	static uint32_t inline size()
-	{
-		return  8 + // Header
-		        1 + // cryptoType
-		        RsGxsId::serial_size() + // recipientsHint
-		        8; // receiptId
-	}
-	bool serialize(uint8_t* data, uint32_t size, uint32_t& offset) const;
-	bool deserialize(const uint8_t* data, uint32_t& size, uint32_t& offset);
-	std::ostream &print(std::ostream &out, uint16_t /*indent = 0*/);
-};
-
-struct RsGxsMailItem : RsGxsMailBaseItem
-{
-	RsGxsMailItem(GxsMailItemsSubtypes subtype) :
-	    RsGxsMailBaseItem(subtype) {}
-	RsGxsMailItem() :
-	    RsGxsMailBaseItem(GXS_MAIL_SUBTYPE_MAIL) {}
 
 	/** This should travel encrypted, unless EncryptionMode::CLEAR_TEXT
 	 * is specified */
 	std::vector<uint8_t> payload;
 
-	uint32_t size() const { return RsGxsMailBaseItem::size() + payload.size(); }
+	uint32_t size() const
+	{
+		return RsGxsMailBaseItem::size() +
+		        1 + // cryptoType
+		        recipientsHint.serial_size() +
+		        payload.size();
+	}
 	bool serialize(uint8_t* data, uint32_t size, uint32_t& offset) const
 	{
 		bool ok = size < MAX_SIZE;
 		ok = ok && RsGxsMailBaseItem::serialize(data, size, offset);
+		ok = ok && setRawUInt8( data, size, &offset,
+		                        static_cast<uint8_t>(cryptoType) );
+		ok = ok && recipientsHint.serialise(data, size, offset);
 		uint32_t psz = payload.size();
 		ok = ok && memcpy(data+offset, &payload[0], psz);
 		offset += psz;
@@ -196,13 +158,28 @@ struct RsGxsMailItem : RsGxsMailBaseItem
 	}
 	bool deserialize(const uint8_t* data, uint32_t& size, uint32_t& offset)
 	{
-		uint32_t bsz = RsGxsMailBaseItem::size();
-		uint32_t psz = size - bsz;
-		return size < MAX_SIZE && size >= bsz
-		        && RsGxsMailBaseItem::deserialize(data, size, offset)
-		        && (payload.resize(psz), memcpy(&payload[0], data+offset, psz));
+		void* dataPtr = reinterpret_cast<void*>(const_cast<uint8_t*>(data));
+		uint32_t rssize = getRsItemSize(dataPtr);
+		uint32_t roffset = offset;
+		bool ok = rssize <= size && size < MAX_SIZE;
+		ok = ok && RsGxsMailBaseItem::deserialize(data, rssize, roffset);
+		uint8_t crType;
+		ok = ok && getRawUInt8(dataPtr, rssize, &roffset, &crType);
+		cryptoType = static_cast<RsGxsMailEncryptionMode>(crType);
+		ok = ok && recipientsHint.deserialise(dataPtr, rssize, roffset);
+		uint32_t psz = rssize - roffset;
+		ok = ok && (payload.resize(psz), memcpy(&payload[0], data+roffset, psz));
+		if(ok) { size = rssize; offset = roffset; }
+		else size = 0;
+		return ok;
 	}
-	void clear() { RsGxsMailBaseItem::clear(); payload.clear(); }
+	void clear()
+	{
+		RsGxsMailBaseItem::clear();
+		cryptoType = RsGxsMailEncryptionMode::UNDEFINED_ENCRYPTION;
+		recipientsHint.clear();
+		payload.clear();
+	}
 
 	/// Maximum mail size in bytes 10 MiB is more than anything sane can need
 	const static uint32_t MAX_SIZE = 10*8*1024*1024;

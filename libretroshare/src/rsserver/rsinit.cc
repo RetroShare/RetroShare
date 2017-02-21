@@ -1500,7 +1500,8 @@ int RsServer::StartupRetroShare()
 	pqih->addService(gxsmails_ns, true);
 	mConfigMgr->addConfiguration("gxs_mail.cfg", gxsmails_ns);
 
-	new TestGxsMailClientService(*mGxsMails);
+	TestGxsMailClientService* tgms =
+	        new TestGxsMailClientService(*mGxsMails, *mGxsIdService);
 #	endif // RS_GXS_MAIL
 
 	// remove pword from memory
@@ -1827,6 +1828,7 @@ int RsServer::StartupRetroShare()
 #	ifdef RS_GXS_MAIL
 	startServiceThread(mGxsMails, "gxs mail");
 	startServiceThread(gxsmails_ns, "gxs mail ns");
+	tgms->start("Gxs Mail Test Service");
 #	endif // RS_GXS_MAIL
 
 #endif // RS_ENABLE_GXS

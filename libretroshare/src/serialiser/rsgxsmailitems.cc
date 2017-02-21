@@ -18,7 +18,7 @@
 
 #include "serialiser/rsgxsmailitems.h"
 
-const RsGxsId RsGxsMailBaseItem::allRecipientsHint("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
+const RsGxsId RsGxsMailItem::allRecipientsHint("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
 
 
 bool RsGxsMailBaseItem::serialize(uint8_t* data, uint32_t size,
@@ -26,9 +26,7 @@ bool RsGxsMailBaseItem::serialize(uint8_t* data, uint32_t size,
 {
 	bool ok = setRsItemHeader(data, size, PacketId(), size);
 	ok = ok && (offset += 8); // Take header in account
-	ok = ok && setRawUInt8(data, size, &offset, cryptoType);
-	ok = ok && recipientsHint.serialise(data, size, offset);
-	ok = ok && setRawUInt64(data, size, &offset, receiptId);
+	ok = ok && setRawUInt64(data, size, &offset, mailId);
 	return ok;
 }
 
@@ -39,18 +37,14 @@ bool RsGxsMailBaseItem::deserialize(const uint8_t* data, uint32_t& size,
 	uint32_t rssize = getRsItemSize(dataPtr);
 	uint32_t roffset = offset + 8; // Take header in account
 	bool ok = rssize <= size;
-	uint8_t crType;
-	ok = ok && getRawUInt8(dataPtr, rssize, &roffset, &crType);
-	cryptoType = static_cast<EncryptionMode>(crType);
-	ok = ok && recipientsHint.deserialise(dataPtr, rssize, roffset);
-	ok = ok && getRawUInt64(dataPtr, rssize, &roffset, &receiptId);
+	ok = ok && getRawUInt64(dataPtr, rssize, &roffset, &mailId);
 	if(ok) { size = rssize; offset = roffset; }
 	else size = 0;
 	return ok;
 }
 
-std::ostream&RsGxsMailBaseItem::print(std::ostream& out, uint16_t)
-{ return out; }
+std::ostream& RsGxsMailBaseItem::print(std::ostream &out, uint16_t)
+{ return out << " RsGxsMailBaseItem::mailId: " << mailId; }
 
 bool RsGxsMailSerializer::serialise(RsItem* item, void* data, uint32_t* size)
 {
