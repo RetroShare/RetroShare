@@ -18,6 +18,8 @@
  */
 
 #include <stdint.h>
+#include <unordered_map>
+#include <map>
 
 #include "retroshare/rsgxsifacetypes.h" // For RsGxsId, RsGxsCircleId
 #include "gxs/gxstokenqueue.h" // For GxsTokenQueue
@@ -184,7 +186,7 @@ private:
 	RsMutex outgoingMutex;
 	void processOutgoingRecord(OutgoingRecord& r);
 
-	typedef std::map<RsGxsMailId, RsGxsMailBaseItem*> inMap;
+	typedef std::unordered_multimap<RsGxsMailId, RsGxsMailBaseItem*> inMap;
 	inMap ingoingQueue;
 	RsMutex ingoingMutex;
 

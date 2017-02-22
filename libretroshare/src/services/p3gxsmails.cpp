@@ -568,19 +568,20 @@ void p3GxsMails::processOutgoingRecord(OutgoingRecord& pr)
 	case GxsMailStatus::PENDING_RECEIPT_RECEIVE:
 	{
 		RS_STACK_MUTEX(ingoingMutex);
-		auto it = ingoingQueue.find(pr.mailItem.mailId);
-		if (it == ingoingQueue.end()) break;
-		RsGxsMailPresignedReceipt* rt =
-		        dynamic_cast<RsGxsMailPresignedReceipt*>(it->second);
-		if( !rt || !idService.isOwnId(rt->meta.mAuthorId) ) break;
-
-		ingoingQueue.erase(it); delete rt;
-		pr.status = GxsMailStatus::RECEIPT_RECEIVED;
-		// TODO: Malicious adversary could forge messages with same mailId and
-		//   could end up overriding the legit receipt in ingoingQueue, and
-		//   causing also a memleak(using unordered_multimap for ingoingQueue
-		//   may fix this?)
+		auto range = ingoingQueue.equal_range(pr.mailItem.mailId);
+		for( auto it = range.first; it != range.second; ++it)
+		{
+			RsGxsMailPresignedReceipt* rt =
+			        dynamic_cast<RsGxsMailPresignedReceipt*>(it->second);
+			if(rt && idService.isOwnId(rt->meta.mAuthorId))
+			{
+				ingoingQueue.erase(it); delete rt;
+				pr.status = GxsMailStatus::RECEIPT_RECEIVED;
+				break;
+			}
+		}
 		// TODO: Resend message if older then treshold
+		break;
 	}
 	case GxsMailStatus::RECEIPT_RECEIVED:
 		break;
