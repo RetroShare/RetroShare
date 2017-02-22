@@ -115,7 +115,7 @@ void p3GxsMails::handleResponse(uint32_t token, uint32_t req_type)
 		{
 			/* This is true only at first run when we haven't received mail
 			 * distribuition groups from friends
-			 * TODO: We should check if we have some connected firend too, to
+			 * TODO: We should check if we have some connected friend too, to
 			 * avoid to create yet another never used mail distribution group.
 			 */
 
@@ -211,29 +211,67 @@ void p3GxsMails::service_tick()
 		RS_STACK_MUTEX(ingoingMutex);
 		for( auto it = ingoingQueue.begin(); it != ingoingQueue.end(); )
 		{
-			if( it->second->PacketSubType() != GXS_MAIL_SUBTYPE_MAIL )
-			{ ++it; continue; }
-
-			RsGxsMailItem* msg = dynamic_cast<RsGxsMailItem*>(it->second);
-			if(!msg)
+			switch (it->second->PacketSubType())
 			{
-				std::cout << "p3GxsMails::service_tick() GXS_MAIL_SUBTYPE_MAIL"
-				          << "dynamic_cast failed, something really wrong is "
-				          << "happening!" << std::endl;
-				++it; continue;
+			case GXS_MAIL_SUBTYPE_MAIL:
+			{
+				RsGxsMailItem* msg = dynamic_cast<RsGxsMailItem*>(it->second);
+				if(!msg)
+				{
+					std::cerr << "p3GxsMails::service_tick() (EE) "
+					          << "GXS_MAIL_SUBTYPE_MAIL dynamic_cast failed, "
+					          << "something really wrong is happening!"
+					          << std::endl;
+				}
+				else
+				{
+					std::cout << "p3GxsMails::service_tick() "
+					          << "GXS_MAIL_SUBTYPE_MAIL handling: "
+					          << msg->meta.mMsgId
+					          << " with cryptoType: "
+					          << static_cast<uint32_t>(msg->cryptoType)
+					          << " recipientHint: " << msg->recipientsHint
+					          << " mailId: "<< msg->mailId
+					          << " payload.size(): " << msg->payload.size()
+					          << std::endl;
+					handleEcryptedMail(msg);
+				}
+				break;
+			}
+			case GXS_MAIL_SUBTYPE_RECEIPT:
+			{
+				RsGxsMailPresignedReceipt* rcpt =
+				        dynamic_cast<RsGxsMailPresignedReceipt*>(it->second);
+				if(!rcpt)
+				{
+					std::cerr << "p3GxsMails::service_tick() (EE) "
+					          << "GXS_MAIL_SUBTYPE_RECEIPT dynamic_cast failed,"
+					          << " something really wrong is happening!"
+					          << std::endl;
+				}
+				else if(idService.isOwnId(rcpt->meta.mAuthorId))
+				{
+					/* It is a receipt for a mail sent by this node live it in
+					 * ingoingQueue so processOutgoingRecord(...) will take care
+					 * of it at next tick */
+					++it;
+					continue;
+				}
+				else
+				{
+					/* TODO: It is a receipt for a message sent by someone else
+					 * we can delete original mail from our GXS DB without
+					 * waiting for GXS_STORAGE_PERIOD */
+				}
+				break;
+			}
+			default:
+				std::cerr << "p3GxsMails::service_tick() (EE) got something "
+				          << "really unknown into ingoingQueue!!" << std::endl;
+				break;
 			}
 
-			std::cout << "p3GxsMails::service_tick() GXS_MAIL_SUBTYPE_MAIL "
-			          << "handling: " << msg->meta.mMsgId
-			          << " with cryptoType: "
-			          << static_cast<uint32_t>(msg->cryptoType)
-			          << " recipientHint: " << msg->recipientsHint
-			          << " mailId: "<< msg->mailId
-			          << " payload.size(): " << msg->payload.size()
-			          << std::endl;
-
-			handleEcryptedMail(msg);
-			it = ingoingQueue.erase(it); delete msg;
+			delete it->second; it = ingoingQueue.erase(it);
 		}
 	}
 }

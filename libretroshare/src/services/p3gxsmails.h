@@ -65,7 +65,7 @@ struct GxsMailsClient
 	                                   GxsMailStatus status ) = 0;
 };
 
-struct p3GxsMails : RsGenExchange, GxsTokenQueue
+struct p3GxsMails : RsGenExchange, GxsTokenQueue // TODO: p3Config
 {
 	p3GxsMails( RsGeneralDataService* gds, RsNetworkExchangeService* nes,
 	            p3IdService& identities ) :
