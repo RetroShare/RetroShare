@@ -57,6 +57,7 @@ private slots:
     void switch_status_ShowSound(bool)   ;
     void switch_status_ShowToaster(bool) ;
     void switch_status_ShowSystray(bool) ;
+    void switch_status_ShowCBox(bool) ;
 
     void updateLanguageCode()    ;
     void updateInterfaceStyle()  ;

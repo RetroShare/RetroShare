@@ -338,13 +338,6 @@
       <bool>true</bool>
      </property>
      <layout class="QGridLayout" name="grpStatusGLayout">
-      <item row="4" column="2">
-       <widget class="QCheckBox" name="checkBoxShowSystrayOnStatus">
-        <property name="text">
-         <string>Show SysTray on Status Bar</string>
-        </property>
-       </widget>
-      </item>
       <item row="4" column="1">
        <widget class="QCheckBox" name="checkBoxShowToasterDisable">
         <property name="text">
@@ -356,13 +349,6 @@
        <widget class="QCheckBox" name="checkBoxShowSoundStatus">
         <property name="text">
          <string>Show Sound Status</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="2">
-       <widget class="QCheckBox" name="checkBoxShowOpModeStatus">
-        <property name="text">
-         <string>Show Operating Mode Status</string>
         </property>
        </widget>
       </item>
@@ -429,6 +415,20 @@
        <widget class="QCheckBox" name="checkBoxDisableSysTrayToolTip">
         <property name="text">
          <string>Disable SysTray ToolTip</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="2">
+       <widget class="QCheckBox" name="checkBoxShowOpModeStatus">
+        <property name="text">
+         <string>Show Operating Mode Status</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="2">
+       <widget class="QCheckBox" name="checkBoxShowSystrayOnStatus">
+        <property name="text">
+         <string>Show SysTray on Status Bar</string>
         </property>
        </widget>
       </item>

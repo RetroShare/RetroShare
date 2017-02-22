@@ -55,7 +55,7 @@ AppearancePage::AppearancePage(QWidget * parent, Qt::WindowFlags flags)
 	connect(ui.grpStatus,                     SIGNAL(toggled(bool)), this /* pMainWindow->statusBar(),				*/, SLOT(switch_status_grpStatus(bool)));
 	connect(ui.checkBoxStatusCompactMode,     SIGNAL(toggled(bool)), this /* pMainWindow, 							*/, SLOT(switch_status_compactMode(bool)));
 	connect(ui.checkBoxDisableSysTrayToolTip, SIGNAL(toggled(bool)), this /* pMainWindow, 							*/, SLOT(switch_status_showToolTip(bool)));
-	connect(ui.checkBoxShowStatusStatus,      SIGNAL(toggled(bool)), this /* pMainWindow->statusComboBoxInstance(), */, SLOT(switch_status_ShowStatus(bool)));
+	connect(ui.checkBoxShowStatusStatus,      SIGNAL(toggled(bool)), this /* pMainWindow->statusComboBoxInstance(), */, SLOT(switch_status_ShowCBox(bool)));
 	connect(ui.checkBoxShowPeerStatus,        SIGNAL(toggled(bool)), this /* pMainWindow->peerstatusInstance(),     */, SLOT(switch_status_ShowStatus(bool)));
 	connect(ui.checkBoxShowNATStatus,         SIGNAL(toggled(bool)), this /* pMainWindow->natstatusInstance(),      */, SLOT(switch_status_ShowPeer(bool)));
 	connect(ui.checkBoxShowDHTStatus,         SIGNAL(toggled(bool)), this /* pMainWindow->dhtstatusInstance(),      */, SLOT(switch_status_ShowDHT(bool)));
@@ -110,6 +110,7 @@ void AppearancePage::switch_status_ShowOpMode(bool b)       { switch_status(Main
 void AppearancePage::switch_status_ShowSound(bool b)        { switch_status(MainWindow::StatusShowSound  ,"ShowSound",             b) ; }
 void AppearancePage::switch_status_ShowToaster(bool b)      { switch_status(MainWindow::StatusShowToaster,"ShowToaster",           b) ; }
 void AppearancePage::switch_status_ShowSystray(bool b)      { switch_status(MainWindow::StatusShowSystray,"ShowSysTrayOnStatusBar",b) ; }
+void AppearancePage::switch_status_ShowCBox(bool b)         { switch_status(MainWindow::StatusShowCBox,   "ShowStatusCBox"        ,b) ; }
 
 void AppearancePage::switch_status(MainWindow::StatusElement s,const QString& key, bool b)
 {
