@@ -77,7 +77,7 @@ void FloatingHelpBrowser::showHelp(bool state)
 		return;
 	}
 
-	resize(p->size() * 0.5);
+	resize(p->size() * 0.75);
 	move(p->width() / 2 - width() / 2, p->height() / 2 - height() / 2);
 	update();
 

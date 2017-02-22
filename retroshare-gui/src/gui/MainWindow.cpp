@@ -1498,6 +1498,7 @@ void MainWindow::switchVisibilityStatus(StatusElement e,bool b)
         case 	StatusGrpStatus   : getInstance()->statusBar()               ->setVisible(b); break ;
         case 	StatusCompactMode : getInstance()->setCompactStatusMode(b) ; break ;
         case 	StatusShowToolTip : getInstance()->toggleStatusToolTip(b) ; break ;
+        case 	StatusShowCBox    : getInstance()->statusComboBoxInstance()  ->setVisible(b); break ;
         case 	StatusShowStatus  : getInstance()->peerstatusInstance()      ->setVisible(b); break ;
         case 	StatusShowPeer    : getInstance()->natstatusInstance()       ->setVisible(b); break ;
         case 	StatusShowDHT     : getInstance()->dhtstatusInstance()       ->setVisible(b); break ;
