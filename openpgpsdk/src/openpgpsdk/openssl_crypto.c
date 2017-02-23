@@ -755,7 +755,7 @@ ops_boolean_t ops_rsa_generate_keypair(const int numbits, const unsigned long e,
 
     skey->public_key.key.rsa.n=BN_dup(nn) ;
     skey->public_key.key.rsa.e=BN_dup(ee) ;
-    skey->public_key.key.rsa.e=BN_dup(dd) ;
+    skey->key.rsa.d=BN_dup(dd) ;
 #endif
 
     skey->s2k_usage=OPS_S2KU_ENCRYPTED_AND_HASHED;
