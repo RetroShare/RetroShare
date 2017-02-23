@@ -107,6 +107,11 @@ void test_groupStoreAndRetrieve(){
         RsGxsGrpMetaData *l_Meta = mit->second,
         *r_Meta = grpMetaR[grpId];
 
+        // assign signSet and mGrpSize
+        // to right as these values are not stored in db
+        r_Meta->signSet = l_Meta->signSet;
+        r_Meta->mGrpSize = l_Meta->mGrpSize;
+
         if(!(*l_Meta == *r_Meta))
         {
             grpMetaMatch = false;
