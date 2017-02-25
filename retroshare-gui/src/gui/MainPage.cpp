@@ -1,4 +1,5 @@
 #include <QToolButton>
+#include <QTimer>
 
 #include <retroshare-gui/mainpage.h>
 #include "common/FloatingHelpBrowser.h"
@@ -27,11 +28,12 @@ void MainPage::registerHelpButton(QToolButton *button, const QString& help_html_
 
 void MainPage::showEvent(QShowEvent *s)
 {
-    if(Settings->getPageFirstTimeDisplay(mHelpCodeName) && mHelpBrowser!=NULL)
+    if(!Settings->getPageAlreadyDisplayed(mHelpCodeName) && mHelpBrowser!=NULL)
     {
-        mHelpBrowser->show();
+        // I use a timer to make sure that the GUI is able to process that.
+        QTimer::singleShot(1000, mHelpBrowser,SLOT(show()));
 
-        Settings->setPageFirstTimeDisplay(mHelpCodeName,false);
+        Settings->setPageAlreadyDisplayed(mHelpCodeName,true);
     }
 
     QWidget::showEvent(s);
