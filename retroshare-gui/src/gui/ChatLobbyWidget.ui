@@ -72,7 +72,7 @@
       <item>
        <widget class="StyledLabel" name="titleBarLabel">
         <property name="text">
-         <string>Chat lobbies</string>
+         <string>Chat rooms</string>
         </property>
        </widget>
       </item>

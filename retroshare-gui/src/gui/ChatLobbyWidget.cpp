@@ -171,20 +171,20 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WindowFlags flags)
 
     int S = QFontMetricsF(font()).height();
     QString help_str = tr("\
-                          <h1><img width=\"%1\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Chat Lobbies</h1>                              \
-	                      <p>Chat lobbies are distributed chat rooms, and work pretty much like IRC.                                      \
+                          <h1><img width=\"%1\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Chat Rooms</h1>                              \
+	                      <p>Chat rooms work pretty much like IRC.                                      \
 	                      They allow you to talk anonymously with tons of people without the need to make friends.</p>                    \
-	                      <p>A chat lobby can be public (your friends see it) or private (your friends can't see it, unless you           \
+	                      <p>A chat room can be public (your friends see it) or private (your friends can't see it, unless you           \
                           invite them with <img src=\":/images/add_24x24.png\" width=%2/>). \
-	                      Once you have been invited to a private lobby, you will be able to see it when your friends   \
+	                      Once you have been invited to a private room, you will be able to see it when your friends   \
 	                      are using it.</p>                                                                                               \
 	                      <p>The list at left shows                                                                                     \
 	                      chat lobbies your friends are participating in. You can either                                 \
 		  <ul>                                                                                                            \
-			  <li>Right click to create a new chat lobby</li>                                                              \
-		     <li>Double click a chat lobby to enter, chat, and show it to your friends</li>                      \
+			  <li>Right click to create a new chat room</li>                                                              \
+		     <li>Double click a chat room to enter, chat, and show it to your friends</li>                      \
 	                      </ul> \
-	                      Note: For the chat lobbies to work properly, your computer needs be on time.  So check your system clock!\
+	                      Note: For the chat rooms to work properly, your computer needs be on time.  So check your system clock!\
 	                      </p>                                      \
 	                      "
                           ).arg(QString::number(2*S)).arg(QString::number(S)) ;
@@ -255,7 +255,7 @@ void ChatLobbyWidget::lobbyTreeWidgetCustomPopupMenu(QPoint)
 	QMenu contextMnu(this);
 
 	if (item && item->type() == TYPE_FOLDER) {
-		QAction *action = contextMnu.addAction(QIcon(IMAGE_CREATE), tr("Create chat lobby"), this, SLOT(createChatLobby()));
+		QAction *action = contextMnu.addAction(QIcon(IMAGE_CREATE), tr("Create chat room"), this, SLOT(createChatLobby()));
 		action->setData(item->data(COLUMN_DATA, ROLE_PRIVACYLEVEL).toInt());
 	}
 
@@ -265,7 +265,7 @@ void ChatLobbyWidget::lobbyTreeWidgetCustomPopupMenu(QPoint)
         rsIdentity->getOwnIds(own_identities) ;
 
         if (item->data(COLUMN_DATA, ROLE_SUBSCRIBED).toBool())
-            contextMnu.addAction(QIcon(IMAGE_UNSUBSCRIBE), tr("Leave this lobby"), this, SLOT(unsubscribeItem()));
+            contextMnu.addAction(QIcon(IMAGE_UNSUBSCRIBE), tr("Leave this room"), this, SLOT(unsubscribeItem()));
         else
         {
             QTreeWidgetItem *item = ui.lobbyTreeWidget->currentItem();
@@ -280,18 +280,18 @@ void ChatLobbyWidget::lobbyTreeWidgetCustomPopupMenu(QPoint)
             if(own_identities.empty())
             {
                 if(removed)
-                contextMnu.addAction(QIcon(IMAGE_SUBSCRIBE), tr("Create a non anonymous identity and enter this lobby"), this, SLOT(createIdentityAndSubscribe()));
+                contextMnu.addAction(QIcon(IMAGE_SUBSCRIBE), tr("Create a non anonymous identity and enter this room"), this, SLOT(createIdentityAndSubscribe()));
                     else
-                contextMnu.addAction(QIcon(IMAGE_SUBSCRIBE), tr("Create an identity and enter this lobby"), this, SLOT(createIdentityAndSubscribe()));
+                contextMnu.addAction(QIcon(IMAGE_SUBSCRIBE), tr("Create an identity and enter this chat room"), this, SLOT(createIdentityAndSubscribe()));
             }
             else if(own_identities.size() == 1)
             {
-                QAction *action = contextMnu.addAction(QIcon(IMAGE_SUBSCRIBE), tr("Enter this lobby"), this, SLOT(subscribeChatLobbyAs()));
+                QAction *action = contextMnu.addAction(QIcon(IMAGE_SUBSCRIBE), tr("Enter this chat room"), this, SLOT(subscribeChatLobbyAs()));
                 action->setData(QString::fromStdString((own_identities.front()).toStdString())) ;
             }
             else
             {
-                QMenu *mnu = contextMnu.addMenu(QIcon(IMAGE_SUBSCRIBE),tr("Enter this lobby as...")) ;
+                QMenu *mnu = contextMnu.addMenu(QIcon(IMAGE_SUBSCRIBE),tr("Enter this chat room as...")) ;
 
                 for(std::list<RsGxsId>::const_iterator it=own_identities.begin();it!=own_identities.end();++it)
                 {
@@ -405,7 +405,7 @@ void ChatLobbyWidget::addChatPage(ChatLobbyDialog *d)
         if(rsMsgs->getChatLobbyInfo(id,linfo))
             _lobby_infos[id].default_icon = (linfo.lobby_flags & RS_CHAT_LOBBY_FLAGS_PUBLIC) ? QIcon(IMAGE_PUBLIC):QIcon(IMAGE_PRIVATE) ;
         else
-            std::cerr << "(EE) cannot find info for lobby " << std::hex << id << std::dec << std::endl;
+            std::cerr << "(EE) cannot find info for room " << std::hex << id << std::dec << std::endl;
 	}
 }
 
@@ -424,7 +424,7 @@ void ChatLobbyWidget::setCurrentChatPage(ChatLobbyDialog *d)
 void ChatLobbyWidget::updateDisplay()
 {
 #ifdef CHAT_LOBBY_GUI_DEBUG
-	std::cerr << "updating chat lobby display!" << std::endl;
+	std::cerr << "updating chat room display!" << std::endl;
 #endif
 	std::vector<VisibleChatLobbyRecord> visibleLobbies;
 	rsMsgs->getListOfNearbyChatLobbies(visibleLobbies);
@@ -795,7 +795,7 @@ void ChatLobbyWidget::subscribeChatLobbyAtItem(QTreeWidgetItem *item)
         
         if( (flags & RS_CHAT_LOBBY_FLAGS_PGP_SIGNED) && !(idd.mFlags & RS_IDENTITY_FLAGS_PGP_LINKED))
         {
-            QMessageBox::warning(NULL,tr("Default identity is anonymous"),tr("You cannot join this lobby with your default identity, since it is anonymous and the lobby forbids it.")) ;
+            QMessageBox::warning(NULL,tr("Default identity is anonymous"),tr("You cannot join this chat room with your default identity, since it is anonymous and the chat room forbids it.")) ;
             return ;
         }
     }
@@ -840,12 +840,12 @@ void ChatLobbyWidget::showBlankPage(ChatLobbyId id)
 			ui.lobbysec_lineEdit->setText( (( (*it).lobby_flags & RS_CHAT_LOBBY_FLAGS_PGP_SIGNED)?tr("No anonymous IDs"):tr("Anonymous IDs accepted")) );
 			ui.lobbypeers_lineEdit->setText( QString::number((*it).total_number_of_peers) );
 
-            QString text = tr("You're not subscribed to this lobby; Double click-it to enter and chat.") ;
+            QString text = tr("You're not subscribed to this chat room; Double click-it to enter and chat.") ;
             
 				if(my_ids.empty())
 				{
 					if( (*it).lobby_flags & RS_CHAT_LOBBY_FLAGS_PGP_SIGNED)
-						text += "\n\n"+tr("You will need to create a non anonymous identity in order to join this chat lobby.") ;
+						text += "\n\n"+tr("You will need to create a non anonymous identity in order to join this chat room.") ;
 					else
 						text += "\n\n"+tr("You will need to create an identity in order to join chat lobbies.") ;
 				}
@@ -861,7 +861,7 @@ void ChatLobbyWidget::showBlankPage(ChatLobbyId id)
 	ui.lobbypeers_lineEdit->clear();
 	ui.lobbysec_lineEdit->clear();
 
-	QString text = tr("No lobby selected. \nSelect lobbies at left to show details.\nDouble click lobbies to enter and chat.") ;
+	QString text = tr("No chat room selected. \nSelect chat rooms at left to show details.\nDouble click lobbies to enter and chat.") ;
 	ui.lobbyInfoLabel->setText(text) ;
 }
 
@@ -965,7 +965,7 @@ void ChatLobbyWidget::unsubscribeItem()
 
 void ChatLobbyWidget::unsubscribeChatLobby(ChatLobbyId id)
 {
-	std::cerr << "Unsubscribing from chat lobby" << std::endl;
+	std::cerr << "Unsubscribing from chat room" << std::endl;
 
 	// close the tab.
 
@@ -1072,12 +1072,12 @@ void ChatLobbyWidget::readChatLobbyInvites()
 
     for(std::list<ChatLobbyInvite>::const_iterator it(invites.begin());it!=invites.end();++it)
     {
-        QMessageBox mb(QObject::tr("Join chat lobby"),
-                       tr("%1 invites you to chat lobby named %2").arg(QString::fromUtf8(rsPeers->getPeerName((*it).peer_id).c_str())).arg(RsHtml::plainText(it->lobby_name)),
+        QMessageBox mb(QObject::tr("Join chat room"),
+                       tr("%1 invites you to chat room named %2").arg(QString::fromUtf8(rsPeers->getPeerName((*it).peer_id).c_str())).arg(RsHtml::plainText(it->lobby_name)),
                        QMessageBox::Question, QMessageBox::Yes,QMessageBox::No, 0);
 
 
-        QLabel *label = new QLabel(tr("Choose an identity for this lobby:"));
+        QLabel *label = new QLabel(tr("Choose an identity for this chat room:"));
         GxsIdChooser *idchooser = new GxsIdChooser ;
         idchooser->loadIds(IDCHOOSER_ID_REQUIRED,default_id) ;
 
@@ -1112,7 +1112,7 @@ void ChatLobbyWidget::readChatLobbyInvites()
         if(rsMsgs->acceptLobbyInvite((*it).lobby_id,chosen_id))
             ChatDialog::chatFriend(ChatId((*it).lobby_id),true);
         else
-            std::cerr << "Can't join lobby with id 0x" << std::hex << (*it).lobby_id << std::dec << std::endl;
+            std::cerr << "Can't join chat room with id 0x" << std::hex << (*it).lobby_id << std::dec << std::endl;
 
     }
 }
