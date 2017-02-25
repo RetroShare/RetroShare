@@ -91,8 +91,9 @@ static int clear_tou_socket_error(int s);
 #include "tou.h"
 
 #if OPENSSL_VERSION_NUMBER < 0x10100000L
+//static void BIO_set_shutdown(BIO *a,int s) { a->shutdown=s; }
+
 static int  BIO_get_shutdown(BIO *a) { return a->shutdown; }
-static void BIO_set_shutdown(BIO *a,int s) { a->shutdown=s; }
 static int  BIO_get_init(BIO *a) { return a->init; }
 static void BIO_set_init(BIO *a,int i) { a->init=i; }
 static void BIO_set_data(BIO *a,void *p) { a->ptr = p; }
@@ -238,6 +239,8 @@ static long tou_socket_ctrl(BIO *b, int cmd, long num, void *ptr)
 	fprintf(stderr, "tou_socket_ctrl(%p,%d,%ld)\n", b, cmd, num);
 #endif
 
+	// We are not allowed to call BIO_set_fd here, because it will trigger a callback, which re-ends here
+
 	switch (cmd)
 		{
 	case BIO_CTRL_RESET:
@@ -251,25 +254,17 @@ static long tou_socket_ctrl(BIO *b, int cmd, long num, void *ptr)
 		break;
 	case BIO_C_SET_FD:
 		tou_socket_free(b);
-		BIO_set_fd(b,*((int *)ptr),0);
-        BIO_set_shutdown(b,(int)num) ;
-        BIO_set_init(b,1) ;
+		ret = BIO_s_fd()->ctrl(b,cmd,num,ptr) ;
+
 		break;
 	case BIO_C_GET_FD:
-		if (BIO_get_init(b))
-			{
-			ip=(int *)ptr;
-			if (ip != NULL) *ip=BIO_get_fd(b,NULL);
-			ret=BIO_get_fd(b,NULL);
-			}
-		else
-			ret= -1;
+		ret = BIO_s_fd()->ctrl(b,cmd,num,ptr) ;
 		break;
 	case BIO_CTRL_GET_CLOSE:
-		ret=BIO_get_shutdown(b);
+		ret = BIO_s_fd()->ctrl(b,cmd,num,ptr) ;
 		break;
 	case BIO_CTRL_SET_CLOSE:
-		BIO_set_shutdown(b,(int)num) ;
+		ret = BIO_s_fd()->ctrl(b,cmd,num,ptr) ;
 		break;
 	case BIO_CTRL_PENDING:
 		ret = tou_maxread(BIO_get_fd(b,NULL));
