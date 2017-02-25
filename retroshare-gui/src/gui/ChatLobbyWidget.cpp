@@ -188,7 +188,8 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WindowFlags flags)
 	                      </p>                                      \
 	                      "
                           ).arg(QString::number(2*S)).arg(QString::number(S)) ;
-	    registerHelpButton(ui.helpButton,help_str) ;
+
+	    registerHelpButton(ui.helpButton,help_str,"ChatLobbyDialog") ;
 }
 
 ChatLobbyWidget::~ChatLobbyWidget()

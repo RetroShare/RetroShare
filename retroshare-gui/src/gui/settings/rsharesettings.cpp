@@ -1160,3 +1160,14 @@ void RshareSettings::setWebinterfaceAllowAllIps(bool allow_all)
 {
     setValueToGroup("Webinterface", "allowAllIps", allow_all);
 }
+
+bool RshareSettings::getPageFirstTimeDisplay(const QString& page_name)
+{
+	return valueFromGroup("PageDisplayed",page_name,true).toBool();
+}
+
+
+void RshareSettings::setPageFirstTimeDisplay(const QString& page_name,bool b)
+{
+	return setValueToGroup("PageDisplayed",page_name,b);
+}

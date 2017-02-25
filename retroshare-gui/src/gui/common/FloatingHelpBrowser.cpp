@@ -27,8 +27,8 @@
 
 #include "FloatingHelpBrowser.h"
 
-FloatingHelpBrowser::FloatingHelpBrowser(QWidget *parent, QAbstractButton *button) :
-	QTextBrowser(parent), mButton(button)
+FloatingHelpBrowser::FloatingHelpBrowser(QWidget *parent, QAbstractButton *button)
+	:QTextBrowser(parent), mButton(button)
 {
 	QGraphicsDropShadowEffect *effect = new QGraphicsDropShadowEffect(this);
 	effect->setBlurRadius(30.0);
