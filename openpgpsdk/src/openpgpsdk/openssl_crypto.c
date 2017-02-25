@@ -749,7 +749,7 @@ ops_boolean_t ops_rsa_generate_keypair(const int numbits, const unsigned long e,
     skey->public_key.key.rsa.e=BN_dup(rsa->e);
     skey->key.rsa.d=BN_dup(rsa->d);
 #else
-    BIGNUM *nn=NULL,*ee=NULL,*dd=NULL ;
+    const BIGNUM *nn=NULL,*ee=NULL,*dd=NULL ;
 
     RSA_get0_key(rsa,&nn,&ee,&dd) ;
 
@@ -771,7 +771,7 @@ ops_boolean_t ops_rsa_generate_keypair(const int numbits, const unsigned long e,
     skey->key.rsa.q=BN_dup(rsa->q);
     skey->key.rsa.u=BN_mod_inverse(NULL,rsa->p, rsa->q, ctx);
 #else
-    BIGNUM *pp=NULL,*qq=NULL ;
+    const BIGNUM *pp=NULL,*qq=NULL ;
 
     RSA_get0_factors(rsa,&pp,&qq) ;
 
