@@ -84,7 +84,7 @@ HomePage::HomePage(QWidget *parent) :
    <p>Another option is to search the internet for \"Retroshare chat servers\" (independently administrated). These servers allow you to exchange \
 	certificates with a dedicated Retroshare node, through which\
 	  you will be able to meet other people anonymously.</p> ").arg(QString::number(2*S)).arg(width()*0.5);
-             registerHelpButton(ui->helpButton,help_str) ;
+             registerHelpButton(ui->helpButton,help_str,"HomePage") ;
 }
 
 HomePage::~HomePage()

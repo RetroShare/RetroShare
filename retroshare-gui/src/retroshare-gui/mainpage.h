@@ -58,16 +58,20 @@ public:
 	virtual void retranslateUi() {}
 	virtual UserNotify *getUserNotify(QObject */*parent*/) { return NULL; }
 
-		// Overload this to add some help info  to the page. The way the info is 
-		// shown is handled by showHelp() below;
+	// Call this to add some help info  to the page. The way the info is
+	// shown is handled by showHelp() below;
 	//
-	void registerHelpButton(QToolButton *button, const QString& help_html_text) ;
+	void registerHelpButton(QToolButton *button, const QString& help_html_text, const QString &code_name) ;
+
+protected:
+	virtual void showEvent(QShowEvent *);
 
 private:
 	FloatingHelpBrowser *mHelpBrowser ;
 	QIcon mIcon;
 	QString mName;
 	QString mHelp;
+    QString mHelpCodeName;
 };
 
 #endif

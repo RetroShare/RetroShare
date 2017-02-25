@@ -1160,3 +1160,14 @@ void RshareSettings::setWebinterfaceAllowAllIps(bool allow_all)
 {
     setValueToGroup("Webinterface", "allowAllIps", allow_all);
 }
+
+bool RshareSettings::getPageAlreadyDisplayed(const QString& page_name)
+{
+	return valueFromGroup("PageAlreadyDisplayed",page_name,false).toBool();
+}
+
+
+void RshareSettings::setPageAlreadyDisplayed(const QString& page_name,bool b)
+{
+	return setValueToGroup("PageAlreadyDisplayed",page_name,b);
+}
