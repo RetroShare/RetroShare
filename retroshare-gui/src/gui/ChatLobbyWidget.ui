@@ -72,7 +72,7 @@
       <item>
        <widget class="StyledLabel" name="titleBarLabel">
         <property name="text">
-         <string>Chat lobbies</string>
+         <string>Chat rooms</string>
         </property>
        </widget>
       </item>
@@ -95,7 +95,7 @@
          <enum>Qt::NoFocus</enum>
         </property>
         <property name="icon">
-         <iconset resource="images.qrc">
+         <iconset resource="icons.qrc">
           <normaloff>:/icons/help_64.png</normaloff>:/icons/help_64.png</iconset>
         </property>
         <property name="checkable">
@@ -242,7 +242,7 @@
                   </font>
                  </property>
                  <property name="text">
-                  <string>Lobby Name:</string>
+                  <string>Chat room Name:</string>
                  </property>
                 </widget>
                </item>
@@ -255,7 +255,7 @@
                   </font>
                  </property>
                  <property name="text">
-                  <string>Lobby Id:</string>
+                  <string>Chat room Id:</string>
                  </property>
                 </widget>
                </item>
@@ -440,7 +440,6 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="images.qrc"/>
   <include location="icons.qrc"/>
  </resources>
  <connections/>

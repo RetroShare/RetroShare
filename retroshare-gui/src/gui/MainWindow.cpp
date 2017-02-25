@@ -19,14 +19,15 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#include <QMessageBox>
-#include <QString>
-#include <QtDebug>
-#include <QIcon>
-#include <QPixmap>
 #include <QColorDialog>
 #include <QDesktopServices>
+#include <QIcon>
+#include <QMessageBox>
+#include <QPixmap>
+#include <QStatusBar>
+#include <QString>
 #include <QUrl>
+#include <QtDebug>
 
 #ifdef BLOGS
 #include "gui/unfinished/blogs/BlogsDialog.h"
@@ -223,8 +224,11 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     if (!state.isEmpty()) restoreState(state);
 
     /** StatusBar section ********/
+    statusBar()->setVisible(Settings->valueFromGroup("StatusBar", "ShowStatusBar", QVariant(false)).toBool());
+
     /* initialize combobox in status bar */
     statusComboBox = new QComboBox(statusBar());
+    statusComboBox->setHidden(Settings->valueFromGroup("StatusBar", "HideStatus", QVariant(true)).toBool());
     statusComboBox->setFocusPolicy(Qt::ClickFocus);
     initializeStatusObject(statusComboBox, true);
 
@@ -237,32 +241,39 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     statusBar()->addWidget(widget);
 
     peerstatus = new PeerStatus();
+    peerstatus->setHidden(Settings->valueFromGroup("StatusBar", "HidePeer", QVariant(true)).toBool());
     statusBar()->addWidget(peerstatus);
 
     natstatus = new NATStatus();
+    natstatus->setHidden(Settings->valueFromGroup("StatusBar", "HideNAT", QVariant(true)).toBool());
     statusBar()->addWidget(natstatus);
     
     dhtstatus = new DHTStatus();
+    dhtstatus->setHidden(Settings->valueFromGroup("StatusBar", "HideDHT", QVariant(true)).toBool());
     statusBar()->addWidget(dhtstatus);
 
     hashingstatus = new HashingStatus();
+    hashingstatus->setHidden(Settings->valueFromGroup("StatusBar", "HideHashing", QVariant(true)).toBool());
     statusBar()->addPermanentWidget(hashingstatus, 1);
 
     discstatus = new DiscStatus();
+    discstatus->setHidden(Settings->valueFromGroup("StatusBar", "HideDisc", QVariant(true)).toBool());
     statusBar()->addPermanentWidget(discstatus);
 
     ratesstatus = new RatesStatus();
+    ratesstatus->setHidden(Settings->valueFromGroup("StatusBar", "HideRate", QVariant(true)).toBool());
     statusBar()->addPermanentWidget(ratesstatus);
 
     opModeStatus = new OpModeStatus();
+    opModeStatus->setHidden(Settings->valueFromGroup("StatusBar", "HideOpMode", QVariant(true)).toBool());
     statusBar()->addPermanentWidget(opModeStatus);
 
     soundStatus = new SoundStatus();
-    soundStatus->setHidden(Settings->valueFromGroup("StatusBar", "HideSound", QVariant(false)).toBool());
+    soundStatus->setHidden(Settings->valueFromGroup("StatusBar", "HideSound", QVariant(true)).toBool());
     statusBar()->addPermanentWidget(soundStatus);
 
     toasterDisable = new ToasterDisable();
-    toasterDisable->setHidden(Settings->valueFromGroup("StatusBar", "HideToaster", QVariant(false)).toBool());
+    toasterDisable->setHidden(Settings->valueFromGroup("StatusBar", "HideToaster", QVariant(true)).toBool());
     statusBar()->addPermanentWidget(toasterDisable);
 
     sysTrayStatus = new SysTrayStatus();
@@ -309,6 +320,7 @@ MainWindow::~MainWindow()
     Settings->setValueToGroup("MainWindow", "SplitterState", ui->splitter->saveState());
     Settings->setValueToGroup("MainWindow", "State", saveState());
 
+    delete statusComboBox;
     delete peerstatus;
     delete natstatus;
     delete dhtstatus;
@@ -344,28 +356,24 @@ void MainWindow::initStackedPage()
 
   addPage(homePage = new HomePage(ui->stackPages), grp, NULL);
 
-  addPage(newsFeed = new NewsFeed(ui->stackPages), grp, &notify);
-  addPage(friendsDialog = new FriendsDialog(ui->stackPages), grp, &notify);
-
-#ifdef RS_USE_NEW_PEOPLE_DIALOG
-  PeopleDialog *peopleDialog = NULL;
-  addPage(peopleDialog = new PeopleDialog(ui->stackPages), grp, &notify);
-#endif
-
-  addPage(idDialog = new IdDialog(ui->stackPages), grp, &notify);
-
 //#ifdef RS_USE_CIRCLES
 //  CirclesDialog *circlesDialog = NULL;
 //  addPage(circlesDialog = new CirclesDialog(ui->stackPages), grp, &notify);
 //#endif
-
-  addPage(transfersDialog = new TransfersDialog(ui->stackPages), grp, &notify);
+  addPage(friendsDialog = new FriendsDialog(ui->stackPages), grp, &notify);
   addPage(chatLobbyDialog = new ChatLobbyWidget(ui->stackPages), grp, &notify);
-  addPage(messagesDialog = new MessagesDialog(ui->stackPages), grp, &notify);
+  addPage(transfersDialog = new TransfersDialog(ui->stackPages), grp, &notify);
   addPage(gxschannelDialog = new GxsChannelDialog(ui->stackPages), grp, &notify);
   addPage(gxsforumDialog = new GxsForumsDialog(ui->stackPages), grp, &notify);
+  addPage(messagesDialog = new MessagesDialog(ui->stackPages), grp, &notify);
   addPage(postedDialog = new PostedDialog(ui->stackPages), grp, &notify);
+  addPage(idDialog = new IdDialog(ui->stackPages), grp, &notify);
 
+  #ifdef RS_USE_NEW_PEOPLE_DIALOG
+  PeopleDialog *peopleDialog = NULL;
+  addPage(peopleDialog = new PeopleDialog(ui->stackPages), grp, &notify);
+  #endif
+  addPage(newsFeed = new NewsFeed(ui->stackPages), grp, &notify);
 #ifdef RS_USE_WIKI
   WikiDialog *wikiDialog = NULL;
   addPage(wikiDialog = new WikiDialog(ui->stackPages), grp, &notify);
@@ -430,7 +438,8 @@ void MainWindow::initStackedPage()
 #endif
 
   /** Add icon on Action bar */
-  addAction(new QAction(QIcon(IMAGE_ADDFRIEND), tr("Add"), ui->toolBarAction), &MainWindow::addFriend, SLOT(addFriend()));
+  // I remove add a friend because it's in HOME ghibli
+  //addAction(new QAction(QIcon(IMAGE_ADDFRIEND), tr("Add"), ui->toolBarAction), &MainWindow::addFriend, SLOT(addFriend()));
   //addAction(new QAction(QIcon(IMAGE_NEWRSCOLLECTION), tr("New"), ui->toolBarAction), &MainWindow::newRsCollection, SLOT(newRsCollection()));
   addAction(new QAction(QIcon(IMAGE_PREFERENCES), tr("Options"), ui->toolBarAction), &MainWindow::showSettings, SLOT(showSettings()));
   addAction(new QAction(QIcon(IMAGE_ABOUT), tr("About"), ui->toolBarAction), &MainWindow::showabout, SLOT(showabout()));
@@ -1478,6 +1487,45 @@ void MainWindow::processLastArgs()
 //{
 //    ServicePermissionDialog::showYourself();
 //}
+QComboBox *MainWindow::statusComboBoxInstance()
+{
+	return statusComboBox;
+}
+
+PeerStatus *MainWindow::peerstatusInstance()
+{
+	return peerstatus;
+}
+
+NATStatus *MainWindow::natstatusInstance()
+{
+	return natstatus;
+}
+
+DHTStatus *MainWindow::dhtstatusInstance()
+{
+	return dhtstatus;
+}
+
+HashingStatus *MainWindow::hashingstatusInstance()
+{
+	return hashingstatus;
+}
+
+DiscStatus *MainWindow::discstatusInstance()
+{
+	return discstatus;
+}
+
+RatesStatus *MainWindow::ratesstatusInstance()
+{
+	return ratesstatus;
+}
+
+OpModeStatus *MainWindow::opModeStatusInstance()
+{
+	return opModeStatus;
+}
 
 SoundStatus *MainWindow::soundStatusInstance()
 {

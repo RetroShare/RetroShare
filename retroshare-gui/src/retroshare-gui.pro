@@ -425,6 +425,7 @@ HEADERS +=  rshare.h \
             gui/chat/ChatLobbyUserNotify.h \
             gui/connect/ConfCertDialog.h \
             gui/connect/PGPKeyDialog.h \
+            gui/connect/FriendRecommendDialog.h \
             gui/msgs/MessageInterface.h \
             gui/msgs/MessageComposer.h \
             gui/msgs/MessageWindow.h \
@@ -616,6 +617,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/connect/PGPKeyDialog.ui \
             gui/connect/ConnectFriendWizard.ui \
             gui/connect/ConnectProgressDialog.ui \
+            gui/connect/FriendRecommendDialog.ui \
             gui/msgs/MessageComposer.ui \
             gui/msgs/MessageWindow.ui\
             gui/msgs/MessageWidget.ui\
@@ -903,6 +905,7 @@ SOURCES +=  main.cpp \
             gui/feeds/NewsFeedUserNotify.cpp \
             gui/connect/ConnectFriendWizard.cpp \
             gui/connect/ConnectProgressDialog.cpp \
+            gui/connect/FriendRecommendDialog.cpp \
             gui/groups/CreateGroup.cpp \
             gui/GetStartedDialog.cpp \
             gui/statistics/BandwidthGraphWindow.cpp \
