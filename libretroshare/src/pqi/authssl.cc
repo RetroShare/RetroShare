@@ -795,8 +795,8 @@ X509 *AuthSSLimpl::SignX509ReqWithGPG(X509_REQ *req, long /*days*/)
         // The code has been copied in order to use the PGP signing instead of supplying the
         // private EVP_KEY to ASN1_sign(), which would be another alternative.
 
-        int (*i2d)(X509_CINF*, unsigned char**) = i2d_X509_CINF;
 #if OPENSSL_VERSION_NUMBER < 0x10100000L
+        int (*i2d)(X509_CINF*, unsigned char**) = i2d_X509_CINF;
         X509_ALGOR *algor1 = x509->cert_info->signature;
         X509_ALGOR *algor2 = x509->sig_alg;
         ASN1_BIT_STRING *signature = x509->signature;

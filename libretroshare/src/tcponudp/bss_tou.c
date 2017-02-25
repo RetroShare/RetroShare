@@ -234,7 +234,6 @@ static int tou_socket_write(BIO *b, const char *in, int inl)
 static long tou_socket_ctrl(BIO *b, int cmd, long num, void *ptr)
 	{
 	long ret=1;
-	int *ip;
 #ifdef DEBUG_TOU_BIO
 	fprintf(stderr, "tou_socket_ctrl(%p,%d,%ld)\n", b, cmd, num);
 #endif
