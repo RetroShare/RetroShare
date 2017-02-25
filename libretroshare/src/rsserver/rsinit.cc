@@ -944,13 +944,10 @@ RsGRouter *rsGRouter = NULL ;
 
 RsControl *RsControl::instance()
 {
-	static RsServer *rsicontrol = NULL ;
-
-	if(rsicontrol == NULL) 
-		rsicontrol = new RsServer();
-	
-	return rsicontrol;
+	static RsServer rsicontrol;
+	return &rsicontrol;
 }
+
 
 /*
  * The Real RetroShare Startup Function.
@@ -1491,14 +1488,13 @@ int RsServer::StartupRetroShare()
 	RsGeneralDataService* gxsmail_ds = new RsDataService(
 	            currGxsDir + "/", "gxsmails_db", RS_SERVICE_TYPE_GXS_MAIL,
 	            NULL, rsInitConfig->gxs_passwd );
-	p3GxsMails* mGxsMails = new p3GxsMails(gxsmail_ds, NULL, *mGxsIdService);
+	mGxsMails = new p3GxsMails(gxsmail_ds, NULL, *mGxsIdService);
 	RsGxsNetService* gxsmails_ns = new RsGxsNetService(
 	            RS_SERVICE_TYPE_GXS_MAIL, gxsmail_ds, nxsMgr, mGxsMails,
 	            mGxsMails->getServiceInfo(), mReputations, mGxsCircles,
 	            mGxsIdService, pgpAuxUtils);
 	mGxsMails->setNetworkExchangeService(gxsmails_ns);
 	pqih->addService(gxsmails_ns, true);
-	mConfigMgr->addConfiguration("gxs_mail.cfg", gxsmails_ns);
 
 	TestGxsMailClientService* tgms =
 	        new TestGxsMailClientService(*mGxsMails, *mGxsIdService);
@@ -1673,13 +1669,20 @@ int RsServer::StartupRetroShare()
 #ifdef ENABLE_GROUTER
 	mConfigMgr->addConfiguration("grouter.cfg", gr);
 #endif
-    mConfigMgr->addConfiguration("p3identity.cfg", mGxsIdService);
 
 #ifdef RS_USE_BITDHT
-    mConfigMgr->addConfiguration("bitdht.cfg", mBitDht);
+	mConfigMgr->addConfiguration("bitdht.cfg", mBitDht);
 #endif
 
 #ifdef RS_ENABLE_GXS
+
+#	ifdef RS_GXS_MAIL
+	mConfigMgr->addConfiguration("gxs_mail_ns.cfg", gxsmails_ns);
+	mConfigMgr->addConfiguration("gxs_mail.cfg", mGxsMails);
+#	endif
+
+	mConfigMgr->addConfiguration("p3identity.cfg", mGxsIdService);
+
 	mConfigMgr->addConfiguration("identity.cfg", gxsid_ns);
 	mConfigMgr->addConfiguration("gxsforums.cfg", gxsforums_ns);
 	mConfigMgr->addConfiguration("gxschannels.cfg", gxschannels_ns);

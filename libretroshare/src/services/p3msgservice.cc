@@ -105,7 +105,8 @@ p3MsgService::p3MsgService( p3ServiceControl *sc, p3IdService *id_serv,
 
 	if(sc) initStandardTagTypes(); // Initialize standard tag types
 
-	gxsMailService.registerGxsMailsClient(GxsMailsClient::P3_MSG_SERVICE, this);
+	gxsMailService.registerGxsMailsClient( GxsMailSubServices::P3_MSG_SERVICE,
+	                                       this );
 }
 
 const std::string MSG_APP_NAME = "msg";
@@ -452,8 +453,14 @@ int p3MsgService::checkOutgoingMessages()
 	return 0;
 }
 
-bool    p3MsgService::saveList(bool& cleanup, std::list<RsItem*>& itemList)
+bool p3MsgService::saveList(bool& cleanup, std::list<RsItem*>& itemList)
 {
+	RsMsgGRouterMap* gxsmailmap = new RsMsgGRouterMap;
+	{
+		RS_STACK_MUTEX(gxsOngoingMutex);
+		gxsmailmap->ongoing_msgs = gxsOngoingMessages;
+	}
+	itemList.push_front(gxsmailmap);
 
 	std::map<uint32_t, RsMsgItem *>::iterator mit;
 	std::map<uint32_t, RsMsgTagType* >::iterator mit2;
@@ -461,9 +468,7 @@ bool    p3MsgService::saveList(bool& cleanup, std::list<RsItem*>& itemList)
 	std::map<uint32_t, RsMsgSrcId* >::iterator lit;
 	std::map<uint32_t, RsMsgParentId* >::iterator mit4;
 
-    MsgTagType stdTags;
-
-    cleanup = true;
+	cleanup = true;
 
 	mMsgMtx.lock();
 
@@ -508,7 +513,7 @@ bool    p3MsgService::saveList(bool& cleanup, std::list<RsItem*>& itemList)
         kv.value = RsUtil::NumberToString(mDistantMessagePermissions) ;
 	vitem->tlvkvs.pairs.push_back(kv) ;
 
-	itemList.push_back(vitem) ;
+	itemList.push_back(vitem);
 
 	return true;
 }
@@ -570,8 +575,19 @@ void p3MsgService::initStandardTagTypes()
 	}
 }
 
-bool    p3MsgService::loadList(std::list<RsItem*>& load)
+bool p3MsgService::loadList(std::list<RsItem*>& load)
 {
+	auto gxsmIt = load.begin();
+	RsMsgGRouterMap* gxsmailmap = dynamic_cast<RsMsgGRouterMap*>(*gxsmIt);
+	if(gxsmailmap)
+	{
+		{
+			RS_STACK_MUTEX(gxsOngoingMutex);
+			gxsOngoingMessages = gxsmailmap->ongoing_msgs;
+		}
+		delete *gxsmIt; load.erase(gxsmIt);
+	}
+
     RsMsgItem *mitem;
     RsMsgTagType* mtt;
     RsMsgTags* mti;
@@ -581,7 +597,7 @@ bool    p3MsgService::loadList(std::list<RsItem*>& load)
     RsMsgDistantMessagesHashMap *ghm;
 
     std::list<RsMsgItem*> items;
-    std::list<RsItem*>::iterator it;
+	std::list<RsItem*>::iterator it;
     std::map<uint32_t, RsMsgTagType*>::iterator tagIt;
     std::map<uint32_t, RsPeerId> srcIdMsgMap;
     std::map<uint32_t, RsPeerId>::iterator srcIt;
@@ -589,10 +605,10 @@ bool    p3MsgService::loadList(std::list<RsItem*>& load)
     uint32_t max_msg_id = 0 ;
     
     // load items and calculate next unique msgId
-    for(it = load.begin(); it != load.end(); ++it)
+	for(it = load.begin(); it != load.end(); ++it)
     {
 
-	    if (NULL != (mitem = dynamic_cast<RsMsgItem *>(*it)))
+		if (NULL != (mitem = dynamic_cast<RsMsgItem *>(*it)))
 	    {
 		    /* STORE MsgID */
 		    if (mitem->msgId > max_msg_id) 
@@ -600,7 +616,7 @@ bool    p3MsgService::loadList(std::list<RsItem*>& load)
 		    
 		    items.push_back(mitem);
 	    }
-	    else if (NULL != (grm = dynamic_cast<RsMsgGRouterMap *>(*it)))
+		else if (NULL != (grm = dynamic_cast<RsMsgGRouterMap *>(*it)))
 	    {
 		    // merge.
 		    for(std::map<GRouterMsgPropagationId,uint32_t>::const_iterator it(grm->ongoing_msgs.begin());it!=grm->ongoing_msgs.end();++it)
@@ -620,7 +636,7 @@ bool    p3MsgService::loadList(std::list<RsItem*>& load)
                 std::cerr << "    " << it->first << " received " << time(NULL)-it->second << " secs ago." << std::endl;
 #endif
 		}
-	    else if(NULL != (mtt = dynamic_cast<RsMsgTagType *>(*it)))
+		else if(NULL != (mtt = dynamic_cast<RsMsgTagType *>(*it)))
 	    {
 		    // delete standard tags as they are now save in config
 		    if(mTags.end() == (tagIt = mTags.find(mtt->tagId)))
@@ -635,23 +651,23 @@ bool    p3MsgService::loadList(std::list<RsItem*>& load)
 		    }
 
 	    }
-	    else if(NULL != (mti = dynamic_cast<RsMsgTags *>(*it)))
+		else if(NULL != (mti = dynamic_cast<RsMsgTags *>(*it)))
 	    {
 		    mMsgTags.insert(std::pair<uint32_t, RsMsgTags* >(mti->msgId, mti));
 	    }
-	    else if(NULL != (msi = dynamic_cast<RsMsgSrcId *>(*it)))
+		else if(NULL != (msi = dynamic_cast<RsMsgSrcId *>(*it)))
 	    {
 		    srcIdMsgMap.insert(std::pair<uint32_t, RsPeerId>(msi->msgId, msi->srcId));
 		    mSrcIds.insert(std::pair<uint32_t, RsMsgSrcId*>(msi->msgId, msi)); // does not need to be kept
 	    }
-	    else if(NULL != (msp = dynamic_cast<RsMsgParentId *>(*it)))
+		else if(NULL != (msp = dynamic_cast<RsMsgParentId *>(*it)))
 	    {
 		    mParentId.insert(std::pair<uint32_t, RsMsgParentId*>(msp->msgId, msp));
 	    }
 
 	    RsConfigKeyValueSet *vitem = NULL ;
 
-	    if(NULL != (vitem = dynamic_cast<RsConfigKeyValueSet*>(*it)))
+		if(NULL != (vitem = dynamic_cast<RsConfigKeyValueSet*>(*it)))
 	    {
 		    for(std::list<RsTlvKeyValue>::const_iterator kit = vitem->tlvkvs.pairs.begin(); kit != vitem->tlvkvs.pairs.end(); ++kit) 
 		    {
@@ -682,7 +698,7 @@ bool    p3MsgService::loadList(std::list<RsItem*>& load)
 			    }
 		    }
 
-		    delete *it ;
+			delete *it ;
 		    continue ;
 	    }
     }
@@ -700,7 +716,7 @@ bool    p3MsgService::loadList(std::list<RsItem*>& load)
 		    mitem->msgId = getNewUniqueMsgId();
 	    }
 
-	    RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
+		RS_STACK_MUTEX(mMsgMtx);
 
 	    srcIt = srcIdMsgMap.find(mitem->msgId);
 	    if(srcIt != srcIdMsgMap.end()) {
@@ -1888,19 +1904,21 @@ void p3MsgService::notifyDataStatus( const GRouterMsgPropagationId& id,
 		mDistantOutgoingMsgSigners[msg_id] = signer_id;
 
 		std::map<uint32_t,RsMsgItem*>::iterator mit = msgOutgoing.find(msg_id);
-
 		if(mit == msgOutgoing.end())
 		{
-			std::cerr << "  (EE) message has been notified as not delivered, "
-			          << "but it not on outgoing list. Something's wrong!!"
+			std::cerr << "  (II) message has been notified as not delivered, "
+			          << "but it's not in outgoing list. Probably it has been "
+			          << "delivered successfully by other means."
 			          << std::endl;
-			return;
 		}
-		std::cerr << "  reseting the ROUTED flag so that the message is "
-		          << "requested again" << std::endl;
+		else
+		{
+			std::cerr << "  reseting the ROUTED flag so that the message is "
+			          << "requested again" << std::endl;
 
-		// clear the routed flag so that the message is requested again
-		mit->second->msgFlags &= ~RS_MSG_FLAGS_ROUTED;
+			// clear the routed flag so that the message is requested again
+			mit->second->msgFlags &= ~RS_MSG_FLAGS_ROUTED;
+		}
 		return;
 	}
 
@@ -1918,15 +1936,15 @@ void p3MsgService::notifyDataStatus( const GRouterMsgPropagationId& id,
 			return;
 		}
 
-		uint32_t msg_id = it->second ;
+		uint32_t msg_id = it->second;
 
 		// we should now remove the item from the msgOutgoing list.
-
 		std::map<uint32_t,RsMsgItem*>::iterator it2 = msgOutgoing.find(msg_id);
 		if(it2 == msgOutgoing.end())
 		{
-			std::cerr << "(EE) message has been ACKed, but is not in outgoing "
-			          << "list. Something's wrong!!" << std::endl;
+			std::cerr << "(II) message has been notified as delivered, but it's"
+			          << " not in outgoing list. Probably it has been delivered"
+			          << " successfully by other means." << std::endl;
 			return;
 		}
 
@@ -1972,6 +1990,9 @@ uint32_t p3MsgService::getDistantMessagingPermissionFlags()
 bool p3MsgService::receiveGxsMail( const RsGxsMailItem& originalMessage,
                                    const uint8_t* data, uint32_t dataSize )
 {
+	std::cout << "p3MsgService::receiveGxsMail(" << originalMessage.mailId
+	          << ",, " << dataSize << ")" << std::endl;
+
 	Sha1CheckSum hash = RsDirUtil::sha1sum(data, dataSize);
 
 	{
@@ -1979,9 +2000,9 @@ bool p3MsgService::receiveGxsMail( const RsGxsMailItem& originalMessage,
 		if( mRecentlyReceivedMessageHashes.find(hash) !=
 		        mRecentlyReceivedMessageHashes.end() )
 		{
-			std::cerr << "p3MsgService::receiveGxsMail(...) (WW) receiving "
-			          << "message of hash " << hash << " more than once. This "
-			          << "is not a bug, unless it happens very often."
+			std::cerr << "p3MsgService::receiveGxsMail(...) (II) receiving "
+			          << "message of hash " << hash << " more than once. "
+			          << "Probably it has arrived  before by other means."
 			          << std::endl;
 			return true;
 		}
@@ -2016,6 +2037,58 @@ bool p3MsgService::receiveGxsMail( const RsGxsMailItem& originalMessage,
 bool p3MsgService::notifySendMailStatus( const RsGxsMailItem& originalMessage,
                                          GxsMailStatus status )
 {
+	std::cout << "p3MsgService::notifySendMailStatus(" << originalMessage.mailId
+	          << ", " << static_cast<uint>(status) << ")" << std::endl;
+
+	if( status == GxsMailStatus::RECEIPT_RECEIVED )
+	{
+		uint32_t msg_id;
+
+		{
+			RS_STACK_MUTEX(gxsOngoingMutex);
+
+			auto it = gxsOngoingMessages.find(originalMessage.mailId);
+			if(it == gxsOngoingMessages.end())
+			{
+				std::cerr << "p3MsgService::notifySendMailStatus("
+				          << originalMessage.mailId
+				          << ", " << static_cast<uint>(status) << ") "
+				          << "(EE) cannot find pending message to acknowledge!"
+				          << std::endl;
+				return false;
+			}
+
+			msg_id = it->second;
+		}
+
+		// we should now remove the item from the msgOutgoing list.
+
+		{
+			RS_STACK_MUTEX(mMsgMtx);
+
+			auto it2 = msgOutgoing.find(msg_id);
+			if(it2 == msgOutgoing.end())
+			{
+				std::cerr << "p3MsgService::notifySendMailStatus("
+				          << originalMessage.mailId
+				          << ", " << static_cast<uint>(status) << ") (II) "
+				          << "received receipt for message that is not in "
+				          << "outgoing list, probably it has been acknoweldged "
+				          << "before by other means." << std::endl;
+				return true;
+			}
+
+			delete it2->second;
+			msgOutgoing.erase(it2);
+		}
+
+		RsServer::notify()->notifyListChange( NOTIFY_LIST_MESSAGELIST,
+		                                      NOTIFY_TYPE_ADD );
+		IndicateConfigChanged();
+
+		return true;
+	}
+
 	if( status >= GxsMailStatus::FAILED_RECEIPT_SIGNATURE )
 	{
 		uint32_t msg_id;
@@ -2025,7 +2098,7 @@ bool p3MsgService::notifySendMailStatus( const RsGxsMailItem& originalMessage,
 
 			std::cerr << "p3MsgService::notifySendMailStatus(...) mail delivery"
 			          << "mailId: " << originalMessage.mailId
-			          << " failed with " << static_cast<uint>(status);
+			          << " failed with " << static_cast<uint32_t>(status);
 
 			auto it = gxsOngoingMessages.find(originalMessage.mailId);
 			if(it == gxsOngoingMessages.end())
@@ -2058,49 +2131,6 @@ bool p3MsgService::notifySendMailStatus( const RsGxsMailItem& originalMessage,
 			return true;
 		}
 	}
-
-	if( status == GxsMailStatus::RECEIPT_RECEIVED )
-	{
-		uint32_t msg_id;
-
-		{
-			RS_STACK_MUTEX(gxsOngoingMutex);
-
-			auto it = gxsOngoingMessages.find(originalMessage.mailId);
-			if(it == gxsOngoingMessages.end())
-			{
-				std::cerr << "  (EE) cannot find pending message to acknowledge. "
-				          << "Weird.mailId = " << originalMessage.mailId
-				          << std::endl;
-				return false;
-			}
-
-			msg_id = it->second;
-		}
-
-		// we should now remove the item from the msgOutgoing list.
-
-		{
-			RS_STACK_MUTEX(mMsgMtx);
-
-			auto it2 = msgOutgoing.find(msg_id);
-			if(it2 == msgOutgoing.end())
-			{
-				std::cerr << "(EE) message has been ACKed, but is not in "
-				          << "outgoing list. Something's wrong!!" << std::endl;
-				return true;
-			}
-
-			delete it2->second;
-			msgOutgoing.erase(it2);
-		}
-
-		RsServer::notify()->notifyListChange( NOTIFY_LIST_MESSAGELIST,
-		                                      NOTIFY_TYPE_ADD );
-		IndicateConfigChanged();
-
-		return true;
-	}
 }
 
 void p3MsgService::receiveGRouterData( const RsGxsId &destination_key,
@@ -2122,9 +2152,9 @@ void p3MsgService::receiveGRouterData( const RsGxsId &destination_key,
 		if( mRecentlyReceivedMessageHashes.find(hash) !=
 		        mRecentlyReceivedMessageHashes.end() )
 		{
-			std::cerr << "p3MsgService::receiveGRouterData(...) (WW) receiving"
+			std::cerr << "p3MsgService::receiveGRouterData(...) (II) receiving"
 			          << "distant message of hash " << hash << " more than once"
-			          << ". This is not a bug, unless it happens very often."
+			          << ". Probably it has arrived  before by other means."
 			          << std::endl;
 			free(data);
 			return;
@@ -2218,9 +2248,9 @@ void p3MsgService::sendDistantMsgItem(RsMsgItem *msgitem)
 	                    msg_serialized_data, msg_serialized_rssize,
 	                    signing_key_id, grouter_message_id );
 	RsGxsMailId gxsMailId;
-	gxsMailService.sendMail( gxsMailId, P3_MSG_SERVICE, signing_key_id,
-	                         destination_key_id, msg_serialized_data,
-	                         msg_serialized_rssize );
+	gxsMailService.sendMail( gxsMailId, GxsMailSubServices::P3_MSG_SERVICE,
+	                         signing_key_id, destination_key_id,
+	                         msg_serialized_data, msg_serialized_rssize );
 
 	/* now store the grouter id along with the message id, so that we can keep
 	 * track of received messages */

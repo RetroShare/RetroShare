@@ -150,6 +150,7 @@ private:
 	 * The map is indexed by the hash */
 	std::map<GRouterMsgPropagationId, uint32_t> _ongoing_messages;
 
+	/// Contains ongoing messages handed to gxs mail
 	std::map<RsGxsMailId, uint32_t> gxsOngoingMessages;
 	RsMutex gxsOngoingMutex;
 

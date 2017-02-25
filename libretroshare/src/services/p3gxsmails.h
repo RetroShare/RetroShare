@@ -27,30 +27,9 @@
 #include "services/p3idservice.h" // For p3IdService
 #include "util/rsthreads.h"
 
-enum class GxsMailStatus
-{
-	PENDING_PROCESSING = 0,
-	PENDING_PREFERRED_GROUP,
-	PENDING_RECEIPT_CREATE,
-	PENDING_RECEIPT_SIGNATURE,
-	PENDING_SERIALIZATION,
-	PENDING_PAYLOAD_CREATE,
-	PENDING_PAYLOAD_ENCRYPT,
-	PENDING_PUBLISH,
-	//PENDING_TRANSFER, /// This will be useful so the user can know if the mail reached some friend node, in case of internet connection interruption
-	PENDING_RECEIPT_RECEIVE,
-	/// Records with status >= RECEIPT_RECEIVED get deleted
-	RECEIPT_RECEIVED,
-	FAILED_RECEIPT_SIGNATURE = 240,
-	FAILED_ENCRYPTION
-};
-
 struct p3GxsMails;
 struct GxsMailsClient
 {
-	/// Subservices identifiers (like port for TCP)
-	enum GxsMailSubServices : uint16_t { TEST_SERVICE = 1, P3_MSG_SERVICE = 2 };
-
 	/**
 	 * This will be called by p3GxsMails to dispatch mails to the subservice
 	 * @param originalMessage message as received from GXS backend (encrypted)
@@ -65,7 +44,7 @@ struct GxsMailsClient
 	                                   GxsMailStatus status ) = 0;
 };
 
-struct p3GxsMails : RsGenExchange, GxsTokenQueue // TODO: p3Config
+struct p3GxsMails : RsGenExchange, GxsTokenQueue, p3Config
 {
 	p3GxsMails( RsGeneralDataService* gds, RsNetworkExchangeService* nes,
 	            p3IdService& identities ) :
@@ -76,6 +55,7 @@ struct p3GxsMails : RsGenExchange, GxsTokenQueue // TODO: p3Config
 	    servClientsMutex("p3GxsMails client services map mutex"),
 	    outgoingMutex("p3GxsMails outgoing queue map mutex"),
 	    ingoingMutex("p3GxsMails ingoing queue map mutex") {}
+	~p3GxsMails();
 
 	/**
 	 * Send an email to recipient, in the process author of the email is
@@ -86,7 +66,7 @@ struct p3GxsMails : RsGenExchange, GxsTokenQueue // TODO: p3Config
 	 * @return true if the mail will be sent, false if not
 	 */
 	bool sendMail( RsGxsMailId& mailId,
-	               GxsMailsClient::GxsMailSubServices service,
+	               GxsMailSubServices service,
 	               const RsGxsId& own_gxsid, const RsGxsId& recipient,
 	               const uint8_t* data, uint32_t size,
 	               RsGxsMailEncryptionMode cm = RsGxsMailEncryptionMode::RSA
@@ -103,25 +83,13 @@ struct p3GxsMails : RsGenExchange, GxsTokenQueue // TODO: p3Config
 	 * GxsMailsClient::receiveGxsMail(...) callback
 	 * This method is part of the public interface of this service.
 	 */
-	void registerGxsMailsClient( GxsMailsClient::GxsMailSubServices serviceType,
+	void registerGxsMailsClient( GxsMailSubServices serviceType,
 	                             GxsMailsClient* service );
 
 	/// @see RsGenExchange::getServiceInfo()
 	virtual RsServiceInfo getServiceInfo() { return RsServiceInfo( RS_SERVICE_TYPE_GXS_MAIL, "GXS Mails", 0, 1, 0, 1 ); }
 
 private:
-	/// @see GxsTokenQueue::handleResponse(uint32_t token, uint32_t req_type)
-	virtual void handleResponse(uint32_t token, uint32_t req_type);
-
-	/// @see RsGenExchange::service_tick()
-	virtual void service_tick();
-
-	/// @see RsGenExchange::service_CreateGroup(...)
-	RsGenExchange::ServiceCreate_Return service_CreateGroup(RsGxsGrpItem* grpItem, RsTlvSecurityKeySet&);
-
-	/// @see RsGenExchange::notifyChanges(std::vector<RsGxsNotify *> &changes)
-	void notifyChanges(std::vector<RsGxsNotify *> &changes);
-
 	/** Time interval of inactivity before a distribution group is unsubscribed.
 	 * Approximatively 3 months seems ok ATM. */
 	const static int32_t UNUSED_GROUP_UNSUBSCRIBE_INTERVAL = 0x76A700;
@@ -134,7 +102,7 @@ private:
 	 * Tought it can't be too little as this may cause signed receipts to
 	 * get lost thus causing resend and fastly grow perceived async latency, in
 	 * case two sporadically connected users sends mails each other.
-	 * TODO: While it is ok for signed acknowledged to stays in the DB for a
+	 * While it is ok for signed acknowledged to stays in the DB for a
 	 * full GXS_STORAGE_PERIOD, mails should be removed as soon as a valid
 	 * signed acknowledged is received for each of them.
 	 * Two weeks seems fair ATM.
@@ -159,36 +127,53 @@ private:
 	p3IdService& idService;
 
 	/// Stores pointers to client services to notify them about new mails
-	std::map<GxsMailsClient::GxsMailSubServices, GxsMailsClient*> servClients;
+	std::map<GxsMailSubServices, GxsMailsClient*> servClients;
 	RsMutex servClientsMutex;
 
-	struct OutgoingRecord
-	{
-		OutgoingRecord( RsGxsId rec, GxsMailsClient::GxsMailSubServices cs,
-		                const uint8_t* data, uint32_t size ) :
-		    status(GxsMailStatus::PENDING_PROCESSING), recipient(rec),
-		    clientService(cs)
-		{
-			mailData.resize(size);
-			memcpy(&mailData[0], data, size);
-		}
-
-		GxsMailStatus status;
-		RsGxsId recipient;
-		RsGxsMailItem mailItem; /// Don't use a pointer would be invalid after publish
-		std::vector<uint8_t> mailData;
-		GxsMailsClient::GxsMailSubServices clientService;
-		RsNxsMailPresignedReceipt presignedReceipt;
-	};
-	/// Keep track of mails while being processed
+	/**
+	 * @brief Keep track of outgoing mails.
+	 * Records enter the queue when a mail is sent, and are removed when a
+	 * receipt has been received or sending is considered definetly failed.
+	 * Items are saved in config for consistence accross RetroShare shutdowns.
+	 */
 	typedef std::map<RsGxsMailId, OutgoingRecord> prMap;
 	prMap outgoingQueue;
 	RsMutex outgoingMutex;
 	void processOutgoingRecord(OutgoingRecord& r);
 
+	/**
+	 * @brief Ingoing mail and receipt processing queue.
+	 * Items are saved in config and then deleted in destructor for consistence
+	 * accross RetroShare shutdowns.
+	 */
 	typedef std::unordered_multimap<RsGxsMailId, RsGxsMailBaseItem*> inMap;
 	inMap ingoingQueue;
 	RsMutex ingoingMutex;
+
+	/// @see GxsTokenQueue::handleResponse(uint32_t token, uint32_t req_type)
+	virtual void handleResponse(uint32_t token, uint32_t req_type);
+
+	/// @see RsGenExchange::service_tick()
+	virtual void service_tick();
+
+	/// @see RsGenExchange::service_CreateGroup(...)
+	RsGenExchange::ServiceCreate_Return service_CreateGroup(
+	        RsGxsGrpItem* grpItem, RsTlvSecurityKeySet& );
+
+	/// @see RsGenExchange::notifyChanges(std::vector<RsGxsNotify *> &changes)
+	void notifyChanges(std::vector<RsGxsNotify *> &changes);
+
+	/// @see p3Config::setupSerialiser()
+	virtual RsSerialiser* setupSerialiser();
+
+	/// @see p3Config::saveList(bool &cleanup, std::list<RsItem *>&)
+	virtual bool saveList(bool &cleanup, std::list<RsItem *>&saveList);
+
+	/// @see p3Config::saveDone()
+	void saveDone();
+
+	/// @see p3Config::loadList(std::list<RsItem *>&)
+	virtual bool loadList(std::list<RsItem *>& loadList);
 
 	/// Request groups list to GXS backend. Async method.
 	bool requestGroupsData(const std::list<RsGxsGroupId>* groupIds = NULL);
@@ -267,6 +252,7 @@ struct TestGxsMailClientService : GxsMailsClient, RsSingleJobThread
 	/// @see RsSingleJobThread::run()
 	virtual void run()
 	{
+#if 0
 		usleep(10*1000*1000);
 		RsGxsId gxsidA("d0df7474bdde0464679e6ef787890287");
 		RsGxsId gxsidB("d060bea09dfa14883b5e6e517eb580cd");
@@ -274,23 +260,23 @@ struct TestGxsMailClientService : GxsMailsClient, RsSingleJobThread
 		if(idService.isOwnId(gxsidA))
 		{
 			std::string ciao("CiAone!");
-			mailService.sendMail( mailId, GxsMailsClient::TEST_SERVICE, gxsidA,
-			                      gxsidB,
+			mailService.sendMail( mailId, GxsMailSubServices::TEST_SERVICE,
+			                      gxsidA, gxsidB,
 			                      reinterpret_cast<const uint8_t*>(ciao.data()),
 			                      ciao.size() );
 		}
 		else if(idService.isOwnId(gxsidB))
 		{
 			std::string ciao("CiBuono!");
-			mailService.sendMail( mailId, GxsMailsClient::TEST_SERVICE, gxsidB,
-			                      gxsidA,
+			mailService.sendMail( mailId, GxsMailSubServices::TEST_SERVICE,
+			                      gxsidB, gxsidA,
 			                      reinterpret_cast<const uint8_t*>(ciao.data()),
 			                      ciao.size() );
 		}
+#endif
 	}
 
 private:
 	p3GxsMails& mailService;
 	p3IdService& idService;
 };
-

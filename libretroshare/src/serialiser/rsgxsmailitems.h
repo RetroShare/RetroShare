@@ -26,12 +26,21 @@
 #include "retroshare/rsgxscircles.h" // For: GXS_CIRCLE_TYPE_PUBLIC
 #include "services/p3idservice.h"
 
+/// Subservices identifiers (like port for TCP)
+enum class GxsMailSubServices : uint16_t
+{
+	UNKNOWN = 0,
+	TEST_SERVICE = 1,
+	P3_MSG_SERVICE = 2
+};
+
 /// Values must fit into uint8_t
-enum GxsMailItemsSubtypes
+enum class GxsMailItemsSubtypes : uint8_t
 {
 	GXS_MAIL_SUBTYPE_MAIL    = 1,
 	GXS_MAIL_SUBTYPE_RECEIPT = 2,
-	GXS_MAIL_SUBTYPE_GROUP   = 3
+	GXS_MAIL_SUBTYPE_GROUP   = 3,
+	OUTGOING_RECORD_ITEM     = 4
 };
 
 typedef uint64_t RsGxsMailId;
@@ -67,7 +76,8 @@ struct RsGxsMailBaseItem : RsGxsMsgItem
 
 struct RsGxsMailPresignedReceipt : RsGxsMailBaseItem
 {
-	RsGxsMailPresignedReceipt() : RsGxsMailBaseItem(GXS_MAIL_SUBTYPE_RECEIPT) {}
+	RsGxsMailPresignedReceipt() :
+	    RsGxsMailBaseItem(GxsMailItemsSubtypes::GXS_MAIL_SUBTYPE_RECEIPT) {}
 };
 
 enum class RsGxsMailEncryptionMode : uint8_t
@@ -79,7 +89,8 @@ enum class RsGxsMailEncryptionMode : uint8_t
 
 struct RsGxsMailItem : RsGxsMailBaseItem
 {
-	RsGxsMailItem() : RsGxsMailBaseItem(GXS_MAIL_SUBTYPE_MAIL),
+	RsGxsMailItem() :
+	    RsGxsMailBaseItem(GxsMailItemsSubtypes::GXS_MAIL_SUBTYPE_MAIL),
 	    cryptoType(RsGxsMailEncryptionMode::UNDEFINED_ENCRYPTION) {}
 
 	RsGxsMailEncryptionMode cryptoType;
@@ -158,17 +169,21 @@ struct RsGxsMailItem : RsGxsMailBaseItem
 	}
 	bool deserialize(const uint8_t* data, uint32_t& size, uint32_t& offset)
 	{
-		void* dataPtr = reinterpret_cast<void*>(const_cast<uint8_t*>(data));
-		uint32_t rssize = getRsItemSize(dataPtr);
+		void* sizePtr = const_cast<uint8_t*>(data+offset);
+		uint32_t rssize = getRsItemSize(sizePtr);
+
 		uint32_t roffset = offset;
 		bool ok = rssize <= size && size < MAX_SIZE;
 		ok = ok && RsGxsMailBaseItem::deserialize(data, rssize, roffset);
+
+		void* dataPtr = const_cast<uint8_t*>(data);
 		uint8_t crType;
 		ok = ok && getRawUInt8(dataPtr, rssize, &roffset, &crType);
 		cryptoType = static_cast<RsGxsMailEncryptionMode>(crType);
 		ok = ok && recipientsHint.deserialise(dataPtr, rssize, roffset);
 		uint32_t psz = rssize - roffset;
 		ok = ok && (payload.resize(psz), memcpy(&payload[0], data+roffset, psz));
+		ok = ok && (roffset += psz);
 		if(ok) { size = rssize; offset = roffset; }
 		else size = 0;
 		return ok;
@@ -188,7 +203,9 @@ struct RsGxsMailItem : RsGxsMailBaseItem
 struct RsGxsMailGroupItem : RsGxsGrpItem
 {
 	RsGxsMailGroupItem() :
-	    RsGxsGrpItem(RS_SERVICE_TYPE_GXS_MAIL, GXS_MAIL_SUBTYPE_GROUP)
+	    RsGxsGrpItem( RS_SERVICE_TYPE_GXS_MAIL,
+	                  static_cast<uint8_t>(
+	                      GxsMailItemsSubtypes::GXS_MAIL_SUBTYPE_GROUP) )
 	{
 		meta.mGroupFlags = GXS_SERV::FLAG_PRIVACY_PUBLIC;
 		meta.mGroupName = "Mail";
@@ -200,6 +217,54 @@ struct RsGxsMailGroupItem : RsGxsGrpItem
 	{ return out; }
 };
 
+enum class GxsMailStatus : uint8_t
+{
+	UNKNOWN = 0,
+	PENDING_PROCESSING,
+	PENDING_PREFERRED_GROUP,
+	PENDING_RECEIPT_CREATE,
+	PENDING_RECEIPT_SIGNATURE,
+	PENDING_SERIALIZATION,
+	PENDING_PAYLOAD_CREATE,
+	PENDING_PAYLOAD_ENCRYPT,
+	PENDING_PUBLISH,
+	/** This will be useful so the user can know if the mail reached at least
+	 * some friend node, in case of internet connection interruption */
+	//PENDING_TRANSFER,
+	PENDING_RECEIPT_RECEIVE,
+	/// Records with status >= RECEIPT_RECEIVED get deleted
+	RECEIPT_RECEIVED,
+	FAILED_RECEIPT_SIGNATURE = 240,
+	FAILED_ENCRYPTION
+};
+
+class RsGxsMailSerializer;
+struct OutgoingRecord : RsItem
+{
+	OutgoingRecord( RsGxsId rec, GxsMailSubServices cs,
+	                const uint8_t* data, uint32_t size );
+
+	GxsMailStatus status;
+	RsGxsId recipient;
+	/// Don't use a pointer would be invalid after publish
+	RsGxsMailItem mailItem;
+	std::vector<uint8_t> mailData;
+	GxsMailSubServices clientService;
+	RsNxsMailPresignedReceipt presignedReceipt;
+
+	uint32_t size() const;
+	bool serialize(uint8_t* data, uint32_t size, uint32_t& offset) const;
+	bool deserialize(const uint8_t* data, uint32_t& size, uint32_t& offset);
+
+	virtual void clear();
+	virtual std::ostream &print(std::ostream &out, uint16_t indent = 0);
+
+private:
+	friend class RsGxsMailSerializer;
+	OutgoingRecord();
+};
+
+
 struct RsGxsMailSerializer : RsSerialType
 {
 	RsGxsMailSerializer() : RsSerialType( RS_PKT_VERSION_SERVICE,
@@ -209,17 +274,23 @@ struct RsGxsMailSerializer : RsSerialType
 	uint32_t size(RsItem* item)
 	{
 		uint32_t sz = 0;
-		switch(item->PacketSubType())
+		switch(static_cast<GxsMailItemsSubtypes>(item->PacketSubType()))
 		{
-		case GXS_MAIL_SUBTYPE_MAIL:
+		case GxsMailItemsSubtypes::GXS_MAIL_SUBTYPE_MAIL:
 		{
 			RsGxsMailItem* i = dynamic_cast<RsGxsMailItem*>(item);
 			if(i) sz = i->size();
 			break;
 		}
-		case GXS_MAIL_SUBTYPE_RECEIPT:
+		case GxsMailItemsSubtypes::GXS_MAIL_SUBTYPE_RECEIPT:
 			sz = RsGxsMailPresignedReceipt::size(); break;
-		case GXS_MAIL_SUBTYPE_GROUP: sz = 8; break;
+		case GxsMailItemsSubtypes::GXS_MAIL_SUBTYPE_GROUP: sz = 8; break;
+		case GxsMailItemsSubtypes::OUTGOING_RECORD_ITEM:
+		{
+			OutgoingRecord* ci = dynamic_cast<OutgoingRecord*>(item);
+			if(ci) sz = ci->size();
+			break;
+		}
 		default: break;
 		}
 
@@ -248,9 +319,9 @@ struct RsGxsMailSerializer : RsSerialType
 		bool ok = true;
 		RsItem* ret = NULL;
 
-		switch (getRsItemSubType(rstype))
+		switch (static_cast<GxsMailItemsSubtypes>(getRsItemSubType(rstype)))
 		{
-		case GXS_MAIL_SUBTYPE_MAIL:
+		case GxsMailItemsSubtypes::GXS_MAIL_SUBTYPE_MAIL:
 		{
 			RsGxsMailItem* i = new RsGxsMailItem();
 			uint32_t offset = 0;
@@ -258,7 +329,7 @@ struct RsGxsMailSerializer : RsSerialType
 			ret = i;
 			break;
 		}
-		case GXS_MAIL_SUBTYPE_RECEIPT:
+		case GxsMailItemsSubtypes::GXS_MAIL_SUBTYPE_RECEIPT:
 		{
 			RsGxsMailPresignedReceipt* i = new RsGxsMailPresignedReceipt();
 			uint32_t offset = 0;
@@ -266,9 +337,17 @@ struct RsGxsMailSerializer : RsSerialType
 			ret = i;
 			break;
 		}
-		case GXS_MAIL_SUBTYPE_GROUP:
+		case GxsMailItemsSubtypes::GXS_MAIL_SUBTYPE_GROUP:
 		{
 			ret = new RsGxsMailGroupItem();
+			break;
+		}
+		case GxsMailItemsSubtypes::OUTGOING_RECORD_ITEM:
+		{
+			OutgoingRecord* i = new OutgoingRecord();
+			uint32_t offset = 0;
+			ok = ok && i->deserialize(dataPtr, *size, offset);
+			ret = i;
 			break;
 		}
 		default:

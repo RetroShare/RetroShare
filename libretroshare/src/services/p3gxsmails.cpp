@@ -20,8 +20,18 @@
 #include "util/stacktrace.h"
 
 
+p3GxsMails::~p3GxsMails()
+{
+	p3Config::saveConfiguration();
+
+	{
+		RS_STACK_MUTEX(ingoingMutex);
+		for ( auto& kv : ingoingQueue ) delete kv.second;
+	}
+}
+
 bool p3GxsMails::sendMail( RsGxsMailId& mailId,
-                           GxsMailsClient::GxsMailSubServices service,
+                           GxsMailSubServices service,
                            const RsGxsId& own_gxsid, const RsGxsId& recipient,
                            const uint8_t* data, uint32_t size,
                            RsGxsMailEncryptionMode cm )
@@ -69,12 +79,11 @@ bool p3GxsMails::querySendMailStatus(RsGxsMailId mailId, GxsMailStatus& st)
 }
 
 void p3GxsMails::registerGxsMailsClient(
-        GxsMailsClient::GxsMailSubServices serviceType, GxsMailsClient* service)
+        GxsMailSubServices serviceType, GxsMailsClient* service)
 {
 	RS_STACK_MUTEX(servClientsMutex);
 	servClients[serviceType] = service;
 }
-
 
 void p3GxsMails::handleResponse(uint32_t token, uint32_t req_type)
 {
@@ -87,8 +96,7 @@ void p3GxsMails::handleResponse(uint32_t token, uint32_t req_type)
 		std::vector<RsGxsGrpItem*> groups;
 		getGroupData(token, groups);
 
-		for( std::vector<RsGxsGrpItem *>::iterator it = groups.begin();
-		     it != groups.end(); ++it )
+		for( auto grp : groups )
 		{
 			/* For each group check if it is better candidate then
 			 * preferredGroupId, if it is supplant it and subscribe if it is not
@@ -98,17 +106,39 @@ void p3GxsMails::handleResponse(uint32_t token, uint32_t req_type)
 			 * unsubscribe.
 			 */
 
-			const RsGroupMetaData& meta = (*it)->meta;
+			const RsGroupMetaData& meta = grp->meta;
 			bool subscribed = IS_GROUP_SUBSCRIBED(meta.mSubscribeFlags);
 			bool old = olderThen( meta.mLastPost,
 			                      UNUSED_GROUP_UNSUBSCRIBE_INTERVAL );
 			bool supersede = supersedePreferredGroup(meta.mGroupId);
 			uint32_t token;
 
-			if( !subscribed && ( !old || supersede ))
+			bool shoudlSubscribe = !subscribed && ( !old || supersede );
+			bool shoudlUnSubscribe = subscribed && old
+			        && meta.mGroupId != preferredGroupId;
+
+			if(shoudlSubscribe)
 				subscribeToGroup(token, meta.mGroupId, true);
-			else if( subscribed && old )
+			else if(shoudlUnSubscribe)
 				subscribeToGroup(token, meta.mGroupId, false);
+
+#ifdef GXS_MAIL_GRP_DEBUG
+			char buff[30];
+			struct tm* timeinfo;
+			timeinfo = localtime(&meta.mLastPost);
+			strftime(buff, sizeof(buff), "%Y %b %d %H:%M", timeinfo);
+
+			std::cout << "p3GxsMails::handleResponse(...) GROUPS_LIST "
+			          << "meta.mGroupId: " << meta.mGroupId
+			          << " meta.mLastPost: " << buff
+			          << " subscribed: " << subscribed
+			          << " old: " << old
+			          << " shoudlSubscribe: " << shoudlSubscribe
+			          << " shoudlUnSubscribe: " << shoudlUnSubscribe
+			          << std::endl;
+#endif // GXS_MAIL_GRP_DEBUG
+
+			delete grp;
 		}
 
 		if(preferredGroupId.isNull())
@@ -150,10 +180,10 @@ void p3GxsMails::handleResponse(uint32_t token, uint32_t req_type)
 			for( vT::const_iterator mIt = mv.begin(); mIt != mv.end(); ++mIt )
 			{
 				RsGxsMsgItem* gIt = *mIt;
-				switch(gIt->PacketSubType())
+				switch(static_cast<GxsMailItemsSubtypes>(gIt->PacketSubType()))
 				{
-				case GXS_MAIL_SUBTYPE_MAIL:
-				case GXS_MAIL_SUBTYPE_RECEIPT:
+				case GxsMailItemsSubtypes::GXS_MAIL_SUBTYPE_MAIL:
+				case GxsMailItemsSubtypes::GXS_MAIL_SUBTYPE_RECEIPT:
 				{
 					RsGxsMailBaseItem* mb =
 					        dynamic_cast<RsGxsMailBaseItem*>(*mIt);
@@ -211,9 +241,10 @@ void p3GxsMails::service_tick()
 		RS_STACK_MUTEX(ingoingMutex);
 		for( auto it = ingoingQueue.begin(); it != ingoingQueue.end(); )
 		{
-			switch (it->second->PacketSubType())
+			switch(static_cast<GxsMailItemsSubtypes>(
+			           it->second->PacketSubType()))
 			{
-			case GXS_MAIL_SUBTYPE_MAIL:
+			case GxsMailItemsSubtypes::GXS_MAIL_SUBTYPE_MAIL:
 			{
 				RsGxsMailItem* msg = dynamic_cast<RsGxsMailItem*>(it->second);
 				if(!msg)
@@ -238,7 +269,7 @@ void p3GxsMails::service_tick()
 				}
 				break;
 			}
-			case GXS_MAIL_SUBTYPE_RECEIPT:
+			case GxsMailItemsSubtypes::GXS_MAIL_SUBTYPE_RECEIPT:
 			{
 				RsGxsMailPresignedReceipt* rcpt =
 				        dynamic_cast<RsGxsMailPresignedReceipt*>(it->second);
@@ -276,9 +307,11 @@ void p3GxsMails::service_tick()
 	}
 }
 
-RsGenExchange::ServiceCreate_Return p3GxsMails::service_CreateGroup(RsGxsGrpItem* grpItem, RsTlvSecurityKeySet& /*keySet*/)
+RsGenExchange::ServiceCreate_Return p3GxsMails::service_CreateGroup(
+        RsGxsGrpItem* grpItem, RsTlvSecurityKeySet& /*keySet*/ )
 {
-	std::cout << "p3GxsMails::service_CreateGroup(...) " << grpItem->meta.mGroupId << std::endl;
+	std::cout << "p3GxsMails::service_CreateGroup(...) "
+	          << grpItem->meta.mGroupId << std::endl;
 	return SERVICE_CREATE_SUCCESS;
 }
 
@@ -434,8 +467,7 @@ bool p3GxsMails::dispatchDecryptedMail( const RsGxsMailItem* received_msg,
 		          << "happening!" << std::endl;
 		return false;
 	}
-	GxsMailsClient::GxsMailSubServices rsrvc;
-	rsrvc = static_cast<GxsMailsClient::GxsMailSubServices>(csri);
+	GxsMailSubServices rsrvc = static_cast<GxsMailSubServices>(csri);
 
 	RsNxsMailPresignedReceipt* receipt = new RsNxsMailPresignedReceipt();
 	uint32_t rcptsize = decrypted_data_size;
@@ -657,5 +689,87 @@ void p3GxsMails::notifyClientService(const OutgoingRecord& pr)
 	          << " fatally failed with: "
 	          << static_cast<uint32_t>(pr.status) << std::endl;
 	print_stacktrace();
+}
+
+RsSerialiser* p3GxsMails::setupSerialiser()
+{
+	RsSerialiser* rss = new RsSerialiser;
+	rss->addSerialType(new RsGxsMailSerializer);
+	return rss;
+}
+
+bool p3GxsMails::saveList(bool &cleanup, std::list<RsItem *>& saveList)
+{
+	std::cout << "p3GxsMails::saveList(...)" << saveList.size() << " "
+	          << ingoingQueue.size() << " " << outgoingQueue.size()
+	          << std::endl;
+
+	outgoingMutex.lock();
+	ingoingMutex.lock();
+
+	for ( auto& kv : outgoingQueue ) saveList.push_back(&kv.second);
+	for ( auto& kv : ingoingQueue ) saveList.push_back(kv.second);
+
+	std::cout << "p3GxsMails::saveList(...)" << saveList.size() << " "
+	          << ingoingQueue.size() << " " << outgoingQueue.size()
+	          << std::endl;
+
+	cleanup = false;
+	return true;
+}
+
+void p3GxsMails::saveDone()
+{
+	outgoingMutex.unlock();
+	ingoingMutex.unlock();
+}
+
+bool p3GxsMails::loadList(std::list<RsItem *>&loadList)
+{
+	std::cout << "p3GxsMails::loadList(...) " << loadList.size() << " "
+	          << ingoingQueue.size() << " " << outgoingQueue.size()
+	          << std::endl;
+
+	for(auto& v : loadList)
+		switch(static_cast<GxsMailItemsSubtypes>(v->PacketSubType()))
+		{
+		case GxsMailItemsSubtypes::GXS_MAIL_SUBTYPE_MAIL:
+		case GxsMailItemsSubtypes::GXS_MAIL_SUBTYPE_RECEIPT:
+		{
+			RsGxsMailBaseItem* mi = dynamic_cast<RsGxsMailBaseItem*>(v);
+			if(mi)
+			{
+				RS_STACK_MUTEX(ingoingMutex);
+				ingoingQueue.insert(inMap::value_type(mi->mailId, mi));
+			}
+			break;
+		}
+		case GxsMailItemsSubtypes::OUTGOING_RECORD_ITEM:
+		{
+			OutgoingRecord* ot = dynamic_cast<OutgoingRecord*>(v);
+			if(ot)
+			{
+				RS_STACK_MUTEX(outgoingMutex);
+				outgoingQueue.insert(
+				            prMap::value_type(ot->mailItem.mailId, *ot));
+			}
+			delete v;
+			break;
+		}
+		case GxsMailItemsSubtypes::GXS_MAIL_SUBTYPE_GROUP:
+		default:
+			std::cerr << "p3GxsMails::loadList(...) (EE) got item with "
+			          << "unhandled type: "
+			          << static_cast<uint>(v->PacketSubType())
+			          << std::endl;
+			delete v;
+			break;
+		}
+
+	std::cout << "p3GxsMails::loadList(...) " << loadList.size() << " "
+	          << ingoingQueue.size() << " " << outgoingQueue.size()
+	          << std::endl;
+
+	return true;
 }
 
