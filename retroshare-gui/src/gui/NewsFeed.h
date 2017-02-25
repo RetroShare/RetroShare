@@ -49,7 +49,7 @@ public:
 	virtual ~NewsFeed();
 
 	virtual QIcon iconPixmap() const { return QIcon(IMAGE_NEWSFEED) ; } //MainPage
-	virtual QString pageName() const { return tr("News feed") ; } //MainPage
+	virtual QString pageName() const { return tr("Log") ; } //MainPage
 	virtual QString helpText() const { return ""; } //MainPage
 
 	virtual UserNotify *getUserNotify(QObject *parent);
