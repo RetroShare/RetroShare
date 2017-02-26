@@ -358,7 +358,7 @@ IdDialog::IdDialog(QWidget *parent) :
                     <p>An <b>circle</b> can be restricted to another circle, thereby limiting its visibility to members of that circle \
                         or even self-restricted, meaning that it is only visible to invited members.</p>") ;
 
-	registerHelpButton(ui->helpButton, hlp_str) ;
+	registerHelpButton(ui->helpButton, hlp_str,"PeopleDialog") ;
 
 	// load settings
 	processSettings(true);

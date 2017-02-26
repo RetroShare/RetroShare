@@ -131,38 +131,6 @@ FileAssociationsPage::~FileAssociationsPage()
 {
 }
 
-//============================================================================
-
-bool
-FileAssociationsPage::save (QString &/*errmsg*/)
-{
-//    RshareSettings settings;
-
-
-//    settings.beginGroup("FileAssotiations");
-//    settings.setValue(".s01", "s01 test");
-//    settings.setValue(".s02", "s02 test");
-//    settings.setValue(".s03", "s03 test");
-//    settings.setValue(".s04", "s04 test");
-//     QMap<QString, QString>::const_iterator ati = ations.constBegin();
-//     while (ati != ations.constEnd())
-//     {
-//         settings.setValue( ati.key(), ati.value() );
-//         qDebug() << "  - " << ati.key() << ati.value() << "\n" ;
-//         ++ati;
-//     }
-//
-//     settings.endGroup();
-
-//    settings.sync();
-
-//    delete settings;
-/*    */
-    return true;
-}
-
-//============================================================================
-
 void
 FileAssociationsPage::load()
 {

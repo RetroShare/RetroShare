@@ -53,6 +53,7 @@ class PostedDialog;
 class FriendsDialog;
 class IdDialog;
 class ChatLobbyWidget;
+class SettingsPage ;
 class ChatDialog;
 class NetworkDialog;
 class SearchDialog;
@@ -104,7 +105,26 @@ public:
         Links              = 10,  /** Links page. */
 #endif
         Posted             = 11,  /** Posted links */
-        People             = 12   /** People page. */
+        People             = 12,   /** People page. */
+        Options            = 13   /** People page. */
+    };
+
+
+    enum StatusElement {
+    	StatusGrpStatus    = 0x01,
+    	StatusCompactMode  = 0x02,
+    	StatusShowToolTip  = 0x03,
+    	StatusShowStatus   = 0x04,
+    	StatusShowPeer     = 0x05,
+    	StatusShowDHT      = 0x06,
+    	StatusShowHashing  = 0x07,
+    	StatusShowDisc     = 0x08,
+    	StatusShowRate     = 0x09,
+    	StatusShowOpMode   = 0x0a,
+    	StatusShowSound    = 0x0b,
+    	StatusShowToaster  = 0x0c,
+    	StatusShowSystray  = 0x0d,
+    	StatusShowCBox     = 0x0e
     };
 
     /** Create main window */
@@ -142,6 +162,7 @@ public:
   	 IdDialog          *idDialog ;
 	 ChatLobbyWidget   *chatLobbyDialog;
 	 MessagesDialog    *messagesDialog;
+	 SettingsPage      *settingsDialog;
 	 SharedFilesDialog *sharedfilesDialog;
 	 GxsChannelDialog  *gxschannelDialog ;
 	 GxsForumsDialog   *gxsforumDialog ;
@@ -168,11 +189,21 @@ public:
     static void installNotifyIcons();
     static void displayLobbySystrayMsg(const QString&,const QString&);
 
+    static void switchVisibilityStatus(MainWindow::StatusElement e,bool b);
+
     /* initialize widget with status informations, status constant stored in data or in Qt::UserRole */
     void initializeStatusObject(QObject *pObject, bool bConnect);
     void removeStatusObject(QObject *pObject);
     void setStatus(QObject *pObject, int nStatus);
 
+    QComboBox *statusComboBoxInstance();
+    PeerStatus *peerstatusInstance();
+    NATStatus *natstatusInstance();
+    DHTStatus *dhtstatusInstance();
+    HashingStatus *hashingstatusInstance();
+    DiscStatus *discstatusInstance();
+    RatesStatus *ratesstatusInstance();
+    OpModeStatus *opModeStatusInstance();
     SoundStatus *soundStatusInstance();
     ToasterDisable *toasterDisableInstance();
     SysTrayStatus *sysTrayStatusInstance();

@@ -343,6 +343,7 @@ HEADERS +=  rshare.h \
             gui/MainWindow.h \
             gui/RSHumanReadableDelegate.h \
             gui/AboutDialog.h \
+            gui/AboutWidget.h \
             gui/NetworkView.h \
             gui/MessengerWindow.h \
             gui/FriendsDialog.h \
@@ -425,6 +426,7 @@ HEADERS +=  rshare.h \
             gui/chat/ChatLobbyUserNotify.h \
             gui/connect/ConfCertDialog.h \
             gui/connect/PGPKeyDialog.h \
+            gui/connect/FriendRecommendDialog.h \
             gui/msgs/MessageInterface.h \
             gui/msgs/MessageComposer.h \
             gui/msgs/MessageWindow.h \
@@ -441,6 +443,7 @@ HEADERS +=  rshare.h \
             gui/settings/GeneralPage.h \
             gui/settings/PeoplePage.h \
             gui/settings/DirectoriesPage.h \
+            gui/settings/AboutPage.h \
             gui/settings/ServerPage.h \
             gui/settings/NetworkPage.h \
             gui/settings/NotifyPage.h \
@@ -585,6 +588,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/HomePage.ui\
             gui/GenCertDialog.ui \
             gui/AboutDialog.ui \
+            gui/AboutWidget.ui \
             gui/QuickStartWizard.ui \
             gui/NetworkDialog.ui \
             gui/common/AvatarDialog.ui \
@@ -616,10 +620,11 @@ FORMS +=    gui/StartDialog.ui \
             gui/connect/PGPKeyDialog.ui \
             gui/connect/ConnectFriendWizard.ui \
             gui/connect/ConnectProgressDialog.ui \
+            gui/connect/FriendRecommendDialog.ui \
             gui/msgs/MessageComposer.ui \
             gui/msgs/MessageWindow.ui\
             gui/msgs/MessageWidget.ui\
-            gui/settings/settings.ui \
+            gui/settings/settingsw.ui \
             gui/settings/GeneralPage.ui \
             gui/settings/DirectoriesPage.ui \
             gui/settings/ServerPage.ui \
@@ -630,6 +635,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/settings/MessagePage.ui \
             gui/settings/NewTag.ui \
             gui/settings/ForumPage.ui \
+            gui/settings/AboutPage.ui \
             gui/settings/PluginsPage.ui \
             gui/settings/AppearancePage.ui \
             gui/settings/TransferPage.ui \
@@ -701,6 +707,7 @@ SOURCES +=  main.cpp \
             rshare.cpp \
             gui/notifyqt.cpp \
             gui/AboutDialog.cpp \
+            gui/AboutWidget.cpp \
             gui/QuickStartWizard.cpp \
             gui/StartDialog.cpp \
             gui/HomePage.cpp\
@@ -844,6 +851,7 @@ SOURCES +=  main.cpp \
             gui/settings/rsettingswin.cpp \
             gui/settings/GeneralPage.cpp \
             gui/settings/DirectoriesPage.cpp \
+            gui/settings/AboutPage.cpp \
             gui/settings/ServerPage.cpp \
             gui/settings/NetworkPage.cpp \
             gui/settings/NotifyPage.cpp \
@@ -903,6 +911,7 @@ SOURCES +=  main.cpp \
             gui/feeds/NewsFeedUserNotify.cpp \
             gui/connect/ConnectFriendWizard.cpp \
             gui/connect/ConnectProgressDialog.cpp \
+            gui/connect/FriendRecommendDialog.cpp \
             gui/groups/CreateGroup.cpp \
             gui/GetStartedDialog.cpp \
             gui/statistics/BandwidthGraphWindow.cpp \

@@ -20,11 +20,15 @@ public:
 	void setOpenAllInNewTabText(const QString &text);
 
 	void loadSettings(GroupFrameSettings::Type type);
-	void saveSettings(GroupFrameSettings::Type type);
+
+    void setType(GroupFrameSettings::Type type) { mType = type ; }
+protected slots:
+	void saveSettings();
 
 private:
 	bool mEnable;
 	Ui::GroupFrameSettingsWidget *ui;
+    GroupFrameSettings::Type mType ;
 };
 
 #endif // GROUPFRAMESETTINGSWIDGET_H

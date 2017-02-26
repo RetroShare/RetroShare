@@ -127,7 +127,7 @@ public slots:
 	void updateStatus(const QString &peer_id, int status);
 
 private slots:
-	void pasteCreateMsgLink() ;
+	//void pasteCreateMsgLink() ;
 	void clearChatHistory();
 	void deleteChatHistory();
 	void messageHistory();

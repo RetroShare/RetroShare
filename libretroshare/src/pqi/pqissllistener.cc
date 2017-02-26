@@ -214,7 +214,6 @@ int	pqissllistenbase::setuplisten()
 		if (!mPeerMgr->isHidden()) std::cerr << "Zeroed tmpaddr: " << sockaddr_storage_tostring(tmpaddr) << std::endl;
 #endif
 
-		exit(1); 
 		return -1;
 	}
 	else
