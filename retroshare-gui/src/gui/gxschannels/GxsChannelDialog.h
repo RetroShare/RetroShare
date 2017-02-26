@@ -37,7 +37,7 @@ public:
 	~GxsChannelDialog();
 
 	virtual QIcon iconPixmap() const { return QIcon(IMAGE_GXSCHANNELS) ; } //MainPage
-	virtual QString pageName() const { return tr("Channels") ; } //MainPage
+	virtual QString pageName() const { return tr("Feeds") ; } //MainPage
 	virtual QString helpText() const { return ""; } //MainPage
 
 	virtual UserNotify *getUserNotify(QObject *parent);
