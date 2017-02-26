@@ -28,6 +28,8 @@
 #include "util/rsthreads.h"
 
 struct p3GxsMails;
+
+/// Services who want to make use of p3GxsMails should inherit this struct
 struct GxsMailsClient
 {
 	/**
@@ -40,10 +42,37 @@ struct GxsMailsClient
 	virtual bool receiveGxsMail( const RsGxsMailItem& originalMessage,
 	                             const uint8_t* data, uint32_t dataSize ) = 0;
 
+	/**
+	 * This will be called by p3GxsMails to notify the subservice about the
+	 * status of a sent email.
+	 * @param originalMessage message for with the notification is made
+	 * @param status the new status of the message
+	 * @return true if notification goes fine, false otherwise (ignored ATM)
+	 */
 	virtual bool notifySendMailStatus( const RsGxsMailItem& originalMessage,
 	                                   GxsMailStatus status ) = 0;
 };
 
+/**
+ * @brief p3GxsMails is a mail delivery service based on GXS.
+ * p3GxsMails is capable of asynchronous mail delivery and acknowledgement.
+ * p3GxsMails is meant to be capable of multiple encryption options,
+ * @see RsGxsMailEncryptionMode at moment messages are encrypted using RSA
+ * unless the user ask for them being sent in clear text ( this is not supposed
+ * to happen in non testing environment so warnings and stack traces are printed
+ * in the log if an attempt to send something in clear text is made ).
+ * p3GxsMails try to hide metadata so the travelling message signed by the author
+ * but the recipient is not disclosed, instead to avoid everyone trying to
+ * decrypt every message a hint has been introduced, the hint is calculated in a
+ * way that one can easily prove that a message is not destined to someone, but
+ * cannot prove the message is destined to someone
+ * @see RsGxsMailItem::recipientsHint for more details.
+ * p3GxsMails expose a simple API to send and receive mails, the API also
+ * provide notification for the sending mail status @see sendMail(...),
+ * @see querySendMailStatus(...), @see registerGxsMailsClient(...),
+ * @see GxsMailsClient::receiveGxsMail(...),
+ * @see GxsMailsClient::notifySendMailStatus(...).
+ */
 struct p3GxsMails : RsGenExchange, GxsTokenQueue, p3Config
 {
 	p3GxsMails( RsGeneralDataService* gds, RsNetworkExchangeService* nes,
