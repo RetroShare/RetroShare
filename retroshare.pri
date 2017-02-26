@@ -60,10 +60,10 @@ rs_nodeprecatedwarning:CONFIG -= no_rs_nodeprecatedwarning
 CONFIG *= no_rs_nocppwarning
 rs_nocppwarning:CONFIG -= no_rs_nocppwarning
 
-# To enable GXS mail append the following assignation to qmake command line
-# "CONFIG+=rs_gxs_mail"
-CONFIG *= no_rs_gxs_mail
-rs_gxs_mail:CONFIG -= no_rs_gxs_mail
+# To disable GXS mail append the following assignation to qmake command line
+# "CONFIG+=no_rs_gxs_mail"
+CONFIG *= rs_gxs_mail
+#no_rs_gxs_mail:CONFIG -= rs_gxs_mail ## Disabing not supported ATM
 
 
 unix {
@@ -179,7 +179,7 @@ rs_nodeprecatedwarning {
 rs_nocppwarning {
     QMAKE_CXXFLAGS += -Wno-cpp
     DEFINES *= RS_NO_WARN_CPP
-    warning("QMAKE: You have disable cpp warnings.")
+    warning("QMAKE: You have disable C preprocessor warnings.")
 }
 
 rs_gxs_mail:DEFINES *= RS_GXS_MAIL

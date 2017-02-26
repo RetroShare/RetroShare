@@ -85,10 +85,11 @@ static const uint32_t RS_MSG_DISTANT_MESSAGE_HASH_KEEP_TIME = 2*30*86400 ; // ke
 
 p3MsgService::p3MsgService( p3ServiceControl *sc, p3IdService *id_serv,
                             p3GxsMails& gxsMS )
-    : p3Service(), p3Config(), mIdService(id_serv), mServiceCtrl(sc),
-      mMsgMtx("p3MsgService"), mMsgUniqueId(0), gxsMailService(gxsMS),
-      gxsOngoingMutex("p3MsgService Gxs Outgoing Mutex"),
-      recentlyReceivedMutex("p3MsgService recently received hash mutex")
+    : p3Service(), p3Config(),
+      gxsOngoingMutex("p3MsgService Gxs Outgoing Mutex"), mIdService(id_serv),
+      mServiceCtrl(sc), mMsgMtx("p3MsgService"), mMsgUniqueId(0),
+      recentlyReceivedMutex("p3MsgService recently received hash mutex"),
+      gxsMailService(gxsMS)
 {
 	/* this serialiser is used for services. It's not the same than the one
 	 * returned by setupSerialiser(). We need both!! */
@@ -2030,8 +2031,13 @@ bool p3MsgService::receiveGxsMail( const RsGxsMailItem& originalMessage,
 		handleIncomingItem(msg_item);
 	}
 	else
+	{
 		std::cerr << "p3MsgService::receiveGxsMail(...) Item could not be "
 		          << "deserialised. Format error??" << std::endl;
+		return false;
+	}
+
+	return true;
 }
 
 bool p3MsgService::notifySendMailStatus( const RsGxsMailItem& originalMessage,
@@ -2131,6 +2137,8 @@ bool p3MsgService::notifySendMailStatus( const RsGxsMailItem& originalMessage,
 			return true;
 		}
 	}
+
+	return true;
 }
 
 void p3MsgService::receiveGRouterData( const RsGxsId &destination_key,
