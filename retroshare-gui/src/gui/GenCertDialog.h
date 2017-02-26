@@ -43,7 +43,9 @@ private slots:
 	void exportIdentity();
 	void newGPGKeyGenUiSetup();
 	void grabMouse();
-    void updateUiSetup();
+	void updateUiSetup();
+
+	void useBobChecked(bool checked);
 
 private:
 	void init();

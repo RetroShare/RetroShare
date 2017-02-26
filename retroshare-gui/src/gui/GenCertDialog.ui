@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>855</width>
-    <height>572</height>
+    <width>972</width>
+    <height>674</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -352,8 +352,14 @@ anonymous, you can use a fake email.</string>
               <height>32</height>
              </size>
             </property>
+            <property name="text">
+             <string/>
+            </property>
             <property name="maxLength">
              <number>64</number>
+            </property>
+            <property name="placeholderText">
+             <string>hidden service address</string>
             </property>
            </widget>
           </item>
@@ -377,6 +383,13 @@ anonymous, you can use a fake email.</string>
             </property>
             <property name="value">
              <number>7812</number>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="cbUseBob">
+            <property name="text">
+             <string>use I2P/BOB</string>
             </property>
            </widget>
           </item>
@@ -722,15 +735,15 @@ Alternatively you can use an existing profile. Just uncheck &quot;Create a new p
  </widget>
  <customwidgets>
   <customwidget>
+   <class>StyledLabel</class>
+   <extends>QLabel</extends>
+   <header>gui/common/StyledLabel.h</header>
+  </customwidget>
+  <customwidget>
    <class>HeaderFrame</class>
    <extends>QFrame</extends>
    <header>gui/common/HeaderFrame.h</header>
    <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>StyledLabel</class>
-   <extends>QLabel</extends>
-   <header>gui/common/StyledLabel.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>
@@ -749,8 +762,8 @@ Alternatively you can use an existing profile. Just uncheck &quot;Create a new p
   <tabstop>hiddenport_spinBox</tabstop>
  </tabstops>
  <resources>
-  <include location="images.qrc"/>
   <include location="icons.qrc"/>
+  <include location="images.qrc"/>
  </resources>
  <connections/>
 </ui>
