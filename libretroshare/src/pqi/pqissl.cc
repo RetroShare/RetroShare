@@ -361,7 +361,11 @@ void pqissl::getCryptoParams(RsPeerCryptoParams& params)
 
 bool pqissl::actAsServer()
 {
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
 	return (bool)ssl_connection->server;
+#else
+	return (bool)SSL_is_server(ssl_connection);
+#endif
 }
 
 /* returns ...
@@ -1226,8 +1230,13 @@ int 	pqissl::Extract_Failed_SSL_Certificate()
 	RsPeerId sslid ;
 	getX509id(peercert, sslid) ;
 
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
 	RsPgpId gpgid(getX509CNString(peercert->cert_info->issuer));
 	std::string sslcn = getX509CNString(peercert->cert_info->subject);
+#else
+	RsPgpId gpgid(getX509CNString(X509_get_issuer_name(peercert)));
+	std::string sslcn = getX509CNString(X509_get_subject_name(peercert));
+#endif
 
 	AuthSSL::getAuthSSL()->FailedCertificate(peercert, gpgid,sslid,sslcn,remote_addr, false);
 	mLinkMgr->notifyDeniedConnection(gpgid, sslid, sslcn, remote_addr, false);

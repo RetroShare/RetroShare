@@ -26,6 +26,7 @@
 
 #include "pqi/pqistreamer.h"
 
+#include <sys/time.h>             // for gettimeofday
 #include <stdlib.h>               // for free, realloc, exit
 #include <string.h>               // for memcpy, memset, memcmp
 #include <time.h>                 // for NULL, time, time_t
