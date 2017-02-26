@@ -537,6 +537,7 @@ bool AEAD_chacha20_sha256(uint8_t key[32], uint8_t nonce[12],uint8_t *data,uint3
        uint8_t computed_tag[EVP_MAX_MD_SIZE];
        unsigned int md_size ;
 
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
        HMAC_CTX hmac_ctx ;
        HMAC_CTX_init(&hmac_ctx) ;
 
@@ -544,6 +545,17 @@ bool AEAD_chacha20_sha256(uint8_t key[32], uint8_t nonce[12],uint8_t *data,uint3
        HMAC_Update(&hmac_ctx,aad,aad_size) ;
        HMAC_Update(&hmac_ctx,data,data_size) ;
        HMAC_Final(&hmac_ctx,computed_tag,&md_size) ;
+#else
+       HMAC_CTX *hmac_ctx = HMAC_CTX_new();
+
+       HMAC_Init_ex(hmac_ctx,key,32,EVP_sha256(),NULL) ;
+       HMAC_Update(hmac_ctx,aad,aad_size) ;
+       HMAC_Update(hmac_ctx,data,data_size) ;
+       HMAC_Final(hmac_ctx,computed_tag,&md_size) ;
+
+       HMAC_CTX_free(hmac_ctx) ;
+       hmac_ctx=NULL;
+#endif
 
        assert(md_size >= 16);
 
@@ -556,6 +568,7 @@ bool AEAD_chacha20_sha256(uint8_t key[32], uint8_t nonce[12],uint8_t *data,uint3
        uint8_t computed_tag[EVP_MAX_MD_SIZE];
        unsigned int md_size ;
 
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
        HMAC_CTX hmac_ctx ;
        HMAC_CTX_init(&hmac_ctx) ;
 
@@ -563,6 +576,17 @@ bool AEAD_chacha20_sha256(uint8_t key[32], uint8_t nonce[12],uint8_t *data,uint3
        HMAC_Update(&hmac_ctx,aad,aad_size) ;
        HMAC_Update(&hmac_ctx,data,data_size) ;
        HMAC_Final(&hmac_ctx,computed_tag,&md_size) ;
+#else
+       HMAC_CTX *hmac_ctx = HMAC_CTX_new();
+
+       HMAC_Init_ex(hmac_ctx,key,32,EVP_sha256(),NULL) ;
+       HMAC_Update(hmac_ctx,aad,aad_size) ;
+       HMAC_Update(hmac_ctx,data,data_size) ;
+       HMAC_Final(hmac_ctx,computed_tag,&md_size) ;
+
+       HMAC_CTX_free(hmac_ctx) ;
+       hmac_ctx=NULL;
+#endif
 
        // decrypt
 

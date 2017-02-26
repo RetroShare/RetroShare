@@ -90,7 +90,28 @@ static int clear_tou_socket_error(int s);
 
 #include "tou.h"
 
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
+//static void BIO_set_shutdown(BIO *a,int s) { a->shutdown=s; }
 
+static int  BIO_get_shutdown(BIO *a) { return a->shutdown; }
+static int  BIO_get_init(BIO *a) { return a->init; }
+static void BIO_set_init(BIO *a,int i) { a->init=i; }
+static void BIO_set_data(BIO *a,void *p) { a->ptr = p; }
+#else
+typedef struct bio_method_st {
+    int type;
+    const char *name;
+    int (*bwrite) (BIO *, const char *, int);
+    int (*bread) (BIO *, char *, int);
+    int (*bputs) (BIO *, const char *);
+    int (*bgets) (BIO *, char *, int);
+    long (*ctrl) (BIO *, int, long, void *);
+    int (*create) (BIO *);
+    int (*destroy) (BIO *);
+    long (*callback_ctrl) (BIO *, int, bio_info_cb *);
+} BIO_METHOD;
+
+#endif
 
 static BIO_METHOD methods_tou_sockp=
 	{
@@ -132,10 +153,10 @@ static int tou_socket_new(BIO *bi)
 #ifdef DEBUG_TOU_BIO
 	fprintf(stderr, "tou_socket_new()\n");
 #endif
-	bi->init=0;
-	bi->num=0;
-	bi->ptr=NULL;
-	bi->flags=0;
+    BIO_set_init(bi,0) ;
+    BIO_set_data(bi,NULL) ;	// sets bi->ptr
+    BIO_set_flags(bi,0) ;
+    BIO_set_fd(bi,0,0) ;
 	return(1);
 	}
 
@@ -145,14 +166,15 @@ static int tou_socket_free(BIO *a)
 	fprintf(stderr, "tou_socket_free()\n");
 #endif
 	if (a == NULL) return(0);
-	if (a->shutdown)
+
+    if(BIO_get_shutdown(a))
 		{
-		if (a->init)
+		if(BIO_get_init(a))
 			{
-			tou_close(a->num);
+			tou_close(BIO_get_fd(a,NULL));
 			}
-		a->init=0;
-		a->flags=0;
+        BIO_set_init(a,0) ;
+        BIO_set_flags(a,0) ;
 		}
 	return(1);
 	}
@@ -166,13 +188,13 @@ static int tou_socket_read(BIO *b, char *out, int outl)
 
 	if (out != NULL)
 		{
-		clear_tou_socket_error(b->num);
+		clear_tou_socket_error(BIO_get_fd(b,NULL));
 		/* call tou library */
-		ret=tou_read(b->num,out,outl);
+		ret=tou_read(BIO_get_fd(b,NULL),out,outl);
 		BIO_clear_retry_flags(b);
 		if (ret <= 0)
 			{
-			if (BIO_tou_socket_should_retry(b->num, ret))
+			if (BIO_tou_socket_should_retry(BIO_get_fd(b,NULL), ret))
 				BIO_set_retry_read(b);
 			}
 		}
@@ -189,13 +211,13 @@ static int tou_socket_write(BIO *b, const char *in, int inl)
 	fprintf(stderr, "tou_socket_write(%p,%p,%d)\n",b,in,inl);
 #endif
 	
-	clear_tou_socket_error(b->num);
+	clear_tou_socket_error(BIO_get_fd(b,NULL));
 	/* call tou library */
-	ret=tou_write(b->num,in,inl);
+	ret=tou_write(BIO_get_fd(b,NULL),in,inl);
 	BIO_clear_retry_flags(b);
 	if (ret <= 0)
 		{
-		if (BIO_tou_socket_should_retry(b->num,ret))
+		if (BIO_tou_socket_should_retry(BIO_get_fd(b,NULL),ret))
 		{
 			BIO_set_retry_write(b);
 #ifdef DEBUG_TOU_BIO
@@ -212,10 +234,11 @@ static int tou_socket_write(BIO *b, const char *in, int inl)
 static long tou_socket_ctrl(BIO *b, int cmd, long num, void *ptr)
 	{
 	long ret=1;
-	int *ip;
 #ifdef DEBUG_TOU_BIO
 	fprintf(stderr, "tou_socket_ctrl(%p,%d,%ld)\n", b, cmd, num);
 #endif
+
+	// We are not allowed to call BIO_set_fd here, because it will trigger a callback, which re-ends here
 
 	switch (cmd)
 		{
@@ -230,34 +253,26 @@ static long tou_socket_ctrl(BIO *b, int cmd, long num, void *ptr)
 		break;
 	case BIO_C_SET_FD:
 		tou_socket_free(b);
-		b->num= *((int *)ptr);
-		b->shutdown=(int)num;
-		b->init=1;
+		ret = BIO_s_fd()->ctrl(b,cmd,num,ptr) ;
+
 		break;
 	case BIO_C_GET_FD:
-		if (b->init)
-			{
-			ip=(int *)ptr;
-			if (ip != NULL) *ip=b->num;
-			ret=b->num;
-			}
-		else
-			ret= -1;
+		ret = BIO_s_fd()->ctrl(b,cmd,num,ptr) ;
 		break;
 	case BIO_CTRL_GET_CLOSE:
-		ret=b->shutdown;
+		ret = BIO_s_fd()->ctrl(b,cmd,num,ptr) ;
 		break;
 	case BIO_CTRL_SET_CLOSE:
-		b->shutdown=(int)num;
+		ret = BIO_s_fd()->ctrl(b,cmd,num,ptr) ;
 		break;
 	case BIO_CTRL_PENDING:
-		ret = tou_maxread(b->num);
+		ret = tou_maxread(BIO_get_fd(b,NULL));
 #ifdef DEBUG_TOU_BIO
 		fprintf(stderr, "tou_pending = %ld\n", ret);
 #endif
 		break;
 	case BIO_CTRL_WPENDING:
-		ret = tou_maxwrite(b->num);
+		ret = tou_maxwrite(BIO_get_fd(b,NULL));
 #ifdef DEBUG_TOU_BIO
 		fprintf(stderr, "tou_wpending = %ld\n", ret);
 #endif
