@@ -216,6 +216,8 @@ private:
 	void notifyClientService(const OutgoingRecord& pr);
 };
 
+#ifdef TEST_RS_GXS_MAIL
+
 struct TestGxsMailClientService : GxsMailsClient, RsSingleJobThread
 {
 	TestGxsMailClientService( p3GxsMails& gxsMailService,
@@ -280,3 +282,6 @@ private:
 	p3GxsMails& mailService;
 	p3IdService& idService;
 };
+
+#endif // TEST_RS_GXS_MAIL
+
