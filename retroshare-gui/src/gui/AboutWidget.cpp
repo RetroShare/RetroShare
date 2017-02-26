@@ -225,7 +225,7 @@ void AWidget::initImages()
     //p.drawPixmap(QRect(10, 10, width()-10, 60), image);
 
     /* Draw RetroShare version */
-    p.drawText(QPointF(10, 50), QString("%1 : %2").arg(tr("RetroShare version"), Rshare::retroshareVersion(true)));
+    p.drawText(QPointF(10, 50), QString("%1 : %2").arg(tr("Retroshare version"), Rshare::retroshareVersion(true)));
 
     /* Draw Qt's version number */
     p.drawText(QPointF(10, 90), QString("Qt %1 : %2").arg(tr("version"), QT_VERSION_STR));
@@ -290,7 +290,7 @@ void AWidget::drawBitField()
 		for(int j=0;j<bh;++j)
 			if(bitfield1[i+bw*j] == 1)
                 if(mStep >= mMaxStep)
-					p.fillRect(QRect(i*s+1,j*s+1,s-2,s-2),QBrush(QColor(50,50,50)));
+					p.fillRect(QRect(i*s+1,j*s+1,s-1,s-1),QBrush(QColor(50,50,50)));
 				else
 					p.fillRect(QRect(i*s,j*s,s,s),QBrush(QColor(50,50,50)));
 
