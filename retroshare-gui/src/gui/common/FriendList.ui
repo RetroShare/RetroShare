@@ -73,12 +73,15 @@
      <property name="columnCount">
       <number>3</number>
      </property>
+     <attribute name="headerDefaultSectionSize">
+      <number>120</number>
+     </attribute>
      <attribute name="headerStretchLastSection">
       <bool>false</bool>
      </attribute>
      <column>
       <property name="text">
-       <string>Friend nodes</string>
+       <string>Trusted nodes</string>
       </property>
       <property name="textAlignment">
        <set>AlignCenter</set>
