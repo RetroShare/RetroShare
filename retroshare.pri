@@ -182,4 +182,12 @@ rs_nocppwarning {
     warning("QMAKE: You have disable C preprocessor warnings.")
 }
 
-rs_gxs_mail:DEFINES *= RS_GXS_MAIL
+rs_gxs_mail {
+    DEFINES *= RS_GXS_MAIL
+    greaterThan(QT_MAJOR_VERSION, 4) {
+        CONFIG += c++11
+    } else {
+        QMAKE_CXXFLAGS += -std=c++0x
+    }
+}
+
