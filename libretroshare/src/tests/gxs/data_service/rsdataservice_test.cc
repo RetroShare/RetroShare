@@ -335,38 +335,3 @@ void tearDown(){
 
 }
 
-
-
-bool operator ==(const RsGxsGrpMetaData& l, const RsGxsGrpMetaData& r)
-{
-    if(!(l.signSet == r.signSet)) return false;
-    if(!(l.keys == r.keys)) return false;
-    if(l.mGroupFlags != r.mGroupFlags) return false;
-    if(l.mPublishTs != r.mPublishTs) return false;
-    if(l.mAuthorId != r.mAuthorId) return false;
-    if(l.mGroupName != r.mGroupName) return false;
-    if(l.mGroupId != r.mGroupId) return false;
-    if(l.mGroupStatus != r.mGroupStatus) return false;
-    if(l.mPop != r.mPop) return false;
-    if(l.mMsgCount != r.mMsgCount) return false;
-    if(l.mSubscribeFlags != r.mSubscribeFlags) return false;
-
-    return true;
-}
-
-bool operator ==(const RsGxsMsgMetaData& l, const RsGxsMsgMetaData& r)
-{
-
-    if(!(l.signSet == r.signSet)) return false;
-    if(l.mGroupId != r.mGroupId) return false;
-    if(l.mAuthorId != r.mAuthorId) return false;
-    if(l.mParentId != r.mParentId) return false;
-    if(l.mOrigMsgId != r.mOrigMsgId) return false;
-    if(l.mThreadId != r.mThreadId) return false;
-    if(l.mMsgId != r.mMsgId) return false;
-    if(l.mMsgName != r.mMsgName) return false;
-    if(l.mPublishTs != r.mPublishTs) return false;
-    if(l.mMsgFlags != r.mMsgFlags) return false;
-
-    return true;
-}

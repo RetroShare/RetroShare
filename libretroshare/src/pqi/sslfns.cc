@@ -242,6 +242,7 @@ X509_REQ *GenerateX509Req(
 
 #define SERIAL_RAND_BITS 	64
 
+#ifdef UNUSED_CODE
 X509 *SignX509Certificate(X509_NAME *issuer, EVP_PKEY *privkey, X509_REQ *req, long days)
 {
 	const EVP_MD *digest = EVP_sha1();
@@ -369,6 +370,7 @@ X509 *SignX509Certificate(X509_NAME *issuer, EVP_PKEY *privkey, X509_REQ *req, l
 
 	return x509;
 }
+#endif
 
 /********************************************************************************/
 /********************************************************************************/
@@ -600,7 +602,14 @@ bool getX509id(X509 *x509, RsPeerId& xid)
 	}
 
 	// get the signature from the cert, and copy to the array.
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
 	ASN1_BIT_STRING *signature = x509->signature;
+#else
+	const ASN1_BIT_STRING *signature = NULL ;
+    const X509_ALGOR *algor ;
+
+    X509_get0_signature(&signature,&algor,x509);
+#endif
 	int signlen = ASN1_STRING_length(signature);
 	if (signlen < CERTSIGNLEN)
 	{
@@ -612,11 +621,13 @@ bool getX509id(X509 *x509, RsPeerId& xid)
 	}
 
 	// else copy in the first CERTSIGNLEN.
-	unsigned char *signdata = ASN1_STRING_data(signature);
+	unsigned char *signdata = ASN1_STRING_data(const_cast<ASN1_BIT_STRING*>(signature));
 
 	/* switched to the other end of the signature. for
 	 * more randomness
 	 */
+
+#warning this is cryptographically horrible. We should do a hash of the public key here!!!
 
 	xid = RsPeerId(&signdata[signlen - CERTSIGNLEN]) ;
 
@@ -689,8 +700,13 @@ int	LoadCheckX509(const char *cert_file, RsPgpId& issuerName, std::string &locat
 	if (valid)
 	{
 		// extract the name.
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
 		issuerName = RsPgpId(std::string(getX509CNString(x509->cert_info->issuer)));
 		location = getX509LocString(x509->cert_info->subject);
+#else
+		issuerName = RsPgpId(std::string(getX509CNString(X509_get_issuer_name(x509))));
+		location = getX509LocString(X509_get_subject_name(x509));
+#endif
 	}
 
 #ifdef AUTHSSL_DEBUG

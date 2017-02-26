@@ -70,24 +70,28 @@ void LocalDirectoryUpdater::setEnabled(bool b)
 void LocalDirectoryUpdater::data_tick()
 {
     time_t now = time(NULL) ;
-
-    if(now > mDelayBetweenDirectoryUpdates + mLastSweepTime)
+    if (mIsEnabled)
     {
-        if(sweepSharedDirectories())
-		{
-			mNeedsFullRecheck = false ;
-			mLastSweepTime = now;
-			mSharedDirectories->notifyTSChanged() ;
-		}
-        else
-            std::cerr << "(WW) sweepSharedDirectories() failed. Will do it again in a short time." << std::endl;
+
+        if(now > mDelayBetweenDirectoryUpdates + mLastSweepTime)
+        {
+            if(sweepSharedDirectories())
+            {
+                mNeedsFullRecheck = false;
+                mLastSweepTime = now ;
+                mSharedDirectories->notifyTSChanged();
+            }
+            else
+                std::cerr << "(WW) sweepSharedDirectories() failed. Will do it again in a short time." << std::endl;
+        }
+
+        if(now > DELAY_BETWEEN_LOCAL_DIRECTORIES_TS_UPDATE + mLastTSUpdateTime)
+        {
+            mSharedDirectories->updateTimeStamps() ;
+            mLastTSUpdateTime = now ;
+        }
     }
 
-    if(now > DELAY_BETWEEN_LOCAL_DIRECTORIES_TS_UPDATE + mLastTSUpdateTime)
-    {
-        mSharedDirectories->updateTimeStamps() ;
-        mLastTSUpdateTime = now ;
-    }
     usleep(10*1000*1000);
 }
 

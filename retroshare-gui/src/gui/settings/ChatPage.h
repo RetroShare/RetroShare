@@ -35,8 +35,6 @@ class ChatPage : public ConfigPage
       /** Default Destructor */
       ~ChatPage() {}
 
-      /** Saves the changes on this page */
-      virtual bool save(QString &errmsg);
       /** Loads the settings for this page */
       virtual void load();
 
@@ -58,10 +56,21 @@ class ChatPage : public ConfigPage
  
     void distantChatComboBoxChanged(int);
   
+    void updateFontsAndEmotes();
+    void updateChatParams();
+    void updateChatSearchParams();
+    void updateDefaultLobbyIdentity() ;
+    void updateHistoryParams();
+    void updatePublicStyle() ;
+    void updatePrivateStyle() ;
+    void updateHistoryStyle() ;
+    void updateHistoryStorage();
+    void updateChatFlags();
+    void updateChatLobbyFlags();
 
   private:
       void setPreviewMessages(QString &stylePath, QString styleVariant, QTextBrowser *textBrowser);
-      void fillPreview(QListWidget *listWidget, QComboBox *comboBox, QTextBrowser *textBrowser);
+      void fillPreview(QComboBox *listWidget, QComboBox *comboBox, QTextBrowser *textBrowser);
 
       QFont fontTempChat;
 

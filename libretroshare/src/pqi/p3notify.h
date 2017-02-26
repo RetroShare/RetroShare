@@ -124,6 +124,9 @@ class p3Notify: public RsNotify
 		bool askForPassword                   (const std::string& title, const std::string& /* key_details     */, bool               /* prev_is_bad */, std::string&, bool *cancelled /* password */ ) ;
 		bool askForPluginConfirmation         (const std::string& /* plugin_filename */, const std::string& /* plugin_file_hash */) ;
 
+        virtual bool cachePgpPassphrase       (const std::string& /* pgp_passphrase */) ;
+        virtual bool clearPgpPassphrase       () ;
+
 	private:
 
 		RsMutex noteMtx;
@@ -134,6 +137,8 @@ class p3Notify: public RsNotify
 		std::list<RsFeedItem>  pendingNewsFeed;
 
 		std::list<NotifyClient*> notifyClients ;
+
+        std::string cached_pgp_passphrase ;
 };
 
 

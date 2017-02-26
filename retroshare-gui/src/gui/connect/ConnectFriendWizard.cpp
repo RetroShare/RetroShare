@@ -42,6 +42,7 @@
 
 #include <retroshare/rsiface.h>
 #include <retroshare/rsbanlist.h>
+#include <retroshare/rsconfig.h>
 
 #include "ConnectProgressDialog.h"
 #include "gui/GetStartedDialog.h"
@@ -103,7 +104,7 @@ ConnectFriendWizard::ConnectFriendWizard(QWidget *parent) :
 	
 	ui->fr_label->hide();
 	ui->requestinfolabel->hide();
-
+	
     connect(ui->acceptNoSignGPGCheckBox,SIGNAL(toggled(bool)), ui->_options_GB,SLOT(setEnabled(bool))) ;
     connect(ui->addKeyToKeyring_CB,SIGNAL(toggled(bool)), ui->acceptNoSignGPGCheckBox,SLOT(setChecked(bool))) ;
 	
@@ -113,15 +114,36 @@ ConnectFriendWizard::ConnectFriendWizard(QWidget *parent) :
     connect(ui->aolButton, SIGNAL(clicked()), this, SLOT(inviteAol()));
     connect(ui->yandexButton, SIGNAL(clicked()), this, SLOT(inviteYandex()));
     connect(ui->emailButton, SIGNAL(clicked()), this, SLOT(runEmailClient2()));
-
+	connect(ui->toggleadvancedButton, SIGNAL(clicked()), this, SLOT(toggleAdvanced()));
     
     subject = tr("RetroShare Invitation");
     body = GetStartedDialog::GetInviteText();
 	
     body += "\n" + GetStartedDialog::GetCutBelowText();
     body += "\n\n" + QString::fromUtf8(rsPeers->GetRetroshareInvite(false).c_str());
+	
+	std::string advsetting;
+	if(rsConfig->getConfigurationOption(RS_CONFIG_ADVANCED, advsetting) && (advsetting == "YES"))
+	{
+		ui->toggleadvancedButton->setVisible(false);
+	}
+	else
+	{
+		ui->userFrame->hide(); // certificates page - top half with own cert and it's functions
+		
+		ui->horizontalLayout_13->hide(); // Advanced options - key sign, whitelist, direct source ...
+		AdvancedVisible=false;
 
-    ui->userFrame->hide();
+		ui->emailLabel->hide(); // is it ever used?
+		ui->emailEdit->hide();
+		ui->trustLabel->hide();
+		ui->trustEdit->hide();
+	}
+	
+	unsigned int onlineCount = 0, friendCount = 0;
+    rsPeers->getPeerCount (&friendCount, &onlineCount, false);
+	if(friendCount<30)
+		ui->makefriend_infolabel->hide();
   
 	updateStylesheet();
 }
@@ -962,13 +984,14 @@ void ConnectFriendWizard::friendCertChanged()
 void ConnectFriendWizard::cleanFriendCert()
 {
 	bool certValid = false;
-	QString errorMsg;
+	QString errorMsg ;
 	std::string cert = ui->friendCertEdit->toPlainText().toUtf8().constData();
 
 	if (cert.empty()) {
 		ui->friendCertCleanLabel->setPixmap(QPixmap(":/images/delete.png"));
 		ui->friendCertCleanLabel->setToolTip("");
 		ui->friendCertCleanLabel->setStyleSheet("");
+		errorMsg = tr("");
 
 	} else {
 		std::string cleanCert;
@@ -984,23 +1007,27 @@ void ConnectFriendWizard::cleanFriendCert()
 				ui->friendCertCleanLabel->setStyleSheet("");
 				connect(ui->friendCertEdit, SIGNAL(textChanged()), this, SLOT(friendCertChanged()));
 			}
+			errorMsg = tr("Certificate appears to be valid");
+			ui->friendCertCleanLabel->setPixmap(QPixmap(":/images/accepted16.png"));
 		} else {
 			if (error_code > 0) {
 				switch (error_code) {
-				case RS_PEER_CERT_CLEANING_CODE_NO_BEGIN_TAG:
-					errorMsg = tr("No or misspelled BEGIN tag found") ;
-					break ;
-				case RS_PEER_CERT_CLEANING_CODE_NO_END_TAG:
-					errorMsg = tr("No or misspelled END tag found") ;
-					break ;
-				case RS_PEER_CERT_CLEANING_CODE_NO_CHECKSUM:
-					errorMsg = tr("No checksum found (the last 5 chars should be separated by a '=' char), or no newline after tag line (e.g. line beginning with Version:)") ;
-					break ;
+				case CERTIFICATE_PARSING_ERROR_CHECKSUM_ERROR            :
+				case CERTIFICATE_PARSING_ERROR_WRONG_VERSION             :
+				case CERTIFICATE_PARSING_ERROR_SIZE_ERROR                :
+				case CERTIFICATE_PARSING_ERROR_INVALID_LOCATION_ID       :
+				case CERTIFICATE_PARSING_ERROR_INVALID_EXTERNAL_IP       :
+				case CERTIFICATE_PARSING_ERROR_INVALID_LOCAL_IP          :
+				case CERTIFICATE_PARSING_ERROR_INVALID_CHECKSUM_SECTION  :
+				case CERTIFICATE_PARSING_ERROR_UNKNOWN_SECTION_PTAG      :
+				case CERTIFICATE_PARSING_ERROR_MISSING_CHECKSUM          :
+
 				default:
-					errorMsg = tr("Fake certificate: take any real certificate, and replace some of the letters randomly") ;
+					errorMsg = tr("Not a valid Retroshare certificate!") ;
 					ui->friendCertCleanLabel->setStyleSheet("QLabel#friendCertCleanLabel {border: 2px solid red; border-radius: 6px;}");
 				}
 			}
+			ui->friendCertCleanLabel->setPixmap(QPixmap(":/images/delete.png"));
 		}
 	}
 
@@ -1274,4 +1301,20 @@ void ConnectFriendWizard::inviteYandex()
 void ConnectFriendWizard::runEmailClient2()
 {
 	sendMail("", subject, body );
+}
+
+void ConnectFriendWizard::toggleAdvanced()
+{
+	if(AdvancedVisible)
+	{
+		ui->horizontalLayout_13->hide();
+		ui->toggleadvancedButton->setText("Show advanced options");
+		AdvancedVisible=false;
+	}
+	else
+	{
+		ui->horizontalLayout_13->show();
+		ui->toggleadvancedButton->setText("Hide advanced options");
+		AdvancedVisible=true;
+	}
 }

@@ -25,6 +25,7 @@
 #include "gui/notifyqt.h"
 #include "gui/msgs/MessageComposer.h"
 #include "gui/connect/ConnectFriendWizard.h"
+#include "gui/connect/FriendRecommendDialog.h"
 
 #if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
 #include <QUrlQuery>
@@ -60,13 +61,30 @@ HomePage::HomePage(QWidget *parent) :
     QAction *SendAction = new QAction(QIcon(),tr("Send via Email"), this);
     connect(SendAction, SIGNAL(triggered()), this, SLOT(runEmailClient()));
 		
+    QAction *RecAction = new QAction(QIcon(),tr("Recommend friends to each others"), this);
+    connect(RecAction, SIGNAL(triggered()), this, SLOT(recommendFriends()));
+
 		QMenu *menu = new QMenu();
     menu->addAction(CopyAction);
     menu->addAction(SaveAction);
     menu->addAction(SendAction);
+    menu->addAction(RecAction);
 
     ui->shareButton->setMenu(menu);
 
+    int S = QFontMetricsF(font()).height();
+ QString help_str = tr(
+ " <h1><img width=\"%1\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Welcome to Retroshare!</h1>\
+   <p>The first thing you have to do is to <b>make friends</b>. Once you create a network of Retroshare nodes, or join an existing network,\
+	  you'll be able to exchange files, chat, talk in forums, etc. </p>\
+	<div align=center>\
+	<IMG align=\"center\" width=\"%2\" src=\":/images/network_map.png\"/> \
+    </div>\
+   <p>To do so, use the current page to exchange certificates with other persons you want your Retroshare node to connect to.</p> \
+   <p>Another option is to search the internet for \"Retroshare chat servers\" (independently administrated). These servers allow you to exchange \
+	certificates with a dedicated Retroshare node, through which\
+	  you will be able to meet other people anonymously.</p> ").arg(QString::number(2*S)).arg(width()*0.5);
+             registerHelpButton(ui->helpButton,help_str,"HomePage") ;
 }
 
 HomePage::~HomePage()
@@ -107,6 +125,11 @@ static void sendMail(QString sAddress, QString sSubject, QString sBody)
 
 	/* pass the url directly to QDesktopServices::openUrl */
 	QDesktopServices::openUrl (url);
+}
+
+void HomePage::recommendFriends()
+{
+    FriendRecommendDialog::showIt() ;
 }
 
 void HomePage::runEmailClient()

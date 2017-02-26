@@ -37,8 +37,6 @@ public:
 	/** Default Destructor */
 	~SoundPage();
 
-	/** Saves the changes on this page */
-	virtual bool save(QString &errmsg);
 	/** Loads the settings for this page */
 	virtual void load();
 
@@ -52,6 +50,7 @@ private slots:
 	void defaultButtonClicked();
 	void browseButtonClicked();
 	void playButtonClicked();
+	void updateSounds();
 
 private:
 	QTreeWidgetItem *addGroup(const QString &name);

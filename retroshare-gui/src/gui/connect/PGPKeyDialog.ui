@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>990</width>
-    <height>668</height>
+    <width>1071</width>
+    <height>718</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -27,11 +27,11 @@
    <item>
     <widget class="QTabWidget" name="stabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
-       <string>PGP Key info</string>
+       <string>Profile info</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
@@ -41,7 +41,7 @@
            <item row="0" column="0">
             <widget class="QLabel" name="label_name">
              <property name="text">
-              <string>PGP name :</string>
+              <string>Name :</string>
              </property>
             </widget>
            </item>
@@ -153,7 +153,7 @@
           </font>
          </property>
          <property name="text">
-          <string>This key has signed your own PGP key</string>
+          <string>This profile has signed your own profile key</string>
          </property>
         </widget>
        </item>
@@ -197,7 +197,7 @@ p, li { white-space: pre-wrap; }
 &lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;Signing a friend's key is a way to express your trust into this friend, to your other friends. It helps them to decide whether to allow connections from that key based on your own trust. Signing a key is absolutely optional and cannot be undone, so do it wisely.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
            <property name="text">
-            <string>Sign this PGP key</string>
+            <string>Sign this key</string>
            </property>
            <property name="icon">
             <iconset resource="../images.qrc">
@@ -301,13 +301,13 @@ p, li { white-space: pre-wrap; }
      </widget>
      <widget class="QWidget" name="widget">
       <attribute name="title">
-       <string>ASCII format</string>
+       <string>PGP key</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
         <widget class="QLabel" name="label_4">
          <property name="text">
-          <string>Below is the node's PGP key. It identifies the node and all its locations. A &quot;Retroshare certificate&quot; that you can exchange in order to make friends, is in the the &quot;details&quot; of each separate location.</string>
+          <string>Below is the node's profile key in PGP ascii format. It identifies all nodes of the same profile. A &quot;Retroshare certificate&quot; that you can exchange in order to make friends, is in the the &quot;details&quot; of each separate node.</string>
          </property>
          <property name="wordWrap">
           <bool>true</bool>
@@ -348,7 +348,7 @@ p, li { white-space: pre-wrap; }
        <item>
         <widget class="QLabel" name="label_3">
          <property name="text">
-          <string>These options apply to all locations of the same node:</string>
+          <string>These options apply to all nodes of the profile:</string>
          </property>
         </widget>
        </item>

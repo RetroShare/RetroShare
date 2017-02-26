@@ -169,7 +169,7 @@ QList<int> sizes;
     </ul> </p>                                                                                                      \
   ") ;
 
-	 registerHelpButton(ui.helpButton, hlp_str) ;
+	 registerHelpButton(ui.helpButton, hlp_str,"FriendsDialog") ;
 }
 
 FriendsDialog::~FriendsDialog ()
