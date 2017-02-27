@@ -795,9 +795,9 @@ void CreateCircleDialog::loadIdentities(uint32_t token)
 		if (acceptAnonymous)
 			ok = true;
 		else if (acceptAllPGP)
-			ok = idGroup.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID ;
+			ok = idGroup.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID_kept_for_compatibility ;
 		else if (idGroup.mPgpKnown)
-			ok = idGroup.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID ;
+			ok = idGroup.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID_kept_for_compatibility ;
 
 		if (!ok) {
 #ifdef DEBUG_CREATE_CIRCLE_DIALOG 
@@ -816,7 +816,7 @@ void CreateCircleDialog::loadIdentities(uint32_t token)
 		if(idGroup.mImage.mSize == 0 || !pixmap.loadFromData(idGroup.mImage.mData, idGroup.mImage.mSize, "PNG"))
 			pixmap = QPixmap::fromImage(GxsIdDetails::makeDefaultIcon(RsGxsId(idGroup.mMeta.mGroupId))) ;
 
-		if (idGroup.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID)
+		if (idGroup.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID_kept_for_compatibility)
 		{
 			if (idGroup.mPgpKnown) {
 				RsPeerDetails details;

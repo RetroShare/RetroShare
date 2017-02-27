@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>643</width>
-    <height>146</height>
+    <width>707</width>
+    <height>180</height>
    </rect>
   </property>
   <layout class="QGridLayout" name="MsgItemGLayout">
@@ -120,7 +120,7 @@
          <property name="bottomMargin">
           <number>0</number>
          </property>
-         <item row="0" column="0" rowspan="3">
+         <item row="0" column="0" rowspan="4">
           <widget class="AvatarWidget" name="avatar">
            <property name="minimumSize">
             <size>
@@ -146,6 +146,7 @@
            </property>
            <property name="font">
             <font>
+             <pointsize>12</pointsize>
              <weight>75</weight>
              <italic>true</italic>
              <bold>true</bold>
@@ -165,7 +166,7 @@
             <enum>Qt::Horizontal</enum>
            </property>
            <property name="sizeType">
-            <enum>QSizePolicy::Preferred</enum>
+            <enum>QSizePolicy::Expanding</enum>
            </property>
            <property name="sizeHint" stdset="0">
             <size>
@@ -188,7 +189,7 @@
            </property>
           </widget>
          </item>
-         <item row="1" column="1" colspan="2">
+         <item row="2" column="1" colspan="3">
           <widget class="QLabel" name="subjectLabel">
            <property name="sizePolicy">
             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
@@ -204,8 +205,15 @@
            </property>
           </widget>
          </item>
-         <item row="2" column="1" colspan="3">
+         <item row="3" column="1" colspan="3">
           <layout class="QHBoxLayout" name="buttonHLayout">
+           <item>
+            <widget class="QPushButton" name="sendinviteButton">
+             <property name="text">
+              <string>Send Invite</string>
+             </property>
+            </widget>
+           </item>
            <item>
             <widget class="QToolButton" name="replyButton">
              <property name="focusPolicy">
@@ -225,7 +233,7 @@
               <enum>Qt::ToolButtonTextBesideIcon</enum>
              </property>
              <property name="autoRaise">
-              <bool>true</bool>
+              <bool>false</bool>
              </property>
             </widget>
            </item>
@@ -324,6 +332,123 @@
            </item>
           </layout>
          </item>
+         <item row="1" column="1" colspan="3">
+          <widget class="QFrame" name="inviteFrame">
+           <property name="palette">
+            <palette>
+             <active>
+              <colorrole role="Base">
+               <brush brushstyle="SolidPattern">
+                <color alpha="255">
+                 <red>255</red>
+                 <green>255</green>
+                 <blue>255</blue>
+                </color>
+               </brush>
+              </colorrole>
+              <colorrole role="Window">
+               <brush brushstyle="SolidPattern">
+                <color alpha="255">
+                 <red>255</red>
+                 <green>255</green>
+                 <blue>178</blue>
+                </color>
+               </brush>
+              </colorrole>
+             </active>
+             <inactive>
+              <colorrole role="Base">
+               <brush brushstyle="SolidPattern">
+                <color alpha="255">
+                 <red>255</red>
+                 <green>255</green>
+                 <blue>255</blue>
+                </color>
+               </brush>
+              </colorrole>
+              <colorrole role="Window">
+               <brush brushstyle="SolidPattern">
+                <color alpha="255">
+                 <red>255</red>
+                 <green>255</green>
+                 <blue>178</blue>
+                </color>
+               </brush>
+              </colorrole>
+             </inactive>
+             <disabled>
+              <colorrole role="Base">
+               <brush brushstyle="SolidPattern">
+                <color alpha="255">
+                 <red>255</red>
+                 <green>255</green>
+                 <blue>178</blue>
+                </color>
+               </brush>
+              </colorrole>
+              <colorrole role="Window">
+               <brush brushstyle="SolidPattern">
+                <color alpha="255">
+                 <red>255</red>
+                 <green>255</green>
+                 <blue>178</blue>
+                </color>
+               </brush>
+              </colorrole>
+             </disabled>
+            </palette>
+           </property>
+           <property name="autoFillBackground">
+            <bool>true</bool>
+           </property>
+           <property name="styleSheet">
+            <string notr="true"/>
+           </property>
+           <property name="frameShape">
+            <enum>QFrame::Box</enum>
+           </property>
+           <layout class="QHBoxLayout" name="distantFrameHLayout">
+            <property name="leftMargin">
+             <number>6</number>
+            </property>
+            <property name="topMargin">
+             <number>6</number>
+            </property>
+            <property name="rightMargin">
+             <number>6</number>
+            </property>
+            <property name="bottomMargin">
+             <number>6</number>
+            </property>
+            <item>
+             <widget class="QLabel" name="infoPixmap">
+              <property name="maximumSize">
+               <size>
+                <width>16</width>
+                <height>16</height>
+               </size>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+              <property name="pixmap">
+               <pixmap resource="../images.qrc">:/images/info16.png</pixmap>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="infoLabel">
+              <property name="text">
+               <string notr="true">You get Invite, accept request and send your own Certificate back</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
         </layout>
        </widget>
       </item>
@@ -368,6 +493,7 @@
  </customwidgets>
  <resources>
   <include location="../images.qrc"/>
+  <include location="../../../../RetroShare/RetroShare/retroshare-gui/src/gui/images.qrc"/>
  </resources>
  <connections/>
 </ui>

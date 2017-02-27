@@ -93,7 +93,7 @@ private slots:
 	void editIdentity();
 	void chatIdentity();
 	void sendMsg();
-
+  void on_closeInfoFrameButton_clicked();
 
 	void updateSelection();
 

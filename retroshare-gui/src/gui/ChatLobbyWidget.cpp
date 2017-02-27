@@ -188,7 +188,8 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WindowFlags flags)
 	                      </p>                                      \
 	                      "
                           ).arg(QString::number(2*S)).arg(QString::number(S)) ;
-	    registerHelpButton(ui.helpButton,help_str) ;
+
+	    registerHelpButton(ui.helpButton,help_str,"ChatLobbyDialog") ;
 }
 
 ChatLobbyWidget::~ChatLobbyWidget()
@@ -847,7 +848,7 @@ void ChatLobbyWidget::showBlankPage(ChatLobbyId id)
 					if( (*it).lobby_flags & RS_CHAT_LOBBY_FLAGS_PGP_SIGNED)
 						text += "\n\n"+tr("You will need to create a non anonymous identity in order to join this chat room.") ;
 					else
-						text += "\n\n"+tr("You will need to create an identity in order to join chat lobbies.") ;
+						text += "\n\n"+tr("You will need to create an identity in order to join chat rooms.") ;
 				}
 
             ui.lobbyInfoLabel->setText(text);
@@ -861,7 +862,7 @@ void ChatLobbyWidget::showBlankPage(ChatLobbyId id)
 	ui.lobbypeers_lineEdit->clear();
 	ui.lobbysec_lineEdit->clear();
 
-	QString text = tr("No chat room selected. \nSelect chat rooms at left to show details.\nDouble click lobbies to enter and chat.") ;
+	QString text = tr("No chat room selected. \nSelect chat rooms at left to show details.\nDouble click a chat room to enter and chat.") ;
 	ui.lobbyInfoLabel->setText(text) ;
 }
 

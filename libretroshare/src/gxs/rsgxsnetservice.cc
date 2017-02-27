@@ -457,45 +457,6 @@ void RsGxsNetService::cleanRejectedMessages()
             ++it ;
 }
 
-// temporary holds a map of pointers to class T, and destroys all pointers on delete.
-
-template<class T>
-class RsGxsMetaDataTemporaryMap: public std::map<RsGxsGroupId,T*>
-{
-public:
-    virtual ~RsGxsMetaDataTemporaryMap()
-    {
-        clear() ;
-    }
-
-    virtual void clear()
-    {
-        for(typename RsGxsMetaDataTemporaryMap<T>::iterator it = this->begin();it!=this->end();++it)
-            if(it->second != NULL)
-		    delete it->second ;
-
-        std::map<RsGxsGroupId,T*>::clear() ;
-    }
-};
-
-template<class T>
-class RsGxsMetaDataTemporaryMapVector: public std::vector<T*>
-{
-public:
-    virtual ~RsGxsMetaDataTemporaryMapVector()
-    {
-        clear() ;
-    }
-
-    virtual void clear()
-    {
-        for(typename RsGxsMetaDataTemporaryMapVector<T>::iterator it = this->begin();it!=this->end();++it)
-            if(it->second != NULL)
-		    delete it->second ;
-        std::vector<T*>::clear() ;
-    }
-};
-
 RsGxsGroupId RsGxsNetService::hashGrpId(const RsGxsGroupId& gid,const RsPeerId& pid)
 {
     static const uint32_t SIZE = RsGxsGroupId::SIZE_IN_BYTES + RsPeerId::SIZE_IN_BYTES ;
@@ -4218,6 +4179,7 @@ void RsGxsNetService::handleRecvSyncMessage(RsNxsSyncMsgReqItem *item,bool item_
 						delete *it ;
 
 					itemL.clear() ;
+					delete mItem ;
 					break ;
 				}
 			}

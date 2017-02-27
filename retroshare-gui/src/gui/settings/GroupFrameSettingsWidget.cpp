@@ -1,5 +1,6 @@
 #include <iostream>
 
+#include "gui/notifyqt.h"
 #include "GroupFrameSettingsWidget.h"
 #include "ui_GroupFrameSettingsWidget.h"
 
@@ -55,5 +56,7 @@ void GroupFrameSettingsWidget::saveSettings()
 		groupFrameSettings.mHideTabBarWithOneTab = ui->hideTabBarWithOneTabCheckBox->isChecked();
 
 		Settings->setGroupFrameSettings(mType, groupFrameSettings);
+
+		NotifyQt::getInstance()->notifySettingsChanged();
 	}
 }

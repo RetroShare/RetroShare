@@ -123,7 +123,8 @@ public:
     	StatusShowOpMode   = 0x0a,
     	StatusShowSound    = 0x0b,
     	StatusShowToaster  = 0x0c,
-    	StatusShowSystray  = 0x0d
+    	StatusShowSystray  = 0x0d,
+    	StatusShowCBox     = 0x0e
     };
 
     /** Create main window */

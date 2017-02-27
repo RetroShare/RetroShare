@@ -49,6 +49,70 @@ void freeAndClearContainerResource(Container container)
 	container.clear();
 }
 
+// temporary holds a map of pointers to class T, and destroys all pointers on delete.
+
+template<class T>
+class RsGxsMetaDataTemporaryMap: public std::map<RsGxsGroupId,T*>
+{
+public:
+    virtual ~RsGxsMetaDataTemporaryMap()
+    {
+        clear() ;
+    }
+
+    virtual void clear()
+    {
+        for(typename RsGxsMetaDataTemporaryMap<T>::iterator it = this->begin();it!=this->end();++it)
+            if(it->second != NULL)
+		    delete it->second ;
+
+        std::map<RsGxsGroupId,T*>::clear() ;
+    }
+};
+
+template<class T>
+class RsGxsMetaDataTemporaryMapVector: public std::map<RsGxsGroupId,std::vector<T*> >
+{
+public:
+    virtual ~RsGxsMetaDataTemporaryMapVector()
+    {
+        clear() ;
+    }
+
+    virtual void clear()
+    {
+        for(typename RsGxsMetaDataTemporaryMapVector<T>::iterator it = this->begin();it!=this->end();++it)
+        {
+            for(uint32_t i=0;i<it->second.size();++i)
+				delete it->second[i] ;
+
+            it->second.clear();
+        }
+
+        std::map<RsGxsGroupId,std::vector<T*> >::clear() ;
+    }
+};
+#ifdef UNUSED
+template<class T>
+class RsGxsMetaDataTemporaryMapVector: public std::vector<T*>
+{
+public:
+    virtual ~RsGxsMetaDataTemporaryMapVector()
+    {
+        clear() ;
+    }
+
+    virtual void clear()
+    {
+        for(typename RsGxsMetaDataTemporaryMapVector<T>::iterator it = this->begin();it!=this->end();++it)
+            if(it->second != NULL)
+		    delete it->second ;
+        std::vector<T*>::clear() ;
+    }
+};
+#endif
+
+
 inline RsGxsGrpMsgIdPair getMsgIdPair(RsNxsMsg& msg)
 {
 	return RsGxsGrpMsgIdPair(std::make_pair(msg.grpId, msg.msgId));
