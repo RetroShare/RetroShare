@@ -27,7 +27,7 @@ call "%~dp0tools\prepare-tools.bat"
 if errorlevel 1 exit /B %ERRORLEVEL%
 
 :: Add MinGit to PATH
-set PATH=%EnvToolsPath%\MinGit\cmd;%PATH%
+set PATH=%EnvToolsPath%\MinGit\cmd;%EnvToolsPath%\cmake\bin;%PATH%
 set HOME=%EnvToolsPath%\MinGit\home
 
 exit /B 0

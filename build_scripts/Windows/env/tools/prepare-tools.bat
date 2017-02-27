@@ -24,6 +24,10 @@ set MinGitUrl=https://github.com/git-for-windows/git/releases/download/v2.28.0.w
 set MinGitInstallPath=%EnvToolsPath%\MinGit
 set SigcheckInstall=Sigcheck.zip
 set SigcheckUrl=https://download.sysinternals.com/files/%SigcheckInstall%
+set CMakeVersion=cmake-3.1.0-win32-x86
+set CMakeInstall=%CMakeVersion%.zip
+set CMakeUrl=http://www.cmake.org/files/v3.1/%CMakeInstall%
+set CMakeInstallPath=%EnvToolsPath%\cmake
 
 if not exist "%EnvToolsPath%\wget.exe" (
 	echo Download Wget installation
@@ -183,6 +187,25 @@ if not exist "%EnvToolsPath%\sigcheck.exe" (
 
 	%cecho% info "Unpack Sigcheck"
 	"%EnvSevenZipExe%" x -o"%EnvToolsPath%" "%EnvDownloadPath%\%SigcheckInstall%" sigcheck.exe
+)
+
+if not exist "%EnvDownloadPath%\%CMakeInstall%" call "%ToolsPath%\remove-dir.bat" "%CMakeInstallPath%"
+if not exist "%CMakeInstallPath%\bin\cmake.exe" (
+	%cecho% info "Download CMake installation"
+
+	if exist "%CMakeInstallPath%" call "%ToolsPath%\remove-dir.bat" "%CMakeInstallPath%"
+
+	mkdir "%EnvTempPath%"
+
+	if not exist "%EnvDownloadPath%\%CMakeInstall%" call "%ToolsPath%\download-file.bat" "%CMakeUrl%" "%EnvDownloadPath%\%CMakeInstall%"
+	if not exist "%EnvDownloadPath%\%CMakeInstall%" %cecho% error "Cannot download CMake installation" & goto error
+
+	%cecho% info "Unpack CMake"
+	"%EnvSevenZipExe%" x -o"%EnvTempPath%" "%EnvDownloadPath%\%CMakeInstall%"
+
+	move "%EnvTempPath%\%CMakeVersion%" "%CMakeInstallPath%"
+
+	call "%ToolsPath%\remove-dir.bat" "%EnvTempPath%"
 )
 
 :exit

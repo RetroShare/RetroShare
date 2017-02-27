@@ -67,13 +67,14 @@ call "%ToolsPath%\get-qt-version.bat" QtVersion
 if "%QtVersion%"=="" %cecho% error "Cannot get Qt version." & exit /B 1
 
 :: Get gcc versions
-call "%ToolsPath%\get-gcc-version.bat" GCCVersion
+call "%ToolsPath%\get-gcc-version.bat" GCCVersion GCCArchitecture
 if "%GCCVersion%"=="" %cecho% error "Cannot get gcc version." & exit /B 1
+if "%GCCArchitecture%"=="" %cecho% error "Cannot get gcc architecture." & exit /B 1
 
-set BuildLibsPath=%EnvRootPath%\build-libs\gcc-%GCCVersion%
+set BuildLibsPath=%EnvRootPath%\build-libs\gcc-%GCCVersion%\%GCCArchitecture%
 
-set RsBuildPath=%BuildPath%\Qt-%QtVersion%-%RsBuildConfig%
-set RsDeployPath=%DeployPath%\Qt-%QtVersion%%RsType%-%RsBuildConfig%
+set RsBuildPath=%BuildPath%\Qt-%QtVersion%-%GCCArchitecture%-%RsBuildConfig%
+set RsDeployPath=%DeployPath%\Qt-%QtVersion%%RsType%-%GCCArchitecture%-%RsBuildConfig%
 set RsPackPath=%DeployPath%
 set RsArchiveAdd=
 
