@@ -172,8 +172,12 @@ private:
 
 	/**
 	 * @brief Ingoing mail and receipt processing queue.
-	 * Items are saved in config and then deleted in destructor for consistence
-	 * accross RetroShare shutdowns.
+	 * At shutdown remaining items are saved in config and then deleted in
+	 * destructor for consistence accross RetroShare instances.
+	 * In order to avoid malicious messages ( non malicious collision has 1/2^64
+	 * probablity ) to smash items in the queue thus causing previous incoming
+	 * item to not being processed and memleaked multimap is used instead of map
+	 * for incoming queue.
 	 */
 	typedef std::unordered_multimap<RsGxsMailId, RsGxsMailBaseItem*> inMap;
 	inMap ingoingQueue;
