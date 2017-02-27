@@ -88,7 +88,7 @@ GeneralPage::GeneralPage(QWidget * parent, Qt::WindowFlags flags) :
     connect(ui.autoLogin,                                   SIGNAL(toggled(bool)),     this,SLOT(updateAutoLogin())) ;
     connect(ui.chkRunRetroshareAtSystemStartup,             SIGNAL(toggled(bool)),     this,SLOT(updateRunRSOnBoot())) ;
     connect(ui.chkRunRetroshareAtSystemStartupMinimized,    SIGNAL(toggled(bool)),     this,SLOT(updateRunRSOnBoot())) ;
-    connect(ui.runStartWizard_PB,                           SIGNAL(clicked()),         this,SLOT(runStartWizard())) ;
+    //connect(ui.runStartWizard_PB,                           SIGNAL(clicked()),         this,SLOT(runStartWizard())) ;
     connect(ui.checkAdvanced,                               SIGNAL(toggled(bool)),     this,SLOT(updateAdvancedMode())) ;
     connect(ui.registerRetroShareProtocol,                  SIGNAL(toggled(bool)),     this,SLOT(updateRegisterRSProtocol())) ;
 }
