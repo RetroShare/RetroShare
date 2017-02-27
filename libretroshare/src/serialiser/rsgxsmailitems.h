@@ -29,9 +29,10 @@
 /// Subservices identifiers (like port for TCP)
 enum class GxsMailSubServices : uint16_t
 {
-	UNKNOWN = 0,
-	TEST_SERVICE = 1,
-	P3_MSG_SERVICE = 2
+	UNKNOWN         = 0,
+	TEST_SERVICE    = 1,
+	P3_MSG_SERVICE  = 2,
+	P3_CHAT_SERVICE = 3
 };
 
 /// Values must fit into uint8_t

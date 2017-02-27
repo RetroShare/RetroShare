@@ -75,6 +75,7 @@ const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_SIGNED_MSG     	  = 0x17 ;
 const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_SIGNED_EVENT      = 0x18 ;
 const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_LIST              = 0x19 ;
 const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_INVITE       	  = 0x1A ;
+const uint8_t RS_PKT_SUBTYPE_OUTGOING_MAP                 = 0x1B ;
 
 typedef uint64_t 		ChatLobbyId ;
 typedef uint64_t 		ChatLobbyMsgId ;
@@ -286,30 +287,32 @@ class RsChatLobbyInviteItem: public RsChatItem
  * For saving incoming and outgoing chat msgs
  * @see p3ChatService
  */
-class RsPrivateChatMsgConfigItem: public RsChatItem
+struct RsPrivateChatMsgConfigItem : RsChatItem
 {
-	public:
-		RsPrivateChatMsgConfigItem() :RsChatItem(RS_PKT_SUBTYPE_PRIVATECHATMSG_CONFIG) {}
-		RsPrivateChatMsgConfigItem(void *data,uint32_t size) ; // deserialization
+	RsPrivateChatMsgConfigItem() :RsChatItem(RS_PKT_SUBTYPE_PRIVATECHATMSG_CONFIG) {}
+	RsPrivateChatMsgConfigItem(void *data,uint32_t size) ; // deserialization
 
-		virtual ~RsPrivateChatMsgConfigItem() {}
-		virtual void clear() {}
-		virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
+	virtual ~RsPrivateChatMsgConfigItem() {}
+	virtual void clear() {}
+	virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
 
-		virtual bool serialise(void *data,uint32_t& size) ;	// Isn't it better that items can serialize themselves ?
-		virtual uint32_t serial_size() ; 							// deserialise is handled using a constructor
+	virtual bool serialise(void *data,uint32_t& size);
+	virtual uint32_t serial_size();
+	/* Deserialize is handled using a constructor,it would be better have a
+	 * deserialize method as constructor cannot fails while deserialization can.
+	 */
 
-		/* set data from RsChatMsgItem to RsPrivateChatMsgConfigItem */
-		void set(RsChatMsgItem *ci, const RsPeerId &peerId, uint32_t confFlags);
-		/* get data from RsPrivateChatMsgConfigItem to RsChatMsgItem */
-		void get(RsChatMsgItem *ci);
+	/* set data from RsChatMsgItem to RsPrivateChatMsgConfigItem */
+	void set(RsChatMsgItem *ci, const RsPeerId &peerId, uint32_t confFlags);
+	/* get data from RsPrivateChatMsgConfigItem to RsChatMsgItem */
+	void get(RsChatMsgItem *ci);
 
-		RsPeerId configPeerId;
-		uint32_t chatFlags;
-		uint32_t configFlags;
-		uint32_t sendTime;
-		std::string message;
-		uint32_t recvTime;
+	RsPeerId configPeerId;
+	uint32_t chatFlags;
+	uint32_t configFlags;
+	uint32_t sendTime;
+	std::string message;
+	uint32_t recvTime;
 };
 class RsPrivateChatDistantInviteConfigItem: public RsChatItem
 {
@@ -411,6 +414,126 @@ class RsChatDHPublicKeyItem: public RsChatItem
 	private:
 		RsChatDHPublicKeyItem(const RsChatDHPublicKeyItem&) : RsChatItem(RS_PKT_SUBTYPE_DISTANT_CHAT_DH_PUBLIC_KEY) {}						// make the object non copy-able
 		const RsChatDHPublicKeyItem& operator=(const RsChatDHPublicKeyItem&) { return *this ;}
+};
+
+
+struct PrivateOugoingMapItem : RsChatItem
+{
+	PrivateOugoingMapItem() : RsChatItem(RS_PKT_SUBTYPE_OUTGOING_MAP) {}
+
+	uint32_t serial_size()
+	{
+		uint32_t s = 8; /* header */
+		s += 4; // number of entries
+		for( auto entry : store )
+		{
+			s += 8; // key size
+			s += entry.second.serial_size();
+		}
+		return s;
+	}
+	bool serialise(void* data, uint32_t& pktsize)
+	{
+		uint32_t tlvsize = serial_size();
+		uint32_t offset = 0;
+
+		if (pktsize < tlvsize) return false; /* not enough space */
+
+		pktsize = tlvsize;
+
+		bool ok = true;
+
+		ok = ok && setRsItemHeader(data, tlvsize, PacketId(), tlvsize)
+		        && (offset += 8);
+
+		ok = ok && setRawUInt32(data, tlvsize, &offset, store.size());
+
+		for( auto entry : store )
+		{
+			ok = ok && setRawUInt64(data, tlvsize, &offset, entry.first);
+
+			uint8_t* hdrPtr = static_cast<uint8_t*>(data) + offset;
+			uint32_t tmpsize = entry.second.serial_size();
+			ok = ok && entry.second.serialise(hdrPtr, tmpsize);
+		}
+
+		if (offset != tlvsize)
+		{
+			ok = false;
+			std::cerr << "PrivateOugoingMapItem::serialise() Size Error!"
+			          << std::endl;
+		}
+
+		return ok;
+	}
+	PrivateOugoingMapItem* deserialise(const uint8_t* data, uint32_t& pktsize)
+	{
+		/* get the type and size */
+		uint8_t* dataPtr = const_cast<uint8_t*>(data);
+		uint32_t rstype = getRsItemId(dataPtr);
+		uint32_t rssize = getRsItemSize(dataPtr);
+
+		uint32_t offset = 0;
+
+		if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
+		        (RS_SERVICE_TYPE_CHAT != getRsItemService(rstype)) ||
+		        (RS_PKT_SUBTYPE_OUTGOING_MAP != getRsItemSubType(rstype))
+		        ) return NULL; /* wrong type */
+
+		if (pktsize < rssize) return NULL; /* check size not enough data */
+
+		/* set the packet length */
+		pktsize = rssize;
+
+		bool ok = true;
+
+		/* ready to load */
+		PrivateOugoingMapItem* item = new PrivateOugoingMapItem();
+
+		/* skip the header */
+		offset += 8;
+
+		// get map size first */
+		uint32_t s = 0;
+		ok = ok && getRawUInt32(dataPtr, rssize, &offset, &s);
+
+		for(uint32_t i=0; i<s && ok; ++i)
+		{
+			uint64_t msgId;
+
+			ok = ok && getRawUInt64(dataPtr, rssize, &offset, &msgId);
+
+			uint8_t* hdrPtr = const_cast<uint8_t*>(data); hdrPtr += offset;
+			uint32_t tmpSize = getRsItemSize(hdrPtr);
+			RsChatMsgItem msgItem(hdrPtr, tmpSize);
+			item->store.insert(std::make_pair(msgId, msgItem));
+		}
+
+		if (offset != rssize)
+		{
+			/* error */
+			std::cerr << "(EE) size error in packet deserialisation: p3MsgItem,"
+			          << " subtype " << getRsItemSubType(rstype) << ". offset="
+			          << offset << " != rssize=" << rssize << std::endl;
+			delete item;
+			return NULL;
+		}
+
+		if (!ok)
+		{
+			std::cerr << "(EE) size error in packet deserialisation: p3MsgItem,"
+			          << " subtype " << getRsItemSubType(rstype) << std::endl;
+			delete item;
+			return NULL;
+		}
+
+		return item;
+	}
+
+	virtual std::ostream& print(std::ostream &out, uint16_t /*indent*/ = 0)
+	{ return out << "PrivateOugoingMapItem store size: " << store.size(); }
+
+	std::map<uint64_t, RsChatMsgItem> store;
 };
 
 class RsChatSerialiser: public RsSerialType
