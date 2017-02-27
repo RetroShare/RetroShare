@@ -30,6 +30,7 @@
 #include <rshare.h>
 #include "AppearancePage.h"
 #include "rsharesettings.h"
+#include "util/misc.h"
 #include "gui/MainWindow.h"
 #include "gui/notifyqt.h"
 #include "gui/statusbar/peerstatus.h"
@@ -222,56 +223,56 @@ void AppearancePage::updateStyle() { Rshare::setStyle(ui.cmboStyle->currentText(
 void AppearancePage::load()
 {
 	int index = ui.cmboLanguage->findData(Settings->getLanguageCode());
-	ui.cmboLanguage->setCurrentIndex(index);
+	whileBlocking(ui.cmboLanguage)->setCurrentIndex(index);
 
 	index = ui.cmboStyle->findData(Rshare::style().toLower());
-	ui.cmboStyle->setCurrentIndex(index);
+	whileBlocking(ui.cmboStyle)->setCurrentIndex(index);
 
 	index = ui.cmboStyleSheet->findData(Settings->getSheetName());
 	if (index == -1) {
 		/* set standard "no style sheet" */
 		index = ui.cmboStyleSheet->findData("");
 	}
-	ui.cmboStyleSheet->setCurrentIndex(index);
+	whileBlocking(ui.cmboStyleSheet)->setCurrentIndex(index);
 
-	ui.mainPageButtonType_CB->setCurrentIndex(!Settings->getPageButtonLoc());
+	whileBlocking(ui.mainPageButtonType_CB)->setCurrentIndex(!Settings->getPageButtonLoc());
 //	ui.menuItemsButtonType_CB->setCurrentIndex(!Settings->getActionButtonLoc());
 
 	switch (Settings->getToolButtonStyle())
 	{
 		case Qt::ToolButtonIconOnly:
-			ui.cmboTollButtonsStyle->setCurrentIndex(0);
+			whileBlocking(ui.cmboTollButtonsStyle)->setCurrentIndex(0);
 		break;
 		case Qt::ToolButtonTextOnly:
-			ui.cmboTollButtonsStyle->setCurrentIndex(1);
+			whileBlocking(ui.cmboTollButtonsStyle)->setCurrentIndex(1);
 		break;
 		case Qt::ToolButtonTextBesideIcon:
-			ui.cmboTollButtonsStyle->setCurrentIndex(2);
+			whileBlocking(ui.cmboTollButtonsStyle)->setCurrentIndex(2);
 		break;
 		case Qt::ToolButtonTextUnderIcon:
 		default:
-			ui.cmboTollButtonsStyle->setCurrentIndex(3);
+			whileBlocking(ui.cmboTollButtonsStyle)->setCurrentIndex(3);
 	}
 	switch (Settings->getToolButtonSize())
 	{
 		case 8:
-			ui.cmboTollButtonsSize->setCurrentIndex(0);
+			whileBlocking(ui.cmboTollButtonsSize)->setCurrentIndex(0);
 		break;
 		case 16:
-			ui.cmboTollButtonsSize->setCurrentIndex(1);
+			whileBlocking(ui.cmboTollButtonsSize)->setCurrentIndex(1);
 		break;
 		case 24:
 		default:
-			ui.cmboTollButtonsSize->setCurrentIndex(2);
+			whileBlocking(ui.cmboTollButtonsSize)->setCurrentIndex(2);
 		break;
 		case 32:
-			ui.cmboTollButtonsSize->setCurrentIndex(3);
+			whileBlocking(ui.cmboTollButtonsSize)->setCurrentIndex(3);
         break;
         case 64:
-            ui.cmboTollButtonsSize->setCurrentIndex(4);
+            whileBlocking(ui.cmboTollButtonsSize)->setCurrentIndex(4);
         break;
         case 128:
-            ui.cmboTollButtonsSize->setCurrentIndex(5);
+            whileBlocking(ui.cmboTollButtonsSize)->setCurrentIndex(5);
     }
 //	switch (Settings->getListItemIconSize())
 //	{
@@ -295,20 +296,20 @@ void AppearancePage::load()
 //            ui.cmboListItemSize->setCurrentIndex(5);
 //    }
 
-	ui.grpStatus->setChecked(Settings->valueFromGroup("StatusBar", "ShowStatusBar", QVariant(true)).toBool());
-	ui.checkBoxStatusCompactMode->setChecked(Settings->valueFromGroup("StatusBar", "CompactMode", QVariant(false)).toBool());
-	ui.checkBoxDisableSysTrayToolTip->setChecked(Settings->valueFromGroup("StatusBar", "DisableSysTrayToolTip", QVariant(false)).toBool());
-	ui.checkBoxShowStatusStatus->  setChecked(Settings->valueFromGroup("StatusBar", "ShowStatus",  QVariant(true)).toBool());
-	ui.checkBoxShowPeerStatus->    setChecked(Settings->valueFromGroup("StatusBar", "ShowPeer",    QVariant(true)).toBool());
-	ui.checkBoxShowNATStatus->     setChecked(Settings->valueFromGroup("StatusBar", "ShowNAT",     QVariant(true)).toBool());
-	ui.checkBoxShowDHTStatus->     setChecked(Settings->valueFromGroup("StatusBar", "ShowDHT",     QVariant(true)).toBool());
-	ui.checkBoxShowHashingStatus-> setChecked(Settings->valueFromGroup("StatusBar", "ShowHashing", QVariant(true)).toBool());
-	ui.checkBoxShowDiscStatus->    setChecked(Settings->valueFromGroup("StatusBar", "Show eDisc",  QVariant(true)).toBool());
-	ui.checkBoxShowRateStatus->    setChecked(Settings->valueFromGroup("StatusBar", "ShowRate",    QVariant(true)).toBool());
-	ui.checkBoxShowOpModeStatus->  setChecked(Settings->valueFromGroup("StatusBar", "ShowOpMode",  QVariant(true)).toBool());
-	ui.checkBoxShowSoundStatus->   setChecked(Settings->valueFromGroup("StatusBar", "ShowSound",   QVariant(true)).toBool());
-	ui.checkBoxShowToasterDisable->setChecked(Settings->valueFromGroup("StatusBar", "ShowToaster", QVariant(true)).toBool());
-	ui.checkBoxShowSystrayOnStatus->setChecked(Settings->valueFromGroup("StatusBar", "ShowSysTrayOnStatusBar", QVariant(false)).toBool());
+	whileBlocking(ui.grpStatus)->setChecked(Settings->valueFromGroup("StatusBar", "ShowStatusBar", QVariant(true)).toBool());
+	whileBlocking(ui.checkBoxStatusCompactMode)->setChecked(Settings->valueFromGroup("StatusBar", "CompactMode", QVariant(false)).toBool());
+	whileBlocking(ui.checkBoxDisableSysTrayToolTip)->setChecked(Settings->valueFromGroup("StatusBar", "DisableSysTrayToolTip", QVariant(false)).toBool());
+	whileBlocking(ui.checkBoxShowStatusStatus)->  setChecked(Settings->valueFromGroup("StatusBar", "ShowStatus",  QVariant(true)).toBool());
+	whileBlocking(ui.checkBoxShowPeerStatus)->    setChecked(Settings->valueFromGroup("StatusBar", "ShowPeer",    QVariant(true)).toBool());
+	whileBlocking(ui.checkBoxShowNATStatus)->     setChecked(Settings->valueFromGroup("StatusBar", "ShowNAT",     QVariant(true)).toBool());
+	whileBlocking(ui.checkBoxShowDHTStatus)->     setChecked(Settings->valueFromGroup("StatusBar", "ShowDHT",     QVariant(true)).toBool());
+	whileBlocking(ui.checkBoxShowHashingStatus)-> setChecked(Settings->valueFromGroup("StatusBar", "ShowHashing", QVariant(true)).toBool());
+	whileBlocking(ui.checkBoxShowDiscStatus)->    setChecked(Settings->valueFromGroup("StatusBar", "Show eDisc",  QVariant(true)).toBool());
+	whileBlocking(ui.checkBoxShowRateStatus)->    setChecked(Settings->valueFromGroup("StatusBar", "ShowRate",    QVariant(true)).toBool());
+	whileBlocking(ui.checkBoxShowOpModeStatus)->  setChecked(Settings->valueFromGroup("StatusBar", "ShowOpMode",  QVariant(true)).toBool());
+	whileBlocking(ui.checkBoxShowSoundStatus)->   setChecked(Settings->valueFromGroup("StatusBar", "ShowSound",   QVariant(true)).toBool());
+	whileBlocking(ui.checkBoxShowToasterDisable)->setChecked(Settings->valueFromGroup("StatusBar", "ShowToaster", QVariant(true)).toBool());
+	whileBlocking(ui.checkBoxShowSystrayOnStatus)->setChecked(Settings->valueFromGroup("StatusBar", "ShowSysTrayOnStatusBar", QVariant(false)).toBool());
 
 }
 

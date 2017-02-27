@@ -27,6 +27,7 @@
 
 #include "GeneralPage.h"
 #include <util/stringutil.h>
+#include <util/misc.h>
 #include <QSystemTrayIcon>
 #include "rsharesettings.h"
 #include <gui/QuickStartWizard.h>
@@ -157,7 +158,7 @@ void GeneralPage::load()
   ui.chkRunRetroshareAtSystemStartupMinimized->setChecked(minimized);
 #endif
 
-  ui.checkStartMinimized->setChecked(Settings->getStartMinimized());
+  whileBlocking(ui.checkStartMinimized)->setChecked(Settings->getStartMinimized());
 
   bool advancedmode = false;
   std::string advsetting;
@@ -165,13 +166,13 @@ void GeneralPage::load()
   {
     advancedmode = true;
   }
-  ui.checkAdvanced->setChecked(advancedmode);
+  whileBlocking(ui.checkAdvanced)->setChecked(advancedmode);
 
-  ui.checkQuit->setChecked(Settings->value("doQuit", false).toBool());
-  ui.checkCloseToTray->setChecked(Settings->getCloseToTray());
-  ui.autoLogin->setChecked(RsInit::getAutoLogin());
-  ui.registerRetroShareProtocol->setChecked(Settings->getRetroShareProtocol());
-  ui.useLocalServer->setChecked(Settings->getUseLocalServer());
+  whileBlocking(ui.checkQuit)->setChecked(Settings->value("doQuit", false).toBool());
+  whileBlocking(ui.checkCloseToTray)->setChecked(Settings->getCloseToTray());
+  whileBlocking(ui.autoLogin)->setChecked(RsInit::getAutoLogin());
+  whileBlocking(ui.registerRetroShareProtocol)->setChecked(Settings->getRetroShareProtocol());
+  whileBlocking(ui.useLocalServer)->setChecked(Settings->getUseLocalServer());
 
-  ui.idleSpinBox->setValue(Settings->getMaxTimeBeforeIdle());
+  whileBlocking(ui.idleSpinBox)->setValue(Settings->getMaxTimeBeforeIdle());
 }

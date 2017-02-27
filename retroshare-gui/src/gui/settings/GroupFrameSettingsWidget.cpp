@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include "gui/notifyqt.h"
+#include "util/misc.h"
 #include "GroupFrameSettingsWidget.h"
 #include "ui_GroupFrameSettingsWidget.h"
 
@@ -33,8 +34,8 @@ void GroupFrameSettingsWidget::loadSettings(GroupFrameSettings::Type type)
 
 	GroupFrameSettings groupFrameSettings;
 	if (Settings->getGroupFrameSettings(type, groupFrameSettings)) {
-		ui->openAllInNewTabCheckBox->setChecked(groupFrameSettings.mOpenAllInNewTab);
-		ui->hideTabBarWithOneTabCheckBox->setChecked(groupFrameSettings.mHideTabBarWithOneTab);
+		whileBlocking(ui->openAllInNewTabCheckBox)->setChecked(groupFrameSettings.mOpenAllInNewTab);
+		whileBlocking(ui->hideTabBarWithOneTabCheckBox)->setChecked(groupFrameSettings.mHideTabBarWithOneTab);
 	} else {
 		hide();
 		mEnable = false;

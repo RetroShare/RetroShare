@@ -20,6 +20,7 @@
  ****************************************************************/
 
 #include "ForumPage.h"
+#include "util/misc.h"
 #include "rsharesettings.h"
 
 ForumPage::ForumPage(QWidget * parent, Qt::WindowFlags flags)
@@ -51,10 +52,10 @@ void ForumPage::updateLoadEmoticons()		{ Settings->setForumLoadEmoticons(       
 /** Loads the settings for this page */
 void ForumPage::load()
 {
-	ui.setMsgToReadOnActivate->setChecked(Settings->getForumMsgSetToReadOnActivate());
-	ui.expandNewMessages->setChecked(Settings->getForumExpandNewMessages());
-	ui.loadEmbeddedImages->setChecked(Settings->getForumLoadEmbeddedImages());
-	ui.loadEmoticons->setChecked(Settings->getForumLoadEmoticons());
+	whileBlocking(ui.setMsgToReadOnActivate)->setChecked(Settings->getForumMsgSetToReadOnActivate());
+	whileBlocking(ui.expandNewMessages)->setChecked(Settings->getForumExpandNewMessages());
+	whileBlocking(ui.loadEmbeddedImages)->setChecked(Settings->getForumLoadEmbeddedImages());
+	whileBlocking(ui.loadEmoticons)->setChecked(Settings->getForumLoadEmoticons());
 
 	ui.groupFrameSettingsWidget->loadSettings(GroupFrameSettings::Forum);
 }
