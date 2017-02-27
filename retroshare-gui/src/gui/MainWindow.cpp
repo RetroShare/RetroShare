@@ -425,6 +425,18 @@ void MainWindow::initStackedPage()
       addPage(getStartedPage = new GetStartedDialog(ui->stackPages), grp, NULL);
   }
 #endif
+
+  //List All notify before Setting was created
+  QList<QPair<MainPage*, QPair<QAction*, QListWidgetItem*> > >::iterator notifyIt;
+  for (notifyIt = notify.begin(); notifyIt != notify.end(); ++notifyIt) {
+      UserNotify *userNotify = notifyIt->first->getUserNotify(this);
+      if (userNotify) {
+          userNotify->initialize(ui->toolBarPage, notifyIt->second.first, notifyIt->second.second);
+          connect(userNotify, SIGNAL(countChanged()), this, SLOT(updateTrayCombine()));
+          userNotifyList.push_back(userNotify);
+      }
+  }
+
   addPage(settingsDialog = new SettingsPage(ui->stackPages),grp,&notify);
 
   /* Create the toolbar */
@@ -448,16 +460,6 @@ void MainWindow::initStackedPage()
   //addAction(new QAction(QIcon(IMAGE_ABOUT), tr("About"), ui->toolBarAction), &MainWindow::showabout, SLOT(showabout()));
 
   addAction(new QAction(QIcon(IMAGE_QUIT), tr("Quit"), ui->toolBarAction), &MainWindow::doQuit, SLOT(doQuit()));
-
-  QList<QPair<MainPage*, QPair<QAction*, QListWidgetItem*> > >::iterator notifyIt;
-  for (notifyIt = notify.begin(); notifyIt != notify.end(); ++notifyIt) {
-      UserNotify *userNotify = notifyIt->first->getUserNotify(this);
-      if (userNotify) {
-          userNotify->initialize(ui->toolBarPage, notifyIt->second.first, notifyIt->second.second);
-          connect(userNotify, SIGNAL(countChanged()), this, SLOT(updateTrayCombine()));
-          userNotifyList.push_back(userNotify);
-      }
-  }
 
 }
 
