@@ -117,12 +117,12 @@ void AppearancePage::switch_status(MainWindow::StatusElement s,const QString& ke
 {
 	MainWindow *pMainWindow = MainWindow::getInstance();
 
-    if(!pMainWindow)
-        return ;
+	if (!pMainWindow)
+		return;
 
 	Settings->setValueToGroup("StatusBar", key, QVariant(b));
 
-    pMainWindow->switchVisibilityStatus(s,b) ;
+	pMainWindow->switchVisibilityStatus(s,b);
 }
 
 void AppearancePage::updateLanguageCode()     { Settings->setLanguageCode(LanguageSupport::languageCode(ui.cmboLanguage->currentText())); }

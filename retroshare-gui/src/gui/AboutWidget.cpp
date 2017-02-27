@@ -200,7 +200,7 @@ void AWidget::switchState()
 
 }
 
-void AWidget::resizeEvent(QResizeEvent *e)
+void AWidget::resizeEvent(QResizeEvent */*e*/)
 {
     mImagesReady = false ;
 }
@@ -289,12 +289,14 @@ void AWidget::drawBitField()
 	for(int i=0;i<bw;++i)
 		for(int j=0;j<bh;++j)
 			if(bitfield1[i+bw*j] == 1)
-                if(mStep >= mMaxStep)
+			{
+				if (mStep >= mMaxStep)
 					p.fillRect(QRect(i*s+1,j*s+1,s-1,s-1),QBrush(QColor(50,50,50)));
 				else
 					p.fillRect(QRect(i*s,j*s,s,s),QBrush(QColor(50,50,50)));
+			}
 
-    p.end();
+	p.end() ;
 }
 
 AWidget::AWidget() {
