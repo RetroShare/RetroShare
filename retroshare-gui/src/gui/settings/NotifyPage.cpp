@@ -69,7 +69,7 @@ NotifyPage::NotifyPage(QWidget * parent, Qt::WindowFlags flags)
 
 					mFeedNotifySettingList.push_back(FeedNotifySetting(feedNotify, enabledCheckBox));
 
-                    connect(enabledCheckBox,SIGNAL(toggled(bool)),this,SLOT(updateFeedNotifySettings())) ;
+					connect(enabledCheckBox,SIGNAL(toggled(bool)),this,SLOT(updateFeedNotifySettings()));
 				}
 			}
 
@@ -84,7 +84,7 @@ NotifyPage::NotifyPage(QWidget * parent, Qt::WindowFlags flags)
 
 					mToasterNotifySettingList.push_back(ToasterNotifySetting(toasterNotify, enabledCheckBox));
 
-                    connect(enabledCheckBox,SIGNAL(toggled(bool)),this,SLOT(updateToasterNotifySettings())) ;
+					connect(enabledCheckBox,SIGNAL(toggled(bool)),this,SLOT(updateToasterNotifySettings()));
 				}
 
 				QMap<QString, QString> map;
@@ -114,8 +114,8 @@ NotifyPage::NotifyPage(QWidget * parent, Qt::WindowFlags flags)
 
 	}
 
-	        /* add user notify */
-	        const QList<UserNotify*> &userNotifyList = MainWindow::getInstance()->getUserNotifyList();
+	/* Add user notify */
+	const QList<UserNotify*> &userNotifyList = MainWindow::getInstance()->getUserNotifyList() ;
 	QList<UserNotify*>::const_iterator it;
 	rowFeed = 0;
 	mChatLobbyUserNotify = 0;
@@ -169,11 +169,11 @@ NotifyPage::NotifyPage(QWidget * parent, Qt::WindowFlags flags)
 	connect(ui.notify_Security,     SIGNAL(toggled(bool)), this, SLOT(updateNewsFeedFlags()));
 	connect(ui.notify_SecurityIp,   SIGNAL(toggled(bool)), this, SLOT(updateNewsFeedFlags()));
 
-    connect(ui.systray_ChatLobby,   SIGNAL(toggled(bool)),this,SLOT(updateSystrayChatLobby()));
-    connect(ui.systray_GroupChat,   SIGNAL(toggled(bool)),this,SLOT(updateSystrayGroupChat()));
+	connect(ui.systray_ChatLobby,   SIGNAL(toggled(bool)), this, SLOT(updateSystrayChatLobby()));
+	connect(ui.systray_GroupChat,   SIGNAL(toggled(bool)), this, SLOT(updateSystrayGroupChat()));
 
-    connect(ui.spinBoxToasterXMargin, SIGNAL(valueChanged(int)),this, SLOT(updateToasterMargin())) ;
-    connect(ui.spinBoxToasterYMargin, SIGNAL(valueChanged(int)),this, SLOT(updateToasterMargin())) ;
+	connect(ui.spinBoxToasterXMargin, SIGNAL(valueChanged(int)), this, SLOT(updateToasterMargin()));
+	connect(ui.spinBoxToasterYMargin, SIGNAL(valueChanged(int)), this, SLOT(updateToasterMargin()));
 
 	connect(ui.comboBoxToasterPosition,  SIGNAL(currentIndexChanged(int)),this, SLOT(updateToasterPosition())) ;
 
