@@ -676,14 +676,14 @@ void ServerPage::updateStatus()
 	if (!ui.localPort->isEnabled())
 	{
 		/* set local address */
-		ui.localPort -> setValue(detail.localPort);
-		ui.extPort -> setValue(detail.extPort);
+		whileBlocking(ui.localPort) -> setValue(detail.localPort);
+		whileBlocking(ui.extPort) -> setValue(detail.extPort);
 	}
 
 	/* set local address */
-	ui.localAddress->setText(QString::fromStdString(detail.localAddr));
+	whileBlocking(ui.localAddress)->setText(QString::fromStdString(detail.localAddr));
 	/* set the server address */
-	ui.extAddress->setText(QString::fromStdString(detail.extAddr));
+	whileBlocking(ui.extAddress)->setText(QString::fromStdString(detail.extAddr));
 
 
 	// Now update network bits.

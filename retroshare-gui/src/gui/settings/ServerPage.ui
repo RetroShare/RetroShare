@@ -26,7 +26,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>2</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tabNetConf">
       <attribute name="title">
@@ -157,7 +157,7 @@
                 <string>Acceptable ports range from 10 to 65535. Normally Ports below 1024 are reserved by your system.</string>
                </property>
                <property name="minimum">
-                <number>10</number>
+                <number>1024</number>
                </property>
                <property name="maximum">
                 <number>65535</number>
@@ -183,7 +183,7 @@
                 <string>Acceptable ports range from 10 to 65535. Normally ports below 1024 are reserved by your system.</string>
                </property>
                <property name="minimum">
-                <number>10</number>
+                <number>1024</number>
                </property>
                <property name="maximum">
                 <number>65535</number>
