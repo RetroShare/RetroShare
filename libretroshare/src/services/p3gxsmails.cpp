@@ -19,6 +19,7 @@
 #include "p3gxsmails.h"
 #include "util/stacktrace.h"
 
+typedef unsigned int uint;
 
 p3GxsMails::~p3GxsMails()
 {

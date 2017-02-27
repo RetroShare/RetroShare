@@ -65,6 +65,8 @@
 //#define DISABLE_DISTANT_MESSAGES 
 //#define DEBUG_DISTANT_MSG
 
+typedef unsigned int uint;
+
 using namespace Rs::Msgs;
 
 static struct RsLog::logInfo msgservicezoneInfo = {RsLog::Default, "msgservice"};
