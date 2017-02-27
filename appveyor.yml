@@ -114,7 +114,7 @@ install:
   - copy C:\msys64\mingw64\x86_64-w64-mingw32\bin\ranlib.exe C:\msys64\mingw64\bin\x86_64-w64-mingw32-ranlib.exe
   - copy C:\msys64\mingw64\bin\windres.exe C:\msys64\mingw64\bin\x86_64-w64-mingw32-windres.exe
   # Build missing Libs
-  - C:\msys64\mingw32_shell.bat -lc "cd /c/projects/RetroShare/msys2_build_libs/ && make"
+  - C:\msys64\mingw32.exe -lc "cd /c/projects/RetroShare/msys2_build_libs/ && make"
   # Clone RetroShare
   #- git clone -q --branch={branch} https://github.com/RetroShare/RetroShare.git C:\projects\RetroShare
 

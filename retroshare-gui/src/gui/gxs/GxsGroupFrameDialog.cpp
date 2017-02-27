@@ -123,7 +123,7 @@ GxsGroupFrameDialog::~GxsGroupFrameDialog()
 
 void GxsGroupFrameDialog::initUi()
 {
-	registerHelpButton(ui->helpButton, getHelpString()) ;
+	registerHelpButton(ui->helpButton, getHelpString(),pageName()) ;
 
 	ui->titleBarPixmap->setPixmap(QPixmap(icon(ICON_NAME)));
 	ui->titleBarLabel->setText(text(TEXT_NAME));

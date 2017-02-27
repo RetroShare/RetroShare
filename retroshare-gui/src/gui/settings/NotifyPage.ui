@@ -47,7 +47,7 @@
             <item>
              <widget class="QCheckBox" name="notify_Peers">
               <property name="text">
-               <string>Friend Connect</string>
+               <string>Friend Connected</string>
               </property>
              </widget>
             </item>
@@ -68,7 +68,7 @@
             <item>
              <widget class="QCheckBox" name="notify_Posted">
               <property name="text">
-               <string>Posted</string>
+               <string>Links</string>
               </property>
              </widget>
             </item>
@@ -82,14 +82,14 @@
             <item>
              <widget class="QCheckBox" name="notify_Messages">
               <property name="text">
-               <string>Messages</string>
+               <string>Mails</string>
               </property>
              </widget>
             </item>
             <item>
              <widget class="QCheckBox" name="notify_Chat">
               <property name="text">
-               <string>Chat</string>
+               <string>Chats</string>
               </property>
              </widget>
             </item>
@@ -242,7 +242,7 @@
               <item>
                <widget class="QCheckBox" name="popup_ChatLobby">
                 <property name="text">
-                 <string>Chat Lobby</string>
+                 <string>Chat Room</string>
                 </property>
                </widget>
               </item>
@@ -414,7 +414,7 @@
           <item>
            <widget class="QCheckBox" name="systray_ChatLobby">
             <property name="text">
-             <string>Chat lobbies</string>
+             <string>Chat rooms</string>
             </property>
            </widget>
           </item>
@@ -438,7 +438,7 @@
      </widget>
      <widget class="QWidget" name="tabChatLobbies">
       <attribute name="title">
-       <string>Chat Lobbies</string>
+       <string>Chat Rooms</string>
       </attribute>
       <layout class="QVBoxLayout" name="tabChatLobbiesVLayout">
        <item>

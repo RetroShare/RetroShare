@@ -214,7 +214,6 @@ int	pqissllistenbase::setuplisten()
 		if (!mPeerMgr->isHidden()) std::cerr << "Zeroed tmpaddr: " << sockaddr_storage_tostring(tmpaddr) << std::endl;
 #endif
 
-		exit(1); 
 		return -1;
 	}
 	else
@@ -494,8 +493,13 @@ int	pqissllistenbase::continueSSL(IncomingSSLInfo& incoming_connexion_info, bool
 #endif
     if(x509 != NULL)
     {
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
         incoming_connexion_info.gpgid = RsPgpId(std::string(getX509CNString(x509->cert_info->issuer)));
         incoming_connexion_info.sslcn = getX509CNString(x509->cert_info->subject);
+#else
+        incoming_connexion_info.gpgid = RsPgpId(std::string(getX509CNString(X509_get_issuer_name(x509))));
+        incoming_connexion_info.sslcn = getX509CNString(X509_get_subject_name(x509));
+#endif
 
         getX509id(x509,incoming_connexion_info.sslid);
 
@@ -888,7 +892,11 @@ int pqissllistener::completeConnection(int fd, IncomingSSLInfo& info)
 		AuthSSL::getAuthSSL()->CheckCertificate(newPeerId, peercert);
 
 		/* now need to get GPG id too */
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
 		RsPgpId pgpid(std::string(getX509CNString(peercert->cert_info->issuer)));
+#else
+		RsPgpId pgpid(std::string(getX509CNString(X509_get_issuer_name(peercert))));
+#endif
 		mPeerMgr->addFriend(newPeerId, pgpid);
 	
 		X509_free(peercert);

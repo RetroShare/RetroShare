@@ -199,6 +199,9 @@ class RsNotify
 		virtual bool NotifyLogMessage(uint32_t &sysid, uint32_t &type, std::string &title, std::string &msg) = 0;
 
 		virtual bool GetFeedItem(RsFeedItem &item) = 0;
+
+        virtual bool cachePgpPassphrase               (const std::string& /* pgp_passphrase */) { return false ; }
+        virtual bool clearPgpPassphrase               () { return false ; }
 };
 
 class NotifyClient

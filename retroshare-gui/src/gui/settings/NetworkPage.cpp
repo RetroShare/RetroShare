@@ -30,13 +30,6 @@ NetworkPage::NetworkPage(QWidget * parent, Qt::WindowFlags flags)
 
 }
 
-/** Saves the changes on this page */
-bool
-NetworkPage::save(QString &/*errmsg*/)
-{
-	return true;
-}
-
 /** Loads the settings for this page */
 void
 NetworkPage::load()

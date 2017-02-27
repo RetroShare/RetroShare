@@ -23,6 +23,7 @@
 #ifndef _CONFIGPAGE_H
 #define _CONFIGPAGE_H
 
+#include <iostream>
 #include <QWidget>
 
 class ConfigPage : public QWidget
@@ -36,8 +37,6 @@ class ConfigPage : public QWidget
 
 		/** Pure virtual method. Subclassed pages save their config settings here
 		 * and return true if everything was saved successfully. */
-
-		virtual bool save(QString &errmsg) = 0;
 
 		bool wasLoaded() { return loaded ; }
 
@@ -53,6 +52,8 @@ class ConfigPage : public QWidget
 		//
 		virtual QString helpText() const = 0;
 
+private:
+        virtual bool save(QString &errmsg) { std::cerr << "(EE) save() shoud not be called!" << std::endl; return true;}
 	protected:
 		virtual void showEvent(QShowEvent * /*event*/)
 		{

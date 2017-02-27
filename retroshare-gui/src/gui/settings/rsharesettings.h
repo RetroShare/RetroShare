@@ -210,6 +210,9 @@ public:
 	bool getChatSendMessageWithCtrlReturn();
 	void setChatSendMessageWithCtrlReturn(bool bValue);
 
+	bool getChatDoNotSendIsTyping();
+	void setChatDoNotSendIsTyping(bool bValue);
+
 	bool getChatSendAsPlainTextByDef();
 	void setChatSendAsPlainTextByDef(bool bValue);
 
@@ -332,6 +335,9 @@ public:
     
     // proxy function that computes the best icon size among sizes passed as array, to match the recommended size on screen.
     int computeBestIconSize(int n_sizes, int *sizes, int recommended_size);
+
+    bool getPageAlreadyDisplayed(const QString& page_code) ;
+    void setPageAlreadyDisplayed(const QString& page_code,bool b) ;
 
 protected:
 	/** Default constructor. */

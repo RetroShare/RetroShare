@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
+        <file>images/network_map.png</file>
         <file>images/global_switch_on.png</file>
         <file>images/global_switch_off.png</file>
         <file>images/switch00.png</file>

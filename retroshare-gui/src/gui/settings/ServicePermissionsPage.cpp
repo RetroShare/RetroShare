@@ -31,16 +31,18 @@
 ServicePermissionsPage::ServicePermissionsPage(QWidget * parent, Qt::WindowFlags flags) :
     ConfigPage(parent, flags)
 {
-  /* Invoke the Qt Designer generated object setup routine */
-  ui.setupUi(this);
+	/* Invoke the Qt Designer generated object setup routine */
+	ui.setupUi(this);
 
-    connect(ui.cb_hideOffline, SIGNAL(toggled(bool)), ui.frame, SLOT(setHideOffline(bool)));
-    //QObject::connect(ui.tableWidget,SIGNAL(itemChanged(QTableWidgetItem *)),  this, SLOT(tableItemChanged(QTableWidgetItem *)));
+	ui.cb_hideOffline->setChecked(true);
 
-    ui.frame->setHideOffline(ui.cb_hideOffline->isChecked());
+	connect(ui.cb_hideOffline, SIGNAL(toggled(bool)), ui.frame, SLOT(setHideOffline(bool)));
+	//QObject::connect(ui.tableWidget,SIGNAL(itemChanged(QTableWidgetItem *)),  this, SLOT(tableItemChanged(QTableWidgetItem *)));
 
-    // Not implemented?
-    ui.pushButton->hide();
+	ui.frame->setHideOffline(ui.cb_hideOffline->isChecked());
+
+	// Not implemented?
+	ui.pushButton->hide();
 }
 
 QString ServicePermissionsPage::helpText() const

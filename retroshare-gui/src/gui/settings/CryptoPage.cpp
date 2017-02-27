@@ -92,13 +92,6 @@ CryptoPage::~CryptoPage()
 {
 }
 
-/** Saves the changes on this page */
-bool
-CryptoPage::save(QString &/*errmsg*/)
-{
- 	return true;
-}
-
 /** Loads the settings for this page */
 void
 CryptoPage::load()
