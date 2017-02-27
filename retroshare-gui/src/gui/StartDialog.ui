@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>291</width>
-    <height>433</height>
+    <width>430</width>
+    <height>552</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -220,7 +220,7 @@
         <item>
          <widget class="QLabel" name="label_3">
           <property name="text">
-           <string>Name (PGP Id) - location:</string>
+           <string>Profile - Location</string>
           </property>
          </widget>
         </item>

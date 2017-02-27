@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>724</width>
-    <height>568</height>
+    <width>1220</width>
+    <height>896</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" name="ServerPageVLayout">
@@ -506,11 +506,25 @@ behind a firewall or a VPN.</string>
          </property>
         </widget>
        </item>
+       <item row="6" column="0">
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
       </layout>
       <zorder>showDiscStatusBar</zorder>
       <zorder>allowIpDeterminationCB</zorder>
       <zorder>IPServersLV</zorder>
       <zorder>ipAddressList</zorder>
+      <zorder>verticalSpacer</zorder>
      </widget>
      <widget class="QWidget" name="tabIPFilters">
       <attribute name="title">
@@ -764,6 +778,19 @@ behind a firewall or a VPN.</string>
              </widget>
             </item>
            </layout>
+          </item>
+          <item>
+           <spacer name="verticalSpacer_2">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
           </item>
          </layout>
         </widget>

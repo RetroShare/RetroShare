@@ -1569,7 +1569,9 @@ bool RsGenExchange::checkGroupMetaConsistency(const RsGroupMetaData& meta)
         return false;
     }
 
-    if(meta.mGroupFlags != GXS_SERV::FLAG_PRIVACY_PUBLIC && meta.mGroupFlags != GXS_SERV::FLAG_PRIVACY_RESTRICTED && meta.mGroupFlags != GXS_SERV::FLAG_PRIVACY_PRIVATE)
+    uint32_t gf = meta.mGroupFlags & GXS_SERV::FLAG_PRIVACY_MASK ;
+
+    if(gf != GXS_SERV::FLAG_PRIVACY_PUBLIC && gf != GXS_SERV::FLAG_PRIVACY_RESTRICTED && gf != GXS_SERV::FLAG_PRIVACY_PRIVATE)
     {
         std::cerr << "(EE) mGroupFlags has incorrect value " << std::hex << meta.mGroupFlags << std::dec << ". A value among GXS_SERV::FLAG_PRIVACY_{PUBLIC,RESTRICTED,PRIVATE} is expected." << std::endl;
         return false ;

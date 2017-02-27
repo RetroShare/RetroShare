@@ -57,17 +57,18 @@ private slots:
     void switch_status_ShowSound(bool)   ;
     void switch_status_ShowToaster(bool) ;
     void switch_status_ShowSystray(bool) ;
+    void switch_status_ShowCBox(bool) ;
 
     void updateLanguageCode()    ;
     void updateInterfaceStyle()  ;
     void updateSheetName()       ;
     void updateRbtPageOnToolBar();
-    void updateActionButtonLoc() ;
+//    void updateActionButtonLoc() ;
     void updateStatusToolTip()   ;
 
 	void updateCmboToolButtonStyle();
 	void updateCmboToolButtonSize();
-	void updateCmboListItemSize();
+//	void updateCmboListItemSize();
 
 	void updateStyle() ;
 private:

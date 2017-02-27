@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1160</width>
+    <width>1170</width>
     <height>897</height>
    </rect>
   </property>
@@ -238,44 +238,6 @@
        </layout>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_2">
-        <item>
-         <widget class="QLabel" name="labelActionToolBar">
-          <property name="text">
-           <string>Menu  items:</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QComboBox" name="menuItemsButtonType_CB">
-          <item>
-           <property name="text">
-            <string>Buttons</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Item list</string>
-           </property>
-          </item>
-         </widget>
-        </item>
-        <item>
-         <spacer name="frameActionHSpacer">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>300</width>
-            <height>16</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
-      </item>
-      <item>
        <widget class="QFrame" name="frameToolListStyle">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -324,55 +286,8 @@
            </property>
           </widget>
          </item>
-         <item row="0" column="1">
-          <widget class="QLabel" name="labelListItemStyle">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="text">
-            <string>Choose the style of List Items.</string>
-           </property>
-          </widget>
-         </item>
          <item row="1" column="0">
           <widget class="QComboBox" name="cmboTollButtonsSize">
-           <item>
-            <property name="text">
-             <string>Icon Size = 8x8</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Icon Size = 16x16</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Icon Size = 24x24</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Icon Size = 32x32</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Icon Size = 64x64</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Icon Size = 128x128</string>
-            </property>
-           </item>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="QComboBox" name="cmboListItemSize">
            <item>
             <property name="text">
              <string>Icon Size = 8x8</string>
@@ -423,13 +338,6 @@
       <bool>true</bool>
      </property>
      <layout class="QGridLayout" name="grpStatusGLayout">
-      <item row="4" column="2">
-       <widget class="QCheckBox" name="checkBoxShowSystrayOnStatus">
-        <property name="text">
-         <string>Show SysTray on Status Bar</string>
-        </property>
-       </widget>
-      </item>
       <item row="4" column="1">
        <widget class="QCheckBox" name="checkBoxShowToasterDisable">
         <property name="text">
@@ -441,13 +349,6 @@
        <widget class="QCheckBox" name="checkBoxShowSoundStatus">
         <property name="text">
          <string>Show Sound Status</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="2">
-       <widget class="QCheckBox" name="checkBoxShowOpModeStatus">
-        <property name="text">
-         <string>Show Operating Mode Status</string>
         </property>
        </widget>
       </item>
@@ -514,6 +415,20 @@
        <widget class="QCheckBox" name="checkBoxDisableSysTrayToolTip">
         <property name="text">
          <string>Disable SysTray ToolTip</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="2">
+       <widget class="QCheckBox" name="checkBoxShowOpModeStatus">
+        <property name="text">
+         <string>Show Operating Mode Status</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="2">
+       <widget class="QCheckBox" name="checkBoxShowSystrayOnStatus">
+        <property name="text">
+         <string>Show SysTray on Status Bar</string>
         </property>
        </widget>
       </item>

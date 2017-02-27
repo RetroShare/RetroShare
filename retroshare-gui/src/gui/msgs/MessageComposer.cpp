@@ -2200,7 +2200,13 @@ void MessageComposer::smileyWidget()
 
 void MessageComposer::addSmileys()
 {
-    ui.msgText->textCursor().insertText(qobject_cast<QPushButton*>(sender())->toolTip().split("|").first());
+	QString smiley = qobject_cast<QPushButton*>(sender())->toolTip().split("|").first();
+	// add trailing space
+	smiley += QString(" ");
+	// add preceding space when needed (not at start of text or preceding space already exists)
+	if(!ui.msgText->textCursor().atStart() && ui.msgText->toPlainText()[ui.msgText->textCursor().position() - 1] != QChar(' '))
+		smiley = QString(" ") + smiley;
+	ui.msgText->textCursor().insertText(smiley);
 }
 
 void MessageComposer::currentCharFormatChanged(const QTextCharFormat &format)
@@ -2758,3 +2764,44 @@ void MessageComposer::on_closeInfoFrameButton_clicked()
 {
 	ui.distantFrame->setVisible(false);
 }
+
+QString MessageComposer::inviteMessage()
+{
+    return tr("Hi,<br>I want to be friends with you on RetroShare.<br>");
+}
+
+void MessageComposer::sendInvite(const RsGxsId &to, const QString &msg, bool autoSend)
+{
+    /* create a message */
+    MessageComposer *composer = MessageComposer::newMsg();
+
+    composer->setTitleText(tr("You have a friend invite"));
+    composer->msgFlags |= RS_MSG_USER_REQUEST;
+
+
+    RsPeerId ownId = rsPeers->getOwnId();
+    RetroShareLink link;
+    link.createCertificate(ownId);
+        
+    QString sMsgText = inviteMessage();
+    sMsgText += "<br><br>";
+    sMsgText += tr("Respond now:") + "<br>";
+    sMsgText += link.toHtml() + "<br>";
+    sMsgText += "<br>";
+    sMsgText += tr("Thanks, <br>") + QString::fromUtf8(rsPeers->getGPGName(rsPeers->getGPGOwnId()).c_str());
+    composer->setMsgText(sMsgText);
+    composer->addRecipient(MessageComposer::TO,  RsGxsId(to));
+    
+    
+    if (autoSend) {
+        if (composer->sendMessage_internal(false)) {
+            composer->close();
+            return;
+        }
+    }
+
+    //composer->show();
+
+    /* window will destroy itself! */
+}
+

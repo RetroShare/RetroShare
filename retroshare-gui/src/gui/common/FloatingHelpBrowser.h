@@ -36,7 +36,7 @@ public:
 	void setHelpText(const QString &helpText);
 
 public slots:
-	void showHelp(bool state);
+	void showHelp(bool state=false);
 
 private slots:
 	void textChanged();
