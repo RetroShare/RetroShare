@@ -74,6 +74,7 @@ HomePage::HomePage(QWidget *parent) :
     ui->shareButton->setMenu(menu);
 
     connect(ui->runStartWizard_PB,SIGNAL(clicked()), this,SLOT(runStartWizard())) ;
+	connect(ui->openwebhelp,SIGNAL(clicked()), this,SLOT(openWebHelp())) ;
 
     int S = QFontMetricsF(font()).height();
  QString help_str = tr(
@@ -176,4 +177,9 @@ void HomePage::addFriend()
 void HomePage::runStartWizard()
 {
     QuickStartWizard(this).exec();
+}
+
+void HomePage::openWebHelp()
+{
+    QDesktopServices::openUrl(QUrl(QString("https://retroshare.readthedocs.io")));
 }

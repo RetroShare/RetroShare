@@ -54,6 +54,7 @@ private slots:
 	void saveCert();
   void addFriend();
 	void runStartWizard() ;
+	void openWebHelp() ;
 	void recommendFriends();
 
 private:
