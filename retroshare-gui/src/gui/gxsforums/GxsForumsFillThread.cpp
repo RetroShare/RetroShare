@@ -198,24 +198,30 @@ void GxsForumsFillThread::run()
 
 	for ( std::map<RsGxsMessageId,RsGxsForumMsg>::iterator msgIt = msgs.begin(); msgIt != msgs.end();++msgIt)
         if(!msgIt->second.mMeta.mOrigMsgId.isNull() && msgIt->second.mMeta.mOrigMsgId != msgIt->second.mMeta.mMsgId)
-        {
+		{
 #ifdef DEBUG_FORUMS
 			std::cerr << "  Post " << msgIt->second.mMeta.mMsgId << " is a new version of " << msgIt->second.mMeta.mOrigMsgId << std::endl;
 #endif
 			std::map<RsGxsMessageId,RsGxsForumMsg>::iterator msgIt2 = msgs.find(msgIt->second.mMeta.mOrigMsgId);
 
-            // always add the post a a self version
+			// Ensuring that the post exists allows to only collect the existing data.
 
-            if(msgIt2 != msgs.end())
-            {
-                // Ensuring that the post exists allows to only collect the existing data.
+			if(msgIt2 == msgs.end())
+				continue ;
 
-                if(mPostVersions[msgIt->second.mMeta.mOrigMsgId].empty())
-					mPostVersions[msgIt->second.mMeta.mOrigMsgId].push_back(QPair<time_t,RsGxsMessageId>(msgIt2->second.mMeta.mPublishTs,msgIt2->second.mMeta.mMsgId)) ;
+			// Make sure that the author is the same than the original message. This should always happen, but nothing can prevent someone to
+			// craft a new version of a message with his own signature.
 
-				mPostVersions[msgIt->second.mMeta.mOrigMsgId].push_back(QPair<time_t,RsGxsMessageId>(msgIt->second.mMeta.mPublishTs,msgIt->second.mMeta.mMsgId)) ;
-            }
-        }
+			if(msgIt2->second.mMeta.mAuthorId != msgIt->second.mMeta.mAuthorId)
+				continue ;
+
+			// always add the post a self version
+
+			if(mPostVersions[msgIt->second.mMeta.mOrigMsgId].empty())
+				mPostVersions[msgIt->second.mMeta.mOrigMsgId].push_back(QPair<time_t,RsGxsMessageId>(msgIt2->second.mMeta.mPublishTs,msgIt2->second.mMeta.mMsgId)) ;
+
+			mPostVersions[msgIt->second.mMeta.mOrigMsgId].push_back(QPair<time_t,RsGxsMessageId>(msgIt->second.mMeta.mPublishTs,msgIt->second.mMeta.mMsgId)) ;
+		}
 
     // The following code assembles all new versions of a given post into the same array, indexed by the oldest version of the post.
 
