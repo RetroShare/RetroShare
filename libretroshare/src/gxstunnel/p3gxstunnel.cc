@@ -1055,7 +1055,13 @@ bool p3GxsTunnelService::locked_sendDHPublicKey(const DH *dh,const RsGxsId& own_
 	}
 
 	RsGxsTunnelDHPublicKeyItem *dhitem = new RsGxsTunnelDHPublicKeyItem ;
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
 	dhitem->public_key = BN_dup(dh->pub_key) ;
+#else
+    const BIGNUM *pub_key=NULL ;
+    DH_get0_key(dh,&pub_key,NULL) ;
+	dhitem->public_key = BN_dup(pub_key) ;
+#endif
 
 	// we should also sign the data and check the signature on the other end.
 	//
@@ -1133,8 +1139,18 @@ bool p3GxsTunnelService::locked_initDHSessionKey(DH *& dh)
         return false ;
     }
 
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
     BN_hex2bn(&dh->p,dh_prime_2048_hex.c_str()) ;
     BN_hex2bn(&dh->g,"5") ;
+#else
+    BIGNUM *pp=NULL ;
+    BIGNUM *gg=NULL ;
+
+    BN_hex2bn(&pp,dh_prime_2048_hex.c_str()) ;
+    BN_hex2bn(&gg,"5") ;
+
+    DH_set0_pqg(dh,pp,NULL,gg) ;
+#endif
 
     int codes = 0 ;
 

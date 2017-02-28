@@ -32,6 +32,7 @@
 #include "gui/common/ToasterNotify.h"
 #include "gui/notifyqt.h"
 #include "gui/NewsFeed.h"
+#include "util/misc.h"
 
 /** Constructor */
 NotifyPage::NotifyPage(QWidget * parent, Qt::WindowFlags flags)
@@ -69,7 +70,7 @@ NotifyPage::NotifyPage(QWidget * parent, Qt::WindowFlags flags)
 
 					mFeedNotifySettingList.push_back(FeedNotifySetting(feedNotify, enabledCheckBox));
 
-                    connect(enabledCheckBox,SIGNAL(toggled(bool)),this,SLOT(updateFeedNotifySettings())) ;
+					connect(enabledCheckBox,SIGNAL(toggled(bool)),this,SLOT(updateFeedNotifySettings()));
 				}
 			}
 
@@ -84,7 +85,7 @@ NotifyPage::NotifyPage(QWidget * parent, Qt::WindowFlags flags)
 
 					mToasterNotifySettingList.push_back(ToasterNotifySetting(toasterNotify, enabledCheckBox));
 
-                    connect(enabledCheckBox,SIGNAL(toggled(bool)),this,SLOT(updateToasterNotifySettings())) ;
+					connect(enabledCheckBox,SIGNAL(toggled(bool)),this,SLOT(updateToasterNotifySettings()));
 				}
 
 				QMap<QString, QString> map;
@@ -114,8 +115,8 @@ NotifyPage::NotifyPage(QWidget * parent, Qt::WindowFlags flags)
 
 	}
 
-	        /* add user notify */
-	        const QList<UserNotify*> &userNotifyList = MainWindow::getInstance()->getUserNotifyList();
+	/* Add user notify */
+	const QList<UserNotify*> &userNotifyList = MainWindow::getInstance()->getUserNotifyList() ;
 	QList<UserNotify*>::const_iterator it;
 	rowFeed = 0;
 	mChatLobbyUserNotify = 0;
@@ -169,11 +170,11 @@ NotifyPage::NotifyPage(QWidget * parent, Qt::WindowFlags flags)
 	connect(ui.notify_Security,     SIGNAL(toggled(bool)), this, SLOT(updateNewsFeedFlags()));
 	connect(ui.notify_SecurityIp,   SIGNAL(toggled(bool)), this, SLOT(updateNewsFeedFlags()));
 
-    connect(ui.systray_ChatLobby,   SIGNAL(toggled(bool)),this,SLOT(updateSystrayChatLobby()));
-    connect(ui.systray_GroupChat,   SIGNAL(toggled(bool)),this,SLOT(updateSystrayGroupChat()));
+	connect(ui.systray_ChatLobby,   SIGNAL(toggled(bool)), this, SLOT(updateSystrayChatLobby()));
+	connect(ui.systray_GroupChat,   SIGNAL(toggled(bool)), this, SLOT(updateSystrayGroupChat()));
 
-    connect(ui.spinBoxToasterXMargin, SIGNAL(valueChanged(int)),this, SLOT(updateToasterMargin())) ;
-    connect(ui.spinBoxToasterYMargin, SIGNAL(valueChanged(int)),this, SLOT(updateToasterMargin())) ;
+	connect(ui.spinBoxToasterXMargin, SIGNAL(valueChanged(int)), this, SLOT(updateToasterMargin()));
+	connect(ui.spinBoxToasterYMargin, SIGNAL(valueChanged(int)), this, SLOT(updateToasterMargin()));
 
 	connect(ui.comboBoxToasterPosition,  SIGNAL(currentIndexChanged(int)),this, SLOT(updateToasterPosition())) ;
 
@@ -309,38 +310,38 @@ void NotifyPage::updateChatLobbyUserNotify()
 /** Loads the settings for this page */
 void NotifyPage::load()
 {
-    /* extract from rsNotify the flags */
-    uint notifyflags = Settings->getNotifyFlags();
-    uint newsflags = Settings->getNewsFeedFlags();
-    uint messageflags = Settings->getMessageFlags();
+	/* Extract from rsNotify the flags */
+	uint notifyflags = Settings->getNotifyFlags() ;
+	uint newsflags = Settings->getNewsFeedFlags() ;
+	uint messageflags = Settings->getMessageFlags() ;
 
-    ui.popup_Connect->setChecked(notifyflags & RS_POPUP_CONNECT);
-    ui.popup_NewMsg->setChecked(notifyflags & RS_POPUP_MSG);
-    ui.popup_DownloadFinished->setChecked(notifyflags & RS_POPUP_DOWNLOAD);
-    ui.popup_PrivateChat->setChecked(notifyflags & RS_POPUP_CHAT);
-    ui.popup_GroupChat->setChecked(notifyflags & RS_POPUP_GROUPCHAT);
-    ui.popup_ChatLobby->setChecked(notifyflags & RS_POPUP_CHATLOBBY);
-    ui.popup_ConnectAttempt->setChecked(notifyflags & RS_POPUP_CONNECT_ATTEMPT);
+	whileBlocking(ui.popup_Connect)->setChecked(notifyflags & RS_POPUP_CONNECT);
+	whileBlocking(ui.popup_NewMsg)->setChecked(notifyflags & RS_POPUP_MSG);
+	whileBlocking(ui.popup_DownloadFinished)->setChecked(notifyflags & RS_POPUP_DOWNLOAD);
+	whileBlocking(ui.popup_PrivateChat)->setChecked(notifyflags & RS_POPUP_CHAT);
+	whileBlocking(ui.popup_GroupChat)->setChecked(notifyflags & RS_POPUP_GROUPCHAT);
+	whileBlocking(ui.popup_ChatLobby)->setChecked(notifyflags & RS_POPUP_CHATLOBBY);
+	whileBlocking(ui.popup_ConnectAttempt)->setChecked(notifyflags & RS_POPUP_CONNECT_ATTEMPT);
 
-    ui.notify_Peers->setChecked(newsflags & RS_FEED_TYPE_PEER);
-    ui.notify_Channels->setChecked(newsflags & RS_FEED_TYPE_CHANNEL);
-    ui.notify_Forums->setChecked(newsflags & RS_FEED_TYPE_FORUM);
-    ui.notify_Posted->setChecked(newsflags & RS_FEED_TYPE_POSTED);
+	whileBlocking(ui.notify_Peers)->setChecked(newsflags & RS_FEED_TYPE_PEER);
+	whileBlocking(ui.notify_Channels)->setChecked(newsflags & RS_FEED_TYPE_CHANNEL);
+	whileBlocking(ui.notify_Forums)->setChecked(newsflags & RS_FEED_TYPE_FORUM);
+	whileBlocking(ui.notify_Posted)->setChecked(newsflags & RS_FEED_TYPE_POSTED);
 #if 0
-    ui.notify_Blogs->setChecked(newsflags & RS_FEED_TYPE_BLOG);
+	whileBlocking(ui.notify_Blogs)->setChecked(newsflags & RS_FEED_TYPE_BLOG);
 #endif
-    ui.notify_Chat->setChecked(newsflags & RS_FEED_TYPE_CHAT);
-    ui.notify_Messages->setChecked(newsflags & RS_FEED_TYPE_MSG);
-    ui.notify_Chat->setChecked(newsflags & RS_FEED_TYPE_CHAT);
-    ui.notify_Security->setChecked(newsflags & RS_FEED_TYPE_SECURITY);
-    ui.notify_SecurityIp->setChecked(newsflags & RS_FEED_TYPE_SECURITY_IP);
+	whileBlocking(ui.notify_Chat)->setChecked(newsflags & RS_FEED_TYPE_CHAT);
+	whileBlocking(ui.notify_Messages)->setChecked(newsflags & RS_FEED_TYPE_MSG);
+	whileBlocking(ui.notify_Chat)->setChecked(newsflags & RS_FEED_TYPE_CHAT);
+	whileBlocking(ui.notify_Security)->setChecked(newsflags & RS_FEED_TYPE_SECURITY);
+	whileBlocking(ui.notify_SecurityIp)->setChecked(newsflags & RS_FEED_TYPE_SECURITY_IP);
 
-    ui.message_ConnectAttempt->setChecked(messageflags & RS_MESSAGE_CONNECT_ATTEMPT);
+	whileBlocking(ui.message_ConnectAttempt)->setChecked(messageflags & RS_MESSAGE_CONNECT_ATTEMPT);
 
-    ui.systray_GroupChat->setChecked(Settings->getDisplayTrayGroupChat());
-    ui.systray_ChatLobby->setChecked(Settings->getDisplayTrayChatLobby());
+	whileBlocking(ui.systray_GroupChat)->setChecked(Settings->getDisplayTrayGroupChat());
+	whileBlocking(ui.systray_ChatLobby)->setChecked(Settings->getDisplayTrayChatLobby());
 
-    ui.pushButtonDisableAll->setChecked(NotifyQt::isAllDisable());
+	whileBlocking(ui.pushButtonDisableAll)->setChecked(NotifyQt::isAllDisable());
 
     RshareSettings::enumToasterPosition toasterPosition = Settings->getToasterPosition();
     ui.comboBoxToasterPosition->clear();
@@ -357,48 +358,48 @@ void NotifyPage::load()
         ui.comboBoxToasterPosition->addItem(it.value(), it.key());
 
         if (it.key() == toasterPosition) {
-            ui.comboBoxToasterPosition->setCurrentIndex(index);
+            whileBlocking(ui.comboBoxToasterPosition)->setCurrentIndex(index);
         }
     }
 
-    QPoint margin = Settings->getToasterMargin();
-    ui.spinBoxToasterXMargin->setValue(margin.x());
-    ui.spinBoxToasterYMargin->setValue(margin.y());
+	QPoint margin = Settings->getToasterMargin() ;
+	whileBlocking(ui.spinBoxToasterXMargin)->setValue(margin.x());
+	whileBlocking(ui.spinBoxToasterYMargin)->setValue(margin.y());
 
-    /* load feed notify */
-    QList<FeedNotifySetting>::iterator feedNotifyIt;
-    for (feedNotifyIt = mFeedNotifySettingList.begin(); feedNotifyIt != mFeedNotifySettingList.end(); ++feedNotifyIt) {
-        feedNotifyIt->mEnabledCheckBox->setChecked(feedNotifyIt->mFeedNotify->notifyEnabled());
-    }
+	/* Load feed notify */
+	QList<FeedNotifySetting>::iterator feedNotifyIt ;
+	for (feedNotifyIt = mFeedNotifySettingList.begin(); feedNotifyIt != mFeedNotifySettingList.end(); ++feedNotifyIt ) {
+		whileBlocking(feedNotifyIt->mEnabledCheckBox)->setChecked(feedNotifyIt->mFeedNotify->notifyEnabled());
+	}
 
-    /* load toaster notify */
-    QList<ToasterNotifySetting>::iterator toasterNotifyIt;
-    for (toasterNotifyIt = mToasterNotifySettingList.begin(); toasterNotifyIt != mToasterNotifySettingList.end(); ++toasterNotifyIt) {
-        if (toasterNotifyIt->mEnabledCheckBox->accessibleName().isEmpty()) {
-            toasterNotifyIt->mEnabledCheckBox->setChecked(toasterNotifyIt->mToasterNotify->notifyEnabled()) ;
-        } else {
-            toasterNotifyIt->mEnabledCheckBox->setChecked(toasterNotifyIt->mToasterNotify->notifyEnabled(toasterNotifyIt->mEnabledCheckBox->accessibleName())) ;
-        }
-    }
+	/* Load toaster notify */
+	QList<ToasterNotifySetting>::iterator toasterNotifyIt ;
+	for (toasterNotifyIt = mToasterNotifySettingList.begin(); toasterNotifyIt != mToasterNotifySettingList.end(); ++toasterNotifyIt ) {
+		if( toasterNotifyIt->mEnabledCheckBox->accessibleName().isEmpty() ) {
+			whileBlocking(toasterNotifyIt->mEnabledCheckBox)->setChecked(toasterNotifyIt->mToasterNotify->notifyEnabled()) ;
+		} else {
+			whileBlocking(toasterNotifyIt->mEnabledCheckBox)->setChecked(toasterNotifyIt->mToasterNotify->notifyEnabled(toasterNotifyIt->mEnabledCheckBox->accessibleName())) ;
+		}
+	}
 
-    /* load user notify */
-    QList<UserNotifySetting>::iterator userNotifyIt;
-    for (userNotifyIt = mUserNotifySettingList.begin(); userNotifyIt != mUserNotifySettingList.end(); ++userNotifyIt) {
-        userNotifyIt->mEnabledCheckBox->setChecked(userNotifyIt->mUserNotify->notifyEnabled());
-        userNotifyIt->mCombinedCheckBox->setChecked(userNotifyIt->mUserNotify->notifyCombined());
-        userNotifyIt->mBlinkCheckBox->setChecked(userNotifyIt->mUserNotify->notifyBlink());
-    }
+	/* Load user notify */
+	QList<UserNotifySetting>::iterator userNotifyIt ;
+	for (userNotifyIt = mUserNotifySettingList.begin(); userNotifyIt != mUserNotifySettingList.end(); ++userNotifyIt ) {
+		whileBlocking(userNotifyIt->mEnabledCheckBox)->setChecked(userNotifyIt->mUserNotify->notifyEnabled());
+		whileBlocking(userNotifyIt->mCombinedCheckBox)->setChecked(userNotifyIt->mUserNotify->notifyCombined());
+		whileBlocking(userNotifyIt->mBlinkCheckBox)->setChecked(userNotifyIt->mUserNotify->notifyBlink());
+	}
 
-    notifyToggled();
+	notifyToggled() ;
 
-    if (mChatLobbyUserNotify){
-        ui.chatLobbies_CountUnRead->setChecked(mChatLobbyUserNotify->isCountUnRead());
-        ui.chatLobbies_CheckNickName->setChecked(mChatLobbyUserNotify->isCheckForNickName());
-        ui.chatLobbies_CountFollowingText->setChecked(mChatLobbyUserNotify->isCountSpecificText()) ;
-        ui.chatLobbies_TextToNotify->setEnabled(mChatLobbyUserNotify->isCountSpecificText()) ;
-        ui.chatLobbies_TextToNotify->setPlainText(mChatLobbyUserNotify->textToNotify());
-        ui.chatLobbies_TextCaseSensitive->setChecked(mChatLobbyUserNotify->isTextCaseSensitive());
-    }
+	if (mChatLobbyUserNotify){
+		whileBlocking(ui.chatLobbies_CountUnRead)->setChecked(mChatLobbyUserNotify->isCountUnRead());
+		whileBlocking(ui.chatLobbies_CheckNickName)->setChecked(mChatLobbyUserNotify->isCheckForNickName());
+		whileBlocking(ui.chatLobbies_CountFollowingText)->setChecked(mChatLobbyUserNotify->isCountSpecificText()) ;
+		whileBlocking(ui.chatLobbies_TextToNotify)->setEnabled(mChatLobbyUserNotify->isCountSpecificText()) ;
+		whileBlocking(ui.chatLobbies_TextToNotify)->setPlainText(mChatLobbyUserNotify->textToNotify());
+		whileBlocking(ui.chatLobbies_TextCaseSensitive)->setChecked(mChatLobbyUserNotify->isTextCaseSensitive());
+	}
 }
 
 void NotifyPage::notifyToggled()

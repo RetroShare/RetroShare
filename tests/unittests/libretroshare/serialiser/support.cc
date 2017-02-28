@@ -68,14 +68,11 @@ void init_item(RsTlvSecurityKeySet& ks)
 	randString(SHORT_STR, ks.groupId);
 	for(int i=1; i<n; i++)
 	{
-		RsGxsId pub_str;
-		RsGxsId pri_str;
-		pub_str = RsGxsId::random();
-		pri_str = RsGxsId::random();
-
-		RsTlvPublicRSAKey& pub_key = ks.public_keys[pub_str];
-		RsTlvPrivateRSAKey& pri_key = ks.private_keys[pri_str];
+		RsTlvPublicRSAKey pub_key;
+		RsTlvPrivateRSAKey pri_key;
 		GxsSecurity::generateKeyPair(pub_key, pri_key);
+		ks.public_keys[pub_key.keyId] = pub_key;
+		ks.private_keys[pri_key.keyId] = pri_key;
 	}
 }
 
@@ -94,8 +91,6 @@ bool operator==(const RsTlvSecurityKeySet& l, const RsTlvSecurityKeySet& r)
 
 	return true;
 }
-
-
 
 bool operator==(const RsTlvPublicRSAKey& sk1, const RsTlvPublicRSAKey& sk2)
 {
@@ -208,7 +203,6 @@ void init_item(RsTlvKeySignatureSet &kss)
         kss.keySignSet.insert(std::make_pair(sType, sign));
     }
 }
-
 
 bool operator==(const RsTlvImage& img1, const RsTlvImage& img2)
 {

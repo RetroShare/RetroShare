@@ -179,7 +179,7 @@ int p3FileDatabase::tick()
 #endif
         last_print_time = now ;
 
-//#warning this should be removed, but it's necessary atm for updating the GUI
+#warning mr-alice 2016-08-19: This should be removed, but it's necessary atm for updating the GUI
         RsServer::notify()->notifyListChange(NOTIFY_LIST_DIRLIST_LOCAL, 0);
     }
 
@@ -896,9 +896,9 @@ uint32_t p3FileDatabase::getType(void *ref) const
     if(e == 0)
         return DIR_TYPE_PERSON ;
 
-    if(fi == 0)
+    if(fi == 0 && mLocalSharedDirs != NULL)
         return mLocalSharedDirs->getEntryType(e) ;
-    else if(mRemoteDirectories[fi-1]!=NULL)
+    else if(fi-1 < mRemoteDirectories.size() && mRemoteDirectories[fi-1]!=NULL)
         return mRemoteDirectories[fi-1]->getEntryType(e) ;
     else
         return DIR_TYPE_ROOT ;// some failure case. Should not happen

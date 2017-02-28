@@ -24,6 +24,7 @@
 #include "retroshare/rsmsgs.h"
 
 #include "MessagePage.h"
+#include "util/misc.h"
 #include "gui/common/TagDefs.h"
 #include <algorithm>
 #include "NewTag.h"
@@ -110,20 +111,20 @@ void MessagePage::updateMsgTags()
 void
 MessagePage::load()
 {
-    ui.setMsgToReadOnActivate->setChecked(Settings->getMsgSetToReadOnActivate());
-    ui.loadEmbeddedImages->setChecked(Settings->getMsgLoadEmbeddedImages());
-    ui.openComboBox->setCurrentIndex(ui.openComboBox->findData(Settings->getMsgOpen()));
+    whileBlocking(ui.setMsgToReadOnActivate)->setChecked(Settings->getMsgSetToReadOnActivate());
+    whileBlocking(ui.loadEmbeddedImages)->setChecked(Settings->getMsgLoadEmbeddedImages());
+    whileBlocking(ui.openComboBox)->setCurrentIndex(ui.openComboBox->findData(Settings->getMsgOpen()));
 
 	  // state of filter combobox
     
     uint32_t flags = rsMail->getDistantMessagingPermissionFlags() ;
     
     if(flags & RS_DISTANT_MESSAGING_CONTACT_PERMISSION_FLAG_FILTER_EVERYBODY)
-	    ui.comboBox->setCurrentIndex(2);
+	    whileBlocking(ui.comboBox)->setCurrentIndex(2);
     else if(flags & RS_DISTANT_MESSAGING_CONTACT_PERMISSION_FLAG_FILTER_NON_CONTACTS)
-	    ui.comboBox->setCurrentIndex(1);
+	    whileBlocking(ui.comboBox)->setCurrentIndex(1);
     else
-	    ui.comboBox->setCurrentIndex(0);
+	    whileBlocking(ui.comboBox)->setCurrentIndex(0);
 	  
     // fill items
     rsMail->getMessageTagTypes(*m_pTags);
