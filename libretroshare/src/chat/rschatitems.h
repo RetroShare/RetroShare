@@ -454,7 +454,9 @@ struct PrivateOugoingMapItem : RsChatItem
 
 			uint8_t* hdrPtr = static_cast<uint8_t*>(data) + offset;
 			uint32_t tmpsize = entry.second.serial_size();
-			ok = ok && entry.second.serialise(hdrPtr, tmpsize);
+			ok = ok && entry.second.serialise(hdrPtr, tmpsize)
+			        && (offset += tmpsize);
+
 		}
 
 		if (offset != tlvsize)
@@ -505,7 +507,7 @@ struct PrivateOugoingMapItem : RsChatItem
 
 			uint8_t* hdrPtr = const_cast<uint8_t*>(data); hdrPtr += offset;
 			uint32_t tmpSize = getRsItemSize(hdrPtr);
-			RsChatMsgItem msgItem(hdrPtr, tmpSize);
+			RsChatMsgItem msgItem(hdrPtr, tmpSize); offset+= tmpSize;
 			item->store.insert(std::make_pair(msgId, msgItem));
 		}
 
@@ -531,7 +533,10 @@ struct PrivateOugoingMapItem : RsChatItem
 	}
 
 	virtual std::ostream& print(std::ostream &out, uint16_t /*indent*/ = 0)
-	{ return out << "PrivateOugoingMapItem store size: " << store.size(); }
+	{
+		return out << "PrivateOugoingMapItem store size: " << store.size()
+		           << std::endl;
+	}
 
 	std::map<uint64_t, RsChatMsgItem> store;
 };
