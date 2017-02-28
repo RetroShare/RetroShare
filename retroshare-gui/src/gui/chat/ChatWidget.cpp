@@ -614,7 +614,6 @@ bool ChatWidget::eventFilter(QObject *obj, QEvent *event)
 					else {
 						completionWord.clear();
 					}
-				}
 					if ((keyEvent->modifiers() & ui->chatTextEdit->getCompleterKeyModifiers()) && keyEvent->key() == ui->chatTextEdit->getCompleterKey()) {
 						completer->setModel(modelFromPeers());
 					}
@@ -622,6 +621,7 @@ bool ChatWidget::eventFilter(QObject *obj, QEvent *event)
 						ui->chatTextEdit->forceCompleterShowNextKeyEvent("@");
 						completer->setModel(modelFromPeers());
 					}
+				}
 				if (keyEvent->key() == Qt::Key_Enter || keyEvent->key() == Qt::Key_Return) {
 					// Enter pressed
 					if (Settings->getChatSendMessageWithCtrlReturn()) {
@@ -631,7 +631,7 @@ bool ChatWidget::eventFilter(QObject *obj, QEvent *event)
 							return true; // eat event
 						}
 					} else {
-						if (keyEvent->modifiers() & Qt::ControlModifier) {
+						if ((keyEvent->modifiers() & Qt::ControlModifier) || (keyEvent->modifiers() & Qt::ShiftModifier)){
 							// insert return
 							ui->chatTextEdit->textCursor().insertText("\n");
 						} else {

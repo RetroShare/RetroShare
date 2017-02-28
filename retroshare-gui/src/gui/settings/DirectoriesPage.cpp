@@ -21,6 +21,7 @@
 
 #include "DirectoriesPage.h"
 #include "gui/ShareManager.h"
+#include "util/misc.h"
 #include <QMessageBox>
 
 #include "rshare.h"
@@ -62,15 +63,15 @@ void DirectoriesPage::updateFollowSymLinks()             {    rsFiles->setFollow
 /** Loads the settings for this page */
 void DirectoriesPage::load()
 {
-	ui.shareDownloadDirectoryCB->setChecked(rsFiles->getShareDownloadDirectory());
+	whileBlocking(ui.shareDownloadDirectoryCB)->setChecked(rsFiles->getShareDownloadDirectory());
 
 	int u = rsFiles->watchPeriod() ;
-    ui.autoCheckDirectoriesDelay_SB->setValue(u) ;
-    ui.autoCheckDirectories_CB->setChecked(rsFiles->watchEnabled()) ; ;
+    whileBlocking(ui.autoCheckDirectoriesDelay_SB)->setValue(u) ;
+    whileBlocking(ui.autoCheckDirectories_CB)->setChecked(rsFiles->watchEnabled()) ; ;
 
-	ui.incomingDir->setText(QString::fromUtf8(rsFiles->getDownloadDirectory().c_str()));
-	ui.partialsDir->setText(QString::fromUtf8(rsFiles->getPartialsDirectory().c_str()));
-	ui.followSymLinks_CB->setChecked(rsFiles->followSymLinks());
+	whileBlocking(ui.incomingDir)->setText(QString::fromUtf8(rsFiles->getDownloadDirectory().c_str()));
+	whileBlocking(ui.partialsDir)->setText(QString::fromUtf8(rsFiles->getPartialsDirectory().c_str()));
+	whileBlocking(ui.followSymLinks_CB)->setChecked(rsFiles->followSymLinks());
 }
 
 void DirectoriesPage::setIncomingDirectory()

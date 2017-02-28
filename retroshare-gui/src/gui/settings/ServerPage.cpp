@@ -24,6 +24,7 @@
 #include "rshare.h"
 #include "rsharesettings.h"
 #include "util/RsNetUtil.h"
+#include "util/misc.h"
 
 #include <iostream>
 
@@ -123,9 +124,9 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
 	connect(ui.dynDNS,         SIGNAL(textChanged(QString)),this,SLOT(saveAddresses()));
 
 	connect(ui.hiddenpage_proxyAddress_tor, SIGNAL(textChanged(QString)),this,SLOT(saveAddresses()));
-	connect(ui.hiddenpage_proxyPort_tor,    SIGNAL(textChanged(QString)),this,SLOT(saveAddresses()));
+	connect(ui.hiddenpage_proxyPort_tor,    SIGNAL(valueChanged(int)),this,SLOT(saveAddresses()));
 	connect(ui.hiddenpage_proxyAddress_i2p, SIGNAL(textChanged(QString)),this,SLOT(saveAddresses()));
-	connect(ui.hiddenpage_proxyPort_i2p,    SIGNAL(textChanged(QString)),this,SLOT(saveAddresses()));
+	connect(ui.hiddenpage_proxyPort_i2p,    SIGNAL(valueChanged(int)),this,SLOT(saveAddresses()));
 
 	connect(ui.totalDownloadRate,SIGNAL(valueChanged(int)),this,SLOT(saveRates()));
 	connect(ui.totalUploadRate,  SIGNAL(valueChanged(int)),this,SLOT(saveRates()));
@@ -231,11 +232,6 @@ void ServerPage::load()
 	// (csoler) Disabling some signals in this block in order to avoid
     // some nasty feedback.
 	{
-		ui.localPort->blockSignals(true);
-		ui.extPort->blockSignals(true);
-		ui.localAddress->blockSignals(true);
-		ui.extAddress->blockSignals(true);
-
 		loadFilteredIps() ;
 
 		ui.netModeComboBox->show() ;
@@ -261,7 +257,7 @@ void ServerPage::load()
 			netIndex = 0;
 			break;
 		}
-		ui.netModeComboBox->setCurrentIndex(netIndex);
+		whileBlocking(ui.netModeComboBox)->setCurrentIndex(netIndex);
 
 		/* DHT + Discovery: (public)
 	 * Discovery only:  (private)
@@ -285,31 +281,31 @@ void ServerPage::load()
 				netIndex = 3; // NONE
 		}
 
-		ui.discComboBox->setCurrentIndex(netIndex);
+		whileBlocking(ui.discComboBox)->setCurrentIndex(netIndex);
 
 		int dlrate = 0;
 		int ulrate = 0;
 		rsConfig->GetMaxDataRates(dlrate, ulrate);
-		ui.totalDownloadRate->setValue(dlrate);
-		ui.totalUploadRate->setValue(ulrate);
+		whileBlocking(ui.totalDownloadRate)->setValue(dlrate);
+		whileBlocking(ui.totalUploadRate)->setValue(ulrate);
 
 		toggleUPnP();
 
 		/* Addresses must be set here - otherwise can't edit it */
 		/* set local address */
-		ui.localAddress->setText(QString::fromStdString(detail.localAddr));
-		ui.localPort -> setValue(detail.localPort);
+		whileBlocking(ui.localAddress)->setText(QString::fromStdString(detail.localAddr));
+		whileBlocking(ui.localPort )-> setValue(detail.localPort);
 		/* set the server address */
-		ui.extAddress->setText(QString::fromStdString(detail.extAddr));
-		ui.extPort -> setValue(detail.extPort);
+		whileBlocking(ui.extAddress)->setText(QString::fromStdString(detail.extAddr));
+		whileBlocking(ui.extPort) -> setValue(detail.extPort);
 		/* set DynDNS */
-		ui.dynDNS -> setText(QString::fromStdString(detail.dyndns));
+		whileBlocking(ui.dynDNS) -> setText(QString::fromStdString(detail.dyndns));
 
-		ui.showDiscStatusBar->setChecked(Settings->getStatusBarFlags() & STATUSBAR_DISC);
+		whileBlocking(ui.showDiscStatusBar)->setChecked(Settings->getStatusBarFlags() & STATUSBAR_DISC);
 
-		ui.ipAddressList->clear();
+		whileBlocking(ui.ipAddressList)->clear();
 		for(std::list<std::string>::const_iterator it(detail.ipAddressList.begin());it!=detail.ipAddressList.end();++it)
-			ui.ipAddressList->addItem(QString::fromStdString(*it));
+			whileBlocking(ui.ipAddressList)->addItem(QString::fromStdString(*it));
 
 		/* HIDDEN PAGE SETTINGS - only Proxy (outgoing) */
 		std::string proxyaddr;
@@ -317,19 +313,14 @@ void ServerPage::load()
 		uint32_t status ;
 		// Tor
 		rsPeers->getProxyServer(RS_HIDDEN_TYPE_TOR, proxyaddr, proxyport, status);
-		ui.hiddenpage_proxyAddress_tor -> setText(QString::fromStdString(proxyaddr));
-		ui.hiddenpage_proxyPort_tor -> setValue(proxyport);
+		whileBlocking(ui.hiddenpage_proxyAddress_tor) -> setText(QString::fromStdString(proxyaddr));
+		whileBlocking(ui.hiddenpage_proxyPort_tor) -> setValue(proxyport);
 		// I2P
 		rsPeers->getProxyServer(RS_HIDDEN_TYPE_I2P, proxyaddr, proxyport, status);
-		ui.hiddenpage_proxyAddress_i2p -> setText(QString::fromStdString(proxyaddr));
-		ui.hiddenpage_proxyPort_i2p -> setValue(proxyport);
+		whileBlocking(ui.hiddenpage_proxyAddress_i2p) -> setText(QString::fromStdString(proxyaddr));
+		whileBlocking(ui.hiddenpage_proxyPort_i2p) -> setValue(proxyport);
 
 		updateOutProxyIndicator();
-
-		ui.localPort->blockSignals(false);
-		ui.extPort->blockSignals(false);
-		ui.localAddress->blockSignals(false);
-		ui.extAddress->blockSignals(false);
 	}
 }
 
@@ -352,37 +343,37 @@ void ServerPage::loadFilteredIps()
 {
     if(rsBanList->ipFilteringEnabled())
     {
-        ui.denyAll_CB->setChecked(true) ;
-        ui.filteredIpsTable->setEnabled(true) ;
-        ui.includeFromFriends_CB->setEnabled(true) ;
-        ui.includeFromDHT_CB->setEnabled(true) ;
-        ui.ipInput_LE->setEnabled(true) ;
-        ui.ipInputRange_SB->setEnabled(true) ;
-        ui.ipInputComment_LE->setEnabled(true) ;
-        ui.ipInputAddBlackList_PB->setEnabled(true) ;
-        ui.ipInputAddWhiteList_PB->setEnabled(true) ;
-        ui.groupIPRanges_CB->setEnabled(true) ;
-        ui.groupIPRanges_SB->setEnabled(true) ;
+        whileBlocking(ui.denyAll_CB)->setChecked(true) ;
+        whileBlocking(ui.filteredIpsTable)->setEnabled(true) ;
+        whileBlocking(ui.includeFromFriends_CB)->setEnabled(true) ;
+        whileBlocking(ui.includeFromDHT_CB)->setEnabled(true) ;
+        whileBlocking(ui.ipInput_LE)->setEnabled(true) ;
+        whileBlocking(ui.ipInputRange_SB)->setEnabled(true) ;
+        whileBlocking(ui.ipInputComment_LE)->setEnabled(true) ;
+        whileBlocking(ui.ipInputAddBlackList_PB)->setEnabled(true) ;
+        whileBlocking(ui.ipInputAddWhiteList_PB)->setEnabled(true) ;
+        whileBlocking(ui.groupIPRanges_CB)->setEnabled(true) ;
+        whileBlocking(ui.groupIPRanges_SB)->setEnabled(true) ;
     }
     else
     {
-        ui.denyAll_CB->setChecked(false) ;
-        ui.filteredIpsTable->setEnabled(false) ;
-        ui.includeFromFriends_CB->setEnabled(false) ;
-        ui.includeFromDHT_CB->setEnabled(false) ;
-        ui.ipInput_LE->setEnabled(false) ;
-        ui.ipInputRange_SB->setEnabled(false) ;
-        ui.ipInputComment_LE->setEnabled(false) ;
-        ui.ipInputAddBlackList_PB->setEnabled(false) ;
-        ui.ipInputAddWhiteList_PB->setEnabled(true) ;
-        ui.groupIPRanges_CB->setEnabled(false) ;
-        ui.groupIPRanges_SB->setEnabled(false) ;
+        whileBlocking(ui.denyAll_CB)->setChecked(false) ;
+        whileBlocking(ui.filteredIpsTable)->setEnabled(false) ;
+        whileBlocking(ui.includeFromFriends_CB)->setEnabled(false) ;
+        whileBlocking(ui.includeFromDHT_CB)->setEnabled(false) ;
+        whileBlocking(ui.ipInput_LE)->setEnabled(false) ;
+        whileBlocking(ui.ipInputRange_SB)->setEnabled(false) ;
+        whileBlocking(ui.ipInputComment_LE)->setEnabled(false) ;
+        whileBlocking(ui.ipInputAddBlackList_PB)->setEnabled(false) ;
+        whileBlocking(ui.ipInputAddWhiteList_PB)->setEnabled(true) ;
+        whileBlocking(ui.groupIPRanges_CB)->setEnabled(false) ;
+        whileBlocking(ui.groupIPRanges_SB)->setEnabled(false) ;
     }
 
-    ui.includeFromFriends_CB->setChecked(rsBanList->IPsFromFriendsEnabled()) ;
-    ui.includeFromDHT_CB->setChecked(rsBanList->iPsFromDHTEnabled()) ;
-    ui.groupIPRanges_CB->setChecked(rsBanList->autoRangeEnabled()) ;
-    ui.groupIPRanges_SB->setValue(rsBanList->autoRangeLimit()) ;
+    whileBlocking(ui.includeFromFriends_CB)->setChecked(rsBanList->IPsFromFriendsEnabled()) ;
+    whileBlocking(ui.includeFromDHT_CB)->setChecked(rsBanList->iPsFromDHTEnabled()) ;
+    whileBlocking(ui.groupIPRanges_CB)->setChecked(rsBanList->autoRangeEnabled()) ;
+    whileBlocking(ui.groupIPRanges_SB)->setValue(rsBanList->autoRangeLimit()) ;
 
     ui.whiteListIpsTable->setColumnHidden(COLUMN_STATUS,true);
     ui.filteredIpsTable->setColumnHidden(COLUMN_STATUS,true);
@@ -685,14 +676,14 @@ void ServerPage::updateStatus()
 	if (!ui.localPort->isEnabled())
 	{
 		/* set local address */
-		ui.localPort -> setValue(detail.localPort);
-		ui.extPort -> setValue(detail.extPort);
+		whileBlocking(ui.localPort) -> setValue(detail.localPort);
+		whileBlocking(ui.extPort) -> setValue(detail.extPort);
 	}
 
 	/* set local address */
-	ui.localAddress->setText(QString::fromStdString(detail.localAddr));
+	whileBlocking(ui.localAddress)->setText(QString::fromStdString(detail.localAddr));
 	/* set the server address */
-	ui.extAddress->setText(QString::fromStdString(detail.extAddr));
+	whileBlocking(ui.extAddress)->setText(QString::fromStdString(detail.extAddr));
 
 
 	// Now update network bits.

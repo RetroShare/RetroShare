@@ -335,7 +335,7 @@ void GenCertDialog::updateCheckLabels()
     bool generate_new = !ui.reuse_existing_node_CB->isChecked();
     mAllFieldsOk = true ;
 
-    if(ui.node_input->text().length() > 3)
+    if(ui.node_input->text().length() >= 3)
 		ui.node_name_check_LB   ->setPixmap(good) ;
     else
     {
@@ -343,7 +343,7 @@ void GenCertDialog::updateCheckLabels()
 		ui.node_name_check_LB   ->setPixmap(bad) ;
     }
 
-    if(!generate_new || ui.name_input->text().length() > 3)
+    if(!generate_new || ui.name_input->text().length() >= 3)
 		ui.profile_name_check_LB   ->setPixmap(good) ;
     else
     {
@@ -351,14 +351,14 @@ void GenCertDialog::updateCheckLabels()
 		ui.profile_name_check_LB   ->setPixmap(bad) ;
     }
 
-	if(ui.password_input->text().length() > 3)
+	if(ui.password_input->text().length() >= 3)
 		ui.password_check_LB   ->setPixmap(good) ;
     else
     {
         mAllFieldsOk = false ;
 		ui.password_check_LB   ->setPixmap(bad) ;
     }
-    if(ui.password_input->text().length() > 3 && ui.password_input->text() == ui.password_input_2->text())
+    if(ui.password_input->text().length() >= 3 && ui.password_input->text() == ui.password_input_2->text())
 		ui.password2_check_LB   ->setPixmap(good) ;
     else
     {

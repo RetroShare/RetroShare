@@ -75,6 +75,15 @@
      </layout>
     </widget>
    </item>
+   <item row="5" column="1">
+    <widget class="QFrame" name="addFrame">
+     <layout class="QGridLayout" name="gridLayout_3">
+      <property name="margin">
+       <number>0</number>
+      </property>
+     </layout>
+    </widget>
+   </item>
    <item row="3" column="1" colspan="2">
     <layout class="QGridLayout" name="gridLayout">
      <property name="topMargin">
@@ -168,24 +177,6 @@
      </item>
     </layout>
    </item>
-   <item row="4" column="1">
-    <widget class="QFrame" name="addFrame">
-     <layout class="QGridLayout" name="gridLayout_3">
-      <property name="leftMargin">
-       <number>0</number>
-      </property>
-      <property name="topMargin">
-       <number>0</number>
-      </property>
-      <property name="rightMargin">
-       <number>0</number>
-      </property>
-      <property name="bottomMargin">
-       <number>0</number>
-      </property>
-     </layout>
-    </widget>
-   </item>
    <item row="1" column="1" colspan="2">
     <widget class="QLabel" name="label_2">
      <property name="font">
@@ -222,11 +213,23 @@ private and secure decentralized commmunication platform.
      </property>
     </widget>
    </item>
+   <item row="4" column="1">
+    <widget class="QPushButton" name="runStartWizard_PB">
+     <property name="text">
+      <string>Launch startup wizard</string>
+     </property>
+     <property name="icon">
+      <iconset resource="images.qrc">
+       <normaloff>:/images/tools_wizard.png</normaloff>:/images/tools_wizard.png</iconset>
+     </property>
+    </widget>
+   </item>
   </layout>
   <zorder>label</zorder>
   <zorder>addFrame</zorder>
   <zorder>label_2</zorder>
   <zorder>addframe</zorder>
+  <zorder>runStartWizard_PB</zorder>
  </widget>
  <resources>
   <include location="icons.qrc"/>

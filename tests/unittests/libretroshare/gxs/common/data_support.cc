@@ -98,7 +98,7 @@ void init_item(RsGxsGrpMetaData* metaGrp)
     randString(SHORT_STR, metaGrp->mGroupName);
     randString(SHORT_STR, metaGrp->mServiceString);
 
-    init_item(metaGrp->signSet);
+    init_item(metaGrp->signSet);// This is not stored in db.
     init_item(metaGrp->keys);
 
     metaGrp->mPublishTs = rand()%3452;
@@ -115,9 +115,10 @@ void init_item(RsGxsGrpMetaData* metaGrp)
     metaGrp->mGroupStatus = rand()%313;
     metaGrp->mRecvTS = rand()%313;
 
-	 metaGrp->mOriginator = RsPeerId::random() ;
-	 metaGrp->mInternalCircle = RsGxsCircleId::random() ;
-	 metaGrp->mHash = RsFileHash::random() ;
+    metaGrp->mOriginator = RsPeerId::random();
+    metaGrp->mInternalCircle = RsGxsCircleId::random();
+    metaGrp->mHash = RsFileHash::random();
+    metaGrp->mGrpSize = 0;// This was calculated on db read.
 }
 
 void init_item(RsGxsMsgMetaData* metaMsg)

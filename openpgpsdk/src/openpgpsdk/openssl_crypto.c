@@ -45,12 +45,21 @@ void test_secret_key(const ops_secret_key_t *skey)
     {
     RSA* test=RSA_new();
 
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
     test->n=BN_dup(skey->public_key.key.rsa.n);
     test->e=BN_dup(skey->public_key.key.rsa.e);
-
     test->d=BN_dup(skey->key.rsa.d);
+
     test->p=BN_dup(skey->key.rsa.p);
     test->q=BN_dup(skey->key.rsa.q);
+#else
+    RSA_set0_key(test,
+		    BN_dup(skey->public_key.key.rsa.n),
+    		BN_dup(skey->public_key.key.rsa.e),
+		    BN_dup(skey->key.rsa.d));
+
+    RSA_set0_factors(test, BN_dup(skey->key.rsa.p), BN_dup(skey->key.rsa.q));
+#endif
 
     assert(RSA_check_key(test)==1);
     RSA_free(test);
@@ -392,8 +401,13 @@ ops_boolean_t ops_dsa_verify(const unsigned char *hash,size_t hash_length,
     int ret;
 
     osig=DSA_SIG_new();
+
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
     osig->r=sig->r;
     osig->s=sig->s;
+#else
+    DSA_SIG_set0(osig,BN_dup(sig->r),BN_dup(sig->s)) ;
+#endif
 
 	 if(BN_num_bits(dsa->q) != 160)
 	 {
@@ -402,16 +416,27 @@ ops_boolean_t ops_dsa_verify(const unsigned char *hash,size_t hash_length,
 			 fprintf(stderr,"(WW) ops_dsa_verify: openssl does only supports 'q' of 160 bits. Current is %d bits.\n",BN_num_bits(dsa->q)) ;
 			 already_said=ops_true ;
 		 }
-		 osig->r=osig->s=NULL;
+
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
+		 osig->r=NULL;			// in this case, the values are not copied.
+		 osig->s=NULL;
+#endif
+
 		 DSA_SIG_free(osig);
 		 return ops_false ;
 	 }
 
     odsa=DSA_new();
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
     odsa->p=dsa->p;
     odsa->q=dsa->q;
     odsa->g=dsa->g;
+
     odsa->pub_key=dsa->y;
+#else
+    DSA_set0_pqg(odsa,BN_dup(dsa->p),BN_dup(dsa->q),BN_dup(dsa->g));
+    DSA_set0_key(odsa,BN_dup(dsa->y),NULL) ;
+#endif
 
     if (debug)
         {
@@ -425,7 +450,8 @@ ops_boolean_t ops_dsa_verify(const unsigned char *hash,size_t hash_length,
         }
     //printf("hash_length=%ld\n", hash_length);
     //printf("Q=%d\n", BN_num_bytes(odsa->q));
-    unsigned int qlen=BN_num_bytes(odsa->q);
+    unsigned int qlen=BN_num_bytes(dsa->q);
+
     if (qlen < hash_length)
         hash_length=qlen;
     //    ret=DSA_do_verify(hash,hash_length,osig,odsa);
@@ -445,10 +471,17 @@ ops_boolean_t ops_dsa_verify(const unsigned char *hash,size_t hash_length,
 		return ops_false ;
 	 }
 
-    odsa->p=odsa->q=odsa->g=odsa->pub_key=NULL;
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
+    osig->r=NULL;
+    osig->s=NULL;
+
+    odsa->p=NULL;
+    odsa->q=NULL;
+    odsa->g=NULL;
+    odsa->pub_key=NULL;
+#endif
+
     DSA_free(odsa);
- 
-    osig->r=osig->s=NULL;
     DSA_SIG_free(osig);
 
     return ret != 0;
@@ -470,12 +503,18 @@ int ops_rsa_public_decrypt(unsigned char *out,const unsigned char *in,
     int n;
 
     orsa=RSA_new();
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
     orsa->n=rsa->n;
     orsa->e=rsa->e;
+#else
+    RSA_set0_key(orsa,BN_dup(rsa->n),BN_dup(rsa->e),NULL) ;
+#endif
 
     n=RSA_public_decrypt(length,in,out,orsa,RSA_NO_PADDING);
 
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
     orsa->n=orsa->e=NULL;
+#endif
     RSA_free(orsa);
 
     return n;
@@ -499,6 +538,7 @@ int ops_rsa_private_encrypt(unsigned char *out,const unsigned char *in,
     int n;
 
     orsa=RSA_new();
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
     orsa->n=rsa->n;	// XXX: do we need n?
     orsa->d=srsa->d;
     orsa->p=srsa->q;
@@ -506,17 +546,28 @@ int ops_rsa_private_encrypt(unsigned char *out,const unsigned char *in,
 
     /* debug */
     orsa->e=rsa->e;
+
     // If this isn't set, it's very likely that the programmer hasn't
     // decrypted the secret key. RSA_check_key segfaults in that case.
     // Use ops_decrypt_secret_key_from_data() to do that.
     assert(orsa->d);
+#else
+    RSA_set0_key(orsa,BN_dup(rsa->n),BN_dup(rsa->e),BN_dup(srsa->d)) ;
+    RSA_set0_factors(orsa,BN_dup(srsa->p),BN_dup(srsa->q));
+#endif
+
     assert(RSA_check_key(orsa) == 1);
-    orsa->e=NULL;
     /* end debug */
+
+    // WARNING: this function should *never* be called for direct encryption, because of the padding.
+    // It's actually only called in the signature function now, where an adapted padding is placed.
 
     n=RSA_private_encrypt(length,in,out,orsa,RSA_NO_PADDING);
 
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
     orsa->n=orsa->d=orsa->p=orsa->q=NULL;
+    orsa->e=NULL;
+#endif
     RSA_free(orsa);
 
     return n;
@@ -541,15 +592,19 @@ int ops_rsa_private_decrypt(unsigned char *out,const unsigned char *in,
     char errbuf[1024];
 
     orsa=RSA_new();
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
     orsa->n=rsa->n;	// XXX: do we need n?
     orsa->d=srsa->d;
     orsa->p=srsa->q;
     orsa->q=srsa->p;
+    orsa->e=rsa->e;
+#else
+    RSA_set0_key(orsa,BN_dup(rsa->n),BN_dup(rsa->e),BN_dup(srsa->d)) ;
+    RSA_set0_factors(orsa,BN_dup(srsa->p),BN_dup(srsa->q));
+#endif
 
     /* debug */
-    orsa->e=rsa->e;
     assert(RSA_check_key(orsa) == 1);
-    orsa->e=NULL;
     /* end debug */
 
     n=RSA_private_decrypt(length,in,out,orsa,RSA_NO_PADDING);
@@ -563,7 +618,10 @@ int ops_rsa_private_decrypt(unsigned char *out,const unsigned char *in,
         ERR_error_string(err,&errbuf[0]);
         fprintf(stderr,"openssl error : %s\n",errbuf);
         }
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
     orsa->n=orsa->d=orsa->p=orsa->q=NULL;
+    orsa->e=NULL;
+#endif
     RSA_free(orsa);
 
     return n;
@@ -586,8 +644,12 @@ int ops_rsa_public_encrypt(unsigned char *out,const unsigned char *in,
     //    printf("ops_rsa_public_encrypt: length=%ld\n", length);
 
     orsa=RSA_new();
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
     orsa->n=rsa->n;
     orsa->e=rsa->e;
+#else
+    RSA_set0_key(orsa,BN_dup(rsa->n),BN_dup(rsa->e),NULL);
+#endif
 
     //    printf("len: %ld\n", length);
     //    ops_print_bn("n: ", orsa->n);
@@ -602,7 +664,9 @@ int ops_rsa_public_encrypt(unsigned char *out,const unsigned char *in,
 	    BIO_free(fd_out) ;
     }
 
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
     orsa->n=orsa->e=NULL;
+#endif
     RSA_free(orsa);
 
     return n;
@@ -680,8 +744,19 @@ ops_boolean_t ops_rsa_generate_keypair(const int numbits, const unsigned long e,
     skey->public_key.days_valid=0;
     skey->public_key.algorithm= OPS_PKA_RSA;
 
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
     skey->public_key.key.rsa.n=BN_dup(rsa->n);
     skey->public_key.key.rsa.e=BN_dup(rsa->e);
+    skey->key.rsa.d=BN_dup(rsa->d);
+#else
+    const BIGNUM *nn=NULL,*ee=NULL,*dd=NULL ;
+
+    RSA_get0_key(rsa,&nn,&ee,&dd) ;
+
+    skey->public_key.key.rsa.n=BN_dup(nn) ;
+    skey->public_key.key.rsa.e=BN_dup(ee) ;
+    skey->key.rsa.d=BN_dup(dd) ;
+#endif
 
     skey->s2k_usage=OPS_S2KU_ENCRYPTED_AND_HASHED;
     skey->s2k_specifier=OPS_S2KS_SALTED;
@@ -691,10 +766,20 @@ ops_boolean_t ops_rsa_generate_keypair(const int numbits, const unsigned long e,
     skey->octet_count=0;
     skey->checksum=0;
 
-    skey->key.rsa.d=BN_dup(rsa->d);
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
     skey->key.rsa.p=BN_dup(rsa->p);
     skey->key.rsa.q=BN_dup(rsa->q);
     skey->key.rsa.u=BN_mod_inverse(NULL,rsa->p, rsa->q, ctx);
+#else
+    const BIGNUM *pp=NULL,*qq=NULL ;
+
+    RSA_get0_factors(rsa,&pp,&qq) ;
+
+    skey->key.rsa.p=BN_dup(pp);
+    skey->key.rsa.q=BN_dup(qq);
+
+    skey->key.rsa.u=BN_mod_inverse(NULL,pp,qq, ctx);
+#endif
     assert(skey->key.rsa.u);
     BN_CTX_free(ctx);
 
@@ -803,15 +888,22 @@ DSA_SIG* ops_dsa_sign(unsigned char* hashbuf, unsigned hashsize, const ops_dsa_s
     DSA_SIG *dsasig;
 
     odsa=DSA_new();
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
     odsa->p=dsa->p;
     odsa->q=dsa->q;
     odsa->g=dsa->g;
     odsa->pub_key=dsa->y;
     odsa->priv_key=sdsa->x;
+#else
+    DSA_set0_pqg(odsa,BN_dup(dsa->p),BN_dup(dsa->q),BN_dup(dsa->g));
+    DSA_set0_key(odsa,BN_dup(dsa->y),BN_dup(sdsa->x));
+#endif
 
     dsasig=DSA_do_sign(hashbuf,hashsize,odsa);
 
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
     odsa->p=odsa->q=odsa->g=odsa->pub_key=odsa->priv_key=NULL;
+#endif
     DSA_free(odsa);
 
     return dsasig;

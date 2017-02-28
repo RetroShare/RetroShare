@@ -34,6 +34,7 @@
 #include "gui/chat/ChatDialog.h"
 #include "gui/notifyqt.h"
 #include "rsharesettings.h"
+#include "util/misc.h"
 #include <retroshare/rsconfig.h>
 
 #include <retroshare/rshistory.h>
@@ -299,26 +300,26 @@ void
 ChatPage::load()
 {
     Settings->beginGroup(QString("Chat"));
-    ui.checkBox_emoteprivchat->setChecked(Settings->value("Emoteicons_PrivatChat", true).toBool());
-    ui.checkBox_emotegroupchat->setChecked(Settings->value("Emoteicons_GroupChat", true).toBool());
-    ui.checkBox_enableCustomFonts->setChecked(Settings->value("EnableCustomFonts", true).toBool());
-    ui.checkBox_enableCustomFontSize->setChecked(Settings->value("EnableCustomFontSize", true).toBool());
-		ui.minimumFontSize->setValue(Settings->value("MinimumFontSize", 10).toInt());
-    ui.checkBox_enableBold->setChecked(Settings->value("EnableBold", true).toBool());
-    ui.checkBox_enableItalics->setChecked(Settings->value("EnableItalics", true).toBool());
-    ui.minimumContrast->setValue(Settings->value("MinimumContrast", 4.5).toDouble());
+    whileBlocking(ui.checkBox_emoteprivchat)->setChecked(Settings->value("Emoteicons_PrivatChat", true).toBool());
+    whileBlocking(ui.checkBox_emotegroupchat)->setChecked(Settings->value("Emoteicons_GroupChat", true).toBool());
+    whileBlocking(ui.checkBox_enableCustomFonts)->setChecked(Settings->value("EnableCustomFonts", true).toBool());
+    whileBlocking(ui.checkBox_enableCustomFontSize)->setChecked(Settings->value("EnableCustomFontSize", true).toBool());
+	whileBlocking(ui.minimumFontSize)->setValue(Settings->value("MinimumFontSize", 10).toInt());
+    whileBlocking(ui.checkBox_enableBold)->setChecked(Settings->value("EnableBold", true).toBool());
+    whileBlocking(ui.checkBox_enableItalics)->setChecked(Settings->value("EnableItalics", true).toBool());
+    whileBlocking(ui.minimumContrast)->setValue(Settings->value("MinimumContrast", 4.5).toDouble());
     Settings->endGroup();
 
 	     // state of distant Chat combobox
     int index = Settings->value("DistantChat", 0).toInt();
-    ui.distantChatComboBox->setCurrentIndex(index);
+    whileBlocking(ui.distantChatComboBox)->setCurrentIndex(index);
 
     fontTempChat.fromString(Settings->getChatScreenFont());
 
-    ui.sendMessageWithCtrlReturn->setChecked(Settings->getChatSendMessageWithCtrlReturn());
-    ui.sendAsPlainTextByDef->setChecked(Settings->getChatSendAsPlainTextByDef());
-    ui.loadEmbeddedImages->setChecked(Settings->getChatLoadEmbeddedImages());
-    ui.DontSendTyping->setChecked(Settings->getChatDoNotSendIsTyping());
+    whileBlocking(ui.sendMessageWithCtrlReturn)->setChecked(Settings->getChatSendMessageWithCtrlReturn());
+    whileBlocking(ui.sendAsPlainTextByDef)->setChecked(Settings->getChatSendAsPlainTextByDef());
+    whileBlocking(ui.loadEmbeddedImages)->setChecked(Settings->getChatLoadEmbeddedImages());
+    whileBlocking(ui.DontSendTyping)->setChecked(Settings->getChatDoNotSendIsTyping());
 
 	std::string advsetting;
 	if(rsConfig->getConfigurationOption(RS_CONFIG_ADVANCED, advsetting) && (advsetting == "YES"))
@@ -326,36 +327,36 @@ ChatPage::load()
 	else
 		ui.DontSendTyping->hide();
 
-    ui.sbSearch_CharToStart->setValue(Settings->getChatSearchCharToStartSearch());
-    ui.cbSearch_CaseSensitively->setChecked(Settings->getChatSearchCaseSensitively());
-    ui.cbSearch_WholeWords->setChecked(Settings->getChatSearchWholeWords());
-    ui.cbSearch_MoveToCursor->setChecked(Settings->getChatSearchMoveToCursor());
-    ui.cbSearch_WithoutLimit->setChecked(Settings->getChatSearchSearchWithoutLimit());
-    ui.sbSearch_MaxLimitColor->setValue(Settings->getChatSearchMaxSearchLimitColor());
+    whileBlocking(ui.sbSearch_CharToStart)->setValue(Settings->getChatSearchCharToStartSearch());
+    whileBlocking(ui.cbSearch_CaseSensitively)->setChecked(Settings->getChatSearchCaseSensitively());
+    whileBlocking(ui.cbSearch_WholeWords)->setChecked(Settings->getChatSearchWholeWords());
+    whileBlocking(ui.cbSearch_MoveToCursor)->setChecked(Settings->getChatSearchMoveToCursor());
+    whileBlocking(ui.cbSearch_WithoutLimit)->setChecked(Settings->getChatSearchSearchWithoutLimit());
+    whileBlocking(ui.sbSearch_MaxLimitColor)->setValue(Settings->getChatSearchMaxSearchLimitColor());
     rgbChatSearchFoundColor=Settings->getChatSearchFoundColor();
     QPixmap pix(24, 24);
     pix.fill(rgbChatSearchFoundColor);
     ui.btSearch_FoundColor->setIcon(pix);
 
-    ui.publicChatLoadCount->setValue(Settings->getPublicChatHistoryCount());
-    ui.privateChatLoadCount->setValue(Settings->getPrivateChatHistoryCount());
-    ui.lobbyChatLoadCount->setValue(Settings->getLobbyChatHistoryCount());
+    whileBlocking(ui.publicChatLoadCount)->setValue(Settings->getPublicChatHistoryCount());
+    whileBlocking(ui.privateChatLoadCount)->setValue(Settings->getPrivateChatHistoryCount());
+    whileBlocking(ui.lobbyChatLoadCount)->setValue(Settings->getLobbyChatHistoryCount());
 
-    ui.publicChatEnable->setChecked(rsHistory->getEnable(RS_HISTORY_TYPE_PUBLIC));
-    ui.privateChatEnable->setChecked(rsHistory->getEnable(RS_HISTORY_TYPE_PRIVATE));
-    ui.lobbyChatEnable->setChecked(rsHistory->getEnable(RS_HISTORY_TYPE_LOBBY));
+    whileBlocking(ui.publicChatEnable)->setChecked(rsHistory->getEnable(RS_HISTORY_TYPE_PUBLIC));
+    whileBlocking(ui.privateChatEnable)->setChecked(rsHistory->getEnable(RS_HISTORY_TYPE_PRIVATE));
+    whileBlocking(ui.lobbyChatEnable)->setChecked(rsHistory->getEnable(RS_HISTORY_TYPE_LOBBY));
 
-    ui.publicChatSaveCount->setValue(rsHistory->getSaveCount(RS_HISTORY_TYPE_PUBLIC));
-    ui.privateChatSaveCount->setValue(rsHistory->getSaveCount(RS_HISTORY_TYPE_PRIVATE));
-    ui.lobbyChatSaveCount->setValue(rsHistory->getSaveCount(RS_HISTORY_TYPE_LOBBY));
+    whileBlocking(ui.publicChatSaveCount)->setValue(rsHistory->getSaveCount(RS_HISTORY_TYPE_PUBLIC));
+    whileBlocking(ui.privateChatSaveCount)->setValue(rsHistory->getSaveCount(RS_HISTORY_TYPE_PRIVATE));
+    whileBlocking(ui.lobbyChatSaveCount)->setValue(rsHistory->getSaveCount(RS_HISTORY_TYPE_LOBBY));
     
     // using fontTempChat.rawname() does not always work!
     // see http://doc.qt.digia.com/qt-maemo/qfont.html#rawName
     QStringList fontname = fontTempChat.toString().split(",");
-    ui.labelChatFontPreview->setText(fontname[0]);
-    ui.labelChatFontPreview->setFont(fontTempChat);
+    whileBlocking(ui.labelChatFontPreview)->setText(fontname[0]);
+    whileBlocking(ui.labelChatFontPreview)->setFont(fontTempChat);
 
-	 ui.max_storage_period->setValue(rsHistory->getMaxStorageDuration()/86400) ;
+	 whileBlocking(ui.max_storage_period)->setValue(rsHistory->getMaxStorageDuration()/86400) ;
 
     /* Load styles */
     publicStylePath = loadStyleInfo(ChatStyle::TYPE_PUBLIC, ui.publicStyle, ui.publicComboBoxVariant, publicStyleVariant);
@@ -372,14 +373,14 @@ ChatPage::load()
 
     uint chatflags = Settings->getChatFlags();
 
-    ui.chat_NewWindow->setChecked(chatflags & RS_CHAT_OPEN);
-    ui.chat_Focus->setChecked(chatflags & RS_CHAT_FOCUS);
-    ui.chat_tabbedWindow->setChecked(chatflags & RS_CHAT_TABBED_WINDOW);
-    ui.chat_Blink->setChecked(chatflags & RS_CHAT_BLINK);
+    whileBlocking(ui.chat_NewWindow)->setChecked(chatflags & RS_CHAT_OPEN);
+    whileBlocking(ui.chat_Focus)->setChecked(chatflags & RS_CHAT_FOCUS);
+    whileBlocking(ui.chat_tabbedWindow)->setChecked(chatflags & RS_CHAT_TABBED_WINDOW);
+    whileBlocking(ui.chat_Blink)->setChecked(chatflags & RS_CHAT_BLINK);
 
     uint chatLobbyFlags = Settings->getChatLobbyFlags();
 
-    ui.chatLobby_Blink->setChecked(chatLobbyFlags & RS_CHATLOBBY_BLINK);
+    whileBlocking(ui.chatLobby_Blink)->setChecked(chatLobbyFlags & RS_CHATLOBBY_BLINK);
 
 	 // load personal invites
 	 //

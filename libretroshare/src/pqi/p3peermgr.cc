@@ -2259,7 +2259,10 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
 			    }
 			    else if (kit->key == kConfigKeyProxyServerPortTor)
 			    {
-				    proxyPortTor = atoi(kit->value.c_str());
+                    uint16_t p = atoi(kit->value.c_str());
+
+                    if(p >= 1024)
+						proxyPortTor = p;
 #ifdef PEER_DEBUG
 				    std::cerr << "Loaded proxyPort for Tor: " << proxyPortTor;
 				    std::cerr << std::endl ;
@@ -2276,7 +2279,10 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
 			    }
 			    else if (kit->key == kConfigKeyProxyServerPortI2P)
 			    {
-				    proxyPortI2P = atoi(kit->value.c_str());
+                    uint16_t p = atoi(kit->value.c_str());
+
+                    if(p >= 1024)
+						proxyPortI2P = p;
 #ifdef PEER_DEBUG
 				    std::cerr << "Loaded proxyPort for I2P: " << proxyPortI2P;
 				    std::cerr << std::endl ;

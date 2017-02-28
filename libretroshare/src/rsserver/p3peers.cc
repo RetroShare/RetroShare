@@ -901,6 +901,12 @@ bool 	p3Peers::setLocalAddress(const RsPeerId &id, const std::string &addr_str, 
         std::cerr << "p3Peers::setLocalAddress() " << id << std::endl;
 #endif
 
+        if(port < 1024)
+        {
+            std::cerr << "(EE) attempt to use a port that is reserved to the system: " << port << std::endl;
+            return false ;
+        }
+
 	struct sockaddr_storage addr;
 	struct sockaddr_in *addrv4p = (struct sockaddr_in *) &addr;
 	addrv4p->sin_family = AF_INET;
@@ -926,6 +932,12 @@ bool 	p3Peers::setExtAddress(const RsPeerId &id, const std::string &addr_str, ui
 #ifdef P3PEERS_DEBUG
         std::cerr << "p3Peers::setExtAddress() " << id << std::endl;
 #endif
+        if(port < 1024)
+        {
+            std::cerr << "(EE) attempt to use a port that is reserved to the system: " << port << std::endl;
+            return false ;
+        }
+
 
 	// NOTE THIS IS IPV4 FOR NOW.
 	struct sockaddr_storage addr;
@@ -1020,6 +1032,11 @@ bool p3Peers::setProxyServer(const uint32_t type, const std::string &addr_str, c
         std::cerr << "p3Peers::setProxyServer() " << std::endl;
     #endif
 
+		if(port < 1024)
+        {
+            std::cerr << "(EE) attempt to set proxy server address to something not allowed: " << addr_str << ":" << port << std::endl;
+            return false ;
+        }
 	struct sockaddr_storage addr;
 	struct sockaddr_in *addrv4p = (struct sockaddr_in *) &addr;
 	addrv4p->sin_family = AF_INET;

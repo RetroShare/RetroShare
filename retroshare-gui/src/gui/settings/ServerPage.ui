@@ -157,7 +157,7 @@
                 <string>Acceptable ports range from 10 to 65535. Normally Ports below 1024 are reserved by your system.</string>
                </property>
                <property name="minimum">
-                <number>10</number>
+                <number>1024</number>
                </property>
                <property name="maximum">
                 <number>65535</number>
@@ -183,7 +183,7 @@
                 <string>Acceptable ports range from 10 to 65535. Normally ports below 1024 are reserved by your system.</string>
                </property>
                <property name="minimum">
-                <number>10</number>
+                <number>1024</number>
                </property>
                <property name="maximum">
                 <number>65535</number>
@@ -828,7 +828,7 @@ behind a firewall or a VPN.</string>
                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the port of the Tor Socks proxy. Your Retroshare node can use this port to connect to&lt;/p&gt;&lt;p&gt;Hidden nodes. The led at right turns green when this port is active on your computer. &lt;/p&gt;&lt;p&gt;This does not mean however that your Retroshare traffic transits though Tor. It does only if &lt;/p&gt;&lt;p&gt;you connect to Hidden nodes, or if you are running a Hidden node yourself.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                 </property>
                 <property name="minimum">
-                 <number>10</number>
+                 <number>1024</number>
                 </property>
                 <property name="maximum">
                  <number>65535</number>
@@ -895,7 +895,7 @@ behind a firewall or a VPN.</string>
                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the port of the I2P Socks proxy. Your Retroshare node can use this port to connect to&lt;/p&gt;&lt;p&gt;Hidden nodes. The led at right turns green when this port is active on your computer. &lt;/p&gt;&lt;p&gt;This does not mean however that your Retroshare traffic transits though I2P. It does only if &lt;/p&gt;&lt;p&gt;you connect to Hidden nodes, or if you are running a Hidden node yourself.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                 </property>
                 <property name="minimum">
-                 <number>10</number>
+                 <number>1024</number>
                 </property>
                 <property name="maximum">
                  <number>65535</number>
@@ -975,7 +975,7 @@ You can connect to Hidden Nodes, even if you are running a standard Node, so why
             <item row="0" column="2">
              <widget class="QSpinBox" name="hiddenpage_localPort">
               <property name="minimum">
-               <number>10</number>
+               <number>1024</number>
               </property>
               <property name="maximum">
                <number>65535</number>
@@ -999,7 +999,7 @@ You can connect to Hidden Nodes, even if you are running a standard Node, so why
             <item row="1" column="2">
              <widget class="QSpinBox" name="hiddenpage_servicePort">
               <property name="minimum">
-               <number>10</number>
+               <number>1024</number>
               </property>
               <property name="maximum">
                <number>65535</number>

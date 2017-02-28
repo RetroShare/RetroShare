@@ -20,6 +20,7 @@
  ****************************************************************/
 
 #include "PeoplePage.h"
+#include "util/misc.h"
 #include "rsharesettings.h"
 #include "retroshare/rsreputations.h"
 #include "retroshare/rsidentity.h"
@@ -56,9 +57,9 @@ void PeoplePage::load()
     uint32_t threshold_for_positive = rsReputations->thresholdForRemotelyPositiveReputation();
     uint32_t threshold_for_negative = rsReputations->thresholdForRemotelyNegativeReputation();
 
-    ui.autoPositiveOpinion_CB->setChecked(auto_positive_contacts);
-    ui.thresholdForPositive_SB->setValue(threshold_for_positive);
-    ui.thresholdForNegative_SB->setValue(threshold_for_negative);
-    ui.deleteBannedIdentitiesAfter_SB->setValue(rsIdentity->deleteBannedNodesThreshold());
-    ui.preventReloadingBannedIdentitiesFor_SB->setValue(rsReputations->rememberDeletedNodesThreshold());
+    whileBlocking(ui.autoPositiveOpinion_CB)->setChecked(auto_positive_contacts);
+    whileBlocking(ui.thresholdForPositive_SB)->setValue(threshold_for_positive);
+    whileBlocking(ui.thresholdForNegative_SB)->setValue(threshold_for_negative);
+    whileBlocking(ui.deleteBannedIdentitiesAfter_SB)->setValue(rsIdentity->deleteBannedNodesThreshold());
+    whileBlocking(ui.preventReloadingBannedIdentitiesFor_SB)->setValue(rsReputations->rememberDeletedNodesThreshold());
 }
