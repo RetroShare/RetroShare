@@ -896,26 +896,26 @@ void ServerPage::loadHiddenNode()
 	ui.iconlabel_hiddenMode->setPixmap(QPixmap(":/images/ledon1.png"));
 
 	// CHANGE OPTIONS ON 
-	ui.discComboBox->removeItem(3);
-	ui.discComboBox->removeItem(2);
-	ui.discComboBox->removeItem(1);
-	ui.discComboBox->removeItem(0);
-	ui.discComboBox->insertItem (0, tr("Discovery On (recommended)"));
-	ui.discComboBox->insertItem (1, tr("Discovery Off"));
+	whileBlocking(ui.discComboBox)->removeItem(3);
+	whileBlocking(ui.discComboBox)->removeItem(2);
+	whileBlocking(ui.discComboBox)->removeItem(1);
+	whileBlocking(ui.discComboBox)->removeItem(0);
+	whileBlocking(ui.discComboBox)->insertItem (0, tr("Discovery On (recommended)"));
+	whileBlocking(ui.discComboBox)->insertItem (1, tr("Discovery Off"));
 
 	int netIndex = 1; // OFF.
 	if (detail.vs_disc != RS_VS_DISC_OFF)
 	{
 		netIndex = 0; // DISC ON;
 	}
-	ui.discComboBox->setCurrentIndex(netIndex);
+	whileBlocking(ui.discComboBox)->setCurrentIndex(netIndex);
 
 	// Download Rates - Stay the same as before.
 	int dlrate = 0;
 	int ulrate = 0;
 	rsConfig->GetMaxDataRates(dlrate, ulrate);
-	ui.totalDownloadRate->setValue(dlrate);
-	ui.totalUploadRate->setValue(ulrate);
+	whileBlocking(ui.totalDownloadRate)->setValue(dlrate);
+	whileBlocking(ui.totalUploadRate)->setValue(ulrate);
 
 	// Addresses.
 	ui.localAddress->setEnabled(false);
@@ -929,13 +929,13 @@ void ServerPage::loadHiddenNode()
 
 	/* Addresses must be set here - otherwise can't edit it */
 		/* set local address */
-	ui.localAddress->setText(QString::fromStdString(detail.localAddr));
-	ui.localPort -> setValue(detail.localPort);
+	whileBlocking(ui.localAddress)->setText(QString::fromStdString(detail.localAddr));
+	whileBlocking(ui.localPort )-> setValue(detail.localPort);
 		/* set the server address */
 
-	ui.extAddress->setText(tr("Hidden - See Config"));
+	whileBlocking(ui.extAddress)->setText(tr("Hidden - See Config"));
 
-	ui.showDiscStatusBar->setChecked(Settings->getStatusBarFlags() & STATUSBAR_DISC);
+	whileBlocking(ui.showDiscStatusBar)->setChecked(Settings->getStatusBarFlags() & STATUSBAR_DISC);
     ui.showDiscStatusBar->hide() ;	// hidden because not functional at the moment.
 
     //ui._turtle_enabled_CB->setChecked(rsTurtle->enabled()) ;
@@ -943,28 +943,28 @@ void ServerPage::loadHiddenNode()
 	// show what we have in ipAddresses. (should be nothing!)
 	ui.ipAddressList->clear();
 	for(std::list<std::string>::const_iterator it(detail.ipAddressList.begin());it!=detail.ipAddressList.end();++it)
-		ui.ipAddressList->addItem(QString::fromStdString(*it));
+		whileBlocking(ui.ipAddressList)->addItem(QString::fromStdString(*it));
 
 	ui.iconlabel_upnp->setPixmap(QPixmap(":/images/ledoff1.png"));
 	ui.iconlabel_netLimited->setPixmap(QPixmap(":/images/ledoff1.png"));
 	ui.iconlabel_ext->setPixmap(QPixmap(":/images/ledoff1.png"));
 
-	ui.allowIpDeterminationCB->setChecked(false);
-	ui.allowIpDeterminationCB->setEnabled(false);
-	ui.IPServersLV->setEnabled(false);
+	whileBlocking(ui.allowIpDeterminationCB)->setChecked(false);
+	whileBlocking(ui.allowIpDeterminationCB)->setEnabled(false);
+	whileBlocking(ui.IPServersLV)->setEnabled(false);
 
 	/* TOR PAGE SETTINGS */
 
 	/* set local address */
 	ui.hiddenpage_localAddress->setEnabled(false);
-	ui.hiddenpage_localAddress->setText(QString::fromStdString(detail.localAddr));
-	ui.hiddenpage_localPort -> setValue(detail.localPort);
+	whileBlocking(ui.hiddenpage_localAddress)->setText(QString::fromStdString(detail.localAddr));
+	whileBlocking(ui.hiddenpage_localPort) -> setValue(detail.localPort);
 
 	/* set the server address */
-	ui.hiddenpage_serviceAddress->setText(QString::fromStdString(detail.hiddenNodeAddress));
-	ui.hiddenpage_servicePort -> setValue(detail.hiddenNodePort);
+	whileBlocking(ui.hiddenpage_serviceAddress)->setText(QString::fromStdString(detail.hiddenNodeAddress));
+	whileBlocking(ui.hiddenpage_servicePort) -> setValue(detail.hiddenNodePort);
 	/* in I2P there is no port - there is only the address */
-	ui.hiddenpage_servicePort->setEnabled(detail.hiddenType != RS_HIDDEN_TYPE_I2P);
+	whileBlocking(ui.hiddenpage_servicePort)->setEnabled(detail.hiddenType != RS_HIDDEN_TYPE_I2P);
 
 	/* out proxy settings */
 	std::string proxyaddr;
@@ -972,12 +972,12 @@ void ServerPage::loadHiddenNode()
 	uint32_t status ;
 	// Tor
 	rsPeers->getProxyServer(RS_HIDDEN_TYPE_TOR, proxyaddr, proxyport, status);
-	ui.hiddenpage_proxyAddress_tor -> setText(QString::fromStdString(proxyaddr));
-	ui.hiddenpage_proxyPort_tor -> setValue(proxyport);
+	whileBlocking(ui.hiddenpage_proxyAddress_tor) -> setText(QString::fromStdString(proxyaddr));
+	whileBlocking(ui.hiddenpage_proxyPort_tor) -> setValue(proxyport);
 	// I2P
 	rsPeers->getProxyServer(RS_HIDDEN_TYPE_I2P, proxyaddr, proxyport, status);
-	ui.hiddenpage_proxyAddress_i2p -> setText(QString::fromStdString(proxyaddr));
-	ui.hiddenpage_proxyPort_i2p -> setValue(proxyport);
+	whileBlocking(ui.hiddenpage_proxyAddress_i2p) -> setText(QString::fromStdString(proxyaddr));
+	whileBlocking(ui.hiddenpage_proxyPort_i2p) -> setValue(proxyport);
 
 	updateOutProxyIndicator();
 
@@ -1013,7 +1013,7 @@ void ServerPage::loadHiddenNode()
 
 		break;
 	}
-	ui.hiddenpage_configuration->setPlainText(expected);
+	whileBlocking(ui.hiddenpage_configuration)->setPlainText(expected);
 }
 
 /** Loads the settings for this page */

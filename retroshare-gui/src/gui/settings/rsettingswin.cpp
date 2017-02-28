@@ -60,7 +60,6 @@ SettingsPage::SettingsPage(QWidget *parent)
 {
     ui.setupUi(this);
     setAttribute(Qt::WA_DeleteOnClose, true);
-//    setModal(false);
 
     /* Initialize help browser */
     mHelpBrowser = new FloatingHelpBrowser(this, ui.helpButton);
@@ -74,8 +73,6 @@ SettingsPage::SettingsPage(QWidget *parent)
     }
 
     connect(ui.listWidget, SIGNAL(currentRowChanged(int)), this, SLOT(setNewPage(int)));
-//    connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(saveChanges()));
-//    connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(close()));
     connect(this, SIGNAL(finished(int)), this, SLOT(dialogFinished(int)));
 }
 
