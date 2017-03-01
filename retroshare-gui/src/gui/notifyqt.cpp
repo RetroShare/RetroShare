@@ -278,7 +278,7 @@ bool NotifyQt::askForPassword(const std::string& title, const std::string& key_d
 		dialog.setWindowTitle(QString::fromStdString(title));
 	}
 
-	dialog.setLabelText((prev_is_bad ? QString("%1\n\n").arg(tr("Wrong password !")) : QString()) + QString("<b>%1</b><br/>Profile: <i>%2</i>\n").arg(tr("Please enter your Retroshare passphrase"), QString::fromUtf8(key_details.c_str())));
+	dialog.setLabelText((prev_is_bad ? QString("%1<br/><br/>").arg(tr("Wrong password !")) : QString()) + QString("<b>%1</b><br/>Profile: <i>%2</i>\n").arg(tr("Please enter your Retroshare passphrase"), QString::fromUtf8(key_details.c_str())));
 	dialog.setTextEchoMode(QLineEdit::Password);
 	dialog.setModal(true);
 
