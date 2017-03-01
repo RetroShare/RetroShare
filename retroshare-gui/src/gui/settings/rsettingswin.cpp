@@ -92,7 +92,7 @@ SettingsPage::~SettingsPage()
 //	}
 //}
 
-/*static*/ void SettingsPage::showYourself(QWidget *parent, PageType page /* = LastPage*/)
+/*static*/ void SettingsPage::showYourself(QWidget */*parent*/, PageType /*page = LastPage*/)
 {
 #ifdef TODO
     if(_instance == NULL) {

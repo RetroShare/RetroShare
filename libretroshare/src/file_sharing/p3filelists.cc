@@ -179,7 +179,7 @@ int p3FileDatabase::tick()
 #endif
         last_print_time = now ;
 
-#warning mr-alice 2016-08-19: This should be removed, but it's necessary atm for updating the GUI
+#warning mr-alice 2016-08-19: "This should be removed, but it's necessary atm for updating the GUI"
         RsServer::notify()->notifyListChange(NOTIFY_LIST_DIRLIST_LOCAL, 0);
     }
 

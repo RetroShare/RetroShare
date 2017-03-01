@@ -771,7 +771,7 @@ void MainWindow::updateFriends()
     if (sysTrayStatus) sysTrayStatus->setIcon(icon);
 }
 
-void MainWindow::postModDirectories(bool update_local)
+void MainWindow::postModDirectories(bool /*update_local*/)
 {
     //RSettingsPage::postModDirectories(update_local);
 
