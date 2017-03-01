@@ -243,7 +243,9 @@ void DistantChatService::markDistantChatAsClosed(const DistantChatPeerId& dcpid)
         mDistantChatContacts.erase(it) ;
 }
 
-bool DistantChatService::initiateDistantChatConnexion(const RsGxsId& to_gxs_id, const RsGxsId& from_gxs_id, DistantChatPeerId& dcpid, uint32_t& error_code)
+bool DistantChatService::initiateDistantChatConnexion(
+        const RsGxsId& to_gxs_id, const RsGxsId& from_gxs_id,
+        DistantChatPeerId& dcpid, uint32_t& error_code, bool notify )
 {
     RsGxsTunnelId tunnel_id ;
 
@@ -259,17 +261,19 @@ bool DistantChatService::initiateDistantChatConnexion(const RsGxsId& to_gxs_id, 
 
     error_code = RS_DISTANT_CHAT_ERROR_NO_ERROR ;
 
-    // Make a self message to raise the chat window
-    
-    RsChatMsgItem *item = new RsChatMsgItem;
-    item->message = "[Starting distant chat. Please wait for secure tunnel to be established]" ;
-    item->chatFlags = RS_CHAT_FLAG_PRIVATE ;
-    item->sendTime = time(NULL) ;
-    item->PeerId(RsPeerId(tunnel_id)) ;
-    handleRecvChatMsgItem(item) ;
-    
-    delete item ;	// item is replaced by NULL if partial, but this is not the case here.
-    
+	if(notify)
+	{
+		// Make a self message to raise the chat window
+		RsChatMsgItem *item = new RsChatMsgItem;
+		item->message = "[Starting distant chat. Please wait for secure tunnel";
+		item->message += " to be established]";
+		item->chatFlags = RS_CHAT_FLAG_PRIVATE;
+		item->sendTime = time(NULL);
+		item->PeerId(RsPeerId(tunnel_id));
+		handleRecvChatMsgItem(item);
+		delete item ;
+	}
+
     return true ;
 }
 

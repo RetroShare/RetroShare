@@ -59,8 +59,9 @@ p3ChatService::p3ChatService( p3ServiceControl *sc, p3IdService *pids,
     DistributedChatService(getServiceInfo().mServiceType, sc, historyMgr,pids),
     mChatMtx("p3ChatService"), mServiceCtrl(sc), mLinkMgr(lm),
     mHistoryMgr(historyMgr), _own_avatar(NULL),
-    _serializer(new RsChatSerialiser()), mGxsTransport(gxsMailService),
-    recentlyReceivedMutex("p3ChatService recently received mutex")
+    _serializer(new RsChatSerialiser()),
+    mDGMutex("p3ChatService distant id - gxs id map mutex"),
+    mGxsTransport(gxsMailService)
 {
 	addSerialType(_serializer);
 	mGxsTransport.registerGxsMailsClient( GxsMailSubServices::P3_CHAT_SERVICE,
@@ -75,8 +76,6 @@ int	p3ChatService::tick()
 	if(receivedItems()) receiveChatQueue();
 
 	DistributedChatService::flush();
-
-	cleanListOfReceivedMessageHashes();
 
 	return 0;
 }
@@ -203,37 +202,38 @@ void p3ChatService::sendGroupChatStatusString(const std::string& status_string)
 	}
 }
 
-void p3ChatService::sendStatusString(const ChatId& id , const std::string& status_string)
+void p3ChatService::sendStatusString( const ChatId& id,
+                                      const std::string& status_string )
 {
-    if(id.isLobbyId())
-        sendLobbyStatusString(id.toLobbyId(),status_string) ;
-    else if(id.isBroadcast())
-        sendGroupChatStatusString(status_string);
-    else if(id.isPeerId() || id.isDistantChatId())
-    {
-	    RsChatStatusItem *cs = new RsChatStatusItem ;
+	if(id.isLobbyId()) sendLobbyStatusString(id.toLobbyId(),status_string);
+	else if(id.isBroadcast()) sendGroupChatStatusString(status_string);
+	else if(id.isPeerId() || id.isDistantChatId())
+	{
+		RsPeerId vpid;
+		if(id.isDistantChatId()) vpid = RsPeerId(id.toDistantChatId());
+		else vpid = id.toPeerId();
 
-	    cs->status_string = status_string ;
-	    cs->flags = RS_CHAT_FLAG_PRIVATE ;
-	    RsPeerId vpid;
-	    if(id.isDistantChatId())
-		    vpid = RsPeerId(id.toDistantChatId());
-	    else
-		    vpid = id.toPeerId();
-        
-	    cs->PeerId(vpid);
+		if(isOnline(vpid))
+		{
+			RsChatStatusItem *cs = new RsChatStatusItem;
+
+			cs->status_string = status_string;
+			cs->flags = RS_CHAT_FLAG_PRIVATE;
+			cs->PeerId(vpid);
 
 #ifdef CHAT_DEBUG
-	    std::cerr  << "sending chat status packet:" << std::endl ;
-	    cs->print(std::cerr) ;
+			std::cerr  << "sending chat status packet:" << std::endl;
+			cs->print(std::cerr);
 #endif
-	    sendChatItem(cs);
-    }
-    else
-    {
-        std::cerr << "p3ChatService::sendStatusString() Error: chat id of this type is not handled, is it empty?" << std::endl;
-        return;
-    }
+			sendChatItem(cs);
+		}
+	}
+	else
+	{
+		std::cerr << "p3ChatService::sendStatusString() Error: chat id of this "
+		          << "type is not handled, is it empty?" << std::endl;
+		return;
+	}
 }
 
 void p3ChatService::clearChatLobby(const ChatId& id)
@@ -339,7 +339,8 @@ bool p3ChatService::sendChat(ChatId destination, std::string msg)
 
 		if(destination.isDistantChatId())
 		{
-			DEPMap::const_iterator it =
+			RS_STACK_MUTEX(mDGMutex);
+			DIDEMap::const_iterator it =
 			        mDistantGxsMap.find(destination.toDistantChatId());
 			if(it != mDistantGxsMap.end())
 			{
@@ -687,31 +688,50 @@ bool p3ChatService::checkForMessageSecurity(RsChatMsgItem *ci)
 	return true ;
 }
 
-bool p3ChatService::initiateDistantChatConnexion(
-        const RsGxsId& to_gxs_id, const RsGxsId& from_gxs_id,
-        DistantChatPeerId& pid, uint32_t& error_code )
+bool p3ChatService::initiateDistantChatConnexion( const RsGxsId& to_gxs_id,
+                                                  const RsGxsId& from_gxs_id,
+                                                  DistantChatPeerId& pid,
+                                                  uint32_t& error_code,
+                                                  bool notify )
 {
 	if(DistantChatService::initiateDistantChatConnexion( to_gxs_id,
 	                                                     from_gxs_id, pid,
-	                                                     error_code ))
+	                                                     error_code, notify ))
 	{
+		RS_STACK_MUTEX(mDGMutex);
 		DistantEndpoints ep; ep.from = from_gxs_id; ep.to = to_gxs_id;
-		mDistantGxsMap.insert(DEPMap::value_type(pid, ep));
+		mDistantGxsMap.insert(DIDEMap::value_type(pid, ep));
 		return true;
 	}
 	return false;
 }
 
-bool p3ChatService::receiveGxsMail(const RsGxsMailItem&, const uint8_t* data, uint32_t dataSize)
+bool p3ChatService::receiveGxsMail( const RsGxsId& authorId,
+                                    const RsGxsId& recipientId,
+                                    const uint8_t* data, uint32_t dataSize )
 {
-	RsChatMsgItem* item = new RsChatMsgItem( const_cast<uint8_t*>(data),
-	                                         dataSize );
-	handleRecvChatMsgItem(item);
-	delete item;
-	return true;
+	DistantChatPeerId pid;
+	uint32_t error_code;
+	if(initiateDistantChatConnexion(
+	            authorId, recipientId, pid, error_code, false ))
+	{
+		RsChatMsgItem* item = new RsChatMsgItem( const_cast<uint8_t*>(data),
+		                                         dataSize );
+		RsPeerId rd(p3GxsTunnelService::makeGxsTunnelId(authorId, recipientId));
+		item->PeerId(rd);
+		handleRecvChatMsgItem(item);
+		delete item;
+		return true;
+	}
+
+	std::cerr << "p3ChatService::receiveGxsMail(...) (EE) failed initiating"
+	          << " distant chat connection error: "<< error_code
+	          << std::endl;
+	return false;
 }
 
-bool p3ChatService::notifySendMailStatus(const RsGxsMailItem& originalMessage, GxsMailStatus status)
+bool p3ChatService::notifySendMailStatus( const RsGxsMailItem& originalMessage,
+                                          GxsMailStatus status )
 {
 	if ( status != GxsMailStatus::RECEIPT_RECEIVED ) return true;
 
@@ -740,29 +760,6 @@ bool p3ChatService::notifySendMailStatus(const RsGxsMailItem& originalMessage, G
 
 bool p3ChatService::handleRecvChatMsgItem(RsChatMsgItem *& ci)
 {
-	time_t now = time(NULL);
-
-	{ // Check for duplicates
-		uint32_t sz = ci->serial_size();
-		std::vector<uint8_t> srz; srz.resize(sz);
-		ci->serialise(&srz[0], sz);
-		Sha1CheckSum hash = RsDirUtil::sha1sum(&srz[0], sz);
-		{
-			RS_STACK_MUTEX(recentlyReceivedMutex);
-			if( mRecentlyReceivedMessageHashes.find(hash) !=
-			        mRecentlyReceivedMessageHashes.end() )
-			{
-				std::cerr << "p3ChatService::handleRecvChatMsgItem(...) (II) "
-				          << "receiving distant message of hash " << hash
-				          << " more than once. Probably it has arrived  before "
-				          << "by other means." << std::endl;
-			delete ci; ci=NULL;
-			return true;
-			}
-			mRecentlyReceivedMessageHashes[hash] = now;
-		}
-	}
-
 	std::string name;
 	uint32_t popupChatFlag = RS_POPUP_CHAT;
 
@@ -840,7 +837,7 @@ bool p3ChatService::handleRecvChatMsgItem(RsChatMsgItem *& ci)
         }
     }
 
-    ci->recvTime = now;
+	ci->recvTime = time(NULL);
 
     ChatMessage cm;
     initChatMessage(ci, cm);
@@ -1169,24 +1166,6 @@ RsChatStatusItem *p3ChatService::makeOwnCustomStateStringItem()
 	return ci ;
 }
 
-void p3ChatService::cleanListOfReceivedMessageHashes()
-{
-	RS_STACK_MUTEX(recentlyReceivedMutex);
-
-	time_t now = time(NULL);
-
-	for( auto it = mRecentlyReceivedMessageHashes.begin();
-	     it != mRecentlyReceivedMessageHashes.end(); )
-		if( now > RECENTLY_RECEIVED_INTERVAL + it->second )
-		{
-			std::cerr << "p3MsgService(): cleanListOfReceivedMessageHashes("
-			          << "). Removing old hash " << it->first << ", aged "
-			          << now - it->second << " secs ago." << std::endl;
-
-			it = mRecentlyReceivedMessageHashes.erase(it);
-		}
-		else ++it;
-}
 RsChatAvatarItem *p3ChatService::makeOwnAvatarItem()
 {
 	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/

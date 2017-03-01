@@ -136,7 +136,8 @@ struct p3MsgService :
     uint32_t getDistantMessagingPermissionFlags() ;
 
 	/// @see GxsMailsClient::receiveGxsMail(...)
-	virtual bool receiveGxsMail( const RsGxsMailItem& originalMessage,
+	virtual bool receiveGxsMail( const RsGxsId& authorId,
+	                             const RsGxsId& recipientId,
 	                             const uint8_t* data, uint32_t dataSize );
 
 	/// @see GxsMailsClient::notifySendMailStatus(...)

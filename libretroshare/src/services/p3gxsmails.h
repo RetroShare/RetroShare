@@ -34,12 +34,14 @@ struct GxsMailsClient
 {
 	/**
 	 * This will be called by p3GxsMails to dispatch mails to the subservice
-	 * @param originalMessage message as received from GXS backend (encrypted)
+	 * @param authorId message sender
+	 * @param decryptId recipient id
 	 * @param data buffer containing the decrypted data
 	 * @param dataSize size of the buffer
 	 * @return true if dispatching goes fine, false otherwise
 	 */
-	virtual bool receiveGxsMail( const RsGxsMailItem& originalMessage,
+	virtual bool receiveGxsMail( const RsGxsId& authorId,
+	                             const RsGxsId& recipientId,
 	                             const uint8_t* data, uint32_t dataSize ) = 0;
 
 	/**
@@ -242,7 +244,8 @@ private:
 	bool handleEcryptedMail(const RsGxsMailItem* mail);
 
 	/// Dispatch the message to the recipient service
-	bool dispatchDecryptedMail( const RsGxsMailItem* received_msg,
+	bool dispatchDecryptedMail( const RsGxsId& authorId,
+	                            const RsGxsId& decryptId,
 	                            const uint8_t* decrypted_data,
 	                            uint32_t decrypted_data_size );
 

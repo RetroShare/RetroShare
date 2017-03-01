@@ -70,7 +70,7 @@
  *****/
 
 ChatWidget::ChatWidget(QWidget *parent) :
-    QWidget(parent), sendingBlocked(false), ui(new Ui::ChatWidget)
+    QWidget(parent), ui(new Ui::ChatWidget)
 {
 	ui->setupUi(this);
 
@@ -413,18 +413,9 @@ ChatWidget::ChatType ChatWidget::chatType()
     return CHATTYPE_UNKNOWN;
 }
 
-void ChatWidget::blockSending(QString msg)
-{
-    sendingBlocked = true;
-    ui->sendButton->setEnabled(false);
-    ui->sendButton->setToolTip(msg);
-}
+void ChatWidget::blockSending(QString msg) { ui->sendButton->setToolTip(msg); }
 
-void ChatWidget::unblockSending()
-{
-    sendingBlocked = false;
-    updateLenOfChatTextEdit();
-}
+void ChatWidget::unblockSending() { updateLenOfChatTextEdit(); }
 
 void ChatWidget::processSettings(bool load)
 {
@@ -1096,8 +1087,6 @@ void ChatWidget::updateStatusTyping()
 
 void ChatWidget::updateLenOfChatTextEdit()
 {
-	if(sendingBlocked) return;
-
 	QTextEdit *chatWidget = ui->chatTextEdit;
 	QString text;
 	RsHtml::optimizeHtml(chatWidget, text);

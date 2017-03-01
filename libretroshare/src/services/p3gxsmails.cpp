@@ -262,7 +262,7 @@ void p3GxsMails::service_tick()
 					          << msg->meta.mMsgId
 					          << " with cryptoType: "
 					          << static_cast<uint32_t>(msg->cryptoType)
-					          << " recipientHint: " << msg->recipientsHint
+					          << " recipientHint: " << msg->recipientHint
 					          << " mailId: "<< msg->mailId
 					          << " payload.size(): " << msg->payload.size()
 					          << std::endl;
@@ -423,8 +423,10 @@ bool p3GxsMails::handleEcryptedMail(const RsGxsMailItem* mail)
 		getRawUInt16(&mail->payload[0], mail->payload.size(), &off, &csri);
 		std::cerr << "service: " << csri << " got CLEAR_TEXT mail!"
 		          << std::endl;
-		return dispatchDecryptedMail( mail, &mail->payload[0],
-		                                     mail->payload.size() );
+		/* As we cannot verify recipient without encryption, just pass the hint
+		 * as recipient */
+		return dispatchDecryptedMail( mail->meta.mAuthorId, mail->recipientHint,
+		                              &mail->payload[0], mail->payload.size() );
 	}
 	case RsGxsMailEncryptionMode::RSA:
 	{
@@ -432,14 +434,16 @@ bool p3GxsMails::handleEcryptedMail(const RsGxsMailItem* mail)
 		for( std::set<RsGxsId>::const_iterator it = decryptIds.begin();
 		     it != decryptIds.end(); ++it )
 		{
+			const RsGxsId& decryptId(*it);
 			uint8_t* decrypted_data = NULL;
 			uint32_t decrypted_data_size = 0;
 			uint32_t decryption_error;
 			if( idService.decryptData( &mail->payload[0],
 			                            mail->payload.size(), decrypted_data,
-			                            decrypted_data_size, *it,
+			                            decrypted_data_size, decryptId,
 			                            decryption_error ) )
-				ok = ok && dispatchDecryptedMail( mail, decrypted_data,
+				ok = ok && dispatchDecryptedMail( mail->meta.mAuthorId,
+				                                  decryptId, decrypted_data,
 				                                  decrypted_data_size );
 			free(decrypted_data);
 		}
@@ -452,7 +456,8 @@ bool p3GxsMails::handleEcryptedMail(const RsGxsMailItem* mail)
 	}
 }
 
-bool p3GxsMails::dispatchDecryptedMail( const RsGxsMailItem* received_msg,
+bool p3GxsMails::dispatchDecryptedMail( const RsGxsId& authorId,
+                                        const RsGxsId& decryptId,
                                         const uint8_t* decrypted_data,
                                         uint32_t decrypted_data_size )
 {
@@ -486,16 +491,16 @@ bool p3GxsMails::dispatchDecryptedMail( const RsGxsMailItem* received_msg,
 	std::vector<RsNxsMsg*> rcct; rcct.push_back(receipt);
 	RsGenExchange::notifyNewMessages(rcct);
 
-	GxsMailsClient* reecipientService = NULL;
+	GxsMailsClient* recipientService = NULL;
 	{
 		RS_STACK_MUTEX(servClientsMutex);
-		reecipientService = servClients[rsrvc];
+		recipientService = servClients[rsrvc];
 	}
 
-	if(reecipientService)
-		return reecipientService->receiveGxsMail( *received_msg,
-		                                          &decrypted_data[offset],
-		                                          decrypted_data_size-offset );
+	if(recipientService)
+		return recipientService->receiveGxsMail( authorId, decryptId,
+		                                         &decrypted_data[offset],
+		                                         decrypted_data_size-offset );
 	else
 	{
 		std::cerr << "p3GxsMails::dispatchReceivedMail(...) "
@@ -625,7 +630,7 @@ void p3GxsMails::processOutgoingRecord(OutgoingRecord& pr)
 		          << pr.recipient
 		          << " with cryptoType: "
 		          << static_cast<uint>(pr.mailItem.cryptoType)
-		          << " recipientHint: " << pr.mailItem.recipientsHint
+		          << " recipientHint: " << pr.mailItem.recipientHint
 		          << " receiptId: " << pr.mailItem.mailId
 		          << " payload size: " << pr.mailItem.payload.size()
 		          << std::endl;

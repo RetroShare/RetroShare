@@ -95,11 +95,11 @@ struct p3ChatService :
 		 */
 	bool	sendPrivateChat(const RsPeerId &id, const std::string &msg);
 
-	/*!
-		 * can be used to send 'immediate' status msgs, these status updates are meant for immediate use by peer (not saved by rs)
-		 * e.g currently used to update user when a peer 'is typing' during a chat
-		 */
-	void  sendStatusString(const ChatId& id,const std::string& status_str) ;
+	/**
+	 * can be used to send 'immediate' status msgs, these status updates are
+	 * meant for immediate use by peer (not saved by rs) e.g currently used to
+	 * update user when a peer 'is typing' during a chat */
+	void sendStatusString( const ChatId& id, const std::string& status_str );
 
 	/**
 	 * @brief clearChatLobby: Signal chat was cleared by GUI.
@@ -168,10 +168,12 @@ struct p3ChatService :
 	virtual bool initiateDistantChatConnexion( const RsGxsId& to_gxs_id,
 	                                           const RsGxsId& from_gxs_id,
 	                                           DistantChatPeerId &pid,
-	                                           uint32_t& error_code );
+	                                           uint32_t& error_code,
+	                                           bool notify = true );
 
 	/// @see GxsMailsClient::receiveGxsMail(...)
-	virtual bool receiveGxsMail( const RsGxsMailItem& /*originalMessage*/,
+	virtual bool receiveGxsMail( const RsGxsId& authorId,
+	                             const RsGxsId& recipientId,
 	                             const uint8_t* data, uint32_t dataSize );
 
 	/// @see GxsMailsClient::notifySendMailStatus(...)
@@ -256,7 +258,7 @@ private:
 
 	AvatarInfo *_own_avatar ;
 	std::map<RsPeerId,AvatarInfo *> _avatars ;
-	std::map<RsPeerId,RsChatMsgItem *> _pendingPartialMessages ;	
+	std::map<RsPeerId,RsChatMsgItem *> _pendingPartialMessages;
 
 	std::string _custom_status_string ;
 	std::map<RsPeerId,StateStringInfo> _state_strings ;
@@ -264,16 +266,11 @@ private:
 	RsChatSerialiser *_serializer;
 
 	struct DistantEndpoints { RsGxsId from; RsGxsId to; };
-	typedef std::map<DistantChatPeerId, DistantEndpoints> DEPMap;
-	DEPMap mDistantGxsMap;
-	p3GxsMails& mGxsTransport;
+	typedef std::map<DistantChatPeerId, DistantEndpoints> DIDEMap;
+	DIDEMap mDistantGxsMap;
+	RsMutex mDGMutex;
 
-	/** As we have multiple backends duplicates are possible, keep track of
-	 * recently received messages hashes for at least 2h to avoid them */
-	const static uint32_t RECENTLY_RECEIVED_INTERVAL = 2*3600;
-	std::map<Sha1CheckSum, uint32_t> mRecentlyReceivedMessageHashes;
-	RsMutex recentlyReceivedMutex;
-	void cleanListOfReceivedMessageHashes();
+	p3GxsMails& mGxsTransport;
 };
 
 class p3ChatService::StateStringInfo

@@ -1990,11 +1990,12 @@ uint32_t p3MsgService::getDistantMessagingPermissionFlags()
     return mDistantMessagePermissions ;
 }
 
-bool p3MsgService::receiveGxsMail( const RsGxsMailItem& originalMessage,
+bool p3MsgService::receiveGxsMail( const RsGxsId& authorId,
+                                   const RsGxsId& recipientId,
                                    const uint8_t* data, uint32_t dataSize )
 {
-	std::cout << "p3MsgService::receiveGxsMail(" << originalMessage.mailId
-	          << ",, " << dataSize << ")" << std::endl;
+	std::cout << "p3MsgService::receiveGxsMail(" << authorId
+	          << ", " << recipientId << ", " << dataSize << ")" << std::endl;
 
 	Sha1CheckSum hash = RsDirUtil::sha1sum(data, dataSize);
 
@@ -2029,7 +2030,7 @@ bool p3MsgService::receiveGxsMail( const RsGxsMailItem& originalMessage,
 		msg_item->msgFlags &= ~RS_MSG_FLAGS_PARTIAL;
 
 		// hack to pass on GXS id.
-		msg_item->PeerId(RsPeerId(originalMessage.meta.mAuthorId));
+		msg_item->PeerId(RsPeerId(authorId));
 		handleIncomingItem(msg_item);
 	}
 	else

@@ -36,6 +36,7 @@
 
 #include <retroshare/rsmsgs.h>
 #include <retroshare/rsfiles.h>
+#include <util/rsdeprecate.h>
 
 class QAction;
 class QTextEdit;
@@ -78,9 +79,8 @@ public:
     ChatId getChatId();
     ChatType chatType();
 
-    // allow/disallow sendng of messages
-    void blockSending(QString msg);
-    void unblockSending();
+	RS_DEPRECATED void blockSending(QString msg);
+	RS_DEPRECATED void unblockSending();
 
 	bool hasNewMessages() { return newMessages; }
 	bool isTyping() { return typing; }
@@ -215,8 +215,6 @@ private:
 	bool newMessages;
 	bool typing;
 	int peerStatus;
-
-    bool sendingBlocked;
 
 	time_t lastStatusSendTime;
 

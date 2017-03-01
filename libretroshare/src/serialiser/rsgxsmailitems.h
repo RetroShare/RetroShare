@@ -131,9 +131,9 @@ struct RsGxsMailItem : RsGxsMailBaseItem
 	 * mail is directed to the actual recipient as the "apparently"
 	 * corresponding hint may be fruit of a "luky" salting of another id.
 	 */
-	RsGxsId recipientsHint;
+	RsGxsId recipientHint;
 	void inline saltRecipientHint(const RsGxsId& salt)
-	{ recipientsHint = recipientsHint | salt; }
+	{ recipientHint = recipientHint | salt; }
 
 	/**
 	 * @brief maybeRecipient given an id and an hint check if they match
@@ -141,7 +141,7 @@ struct RsGxsMailItem : RsGxsMailBaseItem
 	 * @return true if the id may be recipient of the hint, false otherwise
 	 */
 	bool inline maybeRecipient(const RsGxsId& id) const
-	{ return (~id|recipientsHint) == allRecipientsHint; }
+	{ return (~id|recipientHint) == allRecipientsHint; }
 
 	const static RsGxsId allRecipientsHint;
 
@@ -153,7 +153,7 @@ struct RsGxsMailItem : RsGxsMailBaseItem
 	{
 		return RsGxsMailBaseItem::size() +
 		        1 + // cryptoType
-		        recipientsHint.serial_size() +
+		        recipientHint.serial_size() +
 		        payload.size();
 	}
 	bool serialize(uint8_t* data, uint32_t size, uint32_t& offset) const
@@ -162,7 +162,7 @@ struct RsGxsMailItem : RsGxsMailBaseItem
 		ok = ok && RsGxsMailBaseItem::serialize(data, size, offset);
 		ok = ok && setRawUInt8( data, size, &offset,
 		                        static_cast<uint8_t>(cryptoType) );
-		ok = ok && recipientsHint.serialise(data, size, offset);
+		ok = ok && recipientHint.serialise(data, size, offset);
 		uint32_t psz = payload.size();
 		ok = ok && memcpy(data+offset, &payload[0], psz);
 		offset += psz;
@@ -181,7 +181,7 @@ struct RsGxsMailItem : RsGxsMailBaseItem
 		uint8_t crType;
 		ok = ok && getRawUInt8(dataPtr, rssize, &roffset, &crType);
 		cryptoType = static_cast<RsGxsMailEncryptionMode>(crType);
-		ok = ok && recipientsHint.deserialise(dataPtr, rssize, roffset);
+		ok = ok && recipientHint.deserialise(dataPtr, rssize, roffset);
 		uint32_t psz = rssize - roffset;
 		ok = ok && (payload.resize(psz), memcpy(&payload[0], data+roffset, psz));
 		ok = ok && (roffset += psz);
@@ -193,7 +193,7 @@ struct RsGxsMailItem : RsGxsMailBaseItem
 	{
 		RsGxsMailBaseItem::clear();
 		cryptoType = RsGxsMailEncryptionMode::UNDEFINED_ENCRYPTION;
-		recipientsHint.clear();
+		recipientHint.clear();
 		payload.clear();
 	}
 
