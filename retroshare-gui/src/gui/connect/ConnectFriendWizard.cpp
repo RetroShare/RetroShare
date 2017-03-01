@@ -133,12 +133,8 @@ ConnectFriendWizard::ConnectFriendWizard(QWidget *parent) :
 	else
 	{
 		ui->userFrame->hide(); // certificates page - top half with own cert and it's functions
-		
 		ui->horizontalLayout_13->hide(); // Advanced options - key sign, whitelist, direct source ...
 		AdvancedVisible=false;
-
-		ui->emailLabel->hide(); // is it ever used?
-		ui->emailEdit->hide();
 		ui->trustLabel->hide();
 		ui->trustEdit->hide();
 	}
@@ -557,6 +553,14 @@ void ConnectFriendWizard::initializePage(int id)
 				ui->ipLabel->setPixmap(QPixmap(":/images/anonymous_128_blue.png").scaledToHeight(S*2,Qt::SmoothTransformation));
 				ui->ipLabel->setToolTip("This is a Hidden node - you need tor/i2p proxy to connect");
 			}
+
+			if(peerDetails.email.empty())
+			{
+				ui->emailLabel->hide(); // is it ever used?
+				ui->emailEdit->hide();
+			}
+			ui->ipEdit->setTextInteractionFlags(Qt::TextSelectableByMouse);
+
 		}
 		break;
 	case Page_FriendRequest:

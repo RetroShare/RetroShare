@@ -217,17 +217,6 @@
      </property>
     </spacer>
    </item>
-   <item>
-    <widget class="QPushButton" name="runStartWizard_PB">
-     <property name="text">
-      <string>Launch startup wizard</string>
-     </property>
-     <property name="icon">
-      <iconset resource="../images.qrc">
-       <normaloff>:/images/tools_wizard.png</normaloff>:/images/tools_wizard.png</iconset>
-     </property>
-    </widget>
-   </item>
   </layout>
  </widget>
  <resources>

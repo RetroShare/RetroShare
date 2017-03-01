@@ -25,6 +25,7 @@
 #include "gui/notifyqt.h"
 #include "gui/msgs/MessageComposer.h"
 #include "gui/connect/ConnectFriendWizard.h"
+#include <gui/QuickStartWizard.h>
 #include "gui/connect/FriendRecommendDialog.h"
 
 #if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
@@ -71,6 +72,9 @@ HomePage::HomePage(QWidget *parent) :
     menu->addAction(RecAction);
 
     ui->shareButton->setMenu(menu);
+
+    connect(ui->runStartWizard_PB,SIGNAL(clicked()), this,SLOT(runStartWizard())) ;
+	connect(ui->openwebhelp,SIGNAL(clicked()), this,SLOT(openWebHelp())) ;
 
     int S = QFontMetricsF(font()).height();
  QString help_str = tr(
@@ -168,4 +172,14 @@ void HomePage::addFriend()
 
     connwiz.setStartId(ConnectFriendWizard::Page_Text);
     connwiz.exec ();
+}
+
+void HomePage::runStartWizard()
+{
+    QuickStartWizard(this).exec();
+}
+
+void HomePage::openWebHelp()
+{
+    QDesktopServices::openUrl(QUrl(QString("https://retroshare.readthedocs.io")));
 }
