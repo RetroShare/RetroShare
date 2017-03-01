@@ -232,16 +232,21 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 	QHeaderView_setSectionResizeModeColumn(ttheader, COLUMN_THREAD_TITLE, QHeaderView::Interactive);
 	QHeaderView_setSectionResizeModeColumn(ttheader, COLUMN_THREAD_DISTRIBUTION, QHeaderView::ResizeToContents);
 
-	ttheader->resizeSection (COLUMN_THREAD_DATE,  140);
-	ttheader->resizeSection (COLUMN_THREAD_TITLE, 440);
-	ttheader->resizeSection (COLUMN_THREAD_DISTRIBUTION, 24);
-	ttheader->resizeSection (COLUMN_THREAD_AUTHOR, 150);
+    float f = QFontMetricsF(font()).height()/14.0f ;
+
+	ttheader->resizeSection (COLUMN_THREAD_DATE,  140*f);
+	ttheader->resizeSection (COLUMN_THREAD_TITLE, 440*f);
+	ttheader->resizeSection (COLUMN_THREAD_DISTRIBUTION, 24*f);
+	ttheader->resizeSection (COLUMN_THREAD_AUTHOR, 150*f);
 
 	ui->threadTreeWidget->sortItems(COLUMN_THREAD_DATE, Qt::DescendingOrder);
 
 	/* Set text of column "Read" to empty - without this the column has a number as header text */
 	QTreeWidgetItem *headerItem = ui->threadTreeWidget->headerItem();
-	headerItem->setText(COLUMN_THREAD_READ, "");
+	headerItem->setText(COLUMN_THREAD_READ, "") ;
+	headerItem->setText(COLUMN_THREAD_DISTRIBUTION, "");
+	headerItem->setData(COLUMN_THREAD_READ,Qt::UserRole, tr("Read status")) ;			// this is used to display drop menus.
+	headerItem->setData(COLUMN_THREAD_DISTRIBUTION,Qt::UserRole, tr("Distribution"));
 
 	/* add filter actions */
 	ui->filterLineEdit->addFilter(QIcon(), tr("Title"), COLUMN_THREAD_TITLE, tr("Search Title"));
@@ -257,7 +262,7 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 	processSettings(true);
 
 	/* Set header sizes for the fixed columns and resize modes, must be set after processSettings */
-	ttheader->resizeSection (COLUMN_THREAD_READ,  24);
+	ttheader->resizeSection (COLUMN_THREAD_READ,  24*f);
 	QHeaderView_setSectionResizeModeColumn(ttheader, COLUMN_THREAD_READ, QHeaderView::Fixed);
 	ttheader->hideSection (COLUMN_THREAD_CONTENT);
 
