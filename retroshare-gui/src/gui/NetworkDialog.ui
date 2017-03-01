@@ -97,7 +97,7 @@
       </column>
       <column>
        <property name="text">
-        <string>Name</string>
+        <string>Profile</string>
        </property>
       </column>
       <column>
@@ -110,7 +110,7 @@
       </column>
       <column>
        <property name="text">
-        <string>Did peer authenticated me</string>
+        <string>Has signed my key</string>
        </property>
       </column>
       <column>

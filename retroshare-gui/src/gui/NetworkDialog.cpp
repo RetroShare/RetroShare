@@ -111,18 +111,18 @@ NetworkDialog::NetworkDialog(QWidget *parent)
     QHeaderView_setSectionResizeModeColumn(_header, COLUMN_LAST_USED, QHeaderView::Interactive);
 
     _header->model()->setHeaderData(COLUMN_CHECK, Qt::Horizontal, tr(""));
-    _header->model()->setHeaderData(COLUMN_PEERNAME, Qt::Horizontal, tr("Name"));
+    _header->model()->setHeaderData(COLUMN_PEERNAME, Qt::Horizontal, tr("Profile"));
     _header->model()->setHeaderData(COLUMN_I_AUTH_PEER, Qt::Horizontal, tr("Trust level"));
-    _header->model()->setHeaderData(COLUMN_PEER_AUTH_ME, Qt::Horizontal, tr("Did peer authenticate you"));
-    _header->model()->setHeaderData(COLUMN_PEERID, Qt::Horizontal, tr("Cert Id"));
+    _header->model()->setHeaderData(COLUMN_PEER_AUTH_ME, Qt::Horizontal, tr("Has signed your key?"));
+    _header->model()->setHeaderData(COLUMN_PEERID, Qt::Horizontal, tr("Id"));
     _header->model()->setHeaderData(COLUMN_LAST_USED, Qt::Horizontal, tr("Last used"));
 
-    _header->model()->setHeaderData(COLUMN_CHECK, Qt::Horizontal, tr(" Do you accept connections signed by this key?"),Qt::ToolTipRole);
-    _header->model()->setHeaderData(COLUMN_PEERNAME, Qt::Horizontal, tr("Name of the key"),Qt::ToolTipRole);
-    _header->model()->setHeaderData(COLUMN_I_AUTH_PEER, Qt::Horizontal, tr("This column indicates trust level and whether you signed their PGP key"),Qt::ToolTipRole);
-    _header->model()->setHeaderData(COLUMN_PEER_AUTH_ME, Qt::Horizontal, tr("Did that peer sign your PGP key"),Qt::ToolTipRole);
-    _header->model()->setHeaderData(COLUMN_PEERID, Qt::Horizontal, tr("Certificat ID"),Qt::ToolTipRole);
-    _header->model()->setHeaderData(COLUMN_LAST_USED, Qt::Horizontal, tr("Since when I use this certificate"),Qt::ToolTipRole);
+    _header->model()->setHeaderData(COLUMN_CHECK, Qt::Horizontal, tr(" Do you accept connections signed by this profile?"),Qt::ToolTipRole);
+    _header->model()->setHeaderData(COLUMN_PEERNAME, Qt::Horizontal, tr("Name of the profile"),Qt::ToolTipRole);
+    _header->model()->setHeaderData(COLUMN_I_AUTH_PEER, Qt::Horizontal, tr("This column indicates trust level and whether you signed the profile PGP key"),Qt::ToolTipRole);
+    _header->model()->setHeaderData(COLUMN_PEER_AUTH_ME, Qt::Horizontal, tr("Did that peer sign your own profile PGP key"),Qt::ToolTipRole);
+    _header->model()->setHeaderData(COLUMN_PEERID, Qt::Horizontal, tr("PGP Key Id of that profile"),Qt::ToolTipRole);
+    _header->model()->setHeaderData(COLUMN_LAST_USED, Qt::Horizontal, tr("Last time this key was used (received time, or to check connection)"),Qt::ToolTipRole);
 
     float f = QFontMetricsF(font()).height()/14.0 ;
 
@@ -455,9 +455,9 @@ void NetworkDialog::insertConnect()
 		QString PeerAuthenticationString ;
 
 		if (detail.hasSignedMe)
-			PeerAuthenticationString = tr("Has authenticated me");
+			PeerAuthenticationString = tr("Yes");
 		else
-			PeerAuthenticationString = tr("Unknown");
+			PeerAuthenticationString = tr("No");
 
         item->setText(COLUMN_PEER_AUTH_ME,PeerAuthenticationString) ;
 
