@@ -123,8 +123,8 @@ void PopupDistantChatDialog::updateDisplay()
 		_status_label->setToolTip(
 		            QObject::tr("Distant peer has closed the chat") );
 		getChatWidget()->updateStatusString(
-		            "%1", tr( "The person you're talking to has deleted the"
-		                      "secured chat tunnel." ), true );
+		            "%1", tr( "The person you are talking to has deleted the"
+		                      " secured chat tunnel." ), true );
 		getChatWidget()->blockSending(tr( "The chat partner deleted the secure"
 		                                  " tunnel, messages will be delivered"
 		                                  " as soon as possible"));
@@ -143,7 +143,7 @@ void PopupDistantChatDialog::updateDisplay()
 	case RS_DISTANT_CHAT_STATUS_CAN_TALK:
 		//std::cerr << "Tunnel is ok and data is transmitted." << std::endl;
 		_status_label->setIcon(QIcon(IMAGE_GRN_LED));
-		msg = QObject::tr( "Secured tunnel is working."
+		msg = QObject::tr( "Secured tunnel is working. "
 		                   "Messages are delivered immediately!" );
 		_status_label->setToolTip(msg);
 		getChatWidget()->unblockSending();
