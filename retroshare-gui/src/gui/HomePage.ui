@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1558</width>
-    <height>699</height>
+    <height>703</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -195,7 +195,7 @@
      </property>
      <property name="text">
       <string>Open Source cross-platform, 
-private and secure decentralized commmunication platform.	
+private and secure decentralized communication platform.	
 </string>
      </property>
      <property name="alignment">
