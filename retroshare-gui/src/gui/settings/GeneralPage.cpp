@@ -30,7 +30,6 @@
 #include <util/misc.h>
 #include <QSystemTrayIcon>
 #include "rsharesettings.h"
-#include <gui/QuickStartWizard.h>
 
 /** Constructor */
 GeneralPage::GeneralPage(QWidget * parent, Qt::WindowFlags flags) :
@@ -38,7 +37,6 @@ GeneralPage::GeneralPage(QWidget * parent, Qt::WindowFlags flags) :
 {
     /* Invoke the Qt Designer generated object setup routine */
     ui.setupUi(this);
-
 
     /* Hide platform specific features */
 #ifdef Q_OS_WIN
@@ -91,7 +89,7 @@ GeneralPage::GeneralPage(QWidget * parent, Qt::WindowFlags flags) :
     connect(ui.autoLogin,                                   SIGNAL(toggled(bool)),     this,SLOT(updateAutoLogin())) ;
     connect(ui.chkRunRetroshareAtSystemStartup,             SIGNAL(toggled(bool)),     this,SLOT(updateRunRSOnBoot())) ;
     connect(ui.chkRunRetroshareAtSystemStartupMinimized,    SIGNAL(toggled(bool)),     this,SLOT(updateRunRSOnBoot())) ;
-    connect(ui.runStartWizard_PB,                           SIGNAL(clicked()),         this,SLOT(runStartWizard())) ;
+    //connect(ui.runStartWizard_PB,                           SIGNAL(clicked()),         this,SLOT(runStartWizard())) ;
     connect(ui.checkAdvanced,                               SIGNAL(toggled(bool)),     this,SLOT(updateAdvancedMode())) ;
     connect(ui.registerRetroShareProtocol,                  SIGNAL(toggled(bool)),     this,SLOT(updateRegisterRSProtocol())) ;
 }
@@ -99,10 +97,6 @@ GeneralPage::GeneralPage(QWidget * parent, Qt::WindowFlags flags) :
 /** Destructor */
 GeneralPage::~GeneralPage()
 {
-}
-void GeneralPage::runStartWizard()
-{
-    QuickStartWizard(this).exec();
 }
 
 void GeneralPage::updateAdvancedMode()
