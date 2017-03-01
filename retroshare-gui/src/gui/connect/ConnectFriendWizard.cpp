@@ -79,6 +79,9 @@ ConnectFriendWizard::ConnectFriendWizard(QWidget *parent) :
 	mTitleFontSize = 0; // Standard
 	mTitleFontWeight = 0; // Standard
 
+    // (csoler) I'm hiding this, since it is not needed anymore with the new Home page.
+    ui->userFrame->hide();
+
 // this define comes from Qt example. I don't have mac, so it wasn't tested
 #ifndef Q_OS_MAC
 	setWizardStyle(ModernStyle);
@@ -411,7 +414,7 @@ void ConnectFriendWizard::initializePage(int id)
 		{
 			std::cerr << "Conclusion page id : " << peerDetails.id << "; gpg_id : " << peerDetails.gpg_id << std::endl;
 
-            ui->_direct_transfer_CB_2  ->setChecked(false) ;
+            ui->_direct_transfer_CB_2  ->setChecked(false) ; //peerDetails.service_perm_flags & RS_NODE_PERM_DIRECT_DL) ;
             ui->_allow_push_CB_2  ->setChecked(peerDetails.service_perm_flags & RS_NODE_PERM_ALLOW_PUSH) ;
             ui->_require_WL_CB_2  ->setChecked(peerDetails.service_perm_flags & RS_NODE_PERM_REQUIRE_WL) ;
 
@@ -422,7 +425,7 @@ void ConnectFriendWizard::initializePage(int id)
         {
             QString ipstring0 = QString::fromStdString(sockaddr_storage_iptostring(addr));
 
-            ui->_addIPToWhiteList_CB_2->setChecked(false) ;
+            ui->_addIPToWhiteList_CB_2->setChecked(ui->_require_WL_CB_2->isChecked());
             ui->_addIPToWhiteList_ComboBox_2->addItem(ipstring0) ;
             ui->_addIPToWhiteList_ComboBox_2->addItem(ipstring0+"/24") ;
             ui->_addIPToWhiteList_ComboBox_2->addItem(ipstring0+"/16") ;
@@ -550,6 +553,7 @@ void ConnectFriendWizard::initializePage(int id)
 				ui->ipLabel->setPixmap(QPixmap(":/images/anonymous_128_blue.png").scaledToHeight(S*2,Qt::SmoothTransformation));
 				ui->ipLabel->setToolTip("This is a Hidden node - you need tor/i2p proxy to connect");
 			}
+
 			if(peerDetails.email.empty())
 			{
 				ui->emailLabel->hide(); // is it ever used?

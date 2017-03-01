@@ -119,8 +119,10 @@ NewsFeed::NewsFeed(QWidget *parent) :
 	connect(ui->sortComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(sortChanged(int)));
 
 	connect(ui->removeAllButton, SIGNAL(clicked()), ui->feedWidget, SLOT(clear()));
-	connect(ui->feedOptionsButton, SIGNAL(clicked()), this, SLOT(feedoptions()));
 	connect(ui->feedWidget, SIGNAL(feedCountChanged()), this, SLOT(sendNewsFeedChanged()));
+
+	connect(ui->feedOptionsButton, SIGNAL(clicked()), this, SLOT(feedoptions()));
+    ui->feedOptionsButton->hide();	// (csoler) Hidden until we repare the system to display a specific settings page.
 
 QString hlp_str = tr(
  " <h1><img width=\"32\" src=\":/icons/help_64.png\">&nbsp;&nbsp;News Feed</h1>                                                          \

@@ -353,8 +353,8 @@ void FriendList::peerTreeWidgetCustomPopupMenu()
 
              contextMenu->addSeparator();
 
-             contextMenu->addAction(QIcon(IMAGE_FRIENDINFO), tr("Details"), this, SLOT(configurefriend()));
-             contextMenu->addAction(QIcon(IMAGE_DENYFRIEND), tr("Deny"), this, SLOT(removefriend()));
+             contextMenu->addAction(QIcon(IMAGE_FRIENDINFO), tr("Profile details"), this, SLOT(configurefriend()));
+             contextMenu->addAction(QIcon(IMAGE_DENYFRIEND), tr("Deny connections"), this, SLOT(removefriend()));
 
              if(mShowGroups)
              {
@@ -429,14 +429,14 @@ void FriendList::peerTreeWidgetCustomPopupMenu()
          case TYPE_SSL:
              {
                  contextMenu->addAction(QIcon(IMAGE_CHAT), tr("Chat"), this, SLOT(chatfriendproxy()));
-                 contextMenu->addAction(QIcon(IMAGE_MSG), tr("Send message"), this, SLOT(msgfriend()));
+                 contextMenu->addAction(QIcon(IMAGE_MSG), tr("Send message to this node"), this, SLOT(msgfriend()));
 
                  contextMenu->addSeparator();
 
-                 contextMenu->addAction(QIcon(IMAGE_FRIENDINFO), tr("Details"), this, SLOT(configurefriend()));
+                 contextMenu->addAction(QIcon(IMAGE_FRIENDINFO), tr("Node details"), this, SLOT(configurefriend()));
 
                  if (type == TYPE_GPG || type == TYPE_SSL) {
-                     contextMenu->addAction(QIcon(IMAGE_EXPORTFRIEND), tr("Recommend this Friend to..."), this, SLOT(recommendfriend()));
+                     contextMenu->addAction(QIcon(IMAGE_EXPORTFRIEND), tr("Recommend this node to..."), this, SLOT(recommendfriend()));
                  }
 
                  contextMenu->addAction(QIcon(IMAGE_CONNECT), tr("Attempt to connect"), this, SLOT(connectfriend()));
