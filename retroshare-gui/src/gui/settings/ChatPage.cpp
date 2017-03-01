@@ -459,22 +459,22 @@ void ChatPage::on_publicList_currentRowChanged(int currentRow)
 
         QStringList variants;
         ChatStyle::getAvailableVariants(info.stylePath, variants);
-        ui.publicComboBoxVariant->clear();
-        ui.publicComboBoxVariant->setEnabled(variants.size() != 0);
-        ui.publicComboBoxVariant->addItems(variants);
+        whileBlocking(ui.publicComboBoxVariant)->clear();
+        whileBlocking(ui.publicComboBoxVariant)->setEnabled(variants.size() != 0);
+        whileBlocking(ui.publicComboBoxVariant)->addItems(variants);
 
         /* try to find "Standard" */
         int index = ui.publicComboBoxVariant->findText(VARIANT_STANDARD);
         if (index != -1) {
-            ui.publicComboBoxVariant->setCurrentIndex(index);
+            whileBlocking(ui.publicComboBoxVariant)->setCurrentIndex(index);
         } else {
-            ui.publicComboBoxVariant->setCurrentIndex(0);
+            whileBlocking(ui.publicComboBoxVariant)->setCurrentIndex(0);
         }
     } else {
-        ui.publicAuthor->clear();
-        ui.publicDescription->clear();
-        ui.publicComboBoxVariant->clear();
-        ui.publicComboBoxVariant->setDisabled(true);
+        whileBlocking(ui.publicAuthor)->clear();
+        whileBlocking(ui.publicDescription)->clear();
+        whileBlocking(ui.publicComboBoxVariant)->clear();
+        whileBlocking(ui.publicComboBoxVariant)->setDisabled(true);
     }
 
     fillPreview(ui.publicStyle, ui.publicComboBoxVariant, ui.publicPreview);
@@ -489,27 +489,27 @@ void ChatPage::on_privateList_currentRowChanged(int currentRow)
         if (info.authorEmail.isEmpty() == false) {
             author += " (" + info.authorEmail + ")";
         }
-        ui.privateAuthor->setText(author);
-        ui.privateDescription->setText(info.styleDescription);
+        whileBlocking(ui.privateAuthor)->setText(author);
+        whileBlocking(ui.privateDescription)->setText(info.styleDescription);
 
         QStringList variants;
         ChatStyle::getAvailableVariants(info.stylePath, variants);
-        ui.privateComboBoxVariant->clear();
-        ui.privateComboBoxVariant->setEnabled(variants.size() != 0);
-        ui.privateComboBoxVariant->addItems(variants);
+        whileBlocking(ui.privateComboBoxVariant)->clear();
+        whileBlocking(ui.privateComboBoxVariant)->setEnabled(variants.size() != 0);
+        whileBlocking(ui.privateComboBoxVariant)->addItems(variants);
 
         /* try to find "Standard" */
         int index = ui.privateComboBoxVariant->findText(VARIANT_STANDARD);
         if (index != -1) {
-            ui.privateComboBoxVariant->setCurrentIndex(index);
+            whileBlocking(ui.privateComboBoxVariant)->setCurrentIndex(index);
         } else {
-            ui.privateComboBoxVariant->setCurrentIndex(0);
+            whileBlocking(ui.privateComboBoxVariant)->setCurrentIndex(0);
         }
     } else {
-        ui.privateAuthor->clear();
-        ui.privateDescription->clear();
-        ui.privateComboBoxVariant->clear();
-        ui.privateComboBoxVariant->setDisabled(true);
+        whileBlocking(ui.privateAuthor)->clear();
+        whileBlocking(ui.privateDescription)->clear();
+        whileBlocking(ui.privateComboBoxVariant)->clear();
+        whileBlocking(ui.privateComboBoxVariant)->setDisabled(true);
     }
 
     fillPreview(ui.privateStyle, ui.privateComboBoxVariant, ui.privatePreview);
@@ -524,27 +524,27 @@ void ChatPage::on_historyList_currentRowChanged(int currentRow)
         if (info.authorEmail.isEmpty() == false) {
             author += " (" + info.authorEmail + ")";
         }
-        ui.historyAuthor->setText(author);
-        ui.historyDescription->setText(info.styleDescription);
+        whileBlocking(ui.historyAuthor)->setText(author);
+        whileBlocking(ui.historyDescription)->setText(info.styleDescription);
 
         QStringList variants;
         ChatStyle::getAvailableVariants(info.stylePath, variants);
-        ui.historyComboBoxVariant->clear();
-        ui.historyComboBoxVariant->setEnabled(variants.size() != 0);
-        ui.historyComboBoxVariant->addItems(variants);
+        whileBlocking(ui.historyComboBoxVariant)->clear();
+        whileBlocking(ui.historyComboBoxVariant)->setEnabled(variants.size() != 0);
+        whileBlocking(ui.historyComboBoxVariant)->addItems(variants);
 
         /* try to find "Standard" */
         int index = ui.historyComboBoxVariant->findText(VARIANT_STANDARD);
         if (index != -1) {
-            ui.historyComboBoxVariant->setCurrentIndex(index);
+            whileBlocking(ui.historyComboBoxVariant)->setCurrentIndex(index);
         } else {
-            ui.historyComboBoxVariant->setCurrentIndex(0);
+            whileBlocking(ui.historyComboBoxVariant)->setCurrentIndex(0);
         }
     } else {
-        ui.historyAuthor->clear();
-        ui.historyDescription->clear();
-        ui.historyComboBoxVariant->clear();
-        ui.historyComboBoxVariant->setDisabled(true);
+        whileBlocking(ui.historyAuthor)->clear();
+        whileBlocking(ui.historyDescription)->clear();
+        whileBlocking(ui.historyComboBoxVariant)->clear();
+        whileBlocking(ui.historyComboBoxVariant)->setDisabled(true);
     }
 
     fillPreview(ui.historyStyle, ui.historyComboBoxVariant, ui.historyPreview);
