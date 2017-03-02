@@ -23,6 +23,7 @@
 #define _CHATPAGE_H
 
 #include <retroshare-gui/configpage.h>
+#include "gui/chat/ChatStyle.h"
 #include "ui_ChatPage.h"
 
 class ChatPage : public ConfigPage
@@ -71,6 +72,7 @@ class ChatPage : public ConfigPage
   private:
       void setPreviewMessages(QString &stylePath, QString styleVariant, QTextBrowser *textBrowser);
       void fillPreview(QComboBox *listWidget, QComboBox *comboBox, QTextBrowser *textBrowser);
+	  QString loadStyleInfo(ChatStyle::enumStyleType type, QComboBox *style_CB, QComboBox *comboBox, QString &styleVariant);
 
       QFont fontTempChat;
 

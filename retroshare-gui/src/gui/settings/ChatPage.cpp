@@ -30,7 +30,6 @@
 #include <retroshare/rspeers.h>
 #include "ChatPage.h"
 #include <gui/RetroShareLink.h>
-#include "gui/chat/ChatStyle.h"
 #include "gui/chat/ChatDialog.h"
 #include "gui/notifyqt.h"
 #include "rsharesettings.h"
@@ -46,7 +45,7 @@
 #define IMAGE_CHAT_DELETE   ":/images/deletemail24.png"
 #define IMAGE_CHAT_COPY     ":/images/copyrslink.png"
 
-static QString loadStyleInfo(ChatStyle::enumStyleType type, QComboBox *style_CB, QComboBox *comboBox, QString &styleVariant)
+QString ChatPage::loadStyleInfo(ChatStyle::enumStyleType type, QComboBox *style_CB, QComboBox *comboBox, QString &styleVariant)
 {
     QList<ChatStyleInfo> styles;
     QList<ChatStyleInfo>::iterator style;
@@ -86,6 +85,15 @@ static QString loadStyleInfo(ChatStyle::enumStyleType type, QComboBox *style_CB,
     }
 
     whileBlocking(style_CB)->setCurrentIndex(activeItem);
+
+    switch(type)
+    {
+    case ChatStyle::TYPE_PUBLIC: on_publicList_currentRowChanged(activeItem);	break ;
+    case ChatStyle::TYPE_PRIVATE: on_privateList_currentRowChanged(activeItem);	break ;
+    case ChatStyle::TYPE_HISTORY: on_historyList_currentRowChanged(activeItem);	break ;
+    default:
+        break ;
+    }
 
     /* now the combobox should be filled */
 

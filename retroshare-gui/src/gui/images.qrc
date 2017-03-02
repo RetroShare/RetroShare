@@ -621,6 +621,7 @@
         <file>qss/chat/compact/history/system.htm</file>
         <file>qss/chat/compact/history/main.css</file>
         <file>qss/chat/compact/history/variants/Standard.css</file>
+        <file>qss/chat/compact/history/variants/Colored.css</file>
         <file>qss/stylesheet/qss.default</file>
         <file>qss/stylesheet/Standard.qss</file>
         <file>images/connect/connectFriendWatermark.png</file>
