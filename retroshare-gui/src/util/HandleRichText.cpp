@@ -1187,9 +1187,9 @@ QString RsHtml::makeQuotedText(RSTextBrowser *browser)
 		text = browser->toPlainText();
 	}
 	QStringList sl = text.split(QRegExp("[\r\n]"),QString::SkipEmptyParts);
-	text = sl.join("\n>");
-	text.replace(QChar(-4),"");//Char used when image on text.
-	return QString(">") + text;
+	text = sl.join("\n> ");
+	text.replace(QChar(-4)," ");//Char used when image on text.
+	return QString("> ") + text;
 }
 
 void RsHtml::insertSpoilerText(QTextCursor cursor)
