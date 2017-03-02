@@ -852,9 +852,9 @@ gxsphotoshare {
 		serialiser/rsphotoitems.cc \
 }
 
-rs_gxs_mail {
-    HEADERS += serialiser/rsgxsmailitems.h services/p3gxsmails.h
-    SOURCES += serialiser/rsgxsmailitems.cc services/p3gxsmails.cpp
+rs_gxs_trans {
+    HEADERS += gxstrans/p3gxstransitems.h gxstrans/p3gxstrans.h
+    SOURCES += gxstrans/p3gxstransitems.cc gxstrans/p3gxstrans.cc
 }
 
 

@@ -16,12 +16,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "serialiser/rsgxsmailitems.h"
+#include "gxstrans/p3gxstransitems.h"
 
-const RsGxsId RsGxsMailItem::allRecipientsHint("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
+const RsGxsId RsGxsTransMailItem::allRecipientsHint("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
 
 
-bool RsGxsMailBaseItem::serialize(uint8_t* data, uint32_t size,
+bool RsGxsTransBaseItem::serialize(uint8_t* data, uint32_t size,
                                   uint32_t& offset) const
 {
 	bool ok = setRsItemHeader(data+offset, size, PacketId(), size);
@@ -30,8 +30,8 @@ bool RsGxsMailBaseItem::serialize(uint8_t* data, uint32_t size,
 	return ok;
 }
 
-bool RsGxsMailBaseItem::deserialize(const uint8_t* data, uint32_t& size,
-                                    uint32_t& offset)
+bool RsGxsTransBaseItem::deserialize( const uint8_t* data, uint32_t& size,
+                                      uint32_t& offset)
 {
 	void* hdrPtr = const_cast<uint8_t*>(data+offset);
 	uint32_t rssize = getRsItemSize(hdrPtr);
@@ -45,42 +45,42 @@ bool RsGxsMailBaseItem::deserialize(const uint8_t* data, uint32_t& size,
 	return ok;
 }
 
-std::ostream& RsGxsMailBaseItem::print(std::ostream &out, uint16_t)
-{ return out << " RsGxsMailBaseItem::mailId: " << mailId; }
+std::ostream& RsGxsTransBaseItem::print(std::ostream &out, uint16_t)
+{ return out << __PRETTY_FUNCTION__ << " mailId: " << mailId; }
 
-bool RsGxsMailSerializer::serialise(RsItem* item, void* data, uint32_t* size)
+bool RsGxsTransSerializer::serialise(RsItem* item, void* data, uint32_t* size)
 {
-	uint32_t itemSize = RsGxsMailSerializer::size(item);
+	uint32_t itemSize = RsGxsTransSerializer::size(item);
 	if(*size < itemSize)
 	{
-		std::cout << "RsGxsMailSerializer::serialise(...) failed due to wrong size: "
+		std::cout << __PRETTY_FUNCTION__ << " failed due to wrong size: "
 		          << size << " < " << itemSize << std::endl;
 		return false;
 	}
 
 	uint8_t* dataPtr = reinterpret_cast<uint8_t*>(data);
 	bool ok = false;
-	switch(static_cast<GxsMailItemsSubtypes>(item->PacketSubType()))
+	switch(static_cast<GxsTransItemsSubtypes>(item->PacketSubType()))
 	{
-	case GxsMailItemsSubtypes::GXS_MAIL_SUBTYPE_MAIL:
+	case GxsTransItemsSubtypes::GXS_TRANS_SUBTYPE_MAIL:
 	{
 		uint32_t offset = 0;
-		RsGxsMailItem* i = dynamic_cast<RsGxsMailItem*>(item);
+		RsGxsTransMailItem* i = dynamic_cast<RsGxsTransMailItem*>(item);
 		ok = i && i->serialize(dataPtr, itemSize, offset);
 		break;
 	}
-	case GxsMailItemsSubtypes::GXS_MAIL_SUBTYPE_RECEIPT:
+	case GxsTransItemsSubtypes::GXS_TRANS_SUBTYPE_RECEIPT:
 	{
-		RsGxsMailPresignedReceipt* i =
-		        dynamic_cast<RsGxsMailPresignedReceipt*>(item);
+		RsGxsTransPresignedReceipt* i =
+		        dynamic_cast<RsGxsTransPresignedReceipt*>(item);
 		uint32_t offset = 0;
 		ok = i && i->serialize(dataPtr, itemSize, offset);
 		break;
 	}
-	case GxsMailItemsSubtypes::GXS_MAIL_SUBTYPE_GROUP:
+	case GxsTransItemsSubtypes::GXS_TRANS_SUBTYPE_GROUP:
 		ok = setRsItemHeader(data, itemSize, item->PacketId(), itemSize);
 		break;
-	case GxsMailItemsSubtypes::OUTGOING_RECORD_ITEM:
+	case GxsTransItemsSubtypes::OUTGOING_RECORD_ITEM:
 	{
 		uint32_t offset = 0;
 		OutgoingRecord* i = dynamic_cast<OutgoingRecord*>(item);
@@ -96,15 +96,15 @@ bool RsGxsMailSerializer::serialise(RsItem* item, void* data, uint32_t* size)
 		return true;
 	}
 
-	std::cout << "RsGxsMailSerializer::serialise(...) failed!" << std::endl;
+	std::cout << __PRETTY_FUNCTION__ << " failed!" << std::endl;
 	return false;
 }
 
-OutgoingRecord::OutgoingRecord( RsGxsId rec, GxsMailSubServices cs,
+OutgoingRecord::OutgoingRecord( RsGxsId rec, GxsTransSubServices cs,
                                 const uint8_t* data, uint32_t size ) :
-    RsItem( RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_GXS_MAIL,
-            static_cast<uint8_t>(GxsMailItemsSubtypes::OUTGOING_RECORD_ITEM) ),
-    status(GxsMailStatus::PENDING_PROCESSING), recipient(rec),
+    RsItem( RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_GXS_TRANS,
+            static_cast<uint8_t>(GxsTransItemsSubtypes::OUTGOING_RECORD_ITEM) ),
+    status(GxsTransSendStatus::PENDING_PROCESSING), recipient(rec),
     clientService(cs)
 {
 	mailData.resize(size);
@@ -113,11 +113,11 @@ OutgoingRecord::OutgoingRecord( RsGxsId rec, GxsMailSubServices cs,
 
 void OutgoingRecord::clear()
 {
-	status = GxsMailStatus::UNKNOWN;
+	status = GxsTransSendStatus::UNKNOWN;
 	recipient.clear();
 	mailItem.clear();
 	mailData.clear();
-	clientService = GxsMailSubServices::UNKNOWN;
+	clientService = GxsTransSubServices::UNKNOWN;
 	presignedReceipt.clear();
 }
 
@@ -125,8 +125,8 @@ std::ostream& OutgoingRecord::print(std::ostream& out, uint16_t)
 { return out << "TODO: OutgoingRecordItem::print(...)"; }
 
 OutgoingRecord::OutgoingRecord() :
-    RsItem( RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_GXS_MAIL,
-            static_cast<uint8_t>(GxsMailItemsSubtypes::OUTGOING_RECORD_ITEM) )
+    RsItem( RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_GXS_TRANS,
+            static_cast<uint8_t>(GxsTransItemsSubtypes::OUTGOING_RECORD_ITEM) )
 { clear();}
 
 uint32_t OutgoingRecord::size() const
@@ -134,7 +134,7 @@ uint32_t OutgoingRecord::size() const
 	return 8 + // Header
 	        1 + // status
 	        recipient.serial_size() +
-	        mailItem.size() +
+	        mailItem.serial_size() +
 	        4 + // sizeof(mailData.size())
 	        mailData.size() +
 	        2 + // clientService
@@ -154,7 +154,7 @@ bool OutgoingRecord::serialize( uint8_t* data, uint32_t size,
 	ok = ok && recipient.serialise(data, size, offset);
 
 	uint32_t tmpOffset = 0;
-	uint32_t tmpSize = mailItem.size();
+	uint32_t tmpSize = mailItem.serial_size();
 	ok = ok && mailItem.serialize(data+offset, tmpSize, tmpOffset)
 	        && (offset += tmpOffset);
 
@@ -182,7 +182,7 @@ bool OutgoingRecord::deserialize(
 
 	uint8_t tmpStatus = 0;
 	ok = ok && getRawUInt8(dataPtr, size, &offset, &tmpStatus);
-	status = static_cast<GxsMailStatus>(tmpStatus);
+	status = static_cast<GxsTransSendStatus>(tmpStatus);
 
 	uint32_t tmpSize = size;
 	ok = ok && recipient.deserialise(dataPtr, tmpSize, offset);
@@ -202,7 +202,7 @@ bool OutgoingRecord::deserialize(
 
 	uint16_t cs = 0;
 	ok = ok && getRawUInt16(dataPtr, offset+2, &offset, &cs);
-	clientService = static_cast<GxsMailSubServices>(cs);
+	clientService = static_cast<GxsTransSubServices>(cs);
 
 	tmpSize = size;
 	ok = ok && presignedReceipt.deserialize(data, tmpSize, offset);

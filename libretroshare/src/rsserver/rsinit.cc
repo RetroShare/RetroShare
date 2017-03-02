@@ -82,8 +82,8 @@
 #include "tcponudp/udpstunner.h"
 #endif // RS_USE_DHT_STUNNER
 
-#ifdef RS_GXS_MAIL
-#	include "services/p3gxsmails.h"
+#ifdef RS_GXS_TRANS
+#	include "gxstrans/p3gxstrans.h"
 #endif
 
 // #define GPG_DEBUG
@@ -1484,22 +1484,18 @@ int RsServer::StartupRetroShare()
         pqih->addService(gxschannels_ns, true);
         //pqih->addService(photo_ns, true);
 
-#	ifdef RS_GXS_MAIL
-	RsGeneralDataService* gxsmail_ds = new RsDataService(
-	            currGxsDir + "/", "gxsmails_db", RS_SERVICE_TYPE_GXS_MAIL,
+#	ifdef RS_GXS_TRANS
+	RsGeneralDataService* gxstrans_ds = new RsDataService(
+	            currGxsDir + "/", "gxstrans_db", RS_SERVICE_TYPE_GXS_TRANS,
 	            NULL, rsInitConfig->gxs_passwd );
-	mGxsMails = new p3GxsMails(gxsmail_ds, NULL, *mGxsIdService);
-	RsGxsNetService* gxsmails_ns = new RsGxsNetService(
-	            RS_SERVICE_TYPE_GXS_MAIL, gxsmail_ds, nxsMgr, mGxsMails,
-	            mGxsMails->getServiceInfo(), mReputations, mGxsCircles,
+	mGxsTrans = new p3GxsTrans(gxstrans_ds, NULL, *mGxsIdService);
+	RsGxsNetService* gxstrans_ns = new RsGxsNetService(
+	            RS_SERVICE_TYPE_GXS_TRANS, gxstrans_ds, nxsMgr, mGxsTrans,
+	            mGxsTrans->getServiceInfo(), mReputations, mGxsCircles,
 	            mGxsIdService, pgpAuxUtils);
-	mGxsMails->setNetworkExchangeService(gxsmails_ns);
-	pqih->addService(gxsmails_ns, true);
-#		ifdef TEST_RS_GXS_MAIL
-	TestGxsMailClientService* tgms =
-	        new TestGxsMailClientService(*mGxsMails, *mGxsIdService);
-#		endif // TEST_RS_GXS_MAIL
-#	endif // RS_GXS_MAIL
+	mGxsTrans->setNetworkExchangeService(gxstrans_ns);
+	pqih->addService(gxstrans_ns, true);
+#	endif // RS_GXS_TRANS
 
 	// remove pword from memory
 	rsInitConfig->gxs_passwd = "";
@@ -1510,9 +1506,9 @@ int RsServer::StartupRetroShare()
 	p3ServiceInfo *serviceInfo = new p3ServiceInfo(serviceCtrl);
 	mDisc = new p3discovery2(mPeerMgr, mLinkMgr, mNetMgr, serviceCtrl);
 	mHeart = new p3heartbeat(serviceCtrl, pqih);
-	msgSrv = new p3MsgService( serviceCtrl, mGxsIdService, *mGxsMails );
+	msgSrv = new p3MsgService( serviceCtrl, mGxsIdService, *mGxsTrans );
 	chatSrv = new p3ChatService( serviceCtrl,mGxsIdService, mLinkMgr,
-	                             mHistoryMgr, *mGxsMails );
+	                             mHistoryMgr, *mGxsTrans );
 	mStatusSrv = new p3StatusService(serviceCtrl);
 
 #ifdef ENABLE_GROUTER
@@ -1678,10 +1674,10 @@ int RsServer::StartupRetroShare()
 
 #ifdef RS_ENABLE_GXS
 
-#	ifdef RS_GXS_MAIL
-	mConfigMgr->addConfiguration("gxs_mail_ns.cfg", gxsmails_ns);
-	mConfigMgr->addConfiguration("gxs_mail.cfg", mGxsMails);
-#	endif
+#	ifdef RS_GXS_TRANS
+	mConfigMgr->addConfiguration("gxs_trans_ns.cfg", gxstrans_ns);
+	mConfigMgr->addConfiguration("gxs_trans.cfg", mGxsTrans);
+#	endif // RS_GXS_TRANS
 
 	mConfigMgr->addConfiguration("p3identity.cfg", mGxsIdService);
 
@@ -1830,13 +1826,10 @@ int RsServer::StartupRetroShare()
 	//createThread(*photo_ns);
 	//createThread(*wire_ns);
 
-#	ifdef RS_GXS_MAIL
-	startServiceThread(mGxsMails, "gxs mail");
-	startServiceThread(gxsmails_ns, "gxs mail ns");
-#		ifdef TEST_RS_GXS_MAIL
-	tgms->start("Gxs Mail Test Service");
-#		endif // TEST_RS_GXS_MAIL
-#	endif // RS_GXS_MAIL
+#	ifdef RS_GXS_TRANS
+	startServiceThread(mGxsTrans, "gxs trans");
+	startServiceThread(gxstrans_ns, "gxs trans ns");
+#	endif // RS_GXS_TRANS
 
 #endif // RS_ENABLE_GXS
 

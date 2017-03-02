@@ -40,6 +40,7 @@
 #include "pqi/p3historymgr.h"
 #include "rsserver/p3face.h"
 #include "services/p3idservice.h"
+#include "gxstrans/p3gxstrans.h"
 
 #include "chat/p3chatservice.h"
 #include "serialiser/rsconfigitems.h"
@@ -55,16 +56,16 @@ static const uint32_t MAX_AVATAR_JPEG_SIZE              = 32767; // Maximum size
 
 p3ChatService::p3ChatService( p3ServiceControl *sc, p3IdService *pids,
                               p3LinkMgr *lm, p3HistoryMgr *historyMgr,
-                              p3GxsMails& gxsMailService ) :
+                              p3GxsTrans& gxsTransService ) :
     DistributedChatService(getServiceInfo().mServiceType, sc, historyMgr,pids),
     mChatMtx("p3ChatService"), mServiceCtrl(sc), mLinkMgr(lm),
     mHistoryMgr(historyMgr), _own_avatar(NULL),
     _serializer(new RsChatSerialiser()),
     mDGMutex("p3ChatService distant id - gxs id map mutex"),
-    mGxsTransport(gxsMailService)
+    mGxsTransport(gxsTransService)
 {
 	addSerialType(_serializer);
-	mGxsTransport.registerGxsMailsClient( GxsMailSubServices::P3_CHAT_SERVICE,
+	mGxsTransport.registerGxsTransClient( GxsTransSubServices::P3_CHAT_SERVICE,
 	                                      this );
 }
 
@@ -335,7 +336,7 @@ bool p3ChatService::sendChat(ChatId destination, std::string msg)
 		// this is not very nice, because the user may think the message was send, while it is still in the queue
 		mHistoryMgr->addMessage(message);
 
-		RsGxsMailId tId = RSRandom::random_u64();
+		RsGxsTransId tId = RSRandom::random_u64();
 
 		if(destination.isDistantChatId())
 		{
@@ -348,7 +349,7 @@ bool p3ChatService::sendChat(ChatId destination, std::string msg)
 				uint32_t sz = ci->serial_size();
 				std::vector<uint8_t> data; data.resize(sz);
 				ci->serialise(&data[0], sz);
-				mGxsTransport.sendMail(tId, GxsMailSubServices::P3_CHAT_SERVICE,
+				mGxsTransport.sendMail(tId, GxsTransSubServices::P3_CHAT_SERVICE,
 				                       de.from, de.to, &data[0], sz);
 			}
 			else
@@ -706,9 +707,10 @@ bool p3ChatService::initiateDistantChatConnexion( const RsGxsId& to_gxs_id,
 	return false;
 }
 
-bool p3ChatService::receiveGxsMail( const RsGxsId& authorId,
-                                    const RsGxsId& recipientId,
-                                    const uint8_t* data, uint32_t dataSize )
+bool p3ChatService::receiveGxsTransMail( const RsGxsId& authorId,
+                                         const RsGxsId& recipientId,
+                                         const uint8_t* data,
+                                         uint32_t dataSize )
 {
 	DistantChatPeerId pid;
 	uint32_t error_code;
@@ -724,22 +726,22 @@ bool p3ChatService::receiveGxsMail( const RsGxsId& authorId,
 		return true;
 	}
 
-	std::cerr << "p3ChatService::receiveGxsMail(...) (EE) failed initiating"
+	std::cerr << __PRETTY_FUNCTION__ << " (EE) failed initiating"
 	          << " distant chat connection error: "<< error_code
 	          << std::endl;
 	return false;
 }
 
-bool p3ChatService::notifySendMailStatus( const RsGxsMailItem& originalMessage,
-                                          GxsMailStatus status )
+bool p3ChatService::notifyGxsTransSendStatus(RsGxsTransId mailId,
+                                             GxsTransSendStatus status )
 {
-	if ( status != GxsMailStatus::RECEIPT_RECEIVED ) return true;
+	if ( status != GxsTransSendStatus::RECEIPT_RECEIVED ) return true;
 
 	bool changed = false;
 
 	{
 		RS_STACK_MUTEX(mChatMtx);
-		auto it = privateOutgoingMap.find(originalMessage.mailId);
+		auto it = privateOutgoingMap.find(mailId);
 		if( it != privateOutgoingMap.end() )
 		{
 			privateOutgoingMap.erase(it);

@@ -122,7 +122,7 @@ RsServer::RsServer()
 
 RsServer::~RsServer()
 {
-	delete mGxsMails;
+	delete mGxsTrans;
 }
 
         /* General Internal Helper Functions 

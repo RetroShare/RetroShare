@@ -49,7 +49,7 @@
 #include "grouter/grouterclientservice.h"
 #include "turtle/p3turtle.h"
 #include "turtle/turtleclientservice.h"
-#include "services/p3gxsmails.h"
+#include "gxstrans/p3gxstrans.h"
 
 class p3LinkMgr;
 class p3IdService;
@@ -57,9 +57,9 @@ class p3IdService;
 // Temp tweak to test grouter
 struct p3MsgService :
         p3Service, p3Config, pqiServiceMonitor, GRouterClientService,
-        GxsMailsClient
+        GxsTransClient
 {
-	p3MsgService(p3ServiceControl *sc, p3IdService *id_service, p3GxsMails& gxsMS);
+	p3MsgService(p3ServiceControl *sc, p3IdService *id_service, p3GxsTrans& gxsMS);
 
 	virtual RsServiceInfo getServiceInfo();
 
@@ -135,14 +135,14 @@ struct p3MsgService :
     void setDistantMessagingPermissionFlags(uint32_t flags) ;
     uint32_t getDistantMessagingPermissionFlags() ;
 
-	/// @see GxsMailsClient::receiveGxsMail(...)
-	virtual bool receiveGxsMail( const RsGxsId& authorId,
-	                             const RsGxsId& recipientId,
-	                             const uint8_t* data, uint32_t dataSize );
+	/// @see GxsTransClient::receiveGxsTransMail(...)
+	virtual bool receiveGxsTransMail( const RsGxsId& authorId,
+	                                  const RsGxsId& recipientId,
+	                                  const uint8_t* data, uint32_t dataSize );
 
-	/// @see GxsMailsClient::notifySendMailStatus(...)
-	virtual bool notifySendMailStatus( const RsGxsMailItem& originalMessage,
-	                                   GxsMailStatus status );
+	/// @see GxsTransClient::notifyGxsTransSendStatus(...)
+	virtual bool notifyGxsTransSendStatus( RsGxsTransId mailId,
+	                                       GxsTransSendStatus status );
 
 private:
 	void sendDistantMsgItem(RsMsgItem *msgitem);
@@ -152,7 +152,7 @@ private:
 	std::map<GRouterMsgPropagationId, uint32_t> _ongoing_messages;
 
 	/// Contains ongoing messages handed to gxs mail
-	std::map<RsGxsMailId, uint32_t> gxsOngoingMessages;
+	std::map<RsGxsTransId, uint32_t> gxsOngoingMessages;
 	RsMutex gxsOngoingMutex;
 
     // Overloaded from GRouterClientService
@@ -229,7 +229,7 @@ private:
     uint32_t mDistantMessagePermissions ;
     bool mShouldEnableDistantMessaging ;
 
-	p3GxsMails& gxsMailService;
+	p3GxsTrans& mGxsTransServ;
 };
 
 #endif // MESSAGE_SERVICE_HEADER

@@ -37,7 +37,7 @@
 #include "chat/distantchat.h"
 #include "chat/distributedchat.h"
 #include "retroshare/rsmsgs.h"
-#include "services/p3gxsmails.h"
+#include "gxstrans/p3gxstrans.h"
 #include "util/rsdeprecate.h"
 
 class p3ServiceControl;
@@ -55,10 +55,10 @@ typedef RsPeerId ChatLobbyVirtualPeerId ;
   */
 struct p3ChatService :
         p3Service, DistantChatService, DistributedChatService, p3Config,
-        pqiServiceMonitor, GxsMailsClient
+        pqiServiceMonitor, GxsTransClient
 {
-	p3ChatService( p3ServiceControl *cs, p3IdService *pids,p3LinkMgr *cm,
-	               p3HistoryMgr *historyMgr, p3GxsMails& gxsMailService );
+	p3ChatService(p3ServiceControl *cs, p3IdService *pids, p3LinkMgr *cm,
+	               p3HistoryMgr *historyMgr, p3GxsTrans& gxsTransService );
 
 	virtual RsServiceInfo getServiceInfo();
 
@@ -171,14 +171,14 @@ struct p3ChatService :
 	                                           uint32_t& error_code,
 	                                           bool notify = true );
 
-	/// @see GxsMailsClient::receiveGxsMail(...)
-	virtual bool receiveGxsMail( const RsGxsId& authorId,
-	                             const RsGxsId& recipientId,
-	                             const uint8_t* data, uint32_t dataSize );
+	/// @see GxsTransClient::receiveGxsTransMail(...)
+	virtual bool receiveGxsTransMail( const RsGxsId& authorId,
+	                                  const RsGxsId& recipientId,
+	                                  const uint8_t* data, uint32_t dataSize );
 
-	/// @see GxsMailsClient::notifySendMailStatus(...)
-	virtual bool notifySendMailStatus( const RsGxsMailItem& originalMessage,
-	                                   GxsMailStatus status );
+	/// @see GxsTransClient::notifySendMailStatus(...)
+	virtual bool notifyGxsTransSendStatus( RsGxsTransId mailId,
+	                                       GxsTransSendStatus status );
 
 
 protected:
@@ -270,7 +270,7 @@ private:
 	DIDEMap mDistantGxsMap;
 	RsMutex mDGMutex;
 
-	p3GxsMails& mGxsTransport;
+	p3GxsTrans& mGxsTransport;
 };
 
 class p3ChatService::StateStringInfo

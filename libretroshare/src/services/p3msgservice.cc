@@ -86,12 +86,12 @@ static const uint32_t RS_MSG_DISTANT_MESSAGE_HASH_KEEP_TIME = 2*30*86400 ; // ke
  */
 
 p3MsgService::p3MsgService( p3ServiceControl *sc, p3IdService *id_serv,
-                            p3GxsMails& gxsMS )
+                            p3GxsTrans& gxsMS )
     : p3Service(), p3Config(),
       gxsOngoingMutex("p3MsgService Gxs Outgoing Mutex"), mIdService(id_serv),
       mServiceCtrl(sc), mMsgMtx("p3MsgService"), mMsgUniqueId(0),
       recentlyReceivedMutex("p3MsgService recently received hash mutex"),
-      gxsMailService(gxsMS)
+      mGxsTransServ(gxsMS)
 {
 	/* this serialiser is used for services. It's not the same than the one
 	 * returned by setupSerialiser(). We need both!! */
@@ -108,8 +108,8 @@ p3MsgService::p3MsgService( p3ServiceControl *sc, p3IdService *id_serv,
 
 	if(sc) initStandardTagTypes(); // Initialize standard tag types
 
-	gxsMailService.registerGxsMailsClient( GxsMailSubServices::P3_MSG_SERVICE,
-	                                       this );
+	mGxsTransServ.registerGxsTransClient( GxsTransSubServices::P3_MSG_SERVICE,
+	                                      this );
 }
 
 const std::string MSG_APP_NAME = "msg";
@@ -1990,12 +1990,12 @@ uint32_t p3MsgService::getDistantMessagingPermissionFlags()
     return mDistantMessagePermissions ;
 }
 
-bool p3MsgService::receiveGxsMail( const RsGxsId& authorId,
-                                   const RsGxsId& recipientId,
-                                   const uint8_t* data, uint32_t dataSize )
+bool p3MsgService::receiveGxsTransMail( const RsGxsId& authorId,
+                                const RsGxsId& recipientId,
+                                const uint8_t* data, uint32_t dataSize )
 {
-	std::cout << "p3MsgService::receiveGxsMail(" << authorId
-	          << ", " << recipientId << ", " << dataSize << ")" << std::endl;
+	std::cout << __PRETTY_FUNCTION__ << " " << authorId << ", " << recipientId
+	          << ",, " << dataSize << std::endl;
 
 	Sha1CheckSum hash = RsDirUtil::sha1sum(data, dataSize);
 
@@ -2004,7 +2004,7 @@ bool p3MsgService::receiveGxsMail( const RsGxsId& authorId,
 		if( mRecentlyReceivedMessageHashes.find(hash) !=
 		        mRecentlyReceivedMessageHashes.end() )
 		{
-			std::cerr << "p3MsgService::receiveGxsMail(...) (II) receiving "
+			std::cerr << __PRETTY_FUNCTION__ << " (II) receiving "
 			          << "message of hash " << hash << " more than once. "
 			          << "Probably it has arrived  before by other means."
 			          << std::endl;
@@ -2020,8 +2020,8 @@ bool p3MsgService::receiveGxsMail( const RsGxsId& authorId,
 
 	if(msg_item)
 	{
-		std::cerr << "p3MsgService::receiveGxsMail(...) Encrypted item "
-		          << "correctly deserialised. Passing on to incoming list."
+		std::cerr << __PRETTY_FUNCTION__ << " Encrypted item correctly "
+		          << "deserialised. Passing on to incoming list."
 		          << std::endl;
 
 		msg_item->msgFlags |= RS_MSG_FLAGS_DISTANT;
@@ -2035,7 +2035,7 @@ bool p3MsgService::receiveGxsMail( const RsGxsId& authorId,
 	}
 	else
 	{
-		std::cerr << "p3MsgService::receiveGxsMail(...) Item could not be "
+		std::cerr << __PRETTY_FUNCTION__ << " Item could not be "
 		          << "deserialised. Format error??" << std::endl;
 		return false;
 	}
@@ -2043,26 +2043,26 @@ bool p3MsgService::receiveGxsMail( const RsGxsId& authorId,
 	return true;
 }
 
-bool p3MsgService::notifySendMailStatus( const RsGxsMailItem& originalMessage,
-                                         GxsMailStatus status )
+bool p3MsgService::notifyGxsTransSendStatus( RsGxsTransId mailId,
+                                             GxsTransSendStatus status )
 {
-	std::cout << "p3MsgService::notifySendMailStatus(" << originalMessage.mailId
-	          << ", " << static_cast<uint>(status) << ")" << std::endl;
+	std::cout << __PRETTY_FUNCTION__ << " " << mailId << ", "
+	          << static_cast<uint>(status) << std::endl;
 
-	if( status == GxsMailStatus::RECEIPT_RECEIVED )
+	if( status == GxsTransSendStatus::RECEIPT_RECEIVED )
 	{
 		uint32_t msg_id;
 
 		{
 			RS_STACK_MUTEX(gxsOngoingMutex);
 
-			auto it = gxsOngoingMessages.find(originalMessage.mailId);
+			auto it = gxsOngoingMessages.find(mailId);
 			if(it == gxsOngoingMessages.end())
 			{
-				std::cerr << "p3MsgService::notifySendMailStatus("
-				          << originalMessage.mailId
-				          << ", " << static_cast<uint>(status) << ") "
-				          << "(EE) cannot find pending message to acknowledge!"
+				std::cerr << __PRETTY_FUNCTION__<< " "
+				          << mailId
+				          << ", " << static_cast<uint>(status)
+				          << " (EE) cannot find pending message to acknowledge!"
 				          << std::endl;
 				return false;
 			}
@@ -2078,9 +2078,8 @@ bool p3MsgService::notifySendMailStatus( const RsGxsMailItem& originalMessage,
 			auto it2 = msgOutgoing.find(msg_id);
 			if(it2 == msgOutgoing.end())
 			{
-				std::cerr << "p3MsgService::notifySendMailStatus("
-				          << originalMessage.mailId
-				          << ", " << static_cast<uint>(status) << ") (II) "
+				std::cerr << __PRETTY_FUNCTION__ << " " << mailId
+				          << ", " << static_cast<uint>(status) << " (II) "
 				          << "received receipt for message that is not in "
 				          << "outgoing list, probably it has been acknoweldged "
 				          << "before by other means." << std::endl;
@@ -2098,18 +2097,18 @@ bool p3MsgService::notifySendMailStatus( const RsGxsMailItem& originalMessage,
 		return true;
 	}
 
-	if( status >= GxsMailStatus::FAILED_RECEIPT_SIGNATURE )
+	if( status >= GxsTransSendStatus::FAILED_RECEIPT_SIGNATURE )
 	{
 		uint32_t msg_id;
 
 		{
 			RS_STACK_MUTEX(gxsOngoingMutex);
 
-			std::cerr << "p3MsgService::notifySendMailStatus(...) mail delivery"
-			          << "mailId: " << originalMessage.mailId
+			std::cerr << __PRETTY_FUNCTION__ << " mail delivery "
+			          << "mailId: " << mailId
 			          << " failed with " << static_cast<uint32_t>(status);
 
-			auto it = gxsOngoingMessages.find(originalMessage.mailId);
+			auto it = gxsOngoingMessages.find(mailId);
 			if(it == gxsOngoingMessages.end())
 			{
 				std::cerr << " cannot find pending message to notify"
@@ -2258,8 +2257,8 @@ void p3MsgService::sendDistantMsgItem(RsMsgItem *msgitem)
 	mGRouter->sendData( destination_key_id, GROUTER_CLIENT_ID_MESSAGES,
 	                    msg_serialized_data, msg_serialized_rssize,
 	                    signing_key_id, grouter_message_id );
-	RsGxsMailId gxsMailId;
-	gxsMailService.sendMail( gxsMailId, GxsMailSubServices::P3_MSG_SERVICE,
+	RsGxsTransId gxsMailId;
+	mGxsTransServ.sendMail( gxsMailId, GxsTransSubServices::P3_MSG_SERVICE,
 	                         signing_key_id, destination_key_id,
 	                         msg_serialized_data, msg_serialized_rssize );
 

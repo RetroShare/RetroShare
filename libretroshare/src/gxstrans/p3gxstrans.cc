@@ -16,39 +16,39 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "p3gxsmails.h"
+#include "gxstrans/p3gxstrans.h"
 #include "util/stacktrace.h"
 
 typedef unsigned int uint;
 
-p3GxsMails::~p3GxsMails()
+p3GxsTrans::~p3GxsTrans()
 {
 	p3Config::saveConfiguration();
 
 	{
-		RS_STACK_MUTEX(ingoingMutex);
-		for ( auto& kv : ingoingQueue ) delete kv.second;
+		RS_STACK_MUTEX(mIngoingMutex);
+		for ( auto& kv : mIngoingQueue ) delete kv.second;
 	}
 }
 
-bool p3GxsMails::sendMail( RsGxsMailId& mailId,
-                           GxsMailSubServices service,
+bool p3GxsTrans::sendMail( RsGxsTransId& mailId,
+                           GxsTransSubServices service,
                            const RsGxsId& own_gxsid, const RsGxsId& recipient,
                            const uint8_t* data, uint32_t size,
-                           RsGxsMailEncryptionMode cm )
+                           RsGxsTransEncryptionMode cm )
 {
-	std::cout << "p3GxsMails::sendEmail(...)" << std::endl;
+	std::cout << "p3GxsTrans::sendEmail(...)" << std::endl;
 
-	if(!idService.isOwnId(own_gxsid))
+	if(!mIdService.isOwnId(own_gxsid))
 	{
-		std::cerr << "p3GxsMails::sendEmail(...) isOwnId(own_gxsid) false!"
+		std::cerr << "p3GxsTrans::sendEmail(...) isOwnId(own_gxsid) false!"
 		          << std::endl;
 		return false;
 	}
 
 	if(recipient.isNull())
 	{
-		std::cerr << "p3GxsMails::sendEmail(...) got invalid recipient"
+		std::cerr << "p3GxsTrans::sendEmail(...) got invalid recipient"
 		          << std::endl;
 		print_stacktrace();
 		return false;
@@ -60,18 +60,19 @@ bool p3GxsMails::sendMail( RsGxsMailId& mailId,
 	pr.mailItem.mailId = RSRandom::random_u64();
 
 	{
-		RS_STACK_MUTEX(outgoingMutex);
-		outgoingQueue.insert(prMap::value_type(pr.mailItem.mailId, pr));
+		RS_STACK_MUTEX(mOutgoingMutex);
+		mOutgoingQueue.insert(prMap::value_type(pr.mailItem.mailId, pr));
 	}
 
 	mailId = pr.mailItem.mailId;
 	return true;
 }
 
-bool p3GxsMails::querySendMailStatus(RsGxsMailId mailId, GxsMailStatus& st)
+bool p3GxsTrans::querySendStatus(RsGxsTransId mailId, GxsTransSendStatus& st)
 {
-	auto it = outgoingQueue.find(mailId);
-	if( it != outgoingQueue.end() )
+	RS_STACK_MUTEX(mOutgoingMutex);
+	auto it = mOutgoingQueue.find(mailId);
+	if( it != mOutgoingQueue.end() )
 	{
 		st = it->second.status;
 		return true;
@@ -79,16 +80,16 @@ bool p3GxsMails::querySendMailStatus(RsGxsMailId mailId, GxsMailStatus& st)
 	return false;
 }
 
-void p3GxsMails::registerGxsMailsClient(
-        GxsMailSubServices serviceType, GxsMailsClient* service)
+void p3GxsTrans::registerGxsTransClient(
+        GxsTransSubServices serviceType, GxsTransClient* service)
 {
-	RS_STACK_MUTEX(servClientsMutex);
-	servClients[serviceType] = service;
+	RS_STACK_MUTEX(mServClientsMutex);
+	mServClients[serviceType] = service;
 }
 
-void p3GxsMails::handleResponse(uint32_t token, uint32_t req_type)
+void p3GxsTrans::handleResponse(uint32_t token, uint32_t req_type)
 {
-	std::cout << "p3GxsMails::handleResponse(" << token << ", " << req_type
+	std::cout << "p3GxsTrans::handleResponse(" << token << ", " << req_type
 	          << ")" << std::endl;
 	switch (req_type)
 	{
@@ -116,7 +117,7 @@ void p3GxsMails::handleResponse(uint32_t token, uint32_t req_type)
 
 			bool shoudlSubscribe = !subscribed && ( !old || supersede );
 			bool shoudlUnSubscribe = subscribed && old
-			        && meta.mGroupId != preferredGroupId;
+			        && meta.mGroupId != mPreferredGroupId;
 
 			if(shoudlSubscribe)
 				subscribeToGroup(token, meta.mGroupId, true);
@@ -129,7 +130,7 @@ void p3GxsMails::handleResponse(uint32_t token, uint32_t req_type)
 			timeinfo = localtime(&meta.mLastPost);
 			strftime(buff, sizeof(buff), "%Y %b %d %H:%M", timeinfo);
 
-			std::cout << "p3GxsMails::handleResponse(...) GROUPS_LIST "
+			std::cout << "p3GxsTrans::handleResponse(...) GROUPS_LIST "
 			          << "meta.mGroupId: " << meta.mGroupId
 			          << " meta.mLastPost: " << buff
 			          << " subscribed: " << subscribed
@@ -142,7 +143,7 @@ void p3GxsMails::handleResponse(uint32_t token, uint32_t req_type)
 			delete grp;
 		}
 
-		if(preferredGroupId.isNull())
+		if(mPreferredGroupId.isNull())
 		{
 			/* This is true only at first run when we haven't received mail
 			 * distribuition groups from friends
@@ -150,10 +151,10 @@ void p3GxsMails::handleResponse(uint32_t token, uint32_t req_type)
 			 * avoid to create yet another never used mail distribution group.
 			 */
 
-			std::cerr << "p3GxsMails::handleResponse(...) preferredGroupId.isNu"
+			std::cerr << "p3GxsTrans::handleResponse(...) preferredGroupId.isNu"
 			          << "ll() let's create a new group." << std::endl;
 			uint32_t token;
-			publishGroup(token, new RsGxsMailGroupItem());
+			publishGroup(token, new RsGxsTransGroupItem());
 			queueRequest(token, GROUP_CREATE);
 		}
 
@@ -161,7 +162,7 @@ void p3GxsMails::handleResponse(uint32_t token, uint32_t req_type)
 	}
 	case GROUP_CREATE:
 	{
-		std::cerr << "p3GxsMails::handleResponse(...) GROUP_CREATE" << std::endl;
+		std::cerr << "p3GxsTrans::handleResponse(...) GROUP_CREATE" << std::endl;
 		RsGxsGroupId grpId;
 		acknowledgeTokenGrp(token, grpId);
 		supersedePreferredGroup(grpId);
@@ -169,7 +170,7 @@ void p3GxsMails::handleResponse(uint32_t token, uint32_t req_type)
 	}
 	case MAILS_UPDATE:
 	{
-		std::cout << "p3GxsMails::handleResponse(...) MAILS_UPDATE" << std::endl;
+		std::cout << "p3GxsTrans::handleResponse(...) MAILS_UPDATE" << std::endl;
 		typedef std::map<RsGxsGroupId, std::vector<RsGxsMsgItem*> > GxsMsgDataMap;
 		GxsMsgDataMap gpMsgMap;
 		getMsgData(token, gpMsgMap);
@@ -181,27 +182,27 @@ void p3GxsMails::handleResponse(uint32_t token, uint32_t req_type)
 			for( vT::const_iterator mIt = mv.begin(); mIt != mv.end(); ++mIt )
 			{
 				RsGxsMsgItem* gIt = *mIt;
-				switch(static_cast<GxsMailItemsSubtypes>(gIt->PacketSubType()))
+				switch(static_cast<GxsTransItemsSubtypes>(gIt->PacketSubType()))
 				{
-				case GxsMailItemsSubtypes::GXS_MAIL_SUBTYPE_MAIL:
-				case GxsMailItemsSubtypes::GXS_MAIL_SUBTYPE_RECEIPT:
+				case GxsTransItemsSubtypes::GXS_TRANS_SUBTYPE_MAIL:
+				case GxsTransItemsSubtypes::GXS_TRANS_SUBTYPE_RECEIPT:
 				{
-					RsGxsMailBaseItem* mb =
-					        dynamic_cast<RsGxsMailBaseItem*>(*mIt);
+					RsGxsTransBaseItem* mb =
+					        dynamic_cast<RsGxsTransBaseItem*>(*mIt);
 					if(mb)
 					{
-						RS_STACK_MUTEX(ingoingMutex);
-						ingoingQueue.insert(inMap::value_type(mb->mailId, mb));
+						RS_STACK_MUTEX(mIngoingMutex);
+						mIngoingQueue.insert(inMap::value_type(mb->mailId, mb));
 					}
 					else
-						std::cerr << "p3GxsMails::handleResponse(...) "
+						std::cerr << "p3GxsTrans::handleResponse(...) "
 						          << "GXS_MAIL_SUBTYPE_MAIL cast error, "
 						          << "something really wrong is happening"
 						          << std::endl;
 					break;
 				}
 				default:
-					std::cerr << "p3GxsMails::handleResponse(...) MAILS_UPDATE "
+					std::cerr << "p3GxsTrans::handleResponse(...) MAILS_UPDATE "
 					          << "Unknown mail subtype : "
 					          << static_cast<uint>(gIt->PacketSubType())
 					          << std::endl;
@@ -213,51 +214,51 @@ void p3GxsMails::handleResponse(uint32_t token, uint32_t req_type)
 		break;
 	}
 	default:
-		std::cerr << "p3GxsMails::handleResponse(...) Unknown req_type: "
+		std::cerr << "p3GxsTrans::handleResponse(...) Unknown req_type: "
 		          << req_type << std::endl;
 		break;
 	}
 }
 
-void p3GxsMails::service_tick()
+void p3GxsTrans::service_tick()
 {
 	GxsTokenQueue::checkRequests();
 
 	{
-		RS_STACK_MUTEX(outgoingMutex);
-		for ( auto it = outgoingQueue.begin(); it != outgoingQueue.end(); )
+		RS_STACK_MUTEX(mOutgoingMutex);
+		for ( auto it = mOutgoingQueue.begin(); it != mOutgoingQueue.end(); )
 		{
 			OutgoingRecord& pr(it->second);
-			GxsMailStatus oldStatus = pr.status;
+			GxsTransSendStatus oldStatus = pr.status;
 			processOutgoingRecord(pr);
 			if (oldStatus != pr.status) notifyClientService(pr);
-			if( pr.status >= GxsMailStatus::RECEIPT_RECEIVED )
-				it = outgoingQueue.erase(it);
+			if( pr.status >= GxsTransSendStatus::RECEIPT_RECEIVED )
+				it = mOutgoingQueue.erase(it);
 			else ++it;
 		}
 	}
 
 
 	{
-		RS_STACK_MUTEX(ingoingMutex);
-		for( auto it = ingoingQueue.begin(); it != ingoingQueue.end(); )
+		RS_STACK_MUTEX(mIngoingMutex);
+		for( auto it = mIngoingQueue.begin(); it != mIngoingQueue.end(); )
 		{
-			switch(static_cast<GxsMailItemsSubtypes>(
+			switch(static_cast<GxsTransItemsSubtypes>(
 			           it->second->PacketSubType()))
 			{
-			case GxsMailItemsSubtypes::GXS_MAIL_SUBTYPE_MAIL:
+			case GxsTransItemsSubtypes::GXS_TRANS_SUBTYPE_MAIL:
 			{
-				RsGxsMailItem* msg = dynamic_cast<RsGxsMailItem*>(it->second);
+				RsGxsTransMailItem* msg = dynamic_cast<RsGxsTransMailItem*>(it->second);
 				if(!msg)
 				{
-					std::cerr << "p3GxsMails::service_tick() (EE) "
+					std::cerr << "p3GxsTrans::service_tick() (EE) "
 					          << "GXS_MAIL_SUBTYPE_MAIL dynamic_cast failed, "
 					          << "something really wrong is happening!"
 					          << std::endl;
 				}
 				else
 				{
-					std::cout << "p3GxsMails::service_tick() "
+					std::cout << "p3GxsTrans::service_tick() "
 					          << "GXS_MAIL_SUBTYPE_MAIL handling: "
 					          << msg->meta.mMsgId
 					          << " with cryptoType: "
@@ -270,18 +271,18 @@ void p3GxsMails::service_tick()
 				}
 				break;
 			}
-			case GxsMailItemsSubtypes::GXS_MAIL_SUBTYPE_RECEIPT:
+			case GxsTransItemsSubtypes::GXS_TRANS_SUBTYPE_RECEIPT:
 			{
-				RsGxsMailPresignedReceipt* rcpt =
-				        dynamic_cast<RsGxsMailPresignedReceipt*>(it->second);
+				RsGxsTransPresignedReceipt* rcpt =
+				        dynamic_cast<RsGxsTransPresignedReceipt*>(it->second);
 				if(!rcpt)
 				{
-					std::cerr << "p3GxsMails::service_tick() (EE) "
+					std::cerr << "p3GxsTrans::service_tick() (EE) "
 					          << "GXS_MAIL_SUBTYPE_RECEIPT dynamic_cast failed,"
 					          << " something really wrong is happening!"
 					          << std::endl;
 				}
-				else if(idService.isOwnId(rcpt->meta.mAuthorId))
+				else if(mIdService.isOwnId(rcpt->meta.mAuthorId))
 				{
 					/* It is a receipt for a mail sent by this node live it in
 					 * ingoingQueue so processOutgoingRecord(...) will take care
@@ -298,27 +299,27 @@ void p3GxsMails::service_tick()
 				break;
 			}
 			default:
-				std::cerr << "p3GxsMails::service_tick() (EE) got something "
+				std::cerr << "p3GxsTrans::service_tick() (EE) got something "
 				          << "really unknown into ingoingQueue!!" << std::endl;
 				break;
 			}
 
-			delete it->second; it = ingoingQueue.erase(it);
+			delete it->second; it = mIngoingQueue.erase(it);
 		}
 	}
 }
 
-RsGenExchange::ServiceCreate_Return p3GxsMails::service_CreateGroup(
+RsGenExchange::ServiceCreate_Return p3GxsTrans::service_CreateGroup(
         RsGxsGrpItem* grpItem, RsTlvSecurityKeySet& /*keySet*/ )
 {
-	std::cout << "p3GxsMails::service_CreateGroup(...) "
+	std::cout << "p3GxsTrans::service_CreateGroup(...) "
 	          << grpItem->meta.mGroupId << std::endl;
 	return SERVICE_CREATE_SUCCESS;
 }
 
-void p3GxsMails::notifyChanges(std::vector<RsGxsNotify*>& changes)
+void p3GxsTrans::notifyChanges(std::vector<RsGxsNotify*>& changes)
 {
-	std::cout << "p3GxsMails::notifyChanges(...)" << std::endl;
+	std::cout << "p3GxsTrans::notifyChanges(...)" << std::endl;
 	for( std::vector<RsGxsNotify*>::const_iterator it = changes.begin();
 	     it != changes.end(); ++it )
 	{
@@ -327,12 +328,12 @@ void p3GxsMails::notifyChanges(std::vector<RsGxsNotify*>& changes)
 
 		if (grpChange)
 		{
-			std::cout << "p3GxsMails::notifyChanges(...) grpChange" << std::endl;
+			std::cout << "p3GxsTrans::notifyChanges(...) grpChange" << std::endl;
 			requestGroupsData(&(grpChange->mGrpIdList));
 		}
 		else if(msgChange)
 		{
-			std::cout << "p3GxsMails::notifyChanges(...) msgChange" << std::endl;
+			std::cout << "p3GxsTrans::notifyChanges(...) msgChange" << std::endl;
 			uint32_t token;
 			RsTokReqOptions opts; opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
 			getTokenService()->requestMsgInfo( token, 0xcaca,
@@ -348,7 +349,7 @@ void p3GxsMails::notifyChanges(std::vector<RsGxsNotify*>& changes)
 				for(itT vit = msgsIds.begin(); vit != msgsIds.end(); ++vit)
 				{
 					const RsGxsMessageId& msgId = *vit;
-					std::cout << "p3GxsMails::notifyChanges(...) got "
+					std::cout << "p3GxsTrans::notifyChanges(...) got "
 					          << "notification for message " << msgId
 					          << " in group " << grpId << std::endl;
 				}
@@ -357,7 +358,7 @@ void p3GxsMails::notifyChanges(std::vector<RsGxsNotify*>& changes)
 	}
 }
 
-uint32_t p3GxsMails::AuthenPolicy()
+uint32_t p3GxsTrans::AuthenPolicy()
 {
 	uint32_t policy = 0;
 	uint32_t flag = 0;
@@ -386,9 +387,9 @@ uint32_t p3GxsMails::AuthenPolicy()
 	return policy;
 }
 
-bool p3GxsMails::requestGroupsData(const std::list<RsGxsGroupId>* groupIds)
+bool p3GxsTrans::requestGroupsData(const std::list<RsGxsGroupId>* groupIds)
 {
-	//	std::cout << "p3GxsMails::requestGroupsList()" << std::endl;
+	//	std::cout << "p3GxsTrans::requestGroupsList()" << std::endl;
 	uint32_t token;
 	RsTokReqOptions opts; opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
 	if(!groupIds) getTokenService()->requestGroupInfo(token, 0xcaca, opts);
@@ -397,26 +398,26 @@ bool p3GxsMails::requestGroupsData(const std::list<RsGxsGroupId>* groupIds)
 	return true;
 }
 
-bool p3GxsMails::handleEcryptedMail(const RsGxsMailItem* mail)
+bool p3GxsTrans::handleEcryptedMail(const RsGxsTransMailItem* mail)
 {
-	std::cout << "p3GxsMails::handleEcryptedMail(...)" << std::endl;
+	std::cout << "p3GxsTrans::handleEcryptedMail(...)" << std::endl;
 
 	std::set<RsGxsId> decryptIds;
 	std::list<RsGxsId> ownIds;
-	idService.getOwnIds(ownIds);
+	mIdService.getOwnIds(ownIds);
 	for(auto it = ownIds.begin(); it != ownIds.end(); ++it)
 		if(mail->maybeRecipient(*it)) decryptIds.insert(*it);
 
 	// Hint match none of our own ids
 	if(decryptIds.empty())
 	{
-		std::cout << "p3GxsMails::handleEcryptedMail(...) hint doesn't match" << std::endl;
+		std::cout << "p3GxsTrans::handleEcryptedMail(...) hint doesn't match" << std::endl;
 		return true;
 	}
 
 	switch (mail->cryptoType)
 	{
-	case RsGxsMailEncryptionMode::CLEAR_TEXT:
+	case RsGxsTransEncryptionMode::CLEAR_TEXT:
 	{
 		uint16_t csri = 0;
 		uint32_t off = 0;
@@ -428,7 +429,7 @@ bool p3GxsMails::handleEcryptedMail(const RsGxsMailItem* mail)
 		return dispatchDecryptedMail( mail->meta.mAuthorId, mail->recipientHint,
 		                              &mail->payload[0], mail->payload.size() );
 	}
-	case RsGxsMailEncryptionMode::RSA:
+	case RsGxsTransEncryptionMode::RSA:
 	{
 		bool ok = true;
 		for( std::set<RsGxsId>::const_iterator it = decryptIds.begin();
@@ -438,7 +439,7 @@ bool p3GxsMails::handleEcryptedMail(const RsGxsMailItem* mail)
 			uint8_t* decrypted_data = NULL;
 			uint32_t decrypted_data_size = 0;
 			uint32_t decryption_error;
-			if( idService.decryptData( &mail->payload[0],
+			if( mIdService.decryptData( &mail->payload[0],
 			                            mail->payload.size(), decrypted_data,
 			                            decrypted_data_size, decryptId,
 			                            decryption_error ) )
@@ -456,108 +457,108 @@ bool p3GxsMails::handleEcryptedMail(const RsGxsMailItem* mail)
 	}
 }
 
-bool p3GxsMails::dispatchDecryptedMail( const RsGxsId& authorId,
+bool p3GxsTrans::dispatchDecryptedMail( const RsGxsId& authorId,
                                         const RsGxsId& decryptId,
                                         const uint8_t* decrypted_data,
                                         uint32_t decrypted_data_size )
 {
-	std::cout << "p3GxsMails::dispatchDecryptedMail(, , " << decrypted_data_size
+	std::cout << "p3GxsTrans::dispatchDecryptedMail(, , " << decrypted_data_size
 	          << ")" << std::endl;
 
 	uint16_t csri = 0;
 	uint32_t offset = 0;
 	if(!getRawUInt16( decrypted_data, decrypted_data_size, &offset, &csri))
 	{
-		std::cerr << "p3GxsMails::dispatchDecryptedMail(...) (EE) fatal error "
+		std::cerr << "p3GxsTrans::dispatchDecryptedMail(...) (EE) fatal error "
 		          << "deserializing service type, something really wrong is "
 		          << "happening!" << std::endl;
 		return false;
 	}
-	GxsMailSubServices rsrvc = static_cast<GxsMailSubServices>(csri);
+	GxsTransSubServices rsrvc = static_cast<GxsTransSubServices>(csri);
 
-	RsNxsMailPresignedReceipt* receipt = new RsNxsMailPresignedReceipt();
+	RsNxsTransPresignedReceipt* receipt = new RsNxsTransPresignedReceipt();
 	uint32_t rcptsize = decrypted_data_size;
 	if(!receipt->deserialize(decrypted_data, rcptsize, offset))
 	{
-		std::cerr << "p3GxsMails::dispatchDecryptedMail(...) (EE) fatal error "
+		std::cerr << "p3GxsTrans::dispatchDecryptedMail(...) (EE) fatal error "
 		          << "deserializing presigned return receipt , something really"
 		          << " wrong is happening!" << std::endl;
 		delete receipt;
 		return false;
 	}
-	std::cout << "p3GxsMails::dispatchDecryptedMail(...) dispatching receipt "
+	std::cout << "p3GxsTrans::dispatchDecryptedMail(...) dispatching receipt "
 	          << "with: msgId: " << receipt->msgId << std::endl;
 
 	std::vector<RsNxsMsg*> rcct; rcct.push_back(receipt);
 	RsGenExchange::notifyNewMessages(rcct);
 
-	GxsMailsClient* recipientService = NULL;
+	GxsTransClient* recipientService = NULL;
 	{
-		RS_STACK_MUTEX(servClientsMutex);
-		recipientService = servClients[rsrvc];
+		RS_STACK_MUTEX(mServClientsMutex);
+		recipientService = mServClients[rsrvc];
 	}
 
 	if(recipientService)
-		return recipientService->receiveGxsMail( authorId, decryptId,
-		                                         &decrypted_data[offset],
-		                                         decrypted_data_size-offset );
+		return recipientService->receiveGxsTransMail(
+		            authorId, decryptId, &decrypted_data[offset],
+		            decrypted_data_size-offset );
 	else
 	{
-		std::cerr << "p3GxsMails::dispatchReceivedMail(...) "
+		std::cerr << "p3GxsTrans::dispatchReceivedMail(...) "
 		          << "got message for unknown service: "
 		          << csri << std::endl;
 		return false;
 	}
 }
 
-void p3GxsMails::processOutgoingRecord(OutgoingRecord& pr)
+void p3GxsTrans::processOutgoingRecord(OutgoingRecord& pr)
 {
-	//std::cout << "p3GxsMails::processRecord(...)" << std::endl;
+	//std::cout << "p3GxsTrans::processRecord(...)" << std::endl;
 
 	switch (pr.status)
 	{
-	case GxsMailStatus::PENDING_PROCESSING:
+	case GxsTransSendStatus::PENDING_PROCESSING:
 	{
 		pr.mailItem.saltRecipientHint(pr.recipient);
 		pr.mailItem.saltRecipientHint(RsGxsId::random());
 	}
-	case GxsMailStatus::PENDING_PREFERRED_GROUP:
+	case GxsTransSendStatus::PENDING_PREFERRED_GROUP:
 	{
-		if(preferredGroupId.isNull())
+		if(mPreferredGroupId.isNull())
 		{
 			requestGroupsData();
-			pr.status = GxsMailStatus::PENDING_PREFERRED_GROUP;
+			pr.status = GxsTransSendStatus::PENDING_PREFERRED_GROUP;
 			break;
 		}
 
-		pr.mailItem.meta.mGroupId = preferredGroupId;
+		pr.mailItem.meta.mGroupId = mPreferredGroupId;
 	}
-	case GxsMailStatus::PENDING_RECEIPT_CREATE:
+	case GxsTransSendStatus::PENDING_RECEIPT_CREATE:
 	{
-		RsGxsMailPresignedReceipt grcpt;
+		RsGxsTransPresignedReceipt grcpt;
 		grcpt.meta = pr.mailItem.meta;
 		grcpt.meta.mPublishTs = time(NULL);
 		grcpt.mailId = pr.mailItem.mailId;
-		uint32_t groff = 0, grsz = grcpt.size();
+		uint32_t groff = 0, grsz = grcpt.serial_size();
 		std::vector<uint8_t> grsrz;
 		grsrz.resize(grsz);
 		grcpt.serialize(&grsrz[0], grsz, groff);
 
-		pr.presignedReceipt.grpId = preferredGroupId;
+		pr.presignedReceipt.grpId = mPreferredGroupId;
 		pr.presignedReceipt.metaData = new RsGxsMsgMetaData();
 		*pr.presignedReceipt.metaData = grcpt.meta;
 		pr.presignedReceipt.msg.setBinData(&grsrz[0], grsz);
 	}
-	case GxsMailStatus::PENDING_RECEIPT_SIGNATURE:
+	case GxsTransSendStatus::PENDING_RECEIPT_SIGNATURE:
 	{
 		switch (RsGenExchange::createMessage(&pr.presignedReceipt))
 		{
 		case CREATE_SUCCESS: break;
 		case CREATE_FAIL_TRY_LATER:
-			pr.status = GxsMailStatus::PENDING_RECEIPT_CREATE;
+			pr.status = GxsTransSendStatus::PENDING_RECEIPT_CREATE;
 			return;
 		default:
-			pr.status = GxsMailStatus::FAILED_RECEIPT_SIGNATURE;
+			pr.status = GxsTransSendStatus::FAILED_RECEIPT_SIGNATURE;
 			goto processingFailed;
 		}
 
@@ -566,7 +567,7 @@ void p3GxsMails::processOutgoingRecord(OutgoingRecord& pr)
 		pr.presignedReceipt.metaData->serialise(&srx[0], &metaSize);
 		pr.presignedReceipt.meta.setBinData(&srx[0], metaSize);
 	}
-	case GxsMailStatus::PENDING_PAYLOAD_CREATE:
+	case GxsTransSendStatus::PENDING_PAYLOAD_CREATE:
 	{
 		uint16_t serv = static_cast<uint16_t>(pr.clientService);
 		uint32_t rcptsize = pr.presignedReceipt.serial_size();
@@ -579,23 +580,23 @@ void p3GxsMails::processOutgoingRecord(OutgoingRecord& pr)
 		offset += rcptsize;
 		memcpy(&pr.mailItem.payload[offset], &pr.mailData[0], datasize);
 	}
-	case GxsMailStatus::PENDING_PAYLOAD_ENCRYPT:
+	case GxsTransSendStatus::PENDING_PAYLOAD_ENCRYPT:
 	{
 		switch (pr.mailItem.cryptoType)
 		{
-		case RsGxsMailEncryptionMode::CLEAR_TEXT:
+		case RsGxsTransEncryptionMode::CLEAR_TEXT:
 		{
-			std::cerr << "p3GxsMails::sendMail(...) you are sending a mail "
+			std::cerr << "p3GxsTrans::sendMail(...) you are sending a mail "
 			          << "without encryption, everyone can read it!"
 			          << std::endl;
 			break;
 		}
-		case RsGxsMailEncryptionMode::RSA:
+		case RsGxsTransEncryptionMode::RSA:
 		{
 			uint8_t* encryptedData = NULL;
 			uint32_t encryptedSize = 0;
 			uint32_t encryptError = 0;
-			if( idService.encryptData( &pr.mailItem.payload[0],
+			if( mIdService.encryptData( &pr.mailItem.payload[0],
 			                           pr.mailItem.payload.size(),
 			                           encryptedData, encryptedSize,
 			                           pr.recipient, encryptError, true ) )
@@ -608,25 +609,25 @@ void p3GxsMails::processOutgoingRecord(OutgoingRecord& pr)
 			}
 			else
 			{
-				std::cerr << "p3GxsMails::sendMail(...) RSA encryption failed! "
+				std::cerr << "p3GxsTrans::sendMail(...) RSA encryption failed! "
 				          << "error_status: " << encryptError << std::endl;
-				pr.status = GxsMailStatus::FAILED_ENCRYPTION;
+				pr.status = GxsTransSendStatus::FAILED_ENCRYPTION;
 				goto processingFailed;
 			}
 		}
-		case RsGxsMailEncryptionMode::UNDEFINED_ENCRYPTION:
+		case RsGxsTransEncryptionMode::UNDEFINED_ENCRYPTION:
 		default:
-			std::cerr << "p3GxsMails::sendMail(...) attempt to send mail with "
+			std::cerr << "p3GxsTrans::sendMail(...) attempt to send mail with "
 			          << "wrong EncryptionMode: "
 			          << static_cast<uint>(pr.mailItem.cryptoType)
 			          << " dropping mail!" << std::endl;
-			pr.status = GxsMailStatus::FAILED_ENCRYPTION;
+			pr.status = GxsTransSendStatus::FAILED_ENCRYPTION;
 			goto processingFailed;
 		}
 	}
-	case GxsMailStatus::PENDING_PUBLISH:
+	case GxsTransSendStatus::PENDING_PUBLISH:
 	{
-		std::cout << "p3GxsMails::sendEmail(...) sending mail to: "
+		std::cout << "p3GxsTrans::sendEmail(...) sending mail to: "
 		          << pr.recipient
 		          << " with cryptoType: "
 		          << static_cast<uint>(pr.mailItem.cryptoType)
@@ -636,38 +637,38 @@ void p3GxsMails::processOutgoingRecord(OutgoingRecord& pr)
 		          << std::endl;
 
 		uint32_t token;
-		publishMsg(token, new RsGxsMailItem(pr.mailItem));
-		pr.status = GxsMailStatus::PENDING_RECEIPT_RECEIVE;
+		publishMsg(token, new RsGxsTransMailItem(pr.mailItem));
+		pr.status = GxsTransSendStatus::PENDING_RECEIPT_RECEIVE;
 		break;
 	}
-	//case GxsMailStatus::PENDING_TRANSFER:
-	case GxsMailStatus::PENDING_RECEIPT_RECEIVE:
+	//case GxsTransSendStatus::PENDING_TRANSFER:
+	case GxsTransSendStatus::PENDING_RECEIPT_RECEIVE:
 	{
-		RS_STACK_MUTEX(ingoingMutex);
-		auto range = ingoingQueue.equal_range(pr.mailItem.mailId);
+		RS_STACK_MUTEX(mIngoingMutex);
+		auto range = mIngoingQueue.equal_range(pr.mailItem.mailId);
 		for( auto it = range.first; it != range.second; ++it)
 		{
-			RsGxsMailPresignedReceipt* rt =
-			        dynamic_cast<RsGxsMailPresignedReceipt*>(it->second);
-			if(rt && idService.isOwnId(rt->meta.mAuthorId))
+			RsGxsTransPresignedReceipt* rt =
+			        dynamic_cast<RsGxsTransPresignedReceipt*>(it->second);
+			if(rt && mIdService.isOwnId(rt->meta.mAuthorId))
 			{
-				ingoingQueue.erase(it); delete rt;
-				pr.status = GxsMailStatus::RECEIPT_RECEIVED;
+				mIngoingQueue.erase(it); delete rt;
+				pr.status = GxsTransSendStatus::RECEIPT_RECEIVED;
 				break;
 			}
 		}
 		// TODO: Resend message if older then treshold
 		break;
 	}
-	case GxsMailStatus::RECEIPT_RECEIVED:
+	case GxsTransSendStatus::RECEIPT_RECEIVED:
 		break;
 
 processingFailed:
-	case GxsMailStatus::FAILED_RECEIPT_SIGNATURE:
-	case GxsMailStatus::FAILED_ENCRYPTION:
+	case GxsTransSendStatus::FAILED_RECEIPT_SIGNATURE:
+	case GxsTransSendStatus::FAILED_ENCRYPTION:
 	default:
 	{
-		std::cout << "p3GxsMails::processRecord(" << pr.mailItem.mailId
+		std::cout << "p3GxsTrans::processRecord(" << pr.mailItem.mailId
 		          << ") failed with: " << static_cast<uint>(pr.status)
 		          << std::endl;
 		break;
@@ -675,21 +676,21 @@ processingFailed:
 	}
 }
 
-void p3GxsMails::notifyClientService(const OutgoingRecord& pr)
+void p3GxsTrans::notifyClientService(const OutgoingRecord& pr)
 {
-	RS_STACK_MUTEX(servClientsMutex);
-	auto it = servClients.find(pr.clientService);
-	if( it != servClients.end())
+	RS_STACK_MUTEX(mServClientsMutex);
+	auto it = mServClients.find(pr.clientService);
+	if( it != mServClients.end())
 	{
-		GxsMailsClient* serv(it->second);
+		GxsTransClient* serv(it->second);
 		if(serv)
 		{
-			serv->notifySendMailStatus(pr.mailItem, pr.status);
+			serv->notifyGxsTransSendStatus(pr.mailItem.mailId, pr.status);
 			return;
 		}
 	}
 
-	std::cerr << "p3GxsMails::processRecord(...) (EE) processed"
+	std::cerr << "p3GxsTrans::processRecord(...) (EE) processed"
 	          << " mail for unkown service: "
 	          << static_cast<uint32_t>(pr.clientService)
 	          << " fatally failed with: "
@@ -697,74 +698,74 @@ void p3GxsMails::notifyClientService(const OutgoingRecord& pr)
 	print_stacktrace();
 }
 
-RsSerialiser* p3GxsMails::setupSerialiser()
+RsSerialiser* p3GxsTrans::setupSerialiser()
 {
 	RsSerialiser* rss = new RsSerialiser;
-	rss->addSerialType(new RsGxsMailSerializer);
+	rss->addSerialType(new RsGxsTransSerializer);
 	return rss;
 }
 
-bool p3GxsMails::saveList(bool &cleanup, std::list<RsItem *>& saveList)
+bool p3GxsTrans::saveList(bool &cleanup, std::list<RsItem *>& saveList)
 {
-	std::cout << "p3GxsMails::saveList(...)" << saveList.size() << " "
-	          << ingoingQueue.size() << " " << outgoingQueue.size()
+	std::cout << "p3GxsTrans::saveList(...)" << saveList.size() << " "
+	          << mIngoingQueue.size() << " " << mOutgoingQueue.size()
 	          << std::endl;
 
-	outgoingMutex.lock();
-	ingoingMutex.lock();
+	mOutgoingMutex.lock();
+	mIngoingMutex.lock();
 
-	for ( auto& kv : outgoingQueue ) saveList.push_back(&kv.second);
-	for ( auto& kv : ingoingQueue ) saveList.push_back(kv.second);
+	for ( auto& kv : mOutgoingQueue ) saveList.push_back(&kv.second);
+	for ( auto& kv : mIngoingQueue ) saveList.push_back(kv.second);
 
-	std::cout << "p3GxsMails::saveList(...)" << saveList.size() << " "
-	          << ingoingQueue.size() << " " << outgoingQueue.size()
+	std::cout << "p3GxsTrans::saveList(...)" << saveList.size() << " "
+	          << mIngoingQueue.size() << " " << mOutgoingQueue.size()
 	          << std::endl;
 
 	cleanup = false;
 	return true;
 }
 
-void p3GxsMails::saveDone()
+void p3GxsTrans::saveDone()
 {
-	outgoingMutex.unlock();
-	ingoingMutex.unlock();
+	mOutgoingMutex.unlock();
+	mIngoingMutex.unlock();
 }
 
-bool p3GxsMails::loadList(std::list<RsItem *>&loadList)
+bool p3GxsTrans::loadList(std::list<RsItem *>&loadList)
 {
-	std::cout << "p3GxsMails::loadList(...) " << loadList.size() << " "
-	          << ingoingQueue.size() << " " << outgoingQueue.size()
+	std::cout << "p3GxsTrans::loadList(...) " << loadList.size() << " "
+	          << mIngoingQueue.size() << " " << mOutgoingQueue.size()
 	          << std::endl;
 
 	for(auto& v : loadList)
-		switch(static_cast<GxsMailItemsSubtypes>(v->PacketSubType()))
+		switch(static_cast<GxsTransItemsSubtypes>(v->PacketSubType()))
 		{
-		case GxsMailItemsSubtypes::GXS_MAIL_SUBTYPE_MAIL:
-		case GxsMailItemsSubtypes::GXS_MAIL_SUBTYPE_RECEIPT:
+		case GxsTransItemsSubtypes::GXS_TRANS_SUBTYPE_MAIL:
+		case GxsTransItemsSubtypes::GXS_TRANS_SUBTYPE_RECEIPT:
 		{
-			RsGxsMailBaseItem* mi = dynamic_cast<RsGxsMailBaseItem*>(v);
+			RsGxsTransBaseItem* mi = dynamic_cast<RsGxsTransBaseItem*>(v);
 			if(mi)
 			{
-				RS_STACK_MUTEX(ingoingMutex);
-				ingoingQueue.insert(inMap::value_type(mi->mailId, mi));
+				RS_STACK_MUTEX(mIngoingMutex);
+				mIngoingQueue.insert(inMap::value_type(mi->mailId, mi));
 			}
 			break;
 		}
-		case GxsMailItemsSubtypes::OUTGOING_RECORD_ITEM:
+		case GxsTransItemsSubtypes::OUTGOING_RECORD_ITEM:
 		{
 			OutgoingRecord* ot = dynamic_cast<OutgoingRecord*>(v);
 			if(ot)
 			{
-				RS_STACK_MUTEX(outgoingMutex);
-				outgoingQueue.insert(
+				RS_STACK_MUTEX(mOutgoingMutex);
+				mOutgoingQueue.insert(
 				            prMap::value_type(ot->mailItem.mailId, *ot));
 			}
 			delete v;
 			break;
 		}
-		case GxsMailItemsSubtypes::GXS_MAIL_SUBTYPE_GROUP:
+		case GxsTransItemsSubtypes::GXS_TRANS_SUBTYPE_GROUP:
 		default:
-			std::cerr << "p3GxsMails::loadList(...) (EE) got item with "
+			std::cerr << "p3GxsTrans::loadList(...) (EE) got item with "
 			          << "unhandled type: "
 			          << static_cast<uint>(v->PacketSubType())
 			          << std::endl;
@@ -772,8 +773,8 @@ bool p3GxsMails::loadList(std::list<RsItem *>&loadList)
 			break;
 		}
 
-	std::cout << "p3GxsMails::loadList(...) " << loadList.size() << " "
-	          << ingoingQueue.size() << " " << outgoingQueue.size()
+	std::cout << "p3GxsTrans::loadList(...) " << loadList.size() << " "
+	          << mIngoingQueue.size() << " " << mOutgoingQueue.size()
 	          << std::endl;
 
 	return true;
