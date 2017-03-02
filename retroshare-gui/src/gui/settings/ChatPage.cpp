@@ -71,12 +71,13 @@ static QString loadStyleInfo(ChatStyle::enumStyleType type, QComboBox *style_CB,
     ChatStyle::getAvailableStyles(type, styles);
 
     while(style_CB->count())
-		style_CB->removeItem(0) ;
+		whileBlocking(style_CB)->removeItem(0) ;
 
     int n=0;
     for (style = styles.begin(); style != styles.end(); ++style,++n)
     {
-        style_CB->insertItem(n,style->styleName);
+        whileBlocking(style_CB)->insertItem(n,style->styleName);
+
         style_CB->setItemData(n, qVariantFromValue(*style),Qt::UserRole);
 
         if (style->stylePath == stylePath) {
@@ -84,16 +85,17 @@ static QString loadStyleInfo(ChatStyle::enumStyleType type, QComboBox *style_CB,
         }
     }
 
-    style_CB->setCurrentIndex(activeItem);
+    whileBlocking(style_CB)->setCurrentIndex(activeItem);
 
     /* now the combobox should be filled */
 
     int index = comboBox->findText(styleVariant);
+
     if (index != -1) {
-        comboBox->setCurrentIndex(index);
+        whileBlocking(comboBox)->setCurrentIndex(index);
     } else {
         if (comboBox->count()) {
-            comboBox->setCurrentIndex(0);
+            whileBlocking(comboBox)->setCurrentIndex(0);
         }
     }
     return stylePath;
@@ -356,7 +358,7 @@ ChatPage::load()
     whileBlocking(ui.labelChatFontPreview)->setText(fontname[0]);
     whileBlocking(ui.labelChatFontPreview)->setFont(fontTempChat);
 
-	 whileBlocking(ui.max_storage_period)->setValue(rsHistory->getMaxStorageDuration()/86400) ;
+	whileBlocking(ui.max_storage_period)->setValue(rsHistory->getMaxStorageDuration()/86400) ;
 
     /* Load styles */
     publicStylePath = loadStyleInfo(ChatStyle::TYPE_PUBLIC, ui.publicStyle, ui.publicComboBoxVariant, publicStyleVariant);
