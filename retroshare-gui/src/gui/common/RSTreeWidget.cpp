@@ -213,7 +213,7 @@ QMenu *RSTreeWidget::createStandardContextMenu(QMenu *contextMenu)
 	}
 
 	if (mEnableColumnCustomize) {
-		QMenu *headerMenu = contextMenu->addMenu(QIcon(),tr("Show Headers"));
+		QMenu *headerMenu = contextMenu->addMenu(QIcon(),tr("Show column..."));
 
 		QTreeWidgetItem *item = headerItem();
 		int columnCount = item->columnCount();
