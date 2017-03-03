@@ -129,7 +129,7 @@ OutgoingRecord::OutgoingRecord() :
             static_cast<uint8_t>(GxsTransItemsSubtypes::OUTGOING_RECORD_ITEM) )
 { clear();}
 
-uint32_t OutgoingRecord::size() const
+uint32_t OutgoingRecord::serial_size() const
 {
 	return 8 + // Header
 	        1 + // status

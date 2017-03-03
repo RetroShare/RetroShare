@@ -248,7 +248,8 @@ void p3GxsTrans::service_tick()
 			{
 			case GxsTransItemsSubtypes::GXS_TRANS_SUBTYPE_MAIL:
 			{
-				RsGxsTransMailItem* msg = dynamic_cast<RsGxsTransMailItem*>(it->second);
+				RsGxsTransMailItem* msg =
+				        dynamic_cast<RsGxsTransMailItem*>(it->second);
 				if(!msg)
 				{
 					std::cerr << "p3GxsTrans::service_tick() (EE) "
@@ -267,7 +268,7 @@ void p3GxsTrans::service_tick()
 					          << " mailId: "<< msg->mailId
 					          << " payload.size(): " << msg->payload.size()
 					          << std::endl;
-					handleEcryptedMail(msg);
+					handleEncryptedMail(msg);
 				}
 				break;
 			}
@@ -398,7 +399,7 @@ bool p3GxsTrans::requestGroupsData(const std::list<RsGxsGroupId>* groupIds)
 	return true;
 }
 
-bool p3GxsTrans::handleEcryptedMail(const RsGxsTransMailItem* mail)
+bool p3GxsTrans::handleEncryptedMail(const RsGxsTransMailItem* mail)
 {
 	std::cout << "p3GxsTrans::handleEcryptedMail(...)" << std::endl;
 
@@ -411,7 +412,8 @@ bool p3GxsTrans::handleEcryptedMail(const RsGxsTransMailItem* mail)
 	// Hint match none of our own ids
 	if(decryptIds.empty())
 	{
-		std::cout << "p3GxsTrans::handleEcryptedMail(...) hint doesn't match" << std::endl;
+		std::cout << "p3GxsTrans::handleEcryptedMail(...) hint doesn't match"
+		          << std::endl;
 		return true;
 	}
 

@@ -120,7 +120,7 @@ struct RsGxsTransMailItem : RsGxsTransBaseItem
 	 *
 	 * To check if one id may be the recipient of the mail or not one need to
 	 * bitwise compare the hint with the id, if at least one bit of the hint is
-	 * 0 while the corrisponding bit in the id is 1 then the id cannot be the
+	 * 0 while the corresponding bit in the id is 1 then the id cannot be the
 	 * recipient of the mail.
 	 *
 	 * Note that by design one can prove that an id is not recipient of the mail
@@ -253,7 +253,7 @@ struct OutgoingRecord : RsItem
 	GxsTransSubServices clientService;
 	RsNxsTransPresignedReceipt presignedReceipt;
 
-	uint32_t size() const;
+	uint32_t serial_size() const;
 	bool serialize(uint8_t* data, uint32_t size, uint32_t& offset) const;
 	bool deserialize(const uint8_t* data, uint32_t& size, uint32_t& offset);
 
@@ -289,7 +289,7 @@ struct RsGxsTransSerializer : RsSerialType
 		case GxsTransItemsSubtypes::OUTGOING_RECORD_ITEM:
 		{
 			OutgoingRecord* ci = dynamic_cast<OutgoingRecord*>(item);
-			if(ci) sz = ci->size();
+			if(ci) sz = ci->serial_size();
 			break;
 		}
 		default: break;

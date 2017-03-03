@@ -242,7 +242,7 @@ private:
 
 
 	/// Decrypt email content and pass it to dispatchDecryptedMail(...)
-	bool handleEcryptedMail(const RsGxsTransMailItem* mail);
+	bool handleEncryptedMail(const RsGxsTransMailItem* mail);
 
 	/// Dispatch the message to the recipient service
 	bool dispatchDecryptedMail( const RsGxsId& authorId,
