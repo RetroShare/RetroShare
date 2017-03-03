@@ -75,6 +75,7 @@ HomePage::HomePage(QWidget *parent) :
 
     connect(ui->runStartWizard_PB,SIGNAL(clicked()), this,SLOT(runStartWizard())) ;
 	connect(ui->openwebhelp,SIGNAL(clicked()), this,SLOT(openWebHelp())) ;
+	ui->runStartWizard_PB->hide(); // until future rework
 
     int S = QFontMetricsF(font()).height();
  QString help_str = tr(
