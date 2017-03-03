@@ -81,6 +81,8 @@ ConnectFriendWizard::ConnectFriendWizard(QWidget *parent) :
 
     // (csoler) I'm hiding this, since it is not needed anymore with the new Home page.
     ui->userFrame->hide();
+	
+	ui->userFileFrame->hide(); // in homepage dropmenu now
 
 // this define comes from Qt example. I don't have mac, so it wasn't tested
 #ifndef Q_OS_MAC
@@ -133,12 +135,8 @@ ConnectFriendWizard::ConnectFriendWizard(QWidget *parent) :
 	else
 	{
 		ui->userFrame->hide(); // certificates page - top half with own cert and it's functions
-		
 		ui->horizontalLayout_13->hide(); // Advanced options - key sign, whitelist, direct source ...
 		AdvancedVisible=false;
-
-		ui->emailLabel->hide(); // is it ever used?
-		ui->emailEdit->hide();
 		ui->trustLabel->hide();
 		ui->trustEdit->hide();
 	}
@@ -557,6 +555,14 @@ void ConnectFriendWizard::initializePage(int id)
 				ui->ipLabel->setPixmap(QPixmap(":/images/anonymous_128_blue.png").scaledToHeight(S*2,Qt::SmoothTransformation));
 				ui->ipLabel->setToolTip("This is a Hidden node - you need tor/i2p proxy to connect");
 			}
+
+			if(peerDetails.email.empty())
+			{
+				ui->emailLabel->hide(); // is it ever used?
+				ui->emailEdit->hide();
+			}
+			ui->ipEdit->setTextInteractionFlags(Qt::TextSelectableByMouse);
+
 		}
 		break;
 	case Page_FriendRequest:

@@ -59,19 +59,46 @@
        </widget>
       </item>
       <item>
-       <widget class="QToolButton" name="helpButton">
+       <widget class="QToolButton" name="LoadCertFileButton">
         <property name="text">
-         <string>...</string>
+         <string>Add certificate file</string>
         </property>
         <property name="icon">
          <iconset resource="icons.qrc">
-          <normaloff>:/icons/help_64.png</normaloff>:/icons/help_64.png</iconset>
+          <normaloff>:/icons/svg/folders1.svg</normaloff>:/icons/svg/folders1.svg</iconset>
         </property>
-        <property name="checkable">
-         <bool>true</bool>
+        <property name="iconSize">
+         <size>
+          <width>24</width>
+          <height>24</height>
+         </size>
+        </property>
+        <property name="toolButtonStyle">
+         <enum>Qt::ToolButtonTextBesideIcon</enum>
+        </property>
+        <property name="autoRaise">
+         <bool>false</bool>
         </property>
        </widget>
       </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="5" column="1">
+    <widget class="QFrame" name="addFrame">
+     <layout class="QGridLayout" name="gridLayout_3">
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
      </layout>
     </widget>
    </item>
@@ -86,7 +113,7 @@
      <property name="verticalSpacing">
       <number>2</number>
      </property>
-     <item row="2" column="0" colspan="2">
+     <item row="2" column="0" colspan="4">
       <widget class="QPlainTextEdit" name="userCertEdit">
        <property name="font">
         <font>
@@ -113,28 +140,7 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="0">
-      <widget class="QLabel" name="userCertLabel">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>11</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>The text below is your own Retroshare certificate. Send it to your friends</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="1">
+     <item row="1" column="3">
       <widget class="QToolButton" name="shareButton">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -166,25 +172,42 @@
        </property>
       </widget>
      </item>
+     <item row="1" column="1">
+      <widget class="QToolButton" name="helpButton">
+       <property name="text">
+        <string>...</string>
+       </property>
+       <property name="icon">
+        <iconset resource="icons.qrc">
+         <normaloff>:/icons/help_64.png</normaloff>:/icons/help_64.png</iconset>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="2">
+      <widget class="QLabel" name="userCertLabel">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>11</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>The text below is your own Retroshare certificate. Send it to your friends</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
     </layout>
-   </item>
-   <item row="4" column="1">
-    <widget class="QFrame" name="addFrame">
-     <layout class="QGridLayout" name="gridLayout_3">
-      <property name="leftMargin">
-       <number>0</number>
-      </property>
-      <property name="topMargin">
-       <number>0</number>
-      </property>
-      <property name="rightMargin">
-       <number>0</number>
-      </property>
-      <property name="bottomMargin">
-       <number>0</number>
-      </property>
-     </layout>
-    </widget>
    </item>
    <item row="1" column="1" colspan="2">
     <widget class="QLabel" name="label_2">
@@ -195,7 +218,7 @@
      </property>
      <property name="text">
       <string>Open Source cross-platform, 
-private and secure decentralized communication platform.	
+private and secure decentralized communication platform.
 </string>
      </property>
      <property name="alignment">
@@ -222,11 +245,35 @@ private and secure decentralized communication platform.
      </property>
     </widget>
    </item>
+   <item row="4" column="1">
+    <widget class="QPushButton" name="runStartWizard_PB">
+     <property name="text">
+      <string>Launch startup wizard</string>
+     </property>
+     <property name="icon">
+      <iconset resource="images.qrc">
+       <normaloff>:/images/tools_wizard.png</normaloff>:/images/tools_wizard.png</iconset>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="2">
+    <widget class="QPushButton" name="openwebhelp">
+     <property name="text">
+      <string>Open Web Help</string>
+     </property>
+     <property name="icon">
+      <iconset resource="icons.qrc">
+       <normaloff>:/icons/settings/webinterface.svg</normaloff>:/icons/settings/webinterface.svg</iconset>
+     </property>
+    </widget>
+   </item>
   </layout>
   <zorder>label</zorder>
   <zorder>addFrame</zorder>
   <zorder>label_2</zorder>
   <zorder>addframe</zorder>
+  <zorder>runStartWizard_PB</zorder>
+  <zorder>openwebhelp</zorder>
  </widget>
  <resources>
   <include location="icons.qrc"/>

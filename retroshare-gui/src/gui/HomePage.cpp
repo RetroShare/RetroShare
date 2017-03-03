@@ -25,6 +25,7 @@
 #include "gui/notifyqt.h"
 #include "gui/msgs/MessageComposer.h"
 #include "gui/connect/ConnectFriendWizard.h"
+#include <gui/QuickStartWizard.h>
 #include "gui/connect/FriendRecommendDialog.h"
 
 #if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
@@ -51,7 +52,8 @@ HomePage::HomePage(QWidget *parent) :
 		updateOwnCert();
 		
 	connect(ui->addButton, SIGNAL(clicked()), this, SLOT(addFriend()));
-		
+	connect(ui->LoadCertFileButton, SIGNAL(clicked()), this, SLOT(loadCert()));
+	
     QAction *CopyAction = new QAction(QIcon(),tr("Copy your Cert to Clipboard"), this);
     connect(CopyAction, SIGNAL(triggered()), this, SLOT(copyCert()));
 	
@@ -60,7 +62,10 @@ HomePage::HomePage(QWidget *parent) :
     
     QAction *SendAction = new QAction(QIcon(),tr("Send via Email"), this);
     connect(SendAction, SIGNAL(triggered()), this, SLOT(runEmailClient()));
-		
+
+    QAction *WebMailAction = new QAction(QIcon(),tr("Invite via WebMail"), this);
+    connect(WebMailAction, SIGNAL(triggered()), this, SLOT(webMail()));
+	
     QAction *RecAction = new QAction(QIcon(),tr("Recommend friends to each others"), this);
     connect(RecAction, SIGNAL(triggered()), this, SLOT(recommendFriends()));
 
@@ -68,9 +73,14 @@ HomePage::HomePage(QWidget *parent) :
     menu->addAction(CopyAction);
     menu->addAction(SaveAction);
     menu->addAction(SendAction);
+	menu->addAction(WebMailAction);
     menu->addAction(RecAction);
 
     ui->shareButton->setMenu(menu);
+
+    connect(ui->runStartWizard_PB,SIGNAL(clicked()), this,SLOT(runStartWizard())) ;
+	connect(ui->openwebhelp,SIGNAL(clicked()), this,SLOT(openWebHelp())) ;
+	ui->runStartWizard_PB->hide(); // until future rework
 
     int S = QFontMetricsF(font()).height();
  QString help_str = tr(
@@ -168,4 +178,30 @@ void HomePage::addFriend()
 
     connwiz.setStartId(ConnectFriendWizard::Page_Text);
     connwiz.exec ();
+}
+
+void HomePage::webMail()
+{
+    ConnectFriendWizard connwiz (this);
+
+    connwiz.setStartId(ConnectFriendWizard::Page_WebMail);
+    connwiz.exec ();
+}
+
+void HomePage::loadCert()
+{
+    ConnectFriendWizard connwiz (this);
+
+    connwiz.setStartId(ConnectFriendWizard::Page_Cert);
+    connwiz.exec ();
+}
+
+void HomePage::runStartWizard()
+{
+    QuickStartWizard(this).exec();
+}
+
+void HomePage::openWebHelp()
+{
+    QDesktopServices::openUrl(QUrl(QString("https://retroshare.readthedocs.io")));
 }
