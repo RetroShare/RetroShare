@@ -257,6 +257,7 @@ void  CreateGxsForumMsg::loadFormInformation()
 	{
 		ui.signBox->setChecked(true);
 		ui.signBox->setEnabled(false);
+		ui.signBox->hide();
 	}
 	else
 	{
