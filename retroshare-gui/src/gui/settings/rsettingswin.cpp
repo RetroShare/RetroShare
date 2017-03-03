@@ -138,23 +138,23 @@ SettingsPage::initStackedWidget()
     ui.stackedWidget->setCurrentIndex(-1);
     ui.stackedWidget->removeWidget(ui.stackedWidget->widget(0));
 
-    addPage(new GeneralPage());
-    addPage(new ServerPage());
-    addPage(new TransferPage());
-    addPage(new RelayPage() );
-    addPage(new DirectoriesPage());
-    addPage(new PluginsPage() );
-    addPage(new NotifyPage());
-    addPage(new CryptoPage());
-    addPage(new PeoplePage());
-    addPage(new ChatPage());
-    addPage(new MessagePage());
-    addPage(new ChannelPage());
-    addPage(new ForumPage());
-    addPage(new PostedPage());
-    addPage(new AppearancePage());
-    addPage(new SoundPage() );
-    addPage(new ServicePermissionsPage() );
+    addPage(new GeneralPage()); // GENERAL
+    addPage(new CryptoPage()); // NODE
+    addPage(new ServerPage()); // NETWORK
+    addPage(new PeoplePage()); // PEOLPE
+    addPage(new ChatPage()); // CHAT
+    addPage(new MessagePage()); //MESSGE RENAME TO MAIL
+    addPage(new TransferPage()); //FILE TRANSFER
+    addPage(new ChannelPage()); // CHANNELS
+    addPage(new ForumPage()); // FORUMS
+    addPage(new PostedPage()); // POSTED RENAME TO LINKS
+    addPage(new NotifyPage()); // NOTIFY
+    addPage(new RelayPage() ); // RELAY SHOUD BE INSIDE NETWORK AS A TAB
+    addPage(new DirectoriesPage()); // DIRECOTIRES, SHOULD BE INSIDE FILE TRANSFER AS A TAB
+    addPage(new PluginsPage() ); // PLUGINS
+    addPage(new AppearancePage()); // APPEARENCE
+    addPage(new SoundPage() ); // SOUND
+    addPage(new ServicePermissionsPage() ); // PERMISSIONS
 #ifdef ENABLE_WEBUI
     addPage(new WebuiPage() );
 #endif // ENABLE_WEBUI
