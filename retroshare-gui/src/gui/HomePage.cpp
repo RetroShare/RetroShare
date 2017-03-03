@@ -52,7 +52,8 @@ HomePage::HomePage(QWidget *parent) :
 		updateOwnCert();
 		
 	connect(ui->addButton, SIGNAL(clicked()), this, SLOT(addFriend()));
-		
+	connect(ui->LoadCertFileButton, SIGNAL(clicked()), this, SLOT(loadCert()));
+	
     QAction *CopyAction = new QAction(QIcon(),tr("Copy your Cert to Clipboard"), this);
     connect(CopyAction, SIGNAL(triggered()), this, SLOT(copyCert()));
 	
@@ -184,6 +185,14 @@ void HomePage::webMail()
     ConnectFriendWizard connwiz (this);
 
     connwiz.setStartId(ConnectFriendWizard::Page_WebMail);
+    connwiz.exec ();
+}
+
+void HomePage::loadCert()
+{
+    ConnectFriendWizard connwiz (this);
+
+    connwiz.setStartId(ConnectFriendWizard::Page_Cert);
     connwiz.exec ();
 }
 

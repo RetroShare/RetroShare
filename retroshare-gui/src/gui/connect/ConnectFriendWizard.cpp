@@ -81,6 +81,8 @@ ConnectFriendWizard::ConnectFriendWizard(QWidget *parent) :
 
     // (csoler) I'm hiding this, since it is not needed anymore with the new Home page.
     ui->userFrame->hide();
+	
+	ui->userFileFrame->hide(); // in homepage dropmenu now
 
 // this define comes from Qt example. I don't have mac, so it wasn't tested
 #ifndef Q_OS_MAC
