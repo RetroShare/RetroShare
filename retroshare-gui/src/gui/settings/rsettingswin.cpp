@@ -150,7 +150,6 @@ SettingsPage::initStackedWidget()
     addPage(new PostedPage()); // POSTED RENAME TO LINKS
     addPage(new NotifyPage()); // NOTIFY
     addPage(new RelayPage() ); // RELAY SHOUD BE INSIDE NETWORK AS A TAB
-    addPage(new DirectoriesPage()); // DIRECOTIRES, SHOULD BE INSIDE FILE TRANSFER AS A TAB
     addPage(new PluginsPage() ); // PLUGINS
     addPage(new AppearancePage()); // APPEARENCE
     addPage(new SoundPage() ); // SOUND
