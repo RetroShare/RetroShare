@@ -111,20 +111,20 @@ public:
 
 
     enum StatusElement {
-    	StatusGrpStatus    = 0x01,
-    	StatusCompactMode  = 0x02,
-    	StatusShowToolTip  = 0x03,
-    	StatusShowStatus   = 0x04,
-    	StatusShowPeer     = 0x05,
-    	StatusShowDHT      = 0x06,
-    	StatusShowHashing  = 0x07,
-    	StatusShowDisc     = 0x08,
-    	StatusShowRate     = 0x09,
-    	StatusShowOpMode   = 0x0a,
-    	StatusShowSound    = 0x0b,
-    	StatusShowToaster  = 0x0c,
-    	StatusShowSystray  = 0x0d,
-    	StatusShowCBox     = 0x0e
+        StatusGrpStatus    = 0x01,
+        StatusCompactMode  = 0x02,
+        StatusShowToolTip  = 0x03,
+        StatusShowStatus   = 0x04,
+        StatusShowPeer     = 0x05,
+        StatusShowNAT      = 0x06,
+        StatusShowDHT      = 0x07,
+        StatusShowHashing  = 0x08,
+        StatusShowDisc     = 0x09,
+        StatusShowRate     = 0x0a,
+        StatusShowOpMode   = 0x0b,
+        StatusShowSound    = 0x0c,
+        StatusShowToaster  = 0x0d,
+        StatusShowSystray  = 0x0e,
     };
 
     /** Create main window */
@@ -159,7 +159,7 @@ public:
 	 NewsFeed          *newsFeed;
 	 FriendsDialog     *friendsDialog;
 	 TransfersDialog   *transfersDialog;
-  	 IdDialog          *idDialog ;
+ 	 IdDialog          *idDialog;
 	 ChatLobbyWidget   *chatLobbyDialog;
 	 MessagesDialog    *messagesDialog;
 	 SettingsPage      *settingsDialog;

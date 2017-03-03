@@ -53,12 +53,12 @@ AppearancePage::AppearancePage(QWidget * parent, Qt::WindowFlags flags)
 
 	connect(ui.cmboStyleSheet, SIGNAL(activated(int)), this, SLOT(loadStyleSheet(int)));
 
-	connect(ui.grpStatus,                     SIGNAL(toggled(bool)), this /* pMainWindow->statusBar(),				*/, SLOT(switch_status_grpStatus(bool)));
-	connect(ui.checkBoxStatusCompactMode,     SIGNAL(toggled(bool)), this /* pMainWindow, 							*/, SLOT(switch_status_compactMode(bool)));
-	connect(ui.checkBoxDisableSysTrayToolTip, SIGNAL(toggled(bool)), this /* pMainWindow, 							*/, SLOT(switch_status_showToolTip(bool)));
-	connect(ui.checkBoxShowStatusStatus,      SIGNAL(toggled(bool)), this /* pMainWindow->statusComboBoxInstance(), */, SLOT(switch_status_ShowCBox(bool)));
-	connect(ui.checkBoxShowPeerStatus,        SIGNAL(toggled(bool)), this /* pMainWindow->peerstatusInstance(),     */, SLOT(switch_status_ShowStatus(bool)));
-	connect(ui.checkBoxShowNATStatus,         SIGNAL(toggled(bool)), this /* pMainWindow->natstatusInstance(),      */, SLOT(switch_status_ShowPeer(bool)));
+	connect(ui.grpStatus,                     SIGNAL(toggled(bool)), this /* pMainWindow->statusBar(),              */, SLOT(switch_status_grpStatus(bool)));
+	connect(ui.checkBoxStatusCompactMode,     SIGNAL(toggled(bool)), this /* pMainWindow,                           */, SLOT(switch_status_compactMode(bool)));
+	connect(ui.checkBoxDisableSysTrayToolTip, SIGNAL(toggled(bool)), this /* pMainWindow,                           */, SLOT(switch_status_showToolTip(bool)));
+	connect(ui.checkBoxShowStatusStatus,      SIGNAL(toggled(bool)), this /* pMainWindow->statusComboBoxInstance(), */, SLOT(switch_status_ShowStatus(bool)));
+	connect(ui.checkBoxShowPeerStatus,        SIGNAL(toggled(bool)), this /* pMainWindow->peerstatusInstance(),     */, SLOT(switch_status_ShowPeer(bool)));
+	connect(ui.checkBoxShowNATStatus,         SIGNAL(toggled(bool)), this /* pMainWindow->natstatusInstance(),      */, SLOT(switch_status_ShowNAT(bool)));
 	connect(ui.checkBoxShowDHTStatus,         SIGNAL(toggled(bool)), this /* pMainWindow->dhtstatusInstance(),      */, SLOT(switch_status_ShowDHT(bool)));
 	connect(ui.checkBoxShowHashingStatus,     SIGNAL(toggled(bool)), this /* pMainWindow->hashingstatusInstance(),  */, SLOT(switch_status_ShowHashing(bool)));
 	connect(ui.checkBoxShowDiscStatus,        SIGNAL(toggled(bool)), this /* pMainWindow->discstatusInstance(),     */, SLOT(switch_status_ShowDisc(bool)));
@@ -103,6 +103,7 @@ void AppearancePage::switch_status_compactMode(bool b)      { switch_status(Main
 void AppearancePage::switch_status_showToolTip(bool b)      { switch_status(MainWindow::StatusShowToolTip,"DisableSysTrayToolTip", b) ; }
 void AppearancePage::switch_status_ShowStatus(bool b)       { switch_status(MainWindow::StatusShowStatus ,"ShowStatus",            b) ; }
 void AppearancePage::switch_status_ShowPeer(bool b)         { switch_status(MainWindow::StatusShowPeer   ,"ShowPeer",              b) ; }
+void AppearancePage::switch_status_ShowNAT(bool b)          { switch_status(MainWindow::StatusShowNAT    ,"ShowNAT",               b) ; }
 void AppearancePage::switch_status_ShowDHT(bool b)          { switch_status(MainWindow::StatusShowDHT    ,"ShowDHT",               b) ; }
 void AppearancePage::switch_status_ShowHashing(bool b)      { switch_status(MainWindow::StatusShowHashing,"ShowHashing",           b) ; }
 void AppearancePage::switch_status_ShowDisc(bool b)         { switch_status(MainWindow::StatusShowDisc   ,"ShowDisc",              b) ; }
@@ -111,7 +112,6 @@ void AppearancePage::switch_status_ShowOpMode(bool b)       { switch_status(Main
 void AppearancePage::switch_status_ShowSound(bool b)        { switch_status(MainWindow::StatusShowSound  ,"ShowSound",             b) ; }
 void AppearancePage::switch_status_ShowToaster(bool b)      { switch_status(MainWindow::StatusShowToaster,"ShowToaster",           b) ; }
 void AppearancePage::switch_status_ShowSystray(bool b)      { switch_status(MainWindow::StatusShowSystray,"ShowSysTrayOnStatusBar",b) ; }
-void AppearancePage::switch_status_ShowCBox(bool b)         { switch_status(MainWindow::StatusShowCBox,   "ShowStatusCBox"        ,b) ; }
 
 void AppearancePage::switch_status(MainWindow::StatusElement s,const QString& key, bool b)
 {
@@ -304,7 +304,7 @@ void AppearancePage::load()
 	whileBlocking(ui.checkBoxShowNATStatus)->     setChecked(Settings->valueFromGroup("StatusBar", "ShowNAT",     QVariant(true)).toBool());
 	whileBlocking(ui.checkBoxShowDHTStatus)->     setChecked(Settings->valueFromGroup("StatusBar", "ShowDHT",     QVariant(true)).toBool());
 	whileBlocking(ui.checkBoxShowHashingStatus)-> setChecked(Settings->valueFromGroup("StatusBar", "ShowHashing", QVariant(true)).toBool());
-	whileBlocking(ui.checkBoxShowDiscStatus)->    setChecked(Settings->valueFromGroup("StatusBar", "Show eDisc",  QVariant(true)).toBool());
+	whileBlocking(ui.checkBoxShowDiscStatus)->    setChecked(Settings->valueFromGroup("StatusBar", "ShowDisc",  QVariant(true)).toBool());
 	whileBlocking(ui.checkBoxShowRateStatus)->    setChecked(Settings->valueFromGroup("StatusBar", "ShowRate",    QVariant(true)).toBool());
 	whileBlocking(ui.checkBoxShowOpModeStatus)->  setChecked(Settings->valueFromGroup("StatusBar", "ShowOpMode",  QVariant(true)).toBool());
 	whileBlocking(ui.checkBoxShowSoundStatus)->   setChecked(Settings->valueFromGroup("StatusBar", "ShowSound",   QVariant(true)).toBool());
