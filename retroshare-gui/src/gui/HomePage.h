@@ -53,6 +53,7 @@ private slots:
 	void copyCert();
 	void saveCert();
   void addFriend();
+  void webMail();
 	void runStartWizard() ;
 	void openWebHelp() ;
 	void recommendFriends();

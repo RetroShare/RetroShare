@@ -61,7 +61,10 @@ HomePage::HomePage(QWidget *parent) :
     
     QAction *SendAction = new QAction(QIcon(),tr("Send via Email"), this);
     connect(SendAction, SIGNAL(triggered()), this, SLOT(runEmailClient()));
-		
+
+    QAction *WebMailAction = new QAction(QIcon(),tr("Invite via WebMail"), this);
+    connect(WebMailAction, SIGNAL(triggered()), this, SLOT(webMail()));
+	
     QAction *RecAction = new QAction(QIcon(),tr("Recommend friends to each others"), this);
     connect(RecAction, SIGNAL(triggered()), this, SLOT(recommendFriends()));
 
@@ -69,6 +72,7 @@ HomePage::HomePage(QWidget *parent) :
     menu->addAction(CopyAction);
     menu->addAction(SaveAction);
     menu->addAction(SendAction);
+	menu->addAction(WebMailAction);
     menu->addAction(RecAction);
 
     ui->shareButton->setMenu(menu);
@@ -172,6 +176,14 @@ void HomePage::addFriend()
     ConnectFriendWizard connwiz (this);
 
     connwiz.setStartId(ConnectFriendWizard::Page_Text);
+    connwiz.exec ();
+}
+
+void HomePage::webMail()
+{
+    ConnectFriendWizard connwiz (this);
+
+    connwiz.setStartId(ConnectFriendWizard::Page_WebMail);
     connwiz.exec ();
 }
 
