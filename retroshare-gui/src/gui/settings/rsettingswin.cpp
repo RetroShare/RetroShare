@@ -24,7 +24,6 @@
 #include <retroshare/rsplugin.h>
 #include <rshare.h>
 #include "GeneralPage.h"
-#include "DirectoriesPage.h"
 #include "ServerPage.h"
 #include "NetworkPage.h"
 #include "NotifyPage.h"
