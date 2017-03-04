@@ -587,7 +587,6 @@ bool    p3MsgService::loadList(std::list<RsItem*>& load)
     // load items and calculate next unique msgId
     for(it = load.begin(); it != load.end(); ++it)
     {
-
 	    if (NULL != (mitem = dynamic_cast<RsMsgItem *>(*it)))
 	    {
 		    /* STORE MsgID */
@@ -599,19 +598,23 @@ bool    p3MsgService::loadList(std::list<RsItem*>& load)
 	    else if (NULL != (grm = dynamic_cast<RsMsgGRouterMap *>(*it)))
 	    {
 		    // merge.
-		    for(std::map<GRouterMsgPropagationId,uint32_t>::const_iterator it(grm->ongoing_msgs.begin());it!=grm->ongoing_msgs.end();++it)
-			    _ongoing_messages.insert(*it) ;
+		    for(std::map<GRouterMsgPropagationId,uint32_t>::const_iterator bit(grm->ongoing_msgs.begin());bit!=grm->ongoing_msgs.end();++bit)
+			    _ongoing_messages.insert(*bit) ;
+
+            delete *it ;
+            continue ;
 	    }
         else if(NULL != (ghm = dynamic_cast<RsMsgDistantMessagesHashMap*>(*it)))
         {
             mRecentlyReceivedDistantMessageHashes = ghm->hash_map ;
-            
 #ifdef DEBUG_DISTANT_MSG
             std::cerr << "  loaded recently received message map: " << std::endl;
             
             for(std::map<Sha1CheckSum,uint32_t>::const_iterator it(mRecentlyReceivedDistantMessageHashes.begin());it!=mRecentlyReceivedDistantMessageHashes.end();++it)
                 std::cerr << "    " << it->first << " received " << time(NULL)-it->second << " secs ago." << std::endl;
 #endif
+            delete *it ;
+            continue ;
         }
 	    else if(NULL != (mtt = dynamic_cast<RsMsgTagType *>(*it)))
 	    {
