@@ -3818,10 +3818,7 @@ void RsGxsNetService::handleRecvSyncGroup(RsNxsSyncGrpReqItem *item)
 				    uint32_t status = RS_NXS_ITEM_ENCRYPTION_STATUS_UNKNOWN ;
 
 				    if(encryptSingleNxsItem(gItem, grpMeta->mCircleId,mit->first, encrypted_item,status))
-				    {
 					    itemL.push_back(encrypted_item) ;
-					    delete gItem ;
-				    }
 				    else
 				    {
 					    switch(status)
@@ -3836,6 +3833,7 @@ void RsGxsNetService::handleRecvSyncGroup(RsNxsSyncGrpReqItem *item)
 						    std::cerr << "    Could not encrypt item for grpId " << grpMeta->mGroupId << " for circle " << grpMeta->mCircleId << ". Not sending it." << std::endl;
 					    }
 				    }
+					delete gItem ;
 			    }
 			    else
 				    itemL.push_back(gItem);
