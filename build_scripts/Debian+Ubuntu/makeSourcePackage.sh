@@ -88,27 +88,13 @@ if ! test -d ${workdir}/src/libretroshare/; then
 	exit
 fi
 
-#cp -r data   ${workdir}/src/
 cp -r debian ${workdir}/debian
-
-#svn co -r${rev} ${svnpath}/trunk/ . 
 
 # VOIP tweak  
 cp ${workdir}/src/retroshare-gui/src/gui/chat/PopupChatDialog.ui ${workdir}/src/plugins/VOIP/gui/PopupChatDialog.ui
 
-#   # handling of libssh
-#   LIBSSH_VERSION=0.6.4
-#   LIBSSH_LOCATION=https://git.libssh.org/projects/libssh.git/snapshot/libssh-${LIBSSH_VERSION}.tar.gz
-#   
-#   [ -f libssh-${LIBSSH_VERSION}.tar.gz ] || wget --no-check-certificate -O libssh-${LIBSSH_VERSION}.tar.gz $LIBSSH_LOCATION 
-#   tar zxvf ../libssh-${LIBSSH_VERSION}.tar.gz
-
 # Cloning sqlcipher
 # git clone https://github.com/sqlcipher/sqlcipher.git
-
-# cleaning up protobof generated files
-# rm -f src/retroshare-nogui/src/rpc/proto/gencc/*.pb.h
-# rm -f src/retroshare-nogui/src/rpc/proto/gencc/*.pb.cc
 
 cd ${workdir}
 echo Setting version numbers...
@@ -120,7 +106,6 @@ sed -e "s%RS_REVISION_NUMBER.*%RS_REVISION_NUMBER   0x${hhsh}%"  src/libretrosha
 echo Cleaning...
 
 \rm -rf src/.git
-#find . -depth -name ".svn" -a -type d -exec rm -rf {} \;    # remove all svn repositories
 
 echo Calling debuild...
 for i in ${dist}; do
