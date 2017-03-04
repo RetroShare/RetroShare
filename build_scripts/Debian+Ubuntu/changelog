@@ -1,9 +1,248 @@
 retroshare06 (0.6.1-1.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
+  931442a csoler    Sat,  4 Mar 2017 00:07:51 +0100 fixed compilation
+  b4e0a8f csoler    Sat,  4 Mar 2017 00:04:52 +0100 removed unused file DirectoriesPage.{cpp,ui,h}
+  e257563 csoler    Sat,  4 Mar 2017 00:01:21 +0100 merged Directories settings page into Transfers and renamed it Files
+  8bdf4f3 csoler    Fri,  3 Mar 2017 23:28:35 +0100 fixed sharing of sshfs mounted dirs by allowing files of type DT_UNKNOWN to be explored
+  b82a18e csoler    Fri,  3 Mar 2017 22:41:32 +0100 hide add cert file button
+  556aae6 csoler    Fri,  3 Mar 2017 22:37:16 +0100 Merge pull request #711 from RetroPooh/test2
+  9716b92 csoler    Fri,  3 Mar 2017 22:26:32 +0100 Merge pull request #715 from PhenomRetroShare/Fix_NatDisplayOptionSaving
+  d6870b4 RetroPooh Sat,  4 Mar 2017 00:12:36 +0300 homepage - add friend from cert file button
+  1584b77 Phenom    Fri,  3 Mar 2017 20:35:18 +0100 Fix NAT Display setting saving.
+  cb960a3 RetroPooh Fri,  3 Mar 2017 22:31:23 +0300 add webmail invite option to homepage dropmenu
+  c98e6c6 csoler    Fri,  3 Mar 2017 18:54:54 +0100 Merge pull request #714 from RetroPooh/new1
+  76ab91f RetroPooh Fri,  3 Mar 2017 20:11:09 +0300 quick config on homepage hidden until rework
+  47b836d RetroPooh Fri,  3 Mar 2017 19:49:56 +0300 people window fix layout compression on resize
+  d360968 RetroPooh Fri,  3 Mar 2017 16:59:18 +0300 forum post dialog - hide obsolete sign option
+  711e38b csoler    Fri,  3 Mar 2017 14:35:33 +0100 Merge pull request #713 from felisucoibi/master
+  c7115da felisucoi Fri,  3 Mar 2017 14:23:50 +0100 CHANGED ORDER IN SETTINGS
+  303bc09 csoler    Thu,  2 Mar 2017 23:18:12 +0100 fixed force check directories when auto check is disabled
+  cdb0c6e csoler    Thu,  2 Mar 2017 22:35:21 +0100 fixed [No title] text in people
+  1e1fe77 csoler    Thu,  2 Mar 2017 22:30:51 +0100 fixed styles loading in chat. Added missing history/compact/colored style
+  d053400 csoler    Thu,  2 Mar 2017 20:30:54 +0100 attempt to fix problems with chat styles
+  af1c22a csoler    Thu,  2 Mar 2017 20:10:10 +0100 Merge pull request #712 from RetroPooh/test3
+  328168d RetroPooh Thu,  2 Mar 2017 20:03:16 +0300 add space after quoting sign
+  fc0cfc0 RetroPooh Thu,  2 Mar 2017 19:57:21 +0300 id edit dialog - tag functions hidden (unfinished)
+  c9ddd04 RetroPooh Thu,  2 Mar 2017 19:00:54 +0300 channel item display layout fix correct comments view
+  939b5b4 RetroPooh Thu,  2 Mar 2017 18:08:35 +0300 fix channel item display layout
+  132da5f thunder2  Thu,  2 Mar 2017 13:08:42 +0100 Updated Windows build script - speex-1.2.0 - libxml2-2.9.4 - curl-7.53.1 - libmicrohttpd-0.9.52 - ffmpeg-3.2.4
+  e408751 RetroPooh Thu,  2 Mar 2017 15:49:12 +0300 newsfeed item layout for new channel made uniform with forums
+  1eb22f8 thunder2  Thu,  2 Mar 2017 06:52:18 +0100 Updated Windows build to opencv-3.2.0
+  ff5f3df defnax    Thu,  2 Mar 2017 01:38:11 +0100 Fixed default Layout size, it was to big for small screens.
+  ea2c832 csoler    Wed,  1 Mar 2017 22:54:25 +0100 attempt to sort out chat style config issus
+  f8b3194 csoler    Wed,  1 Mar 2017 22:43:51 +0100 Merge pull request #705 from PhenomRetroShare/Fix_NewWarnings
+  b596791 csoler    Wed,  1 Mar 2017 22:33:01 +0100 improved wording in keyring
+  0fea0e0 csoler    Wed,  1 Mar 2017 22:25:57 +0100 fixed sorting by last time used in keyring
+  006e542 csoler    Wed,  1 Mar 2017 21:18:16 +0100 fixed auto-expanding of nodes in friend list
+  5618358 RetroPooh Wed,  1 Mar 2017 22:36:36 +0300 homepage quickstartwizard webhelp
+  e4dbc46 Phenom    Mon, 27 Feb 2017 22:12:48 +0100 Fiw New Warnings
+  91f2cf7 csoler    Wed,  1 Mar 2017 19:12:32 +0100 fixed typo
+  40c14db csoler    Wed,  1 Mar 2017 19:10:45 +0100 fixed wrong passwd html text
+  e081567 csoler    Wed,  1 Mar 2017 19:08:20 +0100 fixed empty names in header drop menu
+  a8adf8d csoler    Tue, 28 Feb 2017 23:05:19 +0100 fixed names in FriendList for details
+  c078d93 RetroPooh Wed,  1 Mar 2017 00:21:42 +0300 people header fix layout so invite panel does not obstruct the name
+  b52c4b8 RetroPooh Tue, 28 Feb 2017 12:07:45 +0300 GenCertDialog fix min 3 letters length, fields rearrange for sequential display on advanced switch
+  d427182 RetroPooh Tue, 28 Feb 2017 10:14:08 +0300 fix gxs storage period 1year to 372 days to match old clients
+  62a0ccd RetroPooh Wed, 25 Jan 2017 18:36:28 +0300 QuickStartWizard fixed reset hidden mode
+  da41343 RetroPooh Tue, 24 Jan 2017 22:56:55 +0300 add friend wizard - refinements for hidden nodes
+  03b5fb6 RetroPooh Tue, 24 Jan 2017 17:51:57 +0300 add chatlobby splitter position saving
+  53186ee csoler    Tue, 28 Feb 2017 22:20:52 +0100 set proper default options in make friend dialog, and hide the frame showing own cert since it is not needed anymore
+  4abf2c6 csoler    Tue, 28 Feb 2017 21:41:45 +0100 hide the feed option button until we figure out how to do it properly. Also fixed the crash when showing network settings on hidden nodes
+  9d3df7c csoler    Tue, 28 Feb 2017 00:10:54 +0100 added signal blocking calls to a few last config pages
+  6d67da5 csoler    Tue, 28 Feb 2017 00:04:33 +0100 Merge pull request #709 from PhenomRetroShare/Fix_NotifyPageSignelBlocking
+  8caeda9 Phenom    Mon, 27 Feb 2017 23:41:31 +0100 Fix missing signals blocking calls in Notify config page.
+  88afe51 csoler    Mon, 27 Feb 2017 23:13:45 +0100 added missing signal blocking calls in several config pages
+  58efbc2 csoler    Mon, 27 Feb 2017 23:11:37 +0100 Merge pull request #708 from PhenomRetroShare/Fix_NotifySettings
+  0642022 Phenom    Mon, 27 Feb 2017 23:00:49 +0100 Fix Notify Settings
+  f70cbbe csoler    Mon, 27 Feb 2017 22:37:27 +0100 prevent port values to go below 1024 in the backend
+  30c4dfe csoler    Mon, 27 Feb 2017 22:35:24 +0100 prevent port values to go below 1024 in the GUI
+  ee9fbef csoler    Mon, 27 Feb 2017 22:29:01 +0100 added signal blockign trick for widgets, and fixed the bug causing wrong values to be displayed in server settings
+  e7a7c17 csoler    Mon, 27 Feb 2017 21:10:20 +0100 fixed bug preventing circle creation.
+  18cc77a csoler    Sun, 26 Feb 2017 22:15:14 +0100 Merge pull request #704 from G10h4ck/master
+  c51ee19 Gioacchin Sun, 26 Feb 2017 21:41:45 +0100 Some consistence fixes in GUI
+  99cf69a csoler    Sun, 26 Feb 2017 20:14:34 +0100 Merge pull request #703 from RetroShare/v0.6-ImprovedGUI
+  eb817af csoler    Sun, 26 Feb 2017 20:12:52 +0100 Merge pull request #689 from csoler/v0.6-SSL110Fix
+  98eed2a csoler    Sun, 26 Feb 2017 20:09:53 +0100 Merge pull request #702 from PhenomRetroShare/Fix_AppVeyorBuild
+  3a2312d csoler    Sun, 26 Feb 2017 18:38:42 +0100 Merge pull request #701 from csoler/v0.6-ImprovedGUI
+  158d421 csoler    Sun, 26 Feb 2017 18:27:39 +0100 fixed graphical bug in AboutWidget
+  b3fadf3 csoler    Sun, 26 Feb 2017 18:22:36 +0100 Merge pull request #649 from jolavillette/jola_BW_Bursts
+  5f8c57c csoler    Sun, 26 Feb 2017 18:22:02 +0100 Merge pull request #697 from PhenomRetroShare/Add_ShiftEnterForNewLineInChatWidget
+  9ebf0e1 Phenom    Sun, 26 Feb 2017 18:15:14 +0100 Fix AppVeyor Build
+  7028bb5 csoler    Sun, 26 Feb 2017 17:54:51 +0100 Merge pull request #700 from PhenomRetroShare/Fix_LocalDirectoryUpdaterTakeCareIfEnabled
+  c3c2671 Phenom    Sun, 26 Feb 2017 15:42:32 +0100 Fix LocalDirectoryUpdater to take care if is Enabled in option.
+  3452821 Phenom    Sun, 26 Feb 2017 11:31:43 +0100 Add Shift+Enter to create new line in chat widget when Ctrl+Enter option is disabled. Proposed by MMT1
+  cae0668 csoler    Sun, 26 Feb 2017 00:18:15 +0100 Merge pull request #695 from csoler/v0.6-ImprovedGUI
+  3230e55 csoler    Sun, 26 Feb 2017 00:16:36 +0100 added some delay in the showHelp() feature
+  12246e3 csoler    Sat, 25 Feb 2017 23:52:57 +0100 added settings variable to allow to always display the help of each tab the first time it is shown
+  e75487e csoler    Sat, 25 Feb 2017 23:16:43 +0100 suppressed a few warnings (suggested by Phenom)
+  a531a41 csoler    Sat, 25 Feb 2017 18:21:24 +0100 fixed recursive call to BIO_set_fd()
+  c313fb5 csoler    Sat, 25 Feb 2017 14:09:39 +0100 removed compilation warning
+  e18cc3e csoler    Fri, 24 Feb 2017 23:34:52 +0100 changed reset to cleanup for backward compatibility in EVP_CIPHER_CTX_cleanup call
+  d1bf977 csoler    Fri, 24 Feb 2017 23:19:47 +0100 fixed bug causing decryption of group data to crash
+  65a383a csoler    Thu, 23 Feb 2017 19:16:48 +0100 fixed typo causing crash in openpgp-sdk
+  753ebdd csoler    Thu, 23 Feb 2017 18:29:02 +0100 Merge pull request #691 from PhenomRetroShare/Fix_UnitTestCompilation
+  83195e1 csoler    Wed, 22 Feb 2017 23:57:04 +0100 Merge pull request #692 from csoler/v0.6-ImprovedGUI
+  dc51911 csoler    Wed, 22 Feb 2017 23:55:29 +0100 added welcome message to show on first start in HomePage
+  fe2059f csoler    Wed, 22 Feb 2017 22:44:00 +0100 fixed update of GxsGroupWidget layout when changing options
+  0e57874 csoler    Wed, 22 Feb 2017 22:22:50 +0100 fixed loading of settings::Server page
+  27db797 csoler    Wed, 22 Feb 2017 22:06:00 +0100 fixed show/hide buttons in appearance settings page
+  8325c72 Phenom    Mon, 20 Feb 2017 16:15:31 +0100 Fix UnitTest Compilation and Travis Error.
+  9371521 csoler    Mon, 20 Feb 2017 23:19:29 +0100 fixed bug causing crash in openssl_crypto due to not zeroing a field that was not duplicated before delete
+  8c3f553 csoler    Mon, 20 Feb 2017 22:54:25 +0100 fixed compilation with openssl1.0.1 broken by previous commits
+  4dac3b4 csoler    Mon, 20 Feb 2017 22:36:35 +0100 removed compilation tweak
+  c3b4985 csoler    Mon, 20 Feb 2017 21:44:48 +0100 compilation fix for openssl-1.1.0 (gxssecurity+gxstunnel part)
+  5c95b88 csoler    Sun, 19 Feb 2017 22:38:02 +0100 compilation fix for openssl-1.1.0 (pqissl+authssl part)
+  57bbd15 csoler    Sun, 19 Feb 2017 11:10:25 +0100 fixing compilation for openssl-1.1.0 (chacha20.cc, HMAC structure, part 2)
+  d7bfc32 csoler    Sun, 19 Feb 2017 10:56:33 +0100 fixing compilation for openssl-1.1.0 (chacha20.cc, HMAC structure)
+  175664e csoler    Sat, 18 Feb 2017 23:58:47 +0100 fixing compilation for openssl-1.1.0 (part 12)
+  0c77a10 csoler    Sat, 18 Feb 2017 23:47:53 +0100 fixing compilation for openssl-1.1.0 (part 11)
+  01e89bb csoler    Sat, 18 Feb 2017 23:47:47 +0100 fixing compilation for openssl-1.1.0 (part 10)
+  fc1a792 csoler    Sat, 18 Feb 2017 18:16:10 +0100 fixing compilation for openssl-1.1.0 (part 9)
+  d5e6792 csoler    Sat, 18 Feb 2017 18:09:49 +0100 fixing compilation for openssl-1.1.0 (part 8)
+  deb3a49 csoler    Sat, 18 Feb 2017 17:00:46 +0100 fixing compilation for openssl-1.1.0 (part 7)
+  5951f46 csoler    Sat, 18 Feb 2017 16:49:35 +0100 fixing compilation for openssl-1.1.0 (part 6)
+  70e2a67 csoler    Sat, 18 Feb 2017 16:40:38 +0100 fixing compilation for openssl-1.1.0 (part 5)
+  13a8389 csoler    Sat, 18 Feb 2017 16:21:17 +0100 fixing compilation for openssl-1.1.0 (part 4)
+  262fa9c csoler    Sat, 18 Feb 2017 15:45:45 +0100 fixing compilation for openssl-1.1.0 (part 3)
+  ba52b05 csoler    Sat, 18 Feb 2017 15:28:27 +0100 fixing compilation for openssl-1.1.0 (part 2)
+  63a2210 csoler    Sat, 18 Feb 2017 14:40:44 +0100 fixing compilation with openssl-1.1.0 (part 1)
+  cda3c74 csoler    Fri, 17 Feb 2017 09:17:22 +0100 attempt at fixing a bug that can cause a crash in p3filelists.cc
+  2e7d952 csoler    Thu, 16 Feb 2017 15:53:15 +0100 Merge pull request #687 from csoler/v0.6-ImprovedGUI
+  f9f79d4 csoler    Thu, 16 Feb 2017 10:17:29 +0100 removed some mentions to PGP
+  dcab611 csoler    Thu, 16 Feb 2017 09:53:54 +0100 improved layout of Home page
+  6cc9468 csoler    Wed, 15 Feb 2017 22:04:15 +0100 Merge pull request #686 from csoler/v0.6-ImprovedGUI
+  3c75135 csoler    Wed, 15 Feb 2017 21:50:53 +0100 pass over AppearancePage to fit to the removal of tool buttons
+  7c8f8ef csoler    Wed, 15 Feb 2017 21:30:49 +0100 pass over settings to improve layouts
+  64d39d8 csoler    Wed, 15 Feb 2017 19:28:26 +0100 Merge pull request #685 from csoler/v0.6-ImprovedGUI
+  391ef3e csoler    Wed, 15 Feb 2017 19:25:46 +0100 improved passphrase window
+  b817648 csoler    Wed, 15 Feb 2017 19:17:41 +0100 fixed a few bugs in cert creation window
+  59f428f csoler    Sun, 12 Feb 2017 23:35:43 +0100 fixed the update of check icons in genCertDialog
+  5069ba8 csoler    Sun, 12 Feb 2017 21:45:22 +0100 improved style/layout of gen cert dialog
+  ccacba7 csoler    Sun, 12 Feb 2017 15:27:13 +0100 added pgp passphrase temporary caching in order to avoid re-asking for password at location creation time
+  f3824f2 csoler    Sat, 11 Feb 2017 10:46:51 +0100 merged upstream/master
+  c61ccda csoler    Tue,  7 Feb 2017 22:04:07 +0100 fixed compilation problem caused by a bug in qtcreator global replace. Warning: always check the result of qtcreator global replace
+  37f3e1a csoler    Tue,  7 Feb 2017 20:15:55 +0100 fixed problem in ID creation code.
+  9226ccc defnax    Tue,  7 Feb 2017 17:01:36 +0100 Added invite info frame for Friend Request Messages.
+  90594bc csoler    Mon,  6 Feb 2017 23:59:18 +0100 Merge pull request #679 from csoler/v0.6-QtOptim
+  32b2cda csoler    Mon,  6 Feb 2017 23:57:50 +0100 Merge pull request #678 from PhenomRetroShare/Fix_DisableSysTrayToolTipOption
+  266affe csoler    Mon,  6 Feb 2017 23:56:43 +0100 Merge pull request #659 from hunbernd/fix/slow-emoticons
+  6a9b697 csoler    Mon,  6 Feb 2017 23:46:01 +0100 made RsReputation::overallReputationLevel() to also return the identity ownership flags so that we dont need to rely on async calls to p3IdService to get them
+  013eb93 csoler    Mon,  6 Feb 2017 00:11:26 +0100 rewrote forum loading method with the proper logarithmic containers
+  d1328f4 hunbernd  Sat, 21 Jan 2017 22:53:56 +0100 Fix spaces between emoticons in message composer and forum
+  d0ab10c hunbernd  Sun,  5 Feb 2017 19:13:40 +0100 Fix slow emoticons by using generic regex rules where possible.
+  865a574 Phenom    Sun,  5 Feb 2017 14:34:33 +0100 Fix DisableSysTrayToolTip Option
+  80e6742 csoler    Fri,  3 Feb 2017 11:45:00 +0100 teaking of the css file
+  389eff0 csoler    Thu,  2 Feb 2017 22:05:28 +0100 improved the qss and look of login window
+  a9b7ed3 csoler    Thu,  2 Feb 2017 21:48:18 +0100 attempt to make the login creation window look better
+  3baaae7 defnax    Thu,  2 Feb 2017 17:58:48 +0100 Fixed People Header Text color Moved info frame for Invite to Top Header
+  bc8aac1 defnax    Thu,  2 Feb 2017 17:15:32 +0100 Added warn messagebox before send invite
+  89a27ae csoler    Wed,  1 Feb 2017 23:08:57 +0100 finished new profile creation window
+  2a36d6b csoler    Wed,  1 Feb 2017 21:55:06 +0100 re-working on the node creation wizard (unfinished)
+  873fbf9 csoler    Wed,  1 Feb 2017 14:32:35 +0100 added 3 missing delete, responsible for small memory leaks
+  0ad581a thunder2  Wed,  1 Feb 2017 13:03:16 +0100 Updated Windows build script to openssl-1.0.2k
+  3eedf1b csoler    Tue, 31 Jan 2017 23:24:09 +0100 Merge pull request #675 from csoler/v0.6-ImprovedGUI
+  79ef403 csoler    Tue, 31 Jan 2017 23:07:59 +0100 tested/fixed all option buttons
+  a357c52 csoler    Tue, 31 Jan 2017 21:51:16 +0100 fixed a few things in options
+  deea1b5 csoler    Tue, 31 Jan 2017 20:59:50 +0100 moved temporary GXS object structures into rsgxsutil.h and used them in p3gxscircles to remove a memory leak
+  0a02419 csoler    Tue, 31 Jan 2017 20:07:00 +0100 fixed a big memory leak in hash cache storage load code, and improved deletion of allocated memory if file reading fails
+  66bbf4d csoler    Mon, 30 Jan 2017 21:38:06 +0100 converted the last CONFIG pages to interactive mode
+  60d9ea0 csoler    Sun, 29 Jan 2017 21:47:13 +0100 changed more ConfigPages to not requiring calls to save()
+  7861b09 defnax    Sun, 29 Jan 2017 19:01:38 +0100 Fixed to display Avatars and nickname on news feeds Messages Item for Distant Messages. Added for Invite Message RS_MSG_USER_REQUEST flag & auto send invites to outbox. Optimized Messages Item for Invite Messages, display a Send Invite Button, to send back own rs cert link via Distant Message.
+  bd379e6 csoler    Sat, 28 Jan 2017 18:13:38 +0100 changed a few pages to not requiring to call save()
+  7327f1a csoler    Sat, 28 Jan 2017 15:26:12 +0100 fixed deadlock caused by locking the mutex in p3Identity after the one in p3GxsReputation
+  f935d9f csoler    Thu, 26 Jan 2017 22:48:25 +0100 Merge pull request #669 from csoler/v0.6-ImprovedGUI
+  53a1993 csoler    Thu, 26 Jan 2017 22:46:58 +0100 added missing files
+  6321bc1 csoler    Thu, 26 Jan 2017 22:43:44 +0100 Merge pull request #668 from csoler/v0.6-ImprovedGUI
+  3395727 csoler    Thu, 26 Jan 2017 22:42:24 +0100 keep quit button into toolbar
+  67af166 csoler    Thu, 26 Jan 2017 22:35:33 +0100 moved Options window into a new Preferences tab
+  f3caad9 csoler    Thu, 26 Jan 2017 18:16:30 +0100 Merge pull request #667 from csoler/v0.6-ImprovedGUI
+  883c4cc csoler    Thu, 26 Jan 2017 09:19:18 +0100 improved AboutWidget a little bit
+  1cd64ce csoler    Wed, 25 Jan 2017 22:41:23 +0100 improved EE
+  0774f08 csoler    Wed, 25 Jan 2017 20:27:53 +0100 fixed display of about widget
+  1cdb970 csoler    Tue, 24 Jan 2017 22:39:28 +0100 moved the AboutDialog into Options
+  f90ebb1 defnax    Tue, 24 Jan 2017 16:17:53 +0100 update Person details window used on Statistics. clean up look and feel of Friend Details to get more user friendly for normal users.
+  ca5fa7a csoler    Mon, 23 Jan 2017 21:11:22 +0100 Merge pull request #653 from RetroPooh/master
+  1d5c536 csoler    Mon, 23 Jan 2017 21:04:41 +0100 Merge pull request #650 from PhenomRetroShare/Add_StatusBarHideOption
+  f7a1348 csoler    Mon, 23 Jan 2017 19:13:50 +0100 made Accepted option in Transfers to send tunnel requests for both encrypted and clear tunnels
+  8cf5abc RetroPooh Mon, 23 Jan 2017 21:10:06 +0300 options-network default tab opened changed to first
+  9937513 Phenom    Wed, 18 Jan 2017 20:18:12 +0100 Add StatusBar and its widgets show options.
+  091ea05 RetroPooh Mon, 23 Jan 2017 19:58:31 +0300 fix previous - forgot .h file
+  5dc5496 RetroPooh Mon, 23 Jan 2017 18:31:00 +0300 add friend dialog - hide email and trust strings if not in advanced mode
+  bcb1f19 RetroPooh Mon, 23 Jan 2017 15:09:40 +0300 friend add wizard - hide options checkboxes in collapsible panel, default on in advanced mode
+  e82b4fe RetroPooh Mon, 23 Jan 2017 00:34:02 +0300 friend connect wizard - add tooltips for checkboxes; hide 40peers warning if you have <30 friends; restored back own cert actions for advanced mode
+  58c296c RetroPooh Mon, 23 Jan 2017 00:25:17 +0300 hide typing notification setting in chat options by default
+  9268fd5 RetroPooh Mon, 23 Jan 2017 00:21:23 +0300 Merge branch 'master' of https://github.com/RetroShare/RetroShare
+  297907e csoler    Sun, 22 Jan 2017 21:48:48 +0100 Merge pull request #662 from csoler/v0.6-ImprovedGUI
+  7da68ff csoler    Sun, 22 Jan 2017 21:44:26 +0100 improved certificate parsing in Home so that corrupted certs never get accepted
+  214fbc7 csoler    Sun, 22 Jan 2017 21:06:11 +0100 added a friend recommendation menu entry in Home drop menu, and created the dialog to create/send the recommendations
+  aa62136 csoler    Sun, 22 Jan 2017 19:47:50 +0100 Merge pull request #657 from PhenomRetroShare/Add_NoCppWarningFlag
+  dc43611 csoler    Sun, 22 Jan 2017 18:52:30 +0100 changed Lobbies into Chat rooms in a few places
+  73d9a48 csoler    Sun, 22 Jan 2017 18:36:36 +0100 update client Grp TS even when friend peer is subscribed to no groups, so as to avoid the friend re-sendign an empty list indefinitly (fix suggested by jo)
+  baa9713 csoler    Sat, 21 Jan 2017 21:38:10 +0100 partially changed lobby->chat room in displayed strings in the GUI
+  3538b0a csoler    Sat, 21 Jan 2017 20:56:00 +0100 merged upstream/pr/648
+  72493ad csoler    Sat, 21 Jan 2017 17:31:06 +0100 Merge pull request #658 from PhenomRetroShare/Fix_Compilation
+  1f5ef4c Phenom    Sat, 21 Jan 2017 17:15:38 +0100 Fix Compilation
+  e07d6ff csoler    Sat, 21 Jan 2017 17:26:44 +0100 removed debuginfo from PR 654
+  6f7f1c2 csoler    Sat, 21 Jan 2017 17:16:56 +0100 Merge pull request #656 from PhenomRetroShare/Fix_UnitTestWarnings
+  eee2a7b Phenom    Sat, 21 Jan 2017 16:51:37 +0100 Add no cpp #warning Config flag to better show other ones.
+  aa05d60 Phenom    Sat, 21 Jan 2017 16:31:22 +0100 Fix all warnings in UnitTest
+  e3240de csoler    Sat, 21 Jan 2017 15:06:46 +0100 Merge pull request #654 from csoler/v0.6-GXS-LimitedSync2
+  9a20160 csoler    Sat, 21 Jan 2017 14:01:53 +0100 merged upstream/master
+  e95c131 felisucoi Sat, 21 Jan 2017 00:08:23 +0100 Merge branch 'master' of https://github.com/RetroShare/RetroShare
+  ee4d722 csoler    Fri, 20 Jan 2017 23:27:18 +0100 fixed cache deletion of GXS grp meta that caused deleted groups to not come back when available
+  7bbb993 csoler    Fri, 20 Jan 2017 23:00:05 +0100 disabled emoticons from messages and toasters, since they significantly slow down the whole software
+  0ca477d RetroPooh Fri, 20 Jan 2017 22:26:50 +0300 add chatlobby option to disable sending typing notifications
+  d1af2e0 csoler    Fri, 20 Jan 2017 00:00:47 +0100 merged with upstream/master
+  b52ab0f csoler    Thu, 19 Jan 2017 23:59:26 +0100 added auto-clean of unused groups when grpAutoSync is enabled (so it does not touch identities)
+  39aaca9 felisuc   oibi Thu, 19 Jan 2017 14:45:08 +0100 Merge branch 'master' of https://github.com/RetroShare/RetroShare
+  f3b3d2b csoler    Thu, 19 Jan 2017 14:01:54 +0100 disabled emoticon replacement in GxsChannelPostItem and chat lobby toaster and chat toaster, where there are not needed as compare to how problematic they can be
+  73f59c2 felisucoi Thu, 19 Jan 2017 13:58:36 +0100 Merge branch 'master' of https://github.com/RetroShare/RetroShare
+  cb61d58 csoler    Thu, 19 Jan 2017 13:49:17 +0100 disabled emoticon replacement in channel title because it causes channels to load extremely slowly due to the enormous amount of emoticons
+  410123b csoler    Thu, 19 Jan 2017 11:16:47 +0100 added warning about consistency error in idservice group flags
+  06265f2 csoler    Thu, 19 Jan 2017 11:12:37 +0100 added consistency check in meta data in publishGroup() and updateGroup() in order to avoid bad data supplied from GXS services
+  5f7327f felisucoi Wed, 18 Jan 2017 21:45:56 +0100 Merge branch 'master' of https://github.com/RetroShare/RetroShare
+  d2dc632 csoler    Wed, 18 Jan 2017 21:27:27 +0100 Merge pull request #651 from csoler/v0.6-QtOptim
+  34962c3 csoler    Wed, 18 Jan 2017 21:22:38 +0100 added a checkbox to load emoticons in forums as an option, so as to avoid crazy loading times. Disabled by default until we fix the RsHtml code
+  1b8de7b jolaville Wed, 18 Jan 2017 13:25:45 +0100 Attempt to reduce BW bursts
+  717b455 felisucoi Wed, 18 Jan 2017 10:55:01 +0100 Merge pull request #13 from felisucoibi/0.6-buttons
+  47a4ed5 felisucoi Wed, 18 Jan 2017 10:34:34 +0100 Update ChatLobbyWidget.ui
+  837bb76 felisucoi Wed, 18 Jan 2017 10:31:50 +0100 Update CreateLobbyDialog.cpp
+  2d764f4 felisucoi Wed, 18 Jan 2017 10:26:25 +0100 updated sectionnames chat lobbi
+  1217a85 felisucoi Wed, 18 Jan 2017 10:15:07 +0100 change chat lobies t chat rooms strings
+  07dd196 felisucoi Wed, 18 Jan 2017 09:54:32 +0100 changed friends to second flaces csoler agreed
+  5646187 felisucoi Wed, 18 Jan 2017 00:48:00 +0100 Merge branch 'master' of https://github.com/RetroShare/RetroShare
+  bdc5680 csoler    Tue, 17 Jan 2017 23:01:51 +0100 Merge pull request #647 from RetroPooh/master
+  e778b8c felisucoi Tue, 17 Jan 2017 17:01:37 +0100 Merge pull request #12 from felisucoibi/0.6-buttons
+  dc391c5 felisucoi Tue, 17 Jan 2017 17:00:41 +0100 Update ChatLobbyWidget.h
+  8519b79 felisucoi Tue, 17 Jan 2017 16:56:17 +0100 Merge pull request #11 from felisucoibi/0.6-buttons
+  ce53a9d felisucoi Tue, 17 Jan 2017 16:55:14 +0100 Update FriendsDialog.h
+  296903a felisucoi Tue, 17 Jan 2017 16:51:16 +0100 Update MainWindow.cpp
+  66ab7c9 felisucoi Tue, 17 Jan 2017 16:49:36 +0100 Update ChatLobbyUserNotify.cpp
+  afd5e55 felisucoi Tue, 17 Jan 2017 16:38:18 +0100 Merge pull request #10 from felisucoibi/0.6-buttons
+  982c837 felisucoi Tue, 17 Jan 2017 16:37:23 +0100 Update PostedDialog.h
+  d31cb0d felisucoi Tue, 17 Jan 2017 16:36:24 +0100 Update NewsFeed.h
+  701868d felisucoi Tue, 17 Jan 2017 16:35:20 +0100 Update MessagesDialog.h
+  0633744 felisucoi Tue, 17 Jan 2017 16:34:37 +0100 buttons
+  02aec3d felisucoi Tue, 17 Jan 2017 16:32:56 +0100 button changes
+  f079e99 RetroPooh Tue, 17 Jan 2017 17:21:51 +0300 fix mute option in chatlobby id menu
+  8568199 csoler    Tue, 17 Jan 2017 12:39:54 +0100 fixed mistake that prevented GXS posts to propagate
+  e197117 csoler    Mon, 16 Jan 2017 20:57:19 +0100 fixed last commit because of compilation
+  d5936a5 csoler    Mon, 16 Jan 2017 20:49:30 +0100 removed debug msg
+  967b85c csoler    Mon, 16 Jan 2017 20:49:15 +0100 removed old call to rsIdentity in rsgxsnetservice and removed warning
+  c00caa9 csoler    Sun, 15 Jan 2017 21:28:28 +0100 Merge pull request #644 from G10h4ck/ccleanup
+  e7a119f csoler    Sun, 15 Jan 2017 21:13:27 +0100 added a warning and skip files with missing hash in copy link
+  f314e7d csoler    Sun, 15 Jan 2017 20:56:44 +0100 simplified code in PR/630
+  7e750d3 csoler    Sun, 15 Jan 2017 20:31:22 +0100 Merge pull request #630 from RetroPooh/master
+  75d717c RetroPooh Sun, 15 Jan 2017 20:29:59 +0300 fix
+
+ -- Retroshare Dev Team <contact@retroshare.net>  Sat, 04 Mar 2017 12:00:00 +0100
+
+retroshare06 (0.6.1-1.20170117~5c296b9~trusty) trusty; urgency=low
+
   5c296b9 csoler Sun, 15 Jan 2017 09:57:06 +0100 removed warning when peer list is empty in cache_load of identities
   233c38d csoler Sat, 14 Jan 2017 20:45:53 +0100 Merge pull request #641 from csoler/v0.6-Reputations
   dd40877 csoler Sat, 14 Jan 2017 19:08:14 +0100 removed debug info
-  318a372 csoler Sat, 14 Jan 2017 19:04:14 +0100 fixed reloading of distribution icons when opinion is changed over an ID in forums. Improved efficiency of forum loading in general.
+  318a372 csoler Sat, 14 Jan 2017 19:04:14 +0100 fixed reloading of distribution icons when opinion is changed over an ID in forums. Improved efficiency of forum loading in general
   25680d5 csoler Sat, 14 Jan 2017 17:29:37 +0100 removed quadratic cost in forum thread fill
   7308695 csoler Sat, 14 Jan 2017 11:02:02 +0100 fixed reloading of GXS id icon when banned/unbanned in forums
   57f22e9 csoler Sat, 14 Jan 2017 10:51:14 +0100 removed costly size() call in QList
