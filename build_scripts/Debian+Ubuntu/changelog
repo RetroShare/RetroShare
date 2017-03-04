@@ -1,4 +1,4 @@
-retroshare06 (0.6.1-1.XXXXXX~YYYYYY) YYYYYY; urgency=low
+retroshare06 (0.6.2-1.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
   931442a csoler    Sat,  4 Mar 2017 00:07:51 +0100 fixed compilation
   b4e0a8f csoler    Sat,  4 Mar 2017 00:04:52 +0100 removed unused file DirectoriesPage.{cpp,ui,h}
