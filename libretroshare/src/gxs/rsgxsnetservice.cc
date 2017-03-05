@@ -1451,7 +1451,9 @@ bool RsGxsNetService::saveList(bool& cleanup, std::list<RsItem*>& save)
 {
 	RS_STACK_MUTEX(mNxsMutex) ;
 
+#ifdef NXS_NET_DEBUG_0
     std::cerr << "RsGxsNetService::saveList()..." << std::endl;
+#endif
 
     // hardcore templates
     std::transform(mClientGrpUpdateMap.begin(), mClientGrpUpdateMap.end(), std::back_inserter(save), get_second<ClientGrpMap,RsGxsGrpUpdateItem>(mServType,&RsGxsGrpUpdateItem::peerID));
