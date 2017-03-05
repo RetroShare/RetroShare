@@ -142,9 +142,16 @@ void p3GxsForums::notifyChanges(std::vector<RsGxsNotify *> &changes)
 							/* group received */
 							std::list<RsGxsGroupId> &grpList = grpChange->mGrpIdList;
 							std::list<RsGxsGroupId>::iterator git;
+
 							for (git = grpList.begin(); git != grpList.end(); ++git)
 							{
-								notify->AddFeedItem(RS_FEED_ITEM_FORUM_NEW, git->toStdString());
+                                if(mKnownForums.find(*git) == mKnownForums.end())
+                                {
+									notify->AddFeedItem(RS_FEED_ITEM_FORUM_NEW, git->toStdString());
+                                    mKnownForums.insert(*git) ;
+                                }
+                                else
+                                    std::cerr << "(II) Not notifying already known forum " << *git << std::endl;
 							}
 							break;
 						}
