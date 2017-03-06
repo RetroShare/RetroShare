@@ -23,10 +23,15 @@
 #define HOMEPAGE_H
 
 #include <retroshare-gui/mainpage.h>
+#include <util/RsIcon.h>
+
 #include <retroshare/rsfiles.h>
 #include <retroshare/rspeers.h>
 
 #include <QWidget>
+
+
+#define IMAGE_HOME       ":/icons/svg/profile-trans.svg"
 
 
 class QAction;
@@ -43,9 +48,9 @@ public:
 	explicit HomePage(QWidget *parent);
 	~HomePage();
 	
-	  virtual QIcon iconPixmap() const { return QPixmap(":/icons/svg/profile.svg") ; } //MainPage
-    virtual QString pageName() const { return tr("Home") ; } //MainPage
-    virtual QString helpText() const { return ""; } //MainPage
+	virtual QIcon iconPixmap() const { return RsIcon(IMAGE_HOME); } // MainPage
+	virtual QString pageName() const { return tr("Home"); } // MainPage
+	virtual QString helpText() const { return ""; } // MainPage
 
 private slots:
 	void updateOwnCert();

@@ -119,7 +119,6 @@
 #include <unistd.h>
 
 #define IMAGE_QUIT              ":/icons/svg/exit-trans.svg"
-#define IMAGE_PREFERENCES       ":/icons/svg/options-trans.svg"
 #define IMAGE_ABOUT             ":/icons/svg/info-trans.svg"
 #define IMAGE_ADDFRIEND         ":/icons/svg/invite-trans.svg"
 #define IMAGE_RETROSHARE        ":/icons/logo_128.png"

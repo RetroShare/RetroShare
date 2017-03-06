@@ -255,5 +255,6 @@
     <file>icons/svg/options-trans.svg</file>
     <file>icons/svg/people-trans.svg</file>
     <file>icons/svg/posted-trans.svg</file>
+    <file>icons/svg/profile-trans.svg</file>
   </qresource>
 </RCC>

@@ -22,14 +22,17 @@
 #ifndef RSETTINGSWIN_HPP_
 #define RSETTINGSWIN_HPP_
 
-#include <QDialog>
-#include <retroshare-gui/configpage.h>
 #include "ui_settingsw.h"
+
+#include <QDialog>
+
+#include <retroshare-gui/configpage.h>
 #include "mainpage.h"
+#include <util/RsIcon.h>
 
 class FloatingHelpBrowser;
 
-#define IMAGE_PREFERENCES       ":/icons/png/options.png"
+#define IMAGE_PREFERENCES       ":/icons/svg/options-trans.svg"
 
 class SettingsPage: public MainPage
 {
@@ -45,7 +48,7 @@ public:
 
 	void postModDirectories(bool update_local);
 
-	virtual QIcon iconPixmap() const { return QIcon(IMAGE_PREFERENCES) ; } //MainPage
+	virtual QIcon iconPixmap() const { return RsIcon(IMAGE_PREFERENCES) ; } //MainPage
 	virtual QString pageName() const { return tr("Preferences") ; } //MainPage
 
 protected:
