@@ -267,7 +267,7 @@ static QString getStyle(const QDir &styleDir, const QString &styleVariant, enumG
 
 QString ChatStyle::formatMessage(enumFormatMessage type
                                  , const QString &name
-								 , const QString &gxsid
+                                 , const QString &gxsid
                                  , const QDateTime &timestamp
                                  , const QString &message
                                  , unsigned int flag
