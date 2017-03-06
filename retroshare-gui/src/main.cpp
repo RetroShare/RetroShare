@@ -59,6 +59,23 @@
 #endif
 #endif
 
+#ifdef Q_OS_WIN
+#if QT_VERSION >= QT_VERSION_CHECK (5, 7, 0)
+// see INSTALL.W32 in openssl
+// Needed as workaround for gcc 5.3.0 because the call to GetProcAddress in cryptlib.c finds an function pointer
+// to the not existing function _OPENSSL_isservice in the executable running on Windows 7.
+extern "C" {
+__declspec(dllexport) __cdecl BOOL _OPENSSL_isservice(void)
+{
+	DWORD sess;
+	if (ProcessIdToSessionId(GetCurrentProcessId(),&sess))
+		return sess==0;
+	return FALSE;
+}
+}
+#endif
+#endif
+
 /*** WINDOWS DON'T LIKE THIS - REDEFINES VER numbers.
 #include <gui/qskinobject/qskinobject.h>
 ****/
