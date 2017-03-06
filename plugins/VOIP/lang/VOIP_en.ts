@@ -878,7 +878,7 @@
     </message>
     <message>
         <location line="+24"/>
-        <source>Bandwidth Info received from this peer:%1</source>
+        <source>Bandwidth Info received from this peer: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
