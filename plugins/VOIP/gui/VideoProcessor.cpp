@@ -38,6 +38,7 @@ extern "C" {
 #endif
 #endif
 
+#ifndef MINGW
 #if (LIBAVUTIL_VERSION_MAJOR == 54) && (LIBAVUTIL_VERSION_MINOR == 3) && (LIBAVUTIL_VERSION_MICRO == 0)
 //Ubuntu Vivid use other version of rational.h than GIT with LIBAVUTIL_VERSION_MICRO  == 0
 #define VIVID_RATIONAL_H_VERSION 1
@@ -107,7 +108,7 @@ void av_frame_free(AVFrame **frame)
     av_freep(frame);
 }
 #endif
-
+#endif // MINGW
 
 VideoProcessor::VideoProcessor()
     :_encoded_frame_size(640,480) , vpMtx("VideoProcessor")
