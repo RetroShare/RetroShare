@@ -491,7 +491,7 @@
     </message>
     <message>
         <location line="+1"/>
-        <source>&lt;br/&gt;The VOIP plugin adds VOIP to the private chat window of RetroShare. to use it, proceed as follows:&lt;UL&gt;</source>
+        <source>&lt;br/&gt;The VOIP plugin adds VOIP to the private chat window of RetroShare. To use it, proceed as follows:&lt;UL&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -501,7 +501,7 @@
     </message>
     <message>
         <location line="+1"/>
-        <source>&lt;li&gt; check your microphone by looking at the VU-metters&lt;/li&gt;</source>
+        <source>&lt;li&gt; check your microphone by looking at the VU-meters&lt;/li&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -597,7 +597,7 @@
     </message>
     <message>
         <location line="-412"/>
-        <source>%1 inviting you to start an audio conversation. Do you want Accept or Decline the invitation?</source>
+        <source>%1 is inviting you to start an audio conversation. Do you want to Accept or Decline the invitation?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -617,7 +617,7 @@
     </message>
     <message>
         <location line="+33"/>
-        <source>%1 inviting you to start a video conversation. Do you want Accept or Decline the invitation?</source>
+        <source>%1 is inviting you to start a video conversation. Do you want to Accept or Decline the invitation?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -642,7 +642,7 @@
     </message>
     <message>
         <location line="+589"/>
-        <source>Waiting your friend respond your video call.</source>
+        <source>Waiting for your friend to respond to your video call.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -753,7 +753,7 @@
     </message>
     <message>
         <location line="+20"/>
-        <source>Waiting your friend respond your audio call.</source>
+        <source>Waiting for your friend to respond to your audio call.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
