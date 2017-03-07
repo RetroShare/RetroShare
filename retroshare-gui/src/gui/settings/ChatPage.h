@@ -40,7 +40,7 @@ class ChatPage : public ConfigPage
       virtual void load();
 
 		virtual QPixmap iconPixmap() const { return QPixmap(":/icons/settings/chat.svg") ; }
-		virtual QString pageName() const { return tr("Chat") ; }
+		virtual QString pageName() const { return tr("Chats") ; }
 		virtual QString helpText() const { return ""; }
 
   private slots:
