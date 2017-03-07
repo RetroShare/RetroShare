@@ -133,12 +133,31 @@ void TurtleRouterDialog::updateTunnelRequests(	const std::vector<std::vector<std
 
 		if(parent->text(0).left(14) == tr("Unknown hashes"))
 			unknown_hash_found = true ;
+		
+		float num = strtof(tunnels_info[i][5].c_str(), NULL);  // printFloatNumber
+		char tmp[100] ;
+		std::string units[4] = { "B/s","KB/s","MB/s","GB/s" } ;
+		int k=0 ;
+		while(num >= 800.0f && k<4)
+			num /= 1024.0f,++k;
+		sprintf(tmp,"%3.2f %s",num,units[k].c_str()) ;
 
-		QString str = tr("Tunnel id") + ": " + QString::fromUtf8(tunnels_info[i][0].c_str()) + "\t [" + QString::fromUtf8(tunnels_info[i][2].c_str()) + "] --> [" + QString::fromUtf8(tunnels_info[i][1].c_str()) + "]\t\t " + tr("last transfer") + ": " + QString::fromStdString(tunnels_info[i][4]) + "\t " + tr("Speed") + ": " + QString::fromStdString(tunnels_info[i][5]) ;
+		QString str = tr("Tunnel id") + ": " + QString::fromUtf8(tunnels_info[i][0].c_str()) + "\t [" + QString::fromUtf8(tunnels_info[i][2].c_str()) + "] --> [" + QString::fromUtf8(tunnels_info[i][1].c_str()) + "]\t\t " + tr("last transfer") + ": " + QString::fromStdString(tunnels_info[i][4]) + " " + "\t " + tr("Speed") + ": " + QString::fromStdString(tmp) ;
 		stl.clear() ;
 		stl.push_back(str) ;
-
-		parent->addChild(new QTreeWidgetItem(stl)) ;
+		QTreeWidgetItem *item = new QTreeWidgetItem(stl);
+		parent->addChild(item);
+		QFont font = item->font(0);
+		if(strtol(tunnels_info[i][4].c_str(), NULL, 0)>10) // stuck
+		{
+			font.setItalic(true);
+			item->setFont(0,font);
+		}
+		if(strtol(tunnels_info[i][5].c_str(), NULL, 0)>1000) // fast
+		{
+			font.setBold(true);
+			item->setFont(0,font);
+		}
 	}
 
 	for(uint i=0;i<search_reqs_info.size();++i)
@@ -150,7 +169,7 @@ void TurtleRouterDialog::updateTunnelRequests(	const std::vector<std::vector<std
 
 		top_level_s_requests->addChild(new QTreeWidgetItem(stl)) ;
 	}
-	top_level_s_requests->setText(0, tr("Search requests") + "(" + QString::number(search_reqs_info.size()) + ")" ) ;
+	top_level_s_requests->setText(0, tr("Search requests") + " (" + QString::number(search_reqs_info.size()) + ")" ) ;
 
 	for(uint i=0;i<tunnel_reqs_info.size();++i)
 		if(i+MAX_TUNNEL_REQUESTS_DISPLAY >= tunnel_reqs_info.size() || i < MAX_TUNNEL_REQUESTS_DISPLAY)
@@ -170,7 +189,7 @@ void TurtleRouterDialog::updateTunnelRequests(	const std::vector<std::vector<std
 
 		} 
 
-	top_level_t_requests->setText(0, tr("Tunnel requests") + "("+QString::number(tunnel_reqs_info.size()) + ")") ;
+	top_level_t_requests->setText(0, tr("Tunnel requests") + " ("+QString::number(tunnel_reqs_info.size()) + ")") ;
 
 	QTreeWidgetItem *unknown_hashs_item = findParentHashItem(RsFileHash().toStdString()) ;
 	unknown_hashs_item->setText(0,tr("Unknown hashes") + " (" + QString::number(unknown_hashs_item->childCount())+QString(")")) ;
