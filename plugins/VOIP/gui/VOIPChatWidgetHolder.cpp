@@ -365,7 +365,7 @@ void VOIPChatWidgetHolder::addNewAudioButtonMap(const RsPeerId &peer_id)
 		button_map::iterator it = buttonMapTakeCall.find(QString("a").append(buttonName));
 		if (it == buttonMapTakeCall.end()){
 			mChatWidget->addChatMsg(true, tr("VoIP Status"), QDateTime::currentDateTime(), QDateTime::currentDateTime()
-			                        , tr("%1 inviting you to start an audio conversation. Do you want Accept or Decline the invitation?").arg(buttonName), ChatWidget::MSGTYPE_SYSTEM);
+			                        , tr("%1 is inviting you to start an audio conversation. Do you want to Accept or Decline the invitation?").arg(buttonName), ChatWidget::MSGTYPE_SYSTEM);
 
 			RSButtonOnText *buttonT = mChatWidget->getNewButtonOnTextBrowser(tr("Accept Audio Call"));
 			buttonT->setToolTip(tr("Activate audio"));
@@ -418,7 +418,7 @@ void VOIPChatWidgetHolder::addNewVideoButtonMap(const RsPeerId &peer_id)
 		button_map::iterator it = buttonMapTakeCall.find(QString("v").append(buttonName));
 		if (it == buttonMapTakeCall.end()){
 			mChatWidget->addChatMsg(true, tr("VoIP Status"), QDateTime::currentDateTime(), QDateTime::currentDateTime()
-			                        , tr("%1 inviting you to start a video conversation. Do you want Accept or Decline the invitation?").arg(buttonName), ChatWidget::MSGTYPE_SYSTEM);
+			                        , tr("%1 is inviting you to start a video conversation. Do you want to Accept or Decline the invitation?").arg(buttonName), ChatWidget::MSGTYPE_SYSTEM);
 
 			RSButtonOnText *buttonT = mChatWidget->getNewButtonOnTextBrowser(tr("Accept Video Call"));
 			buttonT->setToolTip(tr("Activate camera"));
@@ -1073,7 +1073,7 @@ void VOIPChatWidgetHolder::timerAudioRingTimeOut()
 		++sendAudioRingTime;
 		if (sendAudioRingTime == 100) sendAudioRingTime = 0;
 		pbAudioRing->setValue(sendAudioRingTime);
-		pbAudioRing->setToolTip(tr("Waiting your friend respond your audio call."));
+		pbAudioRing->setToolTip(tr("Waiting for your friend to respond to your audio call."));
 		pbAudioRing->setVisible(true);
 
 		if (time(NULL) > lastTimePlayOccurs) {
@@ -1131,7 +1131,7 @@ void VOIPChatWidgetHolder::timerVideoRingTimeOut()
 		++sendVideoRingTime;
 		if (sendVideoRingTime == 100) sendVideoRingTime = 0;
 		pbVideoRing->setValue(sendVideoRingTime);
-		pbVideoRing->setToolTip(tr("Waiting your friend respond your video call."));
+		pbVideoRing->setToolTip(tr("Waiting for your friend to respond to your video call."));
 		pbVideoRing->setVisible(true);
 
 		if (time(NULL) > lastTimePlayOccurs) {
