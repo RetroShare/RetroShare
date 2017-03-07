@@ -731,7 +731,7 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 				if(has_id)
 					subitem->setText(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, QString::fromUtf8(idd.mNickname.c_str())) ;
 				else
-					subitem->setText(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, tr("Unknown ID :")+QString::fromStdString(it->first.toStdString())) ;
+					subitem->setText(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, tr("Unknown ID:")+QString::fromStdString(it->first.toStdString())) ;
 
 				QString tooltip ;
 				tooltip += tr("Identity ID: ")+QString::fromStdString(it->first.toStdString()) ;
