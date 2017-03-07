@@ -58,7 +58,7 @@ GeneralPage::GeneralPage(QWidget * parent, Qt::WindowFlags flags) :
         ui.registerRetroShareProtocol->setEnabled(true);
 #ifdef Q_OS_WIN
         ui.adminLabel->setEnabled(true);
-        ui.adminLabel->setToolTip(tr("You have enough right."));
+        ui.adminLabel->setToolTip(tr("You have sufficient rights."));
 #else
         ui.desktopFileMissingLabel->setVisible(false);
 #endif
@@ -66,7 +66,7 @@ GeneralPage::GeneralPage(QWidget * parent, Qt::WindowFlags flags) :
         ui.registerRetroShareProtocol->setEnabled(false);
 #ifdef Q_OS_WIN
         ui.adminLabel->setEnabled(false);
-        ui.adminLabel->setToolTip(tr("You don't have enough right. Run RetroShare as Admin to change this setting."));
+        ui.adminLabel->setToolTip(tr("You don't have sufficient rights. Run RetroShare as Admin to change this setting."));
 #else
         ui.desktopFileMissingLabel->setVisible(true);
 #endif
