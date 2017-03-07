@@ -67,7 +67,7 @@
      <widget class="QRadioButton" name="emailRadioButton">
       <property name="text">
        <string>&amp;Send an Invitation by Email 
- (Your friend will receive an email with instructions how to to download RetroShare)</string>
+ (Your friend will receive an email with instructions how to download RetroShare)</string>
       </property>
      </widget>
     </item>
