@@ -1189,8 +1189,12 @@ void p3FileDatabase::tickRecv()
       {
       case RS_PKT_SUBTYPE_FILELISTS_SYNC_REQ_ITEM: handleDirSyncRequest( dynamic_cast<RsFileListsSyncRequestItem*>(item) ) ;
          break ;
-      case RS_PKT_SUBTYPE_FILELISTS_SYNC_RSP_ITEM: handleDirSyncResponse( dynamic_cast<RsFileListsSyncResponseItem*>(item) ) ;
-         break ;
+      case RS_PKT_SUBTYPE_FILELISTS_SYNC_RSP_ITEM:
+	  {
+          RsFileListsSyncResponseItem *sitem = dynamic_cast<RsFileListsSyncResponseItem*>(item);
+		  handleDirSyncResponse(sitem) ;
+      }
+		  break ;
       default:
          P3FILELISTS_ERROR() << "(EE) unhandled packet subtype " << item->PacketSubType() << " in " << __PRETTY_FUNCTION__ << std::endl;
       }
@@ -1322,6 +1326,7 @@ void p3FileDatabase::splitAndSendItem(RsFileListsSyncResponseItem *ritem)
 }
 
 // This function should not take memory ownership of ritem, so it makes copies.
+// The item that is returned is either created (if different from ritem) or equal to ritem.
 
 RsFileListsSyncResponseItem *p3FileDatabase::recvAndRebuildItem(RsFileListsSyncResponseItem *ritem)
 {
@@ -1393,12 +1398,24 @@ RsFileListsSyncResponseItem *p3FileDatabase::recvAndRebuildItem(RsFileListsSyncR
         return NULL ;
 }
 
-void p3FileDatabase::handleDirSyncResponse(RsFileListsSyncResponseItem *sitem)
+// We employ a trick in this function:
+// - if recvAndRebuildItem(item) returns the same item, it has not created memory, so the incoming item should be the one to
+//   delete, which is done by the caller in every case.
+// - if it returns a different item, it means that the item has been created below when collapsing items, so we should delete both.
+//   to do so, we first delete the incoming item, and replace the pointer by the new created one.
+
+void p3FileDatabase::handleDirSyncResponse(RsFileListsSyncResponseItem*& sitem)
 {
     RsFileListsSyncResponseItem *item = recvAndRebuildItem(sitem) ;
 
     if(!item)
         return ;
+
+    if(item != sitem)
+    {
+        delete sitem ;
+        sitem = item ;
+    }
 
     time_t now = time(NULL);
 
