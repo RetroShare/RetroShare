@@ -1668,14 +1668,14 @@ void RsGenExchange::updateGroup(uint32_t& token, RsGxsGrpItem* grpItem)
 #endif
 }
 
-void RsGenExchange::deleteGroup(uint32_t& token, RsGxsGrpItem* grpItem)
+void RsGenExchange::deleteGroup(uint32_t& token, const RsGxsGroupId& grpId)
 {
-					RS_STACK_MUTEX(mGenMtx) ;
+	RS_STACK_MUTEX(mGenMtx) ;
 	token = mDataAccess->generatePublicToken();
-	mGroupDeletePublish.push_back(GroupDeletePublish(grpItem, token));
+	mGroupDeletePublish.push_back(GroupDeletePublish(grpId, token));
 
 #ifdef GEN_EXCH_DEBUG
-    std::cerr << "RsGenExchange::deleteGroup() token: " << token;
+	std::cerr << "RsGenExchange::deleteGroup() token: " << token;
 	std::cerr << std::endl;
 #endif
 }
@@ -2319,14 +2319,10 @@ void RsGenExchange::processGroupDelete()
 	std::vector<GroupDeletePublish>::iterator vit = mGroupDeletePublish.begin();
 	for(; vit != mGroupDeletePublish.end(); ++vit)
 	{
-		GroupDeletePublish& gdp = *vit;
-		uint32_t token = gdp.mToken;
-		const RsGxsGroupId& groupId = gdp.grpItem->meta.mGroupId;
 		std::vector<RsGxsGroupId> gprIds;
-		gprIds.push_back(groupId);
+		gprIds.push_back(vit->mGroupId);
 		mDataStore->removeGroups(gprIds);
-		toNotify.insert(std::make_pair(
-		                  token, GrpNote(true, groupId)));
+		toNotify.insert(std::make_pair( vit->mToken, GrpNote(true, vit->mGroupId)));
 	}
 
 

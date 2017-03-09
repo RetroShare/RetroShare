@@ -1433,17 +1433,14 @@ bool p3IdService::updateGroup(uint32_t& token, RsGxsIdGroup &group)
 
 bool 	p3IdService::deleteGroup(uint32_t& token, RsGxsIdGroup &group)
 {
-    RsGxsId id = RsGxsId(group.mMeta.mGroupId.toStdString());
-    RsGxsIdGroupItem* item = new RsGxsIdGroupItem();
-
-    item->fromGxsIdGroup(group,false) ;
+    RsGxsId id(group.mMeta.mGroupId);
 
 #ifdef DEBUG_IDS
     std::cerr << "p3IdService::deleteGroup() Deleting RsGxsId: " << id;
     std::cerr << std::endl;
 #endif
 
-    RsGenExchange::deleteGroup(token, item);
+    RsGenExchange::deleteGroup(token,group.mMeta.mGroupId);
 
     // if its in the cache - clear it.
     {

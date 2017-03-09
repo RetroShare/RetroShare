@@ -519,7 +519,7 @@ protected:
      * @param token
      * @param grpItem
      */
-    void deleteGroup(uint32_t& token, RsGxsGrpItem* grpItem);
+    void deleteGroup(uint32_t& token, const RsGxsGroupId &grpId);
 
 public:
     /*!
