@@ -545,6 +545,8 @@ bool AEAD_chacha20_sha256(uint8_t key[32], uint8_t nonce[12],uint8_t *data,uint3
        HMAC_Update(&hmac_ctx,aad,aad_size) ;
        HMAC_Update(&hmac_ctx,data,data_size) ;
        HMAC_Final(&hmac_ctx,computed_tag,&md_size) ;
+
+       HMAC_CTX_cleanup(&hmac_ctx) ;
 #else
        HMAC_CTX *hmac_ctx = HMAC_CTX_new();
 
@@ -576,6 +578,8 @@ bool AEAD_chacha20_sha256(uint8_t key[32], uint8_t nonce[12],uint8_t *data,uint3
        HMAC_Update(&hmac_ctx,aad,aad_size) ;
        HMAC_Update(&hmac_ctx,data,data_size) ;
        HMAC_Final(&hmac_ctx,computed_tag,&md_size) ;
+
+       HMAC_CTX_cleanup(&hmac_ctx) ;
 #else
        HMAC_CTX *hmac_ctx = HMAC_CTX_new();
 
