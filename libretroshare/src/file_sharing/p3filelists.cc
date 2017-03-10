@@ -1193,6 +1193,7 @@ void p3FileDatabase::tickRecv()
 	  {
           RsFileListsSyncResponseItem *sitem = dynamic_cast<RsFileListsSyncResponseItem*>(item);
 		  handleDirSyncResponse(sitem) ;
+          item = sitem ;
       }
 		  break ;
       default:
