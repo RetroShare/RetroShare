@@ -29,7 +29,7 @@
     <message>
         <location line="+53"/>
         <source>Clear cache</source>
-        <translation type="unfinished"/>
+        <translation>清除缓存</translation>
     </message>
     <message>
         <location line="+50"/>
@@ -623,12 +623,12 @@
     <message>
         <location line="+3"/>
         <source>Feed is a folder.</source>
-        <translation type="unfinished"/>
+        <translation>是文件夹</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Feed is no folder.</source>
-        <translation type="unfinished"/>
+        <translation>不是文件夹</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -714,7 +714,7 @@
     <message>
         <location line="+3"/>
         <source>Forum has no author</source>
-        <translation type="unfinished"/>
+        <translation>论坛没有作者</translation>
     </message>
     <message>
         <location line="+4"/>

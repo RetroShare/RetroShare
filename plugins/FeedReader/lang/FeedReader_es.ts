@@ -9,7 +9,7 @@
     <message>
         <location line="+79"/>
         <source>Authentication (not yet supported)</source>
-        <translation>Autenticación (no soportado)</translation>
+        <translation>Autenticación (aún no soportado)</translation>
     </message>
     <message>
         <location line="+6"/>
