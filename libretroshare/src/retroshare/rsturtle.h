@@ -129,6 +129,8 @@ class RsTurtle
 		///
 		virtual void registerTunnelService(RsTurtleClientService *service) = 0;
 
+		virtual std::string getPeerNameForVirtualPeerId(const RsPeerId& virtual_peer_id) = 0;
+		
 		// Get info from the turtle router. I use std strings to hide the internal structs.
 		//
 		virtual void getInfo(std::vector<std::vector<std::string> >&,std::vector<std::vector<std::string> >&,

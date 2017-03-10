@@ -275,6 +275,8 @@ class p3turtle: public p3Service, public RsTurtle, public p3Config
 		///
 		virtual void registerTunnelService(RsTurtleClientService *service) ;
 
+		virtual std::string getPeerNameForVirtualPeerId(const RsPeerId& virtual_peer_id);
+		
 		/// get info about tunnels
 		virtual void getInfo(std::vector<std::vector<std::string> >&,
 									std::vector<std::vector<std::string> >&,

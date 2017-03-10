@@ -2001,6 +2001,25 @@ void p3turtle::getTrafficStatistics(TurtleTrafficStatisticsInfo& info) const
 	}
 }
 
+std::string p3turtle::getPeerNameForVirtualPeerId(const RsPeerId& virtual_peer_id)
+{
+	std::string name = "unknown";
+	std::map<TurtleVirtualPeerId,TurtleTunnelId>::const_iterator it(_virtual_peers.find(virtual_peer_id)) ;
+	if(it != _virtual_peers.end())
+	{
+		TurtleTunnelId tunnel_id = it->second ;
+		std::map<TurtleTunnelId,TurtleTunnel>::iterator it2( _local_tunnels.find(tunnel_id) ) ;	
+		if(it2 != _local_tunnels.end())
+		{
+			if(it2->second.local_src == _own_id)
+				mLinkMgr->getPeerName(it2->second.local_dst,name);
+			else
+				mLinkMgr->getPeerName(it2->second.local_src,name);
+		}
+	}
+	return name;
+}
+
 void p3turtle::getInfo(	std::vector<std::vector<std::string> >& hashes_info,
 								std::vector<std::vector<std::string> >& tunnels_info,
 								std::vector<TurtleRequestDisplayInfo >& search_reqs_info,

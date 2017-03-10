@@ -58,6 +58,8 @@
 #include <retroshare/rsdisc.h>
 #include <retroshare/rsplugin.h>
 
+#include <retroshare/rsturtle.h>
+
 /* Images for context menu icons */
 #define IMAGE_INFO                 ":/images/fileinfo.png"
 #define IMAGE_CANCEL               ":/images/delete.png"
@@ -1388,10 +1390,11 @@ QString TransfersDialog::getPeerName(const RsPeerId& id) const
 	//
 	if(res == "")
     {
+		res = QString::fromStdString(rsTurtle->getPeerNameForVirtualPeerId(id));
         if(rsFiles->isEncryptedSource(id))
-        return tr("Anonymous end-to-end encrypted tunnel 0x")+QString::fromStdString(id.toStdString()).left(8) ;
+		return tr("e2ee tunnel ")+QString::fromStdString(id.toStdString()).left(8) + " via " +res ;
             else
-        return tr("Anonymous tunnel 0x")+QString::fromStdString(id.toStdString()).left(8) ;
+		return tr("Anon tunnel ")+QString::fromStdString(id.toStdString()).left(8) + " via " +res ;
     }
 	else
 		return res ;
