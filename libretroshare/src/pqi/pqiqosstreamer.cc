@@ -78,7 +78,7 @@ void *pqiQoSstreamer::locked_pop_out_data(uint32_t max_slice_size, uint32_t& siz
 
 	if(out != NULL) 
 	{
-		_total_item_size -= getRsItemSize(out) ;
+		_total_item_size -= size ;
         
         	if(ends)
 			--_total_item_count ;
