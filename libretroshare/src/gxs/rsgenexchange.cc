@@ -1322,11 +1322,9 @@ bool RsGenExchange::getGroupData(const uint32_t &token, std::vector<RsGxsGrpItem
 					delete item;
 				}
 			}
-			else
-			{
-				std::cerr << "RsGenExchange::getGroupData() ERROR deserialising item. Item type is probably not handled. Data is: " << RsUtil::BinToHex((unsigned char*)data.bin_data,std::min(50u,data.bin_len)) << ((data.bin_len>50)?"...":"") << std::endl;
-				std::cerr << std::endl;
-			}
+			else if(data.bin_len > 0)
+				std::cerr << "(EE) RsGenExchange::getGroupData() Item type is probably not handled. Data is: " << RsUtil::BinToHex((unsigned char*)data.bin_data,std::min(50u,data.bin_len)) << ((data.bin_len>50)?"...":"") << std::endl;
+
 			delete *lit;
 		}
 	}
