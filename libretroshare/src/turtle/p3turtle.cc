@@ -2003,12 +2003,12 @@ void p3turtle::getTrafficStatistics(TurtleTrafficStatisticsInfo& info) const
 
 std::string p3turtle::getPeerNameForVirtualPeerId(const RsPeerId& virtual_peer_id)
 {
+	RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
 	std::string name = "unknown";
 	std::map<TurtleVirtualPeerId,TurtleTunnelId>::const_iterator it(_virtual_peers.find(virtual_peer_id)) ;
 	if(it != _virtual_peers.end())
 	{
-		TurtleTunnelId tunnel_id = it->second ;
-		std::map<TurtleTunnelId,TurtleTunnel>::iterator it2( _local_tunnels.find(tunnel_id) ) ;	
+		std::map<TurtleTunnelId,TurtleTunnel>::iterator it2( _local_tunnels.find(it->second) ) ;	
 		if(it2 != _local_tunnels.end())
 		{
 			if(it2->second.local_src == _own_id)

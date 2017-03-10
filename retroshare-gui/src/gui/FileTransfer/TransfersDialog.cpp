@@ -1392,9 +1392,9 @@ QString TransfersDialog::getPeerName(const RsPeerId& id) const
     {
 		res = QString::fromStdString(rsTurtle->getPeerNameForVirtualPeerId(id));
         if(rsFiles->isEncryptedSource(id))
-		return tr("e2ee tunnel ")+QString::fromStdString(id.toStdString()).left(8) + " via " +res ;
+		return tr("Anonymous E2EE tunnel ")+QString::fromStdString(id.toStdString()).left(8) + " via " +res ;
             else
-		return tr("Anon tunnel ")+QString::fromStdString(id.toStdString()).left(8) + " via " +res ;
+		return tr("Anonymous tunnel id # ")+QString::fromStdString(id.toStdString()).left(8) + " via " +res ;
     }
 	else
 		return res ;
