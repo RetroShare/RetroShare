@@ -195,7 +195,9 @@ bool RsGxsIntegrityCheck::check()
 
             if(stats.mSuppliers == 0 && stats.mMaxVisibleCount == 0 && stats.mGrpAutoSync)
             {
+#ifdef DEBUG_GXSUTIL
                 GXSUTIL_DEBUG() << "Scheduling group \"" << grp->metaData->mGroupName << "\" ID=" << grp->grpId << " in service " << std::hex << mGenExchangeClient->serviceType() << std::dec << " for deletion because it has no suppliers not any visible data at friends." << std::endl;
+#endif
 				grpsToDel.push_back(grp->grpId);
             }
         }

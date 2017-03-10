@@ -30,6 +30,7 @@
 #include "rsgenexchange.h"
 #include "gxssecurity.h"
 #include "util/contentvalue.h"
+#include "util/rsprint.h"
 #include "retroshare/rsgxsflags.h"
 #include "retroshare/rsgxscircles.h"
 #include "retroshare/rsgrouter.h"
@@ -1323,7 +1324,7 @@ bool RsGenExchange::getGroupData(const uint32_t &token, std::vector<RsGxsGrpItem
 			}
 			else
 			{
-				std::cerr << "RsGenExchange::getGroupData() ERROR deserialising item";
+				std::cerr << "RsGenExchange::getGroupData() ERROR deserialising item. Item type is probably not handled. Data is: " << RsUtil::BinToHex((unsigned char*)data.bin_data,std::min(50u,data.bin_len)) << ((data.bin_len>50)?"...":"") << std::endl;
 				std::cerr << std::endl;
 			}
 			delete *lit;

@@ -2790,7 +2790,9 @@ bool p3PeerMgrIMPL::removeBannedIps()
 {
     RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
+#ifdef PEER_DEBUG
     std::cerr << "Cleaning known IPs for all peers." << std::endl;
+#endif
 
     bool changed = false ;
     for( std::map<RsPeerId, peerState>::iterator it = mFriendList.begin(); it != mFriendList.end(); ++it)

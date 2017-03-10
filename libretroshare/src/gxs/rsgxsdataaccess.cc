@@ -50,7 +50,7 @@ bool RsGxsDataAccess::requestGroupInfo(uint32_t &token, uint32_t ansType, const 
 {
     if(groupIds.empty())
     {
-    	std::cerr << "Group Id list is empty" << std::endl;
+    	std::cerr << "(WW) Group Id list is empty" << std::endl;
         return false;
     }
 
