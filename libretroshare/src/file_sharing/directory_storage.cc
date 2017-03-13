@@ -306,6 +306,12 @@ void DirectoryStorage::checkSave()
 /*                                           Local Directory Storage                                              */
 /******************************************************************************************************************/
 
+LocalDirectoryStorage::LocalDirectoryStorage(const std::string& fname,const RsPeerId& own_id)
+    : DirectoryStorage(own_id,fname)
+{
+	mTSChanged = false ;
+}
+
 RsFileHash LocalDirectoryStorage::makeEncryptedHash(const RsFileHash& hash)
 {
     return RsDirUtil::sha1sum(hash.toByteArray(),hash.SIZE_IN_BYTES);

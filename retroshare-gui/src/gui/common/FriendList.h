@@ -101,6 +101,8 @@ public slots:
 private slots:
     void peerTreeColumnVisibleChanged(int column, bool visible);
     void peerTreeItemCollapsedExpanded(QTreeWidgetItem *item);
+	void collapseItem(QTreeWidgetItem *item);
+	void expandItem(QTreeWidgetItem *item);
 
 protected:
     void changeEvent(QEvent *e);

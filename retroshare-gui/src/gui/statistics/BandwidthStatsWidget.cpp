@@ -24,9 +24,9 @@ BandwidthStatsWidget::BandwidthStatsWidget(QWidget *parent)
     
     ui.logScale_CB->setChecked(true) ;
 
-    ui.bwgraph_BW->source()->setSelector(BWGraphSource::SELECTOR_TYPE_FRIEND,BWGraphSource::GRAPH_TYPE_SUM) ;
-    ui.bwgraph_BW->source()->setSelector(BWGraphSource::SELECTOR_TYPE_SERVICE,BWGraphSource::GRAPH_TYPE_SUM) ;
-    ui.bwgraph_BW->source()->setUnit(BWGraphSource::UNIT_KILOBYTES) ;
+    ui.bwgraph_BW->setSelector(BWGraphSource::SELECTOR_TYPE_FRIEND,BWGraphSource::GRAPH_TYPE_SUM) ;
+    ui.bwgraph_BW->setSelector(BWGraphSource::SELECTOR_TYPE_SERVICE,BWGraphSource::GRAPH_TYPE_SUM) ;
+    ui.bwgraph_BW->setUnit(BWGraphSource::UNIT_KILOBYTES) ;
 
     // Setup connections
 
@@ -139,7 +139,7 @@ void BandwidthStatsWidget::updateComboBoxes()
 void BandwidthStatsWidget::updateFriendSelection(int n)
 {
     if(n == 0)
-        ui.bwgraph_BW->source()->setSelector(BWGraphSource::SELECTOR_TYPE_FRIEND,BWGraphSource::GRAPH_TYPE_SUM) ;
+        ui.bwgraph_BW->setSelector(BWGraphSource::SELECTOR_TYPE_FRIEND,BWGraphSource::GRAPH_TYPE_SUM) ;
     else if(n == 1)
     {
         // 1 means all. So make sure the other combo is not set on ALL. If so, switch it to sum.
@@ -147,19 +147,19 @@ void BandwidthStatsWidget::updateFriendSelection(int n)
         if(ui.service_CB->currentIndex() == 1)
             ui.service_CB->setCurrentIndex(0) ;
 
-        ui.bwgraph_BW->source()->setSelector(BWGraphSource::SELECTOR_TYPE_FRIEND,BWGraphSource::GRAPH_TYPE_ALL) ;
+        ui.bwgraph_BW->setSelector(BWGraphSource::SELECTOR_TYPE_FRIEND,BWGraphSource::GRAPH_TYPE_ALL) ;
     }
     else
     {
         int ci = ui.friend_CB->currentIndex() ;
 
-        ui.bwgraph_BW->source()->setSelector(BWGraphSource::SELECTOR_TYPE_FRIEND,BWGraphSource::GRAPH_TYPE_SINGLE,ui.friend_CB->itemData(ci,Qt::UserRole).toString().toStdString()) ;
+        ui.bwgraph_BW->setSelector(BWGraphSource::SELECTOR_TYPE_FRIEND,BWGraphSource::GRAPH_TYPE_SINGLE,ui.friend_CB->itemData(ci,Qt::UserRole).toString().toStdString()) ;
     }
 }
 void BandwidthStatsWidget::updateServiceSelection(int n)
 {
     if(n == 0)
-        ui.bwgraph_BW->source()->setSelector(BWGraphSource::SELECTOR_TYPE_SERVICE,BWGraphSource::GRAPH_TYPE_SUM) ;
+        ui.bwgraph_BW->setSelector(BWGraphSource::SELECTOR_TYPE_SERVICE,BWGraphSource::GRAPH_TYPE_SUM) ;
     else if(n == 1)
     {
         // 1 means all. So make sure the other combo is not set on ALL. If so, switch it to sum.
@@ -167,27 +167,27 @@ void BandwidthStatsWidget::updateServiceSelection(int n)
         if(ui.friend_CB->currentIndex() == 1)
             ui.friend_CB->setCurrentIndex(0) ;
 
-        ui.bwgraph_BW->source()->setSelector(BWGraphSource::SELECTOR_TYPE_SERVICE,BWGraphSource::GRAPH_TYPE_ALL) ;
+        ui.bwgraph_BW->setSelector(BWGraphSource::SELECTOR_TYPE_SERVICE,BWGraphSource::GRAPH_TYPE_ALL) ;
     }
     else
     {
         int ci = ui.service_CB->currentIndex() ;
 
-        ui.bwgraph_BW->source()->setSelector(BWGraphSource::SELECTOR_TYPE_SERVICE,BWGraphSource::GRAPH_TYPE_SINGLE,ui.service_CB->itemData(ci,Qt::UserRole).toString().toStdString()) ;
+        ui.bwgraph_BW->setSelector(BWGraphSource::SELECTOR_TYPE_SERVICE,BWGraphSource::GRAPH_TYPE_SINGLE,ui.service_CB->itemData(ci,Qt::UserRole).toString().toStdString()) ;
     }
 }
 
 void BandwidthStatsWidget::updateUpDownSelection(int n)
 {
     if(n==0)
-        ui.bwgraph_BW->source()->setDirection(BWGraphSource::DIRECTION_UP) ;
+        ui.bwgraph_BW->setDirection(BWGraphSource::DIRECTION_UP) ;
     else
-        ui.bwgraph_BW->source()->setDirection(BWGraphSource::DIRECTION_DOWN) ;
+        ui.bwgraph_BW->setDirection(BWGraphSource::DIRECTION_DOWN) ;
 }
 void BandwidthStatsWidget::updateUnitSelection(int n)
 {
     if(n==0)
-        ui.bwgraph_BW->source()->setUnit(BWGraphSource::UNIT_KILOBYTES) ;
+        ui.bwgraph_BW->setUnit(BWGraphSource::UNIT_KILOBYTES) ;
     else
-        ui.bwgraph_BW->source()->setUnit(BWGraphSource::UNIT_COUNT) ;
+        ui.bwgraph_BW->setUnit(BWGraphSource::UNIT_COUNT) ;
 }

@@ -185,4 +185,19 @@ class SleeperThread : public QThread{
     }
 };
 
+template<class T> class SignalsBlocker
+{
+public:
+	SignalsBlocker(T *blocked) : blocked(blocked), previous(blocked->blockSignals(true)) {}
+	~SignalsBlocker() { blocked->blockSignals(previous); }
+
+	T *operator->() { return blocked; }
+
+private:
+	T *blocked;
+	bool previous;
+};
+
+template<class T> inline SignalsBlocker<T> whileBlocking(T *blocked) { return SignalsBlocker<T>(blocked); }
+
 #endif

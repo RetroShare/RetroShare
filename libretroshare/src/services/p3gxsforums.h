@@ -117,6 +117,7 @@ bool generateGroup(uint32_t &token, std::string groupName);
 	int mGenCount;
 	std::vector<ForumDummyRef> mGenRefs;
 	RsGxsMessageId mGenThreadId;
+    std::set<RsGxsGroupId> mKnownForums ;
 	
 };
 

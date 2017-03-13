@@ -218,6 +218,7 @@ bool generateGroup(uint32_t &token, std::string groupName);
 	RsGxsMessageId mGenThreadId;
 
 	p3GxsCommentService *mCommentService;	
+    std::set<RsGxsGroupId> mKnownChannels;
 };
 
 #endif 

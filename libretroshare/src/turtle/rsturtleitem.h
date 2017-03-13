@@ -159,6 +159,7 @@ class RsTurtleGenericTunnelItem: public RsTurtleItem
 {
 	public:
         RsTurtleGenericTunnelItem(uint8_t sub_packet_id) : RsTurtleItem(sub_packet_id), direction(0), tunnel_id(0) { setPriorityLevel(QOS_PRIORITY_RS_TURTLE_GENERIC_ITEM);}
+        virtual ~RsTurtleGenericTunnelItem() {}
 
 		typedef uint32_t Direction ;
 		static const Direction DIRECTION_CLIENT = 0x001 ;

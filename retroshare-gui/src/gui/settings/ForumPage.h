@@ -37,7 +37,7 @@ public:
 	virtual void load();
 
 	virtual QPixmap iconPixmap() const { return QPixmap(":/icons/settings/forums.svg") ; }
-	virtual QString pageName() const { return tr("Forum") ; }
+	virtual QString pageName() const { return tr("Forums") ; }
 	virtual QString helpText() const { return ""; }
 
 protected slots:

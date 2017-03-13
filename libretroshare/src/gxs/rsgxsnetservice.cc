@@ -1451,7 +1451,9 @@ bool RsGxsNetService::saveList(bool& cleanup, std::list<RsItem*>& save)
 {
 	RS_STACK_MUTEX(mNxsMutex) ;
 
+#ifdef NXS_NET_DEBUG_0
     std::cerr << "RsGxsNetService::saveList()..." << std::endl;
+#endif
 
     // hardcore templates
     std::transform(mClientGrpUpdateMap.begin(), mClientGrpUpdateMap.end(), std::back_inserter(save), get_second<ClientGrpMap,RsGxsGrpUpdateItem>(mServType,&RsGxsGrpUpdateItem::peerID));
@@ -3818,10 +3820,7 @@ void RsGxsNetService::handleRecvSyncGroup(RsNxsSyncGrpReqItem *item)
 				    uint32_t status = RS_NXS_ITEM_ENCRYPTION_STATUS_UNKNOWN ;
 
 				    if(encryptSingleNxsItem(gItem, grpMeta->mCircleId,mit->first, encrypted_item,status))
-				    {
 					    itemL.push_back(encrypted_item) ;
-					    delete gItem ;
-				    }
 				    else
 				    {
 					    switch(status)
@@ -3836,6 +3835,7 @@ void RsGxsNetService::handleRecvSyncGroup(RsNxsSyncGrpReqItem *item)
 						    std::cerr << "    Could not encrypt item for grpId " << grpMeta->mGroupId << " for circle " << grpMeta->mCircleId << ". Not sending it." << std::endl;
 					    }
 				    }
+					delete gItem ;
 			    }
 			    else
 				    itemL.push_back(gItem);

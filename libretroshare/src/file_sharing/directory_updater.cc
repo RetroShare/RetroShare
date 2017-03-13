@@ -48,6 +48,8 @@ LocalDirectoryUpdater::LocalDirectoryUpdater(HashStorage *hc,LocalDirectoryStora
     // Can be left to false, but setting it to true will force to re-hash any file that has been left unhashed in the last session.
 
     mNeedsFullRecheck = true ;
+    mIsChecking = false ;
+    mForceUpdate = false ;
 }
 
 bool LocalDirectoryUpdater::isEnabled() const
@@ -70,9 +72,9 @@ void LocalDirectoryUpdater::setEnabled(bool b)
 void LocalDirectoryUpdater::data_tick()
 {
     time_t now = time(NULL) ;
-    if (mIsEnabled)
-    {
 
+    if (mIsEnabled || mForceUpdate)
+    {
         if(now > mDelayBetweenDirectoryUpdates + mLastSweepTime)
         {
             if(sweepSharedDirectories())
@@ -80,6 +82,7 @@ void LocalDirectoryUpdater::data_tick()
                 mNeedsFullRecheck = false;
                 mLastSweepTime = now ;
                 mSharedDirectories->notifyTSChanged();
+                mForceUpdate = false ;
             }
             else
                 std::cerr << "(WW) sweepSharedDirectories() failed. Will do it again in a short time." << std::endl;
@@ -97,7 +100,8 @@ void LocalDirectoryUpdater::data_tick()
 
 void LocalDirectoryUpdater::forceUpdate()
 {
-    mLastSweepTime = 0;
+    mForceUpdate = true ;
+	mLastSweepTime = 0 ;
 }
 
 bool LocalDirectoryUpdater::sweepSharedDirectories()
@@ -107,6 +111,8 @@ bool LocalDirectoryUpdater::sweepSharedDirectories()
         std::cerr << "(EE) no salt value in LocalDirectoryUpdater. Is that a bug?" << std::endl;
         return false;
     }
+
+    mIsChecking = true ;
 
     RsServer::notify()->notifyListPreChange(NOTIFY_LIST_DIRLIST_LOCAL, 0);
 #ifdef DEBUG_LOCAL_DIR_UPDATER
@@ -149,6 +155,8 @@ bool LocalDirectoryUpdater::sweepSharedDirectories()
     }
 
     RsServer::notify()->notifyListChange(NOTIFY_LIST_DIRLIST_LOCAL, 0);
+    mIsChecking = false ;
+
     return true ;
 }
 

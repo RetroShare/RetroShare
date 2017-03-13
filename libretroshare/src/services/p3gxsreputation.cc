@@ -166,6 +166,7 @@ p3GxsReputation::p3GxsReputation(p3LinkMgr *lm)
     mLastReputationConfigSaved = 0;
     mChanged = false ;
     mMaxPreventReloadBannedIds = 0 ; // default is "never"
+	mLastCleanUp = time(NULL) ;
 }
 
 const std::string GXS_REPUTATION_APP_NAME = "gxsreputation";
@@ -1095,7 +1096,9 @@ bool p3GxsReputation::saveList(bool& cleanup, std::list<RsItem*> &savelist)
 	cleanup = true;
 	RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
 
+#ifdef DEBUG_REPUTATION
     std::cerr << "p3GxsReputation::saveList()" << std::endl;
+#endif
 
 	/* save */
 	std::map<RsPeerId, ReputationConfig>::iterator it;

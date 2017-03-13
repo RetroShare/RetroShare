@@ -225,7 +225,7 @@ void VOIPToasterNotify::voipBandwidthInfoReceived(const RsPeerId &peer_id,int by
 	if (!mToasterBandwidthInfo.contains(peer_id)){
 		ToasterItemData toasterItemData;
 		toasterItemData.mPeerId = peer_id;
-		toasterItemData.mMsg = tr("Bandwidth Info received from this peer:%1").arg(bytes_per_sec);
+		toasterItemData.mMsg = tr("Bandwidth Info received from this peer: %1").arg(bytes_per_sec);
 
 		mPendingToasterBandwidthInfo.push_back(toasterItemData);
 		mToasterBandwidthInfo.insert(peer_id, NULL);

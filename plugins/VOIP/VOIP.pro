@@ -35,7 +35,7 @@ win32 {
 	DEPENDPATH += . $$INC_DIR
 	INCLUDEPATH += . $$INC_DIR
 
-	OPENCV_VERSION = "2413"
+	OPENCV_VERSION = "320"
 	USE_PRECOMPILED_LIBS =
 	for(lib, LIB_DIR) {
 #message(Scanning $$lib)
@@ -44,7 +44,7 @@ win32 {
 				message(Get pre-compiled opencv $$OPENCV_VERSION libraries here:)
 				message($$lib)
 				LIBS += -L"$$lib/opencv"
-				LIBS += -lopencv_core$$OPENCV_VERSION -lopencv_highgui$$OPENCV_VERSION -lopencv_imgproc$$OPENCV_VERSION
+				LIBS += -lopencv_core$$OPENCV_VERSION -lopencv_highgui$$OPENCV_VERSION -lopencv_imgproc$$OPENCV_VERSION -lopencv_videoio$$OPENCV_VERSION -lopencv_imgcodecs$$OPENCV_VERSION -llibwebp
 				USE_PRECOMPILED_LIBS = 1
 			}
 		}

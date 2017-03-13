@@ -202,7 +202,7 @@ PluginManager::pluginWidget(QString pluginName)
             }
             else
             {
-                QString em=tr("Error: instance '%1'can't create a widget")
+                QString em=tr("Error: instance '%1' can't create a widget")
                             .arg( pluginName );
                 emit errorAppeared( em );
 		return 0;
@@ -286,7 +286,7 @@ PluginManager::removePlugin(QString pluginName)
         if (!fl.remove())
         {
 	    QString em = tr("Error: failed to remove file %1"
-	                         "(uninstalling plugin '%2')")
+	                         " (uninstalling plugin '%2')")
                             .arg(fn).arg(pluginName);
             emit errorAppeared( em);
         }
@@ -298,7 +298,7 @@ PluginManager::removePlugin(QString pluginName)
     }
     else
     {
-       QString em = tr("Error(uninstall): no plugin with name '%1' found")
+       QString em = tr("Error (uninstall): no plugin with name '%1' found")
 		      .arg(pluginName);
        emit errorAppeared( em );
     }
@@ -313,7 +313,7 @@ PluginManager::installPlugin(QString fileName)
    
     if (!QFile::exists( fileName) )
     {       
-       QString em = tr("Error(installation): plugin file %1 doesn't exist")
+       QString em = tr("Error (installation): plugin file %1 doesn't exist")
  		      .arg( fileName );
 
        emit errorAppeared( em );

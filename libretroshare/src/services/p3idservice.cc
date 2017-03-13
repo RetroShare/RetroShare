@@ -407,11 +407,15 @@ public:
         bool is_signed_id = (bool)(entry.details.mFlags & RS_IDENTITY_FLAGS_PGP_LINKED) ;
         bool is_a_contact = (bool)(entry.details.mFlags & RS_IDENTITY_FLAGS_IS_A_CONTACT) ;
 
+#ifdef DEBUG_IDS
         std::cerr << "Identity: " << gxs_id << ": banned: " << is_id_banned << ", own: " << is_own_id << ", contact: " << is_a_contact << ", signed: " << is_signed_id << ", known: " << is_known_id;
+#endif
 
         if(is_own_id || is_a_contact)
         {
+#ifdef DEBUG_IDS
             std::cerr << " => kept" << std::endl;
+#endif
             return true ;
         }
 
@@ -439,15 +443,21 @@ public:
         else
             max_keep_time = MAX_KEEP_KEYS_DEFAULT ;
 
+#ifdef DEBUG_IDS
         std::cerr << ". Max keep = " << max_keep_time/86400 << " days. Unused for " << (now - last_usage_ts + 86399)/86400 << " days " ;
+#endif
 
         if(should_check && now > last_usage_ts + max_keep_time)
         {
+#ifdef DEBUG_IDS
             std::cerr << " => delete " << std::endl;
+#endif
             ids_to_delete.push_back(gxs_id) ;
         }
+#ifdef DEBUG_IDS
         else
             std::cerr << " => keep " << std::endl;
+#endif
 
         return true;
     }
@@ -484,7 +494,9 @@ void p3IdService::cleanUnusedKeys()
 
     for(std::list<RsGxsId>::const_iterator it(ids_to_delete.begin());it!=ids_to_delete.end();++it)
     {
+#ifdef DEBUG_IDS
         std::cerr << "Deleting identity " << *it << " which is too old." << std::endl;
+#endif
         uint32_t token ;
         RsGxsIdGroup group;
         group.mMeta.mGroupId=RsGxsGroupId(*it);
@@ -518,7 +530,9 @@ bool p3IdService::acceptNewGroup(const RsGxsGrpMetaData *grpMeta)
 {
     bool res = !rsReputations->isIdentityBanned(RsGxsId(grpMeta->mGroupId)) ;
 
+#ifdef DEBUG_IDS
     std::cerr << "p3IdService::acceptNewGroup: ID=" << grpMeta->mGroupId << ": " << (res?"ACCEPTED":"DENIED") << std::endl;
+#endif
 
     return res ;
 }
@@ -866,7 +880,9 @@ bool p3IdService::requestKey(const RsGxsId &id, const std::list<RsPeerId>& peers
         // Normally we should call getIdDetails(), but since the key is not known, we need to digg a possibly old information
         // from the reputation system, which keeps its own list of banned keys. Of course, the owner ID is not known at this point.
 
+#ifdef DEBUG_IDS
         std::cerr << "p3IdService::requesting key " << id <<std::endl;
+#endif
 
         RsReputations::ReputationInfo info ;
         rsReputations->getReputationInfo(id,RsPgpId(),info) ;
@@ -1625,17 +1641,14 @@ bool p3IdService::updateGroup(uint32_t& token, RsGxsIdGroup &group)
 
 bool 	p3IdService::deleteGroup(uint32_t& token, RsGxsIdGroup &group)
 {
-    RsGxsId id = RsGxsId(group.mMeta.mGroupId.toStdString());
-    RsGxsIdGroupItem* item = new RsGxsIdGroupItem();
-
-    item->fromGxsIdGroup(group,false) ;
+    RsGxsId id(group.mMeta.mGroupId);
 
 #ifdef DEBUG_IDS
     std::cerr << "p3IdService::deleteGroup() Deleting RsGxsId: " << id;
     std::cerr << std::endl;
 #endif
 
-    RsGenExchange::deleteGroup(token, item);
+    RsGenExchange::deleteGroup(token,group.mMeta.mGroupId);
 
     // if its in the cache - clear it.
     {

@@ -1609,7 +1609,7 @@ void ChatWidget::updateStatus(const QString &peer_id, int status)
 	    switch (status) {
 	    case RS_STATUS_OFFLINE:
 		    ui->infoFrame->setVisible(true);
-		    ui->infoLabel->setText(peerName + " " + tr("appears to be Offline.") +"\n" + tr("Messages you send will be delivered after Friend is again Online"));
+		    ui->infoLabel->setText(peerName + " " + tr("appears to be Offline.") +"\n" + tr("Messages you send will be delivered after Friend is again Online."));
 		    break;
 
 	    case RS_STATUS_INACTIVE:
@@ -1727,9 +1727,9 @@ void ChatWidget::quote()
 	if(text.length() > 0)
 	{
 		QStringList sl = text.split(QRegExp("[\r\n]"),QString::SkipEmptyParts);
-		text = sl.join("\n>");
-		text.replace(QChar(-4),"");//Char used when image on text.
-		emit ui->chatTextEdit->append(QString(">") + text);
+		text = sl.join("\n> ");
+		text.replace(QChar(-4)," ");//Char used when image on text.
+		emit ui->chatTextEdit->append(QString("> ") + text);
 	}
 }
 

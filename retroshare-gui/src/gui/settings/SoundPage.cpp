@@ -105,11 +105,16 @@ void SoundPage::updateSounds()
 {
 	QTreeWidgetItemIterator itemIterator(ui.eventTreeWidget);
 	QTreeWidgetItem *item = NULL;
-	while ((item = *itemIterator) != NULL) {
+
+	while ((item = *itemIterator) != NULL)
+    {
 		++itemIterator;
 
-		if (item->type() == TYPE_ITEM) {
+		if (item->type() == TYPE_ITEM)
+        {
 			const QString event = item->data(COLUMN_DATA, ROLE_EVENT).toString();
+
+            std::cerr << "Enabling event \"" << event.toStdString() << "\" to " << item->checkState(COLUMN_NAME) << ", to file \"" << item->text(COLUMN_FILENAME).toStdString() << std::endl;
 			SoundManager::setEventEnabled(event, item->checkState(COLUMN_NAME) == Qt::Checked);
 			SoundManager::setEventFilename(event, item->text(COLUMN_FILENAME));
 		}
@@ -119,7 +124,9 @@ void SoundPage::updateSounds()
 /** Loads the settings for this page */
 void SoundPage::load()
 {
-	ui.eventTreeWidget->clear();
+	SignalsBlocker<QTreeWidget> B(ui.eventTreeWidget) ;
+
+    ui.eventTreeWidget->clear();
 
 	/* add sound events */
 	SoundEvents events;
@@ -160,7 +167,7 @@ void SoundPage::eventChanged(QTreeWidgetItem *current, QTreeWidgetItem */*previo
 	ui.eventName->setText(eventName);
 
 	QString event = current->data(COLUMN_DATA, ROLE_EVENT).toString();
-	ui.defaultButton->setDisabled(SoundManager::defaultFilename(event, true).isEmpty());
+	whileBlocking(ui.defaultButton)->setDisabled(SoundManager::defaultFilename(event, true).isEmpty());
 }
 
 void SoundPage::filenameChanged(QString filename)

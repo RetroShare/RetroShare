@@ -24,7 +24,6 @@
 #include <retroshare/rsplugin.h>
 #include <rshare.h>
 #include "GeneralPage.h"
-#include "DirectoriesPage.h"
 #include "ServerPage.h"
 #include "NetworkPage.h"
 #include "NotifyPage.h"
@@ -47,8 +46,11 @@
 #include "rsharesettings.h"
 #include "gui/notifyqt.h"
 #include "gui/common/FloatingHelpBrowser.h"
+#include "gui/common/RSElidedItemDelegate.h"
 
 #define IMAGE_GENERAL       ":/images/kcmsystem24.png"
+
+#define ITEM_SPACING 2
 
 #include "rsettingswin.h"
 
@@ -60,10 +62,14 @@ SettingsPage::SettingsPage(QWidget *parent)
 {
     ui.setupUi(this);
     setAttribute(Qt::WA_DeleteOnClose, true);
-//    setModal(false);
 
     /* Initialize help browser */
     mHelpBrowser = new FloatingHelpBrowser(this, ui.helpButton);
+
+    /* Add own item delegate to get item width*/
+    RSElidedItemDelegate *itemDelegate = new RSElidedItemDelegate(this);
+    itemDelegate->setSpacing(QSize(0, ITEM_SPACING));
+    ui.listWidget->setItemDelegate(itemDelegate);
 
     initStackedWidget();
 
@@ -74,8 +80,6 @@ SettingsPage::SettingsPage(QWidget *parent)
     }
 
     connect(ui.listWidget, SIGNAL(currentRowChanged(int)), this, SLOT(setNewPage(int)));
-//    connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(saveChanges()));
-//    connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(close()));
     connect(this, SIGNAL(finished(int)), this, SLOT(dialogFinished(int)));
 }
 
@@ -95,7 +99,7 @@ SettingsPage::~SettingsPage()
 //	}
 //}
 
-/*static*/ void SettingsPage::showYourself(QWidget *parent, PageType page /* = LastPage*/)
+/*static*/ void SettingsPage::showYourself(QWidget */*parent*/, PageType /*page = LastPage*/)
 {
 #ifdef TODO
     if(_instance == NULL) {
@@ -141,23 +145,22 @@ SettingsPage::initStackedWidget()
     ui.stackedWidget->setCurrentIndex(-1);
     ui.stackedWidget->removeWidget(ui.stackedWidget->widget(0));
 
-    addPage(new GeneralPage());
-    addPage(new ServerPage());
-    addPage(new TransferPage());
-    addPage(new RelayPage() );
-    addPage(new DirectoriesPage());
-    addPage(new PluginsPage() );
-    addPage(new NotifyPage());
-    addPage(new CryptoPage());
-    addPage(new PeoplePage());
-    addPage(new ChatPage());
-    addPage(new MessagePage());
-    addPage(new ChannelPage());
-    addPage(new ForumPage());
-    addPage(new PostedPage());
-    addPage(new AppearancePage());
-    addPage(new SoundPage() );
-    addPage(new ServicePermissionsPage() );
+    addPage(new GeneralPage()); // GENERAL
+    addPage(new CryptoPage()); // NODE
+    addPage(new ServerPage()); // NETWORK
+    addPage(new PeoplePage()); // PEOLPE
+    addPage(new ChatPage()); // CHAT
+    addPage(new MessagePage()); //MESSGE RENAME TO MAIL
+    addPage(new TransferPage()); //FILE TRANSFER
+    addPage(new ChannelPage()); // CHANNELS
+    addPage(new ForumPage()); // FORUMS
+    addPage(new PostedPage()); // POSTED RENAME TO LINKS
+    addPage(new NotifyPage()); // NOTIFY
+    addPage(new RelayPage() ); // RELAY SHOUD BE INSIDE NETWORK AS A TAB
+    addPage(new PluginsPage() ); // PLUGINS
+    addPage(new AppearancePage()); // APPEARENCE
+    addPage(new SoundPage() ); // SOUND
+    addPage(new ServicePermissionsPage() ); // PERMISSIONS
 #ifdef ENABLE_WEBUI
     addPage(new WebuiPage() );
 #endif // ENABLE_WEBUI
@@ -184,8 +187,13 @@ void SettingsPage::addPage(ConfigPage *page)
 {
 	ui.stackedWidget->addWidget(page) ;
 
-	QListWidgetItem *item = new QListWidgetItem(QIcon(page->iconPixmap()),page->pageName()) ;
-	ui.listWidget->addItem(item) ;
+	QListWidgetItem *item = new QListWidgetItem(QIcon(page->iconPixmap()),page->pageName(),ui.listWidget) ;
+	QFontMetrics fontMetrics = ui.listWidget->fontMetrics();
+	int w = ITEM_SPACING*8;
+	w += ui.listWidget->iconSize().width();
+	w += fontMetrics.width(item->text());
+	if (w > ui.listWidget->maximumWidth())
+		ui.listWidget->setMaximumWidth(w);
 }
 
 void

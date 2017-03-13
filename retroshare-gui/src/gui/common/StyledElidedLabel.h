@@ -27,13 +27,14 @@
 class StyledElidedLabel : public ElidedLabel
 {
 	Q_OBJECT
-	Q_PROPERTY(int fontSizeFactor WRITE setFontSizeFactor)
+	Q_PROPERTY(int fontSizeFactor READ fontSizeFactor WRITE setFontSizeFactor)
 
 public:
 	StyledElidedLabel(QWidget *parent = NULL);
 	StyledElidedLabel(const QString &text, QWidget *parent = NULL);
 
 	void setFontSizeFactor(int factor);
+	int fontSizeFactor() {return _lastFactor;}
 
 private:
 	int _lastFactor;

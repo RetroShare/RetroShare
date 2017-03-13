@@ -93,6 +93,9 @@ IdEditDialog::IdEditDialog(QWidget *parent) :
 
 	mIdQueue = new TokenQueue(rsIdentity->getTokenService(), this);
 	ui->pushButton_Tag->setEnabled(false);
+	ui->pushButton_Tag->hide(); // unfinished
+	ui->plainTextEdit_Tag->hide();
+	ui->label_TagCheck->hide();
 }
 
 IdEditDialog::~IdEditDialog()

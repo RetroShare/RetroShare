@@ -220,7 +220,13 @@ void p3GxsChannels::notifyChanges(std::vector<RsGxsNotify *> &changes)
 							std::list<RsGxsGroupId>::iterator git;
 							for (git = grpList.begin(); git != grpList.end(); ++git)
 							{
-								notify->AddFeedItem(RS_FEED_ITEM_CHANNEL_NEW, git->toStdString());
+                                if(mKnownChannels.find(*git) == mKnownChannels.end())
+                                {
+									notify->AddFeedItem(RS_FEED_ITEM_CHANNEL_NEW, git->toStdString());
+                                    mKnownChannels.insert(*git) ;
+                                }
+                                else
+                                    std::cerr << "(II) Not notifying already known channel " << *git << std::endl;
 							}
 							break;
 						}

@@ -545,6 +545,8 @@ bool AEAD_chacha20_sha256(uint8_t key[32], uint8_t nonce[12],uint8_t *data,uint3
        HMAC_Update(&hmac_ctx,aad,aad_size) ;
        HMAC_Update(&hmac_ctx,data,data_size) ;
        HMAC_Final(&hmac_ctx,computed_tag,&md_size) ;
+
+       HMAC_CTX_cleanup(&hmac_ctx) ;
 #else
        HMAC_CTX *hmac_ctx = HMAC_CTX_new();
 
@@ -576,6 +578,8 @@ bool AEAD_chacha20_sha256(uint8_t key[32], uint8_t nonce[12],uint8_t *data,uint3
        HMAC_Update(&hmac_ctx,aad,aad_size) ;
        HMAC_Update(&hmac_ctx,data,data_size) ;
        HMAC_Final(&hmac_ctx,computed_tag,&md_size) ;
+
+       HMAC_CTX_cleanup(&hmac_ctx) ;
 #else
        HMAC_CTX *hmac_ctx = HMAC_CTX_new();
 
@@ -1226,6 +1230,8 @@ bool perform_tests()
     {
         uint32_t SIZE = 1*1024*1024 ;
         uint8_t *ten_megabyte_data = (uint8_t*)malloc(SIZE) ;
+
+        memset(ten_megabyte_data,0x37,SIZE) ;	// put something. We dont really care here.
 
         uint8_t key[32] = { 0x1c,0x92,0x40,0xa5,0xeb,0x55,0xd3,0x8a,0xf3,0x33,0x88,0x86,0x04,0xf6,0xb5,0xf0,
                             0x47,0x39,0x17,0xc1,0x40,0x2b,0x80,0x09,0x9d,0xca,0x5c,0xbc,0x20,0x70,0x75,0xc0 };

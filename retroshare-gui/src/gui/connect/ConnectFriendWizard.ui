@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>620</width>
-    <height>530</height>
+    <width>760</width>
+    <height>538</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -67,7 +67,7 @@
      <widget class="QRadioButton" name="emailRadioButton">
       <property name="text">
        <string>&amp;Send an Invitation by Email 
- (Your friend will receive an email with instructions how to to download RetroShare)</string>
+ (Your friend will receive an email with instructions how to download RetroShare)</string>
       </property>
      </widget>
     </item>
@@ -1613,8 +1613,8 @@ resources.</string>
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../images.qrc"/>
   <include location="../icons.qrc"/>
+  <include location="../images.qrc"/>
  </resources>
  <connections/>
 </ui>

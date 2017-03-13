@@ -2047,7 +2047,7 @@ void p3turtle::getInfo(	std::vector<std::vector<std::string> >& hashes_info,
 
         tunnel.push_back(it->second.hash.toStdString()) ;
 		tunnel.push_back(printNumber(now-it->second.time_stamp) + " secs ago") ;
-		tunnel.push_back(printFloatNumber(it->second.speed_Bps,true)) ;
+		tunnel.push_back(printFloatNumber(it->second.speed_Bps,false)) ; //
 	}
 
 	search_reqs_info.clear();

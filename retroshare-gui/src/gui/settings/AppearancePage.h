@@ -49,6 +49,7 @@ private slots:
     void switch_status_showToolTip(bool b) ;
     void switch_status_ShowStatus(bool)  ;
     void switch_status_ShowPeer(bool)    ;
+    void switch_status_ShowNAT(bool)    ;
     void switch_status_ShowDHT(bool)    ;
     void switch_status_ShowHashing(bool) ;
     void switch_status_ShowDisc(bool)    ;
@@ -57,7 +58,6 @@ private slots:
     void switch_status_ShowSound(bool)   ;
     void switch_status_ShowToaster(bool) ;
     void switch_status_ShowSystray(bool) ;
-    void switch_status_ShowCBox(bool) ;
 
     void updateLanguageCode()    ;
     void updateInterfaceStyle()  ;

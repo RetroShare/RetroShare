@@ -2770,7 +2770,7 @@ QString MessageComposer::inviteMessage()
     return tr("Hi,<br>I want to be friends with you on RetroShare.<br>");
 }
 
-void MessageComposer::sendInvite(const RsGxsId &to, const QString &msg, bool autoSend)
+void MessageComposer::sendInvite(const RsGxsId &to, const QString &/*msg*/, bool autoSend)
 {
     /* create a message */
     MessageComposer *composer = MessageComposer::newMsg();

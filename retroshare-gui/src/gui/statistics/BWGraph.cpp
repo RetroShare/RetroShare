@@ -519,7 +519,8 @@ BWGraph::BWGraph(QWidget *parent) : RSGraphWidget(parent)
     setFlags(RSGRAPH_FLAGS_SHOW_LEGEND) ;
 }
 
-BWGraphSource *BWGraph::source()
+BWGraph::~BWGraph()
 {
-    return _local_source ;
+    delete _local_source ;
 }
+

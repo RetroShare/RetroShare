@@ -45,7 +45,7 @@ public:
 	virtual QString helpText() const { return ""; }
 
 public slots:
-	void runStartWizard() ;
+	//void runStartWizard() ;
 	void updateAdvancedMode();
 	void updateUseLocalServer()   ;
 	void updateMaxTimeBeforeIdle();

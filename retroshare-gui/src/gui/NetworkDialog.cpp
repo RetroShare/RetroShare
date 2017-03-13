@@ -24,6 +24,7 @@
 #include <QTimer>
 #include <QTime>
 #include <QMenu>
+#include <QSortFilterProxyModel>
 
 #include <retroshare/rsiface.h>
 #include <retroshare/rspeers.h>
@@ -76,6 +77,8 @@ RsPeerId getNeighRsCertId(QTreeWidgetItem *i);
  * #define NET_DEBUG 1
  *****/
 
+static const unsigned int ROLE_SORT = Qt::UserRole + 1 ;
+
 /** Constructor */
 NetworkDialog::NetworkDialog(QWidget *parent)
 : RsAutoUpdatePage(10000,parent) 	// updates every 10 sec.
@@ -95,6 +98,9 @@ NetworkDialog::NetworkDialog(QWidget *parent)
     ui.connectTreeWidget -> setRootIsDecorated( false );
     ui.connectTreeWidget -> setColumnCount(6);
 
+    compareNetworkRole = new RSTreeWidgetItemCompareRole;
+    compareNetworkRole->setRole(COLUMN_LAST_USED, ROLE_SORT);
+
     /* Set header resize modes and initial section sizes */
     QHeaderView * _header = ui.connectTreeWidget->header () ;
     QHeaderView_setSectionResizeModeColumn(_header, COLUMN_CHECK, QHeaderView::Custom);
@@ -105,24 +111,26 @@ NetworkDialog::NetworkDialog(QWidget *parent)
     QHeaderView_setSectionResizeModeColumn(_header, COLUMN_LAST_USED, QHeaderView::Interactive);
 
     _header->model()->setHeaderData(COLUMN_CHECK, Qt::Horizontal, tr(""));
-    _header->model()->setHeaderData(COLUMN_PEERNAME, Qt::Horizontal, tr("Name"));
+    _header->model()->setHeaderData(COLUMN_PEERNAME, Qt::Horizontal, tr("Profile"));
     _header->model()->setHeaderData(COLUMN_I_AUTH_PEER, Qt::Horizontal, tr("Trust level"));
-    _header->model()->setHeaderData(COLUMN_PEER_AUTH_ME, Qt::Horizontal, tr("Did peer authenticate you"));
-    _header->model()->setHeaderData(COLUMN_PEERID, Qt::Horizontal, tr("Cert Id"));
+    _header->model()->setHeaderData(COLUMN_PEER_AUTH_ME, Qt::Horizontal, tr("Has signed your key?"));
+    _header->model()->setHeaderData(COLUMN_PEERID, Qt::Horizontal, tr("Id"));
     _header->model()->setHeaderData(COLUMN_LAST_USED, Qt::Horizontal, tr("Last used"));
 
-    _header->model()->setHeaderData(COLUMN_CHECK, Qt::Horizontal, tr(" Do you accept connections signed by this key?"),Qt::ToolTipRole);
-    _header->model()->setHeaderData(COLUMN_PEERNAME, Qt::Horizontal, tr("Name of the key"),Qt::ToolTipRole);
-    _header->model()->setHeaderData(COLUMN_I_AUTH_PEER, Qt::Horizontal, tr("This column indicates trust level and whether you signed their PGP key"),Qt::ToolTipRole);
-    _header->model()->setHeaderData(COLUMN_PEER_AUTH_ME, Qt::Horizontal, tr("Did that peer sign your PGP key"),Qt::ToolTipRole);
-    _header->model()->setHeaderData(COLUMN_PEERID, Qt::Horizontal, tr("Certificat ID"),Qt::ToolTipRole);
-    _header->model()->setHeaderData(COLUMN_LAST_USED, Qt::Horizontal, tr("Since when I use this certificate"),Qt::ToolTipRole);
+    _header->model()->setHeaderData(COLUMN_CHECK, Qt::Horizontal, tr(" Do you accept connections signed by this profile?"),Qt::ToolTipRole);
+    _header->model()->setHeaderData(COLUMN_PEERNAME, Qt::Horizontal, tr("Name of the profile"),Qt::ToolTipRole);
+    _header->model()->setHeaderData(COLUMN_I_AUTH_PEER, Qt::Horizontal, tr("This column indicates trust level and whether you signed the profile PGP key"),Qt::ToolTipRole);
+    _header->model()->setHeaderData(COLUMN_PEER_AUTH_ME, Qt::Horizontal, tr("Did that peer sign your own profile PGP key"),Qt::ToolTipRole);
+    _header->model()->setHeaderData(COLUMN_PEERID, Qt::Horizontal, tr("PGP Key Id of that profile"),Qt::ToolTipRole);
+    _header->model()->setHeaderData(COLUMN_LAST_USED, Qt::Horizontal, tr("Last time this key was used (received time, or to check connection)"),Qt::ToolTipRole);
 
-    _header->resizeSection ( COLUMN_CHECK, 25 );
-    _header->resizeSection ( COLUMN_PEERNAME, 200 );
-    _header->resizeSection ( COLUMN_I_AUTH_PEER, 200 );
-    _header->resizeSection ( COLUMN_PEER_AUTH_ME, 200 );
-    _header->resizeSection ( COLUMN_LAST_USED, 75 );
+    float f = QFontMetricsF(font()).height()/14.0 ;
+
+    _header->resizeSection ( COLUMN_CHECK, 25*f );
+    _header->resizeSection ( COLUMN_PEERNAME, 200*f );
+    _header->resizeSection ( COLUMN_I_AUTH_PEER, 200*f );
+    _header->resizeSection ( COLUMN_PEER_AUTH_ME, 200*f );
+    _header->resizeSection ( COLUMN_LAST_USED, 75*f );
 
     // set header text aligment
     QTreeWidgetItem * headerItem = ui.connectTreeWidget->headerItem();
@@ -137,17 +145,9 @@ NetworkDialog::NetworkDialog(QWidget *parent)
 
     ui.connectTreeWidget->sortItems( COLUMN_PEERNAME, Qt::AscendingOrder );
 
-//    ui.networkTab->addTab(new TrustView(),QString(tr("Authentication matrix")));
-//    ui.networkTab->addTab(networkview = new NetworkView(),QString(tr("Network View")));
-
-    ui.onlyTrustedKeys->setMinimumWidth(20);
+    ui.onlyTrustedKeys->setMinimumWidth(20*f);
 
     QMenu *menu = new QMenu();
-    //menu->addAction(ui.actionAddFriend); 
-    //menu->addAction(ui.actionCopyKey);
-    //menu->addAction(ui.actionExportKey);
-    //menu->addAction(ui.actionCreate_New_Profile);
-    //menu->addSeparator();
     menu->addAction(ui.actionTabsright); 
     menu->addAction(ui.actionTabswest);
     menu->addAction(ui.actionTabssouth); 
@@ -155,20 +155,11 @@ NetworkDialog::NetworkDialog(QWidget *parent)
     menu->addSeparator();
     menu->addAction(ui.actionTabsTriangular); 
     menu->addAction(ui.actionTabsRounded);
-    //ui.viewButton->setMenu(menu);
-    
-    QTimer *timer2 = new QTimer(this);
-    connect(timer2, SIGNAL(timeout()), this, SLOT(updateNetworkStatus()));
-    timer2->start(1000);
     
     /* add filter actions */
     ui.filterLineEdit->addFilter(QIcon(), tr("Name"), COLUMN_PEERNAME, tr("Search name"));
     ui.filterLineEdit->addFilter(QIcon(), tr("Peer ID"), COLUMN_PEERID, tr("Search peer ID"));
     ui.filterLineEdit->setCurrentFilter(COLUMN_PEERNAME);
-
-    //updateNetworkStatus();
-    //loadtabsettings();
-    
 }
 
 void NetworkDialog::changeEvent(QEvent *e)
@@ -200,19 +191,17 @@ void NetworkDialog::connectTreeWidgetCostumPopupMenu( QPoint /*point*/ )
 	if(!rsPeers->getGPGDetails(peer_id, detail))		// that is not suppose to fail.
 		return ;
 
-    if(peer_id != rsPeers->getGPGOwnId())
-    {
-        if(detail.accept_connection)
-            contextMnu->addAction(QIcon(IMAGE_DENIED), tr("Deny friend"), this, SLOT(denyFriend()));
-        else	// not a friend
-            contextMnu->addAction(QIcon(IMAGE_MAKEFRIEND), tr("Make friend..."), this, SLOT(makeFriend()));
-    }
+//     if(peer_id != rsPeers->getGPGOwnId())
+//     {
+//         if(detail.accept_connection)
+//             contextMnu->addAction(QIcon(IMAGE_DENIED), tr("Deny friend"), this, SLOT(denyFriend()));
+//         else	// not a friend
+//             contextMnu->addAction(QIcon(IMAGE_MAKEFRIEND), tr("Make friend..."), this, SLOT(makeFriend()));
+//     }
 	if(peer_id == rsPeers->getGPGOwnId())
 		contextMnu->addAction(QIcon(IMAGE_EXPORT), tr("Export/create a new node"), this, SLOT(on_actionExportKey_activated()));
 
-	contextMnu->addAction(QIcon(IMAGE_PEERDETAILS), tr("Peer details..."), this, SLOT(peerdetails()));
-   //contextMnu->addAction(QIcon(IMAGE_MESSAGE), tr("Send Message"), this, SLOT(sendDistantMessage()));
-	//contextMnu->addAction(QIcon(IMAGE_COPYLINK), tr("Copy RetroShare Link"), this, SLOT(copyLink()));
+	contextMnu->addAction(QIcon(IMAGE_PEERDETAILS), tr("Profile details..."), this, SLOT(peerdetails()));
 	contextMnu->addSeparator() ;
 	contextMnu->addAction(QIcon(IMAGE_CLEAN_UNUSED), tr("Remove unused keys..."), this, SLOT(removeUnusedKeys()));
 
@@ -382,10 +371,6 @@ void NetworkDialog::insertConnect()
 
 //	// Because this is called from a qt signal, there's no limitation between calls.
 	time_t now = time(NULL);
-//	if(last_time + 5 > now)		// never update more often then every 5 seconds.
-//		return ;
-//
-//	last_time = now ;
 
     std::list<RsPgpId> neighs; //these are GPG ids
     std::list<RsPgpId>::iterator it;
@@ -407,8 +392,6 @@ void NetworkDialog::insertConnect()
 		else 
 			++index;
 	}
-    //QList<QTreeWidgetItem *> validItems;
-    //QList<QTreeWidgetItem *> unvalidItems;
 
 	for(it = neighs.begin(); it != neighs.end(); ++it)
 	{
@@ -435,7 +418,7 @@ void NetworkDialog::insertConnect()
 #ifdef NET_DEBUG
 				std::cerr << "NetworkDialog::insertConnect() creating new tree widget item : " << *it << std::endl;
 #endif
-				item = new RSTreeWidgetItem(NULL, 0);
+				item = new RSTreeWidgetItem(compareNetworkRole, 0);
 				item -> setChildIndicatorPolicy(QTreeWidgetItem::DontShowIndicatorWhenChildless);
 
 				int S = QFontMetricsF(font()).height() ;
@@ -472,9 +455,9 @@ void NetworkDialog::insertConnect()
 		QString PeerAuthenticationString ;
 
 		if (detail.hasSignedMe)
-			PeerAuthenticationString = tr("Has authenticated me");
+			PeerAuthenticationString = tr("Yes");
 		else
-			PeerAuthenticationString = tr("Unknown");
+			PeerAuthenticationString = tr("No");
 
         item->setText(COLUMN_PEER_AUTH_ME,PeerAuthenticationString) ;
 
@@ -490,7 +473,10 @@ void NetworkDialog::insertConnect()
 		else
 			lst_used_str = tr("%1 days ago").arg((int)( last_time_used / 86400 )) ;
 
+        QString lst_used_sort_str = QString::number(detail.lastUsed,'f',10);
+
 		item->setText(COLUMN_LAST_USED,lst_used_str) ;
+		item->setData(COLUMN_LAST_USED,ROLE_SORT,lst_used_sort_str) ;
 
 		/**
 		 * Determinated the Background Color
@@ -546,7 +532,7 @@ void NetworkDialog::insertConnect()
 	if (list.size() == 1) {
 		self_item = list.front();
 	} else {
-		self_item = new RSTreeWidgetItem(NULL, 0);
+		self_item = new RSTreeWidgetItem(compareNetworkRole, 0);
 		self_item->setChildIndicatorPolicy(QTreeWidgetItem::DontShowIndicatorWhenChildless);
 	}
     self_item -> setText(COLUMN_CHECK, "0");
@@ -589,58 +575,6 @@ RsPeerId getNeighRsCertId(QTreeWidgetItem *i)
 	RsPeerId id ( (i -> text(COLUMN_PEERID)).toStdString() );
 	return id;
 }   
-  
-/* So from the Neighbours Dialog we can call the following control Functions:
- * (1) Load Certificate             NeighLoadCertificate(std::string file)
- * (2) Neigh  Auth                  NeighAuthFriend(id, code)
- * (4) Neigh  Add                   NeighAddFriend(id)
- *
- * All of these rely on the finding of the current Id.
- */
-
-//std::string NetworkDialog::loadneighbour()
-//{
-//#ifdef NET_DEBUG
-//        std::cerr << "NetworkDialog::loadneighbour()" << std::endl;
-//#endif
-// use misc::getOpenFileName
-//        QString fileName = QFileDialog::getOpenFileName(this, tr("Select Certificate"), "",
-//	                                             tr("Certificates (*.pqi *.pem)"));
-//
-//	std::string file = fileName.toStdString();
-//	std::string id;
-//        std::string gpg_id;
-//	if (file != "")
-//	{
-//                rsPeers->loadCertificateFromFile(file, id, gpg_id);
-//	}
-//	return id;
-//}
-
-//void NetworkDialog::addneighbour()
-//{
-////        QTreeWidgetItem *c = getCurrentNeighbour();
-//#ifdef NET_DEBUG
-//        std::cerr << "NetworkDialog::addneighbour()" << std::endl;
-//#endif
-//        /*
-//        rsServer->NeighAddFriend(getNeighRsCertId(c));
-//        */
-//}
-
-//void NetworkDialog::authneighbour()
-//{
-////        QTreeWidgetItem *c = getCurrentNeighbour();
-//#ifdef NET_DEBUG
-//        std::cerr << "NetworkDialog::authneighbour()" << std::endl;
-//#endif
-//        /*
-//	RsAuthId code;
-//        rsServer->NeighAuthFriend(getNeighRsCertId(c), code);
-//        */
-//}
-
-/** Open a QFileDialog to browse for a pem/pqi file. */
 void NetworkDialog::on_actionAddFriend_activated()
 {
 //  /* Create a new input dialog, which allows users to create files, too */

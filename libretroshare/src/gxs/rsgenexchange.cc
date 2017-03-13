@@ -30,6 +30,7 @@
 #include "rsgenexchange.h"
 #include "gxssecurity.h"
 #include "util/contentvalue.h"
+#include "util/rsprint.h"
 #include "retroshare/rsgxsflags.h"
 #include "retroshare/rsgxscircles.h"
 #include "retroshare/rsgrouter.h"
@@ -1318,11 +1319,9 @@ bool RsGenExchange::getGroupData(const uint32_t &token, std::vector<RsGxsGrpItem
 					delete item;
 				}
 			}
-			else
-			{
-				std::cerr << "RsGenExchange::getGroupData() ERROR deserialising item";
-				std::cerr << std::endl;
-			}
+			else if(data.bin_len > 0)
+				std::cerr << "(EE) RsGenExchange::getGroupData() Item type is probably not handled. Data is: " << RsUtil::BinToHex((unsigned char*)data.bin_data,std::min(50u,data.bin_len)) << ((data.bin_len>50)?"...":"") << std::endl;
+
 			delete *lit;
 		}
 	}
@@ -1666,14 +1665,14 @@ void RsGenExchange::updateGroup(uint32_t& token, RsGxsGrpItem* grpItem)
 #endif
 }
 
-void RsGenExchange::deleteGroup(uint32_t& token, RsGxsGrpItem* grpItem)
+void RsGenExchange::deleteGroup(uint32_t& token, const RsGxsGroupId& grpId)
 {
-					RS_STACK_MUTEX(mGenMtx) ;
+	RS_STACK_MUTEX(mGenMtx) ;
 	token = mDataAccess->generatePublicToken();
-	mGroupDeletePublish.push_back(GroupDeletePublish(grpItem, token));
+	mGroupDeletePublish.push_back(GroupDeletePublish(grpId, token));
 
 #ifdef GEN_EXCH_DEBUG
-    std::cerr << "RsGenExchange::deleteGroup() token: " << token;
+	std::cerr << "RsGenExchange::deleteGroup() token: " << token;
 	std::cerr << std::endl;
 #endif
 }
@@ -2317,14 +2316,10 @@ void RsGenExchange::processGroupDelete()
 	std::vector<GroupDeletePublish>::iterator vit = mGroupDeletePublish.begin();
 	for(; vit != mGroupDeletePublish.end(); ++vit)
 	{
-		GroupDeletePublish& gdp = *vit;
-		uint32_t token = gdp.mToken;
-		const RsGxsGroupId& groupId = gdp.grpItem->meta.mGroupId;
 		std::vector<RsGxsGroupId> gprIds;
-		gprIds.push_back(groupId);
+		gprIds.push_back(vit->mGroupId);
 		mDataStore->removeGroups(gprIds);
-		toNotify.insert(std::make_pair(
-		                  token, GrpNote(true, groupId)));
+		toNotify.insert(std::make_pair( vit->mToken, GrpNote(true, vit->mGroupId)));
 	}
 
 

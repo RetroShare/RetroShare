@@ -2259,7 +2259,10 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
 			    }
 			    else if (kit->key == kConfigKeyProxyServerPortTor)
 			    {
-				    proxyPortTor = atoi(kit->value.c_str());
+                    uint16_t p = atoi(kit->value.c_str());
+
+                    if(p >= 1024)
+						proxyPortTor = p;
 #ifdef PEER_DEBUG
 				    std::cerr << "Loaded proxyPort for Tor: " << proxyPortTor;
 				    std::cerr << std::endl ;
@@ -2276,7 +2279,10 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
 			    }
 			    else if (kit->key == kConfigKeyProxyServerPortI2P)
 			    {
-				    proxyPortI2P = atoi(kit->value.c_str());
+                    uint16_t p = atoi(kit->value.c_str());
+
+                    if(p >= 1024)
+						proxyPortI2P = p;
 #ifdef PEER_DEBUG
 				    std::cerr << "Loaded proxyPort for I2P: " << proxyPortI2P;
 				    std::cerr << std::endl ;
@@ -2784,7 +2790,9 @@ bool p3PeerMgrIMPL::removeBannedIps()
 {
     RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
+#ifdef PEER_DEBUG
     std::cerr << "Cleaning known IPs for all peers." << std::endl;
+#endif
 
     bool changed = false ;
     for( std::map<RsPeerId, peerState>::iterator it = mFriendList.begin(); it != mFriendList.end(); ++it)

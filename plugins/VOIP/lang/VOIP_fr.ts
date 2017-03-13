@@ -1,4 +1,4 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="fr" version="2.1">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="fr" version="2.0">
 <context>
     <name>AudioInput</name>
     <message>
@@ -128,15 +128,40 @@
         <translation>Annulation d&apos;écho en cours</translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="+15"/>
         <source>Video Processing</source>
         <translation>Traitement vidéo</translation>
+    </message>
+    <message>
+        <location line="+43"/>
+        <source>Available bandwidth:</source>
+        <translation>Bande passante disponible :</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Use this field to simulate the maximum bandwidth available so as to preview what the encoded video will look like with the corresponding compression rate.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Utilisez ce champ pour simuler la largeur de bande passante maximale disponible afin de prévisualiser ce à quoi la vidéo codée ressemblera avec le taux de compression correspondant.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>KB/s</source>
+        <translation>KO/s</translation>
+    </message>
+    <message>
+        <location line="+21"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Display encoded (and then decoded) frame, to check the codec&apos;s quality. If not selected, the image above only shows the frame that is grabbed from your camera.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Trame d&apos;affichage encodée (et décodée), afin de vérifier la qualité du codec. Si non sélectionnée, l&apos;image ci-dessus montre seulement le cadre qui est saisi depuis votre caméra.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>preview</source>
+        <translation>prévisualisation</translation>
     </message>
 </context>
 <context>
     <name>AudioInputConfig</name>
     <message>
-        <location filename="../gui/AudioInputConfig.cpp" line="+115"/>
+        <location filename="../gui/AudioInputConfig.cpp" line="+202"/>
         <source>Continuous</source>
         <translation>En continu</translation>
     </message>
@@ -166,7 +191,7 @@
         <translation>-%1 dB</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.h" line="+75"/>
+        <location filename="../gui/AudioInputConfig.h" line="+94"/>
         <source>VOIP</source>
         <translation>VOIP</translation>
     </message>
@@ -364,7 +389,7 @@
         <translation>Bienvenue dans l&apos;assistant audio de RetroShare</translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+6"/>
         <source>This is the audio tuning wizard for RetroShare. This will help you correctly set the input levels of your sound card, and also set the correct parameters for sound processing in Retroshare. </source>
         <translation>Ceci est l&apos;assistant audio pour RetroShare. Il vous aide à configurer correctement le le niveau d&apos;entré de votre carte son, Et également définir les paramètres corrects dans le traitement du son pour RetroShare.</translation>
     </message>
@@ -379,14 +404,14 @@
         <translation>Réglage du volume matériel du micro pour une meilleure configuration.</translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+6"/>
         <source>&lt;p &gt;Open your sound control panel and go to the recording settings. Make sure the microphone is selected as active input with maximum recording volume. If there's an option to enable a &amp;quot;Microphone boost&amp;quot; make sure it's checked. &lt;/p&gt;
 &lt;p&gt;Speak loudly, as when you are annoyed or excited. Decrease the volume in the sound control panel until the bar below stays as high as possible in the green and orange but not the red zone while you speak. &lt;/p&gt;</source>
         <translation>&lt;p&gt;Ouvrir le panneau de contrôle de votre carte son et aller dans les options d&apos;enregistrements. Vérifiez que le microphone est séléctionné en tant qu&apos;entrée active avec le volume d&apos;enregistrement au maximum. S&apos;il ya une option pour permettre le  &amp;quot;mic boost&amp;quot; vérifiez qu&apos;il est cochée. &lt;/p&gt;
 &lt;p&gt;Parler fort, comme lorsque vous êtes ennuyé ou excitée. Diminuer le volume sonore dans le panneau de contrôle jusqu&apos;à ce que la barre soit aussi haute que possible dans le bleu et le vert, mais &lt;b&gt;pas&lt;/b&gt; dans la zone rouge pendant que vous parlez. &lt;/p&gt;</translation>
     </message>
     <message>
-        <location line="+16"/>
+        <location line="+11"/>
         <source>Talk normally, and adjust the slider below so that the bar moves into green when you talk, and doesn&apos;t go into the orange zone.</source>
         <translation>Parlez normalement, et ajustez le curseur ci-dessous pour que la barre se déplace dans le vert lorsque vous parlez, et n&apos;entre dans la zone orange.</translation>
     </message>
@@ -451,7 +476,7 @@
         <translation>Profitez de l&apos;utilisation de RetroShare</translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+6"/>
         <source>Congratulations. You should now be ready to enjoy a richer sound experience with Retroshare.</source>
         <translation>Félicitations. Vous devriez maintenant être prêt à profiter d&apos;une expérience sonore riche avec RetroShare.</translation>
     </message>
@@ -459,7 +484,7 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="+124"/>
+        <location filename="../VOIPPlugin.cpp" line="+128"/>
         <source>&lt;h3&gt;RetroShare VOIP plugin&lt;/h3&gt;&lt;br/&gt;   * Contributors: Cyril Soler, Josselin Jacquard&lt;br/&gt;</source>
         <translation>&lt;h3&gt;Extension RetroShare VOIP&lt;/h3&gt;&lt;br/&gt;   * Contributeurs: Cyril Soler, Josselin Jacquard&lt;br/&gt;</translation>
     </message>
@@ -497,35 +522,115 @@
 <context>
     <name>VOIP</name>
     <message>
-        <location line="+49"/>
+        <location line="+47"/>
         <source>This plugin provides voice communication between friends in RetroShare.</source>
         <translation>Cette extension permet la communication vocale entre amis dans RetroShare.</translation>
+    </message>
+    <message>
+        <location line="+40"/>
+        <location line="+4"/>
+        <location line="+4"/>
+        <location line="+4"/>
+        <source>VOIP</source>
+        <translation>VOIP</translation>
+    </message>
+    <message>
+        <location line="-11"/>
+        <source>Incoming audio call</source>
+        <translation>Appel audio entrant</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Incoming video call</source>
+        <translation>Appel vidéo entrant</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Outgoing audio call</source>
+        <translation>Appel audio sortant</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Outgoing video call</source>
+        <translation>Appel vidéo sortant</translation>
     </message>
 </context>
 <context>
     <name>VOIPChatWidgetHolder</name>
     <message>
-        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="+63"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="+70"/>
+        <location line="+146"/>
         <source>Mute</source>
         <translation>Muet</translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="-128"/>
+        <location line="+138"/>
         <source>Start Call</source>
         <translation>Lancer l&apos;appel</translation>
     </message>
     <message>
-        <location line="+28"/>
+        <location line="-121"/>
+        <location line="+131"/>
         <source>Start Video Call</source>
         <translation>Lancer l&apos;appel vidéo</translation>
     </message>
     <message>
-        <location line="-14"/>
+        <location line="-121"/>
+        <location line="+131"/>
         <source>Hangup Call</source>
         <translation>Raccrocher l&apos;appel</translation>
     </message>
     <message>
-        <location line="+79"/>
+        <location line="-113"/>
+        <location line="+626"/>
+        <source>Hide Chat Text</source>
+        <translation>Cacher le texte de tchat</translation>
+    </message>
+    <message>
+        <location line="-608"/>
+        <location line="+106"/>
+        <location line="+523"/>
+        <source>Fullscreen mode</source>
+        <translation>Mode plein écran</translation>
+    </message>
+    <message>
+        <location line="-412"/>
+        <source>%1 inviting you to start an audio conversation. Do you want Accept or Decline the invitation?</source>
+        <translation>%1 vous invite à commencer une conversation en audio. Voulez-vous accepter ou décliner l&apos;invitation ?</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Accept Audio Call</source>
+        <translation>Accepter l&apos;appel audio</translation>
+    </message>
+    <message>
+        <location line="+17"/>
+        <source>Decline Audio Call</source>
+        <translation>Décliner l&apos;appel audio</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Refuse audio call</source>
+        <translation>Refuser appel audio</translation>
+    </message>
+    <message>
+        <location line="+33"/>
+        <source>%1 inviting you to start a video conversation. Do you want Accept or Decline the invitation?</source>
+        <translation>%1 vous invite à commencer une conversation en vidéo. Voulez-vous accepter ou décliner l&apos;invitation ?</translation>
+    </message>
+    <message>
+        <location line="+19"/>
+        <source>Decline Video Call</source>
+        <translation>Décliner l&apos;appel vidéo</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Refuse video call</source>
+        <translation>Refuser l&apos;appel vidéo</translation>
+    </message>
+    <message>
+        <location line="+102"/>
         <source>Mute yourself</source>
         <translation>Mode muet</translation>
     </message>
@@ -535,83 +640,129 @@
         <translation>Se démuter</translation>
     </message>
     <message>
-        <location line="+19"/>
-        <location line="+37"/>
-        <location line="+38"/>
-        <location line="+18"/>
-        <location line="+13"/>
-        <location line="+92"/>
+        <location line="+589"/>
+        <source>Waiting your friend respond your video call.</source>
+        <translation>En attente que votre ami réponde à votre appel vidéo.</translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Your friend is calling you for video. Respond.</source>
+        <translation>Votre ami vous appelle en vidéo. Répondre.</translation>
+    </message>
+    <message>
+        <location line="-781"/>
+        <location line="+53"/>
+        <location line="+188"/>
+        <location line="+24"/>
+        <location line="+57"/>
+        <location line="+28"/>
+        <location line="+284"/>
+        <location line="+11"/>
+        <location line="+11"/>
+        <location line="+21"/>
+        <location line="+11"/>
         <source>VoIP Status</source>
         <translation>Statut VoIP</translation>
     </message>
     <message>
-        <location line="-198"/>
-        <source>Outgoing Call stopped.</source>
-        <translation>Appel sortant arrêté.</translation>
-    </message>
-    <message>
-        <location line="+19"/>
+        <location line="-467"/>
         <source>Hold Call</source>
         <translation>Tenir l&apos;appel</translation>
     </message>
     <message>
-        <location line="+18"/>
+        <location line="+20"/>
         <source>Outgoing Call is started...</source>
         <translation>Appel sortant lancé...</translation>
     </message>
     <message>
-        <location line="+15"/>
+        <location line="+9"/>
         <source>Resume Call</source>
         <translation>Reprendre l&apos;appel</translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location line="+16"/>
+        <source>Outgoing Audio Call stopped.</source>
+        <translation>Appel audio sortant stoppé.</translation>
+    </message>
+    <message>
+        <location line="+46"/>
         <source>Shut camera off</source>
         <translation>Couper la caméra</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+11"/>
         <source>You&apos;re now sending video...</source>
         <translation>Vous envoyez maintenant de la vidéo ...</translation>
     </message>
     <message>
-        <location line="+12"/>
-        <location line="+21"/>
+        <location line="-266"/>
+        <location line="+279"/>
         <source>Activate camera</source>
         <translation>Activer caméra</translation>
     </message>
     <message>
-        <location line="-15"/>
+        <location line="+15"/>
         <source>Video call stopped</source>
         <translation>Appel vidéo stoppé</translation>
     </message>
     <message>
-        <location line="+13"/>
-        <source>%1 inviting you to start a video conversation. do you want Accept or Decline the invitation?</source>
-        <translation>%1 vous invite à démarrer une conversation vidéo. Voulez-vous Accepter ou Décliner l&apos;invitation?</translation>
-    </message>
-    <message>
-        <location line="+1"/>
+        <location line="-295"/>
         <source>Accept Video Call</source>
         <translation>Accepter l&apos;appel vidéo</translation>
     </message>
     <message>
-        <location line="+91"/>
-        <source>%1 inviting you to start a audio conversation. do you want Accept or Decline the invitation?</source>
-        <translation>%1 vous invite à démarrer une conversation audio. Voulez-vous Accepter ou Décliner l&apos;invitation?</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Accept Call</source>
-        <translation>Accepter l&apos;appel</translation>
-    </message>
-    <message>
-        <location line="+1"/>
+        <location line="-52"/>
         <source>Activate audio</source>
         <translation>Activer l&apos;audio</translation>
     </message>
     <message>
+        <location line="+384"/>
+        <source>Show Chat Text</source>
+        <translation>Montrer le texte de tchat</translation>
+    </message>
+    <message>
+        <location line="+19"/>
+        <source>Return to normal view.</source>
+        <translation>Retourner en vue normale.</translation>
+    </message>
+    <message>
+        <location line="+228"/>
+        <source>%1 hang up. Your call is closed.</source>
+        <translation>%1 raccroche. Votre appel est fermé.</translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>%1 hang up. Your audio call is closed.</source>
+        <translation>%1 raccroche. Votre appel audio est fermé.</translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>%1 hang up. Your video call is closed.</source>
+        <translation>%1 raccroche. Votre appel vidéo est fermé.</translation>
+    </message>
+    <message>
         <location line="+21"/>
+        <source>%1 accepted your audio call.</source>
+        <translation>%1 a accepté votre appel audio.</translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>%1 accepted your video call.</source>
+        <translation>%1 a accepté votre appel vidéo.</translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>Waiting your friend respond your audio call.</source>
+        <translation>En attente que votre ami réponde à votre appel audio.</translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Your friend is calling you for audio. Respond.</source>
+        <translation>Votre ami vous appelle en audio. Répondre.</translation>
+    </message>
+    <message>
+        <location line="+17"/>
+        <location line="+58"/>
         <source>Answer</source>
         <translation>Répondre</translation>
     </message>
@@ -619,7 +770,7 @@
 <context>
     <name>VOIPPlugin</name>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="+5"/>
+        <location filename="../VOIPPlugin.cpp" line="-48"/>
         <source>VOIP</source>
         <translation>VOIP</translation>
     </message>
@@ -635,6 +786,11 @@
         <location line="+4"/>
         <source>Answer with video</source>
         <translation>Répondre avec vidéo</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPToasterItem.ui" line="+232"/>
+        <source>Decline</source>
+        <translation>Décliner</translation>
     </message>
 </context>
 <context>
@@ -744,6 +900,14 @@
         <location line="+24"/>
         <source>calling</source>
         <translation>appel en cours</translation>
+    </message>
+</context>
+<context>
+    <name>voipGraphSource</name>
+    <message>
+        <location filename="../gui/AudioInputConfig.cpp" line="-260"/>
+        <source>Required bandwidth</source>
+        <translation>Bande passante requise</translation>
     </message>
 </context>
 </TS>

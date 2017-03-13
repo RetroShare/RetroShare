@@ -124,9 +124,9 @@ bool FolderIterator::updateFileInfo(bool& should_skip)
 		 return true ;
 	  }
    }
-   else if( ent->d_type != DT_DIR && ent->d_type != DT_REG)
+   else if( ent->d_type != DT_DIR && ent->d_type != DT_REG && ent->d_type != DT_UNKNOWN)	// DT_UNKNOWN is reported by mounted dirs, by services such as sshfs.
    {
-	   std::cerr << "(II) Skipping file of unknown type " << ent->d_type << ": " << mFullPath << std::endl;
+	   std::cerr << "(II) Skipping file of unknown type " << std::dec << (int)ent->d_type << std::dec << ": " << mFullPath << std::endl;
 	   should_skip = true ;
 	   return true ;
    }

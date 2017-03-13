@@ -482,6 +482,8 @@ void CreateCircleDialog::createCircle()
 
 	    // set distribution from GUI.
 	    circle.mMeta.mCircleId.clear() ;
+        circle.mMeta.mGroupFlags = GXS_SERV::FLAG_PRIVACY_PUBLIC;
+
 	    if (ui.radioButton_Public->isChecked()) {
 #ifdef DEBUG_CREATE_CIRCLE_DIALOG 
 		    std::cerr << "CreateCircleDialog::createCircle() Public Circle";
@@ -525,13 +527,13 @@ void CreateCircleDialog::createCircle()
 		    }//else (ui.circleComboBox->getChosenCircle(chosenId))
 	    } 
 	    else 
-	    { //if (ui.radioButton_Public->isChecked())
+	    {
 		    QMessageBox::warning(this, tr("RetroShare"),tr("No Circle Limitations Selected"), QMessageBox::Ok, QMessageBox::Ok);
 		    return; 
-	    }//else (ui.radioButton_Public->isChecked())
+	    }
     } 
     else 
-    {//if (mIsExternalCircle)
+    {
 #ifdef DEBUG_CREATE_CIRCLE_DIALOG 
 	    std::cerr << "CreateCircleDialog::createCircle() Personal Circle";
 	    std::cerr << std::endl;
@@ -540,7 +542,7 @@ void CreateCircleDialog::createCircle()
 	    // set personal distribution
 	    circle.mMeta.mCircleId.clear() ;
 	    circle.mMeta.mCircleType = GXS_CIRCLE_TYPE_LOCAL;
-    }//else (mIsExternalCircle)
+    }
 
     uint32_t token;
     
