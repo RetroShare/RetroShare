@@ -2137,7 +2137,9 @@ void RsGenExchange::publishMsgs()
 			if(createOk && validSize)
 			{
 				// empty orig msg id means this is the original
-				// msg
+				// msg.
+                // (csoler) Why are we doing this???
+
 				if(msg->metaData->mOrigMsgId.isNull())
 				{
 					msg->metaData->mOrigMsgId = msg->metaData->mMsgId;
