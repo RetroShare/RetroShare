@@ -229,7 +229,9 @@ void	bdStore::writeStore(std::string file)
 	std::list<bdPeer>::iterator it;
 	for(it = store.begin(); it != store.end(); it++)
 	{
-		fprintf(fd, "%s %d\n", bdnet_inet_ntoa(it->mPeerId.addr.sin_addr).c_str(), ntohs(it->mPeerId.addr.sin_port));
+		char add[15];
+		bdnet_inet_ntoa(it->mPeerId.addr.sin_addr, add);
+		fprintf(fd, "%s %d\n", add, ntohs(it->mPeerId.addr.sin_port));
 #ifdef DEBUG_STORE
 		fprintf(stderr, "Storing Peer Address: %s %d\n", inet_ntoa(it->mPeerId.addr.sin_addr), ntohs(it->mPeerId.addr.sin_port));
 #endif

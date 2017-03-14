@@ -67,9 +67,11 @@ void bdFilter::writeBannedIpFile()
 
     for( std::map<uint32_t,bdFilteredPeer>::iterator it=mFiltered.begin();it!=mFiltered.end();++it)
     {
-        fprintf(fd, "%s %u %lu %lu\n", bdnet_inet_ntoa(it->second.mAddr.sin_addr).c_str(), it->second.mFilterFlags, it->second.mFilterTS, it->second.mLastSeen) ;
+        char add[15];
+        bdnet_inet_ntoa(it->second.mAddr.sin_addr, add);
+        fprintf(fd, "%s %u %lu %lu\n", add , it->second.mFilterFlags, it->second.mFilterTS, it->second.mLastSeen) ;
 #ifdef DEBUG_FILTER
-        fprintf(stderr, "Storing Peer Address: %s \n", bdnet_inet_ntoa(it->second.mAddr.sin_addr).c_str()) ;
+        fprintf(stderr, "Storing Peer Address: %s \n", add) ;
 #endif
 
     }
@@ -194,7 +196,9 @@ int bdFilter::addPeerToFilter(const struct sockaddr_in& addr, uint32_t flags)
 
         mFiltered[saddr] = fp;
 
-        std::cerr << "Adding New Banned Ip Address: " << bdnet_inet_ntoa(addr.sin_addr);
+        char add[15];
+        bdnet_inet_ntoa(addr.sin_addr, add);
+        std::cerr << "Adding New Banned Ip Address: " << add;
         std::cerr << std::endl;
     }
     writeBannedIpFile() ;
@@ -289,7 +293,9 @@ bool bdFilter::cleanupFilter()
     for(std::map<uint32_t,bdFilteredPeer>::iterator it = mFiltered.begin(); it != mFiltered.end();)
     {
 #ifdef DEBUG_FILTER
-        std::cerr << "\t" << bdnet_inet_ntoa(it->second.mAddr.sin_addr);
+        char add[15];
+        bdnet_inet_ntoa(it->second.mAddr.sin_addr, add);
+        std::cerr << "\t" << add;
         std::cerr << " Flags: " << it->second.mFilterFlags;
         std::cerr << " FilterTS: " << now - it->second.mFilterTS;
         std::cerr << " LastSeen: " << now - it->second.mLastSeen;

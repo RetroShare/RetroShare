@@ -2414,8 +2414,10 @@ bdNodeNetMsg::bdNodeNetMsg(char *msg, int len, struct sockaddr_in *in_addr)
 
 void bdNodeNetMsg::print(std::ostream &out)
 {
+	char add[15];
+	bdnet_inet_ntoa(addr.sin_addr, add);
 	out << "bdNodeNetMsg::print(" << mSize << ") to "
-			<< bdnet_inet_ntoa(addr.sin_addr) << ":" << htons(addr.sin_port);
+			<< add << ":" << htons(addr.sin_port);
 	out << std::endl;
 }
 
