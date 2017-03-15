@@ -239,9 +239,9 @@ void ConfCertDialog::load()
 		 ui.version->show();
 		 ui.label_version->show();
 
-		 ui.groupBox->show();
+		 //ui.groupBox->show();
 		 ui.groupBox_4->show();
-		 ui.tabWidget->show();
+		 //ui.tabWidget->show();
          //ui.rsid->hide();
          //ui.label_rsid->hide();
 		 ui.pgpfingerprint->show();

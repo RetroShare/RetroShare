@@ -109,7 +109,7 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
 	connect( ui.netModeComboBox, SIGNAL( activated ( int ) ), this, SLOT( toggleUPnP( ) ) );
 	connect( ui.allowIpDeterminationCB, SIGNAL( toggled( bool ) ), this, SLOT( toggleIpDetermination(bool) ) );
 	connect( ui.cleanKnownIPs_PB, SIGNAL( clicked( ) ), this, SLOT( clearKnownAddressList() ) );
-	connect( ui.testIncoming_PB, SIGNAL( clicked( ) ), this, SLOT( updateInProxyIndicator() ) );
+	connect( ui.testIncoming_PB, SIGNAL( clicked( ) ), this, SLOT( saveAndTestInProxy() ) );
     connect( ui.showDiscStatusBar,SIGNAL(toggled(bool)),this,SLOT(updateShowDiscStatusBar())) ;
 
 #ifdef SERVER_DEBUG
@@ -130,6 +130,12 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
 
 	connect(ui.totalDownloadRate,SIGNAL(valueChanged(int)),this,SLOT(saveRates()));
 	connect(ui.totalUploadRate,  SIGNAL(valueChanged(int)),this,SLOT(saveRates()));
+}
+
+void ServerPage::saveAndTestInProxy()
+{
+    saveAddresses();
+	updateInProxyIndicator() ;
 }
 
 void ServerPage::checkIpRange(const QString& ipstr)

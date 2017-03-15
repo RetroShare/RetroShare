@@ -4,6 +4,7 @@
 version="0.6.2"
 gitpath="https://github.com/RetroShare/RetroShare.git"
 workdir=retroshare06-${version}
+branch="v0.6.2-official_release"
 #bubba3="Y"		# comment out to compile for bubba3
 ######################################################
 
@@ -66,6 +67,7 @@ echo "  "Commit count       : ${ccount}
 echo "  "Date               : ${date}
 echo "  "Time               : ${time}
 echo "  "Hash               : ${hhsh}
+echo "  "Using branch       : ${branch}
 echo "  "Using revision     : ${rev}
 
 echo Done.
@@ -80,7 +82,7 @@ echo Extracting base archive...
 mkdir -p ${workdir}/src
 echo Checking out latest snapshot...
 cd ${workdir}/src
-git clone --depth 1 https://github.com/RetroShare/RetroShare.git .
+git clone --depth 1 https://github.com/RetroShare/RetroShare.git --single-branch --branch $branch .
 cd -
 
 if ! test -d ${workdir}/src/libretroshare/; then

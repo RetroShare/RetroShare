@@ -61,6 +61,7 @@ private slots:
     // ban list
     void updateSelectedBlackListIP(int row, int, int, int);
     void updateSelectedWhiteListIP(int row,int,int,int);
+	void saveAndTestInProxy();
     void addIpRangeToBlackList();
     void addIpRangeToWhiteList();
     void moveToWhiteList0();
