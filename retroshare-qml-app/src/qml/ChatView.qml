@@ -7,7 +7,11 @@ Item
 	id: chatView
 	property string chatId
 
-	function refreshData() { rsApi.request("/chat/messages/"+ chatId, "", function(par) { chatModel.json = par.response }) }
+	function refreshData()
+	{
+		rsApi.request( "/chat/messages/"+ chatId, "",
+					   function(par) { chatModel.json = par.response } )
+	}
 
 	onFocusChanged: focus && refreshData()
 
@@ -66,7 +70,8 @@ Item
 		onClicked:
 		{
 			var jsonData = {"chat_id":chatView.chatId, "msg":msgComposer.text}
-			rsApi.request("/chat/send_message", JSON.stringify(jsonData), function(par) { msgComposer.text = ""; console.log(msg) })
+			rsApi.request( "/chat/send_message", JSON.stringify(jsonData),
+						   function(par) { msgComposer.text = ""; } )
 		}
 	}
 

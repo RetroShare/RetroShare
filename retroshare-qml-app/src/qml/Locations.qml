@@ -69,7 +69,8 @@ Item
 				{
 					locationView.password = password
 					console.log("locationView.sslid: ", locationView.sslid)
-					rsApi.request("/control/login/", JSON.stringify({id: locationView.sslid}))
+					rsApi.request( "/control/login/",
+								   JSON.stringify({id: locationView.sslid}) )
 					locationView.attemptLogin = true
 					busyIndicator.running = true
 					attemptTimer.start()
@@ -111,7 +112,8 @@ Item
 						{
 							// if Server requested password
 							var jsonPass = { password: locationView.password }
-							rsApi.request("/control/password/", JSON.stringify(jsonPass))
+							rsApi.request( "/control/password/",
+										   JSON.stringify(jsonPass) )
 							locationView.attemptLogin = false
 							console.debug("RS core asked for password")
 						}
