@@ -172,7 +172,7 @@ private:
 	bool active;
 	pqiconnect *activepqi;
 	bool inConnectAttempt;
-	int waittimes;
+	//int waittimes;
 	time_t lastHeartbeatReceived; // use to track connection failure
 	pqipersongrp *pqipg; /* parent for callback */
 };
