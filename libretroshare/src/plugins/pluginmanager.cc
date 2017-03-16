@@ -51,9 +51,14 @@ RsPluginManager::RsPluginManager(const RsFileHash &hash)
 	_allow_all_plugins = false ;
 }
 
+bool RsPluginManager::loadConfiguration(RsFileHash &loadHash)
+{
+	return p3Config::loadConfiguration(loadHash);
+}
+
 void RsPluginManager::loadConfiguration()
 {
-    RsFileHash dummyHash ;
+	RsFileHash dummyHash;
 	p3Config::loadConfiguration(dummyHash);
 }
 

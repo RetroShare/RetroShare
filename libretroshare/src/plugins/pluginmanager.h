@@ -74,6 +74,7 @@ class RsPluginManager: public RsPluginHandler, public p3Config
 		// -------------------- Own members -------------------------//
 		//
 		virtual void addConfigurations(p3ConfigMgr *cfgMgr) ;
+		virtual bool loadConfiguration(RsFileHash &loadHash) ;
 		virtual void loadConfiguration() ;
 
                 /*!
