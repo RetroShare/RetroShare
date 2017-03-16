@@ -1009,7 +1009,7 @@ int 	pqissl::Basic_Connection_Complete()
 
 			return -1;
 		}
-		else if ((err == ECONNREFUSED))
+		else if (err == ECONNREFUSED)
 		{
 			rslog(RSL_WARNING, pqisslzone, "pqissl::Basic_Connection_Complete() ECONNREFUSED: cert: " + PeerId().toStdString());
 
