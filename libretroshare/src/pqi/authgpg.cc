@@ -46,7 +46,7 @@
 #define LIMIT_CERTIFICATE_SIZE		1
 #define MAX_CERTIFICATE_SIZE		10000
 
-const time_t STORE_KEY_TIMEOUT = 1 * 60 * 60; //store key is call around every hour
+//const time_t STORE_KEY_TIMEOUT = 1 * 60 * 60; //store key is call around every hour
 
 AuthGPG *AuthGPG::_instance = NULL ;
 

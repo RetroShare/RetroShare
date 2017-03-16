@@ -68,8 +68,8 @@ static double getCurrentTS()
 struct RsLog::logInfo pqihandlerzoneInfo = {RsLog::Default, "pqihandler"};
 #define pqihandlerzone &pqihandlerzoneInfo
 
-static const int PQI_HANDLER_NB_PRIORITY_LEVELS = 10 ;
-static const float PQI_HANDLER_NB_PRIORITY_RATIO = 2 ;
+//static const int PQI_HANDLER_NB_PRIORITY_LEVELS = 10 ;
+//static const float PQI_HANDLER_NB_PRIORITY_RATIO = 2 ;
 
 /****
 #define DEBUG_TICK 1
