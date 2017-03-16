@@ -93,9 +93,9 @@ again:
 				idx = (idx + 1) % 4;
 			}
 
-			idx = idx;
+			//idx = idx;
 
-            return buf;
+			return buf ;
 		}
 
 		/****************
