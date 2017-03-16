@@ -308,7 +308,7 @@ void  CreateGxsForumMsg::loadFormInformation()
 
 	ui.forumName->setText(misc::removeNewLine(name));
 	ui.forumSubject->setText(misc::removeNewLine(subj));
-	ui.forumSubject->setReadOnly(!mOrigMsgId.isNull());
+	//ui.forumSubject->setReadOnly(!mOrigMsgId.isNull());
 
 	if (ui.forumSubject->text().isEmpty())
 	{
