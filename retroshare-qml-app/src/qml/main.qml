@@ -1,6 +1,6 @@
 /*
  * RetroShare Android QML App
- * Copyright (C) 2016  Gioacchino Mazzurco <gio@eigenlab.org>
+ * Copyright (C) 2016-2017  Gioacchino Mazzurco <gio@eigenlab.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -24,94 +24,137 @@ ApplicationWindow
 {
 	id: mainWindow
 	visible: true
-	title: qsTr("RSChat")
+	title: "RetroShare"
 	width: 400
 	height: 400
 
-	property string activeChatId;
-
-	Rectangle
+	toolBar: ToolBar
 	{
-		id: mainView
-		anchors.fill: parent
-		states:
-			[
-			    State
-			    {
-					name: "waiting_account_select"
-					PropertyChanges { target: swipeView; currentIndex: 0 }
-					PropertyChanges { target: locationsTab; enabled: true }
-				},
-				State
-				{
-					name: "running_ok"
-					PropertyChanges { target: swipeView; currentIndex: 1 }
-					PropertyChanges { target: locationsTab; enabled: false }
-				},
-				State
-				{
-					name: "running_ok_no_full_control"
-					PropertyChanges { target: swipeView; currentIndex: 1 }
-					PropertyChanges { target: locationsTab; enabled: false }
-				}
-		]
-
-		LibresapiLocalClient
+		Image
 		{
-			onGoodResponseReceived:
+			id: rsIcon
+			fillMode: Image.PreserveAspectFit
+			height: Math.max(30, parent.height - 4)
+			anchors.verticalCenter: parent.verticalCenter
+			source: "icons/retroshare06.png"
+		}
+		Label
+		{
+			text: "RetroShare"
+			anchors.verticalCenter: parent.verticalCenter
+			anchors.left: rsIcon.right
+			anchors.leftMargin: 20
+		}
+	}
+
+	menuBar: MenuBar
+	{
+		Menu
+		{
+			MenuItem
 			{
-				var jsonReponse = JSON.parse(msg)
-				mainView.state = jsonReponse.data.runstate
+				text: "Trusted Nodes"
+				onTriggered:
+					stackView.push({item:"qrc:/qml/TrustedNodesView.qml"})
 			}
-			Component.onCompleted:
+			MenuItem
 			{
-				openConnection(apiSocketPath)
-				request("/control/runstate/", "")
+				text: "StackView State"
+				onTriggered: console.log(stackView.state, stackView.enabled)
+			}
+		}
+	}
+
+	StackView
+	{
+		id: stackView
+		anchors.fill: parent
+		Keys.onReleased:
+			if (event.key === Qt.Key_Back && stackView.depth > 1)
+			{
+				stackView.pop();
+				event.accepted = true;
+			}
+
+		function checkCoreStatus()
+		{
+			function runStateCallback(par)
+			{
+				var jsonReponse = JSON.parse(par.response)
+				var runState = jsonReponse.data.runstate
+				if(typeof(runState) === 'string') stackView.state = runState
+				else
+				{
+					stackView.state = "core_down"
+					console.log("runStateCallback(...) core is down")
+				}
+			}
+			var ret = rsApi.request("/control/runstate/", "", runStateCallback)
+			if ( ret < 1 )
+			{
+				console.log("checkCoreStatus() core is down")
+				stackView.state = "core_down"
 			}
 		}
 
-		TabView
+		Timer
 		{
-			id: swipeView
-			anchors.fill: parent
-			visible: true
-			currentIndex: 0
+			id: refreshTimer
+			interval: 800
+			repeat: true
+			onTriggered: if(stackView.visible) stackView.checkCoreStatus()
+			Component.onCompleted: start()
+		}
 
-			Tab
+		state: "core_down"
+		states: [
+			State
 			{
-				title:"Locations"
-				id: locationsTab
-				Locations { onVisibleChanged: focus = visible }
-			}
-
-			Tab
+				name: "core_down"
+				PropertyChanges { target: stackView; enabled: false }
+			},
+			State
 			{
-				title: "Trusted Nodes"
-				TrustedNodesView { onVisibleChanged: focus = visible }
-			}
-
-			Tab
-			{
-				title: "Contacts"
-				Contacts { onVisibleChanged: focus = visible }
-			}
-
-			Tab
-			{
-				title: "Add Node"
-				AddTrustedNode { onVisibleChanged: focus = visible }
-			}
-
-			Tab
-			{
-				title: "Chat"
-				ChatView
+				name: "waiting_account_select"
+				PropertyChanges { target: stackView; enabled: true }
+				StateChangeScript
 				{
-					id: chatView
-					chatId: mainWindow.activeChatId
-					onVisibleChanged: focus = visible
+					script:
+					{
+						console.log("StateChangeScript waiting_account_select")
+						stackView.clear()
+						stackView.push({item:"qrc:/qml/Locations.qml"})
+					}
 				}
+			},
+			State
+			{
+				name: "running_ok"
+				PropertyChanges { target: stackView; enabled: true }
+				StateChangeScript
+				{
+					script:
+					{
+						console.log("StateChangeScript waiting_account_select")
+						stackView.clear()
+						stackView.push({item: "qrc:/qml/Contacts.qml"})
+					}
+				}
+			},
+			State
+			{
+				name: "running_ok_no_full_control"
+				PropertyChanges { target: stackView; state: "running_ok" }
 			}
+		]
+
+		initialItem: Rectangle
+		{
+			anchors.fill: parent
+			color: "green"
+			border.color: "black"
+
+			Text { text: "Connecting to core..." }
 		}
 	}
 }

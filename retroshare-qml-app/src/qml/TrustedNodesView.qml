@@ -1,6 +1,6 @@
 /*
  * RetroShare Android QML App
- * Copyright (C) 2016  Gioacchino Mazzurco <gio@eigenlab.org>
+ * Copyright (C) 2016-2017  Gioacchino Mazzurco <gio@eigenlab.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -18,17 +18,31 @@
 
 import QtQuick 2.0
 import QtQuick.Controls 1.4
+import QtQuick.Dialogs 1.2
 import "jsonpath.js" as JSONPath
 
 Item
 {
-	function refreshData() { rsApi.request("/peers/*", "", function(par) { jsonModel.json = par.response }) }
+	id: trustedNodesView
+
+	function refreshData()
+	{
+		rsApi.request("/peers/*", "",
+					  function(par) { jsonModel.json = par.response })
+	}
 	onFocusChanged: focus && refreshData()
 
 	JSONListModel
 	{
 		id: jsonModel
 		query: "$.data[*]"
+
+		function isOnline(pgpId)
+		{
+			var qr = "$.data[?(@.pgp_id=='"+pgpId+"')].locations[*].is_online"
+			var locArr = JSONPath.jsonPath(JSON.parse(jsonModel.json), qr)
+			return locArr.reduce(function(cur,acc){return cur || acc}, false)
+		}
 	}
 
 	ListView
@@ -39,30 +53,75 @@ Item
 		model: jsonModel.model
 		delegate: Item
 		{
-			height: 50
-			Row
-			{
-				height: 30
-				Text
-				{
-					text: model.name
-					onTextChanged: color = JSONPath.jsonPath(JSON.parse(jsonModel.json), "$.data[?(@.pgp_id=='"+model.pgp_id+"')].locations[*].is_online").reduce(function(cur,acc){return cur || acc}, false) ? "lime" : "darkslategray"
-				}
+			height: 30
+			width: parent.width
 
-				Rectangle
+			Image
+			{
+				id: statusImage
+				source: jsonModel.isOnline(model.pgp_id) ?
+							"icons/state-ok.png" :
+							"icons/state-offline.png"
+
+				height: parent.height - 4
+				fillMode: Image.PreserveAspectFit
+				anchors.leftMargin: 6
+				anchors.verticalCenter: parent.verticalCenter
+			}
+			Text
+			{
+				text: model.name
+				anchors.verticalCenter: parent.verticalCenter
+				anchors.left: statusImage.right
+				anchors.leftMargin: 10
+			}
+			Image
+			{
+				source: "icons/remove-link.png"
+
+				height: parent.height - 6
+				fillMode: Image.PreserveAspectFit
+
+				anchors.right: parent.right
+				anchors.rightMargin: 2
+				anchors.verticalCenter: parent.verticalCenter
+
+				MouseArea
 				{
 					height: parent.height
-					width: parent.height
-					color: "red"
-
-					MouseArea
+					width: parent.width
+					onClicked:
 					{
-						height: parent.height
-						width: parent.height
-						onClicked: rsApi.request("/peers/"+model.pgp_id+"/delete")
+						deleteDialog.nodeName = model.name
+						deleteDialog.nodeId = model.pgp_id
+						deleteDialog.visible = true
 					}
 				}
 			}
+		}
+	}
+
+	Dialog
+	{
+		id: deleteDialog
+		property string nodeName
+		property string nodeId
+		standardButtons: StandardButton.Yes | StandardButton.No
+		visible: false
+		onYes:
+		{
+			rsApi.request("/peers/"+nodeId+"/delete")
+			trustedNodesView.refreshData()
+			trustedNodesView.forceActiveFocus()
+		}
+		onNo: trustedNodesView.forceActiveFocus()
+		Text
+		{
+			text: "Are you sure to delete " + deleteDialog.nodeName + " ("+
+				  deleteDialog.nodeId +") ?"
+
+			width: parent.width - 2
+			wrapMode: Text.Wrap
 		}
 	}
 
@@ -71,6 +130,15 @@ Item
 		id: bottomButton
 		text: "Add Trusted Node"
 		anchors.bottom: parent.bottom
-		onClicked: swipeView.currentIndex = 3
+		onClicked: stackView.push({item:"qrc:/qml/AddTrustedNode.qml"})
+		width: parent.width
+	}
+
+	Timer
+	{
+		interval: 800
+		repeat: true
+		onTriggered: if(trustedNodesView.visible) trustedNodesView.refreshData()
+		Component.onCompleted: start()
 	}
 }

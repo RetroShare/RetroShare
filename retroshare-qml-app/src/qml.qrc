@@ -1,10 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>qml/main.qml</file>
-        <file>qml/icons/star-2-128.png</file>
-        <file>qml/icons/settings-4-128.png</file>
-        <file>qml/icons/email-128.png</file>
-        <file>qml/icons/contacts-128.png</file>
         <file>qml/Locations.qml</file>
         <file>qml/jsonpath.js</file>
         <file>qml/JSONListModel.qml</file>
@@ -13,5 +9,9 @@
         <file>qml/RsLoginPassView.qml</file>
         <file>qml/TrustedNodesView.qml</file>
         <file>qml/ChatView.qml</file>
+        <file>qml/icons/retroshare06.png</file>
+        <file>qml/icons/remove-link.png</file>
+        <file>qml/icons/state-offline.png</file>
+        <file>qml/icons/state-ok.png</file>
     </qresource>
 </RCC>

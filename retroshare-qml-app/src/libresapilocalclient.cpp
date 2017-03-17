@@ -1,6 +1,6 @@
 /*
  * RetroShare Android QML App
- * Copyright (C) 2016  Gioacchino Mazzurco <gio@eigenlab.org>
+ * Copyright (C) 2016-2017  Gioacchino Mazzurco <gio@eigenlab.org>
  * Copyright (C) 2016  Manu Pineda <manu@cooperativa.cat>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -38,9 +38,7 @@ int LibresapiLocalClient::request( const QString& path, const QString& jsonData,
 	data.append(path); data.append('\n');
 	data.append(jsonData); data.append('\n');
 	callbackQueue.enqueue(callback);
-	mLocalSocket.write(data);
-
-	return 1;
+	return mLocalSocket.write(data);
 }
 
 void LibresapiLocalClient::socketError(QLocalSocket::LocalSocketError)

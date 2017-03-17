@@ -1,6 +1,6 @@
 /*
  * RetroShare Android QML App
- * Copyright (C) 2016  Gioacchino Mazzurco <gio@eigenlab.org>
+ * Copyright (C) 2016-2017  Gioacchino Mazzurco <gio@eigenlab.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -39,7 +39,8 @@ int main(int argc, char *argv[])
 
 	QQmlApplicationEngine engine;
 
-	/// @deprecated
+	/** When possible it is better to use +rsApi+ object directly instead of
+	 * multiple instances of +LibresapiLocalClient+ in Qml */
 	qmlRegisterType<LibresapiLocalClient>(
 	            "org.retroshare.qml_components.LibresapiLocalClient", 1, 0,
 	            "LibresapiLocalClient");
@@ -55,7 +56,8 @@ int main(int argc, char *argv[])
 	engine.load(QUrl(QLatin1String("qrc:/qml/main.qml")));
 
 	QFileInfo fileInfo(sockPath);
-	qDebug() << "QML APP:" << sockPath << fileInfo.exists() << fileInfo.lastModified().toString();
+	qDebug() << "QML APP:" << sockPath << fileInfo.exists()
+	         << fileInfo.lastModified().toString();
 
 	return app.exec();
 }

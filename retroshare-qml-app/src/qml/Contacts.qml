@@ -1,6 +1,6 @@
 /*
  * RetroShare Android QML App
- * Copyright (C) 2016  Gioacchino Mazzurco <gio@eigenlab.org>
+ * Copyright (C) 2016-2017  Gioacchino Mazzurco <gio@eigenlab.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -29,7 +29,15 @@ Item
 
 	Component.onCompleted: refreshOwn()
 
-	function refreshData() { rsApi.request("/identity/*/", "", function(par) { locationsModel.json = par.response; if(contactsView.own_gxs_id == "") refreshOwn() }) }
+	function refreshData()
+	{
+		function refreshCallback(par)
+		{
+			locationsModel.json = par.response
+			if(contactsView.own_gxs_id == "") refreshOwn()
+		}
+		rsApi.request("/identity/*/", "", refreshCallback)
+	}
 	function refreshOwn()
 	{
 		rsApi.request("/identity/own", "", function(par)
@@ -42,6 +50,14 @@ Item
 			}
 			else createIdentityDialog.visible = true
 		})
+	}
+	function startChatCallback(par)
+	{
+		var chId = JSON.parse(par.response).data.chat_id
+		stackView.push({
+						   item:"qrc:/qml/ChatView.qml",
+						   properties: {chatId: chId}
+					   })
 	}
 
 	onFocusChanged: focus && refreshData()
@@ -68,12 +84,16 @@ Item
 				anchors.fill: parent
 				onClicked:
 				{
-					console.log("Contacts view onclicked:", model.name, model.gxs_id)
+					console.log("Contacts view onclicked:", model.name,
+								model.gxs_id)
 					if(model.own) contactsView.own_gxs_id = model.gxs_id
 					else
 					{
-						var jsonData = { "own_gxs_hex": contactsView.own_gxs_id, "remote_gxs_hex": model.gxs_id }
-						rsApi.request("/chat/initiate_distant_chat", JSON.stringify(jsonData), function (par) { mainWindow.activeChatId = JSON.parse(par.response).data.chat_id })
+						var jsonData = { "own_gxs_hex": contactsView.own_gxs_id,
+							"remote_gxs_hex": model.gxs_id }
+						rsApi.request("/chat/initiate_distant_chat",
+									  JSON.stringify(jsonData),
+									  contactsView.startChatCallback)
 					}
 				}
 				Text
