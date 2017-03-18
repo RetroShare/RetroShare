@@ -63,7 +63,7 @@ void ChatDialog::closeEvent(QCloseEvent *event)
 	emit dialogClose(this);
 }
 
-void ChatDialog::init(ChatId id, const QString &title)
+void ChatDialog::init(const ChatId &id, const QString &title)
 {
     mChatId = id;
 	ChatWidget *cw = getChatWidget();
@@ -102,7 +102,7 @@ void ChatDialog::init(ChatId id, const QString &title)
         if (chatflags & RS_CHAT_OPEN) {
             if (id.isLobbyId()) {
                 ChatLobbyDialog* cld = new ChatLobbyDialog(id.toLobbyId());
-                cld->init();
+                cld->init(ChatId(), "");
                 cd = cld;
             } 
             else if(id.isDistantChatId())
