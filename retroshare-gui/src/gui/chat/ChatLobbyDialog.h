@@ -71,7 +71,8 @@ protected:
 	virtual ~ChatLobbyDialog();
 
 	void processSettings(bool load);
-    virtual void init();
+	virtual void init(ChatId id, const QString &title);
+	void init();
 	virtual bool canClose();
     virtual void addChatMsg(const ChatMessage &msg);
 
