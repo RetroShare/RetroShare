@@ -788,7 +788,7 @@ bool p3IdService::createIdentity(uint32_t& token, RsIdentityParameters &params)
 
     if (params.isPgpLinked)
     {
-#warning Backward compatibility issue to fix here in v0.7.0
+#warning csoler 2017-02-07: Backward compatibility issue to fix here in v0.7.0
 
         // This is a hack, because a bad decision led to having RSGXSID_GROUPFLAG_REALID be equal to GXS_SERV::FLAG_PRIVACY_PRIVATE.
         // In order to keep backward compatibility, we'll also add the new value

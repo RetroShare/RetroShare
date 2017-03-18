@@ -1993,7 +1993,7 @@ QString IdDialog::createUsageString(const RsIdentityUsage& u) const
 		return tr("Membership verification in circle %1.").arg(QString::fromStdString(u.mGrpId.toStdString()));
     }
 
-#warning TODO! Add the different strings and translations here.
+#warning TODO! csoler 2017-01-03: Add the different strings and translations here.
 	default:
 		return QString("Undone yet");
     }
