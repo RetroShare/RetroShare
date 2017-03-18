@@ -1207,7 +1207,7 @@ void MainWindow::showHelpDialog(const QString &topic)
 void
 MainWindow::retranslateUi()
 {
-  retranslateUi();
+  //retranslateUi();
   foreach (MainPage *page, ui->stackPages->pages()) {
     page->retranslateUi();
   }
