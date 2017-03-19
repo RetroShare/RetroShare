@@ -109,7 +109,7 @@ void ChatDialog::init(const ChatId &id, const QString &title)
             {
                 PopupDistantChatDialog* pdcd = new PopupDistantChatDialog(id.toDistantChatId());
                 
-                pdcd->init(id.toDistantChatId());
+                pdcd->init(id, "");
                 cd = pdcd;
             } 
             else 
