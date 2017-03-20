@@ -2,6 +2,8 @@
 //
 //
 
+#include <set>
+
 #include "serializer.h"
 #include "util/rsmemory.h"
 #include "util/rsprint.h"
@@ -10,18 +12,79 @@
 static const uint16_t RS_SERVICE_TYPE_TEST  = 0xffff;
 static const uint8_t  RS_ITEM_SUBTYPE_TEST1 = 0x01 ;
 
+// Template serialization of RsTypeSerialiser::serial_process() for unknown/new types
+//
+//
+template<> uint32_t RsTypeSerializer::serial_size(const std::set<uint32_t>& s)
+{
+	return s.size() * 4 + 4 ;
+}
+template<> bool RsTypeSerializer::serialize(uint8_t data[], uint32_t size, uint32_t &offset, const std::set<uint32_t>& member)
+{
+	uint32_t tlvsize = serial_size(member) ;
+	bool ok = true ;
+	uint32_t offset_save = offset ;
+
+	if(tlvsize + offset >= size)
+		return false ;
+
+	ok = ok && RsTypeSerializer::serialize(data,size,offset,member.size()) ;
+
+	for(std::set<uint32_t>::const_iterator it(member.begin());it!=member.end();++it)
+		ok = ok && RsTypeSerializer::serialize(data,size,offset,*it) ;
+
+	if(!ok)
+	{
+		std::cerr << "(EE) Cannot serialize std::set<uint32_t>" << std::endl;
+		offset = offset_save ;	// return the data in the same condition
+	}
+	return ok ;
+}
+
+template<> bool RsTypeSerializer::deserialize(const uint8_t data[], uint32_t size, uint32_t &offset, std::set<uint32_t>& member)
+{
+	bool ok = true ;
+	uint32_t n = 0 ;
+	uint32_t offset_save = offset ;
+	member.clear();
+
+	ok = ok && RsTypeSerializer::deserialize(data,size,offset,n);
+
+	for(uint32_t i=0;i<n;++i)
+	{
+		uint32_t x;
+		ok = ok && RsTypeSerializer::deserialize(data,size,offset,x) ;
+
+		member.insert(x);
+	}
+
+	if(!ok)
+	{
+		std::cerr << "(EE) Cannot deserialize std::set<uint32_t>" << std::endl;
+		offset = offset_save ;	// return the data in the same condition
+	}
+	return ok;
+}
+
+// New item class. This class needs to define:
+// - a serial_process method that tells which members to serialize
+// - overload the clear() and print() methods of RsItem
+//
 class RsTestItem: public RsSerializable
 {
 	public:
 		RsTestItem() : RsSerializable(RS_PKT_VERSION_SERVICE,RS_SERVICE_TYPE_TEST,RS_ITEM_SUBTYPE_TEST1) {}
 
+		// Derived from RsSerializable
+		//
 		virtual void serial_process(RsSerializable::SerializeJob j, SerializeContext& ctx) 
 		{
-			RsTypeSerializer<uint64_t>   ().serial_process(j,ctx,ts) ;
-			RsTypeSerializer<std::string>().serial_process(j,ctx,str) ;
+			RsTypeSerializer::serial_process(j,ctx,ts ) ;
+			RsTypeSerializer::serial_process(j,ctx,str) ;
+			RsTypeSerializer::serial_process(j,ctx,int_set ) ;
 		}
 
-		// derived from RsItem
+		// Derived from RsItem
 		//
 		virtual void clear() {}
 		virtual std::ostream& print(std::ostream&,uint16_t indent) {}
@@ -30,8 +93,13 @@ class RsTestItem: public RsSerializable
 	private:
 		std::string str ;
 		uint64_t ts ;
+		std::set<uint32_t> int_set ;
 };
 
+// New user-defined serializer class. 
+// The only required member is the create_item() method, which creates the correct RsSerializable 
+// that corresponds to a specific (service,subtype) couple.
+//
 class RsTestSerializer: public RsSerializer
 {
 	public:

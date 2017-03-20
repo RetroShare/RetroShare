@@ -51,6 +51,7 @@ class SerializeContext
 };
 template<typename T> T ntoh(T t)
 {
+	if(sizeof(T) == 8) return t;
 	if(sizeof(T) == 4) return ntohl(t) ;
 	if(sizeof(T) == 2) return ntohs(t) ;
 
@@ -59,6 +60,7 @@ template<typename T> T ntoh(T t)
 }
 template<typename T> T hton(T t)
 {
+	if(sizeof(T) == 8) return t;
 	if(sizeof(T) == 4) return htonl(t) ;
 	if(sizeof(T) == 2) return htons(t) ;
 
@@ -66,10 +68,11 @@ template<typename T> T hton(T t)
 	return t;
 }
 
-template<typename T> class RsTypeSerializerBase
+class RsTypeSerializer
 {
 	public:
-		void serial_process(RsSerializable::SerializeJob j,SerializeContext& ctx,T& member) 
+		template<typename T> 
+		static void serial_process(RsSerializable::SerializeJob j,SerializeContext& ctx,T& member) 
 		{
 			switch(j)
 			{
@@ -88,16 +91,22 @@ template<typename T> class RsTypeSerializerBase
 		}
 
 	protected:
-		virtual bool serialize(uint8_t data[], uint32_t size, uint32_t &offset, const T& member)const=0;
-		virtual bool deserialize(const uint8_t data[], uint32_t size, uint32_t &offset, T& member) const=0;
-		virtual uint32_t serial_size(const T& /* member */)const=0;
+		template<typename T> 
+		static bool serialize(uint8_t data[], uint32_t size, uint32_t &offset, const T& member);
+
+		template<typename T> 
+		static bool deserialize(const uint8_t data[], uint32_t size, uint32_t &offset, T& member);
+
+		template<typename T> 
+		static uint32_t serial_size(const T& /* member */);
 };
 
 /// Templates to generate RsSerializer for standard integral types
-template<typename N, uint32_t SIZE> class t_SerializerNType : public RsTypeSerializerBase<N>
+//
+template<typename N,uint32_t SIZE> class t_SerializerNType 
 {
-protected:
-	bool serialize(uint8_t data[], uint32_t size, uint32_t &offset, const N& member)const
+public:
+	static bool serialize(uint8_t data[], uint32_t size, uint32_t &offset, const N& member)
 	{
 		if (size <= offset || size - offset < SIZE) 
 			return false;
@@ -107,7 +116,7 @@ protected:
 		offset += SIZE;
 		return true;
 	}
-	bool deserialize(const uint8_t data[], uint32_t size, uint32_t &offset, N& member)const
+	static bool deserialize(const uint8_t data[], uint32_t size, uint32_t &offset, N& member)
 	{
 		if (size <= offset || size - offset < SIZE) 
 			return false;
@@ -119,34 +128,56 @@ protected:
 		return true;
 	}
 
-	inline uint32_t serial_size(const N& /* member */)const
+	static uint32_t serial_size(const N& /* member */)
 	{ 
 		return SIZE; 
 	}
 };
 
-template<typename T> class RsTypeSerializer
-{
-//	public:
-//		virtual void serial_process(RsSerializable::SerializeJob j,SerializeContext& ctx,const T& member)=0; 
+template<> bool RsTypeSerializer::serialize(uint8_t data[], uint32_t size, uint32_t &offset, const uint8_t& member) 
+{ 
+	return t_SerializerNType<uint8_t,1>::serialize(data,size,offset,member); 
+}
+template<> bool RsTypeSerializer::serialize(uint8_t data[], uint32_t size, uint32_t &offset, const uint32_t& member) 
+{ 
+	return t_SerializerNType<uint64_t,8>::serialize(data,size,offset,member); 
+}
+template<> bool RsTypeSerializer::serialize(uint8_t data[], uint32_t size, uint32_t &offset, const uint64_t& member) 
+{ 
+	return t_SerializerNType<uint64_t,8>::serialize(data,size,offset,member); 
+}
+template<> bool RsTypeSerializer::deserialize(const uint8_t data[], uint32_t size, uint32_t &offset, uint8_t& member) 
+{ 
+	return t_SerializerNType<uint8_t,1>::deserialize(data,size,offset,member); 
+}
+template<> bool RsTypeSerializer::deserialize(const uint8_t data[], uint32_t size, uint32_t &offset, uint32_t& member) 
+{ 
+	return t_SerializerNType<uint32_t,4>::deserialize(data,size,offset,member); 
+}
+template<> bool RsTypeSerializer::deserialize(const uint8_t data[], uint32_t size, uint32_t &offset, uint64_t& member) 
+{ 
+	return t_SerializerNType<uint64_t,8>::deserialize(data,size,offset,member); 
+}
+template<> uint32_t RsTypeSerializer::serial_size(const uint8_t& member) 
+{ 
+	return t_SerializerNType<uint8_t,1>::serial_size(member); 
+}
+template<> uint32_t RsTypeSerializer::serial_size(const uint32_t& member) 
+{ 
+	return t_SerializerNType<uint32_t,4>::serial_size(member); 
+}
+template<> uint32_t RsTypeSerializer::serial_size(const uint64_t& member) 
+{ 
+	return t_SerializerNType<uint64_t,8>::serial_size(member); 
+}
+//// Float
 //
-//	protected:
-//		virtual bool serialize(uint8_t data[], uint32_t size, uint32_t &offset, const T& member)const=0;
-//		virtual bool deserialize(const uint8_t data[], uint32_t size, uint32_t &offset, T& member)=0;
-//		virtual uint32_t serial_size(const T& /* member */)const=0;
-};
+template<>
+	uint32_t RsTypeSerializer::serial_size(const float&){ return 4; }
 
-template<> class RsTypeSerializer<uint8_t>  : public t_SerializerNType<uint8_t,  1>{};
-template<> class RsTypeSerializer<uint16_t> : public t_SerializerNType<uint16_t, 2>{};
-template<> class RsTypeSerializer<uint32_t> : public t_SerializerNType<uint32_t, 4>{};
-template<> class RsTypeSerializer<uint64_t> : public t_SerializerNType<uint64_t, 8>{};
-template<> class RsTypeSerializer<time_t>   : public t_SerializerNType<uint64_t, 8>{};
 
-/// Serializer for <b>non negative</b> float
-template<> class RsTypeSerializer<float> : public RsTypeSerializerBase<float>
-{
-protected:
-	bool serialize(uint8_t data[], uint32_t size, uint32_t &offset, const float& f)const
+template<>
+bool RsTypeSerializer::serialize(uint8_t data[], uint32_t size, uint32_t &offset, const float& f)
 	{
 		uint32_t sz = serial_size(f);
 		if ( !data || size <= offset || size - offset < sz )
@@ -172,7 +203,14 @@ protected:
 		return true;
 	}
 
-	bool deserialize(const uint8_t data[], uint32_t size, uint32_t &offset, float& f)const
+template<> uint32_t RsTypeSerializer::serial_size<std::string>(const std::string& s)
+{
+	return s.length() + 4;
+}
+
+
+template<>
+	bool RsTypeSerializer::deserialize(const uint8_t data[], uint32_t size, uint32_t &offset, float& f)
 	{
 		uint32_t sz = serial_size(f);
 		if ( !data || size <= offset ||
@@ -185,14 +223,11 @@ protected:
 		f = 1.0f/ ( n/(float)(~(uint32_t)0)) - 1.0f;
 		return true;
 	}
-	inline uint32_t serial_size(const float&)const { return 4; }
-};
+
 
 /// Serializer for std::string
-template<> class RsTypeSerializer<std::string> : public RsTypeSerializerBase<std::string>
-{
-	protected:
-		bool serialize(uint8_t data[], uint32_t size, uint32_t &offset,const std::string& s)const
+	template<>
+	bool RsTypeSerializer::serialize(uint8_t data[], uint32_t size, uint32_t &offset,const std::string& s)
 		{
 			if ( !data || size <= offset || size - offset < serial_size(s))
 				return false;
@@ -203,7 +238,8 @@ template<> class RsTypeSerializer<std::string> : public RsTypeSerializerBase<std
 			memcpy(data+offset, s.c_str(), charsLen); offset += charsLen;
 			return true;
 		}
-		bool deserialize(const uint8_t data[], uint32_t size,uint32_t& offset,std::string& s)const
+template<>
+		bool RsTypeSerializer::deserialize(const uint8_t data[], uint32_t size,uint32_t& offset,std::string& s)
 		{
 			if ( !data || size <= offset || size - offset < 4 ) return false;
 			uint32_t charsLen;
@@ -216,13 +252,6 @@ template<> class RsTypeSerializer<std::string> : public RsTypeSerializerBase<std
 			offset += charsLen;
 			return true;
 		}
-		inline uint32_t serial_size(const std::string& s)const
-		{
-			return s.length() + 4;
-		}
-};
-
-
 
 class RsSerializer
 {
