@@ -76,7 +76,7 @@ Item
 		model: locationsModel.model
 		delegate: Item
 		{
-		    height: 20
+			height: 40
 			width: parent.width
 
 			MouseArea
@@ -96,17 +96,76 @@ Item
 									  contactsView.startChatCallback)
 					}
 				}
+				Rectangle
+				{
+					id: colorHash
+					height: parent.height - 4
+					width: height
+					anchors.verticalCenter: parent.verticalCenter
+					anchors.left: parent.left
+					anchors.leftMargin: 2
+					color: "white"
+					property int childHeight : height/2
+
+					Rectangle
+					{
+						color: '#' + model.gxs_id.substring(1, 9)
+						height: parent.childHeight
+						width: height
+						anchors.top: parent.top
+						anchors.left: parent.left
+					}
+					Rectangle
+					{
+						color: '#' + model.gxs_id.substring(9, 17)
+						height: parent.childHeight
+						width: height
+						anchors.top: parent.top
+						anchors.right: parent.right
+					}
+					Rectangle
+					{
+						color: '#' + model.gxs_id.substring(17, 25)
+						height: parent.childHeight
+						width: height
+						anchors.bottom: parent.bottom
+						anchors.left: parent.left
+					}
+					Rectangle
+					{
+						color: '#' + model.gxs_id.slice(-8)
+						height: parent.childHeight
+						width: height
+						anchors.bottom: parent.bottom
+						anchors.right: parent.right
+					}
+
+					MouseArea
+					{
+						anchors.fill: parent
+						onPressAndHold:
+						{
+							fingerPrintDialog.nick = model.name
+							fingerPrintDialog.gxs_id = model.gxs_id
+							fingerPrintDialog.visible = true
+						}
+					}
+				}
 				Text
 				{
+					id: nickText
 					color: model.own ? "blue" : "black"
-					text: model.name + " " + model.gxs_id
+					text: model.name
+					anchors.left: colorHash.right
+					anchors.leftMargin: 5
+					anchors.verticalCenter: parent.verticalCenter
 				}
 			}
-	    }
+		}
 	}
 
-    Text
-    {
+	Text
+	{
 		id: selectedOwnIdentityView
 		color: "green"
 		anchors.bottom: parent.bottom
@@ -145,6 +204,27 @@ Item
 			anchors.top: identityNameTE.bottom
 			Text { text: "Pseudonymous: " }
 			CheckBox { id: psdnmCheckBox; checked: true; enabled: false }
+		}
+	}
+
+	Dialog
+	{
+		id: fingerPrintDialog
+		visible: false
+		property string nick
+		property string gxs_id
+		title: nick + " fingerprint:"
+		standardButtons: StandardButton.NoButton
+		Text
+		{
+			id: fingerPrintText
+			anchors.centerIn: parent
+			text: "<pre>" +
+				  fingerPrintDialog.gxs_id.substring(1, 9) + "<br/>" +
+				  fingerPrintDialog.gxs_id.substring(9, 17) + "<br/>" +
+				  fingerPrintDialog.gxs_id.substring(17, 25) + "<br/>" +
+				  fingerPrintDialog.gxs_id.slice(-8) + "<br/>" +
+				  "</pre>"
 		}
 	}
 }
