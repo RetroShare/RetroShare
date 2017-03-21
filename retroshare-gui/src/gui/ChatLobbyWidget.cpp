@@ -378,8 +378,12 @@ static void updateItem(QTreeWidget *treeWidget, QTreeWidgetItem *item, ChatLobby
                      +QObject::tr("Id:")+" "+QString::number(id,16) ;
     
     if(lobby_flags & RS_CHAT_LOBBY_FLAGS_PGP_SIGNED)
+	{
         tooltipstr += QObject::tr("\nSecurity: no anonymous IDs") ;
-    
+		QColor foreground = QColor(0, 128, 0); // green
+		for (int column = 0; column < COLUMN_COUNT; ++column)
+			item->setTextColor(column, foreground);
+	}
     item->setToolTip(0,tooltipstr) ;
 }
 
