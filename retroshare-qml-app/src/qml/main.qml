@@ -17,7 +17,7 @@
  */
 
 import QtQuick 2.2
-import QtQuick.Controls 1.4
+import QtQuick.Controls 2.0
 import org.retroshare.qml_components.LibresapiLocalClient 1.0
 
 ApplicationWindow
@@ -28,8 +28,10 @@ ApplicationWindow
 	width: 400
 	height: 400
 
-	toolBar: ToolBar
+	header: ToolBar
 	{
+		id: toolBar
+
 		Image
 		{
 			id: rsIcon
@@ -45,22 +47,48 @@ ApplicationWindow
 			anchors.left: rsIcon.right
 			anchors.leftMargin: 20
 		}
-	}
-
-	menuBar: MenuBar
-	{
-		Menu
+		MouseArea
 		{
-			MenuItem
+			height: parent.height
+			width: parent.height
+			anchors.right: parent.right
+			anchors.rightMargin: 2
+			anchors.verticalCenter: parent.verticalCenter
+
+			onClicked: menu.open()
+
+			Image
 			{
-				text: "Trusted Nodes"
-				onTriggered:
-					stackView.push({item:"qrc:/qml/TrustedNodesView.qml"})
+				source: "qrc:/qml/icons/application-menu.png"
+				height: parent.height - 10
+				width: parent.height - 10
+				anchors.centerIn: parent
 			}
-			MenuItem
+
+			Menu
 			{
-				text: "StackView State"
-				onTriggered: console.log(stackView.state, stackView.enabled)
+				id: menu
+				y: parent.y + parent.height
+
+				MenuItem
+				{
+					text: qsTr("Trusted Nodes")
+					//iconSource: "qrc:/qml/icons/document-share.png"
+					onTriggered:
+						stackView.push("qrc:/qml/TrustedNodesView.qml")
+				}
+				MenuItem
+				{
+					text: qsTr("Search Contacts")
+					onTriggered:
+						stackView.push(
+							"qrc:/qml/Contacts.qml", {'searching': true} )
+				}
+				MenuItem
+				{
+					text: "Terminate Core"
+					onTriggered: rsApi.request("/control/shutdown")
+				}
 			}
 		}
 	}
@@ -102,6 +130,7 @@ ApplicationWindow
 			id: refreshTimer
 			interval: 800
 			repeat: true
+			triggeredOnStart: true
 			onTriggered: if(stackView.visible) stackView.checkCoreStatus()
 			Component.onCompleted: start()
 		}
@@ -123,7 +152,7 @@ ApplicationWindow
 					{
 						console.log("StateChangeScript waiting_account_select")
 						stackView.clear()
-						stackView.push({item:"qrc:/qml/Locations.qml"})
+						stackView.push("qrc:/qml/Locations.qml")
 					}
 				}
 			},
@@ -137,7 +166,7 @@ ApplicationWindow
 					{
 						console.log("StateChangeScript waiting_account_select")
 						stackView.clear()
-						stackView.push({item: "qrc:/qml/Contacts.qml"})
+						stackView.push("qrc:/qml/Contacts.qml")
 					}
 				}
 			},

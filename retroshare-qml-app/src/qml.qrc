@@ -13,5 +13,10 @@
         <file>qml/icons/remove-link.png</file>
         <file>qml/icons/state-offline.png</file>
         <file>qml/icons/state-ok.png</file>
+        <file>qml/GxsIdentityDelegate.qml</file>
+        <file>qml/icons/edit-find.png</file>
+        <file>qml/icons/edit-image-face-detect.png</file>
+        <file>qml/icons/document-share.png</file>
+        <file>qml/icons/application-menu.png</file>
     </qresource>
 </RCC>

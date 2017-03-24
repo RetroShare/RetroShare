@@ -17,7 +17,7 @@
  */
 
 import QtQuick 2.0
-import QtQuick.Controls 1.4
+import QtQuick.Controls 2.0
 import org.retroshare.qml_components.LibresapiLocalClient 1.0
 
 Item
@@ -27,8 +27,12 @@ Item
 
 	function refreshData()
 	{
-		rsApi.request( "/chat/messages/"+ chatId, "",
-					   function(par) { chatModel.json = par.response } )
+		rsApi.request( "/chat/messages/"+chatId, "", function(par)
+		{
+			chatModel.json = par.response
+			if(visible) rsApi.request("/chat/mark_chat_as_read/"+chatId, "",
+									  null)
+		} )
 	}
 
 	onFocusChanged: focus && refreshData()
@@ -89,6 +93,7 @@ Item
 		id: refreshTimer
 		interval: 800
 		repeat: true
+		triggeredOnStart: true
 		onTriggered: if(chatView.visible) chatView.refreshData()
 		Component.onCompleted: start()
 	}

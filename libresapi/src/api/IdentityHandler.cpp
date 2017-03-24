@@ -61,7 +61,9 @@ protected:
         {
         case BEGIN:{
             RsIdentityParameters params;
-            req.mStream << makeKeyValueReference("name", params.nickname) << makeKeyValueReference("pgp_linked", params.isPgpLinked);
+			req.mStream
+			        << makeKeyValueReference("name", params.nickname)
+			        << makeKeyValueReference("pgp_linked", params.isPgpLinked);
 
             if(params.nickname == "")
             {
@@ -141,9 +143,9 @@ void IdentityHandler::handleWildcard(Request & /*req*/, Response &resp)
 	      )
 	{
 #ifdef WINDOWS_SYS
-		Sleep(500);
+		Sleep(50);
 #else
-		usleep(500*1000);
+		usleep(50*1000);
 #endif
 	}
 
@@ -156,14 +158,18 @@ void IdentityHandler::handleWildcard(Request & /*req*/, Response &resp)
 			RsGxsIdGroup& grp = *vit;
 			//electron: not very happy about this, i think the flags should stay hidden in rsidentities
 			bool own = (grp.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN);
-			bool pgp_linked = (grp.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID_kept_for_compatibility  ) ;
-            resp.mDataStream.getStreamToMember()
-			        << makeKeyValueReference("id", grp.mMeta.mGroupId) /// @deprecated using "id" as key can cause problems in some JS based languages like Qml @see gxs_id instead
+			bool pgp_linked = (grp.mMeta.mGroupFlags &
+			                   RSGXSID_GROUPFLAG_REALID_kept_for_compatibility);
+			resp.mDataStream.getStreamToMember()
+#warning @deprecated using "id" as key can cause problems in some JS based \
+	        languages like Qml @see gxs_id instead
+			        << makeKeyValueReference("id", grp.mMeta.mGroupId)
 			        << makeKeyValueReference("gxs_id", grp.mMeta.mGroupId)
 			        << makeKeyValueReference("pgp_id",grp.mPgpId )
 			        << makeKeyValueReference("name", grp.mMeta.mGroupName)
 			        << makeKeyValueReference("own", own)
-			        << makeKeyValueReference("pgp_linked", pgp_linked);
+			        << makeKeyValueReference("pgp_linked", pgp_linked)
+			        << makeKeyValueReference("is_contact", grp.mIsAContact);
 		}
 	}
 	else ok = false;

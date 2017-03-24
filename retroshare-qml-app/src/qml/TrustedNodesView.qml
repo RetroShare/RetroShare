@@ -17,7 +17,7 @@
  */
 
 import QtQuick 2.0
-import QtQuick.Controls 1.4
+import QtQuick.Controls 2.0
 import QtQuick.Dialogs 1.2
 import "jsonpath.js" as JSONPath
 
@@ -40,8 +40,10 @@ Item
 		function isOnline(pgpId)
 		{
 			var qr = "$.data[?(@.pgp_id=='"+pgpId+"')].locations[*].is_online"
-			var locArr = JSONPath.jsonPath(JSON.parse(jsonModel.json), qr)
-			return locArr.reduce(function(cur,acc){return cur || acc}, false)
+			var locOn = JSONPath.jsonPath(JSON.parse(jsonModel.json), qr)
+			if (Array.isArray(locOn))
+				return locOn.reduce(function(cur,acc){return cur || acc}, false)
+			return Boolean(locOn)
 		}
 	}
 
@@ -65,7 +67,8 @@ Item
 
 				height: parent.height - 4
 				fillMode: Image.PreserveAspectFit
-				anchors.leftMargin: 6
+				anchors.left: parent.left
+				anchors.leftMargin: 3
 				anchors.verticalCenter: parent.verticalCenter
 			}
 			Text
@@ -130,7 +133,7 @@ Item
 		id: bottomButton
 		text: "Add Trusted Node"
 		anchors.bottom: parent.bottom
-		onClicked: stackView.push({item:"qrc:/qml/AddTrustedNode.qml"})
+		onClicked: stackView.push("qrc:/qml/AddTrustedNode.qml")
 		width: parent.width
 	}
 
@@ -138,6 +141,7 @@ Item
 	{
 		interval: 800
 		repeat: true
+		triggeredOnStart: true
 		onTriggered: if(trustedNodesView.visible) trustedNodesView.refreshData()
 		Component.onCompleted: start()
 	}

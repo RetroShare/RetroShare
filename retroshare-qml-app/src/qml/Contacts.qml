@@ -17,8 +17,9 @@
  */
 
 import QtQuick 2.0
-import QtQuick.Controls 1.4
+import QtQuick.Controls 2.0
 import QtQuick.Dialogs 1.2
+import QtQml.Models 2.2
 import org.retroshare.qml_components.LibresapiLocalClient 1.0
 
 Item
@@ -26,6 +27,8 @@ Item
 	id: contactsView
 	property string own_gxs_id: ""
 	property string own_nick: ""
+	property bool searching: false
+	property var unreadMessages: ({})
 
 	Component.onCompleted: refreshOwn()
 
@@ -33,7 +36,7 @@ Item
 	{
 		function refreshCallback(par)
 		{
-			locationsModel.json = par.response
+			gxsIdsModel.json = par.response
 			if(contactsView.own_gxs_id == "") refreshOwn()
 		}
 		rsApi.request("/identity/*/", "", refreshCallback)
@@ -54,113 +57,174 @@ Item
 	function startChatCallback(par)
 	{
 		var chId = JSON.parse(par.response).data.chat_id
-		stackView.push({
-						   item:"qrc:/qml/ChatView.qml",
-						   properties: {chatId: chId}
-					   })
+		stackView.push("qrc:/qml/ChatView.qml", {'chatId': chId})
 	}
+
+	function refreshUnread()
+	{
+		rsApi.request("/chat/unread_msgs", "", function(par)
+		{
+			var jsonData = JSON.parse(par.response).data
+			var dataLen = jsonData.length
+			if(JSON.stringify(unreadMessages) != JSON.stringify(jsonData))
+			{
+				unreadMessages = {}
+				for ( var i=0; i<dataLen; ++i)
+				{
+					var el = jsonData[i]
+					if(el.is_distant_chat_id)
+						unreadMessages[el.remote_author_id] = el.unread_count
+				}
+
+				visualModel.resetSorting()
+			}
+		})
+	}
+
+	/** This must be equivalent to
+		p3GxsTunnelService::makeGxsTunnelId(...) */
+	function getChatId(from_gxs, to_gxs)
+	{
+		return from_gxs < to_gxs ? from_gxs + to_gxs : to_gxs + from_gxs
+	}
+
+
 
 	onFocusChanged: focus && refreshData()
 
 	JSONListModel
 	{
-		id: locationsModel
+		id: gxsIdsModel
 		query: "$.data[*]"
+	}
+
+	DelegateModel
+	{
+/* More documentation about this is available at:
+ * http://doc.qt.io/qt-5/qml-qtqml-models-delegatemodel.html
+ * http://doc.qt.io/qt-5/qtquick-tutorials-dynamicview-dynamicview4-example.html
+ * http://imaginativethinking.ca/use-qt-quicks-delegatemodelgroup/
+ */
+		id: visualModel
+		model: gxsIdsModel.model
+
+		property var lessThan:
+		[
+			function(left, right)
+			{
+				var lfun = unreadMessages.hasOwnProperty(left.gxs_id) ?
+							unreadMessages[left.gxs_id] : 0
+				var rgun = unreadMessages.hasOwnProperty(right.gxs_id) ?
+							unreadMessages[right.gxs_id] : 0
+				if( lfun !== rgun ) return lfun > rgun
+				if(left.name !== right.name) return left.name < right.name
+				return left.gxs_id < right.gxs_id
+			},
+			function(left, right)
+			{
+				if(searchText.length > 0)
+				{
+					var mtc = searchText.text.toLowerCase()
+					var lfn = left.name.toLowerCase()
+					var rgn = right.name.toLowerCase()
+					var lfml = lfn.indexOf(mtc)
+					var rgml = rgn.indexOf(mtc)
+					if ( lfml !== rgml )
+					{
+						lfml = lfml >= 0 ? lfml : Number.MAX_VALUE
+						rgml = rgml >= 0 ? rgml : Number.MAX_VALUE
+						return lfml < rgml
+					}
+				}
+				return lessThan[0](left, right)
+			}
+		]
+
+		property int sortOrder: contactsView.searching ? 1 : 0
+		onSortOrderChanged: resetSorting()
+
+		property bool isSorting: false
+
+		function insertPosition(lessThan, item)
+		{
+			var lower = 0
+			var upper = items.count
+			while (lower < upper)
+			{
+				var middle = Math.floor(lower + (upper - lower) / 2)
+				var result = lessThan(item.model, items.get(middle).model);
+				if (result) upper = middle
+				else lower = middle + 1
+			}
+			return lower
+		}
+
+		function resetSorting() { items.setGroups(0, items.count, "unsorted") }
+
+		function sort()
+		{
+			while (unsortedItems.count > 0)
+			{
+				var item = unsortedItems.get(0)
+				var index = insertPosition(lessThan[visualModel.sortOrder],
+										   item)
+				item.groups = ["items"]
+				items.move(item.itemsIndex, index)
+			}
+		}
+
+		items.includeByDefault: false
+
+		groups:
+		[
+			DelegateModelGroup
+			{
+				id: unsortedItems
+				name: "unsorted"
+
+				includeByDefault: true
+				onChanged: visualModel.sort()
+			}
+		]
+
+		delegate: GxsIdentityDelegate {}
 	}
 
 	ListView
 	{
 		id: locationsListView
 		width: parent.width
-		height: 300
-		model: locationsModel.model
-		delegate: Item
+		height: contactsView.searching ?
+					parent.height - searchBox.height : parent.height
+		model: visualModel
+		anchors.top: contactsView.searching ? searchBox.bottom : parent.top
+	}
+
+	Rectangle
+	{
+		id: searchBox
+		visible: contactsView.searching
+
+		height: searchText.height
+		width: searchText.width
+		anchors.right: parent.right
+		anchors.top: parent.top
+
+		Image
 		{
-			height: 40
-			width: parent.width
+			id: searchIcon
+			height: searchText.height - 4
+			width: searchText.height - 4
+			anchors.verticalCenter: parent.verticalCenter
+			source: "qrc:/qml/icons/edit-find.png"
+		}
 
-			MouseArea
-			{
-				anchors.fill: parent
-				onClicked:
-				{
-					console.log("Contacts view onclicked:", model.name,
-								model.gxs_id)
-					if(model.own) contactsView.own_gxs_id = model.gxs_id
-					else
-					{
-						var jsonData = { "own_gxs_hex": contactsView.own_gxs_id,
-							"remote_gxs_hex": model.gxs_id }
-						rsApi.request("/chat/initiate_distant_chat",
-									  JSON.stringify(jsonData),
-									  contactsView.startChatCallback)
-					}
-				}
-				Rectangle
-				{
-					id: colorHash
-					height: parent.height - 4
-					width: height
-					anchors.verticalCenter: parent.verticalCenter
-					anchors.left: parent.left
-					anchors.leftMargin: 2
-					color: "white"
-					property int childHeight : height/2
-
-					Rectangle
-					{
-						color: '#' + model.gxs_id.substring(1, 9)
-						height: parent.childHeight
-						width: height
-						anchors.top: parent.top
-						anchors.left: parent.left
-					}
-					Rectangle
-					{
-						color: '#' + model.gxs_id.substring(9, 17)
-						height: parent.childHeight
-						width: height
-						anchors.top: parent.top
-						anchors.right: parent.right
-					}
-					Rectangle
-					{
-						color: '#' + model.gxs_id.substring(17, 25)
-						height: parent.childHeight
-						width: height
-						anchors.bottom: parent.bottom
-						anchors.left: parent.left
-					}
-					Rectangle
-					{
-						color: '#' + model.gxs_id.slice(-8)
-						height: parent.childHeight
-						width: height
-						anchors.bottom: parent.bottom
-						anchors.right: parent.right
-					}
-
-					MouseArea
-					{
-						anchors.fill: parent
-						onPressAndHold:
-						{
-							fingerPrintDialog.nick = model.name
-							fingerPrintDialog.gxs_id = model.gxs_id
-							fingerPrintDialog.visible = true
-						}
-					}
-				}
-				Text
-				{
-					id: nickText
-					color: model.own ? "blue" : "black"
-					text: model.name
-					anchors.left: colorHash.right
-					anchors.leftMargin: 5
-					anchors.verticalCenter: parent.verticalCenter
-				}
-			}
+		TextField
+		{
+			id: searchText
+			anchors.left: searchIcon.right
+			anchors.verticalCenter: parent.verticalCenter
+			onTextChanged: visualModel.resetSorting()
 		}
 	}
 
@@ -179,10 +243,15 @@ Item
 		id: refreshTimer
 		interval: 5000
 		repeat: true
-		onTriggered: if(contactsView.visible) contactsView.refreshData()
+		triggeredOnStart: true
+		onTriggered:
+			if(contactsView.visible)
+			{
+				contactsView.refreshUnread()
+				contactsView.refreshData()
+			}
 		Component.onCompleted: start()
 	}
-
 
 	Dialog
 	{
@@ -207,14 +276,17 @@ Item
 		}
 	}
 
-	Dialog
+	Popup
 	{
 		id: fingerPrintDialog
 		visible: false
 		property string nick
 		property string gxs_id
-		title: nick + " fingerprint:"
-		standardButtons: StandardButton.NoButton
+		width: fingerPrintText.contentWidth + 20
+		height: fingerPrintText.contentHeight + 20
+		x: parent.x + parent.width/2 - width/2
+		y: parent.y + parent.height/2 - height/2
+
 		Text
 		{
 			id: fingerPrintText

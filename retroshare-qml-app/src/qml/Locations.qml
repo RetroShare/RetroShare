@@ -17,7 +17,7 @@
  */
 
 import QtQuick 2.0
-import QtQuick.Controls 1.4
+import QtQuick.Controls 2.0
 import org.retroshare.qml_components.LibresapiLocalClient 1.0
 
 Item
@@ -182,6 +182,7 @@ Item
 		id: attemptTimer
 		interval: 500
 		repeat: true
+		triggeredOnStart: true
 		onTriggered:
 		{
 			if(locationView.focus)

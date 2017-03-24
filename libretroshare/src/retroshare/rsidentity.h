@@ -91,11 +91,11 @@ class GxsReputation
 };
 
 
-class RsGxsIdGroup
+struct RsGxsIdGroup
 {
-	public:
-    RsGxsIdGroup(): mLastUsageTS(0), mPgpKnown(false),mIsAContact(false) { return; }
-	~RsGxsIdGroup() { return; }
+	RsGxsIdGroup() :
+	    mLastUsageTS(0), mPgpKnown(false), mIsAContact(false) {}
+	~RsGxsIdGroup() {}
 
 
 	RsGroupMetaData mMeta;

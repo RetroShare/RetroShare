@@ -924,7 +924,7 @@ ResponseTask* ChatHandler::handleLobbyParticipants(Request &req, Response &resp)
 void ChatHandler::handleMessages(Request &req, Response &resp)
 {
 	/* G10h4ck: Whithout this the request processing won't happen, copied from
-	 * ChatHandler::handleLobbies, is this a work around or is the right whay of
+	 * ChatHandler::handleLobbies, is this a work around or is the right way of
 	 * doing it? */
 	tick();
 
@@ -1118,7 +1118,8 @@ void ChatHandler::handleUnreadMsgs(Request &/*req*/, Response &resp)
     RS_STACK_MUTEX(mMtx); /********** LOCKED **********/
 
     resp.mDataStream.getStreamToMember();
-    for(std::map<ChatId, std::list<Msg> >::const_iterator mit = mMsgs.begin(); mit != mMsgs.end(); ++mit)
+	for( std::map<ChatId, std::list<Msg> >::const_iterator mit = mMsgs.begin();
+	     mit != mMsgs.end(); ++mit )
     {
         uint32_t count = 0;
         for(std::list<Msg>::const_iterator lit = mit->second.begin(); lit != mit->second.end(); ++lit)
@@ -1130,7 +1131,10 @@ void ChatHandler::handleUnreadMsgs(Request &/*req*/, Response &resp)
         if(count && (mit2 != mChatInfo.end()))
         {
             resp.mDataStream.getStreamToMember()
-                    << makeKeyValue("id", mit->first.toStdString())
+#warning @deprecated using "id" as key can cause problems in some JS based \
+	        languages like Qml @see chat_id instead
+			        << makeKeyValue("id", mit->first.toStdString())
+			        << makeKeyValue("chat_id", mit->first.toStdString())
                     << makeKeyValueReference("unread_count", count)
                     << mit2->second;
         }
@@ -1162,7 +1166,8 @@ void ChatHandler::handleInitiateDistantChatConnexion(Request& req, Response& res
 	DistantChatPeerId distant_chat_id;
 	uint32_t error_code;
 
-	if(mRsMsgs->initiateDistantChatConnexion(receiver_id, sender_id, distant_chat_id, error_code))
+	if(mRsMsgs->initiateDistantChatConnexion(receiver_id, sender_id,
+	                                         distant_chat_id, error_code))
 		resp.setOk();
 	else resp.setFail("Failed to initiate distant chat");
 
