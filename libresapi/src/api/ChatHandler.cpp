@@ -5,6 +5,7 @@
 
 #include <retroshare/rspeers.h>
 #include <retroshare/rsidentity.h>
+#include <retroshare/rshistory.h>
 
 #include <algorithm>
 #include <limits>
@@ -158,6 +159,10 @@ ChatHandler::ChatHandler(StateTokenServer *sts, RsNotify *notify, RsMsgs *msgs, 
 	addResourceHandler("initiate_distant_chat", this, &ChatHandler::handleInitiateDistantChatConnexion);
 	addResourceHandler("distant_chat_status", this, &ChatHandler::handleDistantChatStatus);
 	addResourceHandler("close_distant_chat", this, &ChatHandler::handleCloseDistantChatConnexion);
+
+	addResourceHandler("private_lobbies", this, &ChatHandler::handlePrivateLobbies);
+	addResourceHandler("subscribed_public_lobbies", this, &ChatHandler::handleSubscribedPublicLobbies);
+	addResourceHandler("unsubscribed_public_lobbies", this, &ChatHandler::handleUnsubscribedPublicLobbies);
 }
 
 ChatHandler::~ChatHandler()
@@ -928,15 +933,19 @@ void ChatHandler::handleMessages(Request &req, Response &resp)
 	 * doing it? */
 	tick();
 
+	std::string chat_id;
+	req.mStream << makeKeyValueReference("chat_id", chat_id);
+	ChatId id(chat_id);
+
 	{
     RS_STACK_MUTEX(mMtx); /********** LOCKED **********/
-    ChatId id(req.mPath.top());
+
     // make response a list
     resp.mDataStream.getStreamToMember();
     if(id.isNotSet())
     {
-        resp.setFail("\""+req.mPath.top()+"\" is not a valid chat id");
-        return;
+		resp.setFail("\""+chat_id+"\" is not a valid chat id");
+		return;
     }
     std::map<ChatId, std::list<Msg> >::iterator mit = mMsgs.find(id);
 	if(mit == mMsgs.end())
@@ -973,10 +982,14 @@ void ChatHandler::handleSendMessage(Request &req, Response &resp)
 void ChatHandler::handleMarkChatAsRead(Request &req, Response &resp)
 {
     RS_STACK_MUTEX(mMtx); /********** LOCKED **********/
-    ChatId id(req.mPath.top());
+
+	std::string chat_id;
+	req.mStream << makeKeyValueReference("chat_id", chat_id);
+	ChatId id(chat_id);
+
     if(id.isNotSet())
     {
-        resp.setFail("\""+req.mPath.top()+"\" is not a valid chat id");
+		resp.setFail("\""+chat_id+"\" is not a valid chat id");
         return;
     }
     std::map<ChatId, std::list<Msg> >::iterator mit = mMsgs.find(id);
@@ -1195,6 +1208,90 @@ void ChatHandler::handleCloseDistantChatConnexion(Request& req, Response& resp)
 	DistantChatPeerId chat_id(distant_chat_hex);
 	if (mRsMsgs->closeDistantChatConnexion(chat_id)) resp.setOk();
 	else resp.setFail("Failed to close distant chat");
+}
+
+void ChatHandler::handlePrivateLobbies(Request &req, Response &resp)
+{
+	tick();
+
+	{
+		RS_STACK_MUTEX(mMtx); /********** LOCKED **********/
+		resp.mDataStream.getStreamToMember();
+		for(std::vector<Lobby>::iterator vit = mLobbies.begin(); vit != mLobbies.end(); ++vit)
+		{
+			if(!vit->is_private)
+				continue;
+			uint32_t unread_msgs = 0;
+			ChatId chat_id(vit->id);
+			std::map<ChatId, std::list<Msg> >::iterator mit = mMsgs.find(chat_id);
+			if(mit != mMsgs.end())
+			{
+				std::list<Msg>& msgs = mit->second;
+				for(std::list<Msg>::iterator lit = msgs.begin(); lit != msgs.end(); ++lit)
+					if(!lit->read)
+						unread_msgs++;
+			}
+			resp.mDataStream.getStreamToMember() << *vit << makeKeyValueReference("unread_msg_count", unread_msgs);
+		}
+		resp.mStateToken = mLobbiesStateToken;
+	}
+	resp.setOk();
+}
+
+void ChatHandler::handleSubscribedPublicLobbies(Request &req, Response &resp)
+{
+	tick();
+
+	{
+		RS_STACK_MUTEX(mMtx); /********** LOCKED **********/
+		resp.mDataStream.getStreamToMember();
+		for(std::vector<Lobby>::iterator vit = mLobbies.begin(); vit != mLobbies.end(); ++vit)
+		{
+			if(!vit->subscribed || vit->is_private || vit->is_broadcast)
+				continue;
+			uint32_t unread_msgs = 0;
+			ChatId chat_id(vit->id);
+			std::map<ChatId, std::list<Msg> >::iterator mit = mMsgs.find(chat_id);
+			if(mit != mMsgs.end())
+			{
+				std::list<Msg>& msgs = mit->second;
+				for(std::list<Msg>::iterator lit = msgs.begin(); lit != msgs.end(); ++lit)
+					if(!lit->read)
+						unread_msgs++;
+			}
+			resp.mDataStream.getStreamToMember() << *vit << makeKeyValueReference("unread_msg_count", unread_msgs);
+		}
+		resp.mStateToken = mLobbiesStateToken;
+	}
+	resp.setOk();
+}
+
+void ChatHandler::handleUnsubscribedPublicLobbies(Request &req, Response &resp)
+{
+	tick();
+
+	{
+		RS_STACK_MUTEX(mMtx); /********** LOCKED **********/
+		resp.mDataStream.getStreamToMember();
+		for(std::vector<Lobby>::iterator vit = mLobbies.begin(); vit != mLobbies.end(); ++vit)
+		{
+			if(vit->subscribed || vit->is_private)
+				continue;
+			uint32_t unread_msgs = 0;
+			ChatId chat_id(vit->id);
+			std::map<ChatId, std::list<Msg> >::iterator mit = mMsgs.find(chat_id);
+			if(mit != mMsgs.end())
+			{
+				std::list<Msg>& msgs = mit->second;
+				for(std::list<Msg>::iterator lit = msgs.begin(); lit != msgs.end(); ++lit)
+					if(!lit->read)
+						unread_msgs++;
+			}
+			resp.mDataStream.getStreamToMember() << *vit << makeKeyValueReference("unread_msg_count", unread_msgs);
+		}
+		resp.mStateToken = mLobbiesStateToken;
+	}
+	resp.setOk();
 }
 
 } // namespace resource_api
