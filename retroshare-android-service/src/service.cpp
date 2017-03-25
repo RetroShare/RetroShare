@@ -39,11 +39,19 @@ int main(int argc, char *argv[])
 #endif
 
 	QCoreApplication a(argc, argv);
+
+	RsInit::InitRsConfig();
+
 	ApiServer api;
 	RsControlModule ctrl_mod(argc, argv, api.getStateTokenServer(), &api, true);
 	api.addResourceHandler("control", dynamic_cast<resource_api::ResourceRouter*>(&ctrl_mod), &resource_api::RsControlModule::handleRequest);
 
-	QString sockPath = QString::fromStdString(RsAccounts::ConfigDirectory());
+#ifdef QT_DEBUG
+	QString sockPath = "RS/";
+#else
+	QString sockPath = QCoreApplication::applicationDirPath();
+#endif
+
 	sockPath.append("/libresapi.sock");
 	qDebug() << "Listening on:" << sockPath;
 	ApiServerLocal apiServerLocal(&api, sockPath); (void) apiServerLocal;
