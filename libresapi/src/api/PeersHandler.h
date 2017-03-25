@@ -35,6 +35,12 @@ private:
     void handleWildcard(Request& req, Response& resp);
     void handleExamineCert(Request& req, Response& resp);
 
+	void handleGetStateString(Request& req, Response& resp);
+	void handleSetStateString(Request& req, Response& resp);
+
+	void handleGetCustomStateString(Request& req, Response& resp);
+	void handleSetCustomStateString(Request& req, Response& resp);
+
     // a helper which ensures proper mutex locking
     StateToken getCurrentStateToken();
 
