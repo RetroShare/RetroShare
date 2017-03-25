@@ -9,6 +9,8 @@ namespace resource_api{
 class StateTokenServer;
 class ApiServer;
 
+class SignatureEventData;
+
 // resource api module to control accounts, startup and shutdown of retroshare
 // - this module handles everything, no things are required from outside
 // - exception: users of this module have to create an api server and register this module
@@ -31,8 +33,9 @@ public:
     // returns true if the process should terminate
     bool processShouldExit();
 
-    // from NotifyClient
-    virtual bool askForPassword(const std::string &title, const std::string& key_details, bool prev_is_bad , std::string& password,bool& canceled);
+	// from NotifyClient
+	virtual bool askForPassword(const std::string &title, const std::string& key_details, bool prev_is_bad , std::string& password,bool& canceled) override;
+	virtual bool askForDeferredSelfSignature(const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen,int& signature_result, std::string reason = "") override;
 
 protected:
     // from RsThread
@@ -84,6 +87,9 @@ private:
     // we store the password in this variable, it has higher priority than the normal password variable
     // it is also to avoid a lock, when we make a synchronous call into librs, like in ssl cert generation
     std::string mFixedPassword;
+
+	void handleSignatureEvent();
+	std::map<std::string, SignatureEventData*> _deferred_signature_queue ;
 };
 
 } // namespace resource_api

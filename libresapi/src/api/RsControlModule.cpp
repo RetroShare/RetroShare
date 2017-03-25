@@ -6,6 +6,7 @@
 
 #include <retroshare/rsinit.h>
 #include <retroshare/rsiface.h>
+#include <util/rsdir.h>
 
 #include "api/ApiServer.h"
 #include "api/Operators.h"
@@ -301,6 +302,7 @@ void RsControlModule::handlePassword(Request &req, Response &resp)
         mPassword = passwd;
         mWantPassword = false;
         mStateTokenServer->replaceToken(mStateToken);
+		mFixedPassword = passwd;
     }
 
     resp.mDataStream
@@ -425,17 +427,17 @@ void RsControlModule::handleCreateLocation(Request &req, Response &resp)
     RsPeerId ssl_id;
     std::string err_string;
     // give the password to the password callback
-    {
-        RsStackMutex stack(mDataMtx); // ********** LOCKED **********
-        mFixedPassword = pgp_password;
-    }
+	{
+		RsStackMutex stack(mDataMtx); // ********** LOCKED **********
+		mFixedPassword = pgp_password;
+	}
     bool ssl_ok = RsAccounts::GenerateSSLCertificate(pgp_id, "", ssl_name, "", hidden_port!=0, ssl_password, ssl_id, err_string);
 
     // clear fixed password to restore normal password operation
-    {
-        RsStackMutex stack(mDataMtx); // ********** LOCKED **********
-        mFixedPassword = "";
-    }
+//    {
+//        RsStackMutex stack(mDataMtx); // ********** LOCKED **********
+//        mFixedPassword = "";
+//    }
 
     if (ssl_ok)
     {
@@ -454,6 +456,123 @@ void RsControlModule::handleCreateLocation(Request &req, Response &resp)
         return;
     }
     resp.setFail("could not create a new location. Error: "+err_string);
+}
+
+class SignatureEventData
+{
+    public:
+	    SignatureEventData(const void *_data,int32_t _len,unsigned int _signlen, std::string _reason)
+		{
+			// We need a new memory chnk because there's no guarranty _sign nor _signlen are not in the stack
+
+			sign = (unsigned char *)rs_malloc(_signlen);
+
+			if(!sign)
+			{
+				signlen = NULL;
+				signature_result = SELF_SIGNATURE_RESULT_FAILED;
+				return;
+			}
+
+			signlen = new unsigned int;
+			*signlen = _signlen;
+			signature_result = SELF_SIGNATURE_RESULT_PENDING;
+			data = rs_malloc(_len);
+
+			        if(!data)
+					{
+						len = 0;
+						return;
+					}
+					len = _len;
+			memcpy(data,_data,len);
+			reason = _reason;
+		}
+
+		~SignatureEventData()
+		{
+			free(sign);
+			delete signlen;
+			free(data);
+		}
+
+		void performSignature()
+		{
+			if(rsPeers->gpgSignData(data,len,sign,signlen,reason))
+				signature_result = SELF_SIGNATURE_RESULT_SUCCESS;
+			else
+				signature_result = SELF_SIGNATURE_RESULT_FAILED;
+		}
+
+		void *data;
+		uint32_t len;
+		unsigned char *sign;
+		unsigned int *signlen;
+		int signature_result;		// 0=pending, 1=done, 2=failed/cancelled.
+		std::string reason;
+};
+
+bool RsControlModule::askForDeferredSelfSignature(const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen,int& signature_result, std::string reason /*=""*/)
+{
+
+	{
+		RsStackMutex stack(mDataMtx);
+		std::cerr << "NotifyTxt:: deferred signature event requeted. " << std::endl;
+
+		// Look into the queue
+
+		Sha1CheckSum chksum = RsDirUtil::sha1sum((uint8_t*)data,len);
+
+		std::map<std::string,SignatureEventData*>::iterator it = _deferred_signature_queue.find(chksum.toStdString());
+		signature_result = SELF_SIGNATURE_RESULT_PENDING;
+
+		if(it != _deferred_signature_queue.end())
+		{
+			signature_result = it->second->signature_result;
+
+			if(it->second->signature_result != SELF_SIGNATURE_RESULT_PENDING)	// found it. Copy the result, and remove from the queue.
+			{
+				// We should check for the exact data match, for the sake of being totally secure.
+				//
+				std::cerr << "Found into queue: returning it" << std::endl;
+
+				memcpy(sign,it->second->sign,*it->second->signlen);
+				*signlen = *(it->second->signlen);
+
+				delete it->second;
+				_deferred_signature_queue.erase(it);
+			}
+
+			return true;		// already registered, but not done yet.
+		}
+
+		// Not found. Store in the queue and emit a signal.
+		//
+		std::cerr << "NotifyTxt:: deferred signature event requeted. Pushing into queue" << std::endl;
+
+		SignatureEventData *edta = new SignatureEventData(data,len,*signlen, reason);
+
+		_deferred_signature_queue[chksum.toStdString()] = edta;
+	}
+	handleSignatureEvent();
+	return true;
+}
+
+void RsControlModule::handleSignatureEvent()
+{
+	std::cerr << "NotifyTxt:: performing a deferred signature in the main GUI thread." << std::endl;
+
+	static bool working = false ;
+
+	if(!working)
+	{
+		working = true ;
+
+		for(std::map<std::string,SignatureEventData*>::const_iterator it(_deferred_signature_queue.begin());it!=_deferred_signature_queue.end();++it)
+			it->second->performSignature() ;
+
+		working = false ;
+	}
 }
 
 void RsControlModule::setRunState(RunState s, std::string errstr)
