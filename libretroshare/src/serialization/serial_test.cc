@@ -4,16 +4,18 @@
 
 #include <set>
 
-#include "serializer.h"
 #include "util/rsmemory.h"
 #include "util/rsprint.h"
 #include "serialiser/rsserial.h"
+
+#include "serializer.h"
+#include "rstypeserializer.h"
 
 static const uint16_t RS_SERVICE_TYPE_TEST  = 0xffff;
 static const uint8_t  RS_ITEM_SUBTYPE_TEST1 = 0x01 ;
 
 // Template serialization of RsTypeSerialiser::serial_process() for unknown/new types
-//
+// Here we do it for std::set<uint32_t> as an example.
 //
 template<> uint32_t RsTypeSerializer::serial_size(const std::set<uint32_t>& s)
 {
@@ -25,13 +27,16 @@ template<> bool RsTypeSerializer::serialize(uint8_t data[], uint32_t size, uint3
 	bool ok = true ;
 	uint32_t offset_save = offset ;
 
-	if(tlvsize + offset >= size)
+	if(tlvsize + offset > size)
+	{
+		std::cerr << "RsTypeSerializer::serialize: error. tlvsize+offset > size, where tlvsize=" << tlvsize << ", offset=" << offset << ", size=" << size << std::endl;
 		return false ;
+	}
 
-	ok = ok && RsTypeSerializer::serialize(data,size,offset,member.size()) ;
+	ok = ok && RsTypeSerializer::serialize<uint32_t>(data,size,offset,member.size()) ;
 
 	for(std::set<uint32_t>::const_iterator it(member.begin());it!=member.end();++it)
-		ok = ok && RsTypeSerializer::serialize(data,size,offset,*it) ;
+		ok = ok && RsTypeSerializer::serialize<uint32_t>(data,size,offset,*it) ;
 
 	if(!ok)
 	{
@@ -50,7 +55,7 @@ template<> bool RsTypeSerializer::deserialize(const uint8_t data[], uint32_t siz
 
 	ok = ok && RsTypeSerializer::deserialize(data,size,offset,n);
 
-	for(uint32_t i=0;i<n;++i)
+	for(uint32_t i=0;i<n && ok;++i)
 	{
 		uint32_t x;
 		ok = ok && RsTypeSerializer::deserialize(data,size,offset,x) ;
@@ -73,14 +78,24 @@ template<> bool RsTypeSerializer::deserialize(const uint8_t data[], uint32_t siz
 class RsTestItem: public RsSerializable
 {
 	public:
-		RsTestItem() : RsSerializable(RS_PKT_VERSION_SERVICE,RS_SERVICE_TYPE_TEST,RS_ITEM_SUBTYPE_TEST1) {}
+		RsTestItem() : RsSerializable(RS_PKT_VERSION_SERVICE,RS_SERVICE_TYPE_TEST,RS_ITEM_SUBTYPE_TEST1) 
+		{
+			str = "test string";
+			ts = time(NULL) ;
+
+			int_set.insert(lrand48()) ;
+			int_set.insert(lrand48()) ;
+			int_set.insert(lrand48()) ;
+		}
 
 		// Derived from RsSerializable
 		//
 		virtual void serial_process(RsSerializable::SerializeJob j, SerializeContext& ctx) 
 		{
+			TlvString tt(str,TLV_TYPE_STR_DESCR) ;
+
 			RsTypeSerializer::serial_process(j,ctx,ts ) ;
-			RsTypeSerializer::serial_process(j,ctx,str) ;
+			RsTypeSerializer::serial_process(j,ctx,tt ) ;
 			RsTypeSerializer::serial_process(j,ctx,int_set ) ;
 		}
 
@@ -89,11 +104,12 @@ class RsTestItem: public RsSerializable
 		virtual void clear() {}
 		virtual std::ostream& print(std::ostream&,uint16_t indent) {}
 
-
 	private:
 		std::string str ;
 		uint64_t ts ;
 		std::set<uint32_t> int_set ;
+
+		friend int main(int argc,char *argv[]);
 };
 
 // New user-defined serializer class. 
@@ -116,6 +132,12 @@ class RsTestSerializer: public RsSerializer
 		}
 };
 
+// Methods to check the equality of items.
+//
+void check(const std::string& s1,const std::string& s2) { assert(s1 == s2) ; }
+void check(const uint64_t& s1,const uint64_t& s2) { assert(s1 == s2) ; }
+void check(const std::set<uint32_t>& s1,const std::set<uint32_t>& s2) { assert(s1 == s2) ; }
+
 int main(int argc,char *argv[])
 {
 	try
@@ -126,13 +148,25 @@ int main(int argc,char *argv[])
 
 		std::cerr << "t1.serial_size() = " << size << std::endl;
 
+		// Allocate some memory to serialise to
+		//
 		RsTemporaryMemory mem1(size);
 
 		RsTestSerializer().serialize_item(&t1,mem1,mem1.size()) ;
 
+		std::cerr << "Serialized t1: " << RsUtil::BinToHex(mem1,mem1.size()) << std::endl;
+
+		// Now deserialise into a new item
+		//
 		RsSerializable *t2 = RsTestSerializer().deserialize_item(mem1,mem1.size()) ;
 
-		std::cerr << "Serialized t1: " << RsUtil::BinToHex(mem1,mem1.size()) << std::endl;
+		// make sure t1 is equal to t2
+		//
+		check(t1.str,dynamic_cast<RsTestItem*>(t2)->str) ;
+		check(t1.ts,dynamic_cast<RsTestItem*>(t2)->ts) ;
+		check(t1.int_set,dynamic_cast<RsTestItem*>(t2)->int_set) ;
+
+		delete t2;
 
 		return 0;
 	}
