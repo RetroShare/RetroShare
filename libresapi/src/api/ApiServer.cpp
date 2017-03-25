@@ -17,6 +17,8 @@
 #include "ChannelsHandler.h"
 #include "StatsHandler.h"
 
+#include "SettingsHandler.h"
+
 /*
 data types in json       http://json.org/
 string (utf-8 unicode)
@@ -236,7 +238,8 @@ public:
         mChatHandler(sts, ifaces.mNotify, ifaces.mMsgs, ifaces.mPeers, ifaces.mIdentity, &mPeersHandler),
         mApiPluginHandler(sts, ifaces),
 	    mChannelsHandler(ifaces.mGxsChannels),
-	    mStatsHandler()
+	    mStatsHandler(),
+	    mSettingsHandler(sts)
     {
         // the dynamic cast is to not confuse the addResourceHandler template like this:
         // addResourceHandler(derived class, parent class)
@@ -262,7 +265,9 @@ public:
                                   &ChannelsHandler::handleRequest);
 		router.addResourceHandler("stats", dynamic_cast<ResourceRouter*>(&mStatsHandler),
 		                          &StatsHandler::handleRequest);
-    }
+		router.addResourceHandler("settings", dynamic_cast<ResourceRouter*>(&mSettingsHandler),
+		                                  &SettingsHandler::handleRequest);
+	}
 
     PeersHandler mPeersHandler;
     IdentityHandler mIdentityHandler;
@@ -274,6 +279,7 @@ public:
     ApiPluginHandler mApiPluginHandler;
     ChannelsHandler mChannelsHandler;
 	StatsHandler mStatsHandler;
+	SettingsHandler mSettingsHandler;
 };
 
 ApiServer::ApiServer():
