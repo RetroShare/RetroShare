@@ -102,9 +102,10 @@ IdentityHandler::IdentityHandler(StateTokenServer *sts, RsNotify *notify, RsIden
     mNotify->registerNotifyClient(this);
 
 	addResourceHandler("*", this, &IdentityHandler::handleWildcard);
-	//addResourceHandler("own", this, &IdentityHandler::handleOwn);
-	addResourceHandler("own", this, &IdentityHandler::handleOwnIdsRequest);
-	addResourceHandler("notown", this, &IdentityHandler::handleNotOwnIdsRequest);
+	addResourceHandler("own", this, &IdentityHandler::handleOwn);
+
+	addResourceHandler("own_ids", this, &IdentityHandler::handleOwnIdsRequest);
+	addResourceHandler("notown_ids", this, &IdentityHandler::handleNotOwnIdsRequest);
 
     addResourceHandler("create_identity", this, &IdentityHandler::handleCreateIdentity);	
 }

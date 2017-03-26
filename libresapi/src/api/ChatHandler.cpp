@@ -933,18 +933,15 @@ void ChatHandler::handleMessages(Request &req, Response &resp)
 	 * doing it? */
 	tick();
 
-	std::string chat_id;
-	req.mStream << makeKeyValueReference("chat_id", chat_id);
-	ChatId id(chat_id);
-
 	{
     RS_STACK_MUTEX(mMtx); /********** LOCKED **********/
+	ChatId id(req.mPath.top());
 
     // make response a list
     resp.mDataStream.getStreamToMember();
     if(id.isNotSet())
     {
-		resp.setFail("\""+chat_id+"\" is not a valid chat id");
+		resp.setFail("\""+req.mPath.top()+"\" is not a valid chat id");
 		return;
     }
     std::map<ChatId, std::list<Msg> >::iterator mit = mMsgs.find(id);
@@ -982,14 +979,11 @@ void ChatHandler::handleSendMessage(Request &req, Response &resp)
 void ChatHandler::handleMarkChatAsRead(Request &req, Response &resp)
 {
     RS_STACK_MUTEX(mMtx); /********** LOCKED **********/
-
-	std::string chat_id;
-	req.mStream << makeKeyValueReference("chat_id", chat_id);
-	ChatId id(chat_id);
+	ChatId id(req.mPath.top());
 
     if(id.isNotSet())
     {
-		resp.setFail("\""+chat_id+"\" is not a valid chat id");
+		resp.setFail("\""+req.mPath.top()+"\" is not a valid chat id");
         return;
     }
     std::map<ChatId, std::list<Msg> >::iterator mit = mMsgs.find(id);
