@@ -3,7 +3,8 @@
 TEMPLATE = lib
 CONFIG += staticlib
 CONFIG += create_prl
-CONFIG -= qt
+CONFIG += qt
+QT += core
 TARGET = resapi
 TARGET_PRL = libresapi
 DESTDIR = lib
