@@ -181,7 +181,6 @@ void PeersHandler::handleGetStateString(Request& req, Response& resp)
 {
 	{
 		RS_STACK_MUTEX(mMtx);
-		resp.mStateToken = mStateToken;
 	}
 
 	std::string state_string;
@@ -210,7 +209,6 @@ void PeersHandler::handleSetStateString(Request& req, Response& resp)
 {
 	{
 		RS_STACK_MUTEX(mMtx);
-		resp.mStateToken = mStateToken;
 	}
 
 	std::string state_string;
@@ -232,7 +230,6 @@ void PeersHandler::handleGetCustomStateString(Request& req, Response& resp)
 {
 	{
 		RS_STACK_MUTEX(mMtx);
-		resp.mStateToken = mStateToken;
 	}
 
 	std::string custom_state_string = rsMsgs->getCustomStateString();
@@ -244,7 +241,6 @@ void PeersHandler::handleSetCustomStateString(Request& req, Response& resp)
 {
 	{
 		RS_STACK_MUTEX(mMtx);
-		resp.mStateToken = mStateToken;
 	}
 
 	std::string custom_state_string;
