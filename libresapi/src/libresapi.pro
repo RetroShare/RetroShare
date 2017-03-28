@@ -3,8 +3,7 @@
 TEMPLATE = lib
 CONFIG += staticlib
 CONFIG += create_prl
-CONFIG += qt
-QT += core
+CONFIG -= qt
 TARGET = resapi
 TARGET_PRL = libresapi
 DESTDIR = lib
@@ -13,32 +12,32 @@ INCLUDEPATH += ../../libretroshare/src
 
 retroshare_android_service {
     win32 {
-            OBJECTS_DIR = temp/obj
+        OBJECTS_DIR = temp/obj
 
-            LIBS_DIR = $$PWD/../../libs/lib
-            LIBS += $$OUT_PWD/../../libretroshare/src/lib/libretroshare.a
-            LIBS += $$OUT_PWD/../../openpgpsdk/src/lib/libops.a
+        LIBS_DIR = $$PWD/../../libs/lib
+        LIBS += $$OUT_PWD/../../libretroshare/src/lib/libretroshare.a
+        LIBS += $$OUT_PWD/../../openpgpsdk/src/lib/libops.a
 
-            for(lib, LIB_DIR):LIBS += -L"$$lib"
-            for(bin, BIN_DIR):LIBS += -L"$$bin"
+        for(lib, LIB_DIR):LIBS += -L"$$lib"
+        for(bin, BIN_DIR):LIBS += -L"$$bin"
 
 
-            LIBS += -lssl -lcrypto -lpthread -lminiupnpc -lz -lws2_32
-            LIBS += -luuid -lole32 -liphlpapi -lcrypt32 -lgdi32
-            LIBS += -lwinmm
+        LIBS += -lssl -lcrypto -lpthread -lminiupnpc -lz -lws2_32
+        LIBS += -luuid -lole32 -liphlpapi -lcrypt32 -lgdi32
+        LIBS += -lwinmm
 
-            DEFINES *= WINDOWS_SYS WIN32_LEAN_AND_MEAN _USE_32BIT_TIME_T
+        DEFINES *= WINDOWS_SYS WIN32_LEAN_AND_MEAN _USE_32BIT_TIME_T
 
-            DEPENDPATH += . $$INC_DIR
-            INCLUDEPATH += . $$INC_DIR
+        DEPENDPATH += . $$INC_DIR
+        INCLUDEPATH += . $$INC_DIR
 
-            greaterThan(QT_MAJOR_VERSION, 4) {
-                    # Qt 5
-                    RC_INCLUDEPATH += $$_PRO_FILE_PWD_/../../libretroshare/src
-            } else {
-                    # Qt 4
-                    QMAKE_RC += --include-dir=$$_PRO_FILE_PWD_/../../libretroshare/src
-            }
+        greaterThan(QT_MAJOR_VERSION, 4) {
+                # Qt 5
+                RC_INCLUDEPATH += $$_PRO_FILE_PWD_/../../libretroshare/src
+        } else {
+                # Qt 4
+                QMAKE_RC += --include-dir=$$_PRO_FILE_PWD_/../../libretroshare/src
+        }
     }
 
     DEPENDPATH += . ../../libretroshare/src/
@@ -183,8 +182,7 @@ SOURCES += \
     util/ContentTypes.cpp \
     api/ApiPluginHandler.cpp \
     api/ChannelsHandler.cpp \
-    api/StatsHandler.cpp \
-    api/SettingsHandler.cpp
+    api/StatsHandler.cpp
 
 HEADERS += \
 	api/ApiServer.h \
@@ -211,12 +209,19 @@ HEADERS += \
     util/ContentTypes.h \
     api/ApiPluginHandler.h \
     api/ChannelsHandler.h \
-    api/StatsHandler.h \
-    api/SettingsHandler.h
+    api/StatsHandler.h
 
 libresapilocalserver {
     CONFIG *= qt
     QT *= network
     SOURCES *= api/ApiServerLocal.cpp
     HEADERS *= api/ApiServerLocal.h
+}
+
+qt_dependencies {
+    CONFIG *= qt
+    QT *= core
+
+    SOURCES += api/SettingsHandler.cpp
+    HEADERS += api/SettingsHandler.h
 }

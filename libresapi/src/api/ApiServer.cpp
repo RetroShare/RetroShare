@@ -17,7 +17,9 @@
 #include "ChannelsHandler.h"
 #include "StatsHandler.h"
 
-#include "SettingsHandler.h"
+#ifdef LIBRESAPI_QT
+    #include "SettingsHandler.h"
+#endif
 
 /*
 data types in json       http://json.org/
@@ -238,8 +240,10 @@ public:
         mChatHandler(sts, ifaces.mNotify, ifaces.mMsgs, ifaces.mPeers, ifaces.mIdentity, &mPeersHandler),
         mApiPluginHandler(sts, ifaces),
 	    mChannelsHandler(ifaces.mGxsChannels),
-	    mStatsHandler(),
-	    mSettingsHandler(sts)
+	    mStatsHandler()
+#ifdef LIBRESAPI_QT
+	    ,mSettingsHandler(sts)
+#endif
     {
         // the dynamic cast is to not confuse the addResourceHandler template like this:
         // addResourceHandler(derived class, parent class)
@@ -265,8 +269,10 @@ public:
                                   &ChannelsHandler::handleRequest);
 		router.addResourceHandler("stats", dynamic_cast<ResourceRouter*>(&mStatsHandler),
 		                          &StatsHandler::handleRequest);
+#ifdef LIBRESAPI_QT
 		router.addResourceHandler("settings", dynamic_cast<ResourceRouter*>(&mSettingsHandler),
 		                                  &SettingsHandler::handleRequest);
+#endif
 	}
 
     PeersHandler mPeersHandler;
@@ -279,7 +285,10 @@ public:
     ApiPluginHandler mApiPluginHandler;
     ChannelsHandler mChannelsHandler;
 	StatsHandler mStatsHandler;
+
+#ifdef LIBRESAPI_QT
 	SettingsHandler mSettingsHandler;
+#endif
 };
 
 ApiServer::ApiServer():
