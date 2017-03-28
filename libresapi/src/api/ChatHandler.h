@@ -133,10 +133,6 @@ private:
 	void handleDistantChatStatus(Request& req, Response& resp);
 	void handleCloseDistantChatConnexion(Request& req, Response& resp);
 
-	void handlePrivateLobbies(Request &req, Response &resp);
-	void handleSubscribedPublicLobbies(Request &req, Response &resp);
-	void handleUnsubscribedPublicLobbies(Request &req, Response &resp);
-
     void getPlainText(const std::string& in, std::string &out, std::vector<Triple> &links);
     // last parameter is only used for lobbies!
     void locked_storeTypingInfo(const ChatId& chat_id, std::string status, RsGxsId lobby_gxs_id = RsGxsId());
