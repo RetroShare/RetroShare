@@ -148,7 +148,7 @@ void IdentityWidget::updateData(const RsGxsIdGroup &gxs_group_info, const RsPeer
 	updateData(pgp_details);
 }
 
-QSize IdentityWidget::sizeHint()
+QSize IdentityWidget::sizeHint() const
 {
 	QSize size;
 	size.setHeight(ui->graphicsView->size().height() + ui->labelName->size().height());
