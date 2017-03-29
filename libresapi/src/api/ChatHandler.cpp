@@ -147,6 +147,7 @@ ChatHandler::ChatHandler(StateTokenServer *sts, RsNotify *notify, RsMsgs *msgs, 
     addResourceHandler("lobbies", this, &ChatHandler::handleLobbies);
     addResourceHandler("subscribe_lobby", this, &ChatHandler::handleSubscribeLobby);
     addResourceHandler("unsubscribe_lobby", this, &ChatHandler::handleUnsubscribeLobby);
+	addResourceHandler("autosubscribe_lobby", this, &ChatHandler::handleAutoSubsribeLobby);
     addResourceHandler("clear_lobby", this, &ChatHandler::handleClearLobby);
     addResourceHandler("lobby_participants", this, &ChatHandler::handleLobbyParticipants);
     addResourceHandler("messages", this, &ChatHandler::handleMessages);
@@ -888,6 +889,15 @@ void ChatHandler::handleUnsubscribeLobby(Request &req, Response &resp)
     req.mStream << makeKeyValueReference("id", id);
     mRsMsgs->unsubscribeChatLobby(id);
     resp.setOk();
+}
+
+void ChatHandler::handleAutoSubsribeLobby(Request& req, Response& resp)
+{
+	ChatLobbyId chatId = 0;
+	bool autosubsribe;
+	req.mStream << makeKeyValueReference("chatid", chatId) << makeKeyValueReference("autosubsribe", autosubsribe);
+	mRsMsgs->setLobbyAutoSubscribe(chatId, autosubsribe);
+	resp.setOk();
 }
 
 void ChatHandler::handleClearLobby(Request &req, Response &resp)
