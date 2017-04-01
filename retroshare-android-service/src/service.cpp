@@ -24,11 +24,9 @@
 #	include "util/androiddebug.h"
 #endif
 
-#include "retroshare/rsinit.h"
 #include "api/ApiServer.h"
 #include "api/ApiServerLocal.h"
 #include "api/RsControlModule.h"
-
 
 using namespace resource_api;
 
