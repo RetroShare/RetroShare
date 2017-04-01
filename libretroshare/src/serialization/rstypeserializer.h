@@ -23,17 +23,17 @@ class RsTypeSerializer
 {
 	public:
 		template<typename T> 
-		static void serial_process(RsSerializable::SerializeJob j,SerializeContext& ctx,T& member) 
+		static void serial_process(RsItem::SerializeJob j,SerializeContext& ctx,T& member) 
 		{
 			switch(j)
 			{
-				case RsSerializable::SIZE_ESTIMATE: ctx.mSize += serial_size(member) ;
+				case RsItem::SIZE_ESTIMATE: ctx.mSize += serial_size(member) ;
 																break ;
 
-				case RsSerializable::DESERIALIZE:   ctx.mOk = ctx.mOk && deserialize(ctx.mData,ctx.mSize,ctx.mOffset,member) ;
+				case RsItem::DESERIALIZE:   ctx.mOk = ctx.mOk && deserialize(ctx.mData,ctx.mSize,ctx.mOffset,member) ;
 																break ;
 
-				case RsSerializable::SERIALIZE:     ctx.mOk = ctx.mOk && serialize(ctx.mData,ctx.mSize,ctx.mOffset,member) ;
+				case RsItem::SERIALIZE:     ctx.mOk = ctx.mOk && serialize(ctx.mData,ctx.mSize,ctx.mOffset,member) ;
 																break ;
 
 				default:

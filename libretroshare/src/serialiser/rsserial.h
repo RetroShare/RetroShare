@@ -70,6 +70,7 @@ const uint8_t RS_PKT_CLASS_CONFIG    = 0x02;
 
 const uint8_t RS_PKT_SUBTYPE_DEFAULT = 0x01; /* if only one subtype */
 
+class SerializeContext ;
 
 class RsItem: public RsMemoryManagement::SmallObject
 {
@@ -105,7 +106,23 @@ class RsItem: public RsMemoryManagement::SmallObject
 		void    setPacketService(uint16_t service);
 
 		inline uint8_t priority_level() const { return _priority_level ;}
-        inline void setPriorityLevel(uint8_t l) { _priority_level = l ;}
+		inline void setPriorityLevel(uint8_t l) { _priority_level = l ;}
+
+		/**
+		 * @brief serialize this object to the given buffer
+		 * @param Job to do: serialise or deserialize.
+		 * @param data Chunk of memory were to dump the serialized data
+		 * @param size Size of memory chunk
+		 * @param offset Readed to determine at witch offset start writing data,
+		 *        written to inform caller were written data ends, the updated value
+		 *        is usually passed by the caller to serialize of another
+		 *        RsSerializable so it can write on the same chunk of memory just
+		 *        after where this RsSerializable has been serialized.
+		 * @return true if serialization successed, false otherwise
+		 */
+		typedef enum { SIZE_ESTIMATE = 0x01, SERIALIZE = 0x02, DESERIALIZE  = 0x03} SerializeJob ;
+
+		virtual void serial_process(SerializeJob j,SerializeContext& ctx) = 0;
 
 	private:
 		uint32_t type;

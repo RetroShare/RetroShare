@@ -8,7 +8,7 @@
 #include "util/rsprint.h"
 #include "serialiser/rsserial.h"
 
-#include "serializer.h"
+#include "rsserializer.h"
 #include "rstypeserializer.h"
 
 static const uint16_t RS_SERVICE_TYPE_TEST  = 0xffff;
@@ -75,10 +75,10 @@ template<> bool RsTypeSerializer::deserialize(const uint8_t data[], uint32_t siz
 // - a serial_process method that tells which members to serialize
 // - overload the clear() and print() methods of RsItem
 //
-class RsTestItem: public RsSerializable
+class RsTestItem: public RsItem
 {
 	public:
-		RsTestItem() : RsSerializable(RS_PKT_VERSION_SERVICE,RS_SERVICE_TYPE_TEST,RS_ITEM_SUBTYPE_TEST1) 
+		RsTestItem() : RsItem(RS_PKT_VERSION_SERVICE,RS_SERVICE_TYPE_TEST,RS_ITEM_SUBTYPE_TEST1) 
 		{
 			str = "test string";
 			ts = time(NULL) ;
@@ -88,9 +88,9 @@ class RsTestItem: public RsSerializable
 			int_set.insert(lrand48()) ;
 		}
 
-		// Derived from RsSerializable
+		// Derived from RsItem
 		//
-		virtual void serial_process(RsSerializable::SerializeJob j, SerializeContext& ctx) 
+		virtual void serial_process(RsItem::SerializeJob j, SerializeContext& ctx) 
 		{
 			TlvString tt(str,TLV_TYPE_STR_DESCR) ;
 
@@ -113,14 +113,15 @@ class RsTestItem: public RsSerializable
 };
 
 // New user-defined serializer class. 
-// The only required member is the create_item() method, which creates the correct RsSerializable 
+// The only required member is the create_item() method, which creates the correct RsItem 
 // that corresponds to a specific (service,subtype) couple.
 //
 class RsTestSerializer: public RsSerializer
 {
 	public:
+		RsTestSerializer() : RsSerializer(RS_SERVICE_TYPE_TEST) {}
 
-		virtual RsSerializable *create_item(uint16_t service,uint8_t subtype)
+		virtual RsItem *create_item(uint8_t subtype)
 		{
 			switch(subtype)
 			{
@@ -144,7 +145,7 @@ int main(int argc,char *argv[])
 	{
 		RsTestItem t1 ;
 
-		uint32_t size = RsTestSerializer().size_item(&t1);
+		uint32_t size = RsTestSerializer().size(&t1);
 
 		std::cerr << "t1.serial_size() = " << size << std::endl;
 
@@ -152,13 +153,13 @@ int main(int argc,char *argv[])
 		//
 		RsTemporaryMemory mem1(size);
 
-		RsTestSerializer().serialize_item(&t1,mem1,mem1.size()) ;
+		RsTestSerializer().serialise(&t1,mem1,mem1.size()) ;
 
 		std::cerr << "Serialized t1: " << RsUtil::BinToHex(mem1,mem1.size()) << std::endl;
 
 		// Now deserialise into a new item
 		//
-		RsSerializable *t2 = RsTestSerializer().deserialize_item(mem1,mem1.size()) ;
+		RsItem *t2 = RsTestSerializer().deserialise(mem1,mem1.size()) ;
 
 		// make sure t1 is equal to t2
 		//
