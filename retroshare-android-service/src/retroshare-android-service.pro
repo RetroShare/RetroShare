@@ -11,6 +11,16 @@ android-g++:CONFIG += dll
 android-g++:TEMPLATE = lib
 !android-g++:TEMPLATE = app
 
+DEPENDPATH *= ../../libresapi/src
+INCLUDEPATH *= ../../libresapi/src
+PRE_TARGETDEPS *= ../../libresapi/src/lib/libresapi.a
+LIBS *= ../../libresapi/src/lib/libresapi.a
+
+DEPENDPATH *= ../../libretroshare/src
+INCLUDEPATH *= ../../libretroshare/src
+PRE_TARGETDEPS *= ../../libretroshare/src/lib/libretroshare.a
+LIBS *= ../../libretroshare/src/lib/libretroshare.a
+
 win32 {
         OBJECTS_DIR = temp/obj
 
@@ -41,13 +51,3 @@ win32 {
 }
 
 SOURCES += service.cpp
-
-DEPENDPATH *= ../../libresapi/src
-INCLUDEPATH *= ../../libresapi/src
-PRE_TARGETDEPS *= ../../libresapi/src/lib/libresapi.a
-LIBS *= ../../libresapi/src/lib/libresapi.a
-
-DEPENDPATH *= ../../libretroshare/src
-INCLUDEPATH *= ../../libretroshare/src
-PRE_TARGETDEPS *= ../../libretroshare/src/lib/libretroshare.a
-LIBS *= ../../libretroshare/src/lib/libretroshare.a

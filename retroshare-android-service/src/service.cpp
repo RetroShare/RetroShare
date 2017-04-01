@@ -40,8 +40,6 @@ int main(int argc, char *argv[])
 
 	QCoreApplication a(argc, argv);
 
-	RsInit::InitRsConfig();
-
 	ApiServer api;
 	RsControlModule ctrl_mod(argc, argv, api.getStateTokenServer(), &api, true);
 	api.addResourceHandler("control", dynamic_cast<resource_api::ResourceRouter*>(&ctrl_mod), &resource_api::RsControlModule::handleRequest);
