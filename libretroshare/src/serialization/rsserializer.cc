@@ -1,5 +1,6 @@
 #pragma once
 
+#include "util/rsprint.h"
 #include "serialization/rsserializer.h"
 
 RsItem *RsSerializer::deserialise(const uint8_t *data,uint32_t size) 
@@ -11,6 +12,7 @@ RsItem *RsSerializer::deserialise(const uint8_t *data,uint32_t size)
 	if(!item)
 	{
 		std::cerr << "(EE) cannot deserialise: unknown item type " << std::hex << rstype << std::dec << std::endl;
+        std::cerr << "(EE) Data is: " << RsUtil::BinToHex(data,std::min(50u,size)) << ((size>50)?"...":"") << std::endl;
 		return NULL ;
 	}
 

@@ -4,8 +4,12 @@
 class RsTypeSerializer
 {
 	public:
-		template<typename T> 
-		static void serial_process(RsItem::SerializeJob j,SerializeContext& ctx,T& member) 
+    	// This type should be used to pass a parameter to drive the serialisation if needed.
+
+		typedef std::pair<std::string&,uint16_t> TlvString;
+
+		template<typename T>
+		static void serial_process(RsItem::SerializeJob j,SerializeContext& ctx,T& member)
 		{
 			switch(j)
 			{

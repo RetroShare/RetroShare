@@ -92,7 +92,7 @@ class RsTestItem: public RsItem
 		//
 		virtual void serial_process(RsItem::SerializeJob j, SerializeContext& ctx) 
 		{
-			TlvString tt(str,TLV_TYPE_STR_DESCR) ;
+			RsTypeSerializer::TlvString tt(str,TLV_TYPE_STR_DESCR) ;
 
 			RsTypeSerializer::serial_process(j,ctx,ts ) ;
 			RsTypeSerializer::serial_process(j,ctx,tt ) ;
@@ -121,8 +121,11 @@ class RsTestSerializer: public RsSerializer
 	public:
 		RsTestSerializer() : RsSerializer(RS_SERVICE_TYPE_TEST) {}
 
-		virtual RsItem *create_item(uint8_t subtype)
+		virtual RsItem *create_item(uint16_t service_id,uint8_t subtype)
 		{
+			if(service_id != RS_SERVICE_TYPE_TEST)
+				return NULL ;
+
 			switch(subtype)
 			{
 				case RS_ITEM_SUBTYPE_TEST1: return new RsTestItem();
