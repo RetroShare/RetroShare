@@ -771,6 +771,13 @@ HEADERS += gxstunnel/p3gxstunnel.h \
 SOURCES += gxstunnel/p3gxstunnel.cc \
 				gxstunnel/rsgxstunnelitems.cc 
 
+# new serialization code
+HEADERS += serialization/rsserializer.h \
+           serialization/rstypeserializer.h
+
+SOURCES += serialization/rsserializer.cc \
+           serialization/rstypeserializer.cc 
+
 # Identity Service
 HEADERS += retroshare/rsidentity.h \
 	gxs/rsgixs.h \
