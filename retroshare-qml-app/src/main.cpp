@@ -51,6 +51,12 @@ int main(int argc, char *argv[])
 	LibresapiLocalClient rsApi;
 	rsApi.openConnection(sockPath);
 
+#ifdef QT_DEBUG
+	engine.rootContext()->setContextProperty("QT_DEBUG", true);
+#else
+	engine.rootContext()->setContextProperty("QT_DEBUG", false);
+#endif // QT_DEBUG
+
 	engine.rootContext()->setContextProperty("apiSocketPath", sockPath);
 	engine.rootContext()->setContextProperty("rsApi", &rsApi);
 	engine.load(QUrl(QLatin1String("qrc:/qml/main.qml")));
