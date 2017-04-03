@@ -24,17 +24,28 @@ Item
 {
 	id: chatView
 	property string chatId
+	property int token: 0
 
 	function refreshData()
 	{
+		console.log("chatView.refreshData()", visible)
+		if(!visible) return
+
 		rsApi.request( "/chat/messages/"+chatId, "", function(par)
 		{
 			chatModel.json = par.response
-			if(visible) rsApi.request("/chat/mark_chat_as_read/"+chatId, "",
-									  null)
+			token = JSON.parse(par.response).statetoken
+			mainWindow.registerToken(token, refreshData)
+
+			if(chatListView.visible)
+			{
+				chatListView.positionViewAtEnd()
+				rsApi.request("/chat/mark_chat_as_read/"+chatId)
+			}
 		} )
 	}
 
+	Component.onCompleted: refreshData()
 	onFocusChanged: focus && refreshData()
 
 	JSONListModel
@@ -59,6 +70,7 @@ Item
 
 	ListView
 	{
+		id: chatListView
 		width: parent.width
 		height: 300
 		model: chatModel.model
@@ -86,15 +98,5 @@ Item
 			rsApi.request( "/chat/send_message", JSON.stringify(jsonData),
 						   function(par) { msgComposer.text = ""; } )
 		}
-	}
-
-	Timer
-	{
-		id: refreshTimer
-		interval: 800
-		repeat: true
-		triggeredOnStart: true
-		onTriggered: if(chatView.visible) chatView.refreshData()
-		Component.onCompleted: start()
 	}
 }
