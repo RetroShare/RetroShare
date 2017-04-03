@@ -28,6 +28,33 @@ ApplicationWindow
 	width: 400
 	height: 400
 
+	property var tokens: ({})
+	function registerToken(token, callback)
+	{
+		if (Array.isArray(tokens[token])) tokens[token].push(callback)
+		else tokens[token] = [callback]
+	}
+	function tokenExpire(token)
+	{
+		if(Array.isArray(tokens[token]))
+		{
+			var arrLen = tokens[token].length
+			for(var i=0; i<arrLen; ++i)
+			{
+				var tokCallback = tokens[token][i]
+				if (typeof tokCallback == 'function')
+				{
+					console.log("event token", token, tokCallback)
+					tokCallback()
+				}
+			}
+		}
+
+		delete tokens[token]
+	}
+	function isTokenValid(token) { return Array.isArray(tokens[token]) }
+
+
 	header: ToolBar
 	{
 		id: toolBar
@@ -74,15 +101,14 @@ ApplicationWindow
 				{
 					text: qsTr("Trusted Nodes")
 					//iconSource: "qrc:/qml/icons/document-share.png"
-					onTriggered:
-						stackView.push("qrc:/qml/TrustedNodesView.qml")
+					onTriggered: stackView.push("qrc:/qml/TrustedNodesView.qml")
 				}
 				MenuItem
 				{
 					text: qsTr("Search Contacts")
 					onTriggered:
-						stackView.push(
-							"qrc:/qml/Contacts.qml", {'searching': true} )
+						stackView.push("qrc:/qml/Contacts.qml",
+									   {'searching': true} )
 				}
 				MenuItem
 				{
@@ -103,37 +129,6 @@ ApplicationWindow
 				stackView.pop();
 				event.accepted = true;
 			}
-
-		function checkCoreStatus()
-		{
-			function runStateCallback(par)
-			{
-				var jsonReponse = JSON.parse(par.response)
-				var runState = jsonReponse.data.runstate
-				if(typeof(runState) === 'string') stackView.state = runState
-				else
-				{
-					stackView.state = "core_down"
-					console.log("runStateCallback(...) core is down")
-				}
-			}
-			var ret = rsApi.request("/control/runstate/", "", runStateCallback)
-			if ( ret < 1 )
-			{
-				console.log("checkCoreStatus() core is down")
-				stackView.state = "core_down"
-			}
-		}
-
-		Timer
-		{
-			id: refreshTimer
-			interval: 800
-			repeat: true
-			triggeredOnStart: true
-			onTriggered: if(stackView.visible) stackView.checkCoreStatus()
-			Component.onCompleted: start()
-		}
 
 		state: "core_down"
 		states: [
@@ -164,7 +159,8 @@ ApplicationWindow
 				{
 					script:
 					{
-						console.log("StateChangeScript waiting_account_select")
+						console.log("StateChangeScript running_ok")
+						coreStateCheckTimer.stop()
 						stackView.clear()
 						stackView.push("qrc:/qml/Contacts.qml")
 					}
@@ -179,11 +175,79 @@ ApplicationWindow
 
 		initialItem: Rectangle
 		{
-			anchors.fill: parent
 			color: "green"
-			border.color: "black"
+			Text
+			{
+				text: "Connecting to core..."
+				anchors.centerIn: parent
+			}
+		}
+	}
 
-			Text { text: "Connecting to core..." }
+	LibresapiLocalClient
+	{
+		id: refreshTokensApi
+
+		onResponseReceived:
+		{
+			var jsonData = JSON.parse(msg).data
+			var arrayLength = jsonData.length;
+			for (var i = 0; i < arrayLength; i++)
+				mainWindow.tokenExpire(jsonData[i])
+		}
+
+		Component.onCompleted:
+		{
+			if(QT_DEBUG) debug = false
+
+			openConnection(apiSocketPath)
+			refreshTokensTimer.start()
+		}
+
+		function refreshTokens()
+		{
+			var ret = request("/statetokenservice/*",
+							  '['+Object.keys(mainWindow.tokens)+']')
+			if(ret < 1) stackView.state = "core_down"
+		}
+	}
+
+	Timer
+	{
+		id: refreshTokensTimer
+		interval: 1500
+		repeat: true
+		triggeredOnStart: true
+		onTriggered: refreshTokensApi.refreshTokens()
+	}
+
+	Timer
+	{
+		id: coreStateCheckTimer
+		interval: 1000
+		repeat: true
+		triggeredOnStart: true
+		onTriggered:
+		{
+			var ret = rsApi.request("/control/runstate/", "", runStateCallback)
+			if ( ret < 1 )
+			{
+				console.log("checkCoreStatus() core is down")
+				stackView.state = "core_down"
+			}
+		}
+		Component.onCompleted: start()
+
+		function runStateCallback(par)
+		{
+			var jsonReponse = JSON.parse(par.response)
+			var runState = jsonReponse.data.runstate
+			if(typeof(runState) === 'string') stackView.state = runState
+			else
+			{
+				stackView.state = "core_down"
+				console.log("runStateCallback(...) core is down")
+			}
 		}
 	}
 }
