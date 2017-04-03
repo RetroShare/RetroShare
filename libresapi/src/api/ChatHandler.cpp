@@ -1,3 +1,22 @@
+/*
+ * libresapi
+ * Copyright (C) 2015  electron128 <electron128@yahoo.com>
+ * Copyright (C) 2017  Gioacchino Mazzurco <gio@eigenlab.org>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 #include "ChatHandler.h"
 #include "Pagination.h"
 #include "Operators.h"
@@ -1122,9 +1141,8 @@ void ChatHandler::handleUnreadMsgs(Request &/*req*/, Response &resp)
 	     mit != mMsgs.end(); ++mit )
     {
         uint32_t count = 0;
-        for(std::list<Msg>::const_iterator lit = mit->second.begin(); lit != mit->second.end(); ++lit)
-            if(!lit->read)
-                count++;
+		for( std::list<Msg>::const_iterator lit = mit->second.begin();
+		     lit != mit->second.end(); ++lit ) if(!lit->read) ++count;
         std::map<ChatId, ChatInfo>::iterator mit2 = mChatInfo.find(mit->first);
         if(mit2 == mChatInfo.end())
             std::cerr << "Error in ChatHandler::handleUnreadMsgs(): ChatInfo not found. It is weird if this happens. Normally it should not happen." << std::endl;
@@ -1140,6 +1158,7 @@ void ChatHandler::handleUnreadMsgs(Request &/*req*/, Response &resp)
         }
     }
     resp.mStateToken = mUnreadMsgsStateToken;
+	resp.setOk();
 }
 
 void ChatHandler::handleInitiateDistantChatConnexion(Request& req, Response& resp)
