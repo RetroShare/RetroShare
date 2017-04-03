@@ -29,15 +29,43 @@ class LibresapiLocalClient : public QObject
 	Q_OBJECT
 
 public:
-	LibresapiLocalClient() : mLocalSocket(this) {}
+	LibresapiLocalClient() :
+#ifdef QT_DEBUG
+	    reqCount(0), ansCount(0), mDebug(true),
+#endif // QT_DEBUG
+	    mLocalSocket(this) {}
 
 	Q_INVOKABLE int request( const QString& path, const QString& jsonData = "",
-	                         QJSValue callback = QJSValue::NullValue);
+	                         QJSValue callback = QJSValue::NullValue );
 	Q_INVOKABLE void openConnection(QString socketPath);
+
+#ifdef QT_DEBUG
+	Q_PROPERTY(bool debug READ debug WRITE setDebug NOTIFY debugChanged)
+
+	bool debug() const { return mDebug; }
+	void setDebug(bool v);
+
+	uint64_t reqCount;
+	uint64_t ansCount;
+	bool mDebug;
+#endif // QT_DEBUG
 
 private:
 	QLocalSocket mLocalSocket;
-	QQueue<QJSValue> callbackQueue;
+
+	struct PQRecord
+	{
+		PQRecord( const QString& path, const QString& jsonData,
+		          const QJSValue& callback);
+
+#ifdef QT_DEBUG
+		QString mPath;
+		QString mJsonData;
+#endif //QT_DEBUG
+
+		QJSValue mCallback;
+	};
+	QQueue<PQRecord> processingQueue;
 
 private slots:
 	void socketError(QLocalSocket::LocalSocketError error);
@@ -52,6 +80,10 @@ signals:
 	 * @param msg
 	 */
 	void responseReceived(const QString & msg);
+
+#ifdef QT_DEBUG
+	void debugChanged();
+#endif //  QT_DEBUG
 };
 
 #endif // LIBRESAPILOCALCLIENT_H
