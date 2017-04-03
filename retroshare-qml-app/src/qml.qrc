@@ -18,5 +18,6 @@
         <file>qml/icons/edit-image-face-detect.png</file>
         <file>qml/icons/document-share.png</file>
         <file>qml/icons/application-menu.png</file>
+        <file>qml/ContactSort.js</file>
     </qresource>
 </RCC>

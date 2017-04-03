@@ -113,7 +113,7 @@ Item
 		}
 		Rectangle
 		{
-			visible: contactsView.unreadMessages.hasOwnProperty(model.gxs_id)
+			visible: model.unread_count > 0
 
 			anchors.right: parent.right
 			anchors.rightMargin: 10
@@ -130,8 +130,7 @@ Item
 			{
 				color: "white"
 				font.bold: true
-				text: contactsView.unreadMessages.hasOwnProperty(model.gxs_id) ?
-						  contactsView.unreadMessages[model.gxs_id] : ''
+				text: model.unread_count > 0 ? model.unread_count : ''
 				anchors.centerIn: parent
 			}
 		}
