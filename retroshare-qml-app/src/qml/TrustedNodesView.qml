@@ -24,13 +24,19 @@ import "jsonpath.js" as JSONPath
 Item
 {
 	id: trustedNodesView
+	property int token: 0
 
-	function refreshData()
-	{
-		rsApi.request("/peers/*", "",
-					  function(par) { jsonModel.json = par.response })
-	}
+	Component.onCompleted: refreshData()
 	onFocusChanged: focus && refreshData()
+
+	function refreshDataCallback(par)
+	{
+		jsonModel.json = par.response
+		token = JSON.parse(par.response).statetoken
+		mainWindow.registerToken(token, refreshData)
+	}
+	function refreshData()
+	{ if(visible) rsApi.request("/peers/*", "", refreshDataCallback) }
 
 	JSONListModel
 	{
@@ -135,14 +141,5 @@ Item
 		anchors.bottom: parent.bottom
 		onClicked: stackView.push("qrc:/qml/AddTrustedNode.qml")
 		width: parent.width
-	}
-
-	Timer
-	{
-		interval: 800
-		repeat: true
-		triggeredOnStart: true
-		onTriggered: if(trustedNodesView.visible) trustedNodesView.refreshData()
-		Component.onCompleted: start()
 	}
 }
