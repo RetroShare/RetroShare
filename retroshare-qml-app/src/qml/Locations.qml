@@ -50,8 +50,10 @@ Item
 				buttonText: "Save"
 				onSubmit:
 				{
-					var jsonData = { pgp_name: login, ssl_name: login, pgp_password: password }
-					rsApi.request("/control/create_location/", JSON.stringify(jsonData))
+					var jsonData = { pgp_name: login, ssl_name: login,
+						pgp_password: password }
+					rsApi.request("/control/create_location/",
+								  JSON.stringify(jsonData))
 					locationView.state = "selectLocation"
 				}
 			}
@@ -72,76 +74,40 @@ Item
 					rsApi.request( "/control/login/",
 								   JSON.stringify({id: locationView.sslid}) )
 					locationView.attemptLogin = true
-					busyIndicator.running = true
 					attemptTimer.start()
 				}
 			}
 		}
 	]
 
-	function requestLocationsList() { rsApi.request("/control/locations/", "") }
-
-	onFocusChanged: focus && requestLocationsList()
-
-	LibresapiLocalClient
+	function requestLocationsListCB(par)
 	{
-		id: rsApi
-		Component.onCompleted:
+		var jsonData = JSON.parse(par.response).data
+		if(jsonData.length === 1)
 		{
-			openConnection(apiSocketPath)
-			locationView.requestLocationsList()
+			// There is only one location so we can jump selecting location
+			var location = jsonData[0]
+			loginView.login = location.name
+			locationView.sslid = location.peer_id
+			locationView.state = "login"
 		}
-		onGoodResponseReceived:
+		else
 		{
-			var jsonData = JSON.parse(msg)
-
-
-			if(jsonData)
-			{
-				if(jsonData.data)
-				{
-					if(jsonData.data[0] && jsonData.data[0].pgp_id)
-					{
-						// if location list update
-						locationsModel.json = msg
-						busyIndicator.running = false
-					}
-					if (jsonData.data.key_name)
-					{
-						if(jsonData.data.want_password)
-						{
-							// if Server requested password
-							var jsonPass = { password: locationView.password }
-							rsApi.request( "/control/password/",
-										   JSON.stringify(jsonPass) )
-							locationView.attemptLogin = false
-							console.debug("RS core asked for password")
-						}
-						else
-						{
-							// if Already logged in
-							bottomButton.enabled = false
-							bottomButton.text = "Already logged in"
-							locationView.attemptLogin = false
-							busyIndicator.running = false
-							locationView.state = "selectLocation"
-							locationsListView.enabled = false
-							console.debug("Already logged in")
-						}
-					}
-				}
-			}
+			// There is more then one location to choose from
+			locationsModel.json = par.response
 		}
 	}
+	function requestLocationsList()
+	{ rsApi.request("/control/locations/", "", requestLocationsListCB) }
 
-	BusyIndicator { id: busyIndicator; anchors.centerIn: parent }
+	onFocusChanged: focus && requestLocationsList()
+	Component.onCompleted: requestLocationsList()
 
 	JSONListModel
 	{
 		id: locationsModel
 		query: "$.data[*]"
 	}
-
 	ListView
 	{
 		id: locationsListView
@@ -151,22 +117,23 @@ Item
 		model: locationsModel.model
 		delegate: Button
 		{
-		    text: model.name
+			text: model.name
 			onClicked:
 			{
 				loginView.login = text
 				locationView.sslid = model.id
 				locationView.state = "login"
 			}
-	    }
-	    visible: false
+		}
+		visible: false
 	}
 
-    Button
-    {
+	Button
+	{
 		id: bottomButton
 		text: "Create new location"
 		anchors.bottom: parent.bottom
+		anchors.horizontalCenter: parent.horizontalCenter
 		onClicked: locationView.state = "createLocation"
 	}
 
@@ -177,19 +144,60 @@ Item
 		anchors.fill: parent
 	}
 
+	BusyIndicator
+	{
+		id: busyIndicator
+		anchors.centerIn: parent
+		running: false
+
+		Connections
+		{
+			target: locationView
+			onAttemptLoginChanged:
+				if(locationView.attemptLogin) busyIndicator.running = true
+		}
+	}
+
+	LibresapiLocalClient
+	{
+		id: loginApi
+		Component.onCompleted: openConnection(apiSocketPath)
+		onGoodResponseReceived:
+		{
+			var jsonData = JSON.parse(msg)
+			if(jsonData && jsonData.data  && jsonData.data.key_name)
+			{
+				if(jsonData.data.want_password)
+				{
+					// if Server requested password
+					var jsonPass = { password: locationView.password }
+					request( "/control/password/", JSON.stringify(jsonPass) )
+					locationView.attemptLogin = false
+					console.debug("RS core asked for password")
+				}
+				else
+				{
+					// if Already logged in
+					bottomButton.enabled = false
+					bottomButton.text = "Unlocking location..."
+					locationView.attemptLogin = false
+					locationView.state = "selectLocation"
+					locationsListView.enabled = false
+					console.debug("Already logged in")
+				}
+			}
+		}
+	}
 	Timer
 	{
 		id: attemptTimer
-		interval: 500
+		interval: 1000
 		repeat: true
 		triggeredOnStart: true
 		onTriggered:
 		{
-			if(locationView.focus)
-				locationView.requestLocationsList()
-
 			if (locationView.attemptLogin)
-				rsApi.request("/control/password/", "")
+				loginApi.request("/control/password/", "")
 		}
 	}
 }

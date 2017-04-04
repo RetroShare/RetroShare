@@ -19,5 +19,6 @@
         <file>qml/icons/document-share.png</file>
         <file>qml/icons/application-menu.png</file>
         <file>qml/ContactSort.js</file>
+        <file>qml/icons/emblem-locked.png</file>
     </qresource>
 </RCC>

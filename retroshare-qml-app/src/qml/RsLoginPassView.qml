@@ -19,13 +19,12 @@
 import QtQuick 2.0
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.0
-import QtQml 2.2
-import org.retroshare.qml_components.LibresapiLocalClient 1.0
+//import QtQml 2.2
 
 Item
 {
 	id: loginView
-	property string buttonText: "Login"
+	property string buttonText: "Unlock"
 	property string login
 	property string password
 	signal submit(string login, string password)
@@ -34,19 +33,54 @@ Item
 	{
 		id: inputView
 		width: parent.width
-		anchors.top: parent.top
-		anchors.bottom: bottomButton.top
+		anchors.centerIn: parent
 
-		Row { Text {text: "Name:" } TextField { id: nameField; text: loginView.login } }
-		Row { Text {text: "Password:" } TextField { id: passwordField; text: loginView.password } }
-	}
+		Image
+		{
+			source: "qrc:/qml/icons/emblem-locked.png"
+			Layout.alignment: Qt.AlignHCenter
+		}
 
-	Button
-	{
-		id: bottomButton
-		text: loginView.buttonText
-		anchors.bottom: parent.bottom
-		anchors.right: parent.right
-		onClicked: loginView.submit(nameField.text, passwordField.text)
+		Text
+		{
+			text: "Login"
+			visible: loginView.login.length === 0
+			Layout.alignment: Qt.AlignHCenter
+			anchors.bottom: nameField.top
+			anchors.bottomMargin: 5
+		}
+		TextField
+		{
+			id: nameField;
+			text: loginView.login
+			visible: loginView.login.length === 0
+			Layout.alignment: Qt.AlignHCenter
+		}
+
+		Text
+		{
+			id: passLabel
+			text: nameField.visible ?
+					  "Passphrase" : "Enter passphrase for " + loginView.login
+			Layout.alignment: Qt.AlignHCenter
+			anchors.bottom: passwordField.top
+			anchors.bottomMargin: 5
+		}
+		TextField
+		{
+			id: passwordField
+			text: loginView.password
+			width: passLabel.width
+			echoMode: TextInput.Password
+			Layout.alignment: Qt.AlignHCenter
+		}
+
+		Button
+		{
+			id: bottomButton
+			text: loginView.buttonText
+			onClicked: loginView.submit(nameField.text, passwordField.text)
+			Layout.alignment: Qt.AlignHCenter | Qt.AlignBottom
+		}
 	}
 }
