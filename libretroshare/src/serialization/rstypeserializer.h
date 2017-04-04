@@ -8,12 +8,13 @@ class SerializeContext
 	public:
 
 	SerializeContext(uint8_t *data,uint32_t size)
-		: mData(data),mSize(size),mOffset(0),mOk(true) {}
+		: mData(data),mSize(size),mOffset(0),mOk(true),mFlags(0) {}
 
 	unsigned char *mData ;
 	uint32_t mSize ;
 	uint32_t mOffset ;
 	bool mOk ;
+    uint32_t mFlags ;
 };
 
 
@@ -57,10 +58,10 @@ class RsTypeSerializer
 		}
 
 	protected:
-		template<typename T> static bool     serialize  (uint8_t data[], uint32_t size, uint32_t &offset, const T& member);
-		template<typename T> static bool     deserialize(const uint8_t data[], uint32_t size, uint32_t &offset, T& member);
-		template<typename T> static uint32_t serial_size(const T& /* member */);
-		template<typename T> static void     print_data(const std::string& name,const T& /* member */);
+		template<class T> static bool     serialize  (uint8_t data[], uint32_t size, uint32_t &offset, const T& member);
+		template<class T> static bool     deserialize(const uint8_t data[], uint32_t size, uint32_t &offset, T& member);
+		template<class T> static uint32_t serial_size(const T& /* member */);
+		template<class T> static void     print_data(const std::string& name,const T& /* member */);
 };
 
 

@@ -137,17 +137,17 @@ public:
 
     virtual RsChatLobbyBouncingObject *duplicate() const = 0 ;
 
-    // returns the size in bytes of the data chunk to sign.
-
-    virtual uint32_t signed_serial_size() =0;
-    virtual bool serialise_signed_part(void *data,uint32_t& size) = 0;
+    uint32_t serial_size_no_signature() const ;
+    bool serialize_no_signature(uint8_t *data,uint32_t size) const ;
 
 protected:
     // The functions below handle the serialisation of data that is specific to the bouncing object level.
     // They are called by serial_size() and serialise() from children, but should not overload the serial_size() and
     // serialise() methods, otherwise the wrong method will be called when serialising from this top level class.
 
-	void serial_process_special(RsItem::SerializeJob j,SerializeContext& ctx,bool include_signature);
+	void serial_process(RsItem::SerializeJob j,SerializeContext& ctx);
+
+    virtual uint32_t PacketId() const= 0;
 };
 
 class RsChatLobbyMsgItem: public RsChatMsgItem, public RsChatLobbyBouncingObject
@@ -160,10 +160,10 @@ public:
 
 	void serial_process(RsItem::SerializeJob j,SerializeContext& ctx) ;
 
-    virtual uint32_t signed_serial_size() ;
-    virtual bool serialise_signed_part(void *data,uint32_t& size) ;// Isn't it better that items can serialize themselves ?
-
     ChatLobbyMsgId parent_msg_id ;				// Used for threaded chat.
+
+protected:
+    virtual uint32_t PacketId() const { return RsChatMsgItem::PacketId() ; }
 };
 
 class RsChatLobbyEventItem: public RsChatItem, public RsChatLobbyBouncingObject
@@ -176,14 +176,14 @@ class RsChatLobbyEventItem: public RsChatItem, public RsChatLobbyBouncingObject
         //
 		void serial_process(RsItem::SerializeJob j,SerializeContext& ctx);
 
-        virtual uint32_t signed_serial_size() ;
-		virtual bool serialise_signed_part(void *data,uint32_t& size) ;
-
         // members.
         //
         uint8_t event_type ;		// used for defining the type of event.
         std::string string1;		// used for any string
         uint32_t sendTime;		// used to check for old looping messages
+
+protected:
+    virtual uint32_t PacketId() const { return RsChatItem::PacketId() ; }
 };
 
 class RsChatLobbyListRequestItem: public RsChatItem
@@ -243,7 +243,7 @@ class RsChatLobbyInviteItem: public RsChatItem
 {
 	public:
 		RsChatLobbyInviteItem() :RsChatItem(RS_PKT_SUBTYPE_CHAT_LOBBY_INVITE) {}
-		virtual ~RsChatLobbyInviteItem() {} 
+		virtual ~RsChatLobbyInviteItem() {}
 
 		void serial_process(RsItem::SerializeJob j,SerializeContext& ctx);
 
@@ -279,6 +279,7 @@ class RsPrivateChatMsgConfigItem: public RsChatItem
 		std::string message;
 		uint32_t recvTime;
 };
+
 class RsChatLobbyConfigItem: public RsChatItem
 {
 public:

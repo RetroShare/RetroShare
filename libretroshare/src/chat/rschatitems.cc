@@ -35,6 +35,8 @@
 
 //#define CHAT_DEBUG 1
 
+static const uint32_t RS_CHAT_SERIALIZER_FLAGS_NO_SIGNATURE = 0x0001;
+
 #ifdef TO_BE_REMOVED
 std::ostream& RsChatMsgItem::print(std::ostream &out, uint16_t indent)
 {
@@ -474,7 +476,7 @@ bool RsChatMsgItem::serialise(void *data, uint32_t& pktsize)
 }
 #endif
 
-void RsChatLobbyBouncingObject::serial_process_special(RsItem::SerializeJob j,SerializeContext& ctx,bool include_signature)
+void RsChatLobbyBouncingObject::serial_process(RsItem::SerializeJob j,SerializeContext& ctx)
 {
     RsTypeSerializer::TlvString tt(nick,TLV_TYPE_STR_NAME) ;
 
@@ -482,7 +484,7 @@ void RsChatLobbyBouncingObject::serial_process_special(RsItem::SerializeJob j,Se
     RsTypeSerializer::serial_process(j,ctx,msg_id  ,"msg_id") ;
     RsTypeSerializer::serial_process(j,ctx,tt      ,"nick") ;
 
-    if(include_signature)
+    if(!(ctx.mFlags & RS_CHAT_SERIALIZER_FLAGS_NO_SIGNATURE))
     	RsTypeSerializer::serial_process(j,ctx,signature,"signature") ;
 }
 
@@ -490,17 +492,9 @@ void RsChatLobbyMsgItem::serial_process(RsItem::SerializeJob j,SerializeContext&
 {
     RsChatMsgItem::serial_process(j,ctx) ;
 
-    if(j == RsItem::SERIALIZE)
-    {
-		SerializeContext ctx2(NULL,0) ;
-		serial_process(RsItem::SIZE_ESTIMATE,ctx2);
-
-		setRsItemHeader(ctx.mData, ctx.mSize, PacketId(), ctx2.mOffset);		// correct header!
-    }
-
     RsTypeSerializer::serial_process(j,ctx,parent_msg_id,"parent_msg_id") ;
 
-    RsChatLobbyBouncingObject::serial_process_special(j,ctx,true) ;
+    RsChatLobbyBouncingObject::serial_process(j,ctx) ;
 }
 
 #ifdef TO_BE_REMOVED
@@ -536,7 +530,6 @@ bool RsChatLobbyMsgItem::serialise(void *data, uint32_t& pktsize)
 #endif
 	return ok ;
 }
-#endif
 
 /* serialise the data to the buffer */
 bool RsChatLobbyMsgItem::serialise_signed_part(void *data, uint32_t& pktsize)
@@ -571,6 +564,7 @@ bool RsChatLobbyMsgItem::serialise_signed_part(void *data, uint32_t& pktsize)
 #endif
     return ok ;
 }
+#endif
 
 void RsChatLobbyListRequestItem::serial_process(RsItem::SerializeJob j,SerializeContext& ctx)
 {
@@ -592,17 +586,17 @@ bool RsChatLobbyListRequestItem::serialise(void *data, uint32_t& pktsize)
 }
 #endif
 
-template<> void RsTypeSerializer::serial_process<VisibleChatLobbyInfo>(RsItem::SerializeJob j,SerializeContext& ctx,VisibleChatLobbyInfo& info)
+template<> void RsTypeSerializer::serial_process(RsItem::SerializeJob j,SerializeContext& ctx,VisibleChatLobbyInfo& info)
 {
 	RsTypeSerializer::serial_process<uint64_t>(info.id) ;
 
     TlvString tt1(info.name ,TLV_TYPE_STR_NAME) ;
     TlvString tt2(info.topic,TLV_TYPE_STR_NAME) ;
 
-	RsTypeSerializer::serial_process(info.name) ;
-	RsTypeSerializer::serial_process(info.topic) ;
-	RsTypeSerializer::serial_process<uint32_t>(info.count) ;
-	RsTypeSerializer::serial_process<uint32_t>(info.flags.toUInt32()) ;
+	RsTypeSerializer::serial_process(j,ctx,info.name,"info.name") ;
+	RsTypeSerializer::serial_process(j,ctx,info.topic,"info.topic") ;
+	RsTypeSerializer::serial_process<uint32_t>(j,ctx,info.count,"info.count") ;
+	RsTypeSerializer::serial_process<uint32_t>(j,ctx,info.flags.toUInt32(),"info.flags") ;
 }
 
 void RsChatLobbyListItem::serial_process(RsItem::SerializeJob j,SerializeContext& ctx)
@@ -642,6 +636,18 @@ bool RsChatLobbyListItem::serialise(void *data, uint32_t& pktsize)
 }
 #endif
 
+void RsChatLobbyEventItem::serial_process(RsItem::SerializeJob j,SerializeContext& ctx)
+{
+    RsTypeSerializer::TlvString tt(string1,TLV_TYPE_STR_NAME) ;
+
+    RsTypeSerializer::serial_process<uint8_t>(j,ctx,event_type,"event_type") ;
+    RsTypeSerializer::serial_process         (j,ctx,string1,"string1") ;
+    RsTypeSerializer::serial_process<uint32_t>(j,ctx,sendTime,"sendTime") ;
+
+    RsChatLobbyBouncingObject::serial_process(j,ctx,!(ctx.mFlags & RS_CHAT_SERIALIZER_FLAGS_NO_SIGNATURE));
+}
+
+#ifdef TO_BE_REMOVED
 bool RsChatLobbyEventItem::serialise(void *data, uint32_t& pktsize)
 {
     uint32_t tlvsize = serial_size() ;
@@ -702,6 +708,7 @@ bool RsChatLobbyEventItem::serialise_signed_part(void *data, uint32_t& pktsize)
 #endif
 	return ok ;
 }
+#endif
 
 void RsChatLobbyUnsubscribeItem::serial_process(RsItem::SerializeJob j,SerializeContext& ctx)
 {
@@ -771,7 +778,7 @@ void RsChatLobbyInviteItem::serial_process(RsItem::SerializeJob j,SerializeConte
 {
     RsTypeSerializer::serial_process<uint64_t>(j,ctx,lobby_id,"lobby_id") ;
 
-    TlvString s(message,TLV_TYPE_STR_NAME) ;
+    RsTypeSerializer::TlvString s(lobby_name,TLV_TYPE_STR_NAME) ;
 
     RsTypeSerializer::serial_process(j,ctx,s,"lobby_name") ;
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,lobby_flags.toUInt32(),"lobby_flags") ;
@@ -809,7 +816,7 @@ bool RsChatLobbyInviteItem::serialise(void *data, uint32_t& pktsize)
 void RsPrivateChatMsgConfigItem::serial_process(RsItem::SerializeJob j,SerializeContext& ctx)
 {
     uint32_t x=0 ;
-    TlvString s(message,TLV_TYPE_STR_MSG) ;
+    RsTypeSerializer::TlvString s(message,TLV_TYPE_STR_MSG) ;
 
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,x,"place holder value") ;
     RsTypeSerializer::serial_process          (j,ctx,configPeerId,"configPeerId") ;
@@ -956,7 +963,7 @@ bool RsChatStatusItem::serialise(void *data, uint32_t& pktsize)
 
 void RsChatAvatarItem::serial_process(RsItem::SerializeJob j,SerializeContext& ctx)
 {
-    RsTypeSerializer::serial_process<RsTypeSerializer::BinaryDataBlock>(j,ctx,RsTypeSerializer::BinaryDataBlock(data,image_size)) ;
+    RsTypeSerializer::serial_process<RsTypeSerializer::BinaryDataBlock_ref>(j,ctx,RsTypeSerializer::BinaryDataBlock_ref(image_data,image_size)) ;
 }
 
 #ifdef TO_BE_REMOVED
@@ -1004,7 +1011,7 @@ bool RsChatAvatarItem::serialise(void *data, uint32_t& pktsize)
 
 void RsChatLobbyConfigItem::serial_process(RsItem::SerializeJob j,SerializeContext& ctx)
 {
-    RsTypeSerializer::serial_process<uint32_t>(j,ctx,lobby_Id,"lobby_Id") ;
+    RsTypeSerializer::serial_process<uint64_t>(j,ctx,lobby_Id,"lobby_Id") ;
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,flags,"flags") ;
 }
 
@@ -1134,7 +1141,6 @@ RsChatLobbyListItem::RsChatLobbyListItem(void *data,uint32_t)
 	if (!ok)
 		std::cerr << "Unknown error while deserializing." << std::endl ;
 }
-#endif
 	
 bool RsChatLobbyBouncingObject::deserialise_from_memory(void *data,uint32_t rssize,uint32_t& offset)
 {
@@ -1172,7 +1178,6 @@ RsChatLobbyEventItem::RsChatLobbyEventItem(void *data,uint32_t /*size*/)
 		std::cerr << "Unknown error while deserializing." << std::endl ;
 }
 
-#ifdef TO_BE_REMOVED
 RsChatLobbyUnsubscribeItem::RsChatLobbyUnsubscribeItem(void *data,uint32_t /*size*/)
 	: RsChatItem(RS_PKT_SUBTYPE_CHAT_LOBBY_UNSUBSCRIBE)
 {
@@ -1392,4 +1397,44 @@ RsChatAvatarItem::RsChatAvatarItem(void *data,uint32_t /*size*/)
 }
 
 #endif
+
+uint32_t RsChatLobbyBouncingObject::serial_size_no_signature() const
+{
+	SerializeContext ctx(NULL,0);
+
+	ctx.mOffset = 8;
+    ctx.mFlags = RS_CHAT_SERIALIZER_FLAGS_NO_SIGNATURE ;
+
+	const_cast<RsChatLobbyBouncingObject*>(this)->serial_process(RsItem::SERIALIZE,ctx) ;
+
+	return ctx.mOffset ;
+}
+
+bool RsChatLobbyBouncingObject::serialize_no_signature(uint8_t *data,uint32_t size) const
+{
+	SerializeContext ctx(data,0);
+
+	uint32_t tlvsize = serial_size_no_signature() ;
+
+	if(tlvsize > size)
+		throw std::runtime_error("Cannot serialise: not enough room.") ;
+
+	if(!setRsItemHeader(data, tlvsize, PacketId(), tlvsize))
+	{
+		std::cerr << "RsSerializer::serialise_item(): ERROR. Not enough size!" << std::endl;
+		return false ;
+	}
+	ctx.mOffset = 8;
+	ctx.mSize = tlvsize;
+    ctx.mFlags = RS_CHAT_SERIALIZER_FLAGS_NO_SIGNATURE ;
+
+	const_cast<RsChatLobbyBouncingObject*>(this)->serial_process(RsItem::SERIALIZE,ctx) ;
+
+	if(ctx.mSize != ctx.mOffset)
+	{
+		std::cerr << "RsChatSerializer::serialise_item(): ERROR. offset does not match expected size!" << std::endl;
+		return false ;
+	}
+	return true ;
+}
 
