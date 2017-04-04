@@ -120,7 +120,7 @@ class RsItem: public RsMemoryManagement::SmallObject
 		 *        after where this RsSerializable has been serialized.
 		 * @return true if serialization successed, false otherwise
 		 */
-		typedef enum { SIZE_ESTIMATE = 0x01, SERIALIZE = 0x02, DESERIALIZE  = 0x03} SerializeJob ;
+		typedef enum { SIZE_ESTIMATE = 0x01, SERIALIZE = 0x02, DESERIALIZE  = 0x03, PRINT=0x04 } SerializeJob ;
 
 		virtual void serial_process(SerializeJob j,SerializeContext& ctx) 
 		{

@@ -11,6 +11,8 @@
 #include "rsserializer.h"
 #include "rstypeserializer.h"
 
+#define GET_VARIABLE_NAME(str) #str
+
 static const uint16_t RS_SERVICE_TYPE_TEST  = 0xffff;
 static const uint8_t  RS_ITEM_SUBTYPE_TEST1 = 0x01 ;
 
@@ -71,6 +73,11 @@ template<> bool RsTypeSerializer::deserialize(const uint8_t data[], uint32_t siz
 	return ok;
 }
 
+template<> void RsTypeSerializer::print_data(const std::string& s,const std::set<uint32_t>& set)
+{
+	std::cerr << "  [set<uint32_t>] " << s << " : set of size " << set.size() << std::endl;
+}
+
 // New item class. This class needs to define:
 // - a serial_process method that tells which members to serialize
 // - overload the clear() and print() methods of RsItem
@@ -94,15 +101,15 @@ class RsTestItem: public RsItem
 		{
 			RsTypeSerializer::TlvString tt(str,TLV_TYPE_STR_DESCR) ;
 
-			RsTypeSerializer::serial_process(j,ctx,ts ) ;
-			RsTypeSerializer::serial_process(j,ctx,tt ) ;
-			RsTypeSerializer::serial_process(j,ctx,int_set ) ;
+			RsTypeSerializer::serial_process(j,ctx,ts     ,GET_VARIABLE_NAME(ts)      ) ;
+			RsTypeSerializer::serial_process(j,ctx,tt     ,GET_VARIABLE_NAME(str)     ) ;
+			RsTypeSerializer::serial_process(j,ctx,int_set,GET_VARIABLE_NAME(int_set) ) ;
 		}
 
-		// Derived from RsItem
+		// Derived from RsItem, because they are pure virtuals. Normally print() should disappear soon.
 		//
 		virtual void clear() {}
-		virtual std::ostream& print(std::ostream&,uint16_t indent) {}
+		virtual std::ostream& print(std::ostream&,uint16_t) {}
 
 	private:
 		std::string str ;
@@ -156,6 +163,9 @@ int main(int argc,char *argv[])
 		//
 		RsTemporaryMemory mem1(size);
 
+		std::cerr << "Item to be serialized:" << std::endl;
+
+		RsTestSerializer().print(&t1) ;
 		RsTestSerializer().serialise(&t1,mem1,mem1.size()) ;
 
 		std::cerr << "Serialized t1: " << RsUtil::BinToHex(mem1,mem1.size()) << std::endl;

@@ -65,5 +65,13 @@ uint32_t RsSerializer::size(RsItem *item)
 	return ctx.mSize ;
 }
 
+void RsSerializer::print(RsItem *item)
+{
+	SerializeContext ctx(NULL,0);
+
+    std::cerr << "***** RsItem class: \"" << typeid(*item).name() << "\" *****" << std::endl;
+	item->serial_process(RsItem::PRINT, ctx) ;
+    std::cerr << "******************************" << std::endl;
+}
 
 
