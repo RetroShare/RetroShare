@@ -9,19 +9,6 @@
 
 #define SERIALIZE_ERROR() std::cerr << __PRETTY_FUNCTION__ << " : " 
 
-class SerializeContext
-{
-	public:
-
-	SerializeContext(uint8_t *data,uint32_t size)
-		: mData(data),mSize(size),mOffset(0),mOk(true) {}
-
-	unsigned char *mData ;
-	uint32_t mSize ;
-	uint32_t mOffset ;
-	bool mOk ;
-};
-
 class RsSerializer: public RsSerialType
 {
 	public:

@@ -79,7 +79,7 @@ const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_INVITE       	  = 0x1A ;
 
 typedef uint64_t 		ChatLobbyId ;
 typedef uint64_t 		ChatLobbyMsgId ;
-typedef std::string 		ChatLobbyNickName ;
+typedef std::string 	ChatLobbyNickName ;
 typedef uint64_t		DistantChatDHSessionId ;
 
 class RsChatItem: public RsItem
@@ -91,7 +91,7 @@ class RsChatItem: public RsItem
 		}
 
 		virtual ~RsChatItem() {}
-        virtual std::ostream& print(std::ostream &out, uint16_t indent = 0) {}	// derived from RsItem, but should be removed
+        virtual std::ostream& print(std::ostream &out, uint16_t indent = 0) { return out; }	// derived from RsItem, but should be removed
 
         virtual void clear() {}
 };
@@ -136,7 +136,6 @@ public:
     RsTlvKeySignature signature ;
 
     virtual RsChatLobbyBouncingObject *duplicate() const = 0 ;
-    virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
 
     // returns the size in bytes of the data chunk to sign.
 
@@ -148,9 +147,7 @@ protected:
     // They are called by serial_size() and serialise() from children, but should not overload the serial_size() and
     // serialise() methods, otherwise the wrong method will be called when serialising from this top level class.
 
-    uint32_t serialized_size(bool include_signature) ;
-    bool serialise_to_memory(RsItem::SerializeJob j, SerializeContext &ctx, bool include_signature) ;
-    bool deserialise_from_memory(void *data,uint32_t rssize,uint32_t& offset) ;
+	void serial_process_special(RsItem::SerializeJob j,SerializeContext& ctx,bool include_signature);
 };
 
 class RsChatLobbyMsgItem: public RsChatMsgItem, public RsChatLobbyBouncingObject
@@ -158,14 +155,10 @@ class RsChatLobbyMsgItem: public RsChatMsgItem, public RsChatLobbyBouncingObject
 public:
     RsChatLobbyMsgItem() :RsChatMsgItem(RS_PKT_SUBTYPE_CHAT_LOBBY_SIGNED_MSG) {}
 
-    RsChatLobbyMsgItem(void *data,uint32_t size) ; // deserialization /// TODO!!!
-
     virtual ~RsChatLobbyMsgItem() {}
-    virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
     virtual RsChatLobbyBouncingObject *duplicate() const { return new RsChatLobbyMsgItem(*this) ; }
 
-    virtual bool serialise(void *data,uint32_t& size) ;	// Isn't it better that items can serialize themselves ?
-    virtual uint32_t serial_size() ;			// deserialise is handled using a constructor
+	void serial_process(RsItem::SerializeJob j,SerializeContext& ctx) ;
 
     virtual uint32_t signed_serial_size() ;
     virtual bool serialise_signed_part(void *data,uint32_t& size) ;// Isn't it better that items can serialize themselves ?
@@ -177,17 +170,14 @@ class RsChatLobbyEventItem: public RsChatItem, public RsChatLobbyBouncingObject
 {
     public:
         RsChatLobbyEventItem() :RsChatItem(RS_PKT_SUBTYPE_CHAT_LOBBY_SIGNED_EVENT) {}
-        RsChatLobbyEventItem(void *data,uint32_t size) ; // deserialization /// TODO!!!
 
         virtual ~RsChatLobbyEventItem() {}
-        virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
         virtual RsChatLobbyBouncingObject *duplicate() const { return new RsChatLobbyEventItem(*this) ; }
         //
-        virtual bool serialise(void *data,uint32_t& size) ;
-        virtual uint32_t serial_size() ;
+		void serial_process(RsItem::SerializeJob j,SerializeContext& ctx);
 
         virtual uint32_t signed_serial_size() ;
-    virtual bool serialise_signed_part(void *data,uint32_t& size) ;
+		virtual bool serialise_signed_part(void *data,uint32_t& size) ;
 
         // members.
         //
@@ -200,13 +190,9 @@ class RsChatLobbyListRequestItem: public RsChatItem
 {
 	public:
 		RsChatLobbyListRequestItem() : RsChatItem(RS_PKT_SUBTYPE_CHAT_LOBBY_LIST_REQUEST) {}
-		RsChatLobbyListRequestItem(void *data,uint32_t size) ; 
 		virtual ~RsChatLobbyListRequestItem() {}
 
-		virtual bool serialise(void *data,uint32_t& size) ;	
-		virtual uint32_t serial_size() ;				 			
-
-        virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
+		void serial_process(RsItem::SerializeJob j,SerializeContext& ctx);
 };
 
 struct VisibleChatLobbyInfo
@@ -222,13 +208,9 @@ class RsChatLobbyListItem: public RsChatItem
 {
 	public:
 		RsChatLobbyListItem() : RsChatItem(RS_PKT_SUBTYPE_CHAT_LOBBY_LIST) {}
-		RsChatLobbyListItem(void *data,uint32_t size) ; 
 		virtual ~RsChatLobbyListItem() {}
 
-		virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
-
-		virtual bool serialise(void *data,uint32_t& size) ;	
-		virtual uint32_t serial_size() ;				 			
+		void serial_process(RsItem::SerializeJob j,SerializeContext& ctx);
 
         std::vector<VisibleChatLobbyInfo> lobbies ;
 };
@@ -237,48 +219,38 @@ class RsChatLobbyUnsubscribeItem: public RsChatItem
 {
 	public:
 		RsChatLobbyUnsubscribeItem() :RsChatItem(RS_PKT_SUBTYPE_CHAT_LOBBY_UNSUBSCRIBE) {}
-		RsChatLobbyUnsubscribeItem(void *data,uint32_t size) ; // deserialization 
 
 		virtual ~RsChatLobbyUnsubscribeItem() {} 
-		virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
+
+		void serial_process(RsItem::SerializeJob j,SerializeContext& ctx);
 
 		uint64_t lobby_id ;
-
-		virtual bool serialise(void *data,uint32_t& size) ;	// Isn't it better that items can serialize themselves ?
-		virtual uint32_t serial_size() ; 							// deserialise is handled using a constructor
 };
 
 class RsChatLobbyConnectChallengeItem: public RsChatItem
 {
 	public:
 		RsChatLobbyConnectChallengeItem() :RsChatItem(RS_PKT_SUBTYPE_CHAT_LOBBY_CHALLENGE) {}
-		RsChatLobbyConnectChallengeItem(void *data,uint32_t size) ; // deserialization 
 
 		virtual ~RsChatLobbyConnectChallengeItem() {} 
-		virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
+
+		void serial_process(RsItem::SerializeJob j,SerializeContext& ctx);
 
 		uint64_t challenge_code ;
-
-		virtual bool serialise(void *data,uint32_t& size) ;	// Isn't it better that items can serialize themselves ?
-		virtual uint32_t serial_size() ; 							// deserialise is handled using a constructor
 };
 
 class RsChatLobbyInviteItem: public RsChatItem
 {
 	public:
 		RsChatLobbyInviteItem() :RsChatItem(RS_PKT_SUBTYPE_CHAT_LOBBY_INVITE) {}
-		RsChatLobbyInviteItem(void *data,uint32_t size) ; // deserialization 
-
 		virtual ~RsChatLobbyInviteItem() {} 
-		virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
+
+		void serial_process(RsItem::SerializeJob j,SerializeContext& ctx);
 
 		ChatLobbyId lobby_id ;
 		std::string lobby_name ;
 		std::string lobby_topic ;
         ChatLobbyFlags lobby_flags ;
-
-		virtual bool serialise(void *data,uint32_t& size) ;	// Isn't it better that items can serialize themselves ?
-		virtual uint32_t serial_size() ; 							// deserialise is handled using a constructor
 };
 
 /*!
@@ -289,14 +261,11 @@ class RsPrivateChatMsgConfigItem: public RsChatItem
 {
 	public:
 		RsPrivateChatMsgConfigItem() :RsChatItem(RS_PKT_SUBTYPE_PRIVATECHATMSG_CONFIG) {}
-		RsPrivateChatMsgConfigItem(void *data,uint32_t size) ; // deserialization
 
 		virtual ~RsPrivateChatMsgConfigItem() {}
 		virtual void clear() {}
-		virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
 
-		virtual bool serialise(void *data,uint32_t& size) ;	// Isn't it better that items can serialize themselves ?
-		virtual uint32_t serial_size() ; 							// deserialise is handled using a constructor
+		void serial_process(RsItem::SerializeJob j,SerializeContext& ctx);
 
 		/* set data from RsChatMsgItem to RsPrivateChatMsgConfigItem */
 		void set(RsChatMsgItem *ci, const RsPeerId &peerId, uint32_t confFlags);
@@ -310,43 +279,19 @@ class RsPrivateChatMsgConfigItem: public RsChatItem
 		std::string message;
 		uint32_t recvTime;
 };
-class RsPrivateChatDistantInviteConfigItem: public RsChatItem
-{
-	public:
-		RsPrivateChatDistantInviteConfigItem() :RsChatItem(RS_PKT_SUBTYPE_DISTANT_INVITE_CONFIG) {}
-		RsPrivateChatDistantInviteConfigItem(void *data,uint32_t size) ; // deserialization
-
-		virtual ~RsPrivateChatDistantInviteConfigItem() {}
-		virtual void clear() {}
-		virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
-
-		virtual bool serialise(void *data,uint32_t& size) ;	// Isn't it better that items can serialize themselves ?
-		virtual uint32_t serial_size() ; 							// deserialise is handled using a constructor
-
-		unsigned char aes_key[16] ;
-        RsFileHash hash ;
-		std::string encrypted_radix64_string ;
-		RsPgpId destination_pgp_id ;
-		uint32_t time_of_validity ;
-		uint32_t last_hit_time ;
-		uint32_t flags ;
-};
 class RsChatLobbyConfigItem: public RsChatItem
 {
 public:
-    RsChatLobbyConfigItem() :RsChatItem(RS_PKT_SUBTYPE_CHAT_LOBBY_CONFIG) { lobby_Id = 0; }
-    RsChatLobbyConfigItem(void *data,uint32_t size) ; // deserialization
+	RsChatLobbyConfigItem() :RsChatItem(RS_PKT_SUBTYPE_CHAT_LOBBY_CONFIG) { lobby_Id = 0; }
 
-    virtual ~RsChatLobbyConfigItem() {}
+	virtual ~RsChatLobbyConfigItem() {}
 
-    virtual void clear() { lobby_Id = 0; }
-    virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
+	virtual void clear() { lobby_Id = 0; }
 
-    virtual bool serialise(void *data,uint32_t& size) ;	// Isn't it better that items can serialize themselves ?
-    virtual uint32_t serial_size() ; 							// deserialise is handled using a constructor
+	void serial_process(RsItem::SerializeJob j,SerializeContext& ctx);
 
-    uint64_t lobby_Id;
-	 uint32_t flags ;
+	uint64_t lobby_Id;
+	uint32_t flags ;
 };
 
 // This class contains activity info for the sending peer: active, idle, typing, etc.
@@ -355,13 +300,10 @@ class RsChatStatusItem: public RsChatItem
 {
 	public:
 		RsChatStatusItem() :RsChatItem(RS_PKT_SUBTYPE_CHAT_STATUS) {}
-		RsChatStatusItem(void *data,uint32_t size) ; // deserialization
 
 		virtual ~RsChatStatusItem() {}
-		virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
 
-		virtual bool serialise(void *data,uint32_t& size) ;	// Isn't it better that items can serialize themselves ?
-		virtual uint32_t serial_size() ; 							// deserialise is handled using a constructor
+		void serial_process(RsItem::SerializeJob j,SerializeContext& ctx);
 
 		uint32_t flags ;
 		std::string status_string;
@@ -373,13 +315,9 @@ class RsChatAvatarItem: public RsChatItem
 {
 	public:
 		RsChatAvatarItem() :RsChatItem(RS_PKT_SUBTYPE_CHAT_AVATAR) {setPriorityLevel(QOS_PRIORITY_RS_CHAT_AVATAR_ITEM) ;}
-		RsChatAvatarItem(void *data,uint32_t size) ; // deserialization
 
 		virtual ~RsChatAvatarItem() ;
-		virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
-
-		virtual bool serialise(void *data,uint32_t& size) ;	// Isn't it better that items can serialize themselves ?
-		virtual uint32_t serial_size() ; 							// deserialise is handled using a constructor
+		void serial_process(RsItem::SerializeJob j,SerializeContext& ctx);
 
 		uint32_t image_size ;				// size of data in bytes
 		unsigned char *image_data ;		// image
@@ -392,13 +330,10 @@ class RsChatDHPublicKeyItem: public RsChatItem
 {
 	public:
 		RsChatDHPublicKeyItem() :RsChatItem(RS_PKT_SUBTYPE_DISTANT_CHAT_DH_PUBLIC_KEY) {setPriorityLevel(QOS_PRIORITY_RS_CHAT_ITEM) ;}
-		RsChatDHPublicKeyItem(void *data,uint32_t size) ; // deserialization
 
 		virtual ~RsChatDHPublicKeyItem() { BN_free(public_key) ; } 
-		virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
 
-		virtual bool serialise(void *data,uint32_t& size) ;	// Isn't it better that items can serialize themselves ?
-		virtual uint32_t serial_size() ; 							// deserialise is handled using a constructor
+		void serial_process(RsItem::SerializeJob j,SerializeContext& ctx);
 
 		// Private data to DH public key item
 		//

@@ -1,5 +1,21 @@
+#pragma once
+
 #include "serialiser/rsserial.h"
 #include "serialiser/rstlvbase.h"
+
+class SerializeContext
+{
+	public:
+
+	SerializeContext(uint8_t *data,uint32_t size)
+		: mData(data),mSize(size),mOffset(0),mOk(true) {}
+
+	unsigned char *mData ;
+	uint32_t mSize ;
+	uint32_t mOffset ;
+	bool mOk ;
+};
+
 
 class RsTypeSerializer
 {
@@ -7,6 +23,15 @@ class RsTypeSerializer
     	// This type should be used to pass a parameter to drive the serialisation if needed.
 
 		typedef std::pair<std::string&,uint16_t> TlvString;
+
+    	class BinaryDataBlock_ref
+        {
+        public:
+            BinaryDataBlock_ref(unsigned char *& _mem,uint32_t& _size) : mem(&_mem),size(&_size){}
+
+            unsigned char **mem ;
+            uint32_t *size ;
+        };
 
 		template<typename T>
 		static void serial_process(RsItem::SerializeJob j,SerializeContext& ctx,T& member,const std::string& member_name)

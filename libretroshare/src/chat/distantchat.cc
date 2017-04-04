@@ -89,10 +89,10 @@ bool DistantChatService::handleOutgoingItem(RsChatItem *item)
     std::cerr << "p3ChatService::handleOutgoingItem(): sending to " << item->PeerId() << ": interpreted as a distant chat virtual peer id." << std::endl;
 #endif
     
-    uint32_t size = item->serial_size() ;
+    uint32_t size = RsChatSerialiser().size(item) ;
     RsTemporaryMemory mem(size) ;
     
-    if(!item->serialise(mem,size))
+    if(!RsChatSerialiser().serialise(item,mem,size))
     {
         std::cerr << "(EE) serialisation error. Something's really wrong!" << std::endl;
         return false;
@@ -149,10 +149,10 @@ bool DistantChatService::acceptDataFromPeer(const RsGxsId& gxs_id,const RsGxsTun
 
             // we do not use handleOutGoingItem() because there's no distant chat contact, as the chat is refused.
             
-	    uint32_t size = item->serial_size() ;
+	    uint32_t size = RsChatSerialiser().size(item) ;
 	    RsTemporaryMemory mem(size) ;
 
-	    if(!item->serialise(mem,size))
+	    if(!RsChatSerialiser().serialise(item,mem,size))
 	    {
 		    std::cerr << "(EE) serialisation error. Something's really wrong!" << std::endl;
 		    return false;
