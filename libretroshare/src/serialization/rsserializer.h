@@ -35,9 +35,13 @@ class RsSerializer: public RsSerialType
 			return NULL ;
 		}
 
+        // The following functions *should not* be overloaded.
+        // They are kept public in order to allow them to be called if needed.
+
 		RsItem *deserialise(const uint8_t *data,uint32_t size) ;
 		bool serialise(RsItem *item,uint8_t *const data,uint32_t size) ;
 		uint32_t size(RsItem *item) ;
+        void print(RsItem *item) ;
 };
 
 
