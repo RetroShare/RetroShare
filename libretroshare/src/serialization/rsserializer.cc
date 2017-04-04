@@ -59,10 +59,10 @@ uint32_t RsSerializer::size(RsItem *item)
 {
 	SerializeContext ctx(NULL,0);
 
-	ctx.mSize = 8 ;	// header size
+	ctx.mOffset = 8 ;	// header size
 	item->serial_process(RsItem::SIZE_ESTIMATE, ctx) ;
 
-	return ctx.mSize ;
+	return ctx.mOffset ;
 }
 
 void RsSerializer::print(RsItem *item)

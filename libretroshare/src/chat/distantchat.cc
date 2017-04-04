@@ -218,7 +218,7 @@ void DistantChatService::receiveData(const RsGxsTunnelService::RsGxsTunnelId &tu
 	    contact.from_id = tinfo.source_gxs_id ;
     }
 
-    RsItem *item = RsChatSerialiser().deserialise(data,&data_size) ;
+    RsItem *item = RsChatSerialiser().deserialise(data,data_size) ;
 
     if(item != NULL)
     {

@@ -29,10 +29,13 @@
 #include "serialiser/rsbaseserial.h"
 #include "serialiser/rstlvbase.h"
 
+#include "serialization/rstypeserializer.h"
+
 #include "chat/rschatitems.h"
 
 //#define CHAT_DEBUG 1
 
+#ifdef TO_BE_REMOVED
 std::ostream& RsChatMsgItem::print(std::ostream &out, uint16_t indent)
 {
 	printRsItemBase(out, "RsChatMsgItem", indent);
@@ -220,57 +223,44 @@ std::ostream& RsChatAvatarItem::print(std::ostream &out, uint16_t indent)
 
 	return out;
 }
-RsItem *RsChatSerialiser::deserialise(void *data, uint32_t *pktsize)
+#endif
+
+RsItem *RsChatSerialiser::create_item(uint16_t service_id,uint8_t item_sub_id)
 {
-	uint32_t rstype = getRsItemId(data);
-	uint32_t rssize = getRsItemSize(data);
+    if(service_id != RS_SERVICE_TYPE_CHAT)
+        return NULL ;
 
-#ifdef CHAT_DEBUG
-	std::cerr << "deserializing packet..."<< std::endl ;
-#endif
-	// look what we have...
-	if (*pktsize < rssize)    /* check size */
+	switch(item_sub_id)
 	{
-#ifdef CHAT_DEBUG
-		std::cerr << "chat deserialisation: not enough size: pktsize=" << *pktsize << ", rssize=" << rssize << std::endl ;
-#endif
-		return NULL; /* not enough data */
-	}
-
-	/* set the packet length */
-	*pktsize = rssize;
-
-	/* ready to load */
-
-	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) || (RS_SERVICE_TYPE_CHAT != getRsItemService(rstype))) 
-	{
-#ifdef CHAT_DEBUG
-		std::cerr << "chat deserialisation: wrong type !" << std::endl ;
-#endif
-		return NULL; /* wrong type */
-	}
-
-	switch(getRsItemSubType(rstype))
-	{
-        case RS_PKT_SUBTYPE_DEFAULT:			return new RsChatMsgItem(data,*pktsize) ;
-		case RS_PKT_SUBTYPE_PRIVATECHATMSG_CONFIG:	return new RsPrivateChatMsgConfigItem(data,*pktsize) ;
-		case RS_PKT_SUBTYPE_DISTANT_INVITE_CONFIG:	return new RsPrivateChatDistantInviteConfigItem(data,*pktsize) ;
-        case RS_PKT_SUBTYPE_CHAT_STATUS:		return new RsChatStatusItem(data,*pktsize) ;
-        case RS_PKT_SUBTYPE_CHAT_AVATAR:		return new RsChatAvatarItem(data,*pktsize) ;
-            case RS_PKT_SUBTYPE_CHAT_LOBBY_SIGNED_MSG:	return new RsChatLobbyMsgItem(data,*pktsize) ;
-        case RS_PKT_SUBTYPE_CHAT_LOBBY_INVITE:		return new RsChatLobbyInviteItem(data,*pktsize) ;
-        case RS_PKT_SUBTYPE_CHAT_LOBBY_CHALLENGE:	return new RsChatLobbyConnectChallengeItem(data,*pktsize) ;
-		case RS_PKT_SUBTYPE_CHAT_LOBBY_UNSUBSCRIBE:	return new RsChatLobbyUnsubscribeItem(data,*pktsize) ;
-        case RS_PKT_SUBTYPE_CHAT_LOBBY_SIGNED_EVENT:	return new RsChatLobbyEventItem(data,*pktsize) ;
-		case RS_PKT_SUBTYPE_CHAT_LOBBY_LIST_REQUEST:	return new RsChatLobbyListRequestItem(data,*pktsize) ;
-		case RS_PKT_SUBTYPE_CHAT_LOBBY_LIST:        	return new RsChatLobbyListItem(data,*pktsize) ;
-        case RS_PKT_SUBTYPE_CHAT_LOBBY_CONFIG:  	return new RsChatLobbyConfigItem(data,*pktsize) ;
+        case RS_PKT_SUBTYPE_DEFAULT:				return new RsChatMsgItem() ;
+		case RS_PKT_SUBTYPE_PRIVATECHATMSG_CONFIG:	return new RsPrivateChatMsgConfigItem() ;
+		case RS_PKT_SUBTYPE_DISTANT_INVITE_CONFIG:	return new RsPrivateChatDistantInviteConfigItem() ;
+        case RS_PKT_SUBTYPE_CHAT_STATUS:			return new RsChatStatusItem() ;
+        case RS_PKT_SUBTYPE_CHAT_AVATAR:			return new RsChatAvatarItem() ;
+		case RS_PKT_SUBTYPE_CHAT_LOBBY_SIGNED_MSG:	return new RsChatLobbyMsgItem() ;
+        case RS_PKT_SUBTYPE_CHAT_LOBBY_INVITE:		return new RsChatLobbyInviteItem() ;
+        case RS_PKT_SUBTYPE_CHAT_LOBBY_CHALLENGE:	return new RsChatLobbyConnectChallengeItem() ;
+		case RS_PKT_SUBTYPE_CHAT_LOBBY_UNSUBSCRIBE:	return new RsChatLobbyUnsubscribeItem() ;
+        case RS_PKT_SUBTYPE_CHAT_LOBBY_SIGNED_EVENT:return new RsChatLobbyEventItem() ;
+		case RS_PKT_SUBTYPE_CHAT_LOBBY_LIST_REQUEST:return new RsChatLobbyListRequestItem() ;
+		case RS_PKT_SUBTYPE_CHAT_LOBBY_LIST:        return new RsChatLobbyListItem() ;
+        case RS_PKT_SUBTYPE_CHAT_LOBBY_CONFIG:  	return new RsChatLobbyConfigItem() ;
 		default:
 			std::cerr << "Unknown packet type in chat!" << std::endl ;
 			return NULL ;
 	}
 }
 
+void RsChatMsgItem::serial_process(RsItem::SerializeJob j,SerializeContext& ctx)
+{
+    RsTypeSerializer::TlvString tt(str,TLV_TYPE_STR_MSG) ;
+
+    RsTypeSerializer::serial_process(j,ctx,chatFlags,"chatflags") ;
+    RsTypeSerializer::serial_process(j,ctx,sendTime,"sendTime") ;
+    RsTypeSerializer::serial_process(j,ctx,tt,"message") ;
+}
+
+#ifdef TO_BE_REMOVED
 uint32_t RsChatMsgItem::serial_size()
 {
 	uint32_t s = 8; /* header */
@@ -423,6 +413,7 @@ uint32_t RsChatLobbyConfigItem::serial_size()
 
     return s;
 }
+#endif
 
 /*************************************************************************/
 
@@ -435,6 +426,7 @@ RsChatAvatarItem::~RsChatAvatarItem()
 	}
 }
 
+#ifdef TO_BE_REMOVED
 /* serialise the data to the buffer */
 bool RsChatMsgItem::serialise(void *data, uint32_t& pktsize)
 {
@@ -481,21 +473,40 @@ bool RsChatMsgItem::serialise(void *data, uint32_t& pktsize)
 #endif
 	return ok ;
 }
+#endif
 
-bool RsChatLobbyBouncingObject::serialise_to_memory(void *data,uint32_t tlvsize,uint32_t& offset,bool include_signature)
+bool RsChatLobbyBouncingObject::serialise_to_memory(RsItem::SerializeJob j,SerializeContext& ctx,bool include_signature)
 {
-    bool ok = true ;
+    TlvString tt(nick,TLV_TYPE_STR_NAME) ;
 
-    ok &= setRawUInt64(data, tlvsize, &offset, lobby_id);
-    ok &= setRawUInt64(data, tlvsize, &offset, msg_id);
-    ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_NAME, nick);
+    RsTypeSerializer::serial_process(j,ctx,lobby_id,"lobby_id") ;
+    RsTypeSerializer::serial_process(j,ctx,msg_id  ,"msg_id") ;
+    RsTypeSerializer::serial_process(j,ctx,tt      ,"nick") ;
 
     if(include_signature)
-        ok &= signature.SetTlv(data, tlvsize, &offset);
+    	RsTypeSerializer::serial_process(j,ctx,signature,"signature") ;
 
-    return ok ;
+    return true ;
 }
 
+void RsChatLobbyMsgItem::serial_process(RsItem::SerializeJob j,SerializeContext& ctx)
+{
+    RsChatMsgItem::serial_process(j,ctx) ;
+
+    if(j == RsItem::SERIALIZE)
+    {
+		SerializeContext ctx2 ;
+		serial_process(RsItem::SIZE_ESTIMATE,ctx2);
+
+		setRsItemHeader(ctx.mData, ctx.mSize, PacketId(), ctx2.mOffset);		// correct header!
+    }
+
+    RsTypeSerializer::serial_process(j,ctx,parent_msg_id,"parent_msg_id") ;
+
+    ctx.mOk &= RsChatLobbyBouncingObject::serialise_to_memory(j,ctx,true) ;
+}
+
+#ifdef TO_BE_REMOVED
 /* serialise the data to the buffer */
 bool RsChatLobbyMsgItem::serialise(void *data, uint32_t& pktsize)
 {
@@ -528,6 +539,8 @@ bool RsChatLobbyMsgItem::serialise(void *data, uint32_t& pktsize)
 #endif
 	return ok ;
 }
+#endif
+
 /* serialise the data to the buffer */
 bool RsChatLobbyMsgItem::serialise_signed_part(void *data, uint32_t& pktsize)
 {
@@ -562,7 +575,12 @@ bool RsChatLobbyMsgItem::serialise_signed_part(void *data, uint32_t& pktsize)
     return ok ;
 }
 
+void RsChatLobbyListRequestItem::serial_process(RsItem::SerializeJob j,SerializeContext& ctx)
+{
+    // nothing to do. This is an empty item.
+}
 
+#ifdef TO_BE_REMOVED
 bool RsChatLobbyListRequestItem::serialise(void *data, uint32_t& pktsize)
 {
 	uint32_t tlvsize = serial_size() ;
@@ -575,6 +593,27 @@ bool RsChatLobbyListRequestItem::serialise(void *data, uint32_t& pktsize)
 	pktsize = tlvsize ;
 	return ok ;
 }
+#endif
+
+template<> void RsTypeSerializer::serial_process<VisibleChatLobbyInfo>(RsItem::SerializeJob j,SerializeContext& ctx,VisibleChatLobbyInfo& info)
+{
+	RsTypeSerializer::serial_process<uint64_t>(info.id) ;
+
+    TlvString tt1(info.name ,TLV_TYPE_STR_NAME) ;
+    TlvString tt2(info.topic,TLV_TYPE_STR_NAME) ;
+
+	RsTypeSerializer::serial_process(info.name) ;
+	RsTypeSerializer::serial_process(info.topic) ;
+	RsTypeSerializer::serial_process<uint32_t>(info.count) ;
+	RsTypeSerializer::serial_process<uint32_t>(info.flags.toUInt32()) ;
+}
+
+void RsChatLobbyListItem::serial_process(RsItem::SerializeJob j,SerializeContext& ctx)
+{
+    RsTypeSerializer::serial_process<uint32_t>(j,ctx,lobbies,"lobbies") ;
+}
+
+#ifdef TO_BE_REMOVED
 bool RsChatLobbyListItem::serialise(void *data, uint32_t& pktsize)
 {
 	uint32_t tlvsize = serial_size() ;
@@ -604,6 +643,8 @@ bool RsChatLobbyListItem::serialise(void *data, uint32_t& pktsize)
 	}
 	return ok ;
 }
+#endif
+
 bool RsChatLobbyEventItem::serialise(void *data, uint32_t& pktsize)
 {
     uint32_t tlvsize = serial_size() ;

@@ -27,6 +27,7 @@
 
 #include "openssl/bn.h"
 #include "retroshare/rstypes.h"
+#include "serialization/rsserializer.h"
 #include "serialiser/rstlvkeys.h"
 #include "serialiser/rsserviceids.h"
 #include "serialiser/rsserial.h"
@@ -90,11 +91,9 @@ class RsChatItem: public RsItem
 		}
 
 		virtual ~RsChatItem() {}
-		virtual void clear() {}
-		virtual std::ostream& print(std::ostream &out, uint16_t indent = 0) = 0 ;
+        virtual std::ostream& print(std::ostream &out, uint16_t indent = 0) {}	// derived from RsItem, but should be removed
 
-		virtual bool serialise(void *data,uint32_t& size) = 0 ;	// Isn't it better that items can serialize themselves ?
-		virtual uint32_t serial_size() = 0 ; 							// deserialise is handled using a constructor
+        virtual void clear() {}
 };
 
 /*!
@@ -107,14 +106,14 @@ public:
     RsChatMsgItem() :RsChatItem(RS_PKT_SUBTYPE_DEFAULT) {}
     RsChatMsgItem(uint8_t subtype) :RsChatItem(subtype) {}
 
-    RsChatMsgItem(void *data,uint32_t size,uint8_t subtype = RS_PKT_SUBTYPE_DEFAULT) ; // deserialization
+    //RsChatMsgItem() {}
 
     virtual ~RsChatMsgItem() {}
-    virtual void clear() {}
-    virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
 
-    virtual bool serialise(void *data,uint32_t& size) ;	// Isn't it better that items can serialize themselves ?
-    virtual uint32_t serial_size() ; 							// deserialise is handled using a constructor
+    // derived from RsItem
+
+	void serial_process(RsItem::SerializeJob j,SerializeContext& ctx);
+    virtual void clear() {}
 
     uint32_t chatFlags;
     uint32_t sendTime;
@@ -150,7 +149,7 @@ protected:
     // serialise() methods, otherwise the wrong method will be called when serialising from this top level class.
 
     uint32_t serialized_size(bool include_signature) ;
-    bool serialise_to_memory(void *data,uint32_t tlvsize,uint32_t& offset,bool include_signature) ;
+    bool serialise_to_memory(RsItem::SerializeJob j, SerializeContext &ctx, bool include_signature) ;
     bool deserialise_from_memory(void *data,uint32_t rssize,uint32_t& offset) ;
 };
 
@@ -413,19 +412,11 @@ class RsChatDHPublicKeyItem: public RsChatItem
 		const RsChatDHPublicKeyItem& operator=(const RsChatDHPublicKeyItem&) { return *this ;}
 };
 
-class RsChatSerialiser: public RsSerialType
+class RsChatSerialiser: public RsSerializer
 {
 	public:
-		RsChatSerialiser() :RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_CHAT) {}
+		RsChatSerialiser() :RsSerializer(RS_SERVICE_TYPE_CHAT) {}
 
-		virtual uint32_t 	size (RsItem *item) 
-		{ 
-			return static_cast<RsChatItem *>(item)->serial_size() ; 
-		}
-		virtual bool serialise(RsItem *item, void *data, uint32_t *size) 
-		{ 
-			return static_cast<RsChatItem *>(item)->serialise(data,*size) ; 
-		}
-		virtual RsItem *deserialise (void *data, uint32_t *size) ;
+		virtual RsItem *create_item(uint16_t service_id,uint8_t item_sub_id) ;
 };
 

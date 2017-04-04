@@ -13,7 +13,7 @@ class RsTypeSerializer
 		{
 			switch(j)
 			{
-				case RsItem::SIZE_ESTIMATE: ctx.mSize += serial_size(member) ;
+				case RsItem::SIZE_ESTIMATE: ctx.mOffset += serial_size(member) ;
 																break ;
 
 				case RsItem::DESERIALIZE:   ctx.mOk = ctx.mOk && deserialize(ctx.mData,ctx.mSize,ctx.mOffset,member) ;
