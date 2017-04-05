@@ -6,6 +6,7 @@
 
 #include <retroshare/rsinit.h>
 #include <retroshare/rsiface.h>
+#include <util/rsdir.h>
 
 #include "api/ApiServer.h"
 #include "api/Operators.h"
@@ -301,6 +302,7 @@ void RsControlModule::handlePassword(Request &req, Response &resp)
         mPassword = passwd;
         mWantPassword = false;
         mStateTokenServer->replaceToken(mStateToken);
+		mFixedPassword = passwd;
     }
 
     resp.mDataStream
@@ -425,17 +427,17 @@ void RsControlModule::handleCreateLocation(Request &req, Response &resp)
     RsPeerId ssl_id;
     std::string err_string;
     // give the password to the password callback
-    {
-        RsStackMutex stack(mDataMtx); // ********** LOCKED **********
-        mFixedPassword = pgp_password;
-    }
+	{
+		RsStackMutex stack(mDataMtx); // ********** LOCKED **********
+		mFixedPassword = pgp_password;
+	}
     bool ssl_ok = RsAccounts::GenerateSSLCertificate(pgp_id, "", ssl_name, "", hidden_port!=0, ssl_password, ssl_id, err_string);
 
     // clear fixed password to restore normal password operation
-    {
-        RsStackMutex stack(mDataMtx); // ********** LOCKED **********
-        mFixedPassword = "";
-    }
+//    {
+//        RsStackMutex stack(mDataMtx); // ********** LOCKED **********
+//        mFixedPassword = "";
+//    }
 
     if (ssl_ok)
     {
@@ -454,6 +456,20 @@ void RsControlModule::handleCreateLocation(Request &req, Response &resp)
         return;
     }
     resp.setFail("could not create a new location. Error: "+err_string);
+}
+
+bool RsControlModule::askForDeferredSelfSignature(const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen,int& signature_result, std::string reason /*=""*/)
+{
+	if(rsPeers->gpgSignData(data,len,sign,signlen,reason))
+	{
+		signature_result = SELF_SIGNATURE_RESULT_SUCCESS;
+		return true;
+	}
+	else
+	{
+		signature_result = SELF_SIGNATURE_RESULT_FAILED;
+		return false;
+	}
 }
 
 void RsControlModule::setRunState(RunState s, std::string errstr)
