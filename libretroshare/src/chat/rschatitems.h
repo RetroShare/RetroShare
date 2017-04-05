@@ -327,30 +327,6 @@ class RsChatAvatarItem: public RsChatItem
 		unsigned char *image_data ;		// image
 };
 
-// This class contains the public Diffie-Hellman parameters to be sent
-// when performing a DH agreement over a distant chat tunnel.
-//
-class RsChatDHPublicKeyItem: public RsChatItem
-{
-	public:
-		RsChatDHPublicKeyItem() :RsChatItem(RS_PKT_SUBTYPE_DISTANT_CHAT_DH_PUBLIC_KEY) {setPriorityLevel(QOS_PRIORITY_RS_CHAT_ITEM) ;}
-
-		virtual ~RsChatDHPublicKeyItem() { BN_free(public_key) ; } 
-
-		void serial_process(RsItem::SerializeJob j,SerializeContext& ctx);
-
-		// Private data to DH public key item
-		//
-		BIGNUM *public_key ;
-
-		RsTlvKeySignature signature ;	// signs the public key in a row.
-		RsTlvPublicRSAKey gxs_key ;	// public key of the signer
-
-	private:
-		RsChatDHPublicKeyItem(const RsChatDHPublicKeyItem&) : RsChatItem(RS_PKT_SUBTYPE_DISTANT_CHAT_DH_PUBLIC_KEY) {}						// make the object non copy-able
-		const RsChatDHPublicKeyItem& operator=(const RsChatDHPublicKeyItem&) { return *this ;}
-};
-
 class RsChatSerialiser: public RsSerializer
 {
 	public:
