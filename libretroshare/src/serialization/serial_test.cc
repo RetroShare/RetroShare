@@ -100,7 +100,7 @@ class RsTestItem: public RsItem
 		//
 		virtual void serial_process(RsItem::SerializeJob j, SerializeContext& ctx) 
 		{
-			RsTypeSerializer::TlvString tt(str,TLV_TYPE_STR_DESCR) ;
+			RsTypeSerializer::TlvString_proxy tt(str,TLV_TYPE_STR_DESCR) ;
 
 			RsTypeSerializer::serial_process(j,ctx,ts     ,GET_VARIABLE_NAME(ts)      ) ;
 			RsTypeSerializer::serial_process(j,ctx,tt     ,GET_VARIABLE_NAME(str)     ) ;
@@ -168,13 +168,13 @@ int main(int argc,char *argv[])
 		std::cerr << "Item to be serialized:" << std::endl;
 
 		RsTestSerializer().print(&t1) ;
-		RsTestSerializer().serialise(&t1,mem1,mem1.size()) ;
+		RsTestSerializer().serialise(&t1,mem1,&size);
 
 		std::cerr << "Serialized t1: " << RsUtil::BinToHex(mem1,mem1.size()) << std::endl;
 
 		// Now deserialise into a new item
 		//
-		RsItem *t2 = RsTestSerializer().deserialise(mem1,mem1.size()) ;
+		RsItem *t2 = RsTestSerializer().deserialise(mem1,&size);
 
 		// make sure t1 is equal to t2
 		//
