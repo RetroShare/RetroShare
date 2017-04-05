@@ -22,28 +22,11 @@ class SerializeContext
 
 class RsTypeSerializer
 {
-protected:
-	class BinaryDataBlock_ref
-        {
-        public:
-            BinaryDataBlock_ref(unsigned char *_mem,uint32_t& _size) : mem(_mem),size(_size){}
-
-            // This allows to pass Temporary objects as modifiable. This is valid only because all members of this class
-            // are pointers and references.
-
-            BinaryDataBlock_ref& modifiable() const { return *const_cast<BinaryDataBlock_ref*>(this) ; }
-
-            unsigned char *& mem ;
-            uint32_t& size ;
-        };
-
-
 	public:
     	// This type should be used to pass a parameter to drive the serialisation if needed.
 
-		typedef std::pair<std::string&,uint16_t> TlvString;
-
-        static BinaryDataBlock_ref& block_ref(unsigned char *mem,uint32_t& size) { return BinaryDataBlock_ref(mem,size).modifiable() ; }
+		typedef std::pair<std::string&,uint16_t > TlvString_proxy;
+		typedef std::pair<uint8_t*&   ,uint32_t&> TlvMemBlock_proxy;
 
 		//=================================================================================================//
 		//                                            Generic types                                        //

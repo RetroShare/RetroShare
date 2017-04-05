@@ -254,7 +254,7 @@ RsItem *RsChatSerialiser::create_item(uint16_t service_id,uint8_t item_sub_id)
 
 void RsChatMsgItem::serial_process(RsItem::SerializeJob j,SerializeContext& ctx)
 {
-    RsTypeSerializer::TlvString tt(message,TLV_TYPE_STR_MSG) ;
+    RsTypeSerializer::TlvString_proxy tt(message,TLV_TYPE_STR_MSG) ;
 
     RsTypeSerializer::serial_process(j,ctx,chatFlags,"chatflags") ;
     RsTypeSerializer::serial_process(j,ctx,sendTime,"sendTime") ;
@@ -478,7 +478,7 @@ bool RsChatMsgItem::serialise(void *data, uint32_t& pktsize)
 
 void RsChatLobbyBouncingObject::serial_process(RsItem::SerializeJob j, SerializeContext& ctx, bool include_signature)
 {
-    RsTypeSerializer::TlvString tt(nick,TLV_TYPE_STR_NAME) ;
+    RsTypeSerializer::TlvString_proxy tt(nick,TLV_TYPE_STR_NAME) ;
 
     RsTypeSerializer::serial_process(j,ctx,lobby_id,"lobby_id") ;
     RsTypeSerializer::serial_process(j,ctx,msg_id  ,"msg_id") ;
@@ -590,8 +590,8 @@ template<> void RsTypeSerializer::serial_process(RsItem::SerializeJob j,Serializ
 {
 	RsTypeSerializer::serial_process<uint64_t>(j,ctx,info.id,"info.id") ;
 
-    TlvString tt1(info.name ,TLV_TYPE_STR_NAME) ;
-    TlvString tt2(info.topic,TLV_TYPE_STR_NAME) ;
+    TlvString_proxy tt1(info.name ,TLV_TYPE_STR_NAME) ;
+    TlvString_proxy tt2(info.topic,TLV_TYPE_STR_NAME) ;
 
 	RsTypeSerializer::serial_process(j,ctx,tt1,"info.name") ;
 	RsTypeSerializer::serial_process(j,ctx,tt2,"info.topic") ;
@@ -638,7 +638,7 @@ bool RsChatLobbyListItem::serialise(void *data, uint32_t& pktsize)
 
 void RsChatLobbyEventItem::serial_process(RsItem::SerializeJob j,SerializeContext& ctx)
 {
-    RsTypeSerializer::TlvString tt(string1,TLV_TYPE_STR_NAME) ;
+    RsTypeSerializer::TlvString_proxy tt(string1,TLV_TYPE_STR_NAME) ;
 
     RsTypeSerializer::serial_process<uint8_t>(j,ctx,event_type,"event_type") ;
     RsTypeSerializer::serial_process         (j,ctx,tt        ,"string1") ;
@@ -778,7 +778,7 @@ void RsChatLobbyInviteItem::serial_process(RsItem::SerializeJob j,SerializeConte
 {
     RsTypeSerializer::serial_process<uint64_t>(j,ctx,lobby_id,"lobby_id") ;
 
-    RsTypeSerializer::TlvString s(lobby_name,TLV_TYPE_STR_NAME) ;
+    RsTypeSerializer::TlvString_proxy s(lobby_name,TLV_TYPE_STR_NAME) ;
 
     RsTypeSerializer::serial_process(j,ctx,s,"lobby_name") ;
     RsTypeSerializer::serial_process(j,ctx,lobby_flags,"lobby_flags") ;
@@ -816,7 +816,7 @@ bool RsChatLobbyInviteItem::serialise(void *data, uint32_t& pktsize)
 void RsPrivateChatMsgConfigItem::serial_process(RsItem::SerializeJob j,SerializeContext& ctx)
 {
     uint32_t x=0 ;
-    RsTypeSerializer::TlvString s(message,TLV_TYPE_STR_MSG) ;
+    RsTypeSerializer::TlvString_proxy s(message,TLV_TYPE_STR_MSG) ;
 
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,x,"place holder value") ;
     RsTypeSerializer::serial_process          (j,ctx,configPeerId,"configPeerId") ;
@@ -915,7 +915,7 @@ void RsChatStatusItem::serial_process(RsItem::SerializeJob j,SerializeContext& c
 {
     RsTypeSerializer::serial_process(j,ctx,flags,"flags") ;
 
-    RsTypeSerializer::TlvString tt(status_string,TLV_TYPE_STR_MSG) ;
+    RsTypeSerializer::TlvString_proxy tt(status_string,TLV_TYPE_STR_MSG) ;
 
     RsTypeSerializer::serial_process(j,ctx,tt,"status_string") ;
 }
@@ -963,7 +963,9 @@ bool RsChatStatusItem::serialise(void *data, uint32_t& pktsize)
 
 void RsChatAvatarItem::serial_process(RsItem::SerializeJob j,SerializeContext& ctx)
 {
-    RsTypeSerializer::serial_process(j,ctx,RsTypeSerializer::block_ref(image_data,image_size),"image data") ;
+    RsTypeSerializer::TlvMemBlock_proxy b(image_data,image_size) ;
+
+    RsTypeSerializer::serial_process(j,ctx,b,"image data") ;
 }
 
 #ifdef TO_BE_REMOVED
