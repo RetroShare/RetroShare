@@ -145,7 +145,7 @@ protected:
     // They are called by serial_size() and serialise() from children, but should not overload the serial_size() and
     // serialise() methods, otherwise the wrong method will be called when serialising from this top level class.
 
-	void serial_process(RsItem::SerializeJob j,SerializeContext& ctx);
+	void serial_process(RsItem::SerializeJob j,SerializeContext& ctx,bool include_signature);
 
     virtual uint32_t PacketId() const= 0;
 };

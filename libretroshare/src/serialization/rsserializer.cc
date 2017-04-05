@@ -2,6 +2,7 @@
 
 #include "util/rsprint.h"
 #include "serialization/rsserializer.h"
+#include "serialization/rstypeserializer.h"
 
 RsItem *RsSerializer::deserialise(const uint8_t *data,uint32_t size) 
 {
