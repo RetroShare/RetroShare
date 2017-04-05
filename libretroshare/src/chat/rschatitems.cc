@@ -593,10 +593,10 @@ template<> void RsTypeSerializer::serial_process(RsItem::SerializeJob j,Serializ
     TlvString tt1(info.name ,TLV_TYPE_STR_NAME) ;
     TlvString tt2(info.topic,TLV_TYPE_STR_NAME) ;
 
-	RsTypeSerializer::serial_process(j,ctx,info.name,"info.name") ;
-	RsTypeSerializer::serial_process(j,ctx,info.topic,"info.topic") ;
+	RsTypeSerializer::serial_process(j,ctx,tt1,"info.name") ;
+	RsTypeSerializer::serial_process(j,ctx,tt2,"info.topic") ;
 	RsTypeSerializer::serial_process<uint32_t>(j,ctx,info.count,"info.count") ;
-	RsTypeSerializer::serial_process<ChatLobbyFlags>(j,ctx,info.flags,"info.flags") ;
+	RsTypeSerializer::serial_process(j,ctx,info.flags,"info.flags") ;
 }
 
 void RsChatLobbyListItem::serial_process(RsItem::SerializeJob j,SerializeContext& ctx)
@@ -641,8 +641,8 @@ void RsChatLobbyEventItem::serial_process(RsItem::SerializeJob j,SerializeContex
     RsTypeSerializer::TlvString tt(string1,TLV_TYPE_STR_NAME) ;
 
     RsTypeSerializer::serial_process<uint8_t>(j,ctx,event_type,"event_type") ;
-    RsTypeSerializer::serial_process         (j,ctx,string1,"string1") ;
-    RsTypeSerializer::serial_process<uint32_t>(j,ctx,sendTime,"sendTime") ;
+    RsTypeSerializer::serial_process         (j,ctx,tt        ,"string1") ;
+    RsTypeSerializer::serial_process<uint32_t>(j,ctx,sendTime ,"sendTime") ;
 
     RsChatLobbyBouncingObject::serial_process(j,ctx,true) ;
 }
@@ -781,7 +781,7 @@ void RsChatLobbyInviteItem::serial_process(RsItem::SerializeJob j,SerializeConte
     RsTypeSerializer::TlvString s(lobby_name,TLV_TYPE_STR_NAME) ;
 
     RsTypeSerializer::serial_process(j,ctx,s,"lobby_name") ;
-    RsTypeSerializer::serial_process<ChatLobbyFlags>(j,ctx,lobby_flags,"lobby_flags") ;
+    RsTypeSerializer::serial_process(j,ctx,lobby_flags,"lobby_flags") ;
 }
 
 #ifdef TO_BE_REMOVED
@@ -913,7 +913,7 @@ bool RsPrivateChatDistantInviteConfigItem::serialise(void *data, uint32_t& pktsi
 
 void RsChatStatusItem::serial_process(RsItem::SerializeJob j,SerializeContext& ctx)
 {
-    RsTypeSerializer::serial_process<uint32_t>(j,ctx,flags,"flags") ;
+    RsTypeSerializer::serial_process(j,ctx,flags,"flags") ;
 
     RsTypeSerializer::TlvString tt(status_string,TLV_TYPE_STR_MSG) ;
 
@@ -1012,7 +1012,7 @@ bool RsChatAvatarItem::serialise(void *data, uint32_t& pktsize)
 void RsChatLobbyConfigItem::serial_process(RsItem::SerializeJob j,SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process<uint64_t>(j,ctx,lobby_Id,"lobby_Id") ;
-    RsTypeSerializer::serial_process<uint32_t>(j,ctx,flags,"flags") ;
+    RsTypeSerializer::serial_process(j,ctx,flags,"flags") ;
 }
 
 #ifdef TO_BE_REMOVED

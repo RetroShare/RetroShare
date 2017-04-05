@@ -1,9 +1,10 @@
 #pragma once
 
-#include <typeinfo>
-
 #include "serialiser/rsserial.h"
 #include "serialiser/rstlvbase.h"
+
+#include "retroshare/rsflags.h"
+#include "retroshare/rsids.h"
 
 class SerializeContext
 {
@@ -44,6 +45,10 @@ protected:
 
         static BinaryDataBlock_ref& block_ref(unsigned char *mem,uint32_t& size) { return BinaryDataBlock_ref(mem,size).modifiable() ; }
 
+		//=================================================================================================//
+		//                                            Generic types                                        //
+		//=================================================================================================//
+
 		template<typename T>
 		static void serial_process(RsItem::SerializeJob j,SerializeContext& ctx,T& member,const std::string& member_name)
 		{
@@ -67,7 +72,9 @@ protected:
 			}
 		}
 
-		// Arrays of stuff
+		//=================================================================================================//
+		//                                            std::vector<T>                                       //
+		//=================================================================================================//
 
 		template<typename T>
 		static void serial_process(RsItem::SerializeJob j,SerializeContext& ctx,std::vector<T>& v,const std::string& member_name)
@@ -106,7 +113,7 @@ protected:
                 if(v.empty())
 					std::cerr << "  Empty array"<< std::endl;
 				else
-					std::cerr << "  Array of \"" << typeid(v[0]).name() << "\"" << " with " << v.size() << " elements:";
+					std::cerr << "  Array of " << v.size() << " elements:" << std::endl;
 				for(uint32_t i=0;i<v.size();++i)
                 {
                     std::cerr << "  " ;
@@ -118,6 +125,39 @@ protected:
                 break;
 			}
 		}
+		//=================================================================================================//
+		//                                         t_RsFlags32<> types                                     //
+		//=================================================================================================//
+
+		template<int N>
+		static void serial_process(RsItem::SerializeJob j,SerializeContext& ctx,t_RsFlags32<N>& v,const std::string& member_name)
+		{
+			switch(j)
+			{
+			case RsItem::SIZE_ESTIMATE: ctx.mOffset += 4 ;
+				break ;
+
+			case RsItem::DESERIALIZE:
+			{
+                uint32_t n=0 ;
+                deserialize<uint32_t>(ctx.mData,ctx.mSize,ctx.mOffset,n) ;
+                v = t_RsFlags32<N>(n) ;
+			}
+				break ;
+
+			case RsItem::SERIALIZE:
+			{
+                uint32_t n=v.toUInt32() ;
+                serialize<uint32_t>(ctx.mData,ctx.mSize,ctx.mOffset,n) ;
+			}
+				break ;
+
+			case RsItem::PRINT:
+				std::cerr << "  Flags of type " << std::hex << N << " : " << v.toUInt32() << std::endl;
+                break ;
+            }
+
+		}
 
 	protected:
 		template<class T> static bool     serialize  (uint8_t data[], uint32_t size, uint32_t &offset, const T& member);
@@ -125,7 +165,36 @@ protected:
 		template<class T> static uint32_t serial_size(const T& /* member */);
 		template<class T> static void     print_data(const std::string& name,const T& /* member */);
 
-
+		template<uint32_t ID_SIZE_IN_BYTES,bool UPPER_CASE,uint32_t UNIQUE_IDENTIFIER> static bool     serialize  (uint8_t data[], uint32_t size, uint32_t &offset, const t_RsGenericIdType<ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER>& member);
+		template<uint32_t ID_SIZE_IN_BYTES,bool UPPER_CASE,uint32_t UNIQUE_IDENTIFIER> static bool     deserialize(const uint8_t data[], uint32_t size, uint32_t &offset, t_RsGenericIdType<ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER>& member);
+		template<uint32_t ID_SIZE_IN_BYTES,bool UPPER_CASE,uint32_t UNIQUE_IDENTIFIER> static uint32_t serial_size(const t_RsGenericIdType<ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER>& /* member */);
+		template<uint32_t ID_SIZE_IN_BYTES,bool UPPER_CASE,uint32_t UNIQUE_IDENTIFIER> static void     print_data(const std::string& name,const t_RsGenericIdType<ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER>& /* member */);
 };
 
+//=================================================================================================//
+//                                         t_RsGenericId<>                                         //
+//=================================================================================================//
 
+template<uint32_t ID_SIZE_IN_BYTES,bool UPPER_CASE,uint32_t UNIQUE_IDENTIFIER>
+bool     RsTypeSerializer::serialize  (uint8_t data[], uint32_t size, uint32_t &offset, const t_RsGenericIdType<ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER>& member)
+{
+    return (*const_cast<const t_RsGenericIdType<ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER> *>(&member)).serialise(data,size,offset) ;
+}
+
+template<uint32_t ID_SIZE_IN_BYTES,bool UPPER_CASE,uint32_t UNIQUE_IDENTIFIER>
+bool     RsTypeSerializer::deserialize(const uint8_t data[], uint32_t size, uint32_t &offset, t_RsGenericIdType<ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER>& member)
+{
+    return member.deserialise(data,size,offset) ;
+}
+
+template<uint32_t ID_SIZE_IN_BYTES,bool UPPER_CASE,uint32_t UNIQUE_IDENTIFIER>
+uint32_t RsTypeSerializer::serial_size(const t_RsGenericIdType<ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER>& member)
+{
+    return member.serial_size();
+}
+
+template<uint32_t ID_SIZE_IN_BYTES,bool UPPER_CASE,uint32_t UNIQUE_IDENTIFIER>
+void     RsTypeSerializer::print_data(const std::string& name,const t_RsGenericIdType<ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER>& member)
+{
+    std::cerr << "  [RsGenericId<" << std::hex << UNIQUE_IDENTIFIER << ">] : " << member << std::endl;
+}

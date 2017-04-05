@@ -3,6 +3,7 @@
 //
 
 #include <set>
+#include <vector>
 
 #include "util/rsmemory.h"
 #include "util/rsprint.h"
@@ -90,9 +91,9 @@ class RsTestItem: public RsItem
 			str = "test string";
 			ts = time(NULL) ;
 
-			int_set.insert(lrand48()) ;
-			int_set.insert(lrand48()) ;
-			int_set.insert(lrand48()) ;
+			int_set.push_back(lrand48()) ;
+			int_set.push_back(lrand48()) ;
+			int_set.push_back(lrand48()) ;
 		}
 
 		// Derived from RsItem
@@ -114,7 +115,7 @@ class RsTestItem: public RsItem
 	private:
 		std::string str ;
 		uint64_t ts ;
-		std::set<uint32_t> int_set ;
+		std::vector<uint32_t> int_set ;
 
 		friend int main(int argc,char *argv[]);
 };
@@ -148,6 +149,7 @@ class RsTestSerializer: public RsSerializer
 void check(const std::string& s1,const std::string& s2) { assert(s1 == s2) ; }
 void check(const uint64_t& s1,const uint64_t& s2) { assert(s1 == s2) ; }
 void check(const std::set<uint32_t>& s1,const std::set<uint32_t>& s2) { assert(s1 == s2) ; }
+void check(const std::vector<uint32_t>& s1,const std::vector<uint32_t>& s2) { assert(s1 == s2) ; }
 
 int main(int argc,char *argv[])
 {

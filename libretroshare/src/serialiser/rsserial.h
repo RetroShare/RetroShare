@@ -122,7 +122,7 @@ class RsItem: public RsMemoryManagement::SmallObject
 		 */
 		typedef enum { SIZE_ESTIMATE = 0x01, SERIALIZE = 0x02, DESERIALIZE  = 0x03, PRINT=0x04 } SerializeJob ;
 
-		virtual void serial_process(SerializeJob j,SerializeContext& ctx) 
+		virtual void serial_process(SerializeJob /* j */,SerializeContext& /* ctx */)
 		{
 			std::cerr << "(EE) RsItem::serial_process() called by an item using new serialization classes, but not derived! " << std::endl;
 		}

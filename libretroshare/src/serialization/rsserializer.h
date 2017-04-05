@@ -17,7 +17,7 @@ class RsSerializer: public RsSerialType
 		/*! create_item  
 		 * 	should be overloaded to create the correct type of item depending on the data
 		 */
-		virtual RsItem *create_item(uint16_t service, uint8_t item_sub_id)
+		virtual RsItem *create_item(uint16_t /* service */, uint8_t /* item_sub_id */)
 		{
 			return NULL ;
 		}
