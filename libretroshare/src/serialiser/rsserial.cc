@@ -219,6 +219,7 @@ uint32_t    RsSerialType::size(RsItem *)
 
 bool        RsSerialType::serialise(RsItem */*item*/, void */*data*/, uint32_t */*size*/)
 {
+    std::cerr << "(EE) Empty method called for missing serialize() method in serializer class " << typeid(this).name() << std::endl;
 #ifdef  RSSERIAL_DEBUG
 	std::cerr << "RsSerialType::serialise()" << std::endl;
 #endif

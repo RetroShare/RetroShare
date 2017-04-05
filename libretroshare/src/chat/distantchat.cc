@@ -92,7 +92,7 @@ bool DistantChatService::handleOutgoingItem(RsChatItem *item)
     uint32_t size = RsChatSerialiser().size(item) ;
     RsTemporaryMemory mem(size) ;
     
-    if(!RsChatSerialiser().serialise(item,mem,size))
+    if(!RsChatSerialiser().serialise(item,mem,&size))
     {
         std::cerr << "(EE) serialisation error. Something's really wrong!" << std::endl;
         return false;
@@ -152,7 +152,7 @@ bool DistantChatService::acceptDataFromPeer(const RsGxsId& gxs_id,const RsGxsTun
 	    uint32_t size = RsChatSerialiser().size(item) ;
 	    RsTemporaryMemory mem(size) ;
 
-	    if(!RsChatSerialiser().serialise(item,mem,size))
+	    if(!RsChatSerialiser().serialise(item,mem,&size))
 	    {
 		    std::cerr << "(EE) serialisation error. Something's really wrong!" << std::endl;
 		    return false;
@@ -218,7 +218,7 @@ void DistantChatService::receiveData(const RsGxsTunnelService::RsGxsTunnelId &tu
 	    contact.from_id = tinfo.source_gxs_id ;
     }
 
-    RsItem *item = RsChatSerialiser().deserialise(data,data_size) ;
+    RsItem *item = RsChatSerialiser().deserialise(data,&data_size) ;
 
     if(item != NULL)
     {

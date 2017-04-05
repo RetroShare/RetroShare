@@ -12,7 +12,7 @@
 class RsSerializer: public RsSerialType
 {
 	public:
-		RsSerializer(uint16_t service_id) : RsSerialType(service_id) {}
+		RsSerializer(uint16_t service_id) : RsSerialType(RS_PKT_VERSION_SERVICE,service_id) {}
 
 		/*! create_item  
 		 * 	should be overloaded to create the correct type of item depending on the data
@@ -22,11 +22,10 @@ class RsSerializer: public RsSerialType
 			return NULL ;
 		}
 
-        // The following functions *should not* be overloaded.
-        // They are kept public in order to allow them to be called if needed.
+        // The following functions overload RsSerialType. They *should not* need to be further overloaded.
 
-		RsItem *deserialise(const uint8_t *data,uint32_t size) ;
-		bool serialise(RsItem *item,uint8_t *const data,uint32_t size) ;
+		RsItem *deserialise(void *data,uint32_t *size) ;
+		bool serialise(RsItem *item,void *data,uint32_t *size) ;
 		uint32_t size(RsItem *item) ;
         void print(RsItem *item) ;
 };

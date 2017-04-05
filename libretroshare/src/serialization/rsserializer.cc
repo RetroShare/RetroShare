@@ -1,10 +1,8 @@
-#pragma once
-
 #include "util/rsprint.h"
 #include "serialization/rsserializer.h"
 #include "serialization/rstypeserializer.h"
 
-RsItem *RsSerializer::deserialise(const uint8_t *data,uint32_t size) 
+RsItem *RsSerializer::deserialise(void *data, uint32_t *size)
 {
 	uint32_t rstype = getRsItemId(const_cast<void*>((const void*)data)) ;
 
@@ -13,11 +11,11 @@ RsItem *RsSerializer::deserialise(const uint8_t *data,uint32_t size)
 	if(!item)
 	{
 		std::cerr << "(EE) cannot deserialise: unknown item type " << std::hex << rstype << std::dec << std::endl;
-        std::cerr << "(EE) Data is: " << RsUtil::BinToHex(data,std::min(50u,size)) << ((size>50)?"...":"") << std::endl;
+        std::cerr << "(EE) Data is: " << RsUtil::BinToHex(static_cast<uint8_t*>(data),std::min(50u,*size)) << ((*size>50)?"...":"") << std::endl;
 		return NULL ;
 	}
 
-	SerializeContext ctx(const_cast<uint8_t*>(data),size);
+	SerializeContext ctx(const_cast<uint8_t*>(static_cast<uint8_t*>(data)),*size);
 	ctx.mOffset = 8 ;
 
 	item->serial_process(RsItem::DESERIALIZE, ctx) ;
@@ -29,13 +27,13 @@ RsItem *RsSerializer::deserialise(const uint8_t *data,uint32_t size)
 	return NULL ;
 }
 
-bool RsSerializer::serialise(RsItem *item,uint8_t *const data,uint32_t size) 
+bool RsSerializer::serialise(RsItem *item,void *data,uint32_t *size)
 {
-	SerializeContext ctx(data,0);
+	SerializeContext ctx(static_cast<uint8_t*>(data),0);
 
 	uint32_t tlvsize = this->size(item) ;
 
-	if(tlvsize > size)
+	if(tlvsize > *size)
 		throw std::runtime_error("Cannot serialise: not enough room.") ;
 
 	if(!setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize))
