@@ -1208,6 +1208,7 @@ void IdDialog::CircleListCustomPopupMenu( QPoint )
     contextMnu.exec(QCursor::pos());
 }
 
+#ifdef SUSPENDED
 static void set_item_background(QTreeWidgetItem *item, uint32_t type)
 {
 	QBrush brush;
@@ -1233,7 +1234,6 @@ static void set_item_background(QTreeWidgetItem *item, uint32_t type)
 	item->setBackground (0, brush);
 }
 
-#ifdef SUSPENDED
 static void update_children_background(QTreeWidgetItem *item, uint32_t type)
 {
 	int count = item->childCount();
