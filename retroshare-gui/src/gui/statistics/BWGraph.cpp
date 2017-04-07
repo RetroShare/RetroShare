@@ -80,7 +80,7 @@ void BWGraphSource::update()
     {
         std::list<std::pair<qint64,float> >& lst(_points[it->first]) ;
 
-        if(!lst.empty() && fabsf(lst.back().first - ms) > _update_period_msecs*1.2 )
+        if(!lst.empty() && ( (lst.back().first - ms) > _update_period_msecs*1.2 ) )
         {
             lst.push_back(std::make_pair(lst.back().first,0)) ;
             lst.push_back(std::make_pair(              ms,0)) ;
