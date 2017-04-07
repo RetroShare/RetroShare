@@ -234,7 +234,7 @@ void PeersHandler::handleSetStateString(Request& req, Response& resp)
 	std::string state_string;
 	req.mStream << makeKeyValueReference("state_string", state_string);
 
-	uint32_t status;
+	uint32_t status = RS_STATUS_OFFLINE;
 	if(state_string == "online")
 		status = RS_STATUS_ONLINE;
 	else if(state_string == "busy")
