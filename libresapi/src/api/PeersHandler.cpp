@@ -200,7 +200,7 @@ static bool have_avatar(RsMsgs* msgs, const RsPeerId& id)
     return size != 0;
 }
 
-void PeersHandler::handleGetStateString(Request& req, Response& resp)
+void PeersHandler::handleGetStateString(Request& /*req*/, Response& resp)
 {
 	{
 		RS_STACK_MUTEX(mMtx);
@@ -246,7 +246,7 @@ void PeersHandler::handleSetStateString(Request& req, Response& resp)
 	resp.setOk();
 }
 
-void PeersHandler::handleGetCustomStateString(Request& req, Response& resp)
+void PeersHandler::handleGetCustomStateString(Request& /*req*/, Response& resp)
 {
 	{
 		RS_STACK_MUTEX(mMtx);
