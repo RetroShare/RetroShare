@@ -1,6 +1,6 @@
 !include("../../retroshare.pri"): error("Could not include file ../../retroshare.pri")
 
-QT += qml quick
+QT += core network qml quick
 
 CONFIG += c++11
 

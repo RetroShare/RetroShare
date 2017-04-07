@@ -1,6 +1,6 @@
 /*
  * RetroShare Android Service
- * Copyright (C) 2016  Gioacchino Mazzurco <gio@eigenlab.org>
+ * Copyright (C) 2016-2017  Gioacchino Mazzurco <gio@eigenlab.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -28,9 +28,16 @@ public class AppUpdatedReceiver extends BroadcastReceiver
 	@Override
 	public void onReceive(Context context, Intent intent)
 	{
+		Log.i("AppUpdatedReceiver", "onReceive() Stopping RetroShareAndroidNotifyService After Update");
+		Intent nsIntent = new Intent(context, RetroShareAndroidNotifyService.class);
+		context.stopService(nsIntent);
+
 		Log.i("AppUpdatedReceiver", "onReceive() Restarting RetroShare Android Service After Update");
-		Intent myIntent = new Intent(context, RetroShareAndroidService.class);
-		context.stopService(myIntent);
-		context.startService(myIntent);
+		Intent coreIntent = new Intent(context, RetroShareAndroidService.class);
+		context.stopService(coreIntent);
+		context.startService(coreIntent);
+
+		Log.i("AppUpdatedReceiver", "onReceive() Starting RetroShareAndroidNotifyService After Update");
+		context.startService(nsIntent);
 	}
 }

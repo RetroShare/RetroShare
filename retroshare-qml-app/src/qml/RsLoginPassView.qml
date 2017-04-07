@@ -1,6 +1,6 @@
 /*
  * RetroShare Android QML App
- * Copyright (C) 2016  Gioacchino Mazzurco <gio@eigenlab.org>
+ * Copyright (C) 2016-2017  Gioacchino Mazzurco <gio@eigenlab.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -19,15 +19,21 @@
 import QtQuick 2.0
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.0
-//import QtQml 2.2
 
 Item
 {
 	id: loginView
-	property string buttonText: "Unlock"
+	property string buttonText: qsTr("Unlock")
+	property string iconUrl: "qrc:/qml/icons/emblem-locked.png"
 	property string login
-	property string password
+	property bool loginPreset: false
+	property bool advancedMode: false
+	property string hardcodedPassword: "hardcoded default password"
+	property string password: advancedMode ? "" : hardcodedPassword
+	property string suggestionText
 	signal submit(string login, string password)
+
+	Component.onCompleted: loginPreset = login.length > 0
 
 	ColumnLayout
 	{
@@ -35,33 +41,53 @@ Item
 		width: parent.width
 		anchors.centerIn: parent
 
+		Text
+		{
+			text: loginView.suggestionText
+			visible: loginView.suggestionText.length > 0
+			font.bold: true
+			Layout.alignment: Qt.AlignHCenter
+		}
+
 		Image
 		{
-			source: "qrc:/qml/icons/emblem-locked.png"
+			source: loginView.iconUrl
 			Layout.alignment: Qt.AlignHCenter
 		}
 
 		Text
 		{
-			text: "Login"
-			visible: loginView.login.length === 0
+			text: qsTr("Name")
+			visible: !loginView.loginPreset
 			Layout.alignment: Qt.AlignHCenter
 			anchors.bottom: nameField.top
 			anchors.bottomMargin: 5
 		}
 		TextField
 		{
-			id: nameField;
+			id: nameField
 			text: loginView.login
-			visible: loginView.login.length === 0
+			visible: !loginView.loginPreset
 			Layout.alignment: Qt.AlignHCenter
+
+			ToolTip
+			{
+				text: qsTr("Choose a descriptive name, one<br/>" +
+						   "that your friends can recognize.",
+						   "The linebreak is to make the text fit better in " +
+						   "tooltip")
+				visible: nameField.activeFocus
+				timeout: 5000
+			}
 		}
 
 		Text
 		{
 			id: passLabel
+			visible: loginView.advancedMode || loginView.loginPreset
 			text: nameField.visible ?
-					  "Passphrase" : "Enter passphrase for " + loginView.login
+					  qsTr("Password") :
+					  qsTr("Enter password for %1").arg(loginView.login)
 			Layout.alignment: Qt.AlignHCenter
 			anchors.bottom: passwordField.top
 			anchors.bottomMargin: 5
@@ -69,18 +95,40 @@ Item
 		TextField
 		{
 			id: passwordField
+			visible: loginView.advancedMode || loginView.loginPreset
 			text: loginView.password
-			width: passLabel.width
 			echoMode: TextInput.Password
 			Layout.alignment: Qt.AlignHCenter
+
+			ToolTip
+			{
+				visible: passwordField.activeFocus
+				timeout: 5000
+				text: qsTr("Choose a strong password and don't forget it,<br/>"+
+						   "there is no way to recover lost password.",
+						   "The linebreak is to make the text fit better in " +
+						   "tooltip")
+			}
 		}
 
-		Button
+		Row
 		{
-			id: bottomButton
-			text: loginView.buttonText
-			onClicked: loginView.submit(nameField.text, passwordField.text)
 			Layout.alignment: Qt.AlignHCenter | Qt.AlignBottom
+			spacing: 3
+
+			Button
+			{
+				text: qsTr("Advanced...")
+				visible: !loginView.loginPreset
+				onClicked: loginView.advancedMode = !loginView.advancedMode
+			}
+
+			Button
+			{
+				id: bottomButton
+				text: loginView.buttonText
+				onClicked: loginView.submit(nameField.text, passwordField.text)
+			}
 		}
 	}
 }

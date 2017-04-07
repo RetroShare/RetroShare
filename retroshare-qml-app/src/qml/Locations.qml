@@ -24,7 +24,6 @@ Item
 {
 	id: locationView
 	state: "selectLocation"
-	property var qParent
 	property bool attemptLogin: false
 	property string password
 	property string sslid
@@ -42,19 +41,26 @@ Item
 		{
 			name: "createLocation"
 			PropertyChanges { target: locationsListView; visible: false }
-			PropertyChanges	{ target: bottomButton; visible: false }
+			PropertyChanges { target: bottomButton; visible: false }
 			PropertyChanges
 			{
 				target: loginView
 				visible: true
-				buttonText: "Save"
+				buttonText: qsTr("Save")
+				iconUrl: "qrc:/qml/icons/edit-image-face-detect.png"
+				suggestionText: qsTr("Create your profile")
 				onSubmit:
 				{
+					busyIndicator.running = true
 					var jsonData = { pgp_name: login, ssl_name: login,
 						pgp_password: password }
-					rsApi.request("/control/create_location/",
-								  JSON.stringify(jsonData))
+					rsApi.request(
+								"/control/create_location/",
+								JSON.stringify(jsonData))
+					mainWindow.pgp_name = login
 					locationView.state = "selectLocation"
+					bottomButton.enabled = false
+					bottomButton.text = "Creating profile..."
 				}
 			}
 		},
@@ -62,11 +68,12 @@ Item
 		{
 			name: "login"
 			PropertyChanges { target: locationsListView; visible: false }
-			PropertyChanges	{ target: bottomButton; visible: false }
+			PropertyChanges { target: bottomButton; visible: false }
 			PropertyChanges
 			{
 				target: loginView
 				visible: true
+				advancedMode: true
 				onSubmit:
 				{
 					locationView.password = password
@@ -88,8 +95,14 @@ Item
 			// There is only one location so we can jump selecting location
 			var location = jsonData[0]
 			loginView.login = location.name
+			mainWindow.pgp_name = location.name
 			locationView.sslid = location.peer_id
 			locationView.state = "login"
+		}
+		else if (jsonData.length === 0)
+		{
+			// The user haven't created a location yet
+			locationView.state = "createLocation"
 		}
 		else
 		{
@@ -123,6 +136,7 @@ Item
 				loginView.login = text
 				locationView.sslid = model.id
 				locationView.state = "login"
+				mainWindow.pgp_name = model.name
 			}
 		}
 		visible: false

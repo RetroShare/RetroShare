@@ -28,6 +28,8 @@ ApplicationWindow
 	width: 400
 	height: 400
 
+	property string pgp_name
+
 	property var tokens: ({})
 	function registerToken(token, callback)
 	{
@@ -131,6 +133,8 @@ ApplicationWindow
 			}
 
 		state: "core_down"
+		initialItem: BusyOverlay { message: qsTr("Connecting to core...") }
+
 		states: [
 			State
 			{
@@ -148,6 +152,21 @@ ApplicationWindow
 						console.log("StateChangeScript waiting_account_select")
 						stackView.clear()
 						stackView.push("qrc:/qml/Locations.qml")
+					}
+				}
+			},
+			State
+			{
+				name: "waiting_startup"
+				PropertyChanges { target: stackView; enabled: false }
+				StateChangeScript
+				{
+					script:
+					{
+						console.log("StateChangeScript waiting_startup")
+						stackView.clear()
+						stackView.push("qrc:/qml/BusyOverlay.qml",
+									   { message: "Core initializing..."})
 					}
 				}
 			},
@@ -172,16 +191,6 @@ ApplicationWindow
 				PropertyChanges { target: stackView; state: "running_ok" }
 			}
 		]
-
-		initialItem: Rectangle
-		{
-			color: "green"
-			Text
-			{
-				text: "Connecting to core..."
-				anchors.centerIn: parent
-			}
-		}
 	}
 
 	LibresapiLocalClient

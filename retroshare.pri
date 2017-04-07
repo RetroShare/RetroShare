@@ -18,6 +18,12 @@ no_retroshare_plugins:CONFIG -= retroshare_plugins
 CONFIG *= no_retroshare_android_service
 retroshare_android_service:CONFIG -= no_retroshare_android_service
 
+# To enable RetroShare-android-notify-service append the following
+# assignation to qmake command line
+# "CONFIG+=retroshare_android_notify_service"
+CONFIG *= no_retroshare_android_notify_service
+retroshare_android_notify_service:CONFIG -= no_retroshare_android_notify_service
+
 # To enable RetroShare-QML-app append the following assignation to
 # qmake command line "CONFIG+=retroshare_qml_app"
 CONFIG *= no_retroshare_qml_app
@@ -85,6 +91,10 @@ unix {
 android-g++ {
     isEmpty(NATIVE_LIBS_TOOLCHAIN_PATH) {
         NATIVE_LIBS_TOOLCHAIN_PATH = $$(NATIVE_LIBS_TOOLCHAIN_PATH)
+    }
+    retroshare_qml_app {
+        CONFIG -= no_retroshare_android_notify_service
+        CONFIG *= retroshare_android_notify_service
     }
     CONFIG *= no_libresapihttpserver no_sqlcipher upnp_libupnp
     CONFIG -= libresapihttpserver sqlcipher upnp_miniupnpc

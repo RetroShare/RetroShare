@@ -76,7 +76,14 @@ Item
 			contactsView.own_gxs_id = json.data[0].gxs_id
 			contactsView.own_nick = json.data[0].name
 		}
-		else createIdentityDialog.visible = true
+		else
+		{
+			var jsonData = { "name": mainWindow.pgp_name, "pgp_linked": false }
+			rsApi.request(
+						"/identity/create_identity",
+						JSON.stringify(jsonData),
+						refreshOwn)
+		}
 	}
 	function refreshOwn()
 	{
@@ -168,29 +175,6 @@ Item
 		anchors.left: parent.left
 		width: parent.width
 		text: "Open Chat as: " + contactsView.own_nick + " " + contactsView.own_gxs_id
-	}
-
-	Dialog
-	{
-		id: createIdentityDialog
-		visible: false
-		title: "You need to create a GXS identity to chat!"
-		standardButtons: StandardButton.Save
-
-		onAccepted: rsApi.request("/identity/create_identity", JSON.stringify({"name":identityNameTE.text, "pgp_linked": !psdnmCheckBox.checked }))
-
-		TextField
-		{
-			id: identityNameTE
-			width: 300
-		}
-
-		Row
-		{
-			anchors.top: identityNameTE.bottom
-			Text { text: "Pseudonymous: " }
-			CheckBox { id: psdnmCheckBox; checked: true; enabled: false }
-		}
 	}
 
 	Popup

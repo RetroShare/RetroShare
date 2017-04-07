@@ -1,6 +1,6 @@
 /*
  * RetroShare Android QML App
- * Copyright (C) 2016  Gioacchino Mazzurco <gio@eigenlab.org>
+ * Copyright (C) 2016-2017  Gioacchino Mazzurco <gio@eigenlab.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -38,6 +38,14 @@ public class RetroShareQmlActivity extends QtActivity
 			startService(rsIntent);
 		}
 		else Log.v("RetroShareQmlActivity", "onCreate(): RetroShareAndroidService already running");
+
+		if (!isMyServiceRunning(RetroShareAndroidNotifyService.class))
+		{
+			Log.i("RetroShareQmlActivity", "onCreate(): RetroShareAndroidNotifyService is not running, let's start it by Intent");
+			Intent rsIntent = new Intent(this, RetroShareAndroidNotifyService.class);
+			startService(rsIntent);
+		}
+		else Log.v("RetroShareQmlActivity", "onCreate(): RetroShareAndroidNotifyService already running");
 
 		super.onCreate(savedInstanceState);
 	}

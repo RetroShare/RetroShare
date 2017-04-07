@@ -1,6 +1,6 @@
 /*
  * RetroShare Android Service
- * Copyright (C) 2016-2017  Gioacchino Mazzurco <gio@eigenlab.org>
+ * Copyright (C) 2016  Gioacchino Mazzurco <gio@eigenlab.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -17,19 +17,18 @@
  */
 
 #include <QCoreApplication>
+#include <QQmlApplicationEngine>
+#include <QQmlContext>
+#include <QFileInfo>
 #include <QDebug>
 
 #ifdef __ANDROID__
 #	include "util/androiddebug.h"
 #endif
 
+#include "libresapilocalclient.h"
 #include "retroshare/rsinit.h"
-#include "api/ApiServer.h"
-#include "api/ApiServerLocal.h"
-#include "api/RsControlModule.h"
 
-
-using namespace resource_api;
 
 int main(int argc, char *argv[])
 {
@@ -37,26 +36,38 @@ int main(int argc, char *argv[])
 	AndroidStdIOCatcher dbg; (void) dbg;
 #endif
 
-	QCoreApplication a(argc, argv);
-	ApiServer api;
-	RsControlModule ctrl_mod(argc, argv, api.getStateTokenServer(), &api, true);
-	api.addResourceHandler(
-	            "control",
-	            dynamic_cast<resource_api::ResourceRouter*>(&ctrl_mod),
-	            &resource_api::RsControlModule::handleRequest);
+	QCoreApplication app(argc, argv);
 
 	QString sockPath = QString::fromStdString(RsAccounts::ConfigDirectory());
 	sockPath.append("/libresapi.sock");
-	qDebug() << "Listening on:" << sockPath;
-	ApiServerLocal apiServerLocal(&api, sockPath); (void) apiServerLocal;
 
-	while (!ctrl_mod.processShouldExit())
+	QQmlApplicationEngine engine;
+	qmlRegisterType<LibresapiLocalClient>(
+	            "org.retroshare.qml_components.LibresapiLocalClient", 1, 0,
+	            "LibresapiLocalClient");
+
+#ifdef QT_DEBUG
+	engine.rootContext()->setContextProperty("QT_DEBUG", true);
+#else
+	engine.rootContext()->setContextProperty("QT_DEBUG", false);
+#endif // QT_DEBUG
+
+	engine.rootContext()->setContextProperty("apiSocketPath", sockPath);
+
+	LibresapiLocalClient rsApi;
+
+	while (!QFileInfo::exists(sockPath))
 	{
-		a.processEvents();
-		usleep(20000);
+		qDebug() << "RetroShareAndroidNotifyService waiting for core to"
+		         << "listen on:" << sockPath;
+
+		usleep(2500000);
 	}
 
-	QCoreApplication::quit();
+	rsApi.openConnection(sockPath);
 
-	return a.exec();
+	engine.rootContext()->setContextProperty("rsApi", &rsApi);
+	engine.load(QUrl(QLatin1String("qrc:/notify.qml")));
+
+	return app.exec();
 }

@@ -1,6 +1,6 @@
 /*
  * RetroShare Android Service
- * Copyright (C) 2016-2017  Gioacchino Mazzurco <gio@eigenlab.org>
+ * Copyright (C) 2017  Gioacchino Mazzurco <gio@eigenlab.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -18,22 +18,6 @@
 
 package org.retroshare.android.qml_app;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.util.Log;
+import org.qtproject.qt5.android.bindings.QtService;
 
-public class BootCompletedReceiver extends BroadcastReceiver
-{
-	@Override
-	public void onReceive(Context context, Intent intent)
-	{
-		Log.i("BootCompletedReceiver", "onReceive() Starting RetroShareAndroidService on boot");
-		Intent coreIntent = new Intent(context, RetroShareAndroidService.class);
-		context.startService(coreIntent);
-
-		Log.i("BootCompletedReceiver", "onReceive() Starting RetroShareAndroidNotifyService on boot");
-		Intent nsIntent = new Intent(context, RetroShareAndroidNotifyService.class);
-		context.startService(nsIntent);
-	}
-}
+public class RetroShareAndroidNotifyService extends QtService {}

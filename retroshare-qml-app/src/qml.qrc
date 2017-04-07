@@ -20,5 +20,6 @@
         <file>qml/icons/application-menu.png</file>
         <file>qml/ContactSort.js</file>
         <file>qml/icons/emblem-locked.png</file>
+        <file>qml/BusyOverlay.qml</file>
     </qresource>
 </RCC>
