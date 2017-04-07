@@ -1233,6 +1233,7 @@ static void set_item_background(QTreeWidgetItem *item, uint32_t type)
 	item->setBackground (0, brush);
 }
 
+#ifdef SUSPENDED
 static void update_children_background(QTreeWidgetItem *item, uint32_t type)
 {
 	int count = item->childCount();
@@ -1248,7 +1249,6 @@ static void update_children_background(QTreeWidgetItem *item, uint32_t type)
 	}
 }
 
-#ifdef SUSPENDED
 static void set_tree_background(QTreeWidget *tree, uint32_t type)
 {
 	std::cerr << "CirclesDialog set_tree_background()";
