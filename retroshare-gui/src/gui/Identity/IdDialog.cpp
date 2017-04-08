@@ -2432,6 +2432,7 @@ void IdDialog::copyRetroshareLink()
 
     RetroShareLink link ;
     link.createIdentity(RsGxsId(keyId),QString::fromUtf8(details.mNickname.c_str()),QString::fromStdString(radix)) ;
+    urls.push_back(link);
 
 	RSLinkClipboard::copyLinks(urls) ;
 

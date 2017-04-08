@@ -307,6 +307,21 @@ void RetroShareLink::fromUrl(const QUrl& url)
 		return;
 	}
 
+    if(url.host() == HOST_IDENTITY) {
+        _type = TYPE_IDENTITY ;
+        QString name = urlQuery.queryItemValue(IDENTITY_NAME) ;
+        QString radix= urlQuery.queryItemValue(IDENTITY_GROUP) ;
+        QString gxsid= urlQuery.queryItemValue(IDENTITY_ID) ;
+
+        RsGxsId id(gxsid.toStdString()) ;
+
+        if(!id.isNull())
+			createIdentity(id,name,radix) ;
+        else
+            std::cerr << "(EE) identity link is not valid." << std::endl;
+        return ;
+    }
+
 	if (url.host() == HOST_MESSAGE) {
 		_type = TYPE_MESSAGE;
 		std::string id = urlQuery.queryItemValue(MESSAGE_ID).toStdString();
@@ -844,7 +859,7 @@ QString RetroShareLink::niceName() const
 		return PeerDefs::rsid(name().toUtf8().constData(), RsPgpId(hash().toStdString()));
 
     if(type() == TYPE_IDENTITY)
-        return QObject::tr("Click this link to add this person (name=%1, ID=%2) to your People tab.").arg(_name).arg(_hash) ;
+        return QObject::tr("Identity link (name=%1, ID=%2)").arg(_name).arg(_hash) ;
 
 	if(type() == TYPE_PUBLIC_MSG) {
 		RsPeerDetails detail;
@@ -1055,6 +1070,7 @@ static void processList(const QStringList &list, const QString &textSingular, co
                 case TYPE_POSTED:
 				case TYPE_SEARCH:
 				case TYPE_MESSAGE:
+				case TYPE_IDENTITY:
 				case TYPE_CERTIFICATE:
 				case TYPE_PUBLIC_MSG:
 				case TYPE_PRIVATE_CHAT:
