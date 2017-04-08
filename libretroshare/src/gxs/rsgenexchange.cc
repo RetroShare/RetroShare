@@ -1310,7 +1310,7 @@ bool RsGenExchange::deserializeGroupData(unsigned char *data,uint32_t size)
 {
 	RS_STACK_MUTEX(mGenMtx) ;
 
-	RsItem *item = mSerialiser->deserialise(data, &size);
+	RsItem *item = RsNxsSerialiser(mServType).deserialise(data, &size);
 
     RsNxsGrp *nxs_grp = dynamic_cast<RsNxsGrp*>(item) ;
 
@@ -1321,7 +1321,7 @@ bool RsGenExchange::deserializeGroupData(unsigned char *data,uint32_t size)
         return false ;
     }
 
-	mReceivedGrps.push_back( GxsPendingItem<RsNxsGrp*, RsGxsGroupId>(nxs_grp, nxs_grp->metaData->mGroupId,time(NULL)) );
+	mReceivedGrps.push_back( GxsPendingItem<RsNxsGrp*, RsGxsGroupId>(nxs_grp, nxs_grp->grpId,time(NULL)) );
 
     return true ;
 }
