@@ -2,6 +2,7 @@
 
 #include "serialiser/rsserial.h"
 #include "serialiser/rstlvbase.h"
+#include "serialiser/rstlvlist.h"
 
 #include "retroshare/rsflags.h"
 #include "retroshare/rsids.h"
@@ -183,6 +184,11 @@ class RsTypeSerializer
 		template<uint32_t ID_SIZE_IN_BYTES,bool UPPER_CASE,uint32_t UNIQUE_IDENTIFIER> static bool     deserialize(const uint8_t data[], uint32_t size, uint32_t &offset, t_RsGenericIdType<ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER>& member);
 		template<uint32_t ID_SIZE_IN_BYTES,bool UPPER_CASE,uint32_t UNIQUE_IDENTIFIER> static uint32_t serial_size(const t_RsGenericIdType<ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER>& /* member */);
 		template<uint32_t ID_SIZE_IN_BYTES,bool UPPER_CASE,uint32_t UNIQUE_IDENTIFIER> static void     print_data(const std::string& name,const t_RsGenericIdType<ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER>& /* member */);
+
+		template<class TLV_CLASS,uint32_t TLV_TYPE> static bool     serialize  (uint8_t data[], uint32_t size, uint32_t &offset, const t_RsTlvList<TLV_CLASS,TLV_TYPE>& member);
+		template<class TLV_CLASS,uint32_t TLV_TYPE> static bool     deserialize(const uint8_t data[], uint32_t size, uint32_t &offset, t_RsTlvList<TLV_CLASS,TLV_TYPE>& member);
+		template<class TLV_CLASS,uint32_t TLV_TYPE> static uint32_t serial_size(const t_RsTlvList<TLV_CLASS,TLV_TYPE>& /* member */);
+		template<class TLV_CLASS,uint32_t TLV_TYPE> static void     print_data(const std::string& name,const t_RsTlvList<TLV_CLASS,TLV_TYPE>& /* member */);
 };
 
 //=================================================================================================//
@@ -208,7 +214,35 @@ uint32_t RsTypeSerializer::serial_size(const t_RsGenericIdType<ID_SIZE_IN_BYTES,
 }
 
 template<uint32_t ID_SIZE_IN_BYTES,bool UPPER_CASE,uint32_t UNIQUE_IDENTIFIER>
-void     RsTypeSerializer::print_data(const std::string& name,const t_RsGenericIdType<ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER>& member)
+void     RsTypeSerializer::print_data(const std::string& /* name */,const t_RsGenericIdType<ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER>& member)
 {
     std::cerr << "  [RsGenericId<" << std::hex << UNIQUE_IDENTIFIER << ">] : " << member << std::endl;
+}
+
+//=================================================================================================//
+//                                         t_RsTlvList<>                                           //
+//=================================================================================================//
+
+template<class TLV_CLASS,uint32_t TLV_TYPE>
+bool     RsTypeSerializer::serialize  (uint8_t data[], uint32_t size, uint32_t &offset, const t_RsTlvList<TLV_CLASS,TLV_TYPE>& member)
+{
+    return (*const_cast<const t_RsTlvList<TLV_CLASS,TLV_TYPE> *>(&member)).SetTlv(data,size,&offset) ;
+}
+
+template<class TLV_CLASS,uint32_t TLV_TYPE>
+bool     RsTypeSerializer::deserialize(const uint8_t data[], uint32_t size, uint32_t &offset, t_RsTlvList<TLV_CLASS,TLV_TYPE>& member)
+{
+    return member.GetTlv(const_cast<uint8_t*>(data),size,&offset) ;
+}
+
+template<class TLV_CLASS,uint32_t TLV_TYPE>
+uint32_t RsTypeSerializer::serial_size(const t_RsTlvList<TLV_CLASS,TLV_TYPE>& member)
+{
+    return member.TlvSize();
+}
+
+template<class TLV_CLASS,uint32_t TLV_TYPE>
+void     RsTypeSerializer::print_data(const std::string& /* name */,const t_RsTlvList<TLV_CLASS,TLV_TYPE>& member)
+{
+    std::cerr << "  [t_RsTlvString<" << std::hex << TLV_TYPE << ">] : size=" << member.mList.size() << std::endl;
 }

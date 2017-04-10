@@ -84,7 +84,12 @@ class RsItem: public RsMemoryManagement::SmallObject
 
 		virtual ~RsItem();
 		virtual void clear() = 0;
-		virtual std::ostream &print(std::ostream &out, uint16_t indent = 0) = 0;
+        virtual std::ostream &print(std::ostream &out, uint16_t indent = 0)
+        {
+			std::cerr << "(EE) RsItem::print() called by an item using new serialization classes, but not derived! " << std::endl;
+#warning This method should normally call serial_process(PRINT,ctx)
+            return out;
+		}
 		void print_string(std::string &out, uint16_t indent = 0);
 
 		/* source / destination id */
