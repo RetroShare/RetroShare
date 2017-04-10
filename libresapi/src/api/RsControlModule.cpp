@@ -67,7 +67,7 @@ bool RsControlModule::askForPassword(const std::string &title, const std::string
 		mPrevIsBad = prev_is_bad;
 
         if(mFixedPassword != "")
-        {
+		{
             password = mFixedPassword;
             return true;
         }
@@ -80,7 +80,6 @@ bool RsControlModule::askForPassword(const std::string &title, const std::string
 		{
 			password = mPassword;
 			mWantPassword = false;
-			mPassword = "";
 			return true;
 		}
 
@@ -95,8 +94,7 @@ bool RsControlModule::askForPassword(const std::string &title, const std::string
 
 		if(mPassword != "")
         {
-            password = mPassword;
-            mPassword = "";
+			password = mPassword;
             mWantPassword = false;
             mStateTokenServer->replaceToken(mStateToken);
             return true;
@@ -138,6 +136,7 @@ void RsControlModule::run()
     bool login_ok = false;
     while(!login_ok)
     {
+		mPassword = "";
         // skip account selection if autologin is available
         if(initResult != RS_INIT_HAVE_ACCOUNT)
             setRunState(WAITING_ACCOUNT_SELECT);
@@ -190,10 +189,10 @@ void RsControlModule::run()
         }
 
 		mLoadPeerId.clear();
-		mPassword = "";
     }
 
 	mFixedPassword = mPassword;
+	mPassword = "";
 
     setRunState(WAITING_STARTUP);
 
