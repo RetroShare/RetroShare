@@ -22,13 +22,14 @@
 #include <QJSEngine>
 #include <QtDebug>
 
-void LibresapiLocalClient::openConnection(QString socketPath)
+void LibresapiLocalClient::openConnection(const QString& socketPath)
 {
 	connect(& mLocalSocket, SIGNAL(error(QLocalSocket::LocalSocketError)),
 	        this, SLOT(socketError(QLocalSocket::LocalSocketError)));
 	connect(& mLocalSocket, SIGNAL(readyRead()),
 	        this, SLOT(read()));
-	mLocalSocket.connectToServer(socketPath);
+	mSocketPath = socketPath;
+	socketConnectAttempt();
 }
 
 int LibresapiLocalClient::request( const QString& path, const QString& jsonData,
@@ -44,13 +45,24 @@ int LibresapiLocalClient::request( const QString& path, const QString& jsonData,
 	data.append(path); data.append('\n');
 	data.append(jsonData); data.append('\n');
 	processingQueue.enqueue(PQRecord(path, jsonData, callback));
-	return mLocalSocket.write(data);
+	int ret = mLocalSocket.write(data);
+	if(ret < 0) socketError(mLocalSocket.error());
+	return ret;
 }
 
-void LibresapiLocalClient::socketError(QLocalSocket::LocalSocketError)
+void LibresapiLocalClient::socketError(QLocalSocket::LocalSocketError error)
 {
-	qCritical() << __PRETTY_FUNCTION__ << "Socket Eerror! "
+	qCritical() << __PRETTY_FUNCTION__ << "Socket error! " << error
 	            << mLocalSocket.errorString();
+
+	if(mLocalSocket.state() == QLocalSocket::UnconnectedState &&
+	        !mConnectAttemptTimer.isActive())
+	{
+		qDebug() << __PRETTY_FUNCTION__ << "Socket:" << mSocketPath
+		         << "is not connected, scheduling a connect attempt again";
+
+		mConnectAttemptTimer.start();
+	}
 }
 
 void LibresapiLocalClient::read()
