@@ -55,10 +55,13 @@
             <!-- extract android style -->
             <!-- available android:values :
                 * full - useful QWidget & Quick Controls 1 apps
-                * minimal - useful for Quick Controls 2 apps, it is much faster than "full"
-                * none - useful for apps that don't use any of the above Qt modules
+                * minimal - useful for Quick Controls 2 apps, it is much faster
+                  than "full"
+                * none - useful for apps that don't use any of the above Qt
+                  modules
                 -->
-            <meta-data android:name="android.app.extract_android_style" android:value="full"/>
+            <meta-data android:name="android.app.extract_android_style"
+                       android:value="minimal"/>
             <!-- extract android style -->
         </activity>
 
