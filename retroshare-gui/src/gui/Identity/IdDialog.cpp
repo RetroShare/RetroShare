@@ -55,10 +55,11 @@
  *****/
 
 // Data Requests.
-#define IDDIALOG_IDLIST     1
-#define IDDIALOG_IDDETAILS  2
-#define IDDIALOG_REPLIST    3
-#define IDDIALOG_REFRESH    4
+#define IDDIALOG_IDLIST           1
+#define IDDIALOG_IDDETAILS        2
+#define IDDIALOG_REPLIST          3
+#define IDDIALOG_REFRESH          4
+#define IDDIALOG_SERIALIZED_GROUP 5
 
 #define CIRCLEGROUP_CIRCLE_COL_GROUPNAME      0
 #define CIRCLEGROUP_CIRCLE_COL_GROUPID        1
@@ -814,7 +815,7 @@ void IdDialog::loadCircleGroupData(const uint32_t& token)
 #ifdef ID_DEBUG
     std::cerr << "Loading circle info" << std::endl;
 #endif
-    
+
     std::vector<RsGxsCircleGroup> circle_grp_v ;
     rsGxsCircles->getGroupData(token, circle_grp_v);
 
@@ -1384,6 +1385,8 @@ void IdDialog::updateSelection()
 		requestRepList();
 	}
 }
+
+
 
 void IdDialog::requestIdList()
 {
@@ -2174,6 +2177,45 @@ void IdDialog::insertRepList(uint32_t token)
 	mStateHelper->setActive(IDDIALOG_REPLIST, true);
 }
 
+void IdDialog::handleSerializedGroupData(uint32_t token)
+{
+    std::map<RsGxsId,std::string> serialized_group_map ;
+
+    rsIdentity->getGroupSerializedData(token, serialized_group_map);
+
+    if(serialized_group_map.size() < 1)
+    {
+        std::cerr << "(EE) Cannot get radix data " << std::endl;
+        return;
+    }
+    if(serialized_group_map.size() > 1)
+    {
+        std::cerr << "(EE) Too many results for serialized data" << std::endl;
+        return;
+    }
+
+    RsGxsId gxs_id = serialized_group_map.begin()->first ;
+    std::string radix = serialized_group_map.begin()->second ;
+
+    RsIdentityDetails details ;
+
+    if(!rsIdentity->getIdDetails(gxs_id,details))
+    {
+        std::cerr << "(EE) Cannot get id details for key " << gxs_id << std::endl;
+        return;
+    }
+
+    QList<RetroShareLink> urls ;
+
+    RetroShareLink link ;
+    link.createIdentity(gxs_id,QString::fromUtf8(details.mNickname.c_str()),QString::fromStdString(radix)) ;
+    urls.push_back(link);
+
+	RSLinkClipboard::copyLinks(urls) ;
+
+    QMessageBox::information(NULL,tr("information"),tr("This identity link was copied to your clipboard. Paste it in a mail, or a message to transmit the identity to someone.")) ;
+}
+
 void IdDialog::loadRequest(const TokenQueue * queue, const TokenRequest &req)
 {
 #ifdef ID_DEBUG
@@ -2195,6 +2237,10 @@ void IdDialog::loadRequest(const TokenQueue * queue, const TokenRequest &req)
 
 	    case IDDIALOG_REPLIST:
 		    insertRepList(req.mToken);
+		    break;
+
+	    case IDDIALOG_SERIALIZED_GROUP:
+		    handleSerializedGroupData(req.mToken);
 		    break;
 
 	    case IDDIALOG_REFRESH:
@@ -2415,28 +2461,35 @@ void IdDialog::copyRetroshareLink()
 		return;
 	}
 
-	std::string keyId = item->text(RSID_COL_KEYID).toStdString();
+	RsGxsId gxs_id(item->text(RSID_COL_KEYID).toStdString());
+
+    if(gxs_id.isNull())
+    {
+        std::cerr << "Null GXS id. Something went wrong." << std::endl;
+        return ;
+    }
 
     RsIdentityDetails details ;
 
-    if(! rsIdentity->getIdDetails(RsGxsId(keyId),details))
+    if(! rsIdentity->getIdDetails(gxs_id,details))
         return ;
 
-    std::string radix ;
-    if(!rsIdentity->serialiseIdentityToMemory(details.mId,radix))
-    {
-        std::cerr << "(EE) Cannot get radix data for key " << keyId << std::endl;
-        return;
-    }
-    QList<RetroShareLink> urls ;
+	if (!mIdQueue)
+		return;
 
-    RetroShareLink link ;
-    link.createIdentity(RsGxsId(keyId),QString::fromUtf8(details.mNickname.c_str()),QString::fromStdString(radix)) ;
-    urls.push_back(link);
+	mStateHelper->setLoading(IDDIALOG_SERIALIZED_GROUP, true);
 
-	RSLinkClipboard::copyLinks(urls) ;
+	mIdQueue->cancelActiveRequestTokens(IDDIALOG_SERIALIZED_GROUP);
 
-    QMessageBox::information(NULL,tr("information"),tr("This identity link was copied to your clipboard. Paste it in a mail, or a message to transmit the identity to someone.")) ;
+    std::list<RsGxsGroupId> ids ;
+    ids.push_back(RsGxsGroupId(gxs_id)) ;
+
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_GROUP_SERIALIZED_DATA;
+
+	uint32_t token;
+
+	mIdQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, ids, IDDIALOG_SERIALIZED_GROUP);
 }
 
 void IdDialog::chatIdentity()

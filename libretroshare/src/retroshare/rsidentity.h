@@ -322,6 +322,7 @@ public:
          */
 
     virtual bool    getGroupData(const uint32_t &token, std::vector<RsGxsIdGroup> &groups) = 0;
+	virtual bool 	getGroupSerializedData(const uint32_t &token, std::map<RsGxsId,std::string>& serialized_groups)=0;
     //virtual bool 	getMsgData(const uint32_t &token, std::vector<RsGxsIdOpinion> &opinions) = 0;
 
 };

@@ -420,6 +420,13 @@ private:
 
     /*!
      *
+     * Attempts to retrieve group data in serialized format
+     * @param req Request object to satisfy
+     */
+	bool getGroupSerializedData(GroupSerializedDataReq* req);
+
+    /*!
+     *
      * Attempts to service statistic
      * @param req request object to satisfy
      */

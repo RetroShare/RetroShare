@@ -1474,6 +1474,28 @@ bool p3IdService::getGroupData(const uint32_t &token, std::vector<RsGxsIdGroup> 
     return ok;
 }
 
+bool p3IdService::getGroupSerializedData(const uint32_t &token, std::map<RsGxsId,std::string>& serialized_groups)
+{
+    unsigned char *mem = NULL;
+    uint32_t size;
+    RsGxsGroupId id ;
+
+    serialized_groups.clear() ;
+
+	if(!RsGenExchange::getSerializedGroupData(token,id, mem,size))
+    {
+        std::cerr << "(EE) call to RsGenExchage::getSerializedGroupData() failed." << std::endl;
+        return false;
+    }
+
+    std::string radix ;
+
+    Radix64::encode(mem,size,radix) ;
+
+    serialized_groups[RsGxsId(id)] = radix ;
+
+    return true;
+}
 
 /********************************************************************************/
 /********************************************************************************/

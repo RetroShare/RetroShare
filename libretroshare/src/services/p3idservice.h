@@ -245,6 +245,8 @@ public:
 
 	// These are exposed via RsIdentity.
 	virtual bool getGroupData(const uint32_t &token, std::vector<RsGxsIdGroup> &groups);
+	virtual bool getGroupSerializedData(const uint32_t &token, std::map<RsGxsId,std::string>& serialized_groups);
+
 	//virtual bool getMsgData(const uint32_t &token, std::vector<RsGxsIdOpinion> &opinions);
 
 	// These are local - and not exposed via RsIdentity.
