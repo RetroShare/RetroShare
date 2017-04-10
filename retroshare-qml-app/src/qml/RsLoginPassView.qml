@@ -102,7 +102,7 @@ Item
 
 			ToolTip
 			{
-				visible: passwordField.activeFocus
+				visible: passwordField.activeFocus && !loginView.loginPreset
 				timeout: 5000
 				text: qsTr("Choose a strong password and don't forget it,<br/>"+
 						   "there is no way to recover lost password.",
