@@ -87,7 +87,7 @@ void RsChatLobbyBouncingObject::serial_process(RsItem::SerializeJob j, Serialize
     RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_NAME,nick,"nick") ;
 
     if(include_signature)
-    	RsTypeSerializer::serial_process(j,ctx,signature,"signature") ;
+    	RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,signature,"signature") ;
 }
 
 void RsChatLobbyMsgItem::serial_process(RsItem::SerializeJob j,SerializeContext& ctx)

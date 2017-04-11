@@ -29,10 +29,10 @@
 
 #include "retroshare/rstypes.h"
 #include "serialiser/rsserial.h"
-//#include "serialiser/rstlvtypes.h"
 #include "serialiser/rstlvfileitem.h"
 #include "serialiser/rsserviceids.h"
 
+#include "serialization/rsserializer.h"
 
 const uint8_t RS_PKT_SUBTYPE_FT_DATA_REQUEST       = 0x01;
 const uint8_t RS_PKT_SUBTYPE_FT_DATA               = 0x02;
@@ -53,20 +53,11 @@ const uint8_t RS_PKT_SUBTYPE_FT_CACHE_REQUEST = 0x0B;
 class RsFileTransferItem: public RsItem
 {
 	public:
-		RsFileTransferItem(uint8_t ft_subtype) 
-			: RsItem(RS_PKT_VERSION_SERVICE,RS_SERVICE_TYPE_FILE_TRANSFER,ft_subtype) 
-		{}
+		RsFileTransferItem(uint8_t ft_subtype)  : RsItem(RS_PKT_VERSION_SERVICE,RS_SERVICE_TYPE_FILE_TRANSFER,ft_subtype)  {}
 
 		virtual ~RsFileTransferItem() {}
 
-		virtual bool serialise(void *data,uint32_t& size) = 0 ;	
-		virtual uint32_t serial_size() = 0 ; 						
-
-		virtual std::ostream &print(std::ostream &out, uint16_t indent = 0) = 0;
 		virtual void clear() = 0 ;
-
-	protected:
-		bool serialise_header(void *data, uint32_t& pktsize, uint32_t& tlvsize, uint32_t& offset) ;
 };
 
 class RsFileTransferDataRequestItem: public RsFileTransferItem
@@ -77,13 +68,9 @@ class RsFileTransferDataRequestItem: public RsFileTransferItem
 		setPriorityLevel(QOS_PRIORITY_RS_FILE_REQUEST) ;
 	}
 	virtual ~RsFileTransferDataRequestItem() {}
-
-	virtual bool serialise(void *data,uint32_t& size) ;	
-	virtual uint32_t serial_size() ; 						
-
 	virtual void clear();
 
-	std::ostream &print(std::ostream &out, uint16_t indent = 0);
+    void serial_process(RsItem::SerializeJob j,SerializeContext& ctx);
 
 	// Private data part.
 	//
@@ -103,11 +90,9 @@ class RsFileTransferDataItem: public RsFileTransferItem
 	}
 	virtual ~RsFileTransferDataItem() { clear() ; }
 
-	virtual bool serialise(void *data,uint32_t& size) ;	
-	virtual uint32_t serial_size() ; 						
-	virtual void clear();
+    void serial_process(RsItem::SerializeJob j,SerializeContext& ctx);
 
-	virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
+	virtual void clear();
 
 	// Private data part.
 	//
@@ -122,10 +107,9 @@ class RsFileTransferChunkMapRequestItem: public RsFileTransferItem
 			setPriorityLevel(QOS_PRIORITY_RS_FILE_MAP_REQUEST) ;
 		}
 		virtual ~RsFileTransferChunkMapRequestItem() {}
-		virtual bool serialise(void *data,uint32_t& size) ;	
-		virtual uint32_t serial_size() ; 						
 		virtual void clear() {}
-		virtual std::ostream &print(std::ostream &out, uint16_t indent = 0);
+
+		void serial_process(RsItem::SerializeJob j,SerializeContext& ctx);
 
 		// Private data part.
 		//
@@ -142,11 +126,9 @@ class RsFileTransferChunkMapItem: public RsFileTransferItem
 			setPriorityLevel(QOS_PRIORITY_RS_FILE_MAP) ;
 		}
 		virtual ~RsFileTransferChunkMapItem() {}
-		virtual bool serialise(void *data,uint32_t& size) ;	
-		virtual uint32_t serial_size() ; 						
-		virtual void clear() {}
 
-		virtual std::ostream &print(std::ostream &out, uint16_t indent = 0);
+		void serial_process(RsItem::SerializeJob j,SerializeContext& ctx);
+		virtual void clear() {}
 
 		// Private data part.
 		//
@@ -163,11 +145,9 @@ class RsFileTransferSingleChunkCrcRequestItem: public RsFileTransferItem
 			setPriorityLevel(QOS_PRIORITY_RS_CHUNK_CRC_REQUEST) ;
 		}
 		virtual ~RsFileTransferSingleChunkCrcRequestItem() {}
-		virtual bool serialise(void *data,uint32_t& size) ;	
-		virtual uint32_t serial_size() ; 						
-		virtual void clear() {}
 
-		virtual std::ostream &print(std::ostream &out, uint16_t indent = 0);
+		void serial_process(RsItem::SerializeJob j,SerializeContext& ctx);
+		virtual void clear() {}
 
 		// Private data part.
 		//
@@ -183,11 +163,9 @@ class RsFileTransferSingleChunkCrcItem: public RsFileTransferItem
 			setPriorityLevel(QOS_PRIORITY_RS_CHUNK_CRC) ;
 		}
 		virtual ~RsFileTransferSingleChunkCrcItem() {}
-		virtual bool serialise(void *data,uint32_t& size) ;	
-		virtual uint32_t serial_size() ; 						
-		virtual void clear() {}
 
-		virtual std::ostream &print(std::ostream &out, uint16_t indent = 0);
+		void serial_process(RsItem::SerializeJob j,SerializeContext& ctx);
+		virtual void clear() {}
 
 		// Private data part.
 		//
@@ -196,65 +174,16 @@ class RsFileTransferSingleChunkCrcItem: public RsFileTransferItem
 		Sha1CheckSum check_sum ; // CRC32 map of the file.
 };
 
-class RsFileTransferCacheItem: public RsFileTransferItem
-{
-	public:
-		RsFileTransferCacheItem() :RsFileTransferItem(RS_PKT_SUBTYPE_FT_CACHE_ITEM)
-		{ 
-			setPriorityLevel(QOS_PRIORITY_RS_CACHE_ITEM); 
-		}
-
-		virtual ~RsFileTransferCacheItem(){ clear() ; }
-		virtual bool serialise(void *data,uint32_t& size) ;	
-		virtual uint32_t serial_size() ; 						
-		virtual void clear();
-		virtual std::ostream &print(std::ostream &out, uint16_t indent = 0);
-
-		// private part.
-		//
-		uint16_t cacheType;
-		uint16_t cacheSubId;
-		RsTlvFileItem file;   /* file information */
-};
-
-
 /**************************************************************************/
 
-class RsFileTransferSerialiser: public RsSerialType
+class RsFileTransferSerialiser: public RsSerializer
 {
 	public:
-		RsFileTransferSerialiser(): RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_FILE_TRANSFER) {}
+		RsFileTransferSerialiser(): RsSerializer(RS_SERVICE_TYPE_FILE_TRANSFER) {}
 
 		virtual ~RsFileTransferSerialiser() {}
 
-		virtual uint32_t size(RsItem *item)
-		{
-			RsFileTransferItem *ftitem = dynamic_cast<RsFileTransferItem *>(item);
-			if (!ftitem)
-			{
-				return 0;
-			}
-			return ftitem->serial_size() ;
-		}
-		virtual bool serialise(RsItem *item, void *data, uint32_t *size)
-		{
-			RsFileTransferItem *ftitem = dynamic_cast<RsFileTransferItem *>(item);
-			if (!ftitem)
-			{
-				return false;
-			}
-			return ftitem->serialise(data,*size) ;
-		}
-		virtual RsFileTransferItem *deserialise(void *data, uint32_t *size);
-
-	private:
-		RsFileTransferItem *deserialise_RsFileTransferCacheItem(void *data, uint32_t pktsize);
-		RsFileTransferItem *deserialise_RsFileTransferChunkMapRequestItem(void *data, uint32_t pktsize);
-		RsFileTransferItem *deserialise_RsFileTransferChunkMapItem(void *data, uint32_t pktsize);
-		RsFileTransferItem *deserialise_RsFileTransferDataRequestItem(void *data, uint32_t pktsize);
-		RsFileTransferItem *deserialise_RsFileTransferDataItem(void *data, uint32_t pktsize);
-		RsFileTransferItem *deserialise_RsFileTransferSingleChunkCrcItem(void *data, uint32_t pktsize);
-		RsFileTransferItem *deserialise_RsFileTransferSingleChunkCrcRequestItem(void *data, uint32_t pktsize);
+		RsItem *create_item(uint16_t service_type,uint8_t item_type) ;
 
 };
 

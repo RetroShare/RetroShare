@@ -10,34 +10,15 @@
 
 static const uint32_t MAX_SERIALIZED_ARRAY_SIZE = 500 ;
 
-#ifdef REMOVE
-template<typename T> T ntoh(T t)
-{
-	if(sizeof(T) == 8) return t;
-	if(sizeof(T) == 4) return ntohl(t) ;
-	if(sizeof(T) == 2) return ntohs(t) ;
-	if(sizeof(T) == 1) return t ;
-
-	std::cerr << "(EE) unhandled type of size " << sizeof(T) << " in ntoh<>" << std::endl;
-	return t;
-}
-template<typename T> T hton(T t)
-{
-	if(sizeof(T) == 8) return t;
-	if(sizeof(T) == 4) return htonl(t) ;
-	if(sizeof(T) == 2) return htons(t) ;
-	if(sizeof(T) == 1) return t ;
-
-	std::cerr << "(EE) unhandled type of size " << sizeof(T) << " in hton<>" << std::endl;
-	return t;
-}
-#endif
-
 //=================================================================================================//
 //                                            Integer types                                        //
 //=================================================================================================//
 
-template<> bool RsTypeSerializer::serialize(uint8_t data[], uint32_t size, uint32_t &offset, const uint8_t& member) 
+template<> bool RsTypeSerializer::serialize(uint8_t data[], uint32_t size, uint32_t &offset, const bool& member)
+{
+	return setRawUInt8(data,size,&offset,member);
+}
+template<> bool RsTypeSerializer::serialize(uint8_t data[], uint32_t size, uint32_t &offset, const uint8_t& member)
 { 
 	return setRawUInt8(data,size,&offset,member);
 }
@@ -52,6 +33,14 @@ template<> bool RsTypeSerializer::serialize(uint8_t data[], uint32_t size, uint3
 template<> bool RsTypeSerializer::serialize(uint8_t data[], uint32_t size, uint32_t &offset, const time_t& member)
 {
 	return setRawTimeT(data,size,&offset,member);
+}
+
+template<> bool RsTypeSerializer::deserialize(const uint8_t data[], uint32_t size, uint32_t &offset, bool& member)
+{
+    uint8_t m ;
+	bool ok = getRawUInt8(data,size,&offset,&m);
+    member = m ;
+    return ok;
 }
 template<> bool RsTypeSerializer::deserialize(const uint8_t data[], uint32_t size, uint32_t &offset, uint8_t& member)
 { 
@@ -68,6 +57,11 @@ template<> bool RsTypeSerializer::deserialize(const uint8_t data[], uint32_t siz
 template<> bool RsTypeSerializer::deserialize(const uint8_t data[], uint32_t size, uint32_t &offset, time_t& member)
 {
 	return getRawTimeT(data,size,&offset,member);
+}
+
+template<> uint32_t RsTypeSerializer::serial_size(const bool& /* member*/)
+{
+	return 1;
 }
 template<> uint32_t RsTypeSerializer::serial_size(const uint8_t& /* member*/)
 { 
@@ -86,6 +80,10 @@ template<> uint32_t RsTypeSerializer::serial_size(const time_t& /* member*/)
 	return 8;
 }
 
+template<> void RsTypeSerializer::print_data(const std::string& n, const bool & V)
+{
+    std::cerr << "  [bool       ] " << n << ": " << V << std::endl;
+}
 template<> void RsTypeSerializer::print_data(const std::string& n, const uint8_t & V)
 {
     std::cerr << "  [uint8_t    ] " << n << ": " << V << std::endl;
@@ -230,25 +228,27 @@ template<> void RsTypeSerializer::print_data(const std::string& n, const RsTypeS
 }
 
 //=================================================================================================//
-//                                            Signatures                                           //
+//                                            TlvItems                                             //
 //=================================================================================================//
 
-template<> uint32_t RsTypeSerializer::serial_size(const RsTlvKeySignature& s)
+template<> uint32_t RsTypeSerializer::serial_size(const RsTlvItem& s)
 {
 	return s.TlvSize() ;
 }
 
-template<> bool RsTypeSerializer::serialize(uint8_t data[], uint32_t size, uint32_t &offset,const RsTlvKeySignature& s)
+template<> bool RsTypeSerializer::serialize(uint8_t data[], uint32_t size, uint32_t &offset,const RsTlvItem& s)
 {
 	return s.SetTlv(data,size,&offset) ;
 }
 
-template<> bool RsTypeSerializer::deserialize(const uint8_t data[], uint32_t size,uint32_t& offset,RsTlvKeySignature& s)
+template<> bool RsTypeSerializer::deserialize(const uint8_t data[], uint32_t size,uint32_t& offset,RsTlvItem& s)
 {
 	return s.GetTlv((void*)data,size,&offset) ;
 }
 
-template<> void RsTypeSerializer::print_data(const std::string& n, const RsTlvKeySignature& s)
+template<> void RsTypeSerializer::print_data(const std::string& n, const RsTlvItem& s)
 {
-    std::cerr << "  [Signature] " << n << " : key_id=" << s.keyId << ", length=" << s.signData.bin_len << std::endl;
+    // can we call TlvPrint inside this?
+
+    std::cerr << "  [" << typeid(s).name() << "] " << n << std::endl;
 }
