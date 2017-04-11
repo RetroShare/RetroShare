@@ -1,5 +1,8 @@
 <RCC>
     <qresource prefix="/">
         <file>notify.qml</file>
+        <file>TokensManager.qml</file>
+        <file>AutologinManager.qml</file>
+        <file>qmldir</file>
     </qresource>
 </RCC>

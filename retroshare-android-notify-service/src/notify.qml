@@ -18,134 +18,33 @@
 
 import QtQml 2.2
 import org.retroshare.qml_components.LibresapiLocalClient 1.0
+import "." //Needed for TokensManager singleton
 
 QtObject
 {
-	id: mo
+	id: notifyRoot
 
-	property string profileName
-	property string profileSslId
-	property string hardcodedPassword: "hardcoded default password"
-	property int loginAttemptCount: 0
-	property bool attemptingLogin: false
+	property alias coreReady: coreWatcher.coreReady
 
-	property Timer runStateTimer: Timer
+	property AutologinManager _aM: AutologinManager { id: coreWatcher }
+
+	onCoreReadyChanged: if(coreReady) refreshUnread()
+
+	function refreshUnreadCallback(par)
 	{
-		repeat: true
-		interval: 5000
-		triggeredOnStart: true
-		Component.onCompleted: start()
-		onTriggered:
-			rsApi.request("/control/runstate/", "", mo.runStateCallback)
-	}
-
-	function runStateCallback(par)
-	{
-		var jsonReponse = JSON.parse(par.response)
-		var runState = jsonReponse.data.runstate
-		if(typeof(runState) !== 'string')
+		console.log("notifyRoot.refreshUnreadCB()")
+		var json = JSON.parse(par.response)
+		TokensManager.registerToken(json.statetoken, refreshUnread)
+		if(json.data.length > 0)
 		{
-			console.log("runStateCallback(...) Core is hanged")
-			return
-		}
-
-		switch(runState)
-		{
-		case "waiting_init":
-			console.log("Core is starting")
-			break
-		case "fatal_error":
-			console.log("Core hanged")
-			break
-		case "waiting_account_select":
-			if(!attemptingLogin && loginAttemptCount < 5)
-				rsApi.request("/control/locations/", "", requestLocationsListCB)
-			break
-		case "waiting_startup":
-			break
-		case "running_ok":
-		case "running_ok_no_full_control":
-			runStateTimer.interval = 30000
-			break
+			console.log("notifyRoot.refreshUnreadCB() got", json.data.length,
+						"unread messages")
+			//TODO: display android notification
 		}
 	}
-
-	function requestLocationsListCB(par)
+	function refreshUnread()
 	{
-		console.log("requestLocationsListCB")
-		var jsonData = JSON.parse(par.response).data
-		if(jsonData.length === 1)
-		{
-			// There is only one location so we can attempt autologin
-			var location = jsonData[0]
-			profileName = location.name
-			profileSslId = location.peer_id
-			if(!attemptingLogin && loginAttemptCount < 5) attemptLogin()
-		}
-		else if (jsonData.length === 0)
-		{
-			console.log("requestLocationsListCB 0")
-			// The user haven't created a location yet
-			// TODO: notify user to create a location
-		}
-		else
-		{
-			console.log("requestLocationsListCB *")
-			// There is more then one location to choose from
-			// TODO: notify user to login manually
-		}
-	}
-
-	function attemptLogin()
-	{
-		console.log("attemptLogin")
-		attemptingLogin = true
-		++loginAttemptCount
-		rsApi.request(
-					"/control/login/", JSON.stringify({ id: profileSslId }),
-					attemptLoginCB)
-	}
-
-	function attemptLoginCB(par)
-	{
-		console.log("attemptLoginCB")
-		var jsonRet = JSON.parse(par.response).returncode
-		if (jsonRet === "ok") attemptPassTimer.start()
-		else console.log("Login hanged!")
-	}
-
-	property Timer attemptPassTimer: Timer
-	{
-		interval: 700
-		repeat: true
-		triggeredOnStart: true
-		onTriggered: rsApi.request("/control/password/", "", attemptPasswordCB)
-
-		function attemptPasswordCB(par)
-		{
-			console.log("attemptPasswordCB", mo.attemptPassTimer, "running?", running)
-			if(JSON.parse(par.response).data.want_password)
-			{
-				console.log("attemptPasswordCB want_password")
-				rsApi.request(
-							"/control/password/",
-							JSON.stringify({ password: mo.hardcodedPassword }),
-							attemptPasswordCBCB)
-			}
-		}
-
-		function attemptPasswordCBCB()
-		{
-			console.log("attemptPasswordCBCB")
-			stop()
-
-			/* Wait 10 seconds so the core has time to process login and update
-			 * runstate */
-			var timeStart = new Date().getTime();
-			while (new Date().getTime() - timeStart < 10000) {}
-
-			mo.attemptingLogin = false
-			rsApi.request("/control/runstate/", "", mo.runStateCallback)
-		}
+		console.log("notifyRoot.refreshUnread()")
+		rsApi.request("/chat/unread_msgs", "", refreshUnreadCallback)
 	}
 }
