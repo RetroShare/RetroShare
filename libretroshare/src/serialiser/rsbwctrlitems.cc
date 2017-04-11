@@ -34,9 +34,17 @@
 
 /*************************************************************************/
 
-RsBwCtrlAllowedItem::~RsBwCtrlAllowedItem()
+RsItem *RsBwCtrlSerialiser::create_item(uint16_t service, uint8_t item_sub_id)
 {
-	return;
+    if(service != RS_SERVICE_TYPE_BWCTRL)
+        return NULL ;
+
+    switch(item_sub_id)
+	{
+	case RS_PKT_SUBTYPE_BWCTRL_ALLOWED_ITEM: return new RsBwCtrlAllowedItem();
+	default:
+		return NULL;
+	}
 }
 
 void 	RsBwCtrlAllowedItem::clear()
@@ -44,27 +52,12 @@ void 	RsBwCtrlAllowedItem::clear()
 	allowedBw = 0;
 }
 
-std::ostream &RsBwCtrlAllowedItem::print(std::ostream &out, uint16_t indent)
+void RsBwCtrlAllowedItem::serial_process(SerializeJob j,SerializeContext& ctx)
 {
-        printRsItemBase(out, "RsBwCtrlAllowedItem", indent);
-	uint16_t int_Indent = indent + 2;
-        printIndent(out, int_Indent);
-        out << "AllowedBw: " << allowedBw;
-        out << std::endl;
-
-        printRsItemEnd(out, "RsBwCtrlAllowedItem", indent);
-        return out;
+    RsTypeSerializer::serial_process<uint32_t>(j,ctx,TLV_TYPE_UINT32_BW,allowedBw,"allowedBw") ;
 }
 
-
-uint32_t    RsBwCtrlSerialiser::sizeAllowed(RsBwCtrlAllowedItem * /*item*/)
-{
-	uint32_t s = 8; /* header */
-	s += GetTlvUInt32Size();
-
-	return s;
-}
-
+#ifdef TO_REMOVE
 /* serialise the data to the buffer */
 bool     RsBwCtrlSerialiser::serialiseAllowed(RsBwCtrlAllowedItem *item, void *data, uint32_t *pktsize)
 {
@@ -200,6 +193,7 @@ RsItem *RsBwCtrlSerialiser::deserialise(void *data, uint32_t *pktsize)
 }
 
 /*************************************************************************/
+#endif
 
 
 

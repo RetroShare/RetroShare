@@ -32,50 +32,38 @@
 #include "serialiser/rsserial.h"
 #include "serialiser/rstlvbase.h"
 
+#include "serialization/rsserializer.h"
+#include "serialization/rstypeserializer.h"
+
 #define RS_PKT_SUBTYPE_BWCTRL_ALLOWED_ITEM       0x01
 
 /**************************************************************************/
 
 class RsBwCtrlAllowedItem: public RsItem
 {
-	public:
-	RsBwCtrlAllowedItem() 
-	:RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_BWCTRL, 
-		RS_PKT_SUBTYPE_BWCTRL_ALLOWED_ITEM)
-	{ 
+public:
+	RsBwCtrlAllowedItem()  :RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_BWCTRL,  RS_PKT_SUBTYPE_BWCTRL_ALLOWED_ITEM)
+	{
 		setPriorityLevel(QOS_PRIORITY_RS_BWCTRL_ALLOWED_ITEM);
-		return; 
+		return;
 	}
 
-virtual ~RsBwCtrlAllowedItem();
-virtual void clear();  
-std::ostream &print(std::ostream &out, uint16_t indent = 0);
+    virtual ~RsBwCtrlAllowedItem() {}
+	virtual void clear();
 
-	uint32_t	allowedBw; // Units are bytes/sec => 4Gb/s; 
+	void serial_process(SerializeJob j,SerializeContext& ctx);
 
+	uint32_t	allowedBw; // Units are bytes/sec => 4Gb/s;
 };
 
 
-class RsBwCtrlSerialiser: public RsSerialType
+class RsBwCtrlSerialiser: public RsSerializer
 {
-	public:
-	RsBwCtrlSerialiser()
-	:RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_BWCTRL)
-	{ return; }
-virtual     ~RsBwCtrlSerialiser()
-	{ return; }
-	
-virtual	uint32_t    size(RsItem *);
-virtual	bool        serialise  (RsItem *item, void *data, uint32_t *size);
-virtual	RsItem *    deserialise(void *data, uint32_t *size);
+public:
+	RsBwCtrlSerialiser() :RsSerializer(RS_SERVICE_TYPE_BWCTRL) {}
+	virtual     ~RsBwCtrlSerialiser() {}
 
-	private:
-
-virtual	uint32_t    sizeAllowed(RsBwCtrlAllowedItem *);
-virtual	bool        serialiseAllowed  (RsBwCtrlAllowedItem *item, void *data, uint32_t *size);
-virtual	RsBwCtrlAllowedItem *deserialiseAllowed(void *data, uint32_t *size);
-
-
+	RsItem *create_item(uint16_t /* service */, uint8_t /* item_sub_id */);
 };
 
 /**************************************************************************/
