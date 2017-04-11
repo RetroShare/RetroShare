@@ -4,11 +4,15 @@ QT += core network qml quick
 
 CONFIG += c++11
 
-HEADERS += libresapilocalclient.h
-SOURCES += main.cpp \
-    libresapilocalclient.cpp
+HEADERS += libresapilocalclient.h singletonqmlengine.h
+SOURCES += main.cpp libresapilocalclient.cpp
 
 RESOURCES += qml.qrc
+
+android-g++ {
+    SOURCES += NativeCalls.cpp
+    HEADERS += NativeCalls.h
+}
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 #QML_IMPORT_PATH =

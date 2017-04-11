@@ -19,6 +19,7 @@
 import QtQuick 2.2
 import QtQuick.Controls 2.0
 import org.retroshare.qml_components.LibresapiLocalClient 1.0
+import "URI.js" as URI
 
 ApplicationWindow
 {
@@ -55,6 +56,11 @@ ApplicationWindow
 		delete tokens[token]
 	}
 	function isTokenValid(token) { return Array.isArray(tokens[token]) }
+
+	function handleIntentUri(uriStr)
+	{
+		console.log("handleIntentUri", JSON.stringify(URI.parse(uriStr), null, 1))
+	}
 
 
 	header: ToolBar

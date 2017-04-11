@@ -22,22 +22,14 @@
 #include <QQmlComponent>
 #include <QDebug>
 
-#ifdef __ANDROID__
-#	include <QtAndroidExtras>
-#endif
-
-#include <QFileInfo>
-#include <QDateTime>
-
 #include "libresapilocalclient.h"
 #include "retroshare/rsinit.h"
+#include "singletonqmlengine.h"
 
 int main(int argc, char *argv[])
 {
 	QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 	QGuiApplication app(argc, argv);
-
-	QQmlApplicationEngine engine;
 
 	/** When possible it is better to use +rsApi+ object directly instead of
 	 * multiple instances of +LibresapiLocalClient+ in Qml */
@@ -51,6 +43,8 @@ int main(int argc, char *argv[])
 	LibresapiLocalClient rsApi;
 	rsApi.openConnection(sockPath);
 
+	QQmlApplicationEngine& engine(SingletonQmlEngine::instance());
+
 #ifdef QT_DEBUG
 	engine.rootContext()->setContextProperty("QT_DEBUG", true);
 #else
@@ -60,10 +54,6 @@ int main(int argc, char *argv[])
 	engine.rootContext()->setContextProperty("apiSocketPath", sockPath);
 	engine.rootContext()->setContextProperty("rsApi", &rsApi);
 	engine.load(QUrl(QLatin1String("qrc:/qml/main.qml")));
-
-	QFileInfo fileInfo(sockPath);
-	qDebug() << "QML APP:" << sockPath << fileInfo.exists()
-	         << fileInfo.lastModified().toString();
 
 	return app.exec();
 }

@@ -26,6 +26,8 @@ import android.util.Log;
 
 import org.qtproject.qt5.android.bindings.QtActivity;
 
+import org.retroshare.android.qml_app.jni.NativeCalls;
+
 public class RetroShareQmlActivity extends QtActivity
 {
 	@Override
@@ -48,6 +50,18 @@ public class RetroShareQmlActivity extends QtActivity
 		else Log.v("RetroShareQmlActivity", "onCreate(): RetroShareAndroidNotifyService already running");
 
 		super.onCreate(savedInstanceState);
+	}
+
+	@Override
+	public void onNewIntent(Intent intent)
+	{
+		super.onNewIntent(intent);
+		String uri = intent.getDataString();
+		if (uri != null)
+		{
+			Log.d("RetroShareQmlActivity", "onNewIntent() " + uri);
+			NativeCalls.notifyIntentUri(uri);
+		}
 	}
 
 	private boolean isMyServiceRunning(Class<?> serviceClass)

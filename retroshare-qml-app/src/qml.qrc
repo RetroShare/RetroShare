@@ -21,5 +21,6 @@
         <file>qml/ContactSort.js</file>
         <file>qml/icons/emblem-locked.png</file>
         <file>qml/BusyOverlay.qml</file>
+        <file>qml/URI.js</file>
     </qresource>
 </RCC>

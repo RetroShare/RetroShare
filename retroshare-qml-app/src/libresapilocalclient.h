@@ -1,6 +1,7 @@
+#pragma once
 /*
  * libresapi local socket client
- * Copyright (C) 2016  Gioacchino Mazzurco <gio@eigenlab.org>
+ * Copyright (C) 2016-2017  Gioacchino Mazzurco <gio@eigenlab.org>
  * Copyright (C) 2016  Manu Pineda <manu@cooperativa.cat>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -16,9 +17,6 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-#ifndef LIBRESAPILOCALCLIENT_H
-#define LIBRESAPILOCALCLIENT_H
 
 #include <QLocalSocket>
 #include <QQueue>
@@ -95,5 +93,3 @@ signals:
 	void debugChanged();
 #endif //  QT_DEBUG
 };
-
-#endif // LIBRESAPILOCALCLIENT_H
