@@ -21,6 +21,7 @@ import QtQuick.Controls 2.0
 import QtQuick.Dialogs 1.2
 import QtQml.Models 2.2
 import org.retroshare.qml_components.LibresapiLocalClient 1.0
+import "." //Needed for TokensManager singleton
 
 Item
 {
@@ -53,7 +54,7 @@ Item
 		if (contactsListModel.model.count < 1)
 			contactsListModel.json = par.response
 		var token = JSON.parse(par.response).statetoken
-		mainWindow.registerToken(token, refreshContacts)
+		TokensManager.registerToken(token, refreshContacts)
 		contactsSortWorker.sendMessage(
 					{'action': 'refreshContacts', 'response': par.response})
 	}
@@ -69,7 +70,7 @@ Item
 		console.log("contactsView.refreshOwnCallback(par)", visible)
 		var json = JSON.parse(par.response)
 		var token = json.statetoken
-		mainWindow.registerToken(token, refreshOwn)
+		TokensManager.registerToken(token, refreshOwn)
 
 		if(json.data.length > 0)
 		{
@@ -95,7 +96,7 @@ Item
 	{
 		console.log("contactsView.refreshUnreadCB()", visible)
 		var json = JSON.parse(par.response)
-		mainWindow.registerToken(json.statetoken, refreshUnread)
+		TokensManager.registerToken(json.statetoken, refreshUnread)
 		contactsSortWorker.sendMessage(
 					{'action': 'refreshUnread', 'response': par.response})
 	}

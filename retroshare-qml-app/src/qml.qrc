@@ -22,5 +22,7 @@
         <file>qml/icons/emblem-locked.png</file>
         <file>qml/BusyOverlay.qml</file>
         <file>qml/URI.js</file>
+        <file>qml/TokensManager.qml</file>
+        <file>qml/qmldir</file>
     </qresource>
 </RCC>

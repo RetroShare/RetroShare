@@ -20,6 +20,7 @@ import QtQuick 2.2
 import QtQuick.Controls 2.0
 import org.retroshare.qml_components.LibresapiLocalClient 1.0
 import "URI.js" as URI
+import "." //Needed for TokensManager singleton
 
 ApplicationWindow
 {
@@ -31,37 +32,10 @@ ApplicationWindow
 
 	property string pgp_name
 
-	property var tokens: ({})
-	function registerToken(token, callback)
-	{
-		if (Array.isArray(tokens[token])) tokens[token].push(callback)
-		else tokens[token] = [callback]
-	}
-	function tokenExpire(token)
-	{
-		if(Array.isArray(tokens[token]))
-		{
-			var arrLen = tokens[token].length
-			for(var i=0; i<arrLen; ++i)
-			{
-				var tokCallback = tokens[token][i]
-				if (typeof tokCallback == 'function')
-				{
-					console.log("event token", token, tokCallback)
-					tokCallback()
-				}
-			}
-		}
-
-		delete tokens[token]
-	}
-	function isTokenValid(token) { return Array.isArray(tokens[token]) }
-
 	function handleIntentUri(uriStr)
 	{
 		console.log("handleIntentUri", JSON.stringify(URI.parse(uriStr), null, 1))
 	}
-
 
 	header: ToolBar
 	{
@@ -197,43 +171,6 @@ ApplicationWindow
 				PropertyChanges { target: stackView; state: "running_ok" }
 			}
 		]
-	}
-
-	LibresapiLocalClient
-	{
-		id: refreshTokensApi
-
-		onResponseReceived:
-		{
-			var jsonData = JSON.parse(msg).data
-			var arrayLength = jsonData.length;
-			for (var i = 0; i < arrayLength; i++)
-				mainWindow.tokenExpire(jsonData[i])
-		}
-
-		Component.onCompleted:
-		{
-			if(QT_DEBUG) debug = false
-
-			openConnection(apiSocketPath)
-			refreshTokensTimer.start()
-		}
-
-		function refreshTokens()
-		{
-			var ret = request("/statetokenservice/*",
-							  '['+Object.keys(mainWindow.tokens)+']')
-			if(ret < 1) stackView.state = "core_down"
-		}
-	}
-
-	Timer
-	{
-		id: refreshTokensTimer
-		interval: 1500
-		repeat: true
-		triggeredOnStart: true
-		onTriggered: refreshTokensApi.refreshTokens()
 	}
 
 	Timer

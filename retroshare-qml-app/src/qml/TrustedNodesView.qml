@@ -20,6 +20,7 @@ import QtQuick 2.0
 import QtQuick.Controls 2.0
 import QtQuick.Dialogs 1.2
 import "jsonpath.js" as JSONPath
+import "." //Needed for TokensManager singleton
 
 Item
 {
@@ -33,7 +34,7 @@ Item
 	{
 		jsonModel.json = par.response
 		token = JSON.parse(par.response).statetoken
-		mainWindow.registerToken(token, refreshData)
+		TokensManager.registerToken(token, refreshData)
 	}
 	function refreshData()
 	{ if(visible) rsApi.request("/peers/*", "", refreshDataCallback) }

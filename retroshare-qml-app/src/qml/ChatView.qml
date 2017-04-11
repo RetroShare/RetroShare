@@ -19,6 +19,7 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.0
 import org.retroshare.qml_components.LibresapiLocalClient 1.0
+import "." //Needed for TokensManager singleton
 
 Item
 {
@@ -35,7 +36,7 @@ Item
 		{
 			chatModel.json = par.response
 			token = JSON.parse(par.response).statetoken
-			mainWindow.registerToken(token, refreshData)
+			TokensManager.registerToken(token, refreshData)
 
 			if(chatListView.visible)
 			{
