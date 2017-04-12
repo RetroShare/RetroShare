@@ -10,11 +10,17 @@ CONFIG += dll
 
 RESOURCES += qml.qrc
 
-android-g++:TEMPLATE = lib
-!android-g++:TEMPLATE = app
+TEMPLATE = app
+
+android-g++
+{
+    TEMPLATE = lib
+    QT += androidextras
+    HEADERS += notificationsbridge.h
+}
 
 HEADERS += libresapilocalclient.h
-SOURCES += libresapilocalclient.cpp notify.cpp
+SOURCES += libresapilocalclient.cpp main.cpp
 
 DEPENDPATH *= ../../libretroshare/src
 INCLUDEPATH *= ../../libretroshare/src

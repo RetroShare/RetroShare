@@ -27,6 +27,8 @@
 #endif
 
 #include "libresapilocalclient.h"
+#include "notificationsbridge.h"
+
 #include "retroshare/rsinit.h"
 
 
@@ -42,9 +44,13 @@ int main(int argc, char *argv[])
 	sockPath.append("/libresapi.sock");
 
 	QQmlApplicationEngine engine;
-	qmlRegisterType<LibresapiLocalClient>(
-	            "org.retroshare.qml_components.LibresapiLocalClient", 1, 0,
-	            "LibresapiLocalClient");
+
+	qmlRegisterType<NotificationsBridge>(
+	            "org.retroshare.qml_components.NotificationsBridge", 1, 0,
+	            "NotificationsBridge");
+	NotificationsBridge notificationsBridge;
+	engine.rootContext()->setContextProperty("notificationsBridge",
+	                                         &notificationsBridge);
 
 #ifdef QT_DEBUG
 	engine.rootContext()->setContextProperty("QT_DEBUG", true);
@@ -66,8 +72,12 @@ int main(int argc, char *argv[])
 
 	rsApi.openConnection(sockPath);
 
+	qmlRegisterType<LibresapiLocalClient>(
+	            "org.retroshare.qml_components.LibresapiLocalClient", 1, 0,
+	            "LibresapiLocalClient");
 	engine.rootContext()->setContextProperty("rsApi", &rsApi);
-	engine.load(QUrl(QLatin1String("qrc:/notify.qml")));
+
+	engine.load(QUrl(QLatin1String("qrc:/main.qml")));
 
 	return app.exec();
 }

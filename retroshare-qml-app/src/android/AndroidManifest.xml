@@ -5,9 +5,10 @@
           android:installLocation="auto">
     <application android:name="org.qtproject.qt5.android.bindings.QtApplication"
                  android:hardwareAccelerated="true"
-                 android:label="RetroShare">
+                 android:label="RetroShare"
+                 android:icon="@drawable/retroshare06_128x128">
         <activity android:name=".RetroShareQmlActivity"
-                  android:label="RetroShare QML"
+                  android:label="RetroShare"
                   android:configChanges="orientation|uiMode|screenLayout|screenSize|smallestScreenSize|layoutDirection|locale|fontScale|keyboard|keyboardHidden|navigation"
                   android:screenOrientation="unspecified"
                   android:launchMode="singleTask">

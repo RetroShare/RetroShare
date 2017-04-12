@@ -18,6 +18,40 @@
 
 package org.retroshare.android.qml_app;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
+
 import org.qtproject.qt5.android.bindings.QtService;
 
-public class RetroShareAndroidNotifyService extends QtService {}
+public class RetroShareAndroidNotifyService extends QtService
+{
+	@UsedByNativeCode @SuppressWarnings("unused")
+	public void notify(String title, String text, String uri)
+	{
+		Notification.Builder mBuilder = new Notification.Builder(this);
+		mBuilder.setSmallIcon(R.drawable.retroshare06_48x48)
+				.setContentTitle(title)
+				.setContentText(text)
+				.setAutoCancel(true);
+
+		Intent resultIntent = new Intent(this, RetroShareQmlActivity.class);
+		if(!uri.isEmpty()) resultIntent.setData(Uri.parse(uri));
+
+		TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+		stackBuilder.addParentStack(RetroShareQmlActivity.class);
+		stackBuilder.addNextIntent(resultIntent);
+		PendingIntent resultPendingIntent =
+				stackBuilder.getPendingIntent( 0,
+						PendingIntent.FLAG_UPDATE_CURRENT );
+
+		mBuilder.setContentIntent(resultPendingIntent);
+		NotificationManager mNotificationManager =
+				(NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
+		mNotificationManager.notify(0, mBuilder.build());
+	}
+}

@@ -25,21 +25,24 @@ QtObject
 	id: notifyRoot
 
 	property alias coreReady: coreWatcher.coreReady
-
-	property AutologinManager _aM: AutologinManager { id: coreWatcher }
-
 	onCoreReadyChanged: if(coreReady) refreshUnread()
+
+	property AutologinManager coreWatcher: AutologinManager { id: coreWatcher }
 
 	function refreshUnreadCallback(par)
 	{
 		console.log("notifyRoot.refreshUnreadCB()")
 		var json = JSON.parse(par.response)
 		TokensManager.registerToken(json.statetoken, refreshUnread)
-		if(json.data.length > 0)
+		var convCnt = json.data.length
+		if(convCnt > 0)
 		{
 			console.log("notifyRoot.refreshUnreadCB() got", json.data.length,
-						"unread messages")
-			//TODO: display android notification
+						"unread conversations")
+			notificationsBridge.notify(
+						qsTr("New message!"),
+						qsTr("Unread messages in %1 conversations").arg(convCnt)
+						)
 		}
 	}
 	function refreshUnread()
