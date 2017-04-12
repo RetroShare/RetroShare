@@ -31,6 +31,8 @@ QtObject
 	property int loginAttemptCount: 0
 	property bool attemptingLogin: false
 
+	property int loginNotificationTime: 0
+
 	function delay(msecs, func)
 	{
 		var tmr = Qt.createQmlObject("import QtQml 2.2; Timer {}", am);
@@ -74,6 +76,14 @@ QtObject
 			coreReady = false
 			if(!attemptingLogin && loginAttemptCount < 5)
 				rsApi.request("/control/locations/", "", requestLocationsListCB)
+			else if (loginAttemptCount >= 5 &&
+					 /* Avoid flooding non logged in with login requests, wait
+					  * at least 1 hour before notifying the user again */
+					 Date.now() - loginNotificationTime > 3600000)
+			{
+				notificationsBridge.notify(qsTr("Login needed"))
+				loginNotificationTime = Date.now()
+			}
 			break
 		case "waiting_startup":
 			coreReady = false
