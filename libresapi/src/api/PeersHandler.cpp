@@ -119,6 +119,8 @@ PeersHandler::PeersHandler(StateTokenServer* sts, RsNotify* notify, RsPeers *pee
 	addResourceHandler("set_state_string", this, &PeersHandler::handleSetStateString);
 	addResourceHandler("get_custom_state_string", this, &PeersHandler::handleGetCustomStateString);
 	addResourceHandler("set_custom_state_string", this, &PeersHandler::handleSetCustomStateString);
+	addResourceHandler("get_pgp_options", this, &PeersHandler::handleGetPGPOptions);
+	addResourceHandler("set_pgp_options", this, &PeersHandler::handleSetPGPOptions);
 	addResourceHandler("examine_cert", this, &PeersHandler::handleExamineCert);
 }
 
@@ -527,6 +529,120 @@ void PeersHandler::handleExamineCert(Request &req, Response &resp)
     {
         resp.setFail("failed to load certificate");
     }
+}
+
+void PeersHandler::handleGetPGPOptions(Request& req, Response& resp)
+{
+	std::string pgp_id;
+	req.mStream << makeKeyValueReference("pgp_id", pgp_id);
+
+	RsPgpId pgp(pgp_id);
+	RsPeerDetails detail;
+
+	if(!rsPeers->getGPGDetails(pgp, detail))
+	{
+		resp.setFail();
+		return;
+	}
+
+	std::string pgp_key = rsPeers->getPGPKey(detail.gpg_id, false);
+
+	resp.mDataStream << makeKeyValue("pgp_fingerprint", detail.fpr.toStdString());
+	resp.mDataStream << makeKeyValueReference("pgp_key", pgp_key);
+
+	resp.mDataStream << makeKeyValue("direct_transfer", detail.service_perm_flags & RS_NODE_PERM_DIRECT_DL);
+	resp.mDataStream << makeKeyValue("allow_push", detail.service_perm_flags & RS_NODE_PERM_ALLOW_PUSH);
+	resp.mDataStream << makeKeyValue("require_WL", detail.service_perm_flags & RS_NODE_PERM_REQUIRE_WL);
+
+	resp.mDataStream << makeKeyValue("own_sign", detail.ownsign);
+	resp.mDataStream << makeKeyValue("trustLvl", detail.trustLvl);
+
+	uint32_t max_upload_speed = 0;
+	uint32_t max_download_speed = 0;
+
+	rsPeers->getPeerMaximumRates(pgp, max_upload_speed, max_download_speed);
+
+	resp.mDataStream << makeKeyValueReference("maxUploadSpeed", max_upload_speed);
+	resp.mDataStream << makeKeyValueReference("maxDownloadSpeed", max_download_speed);
+
+	StreamBase& signersStream = resp.mDataStream.getStreamToMember("gpg_signers");
+
+	// mark as list (in case list is empty)
+	signersStream.getStreamToMember();
+
+	for(std::list<RsPgpId>::const_iterator it(detail.gpgSigners.begin()); it != detail.gpgSigners.end(); ++it)
+	{
+		RsPeerDetails detail;
+		if(!rsPeers->getGPGDetails(*it, detail))
+			continue;
+
+		std::string pgp_id = (*it).toStdString();
+		std::string name = detail.name;
+
+		signersStream.getStreamToMember()
+		    << makeKeyValueReference("pgp_id", pgp_id)
+		    << makeKeyValueReference("name", name);
+	}
+
+	resp.setOk();
+}
+
+void PeersHandler::handleSetPGPOptions(Request& req, Response& resp)
+{
+	std::string pgp_id;
+	req.mStream << makeKeyValueReference("pgp_id", pgp_id);
+
+	RsPgpId pgp(pgp_id);
+	RsPeerDetails detail;
+
+	if(!rsPeers->getGPGDetails(pgp, detail))
+	{
+		resp.setFail();
+		return;
+	}
+
+	int trustLvl;
+	req.mStream << makeKeyValueReference("trustLvl", trustLvl);
+
+	if(trustLvl != (int)detail.trustLvl)
+		rsPeers->trustGPGCertificate(pgp, trustLvl);
+
+	int max_upload_speed;
+	int max_download_speed;
+
+	req.mStream << makeKeyValueReference("max_upload_speed", max_upload_speed);
+	req.mStream << makeKeyValueReference("max_download_speed", max_download_speed);
+
+	rsPeers->setPeerMaximumRates(pgp, (uint32_t)max_upload_speed, (uint32_t)max_download_speed);
+
+	bool direct_transfer;
+	bool allow_push;
+	bool require_WL;
+
+	req.mStream << makeKeyValueReference("direct_transfer", direct_transfer);
+	req.mStream << makeKeyValueReference("allow_push", allow_push);
+	req.mStream << makeKeyValueReference("require_WL", require_WL);
+
+	ServicePermissionFlags flags(0);
+
+	if(direct_transfer)
+		flags = flags | RS_NODE_PERM_DIRECT_DL;
+	if(allow_push)
+		flags = flags | RS_NODE_PERM_ALLOW_PUSH;
+	if(require_WL)
+		flags = flags | RS_NODE_PERM_REQUIRE_WL;
+
+	rsPeers->setServicePermissionFlags(pgp, flags);
+
+	bool own_sign;
+	req.mStream << makeKeyValueReference("own_sign", own_sign);
+
+	if(own_sign)
+		rsPeers->signGPGCertificate(pgp);
+
+	resp.mStateToken = getCurrentStateToken();
+
+	resp.setOk();
 }
 
 StateToken PeersHandler::getCurrentStateToken()

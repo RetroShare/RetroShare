@@ -41,6 +41,9 @@ private:
 	void handleGetCustomStateString(Request& req, Response& resp);
 	void handleSetCustomStateString(Request& req, Response& resp);
 
+	void handleGetPGPOptions(Request& req, Response& resp);
+	void handleSetPGPOptions(Request& req, Response& resp);
+
     // a helper which ensures proper mutex locking
     StateToken getCurrentStateToken();
 
