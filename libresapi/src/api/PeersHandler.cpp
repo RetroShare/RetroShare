@@ -539,13 +539,13 @@ void PeersHandler::handleGetPGPOptions(Request& req, Response& resp)
 	RsPgpId pgp(pgp_id);
 	RsPeerDetails detail;
 
-	if(!rsPeers->getGPGDetails(pgp, detail))
+	if(!mRsPeers->getGPGDetails(pgp, detail))
 	{
 		resp.setFail();
 		return;
 	}
 
-	std::string pgp_key = rsPeers->getPGPKey(detail.gpg_id, false);
+	std::string pgp_key = mRsPeers->getPGPKey(detail.gpg_id, false);
 
 	resp.mDataStream << makeKeyValue("pgp_fingerprint", detail.fpr.toStdString());
 	resp.mDataStream << makeKeyValueReference("pgp_key", pgp_key);
@@ -560,7 +560,7 @@ void PeersHandler::handleGetPGPOptions(Request& req, Response& resp)
 	uint32_t max_upload_speed = 0;
 	uint32_t max_download_speed = 0;
 
-	rsPeers->getPeerMaximumRates(pgp, max_upload_speed, max_download_speed);
+	mRsPeers->getPeerMaximumRates(pgp, max_upload_speed, max_download_speed);
 
 	resp.mDataStream << makeKeyValueReference("maxUploadSpeed", max_upload_speed);
 	resp.mDataStream << makeKeyValueReference("maxDownloadSpeed", max_download_speed);
@@ -573,7 +573,7 @@ void PeersHandler::handleGetPGPOptions(Request& req, Response& resp)
 	for(std::list<RsPgpId>::const_iterator it(detail.gpgSigners.begin()); it != detail.gpgSigners.end(); ++it)
 	{
 		RsPeerDetails detail;
-		if(!rsPeers->getGPGDetails(*it, detail))
+		if(!mRsPeers->getGPGDetails(*it, detail))
 			continue;
 
 		std::string pgp_id = (*it).toStdString();
@@ -595,7 +595,7 @@ void PeersHandler::handleSetPGPOptions(Request& req, Response& resp)
 	RsPgpId pgp(pgp_id);
 	RsPeerDetails detail;
 
-	if(!rsPeers->getGPGDetails(pgp, detail))
+	if(!mRsPeers->getGPGDetails(pgp, detail))
 	{
 		resp.setFail();
 		return;
@@ -605,7 +605,7 @@ void PeersHandler::handleSetPGPOptions(Request& req, Response& resp)
 	req.mStream << makeKeyValueReference("trustLvl", trustLvl);
 
 	if(trustLvl != (int)detail.trustLvl)
-		rsPeers->trustGPGCertificate(pgp, trustLvl);
+		mRsPeers->trustGPGCertificate(pgp, trustLvl);
 
 	int max_upload_speed;
 	int max_download_speed;
@@ -613,7 +613,7 @@ void PeersHandler::handleSetPGPOptions(Request& req, Response& resp)
 	req.mStream << makeKeyValueReference("max_upload_speed", max_upload_speed);
 	req.mStream << makeKeyValueReference("max_download_speed", max_download_speed);
 
-	rsPeers->setPeerMaximumRates(pgp, (uint32_t)max_upload_speed, (uint32_t)max_download_speed);
+	mRsPeers->setPeerMaximumRates(pgp, (uint32_t)max_upload_speed, (uint32_t)max_download_speed);
 
 	bool direct_transfer;
 	bool allow_push;
@@ -632,13 +632,13 @@ void PeersHandler::handleSetPGPOptions(Request& req, Response& resp)
 	if(require_WL)
 		flags = flags | RS_NODE_PERM_REQUIRE_WL;
 
-	rsPeers->setServicePermissionFlags(pgp, flags);
+	mRsPeers->setServicePermissionFlags(pgp, flags);
 
 	bool own_sign;
 	req.mStream << makeKeyValueReference("own_sign", own_sign);
 
 	if(own_sign)
-		rsPeers->signGPGCertificate(pgp);
+		mRsPeers->signGPGCertificate(pgp);
 
 	resp.mStateToken = getCurrentStateToken();
 
