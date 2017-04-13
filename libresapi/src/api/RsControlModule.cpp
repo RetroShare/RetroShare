@@ -24,7 +24,9 @@ RsControlModule::RsControlModule(int argc, char **argv, StateTokenServer* sts, A
     mDataMtx("RsControlModule::mDataMtx"),
     mRunState(WAITING_INIT),
     mAutoLoginNextTime(false),
-    mWantPassword(false)
+    mWantPassword(false),
+    mPassword(""),
+    mPrevIsBad(false)
 {
     mStateToken = sts->getNewToken();
     this->argc = argc;
@@ -56,13 +58,16 @@ bool RsControlModule::processShouldExit()
     return mProcessShouldExit;
 }
 
-bool RsControlModule::askForPassword(const std::string &title, const std::string &key_details, bool /* prev_is_bad */, std::string &password, bool& cancelled)
+bool RsControlModule::askForPassword(const std::string &title, const std::string &key_details, bool prev_is_bad, std::string &password, bool& cancelled)
 {
 	cancelled = false ;
     {
 		RS_STACK_MUTEX(mDataMtx); // ********** LOCKED **********
+
+		mPrevIsBad = prev_is_bad;
+
         if(mFixedPassword != "")
-        {
+		{
             password = mFixedPassword;
             return true;
         }
@@ -70,25 +75,31 @@ bool RsControlModule::askForPassword(const std::string &title, const std::string
         mWantPassword = true;
         mTitle = title;
         mKeyName = key_details;
-        mPassword = "";
+
+		if(mPassword != "")
+		{
+			password = mPassword;
+			mWantPassword = false;
+			return true;
+		}
+
         mStateTokenServer->replaceToken(mStateToken);
     }
 
-    bool wait = true;
-    while(wait)
+	int i = 0;
+	while(i<100)
     {
         usleep(5*1000);
-
 		RS_STACK_MUTEX(mDataMtx); // ********** LOCKED **********
-        wait = mWantPassword;
-        if(!wait && mPassword != "")
+
+		if(mPassword != "")
         {
-            password = mPassword;
-            mPassword = "";
+			password = mPassword;
             mWantPassword = false;
             mStateTokenServer->replaceToken(mStateToken);
             return true;
         }
+		i++;
     }
     return false;
 }
@@ -125,6 +136,11 @@ void RsControlModule::run()
     bool login_ok = false;
     while(!login_ok)
     {
+		{
+			RsStackMutex stack(mDataMtx); // ********** LOCKED **********
+			mPassword = "";
+		}
+
         // skip account selection if autologin is available
         if(initResult != RS_INIT_HAVE_ACCOUNT)
             setRunState(WAITING_ACCOUNT_SELECT);
@@ -175,7 +191,18 @@ void RsControlModule::run()
             std::cerr << "RsControlModule::run() LockAndLoadCertificates failed. Unexpected switch value: " << retVal << std::endl;
             break;
         }
+
+		{
+			RsStackMutex stack(mDataMtx); // ********** LOCKED **********
+			mLoadPeerId.clear();
+		}
     }
+
+	{
+		RsStackMutex stack(mDataMtx); // ********** LOCKED **********
+		mFixedPassword = mPassword;
+		mPassword = "";
+	}
 
     setRunState(WAITING_STARTUP);
 
@@ -302,12 +329,12 @@ void RsControlModule::handlePassword(Request &req, Response &resp)
         mPassword = passwd;
         mWantPassword = false;
         mStateTokenServer->replaceToken(mStateToken);
-		mFixedPassword = passwd;
     }
 
     resp.mDataStream
             << makeKeyValueReference("want_password", mWantPassword)
-            << makeKeyValueReference("key_name", mKeyName);
+	        << makeKeyValueReference("key_name", mKeyName)
+	        << makeKeyValueReference("prev_is_bad", mPrevIsBad);
     resp.mStateToken = mStateToken;
     resp.setOk();
 }
