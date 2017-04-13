@@ -37,7 +37,7 @@ Item
 	WorkerScript
 	{
 		id: contactsSortWorker
-		source: "qrc:/qml/ContactSort.js"
+		source: "qrc:/ContactSort.js"
 		onMessage: contactsListModel.json = JSON.stringify(messageObject)
 	}
 
@@ -110,7 +110,7 @@ Item
 	function startChatCallback(par)
 	{
 		var chId = JSON.parse(par.response).data.chat_id
-		stackView.push("qrc:/qml/ChatView.qml", {'chatId': chId})
+		stackView.push("qrc:/ChatView.qml", {'chatId': chId})
 	}
 
 
@@ -154,7 +154,7 @@ Item
 			height: searchText.height - 4
 			width: searchText.height - 4
 			anchors.verticalCenter: parent.verticalCenter
-			source: "qrc:/qml/icons/edit-find.png"
+			source: "qrc:/icons/edit-find.png"
 		}
 
 		TextField

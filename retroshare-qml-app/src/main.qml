@@ -19,7 +19,7 @@
 import QtQuick 2.2
 import QtQuick.Controls 2.0
 import org.retroshare.qml_components.LibresapiLocalClient 1.0
-import "URI.js" as URI
+import "URI.js" as UriJs
 import "." //Needed for TokensManager singleton
 
 ApplicationWindow
@@ -32,10 +32,14 @@ ApplicationWindow
 
 	property string pgp_name
 
-	function handleIntentUri(uriStr)
-	{
-		console.log("handleIntentUri", JSON.stringify(URI.parse(uriStr), null, 1))
-	}
+	property bool coreReady: stackView.state === "running_ok" ||
+							 stackView.state === "running_ok_no_full_control"
+
+	Component.onCompleted: addUriHandler("/certificate", certificateLinkHandler)
+
+	property var uriHandlersRegister: ({})
+	function addUriHandler(path, fun) { uriHandlersRegister[path] = fun }
+	function delUriHandler(path, fun) { delete uriHandlersRegister[path] }
 
 	header: ToolBar
 	{
@@ -68,7 +72,7 @@ ApplicationWindow
 
 			Image
 			{
-				source: "qrc:/qml/icons/application-menu.png"
+				source: "qrc:/icons/application-menu.png"
 				height: parent.height - 10
 				width: parent.height - 10
 				anchors.centerIn: parent
@@ -82,15 +86,30 @@ ApplicationWindow
 				MenuItem
 				{
 					text: qsTr("Trusted Nodes")
-					//iconSource: "qrc:/qml/icons/document-share.png"
-					onTriggered: stackView.push("qrc:/qml/TrustedNodesView.qml")
+					//iconSource: "qrc:/icons/document-share.png"
+					onTriggered: stackView.push("qrc:/TrustedNodesView.qml")
+					enabled: mainWindow.coreReady
 				}
 				MenuItem
 				{
 					text: qsTr("Search Contacts")
 					onTriggered:
-						stackView.push("qrc:/qml/Contacts.qml",
+						stackView.push("qrc:/Contacts.qml",
 									   {'searching': true} )
+					enabled: mainWindow.coreReady
+				}
+				MenuItem
+				{
+					text: "Paste Link"
+					onTriggered:
+					{
+						clipboardWrap.selectAll()
+						clipboardWrap.paste()
+						handleIntentUri(clipboardWrap.text)
+					}
+					enabled: mainWindow.coreReady
+
+					TextField { id: clipboardWrap; visible: false }
 				}
 				MenuItem
 				{
@@ -131,7 +150,7 @@ ApplicationWindow
 					{
 						console.log("StateChangeScript waiting_account_select")
 						stackView.clear()
-						stackView.push("qrc:/qml/Locations.qml")
+						stackView.push("qrc:/Locations.qml")
 					}
 				}
 			},
@@ -145,7 +164,7 @@ ApplicationWindow
 					{
 						console.log("StateChangeScript waiting_startup")
 						stackView.clear()
-						stackView.push("qrc:/qml/BusyOverlay.qml",
+						stackView.push("qrc:/BusyOverlay.qml",
 									   { message: "Core initializing..."})
 					}
 				}
@@ -161,7 +180,7 @@ ApplicationWindow
 						console.log("StateChangeScript running_ok")
 						coreStateCheckTimer.stop()
 						stackView.clear()
-						stackView.push("qrc:/qml/Contacts.qml")
+						stackView.push("qrc:/Contacts.qml")
 					}
 				}
 			},
@@ -200,6 +219,82 @@ ApplicationWindow
 				stackView.state = "core_down"
 				console.log("runStateCallback(...) core is down")
 			}
+		}
+	}
+
+	function handleIntentUri(uriStr)
+	{
+		console.log("handleIntentUri(uriStr)")
+
+		if(!Array.isArray(uriStr.match(/:\/\/[a-zA-Z.-]*\//g)))
+		{
+			/* RetroShare GUI produces links without hostname and only two
+			 * slashes after scheme causing the first piece of the path part
+			 * being interpreted as host, this is awckard and should be fixed in
+			 * the GUI, in the meantime we add a slash for easier parsing, in
+			 * case there is no hostname and just two slashes, we might consider
+			 * to use +hostname+ part for some trick in the future, for example
+			 * it could help other application to recognize retroshare link by
+			 * putting a domain name there that has no meaning for retroshare
+			 */
+			uriStr = uriStr.replace("://", ":///")
+		}
+
+		var uri = new UriJs.URI(uriStr)
+		var hPath = uri.path() // no nesting ATM segmentCoded()
+		console.log(hPath)
+
+		if(typeof uriHandlersRegister[hPath] == "function")
+		{
+			console.log("handleIntentUri(uriStr)", "found handler for path",
+						hPath, uriHandlersRegister[hPath])
+			uriHandlersRegister[hPath](uriStr)
+		}
+	}
+
+	function certificateLinkHandler(uriStr)
+	{
+		console.log("certificateLinkHandler(uriStr)", coreReady)
+
+		if(!coreReady) return
+
+		var uri = new UriJs.URI(uriStr)
+		var uQuery = uri.search(true)
+		if(uQuery.radix)
+		{
+			console.log("/peers/examine_cert/")
+			console.log("uriStr", uriStr)
+
+			var certStr = UriJs.URI.decode(uQuery.radix)
+
+			// Workaround https://github.com/RetroShare/RetroShare/issues/772
+			certStr = certStr.replace(/ /g, "+")
+
+			console.log("certStr", certStr)
+			console.log("JSON.stringify(..)",
+						JSON.stringify({cert_string: certStr}, null, 1))
+			rsApi.request(
+						"/peers/examine_cert/",
+						JSON.stringify({cert_string: certStr}),
+						function(par)
+						{
+							console.log("/peers/examine_cert/ CB", par)
+							var jData = JSON.parse(par.response).data
+							stackView.push(
+										"qrc:/TrustedNodeDetails.qml",
+										{
+											nodeCert: certStr,
+											pgpName: jData.name,
+											pgpId: jData.pgp_id,
+											locations:
+												[{
+													location: jData.location,
+													peer_id: jData.peer_id
+												}]
+										}
+										)
+						}
+						)
 		}
 	}
 }

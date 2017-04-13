@@ -47,7 +47,7 @@ Item
 				target: loginView
 				visible: true
 				buttonText: qsTr("Save")
-				iconUrl: "qrc:/qml/icons/edit-image-face-detect.png"
+				iconUrl: "qrc:/icons/edit-image-face-detect.png"
 				suggestionText: qsTr("Create your profile")
 				onSubmit:
 				{

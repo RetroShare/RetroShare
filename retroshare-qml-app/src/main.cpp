@@ -53,7 +53,7 @@ int main(int argc, char *argv[])
 
 	engine.rootContext()->setContextProperty("apiSocketPath", sockPath);
 	engine.rootContext()->setContextProperty("rsApi", &rsApi);
-	engine.load(QUrl(QLatin1String("qrc:/qml/main.qml")));
+	engine.load(QUrl(QLatin1String("qrc:/main.qml")));
 
 	return app.exec();
 }

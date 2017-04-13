@@ -16,9 +16,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import QtQuick 2.0
+import QtQuick 2.7
 import QtQuick.Controls 2.0
-import QtQuick.Dialogs 1.2
 import "jsonpath.js" as JSONPath
 import "." //Needed for TokensManager singleton
 
@@ -28,7 +27,7 @@ Item
 	property int token: 0
 
 	Component.onCompleted: refreshData()
-	onFocusChanged: focus && refreshData()
+	onVisibleChanged: visible && refreshData()
 
 	function refreshDataCallback(par)
 	{
@@ -51,6 +50,12 @@ Item
 			if (Array.isArray(locOn))
 				return locOn.reduce(function(cur,acc){return cur || acc}, false)
 			return Boolean(locOn)
+		}
+
+		function getLocations(pgpId)
+		{
+			var qr = "$.data[?(@.pgp_id=='"+pgpId+"')].locations"
+			return JSONPath.jsonPath(JSON.parse(jsonModel.json), qr)
 		}
 	}
 
@@ -85,62 +90,31 @@ Item
 				anchors.left: statusImage.right
 				anchors.leftMargin: 10
 			}
-			Image
+			MouseArea
 			{
-				source: "icons/remove-link.png"
-
-				height: parent.height - 6
-				fillMode: Image.PreserveAspectFit
-
-				anchors.right: parent.right
-				anchors.rightMargin: 2
-				anchors.verticalCenter: parent.verticalCenter
-
-				MouseArea
+				anchors.fill: parent
+				onClicked:
 				{
-					height: parent.height
-					width: parent.width
-					onClicked:
-					{
-						deleteDialog.nodeName = model.name
-						deleteDialog.nodeId = model.pgp_id
-						deleteDialog.visible = true
-					}
+					stackView.push(
+								"qrc:/TrustedNodeDetails.qml",
+								{
+									pgpName: model.name,
+									pgpId: model.pgp_id,
+									locations: jsonModel.getLocations(
+												   model.pgp_id)
+								}
+								)
 				}
 			}
-		}
-	}
-
-	Dialog
-	{
-		id: deleteDialog
-		property string nodeName
-		property string nodeId
-		standardButtons: StandardButton.Yes | StandardButton.No
-		visible: false
-		onYes:
-		{
-			rsApi.request("/peers/"+nodeId+"/delete")
-			trustedNodesView.refreshData()
-			trustedNodesView.forceActiveFocus()
-		}
-		onNo: trustedNodesView.forceActiveFocus()
-		Text
-		{
-			text: "Are you sure to delete " + deleteDialog.nodeName + " ("+
-				  deleteDialog.nodeId +") ?"
-
-			width: parent.width - 2
-			wrapMode: Text.Wrap
 		}
 	}
 
 	Button
 	{
 		id: bottomButton
-		text: "Add Trusted Node"
+		text: qsTr("Add Trusted Node")
 		anchors.bottom: parent.bottom
-		onClicked: stackView.push("qrc:/qml/AddTrustedNode.qml")
+		onClicked: stackView.push("qrc:/AddTrustedNode.qml")
 		width: parent.width
 	}
 }

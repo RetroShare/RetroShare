@@ -24,7 +24,7 @@ Item
 {
 	id: loginView
 	property string buttonText: qsTr("Unlock")
-	property string iconUrl: "qrc:/qml/icons/emblem-locked.png"
+	property string iconUrl: "qrc:/icons/emblem-locked.png"
 	property string login
 	property bool loginPreset: false
 	property bool advancedMode: false

@@ -35,20 +35,25 @@ Item
 			text: "Add trusted node"
 			onClicked:
 			{
-				console.log("retroshare addtrusted: ", otherKeyField.text)
-				var jsonData =
-				{
-					cert_string: otherKeyField.text,
-					flags:
-					{
-						allow_direct_download: true,
-						allow_push: false,
-						require_whitelist: false,
-					}
-				}
-				console.log("retroshare addtrusted jsonData: ", JSON.stringify(jsonData))
-				//rsApi.request("/peers/examine_cert/", JSON.stringify({ cert_string: otherKeyField.text }))
-				rsApi.request("PUT /peers", JSON.stringify(jsonData))
+				rsApi.request(
+							"/peers/examine_cert/",
+							JSON.stringify({cert_string: otherKeyField.text}),
+							function(par)
+							{
+								console.log("/peers/examine_cert/ CB", par)
+								var jData = JSON.parse(par.response).data
+								stackView.push(
+											"qrc:/TrustedNodeDetails.qml",
+											{
+												nodeCert: otherKeyField.text,
+												pgpName: jData.name,
+												pgpId: jData.pgp_id,
+												locationName: jData.location,
+												sslIdTxt: jData.peer_id
+											}
+											)
+							}
+							)
 			}
 		}
 

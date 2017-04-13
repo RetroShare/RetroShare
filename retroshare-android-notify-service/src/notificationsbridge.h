@@ -17,11 +17,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QtAndroidExtras/QAndroidJniObject>
 #include <QObject>
 #include <QString>
-#include <QtAndroid>
 #include <QDebug>
+
+#ifdef __ANDROID__
+    #include <QtAndroid>
+    #include <QtAndroidExtras/QAndroidJniObject>
+#endif // __ANDROID__
 
 struct NotificationsBridge : QObject
 {
@@ -33,6 +36,7 @@ public slots:
 	{
 		qDebug() << __PRETTY_FUNCTION__ << title << text << uri;
 
+#ifdef __ANDROID__
 		QtAndroid::androidService().callMethod<void>(
 		            "notify",
 		            "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V",
@@ -40,5 +44,6 @@ public slots:
 		            QAndroidJniObject::fromString(text).object(),
 		            QAndroidJniObject::fromString(uri).object()
 		            );
+#endif // __ANDROID__
 	}
 };

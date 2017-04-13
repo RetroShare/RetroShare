@@ -54,7 +54,7 @@ Item
 
 			Image
 			{
-				source: "qrc:/qml/icons/edit-image-face-detect.png"
+				source: "qrc:/icons/edit-image-face-detect.png"
 				anchors.fill: parent
 			}
 

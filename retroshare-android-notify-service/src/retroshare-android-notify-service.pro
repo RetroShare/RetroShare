@@ -12,14 +12,12 @@ RESOURCES += qml.qrc
 
 TEMPLATE = app
 
-android-g++
-{
+android-g++ {
     TEMPLATE = lib
     QT += androidextras
-    HEADERS += notificationsbridge.h
 }
 
-HEADERS += libresapilocalclient.h
+HEADERS += libresapilocalclient.h notificationsbridge.h
 SOURCES += libresapilocalclient.cpp main.cpp
 
 DEPENDPATH *= ../../libretroshare/src

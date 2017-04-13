@@ -41,7 +41,10 @@ QtObject
 						"unread conversations")
 			notificationsBridge.notify(
 						qsTr("New message!"),
-						qsTr("Unread messages in %1 conversations").arg(convCnt)
+						qsTr("Unread messages in %1 %2").arg(convCnt).arg(
+							convCnt > 1 ?
+							qsTr("conversations") : qsTr("conversation")
+							)
 						)
 		}
 	}
