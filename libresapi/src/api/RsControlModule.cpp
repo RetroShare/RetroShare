@@ -136,7 +136,11 @@ void RsControlModule::run()
     bool login_ok = false;
     while(!login_ok)
     {
-		mPassword = "";
+		{
+			RsStackMutex stack(mDataMtx); // ********** LOCKED **********
+			mPassword = "";
+		}
+
         // skip account selection if autologin is available
         if(initResult != RS_INIT_HAVE_ACCOUNT)
             setRunState(WAITING_ACCOUNT_SELECT);
@@ -188,11 +192,17 @@ void RsControlModule::run()
             break;
         }
 
-		mLoadPeerId.clear();
+		{
+			RsStackMutex stack(mDataMtx); // ********** LOCKED **********
+			mLoadPeerId.clear();
+		}
     }
 
-	mFixedPassword = mPassword;
-	mPassword = "";
+	{
+		RsStackMutex stack(mDataMtx); // ********** LOCKED **********
+		mFixedPassword = mPassword;
+		mPassword = "";
+	}
 
     setRunState(WAITING_STARTUP);
 
