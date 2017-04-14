@@ -95,6 +95,37 @@ protected:
     }
 };
 
+class DeleteIdentityTask : public GxsResponseTask
+{
+public:
+	DeleteIdentityTask(RsIdentity* idservice) :
+	    GxsResponseTask(idservice, idservice->getTokenService()),
+	    mToken(0),
+	    mRsIdentity(idservice)
+	{}
+
+protected:
+	virtual void gxsDoWork(Request &req, Response &resp)
+	{
+		RsGxsIdGroup group;
+		std::string gxs_id;
+
+		req.mStream << makeKeyValueReference("gxs_id", gxs_id);
+		group.mMeta.mGroupId = RsGxsGroupId(gxs_id);
+
+		mRsIdentity->deleteIdentity(mToken, group);
+		addWaitingToken(mToken);
+
+		done();
+		return;
+	}
+
+private:
+	uint32_t mToken;
+	RsIdentity* mRsIdentity;
+	RsGxsId mId;
+};
+
 IdentityHandler::IdentityHandler(StateTokenServer *sts, RsNotify *notify, RsIdentity *identity):
     mStateTokenServer(sts), mNotify(notify), mRsIdentity(identity),
     mMtx("IdentityHandler Mtx"), mStateToken(sts->getNewToken())
@@ -107,7 +138,8 @@ IdentityHandler::IdentityHandler(StateTokenServer *sts, RsNotify *notify, RsIden
 	addResourceHandler("own_ids", this, &IdentityHandler::handleOwnIdsRequest);
 	addResourceHandler("notown_ids", this, &IdentityHandler::handleNotOwnIdsRequest);
 
-    addResourceHandler("create_identity", this, &IdentityHandler::handleCreateIdentity);	
+	addResourceHandler("create_identity", this, &IdentityHandler::handleCreateIdentity);
+	addResourceHandler("delete_identity", this, &IdentityHandler::handleDeleteIdentity);
 }
 
 IdentityHandler::~IdentityHandler()
@@ -300,6 +332,11 @@ ResponseTask* IdentityHandler::handleOwn(Request & /* req */, Response &resp)
 ResponseTask* IdentityHandler::handleCreateIdentity(Request & /* req */, Response & /* resp */)
 {
     return new CreateIdentityTask(mRsIdentity);
+}
+
+ResponseTask* IdentityHandler::handleDeleteIdentity(Request& req, Response& resp)
+{
+	return new DeleteIdentityTask(mRsIdentity);
 }
 
 } // namespace resource_api

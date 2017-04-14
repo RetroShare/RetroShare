@@ -28,6 +28,7 @@ private:
 
     ResponseTask *handleOwn(Request& req, Response& resp);
     ResponseTask *handleCreateIdentity(Request& req, Response& resp);
+	ResponseTask *handleDeleteIdentity(Request& req, Response& resp);
 
     StateTokenServer* mStateTokenServer;
     RsNotify* mNotify;
