@@ -6,6 +6,8 @@
 #include "rsturtleitem.h"
 #include "turtleclientservice.h"
 
+#include "serialization/rstypeserializer.h"
+
 //#define P3TURTLE_DEBUG
 // -----------------------------------------------------------------------------------//
 // --------------------------------  Serialization. --------------------------------- // 
@@ -16,6 +18,7 @@
 // ---------------------------------- Packet sizes -----------------------------------//
 //
 
+#ifdef TO_REMOVE
 uint32_t RsTurtleStringSearchRequestItem::serial_size() const
 {
 	uint32_t s = 0 ;
@@ -102,19 +105,13 @@ uint32_t RsTurtleGenericDataItem::serial_size() const
 
 	return s ;
 }
+#endif
 //
 // ---------------------------------- Serialization ----------------------------------//
 //
-RsItem *RsTurtleSerialiser::deserialise(void *data, uint32_t *size) 
+RsItem *RsTurtleSerialiser::create_item(uint16_t service,uint8_t item_subtype)
 {
-	// look what we have...
-	
-	/* get the type */
-	uint32_t rstype = getRsItemId(data);
-#ifdef P3TURTLE_DEBUG
-	std::cerr << "p3turtle: deserialising packet: " << std::endl ;
-#endif
-	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) || (RS_SERVICE_TYPE_TURTLE != getRsItemService(rstype))) 
+	if (RS_SERVICE_TYPE_TURTLE != service)
 	{
 #ifdef P3TURTLE_DEBUG
 		std::cerr << "  Wrong type !!" << std::endl ;
@@ -122,43 +119,38 @@ RsItem *RsTurtleSerialiser::deserialise(void *data, uint32_t *size)
 		return NULL; /* wrong type */
 	}
 
-#ifndef WINDOWS_SYS
-	try
+	switch(getRsItemSubType(item_subtype))
 	{
-#endif
-		switch(getRsItemSubType(rstype))
-		{
-			case RS_TURTLE_SUBTYPE_STRING_SEARCH_REQUEST	:	return new RsTurtleStringSearchRequestItem(data,*size) ;
-			case RS_TURTLE_SUBTYPE_REGEXP_SEARCH_REQUEST	:	return new RsTurtleRegExpSearchRequestItem(data,*size) ;
-			case RS_TURTLE_SUBTYPE_SEARCH_RESULT			:	return new RsTurtleSearchResultItem(data,*size) ;
-			case RS_TURTLE_SUBTYPE_OPEN_TUNNEL  			:	return new RsTurtleOpenTunnelItem(data,*size) ;
-			case RS_TURTLE_SUBTYPE_TUNNEL_OK    			:	return new RsTurtleTunnelOkItem(data,*size) ;
-			case RS_TURTLE_SUBTYPE_GENERIC_DATA 			:	return new RsTurtleGenericDataItem(data,*size) ;
-																			
-			default:
-																			break ;
-		}
-		// now try all client services
-		//
-		RsItem *item = NULL ;
+	case RS_TURTLE_SUBTYPE_STRING_SEARCH_REQUEST	:	return new RsTurtleStringSearchRequestItem();
+	case RS_TURTLE_SUBTYPE_REGEXP_SEARCH_REQUEST	:	return new RsTurtleRegExpSearchRequestItem();
+	case RS_TURTLE_SUBTYPE_SEARCH_RESULT			:	return new RsTurtleSearchResultItem();
+	case RS_TURTLE_SUBTYPE_OPEN_TUNNEL  			:	return new RsTurtleOpenTunnelItem();
+	case RS_TURTLE_SUBTYPE_TUNNEL_OK    			:	return new RsTurtleTunnelOkItem();
+	case RS_TURTLE_SUBTYPE_GENERIC_DATA 			:	return new RsTurtleGenericDataItem();
 
-		for(uint32_t i=0;i<_client_services.size();++i)
-			if((item = _client_services[i]->deserialiseItem(data,*size)) != NULL)
-				return item ;
-
-		std::cerr << "Unknown packet type in RsTurtle (not even handled by client services)!" << std::endl ;
-		return NULL ;
-#ifndef WINDOWS_SYS
+	default:
+		break ;
 	}
-	catch(std::exception& e)
-	{
-		std::cerr << "Exception raised: " << e.what() << std::endl ;
-		return NULL ;
-	}
-#endif
+	// now try all client services
+	//
+	RsItem *item = NULL ;
 
+	for(uint32_t i=0;i<_client_services.size();++i)
+		if((item = _client_services[i]->create_item(service,item_subtype)) != NULL)
+			return item ;
+
+	std::cerr << "Unknown packet type in RsTurtle (not even handled by client services)!" << std::endl ;
+	return NULL ;
 }
 
+void RsTurtleStringSearchRequestItem::serial_process(SerializeJob j,SerializeContext& ctx)
+{
+    RsTypeSerializer::serial_process          (j,ctx,TLV_TYPE_STR_VALUE,match_string,"match_string") ;
+    RsTypeSerializer::serial_process<uint32_t>(j,ctx,request_id,"request_id") ;
+    RsTypeSerializer::serial_process<uint16_t>(j,ctx,depth     ,"depth") ;
+}
+
+#ifdef TO_REMOVE
 bool RsTurtleStringSearchRequestItem::serialize(void *data,uint32_t& pktsize) const
 {
 	uint32_t tlvsize = serial_size();
@@ -242,7 +234,95 @@ bool RsTurtleRegExpSearchRequestItem::serialize(void *data,uint32_t& pktsize) co
 
 	return ok;
 }
+#endif
 
+void RsTurtleRegExpSearchRequestItem::serial_process(SerializeJob j,SerializeContext& ctx)
+{
+    RsTypeSerializer::serial_process<uint32_t>(j,ctx,request_id,"request_id") ;
+    RsTypeSerializer::serial_process<uint16_t>(j,ctx,depth,"depth") ;
+    RsTypeSerializer::serial_process(j,ctx,expr,"expr") ;
+}
+
+template<> uint32_t RsTypeSerializer::serial_size(const RsRegularExpression::LinearizedExpression& r)
+{
+    uint32_t s = 0 ;
+
+	s += 4 ; // number of strings
+
+	for(unsigned int i=0;i<r._strings.size();++i)
+		s += GetTlvStringSize(r._strings[i]) ;
+
+	s += 4 ; // number of ints
+	s += 4 * r._ints.size() ;
+	s += 4 ; // number of tokens
+	s += r._tokens.size() ;		// uint8_t has size 1
+
+    return s;
+}
+
+template<> bool RsTypeSerializer::deserialize(const uint8_t data[],uint32_t size,uint32_t& offset,RsRegularExpression::LinearizedExpression& expr)
+{
+    uint32_t saved_offset = offset ;
+
+	uint32_t n =0 ;
+	bool ok = true ;
+
+    ok &= getRawUInt32(data,size,&offset,&n) ;
+
+	if(ok) expr._tokens.resize(n) ;
+
+	for(uint32_t i=0;i<n && ok;++i) ok &= getRawUInt8(data,size,&offset,&expr._tokens[i]) ;
+
+	ok &= getRawUInt32(data,size,&offset,&n) ;
+
+	if(ok) expr._ints.resize(n) ;
+
+	for(uint32_t i=0;i<n && ok;++i) ok &= getRawUInt32(data,size,&offset,&expr._ints[i]) ;
+
+	ok &= getRawUInt32(data,size,&offset,&n);
+
+	if (ok) expr._strings.resize(n);
+
+	for(uint32_t i=0;i<n && ok;++i) ok &= GetTlvString(data, size, &offset, TLV_TYPE_STR_VALUE, expr._strings[i]);
+
+    if(!ok)
+        offset = saved_offset ;
+
+    return ok;
+}
+
+template<> bool RsTypeSerializer::serialize(uint8_t data[],uint32_t size,uint32_t& offset,const RsRegularExpression::LinearizedExpression& expr)
+{
+    uint32_t saved_offset = offset ;
+
+	bool ok = true ;
+
+    ok &= setRawUInt32(data,size,&offset,expr._tokens.size()) ;
+
+	for(unsigned int i=0;i<expr._tokens.size();++i) ok &= setRawUInt8(data,size,&offset,expr._tokens[i]) ;
+
+	ok &= setRawUInt32(data,size,&offset,expr._ints.size()) ;
+
+	for(unsigned int i=0;i<expr._ints.size();++i) ok &= setRawUInt32(data,size,&offset,expr._ints[i]) ;
+
+	ok &= setRawUInt32(data,size,&offset,expr._strings.size()) ;
+
+	for(unsigned int i=0;i<expr._strings.size();++i) ok &= SetTlvString(data, size, &offset, TLV_TYPE_STR_VALUE, expr._strings[i]);
+
+
+    if(!ok)
+        offset = saved_offset ;
+
+    return ok;
+}
+
+template<> void RsTypeSerializer::print_data(const std::string& n, const RsRegularExpression::LinearizedExpression& expr)
+{
+    std::cerr << "  [RegExpr    ] " << n << ", tokens=" << expr._tokens.size() << " ints=" << expr._ints.size() << " strings=" << expr._strings.size() << std::endl;
+}
+
+
+#ifdef TO_REMOVE
 RsTurtleStringSearchRequestItem::RsTurtleStringSearchRequestItem(void *data,uint32_t pktsize)
 	: RsTurtleSearchRequestItem(RS_TURTLE_SUBTYPE_STRING_SEARCH_REQUEST)
 {
@@ -309,6 +389,62 @@ RsTurtleRegExpSearchRequestItem::RsTurtleRegExpSearchRequestItem(void *data,uint
 		throw std::runtime_error("Unknown error while deserializing.") ;
 #endif
 }
+#endif
+
+void RsTurtleSearchResultItem::serial_process(SerializeJob j,SerializeContext& ctx)
+{
+    RsTypeSerializer::serial_process<uint32_t>(j,ctx,request_id,"request_id") ;
+    RsTypeSerializer::serial_process<uint16_t>(j,ctx,depth     ,"depth") ;
+    RsTypeSerializer::serial_process          (j,ctx,result    ,"result") ;
+}
+
+template<> uint32_t RsTypeSerializer::serial_size(const TurtleFileInfo& i)
+{
+    uint32_t s = 0 ;
+
+    s += 8 ; // size
+    s += i.hash.SIZE_IN_BYTES ;
+    s += GetTlvStringSize(i.name) ;
+
+    return s;
+}
+
+template<> bool RsTypeSerializer::deserialize(const uint8_t data[],uint32_t size,uint32_t& offset,TurtleFileInfo& i)
+{
+    uint32_t saved_offset = offset ;
+    bool ok = true ;
+
+	ok &= getRawUInt64(data, size, &offset, &i.size); 					 // file size
+	ok &= i.hash.deserialise(data, size, offset);                        // file hash
+	ok &= GetTlvString(data, size, &offset, TLV_TYPE_STR_NAME, i.name);  // file name
+
+    if(!ok)
+        offset = saved_offset ;
+
+    return ok;
+}
+
+template<> bool RsTypeSerializer::serialize(uint8_t data[],uint32_t size,uint32_t& offset,const TurtleFileInfo& i)
+{
+	uint32_t saved_offset = offset ;
+    bool ok = true ;
+
+	ok &= setRawUInt64(data, size, &offset, i.size); 					 // file size
+	ok &= i.hash.serialise(data, size, offset);					         // file hash
+	ok &= SetTlvString(data, size, &offset, TLV_TYPE_STR_NAME, i.name);  // file name
+
+	if(!ok)
+		offset = saved_offset ;
+
+	return ok;
+}
+
+template<> void RsTypeSerializer::print_data(const std::string& n, const TurtleFileInfo& i)
+{
+    std::cerr << "  [FileInfo  ] " << n << " size=" << i.size << " hash=" << i.hash << ", name=" << i.name << std::endl;
+}
+
+#ifdef TO_REMOVE
 
 bool RsTurtleSearchResultItem::serialize(void *data,uint32_t& pktsize) const
 {
@@ -394,7 +530,17 @@ RsTurtleSearchResultItem::RsTurtleSearchResultItem(void *data,uint32_t pktsize)
 		throw std::runtime_error("Unknown error while deserializing.") ;
 #endif
 }
+#endif
 
+void RsTurtleOpenTunnelItem::serial_process(SerializeJob j,SerializeContext& ctx)
+{
+    RsTypeSerializer::serial_process          (j,ctx,file_hash        ,"file_hash") ;
+    RsTypeSerializer::serial_process<uint32_t>(j,ctx,request_id       ,"request_id") ;
+    RsTypeSerializer::serial_process<uint32_t>(j,ctx,partial_tunnel_id,"partial_tunnel_id") ;
+    RsTypeSerializer::serial_process<uint16_t>(j,ctx,depth            ,"depth") ;
+}
+
+#ifdef TO_REMOVE
 bool RsTurtleOpenTunnelItem::serialize(void *data,uint32_t& pktsize) const
 {
 	uint32_t tlvsize = serial_size();
@@ -460,7 +606,15 @@ RsTurtleOpenTunnelItem::RsTurtleOpenTunnelItem(void *data,uint32_t pktsize)
 		throw std::runtime_error("RsTurtleOpenTunnelItem::() unknown error while deserializing.") ;
 #endif
 }
+#endif
 
+void RsTurtleTunnelOkItem::serial_process(SerializeJob j,SerializeContext& ctx)
+{
+    RsTypeSerializer::serial_process<uint32_t>(j,ctx,tunnel_id ,"tunnel_id") ;
+    RsTypeSerializer::serial_process<uint32_t>(j,ctx,request_id,"request_id") ;
+}
+
+#ifdef TO_REMOVE
 bool RsTurtleTunnelOkItem::serialize(void *data,uint32_t& pktsize) const
 {
 	uint32_t tlvsize = serial_size();
@@ -522,7 +676,18 @@ RsTurtleTunnelOkItem::RsTurtleTunnelOkItem(void *data,uint32_t pktsize)
 		throw std::runtime_error("RsTurtleTunnelOkItem::() unknown error while deserializing.") ;
 #endif
 }
+#endif
 
+void RsTurtleGenericDataItem::serial_process(SerializeJob j,SerializeContext& ctx)
+{
+    RsTypeSerializer::serial_process<uint32_t>(j,ctx,tunnel_id ,"tunnel_id") ;
+
+    RsTypeSerializer::TlvMemBlock_proxy prox(data_bytes,data_size) ;
+
+    RsTypeSerializer::serial_process(j,ctx,prox,"data bytes") ;
+}
+
+#ifdef TO_REMOVE
 RsTurtleGenericDataItem::RsTurtleGenericDataItem(void *data,uint32_t pktsize)
 	: RsTurtleGenericTunnelItem(RS_TURTLE_SUBTYPE_GENERIC_DATA)
 {
@@ -604,6 +769,7 @@ bool RsTurtleGenericDataItem::serialize(void *data,uint32_t& pktsize) const
 
 	return ok;
 }
+
 // -----------------------------------------------------------------------------------//
 // -------------------------------------  IO  --------------------------------------- // 
 // -----------------------------------------------------------------------------------//
@@ -681,3 +847,4 @@ std::ostream& RsTurtleGenericDataItem::print(std::ostream& o, uint16_t)
 
 	return o ;
 }
+#endif

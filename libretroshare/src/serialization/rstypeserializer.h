@@ -26,7 +26,11 @@ class RsTypeSerializer
 	public:
     	// This type should be used to pass a parameter to drive the serialisation if needed.
 
-		typedef std::pair<uint8_t*&   ,uint32_t&> TlvMemBlock_proxy;
+		struct TlvMemBlock_proxy: public std::pair<void*&   ,uint32_t&>
+        {
+            TlvMemBlock_proxy(void   *& p,uint32_t& s) : std::pair<void*&,uint32_t&>(p,s) {}
+            TlvMemBlock_proxy(uint8_t*& p,uint32_t& s) : std::pair<void*&,uint32_t&>(*(void**)&p,s) {}
+        };
 
 		//=================================================================================================//
 		//                                            Generic types                                        //
@@ -135,6 +139,59 @@ class RsTypeSerializer
                 break;
 			}
 		}
+
+		//=================================================================================================//
+		//                                            std::list<T>                                         //
+		//=================================================================================================//
+
+		template<typename T>
+		static void serial_process(RsItem::SerializeJob j,SerializeContext& ctx,std::list<T>& v,const std::string& member_name)
+		{
+			switch(j)
+			{
+			case RsItem::SIZE_ESTIMATE:
+			{
+				ctx.mOffset += 4 ;
+				for(typename std::list<T>::iterator it(v.begin());it!=v.end();++it)
+					serial_process(j,ctx,*it ,member_name) ;
+			}
+				break ;
+
+			case RsItem::DESERIALIZE:
+			{  uint32_t n=0 ;
+				serial_process(j,ctx,n,"temporary size") ;
+
+				for(uint32_t i=0;i<n;++i)
+                {
+                    T tmp;
+					serial_process<T>(j,ctx,tmp,member_name) ;
+                    v.push_back(tmp);
+                }
+			}
+				break ;
+
+			case RsItem::SERIALIZE:
+			{
+				uint32_t n=v.size();
+				serial_process(j,ctx,n,"temporary size") ;
+				for(typename std::list<T>::iterator it(v.begin());it!=v.end();++it)
+					serial_process(j,ctx,*it ,member_name) ;
+			}
+				break ;
+
+			case RsItem::PRINT:
+			{
+                if(v.empty())
+					std::cerr << "  Empty list"<< std::endl;
+				else
+					std::cerr << "  List of " << v.size() << " elements:" << std::endl;
+			}
+				break;
+			default:
+                break;
+			}
+		}
+
 		//=================================================================================================//
 		//                                         t_RsFlags32<> types                                     //
 		//=================================================================================================//

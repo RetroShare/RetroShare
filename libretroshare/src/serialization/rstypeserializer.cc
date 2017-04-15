@@ -22,7 +22,11 @@ template<> bool RsTypeSerializer::serialize(uint8_t data[], uint32_t size, uint3
 { 
 	return setRawUInt8(data,size,&offset,member);
 }
-template<> bool RsTypeSerializer::serialize(uint8_t data[], uint32_t size, uint32_t &offset, const uint32_t& member) 
+template<> bool RsTypeSerializer::serialize(uint8_t data[], uint32_t size, uint32_t &offset, const uint16_t& member)
+{
+	return setRawUInt16(data,size,&offset,member);
+}
+template<> bool RsTypeSerializer::serialize(uint8_t data[], uint32_t size, uint32_t &offset, const uint32_t& member)
 { 
 	return setRawUInt32(data,size,&offset,member);
 }
@@ -46,7 +50,11 @@ template<> bool RsTypeSerializer::deserialize(const uint8_t data[], uint32_t siz
 { 
 	return getRawUInt8(data,size,&offset,&member);
 }
-template<> bool RsTypeSerializer::deserialize(const uint8_t data[], uint32_t size, uint32_t &offset, uint32_t& member) 
+template<> bool RsTypeSerializer::deserialize(const uint8_t data[], uint32_t size, uint32_t &offset, uint16_t& member)
+{
+	return getRawUInt16(data,size,&offset,&member);
+}
+template<> bool RsTypeSerializer::deserialize(const uint8_t data[], uint32_t size, uint32_t &offset, uint32_t& member)
 { 
 	return getRawUInt32(data,size,&offset,&member);
 }
@@ -66,6 +74,10 @@ template<> uint32_t RsTypeSerializer::serial_size(const bool& /* member*/)
 template<> uint32_t RsTypeSerializer::serial_size(const uint8_t& /* member*/)
 { 
 	return 1;
+}
+template<> uint32_t RsTypeSerializer::serial_size(const uint16_t& /* member*/)
+{
+	return 2;
 }
 template<> uint32_t RsTypeSerializer::serial_size(const uint32_t& /* member*/)
 { 
@@ -224,7 +236,7 @@ template<> bool RsTypeSerializer::serialize(uint8_t data[],uint32_t size,uint32_
 
 template<> void RsTypeSerializer::print_data(const std::string& n, const RsTypeSerializer::TlvMemBlock_proxy& s)
 {
-    std::cerr << "  [Binary data] " << n << ", length=" << s.second << " data=" << RsUtil::BinToHex(s.first,std::min(50u,s.second)) << ((s.second>50)?"...":"") << std::endl;
+    std::cerr << "  [Binary data] " << n << ", length=" << s.second << " data=" << RsUtil::BinToHex((uint8_t*)s.first,std::min(50u,s.second)) << ((s.second>50)?"...":"") << std::endl;
 }
 
 //=================================================================================================//

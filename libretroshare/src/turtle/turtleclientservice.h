@@ -71,12 +71,12 @@ class RsTurtleClientService
 			std::cerr << "!!!!!! Received Data from turtle router, but the client service is not handling it !!!!!!!!!!" << std::endl ; 
 		}
 
-		// Method for deserialising specific items of the client service. The
+		// Method for creating specific items of the client service. The
 		// method has a default behavior of not doing anything, since most client
 		// services might only use the generic item already provided by the turtle
 		// router: RsTurtleGenericDataItem
 
-		virtual RsTurtleGenericTunnelItem *deserialiseItem(void */*data*/, uint32_t /*size*/) const { return NULL ; }
+		virtual RsTurtleGenericTunnelItem *create_item(uint16_t service,uint8_t item_type) const { return NULL ; }
 
 		// These methods are called by the turtle router to add/remove virtual peers when tunnels are created/deleted
 		//
