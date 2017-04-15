@@ -67,7 +67,8 @@
 #define HOST_SEARCH      "search"
 #define HOST_CERTIFICATE "certificate"
 #define HOST_PUBLIC_MSG  "public_msg"
-#define HOST_REGEXP      "file|extra|person|forum|channel|posted|search|message|certificate|private_chat|public_msg"
+#define HOST_IDENTITY    "identity"
+#define HOST_REGEXP      "file|extra|person|forum|channel|posted|search|message|certificate|private_chat|public_msg|identity"
 
 #define FILE_NAME       "name"
 #define FILE_SIZE       "size"
@@ -89,6 +90,9 @@
 #define POSTED_ID      "id"
 #define POSTED_MSGID   "msgid"
 
+#define IDENTITY_NAME  "name"
+#define IDENTITY_ID    "gxsid"
+#define IDENTITY_GROUP "groupdata"
 
 #define MESSAGE_ID      "id"
 #define MESSAGE_SUBJECT "subject"
@@ -303,6 +307,21 @@ void RetroShareLink::fromUrl(const QUrl& url)
 		return;
 	}
 
+    if(url.host() == HOST_IDENTITY) {
+        _type = TYPE_IDENTITY ;
+        QString name = urlQuery.queryItemValue(IDENTITY_NAME) ;
+        QString radix= urlQuery.queryItemValue(IDENTITY_GROUP) ;
+        QString gxsid= urlQuery.queryItemValue(IDENTITY_ID) ;
+
+        RsGxsId id(gxsid.toStdString()) ;
+
+        if(!id.isNull())
+			createIdentity(id,name,radix) ;
+        else
+            std::cerr << "(EE) identity link is not valid." << std::endl;
+        return ;
+    }
+
 	if (url.host() == HOST_MESSAGE) {
 		_type = TYPE_MESSAGE;
 		std::string id = urlQuery.queryItemValue(MESSAGE_ID).toStdString();
@@ -331,6 +350,21 @@ void RetroShareLink::fromUrl(const QUrl& url)
 RetroShareLink::RetroShareLink()
 {
 	clear();
+}
+
+bool RetroShareLink::createIdentity(const RsGxsId& id, const QString& name, const QString& radix_data)
+{
+	clear();
+
+	_name = name;
+	_hash = QString::fromStdString(id.toStdString());
+    _radix_group_data = radix_data ;
+
+	_type = TYPE_IDENTITY;
+
+	check();
+
+	return valid();
 }
 
 bool RetroShareLink::createExtraFile(const QString& name, uint64_t size, const QString& hash,const QString& ssl_id)
@@ -534,6 +568,7 @@ void RetroShareLink::clear()
 	_GPGid = "" ;
 	_time_stamp = 0 ;
 	_encrypted_chat_info = "" ;
+    _radix_group_data = "" ;
 }
 
 void RetroShareLink::check()
@@ -564,6 +599,17 @@ void RetroShareLink::check()
 			if(!checkHash(_hash)) _valid = false ;
 			if(!checkPGPId(_GPGid)) _valid = false ;
 			break ;
+
+        case TYPE_IDENTITY:
+        	if(_name.isNull())
+                _valid = false ;
+
+            if(_radix_group_data.isNull())
+                _valid = false ;
+
+            if(_hash.isNull())
+                _valid = false ;
+        	break ;
 
 		case TYPE_PERSON:
 			if(_size != 0)
@@ -651,6 +697,9 @@ QString RetroShareLink::title() const
 			return QObject::tr("%1 (%2, Extra - Source included)").arg(hash()).arg(misc::friendlyUnit(size()));
 		case TYPE_FILE:
 			return QString("%1 (%2)").arg(hash()).arg(misc::friendlyUnit(size()));
+		case TYPE_IDENTITY:
+        	return _name ;
+
 		case TYPE_PERSON:
 			return PeerDefs::rsidFromId(RsPgpId(hash().toStdString()));
 		case TYPE_FORUM:
@@ -710,6 +759,14 @@ QString RetroShareLink::toString() const
 			urlQuery.addQueryItem(PUBLIC_MSG_SRC_PGP_ID,_GPGid) ;
 
 			break;
+
+    	case TYPE_IDENTITY:
+        	url.setScheme(RSLINK_SCHEME) ;
+        	url.setHost(HOST_IDENTITY) ;
+            urlQuery.addQueryItem(IDENTITY_ID,_hash) ;
+            urlQuery.addQueryItem(IDENTITY_NAME,encodeItem(_name)) ;
+            urlQuery.addQueryItem(IDENTITY_GROUP,_radix_group_data) ;
+        	break ;
 
 		case TYPE_EXTRAFILE:
 			url.setScheme(RSLINK_SCHEME);
@@ -798,9 +855,11 @@ QString RetroShareLink::toString() const
 
 QString RetroShareLink::niceName() const
 {
-	if (type() == TYPE_PERSON) {
+	if (type() == TYPE_PERSON)
 		return PeerDefs::rsid(name().toUtf8().constData(), RsPgpId(hash().toStdString()));
-	}
+
+    if(type() == TYPE_IDENTITY)
+        return QObject::tr("Identity link (name=%1, ID=%2)").arg(_name).arg(_hash) ;
 
 	if(type() == TYPE_PUBLIC_MSG) {
 		RsPeerDetails detail;
@@ -1011,6 +1070,7 @@ static void processList(const QStringList &list, const QString &textSingular, co
                 case TYPE_POSTED:
 				case TYPE_SEARCH:
 				case TYPE_MESSAGE:
+				case TYPE_IDENTITY:
 				case TYPE_CERTIFICATE:
 				case TYPE_PUBLIC_MSG:
 				case TYPE_PRIVATE_CHAT:
@@ -1155,6 +1215,15 @@ static void processList(const QStringList &list, const QString &textSingular, co
 					//		 MessageComposer::msgDistantPeer(link._hash.toStdString(),link._GPGid.toStdString()) ;
 				}
 			break ;
+
+        	case TYPE_IDENTITY:
+        	{
+            	if(rsIdentity->deserialiseIdentityFromMemory(link.radixGroupData().toStdString()))
+                    QMessageBox::information(NULL,QObject::tr("Identity added to People"),QObject::tr("The identity was added to people. You can now chat with it, send messages to it, etc.")) ;
+                else
+                    QMessageBox::warning(NULL,QObject::tr("Identity cannot be added to People"),QObject::tr("The identity was not added to people. Some error occured. The link is probably corrupted.")) ;
+        	}
+            break;
 
 			case TYPE_FILE:
 			case TYPE_EXTRAFILE:

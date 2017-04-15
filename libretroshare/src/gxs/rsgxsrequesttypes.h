@@ -61,6 +61,12 @@ public:
 	std::list<RsGxsGroupId> mGroupIds;
 	std::list<RsGxsGroupId> mGroupIdResult;
 };
+class GroupSerializedDataReq : public GxsRequest
+{
+public:
+	std::list<RsGxsGroupId> mGroupIds;
+	std::list<RsNxsGrp*> mGroupData;
+};
 
 class GroupDataReq : public GxsRequest
 {
