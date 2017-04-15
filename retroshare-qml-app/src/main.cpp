@@ -16,15 +16,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QtGlobal>
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include <QQmlComponent>
 #include <QDebug>
 
+#ifdef Q_OS_ANDROID
+#	include <QtAndroid>
+#	include <QtAndroidExtras/QAndroidJniObject>
+#	include <atomic>
+#endif // Q_OS_ANDROID
+
 #include "libresapilocalclient.h"
 #include "retroshare/rsinit.h"
-#include "singletonqmlengine.h"
+#include "rsqmlappengine.h"
 
 int main(int argc, char *argv[])
 {
@@ -43,17 +50,82 @@ int main(int argc, char *argv[])
 	LibresapiLocalClient rsApi;
 	rsApi.openConnection(sockPath);
 
-	QQmlApplicationEngine& engine(SingletonQmlEngine::instance());
+	RsQmlAppEngine engine(true);
+	QQmlContext& rootContext = *engine.rootContext();
+
+	QStringList mainArgs = app.arguments();
+
+#ifdef Q_OS_ANDROID
+	rootContext.setContextProperty("Q_OS_ANDROID", true);
+
+	/* Add Activity Intent data to args, because onNewIntent is called only if
+	 * the Intet was triggered when the Activity was already created, so only in
+	 * case onCreate is not called.
+	 * The solution exposed in http://stackoverflow.com/a/36942185 is not
+	 * adaptable to our case, because when onCreate is called the RsQmlAppEngine
+	 * is not ready yet.
+	 */
+	uint waitCount = 0;
+	std::atomic<bool> waitIntent(true);
+	QString uriStr;
+	do
+	{
+		QtAndroid::runOnAndroidThread(
+		            [&waitIntent, &uriStr]()
+		{
+			QAndroidJniObject activity = QtAndroid::androidActivity();
+			if(!activity.isValid())
+			{
+				qDebug() << "QtAndroid::runOnAndroidThread(...)"
+				         << "activity not ready yet";
+				return;
+			}
+
+			QAndroidJniObject intent = activity.callObjectMethod(
+			            "getIntent", "()Landroid/content/Intent;");
+			if(!intent.isValid())
+			{
+				qDebug() << "QtAndroid::runOnAndroidThread(...)"
+				         << "intent not ready yet";
+				return;
+			}
+
+			QAndroidJniObject intentData = intent.callObjectMethod(
+			            "getDataString", "()Ljava/lang/String;");
+			if(intentData.isValid()) uriStr = intentData.toString();
+
+			waitIntent = false;
+		});
+
+		if(waitIntent)
+		{
+			qWarning() << "uriStr not ready yet after waiting"
+			           << waitCount << "times";
+			app.processEvents();
+			++waitCount;
+			usleep(10000);
+		}
+	}
+	while (waitIntent);
+
+	qDebug() << "Got uriStr:" << uriStr;
+
+	if(!uriStr.isEmpty()) mainArgs.append(uriStr);
+#else
+	rootContext.setContextProperty("Q_OS_ANDROID", false);
+#endif
+
+	rootContext.setContextProperty("mainArgs", mainArgs);
 
 #ifdef QT_DEBUG
-	engine.rootContext()->setContextProperty("QT_DEBUG", true);
+	rootContext.setContextProperty("QT_DEBUG", true);
 #else
-	engine.rootContext()->setContextProperty("QT_DEBUG", false);
+	rootContext.setContextProperty("QT_DEBUG", false);
 #endif // QT_DEBUG
 
-	engine.rootContext()->setContextProperty("apiSocketPath", sockPath);
-	engine.rootContext()->setContextProperty("rsApi", &rsApi);
-	engine.load(QUrl(QLatin1String("qrc:/main.qml")));
+	rootContext.setContextProperty("apiSocketPath", sockPath);
+	rootContext.setContextProperty("rsApi", &rsApi);
+	engine.load(QUrl(QLatin1String("qrc:/main-app.qml")));
 
 	return app.exec();
 }

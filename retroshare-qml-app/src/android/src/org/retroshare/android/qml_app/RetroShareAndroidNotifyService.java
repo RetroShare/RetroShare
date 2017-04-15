@@ -21,7 +21,6 @@ package org.retroshare.android.qml_app;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -39,19 +38,23 @@ public class RetroShareAndroidNotifyService extends QtService
 				.setContentText(text)
 				.setAutoCancel(true);
 
-		Intent resultIntent = new Intent(this, RetroShareQmlActivity.class);
-		if(!uri.isEmpty()) resultIntent.setData(Uri.parse(uri));
+		Intent intent = new Intent(this, RetroShareQmlActivity.class);
+		intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
-		TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-		stackBuilder.addParentStack(RetroShareQmlActivity.class);
-		stackBuilder.addNextIntent(resultIntent);
-		PendingIntent resultPendingIntent =
-				stackBuilder.getPendingIntent( 0,
-						PendingIntent.FLAG_UPDATE_CURRENT );
+		if(!uri.isEmpty()) intent.setData(Uri.parse(uri));
 
-		mBuilder.setContentIntent(resultPendingIntent);
+		PendingIntent pendingIntent = PendingIntent.getActivity(
+				this, NOTIFY_REQ_CODE, intent,
+				PendingIntent.FLAG_UPDATE_CURRENT);
+
+		mBuilder.setContentIntent(pendingIntent);
 		NotificationManager mNotificationManager =
 				(NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
 		mNotificationManager.notify(0, mBuilder.build());
 	}
+
+	/** Must not be 0 otherwise a new activity may be created when should not
+	 * (ex. the activity is already visible/on top) and deadlocks happens */
+	private static final int NOTIFY_REQ_CODE = 2173;
 }

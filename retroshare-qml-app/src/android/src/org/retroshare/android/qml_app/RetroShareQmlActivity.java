@@ -33,6 +33,8 @@ public class RetroShareQmlActivity extends QtActivity
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
+		Log.i("RetroShareQmlActivity", "onCreate()");
+
 		if (!isMyServiceRunning(RetroShareAndroidService.class))
 		{
 			Log.i("RetroShareQmlActivity", "onCreate(): RetroShareAndroidService is not running, let's start it by Intent");
@@ -55,13 +57,12 @@ public class RetroShareQmlActivity extends QtActivity
 	@Override
 	public void onNewIntent(Intent intent)
 	{
+		Log.i("RetroShareQmlActivity", "onNewIntent(Intent intent)");
+
 		super.onNewIntent(intent);
+
 		String uri = intent.getDataString();
-		if (uri != null)
-		{
-			Log.d("RetroShareQmlActivity", "onNewIntent() " + uri);
-			NativeCalls.notifyIntentUri(uri);
-		}
+		if (uri != null) NativeCalls.notifyIntentUri(uri);
 	}
 
 	private boolean isMyServiceRunning(Class<?> serviceClass)

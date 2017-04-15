@@ -22,8 +22,8 @@
 #include <QDebug>
 
 #ifdef __ANDROID__
-    #include <QtAndroid>
-    #include <QtAndroidExtras/QAndroidJniObject>
+#	include <QtAndroid>
+#	include <QtAndroidExtras/QAndroidJniObject>
 #endif // __ANDROID__
 
 struct NotificationsBridge : QObject

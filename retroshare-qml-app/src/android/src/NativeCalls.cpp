@@ -17,30 +17,27 @@
  */
 
 #include "NativeCalls.h"
-#include "singletonqmlengine.h"
+#include "rsqmlappengine.h"
 
-#include <QString>
-#include <QQmlApplicationEngine>
 #include <QMetaObject>
 #include <QDebug>
-#include <QQuickWindow>
 
 JNIEXPORT void JNICALL
 Java_org_retroshare_android_qml_1app_jni_NativeCalls_notifyIntentUri
 (JNIEnv* env, jclass, jstring uri)
 {
+	qDebug() << __PRETTY_FUNCTION__;
+
 	const char *uriBytes = env->GetStringUTFChars(uri, NULL);
 	QString uriStr(uriBytes);
 	env->ReleaseStringUTFChars(uri, uriBytes);
 
-	QQmlApplicationEngine& engine(SingletonQmlEngine::instance());
-	QObject* rootObj = engine.rootObjects()[0];
-	QQuickWindow* mainWindow = qobject_cast<QQuickWindow*>(rootObj);
-
-	if(mainWindow)
-	{
-		QMetaObject::invokeMethod(mainWindow, "handleIntentUri",
-		                          Q_ARG(QVariant, uriStr));
-	}
-	else qCritical() << __PRETTY_FUNCTION__ << "Root object is not a window!";
+	RsQmlAppEngine* engine = RsQmlAppEngine::mainInstance();
+	if(engine)
+		QMetaObject::invokeMethod(
+		            engine, "handleUri",
+		            Qt::QueuedConnection, // BlockingQueuedConnection, AutoConnection
+		            Q_ARG(QString, uriStr));
+	else qCritical() << __PRETTY_FUNCTION__ << "RsQmlAppEngine::mainInstance()"
+	                 << "not initialized yet!";
 }

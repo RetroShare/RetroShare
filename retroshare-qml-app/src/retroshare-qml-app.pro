@@ -4,12 +4,16 @@ QT += core network qml quick
 
 CONFIG += c++11
 
-HEADERS += libresapilocalclient.h singletonqmlengine.h
-SOURCES += main.cpp libresapilocalclient.cpp
+HEADERS += libresapilocalclient.h \
+    rsqmlappengine.h
+SOURCES += main-app.cpp \
+    libresapilocalclient.cpp \
+    rsqmlappengine.cpp
 
 RESOURCES += qml.qrc
 
 android-g++ {
+    QT += androidextras
     SOURCES += NativeCalls.cpp
     HEADERS += NativeCalls.h
 }

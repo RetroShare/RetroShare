@@ -1,6 +1,5 @@
-#pragma once
 /*
- * libresapi local socket client
+ * RetroShare Qml App
  * Copyright (C) 2017  Gioacchino Mazzurco <gio@eigenlab.org>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -17,16 +16,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QQmlApplicationEngine>
+#include "rsqmlappengine.h"
 
-struct SingletonQmlEngine
+#include <QQuickWindow>
+#include <QDebug>
+
+
+/*static*/ RsQmlAppEngine* RsQmlAppEngine::mMainInstance = nullptr;
+
+void RsQmlAppEngine::handleUri(QString uri)
 {
-	static QQmlApplicationEngine& instance()
-	{
-		static QQmlApplicationEngine engine;
-		return engine;
-	}
+	QObject* rootObj = rootObjects()[0];
+	QQuickWindow* mainWindow = qobject_cast<QQuickWindow*>(rootObj);
 
-private:
-	SingletonQmlEngine();
-};
+	if(mainWindow)
+	{
+		QMetaObject::invokeMethod(mainWindow, "handleIntentUri",
+		                          Qt::AutoConnection,
+		                          Q_ARG(QVariant, uri));
+	}
+	else qCritical() << __PRETTY_FUNCTION__
+	                 << "Root object is not a window!";
+}

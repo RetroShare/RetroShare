@@ -35,9 +35,21 @@ ApplicationWindow
 	property bool coreReady: stackView.state === "running_ok" ||
 							 stackView.state === "running_ok_no_full_control"
 
-	Component.onCompleted: addUriHandler("/certificate", certificateLinkHandler)
+	Component.onCompleted:
+	{
+		addUriHandler("/certificate", certificateLinkHandler)
+
+		var argc = mainArgs.length
+		for(var i=0; i<argc; ++i)
+		{
+			var dump = UriJs.URI.parse(mainArgs[i])
+			if(dump.protocol && (dump.query || dump.path))
+				handleIntentUri(mainArgs[i])
+		}
+	}
 
 	property var uriHandlersRegister: ({})
+	property var pendingUriRegister: []
 	function addUriHandler(path, fun) { uriHandlersRegister[path] = fun }
 	function delUriHandler(path, fun) { delete uriHandlersRegister[path] }
 
@@ -124,6 +136,8 @@ ApplicationWindow
 	{
 		id: stackView
 		anchors.fill: parent
+		focus: true
+		onCurrentItemChanged: if (currentItem) currentItem.focus = true
 		Keys.onReleased:
 			if (event.key === Qt.Key_Back && stackView.depth > 1)
 			{
@@ -181,6 +195,9 @@ ApplicationWindow
 						coreStateCheckTimer.stop()
 						stackView.clear()
 						stackView.push("qrc:/Contacts.qml")
+						while(mainWindow.pendingUriRegister.length > 0)
+							mainWindow.handleIntentUri(
+										mainWindow.pendingUriRegister.shift())
 					}
 				}
 			},
@@ -256,7 +273,12 @@ ApplicationWindow
 	{
 		console.log("certificateLinkHandler(uriStr)", coreReady)
 
-		if(!coreReady) return
+		if(!coreReady)
+		{
+			// Save cert uri for later processing as we need core to examine it
+			pendingUriRegister.push(uriStr)
+			return
+		}
 
 		var uri = new UriJs.URI(uriStr)
 		var uQuery = uri.search(true)
