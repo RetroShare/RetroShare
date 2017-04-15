@@ -2409,7 +2409,7 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
 			}
 
             if(n_selected_items==1)
-				QAction *action = contextMenu->addAction(QIcon(":/images/chat_24.png"),tr("Copy retroshare link"),this,SLOT(copyRetroshareLink())) ;
+				QAction *action = contextMenu->addAction(QIcon(":/images/chat_24.png"),tr("Copy identity to clipboard"),this,SLOT(copyRetroshareLink())) ;
 
 			// always allow to send messages
 			contextMenu->addAction(QIcon(":/images/mail_new.png"), tr("Send message"), this, SLOT(sendMsg()));
@@ -2438,6 +2438,7 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
 		{
 			contextMenu->addSeparator();
 
+			contextMenu->addAction(QIcon(":/images/chat_24.png"),tr("Copy identity to clipboard"),this,SLOT(copyRetroshareLink())) ;
 			contextMenu->addAction(ui->editIdentity);
 			contextMenu->addAction(ui->removeIdentity);
 		}
