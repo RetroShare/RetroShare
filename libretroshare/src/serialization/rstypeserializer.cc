@@ -213,6 +213,7 @@ template<> bool RsTypeSerializer::deserialize(const uint8_t data[],uint32_t size
     ok = ok && NULL != r.first;
 
     memcpy(r.first,&data[offset],r.second) ;
+    offset += r.second ;
 
     if(!ok)
         offset = saved_offset ;
@@ -227,6 +228,7 @@ template<> bool RsTypeSerializer::serialize(uint8_t data[],uint32_t size,uint32_
     bool ok = serialize<uint32_t>(data,size,offset,r.second) ;
 
     memcpy(&data[offset],r.first,r.second) ;
+    offset += r.second ;
 
     if(!ok)
         offset = saved_offset ;
