@@ -18,6 +18,7 @@
 
 #include <QCoreApplication>
 #include <QDebug>
+#include <QMetaObject>
 
 #ifdef __ANDROID__
 #	include "util/androiddebug.h"
@@ -37,7 +38,7 @@ int main(int argc, char *argv[])
 	AndroidStdIOCatcher dbg; (void) dbg;
 #endif
 
-	QCoreApplication a(argc, argv);
+	QCoreApplication app(argc, argv);
 	ApiServer api;
 	RsControlModule ctrl_mod(argc, argv, api.getStateTokenServer(), &api, true);
 	api.addResourceHandler(
@@ -52,11 +53,14 @@ int main(int argc, char *argv[])
 
 	while (!ctrl_mod.processShouldExit())
 	{
-		a.processEvents();
+		app.processEvents();
 		usleep(20000);
 	}
 
-	QCoreApplication::quit();
+	/* Since QCoreApplication::quit() is a no-op until the event loop has been
+	 * started, we need to defer the call until it starts. Thus, we queue a
+	 * deferred method call to quit() */
+	QMetaObject::invokeMethod(&app, "quit", Qt::QueuedConnection);
 
-	return a.exec();
+	return app.exec();
 }
