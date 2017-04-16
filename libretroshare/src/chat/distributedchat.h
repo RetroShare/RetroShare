@@ -39,6 +39,7 @@ class RsChatLobbyListRequestItem ;
 class RsChatLobbyListItem ;
 class RsChatLobbyEventItem ;
 class RsChatLobbyBouncingObject ;
+class RsChatLobbyInviteItem_Deprecated ; // to be removed (deprecated since May 2017)
 class RsChatLobbyInviteItem ;
 class RsChatLobbyMsgItem ;
 class RsChatLobbyConnectChallengeItem ;
@@ -111,6 +112,7 @@ class DistributedChatService
 
 		/// receive and handle chat lobby item
 		bool recvLobbyChat(RsChatLobbyMsgItem*,const RsPeerId& src_peer_id) ;
+		void handleRecvLobbyInvite_Deprecated(RsChatLobbyInviteItem_Deprecated*) ; // to be removed (deprecated since May 2017)
 		void handleRecvLobbyInvite(RsChatLobbyInviteItem*) ;
 		void checkAndRedirectMsgToLobby(RsChatMsgItem*) ;
 		void handleConnectionChallenge(RsChatLobbyConnectChallengeItem *item) ;

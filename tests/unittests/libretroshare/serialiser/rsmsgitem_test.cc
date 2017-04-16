@@ -88,6 +88,7 @@ RsSerialType* init_item(RsChatLobbyInviteItem& cmi)
 {
 	cmi.lobby_id = RSRandom::random_u64() ;
 	cmi.lobby_name = "Name of the lobby" ;
+	cmi.lobby_topic = "Topic of the lobby" ;
 
 	return new RsChatSerialiser();
 }
@@ -254,6 +255,7 @@ bool operator ==(const RsChatLobbyInviteItem& csiLeft, const RsChatLobbyInviteIt
 {
 	if(csiLeft.lobby_id != csiRight.lobby_id) return false ;
 	if(csiLeft.lobby_name != csiRight.lobby_name) return false ;
+	if(csiLeft.lobby_topic != csiRight.lobby_topic) return false ;
 
 	return true;
 }
