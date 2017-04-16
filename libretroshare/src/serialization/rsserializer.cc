@@ -20,6 +20,12 @@ RsItem *RsSerializer::deserialise(void *data, uint32_t *size)
 
 	item->serial_process(RsItem::DESERIALIZE, ctx) ;
 
+	if(ctx.mSize != ctx.mOffset)
+	{
+		std::cerr << "RsSerializer::deserialise(): ERROR. offset does not match expected size!" << std::endl;
+        delete item ;
+		return NULL ;
+	}
 	if(ctx.mOk)
 		return item ;
 
@@ -48,7 +54,7 @@ bool RsSerializer::serialise(RsItem *item,void *data,uint32_t *size)
 
 	if(ctx.mSize != ctx.mOffset)
 	{
-		std::cerr << "RsSerializer::serialise_item(): ERROR. offset does not match expected size!" << std::endl;
+		std::cerr << "RsSerializer::serialise(): ERROR. offset does not match expected size!" << std::endl;
 		return false ;
 	}
 	return true ;
