@@ -1,6 +1,6 @@
 <RCC>
     <qresource prefix="/">
-        <file>main.qml</file>
+        <file>main-app.qml</file>
         <file>Locations.qml</file>
         <file>jsonpath.js</file>
         <file>JSONListModel.qml</file>
