@@ -137,7 +137,7 @@ template<> void RsTypeSerializer::print_data(const std::string& n, const Compres
 //                                            Serializer                                             //
 //===================================================================================================//
 
-RsItem *RsFileTransferSerialiser::create_item(uint16_t service_type,uint8_t item_type)
+RsItem *RsFileTransferSerialiser::create_item(uint16_t service_type,uint8_t item_type) const
 {
     if(service_type != RS_SERVICE_TYPE_FILE_TRANSFER)
         return NULL ;

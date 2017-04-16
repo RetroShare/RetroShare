@@ -183,7 +183,7 @@ class RsFileTransferSerialiser: public RsSerializer
 
 		virtual ~RsFileTransferSerialiser() {}
 
-		RsItem *create_item(uint16_t service_type,uint8_t item_type) ;
+		RsItem *create_item(uint16_t service_type,uint8_t item_type) const ;
 
 };
 

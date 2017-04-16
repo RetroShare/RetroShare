@@ -63,7 +63,7 @@ public:
 	RsBwCtrlSerialiser() :RsSerializer(RS_SERVICE_TYPE_BWCTRL) {}
 	virtual     ~RsBwCtrlSerialiser() {}
 
-	RsItem *create_item(uint16_t /* service */, uint8_t /* item_sub_id */);
+	RsItem *create_item(uint16_t /* service */, uint8_t /* item_sub_id */) const;
 };
 
 /**************************************************************************/

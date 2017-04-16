@@ -77,7 +77,7 @@ class RsBanListSerialiser: public RsSerializer
 public:
 		RsBanListSerialiser() :RsSerializer(RS_SERVICE_TYPE_BANLIST) {}
 
-		virtual RsItem *create_item(uint16_t service_id,uint8_t item_sub_id) ;
+		virtual RsItem *create_item(uint16_t service_id,uint8_t item_sub_id) const ;
 };
 
 /**************************************************************************/

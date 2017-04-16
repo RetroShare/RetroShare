@@ -459,7 +459,7 @@ bool ftServer::FileDetails(const RsFileHash &hash, FileSearchFlags hintflags, Fi
 	return false;
 }
 
-RsItem *ftServer::create_item(uint16_t service,uint8_t item_type)
+RsItem *ftServer::create_item(uint16_t service,uint8_t item_type) const
 {
 #ifdef SERVER_DEBUG
 	FTSERVER_DEBUG() << "p3turtle: deserialising packet: " << std::endl ;

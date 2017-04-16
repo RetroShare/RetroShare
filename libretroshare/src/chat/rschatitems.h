@@ -332,6 +332,6 @@ class RsChatSerialiser: public RsSerializer
 	public:
 		RsChatSerialiser() :RsSerializer(RS_SERVICE_TYPE_CHAT) {}
 
-		virtual RsItem *create_item(uint16_t service_id,uint8_t item_sub_id) ;
+		virtual RsItem *create_item(uint16_t service_id,uint8_t item_sub_id) const ;
 };
 

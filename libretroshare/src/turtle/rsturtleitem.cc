@@ -109,7 +109,7 @@ uint32_t RsTurtleGenericDataItem::serial_size() const
 //
 // ---------------------------------- Serialization ----------------------------------//
 //
-RsItem *RsTurtleSerialiser::create_item(uint16_t service,uint8_t item_subtype)
+RsItem *RsTurtleSerialiser::create_item(uint16_t service,uint8_t item_subtype) const
 {
 	if (RS_SERVICE_TYPE_TURTLE != service)
 	{
@@ -136,7 +136,7 @@ RsItem *RsTurtleSerialiser::create_item(uint16_t service,uint8_t item_subtype)
 	RsItem *item = NULL ;
 
 	for(uint32_t i=0;i<_client_services.size();++i)
-		if((item = _client_services[i]->create_item(service,item_subtype)) != NULL)
+		if((_client_services[i]->serializer() != NULL) && (item = _client_services[i]->serializer()->create_item(service,item_subtype)) != NULL)
 			return item ;
 
 	std::cerr << "Unknown packet type in RsTurtle (not even handled by client services)!" << std::endl ;

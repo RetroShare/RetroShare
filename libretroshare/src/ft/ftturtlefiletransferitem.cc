@@ -606,7 +606,6 @@ void RsTurtleFileDataItem::serial_process(SerializeJob j,SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,tunnel_id,"tunnel_id") ;
     RsTypeSerializer::serial_process<uint64_t>(j,ctx,chunk_offset,"chunk_offset") ;
-    RsTypeSerializer::serial_process<uint32_t>(j,ctx,chunk_size,"chunk_size") ;
 
     RsTypeSerializer::TlvMemBlock_proxy prox(chunk_data,chunk_size) ;
 

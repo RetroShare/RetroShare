@@ -34,7 +34,7 @@
 
 /*************************************************************************/
 
-RsItem *RsBwCtrlSerialiser::create_item(uint16_t service, uint8_t item_sub_id)
+RsItem *RsBwCtrlSerialiser::create_item(uint16_t service, uint8_t item_sub_id) const
 {
     if(service != RS_SERVICE_TYPE_BWCTRL)
         return NULL ;

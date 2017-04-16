@@ -23,10 +23,11 @@ const uint8_t RS_TURTLE_SUBTYPE_REGEXP_SEARCH_REQUEST   = 0x09 ;
 const uint8_t RS_TURTLE_SUBTYPE_GENERIC_DATA     		= 0x0a ;
 const uint8_t RS_TURTLE_SUBTYPE_FILE_MAP                = 0x10 ;
 const uint8_t RS_TURTLE_SUBTYPE_FILE_MAP_REQUEST        = 0x11 ;
-const uint8_t RS_TURTLE_SUBTYPE_FILE_CRC                = 0x12 ;
-const uint8_t RS_TURTLE_SUBTYPE_FILE_CRC_REQUEST        = 0x13 ;
 const uint8_t RS_TURTLE_SUBTYPE_CHUNK_CRC               = 0x14 ;
 const uint8_t RS_TURTLE_SUBTYPE_CHUNK_CRC_REQUEST       = 0x15 ;
+
+// const uint8_t RS_TURTLE_SUBTYPE_FILE_CRC                = 0x12 ; // unused
+// const uint8_t RS_TURTLE_SUBTYPE_FILE_CRC_REQUEST        = 0x13 ;
 
 /***********************************************************************************/
 /*                           Basic Turtle Item Class                               */
@@ -209,7 +210,7 @@ class RsTurtleSerialiser: public RsSerializer
 	public:
 		RsTurtleSerialiser() : RsSerializer(RS_SERVICE_TYPE_TURTLE) {}
 
-		virtual RsItem *create_item(uint16_t service,uint8_t item_subtype);
+		virtual RsItem *create_item(uint16_t service,uint8_t item_subtype) const;
 
 		// This is used by the turtle router to add services to its serialiser.
 		// Client services are only used for deserialising, since the serialisation is
