@@ -92,7 +92,7 @@ dhtPeerEntry::dhtPeerEntry()
 	return;
 }
 
-p3DhtMgr::p3DhtMgr(std::string id, pqiConnectCb *cb)
+p3DhtMgr::p3DhtMgr(RsPeerId id, pqiConnectCb *cb)
 	:pqiNetAssistConnect(id, cb), dhtMtx("p3DhtMgr"), mStunRequired(true) 
 {
 	/* setup own entry */
@@ -237,13 +237,13 @@ bool p3DhtMgr::setExternalInterface(
 
 
 	/* add / remove peers */
-bool p3DhtMgr::findPeer(std::string id)
+bool p3DhtMgr::findPeer(const RsPeerId& id)
 {
 	RsStackMutex stack(dhtMtx); /***** LOCK MUTEX *****/
 
 	mDhtModifications = true;
 
-	std::map<std::string, dhtPeerEntry>::iterator it;
+	std::map<RsPeerId, dhtPeerEntry>::iterator it;
 	it = peers.find(id);
 	if (it != peers.end())
 	{
@@ -281,14 +281,14 @@ bool p3DhtMgr::findPeer(std::string id)
 	return true;
 }
 
-bool p3DhtMgr::dropPeer(std::string id)
+bool p3DhtMgr::dropPeer(const RsPeerId& id)
 {
 	RsStackMutex stack(dhtMtx); /***** LOCK MUTEX *****/
 
 	mDhtModifications = true;
 
 	/* once we are connected ... don't worry about them anymore */
-	std::map<std::string, dhtPeerEntry>::iterator it;
+	std::map<RsPeerId, dhtPeerEntry>::iterator it;
 	it = peers.find(id);
 	if (it == peers.end())
 	{
@@ -302,14 +302,14 @@ bool p3DhtMgr::dropPeer(std::string id)
 }
 
 	/* post DHT key saying we should connect */
-bool p3DhtMgr::notifyPeer(std::string id) 
+bool p3DhtMgr::notifyPeer(const RsPeerId& id)
 {
 	RsStackMutex stack(dhtMtx); /***** LOCK MUTEX *****/
 #ifdef DHT_DEBUG
-	std::cerr << "p3DhtMgr::notifyPeer() " << id << std::endl;
+	std::cerr << "p3DhtMgr::notifyPeer() " << id.toStdString() << std::endl;
 #endif
 
-	std::map<std::string, dhtPeerEntry>::iterator it;
+	std::map<RsPeerId, dhtPeerEntry>::iterator it;
 	it = peers.find(id);
 	if (it == peers.end())
 	{
@@ -333,7 +333,7 @@ bool p3DhtMgr::notifyPeer(std::string id)
 #ifdef DHT_LOGS
 		{
 			/* Log */
-			rslog(RSL_WARNING, p3dhtzone, "p3DhtMgr::notifyPeer() Id: " + id + " TO SOON - DROPPING");
+			rslog(RSL_WARNING, p3dhtzone, "p3DhtMgr::notifyPeer() Id: " + id.toStdString() + " TO SOON - DROPPING");
 
 		}
 #endif
@@ -352,7 +352,7 @@ bool p3DhtMgr::notifyPeer(std::string id)
 #ifdef DHT_LOGS
 		{
 			/* Log */
-			rslog(RSL_WARNING, p3dhtzone, "p3DhtMgr::notifyPeer() Id: " + id + " PEER NOT FOUND - Trigger Search");
+			rslog(RSL_WARNING, p3dhtzone, "p3DhtMgr::notifyPeer() Id: " + id.toStdString() + " PEER NOT FOUND - Trigger Search");
 		}
 #endif
 		it->second.lastTS = 0;
@@ -364,14 +364,14 @@ bool p3DhtMgr::notifyPeer(std::string id)
 }
 
 	/* extract current peer status */
-bool p3DhtMgr::getPeerStatus(std::string id, 
-			struct sockaddr_in &laddr, 
-			struct sockaddr_in &raddr, 
+bool p3DhtMgr::getPeerStatus(const RsPeerId &id,
+			struct sockaddr_in &laddr,
+			struct sockaddr_in &raddr,
 			uint32_t &type, uint32_t &state)
 {
 	RsStackMutex stack(dhtMtx); /* LOCK MUTEX */
 
-	std::map<std::string, dhtPeerEntry>::iterator it;
+	std::map<RsPeerId, dhtPeerEntry>::iterator it;
 	it = peers.find(id);
 
 	/* ignore OFF peers */
@@ -776,7 +776,7 @@ int p3DhtMgr::checkPeerDHTKeys()
 	dhtMtx.lock(); /* LOCK MUTEX */
 
 	/* iterate through and find min time and suitable candidate */
-        std::map<std::string, dhtPeerEntry>::iterator it,pit;
+	std::map<RsPeerId, dhtPeerEntry>::iterator it,pit;
 	time_t now = time(NULL);
 	uint32_t period = 0;
 	uint32_t repeatPeriod = 6000;
@@ -802,7 +802,7 @@ int p3DhtMgr::checkPeerDHTKeys()
 			period = DHT_CHECK_PERIOD;
 		}
 #ifdef DHT_DEBUG
-	std::cerr << "p3DhtMgr::checkPeerDHTKeys() Peer: " << it->second.id;
+	std::cerr << "p3DhtMgr::checkPeerDHTKeys() Peer: " << it->second.id.toStdString();
 	std::cerr << " Period: " << period;
 	std::cerr << " Delta: " << delta;
 	std::cerr << std::endl;
@@ -865,7 +865,7 @@ int p3DhtMgr::checkNotifyDHT()
 	RsStackMutex stack(dhtMtx); /***** LOCK MUTEX *****/
 
 	/* iterate through and find min time and suitable candidate */
-        std::map<std::string, dhtPeerEntry>::iterator it;
+	std::map<RsPeerId, dhtPeerEntry>::iterator it;
 	time_t now = time(NULL);
 	int repeatPeriod = DHT_DEFAULT_PERIOD; 
 
@@ -1015,7 +1015,7 @@ int p3DhtMgr::checkStunState()
 	if (mDhtState == DHT_STATE_CHECK_PEERS)
 	{
 		/* check that they have all be searched for */
-		std::map<std::string, dhtPeerEntry>::iterator it;
+		std::map<RsPeerId, dhtPeerEntry>::iterator it;
 		for(it = peers.begin(); it != peers.end(); it++)
 		{
 			if (it->second.state == DHT_PEER_INIT)
@@ -1287,7 +1287,7 @@ int  p3DhtMgr::status(std::ostream &out)
 	out << "OWN DETAILS END----------------------------------------" << std::endl;
 
 	/* now peers states */
-	std::map<std::string, dhtPeerEntry>::iterator it;
+	std::map<RsPeerId, dhtPeerEntry>::iterator it;
 	out << "PEER DETAILS ------------------------------------------" << std::endl;
 	for(it = peers.begin(); it != peers.end(); it++)
 	{
@@ -1622,15 +1622,13 @@ bool p3DhtMgr::dhtResultNotify(std::string idhash)
 	std::cerr << "p3DhtMgr::dhtResultNotify() from idhash: ";
 	std::cerr << RsUtil::BinToHex(idhash) << std::endl;
 #endif
-	std::map<std::string, dhtPeerEntry>::iterator it;
+	std::map<RsPeerId, dhtPeerEntry>::iterator it;
 	time_t now = time(NULL);
 
 	/* if notify - we must match on the second hash */
 	for(it = peers.begin(); (it != peers.end()) && ((it->second).hash2 != idhash); it++) ;
 
 	/* update data */
-	std::string peerid;
-
 	/* ignore OFF peers */
 	if ((it != peers.end()) && (it->second.state != DHT_PEER_OFF))
 	{
@@ -1677,7 +1675,7 @@ bool p3DhtMgr::dhtResultSearch(std::string idhash,
 	std::cerr << "p3DhtMgr::dhtResultSearch() for idhash: ";
 	std::cerr << RsUtil::BinToHex(idhash) << std::endl;
 #endif
-	std::map<std::string, dhtPeerEntry>::iterator it;
+	std::map<RsPeerId, dhtPeerEntry>::iterator it;
 	bool doCb = false;
 	bool doStun = false;
 	uint32_t stunFlags = 0;
@@ -1780,7 +1778,7 @@ bool p3DhtMgr::dhtResultSearch(std::string idhash,
 void printDhtPeerEntry(dhtPeerEntry *ent, std::ostream &out)
 {
 	
-	out << "DhtEntry: ID: " << ent->id;
+	out << "DhtEntry: ID: " << ent->id.toStdString();
 	out << " State: " << ent->state;
 	out << " lastTS: " << ent->lastTS;
 	out << " notifyPending: " << ent->notifyPending;

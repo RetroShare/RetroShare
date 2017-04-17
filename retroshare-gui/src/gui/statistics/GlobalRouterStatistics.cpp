@@ -379,7 +379,7 @@ void GlobalRouterStatisticsWidget::updateContent()
     
     painter.setPen(QColor::fromRgb(0,0,0)) ;
     
-    painter.setPen(QColor::fromRgb(0.5,0.5,0.5));
+    painter.setPen(QColor::fromRgb(127,127,127));
     painter.drawRect(ox+2*cellx,current_oy+0.15*celly,fm_monospace.width(ids)+cellx*matrix_info.friend_ids.size()- 2*cellx,celly) ;
 
     float total_length = (matrix_info.friend_ids.size()+2)*cellx ;

@@ -25,7 +25,7 @@ typedef std::pair<RsGxsGroupId, RsGxsMessageId> RsGxsGrpMsgIdPair;
 typedef std::map<RsGxsGrpMsgIdPair, std::vector<RsGxsMessageId> > MsgRelatedIdResult;
 typedef std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > GxsMsgReq;
 
-class RsMsgMetaData;
+struct RsMsgMetaData;
 
 typedef std::map<RsGxsGroupId, std::vector<RsMsgMetaData> > MsgMetaResult;
 

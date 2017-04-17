@@ -200,7 +200,7 @@ static bool have_avatar(RsMsgs* msgs, const RsPeerId& id)
     return size != 0;
 }
 
-void PeersHandler::handleGetStateString(Request& req, Response& resp)
+void PeersHandler::handleGetStateString(Request& /*req*/, Response& resp)
 {
 	{
 		RS_STACK_MUTEX(mMtx);
@@ -234,7 +234,7 @@ void PeersHandler::handleSetStateString(Request& req, Response& resp)
 	std::string state_string;
 	req.mStream << makeKeyValueReference("state_string", state_string);
 
-	uint32_t status;
+	uint32_t status = RS_STATUS_OFFLINE;
 	if(state_string == "online")
 		status = RS_STATUS_ONLINE;
 	else if(state_string == "busy")
@@ -246,7 +246,7 @@ void PeersHandler::handleSetStateString(Request& req, Response& resp)
 	resp.setOk();
 }
 
-void PeersHandler::handleGetCustomStateString(Request& req, Response& resp)
+void PeersHandler::handleGetCustomStateString(Request& /*req*/, Response& resp)
 {
 	{
 		RS_STACK_MUTEX(mMtx);

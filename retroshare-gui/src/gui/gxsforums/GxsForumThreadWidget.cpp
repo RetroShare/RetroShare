@@ -1607,7 +1607,7 @@ void GxsForumThreadWidget::insertMessage()
 
         int current_index = 0 ;
 
-        for(uint32_t i=0;i<(*it).size();++i)
+        for(int i=0;i<(*it).size();++i)
         {
             ui->versions_CB->insertItem(i, ((i==0)?tr("(Latest) "):tr("(Old) "))+" "+DateTime::formatLongDateTime( (*it)[i].first));
             ui->versions_CB->setItemData(i,QString::fromStdString((*it)[i].second.toStdString()));

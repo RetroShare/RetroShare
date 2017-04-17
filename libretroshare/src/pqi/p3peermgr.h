@@ -397,7 +397,7 @@ private:
     std::map<RsPeerId,sockaddr_storage> mReportedOwnAddresses ;
 
     std::map<RsNodeGroupId,RsGroupInfo> groupList;
-    uint32_t lastGroupId;
+    //uint32_t lastGroupId;
 
     std::list<RsItem *> saveCleanupList; /* TEMPORARY LIST WHEN SAVING */
 

@@ -1208,6 +1208,7 @@ void IdDialog::CircleListCustomPopupMenu( QPoint )
     contextMnu.exec(QCursor::pos());
 }
 
+#ifdef SUSPENDED
 static void set_item_background(QTreeWidgetItem *item, uint32_t type)
 {
 	QBrush brush;
@@ -1248,7 +1249,6 @@ static void update_children_background(QTreeWidgetItem *item, uint32_t type)
 	}
 }
 
-#ifdef SUSPENDED
 static void set_tree_background(QTreeWidget *tree, uint32_t type)
 {
 	std::cerr << "CirclesDialog set_tree_background()";
@@ -1993,7 +1993,7 @@ QString IdDialog::createUsageString(const RsIdentityUsage& u) const
 		return tr("Membership verification in circle %1.").arg(QString::fromStdString(u.mGrpId.toStdString()));
     }
 
-#warning TODO! Add the different strings and translations here.
+#warning TODO! csoler 2017-01-03: Add the different strings and translations here.
 	default:
 		return QString("Undone yet");
     }
