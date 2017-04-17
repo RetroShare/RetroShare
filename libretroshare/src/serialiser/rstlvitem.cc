@@ -5,6 +5,7 @@
  * RetroShare Serialiser.
  *
  * Copyright 2007-2008 by Robert Fernie, Chris Parker
+ * Copyright (C) 2016 Gioacchino Mazzurco <gio@eigenlab.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -26,172 +27,182 @@
 
 #include "rstlvitem.h"
 #include "rstlvbase.h"
+#include "util/stacktrace.h"
 #include <iostream>
 
-#if 0
-#include "rsbaseserial.h"
-#include "util/rsprint.h"
-#include <ostream>
-#include <sstream>
-#include <iomanip>
-#endif
-
-#define TLV_DEBUG 1
-
-void  	RsTlvItem::TlvShallowClear()
+bool RsAutoTlvSerializable::serialize(uint8_t data[], uint32_t size, uint32_t &offset) const
 {
-	TlvClear(); /* unless overloaded! */
+	if ( !data || size <= offset || size - offset < TLV_HEADER_SIZE )
+		return false;
+
+	uint32_t origOffset = offset;
+	uint32_t * lenghtPtr = (uint32_t *)(data + offset + TLV_HEADER_TYPE_SIZE);
+
+	if(!RsAutoSerializable::serialize(data, size, offset))
+	{
+		std::cerr << "RsAutoTlvItem::serialize(...) failed! Inform Developers!"
+		          << std::endl;
+		print_stacktrace();
+		return false;
+	}
+
+	uint32_t expectedSize = RsAutoSerializable::serialSize();
+	uint32_t writtenSize = offset - origOffset;
+	if (writtenSize != expectedSize)
+	{
+		std::cerr << "RsAutoTlvItem::serialize(...) writtenSize and "
+		          << "expectedSize doesn't match. " << writtenSize << " "
+		          << expectedSize << " Inform Developers!" << std::endl;
+	}
+
+	*lenghtPtr = hton<uint32_t>(writtenSize - TLV_HEADER_SIZE);
+
+	return true;
 }
 
-std::ostream &RsTlvItem::printBase(std::ostream &out, std::string clsName, uint16_t indent) const
+bool RsAutoTlvSerializable::deserialize(const uint8_t data[], uint32_t size,
+                                uint32_t &offset)
+{
+	if ( !data || size <= offset || size - offset < TLV_HEADER_SIZE )
+		return false;
+
+	bool ok = true;
+	uint32_t origOffest = offset; // Backup offset
+	uint16_t tlvType = ntoh<uint16_t>(*((uint16_t *)(data + offset)));
+
+	if( (at_type & CHECK_TYPE) == CHECK_TYPE)
+	{
+		if(!ok)
+		{
+			std::cerr << "RsAutoTlvItem::deserialize(...) failed deserializing "
+			          << "type. Inform Developers!" << std::endl;
+			print_stacktrace();
+			return false;
+		}
+
+		if ( at_type != tlvType )
+		{
+			std::cerr << "RsAutoTlvItem::deserialize(...) Warning wrong TLV "
+			          << "type while CHECK_TYPE is set got: " << tlvType
+			          << " expected: " << at_type << " ";
+			if ( (at_type & MANDATORY) == MANDATORY )
+			{
+				std::cerr << "which has MANDATORY flags set skipping this TLV"
+				          << "and try to populate this member with next TLV."
+				          << std::endl;
+
+				ok = ok && skipTlv(data, size, offset);
+				return ok && deserialize(data, size, offset);
+			}
+			else
+			{
+				std::cerr << "which has MANDATORY unset skipping member not TLV"
+				          << std::endl;
+				return ok;
+			}
+
+			std::cerr << "Inform Developers!" << std::endl;
+			print_stacktrace();
+		}
+	}
+
+	ok = ok && RsAutoSerializable::deserialize(data, size, offset);
+
+	uint32_t tlvEnd = origOffest + at_lenght;
+	if (tlvEnd < offset)
+	{
+		std::cerr << "RsAutoTlvItem::deserialize(...) Warning ignored extra"
+		          << "bytes at end of item. Inform Developers!" << std::endl;
+		print_stacktrace();
+		offset = tlvEnd;
+	}
+
+	return ok;
+}
+
+bool RsAutoTlvSerializable::skipTlv(const uint8_t data[], uint32_t size,
+                            uint32_t &offset)
+{
+	if ( !data || size <= offset || size - offset < TLV_HEADER_SIZE )
+		return false;
+
+	uint32_t tLen = *((const uint32_t *)(data + offset + TLV_HEADER_TYPE_SIZE));
+	tLen = ntoh<uint32_t>(tLen);
+	const uint32_t bufferSize = size - offset - TLV_HEADER_TYPE_SIZE;
+	if ( bufferSize < tLen)
+	{
+		std::cerr << "RsAutoTlvItem::skipTlv(...) FAILED - not enough space. "
+		          << "bufferSize: " << bufferSize << " tlvLenght: "
+		          << tLen << std::endl;
+		return false;
+	}
+
+	offset += TLV_HEADER_TYPE_SIZE;
+	offset += tLen;
+	return true;
+}
+
+static void print_wrong_usage()
+{
+	std::cerr << "You are using an RsTlvItem like it was an RsAutoTlvItem or "
+	          << "vice versa. Reimplement your TLV item on top of RsAutoTlvItem"
+	          << " instead of relying on deprecated, type unsafe code."
+	          << std::endl;
+	print_stacktrace();
+}
+
+void RsTlvItem::TlvClear() { print_wrong_usage(); }
+
+std::ostream &RsTlvItem::printBase(std::ostream &out, std::string clsName,
+                                   uint16_t indent) const
 {
 	printIndent(out, indent);
-	out << "RsTlvItem: " << clsName << " Size: " << TlvSize() << "  ***********************";
-	out << std::endl;
+	out << "RsTlvItem: " << clsName << " Size: " << TlvSize()
+	    << "  ***********************" << std::endl;
 	return out;
 }
 
-std::ostream &RsTlvItem::printEnd(std::ostream &out, std::string clsName, uint16_t indent) const
+std::ostream &RsTlvItem::printEnd(std::ostream &out, std::string clsName,
+                                  uint16_t indent) const
 {
 	printIndent(out, indent);
-	out << "********************** " << clsName << " *********************";
-	out << std::endl;
+	out << "***************** " << clsName << " ****************" << std::endl;
 	return out;
 }
 
 std::ostream &printIndent(std::ostream &out, uint16_t indent)
 {
-	for(int i = 0; i < indent; i++)
-	{
-		out << " ";
-	}
+	for(int i = 0; i < indent; i++) out << " ";
 	return out;
 }
 
-
-	
-RsTlvUnit::RsTlvUnit(const uint16_t tlv_type)
-	:RsTlvItem(), mTlvType(tlv_type)
+bool RsTlvItem::deserialize(const uint8_t data[], uint32_t size,
+                            uint32_t &offset)
 {
-	return;
+	print_wrong_usage();
+	return GetTlv((void *) data, size, &offset);
 }
 
-uint32_t RsTlvUnit::TlvSize() const
+bool RsTlvItem::serialize(uint8_t data[], uint32_t size, uint32_t &offset) const
 {
-	return TLV_HEADER_SIZE + TlvSizeUnit();
+	print_wrong_usage();
+	return SetTlv((void *)data, size, &offset);
 }
 
-/* serialise   */
-bool RsTlvUnit::SetTlv(void *data, uint32_t size, uint32_t *offset) const 
+uint32_t RsTlvItem::serialSize() const
 {
-#ifdef TLV_DEBUG
-        std::cerr << "RsTlvUnit::SetTlv()" << std::endl;
-#endif
-
-	/* must check sizes */
-	uint32_t tlvsize = TlvSize();
-	uint32_t tlvend  = *offset + tlvsize;
-
-	if (size < tlvend)
-	{
-#ifdef TLV_DEBUG
-        	std::cerr << "RsTlvImage::SetTlv() ERROR not enough space" << std::endl;
-#endif
-		return false; /* not enough space */
-	}
-
-	bool ok = true;
-
-		/* start at data[offset] */
-	ok &= SetTlvBase(data, tlvend, offset, TLV_TYPE_IMAGE , tlvsize);
-
-	if (!ok)
-	{
-#ifdef TLV_DEBUG
-        	std::cerr << "RsTlvUnit::SetTlv() ERROR Setting base" << std::endl;
-#endif
-		return false;
-	}
-
-	ok &= SetTlvUnit(data, tlvend, offset);
-
-#ifdef TLV_DEBUG
-	if (!ok)
-        	std::cerr << "RsTlvUnit::SetTlv() ERROR in SetTlvUnit" << std::endl;
-#endif
-	return ok;
+	print_wrong_usage();
+	return TlvSize();
 }
 
-/* deserialise  */
-bool RsTlvUnit::GetTlv(void *data, uint32_t size, uint32_t *offset) 
+uint32_t RsTlvItem::TlvSize() const
 {
-	if (size < *offset + TLV_HEADER_SIZE)
-	{
-#ifdef TLV_DEBUG
-       		std::cerr << "RsTlvUnit::GetTlv() ERROR not enough size for header";
-		std::cerr << std::endl;
-#endif
-		return false;
-	}
-
-	uint16_t tlvtype = GetTlvType( &(((uint8_t *) data)[*offset])  );
-	uint32_t tlvsize = GetTlvSize( &(((uint8_t *) data)[*offset])  );
-	uint32_t tlvend = *offset + tlvsize;
-
-	if (size < tlvend)    /* check size */
-	{
-#ifdef TLV_IMG_DEBUG
-        	std::cerr << "RsTlvImage::GetTlv() ERROR no space";
-		std::cerr << std::endl;
-#endif
-		return false; /* not enough space */
-	}
-
-	if (tlvtype != mTlvType) /* check type */
-	{
-#ifdef TLV_IMG_DEBUG
-        	std::cerr << "RsTlvImage::GetTlv() ERROR wrong type";
-		std::cerr << std::endl;
-#endif
-		return false;
-	}
-
-	bool ok = true;
-
-	/* ready to load */
-	TlvClear();
-
-	/* skip the header */
-	(*offset) += TLV_HEADER_SIZE;
-
-	/* extract components */
-	ok &= GetTlvUnit(data, tlvend, offset);
-
-#ifdef TLV_IMG_DEBUG
-	if (!ok)
-	{
-        	std::cerr << "RsTlvUnit::GetTlv() ERROR GetTlvUnit() NOK";
-		std::cerr << std::endl;
-	}
-#endif
-
-	/***************************************************************************
-	 * NB: extra components could be added (for future expansion of the type).
-	 *            or be present (if this code is reading an extended version).
-	 *
-	 * We must chew up the extra characters to conform with TLV specifications
-	 ***************************************************************************/
-	if (*offset != tlvend)
-	{
-#ifdef TLV_DEBUG
-		std::cerr << "RsTlvUnit::GetTlv() Warning extra bytes at end of item";
-		std::cerr << std::endl;
-#endif
-		*offset = tlvend;
-	}
-
-	return ok;
-
+	print_wrong_usage();
+	return 0;
 }
 
-
+std::ostream & RsTlvItem::print(std::ostream &out, uint16_t /*indent*/) const
+{
+	print_wrong_usage();
+	return out;
+}

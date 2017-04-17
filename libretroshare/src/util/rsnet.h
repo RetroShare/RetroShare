@@ -57,13 +57,30 @@ int inet_aton(const char *name, struct in_addr *addr);
 #endif
 /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 
-/* 64 bit conversions */
+/**
+ * @brief 64 bit host to network and back conversions
+ * Dont use this directly use templated ntoh instead
+ */
 #ifndef ntohll
 uint64_t ntohll(uint64_t x);
 #endif
 #ifndef htonll
 uint64_t htonll(uint64_t x);
 #endif
+
+/// Convert from network to host byte order
+template<typename T> T ntoh(T x);
+template<> inline uint8_t ntoh<uint8_t>(uint8_t x) { return x; }
+template<> inline uint16_t ntoh<uint16_t>(uint16_t x) { return ntohs(x); }
+template<> inline uint32_t ntoh<uint32_t>(uint32_t x) { return ntohl(x); }
+template<> inline uint64_t ntoh<uint64_t>(uint64_t x) { return ntohll(x); }
+
+/// Convert from host to network byte order
+template<typename T> T hton(T x);
+template<> inline uint8_t hton<uint8_t>(uint8_t x) { return x; }
+template<> inline uint16_t hton<uint16_t>(uint16_t x) { return htons(x); }
+template<> inline uint32_t hton<uint32_t>(uint32_t x) { return htonl(x); }
+template<> inline uint64_t hton<uint64_t>(uint64_t x) { return htonll(x); }
 
 /* blank a network address */
 void sockaddr_clear(struct sockaddr_in *addr);
