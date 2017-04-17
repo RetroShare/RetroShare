@@ -443,8 +443,9 @@ RsItem *    RsSerialiser::deserialise(void *data, uint32_t *size)
 		std::cerr << " Class: " << std::hex << (uint32_t) getRsItemClass(failedtype) << std::dec;
 		std::cerr << " Type: " << std::hex << (uint32_t) getRsItemType(failedtype) << std::dec;
 		std::cerr << " SubType: " << std::hex << (uint32_t) getRsItemSubType(failedtype) << std::dec;
-        std::cerr << " Data: " << RsUtil::BinToHex((char*)data,pkt_size).substr(0,300) << std::endl;
-        std::cerr << std::endl;
+		if (pkt_size>300) pkt_size=300;
+		std::cerr << " Data: " << RsUtil::BinToHex((char*)data,pkt_size) << std::endl;
+		std::cerr << std::endl;
 #endif
 		return NULL;
 	}
