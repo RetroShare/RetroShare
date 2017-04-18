@@ -1,6 +1,7 @@
 #include "IdentityHandler.h"
 
 #include <retroshare/rsidentity.h>
+#include <retroshare/rspeers.h>
 #include <time.h>
 
 #include "Operators.h"
@@ -143,6 +144,8 @@ IdentityHandler::IdentityHandler(StateTokenServer *sts, RsNotify *notify, RsIden
 
 	addResourceHandler("create_identity", this, &IdentityHandler::handleCreateIdentity);
 	addResourceHandler("delete_identity", this, &IdentityHandler::handleDeleteIdentity);
+
+	addResourceHandler("get_identity_details", this, &IdentityHandler::handleGetIdentityDetails);
 }
 
 IdentityHandler::~IdentityHandler()
@@ -342,6 +345,128 @@ void IdentityHandler::handleRemoveContact(Request& req, Response& resp)
 	{
 		RsStackMutex stack(mMtx); /********** STACK LOCKED MTX ******/
 		mStateTokenServer->replaceToken(mStateToken);
+	}
+
+	resp.setOk();
+}
+
+void IdentityHandler::handleGetIdentityDetails(Request& req, Response& resp)
+{
+	std::string gxs_id;
+	req.mStream << makeKeyValueReference("gxs_id", gxs_id);
+
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
+	uint32_t token;
+
+	std::list<RsGxsGroupId> groupIds;
+	groupIds.push_back(RsGxsGroupId(gxs_id));
+	mRsIdentity->getTokenService()->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, groupIds);
+
+	time_t start = time(NULL);
+	while((mRsIdentity->getTokenService()->requestStatus(token) != RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
+	      &&(mRsIdentity->getTokenService()->requestStatus(token) != RsTokenService::GXS_REQUEST_V2_STATUS_FAILED)
+	      &&((time(NULL) < (start+10)))
+	      )
+	{
+#ifdef WINDOWS_SYS
+		Sleep(500);
+#else
+		usleep(500*1000);
+#endif
+	}
+
+	RsGxsIdGroup data;
+	std::vector<RsGxsIdGroup> datavector;
+	if (!mRsIdentity->getGroupData(token, datavector))
+	{
+		resp.setFail();
+		return;
+	}
+
+	data = datavector[0];
+
+	resp.mDataStream << makeKeyValue("gxs_name", data.mMeta.mGroupName);
+	resp.mDataStream << makeKeyValue("gxs_id", data.mMeta.mGroupId.toStdString());
+
+	resp.mDataStream << makeKeyValue("pgp_id_known", data.mPgpKnown);
+	resp.mDataStream << makeKeyValue("pgp_id", data.mPgpId.toStdString());
+
+	std::string pgp_name;
+	if (data.mPgpKnown)
+	{
+		RsPeerDetails details;
+		rsPeers->getGPGDetails(data.mPgpId, details);
+		pgp_name = details.name;
+	}
+	else
+	{
+		if (data.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID_kept_for_compatibility)
+			pgp_name = "[Unknown node]";
+		else
+			pgp_name = "Anonymous Id";
+	}
+	resp.mDataStream << makeKeyValue("pgp_name", pgp_name);
+
+	time_t now = time(NULL);
+	resp.mDataStream << makeKeyValue("last_usage", std::to_string(now - data.mLastUsageTS));
+
+	bool isAnonymous = false;
+	if(!data.mPgpKnown)
+	{
+		if (!(data.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID_kept_for_compatibility))
+			isAnonymous = true;
+	}
+	resp.mDataStream << makeKeyValue("anonymous", isAnonymous);
+
+
+	bool isOwnId = (data.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN);
+	resp.mDataStream << makeKeyValue("own", isOwnId);
+
+	std::string type;
+	if(isOwnId)
+	{
+		if (data.mPgpKnown && !data.mPgpId.isNull())
+			type = "Identity owned by you, linked to your Retroshare node";
+		else
+			type = "Anonymous identity, owned by you";
+	}
+	else if (data.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID_kept_for_compatibility)
+	{
+		if (data.mPgpKnown)
+		{
+			if (rsPeers->isGPGAccepted(data.mPgpId))
+				type = "Linked to a friend Retroshare node";
+			else
+				type = "Linked to a known Retroshare node";
+		}
+		else
+			type = "Linked to unknown Retroshare node";
+	}
+	else
+		type = "Anonymous identity";
+
+	resp.mDataStream << makeKeyValue("type", type);
+
+	resp.mDataStream << makeKeyValue("bannned_node", rsReputations->isNodeBanned(data.mPgpId));
+
+	RsReputations::ReputationInfo info;
+	rsReputations->getReputationInfo(RsGxsId(data.mMeta.mGroupId), data.mPgpId, info);
+	resp.mDataStream << makeKeyValue("friends_positive_votes", info.mFriendsPositiveVotes);
+	resp.mDataStream << makeKeyValue("friends_negative_votes", info.mFriendsNegativeVotes);
+	resp.mDataStream << makeKeyValue("overall_reputation_level", (int)info.mOverallReputationLevel);
+	resp.mDataStream << makeKeyValue("own_opinion", (int)info.mOwnOpinion);
+
+	RsIdentityDetails details;
+	mRsIdentity->getIdDetails(RsGxsId(data.mMeta.mGroupId), details);
+	StreamBase& usagesStream = resp.mDataStream.getStreamToMember("usages");
+	usagesStream.getStreamToMember();
+
+	for(std::map<RsIdentityUsage,time_t>::const_iterator it(details.mUseCases.begin()); it != details.mUseCases.end(); ++it)
+	{
+		usagesStream.getStreamToMember() << makeKeyValue("usage_time", std::to_string(now - it->second));
+		usagesStream.getStreamToMember() << makeKeyValue("usage_service", (int)(it->first.mServiceId));
+		usagesStream.getStreamToMember() << makeKeyValue("usage_case", (int)(it->first.mUsageCode));
 	}
 
 	resp.setOk();

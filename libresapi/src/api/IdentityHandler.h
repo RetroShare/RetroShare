@@ -29,6 +29,8 @@ private:
 	void handleAddContact(Request& req, Response& resp);
 	void handleRemoveContact(Request& req, Response& resp);
 
+	void handleGetIdentityDetails(Request& req, Response& resp);
+
     ResponseTask *handleOwn(Request& req, Response& resp);
     ResponseTask *handleCreateIdentity(Request& req, Response& resp);
 	ResponseTask *handleDeleteIdentity(Request& req, Response& resp);
