@@ -138,6 +138,9 @@ IdentityHandler::IdentityHandler(StateTokenServer *sts, RsNotify *notify, RsIden
 	addResourceHandler("own_ids", this, &IdentityHandler::handleOwnIdsRequest);
 	addResourceHandler("notown_ids", this, &IdentityHandler::handleNotOwnIdsRequest);
 
+	addResourceHandler("add_contact", this, &IdentityHandler::handleAddContact);
+	addResourceHandler("remove_contact", this, &IdentityHandler::handleRemoveContact);
+
 	addResourceHandler("create_identity", this, &IdentityHandler::handleCreateIdentity);
 	addResourceHandler("delete_identity", this, &IdentityHandler::handleDeleteIdentity);
 }
@@ -312,6 +315,36 @@ void IdentityHandler::handleOwnIdsRequest(Request & /*req*/, Response &resp)
 
 	if(ok) resp.setOk();
 	else resp.setFail();
+}
+
+void IdentityHandler::handleAddContact(Request& req, Response& resp)
+{
+	std::string gxs_id;
+	req.mStream << makeKeyValueReference("gxs_id", gxs_id);
+
+	mRsIdentity->setAsRegularContact(RsGxsId(gxs_id), true);
+
+	{
+		RsStackMutex stack(mMtx); /********** STACK LOCKED MTX ******/
+		mStateTokenServer->replaceToken(mStateToken);
+	}
+
+	resp.setOk();
+}
+
+void IdentityHandler::handleRemoveContact(Request& req, Response& resp)
+{
+	std::string gxs_id;
+	req.mStream << makeKeyValueReference("gxs_id", gxs_id);
+
+	mRsIdentity->setAsRegularContact(RsGxsId(gxs_id), false);
+
+	{
+		RsStackMutex stack(mMtx); /********** STACK LOCKED MTX ******/
+		mStateTokenServer->replaceToken(mStateToken);
+	}
+
+	resp.setOk();
 }
 
 ResponseTask* IdentityHandler::handleOwn(Request & /* req */, Response &resp)
