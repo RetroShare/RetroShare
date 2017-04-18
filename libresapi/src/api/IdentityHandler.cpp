@@ -148,6 +148,7 @@ IdentityHandler::IdentityHandler(StateTokenServer *sts, RsNotify *notify, RsIden
 	addResourceHandler("get_identity_details", this, &IdentityHandler::handleGetIdentityDetails);
 
 	addResourceHandler("set_ban_node", this, &IdentityHandler::handleSetBanNode);
+	addResourceHandler("set_opinion", this, &IdentityHandler::handleSetOpinion);
 }
 
 IdentityHandler::~IdentityHandler()
@@ -483,6 +484,36 @@ void IdentityHandler::handleSetBanNode(Request& req, Response& resp)
 	bool banned_node;
 	req.mStream << makeKeyValueReference("banned_node", banned_node);
 	rsReputations->banNode(pgpId, banned_node);
+
+	resp.setOk();
+}
+
+void IdentityHandler::handleSetOpinion(Request& req, Response& resp)
+{
+	std::string gxs_id;
+	req.mStream << makeKeyValueReference("gxs_id", gxs_id);
+	RsGxsId gxsId(gxs_id);
+
+	int own_opinion;
+	req.mStream << makeKeyValueReference("own_opinion", own_opinion);
+
+	RsReputations::Opinion opinion;
+	switch(own_opinion)
+	{
+	    case 0:
+		    opinion = RsReputations::OPINION_NEGATIVE;
+		    break;
+	    case 1: opinion =
+		    RsReputations::OPINION_NEUTRAL;
+		    break;
+	    case 2:
+		    opinion = RsReputations::OPINION_POSITIVE;
+		    break;
+	default:
+		resp.setFail();
+		return;
+	}
+	rsReputations->setOwnOpinion(gxsId, opinion);
 
 	resp.setOk();
 }
