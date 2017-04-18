@@ -63,6 +63,7 @@ Item
 		rsApi.request("/identity/*/", "", refreshContactsCallback)
 	}
 
+	property bool _refreshOwnCallback_creating: false
 	function refreshOwnCallback(par)
 	{
 		console.log("contactsView.refreshOwnCallback(par)", visible)
@@ -75,8 +76,11 @@ Item
 			contactsView.own_gxs_id = json.data[0].gxs_id
 			contactsView.own_nick = json.data[0].name
 		}
-		else
+		else if (!_refreshOwnCallback_creating)
 		{
+			console.log("refreshOwnCallback(par)", "creating new identity" )
+			_refreshOwnCallback_creating = true
+
 			var jsonData = { "name": mainWindow.pgp_name, "pgp_linked": false }
 			rsApi.request(
 						"/identity/create_identity",
