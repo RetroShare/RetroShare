@@ -30,16 +30,23 @@ QtObject
 	{
 		if (Array.isArray(tokens[token]))
 		{
-			// Do not register if it is registered already
-			var arrLen = tokens[token].length
-			for(var i=0; i<arrLen; ++i)
+			if(QT_DEBUG)
 			{
-				if(callback === tokens[token][i])
+				/* Haven't properly investigated yet if it may happen in normal
+				 * situations that a callback is registered more then once, so
+				 * if we are in a debug session and that happens print warning
+				 * and stacktrace */
+				var arrLen = tokens[token].length
+				for(var i=0; i<arrLen; ++i)
 				{
-					console.warn("tokensManager.registerToken(token, callback)",
-								 "Attempt to register same callback twice for:",
-								 i, token, callback)
-					return
+					if(callback === tokens[token][i])
+					{
+						console.warn("tokensManager.registerToken(token," +
+									 " callback) Attempt to register same" +
+									 " callback twice for:",
+									 i, token, callback)
+						console.trace()
+					}
 				}
 			}
 			tokens[token].push(callback)
