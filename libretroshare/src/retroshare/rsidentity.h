@@ -305,6 +305,9 @@ public:
     virtual bool setAsRegularContact(const RsGxsId& id,bool is_a_contact) = 0 ;
     virtual bool isARegularContact(const RsGxsId& id) = 0 ;
 
+	virtual bool serialiseIdentityToMemory(const RsGxsId& id,std::string& radix_string)=0;
+    virtual bool deserialiseIdentityFromMemory(const std::string& radix_string)=0;
+
     /*!
      * \brief overallReputationLevel
      * 			Returns the overall reputation level of the supplied identity. See rsreputations.h
@@ -319,6 +322,7 @@ public:
          */
 
     virtual bool    getGroupData(const uint32_t &token, std::vector<RsGxsIdGroup> &groups) = 0;
+	virtual bool 	getGroupSerializedData(const uint32_t &token, std::map<RsGxsId,std::string>& serialized_groups)=0;
     //virtual bool 	getMsgData(const uint32_t &token, std::vector<RsGxsIdOpinion> &opinions) = 0;
 
 };

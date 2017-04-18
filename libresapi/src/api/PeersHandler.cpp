@@ -3,6 +3,7 @@
 #include <retroshare/rspeers.h>
 #include <retroshare/rsmsgs.h>
 #include <util/radix64.h>
+#include <retroshare/rsstatus.h>
 
 #include <algorithm>
 
@@ -12,6 +13,12 @@
 namespace resource_api
 {
 
+#define PEER_STATE_ONLINE       1
+#define PEER_STATE_BUSY         2
+#define PEER_STATE_AWAY         3
+#define PEER_STATE_AVAILABLE    4
+#define PEER_STATE_INACTIVE     5
+#define PEER_STATE_OFFLINE      6
 // todo: groups, add friend, remove friend, permissions
 
 void peerDetailsToStream(StreamBase& stream, RsPeerDetails& details)
@@ -21,7 +28,50 @@ void peerDetailsToStream(StreamBase& stream, RsPeerDetails& details)
         << makeKeyValueReference("name", details.name)
         << makeKeyValueReference("location", details.location)
         << makeKeyValueReference("pgp_id", details.gpg_id)
-            ;
+	    << makeKeyValueReference("pgp_id", details.gpg_id);
+
+	if(details.state & RS_PEER_STATE_CONNECTED)
+	{
+		std::list<StatusInfo> statusInfo;
+		rsStatus->getStatusList(statusInfo);
+
+		std::string state_string;
+		std::list<StatusInfo>::iterator it;
+		for (it = statusInfo.begin(); it != statusInfo.end(); ++it)
+		{
+			if (it->id == details.id)
+			{
+				switch (it->status)
+				{
+				case RS_STATUS_INACTIVE:
+					state_string = "inactive";
+					break;
+
+				case RS_STATUS_ONLINE:
+					state_string = "online";
+					break;
+
+				case RS_STATUS_AWAY:
+					state_string = "away";
+					break;
+
+				case RS_STATUS_BUSY:
+					state_string = "busy";
+					break;
+				default:
+					state_string = "undefined";
+					break;
+				}
+				break;
+			}
+		}
+		stream << makeKeyValueReference("state_string", state_string);
+	}
+	else
+	{
+		std::string state_string = "undefined";
+		stream << makeKeyValueReference("state_string", state_string);
+	}
 }
 
 bool peerInfoToStream(StreamBase& stream, RsPeerDetails& details, RsPeers* peers, std::list<RsGroupInfo>& grpInfo, bool have_avatar)
@@ -29,7 +79,9 @@ bool peerInfoToStream(StreamBase& stream, RsPeerDetails& details, RsPeers* peers
     bool ok = true;
     peerDetailsToStream(stream, details);
     stream << makeKeyValue("is_online", peers->isOnline(details.id))
-           << makeKeyValue("chat_id", ChatId(details.id).toStdString());
+	       << makeKeyValue("chat_id", ChatId(details.id).toStdString())
+	       << makeKeyValue("custom_state_string", rsMsgs->getCustomStateString(details.id));
+
 
     std::string avatar_address = "/"+details.id.toStdString()+"/avatar_image";
 
@@ -63,7 +115,13 @@ PeersHandler::PeersHandler(StateTokenServer* sts, RsNotify* notify, RsPeers *pee
     mNotify->registerNotifyClient(this);
     mStateTokenServer->registerTickClient(this);
     addResourceHandler("*", this, &PeersHandler::handleWildcard);
-    addResourceHandler("examine_cert", this, &PeersHandler::handleExamineCert);
+	addResourceHandler("get_state_string", this, &PeersHandler::handleGetStateString);
+	addResourceHandler("set_state_string", this, &PeersHandler::handleSetStateString);
+	addResourceHandler("get_custom_state_string", this, &PeersHandler::handleGetCustomStateString);
+	addResourceHandler("set_custom_state_string", this, &PeersHandler::handleSetCustomStateString);
+	addResourceHandler("get_pgp_options", this, &PeersHandler::handleGetPGPOptions);
+	addResourceHandler("set_pgp_options", this, &PeersHandler::handleSetPGPOptions);
+	addResourceHandler("examine_cert", this, &PeersHandler::handleExamineCert);
 }
 
 PeersHandler::~PeersHandler()
@@ -100,6 +158,27 @@ void PeersHandler::tick()
         mStateTokenServer->discardToken(mStateToken);
         mStateToken = mStateTokenServer->getNewToken();
     }
+
+	StatusInfo statusInfo;
+	rsStatus->getOwnStatus(statusInfo);
+	if(statusInfo.status != status)
+	{
+		status = statusInfo.status;
+
+		RsStackMutex stack(mMtx); /********** STACK LOCKED MTX ******/
+		mStateTokenServer->discardToken(mStringStateToken);
+		mStringStateToken = mStateTokenServer->getNewToken();
+	}
+
+	std::string custom_state = rsMsgs->getCustomStateString();
+	if(custom_state != custom_state_string)
+	{
+		custom_state_string = custom_state;
+
+		RsStackMutex stack(mMtx); /********** STACK LOCKED MTX ******/
+		mStateTokenServer->discardToken(mCustomStateToken);
+		mCustomStateToken = mStateTokenServer->getNewToken();
+	}
 }
 
 void PeersHandler::notifyUnreadMsgCountChanged(const RsPeerId &peer, uint32_t count)
@@ -119,6 +198,73 @@ static bool have_avatar(RsMsgs* msgs, const RsPeerId& id)
     std::vector<uint8_t> avatar(data, data+size);
     delete[] data;
     return size != 0;
+}
+
+void PeersHandler::handleGetStateString(Request& /*req*/, Response& resp)
+{
+	{
+		RS_STACK_MUTEX(mMtx);
+		resp.mStateToken = mStringStateToken;
+	}
+
+	std::string state_string;
+	StatusInfo statusInfo;
+	if (rsStatus->getOwnStatus(statusInfo))
+	{
+		if(statusInfo.status == RS_STATUS_ONLINE)
+			state_string = "online";
+		else if(statusInfo.status == RS_STATUS_BUSY)
+			state_string = "busy";
+		else if(statusInfo.status == RS_STATUS_AWAY)
+			state_string = "away";
+		else if(statusInfo.status == RS_STATUS_INACTIVE)
+			state_string = "inactive";
+		else
+			state_string = "undefined";
+	}
+	else
+		state_string = "undefined";
+
+	resp.mDataStream << makeKeyValueReference("state_string", state_string);
+	resp.setOk();
+}
+
+void PeersHandler::handleSetStateString(Request& req, Response& resp)
+{
+	std::string state_string;
+	req.mStream << makeKeyValueReference("state_string", state_string);
+
+	uint32_t status = RS_STATUS_OFFLINE;
+	if(state_string == "online")
+		status = RS_STATUS_ONLINE;
+	else if(state_string == "busy")
+		status = RS_STATUS_BUSY;
+	else if(state_string == "away")
+		status = RS_STATUS_AWAY;
+
+	rsStatus->sendStatus(RsPeerId(), status);
+	resp.setOk();
+}
+
+void PeersHandler::handleGetCustomStateString(Request& /*req*/, Response& resp)
+{
+	{
+		RS_STACK_MUTEX(mMtx);
+		resp.mStateToken = mCustomStateToken;
+	}
+
+	std::string custom_state_string = rsMsgs->getCustomStateString();
+	resp.mDataStream << makeKeyValueReference("custom_state_string", custom_state_string);
+	resp.setOk();
+}
+
+void PeersHandler::handleSetCustomStateString(Request& req, Response& resp)
+{
+	std::string custom_state_string;
+	req.mStream << makeKeyValueReference("custom_state_string", custom_state_string);
+
+	rsMsgs->setCustomStateString(custom_state_string);
+	resp.setOk();
 }
 
 void PeersHandler::handleWildcard(Request &req, Response &resp)
@@ -176,6 +322,9 @@ void PeersHandler::handleWildcard(Request &req, Response &resp)
                 RsStackMutex stack(mMtx); /********** STACK LOCKED MTX ******/
                 unread_msgs = mUnreadMsgsCounts;
             }
+			std::list<StatusInfo> statusInfo;
+			rsStatus->getStatusList(statusInfo);
+
             // list all peers
             ok = true;
             std::list<RsPgpId> identities;
@@ -216,6 +365,11 @@ void PeersHandler::handleWildcard(Request &req, Response &resp)
                 StreamBase& locationStream = itemStream.getStreamToMember("locations");
                 // mark as list (in case list is empty)
                 locationStream.getStreamToMember();
+
+				int bestPeerState = 0;
+				unsigned int bestRSState = 0;
+				std::string bestCustomStateString;
+
                 for(std::vector<RsPeerDetails>::iterator vit = detailsVec.begin(); vit != detailsVec.end(); ++vit)
                 {
                     if(vit->gpg_id == *lit)
@@ -226,8 +380,85 @@ void PeersHandler::handleWildcard(Request &req, Response &resp)
                             unread = unread_msgs.find(vit->id)->second;
                         stream << makeKeyValueReference("unread_msgs", unread);
                         peerInfoToStream(stream,*vit, mRsPeers, grpInfo, have_avatar(mRsMsgs, vit->id));
-                    }
+
+
+						/* Custom state string */
+						std::string customStateString;
+						if (vit->state & RS_PEER_STATE_CONNECTED)
+						{
+							customStateString = rsMsgs->getCustomStateString(vit->id);
+						}
+
+						int peerState = 0;
+
+						if (vit->state & RS_PEER_STATE_CONNECTED)
+						{
+							// get the status info for this ssl id
+							int rsState = 0;
+							std::list<StatusInfo>::iterator it;
+							for (it = statusInfo.begin(); it != statusInfo.end(); ++it)
+							{
+								if (it->id == vit->id)
+								{
+									rsState = it->status;
+									switch (rsState)
+									{
+									case RS_STATUS_INACTIVE:
+										peerState = PEER_STATE_INACTIVE;
+										break;
+
+									case RS_STATUS_ONLINE:
+										peerState = PEER_STATE_ONLINE;
+										break;
+
+									case RS_STATUS_AWAY:
+										peerState = PEER_STATE_AWAY;
+										break;
+
+									case RS_STATUS_BUSY:
+										peerState = PEER_STATE_BUSY;
+										break;
+									}
+
+									/* find the best ssl contact for the gpg item */
+									if (bestPeerState == 0 || peerState < bestPeerState)
+									{
+										bestPeerState = peerState;
+										bestRSState = rsState;
+										bestCustomStateString = customStateString;
+									}
+									else if (peerState == bestPeerState)
+									{
+										/* equal state */
+										if (bestCustomStateString.empty() && !customStateString.empty())
+										{
+											bestPeerState = peerState;
+											bestRSState = rsState;
+											bestCustomStateString = customStateString;
+										}
+									}
+									break;
+								}
+							}
+						}
+					}
                 }
+				itemStream << makeKeyValue("custom_state_string", bestCustomStateString);
+
+				std::string state_string;
+
+				if(bestRSState == RS_STATUS_ONLINE)
+					state_string = "online";
+				else if(bestRSState == RS_STATUS_BUSY)
+					state_string = "busy";
+				else if(bestRSState == RS_STATUS_AWAY)
+					state_string = "away";
+				else if(bestRSState == RS_STATUS_INACTIVE)
+					state_string = "inactive";
+				else
+					state_string = "undefined";
+
+				itemStream << makeKeyValue("state_string", state_string);
             }
             resp.mStateToken = getCurrentStateToken();
         }
@@ -298,6 +529,120 @@ void PeersHandler::handleExamineCert(Request &req, Response &resp)
     {
         resp.setFail("failed to load certificate");
     }
+}
+
+void PeersHandler::handleGetPGPOptions(Request& req, Response& resp)
+{
+	std::string pgp_id;
+	req.mStream << makeKeyValueReference("pgp_id", pgp_id);
+
+	RsPgpId pgp(pgp_id);
+	RsPeerDetails detail;
+
+	if(!mRsPeers->getGPGDetails(pgp, detail))
+	{
+		resp.setFail();
+		return;
+	}
+
+	std::string pgp_key = mRsPeers->getPGPKey(detail.gpg_id, false);
+
+	resp.mDataStream << makeKeyValue("pgp_fingerprint", detail.fpr.toStdString());
+	resp.mDataStream << makeKeyValueReference("pgp_key", pgp_key);
+
+	resp.mDataStream << makeKeyValue("direct_transfer", detail.service_perm_flags & RS_NODE_PERM_DIRECT_DL);
+	resp.mDataStream << makeKeyValue("allow_push", detail.service_perm_flags & RS_NODE_PERM_ALLOW_PUSH);
+	resp.mDataStream << makeKeyValue("require_WL", detail.service_perm_flags & RS_NODE_PERM_REQUIRE_WL);
+
+	resp.mDataStream << makeKeyValue("own_sign", detail.ownsign);
+	resp.mDataStream << makeKeyValue("trustLvl", detail.trustLvl);
+
+	uint32_t max_upload_speed = 0;
+	uint32_t max_download_speed = 0;
+
+	mRsPeers->getPeerMaximumRates(pgp, max_upload_speed, max_download_speed);
+
+	resp.mDataStream << makeKeyValueReference("maxUploadSpeed", max_upload_speed);
+	resp.mDataStream << makeKeyValueReference("maxDownloadSpeed", max_download_speed);
+
+	StreamBase& signersStream = resp.mDataStream.getStreamToMember("gpg_signers");
+
+	// mark as list (in case list is empty)
+	signersStream.getStreamToMember();
+
+	for(std::list<RsPgpId>::const_iterator it(detail.gpgSigners.begin()); it != detail.gpgSigners.end(); ++it)
+	{
+		RsPeerDetails detail;
+		if(!mRsPeers->getGPGDetails(*it, detail))
+			continue;
+
+		std::string pgp_id = (*it).toStdString();
+		std::string name = detail.name;
+
+		signersStream.getStreamToMember()
+		    << makeKeyValueReference("pgp_id", pgp_id)
+		    << makeKeyValueReference("name", name);
+	}
+
+	resp.setOk();
+}
+
+void PeersHandler::handleSetPGPOptions(Request& req, Response& resp)
+{
+	std::string pgp_id;
+	req.mStream << makeKeyValueReference("pgp_id", pgp_id);
+
+	RsPgpId pgp(pgp_id);
+	RsPeerDetails detail;
+
+	if(!mRsPeers->getGPGDetails(pgp, detail))
+	{
+		resp.setFail();
+		return;
+	}
+
+	int trustLvl;
+	req.mStream << makeKeyValueReference("trustLvl", trustLvl);
+
+	if(trustLvl != (int)detail.trustLvl)
+		mRsPeers->trustGPGCertificate(pgp, trustLvl);
+
+	int max_upload_speed;
+	int max_download_speed;
+
+	req.mStream << makeKeyValueReference("max_upload_speed", max_upload_speed);
+	req.mStream << makeKeyValueReference("max_download_speed", max_download_speed);
+
+	mRsPeers->setPeerMaximumRates(pgp, (uint32_t)max_upload_speed, (uint32_t)max_download_speed);
+
+	bool direct_transfer;
+	bool allow_push;
+	bool require_WL;
+
+	req.mStream << makeKeyValueReference("direct_transfer", direct_transfer);
+	req.mStream << makeKeyValueReference("allow_push", allow_push);
+	req.mStream << makeKeyValueReference("require_WL", require_WL);
+
+	ServicePermissionFlags flags(0);
+
+	if(direct_transfer)
+		flags = flags | RS_NODE_PERM_DIRECT_DL;
+	if(allow_push)
+		flags = flags | RS_NODE_PERM_ALLOW_PUSH;
+	if(require_WL)
+		flags = flags | RS_NODE_PERM_REQUIRE_WL;
+
+	mRsPeers->setServicePermissionFlags(pgp, flags);
+
+	bool own_sign;
+	req.mStream << makeKeyValueReference("own_sign", own_sign);
+
+	if(own_sign)
+		mRsPeers->signGPGCertificate(pgp);
+
+	resp.mStateToken = getCurrentStateToken();
+
+	resp.setOk();
 }
 
 StateToken PeersHandler::getCurrentStateToken()

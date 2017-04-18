@@ -29,6 +29,7 @@
 #define MRK_PQI_PERSON_HEADER
 
 
+#include <string>
 #include "pqi/pqi.h"
 #include "util/rsnet.h"
 
@@ -66,7 +67,7 @@ public:
     	virtual int 	reset() { pqistreamer::reset(); return ni->reset(); }
 	virtual int 	disconnect() { return reset() ; }
 	virtual bool connect_parameter(uint32_t type, uint32_t value) { return ni->connect_parameter(type, value);}
-	virtual bool connect_parameter(uint32_t type, std::string value) { return ni->connect_parameter(type, value);}
+	virtual bool connect_parameter(uint32_t type, const std::string &value) { return ni->connect_parameter(type, value);}
 	virtual bool connect_additional_address(uint32_t type, const struct sockaddr_storage &addr) { return ni->connect_additional_address(type, addr); }
 	virtual int getConnectAddress(struct sockaddr_storage &raddr){ return ni->getConnectAddress(raddr); }
 
@@ -171,7 +172,7 @@ private:
 	bool active;
 	pqiconnect *activepqi;
 	bool inConnectAttempt;
-	int waittimes;
+	//int waittimes;
 	time_t lastHeartbeatReceived; // use to track connection failure
 	pqipersongrp *pqipg; /* parent for callback */
 };

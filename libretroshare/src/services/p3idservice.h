@@ -212,6 +212,13 @@ private:
     void init(const RsGxsIdGroupItem *item, const RsTlvPublicRSAKey& in_pub_key, const RsTlvPrivateRSAKey& in_priv_key,const std::list<RsRecognTag> &tagList);
 };
 
+struct SerialisedIdentityStruct
+{
+    unsigned char *mMem ;
+    uint32_t mSize ;
+    time_t mLastUsageTS;
+};
+
 // Not sure exactly what should be inherited here?
 // Chris - please correct as necessary.
 
@@ -238,6 +245,8 @@ public:
 
 	// These are exposed via RsIdentity.
 	virtual bool getGroupData(const uint32_t &token, std::vector<RsGxsIdGroup> &groups);
+	virtual bool getGroupSerializedData(const uint32_t &token, std::map<RsGxsId,std::string>& serialized_groups);
+
 	//virtual bool getMsgData(const uint32_t &token, std::vector<RsGxsIdOpinion> &opinions);
 
 	// These are local - and not exposed via RsIdentity.
@@ -341,6 +350,8 @@ public:
 	                         const RsIdentityUsage &use_info );
 	virtual bool requestPrivateKey(const RsGxsId &id);
 
+	virtual bool serialiseIdentityToMemory(const RsGxsId& id,std::string& radix_string);
+    virtual bool deserialiseIdentityFromMemory(const std::string& radix_string);
 
 	/**************** RsGixsReputation Implementation ****************/
 
@@ -432,6 +443,12 @@ private:
 
 	bool mBgSchedule_Active;
 	uint32_t mBgSchedule_Mode;
+
+    /***********************************8
+     * Fonction to receive and handle group serialisation to memory
+     */
+
+	virtual void handle_get_serialized_grp(uint32_t token);
 
 	/************************************************************************
  * pgphash processing.
@@ -562,6 +579,8 @@ private:
 	std::map<uint32_t, std::list<RsGxsGroupId> > mGroupNotPresent;
 	std::map<RsGxsId, std::list<RsPeerId> > mIdsNotPresent;
 	std::map<RsGxsId,keyTSInfo> mKeysTS ;
+
+    std::map<RsGxsId,SerialisedIdentityStruct> mSerialisedIdentities ;
 
 	// keep a list of regular contacts. This is useful to sort IDs, and allow some services to priviledged ids only.
 	std::set<RsGxsId> mContacts;

@@ -35,6 +35,11 @@ retroshare_qml_app:CONFIG -= no_retroshare_qml_app
 CONFIG *= no_libresapilocalserver
 libresapilocalserver:CONFIG -= no_libresapilocalserver
 
+# To enable Qt dependencies in libresapi append the following
+# assignation to qmake command line "CONFIG+=qt_dependencies"
+CONFIG *= no_qt_dependencies
+qt_dependencies:CONFIG -= no_qt_dependencies
+
 # To disable libresapi via HTTP (based on libmicrohttpd) append the following
 # assignation to qmake command line "CONFIG+=no_libresapihttpserver"
 CONFIG *= libresapihttpserver
@@ -174,6 +179,7 @@ unfinished {
 wikipoos:DEFINES *= RS_USE_WIKI
 rs_gxs:DEFINES *= RS_ENABLE_GXS
 libresapilocalserver:DEFINES *= LIBRESAPI_LOCAL_SERVER
+qt_dependencies:DEFINES *= LIBRESAPI_QT
 libresapihttpserver:DEFINES *= ENABLE_WEBUI
 sqlcipher:DEFINES -= NO_SQLCIPHER
 no_sqlcipher:DEFINES *= NO_SQLCIPHER

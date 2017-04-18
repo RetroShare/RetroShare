@@ -68,6 +68,17 @@
 #define ARG_RSFILE_L        "rsfile"        /**< Open RsFile with or without arg  */
 //Other defined for server in /libretroshare/src/rsserver/rsinit.cc:351
 
+// The arguments here can be send to a running instance.
+// If the command line contains arguments not listed here, we have to start a new instance.
+// For exmample, the user wants to start a second instance using --base-dir arg of libretroshare.
+static const char* const forwardableArgs[] = {
+    ARG_RSLINK_S,
+    ARG_RSLINK_L,
+    ARG_RSFILE_S,
+    ARG_RSFILE_L,
+    NULL,
+};
+
 /* Static member variables */
 QMap<QString, QString> Rshare::_args; /**< List of command-line arguments.  */
 QString Rshare::_style;               /**< The current GUI style.           */
@@ -115,6 +126,27 @@ void qt_msg_handler(QtMsgType type, const char *msg)
   }
 }
 
+static bool notifyRunningInstance()
+{
+    // Connect to the Local Server of the main process to notify it
+    // that a new process had been started
+    QLocalSocket localSocket;
+    localSocket.connectToServer(QString(TARGET));
+
+    std::cerr << "Rshare::Rshare waitForConnected to other instance." << std::endl;
+    if( localSocket.waitForConnected(100) )
+    {
+      std::cerr << "Rshare::Rshare Connection etablished. Waiting for disconnection." << std::endl;
+      localSocket.waitForDisconnected(1000);
+      return true;
+    }
+    else
+    {
+        std::cerr << "Rshare::Rshare failed to connect to other instance." << std::endl;
+        return false;
+    }
+}
+
 /** Constructor. Parses the command-line arguments, resets Rshare's
  * configuration (if requested), and sets up the GUI style and language
  * translation. */
@@ -128,7 +160,32 @@ Rshare::Rshare(QStringList args, int &argc, char **argv, const QString &dir)
   {
     QString serverName = QString(TARGET);
 
-    if (!args.isEmpty()) {
+    // check if another instance is running
+    bool haveRunningInstance = notifyRunningInstance();
+
+    bool sendArgsToRunningInstance = haveRunningInstance;
+    if(args.empty())
+        sendArgsToRunningInstance = false;
+    // if we find non-forwardable args, start a new instance
+    for(int i = 0; i < args.size(); ++i)
+    {
+        const char* const* argit = forwardableArgs;
+        bool found = false;
+        while(*argit && i < args.size())
+        {
+            if(args.value(i) == "-"+QString(*argit) || args.value(i) == "--"+QString(*argit))
+            {
+                found = true;
+                if(argNeedsValue(*argit))
+                    i++;
+            }
+            argit++;
+        }
+        if(!found)
+            sendArgsToRunningInstance = false;
+    }
+
+    if (sendArgsToRunningInstance) {
       // load into shared memory
       QBuffer buffer;
       buffer.open(QBuffer::ReadWrite);
@@ -156,30 +213,29 @@ Rshare::Rshare(QStringList args, int &argc, char **argv, const QString &dir)
       memcpy(to, from, qMin(newArgs.size(), size));
       newArgs.unlock();
 
-      // Connect to the Local Server of the main process to notify it
-      // that a new process had been started
-      QLocalSocket localSocket;
-      localSocket.connectToServer(QString(TARGET));
-
       std::cerr << "Rshare::Rshare waitForConnected to other instance." << std::endl;
-      if( localSocket.waitForConnected(100) )
+      if(notifyRunningInstance())
       {
-        std::cerr << "Rshare::Rshare Connection etablished. Waiting for disconnection." << std::endl;
-        localSocket.waitForDisconnected(1000);
         newArgs.detach();
         std::cerr << "Rshare::Rshare Arguments was sended." << std::endl
                   << " To disable it, in Options - General - Misc," << std::endl
                   << " uncheck \"Use Local Server to get new Arguments\"." << std::endl;
         ::exit(EXIT_SUCCESS); // Terminate the program using STDLib's exit function
       }
+      else
+          std::cerr << "Rshare::Rshare failed to connect to other instance." << std::endl;
       newArgs.detach();
     }
-    // No main process exists
-    // Or started without arguments
-    // So we start a Local Server to listen for connections from new process
-    localServer= new QLocalServer();
-    QObject::connect(localServer, SIGNAL(newConnection()), this, SLOT(slotConnectionEstablished()));
-    updateLocalServer();
+
+    if(!haveRunningInstance)
+    {
+        // No main process exists
+        // Or started without arguments
+        // So we start a Local Server to listen for connections from new process
+        localServer= new QLocalServer();
+        QObject::connect(localServer, SIGNAL(newConnection()), this, SLOT(slotConnectionEstablished()));
+        updateLocalServer();
+    }
   }
 
 #if QT_VERSION >= QT_VERSION_CHECK (5, 0, 0)

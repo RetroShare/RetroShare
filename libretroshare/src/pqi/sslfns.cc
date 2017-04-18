@@ -627,7 +627,7 @@ bool getX509id(X509 *x509, RsPeerId& xid)
 	 * more randomness
 	 */
 
-#warning this is cryptographically horrible. We should do a hash of the public key here!!!
+#warning csoler 2017-02-19: This is cryptographically horrible. We should do a hash of the public key here!!!
 
 	xid = RsPeerId(&signdata[signlen - CERTSIGNLEN]) ;
 

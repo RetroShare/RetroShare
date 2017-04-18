@@ -31,8 +31,9 @@ public:
     // returns true if the process should terminate
     bool processShouldExit();
 
-    // from NotifyClient
-    virtual bool askForPassword(const std::string &title, const std::string& key_details, bool prev_is_bad , std::string& password,bool& canceled);
+	// from NotifyClient
+	virtual bool askForPassword(const std::string &title, const std::string& key_details, bool prev_is_bad , std::string& password,bool& canceled) override;
+	virtual bool askForDeferredSelfSignature(const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen,int& signature_result, std::string reason = "") override;
 
 protected:
     // from RsThread
@@ -76,6 +77,7 @@ private:
     // to notify that a password callback is waiting
     // to answer the request, clear the flag and set the password
     bool mWantPassword;
+	bool mPrevIsBad;
     std::string mTitle;
     std::string mKeyName;
     std::string mPassword;

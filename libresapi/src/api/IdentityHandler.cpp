@@ -103,9 +103,13 @@ IdentityHandler::IdentityHandler(StateTokenServer *sts, RsNotify *notify, RsIden
 {
     mNotify->registerNotifyClient(this);
 
-    addResourceHandler("*", this, &IdentityHandler::handleWildcard);
-    addResourceHandler("own", this, &IdentityHandler::handleOwn);
-    addResourceHandler("create_identity", this, &IdentityHandler::handleCreateIdentity);
+	addResourceHandler("*", this, &IdentityHandler::handleWildcard);
+	addResourceHandler("own", this, &IdentityHandler::handleOwn);
+
+	addResourceHandler("own_ids", this, &IdentityHandler::handleOwnIdsRequest);
+	addResourceHandler("notown_ids", this, &IdentityHandler::handleNotOwnIdsRequest);
+
+    addResourceHandler("create_identity", this, &IdentityHandler::handleCreateIdentity);	
 }
 
 IdentityHandler::~IdentityHandler()
@@ -173,6 +177,112 @@ void IdentityHandler::handleWildcard(Request & /*req*/, Response &resp)
 		}
 	}
 	else ok = false;
+
+	if(ok) resp.setOk();
+	else resp.setFail();
+}
+
+
+void IdentityHandler::handleNotOwnIdsRequest(Request & /*req*/, Response &resp)
+{
+	bool ok = true;
+
+	{
+		RS_STACK_MUTEX(mMtx);
+		resp.mStateToken = mStateToken;
+	}
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
+	uint32_t token;
+	mRsIdentity->getTokenService()->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts);
+
+	time_t start = time(NULL);
+	while((mRsIdentity->getTokenService()->requestStatus(token) != RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
+	      &&(mRsIdentity->getTokenService()->requestStatus(token) != RsTokenService::GXS_REQUEST_V2_STATUS_FAILED)
+	      &&((time(NULL) < (start+10)))
+	      )
+	{
+#ifdef WINDOWS_SYS
+		Sleep(500);
+#else
+		usleep(500*1000);
+#endif
+	}
+
+	if(mRsIdentity->getTokenService()->requestStatus(token) == RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
+	{
+		std::vector<RsGxsIdGroup> grps;
+		ok &= mRsIdentity->getGroupData(token, grps);
+		for(std::vector<RsGxsIdGroup>::iterator vit = grps.begin(); vit != grps.end(); vit++)
+		{
+			RsGxsIdGroup& grp = *vit;
+			//electron: not very happy about this, i think the flags should stay hidden in rsidentities
+			if(!(grp.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN) && grp.mIsAContact)
+			{
+				bool pgp_linked = (grp.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID_kept_for_compatibility  ) ;
+				resp.mDataStream.getStreamToMember()
+				        << makeKeyValueReference("id", grp.mMeta.mGroupId) /// @deprecated using "id" as key can cause problems in some JS based languages like Qml @see gxs_id instead
+				        << makeKeyValueReference("gxs_id", grp.mMeta.mGroupId)
+				        << makeKeyValueReference("pgp_id",grp.mPgpId )
+				        << makeKeyValueReference("name", grp.mMeta.mGroupName)
+				        << makeKeyValueReference("pgp_linked", pgp_linked);
+			}
+		}
+	}
+	else ok = false;
+
+	if(ok) resp.setOk();
+	else resp.setFail();
+}
+
+void IdentityHandler::handleOwnIdsRequest(Request & /*req*/, Response &resp)
+{
+	bool ok = true;
+
+	{
+		RS_STACK_MUTEX(mMtx);
+		resp.mStateToken = mStateToken;
+	}
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
+	uint32_t token;
+	mRsIdentity->getTokenService()->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts);
+
+	time_t start = time(NULL);
+	while((mRsIdentity->getTokenService()->requestStatus(token) != RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
+	      &&(mRsIdentity->getTokenService()->requestStatus(token) != RsTokenService::GXS_REQUEST_V2_STATUS_FAILED)
+	      &&((time(NULL) < (start+10)))
+	      )
+	{
+#ifdef WINDOWS_SYS
+		Sleep(500);
+#else
+		usleep(500*1000);
+#endif
+	}
+
+	if(mRsIdentity->getTokenService()->requestStatus(token) == RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
+	{
+		std::vector<RsGxsIdGroup> grps;
+		ok &= mRsIdentity->getGroupData(token, grps);
+		for(std::vector<RsGxsIdGroup>::iterator vit = grps.begin(); vit != grps.end(); vit++)
+		{
+			RsGxsIdGroup& grp = *vit;
+			//electron: not very happy about this, i think the flags should stay hidden in rsidentities
+			if(vit->mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)
+			{
+				bool pgp_linked = (grp.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID_kept_for_compatibility  ) ;
+				resp.mDataStream.getStreamToMember()
+				        << makeKeyValueReference("own_gxs_id", grp.mMeta.mGroupId)
+				        << makeKeyValueReference("pgp_id",grp.mPgpId )
+				        << makeKeyValueReference("name", grp.mMeta.mGroupName)
+				        << makeKeyValueReference("pgp_linked", pgp_linked);
+			}
+		}
+
+	}
+	else
+		ok = false;
 
 	if(ok) resp.setOk();
 	else resp.setFail();

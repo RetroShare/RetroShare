@@ -279,7 +279,12 @@ win32 {
 
 	CONFIG += upnp_miniupnpc
 
-	LIBS += -lsqlcipher
+	no_sqlcipher {
+		PKGCONFIG *= sqlite3
+		LIBS += -lsqlite3
+	} else {
+		LIBS += -lsqlcipher
+	}
 
 	DEPENDPATH += . $$INC_DIR
 	INCLUDEPATH += . $$INC_DIR

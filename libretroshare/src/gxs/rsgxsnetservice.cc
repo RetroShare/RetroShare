@@ -1972,7 +1972,7 @@ void RsGxsNetService::updateServerSyncTS()
 #endif
 
         // I keep the creation, but the data is not used yet.
-#warning disabled this, but do we need it?
+#warning csoler 2016-12-12: Disabled this, but do we need it?
 		// RsGxsServerMsgUpdate& msui(mServerMsgUpdateMap[grpId]) ;
 
         // (cyril) I'm removing this, because the msgUpdateTS is updated when new messages are received by calling locked_stampMsgServerUpdateTS().
@@ -3000,7 +3000,7 @@ void RsGxsNetService::locked_genReqGrpTransaction(NxsTransaction* tr)
         }
         // FIXTESTS global variable rsReputations not available in unittests!
 
-#warning Update the code below to correctly send/recv dependign on reputation
+#warning csoler 2016-12-23: Update the code below to correctly send/recv dependign on reputation
 		if(!grpSyncItem->authorId.isNull() && mReputations->overallReputationLevel(grpSyncItem->authorId) == RsReputations::REPUTATION_LOCALLY_NEGATIVE)
 		{
 #ifdef NXS_NET_DEBUG_0

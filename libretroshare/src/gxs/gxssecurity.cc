@@ -459,8 +459,12 @@ bool GxsSecurity::validateNxsMsg(const RsNxsMsg& msg, const RsTlvKeySignature& s
             msgMeta.signSet.TlvClear();
 
             RsGxsMessageId msgId = msgMeta.mMsgId, origMsgId = msgMeta.mOrigMsgId;
-            msgMeta.mOrigMsgId.clear();
+
+            if(msgMeta.mOrigMsgId == msgMeta.mMsgId)	// message is not versionned, then the signature was made with mOrigMsgId==NULL
+				msgMeta.mOrigMsgId.clear();
+
             msgMeta.mMsgId.clear();
+
 	    int signOk = 0 ;
 
 	{

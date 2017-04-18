@@ -1194,7 +1194,7 @@ bool p3GxsTunnelService::locked_sendClearTunnelData(RsGxsTunnelDHPublicKeyItem *
     if(gitem->data_bytes == NULL)
     {
         delete gitem ;
-        return NULL ;
+        return false ;
     }
     // by convention, we use a IV of 0 for unencrypted data.
     memset(gitem->data_bytes,0,8) ;

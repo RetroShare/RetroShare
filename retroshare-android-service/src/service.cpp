@@ -24,11 +24,9 @@
 #	include "util/androiddebug.h"
 #endif
 
-#include "retroshare/rsinit.h"
 #include "api/ApiServer.h"
 #include "api/ApiServerLocal.h"
 #include "api/RsControlModule.h"
-
 
 using namespace resource_api;
 
@@ -46,7 +44,12 @@ int main(int argc, char *argv[])
 	            dynamic_cast<resource_api::ResourceRouter*>(&ctrl_mod),
 	            &resource_api::RsControlModule::handleRequest);
 
-	QString sockPath = QString::fromStdString(RsAccounts::ConfigDirectory());
+#ifdef QT_DEBUG
+	QString sockPath = "RS/";
+#else
+	QString sockPath = QCoreApplication::applicationDirPath();
+#endif
+
 	sockPath.append("/libresapi.sock");
 	qDebug() << "Listening on:" << sockPath;
 	ApiServerLocal apiServerLocal(&api, sockPath); (void) apiServerLocal;

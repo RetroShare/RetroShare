@@ -63,9 +63,12 @@ PopupDistantChatDialog::PopupDistantChatDialog(const DistantChatPeerId& tunnel_i
 	updateDisplay() ;
 }
 
-void PopupDistantChatDialog::init(const DistantChatPeerId &peer_id)
+void PopupDistantChatDialog::init(const ChatId &chat_id, const QString &/*title*/)
 {
-    _tunnel_id = peer_id;
+    if (!chat_id.isDistantChatId())
+        return;
+
+    _tunnel_id = chat_id.toDistantChatId();
     DistantChatPeerInfo tinfo;
     
     if(!rsMsgs->getDistantChatStatus(_tunnel_id,tinfo))
@@ -74,15 +77,15 @@ void PopupDistantChatDialog::init(const DistantChatPeerId &peer_id)
     RsIdentityDetails iddetails ;
     
     if(rsIdentity->getIdDetails(tinfo.to_id,iddetails))
-	    PopupChatDialog::init(ChatId(peer_id), QString::fromUtf8(iddetails.mNickname.c_str())) ;
+	    PopupChatDialog::init(chat_id, QString::fromUtf8(iddetails.mNickname.c_str())) ;
     else
-	    PopupChatDialog::init(ChatId(peer_id), QString::fromStdString(tinfo.to_id.toStdString())) ;
+	    PopupChatDialog::init(chat_id, QString::fromStdString(tinfo.to_id.toStdString())) ;
 
     // Do not use setOwnId, because we don't want the user to change the GXS avatar from the chat window
     // it will not be transmitted.
 
     ui.ownAvatarWidget->setOwnId() ;			// sets the flag
-    ui.ownAvatarWidget->setId(ChatId(peer_id)) ;	// sets the actual Id
+    ui.ownAvatarWidget->setId(chat_id) ;	// sets the actual Id
 }
 
 void PopupDistantChatDialog::updateDisplay()

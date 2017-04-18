@@ -23,6 +23,9 @@ public:
 
 private:
     void handleWildcard(Request& req, Response& resp);
+	void handleNotOwnIdsRequest(Request& req, Response& resp);
+	void handleOwnIdsRequest(Request& req, Response& resp);
+
     ResponseTask *handleOwn(Request& req, Response& resp);
     ResponseTask *handleCreateIdentity(Request& req, Response& resp);
 

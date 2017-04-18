@@ -120,6 +120,7 @@ private:
     void handleLobbies(Request& req, Response& resp);
     void handleSubscribeLobby(Request& req, Response& resp);
     void handleUnsubscribeLobby(Request& req, Response& resp);
+	void handleAutoSubsribeLobby(Request& req, Response& resp);
     void handleClearLobby(Request& req, Response& resp);
     ResponseTask* handleLobbyParticipants(Request& req, Response& resp);
     void handleMessages(Request& req, Response& resp);

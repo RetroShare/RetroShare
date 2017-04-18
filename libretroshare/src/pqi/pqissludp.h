@@ -95,7 +95,7 @@ private:
 
 	BIO *tou_bio;  // specific to ssludp.
 
-	long listen_checktime;
+	//long listen_checktime;
 
 	uint32_t mConnectPeriod;
 	uint32_t mConnectFlags;

@@ -6,6 +6,7 @@
 
 #include <retroshare/rsinit.h>
 #include <retroshare/rsiface.h>
+#include <util/rsdir.h>
 
 #include "api/ApiServer.h"
 #include "api/Operators.h"
@@ -23,7 +24,9 @@ RsControlModule::RsControlModule(int argc, char **argv, StateTokenServer* sts, A
     mDataMtx("RsControlModule::mDataMtx"),
     mRunState(WAITING_INIT),
     mAutoLoginNextTime(false),
-    mWantPassword(false)
+    mWantPassword(false),
+    mPassword(""),
+    mPrevIsBad(false)
 {
     mStateToken = sts->getNewToken();
     this->argc = argc;
@@ -55,13 +58,16 @@ bool RsControlModule::processShouldExit()
     return mProcessShouldExit;
 }
 
-bool RsControlModule::askForPassword(const std::string &title, const std::string &key_details, bool /* prev_is_bad */, std::string &password, bool& cancelled)
+bool RsControlModule::askForPassword(const std::string &title, const std::string &key_details, bool prev_is_bad, std::string &password, bool& cancelled)
 {
 	cancelled = false ;
     {
 		RS_STACK_MUTEX(mDataMtx); // ********** LOCKED **********
+
+		mPrevIsBad = prev_is_bad;
+
         if(mFixedPassword != "")
-        {
+		{
             password = mFixedPassword;
             return true;
         }
@@ -69,25 +75,31 @@ bool RsControlModule::askForPassword(const std::string &title, const std::string
         mWantPassword = true;
         mTitle = title;
         mKeyName = key_details;
-        mPassword = "";
+
+		if(mPassword != "")
+		{
+			password = mPassword;
+			mWantPassword = false;
+			return true;
+		}
+
         mStateTokenServer->replaceToken(mStateToken);
     }
 
-    bool wait = true;
-    while(wait)
+	int i = 0;
+	while(i<100)
     {
         usleep(5*1000);
-
 		RS_STACK_MUTEX(mDataMtx); // ********** LOCKED **********
-        wait = mWantPassword;
-        if(!wait && mPassword != "")
+
+		if(mPassword != "")
         {
-            password = mPassword;
-            mPassword = "";
+			password = mPassword;
             mWantPassword = false;
             mStateTokenServer->replaceToken(mStateToken);
             return true;
         }
+		i++;
     }
     return false;
 }
@@ -124,6 +136,11 @@ void RsControlModule::run()
     bool login_ok = false;
     while(!login_ok)
     {
+		{
+			RsStackMutex stack(mDataMtx); // ********** LOCKED **********
+			mPassword = "";
+		}
+
         // skip account selection if autologin is available
         if(initResult != RS_INIT_HAVE_ACCOUNT)
             setRunState(WAITING_ACCOUNT_SELECT);
@@ -174,7 +191,18 @@ void RsControlModule::run()
             std::cerr << "RsControlModule::run() LockAndLoadCertificates failed. Unexpected switch value: " << retVal << std::endl;
             break;
         }
+
+		{
+			RsStackMutex stack(mDataMtx); // ********** LOCKED **********
+			mLoadPeerId.clear();
+		}
     }
+
+	{
+		RsStackMutex stack(mDataMtx); // ********** LOCKED **********
+		mFixedPassword = mPassword;
+		mPassword = "";
+	}
 
     setRunState(WAITING_STARTUP);
 
@@ -305,7 +333,8 @@ void RsControlModule::handlePassword(Request &req, Response &resp)
 
     resp.mDataStream
             << makeKeyValueReference("want_password", mWantPassword)
-            << makeKeyValueReference("key_name", mKeyName);
+	        << makeKeyValueReference("key_name", mKeyName)
+	        << makeKeyValueReference("prev_is_bad", mPrevIsBad);
     resp.mStateToken = mStateToken;
     resp.setOk();
 }
@@ -425,17 +454,17 @@ void RsControlModule::handleCreateLocation(Request &req, Response &resp)
     RsPeerId ssl_id;
     std::string err_string;
     // give the password to the password callback
-    {
-        RsStackMutex stack(mDataMtx); // ********** LOCKED **********
-        mFixedPassword = pgp_password;
-    }
+	{
+		RsStackMutex stack(mDataMtx); // ********** LOCKED **********
+		mFixedPassword = pgp_password;
+	}
     bool ssl_ok = RsAccounts::GenerateSSLCertificate(pgp_id, "", ssl_name, "", hidden_port!=0, ssl_password, ssl_id, err_string);
 
     // clear fixed password to restore normal password operation
-    {
-        RsStackMutex stack(mDataMtx); // ********** LOCKED **********
-        mFixedPassword = "";
-    }
+//    {
+//        RsStackMutex stack(mDataMtx); // ********** LOCKED **********
+//        mFixedPassword = "";
+//    }
 
     if (ssl_ok)
     {
@@ -454,6 +483,20 @@ void RsControlModule::handleCreateLocation(Request &req, Response &resp)
         return;
     }
     resp.setFail("could not create a new location. Error: "+err_string);
+}
+
+bool RsControlModule::askForDeferredSelfSignature(const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen,int& signature_result, std::string reason /*=""*/)
+{
+	if(rsPeers->gpgSignData(data,len,sign,signlen,reason))
+	{
+		signature_result = SELF_SIGNATURE_RESULT_SUCCESS;
+		return true;
+	}
+	else
+	{
+		signature_result = SELF_SIGNATURE_RESULT_FAILED;
+		return false;
+	}
 }
 
 void RsControlModule::setRunState(RunState s, std::string errstr)
