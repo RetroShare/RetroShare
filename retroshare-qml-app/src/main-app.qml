@@ -127,6 +127,7 @@ ApplicationWindow
 				{
 					text: "Terminate Core"
 					onTriggered: rsApi.request("/control/shutdown")
+					visible: !Q_OS_ANDROID
 				}
 			}
 		}
