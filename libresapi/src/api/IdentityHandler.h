@@ -31,6 +31,8 @@ private:
 
 	void handleGetIdentityDetails(Request& req, Response& resp);
 
+	void handleSetBanNode(Request& req, Response& resp);
+
     ResponseTask *handleOwn(Request& req, Response& resp);
     ResponseTask *handleCreateIdentity(Request& req, Response& resp);
 	ResponseTask *handleDeleteIdentity(Request& req, Response& resp);

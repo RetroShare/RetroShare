@@ -146,6 +146,8 @@ IdentityHandler::IdentityHandler(StateTokenServer *sts, RsNotify *notify, RsIden
 	addResourceHandler("delete_identity", this, &IdentityHandler::handleDeleteIdentity);
 
 	addResourceHandler("get_identity_details", this, &IdentityHandler::handleGetIdentityDetails);
+
+	addResourceHandler("set_ban_node", this, &IdentityHandler::handleSetBanNode);
 }
 
 IdentityHandler::~IdentityHandler()
@@ -468,6 +470,19 @@ void IdentityHandler::handleGetIdentityDetails(Request& req, Response& resp)
 		usagesStream.getStreamToMember() << makeKeyValue("usage_service", (int)(it->first.mServiceId));
 		usagesStream.getStreamToMember() << makeKeyValue("usage_case", (int)(it->first.mUsageCode));
 	}
+
+	resp.setOk();
+}
+
+void IdentityHandler::handleSetBanNode(Request& req, Response& resp)
+{
+	std::string pgp_id;
+	req.mStream << makeKeyValueReference("pgp_id", pgp_id);
+	RsPgpId pgpId(pgp_id);
+
+	bool banned_node;
+	req.mStream << makeKeyValueReference("banned_node", banned_node);
+	rsReputations->banNode(pgpId, banned_node);
 
 	resp.setOk();
 }
