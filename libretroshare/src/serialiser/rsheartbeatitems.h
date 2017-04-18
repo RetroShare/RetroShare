@@ -29,7 +29,7 @@
 #define RS_HEARTBEAT_ITEMS_H
 
 #include "serialiser/rsserial.h"
-#include "serialiser/rsserviceids.h"
+#include "rsitems/rsserviceids.h"
 
 const uint8_t RS_PKT_SUBTYPE_HEARTBEAT_PULSE    = 0x01;
 

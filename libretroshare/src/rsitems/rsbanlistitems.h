@@ -28,7 +28,7 @@
 
 #include <map>
 
-#include "serialiser/rsserviceids.h"
+#include "rsitems/rsserviceids.h"
 #include "serialiser/rstlvbanlist.h"
 #include "serialization/rsserializer.h"
 

@@ -24,7 +24,7 @@
  */
 
 #include "serialiser/rsbaseserial.h"
-#include "serialiser/rsbwctrlitems.h"
+#include "rsitems/rsbwctrlitems.h"
 
 /***
 #define RSSERIAL_DEBUG 1

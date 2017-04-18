@@ -29,7 +29,7 @@
 
 #include "serialiser/rsserial.h"
 #include "serialiser/rstlvkeys.h"
-#include "serialiser/rsserviceids.h"
+#include "rsitems/rsserviceids.h"
 #include "retroshare/rstypes.h"
 
 #include "retroshare/rsgrouter.h"

@@ -25,7 +25,7 @@
  */
 
 #include "serialiser/rsbaseserial.h"
-#include "serialiser/rsserviceids.h"
+#include "rsitems/rsserviceids.h"
 #include "serialiser/rsheartbeatitems.h"
 
 /***

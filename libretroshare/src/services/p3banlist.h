@@ -31,7 +31,7 @@
 #include <list>
 #include <map>
 
-#include "serialiser/rsbanlistitems.h"
+#include "rsitems/rsbanlistitems.h"
 #include "services/p3service.h"
 #include "retroshare/rsbanlist.h"
 

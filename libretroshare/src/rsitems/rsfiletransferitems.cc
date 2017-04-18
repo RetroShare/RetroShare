@@ -26,7 +26,7 @@
 
 #include "serialiser/rsbaseserial.h"
 #include "serialiser/rstlvbase.h"
-#include "serialiser/rsfiletransferitems.h"
+#include "rsitems/rsfiletransferitems.h"
 
 #include "serialization/rstypeserializer.h"
 

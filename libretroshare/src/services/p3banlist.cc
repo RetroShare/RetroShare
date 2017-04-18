@@ -30,7 +30,7 @@
 #include "util/rsnet.h"
 
 #include "services/p3banlist.h"
-#include "serialiser/rsbanlistitems.h"
+#include "rsitems/rsbanlistitems.h"
 #include "serialiser/rsconfigitems.h"
 #include "retroshare/rsdht.h"
 #include "retroshare/rsbanlist.h"

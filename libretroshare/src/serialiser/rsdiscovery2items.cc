@@ -29,7 +29,7 @@
 
 #if 0
 
-#include "serialiser/rsserviceids.h"
+#include "rsitems/rsserviceids.h"
 
 #include "serialiser/rstlvbase.h"
 #include "serialiser/rstlvtypes.h"

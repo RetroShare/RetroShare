@@ -26,7 +26,7 @@
 #include <iostream>
 
 #include "p3servicecontrol.h"
-#include "serialiser/rsserviceids.h"
+#include "rsitems/rsserviceids.h"
 #include "serialiser/rsserial.h"
 #include "serialiser/rsbaseserial.h"
 #include "pqi/p3cfgmgr.h"

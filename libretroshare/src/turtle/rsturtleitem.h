@@ -6,7 +6,7 @@
 #include "retroshare/rsturtle.h"
 #include "retroshare/rsexpr.h"
 #include "retroshare/rstypes.h"
-#include "serialiser/rsserviceids.h"
+#include "rsitems/rsserviceids.h"
 #include "turtle/turtletypes.h"
 
 #include "serialization/rsserializer.h"

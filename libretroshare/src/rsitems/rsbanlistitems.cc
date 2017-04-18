@@ -24,7 +24,7 @@
  */
 
 #include "serialiser/rsbaseserial.h"
-#include "serialiser/rsbanlistitems.h"
+#include "rsitems/rsbanlistitems.h"
 
 #include "serialization/rstypeserializer.h"
 

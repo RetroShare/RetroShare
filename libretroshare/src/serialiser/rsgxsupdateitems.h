@@ -30,7 +30,7 @@
 
 #if 0
 #include <map>
-#include "serialiser/rsserviceids.h"
+#include "rsitems/rsserviceids.h"
 #include "serialiser/rsserial.h"
 #include "serialiser/rstlvbase.h"
 #include "serialiser/rstlvtypes.h"

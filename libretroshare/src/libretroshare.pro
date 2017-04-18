@@ -452,15 +452,15 @@ HEADERS +=  grouter/groutercache.h \
 				grouter/groutertypes.h \
 				grouter/rsgrouterclient.h 
 
-HEADERS +=	serialiser/itempriorities.h \
+HEADERS +=	rsitems/itempriorities.h \
 			serialiser/rsbaseserial.h \
-			serialiser/rsfiletransferitems.h \
+			rsitems/rsfiletransferitems.h \
 			serialiser/rsserviceserialiser.h \
 			serialiser/rsconfigitems.h \
 			serialiser/rshistoryitems.h \
 			serialiser/rsmsgitems.h \
 			serialiser/rsserial.h \
-			serialiser/rsserviceids.h \
+			rsitems/rsserviceids.h \
 			serialiser/rsserviceitems.h \
 			serialiser/rsstatusitems.h \
 			serialiser/rstlvaddrs.h \
@@ -479,8 +479,8 @@ HEADERS +=	serialiser/itempriorities.h \
 			serialiser/rstlvlist.h \
 			serialiser/rstlvmaps.h \
 			serialiser/rstlvbanlist.h \
-			serialiser/rsbanlistitems.h \
-			serialiser/rsbwctrlitems.h \
+			rsitems/rsbanlistitems.h \
+			rsitems/rsbwctrlitems.h \
 			serialiser/rsdiscovery2items.h \
 			serialiser/rsheartbeatitems.h \
 			serialiser/rsrttitems.h \
@@ -608,7 +608,7 @@ SOURCES += plugins/pluginmanager.cc \
 				serialiser/rspluginitems.cc
 
 SOURCES +=	serialiser/rsbaseserial.cc \
-			serialiser/rsfiletransferitems.cc \
+			rsitems/rsfiletransferitems.cc \
 			serialiser/rsserviceserialiser.cc \
 			serialiser/rsconfigitems.cc \
 			serialiser/rshistoryitems.cc \
@@ -627,8 +627,8 @@ SOURCES +=	serialiser/rsbaseserial.cc \
 			serialiser/rstlvkeyvalue.cc \
 			serialiser/rstlvgenericparam.cc \
 			serialiser/rstlvbanlist.cc \
-			serialiser/rsbanlistitems.cc \
-			serialiser/rsbwctrlitems.cc \
+			rsitems/rsbanlistitems.cc \
+			rsitems/rsbwctrlitems.cc \
 			serialiser/rsdiscovery2items.cc \
 			serialiser/rsheartbeatitems.cc \
 			serialiser/rsrttitems.cc \

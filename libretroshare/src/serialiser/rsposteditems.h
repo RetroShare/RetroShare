@@ -1,7 +1,7 @@
 #ifndef RSPOSTEDITEMS_H
 #define RSPOSTEDITEMS_H
 
-#include "serialiser/rsserviceids.h"
+#include "rsitems/rsserviceids.h"
 #include "serialiser/rsserial.h"
 //#include "serialiser/rstlvtypes.h"
 

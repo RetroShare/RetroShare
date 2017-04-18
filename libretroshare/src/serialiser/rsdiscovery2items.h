@@ -31,7 +31,7 @@
 #include "serialiser/rsserial.h"
 #include "serialiser/rstlvidset.h"
 #include "serialiser/rstlvaddrs.h"
-#include "serialiser/rsserviceids.h"
+#include "rsitems/rsserviceids.h"
 
 const uint8_t RS_PKT_SUBTYPE_DISC_PGP_LIST           = 0x01;
 const uint8_t RS_PKT_SUBTYPE_DISC_PGP_CERT           = 0x02;
