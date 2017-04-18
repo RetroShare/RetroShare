@@ -91,9 +91,7 @@ class   udpPacket
 //std::ostream &operator<<(std::ostream &out, const struct sockaddr_in &addr)
 std::ostream &operator<<(std::ostream &out, struct sockaddr_in &addr)
 {
-	char add[15];
-	bdnet_inet_ntoa(addr.sin_addr, add);
-	out << "[" << add << ":";
+	out << "[" << bdnet_inet_ntoa(addr.sin_addr) << ":";
 	out << htons(addr.sin_port) << "]";
 	return out;
 }

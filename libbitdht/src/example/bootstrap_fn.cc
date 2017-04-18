@@ -55,9 +55,8 @@ bool bdSingleShotFindPeer(const std::string bootstrapfile, const std::string pee
 	if ((status == BITDHT_QUERY_PEER_UNREACHABLE) ||
 		(status == BITDHT_QUERY_SUCCESS))
 	{
-		char add[15];
-		bdnet_inet_ntoa(resultId.addr.sin_addr, add);
-		peer_ip = add;
+	
+		peer_ip = bdnet_inet_ntoa(resultId.addr.sin_addr);
 		peer_port = ntohs(resultId.addr.sin_port);
 	
 		std::cerr << "Answer: ";

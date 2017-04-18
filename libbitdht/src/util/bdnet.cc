@@ -364,10 +364,10 @@ void    bdsockaddr_clear(struct sockaddr_in *addr)
 
 /* thread-safe version of inet_ntoa */
 
-void bdnet_inet_ntoa(struct in_addr in, char *out)
+std::string bdnet_inet_ntoa(struct in_addr in)
 {
 	std::string str;
 	uint8_t *bytes = (uint8_t *) &(in.s_addr);
 	bd_sprintf(str, "%u.%u.%u.%u", (int) bytes[0], (int) bytes[1], (int) bytes[2], (int) bytes[3]);
-	strcpy(out, str.c_str());
+	return str;
 }

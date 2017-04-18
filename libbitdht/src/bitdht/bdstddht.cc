@@ -223,9 +223,7 @@ void bdStdPrintId(std::ostream &out, const bdId *a)
 void bdStdPrintId(std::string &out, const bdId *a, bool append)
 {
 	bdStdPrintNodeId(out, &(a->id), append);
-	char add[15];
-	bdnet_inet_ntoa(a->addr.sin_addr, add);
-	bd_sprintf_append(out, " ip:%s:%u", add, ntohs(a->addr.sin_port));
+	bd_sprintf_append(out, " ip:%s:%u", bdnet_inet_ntoa(a->addr.sin_addr).c_str(), ntohs(a->addr.sin_port));
 }
 
 /* returns 0-160 depending on bucket */
