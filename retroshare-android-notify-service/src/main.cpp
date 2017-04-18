@@ -21,6 +21,7 @@
 #include <QQmlContext>
 #include <QFileInfo>
 #include <QDebug>
+#include <QDir>
 
 #ifdef __ANDROID__
 #	include "util/androiddebug.h"
@@ -28,9 +29,6 @@
 
 #include "libresapilocalclient.h"
 #include "notificationsbridge.h"
-
-#include "retroshare/rsinit.h"
-
 
 int main(int argc, char *argv[])
 {
@@ -40,7 +38,7 @@ int main(int argc, char *argv[])
 
 	QCoreApplication app(argc, argv);
 
-	QString sockPath = QString::fromStdString(RsAccounts::ConfigDirectory());
+	QString sockPath = QDir::homePath() + "/.retroshare";
 	sockPath.append("/libresapi.sock");
 
 	QQmlApplicationEngine engine;

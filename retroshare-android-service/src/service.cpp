@@ -19,6 +19,7 @@
 #include <QCoreApplication>
 #include <QDebug>
 #include <QMetaObject>
+#include <QDir>
 
 #ifdef __ANDROID__
 #	include "util/androiddebug.h"
@@ -44,10 +45,12 @@ int main(int argc, char *argv[])
 	            dynamic_cast<resource_api::ResourceRouter*>(&ctrl_mod),
 	            &resource_api::RsControlModule::handleRequest);
 
-#ifdef QT_DEBUG
+#if defined(Q_OS_WIN) && defined(QT_DEBUG)
 	QString sockPath = "RS/";
-#else
+#elif defined(Q_OS_WIN)
 	QString sockPath = QCoreApplication::applicationDirPath();
+#else
+	QString sockPath = QDir::homePath() + "/.retroshare";
 #endif
 
 	sockPath.append("/libresapi.sock");

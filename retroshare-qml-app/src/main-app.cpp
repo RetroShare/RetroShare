@@ -22,6 +22,8 @@
 #include <QQmlContext>
 #include <QQmlComponent>
 #include <QDebug>
+#include <QDir>
+#include <unistd.h> // for usleep
 
 #ifdef Q_OS_ANDROID
 #	include <QtAndroid>
@@ -30,7 +32,6 @@
 #endif // Q_OS_ANDROID
 
 #include "libresapilocalclient.h"
-#include "retroshare/rsinit.h"
 #include "rsqmlappengine.h"
 
 int main(int argc, char *argv[])
@@ -44,7 +45,7 @@ int main(int argc, char *argv[])
 	            "org.retroshare.qml_components.LibresapiLocalClient", 1, 0,
 	            "LibresapiLocalClient");
 
-	QString sockPath = QString::fromStdString(RsAccounts::ConfigDirectory());
+	QString sockPath = QDir::homePath() + "/.retroshare";
 	sockPath.append("/libresapi.sock");
 
 	LibresapiLocalClient rsApi;
