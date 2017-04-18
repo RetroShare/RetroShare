@@ -21,7 +21,7 @@ std::string getDefaultDocroot();
 class ApiServerMHD
 {
 public:
-    ApiServerMHD(ApiServer* server);
+    explicit ApiServerMHD(ApiServer* server);
     ~ApiServerMHD();
     /**
      * @brief configure the http server

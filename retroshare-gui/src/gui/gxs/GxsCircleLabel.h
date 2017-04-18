@@ -34,7 +34,7 @@ class GxsCircleLabel : public QLabel
         Q_OBJECT
 
 public:
-	GxsCircleLabel(QWidget *parent = NULL);
+	explicit GxsCircleLabel(QWidget *parent = NULL);
 
 	void setCircleId(const RsGxsCircleId &id);
 	bool getCircleId(RsGxsCircleId &id);

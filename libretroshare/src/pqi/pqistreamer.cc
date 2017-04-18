@@ -552,7 +552,6 @@ int	pqistreamer::handleoutgoing_locked()
         
 	    if (!mPkt_wpending)
 	{
-		void *dta;
 		mPkt_wpending_size = 0 ;
 		int k=0;
 
@@ -580,9 +579,9 @@ int	pqistreamer::handleoutgoing_locked()
 
 		do
 		{
-            		int desired_packet_size = mAcceptsPacketSlicing?PQISTREAM_OPTIMAL_PACKET_SIZE:(getRsPktMaxSize());
-                    
-			dta = locked_pop_out_data(desired_packet_size,slice_size,slice_starts,slice_ends,slice_packet_id) ;
+			int desired_packet_size = mAcceptsPacketSlicing ? PQISTREAM_OPTIMAL_PACKET_SIZE : (getRsPktMaxSize());
+
+			void *dta = locked_pop_out_data(desired_packet_size,slice_size,slice_starts,slice_ends,slice_packet_id) ;
 
 			if(!dta)
 				break ;

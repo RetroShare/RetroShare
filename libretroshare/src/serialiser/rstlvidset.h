@@ -95,6 +95,7 @@ template<class ID_CLASS,uint32_t TLV_TYPE> class t_RsTlvIdSet: public RsTlvItem
 			}
 			if(*offset != tlvend)
 				std::cerr << "(EE) deserialisaiton error in " << __PRETTY_FUNCTION__ << std::endl;
+			if (ok) {;}
 			return *offset == tlvend ;
 		}
 		virtual std::ostream &print(std::ostream &out, uint16_t /* indent */) const

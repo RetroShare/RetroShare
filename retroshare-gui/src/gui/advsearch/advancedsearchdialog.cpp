@@ -102,10 +102,9 @@ void AdvancedSearchDialog::deleteExpression(ExpressionWidget* expr)
 
 void AdvancedSearchDialog::reset()
 {
-    ExpressionWidget *expr;
     while (!expressions->isEmpty())
     {
-        expr = expressions->takeLast();
+        ExpressionWidget *expr = expressions->takeLast();
         deleteExpression(expr);
     }
     
@@ -128,6 +127,7 @@ RsRegularExpression::Expression * AdvancedSearchDialog::getRsExpr()
     
 
     // iterate through the items in elements and
+#warning: Cppcheck(memleak): Memory leak: wholeExpression
     for (int i = 1; i < expressions->size(); ++i) {
         // extract the expression information and compound it with the
         // first expression

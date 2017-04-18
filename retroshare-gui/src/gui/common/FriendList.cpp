@@ -1870,7 +1870,7 @@ bool FriendList::exportFriendlist(QString &fileName)
 
     QDomElement pgpIDs = doc.createElement("pgpIDs");
     RsPeerDetails detailPGP;
-    for(std::list<RsPgpId>::iterator list_iter = gpg_ids.begin(); list_iter !=  gpg_ids.end(); list_iter++)	{
+    for(std::list<RsPgpId>::iterator list_iter = gpg_ids.begin(); list_iter !=  gpg_ids.end(); ++list_iter)	{
         rsPeers->getGPGDetails(*list_iter, detailPGP);
         QDomElement pgpID = doc.createElement("pgpID");
         // these values aren't used and just stored for better human readability
@@ -1879,7 +1879,7 @@ bool FriendList::exportFriendlist(QString &fileName)
 
         std::list<RsPeerId> ssl_ids;
         rsPeers->getAssociatedSSLIds(*list_iter, ssl_ids);
-        for(std::list<RsPeerId>::iterator list_iter = ssl_ids.begin(); list_iter !=  ssl_ids.end(); list_iter++) {
+        for(std::list<RsPeerId>::iterator list_iter = ssl_ids.begin(); list_iter !=  ssl_ids.end(); ++list_iter) {
             RsPeerDetails detailSSL;
             if (!rsPeers->getPeerDetails(*list_iter, detailSSL))
                 continue;
@@ -1905,7 +1905,7 @@ bool FriendList::exportFriendlist(QString &fileName)
     root.appendChild(pgpIDs);
 
     QDomElement groups = doc.createElement("groups");
-    for(std::list<RsGroupInfo>::iterator list_iter = group_info_list.begin(); list_iter !=  group_info_list.end(); list_iter++)	{
+    for(std::list<RsGroupInfo>::iterator list_iter = group_info_list.begin(); list_iter !=  group_info_list.end(); ++list_iter)	{
         RsGroupInfo group_info = *list_iter;
 
         //skip groups without peers
@@ -1917,7 +1917,7 @@ bool FriendList::exportFriendlist(QString &fileName)
         group.setAttribute("name", QString::fromUtf8(group_info.name.c_str()));
         group.setAttribute("flag", group_info.flag);
 
-        for(std::set<RsPgpId>::iterator i = group_info.peerIds.begin(); i !=  group_info.peerIds.end(); i++) {
+        for(std::set<RsPgpId>::iterator i = group_info.peerIds.begin(); i !=  group_info.peerIds.end(); ++i) {
             QDomElement pgpID = doc.createElement("pgpID");
             std::string pid = i->toStdString();
             pgpID.setAttribute("id", QString::fromStdString(pid));

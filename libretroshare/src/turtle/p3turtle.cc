@@ -1428,7 +1428,7 @@ void p3turtle::handleTunnelRequest(RsTurtleOpenTunnelItem *item)
 	// We're off-mutex here.
 
 	bool found = false ;
-	std::string info ;
+	//std::string info ;
 	RsTurtleClientService *service = NULL ;
 
 	if(item->PeerId() != _own_id)
@@ -1852,14 +1852,11 @@ void p3turtle::monitorTunnels(const RsFileHash& hash,RsTurtleClientService *clie
 		RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
 
 		// First, check if the hash is tagged for removal (there's a delay)
-
-        if(_hashes_to_remove.find(hash) != _hashes_to_remove.end())
-        {
-            _hashes_to_remove.erase(hash) ;
+		//
+		_hashes_to_remove.erase(hash);
 #ifdef P3TURTLE_DEBUG
-            std::cerr << "p3turtle: File hash " << hash << " Was scheduled for removal. Canceling the removal." << std::endl ;
+		std::cerr << "p3turtle: File hash " << hash << " Was scheduled for removal. Canceling the removal." << std::endl;
 #endif
-        }
 
 		// Then, check if the hash is already there
 		//

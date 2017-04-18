@@ -280,7 +280,7 @@ bool RsVOIPPingItem::serialise(void *data, uint32_t& pktsize)
 }
 
 RsVOIPProtocolItem::RsVOIPProtocolItem(void *data, uint32_t pktsize)
-	: RsVOIPItem(RS_PKT_SUBTYPE_VOIP_PROTOCOL)
+  : RsVOIPItem(RS_PKT_SUBTYPE_VOIP_PROTOCOL), flags(0)
 {
 	/* get the type and size */
 	uint32_t rstype = getRsItemId(data);
@@ -312,7 +312,7 @@ RsVOIPProtocolItem::RsVOIPProtocolItem(void *data, uint32_t pktsize)
 		throw std::runtime_error("Deserialisation error!") ;
 }
 RsVOIPBandwidthItem::RsVOIPBandwidthItem(void *data, uint32_t pktsize)
-	: RsVOIPItem(RS_PKT_SUBTYPE_VOIP_BANDWIDTH)
+  : RsVOIPItem(RS_PKT_SUBTYPE_VOIP_BANDWIDTH), flags(0), bytes_per_sec(0)
 {
 	/* get the type and size */
 	uint32_t rstype = getRsItemId(data);
@@ -342,7 +342,7 @@ RsVOIPBandwidthItem::RsVOIPBandwidthItem(void *data, uint32_t pktsize)
 		throw std::runtime_error("Deserialisation error!") ;
 }
 RsVOIPPingItem::RsVOIPPingItem(void *data, uint32_t pktsize)
-	: RsVOIPItem(RS_PKT_SUBTYPE_VOIP_PING)
+  : RsVOIPItem(RS_PKT_SUBTYPE_VOIP_PING), mSeqNo(0), mPingTS(0)
 {
 	/* get the type and size */
 	uint32_t rstype = getRsItemId(data);
@@ -424,7 +424,7 @@ bool RsVOIPPongItem::serialise(void *data, uint32_t& pktsize)
 	return ok;
 }
 RsVOIPDataItem::RsVOIPDataItem(void *data, uint32_t pktsize)
-	: RsVOIPItem(RS_PKT_SUBTYPE_VOIP_DATA)
+  : RsVOIPItem(RS_PKT_SUBTYPE_VOIP_DATA), flags(0)
 {
 	/* get the type and size */
 	uint32_t rstype = getRsItemId(data);
@@ -465,7 +465,7 @@ RsVOIPDataItem::RsVOIPDataItem(void *data, uint32_t pktsize)
 		throw std::runtime_error("Serialization error.") ;
 }
 RsVOIPPongItem::RsVOIPPongItem(void *data, uint32_t pktsize)
-	: RsVOIPItem(RS_PKT_SUBTYPE_VOIP_PONG)
+  : RsVOIPItem(RS_PKT_SUBTYPE_VOIP_PONG), mSeqNo(0), mPingTS(0), mPongTS(0)
 {
 	/* get the type and size */
 	uint32_t rstype = getRsItemId(data);

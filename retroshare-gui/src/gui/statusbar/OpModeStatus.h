@@ -28,7 +28,7 @@ class OpModeStatus : public QComboBox
 	Q_OBJECT
 
 public:
-	OpModeStatus(QWidget *parent = 0);
+	explicit OpModeStatus(QWidget *parent = 0);
 
 private slots:
     	void setOpMode();

@@ -204,7 +204,8 @@
 const std::string p3GRouter::SERVICE_INFO_APP_NAME = "Global Router" ;
 
 p3GRouter::p3GRouter(p3ServiceControl *sc, RsGixs *is)
-    : p3Service(), p3Config(), mServiceControl(sc), mGixs(is), grMtx("GRouter")
+  : p3Service(), p3Config(), mServiceControl(sc), mTurtle(NULL)
+  , mGixs(is), mLinkMgr(NULL), grMtx("GRouter")
 {
 	addSerialType(new RsGRouterSerialiser()) ;
 
@@ -1195,10 +1196,9 @@ void p3GRouter::locked_collectAvailableFriends(const GRouterKeyId& gxs_id,const 
     std::cerr << "  Normalising probabilities..." << std::endl;
 #endif
 
-    float total_probas = 0.0f ;
-
     if(mypairs.size() > 0 && max_count > 0)
     {
+        float total_probas = 0.0f ;
         for(int i=mypairs.size()-1,n=0;i>=0 && n<max_count;--i,++n) total_probas += mypairs[i].first ;
         for(int i=mypairs.size()-1,n=0;i>=0 && n<max_count;--i,++n) mypairs[i].first /= total_probas ;
     }
@@ -2279,7 +2279,8 @@ bool p3GRouter::saveList(bool& cleanup,std::list<RsItem*>& items)
     for(std::map<GRouterMsgPropagationId,GRouterRoutingInfo>::const_iterator it(_pending_messages.begin());it!=_pending_messages.end();++it)
     {
         RsGRouterRoutingInfoItem *item = new RsGRouterRoutingInfoItem ;
-
+#warning: Cppcheck(cstyleCast): C-style pointer casting
+        // cppcheck-suppress cstyleCast
         *(GRouterRoutingInfo*)item = it->second ;	// copy all members
 
         item->data_item = it->second.data_item->duplicate() ;	// deep copy, because we call delete on the object, and the item might be removed before we handle it in the client.

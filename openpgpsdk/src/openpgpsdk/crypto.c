@@ -60,7 +60,7 @@ int ops_decrypt_and_unencode_mpi(unsigned char *buf, unsigned buflen,
 
 	 if(!(mpisize <= sizeof encmpibuf)) // ASSERT(mpisize <= sizeof encmpibuf);
 	 {
-		 fprintf(stderr,"ops_decrypt_and_unencode_mpi: number size too large (%d bytes!).\n",mpisize) ;
+		 fprintf(stderr,"ops_decrypt_and_unencode_mpi: number size too large (%u bytes!).\n",mpisize) ;
 		 return -1 ;
 	 }
 
@@ -422,7 +422,6 @@ ops_boolean_t ops_decrypt_file(const char* input_filename,
     else
         {
         int suffixlen=4;
-        char *defaultsuffix=".decrypted";
         const char *suffix=input_filename+strlen(input_filename)-suffixlen;
         if (!strcmp(suffix, ".gpg") || !strcmp(suffix, ".asc"))
             {
@@ -432,10 +431,11 @@ ops_boolean_t ops_decrypt_file(const char* input_filename,
             }
         else
             {
+            char *defaultsuffix=".decrypted";
             unsigned filenamelen=strlen(input_filename)+strlen(defaultsuffix)+1;
             myfilename=ops_mallocz(filenamelen);
             snprintf(myfilename, filenamelen, "%s%s", input_filename,
-		     defaultsuffix);
+            defaultsuffix) ;
             }
 
         fd_out=ops_setup_file_write(&pinfo->cbinfo.cinfo, myfilename,

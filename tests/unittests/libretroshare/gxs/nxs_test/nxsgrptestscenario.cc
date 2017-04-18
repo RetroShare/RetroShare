@@ -24,7 +24,7 @@ bool NxsGrpTestScenario::checkTestPassed()
 
 	bool passed = true;
 
-	for(; mit != exMap.end(); mit++)
+	for(; mit != exMap.end(); ++mit)
 	{
 		const RsPeerId& pid = mit->first;
 		RsGxsGroupId::std_vector expGrpIds = mit->second;
@@ -57,7 +57,7 @@ void NxsGrpTestScenario::cleanTestScenario()
 	RsPeerId::std_vector peerIds;
 
 	// remove grps and msg data
-	for(; mit != mDataPeerMap.end(); mit++)
+	for(; mit != mDataPeerMap.end(); ++mit)
 	{
 		mit->second->resetDataStore();
 		peerIds.push_back(mit->first);
@@ -66,7 +66,7 @@ void NxsGrpTestScenario::cleanTestScenario()
 	// now delete tables
 	RsPeerId::std_vector::const_iterator cit = peerIds.begin();
 
-	for(; cit != peerIds.end(); cit++)
+	for(; cit != peerIds.end(); ++cit)
 	{
 		std::string tableFile = "grp_store_" + cit->toStdString();
 		remove(tableFile.c_str());

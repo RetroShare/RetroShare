@@ -38,6 +38,8 @@ class RsTlvBinaryData ;
 class InternalFileHierarchyStorage ;
 class RsTlvBinaryData ;
 
+#warning: Cppcheck(noCopyConstructor): class 'DirectoryStorage' does not have a copy constructor which is recommended since the class contains a pointer to allocated memory.
+// cppcheck-suppress noCopyConstructor
 class DirectoryStorage
 {
 	public:
@@ -97,7 +99,7 @@ class DirectoryStorage
 		class FileIterator
 		{
 			public:
-                FileIterator(DirIterator& d);	// crawls all files in specified directory
+                explicit FileIterator(DirIterator& d);	// crawls all files in specified directory
                 FileIterator(DirectoryStorage *d,EntryIndex e);		// crawls all files in specified directory
 
 				FileIterator& operator++() ;
@@ -285,7 +287,9 @@ public:
 private:
 	static RsFileHash makeEncryptedHash(const RsFileHash& hash);
 	bool locked_findRealHash(const RsFileHash& hash, RsFileHash& real_hash) const;
+/* UNUSED
 	std::string locked_getVirtualPath(EntryIndex indx) const ;
+*/
 	std::string locked_getVirtualDirName(EntryIndex indx) const ;
 
 	bool locked_getFileSharingPermissions(const EntryIndex& indx, FileStorageFlags &flags, std::list<RsNodeGroupId>& parent_groups);

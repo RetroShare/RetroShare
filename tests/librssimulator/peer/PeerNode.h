@@ -17,6 +17,8 @@ class pqiMonitor;
 class pqiServiceMonitor;
 class pqiService;
 
+#warning: Cppcheck(noCopyConstructor): class 'PeerNode' does not have a copy constructor which is recommended since the class contains a pointer to allocated memory.
+// cppcheck-suppress noCopyConstructor
 class PeerNode
 {
 	public:
@@ -32,9 +34,9 @@ class PeerNode
 		void tick() ;
 
 		p3ServiceControl *getServiceControl() const { return _service_control; }
-		p3LinkMgr *getLinkMgr();
-		p3PeerMgr *getPeerMgr();
-		p3NetMgr *getNetMgr();
+//		p3LinkMgr *getLinkMgr();
+//		p3PeerMgr *getPeerMgr();
+//		p3NetMgr *getNetMgr();
 		RsNxsNetMgr *getNxsNetMgr();
 
 		void AddService(pqiService *service);
@@ -54,7 +56,7 @@ class PeerNode
 		p3ServiceControl *_service_control; 
 		FakeLinkMgr *mLinkMgr;
 		FakePeerMgr *mPeerMgr;
-		FakeNetMgr *mNetMgr;
+//UNUSED FakeNetMgr *mNetMgr;
 		FakeNxsNetMgr *mNxsNetMgr;
 
 		/* for monitors */

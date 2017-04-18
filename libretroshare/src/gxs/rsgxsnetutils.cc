@@ -208,7 +208,7 @@ const int GrpCircleVetting::MSG_ID_RECV_PEND = 3;
 
 
 GrpIdCircleVet::GrpIdCircleVet(const RsGxsGroupId& grpId, const RsGxsCircleId& circleId, const RsGxsId& authId)
- : mGroupId(grpId), mCircleId(circleId), mAuthorId(authId), mCleared(false) {}
+ : mGroupId(grpId), mCircleId(circleId), mAuthorId(authId), mCleared(false), mShouldEncrypt(false) {}
 
 GrpCircleVetting::GrpCircleVetting(RsGcxs* const circles, PgpAuxUtils *pgpUtils)
  : mCircles(circles), mPgpUtils(pgpUtils), mTimeStamp(time(NULL)) {}
@@ -235,7 +235,7 @@ bool GrpCircleVetting::canSend(const SSLIdType& peerId, const RsGxsCircleId& cir
 GrpCircleIdRequestVetting::GrpCircleIdRequestVetting(
 		RsGcxs* const circles, 
 		PgpAuxUtils *pgpUtils,
-		std::vector<GrpIdCircleVet> grpCircleV, const RsPeerId& peerId)
+		std::vector<GrpIdCircleVet> &grpCircleV, const RsPeerId& peerId)
  : GrpCircleVetting(circles, pgpUtils), mGrpCircleV(grpCircleV), mPeerId(peerId) {}
 
 bool GrpCircleIdRequestVetting::cleared()
@@ -275,9 +275,10 @@ MsgIdCircleVet::MsgIdCircleVet(const RsGxsMessageId& msgId,
 
 MsgCircleIdsRequestVetting::MsgCircleIdsRequestVetting(RsGcxs* const circles,
 		PgpAuxUtils *pgpUtils,
-		std::vector<MsgIdCircleVet> msgs, const RsGxsGroupId& grpId,
+		std::vector<MsgIdCircleVet> &msgs, const RsGxsGroupId& grpId,
 		const RsPeerId& peerId, const RsGxsCircleId& circleId)
-: GrpCircleVetting(circles, pgpUtils), mMsgs(msgs), mGrpId(grpId), mPeerId(peerId), mCircleId(circleId) {}
+  : GrpCircleVetting(circles, pgpUtils), mMsgs(msgs), mGrpId(grpId)
+  , mPeerId(peerId), mCircleId(circleId), mShouldEncrypt(false) {}
 
 bool MsgCircleIdsRequestVetting::cleared()
 {

@@ -1299,16 +1299,17 @@ bool p3GxsCircles::locked_checkCircleCacheForAutoSubscribe(RsGxsCircleCache &cac
 #endif
 	if(in_admin_list || member_request || am_I_admin)
 	{
-		uint32_t token, token2;	
-        
-        	if(! (cache.mGroupSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED))
-                {
+		uint32_t token2;
+
+		if (! (cache.mGroupSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED))
+		{
+			uint32_t token;
 #ifdef DEBUG_CIRCLES
 		    /* we are part of this group - subscribe, clear unprocessed flag */
 		    std::cerr << "  I'm allowed in this circle => AutoSubscribing!" << std::endl;
 #endif
 			RsGenExchange::subscribeToGroup(token, RsGxsGroupId(cache.mCircleId), true);
-                }
+		}
 #ifdef DEBUG_CIRCLES
                 else
 		    std::cerr << "  I'm allowed in this circle, and already subscribed." << std::endl;
@@ -1323,16 +1324,17 @@ bool p3GxsCircles::locked_checkCircleCacheForAutoSubscribe(RsGxsCircleCache &cac
 	else 
 	{
 		/* we know all the peers - we are not part - we can flag as PROCESSED. */
-		uint32_t token,token2;	
+		uint32_t token;
 		RsGenExchange::setGroupStatusFlags(token, RsGxsGroupId(cache.mCircleId.toStdString()), 0, GXS_SERV::GXS_GRP_STATUS_UNPROCESSED);
-        
-        	if(cache.mGroupSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED)
-                {
+
+		if(cache.mGroupSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED)
+		{
+			uint32_t token2;
 			RsGenExchange::subscribeToGroup(token2, RsGxsGroupId(cache.mCircleId), false);
 #ifdef DEBUG_CIRCLES
 		std::cerr << "  Not part of the group! Let's unsubscribe this circle of unfriendly Napoleons!" << std::endl;
 #endif
-                }
+		}
 #ifdef DEBUG_CIRCLES
                 else
 			std::cerr << "  Not part of the group, and not subscribed either." << std::endl;

@@ -207,6 +207,7 @@ struct uint256_32
             for(int i=7;i>=0;--i)
                 b[i] = (i>=(int)p)?b[i-p]:0 ;
 
+        // cppcheck-suppress variableScope
         uint32_t r = 0 ;
 
         if(u>0)

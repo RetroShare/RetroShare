@@ -544,7 +544,7 @@ void GxsChannelPostItem::updateItem()
 	std::cerr << std::endl;
 #endif
 
-	int msec_rate = 10000;
+#define MSEC_RATE 10000
 
 	int downloadCount = 0;
 	int downloadStartable = 0;
@@ -604,7 +604,7 @@ void GxsChannelPostItem::updateItem()
 	}
 
 	if (loopAgain) {
-		QTimer::singleShot( msec_rate, this, SLOT(updateItem(void)));
+		QTimer::singleShot( MSEC_RATE, this, SLOT(updateItem(void)));
 	}
 
 	// HACK TO DISPLAY COMMENT BUTTON FOR NOW.

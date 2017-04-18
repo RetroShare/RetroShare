@@ -25,7 +25,7 @@ static const std::string ADDR_AGENT  = "Mozilla/5.0";
 void *solveDNSEntries(void *p)
 {
 	bool more_to_go = true ;
-	DNSResolver *dnsr = (DNSResolver*)p ;
+	DNSResolver *dnsr = reinterpret_cast<DNSResolver*>(p);
 
 	while(more_to_go)
 	{

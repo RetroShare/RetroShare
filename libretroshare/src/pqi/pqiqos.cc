@@ -28,10 +28,9 @@ for(int i=((int)nb_levels)-1;i>=0;--i,c *= alpha)
 
 void pqiQoS::clear()
 {
-	void *item ;
 
 	for(uint32_t i=0;i<_item_queues.size();++i)
-		while( (item = _item_queues[i].pop()) != NULL)
+		while( void *item = _item_queues[i].pop())
 			free(item) ;
 
 	_nb_items = 0 ;

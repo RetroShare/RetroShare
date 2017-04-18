@@ -43,10 +43,11 @@ class RsGxsCommentItem : public RsGxsMsgItem
 {
 public:
 
-	RsGxsCommentItem(uint16_t service_type): RsGxsMsgItem(service_type, 
-			RS_PKT_SUBTYPE_GXSCOMMENT_COMMENT_ITEM) {return; }
-        virtual ~RsGxsCommentItem() { return;}
-        void clear();
+	explicit RsGxsCommentItem(uint16_t service_type)
+	  : RsGxsMsgItem(service_type, RS_PKT_SUBTYPE_GXSCOMMENT_COMMENT_ITEM)
+	{return; }
+	virtual ~RsGxsCommentItem() { return; }
+	void clear() ;
 	std::ostream &print(std::ostream &out, uint16_t indent = 0);
 
 	RsGxsComment mMsg;
@@ -57,10 +58,11 @@ class RsGxsVoteItem : public RsGxsMsgItem
 {
 public:
 
-	RsGxsVoteItem(uint16_t service_type): RsGxsMsgItem(service_type, 
-			RS_PKT_SUBTYPE_GXSCOMMENT_VOTE_ITEM) {return; }
-        virtual ~RsGxsVoteItem() { return;}
-        void clear();
+	explicit RsGxsVoteItem(uint16_t service_type)
+	  : RsGxsMsgItem(service_type, RS_PKT_SUBTYPE_GXSCOMMENT_VOTE_ITEM)
+	{return; }
+	virtual ~RsGxsVoteItem() { return; }
+	void clear() ;
 	std::ostream &print(std::ostream &out, uint16_t indent = 0);
 
 	RsGxsVote mMsg;
@@ -71,8 +73,8 @@ class RsGxsCommentSerialiser : public RsSerialType
 {
 public:
 
-	RsGxsCommentSerialiser(uint16_t service_type)
-	:RsSerialType(RS_PKT_VERSION_SERVICE, service_type)
+	explicit RsGxsCommentSerialiser(uint16_t service_type)
+	  :RsSerialType(RS_PKT_VERSION_SERVICE, service_type)
 	{ return; }
 	virtual     ~RsGxsCommentSerialiser() { return; }
 

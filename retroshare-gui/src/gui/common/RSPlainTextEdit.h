@@ -30,7 +30,7 @@ class RSPlainTextEdit : public QPlainTextEdit
 	Q_OBJECT
 
 public:
-	RSPlainTextEdit(QWidget *parent = 0);
+	explicit RSPlainTextEdit(QWidget *parent = 0);
 
 	void setPlaceholderText(const QString &text);
 

@@ -61,7 +61,7 @@ bdQuery::bdQuery(const bdNodeId *id, std::list<bdId> &startList, uint32_t queryF
 
 	time_t now = time(NULL);
 	std::list<bdId>::iterator it;
-	for(it = startList.begin(); it != startList.end(); it++)
+	for(it = startList.begin(); it != startList.end(); ++it)
 	{
 		bdPeer peer;
 		peer.mLastSendTime = 0;
@@ -102,7 +102,7 @@ bool bdQuery::result(std::list<bdId> &answer)
 	sit = mClosest.begin();
 	eit = mClosest.upper_bound(mLimit);
 	int i = 0;
-	for(; sit != eit; sit++)
+	for(; sit != eit; ++sit)
 	{
 		if ((sit->second).mLastRecvTime != 0)
 		{
@@ -140,7 +140,7 @@ int bdQuery::nextQuery(bdId &id, bdNodeId &targetNodeId)
 	bool notFinished = false;
 	std::multimap<bdMetric, bdPeer>::iterator it;
 	int i = 0;
-	for(it = mClosest.begin(); it != mClosest.end(); it++, i++)
+	for(it = mClosest.begin(); it != mClosest.end(); ++it, ++i)
 	{
 		bool queryPeer = false;
 
@@ -299,7 +299,7 @@ int bdQuery::addClosestPeer(const bdId *id, uint32_t mode)
 	int toDrop = 0;
 	// switched end condition to upper_bound to provide stability for NATTED peers.
 	// we will favour the older entries!
-	for(it = mClosest.begin(); it != eit; it++, i++, actualCloser++)
+	for(it = mClosest.begin(); it != eit; ++it, ++i, ++actualCloser)
 	{
 		time_t sendts = ts - it->second.mLastSendTime;
 		bool hasSent = (it->second.mLastSendTime != 0);
@@ -325,7 +325,7 @@ int bdQuery::addClosestPeer(const bdId *id, uint32_t mode)
 		return 0;
 	}
 
-	for(it = sit; it != eit; it++, i++)
+	for(it = sit; it != eit; ++it, ++i)
 	{
 		/* full id check */
 		if (mFns->bdSimilarId(id, &(it->second.mPeerId)))
@@ -391,7 +391,7 @@ int bdQuery::addClosestPeer(const bdId *id, uint32_t mode)
 		it = mClosest.end();
 		if (!mClosest.empty())
 		{
-			it--;
+			--it;
 #ifdef DEBUG_QUERY 
 			fprintf(stderr, "Removing Furthest Peer: ");
 			mFns->bdPrintId(std::cerr, &(it->second.mPeerId));
@@ -518,7 +518,7 @@ int bdQuery::worthyPotentialPeer(const bdId *id)
 	}
 
 
-	for(it = sit; it != eit; it++)
+	for(it = sit; it != eit; ++it)
 	{
 		if (mFns->bdSimilarId(id, &(it->second.mPeerId)))
 		{
@@ -567,7 +567,7 @@ int bdQuery::updatePotentialPeer(const bdId *id, uint32_t mode, uint32_t addType
 	sit = mPotentialPeers.lower_bound(dist);
 	eit = mPotentialPeers.upper_bound(dist);
 
-	for(it = sit; it != eit; it++)
+	for(it = sit; it != eit; ++it)
 	{
 		if (mFns->bdSimilarId(id, &(it->second.mPeerId)))
 		{
@@ -641,7 +641,7 @@ int bdQuery::trimPotentialPeers_FixedLength()
 	{
 		std::multimap<bdMetric, bdPeer>::iterator it;
 		it = mPotentialPeers.end();
-		it--; // must be more than 1 peer here?
+		--it; // must be more than 1 peer here?
 #ifdef DEBUG_QUERY 
 		fprintf(stderr, "Removing Furthest Peer: ");
 		mFns->bdPrintId(std::cerr, &(it->second.mPeerId));
@@ -667,7 +667,7 @@ int bdQuery::trimPotentialPeers_toClosest()
 	{
 		std::multimap<bdMetric, bdPeer>::iterator it;
 		it = mPotentialPeers.end();
-		it--; // must be more than 1 peer here?
+		--it; // must be more than 1 peer here?
 		if (lastClosest < it->first)
 		{
 #ifdef DEBUG_QUERY 
@@ -779,7 +779,7 @@ bool bdQuery::proxies(std::list<bdId> &answer)
 	/* get all the matches to our query */
         std::list<bdPeer>::iterator it;
 	int i = 0;
-	for(it = mProxiesFlagged.begin(); it != mProxiesFlagged.end(); it++, i++)
+	for(it = mProxiesFlagged.begin(); it != mProxiesFlagged.end(); ++it, ++i)
 	{
 		answer.push_back(it->mPeerId);
 	}
@@ -791,7 +791,7 @@ bool bdQuery::potentialProxies(std::list<bdId> &answer)
 	/* get all the matches to our query */
         std::list<bdPeer>::iterator it;
 	int i = 0;
-	for(it = mProxiesUnknown.begin(); it != mProxiesUnknown.end(); it++, i++)
+	for(it = mProxiesUnknown.begin(); it != mProxiesUnknown.end(); ++it, ++i)
 	{
 		answer.push_back(it->mPeerId);
 	}
@@ -881,7 +881,7 @@ int bdQuery::updateProxy(const bdId *id, uint32_t mode)
 int bdQuery::updateProxyList(const bdId *id, uint32_t mode, std::list<bdPeer> &searchProxyList)
 {
 	std::list<bdPeer>::iterator it;
-	for(it = searchProxyList.begin(); it != searchProxyList.end(); it++)
+	for(it = searchProxyList.begin(); it != searchProxyList.end(); ++it)
 	{
 		if (mFns->bdSimilarId(id, &(it->mPeerId)))
 		{
@@ -921,7 +921,7 @@ int bdQuery::updateProxyList(const bdId *id, uint32_t mode, std::list<bdPeer> &s
 			}
 
 			return 1;
-			break;
+			//break;
 		}
 	}
 
@@ -976,7 +976,7 @@ int     bdQuery::printQuery()
 #ifdef DEBUG_QUERY 
 	fprintf(stderr, "Closest Available Peers:\n");
 	std::multimap<bdMetric, bdPeer>::iterator it;
-	for(it = mClosest.begin(); it != mClosest.end(); it++)
+	for(it = mClosest.begin(); it != mClosest.end(); ++it)
 	{
 		fprintf(stderr, "Id:  ");
 		mFns->bdPrintId(std::cerr, &(it->second.mPeerId));
@@ -989,7 +989,7 @@ int     bdQuery::printQuery()
 	}
 
 	fprintf(stderr, "\nClosest Potential Peers:\n");
-	for(it = mPotentialPeers.begin(); it != mPotentialPeers.end(); it++)
+	for(it = mPotentialPeers.begin(); it != mPotentialPeers.end(); ++it)
 	{
 		fprintf(stderr, "Id:  ");
 		mFns->bdPrintId(std::cerr, &(it->second.mPeerId));
@@ -1031,7 +1031,7 @@ int     bdQuery::printQuery()
 #endif
 	std::list<bdPeer>::iterator lit;
 	fprintf(stderr, "Flagged Proxies:\n");
-	for(lit = mProxiesFlagged.begin(); lit != mProxiesFlagged.end(); lit++)
+	for(lit = mProxiesFlagged.begin(); lit != mProxiesFlagged.end(); ++lit)
 	{
 		fprintf(stderr, "ProxyId:  ");
 		mFns->bdPrintId(std::cerr, &(lit->mPeerId));
@@ -1043,7 +1043,7 @@ int     bdQuery::printQuery()
 	}
 	
 	fprintf(stderr, "Potential Proxies:\n");
-	for(lit = mProxiesUnknown.begin(); lit != mProxiesUnknown.end(); lit++)
+	for(lit = mProxiesUnknown.begin(); lit != mProxiesUnknown.end(); ++lit)
 	{
 		fprintf(stderr, "ProxyId:  ");
 		mFns->bdPrintId(std::cerr, &(lit->mPeerId));
@@ -1180,7 +1180,7 @@ void bdQueryHistory::printMsgs()
 	out << " secs" << std::endl;
 
 	std::map<bdId, bdQueryHistoryList>::iterator it;
-	for(it = mHistory.begin(); it != mHistory.end(); it++)
+	for(it = mHistory.begin(); it != mHistory.end(); ++it)
 	{
 		out << "\t";
 		bdStdPrintId(out, &(it->first));

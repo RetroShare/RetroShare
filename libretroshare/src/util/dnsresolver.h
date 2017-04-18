@@ -12,6 +12,8 @@
 
 struct sockaddr ;
 
+#warning: Cppcheck(noCopyConstructor): class 'DNSResolver' does not have a copy constructor which is recommended since the class contains a pointer to allocated memory.
+// cppcheck-suppress noCopyConstructor
 class DNSResolver
 {
 	public:

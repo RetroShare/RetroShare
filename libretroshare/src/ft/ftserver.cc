@@ -130,8 +130,8 @@ void ftServer::SetupFtServer()
 {
 
 	/* setup FiStore/Monitor */
-	std::string localcachedir = mConfigPath + "/cache/local";
-	std::string remotecachedir = mConfigPath + "/cache/remote";
+	//std::string localcachedir = mConfigPath + "/cache/local";
+	//std::string remotecachedir = mConfigPath + "/cache/remote";
 	RsPeerId ownId = mServiceCtrl->getOwnId();
 
 	/* search/extras List */
@@ -1063,7 +1063,6 @@ bool	ftServer::sendData(const RsPeerId& peerId, const RsFileHash& hash, uint64_t
 	/* push to networking part */
 	uint32_t tosend = chunksize;
 	uint64_t offset = 0;
-	uint32_t chunk;
 
 #ifdef SERVER_DEBUG
 	FTSERVER_DEBUG() << "ftServer::sendData() to " << peerId << ", hash: " << hash << " offset: " << baseoffset << " chunk: " << chunksize << " data: " << data << std::endl;
@@ -1077,7 +1076,7 @@ bool	ftServer::sendData(const RsPeerId& peerId, const RsFileHash& hash, uint64_t
 		static const uint32_t	MAX_FT_CHUNK  = 8 * 1024; /* 16K */
 
 		/* workout size */
-		chunk = MAX_FT_CHUNK;
+		uint32_t chunk = MAX_FT_CHUNK;
 		if (chunk > tosend)
 		{
 			chunk = tosend;

@@ -80,7 +80,7 @@ class PluginManagerWidget: public QFrame
     Q_OBJECT
 
 public:
-    PluginManagerWidget(QWidget* parent =0);
+    explicit PluginManagerWidget(QWidget* parent =0);
     virtual ~PluginManagerWidget();
 
     void registerNewPlugin(QString pluginName);

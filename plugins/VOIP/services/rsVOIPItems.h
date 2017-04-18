@@ -70,7 +70,7 @@ const uint32_t RS_VOIP_FLAGS_AUDIO_DATA = 0x0002 ;
 class RsVOIPItem: public RsItem
 {
 	public:
-		RsVOIPItem(uint8_t voip_subtype)
+		explicit RsVOIPItem(uint8_t voip_subtype)
 			: RsItem(RS_PKT_VERSION_SERVICE,RS_SERVICE_TYPE_VOIP_PLUGIN,voip_subtype) 
 		{ 
 			setPriorityLevel(QOS_PRIORITY_RS_VOIP) ;
@@ -103,7 +103,8 @@ class RsVOIPPingItem: public RsVOIPItem
 class RsVOIPDataItem: public RsVOIPItem
 {
 	public:
-		RsVOIPDataItem() :RsVOIPItem(RS_PKT_SUBTYPE_VOIP_DATA) {}
+		RsVOIPDataItem()
+		  :RsVOIPItem(RS_PKT_SUBTYPE_VOIP_DATA), flags(0), data_size(0), voip_data(NULL) {}
 		RsVOIPDataItem(void *data,uint32_t size) ; // de-serialization
 
 		virtual bool serialise(void *data,uint32_t& size) ;
@@ -125,7 +126,8 @@ class RsVOIPDataItem: public RsVOIPItem
 class RsVOIPBandwidthItem: public RsVOIPItem
 {
 	public:
-		RsVOIPBandwidthItem() :RsVOIPItem(RS_PKT_SUBTYPE_VOIP_BANDWIDTH) {}
+		RsVOIPBandwidthItem()
+		  :RsVOIPItem(RS_PKT_SUBTYPE_VOIP_BANDWIDTH), flags(0), bytes_per_sec(0) {}
 		RsVOIPBandwidthItem(void *data,uint32_t size) ; // de-serialization
 
 		virtual bool serialise(void *data,uint32_t& size) ;
@@ -141,7 +143,8 @@ class RsVOIPBandwidthItem: public RsVOIPItem
 class RsVOIPProtocolItem: public RsVOIPItem
 {
 	public:
-		RsVOIPProtocolItem() :RsVOIPItem(RS_PKT_SUBTYPE_VOIP_PROTOCOL) {}
+		RsVOIPProtocolItem()
+		  :RsVOIPItem(RS_PKT_SUBTYPE_VOIP_PROTOCOL), protocol(VoipProtocol_Close), flags(0) {}
 		RsVOIPProtocolItem(void *data,uint32_t size) ;
 
 		typedef enum { VoipProtocol_Ring = 1, VoipProtocol_Ackn = 2, VoipProtocol_Close = 3, VoipProtocol_Bandwidth = 4 } en_Protocol;
@@ -159,7 +162,8 @@ class RsVOIPProtocolItem: public RsVOIPItem
 class RsVOIPPongItem: public RsVOIPItem
 {
 	public:
-		RsVOIPPongItem() :RsVOIPItem(RS_PKT_SUBTYPE_VOIP_PONG) {}
+		RsVOIPPongItem()
+		  :RsVOIPItem(RS_PKT_SUBTYPE_VOIP_PONG), mSeqNo(0), mPingTS(0), mPongTS(0) {}
 		RsVOIPPongItem(void *data,uint32_t size) ;
 
 		virtual bool serialise(void *data,uint32_t& size) ;

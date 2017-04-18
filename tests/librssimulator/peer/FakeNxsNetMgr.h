@@ -8,7 +8,7 @@ class FakeNxsNetMgr : public RsNxsNetMgr
 
 public:
 
-	FakeNxsNetMgr(FakeLinkMgr *linkMgr)
+	explicit FakeNxsNetMgr(FakeLinkMgr *linkMgr)
 	:mLinkMgr(linkMgr) { return; }
 
 	const RsPeerId& getOwnId()  
@@ -24,7 +24,7 @@ public:
 		mLinkMgr->getOnlineList(peerList);
 
 		std::list<RsPeerId>::const_iterator it;
-		for(it = peerList.begin(); it != peerList.end(); it++)
+		for(it = peerList.begin(); it != peerList.end(); ++it)
 		{
 			ssl_peers.insert(*it);
 		}

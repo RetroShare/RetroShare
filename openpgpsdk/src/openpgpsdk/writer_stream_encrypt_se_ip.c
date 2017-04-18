@@ -88,7 +88,6 @@ void ops_writer_push_stream_encrypt_se_ip(ops_create_info_t *cinfo,
                                           const ops_keydata_t *pub_key)
     {
     ops_crypt_t *encrypt;
-    unsigned char *iv=NULL;
     const unsigned int bufsz=1024; // initial value; gets expanded as necessary
 
     // Create arg to be used with this writer
@@ -103,7 +102,7 @@ void ops_writer_push_stream_encrypt_se_ip(ops_create_info_t *cinfo,
     // Setup the arg
     encrypt=ops_mallocz(sizeof *encrypt);
     ops_crypt_any(encrypt, encrypted_pk_session_key->symmetric_algorithm);
-    iv=ops_mallocz(encrypt->blocksize);
+    unsigned char *iv=ops_mallocz(encrypt->blocksize);
     encrypt->set_iv(encrypt, iv);
     encrypt->set_key(encrypt, &encrypted_pk_session_key->key[0]);
     ops_encrypt_init(encrypt);
@@ -215,12 +214,10 @@ static ops_boolean_t stream_encrypt_se_ip_writer(const unsigned char *src,
     {
     stream_encrypt_se_ip_arg_t *arg=ops_writer_get_arg(winfo);
 
-    ops_boolean_t rtn=ops_true;
-
     ops_stream_write_se_ip(src, length,
                            arg, arg->cinfo_se_ip);
     // now write memory to next writer
-    rtn=ops_stacked_write(ops_memory_get_data(arg->mem_se_ip),
+    ops_boolean_t rtn=ops_stacked_write(ops_memory_get_data(arg->mem_se_ip),
                           ops_memory_get_length(arg->mem_se_ip),
                           errors, winfo);
     

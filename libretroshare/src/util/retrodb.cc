@@ -148,10 +148,9 @@ bool RetroDb::execSQL(const std::string &query){
     }
 
 
-    uint32_t delta = 3;
-    time_t stamp = time(NULL), now = 0;
     bool timeOut = false, ok = false;
 
+    time_t stamp = time(NULL);
     while(!timeOut){
 
         rc = sqlite3_step(stm);
@@ -166,15 +165,14 @@ bool RetroDb::execSQL(const std::string &query){
             break;
         }
 
-        now = time(NULL);
-        delta = stamp - now;
+        time_t now = time(NULL);
+        uint32_t delta = stamp - now;
 
         if(delta > TIME_LIMIT){
             ok = false;
             timeOut = true;
         }
-        // TODO add sleep so not to waste
-        // precious cycles
+#warning "chrisparker126 2012-03-18: TODO add sleep so not to waste precious cycles"
     }
 
     if(!ok){
@@ -349,10 +347,9 @@ bool RetroDb::execSQL_bind(const std::string &query, std::list<RetroBind*> &para
         rb = NULL;
     }
 
-    uint32_t delta = 3;
-    time_t stamp = time(NULL), now = 0;
     bool timeOut = false, ok = false;
 
+    time_t stamp = time(NULL);
     while(!timeOut){
 
         rc = sqlite3_step(stm);
@@ -367,15 +364,14 @@ bool RetroDb::execSQL_bind(const std::string &query, std::list<RetroBind*> &para
             break;
         }
 
-        now = time(NULL);
-        delta = stamp - now;
+        time_t now = time(NULL);
+        uint32_t delta = stamp - now;
 
         if(delta > TIME_LIMIT){
             ok = false;
             timeOut = true;
         }
-        // TODO add sleep so not to waste
-        // precious cycles
+#warning "chrisparker126 2012-05-21: TODO add sleep so not to waste precious cycles"
     }
 
     if(!ok){
@@ -396,7 +392,7 @@ bool RetroDb::execSQL_bind(const std::string &query, std::list<RetroBind*> &para
     return ok;
 }
 
-void RetroDb::buildInsertQueryValue(const std::map<std::string, uint8_t> keyTypeMap,
+void RetroDb::buildInsertQueryValue(const std::map<std::string, uint8_t> &keyTypeMap,
 		const ContentValue& cv, std::string& parameter,
 		std::list<RetroBind*>& paramBindings)
 {
@@ -469,7 +465,7 @@ void RetroDb::buildInsertQueryValue(const std::map<std::string, uint8_t> keyType
 
 }
 
-void RetroDb::buildUpdateQueryValue(const std::map<std::string, uint8_t> keyTypeMap,
+void RetroDb::buildUpdateQueryValue(const std::map<std::string, uint8_t> &keyTypeMap,
 		const ContentValue& cv, std::string& parameter,
 		std::list<RetroBind*>& paramBindings)
 {
@@ -551,13 +547,13 @@ bool RetroDb::sqlDelete(const std::string &tableName, const std::string &whereCl
 }
 
 
-bool RetroDb::sqlUpdate(const std::string &tableName, std::string whereClause, const ContentValue& cv){
+bool RetroDb::sqlUpdate(const std::string &tableName,const std::string &whereClause, const ContentValue& cv){
 
     std::string sqlQuery = "UPDATE " + tableName + " SET ";
 
 
     std::map<std::string, uint8_t> keyTypeMap;
-    std::map<std::string, uint8_t>::iterator mit;
+    //std::map<std::string, uint8_t>::iterator mit;
     cv.getKeyTypeMap(keyTypeMap);
 
     // build SET part of update

@@ -74,8 +74,8 @@ class RetroShareLink
 
 	public:
 		RetroShareLink();
-		RetroShareLink(const QUrl& url);
-		RetroShareLink(const QString& url);
+		explicit RetroShareLink(const QUrl& url);
+		explicit RetroShareLink(const QString& url);
 
 #warning csoler 2017-01-04: These methods should be static and return a created link
 		bool createFile(const QString& name, uint64_t size, const QString& hash);
@@ -144,7 +144,7 @@ class RetroShareLink
 		void clear();
 		void check();
 		static bool checkHash(const QString& hash);
-		static bool checkRadix64(const QString& s);
+/* UNUSED		static bool checkRadix64(const QString& s);*/
 		static bool checkName(const QString& name);
 		static bool checkSSLId(const QString& name);
 		static bool checkPGPId(const QString& name);

@@ -36,7 +36,7 @@ class WikiEditDialog : public QWidget, public TokenResponse
   Q_OBJECT
 
 public:
-	WikiEditDialog(QWidget *parent = 0);
+	explicit WikiEditDialog(QWidget *parent = 0);
 	~WikiEditDialog();
 
 void 	setNewPage();

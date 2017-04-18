@@ -28,7 +28,7 @@ bool NxsMsgTestScenario::checkTestPassed() {
 	bool passed = true;
 
 
-	for(; mit != exMap.end(); mit++)
+	for(; mit != exMap.end(); ++mit)
 	{
 		const RsPeerId& pid = mit->first;
 
@@ -36,7 +36,7 @@ bool NxsMsgTestScenario::checkTestPassed() {
 		ExpectedMsgs::const_iterator cit = exMsgs.begin();
 		RsGeneralDataService* ds = getDataService(pid);
 
-		for(; cit != exMsgs.end(); cit++)
+		for(; cit != exMsgs.end(); ++cit)
 		{
 			const RsGxsGroupId& grpId = cit->first;
 			RsGxsMessageId::std_vector expMsgIds = cit->second;
@@ -73,7 +73,7 @@ void NxsMsgTestScenario::cleanTestScenario()
 	RsPeerId::std_vector peerIds;
 
 	// remove grps and msg data
-	for(; mit != mDataPeerMap.end(); mit++)
+	for(; mit != mDataPeerMap.end(); ++mit)
 	{
 		mit->second->resetDataStore();
 		peerIds.push_back(mit->first);
@@ -82,7 +82,7 @@ void NxsMsgTestScenario::cleanTestScenario()
 	// now delete tables
 	RsPeerId::std_vector::const_iterator cit = peerIds.begin();
 
-	for(; cit != peerIds.end(); cit++)
+	for(; cit != peerIds.end(); ++cit)
 	{
 		std::string tableFile = "msg_store_" + cit->toStdString();
 		remove(tableFile.c_str());

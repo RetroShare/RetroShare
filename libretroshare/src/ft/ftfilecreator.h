@@ -136,7 +136,9 @@ class ftFileCreator: public ftFileProvider
 
 	private:
 
+/* UNUSED
 		bool 	locked_printChunkMap();
+*/
 		int 	locked_notifyReceived(uint64_t offset, uint32_t chunk_size);
 		/* 
 		 * structure to track missing chunks 

@@ -709,7 +709,7 @@ be_node *makeCompactNodeIdString(std::list<bdId> &nodes)
 	int len = BITDHT_COMPACTNODEID_LEN * nodes.size();
 	std::string cni;
 	std::list<bdId>::iterator it;
-	for(it = nodes.begin(); it != nodes.end(); it++)
+	for(it = nodes.begin(); it != nodes.end(); ++it)
 	{
 		cni += encodeCompactNodeId(&(*it));
 	}
@@ -723,7 +723,7 @@ be_node *makeCompactPeerIds(std::list<std::string> &values)
 {
         be_node *valuesnode = be_create_list();
 	std::list<std::string>::iterator it;
-	for(it = values.begin(); it != values.end(); it++)
+	for(it = values.begin(); it != values.end(); ++it)
 	{
         	be_node *val1 = be_create_str_wlen((char *) it->c_str(), it->length());
 		be_add_list(valuesnode, val1);

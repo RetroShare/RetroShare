@@ -54,7 +54,7 @@ void ForumHandler::handleWildcard(Request &req, Response &resp)
             {
                 std::vector<RsGxsForumMsg> grps;
                 ok &= mRsGxsForums->getMsgData(token, grps);
-                for(std::vector<RsGxsForumMsg>::iterator vit = grps.begin(); vit != grps.end(); vit++)
+                for(std::vector<RsGxsForumMsg>::iterator vit = grps.begin(); vit != grps.end(); ++vit)
                 {
                     RsGxsForumMsg& grp = *vit;
                     KeyValueReference<RsGxsGroupId> group_id("group_id", grp.mMeta.mGroupId);
@@ -101,7 +101,7 @@ void ForumHandler::handleWildcard(Request &req, Response &resp)
         {
             std::vector<RsGxsForumGroup> grps;
             ok &= mRsGxsForums->getGroupData(token, grps);
-            for(std::vector<RsGxsForumGroup>::iterator vit = grps.begin(); vit != grps.end(); vit++)
+            for(std::vector<RsGxsForumGroup>::iterator vit = grps.begin(); vit != grps.end(); ++vit)
             {
                 RsGxsForumGroup& grp = *vit;
                 KeyValueReference<RsGxsGroupId> id("id", grp.mMeta.mGroupId);

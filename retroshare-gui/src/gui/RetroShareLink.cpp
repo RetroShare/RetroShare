@@ -979,6 +979,7 @@ bool RetroShareLink::checkPGPId(const QString& pgp_id)
 	return true ;
 }
 
+/* UNUSED
 bool RetroShareLink::checkRadix64(const QString& s)
 {
 	QByteArray qb(s.toLatin1()) ;
@@ -996,6 +997,7 @@ bool RetroShareLink::checkRadix64(const QString& s)
 	std::cerr << "Radix check: passed" << std::endl;
 	return true ;
 }
+*/
 
 bool RetroShareLink::checkHash(const QString& hash)
 {

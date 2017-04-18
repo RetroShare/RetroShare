@@ -31,9 +31,9 @@
 #ifndef WINDOWS_SYS
 // for locking instances
 #include <errno.h>
-#else
+#else //WINDOWS_SYS
 #include "util/rswin.h"
-#endif
+#endif //WINDOWS_SYS
 
 #include "util/argstream.h"
 #include "util/rsdebug.h"
@@ -63,7 +63,7 @@
 
 #if (defined(__unix__) || defined(unix)) && !defined(USG)
 #include <sys/param.h>
-#endif
+#endif // __unix__
 
 // for blocking signals
 #include <signal.h>
@@ -76,7 +76,7 @@
 
 #ifdef ENABLE_GROUTER
 #include "grouter/p3grouter.h"
-#endif
+#endif // ENABLE_GROUTER
 
 #ifdef RS_USE_DHT_STUNNER
 #include "tcponudp/udpstunner.h"
@@ -97,7 +97,7 @@ class RsInitConfig
 #ifdef WINDOWS_SYS
 		bool portable;
 		bool isWindowsXP;
-#endif
+#endif //WINDOWS_SYS
 		rs_lock_handle_t lockHandle;
 
 		std::string passwd;
@@ -156,16 +156,16 @@ void RsInit::InitRsConfig()
 #ifdef WINDOWS_SYS
 	rsInitConfig->portable = false;
 	rsInitConfig->isWindowsXP = false;
-#endif
+#endif //WINDOWS_SYS
 	/* v0.6 features */
 	rsInitConfig->hiddenNodeSet = false;
 
 
 #ifndef WINDOWS_SYS
 	rsInitConfig->lockHandle = -1;
-#else
+#else //WINDOWS_SYS
 	rsInitConfig->lockHandle = NULL;
-#endif
+#endif //WINDOWS_SYS
 
 
 	rsInitConfig->load_trustedpeer = false;
@@ -220,7 +220,7 @@ void RsInit::InitRsConfig()
 	} else {
 		std::cerr << "Not running Windows XP" << std::endl;
 	}
-#endif
+#endif //WINDOWS_SYS
 
 	/* Setup the Debugging */
 	// setup debugging for desired zones.
@@ -270,13 +270,13 @@ bool doPortRestrictions = false;
 int RsInit::InitRetroShare(int argc, char **argv, bool /* strictCheck */)
 {
 /******************************** WINDOWS/UNIX SPECIFIC PART ******************/
-#else
+#else // WINDOWS_SYS
 
    /* for static PThreads under windows... we need to init the library...
     */
    #ifdef PTW32_STATIC_LIB
       #include <pthread.h>
-   #endif
+   #endif // PTW32_STATIC_LIB
 
 int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck)
 {
@@ -287,7 +287,7 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
 #ifdef USE_CMD_ARGS
   char** argv = argvIgnored;
   argc = argcIgnored;
-#else
+#else // USE_CMD_ARGS
   const int MAX_ARGS = 32;
   int j;
   char *argv[MAX_ARGS];
@@ -313,7 +313,7 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
         }
   }
   argc = i;
-#endif
+#endif // USE_CMD_ARGS
 
   for( i=0; i<argc; i++)
     printf("%d: %s\n", i, argv[i]);
@@ -322,8 +322,8 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
  */
   #ifdef PTW32_STATIC_LIB
 	 pthread_win32_process_attach_np();
-  #endif
-#endif
+  #endif // PTW32_STATIC_LIB
+#endif // WINDOWS_SYS
 /******************************** WINDOWS/UNIX SPECIFIC PART ******************/
 
 	std::string prefUserString = "";
@@ -345,7 +345,7 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
 	{
 		argc = 1;
 	}
-#endif
+#endif // __APPLE__
 
 
 			argstream as(argc,argv) ;
@@ -368,7 +368,7 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
 			// by rshare    'f' "rsfile"                                       "RsFile" "Open RsFile like RsCollection"
 #ifdef LOCALNET_TESTING
 			   >> parameter('R',"restrict-port" ,portRestrictions             ,"port1-port2","Apply port restriction"                   ,false)
-#endif
+#endif // LOCALNET_TESTING
  				>> help('h',"help","Display this Help") ;
 
 			as.defaultErrorHandling(true) ;
@@ -379,14 +379,14 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
 			if(rsInitConfig->inet != "127.0.0.1") rsInitConfig->forceLocalAddr = true;
 #ifdef LOCALNET_TESTING
 			if(!portRestrictions.empty())       doPortRestrictions           = true;
-#endif
+#endif // LOCALNET_TESTING
 
 #ifdef SUSPENDED_CODE
 #ifdef LOCALNET_TESTING
          while((c = getopt(argc, argv,"hesamui:p:c:w:l:d:U:r:R:")) != -1)
-#else
+#else // LOCALNET_TESTING
          while((c = getopt(argc, argv,"hesamui:p:c:w:l:d:U:r:")) != -1)
-#endif
+#endif // LOCALNET_TESTING
          {
                  switch (c)
                  {
@@ -408,7 +408,7 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
                                  std::cerr << "-r link           Use RetroShare link." << std::endl;
 #ifdef LOCALNET_TESTING
                                  std::cerr << "-R <lport-uport>  Port Restrictions." << std::endl;
-#endif
+#endif // LOCALNET_TESTING
                                  exit(1);
                                  break;
                          default:
@@ -419,7 +419,7 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
                                  }
                  }
          }
-#endif
+#endif // SUSPENDED_CODE
 
 			setOutputLevel((RsLog::logLvl)rsInitConfig->debugLevel);
 
@@ -448,7 +448,7 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
 /******************************** WINDOWS/UNIX SPECIFIC PART ******************/
 #ifndef WINDOWS_SYS
 /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
-#else
+#else // WINDOWS_SYS
 	// Windows Networking Init.
 	WORD wVerReq = MAKEWORD(2,2);
 	WSADATA wsaData;
@@ -464,7 +464,7 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
 		std::cerr << std::endl;
 	}
 
-#endif
+#endif // WINDOWS_SYS
 /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 	// SWITCH off the SIGPIPE - kills process on Linux.
 /******************************** WINDOWS/UNIX SPECIFIC PART ******************/
@@ -486,7 +486,7 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
 	{
 		std::cerr << "RetroShare:: Failed to install the SIGPIPE Block" << std::endl;
 	}
-#endif
+#endif // WINDOWS_SYS
 /******************************** WINDOWS/UNIX SPECIFIC PART ******************/
 
 	// Hash the main executable.
@@ -725,7 +725,7 @@ int RsInit::LoadCertificates(bool autoLoginNT)
 		RsLoginHandler::enableAutoLogin(preferredId,rsInitConfig->passwd);
 		rsInitConfig->autoLogin = true ;
 	}
-#else
+#else // RS_AUTOLOGIN
 	(void) autoLoginNT;
 #endif // RS_AUTOLOGIN
 
@@ -758,18 +758,18 @@ bool RsInit::isPortable()
 {
 #ifdef WINDOWS_SYS
     return rsInitConfig->portable;
-#else
+#else // WINDOWS_SYS
     return false;
-#endif
+#endif // WINDOWS_SYS
 }
 
 bool RsInit::isWindowsXP()
 {
 #ifdef WINDOWS_SYS
     return rsInitConfig->isWindowsXP;
-#else
+#else // WINDOWS_SYS
     return false;
-#endif
+#endif //WINDOWS_SYS
 }
 	
 bool RsInit::getStartMinimised()
@@ -825,7 +825,7 @@ RsTurtle *rsTurtle = NULL ;
 RsReputations *rsReputations = NULL ;
 #ifdef ENABLE_GROUTER
 RsGRouter *rsGRouter = NULL ;
-#endif
+#endif //ENABLE_GROUTER
 
 #include "pqi/pqipersongrp.h"
 #include "pqi/pqisslpersongrp.h"
@@ -839,17 +839,17 @@ RsGRouter *rsGRouter = NULL ;
 
 #ifdef RS_ENABLE_ZEROCONF
 	#include "zeroconf/p3zeroconf.h"
-#endif
+#endif // RS_ENABLE_ZEROCONF
 
 #ifdef RS_ENABLE_ZCNATASSIST
 	#include "zeroconf/p3zcnatassist.h"
-#else
-        #ifdef RS_USE_LIBUPNP
+#else // RS_ENABLE_ZCNATASSIST
+	#ifdef RS_USE_LIBUPNP
 		#include "upnp/upnphandler_linux.h"
-	#else
+	#else // RS_USE_LIBUPNP
 		#include "upnp/upnphandler_miniupnp.h"
-        #endif
-#endif
+	#endif // RS_USE_LIBUPNP
+#endif // RS_ENABLE_ZCNATASSIST
 	
 #include "services/p3gxsreputation.h"
 #include "services/p3serviceinfo.h"
@@ -915,7 +915,7 @@ RsGRouter *rsGRouter = NULL ;
 #include "udp/udpstack.h"
 #include "tcponudp/udppeer.h"
 #include "tcponudp/udprelay.h"
-#endif
+#endif // RS_USE_BITDHT
 
 /****
  * #define RS_RELEASE 		1
@@ -928,7 +928,7 @@ RsGRouter *rsGRouter = NULL ;
 
 #ifdef RS_RTT
 #include "services/p3rtt.h"
-#endif
+#endif // RS_RTT
 
 
 #include "services/p3banlist.h"
@@ -936,7 +936,7 @@ RsGRouter *rsGRouter = NULL ;
 
 #ifdef SERVICES_DSDV
 #include "services/p3dsdv.h"
-#endif
+#endif // SERVICES_DSDV
 
 RsControl *RsControl::instance()
 {
@@ -1087,9 +1087,10 @@ int RsServer::StartupRetroShare()
 		RestrictedUdpLayer *url = (RestrictedUdpLayer *) mDhtStack->getUdpLayer();
 		url->addRestrictedPortRange(lport, uport);
 	}
-#else
+#else // LOCALNET_TESTING
 	rsUdpStack *mDhtStack = new rsUdpStack(tmpladdr);
-#endif
+	if (mDhtStack) {;}
+#endif // LOCALNET_TESTING
 
 #ifdef RS_USE_BITDHT
 
@@ -1154,7 +1155,7 @@ int RsServer::StartupRetroShare()
 
 #ifdef LOCALNET_TESTING
 	mDhtStunner->SetAcceptLocalNet();
-#endif
+#endif // LOCALNET_TESTING
 #endif // RS_USE_DHT_STUNNER
 
 
@@ -1196,9 +1197,9 @@ int RsServer::StartupRetroShare()
 		RestrictedUdpLayer *url = (RestrictedUdpLayer *) mProxyStack->getUdpLayer();
 		url->addRestrictedPortRange(lport, uport);
 	}
-#else
+#else // LOCALNET_TESTING
 	rsFixedUdpStack *mProxyStack = new rsFixedUdpStack(sndladdr);
-#endif
+#endif // LOCALNET_TESTING
 
 #ifdef RS_USE_DHT_STUNNER
 	// FIRSTLY THE PROXY STUNNER.
@@ -1208,7 +1209,7 @@ int RsServer::StartupRetroShare()
 
 #ifdef LOCALNET_TESTING
 	mProxyStunner->SetAcceptLocalNet();
-#endif
+#endif // LOCALNET_TESTING
 #endif // RS_USE_DHT_STUNNER
 
 
@@ -1229,10 +1230,10 @@ int RsServer::StartupRetroShare()
 #ifdef RS_USE_DHT_STUNNER
 	mNetMgr->setAddrAssist(new stunAddrAssist(mDhtStunner), new stunAddrAssist(mProxyStunner));
 #endif // RS_USE_DHT_STUNNER
-#else
+#else // RS_USE_BITDHT
 	/* install NULL Pointer for rsDht Interface */
 	rsDht = NULL;
-#endif
+#endif // RS_USE_BITDHT
 
 
 	/**************************** BITDHT ***********************************/
@@ -1260,18 +1261,18 @@ int RsServer::StartupRetroShare()
 
 
 	/* create Cache Services */
-	std::string config_dir = rsAccounts->PathAccountDirectory();
-	std::string localcachedir = config_dir + "/cache/local";
-	std::string remotecachedir = config_dir + "/cache/remote";
+	//std::string config_dir = rsAccounts->PathAccountDirectory();
+	//std::string localcachedir = config_dir + "/cache/local";
+	//std::string remotecachedir = config_dir + "/cache/remote";
 
 	std::vector<std::string> plugins_directories ;
 
 #ifdef __APPLE__
 	plugins_directories.push_back(rsAccounts->PathDataDirectory()) ;
-#endif
+#endif // __APPLE__
 #ifndef WINDOWS_SYS
 	plugins_directories.push_back(std::string(PLUGIN_DIR)) ;
-#endif
+#endif // WINDOWS_SYS
 	std::string extensions_dir = rsAccounts->PathBaseDirectory() + "/extensions6/" ;
 	plugins_directories.push_back(extensions_dir) ;
 
@@ -1281,7 +1282,7 @@ int RsServer::StartupRetroShare()
 #ifdef DEBUG_PLUGIN_SYSTEM
 	plugins_directories.push_back(".") ;	// this list should be saved/set to some correct value.
 	// possible entries include: /usr/lib/retroshare, ~/.retroshare/extensions/, etc.
-#endif
+#endif // DEBUG_PLUGIN_SYSTEM
 
 	mPluginsManager = new RsPluginManager(rsInitConfig->main_executable_hash) ;
 	rsPlugins  = mPluginsManager ;
@@ -1406,7 +1407,7 @@ int RsServer::StartupRetroShare()
 			pgpAuxUtils);
 
     mWiki->setNetworkExchangeService(wiki_ns) ;
-#endif
+#endif // RS_USE_WIKI
 
         /**** Forum GXS service ****/
 
@@ -1455,7 +1456,7 @@ int RsServer::StartupRetroShare()
 			mPhoto, mPhoto->getServiceInfo(), 
 			mGxsIdService, mGxsCircles,mGxsIdService,
 			pgpAuxUtils);
-#endif
+#endif // 0
 
 #if 0 // WIRE IS DISABLED FOR THE MOMENT
         /**** Wire GXS service ****/
@@ -1471,14 +1472,14 @@ int RsServer::StartupRetroShare()
 			mWire, mWire->getServiceInfo(), 
 			mGxsIdService, mGxsCircles,mGxsIdService,
 			pgpAuxUtils);
-#endif
+#endif // 0
         // now add to p3service
         pqih->addService(gxsid_ns, true);
         pqih->addService(gxscircles_ns, true);
         pqih->addService(posted_ns, true);
 #ifdef RS_USE_WIKI
         pqih->addService(wiki_ns, true);
-#endif
+#endif // RS_USE_WIKI
         pqih->addService(gxsforums_ns, true);
         pqih->addService(gxschannels_ns, true);
         //pqih->addService(photo_ns, true);
@@ -1500,7 +1501,7 @@ int RsServer::StartupRetroShare()
     p3GRouter *gr = new p3GRouter(serviceCtrl,mGxsIdService) ;
 	rsGRouter = gr ;
 	pqih->addService(gr,true) ;
-#endif
+#endif // ENABLE_GROUTER
 
     p3FileDatabase *fdb = new p3FileDatabase(serviceCtrl) ;
     p3turtle *tr = new p3turtle(serviceCtrl,mLinkMgr) ;
@@ -1524,7 +1525,7 @@ int RsServer::StartupRetroShare()
     gr->connectToTurtleRouter(tr) ;
 #ifdef ENABLE_GROUTER
 	msgSrv->connectToGlobalRouter(gr) ;
-#endif
+#endif // ENABLE_GROUTER
 
 	pqih -> addService(serviceInfo,true);
 	pqih -> addService(mHeart,true);
@@ -1574,7 +1575,7 @@ int RsServer::StartupRetroShare()
 	p3rtt *mRtt = new p3rtt(serviceCtrl);
 	pqih -> addService(mRtt, true);
 	rsRtt = mRtt;
-#endif
+#endif // RS_RTT
 
 	// new services to test.
     p3BanList *mBanList = new p3BanList(serviceCtrl, mNetMgr);
@@ -1590,7 +1591,7 @@ int RsServer::StartupRetroShare()
 	pqih -> addService(mDsdv, true);
 	rsDsdv = mDsdv;
 	mDsdv->addTestService();
-#endif
+#endif // SERVICES_DSDV
 
 	/**************************************************************************/
 
@@ -1599,7 +1600,7 @@ int RsServer::StartupRetroShare()
 	mNetMgr->addNetListener(mDhtStack); 
 	mNetMgr->addNetListener(mProxyStack); 
 
-#endif
+#endif // RS_USE_BITDHT
 
 #ifdef RS_ENABLE_ZEROCONF
 	p3ZeroConf *mZeroConf = new p3ZeroConf(
@@ -1607,17 +1608,17 @@ int RsServer::StartupRetroShare()
 			mLinkMgr, mNetMgr, mPeerMgr);
 	mNetMgr->addNetAssistConnect(2, mZeroConf);
 	mNetMgr->addNetListener(mZeroConf); 
-#endif
+#endif // RS_ENABLE_ZEROCONF
 
 #ifdef RS_ENABLE_ZCNATASSIST
 	// Apple's UPnP & NAT-PMP assistance.
 	p3zcNatAssist *mZcNatAssist = new p3zcNatAssist();
 	mNetMgr->addNetAssistFirewall(1, mZcNatAssist);
-#else
+#else // RS_ENABLE_ZCNATASSIST
 	// Original UPnP Interface.
 	pqiNetAssistFirewall *mUpnpMgr = new upnphandler();
 	mNetMgr->addNetAssistFirewall(1, mUpnpMgr);
-#endif
+#endif // RS_ENABLE_ZCNATASSIST
 
 	/**************************************************************************/
 	/* need to Monitor too! */
@@ -1651,12 +1652,12 @@ int RsServer::StartupRetroShare()
 	mConfigMgr->addConfiguration("reputations.cfg", mReputations);
 #ifdef ENABLE_GROUTER
 	mConfigMgr->addConfiguration("grouter.cfg", gr);
-#endif
+#endif // ENABLE_GROUTER
     mConfigMgr->addConfiguration("p3identity.cfg", mGxsIdService);
 
 #ifdef RS_USE_BITDHT
     mConfigMgr->addConfiguration("bitdht.cfg", mBitDht);
-#endif
+#endif // RS_USE_BITDHT
 
 #ifdef RS_ENABLE_GXS
 	mConfigMgr->addConfiguration("identity.cfg", gxsid_ns);
@@ -1666,10 +1667,10 @@ int RsServer::StartupRetroShare()
 	mConfigMgr->addConfiguration("posted.cfg", posted_ns);
 #ifdef RS_USE_WIKI
 	mConfigMgr->addConfiguration("wiki.cfg", wiki_ns);
-#endif
+#endif // RS_USE_WIKI
 	//mConfigMgr->addConfiguration("photo.cfg", photo_ns);
 	//mConfigMgr->addConfiguration("wire.cfg", wire_ns);
-#endif
+#endif // RS_ENABLE_GXS
 
 	mPluginsManager->addConfigurations(mConfigMgr) ;
 
@@ -1771,7 +1772,7 @@ int RsServer::StartupRetroShare()
     rsGxsCircles = mGxsCircles;
 #if RS_USE_WIKI
     rsWiki = mWiki;
-#endif
+#endif // RS_USE_WIKI
     rsPosted = mPosted;
     rsGxsForums = mGxsForums;
     rsGxsChannels = mGxsChannels;
@@ -1784,7 +1785,7 @@ int RsServer::StartupRetroShare()
 	startServiceThread(mPosted, "gxs posted");
 #if RS_USE_WIKI
 	startServiceThread(mWiki, "gxs wiki");
-#endif
+#endif // RS_USE_WIKI
 	startServiceThread(mGxsForums, "gxs forums");
 	startServiceThread(mGxsChannels, "gxs channels");
 
@@ -1797,7 +1798,7 @@ int RsServer::StartupRetroShare()
 	startServiceThread(posted_ns, "gxs posted ns");
 #if RS_USE_WIKI
 	startServiceThread(wiki_ns, "gxs wiki ns");
-#endif
+#endif // RS_USE_WIKI
 	startServiceThread(gxsforums_ns, "gxs forums ns");
 	startServiceThread(gxschannels_ns, "gxs channels ns");
 
@@ -1812,7 +1813,7 @@ int RsServer::StartupRetroShare()
 	//mDhtMgr->start();
 #ifdef RS_USE_BITDHT
 	mBitDht->start();
-#endif
+#endif // RS_USE_BITDHT
 
 	/**************************************************************************/
 

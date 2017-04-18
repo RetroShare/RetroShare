@@ -43,7 +43,7 @@ class SearchTreeWidget : public QTreeWidget
     Q_OBJECT
         
         public:
-    SearchTreeWidget(QWidget *parent = 0);
+    explicit SearchTreeWidget(QWidget *parent = 0);
 
 	protected:
 virtual QMimeData * mimeData ( const QList<QTreeWidgetItem *> items ) const;

@@ -39,12 +39,12 @@
 const QString RsCollectionFile::ExtensionString = QString("rscollection") ;
 
 RsCollectionFile::RsCollectionFile(QObject *parent)
-	: QObject(parent), _xml_doc("RsCollection")
+	: QObject(parent), _xml_doc("RsCollection"), _saved(false)
 {
 }
 
 RsCollectionFile::RsCollectionFile(const std::vector<DirDetails>& file_infos, QObject *parent)
-	: QObject(parent), _xml_doc("RsCollection")
+	: QObject(parent), _xml_doc("RsCollection"), _saved(false)
 {
 	QDomElement root = _xml_doc.createElement("RsCollection");
 	_xml_doc.appendChild(root);

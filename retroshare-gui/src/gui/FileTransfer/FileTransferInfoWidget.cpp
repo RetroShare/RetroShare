@@ -41,10 +41,10 @@ static const float availability_map_size_Y_factor = 2.0 ;// height of availabili
 static const float tab_size_factor        	   = 20.0;// size between tabulated entries
 
 FileTransferInfoWidget::FileTransferInfoWidget(QWidget * /*parent*/, Qt::WindowFlags /*f*/ )
+  : x(0), y(0), maxHeight(0)
 {
 	QRect TaskGraphRect = geometry();
 	maxWidth = TaskGraphRect.width();
-	maxHeight = 0;
 	pixmap = QPixmap(size());
 	pixmap.fill(Qt::transparent);
 

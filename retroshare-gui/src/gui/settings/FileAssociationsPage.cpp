@@ -186,8 +186,6 @@ FileAssociationsPage::addnew()
 {
     AddFileAssociationDialog afad(false, this);//'add file assotiations' dialog
 
-    QTableWidgetItem* titem;
-
     int ti = afad.exec();
 
     if (ti==QDialog::Accepted)
@@ -207,7 +205,7 @@ FileAssociationsPage::addnew()
         {
             for(int rowi=0; rowi<table->rowCount(); ++rowi)
             {
-                titem = table->item( rowi, 0);
+                QTableWidgetItem* titem = table->item( rowi, 0);
                 if (titem->data(QTableWidgetItem::Type).toString()==currType)
                 {
                     titem = table->item( rowi, 1);

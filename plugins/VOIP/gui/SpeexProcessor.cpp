@@ -120,11 +120,10 @@ bool SpeexInputProcessor::hasPendingPackets() {
         return !outputNetworkBuffer.empty();
 }
 
+/* UNUSED
 qint64 SpeexInputProcessor::writeData(const char *data, qint64 maxSize) {
         int iArg;
         int i;
-        float sum;
-        short max;
 
         inputBuffer += QByteArray(data, maxSize);
 
@@ -134,13 +133,13 @@ qint64 SpeexInputProcessor::writeData(const char *data, qint64 maxSize) {
                 short* psMic = (short *)source_frame.data();
 
                 //let's do volume detection
-                sum=1.0f;
+                float sum=1.0f;
                 for (i=0;i<FRAME_SIZE;i++) {
                         sum += static_cast<float>(psMic[i] * psMic[i]);
                 }
                 dPeakMic = qMax(20.0f*log10f(sqrtf(sum / static_cast<float>(FRAME_SIZE)) / 32768.0f), -96.0f);
 
-                max = 1;
+                short max = 1;
                 for (i=0;i<FRAME_SIZE;i++)
                         max = static_cast<short>(std::abs(psMic[i]) > max ? std::abs(psMic[i]) : max);
                 dMaxMic = max;
@@ -236,9 +235,9 @@ qint64 SpeexInputProcessor::writeData(const char *data, qint64 maxSize) {
 
                 //bIsSpeech = bIsSpeech || (g.iPushToTalk > 0);
 
-                /*if (g.s.bMute || ((g.s.lmLoopMode != RsVOIP::Local) && p && (p->bMute || p->bSuppress)) || g.bPushToMute || (g.iTarget < 0)) {
-                        bIsSpeech = false;
-                }*/
+                //if (g.s.bMute || ((g.s.lmLoopMode != RsVOIP::Local) && p && (p->bMute || p->bSuppress)) || g.bPushToMute || (g.iTarget < 0)) {
+                //        bIsSpeech = false;
+                //}
 
                 if (bIsSpeech) {
                         iSilentFrames = 0;
@@ -246,22 +245,22 @@ qint64 SpeexInputProcessor::writeData(const char *data, qint64 maxSize) {
                         iSilentFrames++;
                 }
 
-                /*if (p) {
-                        if (! bIsSpeech)
-                                p->setTalking(RsVOIP::Passive);
-                        else if (g.iTarget == 0)
-                                p->setTalking(RsVOIP::Talking);
-                        else
-                                p->setTalking(RsVOIP::Shouting);
-                }*/
+                //if (p) {
+                //        if (! bIsSpeech)
+                //                p->setTalking(RsVOIP::Passive);
+                //        else if (g.iTarget == 0)
+                //                p->setTalking(RsVOIP::Talking);
+                //        else
+                //                p->setTalking(RsVOIP::Shouting);
+                //}
 
 
                 if (! bIsSpeech && ! bPreviousVoice) {
                         iRealTimeBitrate = 0;
-                        /*if (g.s.iIdleTime && ! g.s.bDeaf && ((tIdle.elapsed() / 1000000ULL) > g.s.iIdleTime)) {
-                                emit doDeaf();
-                                tIdle.restart();
-                        }*/
+                        //if (g.s.iIdleTime && ! g.s.bDeaf && ((tIdle.elapsed() / 1000000ULL) > g.s.iIdleTime)) {
+                        //        emit doDeaf();
+                        //        tIdle.restart();
+                        //}
                         spx_int32_t increment = 0;
                         speex_preprocess_ctl(preprocessor, SPEEX_PREPROCESS_SET_AGC_INCREMENT, &increment);
                 } else {
@@ -323,7 +322,7 @@ qint64 SpeexInputProcessor::writeData(const char *data, qint64 maxSize) {
 
 	return maxSize;
 }
-
+*/
 
 SpeexOutputProcessor::SpeexOutputProcessor(QObject *parent) : QIODevice(parent),
     outputBuffer()
@@ -471,7 +470,6 @@ void SpeexOutputProcessor::speex_jitter_put(SpeexJitter jitter, char *packet, in
 
 void SpeexOutputProcessor::speex_jitter_get(SpeexJitter jitter, spx_int16_t *out, int *current_timestamp)
 {
-   int i;
    int ret;
    spx_int32_t activity;
    //int bufferCount = 0;
@@ -511,7 +509,7 @@ void SpeexOutputProcessor::speex_jitter_get(SpeexJitter jitter, spx_int16_t *out
          jitter.valid_bits = 1;
       } else {
          /* Error while decoding */
-         for (i=0;i<jitter.frame_size;i++)
+         for (int i=0;i<jitter.frame_size;i++)
             out[i]=0;
       }
    }

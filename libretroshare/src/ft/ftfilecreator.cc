@@ -83,7 +83,6 @@ bool ftFileCreator::getFileData(const RsPeerId& peer_id,uint64_t offset, uint32_
         // try if we have data from an incomplete or not veryfied chunk
         if(!have_it && allow_unverified)
         {
-            std::map<uint64_t, ftChunk>::iterator it;
             have_it = true;
             // this map contains chunks which are currently being downloaded
             for(std::map<uint64_t,ftChunk>::iterator it=mChunks.begin(); it!=mChunks.end(); ++it)
@@ -544,7 +543,7 @@ bool ftFileCreator::getMissingChunk(const RsPeerId& peer_id,uint32_t size_hint,u
 	offset = chunk.offset ;
 	size = chunk.size ;
 
-	++chunks_for_this_peer ;	// increase number of chunks for this peer.
+	//++chunks_for_this_peer ;	// increase number of chunks for this peer.
 
 	return true; /* cos more data to get */
 }
@@ -572,6 +571,7 @@ void ftFileCreator::getChunkMap(FileChunksInfo& info)
 	}
 }
 
+/* UNUSED
 bool ftFileCreator::locked_printChunkMap()
 {
 #ifdef FILE_DEBUG
@@ -580,7 +580,7 @@ bool ftFileCreator::locked_printChunkMap()
 	std::cerr << std::endl;
 #endif
 
-	/* check start point */
+	// check start point
 	std::cerr << "\tOutstanding Chunks:";
 	std::cerr << std::endl;
 
@@ -595,6 +595,7 @@ bool ftFileCreator::locked_printChunkMap()
 
 	return true; 
 }
+*/
 
 void ftFileCreator::setAvailabilityMap(const CompressedChunkMap& cmap) 
 {

@@ -192,7 +192,7 @@ void ops_calc_mdc_hash(const unsigned char* preamble, const size_t sz_preamble, 
             fprintf(stderr," 0x%02x", preamble[i]);
         fprintf(stderr,"\n");
 
-        fprintf(stderr,"\nplaintext (len=%d): ",sz_plaintext);
+        fprintf(stderr,"\nplaintext (len=%ud): ",sz_plaintext);
         for (i=0; i<sz_plaintext;i++)
             fprintf(stderr," 0x%02x", plaintext[i]);
         fprintf(stderr,"\n");

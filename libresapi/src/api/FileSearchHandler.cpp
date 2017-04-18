@@ -53,7 +53,7 @@ void FileSearchHandler::notifyTurtleSearchResult(uint32_t search_id, const std::
             search.mResults.push_back(det);
             search.mHashes.insert(lit->hash);
         }
-        lit++;
+        ++lit;
     }
     if(changed)
     {

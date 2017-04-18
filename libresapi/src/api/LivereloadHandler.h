@@ -12,7 +12,7 @@ namespace resource_api
 class LivereloadHandler: public ResourceRouter
 {
 public:
-    LivereloadHandler(StateTokenServer* sts);
+    explicit LivereloadHandler(StateTokenServer* sts);
 
 private:
     void handleWildcard(Request& req, Response& resp);

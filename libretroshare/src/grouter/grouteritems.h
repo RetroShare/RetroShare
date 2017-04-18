@@ -59,7 +59,7 @@ const uint8_t QOS_PRIORITY_RS_GROUTER = 4 ;			// relevant for items that travel 
 class RsGRouterItem: public RsItem
 {
 	public:
-		RsGRouterItem(uint8_t grouter_subtype) : RsItem(RS_PKT_VERSION_SERVICE,RS_SERVICE_TYPE_GROUTER,grouter_subtype) {}
+		explicit RsGRouterItem(uint8_t grouter_subtype) : RsItem(RS_PKT_VERSION_SERVICE,RS_SERVICE_TYPE_GROUTER,grouter_subtype) {}
 
         virtual ~RsGRouterItem() {}
 
@@ -97,7 +97,7 @@ class RsGRouterNonCopyableObject
 class RsGRouterAbstractMsgItem: public RsGRouterItem
 {
 public:
-    RsGRouterAbstractMsgItem(uint8_t pkt_subtype) : RsGRouterItem(pkt_subtype) {}
+    explicit RsGRouterAbstractMsgItem(uint8_t pkt_subtype) : RsGRouterItem(pkt_subtype), flags(0) {}
     virtual ~RsGRouterAbstractMsgItem() {}
 
     virtual uint32_t signed_data_size() const = 0 ;
@@ -106,14 +106,17 @@ public:
     GRouterMsgPropagationId routing_id ;
     GRouterKeyId destination_key ;
     GRouterServiceId service_id ;
-    RsTlvKeySignature signature ;		// signs mid+destination_key+state
-        uint32_t flags ; 			// packet was delivered, not delivered, bounced, etc
+    RsTlvKeySignature signature ; // signs mid+destination_key+state
+    uint32_t flags ;              // packet was delivered, not delivered, bounced, etc
 };
 
 class RsGRouterGenericDataItem: public RsGRouterAbstractMsgItem, public RsGRouterNonCopyableObject
 {
     public:
-        RsGRouterGenericDataItem() : RsGRouterAbstractMsgItem(RS_PKT_SUBTYPE_GROUTER_DATA) { setPriorityLevel(QOS_PRIORITY_RS_GROUTER) ; }
+        RsGRouterGenericDataItem()
+          : RsGRouterAbstractMsgItem(RS_PKT_SUBTYPE_GROUTER_DATA)
+          , data_size(0), data_bytes(NULL), duplication_factor(0)
+          { setPriorityLevel(QOS_PRIORITY_RS_GROUTER) ; }
         virtual ~RsGRouterGenericDataItem() { clear() ; }
 
         virtual bool serialise(void *data,uint32_t& size) const ;
@@ -136,8 +139,8 @@ class RsGRouterGenericDataItem: public RsGRouterAbstractMsgItem, public RsGRoute
         uint32_t duplication_factor ;	// number of duplicates allowed. Should be capped at each de-serialise operation!
 
     // utility methods for signing data
-    virtual uint32_t signed_data_size() const ;
-        virtual bool serialise_signed_data(void *data, uint32_t size) const ;
+    virtual uint32_t signed_data_size() const;
+    virtual bool serialise_signed_data(void *data, uint32_t size) const;
 };
 
 class RsGRouterSignedReceiptItem: public RsGRouterAbstractMsgItem
@@ -168,7 +171,7 @@ class RsGRouterSignedReceiptItem: public RsGRouterAbstractMsgItem
 class RsGRouterTransactionItem: public RsGRouterItem
 {
     public:
-        RsGRouterTransactionItem(uint8_t pkt_subtype) : RsGRouterItem(pkt_subtype) {}
+        explicit RsGRouterTransactionItem(uint8_t pkt_subtype) : RsGRouterItem(pkt_subtype) {}
 
     virtual ~RsGRouterTransactionItem() {}
 
@@ -182,7 +185,10 @@ class RsGRouterTransactionItem: public RsGRouterItem
 class RsGRouterTransactionChunkItem: public RsGRouterTransactionItem, public RsGRouterNonCopyableObject
 {
     public:
-        RsGRouterTransactionChunkItem() : RsGRouterTransactionItem(RS_PKT_SUBTYPE_GROUTER_TRANSACTION_CHUNK) { setPriorityLevel(QOS_PRIORITY_RS_GROUTER) ; }
+        RsGRouterTransactionChunkItem()
+          : RsGRouterTransactionItem(RS_PKT_SUBTYPE_GROUTER_TRANSACTION_CHUNK)
+          , chunk_start(0), chunk_size(0), total_size(0), chunk_data(NULL)
+          { setPriorityLevel(QOS_PRIORITY_RS_GROUTER) ; }
 
     virtual ~RsGRouterTransactionChunkItem()  { free(chunk_data) ; }
 
@@ -251,8 +257,10 @@ class RsGRouterMatrixCluesItem: public RsGRouterItem
 class RsGRouterMatrixTrackItem: public RsGRouterItem
 {
 	public:
-        RsGRouterMatrixTrackItem() : RsGRouterItem(RS_PKT_SUBTYPE_GROUTER_MATRIX_TRACK)
-		{ setPriorityLevel(0) ; }	// this item is never sent through the network
+	RsGRouterMatrixTrackItem()
+	  : RsGRouterItem(RS_PKT_SUBTYPE_GROUTER_MATRIX_TRACK)
+	  , time_stamp(0)
+	  { setPriorityLevel(0) ; }	// this item is never sent through the network
 
 		virtual bool serialise(void *data,uint32_t& size) const ;	
 		virtual uint32_t serial_size() const ; 						
@@ -262,9 +270,9 @@ class RsGRouterMatrixTrackItem: public RsGRouterItem
 
 		// packet data
 		//
-		RsGxsMessageId message_id ;
-        	RsPeerId provider_id ;
-            	time_t time_stamp ;
+		RsGxsMessageId message_id;
+		RsPeerId provider_id;
+		time_t time_stamp;
 };
 class RsGRouterMatrixFriendListItem: public RsGRouterItem
 {

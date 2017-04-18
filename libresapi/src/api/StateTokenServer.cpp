@@ -31,12 +31,12 @@ StreamBase& operator<<(StreamBase& left, StateToken& token)
         // have to make a variable, to be able to pass it by reference
         // (cant pass return value of a function by refernce to another function)
         int value = token.getValue();
-        left << value;
+        left << resource_api::ValueReference<int>(value);
     }
     else
     {
         int value;
-        left << value;
+        left << resource_api::ValueReference<int>(value);
         token = StateToken(value);
     }
     return left;

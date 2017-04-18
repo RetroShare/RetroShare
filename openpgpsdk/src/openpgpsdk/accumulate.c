@@ -177,7 +177,7 @@ static void dump_one_keydata(const ops_keydata_t *key)
     printf("\nPackets\n=======\n");
     for(n=0 ; n < key->npackets ; ++n)
 	{
-	printf("\n%03d: ",n);
+	printf("\n%03ud: ",n);
 	hexdump(key->packets[n].raw,key->packets[n].length);
 	}
     printf("\n\n");

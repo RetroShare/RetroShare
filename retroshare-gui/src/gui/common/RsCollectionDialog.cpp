@@ -22,12 +22,14 @@
  ****************************************************************/
 
 #include <QCheckBox>
+#include <QDateTime>
+#include <QDir>
+#include <QInputDialog>
+#include <QKeyEvent>
 #include <QMessageBox>
 #include <QTextEdit>
-#include <QDir>
-#include <QKeyEvent>
-#include <QDateTime>
-#include <QInputDialog>
+#include <QTreeWidgetItem>
+
 #include "RsCollectionDialog.h"
 #include "RsCollectionFile.h"
 #include "util/misc.h"
@@ -57,7 +59,7 @@
 class FSMSortFilterProxyModel : public QSortFilterProxyModel
 {
 public:
-	FSMSortFilterProxyModel( QObject *parent) : QSortFilterProxyModel(parent)
+	explicit FSMSortFilterProxyModel( QObject *parent) : QSortFilterProxyModel(parent)
 	{}
 
 protected:
@@ -372,8 +374,7 @@ QTreeWidgetItem* RsCollectionDialog::getRootItem()
  */
 bool RsCollectionDialog::updateList()
 {
-	bool wrong_chars = false ;
-	wrong_chars = addChild(getRootItem(), _newColFileInfos);
+	bool wrong_chars = addChild(getRootItem(), _newColFileInfos);
 
 	_newColFileInfos.clear();
 
@@ -810,8 +811,7 @@ void RsCollectionDialog::remove()
 	// First, check if selection contains directories
 	for (int curs = 0; curs < ui._fileEntriesTW->selectedItems().count(); ++curs)
 	{// Have to call ui._fileEntriesTW->selectedItems().count() each time as selected could change
-		QTreeWidgetItem *item = NULL;
-		item= ui._fileEntriesTW->selectedItems().at(curs);
+		QTreeWidgetItem *item= ui._fileEntriesTW->selectedItems().at(curs);
 
 		//Uncheck child directory item if parent is checked
 		if (item != getRootItem()){

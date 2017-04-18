@@ -56,7 +56,7 @@ public:
 
 
     /** Default Constructor */
-    TransfersDialog(QWidget *parent = 0);
+    explicit TransfersDialog(QWidget *parent = 0);
     ~TransfersDialog();
 
     virtual QIcon iconPixmap() const { return QIcon(IMAGE_TRANSFERS) ; } //MainPage

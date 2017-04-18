@@ -74,7 +74,7 @@ const uint8_t RS_PKT_SUBTYPE_DEFAULT = 0x01; /* if only one subtype */
 class RsItem: public RsMemoryManagement::SmallObject
 {
 	public:
-		RsItem(uint32_t t);
+		explicit RsItem(uint32_t t);
 		RsItem(uint8_t ver, uint8_t cls, uint8_t t, uint8_t subtype);
 #ifdef DO_STATISTICS
 		void *operator new(size_t s) ;
@@ -117,7 +117,7 @@ class RsItem: public RsMemoryManagement::SmallObject
 class RsSerialType
 {
 	public:
-	RsSerialType(uint32_t t); /* only uses top 24bits */
+	explicit RsSerialType(uint32_t t); /* only uses top 24bits */
 	RsSerialType(uint8_t ver, uint8_t cls, uint8_t t);
 	RsSerialType(uint8_t ver, uint16_t service);
 
@@ -169,8 +169,8 @@ uint32_t getRsPktMaxSize();
 
 
 /* helper fns for printing */
-std::ostream &printRsItemBase(std::ostream &o, std::string n, uint16_t i);
-std::ostream &printRsItemEnd(std::ostream &o, std::string n, uint16_t i);
+std::ostream &printRsItemBase(std::ostream &o, const std::string &n, uint16_t i);
+std::ostream &printRsItemEnd(std::ostream &o, const std::string &n, uint16_t i);
 
 /* defined in rstlvtypes.cc - redeclared here for ease */
 std::ostream &printIndent(std::ostream &out, uint16_t indent);

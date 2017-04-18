@@ -31,7 +31,7 @@ class WikiAddDialog : public QWidget
   Q_OBJECT
 
 public:
-	WikiAddDialog(QWidget *parent = 0);
+	explicit WikiAddDialog(QWidget *parent = 0);
 
 private slots:
 	void clearDialog();

@@ -33,7 +33,7 @@ class OnlineToaster : public QWidget
 	Q_OBJECT
 
 public:
-    OnlineToaster(const RsPeerId &peerId);
+    explicit OnlineToaster(const RsPeerId &peerId);
 
 private slots:
 	void chatButtonSlot();

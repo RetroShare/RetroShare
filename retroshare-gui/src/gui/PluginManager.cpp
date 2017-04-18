@@ -183,7 +183,6 @@ PluginManager::acceptPlugin(QString fileName, QString pluginName)
 QWidget* 
 PluginManager::pluginWidget(QString pluginName)
 {
-    QWidget* result = 0;
     int plIndex = names.indexOf( pluginName ) ;
     if (plIndex >=0 )
     {
@@ -193,7 +192,7 @@ PluginManager::pluginWidget(QString pluginName)
         if (pliface)
         {
        //=== now, get a widget
-            result = pliface->pluginWidget() ;
+            QWidget* result = pliface->pluginWidget() ;
             if (result)
             {
              // all was good,
@@ -274,7 +273,6 @@ PluginManager::viewWidgetDestroyed(QObject* obj )
 void 
 PluginManager::removePlugin(QString pluginName)
 {
-    QWidget* result = 0;
     int plIndex = names.indexOf( pluginName ) ;
     if (plIndex >=0 )
     {

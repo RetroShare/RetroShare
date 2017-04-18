@@ -117,9 +117,9 @@ static const uint32_t SortRole = Qt::UserRole+1 ;
 class TreeWidgetItem : public QTreeWidgetItem
 {
   public:
-  TreeWidgetItem(int type=Type): QTreeWidgetItem(type) {}
-  TreeWidgetItem(QTreeWidget *tree): QTreeWidgetItem(tree) {}
-  TreeWidgetItem(const QStringList& strings): QTreeWidgetItem (strings) {}
+  explicit TreeWidgetItem(int type=Type): QTreeWidgetItem(type) {}
+  explicit TreeWidgetItem(QTreeWidget *tree): QTreeWidgetItem(tree) {}
+  explicit TreeWidgetItem(const QStringList& strings): QTreeWidgetItem (strings) {}
 
   bool operator< (const QTreeWidgetItem& other ) const
   {

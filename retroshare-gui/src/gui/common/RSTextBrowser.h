@@ -8,6 +8,8 @@
 
 class RSImageBlockWidget;
 
+#warning: Cppcheck(noConstructor): The class 'RSTextBrowser' does not have a constructor.
+// cppcheck-suppress noConstructor
 class RSTextBrowser : public QTextBrowser
 {
 	Q_OBJECT
@@ -16,6 +18,7 @@ class RSTextBrowser : public QTextBrowser
 
 public:
 	explicit RSTextBrowser(QWidget *parent = 0);
+	virtual ~RSTextBrowser(){}
 
 	void setPlaceholderText(const QString &text);
 	void setImageBlockWidget(RSImageBlockWidget *widget);

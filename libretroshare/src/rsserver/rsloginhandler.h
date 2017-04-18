@@ -55,7 +55,7 @@ private:
 
 #ifdef RS_AUTOLOGIN
 	static bool tryAutoLogin(const RsPeerId& ssl_id,std::string& ssl_passwd);
-	static std::string getAutologinFileName(const RsPeerId& ssl_id);
+	//static std::string getAutologinFileName(const RsPeerId& ssl_id);
 #endif // RS_AUTOLOGIN
 };
 

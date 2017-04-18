@@ -92,6 +92,7 @@ public:
 		updateInterval = 0;
 		lastUpdate = 0;
 		storageTime = 0;
+		workstate = WAITING;
 		errorState = RS_FEED_ERRORSTATE_OK;
 		flag.folder = false;
 		flag.infoFromFeed = false;
@@ -201,7 +202,7 @@ public:
 	virtual bool     getSaveInBackground() = 0;
 	virtual void     setSaveInBackground(bool saveInBackground) = 0;
 
-	virtual RsFeedAddResult addFolder(const std::string parentId, const std::string &name, std::string &feedId) = 0;
+	virtual RsFeedAddResult addFolder(const std::string &parentId, const std::string &name, std::string &feedId) = 0;
 	virtual RsFeedAddResult setFolder(const std::string &feedId, const std::string &name) = 0;
 	virtual RsFeedAddResult addFeed(const FeedInfo &feedInfo, std::string &feedId) = 0;
 	virtual RsFeedAddResult setFeed(const std::string &feedId, const FeedInfo &feedInfo) = 0;

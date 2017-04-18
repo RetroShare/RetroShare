@@ -45,10 +45,14 @@ public:
 
 protected:
   QTreeView *directoryView() ;
+#warning: Cppcheck(pureVirtualCall): Call of pure virtual function 'showProperColumns' in constructor.
+// cppcheck-suppress pureVirtualCall
   virtual void showProperColumns() = 0 ;
-  virtual bool isRemote() const = 0 ;
+// cppcheck-suppress pureVirtualCall
+ virtual bool isRemote() const = 0 ;
 
 protected slots:
+// cppcheck-suppress pureVirtualCall
   virtual void spawnCustomPopupMenu(QPoint point) = 0;
 
 private slots:
@@ -149,11 +153,11 @@ class LocalSharedFilesDialog : public SharedFilesDialog
 	Q_OBJECT
 
 	public:
-		LocalSharedFilesDialog(QWidget *parent=NULL) ;
+		explicit LocalSharedFilesDialog(QWidget *parent=NULL) ;
 		virtual ~LocalSharedFilesDialog();
 
 		virtual void spawnCustomPopupMenu(QPoint point);
-		virtual void updatePage() { checkUpdate() ; }
+/*UNUSED		virtual void updatePage() { checkUpdate() ; }*/
 
 	protected:
 		virtual void processSettings(bool bLoad) ;
@@ -183,7 +187,7 @@ class RemoteSharedFilesDialog : public SharedFilesDialog
 	Q_OBJECT
 
 	public:
-		RemoteSharedFilesDialog(QWidget *parent=NULL) ;
+		explicit RemoteSharedFilesDialog(QWidget *parent=NULL) ;
 		virtual ~RemoteSharedFilesDialog() ;
 
 		virtual void spawnCustomPopupMenu(QPoint point);

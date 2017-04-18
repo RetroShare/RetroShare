@@ -330,6 +330,7 @@ RsItem *SetServiceTester::convertToRsItem(RsRawItem *rawitem, bool toDelete)
 	return NULL;
 }
 
+/* UNUSED
 RsRawItem *SetServiceTester::convertToRsRawItem(RsItem *item, bool toDelete)
 {
 #ifdef DEBUG_TEST
@@ -337,14 +338,14 @@ RsRawItem *SetServiceTester::convertToRsRawItem(RsItem *item, bool toDelete)
 	std::cerr << std::endl;
 #endif
 
-	/* try to convert */
+	// try to convert
 	uint32_t size = mRsSerialiser->size(item);
 	if (!size)
 	{
 		std::cerr << "SetServiceTesterconvertToRsRawItem() ERROR size == 0";
 		std::cerr << std::endl;
 
-		/* can't convert! */
+		// can't convert!
 		if (toDelete)
 		{
 			delete item;
@@ -382,5 +383,5 @@ RsRawItem *SetServiceTester::convertToRsRawItem(RsItem *item, bool toDelete)
 	}
 	return raw;
 }
-
+*/
 	

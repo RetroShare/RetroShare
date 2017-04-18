@@ -30,7 +30,7 @@ class PeerStatus : public QWidget
     Q_OBJECT
 
 public:
-    PeerStatus(QWidget *parent = 0);
+    explicit PeerStatus(QWidget *parent = 0);
 
     void getPeerStatus(unsigned int nFriendCount, unsigned int nOnlineCount);
     void setCompactMode(bool compact) {_compactMode = compact; }

@@ -48,6 +48,7 @@ public:
 	{
 		popularity = 0;
 		publishKey = false;
+		adminKey = false;
         subscribeFlags = 0;
         max_visible_posts =0;
 	}
@@ -65,6 +66,8 @@ public:
     quint32  max_visible_posts ;
 };
 
+#warning: Cppcheck(noConstructor): The class 'GroupTreeWidget' does not have a constructor.
+// cppcheck-suppress noConstructor
 class GroupTreeWidget : public QWidget
 {
 	Q_OBJECT
@@ -73,7 +76,7 @@ class GroupTreeWidget : public QWidget
 	Q_PROPERTY(QColor textColorPrivateKey READ textColorPrivateKey WRITE setTextColorPrivateKey)
 
 public:
-	GroupTreeWidget(QWidget *parent = 0);
+	explicit GroupTreeWidget(QWidget *parent = 0);
 	~GroupTreeWidget();
 
 	// Add a tool button to the tool area

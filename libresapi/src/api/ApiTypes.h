@@ -28,7 +28,7 @@ template<class T>
 class ValueReference
 {
 public:
-    ValueReference(T& value): value(value){}
+    explicit ValueReference(T& value): value(value){}
     T& value;
 };
 
@@ -39,7 +39,7 @@ template<class T>
 class Value
 {
 public:
-    Value(T value): value(value){}
+    explicit Value(T value): value(value){}
     operator ValueReference<T>(){ return ValueReference<T>(value);}
     T value;
 };
@@ -52,7 +52,7 @@ template<class T>
 class KeyValueReference
 {
 public:
-    KeyValueReference(std::string key, T& value): key(key), value(value){}
+    KeyValueReference(const std::string &key, T& value): key(key), value(value){}
     //KeyValueReference(const char* key, T& value): key(key), value(value){}
     std::string key;
     T& value;
@@ -68,7 +68,7 @@ template<class T>
 class KeyValue
 {
 public:
-    KeyValue(std::string key, T value): key(key), value(value){}
+    KeyValue(std::string &key, T value): key(key), value(value){}
 
     operator KeyValueReference<T>(){ return KeyValueReference<T>(key, value);}
 
@@ -171,7 +171,7 @@ public:
 class StateToken{
 public:
     StateToken(): value(0){}
-    StateToken(uint32_t value): value(value){}
+    explicit StateToken(uint32_t value): value(value){}
     std::string toString();
 
     uint32_t getValue() const {return value;}
@@ -183,7 +183,7 @@ private:
 class Request
 {
 public:
-	Request(StreamBase& stream) : mStream(stream), mMethod(GET){}
+	explicit Request(StreamBase& stream) : mStream(stream), mMethod(GET){}
 
 	RS_DEPRECATED bool isGet(){ return mMethod == GET;}
 	RS_DEPRECATED bool isPut(){ return mMethod == PUT;}
@@ -262,11 +262,11 @@ public:
     std::ostream& mDebug;
 
     inline void setOk(){mReturnCode = OK;}
-    inline void setWarning(std::string msg = ""){
+    inline void setWarning(const std::string &msg = ""){
         mReturnCode = WARNING;
         if(msg != "")
             mDebug << msg << std::endl;}
-    inline void setFail(std::string msg = ""){
+    inline void setFail(const std::string &msg = ""){
         mReturnCode = FAIL;
         if(msg != "")
             mDebug << msg << std::endl;

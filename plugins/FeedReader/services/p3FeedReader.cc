@@ -342,7 +342,7 @@ void p3FeedReader::stopPreviewThreads_locked()
 	}
 }
 
-RsFeedAddResult p3FeedReader::addFolder(const std::string parentId, const std::string &name, std::string &feedId)
+RsFeedAddResult p3FeedReader::addFolder(const std::string &parentId, const std::string &name, std::string &feedId)
 {
 	feedId.clear();
 
@@ -1371,7 +1371,9 @@ void p3FeedReader::cleanFeeds()
 				storageTime = fi->storageTime;
 			}
 			if (storageTime > 0) {
+#ifdef FEEDREADER_DEBUG
 				uint32_t removedMsgs = 0;
+#endif
 
 				std::map<std::string, RsFeedReaderMsg*>::iterator msgIt;
 				for (msgIt = fi->msgs.begin(); msgIt != fi->msgs.end(); ) {
@@ -1383,7 +1385,9 @@ void p3FeedReader::cleanFeeds()
 							delete(mi);
 							std::map<std::string, RsFeedReaderMsg*>::iterator deleteIt = msgIt++;
 							fi->msgs.erase(deleteIt);
+#ifdef FEEDREADER_DEBUG
 							++removedMsgs;
+#endif
 							continue;
 						}
 					}
@@ -1556,7 +1560,7 @@ bool p3FeedReader::loadList(std::list<RsItem *>& load)
 			msgs[mi->msgId] = mi;
 		} else if (NULL != (rskv = dynamic_cast<RsConfigKeyValueSet*>(*it))) {
 			std::list<RsTlvKeyValue>::iterator kit;
-			for(kit = rskv->tlvkvs.pairs.begin(); kit != rskv->tlvkvs.pairs.end(); kit++) {
+			for(kit = rskv->tlvkvs.pairs.begin(); kit != rskv->tlvkvs.pairs.end(); ++kit) {
 				if (kit->key == "StandardStorageTime") {
 					uint32_t value;
 					if (sscanf(kit->value.c_str(), "%u", &value) == 1) {

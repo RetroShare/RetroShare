@@ -422,9 +422,9 @@ void  CreateGxsForumMsg::createMsg()
 	}//if (ui.generateCheckBox->isChecked())
 #endif
 
-	uint32_t token;
 	if (generateCount) {
 #ifdef ENABLE_GENERATE
+		uint32_t token;
 		for (int count = 0; count < generateCount; ++count) {
 			RsGxsForumMsg generateMsg = msg;
 			generateMsg.mMeta.mMsgName = QString("%1 %2").arg(QString::fromUtf8(msg.mMeta.mMsgName.c_str())).arg(count + 1, 3, 10, QChar('0')).toUtf8().constData();
@@ -433,6 +433,7 @@ void  CreateGxsForumMsg::createMsg()
 		}//for (int count = 0
 #endif
 	} else {
+		uint32_t token;
 		rsGxsForums->createMsg(token, msg);
 	}//if (generateCount)
 

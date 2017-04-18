@@ -37,7 +37,7 @@
 class RSFeedWidgetScrollBar : public QScrollBar
 {
 public:
-	RSFeedWidgetScrollBar(QWidget *parent = 0) : QScrollBar(parent) {}
+	explicit RSFeedWidgetScrollBar(QWidget *parent = 0) : QScrollBar(parent) {}
 
 	void sliderChange(SliderChange change)
 	{

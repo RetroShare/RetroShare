@@ -32,9 +32,8 @@
 void randString(const uint32_t length, std::string& outStr)
 {
 	char alpha = 'a';
-	char* stringData = NULL;
 
-	stringData = new char[length];
+	char* stringData = new char[length];
 
 	for(uint32_t i=0; i != length; i++)
 		stringData[i] = alpha + (rand() % 26);
@@ -48,9 +47,8 @@ void randString(const uint32_t length, std::string& outStr)
 void randString(const uint32_t length, std::wstring& outStr)
 {
 	wchar_t alpha = L'a';
-	wchar_t* stringData = NULL;
 
-	stringData = new wchar_t[length];
+	wchar_t* stringData = new wchar_t[length];
 
 	for(uint32_t i=0; i != length; i++)
 		stringData[i] = (alpha + (rand() % 26));
@@ -84,7 +82,7 @@ bool operator==(const RsTlvSecurityKeySet& l, const RsTlvSecurityKeySet& r)
 	std::map<RsGxsId, RsTlvPublicRSAKey>::const_iterator l_cit = l.public_keys.begin(),
 	r_cit = r.public_keys.begin();
 
-	for(; l_cit != l.public_keys.end(); l_cit++, r_cit++){
+	for(; l_cit != l.public_keys.end(); ++l_cit, ++r_cit){
 		if(l_cit->first != r_cit->first) return false;
 		if(!(l_cit->second == r_cit->second)) return false;
 	}
@@ -122,7 +120,7 @@ bool operator==(const RsTlvKeySignatureSet& kss1, const RsTlvKeySignatureSet& ks
 
     std::map<SignType, RsTlvKeySignature>::const_iterator it1 = set1.begin(), it2;
 
-    for(; it1 != set1.end(); it1++)
+    for(; it1 != set1.end(); ++it1)
     {
         SignType st1 = it1->first;
 
@@ -143,7 +141,7 @@ bool operator==(const RsTlvPeerIdSet& pids1, const RsTlvPeerIdSet& pids2)
 			it2 = pids2.ids.begin();
 
 
-	for(; ((it1 != pids1.ids.end()) && (it2 != pids2.ids.end())); it1++, it2++)
+	for(; ((it1 != pids1.ids.end()) && (it2 != pids2.ids.end())); ++it1, ++it2)
 	{
 		if(*it1 != *it2) return false;
 	}
@@ -236,7 +234,7 @@ bool operator==(const RsTlvHashSet& hs1,const RsTlvHashSet& hs2)
     std::set<RsFileHash>::const_iterator it1 = hs1.ids.begin(),
 			it2 = hs2.ids.begin();
 
-	for(; ((it1 != hs1.ids.end()) && (it2 != hs2.ids.end())); it1++, it2++)
+	for(; ((it1 != hs1.ids.end()) && (it2 != hs2.ids.end())); ++it1, ++it2)
 	{
 		if(*it1 != *it2) return false;
 	}
@@ -286,7 +284,7 @@ bool operator==(const RsTlvFileSet& fs1,const  RsTlvFileSet& fs2)
 	std::list<RsTlvFileItem>::const_iterator it1 = fs1.items.begin(),
 			it2 = fs2.items.begin();
 
-	for(;  ((it1 != fs1.items.end()) && (it2 != fs2.items.end())); it1++, it2++)
+	for(;  ((it1 != fs1.items.end()) && (it2 != fs2.items.end())); ++it1, ++it2)
 		if(!(*it1 == *it2)) return false;
 
 	return true;

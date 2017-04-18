@@ -85,8 +85,6 @@ static int se_ip_data_reader(void *dest_, size_t len, ops_error_t **errors,
 
     if (!arg->passed_checks)
         {
-        unsigned char*buf=NULL;
-
         ops_hash_t hash;
         unsigned char hashed[SHA_DIGEST_LENGTH];
 
@@ -106,7 +104,7 @@ static int se_ip_data_reader(void *dest_, size_t len, ops_error_t **errors,
 
         ops_init_subregion(&decrypted_region,NULL);
         decrypted_region.length = arg->region->length - arg->region->length_read;
-        buf=ops_mallocz(decrypted_region.length);
+        unsigned char*buf=ops_mallocz(decrypted_region.length);
 
         // read entire SE IP packet
         
@@ -168,12 +166,12 @@ static int se_ip_data_reader(void *dest_, size_t len, ops_error_t **errors,
             {
             unsigned int i=0;
 
-            fprintf(stderr,"\nplaintext (len=%ld): ",sz_plaintext);
+            fprintf(stderr,"\nplaintext (len=%zu): ",sz_plaintext);
             for (i=0; i<sz_plaintext;i++)
                 fprintf(stderr," 0x%02x", plaintext[i]);
             fprintf(stderr,"\n");
 
-            fprintf(stderr,"\nmdc (len=%ld): ",sz_mdc);
+            fprintf(stderr,"\nmdc (len=%zu): ",sz_mdc);
             for (i=0; i<sz_mdc;i++)
                 fprintf(stderr," 0x%02x", mdc[i]);
             fprintf(stderr,"\n");

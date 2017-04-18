@@ -89,7 +89,7 @@ HelpTextBrowser::setSource(const QUrl &url)
                 p(tr("Do you want Retroshare to open the link in your Web "
                      "browser?")),
                 VMessageBox::Yes|VMessageBox::Default, 
-                VMessageBox::Cancel|VMessageBox::Cancel);
+                VMessageBox::Cancel);
     
     if (ret == VMessageBox::Cancel)
       return;

@@ -44,7 +44,7 @@ const uint8_t RS_PKT_SUBTYPE_GXSID_LOCAL_INFO_ITEM = 0x05;
 class RsGxsIdItem: public RsGxsGrpItem
 {
     public:
-        RsGxsIdItem(uint8_t item_subtype) : RsGxsGrpItem(RS_SERVICE_GXS_TYPE_GXSID,item_subtype) {}
+        explicit RsGxsIdItem(uint8_t item_subtype) : RsGxsGrpItem(RS_SERVICE_GXS_TYPE_GXSID,item_subtype) {}
 
         virtual bool serialise(void *data,uint32_t& size) = 0 ;
         virtual uint32_t serial_size() = 0 ;

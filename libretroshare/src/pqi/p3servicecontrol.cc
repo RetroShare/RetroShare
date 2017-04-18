@@ -40,7 +40,7 @@ static const uint8_t RS_PKT_SUBTYPE_SERVICE_CONTROL_SERVICE_PERMISSIONS = 0x01 ;
 class RsServiceControlItem: public RsItem
 {
 public:
-    RsServiceControlItem(uint8_t item_subtype) : RsItem(RS_PKT_VERSION_SERVICE,RS_SERVICE_TYPE_SERVICE_CONTROL,item_subtype) {}
+    explicit RsServiceControlItem(uint8_t item_subtype) : RsItem(RS_PKT_VERSION_SERVICE,RS_SERVICE_TYPE_SERVICE_CONTROL,item_subtype) {}
 
     virtual uint32_t serial_size() const =0;
     virtual bool serialise(uint8_t *data,uint32_t size) const =0;
@@ -73,7 +73,7 @@ class RsServicePermissionItem: public RsServiceControlItem, public RsServicePerm
 public:
     RsServicePermissionItem()
             : RsServiceControlItem(RS_PKT_SUBTYPE_SERVICE_CONTROL_SERVICE_PERMISSIONS) {}
-    RsServicePermissionItem(const RsServicePermissions& perms)
+    explicit RsServicePermissionItem(const RsServicePermissions& perms)
             : RsServiceControlItem(RS_PKT_SUBTYPE_SERVICE_CONTROL_SERVICE_PERMISSIONS),
               RsServicePermissions(perms) {}
 
@@ -915,7 +915,7 @@ void	p3ServiceControl::recordFilterChanges_locked(const RsPeerId &peerId,
 #endif
 
 	/* find differences */
-	std::map<uint32_t, bool> changes;
+	//std::map<uint32_t, bool> changes;
 	std::set<uint32_t>::const_iterator it1, it2, eit1, eit2;
 	it1 = originalFilter.mAllowedServices.begin();
 	eit1 = originalFilter.mAllowedServices.end();
@@ -931,7 +931,7 @@ void	p3ServiceControl::recordFilterChanges_locked(const RsPeerId &peerId,
 			std::cerr << std::endl;
 #endif
 			// removal
-			changes[*it1] = false;
+			//changes[*it1] = false;
 			filterChangeRemoved_locked(peerId, *it1);
 			++it1;
 		}
@@ -943,7 +943,7 @@ void	p3ServiceControl::recordFilterChanges_locked(const RsPeerId &peerId,
 #endif
 			// addition.
 			filterChangeAdded_locked(peerId, *it2);
-			changes[*it2] = true;
+			//changes[*it2] = true;
 			++it2;
 		}
 		else
@@ -961,7 +961,7 @@ void	p3ServiceControl::recordFilterChanges_locked(const RsPeerId &peerId,
 		std::cerr << std::endl;
 #endif
 		// removal
-		changes[*it1] = false;
+		//changes[*it1] = false;
 		filterChangeRemoved_locked(peerId, *it1);
 	}
 
@@ -972,7 +972,7 @@ void	p3ServiceControl::recordFilterChanges_locked(const RsPeerId &peerId,
 		std::cerr << std::endl;
 #endif
 		// addition.
-		changes[*it2] = true;
+		//changes[*it2] = true;
 		filterChangeAdded_locked(peerId, *it2);
 	}
 
@@ -1073,7 +1073,7 @@ void p3ServiceControl::filterChangeRemoved_locked(const RsPeerId &peerId, uint32
 	std::cerr << std::endl;
 #endif
 
-	std::map<uint32_t, std::set<RsPeerId> >::iterator mit;
+	//std::map<uint32_t, std::set<RsPeerId> >::iterator mit;
 
 	std::set<RsPeerId> &peerSet = mServicePeerMap[serviceId];
 	std::set<RsPeerId>::iterator sit;
@@ -1104,7 +1104,7 @@ void p3ServiceControl::filterChangeAdded_locked(const RsPeerId &peerId, uint32_t
 	std::cerr << std::endl;
 #endif
 
-	std::map<uint32_t, std::set<RsPeerId> >::iterator mit;
+	//std::map<uint32_t, std::set<RsPeerId> >::iterator mit;
 
 	std::set<RsPeerId> &peerSet = mServicePeerMap[serviceId];
 

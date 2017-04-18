@@ -31,7 +31,7 @@ class ToasterDisable : public QWidget
 	Q_OBJECT
 
 public:
-	ToasterDisable(QWidget *parent = 0);
+	explicit ToasterDisable(QWidget *parent = 0);
 
 private slots:
 	void disable(bool isDisable);

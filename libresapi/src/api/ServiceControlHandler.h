@@ -11,7 +11,7 @@ namespace resource_api
 class ServiceControlHandler: public ResourceRouter
 {
 public:
-    ServiceControlHandler(RsServiceControl* control);
+    explicit ServiceControlHandler(RsServiceControl* control);
 
 private:
     RsServiceControl* mRsServiceControl;

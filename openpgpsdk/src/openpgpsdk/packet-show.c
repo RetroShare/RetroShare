@@ -452,22 +452,19 @@ static ops_text_t *text_from_bytemapped_octets(ops_data_t *data,
 				const char *(*text_fn)(unsigned char octet))
     {
 
-    ops_text_t *text=NULL;
-    const char *str;
-    unsigned i;
-
     /*! allocate and initialise ops_text_t structure to store derived strings */
-    text=malloc(sizeof(ops_text_t));
+    ops_text_t *text=malloc(sizeof(ops_text_t));
     if (!text)
 	return NULL;
 
     ops_text_init(text);
 
+    unsigned i = 0;
     /*! for each octet in field ... */
     for(i=0 ; i < data->len ; i++)
 	{
-	/*! derive string from octet */
-	str=(*text_fn)(data->contents[i]);
+		/*! derive string from octet  */
+		const char *str=(*text_fn)(data->contents[i]);
 
 	/*! and add to text */
 	if (!add_str_from_octet_map(text,strdup(str),data->contents[i]))
@@ -491,14 +488,13 @@ static ops_text_t *text_from_bytemapped_octets(ops_data_t *data,
 static ops_text_t *showall_octets_bits(ops_data_t *data,ops_bit_map_t **map,
 				       size_t nmap)
     {
-    ops_text_t *text=NULL;
     char *str;
     unsigned i;
     int j=0;
     unsigned char mask, bit;
 
     /*! allocate and initialise ops_text_t structure to store derived strings */
-     text=malloc(sizeof(ops_text_t));
+     ops_text_t *text=malloc(sizeof(ops_text_t));
     if (!text)
 	return NULL;
 
@@ -540,8 +536,7 @@ static ops_text_t *showall_octets_bits(ops_data_t *data,ops_bit_map_t **map,
 */
 const char *ops_show_packet_tag(ops_packet_tag_t packet_tag)
     {
-    char *rtn=NULL;
-    rtn=show_packet_tag(packet_tag,packet_tag_map);
+    char *rtn=show_packet_tag(packet_tag,packet_tag_map);
 
     if (!rtn)
         rtn="Unknown Tag";
@@ -703,13 +698,12 @@ static char *ops_show_ss_feature(unsigned char octet,unsigned offset)
 /* XXX: shouldn't this use show_all_octets_bits? */
 ops_text_t *ops_showall_ss_features(ops_ss_features_t ss_features)
     {
-    ops_text_t *text=NULL;
     char *str;
     unsigned i;
     int j=0;
     unsigned char mask, bit;
 
-    text=malloc(sizeof(ops_text_t));
+    ops_text_t *text=malloc(sizeof(ops_text_t));
     if (!text)
 	return NULL;
 
@@ -756,12 +750,11 @@ const char *ops_show_ss_key_flag(unsigned char octet, ops_bit_map_t *map)
  */
 ops_text_t *ops_showall_ss_key_flags(ops_ss_key_flags_t ss_key_flags)
     {
-    ops_text_t *text=NULL;
     const char *str;
     int i=0;
-    unsigned char mask, bit;
+    unsigned char mask;
 
-    text=malloc(sizeof(ops_text_t));
+    ops_text_t *text=malloc(sizeof(ops_text_t));
     if (!text)
 	return NULL;
 
@@ -771,7 +764,7 @@ ops_text_t *ops_showall_ss_key_flags(ops_ss_key_flags_t ss_key_flags)
 
     for (i=0,mask=0x80 ; i < 8 ; i++,mask=mask >> 1)
 	    {
-	    bit=ss_key_flags.data.contents[0]&mask;
+		unsigned char bit=ss_key_flags.data.contents[0]&mask;
 	    if(bit)
 		{
 		str=ops_show_ss_key_flag(bit,&ss_key_flags_map[0]);
@@ -811,12 +804,11 @@ const char *ops_show_ss_key_server_prefs(unsigned char prefs,
 */
 ops_text_t *ops_showall_ss_key_server_prefs(ops_ss_key_server_prefs_t ss_key_server_prefs)
     {
-    ops_text_t *text=NULL;
     const char *str;
     int i=0;
-    unsigned char mask, bit;
+    unsigned char mask;
 
-    text=malloc(sizeof(ops_text_t));
+    ops_text_t *text=malloc(sizeof(ops_text_t));
     if (!text)
 	return NULL;
 
@@ -826,7 +818,7 @@ ops_text_t *ops_showall_ss_key_server_prefs(ops_ss_key_server_prefs_t ss_key_ser
 
     for (i=0,mask=0x80 ; i < 8 ; i++,mask=mask >> 1)
 	    {
-	    bit=ss_key_server_prefs.data.contents[0]&mask;
+		unsigned char bit=ss_key_server_prefs.data.contents[0]&mask;
 	    if (bit)
 		{
 		str=ops_show_ss_key_server_prefs(bit,

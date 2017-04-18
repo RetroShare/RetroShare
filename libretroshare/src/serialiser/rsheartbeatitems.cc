@@ -171,7 +171,7 @@ RsHeartbeatItem *RsHeartbeatSerialiser::deserialiseHeartbeat(void *data, uint32_
 	/* set the packet length */
 	*pktsize = rssize;
 
-	bool ok = true;
+	//bool ok = true;
 
 	/* ready to load */
 	RsHeartbeatItem *item = new RsHeartbeatItem();
@@ -190,14 +190,14 @@ RsHeartbeatItem *RsHeartbeatSerialiser::deserialiseHeartbeat(void *data, uint32_
 		return NULL;
 	}
 
-	if (!ok)
+/*	if (!ok) //ok was always true
 	{
 #ifdef HEART_DEBUG
 		std::cerr << "RsHeartbeatSerialiser::deserialiseHeartbeat() ok = false" << std::endl;
 #endif
 		delete item;
 		return NULL;
-	}
+	}*/
 
 	return item;
 }

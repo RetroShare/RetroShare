@@ -25,19 +25,21 @@
 
 /** Constructor */
 StyledLabel::StyledLabel(QWidget *parent)
-    : QLabel(parent)
+    : QLabel(parent), mFontSizeFactor(0)
 {
 }
 
 StyledLabel::StyledLabel(const QString &text, QWidget *parent)
-    : QLabel(text, parent)
+    : QLabel(text, parent), mFontSizeFactor(0)
 {
 }
 
-int StyledLabel::fontSizeFactor()
+/* UNUSED
+ * int StyledLabel::fontSizeFactor()
 {
 	return mFontSizeFactor;
 }
+*/
 
 void StyledLabel::setFontSizeFactor(int factor)
 {

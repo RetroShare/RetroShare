@@ -21,7 +21,7 @@ class SetFilter
 	 mUseSource(false), mUseDest(false),
 	 mUseFullTypes(false), mUseServiceTypes(false) { return; }
 
-	SetFilter(FilterMode mode)
+	explicit SetFilter(FilterMode mode)
 	:mFilterMode(mode), 
 	 mUseSource(false), mUseDest(false),
 	 mUseFullTypes(false), mUseServiceTypes(false) { return; }

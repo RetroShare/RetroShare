@@ -205,7 +205,7 @@ int     bdSpace::clear()
 {
 	std::vector<bdBucket>::iterator it;
         /* iterate through the buckets, and sort by distance */
-        for(it = buckets.begin(); it != buckets.end(); it++)
+        for(it = buckets.begin(); it != buckets.end(); ++it)
 	{
 		it->entries.clear();
 	}
@@ -244,9 +244,9 @@ int bdSpace::find_nearest_nodes_with_flags(const bdNodeId *id, int number,
 	std::vector<bdBucket>::iterator it;
 	std::list<bdPeer>::iterator eit;
 	/* iterate through the buckets, and sort by distance */
-	for(it = buckets.begin(); it != buckets.end(); it++)
+	for(it = buckets.begin(); it != buckets.end(); ++it)
 	{
-		for(eit = it->entries.begin(); eit != it->entries.end(); eit++) 
+		for(eit = it->entries.begin(); eit != it->entries.end(); ++eit)
 		{
 			if ((!with_flags) || ((with_flags & eit->mPeerFlags) == with_flags))
 			{
@@ -266,7 +266,7 @@ int bdSpace::find_nearest_nodes_with_flags(const bdNodeId *id, int number,
 
 	/* take the first number of nodes */
 	int i = 0;
-	for(mit = closest.begin(); (mit != closest.end()) && (i < number); mit++, i++)
+	for(mit = closest.begin(); (mit != closest.end()) && (i < number); ++mit, ++i)
 	{
 		mFns->bdDistance(&(mOwnId), &(mit->second.id), &dist);
 
@@ -352,7 +352,7 @@ int bdSpace::find_node(const bdNodeId *id, int number, std::list<bdId> &matchIds
 
 	std::list<bdPeer>::iterator eit;
 	int matchCount = 0;
-	for(eit = buck.entries.begin(); eit != buck.entries.end(); eit++) 
+	for(eit = buck.entries.begin(); eit != buck.entries.end(); ++eit)
 	{
 #ifdef DEBUG_BD_SPACE
         std::cerr << "bdSpace::find_node() Checking Against Peer: ";
@@ -420,7 +420,7 @@ int bdSpace::find_exactnode(const bdId *id, bdPeer &peer)
 	bdBucket &buck = buckets[buckno];
 
 	std::list<bdPeer>::iterator eit;
-	for(eit = buck.entries.begin(); eit != buck.entries.end(); eit++) 
+	for(eit = buck.entries.begin(); eit != buck.entries.end(); ++eit)
 	{
 		if (*id == eit->mPeerId)
 		{
@@ -452,10 +452,10 @@ int bdSpace::clean_node_flags(uint32_t flags)
 
 	int count = 0;
 	std::vector<bdBucket>::iterator bit;
-	for(bit = buckets.begin(); bit != buckets.end(); bit++)
+	for(bit = buckets.begin(); bit != buckets.end(); ++bit)
 	{
 		std::list<bdPeer>::iterator eit;
-		for(eit = bit->entries.begin(); eit != bit->entries.end(); eit++) 
+		for(eit = bit->entries.begin(); eit != bit->entries.end(); ++eit)
 		{
 			if (flags & eit->mPeerFlags)
 			{	
@@ -499,7 +499,7 @@ int	bdSpace::scanOutOfDatePeers(std::list<bdId> &peerIds)
 	time_t ts = time(NULL);
 
 	/* iterate through the buckets, and sort by distance */
-	for(it = buckets.begin(); it != buckets.end(); it++)
+	for(it = buckets.begin(); it != buckets.end(); ++it)
 	{
 		for(eit = it->entries.begin(); eit != it->entries.end(); ) 
 		{
@@ -564,7 +564,7 @@ int	bdSpace::scanOutOfDatePeers(std::list<bdId> &peerIds)
 			}
 			else
 			{
-				eit++;
+				++eit;
 			}
 		}
 	}
@@ -607,8 +607,8 @@ int	bdSpace::updateAttachedPeers()
 	}
 #endif
 
-	std::map<bdMetric, bdId> closest;
-	std::map<bdMetric, bdId>::iterator mit;
+	//std::map<bdMetric, bdId> closest;
+	//std::map<bdMetric, bdId>::iterator mit;
 
 	std::vector<bdBucket>::iterator it;
 	std::list<bdPeer>::reverse_iterator eit;
@@ -618,14 +618,14 @@ int	bdSpace::updateAttachedPeers()
 	it = buckets.begin();
 	if (it != buckets.end())
 	{
-		it++;
+		++it;
 	}
 
 	/* iterate through the buckets (sorted by distance) */
-	for(; it != buckets.end(); it++)
+	for(; it != buckets.end(); ++it)
 	{
 		/* start from the back, as these are the most recently seen (and more likely to be the old ATTACHED) */
-		for(eit = it->entries.rbegin(); eit != it->entries.rend(); eit++) 
+		for(eit = it->entries.rbegin(); eit != it->entries.rend(); ++eit)
 		{
 			if (doAttached)
 			{
@@ -708,7 +708,7 @@ int     bdSpace::add_peer(const bdId *id, uint32_t peerflags)
 	uint32_t minScore = peerflags;
 
 	/* loop through ids, to find it */
-	for(it = buck.entries.begin(); it != buck.entries.end(); it++)
+	for(it = buck.entries.begin(); it != buck.entries.end(); ++it)
 	{
                 /* similar id check */
                 if (mFns->bdSimilarId(id, &(it->mPeerId)))
@@ -766,7 +766,7 @@ int     bdSpace::add_peer(const bdId *id, uint32_t peerflags)
 		else if (peerflags > minScore)
 		{
 			/* find one to drop */
-			for(it = buck.entries.begin(); it != buck.entries.end(); it++)
+			for(it = buck.entries.begin(); it != buck.entries.end(); ++it)
 			{
 				if (it->mPeerFlags == minScore)
 				{
@@ -832,7 +832,7 @@ bool    bdSpace::flagpeer(const bdId *id, uint32_t flags, uint32_t ex_flags)
 
 	/* loop through ids, to find it */
 	std::list<bdPeer>::iterator it;
-	for(it = buck.entries.begin(); it != buck.entries.end(); it++)
+	for(it = buck.entries.begin(); it != buck.entries.end(); ++it)
 	{
                 /* similar id check */
 		if (mFns->bdSimilarId(id, &(it->mPeerId)))
@@ -862,25 +862,25 @@ bool    bdSpace::flagpeer(const bdId *id, uint32_t flags, uint32_t ex_flags)
 
 int     bdSpace::printDHT()
 {
-	std::map<bdMetric, bdId> closest;
-	std::map<bdMetric, bdId>::iterator mit;
+	//std::map<bdMetric, bdId> closest;
+	//std::map<bdMetric, bdId>::iterator mit;
 
 	std::vector<bdBucket>::iterator it;
-	std::list<bdPeer>::iterator eit;
+	//std::list<bdPeer>::iterator eit;
 
 	/* iterate through the buckets, and sort by distance */
 	int i = 0;
 
 #ifdef BITDHT_DEBUG
 	fprintf(stderr, "bdSpace::printDHT()\n");
-	for(it = buckets.begin(); it != buckets.end(); it++, i++)
+	for(it = buckets.begin(); it != buckets.end(); ++it, ++i)
 	{
 		if (it->entries.size() > 0)
 		{
 			fprintf(stderr, "Bucket %d ----------------------------\n", i);
 		}
 
-		for(eit = it->entries.begin(); eit != it->entries.end(); eit++) 
+		for(eit = it->entries.begin(); eit != it->entries.end(); ++eit)
 		{
 			bdMetric dist;
 			mFns->bdDistance(&(mOwnId), &(eit->mPeerId.id), &dist);
@@ -907,7 +907,7 @@ int     bdSpace::printDHT()
 	bool doAvg = false;
 
 	i = 0;
-	for(it = buckets.begin(); it != buckets.end(); it++, i++)
+	for(it = buckets.begin(); it != buckets.end(); ++it, ++i)
 	{
 		int size = it->entries.size();
 		int shift = BITDHT_KEY_BITLEN - i;
@@ -1035,7 +1035,7 @@ uint32_t  bdSpace::calcNetworkSize()
 	bool doAvg = false;
 
 	int i = 0;
-	for(it = buckets.begin(); it != buckets.end(); it++, i++)
+	for(it = buckets.begin(); it != buckets.end(); ++it, ++i)
 	{
 		int size = it->entries.size();
 		int shift = BITDHT_KEY_BITLEN - i;
@@ -1113,11 +1113,11 @@ uint32_t  bdSpace::calcNetworkSizeWithFlag(uint32_t withFlag)
 	bool doAvg = false;
 
 	int i = 0;
-	for(it = buckets.begin(); it != buckets.end(); it++, i++)
+	for(it = buckets.begin(); it != buckets.end(); ++it, ++i)
 	{
 		int size = 0;
 		std::list<bdPeer>::iterator lit;
-		for(lit = it->entries.begin(); lit != it->entries.end(); lit++)
+		for(lit = it->entries.begin(); lit != it->entries.end(); ++lit)
 		{
 			if (withFlag & lit->mPeerFlags)
 			{
@@ -1197,7 +1197,7 @@ uint32_t  bdSpace::calcSpaceSize()
 
 	/* little summary */
 	uint32_t totalcount = 0;
-	for(it = buckets.begin(); it != buckets.end(); it++)
+	for(it = buckets.begin(); it != buckets.end(); ++it)
 	{
 		totalcount += it->entries.size();
 	}
@@ -1214,13 +1214,13 @@ uint32_t  bdSpace::calcSpaceSizeWithFlag(uint32_t withFlag)
 	it = buckets.begin();
 	if (it != buckets.end())
 	{
-		it++; /* skip own bucket! */
+		++it; /* skip own bucket! */
 	}
-	for(; it != buckets.end(); it++)
+	for(; it != buckets.end(); ++it)
 	{
 		int size = 0;
 		std::list<bdPeer>::iterator lit;
-		for(lit = it->entries.begin(); lit != it->entries.end(); lit++)
+		for(lit = it->entries.begin(); lit != it->entries.end(); ++lit)
 		{
 			if (withFlag & lit->mPeerFlags)
 			{
@@ -1251,13 +1251,13 @@ bool bdSpace::findRandomPeerWithFlag(bdId &id, uint32_t withFlag)
 	it = buckets.begin();
 	if (it != buckets.end())
 	{
-		it++; /* skip own bucket! */
-		buck++;
+		++it; /* skip own bucket! */
+		++buck;
 	}
-	for(; it != buckets.end(); it++, buck++)
+	for(; it != buckets.end(); ++it, ++buck)
 	{
 		std::list<bdPeer>::iterator lit;
-		for(lit = it->entries.begin(); lit != it->entries.end(); lit++)
+		for(lit = it->entries.begin(); lit != it->entries.end(); ++lit)
 		{
 			if (withFlag & lit->mPeerFlags)
 			{

@@ -37,7 +37,7 @@ class GxsCommentContainer : public MainPage
 	Q_OBJECT
 
 public:
-	GxsCommentContainer(QWidget *parent = 0);
+	explicit GxsCommentContainer(QWidget *parent = 0);
 	void setup();
 
 	void commentLoad(const RsGxsGroupId &grpId, const RsGxsMessageId &msgId, const QString &title);
@@ -62,7 +62,7 @@ private:
 class GxsServiceDialog
 {
 public:
-	GxsServiceDialog(GxsCommentContainer *container)
+	explicit GxsServiceDialog(GxsCommentContainer *container)
 	:mContainer(container) { return; }
 
 	virtual ~GxsServiceDialog() { return; }

@@ -98,9 +98,16 @@ class GRouterRoutingInfo
 public:
     GRouterRoutingInfo()
     {
-        data_transaction_TS = 0 ;	// this is not serialised.
+        data_status = 0 ;
+        tunnel_status = 0 ;
+        received_time_TS = 0 ;
+        last_sent_TS = 0 ;
+        last_tunnel_request_TS = 0 ;
+        sending_attempts = 0 ;
+        routing_flags = 0 ;
         data_item = NULL ;
         receipt_item = NULL ;
+        data_transaction_TS = 0 ;	// this is not serialised.
     }
 
     uint32_t data_status ;		// pending, waiting, etc.

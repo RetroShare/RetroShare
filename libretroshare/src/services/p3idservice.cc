@@ -425,24 +425,24 @@ public:
         bool no_ts = (it == mLastUsageTS.end()) ;
 
         time_t last_usage_ts = no_ts?0:(it->second.TS);
-        time_t max_keep_time ;
+        time_t max_keep_time = 0;
         bool should_check = true ;
 
-        if(no_ts)
-            max_keep_time = 0 ;
-		else if(is_id_banned)
-        {
-			if(mMaxKeepKeysBanned == 0)
-				should_check = false ;
-			else
-				max_keep_time = mMaxKeepKeysBanned ;
-        }
-		else if(is_known_id)
-            max_keep_time = MAX_KEEP_KEYS_SIGNED_KNOWN ;
-        else if(is_signed_id)
-            max_keep_time = MAX_KEEP_KEYS_SIGNED ;
-        else
-            max_keep_time = MAX_KEEP_KEYS_DEFAULT ;
+				if(no_ts)
+					max_keep_time = 0 ;
+				else if(is_id_banned)
+				{
+					if(mMaxKeepKeysBanned == 0)
+						should_check = false ;
+					else
+						max_keep_time = mMaxKeepKeysBanned ;
+				}
+				else if(is_known_id)
+					max_keep_time = MAX_KEEP_KEYS_SIGNED_KNOWN ;
+				else if(is_signed_id)
+					max_keep_time = MAX_KEEP_KEYS_SIGNED ;
+				else
+					max_keep_time = MAX_KEEP_KEYS_DEFAULT ;
 
 #ifdef DEBUG_IDS
         std::cerr << ". Max keep = " << max_keep_time/86400 << " days. Unused for " << (now - last_usage_ts + 86399)/86400 << " days " ;
@@ -546,7 +546,7 @@ void p3IdService::notifyChanges(std::vector<RsGxsNotify *> &changes)
 #endif
 
     /* iterate through and grab any new messages */
-    std::list<RsGxsGroupId> unprocessedGroups;
+    //std::list<RsGxsGroupId> unprocessedGroups;
 
     for(uint32_t i = 0;i<changes.size();++i)
     {
@@ -1322,7 +1322,7 @@ bool p3IdService::opinion_handlerequest(uint32_t token)
 #endif
 
     std::list<RsGroupMetaData> groups;
-    std::list<RsGxsGroupId> groupList;
+    //std::list<RsGxsGroupId> groupList;
 
     if (!getGroupMeta(token, groups))
     {
@@ -1616,14 +1616,17 @@ bool SSGxsIdPgp::load(const std::string &input)
     char pgpline[RSGXSID_MAX_SERVICE_STRING];
     int timestamp = 0;
     uint32_t attempts = 0;
-    if (1 == sscanf(input.c_str(), "K:1 I:%[^)]", pgpline))
+    //sscanf() without field width limits can crash with huge input data.
+    std::string s1 = "K:1 I:%"; s1.append(rs_to_string(RSGXSID_MAX_SERVICE_STRING)).append("[^)]");
+    std::string s2 = "K:0 T:%d C:%ud I:%"; s2.append(rs_to_string(RSGXSID_MAX_SERVICE_STRING)).append("[^)]");
+    if (1 == sscanf(input.c_str(), s1.c_str(), pgpline))
     {
         validatedSignature = true;
         std::string str_line = pgpline;
         pgpId = RsPgpId(str_line);
         return true;
     }
-    else if (3 == sscanf(input.c_str(), "K:0 T:%d C:%d I:%[^)]", &timestamp, &attempts,pgpline))
+    else if (3 == sscanf(input.c_str(), s2.c_str(), &timestamp, &attempts,pgpline))
     {
         lastCheckTs = timestamp;
         checkAttempts = attempts;
@@ -1632,7 +1635,7 @@ bool SSGxsIdPgp::load(const std::string &input)
         pgpId = RsPgpId(str_line);
         return true;
     }
-    else if (2 == sscanf(input.c_str(), "K:0 T:%d C:%d", &timestamp, &attempts))
+    else if (2 == sscanf(input.c_str(), "K:0 T:%d C:%ud", &timestamp, &attempts))
     {
         lastCheckTs = timestamp;
         checkAttempts = attempts;
@@ -1821,8 +1824,14 @@ bool SSGxsIdGroup::load(const std::string &input)
     char recognstr[RSGXSID_MAX_SERVICE_STRING];
     char scorestr[RSGXSID_MAX_SERVICE_STRING];
 
+    //sscanf() without field width limits can crash with huge input data.
+    std::string s1 = "v2 {P:%"; s1.append(rs_to_string(RSGXSID_MAX_SERVICE_STRING))
+             .append("[^}]} {T:%").append(rs_to_string(RSGXSID_MAX_SERVICE_STRING))
+             .append("[^}]} {R:%").append(rs_to_string(RSGXSID_MAX_SERVICE_STRING))
+             .append("[^}]}");
+
     // split into parts.
-    if (3 != sscanf(input.c_str(), "v2 {P:%[^}]} {T:%[^}]} {R:%[^}]}", pgpstr, recognstr, scorestr))
+    if (3 != sscanf(input.c_str(), s1.c_str(), pgpstr, recognstr, scorestr))
     {
 #ifdef DEBUG_IDS
         std::cerr << "SSGxsIdGroup::load() Failed to extract 4 Parts";
@@ -2569,7 +2578,7 @@ bool p3IdService::cache_update_if_cached(const RsGxsId &id, std::string serviceS
 bool p3IdService::cache_request_ownids()
 {
 	/* trigger request to load missing ids into cache */
-	std::list<RsGxsGroupId> groupIds;
+	//std::list<RsGxsGroupId> groupIds;
 #ifdef DEBUG_IDS
 	std::cerr << "p3IdService::cache_request_ownids()";
 	std::cerr << std::endl;
@@ -3020,8 +3029,9 @@ RsGenExchange::ServiceCreate_Return p3IdService::service_CreateGroup(RsGxsGrpIte
         std::cerr << "p3IdService::service_CreateGroup() signature still pending" << std::endl;
         break ;
     default:
-    case SELF_SIGNATURE_RESULT_FAILED:  return SERVICE_CREATE_FAIL ;
+    case SELF_SIGNATURE_RESULT_FAILED:  createStatus = SERVICE_CREATE_FAIL ;
         std::cerr << "p3IdService::service_CreateGroup() signature failed" << std::endl;
+        return createStatus;
         break ;
 
     case SELF_SIGNATURE_RESULT_SUCCESS:
@@ -3709,7 +3719,7 @@ bool p3IdService::recogn_process()
 	uint32_t tagValidFlags = 0;
 	for(it = tagItems.begin(); it != tagItems.end(); ++it)
 	{
-		bool isTagPending = false;
+		//bool isTagPending = false;
 		bool isTagOk = recogn_checktag(RsGxsId(item->meta.mGroupId.toStdString()), item->meta.mGroupName, *it, true, isPending);
 		if (isTagOk)
 		{
@@ -3717,7 +3727,7 @@ bool p3IdService::recogn_process()
 		}
 		else 
 		{
-			isPending |= isTagPending;
+			//isPending |= isTagPending;
 		}
 
 		delete *it;

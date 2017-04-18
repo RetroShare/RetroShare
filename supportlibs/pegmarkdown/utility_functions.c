@@ -175,9 +175,8 @@ bool match_inlines(element *l1, element *l2) {
  * 'link' is modified with the matching url and title. */
 bool find_reference(link *result, element *label) {
     element *cur = references;  /* pointer to walk up list of references */
-    link *curitem;
     while (cur != NULL) {
-        curitem = cur->contents.link;
+        link *curitem = cur->contents.link;
         if (match_inlines(label, curitem->label)) {
             *result = *curitem;
             return true;

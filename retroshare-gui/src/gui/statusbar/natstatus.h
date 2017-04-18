@@ -30,7 +30,7 @@ class NATStatus : public QWidget
     Q_OBJECT
 
 public:
-    NATStatus(QWidget *parent = 0);
+    explicit NATStatus(QWidget *parent = 0);
 
     void getNATStatus( );
     void setCompactMode(bool compact) {_compactMode = compact; }

@@ -35,7 +35,7 @@ class NetworkView : public RsAutoUpdatePage
 	Q_OBJECT
 
 	public:
-		NetworkView(QWidget *parent = 0);
+		explicit NetworkView(QWidget *parent = 0);
 		virtual ~NetworkView();
 
 		virtual void updateDisplay() ; // derived from RsAutoUpdatePage

@@ -42,7 +42,6 @@ char *getpass (const char *prompt)
 {
     static char getpassbuf [PASS_MAX + 1];
     size_t i = 0;
-    int c;
 
     if (prompt) {
         fputs (prompt, stderr);
@@ -50,7 +49,7 @@ char *getpass (const char *prompt)
     }
 
     for (;;) {
-        c = _getch ();
+        int c = _getch ();
         if (c == '\r') {
             getpassbuf [i] = '\0';
             break;
@@ -152,7 +151,7 @@ void NotifyTxt::displayNeighbours()
 	rsPeers->getGPGAllList(neighs);
 
 	std::ostringstream out;
-	for(it = neighs.begin(); it != neighs.end(); it++)
+	for(it = neighs.begin(); it != neighs.end(); ++it)
 	{
 		RsPeerDetails detail;
 		rsPeers->getGPGDetails(*it, detail);
@@ -172,7 +171,7 @@ void NotifyTxt::displayFriends()
 	rsPeers->getFriendList(ids);
 
 	std::ostringstream out;
-	for(it = ids.begin(); it != ids.end(); it++)
+	for(it = ids.begin(); it != ids.end(); ++it)
 	{
 		RsPeerDetails detail;
 		rsPeers->getPeerDetails(*it, detail);
@@ -245,7 +244,7 @@ void NotifyTxt::notifyTurtleSearchResult(uint32_t search_id,const std::list<Turt
 
 	/* add to existing entry */
         std::list<TurtleFileInfo>::const_iterator fit;
-	for(fit = found_files.begin(); fit != found_files.end(); fit++)
+	for(fit = found_files.begin(); fit != found_files.end(); ++fit)
 	{
 		it->second.push_back(*fit);
 	}
@@ -259,7 +258,7 @@ void NotifyTxt::getSearchIds(std::list<uint32_t> &searchIds)
 	RsStackMutex stack(mNotifyMtx); /****** LOCKED *****/
 
         std::map<uint32_t, std::list<TurtleFileInfo> >::iterator it;
-	for(it = mSearchResults.begin(); it != mSearchResults.end(); it++)
+	for(it = mSearchResults.begin(); it != mSearchResults.end(); ++it)
 	{
 		searchIds.push_back(it->first);
 	}

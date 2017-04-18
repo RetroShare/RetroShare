@@ -31,7 +31,7 @@ class DiscStatus : public QWidget
 	Q_OBJECT
 
 public:
-	DiscStatus(QWidget *parent = 0);
+	explicit DiscStatus(QWidget *parent = 0);
 
 	void update();
 

@@ -17,6 +17,8 @@ namespace Ui {
 class GxsForumThreadWidget;
 }
 
+#warning: Cppcheck(noConstructor): The class 'GxsForumThreadWidget' does not have a constructor.
+// cppcheck-suppress noConstructor
 class GxsForumThreadWidget : public GxsMessageFrameWidget
 {
 	Q_OBJECT

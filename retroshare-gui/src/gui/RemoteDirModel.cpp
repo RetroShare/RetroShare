@@ -1125,7 +1125,7 @@ void RetroshareDirModel::downloadDirectory(const DirDetails & dirDetails, int pr
 	}
 	else if (dirDetails.type & DIR_TYPE_DIR)
 	{
-		std::list<DirStub>::const_iterator it;
+		//std::list<DirStub>::const_iterator it;
 		QDir dwlDir(QString::fromUtf8(rsFiles->getDownloadDirectory().c_str()));
 		QString cleanPath = QDir::cleanPath(QString::fromUtf8(dirDetails.path.substr(prefixLen).c_str()));
 
@@ -1240,7 +1240,7 @@ void RetroshareDirModel::openSelected(const QModelIndexList &qmil)
 	return;
 	}
 
-	std::list<std::string> dirs_to_open;
+	//std::list<std::string> dirs_to_open;
 
 	std::list<DirDetails> files_info;
 	std::list<DirDetails>::iterator it;
@@ -1452,10 +1452,8 @@ void FlatStyle_RDM::updateRefs()
 
     RetroshareDirModel::preMods() ;
 
-
-	uint32_t nb_treated_refs = 0 ;
-
     {
+        uint32_t nb_treated_refs = 0 ;
         RS_STACK_MUTEX(_ref_mutex) ;
 
         while(!_ref_stack.empty())

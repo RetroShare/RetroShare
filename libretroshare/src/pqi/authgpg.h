@@ -55,7 +55,7 @@ class RsPeerDetails;
 class AuthGPGOperation
 {
 public:
-    AuthGPGOperation(void *userdata)
+    explicit AuthGPGOperation(void *userdata)
     {
         m_userdata = userdata;
     }

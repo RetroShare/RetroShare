@@ -36,6 +36,8 @@ class FriendSelectionWidget;
 class QTreeWidgetItem;
 class RSTreeWidgetItemCompareRole;
 
+#warning: Cppcheck(noConstructor): The class 'FriendSelectionWidget' does not have a constructor.
+// cppcheck-suppress noConstructor
 class FriendSelectionWidget : public RsGxsUpdateBroadcastPage, public TokenResponse
 {
 	Q_OBJECT

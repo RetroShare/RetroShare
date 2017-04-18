@@ -429,12 +429,11 @@ bool pqiSSLstore::encryptedSendItems(const std::list<RsItem*>& rsItemList)
 	
 bool pqiSSLstore::getEncryptedItems(std::list<RsItem* >& rsItemList)
 {
-	RsItem* item;
 	bStopReading=false;
 
 	do
 	{
-		if (NULL != (item = GetItem()))
+		if (RsItem* item = GetItem())
 			rsItemList.push_back(item);
 
 	} while (enc_bio->isactive() && enc_bio->moretoread(0) && !bStopReading);

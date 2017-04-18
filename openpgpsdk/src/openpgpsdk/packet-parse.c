@@ -72,7 +72,7 @@ static int limited_read_data(ops_data_t *data,unsigned int len,
 
    if(!(subregion->length-subregion->length_read >= len)) // ASSERT(subregion->length-subregion->length_read >= len);
    {
-      fprintf(stderr,"Data length error: announced size %d larger than expected size %d. Giving up.",len,subregion->length-subregion->length_read) ;
+      fprintf(stderr,"Data length error: announced size %ud larger than expected size %d. Giving up.",len,subregion->length-subregion->length_read) ;
       return 0 ;
    }
 
@@ -480,9 +480,10 @@ static int limited_read_scalar(unsigned *dest,unsigned length,
 
    if(!(length <= 4)) // ASSERT(length <= 4)
    {
-	fprintf(stderr,"limited_read_scalar: wrong size for scalar %d\n",length) ;
+	fprintf(stderr,"limited_read_scalar: wrong size for scalar %ud\n",length) ;
 	return ops_false ;
    }
+   // cppcheck-suppress knownConditionTrueFalse
    if(!(sizeof(*dest) >= 4)) // ASSERT(sizeof(*dest) >= 4)
    {
 	fprintf(stderr,"limited_read_scalar: wrong size for dest %lu\n",sizeof(*dest)) ;
@@ -523,6 +524,7 @@ static int limited_read_size_t_scalar(size_t *dest,unsigned length,
 {
    unsigned tmp;
 
+   // cppcheck-suppress knownConditionTrueFalse
    if(!(sizeof(*dest) >= 4)) // ASSERT(sizeof(*dest) >= 4)
    {
 	fprintf(stderr,"limited_read_scalar: wrong dest size for scalar %lu\n",sizeof(*dest)) ;
@@ -562,6 +564,7 @@ static int limited_read_time(time_t *dest,ops_region_t *region,
     * Cannot assume that time_t is 4 octets long - 
     * there is at least one architecture (SunOS 5.10) where it is 8.
     */
+   // cppcheck-suppress knownConditionTrueFalse
    if (sizeof(*dest)==4)
    {
       return limited_read_scalar((unsigned *)dest,4,region,pinfo);
@@ -630,7 +633,7 @@ static int limited_read_mpi(BIGNUM **pbn,ops_region_t *region,
 
     if(!(length <= 8192)) // ASSERT(length <= 8192)
     {
-       fprintf(stderr,"limited_read_mpi: wrong size to read %d > 8192",length) ;
+       fprintf(stderr,"limited_read_mpi: wrong size to read %ud > 8192",length) ;
        return 0 ;
     }
 
@@ -1825,7 +1828,8 @@ static int parse_signature_subpackets(ops_signature_t *sig,
 				      ops_parse_info_t *pinfo)
     {
     ops_region_t subregion;
-    ops_parser_content_t content;
+    // cppcheck-suppress unusedVariable
+    ops_parser_content_t content;// Used by ERRP Macro
 
     ops_init_subregion(&subregion,region);
     if(!limited_read_scalar(&subregion.length,2,region,pinfo))
@@ -2213,7 +2217,7 @@ static int parse_literal_data(ops_region_t *region,ops_parse_info_t *pinfo)
 
 		if(C.literal_data_body.data == NULL)
 		{
-		   fprintf(stderr,"parse_literal_data(): cannot malloc for requested size %d.\n",l) ;
+		   fprintf(stderr,"parse_literal_data(): cannot malloc for requested size %ud.\n",l) ;
 		   return 0 ;
 		}
 
@@ -2297,7 +2301,8 @@ static int consume_packet(ops_region_t *region,ops_parse_info_t *pinfo,
 			  ops_boolean_t warn)
     {
     ops_data_t remainder;
-    ops_parser_content_t content;
+    // cppcheck-suppress unusedVariable
+    ops_parser_content_t content; // Used by ERRP Macro
 
     if(region->indeterminate)
 	ERRP(pinfo,"Can't consume indeterminate packets");
@@ -2333,7 +2338,6 @@ static int parse_secret_key(ops_region_t *region,ops_parse_info_t *pinfo)
    ops_region_t encregion;
    ops_region_t *saved_region=NULL;
    ops_hash_t checkhash;
-   int blocksize;
    ops_boolean_t crypted;
 
    if (debug)
@@ -2414,7 +2418,7 @@ static int parse_secret_key(ops_region_t *region,ops_parse_info_t *pinfo)
       int hashsize;
       size_t l;
 
-      blocksize=ops_block_size(C.secret_key.algorithm);
+      int blocksize=ops_block_size(C.secret_key.algorithm);
       if(!(blocksize > 0 && blocksize <= OPS_MAX_BLOCK_SIZE)) // ASSERT(blocksize > 0 && blocksize <= OPS_MAX_BLOCK_SIZE);
       {
 	 fprintf(stderr,"parse_secret_key: block size error. Data seems corrupted.") ;
@@ -2793,7 +2797,7 @@ static int parse_pk_session_key(ops_region_t *region,
 
     if (debug)
         {
-        printf("session key recovered (len=%d):\n",k);
+        printf("session key recovered (len=%ud):\n",k);
         unsigned int j;
         for(j=0; j<k; j++)
             printf("%2x ", C.pk_session_key.key[j]);
@@ -3247,7 +3251,7 @@ int ops_parse(ops_parse_info_t *pinfo,ops_boolean_t limit_packets)
    } while (r > 0);
 
    return pinfo->errors ? 0 : 1;
-   return r == -1 ? 0 : 1;
+   //return r == -1 ? 0 : 1;
 }
 
 /**

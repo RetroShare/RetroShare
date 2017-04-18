@@ -560,7 +560,7 @@ int p3ZeroConf::checkQueryResults()
 	std::cerr << "sslid = " << qr.sslId;
 	std::cerr << std::endl;
 
-	time_t now = time(NULL);
+	//time_t now = time(NULL);
 	uint32_t flags = RS_CB_FLAG_MODE_TCP;
 	uint32_t source = RS_CB_DHT; // SHOULD ADD NEW SOURCE ZC???
 	struct sockaddr_storage dummyProxyAddr, dummySrcAddr;
@@ -1368,7 +1368,8 @@ std::string displayDNSServiceError(DNSServiceErrorType errcode)
 /* This needs to be a separate class - as we don't know which peer it is
  * associated with until we have Resolved the details.
  */
-	
+/* UNUSED
+
 class RsZCBrowseDetails
 {
 	public:
@@ -1389,18 +1390,16 @@ class RsZCBrowseDetails
 	std::string mResolveTxtRecord;
 };
 
-
-
 class RsZCPeerDetails
 {
-	/* passed from libretroshare */
+	// passed from libretroshare
 
 	std::string mGpgId;
 	std::string mSslId;
 
-	uint32_t mPeerStatus; /* FRIEND, FOF, ONLINE, OFFLINE */
+	uint32_t mPeerStatus; // FRIEND, FOF, ONLINE, OFFLINE
 
-	/* Browse Info */
+	// Browse Info
 
 	uint32_t mBrowseState;
 	time_t   mBrowseUpdate;
@@ -1410,7 +1409,7 @@ class RsZCPeerDetails
 	std::string mBrowserRegType;
 	std::string mBrowserReplyDomain;
 
-	/* Resolve Info */
+	// Resolve Info
 
 	uint32_t mResolveInterfaceIndex;
 	std::string mResolveFullname;
@@ -1418,14 +1417,4 @@ class RsZCPeerDetails
 	uint32_t mResolvePort;
 	std::string mResolveTxtRecord;
 };
-
-
-
-	
-
-
-
-
-
-
-
+*/

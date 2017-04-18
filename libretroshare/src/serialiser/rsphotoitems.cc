@@ -610,7 +610,7 @@ void RsGxsPhotoCommentItem::clear()
 std::ostream& RsGxsPhotoCommentItem::print(std::ostream& out, uint16_t indent)
 {
     printRsItemBase(out, "RsGxsPhotoCommentItem", indent);
-    uint16_t int_Indent = indent + 2;
+    //uint16_t int_Indent = indent + 2;
 
 
     printRsItemEnd(out ,"RsGxsPhotoCommentItem", indent);
@@ -620,7 +620,7 @@ std::ostream& RsGxsPhotoCommentItem::print(std::ostream& out, uint16_t indent)
 std::ostream& RsGxsPhotoAlbumItem::print(std::ostream& out, uint16_t indent)
 {
     printRsItemBase(out, "RsGxsPhotoAlbumItem", indent);
-    uint16_t int_Indent = indent + 2;
+    //uint16_t int_Indent = indent + 2;
 
     out << album << std::endl;
 
@@ -644,7 +644,7 @@ void RsGxsPhotoPhotoItem::clear()
 std::ostream& RsGxsPhotoPhotoItem::print(std::ostream& out, uint16_t indent)
 {
     printRsItemBase(out, "RsGxsPhotoPhotoItem", indent);
-    uint16_t int_Indent = indent + 2;
+    //uint16_t int_Indent = indent + 2;
 
 
     printRsItemEnd(out ,"RsGxsPhotoPhotoItem", indent);

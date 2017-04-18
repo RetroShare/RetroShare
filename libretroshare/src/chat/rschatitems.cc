@@ -988,13 +988,13 @@ RsChatLobbyListRequestItem::RsChatLobbyListRequestItem(void *data,uint32_t)
 	: RsChatItem(RS_PKT_SUBTYPE_CHAT_LOBBY_LIST_REQUEST)
 {
 	uint32_t rssize = getRsItemSize(data);
-	bool ok = true ;
+	//bool ok = true ;
 	uint32_t offset = 8; // skip the header 
 
 	if (offset != rssize)
 		std::cerr << "Size error while deserializing." << std::endl ;
-	if (!ok)
-		std::cerr << "Unknown error while deserializing." << std::endl ;
+	//if (!ok)
+	//	std::cerr << "Unknown error while deserializing." << std::endl ;
 }
 RsChatLobbyListItem::RsChatLobbyListItem(void *data,uint32_t)
 	: RsChatItem(RS_PKT_SUBTYPE_CHAT_LOBBY_LIST)

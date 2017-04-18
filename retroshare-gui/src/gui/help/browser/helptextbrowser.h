@@ -39,7 +39,7 @@ class HelpTextBrowser : public QTextBrowser
 
 public:
   /** Default constructor. */
-  HelpTextBrowser(QWidget *parent = 0);
+  explicit HelpTextBrowser(QWidget *parent = 0);
   /** Loads a resource into the browser. */
   QVariant loadResource(int type, const QUrl &name);
 

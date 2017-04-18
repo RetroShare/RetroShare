@@ -239,9 +239,9 @@ void FriendSelectionWidget::loadRequest(const TokenQueue */*queue*/, const Token
 
 	uint32_t token = req.mToken ;
 
-	RsGxsIdGroup data;
+	//RsGxsIdGroup data;
 	std::vector<RsGxsIdGroup> datavector;
-	std::vector<RsGxsIdGroup>::iterator vit;
+	//std::vector<RsGxsIdGroup>::iterator vit;
 
 	if (!rsIdentity->getGroupData(token, datavector))
 	{

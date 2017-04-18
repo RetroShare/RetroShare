@@ -1008,7 +1008,7 @@ bool sockaddr_storage_ipv6_isExternalNet(const struct sockaddr_storage &/*addr*/
 
 bool rs_inet_ntop (const sockaddr_storage &addr, std::string &dst)
 {
-	bool success = false;
+	bool success = false; if (success) {;}
 	char ipStr[255];
 
 #ifdef WINDOWS_SYS

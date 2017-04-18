@@ -108,7 +108,7 @@ struct RsMsgMetaData
     time_t      mChildTs;
     std::string mServiceString; // Service Specific Free-Form extra storage.
 
-    const std::ostream &print(std::ostream &out, std::string indent = "", std::string varName = "") const {
+    const std::ostream &print(std::ostream &out, const std::string &indent = "", const std::string &varName = "") const {
         out
             << indent << varName << " of RsMsgMetaData Values ###################" << std::endl
             << indent << "  mGroupId: " << mGroupId.toStdString() << std::endl

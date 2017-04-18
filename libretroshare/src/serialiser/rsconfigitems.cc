@@ -1093,10 +1093,11 @@ RsPeerNetItem *RsPeerConfigSerialiser::deserialiseNet(void *data, uint32_t *size
 	ok &= item->extAddrList.GetTlv(data, rssize, &offset);
 
 	// New for V0.6.
-        ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_DOMADDR, item->domain_addr);
+	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_DOMADDR, item->domain_addr );
 	ok &= getRawUInt16(data, rssize, &offset, &(item->domain_port)); /* Mandatory */
+	if(ok){;}
 
-        if (offset != rssize)
+	if(offset != rssize)
 	{
 #ifdef RSSERIAL_ERROR_DEBUG
 		std::cerr << "RsPeerConfigSerialiser::deserialiseNet() ERROR size mismatch" << std::endl;
@@ -1369,6 +1370,7 @@ RsPeerStunItem *RsPeerConfigSerialiser::deserialiseStun(void *data, uint32_t *si
 
 	/* get mandatory parts first */
 	ok &= item->stunList.GetTlv(data, rssize, &offset); /* Mandatory */
+	if (ok){;}
 
 	if (offset != rssize)
 	{
@@ -1508,6 +1510,7 @@ RsPeerGroupItem_deprecated *RsPeerConfigSerialiser::deserialiseGroup_deprecated(
     ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_NAME, item->name);
     ok &= getRawUInt32(data, rssize, &offset, &(item->flag));
     ok &= item->pgpList.GetTlv(data, rssize, &offset);
+    if (ok){;}
 
     if (offset != rssize)
     {
@@ -1610,6 +1613,7 @@ RsNodeGroupItem *RsPeerConfigSerialiser::deserialiseGroup(void *data, uint32_t *
 	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_NAME, item->name);
 	ok &= getRawUInt32(data, rssize, &offset, &(item->flag));
 	ok &= item->pgpList.GetTlv(data, rssize, &offset);
+	if (ok){;}
 
 	if (offset != rssize)
 	{
@@ -1918,6 +1922,7 @@ RsItem *RsCacheConfigSerialiser::deserialise(void *data, uint32_t *size)
 	ok &= item->hash.deserialise(data, rssize, offset) ;
 	ok &= getRawUInt64(data, rssize, &offset, &(item->size));
 	ok &= getRawUInt32(data, rssize, &offset, &(item->recvd));
+	if (ok){;}
 
 
 	if (offset != rssize)

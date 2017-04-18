@@ -259,6 +259,7 @@ RsTurtleStringSearchRequestItem::RsTurtleStringSearchRequestItem(void *data,uint
 
 #ifdef WINDOWS_SYS // No Exceptions in Windows compile. (drbobs).
 	UNREFERENCED_LOCAL_VARIABLE(rssize);
+	if (ok) {;}
 #else
 	if (offset != rssize)
 		throw std::runtime_error("Size error while deserializing.") ;
@@ -352,7 +353,8 @@ bool RsTurtleSearchResultItem::serialize(void *data,uint32_t& pktsize) const
 }
 
 RsTurtleSearchResultItem::RsTurtleSearchResultItem(void *data,uint32_t pktsize)
-	: RsTurtleItem(RS_TURTLE_SUBTYPE_SEARCH_RESULT)
+  : RsTurtleItem(RS_TURTLE_SUBTYPE_SEARCH_RESULT)
+  , depth(0)
 {
 	setPriorityLevel(QOS_PRIORITY_RS_TURTLE_SEARCH_RESULT) ;
 #ifdef P3TURTLE_DEBUG
@@ -431,7 +433,8 @@ bool RsTurtleOpenTunnelItem::serialize(void *data,uint32_t& pktsize) const
 }
 
 RsTurtleOpenTunnelItem::RsTurtleOpenTunnelItem(void *data,uint32_t pktsize)
-	: RsTurtleItem(RS_TURTLE_SUBTYPE_OPEN_TUNNEL)
+  : RsTurtleItem(RS_TURTLE_SUBTYPE_OPEN_TUNNEL)
+  , request_id(0), partial_tunnel_id(0), depth(0)
 {
 	setPriorityLevel(QOS_PRIORITY_RS_TURTLE_OPEN_TUNNEL) ;
 #ifdef P3TURTLE_DEBUG
@@ -453,6 +456,7 @@ RsTurtleOpenTunnelItem::RsTurtleOpenTunnelItem(void *data,uint32_t pktsize)
 
 #ifdef WINDOWS_SYS // No Exceptions in Windows compile. (drbobs).
 	UNREFERENCED_LOCAL_VARIABLE(rssize);
+	if (ok) {;}
 #else
 	if (offset != rssize)
 		throw std::runtime_error("RsTurtleOpenTunnelItem::() error while deserializing.") ;
@@ -495,7 +499,8 @@ bool RsTurtleTunnelOkItem::serialize(void *data,uint32_t& pktsize) const
 }
 
 RsTurtleTunnelOkItem::RsTurtleTunnelOkItem(void *data,uint32_t pktsize)
-	: RsTurtleItem(RS_TURTLE_SUBTYPE_TUNNEL_OK)
+  : RsTurtleItem(RS_TURTLE_SUBTYPE_TUNNEL_OK)
+  , tunnel_id(0), request_id(0)
 {
 	setPriorityLevel(QOS_PRIORITY_RS_TURTLE_TUNNEL_OK) ;
 #ifdef P3TURTLE_DEBUG
@@ -515,6 +520,7 @@ RsTurtleTunnelOkItem::RsTurtleTunnelOkItem(void *data,uint32_t pktsize)
 
 #ifdef WINDOWS_SYS // No Exceptions in Windows compile. (drbobs).
 	UNREFERENCED_LOCAL_VARIABLE(rssize);
+	if (ok) {;}
 #else
 	if (offset != rssize)
 		throw std::runtime_error("RsTurtleTunnelOkItem::() error while deserializing.") ;
@@ -561,6 +567,7 @@ RsTurtleGenericDataItem::RsTurtleGenericDataItem(void *data,uint32_t pktsize)
 
 #ifdef WINDOWS_SYS // No Exceptions in Windows compile. (drbobs).
 	UNREFERENCED_LOCAL_VARIABLE(rssize);
+	if (ok) {;}
 #else
 	if (offset != rssize)
 		throw std::runtime_error("RsTurtleTunnelOkItem::() error while deserializing.") ;

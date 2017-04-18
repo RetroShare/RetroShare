@@ -33,7 +33,7 @@ class IMHistoryItemPainter
 public:
     enum EditMode { /*Editable,*/ ReadOnly };
 
-    IMHistoryItemPainter(const QString &text = "");
+    explicit IMHistoryItemPainter(const QString &text = "");
 
     void paint(QPainter *painter, const QStyleOptionViewItem &option, EditMode mode) const;
     QSize sizeHint() const;

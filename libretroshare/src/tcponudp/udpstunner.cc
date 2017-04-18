@@ -754,8 +754,8 @@ bool    UdpStunner::checkStunDesired()
 	std::cerr << std::endl;
 #endif
 
-	time_t now;
 	{
+		time_t now;
           RsStackMutex stack(stunMtx);   /********** LOCK MUTEX *********/
 
 	  if (mPassiveStunMode)

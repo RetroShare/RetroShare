@@ -319,14 +319,13 @@ static int get_last_tou_socket_error(int s)
 
 int BIO_tou_socket_should_retry(int s, int i)
 	{
-	int err;
 #ifdef DEBUG_TOU_BIO
 	fprintf(stderr, "BIO_tou_socket_should_retry()\n");
 #endif
 
 	if ((i == 0) || (i == -1))
 		{
-		err=get_last_tou_socket_error(s);
+		int err=get_last_tou_socket_error(s);
 
 #if defined(OPENSSL_SYS_WINDOWS) && 0 /* more microsoft stupidity? perhaps not? Ben 4/1/99 */
 		if ((i == -1) && (err == 0))
@@ -344,6 +343,7 @@ int BIO_tou_socket_non_fatal_error(int err)
 		{
 #if defined(OPENSSL_SYS_WINDOWS)
 # if defined(WSAEWOULDBLOCK)
+	// cppcheck-suppress ConfigurationNotChecked
 	case WSAEWOULDBLOCK:
 # endif
 
@@ -360,33 +360,40 @@ int BIO_tou_socket_non_fatal_error(int err)
 	case EWOULDBLOCK:
 #  endif
 # else
+	// cppcheck-suppress ConfigurationNotChecked
 	case EWOULDBLOCK:
 # endif
 #endif
 
 #if defined(ENOTCONN)
+	// cppcheck-suppress ConfigurationNotChecked
 	case ENOTCONN:
 #endif
 
 #ifdef EINTR
+	// cppcheck-suppress ConfigurationNotChecked
 	case EINTR:
 #endif
 
 #ifdef EAGAIN
 #if EWOULDBLOCK != EAGAIN
+	// cppcheck-suppress ConfigurationNotChecked
 	case EAGAIN:
 # endif
 #endif
 
 #ifdef EPROTO
+	// cppcheck-suppress ConfigurationNotChecked
 	case EPROTO:
 #endif
 
 #ifdef EINPROGRESS
+	// cppcheck-suppress ConfigurationNotChecked
 	case EINPROGRESS:
 #endif
 
 #ifdef EALREADY
+	// cppcheck-suppress ConfigurationNotChecked
 	case EALREADY:
 #endif
 

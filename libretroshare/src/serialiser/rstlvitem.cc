@@ -43,7 +43,7 @@ void  	RsTlvItem::TlvShallowClear()
 	TlvClear(); /* unless overloaded! */
 }
 
-std::ostream &RsTlvItem::printBase(std::ostream &out, std::string clsName, uint16_t indent) const
+std::ostream &RsTlvItem::printBase(std::ostream &out, const std::string &clsName, uint16_t indent) const
 {
 	printIndent(out, indent);
 	out << "RsTlvItem: " << clsName << " Size: " << TlvSize() << "  ***********************";
@@ -51,7 +51,7 @@ std::ostream &RsTlvItem::printBase(std::ostream &out, std::string clsName, uint1
 	return out;
 }
 
-std::ostream &RsTlvItem::printEnd(std::ostream &out, std::string clsName, uint16_t indent) const
+std::ostream &RsTlvItem::printEnd(std::ostream &out, const std::string &clsName, uint16_t indent) const
 {
 	printIndent(out, indent);
 	out << "********************** " << clsName << " *********************";

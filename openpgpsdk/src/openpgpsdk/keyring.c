@@ -529,12 +529,8 @@ ops_packet_t* ops_add_packet_to_keydata(ops_keydata_t* keydata, const ops_packet
 */
 void ops_add_signed_userid_to_keydata(ops_keydata_t* keydata, const ops_user_id_t* user_id, const ops_packet_t* sigpacket)
     {
-    //int i=0;
-    ops_user_id_t * uid=NULL;
-    ops_packet_t * pkt=NULL;
-
-    uid=ops_add_userid_to_keydata(keydata, user_id);
-    pkt=ops_add_packet_to_keydata(keydata, sigpacket);
+    ops_user_id_t * uid=ops_add_userid_to_keydata(keydata, user_id);
+    ops_packet_t * pkt=ops_add_packet_to_keydata(keydata, sigpacket);
 
     /*
      * add entry in sigs array to link the userid and sigpacket
@@ -568,8 +564,6 @@ ops_boolean_t ops_add_selfsigned_userid_to_keydata(ops_keydata_t* keydata, ops_u
     ops_memory_t* mem_sig=NULL;
     ops_create_info_t* cinfo_sig=NULL;
 
-    ops_create_signature_t *sig=NULL;
-
     /*
      * create signature packet for this userid
      */
@@ -580,7 +574,7 @@ ops_boolean_t ops_add_selfsigned_userid_to_keydata(ops_keydata_t* keydata, ops_u
 
     // create sig for this pkt
 
-    sig=ops_create_signature_new();
+    ops_create_signature_t *sig=ops_create_signature_new();
     ops_signature_start_key_signature(sig, &keydata->key.skey.public_key, userid, OPS_CERT_POSITIVE);
     ops_signature_add_creation_time(sig,time(NULL));
     ops_signature_add_issuer_key_id(sig,keydata->key_id);
@@ -619,15 +613,13 @@ ops_boolean_t ops_sign_key(ops_keydata_t* keydata, const unsigned char *signers_
 	ops_memory_t* mem_sig=NULL;
 	ops_create_info_t* cinfo_sig=NULL;
 
-	ops_create_signature_t *sig=NULL;
-
 	/*
 	 * create signature packet for this userid
 	 */
 
 	// create sig for this pkt
 
-	sig=ops_create_signature_new();
+	ops_create_signature_t *sig=ops_create_signature_new();
 	ops_signature_start_key_signature(sig, &keydata->key.skey.public_key, &keydata->uids[0], OPS_CERT_GENERIC);
 	ops_signature_add_creation_time(sig,time(NULL)); 
 	ops_signature_add_issuer_key_id(sig,signers_key_id);

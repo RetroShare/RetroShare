@@ -90,7 +90,9 @@ class RsGxsCircleSubscriptionRequestItem: public RsGxsMsgItem
 {
 public:
     
-    RsGxsCircleSubscriptionRequestItem() : RsGxsMsgItem(RS_SERVICE_GXS_TYPE_GXSCIRCLE, RS_PKT_SUBTYPE_GXSCIRCLE_SUBSCRIPTION_REQUEST_ITEM) { }
+    RsGxsCircleSubscriptionRequestItem()
+      : RsGxsMsgItem(RS_SERVICE_GXS_TYPE_GXSCIRCLE, RS_PKT_SUBTYPE_GXSCIRCLE_SUBSCRIPTION_REQUEST_ITEM)
+      ,time_stamp(0), time_out(0), subscription_type(0) { }
     virtual ~RsGxsCircleSubscriptionRequestItem() {}
     
     void clear();

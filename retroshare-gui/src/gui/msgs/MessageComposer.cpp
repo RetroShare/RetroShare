@@ -99,7 +99,7 @@
 class MessageItemDelegate : public QItemDelegate
 {
 public:
-    MessageItemDelegate(QObject *parent = 0) : QItemDelegate(parent)
+    explicit MessageItemDelegate(QObject *parent = 0) : QItemDelegate(parent)
     {
     }
 
@@ -748,7 +748,7 @@ void MessageComposer::buildCompleter()
     std::list<RsPeerId>::iterator peerIt;
     rsPeers->getFriendList(peers);
     
-    std::list<RsGxsId> gxsIds;
+    //std::list<RsGxsId> gxsIds;
     QList<QTreeWidgetItem*> gxsitems ;
 
     ui.friendSelectionWidget->items(gxsitems,FriendSelectionWidget::IDTYPE_GXS) ;
@@ -1013,8 +1013,8 @@ MessageComposer *MessageComposer::newMsg(const std::string &msgId /* = ""*/)
         std::list<RsGroupInfo> groupInfoList;
         rsPeers->getGroupInfoList(groupInfoList);
 
-        std::list<std::string> groupIds;
-        std::list<std::string>::iterator groupIt;
+    //    std::list<std::string> groupIds;
+    //    std::list<std::string>::iterator groupIt;
 
     //       calculateGroupsOfSslIds(groupInfoList, msgInfo.msgto, groupIds);
     //       for (groupIt = groupIds.begin(); groupIt != groupIds.end(); ++groupIt ) {

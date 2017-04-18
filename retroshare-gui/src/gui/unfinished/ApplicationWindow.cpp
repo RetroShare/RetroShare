@@ -79,7 +79,7 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WindowFlags flags)
 
     /* Create the config pages and actions */
     QActionGroup *grp = new QActionGroup(this);
-    QAction *action;
+    //QAction *action;
 
     //StatisticDialog *statisticDialog = NULL;
     //ui.stackPages->add(statisticDialog = new StatisticDialog(ui.stackPages),

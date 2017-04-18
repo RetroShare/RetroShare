@@ -15,7 +15,7 @@ class VideoEncoder ;
 class QVideoOutputDevice: public QLabel
 {
 	public:
-		QVideoOutputDevice(QWidget *parent = 0) ;
+		explicit QVideoOutputDevice(QWidget *parent = 0) ;
 		
 		void showFrame(const QImage&) ;
 		void showFrameOff() ;
@@ -29,7 +29,7 @@ class QVideoInputDevice: public QObject
 	Q_OBJECT
 
 	public:
-		QVideoInputDevice(QWidget *parent = 0) ;
+		explicit QVideoInputDevice(QWidget *parent = 0) ;
 		~QVideoInputDevice() ;
 
 		// Captured images are sent to this encoder. Can be NULL.

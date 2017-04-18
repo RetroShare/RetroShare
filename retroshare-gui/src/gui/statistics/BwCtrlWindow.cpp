@@ -19,31 +19,33 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
+#include <QDateTime>
+#include <QTimer>
+#include <QModelIndex>
+#include <QHeaderView>
+#include <QPainter>
+#include <QTreeWidgetItem>
+
 #include "BwCtrlWindow.h"
+#include "RsAutoUpdatePage.h"
 #include "gui/common/RSGraphWidget.h"
 #include "ui_BwCtrlWindow.h"
 #include "util/QtVersion.h"
-#include <QTimer>
-#include <QDateTime>
+
+#include "retroshare/rsconfig.h"
+#include "retroshare/rspeers.h"
 
 #include <algorithm>
 #include <iostream>
 #include <iomanip>
+#include <limits>
 #include <time.h>
 
-#include "retroshare-gui/RsAutoUpdatePage.h"
-#include "retroshare/rsconfig.h"
-#include "retroshare/rspeers.h"
-
-#include <QModelIndex>
-#include <QHeaderView>
-#include <QPainter>
-#include <limits>
 
 class BWListDelegate: public QAbstractItemDelegate
 {
 public:
-    BWListDelegate(QObject *parent=0);
+    explicit BWListDelegate(QObject *parent=0);
     virtual ~BWListDelegate();
     void paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const;
     QSize sizeHint(const QStyleOptionViewItem &, const QModelIndex &) const;
@@ -75,7 +77,7 @@ void BWListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 	if(value.isValid() && qvariant_cast<QColor>(value).isValid()) {
 		opt.palette.setColor(QPalette::Text, qvariant_cast<QColor>(value));
 	}
-	QPalette::ColorGroup cg = option.state & QStyle::State_Enabled ? QPalette::Normal : QPalette::Disabled;
+	QPalette::ColorGroup cg = (option.state & QStyle::State_Enabled) ? QPalette::Normal : QPalette::Disabled;
 	if(option.state & QStyle::State_Selected){
 		painter->setPen(opt.palette.color(cg, QPalette::HighlightedText));
 	} else {
@@ -273,9 +275,9 @@ void BwCtrlWindow::updateBandwidth()
 				break;
 			}
 		}
-#endif
 
 		if (!peer_item)
+#endif
 		{
 			/* insert */
 			peer_item = new QTreeWidgetItem();

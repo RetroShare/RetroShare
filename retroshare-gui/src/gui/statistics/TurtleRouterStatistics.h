@@ -34,7 +34,7 @@ class TurtleRouterStatistics: public RsAutoUpdatePage, public Ui::TurtleRouterSt
     Q_OBJECT
 
 public:
-    TurtleRouterStatistics(QWidget *parent = NULL) ;
+    explicit TurtleRouterStatistics(QWidget *parent = NULL) ;
     ~TurtleRouterStatistics();
 
     // Cache for peer names.
@@ -55,7 +55,7 @@ class TurtleRouterStatisticsWidget:  public QWidget
 	Q_OBJECT
 
 	public:
-		TurtleRouterStatisticsWidget(QWidget *parent = NULL) ;
+		explicit TurtleRouterStatisticsWidget(QWidget *parent = NULL) ;
 
 		virtual void paintEvent(QPaintEvent *event) ;
 		virtual void resizeEvent(QResizeEvent *event);

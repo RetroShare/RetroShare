@@ -82,6 +82,7 @@ RsGenExchange::RsGenExchange(RsGeneralDataService *gds, RsNetworkExchangeService
   mLastClean((int)time(NULL) - (int)(RSRandom::random_u32() % MSG_CLEANUP_PERIOD)),	// this helps unsynchronising the checks for the different services
   mMsgCleanUp(NULL),
   mChecking(false),
+  mCheckStarted(false),
   mLastCheck((int)time(NULL) - (int)(RSRandom::random_u32() % INTEGRITY_CHECK_PERIOD) + 120),	// this helps unsynchronising the checks for the different services, with 2 min security to avoid checking right away before statistics come up.
   mIntegrityCheck(NULL),
   CREATE_FAIL(0),
@@ -594,7 +595,6 @@ int RsGenExchange::createMsgSignatures(RsTlvKeySignatureSet& signSet, RsTlvBinar
     {
         // public and shared is publish key
         const RsTlvSecurityKeySet& keys = grpMeta.keys;
-        const RsTlvPrivateRSAKey  *publishKey;
 
         std::map<RsGxsId, RsTlvPrivateRSAKey>::const_iterator mit = keys.private_keys.begin(), mit_end = keys.private_keys.end();
         bool publish_key_found = false;
@@ -609,6 +609,8 @@ int RsGenExchange::createMsgSignatures(RsTlvKeySignatureSet& signSet, RsTlvBinar
 
         if (publish_key_found)
         {
+            const RsTlvPrivateRSAKey  *publishKey;
+
             // private publish key
             publishKey = &(mit->second);
 
@@ -1218,7 +1220,7 @@ bool RsGenExchange::getMsgMeta(const uint32_t &token,
 #ifdef GEN_EXCH_DEBUG
 	std::cerr << "RsGenExchange::getMsgMeta(): retrieving meta data for token " << token << std::endl;
 #endif
-	std::list<RsGxsMsgMetaData*> metaL;
+	//std::list<RsGxsMsgMetaData*> metaL;
 	GxsMsgMetaResult result;
 	bool ok = mDataAccess->getMsgSummary(token, result);
 
@@ -1889,13 +1891,15 @@ void RsGenExchange::processMsgMetaChanges()
     {
         MsgLocMetaData& m = mit->second;
 
-		int32_t value, mask;
+        int32_t value;
         bool ok = true;
         bool changed = false;
 
         // for meta flag changes get flag to apply mask
         if(m.val.getAsInt32(RsGeneralDataService::MSG_META_STATUS, value))
         {
+            int32_t mask;
+
             ok = false;
             if(m.val.getAsInt32(RsGeneralDataService::MSG_META_STATUS+GXS_MASK, mask))
             {
@@ -2105,18 +2109,17 @@ void RsGenExchange::publishMsgs()
 		uint32_t size = mSerialiser->size(msgItem);
 		char* mData = new char[size];
 
-		bool serialOk = false;
-
-		// for fatal sign creation
-		bool createOk = false;
 
 		// if sign requests to try later
 		bool tryLater = false;
 
-		serialOk = mSerialiser->serialise(msgItem, mData, &size);
+		bool serialOk = mSerialiser->serialise(msgItem, mData, &size);
 
 		if(serialOk)
 		{
+			// for fatal sign creation
+			bool createOk = false;
+
 			RsNxsMsg* msg = new RsNxsMsg(mServType);
 			msg->grpId = msgItem->meta.mGroupId;
 
@@ -2201,8 +2204,8 @@ void RsGenExchange::publishMsgs()
 				size = msg->metaData->serial_size();
 
 				char* metaDataBuff = new char[size];
-				bool s = msg->metaData->serialise(metaDataBuff, &size);
-				s &= msg->meta.setBinData(metaDataBuff, size);
+				msg->metaData->serialise(metaDataBuff, &size);
+				msg->meta.setBinData(metaDataBuff, size);
 
 				msg->metaData->mMsgStatus = GXS_SERV::GXS_MSG_STATUS_UNPROCESSED;
 				msgId = msg->msgId;

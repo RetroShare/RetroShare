@@ -165,7 +165,7 @@ void RsControlModule::run()
         if(processShouldExit())
             return;
 
-        bool autoLogin = (initResult == RS_INIT_HAVE_ACCOUNT) | auto_login;
+        bool autoLogin = (initResult == RS_INIT_HAVE_ACCOUNT) || auto_login;
         std::string lockFile;
         int retVal = RsInit::LockAndLoadCertificates(autoLogin, lockFile);
 

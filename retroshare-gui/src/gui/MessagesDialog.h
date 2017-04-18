@@ -32,6 +32,8 @@
 class RSTreeWidgetItemCompareRole;
 class MessageWidget;
 
+#warning: Cppcheck(noConstructor): The class 'MessagesDialog' does not have a constructor.
+// cppcheck-suppress noConstructor
 class MessagesDialog : public MainPage
 {
   Q_OBJECT
@@ -40,7 +42,7 @@ class MessagesDialog : public MainPage
 
 public:
   /** Default Constructor */
-  MessagesDialog(QWidget *parent = 0);
+  explicit MessagesDialog(QWidget *parent = 0);
   /** Default Destructor */
   ~MessagesDialog();
 

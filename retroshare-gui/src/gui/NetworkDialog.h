@@ -27,7 +27,8 @@
 #include "RsAutoUpdatePage.h"
 
 class RSTreeWidgetItemCompareRole ;
-
+#warning: Cppcheck(noConstructor): The class 'NetworkDialog' does not have a constructor.
+// cppcheck-suppress noConstructor
 class NetworkDialog : public RsAutoUpdatePage
 {
   Q_OBJECT
@@ -40,7 +41,7 @@ class NetworkDialog : public RsAutoUpdatePage
 
 public:
   /** Default Constructor */
-  NetworkDialog(QWidget *parent = 0);
+  explicit NetworkDialog(QWidget *parent = 0);
 
   //void load();
   virtual void updateDisplay() ; // overloaded from RsAutoUpdatePage

@@ -268,7 +268,7 @@ class upnpThreadData
 	/* Thread routines */
 extern "C" void* doSetupUPnP(void* p)
 {
-	upnpThreadData *data = (upnpThreadData *) p;
+	upnpThreadData *data = reinterpret_cast<upnpThreadData *>(p);
 	if ((!data) || (!data->handler))
 	{
 		pthread_exit(NULL);
@@ -307,6 +307,7 @@ bool upnphandler::background_setup_upnp(bool start, bool stop)
 	if(!pthread_create(&tid, 0, &doSetupUPnP, (void *) data))
 	{
 		pthread_detach(tid); /* so memory is reclaimed in linux */
+#warning: Cppcheck(memleak): Memory leak: data
 		return true;
 	}
         else
@@ -447,12 +448,12 @@ bool upnphandler::shutdown_upnp()
 		return false;
 	}
 
-	char eprot1[] = "TCP";
-	char eprot2[] = "UDP";
 
 	/* always attempt this (unless no port number) */
 	if (eport_curr > 0)
 	{
+		char eprot1[] = "TCP";
+		char eprot2[] = "UDP";
 
 		char eport1[256];
 		char eport2[256];

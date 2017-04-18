@@ -46,7 +46,7 @@ protected:
 class CreateIdentityTask: public GxsResponseTask
 {
 public:
-    CreateIdentityTask(RsIdentity* idservice):
+    explicit CreateIdentityTask(RsIdentity* idservice):
         GxsResponseTask(idservice, idservice->getTokenService()), mState(BEGIN), mToken(0), mRsIdentity(idservice){}
 private:
     enum State {BEGIN, WAIT_ACKN, WAIT_ID};
@@ -155,7 +155,7 @@ void IdentityHandler::handleWildcard(Request & /*req*/, Response &resp)
 	{
 		std::vector<RsGxsIdGroup> grps;
 		ok &= mRsIdentity->getGroupData(token, grps);
-		for(std::vector<RsGxsIdGroup>::iterator vit = grps.begin(); vit != grps.end(); vit++)
+		for(std::vector<RsGxsIdGroup>::iterator vit = grps.begin(); vit != grps.end(); ++vit)
 		{
 			RsGxsIdGroup& grp = *vit;
 			//electron: not very happy about this, i think the flags should stay hidden in rsidentities

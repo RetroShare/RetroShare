@@ -68,7 +68,7 @@ TEST(libretroshare_serialiser, test_RsTlvBase)
 	//std::cout << "GetTlvSize = " <<t <<std::endl;
 	
 	
-	std::string line;
+	//std::string line;
 	
 	
 	//*************Test SetTlvBase***********
@@ -93,19 +93,19 @@ TEST(libretroshare_serialiser, test_RsTlvBase)
 	*/
 	{
 		uint16_t data4[5];
-		bool ok = true;
 		uint32_t off =0;
 		uint32_t pre_set_off = off;
 		uint32_t* offset = &off;
 		uint32_t out = 3324;
 		*offset =0;
-		ok = SetTlvUInt32((void*)data4, 10, offset, 0x0011, out);
+		bool ok = SetTlvUInt32((void*)data4, 10, offset, 0x0011, out);
 		EXPECT_TRUE(*offset - pre_set_off == 10);
 		
 		uint32_t readPos = 0;
 		offset = &readPos;
 		uint32_t in =0;
 		ok &= GetTlvUInt32((void*)data4, 10, offset, 0x0011, &in);
+		if (ok) {;}
 		EXPECT_TRUE(*offset - pre_set_off == 10);
 		EXPECT_TRUE(in == out);
 		

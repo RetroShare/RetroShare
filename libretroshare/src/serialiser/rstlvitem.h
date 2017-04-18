@@ -48,8 +48,8 @@ virtual	void	 TlvShallowClear(); /*! Don't delete allocated data */
 virtual bool     SetTlv(void *data, uint32_t size, uint32_t *offset) const = 0; /* serialise   */
 virtual bool     GetTlv(void *data, uint32_t size, uint32_t *offset) = 0; /* deserialise */
 virtual std::ostream &print(std::ostream &out, uint16_t indent) const = 0;
-std::ostream &printBase(std::ostream &out, std::string clsName, uint16_t indent) const;
-std::ostream &printEnd(std::ostream &out, std::string clsName, uint16_t indent) const;
+std::ostream &printBase(std::ostream &out, const std::string &clsName, uint16_t indent) const;
+std::ostream &printEnd(std::ostream &out, const std::string &clsName, uint16_t indent) const;
 };
 
 std::ostream &printIndent(std::ostream &out, uint16_t indent);
@@ -58,7 +58,7 @@ std::ostream &printIndent(std::ostream &out, uint16_t indent);
 class RsTlvUnit: public RsTlvItem
 {
 	public:
-	 RsTlvUnit(uint16_t tlv_type);
+	 explicit RsTlvUnit(uint16_t tlv_type);
 virtual ~RsTlvUnit() { return; }
 virtual uint32_t TlvSize() const;
 virtual bool     SetTlv(void *data, uint32_t size, uint32_t *offset) const;

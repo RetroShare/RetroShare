@@ -33,6 +33,8 @@ namespace RsRegularExpression { class Expression; }
 
 #define FRIEND_SEARCH 1
 #define ANONYMOUS_SEARCH 2
+#warning: Cppcheck(noConstructor): The class 'SearchDialog' does not have a constructor.
+// cppcheck-suppress noConstructor
 class SearchDialog : public MainPage
 {
     Q_OBJECT
@@ -45,7 +47,7 @@ class SearchDialog : public MainPage
 
 public:
 /** Default Constructor */
-    SearchDialog(QWidget *parent = 0);
+    explicit SearchDialog(QWidget *parent = 0);
 /** Default Destructor */
     ~SearchDialog();
 

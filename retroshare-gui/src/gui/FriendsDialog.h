@@ -52,7 +52,7 @@ public:
 		 };
 
     /** Default Constructor */
-    FriendsDialog(QWidget *parent = 0);
+    explicit FriendsDialog(QWidget *parent = 0);
     /** Default Destructor */
     ~FriendsDialog ();
 

@@ -29,7 +29,7 @@ class TransferUserNotify : public UserNotify
 	Q_OBJECT
 
 public:
-	TransferUserNotify(QObject *parent = 0);
+	explicit TransferUserNotify(QObject *parent = 0);
 
 	virtual bool hasSetting(QString *name, QString *group);
 

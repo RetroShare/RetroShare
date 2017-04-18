@@ -16,7 +16,7 @@
 #include "gxstestservice.h"
 
 GxsIsolatedServiceTester::GxsIsolatedServiceTester(const RsPeerId &ownId, const RsPeerId &friendId, 
-				std::list<RsPeerId> peers, int testMode)
+				std::list<RsPeerId> &peers, int testMode)
 	:IsolatedServiceTester(ownId, peers),
 	mTestMode(testMode),
 	mGxsDir("./gxs_unittest/"),

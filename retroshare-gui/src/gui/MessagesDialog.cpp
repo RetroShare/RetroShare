@@ -846,7 +846,6 @@ void MessagesDialog::insertMessages()
     std::list<MsgInfoSummary> msgList;
     std::list<MsgInfoSummary>::const_iterator it;
     MessageInfo msgInfo;
-    bool gotInfo;
     QString text;
 
     RsPeerId ownId = rsPeers->getOwnId();
@@ -1033,7 +1032,7 @@ void MessagesDialog::insertMessages()
              *
              */
 
-            gotInfo = false;
+            bool gotInfo = false;
             msgInfo = MessageInfo(); // clear
 
             // search exisisting items
@@ -1468,7 +1467,7 @@ void MessagesDialog::setMsgStar(const QList<QTreeWidgetItem*> &items, bool star)
 void MessagesDialog::insertMsgTxtAndFiles(QTreeWidgetItem *item, bool bSetToRead)
 {
     /* get its Ids */
-    std::string cid;
+    // std::string cid;
     std::string mid;
 
     if (item == NULL) {

@@ -31,7 +31,7 @@ namespace ObjectPainter
 class DrawButton : public QPushButton
 {
 public:
-	DrawButton(const QString &text) : QPushButton(text) {}
+	explicit DrawButton(const QString &text) : QPushButton(text) {}
 
 	void drawOnPixmap(QPixmap &pixmap)
 	{

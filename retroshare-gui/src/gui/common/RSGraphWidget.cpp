@@ -523,6 +523,7 @@ void RSGraphWidget::paintLine(const QVector<QPointF>& points, QColor color, Qt::
 /** Paints selected total indicators on the graph. */
 void RSGraphWidget::paintTotals()
 {
+/*
     float FS = QFontMetricsF(font()).height();
     //float fact = FS/14.0 ;
 
@@ -530,9 +531,10 @@ void RSGraphWidget::paintTotals()
   int rowHeight = FS;
 
 #if !defined(Q_OS_MAC)
-  /* On Mac, we don't need vertical spacing between the text rows. */
+  // On Mac, we don't need vertical spacing between the text rows.
   rowHeight += 5;
 #endif
+*/
 }
 
 /** Returns a formatted string with the correct size suffix. */

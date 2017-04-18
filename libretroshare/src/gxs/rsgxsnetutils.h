@@ -92,8 +92,8 @@ class RsNxsNetMgrImpl : public RsNxsNetMgr
 
 public:
 
-    RsNxsNetMgrImpl(p3ServiceControl* sc);
-    virtual ~RsNxsNetMgrImpl(){};
+    explicit RsNxsNetMgrImpl(p3ServiceControl* sc);
+    virtual ~RsNxsNetMgrImpl(){}
 
     virtual const RsPeerId& getOwnId();
     virtual void getOnlineList(const uint32_t serviceId, std::set<RsPeerId>& ssl_peers);
@@ -266,7 +266,7 @@ class GrpCircleIdRequestVetting : public GrpCircleVetting
 public:
 	GrpCircleIdRequestVetting(RsGcxs* const circles, 
 			PgpAuxUtils *pgpUtils, 
-			std::vector<GrpIdCircleVet> mGrpCircleV, const RsPeerId& peerId);
+			std::vector<GrpIdCircleVet> &mGrpCircleV, const RsPeerId& peerId);
 	bool cleared();
 	int getType() const;
 	std::vector<GrpIdCircleVet> mGrpCircleV;
@@ -278,7 +278,7 @@ class MsgCircleIdsRequestVetting : public GrpCircleVetting
 public:
 	MsgCircleIdsRequestVetting(RsGcxs* const circles, 
 			PgpAuxUtils *auxUtils, 
-			std::vector<MsgIdCircleVet> msgs, const RsGxsGroupId& grpId,
+			std::vector<MsgIdCircleVet> &msgs, const RsGxsGroupId& grpId,
 			const RsPeerId& peerId, const RsGxsCircleId& circleId);
 	bool cleared();
 	int getType() const;

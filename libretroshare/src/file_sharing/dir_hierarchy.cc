@@ -861,7 +861,7 @@ void InternalFileHierarchyStorage::print() const
     int nfiles = 0 ;
     int ndirs = 0 ;
     int nempty = 0 ;
-    int nunknown = 0;
+    //int nunknown = 0;
 
     for(uint32_t i=0;i<mNodes.size();++i)
         if(mNodes[i] == NULL)
@@ -881,7 +881,7 @@ void InternalFileHierarchyStorage::print() const
         }
         else
         {
-            ++nunknown;
+            //++nunknown;
             std::cerr << "(EE) Error: unknown type node found!" << std::endl;
         }
 
@@ -955,8 +955,6 @@ bool InternalFileHierarchyStorage::recursRemoveDirectory(DirectoryStorage::Entry
 bool InternalFileHierarchyStorage::save(const std::string& fname)
 {
     unsigned char *buffer = NULL ;
-    uint32_t buffer_size = 0 ;
-    uint32_t buffer_offset = 0 ;
 
     unsigned char *tmp_section_data = (unsigned char*)rs_malloc(FL_BASE_TMP_SECTION_SIZE) ;
 
@@ -967,6 +965,8 @@ bool InternalFileHierarchyStorage::save(const std::string& fname)
 
     try
     {
+        uint32_t buffer_size = 0 ;
+        uint32_t buffer_offset = 0 ;
         // Write some header
 
         if(!FileListIO::writeField(buffer,buffer_size,buffer_offset,FILE_LIST_IO_TAG_LOCAL_DIRECTORY_VERSION,(uint32_t) FILE_LIST_IO_LOCAL_DIRECTORY_STORAGE_VERSION_0001)) throw std::runtime_error("Write error") ;
@@ -1050,7 +1050,7 @@ public:
         s << "At offset " << offset << "/" << size << ": expected section tag " << std::hex << (int)expected_tag << std::dec << " but got " << RsUtil::BinToHex(&sec[offset],std::min((int)size-(int)offset, 15)) << "..." << std::endl;
         err_string = s.str();
     }
-    read_error(const std::string& s) : err_string(s) {}
+    explicit read_error(const std::string& s) : err_string(s) {}
 
     const std::string& what() const { return err_string ; }
 private:
@@ -1060,8 +1060,6 @@ private:
 bool InternalFileHierarchyStorage::load(const std::string& fname)
 {
     unsigned char *buffer = NULL ;
-    uint32_t buffer_size = 0 ;
-    uint32_t buffer_offset = 0 ;
 
     mFreeNodes.clear();
     mTotalFiles = 0;
@@ -1069,6 +1067,8 @@ bool InternalFileHierarchyStorage::load(const std::string& fname)
 
     try
     {
+        uint32_t buffer_size = 0 ;
+        uint32_t buffer_offset = 0 ;
         if(!FileListIO::loadEncryptedDataFromFile(fname,buffer,buffer_size) )
             throw read_error("Cannot decrypt") ;
 

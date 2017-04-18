@@ -1989,9 +1989,9 @@ bool  ftController::loadConfigMap(std::map<std::string, std::string> &configMap)
 {
 	std::map<std::string, std::string>::iterator mit;
 
-	std::string str_true("true");
-	std::string empty("");
-	std::string dir = "notempty";
+	//std::string str_true("true");
+	//std::string empty("");
+	//std::string dir = "notempty";
 
 	if (configMap.end() != (mit = configMap.find(download_dir_ss)))
 		setDownloadDirectory(mit->second);

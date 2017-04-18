@@ -126,6 +126,7 @@ AuthGPG::AuthGPG(const std::string& path_to_public_keyring,const std::string& pa
 	gpgMtxService("AuthGPG-service"),
 	gpgMtxEngine("AuthGPG-engine"), 
 	gpgMtxData("AuthGPG-data"),
+	mStoreKeyTime(0),
 	gpgKeySelected(false) 
 {
 	_force_sync_database = false ;

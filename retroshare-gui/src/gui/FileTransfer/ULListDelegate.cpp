@@ -57,7 +57,7 @@ void ULListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 	if(value.isValid() && qvariant_cast<QColor>(value).isValid()) {
 		opt.palette.setColor(QPalette::Text, qvariant_cast<QColor>(value));
 	}
-	QPalette::ColorGroup cg = option.state & QStyle::State_Enabled ? QPalette::Normal : QPalette::Disabled;
+	QPalette::ColorGroup cg = (option.state & QStyle::State_Enabled) ? QPalette::Normal : QPalette::Disabled ;
 	if(option.state & QStyle::State_Selected){
 		painter->setPen(opt.palette.color(cg, QPalette::HighlightedText));
 	} else {
@@ -153,7 +153,9 @@ void ULListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
         case COLUMN_UNAME:
         		// decoration
 			value = index.data(Qt::DecorationRole);
-			pixmap = qvariant_cast<QIcon>(value).pixmap(option.decorationSize, option.state & QStyle::State_Enabled ? QIcon::Normal : QIcon::Disabled, option.state & QStyle::State_Open ? QIcon::On : QIcon::Off);
+			pixmap = qvariant_cast<QIcon>(value).pixmap( option.decorationSize
+			                                           , (option.state & QStyle::State_Enabled) ? QIcon::Normal : QIcon::Disabled
+			                                           , (option.state & QStyle::State_Open) ? QIcon::On : QIcon::Off );
 			pixmapRect = (pixmap.isNull() ? QRect(0, 0, 0, 0): QRect(QPoint(0, 0), option.decorationSize));
 			if (pixmapRect.isValid()){
 				QPoint p = QStyle::alignedRect(option.direction, Qt::AlignLeft, pixmap.size(), option.rect).topLeft();

@@ -30,7 +30,7 @@ rs_nxs_test::NxsMsgSync::NxsMsgSync()
 
 
 	std::list<RsPeerId>::iterator it = mPeerIds.begin();
-	for(; it != mPeerIds.end(); it++)
+	for(; it != mPeerIds.end(); ++it)
 	{
 		// data stores
 		RsGeneralDataService* ds = createDataStore(*it, mServType);
@@ -74,7 +74,7 @@ rs_nxs_test::NxsMsgSync::NxsMsgSync()
 
 		// add a clone of group into the peer's service
 		// then create 2 msgs for each peer for each group
-		for(; mit != mDataServices.end(); mit++)
+		for(; mit != mDataServices.end(); ++mit)
 		{
 			// first store grp
 			RsGeneralDataService* ds = mit->second;
@@ -105,7 +105,7 @@ rs_nxs_test::NxsMsgSync::NxsMsgSync()
 				it = mPeerIds.begin();
 
 				// the expectation is that all peers have the same messages
-				for(; it != mPeerIds.end(); it++)
+				for(; it != mPeerIds.end(); ++it)
 				{
 					NxsMsgTestScenario::ExpectedMsgs& expMsgs = expMap[peerId];
 					expMsgs[grpId].push_back(msgId);

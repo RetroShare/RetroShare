@@ -38,7 +38,7 @@ class CreateGxsChannelMsg : public QDialog, public TokenResponse, private Ui::Cr
 
 public:
 	/** Default Constructor */
-    CreateGxsChannelMsg(const RsGxsGroupId& cId);
+	explicit CreateGxsChannelMsg(const RsGxsGroupId& cId);
 
 	/** Default Destructor */
 	~CreateGxsChannelMsg();

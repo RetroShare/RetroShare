@@ -235,7 +235,7 @@ static ops_boolean_t rsa_sign(ops_hash_t *hash, const ops_rsa_public_key_t *rsa,
 	hashbuf[0]=0;
 	hashbuf[1]=1;
 	if (debug)
-		printf("rsa_sign: PS is %d\n", keysize-hashsize-1-2);
+		printf("rsa_sign: PS is %ud\n", keysize-hashsize-1-2);
 	for(n=2 ; n < keysize-hashsize-1 ; ++n)
 		hashbuf[n]=0xff;
 	hashbuf[n++]=0;
@@ -999,9 +999,8 @@ static int open_output_file(ops_create_info_t **cinfo,
         fd_out=ops_setup_file_write(cinfo, output_filename, overwrite);
     else
         {
-        char *myfilename=NULL;
         unsigned filenamelen=strlen(input_filename)+4+1;
-        myfilename=ops_mallocz(filenamelen);
+        char *myfilename=ops_mallocz(filenamelen);
         if (use_armour)
             snprintf(myfilename, filenamelen, "%s.asc", input_filename);
         else
@@ -1265,13 +1264,12 @@ ops_boolean_t ops_sign_file(const char* input_filename,
     ops_hash_algorithm_t hash_alg=OPS_HASH_SHA1;
     ops_sig_type_t sig_type=OPS_SIG_BINARY;
 
-    ops_memory_t* mem_buf=NULL;
     ops_hash_t* hash=NULL;
 
     // read input file into buf
 
     int errnum;
-    mem_buf=ops_write_mem_from_file(input_filename, &errnum);
+    ops_memory_t* mem_buf=ops_write_mem_from_file(input_filename, &errnum);
     if (errnum)
         return ops_false;
 
@@ -1386,7 +1384,6 @@ ops_memory_t* ops_sign_buf(const void* input, const size_t input_len,
     // \todo allow choice of hash algorithams
     // enforce use of SHA1 for now
 
-    unsigned char keyid[OPS_KEY_ID_SIZE];
     ops_create_signature_t *sig=NULL;
 
     ops_create_info_t *cinfo=NULL;
@@ -1444,6 +1441,7 @@ ops_memory_t* ops_sign_buf(const void* input, const size_t input_len,
 
 	 if(include_key_id)
 	 {
+		unsigned char keyid[OPS_KEY_ID_SIZE];
 		 ops_keyid(keyid, &skey->public_key);
 		 ops_signature_add_issuer_key_id(sig, keyid);
 	 }

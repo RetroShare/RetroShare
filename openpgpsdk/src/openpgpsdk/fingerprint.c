@@ -52,7 +52,6 @@ void ops_fingerprint(ops_fingerprint_t *fp,const ops_public_key_t *key)
     {
     if(key->version == 2 || key->version == 3)
 	{
-	unsigned char *bn;
 	int n;
 	ops_hash_t md5;
 
@@ -64,14 +63,14 @@ void ops_fingerprint(ops_fingerprint_t *fp,const ops_public_key_t *key)
 	md5.init(&md5);
 
 	n=BN_num_bytes(key->key.rsa.n);
-	bn=alloca(n);
-	BN_bn2bin(key->key.rsa.n,bn);
-	md5.add(&md5,bn,n);
+	unsigned char bn1[n];
+	BN_bn2bin(key->key.rsa.n,bn1);
+	md5.add(&md5,bn1,n);
 
 	n=BN_num_bytes(key->key.rsa.e);
-	bn=alloca(n);
-	BN_bn2bin(key->key.rsa.e,bn);
-	md5.add(&md5,bn,n);
+	unsigned char bn2[n];
+	BN_bn2bin(key->key.rsa.e,bn2);
+	md5.add(&md5,bn2,n);
 
 	md5.finish(&md5,fp->fingerprint);
 	fp->length=16;

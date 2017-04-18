@@ -102,7 +102,9 @@ public:
 	static const uint8_t FLAG_USE_SYNC_HASH;
 	static const uint8_t FLAG_ONLY_CURRENT; // only send most current version of grps / ignores sync hash
 
-	RsNxsSyncGrpReqItem(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_SYNC_GRP_REQ_ITEM) { clear(); return;}
+	explicit RsNxsSyncGrpReqItem(uint16_t servtype)
+	  : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_SYNC_GRP_REQ_ITEM)
+	{ clear(); return;}
 
 	virtual void clear();
 	virtual std::ostream &print(std::ostream &out, uint16_t indent);
@@ -123,7 +125,10 @@ class RsNxsSyncGrpStatsItem : public RsNxsItem
 {
 public:
 
-    RsNxsSyncGrpStatsItem(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_SYNC_GRP_STATS_ITEM) {}
+    explicit RsNxsSyncGrpStatsItem(uint16_t servtype)
+      : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_SYNC_GRP_STATS_ITEM)
+      , request_type(0), number_of_posts(0), last_post_TS(0)
+    {}
 
     virtual void clear() {}
     virtual std::ostream &print(std::ostream &out, uint16_t indent);
@@ -148,7 +153,9 @@ public:
 class RsNxsGroupPublishKeyItem : public RsNxsItem
 {
 public:
-    RsNxsGroupPublishKeyItem(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_GRP_PUBLISH_KEY_ITEM) { clear(); return;}
+    explicit RsNxsGroupPublishKeyItem(uint16_t servtype)
+      : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_GRP_PUBLISH_KEY_ITEM)
+    { clear(); return;}
 
     virtual void clear();
     virtual std::ostream &print(std::ostream &out, uint16_t indent);
@@ -193,7 +200,9 @@ public:
     static const uint16_t FLAG_TYPE_MSGS;
     static const uint16_t FLAG_TYPE_ENCRYPTED_DATA;
 
-    RsNxsTransacItem(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_TRANSAC_ITEM) { clear(); return; }
+    explicit RsNxsTransacItem(uint16_t servtype)
+      : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_TRANSAC_ITEM)
+    { clear(); return; }
     virtual ~RsNxsTransacItem() { return ; }
 
 	virtual bool serialise(void *data,uint32_t& size) const;	
@@ -223,7 +232,9 @@ public:
     static const uint8_t FLAG_RESPONSE;
     static const uint8_t FLAG_USE_SYNC_HASH;
 
-    RsNxsSyncGrpItem(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_SYNC_GRP_ITEM) { clear(); return ; }
+    explicit RsNxsSyncGrpItem(uint16_t servtype)
+      : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_SYNC_GRP_ITEM)
+    { clear(); return ; }
     virtual ~RsNxsSyncGrpItem() { return; }
 
 	virtual bool serialise(void *data,uint32_t& size) const;	
@@ -252,7 +263,9 @@ class RsNxsSessionKeyItem : public RsNxsItem
 
 public:
 
-    RsNxsSessionKeyItem(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_SESSION_KEY_ITEM) { clear(); }
+    explicit RsNxsSessionKeyItem(uint16_t servtype)
+      : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_SESSION_KEY_ITEM)
+    { clear(); }
     virtual ~RsNxsSessionKeyItem() {}
 
 	virtual bool serialise(void *data,uint32_t& size) const;	
@@ -275,7 +288,9 @@ class RsNxsEncryptedDataItem : public RsNxsItem
 
 public:
 
-    RsNxsEncryptedDataItem(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_ENCRYPTED_DATA_ITEM),encrypted_data(servtype) 
+    explicit RsNxsEncryptedDataItem(uint16_t servtype)
+      : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_ENCRYPTED_DATA_ITEM)
+      ,encrypted_data(servtype)
     { 
 	encrypted_data.tlvtype = TLV_TYPE_BIN_ENCRYPTED ;
 	clear(); 
@@ -304,8 +319,10 @@ class RsNxsGrp : public RsNxsItem
 
 public:
 
-    RsNxsGrp(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_GRP_ITEM), grp(servtype), meta(servtype),
-    metaData(NULL) { clear();
+    explicit RsNxsGrp(uint16_t servtype)
+      : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_GRP_ITEM)
+      , grp(servtype), meta(servtype), metaData(NULL)
+    { clear();
     //std::cout << "\nGrp refcount++ : " << ++refcount << std::endl;
     return; }
     virtual ~RsNxsGrp() { if(metaData) delete metaData;
@@ -353,7 +370,9 @@ public:
 #endif
     static const uint8_t FLAG_USE_HASHED_GROUP_ID;
 
-    RsNxsSyncMsgReqItem(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_SYNC_MSG_REQ_ITEM) { clear(); return; }
+    explicit RsNxsSyncMsgReqItem(uint16_t servtype)
+      : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_SYNC_MSG_REQ_ITEM)
+    { clear(); return; }
 
     virtual bool serialise(void *data,uint32_t& size) const;	
     virtual uint32_t serial_size() const; 			
@@ -379,7 +398,9 @@ public:
     static const uint8_t FLAG_REQUEST;
     static const uint8_t FLAG_RESPONSE;
     static const uint8_t FLAG_USE_SYNC_HASH;
-    RsNxsSyncMsgItem(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_SYNC_MSG_ITEM) { clear(); return; }
+    explicit RsNxsSyncMsgItem(uint16_t servtype)
+      : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_SYNC_MSG_ITEM)
+    { clear(); return; }
 
 	virtual bool serialise(void *data,uint32_t& size) const;	
 	virtual uint32_t serial_size() const; 			
@@ -403,8 +424,10 @@ class RsNxsMsg : public RsNxsItem
 {
 public:
 
-    RsNxsMsg(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_MSG_ITEM), meta(servtype), msg(servtype),
-    metaData(NULL) {
+    explicit RsNxsMsg(uint16_t servtype)
+      : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_MSG_ITEM)
+      , pos(0), count(0), meta(servtype), msg(servtype), metaData(NULL)
+    {
     //	std::cout << "\nrefcount++ : " << ++refcount << std::endl;
     	clear(); return;
     }
@@ -452,7 +475,10 @@ class RsNxsSearchReqItem : public RsNxsItem
 {
 public:
 
-    RsNxsSearchReqItem(uint16_t servtype): RsNxsItem(servtype, RS_PKT_SUBTYPE_EXT_SEARCH_REQ), serviceSearchItem(servtype) { return; }
+    explicit RsNxsSearchReqItem(uint16_t servtype)
+      : RsNxsItem(servtype, RS_PKT_SUBTYPE_EXT_SEARCH_REQ)
+      , nHops(0), token(0), serviceSearchItem(servtype), expiration(0)
+    { return; }
     virtual ~RsNxsSearchReqItem() { return;}
 
 	virtual bool serialise(void *data,uint32_t& size) const;	
@@ -476,7 +502,9 @@ class RsNxsSearchResultMsgItem
 {
 public:
 
-    RsNxsSearchResultMsgItem() : context(0) { return;}
+    RsNxsSearchResultMsgItem()
+      : token(0), context(0), expiration(0)
+    { return;}
     
 	virtual bool serialise(void *data,uint32_t& size) const;	
 	virtual uint32_t serial_size() const; 			
@@ -550,8 +578,10 @@ class RsNxsSerialiser : public RsSerialType
 {
 public:
 
-    RsNxsSerialiser(uint16_t servtype) :
-            RsSerialType(RS_PKT_VERSION_SERVICE, servtype), SERVICE_TYPE(servtype) { return; }
+    explicit RsNxsSerialiser(uint16_t servtype)
+      : RsSerialType(RS_PKT_VERSION_SERVICE, servtype)
+      , SERVICE_TYPE(servtype)
+    { return; }
 
     virtual ~RsNxsSerialiser() { return; }
 

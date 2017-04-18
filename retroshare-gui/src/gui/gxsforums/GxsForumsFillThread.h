@@ -16,7 +16,7 @@ class GxsForumsFillThread : public QThread
 	Q_OBJECT
 
 public:
-	GxsForumsFillThread(GxsForumThreadWidget *parent);
+	explicit GxsForumsFillThread(GxsForumThreadWidget *parent);
 	~GxsForumsFillThread();
 
 	void run();

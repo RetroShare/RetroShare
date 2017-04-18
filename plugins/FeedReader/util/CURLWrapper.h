@@ -29,7 +29,7 @@
 class CURLWrapper
 {
 public:
-	CURLWrapper(const std::string &proxy);
+	explicit CURLWrapper(const std::string &proxy);
 	~CURLWrapper();
 
 	CURLcode downloadText(const std::string &link, std::string &data);

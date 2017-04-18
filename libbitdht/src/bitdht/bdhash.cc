@@ -51,7 +51,7 @@ int 	bdHashSet::search(std::string key, uint32_t maxAge, std::list<bdHashEntry> 
 
 	time_t now = time(NULL);
 
-	for(it = sit; it != eit; it++)
+	for(it = sit; it != eit; ++it)
 	{
 		time_t age = now - it->second.mStoreTS;
 		if (age < (int32_t) maxAge)
@@ -80,7 +80,7 @@ int 	bdHashSet::modify(std::string key, bdHashEntry *entry, uint32_t modFlags)
 	time_t now = time(NULL);
 
 	bool updated = false;
-	for(it = sit; it != eit; it++)
+	for(it = sit; it != eit; ++it)
 	{
 		/* check it all */
 		if (it->second.mValue == entry->mValue)
@@ -143,7 +143,7 @@ int	bdHashSet::printHashSet(std::ostream &out)
 	bdStdPrintNodeId(out, &mId); // Allowing "Std" as we dont need dht functions everywhere.
 	out << std::endl;
 
-	for(it = mEntries.begin(); it != mEntries.end();it++)
+	for(it = mEntries.begin(); it != mEntries.end();++it)
 	{
 		time_t age = now - it->second.mStoreTS;
 		out << "\tK:" << bdStdConvertToPrintable(it->first);
@@ -177,7 +177,7 @@ int	bdHashSet::cleanupHashSet(uint32_t maxAge)
 		}
 		else
 		{
-			it++;
+			++it;
 		}
 	}
 	return 1;
@@ -235,7 +235,7 @@ int     bdHashSpace::printHashSpace(std::ostream &out)
 	out << "bdHashSpace::printHashSpace()" << std::endl;
 	out << "--------------------------------------------" << std::endl;
 	
-	for(it = mHashTable.begin(); it != mHashTable.end(); it++)
+	for(it = mHashTable.begin(); it != mHashTable.end(); ++it)
 	{
 		it->second.printHashSet(out);
 	}
@@ -247,9 +247,9 @@ int     bdHashSpace::cleanHashSpace(bdNodeId *min, bdNodeId *max, time_t maxAge)
 {
 	std::map<bdNodeId, bdHashSet>::iterator it;
 	std::list<bdNodeId> eraseList;
-	std::list<bdNodeId>::iterator eit;
+	//std::list<bdNodeId>::iterator eit;
 
-	for(it = mHashTable.begin(); it != mHashTable.end(); it++)
+	for(it = mHashTable.begin(); it != mHashTable.end(); ++it)
 	{
 		if ((it->first < *min) ||
 			(*max < it->first))

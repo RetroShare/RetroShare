@@ -61,6 +61,7 @@ RsPluginHashSetItem::RsPluginHashSetItem(void *data,uint32_t size)
 
 #ifdef WINDOWS_SYS // No Exceptions in Windows compile. (drbobs).
 	UNREFERENCED_LOCAL_VARIABLE(rssize);
+	if (!ok) {;}
 #else
 	if (!ok)
 		throw std::runtime_error("Unknown error while deserializing.") ;

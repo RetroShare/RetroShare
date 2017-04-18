@@ -79,7 +79,7 @@ class GRouterDataInfo
 {
     // ! This class does not have a copy constructor that duplicates the incoming data buffer. This is on purpose!
 public:
-    GRouterDataInfo()
+    GRouterDataInfo() : last_activity_TS(0)
     {
         incoming_data_buffer = NULL ;
     }
@@ -183,7 +183,9 @@ public:
                              SERVICE_INFO_MIN_MINOR_VERSION) ;
     }
 
+/* UNUSED
     virtual void setDebugEnabled(bool b) { _debug_enabled = b ; }
+*/
 
     virtual void connectToTurtleRouter(p3turtle *pt) ;
 

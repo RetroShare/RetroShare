@@ -11,7 +11,7 @@
 #include <iostream>
 
 RSButtonOnText::RSButtonOnText(QWidget *parent)
-  : QPushButton(parent)
+  : QPushButton(parent), _textEdit(NULL), _textEditViewPort(NULL), _textCursor(NULL)
 {
 	_uuid = QUuid::createUuid().toString();
 	_lenght = -1;
@@ -19,7 +19,7 @@ RSButtonOnText::RSButtonOnText(QWidget *parent)
 	_pressed = false;
 }
 RSButtonOnText::RSButtonOnText(const QString &text, QWidget *parent)
-  : QPushButton(parent)
+  : QPushButton(parent), _textEdit(NULL), _textEditViewPort(NULL), _textCursor(NULL)
   //: RSButtonOnText(parent)//delegating constructors only available with -std=c++11 or -std=gnu++11
 {
 	_uuid = QUuid::createUuid().toString();
@@ -30,7 +30,7 @@ RSButtonOnText::RSButtonOnText(const QString &text, QWidget *parent)
 }
 
 RSButtonOnText::RSButtonOnText(const QIcon& icon, const QString &text, QWidget *parent)
-  : QPushButton(parent)
+  : QPushButton(parent), _textEdit(NULL), _textEditViewPort(NULL), _textCursor(NULL)
   //: RSButtonOnText(text, parent)//delegating constructors only available with -std=c++11 or -std=gnu++11
 {
 	_uuid = QUuid::createUuid().toString();
