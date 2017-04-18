@@ -165,7 +165,7 @@ again:
 
 			/* build the helpapr_table_t for radix64 to bin conversion */
 			for (i = 0; i < 256; i++)
-				asctobin()[i] = (char)255;	/* used to detect invalid characters */
+				asctobin()[i] = 255;	/* used to detect invalid characters */
 			for (s = bintoasc(), i = 0; *s; s++, i++)
 				asctobin()[(int)*s] = i;
 
