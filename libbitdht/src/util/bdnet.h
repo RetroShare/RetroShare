@@ -103,8 +103,6 @@ int bdnet_inet_aton(const char *name, struct in_addr *addr);
 int bdnet_checkTTL(int fd);
 
 void	bdsockaddr_clear(struct sockaddr_in *addr);
-/* thread-safe version of inet_ntoa */
-std::string bdnet_inet_ntoa(struct in_addr in);
 
 /* Extra stuff to declare for windows error handling (mimics unix errno)
  */
