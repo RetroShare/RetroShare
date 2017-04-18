@@ -309,8 +309,8 @@ void RetroShareLink::fromUrl(const QUrl& url)
 
     if(url.host() == HOST_IDENTITY) {
         _type = TYPE_IDENTITY ;
-        QString name = urlQuery.queryItemValue(IDENTITY_NAME) ;
-        QString radix= urlQuery.queryItemValue(IDENTITY_GROUP) ;
+        QString name = decodedQueryItemValue(urlQuery, IDENTITY_NAME) ;
+        QString radix= decodedQueryItemValue(urlQuery, IDENTITY_GROUP) ;
         QString gxsid= urlQuery.queryItemValue(IDENTITY_ID) ;
 
         RsGxsId id(gxsid.toStdString()) ;
@@ -331,7 +331,7 @@ void RetroShareLink::fromUrl(const QUrl& url)
 
 	if (url.host() == HOST_CERTIFICATE) {
 		_type = TYPE_CERTIFICATE;
-		_radix = urlQuery.queryItemValue(CERTIFICATE_RADIX);
+		_radix = decodedQueryItemValue(urlQuery, CERTIFICATE_RADIX);
 
 #ifdef DEBUG_RSLINK
         std::cerr << "Got a certificate link!!" << std::endl;
@@ -765,7 +765,7 @@ QString RetroShareLink::toString() const
         	url.setHost(HOST_IDENTITY) ;
             urlQuery.addQueryItem(IDENTITY_ID,_hash) ;
             urlQuery.addQueryItem(IDENTITY_NAME,encodeItem(_name)) ;
-            urlQuery.addQueryItem(IDENTITY_GROUP,_radix_group_data) ;
+            urlQuery.addQueryItem(IDENTITY_GROUP,encodeItem(_radix_group_data)) ;
         	break ;
 
 		case TYPE_EXTRAFILE:
@@ -839,9 +839,9 @@ QString RetroShareLink::toString() const
 		case TYPE_CERTIFICATE:
 			url.setScheme(RSLINK_SCHEME);
 			url.setHost(HOST_CERTIFICATE) ;
-			urlQuery.addQueryItem(CERTIFICATE_RADIX, _radix);
-			urlQuery.addQueryItem(CERTIFICATE_NAME, _name);
-			urlQuery.addQueryItem(CERTIFICATE_LOCATION, _location);
+			urlQuery.addQueryItem(CERTIFICATE_RADIX, encodeItem(_radix));
+			urlQuery.addQueryItem(CERTIFICATE_NAME, encodeItem(_name));
+			urlQuery.addQueryItem(CERTIFICATE_LOCATION, encodeItem(_location));
 			break;
 	}
 
