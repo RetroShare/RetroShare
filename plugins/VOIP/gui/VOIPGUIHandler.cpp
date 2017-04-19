@@ -155,7 +155,7 @@ void VOIPGUIHandler::ReceivedVoipBandwidthInfo(const RsPeerId &peer_id, int byte
 #endif
 
 	ChatDialog *di = ChatDialog::getExistingChat(ChatId(peer_id)) ;
-	if(!di)
+	if(di)
 	{
 
 		ChatWidget *cw = di->getChatWidget();
