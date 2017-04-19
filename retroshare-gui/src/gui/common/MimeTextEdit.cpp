@@ -77,6 +77,7 @@ void MimeTextEdit::insertFromMimeData(const QMimeData* source)
 		}
 	}
 #endif
+	if (source == NULL) return;
 
 	//insert retroshare links
 	QList<RetroShareLink> links;
