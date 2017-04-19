@@ -23,7 +23,8 @@
 #include <QQmlComponent>
 #include <QDebug>
 #include <QDir>
-#include <unistd.h> // for usleep
+#include <QThread>
+#include <QVariant>
 
 #ifdef Q_OS_ANDROID
 #	include <QtAndroid>
@@ -57,7 +58,7 @@ int main(int argc, char *argv[])
 	QStringList mainArgs = app.arguments();
 
 #ifdef Q_OS_ANDROID
-	rootContext.setContextProperty("Q_OS_ANDROID", true);
+	rootContext.setContextProperty("Q_OS_ANDROID", QVariant(true));
 
 	/* Add Activity Intent data to args, because onNewIntent is called only if
 	 * the Intet was triggered when the Activity was already created, so only in
@@ -104,7 +105,7 @@ int main(int argc, char *argv[])
 			           << waitCount << "times";
 			app.processEvents();
 			++waitCount;
-			usleep(10000);
+			QThread::msleep(10);
 		}
 	}
 	while (waitIntent);
@@ -113,15 +114,15 @@ int main(int argc, char *argv[])
 
 	if(!uriStr.isEmpty()) mainArgs.append(uriStr);
 #else
-	rootContext.setContextProperty("Q_OS_ANDROID", false);
+	rootContext.setContextProperty("Q_OS_ANDROID", QVariant(false));
 #endif
 
 	rootContext.setContextProperty("mainArgs", mainArgs);
 
 #ifdef QT_DEBUG
-	rootContext.setContextProperty("QT_DEBUG", true);
+	rootContext.setContextProperty("QT_DEBUG", QVariant(true));
 #else
-	rootContext.setContextProperty("QT_DEBUG", false);
+	rootContext.setContextProperty("QT_DEBUG", QVariant(false));
 #endif // QT_DEBUG
 
 	rootContext.setContextProperty("apiSocketPath", sockPath);

@@ -22,6 +22,7 @@
 #include <QFileInfo>
 #include <QDebug>
 #include <QDir>
+#include <QThread>
 
 #ifdef __ANDROID__
 #	include "util/androiddebug.h"
@@ -65,7 +66,7 @@ int main(int argc, char *argv[])
 		qDebug() << "RetroShareAndroidNotifyService waiting for core to"
 		         << "listen on:" << sockPath;
 
-		usleep(2500000);
+		QThread::sleep(2);
 	}
 
 	rsApi.openConnection(sockPath);
