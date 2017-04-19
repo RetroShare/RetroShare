@@ -20,6 +20,7 @@ import QtQuick 2.7
 import QtQuick.Controls 2.0
 import org.retroshare.qml_components.LibresapiLocalClient 1.0
 import "." //Needed for TokensManager singleton
+import Qt.labs.settings 1.0
 
 Item
 {
@@ -63,7 +64,6 @@ Item
 		rsApi.request("/identity/*/", "", refreshContactsCallback)
 	}
 
-	property bool _refreshOwnCallback_creating: false
 	function refreshOwnCallback(par)
 	{
 		console.log("contactsView.refreshOwnCallback(par)", visible)
@@ -76,10 +76,10 @@ Item
 			contactsView.own_gxs_id = json.data[0].gxs_id
 			contactsView.own_nick = json.data[0].name
 		}
-		else if (!_refreshOwnCallback_creating)
+		else if (!settings.defaultIdentityCreated)
 		{
 			console.log("refreshOwnCallback(par)", "creating new identity" )
-			_refreshOwnCallback_creating = true
+			settings.defaultIdentityCreated = true
 
 			var jsonData = { "name": mainWindow.pgp_name, "pgp_linked": false }
 			rsApi.request(
@@ -202,5 +202,13 @@ Item
 				  fingerPrintDialog.gxs_id.slice(-8) + "<br/>" +
 				  "</pre>"
 		}
+	}
+
+	Settings
+	{
+		id: settings
+		category: "contactsView"
+
+		property bool defaultIdentityCreated: false
 	}
 }
