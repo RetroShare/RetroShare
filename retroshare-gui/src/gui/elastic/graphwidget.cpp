@@ -42,6 +42,7 @@
 #include "graphwidget.h"
 #include "edge.h"
 #include "node.h"
+#include "fft.h"
 
 #include <iostream>
 #include <QDebug>
@@ -259,45 +260,70 @@ void GraphWidget::keyPressEvent(QKeyEvent *event)
     }
 }
 
-static void convolveWithGaussian(double *forceMap,unsigned int S,int /*s*/)
+static void convolveWithForce(double *forceMap,unsigned int S,int /*s*/)
 {
-	static double *bf = NULL ;
+	static double **bf = NULL ;
+	static double **tmp = NULL ;
+    static int *ip = NULL ;
+    static double *w = NULL ;
+    static uint32_t last_S = 0 ;
 
 	if(bf == NULL)
 	{
-		bf = new double[S*S*2] ;
+		bf  = fft::alloc_2d_double(S, 2*S);
 
         for(unsigned int i=0;i<S;++i)
             for(unsigned int j=0;j<S;++j)
 			{
 				int x = (i<S/2)?i:(S-i) ;
 				int y = (j<S/2)?j:(S-j) ;
-//				int l=2*(x*x+y*y);
-				bf[2*(i+S*j)] = log(sqrtf(0.1 + x*x+y*y)); // linear -> derivative is constant
-				bf[2*(i+S*j)+1] = 0 ;
+
+				bf[i][j*2+0] = log(sqrtf(0.1 + x*x+y*y)); // linear -> derivative is constant
+				bf[i][j*2+1] = 0 ;
 			}
 
-		unsigned long nn[2] = {S,S};
-		fourn(&bf[-1],&nn[-1],2,1) ;
+		//unsigned long nn[2] = {S,S};
+		//fourn(&bf[-1],&nn[-1],2,1) ;
+
+        ip = fft::alloc_1d_int(2 + (int) sqrt(S + 0.5));
+        w = fft::alloc_1d_double(S/2+S);
+        ip[0] = 0;
+
+		fft::cdft2d(S, 2*S, 1, bf, ip, w);
 	}
 
-	unsigned long nn[2] = {S,S};
-	fourn(&forceMap[-1],&nn[-1],2,1) ;
+    if(last_S != S)
+    {
+        if(tmp)
+            fft::free_2d_double(tmp) ;
+
+		tmp = fft::alloc_2d_double(S, 2*S);
+        last_S = S ;
+    }
+    memcpy(tmp[0],forceMap,S*S*2*sizeof(double)) ;
+
+	fft::cdft2d(S, 2*S, 1, tmp, ip, w);
+
+	//fourn(&forceMap[-1],&nn[-1],2,1) ;
 
 	for (unsigned int i=0;i<S;++i)
 		for (unsigned int j=0;j<S;++j)
 		{
-			float a = forceMap[2*(i+S*j)]*bf[2*(i+S*j)] - forceMap[2*(i+S*j)+1]*bf[2*(i+S*j)+1] ;
-			float b = forceMap[2*(i+S*j)]*bf[2*(i+S*j)+1] + forceMap[2*(i+S*j)+1]*bf[2*(i+S*j)] ;
+			float a = tmp[i][2*j+0]*bf[i][2*j+0] - tmp[i][2*j+1]*bf[i][2*j+1] ;
+			float b = tmp[i][2*j+0]*bf[i][2*j+1] + tmp[i][2*j+1]*bf[i][2*j+0] ;
 
-			forceMap[2*(i+S*j)]   = a ;
-			forceMap[2*(i+S*j)+1] = b ;
+			tmp[i][2*j+0] = a ;
+			tmp[i][2*j+1] = b ;
 		}
 
-	fourn(&forceMap[-1],&nn[-1],2,-1) ;
+	fft::cdft2d(S, 2*S,-1, tmp, ip, w);
 
-    for(unsigned int i=0;i<S*S*2;++i)
-		forceMap[i] /= S*S;
+	//fourn(&forceMap[-1],&nn[-1],2,-1) ;
+
+    memcpy(forceMap,tmp[0],S*S*2*sizeof(double)) ;
+
+    for(uint32_t i=0;i<2*S*S;++i)
+        forceMap[i] /= S*S;
 }
 
 void GraphWidget::timerEvent(QTimerEvent *event)
@@ -322,7 +348,7 @@ void GraphWidget::timerEvent(QTimerEvent *event)
 
 	 QRectF R(scene()->sceneRect()) ;
 
-	 if( (hit++ & 7) == 0)
+	 if( (hit++ & 3) == 0)
 	 {
 		 memset(forceMap,0,2*S*S*sizeof(double)) ;
 
@@ -348,7 +374,7 @@ void GraphWidget::timerEvent(QTimerEvent *event)
 		 }
 
 		 // compute convolution with 1/omega kernel.
-		 convolveWithGaussian(forceMap,S,20) ;
+		 convolveWithForce(forceMap,S,20) ;
 	 }
 
 	 foreach (Node *node, _nodes)
