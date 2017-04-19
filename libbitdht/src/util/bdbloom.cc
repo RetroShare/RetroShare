@@ -144,6 +144,11 @@ std::string bloomFilter::getFilter()
 		bytes++;
 	}
 
+	if (bytes==0)
+	{
+		std::cerr << "(EE) Error. Cannot allocate memory for 0 byte in " << __PRETTY_FUNCTION__ << std::endl;
+		return std::string();
+	}
 	// convert to binary array.
 	uint8_t *tmparray = (uint8_t *) malloc(bytes);
     
