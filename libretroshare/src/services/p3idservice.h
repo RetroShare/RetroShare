@@ -350,8 +350,10 @@ public:
 	                         const RsIdentityUsage &use_info );
 	virtual bool requestPrivateKey(const RsGxsId &id);
 
-	virtual bool serialiseIdentityToMemory(const RsGxsId& id,std::string& radix_string);
-    virtual bool deserialiseIdentityFromMemory(const std::string& radix_string);
+	virtual bool serialiseIdentityToMemory(const RsGxsId& id,
+	                                       std::string& radix_string);
+	virtual bool deserialiseIdentityFromMemory(const std::string& radix_string,
+	                                           RsGxsId* id = nullptr);
 
 	/**************** RsGixsReputation Implementation ****************/
 
