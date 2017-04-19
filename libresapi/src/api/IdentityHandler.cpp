@@ -207,6 +207,7 @@ void IdentityHandler::handleWildcard(Request & /*req*/, Response &resp)
 			        << makeKeyValueReference("gxs_id", grp.mMeta.mGroupId)
 			        << makeKeyValueReference("pgp_id",grp.mPgpId )
 			        << makeKeyValueReference("name", grp.mMeta.mGroupName)
+			        << makeKeyValueReference("contact", grp.mIsAContact)
 			        << makeKeyValueReference("own", own)
 			        << makeKeyValueReference("pgp_linked", pgp_linked);
 		}
