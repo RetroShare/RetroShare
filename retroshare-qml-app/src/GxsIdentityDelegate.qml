@@ -17,6 +17,8 @@
  */
 
 import QtQuick 2.7
+import QtQuick.Controls 2.0
+import "URI.js" as UriJs
 
 Item
 {
@@ -111,27 +113,68 @@ Item
 			anchors.leftMargin: 5
 			anchors.verticalCenter: parent.verticalCenter
 		}
-		Rectangle
-		{
-			visible: model.unread_count > 0
 
+		Row
+		{
 			anchors.right: parent.right
 			anchors.rightMargin: 10
 			anchors.verticalCenter: parent.verticalCenter
-			color: "cornflowerblue"
-			antialiasing: true
-			border.color: "blue"
-			border.width: 1
-			radius: height/2
 			height: parent.height - 10
-			width: height
 
-			Text
+			Image
 			{
-				color: "white"
-				font.bold: true
-				text: model.unread_count > 0 ? model.unread_count : ''
-				anchors.centerIn: parent
+				source: "qrc:/icons/document-share.png"
+
+				height: parent.height
+				width: height
+
+				MouseArea
+				{
+					anchors.fill: parent
+					onClicked:
+					{
+						rsApi.request(
+									"/identity/export_key",
+									JSON.stringify({ gxs_id: model.gxs_id }),
+									function(par)
+									{
+										var jD = JSON.parse(par.response).data
+										clipboardWrap.text = "retroshare://" +
+												"identity?gxsid=" +
+												model.gxs_id +
+												"&name=" +
+												UriJs.URI.encode(model.name) +
+												"&groupdata=" +
+												UriJs.URI.encode(jD.radix)
+										clipboardWrap.selectAll()
+										clipboardWrap.copy()
+										linkCopiedPopup.itemName = model.name
+										linkCopiedPopup.visible = true
+									}
+									)
+					}
+				}
+			}
+
+			Rectangle
+			{
+				visible: model.unread_count > 0
+
+				color: "cornflowerblue"
+				antialiasing: true
+				border.color: "blue"
+				border.width: 1
+				height: parent.height
+				radius: height/2
+				width: height
+
+				Text
+				{
+					color: "white"
+					font.bold: true
+					text: model.unread_count > 0 ? model.unread_count : ''
+					anchors.centerIn: parent
+				}
 			}
 		}
 	}

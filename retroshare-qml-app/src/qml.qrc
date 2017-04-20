@@ -23,5 +23,6 @@
         <file>TokensManager.qml</file>
         <file>qmldir</file>
         <file>TrustedNodeDetails.qml</file>
+        <file>icons/document-share.png</file>
     </qresource>
 </RCC>

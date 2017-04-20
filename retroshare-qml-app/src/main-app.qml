@@ -38,6 +38,7 @@ ApplicationWindow
 	Component.onCompleted:
 	{
 		addUriHandler("/certificate", certificateLinkHandler)
+		addUriHandler("/identity", contactLinkHandler)
 
 		var argc = mainArgs.length
 		for(var i=0; i<argc; ++i)
@@ -120,8 +121,6 @@ ApplicationWindow
 						handleIntentUri(clipboardWrap.text)
 					}
 					enabled: mainWindow.coreReady
-
-					TextField { id: clipboardWrap; visible: false }
 				}
 				MenuItem
 				{
@@ -285,17 +284,11 @@ ApplicationWindow
 		var uQuery = uri.search(true)
 		if(uQuery.radix)
 		{
-			console.log("/peers/examine_cert/")
-			console.log("uriStr", uriStr)
-
 			var certStr = UriJs.URI.decode(uQuery.radix)
 
 			// Workaround https://github.com/RetroShare/RetroShare/issues/772
 			certStr = certStr.replace(/ /g, "+")
 
-			console.log("certStr", certStr)
-			console.log("JSON.stringify(..)",
-						JSON.stringify({cert_string: certStr}, null, 1))
 			rsApi.request(
 						"/peers/examine_cert/",
 						JSON.stringify({cert_string: certStr}),
@@ -320,4 +313,120 @@ ApplicationWindow
 						)
 		}
 	}
+
+	function contactLinkHandler(uriStr)
+	{
+		console.log("contactLinkHandler(uriStr)", coreReady)
+
+		if(!coreReady)
+		{
+			// Save cert uri for later processing as we need core to examine it
+			pendingUriRegister.push(uriStr)
+			return
+		}
+
+		var uri = new UriJs.URI(uriStr)
+		var uQuery = uri.search(true)
+		if(uQuery.groupdata)
+		{
+			contactImportPopup.expectedName = uQuery.name
+			contactImportPopup.expectedGxsId = uQuery.gxsid
+
+			rsApi.request(
+						"/identity/import_key",
+						JSON.stringify({radix: uQuery.groupdata}),
+						function(par)
+						{
+							var jD = JSON.parse(par.response).data
+							contactImportPopup.realGxsId = jD.gxs_id
+							contactImportPopup.open()
+						}
+						)
+		}
+	}
+	Popup
+	{
+		id: contactImportPopup
+		property string expectedName
+		property string expectedGxsId
+		property string realGxsId
+
+		function idMatch() { return expectedGxsId === realGxsId }
+
+		visible: false
+		onVisibleChanged: if(visible && idMatch()) contactImportTimer.start()
+
+		x: parent.x + parent.width/2 - width/2
+		y: parent.y + parent.height/2 - height/2
+
+		Column
+		{
+			spacing: 3
+			anchors.centerIn: parent
+
+			Text
+			{
+				text: qsTr("%1 key imported").arg(
+						  contactImportPopup.expectedName)
+				horizontalAlignment: parent.horizontalCenter
+			}
+
+			Text
+			{
+				text: qsTr("Link malformed!")
+
+				color: "red"
+				visible: contactImportPopup.visible &&
+						 !contactImportPopup.idMatch()
+				horizontalAlignment: parent.horizontalCenter
+			}
+
+			Text
+			{
+				text:
+					qsTr("Expected id and real one differs:") +
+					"<br/><pre>" + contactImportPopup.expectedGxsId +
+					"<br/>" + contactImportPopup.realGxsId + "</pre>"
+
+				visible: contactImportPopup.visible &&
+						 !contactImportPopup.idMatch()
+				horizontalAlignment: parent.horizontalCenter
+			}
+		}
+
+		Timer
+		{
+			id: contactImportTimer
+			interval: 1500
+			onTriggered: contactImportPopup.close()
+		}
+	}
+
+	Popup
+	{
+		id: linkCopiedPopup
+		property string itemName
+
+		visible: false
+		onVisibleChanged: if(visible) contactLinkTimer.start()
+
+		x: parent.x + parent.width/2 - width/2
+		y: parent.y + parent.height/2 - height/2
+
+		Text
+		{
+			text:
+				qsTr("%1 link copied to clipboard").arg(
+					linkCopiedPopup.itemName)
+		}
+
+		Timer
+		{
+			id: contactLinkTimer
+			interval: 1500
+			onTriggered: linkCopiedPopup.close()
+		}
+	}
+
+	TextField { id: clipboardWrap; visible: false }
 }
