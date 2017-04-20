@@ -99,6 +99,11 @@ QString RSGraphSource::displayValue(float v) const
     return QString::number(v,'f',_digits) + " " + unitName() ;
 }
 
+void RSGraphSource::getCumulatedValues(std::vector<float>& vals) const
+{
+    for(std::map<std::string,float>::const_iterator it = _totals.begin();it!=_totals.end();++it)
+        vals.push_back(it->second) ;
+}
 void RSGraphSource::getCurrentValues(std::vector<QPointF>& vals) const
 {
     std::map<std::string,std::list<std::pair<qint64,float> > >::const_iterator it = _points.begin();
@@ -108,9 +113,9 @@ void RSGraphSource::getCurrentValues(std::vector<QPointF>& vals) const
         vals.push_back(QPointF( (now - it->second.back().first)/1000.0f,it->second.back().second)) ;
 }
 
-QString RSGraphSource::legend(int i,float v) const
+QString RSGraphSource::legend(int i,float v,bool show_value) const
 {
-    return displayName(i) + " (" + displayValue(v) + " )";
+    return displayName(i) + (show_value?(" (" + displayValue(v) + ")"):"");
 }
 
 void RSGraphSource::getDataPoints(int index,std::vector<QPointF>& pts,float filter_factor) const
@@ -209,11 +214,30 @@ void RSGraphSource::update()
     }
         else
             ++it ;
+
+    updateTotals();
+}
+
+void RSGraphSource::updateTotals()
+{
+    // now compute totals
+
+    _totals.clear();
+
+    for(std::map<std::string,std::list<std::pair<qint64,float> > >::const_iterator it(_points.begin());it!=_points.end();++it)
+    {
+        float& f = _totals[it->first] ;
+
+        f = 0.0f ;
+        for(std::list<std::pair<qint64,float> >::const_iterator it2=it->second.begin();it2!=it->second.end();++it2)
+			f += (*it2).second ;
+    }
 }
 
 void RSGraphSource::reset()
 {
-    _points.clear() ;
+    _points.clear();
+    _totals.clear();
 }
 
 void RSGraphSource::setCollectionTimeLimit(qint64 s) { _time_limit_msecs = s ; }
@@ -630,8 +654,19 @@ void RSGraphWidget::paintLegend()
 {
   //int bottom = _rec.height();
 
-  std::vector<QPointF> vals ;
-  _source->getCurrentValues(vals) ;
+  std::vector<float> vals ;
+
+  if(_flags & RSGRAPH_FLAGS_LEGEND_CUMULATED)
+	  _source->getCumulatedValues(vals) ;
+  else
+  {
+	  std::vector<QPointF> cvals ;
+	  _source->getCurrentValues(cvals) ;
+
+      for(uint32_t i=0;i<cvals.size();++i)
+          vals.push_back(cvals[i].y()) ;
+  }
+
   int j=0;
 
     float FS = QFontMetricsF(font()).height();
@@ -640,12 +675,13 @@ void RSGraphWidget::paintLegend()
     for(uint i=0;i<vals.size();++i)
       if( _masked_entries.find(_source->displayName(i).toStdString()) == _masked_entries.end() )
       {
-          if( _rec.width() - (vals[i].x()-0)*_time_scale < SCALE_WIDTH*fact )
-              continue ;
+//          if( _rec.width() - (vals[i].x()-0)*_time_scale < SCALE_WIDTH*fact )
+//              continue ;
 
           qreal paintStep = 4*fact+FS;
           qreal pos = 15*fact+j*paintStep;
-          QString text = _source->legend(i,vals[i].y()) ;
+
+          QString text = _source->legend(i,vals[i]) ;
 
           QPen oldPen = _painter->pen();
           _painter->setPen(QPen(getColor(i), Qt::SolidLine));
