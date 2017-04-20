@@ -221,6 +221,12 @@ void PeersHandler::notifyListChange(int list, int /* type */)
     }
 }
 
+void PeersHandler::notifyPeerStatusChanged(const std::string& /*peer_id*/, uint32_t /*state*/)
+{
+	RsStackMutex stack(mMtx); /********** STACK LOCKED MTX ******/
+	mStateTokenServer->replaceToken(mStateToken);
+}
+
 void PeersHandler::notifyPeerHasNewAvatar(std::string /*peer_id*/)
 {
     RsStackMutex stack(mMtx); /********** STACK LOCKED MTX ******/

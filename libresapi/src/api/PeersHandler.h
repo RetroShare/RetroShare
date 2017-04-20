@@ -21,6 +21,7 @@ public:
     // from NotifyClient
     // note: this may get called from foreign threads
     virtual void notifyListChange(int list, int type); // friends list change
+	virtual void notifyPeerStatusChanged(const std::string& /*peer_id*/, uint32_t /*state*/);
     virtual void notifyPeerHasNewAvatar(std::string /*peer_id*/);
 
     // from Tickable
