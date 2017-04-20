@@ -114,8 +114,9 @@ ApplicationWindow
 				MenuItem
 				{
 					text: "Paste Link"
-					onTriggered:
-						handleIntentUri(ClipboardWrapper.getFromClipBoard())
+					onTriggered: UriJs.URI.withinString(
+									 ClipboardWrapper.getFromClipBoard(),
+									 handleIntentUri)
 
 					enabled: mainWindow.coreReady
 				}

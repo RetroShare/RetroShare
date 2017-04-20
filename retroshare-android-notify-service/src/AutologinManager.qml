@@ -58,7 +58,7 @@ QtObject
 		var runState = jsonReponse.data.runstate
 		if(typeof(runState) !== 'string')
 		{
-			console.log("runStateCallback(...) Core is hanged")
+			console.log("runStateCallback(par)", "Core hanged!", par.response)
 			return
 		}
 
