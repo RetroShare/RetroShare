@@ -75,13 +75,15 @@ Item
 		{
 			contactsView.own_gxs_id = json.data[0].gxs_id
 			contactsView.own_nick = json.data[0].name
+			if(mainWindow.user_name.length === 0)
+				mainWindow.user_name = json.data[0].name
 		}
 		else if (!settings.defaultIdentityCreated)
 		{
 			console.log("refreshOwnCallback(par)", "creating new identity" )
 			settings.defaultIdentityCreated = true
 
-			var jsonData = { "name": mainWindow.pgp_name, "pgp_linked": false }
+			var jsonData = { "name": mainWindow.user_name, "pgp_linked": false }
 			rsApi.request(
 						"/identity/create_identity",
 						JSON.stringify(jsonData),

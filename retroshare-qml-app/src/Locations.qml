@@ -57,7 +57,7 @@ Item
 					rsApi.request(
 								"/control/create_location/",
 								JSON.stringify(jsonData))
-					mainWindow.pgp_name = login
+					mainWindow.user_name = login
 					locationView.state = "selectLocation"
 					bottomButton.enabled = false
 					bottomButton.text = "Creating profile..."
@@ -95,7 +95,7 @@ Item
 			// There is only one location so we can jump selecting location
 			var location = jsonData[0]
 			loginView.login = location.name
-			mainWindow.pgp_name = location.name
+			mainWindow.user_name = location.name
 			locationView.sslid = location.peer_id
 			locationView.state = "login"
 		}
@@ -136,7 +136,7 @@ Item
 				loginView.login = text
 				locationView.sslid = model.id
 				locationView.state = "login"
-				mainWindow.pgp_name = model.name
+				mainWindow.user_name = model.name
 			}
 		}
 		visible: false

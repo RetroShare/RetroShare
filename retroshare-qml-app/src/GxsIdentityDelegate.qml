@@ -18,6 +18,7 @@
 
 import QtQuick 2.7
 import QtQuick.Controls 2.0
+import "." //Needed for ClipboardWrapper singleton
 import "URI.js" as UriJs
 
 Item
@@ -139,15 +140,14 @@ Item
 									function(par)
 									{
 										var jD = JSON.parse(par.response).data
-										clipboardWrap.text = "retroshare://" +
+										ClipboardWrapper.postToClipBoard(
+												"retroshare://" +
 												"identity?gxsid=" +
 												model.gxs_id +
 												"&name=" +
 												UriJs.URI.encode(model.name) +
 												"&groupdata=" +
-												UriJs.URI.encode(jD.radix)
-										clipboardWrap.selectAll()
-										clipboardWrap.copy()
+												UriJs.URI.encode(jD.radix))
 										linkCopiedPopup.itemName = model.name
 										linkCopiedPopup.visible = true
 									}

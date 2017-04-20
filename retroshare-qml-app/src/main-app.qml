@@ -20,7 +20,7 @@ import QtQuick 2.7
 import QtQuick.Controls 2.0
 import org.retroshare.qml_components.LibresapiLocalClient 1.0
 import "URI.js" as UriJs
-import "." //Needed for TokensManager singleton
+import "." //Needed for TokensManager and ClipboardWrapper singleton
 
 ApplicationWindow
 {
@@ -30,7 +30,7 @@ ApplicationWindow
 	width: 400
 	height: 400
 
-	property string pgp_name
+	property string user_name
 
 	property bool coreReady: stackView.state === "running_ok" ||
 							 stackView.state === "running_ok_no_full_control"
@@ -115,11 +115,8 @@ ApplicationWindow
 				{
 					text: "Paste Link"
 					onTriggered:
-					{
-						clipboardWrap.selectAll()
-						clipboardWrap.paste()
-						handleIntentUri(clipboardWrap.text)
-					}
+						handleIntentUri(ClipboardWrapper.getFromClipBoard())
+
 					enabled: mainWindow.coreReady
 				}
 				MenuItem
@@ -368,17 +365,16 @@ ApplicationWindow
 			{
 				text: qsTr("%1 key imported").arg(
 						  contactImportPopup.expectedName)
-				horizontalAlignment: parent.horizontalCenter
+				anchors.horizontalCenter: parent.horizontalCenter
 			}
 
 			Text
 			{
 				text: qsTr("Link malformed!")
-
 				color: "red"
 				visible: contactImportPopup.visible &&
 						 !contactImportPopup.idMatch()
-				horizontalAlignment: parent.horizontalCenter
+				anchors.horizontalCenter: parent.horizontalCenter
 			}
 
 			Text
@@ -387,10 +383,9 @@ ApplicationWindow
 					qsTr("Expected id and real one differs:") +
 					"<br/><pre>" + contactImportPopup.expectedGxsId +
 					"<br/>" + contactImportPopup.realGxsId + "</pre>"
-
 				visible: contactImportPopup.visible &&
 						 !contactImportPopup.idMatch()
-				horizontalAlignment: parent.horizontalCenter
+				anchors.horizontalCenter: parent.horizontalCenter
 			}
 		}
 
@@ -427,6 +422,4 @@ ApplicationWindow
 			onTriggered: linkCopiedPopup.close()
 		}
 	}
-
-	TextField { id: clipboardWrap; visible: false }
 }

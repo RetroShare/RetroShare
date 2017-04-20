@@ -24,5 +24,6 @@
         <file>qmldir</file>
         <file>TrustedNodeDetails.qml</file>
         <file>icons/document-share.png</file>
+        <file>ClipboardWrapper.qml</file>
     </qresource>
 </RCC>

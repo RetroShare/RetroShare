@@ -121,6 +121,7 @@ int main(int argc, char *argv[])
 
 #ifdef QT_DEBUG
 	rootContext.setContextProperty("QT_DEBUG", QVariant(true));
+	rsApi.setDebug(false);
 #else
 	rootContext.setContextProperty("QT_DEBUG", QVariant(false));
 #endif // QT_DEBUG
