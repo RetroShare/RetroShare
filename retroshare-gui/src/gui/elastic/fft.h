@@ -104,7 +104,11 @@ public:
 			w[nwh] = cos(delta * nwh);
 			w[nwh + 1] = w[nwh];
 			for (j = 2; j <= nwh - 2; j += 2) {
+#ifdef __APPLE__
+				__sincos(delta*j,&y,&x);
+#else
 				sincos(delta*j,&y,&x) ;
+#endif
 				//x = cos(delta * j);
 				//y = sin(delta * j);
 				w[j] = x;
