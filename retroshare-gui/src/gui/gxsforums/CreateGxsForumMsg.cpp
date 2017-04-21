@@ -274,14 +274,14 @@ void  CreateGxsForumMsg::loadFormInformation()
 	//std::cerr << std::endl;
 
 	//std::cerr << "CreateGxsForumMsg::loadMsgInformation() using signFlags=" << std::hex << mForumMeta.mSignFlags << std::dec << std::endl;
-    
-    uint32_t fl = IDCHOOSER_ID_REQUIRED ;
 
-	if( (mForumMeta.mSignFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG) || (mForumMeta.mSignFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG_KNOWN))
-        fl |=  IDCHOOSER_NON_ANONYMOUS ;
+	uint32_t fl = IDCHOOSER_ID_REQUIRED;
 
-    if(!mPosterId.isNull())
-        fl |= IDCHOOSER_NO_CREATE;
+	if ( (mForumMeta.mSignFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG) || (mForumMeta.mSignFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG_KNOWN) )
+		fl |= IDCHOOSER_NON_ANONYMOUS ;
+
+	if (!mPosterId.isNull())
+		fl |= IDCHOOSER_NO_CREATE ;
 
 	ui.idChooser->setFlags(fl) ;
 
