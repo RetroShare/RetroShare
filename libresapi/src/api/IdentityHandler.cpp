@@ -388,6 +388,12 @@ void IdentityHandler::handleGetIdentityDetails(Request& req, Response& resp)
 		return;
 	}
 
+	if(datavector.empty())
+	{
+		resp.setFail();
+		return;
+	}
+
 	data = datavector[0];
 
 	resp.mDataStream << makeKeyValue("gxs_name", data.mMeta.mGroupName);
@@ -468,9 +474,10 @@ void IdentityHandler::handleGetIdentityDetails(Request& req, Response& resp)
 
 	for(std::map<RsIdentityUsage,time_t>::const_iterator it(details.mUseCases.begin()); it != details.mUseCases.end(); ++it)
 	{
-		usagesStream.getStreamToMember() << makeKeyValue("usage_time", difftime(now, data.mLastUsageTS));
-		usagesStream.getStreamToMember() << makeKeyValue("usage_service", (int)(it->first.mServiceId));
-		usagesStream.getStreamToMember() << makeKeyValue("usage_case", (int)(it->first.mUsageCode));
+		usagesStream.getStreamToMember()
+		        << makeKeyValue("usage_time", difftime(now, data.mLastUsageTS))
+		        << makeKeyValue("usage_service", (int)(it->first.mServiceId))
+		        << makeKeyValue("usage_case", (int)(it->first.mUsageCode));
 	}
 
 	resp.setOk();
