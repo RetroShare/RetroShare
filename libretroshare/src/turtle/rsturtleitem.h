@@ -13,16 +13,12 @@ const uint8_t RS_TURTLE_SUBTYPE_STRING_SEARCH_REQUEST	= 0x01 ;
 const uint8_t RS_TURTLE_SUBTYPE_SEARCH_RESULT  			= 0x02 ;
 const uint8_t RS_TURTLE_SUBTYPE_OPEN_TUNNEL    			= 0x03 ;
 const uint8_t RS_TURTLE_SUBTYPE_TUNNEL_OK      			= 0x04 ;
-const uint8_t RS_TURTLE_SUBTYPE_CLOSE_TUNNEL   			= 0x05 ;
-const uint8_t RS_TURTLE_SUBTYPE_TUNNEL_CLOSED  			= 0x06 ;
 const uint8_t RS_TURTLE_SUBTYPE_FILE_REQUEST   			= 0x07 ;
 const uint8_t RS_TURTLE_SUBTYPE_FILE_DATA      			= 0x08 ;
 const uint8_t RS_TURTLE_SUBTYPE_REGEXP_SEARCH_REQUEST = 0x09 ;
 const uint8_t RS_TURTLE_SUBTYPE_GENERIC_DATA     		= 0x0a ;
 const uint8_t RS_TURTLE_SUBTYPE_FILE_MAP              = 0x10 ;
 const uint8_t RS_TURTLE_SUBTYPE_FILE_MAP_REQUEST      = 0x11 ;
-const uint8_t RS_TURTLE_SUBTYPE_FILE_CRC              = 0x12 ;
-const uint8_t RS_TURTLE_SUBTYPE_FILE_CRC_REQUEST      = 0x13 ;	
 const uint8_t RS_TURTLE_SUBTYPE_CHUNK_CRC             = 0x14 ;
 const uint8_t RS_TURTLE_SUBTYPE_CHUNK_CRC_REQUEST     = 0x15 ;	
 

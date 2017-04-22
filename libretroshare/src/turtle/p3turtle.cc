@@ -144,6 +144,23 @@ RsServiceInfo p3turtle::getServiceInfo()
 		TURTLE_MIN_MINOR_VERSION);
 }
 
+void p3turtle::getItemNames(std::map<uint8_t,std::string>& names) const
+{
+	names.clear();
+
+	names[RS_TURTLE_SUBTYPE_STRING_SEARCH_REQUEST	] = "Search request";
+	names[RS_TURTLE_SUBTYPE_SEARCH_RESULT  			] = "Search result";
+	names[RS_TURTLE_SUBTYPE_OPEN_TUNNEL    			] = "Tunnel request";
+	names[RS_TURTLE_SUBTYPE_TUNNEL_OK      			] = "Tunnel response";
+	names[RS_TURTLE_SUBTYPE_FILE_REQUEST   			] = "Data request";
+	names[RS_TURTLE_SUBTYPE_FILE_DATA      			] = "Data chunk";
+	names[RS_TURTLE_SUBTYPE_REGEXP_SEARCH_REQUEST   ] = "RegExp search";
+	names[RS_TURTLE_SUBTYPE_GENERIC_DATA     		] = "Generic data";
+	names[RS_TURTLE_SUBTYPE_FILE_MAP                ] = "Chunk map";
+	names[RS_TURTLE_SUBTYPE_FILE_MAP_REQUEST        ] = "Chunk map request";
+	names[RS_TURTLE_SUBTYPE_CHUNK_CRC               ] = "Chunk CRC";
+	names[RS_TURTLE_SUBTYPE_CHUNK_CRC_REQUEST       ] = "Chunk CRC request";
+}
 
 void p3turtle::setEnabled(bool b) 
 {
