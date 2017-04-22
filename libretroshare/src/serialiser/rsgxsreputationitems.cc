@@ -28,39 +28,13 @@
 #include "serialiser/rsbaseserial.h"
 #include "serialiser/rsgxsreputationitems.h"
 
+#include "serialization/rstypeserializer.h"
+
 /***
 #define RSSERIAL_DEBUG 1
 ***/
 
 #include <iostream>
-
-// re-defined here, in order to avoid cross-includes
-#define REPUTATION_IDENTITY_FLAG_NEEDS_UPDATE 0x0100
-
-/*************************************************************************/
-
-bool RsReputationItem::serialise_header(void *data,uint32_t& pktsize,uint32_t& tlvsize, uint32_t& offset) const
-{
-	tlvsize = serial_size() ;
-	offset = 0;
-
-	if (pktsize < tlvsize)
-		return false; /* not enough space */
-
-	pktsize = tlvsize;
-
-	if(!setRsItemHeader(data, tlvsize, PacketId(), tlvsize))
-	{
-		std::cerr << "RsReputationItem::serialise_header(): ERROR. Not enough size!" << std::endl;
-		return false ;
-	}
-#ifdef RSSERIAL_DEBUG
-	std::cerr << "RsReputationItem::serialise() Header: " << ok << std::endl;
-#endif
-	offset += 8;
-
-	return true ;
-}
 
 /*************************************************************************/
 
@@ -78,6 +52,45 @@ void RsGxsReputationBannedNodeSetItem::clear()
 {
     mKnownIdentities.TlvClear();
 }
+
+void RsGxsReputationConfigItem::serial_process(RsItem::SerializeJob j,SerializeContext& ctx)
+{
+    RsTypeSerializer::serial_process          (j,ctx,mPeerId,"mPeerId") ;
+    RsTypeSerializer::serial_process<uint32_t>(j,ctx,mLatestUpdate,"mLatestUpdate") ;
+    RsTypeSerializer::serial_process<uint32_t>(j,ctx,mLastQuery,"mLastQuery") ;
+}
+
+void RsGxsReputationBannedNodeSetItem::serial_process(RsItem::SerializeJob j,SerializeContext& ctx)
+{
+    RsTypeSerializer::serial_process           (j,ctx,mPgpId,"mPgpId") ;
+    RsTypeSerializer::serial_process<uint32_t> (j,ctx,mLastActivityTS,"mLastActivityTS") ;
+    RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,mKnownIdentities,"mKnownIdentities") ;
+}
+
+void RsGxsReputationSetItem::serial_process(RsItem::SerializeJob j,SerializeContext& ctx)
+{
+    RsTypeSerializer::serial_process          (j,ctx,mGxsId,"mGxsId") ;
+    RsTypeSerializer::serial_process<uint32_t>(j,ctx,mOwnOpinion,"mOwnOpinion") ;
+    RsTypeSerializer::serial_process<uint32_t>(j,ctx,mOwnOpinionTS,"mOwnOpinionTS") ;
+    RsTypeSerializer::serial_process<uint32_t>(j,ctx,mIdentityFlags,"mIdentityFlags") ;
+    RsTypeSerializer::serial_process<uint32_t>(j,ctx,mLastUsedTS,"mLastUsedTS") ;
+    RsTypeSerializer::serial_process          (j,ctx,mOwnerNodeId,"mOwnerNodeId") ;
+    RsTypeSerializer::serial_process          (j,ctx,mOpinions,"mOpinions") ;
+}
+
+void RsGxsReputationUpdateItem::serial_process(RsItem::SerializeJob j,SerializeContext& ctx)
+{
+    RsTypeSerializer::serial_process<uint32_t>(j,ctx,mLatestUpdate,"mLatestUpdate") ;
+    RsTypeSerializer::serial_process          (j,ctx,mOpinions,"mOpinions") ;
+}
+void RsGxsReputationRequestItem::serial_process(RsItem::SerializeJob j,SerializeContext& ctx)
+{
+    RsTypeSerializer::serial_process<uint32_t>(j,ctx,mLastUpdate,"mLastUpdate") ;
+}
+
+#ifdef TO_REMOVE
+// re-defined here, in order to avoid cross-includes
+#define REPUTATION_IDENTITY_FLAG_NEEDS_UPDATE 0x0100
 
 /*************************************************************************/
 /*************************************************************************/
@@ -360,6 +373,7 @@ RsGxsReputationConfigItem *RsGxsReputationSerialiser::deserialiseReputationConfi
 
     return item;
 }
+
 RsGxsReputationBannedNodeSetItem *RsGxsReputationSerialiser::deserialiseReputationBannedNodeSetItem(void *data,uint32_t size)
 {
     uint32_t offset = 8; // skip the header
@@ -382,6 +396,8 @@ RsGxsReputationBannedNodeSetItem *RsGxsReputationSerialiser::deserialiseReputati
 
     return item;
 }
+
+
 RsGxsReputationSetItem *RsGxsReputationSerialiser::deserialiseReputationSetItem_deprecated(void *data,uint32_t tlvsize)
 {
     uint32_t offset = 8; // skip the header
@@ -502,6 +518,7 @@ RsGxsReputationSetItem *RsGxsReputationSerialiser::deserialiseReputationSetItem(
 
     return item;
 }
+
 RsGxsReputationUpdateItem *RsGxsReputationSerialiser::deserialiseReputationUpdateItem(void *data,uint32_t tlvsize)
 {
     uint32_t offset = 8; // skip the header
@@ -559,6 +576,7 @@ RsGxsReputationRequestItem *RsGxsReputationSerialiser::deserialiseReputationRequ
 
     return item;
 }
+
 /*************************************************************************/
 
 RsItem *RsGxsReputationSerialiser::deserialise(void *data, uint32_t *pktsize)
@@ -587,8 +605,25 @@ RsItem *RsGxsReputationSerialiser::deserialise(void *data, uint32_t *pktsize)
 			break;
 	}
 }
+#endif
 
 /*************************************************************************/
 
+RsItem *RsGxsReputationSerialiser::create_item(uint16_t service,uint8_t subtype) const
+{
+    if(service != RS_SERVICE_GXS_TYPE_REPUTATION)
+        return NULL ;
 
+    switch(subtype)
+    {
+    case 	RS_PKT_SUBTYPE_GXS_REPUTATION_SET_ITEM              : return new RsGxsReputationSetItem() ;
+    case    RS_PKT_SUBTYPE_GXS_REPUTATION_BANNED_NODE_SET_ITEM  : return new RsGxsReputationBannedNodeSetItem();
+    case    RS_PKT_SUBTYPE_GXS_REPUTATION_UPDATE_ITEM         	: return new RsGxsReputationUpdateItem();
+    case    RS_PKT_SUBTYPE_GXS_REPUTATION_REQUEST_ITEM        	: return new RsGxsReputationRequestItem() ;
+    case    RS_PKT_SUBTYPE_GXS_REPUTATION_CONFIG_ITEM         	: return new RsGxsReputationConfigItem () ;
+    default:
+        std::cerr << "(EE) RsGxsReputationSerialiser::create_item(): unhandled item type " << subtype << std::endl;
+        return NULL ;
+    }
+}
 

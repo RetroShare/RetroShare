@@ -1210,6 +1210,7 @@ bool p3GxsReputation::loadList(std::list<RsItem *>& loadList)
 	    if (set)
 		    loadReputationSet(set, peerSet);
 
+#ifdef TO_REMOVE
 	    RsGxsReputationSetItem_deprecated3 *set2 = dynamic_cast<RsGxsReputationSetItem_deprecated3 *>(*it);
 
         if(set2)
@@ -1217,6 +1218,7 @@ bool p3GxsReputation::loadList(std::list<RsItem *>& loadList)
             std::cerr << "(II) reading and converting old format ReputationSetItem." << std::endl;
 		    loadReputationSet_deprecated3(set2, peerSet);
         }
+#endif
 
         RsGxsReputationBannedNodeSetItem *itm2 = dynamic_cast<RsGxsReputationBannedNodeSetItem*>(*it) ;
 
@@ -1274,6 +1276,7 @@ bool p3GxsReputation::loadList(std::list<RsItem *>& loadList)
     loadList.clear() ;
     return true;
 }
+#ifdef TO_REMOVE
 bool p3GxsReputation::loadReputationSet_deprecated3(RsGxsReputationSetItem_deprecated3 *item, const std::set<RsPeerId> &peerSet)
 {
     {
@@ -1324,7 +1327,7 @@ bool p3GxsReputation::loadReputationSet_deprecated3(RsGxsReputationSetItem_depre
 #endif
     return true;
 }
-
+#endif
 
 bool p3GxsReputation::loadReputationSet(RsGxsReputationSetItem *item, const std::set<RsPeerId> &peerSet)
 {

@@ -156,7 +156,9 @@ private:
     // internal update of data. Takes care of cleaning empty boxes.
     void locked_updateOpinion(const RsPeerId &from, const RsGxsId &about, RsReputations::Opinion op);
     bool loadReputationSet(RsGxsReputationSetItem *item,  const std::set<RsPeerId> &peerSet);
+#ifdef TO_REMOVE
 	bool loadReputationSet_deprecated3(RsGxsReputationSetItem_deprecated3 *item, const std::set<RsPeerId> &peerSet);
+#endif
     int  sendPackets();
     void cleanup();
     void sendReputationRequests();

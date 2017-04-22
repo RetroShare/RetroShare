@@ -85,6 +85,77 @@ class RsTypeSerializer
 																throw std::runtime_error("Unknown serial job") ;
 			}
 		}
+		//=================================================================================================//
+		//                                            std::map<T,U>                                        //
+		//=================================================================================================//
+
+		template<typename T,typename U>
+		static void serial_process(RsItem::SerializeJob j,SerializeContext& ctx,std::map<T,U>& v,const std::string& member_name)
+		{
+			switch(j)
+			{
+			case RsItem::SIZE_ESTIMATE:
+			{
+				ctx.mOffset += 4 ;
+				for(typename std::map<T,U>::iterator it(v.begin());it!=v.end();++it)
+                {
+                    ctx.mOffset += serial_size(it->first) ;
+                    ctx.mOffset += serial_size(it->second) ;
+				}
+			}
+				break ;
+
+			case RsItem::DESERIALIZE:
+			{
+                uint32_t n=0 ;
+				ctx.mOk = ctx.mOk && deserialize<uint32_t>(ctx.mData,ctx.mSize,ctx.mOffset,n) ;
+
+				for(uint32_t i=0;i<n;++i)
+                {
+                    T t ;
+                    U u ;
+
+					ctx.mOk = ctx.mOk && deserialize(ctx.mData,ctx.mSize,ctx.mOffset,t) ;
+					ctx.mOk = ctx.mOk && deserialize(ctx.mData,ctx.mSize,ctx.mOffset,u) ;
+
+                    v[t] = u ;
+                }
+			}
+				break ;
+
+			case RsItem::SERIALIZE:
+			{
+				uint32_t n=v.size();
+				ctx.mOk = ctx.mOk && serialize<uint32_t>(ctx.mData,ctx.mSize,ctx.mOffset,n) ;
+
+				for(typename std::map<T,U>::iterator it(v.begin());it!=v.end();++it)
+                {
+					ctx.mOk = ctx.mOk && serialize(ctx.mData,ctx.mSize,ctx.mOffset,it->first) ;
+					ctx.mOk = ctx.mOk && serialize(ctx.mData,ctx.mSize,ctx.mOffset,it->second) ;
+                }
+			}
+				break ;
+
+			case RsItem::PRINT:
+			{
+                if(v.empty())
+					std::cerr << "  Empty map"<< std::endl;
+				else
+					std::cerr << "  std::map of " << v.size() << " elements:" << std::endl;
+
+				for(typename std::map<T,U>::iterator it(v.begin());it!=v.end();++it)
+                {
+                    std::cerr << "  " ;
+
+                    print_data("first",it->first) ;
+                    print_data("second",it->second) ;
+                }
+			}
+				break;
+			default:
+                break;
+			}
+		}
 
 		//=================================================================================================//
 		//                                            std::vector<T>                                       //
