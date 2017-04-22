@@ -439,13 +439,13 @@ void ChatPage::setPreviewMessages(QString &stylePath, QString styleVariant, QTex
     QDateTime timestmp = QDateTime::fromTime_t(time(NULL));
     QColor backgroundColor = textBrowser->palette().base().color();
 
-    textBrowser->append(style.formatMessage(ChatStyle::FORMATMSG_HINCOMING, nameIncoming, timestmp, tr("Incoming message in history"), 0, backgroundColor));
-    textBrowser->append(style.formatMessage(ChatStyle::FORMATMSG_HOUTGOING, nameOutgoing, timestmp, tr("Outgoing message in history"), 0, backgroundColor));
-    textBrowser->append(style.formatMessage(ChatStyle::FORMATMSG_INCOMING,  nameIncoming, timestmp, tr("Incoming message"), 0, backgroundColor));
-    textBrowser->append(style.formatMessage(ChatStyle::FORMATMSG_OUTGOING,  nameOutgoing, timestmp, tr("Outgoing message"), 0, backgroundColor));
-    textBrowser->append(style.formatMessage(ChatStyle::FORMATMSG_OOUTGOING,  nameOutgoing, timestmp, tr("Outgoing offline message"), 0, backgroundColor));
-    textBrowser->append(style.formatMessage(ChatStyle::FORMATMSG_SYSTEM,  tr("System"), timestmp, tr("System message"), 0, backgroundColor));
-    textBrowser->append(style.formatMessage(ChatStyle::FORMATMSG_OUTGOING,  tr("UserName"), timestmp, tr("/me is sending a message with /me"), 0, backgroundColor));
+    textBrowser->append(style.formatMessage(ChatStyle::FORMATMSG_HINCOMING, nameIncoming, nameIncoming, timestmp, tr("Incoming message in history"), 0, backgroundColor));
+    textBrowser->append(style.formatMessage(ChatStyle::FORMATMSG_HOUTGOING, nameOutgoing, nameOutgoing, timestmp, tr("Outgoing message in history"), 0, backgroundColor));
+    textBrowser->append(style.formatMessage(ChatStyle::FORMATMSG_INCOMING,  nameIncoming, nameIncoming, timestmp, tr("Incoming message"), 0, backgroundColor));
+    textBrowser->append(style.formatMessage(ChatStyle::FORMATMSG_OUTGOING,  nameOutgoing, nameOutgoing, timestmp, tr("Outgoing message"), 0, backgroundColor));
+    textBrowser->append(style.formatMessage(ChatStyle::FORMATMSG_OOUTGOING,  nameOutgoing, nameOutgoing, timestmp, tr("Outgoing offline message"), 0, backgroundColor));
+    textBrowser->append(style.formatMessage(ChatStyle::FORMATMSG_SYSTEM,  tr("System"), tr("System"), timestmp, tr("System message"), 0, backgroundColor));
+    textBrowser->append(style.formatMessage(ChatStyle::FORMATMSG_OUTGOING,  tr("UserName"), tr("UserName"), timestmp, tr("/me is sending a message with /me"), 0, backgroundColor));
 }
 
 void ChatPage::fillPreview(QComboBox *listWidget, QComboBox *comboBox, QTextBrowser *textBrowser)

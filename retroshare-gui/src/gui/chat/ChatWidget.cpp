@@ -955,16 +955,17 @@ void ChatWidget::addChatMsg(bool incoming, const QString &name, const RsGxsId gx
 
 	QString formattedMessage = RsHtml().formatText(ui->textBrowser->document(), message, formatTextFlag, backgroundColor, desiredContrast, desiredMinimumFontSize);
 	QDateTime dtTimestamp=incoming ? sendTime : recvTime;
-	QString formatMsg = chatStyle.formatMessage(type, name, dtTimestamp, formattedMessage, formatFlag, backgroundColor);
-	QString timeStamp = dtTimestamp.toString(Qt::ISODate);
-
-	//replace Date and Time anchors
-	formatMsg.replace(QString("<a name=\"date\">"),QString("<a name=\"%1\">").arg(timeStamp));
-	formatMsg.replace(QString("<a name=\"time\">"),QString("<a name=\"%1\">").arg(timeStamp));
 	//replace Name anchors with GXS Id
 	QString strGxsId = "";
 	if (!gxsId.isNull())
 		strGxsId = QString::fromStdString(gxsId.toStdString());
+
+	QString formatMsg = chatStyle.formatMessage(type, name, strGxsId, dtTimestamp, formattedMessage, formatFlag, backgroundColor);
+	QString timeStamp = dtTimestamp.toString(Qt::ISODate);
+	//replace Date and Time anchors
+	formatMsg.replace(QString("<a name=\"date\">"),QString("<a name=\"%1\">").arg(timeStamp));
+	formatMsg.replace(QString("<a name=\"time\">"),QString("<a name=\"%1\">").arg(timeStamp));
+		
 	formatMsg.replace(QString("<a name=\"name\">"),QString("<a name=\"Person Id: %1\">").arg(strGxsId));
 
 	QTextCursor textCursor = QTextCursor(ui->textBrowser->textCursor());
