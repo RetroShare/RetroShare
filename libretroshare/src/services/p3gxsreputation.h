@@ -36,7 +36,7 @@ static const uint32_t  REPUTATION_IDENTITY_FLAG_UP_TO_DATE    = 0x0100;	// This 
 static const uint32_t  REPUTATION_IDENTITY_FLAG_PGP_LINKED    = 0x0001;
 static const uint32_t  REPUTATION_IDENTITY_FLAG_PGP_KNOWN     = 0x0002;
 
-#include "serialiser/rsgxsreputationitems.h"
+#include "rsitems/rsgxsreputationitems.h"
 
 #include "retroshare/rsidentity.h"
 #include "retroshare/rsreputations.h"

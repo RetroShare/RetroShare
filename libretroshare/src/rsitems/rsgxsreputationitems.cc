@@ -26,7 +26,7 @@
 #include <stdio.h>
 #include <time.h>
 #include "serialiser/rsbaseserial.h"
-#include "serialiser/rsgxsreputationitems.h"
+#include "rsitems/rsgxsreputationitems.h"
 
 #include "serialization/rstypeserializer.h"
 

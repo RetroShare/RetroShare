@@ -784,12 +784,12 @@ HEADERS += retroshare/rsidentity.h \
 	services/p3idservice.h \
 	serialiser/rsgxsiditems.h \
 	services/p3gxsreputation.h \
-	serialiser/rsgxsreputationitems.h \
+	rsitems/rsgxsreputationitems.h \
 
 SOURCES += services/p3idservice.cc \
 	serialiser/rsgxsiditems.cc \
 	services/p3gxsreputation.cc \
-	serialiser/rsgxsreputationitems.cc \
+	rsitems/rsgxsreputationitems.cc \
 
 # GxsCircles Service
 HEADERS += services/p3gxscircles.h \
