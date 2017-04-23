@@ -6,13 +6,28 @@
 #include <string>
 
 #include "serialiser/rsserial.h"
+#include "serialization/rstypeserializer.h"
 
 #define SERIALIZE_ERROR() std::cerr << __PRETTY_FUNCTION__ << " : " 
 
 class RsSerializer: public RsSerialType
 {
 	public:
-		RsSerializer(uint16_t service_id) : RsSerialType(RS_PKT_VERSION_SERVICE,service_id) {}
+    	// These are convenience flags to be used by the items when processing the data. The names of the flags
+    	// are not very important. What matters is that the serial_process() method of each item correctly
+    	// deals with the data when it sees the flags, if the serialiser sets them. By default the flags are not
+    	// set and shouldn't be handled.
+    	// When deriving a new serializer, the user can set his own flags, using compatible values
+
+        static const SerializationFlags SERIALIZATION_FLAG_NONE ;			// 0x0000
+        static const SerializationFlags SERIALIZATION_FLAG_CONFIG ;			// 0x0001
+        static const SerializationFlags SERIALIZATION_FLAG_SIGNATURE ;		// 0x0002
+
+		RsSerializer(uint16_t service_id,
+                     SerializeContext::SerializationFormat format = SerializeContext::FORMAT_BINARY,
+                     SerializationFlags                    flags  = SERIALIZATION_FLAG_NONE)
+
+            : RsSerialType(RS_PKT_VERSION_SERVICE,service_id),mFormat(format),mFlags(flags) {}
 
 		/*! create_item  
 		 * 	should be overloaded to create the correct type of item depending on the data
@@ -28,6 +43,10 @@ class RsSerializer: public RsSerialType
 		bool serialise(RsItem *item,void *data,uint32_t *size) ;
 		uint32_t size(RsItem *item) ;
         void print(RsItem *item) ;
+
+private:
+        SerializeContext::SerializationFormat mFormat ;
+        SerializationFlags mFlags ;
 };
 
 

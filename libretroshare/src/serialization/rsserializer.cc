@@ -2,6 +2,10 @@
 #include "serialization/rsserializer.h"
 #include "serialization/rstypeserializer.h"
 
+const SerializationFlags RsSerializer::SERIALIZATION_FLAG_NONE      ( 0x0000 );
+const SerializationFlags RsSerializer::SERIALIZATION_FLAG_CONFIG    ( 0x0001 );
+const SerializationFlags RsSerializer::SERIALIZATION_FLAG_SIGNATURE ( 0x0002 );
+
 RsItem *RsSerializer::deserialise(void *data, uint32_t *size)
 {
 	uint32_t rstype = getRsItemId(const_cast<void*>((const void*)data)) ;
@@ -15,7 +19,7 @@ RsItem *RsSerializer::deserialise(void *data, uint32_t *size)
 		return NULL ;
 	}
 
-	SerializeContext ctx(const_cast<uint8_t*>(static_cast<uint8_t*>(data)),*size);
+	SerializeContext ctx(const_cast<uint8_t*>(static_cast<uint8_t*>(data)),*size,mFormat,mFlags);
 	ctx.mOffset = 8 ;
 
 	item->serial_process(RsItem::DESERIALIZE, ctx) ;
@@ -35,7 +39,7 @@ RsItem *RsSerializer::deserialise(void *data, uint32_t *size)
 
 bool RsSerializer::serialise(RsItem *item,void *data,uint32_t *size)
 {
-	SerializeContext ctx(static_cast<uint8_t*>(data),0);
+	SerializeContext ctx(static_cast<uint8_t*>(data),0,mFormat,mFlags);
 
 	uint32_t tlvsize = this->size(item) ;
 
@@ -62,7 +66,7 @@ bool RsSerializer::serialise(RsItem *item,void *data,uint32_t *size)
 
 uint32_t RsSerializer::size(RsItem *item) 
 {
-	SerializeContext ctx(NULL,0);
+	SerializeContext ctx(NULL,0,mFormat,mFlags);
 
 	ctx.mOffset = 8 ;	// header size
 	item->serial_process(RsItem::SIZE_ESTIMATE, ctx) ;
@@ -72,7 +76,7 @@ uint32_t RsSerializer::size(RsItem *item)
 
 void RsSerializer::print(RsItem *item)
 {
-	SerializeContext ctx(NULL,0);
+	SerializeContext ctx(NULL,0,mFormat,mFlags);
 
     std::cerr << "***** RsItem class: \"" << typeid(*item).name() << "\" *****" << std::endl;
 	item->serial_process(RsItem::PRINT, ctx) ;

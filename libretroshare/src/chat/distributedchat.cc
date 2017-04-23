@@ -222,7 +222,7 @@ bool DistributedChatService::checkSignature(RsChatLobbyBouncingObject *obj,const
 
     mGixs->requestKey(obj->signature.keyId,peer_list,RsIdentityUsage(RS_SERVICE_TYPE_CHAT,RsIdentityUsage::CHAT_LOBBY_MSG_VALIDATION,RsGxsGroupId(),RsGxsMessageId(),obj->lobby_id));
 
-    uint32_t size = obj->serial_size_for_signature() ;
+    uint32_t size = RsChatSerialiser(RsSerializer::SERIALIZATION_FLAG_SIGNATURE).size((RsItem*)obj) ;
     RsTemporaryMemory memory(size) ;
 
 #ifdef DEBUG_CHAT_LOBBIES
@@ -230,7 +230,7 @@ bool DistributedChatService::checkSignature(RsChatLobbyBouncingObject *obj,const
     std::cerr << "   signature id: " << obj->signature.keyId << std::endl;
 #endif
 
-    if(!obj->serialize_for_signature(memory,size))
+    if(!RsChatSerialiser(RsSerializer::SERIALIZATION_FLAG_SIGNATURE).serialise((RsItem*)obj,memory,&size))
     {
 	    std::cerr << "  (EE) Cannot serialise message item. " << std::endl;
 	    return false ;
@@ -239,7 +239,7 @@ bool DistributedChatService::checkSignature(RsChatLobbyBouncingObject *obj,const
     uint32_t error_status ;
     RsIdentityUsage use_info(RS_SERVICE_TYPE_CHAT,RsIdentityUsage::CHAT_LOBBY_MSG_VALIDATION,RsGxsGroupId(),RsGxsMessageId(),obj->lobby_id) ;
 
-    if(!mGixs->validateData(memory,obj->serial_size_for_signature(),obj->signature,false,use_info,error_status))
+    if(!mGixs->validateData(memory,size,obj->signature,false,use_info,error_status))
     {
 	    bool res = false ;
 
@@ -970,10 +970,10 @@ bool DistributedChatService::locked_initLobbyBouncableObject(const ChatLobbyId& 
 
     // now sign the object, if the lobby expects it
 
-        uint32_t size = item.serial_size_for_signature() ;
+        uint32_t size = RsChatSerialiser(RsSerializer::SERIALIZATION_FLAG_SIGNATURE).size((RsItem*)&item) ;
         RsTemporaryMemory memory(size) ;
 
-        if(!item.serialize_for_signature(memory,size))
+        if(!RsChatSerialiser(RsSerializer::SERIALIZATION_FLAG_SIGNATURE).serialise((RsItem*)&item,memory,&size))
         {
             std::cerr << "(EE) Cannot sign message item. " << std::endl;
             return false ;

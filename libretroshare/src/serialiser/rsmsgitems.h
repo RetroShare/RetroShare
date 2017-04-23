@@ -90,10 +90,6 @@ class RsMessageItem: public RsItem
 
 		virtual ~RsMessageItem() {}
 		virtual void clear() {}
-		virtual std::ostream& print(std::ostream &out, uint16_t indent = 0) = 0 ;
-
-		virtual bool serialise(void *data,uint32_t& size,bool config) = 0 ;	
-		virtual uint32_t serial_size(bool config) = 0 ; 						
 };
 
 
@@ -105,10 +101,7 @@ class RsMsgItem: public RsMessageItem
 		virtual ~RsMsgItem() {}
 		virtual void clear();
 
-		virtual bool serialise(void *data,uint32_t& size,bool config) ;	
-		virtual uint32_t serial_size(bool config) ; 						
-
-		virtual std::ostream &print(std::ostream &out, uint16_t indent = 0);
+		virtual void serial_process(SerializeJob /* j */,SerializeContext& /* ctx */);
 
 		// ----------- Specific fields ------------- //
 
@@ -137,10 +130,7 @@ class RsMsgTagType : public RsMessageItem
 	public:
 		RsMsgTagType() :RsMessageItem(RS_PKT_SUBTYPE_MSG_TAG_TYPE) {}
 
-		virtual std::ostream &print(std::ostream &out, uint16_t indent = 0);
-
-		virtual bool serialise(void *data,uint32_t& size,bool config) ;	
-		virtual uint32_t serial_size(bool config) ; 						
+		virtual void serial_process(SerializeJob /* j */,SerializeContext& /* ctx */);
 
 		virtual ~RsMsgTagType() {}
 		virtual void clear();
@@ -158,10 +148,7 @@ public:
 	RsMsgTags()
 		:RsMessageItem(RS_PKT_SUBTYPE_MSG_TAGS) {}
 
-		virtual bool serialise(void *data,uint32_t& size,bool config) ;	
-		virtual uint32_t serial_size(bool config) ; 						
-
-	virtual std::ostream &print(std::ostream &out, uint16_t indent = 0);
+		virtual void serial_process(SerializeJob /* j */,SerializeContext& /* ctx */);
 
 	virtual ~RsMsgTags() {}
 	virtual void clear();
@@ -177,13 +164,10 @@ class RsMsgSrcId : public RsMessageItem
 	public:
 		RsMsgSrcId() : RsMessageItem(RS_PKT_SUBTYPE_MSG_SRC_TAG) {}
 
-		std::ostream &print(std::ostream &out, uint16_t indent = 0);
-
-		virtual bool serialise(void *data,uint32_t& size,bool config) ;	
-		virtual uint32_t serial_size(bool config) ; 						
+		virtual void serial_process(SerializeJob /* j */,SerializeContext& /* ctx */);
 
 		virtual ~RsMsgSrcId() {}
-		virtual void clear();
+        virtual void clear(){}
 
 		// ----------- Specific fields ------------- //
 		//
@@ -196,10 +180,7 @@ class RsPublicMsgInviteConfigItem : public RsMessageItem
 	public:
 		RsPublicMsgInviteConfigItem() : RsMessageItem(RS_PKT_SUBTYPE_MSG_INVITE) {}
 
-		virtual bool serialise(void *data,uint32_t& size,bool config) ;	
-		virtual uint32_t serial_size(bool config) ; 						
-
-		std::ostream &print(std::ostream &out, uint16_t indent = 0);
+		virtual void serial_process(SerializeJob /* j */,SerializeContext& /* ctx */);
 
 		virtual ~RsPublicMsgInviteConfigItem() {}
 		virtual void clear();
@@ -215,10 +196,7 @@ class RsMsgGRouterMap : public RsMessageItem
     public:
         RsMsgGRouterMap() : RsMessageItem(RS_PKT_SUBTYPE_MSG_GROUTER_MAP) {}
 
-        std::ostream &print(std::ostream &out, uint16_t indent = 0);
-
-        virtual bool serialise(void *data,uint32_t& size,bool config) ;
-        virtual uint32_t serial_size(bool config) ;
+		virtual void serial_process(SerializeJob /* j */,SerializeContext& /* ctx */);
 
         virtual ~RsMsgGRouterMap() {}
         virtual void clear();
@@ -232,13 +210,10 @@ class RsMsgDistantMessagesHashMap : public RsMessageItem
     public:
         RsMsgDistantMessagesHashMap() : RsMessageItem(RS_PKT_SUBTYPE_MSG_DISTANT_MSG_MAP) {}
 
-        std::ostream &print(std::ostream &out, uint16_t indent = 0);
-
-        virtual bool serialise(void *data,uint32_t& size,bool config) ;
-        virtual uint32_t serial_size(bool config) ;
+		virtual void serial_process(SerializeJob /* j */,SerializeContext& /* ctx */);
 
         virtual ~RsMsgDistantMessagesHashMap() {}
-        virtual void clear();
+        virtual void clear() { hash_map.clear() ;}
 
         // ----------- Specific fields ------------- //
         //
@@ -249,13 +224,10 @@ class RsMsgParentId : public RsMessageItem
 	public:
 		RsMsgParentId() : RsMessageItem(RS_PKT_SUBTYPE_MSG_PARENT_TAG) {}
 
-		std::ostream &print(std::ostream &out, uint16_t indent = 0);
-
-		virtual bool serialise(void *data,uint32_t& size,bool config) ;	
-		virtual uint32_t serial_size(bool config) ; 						
+		virtual void serial_process(SerializeJob /* j */,SerializeContext& /* ctx */);
 
 		virtual ~RsMsgParentId() {}
-		virtual void clear();
+        virtual void clear(){}
 
 		// ----------- Specific fields ------------- //
 		//
@@ -263,39 +235,15 @@ class RsMsgParentId : public RsMessageItem
 		uint32_t msgParentId;
 };
 
-class RsMsgSerialiser: public RsSerialType
+class RsMsgSerialiser: public RsSerializer
 {
 	public:
-		RsMsgSerialiser(bool bConfiguration = false)
-			:RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_MSG), m_bConfiguration (bConfiguration) {}
-
-		RsMsgSerialiser(uint16_t type)
-            :RsSerialType(RS_PKT_VERSION_SERVICE, type), m_bConfiguration (false) {}
+		RsMsgSerialiser(SerializationFlags flags)
+			:RsSerializer(RS_SERVICE_TYPE_MSG,SerializeContext::FORMAT_BINARY,flags){}
 
 		virtual     ~RsMsgSerialiser() {}
 
-		virtual	uint32_t    size(RsItem *item) 
-		{ 
-			return dynamic_cast<RsMessageItem*>(item)->serial_size(m_bConfiguration) ; 
-		}
-		virtual	bool        serialise  (RsItem *item, void *data, uint32_t *size)
-		{
-			return dynamic_cast<RsMessageItem*>(item)->serialise(data,*size,m_bConfiguration) ; 
-		}
-		virtual	RsItem *    deserialise(void *data, uint32_t *size);
-
-	private:
-
-		virtual	RsMsgItem                   *deserialiseMsgItem(void *data, uint32_t *size);
-		virtual	RsMsgTagType                *deserialiseTagItem(void *data, uint32_t *size);
-		virtual	RsMsgTags                   *deserialiseMsgTagItem(void *data, uint32_t *size);
-		virtual	RsMsgSrcId                  *deserialiseMsgSrcIdItem(void *data, uint32_t *size);
-		virtual	RsMsgParentId               *deserialiseMsgParentIdItem(void *data, uint32_t *size);
-		virtual	RsPublicMsgInviteConfigItem *deserialisePublicMsgInviteConfigItem(void *data, uint32_t *size);
-		virtual	RsMsgGRouterMap             *deserialiseMsgGRouterMap(void *data, uint32_t *size);
-		virtual	RsMsgDistantMessagesHashMap *deserialiseMsgDistantMessageHashMap(void *data, uint32_t *size);
-
-		bool m_bConfiguration; // is set to true for saving configuration (enables serialising msgId)
+        virtual RsItem *create_item(uint16_t service,uint8_t type) const ;
 };
 
 /**************************************************************************/

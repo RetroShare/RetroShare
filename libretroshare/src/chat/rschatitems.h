@@ -137,16 +137,12 @@ public:
 
     virtual RsChatLobbyBouncingObject *duplicate() const = 0 ;
 
-    uint32_t serial_size_for_signature() const ;
-    bool serialize_for_signature(uint8_t *data,uint32_t size) const ;
-
 protected:
     // The functions below handle the serialisation of data that is specific to the bouncing object level.
     // They are called by serial_size() and serialise() from children, but should not overload the serial_size() and
     // serialise() methods, otherwise the wrong method will be called when serialising from this top level class.
 
-	virtual void serial_process(RsItem::SerializeJob j,SerializeContext& ctx,bool include_signature);
-	virtual void serial_process_for_signature(RsItem::SerializeJob j,SerializeContext& ctx)=0;
+	virtual void serial_process(RsItem::SerializeJob j, SerializeContext& ctx);
 
     virtual uint32_t PacketId() const= 0;
 };
@@ -160,7 +156,6 @@ public:
     virtual RsChatLobbyBouncingObject *duplicate() const { return new RsChatLobbyMsgItem(*this) ; }
 
 	void serial_process(RsItem::SerializeJob j,SerializeContext& ctx) ;
-	void serial_process_for_signature(RsItem::SerializeJob j,SerializeContext& ctx) ;	// This one is new, and used to add/remove signature on demand
 
     ChatLobbyMsgId parent_msg_id ;				// Used for threaded chat.
 
@@ -177,7 +172,6 @@ public:
 	virtual RsChatLobbyBouncingObject *duplicate() const { return new RsChatLobbyEventItem(*this) ; }
 	//
 	void serial_process(RsItem::SerializeJob j,SerializeContext& ctx);
-	void serial_process_for_signature(RsItem::SerializeJob j,SerializeContext& ctx) ;	// This one is new, and used to add/remove signature on demand
 
 	// members.
 	//
@@ -330,7 +324,8 @@ class RsChatAvatarItem: public RsChatItem
 class RsChatSerialiser: public RsSerializer
 {
 	public:
-		RsChatSerialiser() :RsSerializer(RS_SERVICE_TYPE_CHAT) {}
+		RsChatSerialiser(SerializationFlags flags = SERIALIZATION_FLAG_NONE)
+            :RsSerializer(RS_SERVICE_TYPE_CHAT,SerializeContext::FORMAT_BINARY,flags) {}
 
 		virtual RsItem *create_item(uint16_t service_id,uint8_t item_sub_id) const ;
 };

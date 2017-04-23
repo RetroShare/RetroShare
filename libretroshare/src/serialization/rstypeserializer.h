@@ -11,13 +11,20 @@ class SerializeContext
 {
 	public:
 
-	SerializeContext(uint8_t *data,uint32_t size)
-		: mData(data),mSize(size),mOffset(0),mOk(true) {}
+    enum SerializationFormat {
+                                 FORMAT_BINARY   = 0x01 ,
+                                 FORMAT_JSON     = 0x02
+    };
+
+	SerializeContext(uint8_t *data,uint32_t size,SerializationFormat format,SerializationFlags flags)
+        : mData(data),mSize(size),mOffset(0),mOk(true),mFormat(format),mFlags(flags) {}
 
 	unsigned char *mData ;
 	uint32_t mSize ;
 	uint32_t mOffset ;
 	bool mOk ;
+    SerializationFormat mFormat ;
+    SerializationFlags mFlags ;
 };
 
 

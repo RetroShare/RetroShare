@@ -30,11 +30,34 @@
 #include "serialiser/rsmsgitems.h"
 #include "serialiser/rstlvbase.h"
 
+#include "serialization/rstypeserializer.h"
+
 /***
 #define RSSERIAL_DEBUG 1
 ***/
 
 #include <iostream>
+
+
+RsItem *RsMsgSerialiser::create_item(uint16_t service,uint8_t type) const
+{
+    if(service != RS_SERVICE_TYPE_MSG)
+        return NULL ;
+
+    switch(type)
+	{
+	case RS_PKT_SUBTYPE_DEFAULT            : return new RsMsgItem() ;                  //= 0x01;
+	case RS_PKT_SUBTYPE_MSG_TAG_TYPE 	   : return new RsMsgTagType() ;               //= 0x03;
+	case RS_PKT_SUBTYPE_MSG_TAGS 	 	   : return new RsMsgTags() ;                  //= 0x04;
+	case RS_PKT_SUBTYPE_MSG_SRC_TAG 	   : return new RsMsgSrcId();                  //= 0x05;
+	case RS_PKT_SUBTYPE_MSG_PARENT_TAG 	   : return new RsMsgParentId() ;              //= 0x06;
+	case RS_PKT_SUBTYPE_MSG_INVITE    	   : return new RsPublicMsgInviteConfigItem(); //= 0x07;
+	case RS_PKT_SUBTYPE_MSG_GROUTER_MAP    : return new RsMsgGRouterMap();             //= 0x08;
+	case RS_PKT_SUBTYPE_MSG_DISTANT_MSG_MAP : return new RsMsgDistantMessagesHashMap();//= 0x09;
+	default:
+		return NULL ;
+	}
+}
 
 void 	RsMsgItem::clear()
 {
@@ -56,6 +79,107 @@ void 	RsMsgItem::clear()
 	attachment.TlvClear();
 }
 
+void RsPublicMsgInviteConfigItem::serial_process(SerializeJob j,SerializeContext& ctx)
+{
+    RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_HASH_SHA1,hash,"hash") ;
+    RsTypeSerializer::serial_process<uint32_t>(j,ctx,(uint32_t&)time_stamp,"time_stamp") ;
+}
+void RsMsgTagType::serial_process(SerializeJob j,SerializeContext& ctx)
+{
+    RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_NAME,text,"text") ;
+    RsTypeSerializer::serial_process<uint32_t>(j,ctx,rgb_color,"rgb_color") ;
+    RsTypeSerializer::serial_process<uint32_t>(j,ctx,tagId,"tagId") ;
+}
+
+void RsMsgTags::serial_process(SerializeJob j,SerializeContext& ctx)
+{
+    RsTypeSerializer::serial_process<uint32_t>(j,ctx,msgId,"msgId") ;
+
+#warning this is not the correct way to serialise here. We should directly call serial_process<std::vector<uint32_t> >() but for backward compatibility, we cannot
+
+    if(j == RsItem::DESERIALIZE)
+        while(ctx.mOffset < ctx.mSize)
+        {
+            uint32_t n ;
+			RsTypeSerializer::serial_process<uint32_t>(j,ctx,n,"tagIds element") ;
+			tagIds.push_back(n) ;
+        }
+    else
+        for(std::list<uint32_t>::iterator it(tagIds.begin());it!=tagIds.end();++it)
+			RsTypeSerializer::serial_process<uint32_t>(j,ctx,*it,"tagIds element") ;
+}
+
+void RsMsgSrcId::serial_process(SerializeJob j,SerializeContext& ctx)
+{
+    RsTypeSerializer::serial_process<uint32_t>(j,ctx,msgId,"msgId") ;
+    RsTypeSerializer::serial_process          (j,ctx,srcId,"srcId") ;
+}
+
+void RsMsgGRouterMap::serial_process(SerializeJob j,SerializeContext& ctx)
+{
+    RsTypeSerializer::serial_process(j,ctx,ongoing_msgs,"ongoing_msgs") ;
+}
+
+void RsMsgGRouterMap::clear()
+{
+    ongoing_msgs.clear() ;
+
+    return;
+}
+
+void RsMsgDistantMessagesHashMap::serial_process(SerializeJob j,SerializeContext& ctx)
+{
+    RsTypeSerializer::serial_process(j,ctx,hash_map,"hash_map") ;
+}
+
+void RsMsgParentId::serial_process(SerializeJob j,SerializeContext& ctx)
+{
+    RsTypeSerializer::serial_process<uint32_t>(j,ctx,msgId,"msgId") ;
+    RsTypeSerializer::serial_process<uint32_t>(j,ctx,msgParentId,"msgParentId") ;
+}
+
+void RsMsgItem::serial_process(SerializeJob j,SerializeContext& ctx)
+{
+    RsTypeSerializer::serial_process<uint32_t>(j,ctx,msgFlags,"msgFlags");
+    RsTypeSerializer::serial_process<uint32_t>(j,ctx,sendTime,"sendTime");
+    RsTypeSerializer::serial_process<uint32_t>(j,ctx,recvTime,"recvTime");
+
+    RsTypeSerializer::serial_process          (j,ctx,TLV_TYPE_STR_SUBJECT,subject,"subject");
+    RsTypeSerializer::serial_process          (j,ctx,TLV_TYPE_STR_MSG,message,"message");
+
+    RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,rspeerid_msgto,"rspeerid_msgto");
+    RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,rspeerid_msgcc,"rspeerid_msgcc");
+    RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,rspeerid_msgbcc,"rspeerid_msgbcc");
+
+    RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,rsgxsid_msgto,"rsgxsid_msgto");
+    RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,rsgxsid_msgcc,"rsgxsid_msgcc");
+    RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,rsgxsid_msgbcc,"rsgxsid_msgbcc");
+
+    RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,attachment,"attachment");
+
+    if(ctx.mFlags & RsSerializer::SERIALIZATION_FLAG_CONFIG)
+    	RsTypeSerializer::serial_process<uint32_t>(j,ctx,msgId,"msgId");
+}
+
+void RsMsgTagType::clear()
+{
+	text.clear();
+	tagId = 0;
+	rgb_color = 0;
+}
+
+void RsPublicMsgInviteConfigItem::clear()
+{
+	hash.clear() ;
+	time_stamp = 0 ;
+}
+void RsMsgTags::clear()
+{
+	msgId = 0;
+	tagIds.clear();
+}
+
+#ifdef TO_REMOVE
 std::ostream &RsMsgItem::print(std::ostream &out, uint16_t indent)
 {
         printRsItemBase(out, "RsMsgItem", indent);
@@ -100,19 +224,6 @@ std::ostream &RsMsgItem::print(std::ostream &out, uint16_t indent)
         printRsItemEnd(out, "RsMsgItem", indent);
         return out;
 }
-
-void RsMsgTagType::clear()
-{
-	text.clear();
-	tagId = 0;
-	rgb_color = 0;
-}
-
-void RsPublicMsgInviteConfigItem::clear()
-{
-	hash.clear() ;
-	time_stamp = 0 ;
-}
 std::ostream& RsPublicMsgInviteConfigItem::print(std::ostream &out, uint16_t indent)
 {
 	printRsItemBase(out, "RsPublicMsgInviteConfigItem", indent);
@@ -128,12 +239,6 @@ std::ostream& RsPublicMsgInviteConfigItem::print(std::ostream &out, uint16_t ind
 
 	return out;
 }
-void RsMsgTags::clear()
-{
-	msgId = 0;
-	tagIds.clear();
-}
-
 std::ostream& RsMsgTagType::print(std::ostream &out, uint16_t indent)
 {
 	printRsItemBase(out, "RsMsgTagType", indent);
@@ -346,7 +451,6 @@ uint32_t RsMsgTagType::serial_size(bool)
 
 	return s;
 }
-
 bool RsPublicMsgInviteConfigItem::serialise(void *data, uint32_t& pktsize,bool config)
 {
 	uint32_t tlvsize = serial_size(config) ;
@@ -382,8 +486,6 @@ bool RsPublicMsgInviteConfigItem::serialise(void *data, uint32_t& pktsize,bool c
 
 	return ok;
 }
-
-
 bool RsMsgTagType::serialise(void *data, uint32_t& pktsize,bool config)
 {
 	uint32_t tlvsize = serial_size( config) ;
@@ -536,7 +638,6 @@ uint32_t RsMsgTags::serial_size(bool)
 
 	return s;
 }
-
 bool RsMsgTags::serialise(void *data, uint32_t& pktsize,bool config)
 {
 	uint32_t tlvsize = serial_size( config) ;
@@ -672,8 +773,6 @@ uint32_t RsMsgSrcId::serial_size(bool)
 
 	return s;
 }
-
-
 bool RsMsgSrcId::serialise(void *data, uint32_t& pktsize,bool config)
 {
 	uint32_t tlvsize = serial_size(config) ;
@@ -777,14 +876,6 @@ std::ostream& RsMsgGRouterMap::print(std::ostream& out, uint16_t indent)
 
     return out;
 }
-
-void RsMsgGRouterMap::clear()
-{
-    ongoing_msgs.clear() ;
-
-    return;
-}
-
 uint32_t RsMsgGRouterMap::serial_size(bool)
 {
     uint32_t s = 8; /* header */
@@ -933,7 +1024,6 @@ uint32_t RsMsgDistantMessagesHashMap::serial_size(bool)
 
     return s;
 }
-
 bool RsMsgDistantMessagesHashMap::serialise(void *data, uint32_t& pktsize,bool config)
 {
     uint32_t tlvsize = serial_size(config) ;
@@ -1073,7 +1163,6 @@ uint32_t RsMsgParentId::serial_size(bool)
 
 	return s;
 }
-
 bool RsMsgParentId::serialise(void *data, uint32_t& pktsize,bool config)
 {
 	uint32_t tlvsize = serial_size( config) ;
@@ -1197,4 +1286,7 @@ RsItem* RsMsgSerialiser::deserialise(void *data, uint32_t *pktsize)
 
 
 /*************************************************************************/
+
+#endif
+
 

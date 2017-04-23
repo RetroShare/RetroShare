@@ -80,13 +80,13 @@ RsChatAvatarItem::~RsChatAvatarItem()
 	}
 }
 
-void RsChatLobbyBouncingObject::serial_process(RsItem::SerializeJob j, SerializeContext& ctx, bool include_signature)
+void RsChatLobbyBouncingObject::serial_process(RsItem::SerializeJob j, SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process(j,ctx,lobby_id,"lobby_id") ;
     RsTypeSerializer::serial_process(j,ctx,msg_id  ,"msg_id") ;
     RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_NAME,nick,"nick") ;
 
-    if(include_signature)
+    if(!(ctx.mFlags & RsSerializer::SERIALIZATION_FLAG_SIGNATURE))
     	RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,signature,"signature") ;
 }
 
@@ -94,13 +94,7 @@ void RsChatLobbyMsgItem::serial_process(RsItem::SerializeJob j,SerializeContext&
 {
     RsChatMsgItem::serial_process(j,ctx) ;
     RsTypeSerializer::serial_process(j,ctx,parent_msg_id,"parent_msg_id") ;
-    RsChatLobbyBouncingObject::serial_process(j,ctx,true) ;
-}
-void RsChatLobbyMsgItem::serial_process_for_signature(RsItem::SerializeJob j,SerializeContext& ctx)
-{
-    RsChatMsgItem::serial_process(j,ctx) ;
-    RsTypeSerializer::serial_process(j,ctx,parent_msg_id,"parent_msg_id") ;
-    RsChatLobbyBouncingObject::serial_process(j,ctx,false) ;
+    RsChatLobbyBouncingObject::serial_process(j,ctx) ;
 }
 
 void RsChatLobbyListRequestItem::serial_process(RsItem::SerializeJob j,SerializeContext& ctx)
@@ -129,15 +123,7 @@ void RsChatLobbyEventItem::serial_process(RsItem::SerializeJob j,SerializeContex
     RsTypeSerializer::serial_process         (j,ctx,TLV_TYPE_STR_NAME,string1,"string1") ;
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,sendTime ,"sendTime") ;
 
-    RsChatLobbyBouncingObject::serial_process(j,ctx,true) ;
-}
-void RsChatLobbyEventItem::serial_process_for_signature(RsItem::SerializeJob j,SerializeContext& ctx)
-{
-    RsTypeSerializer::serial_process<uint8_t>(j,ctx,event_type,"event_type") ;
-    RsTypeSerializer::serial_process         (j,ctx,TLV_TYPE_STR_NAME,string1,"string1") ;
-    RsTypeSerializer::serial_process<uint32_t>(j,ctx,sendTime ,"sendTime") ;
-
-    RsChatLobbyBouncingObject::serial_process(j,ctx,false) ;
+    RsChatLobbyBouncingObject::serial_process(j,ctx) ;
 }
 void RsChatLobbyUnsubscribeItem::serial_process(RsItem::SerializeJob j,SerializeContext& ctx)
 {
@@ -209,41 +195,4 @@ void RsPrivateChatMsgConfigItem::get(RsChatMsgItem *ci)
 	ci->recvTime = recvTime;
 }
 
-uint32_t RsChatLobbyBouncingObject::serial_size_for_signature() const
-{
-	SerializeContext ctx(NULL,0);
-
-	ctx.mOffset = 8;
-
-	const_cast<RsChatLobbyBouncingObject*>(this)->serial_process_for_signature(RsItem::SIZE_ESTIMATE,ctx) ;
-
-	return ctx.mOffset ;
-}
-
-bool RsChatLobbyBouncingObject::serialize_for_signature(uint8_t *data,uint32_t size) const
-{
-	SerializeContext ctx(data,0);
-
-	uint32_t tlvsize = serial_size_for_signature() ;
-
-	if(tlvsize > size)
-		throw std::runtime_error("Cannot serialise: not enough room.") ;
-
-	if(!setRsItemHeader(data, tlvsize, PacketId(), tlvsize))
-	{
-		std::cerr << "RsSerializer::serialise_item(): ERROR. Not enough size!" << std::endl;
-		return false ;
-	}
-	ctx.mOffset = 8;
-	ctx.mSize = tlvsize;
-
-	const_cast<RsChatLobbyBouncingObject*>(this)->serial_process_for_signature(RsItem::SERIALIZE,ctx) ;
-
-	if(ctx.mSize != ctx.mOffset)
-	{
-		std::cerr << "RsChatSerializer::serialise_item(): ERROR. offset does not match expected size!" << std::endl;
-		return false ;
-	}
-	return true ;
-}
 
