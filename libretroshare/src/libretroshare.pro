@@ -481,7 +481,7 @@ HEADERS +=	rsitems/itempriorities.h \
 			serialiser/rstlvbanlist.h \
 			rsitems/rsbanlistitems.h \
 			rsitems/rsbwctrlitems.h \
-			serialiser/rsdiscovery2items.h \
+			rsitems/rsdiscovery2items.h \
 			serialiser/rsheartbeatitems.h \
 			serialiser/rsrttitems.h \
 			serialiser/rsgxsrecognitems.h \
@@ -629,7 +629,7 @@ SOURCES +=	serialiser/rsbaseserial.cc \
 			serialiser/rstlvbanlist.cc \
 			rsitems/rsbanlistitems.cc \
 			rsitems/rsbwctrlitems.cc \
-			serialiser/rsdiscovery2items.cc \
+			rsitems/rsdiscovery2items.cc \
 			serialiser/rsheartbeatitems.cc \
 			serialiser/rsrttitems.cc \
 			serialiser/rsgxsrecognitems.cc \
