@@ -27,6 +27,8 @@
 #include "serialiser/rsdiscovery2items.h"
 #include "serialiser/rsbaseserial.h"
 
+#include "serialization/rstypeserializer.h"
+
 #if 0
 
 #include "rsitems/rsserviceids.h"
@@ -44,6 +46,121 @@
 
 #include <iostream>
 
+RsItem *RsDiscSerialiser::create_item(uint16_t service,uint8_t item_subtype) const
+{
+    if(service != RS_SERVICE_TYPE_DISC)
+        return NULL ;
+
+    switch(item_subtype)
+    {
+	case RS_PKT_SUBTYPE_DISC_PGP_LIST           : return new RsDiscPgpListItem() ; //= 0x01;
+	case RS_PKT_SUBTYPE_DISC_PGP_CERT           : return new RsDiscPgpCertItem() ; //= 0x02;
+	case RS_PKT_SUBTYPE_DISC_CONTACT_deprecated : return NULL ;                    //= 0x03;
+#if 0
+	case RS_PKT_SUBTYPE_DISC_SERVICES           : return new RsDiscServicesItem(); //= 0x04;
+#endif
+	case RS_PKT_SUBTYPE_DISC_CONTACT            : return new RsDiscContactItem();  //= 0x05;
+    default:
+    return NULL ;
+    }
+}
+
+/*************************************************************************/
+
+void 	RsDiscPgpListItem::clear()
+{
+	mode = DISC_PGP_LIST_MODE_NONE;
+	pgpIdSet.TlvClear();
+}
+
+void RsDiscPgpListItem::serial_process(SerializeJob j,SerializeContext& ctx)
+{
+    RsTypeSerializer::serial_process<uint32_t>(j,ctx,mode,"mode") ;
+    RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,pgpIdSet,"pgpIdSet") ;
+}
+
+void 	RsDiscPgpCertItem::clear()
+{
+	pgpId.clear();
+	pgpCert.clear();
+}
+
+
+void RsDiscPgpCertItem::serial_process(SerializeJob j,SerializeContext& ctx)
+{
+    RsTypeSerializer::serial_process(j,ctx,pgpId,"pgpId") ;
+    RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_PGPCERT,pgpCert,"pgpCert") ;
+}
+
+void 	RsDiscContactItem::clear()
+{
+	pgpId.clear();
+	sslId.clear();
+
+	location.clear();
+	version.clear();
+
+	netMode = 0;
+	vs_disc = 0;
+	vs_dht = 0;
+	lastContact = 0;
+
+	isHidden = false;
+	hiddenAddr.clear();
+	hiddenPort = 0;
+
+	localAddrV4.TlvClear();
+	extAddrV4.TlvClear();
+	localAddrV6.TlvClear();
+	extAddrV6.TlvClear();
+
+
+	dyndns.clear();
+
+	localAddrList.TlvClear();
+	extAddrList.TlvClear();
+}
+
+void RsDiscContactItem::serial_process(SerializeJob j,SerializeContext& ctx)
+{
+   RsTypeSerializer::serial_process          (j,ctx,pgpId,"pgpId");
+   RsTypeSerializer::serial_process          (j,ctx,sslId,"sslId");
+   RsTypeSerializer::serial_process          (j,ctx,TLV_TYPE_STR_LOCATION,location,"location");
+   RsTypeSerializer::serial_process          (j,ctx,TLV_TYPE_STR_VERSION,version,"version");
+   RsTypeSerializer::serial_process<uint32_t>(j,ctx,netMode,"netMode");
+   RsTypeSerializer::serial_process<uint16_t>(j,ctx,vs_disc,"vs_disc");
+   RsTypeSerializer::serial_process<uint16_t>(j,ctx,vs_dht,"vs_dht");
+   RsTypeSerializer::serial_process<uint32_t>(j,ctx,lastContact,"lastContact");
+
+   // This is a hack. Normally we should have to different item types, in order to avoid this nonesense.
+
+   if( (j == RsItem::DESERIALIZE && GetTlvType( &(((uint8_t *) ctx.mData)[ctx.mOffset])  )==TLV_TYPE_STR_DOMADDR) || isHidden)
+   {
+       isHidden = true ;
+
+	   RsTypeSerializer::serial_process          (j,ctx,TLV_TYPE_STR_DOMADDR,hiddenAddr,"hiddenAddr");
+	   RsTypeSerializer::serial_process<uint16_t>(j,ctx,hiddenPort,"hiddenPort");
+   }
+   else
+   {
+       isHidden = false ;
+
+	   RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,localAddrV4,"localAddrV4");
+	   RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,  extAddrV4,"extAddrV4");
+	   RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,localAddrV6,"localAddrV6");
+	   RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,  extAddrV6,"extAddrV6");
+	   RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,currentConnectAddress,"currentConnectAddress");
+	   RsTypeSerializer::serial_process           (j,ctx,TLV_TYPE_STR_DYNDNS,dyndns,"dyndns");
+	   RsTypeSerializer::serial_process           (j,ctx,localAddrList,"localAddrList");
+	   RsTypeSerializer::serial_process           (j,ctx,  extAddrList,"extAddrList");
+   }
+}
+
+/*************************************************************************/
+
+
+
+#ifdef TO_REMOVE
 /*************************************************************************/
 
 uint32_t    RsDiscSerialiser::size(RsItem *i)
@@ -138,20 +255,6 @@ RsItem *RsDiscSerialiser::deserialise(void *data, uint32_t *pktsize)
 	}
 	return NULL;
 }
-
-/*************************************************************************/
-
-RsDiscPgpListItem::~RsDiscPgpListItem()
-{
-	return;
-}
-
-void 	RsDiscPgpListItem::clear()
-{
-	mode = DISC_PGP_LIST_MODE_NONE;
-	pgpIdSet.TlvClear();
-}
-
 std::ostream &RsDiscPgpListItem::print(std::ostream &out, uint16_t indent)
 {
 	printRsItemBase(out, "RsDiscPgpListItem", indent);
@@ -173,7 +276,6 @@ uint32_t    RsDiscSerialiser::sizePgpList(RsDiscPgpListItem *item)
 	s += item->pgpIdSet.TlvSize();
 	return s;
 }
-
 /* serialise the data to the buffer */
 bool     RsDiscSerialiser::serialisePgpList(RsDiscPgpListItem *item, void *data, uint32_t *pktsize)
 {
@@ -273,6 +375,7 @@ RsDiscPgpListItem *RsDiscSerialiser::deserialisePgpList(void *data, uint32_t *pk
 	return item;
 }
 
+#endif
 
 /*************************************************************************/
 /*************************************************************************/
@@ -410,20 +513,9 @@ RsDiscServicesItem *RsDiscSerialiser::deserialiseServices(void *data, uint32_t *
 	return item;
 }
 
-#endif
-
-
-/*************************************************************************/
-
 RsDiscPgpCertItem::~RsDiscPgpCertItem()
 {
 	return;
-}
-
-void 	RsDiscPgpCertItem::clear()
-{
-	pgpId.clear();
-	pgpCert.clear();
 }
 
 std::ostream &RsDiscPgpCertItem::print(std::ostream &out, uint16_t indent)
@@ -448,7 +540,6 @@ uint32_t    RsDiscSerialiser::sizePgpCert(RsDiscPgpCertItem *item)
 	s += GetTlvStringSize(item->pgpCert);
 	return s;
 }
-
 /* serialise the data to the buffer */
 bool     RsDiscSerialiser::serialisePgpCert(RsDiscPgpCertItem *item, void *data, uint32_t *pktsize)
 {
@@ -557,35 +648,6 @@ RsDiscContactItem::~RsDiscContactItem()
 	return;
 }
 
-void 	RsDiscContactItem::clear()
-{
-	pgpId.clear();
-	sslId.clear();
-
-	location.clear();
-	version.clear();
-
-	netMode = 0;
-	vs_disc = 0;
-	vs_dht = 0;
-	lastContact = 0;
-
-	isHidden = false;
-	hiddenAddr.clear();
-	hiddenPort = 0;
-
-	localAddrV4.TlvClear();
-	extAddrV4.TlvClear();
-	localAddrV6.TlvClear();
-	extAddrV6.TlvClear();
-
-
-	dyndns.clear();
-
-	localAddrList.TlvClear();
-	extAddrList.TlvClear();
-}
-
 std::ostream &RsDiscContactItem::print(std::ostream &out, uint16_t indent)
 {
 	printRsItemBase(out, "RsDiscContact", indent);
@@ -656,7 +718,6 @@ std::ostream &RsDiscContactItem::print(std::ostream &out, uint16_t indent)
 	printRsItemEnd(out, "RsDiscContact", indent);
 	return out;
 }
-
 
 uint32_t    RsDiscSerialiser::sizeContact(RsDiscContactItem *item)
 {
@@ -893,6 +954,4 @@ RsDiscContactItem *RsDiscSerialiser::deserialiseContact(void *data, uint32_t *pk
 
 	return item;
 }
-
-/*************************************************************************/
-
+#endif

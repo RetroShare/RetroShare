@@ -33,6 +33,8 @@
 #include "serialiser/rstlvaddrs.h"
 #include "rsitems/rsserviceids.h"
 
+#include "serialization/rsserializer.h"
+
 const uint8_t RS_PKT_SUBTYPE_DISC_PGP_LIST           = 0x01;
 const uint8_t RS_PKT_SUBTYPE_DISC_PGP_CERT           = 0x02;
 const uint8_t RS_PKT_SUBTYPE_DISC_CONTACT_deprecated = 0x03;
@@ -52,18 +54,18 @@ class RsDiscItem: public RsItem
 
 class RsDiscPgpListItem: public RsDiscItem
 {
-	public:
+public:
 
-        RsDiscPgpListItem()
-        :RsDiscItem(RS_PKT_SUBTYPE_DISC_PGP_LIST)
-	{ 
+	RsDiscPgpListItem()
+	    :RsDiscItem(RS_PKT_SUBTYPE_DISC_PGP_LIST)
+	{
 		setPriorityLevel(QOS_PRIORITY_RS_DISC_PGP_LIST);
 	}
 
-virtual ~RsDiscPgpListItem();
+    virtual ~RsDiscPgpListItem(){}
 
-virtual  void clear();
-virtual std::ostream &print(std::ostream &out, uint16_t indent = 0);
+	virtual  void clear();
+	virtual void serial_process(SerializeJob /* j */,SerializeContext& /* ctx */);
 
 	uint32_t mode;
 	RsTlvPgpIdSet pgpIdSet;
@@ -73,18 +75,18 @@ virtual std::ostream &print(std::ostream &out, uint16_t indent = 0);
 
 class RsDiscPgpCertItem: public RsDiscItem
 {
-	public:
+public:
 
-        RsDiscPgpCertItem()
-        :RsDiscItem(RS_PKT_SUBTYPE_DISC_PGP_CERT)
-	{ 
+	RsDiscPgpCertItem()
+	    :RsDiscItem(RS_PKT_SUBTYPE_DISC_PGP_CERT)
+	{
 		setPriorityLevel(QOS_PRIORITY_RS_DISC_PGP_CERT);
 	}
 
-virtual ~RsDiscPgpCertItem();
+    virtual ~RsDiscPgpCertItem(){}
 
-virtual  void clear();
-virtual std::ostream &print(std::ostream &out, uint16_t indent = 0);
+	virtual  void clear();
+	virtual void serial_process(SerializeJob /* j */,SerializeContext& /* ctx */);
 
 	RsPgpId pgpId;
 	std::string pgpCert;
@@ -93,30 +95,30 @@ virtual std::ostream &print(std::ostream &out, uint16_t indent = 0);
 
 class RsDiscContactItem: public RsDiscItem
 {
-	public:
+public:
 
 	RsDiscContactItem()
-        :RsDiscItem(RS_PKT_SUBTYPE_DISC_CONTACT)
-	{ 
-		setPriorityLevel(QOS_PRIORITY_RS_DISC_CONTACT); 
+	    :RsDiscItem(RS_PKT_SUBTYPE_DISC_CONTACT)
+	{
+		setPriorityLevel(QOS_PRIORITY_RS_DISC_CONTACT);
 	}
 
-virtual ~RsDiscContactItem();
+    virtual ~RsDiscContactItem() {}
 
-virtual  void clear();
-virtual std::ostream &print(std::ostream &out, uint16_t indent = 0);
+	virtual  void clear();
+	virtual void serial_process(SerializeJob /* j */,SerializeContext& /* ctx */);
 
 	RsPgpId pgpId;
 	RsPeerId sslId;
 
 	// COMMON
-	std::string location;				
+	std::string location;
 	std::string version;
 
 	uint32_t    netMode;			/* Mandatory */
 	uint16_t    vs_disc;		    	/* Mandatory */
 	uint16_t    vs_dht;		    	/* Mandatory */
-	uint32_t    lastContact;		
+	uint32_t    lastContact;
 
 	bool   isHidden;			/* not serialised */
 
@@ -126,7 +128,7 @@ virtual std::ostream &print(std::ostream &out, uint16_t indent = 0);
 
 	// STANDARD.
 
-    RsTlvIpAddress currentConnectAddress ;	// used to check!
+	RsTlvIpAddress currentConnectAddress ;	// used to check!
 
 	RsTlvIpAddress localAddrV4;		/* Mandatory */
 	RsTlvIpAddress extAddrV4;		/* Mandatory */
@@ -164,40 +166,14 @@ virtual std::ostream &print(std::ostream &out, uint16_t indent = 0);
 #endif
 
 
-class RsDiscSerialiser: public RsSerialType
+class RsDiscSerialiser: public RsSerializer
 {
         public:
-        RsDiscSerialiser()
-        :RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_DISC)
-        { return; }
+        RsDiscSerialiser() :RsSerializer(RS_SERVICE_TYPE_DISC) {}
 
-virtual     ~RsDiscSerialiser() { return; }
+		virtual     ~RsDiscSerialiser() {}
 
-virtual uint32_t    size(RsItem *);
-virtual bool        serialise  (RsItem *item, void *data, uint32_t *size);
-virtual RsItem *    deserialise(void *data, uint32_t *size);
-
-	private:
-
-virtual uint32_t    sizePgpList(RsDiscPgpListItem *);
-virtual bool        serialisePgpList(RsDiscPgpListItem *item, void *data, uint32_t *size);
-virtual RsDiscPgpListItem *deserialisePgpList(void *data, uint32_t *size);
-
-virtual uint32_t    sizePgpCert(RsDiscPgpCertItem *);
-virtual bool        serialisePgpCert(RsDiscPgpCertItem *item, void *data, uint32_t *size);
-virtual RsDiscPgpCertItem *deserialisePgpCert(void *data, uint32_t *size);
-
-virtual uint32_t        sizeContact(RsDiscContactItem *);
-virtual bool            serialiseContact(RsDiscContactItem *item, void *data, uint32_t *size);
-virtual RsDiscContactItem   *deserialiseContact(void *data, uint32_t *size);
-
-#if 0
-virtual uint32_t    sizeServices(RsDiscServicesItem *);
-virtual bool        serialiseServices(RsDiscServicesItem *item, void *data, uint32_t *size);
-virtual RsDiscServicesItem *deserialiseServices(void *data, uint32_t *size);
-
-#endif
-
+        RsItem *create_item(uint16_t service,uint8_t item_subtype) const ;
 };
 
 
