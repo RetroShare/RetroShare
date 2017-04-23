@@ -29,6 +29,7 @@
 #include <retroshare/rsfiles.h>
 #include <retroshare/rspeers.h>
 #include <retroshare/rsdht.h>
+#include "util/misc.h"
 
 #include <QTimer>
 
@@ -127,35 +128,37 @@ void RelayPage::load()
 	uint32_t count;
 	uint32_t bandwidth;
 	rsDht->getRelayAllowance(RSDHT_RELAY_CLASS_FRIENDS, count, bandwidth);
-	ui.noFriendSpinBox->setValue(count);
-	ui.bandFriendSpinBox->setValue(bandwidth / 1000);
+	whileBlocking(ui.noFriendSpinBox)->setValue(count);
+	whileBlocking(ui.bandFriendSpinBox)->setValue(bandwidth / 1000);
 
 	rsDht->getRelayAllowance(RSDHT_RELAY_CLASS_FOF, count, bandwidth);
-	ui.noFOFSpinBox->setValue(count);
-	ui.bandFOFSpinBox->setValue(bandwidth / 1000);
+	whileBlocking(ui.noFOFSpinBox)->setValue(count);
+	whileBlocking(ui.bandFOFSpinBox)->setValue(bandwidth / 1000);
 
 	rsDht->getRelayAllowance(RSDHT_RELAY_CLASS_GENERAL, count, bandwidth);
-	ui.noGeneralSpinBox->setValue(count);
-	ui.bandGeneralSpinBox->setValue(bandwidth / 1000);
+	whileBlocking(ui.noGeneralSpinBox)->setValue(count);
+	whileBlocking(ui.bandGeneralSpinBox)->setValue(bandwidth / 1000);
+
+	updateTotals();
 
 
 	uint32_t relayMode = rsDht->getRelayMode();
 	if (relayMode & RSDHT_RELAY_ENABLED)
 	{
-		ui.enableCheckBox->setCheckState(Qt::Checked);
+		whileBlocking(ui.enableCheckBox)->setCheckState(Qt::Checked);
 		if ((relayMode & RSDHT_RELAY_MODE_MASK) == RSDHT_RELAY_MODE_OFF)
 		{
-			ui.serverCheckBox->setCheckState(Qt::Unchecked);
+			whileBlocking(ui.serverCheckBox)->setCheckState(Qt::Unchecked);
 		}
 		else
 		{
-			ui.serverCheckBox->setCheckState(Qt::Checked);
+			whileBlocking(ui.serverCheckBox)->setCheckState(Qt::Checked);
 		}
 	}
 	else
 	{
-		ui.enableCheckBox->setCheckState(Qt::Unchecked);
-		ui.serverCheckBox->setCheckState(Qt::Unchecked);
+		whileBlocking(ui.enableCheckBox)->setCheckState(Qt::Unchecked);
+		whileBlocking(ui.serverCheckBox)->setCheckState(Qt::Unchecked);
 	}
 
 	loadServers();
