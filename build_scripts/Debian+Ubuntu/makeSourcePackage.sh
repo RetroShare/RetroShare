@@ -116,6 +116,8 @@ for i in ${dist}; do
 
     if test "${i}" = "lucid" ; then
         cp ../control.ubuntu_lucid debian/control
+    elif test "${i}" = "zesty" ; then
+        cp ../control.zesty debian/control
     elif test "${i}" = "squeeze" ; then
         cp ../control.squeeze_bubba3 debian/control
     elif test "${i}" = "precise" ; then
