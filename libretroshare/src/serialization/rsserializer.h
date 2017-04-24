@@ -33,10 +33,6 @@ class RsSerializer: public RsSerialType
 		 * 	should be overloaded to create the correct type of item depending on the data
 		 */
 		virtual RsItem *create_item(uint16_t /* service */, uint8_t /* item_sub_id */) const=0;
-	//	{
- //           std::cerr << "(EE) Serializer does not overload create_item(). This is probably an error."<< std::endl;
-	//		return NULL ;
-	//	}
 
         // The following functions overload RsSerialType. They *should not* need to be further overloaded.
 

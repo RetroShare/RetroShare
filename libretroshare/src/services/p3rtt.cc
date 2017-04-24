@@ -32,7 +32,7 @@
 #include "pqi/p3linkmgr.h"
 
 #include "services/p3rtt.h"
-#include "serialiser/rsrttitems.h"
+#include "rsitems/rsrttitems.h"
 
 #include <sys/time.h>
 

@@ -30,7 +30,7 @@
 #include <list>
 #include <string>
 
-#include "serialiser/rsrttitems.h"
+#include "rsitems/rsrttitems.h"
 #include "services/p3service.h"
 #include "retroshare/rsrtt.h"
 
