@@ -29,8 +29,9 @@
 #include "retroshare/rspeers.h"
 
 #include "services/p3gxsreputation.h"
+
 #include "rsitems/rsgxsreputationitems.h"
-#include "serialiser/rsconfigitems.h"
+#include "rsitems/rsconfigitems.h"
 
 #include <sys/time.h>
 

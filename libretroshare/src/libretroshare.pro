@@ -456,8 +456,8 @@ HEADERS +=	rsitems/itempriorities.h \
 			serialiser/rsbaseserial.h \
 			rsitems/rsfiletransferitems.h \
 			serialiser/rsserviceserialiser.h \
-			serialiser/rsconfigitems.h \
-			serialiser/rshistoryitems.h \
+			rsitems/rsconfigitems.h \
+			rsitems/rshistoryitems.h \
 			rsitems/rsmsgitems.h \
 			serialiser/rsserial.h \
 			rsitems/rsserviceids.h \
@@ -610,8 +610,8 @@ SOURCES += plugins/pluginmanager.cc \
 SOURCES +=	serialiser/rsbaseserial.cc \
 			rsitems/rsfiletransferitems.cc \
 			serialiser/rsserviceserialiser.cc \
-			serialiser/rsconfigitems.cc \
-			serialiser/rshistoryitems.cc \
+			rsitems/rsconfigitems.cc \
+			rsitems/rshistoryitems.cc \
 			rsitems/rsmsgitems.cc \
 			serialiser/rsserial.cc \
 			serialiser/rsstatusitems.cc \

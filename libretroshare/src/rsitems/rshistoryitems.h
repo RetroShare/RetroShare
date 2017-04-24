@@ -28,7 +28,7 @@
 
 #include "rsitems/rsserviceids.h"
 #include "serialiser/rsserial.h"
-#include "serialiser/rsconfigitems.h"
+#include "rsitems/rsconfigitems.h"
 #include "retroshare/rstypes.h"
 
 #include "serialization/rsserializer.h"

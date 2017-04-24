@@ -29,7 +29,7 @@
 #include <map>
 #include <list>
 
-#include "serialiser/rshistoryitems.h"
+#include "rsitems/rshistoryitems.h"
 #include "retroshare/rshistory.h"
 #include "pqi/p3cfgmgr.h"
 

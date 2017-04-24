@@ -26,8 +26,8 @@
 #include <time.h>
 
 #include "p3historymgr.h"
-#include "serialiser/rshistoryitems.h"
-#include "serialiser/rsconfigitems.h"
+#include "rsitems/rshistoryitems.h"
+#include "rsitems/rsconfigitems.h"
 #include "retroshare/rsiface.h"
 #include "retroshare/rspeers.h"
 #include "rsitems/rsmsgitems.h"

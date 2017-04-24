@@ -41,7 +41,8 @@
 
 #include "pgp/pgpkeyutil.h"
 #include "rsserver/p3face.h"
-#include "serialiser/rsconfigitems.h"
+
+#include "rsitems/rsconfigitems.h"
 
 #include "grouter/p3grouter.h"
 #include "grouter/groutertypes.h"

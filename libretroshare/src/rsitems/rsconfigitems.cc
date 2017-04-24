@@ -25,7 +25,7 @@
  */
 
 #include "serialiser/rsbaseserial.h"
-#include "serialiser/rsconfigitems.h"
+#include "rsitems/rsconfigitems.h"
 #include "retroshare/rspeers.h" // Needed for RsGroupInfo.
 
 /***

@@ -23,10 +23,11 @@
  *
  */
 
-#include "serialiser/rshistoryitems.h"
+#include "rsitems/rshistoryitems.h"
+#include "rsitems/rsconfigitems.h"
+
 #include "serialiser/rsbaseserial.h"
 #include "serialiser/rstlvbase.h"
-#include "serialiser/rsconfigitems.h"
 
 /***
 #define RSSERIAL_DEBUG 1

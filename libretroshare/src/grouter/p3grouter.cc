@@ -186,7 +186,7 @@
 #include "util/rsrandom.h"
 #include "util/rsprint.h"
 #include "util/rsmemory.h"
-#include "serialiser/rsconfigitems.h"
+#include "rsitems/rsconfigitems.h"
 #include "services/p3idservice.h"
 #include "turtle/p3turtle.h"
 #include "gxs/rsgixs.h"

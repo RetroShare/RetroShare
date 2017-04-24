@@ -30,7 +30,7 @@
 #include <retroshare/rstypes.h>
 #include <retroshare/rsfiles.h>
 #include "ft/ftextralist.h"
-#include "serialiser/rsconfigitems.h"
+#include "rsitems/rsconfigitems.h"
 #include "util/rsdir.h"
 #include <stdio.h>
 #include <unistd.h>		/* for (u)sleep() */

@@ -27,7 +27,7 @@
 #pragma once
 
 #include "serialiser/rsserial.h"
-#include "serialiser/rsconfigitems.h"
+#include "rsitems/rsconfigitems.h"
 #include "serialiser/rsbaseserial.h"
 
 #if 0
