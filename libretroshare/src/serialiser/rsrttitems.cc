@@ -36,7 +36,34 @@
 
 /*************************************************************************/
 
+RsItem *RsRttSerialiser::create_item(uint16_t service,uint8_t type) const
+{
+	if(service != RS_SERVICE_TYPE_RTT)
+		return NULL ;
 
+	switch(type)
+	{
+	case RS_PKT_SUBTYPE_RTT_PING: return new RsRttPingItem() ; //= 0x01;
+	case RS_PKT_SUBTYPE_RTT_PONG: return new RsRttPongItem() ; // = 0x02;
+	default:
+		return NULL ;
+	}
+}
+
+void RsRttPingItem::serial_process(SerializeJob j,SerializeContext& ctx)
+{
+    RsTypeSerializer::serial_process<uint32_t>(j,ctx,mSeqNo,"mSeqNo") ;
+    RsTypeSerializer::serial_process<uint64_t>(j,ctx,mPingTS,"mPingTS") ;
+}
+
+void RsRttPongItem::serial_process(SerializeJob j,SerializeContext& ctx)
+{
+    RsTypeSerializer::serial_process<uint32_t>(j,ctx,mSeqNo,"mSeqNo") ;
+    RsTypeSerializer::serial_process<uint64_t>(j,ctx,mPingTS,"mPingTS") ;
+    RsTypeSerializer::serial_process<uint64_t>(j,ctx,mPongTS,"mPongTS") ;
+}
+
+#ifdef TO_REMOVE
 RsRttPingItem::~RsRttPingItem()
 {
 	return;
@@ -370,4 +397,5 @@ RsItem* RsRttSerialiser::deserialise(void *data, uint32_t *pktsize)
 
 
 /*************************************************************************/
+#endif
 

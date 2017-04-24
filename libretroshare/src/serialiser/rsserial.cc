@@ -438,7 +438,7 @@ RsItem *    RsSerialiser::deserialise(void *data, uint32_t *size)
 		uint32_t failedtype = getRsItemId(data);
 		std::cerr << "RsSerialiser::deserialise() FAILED PACKET Size: ";
 		std::cerr << getRsItemSize(data) << " ID: ";
-		std::cerr << std::hex << failedtype << std::dec;
+		std::cerr << std::hex << failedtype << std::endl;
 		std::cerr << "RsSerialiser::deserialise() FAILED PACKET: ";
 		std::cerr << " Version: " << std::hex << (uint32_t) getRsItemVersion(failedtype) << std::dec;
 		std::cerr << " Class: " << std::hex << (uint32_t) getRsItemClass(failedtype) << std::dec;

@@ -40,7 +40,7 @@
 #include "pqi/p3cfgmgr.h"
 
 #include "services/p3service.h"
-#include "serialiser/rsmsgitems.h"
+#include "rsitems/rsmsgitems.h"
 #include "util/rsthreads.h"
 
 #include "retroshare/rsgxsifacetypes.h"

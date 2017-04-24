@@ -35,17 +35,17 @@
 #include "util/rsmemory.h"
 #include "util/rsprint.h"
 
-#include <serialiser/rsmsgitems.h>
+#include "rsitems/rsmsgitems.h"
 
-#include <retroshare/rsmsgs.h>
-#include <retroshare/rsidentity.h>
-#include <retroshare/rsiface.h>
+#include "retroshare/rsmsgs.h"
+#include "retroshare/rsidentity.h"
+#include "retroshare/rsiface.h"
 
-#include <rsserver/p3face.h>
-#include <services/p3idservice.h>
-#include <gxs/gxssecurity.h>
-#include <turtle/p3turtle.h>
-#include <retroshare/rsids.h>
+#include "rsserver/p3face.h"
+#include "services/p3idservice.h"
+#include "gxs/gxssecurity.h"
+#include "turtle/p3turtle.h"
+#include "retroshare/rsids.h"
 #include "distantchat.h"
 
 //#define DEBUG_DISTANT_CHAT

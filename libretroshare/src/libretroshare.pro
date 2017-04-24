@@ -458,7 +458,7 @@ HEADERS +=	rsitems/itempriorities.h \
 			serialiser/rsserviceserialiser.h \
 			serialiser/rsconfigitems.h \
 			serialiser/rshistoryitems.h \
-			serialiser/rsmsgitems.h \
+			rsitems/rsmsgitems.h \
 			serialiser/rsserial.h \
 			rsitems/rsserviceids.h \
 			serialiser/rsserviceitems.h \
@@ -612,7 +612,7 @@ SOURCES +=	serialiser/rsbaseserial.cc \
 			serialiser/rsserviceserialiser.cc \
 			serialiser/rsconfigitems.cc \
 			serialiser/rshistoryitems.cc \
-			serialiser/rsmsgitems.cc \
+			rsitems/rsmsgitems.cc \
 			serialiser/rsserial.cc \
 			serialiser/rsstatusitems.cc \
 			serialiser/rstlvaddrs.cc \

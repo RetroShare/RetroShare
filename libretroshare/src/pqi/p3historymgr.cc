@@ -30,7 +30,7 @@
 #include "serialiser/rsconfigitems.h"
 #include "retroshare/rsiface.h"
 #include "retroshare/rspeers.h"
-#include "serialiser/rsmsgitems.h"
+#include "rsitems/rsmsgitems.h"
 #include "rsserver/p3face.h"
 #include "util/rsstring.h"
 

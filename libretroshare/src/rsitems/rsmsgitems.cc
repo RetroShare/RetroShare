@@ -27,8 +27,9 @@
 #include <stdexcept>
 #include <time.h>
 #include "serialiser/rsbaseserial.h"
-#include "serialiser/rsmsgitems.h"
 #include "serialiser/rstlvbase.h"
+
+#include "rsitems/rsmsgitems.h"
 
 #include "serialization/rstypeserializer.h"
 

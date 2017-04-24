@@ -31,6 +31,8 @@
 #include "rsitems/rsserviceids.h"
 #include "serialiser/rsserial.h"
 
+#include "serialization/rsserializer.h"
+
 /**************************************************************************/
 
 const uint8_t RS_PKT_SUBTYPE_RTT_PING = 0x01;
@@ -39,12 +41,11 @@ const uint8_t RS_PKT_SUBTYPE_RTT_PONG = 0x02;
 class RsRttItem: public RsItem
 {
 	public:
-		RsRttItem(uint8_t chat_subtype) : RsItem(RS_PKT_VERSION_SERVICE,RS_SERVICE_TYPE_RTT,chat_subtype) 
+		RsRttItem(uint8_t subtype) : RsItem(RS_PKT_VERSION_SERVICE,RS_SERVICE_TYPE_RTT,subtype)
 	{ setPriorityLevel(QOS_PRIORITY_RS_RTT_PING) ;}	// should be refined later.
 
 		virtual ~RsRttItem() {};
 		virtual void clear() {};
-		virtual std::ostream& print(std::ostream &out, uint16_t indent = 0) = 0 ;
 };
 
 class RsRttPingItem: public RsRttItem
@@ -52,9 +53,10 @@ class RsRttPingItem: public RsRttItem
 	public:
 		RsRttPingItem() :RsRttItem(RS_PKT_SUBTYPE_RTT_PING) {}
 
-		virtual ~RsRttPingItem();
-		virtual void clear();
-		virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
+        virtual ~RsRttPingItem(){}
+        virtual void clear(){}
+
+		virtual void serial_process(SerializeJob j,SerializeContext& ctx);
 
 		uint32_t mSeqNo;
 		uint64_t mPingTS;
@@ -65,9 +67,10 @@ class RsRttPongItem: public RsRttItem
 	public:
 		RsRttPongItem() :RsRttItem(RS_PKT_SUBTYPE_RTT_PONG) {}
 
-		virtual ~RsRttPongItem();
-		virtual void clear();
-		virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
+        virtual ~RsRttPongItem(){}
+        virtual void clear(){}
+
+		virtual void serial_process(SerializeJob j,SerializeContext& ctx);
 
 		uint32_t mSeqNo;
 		uint64_t mPingTS;
@@ -75,29 +78,14 @@ class RsRttPongItem: public RsRttItem
 };
 
 
-class RsRttSerialiser: public RsSerialType
+class RsRttSerialiser: public RsSerializer
 {
 	public:
-	RsRttSerialiser()
-	:RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_RTT)
-	{ return; }
+	RsRttSerialiser() :RsSerializer(RS_SERVICE_TYPE_RTT) {}
 	
-virtual     ~RsRttSerialiser() { return; }
+	virtual     ~RsRttSerialiser(){}
 	
-virtual	uint32_t    size(RsItem *);
-virtual	bool        serialise  (RsItem *item, void *data, uint32_t *size);
-virtual	RsItem *    deserialise(void *data, uint32_t *size);
-
-	private:
-
-virtual	uint32_t    sizeRttPingItem(RsRttPingItem *);
-virtual	bool        serialiseRttPingItem  (RsRttPingItem *item, void *data, uint32_t *size);
-virtual	RsRttPingItem *deserialiseRttPingItem(void *data, uint32_t *size);
-
-virtual	uint32_t    sizeRttPongItem(RsRttPongItem *);
-virtual	bool        serialiseRttPongItem  (RsRttPongItem *item, void *data, uint32_t *size);
-virtual	RsRttPongItem *deserialiseRttPongItem(void *data, uint32_t *size);
-
+    virtual RsItem *create_item(uint16_t service,uint8_t type) const;
 };
 
 /**************************************************************************/
