@@ -10,7 +10,7 @@
 
 #define SERIALIZE_ERROR() std::cerr << __PRETTY_FUNCTION__ << " : " 
 
-class RsSerializer: public RsSerialType
+class RsServiceSerializer: public RsSerialType
 {
 	public:
     	// These are convenience flags to be used by the items when processing the data. The names of the flags
@@ -23,7 +23,7 @@ class RsSerializer: public RsSerialType
         static const SerializationFlags SERIALIZATION_FLAG_CONFIG ;			// 0x0001
         static const SerializationFlags SERIALIZATION_FLAG_SIGNATURE ;		// 0x0002
 
-		RsSerializer(uint16_t service_id,
+		RsServiceSerializer(uint16_t service_id,
                      SerializeContext::SerializationFormat format = SerializeContext::FORMAT_BINARY,
                      SerializationFlags                    flags  = SERIALIZATION_FLAG_NONE)
 

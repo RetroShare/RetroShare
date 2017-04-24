@@ -222,7 +222,7 @@ bool DistributedChatService::checkSignature(RsChatLobbyBouncingObject *obj,const
 
     mGixs->requestKey(obj->signature.keyId,peer_list,RsIdentityUsage(RS_SERVICE_TYPE_CHAT,RsIdentityUsage::CHAT_LOBBY_MSG_VALIDATION,RsGxsGroupId(),RsGxsMessageId(),obj->lobby_id));
 
-    uint32_t size = RsChatSerialiser(RsSerializer::SERIALIZATION_FLAG_SIGNATURE).size(dynamic_cast<RsItem*>(obj)) ;
+    uint32_t size = RsChatSerialiser(RsServiceSerializer::SERIALIZATION_FLAG_SIGNATURE).size(dynamic_cast<RsItem*>(obj)) ;
     RsTemporaryMemory memory(size) ;
 
 #ifdef DEBUG_CHAT_LOBBIES
@@ -230,7 +230,7 @@ bool DistributedChatService::checkSignature(RsChatLobbyBouncingObject *obj,const
     std::cerr << "   signature id: " << obj->signature.keyId << std::endl;
 #endif
 
-    if(!RsChatSerialiser(RsSerializer::SERIALIZATION_FLAG_SIGNATURE).serialise(dynamic_cast<RsItem*>(obj),memory,&size))
+    if(!RsChatSerialiser(RsServiceSerializer::SERIALIZATION_FLAG_SIGNATURE).serialise(dynamic_cast<RsItem*>(obj),memory,&size))
     {
 	    std::cerr << "  (EE) Cannot serialise message item. " << std::endl;
 	    return false ;
@@ -970,10 +970,10 @@ bool DistributedChatService::locked_initLobbyBouncableObject(const ChatLobbyId& 
 
     // now sign the object, if the lobby expects it
 
-        uint32_t size = RsChatSerialiser(RsSerializer::SERIALIZATION_FLAG_SIGNATURE).size(dynamic_cast<RsItem*>(&item)) ;
+        uint32_t size = RsChatSerialiser(RsServiceSerializer::SERIALIZATION_FLAG_SIGNATURE).size(dynamic_cast<RsItem*>(&item)) ;
         RsTemporaryMemory memory(size) ;
 
-        if(!RsChatSerialiser(RsSerializer::SERIALIZATION_FLAG_SIGNATURE).serialise(dynamic_cast<RsItem*>(&item),memory,&size))
+        if(!RsChatSerialiser(RsServiceSerializer::SERIALIZATION_FLAG_SIGNATURE).serialise(dynamic_cast<RsItem*>(&item),memory,&size))
         {
             std::cerr << "(EE) Cannot sign message item. " << std::endl;
             return false ;

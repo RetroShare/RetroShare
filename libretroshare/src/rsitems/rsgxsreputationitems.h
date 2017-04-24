@@ -163,10 +163,10 @@ public:
 };
 
 
-class RsGxsReputationSerialiser: public RsSerializer
+class RsGxsReputationSerialiser: public RsServiceSerializer
 {
 public:
-    RsGxsReputationSerialiser() :RsSerializer(RS_SERVICE_GXS_TYPE_REPUTATION){}
+    RsGxsReputationSerialiser() :RsServiceSerializer(RS_SERVICE_GXS_TYPE_REPUTATION){}
     virtual     ~RsGxsReputationSerialiser(){}
 
     virtual RsItem *create_item(uint16_t service,uint8_t item_type) const;

@@ -235,11 +235,11 @@ class RsMsgParentId : public RsMessageItem
 		uint32_t msgParentId;
 };
 
-class RsMsgSerialiser: public RsSerializer
+class RsMsgSerialiser: public RsServiceSerializer
 {
 	public:
 		RsMsgSerialiser(SerializationFlags flags)
-			:RsSerializer(RS_SERVICE_TYPE_MSG,SerializeContext::FORMAT_BINARY,flags){}
+			:RsServiceSerializer(RS_SERVICE_TYPE_MSG,SerializeContext::FORMAT_BINARY,flags){}
 
 		virtual     ~RsMsgSerialiser() {}
 

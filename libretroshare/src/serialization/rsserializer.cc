@@ -2,11 +2,11 @@
 #include "serialization/rsserializer.h"
 #include "serialization/rstypeserializer.h"
 
-const SerializationFlags RsSerializer::SERIALIZATION_FLAG_NONE      ( 0x0000 );
-const SerializationFlags RsSerializer::SERIALIZATION_FLAG_CONFIG    ( 0x0001 );
-const SerializationFlags RsSerializer::SERIALIZATION_FLAG_SIGNATURE ( 0x0002 );
+const SerializationFlags RsServiceSerializer::SERIALIZATION_FLAG_NONE      ( 0x0000 );
+const SerializationFlags RsServiceSerializer::SERIALIZATION_FLAG_CONFIG    ( 0x0001 );
+const SerializationFlags RsServiceSerializer::SERIALIZATION_FLAG_SIGNATURE ( 0x0002 );
 
-RsItem *RsSerializer::deserialise(void *data, uint32_t *size)
+RsItem *RsServiceSerializer::deserialise(void *data, uint32_t *size)
 {
 	uint32_t rstype = getRsItemId(const_cast<void*>((const void*)data)) ;
 
@@ -37,7 +37,7 @@ RsItem *RsSerializer::deserialise(void *data, uint32_t *size)
 	return NULL ;
 }
 
-bool RsSerializer::serialise(RsItem *item,void *data,uint32_t *size)
+bool RsServiceSerializer::serialise(RsItem *item,void *data,uint32_t *size)
 {
 	SerializeContext ctx(static_cast<uint8_t*>(data),0,mFormat,mFlags);
 
@@ -64,7 +64,7 @@ bool RsSerializer::serialise(RsItem *item,void *data,uint32_t *size)
 	return true ;
 }
 
-uint32_t RsSerializer::size(RsItem *item) 
+uint32_t RsServiceSerializer::size(RsItem *item)
 {
 	SerializeContext ctx(NULL,0,mFormat,mFlags);
 
@@ -74,7 +74,7 @@ uint32_t RsSerializer::size(RsItem *item)
 	return ctx.mOffset ;
 }
 
-void RsSerializer::print(RsItem *item)
+void RsServiceSerializer::print(RsItem *item)
 {
 	SerializeContext ctx(NULL,0,mFormat,mFlags);
 

@@ -68,7 +68,7 @@ class p3PeerMgr;
 class p3ServiceControl;
 class p3FileDatabase;
 
-class ftServer: public p3Service, public RsFiles, public ftDataSend, public RsTurtleClientService, public RsSerializer
+class ftServer: public p3Service, public RsFiles, public ftDataSend, public RsTurtleClientService, public RsServiceSerializer
 {
 
 public:
@@ -98,7 +98,7 @@ public:
     virtual bool handleTunnelRequest(const RsFileHash& hash,const RsPeerId& peer_id) ;
     virtual void receiveTurtleData(RsTurtleGenericTunnelItem *item,const RsFileHash& hash,const RsPeerId& virtual_peer_id,RsTurtleGenericTunnelItem::Direction direction) ;
     virtual RsItem *create_item(uint16_t service,uint8_t item_type) const ;
-	virtual RsSerializer *serializer() { return this ; }
+	virtual RsServiceSerializer *serializer() { return this ; }
 
     void addVirtualPeer(const TurtleFileHash&, const TurtleVirtualPeerId&,RsTurtleGenericTunnelItem::Direction dir) ;
     void removeVirtualPeer(const TurtleFileHash&, const TurtleVirtualPeerId&) ;

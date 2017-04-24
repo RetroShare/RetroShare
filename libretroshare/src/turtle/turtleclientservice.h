@@ -76,7 +76,7 @@ class RsTurtleClientService
 		// services might only use the generic item already provided by the turtle
 		// router: RsTurtleGenericDataItem
 
-		virtual RsSerializer *serializer() { return NULL ; }
+		virtual RsServiceSerializer *serializer() { return NULL ; }
 
 		// These methods are called by the turtle router to add/remove virtual peers when tunnels are created/deleted
 		//

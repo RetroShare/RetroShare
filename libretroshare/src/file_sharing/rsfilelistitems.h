@@ -105,11 +105,11 @@ public:
     RsTlvBinaryData directory_content_data ;	// encoded binary data. This allows to vary the encoding format, in a way that is transparent to the serialiser.
 };
 
-class RsFileListsSerialiser : public RsSerializer
+class RsFileListsSerialiser : public RsServiceSerializer
 {
 public:
 
-    RsFileListsSerialiser() : RsSerializer(RS_SERVICE_TYPE_FILE_DATABASE) {}
+    RsFileListsSerialiser() : RsServiceSerializer(RS_SERVICE_TYPE_FILE_DATABASE) {}
 
     virtual ~RsFileListsSerialiser() {}
 

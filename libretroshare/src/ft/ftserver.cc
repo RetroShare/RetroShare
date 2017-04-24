@@ -64,7 +64,7 @@ static const time_t FILE_TRANSFER_LOW_PRIORITY_TASKS_PERIOD = 5 ; // low priorit
 
 /* Setup */
 ftServer::ftServer(p3PeerMgr *pm, p3ServiceControl *sc)
-    :       p3Service(),RsSerializer(RS_SERVICE_TYPE_TURTLE), // should be FT, but this is for backward compatibility
+    :       p3Service(),RsServiceSerializer(RS_SERVICE_TYPE_TURTLE), // should be FT, but this is for backward compatibility
       mPeerMgr(pm), mServiceCtrl(sc),
       mFileDatabase(NULL),
       mFtController(NULL), mFtExtra(NULL),

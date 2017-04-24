@@ -166,10 +166,10 @@ virtual std::ostream &print(std::ostream &out, uint16_t indent = 0);
 #endif
 
 
-class RsDiscSerialiser: public RsSerializer
+class RsDiscSerialiser: public RsServiceSerializer
 {
         public:
-        RsDiscSerialiser() :RsSerializer(RS_SERVICE_TYPE_DISC) {}
+        RsDiscSerialiser() :RsServiceSerializer(RS_SERVICE_TYPE_DISC) {}
 
 		virtual     ~RsDiscSerialiser() {}
 

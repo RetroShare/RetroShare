@@ -176,10 +176,10 @@ class RsFileTransferSingleChunkCrcItem: public RsFileTransferItem
 
 /**************************************************************************/
 
-class RsFileTransferSerialiser: public RsSerializer
+class RsFileTransferSerialiser: public RsServiceSerializer
 {
 	public:
-		RsFileTransferSerialiser(): RsSerializer(RS_SERVICE_TYPE_FILE_TRANSFER) {}
+		RsFileTransferSerialiser(): RsServiceSerializer(RS_SERVICE_TYPE_FILE_TRANSFER) {}
 
 		virtual ~RsFileTransferSerialiser() {}
 

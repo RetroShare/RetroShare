@@ -205,10 +205,10 @@ class RsTurtleGenericDataItem: public RsTurtleGenericTunnelItem
 /*                           Turtle Serialiser class                               */
 /***********************************************************************************/
 
-class RsTurtleSerialiser: public RsSerializer
+class RsTurtleSerialiser: public RsServiceSerializer
 {
 	public:
-		RsTurtleSerialiser() : RsSerializer(RS_SERVICE_TYPE_TURTLE) {}
+		RsTurtleSerialiser() : RsServiceSerializer(RS_SERVICE_TYPE_TURTLE) {}
 
 		virtual RsItem *create_item(uint16_t service,uint8_t item_subtype) const;
 

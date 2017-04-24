@@ -78,10 +78,10 @@ class RsRttPongItem: public RsRttItem
 };
 
 
-class RsRttSerialiser: public RsSerializer
+class RsRttSerialiser: public RsServiceSerializer
 {
 	public:
-	RsRttSerialiser() :RsSerializer(RS_SERVICE_TYPE_RTT) {}
+	RsRttSerialiser() :RsServiceSerializer(RS_SERVICE_TYPE_RTT) {}
 	
 	virtual     ~RsRttSerialiser(){}
 	

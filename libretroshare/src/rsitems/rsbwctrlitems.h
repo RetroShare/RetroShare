@@ -57,10 +57,10 @@ public:
 };
 
 
-class RsBwCtrlSerialiser: public RsSerializer
+class RsBwCtrlSerialiser: public RsServiceSerializer
 {
 public:
-	RsBwCtrlSerialiser() :RsSerializer(RS_SERVICE_TYPE_BWCTRL) {}
+	RsBwCtrlSerialiser() :RsServiceSerializer(RS_SERVICE_TYPE_BWCTRL) {}
 	virtual     ~RsBwCtrlSerialiser() {}
 
 	RsItem *create_item(uint16_t /* service */, uint8_t /* item_sub_id */) const;

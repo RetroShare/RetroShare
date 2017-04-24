@@ -158,7 +158,7 @@ void RsMsgItem::serial_process(SerializeJob j,SerializeContext& ctx)
 
     RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,attachment,"attachment");
 
-    if(ctx.mFlags & RsSerializer::SERIALIZATION_FLAG_CONFIG)
+    if(ctx.mFlags & RsServiceSerializer::SERIALIZATION_FLAG_CONFIG)
     	RsTypeSerializer::serial_process<uint32_t>(j,ctx,msgId,"msgId");
 }
 

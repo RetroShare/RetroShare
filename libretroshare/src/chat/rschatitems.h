@@ -321,11 +321,11 @@ class RsChatAvatarItem: public RsChatItem
 		unsigned char *image_data ;		// image
 };
 
-class RsChatSerialiser: public RsSerializer
+class RsChatSerialiser: public RsServiceSerializer
 {
 	public:
 		RsChatSerialiser(SerializationFlags flags = SERIALIZATION_FLAG_NONE)
-            :RsSerializer(RS_SERVICE_TYPE_CHAT,SerializeContext::FORMAT_BINARY,flags) {}
+            :RsServiceSerializer(RS_SERVICE_TYPE_CHAT,SerializeContext::FORMAT_BINARY,flags) {}
 
 		virtual RsItem *create_item(uint16_t service_id,uint8_t item_sub_id) const ;
 };
