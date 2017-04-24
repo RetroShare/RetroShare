@@ -134,17 +134,16 @@ void RsDiscContactItem::serial_process(SerializeJob j,SerializeContext& ctx)
 
    // This is a hack. Normally we should have to different item types, in order to avoid this nonesense.
 
-   if( (j == RsItem::DESERIALIZE && GetTlvType( &(((uint8_t *) ctx.mData)[ctx.mOffset])  )==TLV_TYPE_STR_DOMADDR) || isHidden)
-   {
-       isHidden = true ;
+   if(j == RsItem::DESERIALIZE)
+	   isHidden = ( GetTlvType( &(((uint8_t *) ctx.mData)[ctx.mOffset])  )==TLV_TYPE_STR_DOMADDR);
 
+   if(isHidden)
+   {
 	   RsTypeSerializer::serial_process          (j,ctx,TLV_TYPE_STR_DOMADDR,hiddenAddr,"hiddenAddr");
 	   RsTypeSerializer::serial_process<uint16_t>(j,ctx,hiddenPort,"hiddenPort");
    }
    else
    {
-       isHidden = false ;
-
 	   RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,localAddrV4,"localAddrV4");
 	   RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,  extAddrV4,"extAddrV4");
 	   RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,localAddrV6,"localAddrV6");

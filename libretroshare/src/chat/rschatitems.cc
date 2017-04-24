@@ -75,7 +75,7 @@ RsChatAvatarItem::~RsChatAvatarItem()
 {
 	if(image_data != NULL)
 	{
-		delete[] image_data ;
+		free(image_data) ;
 		image_data = NULL ;
 	}
 }
