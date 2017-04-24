@@ -7,7 +7,6 @@
 #include <retroshare/rsiface.h>
 
 #include <algorithm>
-#include <time.h>
 
 #include "Operators.h"
 #include "ApiTypes.h"
@@ -746,12 +745,11 @@ void PeersHandler::handleGetNodeOptions(Request& req, Response& resp)
 		return;
 	}
 
-	time_t now = time(NULL);
 	resp.mDataStream << makeKeyValue("peer_id", detail.id.toStdString());
 	resp.mDataStream << makeKeyValue("name", detail.name);
 	resp.mDataStream << makeKeyValue("location", detail.location);
 	resp.mDataStream << makeKeyValue("pgp_id", detail.gpg_id.toStdString());
-	resp.mDataStream << makeKeyValue("last_contact", difftime(now, detail.lastConnect));
+	resp.mDataStream << makeKeyValue("last_contact", detail.lastConnect);
 
 	std::string status_message = mRsMsgs->getCustomStateString(detail.id);
 	resp.mDataStream << makeKeyValueReference("status_message", status_message);

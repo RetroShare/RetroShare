@@ -418,8 +418,7 @@ void IdentityHandler::handleGetIdentityDetails(Request& req, Response& resp)
 	}
 	resp.mDataStream << makeKeyValue("pgp_name", pgp_name);
 
-	time_t now = time(NULL);
-	resp.mDataStream << makeKeyValue("last_usage", difftime(now, data.mLastUsageTS));
+	resp.mDataStream << makeKeyValue("last_usage", (uint32_t)data.mLastUsageTS);
 
 	bool isAnonymous = false;
 	if(!data.mPgpKnown)
@@ -475,7 +474,7 @@ void IdentityHandler::handleGetIdentityDetails(Request& req, Response& resp)
 	for(std::map<RsIdentityUsage,time_t>::const_iterator it(details.mUseCases.begin()); it != details.mUseCases.end(); ++it)
 	{
 		usagesStream.getStreamToMember()
-		        << makeKeyValue("usage_time", difftime(now, data.mLastUsageTS))
+		        << makeKeyValue("usage_time", (uint32_t)data.mLastUsageTS)
 		        << makeKeyValue("usage_service", (int)(it->first.mServiceId))
 		        << makeKeyValue("usage_case", (int)(it->first.mUsageCode));
 	}
