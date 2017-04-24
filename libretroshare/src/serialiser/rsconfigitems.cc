@@ -40,12 +40,12 @@
 
 /*************************************************************************/
 
-RsItem *RsFileConfigSerialiser::create_item(uint8_t item_class,uint8_t item_type) const
+RsItem *RsFileConfigSerialiser::create_item(uint8_t item_type,uint8_t item_subtype) const
 {
-    if(item_class != RS_PKT_CLASS_CONFIG)
+    if(item_type != RS_PKT_TYPE_FILE_CONFIG)
         return NULL ;
 
-    switch(item_type)
+    switch(item_subtype)
     {
     case RS_PKT_SUBTYPE_FILE_TRANSFER: return new RsFileTransfer() ;
     case RS_PKT_SUBTYPE_FILE_ITEM:     return new RsFileConfigItem() ;
@@ -590,12 +590,12 @@ RsGeneralConfigSerialiser::~RsGeneralConfigSerialiser()
 
 #endif
 
-RsItem *RsGeneralConfigSerialiser::create_item(uint8_t item_class,uint8_t item_type) const
+RsItem *RsGeneralConfigSerialiser::create_item(uint8_t item_type,uint8_t item_subtype) const
 {
-    if(item_class != RS_PKT_TYPE_GENERAL_CONFIG)
+    if(item_type != RS_PKT_TYPE_GENERAL_CONFIG)
         return NULL ;
 
-    switch(item_type)
+    switch(item_subtype)
     {
     case RS_PKT_SUBTYPE_KEY_VALUE: return new RsConfigKeyValueSet();
     default:
@@ -818,12 +818,12 @@ RsPeerConfigSerialiser::~RsPeerConfigSerialiser()
 }
 #endif
 
-RsItem *RsPeerConfigSerialiser::create_item(uint8_t item_class,uint8_t item_type) const
+RsItem *RsPeerConfigSerialiser::create_item(uint8_t item_type,uint8_t item_subtype) const
 {
-    if(item_class != RS_PKT_TYPE_PEER_CONFIG)
+    if(item_type != RS_PKT_TYPE_PEER_CONFIG)
         return NULL ;
 
-    switch(item_type)
+    switch(item_subtype)
     {
     case RS_PKT_SUBTYPE_PEER_NET: return new RsPeerNetItem();
     case RS_PKT_SUBTYPE_PEER_STUN: return new RsPeerStunItem();
@@ -1824,7 +1824,30 @@ uint32_t RsPeerConfigSerialiser::sizePermissions(RsPeerServicePermissionItem *i)
 
 void RsPeerServicePermissionItem::serial_process(SerializeJob j,SerializeContext& ctx)
 {
-    RsTypeSerializer::serial_process(j,ctx,pgp_ids,"pgp_ids") ;
+    // We need to hack this because of backward compatibility. The correct way to do it would be:
+    //
+    // RsTypeSerializer::serial_process(j,ctx,pgp_ids,"pgp_ids") ;
+    // RsTypeSerializer::serial_process(j,ctx,service_flags,"service_flags") ;
+
+    if(j == RsItem::DESERIALIZE)
+    {
+        uint32_t v=0 ;
+        RsTypeSerializer::serial_process<uint32_t>(j,ctx,v,"pgp_ids.size()") ;
+
+        pgp_ids.resize(v) ;
+        service_flags.resize(v) ;
+    }
+    else
+    {
+        uint32_t s = pgp_ids.size();
+        RsTypeSerializer::serial_process<uint32_t>(j,ctx,s,"pgp_ids.size()") ;
+    }
+
+	for(uint32_t i=0;i<pgp_ids.size();++i)
+	{
+		RsTypeSerializer::serial_process(j,ctx,pgp_ids[i],"pgp_ids[i]") ;
+		RsTypeSerializer::serial_process(j,ctx,service_flags[i],"service_flags[i]") ;
+	}
 }
 
 #ifdef TO_REMOVE

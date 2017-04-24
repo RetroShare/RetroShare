@@ -66,8 +66,6 @@ const uint8_t RS_PKT_SUBTYPE_FILE_ITEM                = 0x03;
 
 /**************************************************************************/
 
-// We should make these items use a clean serialise code, and all derive from the same item type.
-
 class RsPeerNetItem: public RsItem
 {
 public:
@@ -211,7 +209,7 @@ class RsPeerConfigSerialiser: public RsConfigSerializer
 
     virtual     ~RsPeerConfigSerialiser(){}
 
-    virtual RsItem *create_item(uint8_t item_class,uint8_t item_type) const ;
+    virtual RsItem *create_item(uint8_t item_type, uint8_t item_subtype) const ;
 };
 
 /**************************************************************************/
@@ -347,7 +345,7 @@ class RsFileConfigSerialiser: public RsConfigSerializer
 	RsFileConfigSerialiser() :RsConfigSerializer(RS_PKT_CLASS_CONFIG, RS_PKT_TYPE_FILE_CONFIG) { }
 	virtual     ~RsFileConfigSerialiser() {}
 	
-    virtual RsItem *create_item(uint8_t item_class,uint8_t item_type) const ;
+    virtual RsItem *create_item(uint8_t item_type, uint8_t item_subtype) const ;
 };
 
 /**************************************************************************/
@@ -372,7 +370,7 @@ class RsGeneralConfigSerialiser: public RsConfigSerializer
 	public:
 	RsGeneralConfigSerialiser() :RsConfigSerializer(RS_PKT_CLASS_CONFIG, RS_PKT_TYPE_GENERAL_CONFIG) {}
 
-    virtual RsItem *create_item(uint8_t item_class,uint8_t item_type) const ;
+    virtual RsItem *create_item(uint8_t item_type, uint8_t item_subtype) const ;
 };
 
 #endif /* RS_CONFIG_ITEMS_SERIALISER_H */
