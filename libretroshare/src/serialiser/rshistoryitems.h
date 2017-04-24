@@ -28,7 +28,10 @@
 
 #include "rsitems/rsserviceids.h"
 #include "serialiser/rsserial.h"
+#include "serialiser/rsconfigitems.h"
 #include "retroshare/rstypes.h"
+
+#include "serialization/rsserializer.h"
 
 /**************************************************************************/
 
@@ -36,10 +39,10 @@ class RsHistoryMsgItem: public RsItem
 {
 public:
 	RsHistoryMsgItem();
-	virtual ~RsHistoryMsgItem();
+    virtual ~RsHistoryMsgItem() {}
+    virtual void clear() {}
 
-	virtual void clear();
-	std::ostream& print(std::ostream &out, uint16_t indent = 0);
+	virtual void serial_process(SerializeJob j,SerializeContext& ctx);
 
 	RsPeerId    chatPeerId; // empty for global chat
 	bool        incoming;
@@ -54,20 +57,13 @@ public:
 	bool         saveToDisc;
 };
 
-class RsHistorySerialiser: public RsSerialType
+class RsHistorySerialiser: public RsConfigSerializer
 {
 public:
-	RsHistorySerialiser();
-	virtual ~RsHistorySerialiser();
-	
-	virtual	uint32_t size(RsItem*);
-	virtual	bool     serialise(RsItem* item, void* data, uint32_t* size);
-	virtual	RsItem*  deserialise(void* data, uint32_t* size);
+	RsHistorySerialiser() : RsConfigSerializer(RS_PKT_CLASS_CONFIG, RS_PKT_TYPE_HISTORY_CONFIG) {}
+	virtual ~RsHistorySerialiser() {}
 
-private:
-	virtual	uint32_t          sizeHistoryMsgItem(RsHistoryMsgItem*);
-	virtual	bool              serialiseHistoryMsgItem  (RsHistoryMsgItem* item, void* data, uint32_t* size);
-	virtual	RsHistoryMsgItem* deserialiseHistoryMsgItem(void* data, uint32_t* size);
+    virtual RsItem *create_item(uint8_t service,uint8_t type) const ;
 };
 
 /**************************************************************************/

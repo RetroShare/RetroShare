@@ -25,14 +25,9 @@ public:
         static const SerializationFlags SERIALIZATION_FLAG_CONFIG ;			// 0x0001
         static const SerializationFlags SERIALIZATION_FLAG_SIGNATURE ;		// 0x0002
 
-		/*! create_item
-		 * 	should be overloaded to create the correct type of item depending on the data
-		 */
-		virtual RsItem *create_item(uint16_t /* service */, uint8_t /* item_sub_id */) const=0;
-
         // The following functions overload RsSerialType. They *should not* need to be further overloaded.
 
-		RsItem *deserialise(void *data,uint32_t *size) ;
+		RsItem *deserialise(void *data,uint32_t *size) =0;
 		bool serialise(RsItem *item,void *data,uint32_t *size) ;
 		uint32_t size(RsItem *item) ;
         void print(RsItem *item) ;
@@ -51,7 +46,6 @@ protected:
             : RsSerialType(RS_PKT_VERSION_SERVICE,service), mFormat(format),mFlags(flags)
         {}
 
-private:
         SerializeContext::SerializationFormat mFormat ;
         SerializationFlags mFlags ;
 
@@ -65,6 +59,13 @@ public:
 		                    SerializationFlags                    flags  = SERIALIZATION_FLAG_NONE)
 
 		    : RsGenericSerializer(service_id,format,flags) {}
+
+		/*! create_item
+		 * 	should be overloaded to create the correct type of item depending on the data
+		 */
+		virtual RsItem *create_item(uint16_t /* service */, uint8_t /* item_sub_id */) const=0;
+
+		RsItem *deserialise(void *data,uint32_t *size) ;
 };
 
 class RsConfigSerializer: public RsGenericSerializer
@@ -76,6 +77,13 @@ public:
 	                   SerializationFlags                    flags  = RsGenericSerializer::SERIALIZATION_FLAG_NONE)
 
 	    : RsGenericSerializer(config_class,config_type,format,flags) {}
+
+		/*! create_item
+		 * 	should be overloaded to create the correct type of item depending on the data
+		 */
+		virtual RsItem *create_item(uint8_t /* class */, uint8_t /* item_type */) const=0;
+
+		RsItem *deserialise(void *data,uint32_t *size) ;
 };
 
 

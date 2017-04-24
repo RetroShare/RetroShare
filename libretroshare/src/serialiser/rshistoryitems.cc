@@ -34,7 +34,31 @@
 
 #include <iostream>
 
-/*************************************************************************/
+void RsHistoryMsgItem::serial_process(SerializeJob j,SerializeContext& ctx)
+{
+    uint16_t version=0;
+
+    RsTypeSerializer::serial_process<uint16_t>(j,ctx,version,"version") ;
+    RsTypeSerializer::serial_process          (j,ctx,chatPeerId,"chatPeerId") ;
+    RsTypeSerializer::serial_process<bool>    (j,ctx,incoming,"incoming") ;
+    RsTypeSerializer::serial_process          (j,ctx,peerId,"peerId") ;
+    RsTypeSerializer::serial_process          (j,ctx,TLV_TYPE_STR_NAME,peerName,"peerName") ;
+    RsTypeSerializer::serial_process<uint32_t>(j,ctx,sendTime,"sendTime") ;
+    RsTypeSerializer::serial_process<uint32_t>(j,ctx,recvTime,"recvTime") ;
+    RsTypeSerializer::serial_process          (j,ctx,TLV_TYPE_STR_MSG,message,"message") ;
+}
+
+RsItem *RsHistorySerialiser::create_item(uint8_t serial_class,uint8_t serial_type) const
+{
+    if(serial_class != RS_PKT_CLASS_CONFIG)
+        return NULL ;
+
+    if(serial_type == RS_PKT_SUBTYPE_DEFAULT)
+        return new RsHistoryMsgItem();
+
+    return NULL ;
+}
+
 
 RsHistoryMsgItem::RsHistoryMsgItem() : RsItem(RS_PKT_VERSION1, RS_PKT_CLASS_CONFIG, RS_PKT_TYPE_HISTORY_CONFIG, RS_PKT_SUBTYPE_DEFAULT)
 {
@@ -45,6 +69,9 @@ RsHistoryMsgItem::RsHistoryMsgItem() : RsItem(RS_PKT_VERSION1, RS_PKT_CLASS_CONF
 	saveToDisc = true;
 }
 
+#ifdef TO_REMOVE
+
+/*************************************************************************/
 RsHistoryMsgItem::~RsHistoryMsgItem()
 {
 }
@@ -92,9 +119,6 @@ std::ostream& RsHistoryMsgItem::print(std::ostream &out, uint16_t indent)
 	return out;
 }
 
-RsHistorySerialiser::RsHistorySerialiser() : RsSerialType(RS_PKT_VERSION1, RS_PKT_CLASS_CONFIG, RS_PKT_TYPE_HISTORY_CONFIG)
-{
-}
 
 RsHistorySerialiser::~RsHistorySerialiser()
 {
@@ -114,7 +138,6 @@ uint32_t RsHistorySerialiser::sizeHistoryMsgItem(RsHistoryMsgItem* item)
 
 	return s;
 }
-
 /* serialise the data to the buffer */
 bool RsHistorySerialiser::serialiseHistoryMsgItem(RsHistoryMsgItem* item, void* data, uint32_t* pktsize)
 {
@@ -266,3 +289,5 @@ RsItem* RsHistorySerialiser::deserialise(void *data, uint32_t *pktsize)
 }
 
 /*************************************************************************/
+
+#endif
