@@ -40,6 +40,37 @@
 
 /*************************************************************************/
 
+RsItem *RsFileConfigSerialiser::create_item(uint8_t item_class,uint8_t item_type) const
+{
+    if(item_class != RS_PKT_CLASS_CONFIG)
+        return NULL ;
+
+    switch(item_type)
+    {
+    case RS_PKT_SUBTYPE_FILE_TRANSFER: return new RsFileTransfer() ;
+    case RS_PKT_SUBTYPE_FILE_ITEM:     return new RsFileConfigItem() ;
+    default:
+        return NULL ;
+    }
+}
+void 	RsFileTransfer::clear()
+{
+
+	file.TlvClear();
+	allPeerIds.TlvClear();
+	cPeerId.clear() ;
+	state = 0;
+	in = false;
+	transferred = 0;
+	crate = 0;
+	trate = 0;
+	lrate = 0;
+	ltransfer = 0;
+
+}
+
+
+#ifdef TO_REMOVE
 uint32_t    RsFileConfigSerialiser::size(RsItem *i)
 {
 	RsFileTransfer *rft;
@@ -108,22 +139,6 @@ RsItem *RsFileConfigSerialiser::deserialise(void *data, uint32_t *pktsize)
 RsFileTransfer::~RsFileTransfer()
 {
 	return;
-}
-
-void 	RsFileTransfer::clear()
-{
-
-	file.TlvClear();
-	allPeerIds.TlvClear();
-	cPeerId.clear() ;
-	state = 0;
-	in = false;
-	transferred = 0;
-	crate = 0;
-	trate = 0;
-	lrate = 0;
-	ltransfer = 0;
-
 }
 
 std::ostream &RsFileTransfer::print(std::ostream &out, uint16_t indent)
@@ -231,7 +246,31 @@ uint32_t    RsFileConfigSerialiser::sizeTransfer(RsFileTransfer *item)
 
 	return s;
 }
+#endif
 
+void RsFileTransfer::serial_process(SerializeJob j,SerializeContext& ctx)
+{
+    RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,file,"file") ;
+    RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,allPeerIds,"allPeerIds") ;
+
+    RsTypeSerializer::serial_process           (j,ctx,cPeerId,"cPeerId") ;
+
+    RsTypeSerializer::serial_process<uint16_t> (j,ctx,state,"state") ;
+    RsTypeSerializer::serial_process<uint16_t> (j,ctx,in,"in") ;
+
+    RsTypeSerializer::serial_process<uint64_t> (j,ctx,transferred,"transferred") ;
+
+    RsTypeSerializer::serial_process<uint32_t> (j,ctx,crate,"crate") ;
+    RsTypeSerializer::serial_process<uint32_t> (j,ctx,trate,"trate") ;
+    RsTypeSerializer::serial_process<uint32_t> (j,ctx,lrate,"lrate") ;
+    RsTypeSerializer::serial_process<uint32_t> (j,ctx,ltransfer,"ltransfer") ;
+
+    RsTypeSerializer::serial_process<uint32_t> (j,ctx,flags,"flags") ;
+    RsTypeSerializer::serial_process<uint32_t> (j,ctx,chunk_strategy,"chunk_strategy") ;
+    RsTypeSerializer::serial_process           (j,ctx,compressed_chunk_map,"compressed_chunk_map") ;
+}
+
+#ifdef TO_REMOVE
 bool     RsFileConfigSerialiser::serialiseTransfer(RsFileTransfer *item, void *data, uint32_t *pktsize)
 {
 	uint32_t tlvsize = sizeTransfer(item);
@@ -374,7 +413,16 @@ uint32_t    RsFileConfigSerialiser::sizeFileItem(RsFileConfigItem *item)
 
 	return s;
 }
+#endif
 
+void RsFileConfigItem::serial_process(SerializeJob j,SerializeContext& ctx)
+{
+    RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,file,"file") ;
+    RsTypeSerializer::serial_process<uint32_t> (j,ctx,flags,"flags") ;
+    RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,parent_groups,"parent_groups") ;
+}
+
+#ifdef TO_REMOVE
 bool     RsFileConfigSerialiser::serialiseFileItem(RsFileConfigItem *item, void *data, uint32_t *pktsize)
 {
 	uint32_t tlvsize = sizeFileItem(item);
@@ -540,6 +588,22 @@ RsGeneralConfigSerialiser::~RsGeneralConfigSerialiser()
 	return;
 }
 
+#endif
+
+RsItem *RsGeneralConfigSerialiser::create_item(uint8_t item_class,uint8_t item_type) const
+{
+    if(item_class != RS_PKT_TYPE_GENERAL_CONFIG)
+        return NULL ;
+
+    switch(item_type)
+    {
+    case RS_PKT_SUBTYPE_KEY_VALUE: return new RsConfigKeyValueSet();
+    default:
+        return NULL ;
+    }
+}
+
+#ifdef TO_REMOVE
 uint32_t    RsGeneralConfigSerialiser::size(RsItem *i)
 {
 	RsConfigKeyValueSet  *kvs;
@@ -632,7 +696,14 @@ uint32_t    RsGeneralConfigSerialiser::sizeKeyValueSet(RsConfigKeyValueSet *item
 
 	return s;
 }
+#endif
 
+void RsConfigKeyValueSet::serial_process(SerializeJob j,SerializeContext& ctx)
+{
+    RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,tlvkvs,"tlvkvs") ;
+}
+
+#ifdef TO_REMOVE
 /* serialise the data to the buffer */
 bool     RsGeneralConfigSerialiser::serialiseKeyValueSet(RsConfigKeyValueSet *item, void *data, uint32_t *pktsize)
 {
@@ -745,7 +816,49 @@ RsPeerConfigSerialiser::~RsPeerConfigSerialiser()
 {
 	return;
 }
+#endif
 
+RsItem *RsPeerConfigSerialiser::create_item(uint8_t item_class,uint8_t item_type) const
+{
+    if(item_class != RS_PKT_TYPE_PEER_CONFIG)
+        return NULL ;
+
+    switch(item_type)
+    {
+    case RS_PKT_SUBTYPE_PEER_NET: return new RsPeerNetItem();
+    case RS_PKT_SUBTYPE_PEER_STUN: return new RsPeerStunItem();
+    case RS_PKT_SUBTYPE_NODE_GROUP: return new RsNodeGroupItem() ;
+    case RS_PKT_SUBTYPE_PEER_PERMISSIONS: return new RsPeerServicePermissionItem();
+    case RS_PKT_SUBTYPE_PEER_BANDLIMITS: return new RsPeerBandwidthLimitsItem();
+    default:
+        return NULL ;
+    }
+}
+
+void RsPeerNetItem::clear()
+{
+	peerId.clear();
+        pgpId.clear();
+        location.clear();
+	netMode = 0;
+	vs_disc = 0;
+	vs_dht = 0;
+	lastContact = 0;
+
+	localAddrV4.TlvClear();
+	extAddrV4.TlvClear();
+	localAddrV6.TlvClear();
+	extAddrV6.TlvClear();
+
+	dyndns.clear();
+
+	localAddrList.TlvClear();
+	extAddrList.TlvClear();
+
+	domain_addr.clear();
+	domain_port = 0;
+}
+#ifdef TO_REMOVE
 uint32_t    RsPeerConfigSerialiser::size(RsItem *i)
 {
 	RsPeerStunItem *psi;
@@ -855,29 +968,7 @@ RsPeerNetItem::~RsPeerNetItem()
 	return;
 }
 
-void RsPeerNetItem::clear()
-{
-	peerId.clear();
-        pgpId.clear();
-        location.clear();
-	netMode = 0;
-	vs_disc = 0;
-	vs_dht = 0;
-	lastContact = 0;
 
-	localAddrV4.TlvClear();
-	extAddrV4.TlvClear();
-	localAddrV6.TlvClear();
-	extAddrV6.TlvClear();
-
-	dyndns.clear();
-
-	localAddrList.TlvClear();
-	extAddrList.TlvClear();
-
-	domain_addr.clear();
-	domain_port = 0;
-}
 
 std::ostream &RsPeerNetItem::print(std::ostream &out, uint16_t indent)
 {
@@ -963,7 +1054,34 @@ uint32_t RsPeerConfigSerialiser::sizeNet(RsPeerNetItem *i)
 
 	return s;
 }
+#endif
 
+void RsPeerNetItem::serial_process(SerializeJob j,SerializeContext& ctx)
+{
+	RsTypeSerializer::serial_process(j,ctx,peerId,"peerId") ;
+	RsTypeSerializer::serial_process(j,ctx,pgpId,"pgpId") ;
+	RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_LOCATION,location,"location") ;
+
+	RsTypeSerializer::serial_process<uint32_t>(j,ctx,netMode,"netMode") ;
+	RsTypeSerializer::serial_process<uint16_t>(j,ctx,vs_disc,"vs_disc") ;
+	RsTypeSerializer::serial_process<uint16_t>(j,ctx,vs_dht,"vs_dht") ;
+	RsTypeSerializer::serial_process<uint32_t>(j,ctx,lastContact,"lastContact") ;
+
+	RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,localAddrV4,"localAddrV4") ;
+	RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,extAddrV4,"extAddrV4") ;
+	RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,localAddrV6,"localAddrV6") ;
+	RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,extAddrV6,"extAddrV6") ;
+
+	RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_DYNDNS,dyndns,"dyndns") ;
+
+	RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,localAddrList,"localAddrList") ;
+	RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,extAddrList,"extAddrList") ;
+
+	RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_DOMADDR,domain_addr,"domain_addr") ;
+	RsTypeSerializer::serial_process<uint16_t>(j,ctx,domain_port,"domain_port") ;
+}
+
+#ifdef TO_REMOVE
 bool RsPeerConfigSerialiser::serialiseNet(RsPeerNetItem *item, void *data, uint32_t *size)
 {
 	uint32_t tlvsize = RsPeerConfigSerialiser::sizeNet(item);
@@ -1119,7 +1237,14 @@ uint32_t RsPeerConfigSerialiser::sizePeerBandwidthLimits(RsPeerBandwidthLimitsIt
 
 	return s;
 }
+#endif
 
+void RsPeerBandwidthLimitsItem::serial_process(SerializeJob j,SerializeContext& ctx)
+{
+    RsTypeSerializer::serial_process(j,ctx,peers,"peers") ;
+}
+
+#ifdef TO_REMOVE
 bool RsPeerConfigSerialiser::serialisePeerBandwidthLimits(RsPeerBandwidthLimitsItem *item, void *data, uint32_t *size)
 {
 	uint32_t tlvsize = RsPeerConfigSerialiser::sizePeerBandwidthLimits(item);
@@ -1296,7 +1421,50 @@ uint32_t RsPeerConfigSerialiser::sizeStun(RsPeerStunItem *i)
 	return s;
 
 }
+#endif
 
+void RsPeerStunItem::serial_process(SerializeJob j,SerializeContext& ctx)
+{
+    RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,stunList,"stunList") ;
+}
+
+template<> uint32_t RsTypeSerializer::serial_size(const PeerBandwidthLimits& s)
+{
+    return 4+4 ;
+}
+
+template<> bool RsTypeSerializer::serialize(uint8_t data[], uint32_t size, uint32_t &offset,const PeerBandwidthLimits& s)
+{
+    bool ok = true ;
+	ok = ok && setRawUInt32(data,size,&offset,s.max_up_rate_kbs);
+	ok = ok && setRawUInt32(data,size,&offset,s.max_dl_rate_kbs);
+	return ok;
+}
+
+template<> bool RsTypeSerializer::deserialize(const uint8_t data[], uint32_t size,uint32_t& offset,PeerBandwidthLimits& s)
+{
+    bool ok = true ;
+	ok = ok && getRawUInt32(data,size,&offset,&s.max_up_rate_kbs);
+	ok = ok && getRawUInt32(data,size,&offset,&s.max_dl_rate_kbs);
+    return ok;
+}
+
+template<> void RsTypeSerializer::print_data(const std::string& n, const PeerBandwidthLimits& s)
+{
+    std::cerr << "  [Peer BW limit] " << s.max_up_rate_kbs << " / " << s.max_dl_rate_kbs << std::endl;
+}
+
+RsNodeGroupItem::RsNodeGroupItem(const RsGroupInfo& g)
+    :RsItem(RS_PKT_VERSION1, RS_PKT_CLASS_CONFIG, RS_PKT_TYPE_PEER_CONFIG, RS_PKT_SUBTYPE_NODE_GROUP)
+{
+    id = g.id ;
+    name = g.name ;
+    flag = g.flag ;
+    pgpList.ids = g.peerIds;
+}
+
+
+#ifdef TO_REMOVE
 bool RsPeerConfigSerialiser::serialiseStun(RsPeerStunItem *item, void *data, uint32_t *size)
 {
 	uint32_t tlvsize = RsPeerConfigSerialiser::sizeStun(item);
@@ -1382,18 +1550,6 @@ RsPeerStunItem *RsPeerConfigSerialiser::deserialiseStun(void *data, uint32_t *si
 }
 
 /*************************************************************************/
-RsNodeGroupItem::RsNodeGroupItem() : RsItem(RS_PKT_VERSION1, RS_PKT_CLASS_CONFIG, RS_PKT_TYPE_PEER_CONFIG, RS_PKT_SUBTYPE_NODE_GROUP)
-{
-}
-
-RsNodeGroupItem::RsNodeGroupItem(const RsGroupInfo& g)
-    :RsItem(RS_PKT_VERSION1, RS_PKT_CLASS_CONFIG, RS_PKT_TYPE_PEER_CONFIG, RS_PKT_SUBTYPE_NODE_GROUP)
-{
-    id = g.id ;
-    name = g.name ;
-    flag = g.flag ;
-    pgpList.ids = g.peerIds;
-}
 
 void RsNodeGroupItem::clear()
 {
@@ -1531,6 +1687,20 @@ uint32_t RsPeerConfigSerialiser::sizeGroup(RsNodeGroupItem *i)
 	return s;
 }
 
+#endif
+
+void RsNodeGroupItem::serial_process(SerializeJob j,SerializeContext& ctx)
+{
+    uint32_t v=0 ;
+
+    RsTypeSerializer::serial_process<uint32_t>(j,ctx,v,"dummy field 0") ;
+    RsTypeSerializer::serial_process          (j,ctx,id,"id") ;
+    RsTypeSerializer::serial_process          (j,ctx,TLV_TYPE_STR_NAME,name,"name") ;
+    RsTypeSerializer::serial_process<uint32_t>(j,ctx,flag,"flag") ;
+    RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,pgpList,"pgpList") ;
+}
+
+#ifdef TO_REMOVE
 bool RsPeerConfigSerialiser::serialiseGroup(RsNodeGroupItem *item, void *data, uint32_t *size)
 {
 	uint32_t tlvsize = RsPeerConfigSerialiser::sizeGroup(item);
@@ -1650,7 +1820,14 @@ uint32_t RsPeerConfigSerialiser::sizePermissions(RsPeerServicePermissionItem *i)
 
 	return s;
 }
+#endif
 
+void RsPeerServicePermissionItem::serial_process(SerializeJob j,SerializeContext& ctx)
+{
+    RsTypeSerializer::serial_process(j,ctx,pgp_ids,"pgp_ids") ;
+}
+
+#ifdef TO_REMOVE
 bool RsPeerConfigSerialiser::serialisePermissions(RsPeerServicePermissionItem *item, void *data, uint32_t *size)
 {
 	uint32_t tlvsize = RsPeerConfigSerialiser::sizePermissions(item);
@@ -1932,6 +2109,7 @@ RsItem *RsCacheConfigSerialiser::deserialise(void *data, uint32_t *size)
 }
 
 
+#endif
 
 
 

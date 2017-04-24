@@ -37,6 +37,8 @@
 #include "serialiser/rstlvkeyvalue.h"
 #include "serialiser/rstlvaddrs.h"
 
+#include "serialization/rsserializer.h"
+
 class RsGroupInfo;
 
 const uint8_t RS_PKT_TYPE_GENERAL_CONFIG = 0x01;
@@ -68,21 +70,22 @@ const uint8_t RS_PKT_SUBTYPE_FILE_ITEM                = 0x03;
 
 class RsPeerNetItem: public RsItem
 {
-	public:
-	RsPeerNetItem() 
-	:RsItem(RS_PKT_VERSION1, RS_PKT_CLASS_CONFIG,
-		RS_PKT_TYPE_PEER_CONFIG,
-		RS_PKT_SUBTYPE_PEER_NET)
-	{ return; }
-virtual ~RsPeerNetItem();
-virtual void clear();
-std::ostream &print(std::ostream &out, uint16_t indent = 0);
+public:
+	RsPeerNetItem()
+	    :RsItem(RS_PKT_VERSION1, RS_PKT_CLASS_CONFIG,
+	            RS_PKT_TYPE_PEER_CONFIG,
+	            RS_PKT_SUBTYPE_PEER_NET) {}
+
+    virtual ~RsPeerNetItem(){}
+	virtual void clear();
+
+	virtual void serial_process(SerializeJob j,SerializeContext& ctx);
 
 	/* networking information */
 	RsPeerId    peerId;                       /* Mandatory */
-        RsPgpId     pgpId;                        /* Mandatory */
-        std::string location;                     /* Mandatory */
-        uint32_t    netMode;                      /* Mandatory */
+	RsPgpId     pgpId;                        /* Mandatory */
+	std::string location;                     /* Mandatory */
+	uint32_t    netMode;                      /* Mandatory */
 	uint16_t    vs_disc;                      /* Mandatory */
 	uint16_t    vs_dht;                       /* Mandatory */
 	uint32_t    lastContact;                  /* Mandatory */
@@ -92,14 +95,14 @@ std::ostream &print(std::ostream &out, uint16_t indent = 0);
 	RsTlvIpAddress localAddrV6;            	/* Mandatory */
 	RsTlvIpAddress extAddrV6;            	/* Mandatory */
 
-        std::string dyndns;
+	std::string dyndns;
 
 	RsTlvIpAddrSet localAddrList;
 	RsTlvIpAddrSet extAddrList;
 
 	// for proxy connection.
 	std::string domain_addr;
-	uint16_t    domain_port;  
+	uint16_t    domain_port;
 };
 
 // This item should be merged with the next item, but that is not backward compatible.
@@ -114,7 +117,8 @@ class RsPeerServicePermissionItem : public RsItem
 			pgp_ids.clear() ;
 			service_flags.clear() ;
 		}
-		std::ostream &print(std::ostream &out, uint16_t indent = 0);
+		virtual void serial_process(SerializeJob j,SerializeContext& ctx);
+
 
 		/* Mandatory */
 		std::vector<RsPgpId> pgp_ids ;
@@ -130,12 +134,13 @@ class RsPeerBandwidthLimitsItem : public RsItem
 		{
 			peers.clear() ;
 		}
-		std::ostream &print(std::ostream &out, uint16_t indent = 0);
+		virtual void serial_process(SerializeJob j,SerializeContext& ctx);
 
 		/* Mandatory */
 		std::map<RsPgpId,PeerBandwidthLimits> peers ;
 };
 
+#ifdef TO_REMOVE
 class RsPeerGroupItem_deprecated : public RsItem
 {
 public:
@@ -157,17 +162,19 @@ public:
 
 	RsTlvPgpIdSet pgpList;
 };
+#endif
 
 class RsNodeGroupItem: public RsItem
 {
 public:
-    RsNodeGroupItem();
+    RsNodeGroupItem(): RsItem(RS_PKT_VERSION1, RS_PKT_CLASS_CONFIG, RS_PKT_TYPE_PEER_CONFIG, RS_PKT_SUBTYPE_NODE_GROUP){}
     virtual ~RsNodeGroupItem() {}
 
-    virtual void clear();
-    std::ostream &print(std::ostream &out, uint16_t indent = 0);
+    virtual void clear() { pgpList.TlvClear();}
 
     explicit RsNodeGroupItem(const RsGroupInfo&) ;
+
+	virtual void serial_process(SerializeJob j,SerializeContext& ctx);
 
    // /* set data from RsGroupInfo to RsPeerGroupItem */
    // void set(RsGroupInfo &groupInfo);
@@ -184,63 +191,32 @@ public:
 
 class RsPeerStunItem: public RsItem
 {
-	public:
-	RsPeerStunItem() 
-	:RsItem(RS_PKT_VERSION1, RS_PKT_CLASS_CONFIG,
-		RS_PKT_TYPE_PEER_CONFIG,
-		RS_PKT_SUBTYPE_PEER_STUN)
-	{ return; }
-virtual ~RsPeerStunItem();
-virtual void clear();
-std::ostream &print(std::ostream &out, uint16_t indent = 0);
+public:
+	RsPeerStunItem()
+	    :RsItem(RS_PKT_VERSION1, RS_PKT_CLASS_CONFIG,
+	            RS_PKT_TYPE_PEER_CONFIG,
+	            RS_PKT_SUBTYPE_PEER_STUN) {}
+    virtual ~RsPeerStunItem(){}
+    virtual void clear() { stunList.TlvClear() ;}
+
+	virtual void serial_process(SerializeJob j,SerializeContext& ctx);
 
 	RsTlvPeerIdSet stunList;		  /* Mandatory */
 };
 
-class RsPeerConfigSerialiser: public RsSerialType
+class RsPeerConfigSerialiser: public RsConfigSerializer
 {
 	public:
-	RsPeerConfigSerialiser()
-        :RsSerialType(RS_PKT_VERSION1, RS_PKT_CLASS_CONFIG,
-	                RS_PKT_TYPE_PEER_CONFIG)
-	{ return; }
+	RsPeerConfigSerialiser() :RsConfigSerializer(RS_PKT_CLASS_CONFIG,RS_PKT_TYPE_PEER_CONFIG) {}
 
-virtual     ~RsPeerConfigSerialiser();
-	
-virtual	uint32_t    size(RsItem *);
-virtual	bool        serialise  (RsItem *item, void *data, uint32_t *size);
-virtual	RsItem *    deserialise(void *data, uint32_t *size);
+    virtual     ~RsPeerConfigSerialiser(){}
 
-	private:
-
-
-virtual	uint32_t    sizeNet(RsPeerNetItem *);
-virtual	bool        serialiseNet  (RsPeerNetItem *item, void *data, uint32_t *size);
-virtual	RsPeerNetItem *deserialiseNet(void *data, uint32_t *size);
-
-virtual	uint32_t    sizeStun(RsPeerStunItem *);
-virtual	bool        serialiseStun  (RsPeerStunItem *item, void *data, uint32_t *size);
-virtual	RsPeerStunItem *    deserialiseStun(void *data, uint32_t *size);
-
-virtual	uint32_t    sizeGroup(RsNodeGroupItem *);
-virtual	bool        serialiseGroup  (RsNodeGroupItem *item, void *data, uint32_t *size);
-virtual	RsNodeGroupItem *deserialiseGroup(void *data, uint32_t *size);
-virtual	RsPeerGroupItem_deprecated *    deserialiseGroup_deprecated(void *data, uint32_t *size);
-
-virtual	uint32_t    sizePeerBandwidthLimits(RsPeerBandwidthLimitsItem *);
-virtual	bool        serialisePeerBandwidthLimits  (RsPeerBandwidthLimitsItem *item, void *data, uint32_t *size);
-virtual	RsPeerBandwidthLimitsItem *deserialisePeerBandwidthLimits(void *data, uint32_t *size);
-
-virtual	uint32_t    sizePermissions(RsPeerServicePermissionItem *);
-virtual	bool        serialisePermissions  (RsPeerServicePermissionItem *item, void *data, uint32_t *size);
-virtual	RsPeerServicePermissionItem *    deserialisePermissions(void *data, uint32_t *size);
+    virtual RsItem *create_item(uint8_t item_class,uint8_t item_type) const ;
 };
 
 /**************************************************************************/
-/**************************************************************************/
 
-/**************************************************************************/
-
+#ifdef TO_REMOVE
 class RsCacheConfig: public RsItem
 {
 	public:
@@ -281,6 +257,7 @@ virtual	bool        serialise  (RsItem *item, void *data, uint32_t *size);
 virtual	RsItem *    deserialise(void *data, uint32_t *size);
 
 };
+#endif
 
 /**************************************************************************/
 
@@ -299,14 +276,15 @@ class RsFileTransfer: public RsItem
 			flags = 0;
 			chunk_strategy = 0;
 		}
-		virtual ~RsFileTransfer();
+        virtual ~RsFileTransfer(){}
 		virtual void clear();
-		std::ostream &print(std::ostream &out, uint16_t indent = 0);
+
+		virtual void serial_process(SerializeJob j,SerializeContext& ctx);
 
 		RsTlvFileItem file;
 		RsTlvPeerIdSet allPeerIds;
 
-        	RsPeerId cPeerId;
+		RsPeerId cPeerId;
 
 		uint16_t state;
 		uint16_t in;
@@ -328,6 +306,7 @@ class RsFileTransfer: public RsItem
 
 const uint32_t RS_FILE_CONFIG_CLEANUP_DELETE = 0x0001;
 
+#ifdef TO_REMOVE
 /* Used by ft / extralist / configdirs / anyone who wants a basic file */ 
 class RsFileConfigItem_deprecated: public RsItem
 {
@@ -345,18 +324,16 @@ public:
     uint32_t flags;
     std::list<std::string> parent_groups ;
 };
+#endif
 
 class RsFileConfigItem: public RsItem
 {
 public:
-    RsFileConfigItem()
-        :RsItem(RS_PKT_VERSION1, RS_PKT_CLASS_CONFIG,
-                RS_PKT_TYPE_FILE_CONFIG,
-                RS_PKT_SUBTYPE_FILE_ITEM)
-    {}
+    RsFileConfigItem() :RsItem(RS_PKT_VERSION1, RS_PKT_CLASS_CONFIG, RS_PKT_TYPE_FILE_CONFIG, RS_PKT_SUBTYPE_FILE_ITEM) {}
     virtual ~RsFileConfigItem() {}
-    virtual void clear();
-    std::ostream &print(std::ostream &out, uint16_t indent = 0);
+    virtual void clear() { parent_groups.TlvClear(); }
+
+	virtual void serial_process(SerializeJob j,SerializeContext& ctx);
 
     RsTlvFileItem file;
     uint32_t flags;
@@ -364,31 +341,13 @@ public:
 };
 /**************************************************************************/
 
-class RsFileConfigSerialiser: public RsSerialType
+class RsFileConfigSerialiser: public RsConfigSerializer
 {
 	public:
-	RsFileConfigSerialiser()
-	:RsSerialType(RS_PKT_VERSION1, RS_PKT_CLASS_CONFIG, 
-		RS_PKT_TYPE_FILE_CONFIG)
-	{ return; }
-virtual     ~RsFileConfigSerialiser() { return; }
+	RsFileConfigSerialiser() :RsConfigSerializer(RS_PKT_CLASS_CONFIG, RS_PKT_TYPE_FILE_CONFIG) { }
+	virtual     ~RsFileConfigSerialiser() {}
 	
-virtual	uint32_t    size(RsItem *);
-virtual	bool        serialise  (RsItem *item, void *data, uint32_t *size);
-virtual	RsItem *    deserialise(void *data, uint32_t *size);
-
-	private:
-
-virtual	uint32_t    sizeTransfer(RsFileTransfer *);
-virtual	bool        serialiseTransfer(RsFileTransfer *item, void *data, uint32_t *size);
-virtual	RsFileTransfer *  deserialiseTransfer(void *data, uint32_t *size);
-
-virtual	RsFileConfigItem_deprecated *  deserialiseFileItem_deprecated(void *data, uint32_t *size);
-
-virtual	uint32_t    sizeFileItem(RsFileConfigItem *);
-virtual	bool        serialiseFileItem(RsFileConfigItem *item, void *data, uint32_t *size);
-virtual	RsFileConfigItem *deserialiseFileItem(void *data, uint32_t *size);
-
+    virtual RsItem *create_item(uint8_t item_class,uint8_t item_type) const ;
 };
 
 /**************************************************************************/
@@ -397,39 +356,23 @@ virtual	RsFileConfigItem *deserialiseFileItem(void *data, uint32_t *size);
 
 class RsConfigKeyValueSet: public RsItem
 {
-	public:
-	RsConfigKeyValueSet() 
-	:RsItem(RS_PKT_VERSION1, RS_PKT_CLASS_CONFIG,
-		RS_PKT_TYPE_GENERAL_CONFIG,
-		RS_PKT_SUBTYPE_KEY_VALUE)
-	{ return; }
-virtual ~RsConfigKeyValueSet();
-virtual void clear();
-std::ostream &print(std::ostream &out, uint16_t indent = 0);
+public:
+	RsConfigKeyValueSet()  :RsItem(RS_PKT_VERSION1, RS_PKT_CLASS_CONFIG, RS_PKT_TYPE_GENERAL_CONFIG, RS_PKT_SUBTYPE_KEY_VALUE) {}
+    virtual ~RsConfigKeyValueSet(){}
+    virtual void clear() { tlvkvs.TlvClear();}
+
+	virtual void serial_process(SerializeJob j,SerializeContext& ctx);
 
 	RsTlvKeyValueSet tlvkvs;
 };
 
 
-class RsGeneralConfigSerialiser: public RsSerialType
+class RsGeneralConfigSerialiser: public RsConfigSerializer
 {
 	public:
-	RsGeneralConfigSerialiser()
-        :RsSerialType(RS_PKT_VERSION1, RS_PKT_CLASS_CONFIG,
-	                RS_PKT_TYPE_GENERAL_CONFIG)
-	{ return; }
+	RsGeneralConfigSerialiser() :RsConfigSerializer(RS_PKT_CLASS_CONFIG, RS_PKT_TYPE_GENERAL_CONFIG) {}
 
-virtual     ~RsGeneralConfigSerialiser();
-	
-virtual	uint32_t    size(RsItem *);
-virtual	bool        serialise  (RsItem *item, void *data, uint32_t *size);
-virtual	RsItem *    deserialise(void *data, uint32_t *size);
-
-	private:
-uint32_t    sizeKeyValueSet(RsConfigKeyValueSet *item);
-bool     serialiseKeyValueSet(RsConfigKeyValueSet *item, void *data, uint32_t *pktsize);
-RsConfigKeyValueSet *deserialiseKeyValueSet(void *data, uint32_t *pktsize);
-
+    virtual RsItem *create_item(uint8_t item_class,uint8_t item_type) const ;
 };
 
 #endif /* RS_CONFIG_ITEMS_SERIALISER_H */

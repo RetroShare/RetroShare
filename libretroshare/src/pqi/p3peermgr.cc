@@ -2294,7 +2294,7 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
 
 		    continue;
 	    }
-
+#ifdef TO_REMOVE
         RsPeerGroupItem_deprecated *gitem = dynamic_cast<RsPeerGroupItem_deprecated *>(*it) ;
 
 	    if (gitem)
@@ -2331,6 +2331,7 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
 
             continue;
 	    }
+#endif
 
         RsNodeGroupItem *gitem2 = dynamic_cast<RsNodeGroupItem*>(*it) ;
 
