@@ -34,6 +34,8 @@
 #include "serialiser/rstlvkeys.h"
 #include "gxs/rsgxsdata.h"
 
+#include "serialization/rsserializer.h"
+
 // These items have "flag type" numbers, but this is not used.
 
 const uint8_t RS_PKT_SUBTYPE_FILELISTS_SYNC_REQ_ITEM    = 0x01;
@@ -54,12 +56,7 @@ public:
     }
     virtual ~RsFileListsItem(){}
    
-    virtual bool serialise(void *data,uint32_t& size) const = 0 ;	
-    virtual uint32_t serial_size() const = 0 ; 			
     virtual void clear() = 0;
-    virtual std::ostream &print(std::ostream &out, uint16_t indent = 0) = 0;
-
-    bool serialise_header(void *data,uint32_t& pktsize,uint32_t& tlvsize, uint32_t& offset) const;
 
     static const uint32_t FLAGS_SYNC_REQUEST      = 0x0001 ;
     static const uint32_t FLAGS_SYNC_RESPONSE     = 0x0002 ;
@@ -79,12 +76,10 @@ public:
 
     RsFileListsSyncRequestItem() : RsFileListsItem(RS_PKT_SUBTYPE_FILELISTS_SYNC_REQ_ITEM) {}
 
-	virtual void clear();
-	virtual std::ostream &print(std::ostream &out, uint16_t indent);
+    virtual void clear(){}
 
-	virtual bool serialise(void *data,uint32_t& size) const;	
-	virtual uint32_t serial_size() const ; 			
-        
+	virtual void serial_process(SerializeJob j,SerializeContext& ctx);
+
     RsFileHash entry_hash ;               // hash of the directory to sync
     uint32_t   flags;                     // used to say that it's a request or a response, say that the directory has been removed, ask for further update, etc.
     uint32_t   last_known_recurs_modf_TS; // time of last modification, computed over all files+directories below.
@@ -98,10 +93,8 @@ public:
     RsFileListsSyncResponseItem() : RsFileListsItem(RS_PKT_SUBTYPE_FILELISTS_SYNC_RSP_ITEM) {}
 
     virtual void clear();
-    virtual std::ostream &print(std::ostream &out, uint16_t indent);
 
-    virtual bool serialise(void *data,uint32_t& size) const;
-    virtual uint32_t serial_size() const ;
+	virtual void serial_process(SerializeJob j,SerializeContext& ctx);
 
     RsFileHash entry_hash ;               // hash of the directory to sync
     RsFileHash checksum   ;               // checksum of the bindary data, for checking
@@ -112,24 +105,15 @@ public:
     RsTlvBinaryData directory_content_data ;	// encoded binary data. This allows to vary the encoding format, in a way that is transparent to the serialiser.
 };
 
-class RsFileListsSerialiser : public RsSerialType
+class RsFileListsSerialiser : public RsSerializer
 {
 public:
 
-    RsFileListsSerialiser() : RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_FILE_DATABASE) {}
+    RsFileListsSerialiser() : RsSerializer(RS_SERVICE_TYPE_FILE_DATABASE) {}
 
     virtual ~RsFileListsSerialiser() {}
 
-    virtual uint32_t size(RsItem *item);
-    virtual bool serialise(RsItem *item, void *data, uint32_t *size);
-    virtual RsItem* deserialise(void *data, uint32_t *size);
-
-private:
-    RsFileListsSyncRequestItem  *deserialFileListsSyncRequestItem(void *data, uint32_t *size); /* RS_PKT_SUBTYPE_SYNC_GRP */
-    RsFileListsSyncResponseItem  *deserialFileListsSyncResponseItem(void *data, uint32_t *size); /* RS_PKT_SUBTYPE_SYNC_GRP */
-//    RsFileListsSyncResponseItem  *deserialFileListsConfigItem (void *data, uint32_t *size); /* RS_PKT_SUBTYPE_SYNC_GRP */
-
-    bool checkItemHeader(void *data, uint32_t *size, uint8_t subservice_type);
+    virtual RsItem *create_item(uint16_t service,uint8_t type) const ;
 };
 
 

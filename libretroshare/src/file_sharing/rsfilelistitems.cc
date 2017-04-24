@@ -26,6 +26,41 @@
 
 #include "file_sharing/rsfilelistitems.h"
 
+void RsFileListsSyncRequestItem::serial_process(SerializeJob j,SerializeContext& ctx)
+{
+    RsTypeSerializer::serial_process          (j,ctx,entry_hash,"entry_hash") ;
+    RsTypeSerializer::serial_process<uint32_t>(j,ctx,flags     ,"flags") ;
+    RsTypeSerializer::serial_process<uint32_t>(j,ctx,last_known_recurs_modf_TS,"last_known_recurs_modf_TS") ;
+    RsTypeSerializer::serial_process<uint64_t>(j,ctx,request_id,"request_id") ;
+}
+void RsFileListsSyncResponseItem::serial_process(SerializeJob j,SerializeContext& ctx)
+{
+    RsTypeSerializer::serial_process           (j,ctx,entry_hash,"entry_hash") ;
+    RsTypeSerializer::serial_process           (j,ctx,checksum,"checksum") ;
+    RsTypeSerializer::serial_process<uint32_t> (j,ctx,flags     ,"flags") ;
+    RsTypeSerializer::serial_process<uint32_t> (j,ctx,last_known_recurs_modf_TS,"last_known_recurs_modf_TS") ;
+    RsTypeSerializer::serial_process<uint64_t> (j,ctx,request_id,"request_id") ;
+    RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,directory_content_data,"directory_content_data") ;
+}
+
+RsItem *RsFileListsSerialiser::create_item(uint16_t service,uint8_t type) const
+{
+    if(service != RS_SERVICE_TYPE_FILE_DATABASE)
+        return NULL ;
+
+    switch(type)
+    {
+    case RS_PKT_SUBTYPE_FILELISTS_SYNC_REQ_ITEM: return new RsFileListsSyncRequestItem();
+    case RS_PKT_SUBTYPE_FILELISTS_SYNC_RSP_ITEM: return new RsFileListsSyncResponseItem();
+    default:
+        return NULL ;
+    }
+}
+void RsFileListsSyncResponseItem::clear()
+{
+    directory_content_data.TlvClear();
+}
+#ifdef TO_REMOVE
 RsItem* RsFileListsSerialiser::deserialise(void *data, uint32_t *size)
 {
 #ifdef RSSERIAL_DEBUG
@@ -325,13 +360,7 @@ uint32_t RsFileListsSyncResponseItem::serial_size()const
     return s;
 }
 
-void RsFileListsSyncRequestItem::clear()
-{
-}
-void RsFileListsSyncResponseItem::clear()
-{
-    directory_content_data.TlvClear();
-}
+
 std::ostream& RsFileListsSyncRequestItem::print(std::ostream &out, uint16_t indent)
 {
     printRsItemBase(out, "RsFileListsSyncReqItem", indent);
@@ -363,3 +392,5 @@ std::ostream& RsFileListsSyncResponseItem::print(std::ostream &out, uint16_t ind
 
     return out;
 }
+
+#endif
