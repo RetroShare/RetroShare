@@ -129,15 +129,15 @@ void RelayPage::load()
 	uint32_t bandwidth;
 	rsDht->getRelayAllowance(RSDHT_RELAY_CLASS_FRIENDS, count, bandwidth);
 	whileBlocking(ui.noFriendSpinBox)->setValue(count);
-	whileBlocking(ui.bandFriendSpinBox)->setValue(bandwidth / 1000);
+	whileBlocking(ui.bandFriendSpinBox)->setValue(bandwidth / 1024);
 
 	rsDht->getRelayAllowance(RSDHT_RELAY_CLASS_FOF, count, bandwidth);
 	whileBlocking(ui.noFOFSpinBox)->setValue(count);
-	whileBlocking(ui.bandFOFSpinBox)->setValue(bandwidth / 1000);
+	whileBlocking(ui.bandFOFSpinBox)->setValue(bandwidth / 1024);
 
 	rsDht->getRelayAllowance(RSDHT_RELAY_CLASS_GENERAL, count, bandwidth);
 	whileBlocking(ui.noGeneralSpinBox)->setValue(count);
-	whileBlocking(ui.bandGeneralSpinBox)->setValue(bandwidth / 1000);
+	whileBlocking(ui.bandGeneralSpinBox)->setValue(bandwidth / 1024);
 
 	updateTotals();
 
