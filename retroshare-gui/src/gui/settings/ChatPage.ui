@@ -14,7 +14,7 @@
    <item row="3" column="0">
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>2</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="general">
       <attribute name="title">
@@ -104,6 +104,16 @@
              <widget class="QCheckBox" name="checkBox_enableCustomFontSize">
               <property name="text">
                <string>Enable custom font size</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="checkBox_enableCustomFontColor">
+              <property name="text">
+               <string>Enable custom font color</string>
               </property>
               <property name="checked">
                <bool>true</bool>
@@ -866,7 +876,7 @@
           <enum>QTabWidget::North</enum>
          </property>
          <property name="currentIndex">
-          <number>2</number>
+          <number>0</number>
          </property>
          <widget class="QWidget" name="publicTab">
           <attribute name="title">
