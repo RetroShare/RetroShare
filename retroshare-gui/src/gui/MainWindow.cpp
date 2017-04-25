@@ -676,7 +676,8 @@ void MainWindow::updateTrayCombine()
 
         }
     }
-    notifyMenu->menuAction()->setVisible(visible);
+    if (notifyMenu)
+        notifyMenu->menuAction()->setVisible(visible);
 
     // update tray icon
     updateFriends();

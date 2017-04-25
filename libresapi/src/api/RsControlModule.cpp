@@ -25,8 +25,8 @@ RsControlModule::RsControlModule(int argc, char **argv, StateTokenServer* sts, A
     mRunState(WAITING_INIT),
     mAutoLoginNextTime(false),
     mWantPassword(false),
-    mPassword(""),
-    mPrevIsBad(false)
+    mPrevIsBad(false),
+    mPassword("")
 {
     mStateToken = sts->getNewToken();
     this->argc = argc;
