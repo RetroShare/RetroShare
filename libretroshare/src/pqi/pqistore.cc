@@ -524,7 +524,7 @@ int     pqiSSLstore::readPkt(RsItem **item_out)
 	int extralen = getRsItemSize(block) - blen;
 	int totallen = extralen+blen;
 
-	if(totallen > 1024*1024)
+	if(totallen > 1024*1024 || totallen<blen)
 	{
 		free(block);
 		std::cerr << "pqiSSLstore: ERROR: trying to realloc memory for packet of length" << totallen << ", that exceeds the limit of 1MB" << std::endl ;

@@ -132,7 +132,7 @@ class RsItem: public RsMemoryManagement::SmallObject
 			std::cerr << "(EE) RsItem::serial_process() called by an item using new serialization classes, but not derived! " << std::endl;
 		}
 
-	private:
+	protected:
 		uint32_t type;
 		RsPeerId peerId;
 		uint8_t _priority_level ;

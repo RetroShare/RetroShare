@@ -4,19 +4,26 @@
 #include "serialization/rsserializer.h"
 #include "serialization/rstypeserializer.h"
 
-const SerializationFlags RsGenericSerializer::SERIALIZATION_FLAG_NONE      ( 0x0000 );
-const SerializationFlags RsGenericSerializer::SERIALIZATION_FLAG_CONFIG    ( 0x0001 );
-const SerializationFlags RsGenericSerializer::SERIALIZATION_FLAG_SIGNATURE ( 0x0002 );
+const SerializationFlags RsGenericSerializer::SERIALIZATION_FLAG_NONE        ( 0x0000 );
+const SerializationFlags RsGenericSerializer::SERIALIZATION_FLAG_CONFIG      ( 0x0001 );
+const SerializationFlags RsGenericSerializer::SERIALIZATION_FLAG_SIGNATURE   ( 0x0002 );
+const SerializationFlags RsGenericSerializer::SERIALIZATION_FLAG_SKIP_HEADER ( 0x0004 );
 
 RsItem *RsServiceSerializer::deserialise(void *data, uint32_t *size)
 {
+    if(mFlags & SERIALIZATION_FLAG_SKIP_HEADER)
+    {
+        std::cerr << "(EE) Cannot deserialise item with flags SERIALIZATION_FLAG_SKIP_HEADER. Check your code!" << std::endl;
+        return NULL ;
+    }
+
 	uint32_t rstype = getRsItemId(const_cast<void*>((const void*)data)) ;
 
 	RsItem *item = create_item(getRsItemService(rstype),getRsItemSubType(rstype)) ;
 
 	if(!item)
 	{
-		std::cerr << "(EE) " << typeid(*this).name() << ": cannot deserialise unknown item subtype " << std::hex << getRsItemSubType(rstype) << std::dec << std::endl;
+		std::cerr << "(EE) " << typeid(*this).name() << ": cannot deserialise unknown item subtype " << std::hex << (int)getRsItemSubType(rstype) << std::dec << std::endl;
         std::cerr << "(EE) Data is: " << RsUtil::BinToHex(static_cast<uint8_t*>(data),std::min(50u,*size)) << ((*size>50)?"...":"") << std::endl;
 		return NULL ;
 	}
@@ -40,13 +47,19 @@ RsItem *RsServiceSerializer::deserialise(void *data, uint32_t *size)
 }
 RsItem *RsConfigSerializer::deserialise(void *data, uint32_t *size)
 {
+    if(mFlags & SERIALIZATION_FLAG_SKIP_HEADER)
+    {
+        std::cerr << "(EE) Cannot deserialise item with flags SERIALIZATION_FLAG_SKIP_HEADER. Check your code!" << std::endl;
+        return NULL ;
+    }
+
 	uint32_t rstype = getRsItemId(const_cast<void*>((const void*)data)) ;
 
 	RsItem *item = create_item(getRsItemType(rstype),getRsItemSubType(rstype)) ;
 
 	if(!item)
 	{
-		std::cerr << "(EE) " << typeid(*this).name() << ": cannot deserialise unknown item subtype " << std::hex << getRsItemSubType(rstype) << std::dec << std::endl;
+		std::cerr << "(EE) " << typeid(*this).name() << ": cannot deserialise unknown item subtype " << std::hex << (int)getRsItemSubType(rstype) << std::dec << std::endl;
         std::cerr << "(EE) Data is: " << RsUtil::BinToHex(static_cast<uint8_t*>(data),std::min(50u,*size)) << ((*size>50)?"...":"") << std::endl;
 		return NULL ;
 	}
@@ -77,12 +90,19 @@ bool RsGenericSerializer::serialise(RsItem *item,void *data,uint32_t *size)
 	if(tlvsize > *size)
 		throw std::runtime_error("Cannot serialise: not enough room.") ;
 
-	if(!setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize))
+
+    if(mFlags & SERIALIZATION_FLAG_SKIP_HEADER)
+		ctx.mOffset = 0;
+	else
 	{
-		std::cerr << "RsSerializer::serialise_item(): ERROR. Not enough size!" << std::endl;
-		return false ;
+		if(!setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize))
+		{
+			std::cerr << "RsSerializer::serialise_item(): ERROR. Not enough size!" << std::endl;
+			return false ;
+		}
+		ctx.mOffset = 8;
 	}
-	ctx.mOffset = 8;
+
 	ctx.mSize = tlvsize;
 
 	item->serial_process(RsItem::SERIALIZE,ctx) ;
@@ -99,7 +119,10 @@ uint32_t RsGenericSerializer::size(RsItem *item)
 {
 	SerializeContext ctx(NULL,0,mFormat,mFlags);
 
-	ctx.mOffset = 8 ;	// header size
+    if(mFlags & SERIALIZATION_FLAG_SKIP_HEADER)
+		ctx.mOffset = 0;
+	else
+		ctx.mOffset = 8 ;	// header size
 	item->serial_process(RsItem::SIZE_ESTIMATE, ctx) ;
 
 	return ctx.mOffset ;

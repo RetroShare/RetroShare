@@ -24,6 +24,7 @@ public:
         static const SerializationFlags SERIALIZATION_FLAG_NONE ;			// 0x0000
         static const SerializationFlags SERIALIZATION_FLAG_CONFIG ;			// 0x0001
         static const SerializationFlags SERIALIZATION_FLAG_SIGNATURE ;		// 0x0002
+        static const SerializationFlags SERIALIZATION_FLAG_SKIP_HEADER ;	// 0x0004
 
         // The following functions overload RsSerialType. They *should not* need to be further overloaded.
 

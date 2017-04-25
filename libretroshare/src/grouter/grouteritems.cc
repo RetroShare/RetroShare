@@ -1,65 +1,71 @@
+#include "util/rsprint.h"
 #include "serialiser/rsbaseserial.h"
 #include "serialiser/rstlvbase.h"
 #include "grouteritems.h"
 
 /**********************************************************************************************/
-/*                                         SERIALISATION                                      */
-/**********************************************************************************************/
-
-bool RsGRouterItem::serialise_header(void *data,uint32_t& pktsize,uint32_t& tlvsize, uint32_t& offset) const
-{
-	tlvsize = serial_size() ;
-	offset = 0;
-
-	if (pktsize < tlvsize)
-		return false; /* not enough space */
-
-	pktsize = tlvsize;
-
-	if(!setRsItemHeader(data, tlvsize, PacketId(), tlvsize))
-	{
-		std::cerr << "RsFileTransferItem::serialise_header(): ERROR. Not enough size!" << std::endl;
-		return false ;
-	}
-#ifdef RSSERIAL_DEBUG
-	std::cerr << "RsFileItemSerialiser::serialiseData() Header: " << ok << std::endl;
-#endif
-	offset += 8;
-
-	return true ;
-}
-
-/**********************************************************************************************/
 /*                                          SERIALISER STUFF                                  */
 /**********************************************************************************************/
 
-RsItem *RsGRouterSerialiser::deserialise(void *data, uint32_t *pktsize)
+RsItem *RsGRouterSerialiser::create_item(uint16_t service_id,uint8_t subtype) const
 {
-	/* get the type and size */
-	uint32_t rstype = getRsItemId(data);
-
-	if(RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype) || RS_SERVICE_TYPE_GROUTER != getRsItemService(rstype)) 
-	{
+	if(RS_SERVICE_TYPE_GROUTER != service_id)
 		return NULL; /* wrong type */
-	}
 
-	switch(getRsItemSubType(rstype))
+	switch(subtype)
 	{
-	case RS_PKT_SUBTYPE_GROUTER_DATA:              return deserialise_RsGRouterGenericDataItem     (data, *pktsize);
-	case RS_PKT_SUBTYPE_GROUTER_TRANSACTION_CHUNK: return deserialise_RsGRouterTransactionChunkItem(data, *pktsize);
-	case RS_PKT_SUBTYPE_GROUTER_TRANSACTION_ACKN:  return deserialise_RsGRouterTransactionAcknItem (data, *pktsize);
-	case RS_PKT_SUBTYPE_GROUTER_SIGNED_RECEIPT:    return deserialise_RsGRouterSignedReceiptItem   (data, *pktsize);
-	case RS_PKT_SUBTYPE_GROUTER_MATRIX_CLUES:      return deserialise_RsGRouterMatrixCluesItem     (data, *pktsize);
-	case RS_PKT_SUBTYPE_GROUTER_MATRIX_TRACK:      return deserialise_RsGRouterMatrixTrackItem     (data, *pktsize);
-	case RS_PKT_SUBTYPE_GROUTER_FRIENDS_LIST:      return deserialise_RsGRouterMatrixFriendListItem(data, *pktsize);
-	case RS_PKT_SUBTYPE_GROUTER_ROUTING_INFO:      return deserialise_RsGRouterRoutingInfoItem     (data, *pktsize);
+	case RS_PKT_SUBTYPE_GROUTER_DATA:              return new RsGRouterGenericDataItem     ();
+	case RS_PKT_SUBTYPE_GROUTER_TRANSACTION_CHUNK: return new RsGRouterTransactionChunkItem();
+	case RS_PKT_SUBTYPE_GROUTER_TRANSACTION_ACKN:  return new RsGRouterTransactionAcknItem ();
+	case RS_PKT_SUBTYPE_GROUTER_SIGNED_RECEIPT:    return new RsGRouterSignedReceiptItem   ();
+	case RS_PKT_SUBTYPE_GROUTER_MATRIX_CLUES:      return new RsGRouterMatrixCluesItem     ();
+	case RS_PKT_SUBTYPE_GROUTER_MATRIX_TRACK:      return new RsGRouterMatrixTrackItem     ();
+	case RS_PKT_SUBTYPE_GROUTER_FRIENDS_LIST:      return new RsGRouterMatrixFriendListItem();
+	case RS_PKT_SUBTYPE_GROUTER_ROUTING_INFO:      return new RsGRouterRoutingInfoItem     ();
 
 	default:
-		std::cerr << "RsGRouterSerialiser::deserialise(): Could not de-serialise item. SubPacket id = " << std::hex << getRsItemSubType(rstype) << " id = " << rstype << std::dec << std::endl;
 		return NULL;
 	}
-	return NULL;
 }
+
+void RsGRouterTransactionChunkItem::serial_process(SerializeJob j,SerializeContext& ctx)
+{
+    RsTypeSerializer::serial_process<uint64_t>(j,ctx,propagation_id,"propagation_id") ;
+    RsTypeSerializer::serial_process<uint32_t>(j,ctx,chunk_start   ,"chunk_start") ;
+    RsTypeSerializer::serial_process<uint32_t>(j,ctx,chunk_size    ,"chunk_size") ;
+    RsTypeSerializer::serial_process<uint32_t>(j,ctx,total_size    ,"total_size") ;
+
+    // Hack for backward compatibility (the chunk size is not directly next to the chunk data)
+
+    if(j == RsItem::DESERIALIZE)
+	{
+		if(chunk_size > ctx.mSize || ctx.mOffset > ctx.mSize - chunk_size) // better than if(chunk_size + offset > size)
+		{
+			std::cerr << __PRETTY_FUNCTION__ << ": Cannot read beyond item size. Serialisation error!" << std::endl;
+			ctx.mOk = false ;
+			return ;
+		}
+		if( NULL == (chunk_data = (uint8_t*)rs_malloc(chunk_size)))
+		{
+			ctx.mOk = false ;
+			return ;
+		}
+
+		memcpy(chunk_data,&((uint8_t*)ctx.mData)[ctx.mOffset],chunk_size) ;
+		ctx.mOffset += chunk_size ;
+	}
+    else if(j== RsItem::SERIALIZE)
+    {
+		memcpy(&((uint8_t*)ctx.mData)[ctx.mOffset],chunk_data,chunk_size) ;
+		ctx.mOffset += chunk_size ;
+    }
+    else if(j== RsItem::SIZE_ESTIMATE)
+		ctx.mOffset += chunk_size ;
+    else
+    	std::cerr << "  [Binary data] " << ", length=" << chunk_size << " data=" << RsUtil::BinToHex((uint8_t*)chunk_data,std::min(50u,chunk_size)) << ((chunk_size>50)?"...":"") << std::endl;
+
+}
+#ifdef TO_REMOVE
 RsGRouterTransactionChunkItem *RsGRouterSerialiser::deserialise_RsGRouterTransactionChunkItem(void *data, uint32_t tlvsize) const
 {
     uint32_t offset = 8; // skip the header
@@ -104,6 +110,14 @@ RsGRouterTransactionChunkItem *RsGRouterSerialiser::deserialise_RsGRouterTransac
 
     return item;
 }
+#endif
+
+void RsGRouterTransactionAcknItem::serial_process(SerializeJob j,SerializeContext& ctx)
+{
+    RsTypeSerializer::serial_process<uint64_t>(j,ctx,propagation_id,"propagation_id") ;
+}
+
+#ifdef TO_REMOVE
 RsGRouterTransactionAcknItem *RsGRouterSerialiser::deserialise_RsGRouterTransactionAcknItem(void *data, uint32_t tlvsize) const
 {
     uint32_t offset = 8; // skip the header
@@ -124,6 +138,41 @@ RsGRouterTransactionAcknItem *RsGRouterSerialiser::deserialise_RsGRouterTransact
 
     return item;
 }
+#endif
+
+void RsGRouterGenericDataItem::serial_process(SerializeJob j,SerializeContext& ctx)
+{
+    RsTypeSerializer::serial_process<uint64_t>(j,ctx,routing_id,"routing_id") ;
+    RsTypeSerializer::serial_process          (j,ctx,destination_key,"destination_key") ;
+    RsTypeSerializer::serial_process<uint32_t>(j,ctx,service_id,"service_id") ;
+
+    RsTypeSerializer::TlvMemBlock_proxy prox(data_bytes,data_size) ;
+
+    RsTypeSerializer::serial_process(j,ctx,prox,"data") ;
+
+    if(ctx.mFlags & RsGenericSerializer::SERIALIZATION_FLAG_SIGNATURE)
+        return ;
+
+    RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,signature,"signature") ;
+    RsTypeSerializer::serial_process<uint32_t>(j,ctx,duplication_factor,"duplication_factor") ;
+    RsTypeSerializer::serial_process<uint32_t>(j,ctx,flags,"flags") ;
+
+    if(j == RsItem::DESERIALIZE) // make sure the duplication factor is not altered by friends. In the worst case, the item will duplicate a bit more.
+    {
+    	if(duplication_factor < 1)
+        {
+            duplication_factor = 1 ;
+            std::cerr << "(II) correcting GRouter item duplication factor from 0 to 1, to ensure backward compat." << std::endl;
+        }
+    	if(duplication_factor > GROUTER_MAX_DUPLICATION_FACTOR)
+        {
+            std::cerr << "(WW) correcting GRouter item duplication factor of " << duplication_factor << ". This is very unexpected." << std::endl;
+            duplication_factor = GROUTER_MAX_DUPLICATION_FACTOR ;
+        }
+    }
+}
+
+#ifdef TO_REMOVE
 RsGRouterGenericDataItem *RsGRouterSerialiser::deserialise_RsGRouterGenericDataItem(void *data, uint32_t pktsize) const
 {
 	uint32_t offset = 8; // skip the header 
@@ -191,7 +240,23 @@ RsGRouterGenericDataItem *RsGRouterSerialiser::deserialise_RsGRouterGenericDataI
 
 	return item;
 }
+#endif
 
+void RsGRouterSignedReceiptItem::serial_process(SerializeJob j,SerializeContext& ctx)
+{
+    RsTypeSerializer::serial_process<uint64_t> (j,ctx,routing_id,"routing_id") ;
+    RsTypeSerializer::serial_process<uint32_t> (j,ctx,flags,"flags") ;
+    RsTypeSerializer::serial_process           (j,ctx,destination_key,"destination_key") ;
+    RsTypeSerializer::serial_process<uint32_t> (j,ctx,service_id,"service_id") ;
+    RsTypeSerializer::serial_process           (j,ctx,data_hash,"data_hash") ;
+
+    if(ctx.mFlags &  RsGenericSerializer::SERIALIZATION_FLAG_SIGNATURE)
+        return ;
+
+    RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,signature,"signature") ;
+}
+
+#ifdef TO_REMOVE
 RsGRouterSignedReceiptItem *RsGRouterSerialiser::deserialise_RsGRouterSignedReceiptItem(void *data, uint32_t pktsize) const
 {
 	uint32_t offset = 8; // skip the header 
@@ -216,7 +281,76 @@ RsGRouterSignedReceiptItem *RsGRouterSerialiser::deserialise_RsGRouterSignedRece
 
 	return item;
 }
+#endif
 
+void RsGRouterRoutingInfoItem::serial_process(SerializeJob j,SerializeContext& ctx)
+{
+    RsTypeSerializer::serial_process          (j,ctx,peerId,"peerId") ;
+    RsTypeSerializer::serial_process<uint32_t>(j,ctx,data_status,"data_status") ;
+    RsTypeSerializer::serial_process<uint32_t>(j,ctx,tunnel_status,"tunnel_status") ;
+    RsTypeSerializer::serial_process<time_t>  (j,ctx,received_time_TS,"received_time_TS") ;
+    RsTypeSerializer::serial_process<time_t>  (j,ctx,last_sent_TS,"last_sent_TS") ;
+
+    RsTypeSerializer::serial_process<time_t>  (j,ctx,last_tunnel_request_TS,"last_tunnel_request_TS") ;
+    RsTypeSerializer::serial_process<uint32_t>(j,ctx,sending_attempts,"sending_attempts") ;
+
+    RsTypeSerializer::serial_process<uint32_t>(j,ctx,client_id,"client_id") ;
+    RsTypeSerializer::serial_process          (j,ctx,item_hash,"item_hash") ;
+    RsTypeSerializer::serial_process          (j,ctx,tunnel_hash,"tunnel_hash") ;
+    RsTypeSerializer::serial_process<uint32_t>(j,ctx,routing_flags,"routing_flags") ;
+
+    RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,incoming_routes,"incoming_routes") ;
+
+    // Hack for backward compatibility. Normally we should need a single commandline to serialise/deserialise a single item here.
+    // But the full item is serialised, so we need the header.
+
+	if(j == RsItem::DESERIALIZE)
+	{
+        data_item = new RsGRouterGenericDataItem() ;
+
+        ctx.mOffset += 8 ;
+        data_item->serial_process(j,ctx) ;
+
+        if(ctx.mOffset < ctx.mSize)
+		{
+			receipt_item = new RsGRouterSignedReceiptItem();
+
+			ctx.mOffset += 8 ;
+			receipt_item->serial_process(j,ctx) ;
+		}
+        else
+            receipt_item = NULL ;
+    }
+	else if(j == RsItem::SERIALIZE)
+    {
+        uint32_t remaining_size = ctx.mSize - ctx.mOffset;
+        ctx.mOk = ctx.mOk && RsGRouterSerialiser().serialise(data_item,ctx.mData,&remaining_size) ;
+        ctx.mOffset += RsGRouterSerialiser().size(data_item) ;
+
+        if(receipt_item != NULL)
+		{
+			remaining_size = ctx.mSize - ctx.mOffset;
+			ctx.mOk = ctx.mOk && RsGRouterSerialiser().serialise(data_item,ctx.mData,&remaining_size);
+			ctx.mOffset += RsGRouterSerialiser().size(data_item) ;
+		}
+    }
+    else if(j == RsItem::PRINT)
+    {
+        std::cerr << "  [Serialized data] " << std::endl;
+
+        if(receipt_item != NULL)
+			std::cerr << "  [Receipt item   ]" << std::endl;
+    }
+    else if(j == RsItem::SIZE_ESTIMATE)
+    {
+        ctx.mOffset += RsGRouterSerialiser().size(data_item) ;
+
+        if(receipt_item != NULL)
+			ctx.mOffset += RsGRouterSerialiser().size(receipt_item) ;
+    }
+}
+
+#ifdef TO_REMOVE
 RsGRouterRoutingInfoItem *RsGRouterSerialiser::deserialise_RsGRouterRoutingInfoItem(void *data, uint32_t pktsize) const
 {
 	uint32_t offset = 8; // skip the header 
@@ -274,6 +408,14 @@ RsGRouterRoutingInfoItem *RsGRouterSerialiser::deserialise_RsGRouterRoutingInfoI
 
 	return item;
 }
+#endif
+
+void RsGRouterMatrixFriendListItem::serial_process(SerializeJob j,SerializeContext& ctx)
+{
+    RsTypeSerializer::serial_process(j,ctx,reverse_friend_indices,"reverse_friend_indices") ;
+}
+
+#ifdef TO_REMOVE
 RsGRouterMatrixFriendListItem *RsGRouterSerialiser::deserialise_RsGRouterMatrixFriendListItem(void *data, uint32_t pktsize) const
 {
 	uint32_t offset = 8; // skip the header 
@@ -299,7 +441,16 @@ RsGRouterMatrixFriendListItem *RsGRouterSerialiser::deserialise_RsGRouterMatrixF
 
 	return item;
 }
+#endif
 
+void RsGRouterMatrixTrackItem::serial_process(SerializeJob j,SerializeContext& ctx)
+{
+    RsTypeSerializer::serial_process(j,ctx,provider_id,"provider_id") ;
+    RsTypeSerializer::serial_process(j,ctx,message_id,"message_id") ;
+    RsTypeSerializer::serial_process<time_t>(j,ctx,time_stamp,"time_stamp") ;
+}
+
+#ifdef TO_REMOVE
 RsGRouterMatrixTrackItem *RsGRouterSerialiser::deserialise_RsGRouterMatrixTrackItem(void *data, uint32_t pktsize) const
 {
 	uint32_t offset = 8; // skip the header 
@@ -321,6 +472,22 @@ RsGRouterMatrixTrackItem *RsGRouterSerialiser::deserialise_RsGRouterMatrixTrackI
 
 	return item;
 }
+#endif
+
+void RsGRouterMatrixCluesItem::serial_process(SerializeJob j,SerializeContext& ctx)
+{
+    RsTypeSerializer::serial_process(j,ctx,destination_key,"destination_key") ;
+    RsTypeSerializer::serial_process(j,ctx,clues,"clues") ;
+}
+
+template<> void RsTypeSerializer::serial_process(RsItem::SerializeJob j,SerializeContext& ctx,RoutingMatrixHitEntry& s,const std::string& name)
+{
+    RsTypeSerializer::serial_process<uint32_t>(j,ctx,s.friend_id,name+":friend_id") ;
+    RsTypeSerializer::serial_process<float>   (j,ctx,s.weight,name+":weight") ;
+    RsTypeSerializer::serial_process<time_t>  (j,ctx,s.time_stamp,name+":time_stamp") ;
+}
+
+#ifdef TO_REMOVE
 RsGRouterMatrixCluesItem *RsGRouterSerialiser::deserialise_RsGRouterMatrixCluesItem(void *data, uint32_t pktsize) const
 {
 	uint32_t offset = 8; // skip the header 
@@ -356,6 +523,8 @@ RsGRouterMatrixCluesItem *RsGRouterSerialiser::deserialise_RsGRouterMatrixCluesI
 
 	return item;
 }
+#endif
+
 RsGRouterGenericDataItem *RsGRouterGenericDataItem::duplicate() const
 {
     RsGRouterGenericDataItem *item = new RsGRouterGenericDataItem ;
@@ -393,6 +562,8 @@ RsGRouterSignedReceiptItem *RsGRouterSignedReceiptItem::duplicate() const
 
     return item ;
 }
+
+#ifdef TO_REMOVE
 uint32_t RsGRouterGenericDataItem::serial_size() const
 {
     uint32_t s = 8 ;	                      // header
@@ -896,3 +1067,4 @@ std::ostream& RsGRouterMatrixFriendListItem::print(std::ostream& o, uint16_t)
 
 	return o ;
 }
+#endif
