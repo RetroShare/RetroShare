@@ -32,7 +32,7 @@
 #include "gxs/rsgixs.h"			// Internal Interfaces.
 
 #include "gxs/gxstokenqueue.h"		
-#include "serialiser/rsgxsiditems.h"		
+#include "rsitems/rsgxsiditems.h"
 
 #include <map>
 #include <string>

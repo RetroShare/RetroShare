@@ -2,12 +2,9 @@
 #define RSPOSTEDITEMS_H
 
 #include "rsitems/rsserviceids.h"
-#include "serialiser/rsserial.h"
-//#include "serialiser/rstlvtypes.h"
+#include "rsitems/rsgxscommentitems.h"
+#include "rsitems/rsgxsitems.h"
 
-#include "serialiser/rsgxscommentitems.h"
-
-#include "rsgxsitems.h"
 #include "retroshare/rsposted.h"
 
 const uint8_t RS_PKT_SUBTYPE_POSTED_GRP_ITEM = 0x02;

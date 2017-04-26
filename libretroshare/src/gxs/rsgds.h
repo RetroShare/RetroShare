@@ -32,7 +32,7 @@
 
 #include "inttypes.h"
 
-#include "serialiser/rsgxsitems.h"
+#include "rsitems/rsgxsitems.h"
 #include "serialiser/rsnxsitems.h"
 #include "gxs/rsgxsdata.h"
 #include "rsgxs.h"

@@ -29,10 +29,9 @@
 #include <string>
 
 #include <retroshare/rstypes.h>
-
-#include "serialiser/rsserial.h"
 #include "serialiser/rstlvkeys.h"
-#include "serialiser/rsgxsitems.h"
+
+#include "rsitems/rsgxsitems.h"
 
 class RsGroupMetaData;
 class RsMsgMetaData;

@@ -735,7 +735,7 @@ HEADERS += serialiser/rsnxsitems.h \
 	retroshare/rstokenservice.h \
 	gxs/rsgxsdataaccess.h \
 	retroshare/rsgxsservice.h \
-	serialiser/rsgxsitems.h \
+	rsitems/rsgxsitems.h \
 	util/retrodb.h \
 	util/rsdbbind.h \
 	gxs/rsgxsutil.h \
@@ -753,7 +753,7 @@ SOURCES += serialiser/rsnxsitems.cc \
 	gxs/rsgenexchange.cc \
 	gxs/rsgxsnetservice.cc \
 	gxs/rsgxsdata.cc \
-	serialiser/rsgxsitems.cc \
+	rsitems/rsgxsitems.cc \
 	gxs/rsgxsdataaccess.cc \
 	util/retrodb.cc \
 	util/contentvalue.cc \
@@ -783,12 +783,12 @@ SOURCES += serialization/rsserializer.cc \
 HEADERS += retroshare/rsidentity.h \
 	gxs/rsgixs.h \
 	services/p3idservice.h \
-	serialiser/rsgxsiditems.h \
+	rsitems/rsgxsiditems.h \
 	services/p3gxsreputation.h \
 	rsitems/rsgxsreputationitems.h \
 
 SOURCES += services/p3idservice.cc \
-	serialiser/rsgxsiditems.cc \
+	rsitems/rsgxsiditems.cc \
 	services/p3gxsreputation.cc \
 	rsitems/rsgxsreputationitems.cc \
 
@@ -812,12 +812,12 @@ SOURCES += services/p3gxsforums.cc \
 HEADERS += retroshare/rsgxschannels.h \
 	services/p3gxschannels.h \
 	services/p3gxscommon.h \
-	serialiser/rsgxscommentitems.h \
+	rsitems/rsgxscommentitems.h \
 	serialiser/rsgxschannelitems.h \
 
 SOURCES += services/p3gxschannels.cc \
 	services/p3gxscommon.cc \
-	serialiser/rsgxscommentitems.cc \
+	rsitems/rsgxscommentitems.cc \
 	serialiser/rsgxschannelitems.cc \
 
 wikipoos {

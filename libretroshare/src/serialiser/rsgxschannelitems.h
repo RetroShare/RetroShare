@@ -29,14 +29,12 @@
 #include <map>
 
 #include "rsitems/rsserviceids.h"
-#include "serialiser/rsserial.h"
-//#include "serialiser/rstlvtypes.h"
+#include "rsitems/rsgxscommentitems.h"
+#include "rsitems/rsgxsitems.h"
+
 #include "serialiser/rstlvfileitem.h"
 #include "serialiser/rstlvimage.h"
 
-#include "serialiser/rsgxscommentitems.h"
-
-#include "rsgxsitems.h"
 #include "retroshare/rsgxschannels.h"
 
 #include "util/rsdir.h"

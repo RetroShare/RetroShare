@@ -29,10 +29,8 @@
 #include <map>
 
 #include "rsitems/rsserviceids.h"
-#include "serialiser/rsserial.h"
-//#include "serialiser/rstlvtypes.h"
+#include "rsitems/rsgxsitems.h"
 
-#include "rsgxsitems.h"
 #include "retroshare/rsgxsforums.h"
 
 const uint8_t RS_PKT_SUBTYPE_GXSFORUM_GROUP_ITEM = 0x02;

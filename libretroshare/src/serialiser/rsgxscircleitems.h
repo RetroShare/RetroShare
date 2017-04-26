@@ -29,12 +29,12 @@
 #include <map>
 
 #include "rsitems/rsserviceids.h"
-#include "serialiser/rsserial.h"
+
 #include "serialiser/rstlvitem.h"
 #include "serialiser/rstlvstring.h"
 #include "serialiser/rstlvidset.h"
 
-#include "rsgxsitems.h"
+#include "rsitems/rsgxsitems.h"
 #include "retroshare/rsgxscircles.h"
 
 const uint8_t RS_PKT_SUBTYPE_GXSCIRCLE_GROUP_ITEM                = 0x02;

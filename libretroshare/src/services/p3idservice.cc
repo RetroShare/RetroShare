@@ -27,7 +27,7 @@
 
 #include "services/p3idservice.h"
 #include "pgp/pgpauxutils.h"
-#include "serialiser/rsgxsiditems.h"
+#include "rsitems/rsgxsiditems.h"
 #include "rsitems/rsconfigitems.h"
 #include "retroshare/rsgxsflags.h"
 #include "util/rsrandom.h"
