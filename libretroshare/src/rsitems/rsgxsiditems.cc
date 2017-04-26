@@ -234,6 +234,12 @@ void RsGxsIdGroupItem::serial_process(RsGenericSerializer::SerializeJob j,RsGene
     RsTlvStringSetRef rset(TLV_TYPE_RECOGNSET,mRecognTags) ;
 
     RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,rset,"mRecognTags") ;
+
+    // image is optional
+
+    if(j == RsGenericSerializer::DESERIALIZE && ctx.mOffset == ctx.mSize)
+        return ;
+
     RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,mImage,"mImage") ;
 }
 
