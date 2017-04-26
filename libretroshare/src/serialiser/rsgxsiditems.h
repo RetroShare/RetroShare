@@ -45,14 +45,6 @@ class RsGxsIdItem: public RsGxsGrpItem
 {
     public:
         RsGxsIdItem(uint8_t item_subtype) : RsGxsGrpItem(RS_SERVICE_GXS_TYPE_GXSID,item_subtype) {}
-
-        virtual bool serialise(void *data,uint32_t& size) = 0 ;
-        virtual uint32_t serial_size() = 0 ;
-
-        virtual void clear() = 0 ;
-        virtual std::ostream& print(std::ostream &out, uint16_t indent = 0) = 0;
-
-    bool serialise_header(void *data,uint32_t& pktsize,uint32_t& tlvsize, uint32_t& offset) ;
 };
 
 class RsGxsIdGroupItem : public RsGxsIdItem
@@ -62,11 +54,8 @@ public:
     RsGxsIdGroupItem():  RsGxsIdItem(RS_PKT_SUBTYPE_GXSID_GROUP_ITEM) {}
     virtual ~RsGxsIdGroupItem() {}
 
+	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
     virtual void clear();
-    virtual std::ostream &print(std::ostream &out, uint16_t indent = 0);
-
-    virtual bool serialise(void *data,uint32_t& size) ;
-    virtual uint32_t serial_size() ;
 
     bool fromGxsIdGroup(RsGxsIdGroup &group, bool moveImage);
     bool toGxsIdGroup(RsGxsIdGroup &group, bool moveImage);
@@ -91,10 +80,8 @@ public:
     virtual ~RsGxsIdLocalInfoItem() {}
 
     virtual void clear();
-    virtual std::ostream &print(std::ostream &out, uint16_t indent = 0);
 
-    virtual bool serialise(void *data,uint32_t& size) ;
-    virtual uint32_t serial_size() ;
+	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 
     std::map<RsGxsId,time_t> mTimeStamps ;
     std::set<RsGxsId> mContacts ;
@@ -133,39 +120,13 @@ public:
 };
 #endif
 
-class RsGxsIdSerialiser : public RsSerialType
+class RsGxsIdSerialiser : public RsServiceSerializer
 {
 public:
-    RsGxsIdSerialiser() :RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_GXS_TYPE_GXSID) {}
+    RsGxsIdSerialiser() :RsServiceSerializer(RS_SERVICE_GXS_TYPE_GXSID) {}
     virtual     ~RsGxsIdSerialiser() {}
 
-    virtual uint32_t 	size (RsItem *item)
-    {
-        RsGxsIdItem *idItem = dynamic_cast<RsGxsIdItem *>(item);
-        if (!idItem)
-        {
-            return 0;
-        }
-        return idItem->serial_size() ;
-    }
-    virtual bool serialise(RsItem *item, void *data, uint32_t *size)
-    {
-        RsGxsIdItem *idItem = dynamic_cast<RsGxsIdItem *>(item);
-        if (!idItem)
-        {
-            return false;
-        }
-        return idItem->serialise(data,*size) ;
-    }
-    virtual RsItem *deserialise (void *data, uint32_t *size) ;
-
-private:
-#if 0
-    static RsGxsIdOpinionItem *deserialise_GxsIdOpinionItem(void *data, uint32_t *size);
-    static RsGxsIdCommentItem *deserialise_GxsIdCommentItem(void *data, uint32_t *size);
-#endif
-    static RsGxsIdGroupItem   *deserialise_GxsIdGroupItem(void *data, uint32_t *size);
-    static RsGxsIdLocalInfoItem   *deserialise_GxsIdLocalInfoItem(void *data, uint32_t *size);
+    virtual RsItem *create_item(uint16_t service_id,uint8_t item_subtype) const ;
 };
 
 #endif /* RS_GXS_IDENTITY_ITEMS_H */

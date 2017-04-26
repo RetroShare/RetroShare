@@ -31,8 +31,36 @@
 #include "serialiser/rstlvstring.h"
 #include "util/rsstring.h"
 
+#include "serialization/rstypeserializer.h"
+
 #define GXSID_DEBUG	1
 
+RsItem *RsGxsIdSerialiser::create_item(uint16_t service_id,uint8_t item_subtype) const
+{
+    if(service_id != RS_SERVICE_GXS_TYPE_GXSID)
+        return NULL ;
+
+    switch(item_subtype)
+    {
+    case RS_PKT_SUBTYPE_GXSID_GROUP_ITEM     : return new RsGxsIdGroupItem ();
+    case RS_PKT_SUBTYPE_GXSID_LOCAL_INFO_ITEM: return new RsGxsIdLocalInfoItem() ;
+    default:
+        return NULL ;
+    }
+}
+void RsGxsIdLocalInfoItem::clear()
+{
+    mTimeStamps.clear() ;
+}
+void RsGxsIdGroupItem::clear()
+{
+    mPgpIdHash.clear();
+    mPgpIdSign.clear();
+
+    mRecognTags.clear();
+    mImage.TlvClear();
+}
+#ifdef TO_REMOVE
 RsItem* RsGxsIdSerialiser::deserialise(void* data, uint32_t* size)
 {
     /* get the type and size */
@@ -84,18 +112,8 @@ bool RsGxsIdItem::serialise_header(void *data,uint32_t& pktsize,uint32_t& tlvsiz
 /*****************************************************************************************/
 
 
-void RsGxsIdLocalInfoItem::clear()
-{
-    mTimeStamps.clear() ;
-}
-void RsGxsIdGroupItem::clear()
-{
-    mPgpIdHash.clear();
-    mPgpIdSign.clear();
 
-    mRecognTags.clear();
-    mImage.TlvClear();
-}
+
 uint32_t RsGxsIdLocalInfoItem::serial_size()
 {
     uint32_t s = 8 ;	// header
@@ -160,8 +178,15 @@ uint32_t RsGxsIdGroupItem::serial_size()
 
     return s;
 }
+#endif
 
+void RsGxsIdLocalInfoItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
+{
+    RsTypeSerializer::serial_process(j,ctx,mTimeStamps,"mTimeStamps") ;
+    RsTypeSerializer::serial_process(j,ctx,mContacts,"mContacts") ;
+}
 
+#ifdef TO_REMOVE
 bool RsGxsIdLocalInfoItem::serialise(void *data, uint32_t& size)
 {
     uint32_t tlvsize,offset=0;
@@ -199,7 +224,20 @@ bool RsGxsIdLocalInfoItem::serialise(void *data, uint32_t& size)
 
     return ok;
 }
+#endif
 
+void RsGxsIdGroupItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
+{
+    RsTypeSerializer::serial_process(j,ctx,mPgpIdHash,"mPgpIdHash") ;
+    RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_SIGN,mPgpIdSign,"mPgpIdSign") ;
+
+    RsTlvStringSetRef rset(TLV_TYPE_RECOGNSET,mRecognTags) ;
+
+    RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,rset,"mRecognTags") ;
+    RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,mImage,"mImage") ;
+}
+
+#ifdef TO_REMOVE
 bool RsGxsIdGroupItem::serialise(void *data, uint32_t& size)
 {
     uint32_t tlvsize,offset=0;
@@ -234,7 +272,7 @@ bool RsGxsIdGroupItem::serialise(void *data, uint32_t& size)
 
     return ok;
 }
-
+#endif
 
 bool RsGxsIdGroupItem::fromGxsIdGroup(RsGxsIdGroup &group, bool moveImage)
 {
@@ -275,6 +313,8 @@ bool RsGxsIdGroupItem::toGxsIdGroup(RsGxsIdGroup &group, bool moveImage)
         }
     return true ;
 }
+
+#ifdef TO_REMOVE
 RsGxsIdGroupItem* RsGxsIdSerialiser::deserialise_GxsIdGroupItem(void *data, uint32_t *size)
 {
     /* get the type and size */
@@ -427,6 +467,7 @@ RsGxsIdLocalInfoItem *RsGxsIdSerialiser::deserialise_GxsIdLocalInfoItem(void *da
 	return item;
 }
 
+#endif
 
 
 /*****************************************************************************************/
@@ -692,8 +733,3 @@ RsGxsIdCommentItem* RsGxsIdSerialiser::deserialise_GxsIdCommentItem(void *data, 
 }
 
 #endif
-
-/*****************************************************************************************/
-/*****************************************************************************************/
-/*****************************************************************************************/
-

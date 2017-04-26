@@ -199,6 +199,58 @@ class RsTypeSerializer
                 break;
 			}
 		}
+		//=================================================================================================//
+		//                                             std::set<T>                                         //
+		//=================================================================================================//
+
+		template<typename T>
+		static void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx,std::set<T>& v,const std::string& member_name)
+		{
+			switch(j)
+			{
+			case RsGenericSerializer::SIZE_ESTIMATE:
+			{
+				ctx.mOffset += 4 ;
+				for(typename std::set<T>::iterator it(v.begin());it!=v.end();++it)
+					serial_process(j,ctx,const_cast<T&>(*it) ,member_name) ;
+			}
+				break ;
+
+			case RsGenericSerializer::DESERIALIZE:
+			{  uint32_t n=0 ;
+				serial_process(j,ctx,n,"temporary size") ;
+
+				for(uint32_t i=0;i<n;++i)
+                {
+                    T tmp;
+					serial_process<T>(j,ctx,tmp,member_name) ;
+                    v.insert(tmp);
+                }
+			}
+				break ;
+
+			case RsGenericSerializer::SERIALIZE:
+			{
+				uint32_t n=v.size();
+				serial_process(j,ctx,n,"temporary size") ;
+				for(typename std::set<T>::iterator it(v.begin());it!=v.end();++it)
+					serial_process(j,ctx,const_cast<T&>(*it) ,member_name) ;
+			}
+				break ;
+
+			case RsGenericSerializer::PRINT:
+			{
+                if(v.empty())
+					std::cerr << "  Empty set"<< std::endl;
+				else
+					std::cerr << "  Set of " << v.size() << " elements:" << std::endl;
+			}
+				break;
+			default:
+                break;
+			}
+		}
+
 
 		//=================================================================================================//
 		//                                            std::list<T>                                         //
