@@ -61,14 +61,14 @@ file_lists {
 
 dsdv {
 DEFINES *= SERVICES_DSDV
-HEADERS += services/p3dsdv.h \
-			  serialiser/rstlvdsdv.h \
-			  serialiser/rsdsdvitems.h \
-			  retroshare/rsdsdv.h 
+HEADERS += unused/p3dsdv.h \
+			  unused/rstlvdsdv.h \
+			  unused/rsdsdvitems.h \
+			  unused/rsdsdv.h 
 
-SOURCES *= serialiser/rstlvdsdv.cc \
-			  serialiser/rsdsdvitems.cc \
-		  	  services/p3dsdv.cc 
+SOURCES *= unused/rstlvdsdv.cc \
+			  unused/rsdsdvitems.cc \
+		  	  unused/p3dsdv.cc 
 }
 bitdht {
 
