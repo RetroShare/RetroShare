@@ -212,7 +212,7 @@ class RsTypeSerializer
 			{
 				ctx.mOffset += 4 ;
 				for(typename std::set<T>::iterator it(v.begin());it!=v.end();++it)
-					serial_process(j,ctx,const_cast<T&>(*it) ,member_name) ;
+					serial_process(j,ctx,const_cast<T&>(*it) ,member_name) ; // the const cast here is a hack to avoid serial_process to instantiate serialise(const T&)
 			}
 				break ;
 
@@ -234,7 +234,7 @@ class RsTypeSerializer
 				uint32_t n=v.size();
 				serial_process(j,ctx,n,"temporary size") ;
 				for(typename std::set<T>::iterator it(v.begin());it!=v.end();++it)
-					serial_process(j,ctx,const_cast<T&>(*it) ,member_name) ;
+					serial_process(j,ctx,const_cast<T&>(*it) ,member_name) ;	// the const cast here is a hack to avoid serial_process to instantiate serialise(const T&)
 			}
 				break ;
 
