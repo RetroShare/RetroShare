@@ -452,7 +452,8 @@ HEADERS +=  grouter/groutercache.h \
 				grouter/groutertypes.h \
 				grouter/rsgrouterclient.h 
 
-HEADERS +=	rsitems/itempriorities.h \
+HEADERS +=	rsitems/rsitem.h \
+			rsitems/itempriorities.h \
 			serialiser/rsbaseserial.h \
 			rsitems/rsfiletransferitems.h \
 			serialiser/rsserviceserialiser.h \

@@ -25,10 +25,13 @@
  */
 
 #include "serialiser/rsbaseserial.h"
-#include "serialiser/rsserial.h"
+
 #include "util/rsthreads.h"
 #include "util/rsstring.h"
 #include "util/rsprint.h"
+
+#include "rsitems/rsitem.h"
+#include "rsitems/itempriorities.h"
 
 #include <math.h>
 #include <map>

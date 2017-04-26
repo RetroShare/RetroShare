@@ -26,6 +26,7 @@
  *
  */
 
+#include "rsitems/rsitem.h"
 #include "rsitems/rsserviceids.h"
 #include "serialiser/rsserial.h"
 //#include "serialiser/rstlvtypes.h"

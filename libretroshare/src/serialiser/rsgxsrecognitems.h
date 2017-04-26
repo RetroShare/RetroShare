@@ -28,7 +28,10 @@
 
 #include <map>
 
+#include "rsitems/rsitem.h"
 #include "rsitems/rsserviceids.h"
+#include "rsitems/itempriorities.h"
+
 #include "serialiser/rsserial.h"
 #include "serialiser/rstlvkeys.h"
 #include "serialiser/rstlvidset.h"

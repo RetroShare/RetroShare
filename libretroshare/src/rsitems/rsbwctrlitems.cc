@@ -52,7 +52,7 @@ void 	RsBwCtrlAllowedItem::clear()
 	allowedBw = 0;
 }
 
-void RsBwCtrlAllowedItem::serial_process(SerializeJob j,SerializeContext& ctx)
+void RsBwCtrlAllowedItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,TLV_TYPE_UINT32_BW,allowedBw,"allowedBw") ;
 }

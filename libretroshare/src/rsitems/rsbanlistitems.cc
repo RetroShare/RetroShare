@@ -41,12 +41,12 @@ void 	RsBanListItem::clear()
 	peerList.TlvClear();
 }
 
-void RsBanListItem::serial_process(RsItem::SerializeJob j,SerializeContext& ctx)
+void RsBanListItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process(j,ctx,peerList,"peerList") ;
 }
 
-void RsBanListConfigItem::serial_process(RsItem::SerializeJob j,SerializeContext& ctx)
+void RsBanListConfigItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,type,"type") ;
     RsTypeSerializer::serial_process          (j,ctx,peerId,"peerId") ;

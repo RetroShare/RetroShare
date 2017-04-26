@@ -29,13 +29,15 @@
 #include "serialiser/rsbaseserial.h"
 #include "serialiser/rstlvbase.h"
 
+#include "serialization/rstypeserializer.h"
+
 /***
 #define RSSERIAL_DEBUG 1
 ***/
 
 #include <iostream>
 
-void RsHistoryMsgItem::serial_process(SerializeJob j,SerializeContext& ctx)
+void RsHistoryMsgItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     uint16_t version=0;
 

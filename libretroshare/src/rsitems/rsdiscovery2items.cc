@@ -73,7 +73,7 @@ void 	RsDiscPgpListItem::clear()
 	pgpIdSet.TlvClear();
 }
 
-void RsDiscPgpListItem::serial_process(SerializeJob j,SerializeContext& ctx)
+void RsDiscPgpListItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,mode,"mode") ;
     RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,pgpIdSet,"pgpIdSet") ;
@@ -86,7 +86,7 @@ void 	RsDiscPgpCertItem::clear()
 }
 
 
-void RsDiscPgpCertItem::serial_process(SerializeJob j,SerializeContext& ctx)
+void RsDiscPgpCertItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process(j,ctx,pgpId,"pgpId") ;
     RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_PGPCERT,pgpCert,"pgpCert") ;
@@ -121,7 +121,7 @@ void 	RsDiscContactItem::clear()
 	extAddrList.TlvClear();
 }
 
-void RsDiscContactItem::serial_process(SerializeJob j,SerializeContext& ctx)
+void RsDiscContactItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
    RsTypeSerializer::serial_process          (j,ctx,pgpId,"pgpId");
    RsTypeSerializer::serial_process          (j,ctx,sslId,"sslId");
@@ -134,7 +134,7 @@ void RsDiscContactItem::serial_process(SerializeJob j,SerializeContext& ctx)
 
    // This is a hack. Normally we should have to different item types, in order to avoid this nonesense.
 
-   if(j == RsItem::DESERIALIZE)
+   if(j == RsGenericSerializer::DESERIALIZE)
 	   isHidden = ( GetTlvType( &(((uint8_t *) ctx.mData)[ctx.mOffset])  )==TLV_TYPE_STR_DOMADDR);
 
    if(isHidden)

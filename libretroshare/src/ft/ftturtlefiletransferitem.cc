@@ -32,37 +32,37 @@
 
 #include <serialization/rstypeserializer.h>
 
-void RsTurtleFileMapRequestItem::serial_process(SerializeJob j,SerializeContext& ctx)
+void RsTurtleFileMapRequestItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,tunnel_id,"tunnel_id") ;
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,direction,"direction") ;
 }
 
-void RsTurtleFileMapItem::serial_process(SerializeJob j,SerializeContext& ctx)
+void RsTurtleFileMapItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,tunnel_id,"tunnel_id") ;
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,direction,"direction") ;
     RsTypeSerializer::serial_process          (j,ctx,compressed_map._map,"map") ;
 }
-void RsTurtleChunkCrcRequestItem::serial_process(SerializeJob j,SerializeContext& ctx)
+void RsTurtleChunkCrcRequestItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,tunnel_id,"tunnel_id") ;
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,chunk_number,"chunk_number") ;
 }
-void RsTurtleChunkCrcItem::serial_process(SerializeJob j,SerializeContext& ctx)
+void RsTurtleChunkCrcItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,tunnel_id,"tunnel_id") ;
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,chunk_number,"chunk_number") ;
     RsTypeSerializer::serial_process          (j,ctx,check_sum,"check_sum") ;
 }
 
-void RsTurtleFileRequestItem::serial_process(SerializeJob j,SerializeContext& ctx)
+void RsTurtleFileRequestItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,tunnel_id,"tunnel_id") ;
     RsTypeSerializer::serial_process<uint64_t>(j,ctx,chunk_offset,"chunk_offset") ;
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,chunk_size,"chunk_size") ;
 }
-void RsTurtleFileDataItem::serial_process(SerializeJob j,SerializeContext& ctx)
+void RsTurtleFileDataItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,tunnel_id,"tunnel_id") ;
     RsTypeSerializer::serial_process<uint64_t>(j,ctx,chunk_offset,"chunk_offset") ;

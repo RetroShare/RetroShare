@@ -28,6 +28,7 @@
 #include <openssl/ssl.h>
 
 #include "rsitems/rsserviceids.h"
+#include "rsitems/itempriorities.h"
 #include "serialiser/rsserial.h"
 #include "serialiser/rstlvbase.h"
 #include "serialiser/rstlvitem.h"
@@ -78,7 +79,7 @@ public:
 
     virtual void clear(){}
 
-	virtual void serial_process(SerializeJob j,SerializeContext& ctx);
+	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 
     RsFileHash entry_hash ;               // hash of the directory to sync
     uint32_t   flags;                     // used to say that it's a request or a response, say that the directory has been removed, ask for further update, etc.
@@ -94,7 +95,7 @@ public:
 
     virtual void clear();
 
-	virtual void serial_process(SerializeJob j,SerializeContext& ctx);
+	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 
     RsFileHash entry_hash ;               // hash of the directory to sync
     RsFileHash checksum   ;               // checksum of the bindary data, for checking

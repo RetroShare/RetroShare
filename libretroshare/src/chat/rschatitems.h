@@ -30,6 +30,8 @@
 #include "serialization/rsserializer.h"
 #include "serialiser/rstlvkeys.h"
 #include "rsitems/rsserviceids.h"
+#include "rsitems/itempriorities.h"
+#include "rsitems/rsitem.h"
 #include "serialiser/rsserial.h"
 
 #include "serialiser/rstlvidset.h"
@@ -112,7 +114,7 @@ public:
 
     // derived from RsItem
 
-	void serial_process(RsItem::SerializeJob j,SerializeContext& ctx);
+	void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
     virtual void clear() {}
 
     uint32_t chatFlags;
@@ -142,7 +144,7 @@ protected:
     // They are called by serial_size() and serialise() from children, but should not overload the serial_size() and
     // serialise() methods, otherwise the wrong method will be called when serialising from this top level class.
 
-	virtual void serial_process(RsItem::SerializeJob j, SerializeContext& ctx);
+	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 
     virtual uint32_t PacketId() const= 0;
 };
@@ -155,7 +157,7 @@ public:
     virtual ~RsChatLobbyMsgItem() {}
     virtual RsChatLobbyBouncingObject *duplicate() const { return new RsChatLobbyMsgItem(*this) ; }
 
-	void serial_process(RsItem::SerializeJob j,SerializeContext& ctx) ;
+	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 
     ChatLobbyMsgId parent_msg_id ;				// Used for threaded chat.
 
@@ -171,7 +173,7 @@ public:
 	virtual ~RsChatLobbyEventItem() {}
 	virtual RsChatLobbyBouncingObject *duplicate() const { return new RsChatLobbyEventItem(*this) ; }
 	//
-	void serial_process(RsItem::SerializeJob j,SerializeContext& ctx);
+	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 
 	// members.
 	//
@@ -189,7 +191,7 @@ class RsChatLobbyListRequestItem: public RsChatItem
 		RsChatLobbyListRequestItem() : RsChatItem(RS_PKT_SUBTYPE_CHAT_LOBBY_LIST_REQUEST) {}
 		virtual ~RsChatLobbyListRequestItem() {}
 
-		void serial_process(RsItem::SerializeJob j,SerializeContext& ctx);
+		void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 };
 
 struct VisibleChatLobbyInfo
@@ -207,7 +209,7 @@ class RsChatLobbyListItem: public RsChatItem
 		RsChatLobbyListItem() : RsChatItem(RS_PKT_SUBTYPE_CHAT_LOBBY_LIST) {}
 		virtual ~RsChatLobbyListItem() {}
 
-		void serial_process(RsItem::SerializeJob j,SerializeContext& ctx);
+		void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 
         std::vector<VisibleChatLobbyInfo> lobbies ;
 };
@@ -219,7 +221,7 @@ class RsChatLobbyUnsubscribeItem: public RsChatItem
 
 		virtual ~RsChatLobbyUnsubscribeItem() {} 
 
-		void serial_process(RsItem::SerializeJob j,SerializeContext& ctx);
+		void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 
 		uint64_t lobby_id ;
 };
@@ -231,7 +233,7 @@ class RsChatLobbyConnectChallengeItem: public RsChatItem
 
 		virtual ~RsChatLobbyConnectChallengeItem() {} 
 
-		void serial_process(RsItem::SerializeJob j,SerializeContext& ctx);
+		void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 
 		uint64_t challenge_code ;
 };
@@ -242,7 +244,7 @@ class RsChatLobbyInviteItem: public RsChatItem
 		RsChatLobbyInviteItem() :RsChatItem(RS_PKT_SUBTYPE_CHAT_LOBBY_INVITE) {}
 		virtual ~RsChatLobbyInviteItem() {}
 
-		void serial_process(RsItem::SerializeJob j,SerializeContext& ctx);
+		void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 
 		ChatLobbyId lobby_id ;
 		std::string lobby_name ;
@@ -262,7 +264,7 @@ class RsPrivateChatMsgConfigItem: public RsChatItem
 		virtual ~RsPrivateChatMsgConfigItem() {}
 		virtual void clear() {}
 
-		void serial_process(RsItem::SerializeJob j,SerializeContext& ctx);
+		virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 
 		/* set data from RsChatMsgItem to RsPrivateChatMsgConfigItem */
 		void set(RsChatMsgItem *ci, const RsPeerId &peerId, uint32_t confFlags);
@@ -286,7 +288,7 @@ public:
 
 	virtual void clear() { lobby_Id = 0; }
 
-	void serial_process(RsItem::SerializeJob j,SerializeContext& ctx);
+		void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 
 	uint64_t lobby_Id;
 	uint32_t flags ;
@@ -301,7 +303,7 @@ class RsChatStatusItem: public RsChatItem
 
 		virtual ~RsChatStatusItem() {}
 
-		void serial_process(RsItem::SerializeJob j,SerializeContext& ctx);
+		void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 
 		uint32_t flags ;
 		std::string status_string;
@@ -315,7 +317,7 @@ class RsChatAvatarItem: public RsChatItem
 		RsChatAvatarItem() :RsChatItem(RS_PKT_SUBTYPE_CHAT_AVATAR) {setPriorityLevel(QOS_PRIORITY_RS_CHAT_AVATAR_ITEM) ;}
 
 		virtual ~RsChatAvatarItem() ;
-		void serial_process(RsItem::SerializeJob j,SerializeContext& ctx);
+		void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 
 		uint32_t image_size ;				// size of data in bytes
 		unsigned char *image_data ;		// image
@@ -325,7 +327,7 @@ class RsChatSerialiser: public RsServiceSerializer
 {
 	public:
 		RsChatSerialiser(SerializationFlags flags = SERIALIZATION_FLAG_NONE)
-            :RsServiceSerializer(RS_SERVICE_TYPE_CHAT,SerializeContext::FORMAT_BINARY,flags) {}
+            :RsServiceSerializer(RS_SERVICE_TYPE_CHAT,RsGenericSerializer::FORMAT_BINARY,flags) {}
 
 		virtual RsItem *create_item(uint16_t service_id,uint8_t item_sub_id) const ;
 };

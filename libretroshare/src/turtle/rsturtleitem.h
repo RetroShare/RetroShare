@@ -1,12 +1,16 @@
 #pragma once
 
+#include "rsitems/rsserviceids.h"
+#include "rsitems/rsitem.h"
+#include "rsitems/itempriorities.h"
+
 #include "serialiser/rsserial.h"
 #include "serialiser/rstlvbase.h"
 #include "serialiser/rsbaseserial.h"
+
 #include "retroshare/rsturtle.h"
 #include "retroshare/rsexpr.h"
 #include "retroshare/rstypes.h"
-#include "rsitems/rsserviceids.h"
 #include "turtle/turtletypes.h"
 
 #include "serialization/rsserializer.h"
@@ -58,7 +62,7 @@ class RsTurtleSearchResultItem: public RsTurtleItem
 
         void clear() { result.clear() ; }
 	protected:
-		void serial_process(SerializeJob j,SerializeContext& ctx);
+		void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 
 };
 
@@ -87,7 +91,7 @@ class RsTurtleStringSearchRequestItem: public RsTurtleSearchRequestItem
         void clear() { match_string.clear() ; }
 
 	protected:
-		void serial_process(SerializeJob j,SerializeContext& ctx);
+		void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 };
 
 class RsTurtleRegExpSearchRequestItem: public RsTurtleSearchRequestItem
@@ -102,7 +106,7 @@ class RsTurtleRegExpSearchRequestItem: public RsTurtleSearchRequestItem
 
 		void clear() { expr = RsRegularExpression::LinearizedExpression(); }
 	protected:
-		void serial_process(SerializeJob j,SerializeContext& ctx);
+		void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 };
 
 /***********************************************************************************/
@@ -121,7 +125,7 @@ class RsTurtleOpenTunnelItem: public RsTurtleItem
 
         void clear() { file_hash.clear() ;}
 	protected:
-		void serial_process(SerializeJob j,SerializeContext& ctx);
+		void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 };
 
 class RsTurtleTunnelOkItem: public RsTurtleItem
@@ -134,7 +138,7 @@ class RsTurtleTunnelOkItem: public RsTurtleItem
 
         void clear() {}
 	protected:
-		void serial_process(SerializeJob j,SerializeContext& ctx);
+		void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 };
 
 /***********************************************************************************/
@@ -198,7 +202,7 @@ class RsTurtleGenericDataItem: public RsTurtleGenericTunnelItem
             data_size = 0;
         }
 	protected:
-		void serial_process(SerializeJob j,SerializeContext& ctx);
+		void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 };
 
 /***********************************************************************************/

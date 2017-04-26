@@ -53,21 +53,21 @@ void RsGxsReputationBannedNodeSetItem::clear()
     mKnownIdentities.TlvClear();
 }
 
-void RsGxsReputationConfigItem::serial_process(RsItem::SerializeJob j,SerializeContext& ctx)
+void RsGxsReputationConfigItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process          (j,ctx,mPeerId,"mPeerId") ;
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,mLatestUpdate,"mLatestUpdate") ;
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,mLastQuery,"mLastQuery") ;
 }
 
-void RsGxsReputationBannedNodeSetItem::serial_process(RsItem::SerializeJob j,SerializeContext& ctx)
+void RsGxsReputationBannedNodeSetItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process           (j,ctx,mPgpId,"mPgpId") ;
     RsTypeSerializer::serial_process<uint32_t> (j,ctx,mLastActivityTS,"mLastActivityTS") ;
     RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,mKnownIdentities,"mKnownIdentities") ;
 }
 
-void RsGxsReputationSetItem::serial_process(RsItem::SerializeJob j,SerializeContext& ctx)
+void RsGxsReputationSetItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process          (j,ctx,mGxsId,"mGxsId") ;
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,mOwnOpinion,"mOwnOpinion") ;
@@ -78,12 +78,12 @@ void RsGxsReputationSetItem::serial_process(RsItem::SerializeJob j,SerializeCont
     RsTypeSerializer::serial_process          (j,ctx,mOpinions,"mOpinions") ;
 }
 
-void RsGxsReputationUpdateItem::serial_process(RsItem::SerializeJob j,SerializeContext& ctx)
+void RsGxsReputationUpdateItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,mLatestUpdate,"mLatestUpdate") ;
     RsTypeSerializer::serial_process          (j,ctx,mOpinions,"mOpinions") ;
 }
-void RsGxsReputationRequestItem::serial_process(RsItem::SerializeJob j,SerializeContext& ctx)
+void RsGxsReputationRequestItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,mLastUpdate,"mLastUpdate") ;
 }

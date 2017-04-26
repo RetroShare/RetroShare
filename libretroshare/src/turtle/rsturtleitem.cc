@@ -48,14 +48,14 @@ RsItem *RsTurtleSerialiser::create_item(uint16_t service,uint8_t item_subtype) c
 	return NULL ;
 }
 
-void RsTurtleStringSearchRequestItem::serial_process(SerializeJob j,SerializeContext& ctx)
+void RsTurtleStringSearchRequestItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process          (j,ctx,TLV_TYPE_STR_VALUE,match_string,"match_string") ;
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,request_id,"request_id") ;
     RsTypeSerializer::serial_process<uint16_t>(j,ctx,depth     ,"depth") ;
 }
 
-void RsTurtleRegExpSearchRequestItem::serial_process(SerializeJob j,SerializeContext& ctx)
+void RsTurtleRegExpSearchRequestItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,request_id,"request_id") ;
     RsTypeSerializer::serial_process<uint16_t>(j,ctx,depth,"depth") ;
@@ -140,7 +140,7 @@ template<> void RsTypeSerializer::print_data(const std::string& n, const RsRegul
     std::cerr << "  [RegExpr    ] " << n << ", tokens=" << expr._tokens.size() << " ints=" << expr._ints.size() << " strings=" << expr._strings.size() << std::endl;
 }
 
-void RsTurtleSearchResultItem::serial_process(SerializeJob j,SerializeContext& ctx)
+void RsTurtleSearchResultItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,request_id,"request_id") ;
     RsTypeSerializer::serial_process<uint16_t>(j,ctx,depth     ,"depth") ;
@@ -193,7 +193,7 @@ template<> void RsTypeSerializer::print_data(const std::string& n, const TurtleF
     std::cerr << "  [FileInfo  ] " << n << " size=" << i.size << " hash=" << i.hash << ", name=" << i.name << std::endl;
 }
 
-void RsTurtleOpenTunnelItem::serial_process(SerializeJob j,SerializeContext& ctx)
+void RsTurtleOpenTunnelItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process          (j,ctx,file_hash        ,"file_hash") ;
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,request_id       ,"request_id") ;
@@ -201,13 +201,13 @@ void RsTurtleOpenTunnelItem::serial_process(SerializeJob j,SerializeContext& ctx
     RsTypeSerializer::serial_process<uint16_t>(j,ctx,depth            ,"depth") ;
 }
 
-void RsTurtleTunnelOkItem::serial_process(SerializeJob j,SerializeContext& ctx)
+void RsTurtleTunnelOkItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,tunnel_id ,"tunnel_id") ;
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,request_id,"request_id") ;
 }
 
-void RsTurtleGenericDataItem::serial_process(SerializeJob j,SerializeContext& ctx)
+void RsTurtleGenericDataItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,tunnel_id ,"tunnel_id") ;
 

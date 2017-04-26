@@ -28,9 +28,9 @@
 
 #include <map>
 
+#include "rsitems/rsitem.h"
 #include "rsitems/rsserviceids.h"
-#include "serialiser/rsserial.h"
-#include "serialiser/rstlvbase.h"
+#include "rsitems/itempriorities.h"
 
 #include "serialization/rsserializer.h"
 #include "serialization/rstypeserializer.h"
@@ -51,7 +51,7 @@ public:
     virtual ~RsBwCtrlAllowedItem() {}
 	virtual void clear();
 
-	void serial_process(SerializeJob j,SerializeContext& ctx);
+	void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 
 	uint32_t	allowedBw; // Units are bytes/sec => 4Gb/s;
 };

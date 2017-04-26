@@ -40,6 +40,7 @@
  *
  */
 
+#include "rsitems/rsitem.h"
 #include "pqi/pqistore.h"
 #include "serialiser/rsserial.h"
 #include <iostream>

@@ -5,15 +5,34 @@
 #include <iostream>
 #include <string>
 
+#include "retroshare/rsflags.h"
 #include "serialiser/rsserial.h"
-#include "serialization/rstypeserializer.h"
+
+class RsItem ;
 
 #define SERIALIZE_ERROR() std::cerr << __PRETTY_FUNCTION__ << " : " 
 
 class RsGenericSerializer: public RsSerialType
 {
 public:
+		typedef enum { SIZE_ESTIMATE = 0x01, SERIALIZE   = 0x02, DESERIALIZE  = 0x03, PRINT=0x04 } SerializeJob ;
+		typedef enum { FORMAT_BINARY = 0x01, FORMAT_JSON = 0x02 }                                  SerializationFormat ;
 
+		class SerializeContext
+		{
+		public:
+
+
+			SerializeContext(uint8_t *data,uint32_t size,SerializationFormat format,SerializationFlags flags)
+			    : mData(data),mSize(size),mOffset(0),mOk(true),mFormat(format),mFlags(flags) {}
+
+			unsigned char *mData ;
+			uint32_t mSize ;
+			uint32_t mOffset ;
+			bool mOk ;
+			SerializationFormat mFormat ;
+			SerializationFlags mFlags ;
+		};
 
     	// These are convenience flags to be used by the items when processing the data. The names of the flags
     	// are not very important. What matters is that the serial_process() method of each item correctly
@@ -36,18 +55,18 @@ public:
 protected:
     	RsGenericSerializer(uint8_t serial_class,
                             uint8_t serial_type,
-                            SerializeContext::SerializationFormat format,
+                            SerializationFormat format,
                             SerializationFlags                    flags  )
             : RsSerialType(RS_PKT_VERSION1,serial_class,serial_type), mFormat(format),mFlags(flags)
         {}
 
     	RsGenericSerializer(uint16_t service,
-                            SerializeContext::SerializationFormat format,
+                            SerializationFormat format,
                             SerializationFlags                    flags  )
             : RsSerialType(RS_PKT_VERSION_SERVICE,service), mFormat(format),mFlags(flags)
         {}
 
-        SerializeContext::SerializationFormat mFormat ;
+        SerializationFormat mFormat ;
         SerializationFlags mFlags ;
 
 };
@@ -56,8 +75,8 @@ class RsServiceSerializer: public RsGenericSerializer
 {
 public:
 		RsServiceSerializer(uint16_t service_id,
-		                    SerializeContext::SerializationFormat format = SerializeContext::FORMAT_BINARY,
-		                    SerializationFlags                    flags  = SERIALIZATION_FLAG_NONE)
+		                    SerializationFormat format = FORMAT_BINARY,
+		                    SerializationFlags  flags  = SERIALIZATION_FLAG_NONE)
 
 		    : RsGenericSerializer(service_id,format,flags) {}
 
@@ -74,8 +93,8 @@ class RsConfigSerializer: public RsGenericSerializer
 public:
 	RsConfigSerializer(uint8_t config_class,
 	                   uint8_t config_type,
-	                   SerializeContext::SerializationFormat format = SerializeContext::FORMAT_BINARY,
-	                   SerializationFlags                    flags  = RsGenericSerializer::SERIALIZATION_FLAG_NONE)
+	                   SerializationFormat format = FORMAT_BINARY,
+	                   SerializationFlags  flags  = SERIALIZATION_FLAG_NONE)
 
 	    : RsGenericSerializer(config_class,config_type,format,flags) {}
 

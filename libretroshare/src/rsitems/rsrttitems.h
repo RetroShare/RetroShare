@@ -28,7 +28,9 @@
 
 #include <map>
 
+#include "rsitems/rsitem.h"
 #include "rsitems/rsserviceids.h"
+#include "rsitems/itempriorities.h"
 #include "serialiser/rsserial.h"
 
 #include "serialization/rsserializer.h"
@@ -56,7 +58,7 @@ class RsRttPingItem: public RsRttItem
         virtual ~RsRttPingItem(){}
         virtual void clear(){}
 
-		virtual void serial_process(SerializeJob j,SerializeContext& ctx);
+		virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 
 		uint32_t mSeqNo;
 		uint64_t mPingTS;
@@ -70,7 +72,7 @@ class RsRttPongItem: public RsRttItem
         virtual ~RsRttPongItem(){}
         virtual void clear(){}
 
-		virtual void serial_process(SerializeJob j,SerializeContext& ctx);
+		virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 
 		uint32_t mSeqNo;
 		uint64_t mPingTS;

@@ -1,5 +1,7 @@
 #include <typeinfo>
 
+#include "rsitems/rsitem.h"
+
 #include "util/rsprint.h"
 #include "serialization/rsserializer.h"
 #include "serialization/rstypeserializer.h"
@@ -31,7 +33,7 @@ RsItem *RsServiceSerializer::deserialise(void *data, uint32_t *size)
 	SerializeContext ctx(const_cast<uint8_t*>(static_cast<uint8_t*>(data)),*size,mFormat,mFlags);
 	ctx.mOffset = 8 ;
 
-	item->serial_process(RsItem::DESERIALIZE, ctx) ;
+	item->serial_process(RsGenericSerializer::DESERIALIZE, ctx) ;
 
 	if(ctx.mSize != ctx.mOffset)
 	{
@@ -67,7 +69,7 @@ RsItem *RsConfigSerializer::deserialise(void *data, uint32_t *size)
 	SerializeContext ctx(const_cast<uint8_t*>(static_cast<uint8_t*>(data)),*size,mFormat,mFlags);
 	ctx.mOffset = 8 ;
 
-	item->serial_process(RsItem::DESERIALIZE, ctx) ;
+	item->serial_process(DESERIALIZE, ctx) ;
 
 	if(ctx.mSize != ctx.mOffset)
 	{
@@ -105,7 +107,7 @@ bool RsGenericSerializer::serialise(RsItem *item,void *data,uint32_t *size)
 
 	ctx.mSize = tlvsize;
 
-	item->serial_process(RsItem::SERIALIZE,ctx) ;
+	item->serial_process(RsGenericSerializer::SERIALIZE,ctx) ;
 
 	if(ctx.mSize != ctx.mOffset)
 	{
@@ -123,7 +125,7 @@ uint32_t RsGenericSerializer::size(RsItem *item)
 		ctx.mOffset = 0;
 	else
 		ctx.mOffset = 8 ;	// header size
-	item->serial_process(RsItem::SIZE_ESTIMATE, ctx) ;
+	item->serial_process(SIZE_ESTIMATE, ctx) ;
 
 	return ctx.mOffset ;
 }
@@ -133,7 +135,7 @@ void RsGenericSerializer::print(RsItem *item)
 	SerializeContext ctx(NULL,0,mFormat,mFlags);
 
     std::cerr << "***** RsItem class: \"" << typeid(*item).name() << "\" *****" << std::endl;
-	item->serial_process(RsItem::PRINT, ctx) ;
+	item->serial_process(PRINT, ctx) ;
     std::cerr << "******************************" << std::endl;
 }
 

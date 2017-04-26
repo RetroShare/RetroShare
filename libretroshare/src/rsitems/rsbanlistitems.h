@@ -29,6 +29,8 @@
 #include <map>
 
 #include "rsitems/rsserviceids.h"
+#include "rsitems/rsitem.h"
+#include "rsitems/itempriorities.h"
 #include "serialiser/rstlvbanlist.h"
 #include "serialization/rsserializer.h"
 
@@ -50,7 +52,7 @@ class RsBanListItem: public RsItem
 
     virtual ~RsBanListItem(){}
     virtual void clear();
-	void serial_process(RsItem::SerializeJob j,SerializeContext& ctx);
+	void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 
 	RsTlvBanList	peerList;
 };
@@ -64,7 +66,7 @@ public:
     virtual ~RsBanListConfigItem(){}
     virtual void clear() { banned_peers.TlvClear() ; }
 
-	void serial_process(RsItem::SerializeJob j,SerializeContext& ctx);
+	void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 
     uint32_t		type ;
     RsPeerId  		peerId ;

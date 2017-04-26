@@ -23,6 +23,7 @@
  *
  */
 
+#include "rsitems/rsitem.h"
 #include "rsserviceserialiser.h"
 
 uint32_t    RsServiceSerialiser::size(RsItem *i)

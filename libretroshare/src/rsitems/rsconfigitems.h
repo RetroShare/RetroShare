@@ -29,6 +29,8 @@
 #include <map>
 #include <vector>
 
+#include "rsitems/rsitem.h"
+
 #include "retroshare/rstypes.h"
 #include "serialiser/rsserial.h"
 
@@ -77,7 +79,7 @@ public:
     virtual ~RsPeerNetItem(){}
 	virtual void clear();
 
-	virtual void serial_process(SerializeJob j,SerializeContext& ctx);
+	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 
 	/* networking information */
 	RsPeerId    peerId;                       /* Mandatory */
@@ -115,7 +117,7 @@ class RsPeerServicePermissionItem : public RsItem
 			pgp_ids.clear() ;
 			service_flags.clear() ;
 		}
-		virtual void serial_process(SerializeJob j,SerializeContext& ctx);
+		virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 
 
 		/* Mandatory */
@@ -132,7 +134,7 @@ class RsPeerBandwidthLimitsItem : public RsItem
 		{
 			peers.clear() ;
 		}
-		virtual void serial_process(SerializeJob j,SerializeContext& ctx);
+		virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 
 		/* Mandatory */
 		std::map<RsPgpId,PeerBandwidthLimits> peers ;
@@ -172,7 +174,7 @@ public:
 
     explicit RsNodeGroupItem(const RsGroupInfo&) ;
 
-	virtual void serial_process(SerializeJob j,SerializeContext& ctx);
+	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 
    // /* set data from RsGroupInfo to RsPeerGroupItem */
    // void set(RsGroupInfo &groupInfo);
@@ -197,7 +199,7 @@ public:
     virtual ~RsPeerStunItem(){}
     virtual void clear() { stunList.TlvClear() ;}
 
-	virtual void serial_process(SerializeJob j,SerializeContext& ctx);
+	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 
 	RsTlvPeerIdSet stunList;		  /* Mandatory */
 };
@@ -277,7 +279,7 @@ class RsFileTransfer: public RsItem
         virtual ~RsFileTransfer(){}
 		virtual void clear();
 
-		virtual void serial_process(SerializeJob j,SerializeContext& ctx);
+		virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 
 		RsTlvFileItem file;
 		RsTlvPeerIdSet allPeerIds;
@@ -331,7 +333,7 @@ public:
     virtual ~RsFileConfigItem() {}
     virtual void clear() { parent_groups.TlvClear(); }
 
-	virtual void serial_process(SerializeJob j,SerializeContext& ctx);
+	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 
     RsTlvFileItem file;
     uint32_t flags;
@@ -359,7 +361,7 @@ public:
     virtual ~RsConfigKeyValueSet(){}
     virtual void clear() { tlvkvs.TlvClear();}
 
-	virtual void serial_process(SerializeJob j,SerializeContext& ctx);
+	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 
 	RsTlvKeyValueSet tlvkvs;
 };

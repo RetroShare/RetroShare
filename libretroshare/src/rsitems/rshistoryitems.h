@@ -42,7 +42,7 @@ public:
     virtual ~RsHistoryMsgItem() {}
     virtual void clear() {}
 
-	virtual void serial_process(SerializeJob j,SerializeContext& ctx);
+	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 
 	RsPeerId    chatPeerId; // empty for global chat
 	bool        incoming;

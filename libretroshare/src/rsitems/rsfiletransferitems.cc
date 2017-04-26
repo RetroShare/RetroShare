@@ -53,38 +53,38 @@ void RsFileTransferDataItem::clear()
 	fd.TlvClear();
 }
  
-void RsFileTransferDataRequestItem::serial_process(RsItem::SerializeJob j,SerializeContext& ctx)
+void RsFileTransferDataRequestItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process<uint64_t> (j,ctx,fileoffset,"fileoffset") ;
     RsTypeSerializer::serial_process<uint32_t> (j,ctx,chunksize, "chunksize") ;
     RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,file,      "file") ;
 }
 
-void RsFileTransferDataItem::serial_process(RsItem::SerializeJob j,SerializeContext& ctx)
+void RsFileTransferDataItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,fd,"fd") ;
 }
 
-void RsFileTransferChunkMapRequestItem::serial_process(RsItem::SerializeJob j,SerializeContext& ctx)
+void RsFileTransferChunkMapRequestItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process<bool>    (j,ctx,is_client,"is_client") ;
     RsTypeSerializer::serial_process          (j,ctx,hash,     "hash") ;
 }
 
-void RsFileTransferChunkMapItem::serial_process(RsItem::SerializeJob j,SerializeContext& ctx)
+void RsFileTransferChunkMapItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process<bool>    (j,ctx,is_client,     "is_client") ;
     RsTypeSerializer::serial_process          (j,ctx,hash,          "hash") ;
     RsTypeSerializer::serial_process          (j,ctx,compressed_map,"compressed_map") ;
 }
 
-void RsFileTransferSingleChunkCrcRequestItem::serial_process(RsItem::SerializeJob j,SerializeContext& ctx)
+void RsFileTransferSingleChunkCrcRequestItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process          (j,ctx,hash,        "hash") ;
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,chunk_number,"chunk_number") ;
 }
 
-void RsFileTransferSingleChunkCrcItem::serial_process(RsItem::SerializeJob j,SerializeContext& ctx)
+void RsFileTransferSingleChunkCrcItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process          (j,ctx,hash,        "hash") ;
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,chunk_number,"chunk_number") ;

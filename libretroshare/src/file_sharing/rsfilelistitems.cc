@@ -24,16 +24,18 @@
  */
 #include "serialiser/rsbaseserial.h"
 
+#include "serialization/rstypeserializer.h"
+
 #include "file_sharing/rsfilelistitems.h"
 
-void RsFileListsSyncRequestItem::serial_process(SerializeJob j,SerializeContext& ctx)
+void RsFileListsSyncRequestItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process          (j,ctx,entry_hash,"entry_hash") ;
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,flags     ,"flags") ;
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,last_known_recurs_modf_TS,"last_known_recurs_modf_TS") ;
     RsTypeSerializer::serial_process<uint64_t>(j,ctx,request_id,"request_id") ;
 }
-void RsFileListsSyncResponseItem::serial_process(SerializeJob j,SerializeContext& ctx)
+void RsFileListsSyncResponseItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process           (j,ctx,entry_hash,"entry_hash") ;
     RsTypeSerializer::serial_process           (j,ctx,checksum,"checksum") ;

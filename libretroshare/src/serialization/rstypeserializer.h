@@ -7,25 +7,7 @@
 #include "retroshare/rsflags.h"
 #include "retroshare/rsids.h"
 
-class SerializeContext
-{
-	public:
-
-    enum SerializationFormat {
-                                 FORMAT_BINARY   = 0x01 ,
-                                 FORMAT_JSON     = 0x02
-    };
-
-	SerializeContext(uint8_t *data,uint32_t size,SerializationFormat format,SerializationFlags flags)
-        : mData(data),mSize(size),mOffset(0),mOk(true),mFormat(format),mFlags(flags) {}
-
-	unsigned char *mData ;
-	uint32_t mSize ;
-	uint32_t mOffset ;
-	bool mOk ;
-    SerializationFormat mFormat ;
-    SerializationFlags mFlags ;
-};
+#include "serialization/rsserializer.h"
 
 
 class RsTypeSerializer
@@ -44,20 +26,20 @@ class RsTypeSerializer
 		//=================================================================================================//
 
 		template<typename T>
-		static void serial_process(RsItem::SerializeJob j,SerializeContext& ctx,T& member,const std::string& member_name)
+		static void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx,T& member,const std::string& member_name)
 		{
 			switch(j)
 			{
-				case RsItem::SIZE_ESTIMATE: ctx.mOffset += serial_size(member) ;
+				case RsGenericSerializer::SIZE_ESTIMATE: ctx.mOffset += serial_size(member) ;
 																break ;
 
-				case RsItem::DESERIALIZE:   ctx.mOk = ctx.mOk && deserialize(ctx.mData,ctx.mSize,ctx.mOffset,member) ;
+				case RsGenericSerializer::DESERIALIZE:   ctx.mOk = ctx.mOk && deserialize(ctx.mData,ctx.mSize,ctx.mOffset,member) ;
 																break ;
 
-				case RsItem::SERIALIZE:     ctx.mOk = ctx.mOk && serialize(ctx.mData,ctx.mSize,ctx.mOffset,member) ;
+				case RsGenericSerializer::SERIALIZE:     ctx.mOk = ctx.mOk && serialize(ctx.mData,ctx.mSize,ctx.mOffset,member) ;
 																break ;
 
-				case RsItem::PRINT:
+				case RsGenericSerializer::PRINT:
                 							print_data(member_name,member);
                 break;
 				default:
@@ -71,20 +53,20 @@ class RsTypeSerializer
 		//=================================================================================================//
 
 		template<typename T>
-		static void serial_process(RsItem::SerializeJob j,SerializeContext& ctx,uint16_t type_id,T& member,const std::string& member_name)
+		static void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx,uint16_t type_id,T& member,const std::string& member_name)
 		{
 			switch(j)
 			{
-				case RsItem::SIZE_ESTIMATE: ctx.mOffset += serial_size(type_id,member) ;
+				case RsGenericSerializer::SIZE_ESTIMATE: ctx.mOffset += serial_size(type_id,member) ;
 																break ;
 
-				case RsItem::DESERIALIZE:   ctx.mOk = ctx.mOk && deserialize(ctx.mData,ctx.mSize,ctx.mOffset,type_id,member) ;
+				case RsGenericSerializer::DESERIALIZE:   ctx.mOk = ctx.mOk && deserialize(ctx.mData,ctx.mSize,ctx.mOffset,type_id,member) ;
 																break ;
 
-				case RsItem::SERIALIZE:     ctx.mOk = ctx.mOk && serialize(ctx.mData,ctx.mSize,ctx.mOffset,type_id,member) ;
+				case RsGenericSerializer::SERIALIZE:     ctx.mOk = ctx.mOk && serialize(ctx.mData,ctx.mSize,ctx.mOffset,type_id,member) ;
 																break ;
 
-				case RsItem::PRINT:
+				case RsGenericSerializer::PRINT:
                 							print_data(member_name,type_id,member);
                 break;
 				default:
@@ -97,11 +79,11 @@ class RsTypeSerializer
 		//=================================================================================================//
 
 		template<typename T,typename U>
-		static void serial_process(RsItem::SerializeJob j,SerializeContext& ctx,std::map<T,U>& v,const std::string& member_name)
+		static void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx,std::map<T,U>& v,const std::string& member_name)
 		{
 			switch(j)
 			{
-			case RsItem::SIZE_ESTIMATE:
+			case RsGenericSerializer::SIZE_ESTIMATE:
 			{
 				ctx.mOffset += 4 ;
 				for(typename std::map<T,U>::iterator it(v.begin());it!=v.end();++it)
@@ -112,7 +94,7 @@ class RsTypeSerializer
 			}
 				break ;
 
-			case RsItem::DESERIALIZE:
+			case RsGenericSerializer::DESERIALIZE:
 			{
                 uint32_t n=0 ;
 				ctx.mOk = ctx.mOk && deserialize<uint32_t>(ctx.mData,ctx.mSize,ctx.mOffset,n) ;
@@ -130,7 +112,7 @@ class RsTypeSerializer
 			}
 				break ;
 
-			case RsItem::SERIALIZE:
+			case RsGenericSerializer::SERIALIZE:
 			{
 				uint32_t n=v.size();
 				ctx.mOk = ctx.mOk && serialize<uint32_t>(ctx.mData,ctx.mSize,ctx.mOffset,n) ;
@@ -143,12 +125,12 @@ class RsTypeSerializer
 			}
 				break ;
 
-			case RsItem::PRINT:
+			case RsGenericSerializer::PRINT:
 			{
                 if(v.empty())
-					std::cerr << "  Empty map"<< std::endl;
+					std::cerr << "  Empty map \"" << member_name << "\"" << std::endl;
 				else
-					std::cerr << "  std::map of " << v.size() << " elements:" << std::endl;
+					std::cerr << "  std::map of " << v.size() << " elements: \"" << member_name << "\"" << std::endl;
 
 				for(typename std::map<T,U>::iterator it(v.begin());it!=v.end();++it)
                 {
@@ -169,11 +151,11 @@ class RsTypeSerializer
 		//=================================================================================================//
 
 		template<typename T>
-		static void serial_process(RsItem::SerializeJob j,SerializeContext& ctx,std::vector<T>& v,const std::string& member_name)
+		static void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx,std::vector<T>& v,const std::string& member_name)
 		{
 			switch(j)
 			{
-			case RsItem::SIZE_ESTIMATE:
+			case RsGenericSerializer::SIZE_ESTIMATE:
 			{
 				ctx.mOffset += 4 ;
 				for(uint32_t i=0;i<v.size();++i)
@@ -181,7 +163,7 @@ class RsTypeSerializer
 			}
 				break ;
 
-			case RsItem::DESERIALIZE:
+			case RsGenericSerializer::DESERIALIZE:
 			{  uint32_t n=0 ;
 				serial_process(j,ctx,n,"temporary size") ;
 
@@ -191,7 +173,7 @@ class RsTypeSerializer
 			}
 				break ;
 
-			case RsItem::SERIALIZE:
+			case RsGenericSerializer::SERIALIZE:
 			{
 				uint32_t n=v.size();
 				serial_process(j,ctx,n,"temporary size") ;
@@ -200,7 +182,7 @@ class RsTypeSerializer
 			}
 				break ;
 
-			case RsItem::PRINT:
+			case RsGenericSerializer::PRINT:
 			{
                 if(v.empty())
 					std::cerr << "  Empty array"<< std::endl;
@@ -223,11 +205,11 @@ class RsTypeSerializer
 		//=================================================================================================//
 
 		template<typename T>
-		static void serial_process(RsItem::SerializeJob j,SerializeContext& ctx,std::list<T>& v,const std::string& member_name)
+		static void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx,std::list<T>& v,const std::string& member_name)
 		{
 			switch(j)
 			{
-			case RsItem::SIZE_ESTIMATE:
+			case RsGenericSerializer::SIZE_ESTIMATE:
 			{
 				ctx.mOffset += 4 ;
 				for(typename std::list<T>::iterator it(v.begin());it!=v.end();++it)
@@ -235,7 +217,7 @@ class RsTypeSerializer
 			}
 				break ;
 
-			case RsItem::DESERIALIZE:
+			case RsGenericSerializer::DESERIALIZE:
 			{  uint32_t n=0 ;
 				serial_process(j,ctx,n,"temporary size") ;
 
@@ -248,7 +230,7 @@ class RsTypeSerializer
 			}
 				break ;
 
-			case RsItem::SERIALIZE:
+			case RsGenericSerializer::SERIALIZE:
 			{
 				uint32_t n=v.size();
 				serial_process(j,ctx,n,"temporary size") ;
@@ -257,7 +239,7 @@ class RsTypeSerializer
 			}
 				break ;
 
-			case RsItem::PRINT:
+			case RsGenericSerializer::PRINT:
 			{
                 if(v.empty())
 					std::cerr << "  Empty list"<< std::endl;
@@ -275,14 +257,14 @@ class RsTypeSerializer
 		//=================================================================================================//
 
 		template<int N>
-		static void serial_process(RsItem::SerializeJob j,SerializeContext& ctx,t_RsFlags32<N>& v,const std::string& member_name)
+		static void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx,t_RsFlags32<N>& v,const std::string& member_name)
 		{
 			switch(j)
 			{
-			case RsItem::SIZE_ESTIMATE: ctx.mOffset += 4 ;
+			case RsGenericSerializer::SIZE_ESTIMATE: ctx.mOffset += 4 ;
 				break ;
 
-			case RsItem::DESERIALIZE:
+			case RsGenericSerializer::DESERIALIZE:
 			{
                 uint32_t n=0 ;
                 deserialize<uint32_t>(ctx.mData,ctx.mSize,ctx.mOffset,n) ;
@@ -290,14 +272,14 @@ class RsTypeSerializer
 			}
 				break ;
 
-			case RsItem::SERIALIZE:
+			case RsGenericSerializer::SERIALIZE:
 			{
                 uint32_t n=v.toUInt32() ;
                 serialize<uint32_t>(ctx.mData,ctx.mSize,ctx.mOffset,n) ;
 			}
 				break ;
 
-			case RsItem::PRINT:
+			case RsGenericSerializer::PRINT:
 				std::cerr << "  Flags of type " << std::hex << N << " : " << v.toUInt32() << std::endl;
                 break ;
             }

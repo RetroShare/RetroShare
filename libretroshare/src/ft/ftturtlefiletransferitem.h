@@ -43,7 +43,7 @@ class RsTurtleFileRequestItem: public RsTurtleGenericTunnelItem
 
         void clear() {}
 	protected:
-		void serial_process(SerializeJob j,SerializeContext& ctx);
+		void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 };
 
 class RsTurtleFileDataItem: public RsTurtleGenericTunnelItem
@@ -67,7 +67,7 @@ class RsTurtleFileDataItem: public RsTurtleGenericTunnelItem
 		uint32_t chunk_size ;	// size of the file chunk
 		void    *chunk_data ;	// actual data.
 
-		void serial_process(SerializeJob j,SerializeContext& ctx);
+		void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 };
 
 class RsTurtleFileMapRequestItem: public RsTurtleGenericTunnelItem			
@@ -78,7 +78,7 @@ class RsTurtleFileMapRequestItem: public RsTurtleGenericTunnelItem
 		virtual bool shouldStampTunnel() const { return false ; }
 
         void clear() {}
-		void serial_process(SerializeJob j,SerializeContext& ctx);
+		void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 };
 
 class RsTurtleFileMapItem: public RsTurtleGenericTunnelItem			
@@ -93,7 +93,7 @@ class RsTurtleFileMapItem: public RsTurtleGenericTunnelItem
 										// with the default file map for this source.
 												
         void clear() { compressed_map._map.clear() ;}
-		void serial_process(SerializeJob j,SerializeContext& ctx);
+		void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 };
 
 class RsTurtleChunkCrcRequestItem: public RsTurtleGenericTunnelItem			
@@ -107,7 +107,7 @@ class RsTurtleChunkCrcRequestItem: public RsTurtleGenericTunnelItem
 		uint32_t chunk_number ; // id of the chunk to CRC.
 												
         void clear() {}
-		void serial_process(SerializeJob j,SerializeContext& ctx);
+		void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 };
 
 class RsTurtleChunkCrcItem: public RsTurtleGenericTunnelItem			
@@ -122,5 +122,5 @@ class RsTurtleChunkCrcItem: public RsTurtleGenericTunnelItem
 		Sha1CheckSum check_sum ;
 
         void clear() { check_sum.clear() ;}
-		void serial_process(SerializeJob j,SerializeContext& ctx);
+		void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 };

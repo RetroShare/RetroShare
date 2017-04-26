@@ -31,6 +31,9 @@
 #include <map>
 
 #include "rsitems/rsserviceids.h"
+#include "rsitems/rsitem.h"
+#include "rsitems/itempriorities.h"
+
 #include "serialiser/rsserial.h"
 #include "serialiser/rstlvbase.h"
 #include "serialiser/rstlvgenericmap.h"

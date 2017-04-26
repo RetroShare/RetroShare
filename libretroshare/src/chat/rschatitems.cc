@@ -62,7 +62,7 @@ RsItem *RsChatSerialiser::create_item(uint16_t service_id,uint8_t item_sub_id) c
 	}
 }
 
-void RsChatMsgItem::serial_process(RsItem::SerializeJob j,SerializeContext& ctx)
+void RsChatMsgItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process(j,ctx,chatFlags,"chatflags") ;
     RsTypeSerializer::serial_process(j,ctx,sendTime,"sendTime") ;
@@ -80,7 +80,7 @@ RsChatAvatarItem::~RsChatAvatarItem()
 	}
 }
 
-void RsChatLobbyBouncingObject::serial_process(RsItem::SerializeJob j, SerializeContext& ctx)
+void RsChatLobbyBouncingObject::serial_process(RsGenericSerializer::SerializeJob j, RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process(j,ctx,lobby_id,"lobby_id") ;
     RsTypeSerializer::serial_process(j,ctx,msg_id  ,"msg_id") ;
@@ -90,19 +90,19 @@ void RsChatLobbyBouncingObject::serial_process(RsItem::SerializeJob j, Serialize
     	RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,signature,"signature") ;
 }
 
-void RsChatLobbyMsgItem::serial_process(RsItem::SerializeJob j,SerializeContext& ctx)
+void RsChatLobbyMsgItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsChatMsgItem::serial_process(j,ctx) ;
     RsTypeSerializer::serial_process(j,ctx,parent_msg_id,"parent_msg_id") ;
     RsChatLobbyBouncingObject::serial_process(j,ctx) ;
 }
 
-void RsChatLobbyListRequestItem::serial_process(RsItem::SerializeJob j,SerializeContext& ctx)
+void RsChatLobbyListRequestItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     // nothing to do. This is an empty item.
 }
 
-template<> void RsTypeSerializer::serial_process(RsItem::SerializeJob j,SerializeContext& ctx,VisibleChatLobbyInfo& info,const std::string& name)
+template<> void RsTypeSerializer::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx,VisibleChatLobbyInfo& info,const std::string& name)
 {
 	RsTypeSerializer::serial_process<uint64_t>(j,ctx,info.id,"info.id") ;
 
@@ -112,12 +112,12 @@ template<> void RsTypeSerializer::serial_process(RsItem::SerializeJob j,Serializ
 	RsTypeSerializer::serial_process          (j,ctx,                  info.flags,"info.flags") ;
 }
 
-void RsChatLobbyListItem::serial_process(RsItem::SerializeJob j,SerializeContext& ctx)
+void RsChatLobbyListItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process(j,ctx,lobbies,"lobbies") ;
 }
 
-void RsChatLobbyEventItem::serial_process(RsItem::SerializeJob j,SerializeContext& ctx)
+void RsChatLobbyEventItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process<uint8_t>(j,ctx,event_type,"event_type") ;
     RsTypeSerializer::serial_process         (j,ctx,TLV_TYPE_STR_NAME,string1,"string1") ;
@@ -125,24 +125,24 @@ void RsChatLobbyEventItem::serial_process(RsItem::SerializeJob j,SerializeContex
 
     RsChatLobbyBouncingObject::serial_process(j,ctx) ;
 }
-void RsChatLobbyUnsubscribeItem::serial_process(RsItem::SerializeJob j,SerializeContext& ctx)
+void RsChatLobbyUnsubscribeItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process<uint64_t>(j,ctx,lobby_id,"lobby_id") ;
 }
 
-void RsChatLobbyConnectChallengeItem::serial_process(RsItem::SerializeJob j,SerializeContext& ctx)
+void RsChatLobbyConnectChallengeItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process<uint64_t>(j,ctx,challenge_code,"challenge_code") ;
 }
 
-void RsChatLobbyInviteItem::serial_process(RsItem::SerializeJob j,SerializeContext& ctx)
+void RsChatLobbyInviteItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process<uint64_t>(j,ctx,                  lobby_id,   "lobby_id") ;
     RsTypeSerializer::serial_process          (j,ctx,TLV_TYPE_STR_NAME,lobby_name, "lobby_name") ;
     RsTypeSerializer::serial_process          (j,ctx,                  lobby_flags,"lobby_flags") ;
 }
 
-void RsPrivateChatMsgConfigItem::serial_process(RsItem::SerializeJob j,SerializeContext& ctx)
+void RsPrivateChatMsgConfigItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     uint32_t x=0 ;
 
@@ -154,19 +154,19 @@ void RsPrivateChatMsgConfigItem::serial_process(RsItem::SerializeJob j,Serialize
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,                 recvTime,    "recvTime") ;
 }
 
-void RsChatStatusItem::serial_process(RsItem::SerializeJob j,SerializeContext& ctx)
+void RsChatStatusItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process(j,ctx,flags,"flags") ;
     RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_MSG,status_string,"status_string") ;
 }
 
-void RsChatAvatarItem::serial_process(RsItem::SerializeJob j,SerializeContext& ctx)
+void RsChatAvatarItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::TlvMemBlock_proxy b(image_data,image_size) ;
     RsTypeSerializer::serial_process(j,ctx,b,"image data") ;
 }
 
-void RsChatLobbyConfigItem::serial_process(RsItem::SerializeJob j,SerializeContext& ctx)
+void RsChatLobbyConfigItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process<uint64_t>(j,ctx,lobby_Id,"lobby_Id") ;
     RsTypeSerializer::serial_process(j,ctx,flags,"flags") ;

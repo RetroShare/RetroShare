@@ -27,9 +27,12 @@
 
 #include <openssl/ssl.h>
 
+#include "rsitems/rsserviceids.h"
+#include "rsitems/itempriorities.h"
+#include "rsitems/rsitem.h"
+
 #include "retroshare/rstypes.h"
 #include "serialiser/rstlvkeys.h"
-#include "rsitems/rsserviceids.h"
 #include "serialiser/rsserial.h"
 
 #include "serialiser/rstlvidset.h"

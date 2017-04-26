@@ -27,7 +27,8 @@
  */
 
 #include "rsitems/rsserviceids.h"
-#include "serialiser/rsserial.h"
+#include "rsitems/itempriorities.h"
+#include "rsitems/rsitem.h"
 
 /**************************************************************************/
 

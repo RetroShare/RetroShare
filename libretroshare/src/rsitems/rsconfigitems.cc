@@ -28,6 +28,7 @@
 #include "rsitems/rsconfigitems.h"
 #include "retroshare/rspeers.h" // Needed for RsGroupInfo.
 
+#include "serialization/rstypeserializer.h"
 /***
  * #define RSSERIAL_DEBUG 		1
  * #define RSSERIAL_ERROR_DEBUG 	1
@@ -69,7 +70,7 @@ void 	RsFileTransfer::clear()
 
 }
 
-void RsFileTransfer::serial_process(SerializeJob j,SerializeContext& ctx)
+void RsFileTransfer::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,file,"file") ;
     RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,allPeerIds,"allPeerIds") ;
@@ -91,7 +92,7 @@ void RsFileTransfer::serial_process(SerializeJob j,SerializeContext& ctx)
     RsTypeSerializer::serial_process           (j,ctx,compressed_chunk_map,"compressed_chunk_map") ;
 }
 
-void RsFileConfigItem::serial_process(SerializeJob j,SerializeContext& ctx)
+void RsFileConfigItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,file,"file") ;
     RsTypeSerializer::serial_process<uint32_t> (j,ctx,flags,"flags") ;
@@ -111,7 +112,7 @@ RsItem *RsGeneralConfigSerialiser::create_item(uint8_t item_type,uint8_t item_su
     }
 }
 
-void RsConfigKeyValueSet::serial_process(SerializeJob j,SerializeContext& ctx)
+void RsConfigKeyValueSet::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,tlvkvs,"tlvkvs") ;
 }
@@ -156,7 +157,7 @@ void RsPeerNetItem::clear()
 	domain_addr.clear();
 	domain_port = 0;
 }
-void RsPeerNetItem::serial_process(SerializeJob j,SerializeContext& ctx)
+void RsPeerNetItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
 	RsTypeSerializer::serial_process(j,ctx,peerId,"peerId") ;
 	RsTypeSerializer::serial_process(j,ctx,pgpId,"pgpId") ;
@@ -181,12 +182,12 @@ void RsPeerNetItem::serial_process(SerializeJob j,SerializeContext& ctx)
 	RsTypeSerializer::serial_process<uint16_t>(j,ctx,domain_port,"domain_port") ;
 }
 
-void RsPeerBandwidthLimitsItem::serial_process(SerializeJob j,SerializeContext& ctx)
+void RsPeerBandwidthLimitsItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process(j,ctx,peers,"peers") ;
 }
 
-void RsPeerStunItem::serial_process(SerializeJob j,SerializeContext& ctx)
+void RsPeerStunItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,stunList,"stunList") ;
 }
@@ -226,7 +227,7 @@ RsNodeGroupItem::RsNodeGroupItem(const RsGroupInfo& g)
     pgpList.ids = g.peerIds;
 }
 
-void RsNodeGroupItem::serial_process(SerializeJob j,SerializeContext& ctx)
+void RsNodeGroupItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     uint32_t v=0 ;
 
@@ -237,14 +238,14 @@ void RsNodeGroupItem::serial_process(SerializeJob j,SerializeContext& ctx)
     RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,pgpList,"pgpList") ;
 }
 
-void RsPeerServicePermissionItem::serial_process(SerializeJob j,SerializeContext& ctx)
+void RsPeerServicePermissionItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     // We need to hack this because of backward compatibility. The correct way to do it would be:
     //
     // RsTypeSerializer::serial_process(j,ctx,pgp_ids,"pgp_ids") ;
     // RsTypeSerializer::serial_process(j,ctx,service_flags,"service_flags") ;
 
-    if(j == RsItem::DESERIALIZE)
+    if(j == RsGenericSerializer::DESERIALIZE)
     {
         uint32_t v=0 ;
         RsTypeSerializer::serial_process<uint32_t>(j,ctx,v,"pgp_ids.size()") ;

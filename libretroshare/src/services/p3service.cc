@@ -23,6 +23,8 @@
  *
  */
 
+#include "rsitems/itempriorities.h"
+
 #include "pqi/pqi.h"
 #include "util/rsstring.h"
 #include "services/p3service.h"

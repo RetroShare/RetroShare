@@ -30,6 +30,8 @@
 
 #include "serialiser/rsserial.h"
 #include "rsitems/rsserviceids.h"
+#include "rsitems/rsitem.h"
+#include "rsitems/itempriorities.h"
 
 const uint8_t RS_PKT_SUBTYPE_HEARTBEAT_PULSE    = 0x01;
 

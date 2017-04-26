@@ -31,6 +31,7 @@
 #include <openssl/ssl.h>
 
 #include "rsitems/rsserviceids.h"
+#include "rsitems/itempriorities.h"
 #include "serialiser/rsserial.h"
 #include "serialiser/rstlvbase.h"
 #include "serialiser/rstlvitem.h"

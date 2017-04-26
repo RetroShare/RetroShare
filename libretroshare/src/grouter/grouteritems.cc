@@ -3,6 +3,8 @@
 #include "serialiser/rstlvbase.h"
 #include "grouteritems.h"
 
+#include "serialization/rstypeserializer.h"
+
 /**********************************************************************************************/
 /*                                          SERIALISER STUFF                                  */
 /**********************************************************************************************/
@@ -28,7 +30,7 @@ RsItem *RsGRouterSerialiser::create_item(uint16_t service_id,uint8_t subtype) co
 	}
 }
 
-void RsGRouterTransactionChunkItem::serial_process(SerializeJob j,SerializeContext& ctx)
+void RsGRouterTransactionChunkItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process<uint64_t>(j,ctx,propagation_id,"propagation_id") ;
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,chunk_start   ,"chunk_start") ;
@@ -37,7 +39,7 @@ void RsGRouterTransactionChunkItem::serial_process(SerializeJob j,SerializeConte
 
     // Hack for backward compatibility (the chunk size is not directly next to the chunk data)
 
-    if(j == RsItem::DESERIALIZE)
+    if(j == RsGenericSerializer::DESERIALIZE)
 	{
 		if(chunk_size > ctx.mSize || ctx.mOffset > ctx.mSize - chunk_size) // better than if(chunk_size + offset > size)
 		{
@@ -54,12 +56,12 @@ void RsGRouterTransactionChunkItem::serial_process(SerializeJob j,SerializeConte
 		memcpy(chunk_data,&((uint8_t*)ctx.mData)[ctx.mOffset],chunk_size) ;
 		ctx.mOffset += chunk_size ;
 	}
-    else if(j== RsItem::SERIALIZE)
+    else if(j== RsGenericSerializer::SERIALIZE)
     {
 		memcpy(&((uint8_t*)ctx.mData)[ctx.mOffset],chunk_data,chunk_size) ;
 		ctx.mOffset += chunk_size ;
     }
-    else if(j== RsItem::SIZE_ESTIMATE)
+    else if(j== RsGenericSerializer::SIZE_ESTIMATE)
 		ctx.mOffset += chunk_size ;
     else
     	std::cerr << "  [Binary data] " << ", length=" << chunk_size << " data=" << RsUtil::BinToHex((uint8_t*)chunk_data,std::min(50u,chunk_size)) << ((chunk_size>50)?"...":"") << std::endl;
@@ -112,7 +114,7 @@ RsGRouterTransactionChunkItem *RsGRouterSerialiser::deserialise_RsGRouterTransac
 }
 #endif
 
-void RsGRouterTransactionAcknItem::serial_process(SerializeJob j,SerializeContext& ctx)
+void RsGRouterTransactionAcknItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process<uint64_t>(j,ctx,propagation_id,"propagation_id") ;
 }
@@ -140,7 +142,7 @@ RsGRouterTransactionAcknItem *RsGRouterSerialiser::deserialise_RsGRouterTransact
 }
 #endif
 
-void RsGRouterGenericDataItem::serial_process(SerializeJob j,SerializeContext& ctx)
+void RsGRouterGenericDataItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process<uint64_t>(j,ctx,routing_id,"routing_id") ;
     RsTypeSerializer::serial_process          (j,ctx,destination_key,"destination_key") ;
@@ -157,7 +159,7 @@ void RsGRouterGenericDataItem::serial_process(SerializeJob j,SerializeContext& c
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,duplication_factor,"duplication_factor") ;
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,flags,"flags") ;
 
-    if(j == RsItem::DESERIALIZE) // make sure the duplication factor is not altered by friends. In the worst case, the item will duplicate a bit more.
+    if(j == RsGenericSerializer::DESERIALIZE) // make sure the duplication factor is not altered by friends. In the worst case, the item will duplicate a bit more.
     {
     	if(duplication_factor < 1)
         {
@@ -242,7 +244,7 @@ RsGRouterGenericDataItem *RsGRouterSerialiser::deserialise_RsGRouterGenericDataI
 }
 #endif
 
-void RsGRouterSignedReceiptItem::serial_process(SerializeJob j,SerializeContext& ctx)
+void RsGRouterSignedReceiptItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process<uint64_t> (j,ctx,routing_id,"routing_id") ;
     RsTypeSerializer::serial_process<uint32_t> (j,ctx,flags,"flags") ;
@@ -283,7 +285,7 @@ RsGRouterSignedReceiptItem *RsGRouterSerialiser::deserialise_RsGRouterSignedRece
 }
 #endif
 
-void RsGRouterRoutingInfoItem::serial_process(SerializeJob j,SerializeContext& ctx)
+void RsGRouterRoutingInfoItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process          (j,ctx,peerId,"peerId") ;
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,data_status,"data_status") ;
@@ -304,7 +306,7 @@ void RsGRouterRoutingInfoItem::serial_process(SerializeJob j,SerializeContext& c
     // Hack for backward compatibility. Normally we should need a single commandline to serialise/deserialise a single item here.
     // But the full item is serialised, so we need the header.
 
-	if(j == RsItem::DESERIALIZE)
+	if(j == RsGenericSerializer::DESERIALIZE)
 	{
         data_item = new RsGRouterGenericDataItem() ;
 
@@ -321,7 +323,7 @@ void RsGRouterRoutingInfoItem::serial_process(SerializeJob j,SerializeContext& c
         else
             receipt_item = NULL ;
     }
-	else if(j == RsItem::SERIALIZE)
+	else if(j == RsGenericSerializer::SERIALIZE)
     {
         uint32_t remaining_size = ctx.mSize - ctx.mOffset;
         ctx.mOk = ctx.mOk && RsGRouterSerialiser().serialise(data_item,ctx.mData,&remaining_size) ;
@@ -330,18 +332,18 @@ void RsGRouterRoutingInfoItem::serial_process(SerializeJob j,SerializeContext& c
         if(receipt_item != NULL)
 		{
 			remaining_size = ctx.mSize - ctx.mOffset;
-			ctx.mOk = ctx.mOk && RsGRouterSerialiser().serialise(data_item,ctx.mData,&remaining_size);
-			ctx.mOffset += RsGRouterSerialiser().size(data_item) ;
+			ctx.mOk = ctx.mOk && RsGRouterSerialiser().serialise(receipt_item,ctx.mData,&remaining_size);
+			ctx.mOffset += RsGRouterSerialiser().size(receipt_item) ;
 		}
     }
-    else if(j == RsItem::PRINT)
+    else if(j == RsGenericSerializer::PRINT)
     {
         std::cerr << "  [Serialized data] " << std::endl;
 
         if(receipt_item != NULL)
 			std::cerr << "  [Receipt item   ]" << std::endl;
     }
-    else if(j == RsItem::SIZE_ESTIMATE)
+    else if(j == RsGenericSerializer::SIZE_ESTIMATE)
     {
         ctx.mOffset += RsGRouterSerialiser().size(data_item) ;
 
@@ -410,7 +412,7 @@ RsGRouterRoutingInfoItem *RsGRouterSerialiser::deserialise_RsGRouterRoutingInfoI
 }
 #endif
 
-void RsGRouterMatrixFriendListItem::serial_process(SerializeJob j,SerializeContext& ctx)
+void RsGRouterMatrixFriendListItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process(j,ctx,reverse_friend_indices,"reverse_friend_indices") ;
 }
@@ -443,7 +445,7 @@ RsGRouterMatrixFriendListItem *RsGRouterSerialiser::deserialise_RsGRouterMatrixF
 }
 #endif
 
-void RsGRouterMatrixTrackItem::serial_process(SerializeJob j,SerializeContext& ctx)
+void RsGRouterMatrixTrackItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process(j,ctx,provider_id,"provider_id") ;
     RsTypeSerializer::serial_process(j,ctx,message_id,"message_id") ;
@@ -474,13 +476,13 @@ RsGRouterMatrixTrackItem *RsGRouterSerialiser::deserialise_RsGRouterMatrixTrackI
 }
 #endif
 
-void RsGRouterMatrixCluesItem::serial_process(SerializeJob j,SerializeContext& ctx)
+void RsGRouterMatrixCluesItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process(j,ctx,destination_key,"destination_key") ;
     RsTypeSerializer::serial_process(j,ctx,clues,"clues") ;
 }
 
-template<> void RsTypeSerializer::serial_process(RsItem::SerializeJob j,SerializeContext& ctx,RoutingMatrixHitEntry& s,const std::string& name)
+template<> void RsTypeSerializer::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx,RoutingMatrixHitEntry& s,const std::string& name)
 {
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,s.friend_id,name+":friend_id") ;
     RsTypeSerializer::serial_process<float>   (j,ctx,s.weight,name+":weight") ;

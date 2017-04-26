@@ -112,7 +112,7 @@ class RsGRouterGenericDataItem: public RsGRouterAbstractMsgItem, public RsGRoute
             data_bytes=NULL;
         }
 
-		virtual void serial_process(SerializeJob j,SerializeContext& ctx);
+		virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 
         RsGRouterGenericDataItem *duplicate() const ;
 
@@ -130,7 +130,7 @@ class RsGRouterSignedReceiptItem: public RsGRouterAbstractMsgItem
 		virtual ~RsGRouterSignedReceiptItem() {}
 
         virtual void clear() {}
-		virtual void serial_process(SerializeJob j,SerializeContext& ctx);
+		virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 
         RsGRouterSignedReceiptItem *duplicate() const ;
 
@@ -161,7 +161,7 @@ public:
 	virtual ~RsGRouterTransactionChunkItem()  { free(chunk_data) ; }
 
 	virtual void clear() {}
-	virtual void serial_process(SerializeJob j,SerializeContext& ctx);
+	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 
 	virtual RsGRouterTransactionItem *duplicate() const
 	{
@@ -188,7 +188,7 @@ public:
 	RsGRouterTransactionAcknItem() : RsGRouterTransactionItem(RS_PKT_SUBTYPE_GROUTER_TRANSACTION_ACKN) { setPriorityLevel(QOS_PRIORITY_RS_GROUTER) ; }
 	virtual ~RsGRouterTransactionAcknItem() {}
 
-	virtual void serial_process(SerializeJob j,SerializeContext& ctx);
+	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 
 	virtual void clear() {}
 
@@ -206,7 +206,7 @@ class RsGRouterMatrixCluesItem: public RsGRouterItem
 		{ setPriorityLevel(0) ; }	// this item is never sent through the network
 
 		virtual void clear() {} 
-		virtual void serial_process(SerializeJob j,SerializeContext& ctx);
+		virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 
 		// packet data
 		//
@@ -220,7 +220,7 @@ class RsGRouterMatrixTrackItem: public RsGRouterItem
         RsGRouterMatrixTrackItem() : RsGRouterItem(RS_PKT_SUBTYPE_GROUTER_MATRIX_TRACK)
 		{ setPriorityLevel(0) ; }	// this item is never sent through the network
 
-		virtual void serial_process(SerializeJob j,SerializeContext& ctx);
+		virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 
 		virtual void clear() {} 
 
@@ -236,7 +236,7 @@ class RsGRouterMatrixFriendListItem: public RsGRouterItem
 		RsGRouterMatrixFriendListItem() : RsGRouterItem(RS_PKT_SUBTYPE_GROUTER_FRIENDS_LIST) 
         { setPriorityLevel(0) ; }	// this item is never sent through the network
 
-		virtual void serial_process(SerializeJob j,SerializeContext& ctx);
+		virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 		virtual void clear() {}
 
 		// packet data
@@ -252,7 +252,7 @@ class RsGRouterRoutingInfoItem: public RsGRouterItem, public GRouterRoutingInfo,
 
 		virtual ~RsGRouterRoutingInfoItem() { clear() ; }
 		
-		virtual void serial_process(SerializeJob j,SerializeContext& ctx);
+		virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 
 		virtual void clear() 
 		{
@@ -271,7 +271,7 @@ class RsGRouterRoutingInfoItem: public RsGRouterItem, public GRouterRoutingInfo,
 class RsGRouterSerialiser: public RsServiceSerializer
 {
 public:
-    RsGRouterSerialiser(SerializationFlags flags = SERIALIZATION_FLAG_NONE) : RsServiceSerializer(RS_SERVICE_TYPE_GROUTER,SerializeContext::FORMAT_BINARY,flags) {}
+    RsGRouterSerialiser(SerializationFlags flags = SERIALIZATION_FLAG_NONE) : RsServiceSerializer(RS_SERVICE_TYPE_GROUTER,RsGenericSerializer::FORMAT_BINARY,flags) {}
 
     virtual RsItem *create_item(uint16_t service,uint8_t subtype) const ;
 };

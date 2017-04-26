@@ -27,6 +27,7 @@
 
 #include "p3servicecontrol.h"
 #include "rsitems/rsserviceids.h"
+#include "rsitems/rsitem.h"
 #include "serialiser/rsserial.h"
 #include "serialiser/rsbaseserial.h"
 #include "pqi/p3cfgmgr.h"

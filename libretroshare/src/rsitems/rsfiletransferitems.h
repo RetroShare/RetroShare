@@ -30,7 +30,9 @@
 #include "retroshare/rstypes.h"
 #include "serialiser/rsserial.h"
 #include "serialiser/rstlvfileitem.h"
+#include "rsitems/rsitem.h"
 #include "rsitems/rsserviceids.h"
+#include "rsitems/itempriorities.h"
 
 #include "serialization/rsserializer.h"
 
@@ -70,7 +72,7 @@ class RsFileTransferDataRequestItem: public RsFileTransferItem
 	virtual ~RsFileTransferDataRequestItem() {}
 	virtual void clear();
 
-    void serial_process(RsItem::SerializeJob j,SerializeContext& ctx);
+    void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 
 	// Private data part.
 	//
@@ -90,7 +92,7 @@ class RsFileTransferDataItem: public RsFileTransferItem
 	}
 	virtual ~RsFileTransferDataItem() { clear() ; }
 
-    void serial_process(RsItem::SerializeJob j,SerializeContext& ctx);
+    void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 
 	virtual void clear();
 
@@ -109,7 +111,7 @@ class RsFileTransferChunkMapRequestItem: public RsFileTransferItem
 		virtual ~RsFileTransferChunkMapRequestItem() {}
 		virtual void clear() {}
 
-		void serial_process(RsItem::SerializeJob j,SerializeContext& ctx);
+		void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 
 		// Private data part.
 		//
@@ -127,7 +129,7 @@ class RsFileTransferChunkMapItem: public RsFileTransferItem
 		}
 		virtual ~RsFileTransferChunkMapItem() {}
 
-		void serial_process(RsItem::SerializeJob j,SerializeContext& ctx);
+		void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 		virtual void clear() {}
 
 		// Private data part.
@@ -146,7 +148,7 @@ class RsFileTransferSingleChunkCrcRequestItem: public RsFileTransferItem
 		}
 		virtual ~RsFileTransferSingleChunkCrcRequestItem() {}
 
-		void serial_process(RsItem::SerializeJob j,SerializeContext& ctx);
+		void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 		virtual void clear() {}
 
 		// Private data part.
@@ -164,7 +166,7 @@ class RsFileTransferSingleChunkCrcItem: public RsFileTransferItem
 		}
 		virtual ~RsFileTransferSingleChunkCrcItem() {}
 
-		void serial_process(RsItem::SerializeJob j,SerializeContext& ctx);
+		void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 		virtual void clear() {}
 
 		// Private data part.

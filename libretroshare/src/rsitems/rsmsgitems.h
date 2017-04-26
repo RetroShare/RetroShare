@@ -101,7 +101,7 @@ class RsMsgItem: public RsMessageItem
 		virtual ~RsMsgItem() {}
 		virtual void clear();
 
-		virtual void serial_process(SerializeJob /* j */,SerializeContext& /* ctx */);
+		virtual void serial_process(RsGenericSerializer::SerializeJob /* j */,RsGenericSerializer::SerializeContext& /* ctx */);
 
 		// ----------- Specific fields ------------- //
 
@@ -130,7 +130,7 @@ class RsMsgTagType : public RsMessageItem
 	public:
 		RsMsgTagType() :RsMessageItem(RS_PKT_SUBTYPE_MSG_TAG_TYPE) {}
 
-		virtual void serial_process(SerializeJob /* j */,SerializeContext& /* ctx */);
+		virtual void serial_process(RsGenericSerializer::SerializeJob /* j */,RsGenericSerializer::SerializeContext& /* ctx */);
 
 		virtual ~RsMsgTagType() {}
 		virtual void clear();
@@ -148,7 +148,7 @@ public:
 	RsMsgTags()
 		:RsMessageItem(RS_PKT_SUBTYPE_MSG_TAGS) {}
 
-		virtual void serial_process(SerializeJob /* j */,SerializeContext& /* ctx */);
+		virtual void serial_process(RsGenericSerializer::SerializeJob /* j */,RsGenericSerializer::SerializeContext& /* ctx */);
 
 	virtual ~RsMsgTags() {}
 	virtual void clear();
@@ -164,7 +164,7 @@ class RsMsgSrcId : public RsMessageItem
 	public:
 		RsMsgSrcId() : RsMessageItem(RS_PKT_SUBTYPE_MSG_SRC_TAG) {}
 
-		virtual void serial_process(SerializeJob /* j */,SerializeContext& /* ctx */);
+		virtual void serial_process(RsGenericSerializer::SerializeJob /* j */,RsGenericSerializer::SerializeContext& /* ctx */);
 
 		virtual ~RsMsgSrcId() {}
         virtual void clear(){}
@@ -180,7 +180,7 @@ class RsPublicMsgInviteConfigItem : public RsMessageItem
 	public:
 		RsPublicMsgInviteConfigItem() : RsMessageItem(RS_PKT_SUBTYPE_MSG_INVITE) {}
 
-		virtual void serial_process(SerializeJob /* j */,SerializeContext& /* ctx */);
+		virtual void serial_process(RsGenericSerializer::SerializeJob /* j */,RsGenericSerializer::SerializeContext& /* ctx */);
 
 		virtual ~RsPublicMsgInviteConfigItem() {}
 		virtual void clear();
@@ -196,7 +196,7 @@ class RsMsgGRouterMap : public RsMessageItem
     public:
         RsMsgGRouterMap() : RsMessageItem(RS_PKT_SUBTYPE_MSG_GROUTER_MAP) {}
 
-		virtual void serial_process(SerializeJob /* j */,SerializeContext& /* ctx */);
+		virtual void serial_process(RsGenericSerializer::SerializeJob /* j */,RsGenericSerializer::SerializeContext& /* ctx */);
 
         virtual ~RsMsgGRouterMap() {}
         virtual void clear();
@@ -210,7 +210,7 @@ class RsMsgDistantMessagesHashMap : public RsMessageItem
     public:
         RsMsgDistantMessagesHashMap() : RsMessageItem(RS_PKT_SUBTYPE_MSG_DISTANT_MSG_MAP) {}
 
-		virtual void serial_process(SerializeJob /* j */,SerializeContext& /* ctx */);
+		virtual void serial_process(RsGenericSerializer::SerializeJob /* j */,RsGenericSerializer::SerializeContext& /* ctx */);
 
         virtual ~RsMsgDistantMessagesHashMap() {}
         virtual void clear() { hash_map.clear() ;}
@@ -224,7 +224,7 @@ class RsMsgParentId : public RsMessageItem
 	public:
 		RsMsgParentId() : RsMessageItem(RS_PKT_SUBTYPE_MSG_PARENT_TAG) {}
 
-		virtual void serial_process(SerializeJob /* j */,SerializeContext& /* ctx */);
+		virtual void serial_process(RsGenericSerializer::SerializeJob /* j */,RsGenericSerializer::SerializeContext& /* ctx */);
 
 		virtual ~RsMsgParentId() {}
         virtual void clear(){}
@@ -239,7 +239,7 @@ class RsMsgSerialiser: public RsServiceSerializer
 {
 	public:
 		RsMsgSerialiser(SerializationFlags flags)
-			:RsServiceSerializer(RS_SERVICE_TYPE_MSG,SerializeContext::FORMAT_BINARY,flags){}
+			:RsServiceSerializer(RS_SERVICE_TYPE_MSG,RsGenericSerializer::FORMAT_BINARY,flags){}
 
 		virtual     ~RsMsgSerialiser() {}
 

@@ -80,25 +80,25 @@ void 	RsMsgItem::clear()
 	attachment.TlvClear();
 }
 
-void RsPublicMsgInviteConfigItem::serial_process(SerializeJob j,SerializeContext& ctx)
+void RsPublicMsgInviteConfigItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_HASH_SHA1,hash,"hash") ;
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,(uint32_t&)time_stamp,"time_stamp") ;
 }
-void RsMsgTagType::serial_process(SerializeJob j,SerializeContext& ctx)
+void RsMsgTagType::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_NAME,text,"text") ;
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,rgb_color,"rgb_color") ;
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,tagId,"tagId") ;
 }
 
-void RsMsgTags::serial_process(SerializeJob j,SerializeContext& ctx)
+void RsMsgTags::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,msgId,"msgId") ;
 
 #warning this is not the correct way to serialise here. We should directly call serial_process<std::vector<uint32_t> >() but for backward compatibility, we cannot
 
-    if(j == RsItem::DESERIALIZE)
+    if(j == RsGenericSerializer::DESERIALIZE)
         while(ctx.mOffset < ctx.mSize)
         {
             uint32_t n ;
@@ -110,13 +110,13 @@ void RsMsgTags::serial_process(SerializeJob j,SerializeContext& ctx)
 			RsTypeSerializer::serial_process<uint32_t>(j,ctx,*it,"tagIds element") ;
 }
 
-void RsMsgSrcId::serial_process(SerializeJob j,SerializeContext& ctx)
+void RsMsgSrcId::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,msgId,"msgId") ;
     RsTypeSerializer::serial_process          (j,ctx,srcId,"srcId") ;
 }
 
-void RsMsgGRouterMap::serial_process(SerializeJob j,SerializeContext& ctx)
+void RsMsgGRouterMap::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process(j,ctx,ongoing_msgs,"ongoing_msgs") ;
 }
@@ -128,18 +128,18 @@ void RsMsgGRouterMap::clear()
     return;
 }
 
-void RsMsgDistantMessagesHashMap::serial_process(SerializeJob j,SerializeContext& ctx)
+void RsMsgDistantMessagesHashMap::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process(j,ctx,hash_map,"hash_map") ;
 }
 
-void RsMsgParentId::serial_process(SerializeJob j,SerializeContext& ctx)
+void RsMsgParentId::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,msgId,"msgId") ;
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,msgParentId,"msgParentId") ;
 }
 
-void RsMsgItem::serial_process(SerializeJob j,SerializeContext& ctx)
+void RsMsgItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,msgFlags,"msgFlags");
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,sendTime,"sendTime");

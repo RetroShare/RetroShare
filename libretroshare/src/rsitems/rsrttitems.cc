@@ -32,6 +32,8 @@
 
 #include <iostream>
 
+#include "serialization/rstypeserializer.h"
+
 /*************************************************************************/
 
 RsItem *RsRttSerialiser::create_item(uint16_t service,uint8_t type) const
@@ -48,13 +50,13 @@ RsItem *RsRttSerialiser::create_item(uint16_t service,uint8_t type) const
 	}
 }
 
-void RsRttPingItem::serial_process(SerializeJob j,SerializeContext& ctx)
+void RsRttPingItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,mSeqNo,"mSeqNo") ;
     RsTypeSerializer::serial_process<uint64_t>(j,ctx,mPingTS,"mPingTS") ;
 }
 
-void RsRttPongItem::serial_process(SerializeJob j,SerializeContext& ctx)
+void RsRttPongItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,mSeqNo,"mSeqNo") ;
     RsTypeSerializer::serial_process<uint64_t>(j,ctx,mPingTS,"mPingTS") ;

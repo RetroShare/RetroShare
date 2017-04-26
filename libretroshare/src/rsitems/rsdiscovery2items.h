@@ -32,6 +32,8 @@
 #include "serialiser/rstlvidset.h"
 #include "serialiser/rstlvaddrs.h"
 #include "rsitems/rsserviceids.h"
+#include "rsitems/rsitem.h"
+#include "rsitems/itempriorities.h"
 
 #include "serialization/rsserializer.h"
 
@@ -65,7 +67,7 @@ public:
     virtual ~RsDiscPgpListItem(){}
 
 	virtual  void clear();
-	virtual void serial_process(SerializeJob /* j */,SerializeContext& /* ctx */);
+	virtual void serial_process(RsGenericSerializer::SerializeJob /* j */,RsGenericSerializer::SerializeContext& /* ctx */);
 
 	uint32_t mode;
 	RsTlvPgpIdSet pgpIdSet;
@@ -86,7 +88,7 @@ public:
     virtual ~RsDiscPgpCertItem(){}
 
 	virtual  void clear();
-	virtual void serial_process(SerializeJob /* j */,SerializeContext& /* ctx */);
+	virtual void serial_process(RsGenericSerializer::SerializeJob /* j */,RsGenericSerializer::SerializeContext& /* ctx */);
 
 	RsPgpId pgpId;
 	std::string pgpCert;
@@ -106,7 +108,7 @@ public:
     virtual ~RsDiscContactItem() {}
 
 	virtual  void clear();
-	virtual void serial_process(SerializeJob /* j */,SerializeContext& /* ctx */);
+	virtual void serial_process(RsGenericSerializer::SerializeJob /* j */,RsGenericSerializer::SerializeContext& /* ctx */);
 
 	RsPgpId pgpId;
 	RsPeerId sslId;
