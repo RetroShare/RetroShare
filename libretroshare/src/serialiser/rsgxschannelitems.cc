@@ -29,9 +29,25 @@
 #include "serialiser/rstlvbase.h"
 #include "serialiser/rsbaseserial.h"
 
+#include "serialization/rstypeserializer.h"
+
 //#define GXSCHANNEL_DEBUG	1
 
+RsItem *RsGxsChannelSerialiser::create_item(uint16_t service_id,uint8_t item_subtype) const
+{
+    if(service_id !=  RS_SERVICE_GXS_TYPE_CHANNELS)
+        return NULL ;
 
+    switch(item_subtype)
+    {
+    case RS_PKT_SUBTYPE_GXSCHANNEL_GROUP_ITEM: return new RsGxsChannelGroupItem() ;
+    case RS_PKT_SUBTYPE_GXSCHANNEL_POST_ITEM:  return new RsGxsChannelPostItem();
+    default:
+        return RsGxsCommentSerialiser::create_item(service_id,item_subtype) ;
+    }
+}
+
+#ifdef TO_REMOVE
 uint32_t RsGxsChannelSerialiser::size(RsItem *item)
 {
 #ifdef GXSCHANNEL_DEBUG
@@ -113,19 +129,6 @@ RsItem* RsGxsChannelSerialiser::deserialise(void* data, uint32_t* size)
 	return NULL;
 }
 
-
-
-/*****************************************************************************************/
-/*****************************************************************************************/
-/*****************************************************************************************/
-
-
-void RsGxsChannelGroupItem::clear()
-{
-	mDescription.clear();
-	mImage.TlvClear();
-}
-
 std::ostream& RsGxsChannelGroupItem::print(std::ostream& out, uint16_t indent)
 {
 	printRsItemBase(out, "RsGxsChannelGroupItem", indent);
@@ -139,6 +142,19 @@ std::ostream& RsGxsChannelGroupItem::print(std::ostream& out, uint16_t indent)
   
 	printRsItemEnd(out ,"RsGxsChannelGroupItem", indent);
 	return out;
+}
+
+#endif
+
+/*****************************************************************************************/
+/*****************************************************************************************/
+/*****************************************************************************************/
+
+
+void RsGxsChannelGroupItem::clear()
+{
+	mDescription.clear();
+	mImage.TlvClear();
 }
 
 
@@ -181,6 +197,7 @@ bool RsGxsChannelGroupItem::toChannelGroup(RsGxsChannelGroup &group, bool moveIm
 	return true;
 }
 
+#ifdef TO_REMOVE
 
 uint32_t RsGxsChannelSerialiser::sizeGxsChannelGroupItem(RsGxsChannelGroupItem *item)
 {
@@ -191,7 +208,15 @@ uint32_t RsGxsChannelSerialiser::sizeGxsChannelGroupItem(RsGxsChannelGroupItem *
 
 	return s;
 }
+#endif
 
+void RsGxsChannelGroupItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
+{
+    RsTypeSerializer::serial_process           (j,ctx,TLV_TYPE_STR_DESCR,mDescription,"mDescription") ;
+    RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,mImage,"mImage") ;
+}
+
+#ifdef TO_REMOVE
 bool RsGxsChannelSerialiser::serialiseGxsChannelGroupItem(RsGxsChannelGroupItem *item, void *data, uint32_t *size)
 {
 	
@@ -312,14 +337,6 @@ RsGxsChannelGroupItem* RsGxsChannelSerialiser::deserialiseGxsChannelGroupItem(vo
 /*****************************************************************************************/
 /*****************************************************************************************/
 
-
-void RsGxsChannelPostItem::clear()
-{
-	mMsg.clear();
-	mAttachment.TlvClear();
-	mThumbnail.TlvClear();
-}
-
 std::ostream& RsGxsChannelPostItem::print(std::ostream& out, uint16_t indent)
 {
 	printRsItemBase(out, "RsGxsChannelPostItem", indent);
@@ -337,6 +354,7 @@ std::ostream& RsGxsChannelPostItem::print(std::ostream& out, uint16_t indent)
 	printRsItemEnd(out ,"RsGxsChannelPostItem", indent);
 	return out;
 }
+#endif
 
 
 bool RsGxsChannelPostItem::fromChannelPost(RsGxsChannelPost &post, bool moveImage)
@@ -402,6 +420,14 @@ bool RsGxsChannelPostItem::toChannelPost(RsGxsChannelPost &post, bool moveImage)
 	return true;
 }
 
+void RsGxsChannelPostItem::clear()
+{
+	mMsg.clear();
+	mAttachment.TlvClear();
+	mThumbnail.TlvClear();
+}
+
+#ifdef TO_REMOVE
 
 uint32_t RsGxsChannelSerialiser::sizeGxsChannelPostItem(RsGxsChannelPostItem *item)
 {
@@ -413,7 +439,16 @@ uint32_t RsGxsChannelSerialiser::sizeGxsChannelPostItem(RsGxsChannelPostItem *it
 
 	return s;
 }
+#endif
 
+void RsGxsChannelPostItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
+{
+    RsTypeSerializer::serial_process           (j,ctx,TLV_TYPE_STR_MSG,mMsg,"mMsg") ;
+    RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,mAttachment,"mAttachment") ;
+    RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,mThumbnail,"mThumbnail") ;
+}
+
+#ifdef TO_REMOVE
 bool RsGxsChannelSerialiser::serialiseGxsChannelPostItem(RsGxsChannelPostItem *item, void *data, uint32_t *size)
 {
 	
@@ -533,4 +568,5 @@ RsGxsChannelPostItem* RsGxsChannelSerialiser::deserialiseGxsChannelPostItem(void
 /*****************************************************************************************/
 /*****************************************************************************************/
 /*****************************************************************************************/
+#endif
 

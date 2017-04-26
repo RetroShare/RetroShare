@@ -72,7 +72,7 @@ public:
 	RsGxsCommentSerialiser(uint16_t service_type) :RsServiceSerializer(service_type) {}
 	virtual     ~RsGxsCommentSerialiser() {}
 
-    RsItem *create_item(uint16_t service_id,uint8_t item_subtype) const ;
+    virtual RsItem *create_item(uint16_t service_id,uint8_t item_subtype) const ;
 };
 
 #endif /* RS_GXS_COMMENT_ITEMS_H */

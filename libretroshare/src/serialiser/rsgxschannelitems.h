@@ -37,22 +37,23 @@
 
 #include "retroshare/rsgxschannels.h"
 
+#include "serialization/rsserializer.h"
+
 #include "util/rsdir.h"
 
 const uint8_t RS_PKT_SUBTYPE_GXSCHANNEL_GROUP_ITEM = 0x02;
-const uint8_t RS_PKT_SUBTYPE_GXSCHANNEL_POST_ITEM = 0x03;
+const uint8_t RS_PKT_SUBTYPE_GXSCHANNEL_POST_ITEM  = 0x03;
 
 class RsGxsChannelGroupItem : public RsGxsGrpItem
 {
-
 public:
 
-	RsGxsChannelGroupItem():  RsGxsGrpItem(RS_SERVICE_GXS_TYPE_CHANNELS,
-			RS_PKT_SUBTYPE_GXSCHANNEL_GROUP_ITEM) { return;}
-        virtual ~RsGxsChannelGroupItem() { return;}
+	RsGxsChannelGroupItem():  RsGxsGrpItem(RS_SERVICE_GXS_TYPE_CHANNELS, RS_PKT_SUBTYPE_GXSCHANNEL_GROUP_ITEM) {}
+	virtual ~RsGxsChannelGroupItem() {}
 
-        void clear();
-	std::ostream &print(std::ostream &out, uint16_t indent = 0);
+	void clear();
+
+	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 
 	// use conversion functions to transform:
 	bool fromChannelGroup(RsGxsChannelGroup &group, bool moveImage);
@@ -66,11 +67,11 @@ class RsGxsChannelPostItem : public RsGxsMsgItem
 {
 public:
 
-	RsGxsChannelPostItem(): RsGxsMsgItem(RS_SERVICE_GXS_TYPE_CHANNELS,
-			RS_PKT_SUBTYPE_GXSCHANNEL_POST_ITEM) {return; }
-        virtual ~RsGxsChannelPostItem() { return;}
-        void clear();
-	std::ostream &print(std::ostream &out, uint16_t indent = 0);
+	RsGxsChannelPostItem(): RsGxsMsgItem(RS_SERVICE_GXS_TYPE_CHANNELS, RS_PKT_SUBTYPE_GXSCHANNEL_POST_ITEM) {}
+	virtual ~RsGxsChannelPostItem() {}
+	void clear();
+
+	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 
 	// Slightly unusual structure.
 	// use conversion functions to transform:
@@ -87,25 +88,10 @@ class RsGxsChannelSerialiser : public RsGxsCommentSerialiser
 {
 public:
 
-	RsGxsChannelSerialiser()
-	:RsGxsCommentSerialiser(RS_SERVICE_GXS_TYPE_CHANNELS)
-	{ return; }
-	virtual     ~RsGxsChannelSerialiser() { return; }
+	RsGxsChannelSerialiser() :RsGxsCommentSerialiser(RS_SERVICE_GXS_TYPE_CHANNELS) {}
+	virtual     ~RsGxsChannelSerialiser() {}
 
-	uint32_t    size(RsItem *item);
-	bool        serialise  (RsItem *item, void *data, uint32_t *size);
-	RsItem *    deserialise(void *data, uint32_t *size);
-
-	private:
-
-	uint32_t    sizeGxsChannelGroupItem(RsGxsChannelGroupItem *item);
-	bool        serialiseGxsChannelGroupItem  (RsGxsChannelGroupItem *item, void *data, uint32_t *size);
-	RsGxsChannelGroupItem *    deserialiseGxsChannelGroupItem(void *data, uint32_t *size);
-
-	uint32_t    sizeGxsChannelPostItem(RsGxsChannelPostItem *item);
-	bool        serialiseGxsChannelPostItem  (RsGxsChannelPostItem *item, void *data, uint32_t *size);
-	RsGxsChannelPostItem *    deserialiseGxsChannelPostItem(void *data, uint32_t *size);
-
+    virtual RsItem *create_item(uint16_t service_id,uint8_t item_subtype) const ;
 };
 
 #endif /* RS_GXS_CHANNEL_ITEMS_H */
