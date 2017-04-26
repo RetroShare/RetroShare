@@ -43,54 +43,36 @@ class RsGxsCommentItem : public RsGxsMsgItem
 {
 public:
 
-	RsGxsCommentItem(uint16_t service_type): RsGxsMsgItem(service_type, 
-			RS_PKT_SUBTYPE_GXSCOMMENT_COMMENT_ITEM) {return; }
-        virtual ~RsGxsCommentItem() { return;}
-        void clear();
-	std::ostream &print(std::ostream &out, uint16_t indent = 0);
+	RsGxsCommentItem(uint16_t service_type): RsGxsMsgItem(service_type,  RS_PKT_SUBTYPE_GXSCOMMENT_COMMENT_ITEM) {}
+	virtual ~RsGxsCommentItem() {}
+    void clear(){}
+
+	virtual void serial_process(RsGenericSerializer::SerializeJob /* j */,RsGenericSerializer::SerializeContext& /* ctx */);
 
 	RsGxsComment mMsg;
 };
-
 
 class RsGxsVoteItem : public RsGxsMsgItem
 {
 public:
 
-	RsGxsVoteItem(uint16_t service_type): RsGxsMsgItem(service_type, 
-			RS_PKT_SUBTYPE_GXSCOMMENT_VOTE_ITEM) {return; }
-        virtual ~RsGxsVoteItem() { return;}
-        void clear();
-	std::ostream &print(std::ostream &out, uint16_t indent = 0);
+	RsGxsVoteItem(uint16_t service_type): RsGxsMsgItem(service_type, RS_PKT_SUBTYPE_GXSCOMMENT_VOTE_ITEM) {}
+	virtual ~RsGxsVoteItem() {}
+    void clear(){}
+
+	virtual void serial_process(RsGenericSerializer::SerializeJob /* j */,RsGenericSerializer::SerializeContext& /* ctx */);
 
 	RsGxsVote mMsg;
 };
 
-
-class RsGxsCommentSerialiser : public RsSerialType
+class RsGxsCommentSerialiser : public RsServiceSerializer
 {
 public:
 
-	RsGxsCommentSerialiser(uint16_t service_type)
-	:RsSerialType(RS_PKT_VERSION_SERVICE, service_type)
-	{ return; }
-	virtual     ~RsGxsCommentSerialiser() { return; }
+	RsGxsCommentSerialiser(uint16_t service_type) :RsServiceSerializer(service_type) {}
+	virtual     ~RsGxsCommentSerialiser() {}
 
-	uint32_t    size(RsItem *item);
-	bool        serialise  (RsItem *item, void *data, uint32_t *size);
-	RsItem *    deserialise(void *data, uint32_t *size);
-
-	private:
-
-	uint32_t    sizeGxsCommentItem(RsGxsCommentItem *item);
-	bool        serialiseGxsCommentItem  (RsGxsCommentItem *item, void *data, uint32_t *size);
-	RsGxsCommentItem *    deserialiseGxsCommentItem(void *data, uint32_t *size);
-
-
-	uint32_t    sizeGxsVoteItem(RsGxsVoteItem *item);
-	bool        serialiseGxsVoteItem  (RsGxsVoteItem *item, void *data, uint32_t *size);
-	RsGxsVoteItem *    deserialiseGxsVoteItem(void *data, uint32_t *size);
-
+    RsItem *create_item(uint16_t service_id,uint8_t item_subtype) const ;
 };
 
 #endif /* RS_GXS_COMMENT_ITEMS_H */

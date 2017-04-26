@@ -28,9 +28,25 @@
 #include "rsgxscommentitems.h"
 #include "serialiser/rstlvbase.h"
 #include "serialiser/rsbaseserial.h"
+#include "serialization/rstypeserializer.h"
 
 //#define GXSCOMMENT_DEBUG	1
 
+RsItem *RsGxsCommentSerialiser::create_item(uint16_t service_id,uint8_t item_subtype) const
+{
+    if(service_id != getRsItemService(PacketId()))
+        return NULL ;
+
+    switch(item_subtype)
+    {
+    case RS_PKT_SUBTYPE_GXSCOMMENT_COMMENT_ITEM: return new RsGxsCommentItem(getRsItemService(PacketId())) ;
+    case RS_PKT_SUBTYPE_GXSCOMMENT_VOTE_ITEM:    return new RsGxsVoteItem(getRsItemService(PacketId()));
+    default:
+		return NULL ;
+    }
+}
+
+#ifdef TO_REMOVE
 
 uint32_t RsGxsCommentSerialiser::size(RsItem *item)
 {
@@ -152,7 +168,15 @@ uint32_t RsGxsCommentSerialiser::sizeGxsCommentItem(RsGxsCommentItem *item)
 
 	return s;
 }
+#endif
 
+
+void RsGxsCommentItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
+{
+    RsTypeSerializer::serial_process(j,ctx,1,mMsg.mComment,"mMsg.mComment") ;
+}
+
+#ifdef TO_REMOVE
 bool RsGxsCommentSerialiser::serialiseGxsCommentItem(RsGxsCommentItem *item, void *data, uint32_t *size)
 {
 	
@@ -297,7 +321,14 @@ uint32_t RsGxsCommentSerialiser::sizeGxsVoteItem(RsGxsVoteItem */*item*/)
 
 	return s;
 }
+#endif
 
+void RsGxsVoteItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
+{
+    RsTypeSerializer::serial_process<uint32_t>(j,ctx,mMsg.mVoteType,"mMsg.mVoteType") ;
+}
+
+#ifdef TO_REMOVE
 bool RsGxsCommentSerialiser::serialiseGxsVoteItem(RsGxsVoteItem *item, void *data, uint32_t *size)
 {
 	
@@ -414,3 +445,4 @@ RsGxsVoteItem* RsGxsCommentSerialiser::deserialiseGxsVoteItem(void *data, uint32
 /*****************************************************************************************/
 /*****************************************************************************************/
 
+#endif
