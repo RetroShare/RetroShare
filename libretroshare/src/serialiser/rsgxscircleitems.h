@@ -52,18 +52,12 @@ class RsGxsCircleGroupItem : public RsGxsGrpItem
 
 public:
 
-	RsGxsCircleGroupItem():  RsGxsGrpItem(RS_SERVICE_GXS_TYPE_GXSCIRCLE,
-			RS_PKT_SUBTYPE_GXSCIRCLE_GROUP_ITEM)
-#if 0
-			pgpIdSet(GXSCIRCLE_PGPIDSET), 
-			gxsIdSet(GXSCIRCLE_GXSIDSET), 
-			subCircleSet(GXSCIRCLE_SUBCIRCLESET) 
-#endif
-			{ return;}
-        virtual ~RsGxsCircleGroupItem() { return;}
+	RsGxsCircleGroupItem():  RsGxsGrpItem(RS_SERVICE_GXS_TYPE_GXSCIRCLE, RS_PKT_SUBTYPE_GXSCIRCLE_GROUP_ITEM) {}
+	virtual ~RsGxsCircleGroupItem() {}
 
-        void clear();
-	std::ostream &print(std::ostream &out, uint16_t indent = 0);
+	void clear();
+
+	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 
 	bool convertFrom(const RsGxsCircleGroup &group);
 	bool convertTo(RsGxsCircleGroup &group) const;
@@ -78,11 +72,12 @@ class RsGxsCircleMsgItem : public RsGxsMsgItem
 {
 public:
 
-	RsGxsCircleMsgItem(): RsGxsMsgItem(RS_SERVICE_GXS_TYPE_GXSCIRCLE,
-			RS_PKT_SUBTYPE_GXSCIRCLE_MSG_ITEM) {return; }
-        virtual ~RsGxsCircleMsgItem() { return;}
-        void clear();
-	std::ostream &print(std::ostream &out, uint16_t indent = 0);
+	RsGxsCircleMsgItem(): RsGxsMsgItem(RS_SERVICE_GXS_TYPE_GXSCIRCLE, RS_PKT_SUBTYPE_GXSCIRCLE_MSG_ITEM) {}
+	virtual ~RsGxsCircleMsgItem() {}
+	void clear();
+
+	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
+
 	RsGxsCircleMsg msg;
 };
 
@@ -94,7 +89,6 @@ public:
     virtual ~RsGxsCircleSubscriptionRequestItem() {}
     
     void clear();
-    std::ostream &print(std::ostream &out, uint16_t indent = 0);
     
     enum {
         SUBSCRIPTION_REQUEST_UNKNOWN     = 0x00, 
@@ -102,37 +96,22 @@ public:
         SUBSCRIPTION_REQUEST_UNSUBSCRIBE = 0x02
     };
     
-    time_t           time_stamp ;
-    time_t           time_out ;           
+	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
+
+    uint32_t           time_stamp ;
+    uint32_t           time_out ;
     uint8_t          subscription_type ;
 };
 
-class RsGxsCircleSerialiser : public RsSerialType
+class RsGxsCircleSerialiser : public RsServiceSerializer
 {
 public:
 
 	RsGxsCircleSerialiser()
-	:RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_GXS_TYPE_GXSCIRCLE)
-	{ return; }
-	virtual     ~RsGxsCircleSerialiser() { return; }
+	:RsServiceSerializer(RS_SERVICE_GXS_TYPE_GXSCIRCLE) {}
+	virtual     ~RsGxsCircleSerialiser() {}
 
-	uint32_t    size(RsItem *item);
-	bool        serialise  (RsItem *item, void *data, uint32_t *size);
-	RsItem *    deserialise(void *data, uint32_t *size);
-
-	private:
-
-	uint32_t    sizeGxsCircleSubscriptionRequestItem(RsGxsCircleSubscriptionRequestItem *item);
-	bool        serialiseGxsCircleSubscriptionRequestItem  (RsGxsCircleSubscriptionRequestItem *item, void *data, uint32_t *size);
-	RsGxsCircleSubscriptionRequestItem *    deserialiseGxsCircleSubscriptionRequestItem(void *data, uint32_t *size);
-
-	uint32_t    sizeGxsCircleGroupItem(RsGxsCircleGroupItem *item);
-	bool        serialiseGxsCircleGroupItem  (RsGxsCircleGroupItem *item, void *data, uint32_t *size);
-	RsGxsCircleGroupItem *    deserialiseGxsCircleGroupItem(void *data, uint32_t *size);
-
-	uint32_t    sizeGxsCircleMsgItem(RsGxsCircleMsgItem *item);
-	bool        serialiseGxsCircleMsgItem  (RsGxsCircleMsgItem *item, void *data, uint32_t *size);
-	RsGxsCircleMsgItem *    deserialiseGxsCircleMsgItem(void *data, uint32_t *size);
+	virtual RsItem *create_item(uint16_t service, uint8_t item_sub_id) const;
 };
 
 #endif /* RS_GXSCIRCLE_ITEMS_H */
