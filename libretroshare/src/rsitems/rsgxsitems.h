@@ -28,9 +28,7 @@
 
 #include "rsitems/rsitem.h"
 #include "rsitems/rsserviceids.h"
-#include "serialiser/rsserial.h"
-//#include "serialiser/rstlvtypes.h"
-//#include "serialiser/rstlvkeys.h"
+
 #include "retroshare/rsgxsifacetypes.h"
 
 std::ostream &operator<<(std::ostream &out, const RsGroupMetaData &meta);

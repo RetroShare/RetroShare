@@ -813,12 +813,12 @@ HEADERS += retroshare/rsgxschannels.h \
 	services/p3gxschannels.h \
 	services/p3gxscommon.h \
 	rsitems/rsgxscommentitems.h \
-	serialiser/rsgxschannelitems.h \
+	rsitems/rsgxschannelitems.h \
 
 SOURCES += services/p3gxschannels.cc \
 	services/p3gxscommon.cc \
 	rsitems/rsgxscommentitems.cc \
-	serialiser/rsgxschannelitems.cc \
+	rsitems/rsgxschannelitems.cc \
 
 wikipoos {
 	# Wiki Service

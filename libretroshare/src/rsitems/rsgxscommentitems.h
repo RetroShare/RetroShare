@@ -29,8 +29,6 @@
 #include <map>
 
 #include "rsitems/rsserviceids.h"
-#include "serialiser/rsserial.h"
-//#include "serialiser/rstlvtypes.h"
 
 #include "rsgxsitems.h"
 
@@ -51,6 +49,7 @@ public:
 
 	RsGxsComment mMsg;
 };
+
 
 class RsGxsVoteItem : public RsGxsMsgItem
 {
