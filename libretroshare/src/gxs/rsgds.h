@@ -33,7 +33,7 @@
 #include "inttypes.h"
 
 #include "rsitems/rsgxsitems.h"
-#include "serialiser/rsnxsitems.h"
+#include "rsitems/rsnxsitems.h"
 #include "gxs/rsgxsdata.h"
 #include "rsgxs.h"
 #include "util/contentvalue.h"

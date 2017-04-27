@@ -722,7 +722,7 @@ SOURCES +=	zeroconf/p3zcnatassist.cc \
 DEFINES *= SQLITE_HAS_CODEC
 DEFINES *= GXS_ENABLE_SYNC_MSGS
 
-HEADERS += serialiser/rsnxsitems.h \
+HEADERS += rsitems/rsnxsitems.h \
 	gxs/rsgds.h \
 	gxs/rsgxs.h \
 	gxs/rsdataservice.h \
@@ -748,7 +748,7 @@ HEADERS += serialiser/rsnxsitems.h \
 	gxs/rsgxsrequesttypes.h
 
 
-SOURCES += serialiser/rsnxsitems.cc \
+SOURCES += rsitems/rsnxsitems.cc \
 	gxs/rsdataservice.cc \
 	gxs/rsgenexchange.cc \
 	gxs/rsgxsnetservice.cc \

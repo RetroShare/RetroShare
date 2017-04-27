@@ -33,7 +33,7 @@
 #include "rsgds.h"
 #include "rsnxsobserver.h"
 #include "pqi/p3linkmgr.h"
-#include "serialiser/rsnxsitems.h"
+#include "rsitems/rsnxsitems.h"
 #include "serialiser/rsgxsupdateitems.h"
 #include "rsgxsnetutils.h"
 #include "pqi/p3cfgmgr.h"

@@ -36,7 +36,7 @@
 #include "rsgxsdataaccess.h"
 #include "rsnxsobserver.h"
 #include "retroshare/rsgxsservice.h"
-#include "serialiser/rsnxsitems.h"
+#include "rsitems/rsnxsitems.h"
 #include "rsgxsutil.h"
 
 template<class GxsItem, typename Identity = std::string>
