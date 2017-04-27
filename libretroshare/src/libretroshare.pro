@@ -803,10 +803,10 @@ SOURCES += services/p3gxscircles.cc \
 # GxsForums Service
 HEADERS += retroshare/rsgxsforums.h \
 	services/p3gxsforums.h \
-	serialiser/rsgxsforumitems.h
+	rsitems/rsgxsforumitems.h
 
 SOURCES += services/p3gxsforums.cc \
-	serialiser/rsgxsforumitems.cc \
+	rsitems/rsgxsforumitems.cc \
 
 # GxsChannels Service
 HEADERS += retroshare/rsgxschannels.h \
