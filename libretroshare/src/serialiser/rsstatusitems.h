@@ -30,49 +30,46 @@
 #include "rsitems/itempriorities.h"
 #include "rsitems/rsitem.h"
 
+#include "serialization/rstypeserializer.h"
+
 /**************************************************************************/
 
 class RsStatusItem: public RsItem
 {
-	public:
-	RsStatusItem() 
-	:RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_STATUS, 
-		RS_PKT_SUBTYPE_DEFAULT)
+public:
+	RsStatusItem()  :RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_STATUS,  RS_PKT_SUBTYPE_DEFAULT)
 	{ 
 		setPriorityLevel(QOS_PRIORITY_RS_STATUS_ITEM); 
 	}
-virtual ~RsStatusItem();
-virtual void clear();
-std::ostream &print(std::ostream &out, uint16_t indent = 0);
+    virtual ~RsStatusItem() {}
+    virtual void clear() {}
+
+	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
+    {
+        RsTypeSerializer::serial_process<uint32_t>(j,ctx,sendTime,"sendTime") ;
+        RsTypeSerializer::serial_process<uint32_t>(j,ctx,status  ,"status") ;
+    }
 
 	uint32_t sendTime;
-
 	uint32_t status;
 
 	/* not serialised */
 	uint32_t recvTime; 
 };
 
-class RsStatusSerialiser: public RsSerialType
+class RsStatusSerialiser: public RsServiceSerializer
 {
-	public:
-	RsStatusSerialiser()
-	:RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_STATUS)
-	{ return; }
-virtual     ~RsStatusSerialiser()
-	{ return; }
-	
-virtual	uint32_t    size(RsItem *);
-virtual	bool        serialise  (RsItem *item, void *data, uint32_t *size);
-virtual	RsItem *    deserialise(void *data, uint32_t *size);
+public:
+	RsStatusSerialiser() :RsServiceSerializer(RS_SERVICE_TYPE_STATUS) {}
+	virtual     ~RsStatusSerialiser() {}
 
-	private:
-
-virtual	uint32_t    sizeItem(RsStatusItem *);
-virtual	bool        serialiseItem  (RsStatusItem *item, void *data, uint32_t *size);
-virtual	RsStatusItem *deserialiseItem(void *data, uint32_t *size);
-
-
+    virtual RsItem *create_item(uint16_t service,uint8_t item_subtype) const
+    {
+ 		if(service == RS_SERVICE_TYPE_STATUS && item_subtype == RS_PKT_SUBTYPE_DEFAULT)
+            return new RsStatusItem();
+        else
+            return NULL ;
+    }
 };
 
 /**************************************************************************/

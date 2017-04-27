@@ -23,6 +23,7 @@
  *
  */
 
+#ifdef TO_REMOVE
 #include "serialiser/rsstatusitems.h"
 #include "serialiser/rsbaseserial.h"
 
@@ -173,3 +174,5 @@ RsItem *RsStatusSerialiser::deserialise(void *data, uint32_t *pktsize)
 }
 
 /*************************************************************************/
+
+#endif
