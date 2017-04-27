@@ -844,11 +844,11 @@ gxsthewire {
 HEADERS += services/p3postbase.h \
 	services/p3posted.h \
 	retroshare/rsposted.h \
-	serialiser/rsposteditems.h
+	rsitems/rsposteditems.h
 
 SOURCES +=  services/p3postbase.cc \
 	services/p3posted.cc \
-	serialiser/rsposteditems.cc
+	rsitems/rsposteditems.cc
 
 gxsphotoshare {
 	#Photo Service

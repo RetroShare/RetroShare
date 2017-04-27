@@ -24,7 +24,7 @@
  */
 
 #include "services/p3posted.h"
-#include "serialiser/rsposteditems.h"
+#include "rsitems/rsposteditems.h"
 
 #include <math.h>
 
