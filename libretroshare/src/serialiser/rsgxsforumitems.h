@@ -31,9 +31,11 @@
 #include "rsitems/rsserviceids.h"
 #include "rsitems/rsgxsitems.h"
 
+#include "serialization/rsserializer.h"
+
 #include "retroshare/rsgxsforums.h"
 
-const uint8_t RS_PKT_SUBTYPE_GXSFORUM_GROUP_ITEM = 0x02;
+const uint8_t RS_PKT_SUBTYPE_GXSFORUM_GROUP_ITEM   = 0x02;
 const uint8_t RS_PKT_SUBTYPE_GXSFORUM_MESSAGE_ITEM = 0x03;
 
 class RsGxsForumGroupItem : public RsGxsGrpItem
@@ -41,13 +43,11 @@ class RsGxsForumGroupItem : public RsGxsGrpItem
 
 public:
 
-	RsGxsForumGroupItem():  RsGxsGrpItem(RS_SERVICE_GXS_TYPE_FORUMS,
-			RS_PKT_SUBTYPE_GXSFORUM_GROUP_ITEM) { return;}
-        virtual ~RsGxsForumGroupItem() { return;}
+	RsGxsForumGroupItem():  RsGxsGrpItem(RS_SERVICE_GXS_TYPE_FORUMS, RS_PKT_SUBTYPE_GXSFORUM_GROUP_ITEM) {}
+	virtual ~RsGxsForumGroupItem() {}
 
-        void clear();
-	std::ostream &print(std::ostream &out, uint16_t indent = 0);
-
+	void clear();
+	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 
 	RsGxsForumGroup mGroup;
 };
@@ -56,38 +56,22 @@ class RsGxsForumMsgItem : public RsGxsMsgItem
 {
 public:
 
-	RsGxsForumMsgItem(): RsGxsMsgItem(RS_SERVICE_GXS_TYPE_FORUMS,
-			RS_PKT_SUBTYPE_GXSFORUM_MESSAGE_ITEM) {return; }
-        virtual ~RsGxsForumMsgItem() { return;}
-        void clear();
-	std::ostream &print(std::ostream &out, uint16_t indent = 0);
+	RsGxsForumMsgItem(): RsGxsMsgItem(RS_SERVICE_GXS_TYPE_FORUMS, RS_PKT_SUBTYPE_GXSFORUM_MESSAGE_ITEM) {}
+	virtual ~RsGxsForumMsgItem() {}
+	void clear();
+
+	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 
 	RsGxsForumMsg mMsg;
 };
 
-class RsGxsForumSerialiser : public RsSerialType
+class RsGxsForumSerialiser : public RsServiceSerializer
 {
 public:
+	RsGxsForumSerialiser() :RsServiceSerializer(RS_SERVICE_GXS_TYPE_FORUMS) {}
+	virtual ~RsGxsForumSerialiser() {}
 
-	RsGxsForumSerialiser()
-	:RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_GXS_TYPE_FORUMS)
-	{ return; }
-	virtual     ~RsGxsForumSerialiser() { return; }
-
-	uint32_t    size(RsItem *item);
-	bool        serialise  (RsItem *item, void *data, uint32_t *size);
-	RsItem *    deserialise(void *data, uint32_t *size);
-
-	private:
-
-	uint32_t    sizeGxsForumGroupItem(RsGxsForumGroupItem *item);
-	bool        serialiseGxsForumGroupItem  (RsGxsForumGroupItem *item, void *data, uint32_t *size);
-	RsGxsForumGroupItem *    deserialiseGxsForumGroupItem(void *data, uint32_t *size);
-
-	uint32_t    sizeGxsForumMsgItem(RsGxsForumMsgItem *item);
-	bool        serialiseGxsForumMsgItem  (RsGxsForumMsgItem *item, void *data, uint32_t *size);
-	RsGxsForumMsgItem *    deserialiseGxsForumMsgItem(void *data, uint32_t *size);
-
+	virtual RsItem *create_item(uint16_t service_id,uint8_t item_subtype) const ;
 };
 
 #endif /* RS_GXS_FORUM_ITEMS_H */

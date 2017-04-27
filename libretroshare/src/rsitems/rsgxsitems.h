@@ -43,7 +43,6 @@ public:
     : RsItem(RS_PKT_VERSION_SERVICE, service, subtype) { return; }
     virtual ~RsGxsGrpItem(){}
 
-
     RsGroupMetaData meta;
 };
 

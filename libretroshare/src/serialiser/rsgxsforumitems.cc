@@ -26,376 +26,42 @@
 #include <iostream>
 
 #include "rsgxsforumitems.h"
-#include "serialiser/rstlvbase.h"
-#include "serialiser/rsbaseserial.h"
+
+#include "serialization/rstypeserializer.h"
 
 //#define GXSFORUM_DEBUG	1
 
-uint32_t RsGxsForumSerialiser::size(RsItem *item)
+RsItem *RsGxsForumSerialiser::create_item(uint16_t service_id,uint8_t item_subtype) const
 {
-	RsGxsForumGroupItem* grp_item = NULL;
-	RsGxsForumMsgItem* op_item = NULL;
+    if(service_id != RS_SERVICE_GXS_TYPE_FORUMS)
+        return NULL ;
 
-	if((grp_item = dynamic_cast<RsGxsForumGroupItem*>(item)) != NULL)
-	{
-		return sizeGxsForumGroupItem(grp_item);
-	}
-	else if((op_item = dynamic_cast<RsGxsForumMsgItem*>(item)) != NULL)
-	{
-		return sizeGxsForumMsgItem(op_item);
-	}
-	std::cerr << "RsGxsForumSerialiser::size() ERROR invalid item" << std::endl;
-	return 0;
+    switch(item_subtype)
+    {
+    case RS_PKT_SUBTYPE_GXSFORUM_GROUP_ITEM: return new RsGxsForumGroupItem();
+    case RS_PKT_SUBTYPE_GXSFORUM_MESSAGE_ITEM: return new RsGxsForumMsgItem();
+    default:
+        return NULL ;
+    }
 }
-
-bool RsGxsForumSerialiser::serialise(RsItem *item, void *data, uint32_t *size)
-{
-	RsGxsForumGroupItem* grp_item = NULL;
-	RsGxsForumMsgItem* op_item = NULL;
-
-	if((grp_item = dynamic_cast<RsGxsForumGroupItem*>(item)) != NULL)
-	{
-		return serialiseGxsForumGroupItem(grp_item, data, size);
-	}
-	else if((op_item = dynamic_cast<RsGxsForumMsgItem*>(item)) != NULL)
-	{
-		return serialiseGxsForumMsgItem(op_item, data, size);
-	}
-	std::cerr << "RsGxsForumSerialiser::serialise() ERROR invalid item" << std::endl;
-	return false;
-}
-
-RsItem* RsGxsForumSerialiser::deserialise(void* data, uint32_t* size)
-{
-		
-#ifdef GXSFORUM_DEBUG
-	std::cerr << "RsGxsForumSerialiser::deserialise()" << std::endl;
-#endif
-	/* get the type and size */
-	uint32_t rstype = getRsItemId(data);
-		
-	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
-		(RS_SERVICE_GXS_TYPE_FORUMS != getRsItemService(rstype)))
-	{
-		return NULL; /* wrong type */
-	}
-		
-	switch(getRsItemSubType(rstype))
-	{
-		
-		case RS_PKT_SUBTYPE_GXSFORUM_GROUP_ITEM:
-			return deserialiseGxsForumGroupItem(data, size);
-			break;
-		case RS_PKT_SUBTYPE_GXSFORUM_MESSAGE_ITEM:
-			return deserialiseGxsForumMsgItem(data, size);
-			break;
-		default:
-#ifdef GXSFORUM_DEBUG
-			std::cerr << "RsGxsForumSerialiser::deserialise(): unknown subtype";
-			std::cerr << std::endl;
-#endif
-			break;
-	}
-	return NULL;
-}
-
-
-
-/*****************************************************************************************/
-/*****************************************************************************************/
-/*****************************************************************************************/
-
-
 void RsGxsForumGroupItem::clear()
 {
 	mGroup.mDescription.clear();
 }
 
-std::ostream& RsGxsForumGroupItem::print(std::ostream& out, uint16_t indent)
+void RsGxsForumGroupItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
-	printRsItemBase(out, "RsGxsForumGroupItem", indent);
-	uint16_t int_Indent = indent + 2;
-
-	printIndent(out, int_Indent);
-	out << "Description: " << mGroup.mDescription << std::endl;
-  
-	printRsItemEnd(out ,"RsGxsForumGroupItem", indent);
-	return out;
+    RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_DESCR,mGroup.mDescription,"mGroup.Description");
 }
-
-
-uint32_t RsGxsForumSerialiser::sizeGxsForumGroupItem(RsGxsForumGroupItem *item)
-{
-
-	const RsGxsForumGroup& group = item->mGroup;
-	uint32_t s = 8; // header
-
-	s += GetTlvStringSize(group.mDescription);
-
-	return s;
-}
-
-bool RsGxsForumSerialiser::serialiseGxsForumGroupItem(RsGxsForumGroupItem *item, void *data, uint32_t *size)
-{
-	
-#ifdef GXSFORUM_DEBUG
-	std::cerr << "RsGxsForumSerialiser::serialiseGxsForumGroupItem()" << std::endl;
-#endif
-	
-	uint32_t tlvsize = sizeGxsForumGroupItem(item);
-	uint32_t offset = 0;
-	
-	if(*size < tlvsize)
-	{
-#ifdef GXSFORUM_DEBUG
-		std::cerr << "RsGxsForumSerialiser::serialiseGxsForumGroupItem() Size too small" << std::endl;
-#endif
-		return false;
-	}
-	
-	*size = tlvsize;
-	
-	bool ok = true;
-	
-	ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
-	
-	/* skip the header */
-	offset += 8;
-	
-	/* GxsForumGroupItem */
-	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_DESCR, item->mGroup.mDescription);
-	
-	if(offset != tlvsize)
-	{
-#ifdef GXSFORUM_DEBUG
-		std::cerr << "RsGxsForumSerialiser::serialiseGxsForumGroupItem() FAIL Size Error! " << std::endl;
-#endif
-		ok = false;
-	}
-	
-#ifdef GXSFORUM_DEBUG
-	if (!ok)
-	{
-		std::cerr << "RsGxsForumSerialiser::serialiseGxsForumGroupItem() NOK" << std::endl;
-	}
-#endif
-	
-	return ok;
-	}
-	
-RsGxsForumGroupItem* RsGxsForumSerialiser::deserialiseGxsForumGroupItem(void *data, uint32_t *size)
-{
-	
-#ifdef GXSFORUM_DEBUG
-	std::cerr << "RsGxsForumSerialiser::deserialiseGxsForumGroupItem()" << std::endl;
-#endif
-	/* get the type and size */
-	uint32_t rstype = getRsItemId(data);
-	uint32_t rssize = getRsItemSize(data);
-	
-	uint32_t offset = 0;
-	
-	
-	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
-		(RS_SERVICE_GXS_TYPE_FORUMS != getRsItemService(rstype)) ||
-		(RS_PKT_SUBTYPE_GXSFORUM_GROUP_ITEM != getRsItemSubType(rstype)))
-	{
-#ifdef GXSFORUM_DEBUG
-		std::cerr << "RsGxsForumSerialiser::deserialiseGxsForumGroupItem() FAIL wrong type" << std::endl;
-#endif
-		return NULL; /* wrong type */
-	}
-	
-	if (*size < rssize)    /* check size */
-	{
-#ifdef GXSFORUM_DEBUG
-		std::cerr << "RsGxsForumSerialiser::deserialiseGxsForumGroupItem() FAIL wrong size" << std::endl;
-#endif
-		return NULL; /* not enough data */
-	}
-	
-	/* set the packet length */
-	*size = rssize;
-	
-	bool ok = true;
-	
-	RsGxsForumGroupItem* item = new RsGxsForumGroupItem();
-	/* skip the header */
-	offset += 8;
-	
-	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_DESCR, item->mGroup.mDescription);
-	
-	if (offset != rssize)
-	{
-#ifdef GXSFORUM_DEBUG
-		std::cerr << "RsGxsForumSerialiser::deserialiseGxsForumGroupItem() FAIL size mismatch" << std::endl;
-#endif
-		/* error */
-		delete item;
-		return NULL;
-	}
-	
-	if (!ok)
-	{
-#ifdef GXSFORUM_DEBUG
-		std::cerr << "RsGxsForumSerialiser::deserialiseGxsForumGroupItem() NOK" << std::endl;
-#endif
-		delete item;
-		return NULL;
-	}
-	
-	return item;
-}
-
-
-
-/*****************************************************************************************/
-/*****************************************************************************************/
-/*****************************************************************************************/
-
-
 void RsGxsForumMsgItem::clear()
 {
 	mMsg.mMsg.clear();
 }
 
-std::ostream& RsGxsForumMsgItem::print(std::ostream& out, uint16_t indent)
+void RsGxsForumMsgItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
-	printRsItemBase(out, "RsGxsForumMsgItem", indent);
-	uint16_t int_Indent = indent + 2;
-
-	printIndent(out, int_Indent);
-	out << "Msg: " << mMsg.mMsg << std::endl;
-  
-	printRsItemEnd(out ,"RsGxsForumMsgItem", indent);
-	return out;
+    RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_MSG,mMsg.mMsg,"mGroup.Description");
 }
 
 
-uint32_t RsGxsForumSerialiser::sizeGxsForumMsgItem(RsGxsForumMsgItem *item)
-{
-
-	const RsGxsForumMsg& msg = item->mMsg;
-	uint32_t s = 8; // header
-
-	s += GetTlvStringSize(msg.mMsg); // mMsg.
-
-	return s;
-}
-
-bool RsGxsForumSerialiser::serialiseGxsForumMsgItem(RsGxsForumMsgItem *item, void *data, uint32_t *size)
-{
-	
-#ifdef GXSFORUM_DEBUG
-	std::cerr << "RsGxsForumSerialiser::serialiseGxsForumMsgItem()" << std::endl;
-#endif
-	
-	uint32_t tlvsize = sizeGxsForumMsgItem(item);
-	uint32_t offset = 0;
-	
-	if(*size < tlvsize)
-	{
-#ifdef GXSFORUM_DEBUG
-		std::cerr << "RsGxsForumSerialiser::serialiseGxsForumMsgItem()" << std::endl;
-#endif
-		return false;
-	}
-	
-	*size = tlvsize;
-	
-	bool ok = true;
-	
-	ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
-	
-	/* skip the header */
-	offset += 8;
-	
-	/* GxsForumMsgItem */
-	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_MSG, item->mMsg.mMsg);
-	
-	if(offset != tlvsize)
-	{
-#ifdef GXSFORUM_DEBUG
-		std::cerr << "RsGxsForumSerialiser::serialiseGxsForumMsgItem() FAIL Size Error! " << std::endl;
-#endif
-		ok = false;
-	}
-	
-#ifdef GXSFORUM_DEBUG
-	if (!ok)
-	{
-		std::cerr << "RsGxsForumSerialiser::serialiseGxsForumGroupItem() NOK" << std::endl;
-	}
-#endif
-	
-	return ok;
-	}
-	
-RsGxsForumMsgItem* RsGxsForumSerialiser::deserialiseGxsForumMsgItem(void *data, uint32_t *size)
-{
-	
-#ifdef GXSFORUM_DEBUG
-	std::cerr << "RsGxsForumSerialiser::deserialiseGxsForumMsgItem()" << std::endl;
-#endif
-	/* get the type and size */
-	uint32_t rstype = getRsItemId(data);
-	uint32_t rssize = getRsItemSize(data);
-	
-	uint32_t offset = 0;
-	
-	
-	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
-		(RS_SERVICE_GXS_TYPE_FORUMS != getRsItemService(rstype)) ||
-		(RS_PKT_SUBTYPE_GXSFORUM_MESSAGE_ITEM != getRsItemSubType(rstype)))
-	{
-#ifdef GXSFORUM_DEBUG
-		std::cerr << "RsGxsForumSerialiser::deserialiseGxsForumMsgItem() FAIL wrong type" << std::endl;
-#endif
-		return NULL; /* wrong type */
-	}
-	
-	if (*size < rssize)    /* check size */
-	{
-#ifdef GXSFORUM_DEBUG
-		std::cerr << "RsGxsForumSerialiser::deserialiseGxsForumMsgItem() FAIL wrong size" << std::endl;
-#endif
-		return NULL; /* not enough data */
-	}
-	
-	/* set the packet length */
-	*size = rssize;
-	
-	bool ok = true;
-	
-	RsGxsForumMsgItem* item = new RsGxsForumMsgItem();
-	/* skip the header */
-	offset += 8;
-	
-	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_MSG, item->mMsg.mMsg);
-	
-	if (offset != rssize)
-	{
-#ifdef GXSFORUM_DEBUG
-		std::cerr << "RsGxsForumSerialiser::deserialiseGxsForumMsgItem() FAIL size mismatch" << std::endl;
-#endif
-		/* error */
-		delete item;
-		return NULL;
-	}
-	
-	if (!ok)
-	{
-#ifdef GXSFORUM_DEBUG
-		std::cerr << "RsGxsForumSerialiser::deserialiseGxsForumMsgItem() NOK" << std::endl;
-#endif
-		delete item;
-		return NULL;
-	}
-	
-	return item;
-}
-
-/*****************************************************************************************/
-/*****************************************************************************************/
-/*****************************************************************************************/
 
