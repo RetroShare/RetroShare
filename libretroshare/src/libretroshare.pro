@@ -463,7 +463,7 @@ HEADERS +=	rsitems/rsitem.h \
 			serialiser/rsserial.h \
 			rsitems/rsserviceids.h \
 			serialiser/rsserviceitems.h \
-			serialiser/rsstatusitems.h \
+			rsitems/rsstatusitems.h \
 			serialiser/rstlvaddrs.h \
 			serialiser/rstlvbase.h \
 			serialiser/rstlvitem.h \
@@ -615,7 +615,6 @@ SOURCES +=	serialiser/rsbaseserial.cc \
 			rsitems/rshistoryitems.cc \
 			rsitems/rsmsgitems.cc \
 			serialiser/rsserial.cc \
-			serialiser/rsstatusitems.cc \
 			serialiser/rstlvaddrs.cc \
 			serialiser/rstlvbase.cc \
 			serialiser/rstlvitem.cc \
