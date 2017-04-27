@@ -156,6 +156,7 @@ bool p3Posted::getPostData(const uint32_t &token, std::vector<RsPostedPost> &msg
 						std::cerr << "Not a PostedPostItem neither a RsGxsCommentItem"
 											<< " PacketService=" << std::hex << (int)msg->PacketService() << std::dec
 											<< " PacketSubType=" << std::hex << (int)msg->PacketSubType() << std::dec
+                                            << " type name    =" << typeid(*msg).name()
 											<< " , deleting!" << std::endl;
 						delete *vit;
 					}
