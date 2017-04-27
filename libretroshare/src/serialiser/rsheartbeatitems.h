@@ -28,9 +28,8 @@
 #ifndef RS_HEARTBEAT_ITEMS_H
 #define RS_HEARTBEAT_ITEMS_H
 
-#include "serialiser/rsserial.h"
-#include "rsitems/rsserviceids.h"
 #include "rsitems/rsitem.h"
+#include "rsitems/rsserviceids.h"
 #include "rsitems/itempriorities.h"
 
 const uint8_t RS_PKT_SUBTYPE_HEARTBEAT_PULSE    = 0x01;
@@ -43,30 +42,25 @@ public:
 		setPriorityLevel(QOS_PRIORITY_RS_HEARTBEAT_PULSE) ;
     }
     virtual ~RsHeartbeatItem() {}
+    virtual void serial_process(RsGenericSerializer::SerializeJob /* j */,RsGenericSerializer::SerializeContext& /* ctx */) {}
 
-    virtual void clear();
-    virtual std::ostream &print(std::ostream &out, uint16_t indent = 0);
+    virtual void clear(){}
 };
 
-class RsHeartbeatSerialiser: public RsSerialType
+class RsHeartbeatSerialiser: public RsServiceSerializer
 {
-        public:
-        RsHeartbeatSerialiser()
-        :RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_HEARTBEAT)
-        { return; }
+public:
+        RsHeartbeatSerialiser() :RsServiceSerializer(RS_SERVICE_TYPE_HEARTBEAT) {}
 
-virtual     ~RsHeartbeatSerialiser() { return; }
+		virtual     ~RsHeartbeatSerialiser() {}
 
-virtual uint32_t    size(RsItem *);
-virtual bool        serialise  (RsItem *item, void *data, uint32_t *size);
-virtual RsItem *    deserialise(void *data, uint32_t *size);
-
-	private:
-
-virtual uint32_t        sizeHeartbeat(RsHeartbeatItem *);
-virtual bool            serialiseHeartbeat(RsHeartbeatItem *item, void *data, uint32_t *size);
-virtual RsHeartbeatItem *deserialiseHeartbeat(void *data, uint32_t *size);
-
+        virtual RsItem *create_item(uint16_t service,uint8_t item_subtype) const
+        {
+            if(service == RS_SERVICE_TYPE_HEARTBEAT && item_subtype == RS_PKT_SUBTYPE_HEARTBEAT_PULSE)
+                return new RsHeartbeatItem() ;
+            else
+                return NULL ;
+        }
 };
 
 

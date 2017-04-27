@@ -24,6 +24,7 @@
  *
  */
 
+#ifdef TO_REMOVE
 #include "serialiser/rsbaseserial.h"
 #include "rsitems/rsserviceids.h"
 #include "serialiser/rsheartbeatitems.h"
@@ -90,10 +91,6 @@ RsItem *RsHeartbeatSerialiser::deserialise(void *data, uint32_t *pktsize)
 
 /*************************************************************************/
 
-
-void RsHeartbeatItem::clear()
-{
-}
 
 std::ostream &RsHeartbeatItem::print(std::ostream &out, uint16_t indent)
 {
@@ -204,3 +201,5 @@ RsHeartbeatItem *RsHeartbeatSerialiser::deserialiseHeartbeat(void *data, uint32_
 
 
 /*************************************************************************/
+
+#endif

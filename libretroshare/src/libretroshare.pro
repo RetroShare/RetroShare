@@ -483,7 +483,7 @@ HEADERS +=	rsitems/rsitem.h \
 			rsitems/rsbanlistitems.h \
 			rsitems/rsbwctrlitems.h \
 			rsitems/rsdiscovery2items.h \
-			serialiser/rsheartbeatitems.h \
+			rsitems/rsheartbeatitems.h \
 			rsitems/rsrttitems.h \
 			serialiser/rsgxsrecognitems.h \
 			serialiser/rsgxsupdateitems.h \
@@ -631,7 +631,6 @@ SOURCES +=	serialiser/rsbaseserial.cc \
 			rsitems/rsbanlistitems.cc \
 			rsitems/rsbwctrlitems.cc \
 			rsitems/rsdiscovery2items.cc \
-			serialiser/rsheartbeatitems.cc \
 			rsitems/rsrttitems.cc \
 			serialiser/rsgxsrecognitems.cc \
 			serialiser/rsgxsupdateitems.cc \
