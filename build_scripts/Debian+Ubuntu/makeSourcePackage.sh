@@ -54,7 +54,7 @@ while [ ${#} -gt 0 ]; do
 done
 
 if test "${dist}" = "" ; then
-	dist="precise trusty vivid xenial yakkety"
+	dist="precise trusty vivid xenial yakkety zesty"
 fi
 
 echo Attempting to get revision number...
@@ -116,6 +116,8 @@ for i in ${dist}; do
 
     if test "${i}" = "lucid" ; then
         cp ../control.ubuntu_lucid debian/control
+    elif test "${i}" = "zesty" ; then
+        cp ../control.zesty debian/control
     elif test "${i}" = "squeeze" ; then
         cp ../control.squeeze_bubba3 debian/control
     elif test "${i}" = "precise" ; then

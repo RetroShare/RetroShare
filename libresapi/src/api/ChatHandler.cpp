@@ -164,6 +164,7 @@ ChatHandler::ChatHandler(StateTokenServer *sts, RsNotify *notify, RsMsgs *msgs, 
 
     addResourceHandler("*", this, &ChatHandler::handleWildcard);
     addResourceHandler("lobbies", this, &ChatHandler::handleLobbies);
+	addResourceHandler("create_lobby", this, &ChatHandler::handleCreateLobby);
     addResourceHandler("subscribe_lobby", this, &ChatHandler::handleSubscribeLobby);
     addResourceHandler("unsubscribe_lobby", this, &ChatHandler::handleUnsubscribeLobby);
 	addResourceHandler("autosubscribe_lobby", this, &ChatHandler::handleAutoSubsribeLobby);
@@ -1232,6 +1233,39 @@ void ChatHandler::handleCloseDistantChatConnexion(Request& req, Response& resp)
 	DistantChatPeerId chat_id(distant_chat_hex);
 	if (mRsMsgs->closeDistantChatConnexion(chat_id)) resp.setOk();
 	else resp.setFail("Failed to close distant chat");
+}
+
+void ChatHandler::handleCreateLobby(Request& req, Response& resp)
+{
+	std::set<RsPeerId> invited_identites;
+	std::string lobby_name;
+	std::string lobby_topic;
+	std::string gxs_id;
+
+	req.mStream << makeKeyValueReference("lobby_name", lobby_name);
+	req.mStream << makeKeyValueReference("lobby_topic", lobby_topic);
+	req.mStream << makeKeyValueReference("gxs_id", gxs_id);
+
+	RsGxsId gxsId(gxs_id);
+
+	bool lobby_public;
+	bool pgp_signed;
+
+	req.mStream << makeKeyValueReference("lobby_public", lobby_public);
+	req.mStream << makeKeyValueReference("pgp_signed", pgp_signed);
+
+	ChatLobbyFlags lobby_flags;
+
+	if(lobby_public)
+		lobby_flags |= RS_CHAT_LOBBY_FLAGS_PUBLIC;
+
+	if(pgp_signed)
+		lobby_flags |= RS_CHAT_LOBBY_FLAGS_PGP_SIGNED;
+
+	mRsMsgs->createChatLobby(lobby_name, gxsId, lobby_topic, invited_identites, lobby_flags);
+
+	tick();
+	resp.setOk();
 }
 
 } // namespace resource_api

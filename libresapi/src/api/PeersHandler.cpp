@@ -4,6 +4,7 @@
 #include <retroshare/rsmsgs.h>
 #include <util/radix64.h>
 #include <retroshare/rsstatus.h>
+#include <retroshare/rsiface.h>
 
 #include <algorithm>
 
@@ -106,6 +107,84 @@ bool peerInfoToStream(StreamBase& stream, RsPeerDetails& details, RsPeers* peers
     return ok;
 }
 
+std::string peerStateString(int peerState)
+{
+	if (peerState & RS_PEER_STATE_CONNECTED) {
+		return "Connected";
+	} else if (peerState & RS_PEER_STATE_UNREACHABLE) {
+		return "Unreachable";
+	} else if (peerState & RS_PEER_STATE_ONLINE) {
+		return "Available";
+	} else if (peerState & RS_PEER_STATE_FRIEND) {
+		return "Offline";
+	}
+
+	return "Neighbor";
+}
+
+std::string connectStateString(RsPeerDetails &details)
+{
+	std::string stateString;
+	bool isConnected = false;
+
+	switch (details.connectState) {
+	case 0:
+		stateString = peerStateString(details.state);
+		break;
+	case RS_PEER_CONNECTSTATE_TRYING_TCP:
+		stateString = "Trying TCP";
+		break;
+	case RS_PEER_CONNECTSTATE_TRYING_UDP:
+		stateString = "Trying UDP";
+		break;
+	case RS_PEER_CONNECTSTATE_CONNECTED_TCP:
+		stateString = "Connected: TCP";
+		isConnected = true;
+		break;
+	case RS_PEER_CONNECTSTATE_CONNECTED_UDP:
+		stateString = "Connected: UDP";
+		isConnected = true;
+		break;
+	case RS_PEER_CONNECTSTATE_CONNECTED_TOR:
+		stateString = "Connected: Tor";
+		isConnected = true;
+		break;
+	case RS_PEER_CONNECTSTATE_CONNECTED_I2P:
+		stateString = "Connected: I2P";
+		isConnected = true;
+		break;
+	case RS_PEER_CONNECTSTATE_CONNECTED_UNKNOWN:
+		stateString = "Connected: Unknown";
+		isConnected = true;
+		break;
+	}
+
+	if(isConnected) {
+		stateString += " ";
+		if(details.actAsServer)
+			stateString += "inbound connection";
+		else
+			stateString += "outbound connection";
+	}
+
+	if (details.connectStateString.empty() == false) {
+		if (stateString.empty() == false) {
+			stateString += ": ";
+		}
+		stateString += details.connectStateString;
+	}
+
+	/* HACK to display DHT Status info too */
+	if (details.foundDHT) {
+		if (stateString.empty() == false) {
+			stateString += ", ";
+		}
+		stateString += "DHT: Contact";
+	}
+
+	return stateString;
+}
+
 PeersHandler::PeersHandler(StateTokenServer* sts, RsNotify* notify, RsPeers *peers, RsMsgs* msgs):
     mStateTokenServer(sts),
     mNotify(notify),
@@ -121,6 +200,8 @@ PeersHandler::PeersHandler(StateTokenServer* sts, RsNotify* notify, RsPeers *pee
 	addResourceHandler("set_custom_state_string", this, &PeersHandler::handleSetCustomStateString);
 	addResourceHandler("get_pgp_options", this, &PeersHandler::handleGetPGPOptions);
 	addResourceHandler("set_pgp_options", this, &PeersHandler::handleSetPGPOptions);
+	addResourceHandler("get_node_options", this, &PeersHandler::handleGetNodeOptions);
+	addResourceHandler("set_node_options", this, &PeersHandler::handleSetNodeOptions);
 	addResourceHandler("examine_cert", this, &PeersHandler::handleExamineCert);
 }
 
@@ -138,6 +219,12 @@ void PeersHandler::notifyListChange(int list, int /* type */)
         mStateTokenServer->discardToken(mStateToken);
         mStateToken = mStateTokenServer->getNewToken();
     }
+}
+
+void PeersHandler::notifyPeerStatusChanged(const std::string& /*peer_id*/, uint32_t /*state*/)
+{
+	RsStackMutex stack(mMtx); /********** STACK LOCKED MTX ******/
+	mStateTokenServer->replaceToken(mStateToken);
 }
 
 void PeersHandler::notifyPeerHasNewAvatar(std::string /*peer_id*/)
@@ -641,6 +728,123 @@ void PeersHandler::handleSetPGPOptions(Request& req, Response& resp)
 		mRsPeers->signGPGCertificate(pgp);
 
 	resp.mStateToken = getCurrentStateToken();
+
+	resp.setOk();
+}
+
+void PeersHandler::handleGetNodeOptions(Request& req, Response& resp)
+{
+	std::string peer_id;
+	req.mStream << makeKeyValueReference("peer_id", peer_id);
+
+	RsPeerId peerId(peer_id);
+	RsPeerDetails detail;
+	if(!mRsPeers->getPeerDetails(peerId, detail))
+	{
+		resp.setFail();
+		return;
+	}
+
+	resp.mDataStream << makeKeyValue("peer_id", detail.id.toStdString());
+	resp.mDataStream << makeKeyValue("name", detail.name);
+	resp.mDataStream << makeKeyValue("location", detail.location);
+	resp.mDataStream << makeKeyValue("pgp_id", detail.gpg_id.toStdString());
+	resp.mDataStream << makeKeyValue("last_contact", detail.lastConnect);
+
+	std::string status_message = mRsMsgs->getCustomStateString(detail.id);
+	resp.mDataStream << makeKeyValueReference("status_message", status_message);
+
+	std::string encryption;
+	RsPeerCryptoParams cdet;
+	if(RsControl::instance()->getPeerCryptoDetails(detail.id, cdet) && cdet.connexion_state != 0)
+	{
+		encryption = cdet.cipher_version;
+		encryption += ": ";
+		encryption += cdet.cipher_name;
+
+		if(cdet.cipher_version != "TLSv1.2")
+			encryption += cdet.cipher_bits_1;
+	}
+	else
+		encryption = "Not connected";
+
+	resp.mDataStream << makeKeyValueReference("encryption", encryption);
+
+	resp.mDataStream << makeKeyValue("is_hidden_node", detail.isHiddenNode);
+	if (detail.isHiddenNode)
+	{
+		resp.mDataStream << makeKeyValue("local_address", detail.hiddenNodeAddress);
+		resp.mDataStream << makeKeyValue("local_port", (int)detail.hiddenNodePort);
+		resp.mDataStream << makeKeyValue("ext_address", std::string("none"));
+		resp.mDataStream << makeKeyValue("ext_port", 0);
+		resp.mDataStream << makeKeyValue("dyn_dns", std::string("none"));
+	}
+	else
+	{
+		resp.mDataStream << makeKeyValue("local_address", detail.localAddr);
+		resp.mDataStream << makeKeyValue("local_port", (int)detail.localPort);
+		resp.mDataStream << makeKeyValue("ext_address", detail.extAddr);
+		resp.mDataStream << makeKeyValue("ext_port", (int)detail.extPort);
+		resp.mDataStream << makeKeyValue("dyn_dns", detail.dyndns);
+	}
+
+	resp.mDataStream << makeKeyValue("connection_status", connectStateString(detail));
+
+	StreamBase& addressesStream = resp.mDataStream.getStreamToMember("ip_addresses");
+
+	// mark as list (in case list is empty)
+	addressesStream.getStreamToMember();
+
+	for(std::list<std::string>::const_iterator it(detail.ipAddressList.begin()); it != detail.ipAddressList.end(); ++it)
+	{
+		addressesStream.getStreamToMember() << makeKeyValue("ip_address", (*it));
+	}
+
+	std::string certificate = mRsPeers->GetRetroshareInvite(detail.id, false);
+	resp.mDataStream << makeKeyValueReference("certificate", certificate);
+
+	resp.setOk();
+}
+
+void PeersHandler::handleSetNodeOptions(Request& req, Response& resp)
+{
+	std::string peer_id;
+	req.mStream << makeKeyValueReference("peer_id", peer_id);
+
+	RsPeerId peerId(peer_id);
+	RsPeerDetails detail;
+	if(!mRsPeers->getPeerDetails(peerId, detail))
+	{
+		resp.setFail();
+		return;
+	}
+
+	std::string local_address;
+	std::string ext_address;
+	std::string dyn_dns;
+	int local_port;
+	int ext_port;
+
+	req.mStream << makeKeyValueReference("local_address", local_address);
+	req.mStream << makeKeyValueReference("local_port", local_port);
+	req.mStream << makeKeyValueReference("ext_address", ext_address);
+	req.mStream << makeKeyValueReference("ext_port", ext_port);
+	req.mStream << makeKeyValueReference("dyn_dns", dyn_dns);
+
+	if(!detail.isHiddenNode)
+	{
+		if(detail.localAddr != local_address || (int)detail.localPort != local_port)
+			mRsPeers->setLocalAddress(peerId, local_address, local_port);
+		if(detail.extAddr != ext_address || (int)detail.extPort != ext_port)
+			mRsPeers->setExtAddress(peerId, ext_address, ext_port);
+		if(detail.dyndns != dyn_dns)
+			mRsPeers->setDynDNS(peerId, dyn_dns);
+	}
+	else
+	{
+		if(detail.hiddenNodeAddress != local_address || detail.hiddenNodePort != local_port)
+			rsPeers->setHiddenNode(peerId, local_address, local_port);
+	}
 
 	resp.setOk();
 }
