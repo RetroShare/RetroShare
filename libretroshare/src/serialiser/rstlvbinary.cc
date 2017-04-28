@@ -188,6 +188,34 @@ bool     RsTlvBinaryData::GetTlv(void *data, uint32_t size, uint32_t *offset)
 
 	return ok;
 }
+std::ostream &RsTlvBinaryDataRef::print(std::ostream &out, uint16_t indent) const
+{
+        uint16_t int_Indent = indent + 2;
+
+        uint32_t i;
+        std::ostringstream sout;
+        printIndent(sout, indent);
+        sout << "RsTlvBinaryData: Type: " << tlvtype << " Size: " << mSizeRef;
+        sout << std::hex;
+
+        for(i = 0; i < mSizeRef; i++)
+        {
+                if (i % 16 == 0)
+                {
+                        sout << std::endl;
+        		printIndent(sout, int_Indent);
+                }
+                sout << std::setw(2) << std::setfill('0')
+                        << (int) (((unsigned char *) mDataRef)[i]) << ":";
+        }
+
+        sout << std::endl;
+        out << sout.str();
+
+        printEnd(out, "RsTlvBinaryData", indent);
+        return out;
+
+}
 
 std::ostream &RsTlvBinaryData::print(std::ostream &out, uint16_t indent) const
 {

@@ -72,6 +72,8 @@ public:
     RsTlvBinaryDataRef(uint16_t type,uint8_t *& data_ref,uint32_t& size_ref) : mDataRef(data_ref),mSizeRef(size_ref),tlvtype(type) {}
 	virtual ~RsTlvBinaryDataRef() {}
 
+	virtual std::ostream &print(std::ostream &out, uint16_t indent) const;
+
 	virtual uint32_t TlvSize() const;
 	virtual void	 TlvClear(){}
 	virtual bool     SetTlv(void *data, uint32_t size, uint32_t *offset) const;

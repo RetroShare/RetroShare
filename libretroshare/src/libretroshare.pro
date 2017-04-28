@@ -851,10 +851,10 @@ gxsphotoshare {
 	#Photo Service
 	HEADERS += services/p3photoservice.h \
 		retroshare/rsphoto.h \
-		serialiser/rsphotoitems.h \
+		rsitems/rsphotoitems.h \
 
 	SOURCES += services/p3photoservice.cc \
-		serialiser/rsphotoitems.cc \
+		rsitems/rsphotoitems.cc \
 }
 
 

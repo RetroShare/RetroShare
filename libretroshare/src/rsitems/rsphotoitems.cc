@@ -25,15 +25,15 @@
 
 #include <iostream>
 
-#include "serialiser/rsphotoitems.h"
-#include "serialiser/rstlvbase.h"
+#include "rsitems/rsphotoitems.h"
+
 #include "serialiser/rstlvbinary.h"
-#include "serialiser/rsbaseserial.h"
+#include "serialization/rstypeserializer.h"
 
 #define GXS_PHOTO_SERIAL_DEBUG
 
 
-virtual RsItem *create_item(uint16_t service, uint8_t item_sub_id) const
+RsItem *RsGxsPhotoSerialiser::create_item(uint16_t service, uint8_t item_sub_id) const
 {
     if(service != RS_SERVICE_GXS_TYPE_PHOTO)
         return NULL ;
