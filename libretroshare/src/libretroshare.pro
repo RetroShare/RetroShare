@@ -485,7 +485,7 @@ HEADERS +=	rsitems/rsitem.h \
 			rsitems/rsdiscovery2items.h \
 			rsitems/rsheartbeatitems.h \
 			rsitems/rsrttitems.h \
-			serialiser/rsgxsrecognitems.h \
+			rsitems/rsgxsrecognitems.h \
 			rsitems/rsgxsupdateitems.h \
 			rsitems/rsserviceinfoitems.h \
 
@@ -630,7 +630,7 @@ SOURCES +=	serialiser/rsbaseserial.cc \
 			rsitems/rsbwctrlitems.cc \
 			rsitems/rsdiscovery2items.cc \
 			rsitems/rsrttitems.cc \
-			serialiser/rsgxsrecognitems.cc \
+			rsitems/rsgxsrecognitems.cc \
 			rsitems/rsgxsupdateitems.cc \
 			rsitems/rsserviceinfoitems.cc \
 

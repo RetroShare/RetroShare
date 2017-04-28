@@ -43,7 +43,7 @@
 
 #include "pqi/authgpg.h"
 
-#include "serialiser/rsgxsrecognitems.h"
+#include "rsitems/rsgxsrecognitems.h"
 
 class PgpAuxUtils;
 

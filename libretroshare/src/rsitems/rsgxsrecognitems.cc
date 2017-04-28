@@ -23,8 +23,7 @@
  *
  */
 
-#include "serialiser/rsgxsrecognitems.h"
-#include "serialiser/rsbaseserial.h"
+#include "rsitems/rsgxsrecognitems.h"
 #include "serialization/rstypeserializer.h"
 
 /***
