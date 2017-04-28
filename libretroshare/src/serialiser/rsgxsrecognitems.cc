@@ -25,6 +25,7 @@
 
 #include "serialiser/rsgxsrecognitems.h"
 #include "serialiser/rsbaseserial.h"
+#include "serialization/rstypeserializer.h"
 
 /***
 #define RSSERIAL_DEBUG 1
@@ -34,9 +35,19 @@
 
 /*************************************************************************/
 
-RsGxsRecognReqItem::~RsGxsRecognReqItem()
+RsItem *RsGxsRecognSerialiser::create_item(uint16_t service, uint8_t item_sub_id) const
 {
-	return;
+    if(service != RS_SERVICE_TYPE_GXS_RECOGN)
+        return NULL ;
+
+    switch(item_sub_id)
+    {
+    case RS_PKT_SUBTYPE_RECOGN_REQ: return new RsGxsRecognReqItem();
+    case RS_PKT_SUBTYPE_RECOGN_SIGNER: return new RsGxsRecognSignerItem();
+    case RS_PKT_SUBTYPE_RECOGN_TAG: return new RsGxsRecognTagItem();
+    default:
+        return NULL ;
+    }
 }
 
 void 	RsGxsRecognReqItem::clear()
@@ -53,6 +64,12 @@ void 	RsGxsRecognReqItem::clear()
 	sign.TlvClear();
 
 }
+#ifdef TO_REMOVE
+RsGxsRecognReqItem::~RsGxsRecognReqItem()
+{
+	return;
+}
+
 
 std::ostream &RsGxsRecognReqItem::print(std::ostream &out, uint16_t indent)
 {
@@ -104,6 +121,21 @@ uint32_t    RsGxsRecognSerialiser::sizeReq(RsGxsRecognReqItem *item)
 	return s;
 }
 
+#endif
+
+void RsGxsRecognReqItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
+{
+    RsTypeSerializer::serial_process<uint32_t> (j,ctx,issued_at  ,"issued_at") ;
+    RsTypeSerializer::serial_process<uint32_t> (j,ctx,period     ,"period") ;
+    RsTypeSerializer::serial_process<uint16_t> (j,ctx,tag_class  ,"tag_class") ;
+    RsTypeSerializer::serial_process<uint16_t> (j,ctx,tag_type   ,"tag_type") ;
+    RsTypeSerializer::serial_process           (j,ctx,identity   ,"identity") ;
+    RsTypeSerializer::serial_process           (j,ctx,1,nickname ,"nickname") ;
+    RsTypeSerializer::serial_process           (j,ctx,1,comment  ,"comment") ;
+    RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,sign       ,"sign") ;
+}
+
+#ifdef TO_REMOVE
 /* serialise the data to the buffer */
 bool     RsGxsRecognSerialiser::serialiseReq(RsGxsRecognReqItem *item, void *data, uint32_t *pktsize)
 {
@@ -217,6 +249,7 @@ RsGxsRecognTagItem::~RsGxsRecognTagItem()
 {
 	return;
 }
+#endif
 
 void 	RsGxsRecognTagItem::clear()
 {
@@ -232,6 +265,7 @@ void 	RsGxsRecognTagItem::clear()
 	sign.TlvClear();
 }
 
+#ifdef TO_REMOVE
 std::ostream &RsGxsRecognTagItem::print(std::ostream &out, uint16_t indent)
 {
 	printRsItemBase(out, "RsGxsRecognTagItem", indent);
@@ -279,7 +313,20 @@ uint32_t    RsGxsRecognSerialiser::sizeTag(RsGxsRecognTagItem *item)
 
 	return s;
 }
+#endif
 
+void RsGxsRecognTagItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
+{
+    RsTypeSerializer::serial_process<uint32_t> (j,ctx,valid_from ,"valid_from") ;
+    RsTypeSerializer::serial_process<uint32_t> (j,ctx,valid_to   ,"valid_to") ;
+    RsTypeSerializer::serial_process<uint16_t> (j,ctx,tag_class  ,"tag_class") ;
+    RsTypeSerializer::serial_process<uint16_t> (j,ctx,tag_type   ,"tag_type") ;
+    RsTypeSerializer::serial_process           (j,ctx,identity   ,"identity");
+    RsTypeSerializer::serial_process           (j,ctx,1,nickname ,"nickname") ;
+    RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,sign       ,"sign") ;
+}
+
+#ifdef TO_REMOVE
 /* serialise the data to the buffer */
 bool     RsGxsRecognSerialiser::serialiseTag(RsGxsRecognTagItem *item, void *data, uint32_t *pktsize)
 {
@@ -393,6 +440,7 @@ RsGxsRecognSignerItem::~RsGxsRecognSignerItem()
 {
 	return;
 }
+#endif
 
 void 	RsGxsRecognSignerItem::clear()
 {
@@ -401,6 +449,7 @@ void 	RsGxsRecognSignerItem::clear()
 	sign.TlvClear();
 }
 
+#ifdef TO_REMOVE
 std::ostream &RsGxsRecognSignerItem::print(std::ostream &out, uint16_t indent)
 {
 	printRsItemBase(out, "RsGxsRecognSignerItem", indent);
@@ -435,7 +484,16 @@ uint32_t    RsGxsRecognSerialiser::sizeSigner(RsGxsRecognSignerItem *item)
 
 	return s;
 }
+#endif
 
+void RsGxsRecognSignerItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
+{
+    RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,signing_classes ,"signing_classes") ;
+    RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,key             ,"key");
+    RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,sign            ,"sign") ;
+}
+
+#ifdef TO_REMOVE
 /* serialise the data to the buffer */
 bool     RsGxsRecognSerialiser::serialiseSigner(RsGxsRecognSignerItem *item, void *data, uint32_t *pktsize)
 {
@@ -604,6 +662,6 @@ RsItem *RsGxsRecognSerialiser::deserialise(void *data, uint32_t *pktsize)
 }
 
 /*************************************************************************/
-
+#endif
 
 
