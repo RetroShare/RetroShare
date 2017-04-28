@@ -143,7 +143,7 @@ PUBLIC_HEADERS =	retroshare/rsdisc.h \
 
 HEADERS += plugins/pluginmanager.h \
 		plugins/dlfcn_win32.h \
-		serialiser/rspluginitems.h \
+		rsitems/rspluginitems.h \
     util/rsinitedptr.h
 
 HEADERS += $$PUBLIC_HEADERS
@@ -605,8 +605,7 @@ SOURCES +=  grouter/p3grouter.cc \
 				grouter/groutermatrix.cc 
 
 SOURCES += plugins/pluginmanager.cc \
-				plugins/dlfcn_win32.cc \
-				serialiser/rspluginitems.cc
+				plugins/dlfcn_win32.cc 
 
 SOURCES +=	serialiser/rsbaseserial.cc \
 			rsitems/rsfiletransferitems.cc \
