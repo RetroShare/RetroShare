@@ -25,6 +25,7 @@
 
 #include "serialiser/rsbaseserial.h"
 #include "serialiser/rsserviceinfoitems.h"
+#include "serialization/rstypeserializer.h"
 
 /***
 #define RSSERIAL_DEBUG 1
@@ -35,8 +36,7 @@
 /*************************************************************************/
 /***** RsServiceInfo ****/
 
-template<>
-std::ostream &RsTlvParamRef<RsServiceInfo>::print(std::ostream &out, uint16_t /*indent*/) const
+template<> std::ostream& RsTlvParamRef<RsServiceInfo>::print(std::ostream &out, uint16_t /*indent*/) const
 {
 	out << "RsServiceInfo: " << mParam.mServiceType << " name " << mParam.mServiceName;
 	out << std::endl;
@@ -138,38 +138,19 @@ template class RsTlvParamRef<RsServiceInfo>;
 
 /*************************************************************************/
 
-RsServiceInfoListItem::~RsServiceInfoListItem()
-{
-	return;
-}
-
 void 	RsServiceInfoListItem::clear()
 {
 	mServiceInfo.clear();
 }
 
-std::ostream &RsServiceInfoListItem::print(std::ostream &out, uint16_t indent)
+void RsServiceInfoListItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
-	printRsItemBase(out, "RsServiceInfoListItem", indent);
-	uint16_t int_Indent = indent + 2;
 	RsTlvServiceInfoMapRef map(mServiceInfo);
-	map.print(out, int_Indent);
-	out << std::endl;
 
-	printRsItemEnd(out, "RsServiceInfoListItem", indent);
-	return out;
+    RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,map,"map") ;
 }
 
-
-uint32_t    RsServiceInfoSerialiser::sizeInfo(RsServiceInfoListItem *item)
-{
-	uint32_t s = 8; /* header */
-	RsTlvServiceInfoMapRef map(item->mServiceInfo);
-	s += map.TlvSize();
-
-	return s;
-}
-
+#ifdef TO_REMOVE
 /* serialise the data to the buffer */
 bool     RsServiceInfoSerialiser::serialiseInfo(RsServiceInfoListItem *item, void *data, uint32_t *pktsize)
 {
@@ -291,7 +272,14 @@ uint32_t    RsServiceInfoSerialiser::sizePermissions(RsServiceInfoPermissionsIte
 
 	return s;
 }
+#endif
 
+void RsServiceInfoPermissionsItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
+{
+    RsTypeSerializer::serial_process<uint32_t>(j,ctx,allowedBw,"allowedBw") ;
+}
+
+#ifdef TO_REMOVE
 /* serialise the data to the buffer */
 bool     RsServiceInfoSerialiser::serialisePermissions(RsServiceInfoPermissionsItem *item, void *data, uint32_t *pktsize)
 {
@@ -440,6 +428,21 @@ RsItem *RsServiceInfoSerialiser::deserialise(void *data, uint32_t *pktsize)
 }
 
 /*************************************************************************/
+#endif
+
+RsItem *RsServiceInfoSerialiser::create_item(uint16_t service, uint8_t item_sub_id) const
+{
+    if(service != RS_SERVICE_TYPE_SERVICEINFO)
+        return NULL ;
+
+    switch(item_sub_id)
+    {
+    case RS_PKT_SUBTYPE_SERVICELIST_ITEM: return new RsServiceInfoListItem() ;
+    case RS_PKT_SUBTYPE_SERVICEPERMISSIONS_ITEM: return new RsServiceInfoPermissionsItem() ;
+    default:
+        return NULL ;
+    }
+}
 
 
 

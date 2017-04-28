@@ -34,8 +34,6 @@
 #include "rsitems/rsitem.h"
 #include "rsitems/itempriorities.h"
 
-#include "serialiser/rsserial.h"
-#include "serialiser/rstlvbase.h"
 #include "serialiser/rstlvgenericmap.h"
 #include "retroshare/rsservicecontrol.h"
 
@@ -63,72 +61,47 @@ public:
 	}
 };
 
-
-
 class RsServiceInfoListItem: public RsItem
 {
 	public:
-	RsServiceInfoListItem() 
-	:RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_SERVICEINFO, 
-		RS_PKT_SUBTYPE_SERVICELIST_ITEM)
+	RsServiceInfoListItem()  :RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_SERVICEINFO, RS_PKT_SUBTYPE_SERVICELIST_ITEM)
 	{ 
 		setPriorityLevel(QOS_PRIORITY_RS_SERVICE_INFO_ITEM);
 		return; 
 	}
 
-virtual ~RsServiceInfoListItem();
-virtual void clear();  
-std::ostream &print(std::ostream &out, uint16_t indent = 0);
+    virtual ~RsServiceInfoListItem(){}
+	virtual void clear();
 
-	std::map<uint32_t, RsServiceInfo> mServiceInfo;	
+	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
+
+	std::map<uint32_t, RsServiceInfo> mServiceInfo;
 };
-
 
 class RsServiceInfoPermissionsItem: public RsItem
 {
 	public:
-	RsServiceInfoPermissionsItem() 
-	:RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_SERVICEINFO, 
-		RS_PKT_SUBTYPE_SERVICEPERMISSIONS_ITEM)
+	RsServiceInfoPermissionsItem()  :RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_SERVICEINFO,  RS_PKT_SUBTYPE_SERVICEPERMISSIONS_ITEM)
 	{ 
 		setPriorityLevel(QOS_PRIORITY_RS_SERVICE_INFO_ITEM);
 		return; 
 	}
 
-virtual ~RsServiceInfoPermissionsItem();
-virtual void clear();  
-std::ostream &print(std::ostream &out, uint16_t indent = 0);
+    virtual ~RsServiceInfoPermissionsItem(){}
+    virtual void clear(){}
+
+	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 
 	uint32_t	allowedBw; // Units are bytes/sec => 4Gb/s; 
-
 };
 
-
-class RsServiceInfoSerialiser: public RsSerialType
+class RsServiceInfoSerialiser: public RsServiceSerializer
 {
 	public:
-	RsServiceInfoSerialiser()
-	:RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_SERVICEINFO)
-	{ return; }
-virtual     ~RsServiceInfoSerialiser()
-	{ return; }
+	RsServiceInfoSerialiser() :RsServiceSerializer(RS_SERVICE_TYPE_SERVICEINFO) {}
+	virtual     ~RsServiceInfoSerialiser() {}
 	
-virtual	uint32_t    size(RsItem *);
-virtual	bool        serialise  (RsItem *item, void *data, uint32_t *size);
-virtual	RsItem *    deserialise(void *data, uint32_t *size);
-
-	private:
-
-virtual	uint32_t    sizeInfo(RsServiceInfoListItem *);
-virtual	bool        serialiseInfo(RsServiceInfoListItem *item, void *data, uint32_t *size);
-virtual	RsServiceInfoListItem *deserialiseInfo(void *data, uint32_t *size);
-
-
-virtual	uint32_t    sizePermissions(RsServiceInfoPermissionsItem *);
-virtual	bool        serialisePermissions(RsServiceInfoPermissionsItem *item, void *data, uint32_t *size);
-virtual	RsServiceInfoPermissionsItem *deserialisePermissions(void *data, uint32_t *size);
-
-
+	virtual RsItem *create_item(uint16_t /* service */, uint8_t /* item_sub_id */) const;
 };
 
 /**************************************************************************/
