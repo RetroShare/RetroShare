@@ -34,7 +34,7 @@
 #include "rsnxsobserver.h"
 #include "pqi/p3linkmgr.h"
 #include "rsitems/rsnxsitems.h"
-#include "serialiser/rsgxsupdateitems.h"
+#include "rsitems/rsgxsupdateitems.h"
 #include "rsgxsnetutils.h"
 #include "pqi/p3cfgmgr.h"
 #include "rsgixs.h"

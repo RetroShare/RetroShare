@@ -24,9 +24,9 @@
  */
 
 #include "serialization/rstypeserializer.h"
+#include "serialiser/rsbaseserial.h"
 
 #include "rsgxsupdateitems.h"
-#include "rsbaseserial.h"
 
 /**********************************************************************************************/
 /*                                         SERIALIZER                                         */
