@@ -35,6 +35,41 @@
 
 /*************************************************************************/
 /***** RsServiceInfo ****/
+/*************************************************************************/
+
+void 	RsServiceInfoListItem::clear()
+{
+	mServiceInfo.clear();
+}
+
+void RsServiceInfoListItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
+{
+	RsTlvServiceInfoMapRef map(mServiceInfo);
+
+    RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,map,"map") ;
+}
+
+void RsServiceInfoPermissionsItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
+{
+    RsTypeSerializer::serial_process<uint32_t>(j,ctx,allowedBw,"allowedBw") ;
+}
+
+RsItem *RsServiceInfoSerialiser::create_item(uint16_t service, uint8_t item_sub_id) const
+{
+    if(service != RS_SERVICE_TYPE_SERVICEINFO)
+        return NULL ;
+
+    switch(item_sub_id)
+    {
+    case RS_PKT_SUBTYPE_SERVICELIST_ITEM: return new RsServiceInfoListItem() ;
+    case RS_PKT_SUBTYPE_SERVICEPERMISSIONS_ITEM: return new RsServiceInfoPermissionsItem() ;
+    default:
+        return NULL ;
+    }
+}
+
+
+
 
 template<> std::ostream& RsTlvParamRef<RsServiceInfo>::print(std::ostream &out, uint16_t /*indent*/) const
 {
@@ -135,314 +170,4 @@ bool RsTlvParamRef<RsServiceInfo>::GetTlv(void *data, uint32_t size, uint32_t *o
 }
 
 template class RsTlvParamRef<RsServiceInfo>;
-
-/*************************************************************************/
-
-void 	RsServiceInfoListItem::clear()
-{
-	mServiceInfo.clear();
-}
-
-void RsServiceInfoListItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
-{
-	RsTlvServiceInfoMapRef map(mServiceInfo);
-
-    RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,map,"map") ;
-}
-
-#ifdef TO_REMOVE
-/* serialise the data to the buffer */
-bool     RsServiceInfoSerialiser::serialiseInfo(RsServiceInfoListItem *item, void *data, uint32_t *pktsize)
-{
-	uint32_t tlvsize = sizeInfo(item);
-	uint32_t offset = 0;
-
-	if (*pktsize < tlvsize)
-		return false; /* not enough space */
-
-	*pktsize = tlvsize;
-
-	bool ok = true;
-
-	ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
-
-#ifdef RSSERIAL_DEBUG
-	std::cerr << "RsServiceInfoSerialiser::serialiseInfo() Header: " << ok << std::endl;
-	std::cerr << "RsServiceInfoSerialiser::serialiseInfo() Size: " << tlvsize << std::endl;
-#endif
-
-	/* skip the header */
-	offset += 8;
-
-	/* add mandatory parts first */
-	RsTlvServiceInfoMapRef map(item->mServiceInfo);
-	ok &= map.SetTlv(data, tlvsize, &offset);
-
-	if (offset != tlvsize)
-	{
-		ok = false;
-#ifdef RSSERIAL_DEBUG
-		std::cerr << "RsServiceInfoSerialiser::serialiseInfo() Size Error! " << std::endl;
-#endif
-	}
-	return ok;
-}
-
-RsServiceInfoListItem *RsServiceInfoSerialiser::deserialiseInfo(void *data, uint32_t *pktsize)
-{
-	/* get the type and size */
-	uint32_t rstype = getRsItemId(data);
-	uint32_t tlvsize = getRsItemSize(data);
-
-	uint32_t offset = 0;
-
-
-	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
-		(RS_SERVICE_TYPE_SERVICEINFO != getRsItemService(rstype)) ||
-		(RS_PKT_SUBTYPE_SERVICELIST_ITEM != getRsItemSubType(rstype)))
-	{
-		return NULL; /* wrong type */
-	}
-
-	if (*pktsize < tlvsize)    /* check size */
-		return NULL; /* not enough data */
-
-	/* set the packet length */
-	*pktsize = tlvsize;
-
-	bool ok = true;
-
-	/* ready to load */
-	RsServiceInfoListItem *item = new RsServiceInfoListItem();
-	item->clear();
-
-	/* skip the header */
-	offset += 8;
-
-	/* get mandatory parts first */
-	RsTlvServiceInfoMapRef map(item->mServiceInfo);
-	ok &= map.GetTlv(data, tlvsize, &offset);
-
-	if (offset != tlvsize)
-	{
-		/* error */
-		delete item;
-		return NULL;
-	}
-
-	if (!ok)
-	{
-		delete item;
-		return NULL;
-	}
-
-	return item;
-}
-
-/*************************************************************************/
-/*************************************************************************/
-
-RsServiceInfoPermissionsItem::~RsServiceInfoPermissionsItem()
-{
-	return;
-}
-
-void 	RsServiceInfoPermissionsItem::clear()
-{
-	allowedBw = 0;
-}
-
-std::ostream &RsServiceInfoPermissionsItem::print(std::ostream &out, uint16_t indent)
-{
-	printRsItemBase(out, "RsServiceInfoPermissionsItem", indent);
-	uint16_t int_Indent = indent + 2;
-	printIndent(out, int_Indent);
-	out << "AllowedBw: " << allowedBw;
-	out << std::endl;
-
-	printRsItemEnd(out, "RsServiceInfoPermissionsItem", indent);
-	return out;
-}
-
-
-uint32_t    RsServiceInfoSerialiser::sizePermissions(RsServiceInfoPermissionsItem * /*item*/)
-{
-	uint32_t s = 8; /* header */
-	s += GetTlvUInt32Size();
-
-	return s;
-}
-#endif
-
-void RsServiceInfoPermissionsItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
-{
-    RsTypeSerializer::serial_process<uint32_t>(j,ctx,allowedBw,"allowedBw") ;
-}
-
-#ifdef TO_REMOVE
-/* serialise the data to the buffer */
-bool     RsServiceInfoSerialiser::serialisePermissions(RsServiceInfoPermissionsItem *item, void *data, uint32_t *pktsize)
-{
-	uint32_t tlvsize = sizePermissions(item);
-	uint32_t offset = 0;
-
-	if (*pktsize < tlvsize)
-		return false; /* not enough space */
-
-	*pktsize = tlvsize;
-
-	bool ok = true;
-
-	ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
-
-#ifdef RSSERIAL_DEBUG
-	std::cerr << "RsServiceInfoSerialiser::serialisePermissions() Header: " << ok << std::endl;
-	std::cerr << "RsServiceInfoSerialiser::serialisePermissions() Size: " << tlvsize << std::endl;
-#endif
-
-	/* skip the header */
-	offset += 8;
-
-	/* add mandatory parts first */
-	ok &= SetTlvUInt32(data, tlvsize, &offset, TLV_TYPE_UINT32_BW, item->allowedBw);
-
-	if (offset != tlvsize)
-	{
-		ok = false;
-#ifdef RSSERIAL_DEBUG
-		std::cerr << "RsServiceInfoSerialiser::serialisePermissions() Size Error! " << std::endl;
-#endif
-	}
-
-	return ok;
-}
-
-RsServiceInfoPermissionsItem *RsServiceInfoSerialiser::deserialisePermissions(void *data, uint32_t *pktsize)
-{
-	/* get the type and size */
-	uint32_t rstype = getRsItemId(data);
-	uint32_t tlvsize = getRsItemSize(data);
-
-	uint32_t offset = 0;
-
-
-	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
-		(RS_SERVICE_TYPE_SERVICEINFO != getRsItemService(rstype)) ||
-		(RS_PKT_SUBTYPE_SERVICEPERMISSIONS_ITEM != getRsItemSubType(rstype)))
-	{
-		return NULL; /* wrong type */
-	}
-
-	if (*pktsize < tlvsize)    /* check size */
-		return NULL; /* not enough data */
-
-	/* set the packet length */
-	*pktsize = tlvsize;
-
-	bool ok = true;
-
-	/* ready to load */
-	RsServiceInfoPermissionsItem *item = new RsServiceInfoPermissionsItem();
-	item->clear();
-
-	/* skip the header */
-	offset += 8;
-
-	/* get mandatory parts first */
-	ok &= GetTlvUInt32(data, tlvsize, &offset, TLV_TYPE_UINT32_BW, &(item->allowedBw));
-
-
-	if (offset != tlvsize)
-	{
-		/* error */
-		delete item;
-		return NULL;
-	}
-
-	if (!ok)
-	{
-		delete item;
-		return NULL;
-	}
-
-	return item;
-}
-
-/*************************************************************************/
-
-uint32_t    RsServiceInfoSerialiser::size(RsItem *i)
-{
-	RsServiceInfoListItem *sli;
-	RsServiceInfoPermissionsItem *spi;
-
-	if (NULL != (sli = dynamic_cast<RsServiceInfoListItem *>(i)))
-	{
-		return sizeInfo(sli);
-	}
-	if (NULL != (spi = dynamic_cast<RsServiceInfoPermissionsItem *>(i)))
-	{
-		return sizePermissions(spi);
-	}
-	return 0;
-}
-
-bool     RsServiceInfoSerialiser::serialise(RsItem *i, void *data, uint32_t *pktsize)
-{
-	RsServiceInfoListItem *sli;
-	RsServiceInfoPermissionsItem *spi;
-
-	if (NULL != (sli = dynamic_cast<RsServiceInfoListItem *>(i)))
-	{
-		return serialiseInfo(sli, data, pktsize);
-	}
-	if (NULL != (spi = dynamic_cast<RsServiceInfoPermissionsItem *>(i)))
-	{
-		return serialisePermissions(spi, data, pktsize);
-	}
-	return false;
-}
-
-RsItem *RsServiceInfoSerialiser::deserialise(void *data, uint32_t *pktsize)
-{
-	/* get the type and size */
-	uint32_t rstype = getRsItemId(data);
-
-	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
-		(RS_SERVICE_TYPE_SERVICEINFO != getRsItemService(rstype)))
-	{
-		return NULL; /* wrong type */
-	}
-
-	switch(getRsItemSubType(rstype))
-	{
-		case RS_PKT_SUBTYPE_SERVICELIST_ITEM:
-			return deserialiseInfo(data, pktsize);
-			break;
-		case RS_PKT_SUBTYPE_SERVICEPERMISSIONS_ITEM:
-			return deserialisePermissions(data, pktsize);
-			break;
-		default:
-			return NULL;
-			break;
-	}
-}
-
-/*************************************************************************/
-#endif
-
-RsItem *RsServiceInfoSerialiser::create_item(uint16_t service, uint8_t item_sub_id) const
-{
-    if(service != RS_SERVICE_TYPE_SERVICEINFO)
-        return NULL ;
-
-    switch(item_sub_id)
-    {
-    case RS_PKT_SUBTYPE_SERVICELIST_ITEM: return new RsServiceInfoListItem() ;
-    case RS_PKT_SUBTYPE_SERVICEPERMISSIONS_ITEM: return new RsServiceInfoPermissionsItem() ;
-    default:
-        return NULL ;
-    }
-}
-
-
 
