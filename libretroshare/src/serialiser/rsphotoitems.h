@@ -34,8 +34,8 @@
 #include "rsgxsitems.h"
 #include "retroshare/rsphoto.h"
 
-const uint8_t RS_PKT_SUBTYPE_PHOTO_ITEM = 0x02;
-const uint8_t RS_PKT_SUBTYPE_PHOTO_SHOW_ITEM = 0x03;
+const uint8_t RS_PKT_SUBTYPE_PHOTO_ITEM         = 0x02;
+const uint8_t RS_PKT_SUBTYPE_PHOTO_SHOW_ITEM    = 0x03;
 const uint8_t RS_PKT_SUBTYPE_PHOTO_COMMENT_ITEM = 0x04;
 
 class RsGxsPhotoAlbumItem : public RsGxsGrpItem

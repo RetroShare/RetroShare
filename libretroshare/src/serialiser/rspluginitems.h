@@ -26,14 +26,10 @@
 
 #pragma once
 
-#include "serialiser/rsserial.h"
+#include "rsitems/rsitem.h"
 #include "rsitems/rsconfigitems.h"
-#include "serialiser/rsbaseserial.h"
 
-#if 0
-#include "serialiser/rstlvbase.h"
-#include "serialiser/rstlvtypes.h"
-#endif
+#include "serialization/rstypeserializer.h"
 
 const uint8_t RS_PKT_CLASS_PLUGIN_SUBTYPE_HASHSET = 0x01 ;
 
@@ -43,26 +39,7 @@ class RsPluginItem: public RsItem
 		RsPluginItem(uint8_t plugin_item_subtype): RsItem(RS_PKT_VERSION1,RS_PKT_CLASS_CONFIG,RS_PKT_TYPE_PLUGIN_CONFIG,plugin_item_subtype) {}
 		virtual ~RsPluginItem() {}
 
-		virtual bool serialise(void *data,uint32_t& size) = 0 ;	// Isn't it better that items can serialise themselves ?
-		virtual uint32_t serial_size() = 0 ; 							// deserialise is handled using a constructor
-
 		virtual void clear() {} 
-};
-
-class RsPluginSerialiser: public RsSerialType
-{
-	public:
-		RsPluginSerialiser() : RsSerialType(RS_PKT_VERSION1, RS_PKT_CLASS_CONFIG, RS_PKT_TYPE_PLUGIN_CONFIG) {}
-
-		virtual uint32_t 	size (RsItem *item) 
-		{ 
-			return dynamic_cast<RsPluginItem *>(item)->serial_size() ;
-		}
-		virtual bool serialise(RsItem *item, void *data, uint32_t *size) 
-		{ 
-			return dynamic_cast<RsPluginItem *>(item)->serialise(data,*size) ;
-		}
-		virtual RsItem *deserialise (void *data, uint32_t *size) ;
 };
 
 class RsPluginHashSetItem: public RsPluginItem
@@ -71,13 +48,26 @@ class RsPluginHashSetItem: public RsPluginItem
 		RsPluginHashSetItem() : RsPluginItem(RS_PKT_CLASS_PLUGIN_SUBTYPE_HASHSET) {}
 		RsPluginHashSetItem(void *data,uint32_t size) ;
 
+		virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
+        {
+            RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,hashes,"hashes");
+        }
+
 		RsTlvHashSet hashes ;
+};
 
-		virtual std::ostream& print(std::ostream& o, uint16_t) ;
+class RsPluginSerialiser: public RsConfigSerializer
+{
+	public:
+		RsPluginSerialiser() : RsConfigSerializer(RS_PKT_CLASS_CONFIG, RS_PKT_TYPE_PLUGIN_CONFIG) {}
 
-	protected:
-		virtual bool serialise(void *data,uint32_t& size) ;
-		virtual uint32_t serial_size() ;
+		virtual RsItem *create_item(uint8_t class_type, uint8_t item_type) const
+        {
+            if(class_type == RS_PKT_TYPE_PLUGIN_CONFIG && item_type == RS_PKT_CLASS_PLUGIN_SUBTYPE_HASHSET)
+                return new RsPluginHashSetItem() ;
+
+            return NULL ;
+        }
 };
 
 

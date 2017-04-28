@@ -1,5 +1,6 @@
 #include "rspluginitems.h"
 
+#ifdef TO_REMOVE
 #ifndef WINDOWS_SYS
 #include <stdexcept>
 #endif
@@ -130,3 +131,5 @@ std::ostream& RsPluginHashSetItem::print(std::ostream& o, uint16_t)
 }
 
 
+
+#endif
