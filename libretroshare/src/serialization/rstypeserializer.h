@@ -88,8 +88,8 @@ class RsTypeSerializer
 				ctx.mOffset += 4 ;
 				for(typename std::map<T,U>::iterator it(v.begin());it!=v.end();++it)
                 {
-                    ctx.mOffset += serial_size(it->first) ;
-                    ctx.mOffset += serial_size(it->second) ;
+                    serial_process(j,ctx,const_cast<T&>(it->first),"map::*it->first") ;
+                    serial_process(j,ctx,const_cast<U&>(it->second),"map::*it->second") ;
 				}
 			}
 				break ;
@@ -97,15 +97,15 @@ class RsTypeSerializer
 			case RsGenericSerializer::DESERIALIZE:
 			{
                 uint32_t n=0 ;
-				ctx.mOk = ctx.mOk && deserialize<uint32_t>(ctx.mData,ctx.mSize,ctx.mOffset,n) ;
+				serial_process(j,ctx,n,"temporary size");
 
 				for(uint32_t i=0;i<n;++i)
                 {
                     T t ;
                     U u ;
 
-					ctx.mOk = ctx.mOk && deserialize(ctx.mData,ctx.mSize,ctx.mOffset,t) ;
-					ctx.mOk = ctx.mOk && deserialize(ctx.mData,ctx.mSize,ctx.mOffset,u) ;
+                    serial_process(j,ctx,t,"map::*it->first") ;
+                    serial_process(j,ctx,u,"map::*it->second") ;
 
                     v[t] = u ;
                 }
@@ -115,12 +115,12 @@ class RsTypeSerializer
 			case RsGenericSerializer::SERIALIZE:
 			{
 				uint32_t n=v.size();
-				ctx.mOk = ctx.mOk && serialize<uint32_t>(ctx.mData,ctx.mSize,ctx.mOffset,n) ;
+				serial_process(j,ctx,n,"temporary size");
 
 				for(typename std::map<T,U>::iterator it(v.begin());it!=v.end();++it)
                 {
-					ctx.mOk = ctx.mOk && serialize(ctx.mData,ctx.mSize,ctx.mOffset,it->first) ;
-					ctx.mOk = ctx.mOk && serialize(ctx.mData,ctx.mSize,ctx.mOffset,it->second) ;
+                    serial_process(j,ctx,const_cast<T&>(it->first),"map::*it->first") ;
+                    serial_process(j,ctx,const_cast<U&>(it->second),"map::*it->second") ;
                 }
 			}
 				break ;
@@ -136,8 +136,8 @@ class RsTypeSerializer
                 {
                     std::cerr << "  " ;
 
-                    print_data("first",it->first) ;
-                    print_data("second",it->second) ;
+                    serial_process(j,ctx,const_cast<T&>(it->first),"map::*it->first") ;
+                    serial_process(j,ctx,const_cast<U&>(it->second),"map::*it->second") ;
                 }
 			}
 				break;

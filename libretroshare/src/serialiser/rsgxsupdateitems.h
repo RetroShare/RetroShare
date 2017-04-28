@@ -55,15 +55,7 @@ public:
     RsGxsNetServiceItem(uint16_t serv_type,uint8_t subtype) : RsItem(RS_PKT_VERSION_SERVICE, serv_type, subtype) {}
 
     virtual ~RsGxsNetServiceItem() {}
-
-	virtual bool serialise(void *data,uint32_t& size) const = 0 ;
-	virtual uint32_t serial_size() const = 0 ;
-
 	virtual void clear() = 0 ;
-	virtual std::ostream& print(std::ostream &out, uint16_t indent = 0) = 0;
-
-protected:
-	bool serialise_header(void *data, uint32_t& pktsize, uint32_t& tlvsize, uint32_t& offset) const;
 };
 
 class RsGxsGrpConfig
@@ -96,10 +88,7 @@ public:
     virtual ~RsGxsGrpConfigItem() {}
 
     virtual void clear() {}
-    virtual std::ostream &print(std::ostream &out, uint16_t /*indent*/) { return out;}
-
-	virtual bool serialise(void *data,uint32_t& size) const ;
-	virtual uint32_t serial_size() const ;
+	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 
 	RsGxsGroupId grpId ;
 };
@@ -121,10 +110,7 @@ public:
     virtual ~RsGxsGrpUpdateItem() {}
 
     virtual void clear();
-    virtual std::ostream &print(std::ostream &out, uint16_t indent);
-
-	virtual bool serialise(void *data,uint32_t& size) const ;
-	virtual uint32_t serial_size() const ;
+	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 
     RsPeerId peerID;
 };
@@ -145,11 +131,8 @@ public:
 
     virtual ~RsGxsServerGrpUpdateItem() {}
 
-        virtual void clear();
-        virtual std::ostream &print(std::ostream &out, uint16_t indent);
-
-	virtual bool serialise(void *data,uint32_t& size) const ;
-	virtual uint32_t serial_size() const ;
+	virtual void clear();
+	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 };
 
 class RsGxsMsgUpdate
@@ -175,10 +158,7 @@ public:
     virtual ~RsGxsMsgUpdateItem() {}
 
     virtual void clear();
-    virtual std::ostream &print(std::ostream &out, uint16_t indent);
-
-	virtual bool serialise(void *data,uint32_t& size) const ;
-	virtual uint32_t serial_size() const ;
+	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 
     RsPeerId peerID;
 };
@@ -199,58 +179,21 @@ public:
     virtual ~RsGxsServerMsgUpdateItem() {}
 
 	virtual void clear();
-	virtual std::ostream &print(std::ostream &out, uint16_t indent);
-
-	virtual bool serialise(void *data,uint32_t& size) const ;
-	virtual uint32_t serial_size() const ;
+	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 
 	RsGxsGroupId grpId;
 };
 
 
-class RsGxsUpdateSerialiser : public RsSerialType
+class RsGxsUpdateSerialiser : public RsServiceSerializer
 {
 public:
 
-	RsGxsUpdateSerialiser(uint16_t servtype) : RsSerialType(RS_PKT_VERSION_SERVICE, servtype), SERVICE_TYPE(servtype) {}
+	RsGxsUpdateSerialiser(uint16_t servtype) : RsServiceSerializer(servtype), SERVICE_TYPE(servtype) {}
 
 	virtual ~RsGxsUpdateSerialiser() {}
 
-	virtual uint32_t size(RsItem *item)
-	{
-		RsGxsNetServiceItem *gitem = dynamic_cast<RsGxsNetServiceItem *>(item);
-
-		if (!gitem)
-        {
-            std::cerr << "(EE) trying to serialise/size an item that is not a RsGxsNetServiceItem!" << std::endl;
-			return 0;
-        }
-
-		return gitem->serial_size() ;
-	}
-	virtual bool serialise(RsItem *item, void *data, uint32_t *size)
-	{
-		RsGxsNetServiceItem *gitem = dynamic_cast<RsGxsNetServiceItem *>(item);
-
-		if (!gitem)
-        {
-            std::cerr << "(EE) trying to serialise an item that is not a RsGxsNetServiceItem!" << std::endl;
-			return false;
-        }
-
-		return gitem->serialise(data,*size) ;
-	}
-
-	virtual RsItem* deserialise(void *data, uint32_t *size);
-
-private:
-	RsGxsGrpConfigItem       *deserialGxsGrpConfig(void *data, uint32_t *size);
-	RsGxsServerMsgUpdateItem *deserialGxsServerMsgUpdate(void *data, uint32_t *size);
-	RsGxsMsgUpdateItem       *deserialGxsMsgUpdate(void *data, uint32_t *size);
-	RsGxsServerGrpUpdateItem *deserialGxsServerGrpUpddate(void *data, uint32_t *size);
-	RsGxsGrpUpdateItem       *deserialGxsGrpUpddate(void *data, uint32_t *size);
-
-	bool checkItemHeader(void *data, uint32_t *size, uint16_t service_type,uint8_t subservice_type);
+	virtual RsItem* create_item(uint16_t service,uint8_t item_subtype) const ;
 
 	const uint16_t SERVICE_TYPE;
 };
