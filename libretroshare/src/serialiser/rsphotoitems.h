@@ -29,9 +29,11 @@
 #include <map>
 
 #include "rsitems/rsserviceids.h"
-#include "serialiser/rsserial.h"
+#include "rsitems/rsgxsitems.h"
 
-#include "rsgxsitems.h"
+#include "serialiser/rsserial.h"
+#include "serialization/rsserializer.h"
+
 #include "retroshare/rsphoto.h"
 
 const uint8_t RS_PKT_SUBTYPE_PHOTO_ITEM         = 0x02;
@@ -50,6 +52,7 @@ public:
         void clear();
 	std::ostream &print(std::ostream &out, uint16_t indent = 0);
 
+	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 
 	RsPhotoAlbum album;
 };
@@ -58,11 +61,12 @@ class RsGxsPhotoPhotoItem : public RsGxsMsgItem
 {
 public:
 
-	RsGxsPhotoPhotoItem(): RsGxsMsgItem(RS_SERVICE_GXS_TYPE_PHOTO,
-			RS_PKT_SUBTYPE_PHOTO_SHOW_ITEM) {return; }
-        virtual ~RsGxsPhotoPhotoItem() { return;}
-        void clear();
-	std::ostream &print(std::ostream &out, uint16_t indent = 0);
+	RsGxsPhotoPhotoItem(): RsGxsMsgItem(RS_SERVICE_GXS_TYPE_PHOTO, RS_PKT_SUBTYPE_PHOTO_SHOW_ITEM) {}
+	virtual ~RsGxsPhotoPhotoItem() {}
+	void clear();
+
+	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
+
 	RsPhotoPhoto photo;
 };
 
@@ -70,43 +74,23 @@ class RsGxsPhotoCommentItem : public RsGxsMsgItem
 {
 public:
 
-    RsGxsPhotoCommentItem(): RsGxsMsgItem(RS_SERVICE_GXS_TYPE_PHOTO,
-                                          RS_PKT_SUBTYPE_PHOTO_COMMENT_ITEM) { return; }
-    virtual ~RsGxsPhotoCommentItem() { return; }
+    RsGxsPhotoCommentItem(): RsGxsMsgItem(RS_SERVICE_GXS_TYPE_PHOTO, RS_PKT_SUBTYPE_PHOTO_COMMENT_ITEM) {}
+    virtual ~RsGxsPhotoCommentItem() {}
     void clear();
-    std::ostream &print(std::ostream &out, uint16_t indent = 0);
+
+	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
+
     RsPhotoComment comment;
-
-
 };
 
-class RsGxsPhotoSerialiser : public RsSerialType
+class RsGxsPhotoSerialiser : public RsServiceSerializer
 {
 public:
 
-	RsGxsPhotoSerialiser()
-	:RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_GXS_TYPE_PHOTO)
-	{ return; }
-	virtual     ~RsGxsPhotoSerialiser() { return; }
+	RsGxsPhotoSerialiser() :RsServiceSerializer(RS_SERVICE_GXS_TYPE_PHOTO) {}
+	virtual     ~RsGxsPhotoSerialiser() {}
 
-	uint32_t    size(RsItem *item);
-	bool        serialise  (RsItem *item, void *data, uint32_t *size);
-	RsItem *    deserialise(void *data, uint32_t *size);
-
-	private:
-
-	uint32_t    sizeGxsPhotoAlbumItem(RsGxsPhotoAlbumItem *item);
-	bool        serialiseGxsPhotoAlbumItem  (RsGxsPhotoAlbumItem *item, void *data, uint32_t *size);
-	RsGxsPhotoAlbumItem *    deserialiseGxsPhotoAlbumItem(void *data, uint32_t *size);
-
-	uint32_t    sizeGxsPhotoPhotoItem(RsGxsPhotoPhotoItem *item);
-	bool        serialiseGxsPhotoPhotoItem  (RsGxsPhotoPhotoItem *item, void *data, uint32_t *size);
-	RsGxsPhotoPhotoItem *    deserialiseGxsPhotoPhotoItem(void *data, uint32_t *size);
-
-        uint32_t    sizeGxsPhotoCommentItem(RsGxsPhotoCommentItem *item);
-        bool        serialiseGxsPhotoCommentItem  (RsGxsPhotoCommentItem *item, void *data, uint32_t *size);
-        RsGxsPhotoCommentItem *    deserialiseGxsPhotoCommentItem(void *data, uint32_t *size);
-
+	virtual RsItem *create_item(uint16_t service, uint8_t item_sub_id) const;
 };
 
 #endif /* RSPHOTOV2ITEMS_H_ */

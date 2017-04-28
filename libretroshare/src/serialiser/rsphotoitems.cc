@@ -33,6 +33,22 @@
 #define GXS_PHOTO_SERIAL_DEBUG
 
 
+virtual RsItem *create_item(uint16_t service, uint8_t item_sub_id) const
+{
+    if(service != RS_SERVICE_GXS_TYPE_PHOTO)
+        return NULL ;
+
+    switch(item_sub_id)
+    {
+    case RS_PKT_SUBTYPE_PHOTO_COMMENT_ITEM: return new RsGxsPhotoCommentItem() ;
+    case RS_PKT_SUBTYPE_PHOTO_SHOW_ITEM: return new RsGxsPhotoAlbumItem() ;
+    case RS_PKT_SUBTYPE_PHOTO_ITEM: return new RsGxsPhotoPhotoItem() ;
+    default:
+        return NULL ;
+    }
+}
+
+#ifdef TO_REMOVE
 uint32_t RsGxsPhotoSerialiser::size(RsItem* item)
 {
 	RsGxsPhotoPhotoItem* ppItem = NULL;
@@ -161,7 +177,27 @@ uint32_t    RsGxsPhotoSerialiser::sizeGxsPhotoCommentItem(RsGxsPhotoCommentItem 
     return s;
 
 }
+#endif
 
+void RsGxsPhotoAlbumItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
+{
+     RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_CAPTION,  album.mCaption,       "mCaption");
+     RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_CATEGORY, album.mCategory,      "mCategory");
+     RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_DESCR,    album.mDescription,   "mDescription");
+     RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_HASH_TAG, album.mHashTags,      "mHashTags");
+     RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_MSG,      album.mOther,         "mOther");
+     RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_PATH,     album.mPhotoPath,     "mPhotoPath");
+     RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_NAME,     album.mPhotographer,  "mPhotographer");
+     RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_DATE,     album.mWhen,          "mWhen");
+     RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_LOCATION, album.mWhere,         "mWhere");
+     RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_PIC_TYPE, album.mThumbnail.type,"mThumbnail.type");
+
+     RsTlvBinaryDataRef b(RS_SERVICE_GXS_TYPE_PHOTO, album.mThumbnail.data,album.mThumbnail.size);
+
+     RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,b,"thumbnail binary data") ;
+}
+
+#ifdef TO_REMOVE
 bool RsGxsPhotoSerialiser::serialiseGxsPhotoAlbumItem(RsGxsPhotoAlbumItem* item, void* data,
 		uint32_t* size)
 {
@@ -326,7 +362,25 @@ uint32_t RsGxsPhotoSerialiser::sizeGxsPhotoPhotoItem(RsGxsPhotoPhotoItem* item)
 
 	return s;
 }
+#endif
 
+void RsGxsPhotoPhotoItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
+{
+    RsTypeSerializer::serial_process(j,ctx, TLV_TYPE_STR_CAPTION, photo.mCaption);
+    RsTypeSerializer::serial_process(j,ctx, TLV_TYPE_STR_CATEGORY, photo.mCategory);
+    RsTypeSerializer::serial_process(j,ctx, TLV_TYPE_STR_DESCR, photo.mDescription);
+    RsTypeSerializer::serial_process(j,ctx, TLV_TYPE_STR_HASH_TAG, photo.mHashTags);
+    RsTypeSerializer::serial_process(j,ctx, TLV_TYPE_STR_MSG, photo.mOther);
+    RsTypeSerializer::serial_process(j,ctx, TLV_TYPE_STR_PIC_AUTH, photo.mPhotographer);
+    RsTypeSerializer::serial_process(j,ctx, TLV_TYPE_STR_DATE, photo.mWhen);
+    RsTypeSerializer::serial_process(j,ctx, TLV_TYPE_STR_LOCATION, photo.mWhere);
+    RsTypeSerializer::serial_process(j,ctx, TLV_TYPE_STR_PIC_TYPE, photo.mThumbnail.type);
+
+    RsTlvBinaryDataRef b(RS_SERVICE_GXS_TYPE_PHOTO,photo.mThumbnail.data, photo.mThumbnail.size);
+    RsTypeSerializer::serial_process<RsTlvItem>(j,ctx, b, "mThumbnail") ;
+}
+
+#ifdef TO_REMOVE
 bool RsGxsPhotoSerialiser::serialiseGxsPhotoPhotoItem(RsGxsPhotoPhotoItem* item, void* data,
 		uint32_t* size)
 {
@@ -468,8 +522,15 @@ RsGxsPhotoPhotoItem* RsGxsPhotoSerialiser::deserialiseGxsPhotoPhotoItem(void* da
     return item;
 }
 
+#endif
 
+void RsGxsPhotoCommentItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
+{
+    RsTypeSerializer::serial_process          (j,ctx,TLV_TYPE_STR_COMMENT,comment.mComment,"mComment");
+    RsTypeSerializer::serial_process<uint32_t>(j,ctx,comment.mCommentFlag,"mCommentFlag");
+}
 
+#ifdef TO_REMOVE
 bool        RsGxsPhotoSerialiser::serialiseGxsPhotoCommentItem  (RsGxsPhotoCommentItem *item, void *data, uint32_t *size)
 {
 
@@ -586,6 +647,7 @@ RsGxsPhotoCommentItem *    RsGxsPhotoSerialiser::deserialiseGxsPhotoCommentItem(
 
     return item;
 }
+#endif
 
 void RsGxsPhotoAlbumItem::clear()
 {
@@ -607,6 +669,7 @@ void RsGxsPhotoCommentItem::clear()
     comment.mCommentFlag = 0;
 }
 
+#ifdef TO_REMOVE
 std::ostream& RsGxsPhotoCommentItem::print(std::ostream& out, uint16_t indent)
 {
     printRsItemBase(out, "RsGxsPhotoCommentItem", indent);
@@ -628,6 +691,19 @@ std::ostream& RsGxsPhotoAlbumItem::print(std::ostream& out, uint16_t indent)
     return out;
 }
 
+std::ostream& RsGxsPhotoPhotoItem::print(std::ostream& out, uint16_t indent)
+{
+    printRsItemBase(out, "RsGxsPhotoPhotoItem", indent);
+    uint16_t int_Indent = indent + 2;
+
+
+    printRsItemEnd(out ,"RsGxsPhotoPhotoItem", indent);
+    return out;
+}
+
+
+#endif
+
 void RsGxsPhotoPhotoItem::clear()
 {
 	photo.mCaption.clear();
@@ -640,14 +716,3 @@ void RsGxsPhotoPhotoItem::clear()
 	photo.mWhere.clear();
 	photo.mThumbnail.deleteImage();
 }
-
-std::ostream& RsGxsPhotoPhotoItem::print(std::ostream& out, uint16_t indent)
-{
-    printRsItemBase(out, "RsGxsPhotoPhotoItem", indent);
-    uint16_t int_Indent = indent + 2;
-
-
-    printRsItemEnd(out ,"RsGxsPhotoPhotoItem", indent);
-    return out;
-}
-

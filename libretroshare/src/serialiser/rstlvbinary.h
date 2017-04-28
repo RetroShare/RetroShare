@@ -64,4 +64,23 @@ public:
 	void    *bin_data;	/// mandatory
 };
 
+// This class is mainly used for on-the-fly serialization
+
+class RsTlvBinaryDataRef: public RsTlvItem
+{
+public:
+    RsTlvBinaryDataRef(uint16_t type,uint8_t *& data_ref,uint32_t& size_ref) : mDataRef(data_ref),mSizeRef(size_ref),tlvtype(type) {}
+	virtual ~RsTlvBinaryDataRef() {}
+
+	virtual uint32_t TlvSize() const;
+	virtual void	 TlvClear(){}
+	virtual bool     SetTlv(void *data, uint32_t size, uint32_t *offset) const;
+	virtual bool     GetTlv(void *data, uint32_t size, uint32_t *offset);
+
+    uint8_t *& mDataRef ;
+    uint32_t & mSizeRef ;
+    uint16_t tlvtype ;
+};
+
+
 
