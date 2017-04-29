@@ -8,6 +8,8 @@ TARGET = resapi
 TARGET_PRL = libresapi
 DESTDIR = lib
 
+CONFIG += c++11
+
 INCLUDEPATH += ../../libretroshare/src
 
 retroshare_android_service {
@@ -182,7 +184,8 @@ SOURCES += \
     util/ContentTypes.cpp \
     api/ApiPluginHandler.cpp \
     api/ChannelsHandler.cpp \
-    api/StatsHandler.cpp
+    api/StatsHandler.cpp \
+    api/NotificationHandler.cpp
 
 HEADERS += \
 	api/ApiServer.h \
@@ -209,7 +212,8 @@ HEADERS += \
     util/ContentTypes.h \
     api/ApiPluginHandler.h \
     api/ChannelsHandler.h \
-    api/StatsHandler.h
+    api/StatsHandler.h \
+    api/NotificationHandler.h
 
 libresapilocalserver {
     CONFIG *= qt
