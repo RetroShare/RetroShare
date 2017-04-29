@@ -339,15 +339,15 @@ class RsTypeSerializer
 		}
 
 	protected:
-		template<class T> static bool     serialize  (uint8_t data[], uint32_t size, uint32_t &offset, const T& member);
-		template<class T> static bool     deserialize(const uint8_t data[], uint32_t size, uint32_t &offset, T& member);
-		template<class T> static uint32_t serial_size(const T& /* member */);
-		template<class T> static void     print_data(const std::string& name,const T& /* member */);
+		template<typename T> static bool     serialize  (uint8_t data[], uint32_t size, uint32_t &offset, const T& member);
+		template<typename T> static bool     deserialize(const uint8_t data[], uint32_t size, uint32_t &offset, T& member);
+		template<typename T> static uint32_t serial_size(const T& /* member */);
+		template<typename T> static void     print_data(const std::string& name,const T& /* member */);
 
-		template<class T> static bool     serialize  (uint8_t data[], uint32_t size, uint32_t &offset, uint16_t type_id,const T& member);
-		template<class T> static bool     deserialize(const uint8_t data[], uint32_t size, uint32_t &offset,uint16_t type_id, T& member);
-		template<class T> static uint32_t serial_size(uint16_t type_id,const T& /* member */);
-		template<class T> static void     print_data(const std::string& name,uint16_t type_id,const T& /* member */);
+		template<typename T> static bool     serialize  (uint8_t data[], uint32_t size, uint32_t &offset, uint16_t type_id,const T& member);
+		template<typename T> static bool     deserialize(const uint8_t data[], uint32_t size, uint32_t &offset,uint16_t type_id, T& member);
+		template<typename T> static uint32_t serial_size(uint16_t type_id,const T& /* member */);
+		template<typename T> static void     print_data(const std::string& name,uint16_t type_id,const T& /* member */);
 
 		template<uint32_t ID_SIZE_IN_BYTES,bool UPPER_CASE,uint32_t UNIQUE_IDENTIFIER> static bool     serialize  (uint8_t data[], uint32_t size, uint32_t &offset, const t_RsGenericIdType<ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER>& member);
 		template<uint32_t ID_SIZE_IN_BYTES,bool UPPER_CASE,uint32_t UNIQUE_IDENTIFIER> static bool     deserialize(const uint8_t data[], uint32_t size, uint32_t &offset, t_RsGenericIdType<ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER>& member);

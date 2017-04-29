@@ -60,10 +60,6 @@ class RsGxsTunnelItem: public RsItem
 
 		virtual ~RsGxsTunnelItem() {}
 		virtual void clear() {}
-		virtual std::ostream& print(std::ostream &out, uint16_t indent = 0) = 0 ;
-
-		virtual bool serialise(void *data,uint32_t& size) = 0 ;	// Isn't it better that items can serialize themselves ?
-		virtual uint32_t serial_size() = 0 ; 							// deserialise is handled using a constructor
 };
 
 /*!
@@ -81,10 +77,8 @@ public:
 
     virtual ~RsGxsTunnelDataItem() {}
     virtual void clear() {}
-    virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
 
-    virtual bool serialise(void *data,uint32_t& size) ;	// Isn't it better that items can serialize themselves ?
-    virtual uint32_t serial_size() ;				// deserialise is handled using a constructor
+	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 
     uint64_t unique_item_counter;				// this allows to make the item unique
     uint32_t flags;						// mainly NEEDS_HACK?
@@ -103,10 +97,8 @@ class RsGxsTunnelStatusItem: public RsGxsTunnelItem
 		RsGxsTunnelStatusItem(void *data,uint32_t size) ; // deserialization
 
 		virtual ~RsGxsTunnelStatusItem() {}
-		virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
 
-		virtual bool serialise(void *data,uint32_t& size) ;	// Isn't it better that items can serialize themselves ?
-		virtual uint32_t serial_size() ;			// deserialise is handled using a constructor
+		virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 
 		uint32_t status ;
 };
@@ -120,12 +112,10 @@ class RsGxsTunnelDataAckItem: public RsGxsTunnelItem
 		RsGxsTunnelDataAckItem(void *data,uint32_t size) ; // deserialization
 
 		virtual ~RsGxsTunnelDataAckItem() {}
-		virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
 
-		virtual bool serialise(void *data,uint32_t& size) ;	// Isn't it better that items can serialize themselves ?
-		virtual uint32_t serial_size() ;			// deserialise is handled using a constructor
+		virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 
-        	uint64_t unique_item_counter ;					// unique identifier for that item
+		uint64_t unique_item_counter ;					// unique identifier for that item
 };
 
 
@@ -139,10 +129,8 @@ class RsGxsTunnelDHPublicKeyItem: public RsGxsTunnelItem
 		RsGxsTunnelDHPublicKeyItem(void *data,uint32_t size) ; // deserialization
 
 		virtual ~RsGxsTunnelDHPublicKeyItem() ;
-		virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
 
-		virtual bool serialise(void *data,uint32_t& size) ;	// Isn't it better that items can serialize themselves ?
-		virtual uint32_t serial_size() ; 							// deserialise is handled using a constructor
+		virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 
 		// Private data to DH public key item
 		//
@@ -157,24 +145,11 @@ class RsGxsTunnelDHPublicKeyItem: public RsGxsTunnelItem
 		const RsGxsTunnelDHPublicKeyItem& operator=(const RsGxsTunnelDHPublicKeyItem&) { return *this ;}
 };
 
-class RsGxsTunnelSerialiser: public RsSerialType
+class RsGxsTunnelSerialiser: public RsServiceSerializer
 {
 public:
-	RsGxsTunnelSerialiser() :RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_GXS_TUNNEL) {}
+	RsGxsTunnelSerialiser() :RsServiceSerializer(RS_SERVICE_TYPE_GXS_TUNNEL) {}
 
-	virtual uint32_t 	size (RsItem *item) 
-	{ 
-		return static_cast<RsGxsTunnelItem *>(item)->serial_size() ; 
-	}
-	virtual bool serialise(RsItem *item, void *data, uint32_t *size) 
-	{ 
-		return static_cast<RsGxsTunnelItem *>(item)->serialise(data,*size) ; 
-	}
-	RsItem *deserialise(void *data, uint32_t *pktsize);
-private:
-	static RsGxsTunnelDataAckItem     *deserialise_RsGxsTunnelDataAckItem    (void *data, uint32_t size) ;
-	static RsGxsTunnelDataItem        *deserialise_RsGxsTunnelDataItem       (void *data, uint32_t size) ;
-	static RsGxsTunnelStatusItem      *deserialise_RsGxsTunnelStatusItem     (void *data, uint32_t size) ;
-	static RsGxsTunnelDHPublicKeyItem *deserialise_RsGxsTunnelDHPublicKeyItem(void *data, uint32_t size) ;
+	virtual RsItem *create_item(uint16_t service,uint8_t item_subtype) const ;
 };
 
