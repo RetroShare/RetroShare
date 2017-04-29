@@ -25,9 +25,9 @@
 
 #include <iostream>
 
-#include "rswikiitems.h"
+#include "rsitems/rswikiitems.h"
 #include "serialiser/rstlvbase.h"
-#include "serialiser/rsbaseserial.h"
+#include "serialization/rstypeserializer.h"
 
 #define GXSID_DEBUG	1
 

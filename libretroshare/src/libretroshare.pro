@@ -821,20 +821,20 @@ wikipoos {
 	# Wiki Service
 	HEADERS += retroshare/rswiki.h \
 		services/p3wiki.h \
-		serialiser/rswikiitems.h
+		rsitems/rswikiitems.h
 
 	SOURCES += services/p3wiki.cc \
-		serialiser/rswikiitems.cc \
+		rsitems/rswikiitems.cc \
 }
 
 gxsthewire {
 	# Wire Service
 	HEADERS += retroshare/rswire.h \
 		services/p3wire.h \
-		serialiser/rswireitems.h
+		rsitems/rswireitems.h
 
 	SOURCES += services/p3wire.cc \
-		serialiser/rswireitems.cc \
+		rsitems/rswireitems.cc \
 }
 
 # Posted Service

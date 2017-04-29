@@ -30,8 +30,8 @@
 
 #include "rsitems/rsserviceids.h"
 #include "rsitems/rsitem.h"
+#include "rsitems/rsgxsitems.h"
 
-#include "serialiser/rsgxsitems.h"
 #include "retroshare/rswiki.h"
 
 const uint8_t RS_PKT_SUBTYPE_WIKI_COLLECTION_ITEM = 0x02;
