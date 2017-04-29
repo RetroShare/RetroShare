@@ -29,28 +29,24 @@
 #include <map>
 
 #include "rsitems/rsserviceids.h"
-#include "serialiser/rsserial.h"
-//#include "serialiser/rstlvtypes.h"
+#include "rsitems/rsitem.h"
 
-#include "rsgxsitems.h"
+#include "serialiser/rsgxsitems.h"
 #include "retroshare/rswiki.h"
 
 const uint8_t RS_PKT_SUBTYPE_WIKI_COLLECTION_ITEM = 0x02;
-const uint8_t RS_PKT_SUBTYPE_WIKI_SNAPSHOT_ITEM = 0x03;
-const uint8_t RS_PKT_SUBTYPE_WIKI_COMMENT_ITEM = 0x04;
+const uint8_t RS_PKT_SUBTYPE_WIKI_SNAPSHOT_ITEM   = 0x03;
+const uint8_t RS_PKT_SUBTYPE_WIKI_COMMENT_ITEM    = 0x04;
 
 class RsGxsWikiCollectionItem : public RsGxsGrpItem
 {
-
 public:
+	RsGxsWikiCollectionItem():  RsGxsGrpItem(RS_SERVICE_GXS_TYPE_WIKI, RS_PKT_SUBTYPE_WIKI_COLLECTION_ITEM) {}
+	virtual ~RsGxsWikiCollectionItem() {}
 
-	RsGxsWikiCollectionItem():  RsGxsGrpItem(RS_SERVICE_GXS_TYPE_WIKI,
-			RS_PKT_SUBTYPE_WIKI_COLLECTION_ITEM) { return;}
-        virtual ~RsGxsWikiCollectionItem() { return;}
+	void clear();
 
-        void clear();
-	std::ostream &print(std::ostream &out, uint16_t indent = 0);
-
+	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 
 	RsWikiCollection collection;
 };
@@ -59,11 +55,12 @@ class RsGxsWikiSnapshotItem : public RsGxsMsgItem
 {
 public:
 
-	RsGxsWikiSnapshotItem(): RsGxsMsgItem(RS_SERVICE_GXS_TYPE_WIKI,
-			RS_PKT_SUBTYPE_WIKI_SNAPSHOT_ITEM) {return; }
-        virtual ~RsGxsWikiSnapshotItem() { return;}
-        void clear();
-	std::ostream &print(std::ostream &out, uint16_t indent = 0);
+	RsGxsWikiSnapshotItem(): RsGxsMsgItem(RS_SERVICE_GXS_TYPE_WIKI, RS_PKT_SUBTYPE_WIKI_SNAPSHOT_ITEM) {}
+	virtual ~RsGxsWikiSnapshotItem() {}
+	void clear();
+
+	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
+
 	RsWikiSnapshot snapshot;
 };
 
@@ -71,42 +68,23 @@ class RsGxsWikiCommentItem : public RsGxsMsgItem
 {
 public:
 
-    RsGxsWikiCommentItem(): RsGxsMsgItem(RS_SERVICE_GXS_TYPE_WIKI,
-                                          RS_PKT_SUBTYPE_WIKI_COMMENT_ITEM) { return; }
-    virtual ~RsGxsWikiCommentItem() { return; }
+    RsGxsWikiCommentItem(): RsGxsMsgItem(RS_SERVICE_GXS_TYPE_WIKI, RS_PKT_SUBTYPE_WIKI_COMMENT_ITEM) {}
+    virtual ~RsGxsWikiCommentItem() {}
     void clear();
-    std::ostream &print(std::ostream &out, uint16_t indent = 0);
+	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
+
     RsWikiComment comment;
 
 };
 
-class RsGxsWikiSerialiser : public RsSerialType
+class RsGxsWikiSerialiser : public RsServiceSerializer
 {
 public:
 
-	RsGxsWikiSerialiser()
-	:RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_GXS_TYPE_WIKI)
-	{ return; }
-	virtual     ~RsGxsWikiSerialiser() { return; }
+	RsGxsWikiSerialiser() :RsServiceSerializer(RS_SERVICE_GXS_TYPE_WIKI) {}
+	virtual     ~RsGxsWikiSerialiser() {}
 
-	uint32_t    size(RsItem *item);
-	bool        serialise  (RsItem *item, void *data, uint32_t *size);
-	RsItem *    deserialise(void *data, uint32_t *size);
-
-	private:
-
-	uint32_t    sizeGxsWikiCollectionItem(RsGxsWikiCollectionItem *item);
-	bool        serialiseGxsWikiCollectionItem  (RsGxsWikiCollectionItem *item, void *data, uint32_t *size);
-	RsGxsWikiCollectionItem *    deserialiseGxsWikiCollectionItem(void *data, uint32_t *size);
-
-	uint32_t    sizeGxsWikiSnapshotItem(RsGxsWikiSnapshotItem *item);
-	bool        serialiseGxsWikiSnapshotItem  (RsGxsWikiSnapshotItem *item, void *data, uint32_t *size);
-	RsGxsWikiSnapshotItem *    deserialiseGxsWikiSnapshotItem(void *data, uint32_t *size);
-
-        uint32_t    sizeGxsWikiCommentItem(RsGxsWikiCommentItem *item);
-        bool        serialiseGxsWikiCommentItem  (RsGxsWikiCommentItem *item, void *data, uint32_t *size);
-        RsGxsWikiCommentItem *    deserialiseGxsWikiCommentItem(void *data, uint32_t *size);
-
+	virtual RsItem *create_item(uint16_t /* service */, uint8_t /* item_sub_id */) const;
 };
 
 #endif /* RS_WIKI_ITEMS_H */

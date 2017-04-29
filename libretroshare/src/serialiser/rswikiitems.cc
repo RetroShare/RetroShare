@@ -31,7 +31,22 @@
 
 #define GXSID_DEBUG	1
 
+RsItem *RsGxsWikiSerialiser::create_item(uint16_t service, uint8_t item_sub_id) const
+{
+    if(service != RS_SERVICE_GXS_TYPE_WIKI)
+        return NULL ;
 
+    switch(item_sub_id)
+    {
+    case RS_PKT_SUBTYPE_WIKI_COLLECTION_ITEM: return new RsGxsWikiCollectionItem();
+    case RS_PKT_SUBTYPE_WIKI_COMMENT_ITEM:    return new RsGxsWikiCommentItem();
+    case RS_PKT_SUBTYPE_WIKI_SNAPSHOT_ITEM:   return new RsGxsWikiSnapshotItem();
+    default:
+        return NULL ;
+    }
+}
+
+#ifdef TO_REMOVE
 uint32_t RsGxsWikiSerialiser::size(RsItem *item)
 {
 	RsGxsWikiCollectionItem* grp_item = NULL;
@@ -117,6 +132,7 @@ RsItem* RsGxsWikiSerialiser::deserialise(void* data, uint32_t* size)
 /*****************************************************************************************/
 /*****************************************************************************************/
 
+#endif
 
 void RsGxsWikiCollectionItem::clear()
 {
@@ -125,6 +141,7 @@ void RsGxsWikiCollectionItem::clear()
 	collection.mHashTags.clear();
 }
 
+#ifdef TO_REMOVE
 std::ostream& RsGxsWikiCollectionItem::print(std::ostream& out, uint16_t indent)
 {
 	printRsItemBase(out, "RsGxsWikiCollectionItem", indent);
@@ -154,7 +171,16 @@ uint32_t RsGxsWikiSerialiser::sizeGxsWikiCollectionItem(RsGxsWikiCollectionItem 
 
 	return s;
 }
+#endif
 
+void RsGxsWikiCollectionItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
+{
+    RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_DESCR   ,collection.mDescription,"collection.mDescription") ;
+    RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_CATEGORY,collection.mCategory   ,"collection.mCategory") ;
+    RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_HASH_TAG,collection.mHashTags   ,"collection.mHashTags") ;
+}
+
+#ifdef TO_REMOVE
 bool RsGxsWikiSerialiser::serialiseGxsWikiCollectionItem(RsGxsWikiCollectionItem *item, void *data, uint32_t *size)
 {
 	
@@ -277,6 +303,7 @@ RsGxsWikiCollectionItem* RsGxsWikiSerialiser::deserialiseGxsWikiCollectionItem(v
 /*****************************************************************************************/
 /*****************************************************************************************/
 
+#endif
 
 void RsGxsWikiSnapshotItem::clear()
 {
@@ -284,6 +311,7 @@ void RsGxsWikiSnapshotItem::clear()
 	snapshot.mHashTags.clear();
 }
 
+#ifdef TO_REMOVE
 std::ostream& RsGxsWikiSnapshotItem::print(std::ostream& out, uint16_t indent)
 {
 	printRsItemBase(out, "RsGxsWikiSnapshotItem", indent);
@@ -311,7 +339,15 @@ uint32_t RsGxsWikiSerialiser::sizeGxsWikiSnapshotItem(RsGxsWikiSnapshotItem *ite
 
 	return s;
 }
+#endif
 
+void RsGxsWikiSnapshotItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
+{
+    RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_WIKI_PAGE,snapshot.mPage,"snapshot.mPage") ;
+    RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_HASH_TAG ,snapshot.mPage,"snapshot.mHashTags") ;
+}
+
+#ifdef TO_REMOVE
 bool RsGxsWikiSerialiser::serialiseGxsWikiSnapshotItem(RsGxsWikiSnapshotItem *item, void *data, uint32_t *size)
 {
 	
@@ -431,12 +467,14 @@ RsGxsWikiSnapshotItem* RsGxsWikiSerialiser::deserialiseGxsWikiSnapshotItem(void 
 /*****************************************************************************************/
 /*****************************************************************************************/
 
+#endif
 
 void RsGxsWikiCommentItem::clear()
 {
 	comment.mComment.clear();
 }
 
+#ifdef TO_REMOVE
 std::ostream& RsGxsWikiCommentItem::print(std::ostream& out, uint16_t indent)
 {
 	printRsItemBase(out, "RsGxsWikiCommentItem", indent);
@@ -460,7 +498,14 @@ uint32_t RsGxsWikiSerialiser::sizeGxsWikiCommentItem(RsGxsWikiCommentItem *item)
 
 	return s;
 }
+#endif
 
+void RsGxsWikiCommentItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
+{
+    RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_COMMENT,comment.mComment,"comment.mComment") ;
+}
+
+#ifdef TO_REMOVE
 bool RsGxsWikiSerialiser::serialiseGxsWikiCommentItem(RsGxsWikiCommentItem *item, void *data, uint32_t *size)
 {
 	
@@ -578,3 +623,5 @@ RsGxsWikiCommentItem* RsGxsWikiSerialiser::deserialiseGxsWikiCommentItem(void *d
 /*****************************************************************************************/
 /*****************************************************************************************/
 
+
+#endif

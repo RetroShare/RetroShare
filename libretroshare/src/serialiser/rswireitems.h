@@ -43,13 +43,12 @@ class RsGxsWireGroupItem : public RsGxsGrpItem
 
 public:
 
-	RsGxsWireGroupItem():  RsGxsGrpItem(RS_SERVICE_GXS_TYPE_WIRE,
-			RS_PKT_SUBTYPE_WIRE_GROUP_ITEM) { return;}
-        virtual ~RsGxsWireGroupItem() { return;}
+	RsGxsWireGroupItem():  RsGxsGrpItem(RS_SERVICE_GXS_TYPE_WIRE, RS_PKT_SUBTYPE_WIRE_GROUP_ITEM) {}
+	virtual ~RsGxsWireGroupItem() {}
 
-        void clear();
-	std::ostream &print(std::ostream &out, uint16_t indent = 0);
+	void clear();
 
+	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 
 	RsWireGroup group;
 };
@@ -58,36 +57,23 @@ class RsGxsWirePulseItem : public RsGxsMsgItem
 {
 public:
 
-	RsGxsWirePulseItem(): RsGxsMsgItem(RS_SERVICE_GXS_TYPE_WIRE,
-			RS_PKT_SUBTYPE_WIRE_PULSE_ITEM) {return; }
-        virtual ~RsGxsWirePulseItem() { return;}
-        void clear();
-	std::ostream &print(std::ostream &out, uint16_t indent = 0);
+	RsGxsWirePulseItem(): RsGxsMsgItem(RS_SERVICE_GXS_TYPE_WIRE, RS_PKT_SUBTYPE_WIRE_PULSE_ITEM) {}
+	virtual ~RsGxsWirePulseItem() {}
+	void clear();
+
+	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
+
 	RsWirePulse pulse;
 };
 
-class RsGxsWireSerialiser : public RsSerialType
+class RsGxsWireSerialiser : public RsServiceSerializer
 {
 public:
 
-	RsGxsWireSerialiser()
-	:RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_GXS_TYPE_WIRE)
-	{ return; }
-	virtual     ~RsGxsWireSerialiser() { return; }
+	RsGxsWireSerialiser() :RsServiceSerializer(RS_SERVICE_GXS_TYPE_WIRE) {}
+	virtual     ~RsGxsWireSerialiser() {}
 
-	uint32_t    size(RsItem *item);
-	bool        serialise  (RsItem *item, void *data, uint32_t *size);
-	RsItem *    deserialise(void *data, uint32_t *size);
-
-	private:
-
-	uint32_t    sizeGxsWireGroupItem(RsGxsWireGroupItem *item);
-	bool        serialiseGxsWireGroupItem  (RsGxsWireGroupItem *item, void *data, uint32_t *size);
-	RsGxsWireGroupItem *    deserialiseGxsWireGroupItem(void *data, uint32_t *size);
-
-	uint32_t    sizeGxsWirePulseItem(RsGxsWirePulseItem *item);
-	bool        serialiseGxsWirePulseItem  (RsGxsWirePulseItem *item, void *data, uint32_t *size);
-	RsGxsWirePulseItem *    deserialiseGxsWirePulseItem(void *data, uint32_t *size);
+    virtual RsItem *create_item(uint16_t service,uint8_t item_subtype) const ;
 };
 
 #endif /* RS_WIKI_ITEMS_H */

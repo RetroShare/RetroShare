@@ -26,12 +26,27 @@
 #include <iostream>
 
 #include "rswireitems.h"
-#include "serialiser/rstlvbase.h"
-#include "serialiser/rsbaseserial.h"
+
+#include "serialization/rstypeserializer.h"
 
 #define WIRE_DEBUG	1
 
 
+RsItem *RsGxsWireSerialiser::create_item(uint16_t service,uint8_t item_subtype) const
+{
+    if(service != RS_SERVICE_GXS_TYPE_WIRE)
+        return NULL ;
+
+    switch(item_subtype)
+    {
+    case RS_PKT_SUBTYPE_WIRE_GROUP_ITEM: return new RsGxsWireGroupItem();
+    case RS_PKT_SUBTYPE_WIRE_PULSE_ITEM: return new RsGxsWirePulseItem();
+    default:
+        return NULL ;
+    }
+}
+
+#ifdef TO_REMOVE
 uint32_t RsGxsWireSerialiser::size(RsItem *item)
 {
 	RsGxsWireGroupItem* grp_item = NULL;
@@ -104,12 +119,14 @@ RsItem* RsGxsWireSerialiser::deserialise(void* data, uint32_t* size)
 /*****************************************************************************************/
 /*****************************************************************************************/
 
+#endif
 
 void RsGxsWireGroupItem::clear()
 {
 	group.mDescription.clear();
 }
 
+#ifdef TO_REMOVE
 std::ostream& RsGxsWireGroupItem::print(std::ostream& out, uint16_t indent)
 {
 	printRsItemBase(out, "RsGxsWireGroupItem", indent);
@@ -134,6 +151,14 @@ uint32_t RsGxsWireSerialiser::sizeGxsWireGroupItem(RsGxsWireGroupItem *item)
 	return s;
 }
 
+#endif
+
+void RsGxsWireGroupItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
+{
+    RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_DESCR,group.mDescription,"group.mDescription") ;
+}
+
+#ifdef TO_REMOVE
 bool RsGxsWireSerialiser::serialiseGxsWireGroupItem(RsGxsWireGroupItem *item, void *data, uint32_t *size)
 {
 	
@@ -287,6 +312,15 @@ uint32_t RsGxsWireSerialiser::sizeGxsWirePulseItem(RsGxsWirePulseItem *item)
 	return s;
 }
 
+#endif
+
+void RsGxsWirePulseItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
+{
+    RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_MSG,pulse.mPulseText,"pulse.mPulseText") ;
+    RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_HASH_TAG,pulse.mHashTags,"pulse.mHashTags") ;
+}
+
+#ifdef TO_REMOVE
 bool RsGxsWireSerialiser::serialiseGxsWirePulseItem(RsGxsWirePulseItem *item, void *data, uint32_t *size)
 {
 	
@@ -406,3 +440,4 @@ RsGxsWirePulseItem* RsGxsWireSerialiser::deserialiseGxsWirePulseItem(void *data,
 /*****************************************************************************************/
 /*****************************************************************************************/
 
+#endif
