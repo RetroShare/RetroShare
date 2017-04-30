@@ -37,7 +37,7 @@
 
 #include "retroshare/rsgxschannels.h"
 
-#include "serialization/rsserializer.h"
+#include "serialiser/rsserializer.h"
 
 #include "util/rsdir.h"
 

@@ -27,7 +27,7 @@
 #include "rsitems/rsdiscovery2items.h"
 #include "serialiser/rsbaseserial.h"
 
-#include "serialization/rstypeserializer.h"
+#include "serialiser/rstypeserializer.h"
 
 #if 0
 

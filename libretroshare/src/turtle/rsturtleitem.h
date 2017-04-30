@@ -13,7 +13,7 @@
 #include "retroshare/rstypes.h"
 #include "turtle/turtletypes.h"
 
-#include "serialization/rsserializer.h"
+#include "serialiser/rsserializer.h"
 
 const uint8_t RS_TURTLE_SUBTYPE_STRING_SEARCH_REQUEST	= 0x01 ;
 const uint8_t RS_TURTLE_SUBTYPE_SEARCH_RESULT  			= 0x02 ;

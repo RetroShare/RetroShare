@@ -28,7 +28,7 @@
 #include "serialiser/rsbaseserial.h"
 #include "rsitems/rsgxsreputationitems.h"
 
-#include "serialization/rstypeserializer.h"
+#include "serialiser/rstypeserializer.h"
 
 /***
 #define RSSERIAL_DEBUG 1

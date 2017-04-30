@@ -29,7 +29,7 @@
 #include "serialiser/rsbaseserial.h"
 #include "serialiser/rstlvbase.h"
 
-#include "serialization/rstypeserializer.h"
+#include "serialiser/rstypeserializer.h"
 
 #include "chat/rschatitems.h"
 

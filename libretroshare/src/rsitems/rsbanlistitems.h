@@ -32,7 +32,7 @@
 #include "rsitems/rsitem.h"
 #include "rsitems/itempriorities.h"
 #include "serialiser/rstlvbanlist.h"
-#include "serialization/rsserializer.h"
+#include "serialiser/rsserializer.h"
 
 #define RS_PKT_SUBTYPE_BANLIST_ITEM_deprecated  		0x01
 #define RS_PKT_SUBTYPE_BANLIST_CONFIG_ITEM_deprecated 	0x02

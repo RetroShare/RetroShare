@@ -27,7 +27,7 @@
 
 #include "rsgxsforumitems.h"
 
-#include "serialization/rstypeserializer.h"
+#include "serialiser/rstypeserializer.h"
 
 //#define GXSFORUM_DEBUG	1
 

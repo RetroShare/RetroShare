@@ -29,7 +29,7 @@
 #include "rsitems/rsitem.h"
 #include "rsitems/rsconfigitems.h"
 
-#include "serialization/rstypeserializer.h"
+#include "serialiser/rstypeserializer.h"
 
 const uint8_t RS_PKT_CLASS_PLUGIN_SUBTYPE_HASHSET = 0x01 ;
 

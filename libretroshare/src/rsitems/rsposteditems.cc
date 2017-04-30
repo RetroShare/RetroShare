@@ -25,7 +25,7 @@
  */
 
 #include "rsitems/rsposteditems.h"
-#include "serialization/rstypeserializer.h"
+#include "serialiser/rstypeserializer.h"
 
 void RsGxsPostedPostItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {

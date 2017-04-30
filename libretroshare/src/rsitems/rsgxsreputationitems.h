@@ -37,7 +37,7 @@
 #include "retroshare/rsgxsifacetypes.h"
 #include "retroshare/rsreputations.h"
 
-#include "serialization/rsserializer.h"
+#include "serialiser/rsserializer.h"
 
 #define RS_PKT_SUBTYPE_GXS_REPUTATION_CONFIG_ITEM          0x01
 #define RS_PKT_SUBTYPE_GXS_REPUTATION_SET_ITEM_deprecated2 0x02

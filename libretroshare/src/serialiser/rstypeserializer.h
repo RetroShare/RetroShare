@@ -7,7 +7,7 @@
 #include "retroshare/rsflags.h"
 #include "retroshare/rsids.h"
 
-#include "serialization/rsserializer.h"
+#include "serialiser/rsserializer.h"
 
 
 class RsTypeSerializer

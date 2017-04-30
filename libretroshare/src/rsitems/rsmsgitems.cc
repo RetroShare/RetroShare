@@ -31,7 +31,7 @@
 
 #include "rsitems/rsmsgitems.h"
 
-#include "serialization/rstypeserializer.h"
+#include "serialiser/rstypeserializer.h"
 
 /***
 #define RSSERIAL_DEBUG 1

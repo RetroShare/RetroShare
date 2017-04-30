@@ -6,7 +6,7 @@
 #include "rsturtleitem.h"
 #include "turtleclientservice.h"
 
-#include "serialization/rstypeserializer.h"
+#include "serialiser/rstypeserializer.h"
 
 //#define P3TURTLE_DEBUG
 // -----------------------------------------------------------------------------------//

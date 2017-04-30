@@ -30,7 +30,7 @@
 #include <rsitems/itempriorities.h>
 #include <ft/ftturtlefiletransferitem.h>
 
-#include <serialization/rstypeserializer.h>
+#include <serialiser/rstypeserializer.h>
 
 void RsTurtleFileMapRequestItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {

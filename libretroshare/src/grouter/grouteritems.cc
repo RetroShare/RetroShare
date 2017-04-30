@@ -3,7 +3,7 @@
 #include "serialiser/rstlvbase.h"
 #include "grouteritems.h"
 
-#include "serialization/rstypeserializer.h"
+#include "serialiser/rstypeserializer.h"
 
 /**********************************************************************************************/
 /*                                          SERIALISER STUFF                                  */

@@ -35,7 +35,7 @@
 #include "rsitems/rsitem.h"
 #include "rsitems/itempriorities.h"
 
-#include "serialization/rsserializer.h"
+#include "serialiser/rsserializer.h"
 
 const uint8_t RS_PKT_SUBTYPE_DISC_PGP_LIST           = 0x01;
 const uint8_t RS_PKT_SUBTYPE_DISC_PGP_CERT           = 0x02;

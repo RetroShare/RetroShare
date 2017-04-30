@@ -29,7 +29,7 @@
 #include "serialiser/rstlvbase.h"
 #include "serialiser/rsbaseserial.h"
 
-#include "serialization/rstypeserializer.h"
+#include "serialiser/rstypeserializer.h"
 
 RsItem *RsGxsChannelSerialiser::create_item(uint16_t service_id,uint8_t item_subtype) const
 {

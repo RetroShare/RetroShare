@@ -28,7 +28,7 @@
 #include "rsgxscommentitems.h"
 #include "serialiser/rstlvbase.h"
 #include "serialiser/rsbaseserial.h"
-#include "serialization/rstypeserializer.h"
+#include "serialiser/rstypeserializer.h"
 
 //#define GXSCOMMENT_DEBUG	1
 

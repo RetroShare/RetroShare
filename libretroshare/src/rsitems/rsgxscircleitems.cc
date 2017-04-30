@@ -27,7 +27,7 @@
 
 #include "rsgxscircleitems.h"
 
-#include "serialization/rstypeserializer.h"
+#include "serialiser/rstypeserializer.h"
 
 //#define CIRCLE_DEBUG	1
 

@@ -32,7 +32,7 @@
 
 #include <iostream>
 
-#include "serialization/rstypeserializer.h"
+#include "serialiser/rstypeserializer.h"
 
 /*************************************************************************/
 

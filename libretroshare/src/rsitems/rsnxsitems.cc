@@ -2,7 +2,7 @@
 #include "util/rsprint.h"
 #include <iomanip>
 
-#include "serialization/rstypeserializer.h"
+#include "serialiser/rstypeserializer.h"
 
 /***
  * #define RSSERIAL_DEBUG	1

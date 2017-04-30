@@ -28,7 +28,7 @@
 #include <time.h>
 #include "serialiser/rsbaseserial.h"
 #include "serialiser/rstlvbase.h"
-#include "serialization/rstypeserializer.h"
+#include "serialiser/rstypeserializer.h"
 #include "util/rsprint.h"
 #include "util/rsmemory.h"
 

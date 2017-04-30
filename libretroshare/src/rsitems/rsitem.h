@@ -2,7 +2,7 @@
 
 #include "util/smallobject.h"
 #include "retroshare/rstypes.h"
-#include "serialization/rsserializer.h"
+#include "serialiser/rsserializer.h"
 
 class RsItem: public RsMemoryManagement::SmallObject
 {

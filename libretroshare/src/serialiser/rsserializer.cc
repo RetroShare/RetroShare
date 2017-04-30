@@ -3,8 +3,8 @@
 #include "rsitems/rsitem.h"
 
 #include "util/rsprint.h"
-#include "serialization/rsserializer.h"
-#include "serialization/rstypeserializer.h"
+#include "serialiser/rsserializer.h"
+#include "serialiser/rstypeserializer.h"
 
 const SerializationFlags RsGenericSerializer::SERIALIZATION_FLAG_NONE        ( 0x0000 );
 const SerializationFlags RsGenericSerializer::SERIALIZATION_FLAG_CONFIG      ( 0x0001 );

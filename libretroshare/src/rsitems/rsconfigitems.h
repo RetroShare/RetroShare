@@ -39,7 +39,7 @@
 #include "serialiser/rstlvkeyvalue.h"
 #include "serialiser/rstlvaddrs.h"
 
-#include "serialization/rsserializer.h"
+#include "serialiser/rsserializer.h"
 
 class RsGroupInfo;
 

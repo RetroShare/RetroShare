@@ -31,7 +31,7 @@
 #include "rsitems/rsconfigitems.h"
 #include "retroshare/rstypes.h"
 
-#include "serialization/rsserializer.h"
+#include "serialiser/rsserializer.h"
 
 /**************************************************************************/
 

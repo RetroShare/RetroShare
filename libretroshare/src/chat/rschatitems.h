@@ -27,7 +27,7 @@
 
 #include "openssl/bn.h"
 #include "retroshare/rstypes.h"
-#include "serialization/rsserializer.h"
+#include "serialiser/rsserializer.h"
 #include "serialiser/rstlvkeys.h"
 #include "rsitems/rsserviceids.h"
 #include "rsitems/itempriorities.h"

@@ -35,7 +35,7 @@
 #include "serialiser/rstlvkeys.h"
 #include "gxs/rsgxsdata.h"
 
-#include "serialization/rsserializer.h"
+#include "serialiser/rsserializer.h"
 
 // These items have "flag type" numbers, but this is not used.
 

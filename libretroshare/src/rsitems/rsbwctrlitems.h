@@ -32,8 +32,8 @@
 #include "rsitems/rsserviceids.h"
 #include "rsitems/itempriorities.h"
 
-#include "serialization/rsserializer.h"
-#include "serialization/rstypeserializer.h"
+#include "serialiser/rsserializer.h"
+#include "serialiser/rstypeserializer.h"
 
 #define RS_PKT_SUBTYPE_BWCTRL_ALLOWED_ITEM       0x01
 

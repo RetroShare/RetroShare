@@ -31,7 +31,7 @@
 #include "rsitems/rsserviceids.h"
 #include "rsitems/rsgxsitems.h"
 
-#include "serialization/rsserializer.h"
+#include "serialiser/rsserializer.h"
 
 #include "retroshare/rsgxsforums.h"
 

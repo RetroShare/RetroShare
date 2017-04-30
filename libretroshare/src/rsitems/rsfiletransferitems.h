@@ -34,7 +34,7 @@
 #include "rsitems/rsserviceids.h"
 #include "rsitems/itempriorities.h"
 
-#include "serialization/rsserializer.h"
+#include "serialiser/rsserializer.h"
 
 const uint8_t RS_PKT_SUBTYPE_FT_DATA_REQUEST       = 0x01;
 const uint8_t RS_PKT_SUBTYPE_FT_DATA               = 0x02;

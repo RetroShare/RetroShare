@@ -28,7 +28,7 @@
 #include "rsitems/rsphotoitems.h"
 
 #include "serialiser/rstlvbinary.h"
-#include "serialization/rstypeserializer.h"
+#include "serialiser/rstypeserializer.h"
 
 #define GXS_PHOTO_SERIAL_DEBUG
 

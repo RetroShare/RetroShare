@@ -31,7 +31,7 @@
 #include "serialiser/rstlvstring.h"
 #include "util/rsstring.h"
 
-#include "serialization/rstypeserializer.h"
+#include "serialiser/rstypeserializer.h"
 
 #define GXSID_DEBUG	1
 

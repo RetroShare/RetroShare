@@ -30,7 +30,7 @@
 #include "rsitems/itempriorities.h"
 #include "rsitems/rsitem.h"
 
-#include "serialization/rstypeserializer.h"
+#include "serialiser/rstypeserializer.h"
 
 /**************************************************************************/
 

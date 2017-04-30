@@ -27,7 +27,7 @@
 
 #include "rswireitems.h"
 
-#include "serialization/rstypeserializer.h"
+#include "serialiser/rstypeserializer.h"
 
 #define WIRE_DEBUG	1
 

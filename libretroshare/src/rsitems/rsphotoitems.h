@@ -32,7 +32,7 @@
 #include "rsitems/rsgxsitems.h"
 
 #include "serialiser/rsserial.h"
-#include "serialization/rsserializer.h"
+#include "serialiser/rsserializer.h"
 
 #include "retroshare/rsphoto.h"
 
