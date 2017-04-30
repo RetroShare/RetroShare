@@ -10,9 +10,9 @@
     <height>546</height>
    </rect>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QVBoxLayout" name="RelayPageVLayout">
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
+    <layout class="QHBoxLayout" name="topHLayout">
      <item>
       <widget class="QCheckBox" name="enableCheckBox">
        <property name="text">
@@ -21,7 +21,7 @@
       </widget>
      </item>
      <item>
-      <spacer name="horizontalSpacer_5">
+      <spacer name="topLeftHSpacer">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
@@ -41,7 +41,7 @@
       </widget>
      </item>
      <item>
-      <spacer name="horizontalSpacer_4">
+      <spacer name="topRightHSpacer">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
@@ -56,14 +56,14 @@
     </layout>
    </item>
    <item>
-    <widget class="QGroupBox" name="groupBox">
+    <widget class="QGroupBox" name="relayOptionGBox">
      <property name="enabled">
       <bool>true</bool>
      </property>
      <property name="title">
       <string>Relay options</string>
      </property>
-     <layout class="QGridLayout" name="gridLayout">
+     <layout class="QGridLayout" name="relayOptionGBoxGLayout">
       <property name="leftMargin">
        <number>0</number>
       </property>
@@ -80,7 +80,7 @@
        <number>0</number>
       </property>
       <item row="0" column="0">
-       <spacer name="horizontalSpacer_2">
+       <spacer name="optionHeaderLHSpacer">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
@@ -93,14 +93,14 @@
        </spacer>
       </item>
       <item row="0" column="1">
-       <widget class="QLabel" name="label_4">
+       <widget class="QLabel" name="headerNumberLabel">
         <property name="text">
          <string>Number</string>
         </property>
        </widget>
       </item>
       <item row="0" column="2">
-       <spacer name="horizontalSpacer">
+       <spacer name="optionHeaderRHSpacer">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
@@ -113,28 +113,28 @@
        </spacer>
       </item>
       <item row="0" column="3">
-       <widget class="QLabel" name="label_12">
+       <widget class="QLabel" name="headerBandwidthLabel">
         <property name="text">
          <string>Bandwidth per link</string>
         </property>
        </widget>
       </item>
       <item row="0" column="4" rowspan="7">
-       <widget class="Line" name="line_2">
+       <widget class="Line" name="totalVLine">
         <property name="orientation">
          <enum>Qt::Vertical</enum>
         </property>
        </widget>
       </item>
       <item row="0" column="5">
-       <widget class="QLabel" name="label_13">
+       <widget class="QLabel" name="headerTotalLabel">
         <property name="text">
          <string>Total Bandwidth</string>
         </property>
        </widget>
       </item>
       <item row="1" column="0" rowspan="2">
-       <widget class="QLabel" name="label_5">
+       <widget class="QLabel" name="friendLabel">
         <property name="text">
          <string>Friends</string>
         </property>
@@ -154,7 +154,7 @@
        </widget>
       </item>
       <item row="1" column="2" rowspan="2">
-       <widget class="QLabel" name="label_9">
+       <widget class="QLabel" name="xFriendLabel">
         <property name="text">
          <string notr="true">x</string>
         </property>
@@ -184,7 +184,7 @@
        </widget>
       </item>
       <item row="3" column="0" rowspan="2">
-       <widget class="QLabel" name="label_6">
+       <widget class="QLabel" name="fofLabel">
         <property name="text">
          <string>Friends of Friends</string>
         </property>
@@ -198,7 +198,7 @@
        </widget>
       </item>
       <item row="3" column="2" rowspan="2">
-       <widget class="QLabel" name="label_10">
+       <widget class="QLabel" name="xFOFLabel">
         <property name="text">
          <string notr="true">x</string>
         </property>
@@ -228,7 +228,7 @@
        </widget>
       </item>
       <item row="5" column="0" rowspan="2">
-       <widget class="QLabel" name="label_7">
+       <widget class="QLabel" name="generalLabel">
         <property name="text">
          <string>General</string>
         </property>
@@ -242,7 +242,7 @@
        </widget>
       </item>
       <item row="5" column="2" rowspan="2">
-       <widget class="QLabel" name="label_11">
+       <widget class="QLabel" name="xGeneralLabel">
         <property name="text">
          <string notr="true">x</string>
         </property>
@@ -272,9 +272,16 @@
        </widget>
       </item>
       <item row="7" column="0" colspan="6">
-       <widget class="Line" name="line">
+       <widget class="Line" name="totalHLine">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="8" column="0">
+       <widget class="QLabel" name="totalLabel">
+        <property name="text">
+         <string>Total:</string>
         </property>
        </widget>
       </item>
@@ -288,15 +295,8 @@
         </property>
        </widget>
       </item>
-      <item row="8" column="0">
-       <widget class="QLabel" name="label_8">
-        <property name="text">
-         <string>Total:</string>
-        </property>
-       </widget>
-      </item>
       <item row="8" column="2" colspan="2">
-       <spacer name="horizontalSpacer_3">
+       <spacer name="totalHSpacer">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
@@ -318,6 +318,26 @@
         </property>
        </widget>
       </item>
+      <item row="9" column="0" colspan="6">
+       <widget class="QLabel" name="warningLabel">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">	border: 1px solid #DCDC41;
+	border-radius: 6px;
+	background: #FFFFD7;
+	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFFFD7, stop:1 #FFFFB2);
+</string>
+        </property>
+        <property name="text">
+         <string>Warning: This bandwidth adds up to the max bandwidth.</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>
@@ -326,7 +346,17 @@
      <property name="title">
       <string>Relay Server Setup</string>
      </property>
-     <layout class="QGridLayout" name="gridLayout_2">
+     <layout class="QGridLayout" name="serverGroupBoxGLayout">
+      <item row="0" column="0">
+       <widget class="QLineEdit" name="DhtLineEdit">
+        <property name="inputMask">
+         <string notr="true">HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
       <item row="0" column="1">
        <widget class="QCheckBox" name="keyOkBox">
         <property name="enabled">
@@ -344,16 +374,6 @@
        <widget class="QPushButton" name="addPushButton">
         <property name="text">
          <string>Add Server</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="0">
-       <widget class="QLineEdit" name="DhtLineEdit">
-        <property name="inputMask">
-         <string notr="true">HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH</string>
-        </property>
-        <property name="text">
-         <string/>
         </property>
        </widget>
       </item>
@@ -377,7 +397,7 @@
     </widget>
    </item>
    <item>
-    <spacer name="verticalSpacer">
+    <spacer name="mainVSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>

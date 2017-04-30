@@ -209,7 +209,7 @@ void RelayPage::updateEnabled()
 
 	if (ui.enableCheckBox->isChecked())
 	{
-		ui.groupBox->setEnabled(true);
+		ui.relayOptionGBox->setEnabled(true);
 		if (ui.serverCheckBox->isChecked())
 		{
 			std::cerr << "RelayPage::updateEnabled() Both Enabled" << std::endl;
@@ -224,7 +224,7 @@ void RelayPage::updateEnabled()
 	else
 	{
 		std::cerr << "RelayPage::updateEnabled() Both Disabled" << std::endl;
-		ui.groupBox->setEnabled(false);
+		ui.relayOptionGBox->setEnabled(false);
 		ui.serverGroupBox->setEnabled(false);
 	}
 
