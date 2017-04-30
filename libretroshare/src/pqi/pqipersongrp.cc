@@ -27,7 +27,7 @@
 #include "pqi/p3linkmgr.h"
 #include "util/rsdebug.h"
 #include "util/rsprint.h"
-#include "serialiser/rsserviceserialiser.h"
+#include "serialiser/rsserializer.h"
 
 #include <stdio.h>
 

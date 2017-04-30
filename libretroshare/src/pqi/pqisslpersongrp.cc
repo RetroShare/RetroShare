@@ -23,7 +23,7 @@
  *
  */
 
-#include "serialiser/rsserviceserialiser.h"
+#include "serialiser/rsserializer.h"
 #include "util/rsdebug.h"
 
 #include "pqi/pqisslpersongrp.h"

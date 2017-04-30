@@ -117,7 +117,13 @@
 //				addSerialType(new MyServiceSerializer()) ;
 //			}
 //
-//	4 - in your service, recieve and send items by calling recvItem() and sendItem() respectively.
+//      If needed, you may serialize your own items by calling:
+//
+//			uint32_t size = MySerializer().size(item) ;
+//			uint8_t *data = (uint8_t*)malloc(size);
+//			MySerializer().serialise(item,data,size) ;
+//
+//	4 - in your service, receive and send items by calling recvItem() and sendItem() respectively.
 //
 #include <stdint.h>
 #include <string.h>
