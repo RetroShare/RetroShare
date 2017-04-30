@@ -67,8 +67,8 @@
  */
 RsBanList *rsBanList = NULL ;
 
-p3BanList::p3BanList(p3ServiceControl *sc, p3NetMgr *nm)
-	:p3Service(), mBanMtx("p3BanList"), mServiceCtrl(sc), mNetMgr(nm) 
+p3BanList::p3BanList(p3ServiceControl *sc, p3NetMgr */*nm*/)
+	:p3Service(), mBanMtx("p3BanList"), mServiceCtrl(sc)//, mNetMgr(nm)
 {
 	addSerialType(new RsBanListSerialiser());
 

@@ -153,7 +153,7 @@ void TurtleRouterDialog::updateTunnelRequests(	const std::vector<std::vector<std
 			font.setItalic(true);
 			item->setFont(0,font);
 		}
-		if(strtol(tunnels_info[i][5].c_str(), NULL, 0)>1000) // fast
+		if(strtof(tunnels_info[i][5].c_str(), NULL)>1000) // fast
 		{
 			font.setBold(true);
 			item->setFont(0,font);

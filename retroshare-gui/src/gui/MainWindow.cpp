@@ -676,7 +676,8 @@ void MainWindow::updateTrayCombine()
 
         }
     }
-    notifyMenu->menuAction()->setVisible(visible);
+    if (notifyMenu)
+        notifyMenu->menuAction()->setVisible(visible);
 
     // update tray icon
     updateFriends();
@@ -1207,7 +1208,7 @@ void MainWindow::showHelpDialog(const QString &topic)
 void
 MainWindow::retranslateUi()
 {
-  retranslateUi();
+  //retranslateUi();
   foreach (MainPage *page, ui->stackPages->pages()) {
     page->retranslateUi();
   }

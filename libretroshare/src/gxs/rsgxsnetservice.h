@@ -99,6 +99,7 @@ public:
 
     virtual RsServiceInfo getServiceInfo() { return mServiceInfo; }
 
+    virtual void getItemNames(std::map<uint8_t,std::string>& names) const ;
 public:
 
 

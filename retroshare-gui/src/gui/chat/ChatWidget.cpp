@@ -76,7 +76,7 @@ ChatWidget::ChatWidget(QWidget *parent) :
 
 	int iconHeight = FMM*QFontMetricsF(font()).height() ;
 	QSize iconSize = QSize(iconHeight,iconHeight);
-	QSize buttonSize = QSize(iconSize + QSize(FMM,FMM));
+	QSize buttonSize = QSize(iconSize + QSize((int)FMM,(int)FMM));
 
 	newMessages = false;
 	typing = false;
@@ -258,7 +258,7 @@ void ChatWidget::addChatBarWidget(QWidget *w)
 {
 	int iconHeight = FMM*QFontMetricsF(font()).height() ;
 	QSize iconSize = QSize(iconHeight,iconHeight);
-	QSize buttonSize = QSize(iconSize + QSize(FMM,FMM));
+	QSize buttonSize = QSize(iconSize + QSize((int)FMM,(int)FMM));
 	w->setFixedSize(buttonSize);
 	ui->pluginButtonFrame->layout()->addWidget(w) ;
 }

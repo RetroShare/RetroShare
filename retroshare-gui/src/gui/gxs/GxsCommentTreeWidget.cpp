@@ -25,6 +25,7 @@
 #include <QDateTime>
 #include <QMenu>
 
+#include "gui/common/RSElidedItemDelegate.h"
 #include "gui/gxs/GxsCommentTreeWidget.h"
 #include "gui/gxs/GxsCreateCommentDialog.h"
 #include "gui/gxs/GxsIdTreeWidgetItem.h"
@@ -57,6 +58,10 @@ GxsCommentTreeWidget::GxsCommentTreeWidget(QWidget *parent)
 //	QTreeWidget* widget = this;
 
 	setContextMenuPolicy(Qt::CustomContextMenu);
+	RSElidedItemDelegate *itemDelegate = new RSElidedItemDelegate(this);
+	itemDelegate->setSpacing(QSize(0, 2));
+	setItemDelegate(itemDelegate);
+	setWordWrap(true);
 //	QFont font = QFont("ARIAL", 10);
 //	font.setBold(true);
 

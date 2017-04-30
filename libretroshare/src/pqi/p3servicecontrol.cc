@@ -30,7 +30,9 @@
 #include "rsitems/rsitem.h"
 #include "serialiser/rsserial.h"
 #include "serialiser/rsbaseserial.h"
+#include "serialiser/rsnxsitems.h"
 #include "pqi/p3cfgmgr.h"
+#include "pqi/pqiservice.h"
 
 /*******************************/
 // #define SERVICECONTROL_DEBUG	1
@@ -139,7 +141,7 @@ public:
             std::cerr << __PRETTY_FUNCTION__ << ": error while deserialising! Item will be dropped." << std::endl;
             return NULL ;
         }
-            
+
         /* add mandatory parts first */
         ok &= getRawUInt32(data, rssize, &offset, &item->mServiceId);
         ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_NAME, item->mServiceName);
@@ -249,6 +251,13 @@ const 	RsPeerId& p3ServiceControl::getOwnId()
 	return mOwnPeerId;
 }
 
+bool p3ServiceControl::getServiceItemNames(uint32_t serviceId,std::map<uint8_t,std::string>& names)
+{
+    if(mServiceServer != NULL)
+        return mServiceServer->getServiceItemNames(serviceId,names) ;
+
+    return false ;
+}
 
 /* Interface for Services */
 bool p3ServiceControl::registerService(const RsServiceInfo &info, bool defaultOn)
@@ -538,7 +547,7 @@ bool p3ServiceControl::updateServicePermissions(uint32_t serviceId, const RsServ
 	{
 		for(pit = onlinePeers.begin(); pit != onlinePeers.end(); ++pit)
 		{
-			if (it->second.peerHasPermission(*pit) != 
+			if (it->second.peerHasPermission(*pit) !=
 				permissions.peerHasPermission(*pit))
 			{
 				mUpdatedSet.insert(*pit);
@@ -598,7 +607,7 @@ bool	p3ServiceControl::checkFilter(uint32_t serviceId, const RsPeerId &peerId)
 #endif
 
 	// must allow ServiceInfo through, or we have nothing!
-#define FULLID_SERVICEINFO ((((uint32_t) RS_PKT_VERSION_SERVICE) << 24) + ((RS_SERVICE_TYPE_SERVICEINFO) << 8)) 
+#define FULLID_SERVICEINFO ((((uint32_t) RS_PKT_VERSION_SERVICE) << 24) + ((RS_SERVICE_TYPE_SERVICEINFO) << 8))
 
 	//if (serviceId == RS_SERVICE_TYPE_SERVICEINFO)
 	if (serviceId == FULLID_SERVICEINFO)
@@ -692,21 +701,21 @@ bool ServiceInfoCompatible(const RsServiceInfo &info1, const RsServiceInfo &info
 	}
 
 	// ensure that info1 meets minimum requirements for info2
-	if (!versionOkay(info1.mVersionMajor, info1.mVersionMinor, 
+	if (!versionOkay(info1.mVersionMajor, info1.mVersionMinor,
 		info2.mMinVersionMajor, info2.mMinVersionMinor))
 	{
 		return false;
 	}
 
 	// ensure that info2 meets minimum requirements for info1
-	if (!versionOkay(info2.mVersionMajor, info2.mVersionMinor, 
+	if (!versionOkay(info2.mVersionMajor, info2.mVersionMinor,
 		info1.mMinVersionMajor, info1.mMinVersionMinor))
 	{
 		return false;
 	}
 	return true;
 }
-	
+
 
 bool	p3ServiceControl::updateFilterByPeer(const RsPeerId &peerId)
 {
@@ -791,8 +800,8 @@ bool	p3ServiceControl::updateFilterByPeer_locked(const RsPeerId &peerId)
 		std::cerr << "p3ServiceControl::updateFilterByPeer_locked() Empty ... Clearing";
 		std::cerr << std::endl;
 #endif
-	
-		// empty, remove... 
+
+		// empty, remove...
 		recordFilterChanges_locked(peerId, originalFilter, peerFilter);
 		if (fit != mPeerFilterMap.end())
 		{
@@ -883,7 +892,7 @@ bool	p3ServiceControl::updateFilterByPeer_locked(const RsPeerId &peerId)
 		std::cerr << "p3ServiceControl::updateFilterByPeer_locked() Empty(2) ... Clearing";
 		std::cerr << std::endl;
 #endif
-	
+
 		if (fit != mPeerFilterMap.end())
 		{
 			mPeerFilterMap.erase(fit);
@@ -901,7 +910,7 @@ bool	p3ServiceControl::updateFilterByPeer_locked(const RsPeerId &peerId)
 	return true;
 }
 
-void	p3ServiceControl::recordFilterChanges_locked(const RsPeerId &peerId, 
+void	p3ServiceControl::recordFilterChanges_locked(const RsPeerId &peerId,
 	ServicePeerFilter &originalFilter, ServicePeerFilter &updatedFilter)
 {
 #ifdef SERVICECONTROL_DEBUG
@@ -1203,7 +1212,7 @@ bool p3ServiceControl::loadList(std::list<RsItem *>& loadList)
 
         if(item != NULL)
 		mServicePermissionMap[item->mServiceId] = *item ;
-        
+
         delete *it ;
     }
 
@@ -1397,49 +1406,49 @@ void	p3ServiceControl::notifyServices()
 				std::cerr << "p3ServiceControl::notifyServices(): Noone Monitoring ... skipping";
 				std::cerr << std::endl;
 #endif
-	
+
 				continue;
 			}
-	
+
 			std::list<pqiServicePeer> peers;
 			std::set<RsPeerId>::const_iterator pit;
-			for(pit = it->second.mAdded.begin(); 
+			for(pit = it->second.mAdded.begin();
 				pit != it->second.mAdded.end(); ++pit)
 			{
 				pqiServicePeer peer;
 				peer.id = *pit;
 				peer.actions = RS_SERVICE_PEER_CONNECTED;
-	
+
 				peers.push_back(peer);
-	
+
 #ifdef SERVICECONTROL_DEBUG
 				std::cerr << "p3ServiceControl::notifyServices(): Peer: " << *pit << " CONNECTED";
 				std::cerr << std::endl;
 #endif
 			}
-	
-			for(pit = it->second.mRemoved.begin(); 
+
+			for(pit = it->second.mRemoved.begin();
 				pit != it->second.mRemoved.end(); ++pit)
 			{
 				pqiServicePeer peer;
 				peer.id = *pit;
 				peer.actions = RS_SERVICE_PEER_DISCONNECTED;
-	
+
 				peers.push_back(peer);
-	
+
 #ifdef SERVICECONTROL_DEBUG
 				std::cerr << "p3ServiceControl::notifyServices(): Peer: " << *pit << " DISCONNECTED";
 				std::cerr << std::endl;
 #endif
 			}
-	
+
 			for(; sit != eit; ++sit)
 			{
 #ifdef SERVICECONTROL_DEBUG
 				std::cerr << "p3ServiceControl::notifyServices(): Sending to Monitoring Service";
 				std::cerr << std::endl;
 #endif
-	
+
 				sit->second->statusChange(peers);
 			}
 		}
@@ -1501,17 +1510,17 @@ void RsServicePermissions::resetPermission(const RsPeerId& peerId)
 }
 
 RsServiceInfo::RsServiceInfo(
-		const uint16_t service_type, 
-		const std::string service_name, 
+		const uint16_t service_type,
+		const std::string service_name,
 		const uint16_t version_major,
 		const uint16_t version_minor,
 		const uint16_t min_version_major,
 		const uint16_t min_version_minor)
- :mServiceName(service_name), 
-  mServiceType((((uint32_t) RS_PKT_VERSION_SERVICE) << 24) + (((uint32_t) service_type) << 8)), 
-  mVersionMajor(version_major), 
+ :mServiceName(service_name),
+  mServiceType((((uint32_t) RS_PKT_VERSION_SERVICE) << 24) + (((uint32_t) service_type) << 8)),
+  mVersionMajor(version_major),
   mVersionMinor(version_minor),
-  mMinVersionMajor(min_version_major), 
+  mMinVersionMajor(min_version_major),
   mMinVersionMinor(min_version_minor)
 {
 	return;
@@ -1519,7 +1528,7 @@ RsServiceInfo::RsServiceInfo(
 
 
 RsServiceInfo::RsServiceInfo()
- :mServiceName("unknown"), 
+ :mServiceName("unknown"),
   mServiceType(0),
   mVersionMajor(0),
   mVersionMinor(0),

@@ -60,6 +60,7 @@
 /* Images for context menu icons */
 #define IMAGE_MESSAGE          ":/images/mail_new.png"
 #define IMAGE_MESSAGEREPLY     ":/images/mail_reply.png"
+#define IMAGE_MESSAGEEDIT      ":/images/edit_16.png"
 #define IMAGE_MESSAGEREMOVE    ":/images/mail_delete.png"
 #define IMAGE_DOWNLOAD         ":/images/start.png"
 #define IMAGE_DOWNLOADALL      ":/images/startall.png"
@@ -485,7 +486,7 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
 
 	QMenu contextMnu(this);
 
-	QAction *editAct = new QAction(QIcon(IMAGE_MESSAGEREPLY), tr("Edit"), &contextMnu);
+	QAction *editAct = new QAction(QIcon(IMAGE_MESSAGEEDIT), tr("Edit"), &contextMnu);
 	connect(editAct, SIGNAL(triggered()), this, SLOT(editforummessage()));
 
 	QAction *replyAct = new QAction(QIcon(IMAGE_MESSAGEREPLY), tr("Reply"), &contextMnu);
@@ -531,7 +532,7 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
 	QAction *markMsgAsUnreadChildren = new QAction(QIcon(":/images/message-mail.png"), tr("Mark as unread") + " (" + tr ("with children") + ")", &contextMnu);
 	connect(markMsgAsUnreadChildren, SIGNAL(triggered()), this, SLOT(markMsgAsUnreadChildren()));
 
-	QAction *showinpeopleAct = new QAction(QIcon(":/images/message-mail.png"), tr("Show author in people tab"), &contextMnu);
+	QAction *showinpeopleAct = new QAction(QIcon(":/images/info16.png"), tr("Show author in people tab"), &contextMnu);
 	connect(showinpeopleAct, SIGNAL(triggered()), this, SLOT(showInPeopleTab()));
 
 	if (IS_GROUP_SUBSCRIBED(mSubscribeFlags)) {
@@ -1607,7 +1608,7 @@ void GxsForumThreadWidget::insertMessage()
 
         int current_index = 0 ;
 
-        for(uint32_t i=0;i<(*it).size();++i)
+        for(int i=0;i<(*it).size();++i)
         {
             ui->versions_CB->insertItem(i, ((i==0)?tr("(Latest) "):tr("(Old) "))+" "+DateTime::formatLongDateTime( (*it)[i].first));
             ui->versions_CB->setItemData(i,QString::fromStdString((*it)[i].second.toStdString()));

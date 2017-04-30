@@ -148,7 +148,7 @@ private:
     std::map<struct sockaddr_storage, BanListPeer> mWhiteListedRanges;
 
     p3ServiceControl *mServiceCtrl;
-    p3NetMgr *mNetMgr;
+    //p3NetMgr *mNetMgr;
     time_t mLastDhtInfoRequest ;
 
     bool mIPFilteringEnabled ;

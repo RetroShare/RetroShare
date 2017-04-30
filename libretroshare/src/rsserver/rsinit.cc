@@ -1243,6 +1243,8 @@ int RsServer::StartupRetroShare()
     pqih = new pqisslpersongrp(serviceCtrl, flags, mPeerMgr);
 	//pqih = new pqipersongrpDummy(none, flags);
 
+    serviceCtrl->setServiceServer(pqih) ;
+
 	/****** New Ft Server **** !!! */
     ftServer *ftserver = new ftServer(mPeerMgr, serviceCtrl);
     ftserver->setConfigDirectory(rsAccounts->PathAccountDirectory());

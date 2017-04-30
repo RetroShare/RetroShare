@@ -75,6 +75,12 @@ bool RsGxsDataAccess::requestGroupInfo(uint32_t &token, uint32_t ansType, const 
             gir->mGroupIds = groupIds;
             req = gir;
     }
+    else if(reqType & GXS_REQUEST_TYPE_GROUP_SERIALIZED_DATA)
+    {
+            GroupSerializedDataReq* gir = new GroupSerializedDataReq();
+            gir->mGroupIds = groupIds;
+            req = gir;
+    }
 
     if(req == NULL)
     {
@@ -103,33 +109,24 @@ bool RsGxsDataAccess::requestGroupInfo(uint32_t &token, uint32_t ansType, const 
     uint32_t reqType = opts.mReqType;
 
     if(reqType & GXS_REQUEST_TYPE_GROUP_META)
-    {
-            GroupMetaReq* gmr = new GroupMetaReq();
-            req = gmr;
-    }
+            req = new GroupMetaReq();
     else if(reqType & GXS_REQUEST_TYPE_GROUP_DATA)
-    {
-            GroupDataReq* gdr = new GroupDataReq();
-            req = gdr;
-    }
+            req = new GroupDataReq();
     else if(reqType & GXS_REQUEST_TYPE_GROUP_IDS)
-    {
-            GroupIdReq* gir = new GroupIdReq();
-            req = gir;
-    }
-
-    if(req == NULL)
+            req = new GroupIdReq();
+    else if(reqType & GXS_REQUEST_TYPE_GROUP_SERIALIZED_DATA)
+            req = new GroupSerializedDataReq();
+    else
     {
             std::cerr << "RsGxsDataAccess::requestGroupInfo() request type not recognised, type "
                               << reqType << std::endl;
             return false;
-    }else
-    {
-            generateToken(token);
-#ifdef DATA_DEBUG
-            std::cerr << "RsGxsDataAccess::requestGroupInfo() gets Token: " << token << std::endl;
-#endif
     }
+
+	generateToken(token);
+#ifdef DATA_DEBUG
+	std::cerr << "RsGxsDataAccess::requestGroupInfo() gets Token: " << token << std::endl;
+#endif
 
     setReq(req, token, ansType, opts);
     storeRequest(req);
@@ -430,7 +427,16 @@ bool RsGxsDataAccess::getGroupData(const uint32_t& token, std::list<RsNxsGrp*>& 
 	else if(req->status == GXS_REQUEST_V2_STATUS_COMPLETE)
 	{
 		GroupDataReq* gmreq = dynamic_cast<GroupDataReq*>(req);
-		if(gmreq)
+		GroupSerializedDataReq* gsreq = dynamic_cast<GroupSerializedDataReq*>(req);
+
+		if(gsreq)
+		{
+			grpData.swap(gsreq->mGroupData);
+			gsreq->mGroupData.clear();
+
+			locked_updateRequestStatus(token, GXS_REQUEST_V2_STATUS_DONE);
+		}
+        else if(gmreq)
 		{
 			grpData.swap(gmreq->mGroupData);
 			gmreq->mGroupData.clear();
@@ -804,6 +810,7 @@ void RsGxsDataAccess::processRequests()
 		MsgIdReq* mir;
 		MsgRelatedInfoReq* mri;
 		GroupStatisticRequest* gsr;
+		GroupSerializedDataReq* grr;
 		ServiceStatisticRequest* ssr;
 
 #ifdef DATA_DEBUG
@@ -851,6 +858,11 @@ void RsGxsDataAccess::processRequests()
 		{
 			ok = getServiceStatistic(ssr);
 		}
+		else if((grr = dynamic_cast<GroupSerializedDataReq*>(req)) != NULL)
+		{
+			ok = getGroupSerializedData(grr);
+		}
+
 		else
 		{
 			std::cerr << "RsGxsDataAccess::processRequests() Failed to process request, token: "
@@ -929,7 +941,30 @@ bool RsGxsDataAccess::getServiceStatistic(const uint32_t &token, GxsServiceStati
     return true;
 }
 
+bool RsGxsDataAccess::getGroupSerializedData(GroupSerializedDataReq* req)
+{
+	std::map<RsGxsGroupId, RsNxsGrp*> grpData;
+	std::list<RsGxsGroupId> grpIdsOut;
 
+	getGroupList(req->mGroupIds, req->Options, grpIdsOut);
+
+	if(grpIdsOut.empty())
+		return true;
+
+
+	for(std::list<RsGxsGroupId>::iterator lit = grpIdsOut.begin();lit != grpIdsOut.end();++lit)
+		grpData[*lit] = NULL;
+
+	bool ok = mDataStore->retrieveNxsGrps(grpData, true, true);
+    req->mGroupData.clear();
+
+	std::map<RsGxsGroupId, RsNxsGrp*>::iterator mit = grpData.begin();
+
+	for(; mit != grpData.end(); ++mit)
+        req->mGroupData.push_back(mit->second) ;
+
+	return ok;
+}
 bool RsGxsDataAccess::getGroupData(GroupDataReq* req)
 {
 	std::map<RsGxsGroupId, RsNxsGrp*> grpData;

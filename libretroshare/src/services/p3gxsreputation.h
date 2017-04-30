@@ -176,7 +176,7 @@ private:
         time_t mLastIdentityFlagsUpdate ;
     bool   mReputationsUpdated;
 
-    float mAutoBanIdentitiesLimit ;
+    //float mAutoBanIdentitiesLimit ;
     bool mAutoSetPositiveOptionToContacts;
 
     p3LinkMgr *mLinkMgr;

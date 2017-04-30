@@ -38,6 +38,7 @@ class SearchDialog : public MainPage
     Q_OBJECT
 
     Q_PROPERTY(QColor textColorLocal READ textColorLocal WRITE setTextColorLocal)
+	Q_PROPERTY(QColor textColorDownloading READ textColorDownloading WRITE setTextColorDownloading)
     Q_PROPERTY(QColor textColorNoSources READ textColorNoSources WRITE setTextColorNoSources)
     Q_PROPERTY(QColor textColorLowSources READ textColorLowSources WRITE setTextColorLowSources)
     Q_PROPERTY(QColor textColorHighSources READ textColorHighSources WRITE setTextColorHighSources)
@@ -51,11 +52,13 @@ public:
     void searchKeywords(const QString& keywords);
 
     QColor textColorLocal() const { return mTextColorLocal; }
+	QColor textColorDownloading() const { return mTextColorDownloading; }
     QColor textColorNoSources() const { return mTextColorNoSources; }
     QColor textColorLowSources() const { return mTextColorLowSources; }
     QColor textColorHighSources() const { return mTextColorHighSources; }
 
     void setTextColorLocal(QColor color) { mTextColorLocal = color; }
+	void setTextColorDownloading(QColor color) { mTextColorDownloading = color; }
     void setTextColorNoSources(QColor color) { mTextColorNoSources = color; }
     void setTextColorLowSources(QColor color) { mTextColorLowSources = color; }
     void setTextColorHighSources(QColor color) { mTextColorHighSources = color; }
@@ -154,6 +157,7 @@ private:
 
 	/* Color definitions (for standard see qss.default) */
 	QColor mTextColorLocal;
+	QColor mTextColorDownloading;
 	QColor mTextColorNoSources;
 	QColor mTextColorLowSources;
 	QColor mTextColorHighSources;

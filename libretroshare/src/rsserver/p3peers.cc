@@ -1037,6 +1037,9 @@ bool p3Peers::setProxyServer(const uint32_t type, const std::string &addr_str, c
             std::cerr << "(EE) attempt to set proxy server address to something not allowed: " << addr_str << ":" << port << std::endl;
             return false ;
         }
+
+        std::cerr << "Settign proxy server address to " << addr_str << ":" << port << std::endl;
+
 	struct sockaddr_storage addr;
 	struct sockaddr_in *addrv4p = (struct sockaddr_in *) &addr;
 	addrv4p->sin_family = AF_INET;

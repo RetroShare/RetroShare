@@ -328,6 +328,23 @@ RsGxsNetService::RsGxsNetService(uint16_t servType, RsGeneralDataService *gds,
     mUpdateCounter = 0;
 }
 
+void RsGxsNetService::getItemNames(std::map<uint8_t,std::string>& names) const
+{
+	names.clear();
+
+	names[RS_PKT_SUBTYPE_NXS_SYNC_GRP_REQ_ITEM    ] = "Group Sync Request" ;
+	names[RS_PKT_SUBTYPE_NXS_SYNC_GRP_ITEM        ] = "Group Sync" ;
+	names[RS_PKT_SUBTYPE_NXS_SYNC_GRP_STATS_ITEM  ] = "Group Stats" ;
+	names[RS_PKT_SUBTYPE_NXS_GRP_ITEM             ] = "Group Data" ;
+	names[RS_PKT_SUBTYPE_NXS_ENCRYPTED_DATA_ITEM  ] = "Encrypted data" ;
+	names[RS_PKT_SUBTYPE_NXS_SESSION_KEY_ITEM     ] = "Session Key" ;
+	names[RS_PKT_SUBTYPE_NXS_SYNC_MSG_ITEM        ] = "Message Sync" ;
+	names[RS_PKT_SUBTYPE_NXS_SYNC_MSG_REQ_ITEM    ] = "Message Sync Request" ;
+	names[RS_PKT_SUBTYPE_NXS_MSG_ITEM             ] = "Message Data" ;
+	names[RS_PKT_SUBTYPE_NXS_TRANSAC_ITEM         ] = "Transaction" ;
+	names[RS_PKT_SUBTYPE_NXS_GRP_PUBLISH_KEY_ITEM ] = "Publish key" ;
+}
+
 RsGxsNetService::~RsGxsNetService()
 {
     RS_STACK_MUTEX(mNxsMutex) ;
@@ -1972,7 +1989,7 @@ void RsGxsNetService::updateServerSyncTS()
 #endif
 
         // I keep the creation, but the data is not used yet.
-#warning disabled this, but do we need it?
+#warning csoler 2016-12-12: Disabled this, but do we need it?
 		// RsGxsServerMsgUpdate& msui(mServerMsgUpdateMap[grpId]) ;
 
         // (cyril) I'm removing this, because the msgUpdateTS is updated when new messages are received by calling locked_stampMsgServerUpdateTS().
@@ -3000,7 +3017,7 @@ void RsGxsNetService::locked_genReqGrpTransaction(NxsTransaction* tr)
         }
         // FIXTESTS global variable rsReputations not available in unittests!
 
-#warning Update the code below to correctly send/recv dependign on reputation
+#warning csoler 2016-12-23: Update the code below to correctly send/recv dependign on reputation
 		if(!grpSyncItem->authorId.isNull() && mReputations->overallReputationLevel(grpSyncItem->authorId) == RsReputations::REPUTATION_LOCALLY_NEGATIVE)
 		{
 #ifdef NXS_NET_DEBUG_0
