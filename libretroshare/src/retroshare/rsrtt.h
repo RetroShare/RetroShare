@@ -58,6 +58,7 @@ class RsRtt
 virtual ~RsRtt() { return; }
 
 virtual uint32_t getPongResults(const RsPeerId& id, int n, std::list<RsRttPongResult> &results) = 0;
+virtual double getMeanOffset(const RsPeerId& id) = 0;
 
 };
 
