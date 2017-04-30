@@ -1,3 +1,27 @@
+/*
+ * libretroshare/src/serialiser: rsserializer.h
+ *
+ * RetroShare Serialiser.
+ *
+ * Copyright 2016 by Cyril Soler
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License Version 2 as published by the Free Software Foundation.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+ * USA.
+ *
+ * Please report all bugs and problems to "csoler@users.sourceforge.net".
+ *
+ */
 #pragma once
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -137,6 +161,8 @@ class RsItem ;
 
 #define SERIALIZE_ERROR() std::cerr << __PRETTY_FUNCTION__ << " : " 
 
+// This is the base class for serializers.
+
 class RsSerialType
 {
 public:
@@ -155,6 +181,7 @@ private:
 	uint32_t type;
 };
 
+// This class is only used internally to p3service. It should not be used explicitely otherwise.
 
 class RsRawSerialiser: public RsSerialType
 {
@@ -166,6 +193,8 @@ class RsRawSerialiser: public RsSerialType
 		virtual	bool        serialise  (RsItem *item, void *data, uint32_t *size);
 		virtual	RsItem *    deserialise(void *data, uint32_t *size);
 };
+
+// Top class for all services and config serializers.
 
 class RsGenericSerializer: public RsSerialType
 {
@@ -226,6 +255,8 @@ protected:
 
 };
 
+// Top class for service serializers. Derive your on service serializer from this class and overload creat_item().
+
 class RsServiceSerializer: public RsGenericSerializer
 {
 public:
@@ -242,6 +273,8 @@ public:
 
 		RsItem *deserialise(void *data,uint32_t *size) ;
 };
+
+// Top class for config serializers. Config serializers are only used internally by RS core. The development of new services or plugins do not need this.
 
 class RsConfigSerializer: public RsGenericSerializer
 {
