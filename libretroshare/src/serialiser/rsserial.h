@@ -65,24 +65,7 @@ const uint8_t RS_PKT_CLASS_CONFIG    = 0x02;
 const uint8_t RS_PKT_SUBTYPE_DEFAULT = 0x01; /* if only one subtype */
 
 class RsItem ;
-
-class RsSerialType
-{
-	public:
-	RsSerialType(uint32_t t); /* only uses top 24bits */
-	RsSerialType(uint8_t ver, uint8_t cls, uint8_t t);
-	RsSerialType(uint8_t ver, uint16_t service);
-
-virtual     ~RsSerialType();
-	
-virtual	uint32_t    size(RsItem *);
-virtual	bool        serialise  (RsItem *item, void *data, uint32_t *size);
-virtual	RsItem *    deserialise(void *data, uint32_t *size);
-	
-uint32_t    PacketId() const;
-	private:
-uint32_t type;
-};
+class RsSerialType ;
 
 
 class RsSerialiser

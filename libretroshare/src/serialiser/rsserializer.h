@@ -1,5 +1,124 @@
 #pragma once
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//                                           Retroshare Serialization code                                   //
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// Classes
+// =======
+//
+//          RsSerialiser ----------------+ std::map<uint32_t, RsSerialType*>
+//
+//	        RsSerialType
+//               |
+//               +----------- RsRawSerializer
+//               |
+//               +----------- RsGenericSerializer
+//                                    |
+//                                    +----------- RsConfigSerializer
+//                                    |                     |
+//                                    |                     +----------- Specific config serializers
+//                                    |                     +-----------             ...
+//                                    |
+//                                    +----------- RsServiceSerializer
+//                                                          |
+//                                                          +----------- Specific service serializers
+//                                                          +-----------             ...
+//                                                          +-----------             ...
+//
+//
+// Steps to derive a serializer for a new service:
+// ==============================================
+//
+//	1 - create a serializer class, and overload create_item() to create a new item of your own service for each item type constant:
+//
+//			class MyServiceSerializer: public RsServiceSerializer
+//			{
+//				MyServiceSerializer() : RsServiceSerializer(MY_SERVICE_IDENTIFIER) {}
+//
+//				RsItem *create_item(uint16_t service,uint8_t item_subtype)
+//				{
+//					if(service != MY_SERVICE_IDENTIFIER) return NULL ;
+//
+//					switch(item_subtype)
+//					{
+//					case MY_ITEM_SUBTYPE_01: return new MyServiceItem();
+//					default:
+//					   return NULL ;
+//					}
+//				}
+//			}
+//
+//  2 - create your own items, and overload serial_process in order to define the serialized structure:
+//
+//			class MyServiceItem: public RsItem
+//			{
+//				virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
+//				{
+//					RsTypeSerializer::serial_process<uint32_t> (j,ctx,count,"count") ;					// uint32_t is not really needed here, except for explicitly avoiding int types convertion
+//					RsTypeSerializer::serial_process           (j,ctx,update_times,"update_times") ;	// will serialize the map and its content
+//					RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,key,"key") ;						// note the explicit call to TlvItem
+//					RsTypeSerializer::serial_process           (j,ctx,dh_key,"dh_key") ;				// template will automatically require serialise/deserialise/size/print_data for your type
+//				}
+//
+//              private:
+//                 uint32_t                    count ;				// example of an int type. All int sizes are supported
+//                 std::map<uint32_t,time_t>   update_times ;		// example of a std::map. All std containers are supported.
+//                 RsTlvSecurityKey            key ;				// example of a TlvItem class.
+//                 BIGNUM                     *dh_key;				// example of a class that needs its own serializer (see below)
+//			};
+//
+//		Some types may not be already handled by RsTypeSerializer, so in this case, you need to specialise the template for your own type. But this is quite unlikely to
+//		happen. In most cases, for instance in your structure types, serialization is directly done by calling RsTypeSerializer::serial_process() on each member of the type.
+//		In case you really need a specific serialization for soe particular type, here is how to do it, with the example of BIGNUM* (a crypto primitive):
+//
+//			template<> bool RsTypeSerializer::serialize(uint8_t data[], uint32_t size, uint32_t &offset, BIGNUM * const & member)
+//			{
+//				uint32_t s = BN_num_bytes(member) ;
+//
+//			    if(size < offset + 4 + s)
+//			        return false ;
+//
+//			    bool ok = true ;
+//				ok &= setRawUInt32(data, size, &offset, s);
+//
+//				BN_bn2bin(member,&((unsigned char *)data)[offset]) ;
+//				offset += s ;
+//
+//			    return ok;
+//			}
+//			template<> bool RsTypeSerializer::deserialize(const uint8_t data[], uint32_t size, uint32_t &offset, BIGNUM *& member)
+//			{
+//				uint32_t s=0 ;
+//			    bool ok = true ;
+//			    ok &= getRawUInt32(data, size, &offset, &s);
+//
+//			    if(s > size || size - s < offset)
+//				    return false ;
+//
+//			    member = BN_bin2bn(&((unsigned char *)data)[offset],s,NULL) ;
+//			    offset += s ;
+//
+//			    return ok;
+//			}
+//			template<> uint32_t RsTypeSerializer::serial_size(BIGNUM * const & member)
+//			{
+//				return 4 + BN_num_bytes(member) ;
+//			}
+//			template<> void     RsTypeSerializer::print_data(const std::string& name,BIGNUM * const & /* member */)
+//			{
+//			    std::cerr << "[BIGNUM] : " << name << std::endl;
+//			}
+//
+//  3 - in your service, overload the serialiser declaration to add your own:
+//
+//			MyService::MyService()
+//			{
+//				addSerialType(new MyServiceSerializer()) ;
+//			}
+//
+//	4 - in your service, recieve and send items by calling recvItem() and sendItem() respectively.
+//
 #include <stdint.h>
 #include <string.h>
 #include <iostream>
@@ -11,6 +130,36 @@
 class RsItem ;
 
 #define SERIALIZE_ERROR() std::cerr << __PRETTY_FUNCTION__ << " : " 
+
+class RsSerialType
+{
+public:
+	RsSerialType(uint32_t t); /* only uses top 24bits */
+	RsSerialType(uint8_t ver, uint8_t cls, uint8_t t);
+	RsSerialType(uint8_t ver, uint16_t service);
+
+	virtual     ~RsSerialType();
+
+	virtual	uint32_t    size(RsItem *)=0;
+	virtual	bool        serialise  (RsItem *item, void *data, uint32_t *size)=0;
+	virtual	RsItem *    deserialise(void *data, uint32_t *size)=0;
+
+	uint32_t    PacketId() const;
+private:
+	uint32_t type;
+};
+
+
+class RsRawSerialiser: public RsSerialType
+{
+	public:
+		RsRawSerialiser() :RsSerialType(RS_PKT_VERSION_SERVICE, 0, 0) {}
+		virtual     ~RsRawSerialiser() { }
+
+		virtual	uint32_t    size(RsItem *);
+		virtual	bool        serialise  (RsItem *item, void *data, uint32_t *size);
+		virtual	RsItem *    deserialise(void *data, uint32_t *size);
+};
 
 class RsGenericSerializer: public RsSerialType
 {
@@ -105,7 +254,6 @@ public:
 
 		RsItem *deserialise(void *data,uint32_t *size) ;
 };
-
 
 
 

@@ -87,7 +87,7 @@ pqiperson * pqisslpersongrp::locked_createPerson(const RsPeerId& id, pqilistener
 
 	
 		RsSerialiser *rss = new RsSerialiser();
-		rss->addSerialType(new RsServiceSerialiser());
+		rss->addSerialType(new RsRawSerialiser());
 	
 		pqiconnect *pqisc = new pqiconnect(pqip, rss, pqis);
 	
@@ -141,7 +141,7 @@ pqiperson * pqisslpersongrp::locked_createPerson(const RsPeerId& id, pqilistener
 		ssl_tunnels[id] = pqis ;	// keeps for getting crypt info per peer.
 	
 		RsSerialiser *rss = new RsSerialiser();
-		rss->addSerialType(new RsServiceSerialiser());
+		rss->addSerialType(new RsRawSerialiser());
 	
 		pqiconnect *pqisc = new pqiconnect(pqip, rss, pqis);
 	
@@ -151,7 +151,7 @@ pqiperson * pqisslpersongrp::locked_createPerson(const RsPeerId& id, pqilistener
 		pqissludp *pqius 	= new pqissludp(pqip, mLinkMgr);
 	
 		RsSerialiser *rss2 = new RsSerialiser();
-		rss2->addSerialType(new RsServiceSerialiser());
+		rss2->addSerialType(new RsRawSerialiser());
 		
 		pqiconnect *pqiusc 	= new pqiconnect(pqip, rss2, pqius);
 	

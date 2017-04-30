@@ -27,14 +27,4 @@
 
 #include "rsserial.h"
 
-class RsServiceSerialiser: public RsSerialType
-{
-	public:
-		RsServiceSerialiser() :RsSerialType(RS_PKT_VERSION_SERVICE, 0, 0) { }
-		virtual     ~RsServiceSerialiser() { }
-
-		virtual	uint32_t    size(RsItem *);
-		virtual	bool        serialise  (RsItem *item, void *data, uint32_t *size);
-		virtual	RsItem *    deserialise(void *data, uint32_t *size);
-};
 
