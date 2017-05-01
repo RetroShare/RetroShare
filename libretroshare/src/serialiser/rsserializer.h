@@ -60,7 +60,7 @@
 //			{
 //				MyServiceSerializer() : RsServiceSerializer(MY_SERVICE_IDENTIFIER) {}
 //
-//				RsItem *create_item(uint16_t service,uint8_t item_subtype)
+//				RsItem *create_item(uint16_t service,uint8_t item_subtype) const          // mind the "const"!
 //				{
 //					if(service != MY_SERVICE_IDENTIFIER) return NULL ;
 //
