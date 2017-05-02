@@ -2294,44 +2294,6 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
 
 		    continue;
 	    }
-#ifdef TO_REMOVE
-        RsPeerGroupItem_deprecated *gitem = dynamic_cast<RsPeerGroupItem_deprecated *>(*it) ;
-
-	    if (gitem)
-	    {
-		    RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
-
-#ifdef PEER_DEBUG
-		    std::cerr << "p3PeerMgrIMPL::loadList() Peer group item:" << std::endl;
-		    gitem->print(std::cerr, 10);
-		    std::cerr << std::endl;
-#endif
-            RsGroupInfo ginfo ;
-            ginfo.flag = gitem->flag ;
-            ginfo.name = gitem->name ;
-            ginfo.peerIds = gitem->pgpList.ids ;
-
-            do { ginfo.id = RsNodeGroupId::random(); } while(groupList.find(ginfo.id) != groupList.end()) ;
-
-            // Ensure backward compatibility when loading the group in old format. The id must matchthe standard default id.
-
-            if(gitem->id == std::string(RS_GROUP_DEFAULT_NAME_FRIENDS  )) ginfo.id = RS_GROUP_ID_FRIENDS ;
-            if(gitem->id == std::string(RS_GROUP_DEFAULT_NAME_COWORKERS)) ginfo.id = RS_GROUP_ID_COWORKERS ;
-            if(gitem->id == std::string(RS_GROUP_DEFAULT_NAME_FAMILY   )) ginfo.id = RS_GROUP_ID_FAMILY ;
-            if(gitem->id == std::string(RS_GROUP_DEFAULT_NAME_FAVORITES)) ginfo.id = RS_GROUP_ID_FAVORITES ;
-            if(gitem->id == std::string(RS_GROUP_DEFAULT_NAME_OTHERS   )) ginfo.id = RS_GROUP_ID_OTHERS    ;
-
-            if(!ginfo.id.isNull())
-            {
-                groupList[ginfo.id] = ginfo ;
-                std::cerr << "(II) Creating new group for old format local group \"" << gitem->name << "\". Id=" << ginfo.id << std::endl;
-            }
-            else
-                std::cerr << "(EE) no group corresponding to old format group with ID=\"" << gitem->id << "\"" << std::endl;
-
-            continue;
-	    }
-#endif
 
         RsNodeGroupItem *gitem2 = dynamic_cast<RsNodeGroupItem*>(*it) ;
 

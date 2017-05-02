@@ -2205,26 +2205,6 @@ Sha1CheckSum p3GRouter::makeTunnelHash(const RsGxsId& destination,const GRouterS
 
     return RsDirUtil::sha1sum(bytes,20) ;
 }
-#ifdef TO_REMOVE
-bool p3GRouter::locked_getGxsOwnIdAndClientIdFromHash(const TurtleFileHash& sum,RsGxsId& gxs_id,GRouterServiceId& client_id)
-{
-    assert(       gxs_id.SIZE_IN_BYTES == 16) ;
-    assert(Sha1CheckSum::SIZE_IN_BYTES == 20) ;
-
-    //gxs_id = RsGxsId(sum.toByteArray());// takes the first 16 bytes
-    //client_id = sum.toByteArray()[19] + (sum.toByteArray()[18] << 8) ;
-    
-    std::map<Sha1CheckSum, GRouterPublishedKeyInfo>::const_iterator it = _owned_key_ids.find(sum);
-    
-    if(it == _owned_key_ids.end())
-        return false ;
-    
-    gxs_id = it->second.authentication_key ;
-    client_id = it->second.service_id ;
-    
-    return true ;
-}
-#endif
 bool p3GRouter::loadList(std::list<RsItem*>& items)
 {
     {

@@ -140,30 +140,6 @@ class RsPeerBandwidthLimitsItem : public RsItem
 		std::map<RsPgpId,PeerBandwidthLimits> peers ;
 };
 
-#ifdef TO_REMOVE
-class RsPeerGroupItem_deprecated : public RsItem
-{
-public:
-    RsPeerGroupItem_deprecated();
-    virtual ~RsPeerGroupItem_deprecated();
-
-	virtual void clear();
-	std::ostream &print(std::ostream &out, uint16_t indent = 0);
-
-	/* set data from RsGroupInfo to RsPeerGroupItem */
-	void set(RsGroupInfo &groupInfo);
-	/* get data from RsGroupInfo to RsPeerGroupItem */
-	void get(RsGroupInfo &groupInfo);
-
-	/* Mandatory */
-	std::string id;
-	std::string name;
-	uint32_t    flag;
-
-	RsTlvPgpIdSet pgpList;
-};
-#endif
-
 class RsNodeGroupItem: public RsItem
 {
 public:
@@ -216,51 +192,6 @@ class RsPeerConfigSerialiser: public RsConfigSerializer
 
 /**************************************************************************/
 
-#ifdef TO_REMOVE
-class RsCacheConfig: public RsItem
-{
-	public:
-	RsCacheConfig() 
-	:RsItem(RS_PKT_VERSION1, RS_PKT_CLASS_CONFIG,
-		RS_PKT_TYPE_CACHE_CONFIG,
-		RS_PKT_SUBTYPE_DEFAULT)
-	{ return; }
-virtual ~RsCacheConfig();
-virtual void clear();
-std::ostream &print(std::ostream &out, uint16_t indent = 0);
-
-        RsPeerId        pid;                 /* Mandatory */
-	uint16_t        cachetypeid;            /* Mandatory */
-	uint16_t        cachesubid;             /* Mandatory */
-
-	std::string     path;    	        /* Mandatory */
-	std::string     name;    	        /* Mandatory */
-    RsFileHash      hash;    	        /* Mandatory */
-	uint64_t	size;			/* Mandatory */
-
-	uint32_t	recvd;                  /* Mandatory */
-};
-
-
-class RsCacheConfigSerialiser: public RsSerialType
-{
-	public:
-	RsCacheConfigSerialiser()
-        :RsSerialType(RS_PKT_VERSION1, RS_PKT_CLASS_CONFIG,
-	                RS_PKT_TYPE_CACHE_CONFIG)
-	{ return; }
-
-virtual     ~RsCacheConfigSerialiser();
-	
-virtual	uint32_t    size(RsItem *);
-virtual	bool        serialise  (RsItem *item, void *data, uint32_t *size);
-virtual	RsItem *    deserialise(void *data, uint32_t *size);
-
-};
-#endif
-
-/**************************************************************************/
-
 class RsFileTransfer: public RsItem
 {
 	public:
@@ -305,26 +236,6 @@ class RsFileTransfer: public RsItem
 /**************************************************************************/
 
 const uint32_t RS_FILE_CONFIG_CLEANUP_DELETE = 0x0001;
-
-#ifdef TO_REMOVE
-/* Used by ft / extralist / configdirs / anyone who wants a basic file */ 
-class RsFileConfigItem_deprecated: public RsItem
-{
-public:
-    RsFileConfigItem_deprecated()
-        :RsItem(RS_PKT_VERSION1, RS_PKT_CLASS_CONFIG,
-                RS_PKT_TYPE_FILE_CONFIG,
-                RS_PKT_SUBTYPE_FILE_ITEM_deprecated)
-    {}
-    virtual ~RsFileConfigItem_deprecated() {}
-    virtual void clear();
-    std::ostream &print(std::ostream &out, uint16_t indent = 0);
-
-    RsTlvFileItem file;
-    uint32_t flags;
-    std::list<std::string> parent_groups ;
-};
-#endif
 
 class RsFileConfigItem: public RsItem
 {
