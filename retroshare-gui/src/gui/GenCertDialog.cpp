@@ -22,6 +22,7 @@
 #include "GenCertDialog.h"
 
 #include <QAbstractEventDispatcher>
+#include <QLineEdit>
 #include <QFileDialog>
 #include <QGraphicsOpacityEffect>
 #include <QMessageBox>
@@ -269,9 +270,6 @@ void GenCertDialog::setupState()
 	//ui.no_gpg_key_label->setText(tr("Welcome to Retroshare. Before you can proceed you need to create a profile and associate a node with it. To do so please fill out this form.\nAlternatively you can import a (previously exported) profile. Just uncheck \"Create a new profile\""));
 	//no_gpg_key_label->setVisible(false);
 
-	ui.nickname_label->setVisible(adv_state) ;
-	ui.nickname_input->setVisible(adv_state) ;
-
 	ui.name_label->setVisible(true);
 	ui.name_input->setVisible(generate_new);
 
@@ -421,7 +419,15 @@ void GenCertDialog::genPerson()
 	RsPgpId PGPId;
 	bool isHiddenLoc = false;
 
-	mGXSNickname = ui.nickname_input->text();
+	if(ui.nickname_input->isVisible())
+	{
+		mGXSNickname = ui.nickname_input->text();
+	}
+	else
+	{
+		mGXSNickname = ui.node_input->text();
+	}
+
 	if (!mGXSNickname.isEmpty())
 	{
 		if (mGXSNickname.size() < RSID_MINIMUM_NICKNAME_SIZE)

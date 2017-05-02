@@ -30,11 +30,13 @@
 #include "pqi/pqibin.h"
 #include "pqi/pqistore.h"
 #include "pqi/p3linkmgr.h"
+#include "rsserver/p3face.h"
 
 #include "services/p3rtt.h"
 #include "rsitems/rsrttitems.h"
 
 #include <sys/time.h>
+#include <math.h>
 
 /****
  * #define DEBUG_RTT		1
@@ -358,7 +360,26 @@ int	p3rtt::storePongResult(const RsPeerId& id, uint32_t counter, double recv_ts,
 		peerInfo->mPongResults.pop_front();
 	}
 
-	/* should do calculations */
+	//Wait at least 20 pongs before compute mean time offset
+	if(peerInfo->mPongResults.size() > 20)
+	{
+		double mean = 0;
+		for(std::list<RsRttPongResult>::const_iterator prIt = peerInfo->mPongResults.begin(), end = peerInfo->mPongResults.end(); prIt != end; ++ prIt)
+		{
+			mean += prIt->mOffset;
+		}
+		peerInfo->mCurrentMeanOffset = mean / peerInfo->mPongResults.size();
+		if(fabs(peerInfo->mCurrentMeanOffset) > 120)
+		{
+			p3Notify *notify = RsServer::notify();
+			if (notify)
+			{
+				//notify->AddPopupMessage(RS_POPUP_OFFSET, eerInfo->mId.toStdString(),"", "Time Offset: ");
+				notify->AddFeedItem(RS_FEED_ITEM_PEER_OFFSET, peerInfo->mId.toStdString());
+			}
+			std::cerr << "(WW) Peer:" << peerInfo->mId << " get time offset more than two minutes with you!!!" << std::endl;
+		}
+	}
 	return 1;
 }
 
@@ -379,7 +400,16 @@ uint32_t p3rtt::getPongResults(const RsPeerId& id, int n, std::list<RsRttPongRes
 	return i ;
 }
 
+double p3rtt::getMeanOffset(const RsPeerId &id)
+{
+	RsStackMutex stack(mRttMtx); /****** LOCKED MUTEX *******/
 
+	RttPeerInfo *peer = locked_GetPeerInfo(id);
+	if(peer)
+		return peer->mCurrentMeanOffset;
+	else
+		return 0;
+}
 
 RttPeerInfo *p3rtt::locked_GetPeerInfo(const RsPeerId& id)
 {
