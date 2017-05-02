@@ -66,6 +66,15 @@ void NotificationHandler::notifyChatMessage(const ChatMessage& msg)
 	notificationEvent.notificationData.emplace("chat_id", msg.chat_id.toStdString());
 	notificationEvent.notificationData.emplace("incoming", std::to_string(msg.incoming));
 
+	if(msg.chat_id.isBroadcast())
+		notificationEvent.notificationData.emplace("chat_type", "broadcast");
+	else if(msg.chat_id.isDistantChatId())
+		notificationEvent.notificationData.emplace("chat_type", "distant_chat");
+	else if(msg.chat_id.isLobbyId())
+		notificationEvent.notificationData.emplace("chat_type", "lobby");
+	else if(msg.chat_id.isPeerId())
+		notificationEvent.notificationData.emplace("chat_type", "direct_chat");
+
 	eventsVector.push_back(notificationEvent);
 }
 
