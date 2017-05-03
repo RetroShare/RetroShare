@@ -32,6 +32,7 @@
 #include <iomanip>
 
 static const uint32_t MAX_SERIALIZED_ARRAY_SIZE = 500 ;
+static const uint32_t MAX_SERIALIZED_CHUNK_SIZE = 10*1024*1024 ; // 10 MB.
 
 //=================================================================================================//
 //                                            Integer types                                        //
@@ -231,9 +232,25 @@ template<> bool RsTypeSerializer::deserialize(const uint8_t data[],uint32_t size
 
     bool ok = deserialize<uint32_t>(data,size,offset,r.second) ;
 
+    if(r.second == 0)
+    {
+        r.first = NULL ;
+
+        if(!ok)
+			offset = saved_offset ;
+
+        return ok ;
+    }
+    if(r.second > MAX_SERIALIZED_CHUNK_SIZE)
+    {
+        std::cerr << "(EE) RsTypeSerializer::deserialize<TlvMemBlock_proxy>(): data chunk has size larger than safety size (" << MAX_SERIALIZED_CHUNK_SIZE << "). Item will be dropped." << std::endl;
+        offset = saved_offset ;
+        return false ;
+    }
+
     r.first = (uint8_t*)rs_malloc(r.second) ;
 
-    ok = ok && NULL != r.first;
+    ok = ok && (NULL != r.first);
 
     memcpy(r.first,&data[offset],r.second) ;
     offset += r.second ;
