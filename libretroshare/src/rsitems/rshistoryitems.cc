@@ -51,12 +51,12 @@ void RsHistoryMsgItem::serial_process(RsGenericSerializer::SerializeJob j,RsGene
     RsTypeSerializer::serial_process          (j,ctx,TLV_TYPE_STR_MSG,message,"message") ;
 }
 
-RsItem *RsHistorySerialiser::create_item(uint8_t serial_class,uint8_t serial_type) const
+RsItem *RsHistorySerialiser::create_item(uint8_t item_type,uint8_t item_subtype) const
 {
-    if(serial_class != RS_PKT_CLASS_CONFIG)
+    if(item_type != RS_PKT_TYPE_HISTORY_CONFIG)
         return NULL ;
 
-    if(serial_type == RS_PKT_SUBTYPE_DEFAULT)
+    if(item_subtype == RS_PKT_SUBTYPE_DEFAULT)
         return new RsHistoryMsgItem();
 
     return NULL ;

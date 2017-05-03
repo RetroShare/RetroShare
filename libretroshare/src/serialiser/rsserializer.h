@@ -289,7 +289,7 @@ public:
 		/*! create_item
 		 * 	should be overloaded to create the correct type of item depending on the data
 		 */
-		virtual RsItem *create_item(uint8_t /* class */, uint8_t /* item_type */) const=0;
+		virtual RsItem *create_item(uint8_t /* item_type */, uint8_t /* item_sub_type */) const=0;
 
 		RsItem *deserialise(void *data,uint32_t *size) ;
 };

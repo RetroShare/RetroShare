@@ -63,7 +63,7 @@ public:
 	RsHistorySerialiser() : RsConfigSerializer(RS_PKT_CLASS_CONFIG, RS_PKT_TYPE_HISTORY_CONFIG) {}
 	virtual ~RsHistorySerialiser() {}
 
-    virtual RsItem *create_item(uint8_t service,uint8_t type) const ;
+    virtual RsItem *create_item(uint8_t item_type,uint8_t item_subtype) const ;
 };
 
 /**************************************************************************/
