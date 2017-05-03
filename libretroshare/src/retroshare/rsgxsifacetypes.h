@@ -14,6 +14,7 @@
 #include <inttypes.h>
 
 #include <retroshare/rstypes.h>
+#include <retroshare/rsids.h>
 
 typedef GXSGroupId   RsGxsGroupId;
 typedef Sha1CheckSum RsGxsMessageId;

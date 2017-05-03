@@ -27,8 +27,7 @@
 #ifndef PQI_TOP_HEADER
 #define PQI_TOP_HEADER
 
-#include "serialiser/rsserial.h"
-
+#include "rsitems/rsitem.h"
 
 class P3Interface
 {

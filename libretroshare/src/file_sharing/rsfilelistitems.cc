@@ -24,342 +24,41 @@
  */
 #include "serialiser/rsbaseserial.h"
 
+#include "serialiser/rstypeserializer.h"
+
 #include "file_sharing/rsfilelistitems.h"
 
-RsItem* RsFileListsSerialiser::deserialise(void *data, uint32_t *size)
+void RsFileListsSyncRequestItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
-#ifdef RSSERIAL_DEBUG
-        std::cerr << "RsFileListsSerialiser::deserialise()" << std::endl;
-#endif
-        /* get the type and size */
-        uint32_t rstype = getRsItemId(data);
-
-        if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) || (getRsItemService(rstype) != RS_SERVICE_TYPE_FILE_DATABASE))
-            return NULL; /* wrong type */
-
-        switch(getRsItemSubType(rstype))
-        {
-        case RS_PKT_SUBTYPE_FILELISTS_SYNC_REQ_ITEM:   return deserialFileListsSyncRequestItem(data, size);
-        case RS_PKT_SUBTYPE_FILELISTS_SYNC_RSP_ITEM:   return deserialFileListsSyncResponseItem(data, size);
-//        case RS_PKT_SUBTYPE_FILELISTS_CONFIG_ITEM:     return deserialFileListsConfigItem (data, size);
-
-        default:
-            {
-                std::cerr << "(WW) RsFileListsSerialiser::deserialise() : unhandled item type " << getRsItemSubType(rstype) << std::endl;
-                return NULL;
-
-            }
-        }
+    RsTypeSerializer::serial_process          (j,ctx,entry_hash,"entry_hash") ;
+    RsTypeSerializer::serial_process<uint32_t>(j,ctx,flags     ,"flags") ;
+    RsTypeSerializer::serial_process<uint32_t>(j,ctx,last_known_recurs_modf_TS,"last_known_recurs_modf_TS") ;
+    RsTypeSerializer::serial_process<uint64_t>(j,ctx,request_id,"request_id") ;
+}
+void RsFileListsSyncResponseItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
+{
+    RsTypeSerializer::serial_process           (j,ctx,entry_hash,"entry_hash") ;
+    RsTypeSerializer::serial_process           (j,ctx,checksum,"checksum") ;
+    RsTypeSerializer::serial_process<uint32_t> (j,ctx,flags     ,"flags") ;
+    RsTypeSerializer::serial_process<uint32_t> (j,ctx,last_known_recurs_modf_TS,"last_known_recurs_modf_TS") ;
+    RsTypeSerializer::serial_process<uint64_t> (j,ctx,request_id,"request_id") ;
+    RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,directory_content_data,"directory_content_data") ;
 }
 
-uint32_t RsFileListsSerialiser::size(RsItem *item)
+RsItem *RsFileListsSerialiser::create_item(uint16_t service,uint8_t type) const
 {
-    RsFileListsItem *flst_item = dynamic_cast<RsFileListsItem*>(item) ;
+    if(service != RS_SERVICE_TYPE_FILE_DATABASE)
+        return NULL ;
 
-    if(flst_item != NULL)
-        return flst_item->serial_size() ;
-	else
-	{
-        std::cerr << "RsFileListsSerialiser::serialise(): Not an RsFileListsItem!"  << std::endl;
-		return 0;
-	}
-}
-
-bool RsFileListsSerialiser::serialise(RsItem *item, void *data, uint32_t *size)
-{
-    RsFileListsItem *flst_item = dynamic_cast<RsFileListsItem*>(item) ;
-
-    if(flst_item != NULL)
-        return flst_item->serialise(data,*size) ;
-	else
-	{
-        std::cerr << "RsFileListsSerialiser::serialise(): Not an RsFileListsItem!"  << std::endl;
-		return 0;
-	}
-}
-
-bool RsFileListsItem::serialise_header(void *data,uint32_t& pktsize,uint32_t& tlvsize, uint32_t& offset) const
-{
-	tlvsize = serial_size() ;
-	offset = 0;
-
-	if (pktsize < tlvsize)
-		return false; /* not enough space */
-
-	pktsize = tlvsize;
-
-	if(!setRsItemHeader(data, tlvsize, PacketId(), tlvsize))
-	{
-		std::cerr << "RsFileTransferItem::serialise_header(): ERROR. Not enough size!" << std::endl;
-		return false ;
-	}
-#ifdef RSSERIAL_DEBUG
-	std::cerr << "RsFileItemSerialiser::serialiseData() Header: " << ok << std::endl;
-#endif
-	offset += 8;
-
-	return true ;
-}
-
-bool RsFileListsSyncRequestItem::serialise(void *data, uint32_t& size) const
-{
-    uint32_t tlvsize,offset=0;
-    bool ok = true;
-
-    if(!serialise_header(data,size,tlvsize,offset))
-        return false ;
-
-#ifdef RSSERIAL_DEBUG
-    std::cerr << "RsFileListsSerialiser::serialiseFileListsSyncReqItem()" << std::endl;
-#endif
-
-    /* RsFileListsSyncMsgItem */
-
-    ok &= entry_hash.serialise(data, size, offset);
-    ok &= setRawUInt32(data, size, &offset, flags      );
-    ok &= setRawUInt32(data, size, &offset, last_known_recurs_modf_TS);
-    ok &= setRawUInt64(data, size, &offset, request_id);
-
-    if(offset != tlvsize){
-#ifdef RSSERIAL_DEBUG
-        std::cerr << "RsFileListsSerialiser::serialiseNxsSynMsgItem() FAIL Size Error! " << std::endl;
-#endif
-        ok = false;
-    }
-
-#ifdef RSSERIAL_DEBUG
-    if (!ok)
+    switch(type)
     {
-        std::cerr << "RsFileListsSerialiser::serialiseNxsSynMsgItem() NOK" << std::endl;
+    case RS_PKT_SUBTYPE_FILELISTS_SYNC_REQ_ITEM: return new RsFileListsSyncRequestItem();
+    case RS_PKT_SUBTYPE_FILELISTS_SYNC_RSP_ITEM: return new RsFileListsSyncResponseItem();
+    default:
+        return NULL ;
     }
-#endif
-
-    return ok;
-}
-
-bool RsFileListsSyncResponseItem::serialise(void *data, uint32_t& size) const
-{
-    uint32_t tlvsize,offset=0;
-    bool ok = true;
-
-    if(!serialise_header(data,size,tlvsize,offset))
-        return false ;
-
-#ifdef RSSERIAL_DEBUG
-    std::cerr << "RsFileListsSerialiser::serialiseFileListsSyncReqItem()" << std::endl;
-#endif
-
-    /* RsFileListsSyncMsgItem */
-
-    ok &= entry_hash.serialise(data, size, offset);
-    ok &= checksum.serialise(data, size, offset);
-    ok &= setRawUInt32(data, size, &offset, flags      );
-    ok &= setRawUInt32(data, size, &offset, last_known_recurs_modf_TS);
-    ok &= setRawUInt64(data, size, &offset, request_id);
-    ok &= directory_content_data.SetTlv(data,size,&offset) ;
-
-    if(offset != tlvsize){
-#ifdef RSSERIAL_DEBUG
-        std::cerr << "RsFileListsSerialiser::serialiseNxsSynMsgItem() FAIL Size Error! " << std::endl;
-#endif
-        ok = false;
-    }
-
-#ifdef RSSERIAL_DEBUG
-    if (!ok)
-    {
-        std::cerr << "RsFileListsSerialiser::serialiseNxsSynMsgItem() NOK" << std::endl;
-    }
-#endif
-
-    return ok;
-}
-
-//============================================================================================================================//
-//                                                     Deserialisation                                                        //
-//============================================================================================================================//
-
-//RsFileListsConfigItem* RsFileListsSerialiser::deserialFileListsConfigItem(void *data, uint32_t *size)
-//{
-//    NOT_IMPLEMENTED();
-//
-//    return NULL ;
-//}
-
-RsFileListsSyncRequestItem* RsFileListsSerialiser::deserialFileListsSyncRequestItem(void *data, uint32_t *size)
-{
-    bool ok = checkItemHeader(data,size,RS_PKT_SUBTYPE_FILELISTS_SYNC_REQ_ITEM);
-    uint32_t offset = 8;
-
-    RsFileListsSyncRequestItem* item = new RsFileListsSyncRequestItem();
-
-    ok &= item->entry_hash.deserialise(data, *size, offset);
-    ok &= getRawUInt32(data, *size, &offset, &item->flags);
-    ok &= getRawUInt32(data, *size, &offset, &item->last_known_recurs_modf_TS);
-    ok &= getRawUInt64(data, *size, &offset, &item->request_id);
-
-    if (offset != *size)
-    {
-#ifdef RSSERIAL_DEBUG
-            std::cerr << "RsFileListsSerialiser::deserialNxsGrp() FAIL size mismatch" << std::endl;
-#endif
-            /* error */
-            delete item;
-            return NULL;
-    }
-
-    if (!ok)
-    {
-#ifdef RSSERIAL_DEBUG
-            std::cerr << "RsFileListsSerialiser::deserialNxsGrp() NOK" << std::endl;
-#endif
-            delete item;
-            return NULL;
-    }
-
-    return item;
-}
-RsFileListsSyncResponseItem* RsFileListsSerialiser::deserialFileListsSyncResponseItem(void *data, uint32_t *size)
-{
-    bool ok = checkItemHeader(data,size,RS_PKT_SUBTYPE_FILELISTS_SYNC_RSP_ITEM);
-    uint32_t offset = 8;
-
-    RsFileListsSyncResponseItem* item = new RsFileListsSyncResponseItem();
-
-	/*
-    uint32_t entry_index ;              // index of the directory to sync
-    uint32_t flags;                     // used to say that it's a request or a response, say that the directory has been removed, ask for further update, etc.
-    uint32_t last_known_recurs_modf_TS; // time of last modification, computed over all files+directories below.
-    uint64_t request_id;                // use to determine if changes that have occured since last hash
-	*/
-
-    ok &= item->entry_hash.deserialise(data, *size, offset);
-    ok &= item->checksum.deserialise(data, *size, offset);
-    ok &= getRawUInt32(data, *size, &offset, &item->flags);
-    ok &= getRawUInt32(data, *size, &offset, &item->last_known_recurs_modf_TS);
-    ok &= getRawUInt64(data, *size, &offset, &item->request_id);
-
-    ok &= item->directory_content_data.GetTlv(data,*size,&offset) ;
-
-    if (offset != *size)
-    {
-#ifdef RSSERIAL_DEBUG
-            std::cerr << "RsFileListsSerialiser::deserialNxsGrp() FAIL size mismatch" << std::endl;
-#endif
-            /* error */
-            delete item;
-            return NULL;
-    }
-
-    if (!ok)
-    {
-#ifdef RSSERIAL_DEBUG
-            std::cerr << "RsFileListsSerialiser::deserialNxsGrp() NOK" << std::endl;
-#endif
-            delete item;
-            return NULL;
-    }
-
-    return item;
-}
-bool RsFileListsSerialiser::checkItemHeader(void *data,uint32_t *size,uint8_t subservice_type)
-{
-#ifdef RSSERIAL_DEBUG
-    std::cerr << "RsFileListsSerialiser::checkItemHeader()" << std::endl;
-#endif
-    /* get the type and size */
-    uint32_t rstype = getRsItemId(data);
-    uint32_t rssize = getRsItemSize(data);
-
-    if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) || (RS_SERVICE_TYPE_FILE_DATABASE != getRsItemService(rstype)) || (subservice_type != getRsItemSubType(rstype)))
-    {
-#ifdef RSSERIAL_DEBUG
-            std::cerr << "RsFileListsSerialiser::checkItemHeader() FAIL wrong type" << std::endl;
-#endif
-            return false; /* wrong type */
-    }
-
-    if (*size < rssize)    /* check size */
-    {
-#ifdef RSSERIAL_DEBUG
-            std::cerr << "RsFileListsSerialiser::checkItemHeader() FAIL wrong size" << std::endl;
-#endif
-            return false; /* not enough data */
-    }
-
-    /* set the packet length */
-    *size = rssize;
-    
-    return true ;
-}
-
-//============================================================================================================================//
-//                                                         Sizes                                                              //
-//============================================================================================================================//
-
-uint32_t RsFileListsSyncRequestItem::serial_size()const
-{
-
-    uint32_t s = 8; //header size
-
-    s += RsFileHash::serial_size(); // entry hash
-    s += 4; // flags
-    s += 4; // last_known_recurs_modf_TS
-    s += 8; // request_id
-
-    return s;
-}
-
-uint32_t RsFileListsSyncResponseItem::serial_size()const
-{
-
-    uint32_t s = 8; //header size
-
-    s += RsFileHash::serial_size(); // entry hash
-    s += RsFileHash::serial_size(); // checksum
-    s += 4; // flags
-    s += 4; // last_known_recurs_modf_TS
-    s += 8; // request_id
-    s += directory_content_data.TlvSize();
-
-    return s;
-}
-
-void RsFileListsSyncRequestItem::clear()
-{
 }
 void RsFileListsSyncResponseItem::clear()
 {
     directory_content_data.TlvClear();
-}
-std::ostream& RsFileListsSyncRequestItem::print(std::ostream &out, uint16_t indent)
-{
-    printRsItemBase(out, "RsFileListsSyncReqItem", indent);
-    uint16_t int_Indent = indent + 2;
-
-    printIndent(out , int_Indent); out << "Entry hash:   " << entry_hash << std::endl;
-    printIndent(out , int_Indent); out << "Flags:        " << (uint32_t) flags << std::endl;
-    printIndent(out , int_Indent); out << "Last modf TS: " << last_known_recurs_modf_TS << std::endl;
-    printIndent(out , int_Indent); out << "request id:   " << std::hex << request_id  << std::dec << std::endl;
-
-    printRsItemEnd(out ,"RsFileListsSyncReqItem", indent);
-
-    return out;
-}
-
-std::ostream& RsFileListsSyncResponseItem::print(std::ostream &out, uint16_t indent)
-{
-    printRsItemBase(out, "RsFileListsSyncDirItem", indent);
-    uint16_t int_Indent = indent + 2;
-
-    printIndent(out , int_Indent); out << "Entry hash:   " << entry_hash << std::endl;
-    printIndent(out , int_Indent); out << "Checksum  :   " << checksum << std::endl;
-    printIndent(out , int_Indent); out << "Flags:        " << (uint32_t) flags << std::endl;
-    printIndent(out , int_Indent); out << "Last modf TS: " << last_known_recurs_modf_TS << std::endl;
-    printIndent(out , int_Indent); out << "request id:   " << std::hex << request_id  << std::dec << std::endl;
-    printIndent(out , int_Indent); out << "Data size:    " << directory_content_data.bin_len << std::endl;
-
-    printRsItemEnd(out ,"RsFileListsSyncDirItem", indent);
-
-    return out;
 }

@@ -30,7 +30,7 @@
 #include <retroshare/rstypes.h>
 #include <retroshare/rsfiles.h>
 #include "ft/ftextralist.h"
-#include "serialiser/rsconfigitems.h"
+#include "rsitems/rsconfigitems.h"
 #include "util/rsdir.h"
 #include <stdio.h>
 #include <unistd.h>		/* for (u)sleep() */
@@ -396,7 +396,8 @@ bool ftExtraList::saveList(bool &cleanup, std::list<RsItem *>& sList)
     std::map<RsFileHash, FileDetails>::const_iterator it;
 	for(it = mFiles.begin(); it != mFiles.end(); ++it)
 	{
-		RsFileConfigItem_deprecated *fi = new RsFileConfigItem_deprecated();
+		RsFileConfigItem *fi = new RsFileConfigItem();
+
 		fi->file.path        = (it->second).info.path;
 		fi->file.name        = (it->second).info.fname;
 		fi->file.hash        = (it->second).info.hash;
@@ -429,7 +430,7 @@ bool    ftExtraList::loadList(std::list<RsItem *>& load)
 	for(it = load.begin(); it != load.end(); ++it)
 	{
 
-		RsFileConfigItem_deprecated *fi = dynamic_cast<RsFileConfigItem_deprecated *>(*it);
+		RsFileConfigItem *fi = dynamic_cast<RsFileConfigItem *>(*it);
 		if (!fi)
 		{
 			delete (*it);

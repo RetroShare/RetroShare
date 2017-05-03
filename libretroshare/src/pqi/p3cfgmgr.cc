@@ -35,7 +35,7 @@
 #include <util/rsdiscspace.h>
 #include "util/rsstring.h"
 
-#include "serialiser/rsconfigitems.h"
+#include "rsitems/rsconfigitems.h"
 
 /*
 #define CONFIG_DEBUG 1

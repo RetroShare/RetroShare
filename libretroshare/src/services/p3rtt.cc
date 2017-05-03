@@ -33,7 +33,7 @@
 #include "rsserver/p3face.h"
 
 #include "services/p3rtt.h"
-#include "serialiser/rsrttitems.h"
+#include "rsitems/rsrttitems.h"
 
 #include <sys/time.h>
 #include <math.h>

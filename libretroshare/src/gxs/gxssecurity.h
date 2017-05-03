@@ -28,7 +28,8 @@
  */
 
 #include "serialiser/rstlvkeys.h"
-#include "serialiser/rsnxsitems.h"
+
+#include "rsitems/rsnxsitems.h"
 
 #include <openssl/ssl.h>
 #include <openssl/evp.h>

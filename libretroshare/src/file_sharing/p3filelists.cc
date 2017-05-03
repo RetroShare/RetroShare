@@ -22,7 +22,7 @@
  * Please report all bugs and problems to "retroshare.project@gmail.com".
  *
  */
-#include "serialiser/rsserviceids.h"
+#include "rsitems/rsserviceids.h"
 
 #include "file_sharing/p3filelists.h"
 #include "file_sharing/directory_storage.h"

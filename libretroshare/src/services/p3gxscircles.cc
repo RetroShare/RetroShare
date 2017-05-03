@@ -23,8 +23,9 @@
  *
  */
 
+#include "rsitems/rsgxscircleitems.h"
+
 #include "services/p3gxscircles.h"
-#include "serialiser/rsgxscircleitems.h"
 #include "retroshare/rsgxsflags.h"
 #include "util/rsrandom.h"
 #include "util/rsdir.h"

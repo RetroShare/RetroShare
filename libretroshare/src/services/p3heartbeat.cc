@@ -26,7 +26,7 @@
 #include <time.h>
 
 #include "services/p3heartbeat.h"
-#include "serialiser/rsheartbeatitems.h"
+#include "rsitems/rsheartbeatitems.h"
 
 #include "pqi/p3servicecontrol.h"
 #include "pqi/pqipersongrp.h"

@@ -31,7 +31,7 @@
 #include <string>
 #include <vector>
 
-#include "serialiser/rsmsgitems.h"
+#include "rsitems/rsmsgitems.h"
 #include "services/p3service.h"
 #include "pqi/pqiservicemonitor.h"
 #include "chat/distantchat.h"

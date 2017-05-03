@@ -30,7 +30,7 @@
 #include <math.h>
 
 #include "services/p3postbase.h"
-#include "serialiser/rsgxscommentitems.h"
+#include "rsitems/rsgxscommentitems.h"
 
 #include "rsserver/p3face.h"
 #include "retroshare/rsnotify.h"

@@ -32,8 +32,8 @@
 
 #include "inttypes.h"
 
-#include "serialiser/rsgxsitems.h"
-#include "serialiser/rsnxsitems.h"
+#include "rsitems/rsgxsitems.h"
+#include "rsitems/rsnxsitems.h"
 #include "gxs/rsgxsdata.h"
 #include "rsgxs.h"
 #include "util/contentvalue.h"

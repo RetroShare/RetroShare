@@ -41,7 +41,7 @@
 #include <stdexcept>
 #include <sstream>
 #include <algorithm>
-#include "serialiser/rsconfigitems.h"
+#include "rsitems/rsconfigitems.h"
 
 #define LIMIT_CERTIFICATE_SIZE		1
 #define MAX_CERTIFICATE_SIZE		10000

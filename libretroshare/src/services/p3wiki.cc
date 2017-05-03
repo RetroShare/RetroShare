@@ -25,7 +25,7 @@
 
 #include "services/p3wiki.h"
 #include "retroshare/rsgxsflags.h"
-#include "serialiser/rswikiitems.h"
+#include "rsitems/rswikiitems.h"
 
 #include "util/rsrandom.h"
 

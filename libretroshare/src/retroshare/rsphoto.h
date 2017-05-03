@@ -52,7 +52,7 @@ class RsPhotoThumbnail
 
         // Holds Thumbnail image.
         uint8_t *data;
-        int size;
+        uint32_t size;
         std::string type;
 };
 
