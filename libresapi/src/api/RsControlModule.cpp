@@ -25,8 +25,8 @@ RsControlModule::RsControlModule(int argc, char **argv, StateTokenServer* sts, A
     mRunState(WAITING_INIT),
     mAutoLoginNextTime(false),
     mWantPassword(false),
-    mPassword(""),
-    mPrevIsBad(false)
+    mPrevIsBad(false),
+    mPassword("")
 {
     mStateToken = sts->getNewToken();
     this->argc = argc;
@@ -456,6 +456,7 @@ void RsControlModule::handleCreateLocation(Request &req, Response &resp)
     // give the password to the password callback
 	{
 		RsStackMutex stack(mDataMtx); // ********** LOCKED **********
+		mPassword = pgp_password;
 		mFixedPassword = pgp_password;
 	}
     bool ssl_ok = RsAccounts::GenerateSSLCertificate(pgp_id, "", ssl_name, "", hidden_port!=0, ssl_password, ssl_id, err_string);

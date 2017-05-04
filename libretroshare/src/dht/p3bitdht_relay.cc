@@ -29,7 +29,7 @@
 #include "tcponudp/udprelay.h"
 #include "bitdht/bdstddht.h"
 
-#include "serialiser/rsconfigitems.h"
+#include "rsitems/rsconfigitems.h"
 
 
 /***********************************************************************************************

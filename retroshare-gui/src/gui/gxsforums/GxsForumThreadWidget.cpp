@@ -60,6 +60,7 @@
 /* Images for context menu icons */
 #define IMAGE_MESSAGE          ":/images/mail_new.png"
 #define IMAGE_MESSAGEREPLY     ":/images/mail_reply.png"
+#define IMAGE_MESSAGEEDIT      ":/images/edit_16.png"
 #define IMAGE_MESSAGEREMOVE    ":/images/mail_delete.png"
 #define IMAGE_DOWNLOAD         ":/images/start.png"
 #define IMAGE_DOWNLOADALL      ":/images/startall.png"
@@ -485,7 +486,7 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
 
 	QMenu contextMnu(this);
 
-	QAction *editAct = new QAction(QIcon(IMAGE_MESSAGEREPLY), tr("Edit"), &contextMnu);
+	QAction *editAct = new QAction(QIcon(IMAGE_MESSAGEEDIT), tr("Edit"), &contextMnu);
 	connect(editAct, SIGNAL(triggered()), this, SLOT(editforummessage()));
 
 	QAction *replyAct = new QAction(QIcon(IMAGE_MESSAGEREPLY), tr("Reply"), &contextMnu);
@@ -531,7 +532,7 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
 	QAction *markMsgAsUnreadChildren = new QAction(QIcon(":/images/message-mail.png"), tr("Mark as unread") + " (" + tr ("with children") + ")", &contextMnu);
 	connect(markMsgAsUnreadChildren, SIGNAL(triggered()), this, SLOT(markMsgAsUnreadChildren()));
 
-	QAction *showinpeopleAct = new QAction(QIcon(":/images/message-mail.png"), tr("Show author in people tab"), &contextMnu);
+	QAction *showinpeopleAct = new QAction(QIcon(":/images/info16.png"), tr("Show author in people tab"), &contextMnu);
 	connect(showinpeopleAct, SIGNAL(triggered()), this, SLOT(showInPeopleTab()));
 
 	if (IS_GROUP_SUBSCRIBED(mSubscribeFlags)) {
@@ -1843,10 +1844,22 @@ void GxsForumThreadWidget::setMsgReadStatus(QList<QTreeWidgetItem*> &rows, bool 
 			// LIKE THIS BELOW...
 			//std::string grpId = (*Row)->data(COLUMN_THREAD_DATA, ROLE_THREAD_GROUPID).toString().toStdString();
 
-            RsGxsGrpMsgIdPair msgPair = std::make_pair(groupId(), RsGxsMessageId(msgId));
+			RsGxsGrpMsgIdPair msgPair = std::make_pair( groupId(), RsGxsMessageId(msgId) );
 
 			uint32_t token;
 			rsGxsForums->setMessageReadStatus(token, msgPair, read);
+
+			// Look if older version exist to mark them too
+			QMap<RsGxsMessageId,QVector<QPair<time_t,RsGxsMessageId> > >::const_iterator it = mPostVersions.find(mOrigThreadId) ;
+			if(it != mPostVersions.end())
+			{
+				std::cerr << (*it).size() << " versions found " << std::endl;
+				for(int i=0;i<(*it).size();++i)
+				{
+					msgPair = std::make_pair( groupId(), (*it)[i].second );
+					rsGxsForums->setMessageReadStatus(token, msgPair, read);
+				}
+			}
 
 			/* Add message id to ignore list for the next updateDisplay */
 			mIgnoredMsgId.push_back(RsGxsMessageId(msgId));

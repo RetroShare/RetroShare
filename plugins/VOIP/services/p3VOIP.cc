@@ -25,7 +25,7 @@
 #include "pqi/pqistore.h"
 #include "pqi/p3linkmgr.h"
 #include <serialiser/rsserial.h>
-#include <serialiser/rsconfigitems.h>
+#include <rsitems/rsconfigitems.h>
 
 #include <sstream> // for std::istringstream
 

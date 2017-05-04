@@ -30,7 +30,7 @@
 #include <list>
 #include <string>
 
-#include "serialiser/rsrttitems.h"
+#include "rsitems/rsrttitems.h"
 #include "services/p3service.h"
 #include "retroshare/rsrtt.h"
 
@@ -46,6 +46,7 @@ class RttPeerInfo
 	double mCurrentPingTS;
 	double mCurrentPingCounter;
 	bool   mCurrentPongRecvd;
+	double mCurrentMeanOffset;
 
 	uint32_t mLostPongs;
 	uint32_t mSentPings;
@@ -69,6 +70,7 @@ virtual RsServiceInfo getServiceInfo();
 		/***** overloaded from rsRtt *****/
 
 virtual uint32_t getPongResults(const RsPeerId& id, int n, std::list<RsRttPongResult> &results);
+virtual double getMeanOffset(const RsPeerId &id);
 
 		/***** overloaded from p3Service *****/
 

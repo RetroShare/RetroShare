@@ -24,7 +24,7 @@
  */
 
 #include "services/p3gxschannels.h"
-#include "serialiser/rsgxschannelitems.h"
+#include "rsitems/rsgxschannelitems.h"
 #include "util/radix64.h"
 #include "util/rsmemory.h"
 

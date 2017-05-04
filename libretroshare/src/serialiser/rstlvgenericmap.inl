@@ -24,6 +24,7 @@
  *
  */
 
+#include "serialiser/rstlvbase.h"
 
 // Must be different - as this is inline in headers.
 //#define TLV_GENERICMAP_DEBUG 1

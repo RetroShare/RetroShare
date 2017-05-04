@@ -87,8 +87,9 @@ private:
 
 	void addFeedItemPeerConnect(const RsFeedItem &fi);
 	void addFeedItemPeerDisconnect(const RsFeedItem &fi);
-	void addFeedItemPeerNew(const RsFeedItem &fi);
 	void addFeedItemPeerHello(const RsFeedItem &fi);
+	void addFeedItemPeerNew(const RsFeedItem &fi);
+	void addFeedItemPeerOffset(const RsFeedItem &fi);
 
 	void addFeedItemSecurityConnectAttempt(const RsFeedItem &fi);
 	void addFeedItemSecurityAuthDenied(const RsFeedItem &fi);

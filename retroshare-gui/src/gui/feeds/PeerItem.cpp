@@ -34,6 +34,7 @@
 
 #include <retroshare/rsmsgs.h>
 #include <retroshare/rspeers.h>
+#include <retroshare/rsrtt.h>
 
 /*****
  * #define DEBUG_ITEM 1
@@ -68,6 +69,16 @@ PeerItem::PeerItem(FeedHolder *parent, uint32_t feedId, const RsPeerId &peerId, 
 }
 
 
+bool PeerItem::isSame(const RsPeerId &peerId, uint32_t type)
+{
+	if ((mPeerId == peerId) && (mType == type))
+	{
+		return true;
+	}
+	return false;
+}
+
+
 void PeerItem::updateItemStatic()
 {
 	if (!rsPeers)
@@ -95,6 +106,9 @@ void PeerItem::updateItemStatic()
 		case PEER_TYPE_NEW_FOF:
 			title = tr("Friend of Friend");
 			break;
+		case PEER_TYPE_OFFSET:
+			title = tr("Friend Time Offset");
+			break;
 		default:
 			title = tr("Peer");
 			break;
@@ -111,8 +125,14 @@ void PeerItem::updateItemStatic()
 
 		/* expanded Info */
 		nameLabel->setText(QString::fromUtf8(details.name.c_str()));
-        idLabel->setText(QString::fromStdString(details.id.toStdString()));
+		idLabel->setText(QString::fromStdString(details.id.toStdString()));
 		locLabel->setText(QString::fromUtf8(details.location.c_str()));
+
+		if (rsRtt)
+		{
+			double offset = rsRtt->getMeanOffset(RsPeerId(mPeerId));
+			offsetLabel->setText(QString::number(offset,'f',2).append(" s"));
+		}
 	}
 	else
 	{
@@ -187,6 +207,13 @@ void PeerItem::updateItem()
 		{
 			sendmsgButton->setEnabled(false);
 		}
+
+		if (rsRtt)
+		{
+			double offset = rsRtt->getMeanOffset(RsPeerId(mPeerId));
+			offsetLabel->setText(QString::number(offset,'f',2).append(" s"));
+		}
+
 	}
 
 	/* slow Tick  */

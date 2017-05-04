@@ -42,7 +42,8 @@
 struct RsLog::logInfo p3netmgrzoneInfo = {RsLog::Default, "p3netmgr"};
 #define p3netmgrzone &p3netmgrzoneInfo
 
-#include "serialiser/rsconfigitems.h"
+#include "rsitems/rsconfigitems.h"
+
 #include "retroshare/rsiface.h"
 #include "retroshare/rsconfig.h"
 #include "retroshare/rsbanlist.h"

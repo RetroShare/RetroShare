@@ -36,7 +36,7 @@
 
 #include "services/p3service.h"
 
-#include "serialiser/rsserviceinfoitems.h"
+#include "rsitems/rsserviceinfoitems.h"
 
 //!The ServiceInfo service.
  /**

@@ -869,12 +869,14 @@ void p3turtle::handleSearchRequest(RsTurtleSearchRequestItem *item)
 	item->print(std::cerr,0) ;
 #endif
     
-	if(item->serial_size() > TURTLE_MAX_SEARCH_REQ_ACCEPTED_SERIAL_SIZE)
+    uint32_t item_size = RsTurtleSerialiser().size(item);
+
+	if(item_size > TURTLE_MAX_SEARCH_REQ_ACCEPTED_SERIAL_SIZE)
 	{
 #ifdef P3TURTLE_DEBUG
 		std::cerr << "  Dropping, because the serial size exceeds the accepted limit." << std::endl ;
 #endif
-		std::cerr << "  Caught a turtle search item with arbitrary large size from " << item->PeerId() << " of size " << item->serial_size() << " and depth " << item->depth << ". This is not allowed => dropping." << std::endl;
+		std::cerr << "  Caught a turtle search item with arbitrary large size from " << item->PeerId() << " of size " << item_size << " and depth " << item->depth << ". This is not allowed => dropping." << std::endl;
 		return ;
 	}
     
@@ -1091,7 +1093,7 @@ void p3turtle::routeGenericTunnelItem(RsTurtleGenericTunnelItem *item)
 		if(item->shouldStampTunnel())
 			tunnel.time_stamp = time(NULL) ;
 
-		tunnel.transfered_bytes += static_cast<RsTurtleItem*>(item)->serial_size() ;
+		tunnel.transfered_bytes += RsTurtleSerialiser().size(item);
 
 		if(item->PeerId() == tunnel.local_dst)
 			item->setTravelingDirection(RsTurtleGenericTunnelItem::DIRECTION_CLIENT) ;
@@ -1117,7 +1119,7 @@ void p3turtle::routeGenericTunnelItem(RsTurtleGenericTunnelItem *item)
 #endif
 			item->PeerId(tunnel.local_src) ;
 
-			_traffic_info_buffer.unknown_updn_Bps += static_cast<RsTurtleItem*>(item)->serial_size() ;
+			_traffic_info_buffer.unknown_updn_Bps += RsTurtleSerialiser().size(item) ;
 
 			// This has been disabled for compilation reasons. Not sure we actually need it.
 			//
@@ -1135,7 +1137,7 @@ void p3turtle::routeGenericTunnelItem(RsTurtleGenericTunnelItem *item)
 #endif
 			item->PeerId(tunnel.local_dst) ;
 
-			_traffic_info_buffer.unknown_updn_Bps += static_cast<RsTurtleItem*>(item)->serial_size() ;
+			_traffic_info_buffer.unknown_updn_Bps += RsTurtleSerialiser().size(item);
 
 			sendItem(item) ;
 			return ;
@@ -1143,7 +1145,7 @@ void p3turtle::routeGenericTunnelItem(RsTurtleGenericTunnelItem *item)
 
         // item is for us. Use the locked region to record the data.
 
-        _traffic_info_buffer.data_dn_Bps += item->serial_size() ;
+        _traffic_info_buffer.data_dn_Bps += RsTurtleSerialiser().size(item);
     }
 
 	// The packet was not forwarded, so it is for us. Let's treat it.
@@ -1263,7 +1265,7 @@ void p3turtle::sendTurtleData(const RsPeerId& virtual_peer_id,RsTurtleGenericTun
 
 	item->tunnel_id = tunnel_id ;	// we should randomly select a tunnel, or something more clever.
 
-	uint32_t ss = item->serial_size() ;
+	uint32_t ss = RsTurtleSerialiser().size(item);
 
 	if(item->shouldStampTunnel())
 		tunnel.time_stamp = time(NULL) ;
@@ -1397,7 +1399,7 @@ void p3turtle::handleTunnelRequest(RsTurtleOpenTunnelItem *item)
 
 	{
 		RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
-		_traffic_info_buffer.tr_dn_Bps += static_cast<RsTurtleItem*>(item)->serial_size() ;
+		_traffic_info_buffer.tr_dn_Bps += RsTurtleSerialiser().size(item);
 
 		float distance_to_maximum	= std::min(100.0f,_traffic_info.tr_up_Bps/(float)(TUNNEL_REQUEST_PACKET_SIZE*_max_tr_up_rate)) ;
 		float corrected_distance 	= pow(distance_to_maximum,DISTANCE_SQUEEZING_POWER) ;
@@ -1589,7 +1591,7 @@ void p3turtle::handleTunnelRequest(RsTurtleOpenTunnelItem *item)
 
 				{
 					RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
-					_traffic_info_buffer.tr_up_Bps += static_cast<RsTurtleItem*>(fwd_item)->serial_size() ;
+					_traffic_info_buffer.tr_up_Bps += RsTurtleSerialiser().size(fwd_item);
 				}
 
 				sendItem(fwd_item) ;

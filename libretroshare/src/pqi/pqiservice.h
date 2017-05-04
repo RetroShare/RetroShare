@@ -77,7 +77,7 @@ public:
 
 	virtual int	tick() { return 0; }
 
-    virtual void getItemNames(std::map<uint8_t,std::string>& names) const {}	// This does nothing by default. Service should derive it in order to give info for the UI
+	virtual void getItemNames(std::map<uint8_t,std::string>& /*names*/) const {}	// This does nothing by default. Service should derive it in order to give info for the UI
 
 private:
 	p3ServiceServerIface *mServiceServer; // const, no need for mutex.

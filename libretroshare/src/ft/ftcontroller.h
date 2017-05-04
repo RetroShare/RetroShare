@@ -53,7 +53,7 @@ class p3ServiceControl;
 #include "pqi/p3cfgmgr.h"
 
 #include "retroshare/rsfiles.h"
-#include "serialiser/rsconfigitems.h"
+#include "rsitems/rsconfigitems.h"
 
 #include <map>
 
