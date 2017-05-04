@@ -8,8 +8,6 @@ TARGET = resapi
 TARGET_PRL = libresapi
 DESTDIR = lib
 
-CONFIG += c++11
-
 INCLUDEPATH += ../../libretroshare/src
 
 retroshare_android_service {
