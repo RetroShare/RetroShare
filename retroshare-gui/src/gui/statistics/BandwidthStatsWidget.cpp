@@ -201,11 +201,13 @@ void BandwidthStatsWidget::updateUnitSelection(int n)
     if(n==0)
     {
         ui.bwgraph_BW->setUnit(BWGraphSource::UNIT_KILOBYTES) ;
+        ui.bwgraph_BW->resetFlags(RSGraphWidget::RSGRAPH_FLAGS_PAINT_STYLE_DOTS);
         ui.legend_CB->setItemText(1,tr("Average"));
     }
     else
     {
         ui.bwgraph_BW->setUnit(BWGraphSource::UNIT_COUNT) ;
+        ui.bwgraph_BW->setFlags(RSGraphWidget::RSGRAPH_FLAGS_PAINT_STYLE_DOTS);
         ui.legend_CB->setItemText(1,tr("Total"));
     }
 }
