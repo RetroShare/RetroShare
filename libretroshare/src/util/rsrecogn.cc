@@ -552,6 +552,9 @@ RsGxsRecognTagItem *RsRecogn::extractTag(const std::string &encoded)
     std::vector<uint8_t> buffer = Radix64::decode(encoded);
     pktsize = buffer.size();
 
+    if(buffer.empty())
+        return NULL ;
+
 	RsGxsRecognSerialiser serialiser;
     RsItem *item = serialiser.deserialise(buffer.data(), &pktsize);
 
