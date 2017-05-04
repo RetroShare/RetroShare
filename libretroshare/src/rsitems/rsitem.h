@@ -4,6 +4,8 @@
 #include "retroshare/rstypes.h"
 #include "serialiser/rsserializer.h"
 
+#include <typeinfo>
+
 class RsItem: public RsMemoryManagement::SmallObject
 {
 	public:
