@@ -259,6 +259,7 @@ RSGraphWidget::RSGraphWidget(QWidget *parent)
   _maxPoints = getNumPoints();  
   _maxValue = MINUSER_SCALE;
 
+  _linewidthscale = 1.0f;
   _opacity = 0.6 ;
   _flags = 0;
   _time_scale = 5.0f ; // in pixels per second.
@@ -414,12 +415,16 @@ void RSGraphWidget::paintData()
 
           /* Plot the bandwidth as solid lines. If the graph style is currently an
    * area graph, we end up outlining the integrals. */
-          paintLine(points, getColor(i));
+
+          if(_flags & RSGRAPH_FLAGS_PAINT_STYLE_DOTS)
+			  paintDots(points, getColor(i));
+          else
+			  paintLine(points, getColor(i));
       }
   if(_maxValue > 0.0f)
   {
       if(_flags & RSGRAPH_FLAGS_LOG_SCALE_Y)
-          _y_scale = _rec.height()*0.8 / log(_maxValue) ;
+          _y_scale = _rec.height()*0.8 / log(std::max(2.0,_maxValue)) ;
       else
           _y_scale = _rec.height()*0.8/_maxValue ;
   }
@@ -539,11 +544,27 @@ void RSGraphWidget::paintLine(const QVector<QPointF>& points, QColor color, Qt::
 {
   /* Save the current brush, plot the line, and restore the old brush */
   QPen oldPen = _painter->pen();
-  _painter->setPen(QPen(color, lineStyle));
+
+  QPen newPen(color, lineStyle);
+  newPen.setWidth(2.0f*_linewidthscale);
+  _painter->setPen(newPen);
   _painter->drawPolyline(points.data(), points.size());
   _painter->setPen(oldPen);
 }
+void RSGraphWidget::paintDots(const QVector<QPointF>& points, QColor color)
+{
+  /* Save the current brush, plot the line, and restore the old brush */
+  QPen oldPen = _painter->pen();
+  _painter->setPen(QPen(color, oldPen.style()));
+   QBrush oldBrush = _painter->brush();
+  _painter->setBrush(QBrush(color));
 
+  for(int i=0;i<points.size();++i)
+	  _painter->drawEllipse(QRect(points[i].x(),points[i].y(),5*_linewidthscale,5*_linewidthscale)) ;
+
+  _painter->setPen(oldPen);
+  _painter->setBrush(oldBrush);
+}
 /** Paints selected total indicators on the graph. */
 void RSGraphWidget::paintTotals()
 {
@@ -641,6 +662,11 @@ void RSGraphWidget::wheelEvent(QWheelEvent *e)
 		    _time_filter *= 1.1 ;
 	    else
 		    _time_filter /= 1.1 ;
+    else if(e->modifiers() & Qt::ControlModifier)
+        if(e->delta() > 0)
+            _linewidthscale *= 1.2 ;
+		else
+            _linewidthscale /= 1.2 ;
     else
 	    if(e->delta() > 0)
 		    _time_scale *= 1.1 ;
