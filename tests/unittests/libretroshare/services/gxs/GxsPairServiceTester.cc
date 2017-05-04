@@ -5,7 +5,7 @@
 #include "gxstestservice.h"
 
 // libretroshare
-#include "serialiser/rsnxsitems.h"
+#include "rsitems/rsnxsitems.h"
 
 GxsPairServiceTester::GxsPairServiceTester(const RsPeerId &peerId1, const RsPeerId &peerId2, int testMode, bool useIdentityService)
 	:SetServiceTester()
