@@ -304,7 +304,7 @@ void ChatLobbyDialog::showInPeopleTab()
     idDialog->navigate(nickname);
 }
 
-void ChatLobbyDialog::init()
+void ChatLobbyDialog::init(const ChatId &/*id*/, const QString &/*title*/)
 {
     ChatLobbyInfo linfo ;
 

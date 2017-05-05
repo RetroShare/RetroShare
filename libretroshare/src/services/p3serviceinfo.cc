@@ -29,7 +29,7 @@
 #include "util/rsnet.h"
 
 #include "services/p3serviceinfo.h"
-#include "serialiser/rsbanlistitems.h"
+#include "rsitems/rsbanlistitems.h"
 
 #include <sys/time.h>
 

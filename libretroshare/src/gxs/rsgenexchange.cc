@@ -36,6 +36,7 @@
 #include "retroshare/rsgrouter.h"
 #include "retroshare/rsidentity.h"
 #include "retroshare/rspeers.h"
+#include "rsitems/rsnxsitems.h"
 #include "rsgixs.h"
 #include "rsgxsutil.h"
 #include "rsserver/p3face.h"
@@ -1270,6 +1271,58 @@ bool RsGenExchange::getMsgRelatedMeta(const uint32_t &token, GxsMsgRelatedMetaMa
         return ok;
 }
 
+bool RsGenExchange::getSerializedGroupData(const uint32_t &token, RsGxsGroupId& id,unsigned char *& data,uint32_t& size)
+{
+	RS_STACK_MUTEX(mGenMtx) ;
+
+	std::list<RsNxsGrp*> nxsGrps;
+
+	if(!mDataAccess->getGroupData(token, nxsGrps))
+        return false ;
+
+    if(nxsGrps.size() != 1)
+    {
+        std::cerr << "(EE) getSerializedGroupData() got multiple groups in single request. This is unexpected." << std::endl;
+
+        for(std::list<RsNxsGrp*>::const_iterator it(nxsGrps.begin());it!=nxsGrps.end();++it)
+            delete *it ;
+
+        return false ;
+    }
+	RsNxsGrp *nxs_grp = *(nxsGrps.begin());
+
+    size = RsNxsSerialiser(mServType).size(nxs_grp);
+    id = nxs_grp->metaData->mGroupId ;
+
+    if(size > 1024*1024 || NULL==(data = (unsigned char *)rs_malloc(size)))
+    {
+        std::cerr << "(EE) getSerializedGroupData() cannot allocate mem chunk of size " << size << ". Too big, or no room." << std::endl;
+        delete nxs_grp ;
+        return false ;
+    }
+
+    return RsNxsSerialiser(mServType).serialise(nxs_grp,data,&size) ;
+}
+
+bool RsGenExchange::deserializeGroupData(unsigned char *data,uint32_t size)
+{
+	RS_STACK_MUTEX(mGenMtx) ;
+
+	RsItem *item = RsNxsSerialiser(mServType).deserialise(data, &size);
+
+    RsNxsGrp *nxs_grp = dynamic_cast<RsNxsGrp*>(item) ;
+
+    if(item == NULL)
+    {
+        std::cerr << "(EE) RsGenExchange::deserializeGroupData(): cannot deserialise this data. Something's wrong." << std::endl;
+        delete item ;
+        return false ;
+    }
+
+	mReceivedGrps.push_back( GxsPendingItem<RsNxsGrp*, RsGxsGroupId>(nxs_grp, nxs_grp->grpId,time(NULL)) );
+
+    return true ;
+}
 
 bool RsGenExchange::getGroupData(const uint32_t &token, std::vector<RsGxsGrpItem *>& grpItem)
 {
@@ -1320,7 +1373,8 @@ bool RsGenExchange::getGroupData(const uint32_t &token, std::vector<RsGxsGrpItem
 				}
 			}
 			else if(data.bin_len > 0)
-				std::cerr << "(EE) RsGenExchange::getGroupData() Item type is probably not handled. Data is: " << RsUtil::BinToHex((unsigned char*)data.bin_data,std::min(50u,data.bin_len)) << ((data.bin_len>50)?"...":"") << std::endl;
+				//std::cerr << "(EE) RsGenExchange::getGroupData() Item type is probably not handled. Data is: " << RsUtil::BinToHex((unsigned char*)data.bin_data,std::min(50u,data.bin_len)) << ((data.bin_len>50)?"...":"") << std::endl;
+				std::cerr << "(EE) RsGenExchange::getGroupData() Item type is probably not handled. Data is: " << RsUtil::BinToHex((unsigned char*)data.bin_data,data.bin_len) << std::endl;
 
 			delete *lit;
 		}
@@ -2135,7 +2189,9 @@ void RsGenExchange::publishMsgs()
 			if(createOk && validSize)
 			{
 				// empty orig msg id means this is the original
-				// msg
+				// msg.
+                // (csoler) Why are we doing this???
+
 				if(msg->metaData->mOrigMsgId.isNull())
 				{
 					msg->metaData->mOrigMsgId = msg->metaData->mMsgId;

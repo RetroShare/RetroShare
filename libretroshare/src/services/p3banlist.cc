@@ -30,10 +30,11 @@
 #include "util/rsnet.h"
 
 #include "services/p3banlist.h"
-#include "serialiser/rsbanlistitems.h"
-#include "serialiser/rsconfigitems.h"
 #include "retroshare/rsdht.h"
 #include "retroshare/rsbanlist.h"
+
+#include "rsitems/rsbanlistitems.h"
+#include "rsitems/rsconfigitems.h"
 
 #include <sys/time.h>
 #include <sstream>
@@ -66,8 +67,8 @@
  */
 RsBanList *rsBanList = NULL ;
 
-p3BanList::p3BanList(p3ServiceControl *sc, p3NetMgr *nm)
-	:p3Service(), mBanMtx("p3BanList"), mServiceCtrl(sc), mNetMgr(nm) 
+p3BanList::p3BanList(p3ServiceControl *sc, p3NetMgr */*nm*/)
+	:p3Service(), mBanMtx("p3BanList"), mServiceCtrl(sc)//, mNetMgr(nm)
 {
 	addSerialType(new RsBanListSerialiser());
 

@@ -40,6 +40,7 @@
  *
  */
 
+#include "rsitems/rsitem.h"
 #include "pqi/pqistore.h"
 #include "serialiser/rsserial.h"
 #include <iostream>
@@ -309,24 +310,25 @@ int     pqistore::readPkt(RsItem **item_out)
 	}
 
 	// workout how much more to read.
-	int extralen = getRsItemSize(block) - blen;
-	int totallen = extralen+blen;
-	
-	// make sure that totallen is not a crazy number. If so, we drop the entire stream that might be corrupted.
-	
-	if(totallen > 1024*1024)
+    int blocklength = getRsItemSize(block);
+
+	// make sure that blocklength is not a crazy number. If so, we drop the entire stream that might be corrupted.
+
+    if(blocklength < blen || blocklength > 1024*1024*10)
 	{
-		std::cerr << "pqistore: ERROR: trying to realloc memory for packet of length" << totallen <<", which exceeds the allowed limit (1MB)" << std::endl ;
+		std::cerr << "pqistore: ERROR: trying to realloc memory for packet of length" << blocklength <<", which is either too small, or exceeds the safety limit (10 MB)" << std::endl ;
 		free(block) ;
 		bStopReading=true;
 		return 0 ;
 	}
-	void *tmp = realloc(block, totallen);
+	int extralen = blocklength - blen;
+
+	void *tmp = realloc(block, blocklength);
 
 	if (tmp == NULL) 
 	{
 		free(block);
-		std::cerr << "pqistore: ERROR: trying to realloc memory for packet of length" << totallen << std::endl ;
+		std::cerr << "pqistore: ERROR: trying to realloc memory for packet of length" << blocklength << std::endl ;
 		std::cerr << "Have you got enought memory?" << std::endl ;
 		bStopReading=true;
 		return 0 ;
@@ -520,17 +522,18 @@ int     pqiSSLstore::readPkt(RsItem **item_out)
 	}
 
 	// workout how much more to read.
-	int extralen = getRsItemSize(block) - blen;
-	int totallen = extralen+blen;
+    int blocklength = getRsItemSize(block);
 
-	if(totallen > 1024*1024)
+    if(blocklength < blen || blocklength > 1024*1024*10)
 	{
 		free(block);
-		std::cerr << "pqiSSLstore: ERROR: trying to realloc memory for packet of length" << totallen << ", that exceeds the limit of 1MB" << std::endl ;
+		std::cerr << "pqiSSLstore: ERROR: block length has invalid value " << blocklength << " (either too small, or exceeds the safety limit of 10 MB)" << std::endl ;
 		bStopReading=true;
 		return 0 ;
 	}
-	void *tmp = realloc(block, totallen);
+	int extralen = blocklength - blen;
+
+	void *tmp = realloc(block, blocklength);
 
 	if (tmp == NULL) 
 	{

@@ -239,17 +239,21 @@ void RsGxsMsgMetaData::clear()
     mMsgId.clear();
     mThreadId.clear();
     mParentId.clear();
-    mAuthorId.clear();
     mOrigMsgId.clear();
-    mMsgName.clear();
-    mServiceString.clear();
+    mAuthorId.clear();
 
     signSet.TlvClear();
+    mMsgName.clear();
     mPublishTs = 0;
     mMsgFlags = 0;
+
+    mServiceString.clear();
     mMsgStatus = 0;
+    mMsgSize = 0;
     mChildTs = 0;
     recvTS = 0;
+    mHash.clear();
+    validated = false;
 }
 
 bool RsGxsMsgMetaData::serialise(void *data, uint32_t *size)

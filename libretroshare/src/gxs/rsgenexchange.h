@@ -36,7 +36,7 @@
 #include "rsgxsdataaccess.h"
 #include "rsnxsobserver.h"
 #include "retroshare/rsgxsservice.h"
-#include "serialiser/rsnxsitems.h"
+#include "rsitems/rsnxsitems.h"
 #include "rsgxsutil.h"
 
 template<class GxsItem, typename Identity = std::string>
@@ -287,6 +287,20 @@ protected:
      * @param grpItem the items to be retrieved for token are stored here
      */
     bool getGroupData(const uint32_t &token, std::vector<RsGxsGrpItem*>& grpItem);
+
+    /*!
+     * \brief getSerializedGroupData
+     * 			Retrieves the complete group data serialized into a chunk of memory. This can be useful to
+     * 		  transfer a full group from one machine to another.
+     *
+     * \param token		token previously obtained from cache request
+     * \param data		memory chunk allocated (using malloc)
+     * \param size		size of the memory chunk.
+     * \return
+     */
+
+	bool getSerializedGroupData(const uint32_t &token, RsGxsGroupId &id, unsigned char *& data, uint32_t& size);
+	bool deserializeGroupData(unsigned char *data, uint32_t size);
 
     template<class GrpType>
     bool getGroupDataT(const uint32_t &token, std::vector<GrpType*>& grpItem)

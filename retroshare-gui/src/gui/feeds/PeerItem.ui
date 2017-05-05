@@ -7,11 +7,20 @@
     <x>0</x>
     <y>0</y>
     <width>476</width>
-    <height>247</height>
+    <height>250</height>
    </rect>
   </property>
-  <layout class="QGridLayout">
-   <property name="margin">
+  <layout class="QGridLayout" name="PeerItemGLayout">
+   <property name="leftMargin">
+    <number>1</number>
+   </property>
+   <property name="topMargin">
+    <number>1</number>
+   </property>
+   <property name="rightMargin">
+    <number>1</number>
+   </property>
+   <property name="bottomMargin">
     <number>1</number>
    </property>
    <item row="0" column="0">
@@ -95,13 +104,13 @@
      <property name="frameShadow">
       <enum>QFrame::Sunken</enum>
      </property>
-     <layout class="QGridLayout">
+     <layout class="QGridLayout" name="frameGLayout">
       <property name="verticalSpacing">
        <number>0</number>
       </property>
       <item row="0" column="0">
        <widget class="QFrame" name="peerFrame">
-        <layout class="QGridLayout">
+        <layout class="QGridLayout" name="peerFrameGLayout">
          <property name="leftMargin">
           <number>0</number>
          </property>
@@ -128,7 +137,7 @@
           </widget>
          </item>
          <item row="0" column="1">
-          <layout class="QGridLayout">
+          <layout class="QGridLayout" name="peerNameGLayout">
            <item row="0" column="0">
             <widget class="StyledLabel" name="peerNameLabel">
              <property name="text">
@@ -165,9 +174,9 @@
           </layout>
          </item>
          <item row="0" column="2">
-          <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <layout class="QHBoxLayout" name="lastHLayout">
            <item>
-            <spacer name="horizontalSpacer">
+            <spacer name="lastHSpacer">
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
              </property>
@@ -204,9 +213,9 @@
           </layout>
          </item>
          <item row="1" column="1" colspan="2">
-          <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <layout class="QHBoxLayout" name="buttonHLayout">
            <item>
-            <spacer>
+            <spacer name="buttonHSpacer">
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
              </property>
@@ -317,13 +326,13 @@
       </item>
       <item row="1" column="0">
        <widget class="QFrame" name="expandFrame">
-        <layout class="QGridLayout">
+        <layout class="QGridLayout" name="expandFrameGLayout">
          <item row="0" column="0">
-          <layout class="QHBoxLayout" name="horizontalLayout">
+          <layout class="QHBoxLayout" name="expandFrameHLayout">
            <item>
-            <layout class="QVBoxLayout" name="verticalLayout">
+            <layout class="QVBoxLayout" name="textVLayout">
              <item>
-              <widget class="QLabel" name="label_3">
+              <widget class="QLabel" name="nameText">
                <property name="font">
                 <font>
                  <weight>75</weight>
@@ -336,7 +345,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="label_4">
+              <widget class="QLabel" name="idText">
                <property name="font">
                 <font>
                  <weight>75</weight>
@@ -349,7 +358,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="label">
+              <widget class="QLabel" name="trustText">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
                  <horstretch>0</horstretch>
@@ -368,7 +377,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="label_6">
+              <widget class="QLabel" name="locText">
                <property name="font">
                 <font>
                  <weight>75</weight>
@@ -381,7 +390,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="label_8">
+              <widget class="QLabel" name="ipText">
                <property name="font">
                 <font>
                  <weight>75</weight>
@@ -394,7 +403,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="label_9">
+              <widget class="QLabel" name="connText">
                <property name="font">
                 <font>
                  <weight>75</weight>
@@ -407,7 +416,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="typeLabel">
+              <widget class="QLabel" name="statusText">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
                  <horstretch>0</horstretch>
@@ -426,10 +435,30 @@
                </property>
               </widget>
              </item>
+             <item>
+              <widget class="QLabel" name="offsetText">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="font">
+                <font>
+                 <weight>75</weight>
+                 <italic>true</italic>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="text">
+                <string>Time offset:</string>
+               </property>
+              </widget>
+             </item>
             </layout>
            </item>
            <item>
-            <layout class="QVBoxLayout" name="verticalLayout_2">
+            <layout class="QVBoxLayout" name="labelVLayout">
              <item>
               <widget class="QLabel" name="nameLabel">
                <property name="sizePolicy">
@@ -509,6 +538,13 @@
                </property>
               </widget>
              </item>
+             <item>
+              <widget class="QLabel" name="offsetLabel">
+               <property name="text">
+                <string notr="true">TextLabel</string>
+               </property>
+              </widget>
+             </item>
             </layout>
            </item>
           </layout>
@@ -532,15 +568,15 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>StyledLabel</class>
+   <extends>QLabel</extends>
+   <header>gui/common/StyledLabel.h</header>
+  </customwidget>
+  <customwidget>
    <class>AvatarWidget</class>
    <extends>QLabel</extends>
    <header>gui/common/AvatarWidget.h</header>
    <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>StyledLabel</class>
-   <extends>QLabel</extends>
-   <header>gui/common/StyledLabel.h</header>
   </customwidget>
  </customwidgets>
  <resources>

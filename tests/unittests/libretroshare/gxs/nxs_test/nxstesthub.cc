@@ -53,6 +53,7 @@ public:
 	{
 		return recvItem(i);
 	}
+	bool getServiceItemNames(uint32_t /*service_type*/, std::map<uint8_t,std::string>& /*names*/) { return false; }
 private:
 	RsPeerId mPeerId;
 	RecvPeerItemIface* mRecvIface;

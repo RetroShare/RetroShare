@@ -14,6 +14,7 @@
 #include <inttypes.h>
 
 #include <retroshare/rstypes.h>
+#include <retroshare/rsids.h>
 
 typedef GXSGroupId   RsGxsGroupId;
 typedef Sha1CheckSum RsGxsMessageId;
@@ -25,7 +26,7 @@ typedef std::pair<RsGxsGroupId, RsGxsMessageId> RsGxsGrpMsgIdPair;
 typedef std::map<RsGxsGrpMsgIdPair, std::vector<RsGxsMessageId> > MsgRelatedIdResult;
 typedef std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > GxsMsgReq;
 
-class RsMsgMetaData;
+struct RsMsgMetaData;
 
 typedef std::map<RsGxsGroupId, std::vector<RsMsgMetaData> > MsgMetaResult;
 

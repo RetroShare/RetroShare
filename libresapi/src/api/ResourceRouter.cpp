@@ -37,6 +37,13 @@ ResponseTask* ResourceRouter::handleRequest(Request& req, Response& resp)
             if(vit->first == req.mPath.top())
             {
                 req.mPath.pop();
+
+				//Just for GUI benefit
+				std::string callbackName;
+				req.mStream << makeKeyValueReference("callback_name", callbackName);
+				resp.mCallbackName = callbackName;
+				//
+
                 return vit->second->handleRequest(req, resp);
             }
         }

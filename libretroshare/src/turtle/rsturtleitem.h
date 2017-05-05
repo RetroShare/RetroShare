@@ -1,30 +1,35 @@
 #pragma once
 
+#include "rsitems/rsserviceids.h"
+#include "rsitems/rsitem.h"
+#include "rsitems/itempriorities.h"
+
 #include "serialiser/rsserial.h"
 #include "serialiser/rstlvbase.h"
 #include "serialiser/rsbaseserial.h"
+
 #include "retroshare/rsturtle.h"
 #include "retroshare/rsexpr.h"
 #include "retroshare/rstypes.h"
-#include "serialiser/rsserviceids.h"
 #include "turtle/turtletypes.h"
+
+#include "serialiser/rsserializer.h"
 
 const uint8_t RS_TURTLE_SUBTYPE_STRING_SEARCH_REQUEST	= 0x01 ;
 const uint8_t RS_TURTLE_SUBTYPE_SEARCH_RESULT  			= 0x02 ;
 const uint8_t RS_TURTLE_SUBTYPE_OPEN_TUNNEL    			= 0x03 ;
 const uint8_t RS_TURTLE_SUBTYPE_TUNNEL_OK      			= 0x04 ;
-const uint8_t RS_TURTLE_SUBTYPE_CLOSE_TUNNEL   			= 0x05 ;
-const uint8_t RS_TURTLE_SUBTYPE_TUNNEL_CLOSED  			= 0x06 ;
 const uint8_t RS_TURTLE_SUBTYPE_FILE_REQUEST   			= 0x07 ;
 const uint8_t RS_TURTLE_SUBTYPE_FILE_DATA      			= 0x08 ;
-const uint8_t RS_TURTLE_SUBTYPE_REGEXP_SEARCH_REQUEST = 0x09 ;
+const uint8_t RS_TURTLE_SUBTYPE_REGEXP_SEARCH_REQUEST   = 0x09 ;
 const uint8_t RS_TURTLE_SUBTYPE_GENERIC_DATA     		= 0x0a ;
-const uint8_t RS_TURTLE_SUBTYPE_FILE_MAP              = 0x10 ;
-const uint8_t RS_TURTLE_SUBTYPE_FILE_MAP_REQUEST      = 0x11 ;
-const uint8_t RS_TURTLE_SUBTYPE_FILE_CRC              = 0x12 ;
-const uint8_t RS_TURTLE_SUBTYPE_FILE_CRC_REQUEST      = 0x13 ;	
-const uint8_t RS_TURTLE_SUBTYPE_CHUNK_CRC             = 0x14 ;
-const uint8_t RS_TURTLE_SUBTYPE_CHUNK_CRC_REQUEST     = 0x15 ;	
+const uint8_t RS_TURTLE_SUBTYPE_FILE_MAP                = 0x10 ;
+const uint8_t RS_TURTLE_SUBTYPE_FILE_MAP_REQUEST        = 0x11 ;
+const uint8_t RS_TURTLE_SUBTYPE_CHUNK_CRC               = 0x14 ;
+const uint8_t RS_TURTLE_SUBTYPE_CHUNK_CRC_REQUEST       = 0x15 ;
+
+// const uint8_t RS_TURTLE_SUBTYPE_FILE_CRC                = 0x12 ; // unused
+// const uint8_t RS_TURTLE_SUBTYPE_FILE_CRC_REQUEST        = 0x13 ;
 
 /***********************************************************************************/
 /*                           Basic Turtle Item Class                               */
@@ -34,11 +39,6 @@ class RsTurtleItem: public RsItem
 {
 	public:
 		RsTurtleItem(uint8_t turtle_subtype) : RsItem(RS_PKT_VERSION_SERVICE,RS_SERVICE_TYPE_TURTLE,turtle_subtype) {}
-
-        virtual bool serialize(void *data,uint32_t& size) const = 0 ;	// Isn't it better that items can serialize themselves ?
-        virtual uint32_t serial_size() const = 0 ; 							// deserialise is handled using a constructor
-
-		virtual void clear() {} 
 };
 
 /***********************************************************************************/
@@ -50,29 +50,26 @@ class RsTurtleSearchResultItem: public RsTurtleItem
 {
 	public:
         RsTurtleSearchResultItem() : RsTurtleItem(RS_TURTLE_SUBTYPE_SEARCH_RESULT), request_id(0), depth(0) { setPriorityLevel(QOS_PRIORITY_RS_TURTLE_SEARCH_RESULT) ;}
-		RsTurtleSearchResultItem(void *data,uint32_t size) ;		// deserialization
 
 		TurtleSearchRequestId request_id ;	// Randomly generated request id.
 
-		uint16_t depth ;							// The depth of a search result is obfuscated in this way:
-														// 	If the actual depth is 1, this field will be 1.
-														// 	If the actual depth is > 1, this field is a larger arbitrary integer. 
-														
+		uint16_t depth ;					// The depth of a search result is obfuscated in this way:
+											// 	If the actual depth is 1, this field will be 1.
+											// 	If the actual depth is > 1, this field is a larger arbitrary integer.
 		std::list<TurtleFileInfo> result ;
 
-		virtual std::ostream& print(std::ostream& o, uint16_t) ;
-
+        void clear() { result.clear() ; }
 	protected:
-        virtual bool serialize(void *data,uint32_t& size) const ;
-        virtual uint32_t serial_size() const ;
+		void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
+
 };
 
 class RsTurtleSearchRequestItem: public RsTurtleItem
 {
 	public:
         RsTurtleSearchRequestItem(uint32_t subtype) : RsTurtleItem(subtype), request_id(0), depth(0) { setPriorityLevel(QOS_PRIORITY_RS_TURTLE_SEARCH_REQUEST) ;}
+		virtual RsTurtleSearchRequestItem *clone() const = 0 ;					// used for cloning in routing methods
 
-		virtual RsTurtleSearchRequestItem *clone() const = 0 ;						// used for cloning in routing methods
 		virtual void performLocalSearch(std::list<TurtleFileInfo>&) const = 0 ;	// abstracts the search method
 
 		uint32_t request_id ; 		// randomly generated request id.
@@ -83,34 +80,31 @@ class RsTurtleStringSearchRequestItem: public RsTurtleSearchRequestItem
 {
 	public:
 		RsTurtleStringSearchRequestItem() : RsTurtleSearchRequestItem(RS_TURTLE_SUBTYPE_STRING_SEARCH_REQUEST) {} 
-		RsTurtleStringSearchRequestItem(void *data,uint32_t size) ;
 			
 		std::string match_string ;	// string to match
 
 		virtual RsTurtleSearchRequestItem *clone() const { return new RsTurtleStringSearchRequestItem(*this) ; }
 		virtual void performLocalSearch(std::list<TurtleFileInfo>&) const ;
 
-		virtual std::ostream& print(std::ostream& o, uint16_t) ;
+        void clear() { match_string.clear() ; }
+
 	protected:
-        virtual bool serialize(void *data,uint32_t& size) const ;
-        virtual uint32_t serial_size() const ;
+		void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 };
 
 class RsTurtleRegExpSearchRequestItem: public RsTurtleSearchRequestItem
 {
 	public:
 		RsTurtleRegExpSearchRequestItem() : RsTurtleSearchRequestItem(RS_TURTLE_SUBTYPE_REGEXP_SEARCH_REQUEST) {} 
-		RsTurtleRegExpSearchRequestItem(void *data,uint32_t size) ;
 
         RsRegularExpression::LinearizedExpression expr ;	// Reg Exp in linearised mode
 
 		virtual RsTurtleSearchRequestItem *clone() const { return new RsTurtleRegExpSearchRequestItem(*this) ; }
 		virtual void performLocalSearch(std::list<TurtleFileInfo>&) const ;
 
-		virtual std::ostream& print(std::ostream& o, uint16_t) ;
+		void clear() { expr = RsRegularExpression::LinearizedExpression(); }
 	protected:
-        virtual bool serialize(void *data,uint32_t& size) const ;
-        virtual uint32_t serial_size() const ;
+		void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 };
 
 /***********************************************************************************/
@@ -121,34 +115,28 @@ class RsTurtleOpenTunnelItem: public RsTurtleItem
 {
 	public:
         RsTurtleOpenTunnelItem() : RsTurtleItem(RS_TURTLE_SUBTYPE_OPEN_TUNNEL), request_id(0), partial_tunnel_id(0), depth(0) { setPriorityLevel(QOS_PRIORITY_RS_TURTLE_OPEN_TUNNEL) ;}
-		RsTurtleOpenTunnelItem(void *data,uint32_t size) ;		// deserialization
 
 		TurtleFileHash file_hash ;	  // hash to match
 		uint32_t request_id ;		  // randomly generated request id.
 		uint32_t partial_tunnel_id ; // uncomplete tunnel id. Will be completed at destination.
 		uint16_t depth ;				  // Used for limiting search depth.
 
-		virtual std::ostream& print(std::ostream& o, uint16_t) ;
-
+        void clear() { file_hash.clear() ;}
 	protected:
-        virtual bool serialize(void *data,uint32_t& size) const ;
-        virtual uint32_t serial_size() const ;
+		void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 };
 
 class RsTurtleTunnelOkItem: public RsTurtleItem
 {
 	public:
         RsTurtleTunnelOkItem() : RsTurtleItem(RS_TURTLE_SUBTYPE_TUNNEL_OK), tunnel_id(0), request_id(0) { setPriorityLevel(QOS_PRIORITY_RS_TURTLE_TUNNEL_OK) ;}
-		RsTurtleTunnelOkItem(void *data,uint32_t size) ;		// deserialization
 
 		uint32_t tunnel_id ;		// id of the tunnel. Should be identical for a tunnel between two same peers for the same hash.
 		uint32_t request_id ;	// randomly generated request id corresponding to the intial request.
 
-		virtual std::ostream& print(std::ostream& o, uint16_t) ;
-
+        void clear() {}
 	protected:
-        virtual bool serialize(void *data,uint32_t& size) const ;
-        virtual uint32_t serial_size() const ;
+		void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 };
 
 /***********************************************************************************/
@@ -198,8 +186,6 @@ class RsTurtleGenericDataItem: public RsTurtleGenericTunnelItem
 {
 	public:
         RsTurtleGenericDataItem() : RsTurtleGenericTunnelItem(RS_TURTLE_SUBTYPE_GENERIC_DATA), data_size(0), data_bytes(0) { setPriorityLevel(QOS_PRIORITY_RS_TURTLE_FILE_REQUEST);}
-		RsTurtleGenericDataItem(void *data,uint32_t size) ;		// deserialization
-
 		virtual ~RsTurtleGenericDataItem() { if(data_bytes != NULL) free(data_bytes) ; }
 
 		virtual bool shouldStampTunnel() const { return true ; }
@@ -207,30 +193,26 @@ class RsTurtleGenericDataItem: public RsTurtleGenericTunnelItem
 		uint32_t data_size ;
 		void *data_bytes ;
 
-		virtual std::ostream& print(std::ostream& o, uint16_t) ;
+        void clear()
+        {
+            free(data_bytes) ;
+            data_bytes = NULL ;
+            data_size = 0;
+        }
 	protected:
-        virtual bool serialize(void *data,uint32_t& size) const ;
-        virtual uint32_t serial_size() const ;
+		void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 };
 
 /***********************************************************************************/
 /*                           Turtle Serialiser class                               */
 /***********************************************************************************/
 
-class RsTurtleSerialiser: public RsSerialType
+class RsTurtleSerialiser: public RsServiceSerializer
 {
 	public:
-		RsTurtleSerialiser() : RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_TURTLE) {}
+		RsTurtleSerialiser() : RsServiceSerializer(RS_SERVICE_TYPE_TURTLE) {}
 
-		virtual uint32_t 	size (RsItem *item) 
-		{ 
-			return dynamic_cast<RsTurtleItem *>(item)->serial_size() ;
-		}
-		virtual bool serialise(RsItem *item, void *data, uint32_t *size) 
-		{ 
-			return dynamic_cast<RsTurtleItem *>(item)->serialize(data,*size) ;
-		}
-		virtual RsItem *deserialise (void *data, uint32_t *size) ;
+		virtual RsItem *create_item(uint16_t service,uint8_t item_subtype) const;
 
 		// This is used by the turtle router to add services to its serialiser.
 		// Client services are only used for deserialising, since the serialisation is

@@ -1816,25 +1816,26 @@ void FriendList::importFriendlistClicked()
  */
 bool FriendList::importExportFriendlistFileDialog(QString &fileName, bool import)
 {
-    if(!misc::getSaveFileName(this,
-                              RshareSettings::LASTDIR_CERT,
-                              (import ? tr("Select file for importing your friendlist from") :
-                                        tr("Select a file for exporting your friendlist to")),
-                              tr("XML File (*.xml);;All Files (*)"),
-                              fileName,
-                              NULL,
-                              (import ? QFileDialog::DontConfirmOverwrite : (QFileDialog::Options)0)
-                              )) {
-        // show error to user
-        QMessageBox mbox;
-        mbox.setIcon(QMessageBox::Warning);
-        mbox.setText(tr("Error"));
-        mbox.setInformativeText(tr("Failed to get a file!"));
-        mbox.setStandardButtons(QMessageBox::Ok);
-        mbox.exec();
-        return false;
-    }
-    return true;
+	bool res = true;
+	if (import) {
+		res = misc::getOpenFileName(this, RshareSettings::LASTDIR_CERT
+		                            , tr("Select file for importing your friendlist from")
+		                            , tr("XML File (*.xml);;All Files (*)")
+		                            , fileName
+		                            , QFileDialog::DontConfirmOverwrite
+		                            );
+		} else {
+		res = misc::getSaveFileName(this, RshareSettings::LASTDIR_CERT
+		                            , tr("Select a file for exporting your friendlist to")
+		                            , tr("XML File (*.xml);;All Files (*)")
+		                            , fileName, NULL
+		                            , (QFileDialog::Options)0
+		                            );
+	}
+	if ( res && !fileName.endsWith(".xml",Qt::CaseInsensitive) )
+		fileName = fileName.append(".xml");
+
+	return res;
 }
 
 /**

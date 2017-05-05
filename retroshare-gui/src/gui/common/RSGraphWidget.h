@@ -69,8 +69,11 @@ public:
     // return the vector of last values up to date
     virtual void getCurrentValues(std::vector<QPointF>& vals) const ;
 
+    // return the vector of cumulated values up to date
+	virtual void getCumulatedValues(std::vector<float>& vals) const;
+
     // returns what to display in the legend. Derive this to show additional info.
-    virtual QString legend(int i,float v) const ;
+    virtual QString legend(int i, float v, bool show_value=true) const ;
 
     // Returns the n^th interpolated value at the given time in floating point seconds backward.
     virtual void getDataPoints(int index, std::vector<QPointF>& pts, float filter_factor=0.0f) const ;
@@ -95,11 +98,13 @@ protected slots:
 protected:
     virtual void getValues(std::map<std::string,float>& values) const = 0 ;// overload this in your own class to fill in the values you want to display.
 
+	void updateTotals();
     qint64 getTime() const ;						   // returns time in ms since RS has started
 
     // Storage of collected events. The string is any string used to represent the collected data.
 
     std::map<std::string, std::list<std::pair<qint64,float> > > _points ;
+    std::map<std::string, float> _totals ;
 
     QTimer *_timer ;
 
@@ -118,8 +123,10 @@ public:
 	static const uint32_t RSGRAPH_FLAGS_LOG_SCALE_Y     	= 0x0002 ;// log scale in Y
 	static const uint32_t RSGRAPH_FLAGS_ALWAYS_COLLECT  	= 0x0004 ;// keep collecting while not displayed
 	static const uint32_t RSGRAPH_FLAGS_PAINT_STYLE_PLAIN	= 0x0008 ;// use plain / line drawing style
-	static const uint32_t RSGRAPH_FLAGS_SHOW_LEGEND       = 0x0010 ;// show legend in the graph
-	static const uint32_t RSGRAPH_FLAGS_PAINT_STYLE_FLAT  = 0x0020 ;// do not interpolate, and draw flat colored boxes
+	static const uint32_t RSGRAPH_FLAGS_SHOW_LEGEND         = 0x0010 ;// show legend in the graph
+	static const uint32_t RSGRAPH_FLAGS_PAINT_STYLE_FLAT    = 0x0020 ;// do not interpolate, and draw flat colored boxes
+	static const uint32_t RSGRAPH_FLAGS_LEGEND_CUMULATED    = 0x0040 ;// show the total in the legend rather than current values
+	static const uint32_t RSGRAPH_FLAGS_PAINT_STYLE_DOTS 	= 0x0080 ;// use dots
 
 	/** Bandwidth graph style. */
 	enum GraphStyle 
@@ -185,8 +192,11 @@ private:
 	void pointsFromData(const std::vector<QPointF>& values, QVector<QPointF> &points ) ;
 
 	/** Paints a line with the data in <b>points</b>. */
-	void paintLine(const QVector<QPointF>& points, QColor color,
-	               Qt::PenStyle lineStyle = Qt::SolidLine);
+	void paintLine(const QVector<QPointF>& points, QColor color, Qt::PenStyle lineStyle = Qt::SolidLine);
+
+    /** Paint a series of large dots **/
+	void paintDots(const QVector<QPointF>& points, QColor color);
+
 	/** Paints an integral using the supplied data. */
 	void paintIntegral(const QVector<QPointF>& points, QColor color, qreal alpha = 1.0);
 
@@ -208,6 +218,7 @@ private:
 
 	qreal _time_scale ; // horizontal scale in pixels per sec.
         qreal _time_filter ; // time filter. Goes from 0 to infinity. Will be converted into 1-1/(1+f)
+        float _linewidthscale ;
 
 	/** Show the respective lines and counters. */
 	//bool _showRSDHT;

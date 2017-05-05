@@ -53,7 +53,7 @@ static const uint32_t PQI_SSLUDP_DEF_CONN_PERIOD = 300;  /* 5  minutes? */
 /********** PQI SSL UDP STUFF **************************************/
 
 pqissludp::pqissludp(PQInterface *parent, p3LinkMgr *lm) :
-	pqissl(NULL, parent, lm), tou_bio(NULL), listen_checktime(0),
+	pqissl(NULL, parent, lm), tou_bio(NULL),// listen_checktime(0),
 	mConnectPeriod(PQI_SSLUDP_DEF_CONN_PERIOD), mConnectFlags(0),
 	mConnectBandwidth(0)
 {

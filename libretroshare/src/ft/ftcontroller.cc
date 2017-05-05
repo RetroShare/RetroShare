@@ -60,7 +60,7 @@
 #include "retroshare/rsiface.h"
 #include "retroshare/rspeers.h"
 
-#include "serialiser/rsconfigitems.h"
+#include "rsitems/rsconfigitems.h"
 #include <stdio.h>
 #include <unistd.h>		/* for (u)sleep() */
 #include <time.h>

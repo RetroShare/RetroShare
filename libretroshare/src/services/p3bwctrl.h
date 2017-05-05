@@ -31,7 +31,7 @@
 #include <list>
 #include <map>
 
-#include "serialiser/rsbwctrlitems.h"
+#include "rsitems/rsbwctrlitems.h"
 #include "services/p3service.h"
 #include "pqi/pqiservicemonitor.h"
 #include "retroshare/rsconfig.h" // for datatypes.
