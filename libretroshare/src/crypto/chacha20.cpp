@@ -44,6 +44,12 @@
 
 //#define DEBUG_CHACHA20
 
+#if OPENSSL_VERSION_NUMBER >= 0x010100000L
+    #define AEAD_chacha20_poly1305_openssl AEAD_chacha20_poly1305
+#else
+    #define AEAD_chacha20_poly1305_rs AEAD_chacha20_poly1305
+#endif
+
 namespace librs {
 namespace crypto {
 
@@ -273,6 +279,7 @@ static void quotient(const uint256_32& n,const uint256_32& p,uint256_32& q,uint2
             q += m ;
         }
 }
+
 static void remainder(const uint256_32& n,const uint256_32& p,uint256_32& r)
 {
     // simple algorithm: add up multiples of u while keeping below *this. Once done, substract.
@@ -475,7 +482,7 @@ bool constant_time_memory_compare(const uint8_t *m1,const uint8_t *m2,uint32_t s
     return !CRYPTO_memcmp(m1,m2,size) ;
 }
 
-bool AEAD_chacha20_poly1305(uint8_t key[32], uint8_t nonce[12],uint8_t *data,uint32_t data_size,uint8_t *aad,uint32_t aad_size,uint8_t tag[16],bool encrypt)
+bool AEAD_chacha20_poly1305_rs(uint8_t key[32], uint8_t nonce[12],uint8_t *data,uint32_t data_size,uint8_t *aad,uint32_t aad_size,uint8_t tag[16],bool encrypt)
 {
     // encrypt + tag. See RFC7539-2.8
 
@@ -525,6 +532,88 @@ bool AEAD_chacha20_poly1305(uint8_t key[32], uint8_t nonce[12],uint8_t *data,uin
        return constant_time_memory_compare(tag,computed_tag,16) ;
     }
 }
+
+#define errorOut {ret = false; goto out;}
+
+bool AEAD_chacha20_poly1305_openssl(uint8_t key[32], uint8_t nonce[12], uint8_t *data, uint32_t data_size, uint8_t *aad, uint32_t aad_size, uint8_t tag[16], bool encrypt_or_decrypt)
+{
+    EVP_CIPHER_CTX *ctx;
+
+    bool ret = true;
+    int len;
+    const uint8_t tag_len = 16;
+    int tmp_len;
+    uint8_t tmp[data_size];
+
+    /* Create and initialise the context */
+    if(!(ctx = EVP_CIPHER_CTX_new())) return false;
+
+    if (encrypt_or_decrypt) {
+        /* Initialise the encryption operation. */
+        if(1 != EVP_EncryptInit_ex(ctx, EVP_chacha20_poly1305(), NULL, NULL, NULL)) errorOut
+
+        /* Initialise key and IV */
+        if(1 != EVP_EncryptInit_ex(ctx, NULL, NULL, key, nonce)) errorOut
+
+        /* Provide any AAD data. This can be called zero or more times as
+         * required
+         */
+        if(1 != EVP_EncryptUpdate(ctx, NULL, &len, aad, aad_size)) errorOut
+
+        /* Provide the message to be encrypted, and obtain the encrypted output.
+         * EVP_EncryptUpdate can be called multiple times if necessary
+         */
+        if(1 != EVP_EncryptUpdate(ctx, tmp, &len, data, data_size)) errorOut
+        tmp_len = len;
+
+        /* Finalise the encryption. Normally ciphertext bytes may be written at
+         * this stage, but this does not occur in GCM mode
+         */
+        if(1 != EVP_EncryptFinal_ex(ctx, data + len, &len)) errorOut
+        tmp_len += len;
+
+        /* Get the tag */
+        if(1 != EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_AEAD_GET_TAG, tag_len, tag)) errorOut
+    } else {
+        /* Initialise the decryption operation. */
+        if(!EVP_DecryptInit_ex(ctx, EVP_chacha20_poly1305(), NULL, key, nonce)) errorOut
+
+        /* Provide any AAD data. This can be called zero or more times as
+         * required
+         */
+        if(!EVP_DecryptUpdate(ctx, NULL, &len, aad, aad_size)) errorOut
+
+        /* Provide the message to be decrypted, and obtain the plaintext output.
+         * EVP_DecryptUpdate can be called multiple times if necessary
+         */
+        if(!EVP_DecryptUpdate(ctx, tmp, &len, data, data_size)) errorOut
+        tmp_len = len;
+
+        /* Set expected tag value. Works in OpenSSL 1.0.1d and later */
+        if(!EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_AEAD_SET_TAG, tag_len, tag)) errorOut
+
+        /* Finalise the decryption. A positive return value indicates success,
+         * anything else is a failure - the plaintext is not trustworthy.
+         */
+        if(EVP_DecryptFinal_ex(ctx, tmp + len, &len) > 0) {
+            /* Success */
+            tmp_len += len;
+            ret = true;
+        } else {
+            /* Verify failed */
+            errorOut
+        }
+    }
+
+    memcpy(data, tmp, tmp_len);
+
+out:
+    /* Clean up */
+    EVP_CIPHER_CTX_free(ctx);
+    return !!ret;
+}
+
+#undef errorOut
 
 bool AEAD_chacha20_sha256(uint8_t key[32], uint8_t nonce[12],uint8_t *data,uint32_t data_size,uint8_t *aad,uint32_t aad_size,uint8_t tag[16],bool encrypt)
 {
@@ -1154,12 +1243,12 @@ bool perform_tests()
         uint8_t tag[16] ;
         uint8_t test_tag[16] = { 0x1a,0xe1,0x0b,0x59,0x4f,0x09,0xe2,0x6a,0x7e,0x90,0x2e,0xcb,0xd0,0x60,0x06,0x91 };
 
-        AEAD_chacha20_poly1305(key,nonce,msg,7*16+2,aad,12,tag,true) ;
+        AEAD_chacha20_poly1305_rs(key,nonce,msg,7*16+2,aad,12,tag,true) ;
 
         if(!constant_time_memory_compare(msg,test_msg,7*16+2)) return false ;
         if(!constant_time_memory_compare(tag,test_tag,16)) return false ;
 
-        bool res = AEAD_chacha20_poly1305(key,nonce,msg,7*16+2,aad,12,tag,false) ;
+        bool res = AEAD_chacha20_poly1305_rs(key,nonce,msg,7*16+2,aad,12,tag,false) ;
 
         if(!res) return false ;
     }
@@ -1197,7 +1286,7 @@ bool perform_tests()
 
         uint8_t received_tag[16] = { 0xee,0xad,0x9d,0x67,0x89,0x0c,0xbb,0x22,0x39,0x23,0x36,0xfe,0xa1,0x85,0x1f,0x38 };
 
-        if(!AEAD_chacha20_poly1305(key,nonce,ciphertext,16*16+9,aad,12,received_tag,false))
+        if(!AEAD_chacha20_poly1305_rs(key,nonce,ciphertext,16*16+9,aad,12,received_tag,false))
             return false ;
 
         uint8_t cleartext[16*16+9] = {
@@ -1245,19 +1334,25 @@ bool perform_tests()
             RsScopeTimer s("AEAD1") ;
             chacha20_encrypt(key, 1, nonce, ten_megabyte_data,SIZE) ;
 
-            std::cerr << "  Chacha20 encryption speed     : " << SIZE / (1024.0*1024.0) / s.duration() << " MB/s" << std::endl;
+            std::cerr << "  Chacha20 encryption speed             : " << SIZE / (1024.0*1024.0) / s.duration() << " MB/s" << std::endl;
         }
         {
             RsScopeTimer s("AEAD2") ;
-            AEAD_chacha20_poly1305(key,nonce,ten_megabyte_data,SIZE,aad,12,received_tag,true) ;
+            AEAD_chacha20_poly1305_rs(key,nonce,ten_megabyte_data,SIZE,aad,12,received_tag,true) ;
 
-            std::cerr << "  AEAD/poly1305 encryption speed: " << SIZE / (1024.0*1024.0) / s.duration() << " MB/s" << std::endl;
+            std::cerr << "  AEAD/poly1305 own encryption speed    : " << SIZE / (1024.0*1024.0) / s.duration() << " MB/s" << std::endl;
         }
         {
             RsScopeTimer s("AEAD3") ;
+            AEAD_chacha20_poly1305_openssl(key,nonce,ten_megabyte_data,SIZE,aad,12,received_tag,true) ;
+
+            std::cerr << "  AEAD/poly1305 openssl encryption speed: " << SIZE / (1024.0*1024.0) / s.duration() << " MB/s" << std::endl;
+        }
+        {
+            RsScopeTimer s("AEAD4") ;
             AEAD_chacha20_sha256(key,nonce,ten_megabyte_data,SIZE,aad,12,received_tag,true) ;
 
-            std::cerr << "  AEAD/sha256 encryption speed  : " << SIZE / (1024.0*1024.0) / s.duration() << " MB/s" << std::endl;
+            std::cerr << "  AEAD/sha256 encryption speed          : " << SIZE / (1024.0*1024.0) / s.duration() << " MB/s" << std::endl;
         }
 
         free(ten_megabyte_data) ;
