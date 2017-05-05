@@ -372,8 +372,6 @@ struct RsNxsMsg : RsNxsItem
 	    msg(servtype), metaData(NULL) { clear(); }
 	virtual ~RsNxsMsg() { delete metaData; }
 
-	virtual void clear();
-
 	virtual void serial_process( RsGenericSerializer::SerializeJob j,
 	                             RsGenericSerializer::SerializeContext& ctx );
 
