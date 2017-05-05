@@ -1,7 +1,7 @@
 
 #include "support.h"
 #include "libretroshare/gxs/common/data_support.h"
-#include "serialiser/rsnxsitems.h"
+#include "rsitems/rsnxsitems.h"
 
 
 #define NUM_BIN_OBJECTS 5

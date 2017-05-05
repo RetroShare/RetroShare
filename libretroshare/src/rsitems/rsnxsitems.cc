@@ -156,6 +156,19 @@ void RsNxsGrp::clear()
     meta.TlvClear();
 }
 
+RsNxsGrp* RsNxsGrp::clone() const {
+	RsNxsGrp* grp = new RsNxsGrp(this->grp.tlvtype);
+	*grp = *this;
+
+	if(this->metaData)
+	{
+		grp->metaData = new RsGxsGrpMetaData();
+		*(grp->metaData) = *(this->metaData);
+	}
+
+	return grp;
+}
+
 void RsNxsSyncGrpReqItem::clear()
 {
     flag = 0;
