@@ -27,6 +27,8 @@
 #include "rsitems/rsposteditems.h"
 
 #include <math.h>
+#include <typeinfo>
+
 
 /****
  * #define POSTED_DEBUG 1

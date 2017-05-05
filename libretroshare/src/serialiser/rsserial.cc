@@ -37,6 +37,8 @@
 #include <map>
 #include <vector>
 #include <iostream>
+#include <typeinfo>
+
 
 /***
  * #define RSSERIAL_DEBUG 		1
