@@ -53,11 +53,6 @@ void ftExtraList::data_tick()
     bool todo = false;
     time_t now = time(NULL);
 
-#ifdef  DEBUG_ELIST
-    //std::cerr << "ftExtraList::run() Iteration";
-    //std::cerr << std::endl;
-#endif
-
     {
         RsStackMutex stack(extMutex);
 
@@ -131,6 +126,7 @@ void ftExtraList::hashAFile()
 
 		/* stick it in the available queue */
 		mFiles[details.info.hash] = details;
+        mHashOfHash[makeEncryptedHash(details.info.hash)] = details.info.hash ;
 
 		/* add to the path->hash map */
 		mHashedList[details.info.path] = details.info.hash;
@@ -169,6 +165,7 @@ bool	ftExtraList::addExtraFile(std::string path, const RsFileHash& hash,
 
 	/* stick it in the available queue */
 	mFiles[details.info.hash] = details;
+	mHashOfHash[makeEncryptedHash(details.info.hash)] = details.info.hash ;
 
 	IndicateConfigChanged();
 
@@ -189,6 +186,8 @@ bool ftExtraList::removeExtraFile(const RsFileHash& hash, TransferRequestFlags f
 #endif
 
 	RsStackMutex stack(extMutex);
+
+    mHashOfHash.erase(makeEncryptedHash(hash)) ;
 
     std::map<RsFileHash, FileDetails>::iterator it;
 	it = mFiles.find(hash);
@@ -242,29 +241,26 @@ bool	ftExtraList::cleanupOldFiles()
 	time_t now = time(NULL);
 
     std::list<RsFileHash> toRemove;
-    std::list<RsFileHash>::iterator rit;
 
-    std::map<RsFileHash, FileDetails>::iterator it;
-	for(it = mFiles.begin(); it != mFiles.end(); ++it)
-	{
-		/* check timestamps */
+	for( std::map<RsFileHash, FileDetails>::iterator it = mFiles.begin(); it != mFiles.end(); ++it) /* check timestamps */
 		if ((time_t)it->second.info.age < now)
-		{
 			toRemove.push_back(it->first);
-		}
-	}
 
 	if (toRemove.size() > 0)
 	{
+        std::map<RsFileHash, FileDetails>::iterator it;
+
 		/* remove items */
-		for(rit = toRemove.begin(); rit != toRemove.end(); ++rit)
-		{
+		for(std::list<RsFileHash>::iterator rit = toRemove.begin(); rit != toRemove.end(); ++rit)
+        {
 			if (mFiles.end() != (it = mFiles.find(*rit)))
 			{
 				cleanupEntry(it->second.info.path, it->second.info.transfer_info_flags);
 				mFiles.erase(it);
 			}
-		}
+			mHashOfHash.erase(makeEncryptedHash(*rit)) ;
+        }
+
 		IndicateConfigChanged();
 	}
 	return true;
@@ -333,31 +329,71 @@ bool	ftExtraList::hashExtraFileDone(std::string path, FileInfo &info)
 	 **/
 bool    ftExtraList::search(const RsFileHash &hash, FileSearchFlags /*hintflags*/, FileInfo &info) const
 {
-
 #ifdef  DEBUG_ELIST
-	std::cerr << "ftExtraList::search()";
-	std::cerr << std::endl;
+	std::cerr << "ftExtraList::search() hash=" << hash ;
 #endif
 
 	/* find hash */
     std::map<RsFileHash, FileDetails>::const_iterator fit;
 	if (mFiles.end() == (fit = mFiles.find(hash)))
 	{
-		return false;
+#ifdef  DEBUG_ELIST
+        std::cerr << "  not found in mFiles. Trying encrypted... " ;
+#endif
+        // File not found. We try to look for encrypted hash.
+
+        std::map<RsFileHash,RsFileHash>::const_iterator hit = mHashOfHash.find(hash) ;
+
+        if(hit == mHashOfHash.end())
+        {
+#ifdef  DEBUG_ELIST
+			std::cerr << "  not found." << std::endl;
+#endif
+			return false;
+        }
+#ifdef  DEBUG_ELIST
+		std::cerr << "  found! Reaching data..." ;
+#endif
+
+        fit = mFiles.find(hit->second) ;
+
+        if(fit == mFiles.end())		// not found. This is an error.
+        {
+#ifdef  DEBUG_ELIST
+			std::cerr << "  no data. Returning false." << std::endl;
+#endif
+            return false ;
+        }
+
+#ifdef  DEBUG_ELIST
+		std::cerr << "  ok! Accepting encrypted transfer." << std::endl;
+#endif
+		info = fit->second.info;
+		info.storage_permission_flags = FileStorageFlags(DIR_FLAGS_ANONYMOUS_DOWNLOAD) ;
+		info.transfer_info_flags |= RS_FILE_REQ_ENCRYPTED ;
 	}
+    else
+    {
+#ifdef  DEBUG_ELIST
+        std::cerr << "  found! Accepting direct transfer" << std::endl;
+#endif
+		info = fit->second.info;
 
-	info = fit->second.info;
-
-	// Now setup the file storage flags so that the client can know how to handle permissions
-	//
-#warning mr-alice: make sure this is right
-    info.storage_permission_flags = FileStorageFlags(0) ;//DIR_FLAGS_BROWSABLE_OTHERS ;
+        // Unencrypted file transfer: We only allow direct transfers. This is not exactly secure since another friend can
+        // swarm the file. But the hash being kept secret, there's no risk here.
+		//
+		info.storage_permission_flags = FileStorageFlags(DIR_FLAGS_BROWSABLE) ;
+    }
 
 	if(info.transfer_info_flags & RS_FILE_REQ_ANONYMOUS_ROUTING) info.storage_permission_flags |= DIR_FLAGS_ANONYMOUS_DOWNLOAD ;
 
 	return true;
 }
 
+RsFileHash ftExtraList::makeEncryptedHash(const RsFileHash& hash)
+{
+	return RsDirUtil::sha1sum(hash.toByteArray(),hash.SIZE_IN_BYTES);
+}
 
 	/***
 	 * Configuration - store extra files.
@@ -472,6 +508,8 @@ bool    ftExtraList::loadList(std::list<RsItem *>& load)
 	
 		/* stick it in the available queue */
 		mFiles[details.info.hash] = details;
+        mHashOfHash[makeEncryptedHash(details.info.hash)] = details.info.hash ;
+
 		delete (*it);
 
 		/* short sleep */
