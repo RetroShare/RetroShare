@@ -54,10 +54,10 @@
 
 #include <time.h>
 
-#define COLUMN_ICON      0
-#define COLUMN_NAME      1
-#define COLUMN_ACTIVITY  2
-#define COLUMN_ID        3
+#define COLUMN_NAME      0
+#define COLUMN_ACTIVITY  1
+#define COLUMN_ID        2
+#define COLUMN_ICON      3
 #define COLUMN_COUNT     4
 
 #define ROLE_SORT            Qt::UserRole + 1
@@ -80,12 +80,16 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::Wi
 	connect(ui.filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterChanged(QString)));
 
             int S = QFontMetricsF(font()).height() ;
-    ui.participantsList->setIconSize(QSize(1.3*S,1.3*S));
+    ui.participantsList->setIconSize(QSize(1.4*S,1.4*S));
 
     ui.participantsList->setColumnCount(COLUMN_COUNT);
-    ui.participantsList->setColumnWidth(COLUMN_ICON, 1.4*S);
+    ui.participantsList->setColumnWidth(COLUMN_ICON, 1.7*S);
     ui.participantsList->setColumnHidden(COLUMN_ACTIVITY,true);
     ui.participantsList->setColumnHidden(COLUMN_ID,true);
+    
+    /* Set header resize modes and initial section sizes */
+	QHeaderView * header = ui.participantsList->header();
+	header->setSectionResizeMode( COLUMN_NAME, QHeaderView::Stretch);
 
     muteAct = new QAction(QIcon(), tr("Mute participant"), this);
     voteNegativeAct = new QAction(QIcon(":/icons/png/thumbs-down.png"), tr("Ban this person (Sets negative opinion)"), this);
