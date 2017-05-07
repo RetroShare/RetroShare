@@ -325,6 +325,17 @@ class RsChatAvatarItem: public RsChatItem
 		unsigned char *image_data ;		// image
 };
 
+
+struct PrivateOugoingMapItem : RsChatItem
+{
+	PrivateOugoingMapItem() : RsChatItem(RS_PKT_SUBTYPE_OUTGOING_MAP) {}
+
+	void serial_process( RsGenericSerializer::SerializeJob j,
+	                     RsGenericSerializer::SerializeContext& ctx );
+
+	std::map<uint64_t, RsChatMsgItem> store;
+};
+
 struct RsChatSerialiser : RsServiceSerializer
 {
 	RsChatSerialiser(SerializationFlags flags = SERIALIZATION_FLAG_NONE) :

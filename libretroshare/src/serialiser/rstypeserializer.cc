@@ -27,6 +27,8 @@
 #include "serialiser/rsbaseserial.h"
 #include "serialiser/rstlvkeys.h"
 
+#include "rsitems/rsitem.h"
+
 #include "util/rsprint.h"
 
 #include <iomanip>
@@ -305,4 +307,58 @@ template<> void RsTypeSerializer::print_data(const std::string& n, const RsTlvIt
     // can we call TlvPrint inside this?
 
     std::cerr << "  [" << typeid(s).name() << "] " << n << std::endl;
+}
+
+//============================================================================//
+//                          RsItem and derivated                              //
+//============================================================================//
+
+template<> uint32_t RsTypeSerializer::serial_size(const RsItem& s)
+{
+	RsGenericSerializer::SerializeContext ctx(
+	            NULL, 0, RsGenericSerializer::FORMAT_BINARY,
+	            RsGenericSerializer::SERIALIZATION_FLAG_NONE );
+
+	ctx.mOffset = 8;	// header size
+	const_cast<RsItem&>(s).serial_process(RsGenericSerializer::SIZE_ESTIMATE,
+	                                      ctx);
+
+	return ctx.mOffset;
+}
+
+template<> bool RsTypeSerializer::serialize( uint8_t data[], uint32_t size,
+                                             uint32_t &offset, const RsItem& s )
+{
+	RsGenericSerializer::SerializeContext ctx(
+	            data, size, RsGenericSerializer::FORMAT_BINARY,
+	            RsGenericSerializer::SERIALIZATION_FLAG_NONE );
+	ctx.mOffset = offset;
+	const_cast<RsItem&>(s).serial_process(RsGenericSerializer::SERIALIZE,
+	                                      ctx);
+	return true;
+}
+
+template<> bool RsTypeSerializer::deserialize( const uint8_t data[],
+                                               uint32_t size, uint32_t& offset,
+                                               RsItem& s )
+{
+	RsGenericSerializer::SerializeContext ctx(
+	            const_cast<uint8_t*>(data), size,
+	            RsGenericSerializer::FORMAT_BINARY,
+	            RsGenericSerializer::SERIALIZATION_FLAG_NONE );
+	ctx.mOffset = offset;
+	const_cast<RsItem&>(s).serial_process(RsGenericSerializer::DESERIALIZE,
+	                                      ctx);
+	return true;
+}
+
+template<> void RsTypeSerializer::print_data( const std::string& n,
+                                              const RsItem& s )
+{
+	RsGenericSerializer::SerializeContext ctx(
+	            NULL, 0,
+	            RsGenericSerializer::FORMAT_BINARY,
+	            RsGenericSerializer::SERIALIZATION_FLAG_NONE );
+	const_cast<RsItem&>(s).serial_process(RsGenericSerializer::PRINT,
+	                                      ctx);
 }
