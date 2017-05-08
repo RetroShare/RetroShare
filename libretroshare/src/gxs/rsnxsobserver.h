@@ -27,7 +27,7 @@
  */
 
 #include <set>
-#include "serialiser/rsnxsitems.h"
+#include "rsitems/rsnxsitems.h"
 
 
 class RsNxsObserver

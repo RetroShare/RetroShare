@@ -19,12 +19,13 @@
 
 #include <string>
 
-#include "serialiser/rsgxsitems.h"
+#include "rsitems/rsgxsitems.h"
 #include "serialiser/rsbaseserial.h"
 #include "serialiser/rstlvidset.h"
 #include "retroshare/rsgxsflags.h"
 #include "retroshare/rsgxscircles.h" // For: GXS_CIRCLE_TYPE_PUBLIC
 #include "services/p3idservice.h"
+#include "serialiser/rstypeserializer.h"
 
 /// Subservices identifiers (like port for TCP)
 enum class GxsTransSubServices : uint16_t
@@ -65,14 +66,9 @@ struct RsGxsTransBaseItem : RsGxsMsgItem
 		meta = RsMsgMetaData();
 	}
 
-	static uint32_t inline serial_size()
-	{
-		return  8 + // Header
-		        8;  // mailId
-	}
-	bool serialize(uint8_t* data, uint32_t size, uint32_t& offset) const;
-	bool deserialize(const uint8_t* data, uint32_t& size, uint32_t& offset);
-	std::ostream &print(std::ostream &out, uint16_t /*indent = 0*/);
+	void serial_process( RsGenericSerializer::SerializeJob j,
+	                     RsGenericSerializer::SerializeContext& ctx )
+	{ RS_REGISTER_SERIAL_MEMBER_TYPED(mailId, uint64_t); }
 };
 
 struct RsGxsTransPresignedReceipt : RsGxsTransBaseItem
@@ -149,46 +145,15 @@ struct RsGxsTransMailItem : RsGxsTransBaseItem
 	 * is specified */
 	std::vector<uint8_t> payload;
 
-	uint32_t serial_size() const
+	void serial_process( RsGenericSerializer::SerializeJob j,
+	                     RsGenericSerializer::SerializeContext& ctx )
 	{
-		return RsGxsTransBaseItem::serial_size() +
-		        1 + // cryptoType
-		        recipientHint.serial_size() +
-		        payload.size();
+		RsGxsTransBaseItem::serial_process(j, ctx);
+		RS_REGISTER_SERIAL_MEMBER_TYPED(cryptoType, uint8_t);
+		RS_REGISTER_SERIAL_MEMBER(recipientHint);
+		RS_REGISTER_SERIAL_MEMBER(payload);
 	}
-	bool serialize(uint8_t* data, uint32_t size, uint32_t& offset) const
-	{
-		bool ok = size < MAX_SIZE;
-		ok = ok && RsGxsTransBaseItem::serialize(data, size, offset);
-		ok = ok && setRawUInt8( data, size, &offset,
-		                        static_cast<uint8_t>(cryptoType) );
-		ok = ok && recipientHint.serialise(data, size, offset);
-		uint32_t psz = payload.size();
-		ok = ok && memcpy(data+offset, &payload[0], psz);
-		offset += psz;
-		return ok;
-	}
-	bool deserialize(const uint8_t* data, uint32_t& size, uint32_t& offset)
-	{
-		void* sizePtr = const_cast<uint8_t*>(data+offset);
-		uint32_t rssize = getRsItemSize(sizePtr);
 
-		uint32_t roffset = offset;
-		bool ok = rssize <= size && size < MAX_SIZE;
-		ok = ok && RsGxsTransBaseItem::deserialize(data, rssize, roffset);
-
-		void* dataPtr = const_cast<uint8_t*>(data);
-		uint8_t crType;
-		ok = ok && getRawUInt8(dataPtr, rssize, &roffset, &crType);
-		cryptoType = static_cast<RsGxsTransEncryptionMode>(crType);
-		ok = ok && recipientHint.deserialise(dataPtr, rssize, roffset);
-		uint32_t psz = rssize - roffset;
-		ok = ok && (payload.resize(psz), memcpy(&payload[0], data+roffset, psz));
-		ok = ok && (roffset += psz);
-		if(ok) { size = rssize; offset = roffset; }
-		else size = 0;
-		return ok;
-	}
 	void clear()
 	{
 		RsGxsTransBaseItem::clear();
@@ -212,6 +177,11 @@ struct RsGxsTransGroupItem : RsGxsGrpItem
 		meta.mGroupName = "Mail";
 		meta.mCircleType = GXS_CIRCLE_TYPE_PUBLIC;
 	}
+
+	// TODO: Talk with Cyril why there is no RsGxsGrpItem::serial_process
+	virtual void serial_process(RsGenericSerializer::SerializeJob /*j*/,
+	                            RsGenericSerializer::SerializeContext& /*ctx*/)
+	{}
 
 	void clear() {}
 	std::ostream &print(std::ostream &out, uint16_t /*indent = 0*/)
@@ -253,12 +223,10 @@ struct OutgoingRecord : RsItem
 	GxsTransSubServices clientService;
 	RsNxsTransPresignedReceipt presignedReceipt;
 
-	uint32_t serial_size() const;
-	bool serialize(uint8_t* data, uint32_t size, uint32_t& offset) const;
-	bool deserialize(const uint8_t* data, uint32_t& size, uint32_t& offset);
+	void serial_process( RsGenericSerializer::SerializeJob j,
+	                     RsGenericSerializer::SerializeContext& ctx );
 
-	virtual void clear();
-	virtual std::ostream &print(std::ostream &out, uint16_t indent = 0);
+	void clear() {}
 
 private:
 	friend class RsGxsTransSerializer;
@@ -266,100 +234,23 @@ private:
 };
 
 
-struct RsGxsTransSerializer : RsSerialType
+struct RsGxsTransSerializer : public RsServiceSerializer
 {
-	RsGxsTransSerializer() : RsSerialType( RS_PKT_VERSION_SERVICE,
-	                                      RS_SERVICE_TYPE_GXS_TRANS ) {}
+	RsGxsTransSerializer() : RsServiceSerializer(RS_SERVICE_TYPE_GXS_TRANS) {}
 	~RsGxsTransSerializer() {}
 
-	uint32_t size(RsItem* item)
+	RsItem* create_item(uint16_t service_id, uint8_t item_sub_id) const
 	{
-		uint32_t sz = 0;
-		switch(static_cast<GxsTransItemsSubtypes>(item->PacketSubType()))
-		{
-		case GxsTransItemsSubtypes::GXS_TRANS_SUBTYPE_MAIL:
-		{
-			RsGxsTransMailItem* i = dynamic_cast<RsGxsTransMailItem*>(item);
-			if(i) sz = i->serial_size();
-			break;
-		}
-		case GxsTransItemsSubtypes::GXS_TRANS_SUBTYPE_RECEIPT:
-			sz = RsGxsTransPresignedReceipt::serial_size(); break;
-		case GxsTransItemsSubtypes::GXS_TRANS_SUBTYPE_GROUP: sz = 8; break;
-		case GxsTransItemsSubtypes::OUTGOING_RECORD_ITEM:
-		{
-			OutgoingRecord* ci = dynamic_cast<OutgoingRecord*>(item);
-			if(ci) sz = ci->serial_size();
-			break;
-		}
-		default: break;
-		}
+		if(service_id != RS_SERVICE_TYPE_GXS_TRANS) return NULL;
 
-		return sz;
-	}
-
-	bool serialise(RsItem* item, void* data, uint32_t* size);
-
-	RsItem* deserialise(void* data, uint32_t* size)
-	{
-		uint32_t rstype = getRsItemId(data);
-		uint32_t rssize = getRsItemSize(data);
-		uint8_t pktv = getRsItemVersion(rstype);
-		uint16_t srvc = getRsItemService(rstype);
-		const uint8_t* dataPtr = reinterpret_cast<uint8_t*>(data);
-
-		if ( (RS_PKT_VERSION_SERVICE != pktv) || // 0x02
-		     (RS_SERVICE_TYPE_GXS_TRANS != srvc) || // 0x0230 = 560
-		     (*size < rssize) )
+		switch(static_cast<GxsTransItemsSubtypes>(item_sub_id))
 		{
-			print_stacktrace();
-			return NULL;
+		case GxsTransItemsSubtypes::GXS_TRANS_SUBTYPE_MAIL: return new RsGxsTransMailItem();
+		case GxsTransItemsSubtypes::GXS_TRANS_SUBTYPE_RECEIPT: return new RsGxsTransPresignedReceipt();
+		case GxsTransItemsSubtypes::GXS_TRANS_SUBTYPE_GROUP: return new RsGxsTransGroupItem();
+		case GxsTransItemsSubtypes::OUTGOING_RECORD_ITEM: return new OutgoingRecord();
+		default: return NULL;
 		}
-
-		*size = rssize;
-		bool ok = true;
-		RsItem* ret = NULL;
-
-		switch (static_cast<GxsTransItemsSubtypes>(getRsItemSubType(rstype)))
-		{
-		case GxsTransItemsSubtypes::GXS_TRANS_SUBTYPE_MAIL:
-		{
-			RsGxsTransMailItem* i = new RsGxsTransMailItem();
-			uint32_t offset = 0;
-			ok = ok && i->deserialize(dataPtr, *size, offset);
-			ret = i;
-			break;
-		}
-		case GxsTransItemsSubtypes::GXS_TRANS_SUBTYPE_RECEIPT:
-		{
-			RsGxsTransPresignedReceipt* i = new RsGxsTransPresignedReceipt();
-			uint32_t offset = 0;
-			ok &= i->deserialize(dataPtr, *size, offset);
-			ret = i;
-			break;
-		}
-		case GxsTransItemsSubtypes::GXS_TRANS_SUBTYPE_GROUP:
-		{
-			ret = new RsGxsTransGroupItem();
-			break;
-		}
-		case GxsTransItemsSubtypes::OUTGOING_RECORD_ITEM:
-		{
-			OutgoingRecord* i = new OutgoingRecord();
-			uint32_t offset = 0;
-			ok = ok && i->deserialize(dataPtr, *size, offset);
-			ret = i;
-			break;
-		}
-		default:
-			ok = false;
-			break;
-		}
-
-		if(ok) return ret;
-
-		delete ret;
-		return NULL;
 	}
 };
 

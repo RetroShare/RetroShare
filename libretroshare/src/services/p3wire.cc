@@ -24,7 +24,7 @@
  */
 
 #include "services/p3wire.h"
-#include "serialiser/rswireitems.h"
+#include "rsitems/rswireitems.h"
 
 #include "util/rsrandom.h"
 

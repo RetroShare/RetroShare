@@ -36,6 +36,7 @@
 #include "retroshare/rsgrouter.h"
 #include "retroshare/rsidentity.h"
 #include "retroshare/rspeers.h"
+#include "rsitems/rsnxsitems.h"
 #include "rsgixs.h"
 #include "rsgxsutil.h"
 #include "rsserver/p3face.h"
@@ -1292,7 +1293,7 @@ bool RsGenExchange::getSerializedGroupData(uint32_t token, RsGxsGroupId& id,
     }
 	RsNxsGrp *nxs_grp = *(nxsGrps.begin());
 
-    size = nxs_grp->serial_size() ;
+    size = RsNxsSerialiser(mServType).size(nxs_grp);
     id = nxs_grp->metaData->mGroupId ;
 
     if(size > 1024*1024 || NULL==(data = (unsigned char *)rs_malloc(size)))
@@ -1302,7 +1303,7 @@ bool RsGenExchange::getSerializedGroupData(uint32_t token, RsGxsGroupId& id,
         return false ;
     }
 
-    return nxs_grp->serialise(data,size) ;
+    return RsNxsSerialiser(mServType).serialise(nxs_grp,data,&size) ;
 }
 
 bool RsGenExchange::deserializeGroupData(unsigned char *data, uint32_t size,
@@ -1380,7 +1381,8 @@ bool RsGenExchange::getGroupData(const uint32_t &token, std::vector<RsGxsGrpItem
 				}
 			}
 			else if(data.bin_len > 0)
-				std::cerr << "(EE) RsGenExchange::getGroupData() Item type is probably not handled. Data is: " << RsUtil::BinToHex((unsigned char*)data.bin_data,std::min(50u,data.bin_len)) << ((data.bin_len>50)?"...":"") << std::endl;
+				//std::cerr << "(EE) RsGenExchange::getGroupData() Item type is probably not handled. Data is: " << RsUtil::BinToHex((unsigned char*)data.bin_data,std::min(50u,data.bin_len)) << ((data.bin_len>50)?"...":"") << std::endl;
+				std::cerr << "(EE) RsGenExchange::getGroupData() Item type is probably not handled. Data is: " << RsUtil::BinToHex((unsigned char*)data.bin_data,data.bin_len) << std::endl;
 
 			delete *lit;
 		}

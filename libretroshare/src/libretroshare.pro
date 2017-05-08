@@ -61,14 +61,14 @@ file_lists {
 
 dsdv {
 DEFINES *= SERVICES_DSDV
-HEADERS += services/p3dsdv.h \
-			  serialiser/rstlvdsdv.h \
-			  serialiser/rsdsdvitems.h \
-			  retroshare/rsdsdv.h 
+HEADERS += unused/p3dsdv.h \
+			  unused/rstlvdsdv.h \
+			  unused/rsdsdvitems.h \
+			  unused/rsdsdv.h 
 
-SOURCES *= serialiser/rstlvdsdv.cc \
-			  serialiser/rsdsdvitems.cc \
-		  	  services/p3dsdv.cc 
+SOURCES *= unused/rstlvdsdv.cc \
+			  unused/rsdsdvitems.cc \
+		  	  unused/p3dsdv.cc 
 }
 bitdht {
 
@@ -143,7 +143,7 @@ PUBLIC_HEADERS =	retroshare/rsdisc.h \
 
 HEADERS += plugins/pluginmanager.h \
 		plugins/dlfcn_win32.h \
-		serialiser/rspluginitems.h \
+		rsitems/rspluginitems.h \
     util/rsinitedptr.h
 
 HEADERS += $$PUBLIC_HEADERS
@@ -457,17 +457,17 @@ HEADERS +=  grouter/groutercache.h \
 				grouter/groutertypes.h \
 				grouter/rsgrouterclient.h 
 
-HEADERS +=	serialiser/itempriorities.h \
+HEADERS +=	rsitems/rsitem.h \
+			rsitems/itempriorities.h \
 			serialiser/rsbaseserial.h \
-			serialiser/rsfiletransferitems.h \
-			serialiser/rsserviceserialiser.h \
-			serialiser/rsconfigitems.h \
-			serialiser/rshistoryitems.h \
-			serialiser/rsmsgitems.h \
+			rsitems/rsfiletransferitems.h \
+			rsitems/rsconfigitems.h \
+			rsitems/rshistoryitems.h \
+			rsitems/rsmsgitems.h \
 			serialiser/rsserial.h \
-			serialiser/rsserviceids.h \
+			rsitems/rsserviceids.h \
 			serialiser/rsserviceitems.h \
-			serialiser/rsstatusitems.h \
+			rsitems/rsstatusitems.h \
 			serialiser/rstlvaddrs.h \
 			serialiser/rstlvbase.h \
 			serialiser/rstlvitem.h \
@@ -484,14 +484,14 @@ HEADERS +=	serialiser/itempriorities.h \
 			serialiser/rstlvlist.h \
 			serialiser/rstlvmaps.h \
 			serialiser/rstlvbanlist.h \
-			serialiser/rsbanlistitems.h \
-			serialiser/rsbwctrlitems.h \
-			serialiser/rsdiscovery2items.h \
-			serialiser/rsheartbeatitems.h \
-			serialiser/rsrttitems.h \
-			serialiser/rsgxsrecognitems.h \
-			serialiser/rsgxsupdateitems.h \
-			serialiser/rsserviceinfoitems.h \
+			rsitems/rsbanlistitems.h \
+			rsitems/rsbwctrlitems.h \
+			rsitems/rsdiscovery2items.h \
+			rsitems/rsheartbeatitems.h \
+			rsitems/rsrttitems.h \
+			rsitems/rsgxsrecognitems.h \
+			rsitems/rsgxsupdateitems.h \
+			rsitems/rsserviceinfoitems.h \
 
 HEADERS +=	services/p3msgservice.h \
 			services/p3service.h \
@@ -609,17 +609,14 @@ SOURCES +=  grouter/p3grouter.cc \
 				grouter/groutermatrix.cc 
 
 SOURCES += plugins/pluginmanager.cc \
-				plugins/dlfcn_win32.cc \
-				serialiser/rspluginitems.cc
+				plugins/dlfcn_win32.cc 
 
 SOURCES +=	serialiser/rsbaseserial.cc \
-			serialiser/rsfiletransferitems.cc \
-			serialiser/rsserviceserialiser.cc \
-			serialiser/rsconfigitems.cc \
-			serialiser/rshistoryitems.cc \
-			serialiser/rsmsgitems.cc \
+			rsitems/rsfiletransferitems.cc \
+			rsitems/rsconfigitems.cc \
+			rsitems/rshistoryitems.cc \
+			rsitems/rsmsgitems.cc \
 			serialiser/rsserial.cc \
-			serialiser/rsstatusitems.cc \
 			serialiser/rstlvaddrs.cc \
 			serialiser/rstlvbase.cc \
 			serialiser/rstlvitem.cc \
@@ -632,14 +629,13 @@ SOURCES +=	serialiser/rsbaseserial.cc \
 			serialiser/rstlvkeyvalue.cc \
 			serialiser/rstlvgenericparam.cc \
 			serialiser/rstlvbanlist.cc \
-			serialiser/rsbanlistitems.cc \
-			serialiser/rsbwctrlitems.cc \
-			serialiser/rsdiscovery2items.cc \
-			serialiser/rsheartbeatitems.cc \
-			serialiser/rsrttitems.cc \
-			serialiser/rsgxsrecognitems.cc \
-			serialiser/rsgxsupdateitems.cc \
-			serialiser/rsserviceinfoitems.cc \
+			rsitems/rsbanlistitems.cc \
+			rsitems/rsbwctrlitems.cc \
+			rsitems/rsdiscovery2items.cc \
+			rsitems/rsrttitems.cc \
+			rsitems/rsgxsrecognitems.cc \
+			rsitems/rsgxsupdateitems.cc \
+			rsitems/rsserviceinfoitems.cc \
 
 SOURCES +=	services/p3msgservice.cc \
 			services/p3service.cc \
@@ -726,7 +722,7 @@ SOURCES +=	zeroconf/p3zcnatassist.cc \
 DEFINES *= SQLITE_HAS_CODEC
 DEFINES *= GXS_ENABLE_SYNC_MSGS
 
-HEADERS += serialiser/rsnxsitems.h \
+HEADERS += rsitems/rsnxsitems.h \
 	gxs/rsgds.h \
 	gxs/rsgxs.h \
 	gxs/rsdataservice.h \
@@ -739,7 +735,7 @@ HEADERS += serialiser/rsnxsitems.h \
 	retroshare/rstokenservice.h \
 	gxs/rsgxsdataaccess.h \
 	retroshare/rsgxsservice.h \
-	serialiser/rsgxsitems.h \
+	rsitems/rsgxsitems.h \
 	util/retrodb.h \
 	util/rsdbbind.h \
 	gxs/rsgxsutil.h \
@@ -752,12 +748,12 @@ HEADERS += serialiser/rsnxsitems.h \
 	gxs/rsgxsrequesttypes.h
 
 
-SOURCES += serialiser/rsnxsitems.cc \
+SOURCES += rsitems/rsnxsitems.cc \
 	gxs/rsdataservice.cc \
 	gxs/rsgenexchange.cc \
 	gxs/rsgxsnetservice.cc \
 	gxs/rsgxsdata.cc \
-	serialiser/rsgxsitems.cc \
+	rsitems/rsgxsitems.cc \
 	gxs/rsgxsdataaccess.cc \
 	util/retrodb.cc \
 	util/contentvalue.cc \
@@ -776,85 +772,92 @@ HEADERS += gxstunnel/p3gxstunnel.h \
 SOURCES += gxstunnel/p3gxstunnel.cc \
 				gxstunnel/rsgxstunnelitems.cc 
 
+# new serialization code
+HEADERS += serialiser/rsserializer.h \
+           serialiser/rstypeserializer.h
+
+SOURCES += serialiser/rsserializer.cc \
+           serialiser/rstypeserializer.cc 
+
 # Identity Service
 HEADERS += retroshare/rsidentity.h \
 	gxs/rsgixs.h \
 	services/p3idservice.h \
-	serialiser/rsgxsiditems.h \
+	rsitems/rsgxsiditems.h \
 	services/p3gxsreputation.h \
-	serialiser/rsgxsreputationitems.h \
+	rsitems/rsgxsreputationitems.h \
 
 SOURCES += services/p3idservice.cc \
-	serialiser/rsgxsiditems.cc \
+	rsitems/rsgxsiditems.cc \
 	services/p3gxsreputation.cc \
-	serialiser/rsgxsreputationitems.cc \
+	rsitems/rsgxsreputationitems.cc \
 
 # GxsCircles Service
 HEADERS += services/p3gxscircles.h \
-	serialiser/rsgxscircleitems.h \
+	rsitems/rsgxscircleitems.h \
 	retroshare/rsgxscircles.h \
 
 SOURCES += services/p3gxscircles.cc \
-	serialiser/rsgxscircleitems.cc \
+	rsitems/rsgxscircleitems.cc \
 
 # GxsForums Service
 HEADERS += retroshare/rsgxsforums.h \
 	services/p3gxsforums.h \
-	serialiser/rsgxsforumitems.h
+	rsitems/rsgxsforumitems.h
 
 SOURCES += services/p3gxsforums.cc \
-	serialiser/rsgxsforumitems.cc \
+	rsitems/rsgxsforumitems.cc \
 
 # GxsChannels Service
 HEADERS += retroshare/rsgxschannels.h \
 	services/p3gxschannels.h \
 	services/p3gxscommon.h \
-	serialiser/rsgxscommentitems.h \
-	serialiser/rsgxschannelitems.h \
+	rsitems/rsgxscommentitems.h \
+	rsitems/rsgxschannelitems.h \
 
 SOURCES += services/p3gxschannels.cc \
 	services/p3gxscommon.cc \
-	serialiser/rsgxscommentitems.cc \
-	serialiser/rsgxschannelitems.cc \
+	rsitems/rsgxscommentitems.cc \
+	rsitems/rsgxschannelitems.cc \
 
 wikipoos {
 	# Wiki Service
 	HEADERS += retroshare/rswiki.h \
 		services/p3wiki.h \
-		serialiser/rswikiitems.h
+		rsitems/rswikiitems.h
 
 	SOURCES += services/p3wiki.cc \
-		serialiser/rswikiitems.cc \
+		rsitems/rswikiitems.cc \
 }
 
 gxsthewire {
 	# Wire Service
 	HEADERS += retroshare/rswire.h \
 		services/p3wire.h \
-		serialiser/rswireitems.h
+		rsitems/rswireitems.h
 
 	SOURCES += services/p3wire.cc \
-		serialiser/rswireitems.cc \
+		rsitems/rswireitems.cc \
 }
 
 # Posted Service
 HEADERS += services/p3postbase.h \
 	services/p3posted.h \
 	retroshare/rsposted.h \
-	serialiser/rsposteditems.h
+	rsitems/rsposteditems.h
 
 SOURCES +=  services/p3postbase.cc \
 	services/p3posted.cc \
-	serialiser/rsposteditems.cc
+	rsitems/rsposteditems.cc
 
 gxsphotoshare {
 	#Photo Service
 	HEADERS += services/p3photoservice.h \
 		retroshare/rsphoto.h \
-		serialiser/rsphotoitems.h \
+		rsitems/rsphotoitems.h \
 
 	SOURCES += services/p3photoservice.cc \
-		serialiser/rsphotoitems.cc \
+		rsitems/rsphotoitems.cc \
 }
 
 rs_gxs_trans {

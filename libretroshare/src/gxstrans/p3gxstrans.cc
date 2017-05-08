@@ -478,14 +478,16 @@ bool p3GxsTrans::dispatchDecryptedMail( const RsGxsId& authorId,
 	}
 	GxsTransSubServices rsrvc = static_cast<GxsTransSubServices>(csri);
 
-	RsNxsTransPresignedReceipt* receipt = new RsNxsTransPresignedReceipt();
 	uint32_t rcptsize = decrypted_data_size;
-	if(!receipt->deserialize(decrypted_data, rcptsize, offset))
+	RsNxsTransPresignedReceipt* receipt =
+	        static_cast<RsNxsTransPresignedReceipt*>(
+	            RsGxsTransSerializer().deserialise(
+	                const_cast<uint8_t*>(decrypted_data), &rcptsize ) );
+	if(!receipt)
 	{
 		std::cerr << "p3GxsTrans::dispatchDecryptedMail(...) (EE) fatal error "
 		          << "deserializing presigned return receipt , something really"
 		          << " wrong is happening!" << std::endl;
-		delete receipt;
 		return false;
 	}
 	std::cout << "p3GxsTrans::dispatchDecryptedMail(...) dispatching receipt "
@@ -541,10 +543,10 @@ void p3GxsTrans::processOutgoingRecord(OutgoingRecord& pr)
 		grcpt.meta = pr.mailItem.meta;
 		grcpt.meta.mPublishTs = time(NULL);
 		grcpt.mailId = pr.mailItem.mailId;
-		uint32_t groff = 0, grsz = grcpt.serial_size();
+		uint32_t grsz = RsGxsTransSerializer().size(&grcpt);
 		std::vector<uint8_t> grsrz;
 		grsrz.resize(grsz);
-		grcpt.serialize(&grsrz[0], grsz, groff);
+		RsGxsTransSerializer().serialise(&grcpt, &grsrz[0], &grsz);
 
 		pr.presignedReceipt.grpId = mPreferredGroupId;
 		pr.presignedReceipt.metaData = new RsGxsMsgMetaData();
@@ -572,13 +574,14 @@ void p3GxsTrans::processOutgoingRecord(OutgoingRecord& pr)
 	case GxsTransSendStatus::PENDING_PAYLOAD_CREATE:
 	{
 		uint16_t serv = static_cast<uint16_t>(pr.clientService);
-		uint32_t rcptsize = pr.presignedReceipt.serial_size();
+		uint32_t rcptsize = RsGxsTransSerializer().size(&pr.presignedReceipt);
 		uint32_t datasize = pr.mailData.size();
 		pr.mailItem.payload.resize(2 + rcptsize + datasize);
 		uint32_t offset = 0;
 		setRawUInt16(&pr.mailItem.payload[0], 2, &offset, serv);
-		pr.presignedReceipt.serialise( &pr.mailItem.payload[offset],
-		                               rcptsize );
+		RsGxsTransSerializer().serialise(&pr.presignedReceipt,
+		                                 &pr.mailItem.payload[offset],
+		                                 &rcptsize);
 		offset += rcptsize;
 		memcpy(&pr.mailItem.payload[offset], &pr.mailData[0], datasize);
 	}
@@ -781,4 +784,3 @@ bool p3GxsTrans::loadList(std::list<RsItem *>&loadList)
 
 	return true;
 }
-

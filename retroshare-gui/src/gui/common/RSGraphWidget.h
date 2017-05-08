@@ -126,6 +126,7 @@ public:
 	static const uint32_t RSGRAPH_FLAGS_SHOW_LEGEND         = 0x0010 ;// show legend in the graph
 	static const uint32_t RSGRAPH_FLAGS_PAINT_STYLE_FLAT    = 0x0020 ;// do not interpolate, and draw flat colored boxes
 	static const uint32_t RSGRAPH_FLAGS_LEGEND_CUMULATED    = 0x0040 ;// show the total in the legend rather than current values
+	static const uint32_t RSGRAPH_FLAGS_PAINT_STYLE_DOTS 	= 0x0080 ;// use dots
 
 	/** Bandwidth graph style. */
 	enum GraphStyle 
@@ -191,8 +192,11 @@ private:
 	void pointsFromData(const std::vector<QPointF>& values, QVector<QPointF> &points ) ;
 
 	/** Paints a line with the data in <b>points</b>. */
-	void paintLine(const QVector<QPointF>& points, QColor color,
-	               Qt::PenStyle lineStyle = Qt::SolidLine);
+	void paintLine(const QVector<QPointF>& points, QColor color, Qt::PenStyle lineStyle = Qt::SolidLine);
+
+    /** Paint a series of large dots **/
+	void paintDots(const QVector<QPointF>& points, QColor color);
+
 	/** Paints an integral using the supplied data. */
 	void paintIntegral(const QVector<QPointF>& points, QColor color, qreal alpha = 1.0);
 
@@ -214,6 +218,7 @@ private:
 
 	qreal _time_scale ; // horizontal scale in pixels per sec.
         qreal _time_filter ; // time filter. Goes from 0 to infinity. Will be converted into 1-1/(1+f)
+        float _linewidthscale ;
 
 	/** Show the respective lines and counters. */
 	//bool _showRSDHT;

@@ -1844,10 +1844,22 @@ void GxsForumThreadWidget::setMsgReadStatus(QList<QTreeWidgetItem*> &rows, bool 
 			// LIKE THIS BELOW...
 			//std::string grpId = (*Row)->data(COLUMN_THREAD_DATA, ROLE_THREAD_GROUPID).toString().toStdString();
 
-            RsGxsGrpMsgIdPair msgPair = std::make_pair(groupId(), RsGxsMessageId(msgId));
+			RsGxsGrpMsgIdPair msgPair = std::make_pair( groupId(), RsGxsMessageId(msgId) );
 
 			uint32_t token;
 			rsGxsForums->setMessageReadStatus(token, msgPair, read);
+
+			// Look if older version exist to mark them too
+			QMap<RsGxsMessageId,QVector<QPair<time_t,RsGxsMessageId> > >::const_iterator it = mPostVersions.find(mOrigThreadId) ;
+			if(it != mPostVersions.end())
+			{
+				std::cerr << (*it).size() << " versions found " << std::endl;
+				for(int i=0;i<(*it).size();++i)
+				{
+					msgPair = std::make_pair( groupId(), (*it)[i].second );
+					rsGxsForums->setMessageReadStatus(token, msgPair, read);
+				}
+			}
 
 			/* Add message id to ignore list for the next updateDisplay */
 			mIgnoredMsgId.push_back(RsGxsMessageId(msgId));

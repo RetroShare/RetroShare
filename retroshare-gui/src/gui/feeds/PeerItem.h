@@ -30,6 +30,7 @@ const uint32_t PEER_TYPE_STD     = 0x0001;
 const uint32_t PEER_TYPE_CONNECT = 0x0002;
 const uint32_t PEER_TYPE_HELLO   = 0x0003; /* failed Connect Attempt */
 const uint32_t PEER_TYPE_NEW_FOF = 0x0004; /* new Friend of Friend */
+const uint32_t PEER_TYPE_OFFSET  = 0x0005; /* received time offset */
 
 class FeedHolder;
 
@@ -42,6 +43,8 @@ public:
 	PeerItem(FeedHolder *parent, uint32_t feedId, const RsPeerId &peerId, uint32_t type, bool isHome);
 
 	void updateItemStatic();
+
+	bool isSame(const RsPeerId &peerId, uint32_t type);
 
 protected:
 	/* FeedItem */

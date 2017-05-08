@@ -41,7 +41,8 @@
 #include "util/rsprint.h"
 #include "util/rsdebug.h"
 #include "util/rsstring.h"
-#include "serialiser/rsconfigitems.h"
+
+#include "rsitems/rsconfigitems.h"
 
 #include "retroshare/rsiface.h"
 #include "retroshare/rspeers.h"

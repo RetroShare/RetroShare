@@ -1186,7 +1186,9 @@ bool p3GxsTunnelService::locked_sendClearTunnelData(RsGxsTunnelDHPublicKeyItem *
     //
     RsTurtleGenericDataItem *gitem = new RsTurtleGenericDataItem ;
 
-    uint32_t rssize = item->serial_size() ;
+    RsGxsTunnelSerialiser ser ;
+
+    uint32_t rssize = ser.size(item);
 
     gitem->data_size  = rssize + 8 ;
     gitem->data_bytes = rs_malloc(rssize+8) ;
@@ -1199,7 +1201,7 @@ bool p3GxsTunnelService::locked_sendClearTunnelData(RsGxsTunnelDHPublicKeyItem *
     // by convention, we use a IV of 0 for unencrypted data.
     memset(gitem->data_bytes,0,8) ;
 
-    if(!item->serialise(&((uint8_t*)gitem->data_bytes)[8],rssize))
+    if(!ser.serialise(item,&((uint8_t*)gitem->data_bytes)[8],&rssize))
     {
 	    std::cerr << "(EE) Could not serialise item!!!" << std::endl;
 	    delete gitem ;
@@ -1221,10 +1223,12 @@ bool p3GxsTunnelService::locked_sendClearTunnelData(RsGxsTunnelDHPublicKeyItem *
 
 bool p3GxsTunnelService::locked_sendEncryptedTunnelData(RsGxsTunnelItem *item)
 {
-    uint32_t rssize = item->serial_size();
+    RsGxsTunnelSerialiser ser;
+
+    uint32_t rssize = ser.size(item);
     RsTemporaryMemory buff(rssize) ;
 
-    if(!item->serialise(buff,rssize))
+    if(!ser.serialise(item,buff,&rssize))
     {
 	    std::cerr << "(EE) GxsTunnelService::sendEncryptedTunnelData(): Could not serialise item!" << std::endl;
 	    return false;

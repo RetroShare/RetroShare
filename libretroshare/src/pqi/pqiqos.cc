@@ -11,7 +11,9 @@ const uint32_t pqiQoS::MAX_PACKET_COUNTER_VALUE = (1 << 24) ;
 pqiQoS::pqiQoS(uint32_t nb_levels,float alpha)
 	: _item_queues(nb_levels),_alpha(alpha)
 {
+#ifdef DEBUG
 	assert(pow(alpha,nb_levels) < 1e+20) ;
+#endif
 
 	float c = 1.0f ;
 	float inc = alpha ;
@@ -110,7 +112,9 @@ void *pqiQoS::out_rsItem(uint32_t max_slice_size, uint32_t& size, bool& starts, 
 
 	if(last >= 0)
 	{
+#ifdef DEBUG
 		assert(_nb_items > 0) ;
+#endif
         
         	// now chop a slice of this item
         

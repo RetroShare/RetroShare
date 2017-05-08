@@ -43,7 +43,7 @@
 #include "gxstrans/p3gxstrans.h"
 
 #include "chat/p3chatservice.h"
-#include "serialiser/rsconfigitems.h"
+#include "rsitems/rsconfigitems.h"
 
 /****
  * #define CHAT_DEBUG 1
@@ -346,9 +346,9 @@ bool p3ChatService::sendChat(ChatId destination, std::string msg)
 			if(it != mDistantGxsMap.end())
 			{
 				const DistantEndpoints& de(it->second);
-				uint32_t sz = ci->serial_size();
+				uint32_t sz = _serializer->size(ci);
 				std::vector<uint8_t> data; data.resize(sz);
-				ci->serialise(&data[0], sz);
+				_serializer->serialise(ci, &data[0], &sz);
 				mGxsTransport.sendMail(tId, GxsTransSubServices::P3_CHAT_SERVICE,
 				                       de.from, de.to, &data[0], sz);
 			}
@@ -717,8 +717,9 @@ bool p3ChatService::receiveGxsTransMail( const RsGxsId& authorId,
 	if(initiateDistantChatConnexion(
 	            authorId, recipientId, pid, error_code, false ))
 	{
-		RsChatMsgItem* item = new RsChatMsgItem( const_cast<uint8_t*>(data),
-		                                         dataSize );
+		RsChatMsgItem* item = static_cast<RsChatMsgItem*>(
+		            _serializer->deserialise(
+		                const_cast<uint8_t*>(data), &dataSize ));
 		RsPeerId rd(p3GxsTunnelService::makeGxsTunnelId(authorId, recipientId));
 		item->PeerId(rd);
 		handleRecvChatMsgItem(item);

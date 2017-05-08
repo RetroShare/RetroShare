@@ -35,17 +35,17 @@
 #include "util/rsmemory.h"
 #include "util/rsprint.h"
 
-#include <serialiser/rsmsgitems.h>
+#include "rsitems/rsmsgitems.h"
 
-#include <retroshare/rsmsgs.h>
-#include <retroshare/rsidentity.h>
-#include <retroshare/rsiface.h>
+#include "retroshare/rsmsgs.h"
+#include "retroshare/rsidentity.h"
+#include "retroshare/rsiface.h"
 
-#include <rsserver/p3face.h>
-#include <services/p3idservice.h>
-#include <gxs/gxssecurity.h>
-#include <turtle/p3turtle.h>
-#include <retroshare/rsids.h>
+#include "rsserver/p3face.h"
+#include "services/p3idservice.h"
+#include "gxs/gxssecurity.h"
+#include "turtle/p3turtle.h"
+#include "retroshare/rsids.h"
 #include "distantchat.h"
 
 //#define DEBUG_DISTANT_CHAT
@@ -89,10 +89,10 @@ bool DistantChatService::handleOutgoingItem(RsChatItem *item)
     std::cerr << "p3ChatService::handleOutgoingItem(): sending to " << item->PeerId() << ": interpreted as a distant chat virtual peer id." << std::endl;
 #endif
     
-    uint32_t size = item->serial_size() ;
+    uint32_t size = RsChatSerialiser().size(item) ;
     RsTemporaryMemory mem(size) ;
     
-    if(!item->serialise(mem,size))
+    if(!RsChatSerialiser().serialise(item,mem,&size))
     {
         std::cerr << "(EE) serialisation error. Something's really wrong!" << std::endl;
         return false;
@@ -149,10 +149,10 @@ bool DistantChatService::acceptDataFromPeer(const RsGxsId& gxs_id,const RsGxsTun
 
             // we do not use handleOutGoingItem() because there's no distant chat contact, as the chat is refused.
             
-	    uint32_t size = item->serial_size() ;
+	    uint32_t size = RsChatSerialiser().size(item) ;
 	    RsTemporaryMemory mem(size) ;
 
-	    if(!item->serialise(mem,size))
+	    if(!RsChatSerialiser().serialise(item,mem,&size))
 	    {
 		    std::cerr << "(EE) serialisation error. Something's really wrong!" << std::endl;
 		    return false;

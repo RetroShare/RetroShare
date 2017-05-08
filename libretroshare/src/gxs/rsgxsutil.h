@@ -27,7 +27,7 @@
 #define GXSUTIL_H_
 
 #include <vector>
-#include "serialiser/rsnxsitems.h"
+#include "rsitems/rsnxsitems.h"
 #include "rsgds.h"
 
 class RsGixs ;

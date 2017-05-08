@@ -37,7 +37,7 @@
 
 #include "pqinetwork.h"
 #include "authgpg.h"
-#include "serialiser/rsconfigitems.h"
+#include "rsitems/rsconfigitems.h"
 #include "util/rsdir.h"
 #include "util/rsstring.h"
 

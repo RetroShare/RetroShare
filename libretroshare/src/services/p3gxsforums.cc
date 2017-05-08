@@ -24,7 +24,7 @@
  */
 
 #include "services/p3gxsforums.h"
-#include "serialiser/rsgxsforumitems.h"
+#include "rsitems/rsgxsforumitems.h"
 
 #include <retroshare/rsidentity.h>
 
