@@ -288,7 +288,7 @@ bool operator ==(const RsMsgItem& miLeft, const RsMsgItem& miRight)
 	if(miLeft.recvTime != miRight.recvTime) return false;
 	if(miLeft.sendTime != miRight.sendTime) return false;
 	if(miLeft.subject != miRight.subject) return false;
-	if(miLeft.msgId != miRight.msgId) return false;
+	//if(miLeft.msgId != miRight.msgId) return false;
 
 	if(!(miLeft.attachment == miRight.attachment)) return false;
 	if(!(miLeft.rspeerid_msgbcc == miRight.rspeerid_msgbcc)) return false;
