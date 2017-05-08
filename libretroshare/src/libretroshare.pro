@@ -532,7 +532,8 @@ HEADERS +=	util/folderiterator.h \
 			util/rsrecogn.h \
 			util/rsscopetimer.h \
             util/stacktrace.h \
-            util/rsdeprecate.h
+            util/rsdeprecate.h \
+            util/cxx11retrocompat.h
 
 SOURCES +=	ft/ftchunkmap.cc \
 			ft/ftcontroller.cc \
