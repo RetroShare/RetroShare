@@ -854,6 +854,7 @@ X509 *AuthSSLimpl::SignX509ReqWithGPG(X509_REQ *req, long /*days*/)
 #if OPENSSL_VERSION_NUMBER < 0x10100000L
         inl=i2d(data,NULL);
         buf_in=(unsigned char *)OPENSSL_malloc((unsigned int)inl);
+        unsigned char *p=NULL;
 #else
         inl=i2d_re_X509_tbs(x509,&buf_in) ;	// this does the i2d over x509->cert_info
 #endif
@@ -874,7 +875,7 @@ X509 *AuthSSLimpl::SignX509ReqWithGPG(X509_REQ *req, long /*days*/)
         std::cerr << "Buffers Allocated" << std::endl;
 
 #if OPENSSL_VERSION_NUMBER < 0x10100000L
-        unsigned char *p=buf_in;
+        p=buf_in;
         i2d(data,&p);
 #endif
 
@@ -1002,6 +1003,7 @@ bool AuthSSLimpl::AuthX509WithGPG(X509 *x509,uint32_t& diagnostic)
 #if OPENSSL_VERSION_NUMBER < 0x10100000L
 	inl=i2d(data,NULL);
 	buf_in=(unsigned char *)OPENSSL_malloc((unsigned int)inl);
+	unsigned char *p=NULL;
 #else
 	inl=i2d_re_X509_tbs(x509,&buf_in) ;	// this does the i2d over x509->cert_info
 #endif
@@ -1032,7 +1034,7 @@ bool AuthSSLimpl::AuthX509WithGPG(X509 *x509,uint32_t& diagnostic)
 #endif
 
 #if OPENSSL_VERSION_NUMBER < 0x10100000L
-	unsigned char *p=buf_in;
+	p=buf_in;
 	i2d(data,&p);
 #endif
 	/* data in buf_in, ready to be hashed */
