@@ -192,7 +192,7 @@ void RsPeerStunItem::serial_process(RsGenericSerializer::SerializeJob j,RsGeneri
     RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,stunList,"stunList") ;
 }
 
-template<> uint32_t RsTypeSerializer::serial_size(const PeerBandwidthLimits& s)
+template<> uint32_t RsTypeSerializer::serial_size(const PeerBandwidthLimits& /*s*/)
 {
     return 4+4 ;
 }
@@ -213,7 +213,7 @@ template<> bool RsTypeSerializer::deserialize(const uint8_t data[], uint32_t siz
     return ok;
 }
 
-template<> void RsTypeSerializer::print_data(const std::string& n, const PeerBandwidthLimits& s)
+template<> void RsTypeSerializer::print_data(const std::string& /*n*/, const PeerBandwidthLimits& s)
 {
     std::cerr << "  [Peer BW limit] " << s.max_up_rate_kbs << " / " << s.max_dl_rate_kbs << std::endl;
 }

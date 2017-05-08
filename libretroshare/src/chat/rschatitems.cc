@@ -39,8 +39,8 @@ static const uint32_t RS_CHAT_SERIALIZER_FLAGS_NO_SIGNATURE = 0x0001;
 
 RsItem *RsChatSerialiser::create_item(uint16_t service_id,uint8_t item_sub_id) const
 {
-    if(service_id != RS_SERVICE_TYPE_CHAT)
-        return NULL ;
+	if (service_id != RS_SERVICE_TYPE_CHAT)
+		return NULL;
 
 	switch(item_sub_id)
 	{
@@ -97,12 +97,12 @@ void RsChatLobbyMsgItem::serial_process(RsGenericSerializer::SerializeJob j,RsGe
     RsChatLobbyBouncingObject::serial_process(j,ctx) ;
 }
 
-void RsChatLobbyListRequestItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
+void RsChatLobbyListRequestItem::serial_process(RsGenericSerializer::SerializeJob /*j*/,RsGenericSerializer::SerializeContext& /*ctx*/)
 {
     // nothing to do. This is an empty item.
 }
 
-template<> void RsTypeSerializer::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx,VisibleChatLobbyInfo& info,const std::string& name)
+template<> void RsTypeSerializer::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx,VisibleChatLobbyInfo& info,const std::string& /*name*/)
 {
 	RsTypeSerializer::serial_process<uint64_t>(j,ctx,info.id,"info.id") ;
 

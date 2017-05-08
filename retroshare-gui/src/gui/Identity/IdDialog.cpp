@@ -2472,8 +2472,8 @@ void IdDialog::copyRetroshareLink()
 
     RsIdentityDetails details ;
 
-    if(! rsIdentity->getIdDetails(gxs_id,details))
-        return ;
+	if(! rsIdentity->getIdDetails(gxs_id,details))
+		return ;
 
 	if (!mIdQueue)
 		return;
