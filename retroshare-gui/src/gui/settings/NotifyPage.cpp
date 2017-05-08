@@ -355,7 +355,7 @@ void NotifyPage::load()
     QMap<int, QString>::iterator it;
     int index = 0;
     for (it = toasterPositions.begin(); it != toasterPositions.end(); ++it, ++index) {
-        ui.comboBoxToasterPosition->addItem(it.value(), it.key());
+        whileBlocking(ui.comboBoxToasterPosition)->addItem(it.value(), it.key());
 
         if (it.key() == toasterPosition) {
             whileBlocking(ui.comboBoxToasterPosition)->setCurrentIndex(index);
