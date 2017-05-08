@@ -39,8 +39,8 @@ static const uint32_t RS_CHAT_SERIALIZER_FLAGS_NO_SIGNATURE = 0x0001;
 
 RsItem *RsChatSerialiser::create_item(uint16_t service_id,uint8_t item_sub_id) const
 {
-    if(service_id != RS_SERVICE_TYPE_CHAT)
-        return NULL ;
+	if (service_id != RS_SERVICE_TYPE_CHAT)
+		return NULL;
 
 	switch(item_sub_id)
 	{
