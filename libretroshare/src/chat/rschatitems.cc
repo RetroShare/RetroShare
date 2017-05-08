@@ -97,12 +97,12 @@ void RsChatLobbyMsgItem::serial_process(RsGenericSerializer::SerializeJob j,RsGe
     RsChatLobbyBouncingObject::serial_process(j,ctx) ;
 }
 
-void RsChatLobbyListRequestItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
+void RsChatLobbyListRequestItem::serial_process(RsGenericSerializer::SerializeJob /*j*/,RsGenericSerializer::SerializeContext& /*ctx*/)
 {
     // nothing to do. This is an empty item.
 }
 
-template<> void RsTypeSerializer::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx,VisibleChatLobbyInfo& info,const std::string& name)
+template<> void RsTypeSerializer::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx,VisibleChatLobbyInfo& info,const std::string& /*name*/)
 {
 	RsTypeSerializer::serial_process<uint64_t>(j,ctx,info.id,"info.id") ;
 
