@@ -977,9 +977,9 @@ bool AuthSSLimpl::AuthX509WithGPG(X509 *x509,uint32_t& diagnostic)
 	/* verify GPG signature */
 
 	/*** NOW The Manual signing bit (HACKED FROM asn1/a_sign.c) ***/
-	int (*i2d)(X509_CINF*, unsigned char**) = i2d_X509_CINF;
 
 #if OPENSSL_VERSION_NUMBER < 0x10100000L
+	int (*i2d)(X509_CINF*, unsigned char**) = i2d_X509_CINF;
 	ASN1_BIT_STRING *signature = x509->signature;
 	X509_CINF *data = x509->cert_info;
 #else
