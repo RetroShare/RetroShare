@@ -1850,14 +1850,18 @@ void GxsForumThreadWidget::setMsgReadStatus(QList<QTreeWidgetItem*> &rows, bool 
 			rsGxsForums->setMessageReadStatus(token, msgPair, read);
 
 			// Look if older version exist to mark them too
-			QMap<RsGxsMessageId,QVector<QPair<time_t,RsGxsMessageId> > >::const_iterator it = mPostVersions.find(mOrigThreadId) ;
+			QMap<RsGxsMessageId,QVector<QPair<time_t,RsGxsMessageId> > >::const_iterator it = mPostVersions.find(RsGxsMessageId(msgId)) ;
 			if(it != mPostVersions.end())
 			{
 				std::cerr << (*it).size() << " versions found " << std::endl;
 				for(int i=0;i<(*it).size();++i)
 				{
-					msgPair = std::make_pair( groupId(), (*it)[i].second );
-					rsGxsForums->setMessageReadStatus(token, msgPair, read);
+					RsGxsMessageId found = (*it)[i].second;
+					if(found != RsGxsMessageId(msgId))
+					{
+						msgPair = std::make_pair( groupId(), found );
+						rsGxsForums->setMessageReadStatus(token, msgPair, read);
+					}
 				}
 			}
 
