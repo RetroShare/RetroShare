@@ -33,6 +33,7 @@
 #include <QWidgetAction>
 
 #include "ChatLobbyDialog.h"
+#include "util/QtVersion.h"
 #include "gui/ChatLobbyWidget.h"
 #include "ChatTabWidget.h"
 #include "gui/settings/rsharesettings.h"
@@ -89,7 +90,7 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::Wi
     
     /* Set header resize modes and initial section sizes */
 	QHeaderView * header = ui.participantsList->header();
-	header->setSectionResizeMode( COLUMN_NAME, QHeaderView::Stretch);
+	QHeaderView_setSectionResizeModeColumn(header, COLUMN_NAME, QHeaderView::Stretch);
 
     muteAct = new QAction(QIcon(), tr("Mute participant"), this);
     voteNegativeAct = new QAction(QIcon(":/icons/png/thumbs-down.png"), tr("Ban this person (Sets negative opinion)"), this);
