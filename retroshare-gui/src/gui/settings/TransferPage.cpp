@@ -38,6 +38,7 @@ TransferPage::TransferPage(QWidget * parent, Qt::WindowFlags flags)
     ui.setupUi(this);
 
     QObject::connect(ui._queueSize_SB,SIGNAL(valueChanged(int)),this,SLOT(updateQueueSize(int))) ;
+    QObject::connect(ui._max_up_SB,SIGNAL(valueChanged(int)),this,SLOT(updateMaxUploadSlots(int))) ;
     QObject::connect(ui._defaultStrategy_CB,SIGNAL(activated(int)),this,SLOT(updateDefaultStrategy(int))) ;
     QObject::connect(ui._e2e_encryption_CB,SIGNAL(activated(int)),this,SLOT(updateEncryptionPolicy(int))) ;
     QObject::connect(ui._diskSpaceLimit_SB,SIGNAL(valueChanged(int)),this,SLOT(updateDiskSizeLimit(int))) ;
@@ -57,6 +58,11 @@ TransferPage::TransferPage(QWidget * parent, Qt::WindowFlags flags)
 void TransferPage::updateMaxTRUpRate(int b)
 {
     rsTurtle->setMaxTRForwardRate(b) ;
+}
+
+void TransferPage::updateMaxUploadSlots(int b)
+{
+    rsFiles->setMaxUploadSlotsPerFriend(b) ;
 }
 
 void TransferPage::updateEncryptionPolicy(int b)
@@ -100,6 +106,7 @@ void TransferPage::load()
 
     whileBlocking(ui._diskSpaceLimit_SB)->setValue(rsFiles->freeDiskSpaceLimit()) ;
     whileBlocking(ui._max_tr_up_per_sec_SB)->setValue(rsTurtle->getMaxTRForwardRate()) ;
+    whileBlocking(ui._max_up_SB)->setValue(rsFiles->getMaxUploadSlotsPerFriend()) ;
 }
 
 void TransferPage::updateDefaultStrategy(int i)
