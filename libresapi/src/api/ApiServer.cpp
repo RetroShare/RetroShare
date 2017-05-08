@@ -377,8 +377,8 @@ std::string ApiServer::handleRequest(Request &request)
     if(data.isRawData())
         return data.getRawData();
 
-	if(!resp.mCallbackName.empty())
-		    outstream << resource_api::makeKeyValueReference("callback_name", resp.mCallbackName);
+    if(!resp.mCallbackName.empty())
+        outstream << resource_api::makeKeyValueReference("callback_name", resp.mCallbackName);
 
     outstream << resource_api::makeKeyValue("debug_msg", debugString.str());
     outstream << resource_api::makeKeyValueReference("returncode", returncode);
