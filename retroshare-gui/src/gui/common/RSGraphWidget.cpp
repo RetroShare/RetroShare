@@ -357,22 +357,6 @@ void RSGraphWidget::paintEvent(QPaintEvent *)
   _painter->end();
 }
 
-QSizeF RSGraphWidget::sizeHint(Qt::SizeHint which, const QSizeF& /* constraint */) const
-{
-    float FS = QFontMetricsF(font()).height();
-    //float fact = FS/14.0 ;
-
-    switch(which)
-    {
-default:
-    case Qt::MinimumSize:
-    case Qt::PreferredSize:
-        return QSizeF(70*FS,12*FS);
-    case Qt::MaximumSize:
-        return QSizeF(700*FS,120*FS);
-    }
-}
-
 QColor RSGraphWidget::getColor(int i)
 {
     // shuffle the colors a little bit

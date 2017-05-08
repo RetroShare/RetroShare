@@ -600,16 +600,16 @@ void RetroShareLink::check()
 			if(!checkPGPId(_GPGid)) _valid = false ;
 			break ;
 
-        case TYPE_IDENTITY:
-        	if(_name.isNull())
-                _valid = false ;
+		case TYPE_IDENTITY :
+			if(_name.isNull() )
+				_valid = false;
 
-            if(_radix_group_data.isNull())
-                _valid = false ;
+			if( _radix_group_data.isNull() )
+				_valid = false;
 
-            if(_hash.isNull())
-                _valid = false ;
-        	break ;
+			if( _hash.isNull() )
+				_valid = false;
+		break;
 
 		case TYPE_PERSON:
 			if(_size != 0)
@@ -858,8 +858,8 @@ QString RetroShareLink::niceName() const
 	if (type() == TYPE_PERSON)
 		return PeerDefs::rsid(name().toUtf8().constData(), RsPgpId(hash().toStdString()));
 
-    if(type() == TYPE_IDENTITY)
-        return QObject::tr("Identity link (name=%1, ID=%2)").arg(_name).arg(_hash) ;
+	if (type() == TYPE_IDENTITY)
+		return QObject::tr("Identity link (name=%1, ID=%2)").arg(_name).arg(_hash);
 
 	if(type() == TYPE_PUBLIC_MSG) {
 		RsPeerDetails detail;

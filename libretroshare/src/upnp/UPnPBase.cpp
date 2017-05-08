@@ -357,12 +357,12 @@ m_ErrorDescription(upnpLib.Element_GetChildValueByTag(m_root, "errorDescription"
 
 
 CUPnPArgument::CUPnPArgument(
-	const CUPnPControlPoint &upnpControlPoint,
+	const CUPnPControlPoint &/*upnpControlPoint*/,
 	CUPnPLib &upnpLib,
 	IXML_Element *argument,
 	const std::string &/*SCPDURL*/)
 :
-m_UPnPControlPoint(upnpControlPoint),
+//m_UPnPControlPoint(upnpControlPoint),
 m_name                (upnpLib.Element_GetChildValueByTag(argument, "name")),
 m_direction           (upnpLib.Element_GetChildValueByTag(argument, "direction")),
 m_retval              (upnpLib.Element_GetFirstChildByTag(argument, "retval")),
@@ -386,7 +386,7 @@ CUPnPAction::CUPnPAction(
 	IXML_Element *action,
 	const std::string &SCPDURL)
 :
-m_UPnPControlPoint(upnpControlPoint),
+//m_UPnPControlPoint(upnpControlPoint),
 m_ArgumentList(upnpControlPoint, upnpLib, action, SCPDURL),
 m_name(upnpLib.Element_GetChildValueByTag(action, "name"))
 {
@@ -399,12 +399,12 @@ m_name(upnpLib.Element_GetChildValueByTag(action, "name"))
 
 
 CUPnPAllowedValue::CUPnPAllowedValue(
-	const CUPnPControlPoint &upnpControlPoint,
+	const CUPnPControlPoint &/*upnpControlPoint*/,
 	CUPnPLib &upnpLib,
 	IXML_Element *allowedValue,
 	const std::string &/*SCPDURL*/)
 :
-m_UPnPControlPoint(upnpControlPoint),
+//m_UPnPControlPoint(upnpControlPoint),
 m_allowedValue(upnpLib.Element_GetTextValue(allowedValue))
 {
 #ifdef UPNP_DEBUG
@@ -421,7 +421,7 @@ CUPnPStateVariable::CUPnPStateVariable(
 	IXML_Element *stateVariable,
 	const std::string &SCPDURL)
 :
-m_UPnPControlPoint(upnpControlPoint),
+//m_UPnPControlPoint(upnpControlPoint),
 m_AllowedValueList(upnpControlPoint, upnpLib, stateVariable, SCPDURL),
 m_name        (upnpLib.Element_GetChildValueByTag(stateVariable, "name")),
 m_dataType    (upnpLib.Element_GetChildValueByTag(stateVariable, "dataType")),
@@ -445,7 +445,7 @@ CUPnPSCPD::CUPnPSCPD(
 	IXML_Element *scpd,
 	const std::string &SCPDURL)
 :
-m_UPnPControlPoint(upnpControlPoint),
+//m_UPnPControlPoint(upnpControlPoint),
 m_ActionList(upnpControlPoint, upnpLib, scpd, SCPDURL),
 m_ServiceStateTable(upnpControlPoint, upnpLib, scpd, SCPDURL),
 m_SCPDURL(SCPDURL)
@@ -819,7 +819,7 @@ CUPnPDevice::CUPnPDevice(
 	IXML_Element *device,
 	const std::string &URLBase)
 :
-m_UPnPControlPoint(upnpControlPoint),
+//m_UPnPControlPoint(upnpControlPoint),
 m_DeviceList(upnpControlPoint, upnpLib, device, URLBase),
 m_ServiceList(upnpControlPoint, upnpLib, device, URLBase),
 m_deviceType       (upnpLib.Element_GetChildValueByTag(device, "deviceType")),
@@ -883,7 +883,7 @@ CUPnPRootDevice::CUPnPRootDevice(
 	int expires)
 :
 CUPnPDevice(upnpControlPoint, upnpLib, rootDevice, FixedURLBase),
-m_UPnPControlPoint(upnpControlPoint),
+//m_UPnPControlPoint(upnpControlPoint),
 m_URLBase(OriginalURLBase),
 m_location(location),
 m_expires(expires)

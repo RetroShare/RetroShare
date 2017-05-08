@@ -39,7 +39,7 @@ public:
 protected:
     // from RsThread
     // wee need a thread to call into things which block like askForPassword()
-    virtual void run();
+    virtual void run() override;
 
 private:
     enum RunState { WAITING_INIT, FATAL_ERROR, WAITING_ACCOUNT_SELECT, WAITING_STARTUP, RUNNING_OK, RUNNING_OK_NO_FULL_CONTROL};

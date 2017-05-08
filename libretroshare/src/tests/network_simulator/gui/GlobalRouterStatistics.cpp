@@ -32,7 +32,7 @@
 #include <grouter/p3grouter.h>
 #include "GlobalRouterStatistics.h"
 
-static const int MAX_TUNNEL_REQUESTS_DISPLAY = 10 ;
+//static const int MAX_TUNNEL_REQUESTS_DISPLAY = 10 ;
 
 static QColor colorScale(float f)
 {

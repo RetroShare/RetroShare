@@ -17,7 +17,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
@@ -33,7 +33,7 @@
 #include <stdint.h>
 
 #define SCALE_WIDTH   75  /** Width of the scale */
-#define MINUSER_SCALE 2000  /** 2000 users is the minimum scale */  
+#define MINUSER_SCALE 2000  /** 2000 users is the minimum scale */
 #define SCROLL_STEP   4   /** Horizontal change on graph update */
 
 #define BACK_COLOR    Qt::white
@@ -129,7 +129,7 @@ public:
 	static const uint32_t RSGRAPH_FLAGS_PAINT_STYLE_DOTS 	= 0x0080 ;// use dots
 
 	/** Bandwidth graph style. */
-	enum GraphStyle 
+	enum GraphStyle
 	{
 		SolidLine = 0,  /**< Plot bandwidth as solid lines. */
 		AreaGraph = 1   /**< Plot bandwidth as alpha blended area graphs. */
@@ -142,7 +142,7 @@ public:
 
 	// sets the update interval period.
 	//
-	void setTimerPeriod(int miliseconds) ;				
+	void setTimerPeriod(int miliseconds) ;
 	void setSource(RSGraphSource *gs) ;
 	void setTimeScale(float pixels_per_second) ;
 
@@ -161,8 +161,6 @@ public:
 protected:
 	/** Overloaded QWidget::paintEvent() */
 	void paintEvent(QPaintEvent *event);
-
-	virtual QSizeF sizeHint( Qt::SizeHint which, const QSizeF & constraint = QSizeF() ) const;
 
 protected slots:
 	void updateIfPossible() ;

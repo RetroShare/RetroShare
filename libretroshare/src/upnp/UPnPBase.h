@@ -271,7 +271,7 @@ public:
 class CUPnPArgument
 {
 private:
-	const CUPnPControlPoint &m_UPnPControlPoint;
+	//const CUPnPControlPoint &m_UPnPControlPoint;
 	const std::string m_name;
 	const std::string m_direction;
 	bool m_retval;
@@ -301,7 +301,7 @@ public:
 class CUPnPAction
 {
 private:
-	const CUPnPControlPoint &m_UPnPControlPoint;
+	//const CUPnPControlPoint &m_UPnPControlPoint;
 	ArgumentList m_ArgumentList;
 	const std::string m_name;
 	
@@ -324,7 +324,7 @@ public:
 class CUPnPAllowedValue
 {
 private:
-	const CUPnPControlPoint &m_UPnPControlPoint;
+	//const CUPnPControlPoint &m_UPnPControlPoint;
 	const std::string m_allowedValue;
 	
 public:
@@ -344,7 +344,7 @@ public:
 class CUPnPStateVariable
 {
 private:
-	const CUPnPControlPoint &m_UPnPControlPoint;
+	//const CUPnPControlPoint &m_UPnPControlPoint;
 	AllowedValueList m_AllowedValueList;
 	const std::string m_name;
 	const std::string m_dataType;
@@ -374,7 +374,7 @@ public:
 class CUPnPSCPD
 {
 private:
-	const CUPnPControlPoint &m_UPnPControlPoint;
+	//const CUPnPControlPoint &m_UPnPControlPoint;
 	ActionList m_ActionList;
 	ServiceStateTable m_ServiceStateTable;
 	const std::string m_SCPDURL;
@@ -482,7 +482,7 @@ public:
 class CUPnPDevice
 {
 private:
-	const CUPnPControlPoint &m_UPnPControlPoint;
+	//const CUPnPControlPoint &m_UPnPControlPoint;
 
 	// Please, lock these lists before use
 	DeviceList m_DeviceList;
@@ -525,7 +525,7 @@ public:
 class CUPnPRootDevice : public CUPnPDevice
 {
 private:
-	const CUPnPControlPoint &m_UPnPControlPoint;
+	//const CUPnPControlPoint &m_UPnPControlPoint;
 	const std::string m_URLBase;
 	const std::string m_location;
 	int m_expires;

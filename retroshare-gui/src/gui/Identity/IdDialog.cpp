@@ -2464,16 +2464,16 @@ void IdDialog::copyRetroshareLink()
 
 	RsGxsId gxs_id(item->text(RSID_COL_KEYID).toStdString());
 
-    if(gxs_id.isNull())
-    {
-        std::cerr << "Null GXS id. Something went wrong." << std::endl;
-        return ;
-    }
+	if (gxs_id.isNull())
+	{
+		std::cerr << "Null GXS id. Something went wrong."  << std::endl;
+		return;
+	}
 
-    RsIdentityDetails details ;
+	RsIdentityDetails details;
 
-    if(! rsIdentity->getIdDetails(gxs_id,details))
-        return ;
+	if (! rsIdentity->getIdDetails(gxs_id,details))
+		return;
 
 	if (!mIdQueue)
 		return;

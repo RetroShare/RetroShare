@@ -975,7 +975,7 @@ bool perform_tests()
         fprintf(stdout,"result: q=") ; uint256_32::print(q1) ; fprintf(stdout," r=") ; uint256_32::print(r1) ; fprintf(stdout,"\n") ;
 #endif
 
-        uint256_32 res(q1) ;
+        //uint256_32 res(q1) ;
         q1 *= p1 ;
         q1 += r1 ;
 

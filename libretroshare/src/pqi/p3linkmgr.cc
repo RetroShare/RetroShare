@@ -75,7 +75,7 @@ static struct RsLog::logInfo p3connectzoneInfo = {RsLog::Default, "p3connect"};
 //#define P3CONNMGR_NO_TCP_CONNECTIONS 1
 
 const uint32_t P3CONNMGR_TCP_DEFAULT_DELAY = 3; /* 2 Seconds? is it be enough! */
-const uint32_t P3CONNMGR_UDP_DEFAULT_DELAY = 3; /* 2 Seconds? is it be enough! */
+//const uint32_t P3CONNMGR_UDP_DEFAULT_DELAY = 3; /* 2 Seconds? is it be enough! */
 
 const uint32_t P3CONNMGR_TCP_DEFAULT_PERIOD = 10;
 const uint32_t P3CONNMGR_UDP_DEFAULT_PERIOD = 30;  // this represents how long it stays at the default TTL (4), before rising.
