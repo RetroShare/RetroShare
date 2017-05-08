@@ -1,5 +1,7 @@
 #pragma once
 
+#include <typeinfo> // for typeid
+
 #include "util/smallobject.h"
 #include "retroshare/rstypes.h"
 #include "serialiser/rsserializer.h"
