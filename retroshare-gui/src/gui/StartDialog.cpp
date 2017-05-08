@@ -19,11 +19,13 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#include <rshare.h>
-#include <retroshare/rsinit.h>
+#include <QMessageBox>
+
+#include "rshare.h"
+#include "retroshare/rsinit.h"
 #include "StartDialog.h"
 #include "LogoBar.h"
-#include <QMessageBox>
+#include "retroshare/rsnotify.h"
 #include "settings/rsharesettings.h"
 
 #include <iostream>
@@ -42,10 +44,6 @@ StartDialog::StartDialog(QWidget *parent)
 #endif
 
 	Settings->loadWidgetInformation(this);
-
-	ui.loadButton->setFocus();
-
-	connect(ui.loadButton, SIGNAL(clicked()), this, SLOT(loadPerson()));
 
 	/* get all available pgp private certificates....
 	* mark last one as default.
@@ -75,10 +73,19 @@ StartDialog::StartDialog(QWidget *parent)
 		}
 	}
 
+    QObject::connect(ui.loadName,SIGNAL(currentIndexChanged(int)),this,SLOT(updateSelectedProfile(int))) ;
+    QObject::connect(ui.password_input,SIGNAL(returnPressed()),this,SLOT(loadPerson())) ;
+
 	if (pidx > 0)
 	{
 		ui.loadName->setCurrentIndex(pidx);
 	}
+}
+
+void StartDialog::updateSelectedProfile(int)
+{
+    ui.password_input->clear();
+    ui.password_input->setFocus();
 }
 
 void StartDialog::closeEvent (QCloseEvent * event)
@@ -101,18 +108,22 @@ void StartDialog::loadPerson()
 	QVariant data = ui.loadName->itemData(pgpidx);
 	RsPeerId accountId = RsPeerId((data.toString()).toStdString());
 
-	if (Rshare::loadCertificate(accountId, ui.autologin_checkbox->isChecked())) {
+    // Cache the passphrase, so that it is not asked again.
+
+	rsNotify->cachePgpPassphrase(ui.password_input->text().toUtf8().constData()) ;
+
+	bool res = Rshare::loadCertificate(accountId, ui.autologin_checkbox->isChecked()) ;
+
+    rsNotify->clearPgpPassphrase();
+
+    if(res)
 		accept();
-	}
 }
 
 void StartDialog::on_labelProfile_linkActivated(QString /*link*/)
 {
-//	if ((QMessageBox::question(this, tr("Create a New Profile"),tr("This will generate a new Profile\n Are you sure you want to continue?"),QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes))== QMessageBox::Yes)
-//	{
 		reqNewCert = true;
 		accept();
-//	}
 }
 
 bool StartDialog::requestedNewCert()
