@@ -815,7 +815,7 @@ X509 *AuthSSLimpl::SignX509ReqWithGPG(X509_REQ *req, long /*days*/)
         const EVP_MD *type = EVP_sha1();
 
         EVP_MD_CTX *ctx = EVP_MD_CTX_create();
-        unsigned char *p,*buf_in=NULL;
+        unsigned char *buf_in=NULL;
         unsigned char *buf_hashout=NULL,*buf_sigout=NULL;
         int inl=0,hashoutl=0;
         int sigoutl=0;
@@ -874,7 +874,7 @@ X509 *AuthSSLimpl::SignX509ReqWithGPG(X509_REQ *req, long /*days*/)
         std::cerr << "Buffers Allocated" << std::endl;
 
 #if OPENSSL_VERSION_NUMBER < 0x10100000L
-        p=buf_in;
+        unsigned char *p=buf_in;
         i2d(data,&p);
 #endif
 
