@@ -27,10 +27,10 @@
 
 #include <map>
 
-#include "serialiser/rsserviceids.h"
+#include "rsitems/rsserviceids.h"
 #include "serialiser/rsserial.h"
 
-#include "serialiser/rsgxsitems.h"
+#include "rsitems/rsgxsitems.h"
 #include "gxstestservice.h"
 
 const uint8_t RS_PKT_SUBTYPE_TEST_GROUP_ITEM = 0x02;

@@ -254,7 +254,7 @@
     <message>
         <location line="+13"/>
         <source>Set message to read on activate</source>
-        <translation>Beitrag beim Aktivieren als gelesen markieren</translation>
+        <translation>Nachricht beim Aktivieren als gelesen markieren</translation>
     </message>
     <message>
         <location line="+7"/>

@@ -22,7 +22,7 @@
 #ifndef RS_FEEDREADER_ITEMS_H
 #define RS_FEEDREADER_ITEMS_H
 
-#include "serialiser/rsserviceids.h"
+#include "rsitems/rsserviceids.h"
 #include "serialiser/rsserial.h"
 #include "serialiser/rstlvstring.h"
 

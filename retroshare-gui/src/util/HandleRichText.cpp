@@ -230,12 +230,13 @@ bool RsHtml::canReplaceAnchor(QDomDocument &/*doc*/, QDomElement &/*element*/, c
 	case RetroShareLink::TYPE_PERSON:
 	case RetroShareLink::TYPE_FORUM:
 	case RetroShareLink::TYPE_CHANNEL:
-          case RetroShareLink::TYPE_POSTED:
 	case RetroShareLink::TYPE_SEARCH:
 	case RetroShareLink::TYPE_MESSAGE:
 	case RetroShareLink::TYPE_EXTRAFILE:
 	case RetroShareLink::TYPE_PRIVATE_CHAT:
 	case RetroShareLink::TYPE_PUBLIC_MSG:
+	case RetroShareLink::TYPE_POSTED:
+	case RetroShareLink::TYPE_IDENTITY:
 		// not yet implemented
 		break;
 
@@ -259,12 +260,13 @@ void RsHtml::anchorStylesheetForImg(QDomDocument &/*doc*/, QDomElement &/*elemen
 	case RetroShareLink::TYPE_PERSON:
 	case RetroShareLink::TYPE_FORUM:
 	case RetroShareLink::TYPE_CHANNEL:
-        case RetroShareLink::TYPE_POSTED:
 	case RetroShareLink::TYPE_SEARCH:
 	case RetroShareLink::TYPE_MESSAGE:
 	case RetroShareLink::TYPE_EXTRAFILE:
 	case RetroShareLink::TYPE_PRIVATE_CHAT:
 	case RetroShareLink::TYPE_PUBLIC_MSG:
+	case RetroShareLink::TYPE_POSTED:
+	case RetroShareLink::TYPE_IDENTITY:
 		// not yet implemented
 		break;
 
@@ -1187,9 +1189,9 @@ QString RsHtml::makeQuotedText(RSTextBrowser *browser)
 		text = browser->toPlainText();
 	}
 	QStringList sl = text.split(QRegExp("[\r\n]"),QString::SkipEmptyParts);
-	text = sl.join("\n>");
-	text.replace(QChar(-4),"");//Char used when image on text.
-	return QString(">") + text;
+	text = sl.join("\n> ");
+	text.replace(QChar(-4)," ");//Char used when image on text.
+	return QString("> ") + text;
 }
 
 void RsHtml::insertSpoilerText(QTextCursor cursor)

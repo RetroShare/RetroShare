@@ -24,17 +24,22 @@ BandwidthStatsWidget::BandwidthStatsWidget(QWidget *parent)
     
     ui.logScale_CB->setChecked(true) ;
 
-    ui.bwgraph_BW->source()->setSelector(BWGraphSource::SELECTOR_TYPE_FRIEND,BWGraphSource::GRAPH_TYPE_SUM) ;
-    ui.bwgraph_BW->source()->setSelector(BWGraphSource::SELECTOR_TYPE_SERVICE,BWGraphSource::GRAPH_TYPE_SUM) ;
-    ui.bwgraph_BW->source()->setUnit(BWGraphSource::UNIT_KILOBYTES) ;
+    ui.bwgraph_BW->setSelector(BWGraphSource::SELECTOR_TYPE_FRIEND,BWGraphSource::GRAPH_TYPE_SUM) ;
+    ui.bwgraph_BW->setSelector(BWGraphSource::SELECTOR_TYPE_SERVICE,BWGraphSource::GRAPH_TYPE_SUM) ;
+    ui.bwgraph_BW->setUnit(BWGraphSource::UNIT_KILOBYTES) ;
+
+	ui.bwgraph_BW->resetFlags(RSGraphWidget::RSGRAPH_FLAGS_LEGEND_CUMULATED) ;
+
+	updateUnitSelection(0);
 
     // Setup connections
 
-    QObject::connect(ui.friend_CB ,SIGNAL(currentIndexChanged(int)),this, SLOT( updateFriendSelection(int))) ;
-    QObject::connect(ui.updn_CB   ,SIGNAL(currentIndexChanged(int)),this, SLOT( updateUpDownSelection(int))) ;
-    QObject::connect(ui.unit_CB   ,SIGNAL(currentIndexChanged(int)),this, SLOT(   updateUnitSelection(int))) ;
-    QObject::connect(ui.service_CB,SIGNAL(currentIndexChanged(int)),this, SLOT(updateServiceSelection(int))) ;
-    QObject::connect(ui.logScale_CB,SIGNAL(toggled(bool)),this, SLOT(toggleLogScale(bool))) ;
+    QObject::connect(ui.friend_CB  ,SIGNAL(currentIndexChanged(int )),this, SLOT( updateFriendSelection(int ))) ;
+    QObject::connect(ui.updn_CB    ,SIGNAL(currentIndexChanged(int )),this, SLOT( updateUpDownSelection(int ))) ;
+    QObject::connect(ui.unit_CB    ,SIGNAL(currentIndexChanged(int )),this, SLOT(   updateUnitSelection(int ))) ;
+    QObject::connect(ui.service_CB ,SIGNAL(currentIndexChanged(int )),this, SLOT(updateServiceSelection(int ))) ;
+    QObject::connect(ui.legend_CB  ,SIGNAL(currentIndexChanged(int )),this, SLOT(      updateLegendType(int ))) ;
+    QObject::connect(ui.logScale_CB,SIGNAL(            toggled(bool)),this, SLOT(        toggleLogScale(bool))) ;
 
     // setup one timer for auto-update
 
@@ -139,7 +144,7 @@ void BandwidthStatsWidget::updateComboBoxes()
 void BandwidthStatsWidget::updateFriendSelection(int n)
 {
     if(n == 0)
-        ui.bwgraph_BW->source()->setSelector(BWGraphSource::SELECTOR_TYPE_FRIEND,BWGraphSource::GRAPH_TYPE_SUM) ;
+        ui.bwgraph_BW->setSelector(BWGraphSource::SELECTOR_TYPE_FRIEND,BWGraphSource::GRAPH_TYPE_SUM) ;
     else if(n == 1)
     {
         // 1 means all. So make sure the other combo is not set on ALL. If so, switch it to sum.
@@ -147,19 +152,26 @@ void BandwidthStatsWidget::updateFriendSelection(int n)
         if(ui.service_CB->currentIndex() == 1)
             ui.service_CB->setCurrentIndex(0) ;
 
-        ui.bwgraph_BW->source()->setSelector(BWGraphSource::SELECTOR_TYPE_FRIEND,BWGraphSource::GRAPH_TYPE_ALL) ;
+        ui.bwgraph_BW->setSelector(BWGraphSource::SELECTOR_TYPE_FRIEND,BWGraphSource::GRAPH_TYPE_ALL) ;
     }
     else
     {
         int ci = ui.friend_CB->currentIndex() ;
 
-        ui.bwgraph_BW->source()->setSelector(BWGraphSource::SELECTOR_TYPE_FRIEND,BWGraphSource::GRAPH_TYPE_SINGLE,ui.friend_CB->itemData(ci,Qt::UserRole).toString().toStdString()) ;
+        ui.bwgraph_BW->setSelector(BWGraphSource::SELECTOR_TYPE_FRIEND,BWGraphSource::GRAPH_TYPE_SINGLE,ui.friend_CB->itemData(ci,Qt::UserRole).toString().toStdString()) ;
     }
+}
+void BandwidthStatsWidget::updateLegendType(int n)
+{
+    if(n==0)
+        ui.bwgraph_BW->resetFlags(RSGraphWidget::RSGRAPH_FLAGS_LEGEND_CUMULATED) ;
+    else
+        ui.bwgraph_BW->setFlags(RSGraphWidget::RSGRAPH_FLAGS_LEGEND_CUMULATED) ;
 }
 void BandwidthStatsWidget::updateServiceSelection(int n)
 {
     if(n == 0)
-        ui.bwgraph_BW->source()->setSelector(BWGraphSource::SELECTOR_TYPE_SERVICE,BWGraphSource::GRAPH_TYPE_SUM) ;
+        ui.bwgraph_BW->setSelector(BWGraphSource::SELECTOR_TYPE_SERVICE,BWGraphSource::GRAPH_TYPE_SUM) ;
     else if(n == 1)
     {
         // 1 means all. So make sure the other combo is not set on ALL. If so, switch it to sum.
@@ -167,27 +179,35 @@ void BandwidthStatsWidget::updateServiceSelection(int n)
         if(ui.friend_CB->currentIndex() == 1)
             ui.friend_CB->setCurrentIndex(0) ;
 
-        ui.bwgraph_BW->source()->setSelector(BWGraphSource::SELECTOR_TYPE_SERVICE,BWGraphSource::GRAPH_TYPE_ALL) ;
+        ui.bwgraph_BW->setSelector(BWGraphSource::SELECTOR_TYPE_SERVICE,BWGraphSource::GRAPH_TYPE_ALL) ;
     }
     else
     {
         int ci = ui.service_CB->currentIndex() ;
 
-        ui.bwgraph_BW->source()->setSelector(BWGraphSource::SELECTOR_TYPE_SERVICE,BWGraphSource::GRAPH_TYPE_SINGLE,ui.service_CB->itemData(ci,Qt::UserRole).toString().toStdString()) ;
+        ui.bwgraph_BW->setSelector(BWGraphSource::SELECTOR_TYPE_SERVICE,BWGraphSource::GRAPH_TYPE_SINGLE,ui.service_CB->itemData(ci,Qt::UserRole).toString().toStdString()) ;
     }
 }
 
 void BandwidthStatsWidget::updateUpDownSelection(int n)
 {
     if(n==0)
-        ui.bwgraph_BW->source()->setDirection(BWGraphSource::DIRECTION_UP) ;
+        ui.bwgraph_BW->setDirection(BWGraphSource::DIRECTION_UP) ;
     else
-        ui.bwgraph_BW->source()->setDirection(BWGraphSource::DIRECTION_DOWN) ;
+        ui.bwgraph_BW->setDirection(BWGraphSource::DIRECTION_DOWN) ;
 }
 void BandwidthStatsWidget::updateUnitSelection(int n)
 {
     if(n==0)
-        ui.bwgraph_BW->source()->setUnit(BWGraphSource::UNIT_KILOBYTES) ;
+    {
+        ui.bwgraph_BW->setUnit(BWGraphSource::UNIT_KILOBYTES) ;
+        ui.bwgraph_BW->resetFlags(RSGraphWidget::RSGRAPH_FLAGS_PAINT_STYLE_DOTS);
+        ui.legend_CB->setItemText(1,tr("Average"));
+    }
     else
-        ui.bwgraph_BW->source()->setUnit(BWGraphSource::UNIT_COUNT) ;
+    {
+        ui.bwgraph_BW->setUnit(BWGraphSource::UNIT_COUNT) ;
+        ui.bwgraph_BW->setFlags(RSGraphWidget::RSGRAPH_FLAGS_PAINT_STYLE_DOTS);
+        ui.legend_CB->setItemText(1,tr("Total"));
+    }
 }

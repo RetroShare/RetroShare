@@ -1055,7 +1055,13 @@ bool p3GxsTunnelService::locked_sendDHPublicKey(const DH *dh,const RsGxsId& own_
 	}
 
 	RsGxsTunnelDHPublicKeyItem *dhitem = new RsGxsTunnelDHPublicKeyItem ;
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
 	dhitem->public_key = BN_dup(dh->pub_key) ;
+#else
+    const BIGNUM *pub_key=NULL ;
+    DH_get0_key(dh,&pub_key,NULL) ;
+	dhitem->public_key = BN_dup(pub_key) ;
+#endif
 
 	// we should also sign the data and check the signature on the other end.
 	//
@@ -1133,8 +1139,18 @@ bool p3GxsTunnelService::locked_initDHSessionKey(DH *& dh)
         return false ;
     }
 
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
     BN_hex2bn(&dh->p,dh_prime_2048_hex.c_str()) ;
     BN_hex2bn(&dh->g,"5") ;
+#else
+    BIGNUM *pp=NULL ;
+    BIGNUM *gg=NULL ;
+
+    BN_hex2bn(&pp,dh_prime_2048_hex.c_str()) ;
+    BN_hex2bn(&gg,"5") ;
+
+    DH_set0_pqg(dh,pp,NULL,gg) ;
+#endif
 
     int codes = 0 ;
 
@@ -1169,7 +1185,9 @@ bool p3GxsTunnelService::locked_sendClearTunnelData(RsGxsTunnelDHPublicKeyItem *
     //
     RsTurtleGenericDataItem *gitem = new RsTurtleGenericDataItem ;
 
-    uint32_t rssize = item->serial_size() ;
+    RsGxsTunnelSerialiser ser ;
+
+    uint32_t rssize = ser.size(item);
 
     gitem->data_size  = rssize + 8 ;
     gitem->data_bytes = rs_malloc(rssize+8) ;
@@ -1177,12 +1195,12 @@ bool p3GxsTunnelService::locked_sendClearTunnelData(RsGxsTunnelDHPublicKeyItem *
     if(gitem->data_bytes == NULL)
     {
         delete gitem ;
-        return NULL ;
+        return false ;
     }
     // by convention, we use a IV of 0 for unencrypted data.
     memset(gitem->data_bytes,0,8) ;
 
-    if(!item->serialise(&((uint8_t*)gitem->data_bytes)[8],rssize))
+    if(!ser.serialise(item,&((uint8_t*)gitem->data_bytes)[8],&rssize))
     {
 	    std::cerr << "(EE) Could not serialise item!!!" << std::endl;
 	    delete gitem ;
@@ -1204,10 +1222,12 @@ bool p3GxsTunnelService::locked_sendClearTunnelData(RsGxsTunnelDHPublicKeyItem *
 
 bool p3GxsTunnelService::locked_sendEncryptedTunnelData(RsGxsTunnelItem *item)
 {
-    uint32_t rssize = item->serial_size();
+    RsGxsTunnelSerialiser ser;
+
+    uint32_t rssize = ser.size(item);
     RsTemporaryMemory buff(rssize) ;
 
-    if(!item->serialise(buff,rssize))
+    if(!ser.serialise(item,buff,&rssize))
     {
 	    std::cerr << "(EE) GxsTunnelService::sendEncryptedTunnelData(): Could not serialise item!" << std::endl;
 	    return false;

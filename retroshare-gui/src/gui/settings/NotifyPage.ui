@@ -451,14 +451,14 @@
        <item>
         <widget class="QCheckBox" name="chatLobbies_CheckNickName">
          <property name="text">
-          <string>Count occurences of my current identity</string>
+          <string>Count occurrences of my current identity</string>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QCheckBox" name="chatLobbies_CountFollowingText">
          <property name="text">
-          <string>Count occurences of any of the following texts (separate by newlines):</string>
+          <string>Count occurrences of any of the following texts (separate by newlines):</string>
          </property>
         </widget>
        </item>
@@ -468,7 +468,7 @@
        <item>
         <widget class="QCheckBox" name="chatLobbies_TextCaseSensitive">
          <property name="toolTip">
-          <string>Checked, if the identity and the text above occurences must be in the same case to trigger count.</string>
+          <string>Checked, if the identity and the text above occurrences must be in the same case to trigger count.</string>
          </property>
          <property name="text">
           <string>Case sensitive</string>

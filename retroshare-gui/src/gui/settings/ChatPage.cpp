@@ -30,10 +30,10 @@
 #include <retroshare/rspeers.h>
 #include "ChatPage.h"
 #include <gui/RetroShareLink.h>
-#include "gui/chat/ChatStyle.h"
 #include "gui/chat/ChatDialog.h"
 #include "gui/notifyqt.h"
 #include "rsharesettings.h"
+#include "util/misc.h"
 #include <retroshare/rsconfig.h>
 
 #include <retroshare/rshistory.h>
@@ -45,7 +45,7 @@
 #define IMAGE_CHAT_DELETE   ":/images/deletemail24.png"
 #define IMAGE_CHAT_COPY     ":/images/copyrslink.png"
 
-static QString loadStyleInfo(ChatStyle::enumStyleType type, QComboBox *style_CB, QComboBox *comboBox, QString &styleVariant)
+QString ChatPage::loadStyleInfo(ChatStyle::enumStyleType type, QComboBox *style_CB, QComboBox *comboBox, QString &styleVariant)
 {
     QList<ChatStyleInfo> styles;
     QList<ChatStyleInfo>::iterator style;
@@ -70,12 +70,13 @@ static QString loadStyleInfo(ChatStyle::enumStyleType type, QComboBox *style_CB,
     ChatStyle::getAvailableStyles(type, styles);
 
     while(style_CB->count())
-		style_CB->removeItem(0) ;
+		whileBlocking(style_CB)->removeItem(0) ;
 
     int n=0;
     for (style = styles.begin(); style != styles.end(); ++style,++n)
     {
-        style_CB->insertItem(n,style->styleName);
+        whileBlocking(style_CB)->insertItem(n,style->styleName);
+
         style_CB->setItemData(n, qVariantFromValue(*style),Qt::UserRole);
 
         if (style->stylePath == stylePath) {
@@ -83,16 +84,26 @@ static QString loadStyleInfo(ChatStyle::enumStyleType type, QComboBox *style_CB,
         }
     }
 
-    style_CB->setCurrentIndex(activeItem);
+    whileBlocking(style_CB)->setCurrentIndex(activeItem);
+
+    switch(type)
+    {
+    case ChatStyle::TYPE_PUBLIC: on_publicList_currentRowChanged(activeItem);	break ;
+    case ChatStyle::TYPE_PRIVATE: on_privateList_currentRowChanged(activeItem);	break ;
+    case ChatStyle::TYPE_HISTORY: on_historyList_currentRowChanged(activeItem);	break ;
+    default:
+        break ;
+    }
 
     /* now the combobox should be filled */
 
     int index = comboBox->findText(styleVariant);
+
     if (index != -1) {
-        comboBox->setCurrentIndex(index);
+        whileBlocking(comboBox)->setCurrentIndex(index);
     } else {
         if (comboBox->count()) {
-            comboBox->setCurrentIndex(0);
+            whileBlocking(comboBox)->setCurrentIndex(0);
         }
     }
     return stylePath;
@@ -299,26 +310,26 @@ void
 ChatPage::load()
 {
     Settings->beginGroup(QString("Chat"));
-    ui.checkBox_emoteprivchat->setChecked(Settings->value("Emoteicons_PrivatChat", true).toBool());
-    ui.checkBox_emotegroupchat->setChecked(Settings->value("Emoteicons_GroupChat", true).toBool());
-    ui.checkBox_enableCustomFonts->setChecked(Settings->value("EnableCustomFonts", true).toBool());
-    ui.checkBox_enableCustomFontSize->setChecked(Settings->value("EnableCustomFontSize", true).toBool());
-		ui.minimumFontSize->setValue(Settings->value("MinimumFontSize", 10).toInt());
-    ui.checkBox_enableBold->setChecked(Settings->value("EnableBold", true).toBool());
-    ui.checkBox_enableItalics->setChecked(Settings->value("EnableItalics", true).toBool());
-    ui.minimumContrast->setValue(Settings->value("MinimumContrast", 4.5).toDouble());
+    whileBlocking(ui.checkBox_emoteprivchat)->setChecked(Settings->value("Emoteicons_PrivatChat", true).toBool());
+    whileBlocking(ui.checkBox_emotegroupchat)->setChecked(Settings->value("Emoteicons_GroupChat", true).toBool());
+    whileBlocking(ui.checkBox_enableCustomFonts)->setChecked(Settings->value("EnableCustomFonts", true).toBool());
+    whileBlocking(ui.checkBox_enableCustomFontSize)->setChecked(Settings->value("EnableCustomFontSize", true).toBool());
+	whileBlocking(ui.minimumFontSize)->setValue(Settings->value("MinimumFontSize", 10).toInt());
+    whileBlocking(ui.checkBox_enableBold)->setChecked(Settings->value("EnableBold", true).toBool());
+    whileBlocking(ui.checkBox_enableItalics)->setChecked(Settings->value("EnableItalics", true).toBool());
+    whileBlocking(ui.minimumContrast)->setValue(Settings->value("MinimumContrast", 4.5).toDouble());
     Settings->endGroup();
 
 	     // state of distant Chat combobox
     int index = Settings->value("DistantChat", 0).toInt();
-    ui.distantChatComboBox->setCurrentIndex(index);
+    whileBlocking(ui.distantChatComboBox)->setCurrentIndex(index);
 
     fontTempChat.fromString(Settings->getChatScreenFont());
 
-    ui.sendMessageWithCtrlReturn->setChecked(Settings->getChatSendMessageWithCtrlReturn());
-    ui.sendAsPlainTextByDef->setChecked(Settings->getChatSendAsPlainTextByDef());
-    ui.loadEmbeddedImages->setChecked(Settings->getChatLoadEmbeddedImages());
-    ui.DontSendTyping->setChecked(Settings->getChatDoNotSendIsTyping());
+    whileBlocking(ui.sendMessageWithCtrlReturn)->setChecked(Settings->getChatSendMessageWithCtrlReturn());
+    whileBlocking(ui.sendAsPlainTextByDef)->setChecked(Settings->getChatSendAsPlainTextByDef());
+    whileBlocking(ui.loadEmbeddedImages)->setChecked(Settings->getChatLoadEmbeddedImages());
+    whileBlocking(ui.DontSendTyping)->setChecked(Settings->getChatDoNotSendIsTyping());
 
 	std::string advsetting;
 	if(rsConfig->getConfigurationOption(RS_CONFIG_ADVANCED, advsetting) && (advsetting == "YES"))
@@ -326,36 +337,36 @@ ChatPage::load()
 	else
 		ui.DontSendTyping->hide();
 
-    ui.sbSearch_CharToStart->setValue(Settings->getChatSearchCharToStartSearch());
-    ui.cbSearch_CaseSensitively->setChecked(Settings->getChatSearchCaseSensitively());
-    ui.cbSearch_WholeWords->setChecked(Settings->getChatSearchWholeWords());
-    ui.cbSearch_MoveToCursor->setChecked(Settings->getChatSearchMoveToCursor());
-    ui.cbSearch_WithoutLimit->setChecked(Settings->getChatSearchSearchWithoutLimit());
-    ui.sbSearch_MaxLimitColor->setValue(Settings->getChatSearchMaxSearchLimitColor());
+    whileBlocking(ui.sbSearch_CharToStart)->setValue(Settings->getChatSearchCharToStartSearch());
+    whileBlocking(ui.cbSearch_CaseSensitively)->setChecked(Settings->getChatSearchCaseSensitively());
+    whileBlocking(ui.cbSearch_WholeWords)->setChecked(Settings->getChatSearchWholeWords());
+    whileBlocking(ui.cbSearch_MoveToCursor)->setChecked(Settings->getChatSearchMoveToCursor());
+    whileBlocking(ui.cbSearch_WithoutLimit)->setChecked(Settings->getChatSearchSearchWithoutLimit());
+    whileBlocking(ui.sbSearch_MaxLimitColor)->setValue(Settings->getChatSearchMaxSearchLimitColor());
     rgbChatSearchFoundColor=Settings->getChatSearchFoundColor();
     QPixmap pix(24, 24);
     pix.fill(rgbChatSearchFoundColor);
     ui.btSearch_FoundColor->setIcon(pix);
 
-    ui.publicChatLoadCount->setValue(Settings->getPublicChatHistoryCount());
-    ui.privateChatLoadCount->setValue(Settings->getPrivateChatHistoryCount());
-    ui.lobbyChatLoadCount->setValue(Settings->getLobbyChatHistoryCount());
+    whileBlocking(ui.publicChatLoadCount)->setValue(Settings->getPublicChatHistoryCount());
+    whileBlocking(ui.privateChatLoadCount)->setValue(Settings->getPrivateChatHistoryCount());
+    whileBlocking(ui.lobbyChatLoadCount)->setValue(Settings->getLobbyChatHistoryCount());
 
-    ui.publicChatEnable->setChecked(rsHistory->getEnable(RS_HISTORY_TYPE_PUBLIC));
-    ui.privateChatEnable->setChecked(rsHistory->getEnable(RS_HISTORY_TYPE_PRIVATE));
-    ui.lobbyChatEnable->setChecked(rsHistory->getEnable(RS_HISTORY_TYPE_LOBBY));
+    whileBlocking(ui.publicChatEnable)->setChecked(rsHistory->getEnable(RS_HISTORY_TYPE_PUBLIC));
+    whileBlocking(ui.privateChatEnable)->setChecked(rsHistory->getEnable(RS_HISTORY_TYPE_PRIVATE));
+    whileBlocking(ui.lobbyChatEnable)->setChecked(rsHistory->getEnable(RS_HISTORY_TYPE_LOBBY));
 
-    ui.publicChatSaveCount->setValue(rsHistory->getSaveCount(RS_HISTORY_TYPE_PUBLIC));
-    ui.privateChatSaveCount->setValue(rsHistory->getSaveCount(RS_HISTORY_TYPE_PRIVATE));
-    ui.lobbyChatSaveCount->setValue(rsHistory->getSaveCount(RS_HISTORY_TYPE_LOBBY));
+    whileBlocking(ui.publicChatSaveCount)->setValue(rsHistory->getSaveCount(RS_HISTORY_TYPE_PUBLIC));
+    whileBlocking(ui.privateChatSaveCount)->setValue(rsHistory->getSaveCount(RS_HISTORY_TYPE_PRIVATE));
+    whileBlocking(ui.lobbyChatSaveCount)->setValue(rsHistory->getSaveCount(RS_HISTORY_TYPE_LOBBY));
     
     // using fontTempChat.rawname() does not always work!
     // see http://doc.qt.digia.com/qt-maemo/qfont.html#rawName
     QStringList fontname = fontTempChat.toString().split(",");
-    ui.labelChatFontPreview->setText(fontname[0]);
-    ui.labelChatFontPreview->setFont(fontTempChat);
+    whileBlocking(ui.labelChatFontPreview)->setText(fontname[0]);
+    whileBlocking(ui.labelChatFontPreview)->setFont(fontTempChat);
 
-	 ui.max_storage_period->setValue(rsHistory->getMaxStorageDuration()/86400) ;
+	whileBlocking(ui.max_storage_period)->setValue(rsHistory->getMaxStorageDuration()/86400) ;
 
     /* Load styles */
     publicStylePath = loadStyleInfo(ChatStyle::TYPE_PUBLIC, ui.publicStyle, ui.publicComboBoxVariant, publicStyleVariant);
@@ -372,14 +383,14 @@ ChatPage::load()
 
     uint chatflags = Settings->getChatFlags();
 
-    ui.chat_NewWindow->setChecked(chatflags & RS_CHAT_OPEN);
-    ui.chat_Focus->setChecked(chatflags & RS_CHAT_FOCUS);
-    ui.chat_tabbedWindow->setChecked(chatflags & RS_CHAT_TABBED_WINDOW);
-    ui.chat_Blink->setChecked(chatflags & RS_CHAT_BLINK);
+    whileBlocking(ui.chat_NewWindow)->setChecked(chatflags & RS_CHAT_OPEN);
+    whileBlocking(ui.chat_Focus)->setChecked(chatflags & RS_CHAT_FOCUS);
+    whileBlocking(ui.chat_tabbedWindow)->setChecked(chatflags & RS_CHAT_TABBED_WINDOW);
+    whileBlocking(ui.chat_Blink)->setChecked(chatflags & RS_CHAT_BLINK);
 
     uint chatLobbyFlags = Settings->getChatLobbyFlags();
 
-    ui.chatLobby_Blink->setChecked(chatLobbyFlags & RS_CHATLOBBY_BLINK);
+    whileBlocking(ui.chatLobby_Blink)->setChecked(chatLobbyFlags & RS_CHATLOBBY_BLINK);
 
 	 // load personal invites
 	 //
@@ -458,22 +469,22 @@ void ChatPage::on_publicList_currentRowChanged(int currentRow)
 
         QStringList variants;
         ChatStyle::getAvailableVariants(info.stylePath, variants);
-        ui.publicComboBoxVariant->clear();
-        ui.publicComboBoxVariant->setEnabled(variants.size() != 0);
-        ui.publicComboBoxVariant->addItems(variants);
+        whileBlocking(ui.publicComboBoxVariant)->clear();
+        whileBlocking(ui.publicComboBoxVariant)->setEnabled(variants.size() != 0);
+        whileBlocking(ui.publicComboBoxVariant)->addItems(variants);
 
         /* try to find "Standard" */
         int index = ui.publicComboBoxVariant->findText(VARIANT_STANDARD);
         if (index != -1) {
-            ui.publicComboBoxVariant->setCurrentIndex(index);
+            whileBlocking(ui.publicComboBoxVariant)->setCurrentIndex(index);
         } else {
-            ui.publicComboBoxVariant->setCurrentIndex(0);
+            whileBlocking(ui.publicComboBoxVariant)->setCurrentIndex(0);
         }
     } else {
-        ui.publicAuthor->clear();
-        ui.publicDescription->clear();
-        ui.publicComboBoxVariant->clear();
-        ui.publicComboBoxVariant->setDisabled(true);
+        whileBlocking(ui.publicAuthor)->clear();
+        whileBlocking(ui.publicDescription)->clear();
+        whileBlocking(ui.publicComboBoxVariant)->clear();
+        whileBlocking(ui.publicComboBoxVariant)->setDisabled(true);
     }
 
     fillPreview(ui.publicStyle, ui.publicComboBoxVariant, ui.publicPreview);
@@ -488,27 +499,27 @@ void ChatPage::on_privateList_currentRowChanged(int currentRow)
         if (info.authorEmail.isEmpty() == false) {
             author += " (" + info.authorEmail + ")";
         }
-        ui.privateAuthor->setText(author);
-        ui.privateDescription->setText(info.styleDescription);
+        whileBlocking(ui.privateAuthor)->setText(author);
+        whileBlocking(ui.privateDescription)->setText(info.styleDescription);
 
         QStringList variants;
         ChatStyle::getAvailableVariants(info.stylePath, variants);
-        ui.privateComboBoxVariant->clear();
-        ui.privateComboBoxVariant->setEnabled(variants.size() != 0);
-        ui.privateComboBoxVariant->addItems(variants);
+        whileBlocking(ui.privateComboBoxVariant)->clear();
+        whileBlocking(ui.privateComboBoxVariant)->setEnabled(variants.size() != 0);
+        whileBlocking(ui.privateComboBoxVariant)->addItems(variants);
 
         /* try to find "Standard" */
         int index = ui.privateComboBoxVariant->findText(VARIANT_STANDARD);
         if (index != -1) {
-            ui.privateComboBoxVariant->setCurrentIndex(index);
+            whileBlocking(ui.privateComboBoxVariant)->setCurrentIndex(index);
         } else {
-            ui.privateComboBoxVariant->setCurrentIndex(0);
+            whileBlocking(ui.privateComboBoxVariant)->setCurrentIndex(0);
         }
     } else {
-        ui.privateAuthor->clear();
-        ui.privateDescription->clear();
-        ui.privateComboBoxVariant->clear();
-        ui.privateComboBoxVariant->setDisabled(true);
+        whileBlocking(ui.privateAuthor)->clear();
+        whileBlocking(ui.privateDescription)->clear();
+        whileBlocking(ui.privateComboBoxVariant)->clear();
+        whileBlocking(ui.privateComboBoxVariant)->setDisabled(true);
     }
 
     fillPreview(ui.privateStyle, ui.privateComboBoxVariant, ui.privatePreview);
@@ -523,27 +534,27 @@ void ChatPage::on_historyList_currentRowChanged(int currentRow)
         if (info.authorEmail.isEmpty() == false) {
             author += " (" + info.authorEmail + ")";
         }
-        ui.historyAuthor->setText(author);
-        ui.historyDescription->setText(info.styleDescription);
+        whileBlocking(ui.historyAuthor)->setText(author);
+        whileBlocking(ui.historyDescription)->setText(info.styleDescription);
 
         QStringList variants;
         ChatStyle::getAvailableVariants(info.stylePath, variants);
-        ui.historyComboBoxVariant->clear();
-        ui.historyComboBoxVariant->setEnabled(variants.size() != 0);
-        ui.historyComboBoxVariant->addItems(variants);
+        whileBlocking(ui.historyComboBoxVariant)->clear();
+        whileBlocking(ui.historyComboBoxVariant)->setEnabled(variants.size() != 0);
+        whileBlocking(ui.historyComboBoxVariant)->addItems(variants);
 
         /* try to find "Standard" */
         int index = ui.historyComboBoxVariant->findText(VARIANT_STANDARD);
         if (index != -1) {
-            ui.historyComboBoxVariant->setCurrentIndex(index);
+            whileBlocking(ui.historyComboBoxVariant)->setCurrentIndex(index);
         } else {
-            ui.historyComboBoxVariant->setCurrentIndex(0);
+            whileBlocking(ui.historyComboBoxVariant)->setCurrentIndex(0);
         }
     } else {
-        ui.historyAuthor->clear();
-        ui.historyDescription->clear();
-        ui.historyComboBoxVariant->clear();
-        ui.historyComboBoxVariant->setDisabled(true);
+        whileBlocking(ui.historyAuthor)->clear();
+        whileBlocking(ui.historyDescription)->clear();
+        whileBlocking(ui.historyComboBoxVariant)->clear();
+        whileBlocking(ui.historyComboBoxVariant)->setDisabled(true);
     }
 
     fillPreview(ui.historyStyle, ui.historyComboBoxVariant, ui.historyPreview);

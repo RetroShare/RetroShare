@@ -293,7 +293,7 @@ void GroupTreeWidget::initDisplayMenu(QToolButton *toolButton)
 	actionSortByLastPost->setCheckable(true);
 	actionSortByLastPost->setActionGroup(actionGroup);
 
-	actionSortByPosts = displayMenu->addAction(QIcon(), tr("Sort by Posts"), this, SLOT(sort()));
+	actionSortByPosts = displayMenu->addAction(QIcon(), tr("Sort by Number of Posts"), this, SLOT(sort()));
 	actionSortByPosts->setCheckable(true);
 	actionSortByPosts->setActionGroup(actionGroup);
 

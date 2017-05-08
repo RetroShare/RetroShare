@@ -28,7 +28,7 @@
  */
 #include <gtest/gtest.h>
 
-#include "serialiser/rsgxsiditems.h"
+#include "rsitems/rsgxsiditems.h"
 #include "support.h"
 
 

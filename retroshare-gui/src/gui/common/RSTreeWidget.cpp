@@ -213,16 +213,24 @@ QMenu *RSTreeWidget::createStandardContextMenu(QMenu *contextMenu)
 	}
 
 	if (mEnableColumnCustomize) {
-		QMenu *headerMenu = contextMenu->addMenu(QIcon(),tr("Show Headers"));
+		QMenu *headerMenu = contextMenu->addMenu(QIcon(),tr("Show column..."));
 
 		QTreeWidgetItem *item = headerItem();
 		int columnCount = item->columnCount();
-		for (int column = 0; column < columnCount; ++column) {
+		for (int column = 0; column < columnCount; ++column)
+        {
 			QMap<int, bool>::const_iterator it = mColumnCustomizable.find(column);
 			if (it != mColumnCustomizable.end() && *it == false) {
 				continue;
 			}
-			QAction *action = headerMenu->addAction(QIcon(), item->text(column), this, SLOT(columnVisible()));
+            QString txt = item->text(column) ;
+            if(txt == "")
+                txt = item->data(column,Qt::UserRole).toString() ;
+
+            if(txt=="")
+                txt = tr("[no title]") ;
+
+			QAction *action = headerMenu->addAction(QIcon(), txt, this, SLOT(columnVisible()));
 			action->setCheckable(true);
 			action->setData(column);
 			action->setChecked(!isColumnHidden(column));

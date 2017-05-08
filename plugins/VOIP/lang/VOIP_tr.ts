@@ -1,4 +1,4 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="tr" version="2.1">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="tr" version="2.0">
 <context>
     <name>AudioInput</name>
     <message>
@@ -128,15 +128,40 @@
         <translation>Yankı Engelleme İşleniyor</translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="+15"/>
         <source>Video Processing</source>
         <translation>Video İşleme</translation>
+    </message>
+    <message>
+        <location line="+43"/>
+        <source>Available bandwidth:</source>
+        <translation>Kullanılabilecek Bant Genişliği:</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Use this field to simulate the maximum bandwidth available so as to preview what the encoded video will look like with the corresponding compression rate.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Bu alana yazılan değer, kullanılabilecek en büyük bant genişliğine uygun sıkıştırma oranıyla kodlanacak görüntünün nasıl görüneceği hakkında fikir verir.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>KB/s</source>
+        <translation>KB/s</translation>
+    </message>
+    <message>
+        <location line="+21"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Display encoded (and then decoded) frame, to check the codec&apos;s quality. If not selected, the image above only shows the frame that is grabbed from your camera.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Kodlayıcı/çözücünün kalitesini denetlemek için kodlanmış (ve sonra kodu çözülmüş) kare görüntülenir.  Seçilmez ise yukarıdaki görsel yalnız kameranızdan yakalanan görüntüyü gösterir.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>preview</source>
+        <translation>önizleme</translation>
     </message>
 </context>
 <context>
     <name>AudioInputConfig</name>
     <message>
-        <location filename="../gui/AudioInputConfig.cpp" line="+115"/>
+        <location filename="../gui/AudioInputConfig.cpp" line="+202"/>
         <source>Continuous</source>
         <translation>Sürekli</translation>
     </message>
@@ -166,7 +191,7 @@
         <translation>-%1 dB</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.h" line="+75"/>
+        <location filename="../gui/AudioInputConfig.h" line="+94"/>
         <source>VOIP</source>
         <translation>VOIP</translation>
     </message>
@@ -364,7 +389,7 @@
         <translation>RetorShare Ses Ayar Yardımcısına hoş geldiniz</translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+6"/>
         <source>This is the audio tuning wizard for RetroShare. This will help you correctly set the input levels of your sound card, and also set the correct parameters for sound processing in Retroshare. </source>
         <translation>Bu yardımcı, ses kartınız için giriş düzeylerini doğru olarak seçmenizi ve seslerin RetroShare tarafından işlenmesi için gerekli ayarları yapmanızı sağlar.</translation>
     </message>
@@ -379,7 +404,7 @@
         <translation>Mikrofon donanım ses düzeyinin en uygun değere ayarlanması.</translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+6"/>
         <source>&lt;p &gt;Open your sound control panel and go to the recording settings. Make sure the microphone is selected as active input with maximum recording volume. If there's an option to enable a &amp;quot;Microphone boost&amp;quot; make sure it's checked. &lt;/p&gt;
 &lt;p&gt;Speak loudly, as when you are annoyed or excited. Decrease the volume in the sound control panel until the bar below stays as high as possible in the green and orange but not the red zone while you speak. &lt;/p&gt;</source>
         <translation>&lt;p&gt;Ses denetim panelini açarak kayıt ayarlarına gidin. Etkin giriş olarak mikrofonun ses düzeyi en fazla şekilde seçildiğine emin olun. &quot;Mikrofon güçlendirmesi&quot; gibi bir seçenek varsa etkinleştirildiğinden emin olun.
@@ -389,7 +414,7 @@ Sinirli ya da coştuğunuz zamanlardaki gibi yüksek sesle konuşun. Denetim pan
 &lt;/p&gt;</translation>
     </message>
     <message>
-        <location line="+16"/>
+        <location line="+11"/>
         <source>Talk normally, and adjust the slider below so that the bar moves into green when you talk, and doesn&apos;t go into the orange zone.</source>
         <translation>Normal konuşun ve konuşurken çubuk yeşil bölgede kalarak turuncu bölgeye geçmeyecek şekilde düzeyi ayarlayın.</translation>
     </message>
@@ -454,7 +479,7 @@ Sinirli ya da coştuğunuz zamanlardaki gibi yüksek sesle konuşun. Denetim pan
         <translation>RetroShare kullanmanın tadını çıkarın</translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+6"/>
         <source>Congratulations. You should now be ready to enjoy a richer sound experience with Retroshare.</source>
         <translation>Tebrikler. Artık RetroShare ile daha zengin bir ses deneyimi yaşayabilirsiniz.</translation>
     </message>
@@ -462,7 +487,7 @@ Sinirli ya da coştuğunuz zamanlardaki gibi yüksek sesle konuşun. Denetim pan
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="+124"/>
+        <location filename="../VOIPPlugin.cpp" line="+128"/>
         <source>&lt;h3&gt;RetroShare VOIP plugin&lt;/h3&gt;&lt;br/&gt;   * Contributors: Cyril Soler, Josselin Jacquard&lt;br/&gt;</source>
         <translation>&lt;h3&gt;RetroShare VOIP uyumlu eki&lt;/h3&gt;&lt;br/&gt;   * Geliştirenler: Cyril Soler, Josselin Jacquard&lt;br/&gt;</translation>
     </message>
@@ -500,35 +525,115 @@ Sinirli ya da coştuğunuz zamanlardaki gibi yüksek sesle konuşun. Denetim pan
 <context>
     <name>VOIP</name>
     <message>
-        <location line="+49"/>
+        <location line="+47"/>
         <source>This plugin provides voice communication between friends in RetroShare.</source>
         <translation>Bu uyumlu ek RetroShare ile arkadaşlar arasında sesli iletişim sağlar.</translation>
+    </message>
+    <message>
+        <location line="+40"/>
+        <location line="+4"/>
+        <location line="+4"/>
+        <location line="+4"/>
+        <source>VOIP</source>
+        <translation>VOIP</translation>
+    </message>
+    <message>
+        <location line="-11"/>
+        <source>Incoming audio call</source>
+        <translation>Gelen sesli çağrı</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Incoming video call</source>
+        <translation>Gelen görüntülü çağrı</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Outgoing audio call</source>
+        <translation>Giden sesli çağrı</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Outgoing video call</source>
+        <translation>Giden görüntülü çağrı</translation>
     </message>
 </context>
 <context>
     <name>VOIPChatWidgetHolder</name>
     <message>
-        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="+63"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="+70"/>
+        <location line="+146"/>
         <source>Mute</source>
         <translation>Ses Kapalı</translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="-128"/>
+        <location line="+138"/>
         <source>Start Call</source>
         <translation>Çağrı Başlatın</translation>
     </message>
     <message>
-        <location line="+28"/>
+        <location line="-121"/>
+        <location line="+131"/>
         <source>Start Video Call</source>
-        <translation>Görüntülü Arama Başlatın</translation>
+        <translation>Görüntülü Çağrı Başlatın</translation>
     </message>
     <message>
-        <location line="-14"/>
+        <location line="-121"/>
+        <location line="+131"/>
         <source>Hangup Call</source>
         <translation>Çağrıyı Sonlandırın</translation>
     </message>
     <message>
-        <location line="+79"/>
+        <location line="-113"/>
+        <location line="+626"/>
+        <source>Hide Chat Text</source>
+        <translation>Sohbet Metni Gizlensin</translation>
+    </message>
+    <message>
+        <location line="-608"/>
+        <location line="+106"/>
+        <location line="+523"/>
+        <source>Fullscreen mode</source>
+        <translation>Tam Ekran Kipi</translation>
+    </message>
+    <message>
+        <location line="-412"/>
+        <source>%1 inviting you to start an audio conversation. Do you want Accept or Decline the invitation?</source>
+        <translation>%1 sizi sesli görüşmeye çağırıyor. Çağrıyı kabul ya da ret edin.</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Accept Audio Call</source>
+        <translation>Sesli Çağrıyı Kabul Edin</translation>
+    </message>
+    <message>
+        <location line="+17"/>
+        <source>Decline Audio Call</source>
+        <translation>Sesli Çağrıyı Reddedin</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Refuse audio call</source>
+        <translation>Sesli Çağrıyı Geri Çevirin</translation>
+    </message>
+    <message>
+        <location line="+33"/>
+        <source>%1 inviting you to start a video conversation. Do you want Accept or Decline the invitation?</source>
+        <translation>%1 sizi görüntülü görüşmeye çağırıyor. Çağrıyı kabul ya da ret edin.</translation>
+    </message>
+    <message>
+        <location line="+19"/>
+        <source>Decline Video Call</source>
+        <translation>Görüntülü Çağrıyı Kabul Edin</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Refuse video call</source>
+        <translation>Görüntüyü Çağrıyı Geri Çevirin</translation>
+    </message>
+    <message>
+        <location line="+102"/>
         <source>Mute yourself</source>
         <translation>Sesinizi kısın</translation>
     </message>
@@ -538,83 +643,129 @@ Sinirli ya da coştuğunuz zamanlardaki gibi yüksek sesle konuşun. Denetim pan
         <translation>Sesinizi açın</translation>
     </message>
     <message>
-        <location line="+19"/>
-        <location line="+37"/>
-        <location line="+38"/>
-        <location line="+18"/>
-        <location line="+13"/>
-        <location line="+92"/>
+        <location line="+589"/>
+        <source>Waiting your friend respond your video call.</source>
+        <translation>Arkadaşınızın görüntülü çağrıya yanıt vermesi bekleniyor.</translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Your friend is calling you for video. Respond.</source>
+        <translation>Arkadaşınızın görüntülü çağrısını yanıtlayın.</translation>
+    </message>
+    <message>
+        <location line="-781"/>
+        <location line="+53"/>
+        <location line="+188"/>
+        <location line="+24"/>
+        <location line="+57"/>
+        <location line="+28"/>
+        <location line="+284"/>
+        <location line="+11"/>
+        <location line="+11"/>
+        <location line="+21"/>
+        <location line="+11"/>
         <source>VoIP Status</source>
         <translation>VoIP Durumu</translation>
     </message>
     <message>
-        <location line="-198"/>
-        <source>Outgoing Call stopped.</source>
-        <translation>Giden Çağrı sonlandırıldı.</translation>
-    </message>
-    <message>
-        <location line="+19"/>
+        <location line="-467"/>
         <source>Hold Call</source>
         <translation>Çağrıyı Bekletin</translation>
     </message>
     <message>
-        <location line="+18"/>
+        <location line="+20"/>
         <source>Outgoing Call is started...</source>
         <translation>Giden Çağrı başlatıldı...</translation>
     </message>
     <message>
-        <location line="+15"/>
+        <location line="+9"/>
         <source>Resume Call</source>
         <translation>Çağrıyı Sürdürün</translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location line="+16"/>
+        <source>Outgoing Audio Call stopped.</source>
+        <translation>Giden Ses Çağrısı sonlandırıldı.</translation>
+    </message>
+    <message>
+        <location line="+46"/>
         <source>Shut camera off</source>
         <translation>Kamerayı kapatın</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+11"/>
         <source>You&apos;re now sending video...</source>
-        <translation>Video gönderiyorsunuz...</translation>
+        <translation>Görüntü gönderiyorsunuz...</translation>
     </message>
     <message>
-        <location line="+12"/>
-        <location line="+21"/>
+        <location line="-266"/>
+        <location line="+279"/>
         <source>Activate camera</source>
         <translation>Kamerayı etkinleştirin</translation>
     </message>
     <message>
-        <location line="-15"/>
+        <location line="+15"/>
         <source>Video call stopped</source>
         <translation>Görüntülü arama sonlandı</translation>
     </message>
     <message>
-        <location line="+13"/>
-        <source>%1 inviting you to start a video conversation. do you want Accept or Decline the invitation?</source>
-        <translation>%1 sizi görüntülü görüşmeye davet ediyor. Kabul Etmek mi istersiniz yoksa Reddetmek mi?</translation>
-    </message>
-    <message>
-        <location line="+1"/>
+        <location line="-295"/>
         <source>Accept Video Call</source>
-        <translation>Görüntülü Görüşmeyi Kabul Edin</translation>
+        <translation>Görüntülü Çağrıyı Kabul Edin</translation>
     </message>
     <message>
-        <location line="+91"/>
-        <source>%1 inviting you to start a audio conversation. do you want Accept or Decline the invitation?</source>
-        <translation>%1 sizi sesli görüşmeye davet ediyor. Kabul Etmek mi istersiniz yoksa Reddetmek mi?</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Accept Call</source>
-        <translation>Görüşmeyi Kabul Edin</translation>
-    </message>
-    <message>
-        <location line="+1"/>
+        <location line="-52"/>
         <source>Activate audio</source>
         <translation>Sesi Etkinleştirin</translation>
     </message>
     <message>
+        <location line="+384"/>
+        <source>Show Chat Text</source>
+        <translation>Sohbet Metni Görüntülensin</translation>
+    </message>
+    <message>
+        <location line="+19"/>
+        <source>Return to normal view.</source>
+        <translation>Normal görünüme dönün.</translation>
+    </message>
+    <message>
+        <location line="+228"/>
+        <source>%1 hang up. Your call is closed.</source>
+        <translation>%1 kapattı. Çağrınız sonlandırıldı.</translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>%1 hang up. Your audio call is closed.</source>
+        <translation>%1 kapattı. Sesli çağrınız sonlandırıldı.</translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>%1 hang up. Your video call is closed.</source>
+        <translation>%1 kapattı. Görüntülü çağrınız sonlandırıldı.</translation>
+    </message>
+    <message>
         <location line="+21"/>
+        <source>%1 accepted your audio call.</source>
+        <translation>%1 sesli çağrınızı kabul etti.</translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>%1 accepted your video call.</source>
+        <translation>%1 görüntülü çağrınızı kabul etti.</translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>Waiting your friend respond your audio call.</source>
+        <translation>Arkadaşınızın sesli çağrınıza yanıt vermesi bekleniyor.</translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Your friend is calling you for audio. Respond.</source>
+        <translation>Arkadaşınızın sesli çağrısını yanıtlayın.</translation>
+    </message>
+    <message>
+        <location line="+17"/>
+        <location line="+58"/>
         <source>Answer</source>
         <translation>Yanıtlayın</translation>
     </message>
@@ -622,7 +773,7 @@ Sinirli ya da coştuğunuz zamanlardaki gibi yüksek sesle konuşun. Denetim pan
 <context>
     <name>VOIPPlugin</name>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="+5"/>
+        <location filename="../VOIPPlugin.cpp" line="-48"/>
         <source>VOIP</source>
         <translation>VOIP</translation>
     </message>
@@ -639,6 +790,11 @@ Sinirli ya da coştuğunuz zamanlardaki gibi yüksek sesle konuşun. Denetim pan
         <source>Answer with video</source>
         <translation>Görüntülü Yanıtlayın</translation>
     </message>
+    <message>
+        <location filename="../gui/VOIPToasterItem.ui" line="+232"/>
+        <source>Decline</source>
+        <translation>Reddedin</translation>
+    </message>
 </context>
 <context>
     <name>VOIPToasterNotify</name>
@@ -650,7 +806,7 @@ Sinirli ya da coştuğunuz zamanlardaki gibi yüksek sesle konuşun. Denetim pan
     <message>
         <location line="+3"/>
         <source>Accept</source>
-        <translation>KabulEdin</translation>
+        <translation>Kabul Edin</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -660,7 +816,7 @@ Sinirli ya da coştuğunuz zamanlardaki gibi yüksek sesle konuşun. Denetim pan
     <message>
         <location line="+1"/>
         <source>Audio or Video Data</source>
-        <translation>Ses veya Video Verisi</translation>
+        <translation>Ses ya da Görüntü Verisi</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -670,7 +826,7 @@ Sinirli ya da coştuğunuz zamanlardaki gibi yüksek sesle konuşun. Denetim pan
     <message>
         <location line="+1"/>
         <source>Invitation</source>
-        <translation>Davetiye</translation>
+        <translation>Çağrı</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -705,48 +861,56 @@ Sinirli ya da coştuğunuz zamanlardaki gibi yüksek sesle konuşun. Denetim pan
     <message>
         <location line="+1"/>
         <source>Test VOIP Invitation</source>
-        <translation>VOIP Davetiyesini Sınayın</translation>
+        <translation>VOIP Çağrısını Sınayın</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Test VOIP Audio Call</source>
-        <translation>VOIP Sesli Görüşmeyi Sınayın</translation>
+        <translation>VOIP Sesli Görüşmesini Sınayın</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Test VOIP Video Call</source>
-        <translation>VOIP Görüntülü Görüşmeyi Sınayın</translation>
+        <translation>VOIP Görüntülü Görüşmesini Sınayın</translation>
     </message>
     <message>
         <location line="+21"/>
         <source>Accept received from this peer.</source>
-        <translation>Bu kullanıcıdan onay geldi.</translation>
+        <translation>Bu kullanıcı kabul etti.</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Bandwidth Info received from this peer:%1</source>
-        <translation>Bu kullanıcıdan gelen Bant Genişliği Bilgisi:%1</translation>
+        <translation>Bu kullanıcıdan alınan bant genişliği bilgisi: %1</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Audio or Video Data received from this peer.</source>
-        <translation>Bu kullanıcıdan Ses veya Video Verisi aktarıldı.</translation>
+        <translation>Bu kullanıcıdan ses ya da görüntü verisi alındı.</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>HangUp received from this peer.</source>
-        <translation>Bu Kullanıcı görüşmeyi sonlandırdı.</translation>
+        <translation>Bu kullanıcı görüşmeyi sonlandırdı.</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Invitation received from this peer.</source>
-        <translation>Bu kullanıcıdan davetiye geldi.</translation>
+        <translation>Bu kullanıcıdan çağrı geldi.</translation>
     </message>
     <message>
         <location line="+25"/>
         <location line="+24"/>
         <source>calling</source>
         <translation>aranıyor</translation>
+    </message>
+</context>
+<context>
+    <name>voipGraphSource</name>
+    <message>
+        <location filename="../gui/AudioInputConfig.cpp" line="-260"/>
+        <source>Required bandwidth</source>
+        <translation>Gerekli bant genişliği</translation>
     </message>
 </context>
 </TS>

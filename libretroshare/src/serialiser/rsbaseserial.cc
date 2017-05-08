@@ -35,7 +35,7 @@
 
 /* UInt8 get/set */
 
-bool getRawUInt8(void *data, uint32_t size, uint32_t *offset, uint8_t *out)
+bool getRawUInt8(const void *data, uint32_t size, uint32_t *offset, uint8_t *out)
 {
 	/* first check there is space */
 	if (size < *offset + 1)
@@ -71,7 +71,7 @@ bool setRawUInt8(void *data, uint32_t size, uint32_t *offset, uint8_t in)
 }
 /* UInt16 get/set */
 
-bool getRawUInt16(void *data, uint32_t size, uint32_t *offset, uint16_t *out)
+bool getRawUInt16(const void *data, uint32_t size, uint32_t *offset, uint16_t *out)
 {
 	/* first check there is space */
 	if (size < *offset + 2)
@@ -113,7 +113,7 @@ bool setRawUInt16(void *data, uint32_t size, uint32_t *offset, uint16_t in)
 
 /* UInt32 get/set */
 
-bool getRawUInt32(void *data, uint32_t size, uint32_t *offset, uint32_t *out)
+bool getRawUInt32(const void *data, uint32_t size, uint32_t *offset, uint32_t *out)
 {
 	/* first check there is space */
 	if (size < *offset + 4)
@@ -155,7 +155,7 @@ bool setRawUInt32(void *data, uint32_t size, uint32_t *offset, uint32_t in)
 
 /* UInt64 get/set */
 
-bool getRawUInt64(void *data, uint32_t size, uint32_t *offset, uint64_t *out)
+bool getRawUInt64(const void *data, uint32_t size, uint32_t *offset, uint64_t *out)
 {
 	/* first check there is space */
 	if (size < *offset + 8)
@@ -195,7 +195,7 @@ bool setRawUInt64(void *data, uint32_t size, uint32_t *offset, uint64_t in)
 	return true;
 }
 
-bool getRawUFloat32(void *data,uint32_t size,uint32_t *offset,float& f)
+bool getRawUFloat32(const void *data, uint32_t size, uint32_t *offset, float& f)
 {
 	uint32_t n ;
 	if(!getRawUInt32(data, size, offset, &n) )
@@ -208,6 +208,13 @@ bool getRawUFloat32(void *data,uint32_t size,uint32_t *offset,float& f)
 
 bool setRawUFloat32(void *data,uint32_t size,uint32_t *offset,float f)
 {
+	uint32_t sz = 4;
+
+	if ( !data || size <= *offset || size < sz + *offset )
+	{
+		std::cerr << "(EE) not enough room. SIZE+offset=" << sz+*offset << " and size is only " << size << std::endl;
+		return false;
+	}
 	if(f < 0.0f)
 	{
 		std::cerr << "(EE) Cannot serialise invalid negative float value " << f << " in " << __PRETTY_FUNCTION__ << std::endl;
@@ -229,7 +236,7 @@ uint32_t getRawStringSize(const std::string &outStr)
 	return outStr.length() + 4;
 }
 
-bool getRawString(void *data, uint32_t size, uint32_t *offset, std::string &outStr)
+bool getRawString(const void *data, uint32_t size, uint32_t *offset, std::string &outStr)
 {
 #warning Gio: "I had to change this. It seems like a bug to not clear the string. Should make sure it's not introducing any side effect."
     outStr.clear();
@@ -284,7 +291,7 @@ bool setRawString(void *data, uint32_t size, uint32_t *offset, const std::string
 	return true;
 }
 
-bool getRawTimeT(void *data,uint32_t size,uint32_t *offset,time_t& t)
+bool getRawTimeT(const void *data,uint32_t size,uint32_t *offset,time_t& t)
 {
 	uint64_t T ;
 	bool res = getRawUInt64(data,size,offset,&T) ;
@@ -292,7 +299,7 @@ bool getRawTimeT(void *data,uint32_t size,uint32_t *offset,time_t& t)
 
 	return res ;
 }
-bool setRawTimeT(void *data,uint32_t size,uint32_t *offset,const time_t& t)
+bool setRawTimeT(void *data, uint32_t size, uint32_t *offset, const time_t& t)
 {
 	return setRawUInt64(data,size,offset,t) ;
 }

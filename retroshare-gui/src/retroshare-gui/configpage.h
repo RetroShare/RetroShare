@@ -53,7 +53,7 @@ class ConfigPage : public QWidget
 		virtual QString helpText() const = 0;
 
 private:
-        virtual bool save(QString &errmsg) { std::cerr << "(EE) save() shoud not be called!" << std::endl; return true;}
+		virtual bool save(QString &errmsg) { std::cerr << "(EE) save() shoud not be called!" << errmsg.toStdString() << std::endl; return true;}
 	protected:
 		virtual void showEvent(QShowEvent * /*event*/)
 		{

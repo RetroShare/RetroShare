@@ -22,7 +22,7 @@
  * Please report all bugs and problems to "retroshare.project@gmail.com".
  *
  */
-#include "serialiser/rsserviceids.h"
+#include "rsitems/rsserviceids.h"
 
 #include "file_sharing/p3filelists.h"
 #include "file_sharing/directory_storage.h"
@@ -179,7 +179,7 @@ int p3FileDatabase::tick()
 #endif
         last_print_time = now ;
 
-//#warning this should be removed, but it's necessary atm for updating the GUI
+#warning mr-alice 2016-08-19: "This should be removed, but it's necessary atm for updating the GUI"
         RsServer::notify()->notifyListChange(NOTIFY_LIST_DIRLIST_LOCAL, 0);
     }
 
@@ -896,9 +896,9 @@ uint32_t p3FileDatabase::getType(void *ref) const
     if(e == 0)
         return DIR_TYPE_PERSON ;
 
-    if(fi == 0)
+    if(fi == 0 && mLocalSharedDirs != NULL)
         return mLocalSharedDirs->getEntryType(e) ;
-    else if(mRemoteDirectories[fi-1]!=NULL)
+    else if(fi-1 < mRemoteDirectories.size() && mRemoteDirectories[fi-1]!=NULL)
         return mRemoteDirectories[fi-1]->getEntryType(e) ;
     else
         return DIR_TYPE_ROOT ;// some failure case. Should not happen
@@ -1189,8 +1189,13 @@ void p3FileDatabase::tickRecv()
       {
       case RS_PKT_SUBTYPE_FILELISTS_SYNC_REQ_ITEM: handleDirSyncRequest( dynamic_cast<RsFileListsSyncRequestItem*>(item) ) ;
          break ;
-      case RS_PKT_SUBTYPE_FILELISTS_SYNC_RSP_ITEM: handleDirSyncResponse( dynamic_cast<RsFileListsSyncResponseItem*>(item) ) ;
-         break ;
+      case RS_PKT_SUBTYPE_FILELISTS_SYNC_RSP_ITEM:
+	  {
+          RsFileListsSyncResponseItem *sitem = dynamic_cast<RsFileListsSyncResponseItem*>(item);
+		  handleDirSyncResponse(sitem) ;
+          item = sitem ;
+      }
+		  break ;
       default:
          P3FILELISTS_ERROR() << "(EE) unhandled packet subtype " << item->PacketSubType() << " in " << __PRETTY_FUNCTION__ << std::endl;
       }
@@ -1322,6 +1327,7 @@ void p3FileDatabase::splitAndSendItem(RsFileListsSyncResponseItem *ritem)
 }
 
 // This function should not take memory ownership of ritem, so it makes copies.
+// The item that is returned is either created (if different from ritem) or equal to ritem.
 
 RsFileListsSyncResponseItem *p3FileDatabase::recvAndRebuildItem(RsFileListsSyncResponseItem *ritem)
 {
@@ -1393,12 +1399,24 @@ RsFileListsSyncResponseItem *p3FileDatabase::recvAndRebuildItem(RsFileListsSyncR
         return NULL ;
 }
 
-void p3FileDatabase::handleDirSyncResponse(RsFileListsSyncResponseItem *sitem)
+// We employ a trick in this function:
+// - if recvAndRebuildItem(item) returns the same item, it has not created memory, so the incoming item should be the one to
+//   delete, which is done by the caller in every case.
+// - if it returns a different item, it means that the item has been created below when collapsing items, so we should delete both.
+//   to do so, we first delete the incoming item, and replace the pointer by the new created one.
+
+void p3FileDatabase::handleDirSyncResponse(RsFileListsSyncResponseItem*& sitem)
 {
     RsFileListsSyncResponseItem *item = recvAndRebuildItem(sitem) ;
 
     if(!item)
         return ;
+
+    if(item != sitem)
+    {
+        delete sitem ;
+        sitem = item ;
+    }
 
     time_t now = time(NULL);
 

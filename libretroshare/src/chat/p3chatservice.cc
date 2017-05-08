@@ -42,7 +42,7 @@
 #include "services/p3idservice.h"
 
 #include "chat/p3chatservice.h"
-#include "serialiser/rsconfigitems.h"
+#include "rsitems/rsconfigitems.h"
 
 /****
  * #define CHAT_DEBUG 1

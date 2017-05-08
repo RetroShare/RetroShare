@@ -119,8 +119,10 @@ NewsFeed::NewsFeed(QWidget *parent) :
 	connect(ui->sortComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(sortChanged(int)));
 
 	connect(ui->removeAllButton, SIGNAL(clicked()), ui->feedWidget, SLOT(clear()));
-	connect(ui->feedOptionsButton, SIGNAL(clicked()), this, SLOT(feedoptions()));
 	connect(ui->feedWidget, SIGNAL(feedCountChanged()), this, SLOT(sendNewsFeedChanged()));
+
+	connect(ui->feedOptionsButton, SIGNAL(clicked()), this, SLOT(feedoptions()));
+    ui->feedOptionsButton->hide();	// (csoler) Hidden until we repare the system to display a specific settings page.
 
 QString hlp_str = tr(
  " <h1><img width=\"32\" src=\":/icons/help_64.png\">&nbsp;&nbsp;News Feed</h1>                                                          \
@@ -215,13 +217,17 @@ void NewsFeed::updateDisplay()
 				if (flags & RS_FEED_TYPE_PEER)
 					addFeedItemPeerDisconnect(fi);
 				break;
+			case RS_FEED_ITEM_PEER_HELLO:
+				if (flags & RS_FEED_TYPE_PEER)
+					addFeedItemPeerHello(fi);
+				break;
 			case RS_FEED_ITEM_PEER_NEW:
 				if (flags & RS_FEED_TYPE_PEER)
 					addFeedItemPeerNew(fi);
 				break;
-			case RS_FEED_ITEM_PEER_HELLO:
+			case RS_FEED_ITEM_PEER_OFFSET:
 				if (flags & RS_FEED_TYPE_PEER)
-					addFeedItemPeerHello(fi);
+					addFeedItemPeerOffset(fi);
 				break;
 
 			case RS_FEED_ITEM_SEC_CONNECT_ATTEMPT:
@@ -410,8 +416,9 @@ void NewsFeed::testFeeds(uint notifyFlags)
 
 			instance->addFeedItemPeerConnect(fi);
 			instance->addFeedItemPeerDisconnect(fi);
-			instance->addFeedItemPeerNew(fi);
 			instance->addFeedItemPeerHello(fi);
+			instance->addFeedItemPeerNew(fi);
+			instance->addFeedItemPeerOffset(fi);
 			break;
 
 		case RS_FEED_TYPE_SECURITY:
@@ -904,6 +911,7 @@ struct AddFeedItemIfUniqueData
 	AddFeedItemIfUniqueData(FeedItem *feedItem, int type, const RsPeerId &sslId, const std::string& ipAddr, const std::string& ipAddrReported)
 	    : mType(type), mSslId(sslId), mIpAddr(ipAddr), mIpAddrReported(ipAddrReported)
 	{
+		mPeerItem = dynamic_cast<PeerItem*>(feedItem);
 		mSecItem = dynamic_cast<SecurityItem*>(feedItem);
 		mSecurityIpItem = dynamic_cast<SecurityIpItem*>(feedItem);
 	}
@@ -912,6 +920,7 @@ struct AddFeedItemIfUniqueData
 	const RsPeerId &mSslId;
 	const std::string& mIpAddr;
 	const std::string& mIpAddrReported;
+	PeerItem *mPeerItem;
 	SecurityItem *mSecItem;
 	SecurityIpItem *mSecurityIpItem;
 };
@@ -920,6 +929,14 @@ static bool addFeedItemIfUniqueCallback(FeedItem *feedItem, void *data)
 {
 	AddFeedItemIfUniqueData *findData = (AddFeedItemIfUniqueData*) data;
 	if (!findData || findData->mSslId.isNull()) {
+		return false;
+	}
+
+	if (findData->mPeerItem) {
+		PeerItem *peerItem = dynamic_cast<PeerItem*>(feedItem);
+		if (peerItem && peerItem->isSame(findData->mSslId, findData->mType)) {
+			return true;
+		}
 		return false;
 	}
 
@@ -953,7 +970,7 @@ void NewsFeed::addFeedItemIfUnique(FeedItem *item, int itemType, const RsPeerId 
 			return;
 		}
 
-		ui->feedWidget->removeFeedItem(item);
+		ui->feedWidget->removeFeedItem(feedItem);
 	}
 
 	addFeedItem(item);
@@ -1011,6 +1028,20 @@ void NewsFeed::addFeedItemPeerNew(const RsFeedItem &fi)
 
 #ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemPeerNew()";
+	std::cerr << std::endl;
+#endif
+}
+
+void NewsFeed::addFeedItemPeerOffset(const RsFeedItem &fi)
+{
+	/* make new widget */
+	PeerItem *pi = new PeerItem(this, NEWSFEED_PEERLIST, RsPeerId(fi.mId1), PEER_TYPE_OFFSET, false);
+
+	/* add to layout */
+	addFeedItemIfUnique(pi, PEER_TYPE_OFFSET, RsPeerId(fi.mId1), "", "", false);
+
+#ifdef NEWS_DEBUG
+	std::cerr << "NewsFeed::addFeedItemPeerOffset()";
 	std::cerr << std::endl;
 #endif
 }

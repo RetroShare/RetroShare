@@ -255,7 +255,7 @@ void ShareManager::load()
         listWidget->item(row,COLUMN_GROUPS)->setTextColor( (mDirInfos[row].shareflags & DIR_FLAGS_BROWSABLE)? (Qt::black):(Qt::lightGray)) ;
         listWidget->item(row,COLUMN_GROUPS)->setFont(font);
 
-        if(QDir(QString::fromStdString(mDirInfos[row].filename)).exists())
+        if(QDir(QString::fromUtf8(mDirInfos[row].filename.c_str())).exists())
         {
         	listWidget->item(row,COLUMN_PATH)->setTextColor(Qt::black);
 			listWidget->item(row,COLUMN_PATH)->setToolTip(tr("Double click to change shared directory path")) ;

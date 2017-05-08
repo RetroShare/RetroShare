@@ -42,6 +42,7 @@
 #include "graphwidget.h"
 #include "edge.h"
 #include "node.h"
+#include "fft.h"
 
 #include <iostream>
 #include <QDebug>
@@ -50,86 +51,9 @@
 
 #include <math.h>
 
-#define SWAP(a,b) tempr=(a);(a)=(b);(b)=tempr
-
-void fourn(double data[],unsigned long nn[],unsigned long ndim,int isign)
-{
-	int i1,i2,i3,i2rev,i3rev,ip1,ip2,ip3,ifp1,ifp2;
-	int ibit,idim,k1,k2,n,nprev,nrem,ntot;
-	double tempi,tempr;
-	double theta,wi,wpi,wpr,wr,wtemp;
-
-	ntot=1;
-	for (idim=1;idim<=(long)ndim;++idim)
-		ntot *= nn[idim];
-	nprev=1;
-	for (idim=ndim;idim>=1;idim--) {
-		n=nn[idim];
-		nrem=ntot/(n*nprev);
-		ip1=nprev << 1;
-		ip2=ip1*n;
-		ip3=ip2*nrem;
-		i2rev=1;
-		for (i2=1;i2<=ip2;i2+=ip1) {
-			if (i2 < i2rev) {
-				for (i1=i2;i1<=i2+ip1-2;i1+=2) {
-					for (i3=i1;i3<=ip3;i3+=ip2) {
-						i3rev=i2rev+i3-i2;
-						SWAP(data[i3],data[i3rev]);
-						SWAP(data[i3+1],data[i3rev+1]);
-					}
-				}
-			}
-			ibit=ip2 >> 1;
-			while (ibit >= ip1 && i2rev > ibit) {
-				i2rev -= ibit;
-				ibit >>= 1;
-			}
-			i2rev += ibit;
-		}
-		ifp1=ip1;
-		while (ifp1 < ip2) {
-			ifp2=ifp1 << 1;
-			theta=isign*6.28318530717959/(ifp2/ip1);
-			wtemp=sin(0.5*theta);
-			wpr = -2.0*wtemp*wtemp;
-			wpi=sin(theta);
-			wr=1.0;
-			wi=0.0;
-			for (i3=1;i3<=ifp1;i3+=ip1) {
-				for (i1=i3;i1<=i3+ip1-2;i1+=2) {
-					for (i2=i1;i2<=ip3;i2+=ifp2) {
-						k1=i2;
-						k2=k1+ifp1;
-						tempr=wr*data[k2]-wi*data[k2+1];
-						tempi=wr*data[k2+1]+wi*data[k2];
-						data[k2]=data[k1]-tempr;
-						data[k2+1]=data[k1+1]-tempi;
-						data[k1] += tempr;
-						data[k1+1] += tempi;
-					}
-				}
-				wr=(wtemp=wr)*wpr-wi*wpi+wr;
-				wi=wi*wpr+wtemp*wpi+wi;
-			}
-			ifp1=ifp2;
-		}
-		nprev *= n;
-	}
-}
-
-#undef SWAP
-
 GraphWidget::GraphWidget(QWidget *)
     : timerId(0), mIsFrozen(false)
 {
-//    QGraphicsScene *scene = new QGraphicsScene(QRectF(0,0,500,500),this);
-//    scene->setItemIndexMethod(QGraphicsScene::NoIndex);
-//	 scene->clear() ;
-//    setScene(scene);
-    
-//    scene()->setSceneRect(0, 0, width(), height());
-
     setCacheMode(CacheBackground);
     setViewportUpdateMode(BoundingRectViewportUpdate);
     setRenderHint(QPainter::Antialiasing);
@@ -142,18 +66,6 @@ GraphWidget::GraphWidget(QWidget *)
 
 void GraphWidget::clearGraph()
 {
-//	QGraphicsScene *scene = new QGraphicsScene(this);
-//	scene->setItemIndexMethod(QGraphicsScene::NoIndex);
-//	setScene(scene);
-
-//	scene->addItem(centerNode);
-//	centerNode->setPos(0, 0);
-
-//	if (oldscene != NULL)
-//	{
-//		delete oldscene;
-//	}
-
 	scene()->clear();
 	scene()->setSceneRect(0, 0, width(), height());
     
@@ -229,18 +141,6 @@ void GraphWidget::itemMoved()
 void GraphWidget::keyPressEvent(QKeyEvent *event)
 {
     switch (event->key()) {
-//    case Qt::Key_Up:
-//        centerNode->moveBy(0, -20);
-//        break;
-//    case Qt::Key_Down:
-//        centerNode->moveBy(0, 20);
-//        break;
-//    case Qt::Key_Left:
-//        centerNode->moveBy(-20, 0);
-//        break;
-//    case Qt::Key_Right:
-//        centerNode->moveBy(20, 0);
-//        break;
     case Qt::Key_Plus:
         scaleView(qreal(1.2));
         break;
@@ -259,45 +159,63 @@ void GraphWidget::keyPressEvent(QKeyEvent *event)
     }
 }
 
-static void convolveWithGaussian(double *forceMap,unsigned int S,int /*s*/)
+static void convolveWithForce(double *forceMap,unsigned int S,int /*s*/)
 {
-	static double *bf = NULL ;
+	static double **bf = NULL ;
+	static double **tmp = NULL ;
+    static int *ip = NULL ;
+    static double *w = NULL ;
+    static uint32_t last_S = 0 ;
 
 	if(bf == NULL)
 	{
-		bf = new double[S*S*2] ;
+		bf  = fft::alloc_2d_double(S, 2*S);
 
         for(unsigned int i=0;i<S;++i)
             for(unsigned int j=0;j<S;++j)
 			{
 				int x = (i<S/2)?i:(S-i) ;
 				int y = (j<S/2)?j:(S-j) ;
-//				int l=2*(x*x+y*y);
-				bf[2*(i+S*j)] = log(sqrtf(0.1 + x*x+y*y)); // linear -> derivative is constant
-				bf[2*(i+S*j)+1] = 0 ;
+
+				bf[i][j*2+0] = log(sqrtf(0.1 + x*x+y*y)); // linear -> derivative is constant
+				bf[i][j*2+1] = 0 ;
 			}
 
-		unsigned long nn[2] = {S,S};
-		fourn(&bf[-1],&nn[-1],2,1) ;
+        ip = fft::alloc_1d_int(2 + (int) sqrt(S + 0.5));
+        w = fft::alloc_1d_double(S/2+S);
+        ip[0] = 0;
+
+		fft::cdft2d(S, 2*S, 1, bf, ip, w);
 	}
 
-	unsigned long nn[2] = {S,S};
-	fourn(&forceMap[-1],&nn[-1],2,1) ;
+    if(last_S != S)
+    {
+        if(tmp)
+            fft::free_2d_double(tmp) ;
+
+		tmp = fft::alloc_2d_double(S, 2*S);
+        last_S = S ;
+    }
+    memcpy(tmp[0],forceMap,S*S*2*sizeof(double)) ;
+
+	fft::cdft2d(S, 2*S, 1, tmp, ip, w);
 
 	for (unsigned int i=0;i<S;++i)
 		for (unsigned int j=0;j<S;++j)
 		{
-			float a = forceMap[2*(i+S*j)]*bf[2*(i+S*j)] - forceMap[2*(i+S*j)+1]*bf[2*(i+S*j)+1] ;
-			float b = forceMap[2*(i+S*j)]*bf[2*(i+S*j)+1] + forceMap[2*(i+S*j)+1]*bf[2*(i+S*j)] ;
+			float a = tmp[i][2*j+0]*bf[i][2*j+0] - tmp[i][2*j+1]*bf[i][2*j+1] ;
+			float b = tmp[i][2*j+0]*bf[i][2*j+1] + tmp[i][2*j+1]*bf[i][2*j+0] ;
 
-			forceMap[2*(i+S*j)]   = a ;
-			forceMap[2*(i+S*j)+1] = b ;
+			tmp[i][2*j+0] = a ;
+			tmp[i][2*j+1] = b ;
 		}
 
-	fourn(&forceMap[-1],&nn[-1],2,-1) ;
+	fft::cdft2d(S, 2*S,-1, tmp, ip, w);
 
-    for(unsigned int i=0;i<S*S*2;++i)
-		forceMap[i] /= S*S;
+    memcpy(forceMap,tmp[0],S*S*2*sizeof(double)) ;
+
+    for(uint32_t i=0;i<2*S*S;++i)
+        forceMap[i] /= S*S;
 }
 
 void GraphWidget::timerEvent(QTimerEvent *event)
@@ -322,7 +240,7 @@ void GraphWidget::timerEvent(QTimerEvent *event)
 
 	 QRectF R(scene()->sceneRect()) ;
 
-	 if( (hit++ & 7) == 0)
+	 if( (hit++ & 3) == 0)
 	 {
 		 memset(forceMap,0,2*S*S*sizeof(double)) ;
 
@@ -348,7 +266,7 @@ void GraphWidget::timerEvent(QTimerEvent *event)
 		 }
 
 		 // compute convolution with 1/omega kernel.
-		 convolveWithGaussian(forceMap,S,20) ;
+		 convolveWithForce(forceMap,S,20) ;
 	 }
 
 	 foreach (Node *node, _nodes)
@@ -362,7 +280,7 @@ void GraphWidget::timerEvent(QTimerEvent *event)
 
     bool itemsMoved = false;
     foreach (Node *node, _nodes) 
-        if(node->advance())
+        if(node->progress())
             itemsMoved = true;
 
     if (!itemsMoved) {
@@ -434,43 +352,6 @@ void GraphWidget::wheelEvent(QWheelEvent *event)
 {
     scaleView(pow((double)2, -event->delta() / 240.0));
 }
-
-//void GraphWidget::drawBackground(QPainter *painter, const QRectF &rect)
-//{
-//    Q_UNUSED(rect);
-//
-//    // Shadow
-//    QRectF sceneRect = this->sceneRect();
-//    QRectF rightShadow(sceneRect.right(), sceneRect.top() + 5, 5, sceneRect.height());
-//    QRectF bottomShadow(sceneRect.left() + 5, sceneRect.bottom(), sceneRect.width(), 5);
-//    if (rightShadow.intersects(rect) || rightShadow.contains(rect))
-//	painter->fillRect(rightShadow, Qt::darkGray);
-//    if (bottomShadow.intersects(rect) || bottomShadow.contains(rect))
-//	painter->fillRect(bottomShadow, Qt::darkGray);
-//
-//    // Fill
-//    QLinearGradient gradient(sceneRect.topLeft(), sceneRect.bottomRight());
-//    gradient.setColorAt(0, Qt::white);
-//    gradient.setColorAt(1, Qt::lightGray);
-//    painter->fillRect(rect.intersected(sceneRect), gradient);
-//    painter->setBrush(Qt::NoBrush);
-//    painter->drawRect(sceneRect);
-//
-//    // Text
-//    QRectF textRect(sceneRect.left() + 4, sceneRect.top() + 4,
-//                    sceneRect.width() - 4, sceneRect.height() - 4);
-//    QString message(tr("Click and drag the nodes around, and zoom with the mouse "
-//                       "wheel or the '+' and '-' keys"));
-//
-//    QFont font = painter->font();
-//    font.setBold(true);
-//    font.setPointSize(14);
-//    painter->setFont(font);
-//    painter->setPen(Qt::lightGray);
-//    painter->drawText(textRect.translated(2, 2), message);
-//    painter->setPen(Qt::black);
-//    painter->drawText(textRect, message);
-//}
 
 void GraphWidget::scaleView(qreal scaleFactor)
 {

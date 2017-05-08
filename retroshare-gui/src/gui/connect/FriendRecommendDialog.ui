@@ -13,9 +13,9 @@
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QVBoxLayout" name="FriendRecommendDialogVLayout">
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_8">
+    <layout class="QHBoxLayout" name="mainHLayout">
      <item>
       <widget class="FriendSelectionWidget" name="frec_recommendList" native="true">
        <property name="sizePolicy">
@@ -69,8 +69,6 @@
   <zorder>buttonBox</zorder>
   <zorder>frec_label</zorder>
   <zorder>frec_messageEdit</zorder>
-  <zorder>layoutWidget</zorder>
-  <zorder>frec_recommendList</zorder>
  </widget>
  <customwidgets>
   <customwidget>

@@ -48,27 +48,27 @@
  *
  ******************************************************************/
 
-bool getRawUInt8(void *data, uint32_t size, uint32_t *offset, uint8_t *out);
+bool getRawUInt8(const void *data, uint32_t size, uint32_t *offset, uint8_t *out);
 bool setRawUInt8(void *data, uint32_t size, uint32_t *offset, uint8_t in);
 
-bool getRawUInt16(void *data, uint32_t size, uint32_t *offset, uint16_t *out);
+bool getRawUInt16(const void *data, uint32_t size, uint32_t *offset, uint16_t *out);
 bool setRawUInt16(void *data, uint32_t size, uint32_t *offset, uint16_t in);
 
-bool getRawUInt32(void *data, uint32_t size, uint32_t *offset, uint32_t *out);
+bool getRawUInt32(const void *data, uint32_t size, uint32_t *offset, uint32_t *out);
 bool setRawUInt32(void *data, uint32_t size, uint32_t *offset, uint32_t in);
 
-bool getRawUInt64(void *data, uint32_t size, uint32_t *offset, uint64_t *out);
+bool getRawUInt64(const void *data, uint32_t size, uint32_t *offset, uint64_t *out);
 bool setRawUInt64(void *data, uint32_t size, uint32_t *offset, uint64_t in);
 
-bool getRawUFloat32(void *data, uint32_t size, uint32_t *offset, float& out);
+bool getRawUFloat32(const void *data, uint32_t size, uint32_t *offset, float& out);
 bool setRawUFloat32(void *data, uint32_t size, uint32_t *offset, float in);
 
 uint32_t getRawStringSize(const std::string &outStr);
-bool getRawString(void *data, uint32_t size, uint32_t *offset, std::string &outStr);
+bool getRawString(const void *data, uint32_t size, uint32_t *offset, std::string &outStr);
 bool setRawString(void *data, uint32_t size, uint32_t *offset, const std::string &inStr);
 
+bool getRawTimeT(const void *data, uint32_t size, uint32_t *offset, time_t& outStr);
 bool setRawTimeT(void *data, uint32_t size, uint32_t *offset, const time_t& inStr);
-bool getRawTimeT(void *data, uint32_t size, uint32_t *offset, time_t& outStr);
 
 #endif
 

@@ -35,392 +35,403 @@
       <layout class="QGridLayout" name="tabNetConfGLayout">
        <item row="0" column="0">
         <layout class="QHBoxLayout" name="netConfHLayout">
+         <property name="spacing">
+          <number>6</number>
+         </property>
+         <property name="topMargin">
+          <number>6</number>
+         </property>
+         <property name="bottomMargin">
+          <number>6</number>
+         </property>
          <item>
-          <layout class="QHBoxLayout">
+          <layout class="QVBoxLayout" name="netConfLabelVLayout">
+           <item>
+            <widget class="QLabel" name="label_netmode">
+             <property name="text">
+              <string>Network Mode</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_nat">
+             <property name="text">
+              <string>NAT</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_localAddress">
+             <property name="text">
+              <string>Local Address</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_extAddress">
+             <property name="text">
+              <string>External Address</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_dynDNS">
+             <property name="text">
+              <string>Dynamic DNS</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_totalDownloadRate">
+             <property name="font">
+              <font>
+               <weight>50</weight>
+               <bold>false</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>Download limit (KB/s) </string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_totalUploadRate">
+             <property name="font">
+              <font>
+               <weight>50</weight>
+               <bold>false</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>Upload limit (KB/s) </string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QGridLayout" name="netConfValuesVLayout">
            <property name="spacing">
             <number>6</number>
            </property>
-           <property name="topMargin">
-            <number>6</number>
-           </property>
-           <property name="bottomMargin">
-            <number>6</number>
-           </property>
-           <item>
-            <layout class="QVBoxLayout">
+           <item row="5" column="0">
+            <widget class="QSpinBox" name="totalDownloadRate">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This download limit covers the whole application. However, in some situations, such as when transfering many small files at once, the estimated bandwidth becomes unreliable and the total value reported by Retroshare might exceed that limit. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="suffix">
+              <string>kB/s</string>
+             </property>
+             <property name="minimum">
+              <number>1</number>
+             </property>
+             <property name="maximum">
+              <number>100000</number>
+             </property>
+             <property name="value">
+              <number>1</number>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLineEdit" name="localAddress"/>
+           </item>
+           <item row="2" column="1">
+            <widget class="QLabel" name="localPortLabel">
+             <property name="text">
+              <string>Port:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="2">
+            <widget class="QSpinBox" name="localPort">
+             <property name="toolTip">
+              <string>Acceptable ports range from 10 to 65535. Normally Ports below 1024 are reserved by your system.</string>
+             </property>
+             <property name="minimum">
+              <number>1024</number>
+             </property>
+             <property name="maximum">
+              <number>65535</number>
+             </property>
+             <property name="value">
+              <number>7812</number>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="0">
+            <widget class="QLineEdit" name="extAddress"/>
+           </item>
+           <item row="3" column="1">
+            <widget class="QLabel" name="extPortLabel">
+             <property name="text">
+              <string>Port:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="2">
+            <widget class="QSpinBox" name="extPort">
+             <property name="toolTip">
+              <string>Acceptable ports range from 10 to 65535. Normally ports below 1024 are reserved by your system.</string>
+             </property>
+             <property name="minimum">
+              <number>1024</number>
+             </property>
+             <property name="maximum">
+              <number>65535</number>
+             </property>
+             <property name="value">
+              <number>7812</number>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="0">
+            <widget class="QLineEdit" name="dynDNS"/>
+           </item>
+           <item row="1" column="0">
+            <widget class="QComboBox" name="netModeComboBox">
              <item>
-              <widget class="QLabel" name="label_netmode">
+              <property name="text">
+               <string>Automatic (UPnP)</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Firewalled</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Manually Forwarded Port</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item row="0" column="0">
+            <widget class="QComboBox" name="discComboBox">
+             <property name="minimumSize">
+              <size>
+               <width>200</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The DHT allows you to answer connection requests from your friends using BitTorrent's DHT. It greatly improves the connectivity. No information is actually stored in the DHT. It is only used as a proxy system to get in touch with other Retroshare nodes.&lt;/p&gt;&lt;p&gt;The Discovery service sends node name and ids of your trusted contacts to connected peers, to help them choose new friends. The friendship is never automatic however, and both peers still need to trust each other to allow connection. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <item>
+              <property name="text">
+               <string>Public: DHT &amp; Discovery</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Private: Discovery Only</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Inverted: DHT Only</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Dark Net: None</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item row="3" column="3">
+            <layout class="QGridLayout" name="gLayout_ext">
+             <property name="leftMargin">
+              <number>6</number>
+             </property>
+             <property name="rightMargin">
+              <number>6</number>
+             </property>
+             <item row="0" column="0">
+              <widget class="QLabel" name="iconlabel_ext">
+               <property name="maximumSize">
+                <size>
+                 <width>16</width>
+                 <height>16</height>
+                </size>
+               </property>
                <property name="text">
-                <string>Network Mode</string>
+                <string/>
+               </property>
+               <property name="pixmap">
+                <pixmap resource="../images.qrc">:/images/ledoff1.png</pixmap>
                </property>
               </widget>
              </item>
-             <item>
-              <widget class="QLabel" name="label_nat">
-               <property name="text">
-                <string>Nat</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLabel" name="label_localAddress">
-               <property name="text">
-                <string>Local Address</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLabel" name="label_extAddress">
-               <property name="text">
-                <string>External Address</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLabel" name="label_dynDNS">
-               <property name="text">
-                <string>Dynamic DNS</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLabel" name="label_totalDownloadRate">
-               <property name="font">
-                <font>
-                 <weight>50</weight>
-                 <bold>false</bold>
-                </font>
+             <item row="0" column="1">
+              <widget class="QLabel" name="textlabel_ext">
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The bullet turns green as soon as Retroshare manages to get your own IP from the websites listed below, if you enabled that action. Retroshare will also use other means to find out your own IP.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
                <property name="text">
-                <string>Download limit (KB/s) </string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLabel" name="label_totalUploadRate">
-               <property name="font">
-                <font>
-                 <weight>50</weight>
-                 <bold>false</bold>
-                </font>
-               </property>
-               <property name="text">
-                <string>Upload limit (KB/s) </string>
+                <string>External ip address finder</string>
                </property>
               </widget>
              </item>
             </layout>
            </item>
-           <item>
-            <layout class="QGridLayout">
-             <property name="spacing">
+           <item row="2" column="3">
+            <layout class="QGridLayout" name="gLayout_netLimited">
+             <property name="leftMargin">
               <number>6</number>
              </property>
-             <item row="5" column="0">
-              <widget class="QSpinBox" name="totalDownloadRate">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="toolTip">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This download limit covers the whole application. However, in some situations, such as when transfering many small files at once, the estimated bandwidth becomes unreliable and the total value reported by Retroshare might exceed that limit. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-               </property>
-               <property name="suffix">
-                <string>kB/s</string>
-               </property>
-               <property name="minimum">
-                <number>1</number>
-               </property>
-               <property name="maximum">
-                <number>100000</number>
-               </property>
-               <property name="value">
-                <number>1</number>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="0">
-              <widget class="QLineEdit" name="localAddress"/>
-             </item>
-             <item row="2" column="1">
-              <widget class="QLabel" name="localPortLabel">
-               <property name="text">
-                <string>Port:</string>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="2">
-              <widget class="QSpinBox" name="localPort">
-               <property name="toolTip">
-                <string>Acceptable ports range from 10 to 65535. Normally Ports below 1024 are reserved by your system.</string>
-               </property>
-               <property name="minimum">
-                <number>10</number>
-               </property>
-               <property name="maximum">
-                <number>65535</number>
-               </property>
-               <property name="value">
-                <number>7812</number>
-               </property>
-              </widget>
-             </item>
-             <item row="3" column="0">
-              <widget class="QLineEdit" name="extAddress"/>
-             </item>
-             <item row="3" column="1">
-              <widget class="QLabel" name="extPortLabel">
-               <property name="text">
-                <string>Port:</string>
-               </property>
-              </widget>
-             </item>
-             <item row="3" column="2">
-              <widget class="QSpinBox" name="extPort">
-               <property name="toolTip">
-                <string>Acceptable ports range from 10 to 65535. Normally ports below 1024 are reserved by your system.</string>
-               </property>
-               <property name="minimum">
-                <number>10</number>
-               </property>
-               <property name="maximum">
-                <number>65535</number>
-               </property>
-               <property name="value">
-                <number>7812</number>
-               </property>
-              </widget>
-             </item>
-             <item row="4" column="0">
-              <widget class="QLineEdit" name="dynDNS"/>
-             </item>
-             <item row="1" column="0">
-              <widget class="QComboBox" name="netModeComboBox">
-               <item>
-                <property name="text">
-                 <string>Automatic (UPnP)</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Firewalled</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Manually Forwarded Port</string>
-                </property>
-               </item>
-              </widget>
-             </item>
+             <property name="rightMargin">
+              <number>6</number>
+             </property>
              <item row="0" column="0">
-              <widget class="QComboBox" name="discComboBox">
-               <property name="minimumSize">
+              <widget class="QLabel" name="iconlabel_netLimited">
+               <property name="maximumSize">
                 <size>
-                 <width>200</width>
-                 <height>0</height>
+                 <width>16</width>
+                 <height>16</height>
                 </size>
                </property>
-               <property name="toolTip">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The DHT allows you to answer connection requests from your friends using BitTorrent's DHT. It greatly improves the connectivity. No information is actually stored in the DHT. It is only used as a proxy system to get in touch with other Retroshare nodes.&lt;/p&gt;&lt;p&gt;The Discovery service sends node name and ids of your trusted contacts to connected peers, to help them choose new friends. The friendship is never automatic however, and both peers still need to trust each other to allow connection. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-               </property>
-               <item>
-                <property name="text">
-                 <string>Public: DHT &amp; Discovery</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Private: Discovery Only</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Inverted: DHT Only</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Dark Net: None</string>
-                </property>
-               </item>
-              </widget>
-             </item>
-             <item row="3" column="3">
-              <layout class="QGridLayout" name="gLayout_ext">
-               <property name="leftMargin">
-                <number>6</number>
-               </property>
-               <property name="rightMargin">
-                <number>6</number>
-               </property>
-               <item row="0" column="0">
-                <widget class="QLabel" name="iconlabel_ext">
-                 <property name="maximumSize">
-                  <size>
-                   <width>16</width>
-                   <height>16</height>
-                  </size>
-                 </property>
-                 <property name="text">
-                  <string/>
-                 </property>
-                 <property name="pixmap">
-                  <pixmap resource="../images.qrc">:/images/ledoff1.png</pixmap>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="1">
-                <widget class="QLabel" name="textlabel_ext">
-                 <property name="toolTip">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The bullet turns green as soon as Retroshare manages to get your own IP from the websites listed below, if you enabled that action. Retroshare will also use other means to find out your own IP.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                 </property>
-                 <property name="text">
-                  <string>External ip address finder</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </item>
-             <item row="2" column="3">
-              <layout class="QGridLayout" name="gLayout_netLimited">
-               <property name="leftMargin">
-                <number>6</number>
-               </property>
-               <property name="rightMargin">
-                <number>6</number>
-               </property>
-               <item row="0" column="0">
-                <widget class="QLabel" name="iconlabel_netLimited">
-                 <property name="maximumSize">
-                  <size>
-                   <width>16</width>
-                   <height>16</height>
-                  </size>
-                 </property>
-                 <property name="text">
-                  <string/>
-                 </property>
-                 <property name="pixmap">
-                  <pixmap resource="../images.qrc">:/images/ledoff1.png</pixmap>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="1">
-                <widget class="QLabel" name="textlabel_netLimited">
-                 <property name="text">
-                  <string>Local network</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </item>
-             <item row="6" column="0">
-              <widget class="QSpinBox" name="totalUploadRate">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="toolTip">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The upload limit covers the entire software. Too small an upload limit might eventually block low priority services (forums, channels). A minimum recommended value is 50KB/s. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-               </property>
-               <property name="suffix">
-                <string>kB/s</string>
-               </property>
-               <property name="prefix">
+               <property name="text">
                 <string/>
                </property>
-               <property name="minimum">
-                <number>1</number>
-               </property>
-               <property name="maximum">
-                <number>100000</number>
-               </property>
-               <property name="value">
-                <number>1</number>
+               <property name="pixmap">
+                <pixmap resource="../images.qrc">:/images/ledoff1.png</pixmap>
                </property>
               </widget>
              </item>
-             <item row="1" column="3">
-              <layout class="QGridLayout" name="gLayout_upnp">
-               <property name="leftMargin">
-                <number>6</number>
+             <item row="0" column="1">
+              <widget class="QLabel" name="textlabel_netLimited">
+               <property name="text">
+                <string>Local network</string>
                </property>
-               <property name="rightMargin">
-                <number>6</number>
-               </property>
-               <item row="0" column="0">
-                <widget class="QLabel" name="iconlabel_upnp">
-                 <property name="maximumSize">
-                  <size>
-                   <width>16</width>
-                   <height>16</height>
-                  </size>
-                 </property>
-                 <property name="text">
-                  <string/>
-                 </property>
-                 <property name="pixmap">
-                  <pixmap resource="../images.qrc">:/images/ledoff1.png</pixmap>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="1">
-                <widget class="QLabel" name="textlabel_upnp">
-                 <property name="text">
-                  <string>UPnP</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </item>
-             <item row="0" column="3">
-              <layout class="QGridLayout" name="gLayout_hiddenMode">
-               <property name="leftMargin">
-                <number>6</number>
-               </property>
-               <property name="rightMargin">
-                <number>6</number>
-               </property>
-               <item row="0" column="0">
-                <widget class="QLabel" name="iconlabel_hiddenMode">
-                 <property name="maximumSize">
-                  <size>
-                   <width>16</width>
-                   <height>16</height>
-                  </size>
-                 </property>
-                 <property name="text">
-                  <string/>
-                 </property>
-                 <property name="pixmap">
-                  <pixmap resource="../images.qrc">:/images/ledoff1.png</pixmap>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="1">
-                <widget class="QLabel" name="textlabel_hiddenMode">
-                 <property name="font">
-                  <font>
-                   <weight>75</weight>
-                   <bold>true</bold>
-                  </font>
-                 </property>
-                 <property name="toolTip">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The bullet turns green as soon as Retroshare manages to get your own IP from the websites listed below, if you enabled that action. Retroshare will also use other means to find out your own IP.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                 </property>
-                 <property name="text">
-                  <string>[Hidden mode]</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
+              </widget>
              </item>
             </layout>
+           </item>
+           <item row="6" column="0">
+            <widget class="QSpinBox" name="totalUploadRate">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The upload limit covers the entire software. Too small an upload limit might eventually block low priority services (forums, channels). A minimum recommended value is 50KB/s. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="suffix">
+              <string>kB/s</string>
+             </property>
+             <property name="prefix">
+              <string/>
+             </property>
+             <property name="minimum">
+              <number>1</number>
+             </property>
+             <property name="maximum">
+              <number>100000</number>
+             </property>
+             <property name="value">
+              <number>1</number>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="3">
+            <layout class="QGridLayout" name="gLayout_upnp">
+             <property name="leftMargin">
+              <number>6</number>
+             </property>
+             <property name="rightMargin">
+              <number>6</number>
+             </property>
+             <item row="0" column="0">
+              <widget class="QLabel" name="iconlabel_upnp">
+               <property name="maximumSize">
+                <size>
+                 <width>16</width>
+                 <height>16</height>
+                </size>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+               <property name="pixmap">
+                <pixmap resource="../images.qrc">:/images/ledoff1.png</pixmap>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QLabel" name="textlabel_upnp">
+               <property name="text">
+                <string>UPnP</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item row="0" column="3">
+            <layout class="QGridLayout" name="gLayout_hiddenMode">
+             <property name="leftMargin">
+              <number>6</number>
+             </property>
+             <property name="rightMargin">
+              <number>6</number>
+             </property>
+             <item row="0" column="0">
+              <widget class="QLabel" name="iconlabel_hiddenMode">
+               <property name="maximumSize">
+                <size>
+                 <width>16</width>
+                 <height>16</height>
+                </size>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+               <property name="pixmap">
+                <pixmap resource="../images.qrc">:/images/ledoff1.png</pixmap>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QLabel" name="textlabel_hiddenMode">
+               <property name="font">
+                <font>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The bullet turns green as soon as Retroshare manages to get your own IP from the websites listed below, if you enabled that action. Retroshare will also use other means to find out your own IP.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+               <property name="text">
+                <string>[Hidden mode]</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item row="5" column="1" rowspan="2" colspan="3">
+            <widget class="QLabel" name="label_warningBandwidth">
+             <property name="styleSheet">
+              <string notr="true">	border: 1px solid #DCDC41;
+	border-radius: 6px;
+	background: #FFFFD7;
+	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFFFD7, stop:1 #FFFFB2);
+</string>
+             </property>
+             <property name="text">
+              <string>WARNING:
+These values don't take into account the Relays.</string>
+             </property>
+            </widget>
            </item>
           </layout>
          </item>
@@ -507,7 +518,7 @@ behind a firewall or a VPN.</string>
         </widget>
        </item>
        <item row="6" column="0">
-        <spacer name="verticalSpacer">
+        <spacer name="tabNetConfVSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
@@ -524,7 +535,6 @@ behind a firewall or a VPN.</string>
       <zorder>allowIpDeterminationCB</zorder>
       <zorder>IPServersLV</zorder>
       <zorder>ipAddressList</zorder>
-      <zorder>verticalSpacer</zorder>
      </widget>
      <widget class="QWidget" name="tabIPFilters">
       <attribute name="title">
@@ -534,7 +544,7 @@ behind a firewall or a VPN.</string>
        <item>
         <widget class="QCheckBox" name="denyAll_CB">
          <property name="text">
-          <string>activate IP filtering</string>
+          <string>Activate IP filtering</string>
          </property>
         </widget>
        </item>
@@ -543,11 +553,11 @@ behind a firewall or a VPN.</string>
          <property name="currentIndex">
           <number>0</number>
          </property>
-         <widget class="QWidget" name="tabWidgetPage1">
+         <widget class="QWidget" name="ipBlackListTabWidget">
           <attribute name="title">
            <string>IP blacklist</string>
           </attribute>
-          <layout class="QVBoxLayout" name="verticalLayout_4">
+          <layout class="QVBoxLayout" name="ipBlackListTabWidgetVLayout">
            <item>
             <widget class="QTableWidget" name="filteredIpsTable">
              <property name="contextMenuPolicy">
@@ -616,7 +626,7 @@ behind a firewall or a VPN.</string>
             </widget>
            </item>
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_11">
+            <layout class="QHBoxLayout" name="groupIPRangesHLayout">
              <item>
               <widget class="QCheckBox" name="groupIPRanges_CB">
                <property name="toolTip">
@@ -641,7 +651,7 @@ behind a firewall or a VPN.</string>
               </widget>
              </item>
              <item>
-              <spacer name="horizontalSpacer_2">
+              <spacer name="groupIPRangesHSpacer">
                <property name="orientation">
                 <enum>Qt::Horizontal</enum>
                </property>
@@ -657,11 +667,11 @@ behind a firewall or a VPN.</string>
            </item>
           </layout>
          </widget>
-         <widget class="QWidget" name="tab_3">
+         <widget class="QWidget" name="ipWhiteListTabWidget">
           <attribute name="title">
            <string>IP whitelist</string>
           </attribute>
-          <layout class="QGridLayout" name="gridLayout_2">
+          <layout class="QGridLayout" name="ipWhiteListTabWidgetGLayout">
            <item row="0" column="0">
             <widget class="QTableWidget" name="whiteListIpsTable">
              <property name="contextMenuPolicy">
@@ -780,7 +790,7 @@ behind a firewall or a VPN.</string>
            </layout>
           </item>
           <item>
-           <spacer name="verticalSpacer_2">
+           <spacer name="manualInputVSpacer">
             <property name="orientation">
              <enum>Qt::Vertical</enum>
             </property>
@@ -828,7 +838,7 @@ behind a firewall or a VPN.</string>
                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the port of the Tor Socks proxy. Your Retroshare node can use this port to connect to&lt;/p&gt;&lt;p&gt;Hidden nodes. The led at right turns green when this port is active on your computer. &lt;/p&gt;&lt;p&gt;This does not mean however that your Retroshare traffic transits though Tor. It does only if &lt;/p&gt;&lt;p&gt;you connect to Hidden nodes, or if you are running a Hidden node yourself.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                 </property>
                 <property name="minimum">
-                 <number>10</number>
+                 <number>1024</number>
                 </property>
                 <property name="maximum">
                  <number>65535</number>
@@ -858,7 +868,7 @@ behind a firewall or a VPN.</string>
               <item>
                <widget class="QLabel" name="label_tor_outgoing">
                 <property name="toolTip">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This led is green when the port listen on the left is active on your computer. It does not&lt;/p&gt;&lt;p&gt;mean that your Retroshare traffic transits though Tor. It will do so only if &lt;/p&gt;&lt;p&gt;you connect to Hidden nodes, or if you are running a Hidden node yourself.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The led on the left is green when the listening port is active on your computer. It does not&lt;/p&gt;&lt;p&gt;mean that your Retroshare traffic transits though Tor. It will do so only if &lt;/p&gt;&lt;p&gt;you connect to Hidden nodes, or if you are running a Hidden node yourself.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                 </property>
                 <property name="text">
                  <string>Tor outgoing Okay</string>
@@ -895,7 +905,7 @@ behind a firewall or a VPN.</string>
                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the port of the I2P Socks proxy. Your Retroshare node can use this port to connect to&lt;/p&gt;&lt;p&gt;Hidden nodes. The led at right turns green when this port is active on your computer. &lt;/p&gt;&lt;p&gt;This does not mean however that your Retroshare traffic transits though I2P. It does only if &lt;/p&gt;&lt;p&gt;you connect to Hidden nodes, or if you are running a Hidden node yourself.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                 </property>
                 <property name="minimum">
-                 <number>10</number>
+                 <number>1024</number>
                 </property>
                 <property name="maximum">
                  <number>65535</number>
@@ -919,7 +929,7 @@ behind a firewall or a VPN.</string>
               <item>
                <widget class="QLabel" name="label_i2p_outgoing">
                 <property name="toolTip">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This led is green when the port listen on the left is active on your computer. It does not&lt;/p&gt;&lt;p&gt;mean that your Retroshare traffic transits though I2P. It will do so only if &lt;/p&gt;&lt;p&gt;you connect to Hidden nodes, or if you are running a Hidden node yourself.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The led on the left is green when the listening port is active on your computer. It does not&lt;/p&gt;&lt;p&gt;mean that your Retroshare traffic transits though I2P. It will do so only if &lt;/p&gt;&lt;p&gt;you connect to Hidden nodes, or if you are running a Hidden node yourself.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                 </property>
                 <property name="text">
                  <string>I2P outgoing Okay</string>
@@ -948,7 +958,7 @@ behind a firewall or a VPN.</string>
              <string>Tor Socks Proxy default: 127.0.0.1:9050.  Set in torrc config and update here.
 
 I2P Socks Proxy: see http://127.0.0.1:7657/i2ptunnelmgr for setting up a client tunnel:
-Tunnel Wizard -&gt; Client Tunnel -&gt; SOCKS 4/4a/5 -&gt; enter a name -&gt; leave 'Outproxies' empty -&gt; enter port (memorize!) [you may also want to set the reachability to 127.0.0.1] -&gt; check 'Auto Start' -&gt; finish!
+Tunnel Wizard -&gt; Client Tunnel -&gt; SOCKS 4/4a/5 -&gt; enter a name -&gt; leave 'Outproxies' empty -&gt; enter port (memorize!) [you may also want to set the reachability to 127.0.0.1] -&gt; Next -&gt; check 'Auto Start' -&gt; finish!
 Now enter the address (e.g. 127.0.0.1) and the port you've picked before for the I2P Proxy.
 
 You can connect to Hidden Nodes, even if you are running a standard Node, so why not setup Tor and/or I2P?</string>
@@ -975,7 +985,7 @@ You can connect to Hidden Nodes, even if you are running a standard Node, so why
             <item row="0" column="2">
              <widget class="QSpinBox" name="hiddenpage_localPort">
               <property name="minimum">
-               <number>10</number>
+               <number>1024</number>
               </property>
               <property name="maximum">
                <number>65535</number>
@@ -990,7 +1000,7 @@ You can connect to Hidden Nodes, even if you are running a standard Node, so why
                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This button simulates a SSL connection to your hidden address using the corresponding proxy. If your hidden node is reachable, it should cause a SSL handshake error, which RS will interpret as a valid connection state. This operation might also cause several &amp;quot;security warning&amp;quot; about connections from your local host IP (127.0.0.1) in the News Feed if you enabled it, which you should interpret as a sign of good communication.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                 </property>
                 <property name="text">
-                 <string>Test</string>
+                 <string>Apply</string>
                 </property>
                </widget>
               </item>
@@ -999,7 +1009,7 @@ You can connect to Hidden Nodes, even if you are running a standard Node, so why
             <item row="1" column="2">
              <widget class="QSpinBox" name="hiddenpage_servicePort">
               <property name="minimum">
-               <number>10</number>
+               <number>1024</number>
               </property>
               <property name="maximum">
                <number>65535</number>

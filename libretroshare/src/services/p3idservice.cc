@@ -27,8 +27,8 @@
 
 #include "services/p3idservice.h"
 #include "pgp/pgpauxutils.h"
-#include "serialiser/rsgxsiditems.h"
-#include "serialiser/rsconfigitems.h"
+#include "rsitems/rsgxsiditems.h"
+#include "rsitems/rsconfigitems.h"
 #include "retroshare/rsgxsflags.h"
 #include "util/rsrandom.h"
 #include "util/rsstring.h"
@@ -70,6 +70,8 @@ static const time_t MAX_KEEP_KEYS_SIGNED_KNOWN =    30 * 86400 ; // signed ident
 
 static const uint32_t MAX_DELAY_BEFORE_CLEANING=    1800 ; // clean old keys every 30 mins
 
+static const uint32_t MAX_SERIALISED_IDENTITY_AGE  = 600 ; // after 10 mins, a serialised identity record must be renewed.
+
 RsIdentity *rsIdentity = NULL;
 
 /******
@@ -97,13 +99,12 @@ RsIdentity *rsIdentity = NULL;
 #define BG_REPUTATION 	3
 
 
-#define GXSIDREQ_CACHELOAD	0x0001
-#define GXSIDREQ_CACHEOWNIDS	0x0002
-
-#define GXSIDREQ_PGPHASH 	0x0010
-#define GXSIDREQ_RECOGN 	0x0020
-
-#define GXSIDREQ_OPINION 	0x0030
+#define GXSIDREQ_CACHELOAD	         0x0001
+#define GXSIDREQ_CACHEOWNIDS	     0x0002
+#define GXSIDREQ_PGPHASH 	         0x0010
+#define GXSIDREQ_RECOGN 	         0x0020
+#define GXSIDREQ_OPINION 	         0x0030
+#define GXSIDREQ_SERIALIZE_TO_MEMORY 0x0040
 
 #define GXSIDREQ_CACHETEST 	0x1000
 
@@ -407,11 +408,15 @@ public:
         bool is_signed_id = (bool)(entry.details.mFlags & RS_IDENTITY_FLAGS_PGP_LINKED) ;
         bool is_a_contact = (bool)(entry.details.mFlags & RS_IDENTITY_FLAGS_IS_A_CONTACT) ;
 
+#ifdef DEBUG_IDS
         std::cerr << "Identity: " << gxs_id << ": banned: " << is_id_banned << ", own: " << is_own_id << ", contact: " << is_a_contact << ", signed: " << is_signed_id << ", known: " << is_known_id;
+#endif
 
         if(is_own_id || is_a_contact)
         {
+#ifdef DEBUG_IDS
             std::cerr << " => kept" << std::endl;
+#endif
             return true ;
         }
 
@@ -439,15 +444,21 @@ public:
         else
             max_keep_time = MAX_KEEP_KEYS_DEFAULT ;
 
+#ifdef DEBUG_IDS
         std::cerr << ". Max keep = " << max_keep_time/86400 << " days. Unused for " << (now - last_usage_ts + 86399)/86400 << " days " ;
+#endif
 
         if(should_check && now > last_usage_ts + max_keep_time)
         {
+#ifdef DEBUG_IDS
             std::cerr << " => delete " << std::endl;
+#endif
             ids_to_delete.push_back(gxs_id) ;
         }
+#ifdef DEBUG_IDS
         else
             std::cerr << " => keep " << std::endl;
+#endif
 
         return true;
     }
@@ -484,7 +495,9 @@ void p3IdService::cleanUnusedKeys()
 
     for(std::list<RsGxsId>::const_iterator it(ids_to_delete.begin());it!=ids_to_delete.end();++it)
     {
+#ifdef DEBUG_IDS
         std::cerr << "Deleting identity " << *it << " which is too old." << std::endl;
+#endif
         uint32_t token ;
         RsGxsIdGroup group;
         group.mMeta.mGroupId=RsGxsGroupId(*it);
@@ -518,7 +531,9 @@ bool p3IdService::acceptNewGroup(const RsGxsGrpMetaData *grpMeta)
 {
     bool res = !rsReputations->isIdentityBanned(RsGxsId(grpMeta->mGroupId)) ;
 
+#ifdef DEBUG_IDS
     std::cerr << "p3IdService::acceptNewGroup: ID=" << grpMeta->mGroupId << ": " << (res?"ACCEPTED":"DENIED") << std::endl;
+#endif
 
     return res ;
 }
@@ -683,6 +698,84 @@ bool p3IdService::getOwnIds(std::list<RsGxsId> &ownIds)
     return true ;
 }
 
+bool p3IdService::serialiseIdentityToMemory(const RsGxsId& id,std::string& radix_string)
+{
+    RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
+
+    // look into cache. If available, return the data. If not, request it.
+
+    std::map<RsGxsId,SerialisedIdentityStruct>::const_iterator it = mSerialisedIdentities.find(id);
+
+    if(it != mSerialisedIdentities.end())
+    {
+        Radix64::encode(it->second.mMem,it->second.mSize,radix_string) ;
+
+        if(it->second.mLastUsageTS + MAX_SERIALISED_IDENTITY_AGE > time(NULL))
+			return true ;
+
+        std::cerr << "Identity " << id << " will be re-serialised, because the last record is too old." << std::endl;
+    }
+
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
+	uint32_t token = 0;
+    std::list<RsGxsGroupId> groupIds;
+
+    groupIds.push_back(RsGxsGroupId(id)) ;
+
+	RsGenExchange::getTokenService()->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, groupIds);
+	GxsTokenQueue::queueRequest(token, GXSIDREQ_SERIALIZE_TO_MEMORY);
+
+	return false;
+}
+
+void p3IdService::handle_get_serialized_grp(uint32_t token)
+{
+    // store the serialized data in cache.
+
+    unsigned char *mem = NULL;
+    uint32_t size;
+    RsGxsGroupId id ;
+
+	if(!RsGenExchange::getSerializedGroupData(token,id, mem,size))
+    {
+        std::cerr << "(EE) call to RsGenExchage::getSerializedGroupData() failed." << std::endl;
+        return ;
+    }
+
+    std::cerr << "Received serialised group from RsGenExchange." << std::endl;
+
+    std::map<RsGxsId,SerialisedIdentityStruct>::const_iterator it = mSerialisedIdentities.find(RsGxsId(id));
+
+    if(it != mSerialisedIdentities.end())
+        free(it->second.mMem) ;
+
+    SerialisedIdentityStruct s ;
+    s.mMem = mem ;
+    s.mSize = size ;
+    s.mLastUsageTS = time(NULL) ;
+
+    mSerialisedIdentities[RsGxsId(id)] = s ;
+}
+
+bool p3IdService::deserialiseIdentityFromMemory(const std::string& radix_string)
+{
+    std::vector<uint8_t> mem = Radix64::decode(radix_string) ;
+
+    if(mem.empty())
+	{
+		std::cerr << "Cannot decode radix string \"" << radix_string << "\"" << std::endl;
+		return false ;
+	}
+
+	if(!RsGenExchange::deserializeGroupData(mem.data(),mem.size()))
+    {
+		std::cerr << "Cannot load identity from radix string \"" << radix_string << "\"" << std::endl;
+        return false ;
+    }
+
+    return true ;
+}
 
 bool p3IdService::createIdentity(uint32_t& token, RsIdentityParameters &params)
 {
@@ -695,7 +788,7 @@ bool p3IdService::createIdentity(uint32_t& token, RsIdentityParameters &params)
 
     if (params.isPgpLinked)
     {
-#warning Backward compatibility issue to fix here in v0.7.0
+#warning csoler 2017-02-07: Backward compatibility issue to fix here in v0.7.0
 
         // This is a hack, because a bad decision led to having RSGXSID_GROUPFLAG_REALID be equal to GXS_SERV::FLAG_PRIVACY_PRIVATE.
         // In order to keep backward compatibility, we'll also add the new value
@@ -866,7 +959,9 @@ bool p3IdService::requestKey(const RsGxsId &id, const std::list<RsPeerId>& peers
         // Normally we should call getIdDetails(), but since the key is not known, we need to digg a possibly old information
         // from the reputation system, which keeps its own list of banned keys. Of course, the owner ID is not known at this point.
 
+#ifdef DEBUG_IDS
         std::cerr << "p3IdService::requesting key " << id <<std::endl;
+#endif
 
         RsReputations::ReputationInfo info ;
         rsReputations->getReputationInfo(id,RsPgpId(),info) ;
@@ -1379,6 +1474,28 @@ bool p3IdService::getGroupData(const uint32_t &token, std::vector<RsGxsIdGroup> 
     return ok;
 }
 
+bool p3IdService::getGroupSerializedData(const uint32_t &token, std::map<RsGxsId,std::string>& serialized_groups)
+{
+    unsigned char *mem = NULL;
+    uint32_t size;
+    RsGxsGroupId id ;
+
+    serialized_groups.clear() ;
+
+	if(!RsGenExchange::getSerializedGroupData(token,id, mem,size))
+    {
+        std::cerr << "(EE) call to RsGenExchage::getSerializedGroupData() failed." << std::endl;
+        return false;
+    }
+
+    std::string radix ;
+
+    Radix64::encode(mem,size,radix) ;
+
+    serialized_groups[RsGxsId(id)] = radix ;
+
+    return true;
+}
 
 /********************************************************************************/
 /********************************************************************************/
@@ -1433,17 +1550,14 @@ bool p3IdService::updateGroup(uint32_t& token, RsGxsIdGroup &group)
 
 bool 	p3IdService::deleteGroup(uint32_t& token, RsGxsIdGroup &group)
 {
-    RsGxsId id = RsGxsId(group.mMeta.mGroupId.toStdString());
-    RsGxsIdGroupItem* item = new RsGxsIdGroupItem();
-
-    item->fromGxsIdGroup(group,false) ;
+    RsGxsId id(group.mMeta.mGroupId);
 
 #ifdef DEBUG_IDS
     std::cerr << "p3IdService::deleteGroup() Deleting RsGxsId: " << id;
     std::cerr << std::endl;
 #endif
 
-    RsGenExchange::deleteGroup(token, item);
+    RsGenExchange::deleteGroup(token,group.mMeta.mGroupId);
 
     // if its in the cache - clear it.
     {
@@ -4104,6 +4218,9 @@ void p3IdService::handleResponse(uint32_t token, uint32_t req_type)
 		case GXSIDREQ_OPINION:
 			opinion_handlerequest(token);
 			break;
+		case GXSIDREQ_SERIALIZE_TO_MEMORY:
+        	handle_get_serialized_grp(token) ;
+
 		default:
 			/* error */
 			std::cerr << "p3IdService::handleResponse() Unknown Request Type: " << req_type;

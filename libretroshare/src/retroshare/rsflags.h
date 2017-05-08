@@ -59,11 +59,12 @@ template<int n> class t_RsFlags32
 		uint32_t _bits ;
 };
 
-#define FLAGS_TAG_TRANSFER_REQS 	0x4228af
+#define FLAGS_TAG_TRANSFER_REQS 0x4228af
 #define FLAGS_TAG_FILE_STORAGE 	0x184738
-#define FLAGS_TAG_FILE_SEARCH 		0xf29ba5
+#define FLAGS_TAG_FILE_SEARCH 	0xf29ba5
 #define FLAGS_TAG_SERVICE_PERM 	0x380912
 #define FLAGS_TAG_SERVICE_CHAT 	0x839042
+#define FLAGS_TAG_SERIALIZER   	0xa0338d
 
 // Flags for requesting transfers, ask for turtle, cache, speed, etc.
 //
@@ -84,4 +85,8 @@ typedef t_RsFlags32<FLAGS_TAG_SERVICE_PERM > ServicePermissionFlags ;
 // Flags for chat lobbies
 //
 typedef t_RsFlags32<FLAGS_TAG_SERVICE_CHAT > ChatLobbyFlags ;			
+
+// Flags for serializer
+//
+typedef t_RsFlags32<FLAGS_TAG_SERIALIZER > SerializationFlags ;
 

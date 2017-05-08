@@ -298,8 +298,18 @@ static ops_boolean_t dsa_sign(ops_hash_t *hash, const ops_dsa_public_key_t *dsa,
 	dsasig=ops_dsa_sign(hashbuf, hashsize, sdsa, dsa);
 
 	// convert and write the sig out to memory
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
 	ops_write_mpi(dsasig->r, cinfo);
 	ops_write_mpi(dsasig->s, cinfo);
+#else
+    const BIGNUM *rr=NULL,*ss=NULL ;
+
+    DSA_SIG_get0(dsasig,&rr,&ss) ;
+
+	ops_write_mpi(rr, cinfo);
+	ops_write_mpi(ss, cinfo);
+#endif
+
 	DSA_SIG_free(dsasig);
 
 	return ops_true ;

@@ -13,6 +13,14 @@ public:
         std::list<RSTrafficClue> out_rstcl ;
         std::list<RSTrafficClue>  in_rstcl ;
     };
+    class RsServiceInfoWithNames: public RsServiceInfo
+    {
+    public:
+        RsServiceInfoWithNames(const RsServiceInfo& s) : RsServiceInfo(s) {}
+        RsServiceInfoWithNames(){}
+
+		std::map<uint8_t,std::string> item_names ;
+    };
 
     BWGraphSource() ;
 
@@ -25,7 +33,7 @@ public:
 
     virtual void getValues(std::map<std::string,float>& values) const;
     virtual QString displayValue(float v) const;
-    virtual QString legend(int i,float v) const;
+    virtual QString legend(int i,float v,bool show_value=true) const;
     virtual void update();
     QString unitName() const ;
 
@@ -45,6 +53,7 @@ public:
 
 protected:
     void convertTrafficClueToValues(const std::list<RSTrafficClue> &lst, std::map<std::string, float> &vals) const;
+	std::string makeSubItemName(uint16_t service_id,uint8_t sub_item_type) const;
     void recomputeCurrentCurves() ;
     std::string visibleFriendName(const RsPeerId &pid) const ;
 
@@ -67,15 +76,18 @@ private:
     std::map<RsPeerId,std::string> mVisibleFriends ;
     std::set<uint16_t> mVisibleServices ;
 
-    mutable std::map<uint16_t,RsServiceInfo> mServiceInfoMap ;
+    mutable std::map<uint16_t,RsServiceInfoWithNames> mServiceInfoMap ;
 };
 
 class BWGraph: public RSGraphWidget
 {
 	public:
         BWGraph(QWidget *parent);
+        ~BWGraph();
 
-        BWGraphSource *source() ;
+    void setSelector(int selector_type, int graph_type, const std::string& selector_client_string = std::string())  { _local_source->setSelector(selector_type,graph_type,selector_client_string) ; }
+    void setDirection(int dir) { _local_source->setDirection(dir); }
+    void setUnit(int unit) { _local_source->setUnit(unit) ;}
 
     const std::map<RsPeerId,std::string>& visibleFriends() const { return _local_source->visibleFriends(); }
     const std::set<uint16_t>& visibleServices() const { return _local_source->visibleServices(); }

@@ -41,7 +41,8 @@
 
 #include "pgp/pgpkeyutil.h"
 #include "rsserver/p3face.h"
-#include "serialiser/rsconfigitems.h"
+
+#include "rsitems/rsconfigitems.h"
 
 #include "grouter/p3grouter.h"
 #include "grouter/groutertypes.h"
@@ -86,7 +87,7 @@ static const uint32_t RS_MSG_DISTANT_MESSAGE_HASH_KEEP_TIME = 2*30*86400 ; // ke
 p3MsgService::p3MsgService(p3ServiceControl *sc, p3IdService *id_serv)
 	:p3Service(), p3Config(), mIdService(id_serv), mServiceCtrl(sc), mMsgMtx("p3MsgService"), mMsgUniqueId(0) 
 {
-	_serialiser = new RsMsgSerialiser();	// this serialiser is used for services. It's not the same than the one returned by setupSerialiser(). We need both!!
+	_serialiser = new RsMsgSerialiser(RsServiceSerializer::SERIALIZATION_FLAG_NONE);	// this serialiser is used for services. It's not the same than the one returned by setupSerialiser(). We need both!!
 	addSerialType(_serialiser);
 
     mMsgUniqueId = 1 ;	// MsgIds are not transmitted, but only used locally as a storage index. As such, thay do not need to be different
@@ -519,7 +520,7 @@ RsSerialiser* p3MsgService::setupSerialiser()	// this serialiser is used for con
 {
 	RsSerialiser *rss = new RsSerialiser ;
 
-	rss->addSerialType(new RsMsgSerialiser(true));
+	rss->addSerialType(new RsMsgSerialiser(RsServiceSerializer::SERIALIZATION_FLAG_CONFIG));
 	rss->addSerialType(new RsGeneralConfigSerialiser());
 
 	return rss;
@@ -587,7 +588,6 @@ bool    p3MsgService::loadList(std::list<RsItem*>& load)
     // load items and calculate next unique msgId
     for(it = load.begin(); it != load.end(); ++it)
     {
-
 	    if (NULL != (mitem = dynamic_cast<RsMsgItem *>(*it)))
 	    {
 		    /* STORE MsgID */
@@ -599,19 +599,23 @@ bool    p3MsgService::loadList(std::list<RsItem*>& load)
 	    else if (NULL != (grm = dynamic_cast<RsMsgGRouterMap *>(*it)))
 	    {
 		    // merge.
-		    for(std::map<GRouterMsgPropagationId,uint32_t>::const_iterator it(grm->ongoing_msgs.begin());it!=grm->ongoing_msgs.end();++it)
-			    _ongoing_messages.insert(*it) ;
+		    for(std::map<GRouterMsgPropagationId,uint32_t>::const_iterator bit(grm->ongoing_msgs.begin());bit!=grm->ongoing_msgs.end();++bit)
+			    _ongoing_messages.insert(*bit) ;
+
+            delete *it ;
+            continue ;
 	    }
         else if(NULL != (ghm = dynamic_cast<RsMsgDistantMessagesHashMap*>(*it)))
         {
             mRecentlyReceivedDistantMessageHashes = ghm->hash_map ;
-            
 #ifdef DEBUG_DISTANT_MSG
             std::cerr << "  loaded recently received message map: " << std::endl;
             
             for(std::map<Sha1CheckSum,uint32_t>::const_iterator it(mRecentlyReceivedDistantMessageHashes.begin());it!=mRecentlyReceivedDistantMessageHashes.end();++it)
                 std::cerr << "    " << it->first << " received " << time(NULL)-it->second << " secs ago." << std::endl;
 #endif
+            delete *it ;
+            continue ;
         }
 	    else if(NULL != (mtt = dynamic_cast<RsMsgTagType *>(*it)))
 	    {
@@ -2021,10 +2025,10 @@ void p3MsgService::sendDistantMsgItem(RsMsgItem *msgitem)
 
     // The item is serialized and turned into a generic turtle item. Use use the explicit serialiser to make sure that the msgId is not included
 
-    uint32_t msg_serialized_rssize = msgitem->serial_size(false) ;
+    uint32_t msg_serialized_rssize = RsMsgSerialiser(RsServiceSerializer::SERIALIZATION_FLAG_NONE).size(msgitem) ;
     RsTemporaryMemory msg_serialized_data(msg_serialized_rssize) ;
 
-    if(!msgitem->serialise(msg_serialized_data,msg_serialized_rssize,false))
+    if(!RsMsgSerialiser(RsServiceSerializer::SERIALIZATION_FLAG_NONE).serialise(msgitem,msg_serialized_data,&msg_serialized_rssize))
     {
         std::cerr << "(EE) p3MsgService::sendTurtleData(): Serialization error." << std::endl;
         return ;

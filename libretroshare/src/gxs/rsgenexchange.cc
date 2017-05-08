@@ -30,11 +30,13 @@
 #include "rsgenexchange.h"
 #include "gxssecurity.h"
 #include "util/contentvalue.h"
+#include "util/rsprint.h"
 #include "retroshare/rsgxsflags.h"
 #include "retroshare/rsgxscircles.h"
 #include "retroshare/rsgrouter.h"
 #include "retroshare/rsidentity.h"
 #include "retroshare/rspeers.h"
+#include "rsitems/rsnxsitems.h"
 #include "rsgixs.h"
 #include "rsgxsutil.h"
 #include "rsserver/p3face.h"
@@ -1272,6 +1274,58 @@ bool RsGenExchange::getMsgRelatedMeta(const uint32_t &token, GxsMsgRelatedMetaMa
         return ok;
 }
 
+bool RsGenExchange::getSerializedGroupData(const uint32_t &token, RsGxsGroupId& id,unsigned char *& data,uint32_t& size)
+{
+	RS_STACK_MUTEX(mGenMtx) ;
+
+	std::list<RsNxsGrp*> nxsGrps;
+
+	if(!mDataAccess->getGroupData(token, nxsGrps))
+        return false ;
+
+    if(nxsGrps.size() != 1)
+    {
+        std::cerr << "(EE) getSerializedGroupData() got multiple groups in single request. This is unexpected." << std::endl;
+
+        for(std::list<RsNxsGrp*>::const_iterator it(nxsGrps.begin());it!=nxsGrps.end();++it)
+            delete *it ;
+
+        return false ;
+    }
+	RsNxsGrp *nxs_grp = *(nxsGrps.begin());
+
+    size = RsNxsSerialiser(mServType).size(nxs_grp);
+    id = nxs_grp->metaData->mGroupId ;
+
+    if(size > 1024*1024 || NULL==(data = (unsigned char *)rs_malloc(size)))
+    {
+        std::cerr << "(EE) getSerializedGroupData() cannot allocate mem chunk of size " << size << ". Too big, or no room." << std::endl;
+        delete nxs_grp ;
+        return false ;
+    }
+
+    return RsNxsSerialiser(mServType).serialise(nxs_grp,data,&size) ;
+}
+
+bool RsGenExchange::deserializeGroupData(unsigned char *data,uint32_t size)
+{
+	RS_STACK_MUTEX(mGenMtx) ;
+
+	RsItem *item = RsNxsSerialiser(mServType).deserialise(data, &size);
+
+    RsNxsGrp *nxs_grp = dynamic_cast<RsNxsGrp*>(item) ;
+
+    if(item == NULL)
+    {
+        std::cerr << "(EE) RsGenExchange::deserializeGroupData(): cannot deserialise this data. Something's wrong." << std::endl;
+        delete item ;
+        return false ;
+    }
+
+	mReceivedGrps.push_back( GxsPendingItem<RsNxsGrp*, RsGxsGroupId>(nxs_grp, nxs_grp->grpId,time(NULL)) );
+
+    return true ;
+}
 
 bool RsGenExchange::getGroupData(const uint32_t &token, std::vector<RsGxsGrpItem *>& grpItem)
 {
@@ -1312,6 +1366,18 @@ bool RsGenExchange::getGroupData(const uint32_t &token, std::vector<RsGxsGrpItem
 						gItem->meta.mPop = 0;
 						gItem->meta.mVisibleMsgCount = 0;
 					}
+
+                    // Also check the group privacy flags. A while ago, it as possible to publish a group without privacy flags. Now it is not possible anymore.
+                    // As a consequence, it's important to supply a correct value in this flag before the data can be edited/updated.
+
+					if((gItem->meta.mGroupFlags & GXS_SERV::FLAG_PRIVACY_MASK) == 0)
+                    {
+#ifdef GEN_EXCH_DEBUG
+						std::cerr << "(WW) getGroupData(): mGroupFlags for group " << gItem->meta.mGroupId << " has incorrect value " << std::hex << gItem->meta.mGroupFlags << std::dec << ". Setting value to GXS_SERV::FLAG_PRIVACY_PUBLIC." << std::endl;
+#endif
+                        gItem->meta.mGroupFlags |=  GXS_SERV::FLAG_PRIVACY_PUBLIC;
+					}
+
 					grpItem.push_back(gItem);
 				}
 				else
@@ -1321,11 +1387,10 @@ bool RsGenExchange::getGroupData(const uint32_t &token, std::vector<RsGxsGrpItem
 					delete item;
 				}
 			}
-			else
-			{
-				std::cerr << "RsGenExchange::getGroupData() ERROR deserialising item";
-				std::cerr << std::endl;
-			}
+			else if(data.bin_len > 0)
+				//std::cerr << "(EE) RsGenExchange::getGroupData() Item type is probably not handled. Data is: " << RsUtil::BinToHex((unsigned char*)data.bin_data,std::min(50u,data.bin_len)) << ((data.bin_len>50)?"...":"") << std::endl;
+				std::cerr << "(EE) RsGenExchange::getGroupData() Item type is probably not handled. Data is: " << RsUtil::BinToHex((unsigned char*)data.bin_data,data.bin_len) << std::endl;
+
 			delete *lit;
 		}
 	}
@@ -1668,14 +1733,14 @@ void RsGenExchange::updateGroup(uint32_t& token, RsGxsGrpItem* grpItem)
 #endif
 }
 
-void RsGenExchange::deleteGroup(uint32_t& token, RsGxsGrpItem* grpItem)
+void RsGenExchange::deleteGroup(uint32_t& token, const RsGxsGroupId& grpId)
 {
-					RS_STACK_MUTEX(mGenMtx) ;
+	RS_STACK_MUTEX(mGenMtx) ;
 	token = mDataAccess->generatePublicToken();
-	mGroupDeletePublish.push_back(GroupDeletePublish(grpItem, token));
+	mGroupDeletePublish.push_back(GroupDeletePublish(grpId, token));
 
 #ifdef GEN_EXCH_DEBUG
-    std::cerr << "RsGenExchange::deleteGroup() token: " << token;
+	std::cerr << "RsGenExchange::deleteGroup() token: " << token;
 	std::cerr << std::endl;
 #endif
 }
@@ -2138,7 +2203,9 @@ void RsGenExchange::publishMsgs()
 			if(createOk && validSize)
 			{
 				// empty orig msg id means this is the original
-				// msg
+				// msg.
+                // (csoler) Why are we doing this???
+
 				if(msg->metaData->mOrigMsgId.isNull())
 				{
 					msg->metaData->mOrigMsgId = msg->metaData->mMsgId;
@@ -2319,14 +2386,10 @@ void RsGenExchange::processGroupDelete()
 	std::vector<GroupDeletePublish>::iterator vit = mGroupDeletePublish.begin();
 	for(; vit != mGroupDeletePublish.end(); ++vit)
 	{
-		GroupDeletePublish& gdp = *vit;
-		uint32_t token = gdp.mToken;
-		const RsGxsGroupId& groupId = gdp.grpItem->meta.mGroupId;
 		std::vector<RsGxsGroupId> gprIds;
-		gprIds.push_back(groupId);
+		gprIds.push_back(vit->mGroupId);
 		mDataStore->removeGroups(gprIds);
-		toNotify.insert(std::make_pair(
-		                  token, GrpNote(true, groupId)));
+		toNotify.insert(std::make_pair( vit->mToken, GrpNote(true, vit->mGroupId)));
 	}
 
 

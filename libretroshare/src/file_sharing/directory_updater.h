@@ -75,5 +75,7 @@ private:
     bool mIsEnabled ;
     bool mFollowSymLinks;
     bool mNeedsFullRecheck ;
+    bool mIsChecking ;
+    bool mForceUpdate ;
 };
 

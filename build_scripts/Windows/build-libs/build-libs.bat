@@ -24,8 +24,7 @@ call "%EnvPath%\env-msys.bat"
 if errorlevel 1 goto error_env
 
 :: Check MSYS environment
-set MSYSSH=%EnvMSYSPath%\msys\1.0\bin\sh.exe
-if not exist "%MSYSSH%" %cecho% error "Please install MSYS first." & exit /B 1
+if not exist "%EnvMSYSSH%" %cecho% error "Please install MSYS first." & exit /B 1
 
 :: Initialize environment
 call "%~dp0env.bat"
@@ -36,7 +35,7 @@ call "%ToolsPath%\msys-path.bat" "%BuildLibsPath%" MSYSBuildLibsPath
 
 if not exist "%BuildLibsPath%" mkdir "%BuildLibsPath%"
 
-"%MSYSSH%" --login -i -c "cd "%MSYSBuildLibsPath%" && make -f %MSYSCurPath%/makefile %MakeParam% %MakeTask%"
+%EnvMSYSCmd% "cd "%MSYSBuildLibsPath%" && make -f %MSYSCurPath%/makefile %MakeParam% %MakeTask%"
 
 exit /B %ERRORLEVEL%
 

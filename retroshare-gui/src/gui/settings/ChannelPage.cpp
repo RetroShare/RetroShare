@@ -21,6 +21,7 @@
 
 #include "ChannelPage.h"
 #include "rsharesettings.h"
+#include "util/misc.h"
 
 ChannelPage::ChannelPage(QWidget * parent, Qt::WindowFlags flags)
     : ConfigPage(parent, flags)
@@ -44,6 +45,6 @@ ChannelPage::~ChannelPage()
 /** Loads the settings for this page */
 void ChannelPage::load()
 {
-	ui.loadThreadCheckBox->setChecked(Settings->getChannelLoadThread());
+	whileBlocking(ui.loadThreadCheckBox)->setChecked(Settings->getChannelLoadThread());
 	ui.groupFrameSettingsWidget->loadSettings(GroupFrameSettings::Channel);
 }

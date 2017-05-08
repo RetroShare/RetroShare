@@ -25,6 +25,8 @@
 #include "GxsCreateCommentDialog.h"
 #include "ui_GxsCreateCommentDialog.h"
 
+#include "util/HandleRichText.h"
+
 #include <QMessageBox>
 #include <iostream>
 
@@ -45,7 +47,11 @@ void GxsCreateCommentDialog::createComment()
 {
 	RsGxsComment comment;
 
-	comment.mComment = std::string(ui->commentTextEdit->document()->toPlainText().toUtf8());
+	QString text = ui->commentTextEdit->toHtml();
+	RsHtml::optimizeHtml(text);
+	std::string msg = text.toUtf8().constData();
+
+	comment.mComment = msg;
 	comment.mMeta.mParentId = mParentId.second;
 	comment.mMeta.mGroupId = mParentId.first;
 	comment.mMeta.mThreadId = mThreadId;

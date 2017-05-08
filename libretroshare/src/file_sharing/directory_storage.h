@@ -210,7 +210,7 @@ private:
 class LocalDirectoryStorage: public DirectoryStorage
 {
 public:
-    LocalDirectoryStorage(const std::string& fname,const RsPeerId& own_id) : DirectoryStorage(own_id,fname) {}
+    LocalDirectoryStorage(const std::string& fname,const RsPeerId& own_id);
     virtual ~LocalDirectoryStorage() {}
 
     /*!

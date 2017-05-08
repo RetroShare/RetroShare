@@ -22,7 +22,7 @@
 #include "rsFeedReaderItems.h"
 #include "p3FeedReader.h"
 #include "p3FeedReaderThread.h"
-#include "serialiser/rsconfigitems.h"
+#include "rsitems/rsconfigitems.h"
 #include "retroshare/rsiface.h"
 #include "retroshare/rsgxsforums.h"
 #include "util/rsstring.h"

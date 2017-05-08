@@ -29,7 +29,7 @@
     <message>
         <location line="+53"/>
         <source>Clear cache</source>
-        <translation type="unfinished"/>
+        <translation>Tyhjennä välimuisti</translation>
     </message>
     <message>
         <location line="+50"/>
@@ -714,7 +714,7 @@
     <message>
         <location line="+3"/>
         <source>Forum has no author</source>
-        <translation type="unfinished"/>
+        <translation>Foorumilla ei ole kirjoittajaa</translation>
     </message>
     <message>
         <location line="+4"/>

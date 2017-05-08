@@ -24,7 +24,7 @@ private:
     StateTokenServer* mStateTokenServer;
     RsNotify* mNotify;
     RsTurtle* mTurtle;
-    RsFiles* mFiles;
+    //RsFiles* mFiles;
 
     class Search{
     public:

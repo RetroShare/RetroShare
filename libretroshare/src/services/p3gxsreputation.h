@@ -36,7 +36,7 @@ static const uint32_t  REPUTATION_IDENTITY_FLAG_UP_TO_DATE    = 0x0100;	// This 
 static const uint32_t  REPUTATION_IDENTITY_FLAG_PGP_LINKED    = 0x0001;
 static const uint32_t  REPUTATION_IDENTITY_FLAG_PGP_KNOWN     = 0x0002;
 
-#include "serialiser/rsgxsreputationitems.h"
+#include "rsitems/rsgxsreputationitems.h"
 
 #include "retroshare/rsidentity.h"
 #include "retroshare/rsreputations.h"
@@ -156,7 +156,9 @@ private:
     // internal update of data. Takes care of cleaning empty boxes.
     void locked_updateOpinion(const RsPeerId &from, const RsGxsId &about, RsReputations::Opinion op);
     bool loadReputationSet(RsGxsReputationSetItem *item,  const std::set<RsPeerId> &peerSet);
+#ifdef TO_REMOVE
 	bool loadReputationSet_deprecated3(RsGxsReputationSetItem_deprecated3 *item, const std::set<RsPeerId> &peerSet);
+#endif
     int  sendPackets();
     void cleanup();
     void sendReputationRequests();
@@ -174,7 +176,7 @@ private:
         time_t mLastIdentityFlagsUpdate ;
     bool   mReputationsUpdated;
 
-    float mAutoBanIdentitiesLimit ;
+    //float mAutoBanIdentitiesLimit ;
     bool mAutoSetPositiveOptionToContacts;
 
     p3LinkMgr *mLinkMgr;

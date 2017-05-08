@@ -2,6 +2,8 @@
 #define GXSFORUMSFILLTHREAD_H
 
 #include <QThread>
+#include <QMap>
+#include <QPair>
 #include "retroshare/rsgxsifacetypes.h"
 
 class GxsForumThreadWidget;
@@ -39,6 +41,7 @@ public:
 	QList<QTreeWidgetItem*> mItems;
 	QList<QTreeWidgetItem*> mItemToExpand;
 
+    QMap<RsGxsMessageId,QVector<QPair<time_t,RsGxsMessageId> > > mPostVersions ;
 private:
 	void calculateExpand(const RsGxsForumMsg &msg, QTreeWidgetItem *item);
 

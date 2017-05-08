@@ -9,8 +9,7 @@
 #include <serialiser/rstlvtypes.h>
 #endif
 
-#include <serialiser/rspluginitems.h>
-
+#include <rsitems/rspluginitems.h>
 
 #include <rsserver/p3face.h>
 #include <util/rsdir.h>
@@ -34,7 +33,7 @@
 
 std::string RsPluginManager::_plugin_entry_symbol              = "RETROSHARE_PLUGIN_provide" ;
 std::string RsPluginManager::_plugin_revision_symbol           = "RETROSHARE_PLUGIN_revision" ;
-std::string RsPluginManager::_plugin_API_symbol           		= "RETROSHARE_PLUGIN_api" ;
+std::string RsPluginManager::_plugin_API_symbol         		= "RETROSHARE_PLUGIN_api" ;
 
 std::string RsPluginManager::_local_cache_dir ;
 std::string RsPluginManager::_remote_cache_dir ;
@@ -51,9 +50,14 @@ RsPluginManager::RsPluginManager(const RsFileHash &hash)
 	_allow_all_plugins = false ;
 }
 
+bool RsPluginManager::loadConfiguration(RsFileHash &loadHash)
+{
+	return p3Config::loadConfiguration(loadHash);
+}
+
 void RsPluginManager::loadConfiguration()
 {
-    RsFileHash dummyHash ;
+	RsFileHash dummyHash;
 	p3Config::loadConfiguration(dummyHash);
 }
 

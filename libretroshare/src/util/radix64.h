@@ -93,9 +93,9 @@ again:
 				idx = (idx + 1) % 4;
 			}
 
-			idx = idx;
+			//idx = idx;
 
-            return buf;
+			return buf ;
 		}
 
 		/****************
@@ -147,7 +147,7 @@ again:
 
 	private:
 		static inline char *bintoasc() { static char bta[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"; return bta ; }
-		static inline char *asctobin() { static char s[256]; return s ; }	/* runtime radix64_initd */
+		static inline uint8_t *asctobin() { static uint8_t s[256]; return s ; }	/* runtime radix64_initd */
 		static int& is_radix64_initd() { static int is_inited = false ; return is_inited ; }
 
 		/* hey, guess what: this is a read-only table.

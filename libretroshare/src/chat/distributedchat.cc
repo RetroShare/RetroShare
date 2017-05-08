@@ -222,7 +222,7 @@ bool DistributedChatService::checkSignature(RsChatLobbyBouncingObject *obj,const
 
     mGixs->requestKey(obj->signature.keyId,peer_list,RsIdentityUsage(RS_SERVICE_TYPE_CHAT,RsIdentityUsage::CHAT_LOBBY_MSG_VALIDATION,RsGxsGroupId(),RsGxsMessageId(),obj->lobby_id));
 
-    uint32_t size = obj->signed_serial_size() ;
+    uint32_t size = RsChatSerialiser(RsServiceSerializer::SERIALIZATION_FLAG_SIGNATURE).size(dynamic_cast<RsItem*>(obj)) ;
     RsTemporaryMemory memory(size) ;
 
 #ifdef DEBUG_CHAT_LOBBIES
@@ -230,7 +230,7 @@ bool DistributedChatService::checkSignature(RsChatLobbyBouncingObject *obj,const
     std::cerr << "   signature id: " << obj->signature.keyId << std::endl;
 #endif
 
-    if(!obj->serialise_signed_part(memory,size))
+    if(!RsChatSerialiser(RsServiceSerializer::SERIALIZATION_FLAG_SIGNATURE).serialise(dynamic_cast<RsItem*>(obj),memory,&size))
     {
 	    std::cerr << "  (EE) Cannot serialise message item. " << std::endl;
 	    return false ;
@@ -239,7 +239,7 @@ bool DistributedChatService::checkSignature(RsChatLobbyBouncingObject *obj,const
     uint32_t error_status ;
     RsIdentityUsage use_info(RS_SERVICE_TYPE_CHAT,RsIdentityUsage::CHAT_LOBBY_MSG_VALIDATION,RsGxsGroupId(),RsGxsMessageId(),obj->lobby_id) ;
 
-    if(!mGixs->validateData(memory,obj->signed_serial_size(),obj->signature,false,use_info,error_status))
+    if(!mGixs->validateData(memory,size,obj->signature,false,use_info,error_status))
     {
 	    bool res = false ;
 
@@ -415,7 +415,7 @@ void DistributedChatService::checkSizeAndSendLobbyMessage(RsChatItem *msg)
     //
     static const uint32_t MAX_ITEM_SIZE = 32000 ;
 
-    if(msg->serial_size() > MAX_ITEM_SIZE)
+    if(RsChatSerialiser().size(msg) > MAX_ITEM_SIZE)
     {
         std::cerr << "(EE) Chat item exceeds maximum serial size. It will be dropped." << std::endl;
         delete msg ;
@@ -970,10 +970,10 @@ bool DistributedChatService::locked_initLobbyBouncableObject(const ChatLobbyId& 
 
     // now sign the object, if the lobby expects it
 
-        uint32_t size = item.signed_serial_size() ;
+        uint32_t size = RsChatSerialiser(RsServiceSerializer::SERIALIZATION_FLAG_SIGNATURE).size(dynamic_cast<RsItem*>(&item)) ;
         RsTemporaryMemory memory(size) ;
 
-        if(!item.serialise_signed_part(memory,size))
+        if(!RsChatSerialiser(RsServiceSerializer::SERIALIZATION_FLAG_SIGNATURE).serialise(dynamic_cast<RsItem*>(&item),memory,&size))
         {
             std::cerr << "(EE) Cannot sign message item. " << std::endl;
             return false ;

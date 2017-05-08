@@ -31,7 +31,7 @@
 #include <list>
 #include <map>
 
-#include "serialiser/rsbanlistitems.h"
+#include "rsitems/rsbanlistitems.h"
 #include "services/p3service.h"
 #include "retroshare/rsbanlist.h"
 
@@ -148,7 +148,7 @@ private:
     std::map<struct sockaddr_storage, BanListPeer> mWhiteListedRanges;
 
     p3ServiceControl *mServiceCtrl;
-    p3NetMgr *mNetMgr;
+    //p3NetMgr *mNetMgr;
     time_t mLastDhtInfoRequest ;
 
     bool mIPFilteringEnabled ;

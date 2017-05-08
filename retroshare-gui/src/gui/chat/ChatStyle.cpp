@@ -578,7 +578,10 @@ static bool getStyleInfo(QString stylePath, QString stylePathRelative, ChatStyle
 {
     variants.clear();
 
+    std::cerr << "Getting variants for style: \"" << stylePath.toStdString() << "\"" << std::endl;
+
     if (stylePath.isEmpty()) {
+    	std::cerr << "empty!" << std::endl;
         return false;
     }
 
@@ -586,11 +589,13 @@ static bool getStyleInfo(QString stylePath, QString stylePathRelative, ChatStyle
     QDir dir(QApplication::applicationDirPath());
     if (dir.cd(stylePath) == false) {
         // style not found
+    	std::cerr << "no path!" << std::endl;
         return false;
     }
 
     if (dir.cd("variants") == false) {
         // no variants available
+    	std::cerr << "no variants!" << std::endl;
         return true;
     }
 

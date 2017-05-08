@@ -2394,7 +2394,7 @@ static int parse_secret_key(ops_region_t *region,ops_parse_info_t *pinfo)
    else if(C.secret_key.s2k_usage != OPS_S2KU_NONE)
    {
       // this is V3 style, looks just like a V4 simple hash
-      C.secret_key.algorithm=C.secret_key.s2k_usage;
+      C.secret_key.algorithm=(ops_symmetric_algorithm_t)C.secret_key.s2k_usage;
       C.secret_key.s2k_usage=OPS_S2KU_ENCRYPTED;
       C.secret_key.s2k_specifier=OPS_S2KS_SIMPLE;
       C.secret_key.hash_algorithm=OPS_HASH_MD5;

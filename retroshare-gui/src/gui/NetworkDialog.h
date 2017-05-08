@@ -26,7 +26,9 @@
 #include "ui_NetworkDialog.h"
 #include "RsAutoUpdatePage.h"
 
-class NetworkDialog : public RsAutoUpdatePage 
+class RSTreeWidgetItemCompareRole ;
+
+class NetworkDialog : public RsAutoUpdatePage
 {
   Q_OBJECT
 
@@ -117,6 +119,8 @@ private:
   QColor mBackgroundColorAcceptConnection;
   QColor mBackgroundColorHasSignedMe;
   QColor mBackgroundColorDenied;
+
+  RSTreeWidgetItemCompareRole *compareNetworkRole ;
 
   /** Qt Designer generated object */
   Ui::NetworkDialog ui;

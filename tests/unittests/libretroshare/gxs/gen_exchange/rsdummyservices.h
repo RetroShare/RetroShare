@@ -6,7 +6,7 @@
 
 #include "gxs/rsnxs.h"
 #include "gxs/rsgixs.h"
-#include "serialiser/rsgxsitems.h"
+#include "rsitems/rsgxsitems.h"
 
 class RsDummyNetService: public RsNetworkExchangeService
 {

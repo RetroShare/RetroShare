@@ -79,6 +79,11 @@ ConnectFriendWizard::ConnectFriendWizard(QWidget *parent) :
 	mTitleFontSize = 0; // Standard
 	mTitleFontWeight = 0; // Standard
 
+    // (csoler) I'm hiding this, since it is not needed anymore with the new Home page.
+    ui->userFrame->hide();
+	
+	ui->userFileFrame->hide(); // in homepage dropmenu now
+
 // this define comes from Qt example. I don't have mac, so it wasn't tested
 #ifndef Q_OS_MAC
 	setWizardStyle(ModernStyle);
@@ -130,12 +135,8 @@ ConnectFriendWizard::ConnectFriendWizard(QWidget *parent) :
 	else
 	{
 		ui->userFrame->hide(); // certificates page - top half with own cert and it's functions
-		
 		ui->horizontalLayout_13->hide(); // Advanced options - key sign, whitelist, direct source ...
 		AdvancedVisible=false;
-
-		ui->emailLabel->hide(); // is it ever used?
-		ui->emailEdit->hide();
 		ui->trustLabel->hide();
 		ui->trustEdit->hide();
 	}
@@ -415,7 +416,7 @@ void ConnectFriendWizard::initializePage(int id)
 		{
 			std::cerr << "Conclusion page id : " << peerDetails.id << "; gpg_id : " << peerDetails.gpg_id << std::endl;
 
-            ui->_direct_transfer_CB_2  ->setChecked(peerDetails.service_perm_flags & RS_NODE_PERM_DIRECT_DL) ;
+            ui->_direct_transfer_CB_2  ->setChecked(false) ; //peerDetails.service_perm_flags & RS_NODE_PERM_DIRECT_DL) ;
             ui->_allow_push_CB_2  ->setChecked(peerDetails.service_perm_flags & RS_NODE_PERM_ALLOW_PUSH) ;
             ui->_require_WL_CB_2  ->setChecked(peerDetails.service_perm_flags & RS_NODE_PERM_REQUIRE_WL) ;
 
@@ -426,7 +427,7 @@ void ConnectFriendWizard::initializePage(int id)
         {
             QString ipstring0 = QString::fromStdString(sockaddr_storage_iptostring(addr));
 
-            ui->_addIPToWhiteList_CB_2->setChecked(true) ;
+            ui->_addIPToWhiteList_CB_2->setChecked(ui->_require_WL_CB_2->isChecked());
             ui->_addIPToWhiteList_ComboBox_2->addItem(ipstring0) ;
             ui->_addIPToWhiteList_ComboBox_2->addItem(ipstring0+"/24") ;
             ui->_addIPToWhiteList_ComboBox_2->addItem(ipstring0+"/16") ;
@@ -542,6 +543,26 @@ void ConnectFriendWizard::initializePage(int id)
 			ui->signersEdit->setPlainText(ts);
 
 			fillGroups(this, ui->groupComboBox, groupId);
+			
+			if(peerDetails.isHiddenNode)
+			{
+				ui->_addIPToWhiteList_CB_2->setEnabled(false) ;
+				ui->_require_WL_CB_2->setEnabled(false) ;
+				ui->_addIPToWhiteList_ComboBox_2->setEnabled(false) ;
+				ui->_addIPToWhiteList_ComboBox_2->addItem("(Hidden node)") ;
+				int S = QFontMetricsF(ui->ipEdit->font()).height() ;
+				ui->ipEdit->setToolTip("This is a Hidden node - you need tor/i2p proxy to connect");
+				ui->ipLabel->setPixmap(QPixmap(":/images/anonymous_128_blue.png").scaledToHeight(S*2,Qt::SmoothTransformation));
+				ui->ipLabel->setToolTip("This is a Hidden node - you need tor/i2p proxy to connect");
+			}
+
+			if(peerDetails.email.empty())
+			{
+				ui->emailLabel->hide(); // is it ever used?
+				ui->emailEdit->hide();
+			}
+			ui->ipEdit->setTextInteractionFlags(Qt::TextSelectableByMouse);
+
 		}
 		break;
 	case Page_FriendRequest:

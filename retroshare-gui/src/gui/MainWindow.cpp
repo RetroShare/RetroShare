@@ -265,7 +265,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     statusBar()->addPermanentWidget(ratesstatus);
 
     opModeStatus = new OpModeStatus();
-    opModeStatus->setVisible(Settings->valueFromGroup("StatusBar", "ShowOpMode", QVariant(true)).toBool());
+    opModeStatus->setVisible(Settings->valueFromGroup("StatusBar", "ShowOpMode", QVariant(false)).toBool());
     statusBar()->addPermanentWidget(opModeStatus);
 
     soundStatus = new SoundStatus();
@@ -361,13 +361,13 @@ void MainWindow::initStackedPage()
 //  addPage(circlesDialog = new CirclesDialog(ui->stackPages), grp, &notify);
 //#endif
   addPage(friendsDialog = new FriendsDialog(ui->stackPages), grp, &notify);
+  addPage(idDialog = new IdDialog(ui->stackPages), grp, &notify);
   addPage(chatLobbyDialog = new ChatLobbyWidget(ui->stackPages), grp, &notify);
+  addPage(messagesDialog = new MessagesDialog(ui->stackPages), grp, &notify);
   addPage(transfersDialog = new TransfersDialog(ui->stackPages), grp, &notify);
   addPage(gxschannelDialog = new GxsChannelDialog(ui->stackPages), grp, &notify);
   addPage(gxsforumDialog = new GxsForumsDialog(ui->stackPages), grp, &notify);
-  addPage(messagesDialog = new MessagesDialog(ui->stackPages), grp, &notify);
   addPage(postedDialog = new PostedDialog(ui->stackPages), grp, &notify);
-  addPage(idDialog = new IdDialog(ui->stackPages), grp, &notify);
 
   #ifdef RS_USE_NEW_PEOPLE_DIALOG
   PeopleDialog *peopleDialog = NULL;
@@ -425,6 +425,18 @@ void MainWindow::initStackedPage()
       addPage(getStartedPage = new GetStartedDialog(ui->stackPages), grp, NULL);
   }
 #endif
+
+  //List All notify before Setting was created
+  QList<QPair<MainPage*, QPair<QAction*, QListWidgetItem*> > >::iterator notifyIt;
+  for (notifyIt = notify.begin(); notifyIt != notify.end(); ++notifyIt) {
+      UserNotify *userNotify = notifyIt->first->getUserNotify(this);
+      if (userNotify) {
+          userNotify->initialize(ui->toolBarPage, notifyIt->second.first, notifyIt->second.second);
+          connect(userNotify, SIGNAL(countChanged()), this, SLOT(updateTrayCombine()));
+          userNotifyList.push_back(userNotify);
+      }
+  }
+
   addPage(settingsDialog = new SettingsPage(ui->stackPages),grp,&notify);
 
   /* Create the toolbar */
@@ -448,16 +460,6 @@ void MainWindow::initStackedPage()
   //addAction(new QAction(QIcon(IMAGE_ABOUT), tr("About"), ui->toolBarAction), &MainWindow::showabout, SLOT(showabout()));
 
   addAction(new QAction(QIcon(IMAGE_QUIT), tr("Quit"), ui->toolBarAction), &MainWindow::doQuit, SLOT(doQuit()));
-
-  QList<QPair<MainPage*, QPair<QAction*, QListWidgetItem*> > >::iterator notifyIt;
-  for (notifyIt = notify.begin(); notifyIt != notify.end(); ++notifyIt) {
-      UserNotify *userNotify = notifyIt->first->getUserNotify(this);
-      if (userNotify) {
-          userNotify->initialize(ui->toolBarPage, notifyIt->second.first, notifyIt->second.second);
-          connect(userNotify, SIGNAL(countChanged()), this, SLOT(updateTrayCombine()));
-          userNotifyList.push_back(userNotify);
-      }
-  }
 
 }
 
@@ -674,7 +676,8 @@ void MainWindow::updateTrayCombine()
 
         }
     }
-    notifyMenu->menuAction()->setVisible(visible);
+    if (notifyMenu)
+        notifyMenu->menuAction()->setVisible(visible);
 
     // update tray icon
     updateFriends();
@@ -769,7 +772,7 @@ void MainWindow::updateFriends()
     if (sysTrayStatus) sysTrayStatus->setIcon(icon);
 }
 
-void MainWindow::postModDirectories(bool update_local)
+void MainWindow::postModDirectories(bool /*update_local*/)
 {
     //RSettingsPage::postModDirectories(update_local);
 
@@ -1205,7 +1208,7 @@ void MainWindow::showHelpDialog(const QString &topic)
 void
 MainWindow::retranslateUi()
 {
-  retranslateUi();
+  //retranslateUi();
   foreach (MainPage *page, ui->stackPages->pages()) {
     page->retranslateUi();
   }
@@ -1498,9 +1501,9 @@ void MainWindow::switchVisibilityStatus(StatusElement e,bool b)
         case 	StatusGrpStatus   : getInstance()->statusBar()               ->setVisible(b); break ;
         case 	StatusCompactMode : getInstance()->setCompactStatusMode(b) ; break ;
         case 	StatusShowToolTip : getInstance()->toggleStatusToolTip(b) ; break ;
-        case 	StatusShowCBox    : getInstance()->statusComboBoxInstance()  ->setVisible(b); break ;
-        case 	StatusShowStatus  : getInstance()->peerstatusInstance()      ->setVisible(b); break ;
-        case 	StatusShowPeer    : getInstance()->natstatusInstance()       ->setVisible(b); break ;
+        case 	StatusShowStatus  : getInstance()->statusComboBoxInstance()  ->setVisible(b); break ;
+        case 	StatusShowPeer    : getInstance()->peerstatusInstance()      ->setVisible(b); break ;
+        case 	StatusShowNAT     : getInstance()->natstatusInstance()       ->setVisible(b); break ;
         case 	StatusShowDHT     : getInstance()->dhtstatusInstance()       ->setVisible(b); break ;
         case 	StatusShowHashing : getInstance()->hashingstatusInstance()   ->setVisible(b); break ;
         case 	StatusShowDisc    : getInstance()->discstatusInstance()      ->setVisible(b); break ;

@@ -28,6 +28,7 @@
 #include <time.h>
 #include "serialiser/rsbaseserial.h"
 #include "serialiser/rstlvbase.h"
+#include "serialiser/rstypeserializer.h"
 #include "util/rsprint.h"
 #include "util/rsmemory.h"
 
@@ -35,460 +36,91 @@
 
 //#define GXS_TUNNEL_ITEM_DEBUG 1
 
-std::ostream& RsGxsTunnelDHPublicKeyItem::print(std::ostream &out, uint16_t indent)
+RsItem *RsGxsTunnelSerialiser::create_item(uint16_t service,uint8_t item_subtype) const
 {
-	printRsItemBase(out, "RsGxsTunnelDHPublicKeyItem", indent);
-	uint16_t int_Indent = indent + 2;
+    if(service != RS_SERVICE_TYPE_GXS_TUNNEL)
+        return NULL ;
 
-	printIndent(out, int_Indent);
-	out << "  Signature Key ID: " << signature.keyId << std::endl ;
-	out << "  Public    Key ID: " << gxs_key.keyId << std::endl ;
-
-	printRsItemEnd(out, "RsGxsTunnelMsgItem", indent);
-	return out;
+    switch(item_subtype)
+    {
+    case RS_PKT_SUBTYPE_GXS_TUNNEL_DATA:          return new RsGxsTunnelDataItem();
+    case RS_PKT_SUBTYPE_GXS_TUNNEL_DATA_ACK:      return new RsGxsTunnelDataAckItem();
+    case RS_PKT_SUBTYPE_GXS_TUNNEL_DH_PUBLIC_KEY: return new RsGxsTunnelDHPublicKeyItem();
+    case RS_PKT_SUBTYPE_GXS_TUNNEL_STATUS:        return new RsGxsTunnelStatusItem();
+    default:
+        return NULL ;
+    }
 }
-
-std::ostream& RsGxsTunnelDataItem::print(std::ostream &out, uint16_t indent)
-{
-	printRsItemBase(out, "RsGxsTunnelDataItem", indent);
-	uint16_t int_Indent = indent + 2;
-
-	printIndent(out, int_Indent);
-	out << "  message id : " << std::hex << unique_item_counter << std::dec << std::endl ;
-	out << "  service id : " << std::hex << service_id << std::dec << std::endl ;
-	out << "  flags      : " << std::hex << flags << std::dec << std::endl ;
-	out << "  size       : " << data_size << std::endl ;
-	out << "  data       : " << RsUtil::BinToHex(data,std::min(50u,data_size)) << ((data_size>50u)?"...":"") << std::endl ;
-
-	printRsItemEnd(out, "RsGxsTunnelDataItem", indent);
-	return out;
-}
-std::ostream& RsGxsTunnelDataAckItem::print(std::ostream &out, uint16_t indent)
-{
-	printRsItemBase(out, "RsGxsTunnelDataItem", indent);
-	uint16_t int_Indent = indent + 2;
-
-	printIndent(out, int_Indent);
-	out << "  message id : " << std::hex << unique_item_counter << std::dec << std::endl ;
-
-	printRsItemEnd(out, "RsGxsTunnelDataAckItem", indent);
-	return out;
-}
-std::ostream& RsGxsTunnelStatusItem::print(std::ostream &out, uint16_t indent)
-{
-	printRsItemBase(out, "RsGxsTunnelDataItem", indent);
-	uint16_t int_Indent = indent + 2;
-
-	printIndent(out, int_Indent);
-	out << "  flags      : " << std::hex << status << std::dec << std::endl ;
-
-	printRsItemEnd(out, "RsGxsTunnelStatusItem", indent);
-	return out;
-}
-
-/*************************************************************************/
 
 RsGxsTunnelDHPublicKeyItem::~RsGxsTunnelDHPublicKeyItem() 
 {
 	BN_free(public_key) ;
 }
 
-/*************************************************************************/
-
-RsItem *RsGxsTunnelSerialiser::deserialise(void *data, uint32_t *pktsize)
+void RsGxsTunnelDHPublicKeyItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
-    uint32_t rstype = getRsItemId(data);
-    uint32_t rssize = getRsItemSize(data);
-
-#ifdef GXS_TUNNEL_ITEM_DEBUG
-    std::cerr << "deserializing packet..."<< std::endl ;
-#endif
-    // look what we have...
-    if (*pktsize < rssize)    /* check size */
-    {
-	    std::cerr << "GxsTunnel deserialisation: not enough size: pktsize=" << *pktsize << ", rssize=" << rssize << std::endl ;
-	    return NULL; /* not enough data */
-    }
-
-    /* set the packet length */
-    *pktsize = rssize;
-
-    /* ready to load */
-
-    if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) || (RS_SERVICE_TYPE_GXS_TUNNEL != getRsItemService(rstype))) 
-    {
-#ifdef GXS_TUNNEL_ITEM_DEBUG
-	    std::cerr << "GxsTunnel deserialisation: wrong type !" << std::endl ;
-#endif
-	    return NULL; /* wrong type */
-    }
-
-    switch(getRsItemSubType(rstype))
-    {
-    case RS_PKT_SUBTYPE_GXS_TUNNEL_DH_PUBLIC_KEY: 	return deserialise_RsGxsTunnelDHPublicKeyItem(data,*pktsize) ;
-    case RS_PKT_SUBTYPE_GXS_TUNNEL_DATA: 		return deserialise_RsGxsTunnelDataItem       (data,*pktsize) ;
-    case RS_PKT_SUBTYPE_GXS_TUNNEL_DATA_ACK: 		return deserialise_RsGxsTunnelDataAckItem    (data,*pktsize) ;
-    case RS_PKT_SUBTYPE_GXS_TUNNEL_STATUS: 		return deserialise_RsGxsTunnelStatusItem     (data,*pktsize) ;
-    default:
-	    std::cerr << "Unknown packet type in chat!" << std::endl ;
-	    return NULL ;
-    }
+    RsTypeSerializer::serial_process           (j,ctx,public_key,"public_key") ;
+    RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,signature,"signature") ;
+    RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,gxs_key,"gxs_key") ;
 }
 
-/*************************************************************************/
-
-uint32_t RsGxsTunnelDHPublicKeyItem::serial_size()
+template<> bool RsTypeSerializer::serialize(uint8_t data[], uint32_t size, uint32_t &offset, BIGNUM * const & member)
 {
-	uint32_t s = 8 ;                // header
-	s += 4 ;	               	 // BN size
-	s += BN_num_bytes(public_key) ; // public_key
-	s += signature.TlvSize() ;      // signature
-	s += gxs_key.TlvSize() ;        // gxs_key
+	uint32_t s = BN_num_bytes(member) ;
 
-	return s ;
-}
+    if(size < offset + 4 + s)
+        return false ;
 
-uint32_t RsGxsTunnelDataItem::serial_size()
-{
-	uint32_t s = 8 ;               // header
-	s += 8 ;	               	// counter
-	s += 4 ;	               	// flags
-	s += 4 ;	               	// service id
-	s += 4 ;	               	// data_size
-	s += data_size;			// data
+    bool ok = true ;
+	ok &= setRawUInt32(data, size, &offset, s);
 
-	return s ;
-}
-
-uint32_t RsGxsTunnelDataAckItem::serial_size()
-{
-	uint32_t s = 8 ;               // header
-	s += 8 ;	               	// counter
-
-	return s ;
-}
-
-uint32_t RsGxsTunnelStatusItem::serial_size()
-{
-	uint32_t s = 8 ;               // header
-	s += 4 ;	               	// flags
-
-	return s ;
-}
-/*************************************************************************/
-
-bool RsGxsTunnelDHPublicKeyItem::serialise(void *data,uint32_t& pktsize)
-{
-	uint32_t tlvsize = serial_size() ;
-	uint32_t offset = 0;
-
-	if (pktsize < tlvsize)
-		return false; /* not enough space */
-
-	pktsize = tlvsize;
-
-	bool ok = true;
-
-	ok &= setRsItemHeader(data, tlvsize, PacketId(), tlvsize);
-
-	/* skip the header */
-	offset += 8;
-
-	uint32_t s = BN_num_bytes(public_key) ;
-
-	ok &= setRawUInt32(data, tlvsize, &offset, s);
-
-	BN_bn2bin(public_key,&((unsigned char *)data)[offset]) ;
+	BN_bn2bin(member,&((unsigned char *)data)[offset]) ;
 	offset += s ;
 
-	ok &= signature.SetTlv(data, tlvsize, &offset);
-	ok &= gxs_key.SetTlv(data, tlvsize, &offset);
-
-	if (offset != tlvsize)
-	{
-		ok = false;
-		std::cerr << "RsGxsTunnelDHPublicKeyItem::serialiseItem() Size Error! offset=" << offset << ", tlvsize=" << tlvsize << std::endl;
-	}
-	return ok ;
+    return ok;
 }
-
-bool RsGxsTunnelStatusItem::serialise(void *data, uint32_t& pktsize)
+template<> bool RsTypeSerializer::deserialize(const uint8_t data[], uint32_t size, uint32_t &offset, BIGNUM *& member)
 {
-	uint32_t tlvsize = serial_size() ;
-	uint32_t offset = 0;
-
-	if (pktsize < tlvsize)
-		return false; /* not enough space */
-
-	pktsize = tlvsize;
-
-	bool ok = true;
-
-	ok &= setRsItemHeader(data, tlvsize, PacketId(), tlvsize);
-
-#ifdef GXS_TUNNEL_ITEM_DEBUG
-	std::cerr << "RsGxsTunnelSerialiser serialising chat status item." << std::endl;
-	std::cerr << "RsGxsTunnelSerialiser::serialiseItem() Header: " << ok << std::endl;
-	std::cerr << "RsGxsTunnelSerialiser::serialiseItem() Size: " << tlvsize << std::endl;
-#endif
-
-	/* skip the header */
-	offset += 8;
-
-	/* add mandatory parts first */
-	ok &= setRawUInt32(data, tlvsize, &offset, status);
-
-	if (offset != tlvsize)
-	{
-		ok = false;
-		std::cerr << "RsGxsTunnelSerialiser::serialiseItem() Size Error! " << std::endl;
-	}
-#ifdef GXS_TUNNEL_ITEM_DEBUG
-	std::cerr << "computed size: " << 256*((unsigned char*)data)[6]+((unsigned char*)data)[7] << std::endl ;
-#endif
-
-	return ok;
-}
-
-bool RsGxsTunnelDataItem::serialise(void *dt, uint32_t& pktsize)
-{
-	uint32_t tlvsize = serial_size() ;
-	uint32_t offset = 0;
-
-	if (pktsize < tlvsize)
-		return false; /* not enough space */
-
-	pktsize = tlvsize;
-
-	bool ok = true;
-
-	ok &= setRsItemHeader(dt, tlvsize, PacketId(), tlvsize);
-
-#ifdef GXS_TUNNEL_ITEM_DEBUG
-	std::cerr << "RsGxsTunnelSerialiser serialising chat status item." << std::endl;
-	std::cerr << "RsGxsTunnelSerialiser::serialiseItem() Header: " << ok << std::endl;
-	std::cerr << "RsGxsTunnelSerialiser::serialiseItem() Size: " << tlvsize << std::endl;
-#endif
-
-	/* skip the header */
-	offset += 8;
-
-	/* add mandatory parts first */
-	ok &= setRawUInt64(dt, tlvsize, &offset, unique_item_counter);
-	ok &= setRawUInt32(dt, tlvsize, &offset, flags);
-	ok &= setRawUInt32(dt, tlvsize, &offset, service_id);
-	ok &= setRawUInt32(dt, tlvsize, &offset, data_size);
-    
-    	if(offset + data_size <= tlvsize)
-        {
-            memcpy(&((uint8_t*)dt)[offset],data,data_size) ;
-            offset += data_size ;
-        }
-        else
-            ok = false ;
-
-	if (offset != tlvsize)
-	{
-		ok = false;
-		std::cerr << "RsGxsTunnelSerialiser::serialiseItem() Size Error! " << std::endl;
-	}
-
-	return ok;
-}
-bool RsGxsTunnelDataAckItem::serialise(void *data, uint32_t& pktsize)
-{
-	uint32_t tlvsize = serial_size() ;
-	uint32_t offset = 0;
-
-	if (pktsize < tlvsize)
-		return false; /* not enough space */
-
-	pktsize = tlvsize;
-
-	bool ok = true;
-
-	ok &= setRsItemHeader(data, tlvsize, PacketId(), tlvsize);
-
-#ifdef GXS_TUNNEL_ITEM_DEBUG
-	std::cerr << "RsGxsTunnelSerialiser serialising chat status item." << std::endl;
-	std::cerr << "RsGxsTunnelSerialiser::serialiseItem() Header: " << ok << std::endl;
-	std::cerr << "RsGxsTunnelSerialiser::serialiseItem() Size: " << tlvsize << std::endl;
-#endif
-
-	/* skip the header */
-	offset += 8;
-
-	/* add mandatory parts first */
-	ok &= setRawUInt64(data, tlvsize, &offset, unique_item_counter);
-    
-	if (offset != tlvsize)
-	{
-		ok = false;
-		std::cerr << "RsGxsTunnelSerialiser::serialiseItem() Size Error! " << std::endl;
-	}
-
-	return ok;
-}
-
-/*************************************************************************/
-
-RsGxsTunnelDHPublicKeyItem *RsGxsTunnelSerialiser::deserialise_RsGxsTunnelDHPublicKeyItem(void *data,uint32_t /*size*/)
-{
-    uint32_t offset = 8; // skip the header 
-    uint32_t rssize = getRsItemSize(data);
+	uint32_t s=0 ;
     bool ok = true ;
+    ok &= getRawUInt32(data, size, &offset, &s);
 
-    RsGxsTunnelDHPublicKeyItem *item = new RsGxsTunnelDHPublicKeyItem() ;
+    if(s > size || size - s < offset)
+	    return false ;
 
-    uint32_t s=0 ;
-    /* get mandatory parts first */
-    ok &= getRawUInt32(data, rssize, &offset, &s);
-
-    if(s > rssize || rssize - s < offset)
-    {
-	    std::cerr << "RsGxsTunnelDHPublicKeyItem::() Size error while deserializing." << std::endl ;
-            delete item ;
-	    return NULL ;
-    }
-    
-    item->public_key = BN_bin2bn(&((unsigned char *)data)[offset],s,NULL) ;
+    member = BN_bin2bn(&((unsigned char *)data)[offset],s,NULL) ;
     offset += s ;
 
-    ok &= item->signature.GetTlv(data, rssize, &offset) ;
-    ok &= item->gxs_key.GetTlv(data, rssize, &offset) ;
-
-    if (offset != rssize)
-    {
-	    std::cerr << "RsGxsTunnelDHPublicKeyItem::() Size error while deserializing." << std::endl ;
-            delete item ;
-	    return NULL ;
-    }
-    if (!ok)
-    {
-	    std::cerr << "RsGxsTunnelDHPublicKeyItem::() Unknown error while deserializing." << std::endl ;
-	    delete item ;
-	    return NULL ;
-    }
-
-    return item ;
+    return ok;
 }
-
-RsGxsTunnelDataItem *RsGxsTunnelSerialiser::deserialise_RsGxsTunnelDataItem(void *dat,uint32_t size)
+template<> uint32_t RsTypeSerializer::serial_size(BIGNUM * const & member)
 {
-    uint32_t offset = 8; // skip the header 
-    uint32_t rssize = getRsItemSize(dat);
-    bool ok = true ;
-    
-    if(rssize > size)
-    {
-        std::cerr << "RsGxsTunnelDataItem::() Size error while deserializing." << std::endl ;
-        return NULL ;
-    }
-
-    RsGxsTunnelDataItem *item = new RsGxsTunnelDataItem();
-
-    /* get mandatory parts first */
-
-    ok &= getRawUInt64(dat, rssize, &offset, &item->unique_item_counter);
-    ok &= getRawUInt32(dat, rssize, &offset, &item->flags);
-    ok &= getRawUInt32(dat, rssize, &offset, &item->service_id);
-    ok &= getRawUInt32(dat, rssize, &offset, &item->data_size);
-
-    if(item->data_size > rssize || rssize < offset + item->data_size) 
-    {
-	    std::cerr << "RsGxsTunnelDataItem::() Size error while deserializing." << std::endl ;
-	    delete item ;
-	    return NULL ;
-    }
-    item->data = (unsigned char*)rs_malloc(item->data_size) ;
-
-    if(item->data == NULL)
-    {
-	    delete item ;
-	    return NULL ;
-    }
-
-    memcpy(item->data,&((uint8_t*)dat)[offset],item->data_size) ;
-    offset += item->data_size ;
-
-
-    if (offset != rssize)
-    {
-	    std::cerr << "RsGxsTunnelDHPublicKeyItem::() Size error while deserializing." << std::endl ;
-	    delete item ;
-	    return NULL ;
-    }
-    if (!ok)
-    {
-	    std::cerr << "RsGxsTunnelDHPublicKeyItem::() Unknown error while deserializing." << std::endl ;
-	    delete item ;
-	    return NULL ;
-    }
-
-    return item ;
+	return 4 + BN_num_bytes(member) ;
 }
-
-RsGxsTunnelDataAckItem *RsGxsTunnelSerialiser::deserialise_RsGxsTunnelDataAckItem(void *dat,uint32_t /* size */)
+template<> void     RsTypeSerializer::print_data(const std::string& name,BIGNUM * const & /* member */)
 {
-    uint32_t offset = 8; // skip the header 
-    uint32_t rssize = getRsItemSize(dat);
-    bool ok = true ;
-
-    RsGxsTunnelDataAckItem *item = new RsGxsTunnelDataAckItem();
-
-    /* get mandatory parts first */
-
-    ok &= getRawUInt64(dat, rssize, &offset, &item->unique_item_counter);
-
-    if (offset != rssize)
-    {
-	    std::cerr << "RsGxsTunnelDHPublicKeyItem::() Size error while deserializing." << std::endl ;
-	    delete item ;
-	    return NULL ;
-    }
-    if (!ok)
-    {
-	    std::cerr << "RsGxsTunnelDHPublicKeyItem::() Unknown error while deserializing." << std::endl ;
-	    delete item ;
-	    return NULL ;
-    }
-
-    return item ;
+    std::cerr << "[BIGNUM] : " << name << std::endl;
 }
 
-RsGxsTunnelStatusItem *RsGxsTunnelSerialiser::deserialise_RsGxsTunnelStatusItem(void *dat, uint32_t size)
+void RsGxsTunnelStatusItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
-    uint32_t offset = 8; // skip the header 
-    uint32_t rssize = getRsItemSize(dat);
-    bool ok = true ;
-
-    if(rssize > size)
-    {
-        std::cerr << "RsGxsTunnelStatusItem::() Size error while deserializing." << std::endl ;
-        return NULL ;
-    }
-
-    RsGxsTunnelStatusItem *item = new RsGxsTunnelStatusItem();
-
-    /* get mandatory parts first */
-
-    ok &= getRawUInt32(dat, rssize, &offset, &item->status);
-
-    if (offset != rssize)
-    {
-	    std::cerr << "RsGxsTunnelStatusItem::() Size error while deserializing." << std::endl ;
-	    delete item ;
-	    return NULL ;
-    }
-    if (!ok)
-    {
-	    std::cerr << "RsGxsTunnelStatusItem::() Unknown error while deserializing." << std::endl ;
-	    delete item ;
-	    return NULL ;
-    }
-
-    return item ;
+    RsTypeSerializer::serial_process<uint32_t>(j,ctx,status,"status") ;
 }
+
+void RsGxsTunnelDataItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
+{
+    RsTypeSerializer::serial_process<uint64_t>(j,ctx,unique_item_counter,"unique_item_counter") ;
+    RsTypeSerializer::serial_process<uint32_t>(j,ctx,flags              ,"flags") ;
+    RsTypeSerializer::serial_process<uint32_t>(j,ctx,service_id         ,"service_id") ;
+
+    RsTypeSerializer::TlvMemBlock_proxy mem(data,data_size) ;
+    RsTypeSerializer::serial_process(j,ctx,mem,"data") ;
+}
+void RsGxsTunnelDataAckItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
+{
+    RsTypeSerializer::serial_process<uint64_t>(j,ctx,unique_item_counter,"unique_item_counter") ;
+}
+
 
 
 

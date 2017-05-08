@@ -120,7 +120,7 @@ template<uint32_t ID_SIZE_IN_BYTES,bool UPPER_CASE,uint32_t UNIQUE_IDENTIFIER> c
 			offset += SIZE_IN_BYTES ;
 			return true ;
 		}
-		bool deserialise(void *data,uint32_t pktsize,uint32_t& offset)
+		bool deserialise(const void *data,uint32_t pktsize,uint32_t& offset)
 		{
 			if(offset + SIZE_IN_BYTES > pktsize)
 				return false ;

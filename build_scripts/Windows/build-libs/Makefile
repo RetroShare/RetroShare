@@ -2,16 +2,16 @@ ZLIB_VERSION=1.2.3
 BZIP2_VERSION=1.0.6
 MINIUPNPC_VERSION=2.0
 OPENSSL_VERSION=1.0.2k
-SPEEX_VERSION=1.2rc2
+SPEEX_VERSION=1.2.0
 SPEEXDSP_VERSION=1.2rc3
-OPENCV_VERSION=2.4.13
-LIBXML2_VERSION=2.9.3
+OPENCV_VERSION=3.2.0
+LIBXML2_VERSION=2.9.4
 LIBXSLT_VERSION=1.1.28
-CURL_VERSION=7.46.0
+CURL_VERSION=7.53.1
 TCL_VERSION=8.6.2
 SQLCIPHER_VERSION=2.2.1
-LIBMICROHTTPD_VERSION=0.9.46
-FFMPEG_VERSION=3.1.2
+LIBMICROHTTPD_VERSION=0.9.52
+FFMPEG_VERSION=3.2.4
 
 MAKEFILE_PATH=$(dir $(MAKEFILE_LIST))
 LIBS_PATH?=$(MAKEFILE_PATH)../../../../libs
@@ -97,7 +97,7 @@ libs/miniupnpc-$(MINIUPNPC_VERSION): $(DOWNLOAD_PATH)/miniupnpc-$(MINIUPNPC_VERS
 	rm -r -f libs/miniupnpc-*
 	tar xvf $(DOWNLOAD_PATH)/miniupnpc-$(MINIUPNPC_VERSION).tar.gz
 	# build
-	cd miniupnpc-$(MINIUPNPC_VERSION) && CC=gcc && export CC && make -f Makefile.mingw init libminiupnpc.a miniupnpc.dll
+	cd miniupnpc-$(MINIUPNPC_VERSION) && export CC=gcc && make -f Makefile.mingw init libminiupnpc.a miniupnpc.dll
 	# copy files
 	mkdir -p libs/miniupnpc-$(MINIUPNPC_VERSION).tmp/include/miniupnpc
 	cp miniupnpc-$(MINIUPNPC_VERSION)/*.h libs/miniupnpc-$(MINIUPNPC_VERSION).tmp/include/miniupnpc/
@@ -178,7 +178,7 @@ libs/speexdsp-$(SPEEXDSP_VERSION): $(DOWNLOAD_PATH)/speexdsp-$(SPEEXDSP_VERSION)
 opencv: libs/opencv-$(OPENCV_VERSION)
 
 $(DOWNLOAD_PATH)/opencv-$(OPENCV_VERSION).tar.gz:
-	wget --no-check-certificate https://github.com/Itseez/opencv/archive/$(OPENCV_VERSION).tar.gz -O $(DOWNLOAD_PATH)/opencv-$(OPENCV_VERSION).tar.gz
+	wget --no-check-certificate https://github.com/opencv/opencv/archive/$(OPENCV_VERSION).tar.gz -O $(DOWNLOAD_PATH)/opencv-$(OPENCV_VERSION).tar.gz
 
 libs/opencv-$(OPENCV_VERSION): $(DOWNLOAD_PATH)/opencv-$(OPENCV_VERSION).tar.gz
 	# prepare
@@ -285,7 +285,7 @@ libs/sqlcipher-$(SQLCIPHER_VERSION): $(DOWNLOAD_PATH)/tcl$(TCL_VERSION)-src.tar.
 	mkdir -p tcl$(TCL_VERSION)/lib
 	ln -s `pwd`/tcl$(TCL_VERSION)/library `pwd`/tcl$(TCL_VERSION)/lib/tcl8.6
 	# build
-	cd sqlcipher-$(SQLCIPHER_VERSION) && PATH=.:$$PATH:`pwd`/../tcl$(TCL_VERSION)/build && LIBS="-L`pwd`/../libs/openssl-$(OPENSSL_VERSION)/lib -lgdi32 $$LIBS" && export LIBS && ./configure --disable-shared --enable-static --enable-tempstore=yes CFLAGS="-DSQLITE_HAS_CODEC -I`pwd`/../libs/openssl-$(OPENSSL_VERSION)/include -I`pwd`/../tcl$(TCL_VERSION)/generic" LDFLAGS="-L`pwd`/../libs/openssl-$(OPENSSL_VERSION)/lib -lcrypto -lgdi32" --with-tcl="`pwd`/../tcl$(TCL_VERSION)/build" && make install prefix="`pwd`/install"
+	cd sqlcipher-$(SQLCIPHER_VERSION) && PATH=.:$$PATH:`pwd`/../tcl$(TCL_VERSION)/build && export LIBS="-L`pwd`/../libs/openssl-$(OPENSSL_VERSION)/lib -lgdi32 $$LIBS" && ./configure --disable-shared --enable-static --enable-tempstore=yes CFLAGS="-DSQLITE_HAS_CODEC -I`pwd`/../libs/openssl-$(OPENSSL_VERSION)/include -I`pwd`/../tcl$(TCL_VERSION)/generic" LDFLAGS="-L`pwd`/../libs/openssl-$(OPENSSL_VERSION)/lib -lcrypto -lgdi32" --with-tcl="`pwd`/../tcl$(TCL_VERSION)/build" && make install prefix="`pwd`/install"
 	# copy files
 	mkdir -p libs/sqlcipher-$(SQLCIPHER_VERSION).tmp/include
 	cp -r sqlcipher-$(SQLCIPHER_VERSION)/install/include/* libs/sqlcipher-$(SQLCIPHER_VERSION).tmp/include/

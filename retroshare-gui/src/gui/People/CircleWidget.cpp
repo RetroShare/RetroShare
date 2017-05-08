@@ -96,7 +96,7 @@ void CircleWidget::updateData(const RsGroupMetaData& gxs_group_info
 	}
 }
 
-QSize CircleWidget::sizeHint()
+QSize CircleWidget::sizeHint() const
 {
 	QSize size;
 	size.setHeight(ui->graphicsView->size().height() + ui->label->size().height());

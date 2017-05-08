@@ -81,15 +81,18 @@ bool rsGetHostByName(const std::string& hostname, in_addr& returned_addr)
     addrinfo *info = NULL;
     int res = getaddrinfo(hostname.c_str(),NULL,NULL,&info) ;
 
+    bool ok = true;
     if(res > 0 || info == NULL || info->ai_addr == NULL)
     {
 	std::cerr << "(EE) getaddrinfo returned error " << res << " on string \"" << hostname << "\"" << std::endl;
 	returned_addr.s_addr = 0 ;
+        ok = false;
     }
     else
         returned_addr.s_addr = ((sockaddr_in*)info->ai_addr)->sin_addr.s_addr ;
     
-    freeaddrinfo(info) ;
+    if(info)
+        freeaddrinfo(info) ;
     
 #ifdef DEPRECATED_TO_REMOVE
 #if defined(WINDOWS_SYS) || defined(__APPLE__) || defined(__HAIKU__)
@@ -123,7 +126,7 @@ bool rsGetHostByName(const std::string& hostname, in_addr& returned_addr)
     returned_addr.s_addr = *(unsigned long*) (result->h_addr);
 #endif
     
-    return true ;
+    return ok;
 }
 
 bool    isValidNet(const struct in_addr *addr)

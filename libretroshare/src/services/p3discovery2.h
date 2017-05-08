@@ -35,7 +35,7 @@
 #include "pqi/p3netmgr.h"
 
 #include "pqi/pqiservicemonitor.h"
-#include "serialiser/rsdiscovery2items.h"
+#include "rsitems/rsdiscovery2items.h"
 #include "services/p3service.h"
 #include "pqi/authgpg.h"
 

@@ -25,6 +25,8 @@
 
 #include <iostream>
 
+#include <util/misc.h>
+#include <gui/ShareManager.h>
 #include <retroshare/rsiface.h>
 #include <retroshare/rsfiles.h>
 #include <retroshare/rspeers.h>
@@ -35,31 +37,23 @@ TransferPage::TransferPage(QWidget * parent, Qt::WindowFlags flags)
     /* Invoke the Qt Designer generated object setup routine */
     ui.setupUi(this);
 
-    ui._queueSize_SB->setValue(rsFiles->getQueueSize()) ;
-
-    switch(rsFiles->defaultChunkStrategy())
-    {
-    case FileChunksInfo::CHUNK_STRATEGY_STREAMING: ui._defaultStrategy_CB->setCurrentIndex(0) ; break ;
-    case FileChunksInfo::CHUNK_STRATEGY_PROGRESSIVE: ui._defaultStrategy_CB->setCurrentIndex(1) ; break ;
-    case FileChunksInfo::CHUNK_STRATEGY_RANDOM: ui._defaultStrategy_CB->setCurrentIndex(2) ; break ;
-    }
-
-    switch(rsFiles->defaultEncryptionPolicy())
-    {
-    case RS_FILE_CTRL_ENCRYPTION_POLICY_PERMISSIVE: ui._e2e_encryption_CB->setCurrentIndex(0) ; break ;
-    case RS_FILE_CTRL_ENCRYPTION_POLICY_STRICT    : ui._e2e_encryption_CB->setCurrentIndex(1) ; break ;
-    }
-
-    ui._diskSpaceLimit_SB->setValue(rsFiles->freeDiskSpaceLimit()) ;
-
     QObject::connect(ui._queueSize_SB,SIGNAL(valueChanged(int)),this,SLOT(updateQueueSize(int))) ;
     QObject::connect(ui._defaultStrategy_CB,SIGNAL(activated(int)),this,SLOT(updateDefaultStrategy(int))) ;
     QObject::connect(ui._e2e_encryption_CB,SIGNAL(activated(int)),this,SLOT(updateEncryptionPolicy(int))) ;
     QObject::connect(ui._diskSpaceLimit_SB,SIGNAL(valueChanged(int)),this,SLOT(updateDiskSizeLimit(int))) ;
     QObject::connect(ui._max_tr_up_per_sec_SB, SIGNAL( valueChanged( int ) ), this, SLOT( updateMaxTRUpRate(int) ) );
 
-    ui._max_tr_up_per_sec_SB->setValue(rsTurtle->getMaxTRForwardRate()) ;
+	QObject::connect(ui.incomingButton, SIGNAL(clicked( bool ) ), this , SLOT( setIncomingDirectory() ) );
+	QObject::connect(ui.partialButton, SIGNAL(clicked( bool ) ), this , SLOT( setPartialsDirectory() ) );
+	QObject::connect(ui.editShareButton, SIGNAL(clicked()), this, SLOT(editDirectories()));
+	QObject::connect(ui.autoCheckDirectories_CB, SIGNAL(clicked(bool)), this, SLOT(toggleAutoCheckDirectories(bool)));
+
+	QObject::connect(ui.autoCheckDirectories_CB,     SIGNAL(toggled(bool)),    this,SLOT(updateAutoCheckDirectories())) ;
+	QObject::connect(ui.autoCheckDirectoriesDelay_SB,SIGNAL(valueChanged(int)),this,SLOT(updateAutoScanDirectoriesPeriod())) ;
+	QObject::connect(ui.shareDownloadDirectoryCB,    SIGNAL(toggled(bool)),    this,SLOT(updateShareDownloadDirectory())) ;
+	QObject::connect(ui.followSymLinks_CB,           SIGNAL(toggled(bool)),    this,SLOT(updateFollowSymLinks())) ;
 }
+
 void TransferPage::updateMaxTRUpRate(int b)
 {
     rsTurtle->setMaxTRForwardRate(b) ;
@@ -75,6 +69,37 @@ void TransferPage::updateEncryptionPolicy(int b)
     case 0: rsFiles->setDefaultEncryptionPolicy(RS_FILE_CTRL_ENCRYPTION_POLICY_PERMISSIVE) ;
         break ;
     }
+}
+
+void TransferPage::load()
+{
+    whileBlocking(ui.shareDownloadDirectoryCB)->setChecked(rsFiles->getShareDownloadDirectory());
+
+	int u = rsFiles->watchPeriod() ;
+    whileBlocking(ui.autoCheckDirectoriesDelay_SB)->setValue(u) ;
+    whileBlocking(ui.autoCheckDirectories_CB)->setChecked(rsFiles->watchEnabled()) ; ;
+
+	whileBlocking(ui.incomingDir)->setText(QString::fromUtf8(rsFiles->getDownloadDirectory().c_str()));
+	whileBlocking(ui.partialsDir)->setText(QString::fromUtf8(rsFiles->getPartialsDirectory().c_str()));
+	whileBlocking(ui.followSymLinks_CB)->setChecked(rsFiles->followSymLinks());
+
+	whileBlocking(ui._queueSize_SB)->setValue(rsFiles->getQueueSize()) ;
+
+    switch(rsFiles->defaultChunkStrategy())
+    {
+    case FileChunksInfo::CHUNK_STRATEGY_STREAMING: whileBlocking(ui._defaultStrategy_CB)->setCurrentIndex(0) ; break ;
+    case FileChunksInfo::CHUNK_STRATEGY_PROGRESSIVE: whileBlocking(ui._defaultStrategy_CB)->setCurrentIndex(1) ; break ;
+    case FileChunksInfo::CHUNK_STRATEGY_RANDOM: whileBlocking(ui._defaultStrategy_CB)->setCurrentIndex(2) ; break ;
+    }
+
+    switch(rsFiles->defaultEncryptionPolicy())
+    {
+    case RS_FILE_CTRL_ENCRYPTION_POLICY_PERMISSIVE: whileBlocking(ui._e2e_encryption_CB)->setCurrentIndex(0) ; break ;
+    case RS_FILE_CTRL_ENCRYPTION_POLICY_STRICT    : whileBlocking(ui._e2e_encryption_CB)->setCurrentIndex(1) ; break ;
+    }
+
+    whileBlocking(ui._diskSpaceLimit_SB)->setValue(rsFiles->freeDiskSpaceLimit()) ;
+    whileBlocking(ui._max_tr_up_per_sec_SB)->setValue(rsTurtle->getMaxTRForwardRate()) ;
 }
 
 void TransferPage::updateDefaultStrategy(int i)
@@ -102,3 +127,43 @@ void TransferPage::updateQueueSize(int s)
 {
 	rsFiles->setQueueSize(s) ;
 }
+void TransferPage::setIncomingDirectory()
+{
+	QString qdir = QFileDialog::getExistingDirectory(this, tr("Set Incoming Directory"), "", QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+	if (qdir.isEmpty()) {
+		return;
+	}
+
+	ui.incomingDir->setText(qdir);
+	std::string dir = ui.incomingDir->text().toUtf8().constData();
+
+    if(!dir.empty())
+		rsFiles->setDownloadDirectory(dir);
+}
+
+void TransferPage::setPartialsDirectory()
+{
+	QString qdir = QFileDialog::getExistingDirectory(this, tr("Set Partials Directory"), "", QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+	if (qdir.isEmpty()) {
+		return;
+	}
+
+	ui.partialsDir->setText(qdir);
+    std::string	dir = ui.partialsDir->text().toUtf8().constData();
+	if (!dir.empty())
+		rsFiles->setPartialsDirectory(dir);
+}
+void TransferPage::toggleAutoCheckDirectories(bool b)
+{
+	ui.autoCheckDirectoriesDelay_SB->setEnabled(b);
+}
+
+void TransferPage::editDirectories()
+{
+	ShareManager::showYourself() ;
+}
+
+void TransferPage::updateAutoCheckDirectories()       {    rsFiles->setWatchEnabled(ui.autoCheckDirectories_CB->isChecked()) ; }
+void TransferPage::updateAutoScanDirectoriesPeriod()  {    rsFiles->setWatchPeriod(ui.autoCheckDirectoriesDelay_SB->value()); }
+void TransferPage::updateShareDownloadDirectory()     {    rsFiles->shareDownloadDirectory(ui.shareDownloadDirectoryCB->isChecked());}
+void TransferPage::updateFollowSymLinks()             {    rsFiles->setFollowSymLinks(ui.followSymLinks_CB->isChecked()); }

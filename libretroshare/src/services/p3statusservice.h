@@ -29,7 +29,7 @@
 #include <map>
 #include <list>
 
-#include "serialiser/rsstatusitems.h"
+#include "rsitems/rsstatusitems.h"
 #include "retroshare/rsstatus.h"
 #include "services/p3service.h"
 #include "pqi/p3cfgmgr.h"

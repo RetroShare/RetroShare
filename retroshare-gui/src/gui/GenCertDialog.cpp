@@ -22,9 +22,11 @@
 #include "GenCertDialog.h"
 
 #include <QAbstractEventDispatcher>
+#include <QLineEdit>
 #include <QFileDialog>
 #include <QGraphicsOpacityEffect>
 #include <QMessageBox>
+#include <QMenu>
 #include <QMouseEvent>
 #include <QTextBrowser>
 #include <QTimer>
@@ -45,7 +47,7 @@
 #include <iostream>
 
 #define IMAGE_GOOD ":/images/accepted16.png"
-#define IMAGE_BAD  ":/images/deletemail24.png"
+#define IMAGE_BAD  ":/images/cancel.png"
 
 class EntropyCollectorWidget: public QTextBrowser
 {
@@ -133,8 +135,8 @@ GenCertDialog::GenCertDialog(bool onlyGenerateIdentity, QWidget *parent)
 	//ui.headerFrame->setHeaderImage(QPixmap(":/icons/svg/profile.svg"));
 	//ui.headerFrame->setHeaderText(tr("Create a new profile"));
 
-	connect(ui.reuse_existing_node_CB, SIGNAL(clicked()), this, SLOT(switchReuseExistingNode()));
-	connect(ui.adv_checkbox, SIGNAL(clicked()), this, SLOT(setupState()));
+	connect(ui.reuse_existing_node_CB, SIGNAL(triggered()), this, SLOT(switchReuseExistingNode()));
+	connect(ui.adv_checkbox, SIGNAL(triggered()), this, SLOT(setupState()));
 	connect(ui.nodeType_CB, SIGNAL(currentIndexChanged(int)), this, SLOT(setupState()));
 
 	connect(ui.genButton, SIGNAL(clicked()), this, SLOT(genPerson()));
@@ -172,6 +174,11 @@ GenCertDialog::GenCertDialog(bool onlyGenerateIdentity, QWidget *parent)
 	/* get all available pgp private certificates....
 	 * mark last one as default.
 	 */
+	 
+	QMenu *menu = new QMenu(tr("Advanced options"));
+	menu->addAction(ui.adv_checkbox);
+	menu->addAction(ui.reuse_existing_node_CB);
+    ui.optionsButton->setMenu(menu);
 
     mAllFieldsOk = false ;
     mEntropyOk = false ;
@@ -246,30 +253,27 @@ void GenCertDialog::setupState()
 
 	genNewGPGKey = generate_new;
 
-	ui.no_node_label->setVisible(false);
+	//ui.no_node_label->setVisible(false);
 
 	setWindowTitle(generate_new?tr("Create new profile and new Retroshare node"):tr("Create new Retroshare node"));
 	//ui.headerFrame->setHeaderText(generate_new?tr("Create a new profile and node"):tr("Create a new node"));
 
     ui.label_nodeType->setVisible(adv_state) ;
     ui.nodeType_CB->setVisible(adv_state) ;
-    ui.reuse_existing_node_CB->setVisible(adv_state) ;
+    ui.reuse_existing_node_CB->setEnabled(adv_state) ;
     ui.importIdentity_PB->setVisible(adv_state && !generate_new) ;
     ui.exportIdentity_PB->setVisible(adv_state && !generate_new) ;
 
     ui.genPGPuser->setVisible(adv_state && haveGPGKeys && !generate_new) ;
 
-	ui.genprofileinfo_label->setVisible(false);
-	ui.no_gpg_key_label->setText(tr("Welcome to Retroshare. Before you can proceed you need to create a profile and associate a node with it. To do so please fill out this form.\nAlternatively you can import a (previously exported) profile. Just uncheck \"Create a new profile\""));
-	ui.no_gpg_key_label->setVisible(false);
-
-	ui.nickname_label->setVisible(adv_state) ;
-	ui.nickname_input->setVisible(adv_state) ;
+	//ui.genprofileinfo_label->setVisible(false);
+	//ui.no_gpg_key_label->setText(tr("Welcome to Retroshare. Before you can proceed you need to create a profile and associate a node with it. To do so please fill out this form.\nAlternatively you can import a (previously exported) profile. Just uncheck \"Create a new profile\""));
+	//no_gpg_key_label->setVisible(false);
 
 	ui.name_label->setVisible(true);
 	ui.name_input->setVisible(generate_new);
 
-    ui.header_label->setVisible(false) ;
+    //ui.header_label->setVisible(false) ;
 
 	ui.nickname_label->setVisible(adv_state && !mOnlyGenerateIdentity);
 	ui.nickname_input->setVisible(adv_state && !mOnlyGenerateIdentity);
@@ -300,14 +304,16 @@ void GenCertDialog::setupState()
     if(mEntropyOk && mAllFieldsOk)
 	{
 		ui.genButton->setEnabled(true) ;
-		ui.genButton->setIcon(QIcon(IMAGE_GOOD)) ;
+		//ui.genButton->setIcon(QIcon(IMAGE_GOOD)) ;
 		ui.genButton->setToolTip(tr("Click to create your node and/or profile")) ;
+		ui.generate_label->setPixmap(QPixmap(IMAGE_GOOD)) ;
 	}
     else
     {
 		ui.genButton->setEnabled(false) ;
-		ui.genButton->setIcon(QIcon(IMAGE_BAD)) ;
+		//ui.genButton->setIcon(QIcon(IMAGE_BAD)) ;
 		ui.genButton->setToolTip(tr("Disabled until all fields correctly set and enough randomness collected.")) ;
+		ui.generate_label->setPixmap(QPixmap(IMAGE_BAD)) ;
     }
 }
 
@@ -335,7 +341,7 @@ void GenCertDialog::updateCheckLabels()
     bool generate_new = !ui.reuse_existing_node_CB->isChecked();
     mAllFieldsOk = true ;
 
-    if(ui.node_input->text().length() > 3)
+    if(ui.node_input->text().length() >= 3)
 		ui.node_name_check_LB   ->setPixmap(good) ;
     else
     {
@@ -343,7 +349,7 @@ void GenCertDialog::updateCheckLabels()
 		ui.node_name_check_LB   ->setPixmap(bad) ;
     }
 
-    if(!generate_new || ui.name_input->text().length() > 3)
+    if(!generate_new || ui.name_input->text().length() >= 3)
 		ui.profile_name_check_LB   ->setPixmap(good) ;
     else
     {
@@ -351,14 +357,14 @@ void GenCertDialog::updateCheckLabels()
 		ui.profile_name_check_LB   ->setPixmap(bad) ;
     }
 
-	if(ui.password_input->text().length() > 3)
+	if(ui.password_input->text().length() >= 3)
 		ui.password_check_LB   ->setPixmap(good) ;
     else
     {
         mAllFieldsOk = false ;
 		ui.password_check_LB   ->setPixmap(bad) ;
     }
-    if(ui.password_input->text().length() > 3 && ui.password_input->text() == ui.password_input_2->text())
+    if(ui.password_input->text().length() >= 3 && ui.password_input->text() == ui.password_input_2->text())
 		ui.password2_check_LB   ->setPixmap(good) ;
     else
     {
@@ -413,7 +419,15 @@ void GenCertDialog::genPerson()
 	RsPgpId PGPId;
 	bool isHiddenLoc = false;
 
-	mGXSNickname = ui.nickname_input->text();
+	if(ui.nickname_input->isVisible())
+	{
+		mGXSNickname = ui.nickname_input->text();
+	}
+	else
+	{
+		mGXSNickname = ui.node_input->text();
+	}
+
 	if (!mGXSNickname.isEmpty())
 	{
 		if (mGXSNickname.size() < RSID_MINIMUM_NICKNAME_SIZE)
@@ -495,9 +509,9 @@ void GenCertDialog::genPerson()
 		}
 		//generate a new gpg key
 		std::string err_string;
-		ui.no_gpg_key_label->setText(tr("Generating new node key, please be patient: this process needs generating large prime numbers, and can take some minutes on slow computers. \n\nFill in your password when asked, to sign your new key."));
-		ui.no_gpg_key_label->show();
-		ui.reuse_existing_node_CB->hide();
+		//_key_label->setText(tr("Generating new node key, please be patient: this process needs generating large prime numbers, and can take some minutes on slow computers. \n\nFill in your password when asked, to sign your new key."));
+		//ui.no_gpg_key_label->show();
+		//ui.reuse_existing_node_CB->hide();
 		ui.name_label->hide();
 		ui.name_input->hide();
 		ui.nickname_label->hide();
@@ -514,9 +528,9 @@ void GenCertDialog::genPerson()
 		ui.node_input->hide();
 		ui.genButton->hide();
 		ui.importIdentity_PB->hide();
-		ui.genprofileinfo_label->hide();
+		//ui.genprofileinfo_label->hide();
 		ui.nodeType_CB->hide();
-		ui.adv_checkbox->hide();
+		//ui.adv_checkbox->hide();
 		ui.keylength_label->hide();
 		ui.keylength_comboBox->hide();
 

@@ -13,7 +13,7 @@ matrix:
 
 before_install:
   - if [ $TRAVIS_OS_NAME == linux ]; then sudo apt-get update; fi
-  - if [ $TRAVIS_OS_NAME == linux ]; then sudo apt-get install -y build-essential checkinstall cmake libavutil-dev libavcodec-dev libavformat-dev libbz2-dev libcurl4-openssl-dev libcv-dev libopencv-highgui-dev libhighgui-dev libgnome-keyring-dev libgstreamer-plugins-base0.10-dev libgstreamer0.10-dev libjasper-dev libjpeg-dev libmicrohttpd-dev libopencv-dev libprotobuf-dev libqt4-dev libspeex-dev libspeexdsp-dev libsqlite3-dev libssl-dev libswscale-dev libtbb-dev libtiff4-dev libupnp-dev libv4l-dev libxine-dev libxslt1-dev libxss-dev pkg-config protobuf-compiler python-dev qtmobility-dev; fi
+  - if [ $TRAVIS_OS_NAME == linux ]; then sudo apt-get install -y build-essential checkinstall cmake libavutil-dev libavcodec-dev libavformat-dev libbz2-dev libcurl4-openssl-dev libcv-dev libopencv-highgui-dev libhighgui-dev libgnome-keyring-dev libgstreamer-plugins-base0.10-dev libgstreamer0.10-dev libjasper-dev libjpeg-dev libmicrohttpd-dev libopencv-dev libprotobuf-dev libqt4-dev libspeex-dev libspeexdsp-dev libsqlite3-dev libssl-dev libswscale-dev libtbb-dev libtiff4-dev libupnp-dev libv4l-dev libxine-dev libxslt1-dev libxss-dev pkg-config protobuf-compiler python-dev qtmobility-dev gdb ; fi
 
 
 #  - if [ $TRAVIS_OS_NAME == osx ]; then xcode-select --install ; fi
