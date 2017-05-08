@@ -993,7 +993,7 @@ bool AuthSSLimpl::AuthX509WithGPG(X509 *x509,uint32_t& diagnostic)
 	const EVP_MD *type = EVP_sha1();
 
 	EVP_MD_CTX *ctx = EVP_MD_CTX_create();
-	unsigned char *p,*buf_in=NULL;
+	unsigned char *buf_in=NULL;
 	unsigned char *buf_hashout=NULL,*buf_sigout=NULL;
 	int inl=0,hashoutl=0;
 	int sigoutl=0;
@@ -1026,13 +1026,13 @@ bool AuthSSLimpl::AuthX509WithGPG(X509 *x509,uint32_t& diagnostic)
 		diagnostic = RS_SSL_HANDSHAKE_DIAGNOSTIC_MALLOC_ERROR ;
 		goto err;
 	}
-	p=buf_in;
 
 #ifdef AUTHSSL_DEBUG
 	std::cerr << "Buffers Allocated" << std::endl;
 #endif
 
 #if OPENSSL_VERSION_NUMBER < 0x10100000L
+	unsigned char *p=buf_in;
 	i2d(data,&p);
 #endif
 	/* data in buf_in, ready to be hashed */
