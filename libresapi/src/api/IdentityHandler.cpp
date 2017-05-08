@@ -106,7 +106,7 @@ public:
 	{}
 
 protected:
-	virtual void gxsDoWork(Request &req, Response &resp)
+	virtual void gxsDoWork(Request &req, Response & /* resp */)
 	{
 		RsGxsIdGroup group;
 		std::string gxs_id;
@@ -545,7 +545,7 @@ ResponseTask* IdentityHandler::handleCreateIdentity(Request & /* req */, Respons
     return new CreateIdentityTask(mRsIdentity);
 }
 
-ResponseTask* IdentityHandler::handleDeleteIdentity(Request& req, Response& resp)
+ResponseTask* IdentityHandler::handleDeleteIdentity(Request& /* req */, Response& /* resp */)
 {
 	return new DeleteIdentityTask(mRsIdentity);
 }
