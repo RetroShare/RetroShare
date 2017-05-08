@@ -23,7 +23,6 @@
         <file>TokensManager.qml</file>
         <file>qmldir</file>
         <file>TrustedNodeDetails.qml</file>
-        <file>icons/document-share.png</file>
         <file>ClipboardWrapper.qml</file>
         <file>ContactDetails.qml</file>
         <file>ColorHash.qml</file>
