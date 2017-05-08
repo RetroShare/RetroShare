@@ -1539,6 +1539,8 @@ bool ftServer::checkUploadLimit(const RsPeerId& pid,const RsFileHash& hash)
 
     uint32_t max_ups = mFtController->getMaxUploadsPerFriend() ;
 
+	RS_STACK_MUTEX(srvMutex) ;
+
     if(max_ups == 0)
     {
 #ifdef SERVER_DEBUG
@@ -1580,7 +1582,10 @@ bool ftServer::checkUploadLimit(const RsPeerId& pid,const RsFileHash& hash)
     for(it = tmap.begin();it!=tmap.end() && cleaned<2;)
         if(it->second + FILE_TRANSFER_MAX_DELAY_BEFORE_DROP_USAGE_RECORD < now)
 		{
+			std::map<RsFileHash,time_t>::iterator tmp(it) ;
+            ++tmp;
  			tmap.erase(it) ;
+            it = tmp;
             ++cleaned ;
 		}
 		else
