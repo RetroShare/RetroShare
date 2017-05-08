@@ -167,6 +167,8 @@ class RsFiles
 		virtual bool FileClearCompleted() = 0;
         virtual void setDefaultEncryptionPolicy(uint32_t policy)=0 ;	// RS_FILE_CTRL_ENCRYPTION_POLICY_STRICT/PERMISSIVE
         virtual uint32_t defaultEncryptionPolicy()=0 ;
+        virtual void setMaxUploadSlotsPerFriend(uint32_t n)=0 ;
+        virtual uint32_t getMaxUploadSlotsPerFriend()=0 ;
 
 		/***
 		 * Control of Downloads Priority.
