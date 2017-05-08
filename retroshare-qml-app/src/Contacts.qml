@@ -133,7 +133,7 @@ Item
 
 	ListView
 	{
-		id: locationsListView
+		id: contactsListView
 		width: parent.width
 		height: contactsView.searching ?
 					parent.height - searchBox.height : parent.height
@@ -180,30 +180,6 @@ Item
 		anchors.left: parent.left
 		width: parent.width
 		text: "Open Chat as: " + contactsView.own_nick + " " + contactsView.own_gxs_id
-	}
-
-	Popup
-	{
-		id: fingerPrintDialog
-		visible: false
-		property string nick
-		property string gxs_id
-		width: fingerPrintText.contentWidth + 20
-		height: fingerPrintText.contentHeight + 20
-		x: parent.x + parent.width/2 - width/2
-		y: parent.y + parent.height/2 - height/2
-
-		Text
-		{
-			id: fingerPrintText
-			anchors.centerIn: parent
-			text: "<pre>" +
-				  fingerPrintDialog.gxs_id.substring(1, 9) + "<br/>" +
-				  fingerPrintDialog.gxs_id.substring(9, 17) + "<br/>" +
-				  fingerPrintDialog.gxs_id.substring(17, 25) + "<br/>" +
-				  fingerPrintDialog.gxs_id.slice(-8) + "<br/>" +
-				  "</pre>"
-		}
 	}
 
 	Settings

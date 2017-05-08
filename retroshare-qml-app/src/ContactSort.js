@@ -42,6 +42,9 @@ function cntcmp(left, right, searchText)
 	var lfun = left.hasOwnProperty("unread_count") ? left.unread_count : 0
 	var rgun = right.hasOwnProperty("unread_count") ? right.unread_count : 0
 	if( lfun !== rgun ) return rgun - lfun
+	var lcon = left.is_contact
+	var rcon = right.is_contact
+	if( lcon !== rcon ) return rcon - lcon
 	if(left.name !== right.name) return strcmp(left.name, right.name)
 	return strcmp(left.gxs_id, right.gxs_id)
 }

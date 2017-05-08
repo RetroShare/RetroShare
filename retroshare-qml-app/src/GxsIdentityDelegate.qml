@@ -18,8 +18,6 @@
 
 import QtQuick 2.7
 import QtQuick.Controls 2.0
-import "." //Needed for ClipboardWrapper singleton
-import "URI.js" as UriJs
 
 Item
 {
@@ -31,7 +29,7 @@ Item
 		anchors.fill: parent
 		onClicked:
 		{
-			console.log("Contacts view onclicked:", model.name,
+			console.log("GxsIntentityDelegate onclicked:", model.name,
 						model.gxs_id)
 			contactsView.searching = false
 			if(model.own) contactsView.own_gxs_id = model.gxs_id
@@ -44,67 +42,28 @@ Item
 							  contactsView.startChatCallback)
 			}
 		}
-		Rectangle
+
+		onPressAndHold:
+		{
+			console.log("GxsIntentityDelegate onPressAndHold:", model.name,
+						model.gxs_id)
+			contactsView.searching = false
+			stackView.push(
+						"qrc:/ContactDetails.qml",
+						{md: contactsListView.model.get(index)})
+		}
+
+		ColorHash
 		{
 			id: colorHash
+
+			hash: model.gxs_id
 			height: parent.height - 4
-			width: height
 			anchors.verticalCenter: parent.verticalCenter
 			anchors.left: parent.left
 			anchors.leftMargin: 2
-			color: "white"
-			property int childHeight : height/2
-
-			Image
-			{
-				source: "qrc:/icons/edit-image-face-detect.png"
-				anchors.fill: parent
-			}
-
-			Rectangle
-			{
-				color: '#' + model.gxs_id.substring(1, 9)
-				height: parent.childHeight
-				width: height
-				anchors.top: parent.top
-				anchors.left: parent.left
-			}
-			Rectangle
-			{
-				color: '#' + model.gxs_id.substring(9, 17)
-				height: parent.childHeight
-				width: height
-				anchors.top: parent.top
-				anchors.right: parent.right
-			}
-			Rectangle
-			{
-				color: '#' + model.gxs_id.substring(17, 25)
-				height: parent.childHeight
-				width: height
-				anchors.bottom: parent.bottom
-				anchors.left: parent.left
-			}
-			Rectangle
-			{
-				color: '#' + model.gxs_id.slice(-8)
-				height: parent.childHeight
-				width: height
-				anchors.bottom: parent.bottom
-				anchors.right: parent.right
-			}
-
-			MouseArea
-			{
-				anchors.fill: parent
-				onPressAndHold:
-				{
-					fingerPrintDialog.nick = model.name
-					fingerPrintDialog.gxs_id = model.gxs_id
-					fingerPrintDialog.visible = true
-				}
-			}
 		}
+
 		Text
 		{
 			id: nickText
@@ -121,40 +80,6 @@ Item
 			anchors.rightMargin: 10
 			anchors.verticalCenter: parent.verticalCenter
 			height: parent.height - 10
-
-			Image
-			{
-				source: "qrc:/icons/document-share.png"
-
-				height: parent.height
-				width: height
-
-				MouseArea
-				{
-					anchors.fill: parent
-					onClicked:
-					{
-						rsApi.request(
-									"/identity/export_key",
-									JSON.stringify({ gxs_id: model.gxs_id }),
-									function(par)
-									{
-										var jD = JSON.parse(par.response).data
-										ClipboardWrapper.postToClipBoard(
-												"retroshare://" +
-												"identity?gxsid=" +
-												model.gxs_id +
-												"&name=" +
-												UriJs.URI.encode(model.name) +
-												"&groupdata=" +
-												UriJs.URI.encode(jD.radix))
-										linkCopiedPopup.itemName = model.name
-										linkCopiedPopup.visible = true
-									}
-									)
-					}
-				}
-			}
 
 			Rectangle
 			{
@@ -175,6 +100,16 @@ Item
 					text: model.unread_count > 0 ? model.unread_count : ''
 					anchors.centerIn: parent
 				}
+			}
+
+			Image
+			{
+				source: model.is_contact ?
+							"qrc:/icons/rating.png" :
+							"qrc:/icons/rating-unrated.png"
+				height: parent.height - 4
+				fillMode: Image.PreserveAspectFit
+				anchors.verticalCenter: parent.verticalCenter
 			}
 		}
 	}

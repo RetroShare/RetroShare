@@ -25,5 +25,9 @@
         <file>TrustedNodeDetails.qml</file>
         <file>icons/document-share.png</file>
         <file>ClipboardWrapper.qml</file>
+        <file>ContactDetails.qml</file>
+        <file>ColorHash.qml</file>
+        <file>icons/rating-unrated.png</file>
+        <file>icons/rating.png</file>
     </qresource>
 </RCC>
