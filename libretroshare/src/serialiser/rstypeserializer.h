@@ -333,7 +333,7 @@ class RsTypeSerializer
 		//=================================================================================================//
 
 		template<int N>
-		static void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx,t_RsFlags32<N>& v,const std::string& member_name)
+		static void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx,t_RsFlags32<N>& v,const std::string& /*member_name*/)
 		{
 			switch(j)
 			{
