@@ -60,12 +60,14 @@ RsItem *RsServiceSerializer::deserialise(void *data, uint32_t *size)
 
 	item->serial_process(RsGenericSerializer::DESERIALIZE, ctx) ;
 
-	if(ctx.mSize != ctx.mOffset)
+	if(ctx.mSize < ctx.mOffset)
 	{
 		std::cerr << "RsSerializer::deserialise(): ERROR. offset does not match expected size!" << std::endl;
         delete item ;
 		return NULL ;
 	}
+    *size = ctx.mOffset ;
+
 	if(ctx.mOk)
 		return item ;
 
@@ -96,12 +98,14 @@ RsItem *RsConfigSerializer::deserialise(void *data, uint32_t *size)
 
 	item->serial_process(DESERIALIZE, ctx) ;
 
-	if(ctx.mSize != ctx.mOffset)
+	if(ctx.mSize < ctx.mOffset)
 	{
 		std::cerr << "RsSerializer::deserialise(): ERROR. offset does not match expected size!" << std::endl;
         delete item ;
 		return NULL ;
 	}
+    *size = ctx.mOffset ;
+
 	if(ctx.mOk)
 		return item ;
 
@@ -139,6 +143,8 @@ bool RsGenericSerializer::serialise(RsItem *item,void *data,uint32_t *size)
 		std::cerr << "RsSerializer::serialise(): ERROR. offset does not match expected size!" << std::endl;
 		return false ;
 	}
+    *size = ctx.mOffset ;
+
 	return true ;
 }
 

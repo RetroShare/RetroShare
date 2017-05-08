@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>430</width>
-    <height>552</height>
+    <width>656</width>
+    <height>645</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -42,76 +42,6 @@
       <number>0</number>
      </property>
      <item row="0" column="0" colspan="4">
-      <layout class="QGridLayout">
-       <property name="leftMargin">
-        <number>0</number>
-       </property>
-       <property name="topMargin">
-        <number>6</number>
-       </property>
-       <property name="rightMargin">
-        <number>0</number>
-       </property>
-       <property name="bottomMargin">
-        <number>6</number>
-       </property>
-       <property name="spacing">
-        <number>6</number>
-       </property>
-       <item row="0" column="0">
-        <spacer>
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item row="0" column="1">
-        <widget class="QToolButton" name="toolButton">
-         <property name="styleSheet">
-          <string notr="true">QToolButton {
-	border-image: url(:/images/avatar_background.png);
-}</string>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-         <property name="icon">
-          <iconset resource="images.qrc">
-           <normaloff>:/images/user/personal64.png</normaloff>:/images/user/personal64.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>96</width>
-           <height>96</height>
-          </size>
-         </property>
-         <property name="autoRaise">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="2">
-        <spacer>
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-      </layout>
-     </item>
-     <item row="1" column="0" colspan="4">
       <layout class="QGridLayout" name="gridLayout_2">
        <item row="0" column="0">
         <spacer name="horizontalSpacer">
@@ -132,12 +62,6 @@
           <size>
            <width>0</width>
            <height>0</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>16777215</width>
-           <height>32</height>
           </size>
          </property>
          <property name="palette">
@@ -183,7 +107,10 @@
           </font>
          </property>
          <property name="text">
-          <string>Login</string>
+          <string/>
+         </property>
+         <property name="pixmap">
+          <pixmap resource="images.qrc">:/images/logo/logo_splash.png</pixmap>
          </property>
         </widget>
        </item>
@@ -202,7 +129,7 @@
        </item>
       </layout>
      </item>
-     <item row="3" column="1" rowspan="2" colspan="2">
+     <item row="2" column="1" rowspan="2" colspan="2">
       <widget class="QGroupBox" name="groupBox">
        <property name="enabled">
         <bool>true</bool>
@@ -220,12 +147,26 @@
         <item>
          <widget class="QLabel" name="label_3">
           <property name="text">
-           <string>Profile - Location</string>
+           <string>Profile - Location:</string>
           </property>
          </widget>
         </item>
         <item>
          <widget class="QComboBox" name="loadName"/>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_2">
+          <property name="text">
+           <string>Password:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="password_input">
+          <property name="echoMode">
+           <enum>QLineEdit::Password</enum>
+          </property>
+         </widget>
         </item>
         <item>
          <widget class="QCheckBox" name="autologin_checkbox">
@@ -240,56 +181,7 @@
        </layout>
       </widget>
      </item>
-     <item row="5" column="0" colspan="4">
-      <layout class="QGridLayout" name="gridLayout_3">
-       <property name="topMargin">
-        <number>9</number>
-       </property>
-       <property name="bottomMargin">
-        <number>9</number>
-       </property>
-       <item row="0" column="1">
-        <widget class="QPushButton" name="loadButton">
-         <property name="text">
-          <string>Log In</string>
-         </property>
-         <property name="default">
-          <bool>true</bool>
-         </property>
-         <property name="flat">
-          <bool>false</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="0">
-        <spacer>
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>61</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item row="0" column="2">
-        <spacer>
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>71</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-      </layout>
-     </item>
-     <item row="6" column="1" colspan="2">
+     <item row="4" column="1" colspan="2">
       <widget class="QLabel" name="labelProfile">
        <property name="toolTip">
         <string>Opens a dialog for creating a new profile or 
@@ -305,7 +197,7 @@ p, li { white-space: pre-wrap; }
        </property>
       </widget>
      </item>
-     <item row="7" column="0" colspan="4">
+     <item row="5" column="0" colspan="4">
       <widget class="LogoBar" name="callBarFrame">
        <property name="minimumSize">
         <size>
@@ -333,10 +225,6 @@ p, li { white-space: pre-wrap; }
    <container>1</container>
   </customwidget>
  </customwidgets>
- <tabstops>
-  <tabstop>loadButton</tabstop>
-  <tabstop>toolButton</tabstop>
- </tabstops>
  <resources>
   <include location="images.qrc"/>
  </resources>

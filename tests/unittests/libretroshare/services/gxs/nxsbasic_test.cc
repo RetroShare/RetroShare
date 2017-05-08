@@ -8,7 +8,7 @@
 //#include "gxs/rsgixs.h"
 //#include "gxs/rsdataservice.h"
 //#include "gxs/rsgxsnetservice.h"
-#include "serialiser/rsnxsitems.h"
+#include "rsitems/rsnxsitems.h"
 
 // local
 #include "GxsIsolatedServiceTester.h"

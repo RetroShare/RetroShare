@@ -145,11 +145,9 @@
          <attribute name="headerVisible">
           <bool>false</bool>
          </attribute>
-         <column>
-          <property name="text">
-           <string>Participants</string>
-          </property>
-         </column>
+         <attribute name="headerStretchLastSection">
+          <bool>false</bool>
+         </attribute>
          <column>
           <property name="text">
            <string>Name</string>

@@ -37,6 +37,8 @@
 #include <map>
 #include <vector>
 #include <iostream>
+#include <typeinfo>
+
 
 /***
  * #define RSSERIAL_DEBUG 		1
@@ -385,7 +387,7 @@ RsItem *    RsSerialiser::deserialise(void *data, uint32_t *size)
 	//std::cerr << "RsSerialiser::deserialise() RsItem Type: " << std::hex << getRsItemId(data) << " Size: " << pkt_size;
 	//std::cerr << std::endl;
 
-	if (pkt_size != *size)
+	if (pkt_size > *size)
 	{
 #ifdef  RSSERIAL_ERROR_DEBUG
 		std::cerr << "RsSerialiser::deserialise() ERROR Size mismatch(2)";

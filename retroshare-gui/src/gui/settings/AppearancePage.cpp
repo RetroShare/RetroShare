@@ -304,9 +304,9 @@ void AppearancePage::load()
 	whileBlocking(ui.checkBoxShowNATStatus)->     setChecked(Settings->valueFromGroup("StatusBar", "ShowNAT",     QVariant(true)).toBool());
 	whileBlocking(ui.checkBoxShowDHTStatus)->     setChecked(Settings->valueFromGroup("StatusBar", "ShowDHT",     QVariant(true)).toBool());
 	whileBlocking(ui.checkBoxShowHashingStatus)-> setChecked(Settings->valueFromGroup("StatusBar", "ShowHashing", QVariant(true)).toBool());
-	whileBlocking(ui.checkBoxShowDiscStatus)->    setChecked(Settings->valueFromGroup("StatusBar", "ShowDisc",  QVariant(true)).toBool());
+	whileBlocking(ui.checkBoxShowDiscStatus)->    setChecked(Settings->valueFromGroup("StatusBar", "ShowDisc",    QVariant(true)).toBool());
 	whileBlocking(ui.checkBoxShowRateStatus)->    setChecked(Settings->valueFromGroup("StatusBar", "ShowRate",    QVariant(true)).toBool());
-	whileBlocking(ui.checkBoxShowOpModeStatus)->  setChecked(Settings->valueFromGroup("StatusBar", "ShowOpMode",  QVariant(true)).toBool());
+	whileBlocking(ui.checkBoxShowOpModeStatus)->  setChecked(Settings->valueFromGroup("StatusBar", "ShowOpMode",  QVariant(false)).toBool());
 	whileBlocking(ui.checkBoxShowSoundStatus)->   setChecked(Settings->valueFromGroup("StatusBar", "ShowSound",   QVariant(true)).toBool());
 	whileBlocking(ui.checkBoxShowToasterDisable)->setChecked(Settings->valueFromGroup("StatusBar", "ShowToaster", QVariant(true)).toBool());
 	whileBlocking(ui.checkBoxShowSystrayOnStatus)->setChecked(Settings->valueFromGroup("StatusBar", "ShowSysTrayOnStatusBar", QVariant(false)).toBool());

@@ -25,7 +25,7 @@
 
 
 #include "support.h"
-#include "serialiser/rsstatusitems.h"
+#include "rsitems/rsstatusitems.h"
 
 RsSerialType* init_item(RsStatusItem& rsi)
 {

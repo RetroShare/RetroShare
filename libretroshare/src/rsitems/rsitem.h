@@ -7,6 +7,8 @@
 #include "serialiser/rsserializer.h"
 #include "util/stacktrace.h"
 
+#include <typeinfo>
+
 class RsItem: public RsMemoryManagement::SmallObject
 {
 	public:

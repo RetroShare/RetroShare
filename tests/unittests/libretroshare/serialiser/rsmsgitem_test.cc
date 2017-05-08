@@ -26,7 +26,7 @@
 #include <iostream>
 
 #include "util/rsrandom.h"
-#include "serialiser/rsmsgitems.h"
+#include "rsitems/rsmsgitems.h"
 #include "chat/rschatitems.h"
 
 #include "support.h"
@@ -141,7 +141,7 @@ RsSerialType* init_item(RsMsgItem& mi)
 	mi.sendTime = mi.recvTime;
 	mi.msgFlags = mi.recvTime;
 
-	return new RsMsgSerialiser(true);
+	return new RsMsgSerialiser(RsServiceSerializer::SERIALIZATION_FLAG_NONE);
 }
 
 RsSerialType* init_item(RsMsgTagType& mtt)
@@ -150,7 +150,7 @@ RsSerialType* init_item(RsMsgTagType& mtt)
 	mtt.tagId = rand()%24242;
 	randString(SHORT_STR, mtt.text);
 
-	return new RsMsgSerialiser();
+	return new RsMsgSerialiser(RsServiceSerializer::SERIALIZATION_FLAG_NONE);
 }
 
 
@@ -163,7 +163,7 @@ RsSerialType* init_item(RsMsgTags& mt)
 		mt.tagIds.push_back(rand()%21341);
 	}
 
-	return new RsMsgSerialiser();
+	return new RsMsgSerialiser(RsServiceSerializer::SERIALIZATION_FLAG_NONE);
 }
 
 RsSerialType* init_item(RsMsgSrcId& ms)
@@ -171,7 +171,7 @@ RsSerialType* init_item(RsMsgSrcId& ms)
 	ms.msgId = rand()%434;
     ms.srcId = RsPeerId::random();
 
-	return new RsMsgSerialiser();
+	return new RsMsgSerialiser(RsServiceSerializer::SERIALIZATION_FLAG_NONE);
 }
 
 RsSerialType* init_item(RsMsgParentId& ms)
@@ -179,7 +179,7 @@ RsSerialType* init_item(RsMsgParentId& ms)
 	ms.msgId = rand()%354;
 	ms.msgParentId = rand()%476;
 
-	return new RsMsgSerialiser();
+	return new RsMsgSerialiser(RsServiceSerializer::SERIALIZATION_FLAG_NONE);
 }
 
 bool operator ==(const struct VisibleChatLobbyInfo& l, const struct VisibleChatLobbyInfo& r)
@@ -288,7 +288,7 @@ bool operator ==(const RsMsgItem& miLeft, const RsMsgItem& miRight)
 	if(miLeft.recvTime != miRight.recvTime) return false;
 	if(miLeft.sendTime != miRight.sendTime) return false;
 	if(miLeft.subject != miRight.subject) return false;
-	if(miLeft.msgId != miRight.msgId) return false;
+	//if(miLeft.msgId != miRight.msgId) return false;
 
 	if(!(miLeft.attachment == miRight.attachment)) return false;
 	if(!(miLeft.rspeerid_msgbcc == miRight.rspeerid_msgbcc)) return false;
