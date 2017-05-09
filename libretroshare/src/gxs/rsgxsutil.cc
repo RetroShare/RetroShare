@@ -82,14 +82,23 @@ bool RsGxsMessageCleanUp::clean()
 		for(; mit != result.end(); ++mit)
 		{
 			std::vector<RsGxsMsgMetaData*>& metaV = mit->second;
-			std::vector<RsGxsMsgMetaData*>::iterator vit = metaV.begin();
 
-			for(; vit != metaV.end(); )
+            // First, make a map of which message have a child message. This allows to only delete messages that dont have child messages.
+            // A more accurate way to go would be to compute the time of the oldest message and possibly delete all the branch, but in the
+            // end the message tree will be deleted slice after slice, which should still be reasonnably fast.
+            //
+            std::set<RsGxsMessageId> messages_with_kids ;
+
+			for( uint32_t i=0;i<metaV.size();++i)
+                if(!metaV[i]->mParentId.isNull())
+                    messages_with_kids.insert(metaV[i]->mParentId) ;
+
+			for( uint32_t i=0;i<metaV.size();++i)
 			{
-				RsGxsMsgMetaData* meta = *vit;
+				RsGxsMsgMetaData* meta = metaV[i];
 
 				// check if expired
-				bool remove = store_period > 0 && (meta->mPublishTs + store_period) < now;
+				bool remove = store_period > 0 && ((meta->mPublishTs + store_period) < now) && (messages_with_kids.find(meta->mMsgId)==messages_with_kids.end());
 
 				// check client does not want the message kept regardless of age
 				remove &= !(meta->mMsgStatus & GXS_SERV::GXS_MSG_STATUS_KEEP);
@@ -106,7 +115,6 @@ bool RsGxsMessageCleanUp::clean()
 				}
 
 				delete meta;
-				vit = metaV.erase(vit);
 			}
 		}
 
