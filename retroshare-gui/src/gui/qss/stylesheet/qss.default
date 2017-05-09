@@ -138,9 +138,9 @@ PostedCreatePostDialog QLabel#info_label
 
 ForumsDialog, GxsForumThreadWidget
 {
-	qproperty-textColorRead: gray;
+	qproperty-textColorRead: darkgray;
 	qproperty-textColorUnread: black; 
-	qproperty-textColorUnreadChildren: gray;
+	qproperty-textColorUnreadChildren: darkgray;
 	qproperty-textColorNotSubscribed: black;
 	qproperty-textColorMissing: darkRed;
 }
