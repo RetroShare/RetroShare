@@ -1826,6 +1826,11 @@ bool 	pqissl::moretoread(uint32_t usec)
 		rslog(RSL_DEBUG_ALL, pqisslzone, out);
 	}
 #endif
+//Jenster check for a valid file descriptor before continuing
+if (sockfd == -1) {
+std::cerr << "jenster... moretoread() failed to check for a valid socket file descriptor. returning 0!! "<<std::endl ;
+return 0;
+}
 
 	if(sockfd == -1)
 	{
@@ -1898,6 +1903,11 @@ bool 	pqissl::cansend(uint32_t usec)
 	rslog(RSL_DEBUG_ALL, pqisslzone, 
 		"pqissl::cansend() polling socket!");
 #endif
+//Jenster check for a valid file descriptor before continuing
+if (sockfd == -1) {
+std::cerr << "jenster... cansend() failed to check for a valid socket file descriptor. returning 0!! "<<std::endl ;
+return 0;
+}
 
 	if(sockfd == -1)
 	{
