@@ -345,6 +345,7 @@ void ConnectFriendWizard::initializePage(int id)
 		connect(ui->userCertOldFormatButton, SIGNAL(clicked()), this, SLOT(toggleFormatState()));
 		connect(ui->userCertCopyButton, SIGNAL(clicked()), this, SLOT(copyCert()));
 		connect(ui->userCertPasteButton, SIGNAL(clicked()), this, SLOT(pasteCert()));
+		connect(ui->userCertOpenButton, SIGNAL(clicked()), this, SLOT(openCert()));
 		connect(ui->userCertSaveButton, SIGNAL(clicked()), this, SLOT(saveCert()));
 		connect(ui->userCertMailButton, SIGNAL(clicked()), this, SLOT(runEmailClient()));
 		connect(ui->friendCertEdit, SIGNAL(textChanged()), this, SLOT(friendCertChanged()));
@@ -1075,6 +1076,22 @@ void ConnectFriendWizard::pasteCert()
 {
 	QClipboard *clipboard = QApplication::clipboard();
 	ui->friendCertEdit->setPlainText(clipboard->text());
+}
+
+void ConnectFriendWizard::openCert()
+{
+	QString fileName ;
+	if(!misc::getOpenFileName(this, RshareSettings::LASTDIR_CERT, tr("Select Certificate"), tr("RetroShare Certificate (*.rsc );;All Files (*)"),fileName))
+		return ;
+
+	if (!fileName.isNull()) {
+		QFile fileCert(fileName);
+		if (fileCert.open(QIODevice::ReadOnly )) {
+			QByteArray arrayCert(fileCert.readAll());
+			ui->friendCertEdit->setPlainText(QString::fromUtf8(arrayCert));
+			fileCert.close();
+		}
+	}
 }
 
 void ConnectFriendWizard::saveCert()

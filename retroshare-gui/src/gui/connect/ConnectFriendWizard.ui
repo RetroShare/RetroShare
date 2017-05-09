@@ -279,7 +279,7 @@
     </item>
     <item>
      <widget class="QFrame" name="friendFrame">
-      <layout class="QGridLayout" name="gridLayout_3">
+      <layout class="QGridLayout" name="friendFrameGLayout">
        <item row="0" column="0">
         <widget class="QToolButton" name="userCertPasteButton">
          <property name="sizePolicy">
@@ -316,6 +316,41 @@
         </widget>
        </item>
        <item row="0" column="1">
+        <widget class="QToolButton" name="userCertOpenButton">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>20</horstretch>
+           <verstretch>20</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="focusPolicy">
+          <enum>Qt::NoFocus</enum>
+         </property>
+         <property name="toolTip">
+          <string>Open Cert of your friend from File</string>
+         </property>
+         <property name="text">
+          <string>Open certificate</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../icons.qrc">
+           <normaloff>:/icons/svg/filesharing.svg</normaloff>:/icons/svg/filesharing.svg</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>24</width>
+           <height>24</height>
+          </size>
+         </property>
+         <property name="toolButtonStyle">
+          <enum>Qt::ToolButtonTextBesideIcon</enum>
+         </property>
+         <property name="autoRaise">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="2">
         <widget class="QLabel" name="friendCertCleanLabel">
          <property name="pixmap">
           <pixmap resource="../images.qrc">:/images/accepted16.png</pixmap>
@@ -325,7 +360,7 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="0" colspan="2">
+       <item row="1" column="0" colspan="3">
         <widget class="RSPlainTextEdit" name="friendCertEdit">
          <property name="font">
           <font>
