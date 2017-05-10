@@ -20,6 +20,7 @@
  ****************************************************************/
 
 #include <QHBoxLayout>
+#include <QMessageBox>
 #include <QLabel>
 
 #include "gui/statusbar/OpModeStatus.h"
@@ -95,6 +96,19 @@ void OpModeStatus::setOpMode()
 	int idx = currentIndex();
 	QVariant var = itemData(idx);
 	uint32_t opMode = var.toUInt();
+
+	QString message = tr("<p>Warning: This Operating mode disables the tunneling service. This means you can use distant chat not anonymously download files and the mail service will be slower.</p><p>This state will be saved after restart, so do not forget that you changed it!</p>");
+
+	if(opMode == RS_OPMODE_NOTURTLE && ! Settings->getPageAlreadyDisplayed(QString("RS_OPMODE_NO_TURTLE")))
+	{
+		QMessageBox::warning(NULL,tr("Turtle routing disabled!"),message);
+		Settings->setPageAlreadyDisplayed(QString("RS_OPMODE_NO_TURTLE"),true) ;
+	}
+	if( (opMode == RS_OPMODE_MINIMAL  && ! Settings->getPageAlreadyDisplayed(QString("RS_OPMODE_MINIMAL"))))
+	{
+		QMessageBox::warning(NULL,tr("Turtle routing disabled!"),message);
+		Settings->setPageAlreadyDisplayed(QString("RS_OPMODE_MINIMAL"),true) ;
+	}
 
 	rsConfig->setOperatingMode(opMode);
 
