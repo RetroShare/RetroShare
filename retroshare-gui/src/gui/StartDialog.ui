@@ -17,7 +17,7 @@
    <iconset resource="images.qrc">
     <normaloff>:/images/logo/logo_32.png</normaloff>:/images/logo/logo_32.png</iconset>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2">
+  <layout class="QVBoxLayout" name="StartDialogVLayout">
    <property name="leftMargin">
     <number>0</number>
    </property>
@@ -31,7 +31,7 @@
     <number>0</number>
    </property>
    <item>
-    <layout class="QGridLayout" name="gridLayout_4">
+    <layout class="QGridLayout" name="mainGLayout">
      <property name="leftMargin">
       <number>0</number>
      </property>
@@ -42,9 +42,9 @@
       <number>0</number>
      </property>
      <item row="0" column="0" colspan="4">
-      <layout class="QGridLayout" name="gridLayout_2">
+      <layout class="QGridLayout" name="topGLayout">
        <item row="0" column="0">
-        <spacer name="horizontalSpacer">
+        <spacer name="topLeftHSpacer">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
@@ -57,7 +57,7 @@
         </spacer>
        </item>
        <item row="0" column="1">
-        <widget class="QLabel" name="label">
+        <widget class="QLabel" name="rsTopLogo">
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -115,7 +115,7 @@
         </widget>
        </item>
        <item row="0" column="2">
-        <spacer name="horizontalSpacer_2">
+        <spacer name="topRightHSpacer">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
@@ -129,8 +129,8 @@
        </item>
       </layout>
      </item>
-     <item row="2" column="1" rowspan="2" colspan="2">
-      <widget class="QGroupBox" name="groupBox">
+     <item row="1" column="1" rowspan="2" colspan="2">
+      <widget class="QGroupBox" name="profilGBox">
        <property name="enabled">
         <bool>true</bool>
        </property>
@@ -143,9 +143,9 @@
        <property name="title">
         <string/>
        </property>
-       <layout class="QVBoxLayout" name="verticalLayout">
+       <layout class="QVBoxLayout" name="profilGBoxVLayout">
         <item>
-         <widget class="QLabel" name="label_3">
+         <widget class="QLabel" name="nameLabel">
           <property name="text">
            <string>Profile - Location:</string>
           </property>
@@ -155,7 +155,7 @@
          <widget class="QComboBox" name="loadName"/>
         </item>
         <item>
-         <widget class="QLabel" name="label_2">
+         <widget class="QLabel" name="passwordLabel">
           <property name="text">
            <string>Password:</string>
           </property>
@@ -179,6 +179,19 @@
          </widget>
         </item>
        </layout>
+      </widget>
+     </item>
+     <item row="3" column="1" colspan="2">
+      <widget class="QPushButton" name="loadButton">
+       <property name="text">
+        <string>Log In</string>
+       </property>
+       <property name="default">
+        <bool>true</bool>
+       </property>
+       <property name="flat">
+        <bool>false</bool>
+       </property>
       </widget>
      </item>
      <item row="4" column="1" colspan="2">
