@@ -38,7 +38,7 @@ class CreateGxsChannelMsg : public QDialog, public TokenResponse, private Ui::Cr
 
 public:
 	/** Default Constructor */
-    CreateGxsChannelMsg(const RsGxsGroupId& cId);
+    CreateGxsChannelMsg(const RsGxsGroupId& cId, RsGxsMessageId existing_post = RsGxsMessageId());
 
 	/** Default Destructor */
 	~CreateGxsChannelMsg();
@@ -71,6 +71,7 @@ private slots:
 
 private:
 	void loadChannelInfo(const uint32_t &token);
+	void loadChannelPostInfo(const uint32_t &token);
 	void saveChannelInfo(const RsGroupMetaData &group);
 
 	void parseRsFileListAttachments(const std::string &attachList);
@@ -78,7 +79,9 @@ private:
 	bool setThumbNail(const std::string& path, int frame);
 
     RsGxsGroupId mChannelId;
+    RsGxsMessageId mOrigPostId;
 	RsGroupMetaData mChannelMeta;
+	RsMsgMetaData mOrigMeta;
 	bool mChannelMetaLoaded;
 
 	std::list<SubFileItem *> mAttachments;

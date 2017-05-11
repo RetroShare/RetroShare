@@ -79,6 +79,7 @@ protected:
 
 private slots:
 	void createMsg();
+	void editMsg();
 	void toggleAutoDownload();
 	void subscribeGroup(bool subscribe);
 	void filterChanged(int filter);
