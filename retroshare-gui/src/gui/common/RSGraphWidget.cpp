@@ -385,12 +385,16 @@ default:
     }
 }
 
-QColor RSGraphWidget::getColor(int i)
+QColor RSGraphWidget::getColor(const std::string& name)
 {
-    // shuffle the colors a little bit
-    int h = (i*86243)%359 ;
+    uint32_t r = 57 ;
+    for(uint32_t i=0;i<name.length();++i)
+        r = (113*name[i] + r)^0x93859aeb;
 
-    return QColor::fromHsv(h,128+127*(i&1),255) ;
+    // shuffle the colors a little bit
+    int h = (r*86243)%359 ;
+
+    return QColor::fromHsv(h,255,255) ;
 }
 
 void RSGraphWidget::setCurvesOpacity(float f)
@@ -421,17 +425,19 @@ void RSGraphWidget::paintData()
           QVector<QPointF> points ;
           pointsFromData(values,points) ;
 
+          QColor pcolor = getColor(source.displayName(i).toStdString()) ;
+
           /* Plot the bandwidth data as area graphs */
           if (_flags & RSGRAPH_FLAGS_PAINT_STYLE_PLAIN)
-              paintIntegral(points, getColor(i), _opacity);
+              paintIntegral(points, pcolor, _opacity);
 
           /* Plot the bandwidth as solid lines. If the graph style is currently an
    * area graph, we end up outlining the integrals. */
 
           if(_flags & RSGRAPH_FLAGS_PAINT_STYLE_DOTS)
-			  paintDots(points, getColor(i));
+			  paintDots(points, pcolor);
           else
-			  paintLine(points, getColor(i));
+			  paintLine(points, pcolor);
       }
   if(_maxValue > 0.0f)
   {
@@ -731,7 +737,7 @@ void RSGraphWidget::paintLegend()
 
           QPen oldPen = _painter->pen();
 
-          QPen pen(getColor(i), Qt::SolidLine) ;
+          QPen pen(getColor(_source->displayName(i).toStdString()), Qt::SolidLine) ;
 		  pen.setWidth(_linewidthscale);
 
           _painter->setPen(pen);

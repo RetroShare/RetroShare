@@ -191,7 +191,7 @@ private:
 	void paintScale1();
 	void paintScale2();
 
-	QColor getColor(int i) ;
+	QColor getColor(const std::string &name) ;
 
 	/** Returns a formatted string representation of total. */
 	QString totalToStr(qreal total);
