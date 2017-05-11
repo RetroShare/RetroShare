@@ -644,7 +644,7 @@ void RSGraphWidget::paintScale1()
 		QString text = _source->displayValue(scale) ;
 
 		_painter->setPen(SCALE_COLOR);
-        _painter->drawText(QPointF(5*fact, pos+0.4*FS),  text);
+        _painter->drawText(QPointF(SCALE_WIDTH*fact - QFontMetricsF(font()).width(text) - 4*fact, pos+0.4*FS),  text);
 		_painter->setPen(GRID_COLOR);
         _painter->drawLine(QPointF(SCALE_WIDTH*fact, pos),  QPointF(_rec.width(), pos));
 	}
