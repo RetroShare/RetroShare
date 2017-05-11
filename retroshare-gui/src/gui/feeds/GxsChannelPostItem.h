@@ -78,6 +78,7 @@ private slots:
 	void readAndClearItem();
 	void download();
 	void play();
+	void edit();
 	void loadComments();
 
 	void readToggled(bool checked);

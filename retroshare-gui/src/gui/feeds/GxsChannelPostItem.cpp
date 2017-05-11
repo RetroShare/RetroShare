@@ -35,6 +35,7 @@
 #include "util/HandleRichText.h"
 #include "util/DateTime.h"
 #include "util/stringutil.h"
+#include "gui/gxschannels/CreateGxsChannelMsg.h"
 
 #include <iostream>
 
@@ -127,6 +128,7 @@ void GxsChannelPostItem::setup()
 	connect(ui->commentButton, SIGNAL(clicked()), this, SLOT(loadComments()));
 
 	connect(ui->playButton, SIGNAL(clicked()), this, SLOT(play(void)));
+	connect(ui->editButton, SIGNAL(clicked()), this, SLOT(edit(void)));
 	connect(ui->copyLinkButton, SIGNAL(clicked()), this, SLOT(copyMessageLink()));
 
 	connect(ui->readButton, SIGNAL(toggled(bool)), this, SLOT(readToggled(bool)));
@@ -688,6 +690,12 @@ void GxsChannelPostItem::download()
 	}
 
 	updateItem();
+}
+
+void GxsChannelPostItem::edit()
+{
+	CreateGxsChannelMsg *msgDialog = new CreateGxsChannelMsg(mGroup.mMeta.mGroupId,mPost.mMeta.mMsgId);
+    msgDialog->show();
 }
 
 void GxsChannelPostItem::play()

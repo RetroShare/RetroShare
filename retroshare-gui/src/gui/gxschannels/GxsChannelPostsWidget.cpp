@@ -67,14 +67,11 @@ GxsChannelPostsWidget::GxsChannelPostsWidget(const RsGxsGroupId &channelId, QWid
 	mStateHelper->addLoadPlaceholder(mTokenTypeGroupData, ui->nameLabel);
 
 	mStateHelper->addWidget(mTokenTypeGroupData, ui->postButton);
-	mStateHelper->addWidget(mTokenTypeGroupData, ui->editButton);
 	mStateHelper->addWidget(mTokenTypeGroupData, ui->logoLabel);
 	mStateHelper->addWidget(mTokenTypeGroupData, ui->subscribeToolButton);
 
 	/* Connect signals */
 	connect(ui->postButton, SIGNAL(clicked()), this, SLOT(createMsg()));
-	connect(ui->editButton, SIGNAL(clicked()), this, SLOT(editMsg()));
-
 	connect(ui->subscribeToolButton, SIGNAL(subscribe(bool)), this, SLOT(subscribeGroup(bool)));
 	connect(NotifyQt::getInstance(), SIGNAL(settingsChanged()), this, SLOT(settingsChanged()));
 
@@ -214,21 +211,7 @@ void GxsChannelPostsWidget::openComments(uint32_t /*type*/, const RsGxsGroupId &
 {
 	emit loadComment(groupId, msgId, title);
 }
-void GxsChannelPostsWidget::editMsg()
-{
-	if (groupId().isNull()) {
-		return;
-	}
 
-	if (!IS_GROUP_SUBSCRIBED(subscribeFlags())) {
-		return;
-	}
-
-	CreateGxsChannelMsg *msgDialog = new CreateGxsChannelMsg(groupId(),mCurrentMessageId);
-	msgDialog->show();
-
-	/* window will destroy itself! */
-}
 void GxsChannelPostsWidget::createMsg()
 {
 	if (groupId().isNull()) {
@@ -261,12 +244,10 @@ void GxsChannelPostsWidget::insertChannelDetails(const RsGxsChannelGroup &group)
 	if (group.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_PUBLISH)
 	{
 		mStateHelper->setWidgetEnabled(ui->postButton, true);
-		mStateHelper->setWidgetEnabled(ui->editButton, true);
 	}
 	else
 	{
 		mStateHelper->setWidgetEnabled(ui->postButton, false);
-		mStateHelper->setWidgetEnabled(ui->editButton, false);
 	}
 
 	ui->subscribeToolButton->setSubscribed(IS_GROUP_SUBSCRIBED(group.mMeta.mSubscribeFlags));
