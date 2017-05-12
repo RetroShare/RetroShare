@@ -223,3 +223,23 @@ GenCertDialog QLabel#entropy_label
 {
 	qproperty-fontSizeFactor: 115;
 }
+
+/* OpModeStatus need to be at end to overload other values*/
+OpModeStatus {
+	qproperty-opMode_Full_Color: #CCFFCC;
+	qproperty-opMode_NoTurtle_Color: #CCCCFF;
+	qproperty-opMode_Gaming_Color: #FFFFCC;
+	qproperty-opMode_Minimal_Color: #FFCCCC;
+}
+OpModeStatus[opMode="Full"] {
+	background: #CCFFCC;
+}
+OpModeStatus[opMode="NoTurtle"] {
+	background: #CCCCFF;
+}
+OpModeStatus[opMode="Gaming"] {
+	background: #FFFFCC;
+}
+OpModeStatus[opMode="Minimal"] {
+	background: #FFCCCC;
+}

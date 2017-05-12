@@ -428,14 +428,14 @@ bool DistributedChatService::handleRecvItem(RsChatItem *item)
 {
 	switch(item->PacketSubType())
 	{
-        case RS_PKT_SUBTYPE_CHAT_LOBBY_SIGNED_EVENT:    handleRecvChatLobbyEventItem    (dynamic_cast<RsChatLobbyEventItem            *>(item)) ; break ;
-        case RS_PKT_SUBTYPE_CHAT_LOBBY_INVITE:          handleRecvLobbyInvite           (dynamic_cast<RsChatLobbyInviteItem           *>(item)) ; break ;
-		case RS_PKT_SUBTYPE_CHAT_LOBBY_CHALLENGE:       handleConnectionChallenge       (dynamic_cast<RsChatLobbyConnectChallengeItem *>(item)) ; break ;
-		case RS_PKT_SUBTYPE_CHAT_LOBBY_UNSUBSCRIBE:     handleFriendUnsubscribeLobby    (dynamic_cast<RsChatLobbyUnsubscribeItem      *>(item)) ; break ;
-		case RS_PKT_SUBTYPE_CHAT_LOBBY_LIST_REQUEST:    handleRecvChatLobbyListRequest  (dynamic_cast<RsChatLobbyListRequestItem      *>(item)) ; break ;
-		case RS_PKT_SUBTYPE_CHAT_LOBBY_LIST:            handleRecvChatLobbyList         (dynamic_cast<RsChatLobbyListItem             *>(item)) ; break ;
-		default:
-																		return false ;
+		case RS_PKT_SUBTYPE_CHAT_LOBBY_SIGNED_EVENT:      handleRecvChatLobbyEventItem     (dynamic_cast<RsChatLobbyEventItem            *>(item)) ; break ;
+		case RS_PKT_SUBTYPE_CHAT_LOBBY_INVITE_DEPRECATED: handleRecvLobbyInvite_Deprecated (dynamic_cast<RsChatLobbyInviteItem_Deprecated*>(item)) ; break ; // to be removed (deprecated since May 2017)
+		case RS_PKT_SUBTYPE_CHAT_LOBBY_INVITE:            handleRecvLobbyInvite            (dynamic_cast<RsChatLobbyInviteItem           *>(item)) ; break ;
+		case RS_PKT_SUBTYPE_CHAT_LOBBY_CHALLENGE:         handleConnectionChallenge        (dynamic_cast<RsChatLobbyConnectChallengeItem *>(item)) ; break ;
+		case RS_PKT_SUBTYPE_CHAT_LOBBY_UNSUBSCRIBE:       handleFriendUnsubscribeLobby     (dynamic_cast<RsChatLobbyUnsubscribeItem      *>(item)) ; break ;
+		case RS_PKT_SUBTYPE_CHAT_LOBBY_LIST_REQUEST:      handleRecvChatLobbyListRequest   (dynamic_cast<RsChatLobbyListRequestItem      *>(item)) ; break ;
+		case RS_PKT_SUBTYPE_CHAT_LOBBY_LIST:              handleRecvChatLobbyList          (dynamic_cast<RsChatLobbyListItem             *>(item)) ; break ;
+		default:                                          return false ;
 	}
 	return true ;
 }
@@ -1233,14 +1233,45 @@ void DistributedChatService::invitePeerToLobby(const ChatLobbyId& lobby_id, cons
 
 	RsChatLobbyInviteItem *item = new RsChatLobbyInviteItem ;
 
-	item->lobby_id = lobby_id ;
-	item->lobby_name = it->second.lobby_name ;
-	item->lobby_topic = it->second.lobby_topic ;
-    item->lobby_flags = connexion_challenge?RS_CHAT_LOBBY_FLAGS_CHALLENGE:(it->second.lobby_flags) ;
+	item->lobby_id    =  lobby_id ;
+	item->lobby_name  =  it->second.lobby_name ;
+	item->lobby_topic =  it->second.lobby_topic ;
+	item->lobby_flags =  connexion_challenge?RS_CHAT_LOBBY_FLAGS_CHALLENGE:(it->second.lobby_flags) ;
 	item->PeerId(peer_id) ;
 
 	sendChatItem(item) ;
+
+	//FOR BACKWARD COMPATIBILITY
+	{// to be removed (deprecated since May 2017)
+		RsChatLobbyInviteItem_Deprecated *item = new RsChatLobbyInviteItem_Deprecated ;
+
+		item->lobby_id    =  lobby_id ;
+		item->lobby_name  =  it->second.lobby_name ;
+		item->lobby_topic =  it->second.lobby_topic ;
+		item->lobby_flags =  connexion_challenge?RS_CHAT_LOBBY_FLAGS_CHALLENGE:(it->second.lobby_flags) ;
+		item->PeerId(peer_id) ;
+
+		sendChatItem(item) ;
+	}
 }
+
+// to be removed (deprecated since May 2017)
+void DistributedChatService::handleRecvLobbyInvite_Deprecated(RsChatLobbyInviteItem_Deprecated *item)
+{
+#ifdef DEBUG_CHAT_LOBBIES
+	std::cerr << "Received deprecated invite to lobby from " << item->PeerId() << " to lobby " << std::hex << item->lobby_id << std::dec << ", named " << item->lobby_name << item->lobby_topic << std::endl;
+#endif
+	RsChatLobbyInviteItem* newItem = new RsChatLobbyInviteItem();
+
+	newItem->lobby_id = item->lobby_id ;
+	newItem->lobby_name = item->lobby_name ;
+	newItem->lobby_topic = item->lobby_topic ;
+	newItem->lobby_flags = item->lobby_flags ;
+	newItem->PeerId( item->PeerId() );
+
+	handleRecvLobbyInvite(newItem);
+}
+
 void DistributedChatService::handleRecvLobbyInvite(RsChatLobbyInviteItem *item) 
 {
 #ifdef DEBUG_CHAT_LOBBIES
@@ -1259,10 +1290,10 @@ void DistributedChatService::handleRecvLobbyInvite(RsChatLobbyInviteItem *item)
 		{
 #ifdef DEBUG_CHAT_LOBBIES
 			std::cerr << "  Lobby already exists. " << std::endl;
-            std::cerr << "     privacy levels: " << item->lobby_flags << " vs. " << it->second.lobby_flags ;
+			std::cerr << "     privacy levels: " << item->lobby_flags << " vs. " << it->second.lobby_flags ;
 #endif
 
-            if((!IS_CONNEXION_CHALLENGE(item->lobby_flags)) && EXTRACT_PRIVACY_FLAGS(item->lobby_flags) != EXTRACT_PRIVACY_FLAGS(it->second.lobby_flags))
+			if ((!IS_CONNEXION_CHALLENGE(item->lobby_flags)) && EXTRACT_PRIVACY_FLAGS(item->lobby_flags) != EXTRACT_PRIVACY_FLAGS(it->second.lobby_flags))
 			{
 				std::cerr << " : Don't match. Cancelling." << std::endl;
 				return ;
@@ -1274,10 +1305,22 @@ void DistributedChatService::handleRecvLobbyInvite(RsChatLobbyInviteItem *item)
 			std::cerr << "  Adding new friend " << item->PeerId() << " to lobby." << std::endl;
 #endif
 
+			// to be removed (deprecated since May 2017)
+			{ //Update Topics if have received deprecated before (withou topic)
+				if(it->second.lobby_topic.empty() && !item->lobby_topic.empty())
+					it->second.lobby_topic = item->lobby_topic;
+			}
+
 			it->second.participating_friends.insert(item->PeerId()) ;
 			return ;
 		}
 
+		// to be removed (deprecated since May 2017)
+		{//check if invitation is already received by deprecated version
+			std::map<ChatLobbyId,ChatLobbyInvite>::const_iterator it(_lobby_invites_queue.find( item->lobby_id)) ;
+			if(it != _lobby_invites_queue.end())
+				return ;
+		}
 		// Don't record the invitation if it's a challenge response item or a lobby we don't have.
 		//
         if(IS_CONNEXION_CHALLENGE(item->lobby_flags))
@@ -1290,7 +1333,7 @@ void DistributedChatService::handleRecvLobbyInvite(RsChatLobbyInviteItem *item)
 		invite.peer_id = item->PeerId() ;
 		invite.lobby_name = item->lobby_name ;
 		invite.lobby_topic = item->lobby_topic ;
-        invite.lobby_flags = item->lobby_flags ;
+		invite.lobby_flags = item->lobby_flags ;
 
 		_lobby_invites_queue[item->lobby_id] = invite ;
 	}
