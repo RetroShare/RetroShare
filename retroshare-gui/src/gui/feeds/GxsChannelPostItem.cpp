@@ -66,7 +66,8 @@ GxsChannelPostItem::GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, 
 
 	setup();
 
-	setGroup(group, false);
+	//setGroup(group, false);
+	requestGroup();
 	setPost(post);
 	requestComment();
 }
@@ -167,6 +168,12 @@ bool GxsChannelPostItem::setGroup(const RsGxsChannelGroup &group, bool doFill)
 	}
 
 	mGroup = group;
+
+    // if not publisher, hide the edit button. Without the publish key, there's no way to edit a message.
+
+    std::cerr << "Group subscribe flags = " << std::hex << mGroup.mMeta.mSubscribeFlags << std::dec << std::endl;
+    if(!IS_GROUP_PUBLISHER(mGroup.mMeta.mSubscribeFlags))
+        ui->editButton->hide();
 
 	if (doFill) {
 		fill();
