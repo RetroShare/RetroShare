@@ -80,12 +80,21 @@ Item
 							JSON.stringify({cert_string: cptext}),
 							function(par)
 							{
-								console.log("/peers/examine_cert/ CB", par)
-								var jData = JSON.parse(par.response).data
+								console.log("/peers/examine_cert/ CB",
+											par.response)
+								var resp = JSON.parse(par.response)
+								if(resp.returncode === "fail")
+								{
+									importErrorPop.text = resp.debug_msg
+									importErrorPop.open()
+									return
+								}
+
+								var jData = resp.data
 								stackView.push(
 											"qrc:/TrustedNodeDetails.qml",
 											{
-												nodeCert: otherKeyField.text,
+												nodeCert: cptext,
 												pgpName: jData.name,
 												pgpId: jData.pgp_id,
 												locationName: jData.location,
@@ -106,12 +115,26 @@ Item
 					"/peers/self/certificate/", "",
 					function(par)
 					{
-						var jD = JSON.parse(par.response).data
-						ClipboardWrapper.postToClipBoard(jD.cert_string)
-						mainWindow.linkCopiedPopup.itemName=mainWindow.user_name
-						mainWindow.linkCopiedPopup.open()
+						var radix = JSON.parse(par.response).data.cert_string
+						var name = mainWindow.user_name
+						ClipboardWrapper.postToClipBoard(radix)
+
+						linkCopiedPopup.itemName = name
+						linkCopiedPopup.open()
 					})
 			}
+		}
+	}
+
+	TimedPopup
+	{
+		id: importErrorPop
+		property alias text: popText.text
+
+		Text
+		{
+			id: popText
+			anchors.fill: parent
 		}
 	}
 }

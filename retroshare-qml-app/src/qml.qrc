@@ -28,5 +28,6 @@
         <file>ColorHash.qml</file>
         <file>icons/rating-unrated.png</file>
         <file>icons/rating.png</file>
+        <file>TimedPopup.qml</file>
     </qresource>
 </RCC>
