@@ -52,7 +52,11 @@ CreateGxsChannelMsg::CreateGxsChannelMsg(const RsGxsGroupId &cId, RsGxsMessageId
 	mChannelQueue = new TokenQueue(rsGxsChannels->getTokenService(), this);
 
 	headerFrame->setHeaderImage(QPixmap(":/images/channels.png"));
-	headerFrame->setHeaderText(tr("New Channel Post"));
+
+    if(!existing_post.isNull())
+		headerFrame->setHeaderText(tr("Edit Channel Post"));
+	else
+		headerFrame->setHeaderText(tr("New Channel Post"));
 
 	setAttribute ( Qt::WA_DeleteOnClose, true );
 
@@ -639,6 +643,7 @@ void CreateGxsChannelMsg::sendMessage(const std::string &subject, const std::str
 		post.mMeta.mThreadId.clear() ;
 		post.mMeta.mMsgId.clear() ;
 
+		post.mMeta.mOrigMsgId = mOrigPostId;
 		post.mMeta.mMsgName = subject;
 		post.mMsg = msg;
 		post.mFiles = files;

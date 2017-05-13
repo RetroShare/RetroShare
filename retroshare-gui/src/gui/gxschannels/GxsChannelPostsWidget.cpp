@@ -451,14 +451,22 @@ void GxsChannelPostsWidget::insertChannelPosts(std::vector<RsGxsChannelPost> &po
 
     std::vector<uint32_t> new_versions ;
     for (uint32_t i=0;i<posts.size();++i)
+    {
+		if(posts[i].mMeta.mOrigMsgId == posts[i].mMeta.mMsgId)
+			posts[i].mMeta.mOrigMsgId.clear();
+
+        std::cerr << "  " << i << ": msg_id=" << posts[i].mMeta.mMsgId << ": orig msg id = " << posts[i].mMeta.mOrigMsgId << std::endl;
+
         if(!posts[i].mMeta.mOrigMsgId.isNull())
             new_versions.push_back(i) ;
+    }
 
     std::cerr << "New versions: " << new_versions.size() << std::endl;
 
     if(!new_versions.empty())
     {
         std::cerr << "  New versions present. Replacing them..." << std::endl;
+        std::cerr << "  Creating search map."  << std::endl;
 
         // make a quick search map
         std::map<RsGxsMessageId,uint32_t> search_map ;
@@ -467,37 +475,60 @@ void GxsChannelPostsWidget::insertChannelPosts(std::vector<RsGxsChannelPost> &po
 
         for(uint32_t i=0;i<new_versions.size();++i)
         {
+            std::cerr << "  Taking care of new version  at index " << new_versions[i] << std::endl;
+
             uint32_t current_index = new_versions[i] ;
             uint32_t source_index  = new_versions[i] ;
+            RsGxsMessageId source_msg_id = posts[source_index].mMeta.mMsgId ;
 
-            // What we do is everytime we find a replacement post, we climb up the replacement posts until we find the original post (or the most recent version of it)
+            // What we do is everytime we find a replacement post, we climb up the replacement graph until we find the original post
+            // (or the most recent version of it). When we reach this post, we replace it with the data of the source post.
+            // In the mean time, all other posts have their MsgId cleared, so that the posts are removed from the list.
 
-            while(!posts[current_index].mMeta.mOrigMsgId.isNull())
+            std::vector<uint32_t> versions ;
+            std::map<RsGxsMessageId,uint32_t>::const_iterator vit ;
+
+            while(search_map.end() != (vit=search_map.find(posts[current_index].mMeta.mOrigMsgId)))
             {
-				std::map<RsGxsMessageId,uint32_t>::const_iterator vit = search_map.find(posts[new_versions[i]].mMeta.mOrigMsgId) ;
+                std::cerr << "    post at index " << current_index << " replaces a post at position " << vit->second ;
 
-				if(vit == search_map.end())	// original post not found. Give up.
+				// Now replace the post only if the new versionis more recent. It may happen indeed that the same post has been corrected multiple
+				// times. In this case, we only need to replace the post with the newest version
+
+				uint32_t prev_index = current_index ;
+				current_index = vit->second ;
+
+				if(posts[current_index].mMeta.mMsgId.isNull())	// This handles the branching situation where this post has been already erased. No need to go down further.
+                {
+                    std::cerr << "  already erased. Stopping." << std::endl;
                     break ;
+                }
 
-				posts[current_index].mMeta.mMsgId.clear();	// clear the msg Id so the post will be ignored
-                current_index = vit->second ;
+				if(posts[current_index].mMeta.mPublishTs < posts[source_index].mMeta.mPublishTs)
+				{
+                    std::cerr << " and is more recent => following" << std::endl;
+
+					posts[current_index].mMeta.mMsgId.clear();	    // clear the msg Id so the post will be ignored
+				}
+                else
+                    std::cerr << " but is older -> Stopping" << std::endl;
             }
-
-			RsGxsMessageId orig_msg_id = posts[current_index].mMeta.mMsgId ;		// save these two
-			RsGxsMessageId orig_orig_id = posts[current_index].mMeta.mOrigMsgId ;
-
-			std::cerr << "  new version of post " << orig_msg_id << " is " << posts[source_index].mMeta.mMsgId << " at position " << current_index << std::endl;
-
-			posts[current_index] = posts[source_index] ;	// copy all the data to the parent (this is to keep the placement of the post in the list)
-
-			posts[current_index].mMeta.mMsgId = orig_msg_id ;
-			posts[current_index].mMeta.mOrigMsgId = orig_orig_id ;
+//			posts[current_index] = posts[source_index] ;// copy all the data of the source post into the oldest post version (this is to keep the placement of the post in the list)
+//          posts[current_index].mMeta.mOrigMsgId.clear();
+//          posts[current_index].mMeta.mMsgId = source_msg_id;
         }
     }
 
+    std::cerr << "Now adding posts..." << std::endl;
+
     for (std::vector<RsGxsChannelPost>::const_reverse_iterator it = posts.rbegin(); it != posts.rend(); ++it)
-        if((*it).mMeta.mMsgId.isNull())
+    {
+		std::cerr << "  adding post: " << (*it).mMeta.mMsgId ;
+
+        if(!(*it).mMeta.mMsgId.isNull())
 		{
+            std::cerr << " added" << std::endl;
+
 			if (thread && thread->stopped())
 				break;
 
@@ -506,6 +537,9 @@ void GxsChannelPostsWidget::insertChannelPosts(std::vector<RsGxsChannelPost> &po
 			else
 				createPostItem(*it, related);
 		}
+        else
+            std::cerr << " skipped" << std::endl;
+    }
 
 	if (!thread) {
 		ui->feedWidget->setSortingEnabled(true);
