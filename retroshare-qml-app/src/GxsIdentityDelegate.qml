@@ -21,6 +21,7 @@ import QtQuick.Controls 2.0
 
 Item
 {
+	id: delegateRoot
 	height: 40
 	width: parent.width
 
@@ -43,15 +44,7 @@ Item
 			}
 		}
 
-		onPressAndHold:
-		{
-			console.log("GxsIntentityDelegate onPressAndHold:", model.name,
-						model.gxs_id)
-			contactsView.searching = false
-			stackView.push(
-						"qrc:/ContactDetails.qml",
-						{md: contactsListView.model.get(index)})
-		}
+		onPressAndHold: showDetails()
 
 		ColorHash
 		{
@@ -62,6 +55,12 @@ Item
 			anchors.verticalCenter: parent.verticalCenter
 			anchors.left: parent.left
 			anchors.leftMargin: 2
+
+			MouseArea
+			{
+				anchors.fill: parent
+				onClicked: delegateRoot.showDetails()
+			}
 		}
 
 		Text
@@ -112,5 +111,14 @@ Item
 				anchors.verticalCenter: parent.verticalCenter
 			}
 		}
+	}
+
+	function showDetails()
+	{
+		console.log("showDetails()", index)
+		contactsView.searching = false
+		stackView.push(
+					"qrc:/ContactDetails.qml",
+					{md: contactsListView.model.get(index)})
 	}
 }
