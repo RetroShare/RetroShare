@@ -365,38 +365,38 @@ public:
  * Used to respond to a RsGrpMsgsReq
  * with message items satisfying request
  */
-class RsNxsMsg : public RsNxsItem
+struct RsNxsMsg : RsNxsItem
 {
-public:
+	RsNxsMsg(uint16_t servtype) :
+	    RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_MSG_ITEM), meta(servtype),
+	    msg(servtype), metaData(NULL) { clear(); }
+	virtual ~RsNxsMsg() { delete metaData; }
 
-    RsNxsMsg(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_MSG_ITEM), meta(servtype), msg(servtype),
-    metaData(NULL) { clear(); }
-    virtual ~RsNxsMsg() { if(metaData) delete metaData; }
+	virtual void serial_process( RsGenericSerializer::SerializeJob j,
+	                             RsGenericSerializer::SerializeContext& ctx );
 
-    virtual void clear();
+	virtual void clear();
+	virtual std::ostream &print(std::ostream& out, uint16_t indent);
 
-	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
+	uint8_t pos; /// used for splitting up msg
+	uint8_t count; /// number of split up messages
+	RsGxsGroupId grpId; /// group id, forms part of version id
+	RsGxsMessageId msgId; /// msg id
+	static int refcount;
 
-    uint8_t pos; /// used for splitting up msg
-    uint8_t count; /// number of split up messages
-    RsGxsGroupId grpId; /// group id, forms part of version id
-    RsGxsMessageId msgId; /// msg id
-    static int refcount;
+	/*!
+	 * This should contains all the data
+	 * which is not specific to the Gxs service data
+	 */
+	RsTlvBinaryData meta;
 
-    /*!
-     * This should contains all the data
-     * which is not specific to the Gxs service data
-     */
-    RsTlvBinaryData meta;
+	/*!
+	 * This contains Gxs specific data
+	 * only client of API knows how to decode this
+	 */
+	RsTlvBinaryData msg;
 
-    /*!
-     * This contains Gxs specific data
-     * only client of API knows who to decode this
-     */
-    RsTlvBinaryData msg;
-
-    RsGxsMsgMetaData* metaData;
-
+	RsGxsMsgMetaData* metaData;
 };
 
 /*!

@@ -82,6 +82,10 @@
 #include "tcponudp/udpstunner.h"
 #endif // RS_USE_DHT_STUNNER
 
+#ifdef RS_GXS_TRANS
+#	include "gxstrans/p3gxstrans.h"
+#endif
+
 // #define GPG_DEBUG
 // #define AUTHSSL_DEBUG
 // #define FIM_DEBUG
@@ -940,13 +944,10 @@ RsGRouter *rsGRouter = NULL ;
 
 RsControl *RsControl::instance()
 {
-	static RsServer *rsicontrol = NULL ;
-
-	if(rsicontrol == NULL) 
-		rsicontrol = new RsServer();
-	
-	return rsicontrol;
+	static RsServer rsicontrol;
+	return &rsicontrol;
 }
+
 
 /*
  * The Real RetroShare Startup Function.
@@ -1485,8 +1486,21 @@ int RsServer::StartupRetroShare()
         pqih->addService(gxschannels_ns, true);
         //pqih->addService(photo_ns, true);
 
-        // remove pword from memory
-        rsInitConfig->gxs_passwd = "";
+#	ifdef RS_GXS_TRANS
+	RsGeneralDataService* gxstrans_ds = new RsDataService(
+	            currGxsDir + "/", "gxstrans_db", RS_SERVICE_TYPE_GXS_TRANS,
+	            NULL, rsInitConfig->gxs_passwd );
+	mGxsTrans = new p3GxsTrans(gxstrans_ds, NULL, *mGxsIdService);
+	RsGxsNetService* gxstrans_ns = new RsGxsNetService(
+	            RS_SERVICE_TYPE_GXS_TRANS, gxstrans_ds, nxsMgr, mGxsTrans,
+	            mGxsTrans->getServiceInfo(), mReputations, mGxsCircles,
+	            mGxsIdService, pgpAuxUtils);
+	mGxsTrans->setNetworkExchangeService(gxstrans_ns);
+	pqih->addService(gxstrans_ns, true);
+#	endif // RS_GXS_TRANS
+
+	// remove pword from memory
+	rsInitConfig->gxs_passwd = "";
 
 #endif // RS_ENABLE_GXS.
 
@@ -1494,8 +1508,9 @@ int RsServer::StartupRetroShare()
 	p3ServiceInfo *serviceInfo = new p3ServiceInfo(serviceCtrl);
 	mDisc = new p3discovery2(mPeerMgr, mLinkMgr, mNetMgr, serviceCtrl);
 	mHeart = new p3heartbeat(serviceCtrl, pqih);
-	msgSrv = new p3MsgService(serviceCtrl,mGxsIdService);
-	chatSrv = new p3ChatService(serviceCtrl,mGxsIdService, mLinkMgr, mHistoryMgr);
+	msgSrv = new p3MsgService( serviceCtrl, mGxsIdService, *mGxsTrans );
+	chatSrv = new p3ChatService( serviceCtrl,mGxsIdService, mLinkMgr,
+	                             mHistoryMgr, *mGxsTrans );
 	mStatusSrv = new p3StatusService(serviceCtrl);
 
 #ifdef ENABLE_GROUTER
@@ -1654,13 +1669,20 @@ int RsServer::StartupRetroShare()
 #ifdef ENABLE_GROUTER
 	mConfigMgr->addConfiguration("grouter.cfg", gr);
 #endif
-    mConfigMgr->addConfiguration("p3identity.cfg", mGxsIdService);
 
 #ifdef RS_USE_BITDHT
-    mConfigMgr->addConfiguration("bitdht.cfg", mBitDht);
+	mConfigMgr->addConfiguration("bitdht.cfg", mBitDht);
 #endif
 
 #ifdef RS_ENABLE_GXS
+
+#	ifdef RS_GXS_TRANS
+	mConfigMgr->addConfiguration("gxs_trans_ns.cfg", gxstrans_ns);
+	mConfigMgr->addConfiguration("gxs_trans.cfg", mGxsTrans);
+#	endif // RS_GXS_TRANS
+
+	mConfigMgr->addConfiguration("p3identity.cfg", mGxsIdService);
+
 	mConfigMgr->addConfiguration("identity.cfg", gxsid_ns);
 	mConfigMgr->addConfiguration("gxsforums.cfg", gxsforums_ns);
 	mConfigMgr->addConfiguration("gxschannels.cfg", gxschannels_ns);
@@ -1805,6 +1827,11 @@ int RsServer::StartupRetroShare()
 
 	//createThread(*photo_ns);
 	//createThread(*wire_ns);
+
+#	ifdef RS_GXS_TRANS
+	startServiceThread(mGxsTrans, "gxs trans");
+	startServiceThread(gxstrans_ns, "gxs trans ns");
+#	endif // RS_GXS_TRANS
 
 #endif // RS_ENABLE_GXS
 

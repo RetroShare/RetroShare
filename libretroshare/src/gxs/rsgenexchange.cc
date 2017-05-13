@@ -85,9 +85,6 @@ RsGenExchange::RsGenExchange(RsGeneralDataService *gds, RsNetworkExchangeService
   mChecking(false),
   mLastCheck((int)time(NULL) - (int)(RSRandom::random_u32() % INTEGRITY_CHECK_PERIOD) + 120),	// this helps unsynchronising the checks for the different services, with 2 min security to avoid checking right away before statistics come up.
   mIntegrityCheck(NULL),
-  CREATE_FAIL(0),
-  CREATE_SUCCESS(1),
-  CREATE_FAIL_TRY_LATER(2),
   SIGN_MAX_WAITING_TIME(60),
   SIGN_FAIL(0),
   SIGN_SUCCESS(1),
@@ -1397,7 +1394,7 @@ bool RsGenExchange::getGroupData(const uint32_t &token, std::vector<RsGxsGrpItem
 	return ok;
 }
 
-bool RsGenExchange::getMsgData(const uint32_t &token, GxsMsgDataMap &msgItems)
+bool RsGenExchange::getMsgData(uint32_t token, GxsMsgDataMap &msgItems)
 {
 	RS_STACK_MUTEX(mGenMtx) ;
 	NxsMsgDataResult msgResult;
@@ -1447,7 +1444,8 @@ bool RsGenExchange::getMsgData(const uint32_t &token, GxsMsgDataMap &msgItems)
 	return ok;
 }
 
-bool RsGenExchange::getMsgRelatedData(const uint32_t &token, GxsMsgRelatedDataMap &msgItems)
+bool RsGenExchange::getMsgRelatedData( uint32_t token,
+                                       GxsMsgRelatedDataMap &msgItems )
 {
 	RS_STACK_MUTEX(mGenMtx) ;
     NxsMsgRelatedDataResult msgResult;

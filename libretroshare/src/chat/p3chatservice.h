@@ -37,6 +37,8 @@
 #include "chat/distantchat.h"
 #include "chat/distributedchat.h"
 #include "retroshare/rsmsgs.h"
+#include "gxstrans/p3gxstrans.h"
+#include "util/rsdeprecate.h"
 
 class p3ServiceControl;
 class p3LinkMgr;
@@ -51,10 +53,12 @@ typedef RsPeerId ChatLobbyVirtualPeerId ;
   * This service uses rsnotify (callbacks librs clients (e.g. rs-gui))
   * @see NotifyBase
   */
-class p3ChatService: public p3Service, public DistantChatService, public DistributedChatService, public p3Config, public pqiServiceMonitor
+struct p3ChatService :
+        p3Service, DistantChatService, DistributedChatService, p3Config,
+        pqiServiceMonitor, GxsTransClient
 {
-public:
-	p3ChatService(p3ServiceControl *cs, p3IdService *pids,p3LinkMgr *cm, p3HistoryMgr *historyMgr);
+	p3ChatService(p3ServiceControl *cs, p3IdService *pids, p3LinkMgr *cm,
+	               p3HistoryMgr *historyMgr, p3GxsTrans& gxsTransService );
 
 	virtual RsServiceInfo getServiceInfo();
 
@@ -66,7 +70,7 @@ public:
 		 * : notifyCustomState, notifyChatStatus, notifyPeerHasNewAvatar
 		 * @see NotifyBase
 		 */
-	virtual int   tick();
+	virtual int tick();
 
 	/*************** pqiMonitor callback ***********************/
 	virtual void statusChange(const std::list<pqiServicePeer> &plist);
@@ -91,11 +95,11 @@ public:
 		 */
 	bool	sendPrivateChat(const RsPeerId &id, const std::string &msg);
 
-	/*!
-		 * can be used to send 'immediate' status msgs, these status updates are meant for immediate use by peer (not saved by rs)
-		 * e.g currently used to update user when a peer 'is typing' during a chat
-		 */
-	void  sendStatusString(const ChatId& id,const std::string& status_str) ;
+	/**
+	 * can be used to send 'immediate' status msgs, these status updates are
+	 * meant for immediate use by peer (not saved by rs) e.g currently used to
+	 * update user when a peer 'is typing' during a chat */
+	void sendStatusString( const ChatId& id, const std::string& status_str );
 
 	/**
 	 * @brief clearChatLobby: Signal chat was cleared by GUI.
@@ -161,6 +165,22 @@ public:
 		 */
 	bool clearPrivateChatQueue(bool incoming, const RsPeerId &id);
 
+	virtual bool initiateDistantChatConnexion( const RsGxsId& to_gxs_id,
+	                                           const RsGxsId& from_gxs_id,
+	                                           DistantChatPeerId &pid,
+	                                           uint32_t& error_code,
+	                                           bool notify = true );
+
+	/// @see GxsTransClient::receiveGxsTransMail(...)
+	virtual bool receiveGxsTransMail( const RsGxsId& authorId,
+	                                  const RsGxsId& recipientId,
+	                                  const uint8_t* data, uint32_t dataSize );
+
+	/// @see GxsTransClient::notifySendMailStatus(...)
+	virtual bool notifyGxsTransSendStatus( RsGxsTransId mailId,
+	                                       GxsTransSendStatus status );
+
+
 protected:
 	/************* from p3Config *******************/
 	virtual RsSerialiser *setupSerialiser() ;
@@ -177,8 +197,9 @@ protected:
 
 	/// This is to be used by subclasses/parents to call IndicateConfigChanged()
 	virtual void triggerConfigSave()  { IndicateConfigChanged() ; }
+
 	/// Same, for storing messages in incoming list
-	virtual void locked_storeIncomingMsg(RsChatMsgItem *) ;
+	RS_DEPRECATED virtual void locked_storeIncomingMsg(RsChatMsgItem *) ;
 
 private:
 	RsMutex mChatMtx;
@@ -231,16 +252,25 @@ private:
 	p3LinkMgr *mLinkMgr;
 	p3HistoryMgr *mHistoryMgr;
 
-	std::list<RsChatMsgItem *> privateOutgoingList; // messages waiting to be send when peer comes online
+	/// messages waiting to be send when peer comes online
+	typedef std::map<uint64_t, RsChatMsgItem *> outMP;
+	outMP privateOutgoingMap;
 
 	AvatarInfo *_own_avatar ;
 	std::map<RsPeerId,AvatarInfo *> _avatars ;
-	std::map<RsPeerId,RsChatMsgItem *> _pendingPartialMessages ;	
+	std::map<RsPeerId,RsChatMsgItem *> _pendingPartialMessages;
 
 	std::string _custom_status_string ;
 	std::map<RsPeerId,StateStringInfo> _state_strings ;
 
-	RsChatSerialiser *_serializer ;
+	RsChatSerialiser *_serializer;
+
+	struct DistantEndpoints { RsGxsId from; RsGxsId to; };
+	typedef std::map<DistantChatPeerId, DistantEndpoints> DIDEMap;
+	DIDEMap mDistantGxsMap;
+	RsMutex mDGMutex;
+
+	p3GxsTrans& mGxsTransport;
 };
 
 class p3ChatService::StateStringInfo

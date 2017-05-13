@@ -195,6 +195,13 @@
         <property name="leftMargin">
          <number>9</number>
         </property>
+        <item row="0" column="1">
+         <widget class="QLabel" name="label_8">
+          <property name="text">
+           <string>Profile - Location:</string>
+          </property>
+         </widget>
+        </item>
         <item row="1" column="0">
          <widget class="QLabel" name="label_9">
           <property name="maximumSize">
@@ -217,7 +224,7 @@
         <item row="1" column="1">
          <widget class="QComboBox" name="loadName"/>
         </item>
-        <item row="3" column="0">
+        <item row="2" column="0">
          <widget class="QLabel" name="label_11">
           <property name="maximumSize">
            <size>
@@ -236,28 +243,17 @@
           </property>
          </widget>
         </item>
-        <item row="3" column="1">
+        <item row="2" column="1">
          <widget class="QLineEdit" name="password_input">
           <property name="echoMode">
            <enum>QLineEdit::Password</enum>
           </property>
-         </widget>
-        </item>
-        <item row="2" column="1">
-         <widget class="QLabel" name="label_10">
-          <property name="text">
-           <string>Password:</string>
+          <property name="placeholderText">
+           <string>Password</string>
           </property>
          </widget>
         </item>
-        <item row="0" column="1">
-         <widget class="QLabel" name="label_8">
-          <property name="text">
-           <string>Profile - Location:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="1">
+        <item row="3" column="1">
          <widget class="QCheckBox" name="autologin_checkbox">
           <property name="text">
            <string>Remember Password</string>
@@ -267,7 +263,7 @@
           </property>
          </widget>
         </item>
-        <item row="5" column="1">
+        <item row="4" column="1">
          <widget class="QPushButton" name="loadButton">
           <property name="font">
            <font>

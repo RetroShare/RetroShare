@@ -77,8 +77,10 @@ const uint8_t RS_PKT_SUBTYPE_DISTANT_CHAT_DH_PUBLIC_KEY   = 0x16 ;
 const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_SIGNED_MSG     	  = 0x17 ;
 const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_SIGNED_EVENT      = 0x18 ;
 const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_LIST              = 0x19 ;
+
 const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_INVITE_DEPRECATED = 0x1A ;	// to be removed (deprecated since May 2017)
 const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_INVITE            = 0x1B ;
+const uint8_t RS_PKT_SUBTYPE_OUTGOING_MAP                 = 0x1C ;
 
 typedef uint64_t 		ChatLobbyId ;
 typedef uint64_t 		ChatLobbyMsgId ;
@@ -272,27 +274,28 @@ class RsChatLobbyInviteItem: public RsChatItem
  * For saving incoming and outgoing chat msgs
  * @see p3ChatService
  */
-class RsPrivateChatMsgConfigItem: public RsChatItem
+struct RsPrivateChatMsgConfigItem : RsChatItem
 {
-	public:
-		RsPrivateChatMsgConfigItem() :RsChatItem(RS_PKT_SUBTYPE_PRIVATECHATMSG_CONFIG) {}
+	RsPrivateChatMsgConfigItem() :
+	    RsChatItem(RS_PKT_SUBTYPE_PRIVATECHATMSG_CONFIG) {}
 
-		virtual ~RsPrivateChatMsgConfigItem() {}
-		virtual void clear() {}
+	virtual ~RsPrivateChatMsgConfigItem() {}
+	virtual void clear() {}
 
-		virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
+	virtual void serial_process( RsGenericSerializer::SerializeJob j,
+	                             RsGenericSerializer::SerializeContext& ctx );
 
-		/* set data from RsChatMsgItem to RsPrivateChatMsgConfigItem */
-		void set(RsChatMsgItem *ci, const RsPeerId &peerId, uint32_t confFlags);
-		/* get data from RsPrivateChatMsgConfigItem to RsChatMsgItem */
-		void get(RsChatMsgItem *ci);
+	/** set data from RsChatMsgItem to RsPrivateChatMsgConfigItem */
+	void set(RsChatMsgItem *ci, const RsPeerId &peerId, uint32_t confFlags);
+	/** get data from RsPrivateChatMsgConfigItem to RsChatMsgItem */
+	void get(RsChatMsgItem *ci);
 
-		RsPeerId configPeerId;
-		uint32_t chatFlags;
-		uint32_t configFlags;
-		uint32_t sendTime;
-		std::string message;
-		uint32_t recvTime;
+	RsPeerId configPeerId;
+	uint32_t chatFlags;
+	uint32_t configFlags;
+	uint32_t sendTime;
+	std::string message;
+	uint32_t recvTime;
 };
 
 class RsChatLobbyConfigItem: public RsChatItem
@@ -339,12 +342,23 @@ class RsChatAvatarItem: public RsChatItem
 		unsigned char *image_data ;		// image
 };
 
-class RsChatSerialiser: public RsServiceSerializer
-{
-	public:
-		RsChatSerialiser(SerializationFlags flags = SERIALIZATION_FLAG_NONE)
-            :RsServiceSerializer(RS_SERVICE_TYPE_CHAT,RsGenericSerializer::FORMAT_BINARY,flags) {}
 
-		virtual RsItem *create_item(uint16_t service_id,uint8_t item_sub_id) const ;
+struct PrivateOugoingMapItem : RsChatItem
+{
+	PrivateOugoingMapItem() : RsChatItem(RS_PKT_SUBTYPE_OUTGOING_MAP) {}
+
+	void serial_process( RsGenericSerializer::SerializeJob j,
+	                     RsGenericSerializer::SerializeContext& ctx );
+
+	std::map<uint64_t, RsChatMsgItem> store;
+};
+
+struct RsChatSerialiser : RsServiceSerializer
+{
+	RsChatSerialiser(SerializationFlags flags = SERIALIZATION_FLAG_NONE) :
+	    RsServiceSerializer( RS_SERVICE_TYPE_CHAT,
+	                         RsGenericSerializer::FORMAT_BINARY, flags ) {}
+
+	virtual RsItem *create_item(uint16_t service_id,uint8_t item_sub_id) const;
 };
 

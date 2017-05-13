@@ -338,11 +338,11 @@ public:
      * @param token token to be redeemed for message item retrieval
      * @param msgItems
      */
-    bool getMsgData(const uint32_t &token, GxsMsgDataMap& msgItems);
+	bool getMsgData(uint32_t token, GxsMsgDataMap& msgItems);
 
     template <class MsgType>
-    bool getMsgDataT(const uint32_t &token, std::map<RsGxsGroupId,
-    		std::vector<MsgType*> >& msgItems)
+	bool getMsgDataT( uint32_t token, std::map<RsGxsGroupId,
+	                  std::vector<MsgType*> >& msgItems)
     {
     	GxsMsgDataMap msgData;
     	bool ok = getMsgData(token, msgData);
@@ -379,7 +379,7 @@ public:
      * @param token token to be redeemed for message item retrieval
      * @param msgItems
      */
-    bool getMsgRelatedData(const uint32_t &token, GxsMsgRelatedDataMap& msgItems);
+	bool getMsgRelatedData(uint32_t token, GxsMsgRelatedDataMap& msgItems);
 
 protected:
 
@@ -732,18 +732,19 @@ private:
      */
     uint8_t createGroup(RsNxsGrp* grp, RsTlvSecurityKeySet& keySet);
 
+protected:
     /*!
      * This completes the creation of an instance on RsNxsMsg
      * by assigning it a groupId and signature via SHA1 and EVP_sign respectively
      * What signatures are calculated are based on the authentication policy
      * of the service
      * @param msg the Nxs message to create
-     * CREATE_FAIL, CREATE_SUCCESS, CREATE_ID_SIGN_NOT_AVAIL
      * @return CREATE_SUCCESS for success, CREATE_FAIL for fail,
      * 		   CREATE_FAIL_TRY_LATER for Id sign key not avail (but requested)
      */
     int createMessage(RsNxsMsg* msg);
 
+private:
     /*!
      * convenience function to create sign
      * @param signSet signatures are stored here
@@ -890,10 +891,10 @@ private:
     time_t mLastCheck;
     RsGxsIntegrityCheck* mIntegrityCheck;
 
-private:
-
+protected:
+	enum CreateStatus { CREATE_FAIL, CREATE_SUCCESS, CREATE_FAIL_TRY_LATER };
+	const uint8_t SIGN_MAX_WAITING_TIME;
 	// TODO: cleanup this should be an enum!
-    const uint8_t CREATE_FAIL, CREATE_SUCCESS, CREATE_FAIL_TRY_LATER, SIGN_MAX_WAITING_TIME;
     const uint8_t SIGN_FAIL, SIGN_SUCCESS, SIGN_FAIL_TRY_LATER;
     const uint8_t VALIDATE_FAIL, VALIDATE_SUCCESS, VALIDATE_FAIL_TRY_LATER, VALIDATE_MAX_WAITING_TIME;
 
