@@ -75,6 +75,7 @@ static const int32_t INACTIVE_CHUNKS_CHECK_DELAY 	= 240	; // time after which an
 static const int32_t MAX_TIME_INACTIVE_REQUEUED 	= 120 ; // time after which an inactive ftFileControl is bt-queued
 
 static const int32_t FT_FILECONTROL_QUEUE_ADD_END 			= 0 ;
+static const int32_t FT_FILECONTROL_MAX_UPLOAD_SLOTS_DEFAULT= 0 ;
 
 const uint32_t FT_CNTRL_STANDARD_RATE = 10 * 1024 * 1024;
 const uint32_t FT_CNTRL_SLOW_RATE     = 100   * 1024;
@@ -113,6 +114,7 @@ ftController::ftController(ftDataMultiplex *dm, p3ServiceControl *sc, uint32_t f
 {
 	_max_active_downloads = 5 ; // default queue size
     mDefaultEncryptionPolicy = RS_FILE_CTRL_ENCRYPTION_POLICY_PERMISSIVE;
+	_max_uploads_per_friend = FT_FILECONTROL_MAX_UPLOAD_SLOTS_DEFAULT ;
     /* TODO */
     cnt = 0 ;
 }
@@ -239,8 +241,8 @@ void ftController::data_tick()
 		{
 			RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 
-          for(std::map<RsFileHash,ftFileControl*>::iterator it(mDownloads.begin());it!=mDownloads.end();++it)
-			  it->second->mCreator->removeInactiveChunks() ;
+			for(std::map<RsFileHash,ftFileControl*>::iterator it(mDownloads.begin());it!=mDownloads.end();++it)
+				it->second->mCreator->removeInactiveChunks() ;
 
 			last_clean_time = now ;
 		}
@@ -1723,6 +1725,7 @@ void    ftController::statusChange(const std::list<pqiServicePeer> &plist)
 const std::string active_downloads_size_ss("MAX_ACTIVE_DOWNLOADS");
 const std::string download_dir_ss("DOWN_DIR");
 const std::string partial_dir_ss("PART_DIR");
+const std::string max_uploads_per_friend_ss("MAX_UPLOADS_PER_FRIEND");
 const std::string default_chunk_strategy_ss("DEFAULT_CHUNK_STRATEGY");
 const std::string free_space_limit_ss("FREE_SPACE_LIMIT");
 const std::string default_encryption_policy_ss("DEFAULT_ENCRYPTION_POLICY");
@@ -1770,6 +1773,9 @@ bool ftController::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 		case FileChunksInfo::CHUNK_STRATEGY_PROGRESSIVE:configMap[default_chunk_strategy_ss] =  "PROGRESSIVE" ;
 																		break ;
 	}
+
+	rs_sprintf(s,"%lu",_max_uploads_per_friend) ;
+    configMap[max_uploads_per_friend_ss] = s ;
 
     configMap[default_encryption_policy_ss] = (mDefaultEncryptionPolicy==RS_FILE_CTRL_ENCRYPTION_POLICY_PERMISSIVE)?"PERMISSIVE":"STRICT" ;
 
@@ -2057,9 +2063,29 @@ bool  ftController::loadConfigMap(std::map<std::string, std::string> &configMap)
 			RsDiscSpace::setFreeSpaceLimit(size) ;
 		}
 	}
+    if(configMap.end() != (mit = configMap.find(max_uploads_per_friend_ss)))
+    {
+		uint32_t n ;
+		if (sscanf(mit->second.c_str(), "%u", &n) == 1) {
+			std::cerr << "have read a max upload slots limit of " << n << std::endl ;
+
+            _max_uploads_per_friend = n ;
+		}
+    }
 	return true;
 }
 
+void ftController::setMaxUploadsPerFriend(uint32_t m)
+{
+	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
+	_max_uploads_per_friend = m ;
+	IndicateConfigChanged();
+}
+uint32_t ftController::getMaxUploadsPerFriend()
+{
+	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
+	return _max_uploads_per_friend ;
+}
 void ftController::setDefaultEncryptionPolicy(uint32_t p)
 {
     RsStackMutex stack(ctrlMutex); /******* LOCKED ********/

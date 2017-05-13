@@ -452,7 +452,6 @@ protected:
 	template<typename T> static void print_data(
 	        const std::string& name,uint16_t type_id,const T& member );
 
-
 	template<uint32_t ID_SIZE_IN_BYTES,bool UPPER_CASE,uint32_t UNIQUE_IDENTIFIER>
 	static bool serialize(
 	        uint8_t data[], uint32_t size, uint32_t &offset,

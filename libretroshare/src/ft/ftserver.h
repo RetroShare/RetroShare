@@ -138,6 +138,8 @@ public:
     virtual void setFreeDiskSpaceLimit(uint32_t size_in_mb) ;
     virtual void setDefaultEncryptionPolicy(uint32_t policy) ;	// RS_FILE_CTRL_ENCRYPTION_POLICY_STRICT/PERMISSIVE
     virtual uint32_t defaultEncryptionPolicy() ;
+	virtual void setMaxUploadSlotsPerFriend(uint32_t n) ;
+	virtual uint32_t getMaxUploadSlotsPerFriend() ;
 
     /***
          * Control of Downloads Priority.
@@ -266,6 +268,7 @@ protected:
     bool findEncryptedHash(const RsPeerId& virtual_peer_id, RsFileHash& encrypted_hash);
     bool encryptHash(const RsFileHash& hash, RsFileHash& hash_of_hash);
 
+	bool checkUploadLimit(const RsPeerId& pid,const RsFileHash& hash);
 private:
 
     /**** INTERNAL FUNCTIONS ***/
@@ -293,6 +296,7 @@ private:
 
     std::map<RsFileHash,RsFileHash> mEncryptedHashes ; // This map is such that sha1(it->second) = it->first
     std::map<RsPeerId,RsFileHash> mEncryptedPeerIds ;  // This map holds the hash to be used with each peer id
+    std::map<RsPeerId,std::map<RsFileHash,time_t> > mUploadLimitMap ;
 };
 
 

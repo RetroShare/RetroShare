@@ -2,7 +2,7 @@
 #define RSDATASERVICE_TEST_H
 
 #include "util/rsthreads.h"
-#include "serialiser/rsnxsitems.h"
+#include "rsitems/rsnxsitems.h"
 #include "gxs/rsgds.h"
 
 void test_messageStoresAndRetrieve();

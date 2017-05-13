@@ -1363,6 +1363,18 @@ bool RsGenExchange::getGroupData(const uint32_t &token, std::vector<RsGxsGrpItem
 						gItem->meta.mPop = 0;
 						gItem->meta.mVisibleMsgCount = 0;
 					}
+
+                    // Also check the group privacy flags. A while ago, it as possible to publish a group without privacy flags. Now it is not possible anymore.
+                    // As a consequence, it's important to supply a correct value in this flag before the data can be edited/updated.
+
+					if((gItem->meta.mGroupFlags & GXS_SERV::FLAG_PRIVACY_MASK) == 0)
+                    {
+#ifdef GEN_EXCH_DEBUG
+						std::cerr << "(WW) getGroupData(): mGroupFlags for group " << gItem->meta.mGroupId << " has incorrect value " << std::hex << gItem->meta.mGroupFlags << std::dec << ". Setting value to GXS_SERV::FLAG_PRIVACY_PUBLIC." << std::endl;
+#endif
+                        gItem->meta.mGroupFlags |=  GXS_SERV::FLAG_PRIVACY_PUBLIC;
+					}
+
 					grpItem.push_back(gItem);
 				}
 				else

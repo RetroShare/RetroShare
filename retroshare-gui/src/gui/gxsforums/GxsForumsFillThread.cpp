@@ -247,6 +247,7 @@ void GxsForumsFillThread::run()
 			}
     }
 
+
     // Now remove from msg ids, all posts except the most recent one. And make the mPostVersion be indexed by the most recent version of the post,
     // which corresponds to the item in the tree widget.
 
@@ -254,6 +255,7 @@ void GxsForumsFillThread::run()
 	std::cerr << "Final post versions: " << std::endl;
 #endif
 	QMap<RsGxsMessageId,QVector<QPair<time_t,RsGxsMessageId> > > mTmp;
+    std::map<RsGxsMessageId,RsGxsMessageId> most_recent_versions ;
 
     for(QMap<RsGxsMessageId,QVector<QPair<time_t,RsGxsMessageId> > >::iterator it(mPostVersions.begin());it!=mPostVersions.end();++it)
     {
@@ -277,10 +279,16 @@ void GxsForumsFillThread::run()
         }
 
         mTmp[(*it)[0].second] = *it ;	// index the versions map by the ID of the most recent post.
+
+		// Now make sure that message parents are consistent. Indeed, an old post may have the old version of a post as parent. So we need to change that parent
+		// to the newest version. So we create a map of which is the most recent version of each message, so that parent messages can be searched in it.
+
+        for(uint32_t i=1;i<(*it).size();++i)
+            most_recent_versions[(*it)[i].second] = (*it)[0].second ;
     }
     mPostVersions = mTmp ;
 
-    // The first step is to find the top level thread messages. These are defined as the messages without
+    // The next step is to find the top level thread messages. These are defined as the messages without
     // any parent message ID.
     
     // this trick is needed because while we remove messages, the parents a given msg may already have been removed
@@ -325,10 +333,21 @@ void GxsForumsFillThread::run()
 #endif
             // The same missing parent may appear multiple times, so we first store them into a unique container.
 
-            if(msgs.find(msgIt->second.mMeta.mParentId) == msgs.end())
-				missing_parents.insert(msgIt->second.mMeta.mParentId);
+            RsGxsMessageId parent_msg = msgIt->second.mMeta.mParentId;
 
-            kids_array[msgIt->second.mMeta.mParentId].push_back(msgIt->first) ;
+            if(msgs.find(parent_msg) == msgs.end())
+            {
+                // also check that the message is not versionned
+
+                std::map<RsGxsMessageId,RsGxsMessageId>::const_iterator mrit = most_recent_versions.find(parent_msg) ;
+
+                if(mrit != most_recent_versions.end())
+                    parent_msg = mrit->second ;
+                else
+					missing_parents.insert(parent_msg);
+            }
+
+            kids_array[parent_msg].push_back(msgIt->first) ;
             kept_msgs.insert(*msgIt) ;
         }
     }

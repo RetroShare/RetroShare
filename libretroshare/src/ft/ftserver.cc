@@ -60,7 +60,8 @@ const int ftserverzone = 29539;
 #define FTSERVER_DEBUG() std::cerr << time(NULL) << " : FILE_SERVER : " << __FUNCTION__ << " : "
 #define FTSERVER_ERROR() std::cerr << "(EE) FILE_SERVER ERROR : "
 
-static const time_t FILE_TRANSFER_LOW_PRIORITY_TASKS_PERIOD = 5 ; // low priority tasks handling every 5 seconds
+static const time_t FILE_TRANSFER_LOW_PRIORITY_TASKS_PERIOD = 5 ;           // low priority tasks handling every 5 seconds
+static const time_t FILE_TRANSFER_MAX_DELAY_BEFORE_DROP_USAGE_RECORD = 10 ; // keep usage records for 10 secs at most.
 
 /* Setup */
 ftServer::ftServer(p3PeerMgr *pm, p3ServiceControl *sc)
@@ -318,6 +319,16 @@ uint32_t ftServer::defaultEncryptionPolicy()
 {
 	return mFtController->defaultEncryptionPolicy() ;
 }
+
+void ftServer::setMaxUploadSlotsPerFriend(uint32_t n)
+{
+    mFtController->setMaxUploadsPerFriend(n) ;
+}
+uint32_t ftServer::getMaxUploadSlotsPerFriend()
+{
+    return mFtController->getMaxUploadsPerFriend() ;
+}
+
 void ftServer::setDefaultEncryptionPolicy(uint32_t s)
 {
 	mFtController->setDefaultEncryptionPolicy(s) ;
@@ -1518,6 +1529,83 @@ int	ftServer::tick()
 	return moreToTick;
 }
 
+bool ftServer::checkUploadLimit(const RsPeerId& pid,const RsFileHash& hash)
+{
+    // No need for this extra cost if the value means "unlimited"
+
+#ifdef SERVER_DEBUG
+    std::cerr << "Checking upload limit for friend " << pid << " and hash " << hash << ": " ;
+#endif
+
+    uint32_t max_ups = mFtController->getMaxUploadsPerFriend() ;
+
+	RS_STACK_MUTEX(srvMutex) ;
+
+    if(max_ups == 0)
+    {
+#ifdef SERVER_DEBUG
+        std::cerr << " no limit! returning true." << std::endl;
+#endif
+        return true ;
+    }
+#ifdef SERVER_DEBUG
+	std::cerr << " max=" << max_ups ;
+#endif
+
+    // Find the latest records for this pid.
+
+    std::map<RsFileHash,time_t>& tmap(mUploadLimitMap[pid]) ;
+    std::map<RsFileHash,time_t>::iterator it ;
+
+	time_t now = time(NULL) ;
+
+    // If the limit has been decresed, we arbitrarily drop some ongoing slots.
+
+    while(tmap.size() > max_ups)
+        tmap.erase(tmap.begin()) ;
+
+    // Look in the upload record map. If it's not full, directly allocate a slot. If full, re-use an existing slot if a file is already cited.
+
+    if(tmap.size() < max_ups || (tmap.size()==max_ups && tmap.end() != (it = tmap.find(hash))))
+    {
+#ifdef SERVER_DEBUG
+        std::cerr << " allocated slot for this hash => true" << std::endl;
+#endif
+
+        tmap[hash] = now ;
+        return true ;
+    }
+
+    // There's no room in the used slots, but maybe some of them are not used anymore, in which case we remove them, which freeze a slot.
+    uint32_t cleaned = 0 ;
+
+    for(it = tmap.begin();it!=tmap.end() && cleaned<2;)
+        if(it->second + FILE_TRANSFER_MAX_DELAY_BEFORE_DROP_USAGE_RECORD < now)
+		{
+			std::map<RsFileHash,time_t>::iterator tmp(it) ;
+            ++tmp;
+ 			tmap.erase(it) ;
+            it = tmp;
+            ++cleaned ;
+		}
+		else
+			++it ;
+
+    if(cleaned > 0)
+    {
+#ifdef SERVER_DEBUG
+        std::cerr << " cleaned up " << cleaned << " old hashes => true" << std::endl;
+#endif
+		tmap[hash] = now ;
+		return true ;
+    }
+
+#ifdef SERVER_DEBUG
+	std::cerr << " no slot for this hash => false" << std::endl;
+#endif
+    return false ;
+}
+
 int ftServer::handleIncoming()
 {
 	// now File Input.
@@ -1534,7 +1622,8 @@ int ftServer::handleIncoming()
 		case RS_PKT_SUBTYPE_FT_DATA_REQUEST:
 		{
 			RsFileTransferDataRequestItem *f = dynamic_cast<RsFileTransferDataRequestItem*>(item) ;
-			if (f)
+
+			if (f && checkUploadLimit(f->PeerId(),f->file.hash))
 			{
 #ifdef SERVER_DEBUG
 				FTSERVER_DEBUG() << "ftServer::handleIncoming: received data request for hash " << f->file.hash << ", offset=" << f->fileoffset << ", chunk size=" << f->chunksize << std::endl;

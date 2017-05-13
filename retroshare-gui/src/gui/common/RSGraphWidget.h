@@ -32,8 +32,9 @@
 
 #include <stdint.h>
 
+#define GRAPH_BASE     2  /** Position of the 0 of the scale, in count of the text height */
 #define SCALE_WIDTH   75  /** Width of the scale */
-#define MINUSER_SCALE 2000  /** 2000 users is the minimum scale */  
+#define MINUSER_SCALE 2000  /** 2000 users is the minimum scale */
 #define SCROLL_STEP   4   /** Horizontal change on graph update */
 
 #define BACK_COLOR    Qt::white
@@ -87,6 +88,9 @@ public:
     // Sets the time period for collecting new values. Units=milliseconds.
     void setCollectionTimePeriod(qint64 msecs) ;
 
+    // Enables/disables time filtering of the data
+    void setFiltering(bool b) { _filtering_enabled = b; }
+
     void setDigits(int d) { _digits = d ;}
 
 protected slots:
@@ -112,6 +116,7 @@ protected:
     qint64 _update_period_msecs ;
     qint64 _time_orig_msecs ;
     int _digits ;
+    bool _filtering_enabled ;
 };
 
 class RSGraphWidget: public QFrame
@@ -127,6 +132,7 @@ public:
 	static const uint32_t RSGRAPH_FLAGS_PAINT_STYLE_FLAT    = 0x0020 ;// do not interpolate, and draw flat colored boxes
 	static const uint32_t RSGRAPH_FLAGS_LEGEND_CUMULATED    = 0x0040 ;// show the total in the legend rather than current values
 	static const uint32_t RSGRAPH_FLAGS_PAINT_STYLE_DOTS 	= 0x0080 ;// use dots
+	static const uint32_t RSGRAPH_FLAGS_LEGEND_INTEGER   	= 0x0100 ;// use integer number in the legend, and move the lines to match integers
 
 	/** Bandwidth graph style. */
 	enum GraphStyle 
@@ -156,6 +162,8 @@ public:
 	void setShowEntry(uint32_t entry, bool show) ;
 	void setCurvesOpacity(float f) ;
 
+	void setFiltering(bool b) ;
+
 	void setFlags(uint32_t flag) { _flags |= flag ; }
 	void resetFlags(uint32_t flag) { _flags &= ~flag ; }
 protected:
@@ -183,7 +191,7 @@ private:
 	void paintScale1();
 	void paintScale2();
 
-	QColor getColor(int i) ;
+	QColor getColor(const std::string &name) ;
 
 	/** Returns a formatted string representation of total. */
 	QString totalToStr(qreal total);
@@ -209,6 +217,7 @@ private:
 	/** The maximum number of points to store. */
 	qreal _y_scale ;
 	qreal _opacity ;
+    qreal _graph_base;
 
 	qreal pixelsToValue(qreal) ;
 	qreal valueToPixels(qreal) ;

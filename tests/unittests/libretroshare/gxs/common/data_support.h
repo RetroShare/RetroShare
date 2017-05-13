@@ -1,6 +1,6 @@
 #pragma once
 
-#include "serialiser/rsnxsitems.h"
+#include "rsitems/rsnxsitems.h"
 #include "gxs/rsgxsdata.h"
 
 #define RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM 0x012

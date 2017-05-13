@@ -52,12 +52,14 @@ RsSerialType* init_item(RsChatLobbyListItem& cmi)
 
 	cmi.lobby_ids.resize(n) ;
 	cmi.lobby_names.resize(n) ;
+	cmi.lobby_topics.resize(n) ;
 	cmi.lobby_counts.resize(n) ;
 
 	for(int i=0;i<n;++i)
 	{
 		cmi.lobby_ids[i] = RSRandom::random_u64() ;
 		randString(5+(rand()%10), cmi.lobby_names[i]);
+		randString(5+(rand()%10), cmi.lobby_topics[i]);
 		cmi.lobby_counts[i] = RSRandom::random_u32() ;
 	}
 
@@ -87,6 +89,7 @@ RsSerialType* init_item(RsChatLobbyInviteItem& cmi)
 {
 	cmi.lobby_id = RSRandom::random_u64() ;
 	cmi.lobby_name = "Name of the lobby" ;
+	cmi.lobby_topic = "Topic of the lobby" ;
 
 	return new RsChatSerialiser();
 }
@@ -185,12 +188,14 @@ bool operator ==(const RsChatLobbyListItem& cmiLeft,const  RsChatLobbyListItem& 
 {
 	if(cmiLeft.lobby_ids.size() != cmiRight.lobby_ids.size()) return false;
 	if(cmiLeft.lobby_names.size() != cmiRight.lobby_names.size()) return false;
+	if(cmiLeft.lobby_topics.size() != cmiRight.lobby_topics.size()) return false;
 	if(cmiLeft.lobby_counts.size() != cmiRight.lobby_counts.size()) return false;
 
 	for(uint32_t i=0;i<cmiLeft.lobby_ids.size();++i)
 	{
 		if(cmiLeft.lobby_ids[i] != cmiRight.lobby_ids[i]) return false ;
 		if(cmiLeft.lobby_names[i] != cmiRight.lobby_names[i]) return false ;
+		if(cmiLeft.lobby_topics[i] != cmiRight.lobby_topics[i]) return false ;
 		if(cmiLeft.lobby_counts[i] != cmiRight.lobby_counts[i]) return false ;
 	}
 	return true ;
@@ -254,6 +259,7 @@ bool operator ==(const RsChatLobbyInviteItem& csiLeft, const RsChatLobbyInviteIt
 {
 	if(csiLeft.lobby_id != csiRight.lobby_id) return false ;
 	if(csiLeft.lobby_name != csiRight.lobby_name) return false ;
+	if(csiLeft.lobby_topic != csiRight.lobby_topic) return false ;
 
 	return true;
 }

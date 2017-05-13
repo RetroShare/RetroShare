@@ -756,3 +756,20 @@ ConnectFriendWizard QFrame#friendFrame {
 	border-radius: 6px;
 	background: white;
 }
+
+HomePage QFrame#helpframe{
+	border: 2px solid #009933;
+	border-radius: 6px;
+	background: white;
+}
+
+StartDialog QPushButton#loadButton { 
+	border-image: url(:/images/btn_blue.png) 4;
+	border-width: 4;
+	font: bold;
+	color: white;
+}
+
+StartDialog QPushButton#loadButton:hover {
+	border-image: url(:/images/btn_blue_hover.png) 4;
+}

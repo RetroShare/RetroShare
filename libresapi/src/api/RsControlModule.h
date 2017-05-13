@@ -1,6 +1,7 @@
 #pragma once
 
 #include <util/rsthreads.h>
+#include <util/cxx11retrocompat.h>
 #include <retroshare/rsnotify.h>
 #include "api/ResourceRouter.h"
 

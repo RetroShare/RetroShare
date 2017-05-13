@@ -77,8 +77,10 @@ const uint8_t RS_PKT_SUBTYPE_DISTANT_CHAT_DH_PUBLIC_KEY   = 0x16 ;
 const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_SIGNED_MSG     	  = 0x17 ;
 const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_SIGNED_EVENT      = 0x18 ;
 const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_LIST              = 0x19 ;
-const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_INVITE       	  = 0x1A ;
-const uint8_t RS_PKT_SUBTYPE_OUTGOING_MAP                 = 0x1B ;
+
+const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_INVITE_DEPRECATED = 0x1A ;	// to be removed (deprecated since May 2017)
+const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_INVITE            = 0x1B ;
+const uint8_t RS_PKT_SUBTYPE_OUTGOING_MAP                 = 0x1C ;
 
 typedef uint64_t 		ChatLobbyId ;
 typedef uint64_t 		ChatLobbyMsgId ;
@@ -94,7 +96,7 @@ class RsChatItem: public RsItem
 		}
 
 		virtual ~RsChatItem() {}
-        virtual std::ostream& print(std::ostream &out, uint16_t indent = 0) { return out; }	// derived from RsItem, but should be removed
+		virtual std::ostream& print(std::ostream &out, uint16_t /*indent*/ = 0) { return out; }	// derived from RsItem, but should be removed
 
         virtual void clear() {}
 };
@@ -239,6 +241,21 @@ class RsChatLobbyConnectChallengeItem: public RsChatItem
 		uint64_t challenge_code ;
 };
 
+// to be removed (deprecated since May 2017)
+class RsChatLobbyInviteItem_Deprecated: public RsChatItem
+{
+	public:
+		RsChatLobbyInviteItem_Deprecated() :RsChatItem(RS_PKT_SUBTYPE_CHAT_LOBBY_INVITE_DEPRECATED) {}
+		virtual ~RsChatLobbyInviteItem_Deprecated() {}
+
+		void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
+
+		ChatLobbyId lobby_id ;
+		std::string lobby_name ;
+		std::string lobby_topic ;
+		ChatLobbyFlags lobby_flags ;
+};
+
 class RsChatLobbyInviteItem: public RsChatItem
 {
 	public:
@@ -250,7 +267,7 @@ class RsChatLobbyInviteItem: public RsChatItem
 		ChatLobbyId lobby_id ;
 		std::string lobby_name ;
 		std::string lobby_topic ;
-        ChatLobbyFlags lobby_flags ;
+		ChatLobbyFlags lobby_flags ;
 };
 
 /*!

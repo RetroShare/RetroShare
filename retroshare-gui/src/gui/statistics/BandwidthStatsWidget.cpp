@@ -202,12 +202,16 @@ void BandwidthStatsWidget::updateUnitSelection(int n)
     {
         ui.bwgraph_BW->setUnit(BWGraphSource::UNIT_KILOBYTES) ;
         ui.bwgraph_BW->resetFlags(RSGraphWidget::RSGRAPH_FLAGS_PAINT_STYLE_DOTS);
+        ui.bwgraph_BW->resetFlags(RSGraphWidget::RSGRAPH_FLAGS_LEGEND_INTEGER);
         ui.legend_CB->setItemText(1,tr("Average"));
+        ui.bwgraph_BW->setFiltering(true) ;
     }
     else
     {
         ui.bwgraph_BW->setUnit(BWGraphSource::UNIT_COUNT) ;
         ui.bwgraph_BW->setFlags(RSGraphWidget::RSGRAPH_FLAGS_PAINT_STYLE_DOTS);
+        ui.bwgraph_BW->setFlags(RSGraphWidget::RSGRAPH_FLAGS_LEGEND_INTEGER);
+        ui.bwgraph_BW->setFiltering(false) ;
         ui.legend_CB->setItemText(1,tr("Total"));
     }
 }

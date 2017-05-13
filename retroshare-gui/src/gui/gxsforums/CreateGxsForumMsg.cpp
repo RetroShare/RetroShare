@@ -278,10 +278,10 @@ void  CreateGxsForumMsg::loadFormInformation()
     uint32_t fl = IDCHOOSER_ID_REQUIRED ;
 
 	if( (mForumMeta.mSignFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG) || (mForumMeta.mSignFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG_KNOWN))
-        fl |=  IDCHOOSER_NON_ANONYMOUS ;
+		fl |= IDCHOOSER_NON_ANONYMOUS;
 
-    if(!mPosterId.isNull())
-        fl |= IDCHOOSER_NO_CREATE;
+	if(!mPosterId.isNull())
+		fl |= IDCHOOSER_NO_CREATE;
 
 	ui.idChooser->setFlags(fl) ;
 
