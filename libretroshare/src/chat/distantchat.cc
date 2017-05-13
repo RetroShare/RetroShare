@@ -259,8 +259,9 @@ bool DistantChatService::initiateDistantChatConnexion(const RsGxsId& to_gxs_id, 
 
     error_code = RS_DISTANT_CHAT_ERROR_NO_ERROR ;
 
-    // Make a self message to raise the chat window
-    
+#ifdef RETROSHARE_GUI
+	// Make a self message to raise the chat window
+
     RsChatMsgItem *item = new RsChatMsgItem;
     item->message = "[Starting distant chat. Please wait for secure tunnel to be established]" ;
     item->chatFlags = RS_CHAT_FLAG_PRIVATE ;
@@ -269,7 +270,8 @@ bool DistantChatService::initiateDistantChatConnexion(const RsGxsId& to_gxs_id, 
     handleRecvChatMsgItem(item) ;
     
     delete item ;	// item is replaced by NULL if partial, but this is not the case here.
-    
+#endif
+
     return true ;
 }
 
