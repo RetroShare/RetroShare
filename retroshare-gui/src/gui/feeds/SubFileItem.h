@@ -40,8 +40,9 @@ const uint32_t SFI_STATE_UPLOAD		= 0x0006;
 const uint32_t SFI_TYPE_CHANNEL		= 0x0010;
 const uint32_t SFI_TYPE_ATTACH		= 0x0020;
 
-const uint32_t SFI_FLAG_CREATE		= 0x1000;
-const uint32_t SFI_FLAG_DELETE		= 0x2000;
+const uint32_t SFI_FLAG_CREATE		        = 0x1000;
+const uint32_t SFI_FLAG_ALLOW_DELETE		= 0x2000;
+const uint32_t SFI_FLAG_NO_DOWNLOAD 		= 0x4000;
 
 
 //! This create a gui widget that allows users to access files shared by user

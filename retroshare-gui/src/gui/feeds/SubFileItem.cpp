@@ -130,7 +130,9 @@ void SubFileItem::Setup()
 	}
   }
 
-  deleteButton->setVisible(mFlag & SFI_FLAG_DELETE);
+  deleteButton->setVisible(mFlag & SFI_FLAG_ALLOW_DELETE);
+  downloadButton->setVisible(mMode < SFI_STATE_LOCAL);
+  cancelButton->setVisible(mMode < SFI_STATE_LOCAL);
 
   smaller();
   updateItemStatic();
