@@ -351,7 +351,7 @@ void CreateGxsChannelMsg::addAttachment(const RsFileHash &hash, const std::strin
 
 	/* add widget in for new destination */
 
-	uint32_t flags = SFI_TYPE_CHANNEL;
+	uint32_t flags = SFI_TYPE_CHANNEL | SFI_FLAG_DELETE;
 	if (local)
 	{
 		flags |= SFI_STATE_LOCAL;
@@ -363,6 +363,8 @@ void CreateGxsChannelMsg::addAttachment(const RsFileHash &hash, const std::strin
 
 	SubFileItem *file = new SubFileItem(hash, fname, "", size, flags, srcId); // destroyed when fileFrame (this subfileitem) is destroyed
 
+    connect(file,SIGNAL(wantsToBeDeleted()),this,SLOT(deleteAttachment())) ;
+
 	mAttachments.push_back(file);
 	QLayout *layout = fileFrame->layout();
 	layout->addWidget(file);
@@ -373,6 +375,24 @@ void CreateGxsChannelMsg::addAttachment(const RsFileHash &hash, const std::strin
 	}
 
 	return;
+}
+
+void CreateGxsChannelMsg::deleteAttachment()
+{
+    // grab the item who sent the request
+
+	SubFileItem *file_item = qobject_cast<SubFileItem *>(QObject::sender());
+
+    for(std::list<SubFileItem*>::iterator it(mAttachments.begin());it!=mAttachments.end();)
+        if(*it == file_item)
+        {
+            SubFileItem *item = *it ;
+            it = mAttachments.erase(it) ;
+			fileFrame->layout()->removeWidget(file_item) ;
+            delete item ;
+        }
+		else
+            ++it;
 }
 
 void CreateGxsChannelMsg::addExtraFile()
