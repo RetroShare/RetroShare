@@ -38,11 +38,13 @@
 
 //#define ENABLE_GENERATE
 
-#define CREATEMSG_CHANNELINFO 0x002
+#define CREATEMSG_CHANNELINFO       0x002
+#define CREATEMSG_CHANNEL_POST_INFO 0x003
 
 /** Constructor */
-CreateGxsChannelMsg::CreateGxsChannelMsg(const RsGxsGroupId &cId)
-	: QDialog (NULL, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint), mChannelId(cId) ,mCheckAttachment(true), mAutoMediaThumbNail(false)
+CreateGxsChannelMsg::CreateGxsChannelMsg(const RsGxsGroupId &cId, RsGxsMessageId existing_post)
+	: QDialog (NULL, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint),
+      mChannelId(cId) , mOrigPostId(existing_post),mCheckAttachment(true), mAutoMediaThumbNail(false)
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	setupUi(this);
@@ -50,7 +52,11 @@ CreateGxsChannelMsg::CreateGxsChannelMsg(const RsGxsGroupId &cId)
 	mChannelQueue = new TokenQueue(rsGxsChannels->getTokenService(), this);
 
 	headerFrame->setHeaderImage(QPixmap(":/images/channels.png"));
-	headerFrame->setHeaderText(tr("New Channel Post"));
+
+    if(!existing_post.isNull())
+		headerFrame->setHeaderText(tr("Edit Channel Post"));
+	else
+		headerFrame->setHeaderText(tr("New Channel Post"));
 
 	setAttribute ( Qt::WA_DeleteOnClose, true );
 
@@ -555,6 +561,15 @@ void CreateGxsChannelMsg::newChannelMsg()
 
 		uint32_t token;
 		mChannelQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_SUMMARY, opts, groupIds, CREATEMSG_CHANNELINFO);
+
+        if(!mOrigPostId.isNull())
+        {
+			GxsMsgReq message_ids;
+
+			opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
+            message_ids[mChannelId].push_back(mOrigPostId);
+			mChannelQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_SUMMARY, opts, message_ids, CREATEMSG_CHANNEL_POST_INFO);
+        }
 	}
 }
 
@@ -628,6 +643,7 @@ void CreateGxsChannelMsg::sendMessage(const std::string &subject, const std::str
 		post.mMeta.mThreadId.clear() ;
 		post.mMeta.mMsgId.clear() ;
 
+		post.mMeta.mOrigMsgId = mOrigPostId;
 		post.mMeta.mMsgName = subject;
 		post.mMsg = msg;
 		post.mFiles = files;
@@ -686,6 +702,39 @@ void CreateGxsChannelMsg::addThumbnail()
 	thumbnail_label->setPixmap(picture);
 }
 
+void CreateGxsChannelMsg::loadChannelPostInfo(const uint32_t &token)
+{
+	std::cerr << "CreateGxsChannelMsg::loadChannelPostInfo()";
+	std::cerr << std::endl;
+
+	std::vector<RsGxsChannelPost> posts;
+	rsGxsChannels->getPostData(token, posts);
+
+	if (posts.size() != 1)
+	{
+		std::cerr << "CreateGxsChannelMsg::loadChannelPostInfo() ERROR INVALID Number of posts in request" << std::endl;
+        return ;
+    }
+
+    // now populate the widget with the channel post data.
+	const RsGxsChannelPost& post = posts[0];
+
+    if(post.mMeta.mGroupId != mChannelId || post.mMeta.mMsgId != mOrigPostId)
+    {
+		std::cerr << "CreateGxsChannelMsg::loadChannelPostInfo() ERROR INVALID post ID or channel ID" << std::endl;
+        return ;
+    }
+
+	subjectEdit->setText(QString::fromUtf8(post.mMeta.mMsgName.c_str())) ;
+    msgEdit->setText(QString::fromUtf8(post.mMsg.c_str())) ;
+
+    for(std::list<RsGxsFile>::const_iterator it(post.mFiles.begin());it!=post.mFiles.end();++it)
+        addAttachment(it->mHash,it->mName,it->mSize,true,RsPeerId());
+
+    picture.loadFromData(post.mThumbnail.mData,post.mThumbnail.mSize,"PNG");
+	thumbnail_label->setPixmap(picture);
+}
+
 void CreateGxsChannelMsg::loadChannelInfo(const uint32_t &token)
 {
 	std::cerr << "CreateGxsChannelMsg::loadChannelInfo()";
@@ -718,6 +767,9 @@ void CreateGxsChannelMsg::loadRequest(const TokenQueue *queue, const TokenReques
 		{
 			case CREATEMSG_CHANNELINFO:
 				loadChannelInfo(req.mToken);
+				break;
+			case CREATEMSG_CHANNEL_POST_INFO:
+				loadChannelPostInfo(req.mToken);
 				break;
 			default:
 				std::cerr << "CreateGxsChannelMsg::loadRequest() UNKNOWN UserType ";
