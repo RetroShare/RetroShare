@@ -351,7 +351,7 @@ void CreateGxsChannelMsg::addAttachment(const RsFileHash &hash, const std::strin
 
 	/* add widget in for new destination */
 
-	uint32_t flags = SFI_TYPE_CHANNEL | SFI_FLAG_DELETE;
+	uint32_t flags = SFI_TYPE_CHANNEL | SFI_FLAG_ALLOW_DELETE ;
 	if (local)
 	{
 		flags |= SFI_STATE_LOCAL;
