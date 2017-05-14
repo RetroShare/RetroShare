@@ -60,6 +60,7 @@ protected:
 private slots:
 	void addExtraFile();
 	void checkAttachmentReady();
+	void deleteAttachment();
 
 	void cancelMsg();
 	void sendMsg();

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>828</width>
+    <width>880</width>
     <height>557</height>
    </rect>
   </property>
@@ -181,20 +181,6 @@
         </property>
         <property name="autoRaise">
          <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QToolButton" name="editButton">
-        <property name="toolTip">
-         <string>Edit current post</string>
-        </property>
-        <property name="text">
-         <string>...</string>
-        </property>
-        <property name="icon">
-         <iconset resource="../images.qrc">
-          <normaloff>:/images/edit_24.png</normaloff>:/images/edit_24.png</iconset>
         </property>
        </widget>
       </item>

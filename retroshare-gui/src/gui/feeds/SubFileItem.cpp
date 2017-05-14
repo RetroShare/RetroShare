@@ -97,11 +97,12 @@ SubFileItem::SubFileItem(const RsFileHash &hash, const std::string &name, const 
 
 void SubFileItem::Setup()
 {
-  connect( playButton, SIGNAL( clicked( void ) ), this, SLOT( play ( void ) ) );
-  connect( downloadButton, SIGNAL( clicked( void ) ), this, SLOT( download ( void ) ) );
-  connect( cancelButton, SIGNAL( clicked( void ) ), this, SLOT( cancel ( void ) ) );
-  connect( copyLinkButton, SIGNAL( clicked( void ) ), this, SLOT( copyLink ( void ) ) );
-  connect( saveButton, SIGNAL( clicked( void ) ), this, SLOT( save ( void ) ) );
+  connect( playButton, SIGNAL( clicked( ) ), this, SLOT( play ( ) ) );
+  connect( downloadButton, SIGNAL( clicked( ) ), this, SLOT( download ( ) ) );
+  connect( cancelButton, SIGNAL( clicked( ) ), this, SLOT( cancel( ) ) );
+  connect( deleteButton, SIGNAL( clicked( ) ), this, SLOT( del( ) ) );
+  connect( copyLinkButton, SIGNAL( clicked( ) ), this, SLOT( copyLink ( ) ) );
+  connect( saveButton, SIGNAL( clicked( ) ), this, SLOT( save ( ) ) );
 
   /* once off check - if remote, check if we have it 
    * NB: This check might be expensive - and it'll happen often!
@@ -129,11 +130,18 @@ void SubFileItem::Setup()
 	}
   }
 
+  deleteButton->setVisible(mFlag & SFI_FLAG_DELETE);
+
   smaller();
   updateItemStatic();
   updateItem();
 }
 
+
+void SubFileItem::del()
+{
+    emit wantsToBeDeleted();
+}
 
 bool SubFileItem::done()
 {
