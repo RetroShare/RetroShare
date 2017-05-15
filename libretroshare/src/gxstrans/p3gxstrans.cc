@@ -478,11 +478,12 @@ bool p3GxsTrans::dispatchDecryptedMail( const RsGxsId& authorId,
 	}
 	GxsTransSubServices rsrvc = static_cast<GxsTransSubServices>(csri);
 
-	uint32_t rcptsize = decrypted_data_size;
+	uint32_t rcptsize = decrypted_data_size - offset;
 	RsNxsTransPresignedReceipt* receipt =
 	        static_cast<RsNxsTransPresignedReceipt*>(
-	            RsGxsTransSerializer().deserialise(
-	                const_cast<uint8_t*>(decrypted_data), &rcptsize ) );
+	            RsNxsSerialiser(RS_SERVICE_TYPE_GXS_TRANS).deserialise(
+	                const_cast<uint8_t*>(&decrypted_data[offset]), &rcptsize ));
+	offset += rcptsize;
 	if(!receipt)
 	{
 		std::cerr << "p3GxsTrans::dispatchDecryptedMail(...) (EE) fatal error "
