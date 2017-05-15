@@ -186,7 +186,7 @@ void SubFileItem::updateItemStatic()
 	}
 
 	/* get full path for local file */
-	if ((mMode == SFI_STATE_LOCAL) || (mMode == SFI_STATE_UPLOAD))
+	if (((mMode == SFI_STATE_LOCAL) || (mMode == SFI_STATE_UPLOAD)))
 	{
 #ifdef DEBUG_ITEM
 		std::cerr << "SubFileItem::updateItemStatic() STATE=Local/Upload checking path";
@@ -200,7 +200,10 @@ void SubFileItem::updateItemStatic()
 			/* look up path */
 			if (!rsFiles->FileDetails(mFileHash, hintflags, fi))
 			{
-				mMode = SFI_STATE_ERROR;
+				if(mFlag & SFI_FLAG_ASSUME_FILE_READY)
+					mMode = SFI_STATE_REMOTE;
+				else
+					mMode = SFI_STATE_ERROR;
 #ifdef DEBUG_ITEM
 			std::cerr << "SubFileItem::updateItemStatic() STATE=>Error No Details";
 			std::cerr << std::endl;
@@ -251,6 +254,7 @@ void SubFileItem::updateItemStatic()
 		case SFI_STATE_REMOTE:
 			playButton->setEnabled(false);
 			downloadButton->setEnabled(true);
+			downloadButton->setVisible(true);
 			cancelButton->setEnabled(false);
 
 			progressBar->setValue(0);
