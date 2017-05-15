@@ -398,7 +398,27 @@ void GxsChannelPostsWidget::filterChanged(int filter)
 void GxsChannelPostsWidget::createPostItem(const RsGxsChannelPost &post, bool related)
 {
 	GxsChannelPostItem *item = NULL;
-	if (related) {
+
+    if(!post.mMeta.mOrigMsgId.isNull())
+    {
+		FeedItem *feedItem = ui->feedWidget->findGxsFeedItem(post.mMeta.mGroupId, post.mMeta.mOrigMsgId);
+		item = dynamic_cast<GxsChannelPostItem*>(feedItem);
+
+        if(item)
+		{
+			ui->feedWidget->removeFeedItem(item) ;
+			RsGxsChannelGroup dummyGroup;
+			dummyGroup.mMeta.mGroupId = groupId();
+			dummyGroup.mMeta.mSubscribeFlags = 0xffffffff;
+			GxsChannelPostItem *item = new GxsChannelPostItem(this, 0, dummyGroup, post, true, false);
+			ui->feedWidget->addFeedItem(item, ROLE_PUBLISH, QDateTime::fromTime_t(post.mMeta.mPublishTs));
+
+			return ;
+		}
+    }
+
+	if (related)
+    {
 		FeedItem *feedItem = ui->feedWidget->findGxsFeedItem(post.mMeta.mGroupId, post.mMeta.mMsgId);
 		item = dynamic_cast<GxsChannelPostItem*>(feedItem);
 	}

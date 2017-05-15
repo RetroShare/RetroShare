@@ -41,6 +41,8 @@
 #define CREATEMSG_CHANNELINFO       0x002
 #define CREATEMSG_CHANNEL_POST_INFO 0x003
 
+// #define DEBUG_CREATE_GXS_MSG
+
 /** Constructor */
 CreateGxsChannelMsg::CreateGxsChannelMsg(const RsGxsGroupId &cId, RsGxsMessageId existing_post)
 	: QDialog (NULL, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint),
@@ -346,8 +348,10 @@ void CreateGxsChannelMsg::parseRsFileListAttachments(const std::string &attachLi
 void CreateGxsChannelMsg::addAttachment(const RsFileHash &hash, const std::string &fname, uint64_t size, bool local, const RsPeerId &srcId, bool assume_file_ready)
 {
 	/* add a SubFileItem to the attachment section */
+#ifdef DEBUG_CREATE_GXS_MSG
 	std::cerr << "CreateGxsChannelMsg::addAttachment()";
 	std::cerr << std::endl;
+#endif
 
 	/* add widget in for new destination */
 
@@ -394,8 +398,10 @@ void CreateGxsChannelMsg::deleteAttachment()
 void CreateGxsChannelMsg::addExtraFile()
 {
 	/* add a SubFileItem to the attachment section */
+#ifdef DEBUG_CREATE_GXS_MSG
 	std::cerr << "CreateGxsChannelMsg::addExtraFile() opening file dialog";
 	std::cerr << std::endl;
+#endif
 
 	QStringList files;
 	if (misc::getOpenFileNames(this, RshareSettings::LASTDIR_EXTRAFILE, tr("Add Extra File"), "", files)) {
@@ -408,8 +414,10 @@ void CreateGxsChannelMsg::addExtraFile()
 void CreateGxsChannelMsg::addAttachment(const std::string &path)
 {
 	/* add a SubFileItem to the attachment section */
+#ifdef DEBUG_CREATE_GXS_MSG
 	std::cerr << "CreateGxsChannelMsg::addAttachment()";
 	std::cerr << std::endl;
+#endif
 
 	if(mAutoMediaThumbNail)
 	setThumbNail(path, 2000);
@@ -544,8 +552,10 @@ void CreateGxsChannelMsg::checkAttachmentReady()
 
 void CreateGxsChannelMsg::cancelMsg()
 {
+#ifdef DEBUG_CREATE_GXS_MSG
 	std::cerr << "CreateGxsChannelMsg::cancelMsg() :"
 			  << "Deleting EXTRA attachments" << std::endl;
+#endif
 
 	std::cerr << std::endl;
 
@@ -600,8 +610,10 @@ void CreateGxsChannelMsg::saveChannelInfo(const RsGroupMetaData &meta)
 
 void CreateGxsChannelMsg::sendMsg()
 {
+#ifdef DEBUG_CREATE_GXS_MSG
 	std::cerr << "CreateGxsChannelMsg::sendMsg()";
 	std::cerr << std::endl;
+#endif
 
 	/* construct message bits */
 	std::string subject = std::string(misc::removeNewLine(subjectEdit->text()).toUtf8());
@@ -720,8 +732,10 @@ void CreateGxsChannelMsg::addThumbnail()
 
 void CreateGxsChannelMsg::loadChannelPostInfo(const uint32_t &token)
 {
+#ifdef DEBUG_CREATE_GXS_MSG
 	std::cerr << "CreateGxsChannelMsg::loadChannelPostInfo()";
 	std::cerr << std::endl;
+#endif
 
 	std::vector<RsGxsChannelPost> posts;
 	rsGxsChannels->getPostData(token, posts);
@@ -753,8 +767,10 @@ void CreateGxsChannelMsg::loadChannelPostInfo(const uint32_t &token)
 
 void CreateGxsChannelMsg::loadChannelInfo(const uint32_t &token)
 {
+#ifdef DEBUG_CREATE_GXS_MSG
 	std::cerr << "CreateGxsChannelMsg::loadChannelInfo()";
 	std::cerr << std::endl;
+#endif
 
 	std::list<RsGroupMetaData> groupInfo;
 	rsGxsChannels->getGroupSummary(token, groupInfo);
@@ -773,8 +789,10 @@ void CreateGxsChannelMsg::loadChannelInfo(const uint32_t &token)
 
 void CreateGxsChannelMsg::loadRequest(const TokenQueue *queue, const TokenRequest &req)
 {
+#ifdef DEBUG_CREATE_GXS_MSG
 	std::cerr << "CreateGxsChannelMsg::loadRequest() UserType: " << req.mUserType;
 	std::cerr << std::endl;
+#endif
 
 	if (queue == mChannelQueue)
 	{
