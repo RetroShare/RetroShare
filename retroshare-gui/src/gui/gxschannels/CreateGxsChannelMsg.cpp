@@ -343,7 +343,7 @@ void CreateGxsChannelMsg::parseRsFileListAttachments(const std::string &attachLi
 }
 
 
-void CreateGxsChannelMsg::addAttachment(const RsFileHash &hash, const std::string &fname, uint64_t size, bool local, const RsPeerId &srcId)
+void CreateGxsChannelMsg::addAttachment(const RsFileHash &hash, const std::string &fname, uint64_t size, bool local, const RsPeerId &srcId, bool assume_file_ready)
 {
 	/* add a SubFileItem to the attachment section */
 	std::cerr << "CreateGxsChannelMsg::addAttachment()";
@@ -352,14 +352,14 @@ void CreateGxsChannelMsg::addAttachment(const RsFileHash &hash, const std::strin
 	/* add widget in for new destination */
 
 	uint32_t flags = SFI_TYPE_CHANNEL | SFI_FLAG_ALLOW_DELETE ;
+
+    if(assume_file_ready)
+        flags |= SFI_FLAG_ASSUME_FILE_READY;
+
 	if (local)
-	{
 		flags |= SFI_STATE_LOCAL;
-	}
 	else
-	{
 		flags |= SFI_STATE_REMOTE;
-	}
 
 	SubFileItem *file = new SubFileItem(hash, fname, "", size, flags, srcId); // destroyed when fileFrame (this subfileitem) is destroyed
 
@@ -370,11 +370,7 @@ void CreateGxsChannelMsg::addAttachment(const RsFileHash &hash, const std::strin
 	layout->addWidget(file);
 
 	if (mCheckAttachment)
-	{
 		checkAttachmentReady();
-	}
-
-	return;
 }
 
 void CreateGxsChannelMsg::deleteAttachment()
@@ -749,7 +745,7 @@ void CreateGxsChannelMsg::loadChannelPostInfo(const uint32_t &token)
     msgEdit->setText(QString::fromUtf8(post.mMsg.c_str())) ;
 
     for(std::list<RsGxsFile>::const_iterator it(post.mFiles.begin());it!=post.mFiles.end();++it)
-        addAttachment(it->mHash,it->mName,it->mSize,true,RsPeerId());
+        addAttachment(it->mHash,it->mName,it->mSize,true,RsPeerId(),true);
 
     picture.loadFromData(post.mThumbnail.mData,post.mThumbnail.mSize,"PNG");
 	thumbnail_label->setPixmap(picture);
