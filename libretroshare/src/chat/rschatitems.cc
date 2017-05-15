@@ -39,27 +39,27 @@ static const uint32_t RS_CHAT_SERIALIZER_FLAGS_NO_SIGNATURE = 0x0001;
 
 RsItem *RsChatSerialiser::create_item(uint16_t service_id,uint8_t item_sub_id) const
 {
-	if (service_id != RS_SERVICE_TYPE_CHAT)
-		return NULL;
+	if(service_id != RS_SERVICE_TYPE_CHAT) return NULL;
 
 	switch(item_sub_id)
 	{
-		case RS_PKT_SUBTYPE_DEFAULT:                       return new RsChatMsgItem() ;
-		case RS_PKT_SUBTYPE_PRIVATECHATMSG_CONFIG:         return new RsPrivateChatMsgConfigItem() ;
-		case RS_PKT_SUBTYPE_CHAT_STATUS:                   return new RsChatStatusItem() ;
-		case RS_PKT_SUBTYPE_CHAT_AVATAR:                   return new RsChatAvatarItem() ;
-		case RS_PKT_SUBTYPE_CHAT_LOBBY_SIGNED_MSG:         return new RsChatLobbyMsgItem() ;
-		case RS_PKT_SUBTYPE_CHAT_LOBBY_INVITE_DEPRECATED:  return new RsChatLobbyInviteItem_Deprecated() ; // to be removed (deprecated since May 2017)
-		case RS_PKT_SUBTYPE_CHAT_LOBBY_INVITE:             return new RsChatLobbyInviteItem() ;
-		case RS_PKT_SUBTYPE_CHAT_LOBBY_CHALLENGE:          return new RsChatLobbyConnectChallengeItem() ;
-		case RS_PKT_SUBTYPE_CHAT_LOBBY_UNSUBSCRIBE:        return new RsChatLobbyUnsubscribeItem() ;
-		case RS_PKT_SUBTYPE_CHAT_LOBBY_SIGNED_EVENT:       return new RsChatLobbyEventItem() ;
-		case RS_PKT_SUBTYPE_CHAT_LOBBY_LIST_REQUEST:       return new RsChatLobbyListRequestItem() ;
-		case RS_PKT_SUBTYPE_CHAT_LOBBY_LIST:               return new RsChatLobbyListItem() ;
-		case RS_PKT_SUBTYPE_CHAT_LOBBY_CONFIG:             return new RsChatLobbyConfigItem() ;
-		default:
-			std::cerr << "Unknown packet type in chat!" << std::endl ;
-			return NULL ;
+	case RS_PKT_SUBTYPE_DEFAULT: return new RsChatMsgItem();
+	case RS_PKT_SUBTYPE_PRIVATECHATMSG_CONFIG: return new RsPrivateChatMsgConfigItem();
+	case RS_PKT_SUBTYPE_CHAT_STATUS: return new RsChatStatusItem();
+	case RS_PKT_SUBTYPE_CHAT_AVATAR: return new RsChatAvatarItem();
+	case RS_PKT_SUBTYPE_CHAT_LOBBY_SIGNED_MSG: return new RsChatLobbyMsgItem();
+	case RS_PKT_SUBTYPE_CHAT_LOBBY_INVITE: return new RsChatLobbyInviteItem();
+	case RS_PKT_SUBTYPE_CHAT_LOBBY_INVITE_DEPRECATED: return new RsChatLobbyInviteItem_Deprecated(); // to be removed (deprecated since May 2017)
+	case RS_PKT_SUBTYPE_CHAT_LOBBY_CHALLENGE: return new RsChatLobbyConnectChallengeItem();
+	case RS_PKT_SUBTYPE_CHAT_LOBBY_UNSUBSCRIBE: return new RsChatLobbyUnsubscribeItem();
+	case RS_PKT_SUBTYPE_CHAT_LOBBY_SIGNED_EVENT: return new RsChatLobbyEventItem();
+	case RS_PKT_SUBTYPE_CHAT_LOBBY_LIST_REQUEST: return new RsChatLobbyListRequestItem();
+	case RS_PKT_SUBTYPE_CHAT_LOBBY_LIST: return new RsChatLobbyListItem();
+	case RS_PKT_SUBTYPE_CHAT_LOBBY_CONFIG: return new RsChatLobbyConfigItem();
+	case RS_PKT_SUBTYPE_OUTGOING_MAP: return new PrivateOugoingMapItem();
+	default:
+		std::cerr << "Unknown packet type in chat!" << std::endl;
+		return NULL;
 	}
 }
 
