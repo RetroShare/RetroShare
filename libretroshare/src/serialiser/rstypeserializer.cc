@@ -195,7 +195,7 @@ template<> void RsTypeSerializer::print_data(const std::string& n, uint16_t type
 //                                       TlvInt with subtype                                       //
 //=================================================================================================//
 
-template<> uint32_t RsTypeSerializer::serial_size(uint16_t /* type_subtype */,const uint32_t& s)
+template<> uint32_t RsTypeSerializer::serial_size(uint16_t /* type_subtype */,const uint32_t& /*s*/)
 {
 	return GetTlvUInt32Size() ;
 }

@@ -815,7 +815,7 @@ X509 *AuthSSLimpl::SignX509ReqWithGPG(X509_REQ *req, long /*days*/)
         const EVP_MD *type = EVP_sha1();
 
         EVP_MD_CTX *ctx = EVP_MD_CTX_create();
-        unsigned char *p,*buf_in=NULL;
+        unsigned char *buf_in=NULL;
         unsigned char *buf_hashout=NULL,*buf_sigout=NULL;
         int inl=0,hashoutl=0;
         int sigoutl=0;
@@ -854,6 +854,7 @@ X509 *AuthSSLimpl::SignX509ReqWithGPG(X509_REQ *req, long /*days*/)
 #if OPENSSL_VERSION_NUMBER < 0x10100000L
         inl=i2d(data,NULL);
         buf_in=(unsigned char *)OPENSSL_malloc((unsigned int)inl);
+        unsigned char *p=NULL;
 #else
         inl=i2d_re_X509_tbs(x509,&buf_in) ;	// this does the i2d over x509->cert_info
 #endif
@@ -977,9 +978,9 @@ bool AuthSSLimpl::AuthX509WithGPG(X509 *x509,uint32_t& diagnostic)
 	/* verify GPG signature */
 
 	/*** NOW The Manual signing bit (HACKED FROM asn1/a_sign.c) ***/
-	int (*i2d)(X509_CINF*, unsigned char**) = i2d_X509_CINF;
 
 #if OPENSSL_VERSION_NUMBER < 0x10100000L
+	int (*i2d)(X509_CINF*, unsigned char**) = i2d_X509_CINF;
 	ASN1_BIT_STRING *signature = x509->signature;
 	X509_CINF *data = x509->cert_info;
 #else
@@ -993,7 +994,7 @@ bool AuthSSLimpl::AuthX509WithGPG(X509 *x509,uint32_t& diagnostic)
 	const EVP_MD *type = EVP_sha1();
 
 	EVP_MD_CTX *ctx = EVP_MD_CTX_create();
-	unsigned char *p,*buf_in=NULL;
+	unsigned char *buf_in=NULL;
 	unsigned char *buf_hashout=NULL,*buf_sigout=NULL;
 	int inl=0,hashoutl=0;
 	int sigoutl=0;
@@ -1002,6 +1003,7 @@ bool AuthSSLimpl::AuthX509WithGPG(X509 *x509,uint32_t& diagnostic)
 #if OPENSSL_VERSION_NUMBER < 0x10100000L
 	inl=i2d(data,NULL);
 	buf_in=(unsigned char *)OPENSSL_malloc((unsigned int)inl);
+	unsigned char *p=NULL;
 #else
 	inl=i2d_re_X509_tbs(x509,&buf_in) ;	// this does the i2d over x509->cert_info
 #endif
@@ -1026,13 +1028,13 @@ bool AuthSSLimpl::AuthX509WithGPG(X509 *x509,uint32_t& diagnostic)
 		diagnostic = RS_SSL_HANDSHAKE_DIAGNOSTIC_MALLOC_ERROR ;
 		goto err;
 	}
-	p=buf_in;
 
 #ifdef AUTHSSL_DEBUG
 	std::cerr << "Buffers Allocated" << std::endl;
 #endif
 
 #if OPENSSL_VERSION_NUMBER < 0x10100000L
+	p=buf_in;
 	i2d(data,&p);
 #endif
 	/* data in buf_in, ready to be hashed */

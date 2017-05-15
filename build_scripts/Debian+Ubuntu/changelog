@@ -1,5 +1,172 @@
 retroshare06 (0.6.2-1.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
+  9714409 csoler Mon,  8 May 2017 10:57:00 +0200 Merge pull request #802 from csoler/v0.6-ImprovedGUI
+  de0f8b9 csoler Mon,  8 May 2017 10:51:15 +0200 moved passphrase box into start dialog, and removed blank logo, replaced it by RS splash logo
+  6cb4990 csoler Mon,  8 May 2017 10:06:40 +0200 fixed compilation with qt4
+  84c8158 csoler Mon,  8 May 2017 09:38:33 +0200 disabled show OpMode status on default
+  24eca4a defnax Sun,  7 May 2017 19:39:20 +0200 Moved status icon column to the last position
+  b18a186 csoler Sat,  6 May 2017 18:20:48 +0200 fixed ftExtraList to accept e2e encrypted transfers in addition to direct transfers. This fixed the drag+drop of shared files in a distant chat
+  59ac5a5 csoler Sat,  6 May 2017 16:51:38 +0200 added on-the-fly fix of group privacy flags, so that edited groups with old un-set flags will be set automatically. Also fixes the bug preventing to grant membership on old circles
+  868c046 csoler Sat,  6 May 2017 13:23:26 +0200 fixed bug in serializer caused to not updating the size parameter. Also fixes unittests
+  f7f0d8d csoler Fri,  5 May 2017 23:10:07 +0200 Merge pull request #800 from sehraf/pr-openssl-chacha20
+  00c80b1 csoler Fri,  5 May 2017 23:06:25 +0200 Merge pull request #797 from PhenomRetroShare/Fix_WindowsCompilation
+  e4dde95 csoler Fri,  5 May 2017 23:04:28 +0200 Merge pull request #798 from PhenomRetroShare/Fix_TravisCompilation
+  7371fdc sehraf Fri,  5 May 2017 18:50:40 +0200 add openssl chacha20 support
+  96b4a1b sehraf Fri,  5 May 2017 15:40:02 +0200 add openssl chacha20-poly1305 support
+  e913f36 csoler Thu,  4 May 2017 21:40:32 +0200 fixed crash when trying to deserialize an empty buffer in rsrecogn
+  2f2715b csoler Thu,  4 May 2017 21:23:21 +0200 Merge pull request #799 from csoler/v0.6-ImprovedGUI
+  6484ea6 csoler Thu,  4 May 2017 21:19:23 +0200 improved graph widget
+  e6a7168 csoler Thu,  4 May 2017 16:41:02 +0200 merged upstream/master
+  1c2b43b Phenom Thu,  4 May 2017 15:01:25 +0200 Fix UnitTest compilation
+  d31b80c Phenom Thu,  4 May 2017 11:31:36 +0200 Fix Windows Compilation
+  cac335e csoler Wed,  3 May 2017 23:05:50 +0200 Merge pull request #796 from csoler/v0.6-Serialization
+  4f4240d csoler Wed,  3 May 2017 22:43:16 +0200 fixed bug in history serializer
+  214aaa7 csoler Wed,  3 May 2017 22:20:58 +0200 added safety check for null chunks in TlvMemBlock_proxy deserialization
+  f006146 csoler Tue,  2 May 2017 22:41:01 +0200 merged upstream/master
+  4bee52c csoler Tue,  2 May 2017 22:34:45 +0200 removed old unused serialization code
+  861dc16 csoler Tue,  2 May 2017 22:05:54 +0200 switched VOIP to new serialization
+  c481186 csoler Tue,  2 May 2017 10:14:12 +0200 Merge pull request #793 from PhenomRetroShare/Fix_FriendListExport
+  99d8b7d csoler Mon,  1 May 2017 21:23:34 +0200 switched service control items to new serialization
+  07201e8 Phenom Mon,  1 May 2017 12:48:11 +0200 Fix FriendList Import/Export filename and error message.
+  1f56db5 csoler Sun, 30 Apr 2017 22:45:18 +0200 Merge pull request #790 from PhenomRetroShare/Add_CreateGxsIdentityByDefault
+  0c17570 csoler Sun, 30 Apr 2017 22:44:20 +0200 Merge pull request #792 from PhenomRetroShare/Add_DoubleClickOnTextBrowser
+  3d17d31 csoler Sun, 30 Apr 2017 22:43:10 +0200 Merge pull request #789 from PhenomRetroShare/Add_FriendTimeOffsetNewsFeed
+  8aa9be3 csoler Sun, 30 Apr 2017 22:39:07 +0200 Merge pull request #791 from PhenomRetroShare/Fix_MissingMessageMarkedRead
+  40aff5d csoler Sun, 30 Apr 2017 22:37:54 +0200 Merge pull request #785 from PhenomRetroShare/Add_RelayBandwidthOnServerPage
+  16b8947 csoler Sun, 30 Apr 2017 20:31:43 +0200 improved serializer documentation
+  cecd9a3 csoler Sun, 30 Apr 2017 20:14:23 +0200 merged upstream/master
+  24c7c38 csoler Sun, 30 Apr 2017 20:08:30 +0200 removed old file rssrviceserialiser.h/cc
+  14076de csoler Sun, 30 Apr 2017 19:17:44 +0200 moved code of rsservicerserialiser into rsserializer.h/cc and renamed it into RsRawSerializer
+  e401b90 csoler Sun, 30 Apr 2017 16:05:37 +0200 moved rsserializer and rstypeserializer to serialiser/
+  4f92f48 csoler Sat, 29 Apr 2017 23:02:44 +0200 dwicthed GxsTunnel items to new serialization
+  4fbcc1e Phenom Sat, 29 Apr 2017 19:47:29 +0200 Add Double Click on Name for Chat to add their name in text writer.
+  1159c86 csoler Sat, 29 Apr 2017 21:50:55 +0200 moved wiki and wire items to rsitems/
+  d58c638 csoler Sat, 29 Apr 2017 21:46:54 +0200 switched wiki and wire items to new serialization
+  77adc82 Phenom Sat, 29 Apr 2017 17:32:23 +0200 Fix Missing messages when mark all as read.
+  5cba005 csoler Fri, 28 Apr 2017 23:32:47 +0200 moved recognitems to rsitems/
+  2349269 csoler Fri, 28 Apr 2017 23:28:56 +0200 switch rsrecognitems to new serialization
+  8341c68 csoler Fri, 28 Apr 2017 18:54:07 +0200 removed old code
+  688813f csoler Fri, 28 Apr 2017 18:51:35 +0200 moved photo items to rsitems/
+  634efb6 csoler Fri, 28 Apr 2017 18:42:11 +0200 switched rsphotoitems to new serialization
+  d3c960e csoler Fri, 28 Apr 2017 17:48:54 +0200 removed old code
+  22e2416 csoler Fri, 28 Apr 2017 17:47:41 +0200 moved rsserviceinfo items to rsitems/
+  2d19783 csoler Fri, 28 Apr 2017 17:44:45 +0200 switched serviceinfo items to new serialization
+  c33c34b csoler Fri, 28 Apr 2017 16:44:04 +0200 moved rspluginitems to rsitems/
+  d32a8ca csoler Fri, 28 Apr 2017 16:39:54 +0200 switched PluginItems to new serialization
+  45eaf27 csoler Fri, 28 Apr 2017 16:30:33 +0200 moved rsgxsupdateitems to rsitems/
+  2e67665 csoler Fri, 28 Apr 2017 16:26:59 +0200 switched MsgUpdate items to new serialization
+  5995e50 csoler Thu, 27 Apr 2017 21:24:27 +0200 moved rsstatusitem.h to rsitems/
+  87018ed csoler Thu, 27 Apr 2017 21:20:30 +0200 switched rsstatusitem to new serializer
+  07a93be csoler Thu, 27 Apr 2017 21:11:10 +0200 moved heartbeatitem.h to rsitems/
+  9adbab3 csoler Thu, 27 Apr 2017 21:10:22 +0200 switched heartbeatitems to new serialization
+  8a9edb2 Phenom Thu, 27 Apr 2017 17:03:53 +0200 Create a Gxs Identity by default.
+  19b4fb8 Phenom Thu, 27 Apr 2017 16:42:25 +0200 Add Friend Time Offset news feed.
+  349d14b csoler Thu, 27 Apr 2017 14:44:41 +0200 moved rsposteditems to rsitems/
+  35ecc19 csoler Thu, 27 Apr 2017 14:41:31 +0200 switched rsposteditems to new serialization
+  22f6d15 csoler Thu, 27 Apr 2017 14:21:46 +0200 moved rsnxsitems.cc to rsitems/
+  3c20a85 csoler Thu, 27 Apr 2017 14:16:57 +0200 switched RsNxsItems to new serialization
+  f6e59f7 csoler Thu, 27 Apr 2017 11:59:18 +0200 moved gxsforumitems to rsitems/
+  449a420 csoler Thu, 27 Apr 2017 11:56:56 +0200 dwitched gxsforum items to new serialization
+  f50670f csoler Wed, 26 Apr 2017 20:59:59 +0200 moved circle items to rsitems/
+  559137d csoler Wed, 26 Apr 2017 20:57:28 +0200 switched gxscircleitems to new serialization
+  db64523 csoler Wed, 26 Apr 2017 20:15:54 +0200 moved rsgxschannel items to rsitems
+  69729ad csoler Wed, 26 Apr 2017 18:55:23 +0200 switch Channel items to new serialization
+  77c2e6d csoler Wed, 26 Apr 2017 18:14:10 +0200 improved error handlign in pqistore
+  8f97647 csoler Wed, 26 Apr 2017 15:43:00 +0200 fixed bug in RsGxsId deserialization
+  c31396a csoler Wed, 26 Apr 2017 14:31:15 +0200 moved dsdv code to unused directory
+  508a2e2 csoler Wed, 26 Apr 2017 14:28:25 +0200 moved gxs comment and Id items to rsitems/
+  97d0df0 csoler Wed, 26 Apr 2017 14:19:34 +0200 added comment about serialization hack
+  c0d8735 csoler Wed, 26 Apr 2017 14:17:38 +0200 switched RsGxsIdItems to new serialization
+  fb34fa1 csoler Wed, 26 Apr 2017 13:44:09 +0200 switch GxsComment item to new serialization
+  9c610a7 csoler Wed, 26 Apr 2017 11:40:46 +0200 cleaned the hierarchy of serialization classes
+  77e809e csoler Tue, 25 Apr 2017 21:21:46 +0200 switched GRouter to new serialization
+  9e246c9 Phenom Tue, 25 Apr 2017 18:39:30 +0200 Add warning about relays bandwidth.
+  4d7bd83 csoler Tue, 25 Apr 2017 10:14:50 +0200 Merge pull request #786 from PhenomRetroShare/Fix_RelaySettingValues
+  540a8b9 csoler Tue, 25 Apr 2017 10:01:00 +0200 Merge pull request #788 from csoler/v0.6-PRTest
+  078913f Phenom Fri, 21 Apr 2017 21:29:20 +0200 Fix GCC warnings: enumeration value ‘TYPE_IDENTITY’ not handled in switch
+  3592d5b Phenom Fri, 21 Apr 2017 19:55:37 +0200 Fix GCC warnings: unused parameter ‘names’
+  593c0cb Phenom Wed, 19 Apr 2017 14:19:54 +0200 Fix CSA warnings: Called C++ object pointer is null
+  90aaace Phenom Wed, 19 Apr 2017 14:18:35 +0200 Fix CSA warnings: Called C++ object pointer is null
+  1f16f46 Phenom Wed, 19 Apr 2017 14:15:34 +0200 Fix CSA warnings: Called C++ object pointer is null
+  30632dc Phenom Wed, 19 Apr 2017 14:06:56 +0200 Fix CSA warnings: Called C++ object pointer is null
+  90cd623 Phenom Wed, 19 Apr 2017 14:04:50 +0200 Fix CAS warnings: Potential leak of memory pointed to by 'toaster'
+  b2b7d00 Phenom Wed, 19 Apr 2017 14:01:35 +0200 Fix CSA warnings: Called C++ object pointer is null
+  ff1908e Phenom Wed, 19 Apr 2017 11:50:24 +0200 Fix Clang Static Analyser: Undefined allocation of 0 bytes
+  f22dc0f Phenom Tue, 18 Apr 2017 12:02:34 +0200 Fix Clang warnings: unused variable 'action'
+  490f8d2 Phenom Tue, 18 Apr 2017 12:00:00 +0200 Fix Clang warnings: 'TYPE_IDENTITY' not handled
+  6e42cf4 Phenom Tue, 18 Apr 2017 11:56:25 +0200 Fix Clang warnings: field 'mPassword' will be initialized after field 'mPrevIsBad'
+  0d7df56 csoler Mon, 24 Apr 2017 22:47:08 +0200 moved rsconfigitems and rshistoryitems to rsitems/
+  f7338d4 csoler Mon, 24 Apr 2017 22:39:05 +0200 removed old code
+  43b3b87 csoler Mon, 24 Apr 2017 22:36:03 +0200 fixed a few bugs in config items
+  fcabe63 csoler Mon, 24 Apr 2017 18:51:51 +0200 switch RsConfigItems to new serialization
+  be9f126 electr Mon, 24 Apr 2017 18:43:17 +0200 Merge pull request #781 from Sonetio/libresapi_requests
+  af4fcf7 csoler Mon, 24 Apr 2017 17:33:30 +0200 switched rshistoryitems to new serialization
+  1327582 Phenom Mon, 24 Apr 2017 17:28:25 +0200 Fix Relay setting values
+  8ae6541 csoler Mon, 24 Apr 2017 17:10:01 +0200 added two new classes for config/service serialisers and a base generic serialiser class
+  8da5e15 Konrad Mon, 24 Apr 2017 16:00:23 +0200 Changed: difference time to absolute time.
+  dc2df07 csoler Mon, 24 Apr 2017 14:14:34 +0200 renamed RsSerializer into RsServiceSerializer
+  976a80a csoler Mon, 24 Apr 2017 13:30:18 +0200 switch rsfilelistitems to new serialization
+  26e9541 csoler Mon, 24 Apr 2017 11:06:51 +0200 moved RTT items to rsitems/
+  f6aaee7 csoler Mon, 24 Apr 2017 11:01:45 +0200 converted RTT items to new serialization
+  5071c4b csoler Mon, 24 Apr 2017 11:00:57 +0200 moved msgitems to rsitems/
+  fc82b20 csoler Mon, 24 Apr 2017 10:36:22 +0200 removed old serialization code in msgs
+  0886794 csoler Mon, 24 Apr 2017 10:29:57 +0200 fixed bug caused by wrong cast in lobby msg signature validation
+  91b0409 csoler Mon, 24 Apr 2017 10:11:24 +0200 fixed two memory bugs in serialization code
+  6313d89 defnax Mon, 24 Apr 2017 01:23:05 +0200 Improved look n feel of Profile Generation Window.
+  31c07f4 csoler Sun, 23 Apr 2017 22:40:26 +0200 converted RsMsgItems to new serialization. Added format and flag members to RsSerialiser and used the later to handle signature and config serialization techniques
+  63b4b3a csoler Sun, 23 Apr 2017 19:07:26 +0200 moved discovery2 items to rsitems/
+  9d9ff56 csoler Sun, 23 Apr 2017 19:02:12 +0200 switched discovery2items to new serialization
+  190a638 csoler Sun, 23 Apr 2017 17:53:25 +0200 added zesty to ubuntu releases
+  06e90e6 csoler Sun, 23 Apr 2017 17:49:07 +0200 added control file for zesty
+  c738026 csoler Sun, 23 Apr 2017 17:48:39 +0200 updated ubuntu changelog
+  2e71270 csoler Sat, 22 Apr 2017 21:36:39 +0200 fixed previous file move
+  bef6db4 csoler Sat, 22 Apr 2017 21:32:57 +0200 moved files
+  311f257 csoler Sat, 22 Apr 2017 21:10:55 +0200 converted GxsReputationItems to new serialization
+  782c027 csoler Sat, 22 Apr 2017 16:00:01 +0200 added names for turtle sub items
+  f571b05 Konrad Sat, 22 Apr 2017 11:06:56 +0200 Added: Checking if the vector is empty; Changed: Grouped values into one member
+  8c0b7ce Konrad Fri, 21 Apr 2017 23:44:00 +0200 Fixed: Responds sends now correct time difference
+  c9f618d Konrad Thu, 20 Apr 2017 19:09:57 +0200 Added: Notification about changed peer status
+  9600359 Konrad Thu, 20 Apr 2017 18:09:19 +0200 Fixed: Password was not stored after creating a new location
+  4a0b51c Konrad Wed, 19 Apr 2017 22:03:24 +0200 Added: to response information whether the identity is a contact
+  b43bedf Konrad Tue, 18 Apr 2017 23:00:59 +0200 Added: Handling requests to set opinion about identity
+  120ca9d Konrad Tue, 18 Apr 2017 22:58:15 +0200 Added: Handling requests to set opinion about identity
+  3f54568 Konrad Tue, 18 Apr 2017 22:56:35 +0200 Added: Handling requests to get details about identity
+  e2d9152 csoler Tue, 18 Apr 2017 21:11:37 +0200 moved converted serialisation files into new directory rsitems/, leaving serialiser/ for the serialisation classes
+  76dd7fe Konrad Tue, 18 Apr 2017 14:02:14 +0200 Added: Handling requests to add and remove contact
+  4a99000 Konrad Tue, 18 Apr 2017 14:00:30 +0200 Added: Handling requests to get and set node options
+  f8fc8b4 csoler Sun, 16 Apr 2017 20:16:59 +0200 removed old code in turtle serialiser
+  2ca46ec csoler Sun, 16 Apr 2017 20:11:54 +0200 fixed bug in serialization of data chunks
+  1211334 csoler Sun, 16 Apr 2017 19:59:22 +0200 fixed bug in serialization for turtle
+  636450f csoler Sat, 15 Apr 2017 18:46:44 +0200 moved turtle and FT to new serialization
+  fd33315 Konrad Fri, 14 Apr 2017 17:44:17 +0200 Added: Handling requests to create lobby
+  93aeae0 Konrad Fri, 14 Apr 2017 17:41:35 +0200 Added: Handling requests to delete identity
+  3453a3e csoler Tue, 11 Apr 2017 23:05:27 +0200 switched FileTransfer items to new serialization
+  80e8769 csoler Tue, 11 Apr 2017 21:37:35 +0200 added missign file and converted BW control items
+  731e20d csoler Mon, 10 Apr 2017 22:09:56 +0200 switch BanListItem classes to new serialization system
+  691ed8d csoler Mon, 10 Apr 2017 20:34:02 +0200 added new template for std::string with type id
+  8b77388 csoler Wed,  5 Apr 2017 21:02:17 +0200 removed all chat serialization code
+  ae9d0b2 csoler Wed,  5 Apr 2017 20:49:32 +0200 fixed a few bugs in chat serialization
+  03c31ce csoler Wed,  5 Apr 2017 18:27:29 +0200 fixed serialization test example
+  6b4fdb4 csoler Wed,  5 Apr 2017 18:25:54 +0200 fixed bug in serialization
+  a941136 csoler Wed,  5 Apr 2017 18:09:45 +0200 fixed a few bugs in new serialization
+  5b3e488 csoler Wed,  5 Apr 2017 16:53:20 +0200 fixed compilation
+  48688ea csoler Wed,  5 Apr 2017 10:27:12 +0200 progress in converting chat items to new serialization
+  9438d60 csoler Tue,  4 Apr 2017 22:53:50 +0200 progress in converting Chat items to new serialization model
+  f2fa70e csoler Tue,  4 Apr 2017 16:37:57 +0200 progress in converting Chat items to new serialization model
+  32ce9ae csoler Tue,  4 Apr 2017 15:33:59 +0200 started converting rschatitems to new serialization
+  f7e3968 csoler Tue,  4 Apr 2017 14:01:33 +0200 added hability to print in the serialization process
+  059dfcf csoler Tue,  4 Apr 2017 14:00:17 +0200 added hability to print in the serialization process
+  75a3cf0 csoler Sun,  2 Apr 2017 15:04:03 +0200 fixed compilation in new serialization test code
+  ddbe2ef csoler Sun,  2 Apr 2017 14:48:17 +0200 created .cc files for serialization
+  b52071d csoler Sat,  1 Apr 2017 18:05:53 +0200 removed RsSerializable and merged it into RsItem
+  1bc4fe5 csoler Sat, 25 Mar 2017 19:01:32 +0100 polished serialisation prototype
+  369621f csoler Mon, 20 Mar 2017 23:31:04 +0100 simplified new serialization prototype
+  4f24b95 csoler Sun, 19 Mar 2017 21:28:28 +0100 added new serialization code test example
+
+ -- Retroshare Dev Team <contact@retroshare.net>  Mon, 8 May 2017 18:00:00 +0100
+
+retroshare06 (0.6.2-1.20170423.190a638c~xenial) xenial; urgency=low
+
   5b3b903 csoler Sun, 23 Apr 2017 17:33:21 +0200 added missing line for ubuntu zesty
   73bfc27 csoler Sun, 23 Apr 2017 17:33:50 +0200 Merge pull request #784 from PhenomRetroShare/Fix_RelaySettingsPage
   4c326f5 Phenom Sun, 23 Apr 2017 10:27:18 +0200 Fix Relay setting page.

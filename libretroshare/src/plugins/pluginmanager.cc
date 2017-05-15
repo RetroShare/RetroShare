@@ -503,12 +503,15 @@ bool RsPluginManager::loadList(std::list<RsItem*>& list)
 		delete (*it);
 	}
 
+	// Rejected hashes are always kept, so that RS wont ask again if the executable hash has changed.
+	//
+	_rejected_hashes = rejected_hash_candidates ;
+
 	if(reference_executable_hash == _current_executable_hash)
 	{
 		std::cerr << "(II) Executable hash matches. Updating the list of accepted/rejected plugins." << std::endl;
 
 		_accepted_hashes = accepted_hash_candidates ;
-		_rejected_hashes = rejected_hash_candidates ;
 	}
 	else
 		std::cerr << "(WW) Executable hashes do not match. Executable hash has changed. Discarding the list of accepted/rejected plugins." << std::endl;

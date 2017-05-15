@@ -128,7 +128,7 @@ public:
 	{}
 
 protected:
-	virtual void gxsDoWork(Request &req, Response &resp)
+	virtual void gxsDoWork(Request &req, Response & /* resp */)
 	{
 		RsGxsIdGroup group;
 		std::string gxs_id;

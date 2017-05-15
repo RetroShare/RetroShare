@@ -146,6 +146,9 @@ class ftController: public RsTickingThread, public pqiServiceMonitor, public p3C
 		void setFreeDiskSpaceLimit(uint32_t size_in_mb) ;
         uint32_t defaultEncryptionPolicy();
 
+        void setMaxUploadsPerFriend(uint32_t m) ;
+        uint32_t getMaxUploadsPerFriend() ;
+
         bool 	FileCancel(const RsFileHash& hash);
         bool 	FileControl(const RsFileHash& hash, uint32_t flags);
 		bool 	FileClearCompleted();
@@ -261,7 +264,8 @@ class ftController: public RsTickingThread, public pqiServiceMonitor, public p3C
 
 		FileChunksInfo::ChunkStrategy mDefaultChunkStrategy ;
 
-		uint32_t _max_active_downloads ; // maximum number of simultaneous downloads
+		uint32_t _max_active_downloads ;   // maximum number of simultaneous downloads
+		uint32_t _max_uploads_per_friend ; // maximum number of uploads per friend. 0 means unlimited.
 };
 
 #endif

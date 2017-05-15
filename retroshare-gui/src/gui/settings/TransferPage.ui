@@ -204,6 +204,13 @@
            </widget>
           </item>
           <item>
+           <widget class="QLabel" name="label_5">
+            <property name="text">
+             <string>Maximum uploads per friend (0 = no limit)</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QLabel" name="label_3">
             <property name="text">
              <string>Default chunk strategy:</string>
@@ -250,6 +257,9 @@
              <number>5</number>
             </property>
            </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="_max_up_SB"/>
           </item>
           <item>
            <widget class="QComboBox" name="_defaultStrategy_CB">

@@ -39,26 +39,27 @@ static const uint32_t RS_CHAT_SERIALIZER_FLAGS_NO_SIGNATURE = 0x0001;
 
 RsItem *RsChatSerialiser::create_item(uint16_t service_id,uint8_t item_sub_id) const
 {
-    if(service_id != RS_SERVICE_TYPE_CHAT)
-        return NULL ;
+	if(service_id != RS_SERVICE_TYPE_CHAT) return NULL;
 
 	switch(item_sub_id)
 	{
-        case RS_PKT_SUBTYPE_DEFAULT:				return new RsChatMsgItem() ;
-		case RS_PKT_SUBTYPE_PRIVATECHATMSG_CONFIG:	return new RsPrivateChatMsgConfigItem() ;
-        case RS_PKT_SUBTYPE_CHAT_STATUS:			return new RsChatStatusItem() ;
-        case RS_PKT_SUBTYPE_CHAT_AVATAR:			return new RsChatAvatarItem() ;
-		case RS_PKT_SUBTYPE_CHAT_LOBBY_SIGNED_MSG:	return new RsChatLobbyMsgItem() ;
-        case RS_PKT_SUBTYPE_CHAT_LOBBY_INVITE:		return new RsChatLobbyInviteItem() ;
-        case RS_PKT_SUBTYPE_CHAT_LOBBY_CHALLENGE:	return new RsChatLobbyConnectChallengeItem() ;
-		case RS_PKT_SUBTYPE_CHAT_LOBBY_UNSUBSCRIBE:	return new RsChatLobbyUnsubscribeItem() ;
-        case RS_PKT_SUBTYPE_CHAT_LOBBY_SIGNED_EVENT:return new RsChatLobbyEventItem() ;
-		case RS_PKT_SUBTYPE_CHAT_LOBBY_LIST_REQUEST:return new RsChatLobbyListRequestItem() ;
-		case RS_PKT_SUBTYPE_CHAT_LOBBY_LIST:        return new RsChatLobbyListItem() ;
-        case RS_PKT_SUBTYPE_CHAT_LOBBY_CONFIG:  	return new RsChatLobbyConfigItem() ;
-		default:
-			std::cerr << "Unknown packet type in chat!" << std::endl ;
-			return NULL ;
+	case RS_PKT_SUBTYPE_DEFAULT: return new RsChatMsgItem();
+	case RS_PKT_SUBTYPE_PRIVATECHATMSG_CONFIG: return new RsPrivateChatMsgConfigItem();
+	case RS_PKT_SUBTYPE_CHAT_STATUS: return new RsChatStatusItem();
+	case RS_PKT_SUBTYPE_CHAT_AVATAR: return new RsChatAvatarItem();
+	case RS_PKT_SUBTYPE_CHAT_LOBBY_SIGNED_MSG: return new RsChatLobbyMsgItem();
+	case RS_PKT_SUBTYPE_CHAT_LOBBY_INVITE: return new RsChatLobbyInviteItem();
+	case RS_PKT_SUBTYPE_CHAT_LOBBY_INVITE_DEPRECATED: return new RsChatLobbyInviteItem_Deprecated(); // to be removed (deprecated since May 2017)
+	case RS_PKT_SUBTYPE_CHAT_LOBBY_CHALLENGE: return new RsChatLobbyConnectChallengeItem();
+	case RS_PKT_SUBTYPE_CHAT_LOBBY_UNSUBSCRIBE: return new RsChatLobbyUnsubscribeItem();
+	case RS_PKT_SUBTYPE_CHAT_LOBBY_SIGNED_EVENT: return new RsChatLobbyEventItem();
+	case RS_PKT_SUBTYPE_CHAT_LOBBY_LIST_REQUEST: return new RsChatLobbyListRequestItem();
+	case RS_PKT_SUBTYPE_CHAT_LOBBY_LIST: return new RsChatLobbyListItem();
+	case RS_PKT_SUBTYPE_CHAT_LOBBY_CONFIG: return new RsChatLobbyConfigItem();
+	case RS_PKT_SUBTYPE_OUTGOING_MAP: return new PrivateOugoingMapItem();
+	default:
+		std::cerr << "Unknown packet type in chat!" << std::endl;
+		return NULL;
 	}
 }
 
@@ -97,12 +98,12 @@ void RsChatLobbyMsgItem::serial_process(RsGenericSerializer::SerializeJob j,RsGe
     RsChatLobbyBouncingObject::serial_process(j,ctx) ;
 }
 
-void RsChatLobbyListRequestItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
+void RsChatLobbyListRequestItem::serial_process(RsGenericSerializer::SerializeJob /*j*/,RsGenericSerializer::SerializeContext& /*ctx*/)
 {
     // nothing to do. This is an empty item.
 }
 
-template<> void RsTypeSerializer::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx,VisibleChatLobbyInfo& info,const std::string& name)
+template<> void RsTypeSerializer::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx,VisibleChatLobbyInfo& info,const std::string& /*name*/)
 {
 	RsTypeSerializer::serial_process<uint64_t>(j,ctx,info.id,"info.id") ;
 
@@ -135,10 +136,19 @@ void RsChatLobbyConnectChallengeItem::serial_process(RsGenericSerializer::Serial
     RsTypeSerializer::serial_process<uint64_t>(j,ctx,challenge_code,"challenge_code") ;
 }
 
+// to be removed (deprecated since May 2017)
+void RsChatLobbyInviteItem_Deprecated::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
+{
+    RsTypeSerializer::serial_process<uint64_t>(j,ctx,                  lobby_id,   "lobby_id") ;
+    RsTypeSerializer::serial_process          (j,ctx,TLV_TYPE_STR_NAME,lobby_name, "lobby_name") ;
+    RsTypeSerializer::serial_process          (j,ctx,                  lobby_flags,"lobby_flags") ;
+}
+
 void RsChatLobbyInviteItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process<uint64_t>(j,ctx,                  lobby_id,   "lobby_id") ;
     RsTypeSerializer::serial_process          (j,ctx,TLV_TYPE_STR_NAME,lobby_name, "lobby_name") ;
+    RsTypeSerializer::serial_process          (j,ctx,TLV_TYPE_STR_NAME,lobby_topic,"lobby_topic") ;
     RsTypeSerializer::serial_process          (j,ctx,                  lobby_flags,"lobby_flags") ;
 }
 

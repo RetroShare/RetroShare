@@ -73,13 +73,16 @@ StartDialog::StartDialog(QWidget *parent)
 		}
 	}
 
-    QObject::connect(ui.loadName,SIGNAL(currentIndexChanged(int)),this,SLOT(updateSelectedProfile(int))) ;
-    QObject::connect(ui.password_input,SIGNAL(returnPressed()),this,SLOT(loadPerson())) ;
+	QObject::connect(ui.loadName,SIGNAL(currentIndexChanged(int)),this,SLOT(updateSelectedProfile(int))) ;
+	QObject::connect(ui.password_input,SIGNAL(returnPressed()),this,SLOT(loadPerson())) ;
+	QObject::connect(ui.loadButton, SIGNAL(clicked()), this, SLOT(loadPerson()));
 
 	if (pidx > 0)
 	{
 		ui.loadName->setCurrentIndex(pidx);
 	}
+
+	ui.password_input->setFocus();
 }
 
 void StartDialog::updateSelectedProfile(int)
