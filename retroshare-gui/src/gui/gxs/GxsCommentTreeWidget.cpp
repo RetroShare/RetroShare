@@ -96,11 +96,10 @@ public:
         p.setRenderHint(QPainter::Antialiasing);
 
         QPainterPath path ;
-        //path.addRoundedRect(QRectF(m/4.0f,m/4.0f,s.width()+m/2.0,s.height()+m/2.0),m,m) ;
         path.addRoundedRect(QRectF(m/7.0,m/7.0,s.width()+m/2.0,s.height()+m/2.0),m,m) ;
         QPen pen(Qt::gray,m/7.0f);
         p.setPen(pen);
-        p.fillPath(path,QColor::fromRgb(250,230,200));	// Would be nice to vary the color according to the post author
+        p.fillPath(path,QColor::fromHsv( index.data(Qt::UserRole+2).toInt()/255.0*360,40,200));	// Would be nice to vary the color according to the post author
         p.drawPath(path);
 
         QAbstractTextDocumentLayout::PaintContext ctx;
@@ -509,6 +508,7 @@ void GxsCommentTreeWidget::service_loadThread(const uint32_t &token)
 
 		RsGxsId authorId = comment.mMeta.mAuthorId;
 		item->setId(authorId, PCITEM_COLUMN_AUTHOR, false);
+        item->setData(PCITEM_COLUMN_COMMENT,Qt::UserRole+2,QVariant(authorId.toByteArray()[1]));
 
 		text = QString::number(comment.mScore);
 		item->setText(PCITEM_COLUMN_SCORE, text);
