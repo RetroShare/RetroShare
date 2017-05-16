@@ -22,8 +22,12 @@
  */
 
 #include <QMimeData>
+#include <QTextDocument>
+#include <QAbstractTextDocumentLayout>
+#include <QApplication>
 #include <QDateTime>
 #include <QMenu>
+#include <QPainter>
 
 #include "gui/common/RSElidedItemDelegate.h"
 #include "gui/gxs/GxsCommentTreeWidget.h"
@@ -52,6 +56,67 @@
 #define IMAGE_VOTEUP    ":/images/vote_up.png"
 #define IMAGE_VOTEDOWN   ":/images/vote_down.png"
 
+// This class allows to draw the item using an appropriate size
+
+class MultiLinesCommentDelegate: public QStyledItemDelegate
+{
+public:
+    MultiLinesCommentDelegate(QFontMetricsF f) : qf(f){}
+
+    QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
+    {
+        return index.data(Qt::UserRole+1).toSize() ;
+    }
+
+    virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
+    {
+        Q_ASSERT(index.isValid());
+
+        QStyleOptionViewItemV4 opt = option;
+        initStyleOption(&opt, index);
+        // disable default icon
+        opt.icon = QIcon();
+        opt.text = QString();
+        // draw default item
+        QApplication::style()->drawControl(QStyle::CE_ItemViewItem, &opt, painter, 0);
+
+        const QRect r = option.rect;
+
+        QTextDocument td ;
+        td.setHtml("<html>"+index.data(Qt::DisplayRole).toString()+"</html>");
+		QSizeF s = td.documentLayout()->documentSize();
+
+        int m = QFontMetricsF(QFont()).height();
+
+        QSize full_area(std::min(r.width(),(int)s.width())+m,std::min(r.height(),(int)s.height())+m);
+
+        QPixmap px(full_area.width(),full_area.height());
+        px.fill();
+        QPainter p(&px) ;
+        p.setRenderHint(QPainter::Antialiasing);
+
+        QPainterPath path ;
+        //path.addRoundedRect(QRectF(m/4.0f,m/4.0f,s.width()+m/2.0,s.height()+m/2.0),m,m) ;
+        path.addRoundedRect(QRectF(m/7.0,m/7.0,s.width()+m/2.0,s.height()+m/2.0),m,m) ;
+        QPen pen(Qt::gray,m/7.0f);
+        p.setPen(pen);
+        p.fillPath(path,QColor::fromRgb(250,230,200));	// Would be nice to vary the color according to the post author
+        p.drawPath(path);
+
+        QAbstractTextDocumentLayout::PaintContext ctx;
+        ctx.clip = QRectF(0,0,s.width(),s.height());
+        p.translate(QPointF(m/2.0,m/2.0));
+        td.documentLayout()->draw( &p, ctx );
+
+        painter->drawPixmap(r.topLeft(),px);
+
+        const_cast<QAbstractItemModel*>(index.model())->setData(index,px.size(),Qt::UserRole+1);
+    }
+
+private:
+	QFontMetricsF qf;
+};
+
 GxsCommentTreeWidget::GxsCommentTreeWidget(QWidget *parent)
 	:QTreeWidget(parent), mTokenQueue(NULL), mRsTokenService(NULL), mCommentService(NULL)
 {
@@ -62,6 +127,9 @@ GxsCommentTreeWidget::GxsCommentTreeWidget(QWidget *parent)
 	itemDelegate->setSpacing(QSize(0, 2));
 	setItemDelegate(itemDelegate);
 	setWordWrap(true);
+
+    setItemDelegateForColumn(PCITEM_COLUMN_COMMENT,new MultiLinesCommentDelegate(QFontMetricsF(font()))) ;
+
 //	QFont font = QFont("ARIAL", 10);
 //	font.setBold(true);
 
