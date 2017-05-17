@@ -50,8 +50,6 @@ Item
 	function refreshContactsCallback(par)
 	{
 		console.log("contactsView.refreshContactsCB()", visible)
-		if (contactsListModel.model.count < 1)
-			contactsListModel.json = par.response
 		var token = JSON.parse(par.response).statetoken
 		TokensManager.registerToken(token, refreshContacts)
 		contactsSortWorker.sendMessage(

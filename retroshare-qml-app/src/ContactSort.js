@@ -58,6 +58,7 @@ function mergeContactsUnread()
 		var el = jsonData[i]
 		if(unreadMessages.hasOwnProperty(el.gxs_id))
 			el['unread_count'] = unreadMessages[el.gxs_id]
+		else el['unread_count'] = "0" // This must be string
 	}
 }
 

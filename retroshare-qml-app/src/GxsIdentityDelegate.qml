@@ -79,6 +79,7 @@ Item
 			anchors.rightMargin: 10
 			anchors.verticalCenter: parent.verticalCenter
 			height: parent.height - 10
+			spacing: 4
 
 			Rectangle
 			{
@@ -88,15 +89,16 @@ Item
 				antialiasing: true
 				border.color: "blue"
 				border.width: 1
-				height: parent.height
+				height: parent.height - 4
 				radius: height/2
 				width: height
+				anchors.verticalCenter: parent.verticalCenter
 
 				Text
 				{
 					color: "white"
 					font.bold: true
-					text: model.unread_count > 0 ? model.unread_count : ''
+					text: model.unread_count
 					anchors.centerIn: parent
 				}
 			}
