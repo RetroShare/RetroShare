@@ -45,7 +45,9 @@ function cntcmp(left, right, searchText)
 	var lcon = left.is_contact
 	var rcon = right.is_contact
 	if( lcon !== rcon ) return rcon - lcon
-	if(left.name !== right.name) return strcmp(left.name, right.name)
+	var lname = left.name.toLowerCase()
+	var rname = right.name.toLowerCase()
+	if(lname !== rname) return strcmp(lname, rname)
 	return strcmp(left.gxs_id, right.gxs_id)
 }
 
