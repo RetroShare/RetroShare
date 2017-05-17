@@ -44,7 +44,7 @@ QtObject
 						console.warn("tokensManager.registerToken(token," +
 									 " callback) Attempt to register same" +
 									 " callback twice for:",
-									 i, token, callback)
+									 i, token, callback.name)
 						console.trace()
 					}
 				}
@@ -63,7 +63,7 @@ QtObject
 				var tokCallback = tokens[token][i]
 				if (typeof tokCallback == 'function')
 				{
-					console.log("event token", token, tokCallback)
+					console.log("event token", token, tokCallback.name)
 					tokCallback()
 				}
 			}
