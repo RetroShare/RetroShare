@@ -39,7 +39,7 @@ public:
     ~GxsCommentTreeWidget();
     void setup(RsTokenService *token_service, RsGxsCommentService *comment_service);
 
-    void requestComments(const RsGxsGrpMsgIdPair& threadId);
+    void requestComments(const RsGxsGroupId& group, const std::set<RsGxsMessageId> &message_versions, const RsGxsMessageId &most_recent_message);
     void getCurrentMsgId(RsGxsMessageId& parentId);
     void applyRankings(std::map<RsGxsMessageId, uint32_t>& positions);
 
@@ -49,7 +49,7 @@ public:
 protected:
 
     /* to be overloaded */
-    virtual void service_requestComments(const RsGxsGrpMsgIdPair& threadId);
+    virtual void service_requestComments(const RsGxsGroupId &group_id, const std::set<RsGxsMessageId> &msgIds);
     virtual void service_loadThread(const uint32_t &token);
     virtual QTreeWidgetItem *service_createMissingItem(const RsGxsMessageId& parent);
 
@@ -65,7 +65,7 @@ protected:
 
 public slots:
     void customPopUpMenu(const QPoint& point);
-    void setCurrentMsgId(QTreeWidgetItem* current, QTreeWidgetItem* previous);
+    void setCurrentCommentMsgId(QTreeWidgetItem* current, QTreeWidgetItem* previous);
 
 
     void makeComment();
@@ -85,8 +85,10 @@ protected:
 			const RsGxsMessageId &parentId, const RsGxsId &authorId, bool up);
 
     /* Data */
-    RsGxsGrpMsgIdPair mThreadId;
-    RsGxsMessageId mCurrentMsgId;
+    RsGxsGroupId mGroupId;
+    std::set<RsGxsMessageId> mMsgVersions;
+    RsGxsMessageId mLatestMsgId;
+    RsGxsMessageId mCurrentCommentMsgId;
     RsGxsId mVoterId;
 
     std::map<RsGxsMessageId, QTreeWidgetItem *> mLoadingMap;

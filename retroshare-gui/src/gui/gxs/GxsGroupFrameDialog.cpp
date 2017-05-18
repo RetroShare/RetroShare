@@ -525,7 +525,7 @@ void GxsGroupFrameDialog::sharePublishKey()
     shareUi.exec();
 }
 
-void GxsGroupFrameDialog::loadComment(const RsGxsGroupId &grpId, const RsGxsMessageId &msgId, const QString &title)
+void GxsGroupFrameDialog::loadComment(const RsGxsGroupId &grpId, const QVector<RsGxsMessageId>& msg_versions, const RsGxsMessageId &most_recent_msgId, const QString &title)
 {
 	RsGxsCommentService *commentService = getCommentService();
 	if (!commentService) {
@@ -533,7 +533,8 @@ void GxsGroupFrameDialog::loadComment(const RsGxsGroupId &grpId, const RsGxsMess
 		return;
 	}
 
-	GxsCommentDialog *commentDialog = commentWidget(msgId);
+	GxsCommentDialog *commentDialog = commentWidget(most_recent_msgId);
+
 	if (!commentDialog) {
 		QString comments = title;
 		if (title.length() > MAX_COMMENT_TITLE)
@@ -544,12 +545,16 @@ void GxsGroupFrameDialog::loadComment(const RsGxsGroupId &grpId, const RsGxsMess
 
 		commentDialog = new GxsCommentDialog(this, mInterface->getTokenService(), commentService);
 
-		QWidget *commentHeader = createCommentHeaderWidget(grpId, msgId);
+		QWidget *commentHeader = createCommentHeaderWidget(grpId, most_recent_msgId);
 		if (commentHeader) {
 			commentDialog->setCommentHeader(commentHeader);
 		}
 
-		commentDialog->commentLoad(grpId, msgId);
+        std::set<RsGxsMessageId> msgv;
+        for(int i=0;i<msg_versions.size();++i)
+            msgv.insert(msg_versions[i]);
+
+		commentDialog->commentLoad(grpId, msgv,most_recent_msgId);
 
 		int index = ui->messageTabWidget->addTab(commentDialog, comments);
 		ui->messageTabWidget->setTabIcon(index, QIcon(IMAGE_COMMENT));
@@ -620,12 +625,12 @@ GxsMessageFrameWidget *GxsGroupFrameDialog::createMessageWidget(const RsGxsGroup
 
 	connect(msgWidget, SIGNAL(groupChanged(QWidget*)), this, SLOT(messageTabInfoChanged(QWidget*)));
 	connect(msgWidget, SIGNAL(waitingChanged(QWidget*)), this, SLOT(messageTabWaitingChanged(QWidget*)));
-	connect(msgWidget, SIGNAL(loadComment(RsGxsGroupId,RsGxsMessageId,QString)), this, SLOT(loadComment(RsGxsGroupId,RsGxsMessageId,QString)));
+	connect(msgWidget, SIGNAL(loadComment(RsGxsGroupId,QVector<RsGxsMessageId>,RsGxsMessageId,QString)), this, SLOT(loadComment(RsGxsGroupId,QVector<RsGxsMessageId>,RsGxsMessageId,QString)));
 
 	return msgWidget;
 }
 
-GxsCommentDialog *GxsGroupFrameDialog::commentWidget(const RsGxsMessageId &msgId)
+GxsCommentDialog *GxsGroupFrameDialog::commentWidget(const RsGxsMessageId& msgId)
 {
 	int tabCount = ui->messageTabWidget->count();
 	for (int index = 0; index < tabCount; ++index) {
