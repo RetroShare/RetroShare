@@ -665,49 +665,49 @@ IdEditDialog QLabel#info_label
 	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFFFD7, stop:1 #FFFFB2);
 }
 GenCertDialog QComboBox#genPGPuser { 
-  border: 4px solid #0099cc;
+  border: 2px solid #0099cc;
   border-radius: 6px;
   background: white;
 	font: bold;
 }
 GenCertDialog QSpinBox#hiddenport_spinBox { 
-  border: 4px solid #0099cc;
+  border: 2px solid #0099cc;
   border-radius: 6px;
   background: white;
 	font: bold;
 }
 GenCertDialog QLineEdit#hiddenaddr_input { 
-  border: 4px solid #0099cc;
+  border: 2px solid #0099cc;
   border-radius: 6px;
   background: white;
 	font: bold;
 }
 GenCertDialog QLineEdit#password_input_2 { 
-  border: 4px solid #0099cc;
+  border: 2px solid #0099cc;
   border-radius: 6px;
   background: white;
 	font: bold;
 }
 GenCertDialog QLineEdit#password_input { 
-  border: 4px solid #0099cc;
+  border: 2px solid #0099cc;
   border-radius: 6px;
   background: white;
 	font: bold;
 }
 GenCertDialog QLineEdit#nickname_input { 
-  border: 4px solid #0099cc;
+  border: 2px solid #0099cc;
   border-radius: 6px;
   background: white;
 	font: bold;
 }
 GenCertDialog QLineEdit#node_input { 
-  border: 4px solid #0099cc;
+  border: 2px solid #0099cc;
   border-radius: 6px;
   background: white;
 	font: bold;
 }
 GenCertDialog QLineEdit#name_input { 
-  border: 4px solid #0099cc;
+  border: 2px solid #0099cc;
   border-radius: 6px;
   background: white;
 	font: bold;
@@ -772,4 +772,14 @@ StartDialog QPushButton#loadButton {
 
 StartDialog QPushButton#loadButton:hover {
 	border-image: url(:/images/btn_blue_hover.png) 4;
+}
+
+StartDialog QFrame#loginframe{
+  background-image: url(:/images/logo/background.png);
+  background-repeat: repeat;
+}
+
+GenCertDialog QFrame#profileframe{
+  background-image: url(:/images/logo/background.png);
+  background-repeat: repeat;
 }
