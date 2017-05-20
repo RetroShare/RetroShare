@@ -156,12 +156,12 @@ void GxsFeedItem::requestComment()
 	opts.mReqType = GXS_REQUEST_TYPE_MSG_RELATED_DATA;
 	opts.mOptions = RS_TOKREQOPT_MSG_THREAD | RS_TOKREQOPT_MSG_LATEST;
 
-	RsGxsGrpMsgIdPair msgIdPair;
-	msgIdPair.first = groupId();
-	msgIdPair.second = messageId();
-
 	std::vector<RsGxsGrpMsgIdPair> msgIds;
-	msgIds.push_back(msgIdPair);
+
+    for(uint32_t i=0;i<mMessageVersions.size();++i)
+        msgIds.push_back(std::make_pair(groupId(),mMessageVersions[i]));
+
+	msgIds.push_back(std::make_pair(groupId(),messageId()));
 
 	uint32_t token;
 	mLoadQueue->requestMsgRelatedInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, mTokenTypeComment);

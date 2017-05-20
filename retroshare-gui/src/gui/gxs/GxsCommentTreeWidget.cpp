@@ -306,7 +306,7 @@ void GxsCommentTreeWidget::setup(RsTokenService *token_service, RsGxsCommentServ
 	mCommentService = comment_service;
 	mTokenQueue = new TokenQueue(token_service, this);
 	connect(this, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(customPopUpMenu(QPoint)));
-	connect(this, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)), this, SLOT(setCurrentMsgId(QTreeWidgetItem*, QTreeWidgetItem*)));
+	connect(this, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)), this, SLOT(setCurrentCommentMsgId(QTreeWidgetItem*, QTreeWidgetItem*)));
 
 	return;
 }

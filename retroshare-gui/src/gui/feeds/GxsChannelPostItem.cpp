@@ -325,7 +325,7 @@ void GxsChannelPostItem::loadComment(const uint32_t &token)
 	if (comNb == 1) {
 		sComButText = sComButText.append("(1)");
 	} else if (comNb > 1) {
-		sComButText = tr("Comments").append("(%1)").arg(comNb);
+		sComButText = tr("Comments ").append("(%1)").arg(comNb);
 	}
 	ui->commentButton->setText(sComButText);
 }
