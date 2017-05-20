@@ -1576,10 +1576,19 @@ bool RsGxsDataAccess::getGroupStatistic(GroupStatisticRequest *req)
     req->mGroupStatistic.mNumChildMsgsNew = 0;
     req->mGroupStatistic.mNumChildMsgsUnread = 0;
 
+    std::set<RsGxsMessageId> obsolete_msgs ;	// stored message ids that are referred to as older versions of an existing message
+
+    for(uint32_t i = 0; i < msgMetaV.size(); ++i)
+        if(!msgMetaV[i]->mOrigMsgId.isNull() && msgMetaV[i]->mOrigMsgId!=msgMetaV[i]->mMsgId)
+            obsolete_msgs.insert(msgMetaV[i]->mOrigMsgId);
+
     for(uint32_t i = 0; i < msgMetaV.size(); ++i)
     {
         RsGxsMsgMetaData* m = msgMetaV[i];
         req->mGroupStatistic.mTotalSizeOfMsgs += m->mMsgSize + m->serial_size();
+
+        if(obsolete_msgs.find(m->mMsgId) != obsolete_msgs.end()) 	// skip obsolete messages.
+            continue;
 
         if (IS_MSG_NEW(m->mMsgStatus))
         {
