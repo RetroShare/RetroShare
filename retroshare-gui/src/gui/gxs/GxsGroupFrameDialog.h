@@ -126,7 +126,7 @@ private slots:
 
 	void sharePublishKey();
 
-	void loadComment(const RsGxsGroupId &grpId, const RsGxsMessageId &msgId, const QString &title);
+	void loadComment(const RsGxsGroupId &grpId, const QVector<RsGxsMessageId>& msg_versions,const RsGxsMessageId &most_recent_msgId, const QString &title);
 
 private:
 	virtual QString text(TextType type) = 0;

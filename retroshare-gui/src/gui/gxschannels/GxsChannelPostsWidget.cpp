@@ -207,9 +207,9 @@ void GxsChannelPostsWidget::openChat(const RsPeerId & /*peerId*/)
 }
 
 // Callback from Widget->FeedHolder->ServiceDialog->CommentContainer->CommentDialog,
-void GxsChannelPostsWidget::openComments(uint32_t /*type*/, const RsGxsGroupId &groupId, const RsGxsMessageId &msgId, const QString &title)
+void GxsChannelPostsWidget::openComments(uint32_t /*type*/, const RsGxsGroupId &groupId, const QVector<RsGxsMessageId>& msg_versions,const RsGxsMessageId &msgId, const QString &title)
 {
-	emit loadComment(groupId, msgId, title);
+	emit loadComment(groupId, msg_versions,msgId, title);
 }
 
 void GxsChannelPostsWidget::createMsg()
@@ -543,6 +543,10 @@ void GxsChannelPostsWidget::insertChannelPosts(std::vector<RsGxsChannelPost> &po
 #ifdef DEBUG_CHANNEL
                     std::cerr << " and is more recent => following" << std::endl;
 #endif
+                    for(std::set<RsGxsMessageId>::const_iterator itt(posts[current_index].mOlderVersions.begin());itt!=posts[current_index].mOlderVersions.end();++itt)
+						posts[source_index].mOlderVersions.insert(*itt);
+
+					posts[source_index].mOlderVersions.insert(posts[current_index].mMeta.mMsgId);
 					posts[current_index].mMeta.mMsgId.clear();	    // clear the msg Id so the post will be ignored
 				}
 #ifdef DEBUG_CHANNEL
