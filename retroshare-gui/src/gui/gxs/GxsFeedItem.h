@@ -35,9 +35,12 @@ public:
 	GxsFeedItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome, RsGxsIfaceHelper *iface, bool autoUpdate);
 	virtual ~GxsFeedItem();
 
-	RsGxsMessageId messageId() { return mMessageId; }
+	RsGxsMessageId messageId() const { return mMessageId; }
+    const QVector<RsGxsMessageId>& messageVersions() const { return mMessageVersions ; }
+
 	//To be able to update with thread message when comment is received.
 	void setMessageId( RsGxsMessageId id) {mMessageId = id;}
+	void setMessageVersions( const QVector<RsGxsMessageId>& v) { mMessageVersions = v;}
 
 protected:
 	/* load message data */
@@ -61,6 +64,7 @@ protected slots:
 
 private:
 	RsGxsMessageId mMessageId;
+    QVector<RsGxsMessageId> mMessageVersions ;
 	uint32_t mTokenTypeMessage;
 	uint32_t mTokenTypeComment;
 };

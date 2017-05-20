@@ -64,7 +64,10 @@ void GxsFeedItem::comments(const QString &title)
 
 	if (mFeedHolder)
 	{
-		mFeedHolder->openComments(feedId(), groupId(), messageId(), title);
+        if(mMessageVersions.empty())
+			mFeedHolder->openComments(feedId(), groupId(),QVector<RsGxsMessageId>(1,messageId()), messageId(), title);
+		else
+			mFeedHolder->openComments(feedId(), groupId(),mMessageVersions, messageId(), title);
 	}
 }
 

@@ -64,6 +64,21 @@ GxsChannelPostItem::GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, 
 	std::cerr << std::endl;
 #endif
 
+	QVector<RsGxsMessageId> v;
+    bool self = false;
+
+	for(std::set<RsGxsMessageId>::const_iterator it(post.mOlderVersions.begin());it!=post.mOlderVersions.end();++it)
+    {
+        if(*it == post.mMeta.mMsgId)
+            self = true ;
+
+		v.push_back(*it) ;
+    }
+    if(!self)
+        v.push_back(post.mMeta.mMsgId);
+
+    setMessageVersions(v) ;
+
 	setup();
 
 	//setGroup(group, false);

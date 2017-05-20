@@ -60,6 +60,8 @@ public:
 
 public:
 	RsMsgMetaData mMeta;
+
+    std::set<RsGxsMessageId> mOlderVersions ;
 	std::string mMsg;  // UTF8 encoded.
 
 	std::list<RsGxsFile> mFiles;
