@@ -42,6 +42,9 @@ private:
 	void handleGetCustomStateString(Request& req, Response& resp);
 	void handleSetCustomStateString(Request& req, Response& resp);
 
+	void handleGetNetworkOptions(Request& req, Response& resp);
+	void handleSetNetworkOptions(Request& req, Response& resp);
+
 	void handleGetPGPOptions(Request& req, Response& resp);
 	void handleSetPGPOptions(Request& req, Response& resp);
 

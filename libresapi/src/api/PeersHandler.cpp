@@ -5,6 +5,7 @@
 #include <util/radix64.h>
 #include <retroshare/rsstatus.h>
 #include <retroshare/rsiface.h>
+#include <retroshare/rsconfig.h>
 
 #include <algorithm>
 
@@ -198,6 +199,8 @@ PeersHandler::PeersHandler(StateTokenServer* sts, RsNotify* notify, RsPeers *pee
 	addResourceHandler("set_state_string", this, &PeersHandler::handleSetStateString);
 	addResourceHandler("get_custom_state_string", this, &PeersHandler::handleGetCustomStateString);
 	addResourceHandler("set_custom_state_string", this, &PeersHandler::handleSetCustomStateString);
+	addResourceHandler("get_network_options", this, &PeersHandler::handleGetNetworkOptions);
+	addResourceHandler("set_network_options", this, &PeersHandler::handleSetNetworkOptions);
 	addResourceHandler("get_pgp_options", this, &PeersHandler::handleGetPGPOptions);
 	addResourceHandler("set_pgp_options", this, &PeersHandler::handleSetPGPOptions);
 	addResourceHandler("get_node_options", this, &PeersHandler::handleGetNodeOptions);
@@ -616,6 +619,198 @@ void PeersHandler::handleExamineCert(Request &req, Response &resp)
     {
         resp.setFail("failed to load certificate");
     }
+}
+
+void PeersHandler::handleGetNetworkOptions(Request& req, Response& resp)
+{
+	RsPeerDetails detail;
+	if (!mRsPeers->getPeerDetails(mRsPeers->getOwnId(), detail))
+		return;
+
+	resp.mDataStream << makeKeyValue("local_address", detail.localAddr);
+	resp.mDataStream << makeKeyValue("local_port", (int)detail.localPort);
+	resp.mDataStream << makeKeyValue("external_address", detail.extAddr);
+	resp.mDataStream << makeKeyValue("external_port", (int)detail.extPort);
+	resp.mDataStream << makeKeyValue("dyn_dns", detail.dyndns);
+
+	int netIndex = 0;
+	switch(detail.netMode)
+	{
+	case RS_NETMODE_EXT:
+		netIndex = 2;
+		break;
+	case RS_NETMODE_UDP:
+		netIndex = 1;
+		break;
+	case RS_NETMODE_UPNP:
+		netIndex = 0;
+		break;
+	}
+
+	resp.mDataStream << makeKeyValue("nat_mode", netIndex);
+
+	int discoveryIndex = 3; // NONE.
+	if(detail.vs_dht != RS_VS_DHT_OFF)
+	{
+		if(detail.vs_disc != RS_VS_DISC_OFF)
+			discoveryIndex = 0; // PUBLIC
+		else
+			discoveryIndex = 2; // INVERTED
+	}
+	else
+	{
+		if(detail.vs_disc != RS_VS_DISC_OFF)
+			discoveryIndex = 1; // PRIVATE
+		else
+			discoveryIndex = 3; // NONE
+	}
+
+	resp.mDataStream << makeKeyValue("discovery_mode", discoveryIndex);
+
+	int dlrate = 0;
+	int ulrate = 0;
+	rsConfig->GetMaxDataRates(dlrate, ulrate);
+	resp.mDataStream << makeKeyValue("download_limit", dlrate);
+	resp.mDataStream << makeKeyValue("upload_limit", ulrate);
+
+	bool checkIP = mRsPeers->getAllowServerIPDetermination();
+	resp.mDataStream << makeKeyValue("check_ip", checkIP);
+
+	StreamBase& previousIPsStream = resp.mDataStream.getStreamToMember("previous_ips");
+	previousIPsStream.getStreamToMember();
+	for(std::list<std::string>::const_iterator it = detail.ipAddressList.begin(); it != detail.ipAddressList.end(); ++it)
+		previousIPsStream.getStreamToMember() << makeKeyValue("ip_address", *it);
+
+	std::list<std::string> ip_servers;
+	mRsPeers->getIPServersList(ip_servers);
+
+	StreamBase& websitesStream = resp.mDataStream.getStreamToMember("websites");
+	websitesStream.getStreamToMember();
+
+	for(std::list<std::string>::const_iterator it = ip_servers.begin(); it != ip_servers.end(); ++it)
+		websitesStream.getStreamToMember() << makeKeyValue("website", *it);
+
+	std::string proxyaddr;
+	uint16_t proxyport;
+	uint32_t status ;
+	// Tor
+	mRsPeers->getProxyServer(RS_HIDDEN_TYPE_TOR, proxyaddr, proxyport, status);
+	resp.mDataStream << makeKeyValue("tor_address", proxyaddr);
+	resp.mDataStream << makeKeyValue("tor_port", (int)proxyport);
+
+	// I2P
+	mRsPeers->getProxyServer(RS_HIDDEN_TYPE_I2P, proxyaddr, proxyport, status);
+	resp.mDataStream << makeKeyValue("i2p_address", proxyaddr);
+	resp.mDataStream << makeKeyValue("i2p_port", (int)proxyport);
+
+	resp.setOk();
+}
+
+void PeersHandler::handleSetNetworkOptions(Request& req, Response& resp)
+{
+	RsPeerDetails detail;
+	if (!mRsPeers->getPeerDetails(mRsPeers->getOwnId(), detail))
+		return;
+
+	int netIndex = 0;
+	uint32_t natMode = 0;
+	req.mStream << makeKeyValueReference("nat_mode", netIndex);
+
+	switch(netIndex)
+	{
+	case 3:
+		natMode = RS_NETMODE_HIDDEN;
+		break;
+	case 2:
+		natMode = RS_NETMODE_EXT;
+		break;
+	case 1:
+		natMode = RS_NETMODE_UDP;
+		break;
+	default:
+	case 0:
+		natMode = RS_NETMODE_UPNP;
+		break;
+	}
+
+	if (detail.netMode != natMode)
+		mRsPeers->setNetworkMode(mRsPeers->getOwnId(), natMode);
+
+	int discoveryIndex;
+	uint16_t vs_disc = 0;
+	uint16_t vs_dht = 0;
+	req.mStream << makeKeyValueReference("discovery_mode", discoveryIndex);
+
+	switch(discoveryIndex)
+	{
+	    case 0:
+		    vs_disc = RS_VS_DISC_FULL;
+			vs_dht = RS_VS_DHT_FULL;
+		    break;
+	    case 1:
+		    vs_disc = RS_VS_DISC_FULL;
+			vs_dht = RS_VS_DHT_OFF;
+		    break;
+	    case 2:
+		    vs_disc = RS_VS_DISC_OFF;
+			vs_dht = RS_VS_DHT_FULL;
+		    break;
+	    case 3:
+	    default:
+		    vs_disc = RS_VS_DISC_OFF;
+			vs_dht = RS_VS_DHT_OFF;
+		    break;
+	}
+
+	if ((vs_disc != detail.vs_disc) || (vs_dht != detail.vs_dht))
+		mRsPeers->setVisState(mRsPeers->getOwnId(), vs_disc, vs_dht);
+
+	if (0 != netIndex)
+	{
+		std::string localAddr;
+		int localPort;
+		std::string extAddr;
+		int extPort;
+
+		req.mStream << makeKeyValueReference("local_address", localAddr);
+		req.mStream << makeKeyValueReference("local_port", localPort);
+		req.mStream << makeKeyValueReference("external_address", extAddr);
+		req.mStream << makeKeyValueReference("external_port", extPort);
+
+		mRsPeers->setLocalAddress(mRsPeers->getOwnId(), localAddr, (uint16_t)localPort);
+		mRsPeers->setExtAddress(mRsPeers->getOwnId(), extAddr, (uint16_t)extPort);
+	}
+
+	std::string dynDNS;
+	req.mStream << makeKeyValueReference("dyn_dns", dynDNS);
+	mRsPeers->setDynDNS(mRsPeers->getOwnId(), dynDNS);
+
+	int dlrate = 0;
+	int ulrate = 0;
+	req.mStream << makeKeyValueReference("download_limit", dlrate);
+	req.mStream << makeKeyValueReference("upload_limit", ulrate);
+	rsConfig->SetMaxDataRates(dlrate, ulrate);
+
+	bool checkIP;
+	req.mStream << makeKeyValueReference("check_ip", checkIP);
+	rsPeers->allowServerIPDetermination(checkIP) ;
+
+	// Tor
+	std::string toraddr;
+	int torport;
+	req.mStream << makeKeyValueReference("tor_address", toraddr);
+	req.mStream << makeKeyValueReference("tor_port", torport);
+	mRsPeers->setProxyServer(RS_HIDDEN_TYPE_TOR, toraddr, (uint16_t)torport);
+
+	// I2P
+	std::string i2paddr;
+	int i2pport;
+	req.mStream << makeKeyValueReference("i2p_address", i2paddr);
+	req.mStream << makeKeyValueReference("i2p_port", i2pport);
+	mRsPeers->setProxyServer(RS_HIDDEN_TYPE_I2P, i2paddr, (uint16_t)i2pport);
+
+	resp.mStateToken = getCurrentStateToken();
+	resp.setOk();
 }
 
 void PeersHandler::handleGetPGPOptions(Request& req, Response& resp)
