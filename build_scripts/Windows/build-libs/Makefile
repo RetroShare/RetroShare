@@ -266,7 +266,7 @@ libs/curl-$(CURL_VERSION): $(DOWNLOAD_PATH)/curl-$(CURL_VERSION).tar.gz
 sqlcipher: libs/sqlcipher-$(SQLCIPHER_VERSION)
 
 $(DOWNLOAD_PATH)/tcl$(TCL_VERSION)-src.tar.gz:
-	wget http://prdownloads.sourceforge.net/tcl/tcl$(TCL_VERSION)-src.tar.gz -O $(DOWNLOAD_PATH)/tcl$(TCL_VERSION)-src.tar.gz
+	wget --no-check-certificate http://downloads.sourceforge.net/project/tcl/Tcl/$(TCL_VERSION)/tcl$(TCL_VERSION)-src.tar.gz -O $(DOWNLOAD_PATH)/tcl$(TCL_VERSION)-src.tar.gz
 
 $(DOWNLOAD_PATH)/sqlcipher-$(SQLCIPHER_VERSION).tar.gz:
 	wget --no-check-certificate https://github.com/sqlcipher/sqlcipher/archive/v$(SQLCIPHER_VERSION).tar.gz -O $(DOWNLOAD_PATH)/sqlcipher-$(SQLCIPHER_VERSION).tar.gz

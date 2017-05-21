@@ -59,20 +59,16 @@ GxsCommentDialog::~GxsCommentDialog()
 	delete(ui);
 }
 
-void GxsCommentDialog::commentLoad(const RsGxsGroupId &grpId, const RsGxsMessageId &msgId)
+void GxsCommentDialog::commentLoad(const RsGxsGroupId &grpId, const std::set<RsGxsMessageId>& msg_versions,const RsGxsMessageId& most_recent_msgId)
 {
-	std::cerr << "GxsCommentDialog::commentLoad(" << grpId << ", " << msgId << ")";
+	std::cerr << "GxsCommentDialog::commentLoad(" << grpId << ", most recent msg version: " << most_recent_msgId << ")";
 	std::cerr << std::endl;
 
 	mGrpId = grpId;
-	mMsgId = msgId;
+	mMostRecentMsgId = most_recent_msgId;
+    mMsgVersions = msg_versions;
 
-	RsGxsGrpMsgIdPair threadId;
-
-	threadId.first = grpId;
-	threadId.second = msgId;
-
-	ui->treeWidget->requestComments(threadId);
+	ui->treeWidget->requestComments(mGrpId,msg_versions,most_recent_msgId);
 }
 
 void GxsCommentDialog::refresh()
@@ -80,7 +76,7 @@ void GxsCommentDialog::refresh()
 	std::cerr << "GxsCommentDialog::refresh()";
 	std::cerr << std::endl;
 
-	commentLoad(mGrpId, mMsgId);
+	commentLoad(mGrpId, mMsgVersions,mMostRecentMsgId);
 }
 
 void GxsCommentDialog::idChooserReady()

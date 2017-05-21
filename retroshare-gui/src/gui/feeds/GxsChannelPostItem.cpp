@@ -35,6 +35,7 @@
 #include "util/HandleRichText.h"
 #include "util/DateTime.h"
 #include "util/stringutil.h"
+#include "gui/gxschannels/CreateGxsChannelMsg.h"
 
 #include <iostream>
 
@@ -63,9 +64,25 @@ GxsChannelPostItem::GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, 
 	std::cerr << std::endl;
 #endif
 
+	QVector<RsGxsMessageId> v;
+    bool self = false;
+
+	for(std::set<RsGxsMessageId>::const_iterator it(post.mOlderVersions.begin());it!=post.mOlderVersions.end();++it)
+    {
+        if(*it == post.mMeta.mMsgId)
+            self = true ;
+
+		v.push_back(*it) ;
+    }
+    if(!self)
+        v.push_back(post.mMeta.mMsgId);
+
+    setMessageVersions(v) ;
+
 	setup();
 
-	setGroup(group, false);
+	//setGroup(group, false);
+	requestGroup();
 	setPost(post);
 	requestComment();
 }
@@ -127,6 +144,7 @@ void GxsChannelPostItem::setup()
 	connect(ui->commentButton, SIGNAL(clicked()), this, SLOT(loadComments()));
 
 	connect(ui->playButton, SIGNAL(clicked()), this, SLOT(play(void)));
+	connect(ui->editButton, SIGNAL(clicked()), this, SLOT(edit(void)));
 	connect(ui->copyLinkButton, SIGNAL(clicked()), this, SLOT(copyMessageLink()));
 
 	connect(ui->readButton, SIGNAL(toggled(bool)), this, SLOT(readToggled(bool)));
@@ -165,6 +183,12 @@ bool GxsChannelPostItem::setGroup(const RsGxsChannelGroup &group, bool doFill)
 	}
 
 	mGroup = group;
+
+    // if not publisher, hide the edit button. Without the publish key, there's no way to edit a message.
+
+    std::cerr << "Group subscribe flags = " << std::hex << mGroup.mMeta.mSubscribeFlags << std::dec << std::endl;
+    if(!IS_GROUP_PUBLISHER(mGroup.mMeta.mSubscribeFlags))
+        ui->editButton->hide();
 
 	if (doFill) {
 		fill();
@@ -301,7 +325,7 @@ void GxsChannelPostItem::loadComment(const uint32_t &token)
 	if (comNb == 1) {
 		sComButText = sComButText.append("(1)");
 	} else if (comNb > 1) {
-		sComButText = tr("Comments").append("(%1)").arg(comNb);
+		sComButText = tr("Comments ").append("(%1)").arg(comNb);
 	}
 	ui->commentButton->setText(sComButText);
 }
@@ -688,6 +712,12 @@ void GxsChannelPostItem::download()
 	}
 
 	updateItem();
+}
+
+void GxsChannelPostItem::edit()
+{
+	CreateGxsChannelMsg *msgDialog = new CreateGxsChannelMsg(mGroup.mMeta.mGroupId,mPost.mMeta.mMsgId);
+    msgDialog->show();
 }
 
 void GxsChannelPostItem::play()
