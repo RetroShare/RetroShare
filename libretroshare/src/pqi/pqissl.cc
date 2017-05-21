@@ -361,7 +361,7 @@ void pqissl::getCryptoParams(RsPeerCryptoParams& params)
 
 bool pqissl::actAsServer()
 {
-#if OPENSSL_VERSION_NUMBER < 0x10100000L
+#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
 	return (bool)ssl_connection->server;
 #else
 	return (bool)SSL_is_server(ssl_connection);
@@ -1230,7 +1230,7 @@ int 	pqissl::Extract_Failed_SSL_Certificate()
 	RsPeerId sslid ;
 	getX509id(peercert, sslid) ;
 
-#if OPENSSL_VERSION_NUMBER < 0x10100000L
+#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
 	RsPgpId gpgid(getX509CNString(peercert->cert_info->issuer));
 	std::string sslcn = getX509CNString(peercert->cert_info->subject);
 #else

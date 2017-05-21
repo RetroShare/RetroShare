@@ -298,7 +298,7 @@ static ops_boolean_t dsa_sign(ops_hash_t *hash, const ops_dsa_public_key_t *dsa,
 	dsasig=ops_dsa_sign(hashbuf, hashsize, sdsa, dsa);
 
 	// convert and write the sig out to memory
-#if OPENSSL_VERSION_NUMBER < 0x10100000L
+#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
 	ops_write_mpi(dsasig->r, cinfo);
 	ops_write_mpi(dsasig->s, cinfo);
 #else

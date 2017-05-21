@@ -508,7 +508,7 @@ bool	RsRecogn::itemToRadix64(RsItem *item, std::string &radstr)
 
 std::string RsRecogn::getRsaKeyId(RSA *pubkey)
 {
-#if OPENSSL_VERSION_NUMBER < 0x10100000L
+#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
 	int len = BN_num_bytes(pubkey -> n);
 	unsigned char tmp[len];
 	BN_bn2bin(pubkey -> n, tmp);
