@@ -39,10 +39,7 @@
       <bool>false</bool>
      </property>
      <property name="styleSheet">
-      <string notr="true">QFrame#loginframe{
-background-image: url(:/images/logo/background.png);
-background-repeat: repeat;
-}</string>
+      <string notr="true"/>
      </property>
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
