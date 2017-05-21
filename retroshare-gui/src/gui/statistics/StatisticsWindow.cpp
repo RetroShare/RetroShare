@@ -36,6 +36,7 @@
 
 #include <gui/statistics/TurtleRouterStatistics.h>
 #include <gui/statistics/GlobalRouterStatistics.h>
+#include <gui/statistics/GxsTransportStatistics.h>
 #include <gui/statistics/BwCtrlWindow.h>
 #include <gui/statistics/DhtWindow.h>
 
@@ -50,10 +51,10 @@
 
 #define IMAGE_DHT           ":/images/dht32.png"
 #define IMAGE_TURTLE        ":images/turtle.png"
-#define IMAGE_BWGRAPH           ":/images/ksysguard.png"
-#define IMAGE_GLOBALROUTER           ":/images/network32.png"
-#define IMAGE_BANDWIDTH       ":images/office-chart-area-stacked.png"
-#define IMAGE_RTT             ":images/office-chart-line.png"
+#define IMAGE_BWGRAPH       ":/images/ksysguard.png"
+#define IMAGE_GLOBALROUTER  ":/images/network32.png"
+#define IMAGE_BANDWIDTH     ":images/office-chart-area-stacked.png"
+#define IMAGE_RTT           ":images/office-chart-line.png"
 
 /********************************************** STATIC WINDOW *************************************/
 StatisticsWindow * StatisticsWindow::mInstance = NULL;
@@ -133,6 +134,9 @@ void StatisticsWindow::initStackedPage()
   ui->stackPages->add(grsdlg = new GlobalRouterStatistics(ui->stackPages),
                    action = createPageAction(QIcon(IMAGE_GLOBALROUTER), tr("Global Router"), grp)); 
                    
+  ui->stackPages->add(gxsdlg = new GxsTransportStatistics(ui->stackPages),
+                   action = createPageAction(QIcon(IMAGE_GLOBALROUTER), tr("Gxs Transport"), grp));
+
   ui->stackPages->add(rttdlg = new RttStatistics(ui->stackPages),
                       action = createPageAction(QIcon(IMAGE_RTT), tr("RTT Statistics"), grp));
                    
