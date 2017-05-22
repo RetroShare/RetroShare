@@ -21,7 +21,7 @@
 
 #pragma once
 
-#include <serialiser/rsserviceids.h>
+#include <rsitems/rsserviceids.h>
 #include <retroshare/rsplugin.h>
 #include <retroshare-gui/mainpage.h>
 #include "services/p3FeedReader.h"

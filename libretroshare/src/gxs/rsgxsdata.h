@@ -29,13 +29,12 @@
 #include <string>
 
 #include <retroshare/rstypes.h>
-
-#include "serialiser/rsserial.h"
 #include "serialiser/rstlvkeys.h"
-#include "serialiser/rsgxsitems.h"
 
-class RsGroupMetaData;
-class RsMsgMetaData;
+#include "rsitems/rsgxsitems.h"
+
+struct RsGroupMetaData;
+struct RsMsgMetaData;
 
 static const uint32_t RS_GXS_GRP_META_DATA_VERSION_ID_0001 = 0x0000 ; // change this, and keep old values if the content changes
 static const uint32_t RS_GXS_GRP_META_DATA_VERSION_ID_0002 = 0xaf01 ; // current API

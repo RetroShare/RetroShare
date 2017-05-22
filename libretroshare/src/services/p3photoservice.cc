@@ -1,5 +1,5 @@
 #include "p3photoservice.h"
-#include "serialiser/rsphotoitems.h"
+#include "rsitems/rsphotoitems.h"
 #include "retroshare/rsgxsflags.h"
 
 RsPhoto *rsPhoto = NULL;

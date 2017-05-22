@@ -48,6 +48,7 @@
 #include "gui/common/FilesDefs.h"
 #include "gui/common/Emoticons.h"
 #include "gui/chat/ChatLobbyDialog.h"
+#include "gui/gxs/GxsIdDetails.h"
 #include "util/misc.h"
 #include "util/HandleRichText.h"
 #include "gui/chat/ChatUserNotify.h"//For BradCast
@@ -65,6 +66,8 @@
 
 #define FMM 2.5//fontMetricsMultiplicator
 
+#define PERSONID "PersonId:"
+
 /*****
  * #define CHAT_DEBUG 1
  *****/
@@ -76,7 +79,7 @@ ChatWidget::ChatWidget(QWidget *parent) :
 
 	int iconHeight = FMM*QFontMetricsF(font()).height() ;
 	QSize iconSize = QSize(iconHeight,iconHeight);
-	QSize buttonSize = QSize(iconSize + QSize(FMM,FMM));
+	QSize buttonSize = QSize(iconSize + QSize((int)FMM,(int)FMM));
 
 	newMessages = false;
 	typing = false;
@@ -258,7 +261,7 @@ void ChatWidget::addChatBarWidget(QWidget *w)
 {
 	int iconHeight = FMM*QFontMetricsF(font()).height() ;
 	QSize iconSize = QSize(iconHeight,iconHeight);
-	QSize buttonSize = QSize(iconSize + QSize(FMM,FMM));
+	QSize buttonSize = QSize(iconSize + QSize((int)FMM,(int)FMM));
 	w->setFixedSize(buttonSize);
 	ui->pluginButtonFrame->layout()->addWidget(w) ;
 }
@@ -587,6 +590,9 @@ bool ChatWidget::eventFilter(QObject *obj, QEvent *event)
 					if (ui->textBrowser->checkImage(helpEvent->pos(), imageStr)) {
 						toolTipText = imageStr;
 					}
+				} else if (toolTipText.startsWith(PERSONID)){
+					toolTipText = toolTipText.replace(PERSONID, tr("Person id: ") );
+					toolTipText = toolTipText.append(tr("\nDouble click on it to add his name on text writer.") );
 				}
 			}
 			if (!toolTipText.isEmpty()){
@@ -663,6 +669,39 @@ bool ChatWidget::eventFilter(QObject *obj, QEvent *event)
 					ui->leSearch->setPalette(qpSave_leSearch);
 				}
 			}
+		}
+	} else if (obj == ui->textBrowser->viewport()) {
+		if (event->type() == QEvent::MouseButtonDblClick)	{
+
+			QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
+			QTextCursor cursor = ui->textBrowser->cursorForPosition(mouseEvent->pos());
+			cursor.select(QTextCursor::WordUnderCursor);
+			if (!cursor.selectedText().isEmpty()){
+				QRegExp rx("<a name=\"(.*)\"",Qt::CaseSensitive, QRegExp::RegExp2);
+				rx.setMinimal(true);
+				QString sel=cursor.selection().toHtml();
+				QStringList anchors;
+				int pos=0;
+				while ((pos = rx.indexIn(sel,pos)) != -1) {
+					anchors << rx.cap(1);
+					pos += rx.matchedLength();
+				}
+
+				if (!anchors.isEmpty()){
+					if (anchors.at(0).startsWith(PERSONID)){
+						RsGxsId mId = RsGxsId(QString(anchors.at(0)).replace(PERSONID,"").toStdString());
+						if(!mId.isNull()) {
+							RsIdentityDetails details;
+							if (rsIdentity->getIdDetails(mId, details)){
+								QString text = QString("@").append(GxsIdDetails::getName(details)).append(" ");
+								ui->chatTextEdit->textCursor().insertText(text);
+							}
+						}
+					}
+				}
+
+			}
+
 		}
 	} else {
 		if (event->type() == QEvent::WindowActivate) {
@@ -971,8 +1010,13 @@ void ChatWidget::addChatMsg(bool incoming, const QString &name, const RsGxsId gx
 	formatMsg.replace(QString("<a name=\"time\">"),QString("<a name=\"%1\">").arg(timeStamp));
 	
 	//replace Name anchors with GXS Id
-	formatMsg.replace(QString("<a name=\"name\">"),QString("<a name=\"Person Id: %1\">").arg(strGxsId));
-
+	if (!gxsId.isNull()) {
+		formatMsg.replace(QString("<a name=\"name\">")
+		                  ,QString("<a name=\"").append(PERSONID).append("%1\">").arg(strGxsId) );
+	} else {
+		formatMsg.replace(QString("<a name=\"name\">"),"");
+  }
+	
 	QTextCursor textCursor = QTextCursor(ui->textBrowser->textCursor());
 	textCursor.movePosition(QTextCursor::End);
 	textCursor.setBlockFormat(QTextBlockFormat ());
@@ -1403,7 +1447,8 @@ void ChatWidget::colorChanged()
 void ChatWidget::chooseFont()
 {
 	bool ok;
-	QFont font = QFontDialog::getFont(&ok, currentFont, this);
+	//Use NULL as parent as with this QFontDialog don't take care of title nether options.
+	QFont font = QFontDialog::getFont(&ok, currentFont, NULL, tr("Choose your font."),QFontDialog::DontUseNativeDialog);
 	if (ok) {
 		currentFont = font;
 		setFont();
@@ -1626,7 +1671,7 @@ void ChatWidget::updateStatus(const QString &peer_id, int status)
 	    switch (status) {
 	    case RS_STATUS_OFFLINE:
 		    ui->infoFrame->setVisible(true);
-		    ui->infoLabel->setText(peerName + " " + tr("appears to be Offline.") +"\n" + tr("Messages you send will be delivered after Friend is again Online"));
+		    ui->infoLabel->setText(peerName + " " + tr("appears to be Offline.") +"\n" + tr("Messages you send will be delivered after Friend is again Online."));
 		    break;
 
 	    case RS_STATUS_INACTIVE:

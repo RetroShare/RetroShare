@@ -205,7 +205,7 @@ class p3FileDatabase: public p3Service, public p3Config, public ftSearch //, pub
         uint32_t locked_getFriendIndex(const RsPeerId& pid);
 
         void handleDirSyncRequest (RsFileListsSyncRequestItem *) ;
-        void handleDirSyncResponse (RsFileListsSyncResponseItem *) ;
+        void handleDirSyncResponse (RsFileListsSyncResponseItem *&) ;
 
         std::map<RsPeerId,uint32_t> mFriendIndexMap ;
         std::vector<RsPeerId> mFriendIndexTab;

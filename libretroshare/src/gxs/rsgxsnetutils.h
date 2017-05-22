@@ -28,7 +28,7 @@
 
 #include <stdlib.h>
 #include "retroshare/rsgxsifacetypes.h"
-#include "serialiser/rsnxsitems.h"
+#include "rsitems/rsnxsitems.h"
 #include "rsgixs.h"
 
 class p3ServiceControl;

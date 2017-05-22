@@ -418,7 +418,7 @@ ChatPage::load()
 void ChatPage::on_pushButtonChangeChatFont_clicked()
 {
 	bool ok;
-	QFont font = QFontDialog::getFont(&ok, fontTempChat, this);
+	QFont font = QFontDialog::getFont(&ok, fontTempChat, this, tr("Choose your default font for Chat."),QFontDialog::DontUseNativeDialog);
 	if (ok) {
 		fontTempChat = font;
 		// using fontTempChat.rawname() does not always work!
@@ -426,6 +426,7 @@ void ChatPage::on_pushButtonChangeChatFont_clicked()
 		QStringList fontname = fontTempChat.toString().split(",");
 		ui.labelChatFontPreview->setText(fontname[0]);
 		ui.labelChatFontPreview->setFont(fontTempChat);
+		updateChatParams();
 	}
 }
 

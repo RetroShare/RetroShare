@@ -49,8 +49,8 @@ const int ftserverzone = 29539;
 #include "pqi/pqi.h"
 #include "pqi/p3linkmgr.h"
 
-#include "serialiser/rsfiletransferitems.h"
-#include "serialiser/rsserviceids.h"
+#include "rsitems/rsfiletransferitems.h"
+#include "rsitems/rsserviceids.h"
 
 /***
  * #define SERVER_DEBUG       1
@@ -60,11 +60,12 @@ const int ftserverzone = 29539;
 #define FTSERVER_DEBUG() std::cerr << time(NULL) << " : FILE_SERVER : " << __FUNCTION__ << " : "
 #define FTSERVER_ERROR() std::cerr << "(EE) FILE_SERVER ERROR : "
 
-static const time_t FILE_TRANSFER_LOW_PRIORITY_TASKS_PERIOD = 5 ; // low priority tasks handling every 5 seconds
+static const time_t FILE_TRANSFER_LOW_PRIORITY_TASKS_PERIOD = 5 ;           // low priority tasks handling every 5 seconds
+static const time_t FILE_TRANSFER_MAX_DELAY_BEFORE_DROP_USAGE_RECORD = 10 ; // keep usage records for 10 secs at most.
 
 /* Setup */
 ftServer::ftServer(p3PeerMgr *pm, p3ServiceControl *sc)
-    :       p3Service(),
+    :       p3Service(),RsServiceSerializer(RS_SERVICE_TYPE_TURTLE), // should be FT, but this is for backward compatibility
       mPeerMgr(pm), mServiceCtrl(sc),
       mFileDatabase(NULL),
       mFtController(NULL), mFtExtra(NULL),
@@ -318,6 +319,16 @@ uint32_t ftServer::defaultEncryptionPolicy()
 {
 	return mFtController->defaultEncryptionPolicy() ;
 }
+
+void ftServer::setMaxUploadSlotsPerFriend(uint32_t n)
+{
+    mFtController->setMaxUploadsPerFriend(n) ;
+}
+uint32_t ftServer::getMaxUploadSlotsPerFriend()
+{
+    return mFtController->getMaxUploadsPerFriend() ;
+}
+
 void ftServer::setDefaultEncryptionPolicy(uint32_t s)
 {
 	mFtController->setDefaultEncryptionPolicy(s) ;
@@ -459,14 +470,12 @@ bool ftServer::FileDetails(const RsFileHash &hash, FileSearchFlags hintflags, Fi
 	return false;
 }
 
-RsTurtleGenericTunnelItem *ftServer::deserialiseItem(void *data,uint32_t size) const
+RsItem *ftServer::create_item(uint16_t service,uint8_t item_type) const
 {
-	uint32_t rstype = getRsItemId(data);
-
 #ifdef SERVER_DEBUG
 	FTSERVER_DEBUG() << "p3turtle: deserialising packet: " << std::endl ;
 #endif
-	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) || (RS_SERVICE_TYPE_TURTLE != getRsItemService(rstype)))
+	if (RS_SERVICE_TYPE_TURTLE != service)
 	{
 		FTSERVER_ERROR() << "  Wrong type !!" << std::endl ;
 		return NULL; /* wrong type */
@@ -474,14 +483,14 @@ RsTurtleGenericTunnelItem *ftServer::deserialiseItem(void *data,uint32_t size) c
 
 	try
 	{
-		switch(getRsItemSubType(rstype))
+		switch(item_type)
 		{
-		case RS_TURTLE_SUBTYPE_FILE_REQUEST 			:	return new RsTurtleFileRequestItem(data,size) ;
-		case RS_TURTLE_SUBTYPE_FILE_DATA    			:	return new RsTurtleFileDataItem(data,size) ;
-		case RS_TURTLE_SUBTYPE_FILE_MAP_REQUEST		:	return new RsTurtleFileMapRequestItem(data,size) ;
-		case RS_TURTLE_SUBTYPE_FILE_MAP     			:	return new RsTurtleFileMapItem(data,size) ;
-		case RS_TURTLE_SUBTYPE_CHUNK_CRC_REQUEST		:	return new RsTurtleChunkCrcRequestItem(data,size) ;
-		case RS_TURTLE_SUBTYPE_CHUNK_CRC     			:	return new RsTurtleChunkCrcItem(data,size) ;
+		case RS_TURTLE_SUBTYPE_FILE_REQUEST 			:	return new RsTurtleFileRequestItem();
+		case RS_TURTLE_SUBTYPE_FILE_DATA    			:	return new RsTurtleFileDataItem();
+		case RS_TURTLE_SUBTYPE_FILE_MAP_REQUEST		    :	return new RsTurtleFileMapRequestItem();
+		case RS_TURTLE_SUBTYPE_FILE_MAP     			:	return new RsTurtleFileMapItem();
+		case RS_TURTLE_SUBTYPE_CHUNK_CRC_REQUEST		:	return new RsTurtleChunkCrcRequestItem();
+		case RS_TURTLE_SUBTYPE_CHUNK_CRC     			:	return new RsTurtleChunkCrcItem();
 
 		default:
 			return NULL ;
@@ -1189,7 +1198,8 @@ bool ftServer::encryptItem(RsTurtleGenericTunnelItem *clear_item,const RsFileHas
 	FTSERVER_DEBUG() << "  random nonce    : " << RsUtil::BinToHex(initialization_vector,ENCRYPTED_FT_INITIALIZATION_VECTOR_SIZE) << std::endl;
 #endif
 
-	uint32_t total_data_size = ENCRYPTED_FT_HEADER_SIZE + ENCRYPTED_FT_INITIALIZATION_VECTOR_SIZE + ENCRYPTED_FT_EDATA_SIZE + clear_item->serial_size() + ENCRYPTED_FT_AUTHENTICATION_TAG_SIZE  ;
+    uint32_t item_serialized_size = size(clear_item) ;
+	uint32_t total_data_size = ENCRYPTED_FT_HEADER_SIZE + ENCRYPTED_FT_INITIALIZATION_VECTOR_SIZE + ENCRYPTED_FT_EDATA_SIZE + item_serialized_size + ENCRYPTED_FT_AUTHENTICATION_TAG_SIZE  ;
 
 #ifdef SERVER_DEBUG
 	FTSERVER_DEBUG() << "  clear part size : " << clear_item->serial_size() << std::endl;
@@ -1204,7 +1214,7 @@ bool ftServer::encryptItem(RsTurtleGenericTunnelItem *clear_item,const RsFileHas
 		return false ;
 
 	uint8_t *edata = (uint8_t*)encrypted_item->data_bytes ;
-	uint32_t edata_size = clear_item->serial_size() ;
+	uint32_t edata_size = item_serialized_size;
 	uint32_t offset = 0;
 
 	edata[0] = 0xae ;
@@ -1227,7 +1237,8 @@ bool ftServer::encryptItem(RsTurtleGenericTunnelItem *clear_item,const RsFileHas
 	offset += ENCRYPTED_FT_EDATA_SIZE ;
 
 	uint32_t ser_size = (uint32_t)((int)total_data_size - (int)offset);
-	clear_item->serialize(&edata[offset], ser_size);
+
+    serialise(clear_item,&edata[offset], &ser_size);
 
 #ifdef SERVER_DEBUG
 	FTSERVER_DEBUG() << "  clear item      : " << RsUtil::BinToHex(&edata[offset],std::min(50,(int)total_data_size-(int)offset)) << "(...)" << std::endl;
@@ -1331,7 +1342,7 @@ bool ftServer::decryptItem(RsTurtleGenericDataItem *encrypted_item,const RsFileH
 		return false ;
 	}
 
-	decrypted_item = deserialiseItem(&edata[clear_item_offset],edata_size) ;
+	decrypted_item = dynamic_cast<RsTurtleGenericTunnelItem*>(deserialise(&edata[clear_item_offset],&edata_size)) ;
 
 	if(decrypted_item == NULL)
 		return false ;
@@ -1518,6 +1529,83 @@ int	ftServer::tick()
 	return moreToTick;
 }
 
+bool ftServer::checkUploadLimit(const RsPeerId& pid,const RsFileHash& hash)
+{
+    // No need for this extra cost if the value means "unlimited"
+
+#ifdef SERVER_DEBUG
+    std::cerr << "Checking upload limit for friend " << pid << " and hash " << hash << ": " ;
+#endif
+
+    uint32_t max_ups = mFtController->getMaxUploadsPerFriend() ;
+
+	RS_STACK_MUTEX(srvMutex) ;
+
+    if(max_ups == 0)
+    {
+#ifdef SERVER_DEBUG
+        std::cerr << " no limit! returning true." << std::endl;
+#endif
+        return true ;
+    }
+#ifdef SERVER_DEBUG
+	std::cerr << " max=" << max_ups ;
+#endif
+
+    // Find the latest records for this pid.
+
+    std::map<RsFileHash,time_t>& tmap(mUploadLimitMap[pid]) ;
+    std::map<RsFileHash,time_t>::iterator it ;
+
+	time_t now = time(NULL) ;
+
+    // If the limit has been decresed, we arbitrarily drop some ongoing slots.
+
+    while(tmap.size() > max_ups)
+        tmap.erase(tmap.begin()) ;
+
+    // Look in the upload record map. If it's not full, directly allocate a slot. If full, re-use an existing slot if a file is already cited.
+
+    if(tmap.size() < max_ups || (tmap.size()==max_ups && tmap.end() != (it = tmap.find(hash))))
+    {
+#ifdef SERVER_DEBUG
+        std::cerr << " allocated slot for this hash => true" << std::endl;
+#endif
+
+        tmap[hash] = now ;
+        return true ;
+    }
+
+    // There's no room in the used slots, but maybe some of them are not used anymore, in which case we remove them, which freeze a slot.
+    uint32_t cleaned = 0 ;
+
+    for(it = tmap.begin();it!=tmap.end() && cleaned<2;)
+        if(it->second + FILE_TRANSFER_MAX_DELAY_BEFORE_DROP_USAGE_RECORD < now)
+		{
+			std::map<RsFileHash,time_t>::iterator tmp(it) ;
+            ++tmp;
+ 			tmap.erase(it) ;
+            it = tmp;
+            ++cleaned ;
+		}
+		else
+			++it ;
+
+    if(cleaned > 0)
+    {
+#ifdef SERVER_DEBUG
+        std::cerr << " cleaned up " << cleaned << " old hashes => true" << std::endl;
+#endif
+		tmap[hash] = now ;
+		return true ;
+    }
+
+#ifdef SERVER_DEBUG
+	std::cerr << " no slot for this hash => false" << std::endl;
+#endif
+    return false ;
+}
+
 int ftServer::handleIncoming()
 {
 	// now File Input.
@@ -1534,7 +1622,8 @@ int ftServer::handleIncoming()
 		case RS_PKT_SUBTYPE_FT_DATA_REQUEST:
 		{
 			RsFileTransferDataRequestItem *f = dynamic_cast<RsFileTransferDataRequestItem*>(item) ;
-			if (f)
+
+			if (f && checkUploadLimit(f->PeerId(),f->file.hash))
 			{
 #ifdef SERVER_DEBUG
 				FTSERVER_DEBUG() << "ftServer::handleIncoming: received data request for hash " << f->file.hash << ", offset=" << f->fileoffset << ", chunk size=" << f->chunksize << std::endl;

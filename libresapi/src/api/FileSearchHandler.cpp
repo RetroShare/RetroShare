@@ -10,8 +10,8 @@
 namespace resource_api
 {
 
-FileSearchHandler::FileSearchHandler(StateTokenServer *sts, RsNotify *notify, RsTurtle *turtle, RsFiles *files):
-    mStateTokenServer(sts), mNotify(notify), mTurtle(turtle), mFiles(files),
+FileSearchHandler::FileSearchHandler(StateTokenServer *sts, RsNotify *notify, RsTurtle *turtle, RsFiles */*files*/):
+    mStateTokenServer(sts), mNotify(notify), mTurtle(turtle),// mFiles(files),
     mMtx("FileSearchHandler")
 {
     mNotify->registerNotifyClient(this);

@@ -1,4 +1,4 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="ca_ES" version="2.1">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="ca_ES" version="2.0">
 <context>
     <name>AudioInput</name>
     <message>
@@ -24,7 +24,7 @@
     <message>
         <location line="+3"/>
         <source>&lt;b&gt;This sets when speech should be transmitted.&lt;/b&gt;&lt;br /&gt;&lt;i&gt;Continuous&lt;/i&gt; - All the time&lt;br /&gt;&lt;i&gt;Voice Activity&lt;/i&gt; - When you are speaking clearly.&lt;br /&gt;&lt;i&gt;Push To Talk&lt;/i&gt; - When you hold down the hotkey set under &lt;i&gt;Shortcuts&lt;/i&gt;.</source>
-        <translation>&lt;b&gt;Això estableix quan la veu serà transmesa.&lt;/b&gt;&lt;br /&gt;&lt;i&gt;Continuous&lt;/i&gt; - Tota l&apos;estona&lt;br /&gt;&lt;i&gt;Veu activa&lt;/i&gt; - Quan estàs clarament parlant.&lt;br /&gt;&lt;i&gt;Premer per parlar&lt;/i&gt; - Quan mantens premuda la tecla especificada a &lt;i&gt;Dreceres&lt;/i&gt;.</translation>
+        <translation>&lt;b&gt;Estableix quan la veu serà transmesa.&lt;/b&gt;&lt;br /&gt;&lt;i&gt;Continuament&lt;/i&gt; - Tota l&apos;estona&lt;br /&gt;&lt;i&gt;Activitat de veu&lt;/i&gt; - Quan estàs clarament parlant.&lt;br /&gt;&lt;i&gt;Prémer per parlar&lt;/i&gt; - Quan mantens premuda la tecla especificada a &lt;i&gt;Dreceres de teclat&lt;/i&gt;.</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -54,7 +54,7 @@
     <message>
         <location line="+3"/>
         <source>&lt;b&gt;This selects how long after a perceived stop in speech transmission should continue.&lt;/b&gt;&lt;br /&gt;Set this higher if your voice breaks up when you speak (seen by a rapidly blinking voice icon next to your name).</source>
-        <translation>&lt;b&gt;Això defineix quan de temps després d&apos;una pausa a la conversa ha de continuar la transmissió.&lt;/b&gt;Posa un valor més alt si la veu s&apos;entretalla quan parles (ho veuràs perquè l&apos;icona de veu pampalluguejarà al costat del teu nom)&lt;br /&gt;.</translation>
+        <translation>&lt;b&gt;Defineix quan de temps després d&apos;una pausa a la conversa ha de continuar la transmissió.&lt;/b&gt;Posa un valor més alt si la veu s&apos;entretalla quan parles (ho veuràs perquè la icona de veu pampalluguejarà al costat del teu nom)&lt;br /&gt;.</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -120,7 +120,7 @@
     <message>
         <location line="+3"/>
         <source>&lt;b&gt;Maximum amplification of input.&lt;/b&gt;&lt;br /&gt;RetroShare normalizes the input volume before compressing, and this sets how much it&apos;s allowed to amplify.&lt;br /&gt;The actual level is continually updated based on your current speech pattern, but it will never go above the level specified here.&lt;br /&gt;If the &lt;i&gt;Microphone loudness&lt;/i&gt; level of the audio statistics hover around 100%, you probably want to set this to 2.0 or so, but if, like most people, you are unable to reach 100%, set this to something much higher.&lt;br /&gt;Ideally, set it so &lt;i&gt;Microphone Loudness * Amplification Factor &gt;= 100&lt;/i&gt;, even when you&apos;re speaking really soft.&lt;br /&gt;&lt;br /&gt;Note that there is no harm in setting this to maximum, but RetroShare will start picking up other conversations if you leave it to auto-tune to that level.</source>
-        <translation>&lt;b&gt;Amplificació màxima d&apos;entrada.&lt;/b&gt;&lt;br /&gt;RetroShare normalitza el volum d&apos;entrada abans de la compressió, i això estableix quant se li permet amplificar.&lt;br /&gt;El nivell real s&apos;actualitza contínuament basat en el seu patró de veu actual, però mai sobrepassarà el nivell especificat aquí.&lt;br /&gt;Si el nivell de &lt;i&gt; Volum del Micròfon &lt;/i&gt; de les estadístiques d&apos;àudio ronda el 100%, probablement desitgi establir això al voltant de 2.0, però si, com la majoria de la gent, no aconsegueix aconseguir el 100%, estableixi això a alguna cosa molt major.&lt;br /&gt; Idealment, fixi-ho de tal forma que el &lt;i&gt; Volum del Micròfon * Factor d&apos;Amplificació &gt;= 100 &lt;/i&gt; , fins i tot quan parli realment baix.&lt;br /&gt;&lt;br /&gt; Tingui en compte que no és perjudicial establir això al màxim, però RetroShare començarà a captar altres converses si ho deixa auto-ajustar-se a aquest nivell.</translation>
+        <translation>&lt;b&gt;Amplificació màxima d&apos;entrada.&lt;/b&gt;&lt;br /&gt;Retroshare normalitza el volum d&apos;entrada abans de la compressió, i això estableix quant se li permet amplificar.&lt;br /&gt;El nivell real s&apos;actualitza contínuament basat en el seu patró de veu actual, però mai sobrepassarà el nivell especificat aquí.&lt;br /&gt;Si el nivell de &lt;i&gt; Volum del Micròfon &lt;/i&gt; de les estadístiques d&apos;àudio ronda el 100%, probablement desitgi establir això al voltant de 2.0, però si, com la majoria de la gent, no aconsegueix aconseguir el 100%, estableixi això a alguna cosa molt major.&lt;br /&gt; Idealment, fixi-ho de tal forma que el &lt;i&gt; Volum del Micròfon * Factor d&apos;Amplificació &gt;= 100 &lt;/i&gt; , fins i tot quan parli realment baix.&lt;br /&gt;&lt;br /&gt; Tingui en compte que no és perjudicial establir això al màxim, però Retroshare començarà a captar altres converses si ho deixa auto-ajustar-se a aquest nivell.</translation>
     </message>
     <message>
         <location line="+32"/>
@@ -128,15 +128,40 @@
         <translation>Processant cancel·lació d&apos;eco</translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="+15"/>
         <source>Video Processing</source>
         <translation>Processat de vídeo</translation>
+    </message>
+    <message>
+        <location line="+43"/>
+        <source>Available bandwidth:</source>
+        <translation>Ample de banda disponible:</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Use this field to simulate the maximum bandwidth available so as to preview what the encoded video will look like with the corresponding compression rate.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Utilitza aquest camp per simular l&apos;ample de banda màxim disponible per previsualitzar com es veurà el vídeo amb el corresponent ratio de compressió.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>KB/s</source>
+        <translation>KB/s</translation>
+    </message>
+    <message>
+        <location line="+21"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Display encoded (and then decoded) frame, to check the codec&apos;s quality. If not selected, the image above only shows the frame that is grabbed from your camera.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Mostra un fotograma codificat (i després descodificat) per comprovar la qualitat del codec. Si no es selecciona, la imatge superior només mostra el fotograma tal i com el captura la teva càmera.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>preview</source>
+        <translation>Visualització prèvia</translation>
     </message>
 </context>
 <context>
     <name>AudioInputConfig</name>
     <message>
-        <location filename="../gui/AudioInputConfig.cpp" line="+115"/>
+        <location filename="../gui/AudioInputConfig.cpp" line="+202"/>
         <source>Continuous</source>
         <translation>Continuu</translation>
     </message>
@@ -166,7 +191,7 @@
         <translation>-%1 dB</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.h" line="+75"/>
+        <location filename="../gui/AudioInputConfig.h" line="+94"/>
         <source>VOIP</source>
         <translation>VeuIP</translation>
     </message>
@@ -238,7 +263,7 @@
     <message>
         <location line="+3"/>
         <source>This shows how close your current input volume is to the ideal. To adjust your microphone level, open whatever program you use to adjust the recording volume, and look at the value here while talking.&lt;br /&gt;&lt;b&gt;Talk loud, as you would when you&apos;re upset over getting fragged by a noob.&lt;/b&gt;&lt;br /&gt;Adjust the volume until this value is close to 100%, but make sure it doesn&apos;t go above. If it does go above, you are likely to get clipping in parts of your speech, which will degrade sound quality.</source>
-        <translation type="unfinished"/>
+        <translation>Mostra quant de proper a l&apos;ideal és el teu nivell de volum d&apos;entrada actual. Per ajustar el nivell del micròfon, obre el programa que utilitzes per ajustar el volum de gravació, i observa aquí el valor mentre parles.&lt;br /&gt;&lt;b&gt;Parla alt, com ho faries quan estàs enfadat per perdre contra un novell.&lt;/b&gt;&lt;br /&gt;Ajusta el volum fins que el valor estigui proper al 100%, però assegurat que no el sobrepassa. Si el sobrepassa, és probable que es produeixin talls en parts de la conversa, fet que degradarà la qualitat del so.</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -253,7 +278,7 @@
     <message>
         <location line="+3"/>
         <source>This is the Signal-To-Noise Ratio (SNR) of the microphone in the last frame (20 ms). It shows how much clearer the voice is compared to the noise.&lt;br /&gt;If this value is below 1.0, there&apos;s more noise than voice in the signal, and so quality is reduced.&lt;br /&gt;There is no upper limit to this value, but don&apos;t expect to see much above 40-50 without a sound studio.</source>
-        <translation type="unfinished"/>
+        <translation>Mostra la Relació Senyal/Soroll (SNR en anglès) del micròfon en l&apos;últim tram (20 ms). Mostra quant clara és la veu en comparació amb el soroll.&lt;br /&gt;Si aquest valor està por sota de 1.0, hi ha més soroll que veu a la senyal, i per tant es redueix la qualitat.&lt;br /&gt;No hi ha límit superior per aquest valor, però no esperis veure&apos;l molt per sobre de 40-50 sense un estudi de so.</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -268,7 +293,7 @@
     <message>
         <location line="+3"/>
         <source>This is the probability that the last frame (20 ms) was speech and not environment noise.&lt;br /&gt;Voice activity transmission depends on this being right. The trick with this is that the middle of a sentence is always detected as speech; the problem is the pauses between words and the start of speech. It&apos;s hard to distinguish a sigh from a word starting with &apos;h&apos;.&lt;br /&gt;If this is in bold font, it means RetroShare is currently transmitting (if you&apos;re connected).</source>
-        <translation type="unfinished"/>
+        <translation>Aquesta és la probabilitat de que l&apos;últim tram (20 ms) fos veu i no soroll ambient.&lt;br /&gt;La transmissió per Activitat de Veu depèn de la correcció d&apos;aquest valor. El truco d&apos;això és que la meitat d&apos;una frase es detecta sempre com veu, el problema son les pauses entre paraules i el principi de la conversa. És difícil diferenciar un sospir d&apos;una paraula que comenci amb &apos;h&apos; aspirada.&lt;br /&gt;Si això està en font negreta, significa que el Retroshare està transmetent actualment (si està connectat).</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -288,7 +313,7 @@
     <message>
         <location line="+3"/>
         <source>This is the audio bitrate of the last compressed frame (20 ms), and as such will jump up and down as the VBR adjusts the quality. The peak bitrate can be adjusted in the Settings dialog.</source>
-        <translation type="unfinished"/>
+        <translation>Aquesta és la velocitat de transmissió de l&apos;últim tram comprimit (20 ms), i com tal, augmentarà i disminuirà mentre el VBR ajusta la qualitat. Pots ajustar la velocitat de transmissió màxima en el quadre de diàleg Opcions.</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -298,7 +323,7 @@
     <message>
         <location line="+13"/>
         <source>Time between last two Push-To-Talk presses</source>
-        <translation type="unfinished"/>
+        <translation>Temps entre les dues últimes pulsacions de Presionar-Per-Parlar</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -313,7 +338,7 @@
     <message>
         <location line="+3"/>
         <source>&lt;b&gt;This shows the current speech detection settings.&lt;/b&gt;&lt;br /&gt;You can change the settings from the Settings dialog or from the Audio Wizard.</source>
-        <translation type="unfinished"/>
+        <translation>&lt;b&gt;Mostra les opcions actuals de detecció de conversa.&lt;/b&gt;&lt;br /&gt;Pot canviar les opcions des del quadre de diàleg Opcions o des de l&apos;Assistent d&apos;àudio.</translation>
     </message>
     <message>
         <location line="+29"/>
@@ -328,7 +353,7 @@
     <message>
         <location line="+3"/>
         <source>This shows the power spectrum of the current input signal (red line) and the current noise estimate (filled blue).&lt;br /&gt;All amplitudes are multiplied by 30 to show the interesting parts (how much more signal than noise is present in each waveband).&lt;br /&gt;This is probably only of interest if you&apos;re trying to fine-tune noise conditions on your microphone. Under good conditions, there should be just a tiny flutter of blue at the bottom. If the blue is more than halfway up on the graph, you have a seriously noisy environment.</source>
-        <translation type="unfinished"/>
+        <translation>Mostra l&apos;espectre de potència de la senyal d&apos;entrada actual (línia vermella) i l&apos;estimació de soroll actual (emplenat blau).&lt;br /&gt;Totes les amplituds es multipliquen per 30 per mostrar les parts interessants (quant més senyal que soroll hi ha present en cada banda d&apos;onda).&lt;br /&gt;Això probablement tingui interès només si estàs tractant d&apos;ajustar amb precisió les condicions de soroll del teu micròfon. Sota bones condicions, hauria d&apos;haver només una petita palpitació de blau a la part inferior. Si el blau sobrepassa més de la meitat del gràfic, tens un entorn molt sorollós.</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -343,7 +368,7 @@
     <message>
         <location line="+3"/>
         <source>This shows the weights of the echo canceller, with time increasing downwards and frequency increasing to the right.&lt;br /&gt;Ideally, this should be black, indicating no echo exists at all. More commonly, you&apos;ll have one or more horizontal stripes of bluish color representing time delayed echo. You should be able to see the weights updated in real time.&lt;br /&gt;Please note that as long as you have nothing to echo off, you won&apos;t see much useful data here. Play some music and things should stabilize. &lt;br /&gt;You can choose to view the real or imaginary parts of the frequency-domain weights, or alternately the computed modulus and phase. The most useful of these will likely be modulus, which is the amplitude of the echo, and shows you how much of the outgoing signal is being removed at that time step. The other viewing modes are mostly useful to people who want to tune the echo cancellation algorithms.&lt;br /&gt;Please note: If the entire image fluctuates massively while in modulus mode, the echo canceller fails to find any correlation whatsoever between the two input sources (speakers and microphone). Either you have a very long delay on the echo, or one of the input sources is configured wrong.</source>
-        <translation type="unfinished"/>
+        <translation>Mostra la carrega del cancel·lador d&apos;eco, amb el temps incrementant-se cap avall i la freqüència incrementant-se cap a la dreta.&lt;br /&gt;Idealment, això hauria de ser negre, indicant que no existeix cap eco. Més freqüentment, hi haurà una o més bandes horitzontals de color blavós que representen eco enrederit en el temps. Hauries de poder verue la carrega actualitzada en temps real.&lt;br /&gt;Fixa&apos;t que mentre no hi hagi res d&apos;eco per cancel·lar, no veuràs dades massa útils aquí. Reprodueix una mica de música i les coses haurien d&apos;estabilitzar-se.&lt;br /&gt;Pots escollir veure les parts reals o imaginaries de la carrega en el domini de la freqüència, o de forma alternativa el mòdul i la fase calculats. El més útil d&apos;això probablement sigui el mòdul, que és l&apos;amplitud de l&apos;eco, i mostra quanta de la senyal sortint està sent eliminada en aquest pas de temps. Els altres modes de visionat són útils per persones que vulguin ajustar els algorismes de cancel·lació d&apos;eco.&lt;br /&gt;Si us plau, fixa&apos;t en que si la imatge completa fluctua àmpliament mentre està en el mode mòdul, el cancel·lador d&apos;eco no aconsegueix trobar cap correlació entre les dues fonts d&apos;entrada (altaveus i micròfon). O tens un retard molt llarg a l&apos;eco, o una de les fonts d&apos;entrada està mal configurada.</translation>
     </message>
 </context>
 <context>
@@ -364,7 +389,7 @@
         <translation>Benvingut a l&apos;assistent de so del RetroShare</translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+6"/>
         <source>This is the audio tuning wizard for RetroShare. This will help you correctly set the input levels of your sound card, and also set the correct parameters for sound processing in Retroshare. </source>
         <translation>Est és l&apos;assistent per a l&apos;ajust d&apos;àudio de RetroShare. Li ajudarà a establir correctament els nivells d&apos;entrada de la seva targeta de so, i també fixarà els paràmetres correctes per al processament de so en RetroShare.</translation>
     </message>
@@ -379,13 +404,14 @@
         <translation>Calibrant el volum de maquinari del micròfon a nivells òptims.</translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+6"/>
         <source>&lt;p &gt;Open your sound control panel and go to the recording settings. Make sure the microphone is selected as active input with maximum recording volume. If there's an option to enable a &amp;quot;Microphone boost&amp;quot; make sure it's checked. &lt;/p&gt;
 &lt;p&gt;Speak loudly, as when you are annoyed or excited. Decrease the volume in the sound control panel until the bar below stays as high as possible in the green and orange but not the red zone while you speak. &lt;/p&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;p&gt;Obra el teu panell de control de so i ves a les opcions de gravació. Assegura&apos;t que el micròfon estigui seleccionat com l&apos;entrada activa i amb el màxim volum de gravació. Si existeix una opció per habilitar un &amp;quot;Potenciador del micròfon&amp;quot; assegura&apos;t de que està activada.&lt;/p&gt;
+ &lt;p&gt;Parla fort en veu alta, com quan estàs molest o entusiasmat. Baixa el volum en el panell de control de so fins que la barra de sota es mantingui, mentre parles, tant alta com sigui possible en la zona verda i taronja però &lt;b&gt;no&lt;/b&gt; en la zona vermella.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location line="+16"/>
+        <location line="+11"/>
         <source>Talk normally, and adjust the slider below so that the bar moves into green when you talk, and doesn&apos;t go into the orange zone.</source>
         <translation>Parli normalment, ajust-te el control lliscant de baix perquè la barra es mogui a la zona verda quan parla, i no entri a la zona taronja.</translation>
     </message>
@@ -450,7 +476,7 @@
         <translation>Gaudeix utilitzant el RetroShare</translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+6"/>
         <source>Congratulations. You should now be ready to enjoy a richer sound experience with Retroshare.</source>
         <translation>Enhorabona. Ara hauria d&apos;estar llest per gaudir una experiència de so més rica amb RetroShare.</translation>
     </message>
@@ -458,7 +484,7 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="+124"/>
+        <location filename="../VOIPPlugin.cpp" line="+128"/>
         <source>&lt;h3&gt;RetroShare VOIP plugin&lt;/h3&gt;&lt;br/&gt;   * Contributors: Cyril Soler, Josselin Jacquard&lt;br/&gt;</source>
         <translation>&lt;h3&gt;Connector VeuIP RetroShare &lt;/h3&gt;&lt;br/&gt; * Col·laboradors: Cyril Soler, Josselin Jacquard&lt;br/&gt;</translation>
     </message>
@@ -496,35 +522,115 @@
 <context>
     <name>VOIP</name>
     <message>
-        <location line="+49"/>
+        <location line="+47"/>
         <source>This plugin provides voice communication between friends in RetroShare.</source>
         <translation>Aquest complement proporciona comunicació per veu amb els teus amics al RetroShare.</translation>
+    </message>
+    <message>
+        <location line="+40"/>
+        <location line="+4"/>
+        <location line="+4"/>
+        <location line="+4"/>
+        <source>VOIP</source>
+        <translation>VeuIP</translation>
+    </message>
+    <message>
+        <location line="-11"/>
+        <source>Incoming audio call</source>
+        <translation>Trucada de veu entrant</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Incoming video call</source>
+        <translation>Videotrucada entrant</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Outgoing audio call</source>
+        <translation>Trucada de veu sortint</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Outgoing video call</source>
+        <translation>Videotrucada sortint</translation>
     </message>
 </context>
 <context>
     <name>VOIPChatWidgetHolder</name>
     <message>
-        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="+63"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="+70"/>
+        <location line="+146"/>
         <source>Mute</source>
         <translation>Silenci</translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="-128"/>
+        <location line="+138"/>
         <source>Start Call</source>
         <translation>Comença trucada</translation>
     </message>
     <message>
-        <location line="+28"/>
+        <location line="-121"/>
+        <location line="+131"/>
         <source>Start Video Call</source>
         <translation>Inicia videotrucada</translation>
     </message>
     <message>
-        <location line="-14"/>
+        <location line="-121"/>
+        <location line="+131"/>
         <source>Hangup Call</source>
         <translation>Penjar trucada</translation>
     </message>
     <message>
-        <location line="+79"/>
+        <location line="-113"/>
+        <location line="+626"/>
+        <source>Hide Chat Text</source>
+        <translation>Oculta el xat de text</translation>
+    </message>
+    <message>
+        <location line="-608"/>
+        <location line="+106"/>
+        <location line="+523"/>
+        <source>Fullscreen mode</source>
+        <translation>Mode a pantalla completa</translation>
+    </message>
+    <message>
+        <location line="-412"/>
+        <source>%1 inviting you to start an audio conversation. Do you want Accept or Decline the invitation?</source>
+        <translation>%1 li està convidant a iniciar una conversa d&apos;àudio. Vol Acceptar o Declinar la invitació?</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Accept Audio Call</source>
+        <translation>Acceptar trucada d&apos;àudio</translation>
+    </message>
+    <message>
+        <location line="+17"/>
+        <source>Decline Audio Call</source>
+        <translation>Declinar trucada d&apos;àudio</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Refuse audio call</source>
+        <translation>Refusar trucada d&apos;àufio</translation>
+    </message>
+    <message>
+        <location line="+33"/>
+        <source>%1 inviting you to start a video conversation. Do you want Accept or Decline the invitation?</source>
+        <translation>%1 l&apos;està convidant a iniciar una Videotrucada. Vol Acceptar o Declinar la invitació?</translation>
+    </message>
+    <message>
+        <location line="+19"/>
+        <source>Decline Video Call</source>
+        <translation>Declinar videotrucada</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Refuse video call</source>
+        <translation>Refusar videotrucada</translation>
+    </message>
+    <message>
+        <location line="+102"/>
         <source>Mute yourself</source>
         <translation>Silencia&apos;t</translation>
     </message>
@@ -534,83 +640,129 @@
         <translation>Desilencia&apos;t</translation>
     </message>
     <message>
-        <location line="+19"/>
-        <location line="+37"/>
-        <location line="+38"/>
-        <location line="+18"/>
-        <location line="+13"/>
-        <location line="+92"/>
+        <location line="+589"/>
+        <source>Waiting your friend respond your video call.</source>
+        <translation>Esperant que el teu amic respongui la teva videotrucada</translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Your friend is calling you for video. Respond.</source>
+        <translation>El teu amic t&apos;està videotrucant. Respon.</translation>
+    </message>
+    <message>
+        <location line="-781"/>
+        <location line="+53"/>
+        <location line="+188"/>
+        <location line="+24"/>
+        <location line="+57"/>
+        <location line="+28"/>
+        <location line="+284"/>
+        <location line="+11"/>
+        <location line="+11"/>
+        <location line="+21"/>
+        <location line="+11"/>
         <source>VoIP Status</source>
         <translation>Estat VeuIP</translation>
     </message>
     <message>
-        <location line="-198"/>
-        <source>Outgoing Call stopped.</source>
-        <translation>Trucada sortint parada.</translation>
-    </message>
-    <message>
-        <location line="+19"/>
+        <location line="-467"/>
         <source>Hold Call</source>
         <translation>Trucada en espera</translation>
     </message>
     <message>
-        <location line="+18"/>
+        <location line="+20"/>
         <source>Outgoing Call is started...</source>
         <translation>Iniciada trucada sortint...</translation>
     </message>
     <message>
-        <location line="+15"/>
+        <location line="+9"/>
         <source>Resume Call</source>
         <translation>Continuar trucada</translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location line="+16"/>
+        <source>Outgoing Audio Call stopped.</source>
+        <translation>Trucada d&apos;àudio sortint parada.</translation>
+    </message>
+    <message>
+        <location line="+46"/>
         <source>Shut camera off</source>
         <translation>tancar la càmera</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+11"/>
         <source>You&apos;re now sending video...</source>
         <translation>Es troba enviant vídeo...</translation>
     </message>
     <message>
-        <location line="+12"/>
-        <location line="+21"/>
+        <location line="-266"/>
+        <location line="+279"/>
         <source>Activate camera</source>
         <translation>Activar càmera</translation>
     </message>
     <message>
-        <location line="-15"/>
+        <location line="+15"/>
         <source>Video call stopped</source>
         <translation>Videotrucada aturada</translation>
     </message>
     <message>
-        <location line="+13"/>
-        <source>%1 inviting you to start a video conversation. do you want Accept or Decline the invitation?</source>
-        <translation>%1 li està convidant a iniciar una Videoconferència. Vol acceptar o declinar la invitació?</translation>
-    </message>
-    <message>
-        <location line="+1"/>
+        <location line="-295"/>
         <source>Accept Video Call</source>
         <translation>Acceptar Videoconferència </translation>
     </message>
     <message>
-        <location line="+91"/>
-        <source>%1 inviting you to start a audio conversation. do you want Accept or Decline the invitation?</source>
-        <translation>%1 li està convidant a iniciar una conversa d&apos;àudio. Vol acceptar o declinar la invitació?</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Accept Call</source>
-        <translation>Acceptar trucada</translation>
-    </message>
-    <message>
-        <location line="+1"/>
+        <location line="-52"/>
         <source>Activate audio</source>
         <translation>Activar àudio</translation>
     </message>
     <message>
+        <location line="+384"/>
+        <source>Show Chat Text</source>
+        <translation>Mostra xat de text</translation>
+    </message>
+    <message>
+        <location line="+19"/>
+        <source>Return to normal view.</source>
+        <translation>Torna a visualitzacio normal.</translation>
+    </message>
+    <message>
+        <location line="+228"/>
+        <source>%1 hang up. Your call is closed.</source>
+        <translation>%1 ha penjat. S&apos;ha acabat la trucada.</translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>%1 hang up. Your audio call is closed.</source>
+        <translation>%1 ha penjat. S&apos;ha acabat la trucada d&apos;àudio.</translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>%1 hang up. Your video call is closed.</source>
+        <translation>%1 ha penjat. S&apos;ha acabat la videotrucada.</translation>
+    </message>
+    <message>
         <location line="+21"/>
+        <source>%1 accepted your audio call.</source>
+        <translation>%1 ha acceptat la teva trucada d&apos;àudio.</translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>%1 accepted your video call.</source>
+        <translation>%1 ha acceptat la teva videotrucada.</translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>Waiting your friend respond your audio call.</source>
+        <translation>Esperant que el teu amic respongui la teva trucada d&apos;àudio.</translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Your friend is calling you for audio. Respond.</source>
+        <translation>El teu amic t&apos;està trucant per àudio. Respon.</translation>
+    </message>
+    <message>
+        <location line="+17"/>
+        <location line="+58"/>
         <source>Answer</source>
         <translation>Respon</translation>
     </message>
@@ -618,7 +770,7 @@
 <context>
     <name>VOIPPlugin</name>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="+5"/>
+        <location filename="../VOIPPlugin.cpp" line="-48"/>
         <source>VOIP</source>
         <translation>VeuIP</translation>
     </message>
@@ -634,6 +786,11 @@
         <location line="+4"/>
         <source>Answer with video</source>
         <translation>Respondre amb vídeo</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPToasterItem.ui" line="+232"/>
+        <source>Decline</source>
+        <translation>Declina</translation>
     </message>
 </context>
 <context>
@@ -743,6 +900,14 @@
         <location line="+24"/>
         <source>calling</source>
         <translation>trucant</translation>
+    </message>
+</context>
+<context>
+    <name>voipGraphSource</name>
+    <message>
+        <location filename="../gui/AudioInputConfig.cpp" line="-260"/>
+        <source>Required bandwidth</source>
+        <translation>Ample de banda necessari</translation>
     </message>
 </context>
 </TS>

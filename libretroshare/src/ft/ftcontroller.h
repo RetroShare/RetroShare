@@ -53,7 +53,7 @@ class p3ServiceControl;
 #include "pqi/p3cfgmgr.h"
 
 #include "retroshare/rsfiles.h"
-#include "serialiser/rsconfigitems.h"
+#include "rsitems/rsconfigitems.h"
 
 #include <map>
 
@@ -145,6 +145,9 @@ class ftController: public RsTickingThread, public pqiServiceMonitor, public p3C
 		uint32_t freeDiskSpaceLimit() const ;
 		void setFreeDiskSpaceLimit(uint32_t size_in_mb) ;
         uint32_t defaultEncryptionPolicy();
+
+        void setMaxUploadsPerFriend(uint32_t m) ;
+        uint32_t getMaxUploadsPerFriend() ;
 
         bool 	FileCancel(const RsFileHash& hash);
         bool 	FileControl(const RsFileHash& hash, uint32_t flags);
@@ -261,7 +264,8 @@ class ftController: public RsTickingThread, public pqiServiceMonitor, public p3C
 
 		FileChunksInfo::ChunkStrategy mDefaultChunkStrategy ;
 
-		uint32_t _max_active_downloads ; // maximum number of simultaneous downloads
+		uint32_t _max_active_downloads ;   // maximum number of simultaneous downloads
+		uint32_t _max_uploads_per_friend ; // maximum number of uploads per friend. 0 means unlimited.
 };
 
 #endif

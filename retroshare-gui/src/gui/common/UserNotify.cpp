@@ -99,7 +99,7 @@ void UserNotify::initialize(QToolBar *mainToolBar, QAction *mainAction, QListWid
 		}
 	}
 	mListItem = listItem;
-	if (mListItem && !mMainAction) {
+	if (mListItem && mMainAction) {
 		mButtonText = mMainAction->text();
 	}
 }

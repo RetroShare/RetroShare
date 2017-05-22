@@ -13,14 +13,14 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout">
+  <layout class="QHBoxLayout" name="SettingsHLayout">
    <item>
     <widget class="QListWidget" name="listWidget">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Maximum" vsizetype="Expanding">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
+     <property name="maximumSize">
+      <size>
+       <width>50</width>
+       <height>16777215</height>
+      </size>
      </property>
      <property name="font">
       <font>
@@ -39,42 +39,15 @@
      <property name="textElideMode">
       <enum>Qt::ElideRight</enum>
      </property>
-     <property name="movement">
-      <enum>QListView::Static</enum>
-     </property>
-     <property name="flow">
-      <enum>QListView::TopToBottom</enum>
-     </property>
-     <property name="isWrapping" stdset="0">
-      <bool>false</bool>
-     </property>
-     <property name="resizeMode">
-      <enum>QListView::Fixed</enum>
-     </property>
-     <property name="layoutMode">
-      <enum>QListView::SinglePass</enum>
-     </property>
-     <property name="spacing">
-      <number>0</number>
-     </property>
-     <property name="viewMode">
-      <enum>QListView::ListMode</enum>
-     </property>
-     <property name="modelColumn">
-      <number>0</number>
-     </property>
      <property name="uniformItemSizes">
       <bool>true</bool>
-     </property>
-     <property name="currentRow">
-      <number>-1</number>
      </property>
     </widget>
    </item>
    <item>
-    <layout class="QVBoxLayout" name="verticalLayout_2">
+    <layout class="QVBoxLayout" name="rightVLayout">
      <item>
-      <layout class="QGridLayout" name="gridLayout">
+      <layout class="QGridLayout" name="headerGLayout">
        <item row="0" column="2">
         <widget class="QToolButton" name="helpButton">
          <property name="focusPolicy">
@@ -125,7 +98,7 @@
         </widget>
        </item>
        <item row="1" column="0" colspan="3">
-        <widget class="Line" name="line_2">
+        <widget class="Line" name="headerLine">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
@@ -153,7 +126,7 @@
           <height>849</height>
          </rect>
         </property>
-        <layout class="QVBoxLayout" name="verticalLayout">
+        <layout class="QVBoxLayout" name="scrollAreaWidgetContentsVLayout">
          <property name="leftMargin">
           <number>3</number>
          </property>

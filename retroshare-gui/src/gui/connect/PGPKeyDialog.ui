@@ -307,7 +307,7 @@ p, li { white-space: pre-wrap; }
        <item>
         <widget class="QLabel" name="label_4">
          <property name="text">
-          <string>Below is the node's profile key in PGP ascii format. It identifies all nodes of the same profile. A &quot;Retroshare certificate&quot; that you can exchange in order to make friends, is in the the &quot;details&quot; of each separate node.</string>
+          <string>Below is the node's profile key in PGP ASCII format. It identifies all nodes of the same profile. A &quot;Retroshare certificate&quot; that you can exchange in order to make friends, is in the the &quot;details&quot; of each separate node.</string>
          </property>
          <property name="wordWrap">
           <bool>true</bool>

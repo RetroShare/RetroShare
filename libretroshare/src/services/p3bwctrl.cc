@@ -30,7 +30,7 @@
 #include "util/rsnet.h"
 
 #include "services/p3bwctrl.h"
-#include "serialiser/rsbwctrlitems.h"
+#include "rsitems/rsbwctrlitems.h"
 
 #include <sys/time.h>
 

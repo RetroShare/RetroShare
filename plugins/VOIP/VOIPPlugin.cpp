@@ -126,9 +126,9 @@ QDialog *VOIPPlugin::qt_about_page() const
 
 		QString text ;
 		text += QObject::tr("<h3>RetroShare VOIP plugin</h3><br/>   * Contributors: Cyril Soler, Josselin Jacquard<br/>") ;
-		text += QObject::tr("<br/>The VOIP plugin adds VOIP to the private chat window of RetroShare. to use it, proceed as follows:<UL>") ;
+		text += QObject::tr("<br/>The VOIP plugin adds VOIP to the private chat window of RetroShare. To use it, proceed as follows:<UL>") ;
 		text += QObject::tr("<li> setup microphone levels using the configuration panel</li>") ;
-		text += QObject::tr("<li> check your microphone by looking at the VU-metters</li>") ;
+		text += QObject::tr("<li> check your microphone by looking at the VU-meters</li>") ;
 		text += QObject::tr("<li> in the private chat, enable sound input/output by clicking on the two VOIP icons</li></ul>") ;
 		text += QObject::tr("Your friend needs to run the plugin to talk/listen to you, or course.") ;
 		text += QObject::tr("<br/><br/>This is an experimental feature. Don't hesitate to send comments and suggestion to the RS dev team.") ;

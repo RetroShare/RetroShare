@@ -25,7 +25,7 @@
 
 #include "retroshare/rsgxscommon.h"
 #include "services/p3gxscommon.h"
-#include "serialiser/rsgxscommentitems.h"
+#include "rsitems/rsgxscommentitems.h"
 #include "util/rsstring.h"
 
 #include <stdio.h>

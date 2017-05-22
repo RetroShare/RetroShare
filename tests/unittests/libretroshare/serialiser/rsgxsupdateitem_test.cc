@@ -8,7 +8,7 @@
 #include <gtest/gtest.h>
 
 #include "support.h"
-#include "serialiser/rsgxsupdateitems.h"
+#include "rsitems/rsgxsupdateitems.h"
 #define RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM	0x0010
 
 RsSerialType* init_item(RsGxsGrpUpdateItem& i)

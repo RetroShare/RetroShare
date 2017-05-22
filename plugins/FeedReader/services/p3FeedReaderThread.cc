@@ -651,7 +651,7 @@ static time_t parseRFC822Date(const std::string &pubDate)
 			offset = abs(offset);
 			offset = ((offset / 100)*60 + (offset % 100))*sgn;
 		} else {
-			for (int i=0; known_zones[i].tzName != 0; i++) {
+			for (int i=0; known_zones[i].tzName[0] != 0; i++) {
 				if (0 == strncasecmp(dateString, known_zones[i].tzName, strlen(known_zones[i].tzName))) {
 					offset = known_zones[i].tzOffset;
 					break;

@@ -40,7 +40,7 @@ static struct RsLog::logInfo pqipersonzoneInfo = {RsLog::Default, "pqiperson"};
 
 pqiperson::pqiperson(const RsPeerId& id, pqipersongrp *pg) :
 	PQInterface(id), mNotifyMtx("pqiperson-notify"), mPersonMtx("pqiperson"),
-	active(false), activepqi(NULL), inConnectAttempt(false), waittimes(0),
+	active(false), activepqi(NULL), inConnectAttempt(false),// waittimes(0),
 	pqipg(pg) {} // TODO: must check id!
 
 pqiperson::~pqiperson()

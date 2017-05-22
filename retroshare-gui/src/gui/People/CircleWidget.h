@@ -24,7 +24,7 @@ public:
 	          , const RsGxsCircleDetails& details);
 
 	//Start QWidget Properties
-	QSize sizeHint();
+	QSize sizeHint() const;
 	//Start FlowLayoutItem Properties
 	virtual const QPixmap getImage();
 	virtual const QPixmap getDragImage();

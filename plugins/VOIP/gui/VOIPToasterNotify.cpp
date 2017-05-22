@@ -180,7 +180,7 @@ ToasterItem* VOIPToasterNotify::testToasterItem(QString tag)
 	if (tag == "Invitation") toaster = new ToasterItem(new VOIPToasterItem(ownId, tr("Test VOIP Invitation"), VOIPToasterItem::Invitation));
 #endif
 	if (tag == "AudioCall") toaster = new ToasterItem(new VOIPToasterItem(ownId, tr("Test VOIP Audio Call"), VOIPToasterItem::AudioCall));
-	if (tag == "VideoCall") toaster = new ToasterItem(new VOIPToasterItem(ownId, tr("Test VOIP Video Call"), VOIPToasterItem::VideoCall));
+	if (tag == "VideoCall" || toaster == NULL) toaster = new ToasterItem(new VOIPToasterItem(ownId, tr("Test VOIP Video Call"), VOIPToasterItem::VideoCall));
 
 	return toaster;
 }
@@ -225,7 +225,7 @@ void VOIPToasterNotify::voipBandwidthInfoReceived(const RsPeerId &peer_id,int by
 	if (!mToasterBandwidthInfo.contains(peer_id)){
 		ToasterItemData toasterItemData;
 		toasterItemData.mPeerId = peer_id;
-		toasterItemData.mMsg = tr("Bandwidth Info received from this peer:%1").arg(bytes_per_sec);
+		toasterItemData.mMsg = tr("Bandwidth Info received from this peer: %1").arg(bytes_per_sec);
 
 		mPendingToasterBandwidthInfo.push_back(toasterItemData);
 		mToasterBandwidthInfo.insert(peer_id, NULL);

@@ -46,8 +46,11 @@
 #include "rsharesettings.h"
 #include "gui/notifyqt.h"
 #include "gui/common/FloatingHelpBrowser.h"
+#include "gui/common/RSElidedItemDelegate.h"
 
 #define IMAGE_GENERAL       ":/images/kcmsystem24.png"
+
+#define ITEM_SPACING 2
 
 #include "rsettingswin.h"
 
@@ -62,6 +65,11 @@ SettingsPage::SettingsPage(QWidget *parent)
 
     /* Initialize help browser */
     mHelpBrowser = new FloatingHelpBrowser(this, ui.helpButton);
+
+    /* Add own item delegate to get item width*/
+    RSElidedItemDelegate *itemDelegate = new RSElidedItemDelegate(this);
+    itemDelegate->setSpacing(QSize(0, ITEM_SPACING));
+    ui.listWidget->setItemDelegate(itemDelegate);
 
     initStackedWidget();
 
@@ -179,8 +187,13 @@ void SettingsPage::addPage(ConfigPage *page)
 {
 	ui.stackedWidget->addWidget(page) ;
 
-	QListWidgetItem *item = new QListWidgetItem(QIcon(page->iconPixmap()),page->pageName()) ;
-	ui.listWidget->addItem(item) ;
+	QListWidgetItem *item = new QListWidgetItem(QIcon(page->iconPixmap()),page->pageName(),ui.listWidget) ;
+	QFontMetrics fontMetrics = ui.listWidget->fontMetrics();
+	int w = ITEM_SPACING*8;
+	w += ui.listWidget->iconSize().width();
+	w += fontMetrics.width(item->text());
+	if (w > ui.listWidget->maximumWidth())
+		ui.listWidget->setMaximumWidth(w);
 }
 
 void

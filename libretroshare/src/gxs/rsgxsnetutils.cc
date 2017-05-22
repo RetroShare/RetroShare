@@ -45,7 +45,7 @@ bool AuthorPending::getAuthorRep(GixsReputation& rep, const RsGxsId& authorId, c
     rep.id = authorId ;
     rep.reputation_level = mRep->overallReputationLevel(authorId);
 
-#warning can it happen that reputations do not have the info yet?
+#warning csoler 2017-01-10: Can it happen that reputations do not have the info yet?
     return true ;
 #ifdef TO_BE_REMOVED
 	{

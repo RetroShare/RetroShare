@@ -26,10 +26,12 @@
 #include <iostream>
 
 #include "p3servicecontrol.h"
-#include "serialiser/rsserviceids.h"
-#include "serialiser/rsserial.h"
-#include "serialiser/rsbaseserial.h"
+#include "rsitems/rsserviceids.h"
+#include "rsitems/rsitem.h"
+#include "serialiser/rstypeserializer.h"
+#include "rsitems/rsnxsitems.h"
 #include "pqi/p3cfgmgr.h"
+#include "pqi/pqiservice.h"
 
 /*******************************/
 // #define SERVICECONTROL_DEBUG	1
@@ -41,184 +43,40 @@ class RsServiceControlItem: public RsItem
 {
 public:
     RsServiceControlItem(uint8_t item_subtype) : RsItem(RS_PKT_VERSION_SERVICE,RS_SERVICE_TYPE_SERVICE_CONTROL,item_subtype) {}
-
-    virtual uint32_t serial_size() const =0;
-    virtual bool serialise(uint8_t *data,uint32_t size) const =0;
-
-        bool serialise_header(void *data,uint32_t& pktsize,uint32_t& tlvsize, uint32_t& offset) const
-        {
-            tlvsize = serial_size() ;
-            offset = 0;
-
-            if (pktsize < tlvsize)
-                return false; /* not enough space */
-
-            pktsize = tlvsize;
-
-            if(!setRsItemHeader(data, tlvsize, PacketId(), tlvsize))
-            {
-                std::cerr << "RsFileTransferItem::serialise_header(): ERROR. Not enough size!" << std::endl;
-                return false ;
-            }
-        #ifdef RSSERIAL_DEBUG
-            std::cerr << "RsFileItemSerialiser::serialiseData() Header: " << ok << std::endl;
-        #endif
-            offset += 8;
-
-            return true ;
-        }
 };
+
 class RsServicePermissionItem: public RsServiceControlItem, public RsServicePermissions
 {
 public:
-    RsServicePermissionItem()
-            : RsServiceControlItem(RS_PKT_SUBTYPE_SERVICE_CONTROL_SERVICE_PERMISSIONS) {}
-    RsServicePermissionItem(const RsServicePermissions& perms)
-            : RsServiceControlItem(RS_PKT_SUBTYPE_SERVICE_CONTROL_SERVICE_PERMISSIONS),
-              RsServicePermissions(perms) {}
+    RsServicePermissionItem(): RsServiceControlItem(RS_PKT_SUBTYPE_SERVICE_CONTROL_SERVICE_PERMISSIONS) {}
+    RsServicePermissionItem(const RsServicePermissions& perms) : RsServiceControlItem(RS_PKT_SUBTYPE_SERVICE_CONTROL_SERVICE_PERMISSIONS), RsServicePermissions(perms) {}
 
-    virtual uint32_t serial_size() const
+    virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
     {
-        uint32_t s = 8 ; // header
+		RsTypeSerializer::serial_process<uint32_t>(j,ctx,mServiceId,"mServiceId") ;
+		RsTypeSerializer::serial_process          (j,ctx,TLV_TYPE_STR_NAME,mServiceName,"mServiceName") ;
+		RsTypeSerializer::serial_process<bool>    (j,ctx,mDefaultAllowed,"mDefaultAllowed") ;
 
-        s += 4 ; // mServiceId
-        s += GetTlvStringSize(mServiceName) ;
-        s += 1 ; // mDefaultAllowed
-        s += 4 ; // mPeersAllowed.size()
-        s += mPeersAllowed.size() * RsPeerId::serial_size() ;
-        s += 4 ; // mPeersAllowed.size()
-        s += mPeersDenied.size() * RsPeerId::serial_size() ;
-
-    return s ;
-    }
-    virtual bool serialise(uint8_t *data,uint32_t size) const
-    {
-        uint32_t tlvsize,offset=0;
-        bool ok = true;
-
-        if(!serialise_header(data,size,tlvsize,offset))
-            return false ;
-
-        /* add mandatory parts first */
-        ok &= setRawUInt32(data, tlvsize, &offset, mServiceId);
-        ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_NAME, mServiceName);
-        ok &= setRawUInt8(data, tlvsize, &offset, mDefaultAllowed);
-        ok &= setRawUInt32(data, tlvsize, &offset, mPeersAllowed.size());
-
-        for(std::set<RsPeerId>::const_iterator it(mPeersAllowed.begin());it!=mPeersAllowed.end();++it)
-            (*it).serialise(data,tlvsize,offset) ;
-
-        ok &= setRawUInt32(data, tlvsize, &offset, mPeersDenied.size());
-
-        for(std::set<RsPeerId>::const_iterator it(mPeersDenied.begin());it!=mPeersDenied.end();++it)
-            (*it).serialise(data,tlvsize,offset) ;
-
-        if(offset != tlvsize)
-        {
-            std::cerr << "RsGxsChannelSerialiser::serialiseGxsChannelGroupItem() FAIL Size Error! " << std::endl;
-            ok = false;
-        }
-
-        if (!ok)
-            std::cerr << "RsGxsChannelSerialiser::serialiseGxsChannelGroupItem() NOK" << std::endl;
-
-        return ok;
-    }
-
-    static RsServicePermissionItem *deserialise(uint8_t *data, uint32_t size)
-    {
-        RsServicePermissionItem *item = new RsServicePermissionItem ;
-
-        uint32_t offset = 8; // skip the header
-        uint32_t rssize = getRsItemSize(data);
-        bool ok = true ;
-
-        if(rssize > size)
-        {
-            std::cerr << __PRETTY_FUNCTION__ << ": error while deserialising! Item will be dropped." << std::endl;
-            return NULL ;
-        }
-            
-        /* add mandatory parts first */
-        ok &= getRawUInt32(data, rssize, &offset, &item->mServiceId);
-        ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_NAME, item->mServiceName);
-
-        uint8_t v;
-        ok &= getRawUInt8(data, rssize, &offset, &v) ;
-
-        if (v != 0 && v != 1)
-            ok = false;
-        else
-            item->mDefaultAllowed = (bool)v ;
-
-        uint32_t tmp ;
-        ok &= getRawUInt32(data, rssize, &offset, &tmp);
-
-        for(uint32_t i=0;i<tmp && offset < rssize;++i)
-        {
-            RsPeerId peer_id ;
-            ok &= peer_id.deserialise(data,rssize,offset) ;
-            item->mPeersAllowed.insert(peer_id) ;
-        }
-
-        ok &= getRawUInt32(data, rssize, &offset, &tmp);
-
-        for(uint32_t i=0;i<tmp && offset < rssize;++i)
-        {
-            RsPeerId peer_id ;
-            ok &= peer_id.deserialise(data,rssize,offset) ;
-            item->mPeersDenied.insert(peer_id) ;
-        }
-        if (offset != rssize || !ok)
-        {
-            std::cerr << __PRETTY_FUNCTION__ << ": error while deserialising! Item will be dropped." << std::endl;
-            delete(item);
-            return NULL ;
-        }
-
-        return item;
+		RsTypeSerializer::serial_process          (j,ctx,mPeersAllowed,"mPeersAllowed");
+		RsTypeSerializer::serial_process          (j,ctx,mPeersDenied ,"mPeersDenied");
     }
 
     virtual void clear() {}
-    virtual std::ostream& print(std::ostream& out,uint16_t)
-    {
-        std::cerr << __PRETTY_FUNCTION__ << ": not implemented!" << std::endl;
-    return out ;
-    }
 };
 
-class ServiceControlSerialiser: public RsSerialType
+class ServiceControlSerialiser: public RsServiceSerializer
 {
 public:
-    ServiceControlSerialiser() : RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_SERVICE_CONTROL) {}
+    ServiceControlSerialiser() : RsServiceSerializer(RS_SERVICE_TYPE_SERVICE_CONTROL) {}
 
-    virtual uint32_t size (RsItem *item)
+    virtual RsItem *create_item(uint16_t service,uint8_t item_subtype) const
     {
-        RsServiceControlItem *scitem = dynamic_cast<RsServiceControlItem *>(item);
-        if (!scitem)
-        {
-            return 0;
-        }
-        return scitem->serial_size() ;
-    }
-    virtual bool serialise(RsItem *item, void *data, uint32_t *size)
-    {
-        RsServiceControlItem *scitem = dynamic_cast<RsServiceControlItem *>(item);
-        if (!scitem)
-        {
-            return false;
-        }
-        return scitem->serialise((uint8_t*)data,*size) ;
-    }
-    virtual RsItem *deserialise (void *data, uint32_t *size)
-    {
-                uint32_t rstype = getRsItemId(data);
+        if(RS_SERVICE_TYPE_SERVICE_CONTROL != service)
+            return NULL;
 
-                if(RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype) || RS_SERVICE_TYPE_SERVICE_CONTROL != getRsItemService(rstype))  { return NULL; /* wrong type */ }
-
-                switch(getRsItemSubType(rstype))
+		switch(item_subtype)
         {
-        case RS_PKT_SUBTYPE_SERVICE_CONTROL_SERVICE_PERMISSIONS:return RsServicePermissionItem::deserialise((uint8_t*)data, *size);
+        case RS_PKT_SUBTYPE_SERVICE_CONTROL_SERVICE_PERMISSIONS:	return new RsServicePermissionItem();
         default:
             return NULL ;
         }
@@ -248,6 +106,13 @@ const 	RsPeerId& p3ServiceControl::getOwnId()
 	return mOwnPeerId;
 }
 
+bool p3ServiceControl::getServiceItemNames(uint32_t serviceId,std::map<uint8_t,std::string>& names)
+{
+    if(mServiceServer != NULL)
+        return mServiceServer->getServiceItemNames(serviceId,names) ;
+
+    return false ;
+}
 
 /* Interface for Services */
 bool p3ServiceControl::registerService(const RsServiceInfo &info, bool defaultOn)
@@ -537,7 +402,7 @@ bool p3ServiceControl::updateServicePermissions(uint32_t serviceId, const RsServ
 	{
 		for(pit = onlinePeers.begin(); pit != onlinePeers.end(); ++pit)
 		{
-			if (it->second.peerHasPermission(*pit) != 
+			if (it->second.peerHasPermission(*pit) !=
 				permissions.peerHasPermission(*pit))
 			{
 				mUpdatedSet.insert(*pit);
@@ -597,7 +462,7 @@ bool	p3ServiceControl::checkFilter(uint32_t serviceId, const RsPeerId &peerId)
 #endif
 
 	// must allow ServiceInfo through, or we have nothing!
-#define FULLID_SERVICEINFO ((((uint32_t) RS_PKT_VERSION_SERVICE) << 24) + ((RS_SERVICE_TYPE_SERVICEINFO) << 8)) 
+#define FULLID_SERVICEINFO ((((uint32_t) RS_PKT_VERSION_SERVICE) << 24) + ((RS_SERVICE_TYPE_SERVICEINFO) << 8))
 
 	//if (serviceId == RS_SERVICE_TYPE_SERVICEINFO)
 	if (serviceId == FULLID_SERVICEINFO)
@@ -691,21 +556,21 @@ bool ServiceInfoCompatible(const RsServiceInfo &info1, const RsServiceInfo &info
 	}
 
 	// ensure that info1 meets minimum requirements for info2
-	if (!versionOkay(info1.mVersionMajor, info1.mVersionMinor, 
+	if (!versionOkay(info1.mVersionMajor, info1.mVersionMinor,
 		info2.mMinVersionMajor, info2.mMinVersionMinor))
 	{
 		return false;
 	}
 
 	// ensure that info2 meets minimum requirements for info1
-	if (!versionOkay(info2.mVersionMajor, info2.mVersionMinor, 
+	if (!versionOkay(info2.mVersionMajor, info2.mVersionMinor,
 		info1.mMinVersionMajor, info1.mMinVersionMinor))
 	{
 		return false;
 	}
 	return true;
 }
-	
+
 
 bool	p3ServiceControl::updateFilterByPeer(const RsPeerId &peerId)
 {
@@ -790,8 +655,8 @@ bool	p3ServiceControl::updateFilterByPeer_locked(const RsPeerId &peerId)
 		std::cerr << "p3ServiceControl::updateFilterByPeer_locked() Empty ... Clearing";
 		std::cerr << std::endl;
 #endif
-	
-		// empty, remove... 
+
+		// empty, remove...
 		recordFilterChanges_locked(peerId, originalFilter, peerFilter);
 		if (fit != mPeerFilterMap.end())
 		{
@@ -882,7 +747,7 @@ bool	p3ServiceControl::updateFilterByPeer_locked(const RsPeerId &peerId)
 		std::cerr << "p3ServiceControl::updateFilterByPeer_locked() Empty(2) ... Clearing";
 		std::cerr << std::endl;
 #endif
-	
+
 		if (fit != mPeerFilterMap.end())
 		{
 			mPeerFilterMap.erase(fit);
@@ -900,7 +765,7 @@ bool	p3ServiceControl::updateFilterByPeer_locked(const RsPeerId &peerId)
 	return true;
 }
 
-void	p3ServiceControl::recordFilterChanges_locked(const RsPeerId &peerId, 
+void	p3ServiceControl::recordFilterChanges_locked(const RsPeerId &peerId,
 	ServicePeerFilter &originalFilter, ServicePeerFilter &updatedFilter)
 {
 #ifdef SERVICECONTROL_DEBUG
@@ -1202,7 +1067,7 @@ bool p3ServiceControl::loadList(std::list<RsItem *>& loadList)
 
         if(item != NULL)
 		mServicePermissionMap[item->mServiceId] = *item ;
-        
+
         delete *it ;
     }
 
@@ -1396,49 +1261,49 @@ void	p3ServiceControl::notifyServices()
 				std::cerr << "p3ServiceControl::notifyServices(): Noone Monitoring ... skipping";
 				std::cerr << std::endl;
 #endif
-	
+
 				continue;
 			}
-	
+
 			std::list<pqiServicePeer> peers;
 			std::set<RsPeerId>::const_iterator pit;
-			for(pit = it->second.mAdded.begin(); 
+			for(pit = it->second.mAdded.begin();
 				pit != it->second.mAdded.end(); ++pit)
 			{
 				pqiServicePeer peer;
 				peer.id = *pit;
 				peer.actions = RS_SERVICE_PEER_CONNECTED;
-	
+
 				peers.push_back(peer);
-	
+
 #ifdef SERVICECONTROL_DEBUG
 				std::cerr << "p3ServiceControl::notifyServices(): Peer: " << *pit << " CONNECTED";
 				std::cerr << std::endl;
 #endif
 			}
-	
-			for(pit = it->second.mRemoved.begin(); 
+
+			for(pit = it->second.mRemoved.begin();
 				pit != it->second.mRemoved.end(); ++pit)
 			{
 				pqiServicePeer peer;
 				peer.id = *pit;
 				peer.actions = RS_SERVICE_PEER_DISCONNECTED;
-	
+
 				peers.push_back(peer);
-	
+
 #ifdef SERVICECONTROL_DEBUG
 				std::cerr << "p3ServiceControl::notifyServices(): Peer: " << *pit << " DISCONNECTED";
 				std::cerr << std::endl;
 #endif
 			}
-	
+
 			for(; sit != eit; ++sit)
 			{
 #ifdef SERVICECONTROL_DEBUG
 				std::cerr << "p3ServiceControl::notifyServices(): Sending to Monitoring Service";
 				std::cerr << std::endl;
 #endif
-	
+
 				sit->second->statusChange(peers);
 			}
 		}
@@ -1500,17 +1365,17 @@ void RsServicePermissions::resetPermission(const RsPeerId& peerId)
 }
 
 RsServiceInfo::RsServiceInfo(
-		const uint16_t service_type, 
-		const std::string service_name, 
+		const uint16_t service_type,
+		const std::string service_name,
 		const uint16_t version_major,
 		const uint16_t version_minor,
 		const uint16_t min_version_major,
 		const uint16_t min_version_minor)
- :mServiceName(service_name), 
-  mServiceType((((uint32_t) RS_PKT_VERSION_SERVICE) << 24) + (((uint32_t) service_type) << 8)), 
-  mVersionMajor(version_major), 
+ :mServiceName(service_name),
+  mServiceType((((uint32_t) RS_PKT_VERSION_SERVICE) << 24) + (((uint32_t) service_type) << 8)),
+  mVersionMajor(version_major),
   mVersionMinor(version_minor),
-  mMinVersionMajor(min_version_major), 
+  mMinVersionMajor(min_version_major),
   mMinVersionMinor(min_version_minor)
 {
 	return;
@@ -1518,7 +1383,7 @@ RsServiceInfo::RsServiceInfo(
 
 
 RsServiceInfo::RsServiceInfo()
- :mServiceName("unknown"), 
+ :mServiceName("unknown"),
   mServiceType(0),
   mVersionMajor(0),
   mVersionMinor(0),

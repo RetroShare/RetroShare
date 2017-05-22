@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1128</width>
+    <width>1148</width>
     <height>385</height>
    </rect>
   </property>
@@ -14,7 +14,16 @@
    <string>Form</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
-   <property name="margin">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
     <number>0</number>
    </property>
    <item>
@@ -102,6 +111,27 @@
       </item>
       <item>
        <widget class="QComboBox" name="unit_CB"/>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_5">
+        <property name="text">
+         <string>Legend:</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QComboBox" name="legend_CB">
+        <item>
+         <property name="text">
+          <string>Current</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Total</string>
+         </property>
+        </item>
+       </widget>
       </item>
       <item>
        <widget class="QCheckBox" name="logScale_CB">

@@ -39,6 +39,7 @@ protected:
 
 private slots:
 	void loadPerson();
+	void updateSelectedProfile(int);
 
 #ifdef RS_AUTOLOGIN
 	/**

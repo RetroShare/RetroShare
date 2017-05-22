@@ -58,7 +58,7 @@ public:
 	virtual QScrollArea *getScrollArea();
 	virtual void deleteFeedItem(QWidget *item, uint32_t type);
 	virtual void openChat(const RsPeerId& peerId);
-	virtual void openComments(uint32_t type, const RsGxsGroupId &groupId, const RsGxsMessageId &msgId, const QString &title);
+	virtual void openComments(uint32_t type, const RsGxsGroupId &groupId, const QVector<RsGxsMessageId> &versions, const RsGxsMessageId &msgId, const QString &title);
 
 	static void testFeeds(uint notifyFlags);
 	static void testFeed(FeedNotify *feedNotify);
@@ -87,8 +87,9 @@ private:
 
 	void addFeedItemPeerConnect(const RsFeedItem &fi);
 	void addFeedItemPeerDisconnect(const RsFeedItem &fi);
-	void addFeedItemPeerNew(const RsFeedItem &fi);
 	void addFeedItemPeerHello(const RsFeedItem &fi);
+	void addFeedItemPeerNew(const RsFeedItem &fi);
+	void addFeedItemPeerOffset(const RsFeedItem &fi);
 
 	void addFeedItemSecurityConnectAttempt(const RsFeedItem &fi);
 	void addFeedItemSecurityAuthDenied(const RsFeedItem &fi);

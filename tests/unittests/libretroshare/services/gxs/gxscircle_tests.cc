@@ -4,7 +4,7 @@
 // from librssimulator
 
 // from libretroshare
-#include "serialiser/rsnxsitems.h"
+#include "rsitems/rsnxsitems.h"
 
 // local
 #include "GxsPairServiceTester.h"

@@ -508,7 +508,7 @@ bool	RsRecogn::itemToRadix64(RsItem *item, std::string &radstr)
 
 std::string RsRecogn::getRsaKeyId(RSA *pubkey)
 {
-#if OPENSSL_VERSION_NUMBER < 0x10100000L
+#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
 	int len = BN_num_bytes(pubkey -> n);
 	unsigned char tmp[len];
 	BN_bn2bin(pubkey -> n, tmp);
@@ -551,6 +551,9 @@ RsGxsRecognTagItem *RsRecogn::extractTag(const std::string &encoded)
 
     std::vector<uint8_t> buffer = Radix64::decode(encoded);
     pktsize = buffer.size();
+
+	if( buffer.empty() )
+		return NULL;
 
 	RsGxsRecognSerialiser serialiser;
     RsItem *item = serialiser.deserialise(buffer.data(), &pktsize);

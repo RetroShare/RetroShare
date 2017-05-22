@@ -58,7 +58,7 @@
 /*************************************/
 
 UdpBitDht::UdpBitDht(UdpPublisher *pub, bdNodeId *id, std::string appVersion, std::string bootstrapfile, const std::string& filteredipfile, bdDhtFunctions *fns)
-	:UdpSubReceiver(pub), dhtMtx(true), mFns(fns)
+	:UdpSubReceiver(pub), dhtMtx(true)//, mFns(fns)
 {
 	std::string usedVersion;
 

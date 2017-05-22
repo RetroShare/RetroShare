@@ -57,6 +57,10 @@
 #include <errno.h>
 #endif
 
+#ifndef __GLIBC__
+#define canonicalize_file_name(p) realpath(p, NULL)
+#endif
+
 /****
  * #define RSDIR_DEBUG 1
  ****/

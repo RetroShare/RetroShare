@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>581</width>
-    <height>479</height>
+    <width>875</width>
+    <height>659</height>
    </rect>
   </property>
   <property name="acceptDrops">
@@ -60,7 +60,7 @@
          <bool>false</bool>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>1</number>
         </property>
         <widget class="QWidget" name="channelPostTab">
          <attribute name="title">
@@ -302,8 +302,8 @@ p, li { white-space: pre-wrap; }
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>523</width>
-               <height>24</height>
+               <width>767</width>
+               <height>42</height>
               </rect>
              </property>
              <property name="sizePolicy">

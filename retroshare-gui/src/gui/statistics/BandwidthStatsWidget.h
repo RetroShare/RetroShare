@@ -15,7 +15,8 @@ protected slots:
     void updateUpDownSelection(int n);
     void updateUnitSelection(int n);
     void toggleLogScale(bool b);
-    
+    void updateLegendType(int n);
+
 private:
     Ui::BwStatsWidget ui;
 

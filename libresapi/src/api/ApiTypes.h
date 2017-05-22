@@ -252,6 +252,9 @@ public:
 
     StateToken mStateToken;
 
+	//Just for GUI benefit
+	std::string mCallbackName;
+
     // the result
     StreamBase& mDataStream;
 

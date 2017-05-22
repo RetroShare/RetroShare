@@ -17,6 +17,10 @@
 #include "ChannelsHandler.h"
 #include "StatsHandler.h"
 
+#ifdef LIBRESAPI_QT
+    #include "SettingsHandler.h"
+#endif
+
 /*
 data types in json       http://json.org/
 string (utf-8 unicode)
@@ -237,6 +241,9 @@ public:
         mApiPluginHandler(sts, ifaces),
 	    mChannelsHandler(ifaces.mGxsChannels),
 	    mStatsHandler()
+#ifdef LIBRESAPI_QT
+	    ,mSettingsHandler(sts)
+#endif
     {
         // the dynamic cast is to not confuse the addResourceHandler template like this:
         // addResourceHandler(derived class, parent class)
@@ -262,7 +269,11 @@ public:
                                   &ChannelsHandler::handleRequest);
 		router.addResourceHandler("stats", dynamic_cast<ResourceRouter*>(&mStatsHandler),
 		                          &StatsHandler::handleRequest);
-    }
+#ifdef LIBRESAPI_QT
+		router.addResourceHandler("settings", dynamic_cast<ResourceRouter*>(&mSettingsHandler),
+		                                  &SettingsHandler::handleRequest);
+#endif
+	}
 
     PeersHandler mPeersHandler;
     IdentityHandler mIdentityHandler;
@@ -274,6 +285,10 @@ public:
     ApiPluginHandler mApiPluginHandler;
     ChannelsHandler mChannelsHandler;
 	StatsHandler mStatsHandler;
+
+#ifdef LIBRESAPI_QT
+	SettingsHandler mSettingsHandler;
+#endif
 };
 
 ApiServer::ApiServer():
@@ -361,6 +376,9 @@ std::string ApiServer::handleRequest(Request &request)
     // evil HACK, remove this
     if(data.isRawData())
         return data.getRawData();
+
+    if(!resp.mCallbackName.empty())
+        outstream << resource_api::makeKeyValueReference("callback_name", resp.mCallbackName);
 
     outstream << resource_api::makeKeyValue("debug_msg", debugString.str());
     outstream << resource_api::makeKeyValueReference("returncode", returncode);

@@ -45,8 +45,8 @@ public:
 	GxsGroupFeedItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, bool isHome, RsGxsIfaceHelper *iface, bool autoUpdate);
 	virtual ~GxsGroupFeedItem();
 
-	RsGxsGroupId groupId() { return mGroupId; }
-	uint32_t feedId() { return mFeedId; }
+	RsGxsGroupId groupId() const { return mGroupId; }
+	uint32_t feedId() const { return mFeedId; }
 
 protected:
 	uint32_t nextTokenType() { return ++mNextTokenType; }

@@ -84,7 +84,7 @@ protected:
     virtual QString getPeerName(const ChatId &sslid) const ;	// can be overloaded for chat dialogs that have specific peers
     virtual QString getOwnName() const;
 
-    virtual void init(ChatId id, const QString &title);
+    virtual void init(const ChatId &id, const QString &title);
     virtual void addChatMsg(const ChatMessage& msg) = 0;
 
     ChatId mChatId;

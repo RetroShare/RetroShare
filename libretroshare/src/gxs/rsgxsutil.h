@@ -27,7 +27,7 @@
 #define GXSUTIL_H_
 
 #include <vector>
-#include "serialiser/rsnxsitems.h"
+#include "rsitems/rsnxsitems.h"
 #include "rsgds.h"
 
 class RsGixs ;
@@ -222,9 +222,9 @@ public:
 class GroupDeletePublish
 {
 public:
-        GroupDeletePublish(RsGxsGrpItem* item, uint32_t token)
-            : grpItem(item), mToken(token) {}
-	RsGxsGrpItem* grpItem;
+        GroupDeletePublish(const RsGxsGroupId& grpId, uint32_t token)
+            : mGroupId(grpId), mToken(token) {}
+	RsGxsGroupId mGroupId;
 	uint32_t mToken;
 };
 
