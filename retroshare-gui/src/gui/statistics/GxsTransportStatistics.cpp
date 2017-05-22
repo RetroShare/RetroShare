@@ -35,6 +35,7 @@
 #include <retroshare/rsgxstrans.h>
 #include <retroshare/rspeers.h>
 #include <retroshare/rsidentity.h>
+#include <retroshare/rsgxstrans.h>
 
 #include "GxsTransportStatistics.h"
 
@@ -57,13 +58,13 @@
 static const int PARTIAL_VIEW_SIZE           = 9 ;
 static const int MAX_TUNNEL_REQUESTS_DISPLAY = 10 ;
 
-static QColor colorScale(float f)
-{
-	if(f == 0)
-		return QColor::fromHsv(0,0,192) ;
-	else
-		return QColor::fromHsv((int)((1.0-f)*280),200,255) ;
-}
+// static QColor colorScale(float f)
+// {
+// 	if(f == 0)
+// 		return QColor::fromHsv(0,0,192) ;
+// 	else
+// 		return QColor::fromHsv((int)((1.0-f)*280),200,255) ;
+// }
 
 GxsTransportStatistics::GxsTransportStatistics(QWidget *parent)
     : RsAutoUpdatePage(2000,parent)
@@ -153,42 +154,63 @@ QString GxsTransportStatistics::getPeerName(const RsPeerId &peer_id)
 	}
 }
 
+static QString getStatusString(GxsTransSendStatus status)
+{
+    switch(status)
+	{
+    case GxsTransSendStatus::PENDING_PROCESSING         :  return QObject::tr("Processing") ;
+	case GxsTransSendStatus::PENDING_PREFERRED_GROUP    :  return QObject::tr("Choosing group") ;
+	case GxsTransSendStatus::PENDING_RECEIPT_CREATE     :  return QObject::tr("Creating receipt") ;
+	case GxsTransSendStatus::PENDING_RECEIPT_SIGNATURE  :  return QObject::tr("Signing receipt") ;
+	case GxsTransSendStatus::PENDING_SERIALIZATION      :  return QObject::tr("Serializing") ;
+	case GxsTransSendStatus::PENDING_PAYLOAD_CREATE     :  return QObject::tr("Creating payload") ;
+	case GxsTransSendStatus::PENDING_PAYLOAD_ENCRYPT    :  return QObject::tr("Encrypting payload") ;
+	case GxsTransSendStatus::PENDING_PUBLISH            :  return QObject::tr("Publishing") ;
+	case GxsTransSendStatus::PENDING_RECEIPT_RECEIVE    :  return QObject::tr("Waiting for receipt") ;
+	case GxsTransSendStatus::RECEIPT_RECEIVED           :  return QObject::tr("Receipt received") ;
+	case GxsTransSendStatus::FAILED_RECEIPT_SIGNATURE   :  return QObject::tr("Receipt signature failed") ;
+	case GxsTransSendStatus::FAILED_ENCRYPTION          :  return QObject::tr("Encryption failed") ;
+	case GxsTransSendStatus::UNKNOWN                    :
+	default                                             :  return QObject::tr("Unknown") ;
+	}
+}
+
 void GxsTransportStatistics::updateContent()
 {
-    std::vector<RsGRouter::GRouterRoutingCacheInfo> cache_infos ;
-    rsGRouter->getRoutingCacheInfo(cache_infos) ;
+    RsGxsTrans::GxsTransStatistics transinfo ;
+
+    rsGxsTrans->getStatistics(transinfo) ;
 
     treeWidget->clear();
 
     static const QString data_status_string[6] = { "Unkown","Pending","Sent","Receipt OK","Ongoing","Done" } ;
-    static const QString tunnel_status_string[4] = { "Unmanaged", "Pending", "Ready" } ;
 
     time_t now = time(NULL) ;
     
-    groupBox->setTitle(tr("Pending packets")+": " + QString::number(cache_infos.size()) );
+    groupBox->setTitle(tr("Pending packets")+": " + QString::number(transinfo.outgoing_records.size()) );
 
-    for(uint32_t i=0;i<cache_infos.size();++i)
+    for(uint32_t i=0;i<transinfo.outgoing_records.size();++i)
     {
+        const RsGxsTransOutgoingRecord& rec(transinfo.outgoing_records[i]) ;
+
         QTreeWidgetItem *item = new QTreeWidgetItem();
         treeWidget->addTopLevelItem(item);
         
         RsIdentityDetails details ;
-        rsIdentity->getIdDetails(cache_infos[i].destination,details);
-        QString nicknames = QString::fromUtf8(details.mNickname.c_str());
+        rsIdentity->getIdDetails(rec.recipient,details);
+        QString nickname = QString::fromUtf8(details.mNickname.c_str());
         
-        if(nicknames.isEmpty())
-          nicknames = tr("Unknown");
+        if(nickname.isEmpty())
+          nickname = tr("Unknown");
 
         item -> setData(COL_ID,           Qt::DisplayRole, QString::number(cache_infos[i].mid,16).rightJustified(16,'0'));
-        item -> setData(COL_NICKNAME,     Qt::DisplayRole, nicknames ) ;
+        item -> setData(COL_NICKNAME,     Qt::DisplayRole, nickname ) ;
         item -> setData(COL_DESTINATION,  Qt::DisplayRole, QString::fromStdString(cache_infos[i].destination.toStdString()));
-        item -> setData(COL_DATASTATUS,   Qt::DisplayRole, data_status_string[cache_infos[i].data_status % 6]);
-        item -> setData(COL_TUNNELSTATUS, Qt::DisplayRole, tunnel_status_string[cache_infos[i].tunnel_status % 3]);
-        item -> setData(COL_DATASIZE,     Qt::DisplayRole, misc::friendlyUnit(cache_infos[i].data_size));
-        item -> setData(COL_DATAHASH,     Qt::DisplayRole, QString::fromStdString(cache_infos[i].item_hash.toStdString()));
-        item -> setData(COL_RECEIVED,     Qt::DisplayRole, QString::number(now - cache_infos[i].routing_time));
-        item -> setData(COL_SEND,         Qt::DisplayRole, QString::number(now - cache_infos[i].last_sent_time));
-        item -> setData(COL_DUPLICATION_FACTOR, Qt::DisplayRole, QString::number(cache_infos[i].duplication_factor));
+        item -> setData(COL_DATASTATUS,   Qt::DisplayRole, data_status_string[rec.status % 6]);
+        item -> setData(COL_DATASIZE,     Qt::DisplayRole, misc::friendlyUnit(rec.data_size));
+//        item -> setData(COL_DATAHASH,     Qt::DisplayRole, QString::fromStdString(cache_infos[i].item_hash.toStdString()));
+//        item -> setData(COL_RECEIVED,     Qt::DisplayRole, QString::number(now - cache_infos[i].routing_time));
+//        item -> setData(COL_SEND,         Qt::DisplayRole, QString::number(now - cache_infos[i].last_sent_time));
     }
 }
 
@@ -219,22 +241,17 @@ GxsTransportStatisticsWidget::GxsTransportStatisticsWidget(QWidget *parent)
 
 void GxsTransportStatisticsWidget::updateContent()
 {
-    RsGRouter::GRouterRoutingMatrixInfo matrix_info ;
+    RsGxsTrans::GxsTransStatistics transinfo ;
 
-    rsGRouter->getRoutingMatrixInfo(matrix_info) ;
+    rsGxsTrans->getStatistics(transinfo) ;
     
-    mNumberOfKnownKeys = matrix_info.per_friend_probabilities.size() ;
-
     float size = QFontMetricsF(font()).height() ;
     float fact = size/14.0 ;
 
     // What do we need to draw?
     //
-    // Routing matrix
-    // 	Key         [][][][][][][][][][]
-    //
-    // ->	each [] shows a square (one per friend node) that is the routing probabilities for all connected friends
-    // 	computed using the "computeRoutingProbabilitites()" method.
+    // Statistics about GxsTransport
+    //		- prefered group ID
     //
     // Own key ids
     // 	key			service id			description
@@ -243,6 +260,7 @@ void GxsTransportStatisticsWidget::updateContent()
     // 	Msg id				Local origin				Destination				Time           Status
     //
     QPixmap tmppixmap(maxWidth, maxHeight);
+
 	tmppixmap.fill(Qt::transparent);
     setFixedHeight(maxHeight);
 
@@ -252,6 +270,7 @@ void GxsTransportStatisticsWidget::updateContent()
 
     QFont times_f(font());//"Times") ;
     QFont monospace_f("Monospace") ;
+
     monospace_f.setStyleHint(QFont::TypeWriter) ;
     monospace_f.setPointSize(font().pointSize()) ;
 
@@ -267,138 +286,9 @@ void GxsTransportStatisticsWidget::updateContent()
     // draw...
     int ox=5*fact,oy=5*fact ;
 
-
     painter.setFont(times_f) ;
-    painter.drawText(ox,oy+celly,tr("Managed keys")+":" + QString::number(matrix_info.published_keys.size())) ; oy += celly*2 ;
 
-    painter.setFont(monospace_f) ;
-    for(std::map<Sha1CheckSum,RsGRouter::GRouterPublishedKeyInfo>::const_iterator it(matrix_info.published_keys.begin());it!=matrix_info.published_keys.end();++it)
-    {
-        QString packet_string ;
-        packet_string += QString::fromStdString(it->second.authentication_key.toStdString())  ;
-        packet_string += tr(" : Service ID =")+" "+QString::number(it->second.service_id,16) ;
-        packet_string += "  \""+QString::fromUtf8(it->second.description_string.c_str()) + "\"" ;
-
-        painter.drawText(ox+2*cellx,oy+celly,packet_string ) ; oy += celly ;
-    }
-    oy += celly ;
-
-
-    std::map<QString, std::vector<QString> > tos ;
-   
-    // Now draw the matrix
-
-    QString prob_string ;
-    painter.setFont(times_f) ;
-    QString Q = tr("Routing matrix  (") ;
-
-    painter.drawText(ox+0*cellx,oy+fm_times.height(),Q) ;
-
-    // draw scale
-
-    for(int i=0;i<100*fact;++i)
-    {
-        painter.setPen(colorScale(i/100.0/fact)) ;
-        painter.drawLine(ox+fm_times.width(Q)+i,oy+fm_times.height()*0.5,ox+fm_times.width(Q)+i,oy+fm_times.height()) ;
-    }
-    painter.setPen(QColor::fromRgb(0,0,0)) ;
-
-    painter.drawText(ox+fm_times.width(Q) + 102*fact,oy+celly,")") ;
-
-    oy += celly ;
-    oy += celly ;
-
-//	//print friends in the same order their prob is shown
-//	QString FO = tr("Friend Order  (");
-//	RsPeerDetails peer_ssl_details;
-//	for(uint32_t i=0;i<matrix_info.friend_ids.size();++i){
-//		rsPeers->getPeerDetails(matrix_info.friend_ids[i], peer_ssl_details);
-//		QString fn = QString::fromUtf8(peer_ssl_details.name.c_str());
-//		FO+=fn;
-//		FO+=" ";
-//
-//	}
-//	FO+=")";
-//
-//	painter.drawText(ox+0*cellx,oy+fm_times.height(),FO) ;
-//	oy += celly ;
-//	oy += celly ;
-
-    //static const int MaxKeySize = 20*fact ;
-    painter.setFont(monospace_f) ;
-
-    int n=0;
-    QString ids;
-    std::vector<float> current_probs ;
-    int current_oy = 0 ;
-    
-    mMinWheelZoneX = ox+2*cellx ;
-    mMinWheelZoneY = oy ;
-    
-    RsGxsId current_id ;
-    float current_width=0 ;
-    
-    for(std::map<GRouterKeyId,std::vector<float> >::const_iterator it(matrix_info.per_friend_probabilities.begin());it!=matrix_info.per_friend_probabilities.end();++it,++n)
-        if(n >= mCurrentN-PARTIAL_VIEW_SIZE/2 && n <= mCurrentN+PARTIAL_VIEW_SIZE/2)
-	{
-		//bool is_null = false ;
-
-		//for(uint32_t i=0;i<matrix_info.friend_ids.size();++i)
-		//	if(it->second[i] > 0.0)
-		//		is_null = false ;
-
-		//if(!is_null)
-		//{
-		ids = QString::fromStdString(it->first.toStdString())+" : " ;
-		painter.drawText(ox+2*cellx,oy+celly,ids) ;
-
-		for(uint32_t i=0;i<matrix_info.friend_ids.size();++i)
-			painter.fillRect(ox+i*cellx+fm_monospace.width(ids),oy+0.15*celly,cellx,celly,colorScale(it->second[i])) ;
-
-		if(n == mCurrentN)
-		{
-			current_probs = it->second ;
-			current_oy = oy ;
-            		current_id = it->first ;
-                    	current_width = ox+matrix_info.friend_ids.size()*cellx+fm_monospace.width(ids);
-		}
-
-		oy += celly ;
-		//}
-
-	}
-    mMaxWheelZoneX = ox+matrix_info.friend_ids.size()*cellx + fm_monospace.width(ids);
-    
-    RsIdentityDetails iddetails ;
-    if(rsIdentity->getIdDetails(current_id,iddetails))
-        painter.drawText(current_width+cellx, current_oy+celly, QString::fromUtf8(iddetails.mNickname.c_str())) ;
-    else
-        painter.drawText(current_width+cellx, current_oy+celly, tr("[Unknown identity]")) ;
-        
-    mMaxWheelZoneY = oy+celly ;
-    
-    painter.setPen(QColor::fromRgb(0,0,0)) ;
-    
-    painter.setPen(QColor::fromRgb(127,127,127));
-    painter.drawRect(ox+2*cellx,current_oy+0.15*celly,fm_monospace.width(ids)+cellx*matrix_info.friend_ids.size()- 2*cellx,celly) ;
-
-    float total_length = (matrix_info.friend_ids.size()+2)*cellx ;
-    
-    if(!current_probs.empty())
-    for(uint32_t i=0;i<matrix_info.friend_ids.size();++i)
-    {
-        float x1 = ox+(i+0.5)*cellx+fm_monospace.width(ids) ;
-        float y1 = oy+0.15*celly ;
-        float y2 = y1+(matrix_info.friend_ids.size()-1-i+1)*celly;
-        
-	RsPeerDetails peer_ssl_details;
-	rsPeers->getPeerDetails(matrix_info.friend_ids[i], peer_ssl_details);
-        
-        painter.drawLine(x1,y1,x1,y2);
-        painter.drawLine(x1,y2,x1 + total_length - i*cellx,y2) ;
-	painter.drawText(cellx+ x1 + total_length - i*cellx,y2+(0.35)*celly, QString::fromUtf8(peer_ssl_details.name.c_str()) + " - " + QString::fromUtf8(peer_ssl_details.location.c_str()) + " ("+QString::number(current_probs[i])+")");
-    }
-    oy += celly * (2+matrix_info.friend_ids.size());
+    painter.drawText(ox,oy+celly,tr("Preferred group Id")+":" + QString::fromStdString(transinfo.prefered_group_id.toStdString())) ; oy += celly*2 ;
 
     oy += celly ;
     oy += celly ;
@@ -411,20 +301,6 @@ void GxsTransportStatisticsWidget::updateContent()
 
 void GxsTransportStatisticsWidget::wheelEvent(QWheelEvent *e)
 {
-    if(e->x() < mMinWheelZoneX || e->x() > mMaxWheelZoneX || e->y() < mMinWheelZoneY || e->y() > mMaxWheelZoneY)
-    {
-        QWidget::wheelEvent(e) ;
-        return ;
-    }
-    
-    if(e->delta() < 0 && mCurrentN+PARTIAL_VIEW_SIZE/2+1 < mNumberOfKnownKeys)
-	    mCurrentN++ ;
-    
-    if(e->delta() > 0 && mCurrentN > PARTIAL_VIEW_SIZE/2+1)
-	    mCurrentN-- ;
-    
-    updateContent();
-    update();
 }
 
 QString GxsTransportStatisticsWidget::speedString(float f)

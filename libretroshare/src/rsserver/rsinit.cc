@@ -1799,6 +1799,8 @@ int RsServer::StartupRetroShare()
     rsPosted = mPosted;
     rsGxsForums = mGxsForums;
     rsGxsChannels = mGxsChannels;
+    rsGxsTrans = mGxsTrans;
+
     //rsPhoto = mPhoto;
     //rsWire = mWire;
 

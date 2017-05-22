@@ -21,6 +21,8 @@
 
 typedef unsigned int uint;
 
+RsGxsTrans *rsGxsTrans = NULL ;
+
 p3GxsTrans::~p3GxsTrans()
 {
 	p3Config::saveConfiguration();
@@ -34,6 +36,26 @@ p3GxsTrans::~p3GxsTrans()
 bool p3GxsTrans::getStatistics(GxsTransStatistics& stats)
 {
     stats.prefered_group_id = mPreferredGroupId;
+    stats.outgoing_records.clear();
+
+    {
+		RS_STACK_MUTEX(mOutgoingMutex);
+
+		for ( auto it = mOutgoingQueue.begin(); it != mOutgoingQueue.end(); ++it)
+		{
+			const OutgoingRecord& pr(it->second);
+
+			RsGxsTransOutgoingRecord rec ;
+            rec.status = pr.status ;
+            rec.recipient = pr.recipient ;
+            rec.data_size = pr.mailData.size();
+            rec.client_service = pr.clientService ;
+
+            stats.outgoing_records.push_back(rec) ;
+        }
+    }
+
+    return true;
 }
 
 bool p3GxsTrans::sendMail( RsGxsTransId& mailId,
