@@ -775,8 +775,8 @@ StartDialog QPushButton#loadButton:hover {
 }
 
 StartDialog QFrame#loginframe{
-  background-image: url(:/images/logo/background.png);
-  background-repeat: repeat;
+ border-image: url(:/images/logo/background.png) 0 0 0 0 stretch stretch;
+ border-width: 0px;
 }
 
 GenCertDialog QFrame#profileframe{
