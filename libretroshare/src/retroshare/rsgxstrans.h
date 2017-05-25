@@ -68,6 +68,7 @@ struct RsGxsTransOutgoingRecord
 {
 	GxsTransSendStatus status;
 	RsGxsId recipient;
+	RsGxsTransId trans_id;
 	uint32_t data_size ;
 	GxsTransSubServices client_service;
 };

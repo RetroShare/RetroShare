@@ -25,12 +25,14 @@
 #include <retroshare/rsgrouter.h>
 #include <retroshare/rstypes.h>
 
+#include "util/TokenQueue.h"
 #include "RsAutoUpdatePage.h"
 #include "ui_GxsTransportStatistics.h"
 
 class GxsTransportStatisticsWidget ;
+class UIStateHelper;
 
-class GxsTransportStatistics: public RsAutoUpdatePage, public Ui::GxsTransportStatistics
+class GxsTransportStatistics: public RsAutoUpdatePage, public TokenResponse, public Ui::GxsTransportStatistics
 {
 	Q_OBJECT
 
@@ -41,6 +43,8 @@ class GxsTransportStatistics: public RsAutoUpdatePage, public Ui::GxsTransportSt
 		// Cache for peer names.
         static QString getPeerName(const RsPeerId& peer_id) ;
         
+		virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req) ;
+
 		void updateContent() ;
 		
 private slots:
@@ -49,7 +53,11 @@ private slots:
 	void personDetails();
 	
 	private:
-											
+		void loadGroupData(const uint32_t& token);
+		void loadGroupMeta(const uint32_t& token);
+		void requestGroupData();
+		void requestGroupMeta();
+
 		void processSettings(bool bLoad);
 		bool m_bProcessSettings;
 
@@ -57,6 +65,8 @@ private slots:
 
 
 		GxsTransportStatisticsWidget *_tst_CW ;
+        TokenQueue *mTransQueue ;
+		UIStateHelper *mStateHelper;
 } ;
 
 class GxsTransportStatisticsWidget:  public QWidget

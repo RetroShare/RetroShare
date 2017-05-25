@@ -42,6 +42,7 @@
 #include "gui/Identity/IdDetailsDialog.h"
 #include "gui/settings/rsharesettings.h"
 #include "util/QtVersion.h"
+#include "gui/common/UIStateHelper.h"
 #include "util/misc.h"
 
 #define COL_ID                  0
@@ -57,6 +58,9 @@
 
 static const int PARTIAL_VIEW_SIZE           = 9 ;
 static const int MAX_TUNNEL_REQUESTS_DISPLAY = 10 ;
+
+#define GXSTRANS_GROUP_META  0x01
+#define GXSTRANS_GROUP_DATA  0x02
 
 // static QColor colorScale(float f)
 // {
@@ -203,10 +207,10 @@ void GxsTransportStatistics::updateContent()
         if(nickname.isEmpty())
           nickname = tr("Unknown");
 
-        item -> setData(COL_ID,           Qt::DisplayRole, QString::number(cache_infos[i].mid,16).rightJustified(16,'0'));
+        item -> setData(COL_ID,           Qt::DisplayRole, QString::number(rec.trans_id,8).rightJustified(8,'0'));
         item -> setData(COL_NICKNAME,     Qt::DisplayRole, nickname ) ;
-        item -> setData(COL_DESTINATION,  Qt::DisplayRole, QString::fromStdString(cache_infos[i].destination.toStdString()));
-        item -> setData(COL_DATASTATUS,   Qt::DisplayRole, data_status_string[rec.status % 6]);
+        item -> setData(COL_DESTINATION,  Qt::DisplayRole, QString::fromStdString(rec.recipient.toStdString()));
+        item -> setData(COL_DATASTATUS,   Qt::DisplayRole, data_status_string[int(rec.status) % 6]);
         item -> setData(COL_DATASIZE,     Qt::DisplayRole, misc::friendlyUnit(rec.data_size));
 //        item -> setData(COL_DATAHASH,     Qt::DisplayRole, QString::fromStdString(cache_infos[i].item_hash.toStdString()));
 //        item -> setData(COL_RECEIVED,     Qt::DisplayRole, QString::number(now - cache_infos[i].routing_time));
@@ -328,3 +332,107 @@ void GxsTransportStatisticsWidget::resizeEvent(QResizeEvent *event)
 	 updateContent();
 }
 
+void GxsTransportStatistics::loadRequest(const TokenQueue *queue, const TokenRequest &req)
+{
+	std::cerr << "CirclesDialog::loadRequest() UserType: " << req.mUserType;
+	std::cerr << std::endl;
+
+	if (queue != mTransQueue)
+	{
+		/* now switch on req */
+		switch(req.mUserType)
+		{
+			case GXSTRANS_GROUP_META: loadGroupMeta(req.mToken);
+				break;
+
+			case GXSTRANS_GROUP_DATA: loadGroupData(req.mToken);
+				break;
+
+			default:
+				std::cerr << "CirclesDialog::loadRequest() ERROR: INVALID TYPE";
+				std::cerr << std::endl;
+				break;
+		}
+	}
+}
+
+void GxsTransportStatistics::requestGroupMeta()
+{
+	mStateHelper->setLoading(GXSTRANS_GROUP_META, true);
+
+	std::cerr << "GxsTransportStatisticsWidget::requestGroupMeta()";
+	std::cerr << std::endl;
+
+	mTransQueue->cancelActiveRequestTokens(GXSTRANS_GROUP_META);
+
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_GROUP_META;
+
+	uint32_t token;
+	mTransQueue->requestGroupInfo(token,  RS_TOKREQ_ANSTYPE_SUMMARY, opts, GXSTRANS_GROUP_META);
+}
+void GxsTransportStatistics::loadGroupMeta(const uint32_t& token)
+{
+	mStateHelper->setLoading(GXSTRANS_GROUP_META, false);
+
+	std::cerr << "GxsTransportStatisticsWidget::loadGroupMeta()";
+	std::cerr << std::endl;
+
+//	ui.treeWidget_membership->clear();
+
+	std::list<RsGroupMetaData> groupInfo;
+	std::list<RsGroupMetaData>::iterator vit;
+
+	if (!rsGxsTrans->getGroupSummary(token,groupInfo))
+	{
+		std::cerr << "CirclesDialog::loadGroupMeta() Error getting GroupMeta";
+		std::cerr << std::endl;
+		mStateHelper->setActive(GXSTRANS_GROUP_META, false);
+		return;
+	}
+
+	mStateHelper->setActive(GXSTRANS_GROUP_META, true);
+
+//	/* add the top level item */
+//	QTreeWidgetItem *personalCirclesItem = new QTreeWidgetItem();
+//	personalCirclesItem->setText(0, tr("Personal Circles"));
+//	ui.treeWidget_membership->addTopLevelItem(personalCirclesItem);
+//
+//	QTreeWidgetItem *externalAdminCirclesItem = new QTreeWidgetItem();
+//	externalAdminCirclesItem->setText(0, tr("External Circles (Admin)"));
+//	ui.treeWidget_membership->addTopLevelItem(externalAdminCirclesItem);
+//
+//	QTreeWidgetItem *externalSubCirclesItem = new QTreeWidgetItem();
+//	externalSubCirclesItem->setText(0, tr("External Circles (Subscribed)"));
+//	ui.treeWidget_membership->addTopLevelItem(externalSubCirclesItem);
+//
+//	QTreeWidgetItem *externalOtherCirclesItem = new QTreeWidgetItem();
+//	externalOtherCirclesItem->setText(0, tr("External Circles (Other)"));
+//	ui.treeWidget_membership->addTopLevelItem(externalOtherCirclesItem);
+
+	for(vit = groupInfo.begin(); vit != groupInfo.end(); ++vit)
+	{
+		/* Add Widget, and request Pages */
+		std::cerr << "GxsTransportStatisticsWidget::loadGroupMeta() GroupId: " << vit->mGroupId << " Group: " << vit->mGroupName << std::endl;
+
+		// QTreeWidgetItem *groupItem = new QTreeWidgetItem();
+		// groupItem->setText(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, QString::fromUtf8(vit->mGroupName.c_str()));
+  		// groupItem->setText(CIRCLEGROUP_CIRCLE_COL_GROUPID, QString::fromStdString(vit->mGroupId.toStdString()));
+
+		// if (vit->mCircleType == GXS_CIRCLE_TYPE_LOCAL)
+		// 	personalCirclesItem->addChild(groupItem);
+		// else
+		// {
+		// 	if (vit->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)
+		// 		externalAdminCirclesItem->addChild(groupItem);
+		// 	else if (vit->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED)
+		// 		externalSubCirclesItem->addChild(groupItem);
+		// 	else
+		// 		externalOtherCirclesItem->addChild(groupItem);
+		// }
+	}
+}
+void GxsTransportStatistics::loadGroupData(const uint32_t& token)
+{
+    std::cerr << __PRETTY_FUNCTION__ << ": not implemented." << std::endl;
+}
