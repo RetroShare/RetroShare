@@ -450,6 +450,13 @@
                </property>
               </widget>
              </item>
+             <item>
+              <widget class="QCheckBox" name="cbUseBob">
+               <property name="text">
+                <string>Use BOB</string>
+               </property>
+              </widget>
+             </item>
             </layout>
            </item>
            <item row="9" column="2">

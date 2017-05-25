@@ -126,3 +126,24 @@ std::string RsUtil::HashId(const std::string &id, bool reverse)
 //	out << std::setprecision(15) << getCurrentTS();
 //	return out.str();
 //}
+
+std::vector<uint8_t> RsUtil::BinToSha256(const std::vector<uint8_t> &in)
+{
+	std::vector<uint8_t> out;
+
+	SHA256_CTX *sha_ctx = new SHA256_CTX;
+	uint8_t     sha_hash[SHA256_DIGEST_LENGTH] = {0};
+
+	SHA256_Init(sha_ctx);
+	SHA256_Update(sha_ctx, in.data(), in.size());
+	SHA256_Final(sha_hash, sha_ctx);
+
+	for(uint16_t i = 0; i < SHA256_DIGEST_LENGTH; i++)
+	{
+		out.push_back(sha_hash[i]);
+	}
+
+	/* cleanup */
+	delete sha_ctx;
+	return out;
+}

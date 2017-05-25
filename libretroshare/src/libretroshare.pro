@@ -140,7 +140,6 @@ PUBLIC_HEADERS =	retroshare/rsdisc.h \
 					retroshare/rsversion.h \
 					retroshare/rsservicecontrol.h \
 
-
 HEADERS += plugins/pluginmanager.h \
 		plugins/dlfcn_win32.h \
 		rsitems/rspluginitems.h \
@@ -429,6 +428,7 @@ HEADERS +=	pqi/authssl.h \
 			pqi/pqissl.h \
 			pqi/pqissllistener.h \
 			pqi/pqisslpersongrp.h \
+                        pqi/pqissli2pbob.h \
 			pqi/pqissludp.h \
 			pqi/pqisslproxy.h \
 			pqi/pqistore.h \
@@ -493,7 +493,9 @@ HEADERS +=	rsitems/rsitem.h \
 			rsitems/rsgxsupdateitems.h \
 			rsitems/rsserviceinfoitems.h \
 
-HEADERS +=	services/p3msgservice.h \
+HEADERS +=  services/autoproxy/p3i2pbob.h \
+            services/autoproxy/rsautoproxymonitor.h \
+            services/p3msgservice.h \
 			services/p3service.h \
 			services/p3statusservice.h \
 			services/p3banlist.h \
@@ -518,6 +520,9 @@ HEADERS +=	util/folderiterator.h \
 			util/rsnet.h \
 			util/extaddrfinder.h \
 			util/dnsresolver.h \
+                        util/radix32.h \
+                        util/radix64.h \
+                        util/rsinitedptr.h \
 			util/rsprint.h \
 			util/rsstring.h \
 			util/rsstd.h \
@@ -525,7 +530,6 @@ HEADERS +=	util/folderiterator.h \
 			util/rsversioninfo.h \
 			util/rswin.h \
 			util/rsrandom.h \
-			util/radix64.h \
 			util/pugiconfig.h \  
 			util/rsmemcache.h \
 			util/rstickevent.h \
@@ -580,6 +584,7 @@ SOURCES +=	pqi/authgpg.cc \
 			pqi/pqissl.cc \
 			pqi/pqissllistener.cc \
 			pqi/pqisslpersongrp.cc \
+                        pqi/pqissli2pbob.cpp \
 			pqi/pqissludp.cc \
 			pqi/pqisslproxy.cc \
 			pqi/pqistore.cc \
@@ -638,7 +643,9 @@ SOURCES +=	serialiser/rsbaseserial.cc \
 			rsitems/rsgxsupdateitems.cc \
 			rsitems/rsserviceinfoitems.cc \
 
-SOURCES +=	services/p3msgservice.cc \
+SOURCES +=  services/autoproxy/rsautoproxymonitor.cc \
+            services/autoproxy/p3i2pbob.cc \
+            services/p3msgservice.cc \
 			services/p3service.cc \
 			services/p3statusservice.cc \
 			services/p3banlist.cc \

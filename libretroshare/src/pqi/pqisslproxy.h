@@ -81,7 +81,7 @@ private:
 	uint32_t mProxyState;
 
 	std::string mDomainAddress;
-        uint16_t mRemotePort;
+	uint16_t mRemotePort;
 };
 
 #endif // MRK_PQI_SSL_PROXY_HEADER
