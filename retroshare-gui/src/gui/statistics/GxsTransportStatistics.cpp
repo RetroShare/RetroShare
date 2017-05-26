@@ -56,8 +56,9 @@
 #define COL_SEND                8
 #define COL_DUPLICATION_FACTOR  9
 
-static const int PARTIAL_VIEW_SIZE           = 9 ;
-static const int MAX_TUNNEL_REQUESTS_DISPLAY = 10 ;
+static const int PARTIAL_VIEW_SIZE                           =  9 ;
+static const int MAX_TUNNEL_REQUESTS_DISPLAY                 = 10 ;
+static const int GXSTRANS_STATISTICS_DELAY_BETWEEN_GROUP_REQ = 30 ;	// never request more than every 30 secs.
 
 #define GXSTRANS_GROUP_META  0x01
 #define GXSTRANS_GROUP_DATA  0x02
@@ -75,18 +76,24 @@ GxsTransportStatistics::GxsTransportStatistics(QWidget *parent)
 {
 	setupUi(this) ;
 	
-	m_bProcessSettings = false;
+	mStateHelper = new UIStateHelper(this);
+	mStateHelper->addWidget(GXSTRANS_GROUP_META, treeWidget);
 
-	_router_F->setWidget( _tst_CW = new GxsTransportStatisticsWidget() ) ;
-	
-	  /* Set header resize modes and initial section sizes Uploads TreeView*/
-		QHeaderView_setSectionResizeMode(treeWidget->header(), QHeaderView::ResizeToContents);
-		
-		connect(treeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(CustomPopupMenu(QPoint)));
+	mTransQueue = new TokenQueue(rsGxsTrans->getTokenService(), this);
+
+	m_bProcessSettings = false;
+    mLastGroupReqTS = 0 ;
+
+	//_router_F->setWidget( _tst_CW = new GxsTransportStatisticsWidget() ) ;
+
+	/* Set header resize modes and initial section sizes Uploads TreeView*/
+	QHeaderView_setSectionResizeMode(treeWidget->header(), QHeaderView::ResizeToContents);
+
+	connect(treeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(CustomPopupMenu(QPoint)));
 
 
 	// load settings
-    processSettings(true);
+	processSettings(true);
 }
 
 GxsTransportStatistics::~GxsTransportStatistics()
@@ -135,9 +142,17 @@ void GxsTransportStatistics::CustomPopupMenu( QPoint )
 
 void GxsTransportStatistics::updateDisplay()
 {
-	_tst_CW->updateContent() ;
+    time_t now = time(NULL) ;
+
+    if(mLastGroupReqTS + GXSTRANS_STATISTICS_DELAY_BETWEEN_GROUP_REQ < now)
+    {
+        requestGroupMeta();
+        mLastGroupReqTS = now ;
+    }
+
+	//_tst_CW->updateContent() ;
+
 	updateContent();
-	
 }
 
 QString GxsTransportStatistics::getPeerName(const RsPeerId &peer_id)

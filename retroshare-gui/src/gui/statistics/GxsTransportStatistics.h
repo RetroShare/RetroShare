@@ -67,6 +67,7 @@ private slots:
 		GxsTransportStatisticsWidget *_tst_CW ;
         TokenQueue *mTransQueue ;
 		UIStateHelper *mStateHelper;
+        uint32_t mLastGroupReqTS ;
 } ;
 
 class GxsTransportStatisticsWidget:  public QWidget

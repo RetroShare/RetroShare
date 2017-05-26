@@ -76,10 +76,12 @@ struct RsGxsTransOutgoingRecord
 class RsGxsTrans: public RsGxsIfaceHelper
 {
 public:
-	struct GxsTransStatistics
+	class GxsTransStatistics
 	{
-		RsGxsGroupId prefered_group_id ;
+	public:
+		GxsTransStatistics() {}
 
+		RsGxsGroupId prefered_group_id ;
 		std::vector<RsGxsTransOutgoingRecord> outgoing_records;
 	};
 
