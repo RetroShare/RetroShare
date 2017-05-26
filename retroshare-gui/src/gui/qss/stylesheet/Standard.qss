@@ -790,7 +790,7 @@ StartDialog QPushButton#loadButton:hover {
 }
 
 StartDialog QFrame#loginframe{
- border-image: url(:/images/logo/background.png) 0 0 0 0 stretch stretch;
+ border-image: url(:/images/logo/background_lessblue.png) 0 0 0 0 stretch stretch;
  border-width: 0px;
 }
 
