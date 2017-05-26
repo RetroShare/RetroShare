@@ -63,12 +63,12 @@
         </column>
         <column>
          <property name="text">
-          <string>Identity Name</string>
+          <string>Destination ID</string>
          </property>
         </column>
         <column>
          <property name="text">
-          <string>Destinaton</string>
+          <string>Destination Name</string>
          </property>
         </column>
         <column>
@@ -78,12 +78,7 @@
         </column>
         <column>
          <property name="text">
-          <string>Tunnel status</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
-          <string>Stored data size</string>
+          <string>Data size</string>
          </property>
         </column>
         <column>
@@ -93,17 +88,12 @@
         </column>
         <column>
          <property name="text">
-          <string>Receive time (secs ago)</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
           <string>Sending time (secs ago)</string>
          </property>
         </column>
         <column>
          <property name="text">
-          <string>Branching factor</string>
+          <string>Group ID</string>
          </property>
         </column>
        </widget>

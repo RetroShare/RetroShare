@@ -69,8 +69,13 @@ struct RsGxsTransOutgoingRecord
 	GxsTransSendStatus status;
 	RsGxsId recipient;
 	RsGxsTransId trans_id;
-	uint32_t data_size ;
+
 	GxsTransSubServices client_service;
+
+	uint32_t data_size ;
+	Sha1CheckSum data_hash ;
+	uint32_t send_TS ;
+	RsGxsGroupId group_id ;
 };
 
 class RsGxsTrans: public RsGxsIfaceHelper

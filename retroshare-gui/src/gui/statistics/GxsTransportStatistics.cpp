@@ -46,15 +46,13 @@
 #include "util/misc.h"
 
 #define COL_ID                  0
-#define COL_NICKNAME            1
-#define COL_DESTINATION         2
+#define COL_DESTINATION         1
+#define COL_NICKNAME            2
 #define COL_DATASTATUS          3
-#define COL_TUNNELSTATUS        4
-#define COL_DATASIZE            5
-#define COL_DATAHASH            6
-#define COL_RECEIVED            7
-#define COL_SEND                8
-#define COL_DUPLICATION_FACTOR  9
+#define COL_DATASIZE            4
+#define COL_DATAHASH            5
+#define COL_SEND                6
+#define COL_GROUP_ID            7
 
 static const int PARTIAL_VIEW_SIZE                           =  9 ;
 static const int MAX_TUNNEL_REQUESTS_DISPLAY                 = 10 ;
@@ -201,9 +199,6 @@ void GxsTransportStatistics::updateContent()
     rsGxsTrans->getStatistics(transinfo) ;
 
     treeWidget->clear();
-
-    static const QString data_status_string[6] = { "Unkown","Pending","Sent","Receipt OK","Ongoing","Done" } ;
-
     time_t now = time(NULL) ;
     
     groupBox->setTitle(tr("Pending packets")+": " + QString::number(transinfo.outgoing_records.size()) );
@@ -222,14 +217,14 @@ void GxsTransportStatistics::updateContent()
         if(nickname.isEmpty())
           nickname = tr("Unknown");
 
-        item -> setData(COL_ID,           Qt::DisplayRole, QString::number(rec.trans_id,8).rightJustified(8,'0'));
+        item -> setData(COL_ID,           Qt::DisplayRole, QString::number(rec.trans_id,16).rightJustified(8,'0'));
         item -> setData(COL_NICKNAME,     Qt::DisplayRole, nickname ) ;
         item -> setData(COL_DESTINATION,  Qt::DisplayRole, QString::fromStdString(rec.recipient.toStdString()));
-        item -> setData(COL_DATASTATUS,   Qt::DisplayRole, data_status_string[int(rec.status) % 6]);
+        item -> setData(COL_DATASTATUS,   Qt::DisplayRole, getStatusString(rec.status));
         item -> setData(COL_DATASIZE,     Qt::DisplayRole, misc::friendlyUnit(rec.data_size));
-//        item -> setData(COL_DATAHASH,     Qt::DisplayRole, QString::fromStdString(cache_infos[i].item_hash.toStdString()));
-//        item -> setData(COL_RECEIVED,     Qt::DisplayRole, QString::number(now - cache_infos[i].routing_time));
-//        item -> setData(COL_SEND,         Qt::DisplayRole, QString::number(now - cache_infos[i].last_sent_time));
+        item -> setData(COL_DATAHASH,     Qt::DisplayRole, QString::fromStdString(rec.data_hash.toStdString()));
+        item -> setData(COL_SEND,         Qt::DisplayRole, QString::number(now - rec.send_TS));
+        item -> setData(COL_GROUP_ID,     Qt::DisplayRole, QString::fromStdString(rec.group_id.toStdString()));
     }
 }
 
@@ -349,7 +344,7 @@ void GxsTransportStatisticsWidget::resizeEvent(QResizeEvent *event)
 
 void GxsTransportStatistics::loadRequest(const TokenQueue *queue, const TokenRequest &req)
 {
-	std::cerr << "CirclesDialog::loadRequest() UserType: " << req.mUserType;
+	std::cerr << "GxsTransportStatistics::loadRequest() UserType: " << req.mUserType;
 	std::cerr << std::endl;
 
 	if (queue != mTransQueue)
@@ -364,7 +359,7 @@ void GxsTransportStatistics::loadRequest(const TokenQueue *queue, const TokenReq
 				break;
 
 			default:
-				std::cerr << "CirclesDialog::loadRequest() ERROR: INVALID TYPE";
+				std::cerr << "GxsTransportStatistics::loadRequest() ERROR: INVALID TYPE";
 				std::cerr << std::endl;
 				break;
 		}
@@ -400,7 +395,7 @@ void GxsTransportStatistics::loadGroupMeta(const uint32_t& token)
 
 	if (!rsGxsTrans->getGroupSummary(token,groupInfo))
 	{
-		std::cerr << "CirclesDialog::loadGroupMeta() Error getting GroupMeta";
+		std::cerr << "GxsTransportStatistics::loadGroupMeta() Error getting GroupMeta";
 		std::cerr << std::endl;
 		mStateHelper->setActive(GXSTRANS_GROUP_META, false);
 		return;
