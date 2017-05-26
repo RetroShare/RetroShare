@@ -1,6 +1,7 @@
 <RCC>
   <qresource prefix="/">
     <file>images/logo/background.png</file>
+    <file>images/logo/background_lessblue.png</file>
     <file>images/logo/logo_spash2.png</file>
     <file>images/network_map.png</file>
     <file>images/global_switch_on.png</file>
