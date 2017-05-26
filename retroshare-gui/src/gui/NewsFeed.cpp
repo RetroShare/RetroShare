@@ -1403,7 +1403,7 @@ void NewsFeed::openChat(const RsPeerId &peerId)
     ChatDialog::chatFriend(ChatId(peerId));
 }
 
-void NewsFeed::openComments(uint32_t /*type*/, const RsGxsGroupId &/*groupId*/, const RsGxsMessageId &/*msgId*/, const QString &/*title*/)
+void NewsFeed::openComments(uint32_t /*type*/, const RsGxsGroupId &/*groupId*/, const QVector<RsGxsMessageId>& versions,const RsGxsMessageId &/*msgId*/, const QString &/*title*/)
 {
 	std::cerr << "NewsFeed::openComments() Not Handled Yet";
 	std::cerr << std::endl;

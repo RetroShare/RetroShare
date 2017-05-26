@@ -54,7 +54,7 @@ public:
 signals:
 	void groupChanged(QWidget *widget);
 	void waitingChanged(QWidget *widget);
-	void loadComment(const RsGxsGroupId &groupId, const RsGxsMessageId &msgId, const QString &title);
+	void loadComment(const RsGxsGroupId &groupId, const QVector<RsGxsMessageId>& msg_versions,const RsGxsMessageId &msgId, const QString &title);
 
 protected:
 	virtual void setAllMessagesReadDo(bool read, uint32_t &token) = 0;

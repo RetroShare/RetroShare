@@ -161,12 +161,12 @@ GenCertDialog::GenCertDialog(bool onlyGenerateIdentity, QWidget *parent)
 	ui.keylength_comboBox->addItem("Very high (4096 bits)", QVariant(4096));
 
 #if QT_VERSION >= 0x040700
-	ui.node_input->setPlaceholderText(tr("[Required] Examples: Home, Laptop,...(Visible to friends).")) ;
-	ui.hiddenaddr_input->setPlaceholderText(tr("[Optional] Tor/I2P address (Example: xa76giaf6ifda7ri63i263.onion)")) ;
-	ui.name_input->setPlaceholderText(tr("[Required] Visible to friends, and friends of friends."));
-	ui.nickname_input->setPlaceholderText(tr("[Optional] Used to write in chat rooms and forums. Can be set later."));
-	ui.password_input->setPlaceholderText(tr("[Required] This password protects your data. Dont forget it!"));
-	ui.password_input_2->setPlaceholderText(tr("[Required] Type the same password again here."));
+	ui.node_input->setPlaceholderText(tr("Node name")) ;
+	ui.hiddenaddr_input->setPlaceholderText(tr("Tor/I2P address")) ;
+	ui.name_input->setPlaceholderText(tr("Username"));
+	ui.nickname_input->setPlaceholderText(tr("Identity name"));
+	ui.password_input->setPlaceholderText(tr("Password"));
+	ui.password_input_2->setPlaceholderText(tr("Password again"));
 #endif
 
 	ui.nickname_input->setMaxLength(RSID_MAXIMUM_NICKNAME_SIZE);
@@ -294,7 +294,7 @@ void GenCertDialog::setupState()
 	ui.entropy_bar->setVisible(true);
 
 	ui.genButton->setVisible(true);
-	ui.genButton->setText(generate_new?tr("Generate new profile and node"):tr("Generate new node"));
+	ui.genButton->setText(generate_new?tr("Generate"):tr("Generate"));
 
 	ui.hiddenaddr_input->setVisible(hidden_state);
 	ui.hiddenaddr_label->setVisible(hidden_state);

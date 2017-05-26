@@ -139,9 +139,9 @@ void PostedListWidget::openChat(const RsPeerId & /*peerId*/)
 	return;
 }
 
-void PostedListWidget::openComments(uint32_t /*feed_type*/, const RsGxsGroupId &groupId, const RsGxsMessageId &msgId, const QString &title)
+void PostedListWidget::openComments(uint32_t /*feed_type*/, const RsGxsGroupId &groupId, const QVector<RsGxsMessageId> &versions, const RsGxsMessageId &msgId, const QString &title)
 {
-	emit loadComment(groupId, msgId, title);
+	emit loadComment(groupId, versions,msgId, title);
 }
 
 void PostedListWidget::newPost()

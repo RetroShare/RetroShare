@@ -26,6 +26,7 @@
 #include "gxstrans/p3gxstransitems.h"
 #include "services/p3idservice.h" // For p3IdService
 #include "util/rsthreads.h"
+#include "retroshare/rsgxstrans.h"
 
 struct p3GxsTrans;
 
@@ -76,18 +77,32 @@ struct GxsTransClient
  * @see GxsTransClient::receiveGxsTransMail(...),
  * @see GxsTransClient::notifyGxsTransSendStatus(...).
  */
-struct p3GxsTrans : RsGenExchange, GxsTokenQueue, p3Config
+class p3GxsTrans : public RsGenExchange, public GxsTokenQueue, public p3Config, public RsGxsTrans
 {
+public:
 	p3GxsTrans( RsGeneralDataService* gds, RsNetworkExchangeService* nes,
 	            p3IdService& identities ) :
 	    RsGenExchange( gds, nes, new RsGxsTransSerializer(),
 	                   RS_SERVICE_TYPE_GXS_TRANS, &identities,
 	                   AuthenPolicy(), GXS_STORAGE_PERIOD ),
-	    GxsTokenQueue(this), mIdService(identities),
+	    GxsTokenQueue(this),
+        RsGxsTrans(this),
+        mIdService(identities),
 	    mServClientsMutex("p3GxsTrans client services map mutex"),
 	    mOutgoingMutex("p3GxsTrans outgoing queue map mutex"),
 	    mIngoingMutex("p3GxsTrans ingoing queue map mutex") {}
-	~p3GxsTrans();
+
+	virtual ~p3GxsTrans();
+
+    /*!
+     * \brief getStatistics
+     * 				Gathers all sorts of statistics about the internals of p3GxsTrans, in order to display info about the running status,
+     * 			message transport, etc.
+     * \param stats This structure contains all statistics information.
+     * \return 		true is the call succeeds.
+     */
+
+	virtual bool getStatistics(GxsTransStatistics& stats);
 
 	/**
 	 * Send an email to recipient, in the process author of the email is

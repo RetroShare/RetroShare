@@ -23,29 +23,10 @@
 #include "serialiser/rsbaseserial.h"
 #include "serialiser/rstlvidset.h"
 #include "retroshare/rsgxsflags.h"
+#include "retroshare/rsgxstrans.h"
 #include "retroshare/rsgxscircles.h" // For: GXS_CIRCLE_TYPE_PUBLIC
 #include "services/p3idservice.h"
 #include "serialiser/rstypeserializer.h"
-
-/// Subservices identifiers (like port for TCP)
-enum class GxsTransSubServices : uint16_t
-{
-	UNKNOWN         = 0,
-	TEST_SERVICE    = 1,
-	P3_MSG_SERVICE  = 2,
-	P3_CHAT_SERVICE = 3
-};
-
-/// Values must fit into uint8_t
-enum class GxsTransItemsSubtypes : uint8_t
-{
-	GXS_TRANS_SUBTYPE_MAIL    = 1,
-	GXS_TRANS_SUBTYPE_RECEIPT = 2,
-	GXS_TRANS_SUBTYPE_GROUP   = 3,
-	OUTGOING_RECORD_ITEM      = 4
-};
-
-typedef uint64_t RsGxsTransId;
 
 struct RsNxsTransPresignedReceipt : RsNxsMsg
 {
@@ -186,27 +167,6 @@ struct RsGxsTransGroupItem : RsGxsGrpItem
 	void clear() {}
 	std::ostream &print(std::ostream &out, uint16_t /*indent = 0*/)
 	{ return out; }
-};
-
-enum class GxsTransSendStatus : uint8_t
-{
-	UNKNOWN = 0,
-	PENDING_PROCESSING,
-	PENDING_PREFERRED_GROUP,
-	PENDING_RECEIPT_CREATE,
-	PENDING_RECEIPT_SIGNATURE,
-	PENDING_SERIALIZATION,
-	PENDING_PAYLOAD_CREATE,
-	PENDING_PAYLOAD_ENCRYPT,
-	PENDING_PUBLISH,
-	/** This will be useful so the user can know if the mail reached at least
-	 * some friend node, in case of internet connection interruption */
-	//PENDING_TRANSFER,
-	PENDING_RECEIPT_RECEIVE,
-	/// Records with status >= RECEIPT_RECEIVED get deleted
-	RECEIPT_RECEIVED,
-	FAILED_RECEIPT_SIGNATURE = 240,
-	FAILED_ENCRYPTION
 };
 
 class RsGxsTransSerializer;

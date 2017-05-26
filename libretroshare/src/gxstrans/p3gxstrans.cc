@@ -16,10 +16,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "util/rsdir.h"
 #include "gxstrans/p3gxstrans.h"
 #include "util/stacktrace.h"
 
 typedef unsigned int uint;
+
+RsGxsTrans *rsGxsTrans = NULL ;
 
 p3GxsTrans::~p3GxsTrans()
 {
@@ -29,6 +32,35 @@ p3GxsTrans::~p3GxsTrans()
 		RS_STACK_MUTEX(mIngoingMutex);
 		for ( auto& kv : mIngoingQueue ) delete kv.second;
 	}
+}
+
+bool p3GxsTrans::getStatistics(GxsTransStatistics& stats)
+{
+    stats.prefered_group_id = mPreferredGroupId;
+    stats.outgoing_records.clear();
+
+    {
+		RS_STACK_MUTEX(mOutgoingMutex);
+
+		for ( auto it = mOutgoingQueue.begin(); it != mOutgoingQueue.end(); ++it)
+		{
+			const OutgoingRecord& pr(it->second);
+
+			RsGxsTransOutgoingRecord rec ;
+            rec.status = pr.status ;
+            rec.send_TS = pr.mailItem.meta.mPublishTs ;
+            rec.group_id = pr.mailItem.meta.mGroupId ;
+            rec.trans_id = pr.mailItem.mailId ;
+            rec.recipient = pr.recipient ;
+            rec.data_size = pr.mailData.size();
+            rec.data_hash = RsDirUtil::sha1sum(pr.mailData.data(),pr.mailData.size());
+            rec.client_service = pr.clientService ;
+
+            stats.outgoing_records.push_back(rec) ;
+        }
+    }
+
+    return true;
 }
 
 bool p3GxsTrans::sendMail( RsGxsTransId& mailId,
@@ -120,9 +152,9 @@ void p3GxsTrans::handleResponse(uint32_t token, uint32_t req_type)
 			        && meta.mGroupId != mPreferredGroupId;
 
 			if(shoudlSubscribe)
-				subscribeToGroup(token, meta.mGroupId, true);
+				RsGenExchange::subscribeToGroup(token, meta.mGroupId, true);
 			else if(shoudlUnSubscribe)
-				subscribeToGroup(token, meta.mGroupId, false);
+				RsGenExchange::subscribeToGroup(token, meta.mGroupId, false);
 
 #ifdef GXS_MAIL_GRP_DEBUG
 			char buff[30];
@@ -337,7 +369,7 @@ void p3GxsTrans::notifyChanges(std::vector<RsGxsNotify*>& changes)
 			std::cout << "p3GxsTrans::notifyChanges(...) msgChange" << std::endl;
 			uint32_t token;
 			RsTokReqOptions opts; opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
-			getTokenService()->requestMsgInfo( token, 0xcaca,
+			RsGenExchange::getTokenService()->requestMsgInfo( token, 0xcaca,
 			                                   opts, msgChange->msgChangeMap );
 			GxsTokenQueue::queueRequest(token, MAILS_UPDATE);
 
@@ -393,8 +425,8 @@ bool p3GxsTrans::requestGroupsData(const std::list<RsGxsGroupId>* groupIds)
 	//	std::cout << "p3GxsTrans::requestGroupsList()" << std::endl;
 	uint32_t token;
 	RsTokReqOptions opts; opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
-	if(!groupIds) getTokenService()->requestGroupInfo(token, 0xcaca, opts);
-	else getTokenService()->requestGroupInfo(token, 0xcaca, opts, *groupIds);
+	if(!groupIds) RsGenExchange::getTokenService()->requestGroupInfo(token, 0xcaca, opts);
+	else RsGenExchange::getTokenService()->requestGroupInfo(token, 0xcaca, opts, *groupIds);
 	GxsTokenQueue::queueRequest(token, GROUPS_LIST);
 	return true;
 }
