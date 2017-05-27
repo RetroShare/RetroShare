@@ -53,6 +53,7 @@
 #define IMAGE_TURTLE        ":images/turtle.png"
 #define IMAGE_BWGRAPH       ":/images/ksysguard.png"
 #define IMAGE_GLOBALROUTER  ":/images/network32.png"
+#define IMAGE_GXSTRANSPORT  ":/icons/transport128.png"
 #define IMAGE_BANDWIDTH     ":images/office-chart-area-stacked.png"
 #define IMAGE_RTT           ":images/office-chart-line.png"
 
@@ -135,7 +136,7 @@ void StatisticsWindow::initStackedPage()
                    action = createPageAction(QIcon(IMAGE_GLOBALROUTER), tr("Global Router"), grp)); 
                    
   ui->stackPages->add(gxsdlg = new GxsTransportStatistics(ui->stackPages),
-                   action = createPageAction(QIcon(IMAGE_GLOBALROUTER), tr("Gxs Transport"), grp));
+                   action = createPageAction(QIcon(IMAGE_GXSTRANSPORT), tr("Gxs Transport"), grp));
 
   ui->stackPages->add(rttdlg = new RttStatistics(ui->stackPages),
                       action = createPageAction(QIcon(IMAGE_RTT), tr("RTT Statistics"), grp));
