@@ -2259,7 +2259,7 @@ void p3MsgService::sendDistantMsgItem(RsMsgItem *msgitem)
 	                    msg_serialized_data, msg_serialized_rssize,
 	                    signing_key_id, grouter_message_id );
 	RsGxsTransId gxsMailId;
-	mGxsTransServ.sendMail( gxsMailId, GxsTransSubServices::P3_MSG_SERVICE,
+	mGxsTransServ.sendData( gxsMailId, GxsTransSubServices::P3_MSG_SERVICE,
 	                         signing_key_id, destination_key_id,
 	                         msg_serialized_data, msg_serialized_rssize );
 
