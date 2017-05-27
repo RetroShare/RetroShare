@@ -21,6 +21,8 @@
 
 #pragma once
 
+#include <map>
+
 #include <QPoint>
 #include <retroshare/rsgrouter.h>
 #include <retroshare/rstypes.h>
@@ -55,43 +57,49 @@ private slots:
 	private:
 		void loadGroupData(const uint32_t& token);
 		void loadGroupMeta(const uint32_t& token);
+		void loadGroupStat(const uint32_t& token);
+
 		void requestGroupData();
 		void requestGroupMeta();
+		void requestGroupStat(const RsGxsGroupId &groupId);
 
 		void processSettings(bool bLoad);
 		bool m_bProcessSettings;
 
 		virtual void updateDisplay() ;
 
-
 		GxsTransportStatisticsWidget *_tst_CW ;
         TokenQueue *mTransQueue ;
 		UIStateHelper *mStateHelper;
         uint32_t mLastGroupReqTS ;
+
+        // temporary storage of retrieved data, for display (useful because this is obtained from the async token system)
+
+        std::map<RsGxsGroupId,GxsGroupStatistic> mGroupStats ;	// stores the list of active groups and statistics about each of them.
 } ;
 
-class GxsTransportStatisticsWidget:  public QWidget
-{
-	Q_OBJECT
-
-	public:
-		GxsTransportStatisticsWidget(QWidget *parent = NULL) ;
-
-		virtual void paintEvent(QPaintEvent *event) ;
-		virtual void resizeEvent(QResizeEvent *event);
-		virtual void wheelEvent(QWheelEvent *event);
-
-		void updateContent() ;
-	private:
-		static QString speedString(float f) ;
-
-		QPixmap pixmap ;
-		int maxWidth,maxHeight ;
-        	int mCurrentN ;
-            	int mNumberOfKnownKeys ;
-                int mMinWheelZoneX ;
-                int mMinWheelZoneY ;
-                int mMaxWheelZoneX ;
-                int mMaxWheelZoneY ;
-};
+// class GxsTransportStatisticsWidget:  public QWidget
+// {
+// 	Q_OBJECT
+//
+// 	public:
+// 		GxsTransportStatisticsWidget(QWidget *parent = NULL) ;
+//
+// 		virtual void paintEvent(QPaintEvent *event) ;
+// 		virtual void resizeEvent(QResizeEvent *event);
+// 		virtual void wheelEvent(QWheelEvent *event);
+//
+// 		void updateContent() ;
+// 	private:
+// 		static QString speedString(float f) ;
+//
+// 		QPixmap pixmap ;
+// 		int maxWidth,maxHeight ;
+//         	int mCurrentN ;
+//             	int mNumberOfKnownKeys ;
+//                 int mMinWheelZoneX ;
+//                 int mMinWheelZoneY ;
+//                 int mMaxWheelZoneX ;
+//                 int mMaxWheelZoneY ;
+// };
 

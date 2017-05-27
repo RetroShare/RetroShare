@@ -15,31 +15,36 @@
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="1" column="0">
-    <widget class="QSplitter" name="splitter">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
+    <widget class="QGroupBox" name="groupBox_2">
+     <property name="title">
+      <string>Gxs Transport Groups:</string>
      </property>
-     <widget class="QScrollArea" name="_router_F">
-      <property name="frameShape">
-       <enum>QFrame::NoFrame</enum>
-      </property>
-      <property name="horizontalScrollBarPolicy">
-       <enum>Qt::ScrollBarAlwaysOff</enum>
-      </property>
-      <property name="widgetResizable">
-       <bool>true</bool>
-      </property>
-      <widget class="QWidget" name="scrollAreaWidgetContents">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>0</y>
-         <width>1432</width>
-         <height>305</height>
-        </rect>
-       </property>
-      </widget>
-     </widget>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QSplitter" name="splitter">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <widget class="QTreeWidget" name="groupTreeWidget">
+         <column>
+          <property name="text">
+           <string>Group ID</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Number of messages</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Total size of messages</string>
+          </property>
+         </column>
+        </widget>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </item>
    <item row="0" column="0">

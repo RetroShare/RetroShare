@@ -34,6 +34,8 @@
 #include "retroshare/rspeers.h"
 #include <retroshare/rsplugin.h>
 
+#include <gui/settings/rsharesettings.h>
+
 #include <gui/statistics/TurtleRouterStatistics.h>
 #include <gui/statistics/GlobalRouterStatistics.h>
 #include <gui/statistics/GxsTransportStatistics.h>
@@ -49,12 +51,14 @@
 	#include "gui/statistics/RttStatistics.h"
 #endif
 
-#define IMAGE_DHT           ":/images/dht32.png"
-#define IMAGE_TURTLE        ":images/turtle.png"
-#define IMAGE_BWGRAPH       ":/images/ksysguard.png"
-#define IMAGE_GLOBALROUTER  ":/images/network32.png"
-#define IMAGE_BANDWIDTH     ":images/office-chart-area-stacked.png"
-#define IMAGE_RTT           ":images/office-chart-line.png"
+#define IMAGE_DHT           ":/icons/DHT128.png"
+#define IMAGE_TURTLE        ":/icons/turtle128.png"
+#define IMAGE_BWGRAPH       ":/icons/bandwidth128.png"
+#define IMAGE_GLOBALROUTER  ":/icons/GRouter128.png"
+#define IMAGE_GXSTRANSPORT  ":/icons/transport128.png"
+#define IMAGE_RTT           ":/icons/RTT128.png"
+
+//#define IMAGE_BANDWIDTH     ":images/office-chart-area-stacked.png"
 
 /********************************************** STATIC WINDOW *************************************/
 StatisticsWindow * StatisticsWindow::mInstance = NULL;
@@ -95,6 +99,9 @@ StatisticsWindow::StatisticsWindow(QWidget *parent) :
     connect(ui->stackPages, SIGNAL(currentChanged(int)), this, SLOT(setNewPage(int)));
     ui->stackPages->setCurrentIndex(0);
 
+	int toolSize = Settings->getToolButtonSize();
+	ui->toolBar->setToolButtonStyle(Settings->getToolButtonStyle());
+	ui->toolBar->setIconSize(QSize(toolSize,toolSize));
 }
 
 StatisticsWindow::~StatisticsWindow()
@@ -126,7 +133,7 @@ void StatisticsWindow::initStackedPage()
   QAction *action;
   
   ui->stackPages->add(bwdlg = new BwCtrlWindow(ui->stackPages),
-                   action = createPageAction(QIcon(IMAGE_BANDWIDTH), tr("Bandwidth"), grp));
+                   action = createPageAction(QIcon(IMAGE_BWGRAPH), tr("Bandwidth"), grp));
                    
   ui->stackPages->add(trsdlg = new TurtleRouterStatistics(ui->stackPages),
                    action = createPageAction(QIcon(IMAGE_TURTLE), tr("Turtle Router"), grp));
@@ -135,7 +142,7 @@ void StatisticsWindow::initStackedPage()
                    action = createPageAction(QIcon(IMAGE_GLOBALROUTER), tr("Global Router"), grp)); 
                    
   ui->stackPages->add(gxsdlg = new GxsTransportStatistics(ui->stackPages),
-                   action = createPageAction(QIcon(IMAGE_GLOBALROUTER), tr("Gxs Transport"), grp));
+                   action = createPageAction(QIcon(IMAGE_GXSTRANSPORT), tr("Gxs Transport"), grp));
 
   ui->stackPages->add(rttdlg = new RttStatistics(ui->stackPages),
                       action = createPageAction(QIcon(IMAGE_RTT), tr("RTT Statistics"), grp));
@@ -183,7 +190,7 @@ QAction *StatisticsWindow::createPageAction(const QIcon &icon, const QString &te
     font = action->font();
     font.setPointSize(9);
     action->setCheckable(true);
-    action->setFont(font);
+//    action->setFont(font);
     return action;
 }
 
