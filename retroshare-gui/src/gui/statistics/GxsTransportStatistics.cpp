@@ -45,14 +45,18 @@
 #include "gui/common/UIStateHelper.h"
 #include "util/misc.h"
 
-#define COL_ID                  0
-#define COL_DESTINATION         1
-#define COL_NICKNAME            2
-#define COL_DATASTATUS          3
-#define COL_DATASIZE            4
-#define COL_DATAHASH            5
-#define COL_SEND                6
-#define COL_GROUP_ID            7
+#define COL_PENDING_ID                  0
+#define COL_PENDING_DESTINATION         1
+#define COL_PENDING_NICKNAME            2
+#define COL_PENDING_DATASTATUS          3
+#define COL_PENDING_DATASIZE            4
+#define COL_PENDING_DATAHASH            5
+#define COL_PENDING_SEND                6
+#define COL_PENDING_GROUP_ID            7
+
+#define COL_GROUP_GRP_ID                  0
+#define COL_GROUP_NUM_MSGS                1
+#define COL_GROUP_SIZE_MSGS               2
 
 static const int PARTIAL_VIEW_SIZE                           =  9 ;
 static const int MAX_TUNNEL_REQUESTS_DISPLAY                 = 10 ;
@@ -60,6 +64,7 @@ static const int GXSTRANS_STATISTICS_DELAY_BETWEEN_GROUP_REQ = 30 ;	// never req
 
 #define GXSTRANS_GROUP_META  0x01
 #define GXSTRANS_GROUP_DATA  0x02
+#define GXSTRANS_GROUP_STAT  0x03
 
 // static QColor colorScale(float f)
 // {
@@ -201,7 +206,9 @@ void GxsTransportStatistics::updateContent()
     treeWidget->clear();
     time_t now = time(NULL) ;
     
-    groupBox->setTitle(tr("Pending packets")+": " + QString::number(transinfo.outgoing_records.size()) );
+    // 1 - fill the table for pending packets
+
+    groupBox->setTitle(tr("Pending data items")+": " + QString::number(transinfo.outgoing_records.size()) );
 
     for(uint32_t i=0;i<transinfo.outgoing_records.size();++i)
     {
@@ -217,21 +224,37 @@ void GxsTransportStatistics::updateContent()
         if(nickname.isEmpty())
           nickname = tr("Unknown");
 
-        item -> setData(COL_ID,           Qt::DisplayRole, QString::number(rec.trans_id,16).rightJustified(8,'0'));
-        item -> setData(COL_NICKNAME,     Qt::DisplayRole, nickname ) ;
-        item -> setData(COL_DESTINATION,  Qt::DisplayRole, QString::fromStdString(rec.recipient.toStdString()));
-        item -> setData(COL_DATASTATUS,   Qt::DisplayRole, getStatusString(rec.status));
-        item -> setData(COL_DATASIZE,     Qt::DisplayRole, misc::friendlyUnit(rec.data_size));
-        item -> setData(COL_DATAHASH,     Qt::DisplayRole, QString::fromStdString(rec.data_hash.toStdString()));
-        item -> setData(COL_SEND,         Qt::DisplayRole, QString::number(now - rec.send_TS));
-        item -> setData(COL_GROUP_ID,     Qt::DisplayRole, QString::fromStdString(rec.group_id.toStdString()));
+        item -> setData(COL_PENDING_ID,           Qt::DisplayRole, QString::number(rec.trans_id,16).rightJustified(8,'0'));
+        item -> setData(COL_PENDING_NICKNAME,     Qt::DisplayRole, nickname ) ;
+        item -> setData(COL_PENDING_DESTINATION,  Qt::DisplayRole, QString::fromStdString(rec.recipient.toStdString()));
+        item -> setData(COL_PENDING_DATASTATUS,   Qt::DisplayRole, getStatusString(rec.status));
+        item -> setData(COL_PENDING_DATASIZE,     Qt::DisplayRole, misc::friendlyUnit(rec.data_size));
+        item -> setData(COL_PENDING_DATAHASH,     Qt::DisplayRole, QString::fromStdString(rec.data_hash.toStdString()));
+        item -> setData(COL_PENDING_SEND,         Qt::DisplayRole, QString::number(now - rec.send_TS));
+        item -> setData(COL_PENDING_GROUP_ID,     Qt::DisplayRole, QString::fromStdString(rec.group_id.toStdString()));
+    }
+
+    // 2 - fill the table for pending group data
+
+    groupTreeWidget->clear();
+
+    for(std::map<RsGxsGroupId,GxsGroupStatistic>::const_iterator it(mGroupStats.begin());it!=mGroupStats.end();++it)
+    {
+        const GxsGroupStatistic& stat(it->second) ;
+
+		QTreeWidgetItem *item = new QTreeWidgetItem();
+        groupTreeWidget->addTopLevelItem(item);
+
+        item->setData(COL_GROUP_GRP_ID,   Qt::DisplayRole,  QString::fromStdString(stat.mGrpId.toStdString())) ;
+        item->setData(COL_GROUP_NUM_MSGS, Qt::DisplayRole,  QString::number(stat.mNumMsgs)) ;
+        item->setData(COL_GROUP_SIZE_MSGS,Qt::DisplayRole,  QString::number(stat.mTotalSizeOfMsgs)) ;
     }
 }
 
 void GxsTransportStatistics::personDetails()
 {
     QTreeWidgetItem *item = treeWidget->currentItem();
-    std::string id = item->text(COL_DESTINATION).toStdString();
+    std::string id = item->text(COL_PENDING_DESTINATION).toStdString();
 
     if (id.empty()) {
         return;
@@ -239,130 +262,134 @@ void GxsTransportStatistics::personDetails()
     
     IdDetailsDialog *dialog = new IdDetailsDialog(RsGxsGroupId(id));
     dialog->show();
-  
 }
 
-GxsTransportStatisticsWidget::GxsTransportStatisticsWidget(QWidget *parent)
-	: QWidget(parent)
-{
-    float size = QFontMetricsF(font()).height() ;
-    float fact = size/14.0 ;
-
-    maxWidth = 400*fact ;
-	maxHeight = 0 ;
-    mCurrentN = PARTIAL_VIEW_SIZE/2+1 ;
-}
-
-void GxsTransportStatisticsWidget::updateContent()
-{
-    RsGxsTrans::GxsTransStatistics transinfo ;
-
-    rsGxsTrans->getStatistics(transinfo) ;
-    
-    float size = QFontMetricsF(font()).height() ;
-    float fact = size/14.0 ;
-
-    // What do we need to draw?
-    //
-    // Statistics about GxsTransport
-    //		- prefered group ID
-    //
-    // Own key ids
-    // 	key			service id			description
-    //
-    // Data items
-    // 	Msg id				Local origin				Destination				Time           Status
-    //
-    QPixmap tmppixmap(maxWidth, maxHeight);
-
-	tmppixmap.fill(Qt::transparent);
-    setFixedHeight(maxHeight);
-
-    QPainter painter(&tmppixmap);
-    painter.initFrom(this);
-    painter.setPen(QColor::fromRgb(0,0,0)) ;
-
-    QFont times_f(font());//"Times") ;
-    QFont monospace_f("Monospace") ;
-
-    monospace_f.setStyleHint(QFont::TypeWriter) ;
-    monospace_f.setPointSize(font().pointSize()) ;
-
-    QFontMetricsF fm_monospace(monospace_f) ;
-    QFontMetricsF fm_times(times_f) ;
-
-    static const int cellx = fm_monospace.width(QString(" ")) ;
-    static const int celly = fm_monospace.height() ;
-
-    maxHeight = 500*fact ;
-
-    // std::cerr << "Drawing into pixmap of size " << maxWidth << "x" << maxHeight << std::endl;
-    // draw...
-    int ox=5*fact,oy=5*fact ;
-
-    painter.setFont(times_f) ;
-
-    painter.drawText(ox,oy+celly,tr("Preferred group Id")+":" + QString::fromStdString(transinfo.prefered_group_id.toStdString())) ; oy += celly*2 ;
-
-    oy += celly ;
-    oy += celly ;
-
-    // update the pixmap
-    //
-    pixmap = tmppixmap;
-    maxHeight = oy ;
-}
-
-void GxsTransportStatisticsWidget::wheelEvent(QWheelEvent *e)
-{
-}
-
-QString GxsTransportStatisticsWidget::speedString(float f)
-{
-	if(f < 1.0f) 
-		return QString("0 B/s") ;
-	if(f < 1024.0f)
-		return QString::number((int)f)+" B/s" ;
-
-	return QString::number(f/1024.0,'f',2) + " KB/s";
-}
-
-void GxsTransportStatisticsWidget::paintEvent(QPaintEvent */*event*/)
-{
-    QStylePainter(this).drawPixmap(0, 0, pixmap);
-}
-
-void GxsTransportStatisticsWidget::resizeEvent(QResizeEvent *event)
-{
-    QRect TaskGraphRect = geometry();
-    maxWidth = TaskGraphRect.width();
-    maxHeight = TaskGraphRect.height() ;
-
-	 QWidget::resizeEvent(event);
-	 updateContent();
-}
+//  GxsTransportStatisticsWidget::GxsTransportStatisticsWidget(QWidget *parent)
+//  	: QWidget(parent)
+//  {
+//      float size = QFontMetricsF(font()).height() ;
+//      float fact = size/14.0 ;
+//
+//      maxWidth = 400*fact ;
+//  	maxHeight = 0 ;
+//      mCurrentN = PARTIAL_VIEW_SIZE/2+1 ;
+//  }
+//
+//  void GxsTransportStatisticsWidget::updateContent()
+//  {
+//      RsGxsTrans::GxsTransStatistics transinfo ;
+//
+//      rsGxsTrans->getStatistics(transinfo) ;
+//
+//      float size = QFontMetricsF(font()).height() ;
+//      float fact = size/14.0 ;
+//
+//      // What do we need to draw?
+//      //
+//      // Statistics about GxsTransport
+//      //		- prefered group ID
+//      //
+//      // Own key ids
+//      // 	key			service id			description
+//      //
+//      // Data items
+//      // 	Msg id				Local origin				Destination				Time           Status
+//      //
+//      QPixmap tmppixmap(maxWidth, maxHeight);
+//
+//  	tmppixmap.fill(Qt::transparent);
+//      setFixedHeight(maxHeight);
+//
+//      QPainter painter(&tmppixmap);
+//      painter.initFrom(this);
+//      painter.setPen(QColor::fromRgb(0,0,0)) ;
+//
+//      QFont times_f(font());//"Times") ;
+//      QFont monospace_f("Monospace") ;
+//
+//      monospace_f.setStyleHint(QFont::TypeWriter) ;
+//      monospace_f.setPointSize(font().pointSize()) ;
+//
+//      QFontMetricsF fm_monospace(monospace_f) ;
+//      QFontMetricsF fm_times(times_f) ;
+//
+//      static const int cellx = fm_monospace.width(QString(" ")) ;
+//      static const int celly = fm_monospace.height() ;
+//
+//      maxHeight = 500*fact ;
+//
+//      // std::cerr << "Drawing into pixmap of size " << maxWidth << "x" << maxHeight << std::endl;
+//      // draw...
+//      int ox=5*fact,oy=5*fact ;
+//
+//      painter.setFont(times_f) ;
+//
+//      painter.drawText(ox,oy+celly,tr("Preferred group Id")+":" + QString::fromStdString(transinfo.prefered_group_id.toStdString())) ; oy += celly*2 ;
+//
+//      oy += celly ;
+//      oy += celly ;
+//
+//      // update the pixmap
+//      //
+//      pixmap = tmppixmap;
+//      maxHeight = oy ;
+//  }
+//
+//  void GxsTransportStatisticsWidget::wheelEvent(QWheelEvent *e)
+//  {
+//  }
+//
+//  QString GxsTransportStatisticsWidget::speedString(float f)
+//  {
+//  	if(f < 1.0f)
+//  		return QString("0 B/s") ;
+//  	if(f < 1024.0f)
+//  		return QString::number((int)f)+" B/s" ;
+//
+//  	return QString::number(f/1024.0,'f',2) + " KB/s";
+//  }
+//
+//  void GxsTransportStatisticsWidget::paintEvent(QPaintEvent */*event*/)
+//  {
+//      QStylePainter(this).drawPixmap(0, 0, pixmap);
+//  }
+//
+//  void GxsTransportStatisticsWidget::resizeEvent(QResizeEvent *event)
+//  {
+//      QRect TaskGraphRect = geometry();
+//      maxWidth = TaskGraphRect.width();
+//      maxHeight = TaskGraphRect.height() ;
+//
+//  	 QWidget::resizeEvent(event);
+//  	 updateContent();
+//  }
 
 void GxsTransportStatistics::loadRequest(const TokenQueue *queue, const TokenRequest &req)
 {
-	std::cerr << "GxsTransportStatistics::loadRequest() UserType: " << req.mUserType;
-	std::cerr << std::endl;
+	std::cerr << "GxsTransportStatistics::loadRequest() UserType: " << req.mUserType << std::endl;
 
 	if (queue != mTransQueue)
 	{
-		/* now switch on req */
-		switch(req.mUserType)
-		{
-			case GXSTRANS_GROUP_META: loadGroupMeta(req.mToken);
-				break;
+		std::cerr << "Wrong queue!" << std::endl;
+		return ;
+	}
 
-			case GXSTRANS_GROUP_DATA: loadGroupData(req.mToken);
-				break;
+	/* now switch on req */
+	switch(req.mUserType)
+	{
+	case GXSTRANS_GROUP_META: loadGroupMeta(req.mToken);
+		break;
 
-			default:
-				std::cerr << "GxsTransportStatistics::loadRequest() ERROR: INVALID TYPE";
-				std::cerr << std::endl;
-				break;
-		}
+	case GXSTRANS_GROUP_DATA: loadGroupData(req.mToken);
+		break;
+
+	case GXSTRANS_GROUP_STAT: loadGroupStat(req.mToken);
+		break;
+
+	default:
+		std::cerr << "GxsTransportStatistics::loadRequest() ERROR: INVALID TYPE";
+		std::cerr << std::endl;
+		break;
 	}
 }
 
@@ -381,6 +408,23 @@ void GxsTransportStatistics::requestGroupMeta()
 	uint32_t token;
 	mTransQueue->requestGroupInfo(token,  RS_TOKREQ_ANSTYPE_SUMMARY, opts, GXSTRANS_GROUP_META);
 }
+void GxsTransportStatistics::requestGroupStat(const RsGxsGroupId &groupId)
+{
+	mTransQueue->cancelActiveRequestTokens(GXSTRANS_GROUP_STAT);
+	uint32_t token;
+	rsGxsTrans->getTokenService()->requestGroupStatistic(token, groupId);
+	mTransQueue->queueRequest(token, 0, RS_TOKREQ_ANSTYPE_ACK, GXSTRANS_GROUP_STAT);
+}
+
+void GxsTransportStatistics::loadGroupStat(const uint32_t &token)
+{
+    std::cerr << "GxsTransportStatistics::loadGroupStat." << std::endl;
+	GxsGroupStatistic stats;
+	rsGxsTrans->getGroupStatistic(token, stats);
+
+    mGroupStats[stats.mGrpId] = stats ;
+}
+
 void GxsTransportStatistics::loadGroupMeta(const uint32_t& token)
 {
 	mStateHelper->setLoading(GXSTRANS_GROUP_META, false);
@@ -420,28 +464,27 @@ void GxsTransportStatistics::loadGroupMeta(const uint32_t& token)
 //	externalOtherCirclesItem->setText(0, tr("External Circles (Other)"));
 //	ui.treeWidget_membership->addTopLevelItem(externalOtherCirclesItem);
 
+    std::set<RsGxsGroupId> existing_groups ;
+
 	for(vit = groupInfo.begin(); vit != groupInfo.end(); ++vit)
 	{
+        existing_groups.insert(vit->mGroupId) ;
+
 		/* Add Widget, and request Pages */
 		std::cerr << "GxsTransportStatisticsWidget::loadGroupMeta() GroupId: " << vit->mGroupId << " Group: " << vit->mGroupName << std::endl;
 
-		// QTreeWidgetItem *groupItem = new QTreeWidgetItem();
-		// groupItem->setText(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, QString::fromUtf8(vit->mGroupName.c_str()));
-  		// groupItem->setText(CIRCLEGROUP_CIRCLE_COL_GROUPID, QString::fromStdString(vit->mGroupId.toStdString()));
-
-		// if (vit->mCircleType == GXS_CIRCLE_TYPE_LOCAL)
-		// 	personalCirclesItem->addChild(groupItem);
-		// else
-		// {
-		// 	if (vit->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)
-		// 		externalAdminCirclesItem->addChild(groupItem);
-		// 	else if (vit->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED)
-		// 		externalSubCirclesItem->addChild(groupItem);
-		// 	else
-		// 		externalOtherCirclesItem->addChild(groupItem);
-		// }
+        requestGroupStat(vit->mGroupId) ;
 	}
+
+    // remove group stats for group that do not exist anymore
+
+    for(std::map<RsGxsGroupId,GxsGroupStatistic>::iterator it(mGroupStats.begin());it!=mGroupStats.end();)
+        if(existing_groups.find(it->first) == existing_groups.end())
+			it = mGroupStats.erase(it);
+		else
+			++it;
 }
+
 void GxsTransportStatistics::loadGroupData(const uint32_t& token)
 {
     std::cerr << __PRETTY_FUNCTION__ << ": not implemented." << std::endl;
