@@ -63,7 +63,7 @@ bool p3GxsTrans::getStatistics(GxsTransStatistics& stats)
     return true;
 }
 
-bool p3GxsTrans::sendMail( RsGxsTransId& mailId,
+bool p3GxsTrans::sendData( RsGxsTransId& mailId,
                            GxsTransSubServices service,
                            const RsGxsId& own_gxsid, const RsGxsId& recipient,
                            const uint8_t* data, uint32_t size,
@@ -558,6 +558,7 @@ void p3GxsTrans::processOutgoingRecord(OutgoingRecord& pr)
 	{
 		pr.mailItem.saltRecipientHint(pr.recipient);
 		pr.mailItem.saltRecipientHint(RsGxsId::random());
+		pr.mailItem.meta.mPublishTs = time(NULL);
 	}
 	case GxsTransSendStatus::PENDING_PREFERRED_GROUP:
 	{
@@ -640,8 +641,7 @@ void p3GxsTrans::processOutgoingRecord(OutgoingRecord& pr)
 			                           pr.recipient, encryptError, true ) )
 			{
 				pr.mailItem.payload.resize(encryptedSize);
-				memcpy( &pr.mailItem.payload[0], encryptedData,
-				        encryptedSize );
+				memcpy( &pr.mailItem.payload[0], encryptedData, encryptedSize );
 				free(encryptedData);
 				break;
 			}

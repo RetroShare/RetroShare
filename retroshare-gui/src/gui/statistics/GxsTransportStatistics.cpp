@@ -57,6 +57,8 @@
 #define COL_GROUP_GRP_ID                  0
 #define COL_GROUP_NUM_MSGS                1
 #define COL_GROUP_SIZE_MSGS               2
+#define COL_GROUP_SUBSCRIBED              3
+#define COL_GROUP_POPULARITY              4
 
 static const int PARTIAL_VIEW_SIZE                           =  9 ;
 static const int MAX_TUNNEL_REQUESTS_DISPLAY                 = 10 ;
@@ -65,14 +67,6 @@ static const int GXSTRANS_STATISTICS_DELAY_BETWEEN_GROUP_REQ = 30 ;	// never req
 #define GXSTRANS_GROUP_META  0x01
 #define GXSTRANS_GROUP_DATA  0x02
 #define GXSTRANS_GROUP_STAT  0x03
-
-// static QColor colorScale(float f)
-// {
-// 	if(f == 0)
-// 		return QColor::fromHsv(0,0,192) ;
-// 	else
-// 		return QColor::fromHsv((int)((1.0-f)*280),200,255) ;
-// }
 
 GxsTransportStatistics::GxsTransportStatistics(QWidget *parent)
     : RsAutoUpdatePage(2000,parent)
@@ -86,8 +80,6 @@ GxsTransportStatistics::GxsTransportStatistics(QWidget *parent)
 
 	m_bProcessSettings = false;
     mLastGroupReqTS = 0 ;
-
-	//_router_F->setWidget( _tst_CW = new GxsTransportStatisticsWidget() ) ;
 
 	/* Set header resize modes and initial section sizes Uploads TreeView*/
 	QHeaderView_setSectionResizeMode(treeWidget->header(), QHeaderView::ResizeToContents);
@@ -238,9 +230,9 @@ void GxsTransportStatistics::updateContent()
 
     groupTreeWidget->clear();
 
-    for(std::map<RsGxsGroupId,GxsGroupStatistic>::const_iterator it(mGroupStats.begin());it!=mGroupStats.end();++it)
+    for(std::map<RsGxsGroupId,RsGxsTransGroupStatistics>::const_iterator it(mGroupStats.begin());it!=mGroupStats.end();++it)
     {
-        const GxsGroupStatistic& stat(it->second) ;
+        const RsGxsTransGroupStatistics& stat(it->second) ;
 
 		QTreeWidgetItem *item = new QTreeWidgetItem();
         groupTreeWidget->addTopLevelItem(item);
@@ -248,6 +240,8 @@ void GxsTransportStatistics::updateContent()
         item->setData(COL_GROUP_GRP_ID,   Qt::DisplayRole,  QString::fromStdString(stat.mGrpId.toStdString())) ;
         item->setData(COL_GROUP_NUM_MSGS, Qt::DisplayRole,  QString::number(stat.mNumMsgs)) ;
         item->setData(COL_GROUP_SIZE_MSGS,Qt::DisplayRole,  QString::number(stat.mTotalSizeOfMsgs)) ;
+        item->setData(COL_GROUP_SUBSCRIBED,Qt::DisplayRole,  stat.subscribed?tr("Yes"):tr("No")) ;
+        item->setData(COL_GROUP_POPULARITY,Qt::DisplayRole,  QString::number(stat.popularity)) ;
     }
 }
 
@@ -266,7 +260,9 @@ void GxsTransportStatistics::personDetails()
 
 void GxsTransportStatistics::loadRequest(const TokenQueue *queue, const TokenRequest &req)
 {
+#ifdef DEBUG_GXSTRANS_STATS
 	std::cerr << "GxsTransportStatistics::loadRequest() UserType: " << req.mUserType << std::endl;
+#endif
 
 	if (queue != mTransQueue)
 	{
@@ -278,9 +274,6 @@ void GxsTransportStatistics::loadRequest(const TokenQueue *queue, const TokenReq
 	switch(req.mUserType)
 	{
 	case GXSTRANS_GROUP_META: loadGroupMeta(req.mToken);
-		break;
-
-	case GXSTRANS_GROUP_DATA: loadGroupData(req.mToken);
 		break;
 
 	case GXSTRANS_GROUP_STAT: loadGroupStat(req.mToken);
@@ -297,8 +290,10 @@ void GxsTransportStatistics::requestGroupMeta()
 {
 	mStateHelper->setLoading(GXSTRANS_GROUP_META, true);
 
+#ifdef DEBUG_GXSTRANS_STATS
 	std::cerr << "GxsTransportStatisticsWidget::requestGroupMeta()";
 	std::cerr << std::endl;
+#endif
 
 	mTransQueue->cancelActiveRequestTokens(GXSTRANS_GROUP_META);
 
@@ -318,21 +313,23 @@ void GxsTransportStatistics::requestGroupStat(const RsGxsGroupId &groupId)
 
 void GxsTransportStatistics::loadGroupStat(const uint32_t &token)
 {
+#ifdef DEBUG_GXSTRANS_STATS
     std::cerr << "GxsTransportStatistics::loadGroupStat." << std::endl;
+#endif
 	GxsGroupStatistic stats;
 	rsGxsTrans->getGroupStatistic(token, stats);
 
-    mGroupStats[stats.mGrpId] = stats ;
+    dynamic_cast<GxsGroupStatistic&>(mGroupStats[stats.mGrpId]) = stats ;
 }
 
 void GxsTransportStatistics::loadGroupMeta(const uint32_t& token)
 {
 	mStateHelper->setLoading(GXSTRANS_GROUP_META, false);
 
+#ifdef DEBUG_GXSTRANS_STATS
 	std::cerr << "GxsTransportStatisticsWidget::loadGroupMeta()";
 	std::cerr << std::endl;
-
-//	ui.treeWidget_membership->clear();
+#endif
 
 	std::list<RsGroupMetaData> groupInfo;
 	std::list<RsGroupMetaData>::iterator vit;
@@ -347,45 +344,29 @@ void GxsTransportStatistics::loadGroupMeta(const uint32_t& token)
 
 	mStateHelper->setActive(GXSTRANS_GROUP_META, true);
 
-//	/* add the top level item */
-//	QTreeWidgetItem *personalCirclesItem = new QTreeWidgetItem();
-//	personalCirclesItem->setText(0, tr("Personal Circles"));
-//	ui.treeWidget_membership->addTopLevelItem(personalCirclesItem);
-//
-//	QTreeWidgetItem *externalAdminCirclesItem = new QTreeWidgetItem();
-//	externalAdminCirclesItem->setText(0, tr("External Circles (Admin)"));
-//	ui.treeWidget_membership->addTopLevelItem(externalAdminCirclesItem);
-//
-//	QTreeWidgetItem *externalSubCirclesItem = new QTreeWidgetItem();
-//	externalSubCirclesItem->setText(0, tr("External Circles (Subscribed)"));
-//	ui.treeWidget_membership->addTopLevelItem(externalSubCirclesItem);
-//
-//	QTreeWidgetItem *externalOtherCirclesItem = new QTreeWidgetItem();
-//	externalOtherCirclesItem->setText(0, tr("External Circles (Other)"));
-//	ui.treeWidget_membership->addTopLevelItem(externalOtherCirclesItem);
-
-    std::set<RsGxsGroupId> existing_groups ;
+	std::set<RsGxsGroupId> existing_groups ;
 
 	for(vit = groupInfo.begin(); vit != groupInfo.end(); ++vit)
 	{
         existing_groups.insert(vit->mGroupId) ;
 
 		/* Add Widget, and request Pages */
+#ifdef DEBUG_GXSTRANS_STATS
 		std::cerr << "GxsTransportStatisticsWidget::loadGroupMeta() GroupId: " << vit->mGroupId << " Group: " << vit->mGroupName << std::endl;
+#endif
 
         requestGroupStat(vit->mGroupId) ;
+
+        RsGxsTransGroupStatistics& s(mGroupStats[vit->mGroupId]);
+        s.popularity = vit->mPop ;
+        s.subscribed = IS_GROUP_SUBSCRIBED(vit->mSubscribeFlags) ;
 	}
 
     // remove group stats for group that do not exist anymore
 
-    for(std::map<RsGxsGroupId,GxsGroupStatistic>::iterator it(mGroupStats.begin());it!=mGroupStats.end();)
+    for(std::map<RsGxsGroupId,RsGxsTransGroupStatistics>::iterator it(mGroupStats.begin());it!=mGroupStats.end();)
         if(existing_groups.find(it->first) == existing_groups.end())
 			it = mGroupStats.erase(it);
 		else
 			++it;
-}
-
-void GxsTransportStatistics::loadGroupData(const uint32_t& token)
-{
-    std::cerr << __PRETTY_FUNCTION__ << ": not implemented." << std::endl;
 }

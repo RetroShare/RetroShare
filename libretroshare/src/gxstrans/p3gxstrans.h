@@ -112,7 +112,7 @@ public:
 	 * This method is part of the public interface of this service.
 	 * @return true if the mail will be sent, false if not
 	 */
-	bool sendMail( RsGxsTransId& mailId,
+	bool sendData( RsGxsTransId& mailId,
 	               GxsTransSubServices service,
 	               const RsGxsId& own_gxsid, const RsGxsId& recipient,
 	               const uint8_t* data, uint32_t size,

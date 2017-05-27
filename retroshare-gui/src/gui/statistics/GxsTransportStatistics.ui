@@ -41,6 +41,16 @@
            <string>Total size of messages</string>
           </property>
          </column>
+         <column>
+          <property name="text">
+           <string>Subscribed</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Popularity</string>
+          </property>
+         </column>
         </widget>
        </widget>
       </item>
@@ -61,6 +71,9 @@
         <property name="sortingEnabled">
          <bool>true</bool>
         </property>
+        <attribute name="headerShowSortIndicator" stdset="0">
+         <bool>false</bool>
+        </attribute>
         <column>
          <property name="text">
           <string>ID</string>

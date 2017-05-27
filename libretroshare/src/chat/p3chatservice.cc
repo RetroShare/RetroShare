@@ -349,7 +349,7 @@ bool p3ChatService::sendChat(ChatId destination, std::string msg)
 				uint32_t sz = _serializer->size(ci);
 				std::vector<uint8_t> data; data.resize(sz);
 				_serializer->serialise(ci, &data[0], &sz);
-				mGxsTransport.sendMail(tId, GxsTransSubServices::P3_CHAT_SERVICE,
+				mGxsTransport.sendData(tId, GxsTransSubServices::P3_CHAT_SERVICE,
 				                       de.from, de.to, &data[0], sz);
 			}
 			else
