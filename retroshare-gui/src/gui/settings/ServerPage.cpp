@@ -1495,10 +1495,8 @@ void ServerPage::updateStatusBob()
     QString addr = QString::fromStdString(mBobSettings.addr);
     if (ui.leBobB32Addr->text() != addr) {
         ui.leBobB32Addr->setText(addr);
-		ui.hiddenpage_serviceAddress->setText(addr);
-        ui.pteBobServerKey->setPlainText(QString::fromStdString(mBobSettings.keys));
-
         ui.hiddenpage_serviceAddress->setText(addr);
+        ui.pteBobServerKey->setPlainText(QString::fromStdString(mBobSettings.keys));
 
         if (!mBobSettings.keys.empty()) {
             // we have an addr -> show fields
@@ -1516,6 +1514,8 @@ void ServerPage::updateStatusBob()
             ui.leBobB32Addr->hide();
             ui.pbBobGenAddr->hide();
         }
+
+        saveAddresses();
     }
 
     bobStates bs;
