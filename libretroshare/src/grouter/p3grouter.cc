@@ -1990,7 +1990,7 @@ bool p3GRouter::signDataItem(RsGRouterAbstractMsgItem *item,const RsGxsId& signi
         std::cerr << "Created    signature for data hash: " << RsDirUtil::sha1sum(data,data_size) << " and key id=" << signing_id << std::endl;
 //#endif
         // Check signature
-        RsIdentityUsage::UsageCode info;
+        RsIdentityUsage::UsageCode info = RsIdentityUsage::GLOBAL_ROUTER_SIGNATURE_CREATION;
         uint32_t error;
 
         if(verifySignedDataItem(item,info,error))
