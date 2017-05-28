@@ -1,4 +1,5 @@
 #include <sstream>
+#include <unistd.h>		/* for usleep() */
 
 #include "p3i2pbob.h"
 
@@ -38,11 +39,7 @@ static struct RsLog::logInfo i2pBobLogInfo = {RsLog::Debug_All, "p3I2pBob"};
 static const time_t selfCheckPeroid = 30;
 
 void doSleep(useconds_t timeToSleepMS) {
-#ifndef WINDOWS_SYS
 	usleep((useconds_t) (timeToSleepMS * 1000));
-#else
-	Sleep((int) (timeToSleepMS));
-#endif
 }
 
 p3I2pBob::p3I2pBob(p3PeerMgr *peerMgr)
