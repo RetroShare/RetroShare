@@ -87,7 +87,10 @@ bool p3GxsTrans::sendData( RsGxsTransId& mailId,
 	}
 
 	OutgoingRecord pr( recipient, service, data, size );
+
+    pr.mailItem.clear();
 	pr.mailItem.meta.mAuthorId = own_gxsid;
+	pr.mailItem.meta.mMsgId.clear();
 	pr.mailItem.cryptoType = cm;
 	pr.mailItem.mailId = RSRandom::random_u64();
 
