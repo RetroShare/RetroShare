@@ -4,8 +4,10 @@
 #include <map>
 #include <queue>
 #include <sys/types.h>
-#include <sys/socket.h>
 #include <time.h>
+#ifndef WINDOWS_SYS
+	#include <sys/socket.h>
+#endif
 
 #include "services/autoproxy/rsautoproxymonitor.h"
 #include "util/rsthreads.h"

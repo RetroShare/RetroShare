@@ -1,5 +1,7 @@
 #include "rsautoproxymonitor.h"
 
+#include <unistd.h>		/* for usleep() */
+
 rsAutoProxyMonitor *rsAutoProxyMonitor::mInstance = NULL;
 
 rsAutoProxyMonitor::rsAutoProxyMonitor()
@@ -91,11 +93,7 @@ void rsAutoProxyMonitor::stopAllRSShutdown()
 	// wait for shutdown of all services
 	uint32_t t = 0, timeout = 15;
 	do {		
-#ifndef WINDOWS_SYS
 		usleep(1000 * 1000);
-#else
-		Sleep(1000);
-#endif
 		RS_STACK_MUTEX(mLock);
 		std::cout << "(II) waiting for auto proxy service(s) to shut down " << t << "/" << timeout << " (remaining: " << mProxies.size() << ")" << std::endl;
 		if (mProxies.empty())
