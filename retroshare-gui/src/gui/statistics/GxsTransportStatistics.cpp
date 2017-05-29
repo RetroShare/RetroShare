@@ -67,6 +67,7 @@ static const int GXSTRANS_STATISTICS_DELAY_BETWEEN_GROUP_REQ = 30 ;	// never req
 #define GXSTRANS_GROUP_META  0x01
 #define GXSTRANS_GROUP_DATA  0x02
 #define GXSTRANS_GROUP_STAT  0x03
+#define GXSTRANS_MSG_META    0x04
 
 GxsTransportStatistics::GxsTransportStatistics(QWidget *parent)
     : RsAutoUpdatePage(2000,parent)
@@ -242,6 +243,14 @@ void GxsTransportStatistics::updateContent()
         item->setData(COL_GROUP_SIZE_MSGS,Qt::DisplayRole,  QString::number(stat.mTotalSizeOfMsgs)) ;
         item->setData(COL_GROUP_SUBSCRIBED,Qt::DisplayRole,  stat.subscribed?tr("Yes"):tr("No")) ;
         item->setData(COL_GROUP_POPULARITY,Qt::DisplayRole,  QString::number(stat.popularity)) ;
+
+        for(uint32_t i=0;i<it->second.messages_metas.size();++i)
+        {
+            QTreeWidgetItem *sitem = new QTreeWidgetItem(item);
+            const RsMsgMetaData& meta(it->second.messages_metas[i]) ;
+
+            sitem->setData(COL_GROUP_GRP_ID,Qt::DisplayRole, QString::fromStdString(meta.mMsgId.toStdString()));
+        }
     }
 }
 
@@ -279,6 +288,9 @@ void GxsTransportStatistics::loadRequest(const TokenQueue *queue, const TokenReq
 	case GXSTRANS_GROUP_STAT: loadGroupStat(req.mToken);
 		break;
 
+	case GXSTRANS_MSG_META: loadMsgMeta(req.mToken);
+		break;
+
 	default:
 		std::cerr << "GxsTransportStatistics::loadRequest() ERROR: INVALID TYPE";
 		std::cerr << std::endl;
@@ -309,6 +321,27 @@ void GxsTransportStatistics::requestGroupStat(const RsGxsGroupId &groupId)
 	uint32_t token;
 	rsGxsTrans->getTokenService()->requestGroupStatistic(token, groupId);
 	mTransQueue->queueRequest(token, 0, RS_TOKREQ_ANSTYPE_ACK, GXSTRANS_GROUP_STAT);
+}
+void GxsTransportStatistics::requestMsgMeta(const RsGxsGroupId& grpId)
+{
+	mStateHelper->setLoading(GXSTRANS_MSG_META, true);
+
+#ifdef DEBUG_GXSTRANS_STATS
+	std::cerr << "GxsTransportStatisticsWidget::requestGroupMeta()";
+	std::cerr << std::endl;
+#endif
+
+	mTransQueue->cancelActiveRequestTokens(GXSTRANS_MSG_META);
+
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_MSG_META;
+
+    std::list<RsGxsGroupId> grouplist ;
+	grouplist.push_back(grpId) ;
+
+	uint32_t token;
+	rsGxsTrans->getTokenService()->requestMsgInfo(token,  RS_TOKREQ_ANSTYPE_SUMMARY, opts, grouplist);
+	mTransQueue->queueRequest(token, 0, RS_TOKREQ_ANSTYPE_ACK, GXSTRANS_MSG_META);
 }
 
 void GxsTransportStatistics::loadGroupStat(const uint32_t &token)
@@ -356,6 +389,7 @@ void GxsTransportStatistics::loadGroupMeta(const uint32_t& token)
 #endif
 
         requestGroupStat(vit->mGroupId) ;
+        requestMsgMeta(vit->mGroupId) ;
 
         RsGxsTransGroupStatistics& s(mGroupStats[vit->mGroupId]);
         s.popularity = vit->mPop ;
@@ -370,3 +404,17 @@ void GxsTransportStatistics::loadGroupMeta(const uint32_t& token)
 		else
 			++it;
 }
+
+void GxsTransportStatistics::loadMsgMeta(const uint32_t& token)
+{
+	mStateHelper->setLoading(GXSTRANS_MSG_META, false);
+
+    GxsMsgMetaMap m ;
+
+	if (!rsGxsTrans->getMsgSummary(token,m))
+        return ;
+
+    for(GxsMsgMetaMap::const_iterator it(m.begin());it!=m.end();++it)
+        mGroupStats[it->first].messages_metas = it->second ;
+}
+

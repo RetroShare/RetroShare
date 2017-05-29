@@ -41,6 +41,8 @@ public:
 
 	bool subscribed ;
 	int  popularity ;
+
+    std::vector<RsMsgMetaData> messages_metas ;
 };
 
 class GxsTransportStatistics: public RsAutoUpdatePage, public TokenResponse, public Ui::GxsTransportStatistics
@@ -66,8 +68,10 @@ private slots:
 private:
 	void loadGroupMeta(const uint32_t& token);
 	void loadGroupStat(const uint32_t& token);
+	void loadMsgMeta(const uint32_t& token);
 
 	void requestGroupMeta();
+	void requestMsgMeta(const RsGxsGroupId& groupId);
 	void requestGroupStat(const RsGxsGroupId &groupId);
 
 	void processSettings(bool bLoad);
