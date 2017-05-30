@@ -25,44 +25,42 @@
 #include "NewsFeed.h"
 #include "ui_NewsFeed.h"
 
-#include <retroshare/rsnotify.h>
-#include <retroshare/rspeers.h>
+#include <retroshare/rsbanlist.h>
 #include <retroshare/rsgxschannels.h>
 #include <retroshare/rsgxsforums.h>
-#include <retroshare/rsposted.h>
 #include <retroshare/rsmsgs.h>
+#include <retroshare/rsnotify.h>
+#include <retroshare/rspeers.h>
 #include <retroshare/rsplugin.h>
-#include <retroshare/rsbanlist.h>
+#include <retroshare/rsposted.h>
 
-#include "feeds/GxsChannelGroupItem.h"
-#include "feeds/GxsChannelPostItem.h"
-#include "feeds/GxsForumGroupItem.h"
-#include "feeds/GxsForumMsgItem.h"
-#include "feeds/PostedGroupItem.h"
-#include "Posted/PostedItem.h"
-#include "feeds/GxsForumMsgItem.h"
-
-#include "settings/rsettingswin.h"
-
+#include "feeds/ChatMsgItem.h"
 #ifdef BLOGS
 #include "feeds/BlogNewItem.h"
 #include "feeds/BlogMsgItem.h"
 #endif
-
+#include "feeds/GxsCircleItem.h"
+#include "feeds/GxsChannelGroupItem.h"
+#include "feeds/GxsChannelPostItem.h"
+#include "feeds/GxsForumGroupItem.h"
+#include "feeds/GxsForumMsgItem.h"
 #include "feeds/MsgItem.h"
+#include "feeds/NewsFeedUserNotify.h"
 #include "feeds/PeerItem.h"
-#include "feeds/ChatMsgItem.h"
+#include "feeds/PostedGroupItem.h"
 #include "feeds/SecurityItem.h"
 #include "feeds/SecurityIpItem.h"
-#include "feeds/NewsFeedUserNotify.h"
 
+#include "settings/rsettingswin.h"
 #include "settings/rsharesettings.h"
+
 #include "chat/ChatDialog.h"
+#include "Posted/PostedItem.h"
 #include "msgs/MessageComposer.h"
+#include "msgs/MessageInterface.h"
+
 #include "common/FeedNotify.h"
 #include "notifyqt.h"
-
-#include "gui/msgs/MessageInterface.h"
 
 const uint32_t NEWSFEED_PEERLIST =       0x0001;
 
@@ -80,6 +78,7 @@ const uint32_t NEWSFEED_CHATMSGLIST =    0x0009;
 const uint32_t NEWSFEED_SECLIST =        0x000a;
 const uint32_t NEWSFEED_POSTEDNEWLIST =  0x000b;
 const uint32_t NEWSFEED_POSTEDMSGLIST =  0x000c;
+const uint32_t NEWSFEED_CIRCLELIST    =  0x000d;
 
 #define ROLE_RECEIVED FEED_TREEWIDGET_SORTROLE
 
@@ -102,6 +101,7 @@ NewsFeed::NewsFeed(QWidget *parent) :
 	ui->setupUi(this);
 
 	mTokenQueueChannel = NULL;
+	mTokenQueueCircle = NULL;
 	mTokenQueueForum = NULL;
 	mTokenQueuePosted = NULL;
 
@@ -155,6 +155,9 @@ NewsFeed::~NewsFeed()
 
 	if (mTokenQueueChannel) {
 		delete(mTokenQueueChannel);
+	}
+	if (mTokenQueueCircle) {
+		delete(mTokenQueueCircle);
 	}
 	if (mTokenQueueForum) {
 		delete(mTokenQueueForum);
@@ -370,6 +373,52 @@ void NewsFeed::updateDisplay()
 				if (flags & RS_FEED_TYPE_FILES)
 					addFeedItemFilesNew(fi);
 				break;
+
+			case RS_FEED_ITEM_CIRCLE_MEMB_REQ:
+				if (flags & RS_FEED_TYPE_CIRCLE)
+				{
+					if (!mTokenQueueCircle) {
+						mTokenQueueCircle = new TokenQueue(rsGxsCircles->getTokenService(), instance);
+					}
+
+					RsGxsGroupId grpId(fi.mId1);
+					RsGxsMessageId msgId(fi.mId2);
+					if (!grpId.isNull() && !msgId.isNull()) {
+						RsTokReqOptions opts;
+						opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
+
+						GxsMsgReq msgIds;
+						std::vector<RsGxsMessageId> &vect_msgIds = msgIds[grpId];
+						vect_msgIds.push_back(msgId);
+
+						uint32_t token;
+						mTokenQueueCircle->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, TOKEN_TYPE_MESSAGE);
+					}
+				}
+				//	addFeedItemCircleMembReq(fi);
+				break;
+			case RS_FEED_ITEM_CIRCLE_INVIT_REC:
+				if (flags & RS_FEED_TYPE_CIRCLE)
+				{
+					if (!mTokenQueueCircle) {
+						mTokenQueueCircle = new TokenQueue(rsGxsCircles->getTokenService(), instance);
+					}
+
+					RsGxsGroupId grpId(fi.mId1);
+					if (!grpId.isNull()) {
+						RsTokReqOptions opts;
+						opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
+
+						std::list<RsGxsGroupId> grpIds;
+						grpIds.push_back(grpId);
+
+						uint32_t token;
+						mTokenQueueCircle->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_SUMMARY, opts, grpIds, TOKEN_TYPE_GROUP);
+					}
+				}
+				//	addFeedItemCircleInvitRec(fi);
+				break;
+
 			default:
 				std::cerr << "(EE) Unknown type " << std::hex << fi.mType << std::dec << " in news feed." << std::endl;
 				break;
@@ -534,12 +583,102 @@ void NewsFeed::testFeeds(uint notifyFlags)
 // not used
 //			instance->addFeedItemFilesNew(fi);
 			break;
+
+		case RS_FEED_TYPE_CIRCLE:
+		{
+			if (!instance->mTokenQueueCircle) {
+				instance->mTokenQueueCircle = new TokenQueue(rsGxsCircles->getTokenService(), instance);
+			}
+
+			RsTokReqOptions opts;
+			opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
+			uint32_t token;
+			instance->mTokenQueueCircle->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_SUMMARY, opts, TOKEN_TYPE_GROUP);
+
+			break;
+		}
+//			instance->addFeedItemCircleMembReq(fi);
+//			instance->addFeedItemCircleInvitRec(fi);
+			break;
+
 		}
 	}
 
 	instance->ui->feedWidget->enableCountChangedSignal(true);
 
 	instance->sendNewsFeedChanged();
+}
+
+void NewsFeed::loadCircleGroup(const uint32_t &token)
+{
+	std::vector<RsGxsCircleGroup> groups;
+	if (!rsGxsCircles->getGroupData(token, groups)) {
+		std::cerr << "NewsFeed::loadCircleGroup() ERROR getting data";
+		std::cerr << std::endl;
+		return;
+	}
+
+	std::list<RsGxsId> own_identities;
+	rsIdentity->getOwnIds(own_identities);
+
+	std::vector<RsGxsCircleGroup>::const_iterator circleIt;
+	for (circleIt = groups.begin(); circleIt != groups.end(); ++circleIt) {
+		RsGxsCircleGroup group = *(circleIt);
+		RsGxsCircleDetails details;
+		if(rsGxsCircles->getCircleDetails(group.mMeta.mCircleId,details))
+		{
+			for(std::list<RsGxsId>::const_iterator it(own_identities.begin());it!=own_identities.end();++it) {
+				std::map<RsGxsId,uint32_t>::const_iterator vit = details.mSubscriptionFlags.find(*it);
+				uint32_t subscribe_flags = (vit == details.mSubscriptionFlags.end())?0:(vit->second);
+
+				if( !(subscribe_flags & GXS_EXTERNAL_CIRCLE_FLAGS_SUBSCRIBED)
+				    && (subscribe_flags & GXS_EXTERNAL_CIRCLE_FLAGS_IN_ADMIN_LIST) ) {
+
+					RsFeedItem fi;
+					fi.mId1 = group.mMeta.mGroupId.toStdString();
+					fi.mId2 = it->toStdString();
+
+					instance->addFeedItemCircleInvitRec(fi);
+
+				}
+			}
+		}
+	}
+}
+
+void NewsFeed::loadCircleMessage(const uint32_t &token)
+{
+	std::vector<RsGxsCircleMsg> msgs;
+	if (!rsGxsCircles->getMsgData(token, msgs)) {
+		std::cerr << "NewsFeed::loadCircleMessage() ERROR getting data";
+		std::cerr << std::endl;
+		return;
+	}
+
+	std::list<RsGxsId> own_identities;
+	rsIdentity->getOwnIds(own_identities);
+
+	std::vector<RsGxsCircleMsg>::iterator msgIt;
+	for (msgIt = msgs.begin(); msgIt != msgs.end(); ++msgIt) {
+		RsGxsCircleMsg msg = *(msgIt);
+		RsGxsCircleDetails details;
+		if(rsGxsCircles->getCircleDetails(RsGxsCircleId(msg.mMeta.mGroupId),details)) {
+			//for(std::list<RsGxsId>::const_iterator it(own_identities.begin());it!=own_identities.end();++it) {
+			//	std::map<RsGxsId,uint32_t>::const_iterator vit = details.mSubscriptionFlags.find(*it);
+			//	if (vit != details.mSubscriptionFlags.end()) {
+					RsFeedItem fi;
+					fi.mId1 = msgIt->mMeta.mGroupId.toStdString();
+					fi.mId2 = msgIt->mMeta.mAuthorId.toStdString();
+
+					if (msgIt->stuff == "SUBSCRIPTION_REQUEST_UNSUBSCRIBE")
+						instance->remFeedItemCircleMembReq(fi);
+					else
+						instance->addFeedItemCircleMembReq(fi);
+
+				//}
+			//}
+		}
+	}
 }
 
 void NewsFeed::loadChannelGroup(const uint32_t &token)
@@ -821,7 +960,24 @@ void NewsFeed::loadRequest(const TokenQueue *queue, const TokenRequest &req)
 			break;
 
 		default:
-			std::cerr << "NewsFeed::loadRequest() ERROR: INVALID TYPE";
+			std::cerr << "NewsFeed::loadRequest() ERROR: INVALID CHANNEL TYPE";
+			std::cerr << std::endl;
+			break;
+		}
+	}
+
+	if (queue == mTokenQueueCircle) {
+		switch (req.mUserType) {
+		case TOKEN_TYPE_GROUP:
+			loadCircleGroup(req.mToken);
+			break;
+
+		case TOKEN_TYPE_MESSAGE:
+			loadCircleMessage(req.mToken);
+			break;
+
+		default:
+			std::cerr << "NewsFeed::loadRequest() ERROR: INVALID CIRCLE TYPE";
 			std::cerr << std::endl;
 			break;
 		}
@@ -842,7 +998,7 @@ void NewsFeed::loadRequest(const TokenQueue *queue, const TokenRequest &req)
 			break;
 
 		default:
-			std::cerr << "NewsFeed::loadRequest() ERROR: INVALID TYPE";
+			std::cerr << "NewsFeed::loadRequest() ERROR: INVALID FORUM TYPE";
 			std::cerr << std::endl;
 			break;
 		}
@@ -859,7 +1015,7 @@ void NewsFeed::loadRequest(const TokenQueue *queue, const TokenRequest &req)
 			break;
 
 		default:
-			std::cerr << "NewsFeed::loadRequest() ERROR: INVALID TYPE";
+			std::cerr << "NewsFeed::loadRequest() ERROR: INVALID POSTED TYPE";
 			std::cerr << std::endl;
 			break;
 		}
@@ -908,18 +1064,24 @@ void NewsFeed::addFeedItem(FeedItem *item)
 
 struct AddFeedItemIfUniqueData
 {
-	AddFeedItemIfUniqueData(FeedItem *feedItem, int type, const RsPeerId &sslId, const std::string& ipAddr, const std::string& ipAddrReported)
-	    : mType(type), mSslId(sslId), mIpAddr(ipAddr), mIpAddrReported(ipAddrReported)
+	AddFeedItemIfUniqueData(FeedItem *feedItem, int type
+	                        , const std::string& id1, const std::string& id2
+	                        , const std::string& id3, const std::string& id4)
+	  : mType(type), mId1(id1), mId2(id2), mId3(id3), mId4(id4)
 	{
+		mGxsCircleItem = dynamic_cast<GxsCircleItem*>(feedItem);
 		mPeerItem = dynamic_cast<PeerItem*>(feedItem);
 		mSecItem = dynamic_cast<SecurityItem*>(feedItem);
 		mSecurityIpItem = dynamic_cast<SecurityIpItem*>(feedItem);
 	}
 
 	int mType;
-	const RsPeerId &mSslId;
-	const std::string& mIpAddr;
-	const std::string& mIpAddrReported;
+	const std::string& mId1;
+	const std::string& mId2;
+	const std::string& mId3;
+	const std::string& mId4;
+
+	GxsCircleItem *mGxsCircleItem;
 	PeerItem *mPeerItem;
 	SecurityItem *mSecItem;
 	SecurityIpItem *mSecurityIpItem;
@@ -928,13 +1090,21 @@ struct AddFeedItemIfUniqueData
 static bool addFeedItemIfUniqueCallback(FeedItem *feedItem, void *data)
 {
 	AddFeedItemIfUniqueData *findData = (AddFeedItemIfUniqueData*) data;
-	if (!findData || findData->mSslId.isNull()) {
+	if (!findData || findData->mId1.empty()) {
+		return false;
+	}
+
+	if (findData->mGxsCircleItem) {
+		GxsCircleItem *gxsCircleItem = dynamic_cast<GxsCircleItem*>(feedItem);
+		if (gxsCircleItem && gxsCircleItem->isSame(RsGxsCircleId(findData->mId1), RsGxsId(findData->mId2), findData->mType)) {
+			return true;
+		}
 		return false;
 	}
 
 	if (findData->mPeerItem) {
 		PeerItem *peerItem = dynamic_cast<PeerItem*>(feedItem);
-		if (peerItem && peerItem->isSame(findData->mSslId, findData->mType)) {
+		if (peerItem && peerItem->isSame(RsPeerId(findData->mId1), findData->mType)) {
 			return true;
 		}
 		return false;
@@ -942,7 +1112,7 @@ static bool addFeedItemIfUniqueCallback(FeedItem *feedItem, void *data)
 
 	if (findData->mSecItem) {
 		SecurityItem *secitem = dynamic_cast<SecurityItem*>(feedItem);
-		if (secitem && secitem->isSame(findData->mSslId, findData->mType)) {
+		if (secitem && secitem->isSame(RsPeerId(findData->mId1), findData->mType)) {
 			return true;
 		}
 		return false;
@@ -950,7 +1120,7 @@ static bool addFeedItemIfUniqueCallback(FeedItem *feedItem, void *data)
 
 	if (findData->mSecurityIpItem) {
 		SecurityIpItem *securityIpItem = dynamic_cast<SecurityIpItem*>(feedItem);
-		if (securityIpItem && securityIpItem->isSame(findData->mIpAddr, findData->mIpAddrReported, findData->mType)) {
+		if (securityIpItem && securityIpItem->isSame(findData->mId1, findData->mId2, findData->mType)) {
 			return true;
 		}
 		return false;
@@ -959,9 +1129,9 @@ static bool addFeedItemIfUniqueCallback(FeedItem *feedItem, void *data)
 	return false;
 }
 
-void NewsFeed::addFeedItemIfUnique(FeedItem *item, int itemType, const RsPeerId &sslId, const std::string& ipAddr, const std::string& ipAddrReported, bool replace)
+void NewsFeed::addFeedItemIfUnique(FeedItem *item, int itemType, const std::string& id1, const std::string& id2, const std::string& id3, const std::string& id4, bool replace)
 {
-	AddFeedItemIfUniqueData data(item, itemType, sslId, ipAddr, ipAddrReported);
+	AddFeedItemIfUniqueData data(item, itemType, id1, id2, id3, id4);
 	FeedItem *feedItem = ui->feedWidget->findFeedItem(addFeedItemIfUniqueCallback, &data);
 
 	if (feedItem) {
@@ -974,6 +1144,18 @@ void NewsFeed::addFeedItemIfUnique(FeedItem *item, int itemType, const RsPeerId 
 	}
 
 	addFeedItem(item);
+}
+
+void NewsFeed::remUniqueFeedItem(FeedItem *item, int itemType, const std::string &id1, const std::string &id2, const std::string &id3, const std::string &id4)
+{
+	AddFeedItemIfUniqueData data(item, itemType, id1, id2, id3, id4);
+	FeedItem *feedItem = ui->feedWidget->findFeedItem(addFeedItemIfUniqueCallback, &data);
+
+	if (feedItem) {
+		delete item;
+
+		ui->feedWidget->removeFeedItem(feedItem);
+	}
 }
 
 void NewsFeed::addFeedItemPeerConnect(const RsFeedItem &fi)
@@ -1038,7 +1220,7 @@ void NewsFeed::addFeedItemPeerOffset(const RsFeedItem &fi)
 	PeerItem *pi = new PeerItem(this, NEWSFEED_PEERLIST, RsPeerId(fi.mId1), PEER_TYPE_OFFSET, false);
 
 	/* add to layout */
-	addFeedItemIfUnique(pi, PEER_TYPE_OFFSET, RsPeerId(fi.mId1), "", "", false);
+	addFeedItemIfUnique(pi, PEER_TYPE_OFFSET, fi.mId1, fi.mId2, fi.mId3, fi.mId4, false);
 
 #ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemPeerOffset()";
@@ -1052,7 +1234,7 @@ void NewsFeed::addFeedItemSecurityConnectAttempt(const RsFeedItem &fi)
 	SecurityItem *pi = new SecurityItem(this, NEWSFEED_SECLIST, RsPgpId(fi.mId1), RsPeerId(fi.mId2), fi.mId3, fi.mId4, fi.mType, false);
 
 	/* add to layout */
-	addFeedItemIfUnique(pi, fi.mType, RsPeerId(fi.mId2), "", "", false);
+	addFeedItemIfUnique(pi, fi.mType, fi.mId2, "", "", "", false);
 
 #ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemSecurityConnectAttempt()";
@@ -1066,7 +1248,7 @@ void NewsFeed::addFeedItemSecurityAuthDenied(const RsFeedItem &fi)
 	SecurityItem *pi = new SecurityItem(this, NEWSFEED_SECLIST, RsPgpId(fi.mId1), RsPeerId(fi.mId2), fi.mId3, fi.mId4, fi.mType, false);
 
 	/* add to layout */
-	addFeedItemIfUnique(pi, RS_FEED_ITEM_SEC_AUTH_DENIED, RsPeerId(fi.mId2), "", "", false);
+	addFeedItemIfUnique(pi, RS_FEED_ITEM_SEC_AUTH_DENIED, fi.mId2, "", "", "", false);
 
 #ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemSecurityAuthDenied()";
@@ -1080,7 +1262,7 @@ void NewsFeed::addFeedItemSecurityUnknownIn(const RsFeedItem &fi)
 	SecurityItem *pi = new SecurityItem(this, NEWSFEED_SECLIST, RsPgpId(fi.mId1), RsPeerId(fi.mId2), fi.mId3, fi.mId4, RS_FEED_ITEM_SEC_UNKNOWN_IN, false);
 
 	/* add to layout */
-	addFeedItemIfUnique(pi, RS_FEED_ITEM_SEC_UNKNOWN_IN, RsPeerId(fi.mId2), "", "", false);
+	addFeedItemIfUnique(pi, RS_FEED_ITEM_SEC_UNKNOWN_IN, fi.mId2, "", "", "", false);
 
 #ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemSecurityUnknownIn()";
@@ -1094,7 +1276,7 @@ void NewsFeed::addFeedItemSecurityUnknownOut(const RsFeedItem &fi)
 	SecurityItem *pi = new SecurityItem(this, NEWSFEED_SECLIST, RsPgpId(fi.mId1), RsPeerId(fi.mId2), fi.mId3, fi.mId4, RS_FEED_ITEM_SEC_UNKNOWN_OUT, false);
 
 	/* add to layout */
-	addFeedItemIfUnique(pi, RS_FEED_ITEM_SEC_UNKNOWN_OUT, RsPeerId(fi.mId2), "", "", false);
+	addFeedItemIfUnique(pi, RS_FEED_ITEM_SEC_UNKNOWN_OUT, fi.mId2, "", "", "", false);
 
 #ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemSecurityUnknownOut()";
@@ -1108,7 +1290,7 @@ void NewsFeed::addFeedItemSecurityIpBlacklisted(const RsFeedItem &fi, bool isTes
 	SecurityIpItem *pi = new SecurityIpItem(this, RsPeerId(fi.mId1), fi.mId2, fi.mResult1, RS_FEED_ITEM_SEC_IP_BLACKLISTED, isTest);
 
 	/* add to layout */
-	addFeedItemIfUnique(pi, RS_FEED_ITEM_SEC_IP_BLACKLISTED, RsPeerId(fi.mId1), fi.mId2, "", false);
+	addFeedItemIfUnique(pi, RS_FEED_ITEM_SEC_IP_BLACKLISTED, fi.mId1, fi.mId2, fi.mId3, fi.mId4, false);
 
 #ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemSecurityIpBlacklisted()";
@@ -1122,7 +1304,7 @@ void NewsFeed::addFeedItemSecurityWrongExternalIpReported(const RsFeedItem &fi, 
 	SecurityIpItem *pi = new SecurityIpItem(this, RsPeerId(fi.mId1), fi.mId2, fi.mId3, RS_FEED_ITEM_SEC_IP_WRONG_EXTERNAL_IP_REPORTED, isTest);
 
 	/* add to layout */
-	addFeedItemIfUnique(pi, RS_FEED_ITEM_SEC_IP_WRONG_EXTERNAL_IP_REPORTED, RsPeerId(fi.mId1), fi.mId2, fi.mId3, false);
+	addFeedItemIfUnique(pi, RS_FEED_ITEM_SEC_IP_WRONG_EXTERNAL_IP_REPORTED, fi.mId1, fi.mId2, fi.mId3, fi.mId4, false);
 
 #ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemSecurityWrongExternalIpReported()";
@@ -1375,6 +1557,66 @@ void NewsFeed::addFeedItemFilesNew(const RsFeedItem &/*fi*/)
 #endif
 }
 
+void NewsFeed::addFeedItemCircleMembReq(const RsFeedItem &fi)
+{
+	RsGxsCircleId circleId(fi.mId1);
+	RsGxsId gxsId(fi.mId2);
+
+	if (circleId.isNull() || gxsId.isNull()) {
+		return;
+	}
+
+	/* make new widget */
+	GxsCircleItem *item = new GxsCircleItem(this, NEWSFEED_CIRCLELIST, circleId, gxsId, RS_FEED_ITEM_CIRCLE_MEMB_REQ);
+
+	/* add to layout */
+	addFeedItemIfUnique(item, RS_FEED_ITEM_CIRCLE_MEMB_REQ, fi.mId1, fi.mId2, fi.mId3, fi.mId4, false);
+
+#ifdef NEWS_DEBUG
+	std::cerr << "NewsFeed::addFeedItemCircleMembReq()" << std::endl;
+#endif
+}
+
+void NewsFeed::remFeedItemCircleMembReq(const RsFeedItem &fi)
+{
+	RsGxsCircleId circleId(fi.mId1);
+	RsGxsId gxsId(fi.mId2);
+
+	if (circleId.isNull() || gxsId.isNull()) {
+		return;
+	}
+
+	/* make new widget */
+	GxsCircleItem *item = new GxsCircleItem(this, NEWSFEED_CIRCLELIST, circleId, gxsId, RS_FEED_ITEM_CIRCLE_MEMB_REQ);
+
+	/* add to layout */
+	remUniqueFeedItem(item, RS_FEED_ITEM_CIRCLE_MEMB_REQ, fi.mId1, fi.mId2, fi.mId3, fi.mId4);
+
+#ifdef NEWS_DEBUG
+	std::cerr << "NewsFeed::remFeedItemCircleMembReq()" << std::endl;
+#endif
+}
+
+void NewsFeed::addFeedItemCircleInvitRec(const RsFeedItem &fi)
+{
+	RsGxsCircleId circleId(fi.mId1);
+	RsGxsId gxsId(fi.mId2);
+
+	if (circleId.isNull()) {
+		return;
+	}
+
+	/* make new widget */
+	GxsCircleItem *item = new GxsCircleItem(this, NEWSFEED_CIRCLELIST, circleId, gxsId, RS_FEED_ITEM_CIRCLE_INVIT_REC);
+
+	/* add to layout */
+	addFeedItem(item);
+
+#ifdef NEWS_DEBUG
+	std::cerr << "NewsFeed::addFeedItemCircleInvitRec()" << std::endl;
+#endif
+}
+
 /* FeedHolder Functions (for FeedItem functionality) */
 QScrollArea *NewsFeed::getScrollArea()
 {
@@ -1403,7 +1645,7 @@ void NewsFeed::openChat(const RsPeerId &peerId)
     ChatDialog::chatFriend(ChatId(peerId));
 }
 
-void NewsFeed::openComments(uint32_t /*type*/, const RsGxsGroupId &/*groupId*/, const QVector<RsGxsMessageId>& versions,const RsGxsMessageId &/*msgId*/, const QString &/*title*/)
+void NewsFeed::openComments(uint32_t /*type*/, const RsGxsGroupId &/*groupId*/, const QVector<RsGxsMessageId> &/*versions*/,const RsGxsMessageId &/*msgId*/, const QString &/*title*/)
 {
 	std::cerr << "NewsFeed::openComments() Not Handled Yet";
 	std::cerr << std::endl;
