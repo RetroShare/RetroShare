@@ -333,7 +333,7 @@ void ChatHandler::tick()
             }
 
             RsIdentityDetails details;
-            if(!gxs_id_failed && mRsIdentity->getIdDetails(msg.incoming? dcpinfo.to_id: dcpinfo.own_id, details))
+			if(!gxs_id_failed && mRsIdentity->getIdDetails( !msg.incoming ? dcpinfo.to_id: dcpinfo.own_id, details))
             {
                 author_id = details.mId.toStdString();
                 author_name = details.mNickname;
@@ -400,7 +400,7 @@ void ChatHandler::tick()
                 DistantChatPeerInfo dcpinfo ;
                 
                 if(!gxs_id_failed && rsMsgs->getDistantChatStatus(msg.chat_id.toDistantChatId(),dcpinfo)
-                                  && mRsIdentity->getIdDetails(msg.incoming? dcpinfo.to_id: dcpinfo.own_id, details))
+				                  && mRsIdentity->getIdDetails( !msg.incoming ? dcpinfo.to_id: dcpinfo.own_id, details))
                 {
                     info.remote_author_id = details.mId.toStdString();
                     info.remote_author_name = details.mNickname;

@@ -157,6 +157,7 @@ unfinished {
 	CONFIG += wikipoos
 }
 
+retroshare_gui:DEFINES *= RETROSHARE_GUI
 wikipoos:DEFINES *= RS_USE_WIKI
 rs_gxs:DEFINES *= RS_ENABLE_GXS
 libresapilocalserver:DEFINES *= LIBRESAPI_LOCAL_SERVER
