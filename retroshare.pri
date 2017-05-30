@@ -65,6 +65,18 @@ rs_nodeprecatedwarning:CONFIG -= no_rs_nodeprecatedwarning
 CONFIG *= no_rs_nocppwarning
 rs_nocppwarning:CONFIG -= no_rs_nocppwarning
 
+# To disable GXS mail append the following assignation to qmake command line
+# "CONFIG+=no_rs_gxs_trans"
+CONFIG *= rs_gxs_trans
+#no_rs_gxs_trans:CONFIG -= rs_gxs_trans ## Disabing not supported ATM
+
+# To enable GXS based async chat append the following assignation to qmake
+# command line "CONFIG+=rs_async_chat"
+CONFIG *= no_rs_async_chat
+rs_async_chat:CONFIG -= no_rs_async_chat
+
+
+
 unix {
 	isEmpty(PREFIX)   { PREFIX   = "/usr" }
 	isEmpty(BIN_DIR)  { BIN_DIR  = "$${PREFIX}/bin" }
@@ -173,13 +185,24 @@ rs_nodeprecatedwarning {
     QMAKE_CXXFLAGS += -Wno-deprecated
     QMAKE_CXXFLAGS += -Wno-deprecated-declarations
     DEFINES *= RS_NO_WARN_DEPRECATED
-    warning("QMAKE: You have disable deprecated warnings.")
+    warning("QMAKE: You have disabled deprecated warnings.")
 }
 
 rs_nocppwarning {
     QMAKE_CXXFLAGS += -Wno-cpp
     DEFINES *= RS_NO_WARN_CPP
-    warning("QMAKE: You have disable cpp warnings.")
+    warning("QMAKE: You have disabled C preprocessor warnings.")
 }
 
-rs_gxs_mail:DEFINES *= RS_GXS_MAIL
+rs_gxs_trans {
+    DEFINES *= RS_GXS_TRANS
+    greaterThan(QT_MAJOR_VERSION, 4) {
+        CONFIG += c++11
+    } else {
+        QMAKE_CXXFLAGS += -std=c++0x
+    }
+}
+
+rs_async_chat {
+    DEFINES *= RS_ASYNC_CHAT
+}

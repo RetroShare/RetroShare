@@ -418,9 +418,11 @@ ChatWidget::ChatType ChatWidget::chatType()
 
 void ChatWidget::blockSending(QString msg)
 {
-    sendingBlocked = true;
-    ui->sendButton->setEnabled(false);
-    ui->sendButton->setToolTip(msg);
+#ifndef RS_ASYNC_CHAT
+	sendingBlocked = true;
+	ui->sendButton->setEnabled(false);
+#endif
+	ui->sendButton->setToolTip(msg);
 }
 
 void ChatWidget::unblockSending()

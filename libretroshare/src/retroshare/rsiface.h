@@ -53,9 +53,10 @@ int InitRetroShare(int argc, char **argv, RsInit *config);
 
 class RsControl /* The Main Interface Class - for controlling the server */
 {
-	public:
-		static RsControl *instance() ;
-		static void earlyInitNotificationSystem() { instance() ; }
+public:
+	/// TODO: This should return a reference instead of a pointer!
+	static RsControl *instance();
+	static void earlyInitNotificationSystem() { instance(); }
 
 		/* Real Startup Fn */
 		virtual int StartupRetroShare() = 0;

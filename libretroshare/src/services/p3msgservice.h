@@ -49,16 +49,19 @@
 #include "grouter/grouterclientservice.h"
 #include "turtle/p3turtle.h"
 #include "turtle/turtleclientservice.h"
+#include "gxstrans/p3gxstrans.h"
 
 class p3LinkMgr;
 class p3IdService;
 
 // Temp tweak to test grouter
-class p3MsgService: public p3Service, public p3Config, public pqiServiceMonitor, public GRouterClientService
+struct p3MsgService :
+        p3Service, p3Config, pqiServiceMonitor, GRouterClientService,
+        GxsTransClient
 {
-public:
-    p3MsgService(p3ServiceControl *sc, p3IdService *id_service);
-    virtual RsServiceInfo getServiceInfo();
+	p3MsgService(p3ServiceControl *sc, p3IdService *id_service, p3GxsTrans& gxsMS);
+
+	virtual RsServiceInfo getServiceInfo();
 
     /* External Interface */
     bool 	getMessageSummaries(std::list<Rs::Msgs::MsgInfoSummary> &msgList);
@@ -106,7 +109,9 @@ public:
 
     /*** Overloaded from pqiMonitor ***/
     virtual void    statusChange(const std::list<pqiServicePeer> &plist);
-    int     checkOutgoingMessages();
+
+	/// iterate through the outgoing queue if online, send
+	int checkOutgoingMessages();
     /*** Overloaded from pqiMonitor ***/
 
     /*** overloaded from p3turtle   ***/
@@ -130,16 +135,27 @@ public:
     void setDistantMessagingPermissionFlags(uint32_t flags) ;
     uint32_t getDistantMessagingPermissionFlags() ;
 
-private:
-    void sendDistantMsgItem(RsMsgItem *msgitem) ;
+	/// @see GxsTransClient::receiveGxsTransMail(...)
+	virtual bool receiveGxsTransMail( const RsGxsId& authorId,
+	                                  const RsGxsId& recipientId,
+	                                  const uint8_t* data, uint32_t dataSize );
 
-    // This contains the ongoing tunnel handling contacts.
-    // The map is indexed by the hash
-    //
-    std::map<GRouterMsgPropagationId,uint32_t> _ongoing_messages ;
+	/// @see GxsTransClient::notifyGxsTransSendStatus(...)
+	virtual bool notifyGxsTransSendStatus( RsGxsTransId mailId,
+	                                       GxsTransSendStatus status );
+
+private:
+	void sendDistantMsgItem(RsMsgItem *msgitem);
+
+	/** This contains the ongoing tunnel handling contacts.
+	 * The map is indexed by the hash */
+	std::map<GRouterMsgPropagationId, uint32_t> _ongoing_messages;
+
+	/// Contains ongoing messages handed to gxs mail
+	std::map<RsGxsTransId, uint32_t> gxsOngoingMessages;
+	RsMutex gxsOngoingMutex;
 
     // Overloaded from GRouterClientService
-
     virtual bool acceptDataFromPeer(const RsGxsId& gxs_id) ;
     virtual void receiveGRouterData(const RsGxsId& destination_key,const RsGxsId& signing_key, GRouterServiceId &client_id, uint8_t *data, uint32_t data_size) ;
     virtual void notifyDataStatus(const GRouterMsgPropagationId& msg_id,const RsGxsId& signer_id,uint32_t data_status) ;
@@ -194,8 +210,9 @@ private:
     std::map<uint32_t, RsMsgTagType*> mTags;
     std::map<uint32_t, RsMsgTags*> mMsgTags;
 
-    uint32_t mMsgUniqueId;
-    std::map<Sha1CheckSum,uint32_t> mRecentlyReceivedDistantMessageHashes;
+	uint32_t mMsgUniqueId;
+	std::map<Sha1CheckSum, uint32_t> mRecentlyReceivedMessageHashes;
+	RsMutex recentlyReceivedMutex;
 
     // used delete msgSrcIds after config save
     std::map<uint32_t, RsMsgSrcId*> mSrcIds;
@@ -211,6 +228,8 @@ private:
     bool mDistantMessagingEnabled ;
     uint32_t mDistantMessagePermissions ;
     bool mShouldEnableDistantMessaging ;
+
+	p3GxsTrans& mGxsTransServ;
 };
 
 #endif // MESSAGE_SERVICE_HEADER

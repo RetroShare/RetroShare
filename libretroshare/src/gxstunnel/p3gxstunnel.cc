@@ -1023,7 +1023,8 @@ void p3GxsTunnelService::handleRecvDHPublicKey(RsGxsTunnelDHPublicKeyItem *item)
 
 // Note: for some obscure reason, the typedef does not work here. Looks like a compiler error. So I use the primary type.
 
-GXSTunnelId p3GxsTunnelService::makeGxsTunnelId(const RsGxsId &own_id, const RsGxsId &distant_id) const	// creates a unique ID from two GXS ids.
+/*static*/ GXSTunnelId p3GxsTunnelService::makeGxsTunnelId(
+        const RsGxsId &own_id, const RsGxsId &distant_id )
 {
     unsigned char mem[RsGxsId::SIZE_IN_BYTES * 2] ;
     
@@ -1244,18 +1245,20 @@ bool p3GxsTunnelService::locked_sendEncryptedTunnelData(RsGxsTunnelItem *item)
     
     std::map<RsGxsTunnelId,GxsTunnelPeerInfo>::iterator it = _gxs_tunnel_contacts.find(tunnel_id) ;
 
-    if(it == _gxs_tunnel_contacts.end())
-    {
+	if(it == _gxs_tunnel_contacts.end())
+	{
 #ifdef DEBUG_GXS_TUNNEL
-        std::cerr << "  Cannot find contact key info for tunnel id " << tunnel_id << ". Cannot send message!" << std::endl;
+		std::cerr << "  Cannot find contact key info for tunnel id "
+		          << tunnel_id << ". Cannot send message!" << std::endl;
 #endif
-        return false;
-    }
-    if(it->second.status != RS_GXS_TUNNEL_STATUS_CAN_TALK)
-    {
-        std::cerr << "(EE) Cannot talk to tunnel id " << tunnel_id << ". Tunnel status is: " << it->second.status << std::endl;
-        return false;
-    }
+		return false;
+	}
+	if(it->second.status != RS_GXS_TUNNEL_STATUS_CAN_TALK)
+	{
+		std::cerr << "(EE) Cannot talk to tunnel id " << tunnel_id
+		          << ". Tunnel status is: " << it->second.status << std::endl;
+		return false;
+	}
 
     it->second.total_sent += rssize ;	// counts the size of clear data that is sent
     

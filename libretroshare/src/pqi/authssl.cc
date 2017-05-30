@@ -599,7 +599,7 @@ bool AuthSSLimpl::SignData(const void *data, const uint32_t len, std::string &si
 
 	EVP_MD_CTX *mdctx = EVP_MD_CTX_create();
         unsigned int signlen = EVP_PKEY_size(mOwnPrivateKey);
-	unsigned char signature[signlen];
+	unsigned char signature[signlen] = { 0 };
 
 	if (0 == EVP_SignInit(mdctx, EVP_sha1()))
 	{

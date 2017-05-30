@@ -181,6 +181,7 @@ class RsServer: public RsControl, public RsTickingThread
 //		p3GxsForums *mGxsForums;
 //		p3GxsChannels *mGxsChannels;
 //		p3Wire *mWire;
+		p3GxsTrans* mGxsTrans;
 
 		/* Config */
 		p3ConfigMgr     *mConfigMgr;

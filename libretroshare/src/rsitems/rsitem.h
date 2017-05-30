@@ -1,8 +1,11 @@
 #pragma once
 
+#include <typeinfo> // for typeid
+
 #include "util/smallobject.h"
 #include "retroshare/rstypes.h"
 #include "serialiser/rsserializer.h"
+#include "util/stacktrace.h"
 
 #include <typeinfo>
 
@@ -17,6 +20,8 @@ class RsItem: public RsMemoryManagement::SmallObject
 #endif
 
 		virtual ~RsItem();
+
+		/// TODO: Do this make sense with the new serialization system?
 		virtual void clear() = 0;
 
         virtual std::ostream &print(std::ostream &out, uint16_t /* indent */ = 0)
@@ -50,21 +55,16 @@ class RsItem: public RsMemoryManagement::SmallObject
 		inline void setPriorityLevel(uint8_t l) { _priority_level = l ;}
 
 		/**
-		 * @brief serialize this object to the given buffer
-		 * @param Job to do: serialise or deserialize.
-		 * @param data Chunk of memory were to dump the serialized data
-		 * @param size Size of memory chunk
-		 * @param offset Readed to determine at witch offset start writing data,
-		 *        written to inform caller were written data ends, the updated value
-		 *        is usually passed by the caller to serialize of another
-		 *        RsSerializable so it can write on the same chunk of memory just
-		 *        after where this RsSerializable has been serialized.
-		 * @return true if serialization successed, false otherwise
+		 * TODO: This should be made pure virtual as soon as all the codebase
+		 * is ported to the new serialization system
 		 */
-
-		virtual void serial_process(RsGenericSerializer::SerializeJob /* j */,RsGenericSerializer::SerializeContext& /* ctx */)
+		virtual void serial_process(RsGenericSerializer::SerializeJob,
+		                            RsGenericSerializer::SerializeContext&)// = 0;
 		{
-			std::cerr << "(EE) RsItem::serial_process() called by an item using new serialization classes, but not derived! Class is " << typeid(*this).name() << std::endl;
+			std::cerr << "(EE) RsItem::serial_process() called by an item using"
+			          << "new serialization classes, but not derived! Class is "
+			          << typeid(*this).name() << std::endl;
+			print_stacktrace();
 		}
 
 	protected:
@@ -73,6 +73,7 @@ class RsItem: public RsMemoryManagement::SmallObject
 		uint8_t _priority_level ;
 };
 
+/// TODO: Do this make sense with the new serialization system?
 class RsRawItem: public RsItem
 {
 public:
