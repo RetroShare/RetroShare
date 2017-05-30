@@ -278,9 +278,11 @@ void p3GxsTrans::GxsTransIntegrityCleanupThread::run()
     }
 
     // now messages
-    GxsMsgReq msgsToDel;
-    GxsMsgResult msgs;
 
+    std::map<RsGxsTransId,std::pair<RsGxsGroupId,RsGxsMessageId> > stored_msgs ;
+    std::list<RsGxsTransId> received_msgs ;
+
+    GxsMsgResult msgs;
     mDs->retrieveNxsMsgs(grps, msgs, false, true);
 
     for(GxsMsgResult::iterator mit = msgs.begin();mit != msgs.end(); ++mit)
@@ -302,11 +304,15 @@ void p3GxsTrans::GxsTransIntegrityCleanupThread::run()
                 std::cerr << "  Unrecocognised item type!" << std::endl;
             else if(NULL != (mitem = dynamic_cast<RsGxsTransMailItem*>(item)))
             {
-                std::cerr << "  Mail data with ID " << std::hex << mitem->mailId << std::dec << " from " << msg->metaData->mAuthorId << std::endl;
+                std::cerr << "  " << msg->metaData->mMsgId << ": Mail data with ID " << std::hex << mitem->mailId << std::dec << " from " << msg->metaData->mAuthorId << " size: " << msg->msg.bin_len << std::endl;
+
+                stored_msgs[mitem->mailId] = std::make_pair(msg->metaData->mGroupId,msg->metaData->mMsgId) ;
             }
             else if(NULL != (pitem = dynamic_cast<RsGxsTransPresignedReceipt*>(item)))
             {
-                std::cerr << "  Signed rcpt of ID " << std::hex << pitem->mailId << std::dec << " from " << msg->metaData->mAuthorId << std::endl;
+                std::cerr << "  " << msg->metaData->mMsgId << ": Signed rcpt of ID " << std::hex << pitem->mailId << std::dec << " from " << msg->metaData->mAuthorId << " size: " << msg->msg.bin_len << std::endl;
+
+                received_msgs.push_back(pitem->mailId) ;
             }
             else
                 std::cerr << "  Unknown item type!" << std::endl;
@@ -314,11 +320,24 @@ void p3GxsTrans::GxsTransIntegrityCleanupThread::run()
 		    delete msg;
 	    }
     }
-    RS_STACK_MUTEX(mIntegrityMutex);
 
-    //mDs->removeMsgs(msgsToDel);
+    GxsMsgReq msgsToDel ;
 
-    mDone = true;
+    std::cerr << "Msg removal report:" << std::endl;
+
+    for(std::list<RsGxsTransId>::const_iterator it(received_msgs.begin());it!=received_msgs.end();++it)
+    {
+		std::map<RsGxsTransId,std::pair<RsGxsGroupId,RsGxsMessageId> >::const_iterator it2 = stored_msgs.find(*it) ;
+
+        if(stored_msgs.end() != it2)
+        {
+            msgsToDel[it2->second.first].push_back(it2->second.second);
+
+            std::cerr << "  scheduling msg " << std::hex << it2->second.first << "," << it2->second.second << " for deletion." << std::endl;
+        }
+    }
+
+    mDs->removeMsgs(msgsToDel);
 }
 
 void p3GxsTrans::service_tick()
