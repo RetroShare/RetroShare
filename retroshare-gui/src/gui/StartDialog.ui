@@ -20,7 +20,7 @@
   <property name="autoFillBackground">
    <bool>false</bool>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2">
+  <layout class="QVBoxLayout" name="StartDialogVLayout">
    <property name="leftMargin">
     <number>0</number>
    </property>
@@ -44,7 +44,7 @@
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
      </property>
-     <layout class="QGridLayout" name="mainGLayout">
+     <layout class="QGridLayout" name="loginframeGLayout">
       <property name="leftMargin">
        <number>0</number>
       </property>
@@ -59,15 +59,27 @@
       </property>
       <item row="0" column="0" colspan="4">
        <layout class="QGridLayout" name="topGLayout">
+        <property name="leftMargin">
+         <number>16</number>
+        </property>
+        <property name="topMargin">
+         <number>16</number>
+        </property>
+        <property name="rightMargin">
+         <number>16</number>
+        </property>
+        <property name="bottomMargin">
+         <number>16</number>
+        </property>
         <item row="0" column="0">
-         <spacer name="horizontalSpacer">
+         <spacer name="topLHSpacer">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
           <property name="sizeHint" stdset="0">
            <size>
             <width>40</width>
-            <height>20</height>
+            <height>0</height>
            </size>
           </property>
          </spacer>
@@ -131,14 +143,14 @@
          </widget>
         </item>
         <item row="0" column="2">
-         <spacer name="horizontalSpacer_2">
+         <spacer name="topRHSpacer">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
           <property name="sizeHint" stdset="0">
            <size>
-            <width>48</width>
-            <height>20</height>
+            <width>40</width>
+            <height>0</height>
            </size>
           </property>
          </spacer>
@@ -146,7 +158,7 @@
        </layout>
       </item>
       <item row="1" column="2" rowspan="2">
-       <spacer name="horizontalSpacer_4">
+       <spacer name="profileRHSpacer">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
@@ -156,13 +168,13 @@
         <property name="sizeHint" stdset="0">
          <size>
           <width>60</width>
-          <height>20</height>
+          <height>0</height>
          </size>
         </property>
        </spacer>
       </item>
       <item row="4" column="0" colspan="3">
-       <spacer name="verticalSpacer">
+       <spacer name="mainVSpacer">
         <property name="orientation">
          <enum>Qt::Vertical</enum>
         </property>
@@ -175,7 +187,7 @@
        </spacer>
       </item>
       <item row="1" column="0" rowspan="2">
-       <spacer name="horizontalSpacer_3">
+       <spacer name="profileLHSpacer">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
@@ -185,7 +197,7 @@
         <property name="sizeHint" stdset="0">
          <size>
           <width>60</width>
-          <height>20</height>
+          <height>0</height>
          </size>
         </property>
        </spacer>
@@ -207,7 +219,7 @@
         <property name="title">
          <string/>
         </property>
-        <layout class="QGridLayout" name="gridLayout_3">
+        <layout class="QGridLayout" name="profilGBoxGLayout">
          <property name="leftMargin">
           <number>9</number>
          </property>
@@ -221,7 +233,7 @@
           <number>9</number>
          </property>
          <item row="1" column="0">
-          <widget class="QLabel" name="label_9">
+          <widget class="QLabel" name="loadName_label">
            <property name="maximumSize">
             <size>
              <width>22</width>
@@ -243,7 +255,7 @@
           <widget class="QComboBox" name="loadName"/>
          </item>
          <item row="2" column="0">
-          <widget class="QLabel" name="label_11">
+          <widget class="QLabel" name="password_label">
            <property name="maximumSize">
             <size>
              <width>22</width>
@@ -303,9 +315,9 @@
        </widget>
       </item>
       <item row="3" column="1">
-       <layout class="QHBoxLayout" name="horizontalLayout">
+       <layout class="QHBoxLayout" name="newHLayout">
         <item>
-         <spacer name="horizontalSpacer_5">
+         <spacer name="newHSpacer">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
