@@ -28,12 +28,12 @@
         <widget class="QTreeWidget" name="groupTreeWidget">
          <column>
           <property name="text">
-           <string>Group ID</string>
+           <string>Group ID / Author</string>
           </property>
          </column>
          <column>
           <property name="text">
-           <string>Number of messages</string>
+           <string>Number of messages / Publish TS</string>
           </property>
          </column>
          <column>
@@ -81,12 +81,7 @@
         </column>
         <column>
          <property name="text">
-          <string>Destination ID</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
-          <string>Destination Name</string>
+          <string>Destination</string>
          </property>
         </column>
         <column>
