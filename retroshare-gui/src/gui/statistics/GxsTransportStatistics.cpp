@@ -24,6 +24,7 @@
 #include <QObject>
 #include <QFontMetrics>
 #include <QWheelEvent>
+#include <QDateTime>
 #include <time.h>
 
 #include <QMenu>
@@ -44,15 +45,15 @@
 #include "util/QtVersion.h"
 #include "gui/common/UIStateHelper.h"
 #include "util/misc.h"
+#include "gui/gxs/GxsIdLabel.h"
 
 #define COL_PENDING_ID                  0
 #define COL_PENDING_DESTINATION         1
-#define COL_PENDING_NICKNAME            2
-#define COL_PENDING_DATASTATUS          3
-#define COL_PENDING_DATASIZE            4
-#define COL_PENDING_DATAHASH            5
-#define COL_PENDING_SEND                6
-#define COL_PENDING_GROUP_ID            7
+#define COL_PENDING_DATASTATUS          2
+#define COL_PENDING_DATASIZE            3
+#define COL_PENDING_DATAHASH            4
+#define COL_PENDING_SEND                5
+#define COL_PENDING_GROUP_ID            6
 
 #define COL_GROUP_GRP_ID                  0
 #define COL_GROUP_NUM_MSGS                1
@@ -67,6 +68,9 @@ static const int GXSTRANS_STATISTICS_DELAY_BETWEEN_GROUP_REQ = 30 ;	// never req
 #define GXSTRANS_GROUP_META  0x01
 #define GXSTRANS_GROUP_DATA  0x02
 #define GXSTRANS_GROUP_STAT  0x03
+#define GXSTRANS_MSG_META    0x04
+
+#define DEBUG_GXSTRANS_STATS 1
 
 GxsTransportStatistics::GxsTransportStatistics(QWidget *parent)
     : RsAutoUpdatePage(2000,parent)
@@ -195,6 +199,9 @@ void GxsTransportStatistics::updateContent()
 
     rsGxsTrans->getStatistics(transinfo) ;
 
+
+    // clear
+
     treeWidget->clear();
     time_t now = time(NULL) ;
     
@@ -217,16 +224,27 @@ void GxsTransportStatistics::updateContent()
           nickname = tr("Unknown");
 
         item -> setData(COL_PENDING_ID,           Qt::DisplayRole, QString::number(rec.trans_id,16).rightJustified(8,'0'));
-        item -> setData(COL_PENDING_NICKNAME,     Qt::DisplayRole, nickname ) ;
-        item -> setData(COL_PENDING_DESTINATION,  Qt::DisplayRole, QString::fromStdString(rec.recipient.toStdString()));
         item -> setData(COL_PENDING_DATASTATUS,   Qt::DisplayRole, getStatusString(rec.status));
         item -> setData(COL_PENDING_DATASIZE,     Qt::DisplayRole, misc::friendlyUnit(rec.data_size));
         item -> setData(COL_PENDING_DATAHASH,     Qt::DisplayRole, QString::fromStdString(rec.data_hash.toStdString()));
-        item -> setData(COL_PENDING_SEND,         Qt::DisplayRole, QString::number(now - rec.send_TS));
+		item -> setData(COL_PENDING_SEND,         Qt::DisplayRole, QDateTime::fromTime_t(rec.send_TS).toString());
         item -> setData(COL_PENDING_GROUP_ID,     Qt::DisplayRole, QString::fromStdString(rec.group_id.toStdString()));
+
+        GxsIdLabel *label = new GxsIdLabel() ;
+        label->setId(rec.recipient) ;
+
+        treeWidget -> setItemWidget(item,COL_PENDING_DESTINATION, label) ;
     }
 
     // 2 - fill the table for pending group data
+
+    // record openned groups
+
+    std::set<RsGxsGroupId> openned_groups ;
+
+    for(uint32_t i=0;i<groupTreeWidget->topLevelItemCount();++i)
+        if(groupTreeWidget->isItemExpanded(groupTreeWidget->topLevelItem(i)))
+            openned_groups.insert(RsGxsGroupId(groupTreeWidget->topLevelItem(i)->data(COL_GROUP_GRP_ID,Qt::DisplayRole).toString().toStdString())) ;
 
     groupTreeWidget->clear();
 
@@ -236,12 +254,26 @@ void GxsTransportStatistics::updateContent()
 
 		QTreeWidgetItem *item = new QTreeWidgetItem();
         groupTreeWidget->addTopLevelItem(item);
+		groupTreeWidget->setItemExpanded(item,openned_groups.find(it->first) != openned_groups.end());
 
-        item->setData(COL_GROUP_GRP_ID,   Qt::DisplayRole,  QString::fromStdString(stat.mGrpId.toStdString())) ;
-        item->setData(COL_GROUP_NUM_MSGS, Qt::DisplayRole,  QString::number(stat.mNumMsgs)) ;
-        item->setData(COL_GROUP_SIZE_MSGS,Qt::DisplayRole,  QString::number(stat.mTotalSizeOfMsgs)) ;
+        item->setData(COL_GROUP_GRP_ID,    Qt::DisplayRole,  QString::fromStdString(stat.mGrpId.toStdString())) ;
+        item->setData(COL_GROUP_NUM_MSGS,  Qt::DisplayRole,  QString::number(stat.mNumMsgs)) ;
+        item->setData(COL_GROUP_SIZE_MSGS, Qt::DisplayRole,  QString::number(stat.mTotalSizeOfMsgs)) ;
         item->setData(COL_GROUP_SUBSCRIBED,Qt::DisplayRole,  stat.subscribed?tr("Yes"):tr("No")) ;
         item->setData(COL_GROUP_POPULARITY,Qt::DisplayRole,  QString::number(stat.popularity)) ;
+
+        for(uint32_t i=0;i<it->second.messages_metas.size();++i)
+        {
+            QTreeWidgetItem *sitem = new QTreeWidgetItem(item) ;
+
+            const RsMsgMetaData& meta(it->second.messages_metas[i]) ;
+
+            GxsIdLabel *label = new GxsIdLabel();
+            label->setId(meta.mAuthorId) ;
+            groupTreeWidget->setItemWidget(sitem,COL_GROUP_GRP_ID,label) ;
+
+            sitem->setData(COL_GROUP_NUM_MSGS,Qt::DisplayRole, QDateTime::fromTime_t(meta.mPublishTs).toString());
+        }
     }
 }
 
@@ -279,6 +311,9 @@ void GxsTransportStatistics::loadRequest(const TokenQueue *queue, const TokenReq
 	case GXSTRANS_GROUP_STAT: loadGroupStat(req.mToken);
 		break;
 
+	case GXSTRANS_MSG_META: loadMsgMeta(req.mToken);
+		break;
+
 	default:
 		std::cerr << "GxsTransportStatistics::loadRequest() ERROR: INVALID TYPE";
 		std::cerr << std::endl;
@@ -309,6 +344,27 @@ void GxsTransportStatistics::requestGroupStat(const RsGxsGroupId &groupId)
 	uint32_t token;
 	rsGxsTrans->getTokenService()->requestGroupStatistic(token, groupId);
 	mTransQueue->queueRequest(token, 0, RS_TOKREQ_ANSTYPE_ACK, GXSTRANS_GROUP_STAT);
+}
+void GxsTransportStatistics::requestMsgMeta(const RsGxsGroupId& grpId)
+{
+	mStateHelper->setLoading(GXSTRANS_MSG_META, true);
+
+#ifdef DEBUG_GXSTRANS_STATS
+	std::cerr << "GxsTransportStatisticsWidget::requestGroupMeta()";
+	std::cerr << std::endl;
+#endif
+
+	mTransQueue->cancelActiveRequestTokens(GXSTRANS_MSG_META);
+
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_MSG_META;
+
+    std::list<RsGxsGroupId> grouplist ;
+	grouplist.push_back(grpId) ;
+
+	uint32_t token;
+	rsGxsTrans->getTokenService()->requestMsgInfo(token,  RS_TOKREQ_ANSTYPE_SUMMARY, opts, grouplist);
+	mTransQueue->queueRequest(token, 0, RS_TOKREQ_ANSTYPE_ACK, GXSTRANS_MSG_META);
 }
 
 void GxsTransportStatistics::loadGroupStat(const uint32_t &token)
@@ -356,6 +412,7 @@ void GxsTransportStatistics::loadGroupMeta(const uint32_t& token)
 #endif
 
         requestGroupStat(vit->mGroupId) ;
+        requestMsgMeta(vit->mGroupId) ;
 
         RsGxsTransGroupStatistics& s(mGroupStats[vit->mGroupId]);
         s.popularity = vit->mPop ;
@@ -370,3 +427,17 @@ void GxsTransportStatistics::loadGroupMeta(const uint32_t& token)
 		else
 			++it;
 }
+
+void GxsTransportStatistics::loadMsgMeta(const uint32_t& token)
+{
+	mStateHelper->setLoading(GXSTRANS_MSG_META, false);
+
+    GxsMsgMetaMap m ;
+
+	if (!rsGxsTrans->getMsgSummary(token,m))
+        return ;
+
+    for(GxsMsgMetaMap::const_iterator it(m.begin());it!=m.end();++it)
+        mGroupStats[it->first].messages_metas = it->second ;
+}
+

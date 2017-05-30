@@ -263,6 +263,7 @@ class RsThread
 
 protected:
     virtual void runloop() =0; /* called once the thread is started. Should be overloaded by subclasses. */
+    void go() ;	// this one calls runloop and also sets the flags correctly when the thread is finished running.
 
     RsSemaphore mHasStoppedSemaphore;
     RsSemaphore mShouldStopSemaphore;

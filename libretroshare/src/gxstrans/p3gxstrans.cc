@@ -255,9 +255,112 @@ void p3GxsTrans::handleResponse(uint32_t token, uint32_t req_type)
 	}
 }
 
+void p3GxsTrans::GxsTransIntegrityCleanupThread::run()
+{
+    // first take out all the groups
+    std::map<RsGxsGroupId, RsNxsGrp*> grp;
+    mDs->retrieveNxsGrps(grp, true, true);
+
+    std::cerr << "GxsTransIntegrityCleanupThread::run()" << std::endl;
+
+    // compute hash and compare to stored value, if it fails then simply add it
+    // to list
+
+    GxsMsgReq grps;
+    for(std::map<RsGxsGroupId, RsNxsGrp*>::iterator git = grp.begin(); git != grp.end(); ++git)
+    {
+	    RsNxsGrp* grp = git->second;
+
+		// store the group for retrieveNxsMsgs
+		grps[grp->grpId];
+
+	    delete grp;
+    }
+
+    // now messages
+
+    std::map<RsGxsTransId,std::pair<RsGxsGroupId,RsGxsMessageId> > stored_msgs ;
+    std::list<RsGxsTransId> received_msgs ;
+
+    GxsMsgResult msgs;
+    mDs->retrieveNxsMsgs(grps, msgs, false, true);
+
+    for(GxsMsgResult::iterator mit = msgs.begin();mit != msgs.end(); ++mit)
+    {
+	    std::vector<RsNxsMsg*>& msgV = mit->second;
+	    std::vector<RsNxsMsg*>::iterator vit = msgV.begin();
+
+	    for(; vit != msgV.end(); ++vit)
+	    {
+		    RsNxsMsg* msg = *vit;
+
+            RsGxsTransSerializer s ;
+            uint32_t size = msg->msg.bin_len;
+            RsItem *item = s.deserialise(msg->msg.bin_data,&size);
+            RsGxsTransMailItem *mitem ;
+            RsGxsTransPresignedReceipt *pitem ;
+
+            if(item == NULL)
+                std::cerr << "  Unrecocognised item type!" << std::endl;
+            else if(NULL != (mitem = dynamic_cast<RsGxsTransMailItem*>(item)))
+            {
+                std::cerr << "  " << msg->metaData->mMsgId << ": Mail data with ID " << std::hex << mitem->mailId << std::dec << " from " << msg->metaData->mAuthorId << " size: " << msg->msg.bin_len << std::endl;
+
+                stored_msgs[mitem->mailId] = std::make_pair(msg->metaData->mGroupId,msg->metaData->mMsgId) ;
+            }
+            else if(NULL != (pitem = dynamic_cast<RsGxsTransPresignedReceipt*>(item)))
+            {
+                std::cerr << "  " << msg->metaData->mMsgId << ": Signed rcpt of ID " << std::hex << pitem->mailId << std::dec << " from " << msg->metaData->mAuthorId << " size: " << msg->msg.bin_len << std::endl;
+
+                received_msgs.push_back(pitem->mailId) ;
+            }
+            else
+                std::cerr << "  Unknown item type!" << std::endl;
+
+		    delete msg;
+	    }
+    }
+
+    GxsMsgReq msgsToDel ;
+
+    std::cerr << "Msg removal report:" << std::endl;
+
+    for(std::list<RsGxsTransId>::const_iterator it(received_msgs.begin());it!=received_msgs.end();++it)
+    {
+		std::map<RsGxsTransId,std::pair<RsGxsGroupId,RsGxsMessageId> >::const_iterator it2 = stored_msgs.find(*it) ;
+
+        if(stored_msgs.end() != it2)
+        {
+            msgsToDel[it2->second.first].push_back(it2->second.second);
+
+            std::cerr << "  scheduling msg " << std::hex << it2->second.first << "," << it2->second.second << " for deletion." << std::endl;
+        }
+    }
+
+    mDs->removeMsgs(msgsToDel);
+}
+
 void p3GxsTrans::service_tick()
 {
 	GxsTokenQueue::checkRequests();
+
+    time_t now = time(NULL);
+
+    if(mLastMsgCleanup + MAX_DELAY_BETWEEN_CLEANUPS < now)
+    {
+        if(!mCleanupThread)
+            mCleanupThread = new GxsTransIntegrityCleanupThread(getDataStore());
+
+        if(mCleanupThread->isRunning())
+            std::cerr << "Cleanup thread is already running. Not running it again!" << std::endl;
+        else
+        {
+            std::cerr << "Starting GxsIntegrity cleanup thread." << std::endl;
+
+			mCleanupThread->start() ;
+            mLastMsgCleanup = now ;
+        }
+    }
 
 	{
 		RS_STACK_MUTEX(mOutgoingMutex);

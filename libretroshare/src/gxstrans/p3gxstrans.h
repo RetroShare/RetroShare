@@ -90,7 +90,11 @@ public:
         mIdService(identities),
 	    mServClientsMutex("p3GxsTrans client services map mutex"),
 	    mOutgoingMutex("p3GxsTrans outgoing queue map mutex"),
-	    mIngoingMutex("p3GxsTrans ingoing queue map mutex") {}
+	    mIngoingMutex("p3GxsTrans ingoing queue map mutex")
+    {
+        mLastMsgCleanup = time(NULL) - 60;	// to be changed into 0
+        mCleanupThread = NULL ;
+    }
 
 	virtual ~p3GxsTrans();
 
@@ -154,7 +158,10 @@ private:
 	 * signed acknowledged is received for each of them.
 	 * Two weeks seems fair ATM.
 	 */
-	const static uint32_t GXS_STORAGE_PERIOD = 0x127500;
+	static const uint32_t GXS_STORAGE_PERIOD = 0x127500;
+	static const uint32_t MAX_DELAY_BETWEEN_CLEANUPS = 1203; // every 20 mins. Could be less.
+
+    time_t mLastMsgCleanup ;
 
 	/// Define how the backend should handle authentication based on signatures
 	static uint32_t AuthenPolicy();
@@ -266,5 +273,27 @@ private:
 	                            uint32_t decrypted_data_size );
 
 	void notifyClientService(const OutgoingRecord& pr);
+
+	/*!
+	 * Checks the integrity message and groups
+	 */
+	class GxsTransIntegrityCleanupThread : public RsSingleJobThread
+	{
+		enum CheckState { CheckStart, CheckChecking };
+
+	public:
+        GxsTransIntegrityCleanupThread(RsGeneralDataService *const dataService): mDs(dataService) {}
+
+		bool isDone();
+		void run();
+
+		void getDeletedIds(std::list<RsGxsGroupId>& grpIds, std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >& msgIds);
+
+	private:
+
+		RsGeneralDataService* const mDs;
+	};
+
+    GxsTransIntegrityCleanupThread *mCleanupThread ;
 };
 
