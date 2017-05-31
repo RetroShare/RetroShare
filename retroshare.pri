@@ -76,6 +76,12 @@ rs_nocppwarning:CONFIG -= no_rs_nocppwarning
 CONFIG *= rs_gxs_trans
 #no_rs_gxs_trans:CONFIG -= rs_gxs_trans ## Disabing not supported ATM
 
+# To enable GXS based async chat append the following assignation to qmake
+# command line "CONFIG+=rs_async_chat"
+CONFIG *= no_rs_async_chat
+rs_async_chat:CONFIG -= no_rs_async_chat
+
+
 
 unix {
 	isEmpty(PREFIX)   { PREFIX   = "/usr" }
@@ -210,3 +216,6 @@ rs_gxs_trans {
     }
 }
 
+rs_async_chat {
+    DEFINES *= RS_ASYNC_CHAT
+}

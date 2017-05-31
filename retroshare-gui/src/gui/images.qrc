@@ -1,5 +1,7 @@
 <RCC>
   <qresource prefix="/">
+    <file>images/logo/background.png</file>
+    <file>images/logo/background_lessblue.png</file>
     <file>images/logo/logo_spash2.png</file>
     <file>images/network_map.png</file>
     <file>images/global_switch_on.png</file>
@@ -349,6 +351,7 @@
     <file>images/logo/logo_512.png</file>
     <file>images/logo/logo_info.png</file>
     <file>images/logo/logo_splash.png</file>
+    <file>images/logo/logo_web_nobackground.png</file>
     <file>images/logobar/logo_bar_fill.png</file>
     <file>images/logobar/logo_bar_start.png</file>
     <file>images/logobar/rslogo.png</file>

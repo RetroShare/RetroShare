@@ -78,7 +78,7 @@ class RsInit
 		/*!
 		 * Setup Hidden Location;
 		 */
-		static bool 	SetHiddenLocation(const std::string& hiddenaddress, uint16_t port);
+		static void SetHiddenLocation(const std::string& hiddenaddress, uint16_t port, bool useBob);
 
 		static bool	LoadPassword(const std::string& passwd) ;
 

@@ -1,5 +1,7 @@
 <RCC>
   <qresource prefix="/">
+    <file>icons/svg/hidden.svg</file>
+    <file>icons/svg/randomness.svg</file>
     <file>icons/svg/password.svg</file>
     <file>icons/stars/star0.png</file>
     <file>icons/stars/star1.png</file>
@@ -11,6 +13,12 @@
     <file>icons/anonymous_blue_128.png</file>
     <file>icons/anonymous_green_128.png</file>
     <file>icons/aol.png</file>
+    <file>icons/transport128.png</file>
+    <file>icons/bandwidth128.png</file>
+    <file>icons/RTT128.png</file>
+    <file>icons/DHT128.png</file>
+    <file>icons/turtle128.png</file>
+    <file>icons/GRouter128.png</file>
     <file>icons/avatar_128.png</file>
     <file>icons/avatar_grey_128.png</file>
     <file>icons/biohazard_red.png</file>

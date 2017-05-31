@@ -228,6 +228,7 @@ class NotifyClient
 		virtual void notifyDiskFull                   (uint32_t           /* location  */, uint32_t                         /* size limit in MB */) {}
 		virtual void notifyPeerStatusChanged          (const std::string& /* peer_id   */, uint32_t                         /* status           */) {}
         virtual void notifyGxsChange                  (const RsGxsChanges& /* changes  */) {}
+		virtual void notifyConnectionWithoutCert      () {}
 
 		/* one or more peers has changed the states */
 		virtual void notifyPeerStatusChangedSummary   () {}

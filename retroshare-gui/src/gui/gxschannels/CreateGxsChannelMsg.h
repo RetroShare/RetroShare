@@ -38,13 +38,13 @@ class CreateGxsChannelMsg : public QDialog, public TokenResponse, private Ui::Cr
 
 public:
 	/** Default Constructor */
-    CreateGxsChannelMsg(const RsGxsGroupId& cId);
+    CreateGxsChannelMsg(const RsGxsGroupId& cId, RsGxsMessageId existing_post = RsGxsMessageId());
 
 	/** Default Destructor */
 	~CreateGxsChannelMsg();
 
 	void addAttachment(const std::string &path);
-    void addAttachment(const RsFileHash &hash, const std::string &fname, uint64_t size, bool local, const RsPeerId &srcId);
+    void addAttachment(const RsFileHash &hash, const std::string &fname, uint64_t size, bool local, const RsPeerId &srcId,bool assume_file_ready = false);
 
 	void newChannelMsg();
 
@@ -60,6 +60,7 @@ protected:
 private slots:
 	void addExtraFile();
 	void checkAttachmentReady();
+	void deleteAttachment();
 
 	void cancelMsg();
 	void sendMsg();
@@ -71,6 +72,7 @@ private slots:
 
 private:
 	void loadChannelInfo(const uint32_t &token);
+	void loadChannelPostInfo(const uint32_t &token);
 	void saveChannelInfo(const RsGroupMetaData &group);
 
 	void parseRsFileListAttachments(const std::string &attachList);
@@ -78,7 +80,9 @@ private:
 	bool setThumbNail(const std::string& path, int frame);
 
     RsGxsGroupId mChannelId;
+    RsGxsMessageId mOrigPostId;
 	RsGroupMetaData mChannelMeta;
+	RsMsgMetaData mOrigMeta;
 	bool mChannelMetaLoaded;
 
 	std::list<SubFileItem *> mAttachments;

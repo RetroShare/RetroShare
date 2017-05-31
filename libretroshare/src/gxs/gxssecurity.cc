@@ -41,7 +41,7 @@ static const uint32_t MULTI_ENCRYPTION_FORMAT_v001_ENCRYPTED_KEY_SIZE  = 256 ;
         
 static RsGxsId getRsaKeyFingerprint_old_insecure_method(RSA *pubkey)
 {
-#if OPENSSL_VERSION_NUMBER < 0x10100000L
+#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
         int lenn = BN_num_bytes(pubkey -> n);
 
         RsTemporaryMemory tmp(lenn) ;
@@ -65,7 +65,7 @@ static RsGxsId getRsaKeyFingerprint_old_insecure_method(RSA *pubkey)
 }
 static RsGxsId getRsaKeyFingerprint(RSA *pubkey)
 {
-#if OPENSSL_VERSION_NUMBER < 0x10100000L
+#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
         int lenn = BN_num_bytes(pubkey -> n);
         int lene = BN_num_bytes(pubkey -> e);
 
@@ -359,7 +359,7 @@ bool GxsSecurity::getSignature(const char *data, uint32_t data_len, const RsTlvP
 	ok &= EVP_SignUpdate(mdctx, data, data_len) == 1;
 
 	unsigned int siglen = EVP_PKEY_size(key_priv);
-	unsigned char sigbuf[siglen];
+    unsigned char sigbuf[siglen] = { 0 };
 	ok &= EVP_SignFinal(mdctx, sigbuf, &siglen, key_priv) == 1;
 
 	// clean up

@@ -16,10 +16,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "util/rsdir.h"
 #include "gxstrans/p3gxstrans.h"
 #include "util/stacktrace.h"
 
 typedef unsigned int uint;
+
+RsGxsTrans *rsGxsTrans = NULL ;
 
 p3GxsTrans::~p3GxsTrans()
 {
@@ -31,7 +34,36 @@ p3GxsTrans::~p3GxsTrans()
 	}
 }
 
-bool p3GxsTrans::sendMail( RsGxsTransId& mailId,
+bool p3GxsTrans::getStatistics(GxsTransStatistics& stats)
+{
+    stats.prefered_group_id = mPreferredGroupId;
+    stats.outgoing_records.clear();
+
+    {
+		RS_STACK_MUTEX(mOutgoingMutex);
+
+		for ( auto it = mOutgoingQueue.begin(); it != mOutgoingQueue.end(); ++it)
+		{
+			const OutgoingRecord& pr(it->second);
+
+			RsGxsTransOutgoingRecord rec ;
+            rec.status = pr.status ;
+            rec.send_TS = pr.mailItem.meta.mPublishTs ;
+            rec.group_id = pr.mailItem.meta.mGroupId ;
+            rec.trans_id = pr.mailItem.mailId ;
+            rec.recipient = pr.recipient ;
+            rec.data_size = pr.mailData.size();
+            rec.data_hash = RsDirUtil::sha1sum(pr.mailData.data(),pr.mailData.size());
+            rec.client_service = pr.clientService ;
+
+            stats.outgoing_records.push_back(rec) ;
+        }
+    }
+
+    return true;
+}
+
+bool p3GxsTrans::sendData( RsGxsTransId& mailId,
                            GxsTransSubServices service,
                            const RsGxsId& own_gxsid, const RsGxsId& recipient,
                            const uint8_t* data, uint32_t size,
@@ -55,7 +87,10 @@ bool p3GxsTrans::sendMail( RsGxsTransId& mailId,
 	}
 
 	OutgoingRecord pr( recipient, service, data, size );
+
+    pr.mailItem.clear();
 	pr.mailItem.meta.mAuthorId = own_gxsid;
+	pr.mailItem.meta.mMsgId.clear();
 	pr.mailItem.cryptoType = cm;
 	pr.mailItem.mailId = RSRandom::random_u64();
 
@@ -120,9 +155,9 @@ void p3GxsTrans::handleResponse(uint32_t token, uint32_t req_type)
 			        && meta.mGroupId != mPreferredGroupId;
 
 			if(shoudlSubscribe)
-				subscribeToGroup(token, meta.mGroupId, true);
+				RsGenExchange::subscribeToGroup(token, meta.mGroupId, true);
 			else if(shoudlUnSubscribe)
-				subscribeToGroup(token, meta.mGroupId, false);
+				RsGenExchange::subscribeToGroup(token, meta.mGroupId, false);
 
 #ifdef GXS_MAIL_GRP_DEBUG
 			char buff[30];
@@ -220,9 +255,112 @@ void p3GxsTrans::handleResponse(uint32_t token, uint32_t req_type)
 	}
 }
 
+void p3GxsTrans::GxsTransIntegrityCleanupThread::run()
+{
+    // first take out all the groups
+    std::map<RsGxsGroupId, RsNxsGrp*> grp;
+    mDs->retrieveNxsGrps(grp, true, true);
+
+    std::cerr << "GxsTransIntegrityCleanupThread::run()" << std::endl;
+
+    // compute hash and compare to stored value, if it fails then simply add it
+    // to list
+
+    GxsMsgReq grps;
+    for(std::map<RsGxsGroupId, RsNxsGrp*>::iterator git = grp.begin(); git != grp.end(); ++git)
+    {
+	    RsNxsGrp* grp = git->second;
+
+		// store the group for retrieveNxsMsgs
+		grps[grp->grpId];
+
+	    delete grp;
+    }
+
+    // now messages
+
+    std::map<RsGxsTransId,std::pair<RsGxsGroupId,RsGxsMessageId> > stored_msgs ;
+    std::list<RsGxsTransId> received_msgs ;
+
+    GxsMsgResult msgs;
+    mDs->retrieveNxsMsgs(grps, msgs, false, true);
+
+    for(GxsMsgResult::iterator mit = msgs.begin();mit != msgs.end(); ++mit)
+    {
+	    std::vector<RsNxsMsg*>& msgV = mit->second;
+	    std::vector<RsNxsMsg*>::iterator vit = msgV.begin();
+
+	    for(; vit != msgV.end(); ++vit)
+	    {
+		    RsNxsMsg* msg = *vit;
+
+            RsGxsTransSerializer s ;
+            uint32_t size = msg->msg.bin_len;
+            RsItem *item = s.deserialise(msg->msg.bin_data,&size);
+            RsGxsTransMailItem *mitem ;
+            RsGxsTransPresignedReceipt *pitem ;
+
+            if(item == NULL)
+                std::cerr << "  Unrecocognised item type!" << std::endl;
+            else if(NULL != (mitem = dynamic_cast<RsGxsTransMailItem*>(item)))
+            {
+                std::cerr << "  " << msg->metaData->mMsgId << ": Mail data with ID " << std::hex << mitem->mailId << std::dec << " from " << msg->metaData->mAuthorId << " size: " << msg->msg.bin_len << std::endl;
+
+                stored_msgs[mitem->mailId] = std::make_pair(msg->metaData->mGroupId,msg->metaData->mMsgId) ;
+            }
+            else if(NULL != (pitem = dynamic_cast<RsGxsTransPresignedReceipt*>(item)))
+            {
+                std::cerr << "  " << msg->metaData->mMsgId << ": Signed rcpt of ID " << std::hex << pitem->mailId << std::dec << " from " << msg->metaData->mAuthorId << " size: " << msg->msg.bin_len << std::endl;
+
+                received_msgs.push_back(pitem->mailId) ;
+            }
+            else
+                std::cerr << "  Unknown item type!" << std::endl;
+
+		    delete msg;
+	    }
+    }
+
+    GxsMsgReq msgsToDel ;
+
+    std::cerr << "Msg removal report:" << std::endl;
+
+    for(std::list<RsGxsTransId>::const_iterator it(received_msgs.begin());it!=received_msgs.end();++it)
+    {
+		std::map<RsGxsTransId,std::pair<RsGxsGroupId,RsGxsMessageId> >::const_iterator it2 = stored_msgs.find(*it) ;
+
+        if(stored_msgs.end() != it2)
+        {
+            msgsToDel[it2->second.first].push_back(it2->second.second);
+
+            std::cerr << "  scheduling msg " << std::hex << it2->second.first << "," << it2->second.second << " for deletion." << std::endl;
+        }
+    }
+
+    mDs->removeMsgs(msgsToDel);
+}
+
 void p3GxsTrans::service_tick()
 {
 	GxsTokenQueue::checkRequests();
+
+    time_t now = time(NULL);
+
+    if(mLastMsgCleanup + MAX_DELAY_BETWEEN_CLEANUPS < now)
+    {
+        if(!mCleanupThread)
+            mCleanupThread = new GxsTransIntegrityCleanupThread(getDataStore());
+
+        if(mCleanupThread->isRunning())
+            std::cerr << "Cleanup thread is already running. Not running it again!" << std::endl;
+        else
+        {
+            std::cerr << "Starting GxsIntegrity cleanup thread." << std::endl;
+
+			mCleanupThread->start() ;
+            mLastMsgCleanup = now ;
+        }
+    }
 
 	{
 		RS_STACK_MUTEX(mOutgoingMutex);
@@ -337,7 +475,7 @@ void p3GxsTrans::notifyChanges(std::vector<RsGxsNotify*>& changes)
 			std::cout << "p3GxsTrans::notifyChanges(...) msgChange" << std::endl;
 			uint32_t token;
 			RsTokReqOptions opts; opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
-			getTokenService()->requestMsgInfo( token, 0xcaca,
+			RsGenExchange::getTokenService()->requestMsgInfo( token, 0xcaca,
 			                                   opts, msgChange->msgChangeMap );
 			GxsTokenQueue::queueRequest(token, MAILS_UPDATE);
 
@@ -393,8 +531,8 @@ bool p3GxsTrans::requestGroupsData(const std::list<RsGxsGroupId>* groupIds)
 	//	std::cout << "p3GxsTrans::requestGroupsList()" << std::endl;
 	uint32_t token;
 	RsTokReqOptions opts; opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
-	if(!groupIds) getTokenService()->requestGroupInfo(token, 0xcaca, opts);
-	else getTokenService()->requestGroupInfo(token, 0xcaca, opts, *groupIds);
+	if(!groupIds) RsGenExchange::getTokenService()->requestGroupInfo(token, 0xcaca, opts);
+	else RsGenExchange::getTokenService()->requestGroupInfo(token, 0xcaca, opts, *groupIds);
 	GxsTokenQueue::queueRequest(token, GROUPS_LIST);
 	return true;
 }
@@ -526,6 +664,7 @@ void p3GxsTrans::processOutgoingRecord(OutgoingRecord& pr)
 	{
 		pr.mailItem.saltRecipientHint(pr.recipient);
 		pr.mailItem.saltRecipientHint(RsGxsId::random());
+		pr.mailItem.meta.mPublishTs = time(NULL);
 	}
 	case GxsTransSendStatus::PENDING_PREFERRED_GROUP:
 	{
@@ -608,8 +747,7 @@ void p3GxsTrans::processOutgoingRecord(OutgoingRecord& pr)
 			                           pr.recipient, encryptError, true ) )
 			{
 				pr.mailItem.payload.resize(encryptedSize);
-				memcpy( &pr.mailItem.payload[0], encryptedData,
-				        encryptedSize );
+				memcpy( &pr.mailItem.payload[0], encryptedData, encryptedSize );
 				free(encryptedData);
 				break;
 			}

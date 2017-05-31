@@ -493,7 +493,7 @@ int	pqissllistenbase::continueSSL(IncomingSSLInfo& incoming_connexion_info, bool
 #endif
     if(x509 != NULL)
     {
-#if OPENSSL_VERSION_NUMBER < 0x10100000L
+#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
         incoming_connexion_info.gpgid = RsPgpId(std::string(getX509CNString(x509->cert_info->issuer)));
         incoming_connexion_info.sslcn = getX509CNString(x509->cert_info->subject);
 #else
@@ -892,7 +892,7 @@ int pqissllistener::completeConnection(int fd, IncomingSSLInfo& info)
 		AuthSSL::getAuthSSL()->CheckCertificate(newPeerId, peercert);
 
 		/* now need to get GPG id too */
-#if OPENSSL_VERSION_NUMBER < 0x10100000L
+#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
 		RsPgpId pgpid(std::string(getX509CNString(peercert->cert_info->issuer)));
 #else
 		RsPgpId pgpid(std::string(getX509CNString(X509_get_issuer_name(peercert))));

@@ -411,7 +411,13 @@ void PostedItem::loadComments()
 	if (mFeedHolder)
 	{
 		QString title = QString::fromUtf8(mPost.mMeta.mMsgName.c_str());
-		mFeedHolder->openComments(0, mPost.mMeta.mGroupId, mPost.mMeta.mMsgId, title);
+
+#warning (csoler) Posted item versions not handled yet. When it is the case, start here.
+
+        QVector<RsGxsMessageId> post_versions ;
+        post_versions.push_back(mPost.mMeta.mMsgId) ;
+
+		mFeedHolder->openComments(0, mPost.mMeta.mGroupId, post_versions,mPost.mMeta.mMsgId, title);
 	}
 }
 

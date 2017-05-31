@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>840</width>
-    <height>180</height>
+    <width>1052</width>
+    <height>338</height>
    </rect>
   </property>
   <layout class="QGridLayout" name="gxsChannelPostItem_GLayout">
@@ -329,6 +329,13 @@
              <widget class="QPushButton" name="commentButton">
               <property name="text">
                <string>Comments</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="editButton">
+              <property name="text">
+               <string>Edit</string>
               </property>
              </widget>
             </item>

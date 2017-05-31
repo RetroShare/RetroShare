@@ -26,6 +26,7 @@
 #include "gxstrans/p3gxstransitems.h"
 #include "services/p3idservice.h" // For p3IdService
 #include "util/rsthreads.h"
+#include "retroshare/rsgxstrans.h"
 
 struct p3GxsTrans;
 
@@ -76,18 +77,36 @@ struct GxsTransClient
  * @see GxsTransClient::receiveGxsTransMail(...),
  * @see GxsTransClient::notifyGxsTransSendStatus(...).
  */
-struct p3GxsTrans : RsGenExchange, GxsTokenQueue, p3Config
+class p3GxsTrans : public RsGenExchange, public GxsTokenQueue, public p3Config, public RsGxsTrans
 {
+public:
 	p3GxsTrans( RsGeneralDataService* gds, RsNetworkExchangeService* nes,
 	            p3IdService& identities ) :
 	    RsGenExchange( gds, nes, new RsGxsTransSerializer(),
 	                   RS_SERVICE_TYPE_GXS_TRANS, &identities,
 	                   AuthenPolicy(), GXS_STORAGE_PERIOD ),
-	    GxsTokenQueue(this), mIdService(identities),
+	    GxsTokenQueue(this),
+        RsGxsTrans(this),
+        mIdService(identities),
 	    mServClientsMutex("p3GxsTrans client services map mutex"),
 	    mOutgoingMutex("p3GxsTrans outgoing queue map mutex"),
-	    mIngoingMutex("p3GxsTrans ingoing queue map mutex") {}
-	~p3GxsTrans();
+	    mIngoingMutex("p3GxsTrans ingoing queue map mutex")
+    {
+        mLastMsgCleanup = time(NULL) - 60;	// to be changed into 0
+        mCleanupThread = NULL ;
+    }
+
+	virtual ~p3GxsTrans();
+
+    /*!
+     * \brief getStatistics
+     * 				Gathers all sorts of statistics about the internals of p3GxsTrans, in order to display info about the running status,
+     * 			message transport, etc.
+     * \param stats This structure contains all statistics information.
+     * \return 		true is the call succeeds.
+     */
+
+	virtual bool getStatistics(GxsTransStatistics& stats);
 
 	/**
 	 * Send an email to recipient, in the process author of the email is
@@ -97,7 +116,7 @@ struct p3GxsTrans : RsGenExchange, GxsTokenQueue, p3Config
 	 * This method is part of the public interface of this service.
 	 * @return true if the mail will be sent, false if not
 	 */
-	bool sendMail( RsGxsTransId& mailId,
+	bool sendData( RsGxsTransId& mailId,
 	               GxsTransSubServices service,
 	               const RsGxsId& own_gxsid, const RsGxsId& recipient,
 	               const uint8_t* data, uint32_t size,
@@ -139,7 +158,10 @@ private:
 	 * signed acknowledged is received for each of them.
 	 * Two weeks seems fair ATM.
 	 */
-	const static uint32_t GXS_STORAGE_PERIOD = 0x127500;
+	static const uint32_t GXS_STORAGE_PERIOD = 0x127500;
+	static const uint32_t MAX_DELAY_BETWEEN_CLEANUPS = 1203; // every 20 mins. Could be less.
+
+    time_t mLastMsgCleanup ;
 
 	/// Define how the backend should handle authentication based on signatures
 	static uint32_t AuthenPolicy();
@@ -251,5 +273,27 @@ private:
 	                            uint32_t decrypted_data_size );
 
 	void notifyClientService(const OutgoingRecord& pr);
+
+	/*!
+	 * Checks the integrity message and groups
+	 */
+	class GxsTransIntegrityCleanupThread : public RsSingleJobThread
+	{
+		enum CheckState { CheckStart, CheckChecking };
+
+	public:
+        GxsTransIntegrityCleanupThread(RsGeneralDataService *const dataService): mDs(dataService) {}
+
+		bool isDone();
+		void run();
+
+		void getDeletedIds(std::list<RsGxsGroupId>& grpIds, std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >& msgIds);
+
+	private:
+
+		RsGeneralDataService* const mDs;
+	};
+
+    GxsTransIntegrityCleanupThread *mCleanupThread ;
 };
 

@@ -1056,7 +1056,7 @@ bool p3GxsTunnelService::locked_sendDHPublicKey(const DH *dh,const RsGxsId& own_
 	}
 
 	RsGxsTunnelDHPublicKeyItem *dhitem = new RsGxsTunnelDHPublicKeyItem ;
-#if OPENSSL_VERSION_NUMBER < 0x10100000L
+#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
 	dhitem->public_key = BN_dup(dh->pub_key) ;
 #else
     const BIGNUM *pub_key=NULL ;
@@ -1140,7 +1140,7 @@ bool p3GxsTunnelService::locked_initDHSessionKey(DH *& dh)
         return false ;
     }
 
-#if OPENSSL_VERSION_NUMBER < 0x10100000L
+#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
     BN_hex2bn(&dh->p,dh_prime_2048_hex.c_str()) ;
     BN_hex2bn(&dh->g,"5") ;
 #else

@@ -44,7 +44,7 @@
 
 //#define DEBUG_CHACHA20
 
-#if OPENSSL_VERSION_NUMBER >= 0x010100000L
+#if OPENSSL_VERSION_NUMBER >= 0x010100000L && !defined(LIBRESSL_VERSION_NUMBER)
     #define AEAD_chacha20_poly1305_openssl AEAD_chacha20_poly1305
 #else
     #define AEAD_chacha20_poly1305_rs AEAD_chacha20_poly1305
@@ -386,7 +386,7 @@ void chacha20_encrypt_rs(uint8_t key[32], uint32_t block_counter, uint8_t nonce[
     }
 }
 
-#if OPENSSL_VERSION_NUMBER >= 0x010100000L
+#if OPENSSL_VERSION_NUMBER >= 0x010100000L && !defined(LIBRESSL_VERSION_NUMBER)
 void chacha20_encrypt_openssl(uint8_t key[32], uint32_t block_counter, uint8_t nonce[12], uint8_t *data, uint32_t size)
 {
     EVP_CIPHER_CTX *ctx;
@@ -577,7 +577,7 @@ bool AEAD_chacha20_poly1305_rs(uint8_t key[32], uint8_t nonce[12],uint8_t *data,
     }
 }
 
-#if OPENSSL_VERSION_NUMBER >= 0x010100000L
+#if OPENSSL_VERSION_NUMBER >= 0x010100000L && !defined(LIBRESSL_VERSION_NUMBER)
 #define errorOut {ret = false; goto out;}
 
 bool AEAD_chacha20_poly1305_openssl(uint8_t key[32], uint8_t nonce[12], uint8_t *data, uint32_t data_size, uint8_t *aad, uint32_t aad_size, uint8_t tag[16], bool encrypt_or_decrypt)
@@ -667,7 +667,7 @@ bool AEAD_chacha20_sha256(uint8_t key[32], uint8_t nonce[12],uint8_t *data,uint3
 
     if(encrypt)
     {
-#if OPENSSL_VERSION_NUMBER < 0x10100000L
+#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
         chacha20_encrypt_rs(key,1,nonce,data,data_size);
 #else
         chacha20_encrypt_openssl(key, 1, nonce, data, data_size);
@@ -676,7 +676,7 @@ bool AEAD_chacha20_sha256(uint8_t key[32], uint8_t nonce[12],uint8_t *data,uint3
        uint8_t computed_tag[EVP_MAX_MD_SIZE];
        unsigned int md_size ;
 
-#if OPENSSL_VERSION_NUMBER < 0x10100000L
+#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
        HMAC_CTX hmac_ctx ;
        HMAC_CTX_init(&hmac_ctx) ;
 
@@ -709,7 +709,7 @@ bool AEAD_chacha20_sha256(uint8_t key[32], uint8_t nonce[12],uint8_t *data,uint3
        uint8_t computed_tag[EVP_MAX_MD_SIZE];
        unsigned int md_size ;
 
-#if OPENSSL_VERSION_NUMBER < 0x10100000L
+#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
        HMAC_CTX hmac_ctx ;
        HMAC_CTX_init(&hmac_ctx) ;
 
@@ -733,7 +733,7 @@ bool AEAD_chacha20_sha256(uint8_t key[32], uint8_t nonce[12],uint8_t *data,uint3
 
        // decrypt
 
-#if OPENSSL_VERSION_NUMBER < 0x10100000L
+#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
         chacha20_encrypt_rs(key,1,nonce,data,data_size);
 #else
         chacha20_encrypt_openssl(key, 1, nonce, data, data_size);
@@ -1396,7 +1396,7 @@ bool perform_tests()
 
             std::cerr << "  AEAD/poly1305 own encryption speed    : " << SIZE / (1024.0*1024.0) / s.duration() << " MB/s" << std::endl;
         }
-#if OPENSSL_VERSION_NUMBER >= 0x010100000L
+#if OPENSSL_VERSION_NUMBER >= 0x010100000L && !defined(LIBRESSL_VERSION_NUMBER)
         {
             RsScopeTimer s("AEAD3") ;
             AEAD_chacha20_poly1305_openssl(key,nonce,ten_megabyte_data,SIZE,aad,12,received_tag,true) ;

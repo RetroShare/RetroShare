@@ -45,6 +45,8 @@ const int p3facemsgzone = 11453;
 // TO SHUTDOWN THREADS.
 #ifdef RS_ENABLE_GXS
 
+#include "services/autoproxy/rsautoproxymonitor.h"
+
 #include "services/p3idservice.h"
 #include "services/p3gxscircles.h"
 #include "services/p3wiki.h"
@@ -88,6 +90,8 @@ void RsServer::rsGlobalShutDown()
 	mPluginsManager->stopPlugins(pqih);
 
 	mNetMgr->shutdown(); /* Handles UPnP */
+
+	rsAutoProxyMonitor::instance()->stopAllRSShutdown();
 
     fullstop() ;
 

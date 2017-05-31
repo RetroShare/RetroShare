@@ -73,7 +73,7 @@
  *****/
 
 ChatWidget::ChatWidget(QWidget *parent) :
-    QWidget(parent), ui(new Ui::ChatWidget)
+    QWidget(parent), sendingBlocked(false), ui(new Ui::ChatWidget)
 {
 	ui->setupUi(this);
 
@@ -416,9 +416,20 @@ ChatWidget::ChatType ChatWidget::chatType()
     return CHATTYPE_UNKNOWN;
 }
 
-void ChatWidget::blockSending(QString msg) { ui->sendButton->setToolTip(msg); }
+void ChatWidget::blockSending(QString msg)
+{
+#ifndef RS_ASYNC_CHAT
+	sendingBlocked = true;
+	ui->sendButton->setEnabled(false);
+#endif
+	ui->sendButton->setToolTip(msg);
+}
 
-void ChatWidget::unblockSending() { updateLenOfChatTextEdit(); }
+void ChatWidget::unblockSending()
+{
+    sendingBlocked = false;
+    updateLenOfChatTextEdit();
+}
 
 void ChatWidget::processSettings(bool load)
 {
@@ -1130,6 +1141,8 @@ void ChatWidget::updateStatusTyping()
 
 void ChatWidget::updateLenOfChatTextEdit()
 {
+	if(sendingBlocked) return;
+
 	QTextEdit *chatWidget = ui->chatTextEdit;
 	QString text;
 	RsHtml::optimizeHtml(chatWidget, text);
@@ -1429,7 +1442,8 @@ void ChatWidget::colorChanged()
 void ChatWidget::chooseFont()
 {
 	bool ok;
-	QFont font = QFontDialog::getFont(&ok, currentFont, this);
+	//Use NULL as parent as with this QFontDialog don't take care of title nether options.
+	QFont font = QFontDialog::getFont(&ok, currentFont, NULL, tr("Choose your font."),QFontDialog::DontUseNativeDialog);
 	if (ok) {
 		currentFont = font;
 		setFont();

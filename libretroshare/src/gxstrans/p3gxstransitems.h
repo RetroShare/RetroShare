@@ -23,40 +23,27 @@
 #include "serialiser/rsbaseserial.h"
 #include "serialiser/rstlvidset.h"
 #include "retroshare/rsgxsflags.h"
+#include "retroshare/rsgxstrans.h"
 #include "retroshare/rsgxscircles.h" // For: GXS_CIRCLE_TYPE_PUBLIC
 #include "services/p3idservice.h"
 #include "serialiser/rstypeserializer.h"
 
-/// Subservices identifiers (like port for TCP)
-enum class GxsTransSubServices : uint16_t
+class RsNxsTransPresignedReceipt : public RsNxsMsg
 {
-	UNKNOWN         = 0,
-	TEST_SERVICE    = 1,
-	P3_MSG_SERVICE  = 2,
-	P3_CHAT_SERVICE = 3
-};
-
-/// Values must fit into uint8_t
-enum class GxsTransItemsSubtypes : uint8_t
-{
-	GXS_TRANS_SUBTYPE_MAIL    = 1,
-	GXS_TRANS_SUBTYPE_RECEIPT = 2,
-	GXS_TRANS_SUBTYPE_GROUP   = 3,
-	OUTGOING_RECORD_ITEM      = 4
-};
-
-typedef uint64_t RsGxsTransId;
-
-struct RsNxsTransPresignedReceipt : RsNxsMsg
-{
+public:
 	RsNxsTransPresignedReceipt() : RsNxsMsg(RS_SERVICE_TYPE_GXS_TRANS) {}
+
+    virtual ~RsNxsTransPresignedReceipt() {}
 };
 
-struct RsGxsTransBaseItem : RsGxsMsgItem
+class RsGxsTransBaseItem : public RsGxsMsgItem
 {
+public:
 	RsGxsTransBaseItem(GxsTransItemsSubtypes subtype) :
 	    RsGxsMsgItem( RS_SERVICE_TYPE_GXS_TRANS,
 	                  static_cast<uint8_t>(subtype) ), mailId(0) {}
+
+    virtual ~RsGxsTransBaseItem() {}
 
 	RsGxsTransId mailId;
 
@@ -71,10 +58,11 @@ struct RsGxsTransBaseItem : RsGxsMsgItem
 	{ RS_REGISTER_SERIAL_MEMBER_TYPED(mailId, uint64_t); }
 };
 
-struct RsGxsTransPresignedReceipt : RsGxsTransBaseItem
+class RsGxsTransPresignedReceipt : public RsGxsTransBaseItem
 {
-	RsGxsTransPresignedReceipt() :
-	    RsGxsTransBaseItem(GxsTransItemsSubtypes::GXS_TRANS_SUBTYPE_RECEIPT) {}
+public:
+	RsGxsTransPresignedReceipt() : RsGxsTransBaseItem(GxsTransItemsSubtypes::GXS_TRANS_SUBTYPE_RECEIPT) {}
+    virtual ~RsGxsTransPresignedReceipt() {}
 };
 
 enum class RsGxsTransEncryptionMode : uint8_t
@@ -84,11 +72,14 @@ enum class RsGxsTransEncryptionMode : uint8_t
 	UNDEFINED_ENCRYPTION      = 250
 };
 
-struct RsGxsTransMailItem : RsGxsTransBaseItem
+class RsGxsTransMailItem : public RsGxsTransBaseItem
 {
+public:
 	RsGxsTransMailItem() :
 	    RsGxsTransBaseItem(GxsTransItemsSubtypes::GXS_TRANS_SUBTYPE_MAIL),
 	    cryptoType(RsGxsTransEncryptionMode::UNDEFINED_ENCRYPTION) {}
+
+    virtual ~RsGxsTransMailItem() {}
 
 	RsGxsTransEncryptionMode cryptoType;
 
@@ -166,8 +157,9 @@ struct RsGxsTransMailItem : RsGxsTransBaseItem
 	const static uint32_t MAX_SIZE = 10*8*1024*1024;
 };
 
-struct RsGxsTransGroupItem : RsGxsGrpItem
+class RsGxsTransGroupItem : public RsGxsGrpItem
 {
+public:
 	RsGxsTransGroupItem() :
 	    RsGxsGrpItem( RS_SERVICE_TYPE_GXS_TRANS,
 	                  static_cast<uint8_t>(
@@ -177,6 +169,7 @@ struct RsGxsTransGroupItem : RsGxsGrpItem
 		meta.mGroupName = "Mail";
 		meta.mCircleType = GXS_CIRCLE_TYPE_PUBLIC;
 	}
+    virtual ~RsGxsTransGroupItem() {}
 
 	// TODO: Talk with Cyril why there is no RsGxsGrpItem::serial_process
 	virtual void serial_process(RsGenericSerializer::SerializeJob /*j*/,
@@ -188,32 +181,15 @@ struct RsGxsTransGroupItem : RsGxsGrpItem
 	{ return out; }
 };
 
-enum class GxsTransSendStatus : uint8_t
-{
-	UNKNOWN = 0,
-	PENDING_PROCESSING,
-	PENDING_PREFERRED_GROUP,
-	PENDING_RECEIPT_CREATE,
-	PENDING_RECEIPT_SIGNATURE,
-	PENDING_SERIALIZATION,
-	PENDING_PAYLOAD_CREATE,
-	PENDING_PAYLOAD_ENCRYPT,
-	PENDING_PUBLISH,
-	/** This will be useful so the user can know if the mail reached at least
-	 * some friend node, in case of internet connection interruption */
-	//PENDING_TRANSFER,
-	PENDING_RECEIPT_RECEIVE,
-	/// Records with status >= RECEIPT_RECEIVED get deleted
-	RECEIPT_RECEIVED,
-	FAILED_RECEIPT_SIGNATURE = 240,
-	FAILED_ENCRYPTION
-};
-
 class RsGxsTransSerializer;
-struct OutgoingRecord : RsItem
+
+class OutgoingRecord : public RsItem
 {
+public:
 	OutgoingRecord( RsGxsId rec, GxsTransSubServices cs,
 	                const uint8_t* data, uint32_t size );
+
+    virtual ~OutgoingRecord() {}
 
 	GxsTransSendStatus status;
 	RsGxsId recipient;
@@ -234,10 +210,11 @@ private:
 };
 
 
-struct RsGxsTransSerializer : public RsServiceSerializer
+class RsGxsTransSerializer : public RsServiceSerializer
 {
+public:
 	RsGxsTransSerializer() : RsServiceSerializer(RS_SERVICE_TYPE_GXS_TRANS) {}
-	~RsGxsTransSerializer() {}
+	virtual ~RsGxsTransSerializer() {}
 
 	RsItem* create_item(uint16_t service_id, uint8_t item_sub_id) const
 	{

@@ -1624,10 +1624,17 @@ Sha1CheckSum p3GRouter::computeDataItemHash(RsGRouterGenericDataItem *data_item)
     RsTemporaryMemory mem(total_size) ;
 
     uint32_t offset = 0 ;
-    signature_serializer.serialise(data_item,mem,&total_size) ;
-    offset += signed_data_size ;
+    uint32_t tmp_size = total_size ;
+    signature_serializer.serialise(data_item,mem,&tmp_size) ;
+    if(tmp_size != signed_data_size)
+        std::cerr << "(EE) Some error occured in p3GRouter::computeDataItemHash(). Mismatched offset/data size" << std::endl;
+
+    offset += tmp_size ;
 
     data_item->signature.SetTlv(mem, total_size,&offset) ;
+
+    if(offset != total_size)
+        std::cerr << "(EE) Some error occured in p3GRouter::computeDataItemHash(). Mismatched offset/data size" << std::endl;
 
     return RsDirUtil::sha1sum(mem,total_size) ;
 }
@@ -1983,7 +1990,7 @@ bool p3GRouter::signDataItem(RsGRouterAbstractMsgItem *item,const RsGxsId& signi
         std::cerr << "Created    signature for data hash: " << RsDirUtil::sha1sum(data,data_size) << " and key id=" << signing_id << std::endl;
 //#endif
         // Check signature
-        RsIdentityUsage::UsageCode info;
+        RsIdentityUsage::UsageCode info = RsIdentityUsage::GLOBAL_ROUTER_SIGNATURE_CREATION;
         uint32_t error;
 
         if(verifySignedDataItem(item,info,error))

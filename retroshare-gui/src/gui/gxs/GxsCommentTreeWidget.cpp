@@ -22,8 +22,12 @@
  */
 
 #include <QMimeData>
+#include <QTextDocument>
+#include <QAbstractTextDocumentLayout>
+#include <QApplication>
 #include <QDateTime>
 #include <QMenu>
+#include <QPainter>
 
 #include "gui/common/RSElidedItemDelegate.h"
 #include "gui/gxs/GxsCommentTreeWidget.h"
@@ -46,11 +50,73 @@
 
 #define COMMENT_VOTE_ACK	0x001234
 
+#define POST_CELL_SIZE_ROLE (Qt::UserRole+1)
+#define POST_COLOR_ROLE     (Qt::UserRole+2)
 
 /* Images for context menu icons */
 #define IMAGE_MESSAGE		":/images/folder-draft.png"
-#define IMAGE_VOTEUP    ":/images/vote_up.png"
-#define IMAGE_VOTEDOWN   ":/images/vote_down.png"
+#define IMAGE_VOTEUP        ":/images/vote_up.png"
+#define IMAGE_VOTEDOWN      ":/images/vote_down.png"
+
+// This class allows to draw the item using an appropriate size
+
+class MultiLinesCommentDelegate: public QStyledItemDelegate
+{
+public:
+    MultiLinesCommentDelegate(QFontMetricsF f) : qf(f){}
+
+    QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
+    {
+        return index.data(POST_CELL_SIZE_ROLE).toSize() ;
+    }
+
+    virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
+    {
+        Q_ASSERT(index.isValid());
+
+        QStyleOptionViewItemV4 opt = option;
+        initStyleOption(&opt, index);
+        // disable default icon
+        opt.icon = QIcon();
+        opt.text = QString();
+        // draw default item
+        QApplication::style()->drawControl(QStyle::CE_ItemViewItem, &opt, painter, 0);
+
+        const QRect r = option.rect;
+
+        QTextDocument td ;
+        td.setHtml("<html>"+index.data(Qt::DisplayRole).toString()+"</html>");
+		QSizeF s = td.documentLayout()->documentSize();
+
+        int m = QFontMetricsF(QFont()).height();
+
+        QSize full_area(std::min(r.width(),(int)s.width())+m,std::min(r.height(),(int)s.height())+m);
+
+        QPixmap px(full_area.width(),full_area.height());
+        px.fill();
+        QPainter p(&px) ;
+        p.setRenderHint(QPainter::Antialiasing);
+
+        QPainterPath path ;
+        path.addRoundedRect(QRectF(m/4.0,m/4.0,s.width()+m/2.0,s.height()+m/2.0),m,m) ;
+        QPen pen(Qt::gray,m/7.0f);
+        p.setPen(pen);
+        p.fillPath(path,QColor::fromHsv( index.data(POST_COLOR_ROLE).toInt()/255.0*360,40,220));	// varies the color according to the post author
+        p.drawPath(path);
+
+        QAbstractTextDocumentLayout::PaintContext ctx;
+        ctx.clip = QRectF(0,0,s.width(),s.height());
+        p.translate(QPointF(m/2.0,m/2.0));
+        td.documentLayout()->draw( &p, ctx );
+
+        painter->drawPixmap(r.topLeft(),px);
+
+        const_cast<QAbstractItemModel*>(index.model())->setData(index,px.size(),POST_CELL_SIZE_ROLE);
+    }
+
+private:
+	QFontMetricsF qf;
+};
 
 GxsCommentTreeWidget::GxsCommentTreeWidget(QWidget *parent)
 	:QTreeWidget(parent), mTokenQueue(NULL), mRsTokenService(NULL), mCommentService(NULL)
@@ -62,6 +128,9 @@ GxsCommentTreeWidget::GxsCommentTreeWidget(QWidget *parent)
 	itemDelegate->setSpacing(QSize(0, 2));
 	setItemDelegate(itemDelegate);
 	setWordWrap(true);
+
+    setItemDelegateForColumn(PCITEM_COLUMN_COMMENT,new MultiLinesCommentDelegate(QFontMetricsF(font()))) ;
+
 //	QFont font = QFont("ARIAL", 10);
 //	font.setBold(true);
 
@@ -85,14 +154,14 @@ GxsCommentTreeWidget::~GxsCommentTreeWidget()
 	}
 }
 
-void GxsCommentTreeWidget::setCurrentMsgId(QTreeWidgetItem *current, QTreeWidgetItem *previous)
+void GxsCommentTreeWidget::setCurrentCommentMsgId(QTreeWidgetItem *current, QTreeWidgetItem *previous)
 {
 
 	Q_UNUSED(previous);
 
 	if(current)
 	{
-		mCurrentMsgId = RsGxsMessageId(current->text(PCITEM_COLUMN_MSGID).toStdString());
+		mCurrentCommentMsgId = RsGxsMessageId(current->text(PCITEM_COLUMN_MSGID).toStdString());
 	}
 }
 
@@ -100,9 +169,9 @@ void GxsCommentTreeWidget::customPopUpMenu(const QPoint& /*point*/)
 {
 	QMenu contextMnu( this );
 	QAction* action = contextMnu.addAction(QIcon(IMAGE_MESSAGE), tr("Reply to Comment"), this, SLOT(replyToComment()));
-	action->setDisabled(mCurrentMsgId.isNull());
+	action->setDisabled(mCurrentCommentMsgId.isNull());
 	action = contextMnu.addAction(QIcon(IMAGE_MESSAGE), tr("Submit Comment"), this, SLOT(makeComment()));
-	action->setDisabled(mThreadId.first.isNull());
+	action->setDisabled(mMsgVersions.empty());
 
 	contextMnu.addSeparator();
 
@@ -112,7 +181,7 @@ void GxsCommentTreeWidget::customPopUpMenu(const QPoint& /*point*/)
 	action->setDisabled(mVoterId.isNull());
 
 
-	if (!mCurrentMsgId.isNull())
+	if (!mCurrentCommentMsgId.isNull())
 	{
         // not implemented yet
         /*
@@ -138,7 +207,8 @@ void GxsCommentTreeWidget::voteUp()
 {
 	std::cerr << "GxsCommentTreeWidget::voteUp()";
 	std::cerr << std::endl;
-	vote(mThreadId.first, mThreadId.second, mCurrentMsgId, mVoterId, true);
+
+	vote(mGroupId, mLatestMsgId, mCurrentCommentMsgId, mVoterId, true);
 }
 
 
@@ -146,7 +216,8 @@ void GxsCommentTreeWidget::voteDown()
 {
 	std::cerr << "GxsCommentTreeWidget::voteDown()";
 	std::cerr << std::endl;
-	vote(mThreadId.first, mThreadId.second, mCurrentMsgId, mVoterId, false);
+
+	vote(mGroupId, mLatestMsgId, mCurrentCommentMsgId, mVoterId, false);
 }
 
 void GxsCommentTreeWidget::setVoteId(const RsGxsId &voterId)
@@ -216,16 +287,16 @@ void GxsCommentTreeWidget::banUser()
 
 void GxsCommentTreeWidget::makeComment()
 {
-	GxsCreateCommentDialog pcc(mTokenQueue, mCommentService, mThreadId, mThreadId.second, this);
+	GxsCreateCommentDialog pcc(mTokenQueue, mCommentService, std::make_pair(mGroupId,mLatestMsgId), mLatestMsgId, this);
 	pcc.exec();
 }
 
 void GxsCommentTreeWidget::replyToComment()
 {
 	RsGxsGrpMsgIdPair msgId;
-	msgId.first = mThreadId.first;
-	msgId.second = mCurrentMsgId;
-	GxsCreateCommentDialog pcc(mTokenQueue, mCommentService, msgId, mThreadId.second, this);
+	msgId.first = mGroupId;
+	msgId.second = mCurrentCommentMsgId;
+	GxsCreateCommentDialog pcc(mTokenQueue, mCommentService, msgId, mLatestMsgId, this);
 	pcc.exec();
 }
 
@@ -235,36 +306,44 @@ void GxsCommentTreeWidget::setup(RsTokenService *token_service, RsGxsCommentServ
 	mCommentService = comment_service;
 	mTokenQueue = new TokenQueue(token_service, this);
 	connect(this, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(customPopUpMenu(QPoint)));
-	connect(this, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)), this, SLOT(setCurrentMsgId(QTreeWidgetItem*, QTreeWidgetItem*)));
+	connect(this, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)), this, SLOT(setCurrentCommentMsgId(QTreeWidgetItem*, QTreeWidgetItem*)));
 
 	return;
 }
 
 
 /* Load Comments */
-void GxsCommentTreeWidget::requestComments(const RsGxsGrpMsgIdPair& threadId)
+void GxsCommentTreeWidget::requestComments(const RsGxsGroupId& group, const std::set<RsGxsMessageId>& message_versions,const RsGxsMessageId& most_recent_message)
 {
 	/* request comments */
 
-	mThreadId = threadId;
-	service_requestComments(threadId);
+    mGroupId = group ;
+	mMsgVersions = message_versions ;
+    mLatestMsgId = most_recent_message;
+
+	service_requestComments(group,message_versions);
 }
 
-void GxsCommentTreeWidget::service_requestComments(const RsGxsGrpMsgIdPair& threadId)
+void GxsCommentTreeWidget::service_requestComments(const RsGxsGroupId& group_id,const std::set<RsGxsMessageId> & msgIds)
 {
 	/* request comments */
-	std::cerr << "GxsCommentTreeWidget::service_requestComments(" << threadId.second << ")";
-	std::cerr << std::endl;
+	std::cerr << "GxsCommentTreeWidget::service_requestComments for group " << group_id << std::endl;
+
+    std::vector<RsGxsGrpMsgIdPair> ids_to_ask;
+
+    for(std::set<RsGxsMessageId>::const_iterator it(msgIds.begin());it!=msgIds.end();++it)
+    {
+		std::cerr << "   asking for msg " << *it << std::endl;
+
+        ids_to_ask.push_back(std::make_pair(group_id,*it));
+    }
 
 	RsTokReqOptions opts;
 	opts.mReqType = GXS_REQUEST_TYPE_MSG_RELATED_DATA;
 	opts.mOptions = RS_TOKREQOPT_MSG_THREAD | RS_TOKREQOPT_MSG_LATEST;
 
-	std::vector<RsGxsGrpMsgIdPair> msgIds;
-	msgIds.push_back(threadId);
-
 	uint32_t token;
-	mTokenQueue->requestMsgRelatedInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, GXSCOMMENTS_LOADTHREAD);
+	mTokenQueue->requestMsgRelatedInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, ids_to_ask, GXSCOMMENTS_LOADTHREAD);
 }
 
 
@@ -317,7 +396,7 @@ void GxsCommentTreeWidget::completeItems()
 
 			parent->addChild(pit->second);
 		}
-		else if (parentId == mThreadId.second)
+		else if (mMsgVersions.find(parentId) != mMsgVersions.end())
 		{
 			std::cerr << "GxsCommentTreeWidget::completeItems() Added to topLevelItems";
 			std::cerr << std::endl;
@@ -391,7 +470,7 @@ void GxsCommentTreeWidget::acknowledgeComment(const uint32_t &token)
 	mCommentService->acknowledgeComment(token, msgId);
 
 	// simply reload data
-	service_requestComments(mThreadId);
+	service_requestComments(mGroupId,mMsgVersions);
 }
 
 
@@ -401,7 +480,7 @@ void GxsCommentTreeWidget::acknowledgeVote(const uint32_t &token)
 	if (mCommentService->acknowledgeVote(token, msgId))
 	{
 		// reload data if vote was added.
-		service_requestComments(mThreadId);
+		service_requestComments(mGroupId,mMsgVersions);
 	}
 }
 
@@ -441,6 +520,7 @@ void GxsCommentTreeWidget::service_loadThread(const uint32_t &token)
 
 		RsGxsId authorId = comment.mMeta.mAuthorId;
 		item->setId(authorId, PCITEM_COLUMN_AUTHOR, false);
+        item->setData(PCITEM_COLUMN_COMMENT,POST_COLOR_ROLE,QVariant(authorId.toByteArray()[1]));
 
 		text = QString::number(comment.mScore);
 		item->setText(PCITEM_COLUMN_SCORE, text);
