@@ -359,7 +359,8 @@ bool GxsSecurity::getSignature(const char *data, uint32_t data_len, const RsTlvP
 	ok &= EVP_SignUpdate(mdctx, data, data_len) == 1;
 
 	unsigned int siglen = EVP_PKEY_size(key_priv);
-    unsigned char sigbuf[siglen] = { 0 };
+    unsigned char sigbuf[siglen] ;
+	memset(sigbuf,0,siglen) ;
 	ok &= EVP_SignFinal(mdctx, sigbuf, &siglen, key_priv) == 1;
 
 	// clean up

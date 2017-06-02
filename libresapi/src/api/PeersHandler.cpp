@@ -1,3 +1,23 @@
+/*
+ * libresapi
+ *
+ * Copyright (C) 2015  electron128 <electron128@yahoo.com>
+ * Copyright (C) 2017  Gioacchino Mazzurco <gio@eigenlab.org>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 #include "PeersHandler.h"
 
 #include <retroshare/rspeers.h>
@@ -194,6 +214,7 @@ PeersHandler::PeersHandler(StateTokenServer* sts, RsNotify* notify, RsPeers *pee
     mNotify->registerNotifyClient(this);
     mStateTokenServer->registerTickClient(this);
     addResourceHandler("*", this, &PeersHandler::handleWildcard);
+	addResourceHandler("attempt_connection", this, &PeersHandler::handleAttemptConnection);
 	addResourceHandler("get_state_string", this, &PeersHandler::handleGetStateString);
 	addResourceHandler("set_state_string", this, &PeersHandler::handleSetStateString);
 	addResourceHandler("get_custom_state_string", this, &PeersHandler::handleGetCustomStateString);
@@ -203,6 +224,7 @@ PeersHandler::PeersHandler(StateTokenServer* sts, RsNotify* notify, RsPeers *pee
 	addResourceHandler("get_node_options", this, &PeersHandler::handleGetNodeOptions);
 	addResourceHandler("set_node_options", this, &PeersHandler::handleSetNodeOptions);
 	addResourceHandler("examine_cert", this, &PeersHandler::handleExamineCert);
+
 }
 
 PeersHandler::~PeersHandler()
@@ -599,6 +621,19 @@ void PeersHandler::handleWildcard(Request &req, Response &resp)
     {
         resp.setFail();
     }
+}
+
+void PeersHandler::handleAttemptConnection(Request &req, Response &resp)
+{
+	std::string ssl_peer_id;
+	req.mStream << makeKeyValueReference("peer_id", ssl_peer_id);
+	RsPeerId peerId(ssl_peer_id);
+	if(peerId.isNull()) resp.setFail("Invalid peer_id");
+	else
+	{
+		mRsPeers->connectAttempt(peerId);
+		resp.setOk();
+	}
 }
 
 void PeersHandler::handleExamineCert(Request &req, Response &resp)
