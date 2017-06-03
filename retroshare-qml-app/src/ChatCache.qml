@@ -26,13 +26,13 @@ QtObject {
 		}
 
 		function updateLastMessage (chatId, chatModel){
-			var lastMessage = getLastMessage (chatModel)
+			console.log("updateLastMessage (chatId, chatModel)")
+			var lastMessage = getLastMessageFromChat (chatModel)
 			lastMessageList[chatId] = lastMessage
 		}
 
 		function getLastMessageFromChat (chatModel){
-			console.log("getLastMessage (chatMessages)")
-			var messagesData = JSON.parse(chatMessages).data
+			var messagesData = JSON.parse(chatModel).data
 			return messagesData.slice(-1)[0]
 		}
 	}
