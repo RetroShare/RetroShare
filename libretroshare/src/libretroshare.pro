@@ -922,15 +922,15 @@ android-g++ {
 ## Add this here and not in retroshare.pri because static library are very
 ## sensible to order in command line, has to be in the end of file for the
 ## same reason
-    LIBS += -L$$NDK_TOOLCHAIN_PATH/sysroot/usr/lib/ -lssl
-    INCLUDEPATH += $$NDK_TOOLCHAIN_PATH/sysroot/usr/include
-    DEPENDPATH += $$NDK_TOOLCHAIN_PATH/sysroot/usr/include
-    PRE_TARGETDEPS += $$NDK_TOOLCHAIN_PATH/sysroot/usr/lib/libssl.a
+    LIBS += -L$$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/lib/ -lssl
+    INCLUDEPATH += $$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/include
+    DEPENDPATH += $$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/include
+    PRE_TARGETDEPS += $$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/lib/libssl.a
 
-    LIBS += -L$$NDK_TOOLCHAIN_PATH/sysroot/usr/lib/ -lcrypto
-    INCLUDEPATH += $$NDK_TOOLCHAIN_PATH/sysroot/usr/include
-    DEPENDPATH += $$NDK_TOOLCHAIN_PATH/sysroot/usr/include
-    PRE_TARGETDEPS += $$NDK_TOOLCHAIN_PATH/sysroot/usr/lib/libcrypto.a
+    LIBS += -L$$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/lib/ -lcrypto
+    INCLUDEPATH += $$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/include
+    DEPENDPATH += $$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/include
+    PRE_TARGETDEPS += $$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/lib/libcrypto.a
 
     HEADERS += util/androiddebug.h
 }

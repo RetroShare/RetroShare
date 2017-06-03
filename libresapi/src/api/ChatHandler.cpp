@@ -1,3 +1,22 @@
+/*
+ * libresapi
+ * Copyright (C) 2015  electron128 <electron128@yahoo.com>
+ * Copyright (C) 2017  Gioacchino Mazzurco <gio@eigenlab.org>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 #include "ChatHandler.h"
 #include "Pagination.h"
 #include "Operators.h"
@@ -936,7 +955,7 @@ ResponseTask* ChatHandler::handleLobbyParticipants(Request &req, Response &resp)
 void ChatHandler::handleMessages(Request &req, Response &resp)
 {
 	/* G10h4ck: Whithout this the request processing won't happen, copied from
-	 * ChatHandler::handleLobbies, is this a work around or is the right whay of
+	 * ChatHandler::handleLobbies, is this a work around or is the right way of
 	 * doing it? */
 	tick();
 
@@ -1132,24 +1151,28 @@ void ChatHandler::handleUnreadMsgs(Request &/*req*/, Response &resp)
     RS_STACK_MUTEX(mMtx); /********** LOCKED **********/
 
     resp.mDataStream.getStreamToMember();
-    for(std::map<ChatId, std::list<Msg> >::const_iterator mit = mMsgs.begin(); mit != mMsgs.end(); ++mit)
+	for( std::map<ChatId, std::list<Msg> >::const_iterator mit = mMsgs.begin();
+	     mit != mMsgs.end(); ++mit )
     {
         uint32_t count = 0;
-        for(std::list<Msg>::const_iterator lit = mit->second.begin(); lit != mit->second.end(); ++lit)
-            if(!lit->read)
-                count++;
+		for( std::list<Msg>::const_iterator lit = mit->second.begin();
+		     lit != mit->second.end(); ++lit ) if(!lit->read) ++count;
         std::map<ChatId, ChatInfo>::iterator mit2 = mChatInfo.find(mit->first);
         if(mit2 == mChatInfo.end())
             std::cerr << "Error in ChatHandler::handleUnreadMsgs(): ChatInfo not found. It is weird if this happens. Normally it should not happen." << std::endl;
         if(count && (mit2 != mChatInfo.end()))
         {
             resp.mDataStream.getStreamToMember()
-                    << makeKeyValue("id", mit->first.toStdString())
+#warning @deprecated using "id" as key can cause problems in some JS based \
+	        languages like Qml @see chat_id instead
+			        << makeKeyValue("id", mit->first.toStdString())
+			        << makeKeyValue("chat_id", mit->first.toStdString())
                     << makeKeyValueReference("unread_count", count)
                     << mit2->second;
         }
     }
     resp.mStateToken = mUnreadMsgsStateToken;
+	resp.setOk();
 }
 
 void ChatHandler::handleInitiateDistantChatConnexion(Request& req, Response& resp)
@@ -1176,7 +1199,8 @@ void ChatHandler::handleInitiateDistantChatConnexion(Request& req, Response& res
 	DistantChatPeerId distant_chat_id;
 	uint32_t error_code;
 
-	if(mRsMsgs->initiateDistantChatConnexion(receiver_id, sender_id, distant_chat_id, error_code))
+	if(mRsMsgs->initiateDistantChatConnexion(receiver_id, sender_id,
+	                                         distant_chat_id, error_code))
 		resp.setOk();
 	else resp.setFail("Failed to initiate distant chat");
 

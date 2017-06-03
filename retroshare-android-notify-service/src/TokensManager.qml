@@ -1,0 +1,1 @@
+../../retroshare-qml-app/src/TokensManager.qml

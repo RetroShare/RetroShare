@@ -698,9 +698,10 @@ bool p3IdService::getOwnIds(std::list<RsGxsId> &ownIds)
     return true ;
 }
 
-bool p3IdService::serialiseIdentityToMemory(const RsGxsId& id,std::string& radix_string)
+bool p3IdService::serialiseIdentityToMemory( const RsGxsId& id,
+                                             std::string& radix_string )
 {
-    RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
+	RS_STACK_MUTEX(mIdMtx);
 
     // look into cache. If available, return the data. If not, request it.
 
@@ -758,23 +759,27 @@ void p3IdService::handle_get_serialized_grp(uint32_t token)
     mSerialisedIdentities[RsGxsId(id)] = s ;
 }
 
-bool p3IdService::deserialiseIdentityFromMemory(const std::string& radix_string)
+bool p3IdService::deserialiseIdentityFromMemory(const std::string& radix_string,
+                                                RsGxsId* id /* = nullptr */)
 {
-    std::vector<uint8_t> mem = Radix64::decode(radix_string) ;
+	std::vector<uint8_t> mem = Radix64::decode(radix_string);
 
-    if(mem.empty())
+	if(mem.empty())
 	{
-		std::cerr << "Cannot decode radix string \"" << radix_string << "\"" << std::endl;
-		return false ;
+		std::cerr << __PRETTY_FUNCTION__ << "Cannot decode radix string \""
+		          << radix_string << "\"" << std::endl;
+		return false;
 	}
 
-	if(!RsGenExchange::deserializeGroupData(mem.data(),mem.size()))
-    {
-		std::cerr << "Cannot load identity from radix string \"" << radix_string << "\"" << std::endl;
-        return false ;
-    }
+	if( !RsGenExchange::deserializeGroupData(
+	            mem.data(), mem.size(), reinterpret_cast<RsGxsGroupId*>(id)) )
+	{
+		std::cerr << __PRETTY_FUNCTION__ << "Cannot load identity from radix "
+		          << "string \"" << radix_string << "\"" << std::endl;
+		return false;
+	}
 
-    return true ;
+	return true;
 }
 
 bool p3IdService::createIdentity(uint32_t& token, RsIdentityParameters &params)

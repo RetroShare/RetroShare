@@ -299,8 +299,10 @@ protected:
      * \return
      */
 
-	bool getSerializedGroupData(const uint32_t &token, RsGxsGroupId &id, unsigned char *& data, uint32_t& size);
-	bool deserializeGroupData(unsigned char *data, uint32_t size);
+	bool getSerializedGroupData(uint32_t token, RsGxsGroupId &id,
+	                            unsigned char *& data, uint32_t& size);
+	bool deserializeGroupData(unsigned char *data, uint32_t size,
+	                          RsGxsGroupId* gId = nullptr);
 
     template<class GrpType>
     bool getGroupDataT(const uint32_t &token, std::vector<GrpType*>& grpItem)

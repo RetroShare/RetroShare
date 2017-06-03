@@ -1,17 +1,27 @@
 !include("../../retroshare.pri"): error("Could not include file ../../retroshare.pri")
 
-QT += qml quick
+QT += core network qml quick
 
 CONFIG += c++11
 
-HEADERS += libresapilocalclient.h
-SOURCES += main.cpp \
-    libresapilocalclient.cpp
+HEADERS += libresapilocalclient.h \
+    rsqmlappengine.h
+SOURCES += main-app.cpp \
+    libresapilocalclient.cpp \
+    rsqmlappengine.cpp
 
 RESOURCES += qml.qrc
 
+android-g++ {
+    QT += androidextras
+    SOURCES += NativeCalls.cpp
+    HEADERS += NativeCalls.h
+}
+
 # Additional import path used to resolve QML modules in Qt Creator's code model
 #QML_IMPORT_PATH =
+#QML2_IMPORT_PATH =
+
 
 # Default rules for deployment.
 include(deployment.pri)
@@ -23,7 +33,8 @@ DISTFILES += \
     android/res/values/libs.xml \
     android/build.gradle \
     android/gradle/wrapper/gradle-wrapper.properties \
-    android/gradlew.bat
+    android/gradlew.bat \
+    icons/retroshare06.png
 
 ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
 

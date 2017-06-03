@@ -1,3 +1,23 @@
+/*
+ * libresapi
+ *
+ * Copyright (C) 2015  electron128 <electron128@yahoo.com>
+ * Copyright (C) 2017  Gioacchino Mazzurco <gio@eigenlab.org>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 #include "IdentityHandler.h"
 
 #include <retroshare/rsidentity.h>
@@ -62,7 +82,9 @@ protected:
         {
         case BEGIN:{
             RsIdentityParameters params;
-            req.mStream << makeKeyValueReference("name", params.nickname) << makeKeyValueReference("pgp_linked", params.isPgpLinked);
+			req.mStream
+			        << makeKeyValueReference("name", params.nickname)
+			        << makeKeyValueReference("pgp_linked", params.isPgpLinked);
 
             if(params.nickname == "")
             {
@@ -127,17 +149,25 @@ private:
 	RsGxsId mId;
 };
 
-IdentityHandler::IdentityHandler(StateTokenServer *sts, RsNotify *notify, RsIdentity *identity):
+IdentityHandler::IdentityHandler(StateTokenServer *sts, RsNotify *notify,
+                                 RsIdentity *identity) :
     mStateTokenServer(sts), mNotify(notify), mRsIdentity(identity),
     mMtx("IdentityHandler Mtx"), mStateToken(sts->getNewToken())
 {
-    mNotify->registerNotifyClient(this);
+	mNotify->registerNotifyClient(this);
 
 	addResourceHandler("*", this, &IdentityHandler::handleWildcard);
 	addResourceHandler("own", this, &IdentityHandler::handleOwn);
 
 	addResourceHandler("own_ids", this, &IdentityHandler::handleOwnIdsRequest);
-	addResourceHandler("notown_ids", this, &IdentityHandler::handleNotOwnIdsRequest);
+	addResourceHandler("notown_ids", this,
+	                   &IdentityHandler::handleNotOwnIdsRequest);
+
+	addResourceHandler("create_identity", this,
+	                   &IdentityHandler::handleCreateIdentity);
+
+	addResourceHandler("export_key", this, &IdentityHandler::handleExportKey);
+	addResourceHandler("import_key", this, &IdentityHandler::handleImportKey);
 
 	addResourceHandler("add_contact", this, &IdentityHandler::handleAddContact);
 	addResourceHandler("remove_contact", this, &IdentityHandler::handleRemoveContact);
@@ -158,12 +188,10 @@ IdentityHandler::~IdentityHandler()
 
 void IdentityHandler::notifyGxsChange(const RsGxsChanges &changes)
 {
-    RS_STACK_MUTEX(mMtx); // ********** LOCKED **********
-    // if changes come from identity service, invalidate own state token
-    if(changes.mService == mRsIdentity->getTokenService())
-    {
-        mStateTokenServer->replaceToken(mStateToken);
-    }
+	RS_STACK_MUTEX(mMtx);
+	// if changes come from identity service, invalidate own state token
+	if(changes.mService == mRsIdentity->getTokenService())
+		mStateTokenServer->replaceToken(mStateToken);
 }
 
 void IdentityHandler::handleWildcard(Request & /*req*/, Response &resp)
@@ -177,39 +205,44 @@ void IdentityHandler::handleWildcard(Request & /*req*/, Response &resp)
 	RsTokReqOptions opts;
 	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
 	uint32_t token;
-	mRsIdentity->getTokenService()->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts);
+	mRsIdentity->getTokenService()->requestGroupInfo(
+	            token, RS_TOKREQ_ANSTYPE_DATA, opts);
 
-	time_t start = time(NULL);
-	while((mRsIdentity->getTokenService()->requestStatus(token) != RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
-	      &&(mRsIdentity->getTokenService()->requestStatus(token) != RsTokenService::GXS_REQUEST_V2_STATUS_FAILED)
-	      &&((time(NULL) < (start+10)))
-	      )
+	time_t timeout = time(NULL)+10;
+	uint8_t rStatus = mRsIdentity->getTokenService()->requestStatus(token);
+	while( rStatus != RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE &&
+	       rStatus != RsTokenService::GXS_REQUEST_V2_STATUS_FAILED &&
+	       time(NULL) < timeout )
 	{
-#ifdef WINDOWS_SYS
-		Sleep(500);
-#else
-		usleep(500*1000);
-#endif
+		usleep(50*1000);
+		rStatus = mRsIdentity->getTokenService()->requestStatus(token);
 	}
 
-	if(mRsIdentity->getTokenService()->requestStatus(token) == RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
+	if(rStatus == RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
 	{
 		std::vector<RsGxsIdGroup> grps;
 		ok &= mRsIdentity->getGroupData(token, grps);
-		for(std::vector<RsGxsIdGroup>::iterator vit = grps.begin(); vit != grps.end(); vit++)
+		for( std::vector<RsGxsIdGroup>::iterator vit = grps.begin();
+		     vit != grps.end(); ++vit )
 		{
 			RsGxsIdGroup& grp = *vit;
-			//electron: not very happy about this, i think the flags should stay hidden in rsidentities
-			bool own = (grp.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN);
-			bool pgp_linked = (grp.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID_kept_for_compatibility  ) ;
-            resp.mDataStream.getStreamToMember()
-			        << makeKeyValueReference("id", grp.mMeta.mGroupId) /// @deprecated using "id" as key can cause problems in some JS based languages like Qml @see gxs_id instead
+			/* electron: not very happy about this, i think the flags should
+			 * stay hidden in rsidentities */
+			bool own = (grp.mMeta.mSubscribeFlags &
+			            GXS_SERV::GROUP_SUBSCRIBE_ADMIN);
+			bool pgp_linked = (grp.mMeta.mGroupFlags &
+			                   RSGXSID_GROUPFLAG_REALID_kept_for_compatibility);
+			resp.mDataStream.getStreamToMember()
+#warning @deprecated using "id" as key can cause problems in some JS based \
+	        languages like Qml @see gxs_id instead
+			        << makeKeyValueReference("id", grp.mMeta.mGroupId)
 			        << makeKeyValueReference("gxs_id", grp.mMeta.mGroupId)
 			        << makeKeyValueReference("pgp_id",grp.mPgpId )
 			        << makeKeyValueReference("name", grp.mMeta.mGroupName)
 			        << makeKeyValueReference("contact", grp.mIsAContact)
 			        << makeKeyValueReference("own", own)
-			        << makeKeyValueReference("pgp_linked", pgp_linked);
+			        << makeKeyValueReference("pgp_linked", pgp_linked)
+			        << makeKeyValueReference("is_contact", grp.mIsAContact);
 		}
 	}
 	else ok = false;
@@ -217,7 +250,6 @@ void IdentityHandler::handleWildcard(Request & /*req*/, Response &resp)
 	if(ok) resp.setOk();
 	else resp.setFail();
 }
-
 
 void IdentityHandler::handleNotOwnIdsRequest(Request & /*req*/, Response &resp)
 {
@@ -230,38 +262,38 @@ void IdentityHandler::handleNotOwnIdsRequest(Request & /*req*/, Response &resp)
 	RsTokReqOptions opts;
 	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
 	uint32_t token;
-	mRsIdentity->getTokenService()->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts);
+	mRsIdentity->getTokenService()->requestGroupInfo(
+	            token, RS_TOKREQ_ANSTYPE_DATA, opts);
 
-	time_t start = time(NULL);
-	while((mRsIdentity->getTokenService()->requestStatus(token) != RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
-	      &&(mRsIdentity->getTokenService()->requestStatus(token) != RsTokenService::GXS_REQUEST_V2_STATUS_FAILED)
-	      &&((time(NULL) < (start+10)))
-	      )
+	time_t timeout = time(NULL)+10;
+	uint8_t rStatus = mRsIdentity->getTokenService()->requestStatus(token);
+	while( rStatus != RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE &&
+	       rStatus != RsTokenService::GXS_REQUEST_V2_STATUS_FAILED &&
+	       time(NULL) < timeout )
 	{
-#ifdef WINDOWS_SYS
-		Sleep(500);
-#else
-		usleep(500*1000);
-#endif
+		usleep(50*1000);
+		rStatus = mRsIdentity->getTokenService()->requestStatus(token);
 	}
 
-	if(mRsIdentity->getTokenService()->requestStatus(token) == RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
+	if(rStatus == RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
 	{
 		std::vector<RsGxsIdGroup> grps;
 		ok &= mRsIdentity->getGroupData(token, grps);
-		for(std::vector<RsGxsIdGroup>::iterator vit = grps.begin(); vit != grps.end(); vit++)
+		for(std::vector<RsGxsIdGroup>::iterator vit = grps.begin();
+		    vit != grps.end(); vit++)
 		{
 			RsGxsIdGroup& grp = *vit;
-			//electron: not very happy about this, i think the flags should stay hidden in rsidentities
-			if(!(grp.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN) && grp.mIsAContact)
+			if(!(grp.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN))
 			{
-				bool pgp_linked = (grp.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID_kept_for_compatibility  ) ;
+				bool pgp_linked = (
+				            grp.mMeta.mGroupFlags &
+				            RSGXSID_GROUPFLAG_REALID_kept_for_compatibility );
 				resp.mDataStream.getStreamToMember()
-				        << makeKeyValueReference("id", grp.mMeta.mGroupId) /// @deprecated using "id" as key can cause problems in some JS based languages like Qml @see gxs_id instead
 				        << makeKeyValueReference("gxs_id", grp.mMeta.mGroupId)
 				        << makeKeyValueReference("pgp_id",grp.mPgpId )
 				        << makeKeyValueReference("name", grp.mMeta.mGroupName)
-				        << makeKeyValueReference("pgp_linked", pgp_linked);
+				        << makeKeyValueReference("pgp_linked", pgp_linked)
+				        << makeKeyValueReference("is_contact", grp.mIsAContact);
 			}
 		}
 	}
@@ -545,9 +577,51 @@ ResponseTask* IdentityHandler::handleCreateIdentity(Request & /* req */, Respons
     return new CreateIdentityTask(mRsIdentity);
 }
 
-ResponseTask* IdentityHandler::handleDeleteIdentity(Request& /* req */, Response& /* resp */)
+void IdentityHandler::handleExportKey(Request& req, Response& resp)
 {
-	return new DeleteIdentityTask(mRsIdentity);
+	RsGxsId gxs_id;
+	req.mStream << makeKeyValueReference("gxs_id", gxs_id);
+
+	std::string radix;
+	time_t timeout = time(NULL)+2;
+	bool found = mRsIdentity->serialiseIdentityToMemory(gxs_id, radix);
+	while(!found && time(nullptr) < timeout)
+	{
+		usleep(5000);
+		found = mRsIdentity->serialiseIdentityToMemory(gxs_id, radix);
+	}
+
+	if(found)
+	{
+		resp.mDataStream << makeKeyValueReference("gxs_id", gxs_id)
+		                 << makeKeyValueReference("radix", radix);
+
+		resp.setOk();
+		return;
+	}
+
+	resp.setFail();
 }
+
+void IdentityHandler::handleImportKey(Request& req, Response& resp)
+{
+	std::string radix;
+	req.mStream << makeKeyValueReference("radix", radix);
+
+	RsGxsId gxs_id;
+	if(mRsIdentity->deserialiseIdentityFromMemory(radix, &gxs_id))
+	{
+		resp.mDataStream << makeKeyValueReference("gxs_id", gxs_id)
+		                 << makeKeyValueReference("radix", radix);
+		resp.setOk();
+		return;
+	}
+
+	resp.setFail();
+}
+
+ResponseTask* IdentityHandler::handleDeleteIdentity(Request& req,
+                                                    Response& resp)
+{ return new DeleteIdentityTask(mRsIdentity); }
 
 } // namespace resource_api

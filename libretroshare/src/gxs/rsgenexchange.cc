@@ -1271,7 +1271,9 @@ bool RsGenExchange::getMsgRelatedMeta(const uint32_t &token, GxsMsgRelatedMetaMa
         return ok;
 }
 
-bool RsGenExchange::getSerializedGroupData(const uint32_t &token, RsGxsGroupId& id,unsigned char *& data,uint32_t& size)
+bool RsGenExchange::getSerializedGroupData(uint32_t token, RsGxsGroupId& id,
+                                           unsigned char *& data,
+                                           uint32_t& size)
 {
 	RS_STACK_MUTEX(mGenMtx) ;
 
@@ -1304,24 +1306,30 @@ bool RsGenExchange::getSerializedGroupData(const uint32_t &token, RsGxsGroupId& 
     return RsNxsSerialiser(mServType).serialise(nxs_grp,data,&size) ;
 }
 
-bool RsGenExchange::deserializeGroupData(unsigned char *data,uint32_t size)
+bool RsGenExchange::deserializeGroupData(unsigned char *data, uint32_t size,
+                                         RsGxsGroupId* gId /*= nullptr*/)
 {
 	RS_STACK_MUTEX(mGenMtx) ;
 
 	RsItem *item = RsNxsSerialiser(mServType).deserialise(data, &size);
 
-    RsNxsGrp *nxs_grp = dynamic_cast<RsNxsGrp*>(item) ;
+	RsNxsGrp *nxs_grp = dynamic_cast<RsNxsGrp*>(item);
 
-    if(item == NULL)
-    {
-        std::cerr << "(EE) RsGenExchange::deserializeGroupData(): cannot deserialise this data. Something's wrong." << std::endl;
-        delete item ;
-        return false ;
-    }
+	if(item == NULL)
+	{
+		std::cerr << "(EE) RsGenExchange::deserializeGroupData(): cannot "
+		          << "deserialise this data. Something's wrong." << std::endl;
+		delete item;
+		return false;
+	}
 
-	mReceivedGrps.push_back( GxsPendingItem<RsNxsGrp*, RsGxsGroupId>(nxs_grp, nxs_grp->grpId,time(NULL)) );
+	mReceivedGrps.push_back(
+	            GxsPendingItem<RsNxsGrp*, RsGxsGroupId>(
+	                nxs_grp, nxs_grp->grpId,time(NULL)) );
 
-    return true ;
+	if(gId) *gId = nxs_grp->grpId;
+
+	return true;
 }
 
 bool RsGenExchange::getGroupData(const uint32_t &token, std::vector<RsGxsGrpItem *>& grpItem)

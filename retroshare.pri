@@ -18,6 +18,12 @@ no_retroshare_plugins:CONFIG -= retroshare_plugins
 CONFIG *= no_retroshare_android_service
 retroshare_android_service:CONFIG -= no_retroshare_android_service
 
+# To enable RetroShare-android-notify-service append the following
+# assignation to qmake command line
+# "CONFIG+=retroshare_android_notify_service"
+CONFIG *= no_retroshare_android_notify_service
+retroshare_android_notify_service:CONFIG -= no_retroshare_android_notify_service
+
 # To enable RetroShare-QML-app append the following assignation to
 # qmake command line "CONFIG+=retroshare_qml_app"
 CONFIG *= no_retroshare_qml_app
@@ -94,16 +100,23 @@ unix {
 }
 
 android-g++ {
+    isEmpty(NATIVE_LIBS_TOOLCHAIN_PATH) {
+        NATIVE_LIBS_TOOLCHAIN_PATH = $$(NATIVE_LIBS_TOOLCHAIN_PATH)
+    }
+    retroshare_qml_app {
+        CONFIG -= no_retroshare_android_notify_service
+        CONFIG *= retroshare_android_notify_service
+    }
     CONFIG *= no_libresapihttpserver no_sqlcipher upnp_libupnp
     CONFIG -= libresapihttpserver sqlcipher upnp_miniupnpc
     QT *= androidextras
     DEFINES *= "fopen64=fopen"
     DEFINES *= "fseeko64=fseeko"
     DEFINES *= "ftello64=ftello"
-    INCLUDEPATH += $$NDK_TOOLCHAIN_PATH/sysroot/usr/include
+    INCLUDEPATH += $$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/include
     LIBS *= -L$$NDK_TOOLCHAIN_PATH/sysroot/usr/lib/
     LIBS *= -lbz2 -lupnp -lixml -lthreadutil -lsqlite3
-    ANDROID_EXTRA_LIBS *= $$NDK_TOOLCHAIN_PATH/sysroot/usr/lib/libsqlite3.so
+    ANDROID_EXTRA_LIBS *= $$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/lib/libsqlite3.so
 #    message(LIBS: $$LIBS)
 #    message(ANDROID_EXTRA_LIBS: $$ANDROID_EXTRA_LIBS)
 #    message(ANDROID_PLATFORM: $$ANDROID_PLATFORM)
