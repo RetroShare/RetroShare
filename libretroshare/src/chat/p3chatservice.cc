@@ -169,6 +169,12 @@ class p3ChatService::AvatarInfo
 
 	  void toUnsignedChar(unsigned char *& data,uint32_t& size) const
 	  {
+		  if(_image_size == 0)
+		  {
+			  size = 0 ;
+			  data = NULL ;
+			  return ;
+		  }
 		  data = (unsigned char *)rs_malloc(_image_size) ;
 		  size = _image_size ;
 		  memcpy(data,_image_data,size*sizeof(unsigned char)) ;
