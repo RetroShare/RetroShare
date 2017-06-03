@@ -27,6 +27,7 @@ Item
 	property string chatId
 	property int token: 0
 
+
 	function refreshData()
 	{
 		console.log("chatView.refreshData()", visible)
@@ -37,6 +38,8 @@ Item
 			chatModel.json = par.response
 			token = JSON.parse(par.response).statetoken
 			TokensManager.registerToken(token, refreshData)
+
+			ChatCache.lastMessageCache.updateLastMessageCache(chatId, chatModel.json)
 
 			if(chatListView.visible)
 			{

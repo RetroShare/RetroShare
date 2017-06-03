@@ -101,6 +101,10 @@ Item
 		TokensManager.registerToken(json.statetoken, refreshUnread)
 		contactsSortWorker.sendMessage(
 					{'action': 'refreshUnread', 'response': par.response})
+		json.data.forEach (function (chat){
+			console.log("@@@@@@@@@@@@ ",chat.chat_id)
+			ChatCache.lastMessageCache.updateLastMessageCache(chat.chat_id)
+		})
 	}
 	function refreshUnread()
 	{
@@ -187,4 +191,5 @@ Item
 
 		property bool defaultIdentityCreated: false
 	}
+
 }
