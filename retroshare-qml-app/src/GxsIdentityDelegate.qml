@@ -22,95 +22,114 @@ import QtQuick.Controls 2.0
 Item
 {
 	id: delegateRoot
-	height: 40
+	height: 50
 	width: parent.width
 
-	MouseArea
-	{
+	Rectangle {
+
 		anchors.fill: parent
-		onClicked:
+		color: contactItem.containsMouse ? "lightgrey" : "transparent"
+		width: parent.width
+		height: parent.height
+
+
+		MouseArea
 		{
-			console.log("GxsIntentityDelegate onclicked:", model.name,
-						model.gxs_id)
-			contactsView.searching = false
-			if(model.own) contactsView.own_gxs_id = model.gxs_id
-			else
+			id: contactItem
+			anchors.fill: parent
+			onClicked:
 			{
-				var jsonData = { "own_gxs_hex": contactsView.own_gxs_id,
-					"remote_gxs_hex": model.gxs_id }
-				rsApi.request("/chat/initiate_distant_chat",
-							  JSON.stringify(jsonData),
-							  contactsView.startChatCallback)
-			}
-		}
-
-		onPressAndHold: showDetails()
-
-		ColorHash
-		{
-			id: colorHash
-
-			hash: model.gxs_id
-			height: parent.height - 4
-			anchors.verticalCenter: parent.verticalCenter
-			anchors.left: parent.left
-			anchors.leftMargin: 2
-
-			MouseArea
-			{
-				anchors.fill: parent
-				onClicked: delegateRoot.showDetails()
-			}
-		}
-
-		Text
-		{
-			id: nickText
-			color: model.own ? "blue" : "black"
-			text: model.name
-			anchors.left: colorHash.right
-			anchors.leftMargin: 5
-			anchors.verticalCenter: parent.verticalCenter
-		}
-
-		Row
-		{
-			anchors.right: parent.right
-			anchors.rightMargin: 10
-			anchors.verticalCenter: parent.verticalCenter
-			height: parent.height - 10
-			spacing: 4
-
-			Rectangle
-			{
-				visible: model.unread_count > 0
-
-				color: "cornflowerblue"
-				antialiasing: true
-				border.color: "blue"
-				border.width: 1
-				height: parent.height - 4
-				radius: height/2
-				width: height
-				anchors.verticalCenter: parent.verticalCenter
-
-				Text
+				console.log("GxsIntentityDelegate onclicked:", model.name,
+							model.gxs_id)
+				contactsView.searching = false
+				if(model.own) contactsView.own_gxs_id = model.gxs_id
+				else
 				{
-					color: "white"
-					font.bold: true
-					text: model.unread_count
-					anchors.centerIn: parent
+					var jsonData = { "own_gxs_hex": contactsView.own_gxs_id,
+						"remote_gxs_hex": model.gxs_id }
+					rsApi.request("/chat/initiate_distant_chat",
+								  JSON.stringify(jsonData),
+								  contactsView.startChatCallback)
 				}
 			}
 
-			Image
+			onPressAndHold: showDetails()
+			hoverEnabled: true
+		}
+
+		Rectangle {
+			anchors.fill: parent
+			color: "transparent"
+			anchors.margins: 5
+//			anchors.leftMargin: 5
+
+
+			ColorHash
 			{
-				source: model.is_contact ?
-							"qrc:/icons/rating.png" :
-							"qrc:/icons/rating-unrated.png"
+				id: colorHash
+
+				hash: model.gxs_id
 				height: parent.height - 4
-				fillMode: Image.PreserveAspectFit
 				anchors.verticalCenter: parent.verticalCenter
+				anchors.left: parent.left
+				anchors.leftMargin: 2
+
+				MouseArea
+				{
+					anchors.fill: parent
+					onClicked: delegateRoot.showDetails()
+				}
+			}
+
+			Text
+			{
+				id: nickText
+				color: model.own ? "blue" : "black"
+				text: model.name
+				anchors.left: colorHash.right
+				anchors.leftMargin: 5
+				anchors.verticalCenter: parent.verticalCenter
+			}
+
+			Row
+			{
+				anchors.right: parent.right
+				anchors.rightMargin: 10
+				anchors.verticalCenter: parent.verticalCenter
+				height: parent.height - 10
+				spacing: 4
+
+				Rectangle
+				{
+					visible: model.unread_count > 0
+
+					color: "cornflowerblue"
+					antialiasing: true
+					border.color: "blue"
+					border.width: 1
+					height: parent.height - 4
+					radius: height/2
+					width: height
+					anchors.verticalCenter: parent.verticalCenter
+
+					Text
+					{
+						color: "white"
+						font.bold: true
+						text: model.unread_count
+						anchors.centerIn: parent
+					}
+				}
+
+				Image
+				{
+					source: model.is_contact ?
+								"qrc:/icons/rating.png" :
+								"qrc:/icons/rating-unrated.png"
+					height: parent.height - 4
+					fillMode: Image.PreserveAspectFit
+					anchors.verticalCenter: parent.verticalCenter
+				}
 			}
 		}
 	}
@@ -124,3 +143,4 @@ Item
 					{md: contactsListView.model.get(index)})
 	}
 }
+
