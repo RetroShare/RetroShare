@@ -282,16 +282,20 @@ private:
 		enum CheckState { CheckStart, CheckChecking };
 
 	public:
-        GxsTransIntegrityCleanupThread(RsGeneralDataService *const dataService): mDs(dataService) {}
+        GxsTransIntegrityCleanupThread(RsGeneralDataService *const dataService): mDs(dataService),mMtx("GxsTransIntegrityCheck") {}
 
 		bool isDone();
 		void run();
 
 		void getDeletedIds(std::list<RsGxsGroupId>& grpIds, std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >& msgIds);
 
-	private:
+		void getMessagesToDelete(GxsMsgReq& req) ;
 
+	private:
 		RsGeneralDataService* const mDs;
+		RsMutex mMtx ;
+
+		GxsMsgReq mMsgToDel ;
 	};
 
     GxsTransIntegrityCleanupThread *mCleanupThread ;
