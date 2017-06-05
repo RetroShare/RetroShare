@@ -30,7 +30,7 @@ p3GxsTrans::~p3GxsTrans()
 
 	{
 		RS_STACK_MUTEX(mIngoingMutex);
-		for ( auto& kv : mIngoingQueue ) delete kv.second;
+		for ( auto& kv : mIncomingQueue) delete kv.second;
 	}
 }
 
@@ -126,8 +126,9 @@ void p3GxsTrans::registerGxsTransClient(
 
 void p3GxsTrans::handleResponse(uint32_t token, uint32_t req_type)
 {
-	std::cout << "p3GxsTrans::handleResponse(" << token << ", " << req_type
-	          << ")" << std::endl;
+	std::cout << "p3GxsTrans::handleResponse(" << token << ", " << req_type << ")" << std::endl;
+	bool changed = false ;
+
 	switch (req_type)
 	{
 	case GROUPS_LIST:
@@ -224,13 +225,14 @@ void p3GxsTrans::handleResponse(uint32_t token, uint32_t req_type)
 				case GxsTransItemsSubtypes::GXS_TRANS_SUBTYPE_MAIL:
 				case GxsTransItemsSubtypes::GXS_TRANS_SUBTYPE_RECEIPT:
 				{
-					RsGxsTransBaseItem* mb =
-					        dynamic_cast<RsGxsTransBaseItem*>(*mIt);
+					RsGxsTransBaseItem* mb = dynamic_cast<RsGxsTransBaseItem*>(*mIt);
+
 					if(mb)
 					{
 						RS_STACK_MUTEX(mIngoingMutex);
-						mIngoingQueue.insert(inMap::value_type(mb->mailId, mb));
-						IndicateConfigChanged();
+						mIncomingQueue.insert(inMap::value_type(mb->mailId,mb));
+
+						changed = true ;
 					}
 					else
 						std::cerr << "p3GxsTrans::handleResponse(...) "
@@ -256,6 +258,9 @@ void p3GxsTrans::handleResponse(uint32_t token, uint32_t req_type)
 		          << req_type << std::endl;
 		break;
 	}
+
+	if(changed)
+		IndicateConfigChanged();
 }
 
 void p3GxsTrans::GxsTransIntegrityCleanupThread::getMessagesToDelete(GxsMsgReq& m)
@@ -357,6 +362,7 @@ void p3GxsTrans::service_tick()
 	GxsTokenQueue::checkRequests();
 
     time_t now = time(NULL);
+	bool changed = false ;
 
     if(mLastMsgCleanup + MAX_DELAY_BETWEEN_CLEANUPS < now)
     {
@@ -397,7 +403,6 @@ void p3GxsTrans::service_tick()
 			GxsTransSendStatus oldStatus = pr.status;
 
 			locked_processOutgoingRecord(pr);
-			bool changed = false ;
 
 			if (oldStatus != pr.status) notifyClientService(pr);
 			if( pr.status >= GxsTransSendStatus::RECEIPT_RECEIVED )
@@ -406,19 +411,15 @@ void p3GxsTrans::service_tick()
 				changed = true ;
 			}
 			else ++it;
-
-			if(changed)
-				IndicateConfigChanged();
 		}
 	}
 
 
 	{
 		RS_STACK_MUTEX(mIngoingMutex);
-		for( auto it = mIngoingQueue.begin(); it != mIngoingQueue.end(); )
+		for( auto it = mIncomingQueue.begin(); it != mIncomingQueue.end(); )
 		{
-			switch(static_cast<GxsTransItemsSubtypes>(
-			           it->second->PacketSubType()))
+			switch(static_cast<GxsTransItemsSubtypes>( it->second->PacketSubType()))
 			{
 			case GxsTransItemsSubtypes::GXS_TRANS_SUBTYPE_MAIL:
 			{
@@ -479,11 +480,14 @@ void p3GxsTrans::service_tick()
 				break;
 			}
 
-			delete it->second; it = mIngoingQueue.erase(it);
-
-			IndicateConfigChanged();
+			delete it->second ;
+			it = mIncomingQueue.erase(it);
+			changed = true ;
 		}
 	}
+
+	if(changed)
+		IndicateConfigChanged();
 }
 
 RsGenExchange::ServiceCreate_Return p3GxsTrans::service_CreateGroup(
@@ -829,7 +833,7 @@ void p3GxsTrans::locked_processOutgoingRecord(OutgoingRecord& pr)
 	case GxsTransSendStatus::PENDING_RECEIPT_RECEIVE:
 	{
 		RS_STACK_MUTEX(mIngoingMutex);
-		auto range = mIngoingQueue.equal_range(pr.mailItem.mailId);
+		auto range = mIncomingQueue.equal_range(pr.mailItem.mailId);
 		bool changed = false ;
 
 		for( auto it = range.first; it != range.second; ++it)
@@ -838,7 +842,7 @@ void p3GxsTrans::locked_processOutgoingRecord(OutgoingRecord& pr)
 
 			if(rt && mIdService.isOwnId(rt->meta.mAuthorId))
 			{
-				mIngoingQueue.erase(it); delete rt;
+				mIncomingQueue.erase(it); delete rt;
 				pr.status = GxsTransSendStatus::RECEIPT_RECEIVED;
 
 				changed = true ;
@@ -898,7 +902,7 @@ RsSerialiser* p3GxsTrans::setupSerialiser()
 
 bool p3GxsTrans::saveList(bool &cleanup, std::list<RsItem *>& saveList)
 {
-	std::cout << "p3GxsTrans::saveList(...)" << saveList.size() << " " << mIngoingQueue.size() << " " << mOutgoingQueue.size() << std::endl;
+	std::cout << "p3GxsTrans::saveList(...)" << saveList.size() << " " << mIncomingQueue.size() << " " << mOutgoingQueue.size() << std::endl;
 
 	mOutgoingMutex.lock();
 	mIngoingMutex.lock();
@@ -908,13 +912,13 @@ bool p3GxsTrans::saveList(bool &cleanup, std::list<RsItem *>& saveList)
 		std::cerr << "Saving outgoing item, ID " << std::hex << std::setfill('0') << std::setw(16) << kv.first << std::dec << "Group id: " << kv.second.mailItem.meta.mGroupId << ", TS=" << kv.second.mailItem.meta.mPublishTs << std::endl;
 		saveList.push_back(&kv.second);
 	}
-	for ( auto& kv : mIngoingQueue )
+	for ( auto& kv : mIncomingQueue )
 	{
 		std::cerr << "Saving incoming item, ID " << std::hex << std::setfill('0') << std::setw(16) << kv.first << std::endl;
 		saveList.push_back(kv.second);
 	}
 
-	std::cout << "p3GxsTrans::saveList(...)" << saveList.size() << " " << mIngoingQueue.size() << " " << mOutgoingQueue.size() << std::endl;
+	std::cout << "p3GxsTrans::saveList(...)" << saveList.size() << " " << mIncomingQueue.size() << " " << mOutgoingQueue.size() << std::endl;
 
 	cleanup = false;
 	return true;
@@ -929,7 +933,7 @@ void p3GxsTrans::saveDone()
 bool p3GxsTrans::loadList(std::list<RsItem *>&loadList)
 {
 	std::cout << "p3GxsTrans::loadList(...) " << loadList.size() << " "
-	          << mIngoingQueue.size() << " " << mOutgoingQueue.size()
+	          << mIncomingQueue.size() << " " << mOutgoingQueue.size()
 	          << std::endl;
 
 	for(auto& v : loadList)
@@ -942,7 +946,7 @@ bool p3GxsTrans::loadList(std::list<RsItem *>&loadList)
 			if(mi)
 			{
 				RS_STACK_MUTEX(mIngoingMutex);
-				mIngoingQueue.insert(inMap::value_type(mi->mailId, mi));
+				mIncomingQueue.insert(inMap::value_type(mi->mailId, mi));
 			}
 			break;
 		}
@@ -971,7 +975,7 @@ bool p3GxsTrans::loadList(std::list<RsItem *>&loadList)
 		}
 
 	std::cout << "p3GxsTrans::loadList(...) " << loadList.size() << " "
-	          << mIngoingQueue.size() << " " << mOutgoingQueue.size()
+	          << mIncomingQueue.size() << " " << mOutgoingQueue.size()
 	          << std::endl;
 
 	return true;

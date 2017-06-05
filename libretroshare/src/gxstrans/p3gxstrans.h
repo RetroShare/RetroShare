@@ -205,7 +205,7 @@ private:
 	 * for incoming queue.
 	 */
 	typedef std::unordered_multimap<RsGxsTransId, RsGxsTransBaseItem*> inMap;
-	inMap mIngoingQueue;
+	inMap mIncomingQueue;
 	RsMutex mIngoingMutex;
 
 	/// @see GxsTokenQueue::handleResponse(uint32_t token, uint32_t req_type)
