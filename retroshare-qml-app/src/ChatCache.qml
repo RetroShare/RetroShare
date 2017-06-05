@@ -11,7 +11,11 @@ QtObject {
 
 	property QtObject lastMessageCache: QtObject
 	{
+		id: lastMessageCache
 		property var lastMessageList: ({})
+
+		signal lastMessageChanged()
+
 
 		function updateLastMessageCache (chatId, chatModel){
 			console.log("updateLastMessageCache (chatId, chatModel)", chatId)
@@ -27,13 +31,33 @@ QtObject {
 
 		function updateLastMessage (chatId, chatModel){
 			console.log("updateLastMessage (chatId, chatModel)")
-			var lastMessage = getLastMessageFromChat (chatModel)
+			var lastMessage = findChatLastMessage (chatModel)
 			lastMessageList[chatId] = lastMessage
+
 		}
 
-		function getLastMessageFromChat (chatModel){
+		function findChatLastMessage (chatModel){
 			var messagesData = JSON.parse(chatModel).data
 			return messagesData.slice(-1)[0]
+		}
+
+
+		function getChatIdFromGxs (gxs){
+			for (var key in lastMessageList) {
+				if ( lastMessageList[key].author_id === gxs ) {
+					return key
+				}
+			}
+			return undefined
+		}
+
+		function getChatLastMessage (chatId){
+			if (lastMessageList[chatId]) {
+				return lastMessageList[chatId]
+			}
+
+			return undefined
+
 		}
 	}
 

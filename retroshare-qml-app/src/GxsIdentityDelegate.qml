@@ -18,12 +18,25 @@
 
 import QtQuick 2.7
 import QtQuick.Controls 2.0
+import "." //Needed for ChatCache singleton
 
 Item
 {
 	id: delegateRoot
 	height: 50
 	width: parent.width
+
+	//	property var lastMessageData: getLastMessage()
+
+	property var chatId: undefined
+	property var lastMessageData: ""
+	property var authorName: lastMessageData.author_name
+
+//	JSONListModel
+//	{
+//		id: lastMessageData
+//		query: "$.*"
+//	}
 
 	Rectangle {
 
@@ -61,7 +74,6 @@ Item
 			anchors.fill: parent
 			color: "transparent"
 			anchors.margins: 5
-//			anchors.leftMargin: 5
 
 
 			ColorHash
@@ -81,15 +93,31 @@ Item
 				}
 			}
 
-			Text
-			{
-				id: nickText
-				color: model.own ? "blue" : "black"
-				text: model.name
+			Column {
+
+				height: parent.height
 				anchors.left: colorHash.right
 				anchors.leftMargin: 5
-				anchors.verticalCenter: parent.verticalCenter
+
+				Text
+				{
+					id: nickText
+					color: model.own ? "blue" : "black"
+					text: model.name
+					font.bold: true
+				}
+
+				Text
+				{
+					id: lastMessage
+					color: model.own ? "blue" : "black"
+					text: (lastMessageData.msg) ? lastMessageData.msg : ""
+					font.italic: true
+				}
+
 			}
+
+
 
 			Row
 			{
@@ -132,6 +160,39 @@ Item
 				}
 			}
 		}
+	}
+//	signal lastMessageChanged(var chatI, var newLastMessage)
+//	lastMessageChanged(chatId, lastMessage)
+//	Connections {
+//		target: ChatCache.lastMessageCache
+//		onLastMessageChanged: {
+//			if (!chatId) {
+//				getChatIdFromGXS()
+//			}
+
+//			if (chatId && chatId === chatI){
+//				delegateRoot.lastMessageData = newLastMessage
+//				console.log("@@@@@@@@@@@2 Last message changed	",chatI ,newLastMessage.msg, chatId )
+//			}
+//		}
+
+//	}
+
+	Component.onCompleted: {
+		if (!chatId){
+			chatId = getChatIdFromGXS()
+		}
+		if (chatId) {
+			lastMessageData = getChatLastMessage(chatId)
+		}
+	}
+
+	function getChatLastMessage (chatId){
+		return ChatCache.lastMessageCache.getChatLastMessage(chatId)
+	}
+
+	function getChatIdFromGXS (){
+		return ChatCache.lastMessageCache.getChatIdFromGxs(model.gxs_id)
 	}
 
 	function showDetails()
