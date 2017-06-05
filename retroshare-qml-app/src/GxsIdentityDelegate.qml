@@ -26,17 +26,10 @@ Item
 	height: 50
 	width: parent.width
 
-	//	property var lastMessageData: getLastMessage()
 
 	property var chatId: undefined
 	property var lastMessageData: ""
-	property var authorName: lastMessageData.author_name
 
-//	JSONListModel
-//	{
-//		id: lastMessageData
-//		query: "$.*"
-//	}
 
 	Rectangle {
 
@@ -70,7 +63,8 @@ Item
 			hoverEnabled: true
 		}
 
-		Rectangle {
+		Rectangle
+		{
 			anchors.fill: parent
 			color: "transparent"
 			anchors.margins: 5
@@ -93,9 +87,11 @@ Item
 				}
 			}
 
-			Column {
+			Column
+			{
 
 				height: parent.height
+				width: parent.width
 				anchors.left: colorHash.right
 				anchors.leftMargin: 5
 
@@ -107,12 +103,24 @@ Item
 					font.bold: true
 				}
 
-				Text
+				Row
 				{
-					id: lastMessage
-					color: model.own ? "blue" : "black"
-					text: (lastMessageData.msg) ? lastMessageData.msg : ""
-					font.italic: true
+					id: lastMessageText
+					width: parent.width
+					Text
+					{
+						id: lastMessageSender
+						font.italic: true
+						color: "dodgerblue"
+						text: (!lastMessageData.incoming && lastMessageData.msg)? "You: " : ""
+					}
+					Text
+					{
+						id: lastMessageMsg
+						text: (lastMessageData.msg) ? lastMessageData.msg : ""
+						font.italic: true
+					}
+
 				}
 
 			}
@@ -161,22 +169,7 @@ Item
 			}
 		}
 	}
-//	signal lastMessageChanged(var chatI, var newLastMessage)
-//	lastMessageChanged(chatId, lastMessage)
-//	Connections {
-//		target: ChatCache.lastMessageCache
-//		onLastMessageChanged: {
-//			if (!chatId) {
-//				getChatIdFromGXS()
-//			}
 
-//			if (chatId && chatId === chatI){
-//				delegateRoot.lastMessageData = newLastMessage
-//				console.log("@@@@@@@@@@@2 Last message changed	",chatI ,newLastMessage.msg, chatId )
-//			}
-//		}
-
-//	}
 
 	Component.onCompleted: {
 		if (!chatId){
@@ -187,11 +180,26 @@ Item
 		}
 	}
 
+	Connections {
+		target: ChatCache.lastMessageCache
+		onLastMessageChanged: {
+			if (!chatId) {
+				chatId = getChatIdFromGXS()
+			}
+			if (chatId && chatId === chatI){
+				console.log("New last message received!")
+				lastMessageData = newLastMessage
+			}
+		}
+	}
+
+
 	function getChatLastMessage (chatId){
 		return ChatCache.lastMessageCache.getChatLastMessage(chatId)
 	}
 
 	function getChatIdFromGXS (){
+		var id= ChatCache.lastMessageCache.getChatIdFromGxs(model.gxs_id)
 		return ChatCache.lastMessageCache.getChatIdFromGxs(model.gxs_id)
 	}
 
