@@ -204,7 +204,7 @@ private:
 	 * item to not being processed and memleaked multimap is used instead of map
 	 * for incoming queue.
 	 */
-	typedef std::unordered_multimap<RsGxsTransId, RsGxsTransBaseItem*> inMap;
+	typedef std::unordered_multimap<RsGxsTransId, RsGxsTransBaseMsgItem*> inMap;
 	inMap mIncomingQueue;
 	RsMutex mIngoingMutex;
 

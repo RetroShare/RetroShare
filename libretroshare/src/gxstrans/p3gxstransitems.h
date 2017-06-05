@@ -36,14 +36,14 @@ public:
     virtual ~RsNxsTransPresignedReceipt() {}
 };
 
-class RsGxsTransBaseItem : public RsGxsMsgItem
+class RsGxsTransBaseMsgItem : public RsGxsMsgItem
 {
 public:
-	RsGxsTransBaseItem(GxsTransItemsSubtypes subtype) :
+	RsGxsTransBaseMsgItem(GxsTransItemsSubtypes subtype) :
 	    RsGxsMsgItem( RS_SERVICE_TYPE_GXS_TRANS,
 	                  static_cast<uint8_t>(subtype) ), mailId(0) {}
 
-    virtual ~RsGxsTransBaseItem() {}
+    virtual ~RsGxsTransBaseMsgItem() {}
 
 	RsGxsTransId mailId;
 
@@ -58,10 +58,10 @@ public:
 	{ RS_REGISTER_SERIAL_MEMBER_TYPED(mailId, uint64_t); }
 };
 
-class RsGxsTransPresignedReceipt : public RsGxsTransBaseItem
+class RsGxsTransPresignedReceipt : public RsGxsTransBaseMsgItem
 {
 public:
-	RsGxsTransPresignedReceipt() : RsGxsTransBaseItem(GxsTransItemsSubtypes::GXS_TRANS_SUBTYPE_RECEIPT) {}
+	RsGxsTransPresignedReceipt() : RsGxsTransBaseMsgItem(GxsTransItemsSubtypes::GXS_TRANS_SUBTYPE_RECEIPT) {}
     virtual ~RsGxsTransPresignedReceipt() {}
 };
 
@@ -72,11 +72,11 @@ enum class RsGxsTransEncryptionMode : uint8_t
 	UNDEFINED_ENCRYPTION      = 250
 };
 
-class RsGxsTransMailItem : public RsGxsTransBaseItem
+class RsGxsTransMailItem : public RsGxsTransBaseMsgItem
 {
 public:
 	RsGxsTransMailItem() :
-	    RsGxsTransBaseItem(GxsTransItemsSubtypes::GXS_TRANS_SUBTYPE_MAIL),
+	    RsGxsTransBaseMsgItem(GxsTransItemsSubtypes::GXS_TRANS_SUBTYPE_MAIL),
 	    cryptoType(RsGxsTransEncryptionMode::UNDEFINED_ENCRYPTION) {}
 
     virtual ~RsGxsTransMailItem() {}
@@ -139,7 +139,7 @@ public:
 	void serial_process( RsGenericSerializer::SerializeJob j,
 	                     RsGenericSerializer::SerializeContext& ctx )
 	{
-		RsGxsTransBaseItem::serial_process(j, ctx);
+		RsGxsTransBaseMsgItem::serial_process(j, ctx);
 		RS_REGISTER_SERIAL_MEMBER_TYPED(cryptoType, uint8_t);
 		RS_REGISTER_SERIAL_MEMBER(recipientHint);
 		RS_REGISTER_SERIAL_MEMBER(payload);
@@ -147,7 +147,7 @@ public:
 
 	void clear()
 	{
-		RsGxsTransBaseItem::clear();
+		RsGxsTransBaseMsgItem::clear();
 		cryptoType = RsGxsTransEncryptionMode::UNDEFINED_ENCRYPTION;
 		recipientHint.clear();
 		payload.clear();
@@ -183,6 +183,33 @@ public:
 
 class RsGxsTransSerializer;
 
+class OutgoingRecord_deprecated : public RsItem
+{
+public:
+	OutgoingRecord_deprecated( RsGxsId rec, GxsTransSubServices cs, const uint8_t* data, uint32_t size );
+
+    virtual ~OutgoingRecord_deprecated() {}
+
+	GxsTransSendStatus status;
+	RsGxsId recipient;
+	/// Don't use a pointer would be invalid after publish
+	RsGxsTransMailItem mailItem;
+
+	std::vector<uint8_t> mailData;
+	GxsTransSubServices clientService;
+
+	RsNxsTransPresignedReceipt presignedReceipt;
+
+	void serial_process( RsGenericSerializer::SerializeJob j,
+	                     RsGenericSerializer::SerializeContext& ctx );
+
+	void clear() {}
+
+private:
+	friend class RsGxsTransSerializer;
+	OutgoingRecord_deprecated();
+};
+
 class OutgoingRecord : public RsItem
 {
 public:
@@ -191,12 +218,19 @@ public:
 
     virtual ~OutgoingRecord() {}
 
-	GxsTransSendStatus status;
-	RsGxsId recipient;
+	GxsTransSendStatus       status;
+	RsGxsId                  recipient;
+
+	RsGxsId                  author;		// These 3 fields cannot be stored in mailItem.meta, which is not serialised.
+	RsGxsGroupId             group_id ;
+	uint32_t                 sent_ts ;
+
 	/// Don't use a pointer would be invalid after publish
 	RsGxsTransMailItem mailItem;
+
 	std::vector<uint8_t> mailData;
 	GxsTransSubServices clientService;
+
 	RsNxsTransPresignedReceipt presignedReceipt;
 
 	void serial_process( RsGenericSerializer::SerializeJob j,
@@ -225,6 +259,7 @@ public:
 		case GxsTransItemsSubtypes::GXS_TRANS_SUBTYPE_MAIL: return new RsGxsTransMailItem();
 		case GxsTransItemsSubtypes::GXS_TRANS_SUBTYPE_RECEIPT: return new RsGxsTransPresignedReceipt();
 		case GxsTransItemsSubtypes::GXS_TRANS_SUBTYPE_GROUP: return new RsGxsTransGroupItem();
+		case GxsTransItemsSubtypes::OUTGOING_RECORD_ITEM_deprecated: return new OutgoingRecord_deprecated();
 		case GxsTransItemsSubtypes::OUTGOING_RECORD_ITEM: return new OutgoingRecord();
 		default: return NULL;
 		}

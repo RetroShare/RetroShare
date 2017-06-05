@@ -21,10 +21,11 @@
 
 const RsGxsId RsGxsTransMailItem::allRecipientsHint("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
 
-OutgoingRecord::OutgoingRecord() :
-    RsItem( RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_GXS_TRANS,
-            static_cast<uint8_t>(GxsTransItemsSubtypes::OUTGOING_RECORD_ITEM) )
-{ clear();}
+OutgoingRecord_deprecated::OutgoingRecord_deprecated()
+    : RsItem( RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_GXS_TRANS, static_cast<uint8_t>(GxsTransItemsSubtypes::OUTGOING_RECORD_ITEM_deprecated) ) { clear();}
+
+OutgoingRecord::OutgoingRecord()
+    : RsItem( RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_GXS_TRANS, static_cast<uint8_t>(GxsTransItemsSubtypes::OUTGOING_RECORD_ITEM) ) { clear();}
 
 OutgoingRecord::OutgoingRecord( RsGxsId rec, GxsTransSubServices cs,
                                 const uint8_t* data, uint32_t size ) :
@@ -41,11 +42,24 @@ OutgoingRecord::OutgoingRecord( RsGxsId rec, GxsTransSubServices cs,
 RS_REGISTER_ITEM_TYPE(RsGxsTransMailItem)         // for mailItem
 RS_REGISTER_ITEM_TYPE(RsNxsTransPresignedReceipt) // for presignedReceipt
 
+void OutgoingRecord_deprecated::serial_process(RsGenericSerializer::SerializeJob j, RsGenericSerializer::SerializeContext& ctx)
+{
+	RS_REGISTER_SERIAL_MEMBER_TYPED(status, uint8_t);
+	RS_REGISTER_SERIAL_MEMBER(recipient);
+	RS_REGISTER_SERIAL_MEMBER(mailItem);
+	RS_REGISTER_SERIAL_MEMBER(mailData);
+	RS_REGISTER_SERIAL_MEMBER_TYPED(clientService, uint16_t);
+	RS_REGISTER_SERIAL_MEMBER(presignedReceipt);
+}
+
 void OutgoingRecord::serial_process(RsGenericSerializer::SerializeJob j,
                                     RsGenericSerializer::SerializeContext& ctx)
 {
 	RS_REGISTER_SERIAL_MEMBER_TYPED(status, uint8_t);
 	RS_REGISTER_SERIAL_MEMBER(recipient);
+	RS_REGISTER_SERIAL_MEMBER(author);
+	RS_REGISTER_SERIAL_MEMBER(group_id);
+	RS_REGISTER_SERIAL_MEMBER(sent_ts);
 	RS_REGISTER_SERIAL_MEMBER(mailItem);
 	RS_REGISTER_SERIAL_MEMBER(mailData);
 	RS_REGISTER_SERIAL_MEMBER_TYPED(clientService, uint16_t);

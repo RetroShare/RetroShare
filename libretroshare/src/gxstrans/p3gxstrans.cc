@@ -48,8 +48,8 @@ bool p3GxsTrans::getStatistics(GxsTransStatistics& stats)
 
 			RsGxsTransOutgoingRecord rec ;
             rec.status = pr.status ;
-            rec.send_TS = pr.mailItem.meta.mPublishTs ;
-            rec.group_id = pr.mailItem.meta.mGroupId ;
+            rec.send_TS = pr.sent_ts ;
+            rec.group_id = pr.group_id ;
             rec.trans_id = pr.mailItem.mailId ;
             rec.recipient = pr.recipient ;
             rec.data_size = pr.mailData.size();
@@ -89,8 +89,7 @@ bool p3GxsTrans::sendData( RsGxsTransId& mailId,
 	OutgoingRecord pr( recipient, service, data, size );
 
     pr.mailItem.clear();
-	pr.mailItem.meta.mAuthorId = own_gxsid;
-	pr.mailItem.meta.mMsgId.clear();
+	pr.author = own_gxsid; //pr.mailItem.meta.mAuthorId = own_gxsid;
 	pr.mailItem.cryptoType = cm;
 	pr.mailItem.mailId = RSRandom::random_u64();
 
@@ -225,7 +224,7 @@ void p3GxsTrans::handleResponse(uint32_t token, uint32_t req_type)
 				case GxsTransItemsSubtypes::GXS_TRANS_SUBTYPE_MAIL:
 				case GxsTransItemsSubtypes::GXS_TRANS_SUBTYPE_RECEIPT:
 				{
-					RsGxsTransBaseItem* mb = dynamic_cast<RsGxsTransBaseItem*>(*mIt);
+					RsGxsTransBaseMsgItem* mb = dynamic_cast<RsGxsTransBaseMsgItem*>(*mIt);
 
 					if(mb)
 					{
@@ -706,7 +705,7 @@ void p3GxsTrans::locked_processOutgoingRecord(OutgoingRecord& pr)
 	{
 		pr.mailItem.saltRecipientHint(pr.recipient);
 		pr.mailItem.saltRecipientHint(RsGxsId::random());
-		pr.mailItem.meta.mPublishTs = time(NULL);
+		pr.sent_ts = time(NULL) ; //pr.mailItem.meta.mPublishTs = time(NULL);
 	}
 	case GxsTransSendStatus::PENDING_PREFERRED_GROUP:
 	{
@@ -717,12 +716,16 @@ void p3GxsTrans::locked_processOutgoingRecord(OutgoingRecord& pr)
 			break;
 		}
 
-		pr.mailItem.meta.mGroupId = mPreferredGroupId;
+		pr.group_id = mPreferredGroupId ; //pr.mailItem.meta.mGroupId = mPreferredGroupId;
 	}
 	case GxsTransSendStatus::PENDING_RECEIPT_CREATE:
 	{
 		RsGxsTransPresignedReceipt grcpt;
-		grcpt.meta = pr.mailItem.meta;
+		grcpt.meta.mAuthorId = pr.author ;   //grcpt.meta = pr.mailItem.meta;
+		grcpt.meta.mGroupId  = pr.group_id ; //grcpt.meta = pr.mailItem.meta;
+		grcpt.meta.mMsgId.clear() ;
+		grcpt.meta.mParentId.clear() ;
+		grcpt.meta.mOrigMsgId.clear() ;
 		grcpt.meta.mPublishTs = time(NULL);
 		grcpt.mailId = pr.mailItem.mailId;
 		uint32_t grsz = RsGxsTransSerializer().size(&grcpt);
@@ -735,7 +738,7 @@ void p3GxsTrans::locked_processOutgoingRecord(OutgoingRecord& pr)
 		*pr.presignedReceipt.metaData = grcpt.meta;
 		pr.presignedReceipt.msg.setBinData(&grsrz[0], grsz);
 	}
-	case GxsTransSendStatus::PENDING_RECEIPT_SIGNATURE:
+	case GxsTransSendStatus::PENDING_RECEIPT_SIGNATURE:					// (cyril) This step is never actually used.
 	{
 		switch (RsGenExchange::createMessage(&pr.presignedReceipt))
 		{
@@ -822,11 +825,23 @@ void p3GxsTrans::locked_processOutgoingRecord(OutgoingRecord& pr)
 		          << " payload size: " << pr.mailItem.payload.size()
 		          << std::endl;
 
+		RsGxsTransMailItem *mail_item = new RsGxsTransMailItem(pr.mailItem);
+
+		// pr.mailItem.meta is *not* serialised. So it is important to not rely on what's in it!
+
+		mail_item->meta.mGroupId = pr.group_id ;
+		mail_item->meta.mAuthorId = pr.author ;
+
+		mail_item->meta.mMsgId.clear();
+		mail_item->meta.mParentId.clear();
+		mail_item->meta.mOrigMsgId.clear();
+
 		uint32_t token;
-		publishMsg(token, new RsGxsTransMailItem(pr.mailItem));
+		publishMsg(token, mail_item) ;
+
 		pr.status = GxsTransSendStatus::PENDING_RECEIPT_RECEIVE;
 
-		IndicateConfigChanged();	// This causes the saving of the message after all data has been filled in.
+		IndicateConfigChanged();	// This causes the saving of the message after pr.status has changed.
 		break;
 	}
 	//case GxsTransSendStatus::PENDING_TRANSFER:
@@ -909,7 +924,7 @@ bool p3GxsTrans::saveList(bool &cleanup, std::list<RsItem *>& saveList)
 
 	for ( auto& kv : mOutgoingQueue )
 	{
-		std::cerr << "Saving outgoing item, ID " << std::hex << std::setfill('0') << std::setw(16) << kv.first << std::dec << "Group id: " << kv.second.mailItem.meta.mGroupId << ", TS=" << kv.second.mailItem.meta.mPublishTs << std::endl;
+		std::cerr << "Saving outgoing item, ID " << std::hex << std::setfill('0') << std::setw(16) << kv.first << std::dec << "Group id: " << kv.second.group_id << ", TS=" << kv.second.sent_ts << std::endl;
 		saveList.push_back(&kv.second);
 	}
 	for ( auto& kv : mIncomingQueue )
@@ -942,7 +957,7 @@ bool p3GxsTrans::loadList(std::list<RsItem *>&loadList)
 		case GxsTransItemsSubtypes::GXS_TRANS_SUBTYPE_MAIL:
 		case GxsTransItemsSubtypes::GXS_TRANS_SUBTYPE_RECEIPT:
 		{
-			RsGxsTransBaseItem* mi = dynamic_cast<RsGxsTransBaseItem*>(v);
+			RsGxsTransBaseMsgItem* mi = dynamic_cast<RsGxsTransBaseMsgItem*>(v);
 			if(mi)
 			{
 				RS_STACK_MUTEX(mIngoingMutex);
@@ -950,6 +965,34 @@ bool p3GxsTrans::loadList(std::list<RsItem *>&loadList)
 			}
 			break;
 		}
+		case GxsTransItemsSubtypes::OUTGOING_RECORD_ITEM_deprecated:
+		{
+			OutgoingRecord_deprecated* dot = dynamic_cast<OutgoingRecord_deprecated*>(v);
+
+			if(dot)
+			{
+				std::cerr << "(EE) Read a deprecated GxsTrans outgoing item. Converting to new format..." << std::endl;
+
+				OutgoingRecord ot(dot->recipient,dot->clientService,&dot->mailData[0],dot->mailData.size()) ;
+
+				ot.status = dot->status ;
+
+				ot.author.clear();		// These 3 fields cannot be stored in mailItem.meta, which is not serialised, so they are lost.
+				ot.group_id.clear() ;
+				ot.sent_ts = 0;
+
+				ot.mailItem = dot->mailItem ;
+				ot.presignedReceipt = dot->presignedReceipt;
+
+				RS_STACK_MUTEX(mOutgoingMutex);
+				mOutgoingQueue.insert(prMap::value_type(ot.mailItem.mailId, ot));
+
+				std::cerr << "Loaded outgoing item (converted), ID " << std::hex << std::setfill('0') << std::setw(16) << ot.mailItem.mailId<< std::dec << ", Group id: " << ot.group_id << ", TS=" << ot.sent_ts << std::endl;
+			}
+			delete v;
+			break;
+		}
+
 		case GxsTransItemsSubtypes::OUTGOING_RECORD_ITEM:
 		{
 			OutgoingRecord* ot = dynamic_cast<OutgoingRecord*>(v);
@@ -959,7 +1002,7 @@ bool p3GxsTrans::loadList(std::list<RsItem *>&loadList)
 				mOutgoingQueue.insert(
 				            prMap::value_type(ot->mailItem.mailId, *ot));
 
-				std::cerr << "Loading outgoing item, ID " << std::hex << std::setfill('0') << std::setw(16) << ot->mailItem.mailId<< std::dec << "Group id: " << ot->mailItem.meta.mGroupId << ", TS=" << ot->mailItem.meta.mPublishTs << std::endl;
+				std::cerr << "Loading outgoing item, ID " << std::hex << std::setfill('0') << std::setw(16) << ot->mailItem.mailId<< std::dec << "Group id: " << ot->group_id << ", TS=" << ot->sent_ts << std::endl;
 			}
 			delete v;
 			break;
