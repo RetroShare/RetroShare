@@ -100,6 +100,8 @@ bool p3GxsTrans::sendData( RsGxsTransId& mailId,
 	}
 
 	mailId = pr.mailItem.mailId;
+
+	IndicateConfigChanged();	// This causes the saving of the message after all data has been filled in.
 	return true;
 }
 
@@ -228,6 +230,7 @@ void p3GxsTrans::handleResponse(uint32_t token, uint32_t req_type)
 					{
 						RS_STACK_MUTEX(mIngoingMutex);
 						mIngoingQueue.insert(inMap::value_type(mb->mailId, mb));
+						IndicateConfigChanged();
 					}
 					else
 						std::cerr << "p3GxsTrans::handleResponse(...) "
@@ -392,11 +395,20 @@ void p3GxsTrans::service_tick()
 		{
 			OutgoingRecord& pr(it->second);
 			GxsTransSendStatus oldStatus = pr.status;
-			processOutgoingRecord(pr);
+
+			locked_processOutgoingRecord(pr);
+			bool changed = false ;
+
 			if (oldStatus != pr.status) notifyClientService(pr);
 			if( pr.status >= GxsTransSendStatus::RECEIPT_RECEIVED )
+			{
 				it = mOutgoingQueue.erase(it);
+				changed = true ;
+			}
 			else ++it;
+
+			if(changed)
+				IndicateConfigChanged();
 		}
 	}
 
@@ -410,8 +422,8 @@ void p3GxsTrans::service_tick()
 			{
 			case GxsTransItemsSubtypes::GXS_TRANS_SUBTYPE_MAIL:
 			{
-				RsGxsTransMailItem* msg =
-				        dynamic_cast<RsGxsTransMailItem*>(it->second);
+				RsGxsTransMailItem* msg = dynamic_cast<RsGxsTransMailItem*>(it->second);
+
 				if(!msg)
 				{
 					std::cerr << "p3GxsTrans::service_tick() (EE) "
@@ -436,8 +448,8 @@ void p3GxsTrans::service_tick()
 			}
 			case GxsTransItemsSubtypes::GXS_TRANS_SUBTYPE_RECEIPT:
 			{
-				RsGxsTransPresignedReceipt* rcpt =
-				        dynamic_cast<RsGxsTransPresignedReceipt*>(it->second);
+				RsGxsTransPresignedReceipt* rcpt = dynamic_cast<RsGxsTransPresignedReceipt*>(it->second);
+
 				if(!rcpt)
 				{
 					std::cerr << "p3GxsTrans::service_tick() (EE) "
@@ -468,6 +480,8 @@ void p3GxsTrans::service_tick()
 			}
 
 			delete it->second; it = mIngoingQueue.erase(it);
+
+			IndicateConfigChanged();
 		}
 	}
 }
@@ -678,7 +692,7 @@ bool p3GxsTrans::dispatchDecryptedMail( const RsGxsId& authorId,
 	}
 }
 
-void p3GxsTrans::processOutgoingRecord(OutgoingRecord& pr)
+void p3GxsTrans::locked_processOutgoingRecord(OutgoingRecord& pr)
 {
 	//std::cout << "p3GxsTrans::processRecord(...)" << std::endl;
 
@@ -807,6 +821,8 @@ void p3GxsTrans::processOutgoingRecord(OutgoingRecord& pr)
 		uint32_t token;
 		publishMsg(token, new RsGxsTransMailItem(pr.mailItem));
 		pr.status = GxsTransSendStatus::PENDING_RECEIPT_RECEIVE;
+
+		IndicateConfigChanged();	// This causes the saving of the message after all data has been filled in.
 		break;
 	}
 	//case GxsTransSendStatus::PENDING_TRANSFER:
@@ -814,17 +830,24 @@ void p3GxsTrans::processOutgoingRecord(OutgoingRecord& pr)
 	{
 		RS_STACK_MUTEX(mIngoingMutex);
 		auto range = mIngoingQueue.equal_range(pr.mailItem.mailId);
+		bool changed = false ;
+
 		for( auto it = range.first; it != range.second; ++it)
 		{
-			RsGxsTransPresignedReceipt* rt =
-			        dynamic_cast<RsGxsTransPresignedReceipt*>(it->second);
+			RsGxsTransPresignedReceipt* rt = dynamic_cast<RsGxsTransPresignedReceipt*>(it->second);
+
 			if(rt && mIdService.isOwnId(rt->meta.mAuthorId))
 			{
 				mIngoingQueue.erase(it); delete rt;
 				pr.status = GxsTransSendStatus::RECEIPT_RECEIVED;
+
+				changed = true ;
 				break;
 			}
 		}
+		if(changed)
+			IndicateConfigChanged();
+
 		// TODO: Resend message if older then treshold
 		break;
 	}
@@ -875,19 +898,23 @@ RsSerialiser* p3GxsTrans::setupSerialiser()
 
 bool p3GxsTrans::saveList(bool &cleanup, std::list<RsItem *>& saveList)
 {
-	std::cout << "p3GxsTrans::saveList(...)" << saveList.size() << " "
-	          << mIngoingQueue.size() << " " << mOutgoingQueue.size()
-	          << std::endl;
+	std::cout << "p3GxsTrans::saveList(...)" << saveList.size() << " " << mIngoingQueue.size() << " " << mOutgoingQueue.size() << std::endl;
 
 	mOutgoingMutex.lock();
 	mIngoingMutex.lock();
 
-	for ( auto& kv : mOutgoingQueue ) saveList.push_back(&kv.second);
-	for ( auto& kv : mIngoingQueue ) saveList.push_back(kv.second);
+	for ( auto& kv : mOutgoingQueue )
+	{
+		std::cerr << "Saving outgoing item, ID " << std::hex << std::setfill('0') << std::setw(16) << kv.first << std::dec << "Group id: " << kv.second.mailItem.meta.mGroupId << ", TS=" << kv.second.mailItem.meta.mPublishTs << std::endl;
+		saveList.push_back(&kv.second);
+	}
+	for ( auto& kv : mIngoingQueue )
+	{
+		std::cerr << "Saving incoming item, ID " << std::hex << std::setfill('0') << std::setw(16) << kv.first << std::endl;
+		saveList.push_back(kv.second);
+	}
 
-	std::cout << "p3GxsTrans::saveList(...)" << saveList.size() << " "
-	          << mIngoingQueue.size() << " " << mOutgoingQueue.size()
-	          << std::endl;
+	std::cout << "p3GxsTrans::saveList(...)" << saveList.size() << " " << mIngoingQueue.size() << " " << mOutgoingQueue.size() << std::endl;
 
 	cleanup = false;
 	return true;
@@ -927,6 +954,8 @@ bool p3GxsTrans::loadList(std::list<RsItem *>&loadList)
 				RS_STACK_MUTEX(mOutgoingMutex);
 				mOutgoingQueue.insert(
 				            prMap::value_type(ot->mailItem.mailId, *ot));
+
+				std::cerr << "Loading outgoing item, ID " << std::hex << std::setfill('0') << std::setw(16) << ot->mailItem.mailId<< std::dec << "Group id: " << ot->mailItem.meta.mGroupId << ", TS=" << ot->mailItem.meta.mPublishTs << std::endl;
 			}
 			delete v;
 			break;

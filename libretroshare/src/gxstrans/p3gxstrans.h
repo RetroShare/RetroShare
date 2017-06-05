@@ -193,7 +193,7 @@ private:
 	typedef std::map<RsGxsTransId, OutgoingRecord> prMap;
 	prMap mOutgoingQueue;
 	RsMutex mOutgoingMutex;
-	void processOutgoingRecord(OutgoingRecord& r);
+	void locked_processOutgoingRecord(OutgoingRecord& r);
 
 	/**
 	 * @brief Ingoing mail and receipt processing queue.
