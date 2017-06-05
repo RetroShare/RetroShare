@@ -45,16 +45,11 @@ int main(int argc, char *argv[])
 	            dynamic_cast<resource_api::ResourceRouter*>(&ctrl_mod),
 	            &resource_api::RsControlModule::handleRequest);
 
-#if defined(Q_OS_WIN) && defined(QT_DEBUG)
-	QString sockPath = "RS/";
-#elif defined(Q_OS_WIN)
-	QString sockPath = QCoreApplication::applicationDirPath();
-#else
-	QString sockPath = QDir::homePath() + "/.retroshare";
-#endif
 
+	QString sockPath = QDir::homePath() + "/.retroshare";
 	sockPath.append("/libresapi.sock");
 	qDebug() << "Listening on:" << sockPath;
+
 	ApiServerLocal apiServerLocal(&api, sockPath); (void) apiServerLocal;
 
 	while (!ctrl_mod.processShouldExit())
