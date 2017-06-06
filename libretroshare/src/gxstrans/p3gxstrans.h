@@ -193,7 +193,7 @@ private:
 	typedef std::map<RsGxsTransId, OutgoingRecord> prMap;
 	prMap mOutgoingQueue;
 	RsMutex mOutgoingMutex;
-	void processOutgoingRecord(OutgoingRecord& r);
+	void locked_processOutgoingRecord(OutgoingRecord& r);
 
 	/**
 	 * @brief Ingoing mail and receipt processing queue.
@@ -204,8 +204,8 @@ private:
 	 * item to not being processed and memleaked multimap is used instead of map
 	 * for incoming queue.
 	 */
-	typedef std::unordered_multimap<RsGxsTransId, RsGxsTransBaseItem*> inMap;
-	inMap mIngoingQueue;
+	typedef std::unordered_multimap<RsGxsTransId, RsGxsTransBaseMsgItem*> inMap;
+	inMap mIncomingQueue;
 	RsMutex mIngoingMutex;
 
 	/// @see GxsTokenQueue::handleResponse(uint32_t token, uint32_t req_type)
