@@ -233,6 +233,7 @@ public:
     ApiServerMainModules(ResourceRouter& router, StateTokenServer* sts, const RsPlugInInterfaces &ifaces):
         mPeersHandler(sts, ifaces.mNotify, ifaces.mPeers, ifaces.mMsgs),
         mIdentityHandler(sts, ifaces.mNotify, ifaces.mIdentity),
+	    mNotificationHandler(sts, ifaces.mNotify),
         mForumHandler(ifaces.mGxsForums),
         mServiceControlHandler(ifaces.mServiceControl),
         mFileSearchHandler(sts, ifaces.mNotify, ifaces.mTurtle, ifaces.mFiles),
@@ -253,6 +254,8 @@ public:
                                    &PeersHandler::handleRequest);
         router.addResourceHandler("identity", dynamic_cast<ResourceRouter*>(&mIdentityHandler),
                                    &IdentityHandler::handleRequest);
+		router.addResourceHandler("notification", dynamic_cast<ResourceRouter*>(&mNotificationHandler),
+		                           &NotificationHandler::handleRequest);
         router.addResourceHandler("forums", dynamic_cast<ResourceRouter*>(&mForumHandler),
                                    &ForumHandler::handleRequest);
         router.addResourceHandler("servicecontrol", dynamic_cast<ResourceRouter*>(&mServiceControlHandler),
@@ -277,6 +280,7 @@ public:
 
     PeersHandler mPeersHandler;
     IdentityHandler mIdentityHandler;
+	NotificationHandler mNotificationHandler;
     ForumHandler mForumHandler;
     ServiceControlHandler mServiceControlHandler;
     FileSearchHandler mFileSearchHandler;

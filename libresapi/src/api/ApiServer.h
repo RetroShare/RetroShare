@@ -11,6 +11,7 @@
 #include "FileSearchHandler.h"
 #include "TransfersHandler.h"
 #include "LivereloadHandler.h"
+#include "NotificationHandler.h"
 #include "TmpBlobStore.h"
 #include "ChatHandler.h"
 
