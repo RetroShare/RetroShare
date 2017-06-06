@@ -92,39 +92,92 @@ Item
 			{
 
 				height: parent.height
-				width: parent.width
+				width: parent.width - (isContactIcon.width *3.5)
 				anchors.left: colorHash.right
 				anchors.leftMargin: 5
 
-				Text
+				Item
 				{
-					id: nickText
-					color: model.own ? "blue" : "black"
-					text: model.name
-					font.bold: true
+					width: parent.width
+					height: parent.height /2
+
+
+					Text
+					{
+						id: nickText
+						color: model.own ? "blue" : "black"
+						text: model.name
+						font.bold: true
+					}
+
+					Text
+					{
+//						text: (lastMessageData.recv_time)? Date.fromLocaleDateString(locale, lastMessageData.recv_time, "ddd yyyy-MM-dd hh:mm:ss"): "sad"
+						text:  setTime()
+						font.italic: true
+						anchors.right: parent.right
+
+					}
+
+
+
 				}
 
-				Row
+				Item
 				{
 					id: lastMessageText
 					width: parent.width
+					height: parent.height /2
+
 					Text
 					{
 						id: lastMessageSender
 						font.italic: true
 						color: "dodgerblue"
 						text: (!lastMessageData.incoming && lastMessageData.msg)? "You: " : ""
+						maximumLineCount: 1
+						elide:Text.ElideRight
+						wrapMode: Text.WordWrap
 					}
 					Text
 					{
 						id: lastMessageMsg
 						text: (lastMessageData.msg) ? lastMessageData.msg : ""
 						font.italic: true
+						rightPadding: 5
+//						maximumLineCount: 1
+//						elide:Text.ElideRight
+//						wrapMode: Text.WordWrap
+
+					}
+
+					Rectangle
+					{
+						visible: model.unread_count > 0
+
+						color: "cornflowerblue"
+						antialiasing: true
+//						border.color: "blue"
+//						border.width: 1
+						height: parent.height - 2
+						radius: height/2
+						width: height
+						anchors.verticalCenter: parent.verticalCenter
+						anchors.right: parent.right
+
+						Text
+						{
+							color: "white"
+							font.bold: true
+							text: model.unread_count
+							anchors.centerIn: parent
+						}
 					}
 
 				}
 
 			}
+
 
 
 
@@ -136,27 +189,7 @@ Item
 				height: parent.height - 10
 				spacing: 4
 
-				Rectangle
-				{
-					visible: model.unread_count > 0
 
-					color: "cornflowerblue"
-					antialiasing: true
-					border.color: "blue"
-					border.width: 1
-					height: parent.height - 4
-					radius: height/2
-					width: height
-					anchors.verticalCenter: parent.verticalCenter
-
-					Text
-					{
-						color: "white"
-						font.bold: true
-						text: model.unread_count
-						anchors.centerIn: parent
-					}
-				}
 
 				Image
 				{
@@ -166,6 +199,8 @@ Item
 					height: parent.height - 4
 					fillMode: Image.PreserveAspectFit
 					anchors.verticalCenter: parent.verticalCenter
+
+					id: isContactIcon
 				}
 			}
 		}
@@ -177,7 +212,8 @@ Item
 			chatId = getChatIdFromGXS()
 		}
 		if (chatId) {
-			lastMessageData = getChatLastMessage(chatId)
+			var last = getChatLastMessage(chatId)
+			if (last) lastMessageData = getChatLastMessage(chatId)
 		}
 	}
 
