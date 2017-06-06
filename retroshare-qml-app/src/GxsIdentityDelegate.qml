@@ -29,6 +29,7 @@ Item
 
 	property var chatId: undefined
 	property var lastMessageData: ""
+	property var locale: Qt.locale()
 
 
 	Rectangle {
