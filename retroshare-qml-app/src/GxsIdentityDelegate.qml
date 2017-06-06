@@ -91,6 +91,7 @@ Item
 			Column
 			{
 
+				id: chatInfoRow
 				height: parent.height
 				width: parent.width - (isContactIcon.width *3.5)
 				anchors.left: colorHash.right
@@ -129,26 +130,29 @@ Item
 					width: parent.width
 					height: parent.height /2
 
+
 					Text
 					{
 						id: lastMessageSender
 						font.italic: true
 						color: "dodgerblue"
 						text: (!lastMessageData.incoming && lastMessageData.msg)? "You: " : ""
-						maximumLineCount: 1
-						elide:Text.ElideRight
-						wrapMode: Text.WordWrap
+//						width: 50
+
+//						maximumLineCount: 1
+//						elide:Text.ElideRight
+//						wrapMode: Text.WordWrap
 					}
 					Text
 					{
 						id: lastMessageMsg
+						anchors.left: lastMessageSender.right
 						text: (lastMessageData.msg) ? lastMessageData.msg : ""
 						font.italic: true
 						rightPadding: 5
-//						maximumLineCount: 1
-//						elide:Text.ElideRight
-//						wrapMode: Text.WordWrap
+						elide: Text.ElideRight
 
+						width: chatInfoRow.width - 30
 					}
 
 					Rectangle
@@ -157,8 +161,6 @@ Item
 
 						color: "cornflowerblue"
 						antialiasing: true
-//						border.color: "blue"
-//						border.width: 1
 						height: parent.height - 2
 						radius: height/2
 						width: height
