@@ -202,6 +202,20 @@ Item
 		var id= ChatCache.lastMessageCache.getChatIdFromGxs(model.gxs_id)
 		return ChatCache.lastMessageCache.getChatIdFromGxs(model.gxs_id)
 	}
+	function setTime(){
+		if (!lastMessageData.recv_time){
+			return ""
+		}
+		var timeFormat = "dd.MM.yyyy";
+		var recvDate = new Date(lastMessageData.recv_time*1000)
+
+		// Check if is today
+		if ( new Date (lastMessageData.recv_time*1000).setHours(0,0,0,0) ==  new Date ().setHours(0,0,0,0)) {
+			timeFormat = "hh:mm"
+		}
+		var timeString = Qt.formatDateTime(recvDate, timeFormat)
+		return timeString
+	}
 
 	function showDetails()
 	{
