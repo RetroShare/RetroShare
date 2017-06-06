@@ -490,7 +490,10 @@ virtual ChatLobbyId createChatLobby(const std::string& lobby_name,const RsGxsId&
     virtual uint32_t getDistantChatPermissionFlags()=0 ;
     virtual bool setDistantChatPermissionFlags(uint32_t flags)=0 ;
     
-virtual bool initiateDistantChatConnexion(const RsGxsId& to_pid,const RsGxsId& from_pid,DistantChatPeerId& pid,uint32_t& error_code) = 0;
+virtual bool initiateDistantChatConnexion(
+	        const RsGxsId& to_pid, const RsGxsId& from_pid,
+	        DistantChatPeerId& pid, uint32_t& error_code,
+	        bool notify = true ) = 0;
 virtual bool getDistantChatStatus(const DistantChatPeerId& pid,DistantChatPeerInfo& info)=0;
 virtual bool closeDistantChatConnexion(const DistantChatPeerId& pid)=0;
 

@@ -1199,9 +1199,9 @@ void ChatHandler::handleInitiateDistantChatConnexion(Request& req, Response& res
 	DistantChatPeerId distant_chat_id;
 	uint32_t error_code;
 
-	if(mRsMsgs->initiateDistantChatConnexion(receiver_id, sender_id,
-	                                         distant_chat_id, error_code))
-		resp.setOk();
+	if(mRsMsgs->initiateDistantChatConnexion( receiver_id, sender_id,
+	                                          distant_chat_id, error_code,
+	                                          false )) resp.setOk();
 	else resp.setFail("Failed to initiate distant chat");
 
 	ChatId chat_id(distant_chat_id);
