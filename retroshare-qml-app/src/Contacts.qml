@@ -149,16 +149,20 @@ Item
 		id: searchBox
 		visible: contactsView.searching
 
-		height: searchText.height
-		width: searchText.width
+		height: searchText.height + 10
+		width: parent.width * 0.9
 		anchors.right: parent.right
 		anchors.top: parent.top
+		anchors.leftMargin: 5
+		anchors.rightMargin: 5
+		anchors.horizontalCenter: parent.horizontalCenter
+		color: "white"
 
 		Image
 		{
 			id: searchIcon
-			height: searchText.height - 4
-			width: searchText.height - 4
+			height: searchText.height /  2
+			width: searchText.height / 2
 			anchors.verticalCenter: parent.verticalCenter
 			source: "qrc:/icons/edit-find.png"
 		}
@@ -168,6 +172,15 @@ Item
 			id: searchText
 			anchors.left: searchIcon.right
 			anchors.verticalCenter: parent.verticalCenter
+			placeholderText : "Search contacts..."
+			width: parent.width - searchIcon.width - 5
+			anchors.leftMargin: 5
+
+			background: Rectangle {
+				border.width: 2
+				radius: 5
+				border.color: searchText.focus ? "cornflowerblue" : "lightgrey"
+			}
 			onTextChanged:
 				contactsSortWorker.sendMessage(
 					        {'action': 'searchContact', 'sexp': text})
