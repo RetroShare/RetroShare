@@ -115,8 +115,8 @@ Item
 					{
 //						text: (lastMessageData.recv_time)? Date.fromLocaleDateString(locale, lastMessageData.recv_time, "ddd yyyy-MM-dd hh:mm:ss"): "sad"
 						text:  setTime()
-						font.italic: true
 						anchors.right: parent.right
+						color: "darkslategrey"
 
 					}
 
@@ -135,23 +135,18 @@ Item
 					{
 						id: lastMessageSender
 						font.italic: true
-						color: "dodgerblue"
+						color: "royalblue"
 						text: (!lastMessageData.incoming && lastMessageData.msg)? "You: " : ""
-//						width: 50
-
-//						maximumLineCount: 1
-//						elide:Text.ElideRight
-//						wrapMode: Text.WordWrap
 					}
+
 					Text
 					{
 						id: lastMessageMsg
 						anchors.left: lastMessageSender.right
 						text: (lastMessageData.msg) ? lastMessageData.msg : ""
-						font.italic: true
 						rightPadding: 5
 						elide: Text.ElideRight
-
+						color: "darkslategrey"
 						width: chatInfoRow.width - 30
 					}
 
