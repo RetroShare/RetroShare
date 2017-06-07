@@ -174,9 +174,6 @@ Item
 
 			}
 
-
-
-
 			Row
 			{
 				anchors.right: parent.right

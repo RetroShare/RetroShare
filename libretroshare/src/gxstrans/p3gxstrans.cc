@@ -255,6 +255,14 @@ void p3GxsTrans::handleResponse(uint32_t token, uint32_t req_type)
 	}
 }
 
+void p3GxsTrans::GxsTransIntegrityCleanupThread::getMessagesToDelete(GxsMsgReq& m)
+{
+	RS_STACK_MUTEX(mMtx) ;
+
+	m = mMsgToDel ;
+	mMsgToDel.clear();
+}
+
 void p3GxsTrans::GxsTransIntegrityCleanupThread::run()
 {
     // first take out all the groups
@@ -304,7 +312,7 @@ void p3GxsTrans::GxsTransIntegrityCleanupThread::run()
                 std::cerr << "  Unrecocognised item type!" << std::endl;
             else if(NULL != (mitem = dynamic_cast<RsGxsTransMailItem*>(item)))
             {
-                std::cerr << "  " << msg->metaData->mMsgId << ": Mail data with ID " << std::hex << mitem->mailId << std::dec << " from " << msg->metaData->mAuthorId << " size: " << msg->msg.bin_len << std::endl;
+                std::cerr << "  " << msg->metaData->mMsgId << ": Mail data with ID " << std::hex << std::setfill('0') << std::setw(16) << mitem->mailId << std::dec << " from " << msg->metaData->mAuthorId << " size: " << msg->msg.bin_len << std::endl;
 
                 stored_msgs[mitem->mailId] = std::make_pair(msg->metaData->mGroupId,msg->metaData->mMsgId) ;
             }
@@ -337,7 +345,8 @@ void p3GxsTrans::GxsTransIntegrityCleanupThread::run()
         }
     }
 
-    mDs->removeMsgs(msgsToDel);
+	RS_STACK_MUTEX(mMtx) ;
+	mMsgToDel = msgsToDel ;
 }
 
 void p3GxsTrans::service_tick()
@@ -361,6 +370,21 @@ void p3GxsTrans::service_tick()
             mLastMsgCleanup = now ;
         }
     }
+
+	// now grab collected messages to delete
+
+	if(mCleanupThread != NULL && !mCleanupThread->isRunning())
+	{
+		GxsMsgReq msgToDel ;
+
+		mCleanupThread->getMessagesToDelete(msgToDel) ;
+
+		if(!msgToDel.empty())
+		{
+			std::cerr << "p3GxsTrans::service_tick(): deleting messages." << std::endl;
+			getDataStore()->removeMsgs(msgToDel);
+		}
+	}
 
 	{
 		RS_STACK_MUTEX(mOutgoingMutex);

@@ -146,7 +146,7 @@ class p3ChatService::AvatarInfo
 
 	  ~AvatarInfo()
 	  {
-		  delete[] _image_data ;
+		  free( _image_data );
 		  _image_data = NULL ;
 		  _image_size = 0 ;
 	  }
@@ -159,7 +159,7 @@ class p3ChatService::AvatarInfo
 	  void init(const unsigned char *jpeg_data,int size)
 	  {
 		  _image_size = size ;
-		  _image_data = new unsigned char[size] ;
+		  _image_data = (unsigned char*)rs_malloc(size) ;
 		  memcpy(_image_data,jpeg_data,size) ;
 	  }
 	  AvatarInfo(const unsigned char *jpeg_data,int size)
@@ -169,7 +169,7 @@ class p3ChatService::AvatarInfo
 
 	  void toUnsignedChar(unsigned char *& data,uint32_t& size) const
 	  {
-		  data = new unsigned char[_image_size] ;
+		  data = (unsigned char *)rs_malloc(_image_size) ;
 		  size = _image_size ;
 		  memcpy(data,_image_data,size*sizeof(unsigned char)) ;
 	  }

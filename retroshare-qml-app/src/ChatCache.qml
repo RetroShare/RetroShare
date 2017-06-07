@@ -78,7 +78,6 @@ QtObject {
 				return lastMessageList[chatId].lastMessage
 			}
 			return ""
-
 		}
 	}
 

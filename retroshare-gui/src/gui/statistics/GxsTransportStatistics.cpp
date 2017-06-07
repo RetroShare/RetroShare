@@ -330,8 +330,6 @@ void GxsTransportStatistics::requestGroupMeta()
 	std::cerr << std::endl;
 #endif
 
-	mTransQueue->cancelActiveRequestTokens(GXSTRANS_GROUP_META);
-
 	RsTokReqOptions opts;
 	opts.mReqType = GXS_REQUEST_TYPE_GROUP_META;
 
@@ -340,7 +338,6 @@ void GxsTransportStatistics::requestGroupMeta()
 }
 void GxsTransportStatistics::requestGroupStat(const RsGxsGroupId &groupId)
 {
-	mTransQueue->cancelActiveRequestTokens(GXSTRANS_GROUP_STAT);
 	uint32_t token;
 	rsGxsTrans->getTokenService()->requestGroupStatistic(token, groupId);
 	mTransQueue->queueRequest(token, 0, RS_TOKREQ_ANSTYPE_ACK, GXSTRANS_GROUP_STAT);
@@ -353,8 +350,6 @@ void GxsTransportStatistics::requestMsgMeta(const RsGxsGroupId& grpId)
 	std::cerr << "GxsTransportStatisticsWidget::requestGroupMeta()";
 	std::cerr << std::endl;
 #endif
-
-	mTransQueue->cancelActiveRequestTokens(GXSTRANS_MSG_META);
 
 	RsTokReqOptions opts;
 	opts.mReqType = GXS_REQUEST_TYPE_MSG_META;
@@ -369,12 +364,10 @@ void GxsTransportStatistics::requestMsgMeta(const RsGxsGroupId& grpId)
 
 void GxsTransportStatistics::loadGroupStat(const uint32_t &token)
 {
-#ifdef DEBUG_GXSTRANS_STATS
-    std::cerr << "GxsTransportStatistics::loadGroupStat." << std::endl;
-#endif
 	GxsGroupStatistic stats;
 	rsGxsTrans->getGroupStatistic(token, stats);
 
+	std::cerr << "Loading group stats: " << stats.mGrpId << ", num msgs=" << stats.mNumMsgs << ", total size=" << stats.mTotalSizeOfMsgs << std::endl;
     dynamic_cast<GxsGroupStatistic&>(mGroupStats[stats.mGrpId]) = stats ;
 }
 
