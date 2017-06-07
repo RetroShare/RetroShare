@@ -268,7 +268,7 @@ static const uint32_t RS_NXS_ITEM_ENCRYPTION_STATUS_GXS_KEY_MISSING     = 0x05 ;
 
 static const RsPeerId     peer_to_print     = RsPeerId(std::string(""))   ;
 static const RsGxsGroupId group_id_to_print = RsGxsGroupId(std::string("")) ;	// use this to allow to this group id only, or "" for all IDs
-static const uint32_t     service_to_print  = 0x215 ;                       	// use this to allow to this service id only, or 0 for all services
+static const uint32_t     service_to_print  = RS_SERVICE_TYPE_GXS_TRANS ;                       	// use this to allow to this service id only, or 0 for all services
 										// warning. Numbers should be SERVICE IDS (see serialiser/rsserviceids.h. E.g. 0x0215 for forums)
 
 class nullstream: public std::ostream {};
@@ -447,6 +447,9 @@ void RsGxsNetService::rejectMessage(const RsGxsMessageId& msg_id)
 {
     RS_STACK_MUTEX(mNxsMutex) ;
 
+#ifdef NXS_NET_DEBUG_0
+    GXSNETDEBUG___ << "adding message " << msg_id << " to rejection list for 24hrs." << std::endl;
+#endif
     mRejectedMessages[msg_id] = time(NULL) ;
 }
 void RsGxsNetService::cleanRejectedMessages()
@@ -595,9 +598,9 @@ void RsGxsNetService::syncWithPeers()
 #ifdef NXS_NET_DEBUG_0
 	    GXSNETDEBUG_PG(peerId,grpId) << "    peer can send messages for group " << grpId ;
 	    if(!encrypt_to_this_circle_id.isNull())
-		    std::cerr << " request should be encrypted for circle ID " << encrypt_to_this_circle_id << std::endl;
+		    GXSNETDEBUG_PG(peerId,grpId) << " request should be encrypted for circle ID " << encrypt_to_this_circle_id << std::endl;
 	    else
-		    std::cerr << " request should be sent in clear." << std::endl;
+		    GXSNETDEBUG_PG(peerId,grpId) << " request should be sent in clear." << std::endl;
 
 #endif
             // On default, the info has never been received so the TS is 0, meaning the peer has sent that it had no information.
@@ -1839,7 +1842,7 @@ void RsGxsNetService::debugDump()
 		    GXSNETDEBUG_PG(it->first,it2->first) << "      group " << it2->first << " - last updated at peer (secs ago): " << nice_time_stamp(time(NULL),it2->second.time_stamp) << ". Message count=" << it2->second.message_count << std::endl;
     }
 
-    GXSNETDEBUG___<< "  List of rejected message ids: " << mRejectedMessages.size() << std::endl;
+    GXSNETDEBUG___<< "  List of rejected message ids: " << std::dec << mRejectedMessages.size() << std::endl;
 #endif
 }
 
