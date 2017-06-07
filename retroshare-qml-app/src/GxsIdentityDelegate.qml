@@ -56,7 +56,7 @@ Item
 						"remote_gxs_hex": model.gxs_id }
 					rsApi.request("/chat/initiate_distant_chat",
 								  JSON.stringify(jsonData),
-								  contactsView.startChatCallback)
+								  startDistantChatCB)
 				}
 			}
 
@@ -113,7 +113,6 @@ Item
 
 					Text
 					{
-//						text: (lastMessageData.recv_time)? Date.fromLocaleDateString(locale, lastMessageData.recv_time, "ddd yyyy-MM-dd hh:mm:ss"): "sad"
 						text:  setTime()
 						anchors.right: parent.right
 						color: "darkslategrey"
@@ -258,6 +257,11 @@ Item
 		stackView.push(
 					"qrc:/ContactDetails.qml",
 					{md: contactsListView.model.get(index)})
+	}
+	function startDistantChatCB (par){
+		var chId = JSON.parse(par.response).data.chat_id
+		ChatCache.lastMessageCache.setRemoteGXS(chId,  model.gxs_id)
+		contactsView.startChatCallback (par)
 	}
 }
 
