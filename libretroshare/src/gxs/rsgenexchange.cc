@@ -1752,8 +1752,18 @@ void RsGenExchange::deleteGroup(uint32_t& token, const RsGxsGroupId& grpId)
 }
 void RsGenExchange::deleteMsgs(uint32_t& token, const GxsMsgReq& msgs)
 {
+	RS_STACK_MUTEX(mGenMtx) ;
+
 	token = mDataAccess->generatePublicToken();
 	mMsgDeletePublish.push_back(MsgDeletePublish(msgs, token));
+
+	// This code below will suspend any requests of the deleted messages for 24 hrs. This of course only works
+	// if all friend nodes consistently delete the messages in the mean time.
+
+	if(mNetService != NULL)
+		for(GxsMsgReq::const_iterator it(msgs.begin());it!=msgs.end();++it)
+			for(uint32_t i=0;i<it->second.size();++i)
+				mNetService->rejectMessage(it->second[i]) ;
 }
 
 void RsGenExchange::publishMsg(uint32_t& token, RsGxsMsgItem *msgItem)
