@@ -30,6 +30,7 @@
 #include "util/TokenQueue.h"
 #include "RsAutoUpdatePage.h"
 #include "ui_GxsTransportStatistics.h"
+#include "gui/gxs/RsGxsUpdateBroadcastPage.h"
 
 class GxsTransportStatisticsWidget ;
 class UIStateHelper;
@@ -45,7 +46,7 @@ public:
     std::vector<RsMsgMetaData> messages_metas ;
 };
 
-class GxsTransportStatistics: public RsAutoUpdatePage, public TokenResponse, public Ui::GxsTransportStatistics
+class GxsTransportStatistics: public RsGxsUpdateBroadcastPage, public TokenResponse, public Ui::GxsTransportStatistics
 {
 	Q_OBJECT
 
@@ -66,6 +67,7 @@ private slots:
 	void personDetails();
 
 private:
+	void updateDisplay(bool complete) ;
 	void loadGroupMeta(const uint32_t& token);
 	void loadGroupStat(const uint32_t& token);
 	void loadMsgMeta(const uint32_t& token);
@@ -76,8 +78,6 @@ private:
 
 	void processSettings(bool bLoad);
 	bool m_bProcessSettings;
-
-	virtual void updateDisplay() ;
 
 	GxsTransportStatisticsWidget *_tst_CW ;
 	TokenQueue *mTransQueue ;

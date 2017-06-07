@@ -387,7 +387,7 @@ void p3GxsTrans::service_tick()
 
 	// now grab collected messages to delete
 
-    if(mCleanupThread != NULL && !mCleanupThread->isDone())
+    if(mCleanupThread != NULL && mCleanupThread->isDone())
 	{
 		GxsMsgReq msgToDel ;
 
@@ -543,6 +543,7 @@ void p3GxsTrans::notifyChanges(std::vector<RsGxsNotify*>& changes)
 			}
 		}
 	}
+	RsGxsIfaceHelper::receiveChanges(changes);
 }
 
 uint32_t p3GxsTrans::AuthenPolicy()
