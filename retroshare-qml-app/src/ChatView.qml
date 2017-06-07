@@ -58,27 +58,17 @@ Item
 		query: "$.data[*]"
 	}
 
-	Component
-	{
-		id: chatMessageDelegate
-		Item
-		{
-			height: 20
-			Row
-			{
-				Text { text: author_name }
-				Text { text: ": " + msg }
-			}
-		}
-	}
-
 	ListView
 	{
 		id: chatListView
-		width: parent.width
+		width: parent.width - 7
+		anchors.horizontalCenter: parent.horizontalCenter
 		height: 300
 		model: chatModel.model
-		delegate: chatMessageDelegate
+		delegate: ChatBubbleDelegate {}
+		spacing: 3
+		preferredHighlightBegin: 1
+
 	}
 
 	TextField
