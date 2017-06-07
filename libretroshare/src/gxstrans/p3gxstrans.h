@@ -159,7 +159,7 @@ private:
 	 * Two weeks seems fair ATM.
 	 */
 	static const uint32_t GXS_STORAGE_PERIOD = 0x127500;
-	static const uint32_t MAX_DELAY_BETWEEN_CLEANUPS = 1203; // every 20 mins. Could be less.
+    static const uint32_t MAX_DELAY_BETWEEN_CLEANUPS = 1203; // every 20 mins. Could be less.
 
     time_t mLastMsgCleanup ;
 
@@ -282,7 +282,7 @@ private:
 		enum CheckState { CheckStart, CheckChecking };
 
 	public:
-        GxsTransIntegrityCleanupThread(RsGeneralDataService *const dataService): mDs(dataService),mMtx("GxsTransIntegrityCheck") {}
+        GxsTransIntegrityCleanupThread(RsGeneralDataService *const dataService): mDs(dataService),mMtx("GxsTransIntegrityCheck") { mDone=false;}
 
 		bool isDone();
 		void run();
@@ -296,6 +296,7 @@ private:
 		RsMutex mMtx ;
 
 		GxsMsgReq mMsgToDel ;
+        bool mDone ;
 	};
 
     GxsTransIntegrityCleanupThread *mCleanupThread ;
