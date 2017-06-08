@@ -35,6 +35,8 @@
 #include "HandleRichText.h"
 #include "gui/RetroShareLink.h"
 #include "util/ObjectPainter.h"
+#include "util/imageutil.h"
+#include "util/rsscopetimer.h"
 
 #include <iostream>
 
@@ -1119,48 +1121,9 @@ bool RsHtml::makeEmbeddedImage(const QString &fileName, QString &embeddedImage, 
 /** Converts image to embedded image HTML fragment **/
 bool RsHtml::makeEmbeddedImage(const QImage &originalImage, QString &embeddedImage, const int maxPixels)
 {
-	QByteArray bytearray;
-	QBuffer buffer(&bytearray);
-	QImage resizedImage;
-	const QImage *image = &originalImage;
-
-	if (maxPixels > 0) {
-		QSize imgSize = originalImage.size();
-		if ((imgSize.height() * imgSize.width()) > maxPixels) {
-			// image is too large - resize keeping aspect ratio
-			QSize newSize;
-			newSize.setWidth(int(qSqrt((maxPixels * imgSize.width()) / imgSize.height())));
-			newSize.setHeight(int((imgSize.height() * newSize.width()) / imgSize.width()));
-
-			// ask user
-			QMessageBox msgBox;
-			msgBox.setText(QString(QApplication::translate("RsHtml", "Image is oversized for transmission.\nReducing image to %1x%2 pixels?")).arg(newSize.width()).arg(newSize.height()));
-			msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
-			msgBox.setDefaultButton(QMessageBox::Ok);
-			if (msgBox.exec() != QMessageBox::Ok) {
-				return false;
-			}
-			resizedImage = originalImage.scaled(newSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-			image = &resizedImage;
-		}
-	}
-
-	if (buffer.open(QIODevice::WriteOnly)) {
-		if (image->save(&buffer, "PNG")) {
-			QByteArray encodedByteArray = bytearray.toBase64();
-
-			embeddedImage = "<img src=\"data:image/png;base64,";
-			embeddedImage.append(encodedByteArray);
-			embeddedImage.append("\">");
-		} else {
-            //fprintf (stderr, "RsHtml::makeEmbeddedImage() - image can't be saved to buffer\n");
-			return false;
-		}
-	} else {
-		fprintf (stderr, "RsHtml::makeEmbeddedImage() - buffer can't be opened\n");
-		return false;
-	}
-	return true;
+	RsScopeTimer s("Embed image");
+	QImage opt;
+	ImageUtil::optimizeSize(embeddedImage, originalImage, opt, maxPixels, 6000);
 }
 
 QString RsHtml::plainText(const QString &text)
