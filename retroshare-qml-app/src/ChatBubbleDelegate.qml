@@ -22,6 +22,7 @@ Item {
 
 
 	Rectangle {
+		id: rootBubble
 		anchors.fill: parent
 		width: parent.width
 		height: parent.height
@@ -29,7 +30,10 @@ Item {
 		Rectangle
 		{
 			id: bubble
-			width: Math.max(mesageText.implicitWidth, sendersName.implicitWidth ) + timeText.implicitWidth + styles.aditionalBubbleWidth
+			width: Math.min (
+					   rootBubble.width * styles.bubbleMaxWidth,
+					    Math.max(mesageText.implicitWidth, sendersName.implicitWidth )
+					   )  + timeText.implicitWidth + styles.aditionalBubbleWidth
 			height: mesageText.height + sendersName.height  + styles.aditionalBubbleHeight
 
 
@@ -77,7 +81,7 @@ Item {
 			Text {
 				id: mesageText
 				text: model.msg
-
+				width: rootBubble.width * styles.bubbleMaxWidth
 				anchors.left: (model.incoming)?  parent.left : undefined
 				anchors.right:(!model.incoming)?  parent.right : undefined
 
@@ -85,10 +89,12 @@ Item {
 				anchors.leftMargin: styles.lMarginBubble
 				anchors.rightMargin: styles.rMarginBubble
 
-//				wrapMode: Text.Wrap
+				horizontalAlignment: (!model.incoming &&
+									  mesageText.implicitWidth <= (rootBubble.width * styles.bubbleMaxWidth)
+									  )? Text.AlignRight : Text.AlignLeft
+
+				wrapMode: Text.Wrap
 			}
-
-
 
 		}
 
