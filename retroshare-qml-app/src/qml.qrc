@@ -32,5 +32,8 @@
         <file>ChatCache.qml</file>
         <file>ChatBubbleDelegate.qml</file>
         <file>styles/ChatBubblesStyle.qml</file>
+        <file>icons/send-message.svg</file>
+        <file>icons/attach.svg</file>
+        <file>components/BtnIcon.qml</file>
     </qresource>
 </RCC>
