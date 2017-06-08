@@ -11,14 +11,7 @@ Item {
 	height: bubble.height
 	width: parent.width
 
-//	property int lMarginBubble: 10
-//	property int rMarginBubble: 10
-//	property int tMarginBubble: 5
-//	property int bMarginBubble: 10
-//	property int aditionalBubbleHeight: tMarginBubble * 2
-//	property int aditionalBubbleWidth: 30
-
-	property var styles: StyleChatBubble
+	property var styles: StyleChat.bubble
 
 
 	Rectangle {
