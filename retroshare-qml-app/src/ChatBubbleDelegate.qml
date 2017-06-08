@@ -71,7 +71,7 @@ Item {
 				anchors.left: (!model.incoming)?  parent.left : undefined
 				anchors.right:(model.incoming)?  parent.right : undefined
 
-				anchors.bottom:  bubble.bottom
+				anchors.top:  bubble.top
 				anchors.leftMargin: styles.lMarginBubble
 				anchors.rightMargin: styles.rMarginBubble
 				anchors.topMargin: styles.tMarginBubble
