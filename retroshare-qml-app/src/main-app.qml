@@ -57,6 +57,18 @@ ApplicationWindow
 	header: ToolBar
 	{
 		id: toolBar
+		property alias titleText: toolBarText.text
+		property string defaultLabel: "RetroShare"
+
+		states: [
+			State {
+				name: "DEFAULT"
+				PropertyChanges { target: toolBar; titleText: defaultLabel}
+			},
+			State {
+				name: "CHATVIEW"
+			}
+		]
 
 		Image
 		{
@@ -68,7 +80,8 @@ ApplicationWindow
 		}
 		Label
 		{
-			text: "RetroShare"
+			id: toolBarText
+			text: defaultLabel
 			anchors.verticalCenter: parent.verticalCenter
 			anchors.left: rsIcon.right
 			anchors.leftMargin: 20
@@ -135,7 +148,15 @@ ApplicationWindow
 		id: stackView
 		anchors.fill: parent
 		focus: true
-		onCurrentItemChanged: if (currentItem) currentItem.focus = true
+		onCurrentItemChanged: {
+			if (currentItem) {
+				if (currentItem.objectName != "chatView" && toolBar.state != "DEFAULT"){
+					 toolBar.state = "DEFAULT"
+				}
+				currentItem.focus = true
+			}
+		}
+
 		Keys.onReleased:
 			if (event.key === Qt.Key_Back && stackView.depth > 1)
 			{

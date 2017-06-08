@@ -27,6 +27,8 @@ Item
 	property string chatId
 	property int token: 0
 
+	property string objectName:"chatView"
+
 
 	function refreshData()
 	{

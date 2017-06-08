@@ -94,6 +94,11 @@ Item {
 
 	}
 
+	Component.onCompleted: {
+		toolBar.state = "CHATVIEW"
+		toolBar.titleText =  model.author_name
+	}
+
 	function getMessageTime(){
 
 		var timeFormat = "hh:mm";
