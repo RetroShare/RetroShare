@@ -81,7 +81,6 @@ ApplicationWindow
 		Label
 		{
 			id: toolBarText
-			text: defaultLabel
 			anchors.verticalCenter: parent.verticalCenter
 			anchors.left: rsIcon.right
 			anchors.leftMargin: 20
