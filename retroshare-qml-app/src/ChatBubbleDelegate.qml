@@ -1,7 +1,9 @@
 import QtQuick 2.7
 import QtQuick.Layouts 1.2
 import QtQuick.Controls 2.0
-
+import "." // To load styles
+//import './styles'
+//import "styles/ChatBubblesStyle.qml" as Style
 
 Item {
 
@@ -9,12 +11,14 @@ Item {
 	height: bubble.height
 	width: parent.width
 
-	property int lMarginBubble: 10
-	property int rMarginBubble: 10
-	property int tMarginBubble: 5
-	property int bMarginBubble: 10
-	property int aditionalBubbleHeight: tMarginBubble * 2
-	property int aditionalBubbleWidth: 30
+//	property int lMarginBubble: 10
+//	property int rMarginBubble: 10
+//	property int tMarginBubble: 5
+//	property int bMarginBubble: 10
+//	property int aditionalBubbleHeight: tMarginBubble * 2
+//	property int aditionalBubbleWidth: 30
+
+	property var styles: StyleChatBubble
 
 
 	Rectangle {
@@ -25,29 +29,28 @@ Item {
 		Rectangle
 		{
 			id: bubble
-			width: Math.max(mesageText.implicitWidth, sendersName.implicitWidth ) + timeText.implicitWidth + aditionalBubbleWidth
-//			height: mesageText.height + mesageText.anchors.margins + 10
-			height: mesageText.height + sendersName.height  + aditionalBubbleHeight
+			width: Math.max(mesageText.implicitWidth, sendersName.implicitWidth ) + timeText.implicitWidth + styles.aditionalBubbleWidth
+			height: mesageText.height + sendersName.height  + styles.aditionalBubbleHeight
 
 
 			anchors.left: (model.incoming)?  parent.left : undefined
 			anchors.right: (!model.incoming)?  parent.right : undefined
 
 
-			color: (!model.incoming)? "aliceblue" : "lightGreen"
-			radius: 5
+			color: (!model.incoming)? styles.colorOutgoing : styles.colorIncoming
+			radius:  styles.radius
 
 
 			Text {
 				id: sendersName
 				visible: model.incoming
 				text: (model.incoming)? model.author_name + ":" : ""
-				color: "cornflowerblue"
+				color: styles.colorSenderName
 				font.bold: true
 
-				anchors.leftMargin:lMarginBubble/2
-				anchors.rightMargin: rMarginBubble
-				anchors.topMargin: tMarginBubble
+				anchors.leftMargin: styles.lMarginBubble
+				anchors.rightMargin: styles.rMarginBubble
+				anchors.topMargin: styles.tMarginBubble
 				anchors.top: bubble.top
 
 				anchors.left: (model.incoming)?  parent.left : undefined
@@ -59,15 +62,15 @@ Item {
 			Text {
 				id: timeText
 				text: getMessageTime()
-				color: "grey"
+				color: styles.colorMessageTime
 
 				anchors.left: (!model.incoming)?  parent.left : undefined
 				anchors.right:(model.incoming)?  parent.right : undefined
 
 				anchors.bottom:  bubble.bottom
-				anchors.leftMargin:lMarginBubble
-				anchors.rightMargin: rMarginBubble
-				anchors.topMargin: tMarginBubble
+				anchors.leftMargin: styles.lMarginBubble
+				anchors.rightMargin: styles.rMarginBubble
+				anchors.topMargin: styles.tMarginBubble
 			}
 
 
@@ -79,9 +82,8 @@ Item {
 				anchors.right:(!model.incoming)?  parent.right : undefined
 
 				anchors.top: sendersName.bottom
-//				anchors.bottomMargin: bMarginBubble
-				anchors.leftMargin:lMarginBubble
-				anchors.rightMargin: rMarginBubble
+				anchors.leftMargin: styles.lMarginBubble
+				anchors.rightMargin: styles.rMarginBubble
 
 //				wrapMode: Text.Wrap
 			}
