@@ -20,7 +20,7 @@ import QtQuick 2.7
 import QtQuick.Controls 2.0
 import org.retroshare.qml_components.LibresapiLocalClient 1.0
 import "." //Needed for TokensManager singleton
-
+import "./components"
 Item
 {
 	id: chatView
@@ -73,26 +73,76 @@ Item
 
 	}
 
-	TextField
-	{
-		id: msgComposer
-		anchors.bottom: parent.bottom
-		anchors.left: parent.left
-		width: chatView.width - sendButton.width
-	}
+	Item {
 
-	Button
-	{
-		id: sendButton
-		text: "Send"
-		anchors.bottom: parent.bottom
-		anchors.right: parent.right
+		property var styles: StyleChat.inferiorPanel
 
-		onClicked:
-		{
-			var jsonData = {"chat_id":chatView.chatId, "msg":msgComposer.text}
-			rsApi.request( "/chat/send_message", JSON.stringify(jsonData),
-						   function(par) { msgComposer.text = ""; } )
+		id: inferiorPanel
+		height: styles.height
+		width: parent.width
+		anchors.bottom: parent.bottom
+
+		Rectangle {
+			anchors.fill: parent.fill
+			width: parent.width
+			height: parent.height
+			color:inferiorPanel.styles.backgroundColor
+			border.color: inferiorPanel.styles.borderColor
 		}
+
+		BtnIcon {
+
+			id: attachButton
+
+			property var styles: StyleChat.inferiorPanel.btnIcon
+
+			height: styles.height
+			width: styles.width
+
+			anchors.verticalCenter: parent.verticalCenter
+			anchors.left: parent.left
+
+			imgUrl: styles.attachIconUrl
+		}
+
+
+		TextField
+		{
+			property var styles: StyleChat.inferiorPanel.msgComposer
+
+			id: msgComposer
+			anchors.bottom: parent.bottom
+			anchors.left: attachButton.right
+
+			width: chatView.width - sendButton.width - attachButton.width
+			height: parent.height -5
+
+			placeholderText: styles.placeHolder
+			background: styles.background
+
+		}
+
+		BtnIcon {
+
+			id: sendButton
+
+			property var styles: StyleChat.inferiorPanel.btnIcon
+
+			height: styles.height
+			width: styles.width
+
+			anchors.verticalCenter: parent.verticalCenter
+			anchors.left: msgComposer.right
+
+			imgUrl:	styles.sendIconUrl
+
+			onClicked:
+			{
+				var jsonData = {"chat_id":chatView.chatId, "msg":msgComposer.text}
+				rsApi.request( "/chat/send_message", JSON.stringify(jsonData),
+							   function(par) { msgComposer.text = ""; } )
+			}
+		}
+
 	}
 }
