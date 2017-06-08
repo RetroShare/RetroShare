@@ -414,16 +414,18 @@ void ChatHandler::tick()
                 }
             }
             else if(msg.chat_id.isDistantChatId())
-            {
-                RsIdentityDetails details;
-                DistantChatPeerInfo dcpinfo ;
-                
-                if(!gxs_id_failed && rsMsgs->getDistantChatStatus(msg.chat_id.toDistantChatId(),dcpinfo)
-                                  && mRsIdentity->getIdDetails(msg.incoming? dcpinfo.to_id: dcpinfo.own_id, details))
-                {
-                    info.remote_author_id = details.mId.toStdString();
-                    info.remote_author_name = details.mNickname;
-                }
+			{
+				RsIdentityDetails details;
+				DistantChatPeerInfo dcpinfo;
+
+				if( !gxs_id_failed &&
+				        rsMsgs->getDistantChatStatus(
+				            msg.chat_id.toDistantChatId(), dcpinfo ) &&
+				        mRsIdentity->getIdDetails(dcpinfo.to_id, details) )
+				{
+					info.remote_author_id = details.mId.toStdString();
+					info.remote_author_name = details.mNickname;
+				}
                 else
                 {
                     gxs_id_failed = true;
