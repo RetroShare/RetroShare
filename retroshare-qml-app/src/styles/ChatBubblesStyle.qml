@@ -46,7 +46,7 @@ QtObject {
 			readonly property int width: 30
 			readonly property int height: 30
 
-			readonly property int margin: 10
+			readonly property int margin: 5
 
 			readonly property string sendIconUrl: "/icons/send-message.svg"
 			readonly property string attachIconUrl: "/icons/attach.svg"

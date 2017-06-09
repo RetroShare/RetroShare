@@ -18,6 +18,7 @@
 
 import QtQuick 2.7
 import QtQuick.Controls 2.0
+import QtQuick.Layouts 1.2
 import org.retroshare.qml_components.LibresapiLocalClient 1.0
 import "." //Needed for TokensManager singleton
 import "./components"
@@ -78,11 +79,12 @@ Item
 		property var styles: StyleChat.inferiorPanel
 
 		id: inferiorPanel
-		height: styles.height
+		height:  (msgComposer.height > styles.height)? msgComposer.height: styles.height
 		width: parent.width
 		anchors.bottom: parent.bottom
 
 		Rectangle {
+			id: backgroundRectangle
 			anchors.fill: parent.fill
 			width: parent.width
 			height: parent.height
@@ -99,26 +101,35 @@ Item
 			height: styles.height
 			width: styles.width
 
-			anchors.verticalCenter: parent.verticalCenter
 			anchors.left: parent.left
+			anchors.bottom: parent.bottom
+
+			anchors.margins: styles.margin
 
 			imgUrl: styles.attachIconUrl
 		}
 
 
-		TextField
+		TextArea
 		{
 			property var styles: StyleChat.inferiorPanel.msgComposer
-
 			id: msgComposer
-			anchors.bottom: parent.bottom
+
+			anchors.verticalCenter: parent.verticalCenter
 			anchors.left: attachButton.right
 
-			width: chatView.width - sendButton.width - attachButton.width - emojiButton.width
-			height: parent.height -5
+			height: (contentHeight > font.pixelSize)? contentHeight +font.pixelSize : parent.styles.height
+			width: chatView.width -
+				   (sendButton.width + sendButton.anchors.margins) -
+				   (attachButton.width + attachButton.anchors.margins) -
+				   (emojiButton.width + emojiButton.anchors.margins)
+
+
 
 			placeholderText: styles.placeHolder
 			background: styles.background
+
+			wrapMode: TextEdit.Wrap
 
 			onTextChanged: {
 				if (msgComposer.length == 0)
@@ -142,8 +153,10 @@ Item
 			height: styles.height
 			width: styles.width
 
-			anchors.verticalCenter: parent.verticalCenter
-			anchors.left: msgComposer.right
+			anchors.right: sendButton.left
+			anchors.bottom: parent.bottom
+
+			anchors.margins: styles.margin
 
 			imgUrl: styles.emojiIconUrl
 		}
@@ -158,8 +171,10 @@ Item
 			height: styles.height
 			width: styles.width
 
-			anchors.verticalCenter: parent.verticalCenter
-			anchors.left: emojiButton.right
+			anchors.right: parent.right
+			anchors.bottom: parent.bottom
+
+			anchors.margins: styles.margin
 
 			imgUrl: styles.microIconUrl
 
