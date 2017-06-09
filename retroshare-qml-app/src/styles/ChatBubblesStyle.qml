@@ -34,6 +34,7 @@ QtObject {
 
 		property QtObject msgComposer: QtObject{
 			readonly property string placeHolder: "Send message..."
+			readonly property int maxHeight: 2 // chatListView/maxHeight
 
 			property QtObject background: Rectangle {
 				color: "transparent"
@@ -56,9 +57,12 @@ QtObject {
 
 
 		}
+	}
 
-
-
+	property QtObject chat: QtObject {
+		// Measures
+		readonly property int bubbleMargin: 20
+		readonly property int bubbleSpacing: 10
 
 	}
 

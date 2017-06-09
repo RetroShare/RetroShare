@@ -63,14 +63,19 @@ Item
 
 	ListView
 	{
+		property var styles: StyleChat.chat
 		id: chatListView
-		width: parent.width - 20
+		width: parent.width - styles.bubbleMargin
+		height: parent.height - inferiorPanel.height
 		anchors.horizontalCenter: parent.horizontalCenter
-		height: 300
 		model: chatModel.model
 		delegate: ChatBubbleDelegate {}
-		spacing: 10
+		spacing: styles.bubbleSpacing
 		preferredHighlightBegin: 1
+
+		onHeightChanged: {
+			chatListView.currentIndex = count - 1
+		}
 
 	}
 
@@ -79,7 +84,7 @@ Item
 		property var styles: StyleChat.inferiorPanel
 
 		id: inferiorPanel
-		height:  (msgComposer.height > styles.height)? msgComposer.height: styles.height
+		height:  ( msgComposer.height > styles.height)? msgComposer.height: styles.height
 		width: parent.width
 		anchors.bottom: parent.bottom
 
@@ -118,11 +123,17 @@ Item
 			anchors.verticalCenter: parent.verticalCenter
 			anchors.left: attachButton.right
 
-			height: (contentHeight > font.pixelSize)? contentHeight +font.pixelSize : parent.styles.height
+			height: setTextAreaHeight()
+
+////
+////				(contentHeight > font.pixelSize)? contentHeight +font.pixelSize : parent.styles.height
+
+
 			width: chatView.width -
 				   (sendButton.width + sendButton.anchors.margins) -
 				   (attachButton.width + attachButton.anchors.margins) -
 				   (emojiButton.width + emojiButton.anchors.margins)
+
 
 			placeholderText: styles.placeHolder
 			background: styles.background
@@ -137,6 +148,21 @@ Item
 				else if (msgComposer.length > 0)
 				{
 					sendButton.state = "SENDBTN"
+				}
+			}
+
+			function setTextAreaHeight (){
+				if (msgComposer.height >= chatView.height / msgComposer.styles.maxHeight)
+				{
+					return msgComposer.height
+				}
+				else if (contentHeight > font.pixelSize)
+				{
+					return msgComposer.contentHeight + msgComposer.font.pixelSize
+				}
+				else
+				{
+					return  parent.styles.height
 				}
 			}
 
