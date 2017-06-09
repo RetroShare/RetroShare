@@ -64,12 +64,12 @@ Item
 	ListView
 	{
 		id: chatListView
-		width: parent.width - 7
+		width: parent.width - 20
 		anchors.horizontalCenter: parent.horizontalCenter
 		height: 300
 		model: chatModel.model
 		delegate: ChatBubbleDelegate {}
-		spacing: 3
+		spacing: 10
 		preferredHighlightBegin: 1
 
 	}
@@ -123,8 +123,6 @@ Item
 				   (sendButton.width + sendButton.anchors.margins) -
 				   (attachButton.width + attachButton.anchors.margins) -
 				   (emojiButton.width + emojiButton.anchors.margins)
-
-
 
 			placeholderText: styles.placeHolder
 			background: styles.background
