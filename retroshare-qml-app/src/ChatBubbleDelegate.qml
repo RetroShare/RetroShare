@@ -51,7 +51,9 @@ Item {
 				anchors.left: (model.incoming)?  parent.left : undefined
 				anchors.right:(!model.incoming)?  parent.right : undefined
 
-				height: (model.incoming)? implicitHeight : 0
+				// Used for give minimum heigh to time when the message is bigger than the bubble in sended messages
+				height: (model.incoming || !model.incoming &&
+						 mesageText.implicitWidth >= (rootBubble.width * styles.bubbleMaxWidth) )? implicitHeight : 0
 			}
 
 			Text {
@@ -66,13 +68,14 @@ Item {
 				anchors.leftMargin: styles.lMarginBubble
 				anchors.rightMargin: styles.rMarginBubble
 				anchors.topMargin: styles.tMarginBubble
+
 			}
 
 
 			Text {
 				id: mesageText
 				text: model.msg
-				width: rootBubble.width * styles.bubbleMaxWidth
+				width: rootBubble.width * styles.bubbleMaxWidth + timeText.width
 				anchors.left: (model.incoming)?  parent.left : undefined
 				anchors.right:(!model.incoming)?  parent.right : undefined
 
@@ -80,9 +83,10 @@ Item {
 				anchors.leftMargin: styles.lMarginBubble
 				anchors.rightMargin: styles.rMarginBubble
 
-				horizontalAlignment: (!model.incoming &&
-									  mesageText.implicitWidth <= (rootBubble.width * styles.bubbleMaxWidth)
-									  )? Text.AlignRight : Text.AlignLeft
+				// Used for the correct alineation when the message must be on right
+				horizontalAlignment:(!model.incoming &&
+									     mesageText.implicitWidth <= (rootBubble.width * styles.bubbleMaxWidth)
+									                       )? Text.AlignRight : Text.AlignLeft
 
 				wrapMode: Text.Wrap
 			}
