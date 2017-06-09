@@ -1,5 +1,6 @@
 #include "imageutil.h"
 #include "util/misc.h"
+#include "util/rsscopetimer.h"
 
 #include <QApplication>
 #include <QByteArray>
@@ -11,6 +12,7 @@
 #include <QBuffer>
 #include <QtGlobal>
 #include <QtMath>
+#include <QSet>
 #include <iostream>
 
 ImageUtil::ImageUtil() {}
@@ -55,13 +57,16 @@ void ImageUtil::optimizeSize(QString &html, const QImage& original, QImage &opti
 		}
 	}
 
+	QVector<QRgb> ct;
+	quantization(original, ct);
+
 	//Downscale the image to fit into maxPixels
 	qreal scale = qSqrt((qreal)(maxPixels) / original.width() / original.height());
 	if(scale > 1.0) scale = 1.0;
 
 	//Half the resolution until image fits into maxBytes, or width becomes 0
 	do {
-		optimized = original.scaledToWidth((int)(original.width() * scale), Qt::SmoothTransformation).convertToFormat(QImage::Format_Indexed8);
+		optimized = original.scaledToWidth((int)(original.width() * scale), Qt::SmoothTransformation).convertToFormat(QImage::Format_Indexed8, ct);
 		checkSize(html, optimized, maxBytes);
 		scale = scale / 2.0;
 	} while((!optimized.isNull()) && (!checkSize(html, optimized, maxBytes)));
@@ -120,4 +125,113 @@ bool ImageUtil::checkSize(QString &embeddedImage, const QImage &img, int maxByte
 
 	embeddedImage.clear();
 	return false;
+}
+
+bool redLessThan(const QRgb &c1, const QRgb &c2)
+{
+	return qRed(c1) < qRed(c2);
+}
+
+bool greenLessThan(const QRgb &c1, const QRgb &c2)
+{
+	return qGreen(c1) < qGreen(c2);
+}
+
+bool blueLessThan(const QRgb &c1, const QRgb &c2)
+{
+	return qBlue(c1) < qBlue(c2);
+}
+
+//median cut algoritmh
+void ImageUtil::quantization(const QImage &img, QVector<QRgb> &palette)
+{
+	int bits = 4;	// bits/pixel
+	RsScopeTimer st("Quantization");
+	QSet<QRgb> colors;
+
+	//collect color information
+	for (int x = 0; x < img.width(); ++x) {
+		for (int y = 0; y < img.height(); ++y) {
+			QRgb rgb = img.pixel(x, y);
+			colors.insert(rgb);
+		}
+	}
+
+	QList<QRgb> colorlist = colors.toList();
+	//don't do the algoritmh if we have less than 16 different colors
+	if(colorlist.size() <= (1 << bits)) {
+		for(int i = 0; i < colors.count(); ++i)
+			palette.append(colorlist[i]);
+	} else {
+		quantization(colorlist.begin(), colorlist.end(), bits, palette);
+	}
+}
+
+void ImageUtil::quantization(QList<QRgb>::iterator begin, QList<QRgb>::iterator end, int depth, QVector<QRgb> &palette)
+{
+	//the buckets are ready
+	if(depth == 0) {
+		avgbucket(begin, end, palette);
+		return;
+	}
+
+	//nothing to do
+	int count = end - begin;
+	if(count == 1) {
+		palette.append(*begin);
+		return;
+	}
+
+	//widest color channel
+	int rl = 255;
+	int gl = 255;
+	int bl = 255;
+	int rh = 0;
+	int gh = 0;
+	int bh = 0;
+	for(QList<QRgb>::iterator it = begin; it < end; ++it) {
+		rl = qMin(rl, qRed(*it));
+		gl = qMin(gl, qGreen(*it));
+		bl = qMin(bl, qBlue(*it));
+		rh = qMax(rh, qRed(*it));
+		gh = qMax(gh, qGreen(*it));
+		bh = qMax(bh, qBlue(*it));
+	}
+	int red = rh - rl;
+	int green = gh - gl;
+	int blue = bh - bl;
+
+	//order by the widest channel
+	if(red > green)
+		if(red > blue)
+			qSort(begin, end, redLessThan);
+		else
+			qSort(begin, end, blueLessThan);
+	else
+		if(green > blue)
+			qSort(begin, end, greenLessThan);
+		else
+			qSort(begin, end, blueLessThan);
+
+	//split into two buckets
+	QList<QRgb>::iterator split = begin + count / 2;
+	quantization(begin, split, depth - 1, palette);
+	quantization(split, end, depth - 1, palette);
+}
+
+void ImageUtil::avgbucket(QList<QRgb>::iterator begin, QList<QRgb>::iterator end, QVector<QRgb> &palette)
+{
+	int red = 0;
+	int green = 0;
+	int blue = 0;
+	int count = end - begin;
+
+	for(QList<QRgb>::iterator it = begin; it < end; ++it) {
+		red += qRed(*it);
+		green += qGreen(*it);
+		blue += qBlue(*it);
+	}
+
+	QRgb color = qRgb(red/count, green/count, blue/count);
+	palette.append(color);
 }
