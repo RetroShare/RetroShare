@@ -29,7 +29,7 @@ QtObject {
 	property QtObject inferiorPanel: QtObject{
 		// Panel globals
 		readonly property int height: 40
-		readonly property string backgroundColor: "transparent"
+		readonly property string backgroundColor: "white"
 		readonly property string borderColor: "lightGrey"
 
 		property QtObject msgComposer: QtObject{
