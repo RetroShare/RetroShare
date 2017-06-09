@@ -46,8 +46,14 @@ QtObject {
 			readonly property int width: 30
 			readonly property int height: 30
 
+			readonly property int margin: 10
+
 			readonly property string sendIconUrl: "/icons/send-message.svg"
 			readonly property string attachIconUrl: "/icons/attach.svg"
+			readonly property string microIconUrl: "/icons/microphone.svg"
+			readonly property string microMuteIconUrl: "/icons/microphone_mute.svg"
+			readonly property string emojiIconUrl: "/icons/smiley.svg"
+
 
 		}
 

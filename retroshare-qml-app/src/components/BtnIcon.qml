@@ -4,8 +4,8 @@ Item {
 
 	id: root
 	signal clicked
-//	signal pressed
-//	signal released
+	signal pressed
+	signal released
 
 	property var imgUrl: ""
 
@@ -21,7 +21,7 @@ Item {
 	MouseArea {
 		anchors.fill: root
 		onClicked: { root.clicked() }
-//		onPressed: { root.pressed() }
-//		onReleased: { root.released() }
+		onPressed: { root.pressed() }
+		onReleased: { root.released() }
 	}
 }

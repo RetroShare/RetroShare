@@ -114,17 +114,28 @@ Item
 			anchors.bottom: parent.bottom
 			anchors.left: attachButton.right
 
-			width: chatView.width - sendButton.width - attachButton.width
+			width: chatView.width - sendButton.width - attachButton.width - emojiButton.width
 			height: parent.height -5
 
 			placeholderText: styles.placeHolder
 			background: styles.background
 
+			onTextChanged: {
+				if (msgComposer.length == 0)
+				{
+					sendButton.state = ""
+				}
+				else if (msgComposer.length > 0)
+				{
+					sendButton.state = "SENDBTN"
+				}
+			}
+
 		}
 
 		BtnIcon {
 
-			id: sendButton
+			id: emojiButton
 
 			property var styles: StyleChat.inferiorPanel.btnIcon
 
@@ -134,14 +145,69 @@ Item
 			anchors.verticalCenter: parent.verticalCenter
 			anchors.left: msgComposer.right
 
-			imgUrl:	styles.sendIconUrl
+			imgUrl: styles.emojiIconUrl
+		}
+
+		BtnIcon {
+
+			id: sendButton
+
+			property var styles: StyleChat.inferiorPanel.btnIcon
+			property alias icon: sendButton.imgUrl
+
+			height: styles.height
+			width: styles.width
+
+			anchors.verticalCenter: parent.verticalCenter
+			anchors.left: emojiButton.right
+
+			imgUrl: styles.microIconUrl
 
 			onClicked:
 			{
-				var jsonData = {"chat_id":chatView.chatId, "msg":msgComposer.text}
-				rsApi.request( "/chat/send_message", JSON.stringify(jsonData),
-							   function(par) { msgComposer.text = ""; } )
+				if (sendButton.state == "SENDBTN" ) {
+					var jsonData = {"chat_id":chatView.chatId, "msg":msgComposer.text}
+					rsApi.request( "/chat/send_message", JSON.stringify(jsonData),
+								   function(par) { msgComposer.text = ""; } )
+				}
 			}
+
+			onPressed:
+			{
+				if (sendButton.state == "RECORDING" )
+				{
+					sendButton.state = ""
+				}
+				else if (sendButton.state == "" )
+				{
+					sendButton.state = "RECORDING"
+				}
+			}
+
+			onReleased:
+			{
+				if (sendButton.state == "RECORDING" )
+				{
+					sendButton.state = ""
+				}
+
+			}
+
+
+			states: [
+				State {
+					name: ""
+					PropertyChanges { target: sendButton; icon: styles.microIconUrl}
+				},
+				State {
+					name: "RECORDING"
+					PropertyChanges { target: sendButton; icon: styles.microMuteIconUrl}
+				},
+				State {
+					name: "SENDBTN"
+					PropertyChanges { target: sendButton; icon: styles.sendIconUrl}
+				}
+			]
 		}
 
 	}
