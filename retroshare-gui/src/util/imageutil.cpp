@@ -50,6 +50,7 @@ void ImageUtil::extractImage(QWidget *window, QTextCursor cursor)
 
 void ImageUtil::optimizeSize(QString &html, const QImage& original, QImage &optimized, int maxPixels, int maxBytes)
 {
+	//nothing to do if it fits into the limits
 	optimized = original;
 	if ((maxPixels <= 0) || (optimized.width()*optimized.height() <= maxPixels)) {
 		if(checkSize(html, optimized, maxBytes)) {
@@ -65,31 +66,42 @@ void ImageUtil::optimizeSize(QString &html, const QImage& original, QImage &opti
 	if(scale > 1.0) scale = 1.0;
 
 	//Half the resolution until image fits into maxBytes, or width becomes 0
+	bool success = false;
 	do {
 		optimized = original.scaledToWidth((int)(original.width() * scale), Qt::SmoothTransformation).convertToFormat(QImage::Format_Indexed8, ct);
-		checkSize(html, optimized, maxBytes);
+		success = checkSize(html, optimized, maxBytes);
 		scale = scale / 2.0;
-	} while((!optimized.isNull()) && (!checkSize(html, optimized, maxBytes)));
+	} while((!optimized.isNull()) && !success);
 }
 
 bool ImageUtil::checkSize(QString &embeddedImage, const QImage &img, int maxBytes)
 {
+	RsScopeTimer st("Check size");
+	//0 means no limit
+	if(maxBytes > 500)
+		maxBytes -= 500;	//make place for html stuff
+	else if(maxBytes > 0) {
+		std::cerr << QString("Limit is too small nothing will fit in, limit: %1 bytes\n").arg(maxBytes).toStdString();
+		return false;
+	}
+
 	QByteArray bytearray;
 	QBuffer buffer(&bytearray);
+	bool success = false;
 
 	std::cout << QString("Trying image: format PNG, size %1x%2, colors %3\n").arg(img.width()).arg(img.height()).arg(img.colorCount()).toStdString();
 	if (buffer.open(QIODevice::WriteOnly)) {
 		if (img.save(&buffer, "PNG", 0)) {
-			QByteArray encodedByteArray = bytearray.toBase64();
-			embeddedImage = "<img src=\"data:image/png;base64,";
-			embeddedImage.append(encodedByteArray);
-			embeddedImage.append("\">");
-			if((maxBytes > 0) && (embeddedImage.size() > maxBytes))
+			if((maxBytes > 0) && (bytearray.length() * 4/3 > maxBytes))	// *4/3 for base64
 			{
-				std::cout << QString("\tToo large, size: %1, limit: %2 bytes\n").arg(embeddedImage.size()).arg(maxBytes).toStdString();
+				std::cout << QString("\tToo large, size: %1, limit: %2 bytes\n").arg(bytearray.length() * 4/3).arg(maxBytes).toStdString();
 			}else{
-				std::cout << QString("\tOK, size: %1, limit: %2 bytes\n").arg(embeddedImage.size()).arg(maxBytes).toStdString();
-				return true;
+				std::cout << QString("\tOK, size: %1, limit: %2 bytes\n").arg(bytearray.length() * 4/3).arg(maxBytes).toStdString();
+				success = true;
+				QByteArray encodedByteArray = bytearray.toBase64();
+				embeddedImage = "<img src=\"data:image/png;base64,";
+				embeddedImage.append(encodedByteArray);
+				embeddedImage.append("\">");
 			}
 		} else {
 			std::cerr << "ImageUtil: image can't be saved to buffer" << std::endl;
@@ -99,32 +111,7 @@ bool ImageUtil::checkSize(QString &embeddedImage, const QImage &img, int maxByte
 	} else {
 		std::cerr << "ImageUtil: buffer can't be opened" << std::endl;
 	}
-
-	std::cout << QString("Trying image: format JPEG, size %1x%2, colors %3\n").arg(img.width()).arg(img.height()).arg(img.colorCount()).toStdString();
-	if (buffer.open(QIODevice::WriteOnly)) {
-		if (img.save(&buffer, "JPEG")) {
-			QByteArray encodedByteArray = bytearray.toBase64();
-			embeddedImage = "<img src=\"data:image/jpeg;base64,";
-			embeddedImage.append(encodedByteArray);
-			embeddedImage.append("\">");
-			if((maxBytes > 0) && (embeddedImage.size() > maxBytes))
-			{
-				std::cout << QString("\tToo large, size: %1, limit: %2 bytes\n").arg(embeddedImage.size()).arg(maxBytes).toStdString();
-			}else{
-				std::cout << QString("\tOK, size: %1, limit: %2 bytes\n").arg(embeddedImage.size()).arg(maxBytes).toStdString();
-				return true;
-			}
-		} else {
-			std::cerr << "ImageUtil: image can't be saved to buffer" << std::endl;
-		}
-		buffer.close();
-		bytearray.clear();
-	} else {
-		std::cerr << "ImageUtil: buffer can't be opened" << std::endl;
-	}
-
-	embeddedImage.clear();
-	return false;
+	return success;
 }
 
 bool redLessThan(const QRgb &c1, const QRgb &c2)
@@ -146,15 +133,19 @@ bool blueLessThan(const QRgb &c1, const QRgb &c2)
 void ImageUtil::quantization(const QImage &img, QVector<QRgb> &palette)
 {
 	int bits = 4;	// bits/pixel
+	int samplesize = 100000;	//only take this many color samples
+
 	RsScopeTimer st("Quantization");
 	QSet<QRgb> colors;
 
 	//collect color information
-	for (int x = 0; x < img.width(); ++x) {
-		for (int y = 0; y < img.height(); ++y) {
-			QRgb rgb = img.pixel(x, y);
-			colors.insert(rgb);
-		}
+	int imgsize = img.width()*img.height();
+	int width = img.width();
+	samplesize = qMin(samplesize, imgsize);
+	double sampledist = (double)imgsize / (double)samplesize;
+	for (double i = 0; i < imgsize; i += sampledist) {
+		QRgb pixel = img.pixel((int)i % width, (int)i / width);
+		colors.insert(pixel);
 	}
 
 	QList<QRgb> colorlist = colors.toList();
