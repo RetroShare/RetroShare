@@ -115,19 +115,11 @@ Item
 		}
 
 
-		TextArea
-		{
-			property var styles: StyleChat.inferiorPanel.msgComposer
+		RowLayout {
 			id: msgComposer
 
 			anchors.verticalCenter: parent.verticalCenter
 			anchors.left: attachButton.right
-
-			height: setTextAreaHeight()
-
-////
-////				(contentHeight > font.pixelSize)? contentHeight +font.pixelSize : parent.styles.height
-
 
 			width: chatView.width -
 				   (sendButton.width + sendButton.anchors.margins) -
@@ -135,38 +127,40 @@ Item
 				   (emojiButton.width + emojiButton.anchors.margins)
 
 
-			placeholderText: styles.placeHolder
-			background: styles.background
+			TextArea
+			{
+				property var styles: StyleChat.inferiorPanel.msgComposer
+				id: msgField
 
-			wrapMode: TextEdit.Wrap
+				height:
+					(contentHeight > font.pixelSize)?
+						contentHeight +font.pixelSize : parent.styles.height
 
-			onTextChanged: {
-				if (msgComposer.length == 0)
-				{
-					sendButton.state = ""
-				}
-				else if (msgComposer.length > 0)
-				{
-					sendButton.state = "SENDBTN"
-				}
-			}
+				width: parent.width
 
-			function setTextAreaHeight (){
-				if (msgComposer.height >= chatView.height / msgComposer.styles.maxHeight)
-				{
-					return msgComposer.height
+				Layout.maximumHeight: chatView.height / styles.maxHeight
+
+				placeholderText: styles.placeHolder
+				background: styles.background
+
+				wrapMode: TextEdit.Wrap
+
+				onTextChanged: {
+					if (msgComposer.length == 0)
+					{
+						sendButton.state = ""
+					}
+					else if (msgComposer.length > 0)
+					{
+						sendButton.state = "SENDBTN"
+					}
 				}
-				else if (contentHeight > font.pixelSize)
-				{
-					return msgComposer.contentHeight + msgComposer.font.pixelSize
-				}
-				else
-				{
-					return  parent.styles.height
-				}
+
 			}
 
 		}
+
+
 
 		BtnIcon {
 
