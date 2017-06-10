@@ -1123,7 +1123,8 @@ bool RsHtml::makeEmbeddedImage(const QImage &originalImage, QString &embeddedIma
 {
 	RsScopeTimer s("Embed image");
 	QImage opt;
-	ImageUtil::optimizeSize(embeddedImage, originalImage, opt, maxPixels, 6000);
+	ImageUtil::optimizeSize(embeddedImage, originalImage, opt, maxPixels, 6000-500);
+	// -500 bytes: keep space for html stuff
 }
 
 QString RsHtml::plainText(const QString &text)
