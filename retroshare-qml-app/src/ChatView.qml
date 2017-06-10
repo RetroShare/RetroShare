@@ -117,6 +117,7 @@ Item
 
 		RowLayout {
 			id: msgComposer
+			property var styles: StyleChat.inferiorPanel.msgComposer
 
 			anchors.verticalCenter: parent.verticalCenter
 			anchors.left: attachButton.right
@@ -126,36 +127,49 @@ Item
 				   (attachButton.width + attachButton.anchors.margins) -
 				   (emojiButton.width + emojiButton.anchors.margins)
 
+			height: (flickable.contentHeight <  styles.maxHeight)? flickable.contentHeight : styles.maxHeight
 
-			TextArea
-			{
-				property var styles: StyleChat.inferiorPanel.msgComposer
-				id: msgField
-
-				height:
-					(contentHeight > font.pixelSize)?
-						contentHeight +font.pixelSize : parent.styles.height
+			Flickable {
+				id: flickable
+				anchors.fill: parent
+				flickableDirection: Flickable.VerticalFlick
 
 				width: parent.width
 
-				Layout.maximumHeight: chatView.height / styles.maxHeight
+				contentWidth: msgField.width
+				contentHeight: msgField.height
+				contentY: contentHeight - height
 
-				placeholderText: styles.placeHolder
-				background: styles.background
+				ScrollBar.vertical: ScrollBar {}
 
-				wrapMode: TextEdit.Wrap
+				clip: true
 
-				onTextChanged: {
-					if (msgComposer.length == 0)
-					{
-						sendButton.state = ""
+				TextArea
+				{
+					property var styles: StyleChat.inferiorPanel.msgComposer
+					id: msgField
+
+					height: contentHeight + font.pixelSize
+
+					width: parent.width
+
+					placeholderText: styles.placeHolder
+					background: styles.background
+
+					wrapMode: TextEdit.Wrap
+
+					onTextChanged: {
+						if (msgField.length == 0)
+						{
+							sendButton.state = ""
+						}
+						else if (msgField.length > 0)
+						{
+							sendButton.state = "SENDBTN"
+						}
 					}
-					else if (msgComposer.length > 0)
-					{
-						sendButton.state = "SENDBTN"
-					}
+
 				}
-
 			}
 
 		}
@@ -199,9 +213,9 @@ Item
 			onClicked:
 			{
 				if (sendButton.state == "SENDBTN" ) {
-					var jsonData = {"chat_id":chatView.chatId, "msg":msgComposer.text}
+					var jsonData = {"chat_id":chatView.chatId, "msg":msgField.text}
 					rsApi.request( "/chat/send_message", JSON.stringify(jsonData),
-								   function(par) { msgComposer.text = ""; } )
+								   function(par) { msgField.text = ""; } )
 				}
 			}
 
