@@ -180,6 +180,8 @@ Item
 
 					wrapMode: TextEdit.Wrap
 
+					focus: true
+
 					onTextChanged: {
 						if (msgField.length == 0)
 						{
@@ -191,9 +193,32 @@ Item
 						}
 					}
 
+					property bool shiftPressed: false
+					Keys.onPressed:
+					{
+						if ((event.key === Qt.Key_Return || event.key === Qt.Key_Enter)
+								&& !shiftPressed)
+						{
+							if (sendButton.state == "SENDBTN" ) {
+								 chatView.sendMessage ()
+							}
+						}
+						else if (event.key === Qt.Key_Shift)
+						{
+							shiftPressed = true
+						}
+					}
+
+					Keys.onReleased:
+					{
+						if (event.key === Qt.Key_Shift)
+						{
+							shiftPressed = false
+						}
+					}
+
 				}
 			}
-
 		}
 
 
@@ -235,9 +260,7 @@ Item
 			onClicked:
 			{
 				if (sendButton.state == "SENDBTN" ) {
-					var jsonData = {"chat_id":chatView.chatId, "msg":msgField.text}
-					rsApi.request( "/chat/send_message", JSON.stringify(jsonData),
-								   function(par) { msgField.text = ""; } )
+					 chatView.sendMessage ()
 				}
 			}
 
@@ -262,7 +285,6 @@ Item
 
 			}
 
-
 			states: [
 				State {
 					name: ""
@@ -279,4 +301,12 @@ Item
 			]
 		}
 	}
+
+	function sendMessage ()
+	{
+		var jsonData = {"chat_id":chatView.chatId, "msg":msgField.text}
+		rsApi.request( "/chat/send_message", JSON.stringify(jsonData),
+					   function(par) { msgField.text = ""; } )
+	}
+
 }
