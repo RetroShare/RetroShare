@@ -73,12 +73,6 @@ Item
 			hash: gxsInfo.gxs
 			height: toolBar.height - 4
 			anchors.leftMargin: 2
-
-			MouseArea
-			{
-				anchors.fill: parent
-				onClicked: delegateRoot.showDetails()
-			}
 		}
 	}
 
@@ -285,6 +279,4 @@ Item
 			]
 		}
 	}
-
-
 }
