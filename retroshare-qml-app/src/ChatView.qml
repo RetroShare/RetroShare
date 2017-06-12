@@ -22,10 +22,12 @@ import QtQuick.Layouts 1.2
 import org.retroshare.qml_components.LibresapiLocalClient 1.0
 import "." //Needed for TokensManager singleton
 import "./components"
+
 Item
 {
 	id: chatView
 	property string chatId
+	property var gxsInfo: ""
 	property int token: 0
 
 	property string objectName:"chatView"
@@ -55,10 +57,31 @@ Item
 	Component.onCompleted: {
 		refreshData()
 		toolBar.state = "CHATVIEW"
-		var gxs = ChatCache.lastMessageCache.getGxsFromChatId(chatView.chatId)
-		toolBar.titleText =  gxs.name
+		gxsInfo=  ChatCache.lastMessageCache.getGxsFromChatId(chatView.chatId)
+		toolBar.titleText =  gxsInfo.name
+		toolBar.loaderSource = userHash
 	}
 	onFocusChanged: focus && refreshData()
+
+	Component {
+		id: userHash
+
+		ColorHash
+		{
+			id: colorHash
+
+			hash: gxsInfo.gxs
+			height: toolBar.height - 4
+			anchors.leftMargin: 2
+
+			MouseArea
+			{
+				anchors.fill: parent
+				onClicked: delegateRoot.showDetails()
+			}
+		}
+	}
+
 
 	JSONListModel
 	{

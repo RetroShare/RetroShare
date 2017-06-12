@@ -58,31 +58,40 @@ ApplicationWindow
 	{
 		id: toolBar
 		property alias titleText: toolBarText.text
+		property alias loaderSource: imageLoader.sourceComponent
 		property string defaultLabel: "RetroShare"
 
 		states: [
 			State {
 				name: "DEFAULT"
 				PropertyChanges { target: toolBar; titleText: defaultLabel}
+				PropertyChanges { target: toolBar; loaderSource: rsIcon}
 			},
 			State {
 				name: "CHATVIEW"
 			}
 		]
 
-		Image
-		{
-			id: rsIcon
-			fillMode: Image.PreserveAspectFit
-			height: Math.max(30, parent.height - 4)
+		Loader {
+			id: imageLoader
 			anchors.verticalCenter: parent.verticalCenter
-			source: "icons/retroshare06.png"
+			height: Math.max(30, toolBar.height - 4)
 		}
+
+		Component {
+			id: rsIcon
+			Image
+			{
+				fillMode: Image.PreserveAspectFit
+				source: "icons/retroshare06.png"
+			}
+		}
+
 		Label
 		{
 			id: toolBarText
 			anchors.verticalCenter: parent.verticalCenter
-			anchors.left: rsIcon.right
+			anchors.left: imageLoader.right
 			anchors.leftMargin: 20
 		}
 		MouseArea
