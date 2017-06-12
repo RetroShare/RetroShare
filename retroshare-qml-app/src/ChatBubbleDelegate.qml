@@ -2,6 +2,7 @@ import QtQuick 2.7
 import QtQuick.Layouts 1.2
 import QtQuick.Controls 2.0
 import "." // To load styles
+import "./components"
 
 Item {
 
@@ -93,11 +94,6 @@ Item {
 
 		}
 
-	}
-
-	Component.onCompleted: {
-		toolBar.state = "CHATVIEW"
-		toolBar.titleText =  model.author_name
 	}
 
 	function getMessageTime(){
