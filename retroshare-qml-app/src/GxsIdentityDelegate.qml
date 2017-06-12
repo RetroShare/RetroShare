@@ -131,12 +131,14 @@ Item
 					height: parent.height /2
 
 
+
 					Text
 					{
 						id: lastMessageSender
 						font.italic: true
 						color: "royalblue"
 						text: (!lastMessageData.incoming && lastMessageData.msg)? "You: " : ""
+						height: parent.height
 					}
 
 					Text
@@ -148,6 +150,7 @@ Item
 						elide: Text.ElideRight
 						color: "darkslategrey"
 						width: chatInfoRow.width - 30
+						height: parent.height
 					}
 
 					Rectangle
