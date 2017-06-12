@@ -19,6 +19,7 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.0
 import "." //Needed for ChatCache singleton
+import "./components"
 
 Item
 {
