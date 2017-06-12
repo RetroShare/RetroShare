@@ -103,7 +103,7 @@ Item
 					{'action': 'refreshUnread', 'response': par.response})
 		json.data.forEach (function (chat){
 			ChatCache.lastMessageCache.updateLastMessageCache(chat.chat_id)
-			ChatCache.lastMessageCache.setRemoteGXS (chat.chat_id, chat.remote_author_id)
+			ChatCache.lastMessageCache.setRemoteGXS (chat.chat_id, { gxs: chat.remote_author_id, name: chat.remote_author_name})
 		})
 	}
 	function refreshUnread()

@@ -258,7 +258,7 @@ Item
 	}
 	function startDistantChatCB (par){
 		var chId = JSON.parse(par.response).data.chat_id
-		ChatCache.lastMessageCache.setRemoteGXS(chId,  model.gxs_id)
+		ChatCache.lastMessageCache.setRemoteGXS(chId, { gxs: model.gxs_id, name: model.name})
 		contactsView.startChatCallback (par)
 	}
 }

@@ -51,7 +51,7 @@ QtObject {
 		}
 
 		function setRemoteGXS (chatId, remoteGXS){
-			if (!lastMessageList[chatId]) {
+			if (!lastMessageList[chatId])  {
 				lastMessageList[chatId] = {}
 				console.log("Last message cache created!")
 			}
@@ -66,11 +66,17 @@ QtObject {
 
 		function getChatIdFromGxs (gxs){
 			for (var key in lastMessageList) {
-				if ( lastMessageList[key].remoteGXS === gxs ) {
+				if (  lastMessageList[key].remoteGXS &&
+						lastMessageList[key].remoteGXS.gxs === gxs ) {
 					return key
 				}
 			}
 			return ""
+		}
+
+		function getGxsFromChatId (chatId){
+			if (lastMessageList[chatId]) return lastMessageList[chatId].remoteGXS
+			return undefined
 		}
 
 		function getChatLastMessage (chatId){

@@ -52,7 +52,12 @@ Item
 		} )
 	}
 
-	Component.onCompleted: refreshData()
+	Component.onCompleted: {
+		refreshData()
+		toolBar.state = "CHATVIEW"
+		var gxs = ChatCache.lastMessageCache.getGxsFromChatId(chatView.chatId)
+		toolBar.titleText =  gxs.name
+	}
 	onFocusChanged: focus && refreshData()
 
 	JSONListModel
@@ -256,6 +261,7 @@ Item
 				}
 			]
 		}
-
 	}
+
+
 }
