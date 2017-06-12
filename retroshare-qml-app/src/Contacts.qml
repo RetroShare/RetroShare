@@ -180,6 +180,8 @@ Item
 				border.width: 2
 				radius: 5
 				border.color: searchText.focus ? "cornflowerblue" : "lightgrey"
+				color: searchText.focus ? "white" : "ghostwhite"
+
 			}
 			onTextChanged:
 				contactsSortWorker.sendMessage(
