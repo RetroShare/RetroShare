@@ -101,7 +101,8 @@ Item
 		TokensManager.registerToken(json.statetoken, refreshUnread)
 		contactsSortWorker.sendMessage(
 					{'action': 'refreshUnread', 'response': par.response})
-		json.data.forEach (function (chat){
+		json.data.forEach (function (chat)
+		{
 			ChatCache.lastMessageCache.updateLastMessageCache(chat.chat_id)
 			ChatCache.lastMessageCache.setRemoteGXS (chat.chat_id, { gxs: chat.remote_author_id, name: chat.remote_author_name})
 		})
@@ -176,13 +177,14 @@ Item
 			width: parent.width - searchIcon.width - 5
 			anchors.leftMargin: 5
 
-			background: Rectangle {
+			background: Rectangle
+			{
 				border.width: 2
 				radius: 5
 				border.color: searchText.focus ? "cornflowerblue" : "lightgrey"
 				color: searchText.focus ? "white" : "ghostwhite"
-
 			}
+
 			onTextChanged:
 				contactsSortWorker.sendMessage(
 					        {'action': 'searchContact', 'sexp': text})

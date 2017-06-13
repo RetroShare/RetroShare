@@ -33,13 +33,13 @@ Item
 	property var locale: Qt.locale()
 
 
-	Rectangle {
+	Rectangle
+	{
 
 		anchors.fill: parent
 		color: contactItem.containsMouse ? "lightgrey" : "transparent"
 		width: parent.width
 		height: parent.height
-
 
 		MouseArea
 		{
@@ -117,11 +117,7 @@ Item
 						text:  setTime()
 						anchors.right: parent.right
 						color: "darkslategrey"
-
 					}
-
-
-
 				}
 
 				Item
@@ -129,8 +125,6 @@ Item
 					id: lastMessageText
 					width: parent.width
 					height: parent.height /2
-
-
 
 					Text
 					{
@@ -204,7 +198,8 @@ Item
 	}
 
 
-	Component.onCompleted: {
+	Component.onCompleted:
+	{
 		if (!chatId){
 			chatId = getChatIdFromGXS()
 		}
@@ -214,7 +209,8 @@ Item
 		}
 	}
 
-	Connections {
+	Connections
+	{
 		target: ChatCache.lastMessageCache
 		onLastMessageChanged: {
 			if (!chatId) {
@@ -228,23 +224,26 @@ Item
 	}
 
 
-	function getChatLastMessage (chatId){
+	function getChatLastMessage (chatId)
+	{
 		return ChatCache.lastMessageCache.getChatLastMessage(chatId)
 	}
 
-	function getChatIdFromGXS (){
+	function getChatIdFromGXS ()
+	{
 		var id= ChatCache.lastMessageCache.getChatIdFromGxs(model.gxs_id)
 		return ChatCache.lastMessageCache.getChatIdFromGxs(model.gxs_id)
 	}
-	function setTime(){
-		if (!lastMessageData || lastMessageData.recv_time === undefined){
-			return ""
-		}
+	function setTime()
+	{
+		if (!lastMessageData || lastMessageData.recv_time === undefined) return ""
+
 		var timeFormat = "dd.MM.yyyy";
 		var recvDate = new Date(lastMessageData.recv_time*1000)
 
 		// Check if is today
-		if ( new Date (lastMessageData.recv_time*1000).setHours(0,0,0,0) ==  new Date ().setHours(0,0,0,0)) {
+		if ( new Date (lastMessageData.recv_time*1000).setHours(0,0,0,0) ==  new Date ().setHours(0,0,0,0))
+		{
 			timeFormat = "hh:mm"
 		}
 		var timeString = Qt.formatDateTime(recvDate, timeFormat)
@@ -259,7 +258,8 @@ Item
 					"qrc:/ContactDetails.qml",
 					{md: contactsListView.model.get(index)})
 	}
-	function startDistantChatCB (par){
+	function startDistantChatCB (par)
+	{
 		var chId = JSON.parse(par.response).data.chat_id
 		ChatCache.lastMessageCache.setRemoteGXS(chId, { gxs: model.gxs_id, name: model.name})
 		contactsView.startChatCallback (par)
