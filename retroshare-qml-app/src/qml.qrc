@@ -30,7 +30,6 @@
         <file>TimedPopup.qml</file>
         <file>ChatCache.qml</file>
         <file>ChatBubbleDelegate.qml</file>
-        <file>styles/ChatBubblesStyle.qml</file>
         <file>icons/send-message.svg</file>
         <file>icons/attach.svg</file>
         <file>components/BtnIcon.qml</file>
@@ -38,5 +37,6 @@
         <file>icons/microphone_mute.svg</file>
         <file>icons/microphone.svg</file>
         <file>components/ColorHash.qml</file>
+        <file>styles/ChatStyle.qml</file>
     </qresource>
 </RCC>
