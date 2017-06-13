@@ -51,10 +51,11 @@ Item
 				chatListView.positionViewAtEnd()
 				rsApi.request("/chat/mark_chat_as_read/"+chatId)
 			}
-		} )
+		})
 	}
 
-	Component.onCompleted: {
+	Component.onCompleted:
+	{
 		refreshData()
 		toolBar.state = "CHATVIEW"
 		gxsInfo=  ChatCache.lastMessageCache.getGxsFromChatId(chatView.chatId)
@@ -63,7 +64,8 @@ Item
 	}
 	onFocusChanged: focus && refreshData()
 
-	Component {
+	Component
+	{
 		id: userHash
 
 		ColorHash
@@ -95,13 +97,15 @@ Item
 		spacing: styles.bubbleSpacing
 		preferredHighlightBegin: 1
 
-		onHeightChanged: {
+		onHeightChanged:
+		{
 			chatListView.currentIndex = count - 1
 		}
 
 	}
 
-	Item {
+	Item
+	{
 
 		property var styles: StyleChat.inferiorPanel
 
@@ -110,7 +114,8 @@ Item
 		width: parent.width
 		anchors.bottom: parent.bottom
 
-		Rectangle {
+		Rectangle
+		{
 			id: backgroundRectangle
 			anchors.fill: parent.fill
 			width: parent.width
@@ -119,7 +124,8 @@ Item
 			border.color: inferiorPanel.styles.borderColor
 		}
 
-		BtnIcon {
+		BtnIcon
+		{
 
 			id: attachButton
 
@@ -137,7 +143,8 @@ Item
 		}
 
 
-		RowLayout {
+		RowLayout
+		{
 			id: msgComposer
 			property var styles: StyleChat.inferiorPanel.msgComposer
 
@@ -151,7 +158,8 @@ Item
 
 			height: (flickable.contentHeight <  styles.maxHeight)? flickable.contentHeight : styles.maxHeight
 
-			Flickable {
+			Flickable
+			{
 				id: flickable
 				anchors.fill: parent
 				flickableDirection: Flickable.VerticalFlick
@@ -182,7 +190,8 @@ Item
 
 					focus: true
 
-					onTextChanged: {
+					onTextChanged:
+					{
 						if (msgField.length == 0)
 						{
 							sendButton.state = ""
@@ -199,7 +208,8 @@ Item
 						if ((event.key === Qt.Key_Return || event.key === Qt.Key_Enter)
 								&& !shiftPressed)
 						{
-							if (sendButton.state == "SENDBTN" ) {
+							if (sendButton.state == "SENDBTN" )
+							{
 								 chatView.sendMessage ()
 							}
 						}
@@ -216,14 +226,14 @@ Item
 							shiftPressed = false
 						}
 					}
-
 				}
 			}
 		}
 
 
 
-		BtnIcon {
+		BtnIcon
+		{
 
 			id: emojiButton
 
@@ -240,7 +250,8 @@ Item
 			imgUrl: styles.emojiIconUrl
 		}
 
-		BtnIcon {
+		BtnIcon
+		{
 
 			id: sendButton
 
@@ -259,7 +270,8 @@ Item
 
 			onClicked:
 			{
-				if (sendButton.state == "SENDBTN" ) {
+				if (sendButton.state == "SENDBTN" )
+				{
 					 chatView.sendMessage ()
 				}
 			}
@@ -285,16 +297,20 @@ Item
 
 			}
 
-			states: [
-				State {
+			states:
+			[
+				State
+				{
 					name: ""
 					PropertyChanges { target: sendButton; icon: styles.microIconUrl}
 				},
-				State {
+				State
+				{
 					name: "RECORDING"
 					PropertyChanges { target: sendButton; icon: styles.microMuteIconUrl}
 				},
-				State {
+				State
+				{
 					name: "SENDBTN"
 					PropertyChanges { target: sendButton; icon: styles.sendIconUrl}
 				}

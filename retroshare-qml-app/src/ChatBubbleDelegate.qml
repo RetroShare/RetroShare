@@ -4,7 +4,8 @@ import QtQuick.Controls 2.0
 import "." // To load styles
 import "./components"
 
-Item {
+Item
+{
 
 	id: chatBubbleDelegate
 	height: bubble.height
@@ -13,7 +14,8 @@ Item {
 	property var styles: StyleChat.bubble
 
 
-	Rectangle {
+	Rectangle
+	{
 		id: rootBubble
 		anchors.fill: parent
 		width: parent.width
@@ -37,7 +39,8 @@ Item {
 			radius:  styles.radius
 
 
-			Text {
+			Text
+			{
 				id: sendersName
 				visible: model.incoming
 				text: (model.incoming)? model.author_name + ":" : ""
@@ -57,7 +60,8 @@ Item {
 						 mesageText.implicitWidth >= (rootBubble.width * styles.bubbleMaxWidth) )? implicitHeight : 0
 			}
 
-			Text {
+			Text
+			{
 				id: timeText
 				text: getMessageTime()
 				color: styles.colorMessageTime
@@ -73,7 +77,8 @@ Item {
 			}
 
 
-			Text {
+			Text
+			{
 				id: mesageText
 				text: model.msg
 				width: rootBubble.width * styles.bubbleMaxWidth + timeText.width
@@ -96,8 +101,8 @@ Item {
 
 	}
 
-	function getMessageTime(){
-
+	function getMessageTime()
+	{
 		var timeFormat = "hh:mm";
 		var recvDate = new Date(model.recv_time*1000)
 

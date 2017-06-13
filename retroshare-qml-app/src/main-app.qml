@@ -63,12 +63,14 @@ ApplicationWindow
 
 		states:
 		[
-			State {
+			State
+			{
 				name: "DEFAULT"
 				PropertyChanges { target: toolBar; titleText: defaultLabel}
 				PropertyChanges { target: toolBar; loaderSource: rsIcon}
 			},
-			State {
+			State
+			{
 				name: "CHATVIEW"
 			}
 		]
@@ -166,9 +168,12 @@ ApplicationWindow
 		id: stackView
 		anchors.fill: parent
 		focus: true
-		onCurrentItemChanged: {
-			if (currentItem) {
-				if (currentItem.objectName != "chatView" && toolBar.state != "DEFAULT"){
+		onCurrentItemChanged:
+		{
+			if (currentItem)
+			{
+				if (currentItem.objectName != "chatView" && toolBar.state != "DEFAULT")
+				{
 					 toolBar.state = "DEFAULT"
 				}
 				currentItem.focus = true
