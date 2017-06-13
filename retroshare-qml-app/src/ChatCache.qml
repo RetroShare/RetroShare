@@ -1,6 +1,6 @@
 pragma Singleton
 
-import QtQml 2.7
+import QtQml 2.3
 import QtQuick.Controls 2.0
 import org.retroshare.qml_components.LibresapiLocalClient 1.0
 import Qt.labs.settings 1.0
