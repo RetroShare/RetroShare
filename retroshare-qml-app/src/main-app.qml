@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import QtQuick 2.7
+import QtQuick 2.1
 import QtQuick.Controls 2.0
 import org.retroshare.qml_components.LibresapiLocalClient 1.0
 import "URI.js" as UriJs
@@ -61,7 +61,8 @@ ApplicationWindow
 		property alias loaderSource: imageLoader.sourceComponent
 		property string defaultLabel: "RetroShare"
 
-		states: [
+		states:
+		[
 			State {
 				name: "DEFAULT"
 				PropertyChanges { target: toolBar; titleText: defaultLabel}
@@ -72,13 +73,22 @@ ApplicationWindow
 			}
 		]
 
-		Loader {
+		Item
+		{
+			id: tolbarLeftPadding
+			width: 4
+		}
+
+		Loader
+		{
 			id: imageLoader
 			anchors.verticalCenter: parent.verticalCenter
 			height: Math.max(30, toolBar.height - 4)
+			anchors.left: tolbarLeftPadding.right
 		}
 
-		Component {
+		Component
+		{
 			id: rsIcon
 			Image
 			{
