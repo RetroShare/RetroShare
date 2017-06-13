@@ -137,7 +137,7 @@ Item
 						id: lastMessageSender
 						font.italic: true
 						color: "royalblue"
-						text: (!lastMessageData.incoming && lastMessageData.msg)? "You: " : ""
+						text:  ((lastMessageData && lastMessageData.incoming !== undefined) && !lastMessageData.incoming)?  "You: " : ""
 						height: parent.height
 					}
 
@@ -145,7 +145,7 @@ Item
 					{
 						id: lastMessageMsg
 						anchors.left: lastMessageSender.right
-						text: (lastMessageData.msg) ? lastMessageData.msg : ""
+						text: (lastMessageData && lastMessageData.msg !== undefined)?  lastMessageData.msg : ""
 						rightPadding: 5
 						elide: Text.ElideRight
 						color: "darkslategrey"
@@ -210,7 +210,7 @@ Item
 		}
 		if (chatId) {
 			var last = getChatLastMessage(chatId)
-			if (last) lastMessageData = getChatLastMessage(chatId)
+			if (last) lastMessageData = last
 		}
 	}
 
@@ -237,7 +237,7 @@ Item
 		return ChatCache.lastMessageCache.getChatIdFromGxs(model.gxs_id)
 	}
 	function setTime(){
-		if (!lastMessageData.recv_time){
+		if (!lastMessageData || lastMessageData.recv_time === undefined){
 			return ""
 		}
 		var timeFormat = "dd.MM.yyyy";
