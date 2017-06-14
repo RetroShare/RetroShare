@@ -2900,8 +2900,12 @@ void RsGenExchange::processRecvdMessages()
 		    std::cerr << "    deserialised info: grp id=" << meta->mGroupId << ", msg id=" << meta->mMsgId ;
 #endif
 		    uint8_t validateReturn = VALIDATE_FAIL;
+			bool accept_new_msg = acceptNewMessage(meta);
 
-		    if(ok)
+			if(!accept_new_msg && mNetService != NULL)
+				mNetService->rejectMessage(meta->mMsgId) ;	// This prevents reloading the message again at next sync.
+
+		    if(ok && accept_new_msg)
 		    {
 			    std::map<RsGxsGroupId, RsGxsGrpMetaData*>::iterator mit = grpMetas.find(msg->grpId);
 
@@ -3042,8 +3046,8 @@ void RsGenExchange::processRecvdMessages()
 		    mNetService->rejectMessage(*it) ;
 }
 
-bool RsGenExchange::acceptNewGroup(const RsGxsGrpMetaData* /*grpMeta*/ )
-{ return true; }
+bool RsGenExchange::acceptNewGroup(const RsGxsGrpMetaData* /*grpMeta*/ ) { return true; }
+bool RsGenExchange::acceptNewMessage(const RsGxsMsgMetaData* /*grpMeta*/ ) { return true; }
 
 void RsGenExchange::processRecvdGroups()
 {

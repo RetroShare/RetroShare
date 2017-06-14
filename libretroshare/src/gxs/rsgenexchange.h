@@ -260,6 +260,17 @@ public:
      */
     virtual bool acceptNewGroup(const RsGxsGrpMetaData *grpMeta) ;
 
+	/*!
+     * \brief acceptNewMessage
+     * 		Early checks if the message can be accepted. This is mainly used to check wether the group is for instance overloaded and the service wants
+     * 		to put limitations to it.
+     * 		Returns true unless derived in GXS services.
+     *
+     * \param grpMeta Group metadata to check
+     * \return
+     */
+	virtual bool acceptNewMessage(const RsGxsMsgMetaData *msgMeta) ;
+
     bool subscribeToGroup(uint32_t& token, const RsGxsGroupId& grpId, bool subscribe);
 
 	/*!

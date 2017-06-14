@@ -24,6 +24,8 @@ typedef unsigned int uint;
 
 RsGxsTrans *rsGxsTrans = NULL ;
 
+const uint32_t p3GxsTrans::MAX_DELAY_BETWEEN_CLEANUPS = 60; // every 20 mins. Could be less.
+
 p3GxsTrans::~p3GxsTrans()
 {
 	p3Config::saveConfiguration();
@@ -261,6 +263,12 @@ void p3GxsTrans::handleResponse(uint32_t token, uint32_t req_type)
 	if(changed)
 		IndicateConfigChanged();
 }
+void p3GxsTrans::GxsTransIntegrityCleanupThread::getPerUserStatistics(std::map<RsGxsId,MsgSizeCount>& m)
+{
+	RS_STACK_MUTEX(mMtx) ;
+
+	m = total_message_size_and_count ;
+}
 
 void p3GxsTrans::GxsTransIntegrityCleanupThread::getMessagesToDelete(GxsMsgReq& m)
 {
@@ -270,9 +278,27 @@ void p3GxsTrans::GxsTransIntegrityCleanupThread::getMessagesToDelete(GxsMsgReq& 
 	mMsgToDel.clear();
 }
 
+// This method does two things:
+//  1 - cleaning up old messages and messages for which an ACK has been received.
+//  2 - building per user statistics across groups. This is important because it allows to mitigate the excess of
+//      messages, which might be due to spam.
+//
+// Note: the anti-spam system is disabled the level of GXS, because we want to allow to send anonymous messages
+//      between identities that might not have a reputation yet. Still, messages from identities with a bad reputation
+//      are still deleted by GXS.
+//
+// The group limits are enforced according to the following rules:
+//   * a temporal sliding window is computed for each identity and the number of messages signed by this identity is counted
+//	 *
+//
+//
+// Deleted messages are notified to the RsGxsNetService part which keeps a list of delete messages so as not to request them again
+// during the same session. This allows to safely delete messages while avoiding re-synchronisation from friend nodes.
+
 void p3GxsTrans::GxsTransIntegrityCleanupThread::run()
 {
     // first take out all the groups
+
     std::map<RsGxsGroupId, RsNxsGrp*> grp;
     mDs->retrieveNxsGrps(grp, true, true);
 
@@ -293,6 +319,8 @@ void p3GxsTrans::GxsTransIntegrityCleanupThread::run()
     }
 
     // now messages
+
+	std::map<RsGxsId,MsgSizeCount> totalMessageSizeAndCount;
 
     std::map<RsGxsTransId,std::pair<RsGxsGroupId,RsGxsMessageId> > stored_msgs ;
     std::list<RsGxsTransId> received_msgs ;
@@ -332,13 +360,21 @@ void p3GxsTrans::GxsTransIntegrityCleanupThread::run()
             else
                 std::cerr << "  Unknown item type!" << std::endl;
 
+			totalMessageSizeAndCount[msg->metaData->mAuthorId].size += msg->msg.bin_len ;
+			totalMessageSizeAndCount[msg->metaData->mAuthorId].count++;
 		    delete msg;
 	    }
     }
 
+	// From the collected information, build a list of group messages to delete.
+
     GxsMsgReq msgsToDel ;
 
     std::cerr << "Msg removal report:" << std::endl;
+
+	std::cerr << "  Per user size and count: " << std::endl;
+	for(std::map<RsGxsId,MsgSizeCount>::const_iterator it(totalMessageSizeAndCount.begin());it!=totalMessageSizeAndCount.end();++it)
+		std::cerr << "     " << it->first << ": " << it->second.count << " messages, for a total size of " << it->second.size << " bytes." << std::endl;
 
     for(std::list<RsGxsTransId>::const_iterator it(received_msgs.begin());it!=received_msgs.end();++it)
     {
@@ -385,6 +421,7 @@ void p3GxsTrans::service_tick()
 	{
 		GxsMsgReq msgToDel ;
 
+		mCleanupThread->getPerUserStatistics(per_user_statistics) ;
 		mCleanupThread->getMessagesToDelete(msgToDel) ;
 
 		if(!msgToDel.empty())
@@ -1023,3 +1060,44 @@ bool p3GxsTrans::loadList(std::list<RsItem *>&loadList)
 
 	return true;
 }
+
+// We should also include the message size!
+
+bool p3GxsTrans::acceptNewMessage(const RsGxsMsgMetaData *msgMeta)
+{
+#ifdef TODO
+	// 1 - check the total size of the msgs for the author of this particular msg.
+
+	// 2 - Reject depending on embedded limits.
+
+	// Depending on reputation, the messages will be rejected:
+	//
+	//     Reputation  |   Maximum msg count  |  Maximum msg size
+	//	   ------------+----------------------+------------------
+	//     Negative    |          0           |         0          // This is already handled by the anti-spam
+	//     R-Negative  |         10           |        10k
+	//     Neutral     |        100           |       500k
+	//     R-Positive  |        500           |         2M
+
+	static const uint32_t GXSTRANS_MAX_COUNT_REMOTELY_NEGATIVE_DEFAULT = 10 ;
+	static const uint32_t GXSTRANS_MAX_COUNT_NEUTRAL_DEFAULT           = 100 ;
+	static const uint32_t GXSTRANS_MAX_COUNT_NEUTRAL_DEFAULT           = 100 ;
+
+	uint32_t max_count = 0 ;
+	uint32_t max_size  = 0 ;
+
+	switch(rsReputations->overallReputationLevel(msgMeta.mAuthorId))
+	{
+	case RsReputations::REPUTATION_REMOTELY_NEGATIVE:   max_count = 10 ;
+														max_size = 10*1024 ;
+	        default:
+	case RsReputations::REPUTATION_LOCALLY_NEGATIVE:    max_count =
+	     break ;
+	}
+
+#endif
+	return true ;
+}
+
+
+
