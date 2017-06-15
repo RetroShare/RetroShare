@@ -1635,7 +1635,7 @@ void ServerPage::updateStatusBob()
         ui.pbBobStart->setToolTip("BOB is not accessible");
         ui.pbBobRestart->setEnabled(false);
         ui.pbBobRestart->setToolTip("BOB is not accessible");
-        ui.pbBobStop->setEnabled(false);
+        // don't disable the stop button! (in case bob is running you are otherwise unable to stop and disable it)
         ui.pbBobStop->setToolTip("BOB is not accessible");
     } else {
         ui.pbBobStart->setToolTip("");
