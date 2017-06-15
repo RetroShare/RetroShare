@@ -1063,8 +1063,6 @@ bool p3GxsTrans::loadList(std::list<RsItem *>&loadList)
 	return true;
 }
 
-// We should also include the message size!
-
 bool p3GxsTrans::acceptNewMessage(const RsGxsMsgMetaData *msgMeta,uint32_t msg_size)
 {
 	// 1 - check the total size of the msgs for the author of this particular msg.
@@ -1077,7 +1075,7 @@ bool p3GxsTrans::acceptNewMessage(const RsGxsMsgMetaData *msgMeta,uint32_t msg_s
 	//	   ------------+----------------------+------------------
 	//     Negative    |          0           |         0          // This is already handled by the anti-spam
 	//     R-Negative  |         10           |        10k
-	//     Neutral     |        100           |       500k
+	//     Neutral     |         20           |        20k
 	//     R-Positive  |        400           |         1M
 	//     Positive    |       1000           |         2M
 
@@ -1085,12 +1083,12 @@ bool p3GxsTrans::acceptNewMessage(const RsGxsMsgMetaData *msgMeta,uint32_t msg_s
 	// default values below used as backup.
 
 	static const uint32_t GXSTRANS_MAX_COUNT_REMOTELY_NEGATIVE_DEFAULT =   10 ;
-	static const uint32_t GXSTRANS_MAX_COUNT_NEUTRAL_DEFAULT           =  100 ;
+	static const uint32_t GXSTRANS_MAX_COUNT_NEUTRAL_DEFAULT           =   20 ;
 	static const uint32_t GXSTRANS_MAX_COUNT_REMOTELY_POSITIVE_DEFAULT =  400 ;
 	static const uint32_t GXSTRANS_MAX_COUNT_LOCALLY_POSITIVE_DEFAULT  = 1000 ;
 
 	static const uint32_t GXSTRANS_MAX_SIZE_REMOTELY_NEGATIVE_DEFAULT =       10 * 1024 ;
-	static const uint32_t GXSTRANS_MAX_SIZE_NEUTRAL_DEFAULT           =      512 * 1024 ;
+	static const uint32_t GXSTRANS_MAX_SIZE_NEUTRAL_DEFAULT           =       20 * 1024 ;
 	static const uint32_t GXSTRANS_MAX_SIZE_REMOTELY_POSITIVE_DEFAULT =     1024 * 1024 ;
 	static const uint32_t GXSTRANS_MAX_SIZE_LOCALLY_POSITIVE_DEFAULT  = 2 * 1024 * 1024 ;
 
