@@ -211,7 +211,7 @@ void p3GxsTunnelService::flush()
         if(it->second.last_contact+20+GXS_TUNNEL_KEEP_ALIVE_TIMEOUT < now && it->second.status == RS_GXS_TUNNEL_STATUS_CAN_TALK)
         {
 #ifdef DEBUG_GXS_TUNNEL    
-            std::cerr << "(II) GxsTunnelService:: connexion interrupted with peer." << std::endl;
+            std::cerr << "(II) GxsTunnelService:: connection interrupted with peer." << std::endl;
 #endif
             
             it->second.status = RS_GXS_TUNNEL_STATUS_TUNNEL_DN ;

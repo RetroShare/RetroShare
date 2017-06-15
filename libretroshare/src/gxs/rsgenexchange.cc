@@ -190,52 +190,54 @@ void RsGenExchange::tick()
 	now = time(NULL);
 	if(mChecking || (mLastCheck + INTEGRITY_CHECK_PERIOD < now))
 	{
-		if(mIntegrityCheck)
+		mLastCheck = time(NULL);
+
 		{
-			if(mIntegrityCheck->isDone())
+			RS_STACK_MUTEX(mGenMtx) ;
+
+			if(!mIntegrityCheck)
 			{
-				std::list<RsGxsGroupId> grpIds;
-				std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > msgIds;
-				mIntegrityCheck->getDeletedIds(grpIds, msgIds);
-
-				if (!grpIds.empty())
-				{
-					RS_STACK_MUTEX(mGenMtx) ;
-
-					RsGxsGroupChange* gc = new RsGxsGroupChange(RsGxsNotify::TYPE_PROCESSED, false);
-					gc->mGrpIdList = grpIds;
-#ifdef GEN_EXCH_DEBUG
-                    			std::cerr << "  adding the following grp ids to notification: " << std::endl;
-                                	for(std::list<RsGxsGroupId>::const_iterator it(grpIds.begin());it!=grpIds.end();++it)
-                                        	std::cerr << "    " << *it << std::endl;
-#endif
-					mNotifications.push_back(gc);
-
-                    // also notify the network exchange service that these groups no longer exist.
-
-                    if(mNetService)
-                        mNetService->removeGroups(grpIds) ;
-				}
-
-				if (!msgIds.empty()) {
-					RS_STACK_MUTEX(mGenMtx) ;
-
-					RsGxsMsgChange* c = new RsGxsMsgChange(RsGxsNotify::TYPE_PROCESSED, false);
-					c->msgChangeMap = msgIds;
-					mNotifications.push_back(c);
-				}
-
-				delete mIntegrityCheck;
-				mIntegrityCheck = NULL;
-				mLastCheck = time(NULL);
-				mChecking = false;
+				mIntegrityCheck = new RsGxsIntegrityCheck(mDataStore,this,mGixs);
+				mIntegrityCheck->start("gxs integrity");
+				mChecking = true;
 			}
 		}
-		else
+
+		if(mIntegrityCheck->isDone())
 		{
-			mIntegrityCheck = new RsGxsIntegrityCheck(mDataStore,this,mGixs);
-			mIntegrityCheck->start("gxs integrity");
-			mChecking = true;
+			RS_STACK_MUTEX(mGenMtx) ;
+
+			std::list<RsGxsGroupId> grpIds;
+			std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > msgIds;
+			mIntegrityCheck->getDeletedIds(grpIds, msgIds);
+
+			if (!grpIds.empty())
+			{
+				RsGxsGroupChange* gc = new RsGxsGroupChange(RsGxsNotify::TYPE_PROCESSED, false);
+				gc->mGrpIdList = grpIds;
+#ifdef GEN_EXCH_DEBUG
+				std::cerr << "  adding the following grp ids to notification: " << std::endl;
+				for(std::list<RsGxsGroupId>::const_iterator it(grpIds.begin());it!=grpIds.end();++it)
+					std::cerr << "    " << *it << std::endl;
+#endif
+				mNotifications.push_back(gc);
+
+				// also notify the network exchange service that these groups no longer exist.
+
+				if(mNetService)
+					mNetService->removeGroups(grpIds) ;
+			}
+
+			if (!msgIds.empty())
+			{
+				RsGxsMsgChange* c = new RsGxsMsgChange(RsGxsNotify::TYPE_PROCESSED, false);
+				c->msgChangeMap = msgIds;
+				mNotifications.push_back(c);
+			}
+
+			delete mIntegrityCheck;
+			mIntegrityCheck = NULL;
+			mChecking = false;
 		}
 	}
 }
@@ -1752,8 +1754,18 @@ void RsGenExchange::deleteGroup(uint32_t& token, const RsGxsGroupId& grpId)
 }
 void RsGenExchange::deleteMsgs(uint32_t& token, const GxsMsgReq& msgs)
 {
+	RS_STACK_MUTEX(mGenMtx) ;
+
 	token = mDataAccess->generatePublicToken();
 	mMsgDeletePublish.push_back(MsgDeletePublish(msgs, token));
+
+	// This code below will suspend any requests of the deleted messages for 24 hrs. This of course only works
+	// if all friend nodes consistently delete the messages in the mean time.
+
+	if(mNetService != NULL)
+		for(GxsMsgReq::const_iterator it(msgs.begin());it!=msgs.end();++it)
+			for(uint32_t i=0;i<it->second.size();++i)
+				mNetService->rejectMessage(it->second[i]) ;
 }
 
 void RsGenExchange::publishMsg(uint32_t& token, RsGxsMsgItem *msgItem)

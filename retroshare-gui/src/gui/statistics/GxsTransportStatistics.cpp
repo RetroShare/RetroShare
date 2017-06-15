@@ -73,7 +73,7 @@ static const int GXSTRANS_STATISTICS_DELAY_BETWEEN_GROUP_REQ = 30 ;	// never req
 #define DEBUG_GXSTRANS_STATS 1
 
 GxsTransportStatistics::GxsTransportStatistics(QWidget *parent)
-    : RsAutoUpdatePage(2000,parent)
+    : RsGxsUpdateBroadcastPage(rsGxsTrans,parent)
 {
 	setupUi(this) ;
 	
@@ -93,6 +93,7 @@ GxsTransportStatistics::GxsTransportStatistics(QWidget *parent)
 
 	// load settings
 	processSettings(true);
+	updateDisplay(true);
 }
 
 GxsTransportStatistics::~GxsTransportStatistics()
@@ -139,19 +140,14 @@ void GxsTransportStatistics::CustomPopupMenu( QPoint )
 	contextMnu.exec(QCursor::pos());
 }
 
-void GxsTransportStatistics::updateDisplay()
+void GxsTransportStatistics::updateDisplay(bool)
 {
-    time_t now = time(NULL) ;
+	time_t now = time(NULL) ;
 
-    if(mLastGroupReqTS + GXSTRANS_STATISTICS_DELAY_BETWEEN_GROUP_REQ < now)
-    {
-        requestGroupMeta();
-        mLastGroupReqTS = now ;
-    }
+	std::cerr << "GxsTransportStatistics::updateDisplay()" << std::endl;
 
-	//_tst_CW->updateContent() ;
-
-	updateContent();
+	requestGroupMeta();
+	mLastGroupReqTS = now ;
 }
 
 QString GxsTransportStatistics::getPeerName(const RsPeerId &peer_id)
@@ -319,6 +315,8 @@ void GxsTransportStatistics::loadRequest(const TokenQueue *queue, const TokenReq
 		std::cerr << std::endl;
 		break;
 	}
+
+	updateContent();
 }
 
 void GxsTransportStatistics::requestGroupMeta()

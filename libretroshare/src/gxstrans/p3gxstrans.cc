@@ -390,8 +390,14 @@ void p3GxsTrans::GxsTransIntegrityCleanupThread::run()
 
 	RS_STACK_MUTEX(mMtx) ;
 	mMsgToDel = msgsToDel ;
+    mDone = true;
 }
 
+bool p3GxsTrans::GxsTransIntegrityCleanupThread::isDone()
+{
+    RS_STACK_MUTEX(mMtx) ;
+    return mDone ;
+}
 void p3GxsTrans::service_tick()
 {
 	GxsTokenQueue::checkRequests();
@@ -417,7 +423,7 @@ void p3GxsTrans::service_tick()
 
 	// now grab collected messages to delete
 
-	if(mCleanupThread != NULL && !mCleanupThread->isRunning())
+    if(mCleanupThread != NULL && mCleanupThread->isDone())
 	{
 		GxsMsgReq msgToDel ;
 
@@ -426,7 +432,8 @@ void p3GxsTrans::service_tick()
 		if(!msgToDel.empty())
 		{
 			std::cerr << "p3GxsTrans::service_tick(): deleting messages." << std::endl;
-			getDataStore()->removeMsgs(msgToDel);
+            uint32_t token ;
+            deleteMsgs(token,msgToDel);
 		}
 
 		RS_STACK_MUTEX(mPerUserStatsMutex);
@@ -575,6 +582,7 @@ void p3GxsTrans::notifyChanges(std::vector<RsGxsNotify*>& changes)
 			}
 		}
 	}
+	RsGxsIfaceHelper::receiveChanges(changes);
 }
 
 uint32_t p3GxsTrans::AuthenPolicy()

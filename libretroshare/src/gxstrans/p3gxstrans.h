@@ -291,7 +291,7 @@ private:
 		enum CheckState { CheckStart, CheckChecking };
 
 	public:
-        GxsTransIntegrityCleanupThread(RsGeneralDataService *const dataService): mDs(dataService),mMtx("GxsTransIntegrityCheck") {}
+        GxsTransIntegrityCleanupThread(RsGeneralDataService *const dataService): mDs(dataService),mMtx("GxsTransIntegrityCheck") { mDone=false;}
 
 		bool isDone();
 		void run();
@@ -307,6 +307,7 @@ private:
 
 		GxsMsgReq mMsgToDel ;
 		std::map<RsGxsId,MsgSizeCount> total_message_size_and_count;
+        bool mDone ;
 	};
 
 	// Overloaded from RsGenExchange.
