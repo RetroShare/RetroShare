@@ -269,7 +269,7 @@ public:
      * \param grpMeta Group metadata to check
      * \return
      */
-	virtual bool acceptNewMessage(const RsGxsMsgMetaData *msgMeta) ;
+	virtual bool acceptNewMessage(const RsGxsMsgMetaData *msgMeta, uint32_t size) ;
 
     bool subscribeToGroup(uint32_t& token, const RsGxsGroupId& grpId, bool subscribe);
 

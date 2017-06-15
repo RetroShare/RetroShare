@@ -421,7 +421,6 @@ void p3GxsTrans::service_tick()
 	{
 		GxsMsgReq msgToDel ;
 
-		mCleanupThread->getPerUserStatistics(per_user_statistics) ;
 		mCleanupThread->getMessagesToDelete(msgToDel) ;
 
 		if(!msgToDel.empty())
@@ -429,6 +428,9 @@ void p3GxsTrans::service_tick()
 			std::cerr << "p3GxsTrans::service_tick(): deleting messages." << std::endl;
 			getDataStore()->removeMsgs(msgToDel);
 		}
+
+		RS_STACK_MUTEX(mPerUserStatsMutex);
+		mCleanupThread->getPerUserStatistics(per_user_statistics) ;
 	}
 
 	{
@@ -1063,9 +1065,8 @@ bool p3GxsTrans::loadList(std::list<RsItem *>&loadList)
 
 // We should also include the message size!
 
-bool p3GxsTrans::acceptNewMessage(const RsGxsMsgMetaData *msgMeta)
+bool p3GxsTrans::acceptNewMessage(const RsGxsMsgMetaData *msgMeta,uint32_t msg_size)
 {
-#ifdef TODO
 	// 1 - check the total size of the msgs for the author of this particular msg.
 
 	// 2 - Reject depending on embedded limits.
@@ -1077,26 +1078,63 @@ bool p3GxsTrans::acceptNewMessage(const RsGxsMsgMetaData *msgMeta)
 	//     Negative    |          0           |         0          // This is already handled by the anti-spam
 	//     R-Negative  |         10           |        10k
 	//     Neutral     |        100           |       500k
-	//     R-Positive  |        500           |         2M
+	//     R-Positive  |        400           |         1M
+	//     Positive    |       1000           |         2M
 
-	static const uint32_t GXSTRANS_MAX_COUNT_REMOTELY_NEGATIVE_DEFAULT = 10 ;
-	static const uint32_t GXSTRANS_MAX_COUNT_NEUTRAL_DEFAULT           = 100 ;
-	static const uint32_t GXSTRANS_MAX_COUNT_NEUTRAL_DEFAULT           = 100 ;
+	// Ideally these values should be left as user-defined parameters, with the
+	// default values below used as backup.
+
+	static const uint32_t GXSTRANS_MAX_COUNT_REMOTELY_NEGATIVE_DEFAULT =   10 ;
+	static const uint32_t GXSTRANS_MAX_COUNT_NEUTRAL_DEFAULT           =  100 ;
+	static const uint32_t GXSTRANS_MAX_COUNT_REMOTELY_POSITIVE_DEFAULT =  400 ;
+	static const uint32_t GXSTRANS_MAX_COUNT_LOCALLY_POSITIVE_DEFAULT  = 1000 ;
+
+	static const uint32_t GXSTRANS_MAX_SIZE_REMOTELY_NEGATIVE_DEFAULT =       10 * 1024 ;
+	static const uint32_t GXSTRANS_MAX_SIZE_NEUTRAL_DEFAULT           =      512 * 1024 ;
+	static const uint32_t GXSTRANS_MAX_SIZE_REMOTELY_POSITIVE_DEFAULT =     1024 * 1024 ;
+	static const uint32_t GXSTRANS_MAX_SIZE_LOCALLY_POSITIVE_DEFAULT  = 2 * 1024 * 1024 ;
 
 	uint32_t max_count = 0 ;
 	uint32_t max_size  = 0 ;
+	RsReputations::ReputationLevel rep_lev = rsReputations->overallReputationLevel(msgMeta->mAuthorId);
 
-	switch(rsReputations->overallReputationLevel(msgMeta.mAuthorId))
+	switch(rep_lev)
 	{
-	case RsReputations::REPUTATION_REMOTELY_NEGATIVE:   max_count = 10 ;
-														max_size = 10*1024 ;
-	        default:
-	case RsReputations::REPUTATION_LOCALLY_NEGATIVE:    max_count =
-	     break ;
+	case RsReputations::REPUTATION_REMOTELY_NEGATIVE:   max_count = GXSTRANS_MAX_COUNT_REMOTELY_NEGATIVE_DEFAULT;
+														max_size  = GXSTRANS_MAX_SIZE_REMOTELY_NEGATIVE_DEFAULT;
+														break ;
+	case RsReputations::REPUTATION_NEUTRAL:   			max_count = GXSTRANS_MAX_COUNT_NEUTRAL_DEFAULT;
+														max_size  = GXSTRANS_MAX_SIZE_NEUTRAL_DEFAULT;
+														break ;
+	case RsReputations::REPUTATION_REMOTELY_POSITIVE:   max_count = GXSTRANS_MAX_COUNT_REMOTELY_POSITIVE_DEFAULT;
+														max_size  = GXSTRANS_MAX_SIZE_REMOTELY_POSITIVE_DEFAULT;
+														break ;
+	case RsReputations::REPUTATION_LOCALLY_POSITIVE:    max_count = GXSTRANS_MAX_COUNT_LOCALLY_POSITIVE_DEFAULT;
+														max_size  = GXSTRANS_MAX_SIZE_LOCALLY_POSITIVE_DEFAULT;
+														break ;
+    default:
+	case RsReputations::REPUTATION_LOCALLY_NEGATIVE:    max_count = 0 ;
+														max_size = 0 ;
+		break ;
 	}
 
-#endif
-	return true ;
+	RS_STACK_MUTEX(mPerUserStatsMutex);
+
+	MsgSizeCount& s(per_user_statistics[msgMeta->mAuthorId]) ;
+
+	std::cerr << "GxsTrans::acceptMessage(): size=" << msg_size << ", grp=" << msgMeta->mGroupId << ", gxs_id=" << msgMeta->mAuthorId << ", current (size,cnt)=("
+	          << s.size << "," << s.count << ") reputation=" << rep_lev << ", limits=(" << max_size << "," << max_count << ") " ;
+
+	if(s.size + msg_size > max_size || 1+s.count > max_count)
+	{
+		std::cerr << "=> rejected." << std::endl;
+		return false ;
+	}
+	else
+	{
+		std::cerr << "=> accepted." << std::endl;
+		return true ;
+	}
 }
 
 

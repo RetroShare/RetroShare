@@ -98,7 +98,8 @@ public:
         mIdService(identities),
 	    mServClientsMutex("p3GxsTrans client services map mutex"),
 	    mOutgoingMutex("p3GxsTrans outgoing queue map mutex"),
-	    mIngoingMutex("p3GxsTrans ingoing queue map mutex")
+	    mIngoingMutex("p3GxsTrans ingoing queue map mutex"),
+	    mPerUserStatsMutex("p3GxsTrans user stats mutex")
     {
         mLastMsgCleanup = time(NULL) - 60;	// to be changed into 0
         mCleanupThread = NULL ;
@@ -310,12 +311,13 @@ private:
 
 	// Overloaded from RsGenExchange.
 
-	bool acceptNewMessage(const RsGxsMsgMetaData *msgMeta) ;
+	bool acceptNewMessage(const RsGxsMsgMetaData *msgMeta, uint32_t size) ;
 
     GxsTransIntegrityCleanupThread *mCleanupThread ;
 
 	// statistics of the load across all groups, per user.
 
+	RsMutex mPerUserStatsMutex;
 	std::map<RsGxsId,MsgSizeCount> per_user_statistics ;
 };
 
