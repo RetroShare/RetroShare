@@ -414,16 +414,18 @@ void ChatHandler::tick()
                 }
             }
             else if(msg.chat_id.isDistantChatId())
-            {
-                RsIdentityDetails details;
-                DistantChatPeerInfo dcpinfo ;
-                
-                if(!gxs_id_failed && rsMsgs->getDistantChatStatus(msg.chat_id.toDistantChatId(),dcpinfo)
-                                  && mRsIdentity->getIdDetails(msg.incoming? dcpinfo.to_id: dcpinfo.own_id, details))
-                {
-                    info.remote_author_id = details.mId.toStdString();
-                    info.remote_author_name = details.mNickname;
-                }
+			{
+				RsIdentityDetails details;
+				DistantChatPeerInfo dcpinfo;
+
+				if( !gxs_id_failed &&
+				        rsMsgs->getDistantChatStatus(
+				            msg.chat_id.toDistantChatId(), dcpinfo ) &&
+				        mRsIdentity->getIdDetails(dcpinfo.to_id, details) )
+				{
+					info.remote_author_id = details.mId.toStdString();
+					info.remote_author_name = details.mNickname;
+				}
                 else
                 {
                     gxs_id_failed = true;
@@ -1199,9 +1201,9 @@ void ChatHandler::handleInitiateDistantChatConnexion(Request& req, Response& res
 	DistantChatPeerId distant_chat_id;
 	uint32_t error_code;
 
-	if(mRsMsgs->initiateDistantChatConnexion(receiver_id, sender_id,
-	                                         distant_chat_id, error_code))
-		resp.setOk();
+	if(mRsMsgs->initiateDistantChatConnexion( receiver_id, sender_id,
+	                                          distant_chat_id, error_code,
+	                                          false )) resp.setOk();
 	else resp.setFail("Failed to initiate distant chat");
 
 	ChatId chat_id(distant_chat_id);
