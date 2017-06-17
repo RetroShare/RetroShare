@@ -390,6 +390,7 @@ void p3GxsTrans::GxsTransIntegrityCleanupThread::run()
 
 	RS_STACK_MUTEX(mMtx) ;
 	mMsgToDel = msgsToDel ;
+	total_message_size_and_count = totalMessageSizeAndCount;
     mDone = true;
 }
 
@@ -407,6 +408,7 @@ void p3GxsTrans::service_tick()
 
     if(mLastMsgCleanup + MAX_DELAY_BETWEEN_CLEANUPS < now)
     {
+		RS_STACK_MUTEX(mPerUserStatsMutex);
         if(!mCleanupThread)
             mCleanupThread = new GxsTransIntegrityCleanupThread(getDataStore());
 
@@ -425,6 +427,7 @@ void p3GxsTrans::service_tick()
 
     if(mCleanupThread != NULL && mCleanupThread->isDone())
 	{
+		RS_STACK_MUTEX(mPerUserStatsMutex);
 		GxsMsgReq msgToDel ;
 
 		mCleanupThread->getMessagesToDelete(msgToDel) ;
@@ -436,8 +439,14 @@ void p3GxsTrans::service_tick()
             deleteMsgs(token,msgToDel);
 		}
 
-		RS_STACK_MUTEX(mPerUserStatsMutex);
 		mCleanupThread->getPerUserStatistics(per_user_statistics) ;
+
+		std::cerr << "p3GxsTrans: Got new set of per user statistics:"<< std::endl;
+		for(std::map<RsGxsId,MsgSizeCount>::const_iterator it(per_user_statistics.begin());it!=per_user_statistics.end();++it)
+			std::cerr << "  " << it->first << ": " << it->second.count << " " << it->second.size << std::endl;
+
+		delete mCleanupThread;
+		mCleanupThread=NULL ;
 	}
 
 	{
