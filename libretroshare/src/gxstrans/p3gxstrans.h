@@ -101,7 +101,7 @@ public:
 	    mIngoingMutex("p3GxsTrans ingoing queue map mutex"),
 	    mPerUserStatsMutex("p3GxsTrans user stats mutex")
     {
-        mLastMsgCleanup = time(NULL) - 60;	// to be changed into 0
+        mLastMsgCleanup = time(NULL) - MAX_DELAY_BETWEEN_CLEANUPS + 30;	// always check 30 secs after start
         mCleanupThread = NULL ;
     }
 
