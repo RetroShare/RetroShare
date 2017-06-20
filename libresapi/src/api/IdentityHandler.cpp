@@ -22,6 +22,7 @@
 
 #include <retroshare/rsidentity.h>
 #include <retroshare/rspeers.h>
+#include <util/radix64.h>
 #include <time.h>
 
 #include "Operators.h"
@@ -500,6 +501,11 @@ void IdentityHandler::handleGetIdentityDetails(Request& req, Response& resp)
 
 	RsIdentityDetails details;
 	mRsIdentity->getIdDetails(RsGxsId(data.mMeta.mGroupId), details);
+
+	std::string base64Avatar;
+	Radix64::encode(details.mAvatar.mData, details.mAvatar.mSize, base64Avatar);
+	resp.mDataStream << makeKeyValue("avatar", base64Avatar);
+
 	StreamBase& usagesStream = resp.mDataStream.getStreamToMember("usages");
 	usagesStream.getStreamToMember();
 
