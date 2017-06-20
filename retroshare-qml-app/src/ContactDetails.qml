@@ -26,59 +26,16 @@ Item
 	id: cntDt
 	property var md
 	property bool is_contact: cntDt.md.is_contact
-	property bool has_avatar: false
 
-	property int avatarAttemptCnt: 0
-	function getDetails()
-	{
-		++cntDt.avatarAttemptCnt
-		rsApi.request(
-					"/identity/get_identity_details",
-					JSON.stringify({ gxs_id: cntDt.md.gxs_id }),
-					function(par)
-					{
-						var jData = JSON.parse(par.response).data
-						setDetails(jData)
-						if(!cntDt.has_avatar && avatarAttemptCnt < 3)
-							getDetails()
-					})
-	}
-	function setDetails(data)
-	{
-		cntDt.has_avatar = data.avatar.length > 0
-		if(cntDt.has_avatar)
-		{
-			contactAvatar.source =
-					"data:image/png;base64," + data.avatar
-		}
-	}
-
-	Component.onCompleted: getDetails()
-
-	Item
+	AvatarOrColorHash
 	{
 		id: topFace
 
-		height: 130
-		width: 130
+		gxs_id: cntDt.md.gxs_id
 
 		anchors.top: parent.top
 		anchors.topMargin: 6
 		anchors.horizontalCenter: parent.horizontalCenter
-
-		Image
-		{
-			id: contactAvatar
-			anchors.fill: parent
-			visible: cntDt.has_avatar
-		}
-
-		ColorHash
-		{
-			anchors.fill: parent
-			visible: !cntDt.has_avatar
-			hash: cntDt.md.gxs_id
-		}
 	}
 
 	Column
@@ -94,6 +51,13 @@ Item
 			height: 50
 			anchors.horizontalCenter: parent.horizontalCenter
 			spacing: 6
+
+			ColorHash
+			{
+				hash: cntDt.md.gxs_id
+				height: parent.height - 10
+				anchors.verticalCenter: parent.verticalCenter
+			}
 
 			Text
 			{
@@ -127,23 +91,10 @@ Item
 			}
 		}
 
-		Row
+		Text
 		{
-			ColorHash
-			{
-				hash: cntDt.md.gxs_id
-				height: 30
-				visible: cntDt.has_avatar
-			}
-
-			Text
-			{
-				text: "<pre>"+cntDt.md.gxs_id+"</pre>"
-				y: 5
-			}
-
+			text: "<pre>"+cntDt.md.gxs_id+"</pre>"
 			anchors.horizontalCenter: parent.horizontalCenter
-			spacing: 5
 		}
 
 		Text
