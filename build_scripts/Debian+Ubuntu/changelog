@@ -201,12 +201,12 @@ retroshare06 (0.6.2-1.XXXXXX~YYYYYY) YYYYYY; urgency=low
   7892004 Phenom Mon,  8 May 2017 11:53:16 +0200 Fix Warnings: unused parameter ‘member_name’
   381aca4 Phenom Mon,  8 May 2017 11:49:39 +0200 Fix Warnings: unused parameter ‘j’, 'ctx' & 'name'
   dd089a9 Phenom Mon,  8 May 2017 11:46:54 +0200 Fix Warnings: this ‘if’ clause does not guard
-  5050d4f Phenom Mon,  8 May 2017 11:42:49 +0200 Fix Warnings: unused parameter ‘indent’ warning: unused parameter ‘indent’ [-Wunused-parameter]          virtual std::ostream& print(std::ostream &out, uint16_t indent = 0) { return out; } // derived from RsItem, but should be removed                                                                           ^
+  5050d4f Phenom Mon,  8 May 2017 11:42:49 +0200 Fix Warnings: unused parameter ‘indent’ warning: unused parameter ‘indent’ [-Wunused-parameter]          virtual std::ostream& print(std::ostream &out, uint16_t indent = 0) { return out; } // derived from RsItem, but should be removed
   8e9b3c9 Gioacc Mon,  8 May 2017 12:03:42 +0200 Fix missing include
   add529f csoler Mon,  8 May 2017 11:41:34 +0200 Merge pull request #803 from PhenomRetroShare/Fix_UnitTest
   4e2db2f Phenom Mon,  8 May 2017 11:30:54 +0200 Fix UnitTest
 
- -- Retroshare Dev Team <contact@retroshare.net>  Mon, 20 June 2017 22:00:00 +0100
+ -- Retroshare Dev Team <contact@retroshare.net>  Mon, 20 Jun 2017 22:00:00 +0100
 
 retroshare06 (0.6.2-1.20170508.52a04e1f~precise) precise; urgency=low
 
