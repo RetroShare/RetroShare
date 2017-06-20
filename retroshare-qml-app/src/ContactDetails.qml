@@ -26,22 +26,64 @@ Item
 	id: cntDt
 	property var md
 	property bool is_contact: cntDt.md.is_contact
+	property bool has_avatar: false
 
-	ColorHash
+	property int avatarAttemptCnt: 0
+	function getDetails()
 	{
-		id: colorHash
+		++cntDt.avatarAttemptCnt
+		rsApi.request(
+					"/identity/get_identity_details",
+					JSON.stringify({ gxs_id: cntDt.md.gxs_id }),
+					function(par)
+					{
+						var jData = JSON.parse(par.response).data
+						setDetails(jData)
+						if(!cntDt.has_avatar && avatarAttemptCnt < 3)
+							getDetails()
+					})
+	}
+	function setDetails(data)
+	{
+		cntDt.has_avatar = data.avatar.length > 0
+		if(cntDt.has_avatar)
+		{
+			contactAvatar.source =
+					"data:image/png;base64," + data.avatar
+		}
+	}
+
+	Component.onCompleted: getDetails()
+
+	Item
+	{
+		id: topFace
+
+		height: 130
+		width: 130
 
 		anchors.top: parent.top
 		anchors.topMargin: 6
 		anchors.horizontalCenter: parent.horizontalCenter
 
-		height: 150
-		hash: cntDt.md.gxs_id
+		Image
+		{
+			id: contactAvatar
+			anchors.fill: parent
+			visible: cntDt.has_avatar
+		}
+
+		ColorHash
+		{
+			anchors.fill: parent
+			visible: !cntDt.has_avatar
+			hash: cntDt.md.gxs_id
+		}
 	}
 
 	Column
 	{
-		anchors.top: colorHash.bottom
+		anchors.top: topFace.bottom
 		anchors.topMargin: 6
 		anchors.horizontalCenter: parent.horizontalCenter
 
@@ -61,7 +103,6 @@ Item
 
 			Image
 			{
-
 				source: cntDt.is_contact ?
 							"qrc:/icons/rating.png" :
 							"qrc:/icons/rating-unrated.png"
@@ -86,10 +127,23 @@ Item
 			}
 		}
 
-		Text
+		Row
 		{
-			text: "<pre>"+cntDt.md.gxs_id+"</pre>"
+			ColorHash
+			{
+				hash: cntDt.md.gxs_id
+				height: 30
+				visible: cntDt.has_avatar
+			}
+
+			Text
+			{
+				text: "<pre>"+cntDt.md.gxs_id+"</pre>"
+				y: 5
+			}
+
 			anchors.horizontalCenter: parent.horizontalCenter
+			spacing: 5
 		}
 
 		Text
