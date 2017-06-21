@@ -25,7 +25,6 @@
         <file>TrustedNodeDetails.qml</file>
         <file>ClipboardWrapper.qml</file>
         <file>ContactDetails.qml</file>
-        <file>ColorHash.qml</file>
         <file>icons/rating-unrated.png</file>
         <file>icons/rating.png</file>
         <file>TimedPopup.qml</file>
@@ -39,5 +38,6 @@
         <file>icons/microphone.svg</file>
         <file>components/ColorHash.qml</file>
         <file>styles/ChatStyle.qml</file>
+        <file>components/AvatarOrColorHash.qml</file>
     </qresource>
 </RCC>
