@@ -25,6 +25,7 @@ Item
 
 	property string gxs_id
 
+
 	height: 130
 	width: height
 
@@ -35,6 +36,7 @@ Item
 	property int avatarAttemptCnt: 0
 	function getDetails()
 	{
+		console.log("getDetails() ", compRoot.gxs_id )
 		++compRoot.avatarAttemptCnt
 		rsApi.request(
 					"/identity/get_identity_details",
@@ -57,6 +59,21 @@ Item
 		}
 	}
 
+	function showDetails()
+	{
+		console.log("showDetails() ", gxs_id)
+		rsApi.request(
+					"/identity/get_identity_details",
+					JSON.stringify({ gxs_id: compRoot.gxs_id }),
+					function(par)
+					{
+						var jData = JSON.parse(par.response).data
+						stackView.push(
+									"qrc:/ContactDetails.qml",
+									{md: jData})
+					})
+	}
+
 	Component.onCompleted: if(visible && !has_avatar) getDetails()
 	onVisibleChanged: if(visible && !has_avatar) getDetails()
 
@@ -72,5 +89,11 @@ Item
 		anchors.fill: parent
 		visible: !compRoot.has_avatar
 		hash: compRoot.gxs_id
+	}
+
+	MouseArea
+	{
+		anchors.fill: parent
+		onClicked: showDetails()
 	}
 }
