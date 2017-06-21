@@ -68,11 +68,11 @@ Item
 	{
 		id: userHash
 
-		ColorHash
+		AvatarOrColorHash
 		{
 			id: colorHash
 
-			hash: gxsInfo.gxs
+			gxs_id: gxsInfo.gxs
 			height: toolBar.height - 4
 			anchors.leftMargin: 2
 		}
