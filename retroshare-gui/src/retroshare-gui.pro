@@ -460,7 +460,6 @@ HEADERS +=  rshare.h \
             gui/settings/ChatPage.h \
             gui/settings/ChannelPage.h \
             gui/settings/PostedPage.h \
-            gui/settings/RelayPage.h \
             gui/settings/ServicePermissionsPage.h \
             gui/settings/AddFileAssociationDialog.h \
             gui/settings/GroupFrameSettingsWidget.h \
@@ -643,7 +642,6 @@ FORMS +=    gui/StartDialog.ui \
             gui/settings/ChatPage.ui \
             gui/settings/ChannelPage.ui \
             gui/settings/PostedPage.ui \
-            gui/settings/RelayPage.ui \
             gui/settings/ServicePermissionsPage.ui \
             gui/settings/PluginItem.ui \
             gui/settings/GroupFrameSettingsWidget.ui \
@@ -870,7 +868,6 @@ SOURCES +=  main.cpp \
             gui/settings/ChatPage.cpp \
             gui/settings/ChannelPage.cpp \
             gui/settings/PostedPage.cpp \
-            gui/settings/RelayPage.cpp \
             gui/settings/ServicePermissionsPage.cpp \
             gui/settings/AddFileAssociationDialog.cpp \
             gui/settings/GroupFrameSettingsWidget.cpp \

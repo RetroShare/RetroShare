@@ -32,7 +32,6 @@
 #include "FileAssociationsPage.h"
 #include "SoundPage.h"
 #include "TransferPage.h"
-#include "RelayPage.h"
 #include "ChatPage.h"
 #include "ChannelPage.h"
 #include "PeoplePage.h"
@@ -156,7 +155,6 @@ SettingsPage::initStackedWidget()
     addPage(new ForumPage()); // FORUMS
     addPage(new PostedPage()); // POSTED RENAME TO LINKS
     addPage(new NotifyPage()); // NOTIFY
-    addPage(new RelayPage() ); // RELAY SHOUD BE INSIDE NETWORK AS A TAB
     addPage(new PluginsPage() ); // PLUGINS
     addPage(new AppearancePage()); // APPEARENCE
     addPage(new SoundPage() ); // SOUND
