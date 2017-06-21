@@ -51,6 +51,7 @@ Item
 	{
 		console.log("contactsView.refreshContactsCB()", visible)
 		var token = JSON.parse(par.response).statetoken
+		ChatCache.contactsCache.contactsList = JSON.parse(par.response).data
 		TokensManager.registerToken(token, refreshContacts)
 		contactsSortWorker.sendMessage(
 					{'action': 'refreshContacts', 'response': par.response})

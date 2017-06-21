@@ -17,6 +17,7 @@
  */
 
 import QtQuick 2.7
+import "../" //Needed for Chat Cache
 
 
 Item
@@ -62,16 +63,11 @@ Item
 	function showDetails()
 	{
 		console.log("showDetails() ", gxs_id)
-		rsApi.request(
-					"/identity/get_identity_details",
-					JSON.stringify({ gxs_id: compRoot.gxs_id }),
-					function(par)
-					{
-						var jData = JSON.parse(par.response).data
-						stackView.push(
-									"qrc:/ContactDetails.qml",
-									{md: jData})
-					})
+
+		stackView.push(
+					"qrc:/ContactDetails.qml",
+					{md: ChatCache.contactsCache.getContactFromGxsId(gxs_id)})
+
 	}
 
 	Component.onCompleted: if(visible && !has_avatar) getDetails()
