@@ -57,6 +57,14 @@ struct GxsTransClient
 	                                       GxsTransSendStatus status ) = 0;
 };
 
+struct MsgSizeCount
+{
+	MsgSizeCount() : size(0),count(0) {}
+
+	uint32_t size ;
+	uint32_t count ;
+};
+
 /**
  * @brief p3GxsTrans is a mail delivery service based on GXS.
  * p3GxsTrans is capable of asynchronous mail delivery and acknowledgement.
@@ -90,9 +98,10 @@ public:
         mIdService(identities),
 	    mServClientsMutex("p3GxsTrans client services map mutex"),
 	    mOutgoingMutex("p3GxsTrans outgoing queue map mutex"),
-	    mIngoingMutex("p3GxsTrans ingoing queue map mutex")
+	    mIngoingMutex("p3GxsTrans ingoing queue map mutex"),
+	    mPerUserStatsMutex("p3GxsTrans user stats mutex")
     {
-        mLastMsgCleanup = time(NULL) - 60;	// to be changed into 0
+        mLastMsgCleanup = time(NULL) - MAX_DELAY_BETWEEN_CLEANUPS + 30;	// always check 30 secs after start
         mCleanupThread = NULL ;
     }
 
@@ -159,7 +168,7 @@ private:
 	 * Two weeks seems fair ATM.
 	 */
 	static const uint32_t GXS_STORAGE_PERIOD = 0x127500;
-	static const uint32_t MAX_DELAY_BETWEEN_CLEANUPS = 1203; // every 20 mins. Could be less.
+	static const uint32_t MAX_DELAY_BETWEEN_CLEANUPS ; // every 20 mins. Could be less.
 
     time_t mLastMsgCleanup ;
 
@@ -193,7 +202,7 @@ private:
 	typedef std::map<RsGxsTransId, OutgoingRecord> prMap;
 	prMap mOutgoingQueue;
 	RsMutex mOutgoingMutex;
-	void processOutgoingRecord(OutgoingRecord& r);
+	void locked_processOutgoingRecord(OutgoingRecord& r);
 
 	/**
 	 * @brief Ingoing mail and receipt processing queue.
@@ -204,8 +213,8 @@ private:
 	 * item to not being processed and memleaked multimap is used instead of map
 	 * for incoming queue.
 	 */
-	typedef std::unordered_multimap<RsGxsTransId, RsGxsTransBaseItem*> inMap;
-	inMap mIngoingQueue;
+	typedef std::unordered_multimap<RsGxsTransId, RsGxsTransBaseMsgItem*> inMap;
+	inMap mIncomingQueue;
 	RsMutex mIngoingMutex;
 
 	/// @see GxsTokenQueue::handleResponse(uint32_t token, uint32_t req_type)
@@ -282,7 +291,7 @@ private:
 		enum CheckState { CheckStart, CheckChecking };
 
 	public:
-        GxsTransIntegrityCleanupThread(RsGeneralDataService *const dataService): mDs(dataService),mMtx("GxsTransIntegrityCheck") {}
+        GxsTransIntegrityCleanupThread(RsGeneralDataService *const dataService): mDs(dataService),mMtx("GxsTransIntegrityCheck") { mDone=false;}
 
 		bool isDone();
 		void run();
@@ -290,14 +299,26 @@ private:
 		void getDeletedIds(std::list<RsGxsGroupId>& grpIds, std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >& msgIds);
 
 		void getMessagesToDelete(GxsMsgReq& req) ;
+		void getPerUserStatistics(std::map<RsGxsId,MsgSizeCount>& m) ;
 
 	private:
 		RsGeneralDataService* const mDs;
 		RsMutex mMtx ;
 
 		GxsMsgReq mMsgToDel ;
+		std::map<RsGxsId,MsgSizeCount> total_message_size_and_count;
+        bool mDone ;
 	};
 
+	// Overloaded from RsGenExchange.
+
+	bool acceptNewMessage(const RsGxsMsgMetaData *msgMeta, uint32_t size) ;
+
     GxsTransIntegrityCleanupThread *mCleanupThread ;
+
+	// statistics of the load across all groups, per user.
+
+	RsMutex mPerUserStatsMutex;
+	std::map<RsGxsId,MsgSizeCount> per_user_statistics ;
 };
 

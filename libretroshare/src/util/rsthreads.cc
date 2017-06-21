@@ -179,6 +179,7 @@ void RsThread::start(const std::string &threadName)
     THREAD_DEBUG << "pqithreadstreamer::start() initing should_stop=0" << std::endl;
 #endif
     mShouldStopSemaphore.set(0) ;
+	mHasStoppedSemaphore.set(0) ;
 
     int err ;
 

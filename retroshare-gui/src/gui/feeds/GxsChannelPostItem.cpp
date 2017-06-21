@@ -185,8 +185,9 @@ bool GxsChannelPostItem::setGroup(const RsGxsChannelGroup &group, bool doFill)
 	mGroup = group;
 
     // if not publisher, hide the edit button. Without the publish key, there's no way to edit a message.
-
+#ifdef DEBUG_ITEM
     std::cerr << "Group subscribe flags = " << std::hex << mGroup.mMeta.mSubscribeFlags << std::dec << std::endl;
+#endif
     if(!IS_GROUP_PUBLISHER(mGroup.mMeta.mSubscribeFlags))
         ui->editButton->hide();
 

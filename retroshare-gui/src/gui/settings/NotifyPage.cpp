@@ -162,6 +162,7 @@ NotifyPage::NotifyPage(QWidget * parent, Qt::WindowFlags flags)
 	connect(ui.message_ConnectAttempt,  SIGNAL(toggled(bool)), this, SLOT(updateMessageFlags())) ;
 
 	connect(ui.notify_Peers,        SIGNAL(toggled(bool)), this, SLOT(updateNewsFeedFlags()));
+	connect(ui.notify_Circles,      SIGNAL(toggled(bool)), this, SLOT(updateNewsFeedFlags()));
 	connect(ui.notify_Channels,     SIGNAL(toggled(bool)), this, SLOT(updateNewsFeedFlags()));
 	connect(ui.notify_Forums,       SIGNAL(toggled(bool)), this, SLOT(updateNewsFeedFlags()));
 	connect(ui.notify_Posted,       SIGNAL(toggled(bool)), this, SLOT(updateNewsFeedFlags()));
@@ -195,6 +196,8 @@ uint NotifyPage::getNewsFlags()
 
     if (ui.notify_Peers->isChecked())
         newsFlags |= RS_FEED_TYPE_PEER;
+    if (ui.notify_Circles->isChecked())
+        newsFlags |= RS_FEED_TYPE_CIRCLE;
     if (ui.notify_Channels->isChecked())
         newsFlags |= RS_FEED_TYPE_CHANNEL;
     if (ui.notify_Forums->isChecked())
@@ -324,6 +327,7 @@ void NotifyPage::load()
 	whileBlocking(ui.popup_ConnectAttempt)->setChecked(notifyflags & RS_POPUP_CONNECT_ATTEMPT);
 
 	whileBlocking(ui.notify_Peers)->setChecked(newsflags & RS_FEED_TYPE_PEER);
+	whileBlocking(ui.notify_Circles)->setChecked(newsflags & RS_FEED_TYPE_CIRCLE);
 	whileBlocking(ui.notify_Channels)->setChecked(newsflags & RS_FEED_TYPE_CHANNEL);
 	whileBlocking(ui.notify_Forums)->setChecked(newsflags & RS_FEED_TYPE_FORUM);
 	whileBlocking(ui.notify_Posted)->setChecked(newsflags & RS_FEED_TYPE_POSTED);
