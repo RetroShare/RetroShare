@@ -1,6 +1,6 @@
 retroshare06 (0.6.2-1.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
-  0133be7 csoler Sat, 17 Jun 2017 23:07:10 +0200 Merge pull request #887 from csoler/v0.6-GxsTransport
+  0133be7 csoler Sat, 17 Jun 2017 23:07:10 +0200 Merge pull request #887 from csoler/v0.6-GxsTransport 
   12a4529 csoler Sat, 17 Jun 2017 23:02:28 +0200 added ifdef for comments on GxsTrans
   eb4bb5b csoler Sat, 17 Jun 2017 21:42:00 +0200 fixed bug in gxs trans stats counting
   43dcddc csoler Fri, 16 Jun 2017 12:37:09 +0200 Merge pull request #880 from PhenomRetroShare/Add_GxsCircleNotify
