@@ -96,4 +96,22 @@ QtObject
 		}
 	}
 
+	property QtObject contactsCache: QtObject
+	{
+		id: contactsCache
+		property var contactsList
+
+		function getContactFromGxsId (gxsId)
+		{
+			console.log("getContactFromGxsId (gxsId)", gxsId)
+			for(var i in contactsList)
+			{
+				if (contactsList[i].gxs_id == gxsId) return contactsList[i]
+			}
+
+
+
+		}
+	}
+
 }
