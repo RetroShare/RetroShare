@@ -1,5 +1,6 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.0
+import QtQuick.Layouts 1.3
 import "../URI.js" as UriJs
 import "../"
 import "../components"
@@ -17,8 +18,30 @@ Drawer
 	{
 		id: listView
 		currentIndex: -1
-		anchors.fill: parent
-		height: parent.height
+
+		anchors.fill:parent
+
+		clip: true
+
+		snapMode: ListView.SnapToItem
+
+		headerPositioning: ListView.OverlayHeader
+
+		header:Rectangle
+		{
+			id:header
+			property var styles: StyleSideBar.header
+
+			width: parent.width
+			height: styles.height
+			color: styles.color
+			Label {
+				        text: "Retroshare"
+						anchors.centerIn: parent
+						wrapMode: Text.WordWrap
+			        }
+
+		}
 
 		delegate: Item
 		{

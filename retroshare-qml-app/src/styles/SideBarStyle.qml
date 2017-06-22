@@ -12,7 +12,11 @@ QtObject {
 		property string hoverColor: "lightgrey"
 		property string defaultColor: "white"
 		property string pressColor: "slategrey"
-
+	}
+	property QtObject header: QtObject
+	{
+		property var height: 80
+		property var color: "#0398d5"
 	}
 
 }
