@@ -13,7 +13,6 @@
         <file>icons/state-offline.png</file>
         <file>icons/state-ok.png</file>
         <file>GxsIdentityDelegate.qml</file>
-        <file>icons/edit-find.png</file>
         <file>icons/edit-image-face-detect.png</file>
         <file>icons/application-menu.png</file>
         <file>ContactSort.js</file>
@@ -43,5 +42,6 @@
         <file>styles/SideBarStyle.qml</file>
         <file>components/Btn.qml</file>
         <file>icons/netgraph.svg</file>
+        <file>icons/search.svg</file>
     </qresource>
 </RCC>

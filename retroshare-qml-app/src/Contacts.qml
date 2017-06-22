@@ -166,7 +166,7 @@ Item
 			height: searchText.height /  2
 			width: searchText.height / 2
 			anchors.verticalCenter: parent.verticalCenter
-			source: "qrc:/icons/edit-find.png"
+			source: "qrc:/icons/searvh.svg"
 		}
 
 		TextField
