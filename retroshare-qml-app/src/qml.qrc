@@ -40,5 +40,7 @@
         <file>styles/ChatStyle.qml</file>
         <file>components/AvatarOrColorHash.qml</file>
         <file>components/SideBar.qml</file>
+        <file>styles/SideBarStyle.qml</file>
+        <file>components/Btn.qml</file>
     </qresource>
 </RCC>

@@ -1,0 +1,123 @@
+import QtQuick 2.0
+import QtQuick.Controls 1.4
+
+Item
+{
+
+	id: button
+	property alias buttonText: innerText.text;
+	property alias innerAnchors: innerElements.anchors;
+	property alias rectangleButton: rectangleButton;
+
+	property var iconUrl
+	property int iconHeight: 20
+
+	property color color
+	property color hoverColor
+	property color pressColor
+	property int fontSize
+	property int borderWidth
+	property int borderRadius
+
+	scale: state === "Pressed" ? 0.96 : 1.0
+	onEnabledChanged: state = ""
+	signal clicked
+
+	Rectangle
+	{
+		id: rectangleButton
+		anchors.fill: parent
+		radius: borderRadius
+		color: button.enabled ? button.color : "grey"
+		border.width: borderWidth
+		border.color: "black"
+
+		ToolButton {
+			id: innerElements
+
+			Image
+			{
+				id: icon
+				source: (iconUrl)? iconUrl: ""
+				height: (iconUrl)? iconHeight: 0
+				width: (iconUrl)? iconHeight: 0
+
+				visible: (iconUrl)? true: false
+				anchors.left: innerElements.left
+
+				anchors.margins:(iconUrl)? 10 : 0
+				anchors.verticalCenter: parent.verticalCenter
+			}
+
+			Text
+			{
+				anchors.margins: 10
+				id: innerText
+				font.pointSize: fontSize
+				anchors.left: icon.right
+				anchors.verticalCenter: parent.verticalCenter
+			}
+		}
+	}
+
+	states: [
+		State
+		{
+			name: "Hovering"
+			PropertyChanges
+			{
+				target: rectangleButton
+				color: hoverColor
+			}
+		},
+		State
+		{
+			name: "Pressed"
+			PropertyChanges
+			{
+				target: rectangleButton
+				color: pressColor
+			}
+		}
+	]
+
+	transitions: [
+		Transition
+		{
+			from: ""; to: "Hovering"
+			ColorAnimation { duration: 200 }
+		},
+		Transition
+		{
+			from: "*"; to: "Pressed"
+			ColorAnimation { duration: 10 }
+		}
+	]
+
+	MouseArea
+	{
+		hoverEnabled: true
+		anchors.fill: button
+		onEntered: { button.state='Hovering'}
+		onExited: { button.state=''}
+		onClicked: { button.clicked();}
+		onPressed: { button.state="Pressed" }
+		onReleased:
+		{
+			if (containsMouse)
+				button.state="Hovering";
+			else
+				button.state="";
+		}
+	}
+
+	Behavior on scale
+	{
+		NumberAnimation
+		{
+			duration: 100
+			easing.type: Easing.InOutQuad
+		}
+	}
+
+}
