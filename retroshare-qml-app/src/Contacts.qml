@@ -160,22 +160,12 @@ Item
 		anchors.horizontalCenter: parent.horizontalCenter
 		color: "white"
 
-		Image
-		{
-			id: searchIcon
-			height: searchText.height /  2
-			width: searchText.height / 2
-			anchors.verticalCenter: parent.verticalCenter
-			source: "qrc:/icons/searvh.svg"
-		}
-
 		TextField
 		{
 			id: searchText
-			anchors.left: searchIcon.right
 			anchors.verticalCenter: parent.verticalCenter
 			placeholderText : "Search contacts..."
-			width: parent.width - searchIcon.width - 5
+			width: parent.width - 5
 			anchors.leftMargin: 5
 
 			background: Rectangle

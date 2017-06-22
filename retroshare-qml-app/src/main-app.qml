@@ -108,8 +108,25 @@ ApplicationWindow
 			anchors.left: imageLoader.right
 			anchors.leftMargin: 20
 		}
+
+
+		BtnIcon
+		{
+			id: searchIcon
+			height: parent.height - 10
+			width: parent.height - 10
+			anchors.verticalCenter: parent.verticalCenter
+			imgUrl: "qrc:/icons/search.svg"
+			anchors.right: menu.left
+			onClicked:
+			{
+				stackView.push("qrc:/Contacts.qml",
+							            {'searching': true} )
+			}
+		}
 		MouseArea
 		{
+			id: menu
 			height: parent.height
 			width: parent.height
 			anchors.right: parent.right
