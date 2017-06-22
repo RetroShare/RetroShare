@@ -74,6 +74,7 @@ Drawer
 				innerAnchors.left: rectangleButton.left
 				innerAnchors.verticalCenter: rectangleButton.verticalCenter
 				iconUrl: (model.icon)? model.icon : undefined
+				innerMargin: 20
 			}
 
 
@@ -134,11 +135,6 @@ Drawer
 				{
 					stackView.push("qrc:/TrustedNodesView.qml");
 				},
-				"Search Contacts": function(){
-					stackView.push("qrc:/Contacts.qml",
-								            {'searching': true} )
-
-				},
 				"Paste Link": function()
 				{
 					UriJs.URI.withinString(
@@ -155,22 +151,19 @@ Drawer
 			{
 				title: "Trusted Nodes"
 				showOnCoreReady: true
-				icon: "/icons/attach.svg"
-			}
-			ListElement
-			{
-				title: "Search Contacts"
-				showOnCoreReady: true
+				icon: "/icons/netgraph.svg"
 			}
 			ListElement
 			{
 				title: "Paste Link"
 				showOnCoreReady: true
+				icon: "/icons/add.svg"
 			}
 			ListElement
 			{
 				title: "Terminate Core"
 				showOnOsAndroid: false
+				icon: "/icons/exit.svg"
 			}
 
 		}

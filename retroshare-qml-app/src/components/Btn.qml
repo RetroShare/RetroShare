@@ -18,6 +18,7 @@ Item
 	property int fontSize
 	property int borderWidth
 	property int borderRadius
+	property int innerMargin: 10
 
 	scale: state === "Pressed" ? 0.96 : 1.0
 	onEnabledChanged: state = ""
@@ -42,16 +43,18 @@ Item
 				height: (iconUrl)? iconHeight: 0
 				width: (iconUrl)? iconHeight: 0
 
+				fillMode: Image.PreserveAspectFit
+
 				visible: (iconUrl)? true: false
 				anchors.left: innerElements.left
 
-				anchors.margins:(iconUrl)? 10 : 0
+				anchors.margins:(iconUrl)? innerMargin : 0
 				anchors.verticalCenter: parent.verticalCenter
 			}
 
 			Text
 			{
-				anchors.margins: 10
+				anchors.margins: innerMargin
 				id: innerText
 				font.pointSize: fontSize
 				anchors.left: icon.right

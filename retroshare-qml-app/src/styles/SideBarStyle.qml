@@ -7,7 +7,7 @@ QtObject {
 
 	property QtObject item: QtObject
 	{
-		property var height: 50
+		property var height: 40
 
 		property string hoverColor: "lightgrey"
 		property string defaultColor: "white"
