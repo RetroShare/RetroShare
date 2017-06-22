@@ -124,7 +124,7 @@ ApplicationWindow
 							            {'searching': true} )
 			}
 
-			visible: setVisible(coreReady)
+			visible: coreReady
 		}
 		MouseArea
 		{
