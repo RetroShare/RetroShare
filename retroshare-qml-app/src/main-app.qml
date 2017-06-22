@@ -21,6 +21,8 @@ import QtQuick.Controls 2.0
 import org.retroshare.qml_components.LibresapiLocalClient 1.0
 import "URI.js" as UriJs
 import "." //Needed for TokensManager and ClipboardWrapper singleton
+import "components/."
+
 
 ApplicationWindow
 {
@@ -114,7 +116,7 @@ ApplicationWindow
 			anchors.rightMargin: 2
 			anchors.verticalCenter: parent.verticalCenter
 
-			onClicked: menu.open()
+			onClicked: sideBar.open()
 
 			Image
 			{
@@ -124,41 +126,8 @@ ApplicationWindow
 				anchors.centerIn: parent
 			}
 
-			Menu
-			{
-				id: menu
-				y: parent.y + parent.height
-
-				MenuItem
-				{
-					text: qsTr("Trusted Nodes")
-					//iconSource: "qrc:/icons/document-share.png"
-					onTriggered: stackView.push("qrc:/TrustedNodesView.qml")
-					enabled: mainWindow.coreReady
-				}
-				MenuItem
-				{
-					text: qsTr("Search Contacts")
-					onTriggered:
-						stackView.push("qrc:/Contacts.qml",
-									   {'searching': true} )
-					enabled: mainWindow.coreReady
-				}
-				MenuItem
-				{
-					text: "Paste Link"
-					onTriggered: UriJs.URI.withinString(
-									 ClipboardWrapper.getFromClipBoard(),
-									 handleIntentUri)
-
-					enabled: mainWindow.coreReady
-				}
-				MenuItem
-				{
-					text: "Terminate Core"
-					onTriggered: rsApi.request("/control/shutdown")
-					visible: !Q_OS_ANDROID
-				}
+			SideBar {
+				id: sideBar
 			}
 		}
 	}

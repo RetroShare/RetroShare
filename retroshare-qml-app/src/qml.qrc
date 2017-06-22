@@ -39,5 +39,6 @@
         <file>components/ColorHash.qml</file>
         <file>styles/ChatStyle.qml</file>
         <file>components/AvatarOrColorHash.qml</file>
+        <file>components/SideBar.qml</file>
     </qresource>
 </RCC>
