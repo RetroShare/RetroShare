@@ -44,14 +44,16 @@ Drawer
 
 			MouseArea
 			{
+				property var lastItem
 				width: parent.width
 				height: parent.height
 				onClicked:
 				{
-					if (listView.currentIndex != index)
+					if (listView.currentIndex != index || stackView.currentItem != lastItem)
 					{
 						listView.currentIndex = index
 						menuList.actions[model.title]();
+						lastItem = stackView.currentItem
 	//					titleLabel.text = model.title
 	//					stackView.replace(model.source)
 					}
@@ -87,6 +89,7 @@ Drawer
 		model: ListModel
 		{
 			id: menuList
+
 			property var actions :
 			{
 				"Trusted Nodes": function()
@@ -95,7 +98,7 @@ Drawer
 				},
 				"Search Contacts": function(){
 					stackView.push("qrc:/Contacts.qml",
-								    {'searching': true} )
+								            {'searching': true} )
 
 				},
 				"Paste Link": function()
