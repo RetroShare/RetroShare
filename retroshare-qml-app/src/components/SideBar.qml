@@ -14,161 +14,242 @@ Drawer
 	width: Math.min(parent.width, parent.height) / 3 * styles.width
 	dragMargin: 10
 
-	ListView
+	Rectangle
 	{
-		id: listView
-		currentIndex: -1
+	width: parent.width
+	height: parent.height
 
-		anchors.fill:parent
 
-		clip: true
-
-		snapMode: ListView.SnapToItem
-
-		headerPositioning: ListView.OverlayHeader
-
-		header:Rectangle
+	    ListView
 		{
-			id:header
-			property var styles: StyleSideBar.header
+			id: listView
+			currentIndex: -1
+
+			anchors.fill:parent
+
+			clip: true
+
+			snapMode: ListView.SnapToItem
+
+			headerPositioning: ListView.OverlayHeader
+
+			header:Rectangle
+			{
+				id:header
+				property var styles: StyleSideBar.header
+
+				width: parent.width
+				height: colorHash.height + nickText.height + gxsText.height + 40
+				color: styles.color
+
+				AvatarOrColorHash
+				{
+					id: colorHash
+
+					gxs_id: (ChatCache.contactsCache.own)?ChatCache.contactsCache.own.gxs_id  : ""
+					height: styles.avatarHeight
+					anchors.margins: styles.avatarMargins
+					anchors.horizontalCenter: header.horizontalCenter
+					anchors.top: header.top
+				}
+
+				Text
+				{
+					id: nickText
+					text: (ChatCache.contactsCache.own)?ChatCache.contactsCache.own.name  : ""
+					height:  contentHeight
+					anchors.top: colorHash.bottom
+					anchors.left: header.left
+					anchors.right: header.right
+					anchors.leftMargin: 10
+					anchors.rightMargin: 10
+					horizontalAlignment:Text.AlignHCenter
+					wrapMode: Text.Wrap
+					color: styles.textColor
+					font.bold: true
+					font.pixelSize: styles.textNickSize
+				}
+				Text
+				{
+					id: gxsText
+					text: (ChatCache.contactsCache.own)?ChatCache.contactsCache.own.gxs_id  : ""
+					height:  contentHeight
+					wrapMode: Text.WrapAnywhere
+					width: header.width
+					anchors.top: nickText.bottom
+					anchors.left: header.left
+					anchors.right: header.right
+					anchors.leftMargin: 10
+					anchors.rightMargin: 10
+					horizontalAlignment:Text.AlignHCenter
+					color: styles.textColor
+					font.pixelSize: styles.textGxsidSize
+				}
+			}
+
+
+
+			delegate: Item
+			{
+
+				property var styles: StyleSideBar.item
+
+				id: menuItem
+				width: parent.width
+				height: styles.height
+
+				Connections
+				{
+					target: mainWindow
+					onCoreReadyChanged:
+					{
+						if (model.showOnCoreReady)
+						{
+							setVisible(mainWindow.coreReady)
+						}
+					}
+				}
+
+				Btn
+				{
+					buttonText: model.title
+					width: parent.width
+					height: parent.height
+					color:  menuItem.styles.defaultColor
+					hoverColor:  menuItem.styles.hoverColor
+					innerAnchors.left: rectangleButton.left
+					innerAnchors.verticalCenter: rectangleButton.verticalCenter
+					iconUrl: (model.icon)? model.icon : undefined
+					innerMargin: 20
+				}
+
+
+				MouseArea
+				{
+					property var lastItem
+					id: itemArea
+					width: parent.width
+					height: parent.height
+					onClicked:
+					{
+						if (listView.currentIndex != index || stackView.currentItem != lastItem)
+						{
+							listView.currentIndex = index
+							menuList.actions[model.title]();
+							lastItem = stackView.currentItem
+		//					titleLabel.text = model.title
+		//					stackView.replace(model.source)
+						}
+						drawer.close()
+					}
+				}
+
+
+
+				visible: (model.showOnCoreReady)? setVisible(mainWindow.coreReady) : true
+
+				Component.onCompleted:
+				{
+					if (model.showOnOsAndroid && !Q_OS_ANDROID)
+					{
+						menuItem.visible = false
+						menuItem.height = 0
+					}
+				}
+
+				function setVisible(b)
+				{
+					menuItem.visible = b
+					if (!b)
+					{
+						menuItem.height = 0
+					}
+					else
+					{
+						menuItem.height = styles.height
+					}
+				}
+			}
+
+			model: ListModel
+			{
+				id: menuList
+
+				property var actions :
+				{
+					"Trusted Nodes": function()
+					{
+						stackView.push("qrc:/TrustedNodesView.qml");
+					},
+					"Search Contacts": function()
+					{
+						stackView.push("qrc:/Contacts.qml",
+									            {'searching': true} )
+					},
+					"Paste Link": function()
+					{
+						UriJs.URI.withinString(
+								ClipboardWrapper.getFromClipBoard(),
+									handleIntentUri);
+					},
+					"Terminate Core": function()
+					{
+						rsApi.request("/control/shutdown");
+					},
+				}
+
+				ListElement
+				{
+					title: "Trusted Nodes"
+					showOnCoreReady: true
+					icon: "/icons/netgraph.svg"
+				}
+				ListElement
+				{
+					title: "Search Contacts"
+					showOnCoreReady: true
+					icon: "/icons/search.svg"
+				}
+				ListElement
+				{
+					title: "Paste Link"
+					showOnCoreReady: true
+					icon: "/icons/add.svg"
+				}
+				ListElement
+				{
+					title: "Terminate Core"
+					showOnOsAndroid: false
+					icon: "/icons/exit.svg"
+				}
+
+			}
+
+			ScrollIndicator.vertical: ScrollIndicator { }
+		}
+
+		Rectangle
+		{
+			property var styles: StyleSideBar.footer
 
 			width: parent.width
-			height: styles.height
+			anchors.bottom: parent.bottom
+			height: Label.contentHeight
 			color: styles.color
-			Label {
-				        text: "Retroshare"
-						anchors.centerIn: parent
-						wrapMode: Text.WordWrap
-			        }
 
-		}
-
-		delegate: Item
-		{
-
-			property var styles: StyleSideBar.item
-
-			id: menuItem
-			width: parent.width
-			height: styles.height
-
-			Connections
+			Label
 			{
-				target: mainWindow
-				onCoreReadyChanged:
-				{
-					if (model.showOnCoreReady)
-					{
-						setVisible(mainWindow.coreReady)
-					}
-				}
-			}
+				horizontalAlignment: Text.AlignRight
+				anchors.bottom: parent.bottom
+				anchors.right: parent.right
+				text:"Retroshare v.DEV"
+				color: parent.styles.textColor
+				anchors.rightMargin: parent.styles.margins
+				anchors.bottomMargin: parent.styles.margins
 
-			Btn
-			{
-				buttonText: model.title
-				width: parent.width
-				height: parent.height
-				color:  menuItem.styles.defaultColor
-				hoverColor:  menuItem.styles.hoverColor
-				innerAnchors.left: rectangleButton.left
-				innerAnchors.verticalCenter: rectangleButton.verticalCenter
-				iconUrl: (model.icon)? model.icon : undefined
-				innerMargin: 20
-			}
-
-
-			MouseArea
-			{
-				property var lastItem
-				id: itemArea
-				width: parent.width
-				height: parent.height
-				onClicked:
-				{
-					if (listView.currentIndex != index || stackView.currentItem != lastItem)
-					{
-						listView.currentIndex = index
-						menuList.actions[model.title]();
-						lastItem = stackView.currentItem
-	//					titleLabel.text = model.title
-	//					stackView.replace(model.source)
-					}
-					drawer.close()
-				}
-			}
-
-
-
-			visible: (model.showOnCoreReady)? setVisible(mainWindow.coreReady) : true
-
-			Component.onCompleted:
-			{
-				if (model.showOnOsAndroid && !Q_OS_ANDROID)
-				{
-					menuItem.visible = false
-					menuItem.height = 0
-				}
-			}
-
-			function setVisible(b)
-			{
-				menuItem.visible = b
-				if (!b)
-				{
-					menuItem.height = 0
-				}
-				else
-				{
-					menuItem.height = styles.height
-				}
 			}
 		}
 
-		model: ListModel
-		{
-			id: menuList
-
-			property var actions :
-			{
-				"Trusted Nodes": function()
-				{
-					stackView.push("qrc:/TrustedNodesView.qml");
-				},
-				"Paste Link": function()
-				{
-					UriJs.URI.withinString(
-							ClipboardWrapper.getFromClipBoard(),
-								handleIntentUri);
-				},
-				"Terminate Core": function()
-				{
-					rsApi.request("/control/shutdown");
-				},
-			}
-
-			ListElement
-			{
-				title: "Trusted Nodes"
-				showOnCoreReady: true
-				icon: "/icons/netgraph.svg"
-			}
-			ListElement
-			{
-				title: "Paste Link"
-				showOnCoreReady: true
-				icon: "/icons/add.svg"
-			}
-			ListElement
-			{
-				title: "Terminate Core"
-				showOnOsAndroid: false
-				icon: "/icons/exit.svg"
-			}
-
-		}
-
-		ScrollIndicator.vertical: ScrollIndicator { }
 	}
 }
 

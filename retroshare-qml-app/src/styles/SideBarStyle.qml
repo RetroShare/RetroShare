@@ -15,8 +15,18 @@ QtObject {
 	}
 	property QtObject header: QtObject
 	{
-		property var height: 80
 		property var color: "#0398d5"
+		property var avatarHeight: 50
+		property var avatarMargins: 15
+		property var textColor: "white"
+		property var textNickSize: 14
+		property var textGxsidSize: 11
+	}
+	property QtObject footer: QtObject
+	{
+		property var color: "white"
+		property var textColor: "grey"
+		property var margins: 8
 	}
 
 }
