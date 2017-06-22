@@ -1,5 +1,16 @@
 retroshare06 (0.6.2-1.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
+  c34165e csoler Wed, 21 Jun 2017 08:08:29 +0200 pushed new changelog to force update of the date...
+  8950acc csoler Thu, 22 Jun 2017 00:39:03 +0200 Merge pull request #892 from PhenomRetroShare/Add_MoveRelayPageToNetwork
+  ea8af8a Phenom Wed, 21 Jun 2017 17:57:14 +0200 Move Relay setting page to network one.
+  8cc82f9 csoler Wed, 21 Jun 2017 18:32:51 +0200 Merge pull request #891 from PhenomRetroShare/Fix_MessageToHeight
+  812e606 csoler Tue, 20 Jun 2017 23:40:58 +0200 fixed changelog for typo
+  1f9320c csoler Tue, 20 Jun 2017 21:17:21 +0200 updated changelog
+  310c848 csoler Wed, 21 Jun 2017 07:42:15 +0200 Merge pull request #890 from G10h4ck/qml_app_identity_avatar
+  c46c747 Phenom Wed, 21 Jun 2017 06:35:29 +0200 Fix To, Cc & Bcc height in MessageWidget.
+  1d03191 Gioacc Tue, 20 Jun 2017 17:16:27 +0200 Created a dedicated component for avatar image
+  8c62c2a Gioacc Tue, 20 Jun 2017 15:35:05 +0200 Qml app: show contact avatar in details if available
+  b206015 Gioacc Tue, 20 Jun 2017 15:33:28 +0200 libresapi: expose identity avatar in JSON API
   0133be7 csoler Sat, 17 Jun 2017 23:07:10 +0200 Merge pull request #887 from csoler/v0.6-GxsTransport 
   12a4529 csoler Sat, 17 Jun 2017 23:02:28 +0200 added ifdef for comments on GxsTrans
   eb4bb5b csoler Sat, 17 Jun 2017 21:42:00 +0200 fixed bug in gxs trans stats counting
