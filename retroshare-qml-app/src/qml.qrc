@@ -43,5 +43,7 @@
         <file>components/Btn.qml</file>
         <file>icons/netgraph.svg</file>
         <file>icons/search.svg</file>
+        <file>icons/exit.svg</file>
+        <file>icons/add.svg</file>
     </qresource>
 </RCC>
