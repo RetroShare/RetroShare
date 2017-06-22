@@ -72,6 +72,7 @@ Item
 
 		if(json.data.length > 0)
 		{
+			ChatCache.contactsCache.own = json.data[0]
 			contactsView.own_gxs_id = json.data[0].gxs_id
 			contactsView.own_nick = json.data[0].name
 			if(mainWindow.user_name.length === 0)

@@ -100,6 +100,7 @@ QtObject
 	{
 		id: contactsCache
 		property var contactsList
+		property var own
 
 		function getContactFromGxsId (gxsId)
 		{
