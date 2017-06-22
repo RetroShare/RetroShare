@@ -42,5 +42,6 @@
         <file>components/SideBar.qml</file>
         <file>styles/SideBarStyle.qml</file>
         <file>components/Btn.qml</file>
+        <file>icons/netgraph.svg</file>
     </qresource>
 </RCC>
