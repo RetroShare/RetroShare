@@ -113,8 +113,8 @@ ApplicationWindow
 		BtnIcon
 		{
 			id: searchIcon
-			height: parent.height - 10
-			width: parent.height - 10
+			height: (coreReady)? parent.height - 10 : 0
+			width: (coreReady)?  parent.height - 10 : 0
 			anchors.verticalCenter: parent.verticalCenter
 			imgUrl: "qrc:/icons/search.svg"
 			anchors.right: menu.left
@@ -123,6 +123,8 @@ ApplicationWindow
 				stackView.push("qrc:/Contacts.qml",
 							            {'searching': true} )
 			}
+
+			visible: setVisible(coreReady)
 		}
 		MouseArea
 		{
