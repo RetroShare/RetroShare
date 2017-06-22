@@ -1,13 +1,16 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.0
 import "../URI.js" as UriJs
-import "../" //Needed for TokensManager and ClipboardWrapper singleton
+import "../"
+import "../components"
+
 
 Drawer
 {
+	property var styles: StyleSideBar
 	id: drawer
 	height: parent.height
-	width: Math.min(parent.width, parent.height) / 3 * 2
+	width: Math.min(parent.width, parent.height) / 3 * styles.width
 	dragMargin: 10
 
 	ListView
@@ -19,11 +22,12 @@ Drawer
 
 		delegate: Item
 		{
-			property var itemHeight: 50
+
+			property var styles: StyleSideBar.item
 
 			id: menuItem
 			width: parent.width
-			height: itemHeight
+			height: styles.height
 
 			Connections
 			{
@@ -37,14 +41,23 @@ Drawer
 				}
 			}
 
-			Text
+			Btn
 			{
-				text: model.title
+				buttonText: model.title
+				width: parent.width
+				height: parent.height
+				color:  menuItem.styles.defaultColor
+				hoverColor:  menuItem.styles.hoverColor
+				innerAnchors.left: rectangleButton.left
+				innerAnchors.verticalCenter: rectangleButton.verticalCenter
+				iconUrl: (model.icon)? model.icon : undefined
 			}
+
 
 			MouseArea
 			{
 				property var lastItem
+				id: itemArea
 				width: parent.width
 				height: parent.height
 				onClicked:
@@ -60,6 +73,8 @@ Drawer
 					drawer.close()
 				}
 			}
+
+
 
 			visible: (model.showOnCoreReady)? setVisible(mainWindow.coreReady) : true
 
@@ -81,7 +96,7 @@ Drawer
 				}
 				else
 				{
-					menuItem.height = itemHeight
+					menuItem.height = styles.height
 				}
 			}
 		}
@@ -117,6 +132,7 @@ Drawer
 			{
 				title: "Trusted Nodes"
 				showOnCoreReady: true
+				icon: "/icons/attach.svg"
 			}
 			ListElement
 			{
