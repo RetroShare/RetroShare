@@ -64,7 +64,6 @@ ApplicationWindow
 		property string defaultLabel: "RetroShare"
 
 		property var iconsSize: (coreReady)? height - 10 : 0
-		property var backBtnVisible: true
 
 		property var searchBtnCb
 
@@ -97,7 +96,6 @@ ApplicationWindow
 				PropertyChanges { target: toolBar; titleText: defaultLabel}
 				PropertyChanges { target: toolBar; loaderSource: rsIcon}
 				PropertyChanges { target: searchIcon; searchIconVisibility: true}
-				PropertyChanges { target: toolBar; backBtnVisible: false }
 			}
 		]
 
@@ -145,28 +143,7 @@ ApplicationWindow
 
 		}
 
-		BtnIcon
-		{
-			id: backButton
-			visible: toolBar.backBtnVisible
-			height: toolBar.iconsSize
-			width: toolBar.iconsSize
-			fillMode: Image.PreserveAspectFit
-			imgUrl: "/icons/microphone.svg"
-			onClicked:
-			{
-				if (stackView.depth > 1)
-				{
-					stackView.pop();
-					console.log("@@@@@@ depth ", stackView.depth)
-//					if (stackView.depth-1 == 0) toolBar.backBtnVisible = false
-				}
-				else
-				{
-					Qt.quit();
-				}
-			}
-		}
+
 
 		BtnIcon
 		{
@@ -227,7 +204,6 @@ ApplicationWindow
 				}
 				currentItem.focus = true
 			}
-			console.log("@@@@@ CHANGED", toolBar.state)
 		}
 
 		Keys.onReleased:
