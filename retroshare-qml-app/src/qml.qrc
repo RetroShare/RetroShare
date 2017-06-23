@@ -46,5 +46,6 @@
         <file>icons/exit.svg</file>
         <file>icons/add.svg</file>
         <file>icons/keyring.svg</file>
+        <file>components/TextAndIcon.qml</file>
     </qresource>
 </RCC>
