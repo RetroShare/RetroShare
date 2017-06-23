@@ -21,6 +21,7 @@
 #include "util/stacktrace.h"
 
 #define DEBUG_GXSTRANS 1
+
 typedef unsigned int uint;
 
 RsGxsTrans *rsGxsTrans = NULL ;
@@ -380,6 +381,9 @@ void p3GxsTrans::GxsTransIntegrityCleanupThread::run()
 			totalMessageSizeAndCount[msg->metaData->mAuthorId].size += msg->msg.bin_len ;
 			totalMessageSizeAndCount[msg->metaData->mAuthorId].count++;
 		    delete msg;
+
+			if(item != NULL)
+				delete item ;
 	    }
     }
 
