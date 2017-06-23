@@ -35,6 +35,7 @@ Item
 	Component.onCompleted:
 	{
 		toolBar.state = "CONTACTSVIEW"
+		toolBar.searchBtnCb = toggleSearchBox
 		refreshAll()
 	}
 	onFocusChanged: focus && refreshAll()
@@ -44,6 +45,11 @@ Item
 		id: contactsSortWorker
 		source: "qrc:/ContactSort.js"
 		onMessage: contactsListModel.json = JSON.stringify(messageObject)
+	}
+
+	function toggleSearchBox (){
+		if (searching) searching = false
+		else searching = true
 	}
 
 	function refreshAll()

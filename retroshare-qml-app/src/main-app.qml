@@ -63,6 +63,8 @@ ApplicationWindow
 		property alias loaderSource: imageLoader.sourceComponent
 		property string defaultLabel: "RetroShare"
 
+		property var searchBtnCb
+
 		states:
 		[
 			State
@@ -120,6 +122,7 @@ ApplicationWindow
 		BtnIcon
 		{
 			property bool searchIconVisibility: false
+			property var onClickCB: function (){}
 
 			id: searchIcon
 			height: (coreReady)? parent.height - 10 : 0
@@ -130,8 +133,7 @@ ApplicationWindow
 			visible: searchIconVisibility && coreReady
 			onClicked:
 			{
-				stackView.push("qrc:/Contacts.qml",
-							            {'searching': true} )
+				toolBar.searchBtnCb()
 			}
 		}
 		MouseArea

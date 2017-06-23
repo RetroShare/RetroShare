@@ -183,8 +183,7 @@ Drawer
 					},
 					"Search Contacts": function()
 					{
-						stackView.push("qrc:/Contacts.qml",
-									            {'searching': true} )
+						stackView.push("qrc:/Contacts.qml" )
 					},
 					"Paste Link": function()
 					{
