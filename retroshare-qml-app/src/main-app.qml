@@ -65,6 +65,15 @@ ApplicationWindow
 
 		property var searchBtnCb
 
+		function openMainPage ()
+		{
+			if (stackView.currentItem.objectName != "contactsView" )
+			{
+				stackView.push("qrc:/Contacts.qml")
+			}
+
+		}
+
 		states:
 		[
 			State
@@ -103,10 +112,13 @@ ApplicationWindow
 		Component
 		{
 			id: rsIcon
-			Image
+			BtnIcon
 			{
+				height: imageLoader.height
+				width: imageLoader.height
 				fillMode: Image.PreserveAspectFit
-				source: "icons/retroshare06.png"
+				imgUrl: "/icons/retroshare06.png"
+				onClicked:{ toolBar.openMainPage() }
 			}
 		}
 
@@ -116,8 +128,13 @@ ApplicationWindow
 			anchors.verticalCenter: parent.verticalCenter
 			anchors.left: imageLoader.right
 			anchors.leftMargin: 20
-		}
 
+			MouseArea {
+				anchors.fill: parent
+				onClicked: {  toolBar.openMainPage() }
+			}
+
+		}
 
 		BtnIcon
 		{
