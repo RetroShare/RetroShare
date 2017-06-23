@@ -162,7 +162,7 @@ Item
 	Rectangle
 	{
 		id: searchBox
-		visible: contactsView.searching
+//		visible: contactsView.searching
 
 		height: searchText.height + 10
 		width: parent.width * 0.9
@@ -177,9 +177,10 @@ Item
 		{
 			id: searchText
 			anchors.verticalCenter: parent.verticalCenter
-			placeholderText : "Search contacts..."
-			width: parent.width - 5
+//			placeholderText : "Search contacts..."
+			width: parent.width
 			anchors.leftMargin: 5
+			height: 0
 
 			background: Rectangle
 			{
@@ -192,6 +193,27 @@ Item
 			onTextChanged:
 				contactsSortWorker.sendMessage(
 					        {'action': 'searchContact', 'sexp': text})
+		}
+
+		states:
+		[
+			State
+			{
+				when: contactsView.searching;
+				PropertyChanges {   target: searchText; height: implicitHeight  }
+				PropertyChanges {   target: searchText; placeholderText : "Search contacts..." }
+				PropertyChanges {   target: searchBox; height: searchText.height + 10   }
+			},
+			State
+			{
+				when: !contactsView.searching;
+				PropertyChanges {   target: searchText; height: 0   }
+				PropertyChanges {   target: searchBox; height: 0   }
+			}
+		]
+		transitions: Transition
+		{
+			NumberAnimation { property: "height"; duration: 500; easing.type: Easing.InOutQuad}
 		}
 	}
 
