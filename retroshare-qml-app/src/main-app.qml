@@ -74,6 +74,13 @@ ApplicationWindow
 			State
 			{
 				name: "CHATVIEW"
+			},
+			State
+			{
+				name: "CONTACTSVIEW"
+				PropertyChanges { target: toolBar; titleText: defaultLabel}
+				PropertyChanges { target: toolBar; loaderSource: rsIcon}
+				PropertyChanges { target: searchIcon; searchIconVisibility: true}
 			}
 		]
 
@@ -112,19 +119,20 @@ ApplicationWindow
 
 		BtnIcon
 		{
+			property bool searchIconVisibility: false
+
 			id: searchIcon
 			height: (coreReady)? parent.height - 10 : 0
 			width: (coreReady)?  parent.height - 10 : 0
 			anchors.verticalCenter: parent.verticalCenter
 			imgUrl: "qrc:/icons/search.svg"
 			anchors.right: menu.left
+			visible: searchIconVisibility && coreReady
 			onClicked:
 			{
 				stackView.push("qrc:/Contacts.qml",
 							            {'searching': true} )
 			}
-
-			visible: coreReady
 		}
 		MouseArea
 		{
@@ -160,7 +168,9 @@ ApplicationWindow
 		{
 			if (currentItem)
 			{
-				if (currentItem.objectName != "chatView" && toolBar.state != "DEFAULT")
+				if (currentItem.objectName != "chatView" &&
+						currentItem.objectName != "contactsView" &&
+						toolBar.state != "DEFAULT")
 				{
 					 toolBar.state = "DEFAULT"
 				}

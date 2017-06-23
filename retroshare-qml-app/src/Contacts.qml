@@ -30,7 +30,13 @@ Item
 	property bool searching: false
 	onSearchingChanged: !searching && contactsSortWorker.sendMessage({})
 
-	Component.onCompleted: refreshAll()
+	property string objectName:"contactsView"
+
+	Component.onCompleted:
+	{
+		toolBar.state = "CONTACTSVIEW"
+		refreshAll()
+	}
 	onFocusChanged: focus && refreshAll()
 
 	WorkerScript
