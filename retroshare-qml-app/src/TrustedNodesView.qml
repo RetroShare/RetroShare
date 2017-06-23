@@ -67,13 +67,14 @@ Item
 		model: jsonModel.model
 		delegate: Item
 		{
+			property bool isOnline: jsonModel.isOnline(model.pgp_id)
 			height: 30
 			width: parent.width
 
 			Image
 			{
 				id: statusImage
-				source: jsonModel.isOnline(model.pgp_id) ?
+				source:  isOnline?
 							"icons/state-ok.png" :
 							"icons/state-offline.png"
 
@@ -100,6 +101,7 @@ Item
 								{
 									pgpName: model.name,
 									pgpId: model.pgp_id,
+									isOnline: isOnline,
 									locations: jsonModel.getLocations(
 												   model.pgp_id)
 								}
