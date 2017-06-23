@@ -45,5 +45,6 @@
         <file>icons/search.svg</file>
         <file>icons/exit.svg</file>
         <file>icons/add.svg</file>
+        <file>icons/keyring.svg</file>
     </qresource>
 </RCC>
