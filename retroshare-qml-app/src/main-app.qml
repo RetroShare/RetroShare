@@ -85,6 +85,7 @@ ApplicationWindow
 			State
 			{
 				name: "CHATVIEW"
+				PropertyChanges { target: toolBarText; mouseA.visible: false }
 			},
 			State
 			{
@@ -124,12 +125,15 @@ ApplicationWindow
 
 		Label
 		{
+			property alias mouseA: mouseA
 			id: toolBarText
 			anchors.verticalCenter: parent.verticalCenter
 			anchors.left: imageLoader.right
 			anchors.leftMargin: 20
 
 			MouseArea {
+				id: mouseA
+				visible: true
 				anchors.fill: parent
 				onClicked: {  toolBar.openMainPage() }
 			}
