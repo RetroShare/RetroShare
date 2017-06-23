@@ -81,8 +81,8 @@ GxsChannelPostItem::GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, 
 
 	setup();
 
-	//setGroup(group, false);
-	requestGroup();
+	setGroup(group, false);
+	//requestGroup(); //Already have RsGxsChannelGroup
 	setPost(post);
 	requestComment();
 }
