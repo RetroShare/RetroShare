@@ -51,6 +51,7 @@ Drawer
 					anchors.margins: styles.avatarMargins
 					anchors.horizontalCenter: header.horizontalCenter
 					anchors.top: header.top
+					onClicked: drawer.close()
 				}
 
 				Text
@@ -73,7 +74,7 @@ Drawer
 				{
 					id: gxsText
 					text: (ChatCache.contactsCache.own)?ChatCache.contactsCache.own.gxs_id  : ""
-					height:  contentHeight
+//					height:  contentHeight
 					wrapMode: Text.WrapAnywhere
 					width: header.width
 					anchors.top: nickText.bottom

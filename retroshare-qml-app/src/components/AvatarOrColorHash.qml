@@ -25,7 +25,7 @@ Item
 	id: compRoot
 
 	property string gxs_id
-
+	signal clicked ()
 
 	height: 130
 	width: height
@@ -90,6 +90,10 @@ Item
 	MouseArea
 	{
 		anchors.fill: parent
-		onClicked: showDetails()
+		onClicked:
+		{
+			compRoot.clicked()
+			showDetails()
+		}
 	}
 }
