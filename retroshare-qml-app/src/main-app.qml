@@ -63,6 +63,9 @@ ApplicationWindow
 		property alias loaderSource: imageLoader.sourceComponent
 		property string defaultLabel: "RetroShare"
 
+		property var iconsSize: (coreReady)? height - 10 : 0
+		property var backBtnVisible: true
+
 		property var searchBtnCb
 
 		function openMainPage ()
@@ -86,6 +89,7 @@ ApplicationWindow
 			{
 				name: "CHATVIEW"
 				PropertyChanges { target: toolBarText; mouseA.visible: false }
+//				PropertyChanges { target: toolBar; backBtnVisible: true }
 			},
 			State
 			{
@@ -93,6 +97,7 @@ ApplicationWindow
 				PropertyChanges { target: toolBar; titleText: defaultLabel}
 				PropertyChanges { target: toolBar; loaderSource: rsIcon}
 				PropertyChanges { target: searchIcon; searchIconVisibility: true}
+				PropertyChanges { target: toolBar; backBtnVisible: false }
 			}
 		]
 
@@ -142,12 +147,35 @@ ApplicationWindow
 
 		BtnIcon
 		{
+			id: backButton
+			visible: toolBar.backBtnVisible
+			height: toolBar.iconsSize
+			width: toolBar.iconsSize
+			fillMode: Image.PreserveAspectFit
+			imgUrl: "/icons/microphone.svg"
+			onClicked:
+			{
+				if (stackView.depth > 1)
+				{
+					stackView.pop();
+					console.log("@@@@@@ depth ", stackView.depth)
+//					if (stackView.depth-1 == 0) toolBar.backBtnVisible = false
+				}
+				else
+				{
+					Qt.quit();
+				}
+			}
+		}
+
+		BtnIcon
+		{
 			property bool searchIconVisibility: false
 			property var onClickCB: function (){}
 
 			id: searchIcon
-			height: (coreReady)? parent.height - 10 : 0
-			width: (coreReady)?  parent.height - 10 : 0
+			height: toolBar.iconsSize
+			width: toolBar.iconsSize
 			anchors.verticalCenter: parent.verticalCenter
 			imgUrl: "qrc:/icons/search.svg"
 			anchors.right: menu.left
@@ -199,6 +227,7 @@ ApplicationWindow
 				}
 				currentItem.focus = true
 			}
+			console.log("@@@@@ CHANGED", toolBar.state)
 		}
 
 		Keys.onReleased:
