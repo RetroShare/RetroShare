@@ -78,7 +78,8 @@ private:
     // to notify that a password callback is waiting
     // to answer the request, clear the flag and set the password
     bool mWantPassword;
-    bool mPrevIsBad ;
+	bool mPrevIsBad;
+	int mCountAttempts;
     std::string mTitle;
     std::string mKeyName;
     std::string mPassword;

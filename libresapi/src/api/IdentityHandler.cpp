@@ -164,9 +164,6 @@ IdentityHandler::IdentityHandler(StateTokenServer *sts, RsNotify *notify,
 	addResourceHandler("notown_ids", this,
 	                   &IdentityHandler::handleNotOwnIdsRequest);
 
-	addResourceHandler("create_identity", this,
-	                   &IdentityHandler::handleCreateIdentity);
-
 	addResourceHandler("export_key", this, &IdentityHandler::handleExportKey);
 	addResourceHandler("import_key", this, &IdentityHandler::handleImportKey);
 
