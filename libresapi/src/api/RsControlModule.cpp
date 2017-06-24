@@ -26,6 +26,7 @@ RsControlModule::RsControlModule(int argc, char **argv, StateTokenServer* sts, A
     mAutoLoginNextTime(false),
     mWantPassword(false),
     mPrevIsBad(false),
+    mCountAttempts(0),
     mPassword("")
 {
     mStateToken = sts->getNewToken();
@@ -64,7 +65,14 @@ bool RsControlModule::askForPassword(const std::string &title, const std::string
     {
 		RS_STACK_MUTEX(mDataMtx); // ********** LOCKED **********
 
-		mPrevIsBad = prev_is_bad;
+		mCountAttempts++;
+		if(mCountAttempts == 3)
+		{
+			mPrevIsBad = prev_is_bad;
+			mCountAttempts = 0;
+		}
+		else
+			mPrevIsBad = false;
 
         if(mFixedPassword != "")
 		{
