@@ -53,6 +53,9 @@ private:
 
 	void handleGetIdentityDetails(Request& req, Response& resp);
 
+	void handleGetAvatar(Request& req, Response& resp);
+	void handleSetAvatar(Request& req, Response& resp);
+
 	void handleSetBanNode(Request& req, Response& resp);
 	void handleSetOpinion(Request& req, Response& resp);
 
