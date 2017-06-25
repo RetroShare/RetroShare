@@ -1076,7 +1076,7 @@ void ServerPage::loadHiddenNode()
     whileBlocking(ui.hiddenpage_serviceAddress)->setText(QString::fromStdString(detail.hiddenNodeAddress));
     whileBlocking(ui.hiddenpage_servicePort) -> setValue(detail.hiddenNodePort);
     /* in I2P there is no port - there is only the address */
-    whileBlocking(ui.hiddenpage_servicePort)->setEnabled(detail.hiddenType != RS_HIDDEN_TYPE_I2P);
+    whileBlocking(ui.hiddenpage_servicePort)->setHidden(detail.hiddenType == RS_HIDDEN_TYPE_I2P);
 
     /* out proxy settings */
     std::string proxyaddr;
