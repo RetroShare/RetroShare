@@ -87,6 +87,15 @@ protected:
 			        << makeKeyValueReference("name", params.nickname)
 			        << makeKeyValueReference("pgp_linked", params.isPgpLinked);
 
+			std::string avatar;
+			req.mStream << makeKeyValueReference("avatar", avatar);
+
+			std::vector<uint8_t> avatar_data = Radix64::decode(avatar);
+			uint8_t *p_avatar_data = &avatar_data[0];
+			uint32_t size = avatar_data.size();
+			params.mImage.clear();
+			params.mImage.copy(p_avatar_data, size);
+
             if(params.nickname == "")
             {
                 resp.setFail("name can't be empty");
