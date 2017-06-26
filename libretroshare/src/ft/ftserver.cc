@@ -291,18 +291,28 @@ bool ftServer::activateTunnels(const RsFileHash& hash,uint32_t encryption_policy
 	return true ;
 }
 
-bool ftServer::setDestinationName(const RsFileHash& hash,const std::string& name)
-{
-	return mFtController->setDestinationName(hash,name);
-}
 bool ftServer::setDestinationDirectory(const RsFileHash& hash,const std::string& directory)
 {
 	return mFtController->setDestinationDirectory(hash,directory);
 }
+bool ftServer::setDestinationName(const RsFileHash& hash,const std::string& name)
+{
+	return mFtController->setDestinationName(hash,name);
+}
+
 bool ftServer::setChunkStrategy(const RsFileHash& hash,FileChunksInfo::ChunkStrategy s)
 {
 	return mFtController->setChunkStrategy(hash,s);
 }
+void ftServer::setDefaultChunkStrategy(FileChunksInfo::ChunkStrategy s)
+{
+	mFtController->setDefaultChunkStrategy(s) ;
+}
+FileChunksInfo::ChunkStrategy ftServer::defaultChunkStrategy()
+{
+	return mFtController->defaultChunkStrategy() ;
+}
+
 uint32_t ftServer::freeDiskSpaceLimit()const
 {
 	return mFtController->freeDiskSpaceLimit() ;
@@ -311,9 +321,10 @@ void ftServer::setFreeDiskSpaceLimit(uint32_t s)
 {
 	mFtController->setFreeDiskSpaceLimit(s) ;
 }
-void ftServer::setDefaultChunkStrategy(FileChunksInfo::ChunkStrategy s)
+
+void ftServer::setDefaultEncryptionPolicy(uint32_t s)
 {
-	mFtController->setDefaultChunkStrategy(s) ;
+	mFtController->setDefaultEncryptionPolicy(s) ;
 }
 uint32_t ftServer::defaultEncryptionPolicy()
 {
@@ -329,14 +340,15 @@ uint32_t ftServer::getMaxUploadSlotsPerFriend()
     return mFtController->getMaxUploadsPerFriend() ;
 }
 
-void ftServer::setDefaultEncryptionPolicy(uint32_t s)
+void ftServer::setFilePermDirectDL(uint32_t perm)
 {
-	mFtController->setDefaultEncryptionPolicy(s) ;
+	mFtController->setFilePermDirectDL(perm);
 }
-FileChunksInfo::ChunkStrategy ftServer::defaultChunkStrategy()
+uint32_t ftServer::filePermDirectDL()
 {
-	return mFtController->defaultChunkStrategy() ;
+	return mFtController->filePermDirectDL() ;
 }
+
 bool ftServer::FileCancel(const RsFileHash& hash)
 {
 	// Remove from both queue and ftController, by default.
