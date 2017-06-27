@@ -33,7 +33,7 @@
 
 static const uint32_t MAX_GXS_IDS_REQUESTS_NET   =  10 ; // max number of requests from cache/net (avoids killing the system!)
 
-//#define DEBUG_GXSUTIL 1
+#define DEBUG_GXSUTIL 1
 
 #define GXSUTIL_DEBUG() std::cerr << time(NULL)    << " : GXS_UTIL : " << __FUNCTION__ << " : "
 
@@ -97,8 +97,10 @@ bool RsGxsMessageCleanUp::clean()
 			{
 				RsGxsMsgMetaData* meta = metaV[i];
 
+				bool have_kids = (messages_with_kids.find(meta->mMsgId)!=messages_with_kids.end());
+
 				// check if expired
-				bool remove = store_period > 0 && ((meta->mPublishTs + store_period) < now) && (messages_with_kids.find(meta->mMsgId)==messages_with_kids.end());
+				bool remove = store_period > 0 && ((meta->mPublishTs + store_period) < now) && !have_kids;
 
 				// check client does not want the message kept regardless of age
 				remove &= !(meta->mMsgStatus & GXS_SERV::GXS_MSG_STATUS_KEEP);
@@ -107,12 +109,18 @@ bool RsGxsMessageCleanUp::clean()
 				remove = remove ||  (grpMeta->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_NOT_SUBSCRIBED);
 				remove = remove || !(grpMeta->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED);
 
+				GXSUTIL_DEBUG() << "    msg id " << meta->mMsgId << " in grp " << grpId << ": keep_flag=" << bool(meta->mMsgStatus & GXS_SERV::GXS_MSG_STATUS_KEEP)
+				                << " subscribed: " << bool(grpMeta->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED) << " store_period: " << store_period
+				                << " kids: " << have_kids << " now - meta->mPublishTs: " << now - meta->mPublishTs ;
+
 				if( remove )
 				{
 					req[grpId].push_back(meta->mMsgId);
                     
-					GXSUTIL_DEBUG() << "    Scheduling msg id " << meta->mMsgId << " in grp " << grpId << " for removal." << std::endl;
+					std::cerr << "    Scheduling for removal." << std::endl;
 				}
+				else
+					std::cerr << std::endl;
 
 				delete meta;
 			}
@@ -313,7 +321,7 @@ bool RsGxsIntegrityCheck::check()
 		{
 			gxs_ids.push_back(*it) ;
 #ifdef DEBUG_GXSUTIL
-			GXSUTIL_DEBUG() << "    " << *it <<  std::endl;
+			GXSUTIL_DEBUG() << "    " << it->first <<  std::endl;
 #endif
 		}
 		uint32_t nb_requested_not_in_cache = 0;
@@ -328,7 +336,7 @@ bool RsGxsIntegrityCheck::check()
 		{
 			uint32_t n = RSRandom::random_u32() % gxs_ids.size() ;
 #ifdef DEBUG_GXSUTIL
-			GXSUTIL_DEBUG() << "    requesting ID " << gxs_ids[n] ;
+			GXSUTIL_DEBUG() << "    requesting ID " << gxs_ids[n].first ;
 #endif
 
 			if(!mGixs->haveKey(gxs_ids[n].first))	// checks if we have it already in the cache (conservative way to ensure that we atually have it)
