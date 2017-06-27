@@ -99,7 +99,8 @@ public:
 	    mServClientsMutex("p3GxsTrans client services map mutex"),
 	    mOutgoingMutex("p3GxsTrans outgoing queue map mutex"),
 	    mIngoingMutex("p3GxsTrans ingoing queue map mutex"),
-	    mPerUserStatsMutex("p3GxsTrans user stats mutex")
+	    mPerUserStatsMutex("p3GxsTrans user stats mutex"),
+	    mDataMutex("p3GxsTrans data mutex")
     {
         mLastMsgCleanup = time(NULL) - MAX_DELAY_BETWEEN_CLEANUPS + 30;	// always check 30 secs after start
         mCleanupThread = NULL ;
@@ -253,7 +254,7 @@ private:
 	 * @return true if preferredGroupId has been supeseded by potentialGrId
 	 *   false otherwise.
 	 */
-	bool inline supersedePreferredGroup(const RsGxsGroupId& potentialGrId)
+	bool inline locked_supersedePreferredGroup(const RsGxsGroupId& potentialGrId)
 	{
 		if(mPreferredGroupId < potentialGrId)
 		{
@@ -320,5 +321,9 @@ private:
 
 	RsMutex mPerUserStatsMutex;
 	std::map<RsGxsId,MsgSizeCount> per_user_statistics ;
+
+	// Mutex to protect local data
+
+	RsMutex mDataMutex;
 };
 

@@ -38,10 +38,23 @@ class UIStateHelper;
 class RsGxsTransGroupStatistics: public GxsGroupStatistic
 {
 public:
-	RsGxsTransGroupStatistics() {}
+	RsGxsTransGroupStatistics()
+	{
+		last_publish_TS = 0;
+		popularity = 0;
+		subscribed = false;
+	}
+
+	void addMessageMeta(const RsMsgMetaData& meta)
+	{
+		messages_metas.push_back(meta) ;
+		last_publish_TS = std::max(last_publish_TS,meta.mPublishTs) ;
+	}
 
 	bool subscribed ;
 	int  popularity ;
+
+	time_t last_publish_TS;
 
     std::vector<RsMsgMetaData> messages_metas ;
 };

@@ -252,8 +252,10 @@ void GxsTransportStatistics::updateContent()
         groupTreeWidget->addTopLevelItem(item);
 		groupTreeWidget->setItemExpanded(item,openned_groups.find(it->first) != openned_groups.end());
 
+		QString msg_time_string = (stat.last_publish_TS>0)?QString(" (Last msg: %1)").arg(QDateTime::fromTime_t(stat.last_publish_TS).toString()):"" ;
+
+        item->setData(COL_GROUP_NUM_MSGS,  Qt::DisplayRole,  QString::number(stat.mNumMsgs) + msg_time_string) ;
         item->setData(COL_GROUP_GRP_ID,    Qt::DisplayRole,  QString::fromStdString(stat.mGrpId.toStdString())) ;
-        item->setData(COL_GROUP_NUM_MSGS,  Qt::DisplayRole,  QString::number(stat.mNumMsgs)) ;
         item->setData(COL_GROUP_SIZE_MSGS, Qt::DisplayRole,  QString::number(stat.mTotalSizeOfMsgs)) ;
         item->setData(COL_GROUP_SUBSCRIBED,Qt::DisplayRole,  stat.subscribed?tr("Yes"):tr("No")) ;
         item->setData(COL_GROUP_POPULARITY,Qt::DisplayRole,  QString::number(stat.popularity)) ;
@@ -429,6 +431,7 @@ void GxsTransportStatistics::loadMsgMeta(const uint32_t& token)
         return ;
 
     for(GxsMsgMetaMap::const_iterator it(m.begin());it!=m.end();++it)
-        mGroupStats[it->first].messages_metas = it->second ;
+		for(uint32_t i=0;i<it->second.size();++i)
+			mGroupStats[it->first].addMessageMeta(it->second[i]) ;
 }
 

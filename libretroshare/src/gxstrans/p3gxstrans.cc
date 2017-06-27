@@ -40,7 +40,10 @@ p3GxsTrans::~p3GxsTrans()
 
 bool p3GxsTrans::getStatistics(GxsTransStatistics& stats)
 {
-    stats.prefered_group_id = mPreferredGroupId;
+	{
+		RS_STACK_MUTEX(mDataMutex);
+		stats.prefered_group_id = mPreferredGroupId;
+	}
     stats.outgoing_records.clear();
 
     {
@@ -143,6 +146,19 @@ void p3GxsTrans::handleResponse(uint32_t token, uint32_t req_type)
 		std::vector<RsGxsGrpItem*> groups;
 		getGroupData(token, groups);
 
+		// First recompute the prefered group Id.
+
+		{
+			RS_STACK_MUTEX(mDataMutex);
+			mPreferredGroupId.clear();
+
+			for( auto grp : groups )
+				locked_supersedePreferredGroup(grp->meta.mGroupId);
+		}
+
+#ifdef DEBUG_GXSTRANS
+		std::cerr << "  computed preferred group id: " << mPreferredGroupId << std::endl;
+#endif
 		for( auto grp : groups )
 		{
 			/* For each group check if it is better candidate then
@@ -155,18 +171,24 @@ void p3GxsTrans::handleResponse(uint32_t token, uint32_t req_type)
 
 			const RsGroupMetaData& meta = grp->meta;
 			bool subscribed = IS_GROUP_SUBSCRIBED(meta.mSubscribeFlags);
-			bool old = olderThen( meta.mLastPost,
-			                      UNUSED_GROUP_UNSUBSCRIBE_INTERVAL );
-			bool supersede = supersedePreferredGroup(meta.mGroupId);
+			bool old = olderThen( meta.mLastPost, UNUSED_GROUP_UNSUBSCRIBE_INTERVAL );
 			uint32_t token;
 
-			bool shoudlSubscribe = !subscribed && ( !old || supersede );
-			bool shoudlUnSubscribe = subscribed && old
-			        && meta.mGroupId != mPreferredGroupId;
+			bool shouldSubscribe   = false ;
+			bool shouldUnSubscribe = false ;
+			{
+				RS_STACK_MUTEX(mDataMutex);
+				bool shouldSubscribe   = !subscribed && ( !old || meta.mGroupId == mPreferredGroupId );
+				bool shouldUnSubscribe =  subscribed &&    old && meta.mGroupId != mPreferredGroupId;
+			}
 
-			if(shoudlSubscribe)
+#ifdef DEBUG_GXSTRANS
+			std::cout << "  group " << grp->meta.mGroupId << ", subscribed: " << subscribed << " last post: " << meta.mLastPost << " should subscribe: "<< shouldSubscribe
+			           << ", should unsubscribe: " << shouldUnSubscribe << std::endl;
+#endif
+			if(shouldSubscribe)
 				RsGenExchange::subscribeToGroup(token, meta.mGroupId, true);
-			else if(shoudlUnSubscribe)
+			else if(shouldUnSubscribe)
 				RsGenExchange::subscribeToGroup(token, meta.mGroupId, false);
 
 #ifdef GXS_MAIL_GRP_DEBUG
@@ -188,7 +210,14 @@ void p3GxsTrans::handleResponse(uint32_t token, uint32_t req_type)
 			delete grp;
 		}
 
-		if(mPreferredGroupId.isNull())
+		bool have_preferred_group = false ;
+
+		{
+			RS_STACK_MUTEX(mDataMutex);
+			have_preferred_group = !mPreferredGroupId.isNull();
+		}
+
+		if(!have_preferred_group)
 		{
 			/* This is true only at first run when we haven't received mail
 			 * distribuition groups from friends
@@ -214,7 +243,9 @@ void p3GxsTrans::handleResponse(uint32_t token, uint32_t req_type)
 #endif
 		RsGxsGroupId grpId;
 		acknowledgeTokenGrp(token, grpId);
-		supersedePreferredGroup(grpId);
+
+		RS_STACK_MUTEX(mDataMutex);
+		locked_supersedePreferredGroup(grpId);
 		break;
 	}
 	case MAILS_UPDATE:
@@ -346,6 +377,9 @@ void p3GxsTrans::GxsTransIntegrityCleanupThread::run()
     {
 	    std::vector<RsNxsMsg*>& msgV = mit->second;
 	    std::vector<RsNxsMsg*>::iterator vit = msgV.begin();
+#ifdef DEBUG_GXSTRANS
+		std::cerr << "Group " << mit->first << ": " << std::endl;
+#endif
 
 	    for(; vit != msgV.end(); ++vit)
 	    {
@@ -817,6 +851,8 @@ void p3GxsTrans::locked_processOutgoingRecord(OutgoingRecord& pr)
 	}
 	case GxsTransSendStatus::PENDING_PREFERRED_GROUP:
 	{
+		RS_STACK_MUTEX(mDataMutex);
+
 		if(mPreferredGroupId.isNull())
 		{
 			requestGroupsData();
@@ -841,7 +877,10 @@ void p3GxsTrans::locked_processOutgoingRecord(OutgoingRecord& pr)
 		grsrz.resize(grsz);
 		RsGxsTransSerializer().serialise(&grcpt, &grsrz[0], &grsz);
 
-		pr.presignedReceipt.grpId = mPreferredGroupId;
+		{
+			RS_STACK_MUTEX(mDataMutex);
+			pr.presignedReceipt.grpId = mPreferredGroupId;
+		}
 		pr.presignedReceipt.metaData = new RsGxsMsgMetaData();
 		*pr.presignedReceipt.metaData = grcpt.meta;
 		pr.presignedReceipt.msg.setBinData(&grsrz[0], grsz);
