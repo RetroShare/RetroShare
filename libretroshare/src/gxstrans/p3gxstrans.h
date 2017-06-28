@@ -92,7 +92,7 @@ public:
 	            p3IdService& identities ) :
 	    RsGenExchange( gds, nes, new RsGxsTransSerializer(),
 	                   RS_SERVICE_TYPE_GXS_TRANS, &identities,
-	                   AuthenPolicy(), GXS_STORAGE_PERIOD ),
+	                   AuthenPolicy()),
 	    GxsTokenQueue(this),
         RsGxsTrans(this),
         mIdService(identities),
@@ -150,6 +150,8 @@ public:
 	/// @see RsGenExchange::getServiceInfo()
 	virtual RsServiceInfo getServiceInfo() { return RsServiceInfo( RS_SERVICE_TYPE_GXS_TRANS, "GXS Mails", 0, 1, 0, 1 ); }
 
+	static const uint32_t GXS_STORAGE_PERIOD = 0x127500;	// 14 days.
+	static const uint32_t GXS_SYNC_PERIOD    = 0x127500;
 private:
 	/** Time interval of inactivity before a distribution group is unsubscribed.
 	 * Approximatively 3 months seems ok ATM. */
@@ -168,7 +170,6 @@ private:
 	 * signed acknowledged is received for each of them.
 	 * Two weeks seems fair ATM.
 	 */
-	static const uint32_t GXS_STORAGE_PERIOD = 0x127500;
 	static const uint32_t MAX_DELAY_BETWEEN_CLEANUPS ; // every 20 mins. Could be less.
 
     time_t mLastMsgCleanup ;

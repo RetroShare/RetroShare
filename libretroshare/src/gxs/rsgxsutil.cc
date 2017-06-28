@@ -57,7 +57,8 @@ bool RsGxsMessageCleanUp::clean()
 	time_t now = time(NULL);
 
 #ifdef DEBUG_GXSUTIL
-	GXSUTIL_DEBUG() << "  Cleaning up groups in service" << std::hex << mGenExchangeClient->serviceType() << std::dec << std::endl;
+	uint16_t service_type = mGenExchangeClient->serviceType() ;
+	GXSUTIL_DEBUG() << "  Cleaning up groups in service " << std::hex << service_type << std::dec << std::endl;
 #endif
 	while(!mGrpMeta.empty())
 	{

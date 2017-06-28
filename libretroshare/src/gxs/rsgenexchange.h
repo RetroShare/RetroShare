@@ -117,9 +117,7 @@ public:
      * @param gixs This is used for verification of msgs and groups received by Gen Exchange using identities.
      * @param authenPolicy This determines the authentication used for verfying authorship of msgs and groups
      */
-    RsGenExchange(RsGeneralDataService* gds, RsNetworkExchangeService* ns,
-                  RsSerialType* serviceSerialiser, uint16_t mServType, RsGixs* gixs, uint32_t authenPolicy,
-                  uint32_t messageStorePeriod = RS_GXS_DEFAULT_MSG_STORE_PERIOD);
+    RsGenExchange(RsGeneralDataService* gds, RsNetworkExchangeService* ns, RsSerialType* serviceSerialiser, uint16_t mServType, RsGixs* gixs, uint32_t authenPolicy);
 
     virtual ~RsGenExchange();
 
@@ -665,7 +663,7 @@ public:
      * \brief getDefaultStoragePeriod. All times in seconds.
      * \return
      */
-    virtual uint32_t getDefaultStoragePeriod() { return MESSAGE_STORE_PERIOD; }
+	virtual uint32_t getDefaultStoragePeriod() { return mNetService->getDefaultKeepAge() ; }
 
     virtual uint32_t getStoragePeriod(const RsGxsGroupId& grpId) ;
     virtual void     setStoragePeriod(const RsGxsGroupId& grpId,uint32_t age_in_secs) ;
@@ -892,8 +890,6 @@ private:
 
     std::vector<GxsPendingItem<RsNxsMsg*, RsGxsGrpMsgIdPair> > mMsgPendingValidate;
     typedef std::vector<GxsPendingItem<RsNxsMsg*, RsGxsGrpMsgIdPair> > NxsMsgPendingVect;
-
-    const uint32_t MESSAGE_STORE_PERIOD;
 
     bool mCleaning;
     time_t mLastClean;

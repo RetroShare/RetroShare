@@ -65,12 +65,12 @@ static const uint32_t INDEX_AUTHEN_ADMIN        = 0x00000040; // admin key
 
 //#define GEN_EXCH_DEBUG	1
 
-static const uint32_t MSG_CLEANUP_PERIOD     = 60*59; // 59 minutes
+static const uint32_t MSG_CLEANUP_PERIOD     = 6 *59; // 59 minutes
 static const uint32_t INTEGRITY_CHECK_PERIOD = 60*31; // 31 minutes
 
 RsGenExchange::RsGenExchange(RsGeneralDataService *gds, RsNetworkExchangeService *ns,
                              RsSerialType *serviceSerialiser, uint16_t servType, RsGixs* gixs,
-                             uint32_t authenPolicy, uint32_t messageStorePeriod)
+                             uint32_t authenPolicy)
   : mGenMtx("GenExchange"),
     mDataStore(gds),
     mNetService(ns),
@@ -78,7 +78,6 @@ RsGenExchange::RsGenExchange(RsGeneralDataService *gds, RsNetworkExchangeService
   mServType(servType),
   mGixs(gixs),
   mAuthenPolicy(authenPolicy),
-  MESSAGE_STORE_PERIOD(messageStorePeriod),
   mCleaning(false),
   mLastClean((int)time(NULL) - (int)(RSRandom::random_u32() % MSG_CLEANUP_PERIOD)),	// this helps unsynchronising the checks for the different services
   mMsgCleanUp(NULL),
@@ -94,9 +93,7 @@ RsGenExchange::RsGenExchange(RsGeneralDataService *gds, RsNetworkExchangeService
   VALIDATE_FAIL_TRY_LATER(2),
   VALIDATE_MAX_WAITING_TIME(60)
 {
-
     mDataAccess = new RsGxsDataAccess(gds);
-
 }
 
 void RsGenExchange::setNetworkExchangeService(RsNetworkExchangeService *ns)
@@ -104,7 +101,9 @@ void RsGenExchange::setNetworkExchangeService(RsNetworkExchangeService *ns)
     if(mNetService != NULL)
         std::cerr << "(EE) Cannot override existing network exchange service. Make sure it has been deleted otherwise." << std::endl;
     else
+	{
         mNetService = ns ;
+	}
 }
 
 RsGenExchange::~RsGenExchange()
@@ -244,10 +243,13 @@ void RsGenExchange::tick()
 
 bool RsGenExchange::messagePublicationTest(const RsGxsMsgMetaData& meta)
 {
-	time_t st = MESSAGE_STORE_PERIOD;
+	if(!mNetService)
+	{
+		std::cerr << "(EE) No network service in service " << std::hex  << serviceType() << std::dec << ": cannot read message storage time." << std::endl;
+		return false ;
+	}
 
-	if(mNetService)
-        st = mNetService->getKeepAge(meta.mGroupId, st);
+	uint32_t st = mNetService->getKeepAge(meta.mGroupId);
 
 	time_t storageTimeLimit = meta.mPublishTs + st;
 
@@ -1825,10 +1827,12 @@ uint32_t RsGenExchange::getStoragePeriod(const RsGxsGroupId& grpId)
 {
 	RS_STACK_MUTEX(mGenMtx) ;
 
-	if(mNetService != NULL)
-        return mNetService->getKeepAge(grpId,MESSAGE_STORE_PERIOD) ;
-    else
-        return MESSAGE_STORE_PERIOD;
+	if(!mNetService)
+	{
+		std::cerr << "(EE) No network service in service " << std::hex  << serviceType() << std::dec << ": cannot read message storage time. Returning infinity." << std::endl;
+		return false ;
+	}
+	return mNetService->getKeepAge(grpId) ;
 }
 void     RsGenExchange::setStoragePeriod(const RsGxsGroupId& grpId,uint32_t age_in_secs)
 {
