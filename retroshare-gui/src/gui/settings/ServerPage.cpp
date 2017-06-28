@@ -35,6 +35,7 @@
 #include <retroshare/rspeers.h>
 #include <retroshare/rsturtle.h>
 
+#include <QCheckBox>
 #include <QMovie>
 #include <QMenu>
 #include <QTcpSocket>
@@ -1921,11 +1922,11 @@ void ServerPage::checkKey()
 	std::cerr << std::endl;
 	if (server.length() == 40)
 	{
-		ui.keyOkBox->setChecked(Qt::Checked);
+		ui.keyOkBox->setChecked(true);
 	}
 	else
 	{
-		ui.keyOkBox->setChecked(Qt::Unchecked);
+		ui.keyOkBox->setChecked(false);
 	}
 }
 
