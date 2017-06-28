@@ -153,7 +153,16 @@ void p3GxsTrans::handleResponse(uint32_t token, uint32_t req_type)
 			mPreferredGroupId.clear();
 
 			for( auto grp : groups )
+			{
 				locked_supersedePreferredGroup(grp->meta.mGroupId);
+
+				if(RsGenExchange::getStoragePeriod(grp->meta.mGroupId) != GXS_STORAGE_PERIOD)
+				{
+					std::cerr << "(WW) forcing storage period in GxsTrans group " << grp->meta.mGroupId << " to " << GXS_STORAGE_PERIOD << " seconds. Value was " <<  RsGenExchange::getStoragePeriod(grp->meta.mGroupId) << std::endl;
+
+					RsGenExchange::setStoragePeriod(grp->meta.mGroupId,GXS_STORAGE_PERIOD) ;
+				}
+			}
 		}
 
 #ifdef DEBUG_GXSTRANS
