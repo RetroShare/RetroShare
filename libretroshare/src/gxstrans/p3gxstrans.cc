@@ -20,7 +20,7 @@
 #include "gxstrans/p3gxstrans.h"
 #include "util/stacktrace.h"
 
-#define DEBUG_GXSTRANS 1
+//#define DEBUG_GXSTRANS 1
 
 typedef unsigned int uint;
 
@@ -183,14 +183,15 @@ void p3GxsTrans::handleResponse(uint32_t token, uint32_t req_type)
 
 			const RsGroupMetaData& meta = grp->meta;
 			bool subscribed = IS_GROUP_SUBSCRIBED(meta.mSubscribeFlags);
-			bool old = olderThen( meta.mLastPost, UNUSED_GROUP_UNSUBSCRIBE_INTERVAL );
+			bool old = meta.mLastPost > 0 && olderThen( meta.mLastPost, UNUSED_GROUP_UNSUBSCRIBE_INTERVAL );
 			uint32_t token;
 
 			bool shouldSubscribe   = false ;
 			bool shouldUnSubscribe = false ;
 			{
 				RS_STACK_MUTEX(mDataMutex);
-				bool shouldSubscribe   = !subscribed && ( !old || meta.mGroupId == mPreferredGroupId );
+
+				bool shouldSubscribe   = !subscribed && ((!old)|| meta.mGroupId == mPreferredGroupId );
 				bool shouldUnSubscribe =  subscribed &&    old && meta.mGroupId != mPreferredGroupId;
 			}
 

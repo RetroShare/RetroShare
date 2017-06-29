@@ -150,12 +150,12 @@ public:
 	/// @see RsGenExchange::getServiceInfo()
 	virtual RsServiceInfo getServiceInfo() { return RsServiceInfo( RS_SERVICE_TYPE_GXS_TRANS, "GXS Mails", 0, 1, 0, 1 ); }
 
-	static const uint32_t GXS_STORAGE_PERIOD = 0x127500;	// 14 days.
-	static const uint32_t GXS_SYNC_PERIOD    = 0x127500;
+	static const uint32_t GXS_STORAGE_PERIOD = 15*86400;	// 15 days.
+	static const uint32_t GXS_SYNC_PERIOD    = 15*86400;
 private:
 	/** Time interval of inactivity before a distribution group is unsubscribed.
 	 * Approximatively 3 months seems ok ATM. */
-	const static int32_t UNUSED_GROUP_UNSUBSCRIBE_INTERVAL = 0x76A700;
+	const static int32_t UNUSED_GROUP_UNSUBSCRIBE_INTERVAL = 16*86400; // 16 days
 
 	/**
 	 * This should be as little as possible as the size of the database can grow
