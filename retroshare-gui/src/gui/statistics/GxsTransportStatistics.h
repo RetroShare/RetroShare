@@ -47,7 +47,7 @@ public:
 
 	void addMessageMeta(const RsMsgMetaData& meta)
 	{
-		messages_metas.push_back(meta) ;
+		messages_metas[meta.mMsgId] = meta ;
 		last_publish_TS = std::max(last_publish_TS,meta.mPublishTs) ;
 	}
 
@@ -56,7 +56,7 @@ public:
 
 	time_t last_publish_TS;
 
-    std::vector<RsMsgMetaData> messages_metas ;
+    std::map<RsGxsMessageId,RsMsgMetaData> messages_metas ;
 };
 
 class GxsTransportStatistics: public RsGxsUpdateBroadcastPage, public TokenResponse, public Ui::GxsTransportStatistics
