@@ -815,8 +815,8 @@ void GxsGroupFrameDialog::insertGroupsData(const std::list<RsGroupMetaData> &gro
 		}
 		else
 		{
-			/* rate the others by popularity */
-			popMap.insert(std::make_pair(it->mPop, groupItemInfo));
+			//popMap.insert(std::make_pair(it->mPop, groupItemInfo)); /* rate the others by popularity */
+			popMap.insert(std::make_pair(it->mLastPost, groupItemInfo)); /* rate the others by time of last post */
 		}
 	}
 
@@ -830,17 +830,17 @@ void GxsGroupFrameDialog::insertGroupsData(const std::list<RsGroupMetaData> &gro
 	uint32_t i = 0;
 	uint32_t popLimit = 0;
 	std::multimap<uint32_t, GroupItemInfo>::reverse_iterator rit;
-	for(rit = popMap.rbegin(); ((rit != popMap.rend()) && (i < popCount)); ++rit, ++i) ;
-	if (rit != popMap.rend()) {
-		popLimit = rit->first;
-	}
+	//for(rit = popMap.rbegin(); ((rit != popMap.rend()) && (i < popCount)); ++rit, ++i) ;
+	//if (rit != popMap.rend()) {
+	//	popLimit = rit->first;
+	//}
 
-	for (rit = popMap.rbegin(); rit != popMap.rend(); ++rit) {
-		if (rit->second.popularity < (int) popLimit) {
-			otherList.append(rit->second);
-		} else {
+	for (rit = popMap.rbegin(); rit != popMap.rend(); ++rit,++i) {
+		//if (rit->second.popularity > (int) popLimit) {
+		if(i < popCount)
 			popList.append(rit->second);
-		}
+		else
+			otherList.append(rit->second);
 	}
 
 	/* now we can add them in as a tree! */
