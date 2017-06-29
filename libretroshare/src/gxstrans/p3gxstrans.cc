@@ -191,8 +191,8 @@ void p3GxsTrans::handleResponse(uint32_t token, uint32_t req_type)
 			{
 				RS_STACK_MUTEX(mDataMutex);
 
-				bool shouldSubscribe   = !subscribed && ((!old)|| meta.mGroupId == mPreferredGroupId );
-				bool shouldUnSubscribe =  subscribed &&    old && meta.mGroupId != mPreferredGroupId;
+				shouldSubscribe   = !subscribed && ((!old)|| meta.mGroupId == mPreferredGroupId );
+				shouldUnSubscribe =  subscribed &&    old && meta.mGroupId != mPreferredGroupId;
 			}
 
 #ifdef DEBUG_GXSTRANS
