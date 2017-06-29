@@ -46,6 +46,10 @@ const uint32_t RS_FILE_CTRL_FORCE_CHECK	= 0x00000400;
 const uint32_t RS_FILE_CTRL_ENCRYPTION_POLICY_STRICT     = 0x00000001 ;
 const uint32_t RS_FILE_CTRL_ENCRYPTION_POLICY_PERMISSIVE = 0x00000002 ;
 
+const uint32_t RS_FILE_PERM_DIRECT_DL_YES      = 0x00000001 ;
+const uint32_t RS_FILE_PERM_DIRECT_DL_NO       = 0x00000002 ;
+const uint32_t RS_FILE_PERM_DIRECT_DL_PER_USER = 0x00000003 ;
+
 const uint32_t RS_FILE_RATE_TRICKLE	 = 0x00000001;
 const uint32_t RS_FILE_RATE_SLOW	 = 0x00000002;
 const uint32_t RS_FILE_RATE_STANDARD	 = 0x00000003;
@@ -165,10 +169,12 @@ class RsFiles
 		virtual void setFreeDiskSpaceLimit(uint32_t size_in_mb) =0;
 		virtual bool FileControl(const RsFileHash& hash, uint32_t flags) = 0;
 		virtual bool FileClearCompleted() = 0;
-        virtual void setDefaultEncryptionPolicy(uint32_t policy)=0 ;	// RS_FILE_CTRL_ENCRYPTION_POLICY_STRICT/PERMISSIVE
-        virtual uint32_t defaultEncryptionPolicy()=0 ;
-        virtual void setMaxUploadSlotsPerFriend(uint32_t n)=0 ;
-        virtual uint32_t getMaxUploadSlotsPerFriend()=0 ;
+		virtual void setDefaultEncryptionPolicy(uint32_t policy)=0;	// RS_FILE_CTRL_ENCRYPTION_POLICY_STRICT/PERMISSIVE
+		virtual uint32_t defaultEncryptionPolicy()=0;
+		virtual void setMaxUploadSlotsPerFriend(uint32_t n)=0;
+		virtual uint32_t getMaxUploadSlotsPerFriend()=0;
+		virtual void setFilePermDirectDL(uint32_t perm)=0;
+		virtual uint32_t filePermDirectDL()=0;
 
 		/***
 		 * Control of Downloads Priority.

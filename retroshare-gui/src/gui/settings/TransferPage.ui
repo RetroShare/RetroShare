@@ -10,15 +10,15 @@
     <height>1099</height>
    </rect>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_5">
+  <layout class="QVBoxLayout" name="TransferPageVLayout">
    <item>
-    <widget class="QGroupBox" name="groupBox_4">
+    <widget class="QGroupBox" name="sharedGBox">
      <property name="title">
       <string>Shared Directories</string>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout">
+     <layout class="QVBoxLayout" name="sharedGBoxVLayout">
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <layout class="QHBoxLayout" name="shareDownloadHLayout">
         <item>
          <widget class="QCheckBox" name="shareDownloadDirectoryCB">
           <property name="enabled">
@@ -42,10 +42,7 @@
        </layout>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_3"/>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_4">
+       <layout class="QHBoxLayout" name="autoCheckDirectoriesHLayout">
         <item>
          <widget class="QCheckBox" name="autoCheckDirectories_CB">
           <property name="text">
@@ -75,27 +72,31 @@
        </layout>
       </item>
       <item>
-       <widget class="QCheckBox" name="followSymLinks_CB">
-        <property name="toolTip">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Tells Retroshare to follow the links. Loops and duplicate directories are automatically taken care of. If unchecked, Retroshare will just ignore symbolic links to both files and directories.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-        </property>
-        <property name="text">
-         <string>follow symbolic links</string>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
+       <layout class="QHBoxLayout" name="followSymLinksHLayout">
+        <item>
+         <widget class="QCheckBox" name="followSymLinks_CB">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Tells Retroshare to follow the links. Loops and duplicate directories are automatically taken care of. If unchecked, Retroshare will just ignore symbolic links to both files and directories.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="text">
+           <string>follow symbolic links</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
      </layout>
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="groupBox_2">
+    <widget class="QGroupBox" name="incomingGBox">
      <property name="title">
       <string>Incoming Directory</string>
      </property>
-     <layout class="QGridLayout" name="_3">
+     <layout class="QGridLayout" name="incomingGBoxGLayout">
       <item row="0" column="0">
        <widget class="QLineEdit" name="incomingDir">
         <property name="readOnly">
@@ -139,11 +140,11 @@
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="groupBox_3">
+    <widget class="QGroupBox" name="partialGBox">
      <property name="title">
       <string>Partials Directory</string>
      </property>
-     <layout class="QGridLayout" name="_2">
+     <layout class="QGridLayout" name="partialGBoxGLayout">
       <item row="0" column="0">
        <widget class="QLineEdit" name="partialsDir">
         <property name="readOnly">
@@ -187,61 +188,68 @@
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="groupBox">
+    <widget class="QGroupBox" name="transfertGBox">
      <property name="title">
       <string>Transfer options</string>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_4">
+     <layout class="QVBoxLayout" name="transfertGBoxVLayout">
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout">
+       <layout class="QHBoxLayout" name="transfertHLayout">
         <item>
-         <layout class="QVBoxLayout" name="verticalLayout_3">
+         <layout class="QVBoxLayout" name="transfertLabelVLayout">
           <item>
-           <widget class="QLabel" name="label">
+           <widget class="QLabel" name="_queueSize_Label">
             <property name="text">
              <string>Maximum simultaneous downloads:</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="label_5">
+           <widget class="QLabel" name="_max_up_Label">
             <property name="text">
              <string>Maximum uploads per friend (0 = no limit)</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="label_3">
+           <widget class="QLabel" name="_defaultStrategy_Label">
             <property name="text">
              <string>Default chunk strategy:</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="label_2">
+           <widget class="QLabel" name="_diskSpaceLimit_Label">
             <property name="text">
              <string>Safety disk space limit :</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="label_6">
+           <widget class="QLabel" name="_max_tr_up_per_sec_Label">
             <property name="text">
              <string>Max. tunnel req. forwarded per second:</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="label_4">
+           <widget class="QLabel" name="_e2e_encryption_Label">
             <property name="text">
              <string>End-to-end encryption:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="_filePermDirectDL_Label">
+            <property name="text">
+             <string>Allow direct download:</string>
             </property>
            </widget>
           </item>
          </layout>
         </item>
         <item>
-         <layout class="QVBoxLayout" name="verticalLayout_2">
+         <layout class="QVBoxLayout" name="transfertValuesVLayout">
           <item>
            <widget class="QSpinBox" name="_queueSize_SB">
             <property name="enabled">
@@ -340,6 +348,28 @@
             <item>
              <property name="text">
               <string>Enforced</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="_filePermDirectDL_CB">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;How RS manage direct download setting.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <item>
+             <property name="text">
+              <string>Yes</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>No</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Per user</string>
              </property>
             </item>
            </widget>
