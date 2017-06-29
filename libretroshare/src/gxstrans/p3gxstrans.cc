@@ -143,6 +143,9 @@ void p3GxsTrans::handleResponse(uint32_t token, uint32_t req_type)
 	{
 	case GROUPS_LIST:
 	{
+#ifdef DEBUG_GXSTRANS
+		std::cerr << "  Reviewing available groups. " << std::endl;
+#endif
 		std::vector<RsGxsGrpItem*> groups;
 		getGroupData(token, groups);
 
@@ -491,6 +494,10 @@ void p3GxsTrans::service_tick()
 			mCleanupThread->start() ;
             mLastMsgCleanup = now ;
         }
+
+		// This forces to review all groups, and decide to subscribe or not to each of them.
+
+		requestGroupsData();
     }
 
 	// now grab collected messages to delete

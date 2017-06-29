@@ -33,9 +33,9 @@
 
 static const uint32_t MAX_GXS_IDS_REQUESTS_NET   =  10 ; // max number of requests from cache/net (avoids killing the system!)
 
-#define DEBUG_GXSUTIL 1
+//#define DEBUG_GXSUTIL 1
 
-#define GXSUTIL_DEBUG() std::cerr << time(NULL)    << " : GXS_UTIL : " << __FUNCTION__ << " : "
+#define GXSUTIL_DEBUG() std::cerr << "[" << time(NULL)  << "] : GXS_UTIL : " << __FUNCTION__ << " : "
 
 RsGxsMessageCleanUp::RsGxsMessageCleanUp(RsGeneralDataService* const dataService, RsGenExchange *genex, uint32_t chunkSize)
 : mDs(dataService), mGenExchangeClient(genex), CHUNK_SIZE(chunkSize)

@@ -333,7 +333,7 @@ RsGxsNetService::RsGxsNetService(uint16_t servType, RsGeneralDataService *gds,
 	if(mDefaultMsgStorePeriod > 0 && mDefaultMsgSyncPeriod > mDefaultMsgStorePeriod)
 	{
 		std::cerr << "(WW) in GXS service \"" << getServiceInfo().mServiceName << "\":  too large message sync period will be set to message store period." << std::endl;
-		mDefaultMsgSyncPeriod == mDefaultMsgStorePeriod ;
+		mDefaultMsgSyncPeriod = mDefaultMsgStorePeriod ;
 	}
 }
 
@@ -696,7 +696,7 @@ void RsGxsNetService::syncGrpStatistics()
 	    GXSNETDEBUG__G(it->first) << "    group " << it->first ;
 #endif
 
-	    if(rec.update_TS + GROUP_STATS_UPDATE_DELAY < now && rec.suppliers.ids.size() > 0)
+	    if(rec.statistics_update_TS + GROUP_STATS_UPDATE_DELAY < now && rec.suppliers.ids.size() > 0)
 	    {
 #ifdef NXS_NET_DEBUG_6
 		    GXSNETDEBUG__G(it->first) << " needs update. Randomly asking to some friends" << std::endl;
@@ -796,7 +796,10 @@ void RsGxsNetService::handleRecvSyncGrpStatistics(RsNxsSyncGrpStatsItem *grs)
 	    grs_resp->grpId = grs->grpId;
 	    grs_resp->PeerId(grs->PeerId()) ;
 
-	    grs_resp->last_post_TS = 0 ;
+	    grs_resp->last_post_TS = grpMeta->mPublishTs ;	// This is not zero, and necessarily older than any message in the group up to clock precision.
+														// This allows us to use 0 as "uninitialized" proof. If the group meta has been changed, this time
+														// will be more recent than some messages. This shouldn't be a problem, since this value can only
+														// be used to discard groups that are not used.
 
 	    for(uint32_t i=0;i<vec.size();++i)
 	    {
@@ -825,7 +828,8 @@ void RsGxsNetService::handleRecvSyncGrpStatistics(RsNxsSyncGrpStatsItem *grs)
 
 	   rec.suppliers.ids.insert(grs->PeerId()) ;
 	   rec.max_visible_count = std::max(rec.max_visible_count,grs->number_of_posts) ;
-	   rec.update_TS = time(NULL) ;
+	   rec.statistics_update_TS = time(NULL) ;
+	   rec.last_group_modification_TS = grs->last_post_TS;
 
 	   if (old_count != rec.max_visible_count || old_suppliers_count != rec.suppliers.ids.size())
 		  mNewStatsToNotify.insert(grs->grpId) ;
@@ -1433,7 +1437,7 @@ bool RsGxsNetService::loadList(std::list<RsItem *> &load)
 
 		// the update time stamp is randomised so as not to ask all friends at once about group statistics.
 
-		it->second.update_TS = now - GROUP_STATS_UPDATE_DELAY + (RSRandom::random_u32()%(GROUP_STATS_UPDATE_DELAY/10)) ;
+		it->second.statistics_update_TS = now - GROUP_STATS_UPDATE_DELAY + (RSRandom::random_u32()%(GROUP_STATS_UPDATE_DELAY/10)) ;
 
 		// Similarly, we remove all suppliers.
 		// Actual suppliers will come back automatically.
@@ -2307,6 +2311,7 @@ bool RsGxsNetService::getGroupNetworkStats(const RsGxsGroupId& gid,RsGroupNetwor
     stats.mMaxVisibleCount = it->second.max_visible_count ;
     stats.mAllowMsgSync = mAllowMsgSync ;
     stats.mGrpAutoSync = mGrpAutoSync ;
+    stats.mLastGroupModificationTS = it->second.last_group_modification_TS ;
 
     return true ;
 }
@@ -4477,7 +4482,8 @@ RsGxsGrpConfig& RsGxsNetService::locked_getGrpConfig(const RsGxsGroupId& grp_id)
 		conf.msg_req_delay  = mDefaultMsgSyncPeriod;
 
 		conf.max_visible_count = 0 ;
-		conf.update_TS = 0 ;
+		conf.statistics_update_TS = 0 ;
+		conf.last_group_modification_TS = 0 ;
 
 		return conf ;
 	}

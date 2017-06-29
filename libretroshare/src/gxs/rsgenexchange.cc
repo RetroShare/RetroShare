@@ -65,7 +65,7 @@ static const uint32_t INDEX_AUTHEN_ADMIN        = 0x00000040; // admin key
 
 //#define GEN_EXCH_DEBUG	1
 
-static const uint32_t MSG_CLEANUP_PERIOD     = 6 *59; // 59 minutes
+static const uint32_t MSG_CLEANUP_PERIOD     = 60*59; // 59 minutes
 static const uint32_t INTEGRITY_CHECK_PERIOD = 60*31; // 31 minutes
 
 RsGenExchange::RsGenExchange(RsGeneralDataService *gds, RsNetworkExchangeService *ns,
@@ -1375,6 +1375,13 @@ bool RsGenExchange::getGroupData(const uint32_t &token, std::vector<RsGxsGrpItem
 						gItem->meta.mPop = 0;
 						gItem->meta.mVisibleMsgCount = 0;
 					}
+
+					// When the group is not subscribed, the last post value is not updated, because there's no message stored. As a consequence,
+					// we rely on network statistics to give this value, but it is not as accurate as if it was locally computed, because of blocked
+					// posts, friends not available, sync delays, etc.
+
+					if(!(IS_GROUP_SUBSCRIBED(gItem->meta.mSubscribeFlags)))
+						gItem->meta.mLastPost = sts.mLastGroupModificationTS ;
 
                     // Also check the group privacy flags. A while ago, it as possible to publish a group without privacy flags. Now it is not possible anymore.
                     // As a consequence, it's important to supply a correct value in this flag before the data can be edited/updated.

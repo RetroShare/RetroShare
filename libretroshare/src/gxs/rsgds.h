@@ -92,6 +92,7 @@ public:
     uint32_t mMaxVisibleCount ;
     bool     mGrpAutoSync ;
     bool     mAllowMsgSync;
+	time_t   mLastGroupModificationTS ;
 };
 
 typedef std::map<RsGxsGroupId,      std::vector<RsNxsMsg*> > NxsMsgDataResult;
