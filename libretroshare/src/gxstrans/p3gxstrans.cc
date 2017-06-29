@@ -183,7 +183,11 @@ void p3GxsTrans::handleResponse(uint32_t token, uint32_t req_type)
 
 			const RsGroupMetaData& meta = grp->meta;
 			bool subscribed = IS_GROUP_SUBSCRIBED(meta.mSubscribeFlags);
-			bool old = meta.mLastPost > 0 && olderThen( meta.mLastPost, UNUSED_GROUP_UNSUBSCRIBE_INTERVAL );
+
+			// if mLastPost is 0, then the group is not subscribed, so it only has impact on shouldSubscribe.  In any case, a group
+			// with no information shouldn't be subscribed, so the olderThen() test is still valid in the case mLastPost=0.
+
+			bool old = olderThen( meta.mLastPost, UNUSED_GROUP_UNSUBSCRIBE_INTERVAL );
 			uint32_t token;
 
 			bool shouldSubscribe   = false ;
@@ -191,8 +195,8 @@ void p3GxsTrans::handleResponse(uint32_t token, uint32_t req_type)
 			{
 				RS_STACK_MUTEX(mDataMutex);
 
-				shouldSubscribe   = !subscribed && ((!old)|| meta.mGroupId == mPreferredGroupId );
-				shouldUnSubscribe =  subscribed &&    old && meta.mGroupId != mPreferredGroupId;
+				shouldSubscribe   = (!subscribed) && ((!old)|| meta.mGroupId == mPreferredGroupId );
+				shouldUnSubscribe = ( subscribed) &&    old && meta.mGroupId != mPreferredGroupId;
 			}
 
 #ifdef DEBUG_GXSTRANS
