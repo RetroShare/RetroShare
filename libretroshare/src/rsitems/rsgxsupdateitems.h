@@ -68,7 +68,8 @@ public:
 		msg_req_delay  = RS_GXS_DEFAULT_MSG_REQ_PERIOD ;
 
 		max_visible_count = 0 ;
-		update_TS = 0 ;
+		statistics_update_TS = 0 ;
+		last_group_modification_TS = 0 ;
 	}
 
 	uint32_t     msg_keep_delay ;	// delay after which we discard the posts
@@ -77,7 +78,8 @@ public:
 
 	RsTlvPeerIdSet suppliers;		// list of friends who feed this group
 	uint32_t max_visible_count ;	// max visible count reported by contributing friends
-	time_t update_TS ;				// last time the max visible count was updated.
+	time_t statistics_update_TS ;	// last time the max visible count was updated.
+	time_t last_group_modification_TS ;	// last time the group was modified, either in meta data or in the list of messages posted in it.
 };
 
 class RsGxsGrpConfigItem : public RsGxsNetServiceItem, public RsGxsGrpConfig

@@ -1298,15 +1298,9 @@ int RsServer::StartupRetroShare()
 	//
 	mPluginsManager->setServiceControl(serviceCtrl) ;
 
-//	std::cerr << "rsinitconf (core 1) = " << (void*)rsInitConfig<<std::endl;
-//	std::cerr << "gxs_passwd (core 1) = " << (void*)&rsInitConfig->gxs_passwd<<" \"" <<  rsInitConfig->gxs_passwd << "\""<< std::endl;
-
 	// Now load the plugins. This parses the available SO/DLL files for known symbols.
 	//
 	mPluginsManager->loadPlugins(plugins_directories) ;
-
-//	std::cerr << "rsinitconf (core 1) = " << (void*)rsInitConfig<<std::endl;
-//	std::cerr << "gxs_passwd (core 2) = " << (void*)&rsInitConfig->gxs_passwd<< " \"" << rsInitConfig->gxs_passwd << "\""<< std::endl;
 
 	// Also load some plugins explicitly. This is helpful for
 	// - developping plugins 
@@ -1375,7 +1369,7 @@ int RsServer::StartupRetroShare()
 	            	true,	// synchronise group automatic 
                     	true); 	// sync messages automatic, since they contain subscription requests.
 
-	mGxsCircles->setNetworkExchangeService(gxscircles_ns) ;
+		mGxsCircles->setNetworkExchangeService(gxscircles_ns) ;
     
         /**** Posted GXS service ****/
 
@@ -1392,8 +1386,7 @@ int RsServer::StartupRetroShare()
 			mReputations, mGxsCircles,mGxsIdService,
 			pgpAuxUtils);
 
-    mPosted->setNetworkExchangeService(posted_ns) ;
-
+		mPosted->setNetworkExchangeService(posted_ns) ;
 
         /**** Wiki GXS service ****/
 
@@ -1493,10 +1486,12 @@ int RsServer::StartupRetroShare()
 	            currGxsDir + "/", "gxstrans_db", RS_SERVICE_TYPE_GXS_TRANS,
 	            NULL, rsInitConfig->gxs_passwd );
 	mGxsTrans = new p3GxsTrans(gxstrans_ds, NULL, *mGxsIdService);
+
 	RsGxsNetService* gxstrans_ns = new RsGxsNetService(
 	            RS_SERVICE_TYPE_GXS_TRANS, gxstrans_ds, nxsMgr, mGxsTrans,
 	            mGxsTrans->getServiceInfo(), mReputations, mGxsCircles,
-	            mGxsIdService, pgpAuxUtils);
+	            mGxsIdService, pgpAuxUtils,true,true,p3GxsTrans::GXS_STORAGE_PERIOD,p3GxsTrans::GXS_SYNC_PERIOD);
+
 	mGxsTrans->setNetworkExchangeService(gxstrans_ns);
 	pqih->addService(gxstrans_ns, true);
 #	endif // RS_GXS_TRANS
