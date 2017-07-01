@@ -28,7 +28,7 @@ QtObject {
 
 	property QtObject inferiorPanel: QtObject{
 		// Panel globals
-		readonly property int height: 40
+		readonly property int height: 50
 		readonly property string backgroundColor: "white"
 		readonly property string borderColor: "lightGrey"
 
@@ -44,8 +44,8 @@ QtObject {
 
 		// Button Icon
 		property QtObject btnIcon: QtObject{
-			readonly property int width: 30
-			readonly property int height: 30
+			readonly property int width: 40
+			readonly property int height: 40
 
 			readonly property int margin: 5
 
