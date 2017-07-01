@@ -27,10 +27,10 @@ Rectangle {
         if (plainText.length > 0) {
             var lastChar = plainText[plainText.length-1]
             if ((lastChar !== ' ') && (lastChar.charCodeAt(0) < 255)) {
-                strAppnd = "&nbsp;"
+				strAppnd = " "
             }
         }
-        strAppnd += '<span style="font-size: 22px">' + selectedEmoji + '</span>'
+		strAppnd += selectedEmoji
 
         textArea.insert(textArea.cursorPosition, strAppnd)
     }

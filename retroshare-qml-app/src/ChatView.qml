@@ -224,7 +224,6 @@ Item
 					focus: true
 
 					inputMethodHints: Qt.ImhMultiLine
-					textFormat: TextEdit.RichText
 
 					onTextChanged:
 					{
