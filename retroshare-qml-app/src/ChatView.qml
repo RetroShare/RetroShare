@@ -363,6 +363,7 @@ Item
 
 	function sendMessage ()
 	{
+		if (emojiPicker.state == "EMOJI_SHOWN") emojiPicker.state = "EMOJI_HIDDEN"
 		var jsonData = {"chat_id":chatView.chatId, "msg":msgField.text}
 		rsApi.request( "/chat/send_message", JSON.stringify(jsonData),
 					   function(par) { msgField.text = ""; } )
