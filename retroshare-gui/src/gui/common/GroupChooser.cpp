@@ -27,6 +27,7 @@
 #include <iostream>
 
 #include <retroshare/rspeers.h>
+#include <gui/common/GroupDefs.h>
 
 /** Constructor */
 GroupChooser::GroupChooser(QWidget *parent)
@@ -88,7 +89,7 @@ void GroupChooser::loadGroups()
 			std::cerr << std::endl;
 			continue;
 		}
-        QString id = QString::fromStdString(it->id.toStdString());
+		QString id = GroupDefs::name(*it) ;
 
 		addItem(str, id);
 
