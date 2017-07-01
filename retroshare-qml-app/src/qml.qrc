@@ -47,5 +47,9 @@
         <file>icons/add.svg</file>
         <file>icons/keyring.svg</file>
         <file>components/TextAndIcon.qml</file>
+        <file>components/emoji/EmojiPicker.qml</file>
+        <file>components/emoji/EmojiCategoryButton.qml</file>
+        <file>components/emoji/EmojiButton.qml</file>
+        <file>components/emoji/emoji.js</file>
     </qresource>
 </RCC>
