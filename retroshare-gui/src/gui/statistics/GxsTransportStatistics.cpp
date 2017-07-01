@@ -266,12 +266,12 @@ void GxsTransportStatistics::updateContent()
 
 		QString msg_time_string = (stat.last_publish_TS>0)?QString(" (Last msg: %1)").arg(QDateTime::fromTime_t(stat.last_publish_TS).toString()):"" ;
 
-        item->setData(COL_GROUP_UNIQUE_ID, Qt::DisplayRole,  QString::fromStdString(stat.mGrpId.toStdString())) ;
         item->setData(COL_GROUP_NUM_MSGS,  Qt::DisplayRole,  QString::number(stat.mNumMsgs) + msg_time_string) ;
-        item->setData(COL_GROUP_GRP_ID,    Qt::DisplayRole,  QString::fromStdString(stat.mGrpId.toStdString())) ;
+        item->setData(COL_GROUP_GRP_ID,    Qt::DisplayRole,  QString::fromStdString(it->first.toStdString())) ;
         item->setData(COL_GROUP_SIZE_MSGS, Qt::DisplayRole,  QString::number(stat.mTotalSizeOfMsgs)) ;
         item->setData(COL_GROUP_SUBSCRIBED,Qt::DisplayRole,  stat.subscribed?tr("Yes"):tr("No")) ;
         item->setData(COL_GROUP_POPULARITY,Qt::DisplayRole,  QString::number(stat.popularity)) ;
+        item->setData(COL_GROUP_UNIQUE_ID, Qt::DisplayRole,  QString::fromStdString(it->first.toStdString())) ;
 
         for(std::map<RsGxsMessageId,RsMsgMetaData>::const_iterator msgIt(stat.messages_metas.begin());msgIt!=stat.messages_metas.end();++msgIt)
         {
@@ -436,6 +436,7 @@ void GxsTransportStatistics::loadGroupMeta(const uint32_t& token)
         RsGxsTransGroupStatistics& s(mGroupStats[vit->mGroupId]);
         s.popularity = vit->mPop ;
         s.subscribed = IS_GROUP_SUBSCRIBED(vit->mSubscribeFlags) ;
+		s.mGrpId = vit->mGroupId ;
 	}
 
     // remove group stats for group that do not exist anymore
@@ -458,6 +459,6 @@ void GxsTransportStatistics::loadMsgMeta(const uint32_t& token)
 
     for(GxsMsgMetaMap::const_iterator it(m.begin());it!=m.end();++it)
 		for(uint32_t i=0;i<it->second.size();++i)
-			mGroupStats[it->first].addMessageMeta(it->second[i]) ;
+			mGroupStats[it->first].addMessageMeta(it->first,it->second[i]) ;
 }
 

@@ -45,10 +45,11 @@ public:
 		subscribed = false;
 	}
 
-	void addMessageMeta(const RsMsgMetaData& meta)
+	void addMessageMeta(const RsGxsGroupId& grp,const RsMsgMetaData& meta)
 	{
 		messages_metas[meta.mMsgId] = meta ;
 		last_publish_TS = std::max(last_publish_TS,meta.mPublishTs) ;
+		mGrpId = grp ;
 	}
 
 	bool subscribed ;

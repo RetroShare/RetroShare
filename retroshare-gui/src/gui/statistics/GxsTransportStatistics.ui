@@ -101,7 +101,7 @@
          </column>
          <column>
           <property name="text">
-           <string>Total size of messages</string>
+           <string>Local size of data</string>
           </property>
          </column>
          <column>
