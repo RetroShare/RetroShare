@@ -22,6 +22,7 @@ import QtQuick.Layouts 1.2
 import org.retroshare.qml_components.LibresapiLocalClient 1.0
 import "." //Needed for TokensManager singleton
 import "./components"
+import "./components/emoji"
 
 Item
 {
@@ -104,10 +105,39 @@ Item
 
 	}
 
+	EmojiPicker {
+		id: emojiPicker
+
+		anchors.fill: parent
+		anchors.topMargin: parent.height / 2
+		anchors.bottomMargin: categorySelectorHeight
+
+		property int categorySelectorHeight: 40
+
+		color: "white"
+		buttonWidth: 40
+		textArea: inferiorPanel.textMessageArea //the TextArea in which EmojiPicker is pasting the Emoji into
+
+		state: "EMOJI_HIDDEN"
+		states: [
+			State {
+				name: "EMOJI_HIDDEN"
+				PropertyChanges { target: emojiPicker; anchors.topMargin: parent.height }
+				PropertyChanges { target: emojiPicker; anchors.bottomMargin: -1 }
+			},
+			State {
+				name: "EMOJI_SHOWN"
+				PropertyChanges { target: emojiPicker; anchors.topMargin: parent.height / 2 }
+				PropertyChanges { target: emojiPicker; anchors.bottomMargin: categorySelectorHeight }
+			}
+		]
+	}
+
 	Item
 	{
 
 		property var styles: StyleChat.inferiorPanel
+		property alias textMessageArea: msgComposer.textMessageArea
 
 		id: inferiorPanel
 		height:  ( msgComposer.height > styles.height)? msgComposer.height: styles.height
@@ -147,6 +177,7 @@ Item
 		{
 			id: msgComposer
 			property var styles: StyleChat.inferiorPanel.msgComposer
+			property alias textMessageArea: flickable.msgField
 
 			anchors.verticalCenter: parent.verticalCenter
 			anchors.left: attachButton.right
@@ -161,6 +192,8 @@ Item
 			Flickable
 			{
 				id: flickable
+				property alias msgField: msgField
+
 				anchors.fill: parent
 				flickableDirection: Flickable.VerticalFlick
 
@@ -189,6 +222,9 @@ Item
 					wrapMode: TextEdit.Wrap
 
 					focus: true
+
+					inputMethodHints: Qt.ImhMultiLine
+					textFormat: TextEdit.RichText
 
 					onTextChanged:
 					{
@@ -230,8 +266,6 @@ Item
 			}
 		}
 
-
-
 		BtnIcon
 		{
 
@@ -248,6 +282,15 @@ Item
 			anchors.margins: styles.margin
 
 			imgUrl: styles.emojiIconUrl
+
+			onClicked: {
+				if (emojiPicker.state == "EMOJI_HIDDEN") {
+					emojiPicker.state = "EMOJI_SHOWN"
+				} else {
+					emojiPicker.state = "EMOJI_HIDDEN"
+				}
+			}
+
 		}
 
 		BtnIcon
