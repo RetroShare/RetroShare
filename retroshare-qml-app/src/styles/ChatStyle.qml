@@ -23,6 +23,9 @@ QtObject {
 		readonly property string colorSenderName: "cornflowerblue"
 		readonly property string colorMessageTime: "grey"
 
+		// Text
+		readonly property int messageTextSize: 15
+
 	}
 
 
@@ -35,6 +38,7 @@ QtObject {
 		property QtObject msgComposer: QtObject{
 			readonly property string placeHolder: "Send message..."
 			readonly property int maxHeight: 180
+			readonly property int messageBoxTextSize: 15
 
 			property QtObject background: Rectangle {
 				color: "transparent"
@@ -44,8 +48,8 @@ QtObject {
 
 		// Button Icon
 		property QtObject btnIcon: QtObject{
-			readonly property int width: 40
-			readonly property int height: 40
+			readonly property int width: 35
+			readonly property int height: 35
 
 			readonly property int margin: 5
 

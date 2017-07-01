@@ -112,7 +112,7 @@ Item
 		anchors.topMargin: parent.height / 2
 		anchors.bottomMargin: categorySelectorHeight
 
-		property int categorySelectorHeight: 40
+		property int categorySelectorHeight: 50
 
 		color: "white"
 		buttonWidth: 40
@@ -224,6 +224,8 @@ Item
 					focus: true
 
 					inputMethodHints: Qt.ImhMultiLine
+
+					font.pixelSize: styles.messageBoxTextSize
 
 					onTextChanged:
 					{

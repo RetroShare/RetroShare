@@ -95,6 +95,7 @@ Item
 									                       )? Text.AlignRight : Text.AlignLeft
 
 				wrapMode: Text.Wrap
+				font.pixelSize: styles.messageTextSize
 			}
 
 		}
