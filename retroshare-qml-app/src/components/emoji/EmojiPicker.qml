@@ -55,11 +55,11 @@ Rectangle {
     //checks if the previous character is an Emoji and adds a ' ' if that's the case
     //this is necessary, because Emoji use a bigger font-size, and that font-size is kept using without a ' '
     function keyPressedHandler(event) {
-        var testStr = txtIn.getText(txtIn.length-2, txtIn.length)
+		var testStr = textArea.getText(textArea.length-2, textArea.length)
         var ptrn = new RegExp("[\uD800-\uDBFF][\uDC00-\uDFFF]")
         if ((event.key !== Qt.Key_Backspace) && (ptrn.test(testStr))) {
-            txtIn.text += " "
-            txtIn.cursorPosition = txtIn.length
+			textArea.text += " "
+			textArea.cursorPosition = textArea.length
         }
     }
 
