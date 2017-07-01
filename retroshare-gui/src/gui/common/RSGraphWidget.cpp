@@ -323,15 +323,6 @@ RSGraphWidget::resetGraph()
   updateIfPossible();
 }
 
-/** Toggles display of respective graph lines and counters. */
-//void
-//DhtGraph::setShowCounters(bool showRSDHT, bool showALLDHT)
-//{
-//  _showRSDHT = showRSDHT;
-//  _showALLDHT = showALLDHT;
-//  this->update();
-//}
-
 /** Overloads default QWidget::paintEvent. Draws the actual 
  * bandwidth graph. */
 void RSGraphWidget::paintEvent(QPaintEvent *)
@@ -354,9 +345,11 @@ void RSGraphWidget::paintEvent(QPaintEvent *)
 
   /* Paint the scale */
   paintScale1();
-  /* Plot the rsDHT/allDHT data */
+
+  /* Plot the data */
   paintData();
-  /* Paint the rsDHT/allDHT totals */
+
+  /* Paint the totals */
   paintTotals();
 
   // part of the scale that needs to write over the data curves.
@@ -427,17 +420,19 @@ void RSGraphWidget::paintData()
 
           QColor pcolor = getColor(source.displayName(i).toStdString()) ;
 
-          /* Plot the bandwidth data as area graphs */
-          if (_flags & RSGRAPH_FLAGS_PAINT_STYLE_PLAIN)
-              paintIntegral(points, pcolor, _opacity);
-
-          /* Plot the bandwidth as solid lines. If the graph style is currently an
-   * area graph, we end up outlining the integrals. */
+          /* Plot the bandwidth as solid lines. If the graph style is currently an area graph, we end up outlining the integrals. */
 
           if(_flags & RSGRAPH_FLAGS_PAINT_STYLE_DOTS)
 			  paintDots(points, pcolor);
           else
 			  paintLine(points, pcolor);
+
+          /* Plot the data as area graphs */
+
+		  points.push_front(QPointF( _rec.width(), _rec.height() - _graph_base)) ; // add a point in the lower right corner, to close the path.
+
+          if (_flags & RSGRAPH_FLAGS_PAINT_STYLE_PLAIN)
+              paintIntegral(points, pcolor, _opacity);
       }
   if(_maxValue > 0.0f)
   {
@@ -520,7 +515,7 @@ void RSGraphWidget::pointsFromData(const std::vector<QPointF>& values,QVector<QP
 		points << QPointF(px,py) ;
 
 		if(!(_flags & RSGRAPH_FLAGS_PAINT_STYLE_DOTS) && (i==values.size()-1))
-			points << QPointF(px,y) ;
+			points << QPointF(px,py) ;
 
 		last_px = px ;
 		last_py = py ;
