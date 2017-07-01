@@ -1,5 +1,44 @@
 retroshare06 (0.6.2-1.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
+  244e8a8 csoler Sat, 1 Jul 2017 15:29:48 +0200 fixed display of GxsTrans statistics
+  27774ba csoler Thu, 29 Jun 2017 22:13:04 +0200 Merge pull request #911 from csoler/v0.6-GxsTransport
+  b294b4b csoler Thu, 29 Jun 2017 22:11:44 +0200 changed sorting of popular forums w.r.t. time of last post rather than number of supplier friends
+  a864cf7 csoler Thu, 29 Jun 2017 21:12:42 +0200 Merge pull request #910 from csoler/v0.6-GxsTransport
+  4b94b2e csoler Thu, 29 Jun 2017 21:12:02 +0200 improved display of GxsTrans statistics
+  1b4e8a4 csoler Thu, 29 Jun 2017 18:38:10 +0200 Merge pull request #909 from csoler/v0.6-GxsTransport
+  64e3fc9 csoler Thu, 29 Jun 2017 18:37:39 +0200 fixed bug preventing correct subscribe in GxsTrans
+  700d114 csoler Thu, 29 Jun 2017 18:27:00 +0200 fixed bug causing failure of group autosubscribe in GxsTrans
+  cb31a92 csoler Thu, 29 Jun 2017 18:03:31 +0200 Merge pull request #907 from PhenomRetroShare/Add_GeneralDirectDLSetting
+  b4071d1 Phenom Mon, 26 Jun 2017 23:35:01 +0200 Add General Direct Download setting.
+  a3e8b96 csoler Thu, 29 Jun 2017 13:50:41 +0200 Merge pull request #908 from csoler/v0.6-GxsTransport
+  37edcc1 csoler Thu, 29 Jun 2017 13:44:40 +0200 fixed subscribe policy to GxsTrans groups as a function of last available post and group usage
+  dc605c0 csoler Thu, 29 Jun 2017 13:15:39 +0200 added a last modif TS in GrpNetworkStats, that is inited from network Grp statistics, and used to provide a value for unsubscribed groups
+  533e2a8 csoler Wed, 28 Jun 2017 23:23:27 +0200 added check to fix existing wrong storage time value in GxsTrans
+  f37ba83 csoler Wed, 28 Jun 2017 23:12:33 +0200 moved msg keep period settings to netService and made the initialisation obei the default settings of the service
+  b96effb csoler Wed, 28 Jun 2017 22:37:50 +0200 Merge pull request #895 from PhenomRetroShare/Add_HelpInRelayTab
+  3550971 csoler Wed, 28 Jun 2017 22:37:05 +0200 Merge pull request #902 from Emotyco/libresapi_avatar_handlers
+  12b5628 csoler Tue, 27 Jun 2017 22:21:35 +0200 added more debug info in GxsUtil
+  51c7e18 csoler Tue, 27 Jun 2017 19:56:21 +0200 added last msg time in GxsTrans stats. Added mutex to protect non atomic mPreferredGroup
+  579c944 csoler Sun, 25 Jun 2017 21:50:51 +0200 Merge pull request #903 from sehraf/improve-server-page
+  3c54beb sehraf Sun, 25 Jun 2017 19:19:07 +0200 hide hidden service port for I2P instead of just disabling it (it's not used for I2P)
+  e128fcb Konrad Sun, 25 Jun 2017 15:35:23 +0200 Added: Creating identity with avatar in libresapi
+  54166ce Konrad Sun, 25 Jun 2017 14:30:38 +0200 Added: Handling requests to set and get identity avatar
+  c3a78ce csoler Sat, 24 Jun 2017 13:14:24 +0200 Merge pull request #900 from csoler/v0.6-GxsTransport
+  8c4396c csoler Sat, 24 Jun 2017 12:54:06 +0200 Merge pull request #899 from Emotyco/libresapi_wrong_password_notification
+  66a9dad Konrad Sat, 24 Jun 2017 12:05:32 +0200 Fixed: Information about wrong password
+  2aac999 Konrad Sat, 24 Jun 2017 12:02:28 +0200 Fixed: Duplication of handler declaration
+  332fedd csoler Sat, 24 Jun 2017 11:38:48 +0200 fixed mismatched free/delete[] in AvatarDefs
+  2bb49f6 csoler Fri, 23 Jun 2017 21:58:54 +0200 Merge pull request #898 from csoler/v0.6-GxsTransport
+  0f99647 csoler Fri, 23 Jun 2017 21:58:17 +0200 fixed memory leak in GxsTrans
+  25a71c9 csoler Fri, 23 Jun 2017 21:24:37 +0200 Merge pull request #897 from PhenomRetroShare/Fix_ChannelPostButton
+  adfc594 Phenom Fri, 23 Jun 2017 20:33:43 +0200 Fix GxsChannelPostItem button, like "download" or "Play" never shown.
+  c415e11 Phenom Thu, 22 Jun 2017 18:52:03 +0200 Add help in Relay setting tab.
+  07ecbec csoler Thu, 22 Jun 2017 18:05:39 +0200 fixed bug in makeSourcePackage which would always grab the release branch
+
+ -- Retroshare Dev Team <contact@retroshare.net>  Sat, 01 Jul 2017 16:00:00 +0100
+
+retroshare06 (0.6.2-1.20170623.07ecbec6~precise) precise; urgency=low
+
   c34165e csoler Wed, 21 Jun 2017 08:08:29 +0200 pushed new changelog to force update of the date...
   8950acc csoler Thu, 22 Jun 2017 00:39:03 +0200 Merge pull request #892 from PhenomRetroShare/Add_MoveRelayPageToNetwork
   ea8af8a Phenom Wed, 21 Jun 2017 17:57:14 +0200 Move Relay setting page to network one.
