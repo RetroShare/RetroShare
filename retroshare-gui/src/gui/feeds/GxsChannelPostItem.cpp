@@ -46,16 +46,29 @@
 #define COLOR_NORMAL QColor(248, 248, 248)
 #define COLOR_NEW    QColor(220, 236, 253)
 
-GxsChannelPostItem::GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome, bool autoUpdate) :
+GxsChannelPostItem::GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome, bool autoUpdate,const std::set<RsGxsMessageId>& older_versions) :
     GxsFeedItem(feedHolder, feedId, groupId, messageId, isHome, rsGxsChannels, autoUpdate)
 {
+	QVector<RsGxsMessageId> v;
+    bool self = false;
+
+	for(std::set<RsGxsMessageId>::const_iterator it(older_versions.begin());it!=older_versions.end();++it)
+		v.push_back(*it) ;
+
+	if(older_versions.find(messageId) == older_versions.end())
+        v.push_back(messageId);
+
+    setMessageVersions(v) ;
+
 	setup();
 
-	requestGroup();
-	requestMessage();
-	requestComment();
+	mLoaded = false ;
 }
 
+// This code has been suspended because it adds more complexity than usefulness.
+// It was used to load a channel post where the post item is already known.
+
+#ifdef SUSPENDED
 GxsChannelPostItem::GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsChannelGroup &group, const RsGxsChannelPost &post, bool isHome, bool autoUpdate) :
     GxsFeedItem(feedHolder, feedId, post.mMeta.mGroupId, post.mMeta.mMsgId, isHome, rsGxsChannels, autoUpdate)
 {
@@ -82,9 +95,9 @@ GxsChannelPostItem::GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, 
 	setup();
 
 	setGroup(group, false);
-	//requestGroup(); //Already have RsGxsChannelGroup
-	setPost(post);
-	requestComment();
+
+	setPost(post,false);
+	mLoaded = false ;
 }
 
 GxsChannelPostItem::GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsChannelPost &post, bool isHome, bool autoUpdate) :
@@ -97,9 +110,29 @@ GxsChannelPostItem::GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, 
 
 	setup();
 
+	mLoaded = true ;
 	requestGroup();
 	setPost(post);
 	requestComment();
+}
+#endif
+
+
+void GxsChannelPostItem::paintEvent(QPaintEvent *e)
+{
+	/* This method employs a trick to trigger a deferred loading. The post and group is requested only
+	 * when actually displayed on the screen. */
+
+	if(!mLoaded)
+	{
+		mLoaded = true ;
+
+		requestGroup();
+		requestMessage();
+		requestComment();
+	}
+
+	GxsFeedItem::paintEvent(e) ;
 }
 
 GxsChannelPostItem::~GxsChannelPostItem()
@@ -349,6 +382,14 @@ void GxsChannelPostItem::fill()
 
 	QString title;
 
+	if(mPost.mThumbnail.mData != NULL)
+	{
+		QPixmap thumbnail;
+		thumbnail.loadFromData(mPost.mThumbnail.mData, mPost.mThumbnail.mSize, "PNG");
+		// Wiping data - as its been passed to thumbnail.
+		ui->logoLabel->setPixmap(thumbnail);
+	}
+
 	if (!mIsHome)
 	{
 		if (mCloseOnRead && !IS_MSG_NEW(mPost.mMeta.mMsgStatus)) {
@@ -386,9 +427,12 @@ void GxsChannelPostItem::fill()
 		/* subject */
 		ui->titleLabel->setText(QString::fromUtf8(mPost.mMeta.mMsgName.c_str()));
 
+		uint32_t autorized_lines = (int)floor((ui->logoLabel->height() - ui->titleLabel->height() - ui->buttonHLayout->sizeHint().height())/QFontMetricsF(ui->subjectLabel->font()).height());
+
 		// fill first 4 lines of message. (csoler) Disabled the replacement of smileys and links, because the cost is too crazy
-		//ui->subjectLabel->setText(RsHtml().formatText(NULL, RsStringUtil::CopyLines(QString::fromUtf8(mPost.mMsg.c_str()), 4), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
-		ui->subjectLabel->setText(RsStringUtil::CopyLines(QString::fromUtf8(mPost.mMsg.c_str()), 4)) ;
+		ui->subjectLabel->setText(RsHtml().formatText(NULL, RsStringUtil::CopyLines(QString::fromUtf8(mPost.mMsg.c_str()), autorized_lines), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
+
+		//ui->subjectLabel->setText(RsStringUtil::CopyLines(QString::fromUtf8(mPost.mMsg.c_str()), 2)) ;
 
 		//QString score = QString::number(post.mTopScore);
 		// scoreLabel->setText(score); 
@@ -494,14 +538,6 @@ void GxsChannelPostItem::fill()
 
 		QLayout *layout = ui->expandFrame->layout();
 		layout->addWidget(fi);
-	}
-
-	if(mPost.mThumbnail.mData != NULL)
-	{
-		QPixmap thumbnail;
-		thumbnail.loadFromData(mPost.mThumbnail.mData, mPost.mThumbnail.mSize, "PNG");
-		// Wiping data - as its been passed to thumbnail.
-		ui->logoLabel->setPixmap(thumbnail);
 	}
 
 	mInFill = false;
