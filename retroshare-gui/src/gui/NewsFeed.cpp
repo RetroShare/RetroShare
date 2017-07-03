@@ -229,7 +229,7 @@ void NewsFeed::updateDisplay()
 					addFeedItemPeerNew(fi);
 				break;
 			case RS_FEED_ITEM_PEER_OFFSET:
-				if (flags & RS_FEED_TYPE_PEER)
+				//if (flags & RS_FEED_TYPE_PEER) //Always allow this feed even if Friend notify is disabled.
 					addFeedItemPeerOffset(fi);
 				break;
 
