@@ -229,11 +229,13 @@ Item
 
 					onTextChanged:
 					{
-						if (msgField.length == 0)
+						var msgLenght = (msgField.preeditText)? msgField.preeditText.length : msgField.length
+
+						if (msgLenght == 0)
 						{
 							sendButton.state = ""
 						}
-						else if (msgField.length > 0)
+						else if (msgLenght > 0 )
 						{
 							sendButton.state = "SENDBTN"
 						}
@@ -262,6 +264,10 @@ Item
 						{
 							shiftPressed = false
 						}
+					}
+					function reset ()
+					{
+						Qt.inputMethod.reset()
 					}
 				}
 			}
@@ -365,9 +371,26 @@ Item
 	function sendMessage ()
 	{
 		if (emojiPicker.state == "EMOJI_SHOWN") emojiPicker.state = "EMOJI_HIDDEN"
-		var jsonData = {"chat_id":chatView.chatId, "msg":msgField.text}
+
+		var msgText = getCompleteMessageText()
+
+		var jsonData = {"chat_id":chatView.chatId, "msg":msgText}
 		rsApi.request( "/chat/send_message", JSON.stringify(jsonData),
-					   function(par) { msgField.text = ""; } )
+					   function(par)
+					   {
+						    msgField.text = ""
+						   msgField.reset();
+					   })
+	}
+
+	// This function is needed for the compatibility with auto predictive keyboards
+	function getCompleteMessageText (){
+		var completeMsg
+		if (msgField.preeditText) completeMsg = msgField.text + msgField.preeditText
+		else completeMsg =  msgField.text
+		return completeMsg
+
+
 	}
 
 }
