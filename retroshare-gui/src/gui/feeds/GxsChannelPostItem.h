@@ -41,9 +41,11 @@ class GxsChannelPostItem : public GxsFeedItem
 	Q_OBJECT
 
 public:
+	// This one is used in NewFeed for incoming channel posts. Only the group and msg ids are known at this point.
 	GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome, bool autoUpdate);
-	GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsChannelGroup &group, const RsGxsChannelPost &post, bool isHome, bool autoUpdate);
-	GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsChannelPost &post, bool isHome, bool autoUpdate);
+
+	//GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsChannelGroup &group, const RsGxsChannelPost &post, bool isHome, bool autoUpdate);
+	//GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsChannelPost &post, bool isHome, bool autoUpdate);
 	virtual ~GxsChannelPostItem();
 
 	bool setGroup(const RsGxsChannelGroup &group, bool doFill = true);
@@ -61,6 +63,8 @@ protected:
 	/* FeedItem */
 	virtual void doExpand(bool open);
 	virtual void expandFill(bool first);
+
+	virtual void paintEvent(QPaintEvent *);
 
 	/* GxsGroupFeedItem */
 	virtual QString groupName();
@@ -101,6 +105,7 @@ private:
 private:
 	bool mInFill;
 	bool mCloseOnRead;
+	bool mLoaded;
 
 	RsGxsChannelGroup mGroup;
 	RsGxsChannelPost mPost;

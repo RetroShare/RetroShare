@@ -407,10 +407,12 @@ void GxsChannelPostsWidget::createPostItem(const RsGxsChannelPost &post, bool re
         if(item)
 		{
 			ui->feedWidget->removeFeedItem(item) ;
-			RsGxsChannelGroup dummyGroup;
-			dummyGroup.mMeta.mGroupId = groupId();
-			dummyGroup.mMeta.mSubscribeFlags = 0xffffffff;
-			GxsChannelPostItem *item = new GxsChannelPostItem(this, 0, dummyGroup, post, true, false);
+			//RsGxsChannelGroup dummyGroup;
+			//dummyGroup.mMeta.mGroupId = groupId();
+			//dummyGroup.mMeta.mSubscribeFlags = 0xffffffff;
+			//GxsChannelPostItem *item = new GxsChannelPostItem(this, 0, dummyGroup, post, true, false);
+
+			GxsChannelPostItem *item = new GxsChannelPostItem(this, 0, post.mMeta.mGroupId, post.mMeta.mMsgId, true, true);
 			ui->feedWidget->addFeedItem(item, ROLE_PUBLISH, QDateTime::fromTime_t(post.mMeta.mPublishTs));
 
 			return ;
@@ -427,10 +429,13 @@ void GxsChannelPostsWidget::createPostItem(const RsGxsChannelPost &post, bool re
 		ui->feedWidget->setSort(item, ROLE_PUBLISH, QDateTime::fromTime_t(post.mMeta.mPublishTs));
 	} else {
 		/* Group is not always available because of the TokenQueue */
-		RsGxsChannelGroup dummyGroup;
-		dummyGroup.mMeta.mGroupId = groupId();
-		dummyGroup.mMeta.mSubscribeFlags = 0xffffffff;
-		GxsChannelPostItem *item = new GxsChannelPostItem(this, 0, dummyGroup, post, true, false);
+
+		//RsGxsChannelGroup dummyGroup;
+		//dummyGroup.mMeta.mGroupId = groupId();
+		//dummyGroup.mMeta.mSubscribeFlags = 0xffffffff;
+		//GxsChannelPostItem *item = new GxsChannelPostItem(this, 0, dummyGroup, post, true, false);
+
+		GxsChannelPostItem *item = new GxsChannelPostItem(this, 0, post.mMeta.mGroupId, post.mMeta.mMsgId, true, true);
 		ui->feedWidget->addFeedItem(item, ROLE_PUBLISH, QDateTime::fromTime_t(post.mMeta.mPublishTs));
 	}
 
