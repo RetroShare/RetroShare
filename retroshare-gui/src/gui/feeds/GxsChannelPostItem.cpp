@@ -51,13 +51,11 @@ GxsChannelPostItem::GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, 
 {
 	setup();
 
-	mLoaded = false ;
+	requestGroup();
+	requestMessage();
+	requestComment();
 }
 
-// This code has been suspended because it adds more complexity than usefulness.
-// It was used to load a channel post where the post item is already known.
-
-#ifdef SUSPENDED
 GxsChannelPostItem::GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsChannelGroup &group, const RsGxsChannelPost &post, bool isHome, bool autoUpdate) :
     GxsFeedItem(feedHolder, feedId, post.mMeta.mGroupId, post.mMeta.mMsgId, isHome, rsGxsChannels, autoUpdate)
 {
@@ -84,9 +82,9 @@ GxsChannelPostItem::GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, 
 	setup();
 
 	setGroup(group, false);
-
-	setPost(post,false);
-	mLoaded = false ;
+	//requestGroup(); //Already have RsGxsChannelGroup
+	setPost(post);
+	requestComment();
 }
 
 GxsChannelPostItem::GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsChannelPost &post, bool isHome, bool autoUpdate) :
@@ -99,29 +97,9 @@ GxsChannelPostItem::GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, 
 
 	setup();
 
-	mLoaded = true ;
 	requestGroup();
 	setPost(post);
 	requestComment();
-}
-#endif
-
-
-void GxsChannelPostItem::paintEvent(QPaintEvent *e)
-{
-	/* This method employs a trick to trigger a deferred loading. The post and group is requested only
-	 * when actually displayed on the screen. */
-
-	if(!mLoaded)
-	{
-		mLoaded = true ;
-
-		requestGroup();
-		requestMessage();
-		requestComment();
-	}
-
-	GxsFeedItem::paintEvent(e) ;
 }
 
 GxsChannelPostItem::~GxsChannelPostItem()
