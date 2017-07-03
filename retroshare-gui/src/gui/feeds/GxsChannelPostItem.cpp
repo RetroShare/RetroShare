@@ -46,9 +46,20 @@
 #define COLOR_NORMAL QColor(248, 248, 248)
 #define COLOR_NEW    QColor(220, 236, 253)
 
-GxsChannelPostItem::GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome, bool autoUpdate) :
+GxsChannelPostItem::GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome, bool autoUpdate,const std::set<RsGxsMessageId>& older_versions) :
     GxsFeedItem(feedHolder, feedId, groupId, messageId, isHome, rsGxsChannels, autoUpdate)
 {
+	QVector<RsGxsMessageId> v;
+    bool self = false;
+
+	for(std::set<RsGxsMessageId>::const_iterator it(older_versions.begin());it!=older_versions.end();++it)
+		v.push_back(*it) ;
+
+	if(older_versions.find(messageId) == older_versions.end())
+        v.push_back(messageId);
+
+    setMessageVersions(v) ;
+
 	setup();
 
 	mLoaded = false ;

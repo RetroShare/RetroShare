@@ -42,7 +42,10 @@ class GxsChannelPostItem : public GxsFeedItem
 
 public:
 	// This one is used in NewFeed for incoming channel posts. Only the group and msg ids are known at this point.
-	GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome, bool autoUpdate);
+	// It can be used for all apparences of channel posts. But in rder to merge comments from the previous versions of the post, the list of
+	// previous posts should be supplied. It's optional. If not supplied only the comments of the new version will be displayed.
+
+	GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome, bool autoUpdate, const std::set<RsGxsMessageId>& older_versions = std::set<RsGxsMessageId>());
 
 	//GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsChannelGroup &group, const RsGxsChannelPost &post, bool isHome, bool autoUpdate);
 	//GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsChannelPost &post, bool isHome, bool autoUpdate);
@@ -63,6 +66,9 @@ protected:
 	/* FeedItem */
 	virtual void doExpand(bool open);
 	virtual void expandFill(bool first);
+
+	// This does nothing except triggering the loading of the post data and comments. This function is mainly used to detect
+	// when the post is actually made visible.
 
 	virtual void paintEvent(QPaintEvent *);
 

@@ -412,7 +412,7 @@ void GxsChannelPostsWidget::createPostItem(const RsGxsChannelPost &post, bool re
 			//dummyGroup.mMeta.mSubscribeFlags = 0xffffffff;
 			//GxsChannelPostItem *item = new GxsChannelPostItem(this, 0, dummyGroup, post, true, false);
 
-			GxsChannelPostItem *item = new GxsChannelPostItem(this, 0, post.mMeta.mGroupId, post.mMeta.mMsgId, true, true);
+			GxsChannelPostItem *item = new GxsChannelPostItem(this, 0, post.mMeta.mGroupId, post.mMeta.mMsgId, true, false,post.mOlderVersions);
 			ui->feedWidget->addFeedItem(item, ROLE_PUBLISH, QDateTime::fromTime_t(post.mMeta.mPublishTs));
 
 			return ;
@@ -435,7 +435,7 @@ void GxsChannelPostsWidget::createPostItem(const RsGxsChannelPost &post, bool re
 		//dummyGroup.mMeta.mSubscribeFlags = 0xffffffff;
 		//GxsChannelPostItem *item = new GxsChannelPostItem(this, 0, dummyGroup, post, true, false);
 
-		GxsChannelPostItem *item = new GxsChannelPostItem(this, 0, post.mMeta.mGroupId, post.mMeta.mMsgId, true, true);
+		GxsChannelPostItem *item = new GxsChannelPostItem(this, 0, post.mMeta.mGroupId, post.mMeta.mMsgId, true, false,post.mOlderVersions);
 		ui->feedWidget->addFeedItem(item, ROLE_PUBLISH, QDateTime::fromTime_t(post.mMeta.mPublishTs));
 	}
 
