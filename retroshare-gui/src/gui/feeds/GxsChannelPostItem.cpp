@@ -382,6 +382,14 @@ void GxsChannelPostItem::fill()
 
 	QString title;
 
+	if(mPost.mThumbnail.mData != NULL)
+	{
+		QPixmap thumbnail;
+		thumbnail.loadFromData(mPost.mThumbnail.mData, mPost.mThumbnail.mSize, "PNG");
+		// Wiping data - as its been passed to thumbnail.
+		ui->logoLabel->setPixmap(thumbnail);
+	}
+
 	if (!mIsHome)
 	{
 		if (mCloseOnRead && !IS_MSG_NEW(mPost.mMeta.mMsgStatus)) {
@@ -419,9 +427,12 @@ void GxsChannelPostItem::fill()
 		/* subject */
 		ui->titleLabel->setText(QString::fromUtf8(mPost.mMeta.mMsgName.c_str()));
 
+		uint32_t autorized_lines = (int)floor((ui->logoLabel->height() - ui->titleLabel->height() - ui->buttonHLayout->sizeHint().height())/QFontMetricsF(ui->subjectLabel->font()).height());
+
 		// fill first 4 lines of message. (csoler) Disabled the replacement of smileys and links, because the cost is too crazy
-		//ui->subjectLabel->setText(RsHtml().formatText(NULL, RsStringUtil::CopyLines(QString::fromUtf8(mPost.mMsg.c_str()), 4), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
-		ui->subjectLabel->setText(RsStringUtil::CopyLines(QString::fromUtf8(mPost.mMsg.c_str()), 4)) ;
+		ui->subjectLabel->setText(RsHtml().formatText(NULL, RsStringUtil::CopyLines(QString::fromUtf8(mPost.mMsg.c_str()), autorized_lines), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
+
+		//ui->subjectLabel->setText(RsStringUtil::CopyLines(QString::fromUtf8(mPost.mMsg.c_str()), 2)) ;
 
 		//QString score = QString::number(post.mTopScore);
 		// scoreLabel->setText(score); 
@@ -527,14 +538,6 @@ void GxsChannelPostItem::fill()
 
 		QLayout *layout = ui->expandFrame->layout();
 		layout->addWidget(fi);
-	}
-
-	if(mPost.mThumbnail.mData != NULL)
-	{
-		QPixmap thumbnail;
-		thumbnail.loadFromData(mPost.mThumbnail.mData, mPost.mThumbnail.mSize, "PNG");
-		// Wiping data - as its been passed to thumbnail.
-		ui->logoLabel->setPixmap(thumbnail);
 	}
 
 	mInFill = false;
