@@ -123,16 +123,18 @@ Item
 							function(par)
 							{
 								var jD = JSON.parse(par.response).data
-								ClipboardWrapper.postToClipBoard(
+								var contactUrl = (
 										"retroshare://" +
 										"identity?gxsid=" +
 										cntDt.md.gxs_id +
 										"&name=" +
 										UriJs.URI.encode(cntDt.md.name) +
 										"&groupdata=" +
-										UriJs.URI.encode(jD.radix))
+										UriJs.URI.encode(jD.radix) )
+								ClipboardWrapper.postToClipBoard(contactUrl)
 								linkCopiedPopup.itemName = cntDt.md.name
 								linkCopiedPopup.visible = true
+								platformGW.shareUrl(contactUrl);
 							}
 							)
 			}
