@@ -266,7 +266,8 @@ void ChatHandler::tick()
             else
             {
                 LobbyParticipantsInfo& pi = mit->second;
-                if(!std::equal(pi.participants.begin(), pi.participants.end(), info.gxs_ids.begin()))
+				if(!std::equal(pi.participants.begin(), pi.participants.end(), info.gxs_ids.begin())
+				        || pi.participants.size() != info.gxs_ids.size())
                 {
                     pi.participants = info.gxs_ids;
                     mStateTokenServer->replaceToken(pi.state_token);
