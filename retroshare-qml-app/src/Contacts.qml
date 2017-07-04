@@ -34,11 +34,15 @@ Item
 
 	Component.onCompleted:
 	{
-		toolBar.state = "CONTACTSVIEW"
-		toolBar.searchBtnCb = toggleSearchBox
 		refreshAll()
 	}
 	onFocusChanged: focus && refreshAll()
+
+	function changeState ()
+	{
+		toolBar.state = "CONTACTSVIEW"
+		toolBar.searchBtnCb = toggleSearchBox
+	}
 
 	WorkerScript
 	{

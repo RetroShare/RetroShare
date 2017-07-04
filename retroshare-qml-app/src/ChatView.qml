@@ -58,12 +58,16 @@ Item
 	Component.onCompleted:
 	{
 		refreshData()
+	}
+	onFocusChanged: focus && refreshData()
+
+	function changeState ()
+	{
 		toolBar.state = "CHATVIEW"
 		gxsInfo=  ChatCache.lastMessageCache.getGxsFromChatId(chatView.chatId)
 		toolBar.titleText =  gxsInfo.name
 		toolBar.loaderSource = userHash
 	}
-	onFocusChanged: focus && refreshData()
 
 	Component
 	{

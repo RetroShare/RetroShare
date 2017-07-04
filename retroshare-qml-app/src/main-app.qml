@@ -221,16 +221,14 @@ ApplicationWindow
 				{
 					 toolBar.state = "DEFAULT"
 				}
+				else if (typeof currentItem.changeState === 'function')
+				{
+					currentItem.changeState ()
+				}
+
 				currentItem.focus = true
 			}
 		}
-
-		Keys.onReleased:
-			if (event.key === Qt.Key_Back && stackView.depth > 1)
-			{
-				stackView.pop();
-				event.accepted = true;
-			}
 
 		state: "core_down"
 		initialItem: BusyOverlay { message: qsTr("Connecting to core...") }
