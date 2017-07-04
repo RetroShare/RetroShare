@@ -32,18 +32,18 @@ Item
 	property var lastMessageData: ({})
 	property var locale: Qt.locale()
 
-
 	Rectangle
 	{
+		id: contactItem
 
 		anchors.fill: parent
-		color: contactItem.containsMouse ? "lightgrey" : "transparent"
+		color: contactItemArea.containsPress ? "lightgrey" : "transparent"
 		width: parent.width
 		height: parent.height
 
 		MouseArea
 		{
-			id: contactItem
+			id: contactItemArea
 			anchors.fill: parent
 			onClicked:
 			{
