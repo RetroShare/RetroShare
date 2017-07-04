@@ -33,10 +33,13 @@ ChannelPage::ChannelPage(QWidget * parent, Qt::WindowFlags flags)
 	ui.groupFrameSettingsWidget->setOpenAllInNewTabText(tr("Open each channel in a new tab"));
     ui.groupFrameSettingsWidget->setType(GroupFrameSettings::Channel) ;
 
-    connect(ui.loadThreadCheckBox,SIGNAL(toggled(bool)),this,SLOT(updateLoadThread)) ;
+    connect(ui.loadThreadCheckBox,SIGNAL(toggled(bool)),this,SLOT(updateLoadThread())) ;
 }
 
-void ChannelPage::updateLoadThread() { Settings->setChannelLoadThread(ui.loadThreadCheckBox->isChecked()); }
+void ChannelPage::updateLoadThread()
+{
+	Settings->setChannelLoadThread(ui.loadThreadCheckBox->isChecked());
+}
 
 ChannelPage::~ChannelPage()
 {
