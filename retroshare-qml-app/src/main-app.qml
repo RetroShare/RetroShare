@@ -56,11 +56,13 @@ ApplicationWindow
 	function addUriHandler(path, fun) { uriHandlersRegister[path] = fun }
 	function delUriHandler(path, fun) { delete uriHandlersRegister[path] }
 
+
 	header: ToolBar
 	{
 		id: toolBar
 		property alias titleText: toolBarText.text
 		property alias loaderSource: imageLoader.sourceComponent
+		property alias gxsSource: imageLoader.gxsSource
 		property string defaultLabel: "RetroShare"
 
 		property var iconsSize: (coreReady)? height - 10 : 0
@@ -88,6 +90,7 @@ ApplicationWindow
 			{
 				name: "CHATVIEW"
 				PropertyChanges { target: toolBarText; mouseA.visible: false }
+				PropertyChanges { target: toolBar; loaderSource: userHash }
 //				PropertyChanges { target: toolBar; backBtnVisible: true }
 			},
 			State
@@ -109,8 +112,12 @@ ApplicationWindow
 		{
 			id: imageLoader
 			anchors.verticalCenter: parent.verticalCenter
-			height: Math.max(30, toolBar.height - 4)
+			height:  toolBar.height - 4
 			anchors.left: tolbarLeftPadding.right
+			asynchronous: true
+
+			property string gxsSource;
+
 		}
 
 		Component
@@ -124,6 +131,21 @@ ApplicationWindow
 				imgUrl: "/icons/retroshare06.png"
 				onClicked:{ toolBar.openMainPage() }
 			}
+		}
+
+		Component
+		{
+			id: userHash
+
+			AvatarOrColorHash
+			{
+				id: colorHash
+
+				gxs_id: imageLoader.gxsSource
+				height: toolBar.height - 4
+				anchors.leftMargin: 2
+			}
+
 		}
 
 		Label
@@ -196,8 +218,7 @@ ApplicationWindow
 		{
 			if (currentItem)
 			{
-				currentItem.forceActiveFocus()
-				setStatus (currentItem)
+				setStatus  (currentItem)
 			}
 		}
 
@@ -229,6 +250,7 @@ ApplicationWindow
 				currentItem.focus = true
 			}
 		}
+
 
 		state: "core_down"
 		initialItem: BusyOverlay { message: qsTr("Connecting to core...") }

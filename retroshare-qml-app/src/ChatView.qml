@@ -65,22 +65,8 @@ Item
 	{
 		toolBar.state = "CHATVIEW"
 		gxsInfo=  ChatCache.lastMessageCache.getGxsFromChatId(chatView.chatId)
+		toolBar.gxsSource = gxsInfo.gxs
 		toolBar.titleText =  gxsInfo.name
-		toolBar.loaderSource = userHash
-	}
-
-	Component
-	{
-		id: userHash
-
-		AvatarOrColorHash
-		{
-			id: colorHash
-
-			gxs_id: gxsInfo.gxs
-			height: toolBar.height - 4
-			anchors.leftMargin: 2
-		}
 	}
 
 
