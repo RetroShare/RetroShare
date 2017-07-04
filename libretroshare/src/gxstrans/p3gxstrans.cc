@@ -153,7 +153,6 @@ void p3GxsTrans::handleResponse(uint32_t token, uint32_t req_type)
 
 		{
 			RS_STACK_MUTEX(mDataMutex);
-			mPreferredGroupId.clear();
 
 			for( auto grp : groups )
 			{

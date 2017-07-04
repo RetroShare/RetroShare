@@ -600,13 +600,16 @@ void IdentityHandler::handleGetAvatar(Request& req, Response& resp)
 	req.mStream << makeKeyValueReference("gxs_id", gxs_id);
 
 	RsIdentityDetails details;
-	mRsIdentity->getIdDetails(RsGxsId(gxs_id), details);
+	bool got = mRsIdentity->getIdDetails(RsGxsId(gxs_id), details);
 
 	std::string base64Avatar;
 	Radix64::encode(details.mAvatar.mData, details.mAvatar.mSize, base64Avatar);
 	resp.mDataStream << makeKeyValue("avatar", base64Avatar);
 
-	resp.setOk();
+	if(got)
+		resp.setOk();
+	else
+		resp.setFail();
 }
 
 void IdentityHandler::handleSetBanNode(Request& req, Response& resp)
