@@ -1066,7 +1066,7 @@ void RshareSettings::setForumLoadEmoticons(bool value)
 /* Channel */
 bool RshareSettings::getChannelLoadThread()
 {
-	return valueFromGroup("Channel", "LoadThread", true).toBool();
+	return valueFromGroup("Channel", "LoadThread", false).toBool();
 }
 
 void RshareSettings::setChannelLoadThread(bool value)
