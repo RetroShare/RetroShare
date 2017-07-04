@@ -22,6 +22,7 @@
 #include "ChannelPage.h"
 #include "rsharesettings.h"
 #include "util/misc.h"
+#include "gui/notifyqt.h"
 
 ChannelPage::ChannelPage(QWidget * parent, Qt::WindowFlags flags)
     : ConfigPage(parent, flags)
@@ -39,6 +40,7 @@ ChannelPage::ChannelPage(QWidget * parent, Qt::WindowFlags flags)
 void ChannelPage::updateLoadThread()
 {
 	Settings->setChannelLoadThread(ui.loadThreadCheckBox->isChecked());
+    NotifyQt::getInstance()->notifySettingsChanged();
 }
 
 ChannelPage::~ChannelPage()
