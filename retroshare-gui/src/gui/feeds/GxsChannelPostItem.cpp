@@ -38,6 +38,7 @@
 #include "gui/gxschannels/CreateGxsChannelMsg.h"
 
 #include <iostream>
+#include <cmath>
 
 /****
  * #define DEBUG_ITEM 1
