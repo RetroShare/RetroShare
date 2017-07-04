@@ -196,6 +196,25 @@ ApplicationWindow
 		{
 			if (currentItem)
 			{
+				currentItem.forceActiveFocus()
+				setStatus (currentItem)
+			}
+		}
+
+		Keys.onReleased:
+		{
+			if ((event.key === Qt.Key_Back ||  Qt.Key_Backspace)   && stackView.depth > 1)
+			{
+				stackView.pop();
+				event.accepted = true;
+				setStatus (stackView.currentItem)
+			}
+		}
+
+		function setStatus (currentItem)
+		{
+			if (currentItem)
+			{
 				if (currentItem.objectName != "chatView" &&
 						currentItem.objectName != "contactsView" &&
 						toolBar.state != "DEFAULT")
