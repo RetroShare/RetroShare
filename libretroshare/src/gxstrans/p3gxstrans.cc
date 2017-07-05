@@ -20,7 +20,7 @@
 #include "gxstrans/p3gxstrans.h"
 #include "util/stacktrace.h"
 
-//#define DEBUG_GXSTRANS 1
+#define DEBUG_GXSTRANS 1
 
 typedef unsigned int uint;
 
