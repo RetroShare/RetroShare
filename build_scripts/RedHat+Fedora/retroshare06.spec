@@ -72,7 +72,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root,-)
-%{_bindir}/RetroShare06
+%{_bindir}/retroshare06
 %defattr(644, root, root)
 %{_datadir}/pixmaps/%{name}.xpm  
 %{_datadir}/icons/hicolor
@@ -81,7 +81,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files nogui
 %defattr(-, root, root)
-%{_bindir}/RetroShare06-nogui
+%{_bindir}/retroshare06-nogui
 %defattr(644, root, root)
 %{_datadir}/RetroShare06
 

@@ -68,8 +68,8 @@ Compilation on Linux
 
    The executables produced will be:
 
-         /usr/bin/RetroShare06
-         /usr/bin/RetroShare06-nogui
+         /usr/bin/retroshare06
+         /usr/bin/retroshare06-nogui
 
 5. Uninstall:
    ```bash
