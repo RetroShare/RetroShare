@@ -1275,8 +1275,10 @@ static void processList(const QStringList &list, const QString &textSingular, co
 						/* make path for downloaded file */
 						std::string path;
 						path = fi.path;//Shared files has path with filename included
-						if (fi.downloadStatus == FT_STATE_COMPLETE)
-							path = fi.path + "/" + fi.fname;
+
+						//Seems that all FileInfo get .path==filepath+filename
+						//if (fi.downloadStatus == FT_STATE_COMPLETE)
+						//	path = fi.path + "/" + fi.fname;
 
 						QFileInfo qinfo;
 						qinfo.setFile(QString::fromUtf8(path.c_str()));
