@@ -169,6 +169,7 @@ ChatHandler::ChatHandler(StateTokenServer *sts, RsNotify *notify, RsMsgs *msgs, 
     addResourceHandler("unsubscribe_lobby", this, &ChatHandler::handleUnsubscribeLobby);
 	addResourceHandler("autosubscribe_lobby", this, &ChatHandler::handleAutoSubsribeLobby);
     addResourceHandler("clear_lobby", this, &ChatHandler::handleClearLobby);
+	addResourceHandler("invite_to_lobby", this, &ChatHandler::handleInviteToLobby);
     addResourceHandler("lobby_participants", this, &ChatHandler::handleLobbyParticipants);
     addResourceHandler("messages", this, &ChatHandler::handleMessages);
     addResourceHandler("send_message", this, &ChatHandler::handleSendMessage);
@@ -934,6 +935,25 @@ void ChatHandler::handleClearLobby(Request &req, Response &resp)
         notifyChatCleared(ChatId("B"));
     }
     resp.setOk();
+}
+
+void ChatHandler::handleInviteToLobby(Request& req, Response& resp)
+{
+	std::string chat_id;
+	std::string pgp_id;
+	req.mStream << makeKeyValueReference("chat_id", chat_id);
+	req.mStream << makeKeyValueReference("pgp_id", pgp_id);
+
+	ChatId chatId(chat_id);
+	RsPgpId pgpId(pgp_id);
+
+	std::list<RsPeerId> peerIds;
+	mRsPeers->getAssociatedSSLIds(pgpId, peerIds);
+
+	for(std::list<RsPeerId>::iterator it = peerIds.begin(); it != peerIds.end(); it++)
+		mRsMsgs->invitePeerToLobby(chatId.toLobbyId(), (*it));
+
+	resp.setOk();
 }
 
 ResponseTask* ChatHandler::handleLobbyParticipants(Request &req, Response &resp)
