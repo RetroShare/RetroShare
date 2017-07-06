@@ -126,6 +126,7 @@ private:
 	void handleAutoSubsribeLobby(Request& req, Response& resp);
 	void handleInviteToLobby(Request& req, Response& resp);
 	void handleGetInvitationsToLobby(Request& req, Response& resp);
+	void handleAnswerToInvitation(Request& req, Response& resp);
     void handleClearLobby(Request& req, Response& resp);
     ResponseTask* handleLobbyParticipants(Request& req, Response& resp);
     void handleMessages(Request& req, Response& resp);

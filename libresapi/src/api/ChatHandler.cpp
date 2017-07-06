@@ -172,6 +172,7 @@ ChatHandler::ChatHandler(StateTokenServer *sts, RsNotify *notify, RsMsgs *msgs, 
     addResourceHandler("clear_lobby", this, &ChatHandler::handleClearLobby);
 	addResourceHandler("invite_to_lobby", this, &ChatHandler::handleInviteToLobby);
 	addResourceHandler("get_invitations_to_lobby", this, &ChatHandler::handleGetInvitationsToLobby);
+	addResourceHandler("answer_to_invitation", this, &ChatHandler::handleAnswerToInvitation);
     addResourceHandler("lobby_participants", this, &ChatHandler::handleLobbyParticipants);
     addResourceHandler("messages", this, &ChatHandler::handleMessages);
     addResourceHandler("send_message", this, &ChatHandler::handleSendMessage);
@@ -984,6 +985,32 @@ void ChatHandler::handleGetInvitationsToLobby(Request& req, Response& resp)
 
 	resp.mStateToken = mInvitationsStateToken;
 	resp.setOk();
+}
+
+void ChatHandler::handleAnswerToInvitation(Request& req, Response& resp)
+{
+	ChatLobbyId lobbyId = 0;
+	req.mStream << makeKeyValueReference("lobby_id", lobbyId);
+
+	bool join;
+	req.mStream << makeKeyValueReference("join", join);
+
+	std::string gxs_id;
+	req.mStream << makeKeyValueReference("gxs_id", gxs_id);
+	RsGxsId gxsId(gxs_id);
+
+	if(join)
+	{
+		if(rsMsgs->acceptLobbyInvite(lobbyId, gxsId))
+			resp.setOk();
+		else
+			resp.setFail();
+	}
+	else
+	{
+		rsMsgs->denyLobbyInvite(lobbyId);
+		resp.setOk();
+	}
 }
 
 ResponseTask* ChatHandler::handleLobbyParticipants(Request &req, Response &resp)
