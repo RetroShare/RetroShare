@@ -159,9 +159,15 @@ void TerminalApiClient::data_tick()
                     enter_was_pressed = false;
                 // send echo
                 if(ask_for_password)
+				{
                     std::cout << "*";
+                    std::cout.flush();
+				}
                 else
+				{
                     std::cout << (char) last_char;
+                    std::cout.flush();
+				}
 
                 //std::cout << "you pressed key " << (char) last_char  << " as integer: " << last_char << std::endl;
             }
@@ -317,7 +323,10 @@ void TerminalApiClient::data_tick()
 
         if(edge && ask_for_password)
         {
-            std::cout << "Enter the password for key " << key_name << std::endl;
+            std::cout << std::endl;
+            std::cout << std::endl;
+            std::cout << "Enter the password for key " << key_name << " : " ;
+			std::cout.flush() ;
         }
 
         if(ask_for_password && enter_was_pressed && !inbuf.empty())
