@@ -2,6 +2,8 @@
 
 #include <unistd.h>
 #include <sstream>
+#include <cmath>
+#include <iomanip>
 
 #include <api/JsonStream.h>
 
@@ -96,6 +98,13 @@ TerminalApiClient::~TerminalApiClient()
     fullstop();
 }
 
+struct AccountInfo
+{
+	std::string name ;
+	std::string location ;
+	RsPeerId    ssl_id ;
+};
+
 void TerminalApiClient::data_tick()
 {
     // values in milliseconds
@@ -109,11 +118,14 @@ void TerminalApiClient::data_tick()
     int last_char = 0;
     std::string inbuf;
     bool enter_was_pressed = false;
+	int account_number_size = 1 ;
+	int selected_account_number = 0 ;
+	int account_number_typed = 0 ;
 
     StateToken runstate_state_token;
     std::string runstate;
 
-    std::vector<std::string> accounts;
+    std::vector<AccountInfo> accounts;
 
     StateToken password_state_token;
     bool ask_for_password = false;
@@ -224,7 +236,6 @@ void TerminalApiClient::data_tick()
             waitForResponse(id);
 
             resps.switchToDeserialisation();
-            std::cout << "Type a number to select an account" << std::endl;
             if(!resps.hasMore())
                 std::cout << "Error: No Accounts. Use the Qt-GUI or the webinterface to create an account." << std::endl;
             int i = 0;
@@ -234,37 +245,75 @@ void TerminalApiClient::data_tick()
                 std::string id;
                 std::string name;
                 std::string location;
+
                 resps.getStreamToMember()
                         << makeKeyValueReference("id", id)
                         << makeKeyValueReference("name", name)
                         << makeKeyValueReference("location", location);
-                std::cout << "[" << i << "] " << name << "(" << location << ")" << std::endl;
-                accounts.push_back(id);
+
+				AccountInfo info ;
+				info.location = location ;
+				info.name = name ;
+				info.ssl_id = RsPeerId(id) ;
+
+                accounts.push_back(info);
                 i++;
             }
+
+			account_number_size = (int)ceil(log(accounts.size())/log(10.0f)) ;
+
+			for(uint32_t i=0;i<accounts.size();++i)
+				std::cout << "[" << std::setw(account_number_size) << std::setfill('0') << i << "] " << accounts[i].name << " (" << accounts[i].location << ")" << std::endl;
+
+			std::cout << std::endl << "Type account number: " ;
+			std::cout.flush() ;
+
+			selected_account_number = 0 ;
+			account_number_typed = 0 ;
         }
 
-        if(!ask_for_password && runstate == "waiting_account_select"
-                && last_char >= '0' && last_char <= '9'
-		        && static_cast<uint32_t>(last_char-'0') < accounts.size())
-        {
-            std::string acc = accounts[last_char-'0'];
-            JsonStream reqs;
-            JsonStream resps;
-            Request req(reqs);
-            std::stringstream ss;
-            Response resp(resps, ss);
+        if(!ask_for_password && runstate == "waiting_account_select" && last_char >= '0' && last_char <= '9')
+		{
+			std::cout.flush();
+			selected_account_number = 10*selected_account_number + last_char - '0' ;
+			account_number_typed++ ;
 
-            req.mPath.push("login");
-            req.mPath.push("control");
-            reqs << makeKeyValueReference("id", acc);
-            reqs.switchToDeserialisation();
+			if(account_number_typed == account_number_size)
+			{
+				if(selected_account_number < accounts.size())
+				{
+					std::cout.flush();
+					std::cout << std::endl << "Selected account: " << accounts[selected_account_number].name << " (" << accounts[selected_account_number].location << ") SSL id: " << accounts[selected_account_number].ssl_id << std::endl;
 
-            ApiServer::RequestId id = mApiServer->handleRequest(req, resp);
-            waitForResponse(id);
+					std::string acc_ssl_id = accounts[selected_account_number].ssl_id.toStdString();
+					JsonStream reqs;
+					JsonStream resps;
+					Request req(reqs);
+					std::stringstream ss;
+					Response resp(resps, ss);
 
-            inbuf.clear();
-        }
+					req.mPath.push("login");
+					req.mPath.push("control");
+					reqs << makeKeyValueReference("id", acc_ssl_id);
+					reqs.switchToDeserialisation();
+
+					ApiServer::RequestId id = mApiServer->handleRequest(req, resp);
+					waitForResponse(id);
+
+					inbuf.clear();
+				}
+				else
+				{
+					std::cerr << ": invalid account number (should be between " << std::setw(account_number_size) << std::setfill('0')
+					          << 0 << " and " << std::setw(account_number_size) << std::setfill('0') << accounts.size()-1 << ")" << std::endl;
+					std::cout << std::endl << "Type account number: " ;
+					std::cout.flush() ;
+				}
+
+				account_number_typed = 0 ;
+				selected_account_number = 0 ;
+			}
+		}
 
         if(edge && ask_for_password)
         {
