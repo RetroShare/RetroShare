@@ -161,6 +161,7 @@ ChatHandler::ChatHandler(StateTokenServer *sts, RsNotify *notify, RsMsgs *msgs, 
     mMsgStateToken = mStateTokenServer->getNewToken();
     mLobbiesStateToken = mStateTokenServer->getNewToken();
     mUnreadMsgsStateToken = mStateTokenServer->getNewToken();
+	mInvitationsStateToken = mStateTokenServer->getNewToken();
 
     addResourceHandler("*", this, &ChatHandler::handleWildcard);
     addResourceHandler("lobbies", this, &ChatHandler::handleLobbies);
@@ -170,6 +171,7 @@ ChatHandler::ChatHandler(StateTokenServer *sts, RsNotify *notify, RsMsgs *msgs, 
 	addResourceHandler("autosubscribe_lobby", this, &ChatHandler::handleAutoSubsribeLobby);
     addResourceHandler("clear_lobby", this, &ChatHandler::handleClearLobby);
 	addResourceHandler("invite_to_lobby", this, &ChatHandler::handleInviteToLobby);
+	addResourceHandler("get_invitations_to_lobby", this, &ChatHandler::handleGetInvitationsToLobby);
     addResourceHandler("lobby_participants", this, &ChatHandler::handleLobbyParticipants);
     addResourceHandler("messages", this, &ChatHandler::handleMessages);
     addResourceHandler("send_message", this, &ChatHandler::handleSendMessage);
@@ -228,6 +230,15 @@ void ChatHandler::notifyChatLobbyEvent(uint64_t lobby_id, uint32_t event_type,
     {
         locked_storeTypingInfo(ChatId(lobby_id), any_string, nickname);
     }
+}
+
+void ChatHandler::notifyListChange(int list, int type)
+{
+	if(list == NOTIFY_LIST_CHAT_LOBBY_INVITATION)
+	{
+		RS_STACK_MUTEX(mMtx); /********** LOCKED **********/
+		mStateTokenServer->replaceToken(mInvitationsStateToken);
+	}
 }
 
 void ChatHandler::tick()
@@ -953,6 +964,25 @@ void ChatHandler::handleInviteToLobby(Request& req, Response& resp)
 	for(std::list<RsPeerId>::iterator it = peerIds.begin(); it != peerIds.end(); it++)
 		mRsMsgs->invitePeerToLobby(chatId.toLobbyId(), (*it));
 
+	resp.setOk();
+}
+
+void ChatHandler::handleGetInvitationsToLobby(Request& req, Response& resp)
+{
+	std::list<ChatLobbyInvite> invites;
+	mRsMsgs->getPendingChatLobbyInvites(invites);
+
+	resp.mDataStream.getStreamToMember();
+	for(std::list<ChatLobbyInvite>::const_iterator it = invites.begin(); it != invites.end(); ++it)
+	{
+		resp.mDataStream.getStreamToMember()
+		        << makeKeyValue("peer_id", (*it).peer_id.toStdString())
+		        << makeKeyValue("lobby_id", (*it).lobby_id)
+		        << makeKeyValue("lobby_name", (*it).lobby_name)
+		        << makeKeyValue("lobby_topic", (*it).lobby_topic);
+	}
+
+	resp.mStateToken = mInvitationsStateToken;
 	resp.setOk();
 }
 
