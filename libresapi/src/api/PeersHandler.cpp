@@ -601,19 +601,30 @@ void PeersHandler::handleWildcard(Request &req, Response &resp)
             }
             RsPeerId peer_id;
             RsPgpId pgp_id;
+			std::string cleanCert;
+			int error_code;
             std::string error_string;
-            if(mRsPeers->loadCertificateFromString(cert_string, peer_id, pgp_id, error_string)
-                    && mRsPeers->addFriend(peer_id, pgp_id, flags))
-            {
-                ok = true;
-                resp.mDataStream << makeKeyValueReference("pgp_id", pgp_id);
-                resp.mDataStream << makeKeyValueReference("peer_id", peer_id);
-            }
-            else
-            {
-                resp.mDebug << "Error: failed to add peer" << std::endl;
-                resp.mDebug << error_string << std::endl;
-            }
+
+			if (mRsPeers->cleanCertificate(cert_string, cleanCert, error_code))
+			{
+				if(mRsPeers->loadCertificateFromString(cert_string, peer_id, pgp_id, error_string)
+				        && mRsPeers->addFriend(peer_id, pgp_id, flags))
+				{
+					ok = true;
+					resp.mDataStream << makeKeyValueReference("pgp_id", pgp_id);
+					resp.mDataStream << makeKeyValueReference("peer_id", peer_id);
+				}
+				else
+				{
+					resp.mDebug << "Error: failed to add peer" << std::endl;
+					resp.mDebug << error_string << std::endl;
+				}
+			}
+			else
+			{
+				resp.mDebug << "Error: failed to add peer" << std::endl;
+				resp.mDebug << error_code << std::endl;
+			}
         }
     }
     if(ok)
