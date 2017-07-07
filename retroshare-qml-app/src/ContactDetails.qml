@@ -69,9 +69,10 @@ Item
 			Image
 			{
 				source: cntDt.is_contact ?
-							"qrc:/icons/rating.png" :
-							"qrc:/icons/rating-unrated.png"
+							"qrc:/icons/rating.svg" :
+							"qrc:/icons/rating-unrated.svg"
 				height: parent.height - 4
+				sourceSize.height: height
 				fillMode: Image.PreserveAspectFit
 				anchors.verticalCenter: parent.verticalCenter
 

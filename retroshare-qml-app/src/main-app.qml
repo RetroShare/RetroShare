@@ -197,9 +197,11 @@ ApplicationWindow
 
 			Image
 			{
-				source: "qrc:/icons/application-menu.png"
+				source: "qrc:/icons/application-menu.svg"
 				height: parent.height - 10
-				width: parent.height - 10
+				width: height
+				sourceSize.height: height
+				sourceSize.width: height
 				anchors.centerIn: parent
 			}
 

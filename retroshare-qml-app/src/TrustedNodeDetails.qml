@@ -37,9 +37,11 @@ Item
 	{
 		id: nodeStatusImage
 		source: isOnline?
-					"icons/state-ok.png" :
-					"icons/state-offline.png"
+					"icons/state-ok.svg" :
+					"icons/state-offline.svg"
 
+		height: 128
+		sourceSize.height: height
 		fillMode: Image.PreserveAspectFit
 
 		anchors.top: parent.top
@@ -125,10 +127,11 @@ Item
 				{
 					id: statusImage
 					source: model.is_online ?
-								"icons/state-ok.png" :
-								"icons/state-offline.png"
+								"icons/network-connect.svg" :
+								"icons/network-disconnect.svg"
 
 					height: parent.height - 4
+					sourceSize.height: height
 					fillMode: Image.PreserveAspectFit
 					anchors.verticalCenter: parent.verticalCenter
 				}
