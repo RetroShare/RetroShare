@@ -150,24 +150,29 @@ void RsControlModule::run()
 		}
 
         // skip account selection if autologin is available
-        if(initResult != RS_INIT_HAVE_ACCOUNT)
-            setRunState(WAITING_ACCOUNT_SELECT);
+		bool wait_for_account_select = (initResult != RS_INIT_HAVE_ACCOUNT);
 
         // wait for login request
         bool auto_login = false;
-        bool wait_for_account_select = (initResult != RS_INIT_HAVE_ACCOUNT);
+
+		if(wait_for_account_select)
+            setRunState(WAITING_ACCOUNT_SELECT);
+
         while(wait_for_account_select && !processShouldExit())
         {
-            usleep(5*1000);
+            usleep(500*1000);
             RsStackMutex stack(mDataMtx); // ********** LOCKED **********
-            wait_for_account_select = mLoadPeerId.isNull();
+
+			if(!mLoadPeerId.isNull())
+                wait_for_account_select = wait_for_account_select && !RsAccounts::SelectAccount(mLoadPeerId);
+
             auto_login = mAutoLoginNextTime;
-            if(!wait_for_account_select)
-            {
-                wait_for_account_select = !RsAccounts::SelectAccount(mLoadPeerId);
-                if(wait_for_account_select)
-                    setRunState(WAITING_ACCOUNT_SELECT);
-            }
+
+            //if(!wait_for_account_select)
+            //{
+            //    if(wait_for_account_select)
+            //        setRunState(WAITING_ACCOUNT_SELECT);
+            //}
         }
 
         if(processShouldExit())

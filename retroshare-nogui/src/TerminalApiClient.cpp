@@ -87,23 +87,14 @@ private:
 
 namespace resource_api {
 
-TerminalApiClient::TerminalApiClient(ApiServer *api):
-    mApiServer(api)
+TerminalApiClient::TerminalApiClient(ApiServer *api): mApiServer(api)
 {
-    start("resapi terminal");
 }
 
 TerminalApiClient::~TerminalApiClient()
 {
     fullstop();
 }
-
-struct AccountInfo
-{
-	std::string name ;
-	std::string location ;
-	RsPeerId    ssl_id ;
-};
 
 void TerminalApiClient::data_tick()
 {
@@ -228,44 +219,7 @@ void TerminalApiClient::data_tick()
 
         if(!ask_for_password && edge && runstate == "waiting_account_select")
         {
-            JsonStream reqs;
-            JsonStream resps;
-            Request req(reqs);
-            std::stringstream ss;
-            Response resp(resps, ss);
-
-            req.mPath.push("locations");
-            req.mPath.push("control");
-            reqs.switchToDeserialisation();
-
-            ApiServer::RequestId id = mApiServer->handleRequest(req, resp);
-            waitForResponse(id);
-
-            resps.switchToDeserialisation();
-            if(!resps.hasMore())
-                std::cout << "Error: No Accounts. Use the Qt-GUI or the webinterface to create an account." << std::endl;
-            int i = 0;
-            accounts.clear();
-            while(resps.hasMore())
-            {
-                std::string id;
-                std::string name;
-                std::string location;
-
-                resps.getStreamToMember()
-                        << makeKeyValueReference("id", id)
-                        << makeKeyValueReference("name", name)
-                        << makeKeyValueReference("location", location);
-
-				AccountInfo info ;
-				info.location = location ;
-				info.name = name ;
-				info.ssl_id = RsPeerId(id) ;
-
-                accounts.push_back(info);
-                i++;
-            }
-
+			readAvailableAccounts(accounts) ;
 			account_number_size = (int)ceil(log(accounts.size())/log(10.0f)) ;
 
 			for(uint32_t i=0;i<accounts.size();++i)
@@ -292,19 +246,7 @@ void TerminalApiClient::data_tick()
 					std::cout << std::endl << "Selected account: " << accounts[selected_account_number].name << " (" << accounts[selected_account_number].location << ") SSL id: " << accounts[selected_account_number].ssl_id << std::endl;
 
 					std::string acc_ssl_id = accounts[selected_account_number].ssl_id.toStdString();
-					JsonStream reqs;
-					JsonStream resps;
-					Request req(reqs);
-					std::stringstream ss;
-					Response resp(resps, ss);
-
-					req.mPath.push("login");
-					req.mPath.push("control");
-					reqs << makeKeyValueReference("id", acc_ssl_id);
-					reqs.switchToDeserialisation();
-
-					ApiServer::RequestId id = mApiServer->handleRequest(req, resp);
-					waitForResponse(id);
+					sendSelectedAccount(acc_ssl_id) ;
 
 					inbuf.clear();
 				}
@@ -330,32 +272,106 @@ void TerminalApiClient::data_tick()
         }
 
         if(ask_for_password && enter_was_pressed && !inbuf.empty())
-        {
-            std::cout << "TerminalApiClient: got a password" << std::endl;
-            JsonStream reqs;
-            JsonStream resps;
-            Request req(reqs);
-            std::stringstream ss;
-            Response resp(resps, ss);
+		{
+			std::cout << "TerminalApiClient: got a password" << std::endl;
 
-            req.mPath.push("password");
-            req.mPath.push("control");
-            reqs << makeKeyValueReference("password", inbuf);
-            reqs.switchToDeserialisation();
+			// Send passwd to api server
+			sendPassword(inbuf) ;
 
-            ApiServer::RequestId id = mApiServer->handleRequest(req, resp);
-            waitForResponse(id);
-
-            inbuf.clear();
+			// clears buffer
+			inbuf.clear();
         }
     }
 }
 
-void TerminalApiClient::waitForResponse(ApiServer::RequestId id)
+void TerminalApiClient::waitForResponse(ApiServer::RequestId id) const
 {
     while(!mApiServer->isRequestDone(id))
           usleep(20*1000);
 }
+
+void TerminalApiClient::sendPassword(const std::string& passwd) const
+{
+	JsonStream reqs;
+	JsonStream resps;
+	Request req(reqs);
+	std::stringstream ss;
+	Response resp(resps, ss);
+
+	req.mPath.push("password");
+	req.mPath.push("control");
+
+	std::string pass(passwd) ;
+
+	reqs << makeKeyValueReference("password", pass);
+	reqs.switchToDeserialisation();
+
+	ApiServer::RequestId id = mApiServer->handleRequest(req, resp);
+	waitForResponse(id);
+}
+
+void TerminalApiClient::sendSelectedAccount(const std::string& ssl_id) const
+{
+	JsonStream reqs;
+	JsonStream resps;
+	Request req(reqs);
+	std::stringstream ss;
+	Response resp(resps, ss);
+
+	std::string acc_ssl_id(ssl_id) ;
+	req.mPath.push("login");
+	req.mPath.push("control");
+	reqs << makeKeyValueReference("id", acc_ssl_id);
+	reqs.switchToDeserialisation();
+
+	ApiServer::RequestId id = mApiServer->handleRequest(req, resp);
+	waitForResponse(id);
+}
+
+void TerminalApiClient::readAvailableAccounts(std::vector<AccountInfo>& accounts) const
+{
+	JsonStream reqs;
+	JsonStream resps;
+	Request req(reqs);
+	std::stringstream ss;
+	Response resp(resps, ss);
+
+	req.mPath.push("locations");
+	req.mPath.push("control");
+	reqs.switchToDeserialisation();
+
+	ApiServer::RequestId id = mApiServer->handleRequest(req, resp);
+	waitForResponse(id);
+
+	resps.switchToDeserialisation();
+
+	if(!resps.hasMore())
+		std::cout << "Error: No Accounts. Use the Qt-GUI or the webinterface to create an account." << std::endl;
+
+	int i = 0;
+	accounts.clear();
+
+	while(resps.hasMore())
+	{
+		std::string id;
+		std::string name;
+		std::string location;
+
+		resps.getStreamToMember()
+		        << makeKeyValueReference("id", id)
+		        << makeKeyValueReference("name", name)
+		        << makeKeyValueReference("location", location);
+
+		AccountInfo info ;
+		info.location = location ;
+		info.name = name ;
+		info.ssl_id = RsPeerId(id) ;
+
+		accounts.push_back(info);
+		i++;
+	}
+}
+
 
 bool TerminalApiClient::isTokenValid(StateToken runstate_state_token)
 {

@@ -8,7 +8,7 @@ namespace resource_api {
 // - account selection
 // - login
 // - shutdown
-class TerminalApiClient: private RsTickingThread{
+class TerminalApiClient: public RsTickingThread{
 public:
     // zero setup: create an instance of this class and destroy it when not needed anymore
     // no need to call start or stop or something
@@ -19,9 +19,24 @@ protected:
     // from RsThread
     virtual void data_tick(); /* called once the thread is started. Should be overloaded by subclasses. */
 private:
-    void waitForResponse(ApiServer::RequestId id);
+	struct AccountInfo
+	{
+		std::string name ;
+		std::string location ;
+		RsPeerId    ssl_id ;
+	};
+
+
+    void waitForResponse(ApiServer::RequestId id) const;
     bool isTokenValid(StateToken st);
     ApiServer* mApiServer;
+
+	// Methods to talk to the ApiServer
+
+	void sendPassword(const std::string& passwd) const;
+	void sendSelectedAccount(const std::string& ssl_id) const;
+	void readAvailableAccounts(std::vector<AccountInfo>& accounts) const;
+	void getRunningState() const ;
 };
 
 } // namespace resource_api
