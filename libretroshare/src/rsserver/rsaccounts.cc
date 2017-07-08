@@ -453,15 +453,19 @@ bool     RsAccountsDetail::getPreferredAccountId(RsPeerId &id)
 bool     RsAccountsDetail::getAccountIds(std::list<RsPeerId> &ids)
 {
 	std::map<RsPeerId, AccountDetails>::iterator it;
+#ifdef DEBUG_ACCOUNTS
 	std::cerr << "getAccountIds:" << std::endl;
+#endif
 
 	for(it = mAccounts.begin(); it != mAccounts.end(); ++it)
 	{
+#ifdef DEBUG_ACCOUNTS
 		std::cerr << "SSL Id: " << it->second.mSslId << " PGP Id " << it->second.mPgpId;
 		std::cerr << " PGP Name: " << it->second.mPgpName;
 		std::cerr << " PGP Email: " << it->second.mPgpEmail;
 		std::cerr << " Location: " << it->second.mLocation;
 		std::cerr << std::endl;
+#endif
 
 		ids.push_back(it->first);
 	}
