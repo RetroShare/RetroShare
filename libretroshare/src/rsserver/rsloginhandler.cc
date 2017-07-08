@@ -63,11 +63,14 @@ bool RsLoginHandler::getSSLPasswdFromGPGFile(const RsPeerId& ssl_id,std::string&
 	          << getSSLPasswdFileName(ssl_id).c_str() << std::endl;
 
 	std::string plain;
-	if ( AuthGPG::getAuthGPG()->decryptTextFromFile(
-	         plain, getSSLPasswdFileName(ssl_id)) )
+	if ( AuthGPG::getAuthGPG()->decryptTextFromFile( plain, getSSLPasswdFileName(ssl_id)) )
 	{
-		std::cerr << "Decrypting went ok !" << std::endl;
 		sslPassword = plain;
+
+		if(sslPassword.length() > 0)
+			std::cerr << "Decrypting went ok !" << std::endl;
+		else
+			std::cerr << "Passphrase is empty!" << std::endl;
 
 		return sslPassword.length() > 0 ;
 	}
