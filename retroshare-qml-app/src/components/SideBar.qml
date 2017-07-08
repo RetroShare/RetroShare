@@ -16,11 +16,11 @@ Drawer
 
 	Rectangle
 	{
-	width: parent.width
-	height: parent.height
+		width: parent.width
+		height: parent.height
 
 
-	    ListView
+		ListView
 		{
 			id: listView
 			currentIndex: -1

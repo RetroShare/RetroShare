@@ -28,8 +28,13 @@ Rectangle
 
 	Image
 	{
-		source: "qrc:/icons/edit-image-face-detect.png"
-		anchors.fill: parent
+		source: "qrc:/icons/edit-image-face-detect.svg"
+		anchors.centerIn: parent
+		height: parent.height
+		width: parent.width
+		sourceSize.height: height
+		sourceSize.width: width
+		fillMode: Image.PreserveAspectFit
 	}
 
 	Rectangle

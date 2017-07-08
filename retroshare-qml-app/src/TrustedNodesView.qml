@@ -75,10 +75,11 @@ Item
 			{
 				id: statusImage
 				source:  isOnline?
-							"icons/state-ok.png" :
-							"icons/state-offline.png"
+							"icons/state-ok.svg" :
+							"icons/state-offline.svg"
 
 				height: parent.height - 4
+				sourceSize.height: height
 				fillMode: Image.PreserveAspectFit
 				anchors.left: parent.left
 				anchors.leftMargin: 3
