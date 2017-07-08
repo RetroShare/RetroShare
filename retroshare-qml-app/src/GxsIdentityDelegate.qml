@@ -24,7 +24,7 @@ import "./components"
 Item
 {
 	id: delegateRoot
-	height: 50
+	height: 57
 	width: parent.width
 
 
@@ -89,20 +89,43 @@ Item
 				}
 			}
 
+			Rectangle
+			{
+				id: backgroundRectangle
+				anchors.fill: parent.fill
+				anchors.right: parent.right
+				width: parent.width - colorHash.width - 15
+				height: parent.height
+				color:"transparent"
+
+				Rectangle
+				{
+					    id: borderBottom
+						width:  parent.width
+						height: 1
+						anchors.bottom: parent.bottom
+						anchors.right: parent.right
+						color: "lightgrey"
+				}
+			}
+
+
 			Column
 			{
 
 				id: chatInfoRow
 				height: parent.height
-				width: parent.width - (isContactIcon.width *3.5)
+				width: parent.width - isContactRow.width - colorHash.width
 				anchors.left: colorHash.right
-				anchors.leftMargin: 5
+				anchors.leftMargin: 10
+				anchors.right: isContactRow.left
+				anchors.rightMargin: 5
+
 
 				Item
 				{
 					width: parent.width
 					height: parent.height /2
-
 
 					Text
 					{
@@ -110,6 +133,7 @@ Item
 						color: model.own ? "blue" : "black"
 						text: model.name
 						font.bold: true
+						anchors.bottom: parent.bottom
 					}
 
 					Text
@@ -117,6 +141,7 @@ Item
 						text:  setTime()
 						anchors.right: parent.right
 						color: "darkslategrey"
+						anchors.bottom: parent.bottom
 					}
 				}
 
@@ -124,7 +149,7 @@ Item
 				{
 					id: lastMessageText
 					width: parent.width
-					height: parent.height /2
+					height: (lastMessageData && lastMessageData.msg !== undefined)? parent.height /2 : 0
 
 					Text
 					{
@@ -153,10 +178,10 @@ Item
 
 						color: "cornflowerblue"
 						antialiasing: true
-						height: parent.height - 2
+						height: parent.height - 6
 						radius: height/2
 						width: height
-						anchors.verticalCenter: parent.verticalCenter
+//						anchors.verticalCenter: parent.verticalCenter
 						anchors.right: parent.right
 
 						Text
@@ -174,13 +199,12 @@ Item
 
 			Row
 			{
+				id: isContactRow
 				anchors.right: parent.right
 				anchors.rightMargin: 10
 				anchors.verticalCenter: parent.verticalCenter
 				height: parent.height - 10
 				spacing: 4
-
-
 
 				Image
 				{
