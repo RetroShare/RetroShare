@@ -25,6 +25,7 @@ Item
 	id: compRoot
 
 	property string gxs_id
+	property bool onlyCached: false
 	signal clicked ()
 
 	height: 130
@@ -54,15 +55,14 @@ Item
 							function(par)
 							{
 								var jData = JSON.parse(par.response).data
-								ChatCache.contactsCache.setIdentityDetails(jData)
-								setDetails(jData)
+								saveDetails(jData)
 								if(!compRoot.has_avatar &&
 										compRoot.avatarAttemptCnt < 3) getDetails()
 							})
 			}
 			else
 			{
-				setDetails(ChatCache.contactsCache.getIdentityDetails(gxs_id))
+				setImage(ChatCache.contactsCache.getIdentityDetails(gxs_id))
 			}
 		}
 		else
@@ -72,23 +72,25 @@ Item
 			contactAvatar.source = noGxsImage
 		}
 	}
-	function setDetails(data)
+	function saveDetails(data)
+	{
+		ChatCache.contactsCache.setIdentityDetails(data)
+		setImage(data)
+
+	}
+	function setImage (data)
 	{
 		compRoot.has_avatar = hasAvatar (data.avatar)
 		if(compRoot.has_avatar)
 		{
-			setImage(data.avatar)
+			contactAvatar.source =
+					"data:image/png;base64," + data.avatar
 		}
 	}
 
 	function hasAvatar (avatar)
 	{
 		return  avatar.length > 0
-	}
-	function setImage (source)
-	{
-		contactAvatar.source =
-				"data:image/png;base64," + source
 	}
 
 	function showDetails()
@@ -100,9 +102,23 @@ Item
 					{md: ChatCache.contactsCache.getContactFromGxsId(gxs_id)})
 	}
 
-	Component.onCompleted: if(visible && (!has_avatar || default_image ) ) getDetails()
+	Component.onCompleted: startComponent ()
 
-	onVisibleChanged: if(visible && (!has_avatar || default_image ) ) getDetails()
+	onVisibleChanged: startComponent ()
+
+	function startComponent ()
+	{
+		if (onlyCached && hasAvatar (ChatCache.contactsCache.getIdentityAvatar(gxs_id) ) )
+		{
+			console.log("load cached avatar")
+			setImage(ChatCache.contactsCache.getIdentityDetails(gxs_id))
+
+		}
+		else if (!onlyCached)
+		{
+			if(visible && (!has_avatar || default_image ) ) getDetails()
+		}
+	}
 
 	Image
 	{

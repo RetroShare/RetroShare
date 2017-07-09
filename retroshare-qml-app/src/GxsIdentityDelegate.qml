@@ -91,22 +91,18 @@ Item
 			color: "transparent"
 			anchors.margins: 5
 
-
-			ColorHash
+			AvatarOrColorHash
 			{
 				id: colorHash
 
-				hash: model.gxs_id
+				gxs_id: model.gxs_id
+
 				height: parent.height - 4
 				anchors.verticalCenter: parent.verticalCenter
 				anchors.left: parent.left
 				anchors.leftMargin: 2
 
-				MouseArea
-				{
-					anchors.fill: parent
-					onClicked: delegateRoot.showDetails()
-				}
+				onlyCached: true
 			}
 
 			Column
