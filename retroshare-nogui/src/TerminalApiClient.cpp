@@ -141,9 +141,8 @@ void TerminalApiClient::data_tick()
     bool ask_for_password = false;
     std::string key_name;
 
-#ifdef TO_REMOVE
+	// This is only used to remove echo from the input and allow us to replace it by what we want.
     TerminalInput term;
-#endif
 
     while(!shouldStop())
     {
@@ -226,7 +225,7 @@ void TerminalApiClient::data_tick()
 			account_number_size = (int)ceil(log(accounts.size())/log(10.0f)) ;
 
 			for(uint32_t i=0;i<accounts.size();++i)
-				std::cout << "[" << std::setw(account_number_size) << std::setfill('0') << i << "] " << accounts[i].name << " (" << accounts[i].location << ")" << std::endl;
+				std::cout << "[" << std::setw(account_number_size) << std::setfill('0') << i << "] Location Id: " << accounts[i].ssl_id << " \"" << accounts[i].name << "\" (" << accounts[i].location << ")" << std::endl;
 
 			selected_account_number = accounts.size() ;
 			account_number_typed = 0 ;
