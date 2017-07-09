@@ -39,16 +39,24 @@ Item
 	{
 		console.log("getDetails() ", compRoot.gxs_id )
 		++compRoot.avatarAttemptCnt
-		rsApi.request(
-					"/identity/get_identity_details",
-					JSON.stringify({ gxs_id: compRoot.gxs_id }),
-					function(par)
-					{
-						var jData = JSON.parse(par.response).data
-						setDetails(jData)
-						if(!compRoot.has_avatar &&
-								compRoot.avatarAttemptCnt < 3) getDetails()
-					})
+		if (gxs_id)
+		{
+			rsApi.request(
+						"/identity/get_identity_details",
+						JSON.stringify({ gxs_id: compRoot.gxs_id }),
+						function(par)
+						{
+							var jData = JSON.parse(par.response).data
+							setDetails(jData)
+							if(!compRoot.has_avatar &&
+									compRoot.avatarAttemptCnt < 3) getDetails()
+						})
+		}
+		else
+		{
+			has_avatar = true
+			contactAvatar.source = "/icons/retroshare06.png"
+		}
 	}
 	function setDetails(data)
 	{
