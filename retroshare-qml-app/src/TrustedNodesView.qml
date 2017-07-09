@@ -68,7 +68,7 @@ Item
 		delegate: Item
 		{
 			property bool isOnline: jsonModel.isOnline(model.pgp_id)
-			height: 30
+			height: 54
 			width: parent.width
 
 			Image
@@ -91,6 +91,7 @@ Item
 				anchors.verticalCenter: parent.verticalCenter
 				anchors.left: statusImage.right
 				anchors.leftMargin: 10
+				font.pixelSize: 15
 			}
 			MouseArea
 			{
