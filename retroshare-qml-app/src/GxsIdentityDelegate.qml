@@ -67,6 +67,26 @@ Item
 
 		Rectangle
 		{
+			id: backgroundRectangle
+			anchors.fill: parent.fill
+			anchors.right: parent.right
+			width: parent.width - colorHash.width - 15
+			height: parent.height
+			color:"transparent"
+
+			Rectangle
+			{
+				    id: borderBottom
+					width:  parent.width
+					height: 1
+					anchors.bottom: parent.bottom
+					anchors.right: parent.right
+					color: "lightgrey"
+			}
+		}
+
+		Rectangle
+		{
 			anchors.fill: parent
 			color: "transparent"
 			anchors.margins: 5
@@ -88,27 +108,6 @@ Item
 					onClicked: delegateRoot.showDetails()
 				}
 			}
-
-			Rectangle
-			{
-				id: backgroundRectangle
-				anchors.fill: parent.fill
-				anchors.right: parent.right
-				width: parent.width - colorHash.width - 15
-				height: parent.height
-				color:"transparent"
-
-				Rectangle
-				{
-					    id: borderBottom
-						width:  parent.width
-						height: 1
-						anchors.bottom: parent.bottom
-						anchors.right: parent.right
-						color: "lightgrey"
-				}
-			}
-
 
 			Column
 			{
