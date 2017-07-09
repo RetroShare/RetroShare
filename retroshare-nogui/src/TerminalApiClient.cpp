@@ -54,7 +54,7 @@ public:
         // restore terminal settings
         tcsetattr(STDIN_FILENO, TCSANOW, &mOldTermSettings);
 #ifdef TERMINALINPUT_DEBUG
-        std::cerr << "Terminal restored" << std::endl;
+        std::cerr << "Terminal killed" << std::endl;
 #endif
 #endif
     }
@@ -110,6 +110,7 @@ static std::string readStringFromKeyboard(bool passwd_mode)
 
 		s += c ;
 	}
+	putchar('\n');
 	return s ;
 }
 
@@ -140,15 +141,20 @@ void TerminalApiClient::data_tick()
     bool ask_for_password = false;
     std::string key_name;
 
+#ifdef TO_REMOVE
     TerminalInput term;
+#endif
 
     while(!shouldStop())
     {
         // assuming sleep_time >> work_time
         // so we don't have to check the absolute time, just sleep every cycle
         usleep(MIN_WAIT_TIME * 1000);
-        last_io_poll          += MIN_WAIT_TIME;
+
         last_event_api_poll   += MIN_WAIT_TIME;
+
+#ifdef TO_REMOVE
+        last_io_poll          += MIN_WAIT_TIME;
 
         if(last_io_poll >= IO_POLL_PERIOD)
         {
@@ -181,6 +187,7 @@ void TerminalApiClient::data_tick()
                 //std::cout << "you pressed key " << (char) last_char  << " as integer: " << last_char << std::endl;
             }
         }
+#endif
 
         if(last_event_api_poll >= API_EVENT_POLL_PERIOD)
         {
@@ -191,6 +198,15 @@ void TerminalApiClient::data_tick()
             if(!password_state_token.isNull() && !isTokenValid(password_state_token))
                 password_state_token = StateToken();
         }
+
+		// If the core has started, we leave. Maybe we should not use this in the future if we want to allow to
+		// log out and then log in again?
+
+		if(runstate == "running_ok")
+		{
+			std::cerr << "Terminating terminal thread because the runstate says that the core is running." << std::endl;
+			shutdown();
+		}
 
         bool edge = false;
         if(runstate_state_token.isNull())
@@ -251,75 +267,6 @@ void TerminalApiClient::data_tick()
 			sendPassword(passwd) ;
 			sendSelectedAccount(acc_ssl_id) ;
         }
-
-#ifdef OLD_CODE
-        if(!ask_for_password && edge && runstate == "waiting_account_select")
-        {
-			readAvailableAccounts(accounts) ;
-			account_number_size = (int)ceil(log(accounts.size())/log(10.0f)) ;
-
-			for(uint32_t i=0;i<accounts.size();++i)
-				std::cout << "[" << std::setw(account_number_size) << std::setfill('0') << i << "] " << accounts[i].name << " (" << accounts[i].location << ")" << std::endl;
-
-			std::cout << std::endl << "Type account number: " ;
-			std::cout.flush() ;
-
-			selected_account_number = 0 ;
-			account_number_typed = 0 ;
-        }
-
-        if(!ask_for_password && runstate == "waiting_account_select" && last_char >= '0' && last_char <= '9')
-		{
-			std::cout.flush();
-			selected_account_number = 10*selected_account_number + last_char - '0' ;
-			account_number_typed++ ;
-
-			if(account_number_typed == account_number_size)
-			{
-				if(selected_account_number < accounts.size())
-				{
-					std::cout.flush();
-					std::cout << std::endl << "Selected account: " << accounts[selected_account_number].name << " (" << accounts[selected_account_number].location << ") SSL id: " << accounts[selected_account_number].ssl_id << std::endl;
-
-					std::string acc_ssl_id = accounts[selected_account_number].ssl_id.toStdString();
-					sendSelectedAccount(acc_ssl_id) ;
-
-					inbuf.clear();
-				}
-				else
-				{
-					std::cerr << ": invalid account number (should be between " << std::setw(account_number_size) << std::setfill('0')
-					          << 0 << " and " << std::setw(account_number_size) << std::setfill('0') << accounts.size()-1 << ")" << std::endl;
-					std::cout << std::endl << "Type account number: " ;
-					std::cout.flush() ;
-				}
-
-				account_number_typed = 0 ;
-				selected_account_number = 0 ;
-			}
-		}
-
-        if(edge && ask_for_password)
-        {
-            std::cout << std::endl;
-            std::cout << std::endl;
-            std::cout << "Enter the password for key " << key_name << " : " ;
-			std::cout.flush() ;
-        }
-
-        if(ask_for_password && enter_was_pressed && !inbuf.empty())
-		{
-			std::cout << "TerminalApiClient: got a password" << std::endl;
-
-			// Send passwd to api server
-			sendPassword(inbuf) ;
-
-			usleep(1000*1000) ;
-
-			// clears buffer
-			inbuf.clear();
-        }
-#endif
     }
 }
 

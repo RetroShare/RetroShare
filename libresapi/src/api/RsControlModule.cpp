@@ -379,11 +379,14 @@ void RsControlModule::handlePassword(Request &req, Response &resp)
         mPassword = passwd;
         mWantPassword = false;
         mStateTokenServer->replaceToken(mStateToken);
-
+#ifdef DEBUG_CONTROL_MODULE
 		std::cerr << "RsControlModule::handlePassword(): setting mPasswd=\"" << mPassword <<  "\"" << std::endl;
+#endif
     }
+#ifdef DEBUG_CONTROL_MODULE
 	else
 		std::cerr << "RsControlModule::handlePassword(): not setting mPasswd=\"" << mPassword <<  "\"!!!" << std::endl;
+#endif
 
     resp.mDataStream
             << makeKeyValueReference("want_password", mWantPassword)

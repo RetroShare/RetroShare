@@ -101,23 +101,16 @@ int main(int argc, char **argv)
 
     resource_api::TerminalApiClient tac(&api);
 	tac.start();
+	bool already = false ;
 
     while(ctrl_mod.processShouldExit() == false)
     {
-        usleep(200*1000);
+        usleep(1000*1000);
 
-		if(!tac.isRunning())
+		if(!tac.isRunning() && !already)
 		{
-//			if(!RsInit::isLocationRunning())
-//			{
-//				std::cerr << "Terminal API client stopped but location not set ! Relaunching." ;
-//				tac.start();
-//			}
-//			else if(RsInit::isLocationRunning())
-//			{
-//				std::cerr << "Terminal API client running but location already set ! Stopping it." ;
-//				tac.shutdown();
-//			}
+			std::cerr << "Terminal API client terminated." << std::endl;
+			already = true ;
 		}
     }
 
