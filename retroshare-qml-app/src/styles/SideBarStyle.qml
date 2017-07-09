@@ -3,15 +3,16 @@ pragma Singleton
 
 QtObject {
 
-	property var width: 1.5
+	property var width: 2 // Number of third parts of screen (for example 2/3)
 
 	property QtObject item: QtObject
 	{
-		property var height: 40
+		property var height: 50
 
 		property string hoverColor: "lightgrey"
 		property string defaultColor: "white"
 		property string pressColor: "slategrey"
+		property int pixelSize: 14
 	}
 	property QtObject header: QtObject
 	{
@@ -27,6 +28,7 @@ QtObject {
 		property var color: "white"
 		property var textColor: "grey"
 		property var margins: 8
+		property string text: "Retroshare Dev Version"
 	}
 
 }

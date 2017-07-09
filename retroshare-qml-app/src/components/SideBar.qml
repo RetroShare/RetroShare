@@ -57,7 +57,7 @@ Drawer
 				Text
 				{
 					id: nickText
-					text: (ChatCache.contactsCache.own)?ChatCache.contactsCache.own.name  : ""
+					text: (ChatCache.contactsCache.own)?ChatCache.contactsCache.own.name  : "Retroshare"
 					height:  contentHeight
 					anchors.top: colorHash.bottom
 					anchors.left: header.left
@@ -122,6 +122,7 @@ Drawer
 					innerAnchors.verticalCenter: rectangleButton.verticalCenter
 					iconUrl: (model.icon)? model.icon : undefined
 					innerMargin: 20
+					buttonTextPixelSize: menuItem.styles.pixelSize
 				}
 
 
@@ -178,13 +179,13 @@ Drawer
 
 				property var actions :
 				{
+					"Contacts": function()
+					{
+						stackView.push("qrc:/Contacts.qml" )
+					},
 					"Trusted Nodes": function()
 					{
 						stackView.push("qrc:/TrustedNodesView.qml");
-					},
-					"Search Contacts": function()
-					{
-						stackView.push("qrc:/Contacts.qml" )
 					},
 					"Paste Link": function()
 					{
@@ -195,20 +196,20 @@ Drawer
 					"Terminate Core": function()
 					{
 						rsApi.request("/control/shutdown");
-					},
+					}
 				}
 
+				ListElement
+				{
+					title: "Contacts"
+					showOnCoreReady: true
+					icon: "/icons/search.svg"
+				}
 				ListElement
 				{
 					title: "Trusted Nodes"
 					showOnCoreReady: true
 					icon: "/icons/netgraph.svg"
-				}
-				ListElement
-				{
-					title: "Search Contacts"
-					showOnCoreReady: true
-					icon: "/icons/search.svg"
 				}
 				ListElement
 				{
@@ -242,7 +243,7 @@ Drawer
 				horizontalAlignment: Text.AlignRight
 				anchors.bottom: parent.bottom
 				anchors.right: parent.right
-				text:"Retroshare v.DEV"
+				text: parent.styles.text
 				color: parent.styles.textColor
 				anchors.rightMargin: parent.styles.margins
 				anchors.bottomMargin: parent.styles.margins
