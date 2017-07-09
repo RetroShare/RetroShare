@@ -45,16 +45,25 @@ Item
 		if (gxs_id)
 		{
 			default_image = false
-			rsApi.request(
-						"/identity/get_identity_details",
-						JSON.stringify({ gxs_id: compRoot.gxs_id }),
-						function(par)
-						{
-							var jData = JSON.parse(par.response).data
-							setDetails(jData)
-							if(!compRoot.has_avatar &&
-									compRoot.avatarAttemptCnt < 3) getDetails()
-						})
+			var hasAvatarCached =  hasAvatar (ChatCache.contactsCache.getIdentityAvatar(gxs_id))
+			if ( !hasAvatarCached )
+			{
+				rsApi.request(
+							"/identity/get_identity_details",
+							JSON.stringify({ gxs_id: compRoot.gxs_id }),
+							function(par)
+							{
+								var jData = JSON.parse(par.response).data
+								ChatCache.contactsCache.setIdentityDetails(jData)
+								setDetails(jData)
+								if(!compRoot.has_avatar &&
+										compRoot.avatarAttemptCnt < 3) getDetails()
+							})
+			}
+			else
+			{
+				setDetails(ChatCache.contactsCache.getIdentityDetails(gxs_id))
+			}
 		}
 		else
 		{
@@ -65,12 +74,21 @@ Item
 	}
 	function setDetails(data)
 	{
-		compRoot.has_avatar = data.avatar.length > 0
+		compRoot.has_avatar = hasAvatar (data.avatar)
 		if(compRoot.has_avatar)
 		{
-			contactAvatar.source =
-					"data:image/png;base64," + data.avatar
+			setImage(data.avatar)
 		}
+	}
+
+	function hasAvatar (avatar)
+	{
+		return  avatar.length > 0
+	}
+	function setImage (source)
+	{
+		contactAvatar.source =
+				"data:image/png;base64," + source
 	}
 
 	function showDetails()
@@ -80,7 +98,6 @@ Item
 		stackView.push(
 					"qrc:/ContactDetails.qml",
 					{md: ChatCache.contactsCache.getContactFromGxsId(gxs_id)})
-
 	}
 
 	Component.onCompleted: if(visible && (!has_avatar || default_image ) ) getDetails()

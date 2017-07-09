@@ -101,6 +101,8 @@ QtObject
 		id: contactsCache
 		property var contactsList
 		property var own
+		property var identityDetails: ({})
+
 
 		function getContactFromGxsId (gxsId)
 		{
@@ -109,10 +111,29 @@ QtObject
 			{
 				if (contactsList[i].gxs_id == gxsId) return contactsList[i]
 			}
-
-
-
 		}
+
+		function getIdentityDetails (gxsId)
+		{
+			if (identityDetails[gxsId]) return identityDetails[gxsId]
+			return ""
+		}
+
+		function setIdentityDetails (jData)
+		{
+			identityDetails[jData.gxs_id] = jData
+		}
+
+		function getIdentityAvatar (gxsId)
+		{
+
+			if (identityDetails[gxsId] && identityDetails[gxsId].avatar !== undefined)
+			{
+				return identityDetails[gxsId].avatar
+			}
+			return ""
+		}
+
 	}
 
 }
