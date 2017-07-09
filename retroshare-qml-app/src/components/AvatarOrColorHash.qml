@@ -34,13 +34,17 @@ Item
 ////////////// The following should be considered privates /////////////////////
 
 	property bool has_avatar: false
+	property bool default_image: false
 	property int avatarAttemptCnt: 0
+	property string noGxsImage: "/icons/retroshare06.png"
+
 	function getDetails()
 	{
 		console.log("getDetails() ", compRoot.gxs_id )
 		++compRoot.avatarAttemptCnt
 		if (gxs_id)
 		{
+			default_image = false
 			rsApi.request(
 						"/identity/get_identity_details",
 						JSON.stringify({ gxs_id: compRoot.gxs_id }),
@@ -55,7 +59,8 @@ Item
 		else
 		{
 			has_avatar = true
-			contactAvatar.source = "/icons/retroshare06.png"
+			default_image = true
+			contactAvatar.source = noGxsImage
 		}
 	}
 	function setDetails(data)
@@ -78,8 +83,9 @@ Item
 
 	}
 
-	Component.onCompleted: if(visible && !has_avatar) getDetails()
-	onVisibleChanged: if(visible && !has_avatar) getDetails()
+	Component.onCompleted: if(visible && (!has_avatar || default_image ) ) getDetails()
+
+	onVisibleChanged: if(visible && (!has_avatar || default_image ) ) getDetails()
 
 	Image
 	{
