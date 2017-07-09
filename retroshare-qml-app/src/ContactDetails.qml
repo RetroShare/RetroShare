@@ -27,6 +27,20 @@ Item
 	id: cntDt
 	property var md
 	property bool is_contact: cntDt.md.is_contact
+	property bool isOwn:  cntDt.md.own
+
+
+	Text
+	{
+		id: meText
+
+		text: "Yourself"
+		visible: isOwn
+
+		anchors.top: parent.top
+		anchors.topMargin: 6
+		anchors.horizontalCenter: parent.horizontalCenter
+	}
 
 	AvatarOrColorHash
 	{
@@ -34,7 +48,7 @@ Item
 
 		gxs_id: cntDt.md.gxs_id
 
-		anchors.top: parent.top
+		anchors.top: meText.bottom
 		anchors.topMargin: 6
 		anchors.horizontalCenter: parent.horizontalCenter
 	}
@@ -68,9 +82,19 @@ Item
 
 			Image
 			{
-				source: cntDt.is_contact ?
-							"qrc:/icons/rating.svg" :
-							"qrc:/icons/rating-unrated.svg"
+				source:
+				{
+					if (isOwn)
+					{
+						"qrc:/icons/keyring.svg"
+					}
+					else
+					{
+						cntDt.is_contact ?
+								"qrc:/icons/rating.svg" :
+								"qrc:/icons/rating-unrated.svg"
+					}
+				}
 				height: parent.height - 4
 				sourceSize.height: height
 				fillMode: Image.PreserveAspectFit
@@ -82,10 +106,13 @@ Item
 
 					onClicked:
 					{
-						var jDt = JSON.stringify({gxs_id: cntDt.md.gxs_id})
-						if(cntDt.is_contact)
-							rsApi.request("/identity/remove_contact", jDt, tgCt)
-						else rsApi.request("/identity/add_contact", jDt, tgCt)
+						if (!isOwn)
+						{
+							var jDt = JSON.stringify({gxs_id: cntDt.md.gxs_id})
+							if(cntDt.is_contact)
+								rsApi.request("/identity/remove_contact", jDt, tgCt)
+							else rsApi.request("/identity/add_contact", jDt, tgCt)
+						}
 					}
 
 					function tgCt() { cntDt.is_contact = !cntDt.is_contact }
