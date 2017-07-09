@@ -28,7 +28,7 @@ private:
 
 
     void waitForResponse(ApiServer::RequestId id) const;
-    bool isTokenValid(StateToken st);
+    bool isTokenValid(StateToken st) const;
     ApiServer* mApiServer;
 
 	// Methods to talk to the ApiServer
@@ -37,6 +37,8 @@ private:
 	void sendSelectedAccount(const std::string& ssl_id) const;
 	void readAvailableAccounts(std::vector<AccountInfo>& accounts) const;
 	void getRunningState() const ;
+	void readPasswordState(StateToken& password_state_token,bool& ask_for_password,std::string& key_name,bool& prev_is_bad) const;
+	void readRunState(StateToken& runstate_state_token, std::__cxx11::string& runstate) const;
 };
 
 } // namespace resource_api

@@ -108,16 +108,16 @@ int main(int argc, char **argv)
 
 		if(!tac.isRunning())
 		{
-			if(!RsInit::isLocationRunning())
-			{
-				std::cerr << "Terminal API client stopped but location not set ! Relaunching." ;
-				tac.start();
-			}
-			else if(RsInit::isLocationRunning())
-			{
-				std::cerr << "Terminal API client running but location already set ! Stopping it." ;
-				tac.shutdown();
-			}
+//			if(!RsInit::isLocationRunning())
+//			{
+//				std::cerr << "Terminal API client stopped but location not set ! Relaunching." ;
+//				tac.start();
+//			}
+//			else if(RsInit::isLocationRunning())
+//			{
+//				std::cerr << "Terminal API client running but location already set ! Stopping it." ;
+//				tac.shutdown();
+//			}
 		}
     }
 

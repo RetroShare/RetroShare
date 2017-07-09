@@ -96,6 +96,23 @@ TerminalApiClient::~TerminalApiClient()
     fullstop();
 }
 
+static std::string readStringFromKeyboard(bool passwd_mode)
+{
+	int c ;
+	std::string s;
+
+	while((c=getchar()) != '\n')
+	{
+		if(passwd_mode)
+			putchar('*') ;
+		else
+			putchar(c) ;
+
+		s += c ;
+	}
+	return s ;
+}
+
 void TerminalApiClient::data_tick()
 {
     // values in milliseconds
@@ -109,6 +126,7 @@ void TerminalApiClient::data_tick()
     int last_char = 0;
     std::string inbuf;
     bool enter_was_pressed = false;
+	bool prev_is_bad = false ;
 	int account_number_size = 1 ;
 	int selected_account_number = 0 ;
 	int account_number_typed = 0 ;
@@ -178,45 +196,63 @@ void TerminalApiClient::data_tick()
         if(runstate_state_token.isNull())
         {
             edge = true;
-            JsonStream reqs;
-            JsonStream resps;
-            Request req(reqs);
-            std::stringstream ss;
-            Response resp(resps, ss);
-
-            req.mPath.push("runstate");
-            req.mPath.push("control");
-            reqs.switchToDeserialisation();
-
-            ApiServer::RequestId id = mApiServer->handleRequest(req, resp);
-            waitForResponse(id);
-
-            resps.switchToDeserialisation();
-            resps << makeKeyValueReference("runstate", runstate);
-            runstate_state_token = resp.mStateToken;
-        }
+			readRunState(runstate_state_token,runstate) ;
+		}
         if(password_state_token.isNull())
-        {
+		{
             edge = true;
-            JsonStream reqs;
-            JsonStream resps;
-            Request req(reqs);
-            std::stringstream ss;
-            Response resp(resps, ss);
+			readPasswordState(password_state_token,ask_for_password,key_name,prev_is_bad) ;
+		}
 
-            req.mPath.push("password");
-            req.mPath.push("control");
-            reqs.switchToDeserialisation();
+        if(!ask_for_password && edge && runstate == "waiting_account_select")
+        {
+			readAvailableAccounts(accounts) ;
+			account_number_size = (int)ceil(log(accounts.size())/log(10.0f)) ;
 
-            ApiServer::RequestId id = mApiServer->handleRequest(req, resp);
-            waitForResponse(id);
+			for(uint32_t i=0;i<accounts.size();++i)
+				std::cout << "[" << std::setw(account_number_size) << std::setfill('0') << i << "] " << accounts[i].name << " (" << accounts[i].location << ")" << std::endl;
 
-            resps.switchToDeserialisation();
-            resps << makeKeyValueReference("want_password", ask_for_password);
-            resps << makeKeyValueReference("key_name", key_name);
-            password_state_token = resp.mStateToken;
+			selected_account_number = accounts.size() ;
+			account_number_typed = 0 ;
+
+			while(selected_account_number >= accounts.size())
+			{
+				std::cout << std::endl << "Type account number: " ;
+				std::cout.flush() ;
+
+				std::string s = readStringFromKeyboard(false) ;
+
+				if(sscanf(s.c_str(),"%d",&selected_account_number) != 1)
+					continue ;
+
+				if(selected_account_number >= accounts.size())
+				{
+					std::cerr << ": invalid account number (should be between " << std::setw(account_number_size) << std::setfill('0')
+					          << 0 << " and " << std::setw(account_number_size) << std::setfill('0') << accounts.size()-1 << ")" << std::endl;
+					std::cout << std::endl << "Type account number: " ;
+					std::cout.flush() ;
+
+					selected_account_number = accounts.size();
+				}
+
+				std::cout << std::endl << "Selected account: " << accounts[selected_account_number].name << " (" << accounts[selected_account_number].location << ") SSL id: " << accounts[selected_account_number].ssl_id << std::endl;
+			}
+			// now ask for passphrase
+
+            std::string prompt = "Enter the password for key " + key_name + " : " ;
+			std::cout << prompt ;
+			std::cout.flush();
+			std::string passwd = readStringFromKeyboard(true);
+
+			// now we have passwd and account number, so send it to the core.
+
+			std::string acc_ssl_id = accounts[selected_account_number].ssl_id.toStdString();
+
+			sendPassword(passwd) ;
+			sendSelectedAccount(acc_ssl_id) ;
         }
 
+#ifdef OLD_CODE
         if(!ask_for_password && edge && runstate == "waiting_account_select")
         {
 			readAvailableAccounts(accounts) ;
@@ -278,9 +314,12 @@ void TerminalApiClient::data_tick()
 			// Send passwd to api server
 			sendPassword(inbuf) ;
 
+			usleep(1000*1000) ;
+
 			// clears buffer
 			inbuf.clear();
         }
+#endif
     }
 }
 
@@ -373,7 +412,7 @@ void TerminalApiClient::readAvailableAccounts(std::vector<AccountInfo>& accounts
 }
 
 
-bool TerminalApiClient::isTokenValid(StateToken runstate_state_token)
+bool TerminalApiClient::isTokenValid(StateToken runstate_state_token) const
 {
     JsonStream reqs;
     JsonStream resps;
@@ -393,6 +432,52 @@ bool TerminalApiClient::isTokenValid(StateToken runstate_state_token)
         return false;
     else
         return true;
+}
+
+void TerminalApiClient::readPasswordState(StateToken& password_state_token,bool& ask_for_password,std::string& key_name,bool& prev_is_bad) const
+{
+	JsonStream reqs;
+	JsonStream resps;
+	Request req(reqs);
+	std::stringstream ss;
+	Response resp(resps, ss);
+
+	req.mPath.push("password");
+	req.mPath.push("control");
+	reqs.switchToDeserialisation();
+
+	ApiServer::RequestId id = mApiServer->handleRequest(req, resp);
+	waitForResponse(id);
+
+	resps.switchToDeserialisation();
+	resps << makeKeyValueReference("want_password", ask_for_password);
+	resps << makeKeyValueReference("key_name", key_name);
+	resps << makeKeyValueReference("prev_is_bad", prev_is_bad);
+	password_state_token = resp.mStateToken;
+
+	std::cerr << "****** Passwd state changed: want_passwd=" << ask_for_password << " key_name=" << key_name << " prev_is_bad=" << prev_is_bad << std::endl;
+}
+
+void TerminalApiClient::readRunState(StateToken& runstate_state_token,std::string& runstate) const
+{
+	JsonStream reqs;
+	JsonStream resps;
+	Request req(reqs);
+	std::stringstream ss;
+	Response resp(resps, ss);
+
+	req.mPath.push("runstate");
+	req.mPath.push("control");
+	reqs.switchToDeserialisation();
+
+	ApiServer::RequestId id = mApiServer->handleRequest(req, resp);
+	waitForResponse(id);
+
+	resps.switchToDeserialisation();
+	resps << makeKeyValueReference("runstate", runstate);
+	runstate_state_token = resp.mStateToken;
+
+	std::cerr << "****** Run State changed to \"" << runstate << "\"" << std::endl;
 }
 
 } // namespace resource_api
