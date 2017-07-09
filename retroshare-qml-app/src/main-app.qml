@@ -108,13 +108,80 @@ ApplicationWindow
 			width: 4
 		}
 
+		MouseArea
+		{
+			id: menu
+			height: parent.height
+			width: parent.height
+
+			anchors.left: tolbarLeftPadding.right
+			anchors.verticalCenter: parent.verticalCenter
+
+			onClicked: sideBar.open()
+
+			Image
+			{
+				source: "qrc:/icons/application-menu.svg"
+				height: parent.height - 10
+				width: height
+				sourceSize.height: height
+				sourceSize.width: height
+				anchors.centerIn: parent
+			}
+
+			SideBar {
+				id: sideBar
+			}
+		}
+
+
+
+		Label
+		{
+			property alias mouseA: mouseA
+			id: toolBarText
+			anchors.verticalCenter: parent.verticalCenter
+			anchors.left: menu.right
+			anchors.leftMargin: 20
+
+			MouseArea {
+				id: mouseA
+				visible: true
+				anchors.fill: parent
+				onClicked: {  toolBar.openMainPage() }
+			}
+
+		}
+
+		BtnIcon
+		{
+			property bool searchIconVisibility: false
+			property var onClickCB: function (){}
+
+			id: searchIcon
+			height: toolBar.iconsSize
+			width: toolBar.iconsSize
+			anchors.verticalCenter: parent.verticalCenter
+			imgUrl: "qrc:/icons/search.svg"
+			anchors.right: imageLoader.left
+			anchors.rightMargin: 5
+			visible: searchIconVisibility && coreReady
+			onClicked:
+			{
+				toolBar.searchBtnCb()
+			}
+		}
+
 		Loader
 		{
 			id: imageLoader
-			anchors.verticalCenter: parent.verticalCenter
 			height:  toolBar.height - 4
-			anchors.left: tolbarLeftPadding.right
+
 			asynchronous: true
+
+			anchors.right: parent.right
+			anchors.rightMargin: 2
+			anchors.verticalCenter: parent.verticalCenter
 
 			property string gxsSource;
 
@@ -148,67 +215,11 @@ ApplicationWindow
 
 		}
 
-		Label
-		{
-			property alias mouseA: mouseA
-			id: toolBarText
-			anchors.verticalCenter: parent.verticalCenter
-			anchors.left: imageLoader.right
-			anchors.leftMargin: 20
-
-			MouseArea {
-				id: mouseA
-				visible: true
-				anchors.fill: parent
-				onClicked: {  toolBar.openMainPage() }
-			}
-
-		}
 
 
 
-		BtnIcon
-		{
-			property bool searchIconVisibility: false
-			property var onClickCB: function (){}
 
-			id: searchIcon
-			height: toolBar.iconsSize
-			width: toolBar.iconsSize
-			anchors.verticalCenter: parent.verticalCenter
-			imgUrl: "qrc:/icons/search.svg"
-			anchors.right: menu.left
-			visible: searchIconVisibility && coreReady
-			onClicked:
-			{
-				toolBar.searchBtnCb()
-			}
-		}
-		MouseArea
-		{
-			id: menu
-			height: parent.height
-			width: parent.height
-			anchors.right: parent.right
-			anchors.rightMargin: 2
-			anchors.verticalCenter: parent.verticalCenter
 
-			onClicked: sideBar.open()
-
-			Image
-			{
-				source: "qrc:/icons/application-menu.svg"
-				height: parent.height - 10
-				width: height
-				sourceSize.height: height
-				sourceSize.width: height
-				anchors.centerIn: parent
-			}
-
-			SideBar {
-				id: sideBar
-			}
-		}
 	}
 
 	StackView
