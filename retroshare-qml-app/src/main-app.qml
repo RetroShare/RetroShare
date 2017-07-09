@@ -196,7 +196,10 @@ ApplicationWindow
 				width: imageLoader.height
 				fillMode: Image.PreserveAspectFit
 				imgUrl: "/icons/retroshare06.png"
-				onClicked:{ toolBar.openMainPage() }
+				onClicked:
+				{
+					if (coreReady) toolBar.openMainPage()
+				}
 			}
 		}
 
