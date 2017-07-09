@@ -89,6 +89,7 @@
 // #define GPG_DEBUG
 // #define AUTHSSL_DEBUG
 // #define FIM_DEBUG
+// #define DEBUG_RSINIT
 
 //std::map<std::string,std::vector<std::string> > RsInit::unsupported_keys ;
 
@@ -311,8 +312,10 @@ int RsInit::InitRetroShare(int argc, char **argv, bool /* strictCheck */)
 		argc = i;
 #endif
 
+#ifdef DEBUG_RSINIT
 		for(int i=0; i<argc; i++)
 			printf("%d: %s\n", i, argv[i]);
+#endif
 
 		/* for static PThreads under windows... we need to init the library... */
 #ifdef PTW32_STATIC_LIB
@@ -357,7 +360,7 @@ int RsInit::InitRetroShare(int argc, char **argv, bool /* strictCheck */)
 		        >> parameter('i',"ip-address"    ,rsInitConfig->inet           ,"nnn.nnn.nnn.nnn", "Set IP address to use."                   ,false)
 		        >> parameter('p',"port"          ,rsInitConfig->port           ,"port", "Set listenning port to use."              ,false)
 		        >> parameter('c',"base-dir"      ,opt_base_dir                 ,"directory", "Set base directory."                      ,false)
-		        >> parameter('U',"user-id"       ,prefUserString               ,"ID", "[User Name/GPG id/SSL id] Sets Account to Use, Useful when Autologin is enabled",false)
+		        >> parameter('U',"user-id"       ,prefUserString               ,"ID", "[ocation Id] Sets Account to Use, Useful when Autologin is enabled.",false)
 		           // by rshare    'r' "link"                                         "Link" "Open RsLink with protocol retroshare://"
 		           // by rshare    'f' "rsfile"                                       "RsFile" "Open RsFile like RsCollection"
            #ifdef LOCALNET_TESTING
@@ -365,7 +368,7 @@ int RsInit::InitRetroShare(int argc, char **argv, bool /* strictCheck */)
            #endif
 		        >> help('h',"help","Display this Help") ;
 
-		as.defaultErrorHandling(true) ;
+		as.defaultErrorHandling(true,true) ;
 
 		if(rsInitConfig->autoLogin)         rsInitConfig->startMinimised = true ;
 		if(rsInitConfig->outStderr)         rsInitConfig->haveLogFile    = false ;
@@ -472,7 +475,7 @@ int RsInit::InitRetroShare(int argc, char **argv, bool /* strictCheck */)
 		{
 			if (!rsAccounts->selectAccountByString(prefUserString))
 			{
-				std::cerr << "Invalid User name/GPG id/SSL id: not found in list";
+				std::cerr << "Invalid User location id: not found in list";
 				std::cerr << std::endl;
 				return RS_INIT_AUTH_FAILED ;
 			}
