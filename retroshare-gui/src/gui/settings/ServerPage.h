@@ -114,6 +114,16 @@ private slots:
 
 	void connectionWithoutCert();
 
+	//Relay Tab
+	void updateRelayOptions();
+	void updateEnabled();
+	void checkKey();
+	void addServer();
+	void removeServer();
+	void loadServers();
+	void updateTotals();
+	void updateRelayMode();
+
 	// autoProxyCallback interface
 public:
 	void taskFinished(taskTicket *&ticket);

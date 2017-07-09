@@ -29,11 +29,13 @@
 
 #include <iostream>
 
+#include <retroshare/rsbanlist.h>
 #include <retroshare/rsconfig.h>
+#include <retroshare/rsdht.h>
 #include <retroshare/rspeers.h>
 #include <retroshare/rsturtle.h>
-#include <retroshare/rsbanlist.h>
 
+#include <QCheckBox>
 #include <QMovie>
 #include <QMenu>
 #include <QTcpSocket>
@@ -170,6 +172,32 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
 
     connect(ui.totalDownloadRate,SIGNAL(valueChanged(int)),this,SLOT(saveRates()));
     connect(ui.totalUploadRate,  SIGNAL(valueChanged(int)),this,SLOT(saveRates()));
+
+	//Relay Tab
+	QObject::connect(ui.noFriendSpinBox,SIGNAL(valueChanged(int)),this,SLOT(updateRelayOptions()));
+	QObject::connect(ui.noFOFSpinBox,SIGNAL(valueChanged(int)),this,SLOT(updateRelayOptions()));
+	QObject::connect(ui.noGeneralSpinBox,SIGNAL(valueChanged(int)),this,SLOT(updateRelayOptions()));
+	QObject::connect(ui.bandFriendSpinBox,SIGNAL(valueChanged(int)),this,SLOT(updateRelayOptions()));
+	QObject::connect(ui.bandFOFSpinBox,SIGNAL(valueChanged(int)),this,SLOT(updateRelayOptions()));
+	QObject::connect(ui.bandGeneralSpinBox,SIGNAL(valueChanged(int)),this,SLOT(updateRelayOptions()));
+
+	QObject::connect(ui.addPushButton,SIGNAL(clicked()),this,SLOT(addServer()));
+	QObject::connect(ui.removePushButton,SIGNAL(clicked()),this,SLOT(removeServer()));
+	QObject::connect(ui.DhtLineEdit,SIGNAL(textChanged(const QString &)),this,SLOT(checkKey()));
+
+	QObject::connect(ui.enableCheckBox,SIGNAL(stateChanged(int)),this,SLOT(updateEnabled()));
+	QObject::connect(ui.serverCheckBox,SIGNAL(stateChanged(int)),this,SLOT(updateEnabled()));
+
+	QObject::connect(ui.noFriendSpinBox,SIGNAL(valueChanged(int)),this,SLOT(updateTotals()));
+	QObject::connect(ui.bandFriendSpinBox,SIGNAL(valueChanged(int)),this,SLOT(updateTotals()));
+	QObject::connect(ui.noFOFSpinBox,SIGNAL(valueChanged(int)),this,SLOT(updateTotals()));
+	QObject::connect(ui.bandFOFSpinBox,SIGNAL(valueChanged(int)),this,SLOT(updateTotals()));
+	QObject::connect(ui.noGeneralSpinBox,SIGNAL(valueChanged(int)),this,SLOT(updateTotals()));
+	QObject::connect(ui.bandGeneralSpinBox,SIGNAL(valueChanged(int)),this,SLOT(updateTotals()));
+
+	QObject::connect(ui.enableCheckBox,SIGNAL(toggled(bool)),this,SLOT(updateRelayMode()));
+	QObject::connect(ui.serverCheckBox,SIGNAL(toggled(bool)),this,SLOT(updateRelayMode()));
+
 }
 
 void ServerPage::saveAndTestInProxy()
@@ -373,6 +401,49 @@ void ServerPage::load()
 
         updateOutProxyIndicator();
     }
+
+	//Relay Tab
+	uint32_t count;
+	uint32_t bandwidth;
+	rsDht->getRelayAllowance(RSDHT_RELAY_CLASS_FRIENDS, count, bandwidth);
+	whileBlocking(ui.noFriendSpinBox)->setValue(count);
+	whileBlocking(ui.bandFriendSpinBox)->setValue(bandwidth / 1024);
+
+	rsDht->getRelayAllowance(RSDHT_RELAY_CLASS_FOF, count, bandwidth);
+	whileBlocking(ui.noFOFSpinBox)->setValue(count);
+	whileBlocking(ui.bandFOFSpinBox)->setValue(bandwidth / 1024);
+
+	rsDht->getRelayAllowance(RSDHT_RELAY_CLASS_GENERAL, count, bandwidth);
+	whileBlocking(ui.noGeneralSpinBox)->setValue(count);
+	whileBlocking(ui.bandGeneralSpinBox)->setValue(bandwidth / 1024);
+
+	updateTotals();
+
+
+	uint32_t relayMode = rsDht->getRelayMode();
+	if (relayMode & RSDHT_RELAY_ENABLED)
+	{
+		whileBlocking(ui.enableCheckBox)->setCheckState(Qt::Checked);
+		if ((relayMode & RSDHT_RELAY_MODE_MASK) == RSDHT_RELAY_MODE_OFF)
+		{
+			whileBlocking(ui.serverCheckBox)->setCheckState(Qt::Unchecked);
+		}
+		else
+		{
+			whileBlocking(ui.serverCheckBox)->setCheckState(Qt::Checked);
+		}
+	}
+	else
+	{
+		whileBlocking(ui.enableCheckBox)->setCheckState(Qt::Unchecked);
+		whileBlocking(ui.serverCheckBox)->setCheckState(Qt::Unchecked);
+	}
+
+	loadServers();
+	updateRelayOptions();
+	updateEnabled();
+	checkKey();
+
 }
 
 void ServerPage::toggleAutoIncludeFriends(bool b)
@@ -1006,7 +1077,7 @@ void ServerPage::loadHiddenNode()
     whileBlocking(ui.hiddenpage_serviceAddress)->setText(QString::fromStdString(detail.hiddenNodeAddress));
     whileBlocking(ui.hiddenpage_servicePort) -> setValue(detail.hiddenNodePort);
     /* in I2P there is no port - there is only the address */
-    whileBlocking(ui.hiddenpage_servicePort)->setEnabled(detail.hiddenType != RS_HIDDEN_TYPE_I2P);
+    whileBlocking(ui.hiddenpage_servicePort)->setHidden(detail.hiddenType == RS_HIDDEN_TYPE_I2P);
 
     /* out proxy settings */
     std::string proxyaddr;
@@ -1731,4 +1802,162 @@ void ServerPage::handleNetworkReply(QNetworkReply *reply)
         updateInProxyIndicatorResult(false);
 
     reply->close();
+}
+
+//#####################################################################
+//## Relay Tab
+//#####################################################################
+
+void ServerPage::updateTotals()
+{
+	int nFriends = ui.noFriendSpinBox->value();
+	int friendBandwidth = ui.bandFriendSpinBox->value();
+
+	int nFOF = ui.noFOFSpinBox->value();
+	int fofBandwidth = ui.bandFOFSpinBox->value();
+
+	int nGeneral = ui.noGeneralSpinBox->value();
+	int genBandwidth = ui.bandGeneralSpinBox->value();
+
+	int total = nFriends + nFOF + nGeneral;
+
+	rsDht->setRelayAllowance(RSDHT_RELAY_CLASS_ALL, total, 0);
+	rsDht->setRelayAllowance(RSDHT_RELAY_CLASS_FRIENDS, nFriends, 1024 * friendBandwidth);
+	rsDht->setRelayAllowance(RSDHT_RELAY_CLASS_FOF, nFOF, 1024 * fofBandwidth);
+	rsDht->setRelayAllowance(RSDHT_RELAY_CLASS_GENERAL, nGeneral, 1024 * genBandwidth);
+}
+
+/** Saves the changes on this page */
+
+void ServerPage::updateRelayMode()
+{
+	uint32_t relayMode = 0;
+	if (ui.enableCheckBox->isChecked())
+	{
+		relayMode |= RSDHT_RELAY_ENABLED;
+
+		if (ui.serverCheckBox->isChecked())
+		{
+			relayMode |= RSDHT_RELAY_MODE_ON;
+		}
+		else
+		{
+			relayMode |= RSDHT_RELAY_MODE_OFF;
+		}
+	}
+	else
+	{
+		relayMode |= RSDHT_RELAY_MODE_OFF;
+	}
+
+	rsDht->setRelayMode(relayMode);
+}
+
+void ServerPage::loadServers()
+{
+	std::list<std::string> servers;
+	std::list<std::string>::iterator it;
+
+	rsDht->getRelayServerList(servers);
+
+	ui.serverTreeWidget->clear();
+	for(it = servers.begin(); it != servers.end(); ++it)
+	{
+		QTreeWidgetItem *item = new QTreeWidgetItem();
+		item->setData(0, Qt::DisplayRole, QString::fromStdString(*it));
+		ui.serverTreeWidget->addTopLevelItem(item);
+	}
+}
+
+void ServerPage::updateRelayOptions()
+{
+	int nFriends = ui.noFriendSpinBox->value();
+	int friendBandwidth = ui.bandFriendSpinBox->value();
+
+	int nFOF = ui.noFOFSpinBox->value();
+	int fofBandwidth = ui.bandFOFSpinBox->value();
+
+	int nGeneral = ui.noGeneralSpinBox->value();
+	int genBandwidth = ui.bandGeneralSpinBox->value();
+
+	ui.totalFriendLineEdit->setText(QString::number(nFriends * friendBandwidth * 2));
+	ui.totalFOFLineEdit->setText(QString::number(nFOF * fofBandwidth * 2));
+	ui.totalGeneralLineEdit->setText(QString::number(nGeneral * genBandwidth * 2));
+	ui.totalBandwidthLineEdit->setText(QString::number((nFriends * friendBandwidth + nFOF * fofBandwidth + nGeneral * genBandwidth) * 2));
+	ui.noTotalLineEdit->setText(QString::number(nFriends + nFOF + nGeneral));
+}
+
+void ServerPage::updateEnabled()
+{
+	std::cerr << "RelayPage::updateEnabled()" << std::endl;
+
+	if (ui.enableCheckBox->isChecked())
+	{
+		ui.relayOptionGBox->setEnabled(true);
+		if (ui.serverCheckBox->isChecked())
+		{
+			std::cerr << "RelayPage::updateEnabled() Both Enabled" << std::endl;
+			ui.serverGroupBox->setEnabled(true);
+		}
+		else
+		{
+			std::cerr << "RelayPage::updateEnabled() Options Only Enabled" << std::endl;
+			ui.serverGroupBox->setEnabled(false);
+		}
+	}
+	else
+	{
+		std::cerr << "RelayPage::updateEnabled() Both Disabled" << std::endl;
+		ui.relayOptionGBox->setEnabled(false);
+		ui.serverGroupBox->setEnabled(false);
+	}
+
+}
+
+void ServerPage::checkKey()
+{
+
+	std::string server = ui.DhtLineEdit->text().toStdString();
+	std::cerr << "RelayPage::checkKey() length: " << server.length();
+	std::cerr << std::endl;
+	if (server.length() == 40)
+	{
+		ui.keyOkBox->setChecked(true);
+	}
+	else
+	{
+		ui.keyOkBox->setChecked(false);
+	}
+}
+
+void ServerPage::addServer()
+{
+	std::cerr << "RelayPage::addServer()";
+	std::cerr << std::endl;
+
+	if (!ui.keyOkBox->isChecked())
+	{
+		return;
+	}
+
+	std::string server = ui.DhtLineEdit->text().toStdString();
+
+	bool ok = rsDht->addRelayServer(server);
+	if (ok)
+	{
+		ui.DhtLineEdit->setText(QString(""));
+	}
+	loadServers();
+}
+
+void ServerPage::removeServer()
+{
+	QTreeWidgetItem *item = ui.serverTreeWidget->currentItem();
+	if (item)
+	{
+		std::string server = item->data(0, Qt::DisplayRole).toString().toStdString();
+		rsDht->removeRelayServer(server);
+	}
+
+	loadServers();
 }

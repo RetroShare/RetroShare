@@ -43,6 +43,7 @@ TransferPage::TransferPage(QWidget * parent, Qt::WindowFlags flags)
     QObject::connect(ui._e2e_encryption_CB,SIGNAL(activated(int)),this,SLOT(updateEncryptionPolicy(int))) ;
     QObject::connect(ui._diskSpaceLimit_SB,SIGNAL(valueChanged(int)),this,SLOT(updateDiskSizeLimit(int))) ;
     QObject::connect(ui._max_tr_up_per_sec_SB, SIGNAL( valueChanged( int ) ), this, SLOT( updateMaxTRUpRate(int) ) );
+	QObject::connect(ui._filePermDirectDL_CB,SIGNAL(activated(int)),this,SLOT(updateFilePermDirectDL(int)));
 
 	QObject::connect(ui.incomingButton, SIGNAL(clicked( bool ) ), this , SLOT( setIncomingDirectory() ) );
 	QObject::connect(ui.partialButton, SIGNAL(clicked( bool ) ), this , SLOT( setPartialsDirectory() ) );
@@ -77,6 +78,16 @@ void TransferPage::updateEncryptionPolicy(int b)
     }
 }
 
+void TransferPage::updateFilePermDirectDL(int i)
+{
+	switch (i)
+	{
+		case 0:  rsFiles->setFilePermDirectDL(RS_FILE_PERM_DIRECT_DL_YES);       break;
+		case 1:  rsFiles->setFilePermDirectDL(RS_FILE_PERM_DIRECT_DL_NO);        break;
+		default: rsFiles->setFilePermDirectDL(RS_FILE_PERM_DIRECT_DL_PER_USER);  break;
+	}
+}
+
 void TransferPage::load()
 {
     whileBlocking(ui.shareDownloadDirectoryCB)->setChecked(rsFiles->getShareDownloadDirectory());
@@ -107,6 +118,13 @@ void TransferPage::load()
     whileBlocking(ui._diskSpaceLimit_SB)->setValue(rsFiles->freeDiskSpaceLimit()) ;
     whileBlocking(ui._max_tr_up_per_sec_SB)->setValue(rsTurtle->getMaxTRForwardRate()) ;
     whileBlocking(ui._max_up_SB)->setValue(rsFiles->getMaxUploadSlotsPerFriend()) ;
+
+		switch (rsFiles->filePermDirectDL())
+		{
+			case RS_FILE_PERM_DIRECT_DL_YES: whileBlocking(ui._filePermDirectDL_CB)->setCurrentIndex(0) ; break ;
+			case RS_FILE_PERM_DIRECT_DL_NO:  whileBlocking(ui._filePermDirectDL_CB)->setCurrentIndex(1) ; break ;
+			default:                         whileBlocking(ui._filePermDirectDL_CB)->setCurrentIndex(2) ; break ;
+		}
 }
 
 void TransferPage::updateDefaultStrategy(int i)

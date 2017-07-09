@@ -88,18 +88,21 @@ public:
      * arrive
      */
     RsGxsNetService(uint16_t servType, RsGeneralDataService *gds,
-                RsNxsNetMgr *netMgr,
-        RsNxsObserver *nxsObs,  // used to be = NULL.
-        const RsServiceInfo serviceInfo,
-        RsGixsReputation* reputations = NULL, RsGcxs* circles = NULL, RsGixs *gixs=NULL,
-        PgpAuxUtils *pgpUtils = NULL,
-        bool grpAutoSync = true, bool msgAutoSync = true);
+      	          RsNxsNetMgr *netMgr,
+      			  RsNxsObserver *nxsObs,  // used to be = NULL.
+      			  const RsServiceInfo serviceInfo,
+      			  RsGixsReputation* reputations = NULL, RsGcxs* circles = NULL, RsGixs *gixs=NULL,
+      			  PgpAuxUtils *pgpUtils = NULL,
+      			  bool grpAutoSync = true, bool msgAutoSync = true,
+	                uint32_t default_store_period = RS_GXS_DEFAULT_MSG_STORE_PERIOD,
+	                uint32_t default_sync_period = RS_GXS_DEFAULT_MSG_REQ_PERIOD);
 
     virtual ~RsGxsNetService();
 
     virtual RsServiceInfo getServiceInfo() { return mServiceInfo; }
 
     virtual void getItemNames(std::map<uint8_t,std::string>& names) const ;
+
 public:
 
 
@@ -111,9 +114,13 @@ public:
     virtual void setKeepAge(const RsGxsGroupId& grpId,uint32_t age_in_secs);
 
     virtual uint32_t getSyncAge(const RsGxsGroupId& id);
-    virtual uint32_t getKeepAge(const RsGxsGroupId& id,uint32_t default_value);
+    virtual uint32_t getKeepAge(const RsGxsGroupId& id);
 
-    virtual uint32_t getDefaultSyncAge() { return RS_GXS_DEFAULT_MSG_REQ_PERIOD ; }
+    virtual uint32_t getDefaultSyncAge() { return mDefaultMsgSyncPeriod ; }
+    virtual uint32_t getDefaultKeepAge() { return mDefaultMsgStorePeriod ; }
+
+	virtual void setDefaultKeepAge(uint32_t t) { mDefaultMsgStorePeriod = t ; }
+	virtual void setDefaultSyncAge(uint32_t t) { mDefaultMsgSyncPeriod = t ; }
 
     /*!
      * pauses synchronisation of subscribed groups and request for group id
@@ -413,6 +420,7 @@ private:
 
     static RsGxsGroupId hashGrpId(const RsGxsGroupId& gid,const RsPeerId& pid) ;
     
+	RsGxsGrpConfig& locked_getGrpConfig(const RsGxsGroupId& grp_id);
 private:
 
     typedef std::vector<RsNxsGrp*> GrpFragments;
@@ -573,6 +581,9 @@ private:
     std::set<RsGxsGroupId> mNewPublishKeysToNotify ;
 
     void debugDump();
+
+	uint32_t mDefaultMsgStorePeriod ;
+	uint32_t mDefaultMsgSyncPeriod ;
 };
 
 #endif // RSGXSNETSERVICE_H

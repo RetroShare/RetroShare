@@ -27,6 +27,7 @@
 #include <iostream>
 
 #include <retroshare/rspeers.h>
+#include <gui/common/GroupDefs.h>
 
 /** Constructor */
 GroupChooser::GroupChooser(QWidget *parent)
@@ -51,7 +52,7 @@ bool GroupChooser::makeNodeGroupDesc(const RsGroupInfo& info, QString &desc)
     if(info.name.empty())
         desc = tr("[Unknown]") ;
     else
-        desc = "\"" + QString::fromUtf8(info.name.c_str()) + "\"";
+        desc = "\"" + GroupDefs::name(info) + "\"";
 
     desc += " [" ;
     desc += QString::fromStdString(info.id.toStdString().substr(0,3));
@@ -88,7 +89,7 @@ void GroupChooser::loadGroups()
 			std::cerr << std::endl;
 			continue;
 		}
-        QString id = QString::fromStdString(it->id.toStdString());
+		QString id = QString::fromStdString((*it).id.toStdString()) ;
 
 		addItem(str, id);
 

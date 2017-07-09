@@ -87,6 +87,15 @@ protected:
 			        << makeKeyValueReference("name", params.nickname)
 			        << makeKeyValueReference("pgp_linked", params.isPgpLinked);
 
+			std::string avatar;
+			req.mStream << makeKeyValueReference("avatar", avatar);
+
+			std::vector<uint8_t> avatar_data = Radix64::decode(avatar);
+			uint8_t *p_avatar_data = &avatar_data[0];
+			uint32_t size = avatar_data.size();
+			params.mImage.clear();
+			params.mImage.copy(p_avatar_data, size);
+
             if(params.nickname == "")
             {
                 resp.setFail("name can't be empty");
@@ -164,9 +173,6 @@ IdentityHandler::IdentityHandler(StateTokenServer *sts, RsNotify *notify,
 	addResourceHandler("notown_ids", this,
 	                   &IdentityHandler::handleNotOwnIdsRequest);
 
-	addResourceHandler("create_identity", this,
-	                   &IdentityHandler::handleCreateIdentity);
-
 	addResourceHandler("export_key", this, &IdentityHandler::handleExportKey);
 	addResourceHandler("import_key", this, &IdentityHandler::handleImportKey);
 
@@ -177,6 +183,9 @@ IdentityHandler::IdentityHandler(StateTokenServer *sts, RsNotify *notify,
 	addResourceHandler("delete_identity", this, &IdentityHandler::handleDeleteIdentity);
 
 	addResourceHandler("get_identity_details", this, &IdentityHandler::handleGetIdentityDetails);
+
+	addResourceHandler("get_avatar", this, &IdentityHandler::handleGetAvatar);
+	addResourceHandler("set_avatar", this, &IdentityHandler::handleSetAvatar);
 
 	addResourceHandler("set_ban_node", this, &IdentityHandler::handleSetBanNode);
 	addResourceHandler("set_opinion", this, &IdentityHandler::handleSetOpinion);
@@ -518,6 +527,89 @@ void IdentityHandler::handleGetIdentityDetails(Request& req, Response& resp)
 	}
 
 	resp.setOk();
+}
+
+void IdentityHandler::handleSetAvatar(Request& req, Response& resp)
+{
+	std::string gxs_id;
+	std::string avatar;
+	req.mStream << makeKeyValueReference("gxs_id", gxs_id);
+	req.mStream << makeKeyValueReference("avatar", avatar);
+
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
+	uint32_t token;
+
+	std::list<RsGxsGroupId> groupIds;
+	groupIds.push_back(RsGxsGroupId(gxs_id));
+	mRsIdentity->getTokenService()->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, groupIds);
+
+	time_t start = time(NULL);
+	while((mRsIdentity->getTokenService()->requestStatus(token) != RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
+	      &&(mRsIdentity->getTokenService()->requestStatus(token) != RsTokenService::GXS_REQUEST_V2_STATUS_FAILED)
+	      &&((time(NULL) < (start+10)))
+	      )
+	{
+#ifdef WINDOWS_SYS
+		Sleep(500);
+#else
+		usleep(500*1000);
+#endif
+	}
+
+	RsGxsIdGroup data;
+	std::vector<RsGxsIdGroup> datavector;
+	if (!mRsIdentity->getGroupData(token, datavector))
+	{
+		resp.setFail();
+		return;
+	}
+
+	if(datavector.empty())
+	{
+		resp.setFail();
+		return;
+	}
+
+	data = datavector[0];
+
+	if(!avatar.empty())
+	{
+		std::vector<uint8_t> avatar_data = Radix64::decode(avatar);
+		uint8_t *p_avatar_data = &avatar_data[0];
+		uint32_t size = avatar_data.size();
+		data.mImage.clear();
+		data.mImage.copy(p_avatar_data, size);
+
+		std::string base64Avatar;
+		Radix64::encode(data.mImage.mData, data.mImage.mSize, base64Avatar);
+		resp.mDataStream << makeKeyValue("avatar", base64Avatar);
+	}
+	else
+		data.mImage.clear();
+
+	uint32_t dummyToken = 0;
+	mRsIdentity->updateIdentity(dummyToken, data);
+
+	resp.setOk();
+}
+
+void IdentityHandler::handleGetAvatar(Request& req, Response& resp)
+{
+	std::string gxs_id;
+	req.mStream << makeKeyValueReference("gxs_id", gxs_id);
+
+	RsIdentityDetails details;
+	bool got = mRsIdentity->getIdDetails(RsGxsId(gxs_id), details);
+
+	std::string base64Avatar;
+	Radix64::encode(details.mAvatar.mData, details.mAvatar.mSize, base64Avatar);
+	resp.mDataStream << makeKeyValue("avatar", base64Avatar);
+
+	if(got)
+		resp.setOk();
+	else
+		resp.setFail();
 }
 
 void IdentityHandler::handleSetBanNode(Request& req, Response& resp)

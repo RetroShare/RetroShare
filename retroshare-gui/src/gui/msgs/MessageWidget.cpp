@@ -135,7 +135,7 @@ MessageWidget::MessageWidget(bool controlled, QWidget *parent, Qt::WindowFlags f
 	connect(ui.expandFilesButton, SIGNAL(clicked()), this, SLOT(togglefileview()));
 	connect(ui.downloadButton, SIGNAL(clicked()), this, SLOT(getallrecommended()));
 	connect(ui.msgText, SIGNAL(anchorClicked(QUrl)), this, SLOT(anchorClicked(QUrl)));
-	connect(ui.sendinviteButton, SIGNAL(clicked()), this, SLOT(sendInvite()));
+	connect(ui.sendInviteButton, SIGNAL(clicked()), this, SLOT(sendInvite()));
 
 	connect(NotifyQt::getInstance(), SIGNAL(messagesTagsChanged()), this, SLOT(messagesTagsChanged()));
 	connect(NotifyQt::getInstance(), SIGNAL(messagesChanged()), this, SLOT(messagesChanged()));
@@ -160,10 +160,13 @@ MessageWidget::MessageWidget(bool controlled, QWidget *parent, Qt::WindowFlags f
 	QFont font = QFont("Arial", 10, QFont::Bold);
 	ui.subjectText->setFont(font);
 
-	ui.bcclabel->setVisible(false);
-	ui.bccText->setVisible(false);
-	ui.cclabel->setVisible(false);
+	ui.toText->setMaximumHeight(ui.toText->fontMetrics().lineSpacing()*1.5);
+	ui.ccLabel->setVisible(false);
 	ui.ccText->setVisible(false);
+	ui.ccText->setMaximumHeight(ui.ccText->fontMetrics().lineSpacing()*1.5);
+	ui.bccLabel->setVisible(false);
+	ui.bccText->setVisible(false);
+	ui.bccText->setMaximumHeight(ui.bccText->fontMetrics().lineSpacing()*1.5);
 
 	ui.tagsLabel->setVisible(false);
 
@@ -454,11 +457,11 @@ void MessageWidget::fill(const std::string &msgId)
 		ui.fromText->setText("");
 		ui.filesText->setText("");
 
-		ui.cclabel->setVisible(false);
+		ui.ccLabel->setVisible(false);
 		ui.ccText->setVisible(false);
 		ui.ccText->clear();
 
-		ui.bcclabel->setVisible(false);
+		ui.bccLabel->setVisible(false);
 		ui.bccText->setVisible(false);
 		ui.bccText->clear();
 
@@ -519,7 +522,7 @@ void MessageWidget::fill(const std::string &msgId)
 
     if (!msgInfo.rspeerid_msgcc.empty() || !msgInfo.rsgxsid_msgcc.empty())
     {
-		ui.cclabel->setVisible(true);
+		ui.ccLabel->setVisible(true);
 		ui.ccText->setVisible(true);
 
 		text.clear();
@@ -528,14 +531,14 @@ void MessageWidget::fill(const std::string &msgId)
 
 		ui.ccText->setText(text);
 	} else {
-		ui.cclabel->setVisible(false);
+		ui.ccLabel->setVisible(false);
 		ui.ccText->setVisible(false);
 		ui.ccText->clear();
 	}
 
     if (!msgInfo.rspeerid_msgbcc.empty() || !msgInfo.rsgxsid_msgbcc.empty())
     {
-        ui.bcclabel->setVisible(true);
+        ui.bccLabel->setVisible(true);
         ui.bccText->setVisible(true);
 
         text.clear();
@@ -544,7 +547,7 @@ void MessageWidget::fill(const std::string &msgId)
 
 		ui.bccText->setText(text);
 	} else {
-		ui.bcclabel->setVisible(false);
+		ui.bccLabel->setVisible(false);
 		ui.bccText->setVisible(false);
 		ui.bccText->clear();
 	}

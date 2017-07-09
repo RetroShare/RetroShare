@@ -46,9 +46,10 @@ class TransferPage: public ConfigPage
 		void updateQueueSize(int) ;
 		void updateDefaultStrategy(int) ;
 		void updateDiskSizeLimit(int) ;
-        void updateMaxTRUpRate(int);
-        void updateEncryptionPolicy(int);
+		void updateMaxTRUpRate(int);
+		void updateEncryptionPolicy(int);
 		void updateMaxUploadSlots(int);
+		void updateFilePermDirectDL(int);
 
 		void editDirectories() ;
 		void setIncomingDirectory();

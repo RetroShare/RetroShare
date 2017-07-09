@@ -99,24 +99,27 @@ ftFileControl::ftFileControl(std::string fname,
 }
 
 ftController::ftController(ftDataMultiplex *dm, p3ServiceControl *sc, uint32_t ftServiceId)
-    : p3Config(),
-	last_save_time(0),
-	last_clean_time(0),
-	mDataplex(dm),
-	mTurtle(NULL), 
-	mFtServer(NULL), 
-	mServiceCtrl(sc),
-	mFtServiceType(ftServiceId),
-	ctrlMutex("ftController"),
-	doneMutex("ftController"),
-	mFtActive(false),
-	mDefaultChunkStrategy(FileChunksInfo::CHUNK_STRATEGY_PROGRESSIVE) 
+  : p3Config(),
+    last_save_time(0),
+    last_clean_time(0),
+    mSearch(NULL),
+    mDataplex(dm),
+    mExtraList(NULL),
+    mTurtle(NULL),
+    mFtServer(NULL),
+    mServiceCtrl(sc),
+    mFtServiceType(ftServiceId),
+    mDefaultEncryptionPolicy(RS_FILE_CTRL_ENCRYPTION_POLICY_PERMISSIVE),
+    mFilePermDirectDLPolicy(RS_FILE_PERM_DIRECT_DL_PER_USER),
+    cnt(0),
+    ctrlMutex("ftController"),
+    doneMutex("ftController"),
+    mFtActive(false),
+    mFtPendingDone(false),
+    mDefaultChunkStrategy(FileChunksInfo::CHUNK_STRATEGY_PROGRESSIVE),
+    _max_active_downloads(5), // default queue size
+    _max_uploads_per_friend(FT_FILECONTROL_MAX_UPLOAD_SLOTS_DEFAULT)
 {
-	_max_active_downloads = 5 ; // default queue size
-    mDefaultEncryptionPolicy = RS_FILE_CTRL_ENCRYPTION_POLICY_PERMISSIVE;
-	_max_uploads_per_friend = FT_FILECONTROL_MAX_UPLOAD_SLOTS_DEFAULT ;
-    /* TODO */
-    cnt = 0 ;
 }
 
 void ftController::setTurtleRouter(p3turtle *pt) { mTurtle = pt ; }
@@ -278,18 +281,27 @@ void ftController::data_tick()
 void ftController::searchForDirectSources()
 {
 	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
+	if (!mSearch) return;
 
-    for(std::map<RsFileHash,ftFileControl*>::iterator it(mDownloads.begin()); it != mDownloads.end(); ++it)
-		if(it->second->mState != ftFileControl::QUEUED && it->second->mState != ftFileControl::PAUSED)
-        {
-            FileInfo info ;	// info needs to be re-allocated each time, to start with a clear list of peers (it's not cleared down there)
+	for(std::map<RsFileHash,ftFileControl*>::iterator it(mDownloads.begin()); it != mDownloads.end(); ++it )
+		if(it->second->mState != ftFileControl::QUEUED && it->second->mState != ftFileControl::PAUSED )
+		{
+			FileInfo info ;	// Info needs to be re-allocated each time, to start with a clear list of peers (it's not cleared down there)
 
-            if(mSearch->search(it->first, RS_FILE_HINTS_REMOTE | RS_FILE_HINTS_SPEC_ONLY, info))
-                for(std::list<TransferInfo>::const_iterator pit = info.peers.begin(); pit != info.peers.end(); ++pit)
-                    if(rsPeers->servicePermissionFlags(pit->peerId) & RS_NODE_PERM_DIRECT_DL)
-                        if(it->second->mTransfer->addFileSource(pit->peerId)) /* if the sources don't exist already - add in */
-                            setPeerState(it->second->mTransfer, pit->peerId, FT_CNTRL_STANDARD_RATE, mServiceCtrl->isPeerConnected(mFtServiceType, pit->peerId));
-        }
+			if( mSearch->search(it->first, RS_FILE_HINTS_REMOTE | RS_FILE_HINTS_SPEC_ONLY, info) )
+				for( std::list<TransferInfo>::const_iterator pit = info.peers.begin(); pit != info.peers.end(); ++pit )
+				{
+					bool bAllowDirectDL = false;
+					switch (rsFiles->filePermDirectDL()) {
+						case RS_FILE_PERM_DIRECT_DL_YES: bAllowDirectDL = true; break;
+						case RS_FILE_PERM_DIRECT_DL_NO: bAllowDirectDL = false; break;
+						default:bAllowDirectDL = (rsPeers->servicePermissionFlags(pit->peerId) & RS_NODE_PERM_DIRECT_DL); break;
+					}
+					if( bAllowDirectDL )
+						if( it->second->mTransfer->addFileSource(pit->peerId) ) /* if the sources don't exist already - add in */
+							setPeerState( it->second->mTransfer, pit->peerId, FT_CNTRL_STANDARD_RATE, mServiceCtrl->isPeerConnected(mFtServiceType, pit->peerId) );
+				}
+		}
 }
 
 void ftController::tickTransfers()
@@ -748,7 +760,8 @@ bool ftController::completeFile(const RsFileHash& hash)
 		  std::cerr << std::endl;
 #endif
 
-		  mExtraList->addExtraFile(path, hash, size, period, extraflags);
+		if(mExtraList)
+			mExtraList->addExtraFile(path, hash, size, period, extraflags);
 	}
 	else
 	{
@@ -855,6 +868,7 @@ bool ftController::alreadyHaveFile(const RsFileHash& hash, FileInfo &info)
 		return true ;
 
 	// check for file lists
+	if (mSearch) return false;
 	if (mSearch->search(hash, RS_FILE_HINTS_LOCAL | RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_SPEC_ONLY, info))
 		return true ;
 	
@@ -944,18 +958,27 @@ bool 	ftController::FileRequest(const std::string& fname, const RsFileHash& hash
 
 	// remove the sources from the list, if they don't have clearance for direct transfer. This happens only for non cache files.
 	//
-    for(std::list<RsPeerId>::iterator it = srcIds.begin(); it != srcIds.end(); )
-        if(!(rsPeers->servicePermissionFlags(*it) & RS_NODE_PERM_DIRECT_DL))
-        {
-            std::list<RsPeerId>::iterator tmp(it) ;
-            ++tmp ;
-            srcIds.erase(it) ;
-            it = tmp ;
-        }
-        else
-            ++it ;
-	
-    std::list<RsPeerId>::const_iterator it;
+	for(std::list<RsPeerId>::iterator it = srcIds.begin(); it != srcIds.end(); )
+	{
+		bool bAllowDirectDL = false;
+		switch (rsFiles->filePermDirectDL()) {
+			case RS_FILE_PERM_DIRECT_DL_YES: bAllowDirectDL = true; break;
+			case RS_FILE_PERM_DIRECT_DL_NO: bAllowDirectDL = false; break;
+			default:bAllowDirectDL = (rsPeers->servicePermissionFlags(*it) & RS_NODE_PERM_DIRECT_DL); break;
+		}
+
+		if(!bAllowDirectDL)
+		{
+			std::list<RsPeerId>::iterator tmp(it);
+			++tmp;
+			srcIds.erase(it);
+			it = tmp;
+		}
+		else
+			++it;
+	}
+
+	std::list<RsPeerId>::const_iterator it;
 	std::list<TransferInfo>::const_iterator pit;
 
 #ifdef CONTROL_DEBUG
@@ -1001,7 +1024,14 @@ bool 	ftController::FileRequest(const std::string& fname, const RsFileHash& hash
 			 */
 
 			for(it = srcIds.begin(); it != srcIds.end(); ++it)
-                if(rsPeers->servicePermissionFlags(*it) & RS_NODE_PERM_DIRECT_DL)
+			{
+				bool bAllowDirectDL = false;
+				switch (rsFiles->filePermDirectDL()) {
+					case RS_FILE_PERM_DIRECT_DL_YES: bAllowDirectDL = true; break;
+					case RS_FILE_PERM_DIRECT_DL_NO: bAllowDirectDL = false; break;
+					default:bAllowDirectDL = (rsPeers->servicePermissionFlags(*it) & RS_NODE_PERM_DIRECT_DL); break;
+				}
+				if(bAllowDirectDL)
 				{
 					uint32_t i, j;
 					if ((dit->second)->mTransfer->getPeerState(*it, i, j))
@@ -1020,6 +1050,7 @@ bool 	ftController::FileRequest(const std::string& fname, const RsFileHash& hash
 					(dit->second)->mTransfer->addFileSource(*it);
 					setPeerState(dit->second->mTransfer, *it, rate, mServiceCtrl->isPeerConnected(mFtServiceType, *it));
 				}
+			}
 
 			if (srcIds.empty())
 			{
@@ -1034,7 +1065,7 @@ bool 	ftController::FileRequest(const std::string& fname, const RsFileHash& hash
 	} /******* UNLOCKED ********/
 
 
-	if(!(flags & RS_FILE_REQ_NO_SEARCH))
+	if(mSearch && !(flags & RS_FILE_REQ_NO_SEARCH))
 	{
 		/* do a source search - for any extra sources */
 		// add sources only in direct mode
@@ -1056,7 +1087,14 @@ bool 	ftController::FileRequest(const std::string& fname, const RsFileHash& hash
 #endif
 				// Because this is auto-add, we only add sources that we allow to DL from using direct transfers.
 
-                if ((srcIds.end() == std::find( srcIds.begin(), srcIds.end(), pit->peerId)) && (RS_NODE_PERM_DIRECT_DL & rsPeers->servicePermissionFlags(pit->peerId)))
+				bool bAllowDirectDL = false;
+				switch (rsFiles->filePermDirectDL()) {
+					case RS_FILE_PERM_DIRECT_DL_YES: bAllowDirectDL = true; break;
+					case RS_FILE_PERM_DIRECT_DL_NO: bAllowDirectDL = false; break;
+					default:bAllowDirectDL = (rsPeers->servicePermissionFlags(pit->peerId) & RS_NODE_PERM_DIRECT_DL); break;
+				}
+
+				if ((srcIds.end() == std::find( srcIds.begin(), srcIds.end(), pit->peerId)) && bAllowDirectDL)
 				{
 					srcIds.push_back(pit->peerId);
 
@@ -1729,6 +1767,7 @@ const std::string max_uploads_per_friend_ss("MAX_UPLOADS_PER_FRIEND");
 const std::string default_chunk_strategy_ss("DEFAULT_CHUNK_STRATEGY");
 const std::string free_space_limit_ss("FREE_SPACE_LIMIT");
 const std::string default_encryption_policy_ss("DEFAULT_ENCRYPTION_POLICY");
+const std::string file_perm_direct_dl_ss("FILE_PERM_DIRECT_DL");
 
 
 	/* p3Config Interface */
@@ -1778,6 +1817,15 @@ bool ftController::saveList(bool &cleanup, std::list<RsItem *>& saveData)
     configMap[max_uploads_per_friend_ss] = s ;
 
     configMap[default_encryption_policy_ss] = (mDefaultEncryptionPolicy==RS_FILE_CTRL_ENCRYPTION_POLICY_PERMISSIVE)?"PERMISSIVE":"STRICT" ;
+
+	switch (mFilePermDirectDLPolicy) {
+		case RS_FILE_PERM_DIRECT_DL_YES: configMap[file_perm_direct_dl_ss] = "YES" ;
+		break;
+		case RS_FILE_PERM_DIRECT_DL_NO: configMap[file_perm_direct_dl_ss] = "NO" ;
+		break;
+		default: configMap[file_perm_direct_dl_ss] = "PER_USER" ;
+		break;
+	}
 
 	rs_sprintf(s, "%lu", RsDiscSpace::freeSpaceLimit());
 	configMap[free_space_limit_ss] = s ;
@@ -1995,9 +2043,9 @@ bool  ftController::loadConfigMap(std::map<std::string, std::string> &configMap)
 {
 	std::map<std::string, std::string>::iterator mit;
 
-	std::string str_true("true");
-	std::string empty("");
-	std::string dir = "notempty";
+	//std::string str_true("true");
+	//std::string empty("");
+	//std::string dir = "notempty";
 
 	if (configMap.end() != (mit = configMap.find(download_dir_ss)))
 		setDownloadDirectory(mit->second);
@@ -2072,6 +2120,26 @@ bool  ftController::loadConfigMap(std::map<std::string, std::string> &configMap)
             _max_uploads_per_friend = n ;
 		}
     }
+
+	if(configMap.end() != (mit = configMap.find(file_perm_direct_dl_ss)))
+	{
+		if(mit->second == "YES")
+		{
+			mFilePermDirectDLPolicy = RS_FILE_PERM_DIRECT_DL_YES ;
+			std::cerr << "Note: loading default value for file permission direct download: YES" << std::endl;
+		}
+		else if(mit->second == "NO")
+		{
+			mFilePermDirectDLPolicy = RS_FILE_PERM_DIRECT_DL_NO ;
+			std::cerr << "Note: loading default value for file permission direct download: NO" << std::endl;
+		}
+		else if(mit->second == "PER_USER")
+		{
+			mFilePermDirectDLPolicy = RS_FILE_PERM_DIRECT_DL_PER_USER ;
+			std::cerr << "Note: loading default value for file permission direct download: PER_USER" << std::endl;
+		}
+	}
+
 	return true;
 }
 
@@ -2097,6 +2165,22 @@ uint32_t ftController::defaultEncryptionPolicy()
     RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
     return mDefaultEncryptionPolicy ;
 }
+
+void ftController::setFilePermDirectDL(uint32_t perm)
+{
+	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
+	if (mFilePermDirectDLPolicy != perm)
+	{
+		mFilePermDirectDLPolicy = perm;
+		IndicateConfigChanged();
+	}
+}
+uint32_t ftController::filePermDirectDL()
+{
+	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
+	return mFilePermDirectDLPolicy;
+}
+
 void ftController::setFreeDiskSpaceLimit(uint32_t size_in_mb)
 {
 	RsDiscSpace::setFreeSpaceLimit(size_in_mb) ;
