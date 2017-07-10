@@ -129,12 +129,12 @@ QStringList filedialog_open_filenames_hook(QWidget * parent, const QString &capt
 
 QString filedialog_open_filename_hook(QWidget * parent, const QString &caption, const QString &dir, const QString &filter, QString *selectedFilter, QFileDialog::Options options)
 {
-	return QFileDialog::getOpenFileName(parent, caption, dir, filter, selectedFilter, options | QFileDialog::DontUseNativeDialog);
+	return QFileDialog::getOpenFileName(parent, caption, dir, filter, selectedFilter, options);
 }
 
 QString filedialog_save_filename_hook(QWidget * parent, const QString &caption, const QString &dir, const QString &filter, QString *selectedFilter, QFileDialog::Options options)
 {
-	return QFileDialog::getSaveFileName(parent, caption, dir, filter, selectedFilter, options | QFileDialog::DontUseNativeDialog);
+	return QFileDialog::getSaveFileName(parent, caption, dir, filter, selectedFilter, options);
 }
 
 QString filedialog_existing_directory_hook(QWidget *parent, const QString &caption, const QString &dir, QFileDialog::Options options)
