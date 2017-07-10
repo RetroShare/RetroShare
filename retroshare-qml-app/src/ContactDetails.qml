@@ -27,6 +27,15 @@ Item
 	property var md
 	property bool is_contact: cntDt.md.is_contact
 
+	Button
+	    {
+			text: "Open f d "
+			onClicked:
+			{
+				androidImagePicker.openPicker()
+			}
+		}
+
 	ColorHash
 	{
 		id: colorHash

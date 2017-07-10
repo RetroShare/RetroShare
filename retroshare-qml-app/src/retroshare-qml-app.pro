@@ -5,7 +5,8 @@ QT += core network qml quick
 CONFIG += c++11
 
 HEADERS += libresapilocalclient.h \
-    rsqmlappengine.h
+    rsqmlappengine.h \
+    androidimagepicker.h
 SOURCES += main-app.cpp \
     libresapilocalclient.cpp \
     rsqmlappengine.cpp
