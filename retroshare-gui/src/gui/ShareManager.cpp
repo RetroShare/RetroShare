@@ -124,7 +124,7 @@ void ShareManager::doubleClickedCell(int row,int column)
 {
     if(column == COLUMN_PATH)
     {
-        QString dirname = QFileDialog::getExistingDirectory(NULL,tr("Choose directory"),QString(),QFileDialog::DontUseNativeDialog | QFileDialog::ShowDirsOnly);
+        QString dirname = QFileDialog::getExistingDirectory(NULL,tr("Choose directory"),QString(),QFileDialog::ShowDirsOnly);
 
         if(!dirname.isNull())
         {
@@ -358,7 +358,7 @@ void ShareManager::showEvent(QShowEvent *event)
 
 void ShareManager::addShare()
 {
-    QString fname = QFileDialog::getExistingDirectory(NULL,tr("Choose a directory to share"),QString(),QFileDialog::DontUseNativeDialog | QFileDialog::ShowDirsOnly);
+    QString fname = QFileDialog::getExistingDirectory(NULL,tr("Choose a directory to share"),QString(),QFileDialog::ShowDirsOnly);
 
     if(fname.isNull())
         return;
