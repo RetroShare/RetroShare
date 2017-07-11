@@ -38,6 +38,10 @@ Item
 		CustomFileChooser
 		{
 			id: fileChooser
+			onResultFileChanged:
+			{
+				console.log("Result file changed! " , resultFile)
+			}
 
 		}
 	}

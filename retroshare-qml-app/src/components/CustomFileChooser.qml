@@ -5,6 +5,8 @@ Item
 {
 	id: compRoot
 
+	property var resultFile
+
 	FileDialog
 	{
 		id: fileDialog
@@ -14,6 +16,7 @@ Item
 		visible: false
 		onAccepted: {
 			console.log("You chose: " + fileDialog.fileUrls)
+			resultFile = fileDialog.fileUrls
 		}
 		onRejected: {
 			console.log("Canceled")
@@ -26,7 +29,7 @@ Item
 		if (Qt.platform.os === "android")
 		{
 			console.log("ImagePicker Android platform detected")
-			mainWindow.addUriHandler("/media", androidResult)
+			mainWindow.addUriHandler("media", androidResult)
 			androidImagePicker.openPicker()
 		}
 		else
@@ -38,7 +41,8 @@ Item
 	function androidResult (uri)
 	{
 		console.log("Android image uri found" , uri)
-
+		resultFile = uri
+		mainWindow.delUriHandler("media", androidResult)
 	}
 
 
