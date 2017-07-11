@@ -46,6 +46,8 @@
 #define LIMIT_CERTIFICATE_SIZE		1
 #define MAX_CERTIFICATE_SIZE		10000
 
+//#define DEBUG_AUTHGPG 1
+
 const time_t STORE_KEY_TIMEOUT = 1 * 60 * 60; //store key is call around every hour
 
 AuthGPG *AuthGPG::_instance = NULL ;
@@ -88,7 +90,6 @@ bool AuthGPG::encryptTextToFile(const std::string& text,const std::string& outfi
 
 std::string pgp_pwd_callback(void * /*hook*/, const char *uid_title, const char *uid_hint, const char * /*passphrase_info*/, int prev_was_bad,bool *cancelled)
 {
-#define GPG_DEBUG2
 #ifdef GPG_DEBUG2
 	fprintf(stderr, "pgp_pwd_callback() called.\n");
 #endif
@@ -162,7 +163,9 @@ AuthGPG::AuthGPG(const std::string& path_to_public_keyring,const std::string& pa
  */
 int AuthGPG::GPGInit(const RsPgpId &ownId)
 {
+#ifdef DEBUG_AUTHGPG
 	std::cerr << "AuthGPG::GPGInit() called with own gpg id : " << ownId.toStdString() << std::endl;
+#endif
 
 	mOwnGpgId = RsPgpId(ownId);
 
@@ -170,7 +173,9 @@ int AuthGPG::GPGInit(const RsPgpId &ownId)
 	privateTrustCertificate(ownId, 5);
 	updateOwnSignatureFlag(mOwnGpgId) ;
 
+#ifdef DEBUG_AUTHGPG
 	std::cerr << "AuthGPG::GPGInit finished." << std::endl;
+#endif
 
 	return 1;
 }

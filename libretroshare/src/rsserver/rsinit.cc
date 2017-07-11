@@ -466,21 +466,28 @@ int RsInit::InitRetroShare(int argc, char **argv, bool /* strictCheck */)
 
 		// load Accounts.
 		if (!rsAccounts->loadAccounts())
-		{
 			return RS_INIT_NO_KEYRING ;
-		}
 
 		// choose alternative account.
 		if(prefUserString != "")
 		{
-			if (!rsAccounts->selectAccountByString(prefUserString))
+			RsPeerId ssl_id(prefUserString);
+
+			if(ssl_id.isNull())
 			{
 				std::cerr << "Invalid User location id: not found in list";
 				std::cerr << std::endl;
 				return RS_INIT_AUTH_FAILED ;
 			}
+
+			if(rsAccounts->selectId(ssl_id))
+			{
+				std::cerr << "Auto-selectng account ID " << ssl_id << std::endl;
+				return RS_INIT_HAVE_ACCOUNT;
+			}
 		}
 
+#ifdef TO_REMOVE
 		/* check that we have selected someone */
 		RsPeerId preferredId;
 		bool existingUser = rsAccounts->getPreferredAccountId(preferredId);
@@ -488,9 +495,6 @@ int RsInit::InitRetroShare(int argc, char **argv, bool /* strictCheck */)
 		if (existingUser)
 		{
 			if (rsInitConfig->passwd != "")
-			{
-				return RS_INIT_HAVE_ACCOUNT;
-			}
 
 			if(RsLoginHandler::getSSLPassword(preferredId,false,rsInitConfig->passwd))
 			{
@@ -499,8 +503,9 @@ int RsInit::InitRetroShare(int argc, char **argv, bool /* strictCheck */)
 				return RS_INIT_HAVE_ACCOUNT;
 			}
 		}
+#endif
 		return RS_INIT_OK;
-	}
+}
 
 
 /*
@@ -638,7 +643,9 @@ int RsInit::LoadCertificates(bool autoLoginNT)
 	
 	if(rsInitConfig->passwd == "") {
 		if (RsLoginHandler::getSSLPassword(preferredId,true,rsInitConfig->passwd) == false) {
+#ifdef DEBUG_RSINIT
 			std::cerr << "RsLoginHandler::getSSLPassword() Failed!";
+#endif
 			return 0 ;
 		}
 	} else {

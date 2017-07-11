@@ -266,6 +266,17 @@ void TerminalApiClient::data_tick()
 			sendPassword(passwd) ;
 			sendSelectedAccount(acc_ssl_id) ;
         }
+		else if(ask_for_password)
+		{
+            std::string prompt = "Enter the password for key " + key_name + " : " ;
+			std::cout << prompt ;
+			std::cout.flush();
+			std::string passwd = readStringFromKeyboard(true);
+
+			// now we have passwd and account number, so send it to the core.
+
+			sendPassword(passwd) ;
+		}
     }
 }
 
