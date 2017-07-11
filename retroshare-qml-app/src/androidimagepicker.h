@@ -19,10 +19,9 @@ public slots:
 		qDebug() << "Starting image picker intent";
 
         #ifdef __ANDROID__
-		    QAndroidJniObject::callStaticMethod<void>(
-			                            "org/retroshare/android/qml_app/RetroshareImagePicker",
-			                            "imagePickerIntent",
-			                            "()Landroid/content/Intent;" );
+		    QtAndroid::androidActivity().callMethod<void>(
+			                            "openImagePicker",
+			                            "()V" );
         #endif // __ANDROID__
 	}
 };
