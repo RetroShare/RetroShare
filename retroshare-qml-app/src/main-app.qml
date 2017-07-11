@@ -239,7 +239,7 @@ ApplicationWindow
 
 	function handleIntentUri(uriStr)
 	{
-		console.log("handleIntentUri(uriStr)")
+		console.log("handleIntentUri(uriStr)", uriStr)
 
 		if(!Array.isArray(uriStr.match(/:\/\/[a-zA-Z.-]*\//g)))
 		{
@@ -257,13 +257,23 @@ ApplicationWindow
 
 		var uri = new UriJs.URI(uriStr)
 		var hPath = uri.path() // no nesting ATM segmentCoded()
-		console.log(hPath)
+		console.log("hPath", hPath)
+
+		var authority = uri.authority()
+		console.log("authority", authority)
 
 		if(typeof uriHandlersRegister[hPath] == "function")
 		{
 			console.log("handleIntentUri(uriStr)", "found handler for path",
 						hPath, uriHandlersRegister[hPath])
 			uriHandlersRegister[hPath](uriStr)
+		}
+
+		else if (typeof uriHandlersRegister[authority] == "function" )
+		{
+			console.log("handleIntentUri(uriStr)", "found handler for path",
+						authority, uriHandlersRegister[authority])
+			uriHandlersRegister[authority](uriStr)
 		}
 	}
 
