@@ -348,18 +348,21 @@ int RsInit::InitRetroShare(int argc, char **argv, bool /* strictCheck */)
 		argstream as(argc,argv) ;
 
 
-		as >> option('a',"auto-login"       ,rsInitConfig->autoLogin      ,"AutoLogin (Windows Only) + StartMinimised")
+		as
+#ifdef RS_AUTOLOGIN
+		        >> option('a',"auto-login"       ,rsInitConfig->autoLogin      ,"AutoLogin (Windows Only) + StartMinimised")
+#endif
 		        >> option('m',"minimized"        ,rsInitConfig->startMinimised ,"Start minimized."                         )
 		        >> option('s',"stderr"           ,rsInitConfig->outStderr      ,"output to stderr instead of log file."    )
 		        >> option('u',"udp"              ,rsInitConfig->udpListenerOnly,"Only listen to UDP."                      )
 		        >> option('e',"external-port"    ,rsInitConfig->forceExtPort   ,"Use a forwarded external port."           )
 
-		        >> parameter('l',"log-file"      ,rsInitConfig->logfname       ,"logfile"   ,"Set Log filename."                        ,false)
-		        >> parameter('d',"debug-level"   ,rsInitConfig->debugLevel     ,"level"     ,"Set debug level."                         ,false)
-		        >> parameter('w',"password"      ,rsInitConfig->passwd         ,"password"  ,"Set Login Password."                      ,false)
-		        >> parameter('i',"ip-address"    ,rsInitConfig->inet           ,"nnn.nnn.nnn.nnn", "Set IP address to use."                   ,false)
-		        >> parameter('p',"port"          ,rsInitConfig->port           ,"port", "Set listenning port to use."              ,false)
-		        >> parameter('c',"base-dir"      ,opt_base_dir                 ,"directory", "Set base directory."                      ,false)
+		        >> parameter('l',"log-file"      ,rsInitConfig->logfname       ,"logfile"   ,"Set Log filename."                                           ,false)
+		        >> parameter('d',"debug-level"   ,rsInitConfig->debugLevel     ,"level"     ,"Set debug level."                                            ,false)
+		        >> parameter('w',"password"      ,rsInitConfig->passwd         ,"password"  ,"Set Login Password."                                         ,false)
+		        >> parameter('i',"ip-address"    ,rsInitConfig->inet           ,"nnn.nnn.nnn.nnn", "Force IP address to use (if cannot be detected)."      ,false)
+		        >> parameter('p',"port"          ,rsInitConfig->port           ,"port", "Set listenning port to use."                                      ,false)
+		        >> parameter('c',"base-dir"      ,opt_base_dir                 ,"directory", "Set base directory."                                         ,false)
 		        >> parameter('U',"user-id"       ,prefUserString               ,"ID", "[ocation Id] Sets Account to Use, Useful when Autologin is enabled.",false)
 		           // by rshare    'r' "link"                                         "Link" "Open RsLink with protocol retroshare://"
 		           // by rshare    'f' "rsfile"                                       "RsFile" "Open RsFile like RsCollection"
