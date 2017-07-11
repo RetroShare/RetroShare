@@ -102,8 +102,8 @@ public class RetroShareQmlActivity extends QtActivity
 		startActivityForResult( chooserIntent, PICK_PHOTO);
 	};
 
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-
+	public void onActivityResult(int requestCode, int resultCode, Intent data)
+	{
 		Log.i("RetroShareQmlActivity", "onActivityResult()" + String.valueOf(requestCode));
 
         if (resultCode == RESULT_OK)
@@ -119,22 +119,32 @@ public class RetroShareQmlActivity extends QtActivity
 				else
 				{
 					final String action = data.getAction();
-					if (action == null) {
+					if (action == null)
+					{
 						isCamera = false;
-					} else {
+					}
+					else
+					{
 						isCamera = action.equals(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
 					}
 				}
 
 				Uri selectedImageUri;
-				if (isCamera) {
+				if (isCamera)
+				{
 					selectedImageUri = capturedImageURI;
-				} else {
+				}
+				else
+				{
 					selectedImageUri = data == null ? null : data.getData();
 				}
 
-				Log.i("RetroShareQmlActivity", "Image uri found!" + selectedImageUri.toString());
-
+				String uri = selectedImageUri.toString();
+				if (uri != null)
+				{
+					Log.i("RetroShareQmlActivity", "Image uri found!" + uri);
+					NativeCalls.notifyIntentUri(uri);
+				}
 			}
         }
 	}
