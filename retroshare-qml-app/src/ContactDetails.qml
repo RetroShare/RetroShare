@@ -19,6 +19,7 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.0
 import "." //Needed for ClipboardWrapper singleton
+import "./components"
 import "URI.js" as UriJs
 
 Item
@@ -28,13 +29,18 @@ Item
 	property bool is_contact: cntDt.md.is_contact
 
 	Button
-	    {
-			text: "Open f d "
-			onClicked:
-			{
-				androidImagePicker.openPicker()
-			}
+	{
+		text: "Open f d "
+		onClicked:
+		{
+			fileChooser.open()
 		}
+		CustomFileChooser
+		{
+			id: fileChooser
+
+		}
+	}
 
 	ColorHash
 	{

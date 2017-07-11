@@ -29,5 +29,6 @@
         <file>icons/rating-unrated.png</file>
         <file>icons/rating.png</file>
         <file>TimedPopup.qml</file>
+        <file>components/CustomFileChooser.qml</file>
     </qresource>
 </RCC>
