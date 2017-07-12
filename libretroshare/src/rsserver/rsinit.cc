@@ -277,7 +277,7 @@ bool doPortRestrictions = false;
 #endif
 #endif
 
-int RsInit::InitRetroShare(int argc, char **argv, bool /* strictCheck */)
+int RsInit::InitRetroShare(int _argc, char **_argv, bool /* strictCheck */)
 {
 	/******************************** WINDOWS/UNIX SPECIFIC PART ******************/
 #ifdef WINDOWS_SYS
@@ -310,6 +310,9 @@ int RsInit::InitRetroShare(int argc, char **argv, bool /* strictCheck */)
 			}
 		}
 		argc = i;
+#else
+	char **argv = _argv ;
+	int argc = _argc ;
 #endif
 
 #ifdef DEBUG_RSINIT
