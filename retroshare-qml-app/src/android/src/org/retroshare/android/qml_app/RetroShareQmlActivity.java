@@ -22,6 +22,7 @@ import android.app.ActivityManager;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -139,14 +140,26 @@ public class RetroShareQmlActivity extends QtActivity
 					selectedImageUri = data == null ? null : data.getData();
 				}
 
-				String uri = selectedImageUri.toString();
+				String uri = getRealPathFromURI(selectedImageUri);
 				if (uri != null)
 				{
-					Log.i("RetroShareQmlActivity", "Image uri found!" + uri);
-					NativeCalls.notifyIntentUri(uri);
+					Log.i("RetroShareQmlActivity", "Image path from uri found!" + uri);
+					NativeCalls.notifyIntentUri("//file"+uri); // Add the authority for get it on qml code
 				}
 			}
         }
+	}
+
+	public String getRealPathFromURI(Uri uri) {
+		String[] projection = { MediaStore.Images.Media.DATA };
+		@SuppressWarnings("deprecation")
+		Cursor cursor = managedQuery(uri, projection, null, null, null);
+		int column_index = cursor
+				.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+		cursor.moveToFirst();
+		String result = cursor.getString(column_index);
+		cursor.close();
+		return result;
 	}
 
 
