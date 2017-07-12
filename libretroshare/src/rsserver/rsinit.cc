@@ -362,16 +362,20 @@ int RsInit::InitRetroShare(int _argc, char **_argv, bool /* strictCheck */)
 
 		        >> parameter('l',"log-file"      ,rsInitConfig->logfname       ,"logfile"   ,"Set Log filename."                                           ,false)
 		        >> parameter('d',"debug-level"   ,rsInitConfig->debugLevel     ,"level"     ,"Set debug level."                                            ,false)
+#ifdef TO_REMOVE
+		        // This as removed because it is not used anymore.
+
 		        >> parameter('w',"password"      ,rsInitConfig->passwd         ,"password"  ,"Set Login Password."                                         ,false)
+#endif
 		        >> parameter('i',"ip-address"    ,rsInitConfig->inet           ,"nnn.nnn.nnn.nnn", "Force IP address to use (if cannot be detected)."      ,false)
 		        >> parameter('p',"port"          ,rsInitConfig->port           ,"port", "Set listenning port to use."                                      ,false)
 		        >> parameter('c',"base-dir"      ,opt_base_dir                 ,"directory", "Set base directory."                                         ,false)
 		        >> parameter('U',"user-id"       ,prefUserString               ,"ID", "[ocation Id] Sets Account to Use, Useful when Autologin is enabled.",false)
 		           // by rshare    'r' "link"                                         "Link" "Open RsLink with protocol retroshare://"
 		           // by rshare    'f' "rsfile"                                       "RsFile" "Open RsFile like RsCollection"
-           #ifdef LOCALNET_TESTING
+#ifdef LOCALNET_TESTING
 		        >> parameter('R',"restrict-port" ,portRestrictions             ,"port1-port2","Apply port restriction"                   ,false)
-           #endif
+#endif
 		        >> help('h',"help","Display this Help") ;
 
 		as.defaultErrorHandling(true,true) ;
