@@ -43,9 +43,19 @@ Item
 			onResultFileChanged:
 			{
 				console.log("Result file changed! " , resultFile)
+				newAvatar.source = resultFile
 			}
 
 		}
+	}
+
+	Image
+	{
+		id: newAvatar
+		height: colorHash.height
+		width: colorHash.height
+		fillMode: Image.PreserveAspectFit
+
 	}
 
 	ColorHash
