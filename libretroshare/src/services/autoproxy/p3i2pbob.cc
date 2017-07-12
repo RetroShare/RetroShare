@@ -34,7 +34,7 @@ static const int sleepFactorDefault   = 10; // 0.5s
 static const int sleepFactorFast      = 1;  // 0.05s
 static const int sleepFactorSlow      = 20; // 1s
 
-static struct RsLog::logInfo i2pBobLogInfo = {RsLog::Debug_All, "p3I2pBob"};
+static struct RsLog::logInfo i2pBobLogInfo = {RsLog::Default, "p3I2pBob"};
 
 static const time_t selfCheckPeroid = 30;
 

@@ -31,7 +31,7 @@
 
 bool GxsTokenQueue::queueRequest(uint32_t token, uint32_t req_type)
 {
-	RsStackMutex stack(mQueueMtx); /********** STACK LOCKED MTX ******/
+	RS_STACK_MUTEX(mQueueMtx);
 	mQueue.push_back(GxsTokenQueueItem(token, req_type));
 	return true;
 }

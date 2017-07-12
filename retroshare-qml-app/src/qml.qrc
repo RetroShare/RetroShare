@@ -30,5 +30,6 @@
         <file>icons/rating.png</file>
         <file>TimedPopup.qml</file>
         <file>components/CustomFileChooser.qml</file>
+        <file>AvatarOrColorHash.qml</file>
     </qresource>
 </RCC>

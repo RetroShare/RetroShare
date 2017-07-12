@@ -30,12 +30,16 @@
 #	include <QtAndroid>
 #	include <QtAndroidExtras/QAndroidJniObject>
 #	include <atomic>
+#	include "androidplatforminteracions.h"
+#else
+#	include "defaultplatforminteracions.h"
 #endif // Q_OS_ANDROID
+
 
 #include "libresapilocalclient.h"
 #include "rsqmlappengine.h"
 #include "androidimagepicker.h"
-
+#include "platforminteracions.h"
 
 int main(int argc, char *argv[])
 {
@@ -70,6 +74,8 @@ int main(int argc, char *argv[])
 
 #ifdef Q_OS_ANDROID
 	rootContext.setContextProperty("Q_OS_ANDROID", QVariant(true));
+
+	AndroidPlatformInteracions platformGW(&app);
 
 	/* Add Activity Intent data to args, because onNewIntent is called only if
 	 * the Intet was triggered when the Activity was already created, so only in
@@ -125,10 +131,12 @@ int main(int argc, char *argv[])
 
 	if(!uriStr.isEmpty()) mainArgs.append(uriStr);
 #else
+	DefaultPlatformInteracions platformGW(&app);
 	rootContext.setContextProperty("Q_OS_ANDROID", QVariant(false));
 #endif
 
 	rootContext.setContextProperty("mainArgs", mainArgs);
+	rootContext.setContextProperty("platformGW", &platformGW);
 
 #ifdef QT_DEBUG
 	rootContext.setContextProperty("QT_DEBUG", QVariant(true));

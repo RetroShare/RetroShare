@@ -520,9 +520,12 @@ void p3Msgs::getPendingChatLobbyInvites(std::list<ChatLobbyInvite>& invites)
 {
 	mChatSrv->getPendingChatLobbyInvites(invites) ;
 }
-bool p3Msgs::initiateDistantChatConnexion(const RsGxsId& to_gxs_id,const RsGxsId& from_gxs_id,DistantChatPeerId& pid,uint32_t& error_code)
+bool p3Msgs::initiateDistantChatConnexion(
+        const RsGxsId& to_gxs_id, const RsGxsId& from_gxs_id,
+        DistantChatPeerId& pid, uint32_t& error_code, bool notify )
 {
-    return mChatSrv->initiateDistantChatConnexion(to_gxs_id,from_gxs_id,pid,error_code) ;
+	return mChatSrv->initiateDistantChatConnexion( to_gxs_id, from_gxs_id,
+	                                               pid, error_code, notify );
 }
 bool p3Msgs::getDistantChatStatus(const DistantChatPeerId& pid,DistantChatPeerInfo& info)
 {

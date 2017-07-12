@@ -30,6 +30,7 @@
 #include "util/TokenQueue.h"
 #include "RsAutoUpdatePage.h"
 #include "ui_GxsTransportStatistics.h"
+#include "gui/gxs/RsGxsUpdateBroadcastPage.h"
 
 class GxsTransportStatisticsWidget ;
 class UIStateHelper;
@@ -37,15 +38,29 @@ class UIStateHelper;
 class RsGxsTransGroupStatistics: public GxsGroupStatistic
 {
 public:
-	RsGxsTransGroupStatistics() {}
+	RsGxsTransGroupStatistics()
+	{
+		last_publish_TS = 0;
+		popularity = 0;
+		subscribed = false;
+	}
+
+	void addMessageMeta(const RsGxsGroupId& grp,const RsMsgMetaData& meta)
+	{
+		messages_metas[meta.mMsgId] = meta ;
+		last_publish_TS = std::max(last_publish_TS,meta.mPublishTs) ;
+		mGrpId = grp ;
+	}
 
 	bool subscribed ;
 	int  popularity ;
 
-    std::vector<RsMsgMetaData> messages_metas ;
+	time_t last_publish_TS;
+
+    std::map<RsGxsMessageId,RsMsgMetaData> messages_metas ;
 };
 
-class GxsTransportStatistics: public RsAutoUpdatePage, public TokenResponse, public Ui::GxsTransportStatistics
+class GxsTransportStatistics: public RsGxsUpdateBroadcastPage, public TokenResponse, public Ui::GxsTransportStatistics
 {
 	Q_OBJECT
 
@@ -66,6 +81,7 @@ private slots:
 	void personDetails();
 
 private:
+	void updateDisplay(bool complete) ;
 	void loadGroupMeta(const uint32_t& token);
 	void loadGroupStat(const uint32_t& token);
 	void loadMsgMeta(const uint32_t& token);
@@ -76,8 +92,6 @@ private:
 
 	void processSettings(bool bLoad);
 	bool m_bProcessSettings;
-
-	virtual void updateDisplay() ;
 
 	GxsTransportStatisticsWidget *_tst_CW ;
 	TokenQueue *mTransQueue ;

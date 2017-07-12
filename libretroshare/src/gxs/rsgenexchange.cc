@@ -70,7 +70,7 @@ static const uint32_t INTEGRITY_CHECK_PERIOD = 60*31; // 31 minutes
 
 RsGenExchange::RsGenExchange(RsGeneralDataService *gds, RsNetworkExchangeService *ns,
                              RsSerialType *serviceSerialiser, uint16_t servType, RsGixs* gixs,
-                             uint32_t authenPolicy, uint32_t messageStorePeriod)
+                             uint32_t authenPolicy)
   : mGenMtx("GenExchange"),
     mDataStore(gds),
     mNetService(ns),
@@ -78,7 +78,6 @@ RsGenExchange::RsGenExchange(RsGeneralDataService *gds, RsNetworkExchangeService
   mServType(servType),
   mGixs(gixs),
   mAuthenPolicy(authenPolicy),
-  MESSAGE_STORE_PERIOD(messageStorePeriod),
   mCleaning(false),
   mLastClean((int)time(NULL) - (int)(RSRandom::random_u32() % MSG_CLEANUP_PERIOD)),	// this helps unsynchronising the checks for the different services
   mMsgCleanUp(NULL),
@@ -94,9 +93,7 @@ RsGenExchange::RsGenExchange(RsGeneralDataService *gds, RsNetworkExchangeService
   VALIDATE_FAIL_TRY_LATER(2),
   VALIDATE_MAX_WAITING_TIME(60)
 {
-
     mDataAccess = new RsGxsDataAccess(gds);
-
 }
 
 void RsGenExchange::setNetworkExchangeService(RsNetworkExchangeService *ns)
@@ -104,7 +101,9 @@ void RsGenExchange::setNetworkExchangeService(RsNetworkExchangeService *ns)
     if(mNetService != NULL)
         std::cerr << "(EE) Cannot override existing network exchange service. Make sure it has been deleted otherwise." << std::endl;
     else
+	{
         mNetService = ns ;
+	}
 }
 
 RsGenExchange::~RsGenExchange()
@@ -190,62 +189,67 @@ void RsGenExchange::tick()
 	now = time(NULL);
 	if(mChecking || (mLastCheck + INTEGRITY_CHECK_PERIOD < now))
 	{
-		if(mIntegrityCheck)
+		mLastCheck = time(NULL);
+
 		{
-			if(mIntegrityCheck->isDone())
+			RS_STACK_MUTEX(mGenMtx) ;
+
+			if(!mIntegrityCheck)
 			{
-				std::list<RsGxsGroupId> grpIds;
-				std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > msgIds;
-				mIntegrityCheck->getDeletedIds(grpIds, msgIds);
-
-				if (!grpIds.empty())
-				{
-					RS_STACK_MUTEX(mGenMtx) ;
-
-					RsGxsGroupChange* gc = new RsGxsGroupChange(RsGxsNotify::TYPE_PROCESSED, false);
-					gc->mGrpIdList = grpIds;
-#ifdef GEN_EXCH_DEBUG
-                    			std::cerr << "  adding the following grp ids to notification: " << std::endl;
-                                	for(std::list<RsGxsGroupId>::const_iterator it(grpIds.begin());it!=grpIds.end();++it)
-                                        	std::cerr << "    " << *it << std::endl;
-#endif
-					mNotifications.push_back(gc);
-
-                    // also notify the network exchange service that these groups no longer exist.
-
-                    if(mNetService)
-                        mNetService->removeGroups(grpIds) ;
-				}
-
-				if (!msgIds.empty()) {
-					RS_STACK_MUTEX(mGenMtx) ;
-
-					RsGxsMsgChange* c = new RsGxsMsgChange(RsGxsNotify::TYPE_PROCESSED, false);
-					c->msgChangeMap = msgIds;
-					mNotifications.push_back(c);
-				}
-
-				delete mIntegrityCheck;
-				mIntegrityCheck = NULL;
-				mLastCheck = time(NULL);
-				mChecking = false;
+				mIntegrityCheck = new RsGxsIntegrityCheck(mDataStore,this,mGixs);
+				mIntegrityCheck->start("gxs integrity");
+				mChecking = true;
 			}
 		}
-		else
+
+		if(mIntegrityCheck->isDone())
 		{
-			mIntegrityCheck = new RsGxsIntegrityCheck(mDataStore,this,mGixs);
-			mIntegrityCheck->start("gxs integrity");
-			mChecking = true;
+			RS_STACK_MUTEX(mGenMtx) ;
+
+			std::list<RsGxsGroupId> grpIds;
+			std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > msgIds;
+			mIntegrityCheck->getDeletedIds(grpIds, msgIds);
+
+			if (!grpIds.empty())
+			{
+				RsGxsGroupChange* gc = new RsGxsGroupChange(RsGxsNotify::TYPE_PROCESSED, false);
+				gc->mGrpIdList = grpIds;
+#ifdef GEN_EXCH_DEBUG
+				std::cerr << "  adding the following grp ids to notification: " << std::endl;
+				for(std::list<RsGxsGroupId>::const_iterator it(grpIds.begin());it!=grpIds.end();++it)
+					std::cerr << "    " << *it << std::endl;
+#endif
+				mNotifications.push_back(gc);
+
+				// also notify the network exchange service that these groups no longer exist.
+
+				if(mNetService)
+					mNetService->removeGroups(grpIds) ;
+			}
+
+			if (!msgIds.empty())
+			{
+				RsGxsMsgChange* c = new RsGxsMsgChange(RsGxsNotify::TYPE_PROCESSED, false);
+				c->msgChangeMap = msgIds;
+				mNotifications.push_back(c);
+			}
+
+			delete mIntegrityCheck;
+			mIntegrityCheck = NULL;
+			mChecking = false;
 		}
 	}
 }
 
 bool RsGenExchange::messagePublicationTest(const RsGxsMsgMetaData& meta)
 {
-	time_t st = MESSAGE_STORE_PERIOD;
+	if(!mNetService)
+	{
+		std::cerr << "(EE) No network service in service " << std::hex  << serviceType() << std::dec << ": cannot read message storage time." << std::endl;
+		return false ;
+	}
 
-	if(mNetService)
-        st = mNetService->getKeepAge(meta.mGroupId, st);
+	uint32_t st = mNetService->getKeepAge(meta.mGroupId);
 
 	time_t storageTimeLimit = meta.mPublishTs + st;
 
@@ -1184,26 +1188,30 @@ bool RsGenExchange::getGroupMeta(const uint32_t &token, std::list<RsGroupMetaDat
 	std::list<RsGxsGrpMetaData*> metaL;
 	bool ok = mDataAccess->getGroupSummary(token, metaL);
 
-	std::list<RsGxsGrpMetaData*>::iterator lit = metaL.begin();
 	RsGroupMetaData m;
-	for(; lit != metaL.end(); ++lit)
+
+	for( std::list<RsGxsGrpMetaData*>::iterator lit = metaL.begin(); lit != metaL.end(); ++lit)
 	{
 		RsGxsGrpMetaData& gMeta = *(*lit);
+
         m = gMeta;
         RsGroupNetworkStats sts ;
 
-    if(mNetService != NULL && mNetService->getGroupNetworkStats((*lit)->mGroupId,sts))
-    {
-        m.mPop = sts.mSuppliers ;
-        m.mVisibleMsgCount = sts.mMaxVisibleCount ;
-    }
-    else
-    {
-        m.mPop= 0 ;
-        m.mVisibleMsgCount = 0 ;
-        }
+		if(mNetService != NULL && mNetService->getGroupNetworkStats(gMeta.mGroupId,sts))
+		{
+			m.mPop = sts.mSuppliers ;
+			m.mVisibleMsgCount = sts.mMaxVisibleCount ;
 
-        groupInfo.push_back(m);
+			if((!(IS_GROUP_SUBSCRIBED(gMeta.mSubscribeFlags))) || gMeta.mLastPost == 0)
+				m.mLastPost = sts.mLastGroupModificationTS ;
+		}
+		else
+		{
+			m.mPop= 0 ;
+			m.mVisibleMsgCount = 0 ;
+		}
+
+		groupInfo.push_back(m);
 		delete (*lit);
 	}
 
@@ -1365,12 +1373,21 @@ bool RsGenExchange::getGroupData(const uint32_t &token, std::vector<RsGxsGrpItem
 					{
 						gItem->meta.mPop = sts.mSuppliers;
 						gItem->meta.mVisibleMsgCount  = sts.mMaxVisibleCount;
+
+						// When the group is not subscribed, the last post value is not updated, because there's no message stored. As a consequence,
+						// we rely on network statistics to give this value, but it is not as accurate as if it was locally computed, because of blocked
+						// posts, friends not available, sync delays, etc. Similarly if the group has just been subscribed, the last post info is probably
+						// uninitialised, so we will it too.
+
+						if((!(IS_GROUP_SUBSCRIBED(gItem->meta.mSubscribeFlags))) || gItem->meta.mLastPost == 0)
+							gItem->meta.mLastPost = sts.mLastGroupModificationTS ;
 					}
 					else
 					{
 						gItem->meta.mPop = 0;
 						gItem->meta.mVisibleMsgCount = 0;
 					}
+
 
                     // Also check the group privacy flags. A while ago, it as possible to publish a group without privacy flags. Now it is not possible anymore.
                     // As a consequence, it's important to supply a correct value in this flag before the data can be edited/updated.
@@ -1752,8 +1769,18 @@ void RsGenExchange::deleteGroup(uint32_t& token, const RsGxsGroupId& grpId)
 }
 void RsGenExchange::deleteMsgs(uint32_t& token, const GxsMsgReq& msgs)
 {
+	RS_STACK_MUTEX(mGenMtx) ;
+
 	token = mDataAccess->generatePublicToken();
 	mMsgDeletePublish.push_back(MsgDeletePublish(msgs, token));
+
+	// This code below will suspend any requests of the deleted messages for 24 hrs. This of course only works
+	// if all friend nodes consistently delete the messages in the mean time.
+
+	if(mNetService != NULL)
+		for(GxsMsgReq::const_iterator it(msgs.begin());it!=msgs.end();++it)
+			for(uint32_t i=0;i<it->second.size();++i)
+				mNetService->rejectMessage(it->second[i]) ;
 }
 
 void RsGenExchange::publishMsg(uint32_t& token, RsGxsMsgItem *msgItem)
@@ -1813,10 +1840,12 @@ uint32_t RsGenExchange::getStoragePeriod(const RsGxsGroupId& grpId)
 {
 	RS_STACK_MUTEX(mGenMtx) ;
 
-	if(mNetService != NULL)
-        return mNetService->getKeepAge(grpId,MESSAGE_STORE_PERIOD) ;
-    else
-        return MESSAGE_STORE_PERIOD;
+	if(!mNetService)
+	{
+		std::cerr << "(EE) No network service in service " << std::hex  << serviceType() << std::dec << ": cannot read message storage time. Returning infinity." << std::endl;
+		return false ;
+	}
+	return mNetService->getKeepAge(grpId) ;
 }
 void     RsGenExchange::setStoragePeriod(const RsGxsGroupId& grpId,uint32_t age_in_secs)
 {
@@ -2900,8 +2929,12 @@ void RsGenExchange::processRecvdMessages()
 		    std::cerr << "    deserialised info: grp id=" << meta->mGroupId << ", msg id=" << meta->mMsgId ;
 #endif
 		    uint8_t validateReturn = VALIDATE_FAIL;
+			bool accept_new_msg = acceptNewMessage(meta,msg->msg.bin_len);
 
-		    if(ok)
+			if(!accept_new_msg && mNetService != NULL)
+				mNetService->rejectMessage(meta->mMsgId) ;	// This prevents reloading the message again at next sync.
+
+		    if(ok && accept_new_msg)
 		    {
 			    std::map<RsGxsGroupId, RsGxsGrpMetaData*>::iterator mit = grpMetas.find(msg->grpId);
 
@@ -3042,8 +3075,8 @@ void RsGenExchange::processRecvdMessages()
 		    mNetService->rejectMessage(*it) ;
 }
 
-bool RsGenExchange::acceptNewGroup(const RsGxsGrpMetaData* /*grpMeta*/ )
-{ return true; }
+bool RsGenExchange::acceptNewGroup(const RsGxsGrpMetaData* /*grpMeta*/ ) { return true; }
+bool RsGenExchange::acceptNewMessage(const RsGxsMsgMetaData* /*grpMeta*/,uint32_t size ) { return true; }
 
 void RsGenExchange::processRecvdGroups()
 {

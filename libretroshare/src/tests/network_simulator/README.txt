@@ -51,7 +51,7 @@ together. The routers will talk to a fake link manager, which reports the peers 
 
 Required components:
 ===================
-	NetworkGraph: a set of friends, with connexions. Should be able to be saved to a file for debugging.
+	NetworkGraph: a set of friends, with connections. Should be able to be saved to a file for debugging.
 
 	GraphNode: a RS peer, represented by a random SSL id, a link manager, and possibly components such as file transfer, etc. 
 

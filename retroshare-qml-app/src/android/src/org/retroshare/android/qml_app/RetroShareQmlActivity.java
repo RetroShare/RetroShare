@@ -73,6 +73,17 @@ public class RetroShareQmlActivity extends QtActivity
 		if (uri != null) NativeCalls.notifyIntentUri(uri);
 	}
 
+	@UsedByNativeCode @SuppressWarnings("unused")
+	public void shareUrl(String urlStr)
+	{
+		Intent shareIntent = new Intent()
+				.setAction(Intent.ACTION_SEND)
+				.putExtra(Intent.EXTRA_TEXT, urlStr)
+				.setType("text/plain");
+		startActivity(Intent.createChooser(shareIntent,"")); // TODO: Need proper title?
+	}
+
+
 	private boolean isMyServiceRunning(Class<?> serviceClass)
 	{
 		ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);

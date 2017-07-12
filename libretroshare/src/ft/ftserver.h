@@ -140,6 +140,8 @@ public:
     virtual uint32_t defaultEncryptionPolicy() ;
 	virtual void setMaxUploadSlotsPerFriend(uint32_t n) ;
 	virtual uint32_t getMaxUploadSlotsPerFriend() ;
+	virtual void setFilePermDirectDL(uint32_t perm) ;
+	virtual uint32_t filePermDirectDL() ;
 
     /***
          * Control of Downloads Priority.

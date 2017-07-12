@@ -6,17 +6,24 @@ CONFIG += c++11
 
 HEADERS += libresapilocalclient.h \
     rsqmlappengine.h \
-    androidimagepicker.h
+    androidimagepicker.h \
+    platforminteracions.h
 SOURCES += main-app.cpp \
     libresapilocalclient.cpp \
     rsqmlappengine.cpp
 
 RESOURCES += qml.qrc
 
+
+# Platform interaction specific code
+
 android-g++ {
     QT += androidextras
-    SOURCES += NativeCalls.cpp
-    HEADERS += NativeCalls.h
+    HEADERS += NativeCalls.h androidplatforminteracions.h
+    SOURCES += NativeCalls.cpp androidplatforminteracions.cpp
+} else {
+    HEADERS += defaultplatforminteracions.h
+    SOURCES += defaultplatforminteracions.cpp
 }
 
 # Additional import path used to resolve QML modules in Qt Creator's code model

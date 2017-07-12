@@ -4,7 +4,7 @@
 version="0.6.2"
 gitpath="https://github.com/RetroShare/RetroShare.git"
 workdir=retroshare06-${version}
-branch="v0.6.2-official_release"
+branch="master"
 #bubba3="Y"		# comment out to compile for bubba3
 ######################################################
 

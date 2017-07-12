@@ -60,6 +60,7 @@
 #define COL_GROUP_SIZE_MSGS               2
 #define COL_GROUP_SUBSCRIBED              3
 #define COL_GROUP_POPULARITY              4
+#define COL_GROUP_UNIQUE_ID               5
 
 static const int PARTIAL_VIEW_SIZE                           =  9 ;
 static const int MAX_TUNNEL_REQUESTS_DISPLAY                 = 10 ;
@@ -70,10 +71,10 @@ static const int GXSTRANS_STATISTICS_DELAY_BETWEEN_GROUP_REQ = 30 ;	// never req
 #define GXSTRANS_GROUP_STAT  0x03
 #define GXSTRANS_MSG_META    0x04
 
-#define DEBUG_GXSTRANS_STATS 1
+//#define DEBUG_GXSTRANS_STATS 1
 
 GxsTransportStatistics::GxsTransportStatistics(QWidget *parent)
-    : RsAutoUpdatePage(2000,parent)
+    : RsGxsUpdateBroadcastPage(rsGxsTrans,parent)
 {
 	setupUi(this) ;
 	
@@ -93,6 +94,7 @@ GxsTransportStatistics::GxsTransportStatistics(QWidget *parent)
 
 	// load settings
 	processSettings(true);
+	updateDisplay(true);
 }
 
 GxsTransportStatistics::~GxsTransportStatistics()
@@ -139,19 +141,15 @@ void GxsTransportStatistics::CustomPopupMenu( QPoint )
 	contextMnu.exec(QCursor::pos());
 }
 
-void GxsTransportStatistics::updateDisplay()
+void GxsTransportStatistics::updateDisplay(bool)
 {
-    time_t now = time(NULL) ;
+	time_t now = time(NULL) ;
+#ifdef DEBUG_GXSTRANS_STATS
+	std::cerr << "GxsTransportStatistics::updateDisplay()" << std::endl;
+#endif
 
-    if(mLastGroupReqTS + GXSTRANS_STATISTICS_DELAY_BETWEEN_GROUP_REQ < now)
-    {
-        requestGroupMeta();
-        mLastGroupReqTS = now ;
-    }
-
-	//_tst_CW->updateContent() ;
-
-	updateContent();
+	requestGroupMeta();
+	mLastGroupReqTS = now ;
 }
 
 QString GxsTransportStatistics::getPeerName(const RsPeerId &peer_id)
@@ -199,7 +197,6 @@ void GxsTransportStatistics::updateContent()
 
     rsGxsTrans->getStatistics(transinfo) ;
 
-
     // clear
 
     treeWidget->clear();
@@ -246,32 +243,57 @@ void GxsTransportStatistics::updateContent()
         if(groupTreeWidget->isItemExpanded(groupTreeWidget->topLevelItem(i)))
             openned_groups.insert(RsGxsGroupId(groupTreeWidget->topLevelItem(i)->data(COL_GROUP_GRP_ID,Qt::DisplayRole).toString().toStdString())) ;
 
-    groupTreeWidget->clear();
+	groupTreeWidget->clear();
 
     for(std::map<RsGxsGroupId,RsGxsTransGroupStatistics>::const_iterator it(mGroupStats.begin());it!=mGroupStats.end();++it)
     {
         const RsGxsTransGroupStatistics& stat(it->second) ;
+		QTreeWidgetItem *item ;
 
-		QTreeWidgetItem *item = new QTreeWidgetItem();
+		{
+			QString unique_id = QString::fromStdString(stat.mGrpId.toStdString());
+
+			QList<QTreeWidgetItem*> iteml = groupTreeWidget->findItems(unique_id,Qt::MatchExactly,COL_GROUP_UNIQUE_ID) ;
+
+			if(iteml.empty())
+				item = new QTreeWidgetItem;
+			else
+				item = *iteml.begin();
+		}
+
         groupTreeWidget->addTopLevelItem(item);
 		groupTreeWidget->setItemExpanded(item,openned_groups.find(it->first) != openned_groups.end());
 
-        item->setData(COL_GROUP_GRP_ID,    Qt::DisplayRole,  QString::fromStdString(stat.mGrpId.toStdString())) ;
-        item->setData(COL_GROUP_NUM_MSGS,  Qt::DisplayRole,  QString::number(stat.mNumMsgs)) ;
+		QString msg_time_string = (stat.last_publish_TS>0)?QString(" (Last msg: %1)").arg(QDateTime::fromTime_t(stat.last_publish_TS).toString()):"" ;
+
+        item->setData(COL_GROUP_NUM_MSGS,  Qt::DisplayRole,  QString::number(stat.mNumMsgs) + msg_time_string) ;
+        item->setData(COL_GROUP_GRP_ID,    Qt::DisplayRole,  QString::fromStdString(it->first.toStdString())) ;
         item->setData(COL_GROUP_SIZE_MSGS, Qt::DisplayRole,  QString::number(stat.mTotalSizeOfMsgs)) ;
         item->setData(COL_GROUP_SUBSCRIBED,Qt::DisplayRole,  stat.subscribed?tr("Yes"):tr("No")) ;
         item->setData(COL_GROUP_POPULARITY,Qt::DisplayRole,  QString::number(stat.popularity)) ;
+        item->setData(COL_GROUP_UNIQUE_ID, Qt::DisplayRole,  QString::fromStdString(it->first.toStdString())) ;
 
-        for(uint32_t i=0;i<it->second.messages_metas.size();++i)
+        for(std::map<RsGxsMessageId,RsMsgMetaData>::const_iterator msgIt(stat.messages_metas.begin());msgIt!=stat.messages_metas.end();++msgIt)
         {
-            QTreeWidgetItem *sitem = new QTreeWidgetItem(item) ;
+            const RsMsgMetaData& meta(msgIt->second);
 
-            const RsMsgMetaData& meta(it->second.messages_metas[i]) ;
+            QTreeWidgetItem *sitem ;
+			{
+				QString unique_id = QString::fromStdString(meta.mMsgId.toStdString());
+
+				QList<QTreeWidgetItem*> iteml = groupTreeWidget->findItems(unique_id,Qt::MatchExactly,COL_GROUP_UNIQUE_ID) ;
+
+				if(iteml.empty())
+					sitem = new QTreeWidgetItem(item) ;
+				else
+					sitem = *iteml.begin();
+			}
 
             GxsIdLabel *label = new GxsIdLabel();
             label->setId(meta.mAuthorId) ;
             groupTreeWidget->setItemWidget(sitem,COL_GROUP_GRP_ID,label) ;
 
+			sitem->setData(COL_GROUP_UNIQUE_ID, Qt::DisplayRole,QString::fromStdString(meta.mMsgId.toStdString()));
             sitem->setData(COL_GROUP_NUM_MSGS,Qt::DisplayRole, QDateTime::fromTime_t(meta.mPublishTs).toString());
         }
     }
@@ -319,6 +341,8 @@ void GxsTransportStatistics::loadRequest(const TokenQueue *queue, const TokenReq
 		std::cerr << std::endl;
 		break;
 	}
+
+	updateContent();
 }
 
 void GxsTransportStatistics::requestGroupMeta()
@@ -330,8 +354,6 @@ void GxsTransportStatistics::requestGroupMeta()
 	std::cerr << std::endl;
 #endif
 
-	mTransQueue->cancelActiveRequestTokens(GXSTRANS_GROUP_META);
-
 	RsTokReqOptions opts;
 	opts.mReqType = GXS_REQUEST_TYPE_GROUP_META;
 
@@ -340,7 +362,6 @@ void GxsTransportStatistics::requestGroupMeta()
 }
 void GxsTransportStatistics::requestGroupStat(const RsGxsGroupId &groupId)
 {
-	mTransQueue->cancelActiveRequestTokens(GXSTRANS_GROUP_STAT);
 	uint32_t token;
 	rsGxsTrans->getTokenService()->requestGroupStatistic(token, groupId);
 	mTransQueue->queueRequest(token, 0, RS_TOKREQ_ANSTYPE_ACK, GXSTRANS_GROUP_STAT);
@@ -353,8 +374,6 @@ void GxsTransportStatistics::requestMsgMeta(const RsGxsGroupId& grpId)
 	std::cerr << "GxsTransportStatisticsWidget::requestGroupMeta()";
 	std::cerr << std::endl;
 #endif
-
-	mTransQueue->cancelActiveRequestTokens(GXSTRANS_MSG_META);
 
 	RsTokReqOptions opts;
 	opts.mReqType = GXS_REQUEST_TYPE_MSG_META;
@@ -369,12 +388,12 @@ void GxsTransportStatistics::requestMsgMeta(const RsGxsGroupId& grpId)
 
 void GxsTransportStatistics::loadGroupStat(const uint32_t &token)
 {
-#ifdef DEBUG_GXSTRANS_STATS
-    std::cerr << "GxsTransportStatistics::loadGroupStat." << std::endl;
-#endif
 	GxsGroupStatistic stats;
 	rsGxsTrans->getGroupStatistic(token, stats);
 
+#ifdef DEBUG_GXSTRANS_STATS
+	std::cerr << "Loading group stats: " << stats.mGrpId << ", num msgs=" << stats.mNumMsgs << ", total size=" << stats.mTotalSizeOfMsgs << std::endl;
+#endif
     dynamic_cast<GxsGroupStatistic&>(mGroupStats[stats.mGrpId]) = stats ;
 }
 
@@ -417,6 +436,7 @@ void GxsTransportStatistics::loadGroupMeta(const uint32_t& token)
         RsGxsTransGroupStatistics& s(mGroupStats[vit->mGroupId]);
         s.popularity = vit->mPop ;
         s.subscribed = IS_GROUP_SUBSCRIBED(vit->mSubscribeFlags) ;
+		s.mGrpId = vit->mGroupId ;
 	}
 
     // remove group stats for group that do not exist anymore
@@ -438,6 +458,7 @@ void GxsTransportStatistics::loadMsgMeta(const uint32_t& token)
         return ;
 
     for(GxsMsgMetaMap::const_iterator it(m.begin());it!=m.end();++it)
-        mGroupStats[it->first].messages_metas = it->second ;
+		for(uint32_t i=0;i<it->second.size();++i)
+			mGroupStats[it->first].addMessageMeta(it->first,it->second[i]) ;
 }
 

@@ -44,8 +44,6 @@
 
 RsGxsForums *rsGxsForums = NULL;
 
-const uint32_t GXSFORUMS_MSG_STORE_PERIOD = 60*60*24*31*12; // 12 months / 1 year
-
 #define FORUM_TESTEVENT_DUMMYDATA	0x0001
 #define DUMMYDATA_PERIOD		60	// long enough for some RsIdentities to be generated.
 
@@ -56,8 +54,7 @@ const uint32_t GXSFORUMS_MSG_STORE_PERIOD = 60*60*24*31*12; // 12 months / 1 yea
 p3GxsForums::p3GxsForums( RsGeneralDataService *gds,
                           RsNetworkExchangeService *nes, RsGixs* gixs ) :
     RsGenExchange( gds, nes, new RsGxsForumSerialiser(),
-                   RS_SERVICE_GXS_TYPE_FORUMS, gixs, forumsAuthenPolicy(),
-                   GXSFORUMS_MSG_STORE_PERIOD),
+                   RS_SERVICE_GXS_TYPE_FORUMS, gixs, forumsAuthenPolicy()),
     RsGxsForums(this), mGenToken(0), mGenActive(false), mGenCount(0)
 {
 	// Test Data disabled in Repo.

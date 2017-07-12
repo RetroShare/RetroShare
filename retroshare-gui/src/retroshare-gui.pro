@@ -460,7 +460,6 @@ HEADERS +=  rshare.h \
             gui/settings/ChatPage.h \
             gui/settings/ChannelPage.h \
             gui/settings/PostedPage.h \
-            gui/settings/RelayPage.h \
             gui/settings/ServicePermissionsPage.h \
             gui/settings/AddFileAssociationDialog.h \
             gui/settings/GroupFrameSettingsWidget.h \
@@ -551,6 +550,7 @@ HEADERS +=  rshare.h \
             gui/NewsFeed.h \
             gui/feeds/FeedItem.h \
             gui/feeds/FeedHolder.h \
+            gui/feeds/GxsCircleItem.h \
             gui/feeds/PeerItem.h \
             gui/feeds/MsgItem.h \
             gui/feeds/ChatMsgItem.h \
@@ -642,7 +642,6 @@ FORMS +=    gui/StartDialog.ui \
             gui/settings/ChatPage.ui \
             gui/settings/ChannelPage.ui \
             gui/settings/PostedPage.ui \
-            gui/settings/RelayPage.ui \
             gui/settings/ServicePermissionsPage.ui \
             gui/settings/PluginItem.ui \
             gui/settings/GroupFrameSettingsWidget.ui \
@@ -656,6 +655,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/advsearch/AdvancedSearchDialog.ui \
             gui/advsearch/expressionwidget.ui \
             gui/NewsFeed.ui \
+            gui/feeds/GxsCircleItem.ui \
             gui/feeds/PeerItem.ui \
             gui/feeds/MsgItem.ui \
             gui/feeds/ChatMsgItem.ui \
@@ -685,7 +685,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/statistics/StatisticsWindow.ui \
             gui/statistics/BwCtrlWindow.ui \
             gui/statistics/RttStatistics.ui \
-            gui/GetStartedDialog.ui \
+            gui/GetStartedDialog.ui
 
 
 #            gui/ForumsDialog.ui \
@@ -868,7 +868,6 @@ SOURCES +=  main.cpp \
             gui/settings/ChatPage.cpp \
             gui/settings/ChannelPage.cpp \
             gui/settings/PostedPage.cpp \
-            gui/settings/RelayPage.cpp \
             gui/settings/ServicePermissionsPage.cpp \
             gui/settings/AddFileAssociationDialog.cpp \
             gui/settings/GroupFrameSettingsWidget.cpp \
@@ -900,6 +899,7 @@ SOURCES +=  main.cpp \
             gui/NewsFeed.cpp \
             gui/feeds/FeedItem.cpp \
             gui/feeds/FeedHolder.cpp \
+            gui/feeds/GxsCircleItem.cpp \
             gui/feeds/PeerItem.cpp \
             gui/feeds/MsgItem.cpp \
             gui/feeds/ChatMsgItem.cpp \

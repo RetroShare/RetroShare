@@ -16,10 +16,11 @@ enum class GxsTransSubServices : uint16_t
 /// Values must fit into uint8_t
 enum class GxsTransItemsSubtypes : uint8_t
 {
-	GXS_TRANS_SUBTYPE_MAIL    = 0x01,
-	GXS_TRANS_SUBTYPE_RECEIPT = 0x02,
-	GXS_TRANS_SUBTYPE_GROUP   = 0x03,
-	OUTGOING_RECORD_ITEM      = 0x04
+	GXS_TRANS_SUBTYPE_MAIL               = 0x01,
+	GXS_TRANS_SUBTYPE_RECEIPT            = 0x02,
+	GXS_TRANS_SUBTYPE_GROUP              = 0x03,
+	OUTGOING_RECORD_ITEM_deprecated      = 0x04,
+	OUTGOING_RECORD_ITEM                 = 0x05
 };
 
 enum class GxsTransSendStatus : uint8_t

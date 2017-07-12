@@ -55,7 +55,8 @@ void RsGxsCircleSubscriptionRequestItem::clear()
 
 void RsGxsCircleMsgItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
-	RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_MSG,msg.stuff,"msg.stuff") ;
+	//RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_MSG,mMsg.stuff,"mMsg.stuff") ;//Should be this but not retrocompatible...
+	RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_MSG,mMsg.stuff,"msg.stuff") ;
 }
 
 void RsGxsCircleSubscriptionRequestItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
@@ -74,7 +75,7 @@ void RsGxsCircleGroupItem::serial_process(RsGenericSerializer::SerializeJob j,Rs
 
 void RsGxsCircleMsgItem::clear()
 {
-	msg.stuff.clear();
+	mMsg.stuff.clear();
 }
 
 void RsGxsCircleGroupItem::clear()

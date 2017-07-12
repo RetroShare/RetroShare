@@ -52,6 +52,13 @@
              </widget>
             </item>
             <item>
+             <widget class="QCheckBox" name="notify_Circles">
+              <property name="text">
+               <string>Circles</string>
+              </property>
+             </widget>
+            </item>
+            <item>
              <widget class="QCheckBox" name="notify_Channels">
               <property name="text">
                <string>Channels</string>

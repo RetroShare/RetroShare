@@ -58,21 +58,20 @@ Item
 
 	}
 
-	ColorHash
+	AvatarOrColorHash
 	{
-		id: colorHash
+		id: topFace
+
+		gxs_id: cntDt.md.gxs_id
 
 		anchors.top: parent.top
 		anchors.topMargin: 6
 		anchors.horizontalCenter: parent.horizontalCenter
-
-		height: 150
-		hash: cntDt.md.gxs_id
 	}
 
 	Column
 	{
-		anchors.top: colorHash.bottom
+		anchors.top: topFace.bottom
 		anchors.topMargin: 6
 		anchors.horizontalCenter: parent.horizontalCenter
 
@@ -84,6 +83,13 @@ Item
 			anchors.horizontalCenter: parent.horizontalCenter
 			spacing: 6
 
+			ColorHash
+			{
+				hash: cntDt.md.gxs_id
+				height: parent.height - 10
+				anchors.verticalCenter: parent.verticalCenter
+			}
+
 			Text
 			{
 				text: cntDt.md.name
@@ -92,7 +98,6 @@ Item
 
 			Image
 			{
-
 				source: cntDt.is_contact ?
 							"qrc:/icons/rating.png" :
 							"qrc:/icons/rating-unrated.png"
@@ -149,16 +154,18 @@ Item
 							function(par)
 							{
 								var jD = JSON.parse(par.response).data
-								ClipboardWrapper.postToClipBoard(
+								var contactUrl = (
 										"retroshare://" +
 										"identity?gxsid=" +
 										cntDt.md.gxs_id +
 										"&name=" +
 										UriJs.URI.encode(cntDt.md.name) +
 										"&groupdata=" +
-										UriJs.URI.encode(jD.radix))
+										UriJs.URI.encode(jD.radix) )
+								ClipboardWrapper.postToClipBoard(contactUrl)
 								linkCopiedPopup.itemName = cntDt.md.name
 								linkCopiedPopup.visible = true
+								platformGW.shareUrl(contactUrl);
 							}
 							)
 			}

@@ -50,15 +50,15 @@ Item
 						var radix = JSON.parse(par.response).data.cert_string
 						var name = mainWindow.user_name
 						var encodedName = UriJs.URI.encode(name)
-						ClipboardWrapper.postToClipBoard(
+						var nodeUrl = (
 							"retroshare://certificate?" +
 							"name=" + encodedName +
 							"&radix=" + UriJs.URI.encode(radix) +
-							"&location=" + encodedName
-						)
-
+							"&location=" + encodedName )
+						ClipboardWrapper.postToClipBoard(nodeUrl)
 						linkCopiedPopup.itemName = name
 						linkCopiedPopup.open()
+						platformGW.shareUrl(nodeUrl);
 					})
 			}
 		}
