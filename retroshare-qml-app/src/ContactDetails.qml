@@ -27,10 +27,12 @@ Item
 	id: cntDt
 	property var md
 	property bool is_contact: cntDt.md.is_contact
+	property bool isOwn:  cntDt.md.own
 
 	Button
 	{
 		text: "Open f d "
+		visible: isOwn
 		onClicked:
 		{
 			fileChooser.open()
