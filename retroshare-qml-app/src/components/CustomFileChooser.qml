@@ -1,6 +1,8 @@
 import QtQuick 2.7
 import QtQuick.Dialogs 1.2
 
+import "../URI.js" as UriJs
+
 Item
 {
 	id: compRoot
@@ -41,9 +43,17 @@ Item
 
 	function androidResult (uri)
 	{
-		console.log("Android image uri found" , uri)
-		resultFile = uri
+		console.log("QML Android image uri found" , uri)
+		resultFile = uriToFilePath (uri)
 		mainWindow.delUriHandler("media", androidResult)
+	}
+
+	function normalizeUriToFilePath (uriStr)
+	{
+		var uri = new UriJs.URI(uriStr)
+		var hPath = uri.path()
+		return "file:///"+hPath
+
 	}
 
 
