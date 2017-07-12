@@ -29,7 +29,7 @@ Item
 		if (Qt.platform.os === "android")
 		{
 			console.log("ImagePicker Android platform detected")
-			mainWindow.addUriHandler("media", androidResult)
+			mainWindow.addUriHandler("file", androidResult)
 			androidImagePicker.openPicker()
 		}
 		else
@@ -40,7 +40,7 @@ Item
 
 	function androidResult (uri)
 	{
-		console.log("Android image uri found" , uri)
+		console.log("@@@@@@@@@ Android image uri found" , uri)
 		resultFile = uri
 		mainWindow.delUriHandler("media", androidResult)
 	}
