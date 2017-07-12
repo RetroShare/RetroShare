@@ -14,9 +14,10 @@ Item
 		folder: shortcuts.pictures
 		nameFilters: [ "Image files (*.png *.jpg)"]
 		visible: false
+		selectMultiple: false
 		onAccepted: {
-			console.log("You chose: " + fileDialog.fileUrls)
-			resultFile = fileDialog.fileUrls
+			console.log("You chose: " + fileDialog.fileUrl)
+			resultFile = fileDialog.fileUrl
 		}
 		onRejected: {
 			console.log("Canceled")
@@ -40,7 +41,7 @@ Item
 
 	function androidResult (uri)
 	{
-		console.log("@@@@@@@@@ Android image uri found" , uri)
+		console.log("Android image uri found" , uri)
 		resultFile = uri
 		mainWindow.delUriHandler("media", androidResult)
 	}
