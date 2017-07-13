@@ -392,10 +392,10 @@ extern RsMsgs   *rsMsgs;
 
 class RsMsgs 
 {
-	public:
+public:
 
-	RsMsgs() { return; }
-virtual ~RsMsgs() { return; }
+	RsMsgs() {}
+	virtual ~RsMsgs() {}
 
 /****************************************/
 /*             Message Items            */
