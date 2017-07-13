@@ -65,7 +65,7 @@ class MultiLinesCommentDelegate: public QStyledItemDelegate
 public:
     MultiLinesCommentDelegate(QFontMetricsF f) : qf(f){}
 
-    QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
+    QSize sizeHint(const QStyleOptionViewItem &/*option*/, const QModelIndex &index) const
     {
         return index.data(POST_CELL_SIZE_ROLE).toSize() ;
     }
@@ -79,21 +79,29 @@ public:
         // disable default icon
         opt.icon = QIcon();
         opt.text = QString();
-        // draw default item
-        QApplication::style()->drawControl(QStyle::CE_ItemViewItem, &opt, painter, 0);
 
-        const QRect r = option.rect;
+        // draw default item background
+        if (option.state & QStyle::State_Selected) {
+            painter->fillRect(option.rect, option.palette.highlight());
+        } else {
+            const QWidget *widget = opt.widget;
+            QStyle *style = widget ? widget->style() : QApplication::style();
+            style->drawPrimitive(QStyle::PE_PanelItemViewItem, &opt, painter, widget);
+        }
+
+        const QRect r = option.rect.adjusted(0,0,-option.decorationSize.width(),0);
 
         QTextDocument td ;
         td.setHtml("<html>"+index.data(Qt::DisplayRole).toString()+"</html>");
-		QSizeF s = td.documentLayout()->documentSize();
+        td.setTextWidth(r.width());
+        QSizeF s = td.documentLayout()->documentSize();
 
         int m = QFontMetricsF(QFont()).height();
 
         QSize full_area(std::min(r.width(),(int)s.width())+m,std::min(r.height(),(int)s.height())+m);
 
         QPixmap px(full_area.width(),full_area.height());
-        px.fill();
+        px.fill(QColor(0,0,0,0));//Transparent background as item background is already paint.
         QPainter p(&px) ;
         p.setRenderHint(QPainter::Antialiasing);
 
