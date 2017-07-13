@@ -77,11 +77,41 @@ hr {
     background-color: midnightblue;
 }
 
+.btnSmall{
+    border-style: solid;
+    /*border-color: lime;*/
+    border-color: limeGreen;
+    /*border-width: 1px;*/
+    border-radius: 3mm;
+    padding: 1mm;
+    font-size: 100%;
+
+    cursor: pointer;
+    margin-bottom: 0mm;
+}
+
+.hidden{
+	display:none;
+}
+
+.noBorderTable{
+	width: 100%;
+	border: none;
+	border-collapse: collapse;
+}
+
+.noBorderTD{
+	border: none;
+	border-collapse: collapse;
+	vertical-align: center;
+}
+
 .filelink{
     color: inherit;
 }
 
-input, textarea{
+
+input,textarea{
     color: lime;
     font-family: monospace;
     background-color: black;
@@ -90,8 +120,8 @@ input, textarea{
     border-radius: 3mm;
     border-width: 1mm;
     padding: 2mm;
-    margin-bottom: 2mm;
-    margin-right: 2mm;
+    margin-bottom: 1mm;
+    margin-right: 1mm;
 
     /* make the button the whole screen width */
     width: 100%;
@@ -100,6 +130,45 @@ input, textarea{
 }
 input:hover{
     background-color: midnightblue;
+}
+
+textarea#txtNewMsg{
+    color: lime;
+    font-family: monospace;
+    background-color: black;
+    border-color: lime;
+    font-size: 100%;
+    border-radius: 3mm;
+    border-width: 1mm;
+    padding: 2mm;
+    margin-bottom: 0mm;
+    margin-right: 1mm;
+	height:110px;
+	resize: none;
+    /* make the button the whole screen width */
+    width: 100%;
+    /*height: 100%;*/
+    /* make the text input fit small screens*/
+    box-sizing: border-box;
+}
+
+
+input#txtMsgKeyword{
+    color: lime;
+    font-family: monospace;
+    background-color: black;
+    border-color: lime;
+    font-size: 100%;
+    border-radius: 3mm;
+    border-width: 1mm;
+    padding: 1mm;
+    margin-bottom: 0mm;
+    margin-right: 1mm;
+
+    /* make the button the whole screen width */
+    width: 100%;
+    /* make the text input fit small screens*/
+    box-sizing: border-box;
 }
 
 .checkbox {

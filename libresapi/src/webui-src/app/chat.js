@@ -87,8 +87,87 @@ function getLobbyDetails(lobbyid){
     return null;
 }
 
+
+function find_next(searchValue){
+    var els = document.getElementsByClassName("chat msg text");
+    var middle = document.getElementsByClassName("chat middle")[0];
+    var find_hidden = document.getElementById("LastWordPos");
+    var start_index = Number(find_hidden.innerText);
+    
+	if(!Number.isInteger(start_index)){
+        console.log(start_index + " is Not Integer");
+        start_index = 0;
+        }
+	if(start_index >  els.length)
+    	start_index = 0;
+        
+    console.log(start_index);
+        
+  for (var i = start_index; i < els.length; i++) {
+  var start = els[i].innerHTML.indexOf(searchValue);
+    if ( start > -1) {
+      //match has been made   
+      middle.scrollTop = els[i].parentElement.offsetTop - middle.clientHeight/2;
+      var end = searchValue.length + start;
+      setSelectionRange(els[i], start, end);
+      find_hidden.innerText = i + 1;
+      break;
+    }
+  }
+}
+
+function setSelectionRange(el, start, end) {
+    if (document.createRange && window.getSelection) {
+        var range = document.createRange();
+        range.selectNodeContents(el);
+        var textNodes = getTextNodesIn(el);
+        var foundStart = false;
+        var charCount = 0, endCharCount;
+
+        for (var i = 0, textNode; textNode = textNodes[i++]; ) {
+            endCharCount = charCount + textNode.length;
+            if (!foundStart && start >= charCount && (start < endCharCount || (start == endCharCount && i <= textNodes.length))) {
+                range.setStart(textNode, start - charCount);
+                foundStart = true;
+            }
+            if (foundStart && end <= endCharCount) {
+                range.setEnd(textNode, end - charCount);
+                break;
+            }
+            charCount = endCharCount;
+        }
+
+        var sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+    } else if (document.selection && document.body.createTextRange) {
+        var textRange = document.body.createTextRange();
+        textRange.moveToElementText(el);
+        textRange.collapse(true);
+        textRange.moveEnd("character", end);
+        textRange.moveStart("character", start);
+        textRange.select();
+    }
+}
+
+function getTextNodesIn(node) {
+    var textNodes = [];
+    if (node.nodeType == 3) {
+        textNodes.push(node);
+    } else {
+        var children = node.childNodes;
+        for (var i = 0, len = children.length; i < len; ++i) {
+            textNodes.push.apply(textNodes, getTextNodesIn(children[i]));
+        }
+    }
+    return textNodes;
+}
+
 function sendmsg(msgid){
     var txtmsg = document.getElementById("txtNewMsg");
+    var remove_whitespace = txtmsg.value.replace(/(\r\n|\n|\r|\s)+/g,'');
+	if( remove_whitespace == '')
+		return;
 	rs.request("chat/send_message", {
 		chat_id: msgid,
 		msg: txtmsg.value
@@ -131,7 +210,7 @@ function lobby(lobbyid){
     });
 
     var intro = [
-            m("h2",lobdt.name),
+            //m("h2",lobdt.name),
             m("p",lobdt.topic ? lobdt.topic: lobdt.location),
             m("hr")
     ]
@@ -154,22 +233,61 @@ function lobby(lobbyid){
             }),
         ];
     } else {
+
+		var el = document.getElementById("CharLobbyName");
+        el.innerText = lobdt.name;
+		
         msg = m(".chat.bottom",[
-            m("div","enter new message:"),
-            m("input",{
+            m("div","enter new message, Ctrl+Enter to submit:"),
+            m("textarea",{
                 id:"txtNewMsg",
                 onkeydown: function(event){
-                    if (event.keyCode == 13){
+                    if (event.ctrlKey && event.keyCode == 13){
                         sendmsg(lobbyid);
                     }
                 }
             }),
-            m("div.btn2", {
-                style: {textAlign:"center"},
-                onclick: function(){
-                    sendmsg(lobbyid);
-                }
-            },"submit")
+            m("table.noBorderTable", [
+                m("tr",[
+                    m("td.noBorderTD",[
+                        m("div.btnSmall", {
+                            style: {textAlign:"center"},
+                            onclick: function(){
+                               var els = document.getElementsByClassName("chat middle");
+                               var el = els[0];
+                                   el.scrollTop = el.scrollHeight - el.clientHeight;
+                            }
+                        },"bottom")
+                    ]),
+                    m("td.noBorderTD",[
+                        m("div.btnSmall", {
+                            style: {textAlign:"center"},
+                            onclick: function(){
+                                sendmsg(lobbyid);
+                            }
+                        },"submit")
+                    ]),
+					m("td.noBorderTD",[
+						m("input",{
+							id:"txtMsgKeyword"
+						})
+					]),
+					m("td.noBorderTD", [
+						m("div.btnSmall", {
+							style: {textAlign:"center"},
+							onclick: function(){
+								var key = document.getElementById("txtMsgKeyword");
+								var txtkeyword = key.value;
+								find_next(txtkeyword);
+							}
+						},"Find")
+					])
+				])
+            ]),
+            m("div.hidden", {
+                 id: "LastWordPos"
+                },""
+            ),
         ]);
     }
     if (lobdt.subscribed != undefined
@@ -256,11 +374,27 @@ module.exports = {
         },[
             m(".chat.container", [
                 m(".chat.header", [
-                    m(
-                        "h2",
-                        {style:{margin:"0px"}},
-                        "chat"
-                    )
+                    m("table.noBorderTable",[
+                        m("tr",[
+                            m("td.noBorderTD",[
+                                m(
+                                    "h2",
+                                    {style:{margin:"0px"}},
+                                    "chat"
+                                )
+                            ]),
+                            m("td.noBorderTD",[
+                                m(
+                                    "h2",
+                                    {
+                                        style:{margin:"0px"},
+                                        id:"CharLobbyName"
+                                    },
+                                    "Lobby Name"
+                                )
+                            ])
+                        ])
+                    ])
                 ]),
                 m(".chat.left", [
                     m("div.chat.header[style=position:relative]","lobbies:"),
