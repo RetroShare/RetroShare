@@ -3247,7 +3247,7 @@ int ops_parse(ops_parse_info_t *pinfo,ops_boolean_t limit_packets)
    } while (r > 0);
 
    return pinfo->errors ? 0 : 1;
-   return r == -1 ? 0 : 1;
+   //return r == -1 ? 0 : 1;
 }
 
 /**

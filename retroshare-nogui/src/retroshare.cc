@@ -100,9 +100,18 @@ int main(int argc, char **argv)
     }
 
     resource_api::TerminalApiClient tac(&api);
+	tac.start();
+	bool already = false ;
+
     while(ctrl_mod.processShouldExit() == false)
     {
-        usleep(20*1000);
+        usleep(1000*1000);
+
+		if(!tac.isRunning() && !already)
+		{
+			std::cerr << "Terminal API client terminated." << std::endl;
+			already = true ;
+		}
     }
 
     if(httpd)

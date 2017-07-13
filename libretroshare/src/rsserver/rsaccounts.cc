@@ -109,6 +109,8 @@ bool RsAccountsDetail::checkAccountDirectory()
 	return setupAccount(PathAccountDirectory());
 }
 
+#warning we need to clean that up. Login should only ask for a SSL id, instead of a std::string.
+
 bool RsAccountsDetail::selectAccountByString(const std::string &prefUserString)
 {
 	if (mAccountsLocked)
@@ -137,9 +139,14 @@ bool RsAccountsDetail::selectAccountByString(const std::string &prefUserString)
 		{
 			mPreferredId = it->second.mSslId;
 			pgpNameFound = true;
+
+			std::cerr << "Account selected: " << ssl_id << std::endl;
+
+			return true;
 		}
 	}
-	return pgpNameFound;
+	std::cerr << "No suitable candidate found." << std::endl;
+	return false;
 }
 
 
@@ -453,15 +460,19 @@ bool     RsAccountsDetail::getPreferredAccountId(RsPeerId &id)
 bool     RsAccountsDetail::getAccountIds(std::list<RsPeerId> &ids)
 {
 	std::map<RsPeerId, AccountDetails>::iterator it;
+#ifdef DEBUG_ACCOUNTS
 	std::cerr << "getAccountIds:" << std::endl;
+#endif
 
 	for(it = mAccounts.begin(); it != mAccounts.end(); ++it)
 	{
+#ifdef DEBUG_ACCOUNTS
 		std::cerr << "SSL Id: " << it->second.mSslId << " PGP Id " << it->second.mPgpId;
 		std::cerr << " PGP Name: " << it->second.mPgpName;
 		std::cerr << " PGP Email: " << it->second.mPgpEmail;
 		std::cerr << " Location: " << it->second.mLocation;
 		std::cerr << std::endl;
+#endif
 
 		ids.push_back(it->first);
 	}
@@ -868,12 +879,16 @@ bool RsAccountsDetail::SelectPGPAccount(const RsPgpId& pgpId)
 	if (0 < AuthGPG::getAuthGPG() -> GPGInit(pgpId))
 	{
 		retVal = true;
+#ifdef DEBUG_ACCOUNTS
 		std::cerr << "PGP Auth Success!";
+#endif
 	}
 	else
 		std::cerr << "PGP Auth Failed!";
 
+#ifdef DEBUG_ACCOUNTS
 	std::cerr << " ID: " << pgpId << std::endl;
+#endif
 
 	return retVal;
 }

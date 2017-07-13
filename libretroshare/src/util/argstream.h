@@ -252,8 +252,8 @@ namespace
 			inline bool helpRequested() const;
 			inline bool isOk() const;
 			inline std::string errorLog() const;
-			inline std::string usage() const;
-			inline bool defaultErrorHandling(bool ignoreUnused=false) const;
+			inline std::string usage(bool skipCommandLine = false) const;
+			inline bool defaultErrorHandling(bool ignoreUnused=false,bool skipCommandLine=false) const;
 			static inline char uniqueLetter();
 		protected:
 			void parse(int argc,char** argv);
@@ -569,10 +569,12 @@ namespace
 			return helpRequested_;
 		}
 	inline std::string
-		argstream::usage() const
+		argstream::usage(bool skipCommandLine) const
 		{
 			std::ostringstream os;
-			os<<"usage: "<<progName_<<cmdLine_<<'\n';
+
+			if(!skipCommandLine)
+			   os<<"usage: "<<progName_<<cmdLine_<<'\n';
 			unsigned int lmax = 0;
 			for (std::deque<help_entry>::const_iterator
 					iter = argHelps_.begin();iter != argHelps_.end();++iter)
@@ -820,11 +822,11 @@ namespace
 			return s;
 		}
 	inline bool
-		argstream::defaultErrorHandling(bool ignoreUnused) const
+		argstream::defaultErrorHandling(bool ignoreUnused,bool skipCommandLine) const
 		{
 			if (helpRequested_)
 			{
-				std::cout<<usage();
+				std::cout<<usage(skipCommandLine);
 				exit(1);
 			}
 			if (!isOk_)
