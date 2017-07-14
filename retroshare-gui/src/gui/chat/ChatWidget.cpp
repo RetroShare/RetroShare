@@ -1006,8 +1006,12 @@ void ChatWidget::addChatMsg(bool incoming, const QString &name, const RsGxsId gx
 	QString strGxsId = "";
 	if (!gxsId.isNull()) {
 		strGxsId = QString::fromStdString(gxsId.toStdString());
+		RsIdentityDetails details;
+		rsIdentity->getIdDetails(gxsId, details);
+
 		formatMsg.replace(QString("<a name=\"name\">")
-		                  ,QString("<a name=\"").append(PERSONID).append("%1\">").arg(strGxsId) );
+		                  ,QString("<a name=\"").append(PERSONID).append("%1\">").arg(strGxsId)
+		                  .append(details.mFlags & RS_IDENTITY_FLAGS_PGP_LINKED ? "" : tr("[Unsigned]") ) );
 	} else {
 		formatMsg.replace(QString("<a name=\"name\">"),"");
 	}
