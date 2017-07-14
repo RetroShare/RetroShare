@@ -10,14 +10,13 @@
         <file>TrustedNodesView.qml</file>
         <file>ChatView.qml</file>
         <file>icons/retroshare06.png</file>
-        <file>icons/state-offline.png</file>
-        <file>icons/state-ok.png</file>
+        <file>icons/state-offline.svg</file>
+        <file>icons/state-ok.svg</file>
         <file>GxsIdentityDelegate.qml</file>
-        <file>icons/edit-find.png</file>
-        <file>icons/edit-image-face-detect.png</file>
-        <file>icons/application-menu.png</file>
+        <file>icons/edit-image-face-detect.svg</file>
+        <file>icons/application-menu.svg</file>
         <file>ContactSort.js</file>
-        <file>icons/emblem-locked.png</file>
+        <file>icons/emblem-locked.svg</file>
         <file>BusyOverlay.qml</file>
         <file>URI.js</file>
         <file>TokensManager.qml</file>
@@ -25,10 +24,34 @@
         <file>TrustedNodeDetails.qml</file>
         <file>ClipboardWrapper.qml</file>
         <file>ContactDetails.qml</file>
-        <file>ColorHash.qml</file>
-        <file>icons/rating-unrated.png</file>
-        <file>icons/rating.png</file>
+        <file>icons/rating-unrated.svg</file>
+        <file>icons/rating.svg</file>
         <file>TimedPopup.qml</file>
-        <file>AvatarOrColorHash.qml</file>
+        <file>ChatCache.qml</file>
+        <file>ChatBubbleDelegate.qml</file>
+        <file>icons/send-message.svg</file>
+        <file>icons/attach.svg</file>
+        <file>components/BtnIcon.qml</file>
+        <file>icons/smiley.svg</file>
+        <file>icons/microphone_mute.svg</file>
+        <file>icons/microphone.svg</file>
+        <file>components/ColorHash.qml</file>
+        <file>styles/ChatStyle.qml</file>
+        <file>components/AvatarOrColorHash.qml</file>
+        <file>components/SideBar.qml</file>
+        <file>styles/SideBarStyle.qml</file>
+        <file>components/Btn.qml</file>
+        <file>icons/netgraph.svg</file>
+        <file>icons/search.svg</file>
+        <file>icons/exit.svg</file>
+        <file>icons/add.svg</file>
+        <file>icons/keyring.svg</file>
+        <file>components/TextAndIcon.qml</file>
+        <file>components/emoji/EmojiPicker.qml</file>
+        <file>components/emoji/EmojiCategoryButton.qml</file>
+        <file>components/emoji/EmojiButton.qml</file>
+        <file>components/emoji/emoji.js</file>
+        <file>icons/network-connect.svg</file>
+        <file>icons/network-disconnect.svg</file>
     </qresource>
 </RCC>

@@ -67,17 +67,19 @@ Item
 		model: jsonModel.model
 		delegate: Item
 		{
-			height: 30
+			property bool isOnline: jsonModel.isOnline(model.pgp_id)
+			height: 54
 			width: parent.width
 
 			Image
 			{
 				id: statusImage
-				source: jsonModel.isOnline(model.pgp_id) ?
-							"icons/state-ok.png" :
-							"icons/state-offline.png"
+				source:  isOnline?
+							"icons/state-ok.svg" :
+							"icons/state-offline.svg"
 
 				height: parent.height - 4
+				sourceSize.height: height
 				fillMode: Image.PreserveAspectFit
 				anchors.left: parent.left
 				anchors.leftMargin: 3
@@ -89,6 +91,7 @@ Item
 				anchors.verticalCenter: parent.verticalCenter
 				anchors.left: statusImage.right
 				anchors.leftMargin: 10
+				font.pixelSize: 15
 			}
 			MouseArea
 			{
@@ -100,6 +103,7 @@ Item
 								{
 									pgpName: model.name,
 									pgpId: model.pgp_id,
+									isOnline: isOnline,
 									locations: jsonModel.getLocations(
 												   model.pgp_id)
 								}

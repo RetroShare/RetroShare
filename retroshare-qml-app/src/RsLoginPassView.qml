@@ -24,7 +24,7 @@ Item
 {
 	id: loginView
 	property string buttonText: qsTr("Unlock")
-	property string iconUrl: "qrc:/icons/emblem-locked.png"
+	property string iconUrl: "qrc:/icons/emblem-locked.svg"
 	property string login
 	property bool loginPreset: false
 	property bool advancedMode: false
@@ -53,6 +53,8 @@ Item
 		{
 			source: loginView.iconUrl
 			Layout.alignment: Qt.AlignHCenter
+			height: 128
+			sourceSize.height: height
 		}
 
 		Text
