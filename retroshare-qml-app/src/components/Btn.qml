@@ -1,9 +1,8 @@
 import QtQuick 2.0
-import QtQuick.Controls 1.4
+import QtQuick.Controls 2.0
 
 Item
 {
-
 	id: button
 	property alias buttonText: innerText.text;
 	property alias buttonTextPixelSize: innerText.font.pixelSize
@@ -123,5 +122,4 @@ Item
 			easing.type: Easing.InOutQuad
 		}
 	}
-
 }
