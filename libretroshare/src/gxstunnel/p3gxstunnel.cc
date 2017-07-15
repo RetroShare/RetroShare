@@ -59,7 +59,9 @@ static const uint32_t RS_GXS_TUNNEL_DATA_PRINT_STORAGE_DELAY = 600 ; // store ol
 static const uint32_t GXS_TUNNEL_ENCRYPTION_HMAC_SIZE    = SHA_DIGEST_LENGTH ;
 static const uint32_t GXS_TUNNEL_ENCRYPTION_IV_SIZE      = 8 ;
 
+#ifdef DEBUG_GXS_TUNNEL
 static const uint32_t INTERVAL_BETWEEN_DEBUG_DUMP        = 10 ;
+#endif
 
 static std::string GXS_TUNNEL_APP_NAME = "GxsTunnels" ;
 
