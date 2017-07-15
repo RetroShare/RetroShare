@@ -863,8 +863,8 @@ void RsGxsNetService::subscribeStatusChanged(const RsGxsGroupId& grpId,bool subs
 
 #ifdef NXS_NET_DEBUG_0
     GXSNETDEBUG__G(grpId) << "Changing subscribe status for grp " << grpId << " to " << subscribed << ": reseting all server msg time stamps for this group, and server global TS." << std::endl;
-#endif
     std::map<RsGxsGroupId,RsGxsServerMsgUpdate>::iterator it = mServerMsgUpdateMap.find(grpId) ;
+#endif
 
     RsGxsServerMsgUpdate& item(mServerMsgUpdateMap[grpId]) ;
 
@@ -2431,7 +2431,9 @@ void RsGxsNetService::locked_processCompletedIncomingTrans(NxsTransaction* tr)
             RsPeerId peerFrom = tr->mTransaction->PeerId();
             uint32_t updateTS = tr->mTransaction->updateTS;
 
+#ifdef NXS_NET_DEBUG_0
             ClientGrpMap::iterator it = mClientGrpUpdateMap.find(peerFrom);
+#endif
 
             RsGxsGrpUpdate& item(mClientGrpUpdateMap[peerFrom]) ;
 
