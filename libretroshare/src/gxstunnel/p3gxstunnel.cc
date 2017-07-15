@@ -74,6 +74,7 @@ p3GxsTunnelService::p3GxsTunnelService(RsGixs *pids)
             : mGixs(pids), mGxsTunnelMtx("GXS tunnel")
 {
 	mTurtle = NULL ;
+	mCurrentPacketCounter = 0 ;
 }
 
 void p3GxsTunnelService::connectToTurtleRouter(p3turtle *tr)
@@ -104,6 +105,7 @@ int p3GxsTunnelService::tick()
     
 #ifdef DEBUG_GXS_TUNNEL    
     time_t now = time(NULL);
+	static time_t last_dump = 0;
     
     if(now > last_dump + INTERVAL_BETWEEN_DEBUG_DUMP )
     {
@@ -288,7 +290,7 @@ void p3GxsTunnelService::handleIncomingItem(const RsGxsTunnelId& tunnel_id,RsGxs
     case RS_PKT_SUBTYPE_GXS_TUNNEL_DATA:		handleRecvTunnelDataItem(tunnel_id,dynamic_cast<RsGxsTunnelDataItem*>(item)) ;
 	    break ;
 
-    case RS_PKT_SUBTYPE_GXS_TUNNEL_DATA_ACK:		handleRecvTunnelDataAckItem(tunnel_id,dynamic_cast<RsGxsTunnelDataAckItem*>(item)) ;
+    case RS_PKT_SUBTYPE_GXS_TUNNEL_DATA_ACK:	handleRecvTunnelDataAckItem(tunnel_id,dynamic_cast<RsGxsTunnelDataAckItem*>(item)) ;
 	    break ;
 
     case RS_PKT_SUBTYPE_GXS_TUNNEL_STATUS:		handleRecvStatusItem(tunnel_id,dynamic_cast<RsGxsTunnelStatusItem*>(item)) ;
@@ -752,7 +754,7 @@ bool p3GxsTunnelService::handleEncryptedData(const uint8_t *data_bytes,uint32_t 
     std::cerr << "   size = " << data_size << std::endl;
     std::cerr << "   data = " << (void*)data_bytes << std::endl;
     std::cerr << "     IV = " << std::hex << *(uint64_t*)data_bytes << std::dec << std::endl;
-    std::cerr << "   data = " << RsUtil::BinToHex((char*)data_bytes,data_size) ;
+    std::cerr << "   data = " << RsUtil::BinToHex((unsigned char*)data_bytes,data_size,100) ;
     std::cerr << std::endl;
 #endif
 
@@ -793,9 +795,9 @@ bool p3GxsTunnelService::handleEncryptedData(const uint8_t *data_bytes,uint32_t 
 #ifdef DEBUG_GXS_TUNNEL
         std::cerr << "   Using IV: " << std::hex << *(uint64_t*)data_bytes << std::dec << std::endl;
         std::cerr << "   Decrypted buffer size: " << decrypted_size << std::endl;
-        std::cerr << "   key  : " << RsUtil::BinToHex((char*)aes_key,GXS_TUNNEL_AES_KEY_SIZE) << std::endl;
-        std::cerr << "   hmac : " << RsUtil::BinToHex((char*)data_bytes+GXS_TUNNEL_ENCRYPTION_IV_SIZE,GXS_TUNNEL_ENCRYPTION_HMAC_SIZE) << std::endl;
-        std::cerr << "   data : " << RsUtil::BinToHex((char*)data_bytes,data_size) << std::endl;
+        std::cerr << "   key  : " << RsUtil::BinToHex((unsigned char*)aes_key,GXS_TUNNEL_AES_KEY_SIZE) << std::endl;
+        std::cerr << "   hmac : " << RsUtil::BinToHex((unsigned char*)data_bytes+GXS_TUNNEL_ENCRYPTION_IV_SIZE,GXS_TUNNEL_ENCRYPTION_HMAC_SIZE) << std::endl;
+        std::cerr << "   data : " << RsUtil::BinToHex((unsigned char*)data_bytes,data_size,100) << std::endl;
 #endif
         // first, check the HMAC
         
@@ -1211,7 +1213,7 @@ bool p3GxsTunnelService::locked_sendClearTunnelData(RsGxsTunnelDHPublicKeyItem *
 #ifdef DEBUG_GXS_TUNNEL
     std::cerr << "   GxsTunnelService::sendClearTunnelData(): Sending clear data to virtual peer: " << item->PeerId() << std::endl;
     std::cerr << "     gitem->data_size = " << gitem->data_size << std::endl;
-    std::cerr << "     data = " << RsUtil::BinToHex((char*)gitem->data_bytes,gitem->data_size) ;
+    std::cerr << "     data = " << RsUtil::BinToHex((unsigned char*)gitem->data_bytes,gitem->data_size,100) ;
     std::cerr << std::endl;
 #endif
     mTurtle->sendTurtleData(item->PeerId(),gitem) ;
@@ -1307,7 +1309,7 @@ bool p3GxsTunnelService::locked_sendEncryptedTunnelData(RsGxsTunnelItem *item)
 #ifdef DEBUG_GXS_TUNNEL
     std::cerr << "GxsTunnelService::sendEncryptedTunnelData(): Sending encrypted data to virtual peer: " << virtual_peer_id << std::endl;
     std::cerr << "   gitem->data_size = " << gitem->data_size << std::endl;
-    std::cerr << "    serialised data = " << RsUtil::BinToHex((char*)gitem->data_bytes,gitem->data_size) ;
+    std::cerr << "    serialised data = " << RsUtil::BinToHex((unsigned char*)gitem->data_bytes,gitem->data_size,100) ;
     std::cerr << std::endl;
 #endif
 
@@ -1346,6 +1348,16 @@ bool p3GxsTunnelService::requestSecuredTunnel(const RsGxsId& to_gxs_id, const Rs
     return true ;
 }
 
+// This method generates an ID that should be unique for each packet sent to a same peer. Rather than a random value,
+// we use this counter because outgoing items are sorted in a map by their counter value. Using an increasing value
+// ensures that the packets are sent in the same order than received from the service. This can be useful in some cases,
+// for instance when services split their items while expecting them to arrive in the same order.
+
+uint64_t p3GxsTunnelService::locked_getPacketCounter()
+{
+	return mCurrentPacketCounter++ ;
+}
+
 bool p3GxsTunnelService::sendData(const RsGxsTunnelId &tunnel_id, uint32_t service_id, const uint8_t *data, uint32_t size)
 {
     // make sure that the tunnel ID is registered.
@@ -1381,7 +1393,7 @@ bool p3GxsTunnelService::sendData(const RsGxsTunnelId &tunnel_id, uint32_t servi
     
     RsGxsTunnelDataItem *item = new RsGxsTunnelDataItem ;
             
-    item->unique_item_counter = RSRandom::random_u64();	// this allows to make the item unique, except very rarely, we we don't care.
+    item->unique_item_counter = locked_getPacketCounter() ;// this allows to make the item unique, while respecting the packet order!
     item->flags = 0;						// not used yet.
     item->service_id = service_id;
     item->data_size = size;					// encrypted data size
