@@ -55,7 +55,7 @@
 #define COL_DUPLICATION_FACTOR  9
 
 static const int PARTIAL_VIEW_SIZE           = 9 ;
-static const int MAX_TUNNEL_REQUESTS_DISPLAY = 10 ;
+//static const int MAX_TUNNEL_REQUESTS_DISPLAY = 10 ;
 
 static QColor colorScale(float f)
 {
