@@ -118,19 +118,21 @@ void TerminalApiClient::data_tick()
 {
     // values in milliseconds
     const int MIN_WAIT_TIME           = 20; // sleep time must be smaller or equal than the smallest period
-    const int IO_POLL_PERIOD          = 20;
     const int API_EVENT_POLL_PERIOD   = 1000;
 
+#ifdef TO_REMOVE
+    const int IO_POLL_PERIOD          = 20;
     int last_io_poll  = 0;
-    int last_event_api_poll = 0;
-
     int last_char = 0;
-    std::string inbuf;
     bool enter_was_pressed = false;
+    std::string inbuf;
+#endif
+
+	int last_event_api_poll = 0;
 	bool prev_is_bad = false ;
 	int account_number_size = 1 ;
-	int selected_account_number = 0 ;
-	int account_number_typed = 0 ;
+	size_t selected_account_number = 0 ;
+	//int account_number_typed = 0 ;
 
     StateToken runstate_state_token;
     std::string runstate;
@@ -228,7 +230,7 @@ void TerminalApiClient::data_tick()
 				std::cout << "[" << std::setw(account_number_size) << std::setfill('0') << i << "] Location Id: " << accounts[i].ssl_id << " \"" << accounts[i].name << "\" (" << accounts[i].location << ")" << std::endl;
 
 			selected_account_number = accounts.size() ;
-			account_number_typed = 0 ;
+			//account_number_typed = 0 ;
 
 			while(selected_account_number >= accounts.size())
 			{
@@ -237,7 +239,7 @@ void TerminalApiClient::data_tick()
 
 				std::string s = readStringFromKeyboard(false) ;
 
-				if(sscanf(s.c_str(),"%d",&selected_account_number) != 1)
+				if(sscanf(s.c_str(),"%lu",&selected_account_number) != 1)
 					continue ;
 
 				if(selected_account_number >= accounts.size())
