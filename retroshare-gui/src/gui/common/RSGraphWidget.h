@@ -170,7 +170,8 @@ protected:
 	/** Overloaded QWidget::paintEvent() */
 	void paintEvent(QPaintEvent *event);
 
-	virtual QSizeF sizeHint( Qt::SizeHint which, const QSizeF & constraint = QSizeF() ) const;
+//QSize QFrame::sizeHint() const;
+//	virtual QSizeF sizeHint( Qt::SizeHint which, const QSizeF & constraint = QSizeF() ) const;
 
 protected slots:
 	void updateIfPossible() ;
