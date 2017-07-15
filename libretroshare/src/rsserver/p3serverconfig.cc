@@ -294,6 +294,7 @@ uint32_t p3ServerConfig::getUserLevel()
 				userLevel = RSCONFIG_USER_LEVEL_BASIC;
 			}
 		}
+		/* fallthrough */
 		case RSCONFIG_USER_LEVEL_BASIC:
 		{
 			/* check that we have some lastConnect > 0 */
@@ -302,7 +303,7 @@ uint32_t p3ServerConfig::getUserLevel()
 				userLevel = RSCONFIG_USER_LEVEL_CASUAL;
 			}
 		}
-
+		/* fallthrough */
 		case RSCONFIG_USER_LEVEL_CASUAL:
 		case RSCONFIG_USER_LEVEL_POWER:
 
