@@ -127,7 +127,7 @@ bool RsAccountsDetail::selectAccountByString(const std::string &prefUserString)
 
 	std::cerr << "RsAccountsDetail::selectAccountByString(" << prefUserString << ")" << std::endl;
 	
-	bool pgpNameFound = false;
+	//bool pgpNameFound = false;
 	std::map<RsPeerId, AccountDetails>::const_iterator it;
 	for(it = mAccounts.begin() ; it!= mAccounts.end() ; ++it)
 	{
@@ -138,7 +138,7 @@ bool RsAccountsDetail::selectAccountByString(const std::string &prefUserString)
 		if(prefUserString == it->second.mPgpName || pgp_id == it->second.mPgpId || ssl_id == it->second.mSslId)
 		{
 			mPreferredId = it->second.mSslId;
-			pgpNameFound = true;
+			//pgpNameFound = true;
 
 			std::cerr << "Account selected: " << ssl_id << std::endl;
 
