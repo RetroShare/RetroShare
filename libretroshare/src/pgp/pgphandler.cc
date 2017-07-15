@@ -60,6 +60,7 @@ ops_parse_cb_return_t cb_get_passphrase(const ops_parser_content_t *content_,ops
 	switch(content_->tag)
 	{
 		case OPS_PARSER_CMD_GET_SK_PASSPHRASE_PREV_WAS_BAD: prev_was_bad = true ;
+			/* fallthrough */
 		case OPS_PARSER_CMD_GET_SK_PASSPHRASE:
 		{
 			std::string passwd;
