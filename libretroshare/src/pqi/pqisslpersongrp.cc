@@ -123,6 +123,7 @@ pqiperson * pqisslpersongrp::locked_createPerson(const RsPeerId& id, pqilistener
 				std::cerr << " - mPeerMgr->isHiddenPeer(id): " << mPeerMgr->isHiddenPeer(id) << std::endl;
 				std::cerr << " - hidden types: peer=" << typePeer << " own=" << typeOwn << std::endl;
 				std::cerr << " --> falling back to Tor" << std::endl;
+				/* fallthrough */
 			case RS_HIDDEN_TYPE_TOR:
 				pqip -> addChildInterface(PQI_CONNECT_HIDDEN_TOR_TCP, pqicSOCKSProxy);
 				break;
