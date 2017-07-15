@@ -188,6 +188,7 @@ void ChunkMap::updateTotalDownloaded()
 		switch(_map[i])
 		{
 			case FileChunksInfo::CHUNK_CHECKING: _file_is_complete = false ;
+				/* fallthrough */
 			case FileChunksInfo::CHUNK_DONE:		 _total_downloaded += sizeOfChunk(i) ;
 															 break ;
 			default:
