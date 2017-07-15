@@ -48,7 +48,7 @@ void *solveDNSEntries(void *p)
 
 						case DNSResolver::DNS_LOOKUP_ERROR:		if(it->second.last_lookup_time + MAX_TIME_BEFORE_RETRY > now)
 																				continue ;
-
+							/* fallthrough */ //Not really, but to suppress warning.
 						case DNSResolver::DNS_DONT_HAVE: 		next_call = it->first ;
 																			it->second.state = DNSResolver::DNS_SEARCHING ;
 																			it->second.last_lookup_time = now ;
