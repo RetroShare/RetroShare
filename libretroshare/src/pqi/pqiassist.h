@@ -171,9 +171,9 @@ virtual int addKnownPeer(const RsPeerId &pid, const struct sockaddr_storage &add
 virtual void ConnectionFeedback(const RsPeerId& pid, int mode) = 0;
 
 	/* extract current peer status */
-virtual bool 	getPeerStatus(const RsPeerId& id, 
-			struct sockaddr_storage &laddr, struct sockaddr_storage &raddr, 
-			uint32_t &type, uint32_t &mode) = 0; // DEPRECIATE.
+//virtual bool 	getPeerStatus(const RsPeerId& id,
+//			struct sockaddr_storage &laddr, struct sockaddr_storage &raddr,
+//			uint32_t &type, uint32_t &mode) = 0; // DEPRECIATE.
 
 virtual bool    setAttachMode(bool on) = 0;		// FIXUP.
 
