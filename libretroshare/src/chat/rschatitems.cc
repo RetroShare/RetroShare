@@ -35,7 +35,7 @@
 
 //#define CHAT_DEBUG 1
 
-static const uint32_t RS_CHAT_SERIALIZER_FLAGS_NO_SIGNATURE = 0x0001;
+//static const uint32_t RS_CHAT_SERIALIZER_FLAGS_NO_SIGNATURE = 0x0001;
 
 RsItem *RsChatSerialiser::create_item(uint16_t service_id,uint8_t item_sub_id) const
 {
