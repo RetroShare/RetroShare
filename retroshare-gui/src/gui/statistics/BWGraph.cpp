@@ -243,6 +243,7 @@ void BWGraphSource::convertTrafficClueToValues(const std::list<RSTrafficClue>& l
 			break ;
 
 		case GRAPH_TYPE_ALL: std::cerr << "(WW) Impossible situation. Cannot draw graph in mode All/All. Reverting to sum." << std::endl;
+			/* fallthrough */
 		case GRAPH_TYPE_SUM:		// all friends, sum of services => one curve per friend
 		{
 			RSTrafficClue total ;
