@@ -63,7 +63,7 @@ GxsChannelPostItem::GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, 
 void GxsChannelPostItem::init(const RsGxsMessageId& messageId,const std::set<RsGxsMessageId>& older_versions)
 {
 	QVector<RsGxsMessageId> v;
-    bool self = false;
+	//bool self = false;
 
 	for(std::set<RsGxsMessageId>::const_iterator it(older_versions.begin());it!=older_versions.end();++it)
 		v.push_back(*it) ;
@@ -230,12 +230,12 @@ bool GxsChannelPostItem::setGroup(const RsGxsChannelGroup &group, bool doFill)
 
 	mGroup = group;
 
-    // if not publisher, hide the edit button. Without the publish key, there's no way to edit a message.
+	// If not publisher, hide the edit button. Without the publish key, there's no way to edit a message.
 #ifdef DEBUG_ITEM
-    std::cerr << "Group subscribe flags = " << std::hex << mGroup.mMeta.mSubscribeFlags << std::dec << std::endl;
+	std::cerr << "Group subscribe flags = " << std::hex << mGroup.mMeta.mSubscribeFlags << std::dec << std::endl ;
 #endif
-    if(!IS_GROUP_PUBLISHER(mGroup.mMeta.mSubscribeFlags))
-        ui->editButton->hide();
+	if( !IS_GROUP_PUBLISHER(mGroup.mMeta.mSubscribeFlags) )
+		ui->editButton->hide() ;
 
 	if (doFill) {
 		fill();
