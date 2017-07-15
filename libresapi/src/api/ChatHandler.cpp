@@ -233,7 +233,7 @@ void ChatHandler::notifyChatLobbyEvent(uint64_t lobby_id, uint32_t event_type,
     }
 }
 
-void ChatHandler::notifyListChange(int list, int type)
+void ChatHandler::notifyListChange(int list, int /*type*/)
 {
 	if(list == NOTIFY_LIST_CHAT_LOBBY_INVITATION)
 	{
@@ -968,7 +968,7 @@ void ChatHandler::handleInviteToLobby(Request& req, Response& resp)
 	resp.setOk();
 }
 
-void ChatHandler::handleGetInvitationsToLobby(Request& req, Response& resp)
+void ChatHandler::handleGetInvitationsToLobby(Request& /*req*/, Response& resp)
 {
 	std::list<ChatLobbyInvite> invites;
 	mRsMsgs->getPendingChatLobbyInvites(invites);
