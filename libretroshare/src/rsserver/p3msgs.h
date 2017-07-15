@@ -29,8 +29,8 @@
 #include "retroshare/rsmsgs.h"
 #include "retroshare/rsgxsifacetypes.h"
 
-class p3MsgService;
-class p3ChatService;
+struct p3MsgService;
+struct p3ChatService;
 
 class RsChatMsgItem;
 
