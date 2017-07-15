@@ -363,6 +363,7 @@ bool p3DhtMgr::notifyPeer(const RsPeerId& id)
 	return true;
 }
 
+#if 0
 	/* extract current peer status */
 bool p3DhtMgr::getPeerStatus(const RsPeerId &id,
 			struct sockaddr_storage &laddr,
@@ -387,6 +388,7 @@ bool p3DhtMgr::getPeerStatus(const RsPeerId &id,
 
 	return true;
 }
+#endif
 
 /********************************* STUN HANDLING  **********************************
  * add / cleanup / stun.
