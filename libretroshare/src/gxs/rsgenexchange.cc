@@ -3076,7 +3076,7 @@ void RsGenExchange::processRecvdMessages()
 }
 
 bool RsGenExchange::acceptNewGroup(const RsGxsGrpMetaData* /*grpMeta*/ ) { return true; }
-bool RsGenExchange::acceptNewMessage(const RsGxsMsgMetaData* /*grpMeta*/,uint32_t size ) { return true; }
+bool RsGenExchange::acceptNewMessage(const RsGxsMsgMetaData* /*grpMeta*/,uint32_t /*size*/ ) { return true; }
 
 void RsGenExchange::processRecvdGroups()
 {
