@@ -2480,7 +2480,7 @@ static int parse_secret_key(ops_region_t *region,ops_parse_info_t *pinfo)
 	 {
 	    case OPS_S2KS_SALTED:
 	       hashes[n].add(&hashes[n],C.secret_key.salt,OPS_SALT_SIZE);
-	       // flow through...
+				/* fallthrough */
 	    case OPS_S2KS_SIMPLE:
 	       hashes[n].add(&hashes[n],(unsigned char*)passphrase,l);
 	       break;
