@@ -36,7 +36,7 @@
 #include <time.h>
 
 
-static const uint32_t MAX_SERIALIZED_ARRAY_SIZE = 500 ;
+//static const uint32_t MAX_SERIALIZED_ARRAY_SIZE = 500 ;
 static const uint32_t MAX_SERIALIZED_CHUNK_SIZE = 10*1024*1024 ; // 10 MB.
 
 //=================================================================================================//
