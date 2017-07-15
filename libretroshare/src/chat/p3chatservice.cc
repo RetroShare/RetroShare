@@ -264,6 +264,10 @@ void p3ChatService::checkSizeAndSendMessage(RsChatMsgItem *msg)
 
 	static const uint32_t MAX_STRING_SIZE = 15000 ;
 
+#ifdef CHAT_DEBUG
+	std::cerr << "Sending message: size=" << msg->message.size() << ", sha1sum=" << RsDirUtil::sha1sum((uint8_t*)msg->message.c_str(),msg->message.size()) << std::endl;
+#endif
+
 	while(msg->message.size() > MAX_STRING_SIZE)
 	{
 		// chop off the first 15000 wchars
@@ -278,11 +282,17 @@ void p3ChatService::checkSizeAndSendMessage(RsChatMsgItem *msg)
 		//
 		item->chatFlags &= (RS_CHAT_FLAG_PRIVATE | RS_CHAT_FLAG_PUBLIC | RS_CHAT_FLAG_LOBBY) ;
 
+#ifdef CHAT_DEBUG
+		std::cerr << "Creating slice of size " << item->message.size() << std::endl;
+#endif
 		// Indicate that the message is to be continued.
 		//
 		item->chatFlags |= RS_CHAT_FLAG_PARTIAL_MESSAGE ;
 		sendChatItem(item) ;
 	}
+#ifdef CHAT_DEBUG
+	std::cerr << "Creating slice of size " << msg->message.size() << std::endl;
+#endif
 	sendChatItem(msg) ;
 }
 
@@ -386,7 +396,7 @@ bool p3ChatService::sendChat(ChatId destination, std::string msg)
         if(it->second->_own_is_new)
         {
 #ifdef CHAT_DEBUG
-            std::cerr << "p3ChatService::sendChat: new avatar never sent to peer " << id << ". Setting <new> flag to packet." << std::endl;
+            std::cerr << "p3ChatService::sendChat: new avatar never sent to peer " << vpid << ". Setting <new> flag to packet." << std::endl;
 #endif
 
             ci->chatFlags |= RS_CHAT_FLAG_AVATAR_AVAILABLE ;
@@ -395,7 +405,7 @@ bool p3ChatService::sendChat(ChatId destination, std::string msg)
     }
 
 #ifdef CHAT_DEBUG
-    std::cerr << "Sending msg to (maybe virtual) peer " << id << ", flags = " << ci->chatFlags << std::endl ;
+    std::cerr << "Sending msg to (maybe virtual) peer " << vpid << ", flags = " << ci->chatFlags << std::endl ;
     std::cerr << "p3ChatService::sendChat() Item:";
     std::cerr << std::endl;
     ci->print(std::cerr);
@@ -435,7 +445,7 @@ bool p3ChatService::sendChat(ChatId destination, std::string msg)
     if(should_send_state_string)
     {
 #ifdef CHAT_DEBUG
-        std::cerr << "own status string is new for peer " << id << ": sending it." << std::endl ;
+        std::cerr << "own status string is new for peer " << vpid << ": sending it." << std::endl ;
 #endif
         RsChatStatusItem *cs = makeOwnCustomStateStringItem() ;
         cs->PeerId(vpid) ;
@@ -493,7 +503,7 @@ bool p3ChatService::locked_checkAndRebuildPartialMessage(RsChatMsgItem *& ci)
 	else
 	{
 #ifdef CHAT_DEBUG
-		std::cerr << "Message is complete, using it now." << std::endl;
+		std::cerr << "Message is complete, using it now. Size = " << ci->message.size() << ", hash=" << RsDirUtil::sha1sum((uint8_t*)ci->message.c_str(),ci->message.size()) << std::endl;
 #endif
 		return true ;
 	}
