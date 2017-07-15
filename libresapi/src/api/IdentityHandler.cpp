@@ -718,8 +718,8 @@ void IdentityHandler::handleImportKey(Request& req, Response& resp)
 	resp.setFail();
 }
 
-ResponseTask* IdentityHandler::handleDeleteIdentity(Request& req,
-                                                    Response& resp)
+ResponseTask* IdentityHandler::handleDeleteIdentity(Request& /*req*/,
+                                                    Response& /*resp*/)
 { return new DeleteIdentityTask(mRsIdentity); }
 
 } // namespace resource_api
