@@ -64,9 +64,9 @@
 #define COL_GROUP_POPULARITY              4
 #define COL_GROUP_UNIQUE_ID               5
 
-static const int PARTIAL_VIEW_SIZE                           =  9 ;
-static const int MAX_TUNNEL_REQUESTS_DISPLAY                 = 10 ;
-static const int GXSTRANS_STATISTICS_DELAY_BETWEEN_GROUP_REQ = 30 ;	// never request more than every 30 secs.
+//static const int PARTIAL_VIEW_SIZE                           =  9 ;
+//static const int MAX_TUNNEL_REQUESTS_DISPLAY                 = 10 ;
+//static const int GXSTRANS_STATISTICS_DELAY_BETWEEN_GROUP_REQ = 30 ;	// never request more than every 30 secs.
 
 #define GXSTRANS_GROUP_META  0x01
 #define GXSTRANS_GROUP_DATA  0x02
