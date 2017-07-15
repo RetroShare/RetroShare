@@ -50,18 +50,19 @@
 
 /* Network setup States */
 
-const uint32_t RS_NET_NEEDS_RESET = 	0x0000;
-const uint32_t RS_NET_UNKNOWN = 	0x0001;
-const uint32_t RS_NET_UPNP_INIT = 	0x0002;
-const uint32_t RS_NET_UPNP_SETUP =  	0x0003;
-const uint32_t RS_NET_EXT_SETUP =  	0x0004;
-const uint32_t RS_NET_DONE =    	0x0005;
-const uint32_t RS_NET_LOOPBACK =    	0x0006;
-const uint32_t RS_NET_DOWN =    	0x0007;
+//Defined and used in /libretroshare/src/pqi/p3netmgr.cc
+//const uint32_t RS_NET_NEEDS_RESET = 	0x0000;
+//const uint32_t RS_NET_UNKNOWN = 	0x0001;
+//const uint32_t RS_NET_UPNP_INIT = 	0x0002;
+//const uint32_t RS_NET_UPNP_SETUP =  	0x0003;
+//const uint32_t RS_NET_EXT_SETUP =  	0x0004;
+//const uint32_t RS_NET_DONE =    	0x0005;
+//const uint32_t RS_NET_LOOPBACK =    	0x0006;
+//const uint32_t RS_NET_DOWN =    	0x0007;
 
-const uint32_t MIN_TIME_BETWEEN_NET_RESET = 		5;
+//const uint32_t MIN_TIME_BETWEEN_NET_RESET = 		5;
 
-const uint32_t PEER_IP_CONNECT_STATE_MAX_LIST_SIZE =     	4;
+//const uint32_t PEER_IP_CONNECT_STATE_MAX_LIST_SIZE =     	4;
 
 static struct RsLog::logInfo p3peermgrzoneInfo = {RsLog::Default, "p3peermgr"};
 #define p3peermgrzone &p3peermgrzoneInfo
