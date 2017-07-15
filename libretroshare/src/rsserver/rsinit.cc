@@ -142,7 +142,7 @@ class RsInitConfig
 
 static RsInitConfig *rsInitConfig = NULL;
 
-const int p3facestartupzone = 47238;
+//const int p3facestartupzone = 47238;
 
 // initial configuration bootstrapping...
 //static const std::string configInitFile = "default_cert.txt";
