@@ -1305,6 +1305,7 @@ void bdConnectManager::callbackConnectRequest(bdId *srcId, bdId *proxyId, bdId *
 
 					}
 				}
+					break;
 				case BITDHT_CONNECT_ERROR_DUPLICATE: // similar attempt. delay/recycle (ANY/ANY)
 				{
 
