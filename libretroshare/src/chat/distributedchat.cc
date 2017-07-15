@@ -54,7 +54,7 @@ static const time_t 	MIN_DELAY_BETWEEN_PUBLIC_LOBBY_REQ =   20 ; // don't ask fo
 static const time_t 	LOBBY_LIST_AUTO_UPDATE_TIME        =  121 ; // regularly ask for available lobbies every 5 minutes, to allow auto-subscribe to work
 
 static const uint32_t MAX_ALLOWED_LOBBIES_IN_LIST_WARNING = 50 ;
-static const uint32_t MAX_MESSAGES_PER_SECONDS_NUMBER     =  5 ; // max number of messages from a given peer in a window for duration below
+//static const uint32_t MAX_MESSAGES_PER_SECONDS_NUMBER     =  5 ; // max number of messages from a given peer in a window for duration below
 static const uint32_t MAX_MESSAGES_PER_SECONDS_PERIOD     = 10 ; // duration window for max number of messages before messages get dropped.
 
 #define        IS_PUBLIC_LOBBY(flags) (flags & RS_CHAT_LOBBY_FLAGS_PUBLIC    )
