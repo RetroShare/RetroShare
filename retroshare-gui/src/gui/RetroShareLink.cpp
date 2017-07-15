@@ -608,6 +608,7 @@ void RetroShareLink::check()
 		case TYPE_EXTRAFILE:
 			if(!checkSSLId(_SSLid))
 				_valid = false;			// no break! We also test file stuff below.
+			/* fallthrough */
 		case TYPE_FILE:
 			if(_size > (((uint64_t)1)<<40))	// 1TB. Who has such large files?
 				_valid = false;
