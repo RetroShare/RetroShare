@@ -437,7 +437,7 @@ void RSGraphWidget::paintData()
   if(_maxValue > 0.0f)
   {
       if(_flags & RSGRAPH_FLAGS_LOG_SCALE_Y)
-          _y_scale = _rec.height()*0.8 / log(std::max(2.0,_maxValue)) ;
+          _y_scale = _rec.height()*0.8 / log(std::max((qreal)2.0,(qreal)_maxValue)) ;
       else
           _y_scale = _rec.height()*0.8/_maxValue ;
   }
