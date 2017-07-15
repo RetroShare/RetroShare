@@ -2616,7 +2616,7 @@ bool p3PeerMgrIMPL::assignPeersToGroup(const RsNodeGroupId &groupId, const std::
 
                 for (std::list<RsPgpId>::const_iterator peerIt = peerIds.begin(); peerIt != peerIds.end(); ++peerIt)
                 {
-                    std::set<RsPgpId>::iterator peerIt1 = groupItem.peerIds.find(*peerIt);
+                    //std::set<RsPgpId>::iterator peerIt1 = groupItem.peerIds.find(*peerIt);
 
                     if (assign)
                     {
