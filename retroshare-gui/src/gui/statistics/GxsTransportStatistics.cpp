@@ -20,18 +20,20 @@
  ****************************************************************/
 
 #include <iostream>
-#include <QTimer>
-#include <QObject>
-#include <QFontMetrics>
-#include <QWheelEvent>
-#include <QDateTime>
 #include <time.h>
 
+#include <QDateTime>
+#include <QFontMetrics>
+#include <QHeaderView>
+#include <QLayout>
 #include <QMenu>
+#include <QObject>
 #include <QPainter>
 #include <QStylePainter>
-#include <QLayout>
-#include <QHeaderView>
+#include <QTimer>
+#include <QTreeWidget>
+#include <QWheelEvent>
+
 
 #include <retroshare/rsgxstrans.h>
 #include <retroshare/rspeers.h>
@@ -200,7 +202,7 @@ void GxsTransportStatistics::updateContent()
     // clear
 
     treeWidget->clear();
-    time_t now = time(NULL) ;
+    //time_t now = time(NULL) ;
     
     // 1 - fill the table for pending packets
 
@@ -239,9 +241,9 @@ void GxsTransportStatistics::updateContent()
 
     std::set<RsGxsGroupId> openned_groups ;
 
-    for(uint32_t i=0;i<groupTreeWidget->topLevelItemCount();++i)
-        if(groupTreeWidget->isItemExpanded(groupTreeWidget->topLevelItem(i)))
-            openned_groups.insert(RsGxsGroupId(groupTreeWidget->topLevelItem(i)->data(COL_GROUP_GRP_ID,Qt::DisplayRole).toString().toStdString())) ;
+	for(int i=0; i<groupTreeWidget->topLevelItemCount(); ++i)
+		if( groupTreeWidget->isItemExpanded(groupTreeWidget->topLevelItem(i)) )
+			openned_groups.insert(RsGxsGroupId(groupTreeWidget->topLevelItem(i)->data(COL_GROUP_GRP_ID, Qt::DisplayRole).toString().toStdString()));
 
 	groupTreeWidget->clear();
 
