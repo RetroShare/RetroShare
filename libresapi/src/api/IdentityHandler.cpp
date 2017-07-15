@@ -243,7 +243,7 @@ void IdentityHandler::handleWildcard(Request & /*req*/, Response &resp)
 			bool pgp_linked = (grp.mMeta.mGroupFlags &
 			                   RSGXSID_GROUPFLAG_REALID_kept_for_compatibility);
 			resp.mDataStream.getStreamToMember()
-#warning @deprecated using "id" as key can cause problems in some JS based \
+#warning Gioacchino Mazzurco 2017-03-24: @deprecated using "id" as key can cause problems in some JS based \
 	        languages like Qml @see gxs_id instead
 			        << makeKeyValueReference("id", grp.mMeta.mGroupId)
 			        << makeKeyValueReference("gxs_id", grp.mMeta.mGroupId)

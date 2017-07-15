@@ -1243,7 +1243,7 @@ void ChatHandler::handleUnreadMsgs(Request &/*req*/, Response &resp)
         if(count && (mit2 != mChatInfo.end()))
         {
             resp.mDataStream.getStreamToMember()
-#warning @deprecated using "id" as key can cause problems in some JS based \
+#warning Gioacchino Mazzurco 2017-03-24: @deprecated using "id" as key can cause problems in some JS based \
 	        languages like Qml @see chat_id instead
 			        << makeKeyValue("id", mit->first.toStdString())
 			        << makeKeyValue("chat_id", mit->first.toStdString())
