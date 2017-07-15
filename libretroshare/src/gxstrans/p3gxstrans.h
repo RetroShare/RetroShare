@@ -28,7 +28,7 @@
 #include "util/rsthreads.h"
 #include "retroshare/rsgxstrans.h"
 
-struct p3GxsTrans;
+class p3GxsTrans;
 
 /// Services who want to make use of p3GxsTrans should inherit this struct
 struct GxsTransClient
