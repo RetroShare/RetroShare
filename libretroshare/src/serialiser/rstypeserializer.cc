@@ -355,7 +355,7 @@ template<> bool RsTypeSerializer::deserialize( const uint8_t data[],
 	return true;
 }
 
-template<> void RsTypeSerializer::print_data( const std::string& n,
+template<> void RsTypeSerializer::print_data( const std::string& /*n*/,
                                               const RsItem& s )
 {
 	RsGenericSerializer::SerializeContext ctx(
