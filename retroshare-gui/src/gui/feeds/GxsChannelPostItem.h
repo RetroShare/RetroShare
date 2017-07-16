@@ -47,6 +47,11 @@ public:
 
 	GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome, bool autoUpdate, const std::set<RsGxsMessageId>& older_versions = std::set<RsGxsMessageId>());
 
+	// This method can be called when additional information is known about the post. In this case, the widget will be initialized with some
+	// minimap information from the post and completed when the use displays it, which shouldn't cost anything more.
+
+	GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsChannelPost& post, bool isHome, bool autoUpdate, const std::set<RsGxsMessageId>& older_versions = std::set<RsGxsMessageId>());
+
 	//GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsChannelGroup &group, const RsGxsChannelPost &post, bool isHome, bool autoUpdate);
 	//GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsChannelPost &post, bool isHome, bool autoUpdate);
 	virtual ~GxsChannelPostItem();
@@ -63,6 +68,8 @@ public:
     bool isUnread() const ;
 
 protected:
+	void init(const RsGxsMessageId& messageId,const std::set<RsGxsMessageId>& older_versions);
+
 	/* FeedItem */
 	virtual void doExpand(bool open);
 	virtual void expandFill(bool first);
