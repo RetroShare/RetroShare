@@ -1394,14 +1394,12 @@ void FriendList::copyFullCertificate()
 {
 	QTreeWidgetItem *c = getCurrentPeer();
 	QList<RetroShareLink> urls;
-    RetroShareLink link ;
-
-    link.createCertificate(RsPeerId(getRsId(c))) ;
+	RetroShareLink link = RetroShareLink::createCertificate(RsPeerId(getRsId(c)));
 	urls.push_back(link);
 
 	std::cerr << "link: " << std::endl;
-
 	std::cerr<< link.toString().toStdString() << std::endl;
+
 	RSLinkClipboard::copyLinks(urls);
 }
 

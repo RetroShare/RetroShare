@@ -467,8 +467,7 @@ void IdDetailsDialog::sendInvite()
     composer->setTitleText(tr("You have a friend invite"));
     
     RsPeerId ownId = rsPeers->getOwnId();
-    RetroShareLink link;
-    link.createCertificate(ownId);
+    RetroShareLink link = RetroShareLink::createCertificate(ownId);
     
     RsGxsId keyId(ui->lineEdit_KeyId->text().toStdString());
     

@@ -77,19 +77,18 @@ class RetroShareLink
 		RetroShareLink(const QUrl& url);
 		RetroShareLink(const QString& url);
 
-#warning csoler 2017-01-04: These methods should be static and return a created link
-		bool createFile(const QString& name, uint64_t size, const QString& hash);
-		bool createExtraFile(const QString& name, uint64_t size, const QString& hash, const QString& ssl_id);
-		bool createPerson(const RsPgpId &id);
-		bool createGxsGroupLink(const RetroShareLink::enumType &linkType, const RsGxsGroupId &groupId, const QString &groupName);
-		bool createGxsMessageLink(const RetroShareLink::enumType &linkType, const RsGxsGroupId &groupId, const RsGxsMessageId &msgId, const QString &msgName);
-		bool createSearch(const QString& keywords);
-		bool createMessage(const RsPeerId &peerId, const QString& subject);
-		bool createMessage(const RsGxsId &peerId, const QString& subject);
-		bool createIdentity(const RsGxsId& gxs_id,const QString& name,const QString& radix_data) ;
-		bool createCertificate(const RsPeerId &ssl_id) ;
-		bool createPublicMsgInvite(time_t time_stamp,const QString& pgp_id,const QString& hash) ;
-		bool createUnknwonSslCertificate(const RsPeerId &sslId, const RsPgpId &gpgId = RsPgpId()) ;
+		static RetroShareLink createIdentity(const RsGxsId& gxs_id,const QString& name,const QString& radix_data) ;
+		static RetroShareLink createExtraFile(const QString& name, uint64_t size, const QString& hash, const QString& ssl_id);
+		static RetroShareLink createFile(const QString& name, uint64_t size, const QString& hash);
+		static RetroShareLink createPublicMsgInvite(time_t time_stamp,const QString& pgp_id,const QString& hash) ;
+		static RetroShareLink createPerson(const RsPgpId &id);
+		static RetroShareLink createCertificate(const RsPeerId &ssl_id) ;
+		static RetroShareLink createUnknwonSslCertificate(const RsPeerId &sslId, const RsPgpId &gpgId = RsPgpId()) ;
+		static RetroShareLink createGxsGroupLink(const RetroShareLink::enumType &linkType, const RsGxsGroupId &groupId, const QString &groupName);
+		static RetroShareLink createGxsMessageLink(const RetroShareLink::enumType &linkType, const RsGxsGroupId &groupId, const RsGxsMessageId &msgId, const QString &msgName);
+		static RetroShareLink createSearch(const QString& keywords);
+		static RetroShareLink createMessage(const RsPeerId &peerId, const QString& subject);
+		static RetroShareLink createMessage(const RsGxsId &peerId, const QString& subject);
 
 		enumType type() const {return _type; }
 		uint64_t size() const { return _size ; }

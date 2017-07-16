@@ -142,11 +142,9 @@ void ConfCertDialog::load()
       ui.headerFrame->setHeaderText(nameAndLocation);
 
 
-      RetroShareLink link;
-      link.createPerson(detail.gpg_id);
-
-      ui.pgpfingerprint->setText(link.toHtml());
-      ui.pgpfingerprint->setToolTip(link.title());
+	RetroShareLink link = RetroShareLink::createPerson(detail.gpg_id);
+	ui.pgpfingerprint->setText(link.toHtml());
+	ui.pgpfingerprint->setToolTip(link.title());
 
       ui.avatar->setId(ChatId(peerId));
 

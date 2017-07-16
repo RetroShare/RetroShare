@@ -130,9 +130,8 @@ void PostedGroupItem::fill()
 #endif
 
 	// No link type at this moment
-    RetroShareLink link;
-    link.createGxsGroupLink(RetroShareLink::TYPE_POSTED, mGroup.mMeta.mGroupId, groupName());
-    ui->nameLabel->setText(link.toHtml());
+	RetroShareLink link = RetroShareLink::createGxsGroupLink(RetroShareLink::TYPE_POSTED, mGroup.mMeta.mGroupId, groupName());
+	ui->nameLabel->setText(link.toHtml());
 //	ui->nameLabel->setText(groupName());
 
 	ui->descLabel->setText(QString::fromUtf8(mGroup.mDescription.c_str()));

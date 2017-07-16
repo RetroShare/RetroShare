@@ -110,9 +110,7 @@ void DetailsDialog::setFileHash(const RsFileHash & hash)
 	if(!rsFiles->FileDetails(hash, RS_FILE_HINTS_DOWNLOAD, nfo)) 
 		return ;
 
-	RetroShareLink link ;
-    link.createFile(QString::fromUtf8(nfo.fname.c_str()),nfo.size,QString::fromStdString(nfo.hash.toStdString())) ;
-
+	RetroShareLink link = RetroShareLink::createFile(QString::fromUtf8(nfo.fname.c_str()),nfo.size,QString::fromStdString(nfo.hash.toStdString()));
 	ui.Linktext->setText(link.toString()) ;
 }
 
