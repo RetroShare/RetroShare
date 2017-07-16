@@ -1464,8 +1464,8 @@ void TransfersDialog::copyLink ()
 			continue;
 		}
 
-		RetroShareLink link;
-        if (link.createFile(QString::fromUtf8(info.fname.c_str()), info.size, QString::fromStdString(info.hash.toStdString()))) {
+		RetroShareLink link = RetroShareLink::createFile(QString::fromUtf8(info.fname.c_str()), info.size, QString::fromStdString(info.hash.toStdString()));
+		if (link.valid()) {
 			links.push_back(link) ;
 		}
 	}
@@ -1487,8 +1487,8 @@ void TransfersDialog::ulCopyLink ()
             continue;
         }
 
-        RetroShareLink link;
-        if (link.createFile(QString::fromUtf8(info.fname.c_str()), info.size, QString::fromStdString(info.hash.toStdString()))) {
+        RetroShareLink link = RetroShareLink::createFile(QString::fromUtf8(info.fname.c_str()), info.size, QString::fromStdString(info.hash.toStdString()));
+        if (link.valid()) {
             links.push_back(link) ;
         }
     }

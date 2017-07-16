@@ -271,10 +271,10 @@ void MimeTextEdit::pasteLink()
 
 void MimeTextEdit::pasteOwnCertificateLink()
 {
-	RetroShareLink link;
 	RsPeerId ownId = rsPeers->getOwnId();
+	RetroShareLink link = RetroShareLink::createCertificate(ownId);
 
-	if (link.createCertificate(ownId)) {
+	if (link.valid()) {
 		insertHtml(link.toHtml() + " ");
 	}
 }

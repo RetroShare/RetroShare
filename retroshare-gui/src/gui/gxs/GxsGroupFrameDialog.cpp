@@ -480,12 +480,12 @@ void GxsGroupFrameDialog::copyGroupLink()
 		return;
 	}
 
-	RetroShareLink link;
-
 	QString name;
 	if(!getCurrentGroupName(name)) return;
 
-	if (link.createGxsGroupLink(getLinkType(), mGroupId, name)) {
+	RetroShareLink link = RetroShareLink::createGxsGroupLink(getLinkType(), mGroupId, name);
+
+	if (link.valid()) {
 		QList<RetroShareLink> urls;
 		urls.push_back(link);
 		RSLinkClipboard::copyLinks(urls);

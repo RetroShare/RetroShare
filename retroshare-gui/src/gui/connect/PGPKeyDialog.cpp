@@ -267,7 +267,7 @@ void PGPKeyDialog::load()
     RetroShareLink link ;
 
     for(std::list<RsPgpId>::const_iterator it(detail.gpgSigners.begin());it!=detail.gpgSigners.end();++it) {
-        link.createPerson(*it);
+        link = RetroShareLink::createPerson(*it);
         if (link.valid()) {
             text += link.toHtml() + "<BR>";
         }

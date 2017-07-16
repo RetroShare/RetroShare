@@ -515,8 +515,16 @@ void MessageWidget::fill(const std::string &msgId)
 	RetroShareLink link;
 	QString text;
 
-    for(std::set<RsPeerId>::const_iterator pit = msgInfo.rspeerid_msgto.begin(); pit != msgInfo.rspeerid_msgto.end(); ++pit)  if (link.createMessage(*pit, ""))  text += link.toHtml() + "   ";
-    for(std::set<RsGxsId >::const_iterator pit = msgInfo.rsgxsid_msgto.begin(); pit != msgInfo.rsgxsid_msgto.end(); ++pit)  if (link.createMessage(*pit, ""))  text += link.toHtml() + "   ";
+	for(std::set<RsPeerId>::const_iterator pit = msgInfo.rspeerid_msgto.begin(); pit != msgInfo.rspeerid_msgto.end(); ++pit) {
+		link = RetroShareLink::createMessage(*pit, "");
+		if (link.valid())
+			text += link.toHtml() + "   ";
+	}
+	for(std::set<RsGxsId >::const_iterator pit = msgInfo.rsgxsid_msgto.begin(); pit != msgInfo.rsgxsid_msgto.end(); ++pit) {
+		link = RetroShareLink::createMessage(*pit, "");
+		if (link.valid())
+			text += link.toHtml() + "   ";
+	}
 
 	ui.toText->setText(text);
 
@@ -526,8 +534,16 @@ void MessageWidget::fill(const std::string &msgId)
 		ui.ccText->setVisible(true);
 
 		text.clear();
-        for(std::set<RsPeerId>::const_iterator pit = msgInfo.rspeerid_msgcc.begin(); pit != msgInfo.rspeerid_msgcc.end(); ++pit)  if (link.createMessage(*pit, ""))  text += link.toHtml() + "   ";
-        for(std::set<RsGxsId>::const_iterator pit = msgInfo.rsgxsid_msgcc.begin(); pit != msgInfo.rsgxsid_msgcc.end(); ++pit)  if (link.createMessage(*pit, ""))  text += link.toHtml() + "   ";
+		for(std::set<RsPeerId>::const_iterator pit = msgInfo.rspeerid_msgcc.begin(); pit != msgInfo.rspeerid_msgcc.end(); ++pit) {
+			link = RetroShareLink::createMessage(*pit, "");
+			if (link.valid())
+				text += link.toHtml() + "   ";
+		}
+		for(std::set<RsGxsId>::const_iterator pit = msgInfo.rsgxsid_msgcc.begin(); pit != msgInfo.rsgxsid_msgcc.end(); ++pit) {
+			link = RetroShareLink::createMessage(*pit, "");
+			if (link.valid())
+				text += link.toHtml() + "   ";
+		}
 
 		ui.ccText->setText(text);
 	} else {
@@ -536,14 +552,22 @@ void MessageWidget::fill(const std::string &msgId)
 		ui.ccText->clear();
 	}
 
-    if (!msgInfo.rspeerid_msgbcc.empty() || !msgInfo.rsgxsid_msgbcc.empty())
-    {
-        ui.bccLabel->setVisible(true);
-        ui.bccText->setVisible(true);
+	if (!msgInfo.rspeerid_msgbcc.empty() || !msgInfo.rsgxsid_msgbcc.empty())
+	{
+		ui.bccLabel->setVisible(true);
+		ui.bccText->setVisible(true);
 
-        text.clear();
-        for(std::set<RsPeerId>::const_iterator pit = msgInfo.rspeerid_msgbcc.begin(); pit != msgInfo.rspeerid_msgbcc.end(); ++pit)  if (link.createMessage(*pit, ""))  text += link.toHtml() + "   ";
-        for(std::set<RsGxsId>::const_iterator pit = msgInfo.rsgxsid_msgbcc.begin(); pit != msgInfo.rsgxsid_msgbcc.end(); ++pit)  if (link.createMessage(*pit, ""))  text += link.toHtml() + "   ";
+		text.clear();
+		for(std::set<RsPeerId>::const_iterator pit = msgInfo.rspeerid_msgbcc.begin(); pit != msgInfo.rspeerid_msgbcc.end(); ++pit) {
+			link = RetroShareLink::createMessage(*pit, "");
+			if (link.valid())
+				text += link.toHtml() + "   ";
+		}
+		for(std::set<RsGxsId>::const_iterator pit = msgInfo.rsgxsid_msgbcc.begin(); pit != msgInfo.rsgxsid_msgbcc.end(); ++pit) {
+			link = RetroShareLink::createMessage(*pit, "");
+			if (link.valid())
+				text += link.toHtml() + "   ";
+		}
 
 		ui.bccText->setText(text);
 	} else {

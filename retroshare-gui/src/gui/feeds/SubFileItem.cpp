@@ -727,8 +727,8 @@ void SubFileItem::copyLink()
 		return;
 	}
 
-	RetroShareLink link;
-    if (link.createFile(QString::fromUtf8(mFileName.c_str()), mFileSize, QString::fromStdString(mFileHash.toStdString()))) {
+	RetroShareLink link = RetroShareLink::createFile(QString::fromUtf8(mFileName.c_str()), mFileSize, QString::fromStdString(mFileHash.toStdString()));
+	if (link.valid()) {
 		QList<RetroShareLink> urls;
 		urls.push_back(link);
 		RSLinkClipboard::copyLinks(urls);

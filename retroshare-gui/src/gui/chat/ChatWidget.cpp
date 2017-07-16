@@ -1556,14 +1556,14 @@ void ChatWidget::fileHashingFinished(QList<HashedFile> hashedFiles)
 	QList<HashedFile>::iterator it;
 	for (it = hashedFiles.begin(); it != hashedFiles.end(); ++it) {
 		HashedFile& hashedFile = *it;
-		QString ext = QFileInfo(hashedFile.filename).suffix();
+		//QString ext = QFileInfo(hashedFile.filename).suffix();
 
 		RetroShareLink link;
 
 		if(mDefaultExtraFileFlags & RS_FILE_REQ_ANONYMOUS_ROUTING)
-            link.createFile(hashedFile.filename, hashedFile.size, QString::fromStdString(hashedFile.hash.toStdString()));
+			link = RetroShareLink::createFile(hashedFile.filename, hashedFile.size, QString::fromStdString(hashedFile.hash.toStdString()));
 		else
-            link.createExtraFile(hashedFile.filename, hashedFile.size, QString::fromStdString(hashedFile.hash.toStdString()),QString::fromStdString(rsPeers->getOwnId().toStdString()));
+			link = RetroShareLink::createExtraFile(hashedFile.filename, hashedFile.size, QString::fromStdString(hashedFile.hash.toStdString()),QString::fromStdString(rsPeers->getOwnId().toStdString()));
 
 		if (hashedFile.flag & HashedFile::Picture) {
 			message += QString("<img src=\"file:///%1\" width=\"100\" height=\"100\">").arg(hashedFile.filepath);
@@ -1575,6 +1575,7 @@ void ChatWidget::fileHashingFinished(QList<HashedFile> hashedFiles)
 			}
 		}
 		message += link.toHtmlSize();
+
 		if (it != hashedFiles.end()) {
 			message += "<BR>";
 		}
