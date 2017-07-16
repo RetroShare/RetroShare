@@ -64,6 +64,7 @@ no_rs_gxs:CONFIG -= rs_gxs
 # To disable Deprecated Warning append the following
 # assignation to qmake command line "CONFIG+=rs_nodeprecatedwarning"
 CONFIG *= no_rs_nodeprecatedwarning
+CONFIG *= rs_nodeprecatedwarning
 rs_nodeprecatedwarning:CONFIG -= no_rs_nodeprecatedwarning
 
 # To disable Cpp #Warning append the following
