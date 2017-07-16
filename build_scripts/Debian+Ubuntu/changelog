@@ -1,5 +1,74 @@
 retroshare06 (0.6.2-1.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
+  6a8b74c csoler Sat, 15 Jul 2017 22:00:35 +0200 fixed compilation for computers where qreal is a float
+  5ffb549 csoler Thu, 13 Jul 2017 21:49:47 +0200 Merge pull request #930 from myfingerhurt/master
+  3912118 csoler Thu, 13 Jul 2017 21:42:05 +0200 Merge pull request #925 from PhenomRetroShare/Fix_ChannelCommentLineWrap
+  98b0585 csoler Thu, 13 Jul 2017 21:23:14 +0200 Merge pull request #937 from csoler/v0.6-ImprovedNoGUI
+  69aa5b6 Gioacc Thu, 13 Jul 2017 13:00:32 +0200 Clean some garbage from the code
+  fd452af csoler Wed, 12 Jul 2017 23:03:17 +0200 removed some debut output that perturbated the passwd command line
+  00c1a9a csoler Wed, 12 Jul 2017 22:53:35 +0200 fixed autologin
+  66268c8 csoler Wed, 12 Jul 2017 18:48:06 +0200 fixed variable shadowing a parameter
+  1cdb971 csoler Tue, 11 Jul 2017 23:47:51 +0200 fixed compilation pb due to qtcreator bug
+  4cfdef5 csoler Tue, 11 Jul 2017 23:39:04 +0200 do not display auto-login option when software is compiled without autologin
+  a5e0b1c csoler Tue, 11 Jul 2017 23:32:22 +0200 fixed -U option in rs-nogui. Removed debug output that would ruin the terminal interface
+  3e3ee1a csoler Sun, 9 Jul 2017 22:12:01 +0200 little improvement to command line help display
+  2c6f11e csoler Sun, 9 Jul 2017 21:59:02 +0200 restored terminal output control class
+  5465e11 csoler Sun, 9 Jul 2017 21:37:39 +0200 fixed debug output
+  5dfbce7 csoler Sun, 9 Jul 2017 21:16:41 +0200 fixed Terminal Api Client logic
+  decbd35 csoler Sat, 8 Jul 2017 17:38:09 +0200 improved the login in the interaction between terminal api client and main
+  7ee527e csoler Sat, 8 Jul 2017 17:35:34 +0200 removed comments
+  b5976e1 csoler Sat, 8 Jul 2017 16:48:24 +0200 fixed message when passphrase is empty
+  4f887ff csoler Sat, 8 Jul 2017 16:47:50 +0200 commented out unused line
+  36a2053 NeverE Sat, 8 Jul 2017 00:20:09 +0900 add new functions to chat
+  75c8b71 NeverE Sat, 8 Jul 2017 00:18:51 +0900 add new functions for chat
+  fcec555 Gioacc Fri, 7 Jul 2017 11:57:17 +0200 Merge pull request #927 from Emotyco/libresapi_lobbies_invitation
+  fc396dd Gioacc Fri, 7 Jul 2017 11:56:12 +0200 Merge pull request #929 from Emotyco/libresapi_empty_cert
+  e46d91e Gioacc Fri, 7 Jul 2017 11:35:16 +0200 Merge branch 'android_share_intent'
+  f5912a3 csoler Thu, 6 Jul 2017 22:52:30 +0200 Merge pull request #928 from PhenomRetroShare/Fix_MultiDownload
+  f0ad687 Konrad Thu, 6 Jul 2017 22:44:45 +0200 Fixed: Libresapi was throwing exception when requested to add new cert which was empty
+  54047cd Phenom Thu, 6 Jul 2017 22:35:54 +0200 Fix multi download of same file.
+  42bf6b2 csoler Thu, 6 Jul 2017 20:57:38 +0200 improved display of password request
+  a778128 csoler Thu, 6 Jul 2017 20:50:59 +0200 fixed multi-digit numbers in terminal account selection
+  c630f1f Gioacc Thu, 6 Jul 2017 16:28:59 +0200 Fix unused warning in gxstokenqueue
+  b935bac Gioacc Thu, 6 Jul 2017 16:28:00 +0200 Add missing break in p3IdService::handleResponse
+  11d02f4 Konrad Thu, 6 Jul 2017 14:08:50 +0200 Added: Handling requests to answer invitation to lobby
+  c9bfe4b Konrad Thu, 6 Jul 2017 14:07:33 +0200 Added: Handling requests to get lobbies invitations
+  aca6233 Konrad Thu, 6 Jul 2017 14:05:48 +0200 Added: Handling requests to invite peers to lobby
+  dad6abd Phenom Wed, 5 Jul 2017 19:30:31 +0200 Fix channel comments line wrap
+  8e62a8b csoler Wed, 5 Jul 2017 22:32:54 +0200 updated tooltip for opinion in People
+  141277b csoler Wed, 5 Jul 2017 22:16:14 +0200 removed debug info
+  c1e18c7 csoler Wed, 5 Jul 2017 22:12:56 +0200 fixed bug causing an infinite subscribe/unsubscribe loop in GxsTrans
+  370d50b csoler Wed, 5 Jul 2017 21:36:00 +0200 cleaned a bit the code in rsinit.cc
+  7ee0b45 csoler Tue, 4 Jul 2017 23:27:43 +0200 Merge pull request #922 from csoler/v0.6-ImprovedGUI
+  5f7df7c csoler Tue, 4 Jul 2017 23:26:57 +0200 update call to notifySettingsChanged() when changing the thread loading of channels
+  2aac675 csoler Tue, 4 Jul 2017 23:15:09 +0200 merged upstream/master into v0.6-ImprovedGUI
+  931ddae csoler Tue, 4 Jul 2017 23:13:03 +0200 set load thread to false for channels on default. Fixed missing () in connect
+  dafaa56 Gioacc Tue, 4 Jul 2017 16:27:12 +0200 Qml App: better Android interaction on URL export
+  a97ba80 Gioacc Tue, 4 Jul 2017 16:41:14 +0200 Fix missing include
+  5b1def1 csoler Tue, 4 Jul 2017 10:25:40 +0200 Merge pull request #912 from Emotyco/libresapi_avatar_handlers
+  3274852 csoler Tue, 4 Jul 2017 10:24:43 +0200 Merge pull request #913 from Emotyco/libresapi_participants_refresh
+  ee25722 csoler Tue, 4 Jul 2017 10:24:05 +0200 Merge pull request #915 from PhenomRetroShare/Add_AlwaysAllowFriendTimeOffsetFeed
+  d7f0141 csoler Tue, 4 Jul 2017 10:23:30 +0200 Merge pull request #916 from PhenomRetroShare/Add_WarningToDirectDonwloadCheckBox
+  d876bb7 csoler Mon, 3 Jul 2017 23:21:31 +0200 fixing async loading of channels. To be tested.
+  1dea00d csoler Mon, 3 Jul 2017 23:09:17 +0200 attempt to fix channel post auto-size by limiting the number of lines from message to display in summary depending on available size
+  719b414 csoler Mon, 3 Jul 2017 22:32:08 +0200 fixed merging of comments in channel post with async-ed loading system
+  f0ed0dd csoler Mon, 3 Jul 2017 22:07:23 +0200 Merge pull request #918 from RetroShare/revert-917-v0.6-ImprovedGUI
+  9a5e46d csoler Mon, 3 Jul 2017 22:07:06 +0200 Revert "attempt to delay channel post loading on demand when displayed"
+  f5abf54 csoler Mon, 3 Jul 2017 21:54:22 +0200 Merge pull request #917 from csoler/v0.6-ImprovedGUI
+  b6d5c55 csoler Mon, 3 Jul 2017 21:48:17 +0200 attempt to delay channel post loading on demand when displayed
+  3987f75 Phenom Mon, 3 Jul 2017 17:14:16 +0200 Always allow Friend Time Offset Feed item.
+  2192a43 Phenom Mon, 3 Jul 2017 18:36:47 +0200 Add a warning to Direct download checkbox depends general setting.
+  f413433 csoler Mon, 3 Jul 2017 11:25:12 +0200 removed zeroing of preferred group causing a bug in GxsTrans
+  e9f9856 csoler Sun, 2 Jul 2017 10:42:22 +0200 fixed naming in friend groups in GroupChooser
+  77b064b csoler Sat, 1 Jul 2017 17:24:58 +0200 fixed translation of built-in group names in GxsGroupDialog
+  c61536e csoler Sat, 1 Jul 2017 16:21:22 +0200 fixed RsGraphWidget by adding an extra data point in the lower right corner, and fixed typo that caused an invalid point to be drawn
+  f136210 csoler Sat, 1 Jul 2017 16:20:39 +0200 fixed layout in GxsTrans stats
+  1323a97 csoler Sat, 1 Jul 2017 15:38:57 +0200 updated changelog
+
+ -- Retroshare Dev Team <contact@retroshare.net>  Sun, 16 Jul 2017 12:00:00 +0100
+ 
+retroshare06 (0.6.2-1.20170716.1323a974~trusty) trusty; urgency=low
+
   244e8a8 csoler Sat, 1 Jul 2017 15:29:48 +0200 fixed display of GxsTrans statistics
   27774ba csoler Thu, 29 Jun 2017 22:13:04 +0200 Merge pull request #911 from csoler/v0.6-GxsTransport
   b294b4b csoler Thu, 29 Jun 2017 22:11:44 +0200 changed sorting of popular forums w.r.t. time of last post rather than number of supplier friends
