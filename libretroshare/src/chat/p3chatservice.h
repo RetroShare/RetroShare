@@ -53,10 +53,11 @@ typedef RsPeerId ChatLobbyVirtualPeerId ;
   * This service uses rsnotify (callbacks librs clients (e.g. rs-gui))
   * @see NotifyBase
   */
-struct p3ChatService :
-        p3Service, DistantChatService, DistributedChatService, p3Config,
-        pqiServiceMonitor, GxsTransClient
+class p3ChatService :
+        public p3Service, public DistantChatService, public DistributedChatService, public p3Config,
+        public pqiServiceMonitor, GxsTransClient
 {
+public:
 	p3ChatService(p3ServiceControl *cs, p3IdService *pids, p3LinkMgr *cm,
 	               p3HistoryMgr *historyMgr, p3GxsTrans& gxsTransService );
 
