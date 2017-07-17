@@ -34,7 +34,7 @@ public class RetroShareAndroidNotifyService extends QtService
 	public void notify(String title, String text, String uri)
 	{
 		Notification.Builder mBuilder = new Notification.Builder(this);
-		mBuilder.setSmallIcon(R.drawable.retroshare06_48x48)
+		mBuilder.setSmallIcon(R.drawable.retroshare_48x48)
 				.setContentTitle(title)
 				.setContentText(text)
 				.setAutoCancel(true)

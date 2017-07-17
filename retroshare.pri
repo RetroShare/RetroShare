@@ -87,9 +87,9 @@ rs_async_chat:CONFIG -= no_rs_async_chat
 unix {
 	isEmpty(PREFIX)   { PREFIX   = "/usr" }
 	isEmpty(BIN_DIR)  { BIN_DIR  = "$${PREFIX}/bin" }
-	isEmpty(INC_DIR)  { INC_DIR  = "$${PREFIX}/include/retroshare06" }
+	isEmpty(INC_DIR)  { INC_DIR  = "$${PREFIX}/include/retroshare" }
 	isEmpty(LIB_DIR)  { LIB_DIR  = "$${PREFIX}/lib" }
-	isEmpty(DATA_DIR) { DATA_DIR = "$${PREFIX}/share/RetroShare06" }
+	isEmpty(DATA_DIR) { DATA_DIR = "$${PREFIX}/share/retroshare" }
 	isEmpty(PLUGIN_DIR) { PLUGIN_DIR  = "$${LIB_DIR}/retroshare/extensions6" }
 
     rs_autologin {

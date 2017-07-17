@@ -6678,8 +6678,8 @@ i utilitzar el botó d&apos;importació per carregar-lo</translation>
     </message>
     <message>
         <location line="+16"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Install RetroShare with a package installer to get&lt;/p&gt;&lt;p&gt;/usr/share/applications/retroshare06.desktop&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Instal·la RetroShare amb un instal·lador de paquets per obtindre&lt;/p&gt;&lt;p&gt;/usr/share/applications/retroshare06.desktop</translation>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Install RetroShare with a package installer to get&lt;/p&gt;&lt;p&gt;/usr/share/applications/retroshare.desktop&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Instal·la RetroShare amb un instal·lador de paquets per obtindre&lt;/p&gt;&lt;p&gt;/usr/share/applications/retroshare.desktop</translation>
     </message>
     <message>
         <location line="+3"/>

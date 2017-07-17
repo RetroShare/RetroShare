@@ -1,5 +1,5 @@
 Summary: Secure communication with friends
-Name: retroshare06
+Name: retroshare
 Version: 0.6.0.%{rev}
 Release: 1%{?dist}
 License: GPLv3
@@ -65,25 +65,25 @@ rm -rf $RPM_BUILD_ROOT
 cd src
 make INSTALL_ROOT=$RPM_BUILD_ROOT install
 #menu
-desktop-file-validate $RPM_BUILD_ROOT%{_datadir}/applications/retroshare06.desktop
+desktop-file-validate $RPM_BUILD_ROOT%{_datadir}/applications/retroshare.desktop
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root,-)
-%{_bindir}/retroshare06
+%{_bindir}/retroshare
 %defattr(644, root, root)
 %{_datadir}/pixmaps/%{name}.xpm  
 %{_datadir}/icons/hicolor
 %{_datadir}/applications/%{name}.desktop
-%{_datadir}/RetroShare06
+%{_datadir}/retroshare
 
 %files nogui
 %defattr(-, root, root)
-%{_bindir}/retroshare06-nogui
+%{_bindir}/retroshare-nogui
 %defattr(644, root, root)
-%{_datadir}/RetroShare06
+%{_datadir}/retroshare
 
 %files voip-plugin
 %defattr(-, root, root)

@@ -4,7 +4,7 @@ TEMPLATE = app
 QT     += network xml
 CONFIG += qt gui uic qrc resources idle bitdht
 CONFIG += link_prl
-TARGET = retroshare06
+TARGET = retroshare
 DEFINES += TARGET=\\\"$${TARGET}\\\"
 
 # Plz never commit the .pro with these flags enabled.
@@ -101,11 +101,11 @@ unix {
 	INSTALLS += icon_files
 
 	desktop_files.path = "$${PREFIX}/share/applications"
-	desktop_files.files = ../../data/retroshare06.desktop
+	desktop_files.files = ../../data/retroshare.desktop
 	INSTALLS += desktop_files
 
 	pixmap_files.path = "$${PREFIX}/share/pixmaps"
-	pixmap_files.files = ../../data/retroshare06.xpm
+	pixmap_files.files = ../../data/retroshare.xpm
 	INSTALLS += pixmap_files
 
 }

@@ -34,10 +34,10 @@ How do I create a source package?
       You should get as many source packages as wanted distributions. For each
       of them you get (example here for wheezy):
 
-         retroshare06_0.6.0-0.7829~wheezy.dsc
-         retroshare06_0.6.0-0.7829~wheezy_source.build
-         retroshare06_0.6.0-0.7829~wheezy_source.changes
-         retroshare06_0.6.0-0.7829~wheezy.tar.gz
+         retroshare_0.6.0-0.7829~wheezy.dsc
+         retroshare_0.6.0-0.7829~wheezy_source.build
+         retroshare_0.6.0-0.7829~wheezy_source.changes
+         retroshare_0.6.0-0.7829~wheezy.tar.gz
          
 How do I create a binary package?
 =================================
@@ -69,7 +69,7 @@ How do I create a binary package?
 
 *Package compilation*
 
-      > pbuilder-dist wheezy build retroshare06_0.6.0~7856~wheezy.dsc
+      > pbuilder-dist wheezy build retroshare_0.6.0~7856~wheezy.dsc
 
    The generated compiled binary packages (including all package plugins etc)
    will  be in ~/pbuilder/wheezy_result/

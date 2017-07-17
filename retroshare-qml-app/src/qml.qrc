@@ -9,7 +9,7 @@
         <file>RsLoginPassView.qml</file>
         <file>TrustedNodesView.qml</file>
         <file>ChatView.qml</file>
-        <file>icons/retroshare06.png</file>
+        <file>icons/retroshare.png</file>
         <file>icons/state-offline.png</file>
         <file>icons/state-ok.png</file>
         <file>GxsIdentityDelegate.qml</file>

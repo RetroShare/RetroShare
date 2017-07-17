@@ -13,9 +13,9 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleExecutable</key>
-	<string>retroshare06</string>
+	<string>retroshare</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.retroshare06</string>
+	<string>com.retroshare</string>
 	<key>NSHighResolutionCapable</key>
 	<true/>
 	<key>CFBundleDocumentTypes</key>

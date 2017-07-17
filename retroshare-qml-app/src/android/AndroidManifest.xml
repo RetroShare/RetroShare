@@ -6,7 +6,7 @@
     <application android:name="org.qtproject.qt5.android.bindings.QtApplication"
                  android:hardwareAccelerated="true"
                  android:label="RetroShare"
-                 android:icon="@drawable/retroshare06_128x128">
+                 android:icon="@drawable/retroshare_128x128">
         <activity android:name=".RetroShareQmlActivity"
                   android:label="RetroShare"
                   android:configChanges="orientation|uiMode|screenLayout|screenSize|smallestScreenSize|layoutDirection|locale|fontScale|keyboard|keyboardHidden|navigation"

@@ -3,7 +3,7 @@
 ###################### PARAMETERS ####################
 version="0.6.2"
 gitpath="https://github.com/RetroShare/RetroShare.git"
-workdir=retroshare06-${version}
+workdir=retroshare-${version}
 branch="master"
 #bubba3="Y"		# comment out to compile for bubba3
 ######################################################
