@@ -365,8 +365,8 @@ bool p3DhtMgr::notifyPeer(const RsPeerId& id)
 
 	/* extract current peer status */
 bool p3DhtMgr::getPeerStatus(const RsPeerId &id,
-			struct sockaddr_in &laddr,
-			struct sockaddr_in &raddr,
+			struct sockaddr_storage &laddr,
+			struct sockaddr_storage &raddr,
 			uint32_t &type, uint32_t &state)
 {
 	RsStackMutex stack(dhtMtx); /* LOCK MUTEX */
