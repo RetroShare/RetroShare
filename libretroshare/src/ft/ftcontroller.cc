@@ -292,7 +292,7 @@ void ftController::searchForDirectSources()
 				for( std::list<TransferInfo>::const_iterator pit = info.peers.begin(); pit != info.peers.end(); ++pit )
 				{
 					bool bAllowDirectDL = false;
-					switch (rsFiles->filePermDirectDL()) {
+                    switch (mFilePermDirectDLPolicy) {
 						case RS_FILE_PERM_DIRECT_DL_YES: bAllowDirectDL = true; break;
 						case RS_FILE_PERM_DIRECT_DL_NO: bAllowDirectDL = false; break;
 						default:bAllowDirectDL = (rsPeers->servicePermissionFlags(pit->peerId) & RS_NODE_PERM_DIRECT_DL); break;
@@ -961,7 +961,7 @@ bool 	ftController::FileRequest(const std::string& fname, const RsFileHash& hash
 	for(std::list<RsPeerId>::iterator it = srcIds.begin(); it != srcIds.end(); )
 	{
 		bool bAllowDirectDL = false;
-		switch (rsFiles->filePermDirectDL()) {
+        switch (mFilePermDirectDLPolicy) {
 			case RS_FILE_PERM_DIRECT_DL_YES: bAllowDirectDL = true; break;
 			case RS_FILE_PERM_DIRECT_DL_NO: bAllowDirectDL = false; break;
 			default:bAllowDirectDL = (rsPeers->servicePermissionFlags(*it) & RS_NODE_PERM_DIRECT_DL); break;
@@ -1026,7 +1026,7 @@ bool 	ftController::FileRequest(const std::string& fname, const RsFileHash& hash
 			for(it = srcIds.begin(); it != srcIds.end(); ++it)
 			{
 				bool bAllowDirectDL = false;
-				switch (rsFiles->filePermDirectDL()) {
+                switch (mFilePermDirectDLPolicy) {
 					case RS_FILE_PERM_DIRECT_DL_YES: bAllowDirectDL = true; break;
 					case RS_FILE_PERM_DIRECT_DL_NO: bAllowDirectDL = false; break;
 					default:bAllowDirectDL = (rsPeers->servicePermissionFlags(*it) & RS_NODE_PERM_DIRECT_DL); break;
@@ -1088,7 +1088,7 @@ bool 	ftController::FileRequest(const std::string& fname, const RsFileHash& hash
 				// Because this is auto-add, we only add sources that we allow to DL from using direct transfers.
 
 				bool bAllowDirectDL = false;
-				switch (rsFiles->filePermDirectDL()) {
+                switch (mFilePermDirectDLPolicy) {
 					case RS_FILE_PERM_DIRECT_DL_YES: bAllowDirectDL = true; break;
 					case RS_FILE_PERM_DIRECT_DL_NO: bAllowDirectDL = false; break;
 					default:bAllowDirectDL = (rsPeers->servicePermissionFlags(pit->peerId) & RS_NODE_PERM_DIRECT_DL); break;
