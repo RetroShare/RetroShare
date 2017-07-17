@@ -74,7 +74,7 @@ class RsNxsNetMgr;
 class RsGxsIdExchange;
 class RsGcxs;
 class PgpAuxUtils;
-struct p3Config;
+class p3Config;
 
 namespace resource_api
 {
