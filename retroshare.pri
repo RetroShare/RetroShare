@@ -61,16 +61,15 @@ rs_autologin:CONFIG -= no_rs_autologin
 CONFIG *= rs_gxs
 no_rs_gxs:CONFIG -= rs_gxs
 
-# To disable Deprecated Warning append the following
-# assignation to qmake command line "CONFIG+=rs_nodeprecatedwarning"
-CONFIG *= no_rs_nodeprecatedwarning
-CONFIG *= rs_nodeprecatedwarning
-rs_nodeprecatedwarning:CONFIG -= no_rs_nodeprecatedwarning
+# To enable RS Deprecated Warnings append the following assignation to qmake
+# command line "CONFIG+=rs_deprecatedwarning"
+CONFIG *= no_rs_deprecatedwarning
+rs_deprecatedwarning:CONFIG -= no_rs_deprecatedwarning
 
-# To disable Cpp #Warning append the following
-# assignation to qmake command line "CONFIG+=rs_nocppwarning"
-CONFIG *= no_rs_nocppwarning
-rs_nocppwarning:CONFIG -= no_rs_nocppwarning
+# To enable CPP #warning append the following assignation to qmake command
+# line "CONFIG+=rs_cppwarning"
+CONFIG *= no_rs_cppwarning
+rs_cppwarning:CONFIG -= no_rs_cppwarning
 
 # To disable GXS mail append the following assignation to qmake command line
 # "CONFIG+=no_rs_gxs_trans"
@@ -195,14 +194,14 @@ rs_autologin {
     warning("You have enabled RetroShare auto-login, this is discouraged. The usage of auto-login on some linux distributions may allow someone having access to your session to steal the SSL keys of your node location and therefore compromise your security")
 }
 
-rs_nodeprecatedwarning {
+no_rs_deprecatedwarning {
     QMAKE_CXXFLAGS += -Wno-deprecated
     QMAKE_CXXFLAGS += -Wno-deprecated-declarations
     DEFINES *= RS_NO_WARN_DEPRECATED
     warning("QMAKE: You have disabled deprecated warnings.")
 }
 
-rs_nocppwarning {
+no_rs_cppwarning {
     QMAKE_CXXFLAGS += -Wno-cpp
     DEFINES *= RS_NO_WARN_CPP
     warning("QMAKE: You have disabled C preprocessor warnings.")
