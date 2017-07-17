@@ -139,6 +139,12 @@ FriendList::FriendList(QWidget *parent) :
     ui->filterLineEdit->setPlaceholderText(tr("Search")) ;
     ui->filterLineEdit->showFilterIcon();
 
+    /* Add filter actions */
+    QTreeWidgetItem *headerItem = ui->peerTreeWidget->headerItem();
+    QString headerText = headerItem->text(COLUMN_NAME);
+    ui->filterLineEdit->addFilter(QIcon(), headerText, COLUMN_NAME, QString("%1 %2").arg(tr("Search"), headerText));
+    ui->filterLineEdit->addFilter(QIcon(), tr("ID"), COLUMN_ID, tr("Search ID"));
+
     mActionSortByState = new QAction(tr("Sort by state"), this);
     mActionSortByState->setCheckable(true);
     connect(mActionSortByState, SIGNAL(toggled(bool)), this, SLOT(sortByState(bool)));
@@ -167,6 +173,7 @@ FriendList::FriendList(QWidget *parent) :
     ui->peerTreeWidget->setColumnWidth(COLUMN_NAME, 22 * fontWidth);
     ui->peerTreeWidget->setColumnWidth(COLUMN_LAST_CONTACT, 12 * fontWidth);
     ui->peerTreeWidget->setColumnWidth(COLUMN_IP, 15 * fontWidth);
+    ui->peerTreeWidget->setColumnWidth(COLUMN_ID, 32 * fontWidth);
 
     int avatarHeight = fontMetrics.height() * 3;
     ui->peerTreeWidget->setIconSize(QSize(avatarHeight, avatarHeight));
@@ -706,7 +713,12 @@ void FriendList::insertPeers()
                 groupItem->setForeground(COLUMN_NAME, QBrush(textColorGroup()));
 
                 /* used to find back the item */
-                groupItem->setData(COLUMN_DATA, ROLE_ID, QString::fromStdString(groupInfo->id.toStdString()));
+                QString strID = QString::fromStdString(groupInfo->id.toStdString());
+                groupItem->setData(COLUMN_DATA, ROLE_ID, strID);
+                //No needs for group ???
+                //groupItem->setText(COLUMN_ID, strID);
+                //groupItem->setData(COLUMN_ID, ROLE_SORT_NAME, strID);
+                //groupItem->setData(COLUMN_ID, ROLE_FILTER, strID);
                 groupItem->setData(COLUMN_DATA, ROLE_STANDARD, (groupInfo->flag & RS_GROUP_FLAG_STANDARD) ? true : false);
 
                 /* Sort data */
@@ -808,7 +820,11 @@ void FriendList::insertPeers()
                 gpgItem->setTextAlignment(COLUMN_NAME, Qt::AlignLeft | Qt::AlignVCenter);
 
                 /* not displayed, used to find back the item */
-                gpgItem->setData(COLUMN_DATA, ROLE_ID, QString::fromStdString(detail.gpg_id.toStdString()));
+                QString strID = QString::fromStdString(detail.gpg_id.toStdString());
+                gpgItem->setData(COLUMN_DATA, ROLE_ID, strID);
+                gpgItem->setText(COLUMN_ID, strID);
+                gpgItem->setData(COLUMN_ID, ROLE_SORT_NAME, strID);
+                gpgItem->setData(COLUMN_ID, ROLE_FILTER, strID);
 
                 /* Sort data */
                 for (int i = 0; i < columnCount; ++i) {
@@ -893,7 +909,11 @@ void FriendList::insertPeers()
                 }
 
                 /* not displayed, used to find back the item */
-                sslItem->setData(COLUMN_DATA, ROLE_ID, QString::fromStdString(sslDetail.id.toStdString()));
+                QString strID = QString::fromStdString(sslDetail.id.toStdString());
+                sslItem->setData(COLUMN_DATA, ROLE_ID, strID);
+                sslItem->setText(COLUMN_ID, strID);
+                sslItem->setData(COLUMN_ID, ROLE_SORT_NAME, strID);
+                sslItem->setData(COLUMN_ID, ROLE_FILTER, strID);
 
                 /* Custom state string */
                 QString customStateString;
@@ -2262,8 +2282,9 @@ void FriendList::setShowGroups(bool show)
  */
 void FriendList::filterItems(const QString &text)
 {
-    mFilterText = text;
-    ui->peerTreeWidget->filterItems(COLUMN_NAME, mFilterText, ROLE_FILTER);
+	int filterColumn = ui->filterLineEdit->currentFilter();
+	mFilterText = text;
+	ui->peerTreeWidget->filterItems(filterColumn, mFilterText, ROLE_FILTER);
 }
 
 /**

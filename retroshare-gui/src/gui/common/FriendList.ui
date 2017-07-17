@@ -71,7 +71,7 @@
       <bool>false</bool>
      </property>
      <property name="columnCount">
-      <number>3</number>
+      <number>4</number>
      </property>
      <attribute name="headerDefaultSectionSize">
       <number>120</number>
@@ -95,6 +95,11 @@
      <column>
       <property name="text">
        <string>IP</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>ID</string>
       </property>
      </column>
     </widget>
