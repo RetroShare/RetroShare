@@ -212,9 +212,9 @@ public:
     virtual void 	ConnectionFeedback(const RsPeerId& pid, int state);
 
     /* extract current peer status */
-    virtual bool 	getPeerStatus(const RsPeerId& id,
-                                  struct sockaddr_storage &laddr, struct sockaddr_storage &raddr,
-                                  uint32_t &type, uint32_t &mode);
+    //virtual bool 	getPeerStatus(const RsPeerId& id,
+    //                              struct sockaddr_storage &laddr, struct sockaddr_storage &raddr,
+    //                              uint32_t &type, uint32_t &mode);
 
     virtual bool 	getExternalInterface(struct sockaddr_storage &raddr,
                                          uint32_t &mode);

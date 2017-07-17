@@ -234,6 +234,7 @@ bool 	p3ZeroConf::dropPeer(std::string pid)
 }
 
 
+#if 0
 	/* extract current peer status */
 bool 	p3ZeroConf::getPeerStatus(std::string id, 
 				struct sockaddr_storage &/*laddr*/, struct sockaddr_storage &/*raddr*/,
@@ -250,7 +251,6 @@ bool 	p3ZeroConf::getPeerStatus(std::string id,
 	return false;
 }
 
-#if 0
 bool 	p3ZeroConf::getExternalInterface(struct sockaddr_storage &/*raddr*/,
 					uint32_t &/*mode*/)
 {
