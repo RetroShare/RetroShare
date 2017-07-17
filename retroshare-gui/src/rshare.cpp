@@ -55,23 +55,27 @@
 #include "rshare.h"
 
 /* Available command-line arguments. */
-#define ARG_LANGUAGE        "lang"          /**< Argument specifying language.    */
-#define ARG_GUISTYLE        "style"         /**< Argument specfying GUI style.    */
-#define ARG_GUISTYLESHEET   "stylesheet"    /**< Argument specfying GUI style.    */
 #define ARG_RESET           "reset"         /**< Reset Rshare's saved settings.   */
 #define ARG_DATADIR         "datadir"       /**< Directory to use for data files. */
 #define ARG_LOGFILE         "logfile"       /**< Location of our logfile.         */
 #define ARG_LOGLEVEL        "loglevel"      /**< Log verbosity.                   */
+#define ARG_GUISTYLE        "style"         /**< Argument specfying GUI style.    */
+#define ARG_GUISTYLESHEET   "stylesheet"    /**< Argument specfying GUI style.    */
+#define ARG_LANGUAGE        "lang"          /**< Argument specifying language.    */
+#define ARG_OPMODE_S        "o"             /**< OpMode (Full, NoTurtle, Gaming, Minimal) */
+#define ARG_OPMODE_L        "opmode"        /**< OpMode (Full, NoTurtle, Gaming, Minimal) */
 #define ARG_RSLINK_S        "r"             /**< Open RsLink with protocol retroshare:// */
 #define ARG_RSLINK_L        "link"          /**< Open RsLink with protocol retroshare:// */
-#define ARG_RSFILE_S        "f"             /**< Open RsFile with or without arg  */
-#define ARG_RSFILE_L        "rsfile"        /**< Open RsFile with or without arg  */
+#define ARG_RSFILE_S        "f"             /**< Open RsFile with or without arg.  */
+#define ARG_RSFILE_L        "rsfile"        /**< Open RsFile with or without arg.  */
 //Other defined for server in /libretroshare/src/rsserver/rsinit.cc:351
 
 // The arguments here can be send to a running instance.
 // If the command line contains arguments not listed here, we have to start a new instance.
-// For exmample, the user wants to start a second instance using --base-dir arg of libretroshare.
+// For example, the user wants to start a second instance using --base-dir arg of libretroshare.
 static const char* const forwardableArgs[] = {
+    ARG_OPMODE_S,
+    ARG_OPMODE_L,
     ARG_RSLINK_S,
     ARG_RSLINK_L,
     ARG_RSFILE_S,
@@ -81,11 +85,12 @@ static const char* const forwardableArgs[] = {
 
 /* Static member variables */
 QMap<QString, QString> Rshare::_args; /**< List of command-line arguments.  */
+Log Rshare::_log;                     /**< Logs debugging messages to file or stdout. */
 QString Rshare::_style;               /**< The current GUI style.           */
 QString Rshare::_stylesheet;          /**< The current GUI stylesheet.      */
 QString Rshare::_language;            /**< The current language.            */
 QString Rshare::_dateformat;          /**< The format of dates in feed items etc. */
-Log Rshare::_log;                     /**< Logs debugging messages to file or stdout. */
+QString Rshare::_opmode;              /**< The operating mode passed by args. */
 QStringList Rshare::_links;           /**< List of links passed by arguments. */
 QStringList Rshare::_files;           /**< List of files passed by arguments. */
 QDateTime Rshare::mStartupTime;
@@ -425,35 +430,45 @@ Rshare::showUsageMessageBox()
               tcol(tr("Resets ALL stored RetroShare settings.")));
   out << trow(tcol("-" ARG_DATADIR" &lt;dir&gt;") +
               tcol(tr("Sets the directory RetroShare uses for data files.")));
-  out << trow(tcol("-" ARG_LOGFILE" &lt;file&gt;") +
+  out << trow(tcol("-" ARG_LOGFILE" &lt;" + tr("filename") + "&gt;") +
               tcol(tr("Sets the name and location of RetroShare's logfile.")));
-  out << trow(tcol("-" ARG_LOGLEVEL" &lt;level&gt;") +
+  out << trow(tcol("-" ARG_LOGLEVEL" &lt;" + tr("level") + "&gt;") +
               tcol(tr("Sets the verbosity of RetroShare's logging.") +
                    "<br>[" + Log::logLevels().join("|") +"]"));
-  out << trow(tcol("-" ARG_GUISTYLE" &lt;style&gt;") +
+  out << trow(tcol("-" ARG_GUISTYLE" &lt;" + tr("style") +"&gt;") +
               tcol(tr("Sets RetroShare's interface style.") +
                    "<br>[" + QStyleFactory::keys().join("|") + "]"));
-  out << trow(tcol("-" ARG_GUISTYLESHEET" &lt;stylesheet&gt;") +
-              tcol(tr("Sets RetroShare's interface stylesheets.")));                   
-  out << trow(tcol("-" ARG_LANGUAGE" &lt;language&gt;") +
+  out << trow(tcol("-" ARG_GUISTYLESHEET" &lt;" + tr("stylesheet") + "&gt;") +
+              tcol(tr("Sets RetroShare's interface stylesheets.")));
+  out << trow(tcol("-" ARG_LANGUAGE" &lt;" + tr("language") + "&gt;") +
               tcol(tr("Sets RetroShare's language.") +
                    "<br>[" + LanguageSupport::languageCodes().join("|") + "]"));
+  out << trow(tcol("--" ARG_OPMODE_L" &lt;" + tr("opmode") + "&gt;") +
+              tcol(tr("Sets RetroShare's operating mode.") +
+                   "<br>[full|noturtle|gaming|minimal]"));
+  out << trow(tcol("-" ARG_RSLINK_L" &lt;" + tr("RsLinkURL") + "&gt;") +
+              tcol(tr("Open RsLink with protocol retroshare://")));
+  out << trow(tcol("-" ARG_RSFILE_L" &lt;" + tr("filename") + "&gt;") +
+              tcol(tr("Open RsFile with or without arg.")));
   out << "</table>";
 
   VMessageBox::information(0, 
-    tr("RetroShare Usage Information"), usage, VMessageBox::Ok);
+    tr("RetroShare GUI Usage Information"), usage, VMessageBox::Ok);
 }
 
 /** Returns true if the specified argument expects a value. */
 bool
 Rshare::argNeedsValue(QString argName)
 {
-	return (argName == ARG_GUISTYLE ||
-	        argName == ARG_GUISTYLESHEET ||
-	        argName == ARG_LANGUAGE ||
+	return (
 	        argName == ARG_DATADIR  ||
 	        argName == ARG_LOGFILE  ||
-	        argName == ARG_LOGLEVEL ||
+          argName == ARG_LOGLEVEL ||
+	        argName == ARG_GUISTYLE ||
+	        argName == ARG_GUISTYLESHEET ||
+	        argName == ARG_LANGUAGE ||
+	        argName == ARG_OPMODE_S ||
+	        argName == ARG_OPMODE_L ||
 	        argName == ARG_RSLINK_S ||
 	        argName == ARG_RSLINK_L ||
 	        argName == ARG_RSFILE_S ||
@@ -494,6 +509,14 @@ Rshare::parseArguments(QStringList args, bool firstRun)
 			}
 		}
 
+		/* handle opmode that could be change while running.*/
+		QString omValue = QString(value).prepend(";").append(";").toLower();
+		QString omValues = QString(";full;noturtle;gaming;minimal;");
+		if ((arg == ARG_OPMODE_S || arg == ARG_OPMODE_L ) &&
+		    omValues.contains(omValue)) {
+			_opmode = value;
+		}
+
 		/* Don't send theses argument to _args map to allow multiple. */
 		if (arg == ARG_RSLINK_S || arg == ARG_RSLINK_L) {
 			_links.append(value);
@@ -510,10 +533,17 @@ Rshare::parseArguments(QStringList args, bool firstRun)
 bool
 Rshare::validateArguments(QString &errmsg)
 {
-  /* Check for a language that Retroshare recognizes. */
-  if (_args.contains(ARG_LANGUAGE) &&
-      !LanguageSupport::isValidLanguageCode(_args.value(ARG_LANGUAGE))) {
-    errmsg = tr("Invalid language code specified:")+" " + _args.value(ARG_LANGUAGE);
+  /* Check for a writable log file */
+  if (_args.contains(ARG_LOGFILE) && !_log.isOpen()) {
+    errmsg = tr("Unable to open log file '%1': %2")
+                           .arg(_args.value(ARG_LOGFILE))
+                           .arg(_log.errorString());
+    return false;
+  }
+  /* Check for a valid log level */
+  if (_args.contains(ARG_LOGLEVEL) &&
+      !Log::logLevels().contains(_args.value(ARG_LOGLEVEL))) {
+    errmsg = tr("Invalid log level specified:")+" " + _args.value(ARG_LOGLEVEL);
     return false;
   }
   /* Check for a valid GUI style */
@@ -523,17 +553,22 @@ Rshare::validateArguments(QString &errmsg)
     errmsg = tr("Invalid GUI style specified:")+" " + _args.value(ARG_GUISTYLE);
     return false;
   }
-  /* Check for a valid log level */
-  if (_args.contains(ARG_LOGLEVEL) &&
-      !Log::logLevels().contains(_args.value(ARG_LOGLEVEL))) {
-    errmsg = tr("Invalid log level specified:")+" " + _args.value(ARG_LOGLEVEL);
+  /* Check for a language that Retroshare recognizes. */
+  if (_args.contains(ARG_LANGUAGE) &&
+      !LanguageSupport::isValidLanguageCode(_args.value(ARG_LANGUAGE))) {
+    errmsg = tr("Invalid language code specified:")+" " + _args.value(ARG_LANGUAGE);
     return false;
   }
-  /* Check for a writable log file */
-  if (_args.contains(ARG_LOGFILE) && !_log.isOpen()) {
-    errmsg = tr("Unable to open log file '%1': %2")
-                           .arg(_args.value(ARG_LOGFILE))
-                           .arg(_log.errorString());
+  /* Check for an opmode that Retroshare recognizes. */
+  if (_args.contains(ARG_OPMODE_S) &&
+      !QString(";full;noturtle;gaming;minimal;").contains(QString(_args.value(ARG_OPMODE_S)).prepend(";").append(";").toLower())) {
+    errmsg = tr("Invalid operating mode specified:")+" " + _args.value(ARG_OPMODE_S);
+    return false;
+  }
+  /* Check for an opmode that Retroshare recognizes. */
+  if (_args.contains(ARG_OPMODE_L) &&
+      !QString(";full;noturtle;gaming;minimal;").contains(QString(_args.value(ARG_OPMODE_L)).prepend(";").append(";").toLower())) {
+    errmsg = tr("Invalid operating mode specified:")+" " + _args.value(ARG_OPMODE_L);
     return false;
   }
   return true;

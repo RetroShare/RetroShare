@@ -46,7 +46,7 @@ public:
 	QColor getOpMode_Minimal_Color() const;
 	void setOpMode_Minimal_Color( QColor c );
 
-private slots:
+public slots:
 	void setOpMode();
 
 private:

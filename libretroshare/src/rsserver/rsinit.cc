@@ -138,6 +138,7 @@ class RsInitConfig
 		std::string load_trustedpeer_file;
 
 		bool udpListenerOnly;
+		std::string opModeStr;
 };
 
 static RsInitConfig *rsInitConfig = NULL;
@@ -189,6 +190,7 @@ void RsInit::InitRsConfig()
 	rsInitConfig->passwd         = "";
 	rsInitConfig->debugLevel	= PQL_WARNING;
 	rsInitConfig->udpListenerOnly = false;
+	rsInitConfig->opModeStr = std::string("FULL");
 
 	/* setup the homePath (default save location) */
 	//	rsInitConfig->homePath = getHomePath();
@@ -363,11 +365,11 @@ int RsInit::InitRetroShare(int _argc, char **_argv, bool /* strictCheck */)
 		        >> parameter('l',"log-file"      ,rsInitConfig->logfname       ,"logfile"   ,"Set Log filename."                                           ,false)
 		        >> parameter('d',"debug-level"   ,rsInitConfig->debugLevel     ,"level"     ,"Set debug level."                                            ,false)
 #ifdef TO_REMOVE
-		        // This as removed because it is not used anymore.
-
+		        // This was removed because it is not used anymore.
 		        >> parameter('w',"password"      ,rsInitConfig->passwd         ,"password"  ,"Set Login Password."                                         ,false)
 #endif
 		        >> parameter('i',"ip-address"    ,rsInitConfig->inet           ,"nnn.nnn.nnn.nnn", "Force IP address to use (if cannot be detected)."      ,false)
+		        >> parameter('o',"opmode"        ,rsInitConfig->opModeStr      ,"opmode"    ,"Set Operating mode (Full, NoTurtle, Gaming, Minimal)."       ,false)
 		        >> parameter('p',"port"          ,rsInitConfig->port           ,"port", "Set listenning port to use."                                      ,false)
 		        >> parameter('c',"base-dir"      ,opt_base_dir                 ,"directory", "Set base directory."                                         ,false)
 		        >> parameter('U',"user-id"       ,prefUserString               ,"ID", "[ocation Id] Sets Account to Use, Useful when Autologin is enabled.",false)
@@ -1733,6 +1735,10 @@ int RsServer::StartupRetroShare()
 		mPeerMgr->forceHiddenNode();
 	}
 
+	if (!rsInitConfig->opModeStr.empty())
+	{
+		rsConfig->setOperatingMode(rsInitConfig->opModeStr);
+	}
 	mNetMgr -> checkNetAddress();
 
 	if (rsInitConfig->hiddenNodeSet) {
