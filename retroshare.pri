@@ -219,3 +219,7 @@ rs_gxs_trans {
 rs_async_chat {
     DEFINES *= RS_ASYNC_CHAT
 }
+
+rs_chatserver {
+    DEFINES *= RS_CHATSERVER
+}
