@@ -58,7 +58,7 @@ public slots:
 		// Get Based 64 image string
 		QString encoded = QString(ba.toBase64());
 
-		qDebug() << "imageToBase64() " << encoded ;
+		qDebug() << "imageToBase64() encoded" ;
 
 		return encoded;
 
