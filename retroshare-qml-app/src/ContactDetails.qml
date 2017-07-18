@@ -31,8 +31,14 @@ Item
 
 	Button
 	{
-		text: "Open f d "
+		id: avatarPicker
+
+		text: "Change your Avatar"
 		visible: isOwn
+
+		anchors.top: parent.top
+		anchors.horizontalCenter: parent.horizontalCenter
+
 		onClicked:
 		{
 			fileChooser.open()
@@ -43,27 +49,17 @@ Item
 			onResultFileChanged:
 			{
 				console.log("Result file changed! " , resultFile)
-				newAvatar.source = resultFile
 
 				var base64Image = androidImagePicker.imageToBase64(resultFile)
 
 				rsApi.request("/identity/set_avatar", JSON.stringify({"gxs_id": cntDt.md.gxs_id, "avatar": base64Image }),
 							  function (res){
 								console.log("Avatar changed! " , JSON.stringify(res))
-							  }
-							)
+							  })
 			}
 		}
 	}
 
-	Image
-	{
-		id: newAvatar
-		height: topFace.height
-		width: topFace.height
-		fillMode: Image.PreserveAspectFit
-
-	}
 
 	AvatarOrColorHash
 	{
@@ -71,7 +67,7 @@ Item
 
 		gxs_id: cntDt.md.gxs_id
 
-		anchors.top: parent.top
+		anchors.top: (isOwn)? avatarPicker.bottom : parent.top
 		anchors.topMargin: 6
 		anchors.horizontalCenter: parent.horizontalCenter
 	}
