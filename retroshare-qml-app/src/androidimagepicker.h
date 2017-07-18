@@ -9,6 +9,7 @@
 #include <QImageReader>
 #include <QBuffer>
 
+
 #ifdef __ANDROID__
 #	include <QtAndroid>
 #	include <QtAndroidExtras/QAndroidJniObject>
@@ -39,21 +40,25 @@ public slots:
 		QUrl url (path);
 		QString localPath = url.toLocalFile();
 
+		qDebug() << "imageToBase64() local path:" << localPath ;
+
 		// Read the image
 		QImageReader reader;
 		reader.setFileName(localPath);
 		QImage image = reader.read();
 
+		image = image.scaled(96,96,Qt::KeepAspectRatio,Qt::SmoothTransformation);
+
 		// Transform image into PNG format
 		QByteArray ba;
 		QBuffer    buffer( &ba );
 		buffer.open( QIODevice::WriteOnly );
-		image.save( &buffer, "PNG" );
+		image.save( &buffer, "png" );
 
 		// Get Based 64 image string
 		QString encoded = QString(ba.toBase64());
 
-		qDebug() << "imageToBase64() " ;
+		qDebug() << "imageToBase64() " << encoded ;
 
 		return encoded;
 
