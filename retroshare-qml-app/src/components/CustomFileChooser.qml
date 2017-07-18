@@ -44,7 +44,7 @@ Item
 	function androidResult (uri)
 	{
 		console.log("QML Android image uri found" , uri)
-		resultFile = uriToFilePath (uri)
+		resultFile = normalizeUriToFilePath (uri)
 		mainWindow.delUriHandler("media", androidResult)
 	}
 

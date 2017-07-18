@@ -169,7 +169,6 @@ public class RetroShareQmlActivity extends QtActivity
 				.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
 		cursor.moveToFirst();
 		String result = cursor.getString(column_index);
-		cursor.close();
 		return result;
 	}
 
