@@ -1596,7 +1596,7 @@ int RsServer::StartupRetroShare()
 	serviceCtrl->registerServiceMonitor(mDisc, mDisc->getServiceInfo().mServiceType);
 	serviceCtrl->registerServiceMonitor(mStatusSrv, mStatusSrv->getServiceInfo().mServiceType);
 	serviceCtrl->registerServiceMonitor(chatSrv, chatSrv->getServiceInfo().mServiceType);
-	serviceCtrl->registerServiceMonitor(mBwCtrl, mDisc->getServiceInfo().mServiceType);
+	serviceCtrl->registerServiceMonitor(mBwCtrl, mBwCtrl->getServiceInfo().mServiceType);
 
 	/**************************************************************************/
 
