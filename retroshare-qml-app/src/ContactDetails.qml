@@ -53,9 +53,15 @@ Item
 				var base64Image = androidImagePicker.imageToBase64(resultFile)
 
 				rsApi.request("/identity/set_avatar", JSON.stringify({"gxs_id": cntDt.md.gxs_id, "avatar": base64Image }),
-							  function (res){
-								console.log("Avatar changed! " , JSON.stringify(res))
-							  })
+							    function (par)
+								{
+									var jP  = JSON.parse(par.response)
+									if (jP.returncode === "ok")
+									{
+										console.log("Avatar changed! ")
+										topFace.getDetails()
+									}
+								})
 			}
 		}
 	}
