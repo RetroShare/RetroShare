@@ -44,16 +44,23 @@ Item
 			{
 				console.log("Result file changed! " , resultFile)
 				newAvatar.source = resultFile
-			}
 
+				var base64Image = androidImagePicker.imageToBase64(resultFile)
+
+				rsApi.request("/identity/set_avatar", {"gxs_id": cntDt.md.gxs_id, "avatar": base64Image },
+							  function (res){
+								console.log("Avatar changed! " , JSON.stringify(res))
+							  }
+							)
+			}
 		}
 	}
 
 	Image
 	{
 		id: newAvatar
-		height: colorHash.height
-		width: colorHash.height
+		height: topFace.height
+		width: topFace.height
 		fillMode: Image.PreserveAspectFit
 
 	}
