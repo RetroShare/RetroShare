@@ -691,7 +691,11 @@ bool ChatWidget::eventFilter(QObject *obj, QEvent *event)
 
 				if (!anchors.isEmpty()){
 					if (anchors.at(0).startsWith(PERSONID)){
-						RsGxsId mId = RsGxsId(QString(anchors.at(0)).replace(PERSONID,"").toStdString());
+						QString strId = QString(anchors.at(0)).replace(PERSONID,"");
+						if (strId.contains(" "))
+							strId.truncate(strId.indexOf(" "));
+
+						RsGxsId mId = RsGxsId(strId.toStdString());
 						if(!mId.isNull()) {
 							RsIdentityDetails details;
 							if (rsIdentity->getIdDetails(mId, details)){
@@ -1003,15 +1007,26 @@ void ChatWidget::addChatMsg(bool incoming, const QString &name, const RsGxsId gx
 	formatMsg.replace(QString("<a name=\"date\">"),QString("<a name=\"%1\">").arg(timeStamp));
 	formatMsg.replace(QString("<a name=\"time\">"),QString("<a name=\"%1\">").arg(timeStamp));
 	//replace Name anchors with GXS Id
-	QString strGxsId = "";
 	if (!gxsId.isNull()) {
-		strGxsId = QString::fromStdString(gxsId.toStdString());
 		RsIdentityDetails details;
+		QString strPreName = "";
+
+		QString strGxsId = QString::fromStdString(gxsId.toStdString());
 		rsIdentity->getIdDetails(gxsId, details);
+		bool isUnsigned = !(details.mFlags & RS_IDENTITY_FLAGS_PGP_LINKED);
+		if(isUnsigned) {
+			QIcon icon = QIcon(":/icons/anonymous_blue_128.png");
+			int height = ui->textBrowser->fontMetrics().height()*0.8;
+			QImage image(icon.pixmap(height,height).toImage());
+			QByteArray byteArray;
+			QBuffer buffer(&byteArray);
+			image.save(&buffer, "PNG"); // writes the image in PNG format inside the buffer
+			QString iconBase64 = QString::fromLatin1(byteArray.toBase64().data());
+			strPreName = QString("<img src=\"data:image/png;base64,%1\" alt=\"[unsigned]\" />").arg(iconBase64);
+		}
 
 		formatMsg.replace(QString("<a name=\"name\">")
-		                  ,QString("<a name=\"").append(PERSONID).append("%1\">").arg(strGxsId)
-		                  .append(details.mFlags & RS_IDENTITY_FLAGS_PGP_LINKED ? "" : tr("[Unsigned]") ) );
+		                  ,QString(strPreName).append("<a name=\"").append(PERSONID).append("%1 %2\">").arg(strGxsId, isUnsigned ? tr(" Unsigned"):""));
 	} else {
 		formatMsg.replace(QString("<a name=\"name\">"),"");
 	}
