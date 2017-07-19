@@ -1030,11 +1030,13 @@ bool rs_inet_ntop (const sockaddr_storage &addr, std::string &dst)
 		const struct sockaddr_in * addrv4p = (const struct sockaddr_in *) &addr;
 		success = inet_ntop( addr.ss_family, (const void *) &(addrv4p->sin_addr), ipStr, INET_ADDRSTRLEN );
 	}
+	break;
 	case AF_INET6:
 	{
 		const struct sockaddr_in6 * addrv6p = (const struct sockaddr_in6 *) &addr;
 		success = inet_ntop( addr.ss_family, (const void *) &(addrv6p->sin6_addr), ipStr, INET6_ADDRSTRLEN );
 	}
+	break;
 	}
 #endif // WINDOWS_SYS
 

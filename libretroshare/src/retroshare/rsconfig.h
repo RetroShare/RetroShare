@@ -289,6 +289,7 @@ public:
     /* Operating Mode */
     virtual uint32_t getOperatingMode() = 0;
     virtual bool     setOperatingMode(uint32_t opMode) = 0;
+    virtual bool     setOperatingMode(const std::string &opModeStr) = 0;
 
     /* Data Rate Control - to be moved here */
     virtual int SetMaxDataRates( int downKb, int upKb ) = 0;

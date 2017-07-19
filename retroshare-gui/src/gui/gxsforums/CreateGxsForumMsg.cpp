@@ -498,9 +498,9 @@ void CreateGxsForumMsg::fileHashingFinished(QList<HashedFile> hashedFiles)
 	QList<HashedFile>::iterator it;
 	for (it = hashedFiles.begin(); it != hashedFiles.end(); ++it) {
 		HashedFile& hashedFile = *it;
-		RetroShareLink link;
-                if (link.createFile(hashedFile.filename, hashedFile.size,
-                                    QString::fromStdString(hashedFile.hash.toStdString()))) {
+		RetroShareLink link = RetroShareLink::createFile(hashedFile.filename, hashedFile.size,
+		                                                 QString::fromStdString(hashedFile.hash.toStdString()));
+		if (link.valid()) {
 			mesgString += link.toHtmlSize() + "<br>";
 		}
 	}

@@ -667,7 +667,7 @@ void PeersHandler::handleExamineCert(Request &req, Response &resp)
     }
 }
 
-void PeersHandler::handleGetNetworkOptions(Request& req, Response& resp)
+void PeersHandler::handleGetNetworkOptions(Request& /*req*/, Response& resp)
 {
 	RsPeerDetails detail;
 	if (!mRsPeers->getPeerDetails(mRsPeers->getOwnId(), detail))

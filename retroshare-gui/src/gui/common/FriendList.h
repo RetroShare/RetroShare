@@ -53,7 +53,8 @@ public:
     {
         COLUMN_NAME         = 0,
         COLUMN_LAST_CONTACT = 1,
-        COLUMN_IP           = 2
+        COLUMN_IP           = 2,
+        COLUMN_ID           = 3
     };
 
 public:

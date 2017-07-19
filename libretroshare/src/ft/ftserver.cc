@@ -31,7 +31,7 @@
 #include "crypto/chacha20.h"
 #include "retroshare/rstypes.h"
 #include "retroshare/rspeers.h"
-const int ftserverzone = 29539;
+//const int ftserverzone = 29539;
 
 #include "file_sharing/p3filelists.h"
 #include "ft/ftturtlefiletransferitem.h"

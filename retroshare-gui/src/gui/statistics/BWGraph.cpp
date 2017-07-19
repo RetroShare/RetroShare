@@ -80,7 +80,7 @@ void BWGraphSource::update()
     {
         std::list<std::pair<qint64,float> >& lst(_points[it->first]) ;
 
-        if(!lst.empty() && fabsf(lst.back().first - ms) > _update_period_msecs*1.2 )
+        if(!lst.empty() && fabsf((float)(lst.back().first - ms)) > _update_period_msecs*1.2 )
         {
             lst.push_back(std::make_pair(lst.back().first,0)) ;
             lst.push_back(std::make_pair(              ms,0)) ;
@@ -243,6 +243,7 @@ void BWGraphSource::convertTrafficClueToValues(const std::list<RSTrafficClue>& l
 			break ;
 
 		case GRAPH_TYPE_ALL: std::cerr << "(WW) Impossible situation. Cannot draw graph in mode All/All. Reverting to sum." << std::endl;
+			/* fallthrough */
 		case GRAPH_TYPE_SUM:		// all friends, sum of services => one curve per friend
 		{
 			RSTrafficClue total ;

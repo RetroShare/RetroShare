@@ -233,7 +233,7 @@ void ChatHandler::notifyChatLobbyEvent(uint64_t lobby_id, uint32_t event_type,
     }
 }
 
-void ChatHandler::notifyListChange(int list, int type)
+void ChatHandler::notifyListChange(int list, int /*type*/)
 {
 	if(list == NOTIFY_LIST_CHAT_LOBBY_INVITATION)
 	{
@@ -968,7 +968,7 @@ void ChatHandler::handleInviteToLobby(Request& req, Response& resp)
 	resp.setOk();
 }
 
-void ChatHandler::handleGetInvitationsToLobby(Request& req, Response& resp)
+void ChatHandler::handleGetInvitationsToLobby(Request& /*req*/, Response& resp)
 {
 	std::list<ChatLobbyInvite> invites;
 	mRsMsgs->getPendingChatLobbyInvites(invites);
@@ -1243,7 +1243,7 @@ void ChatHandler::handleUnreadMsgs(Request &/*req*/, Response &resp)
         if(count && (mit2 != mChatInfo.end()))
         {
             resp.mDataStream.getStreamToMember()
-#warning @deprecated using "id" as key can cause problems in some JS based \
+#warning Gioacchino Mazzurco 2017-03-24: @deprecated using "id" as key can cause problems in some JS based \
 	        languages like Qml @see chat_id instead
 			        << makeKeyValue("id", mit->first.toStdString())
 			        << makeKeyValue("chat_id", mit->first.toStdString())

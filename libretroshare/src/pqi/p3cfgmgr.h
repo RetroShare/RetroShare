@@ -213,8 +213,9 @@ class p3ConfigMgr
  * Aimed at rs services that uses RsItem config data, provide a way for RS
  * services to save and load particular configurations as items.
  */
-struct p3Config : pqiConfig
+class p3Config : public pqiConfig
 {
+public:
 	p3Config();
 
 	virtual bool loadConfiguration(RsFileHash &loadHash);

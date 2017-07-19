@@ -81,8 +81,8 @@ void GxsFeedItem::copyMessageLink()
 		return;
 	}
 
-	RetroShareLink link;
-	if (link.createGxsMessageLink(getLinkType(), groupId(), mMessageId, messageName())) {
+	RetroShareLink link = RetroShareLink::createGxsMessageLink(getLinkType(), groupId(), mMessageId, messageName());
+	if (link.valid()) {
 		QList<RetroShareLink> urls;
 		urls.push_back(link);
 		RSLinkClipboard::copyLinks(urls);
@@ -158,8 +158,8 @@ void GxsFeedItem::requestComment()
 
 	std::vector<RsGxsGrpMsgIdPair> msgIds;
 
-    for(uint32_t i=0;i<mMessageVersions.size();++i)
-        msgIds.push_back(std::make_pair(groupId(),mMessageVersions[i]));
+	for(int i=0;i<mMessageVersions.size();++i)
+		msgIds.push_back(std::make_pair(groupId(),mMessageVersions[i])) ;
 
 	msgIds.push_back(std::make_pair(groupId(),messageId()));
 

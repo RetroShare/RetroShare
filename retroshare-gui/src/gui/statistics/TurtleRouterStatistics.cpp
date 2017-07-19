@@ -33,7 +33,7 @@
 
 #include "gui/settings/rsharesettings.h"
 
-static const int MAX_TUNNEL_REQUESTS_DISPLAY = 10 ;
+//static const int MAX_TUNNEL_REQUESTS_DISPLAY = 10 ;
 
 class TRHistogram
 {

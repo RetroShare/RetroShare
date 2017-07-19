@@ -480,12 +480,12 @@ void GxsGroupFrameDialog::copyGroupLink()
 		return;
 	}
 
-	RetroShareLink link;
-
 	QString name;
 	if(!getCurrentGroupName(name)) return;
 
-	if (link.createGxsGroupLink(getLinkType(), mGroupId, name)) {
+	RetroShareLink link = RetroShareLink::createGxsGroupLink(getLinkType(), mGroupId, name);
+
+	if (link.valid()) {
 		QList<RetroShareLink> urls;
 		urls.push_back(link);
 		RSLinkClipboard::copyLinks(urls);
@@ -828,8 +828,8 @@ void GxsGroupFrameDialog::insertGroupsData(const std::list<RsGroupMetaData> &gro
 	}
 
 	uint32_t i = 0;
-	uint32_t popLimit = 0;
 	std::multimap<uint32_t, GroupItemInfo>::reverse_iterator rit;
+	//uint32_t popLimit = 0;
 	//for(rit = popMap.rbegin(); ((rit != popMap.rend()) && (i < popCount)); ++rit, ++i) ;
 	//if (rit != popMap.rend()) {
 	//	popLimit = rit->first;

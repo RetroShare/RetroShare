@@ -712,8 +712,8 @@ void SearchDialog::copySearchLink()
     std::cerr << "SearchDialog::copySearchLink(): keywords: " << keywords.toStdString();
     std::cerr << std::endl;
 
-    RetroShareLink link;
-    if (link.createSearch(keywords)) {
+    RetroShareLink link = RetroShareLink::createSearch(keywords);
+    if (link.valid()) {
         QList<RetroShareLink> urls;
         urls.push_back(link);
         RSLinkClipboard::copyLinks(urls);
@@ -1443,11 +1443,11 @@ void SearchDialog::copyResultLink()
 			 qulonglong fsize = item->text(SR_SIZE_COL).toULongLong();
 			 QString fname = item->text(SR_NAME_COL);
 
-			 RetroShareLink link;
-			 if (link.createFile(fname, fsize, fhash)) {
-				 std::cerr << "new link added to clipboard: " << link.toString().toStdString() << std::endl ;
-				 urls.push_back(link) ;
-			 }
+			RetroShareLink link = RetroShareLink::createFile(fname, fsize, fhash);
+			if (link.valid()) {
+				std::cerr << "new link added to clipboard: " << link.toString().toStdString() << std::endl ;
+				urls.push_back(link) ;
+			}
 		 } 
 	 }
 	 RSLinkClipboard::copyLinks(urls) ;

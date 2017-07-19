@@ -632,7 +632,7 @@ void p3GxsTrans::service_tick()
 }
 
 RsGenExchange::ServiceCreate_Return p3GxsTrans::service_CreateGroup(
-        RsGxsGrpItem* grpItem, RsTlvSecurityKeySet& /*keySet*/ )
+        RsGxsGrpItem* /*grpItem*/, RsTlvSecurityKeySet& /*keySet*/ )
 {
 #ifdef DEBUG_GXSTRANS
 	std::cout << "p3GxsTrans::service_CreateGroup(...) "
@@ -670,6 +670,7 @@ void p3GxsTrans::notifyChanges(std::vector<RsGxsNotify*>& changes)
 			                                   opts, msgChange->msgChangeMap );
 			GxsTokenQueue::queueRequest(token, MAILS_UPDATE);
 
+#ifdef DEBUG_GXSTRANS
 			for( GxsMsgReq::const_iterator it = msgChange->msgChangeMap.begin();
 			     it != msgChange->msgChangeMap.end(); ++it )
 			{
@@ -679,13 +680,12 @@ void p3GxsTrans::notifyChanges(std::vector<RsGxsNotify*>& changes)
 				for(itT vit = msgsIds.begin(); vit != msgsIds.end(); ++vit)
 				{
 					const RsGxsMessageId& msgId = *vit;
-#ifdef DEBUG_GXSTRANS
 					std::cout << "p3GxsTrans::notifyChanges(...) got "
 					          << "notification for message " << msgId
 					          << " in group " << grpId << std::endl;
-#endif
 				}
 			}
+#endif
 		}
 	}
 	RsGxsIfaceHelper::receiveChanges(changes);
@@ -869,6 +869,7 @@ void p3GxsTrans::locked_processOutgoingRecord(OutgoingRecord& pr)
 		pr.mailItem.saltRecipientHint(RsGxsId::random());
 		pr.sent_ts = time(NULL) ; //pr.mailItem.meta.mPublishTs = time(NULL);
 	}
+	/* fallthrough */
 	case GxsTransSendStatus::PENDING_PREFERRED_GROUP:
 	{
 		RS_STACK_MUTEX(mDataMutex);
@@ -882,6 +883,7 @@ void p3GxsTrans::locked_processOutgoingRecord(OutgoingRecord& pr)
 
 		pr.group_id = mPreferredGroupId ; //pr.mailItem.meta.mGroupId = mPreferredGroupId;
 	}
+	/* fallthrough */
 	case GxsTransSendStatus::PENDING_RECEIPT_CREATE:
 	{
 		RsGxsTransPresignedReceipt grcpt;
@@ -905,6 +907,7 @@ void p3GxsTrans::locked_processOutgoingRecord(OutgoingRecord& pr)
 		*pr.presignedReceipt.metaData = grcpt.meta;
 		pr.presignedReceipt.msg.setBinData(&grsrz[0], grsz);
 	}
+	/* fallthrough */
 	case GxsTransSendStatus::PENDING_RECEIPT_SIGNATURE:					// (cyril) This step is never actually used.
 	{
 		switch (RsGenExchange::createMessage(&pr.presignedReceipt))
@@ -923,6 +926,7 @@ void p3GxsTrans::locked_processOutgoingRecord(OutgoingRecord& pr)
 		pr.presignedReceipt.metaData->serialise(&srx[0], &metaSize);
 		pr.presignedReceipt.meta.setBinData(&srx[0], metaSize);
 	}
+	/* fallthrough */
 	case GxsTransSendStatus::PENDING_PAYLOAD_CREATE:
 	{
 		uint16_t serv = static_cast<uint16_t>(pr.clientService);
@@ -937,6 +941,7 @@ void p3GxsTrans::locked_processOutgoingRecord(OutgoingRecord& pr)
 		offset += rcptsize;
 		memcpy(&pr.mailItem.payload[offset], &pr.mailData[0], datasize);
 	}
+	/* fallthrough */
 	case GxsTransSendStatus::PENDING_PAYLOAD_ENCRYPT:
 	{
 		switch (pr.mailItem.cryptoType)
@@ -981,6 +986,7 @@ void p3GxsTrans::locked_processOutgoingRecord(OutgoingRecord& pr)
 			goto processingFailed;
 		}
 	}
+	/* fallthrough */
 	case GxsTransSendStatus::PENDING_PUBLISH:
 	{
 #ifdef DEBUG_GXSTRANS

@@ -127,8 +127,7 @@ void GxsChannelGroupItem::fill()
 	std::cerr << std::endl;
 #endif
 
-	RetroShareLink link;
-	link.createGxsGroupLink(RetroShareLink::TYPE_CHANNEL, mGroup.mMeta.mGroupId, groupName());
+	RetroShareLink link = RetroShareLink::createGxsGroupLink(RetroShareLink::TYPE_CHANNEL, mGroup.mMeta.mGroupId, groupName());
 	ui->nameLabel->setText(link.toHtml());
 
 	ui->descLabel->setText(QString::fromUtf8(mGroup.mDescription.c_str()));

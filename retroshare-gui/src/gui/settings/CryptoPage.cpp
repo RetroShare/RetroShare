@@ -102,10 +102,10 @@ CryptoPage::load()
 void
 CryptoPage::copyRSLink()
 {
-	RetroShareLink link ;
 	RsPeerId ownId = rsPeers->getOwnId() ;
+	RetroShareLink link = RetroShareLink::createCertificate(ownId);
 
-	if( link.createCertificate(ownId) )
+	if( link.valid() )
 	{
 		QList<RetroShareLink> urls ;
 

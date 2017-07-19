@@ -33,7 +33,7 @@
 #include "retroshare/rsinit.h"
 #include "plugins/pluginmanager.h"
 #include "util/rsdebug.h"
-const int p3facemsgzone = 11453;
+//const int p3facemsgzone = 11453;
 
 #include <sys/time.h>
 #include <time.h>

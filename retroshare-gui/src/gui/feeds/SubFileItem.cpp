@@ -66,7 +66,7 @@
 
 
 
-const uint32_t SFI_DEFAULT_PERIOD 	= (30 * 3600 * 24); /* 30 Days */
+//const uint32_t SFI_DEFAULT_PERIOD 	= (30 * 3600 * 24); /* 30 Days */
 
 /** Constructor */
 SubFileItem::SubFileItem(const RsFileHash &hash, const std::string &name, const std::string &path, uint64_t size, uint32_t flags, const RsPeerId &srcId)
@@ -727,8 +727,8 @@ void SubFileItem::copyLink()
 		return;
 	}
 
-	RetroShareLink link;
-    if (link.createFile(QString::fromUtf8(mFileName.c_str()), mFileSize, QString::fromStdString(mFileHash.toStdString()))) {
+	RetroShareLink link = RetroShareLink::createFile(QString::fromUtf8(mFileName.c_str()), mFileSize, QString::fromStdString(mFileHash.toStdString()));
+	if (link.valid()) {
 		QList<RetroShareLink> urls;
 		urls.push_back(link);
 		RSLinkClipboard::copyLinks(urls);

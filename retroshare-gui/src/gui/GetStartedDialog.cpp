@@ -120,10 +120,10 @@ void GetStartedDialog::updateFromUserLevel()
 		case RSCONFIG_USER_LEVEL_POWER:
 		case RSCONFIG_USER_LEVEL_OVERRIDE:
 			ui.firewallCheckBox->setChecked(true);
-
+			/* fallthrough */
 		case RSCONFIG_USER_LEVEL_CASUAL:
 			ui.connectCheckBox->setChecked(true);
-
+			/* fallthrough */
 		case RSCONFIG_USER_LEVEL_BASIC:
 			ui.addCheckBox->setChecked(true);
 			ui.inviteCheckBox->setChecked(true);

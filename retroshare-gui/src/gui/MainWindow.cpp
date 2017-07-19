@@ -1492,6 +1492,23 @@ void MainWindow::processLastArgs()
 		/* Now use files from the command line, because no RetroShare was running */
 		openRsCollection(Rshare::files()->takeFirst());
 	}
+	/* Handle the -opmode options. */
+	if (opModeStatus) {
+		QString opmode = Rshare::opmode().toLower();
+		if (opmode == "noturtle") {
+			opModeStatus->setCurrentIndex(RS_OPMODE_NOTURTLE - 1);
+		} else if (opmode == "gaming") {
+			opModeStatus->setCurrentIndex(RS_OPMODE_GAMING - 1);
+		} else if (opmode == "minimal") {
+			opModeStatus->setCurrentIndex(RS_OPMODE_MINIMAL - 1);
+		} else {
+			opModeStatus->setCurrentIndex(RS_OPMODE_FULL - 1);
+		}
+		opModeStatus->setOpMode();
+	} else {
+		std::cerr << "ERR: MainWindow::processLastArgs opModeStatus is not initialized.";
+	}
+
 }
 
 void MainWindow::switchVisibilityStatus(StatusElement e,bool b)

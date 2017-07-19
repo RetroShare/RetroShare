@@ -271,8 +271,7 @@ void GxsForumMsgItem::fill()
 	}
 
 	QString title = tr("Forum Feed") + ": ";
-	RetroShareLink link;
-	link.createGxsGroupLink(RetroShareLink::TYPE_FORUM, mMessage.mMeta.mGroupId, groupName());
+	RetroShareLink link = RetroShareLink::createGxsGroupLink(RetroShareLink::TYPE_FORUM, mMessage.mMeta.mGroupId, groupName());
 	title += link.toHtml();
 	ui->titleLabel->setText(title);
 
@@ -310,8 +309,7 @@ void GxsForumMsgItem::fill()
 //		nameLabel->setText(tr("Anonymous"));
 //	}
 
-	RetroShareLink msgLink;
-	msgLink.createGxsMessageLink(RetroShareLink::TYPE_FORUM, mMessage.mMeta.mGroupId, mMessage.mMeta.mMsgId, messageName());
+	RetroShareLink msgLink = RetroShareLink::createGxsMessageLink(RetroShareLink::TYPE_FORUM, mMessage.mMeta.mGroupId, mMessage.mMeta.mMsgId, messageName());
 	ui->subLabel->setText(msgLink.toHtml());
 	if (wasExpanded() || ui->expandFrame->isVisible()) {
 		fillExpandFrame();
@@ -324,8 +322,7 @@ void GxsForumMsgItem::fill()
 	} else {
 //		ui->parentAvatar->setId(msgParent.srcId, true);
 
-		RetroShareLink linkParent;
-		linkParent.createGxsMessageLink(RetroShareLink::TYPE_FORUM, mParentMessage.mMeta.mGroupId, mParentMessage.mMeta.mMsgId, QString::fromUtf8(mParentMessage.mMeta.mMsgName.c_str()));
+		RetroShareLink linkParent = RetroShareLink::createGxsMessageLink(RetroShareLink::TYPE_FORUM, mParentMessage.mMeta.mGroupId, mParentMessage.mMeta.mMsgId, QString::fromUtf8(mParentMessage.mMeta.mMsgName.c_str()));
 		ui->parentSubLabel->setText(linkParent.toHtml());
 		ui->parentMsgLabel->setText(RsHtml().formatText(NULL, QString::fromUtf8(mParentMessage.mMsg.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
 

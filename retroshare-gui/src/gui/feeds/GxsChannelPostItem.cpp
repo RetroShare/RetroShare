@@ -50,8 +50,20 @@
 GxsChannelPostItem::GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome, bool autoUpdate,const std::set<RsGxsMessageId>& older_versions) :
     GxsFeedItem(feedHolder, feedId, groupId, messageId, isHome, rsGxsChannels, autoUpdate)
 {
+	init(messageId,older_versions) ;
+}
+
+GxsChannelPostItem::GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsChannelPost& post, bool isHome, bool autoUpdate,const std::set<RsGxsMessageId>& older_versions) :
+    GxsFeedItem(feedHolder, feedId, post.mMeta.mGroupId, post.mMeta.mMsgId, isHome, rsGxsChannels, autoUpdate)
+{
+	init(post.mMeta.mMsgId,older_versions) ;
+	mPost = post ;
+}
+
+void GxsChannelPostItem::init(const RsGxsMessageId& messageId,const std::set<RsGxsMessageId>& older_versions)
+{
 	QVector<RsGxsMessageId> v;
-    bool self = false;
+	//bool self = false;
 
 	for(std::set<RsGxsMessageId>::const_iterator it(older_versions.begin());it!=older_versions.end();++it)
 		v.push_back(*it) ;
@@ -218,12 +230,12 @@ bool GxsChannelPostItem::setGroup(const RsGxsChannelGroup &group, bool doFill)
 
 	mGroup = group;
 
-    // if not publisher, hide the edit button. Without the publish key, there's no way to edit a message.
+	// If not publisher, hide the edit button. Without the publish key, there's no way to edit a message.
 #ifdef DEBUG_ITEM
-    std::cerr << "Group subscribe flags = " << std::hex << mGroup.mMeta.mSubscribeFlags << std::dec << std::endl;
+	std::cerr << "Group subscribe flags = " << std::hex << mGroup.mMeta.mSubscribeFlags << std::dec << std::endl ;
 #endif
-    if(!IS_GROUP_PUBLISHER(mGroup.mMeta.mSubscribeFlags))
-        ui->editButton->hide();
+	if( !IS_GROUP_PUBLISHER(mGroup.mMeta.mSubscribeFlags) )
+		ui->editButton->hide() ;
 
 	if (doFill) {
 		fill();
@@ -398,13 +410,11 @@ void GxsChannelPostItem::fill()
 		}
 
 		title = tr("Channel Feed") + ": ";
-		RetroShareLink link;
-		link.createGxsGroupLink(RetroShareLink::TYPE_CHANNEL, mPost.mMeta.mGroupId, groupName());
+		RetroShareLink link = RetroShareLink::createGxsGroupLink(RetroShareLink::TYPE_CHANNEL, mPost.mMeta.mGroupId, groupName());
 		title += link.toHtml();
 		ui->titleLabel->setText(title);
 
-		RetroShareLink msgLink;
-		msgLink.createGxsMessageLink(RetroShareLink::TYPE_CHANNEL, mPost.mMeta.mGroupId, mPost.mMeta.mMsgId, messageName());
+		RetroShareLink msgLink = RetroShareLink::createGxsMessageLink(RetroShareLink::TYPE_CHANNEL, mPost.mMeta.mGroupId, mPost.mMeta.mMsgId, messageName());
 		ui->subjectLabel->setText(msgLink.toHtml());
 
 		if (IS_GROUP_SUBSCRIBED(mGroup.mMeta.mSubscribeFlags) || IS_GROUP_ADMIN(mGroup.mMeta.mSubscribeFlags))

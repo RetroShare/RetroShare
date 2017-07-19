@@ -55,10 +55,11 @@ class p3LinkMgr;
 class p3IdService;
 
 // Temp tweak to test grouter
-struct p3MsgService :
-        p3Service, p3Config, pqiServiceMonitor, GRouterClientService,
+class p3MsgService :
+        public p3Service, public p3Config, public pqiServiceMonitor, GRouterClientService,
         GxsTransClient
 {
+public:
 	p3MsgService(p3ServiceControl *sc, p3IdService *id_service, p3GxsTrans& gxsMS);
 
 	virtual RsServiceInfo getServiceInfo();

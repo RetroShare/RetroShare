@@ -652,6 +652,7 @@ uint32_t GxsGroupDialog::getGroupSignFlags()
     {
     case 0: break ;
     case 2: signFlags |= GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG_KNOWN;	// no break below, since we want *both* flags in this case.
+        /* fallthrough */
     case 1:  signFlags |= GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG;
 	    break ;
     }

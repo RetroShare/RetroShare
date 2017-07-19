@@ -294,6 +294,7 @@ uint32_t p3ServerConfig::getUserLevel()
 				userLevel = RSCONFIG_USER_LEVEL_BASIC;
 			}
 		}
+		/* fallthrough */
 		case RSCONFIG_USER_LEVEL_BASIC:
 		{
 			/* check that we have some lastConnect > 0 */
@@ -302,7 +303,7 @@ uint32_t p3ServerConfig::getUserLevel()
 				userLevel = RSCONFIG_USER_LEVEL_CASUAL;
 			}
 		}
-
+		/* fallthrough */
 		case RSCONFIG_USER_LEVEL_CASUAL:
 		case RSCONFIG_USER_LEVEL_POWER:
 
@@ -379,7 +380,7 @@ uint32_t p3ServerConfig::getOperatingMode()
 	{
 		mode = RS_OPMODE_GAMING;
 	}
-	else if (modestr == "MINIMAL_TRANSFER")
+	else if (modestr == "MINIMAL")
 	{
 		mode = RS_OPMODE_MINIMAL;
 	}
@@ -409,7 +410,7 @@ bool p3ServerConfig::setOperatingMode(uint32_t opMode)
 
 		break;
 		case RS_OPMODE_MINIMAL:
-			modestr = "MINIMAL_TRANSFER";
+			modestr = "MINIMAL";
 		break;
 	}
 	mGeneralConfig->setSetting(RS_CONFIG_OPERATING_STRING, modestr);
@@ -422,6 +423,31 @@ bool p3ServerConfig::setOperatingMode(uint32_t opMode)
 	return switchToOperatingMode(opMode);
 }
 
+bool p3ServerConfig::setOperatingMode(const std::string &opModeStr)
+{
+	uint32_t opMode = RS_OPMODE_FULL;
+	std::string upper;
+	stringToUpperCase(opModeStr, upper);
+
+	if (upper == "NOTURTLE")
+	{
+		opMode = RS_OPMODE_NOTURTLE;
+	}
+	else if (upper == "GAMING")
+	{
+		opMode = RS_OPMODE_GAMING;
+	}
+	else if (upper == "MINIMAL")
+	{
+		opMode = RS_OPMODE_MINIMAL;
+	}
+	else	// "FULL" by default
+	{
+		opMode = RS_OPMODE_FULL;
+	}
+
+	return setOperatingMode(opMode);
+}
 
 bool p3ServerConfig::switchToOperatingMode(uint32_t opMode)
 {
