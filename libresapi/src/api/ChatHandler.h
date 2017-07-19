@@ -35,6 +35,8 @@ public:
     virtual void notifyChatLobbyEvent (uint64_t           /* lobby id */, uint32_t           /* event type    */ ,
                                        const RsGxsId& /* nickname */,const std::string& /* any string */);
 
+	virtual void notifyListChange(int list, int type);
+
     // from tickable
     virtual void tick();
 
@@ -122,6 +124,9 @@ private:
     void handleSubscribeLobby(Request& req, Response& resp);
     void handleUnsubscribeLobby(Request& req, Response& resp);
 	void handleAutoSubsribeLobby(Request& req, Response& resp);
+	void handleInviteToLobby(Request& req, Response& resp);
+	void handleGetInvitationsToLobby(Request& req, Response& resp);
+	void handleAnswerToInvitation(Request& req, Response& resp);
     void handleClearLobby(Request& req, Response& resp);
     ResponseTask* handleLobbyParticipants(Request& req, Response& resp);
     void handleMessages(Request& req, Response& resp);
@@ -162,6 +167,7 @@ private:
     std::map<ChatLobbyId, LobbyParticipantsInfo> mLobbyParticipantsInfos;
 
     StateToken mUnreadMsgsStateToken;
+	StateToken mInvitationsStateToken;
 
 };
 } // namespace resource_api

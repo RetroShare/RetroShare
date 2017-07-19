@@ -4397,32 +4397,31 @@ void p3IdService::handleResponse(uint32_t token, uint32_t req_type)
 	// stuff.
 	switch(req_type)
 	{
-		case GXSIDREQ_CACHEOWNIDS:
-			cache_load_ownids(token);
-			break;
-		case GXSIDREQ_CACHELOAD:
-			cache_load_for_token(token);
-			break;
-		case GXSIDREQ_PGPHASH:
-			pgphash_handlerequest(token);
-			break;
-		case GXSIDREQ_RECOGN:
-			recogn_handlerequest(token);
-			break;
-		case GXSIDREQ_CACHETEST:
-			cachetest_handlerequest(token);
-			break;
-		case GXSIDREQ_OPINION:
-			opinion_handlerequest(token);
-			break;
-		case GXSIDREQ_SERIALIZE_TO_MEMORY:
-        	handle_get_serialized_grp(token) ;
-
-		default:
-			/* error */
-			std::cerr << "p3IdService::handleResponse() Unknown Request Type: " << req_type;
-			std::cerr << std::endl;
-			break;
+	case GXSIDREQ_CACHEOWNIDS:
+		cache_load_ownids(token);
+		break;
+	case GXSIDREQ_CACHELOAD:
+		cache_load_for_token(token);
+		break;
+	case GXSIDREQ_PGPHASH:
+		pgphash_handlerequest(token);
+		break;
+	case GXSIDREQ_RECOGN:
+		recogn_handlerequest(token);
+		break;
+	case GXSIDREQ_CACHETEST:
+		cachetest_handlerequest(token);
+		break;
+	case GXSIDREQ_OPINION:
+		opinion_handlerequest(token);
+		break;
+	case GXSIDREQ_SERIALIZE_TO_MEMORY:
+		handle_get_serialized_grp(token);
+		break;
+	default:
+		std::cerr << "p3IdService::handleResponse() Unknown Request Type: "
+		          << req_type << std::endl;
+		break;
 	}
 }
 

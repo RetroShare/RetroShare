@@ -29,18 +29,43 @@ Item
 	property bool is_contact: cntDt.md.is_contact
 	property bool isOwn:  cntDt.md.own
 
-
-	Text
+	Button
 	{
-		id: meText
+		id: avatarPicker
 
-		text: "Yourself"
+		text: "Change your Avatar"
 		visible: isOwn
 
 		anchors.top: parent.top
-		anchors.topMargin: 6
 		anchors.horizontalCenter: parent.horizontalCenter
+
+		onClicked:
+		{
+			fileChooser.open()
+		}
+		CustomFileChooser
+		{
+			id: fileChooser
+			onResultFileChanged:
+			{
+				console.log("Result file changed! " , resultFile)
+
+				var base64Image = androidImagePicker.imageToBase64(resultFile)
+
+				rsApi.request("/identity/set_avatar", JSON.stringify({"gxs_id": cntDt.md.gxs_id, "avatar": base64Image }),
+							    function (par)
+								{
+									var jP  = JSON.parse(par.response)
+									if (jP.returncode === "ok")
+									{
+										console.log("Avatar changed! ")
+										topFace.getDetails()
+									}
+								})
+			}
+		}
 	}
+
 
 	AvatarOrColorHash
 	{
@@ -48,7 +73,7 @@ Item
 
 		gxs_id: cntDt.md.gxs_id
 
-		anchors.top: meText.bottom
+		anchors.top: (isOwn)? avatarPicker.bottom : parent.top
 		anchors.topMargin: 6
 		anchors.horizontalCenter: parent.horizontalCenter
 	}
@@ -82,22 +107,12 @@ Item
 
 			Image
 			{
-				source:
-				{
-					if (isOwn)
-					{
-						"qrc:/icons/keyring.svg"
-					}
-					else
-					{
-						cntDt.is_contact ?
-								"qrc:/icons/rating.svg" :
-								"qrc:/icons/rating-unrated.svg"
-					}
-				}
-				height: parent.height - 4
-				sourceSize.height: height
+				source: cntDt.is_contact ?
+							"qrc:/icons/rating.svg" :
+							"qrc:/icons/rating-unrated.svg"
+				height: parent.height -4
 				fillMode: Image.PreserveAspectFit
+				sourceSize.height: height
 				anchors.verticalCenter: parent.verticalCenter
 
 				MouseArea
@@ -106,13 +121,10 @@ Item
 
 					onClicked:
 					{
-						if (!isOwn)
-						{
-							var jDt = JSON.stringify({gxs_id: cntDt.md.gxs_id})
-							if(cntDt.is_contact)
-								rsApi.request("/identity/remove_contact", jDt, tgCt)
-							else rsApi.request("/identity/add_contact", jDt, tgCt)
-						}
+						var jDt = JSON.stringify({gxs_id: cntDt.md.gxs_id})
+						if(cntDt.is_contact)
+							rsApi.request("/identity/remove_contact", jDt, tgCt)
+						else rsApi.request("/identity/add_contact", jDt, tgCt)
 					}
 
 					function tgCt() { cntDt.is_contact = !cntDt.is_contact }

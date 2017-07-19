@@ -1188,26 +1188,30 @@ bool RsGenExchange::getGroupMeta(const uint32_t &token, std::list<RsGroupMetaDat
 	std::list<RsGxsGrpMetaData*> metaL;
 	bool ok = mDataAccess->getGroupSummary(token, metaL);
 
-	std::list<RsGxsGrpMetaData*>::iterator lit = metaL.begin();
 	RsGroupMetaData m;
-	for(; lit != metaL.end(); ++lit)
+
+	for( std::list<RsGxsGrpMetaData*>::iterator lit = metaL.begin(); lit != metaL.end(); ++lit)
 	{
 		RsGxsGrpMetaData& gMeta = *(*lit);
+
         m = gMeta;
         RsGroupNetworkStats sts ;
 
-    if(mNetService != NULL && mNetService->getGroupNetworkStats((*lit)->mGroupId,sts))
-    {
-        m.mPop = sts.mSuppliers ;
-        m.mVisibleMsgCount = sts.mMaxVisibleCount ;
-    }
-    else
-    {
-        m.mPop= 0 ;
-        m.mVisibleMsgCount = 0 ;
-        }
+		if(mNetService != NULL && mNetService->getGroupNetworkStats(gMeta.mGroupId,sts))
+		{
+			m.mPop = sts.mSuppliers ;
+			m.mVisibleMsgCount = sts.mMaxVisibleCount ;
 
-        groupInfo.push_back(m);
+			if((!(IS_GROUP_SUBSCRIBED(gMeta.mSubscribeFlags))) || gMeta.mLastPost == 0)
+				m.mLastPost = sts.mLastGroupModificationTS ;
+		}
+		else
+		{
+			m.mPop= 0 ;
+			m.mVisibleMsgCount = 0 ;
+		}
+
+		groupInfo.push_back(m);
 		delete (*lit);
 	}
 
@@ -1369,6 +1373,14 @@ bool RsGenExchange::getGroupData(const uint32_t &token, std::vector<RsGxsGrpItem
 					{
 						gItem->meta.mPop = sts.mSuppliers;
 						gItem->meta.mVisibleMsgCount  = sts.mMaxVisibleCount;
+
+						// When the group is not subscribed, the last post value is not updated, because there's no message stored. As a consequence,
+						// we rely on network statistics to give this value, but it is not as accurate as if it was locally computed, because of blocked
+						// posts, friends not available, sync delays, etc. Similarly if the group has just been subscribed, the last post info is probably
+						// uninitialised, so we will it too.
+
+						if((!(IS_GROUP_SUBSCRIBED(gItem->meta.mSubscribeFlags))) || gItem->meta.mLastPost == 0)
+							gItem->meta.mLastPost = sts.mLastGroupModificationTS ;
 					}
 					else
 					{
@@ -1376,12 +1388,6 @@ bool RsGenExchange::getGroupData(const uint32_t &token, std::vector<RsGxsGrpItem
 						gItem->meta.mVisibleMsgCount = 0;
 					}
 
-					// When the group is not subscribed, the last post value is not updated, because there's no message stored. As a consequence,
-					// we rely on network statistics to give this value, but it is not as accurate as if it was locally computed, because of blocked
-					// posts, friends not available, sync delays, etc.
-
-					if(!(IS_GROUP_SUBSCRIBED(gItem->meta.mSubscribeFlags)))
-						gItem->meta.mLastPost = sts.mLastGroupModificationTS ;
 
                     // Also check the group privacy flags. A while ago, it as possible to publish a group without privacy flags. Now it is not possible anymore.
                     // As a consequence, it's important to supply a correct value in this flag before the data can be edited/updated.
