@@ -41,7 +41,7 @@ DISTFILES += \
     android/build.gradle \
     android/gradle/wrapper/gradle-wrapper.properties \
     android/gradlew.bat \
-    icons/retroshare06.png
+    icons/retroshare.png
 
 ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
 

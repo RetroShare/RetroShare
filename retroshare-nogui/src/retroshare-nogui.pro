@@ -1,7 +1,7 @@
 !include("../../retroshare.pri"): error("Could not include file ../../retroshare.pri")
 
 TEMPLATE = app
-TARGET = RetroShare06-nogui
+TARGET = retroshare-nogui
 CONFIG += bitdht
 #CONFIG += introserver
 CONFIG -= qt xml gui

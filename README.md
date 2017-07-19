@@ -68,8 +68,8 @@ Compilation on Linux
 
    The executables produced will be:
 
-         /usr/bin/RetroShare06
-         /usr/bin/RetroShare06-nogui
+         /usr/bin/retroshare
+         /usr/bin/retroshare-nogui
 
 5. Uninstall:
    ```bash
@@ -124,7 +124,7 @@ Using retroshare-nogui & webUI
 The webUI needs to be enabled as a parameter option in retroshare-nogui:
 
 ```bash
-./retroshare-nogui --webinterface 9090 --docroot /usr/share/RetroShare06/webui/
+./retroshare-nogui --webinterface 9090 --docroot /usr/share/retroshare/webui/
 ```
 
 The webUI is only accessible on localhost:9090. It is advised to keep it that way so that your RS

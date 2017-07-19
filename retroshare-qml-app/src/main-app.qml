@@ -64,7 +64,7 @@ ApplicationWindow
 			fillMode: Image.PreserveAspectFit
 			height: Math.max(30, parent.height - 4)
 			anchors.verticalCenter: parent.verticalCenter
-			source: "icons/retroshare06.png"
+			source: "icons/retroshare.png"
 		}
 		Label
 		{

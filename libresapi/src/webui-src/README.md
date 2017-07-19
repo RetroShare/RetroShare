@@ -19,7 +19,7 @@ BUILD / DEVELOPMENT
         - the build process watches files for changes, and rebuilds and reloads the page. Build output is in ./public
 	- use the --webinterface 9090 command line parameter to enable webui in retroshare-nogui
 	- set the --docroot parameter of retroshare-nogui to point to the "libresapi/src/webui-src/public" directory
-		(or symlink from /usr/share/RetroShare06/webui on Linux, ./webui on Windows)
+		(or symlink from /usr/share/retroshare/webui on Linux, ./webui on Windows)
 	- retroshare-gui does not have a --docroot parameter. Use symlinks then.
 
 CONTRIBUTE

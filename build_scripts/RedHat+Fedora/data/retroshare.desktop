@@ -1,9 +1,9 @@
 [Desktop Entry]
 Version=1.0
-Name=RetroShare06
+Name=RetroShare
 Comment=Securely share files with your friends
-Exec=/usr/bin/RetroShare06 %U
-Icon=/usr/share/pixmaps/retroshare06.xpm
+Exec=/usr/bin/retroshare %U
+Icon=/usr/share/pixmaps/retroshare.xpm
 Terminal=false
 Type=Application
 Categories=Network;P2P;

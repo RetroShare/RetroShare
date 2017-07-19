@@ -89,4 +89,4 @@ You can now compile RS into Qt Creator or with terminal
 
 You can change Target and SDK in *./retroshare.pri:82* changing value of QMAKE_MACOSX_DEPLOYMENT_TARGET and QMAKE_MAC_SDK
 
-You can find compiled application on *./retroshare/retroshare-gui/src/RetroShare06.app*
+You can find compiled application on *./retroshare/retroshare-gui/src/retroshare.app*
