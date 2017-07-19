@@ -207,4 +207,8 @@
 
     <!-- Added by G10h4ck: Needed permission for autostart at boot -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <!-- Added by Angesoc: used to pick images from gallery or take it from camera -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+
 </manifest>

@@ -6,6 +6,7 @@ CONFIG += c++11
 
 HEADERS += libresapilocalclient.h \
     rsqmlappengine.h \
+    androidimagepicker.h \
     platforminteracions.h
 SOURCES += main-app.cpp \
     libresapilocalclient.cpp \

@@ -27,6 +27,45 @@ Item
 	id: cntDt
 	property var md
 	property bool is_contact: cntDt.md.is_contact
+	property bool isOwn:  cntDt.md.own
+
+	Button
+	{
+		id: avatarPicker
+
+		text: "Change your Avatar"
+		visible: isOwn
+
+		anchors.top: parent.top
+		anchors.horizontalCenter: parent.horizontalCenter
+
+		onClicked:
+		{
+			fileChooser.open()
+		}
+		CustomFileChooser
+		{
+			id: fileChooser
+			onResultFileChanged:
+			{
+				console.log("Result file changed! " , resultFile)
+
+				var base64Image = androidImagePicker.imageToBase64(resultFile)
+
+				rsApi.request("/identity/set_avatar", JSON.stringify({"gxs_id": cntDt.md.gxs_id, "avatar": base64Image }),
+							    function (par)
+								{
+									var jP  = JSON.parse(par.response)
+									if (jP.returncode === "ok")
+									{
+										console.log("Avatar changed! ")
+										topFace.getDetails()
+									}
+								})
+			}
+		}
+	}
+
 
 	AvatarOrColorHash
 	{
@@ -34,7 +73,7 @@ Item
 
 		gxs_id: cntDt.md.gxs_id
 
-		anchors.top: parent.top
+		anchors.top: (isOwn)? avatarPicker.bottom : parent.top
 		anchors.topMargin: 6
 		anchors.horizontalCenter: parent.horizontalCenter
 	}

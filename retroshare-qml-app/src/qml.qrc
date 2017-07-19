@@ -53,5 +53,6 @@
         <file>components/emoji/emoji.js</file>
         <file>icons/network-connect.svg</file>
         <file>icons/network-disconnect.svg</file>
+        <file>components/CustomFileChooser.qml</file>
     </qresource>
 </RCC>
