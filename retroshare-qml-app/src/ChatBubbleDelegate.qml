@@ -9,7 +9,7 @@ Item
 
 	id: chatBubbleDelegate
 	height: bubble.height
-	width: parent.width
+	width: mainWindow.width - (styles.aditionalBubbleWidth - 10)
 
 	property var styles: StyleChat.bubble
 
