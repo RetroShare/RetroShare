@@ -820,7 +820,8 @@ void ChatLobbyWidget::autoSubscribeLobby(QTreeWidgetItem *item)
     ChatLobbyId id = item->data(COLUMN_DATA, ROLE_ID).toULongLong();
     bool isAutoSubscribe = rsMsgs->getLobbyAutoSubscribe(id);
     rsMsgs->setLobbyAutoSubscribe(id, !isAutoSubscribe);
-    if (!isAutoSubscribe) subscribeChatLobbyAtItem(item);
+    if (!isAutoSubscribe && !item->data(COLUMN_DATA, ROLE_SUBSCRIBED).toBool())
+        subscribeChatLobbyAtItem(item);
 }
 
 void ChatLobbyWidget::showBlankPage(ChatLobbyId id)
