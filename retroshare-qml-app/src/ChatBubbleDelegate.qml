@@ -3,13 +3,14 @@ import QtQuick.Layouts 1.2
 import QtQuick.Controls 2.0
 import "." // To load styles
 import "./components"
+import "URI.js" as UriJs
 
 Item
 {
 
 	id: chatBubbleDelegate
 	height: bubble.height
-	width: parent.width
+	width: mainWindow.width - (styles.aditionalBubbleWidth - 10)
 
 	property var styles: StyleChat.bubble
 
@@ -80,7 +81,11 @@ Item
 			Text
 			{
 				id: mesageText
-				text: model.msg
+				text: UriJs.URI.withinString(model.msg, function(url)
+				{
+					return "<a href=\""+ url + "\">" + url + "</a>";
+				})
+
 				width: rootBubble.width * styles.bubbleMaxWidth + timeText.width
 				anchors.left: (model.incoming)?  parent.left : undefined
 				anchors.right:(!model.incoming)?  parent.right : undefined
@@ -89,6 +94,10 @@ Item
 				anchors.leftMargin: styles.lMarginBubble
 				anchors.rightMargin: styles.rMarginBubble
 
+
+				textFormat: Text.RichText
+				onLinkActivated: Qt.openUrlExternally(link)
+
 				// Used for the correct alineation when the message must be on right
 				horizontalAlignment:(!model.incoming &&
 									     mesageText.implicitWidth <= (rootBubble.width * styles.bubbleMaxWidth)
@@ -96,6 +105,7 @@ Item
 
 				wrapMode: Text.Wrap
 				font.pixelSize: styles.messageTextSize
+
 			}
 
 		}

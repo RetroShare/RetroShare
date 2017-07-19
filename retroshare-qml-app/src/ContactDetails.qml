@@ -110,9 +110,9 @@ Item
 				source: cntDt.is_contact ?
 							"qrc:/icons/rating.svg" :
 							"qrc:/icons/rating-unrated.svg"
-				height: parent.height - 4
-				sourceSize.height: height
+				height: parent.height -4
 				fillMode: Image.PreserveAspectFit
+				sourceSize.height: height
 				anchors.verticalCenter: parent.verticalCenter
 
 				MouseArea
