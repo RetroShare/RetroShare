@@ -154,6 +154,7 @@ private:
 	std::map<uint32_t, CircleUpdateOrder> mCircleUpdates ;
 
 	RsGxsGroupId mId;
+	RsGxsGroupId mIdToNavigate;
 	int filter;
 
 	/* UI -  Designer */

@@ -1060,7 +1060,9 @@ void IdDialog::CircleListCustomPopupMenu( QPoint )
 	}
 #endif
         
+#ifdef ID_DEBUG
 	    std::cerr << "  Item is a circle item. Adding Edit/Details menu entry." << std::endl;
+#endif
             is_circle = true ;
 
 	    contextMnu.addSeparator() ;
@@ -1076,7 +1078,9 @@ void IdDialog::CircleListCustomPopupMenu( QPoint )
 		    am_I_circle_admin = bool(group_flags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN) ;
 	    }
 
+#ifdef ID_DEBUG
 	    std::cerr << "  Item is a GxsId item. Requesting flags/group id from parent: " << circle_id << std::endl;
+#endif
     }
  
     RsGxsCircleDetails details ;
@@ -1565,6 +1569,15 @@ bool IdDialog::fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, 
 
 void IdDialog::insertIdList(uint32_t token)
 {
+	//First: Get current item to restore after
+	RsGxsGroupId oldCurrentId = mIdToNavigate;
+	{
+		QTreeWidgetItem *oldCurrent = ui->idTreeWidget->currentItem();
+		if (oldCurrent) {
+			oldCurrentId = RsGxsGroupId(oldCurrent->text(RSID_COL_KEYID).toStdString());
+		}
+	}
+
 	mStateHelper->setLoading(IDDIALOG_IDLIST, false);
 
 	int accept = filter;
@@ -1663,6 +1676,7 @@ void IdDialog::insertIdList(uint32_t token)
 	int itemCount = contactsItem->childCount() + allItem->childCount() + ownItem->childCount();
 	ui->label_count->setText( "(" + QString::number( itemCount ) + ")" );
 
+	navigate(RsGxsId(oldCurrentId));
 	filterIds();
 	updateSelection();
 }
@@ -2050,20 +2064,27 @@ void IdDialog::modifyReputation()
 	
 void IdDialog::navigate(const RsGxsId& gxs_id)
 {
-    std::cerr << "IdDialog::navigate to " << gxs_id.toStdString() << std::endl;
+#ifdef ID_DEBUG
+	std::cerr << "IdDialog::navigate to " << gxs_id.toStdString() << std::endl;
+#endif
 
-    // in order to do this, we just select the correct ID in the ID list
+	// in order to do this, we just select the correct ID in the ID list
+	if (!gxs_id.isNull())
+	{
+		QList<QTreeWidgetItem*> select = ui->idTreeWidget->findItems(QString::fromStdString(gxs_id.toStdString()),Qt::MatchExactly | Qt::MatchRecursive | Qt::MatchWrap,RSID_COL_KEYID) ;
 
-    QList<QTreeWidgetItem*> select = ui->idTreeWidget->findItems(QString::fromStdString(gxs_id.toStdString()),Qt::MatchExactly | Qt::MatchRecursive | Qt::MatchWrap,RSID_COL_KEYID) ;
+		if(select.empty())
+		{
+			mIdToNavigate = RsGxsGroupId(gxs_id);
+			std::cerr << "Cannot find item with ID " << gxs_id << " in ID list." << std::endl;
+			return;
+		}
+		ui->idTreeWidget->setCurrentItem(*select.begin(),true);
+	}
 
-    if(select.empty())
-    {
-        std::cerr << "Cannot find item with ID " << gxs_id << " in ID list." << std::endl;
-        return ;
-    }
-    ui->idTreeWidget->setCurrentItem(*select.begin(),true);
-
+	mIdToNavigate = RsGxsGroupId();
 }
+
 void IdDialog::updateDisplay(bool complete)
 {
 	/* Update identity list */
