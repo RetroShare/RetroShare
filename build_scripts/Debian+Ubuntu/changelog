@@ -1,4 +1,102 @@
-retroshare06 (0.6.2-1.XXXXXX~YYYYYY) YYYYYY; urgency=low
+retroshare (0.6.3-1.XXXXXX~YYYYYY) YYYYYY; urgency=low
+
+  baac33d csoler Thu, 20 Jul 2017 21:18:07 +0200 updated revision number
+  f9d6a78 csoler Thu, 20 Jul 2017 18:19:10 +0200 Merge pull request #954 from PhenomRetroShare/Fix_ShowAuthorInPeopleTabAtStartUp
+  5b86f44 Phenom Thu, 20 Jul 2017 14:29:31 +0200 Fix Show Author In People Tab at startup
+  d60bb78 csoler Wed, 19 Jul 2017 18:37:23 +0200 Merge pull request #952 from PhenomRetroShare/Fix_LobbyAutoSubscribe
+  cbbc392 Phenom Wed, 19 Jul 2017 13:38:26 +0200 Fix Lobby auto-subscribe.
+  0d681b1 csoler Wed, 19 Jul 2017 18:26:32 +0200 Merge pull request #924 from PhenomRetroShare/Fix_retroshare06_case
+  71810e8 csoler Wed, 19 Jul 2017 18:18:32 +0200 Merge pull request #950 from PhenomRetroShare/Add_ChatServerFlag
+  833787e csoler Tue, 18 Jul 2017 23:02:54 +0200 Merge pull request #949 from PhenomRetroShare/Add_AnonIconBeforeName
+  bb8f93e csoler Tue, 18 Jul 2017 21:19:38 +0200 Merge pull request #951 from PhenomRetroShare/Fix_BadServMntorRegister
+  5bbb99a Phenom Tue, 18 Jul 2017 19:24:32 +0200 Fix Bad Service Monitor registering.
+  3a6bcf5 Phenom Tue, 18 Jul 2017 16:34:56 +0200 Add flag for ChatServer
+  b8f742d Phenom Tue, 18 Jul 2017 14:30:31 +0200 Add :/icons/anonymous_blue_128.png before name for unsigned GxsId
+  e56340e csoler Mon, 17 Jul 2017 23:12:06 +0200 Merge pull request #386 from PhenomRetroShare/Add_AbilityToChangeOpModeInCmdLine
+  d39b05c csoler Mon, 17 Jul 2017 22:49:44 +0200 Merge pull request #948 from PhenomRetroShare/Add_FilterIdInFriendList
+  f4aec11 csoler Mon, 17 Jul 2017 22:48:12 +0200 suppressed warning in p3dhtmgr.cc
+  4374264 Phenom Sat, 15 Jul 2017 15:07:05 +0200 Fix clang warning: unused variable 'pqiservicezone'
+  1f39789 Phenom Sat, 15 Jul 2017 18:32:53 +0200 Fix clang warning: 'RSGraphWidget::sizeHint' hides overloaded virtual function
+  3003598 Phenom Mon, 17 Jul 2017 11:48:08 +0200 Fix clang warning: 'p3ChatService' defined as a struct here but previously declared as a class
+  91c526f Phenom Mon, 17 Jul 2017 11:43:41 +0200 Fix clang warning: 'p3MsgService' defined as a struct here but previously declared as a class
+  896ed3e Phenom Mon, 17 Jul 2017 11:38:53 +0200 Fix clang warning: class 'p3Config' was previously declared as a struct
+  8dbb0d6 Phenom Sat, 15 Jul 2017 10:57:05 +0200 Fix warning: this statement may fall through
+  7d8b379 csoler Mon, 17 Jul 2017 22:18:53 +0200 Merge pull request #941 from PhenomRetroShare/Add_UnsignedInChatName
+  b6731ed Gioacc Mon, 17 Jul 2017 16:04:52 +0200 Better naming and doc for warning suppression CONFIG
+  f888913 Phenom Sat, 13 Aug 2016 14:34:31 +0200 Set Operating Mode in RsInit::InitRetroShare so noGUI could use it.
+  8563957 Phenom Mon, 16 May 2016 12:10:04 +0200 Add the ability to change OpMode in command line.
+  c74c865 Phenom Mon, 17 Jul 2017 14:10:26 +0200 Add new Filter by ID in FriendList.
+  1491a05 csoler Mon, 17 Jul 2017 11:16:48 +0200 fixed deadlock situation in FT causing multiple bugs: lock when DLing from a file list a file that is already being downloaded, and lock when a FT module find a direct source among friends
+  5bf056c Phenom Mon, 17 Jul 2017 10:44:27 +0200 Rename retroshare06 to retroshare
+  b12fd11 Phenom Wed,  5 Jul 2017 18:11:52 +0200 Change RetroShare06 to lower case
+  65326d9 csoler Sun, 16 Jul 2017 22:08:07 +0200 removed DEPRECATED warnings by default
+  e2fa57d Phenom Sat, 15 Jul 2017 19:03:17 +0200 Fix clang warning: unused variable 'INTERVAL_BETWEEN_DEBUG_DUMP'
+  a50c4ca Phenom Sat, 15 Jul 2017 18:54:21 +0200 Fix clang warning: unused variable 'kRecognTagClass_DEVELOPMENT'
+  f2fb05d Phenom Sat, 15 Jul 2017 18:50:32 +0200 Fix clang warning: unused variables 'PARTIAL_VIEW_SIZE', ...
+  6ee65bc Phenom Sat, 15 Jul 2017 18:42:19 +0200 Fix clang warning: using floating point absolute value function 'fabsf' when argument is of integer type
+  a0ac6b7 Phenom Sat, 15 Jul 2017 18:40:03 +0200 Fix clang warning: unused variable 'MAX_TUNNEL_REQUESTS_DISPLAY'
+  64899e4 Phenom Sat, 15 Jul 2017 18:36:14 +0200 Fix clang warning: unused variable 'SFI_DEFAULT_PERIOD'
+  b31c812 Phenom Sat, 15 Jul 2017 18:35:11 +0200 Fix clang warning: unused variable 'NEWSFEED_CHANNELMSGLIST'
+  69060f8 Phenom Sat, 15 Jul 2017 18:24:55 +0200 Modify #warning to get author and date.
+  26397d7 Phenom Sat, 15 Jul 2017 18:22:16 +0200 Fix clang warning: unused variables 'LOWER_LIMIT', ...
+  903f875 Phenom Sat, 15 Jul 2017 18:17:00 +0200 Fix clang warning: unused variable 'MAX_SERIALIZED_ARRAY_SIZE'
+  d83a962 Phenom Sat, 15 Jul 2017 16:45:19 +0200 Fix clang warning: unused variables 'GIXS_CUT_OFF', ...
+  51fa7a5 Phenom Sat, 15 Jul 2017 16:39:24 +0200 Fix clang warning: unused variable 'p3facestartupzone'
+  13220ec Phenom Sat, 15 Jul 2017 16:33:04 +0200 Fix clang warning: unused variable 'MAX_TIME_KEEP_LOCATION_WITHOUT_CONTACT'
+  fea1b83 Phenom Sat, 15 Jul 2017 16:32:11 +0200 Fix clang warning: unused variable 'p3facemsgzone'
+  5a64996 Phenom Sat, 15 Jul 2017 15:04:56 +0200 Fix clang warning: unused variables 'RS_NET_NEEDS_RESET', ...
+  4152a46 Phenom Sat, 15 Jul 2017 14:58:55 +0200 Fix clang warning: unused variable 'P3CONNMGR_UDP_DEFAULT_DELAY'
+  5b1323e Phenom Sat, 15 Jul 2017 14:53:04 +0200 Fix clang warning: unused variables 'PQI_HANDLER_NB_PRIORITY_LEVELS', ...
+  9148fa6 Phenom Sat, 15 Jul 2017 14:38:17 +0200 Fix clang warning: unused variables 'RS_NET_DOWN', ...
+  e4616c0 Phenom Sat, 15 Jul 2017 14:31:21 +0200 Fix clang warning: unused variable 'STORE_KEY_TIMEOUT'
+  0479ec0 Phenom Sat, 15 Jul 2017 14:30:06 +0200 Fix clang warning: unused variable 'MAX_MESSAGES_PER_SECONDS_NUMBER'
+  80ea4de Phenom Sat, 15 Jul 2017 14:28:29 +0200 Fix clang warning: unused variable 'ftserverzone'
+  8a270af Phenom Sat, 15 Jul 2017 14:27:19 +0200 fixed merging problem
+  35186c4 Phenom Sat, 15 Jul 2017 14:22:48 +0200 Fix clang warning: unused variable 'res'
+  7f1e230 Phenom Sat, 15 Jul 2017 14:21:53 +0200 Fix clang warning: unused variable 'FT_TM_CRC_MAP_MAX_WAIT_PER_GIG', ...
+  8b99c80 Phenom Sat, 15 Jul 2017 14:04:56 +0200 Fix clang warning: 'p3GxsTrans' defined as a class here but previously declared as a struct
+  fd24ef5 Phenom Sat, 15 Jul 2017 13:35:50 +0200 Fix warning: comparison between signed and unsigned integer expressions and misleading-indentation
+  431b564 Phenom Sat, 15 Jul 2017 13:32:04 +0200 Fix warning: unused variable ‘popLimit’
+  2444e6e Phenom Sat, 15 Jul 2017 13:29:33 +0200 Fix warning: this statement may fall through
+  dcb8a35 Phenom Sat, 15 Jul 2017 13:28:05 +0200 Fix warning: unused variable ‘self’ and misleading-indentation
+  ca9357c Phenom Sat, 15 Jul 2017 13:25:14 +0200 Fix warning: this ‘if’ clause does not guard...
+  b5c503a Phenom Sat, 15 Jul 2017 13:24:07 +0200 Fix warning: unused variable ‘prev_index’
+  3a22c6d Phenom Sat, 15 Jul 2017 13:20:46 +0200 Fix warning: comparison between signed and unsigned integer expressions
+  6fd0308 Phenom Sat, 15 Jul 2017 13:19:08 +0200 Fix warning: this statement may fall through
+  f27ce82 Phenom Sat, 15 Jul 2017 13:18:00 +0200 Fix warning: comparison between signed and unsigned integer expressions , misleading-indentation and unused-variable
+  15bc9c1 Phenom Sat, 15 Jul 2017 13:10:41 +0200 Fix warning: this statement may fall through
+  f23c84f Phenom Sat, 15 Jul 2017 13:06:19 +0200 Fix warning: this statement may fall through
+  9a4ed80 Phenom Sat, 15 Jul 2017 13:01:39 +0200 Fix warning: comparison between signed and unsigned integer expressions and unused variables
+  8455adf Phenom Sat, 15 Jul 2017 12:50:50 +0200 Fix warning: unused parameter ‘type’ and ‘req’
+  c866bf9 Phenom Sat, 15 Jul 2017 12:49:27 +0200 Fix warning: unused parameter ‘req’ and ‘resp’
+  9d4967c Phenom Sat, 15 Jul 2017 12:48:04 +0200 Fix warning: unused parameter ‘req’
+  c97269b Phenom Sat, 15 Jul 2017 12:44:55 +0200 Fix warning: this statement may fall through
+  1813948 Phenom Sat, 15 Jul 2017 11:48:37 +0200 Fix warning: unused parameter ‘grpItem’ and unused debug variables
+  e1ea92d Phenom Sat, 15 Jul 2017 11:42:02 +0200 Fix warning: unused parameter ‘n’
+  f193af2 Phenom Sat, 15 Jul 2017 11:40:38 +0200 Fix warning: unused parameter ‘size’
+  d8b0b52 Phenom Sat, 15 Jul 2017 11:39:03 +0200 Fix warning: variable ‘it’ set but not used
+  b11022a Phenom Sat, 15 Jul 2017 11:35:18 +0200 Fix warning: this statement may fall through
+  0e302e2 Phenom Sat, 15 Jul 2017 11:30:08 +0200 Fix warning: this statement may fall through
+  7b4d3c5 Phenom Sat, 15 Jul 2017 11:25:54 +0200 Fix warning: this statement may fall through
+  476b581 Phenom Sat, 15 Jul 2017 11:23:51 +0200 Fix warning: this statement may fall through
+  7bd7c57 Phenom Sat, 15 Jul 2017 11:21:36 +0200 Fix warning: variable ‘pgpNameFound’ set but not used
+  a0506c1 Phenom Sat, 15 Jul 2017 11:19:28 +0200 Fix warning: this statement may fall through
+  b9d4651 Phenom Sat, 15 Jul 2017 11:17:02 +0200 Fix warning: this statement may fall through
+  e12f51b Phenom Sat, 15 Jul 2017 11:14:53 +0200 Fix warning: variable ‘peerIt1’ set but not used
+  78cfde9 Phenom Sat, 15 Jul 2017 11:11:51 +0200 Fix warning: this statement may fall through
+  3a6ad82 Phenom Sat, 15 Jul 2017 11:03:58 +0200 Fix warning: this statement may fall through
+  635246c Phenom Sat, 15 Jul 2017 11:01:16 +0200 Fix warning: this statement may fall through
+  e718070 Phenom Sat, 15 Jul 2017 10:51:17 +0200 Fix warning: this statement may fall through
+  714f9bb Phenom Sat, 15 Jul 2017 10:46:32 +0200 Fix warning: this statement may fall through
+  987c105 csoler Sun, 16 Jul 2017 20:16:31 +0200 Merge pull request #945 from PhenomRetroShare/Add_RSLinkCreateAsStatic
+  e40dbe8 csoler Sun, 16 Jul 2017 17:03:37 +0200 Merge pull request #947 from csoler/v0.6-ImprovedGUI
+  1e98de7 csoler Sun, 16 Jul 2017 16:56:23 +0200 fixed filtering for channels when loading  items on the fly
+  82addce Phenom Sun, 16 Jul 2017 13:11:47 +0200 Change RetroShareLink creation methodes as static
+  2d5e1d6 csoler Sun, 16 Jul 2017 10:08:33 +0200 fixed last update missing commits
+
+ -- Retroshare Dev Team <contact@retroshare.net>  Wed, 20 Jul 2017 22:00:00 +0100
+
+retroshare06 (0.6.2-1.20170716.2d5e1d63~zesty) zesty; urgency=low
 
   4718125 csoler Sun, 16 Jul 2017 10:05:33 +0200 updated changelog
   991049d csoler Sat, 15 Jul 2017 22:20:43 +0200 Merge pull request #944 from csoler/v0.6-ImprovedGUI

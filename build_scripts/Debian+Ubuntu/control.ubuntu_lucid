@@ -8,6 +8,7 @@ Homepage: http://retroshare.sourceforge.net
 
 Package: retroshare-voip-plugin
 Architecture: any
+Conflicts: retroshare06-voip-plugin
 Depends: ${shlibs:Depends}, ${misc:Depends}, retroshare, libspeex1, libspeexdsp1, libqtmultimediakit1
 Description: RetroShare VOIP plugin
  This package provides a plugin for RetroShare, a secured Friend-to-Friend communication 
@@ -16,6 +17,7 @@ Description: RetroShare VOIP plugin
 
 Package: retroshare-linkscloud-plugin
 Architecture: any
+Conflicts: retroshare06-feedreader-plugin
 Depends: ${shlibs:Depends}, ${misc:Depends}, retroshare
 Description: RetroShare LinksCloud plugin
  This package provides a plugin for RetroShare, a secured Friend-to-Friend communication 
@@ -32,7 +34,7 @@ Description: RetroShare LinksCloud plugin
 Package: retroshare-nogui
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, gnome-keyring
-Conflicts: retroshare
+Conflicts: retroshare,retroshare06-nogui
 Description: Secure communication with friends
  This is the command-line client for RetroShare network. This client
  can be contacted and talked-to using SSL. Clients exist for portable
@@ -41,7 +43,7 @@ Description: Secure communication with friends
 Package: retroshare
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, gnome-keyring
-Conflicts: retroshare-nogui
+Conflicts: retroshare-nogui,retroshare06
 Description: Secure communication with friends
  RetroShare is a Open Source cross-platform, private and secure decentralised 
  commmunication platform. It lets you to securely chat and share files with your 

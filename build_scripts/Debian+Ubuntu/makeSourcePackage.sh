@@ -1,7 +1,7 @@
 #!/bin/sh
 
 ###################### PARAMETERS ####################
-version="0.6.2"
+version="0.6.3"
 gitpath="https://github.com/RetroShare/RetroShare.git"
 workdir=retroshare-${version}
 branch="master"
