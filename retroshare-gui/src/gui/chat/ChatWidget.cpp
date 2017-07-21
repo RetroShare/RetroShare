@@ -201,6 +201,8 @@ ChatWidget::ChatWidget(QWidget *parent) :
 	menu->addMenu(fontmenu);
 	
 	ui->actionSendAsPlainText->setChecked(Settings->getChatSendAsPlainTextByDef());
+	ui->chatTextEdit->setOnlyPlainText(ui->actionSendAsPlainText->isChecked());
+	connect(ui->actionSendAsPlainText, SIGNAL(toggled(bool)), ui->chatTextEdit, SLOT(setOnlyPlainText(bool)) );
 
 	ui->textBrowser->resetImagesStatus(Settings->getChatLoadEmbeddedImages());
 	ui->textBrowser->installEventFilter(this);
