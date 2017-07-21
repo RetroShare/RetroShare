@@ -437,14 +437,14 @@ bool p3FileDatabase::loadList(std::list<RsItem *>& load)
         if (NULL != (rskv = dynamic_cast<RsConfigKeyValueSet *>(*it)))
         {
             /* make into map */
-            std::map<std::string, std::string> configMap;
-            std::map<std::string, std::string>::const_iterator mit ;
+            //std::map<std::string, std::string> configMap;
+            //std::map<std::string, std::string>::const_iterator mit ;
 
             for(std::list<RsTlvKeyValue>::const_iterator kit = rskv->tlvkvs.pairs.begin(); kit != rskv->tlvkvs.pairs.end(); ++kit)
             if (kit->key == HASH_CACHE_DURATION_SS)
             {
                 uint32_t t=0 ;
-                if(sscanf(kit->value.c_str(),"%d",&t) == 1)
+                if(sscanf(kit->value.c_str(),"%u",&t) == 1)
                     mHashCache->setRememberHashFilesDuration(t);
             }
             else if(kit->key == WATCH_FILE_DURATION_SS)
@@ -1744,7 +1744,7 @@ void p3FileDatabase::locked_recursSweepRemoteDirectory(RemoteDirectoryStorage *r
 {
    time_t now = time(NULL) ;
 
-   std::string indent(2*depth,' ') ;
+   //std::string indent(2*depth,' ') ;
 
    // if not up to date, request update, and return (content is not certified, so no need to recurs yet).
    // if up to date, return, because TS is about the last modif TS below, so no need to recurs either.
