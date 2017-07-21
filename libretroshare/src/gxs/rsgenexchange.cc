@@ -82,6 +82,7 @@ RsGenExchange::RsGenExchange(RsGeneralDataService *gds, RsNetworkExchangeService
   mLastClean((int)time(NULL) - (int)(RSRandom::random_u32() % MSG_CLEANUP_PERIOD)),	// this helps unsynchronising the checks for the different services
   mMsgCleanUp(NULL),
   mChecking(false),
+  mCheckStarted(false),
   mLastCheck((int)time(NULL) - (int)(RSRandom::random_u32() % INTEGRITY_CHECK_PERIOD) + 120),	// this helps unsynchronising the checks for the different services, with 2 min security to avoid checking right away before statistics come up.
   mIntegrityCheck(NULL),
   SIGN_MAX_WAITING_TIME(60),
@@ -1234,7 +1235,7 @@ bool RsGenExchange::getMsgMeta(const uint32_t &token,
 #ifdef GEN_EXCH_DEBUG
 	std::cerr << "RsGenExchange::getMsgMeta(): retrieving meta data for token " << token << std::endl;
 #endif
-	std::list<RsGxsMsgMetaData*> metaL;
+	//std::list<RsGxsMsgMetaData*> metaL;
 	GxsMsgMetaResult result;
 	bool ok = mDataAccess->getMsgSummary(token, result);
 
@@ -2168,15 +2169,13 @@ void RsGenExchange::publishMsgs()
 		uint32_t size = mSerialiser->size(msgItem);
 		char* mData = new char[size];
 
-		bool serialOk = false;
-
 		// for fatal sign creation
 		bool createOk = false;
 
 		// if sign requests to try later
 		bool tryLater = false;
 
-		serialOk = mSerialiser->serialise(msgItem, mData, &size);
+		bool serialOk = mSerialiser->serialise(msgItem, mData, &size);
 
 		if(serialOk)
 		{
@@ -2266,6 +2265,8 @@ void RsGenExchange::publishMsgs()
 				char* metaDataBuff = new char[size];
 				bool s = msg->metaData->serialise(metaDataBuff, &size);
 				s &= msg->meta.setBinData(metaDataBuff, size);
+				if (!s)
+					std::cerr << "(WW) Can't serialise or set bin data" << std::endl;
 
 				msg->metaData->mMsgStatus = GXS_SERV::GXS_MSG_STATUS_UNPROCESSED;
 				msgId = msg->msgId;
