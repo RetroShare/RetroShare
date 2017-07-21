@@ -13,7 +13,7 @@ class RsCertificate
 		// Constructs from text.
 		//		- new format: The input string should only contain radix chars and spaces/LF/tabs.
 		//
-		RsCertificate(const std::string& input_string) ;
+		explicit RsCertificate(const std::string& input_string) ;
 
 		// Constructs from binary gpg key, and RsPeerDetails.
 		//
@@ -52,7 +52,11 @@ class RsCertificate
 		static void addPacket(uint8_t ptag, const unsigned char *mem, size_t size, unsigned char *& buf, size_t& offset, size_t& buf_size) ;
 
 		RsCertificate(const RsCertificate&) {}	// non copy-able
-		const RsCertificate& operator=(const RsCertificate&) { return *this ;}	// non copy-able
+		const RsCertificate& operator=(const RsCertificate&)
+		{ memset(ipv4_external_ip_and_port,0,6); memset(ipv4_internal_ip_and_port,0,6);
+			binary_pgp_key = NULL; binary_pgp_key_size = 0;
+			only_pgp = false; hidden_node = false;
+			return *this ;}	// non copy-able
 
 		unsigned char ipv4_external_ip_and_port[6] ;
 		unsigned char ipv4_internal_ip_and_port[6] ;
