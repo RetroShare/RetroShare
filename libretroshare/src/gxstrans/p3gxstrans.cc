@@ -723,10 +723,13 @@ uint32_t p3GxsTrans::AuthenPolicy()
 bool p3GxsTrans::requestGroupsData(const std::list<RsGxsGroupId>* groupIds)
 {
 	//	std::cout << "p3GxsTrans::requestGroupsList()" << std::endl;
-	uint32_t token;
+	uint32_t token=0;
 	RsTokReqOptions opts; opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
-	if(!groupIds) RsGenExchange::getTokenService()->requestGroupInfo(token, 0xcaca, opts);
-	else RsGenExchange::getTokenService()->requestGroupInfo(token, 0xcaca, opts, *groupIds);
+	if(!groupIds)
+		RsGenExchange::getTokenService()->requestGroupInfo(token, 0xcaca, opts);
+	else
+		RsGenExchange::getTokenService()->requestGroupInfo(token, 0xcaca, opts, *groupIds);
+
 	GxsTokenQueue::queueRequest(token, GROUPS_LIST);
 	return true;
 }
