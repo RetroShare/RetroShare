@@ -156,11 +156,24 @@ class p3ChatService::AvatarInfo
 		  init(ai._image_data,ai._image_size) ;
 	  }
 
+		AvatarInfo& operator =(const AvatarInfo& ai)
+		{
+			if (&ai == this)
+				return *this;
+
+			init(ai._image_data,ai._image_size) ;
+			_peer_is_new = ai._peer_is_new;
+			_own_is_new = ai._own_is_new;
+			return *this;
+		}
+
 	  void init(const unsigned char *jpeg_data,int size)
 	  {
 		  _image_size = size ;
 		  _image_data = (unsigned char*)rs_malloc(size) ;
 		  memcpy(_image_data,jpeg_data,size) ;
+		  _peer_is_new = false ;			// true when the peer has a new avatar
+		  _own_is_new = false ;				// true when I myself a new avatar to send to this peer.
 	  }
 	  AvatarInfo(const unsigned char *jpeg_data,int size)
 	  {
@@ -1061,7 +1074,6 @@ void p3ChatService::getOwnAvatarJpegData(unsigned char *& data,int& size)
 	// should be a Mutex here.
 	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
 
-	uint32_t s = 0 ;
 #ifdef CHAT_DEBUG
 	std::cerr << "p3chatservice:: own avatar requested from above. " << std::endl ;
 #endif
@@ -1069,7 +1081,8 @@ void p3ChatService::getOwnAvatarJpegData(unsigned char *& data,int& size)
 	//
 	if(_own_avatar != NULL)
 	{
-	   _own_avatar->toUnsignedChar(data,s) ;
+		uint32_t s = 0 ;
+		_own_avatar->toUnsignedChar(data,s) ;
 		size = s ;
 	}
 	else
