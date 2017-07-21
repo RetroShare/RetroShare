@@ -14,7 +14,7 @@ namespace librs
 							SHA1    = 0x01
 			};
 
-			HashStream(HashType t);
+			explicit HashStream(HashType t);
 			~HashStream();
 
 			Sha1CheckSum hash() ;
