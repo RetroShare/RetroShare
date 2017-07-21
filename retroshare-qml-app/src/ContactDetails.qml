@@ -33,15 +33,25 @@ Item
 	{
 		id: avatarPicker
 
-		text: "Change your Avatar"
-		visible: isOwn
+		text: (isOwn)? qsTr("Change your Avatar") : qsTr("Start Chat!")
 
 		anchors.top: parent.top
 		anchors.horizontalCenter: parent.horizontalCenter
 
 		onClicked:
 		{
-			fileChooser.open()
+			if (isOwn) fileChooser.open()
+			else startDistantChat ()
+		}
+		function startDistantChat ()
+		{
+			ChatCache.chatHelper.startDistantChat(ChatCache.contactsCache.own.gxs_id,
+												  cntDt.md.gxs_id,
+												  cntDt.md.name,
+												  function (chatId)
+												  {
+													  stackView.push("qrc:/ChatView.qml", {'chatId': chatId})
+												  })
 		}
 		CustomFileChooser
 		{
@@ -73,7 +83,7 @@ Item
 
 		gxs_id: cntDt.md.gxs_id
 
-		anchors.top: (isOwn)? avatarPicker.bottom : parent.top
+		anchors.top: avatarPicker.bottom
 		anchors.topMargin: 6
 		anchors.horizontalCenter: parent.horizontalCenter
 	}
