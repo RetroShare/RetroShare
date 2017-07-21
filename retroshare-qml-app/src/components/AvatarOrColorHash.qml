@@ -97,9 +97,13 @@ Item
 	{
 		console.log("showDetails() ", gxs_id)
 
-		stackView.push(
-					"qrc:/ContactDetails.qml",
-					{md: ChatCache.contactsCache.getContactFromGxsId(gxs_id)})
+		if (stackView.currentItem.objectName != "contactDetails")
+		{
+			stackView.push(
+						"qrc:/ContactDetails.qml",
+						{md: ChatCache.contactsCache.getContactFromGxsId(gxs_id)})
+
+		}
 	}
 
 	Component.onCompleted: startComponent ()

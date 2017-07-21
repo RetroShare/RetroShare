@@ -28,6 +28,7 @@ Item
 	property var md
 	property bool is_contact: cntDt.md.is_contact
 	property bool isOwn:  cntDt.md.own
+	property string objectName: "contactDetails"
 
 	Button
 	{
