@@ -278,15 +278,15 @@ class p3ChatService::StateStringInfo
 {
    public:
 	  StateStringInfo()
+		  :	_custom_status_string("") // the custom status string of the peer
 	  {
-		  _custom_status_string = "" ;	// the custom status string of the peer
 		  _peer_is_new = false ;			// true when the peer has a new avatar
 		  _own_is_new = false ;				// true when I myself a new avatar to send to this peer.
 	  }
 
 	  std::string _custom_status_string ;
-	  int _peer_is_new ;			// true when the peer has a new avatar
-	  int _own_is_new ;			// true when I myself a new avatar to send to this peer.
+	  bool _peer_is_new ;			// true when the peer has a new avatar
+	  bool _own_is_new ;			// true when I myself a new avatar to send to this peer.
 };
 
 #endif // SERVICE_CHAT_HEADER
