@@ -1207,13 +1207,17 @@ bool p3IdService::encryptData( const uint8_t* decrypted_data,
 	for( int i=0; i < maxRounds; ++i )
 	{
 		for( std::set<const RsGxsId*>::iterator it = keyNotYetFoundIds.begin();
-		     it !=keyNotYetFoundIds.end(); ++it )
+		     it !=keyNotYetFoundIds.end(); )
 		{
 			RsTlvPublicRSAKey encryption_key;
 			if(getKey(**it, encryption_key) && !encryption_key.keyId.isNull())
 			{
 				encryption_keys.push_back(encryption_key);
 				it = keyNotYetFoundIds.erase(it);
+			}
+			else
+			{
+				++it;
 			}
 		}
 
@@ -1336,7 +1340,7 @@ bool p3IdService::decryptData( const uint8_t* encrypted_data,
 	for( int i=0; i < maxRounds; ++i )
 	{
 		for( std::set<const RsGxsId*>::iterator it = keyNotYetFoundIds.begin();
-		     it !=keyNotYetFoundIds.end(); ++it )
+		     it !=keyNotYetFoundIds.end(); )
 		{
 			RsTlvPrivateRSAKey decryption_key;
 			if( getPrivateKey(**it, decryption_key)
@@ -1344,6 +1348,10 @@ bool p3IdService::decryptData( const uint8_t* encrypted_data,
 			{
 				decryption_keys.push_back(decryption_key);
 				it = keyNotYetFoundIds.erase(it);
+			}
+			else
+			{
+				++it;
 			}
 		}
 
