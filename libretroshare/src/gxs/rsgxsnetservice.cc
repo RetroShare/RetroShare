@@ -870,7 +870,7 @@ void RsGxsNetService::subscribeStatusChanged(const RsGxsGroupId& grpId,bool subs
 
 #ifdef NXS_NET_DEBUG_0
     GXSNETDEBUG__G(grpId) << "Changing subscribe status for grp " << grpId << " to " << subscribed << ": reseting all server msg time stamps for this group, and server global TS." << std::endl;
-    std::map<RsGxsGroupId,RsGxsServerMsgUpdate>::iterator it = mServerMsgUpdateMap.find(grpId) ;
+    //std::map<RsGxsGroupId,RsGxsServerMsgUpdate>::iterator it = mServerMsgUpdateMap.find(grpId) ;
 #endif
 
     RsGxsServerMsgUpdate& item(mServerMsgUpdateMap[grpId]) ;
@@ -1064,7 +1064,7 @@ RsNxsGrp* RsGxsNetService::deFragmentGrp(GrpFragments& grpFragments) const
 struct GrpFragCollate
 {
     RsGxsGroupId mGrpId;
-	GrpFragCollate(const RsGxsGroupId& grpId) : mGrpId(grpId){ }
+	explicit GrpFragCollate(const RsGxsGroupId& grpId) : mGrpId(grpId){ }
 	bool operator()(RsNxsGrp* grp) { return grp->grpId == mGrpId;}
 };
 
@@ -1324,7 +1324,7 @@ void RsGxsNetService::collateGrpFragments(GrpFragments fragments,
 struct MsgFragCollate
 {
 	RsGxsMessageId mMsgId;
-	MsgFragCollate(const RsGxsMessageId& msgId) : mMsgId(msgId){ }
+	explicit MsgFragCollate(const RsGxsMessageId& msgId) : mMsgId(msgId){ }
 	bool operator()(RsNxsMsg* msg) { return msg->msgId == mMsgId;}
 };
 
@@ -2439,7 +2439,7 @@ void RsGxsNetService::locked_processCompletedIncomingTrans(NxsTransaction* tr)
             uint32_t updateTS = tr->mTransaction->updateTS;
 
 #ifdef NXS_NET_DEBUG_0
-            ClientGrpMap::iterator it = mClientGrpUpdateMap.find(peerFrom);
+            //ClientGrpMap::iterator it = mClientGrpUpdateMap.find(peerFrom);
 #endif
 
             RsGxsGrpUpdate& item(mClientGrpUpdateMap[peerFrom]) ;
@@ -2751,9 +2751,9 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
     }
 
 #ifdef TO_REMOVE
-    int cutoff = 0;
-    if(grpMeta != NULL)
-        cutoff = grpMeta->mReputationCutOff;
+    //int cutoff = 0;
+    //if(grpMeta != NULL)
+    //    cutoff = grpMeta->mReputationCutOff;
 #endif
 
     GxsMsgReq reqIds;
@@ -2994,7 +2994,7 @@ void RsGxsNetService::locked_genReqGrpTransaction(NxsTransaction* tr)
         }else
         {
 #ifdef NXS_NET_DEBUG_0
-            GXSNETDEBUG_PG(tr->mTransaction->PeerId(),item->grpId) << "RsGxsNetService::genReqGrpTransaction(): item failed to caste to RsNxsSyncMsgItem* " << std::endl;
+            GXSNETDEBUG_P_(tr->mTransaction->PeerId()) << "RsGxsNetService::genReqGrpTransaction(): item failed to caste to RsNxsSyncMsgItem* " << std::endl;
 #endif
         }
     }
@@ -3101,7 +3101,7 @@ void RsGxsNetService::locked_genSendGrpsTransaction(NxsTransaction* tr)
 		else
 		{
 #ifdef NXS_NET_DEBUG_1
-			GXSNETDEBUG_PG(tr->mTransaction->PeerId(),item->grpId) << "RsGxsNetService::locked_genSendGrpsTransaction(): item failed to caste to RsNxsSyncGrpItem* " << std::endl;
+			GXSNETDEBUG_P_(tr->mTransaction->PeerId()) << "RsGxsNetService::locked_genSendGrpsTransaction(): item failed to caste to RsNxsSyncGrpItem* " << std::endl;
 #endif
 		}
 	}
@@ -3595,7 +3595,7 @@ bool RsGxsNetService::processTransactionForDecryption(NxsTransaction *tr)
     GXSNETDEBUG_P_(peerId) << "RsGxsNetService::decryptTransaction()" << std::endl;
 #endif
 
-    std::list<RsNxsItem*> decrypted_items ;
+    //std::list<RsNxsItem*> decrypted_items ;
     std::vector<RsTlvPrivateRSAKey> private_keys ;
 
     // get all private keys. Normally we should look into the circle name and only supply the keys that we have
@@ -4701,7 +4701,7 @@ void RsGxsNetService::sharePublishKeysPending()
 void RsGxsNetService::handleRecvPublishKeys(RsNxsGroupPublishKeyItem *item)
 {
 #ifdef NXS_NET_DEBUG_3
-	GXSNETDEBUG_PG(item->PeerId(),item->grpId) << "RsGxsNetService::sharePublishKeys() " << std::endl;
+	GXSNETDEBUG___() << "RsGxsNetService::sharePublishKeys() " << std::endl;
 #endif
 
 	if (!item)
