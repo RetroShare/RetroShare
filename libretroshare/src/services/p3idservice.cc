@@ -425,7 +425,7 @@ public:
         bool no_ts = (it == mLastUsageTS.end()) ;
 
         time_t last_usage_ts = no_ts?0:(it->second.TS);
-        time_t max_keep_time ;
+        time_t max_keep_time = 0;
         bool should_check = true ;
 
         if(no_ts)
@@ -1213,7 +1213,7 @@ bool p3IdService::encryptData( const uint8_t* decrypted_data,
 			if(getKey(**it, encryption_key) && !encryption_key.keyId.isNull())
 			{
 				encryption_keys.push_back(encryption_key);
-				keyNotYetFoundIds.erase(it);
+				it = keyNotYetFoundIds.erase(it);
 			}
 		}
 
@@ -1343,7 +1343,7 @@ bool p3IdService::decryptData( const uint8_t* encrypted_data,
 			        && !decryption_key.keyId.isNull() )
 			{
 				decryption_keys.push_back(decryption_key);
-				keyNotYetFoundIds.erase(it);
+				it = keyNotYetFoundIds.erase(it);
 			}
 		}
 
