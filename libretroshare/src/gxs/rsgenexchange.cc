@@ -3037,10 +3037,9 @@ void RsGenExchange::processRecvdMessages()
 			    NxsMsgPendingVect::iterator vit = std::find(mMsgPendingValidate.begin(), mMsgPendingValidate.end(), id);
 
 			    if(vit == mMsgPendingValidate.end())
-			    {
-				    GxsPendingItem<RsNxsMsg*, RsGxsGrpMsgIdPair> item(msg, id,time(NULL));
-				    mMsgPendingValidate.push_back(item);
-			    }
+				    mMsgPendingValidate.push_back(GxsPendingItem<RsNxsMsg*, RsGxsGrpMsgIdPair>(msg, id,time(NULL)));
+				else
+					delete msg ;
 		    }
 	    }
 
