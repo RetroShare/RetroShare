@@ -59,6 +59,8 @@ public:
     MsgLocMetaData() {}
     RsGxsGrpMsgIdPair msgId;
     ContentValue val;
+private:
+	MsgLocMetaData operator =(MsgLocMetaData& meta) { msgId = meta.msgId; val = meta.val; return *this;}
 };
 
 typedef std::map<RsGxsGroupId,RsGxsGrpMetaData*> RsGxsGrpMetaTemporaryMap;
@@ -74,7 +76,8 @@ public:
     GrpLocMetaData(){}
     RsGxsGroupId grpId;
     ContentValue val;
-
+private:
+	GrpLocMetaData operator =(GrpLocMetaData& meta) { grpId = meta.grpId; val = meta.val; return *this;}
 };
 
 /*!
@@ -85,16 +88,17 @@ public:
 class RsGroupNetworkStats
 {
 public:
-    RsGroupNetworkStats()
-    {
-        mMaxVisibleCount = 0 ;
-    }
+	RsGroupNetworkStats()
+	  : mSuppliers(0), mMaxVisibleCount(0)
+	  , mGrpAutoSync(false), mAllowMsgSync(false)
+	  , mLastGroupModificationTS(0)
+	{}
 
-    uint32_t mSuppliers ;
-    uint32_t mMaxVisibleCount ;
-    bool     mGrpAutoSync ;
-    bool     mAllowMsgSync;
-	time_t   mLastGroupModificationTS ;
+	uint32_t  mSuppliers ;
+	uint32_t  mMaxVisibleCount ;
+	bool      mGrpAutoSync ;
+	bool      mAllowMsgSync;
+	time_t    mLastGroupModificationTS ;
 };
 
 typedef std::map<RsGxsGroupId,      std::vector<RsNxsMsg*> > NxsMsgDataResult;
