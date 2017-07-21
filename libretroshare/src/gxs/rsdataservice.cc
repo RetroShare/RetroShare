@@ -217,7 +217,7 @@ RsDataService::~RsDataService(){
     delete mDb;
 }
 
-static bool moveDataFromFileToDatabase(RetroDb *db, const std::string serviceDir, const std::string &tableName, const std::string &keyId, std::list<std::string> &files)
+static bool moveDataFromFileToDatabase(RetroDb *db, const std::string &serviceDir, const std::string &tableName, const std::string &keyId, std::list<std::string> &files)
 {
     bool ok = true;
 
@@ -498,10 +498,6 @@ RsGxsGrpMetaData* RsDataService::locked_getGrpMeta(RetroCursor &c, int colOffset
 
     bool ok = true;
 
-    // for extracting raw data
-    uint32_t offset = 0;
-    char* data = NULL;
-    uint32_t data_len = 0;
 
     // grpId
     std::string tempId;
@@ -543,8 +539,9 @@ RsGxsGrpMetaData* RsDataService::locked_getGrpMeta(RetroCursor &c, int colOffset
     grpMeta->mGroupFlags = c.getInt32(mColGrpMeta_NxsFlags + colOffset);
     grpMeta->mGrpSize = c.getInt32(mColGrpMeta_NxsDataLen + colOffset);
 
-    offset = 0; data = NULL; data_len = 0;
-    data = (char*)c.getData(mColGrpMeta_KeySet + colOffset, data_len);
+    // for extracting raw data
+    uint32_t data_len = 0, offset = 0;
+    char* data = (char*)c.getData(mColGrpMeta_KeySet + colOffset, data_len);
 
     if(data)
         ok &= grpMeta->keys.GetTlv(data, data_len, &offset);
@@ -663,9 +660,6 @@ RsGxsMsgMetaData* RsDataService::locked_getMsgMeta(RetroCursor &c, int colOffset
     RsGxsMsgMetaData* msgMeta = new RsGxsMsgMetaData();
 
     bool ok = true;
-    uint32_t data_len = 0,
-    offset = 0;
-    char* data = NULL;
 
     std::string gId;
     c.getString(mColMsgMeta_GrpId + colOffset, gId);
@@ -686,8 +680,9 @@ RsGxsMsgMetaData* RsDataService::locked_getMsgMeta(RetroCursor &c, int colOffset
     c.getString(mColMsgMeta_NxsHash + colOffset, temp);
     msgMeta->mHash = RsFileHash(temp);
     msgMeta->recvTS = c.getInt32(mColMsgMeta_RecvTs + colOffset);
-    offset = 0;
-    data = (char*)c.getData(mColMsgMeta_SignSet + colOffset, data_len);
+
+    uint32_t data_len = 0, offset = 0;
+    char* data = (char*)c.getData(mColMsgMeta_SignSet + colOffset, data_len);
     msgMeta->signSet.GetTlv(data, data_len, &offset);
     msgMeta->mMsgSize = c.getInt32(mColMsgMeta_NxsDataLen + colOffset);
 
