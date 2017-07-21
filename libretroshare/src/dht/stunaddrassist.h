@@ -34,7 +34,7 @@ class  stunAddrAssist: public pqiAddrAssist
 {
         public:
 
-        stunAddrAssist(UdpStunner *stunner)
+        explicit stunAddrAssist(UdpStunner *stunner)
         {
                 mStunner = stunner;
         }
