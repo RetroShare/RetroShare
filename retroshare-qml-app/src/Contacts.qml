@@ -132,13 +132,6 @@ Item
 		rsApi.request("/chat/unread_msgs", "", refreshUnreadCallback)
 	}
 
-	function startChatCallback(par)
-	{
-		var chId = JSON.parse(par.response).data.chat_id
-		stackView.push("qrc:/ChatView.qml", {'chatId': chId})
-	}
-
-
 	/** This must be equivalent to
 		p3GxsTunnelService::makeGxsTunnelId(...) */
 	function getChatId(from_gxs, to_gxs)

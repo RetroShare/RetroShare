@@ -53,11 +53,7 @@ Item
 				if(model.own) contactsView.own_gxs_id = model.gxs_id
 				else
 				{
-					var jsonData = { "own_gxs_hex": contactsView.own_gxs_id,
-						"remote_gxs_hex": model.gxs_id }
-					rsApi.request("/chat/initiate_distant_chat",
-								  JSON.stringify(jsonData),
-								  startDistantChatCB)
+					startDistantChat()
 				}
 			}
 
@@ -278,11 +274,14 @@ Item
 					"qrc:/ContactDetails.qml",
 					{md: contactsListView.model.get(index)})
 	}
-	function startDistantChatCB (par)
+
+	function startDistantChat ()
 	{
-		var chId = JSON.parse(par.response).data.chat_id
-		ChatCache.lastMessageCache.setRemoteGXS(chId, { gxs: model.gxs_id, name: model.name})
-		contactsView.startChatCallback (par)
+		ChatCache.chatHelper.startDistantChat(contactsView.own_gxs_id,  model.gxs_id, model.name,
+											  function (chatId)
+											  {
+												  stackView.push("qrc:/ChatView.qml", {'chatId': chatId})
+											  })
 	}
 }
 

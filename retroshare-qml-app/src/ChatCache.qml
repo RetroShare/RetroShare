@@ -136,4 +136,35 @@ QtObject
 
 	}
 
+	property QtObject chatHelper: QtObject
+	{
+		id: chatHelper
+		property var gxs_id
+		property var name
+		property var cb
+
+		function startDistantChat (own_gxs_id, gxs_id, name, cb)
+		{
+			console.log("startDistantChat()")
+			chatHelper.gxs_id = gxs_id
+			chatHelper.name = name
+			chatHelper.cb = cb
+			var jsonData = { "own_gxs_hex": own_gxs_id,
+				"remote_gxs_hex": gxs_id }
+			rsApi.request("/chat/initiate_distant_chat",
+						  JSON.stringify(jsonData),
+						  startDistantChatCB)
+
+		}
+
+		function startDistantChatCB (par)
+		{
+			var chatId = JSON.parse(par.response).data.chat_id
+			lastMessageCache.setRemoteGXS(chatId, { gxs: gxs_id, name: name})
+			cb(chatId)
+		}
+	}
+
+
+
 }
