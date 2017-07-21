@@ -83,7 +83,7 @@ class p3FileDatabase: public p3Service, public p3Config, public ftSearch //, pub
             // [...] more to add here
         };
 
-        p3FileDatabase(p3ServiceControl *mpeers) ;
+        explicit p3FileDatabase(p3ServiceControl *mpeers) ;
         ~p3FileDatabase();
 
         /*!
