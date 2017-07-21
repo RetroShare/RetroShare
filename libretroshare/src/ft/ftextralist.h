@@ -70,7 +70,7 @@ class FileDetails
 			return;
 		}
 
-		FileDetails(std::string path, uint32_t /*p*/, TransferRequestFlags f)
+		FileDetails(const std::string &path, uint32_t /*p*/, TransferRequestFlags f)
 		{
 			info.path = path;
 //			period = p;
