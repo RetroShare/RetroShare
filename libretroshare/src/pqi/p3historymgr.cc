@@ -350,7 +350,7 @@ bool p3HistoryMgr::loadList(std::list<RsItem*>& load)
 
 				if (kit->key == "MAX_STORAGE_TIME") {
 					uint32_t val ;
-					if (sscanf(kit->value.c_str(), "%d", &val) == 1)
+					if (sscanf(kit->value.c_str(), "%u", &val) == 1)
 						mMaxStorageDurationSeconds = val ;
 
 #ifdef HISTMGR_DEBUG
