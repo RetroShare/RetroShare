@@ -151,7 +151,7 @@ class p3ConfigMgr
 		/**
 		 * @param bdir base directory: where config files will be saved
 		 */
-        p3ConfigMgr(std::string bdir);
+	explicit p3ConfigMgr(std::string bdir);
 
         /**
          * checks and update all added configurations
