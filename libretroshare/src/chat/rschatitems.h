@@ -93,7 +93,7 @@ typedef uint64_t		DistantChatDHSessionId ;
 class RsChatItem: public RsItem
 {
 	public:
-		RsChatItem(uint8_t chat_subtype) : RsItem(RS_PKT_VERSION_SERVICE,RS_SERVICE_TYPE_CHAT,chat_subtype) 
+		explicit RsChatItem(uint8_t chat_subtype) : RsItem(RS_PKT_VERSION_SERVICE,RS_SERVICE_TYPE_CHAT,chat_subtype)
 		{
 			setPriorityLevel(QOS_PRIORITY_RS_CHAT_ITEM) ;
 		}
@@ -111,8 +111,8 @@ class RsChatItem: public RsItem
 class RsChatMsgItem: public RsChatItem
 {
 public:
-    RsChatMsgItem() :RsChatItem(RS_PKT_SUBTYPE_DEFAULT) {}
-    RsChatMsgItem(uint8_t subtype) :RsChatItem(subtype) {}
+    RsChatMsgItem() :RsChatItem(RS_PKT_SUBTYPE_DEFAULT), chatFlags(0), sendTime(0), recvTime(0) {}
+    explicit RsChatMsgItem(uint8_t subtype) :RsChatItem(subtype), chatFlags(0), sendTime(0), recvTime(0) {}
 
     //RsChatMsgItem() {}
 
@@ -158,7 +158,7 @@ protected:
 class RsChatLobbyMsgItem: public RsChatMsgItem, public RsChatLobbyBouncingObject
 {
 public:
-    RsChatLobbyMsgItem() :RsChatMsgItem(RS_PKT_SUBTYPE_CHAT_LOBBY_SIGNED_MSG) {}
+    RsChatLobbyMsgItem() :RsChatMsgItem(RS_PKT_SUBTYPE_CHAT_LOBBY_SIGNED_MSG), parent_msg_id(0) {}
 
     virtual ~RsChatLobbyMsgItem() {}
     virtual RsChatLobbyBouncingObject *duplicate() const { return new RsChatLobbyMsgItem(*this) ; }
@@ -174,7 +174,7 @@ protected:
 class RsChatLobbyEventItem: public RsChatItem, public RsChatLobbyBouncingObject
 {
 public:
-	RsChatLobbyEventItem() :RsChatItem(RS_PKT_SUBTYPE_CHAT_LOBBY_SIGNED_EVENT) {}
+	RsChatLobbyEventItem() :RsChatItem(RS_PKT_SUBTYPE_CHAT_LOBBY_SIGNED_EVENT), event_type(0), sendTime(0) {}
 
 	virtual ~RsChatLobbyEventItem() {}
 	virtual RsChatLobbyBouncingObject *duplicate() const { return new RsChatLobbyEventItem(*this) ; }
@@ -223,7 +223,7 @@ class RsChatLobbyListItem: public RsChatItem
 class RsChatLobbyUnsubscribeItem: public RsChatItem
 {
 	public:
-		RsChatLobbyUnsubscribeItem() :RsChatItem(RS_PKT_SUBTYPE_CHAT_LOBBY_UNSUBSCRIBE) {}
+		RsChatLobbyUnsubscribeItem() :RsChatItem(RS_PKT_SUBTYPE_CHAT_LOBBY_UNSUBSCRIBE), lobby_id(0) {}
 
 		virtual ~RsChatLobbyUnsubscribeItem() {} 
 
@@ -235,7 +235,7 @@ class RsChatLobbyUnsubscribeItem: public RsChatItem
 class RsChatLobbyConnectChallengeItem: public RsChatItem
 {
 	public:
-		RsChatLobbyConnectChallengeItem() :RsChatItem(RS_PKT_SUBTYPE_CHAT_LOBBY_CHALLENGE) {}
+		RsChatLobbyConnectChallengeItem() :RsChatItem(RS_PKT_SUBTYPE_CHAT_LOBBY_CHALLENGE), challenge_code(0) {}
 
 		virtual ~RsChatLobbyConnectChallengeItem() {} 
 
@@ -248,7 +248,7 @@ class RsChatLobbyConnectChallengeItem: public RsChatItem
 class RsChatLobbyInviteItem_Deprecated : public RsChatItem
 {
 	public:
-		RsChatLobbyInviteItem_Deprecated() :RsChatItem(RS_PKT_SUBTYPE_CHAT_LOBBY_INVITE_DEPRECATED) {}
+		RsChatLobbyInviteItem_Deprecated() :RsChatItem(RS_PKT_SUBTYPE_CHAT_LOBBY_INVITE_DEPRECATED), lobby_id(0) {}
 		virtual ~RsChatLobbyInviteItem_Deprecated() {}
 
 		void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
@@ -262,7 +262,7 @@ class RsChatLobbyInviteItem_Deprecated : public RsChatItem
 class RsChatLobbyInviteItem: public RsChatItem
 {
 	public:
-		RsChatLobbyInviteItem() :RsChatItem(RS_PKT_SUBTYPE_CHAT_LOBBY_INVITE) {}
+		RsChatLobbyInviteItem() :RsChatItem(RS_PKT_SUBTYPE_CHAT_LOBBY_INVITE), lobby_id(0) {}
 		virtual ~RsChatLobbyInviteItem() {}
 
 		void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
@@ -280,7 +280,7 @@ class RsChatLobbyInviteItem: public RsChatItem
 struct RsPrivateChatMsgConfigItem : RsChatItem
 {
 	RsPrivateChatMsgConfigItem() :
-	    RsChatItem(RS_PKT_SUBTYPE_PRIVATECHATMSG_CONFIG) {}
+	    RsChatItem(RS_PKT_SUBTYPE_PRIVATECHATMSG_CONFIG), chatFlags(0), configFlags(0), sendTime(0), recvTime(0) {}
 
 	virtual ~RsPrivateChatMsgConfigItem() {}
 	virtual void clear() {}
@@ -304,7 +304,7 @@ struct RsPrivateChatMsgConfigItem : RsChatItem
 class RsChatLobbyConfigItem: public RsChatItem
 {
 public:
-	RsChatLobbyConfigItem() :RsChatItem(RS_PKT_SUBTYPE_CHAT_LOBBY_CONFIG) { lobby_Id = 0; }
+	RsChatLobbyConfigItem() :RsChatItem(RS_PKT_SUBTYPE_CHAT_LOBBY_CONFIG), lobby_Id(0), flags(0) {}
 
 	virtual ~RsChatLobbyConfigItem() {}
 
@@ -321,7 +321,7 @@ public:
 class RsChatStatusItem: public RsChatItem
 {
 	public:
-		RsChatStatusItem() :RsChatItem(RS_PKT_SUBTYPE_CHAT_STATUS) {}
+		RsChatStatusItem() :RsChatItem(RS_PKT_SUBTYPE_CHAT_STATUS), flags(0) {}
 
 		virtual ~RsChatStatusItem() {}
 
@@ -336,7 +336,7 @@ class RsChatStatusItem: public RsChatItem
 class RsChatAvatarItem: public RsChatItem
 {
 	public:
-		RsChatAvatarItem() :RsChatItem(RS_PKT_SUBTYPE_CHAT_AVATAR) {setPriorityLevel(QOS_PRIORITY_RS_CHAT_AVATAR_ITEM) ;}
+		RsChatAvatarItem() :RsChatItem(RS_PKT_SUBTYPE_CHAT_AVATAR), image_size(0), image_data(NULL) {setPriorityLevel(QOS_PRIORITY_RS_CHAT_AVATAR_ITEM) ;}
 
 		virtual ~RsChatAvatarItem() ;
 		void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
@@ -358,7 +358,7 @@ struct PrivateOugoingMapItem : RsChatItem
 
 struct RsChatSerialiser : RsServiceSerializer
 {
-	RsChatSerialiser(SerializationFlags flags = SERIALIZATION_FLAG_NONE) :
+	explicit RsChatSerialiser(SerializationFlags flags = SERIALIZATION_FLAG_NONE) :
 	    RsServiceSerializer( RS_SERVICE_TYPE_CHAT,
 	                         RsGenericSerializer::FORMAT_BINARY, flags ) {}
 
