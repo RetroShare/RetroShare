@@ -66,7 +66,7 @@ public:
 
 	/**
 	 */
-        p3ServiceControl(p3LinkMgr *linkMgr);
+	explicit p3ServiceControl(p3LinkMgr *linkMgr);
 
         /**
          * checks and update all added configurations
@@ -171,7 +171,7 @@ bool 	updateFilterByPeer_locked(const RsPeerId &peerId);
 	void filterChangeAdded_locked(const RsPeerId &peerId, uint32_t serviceId);
 	void filterChangeRemoved_locked(const RsPeerId &peerId, uint32_t serviceId);
 
-bool createDefaultPermissions_locked(uint32_t serviceId, std::string serviceName, bool defaultOn);
+bool createDefaultPermissions_locked(uint32_t serviceId, const std::string& serviceName, bool defaultOn);
 bool peerHasPermissionForService_locked(const RsPeerId &peerId, uint32_t serviceId);
 
 	p3LinkMgr *mLinkMgr;
