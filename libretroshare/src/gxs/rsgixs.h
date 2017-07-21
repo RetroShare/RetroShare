@@ -176,7 +176,7 @@ public:
 class GixsReputation
 {
 public:
-	GixsReputation() {}
+	GixsReputation() :reputation_level(0) {}
 
 	RsGxsId id;
 	uint32_t reputation_level ;
