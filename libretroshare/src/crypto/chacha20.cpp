@@ -213,6 +213,7 @@ struct uint256_32
             for(int i=7;i>=0;--i)
                 b[i] = (i>=(int)p)?b[i-p]:0 ;
 
+        // cppcheck-suppress variableScope
         uint32_t r = 0 ;
 
         if(u>0)
@@ -370,13 +371,13 @@ void chacha20_encrypt_rs(uint8_t key[32], uint32_t block_counter, uint8_t nonce[
         chacha20_state s(key,block_counter+i,nonce) ;
 
 #ifdef DEBUG_CHACHA20
-        fprintf(stdout,"Block %d:\n",i) ;
+        fprintf(stdout,"Block %u:\n",i) ;
         print(s) ;
 #endif
         apply_20_rounds(s) ;
 
 #ifdef DEBUG_CHACHA20
-        fprintf(stdout,"Cipher %d:\n",i) ;
+        fprintf(stdout,"Cipher %u:\n",i) ;
         print(s) ;
 #endif
 
