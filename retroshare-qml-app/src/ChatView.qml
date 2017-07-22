@@ -144,7 +144,7 @@ Item
 			border.color: inferiorPanel.styles.borderColor
 		}
 
-		BtnIcon
+		ButtonIcon
 		{
 
 			id: attachButton
@@ -263,7 +263,7 @@ Item
 			}
 		}
 
-		BtnIcon
+		ButtonIcon
 		{
 
 			id: emojiButton
@@ -290,7 +290,7 @@ Item
 
 		}
 
-		BtnIcon
+		ButtonIcon
 		{
 
 			id: sendButton

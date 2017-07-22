@@ -111,7 +111,7 @@ Drawer
 					}
 				}
 
-				Btn
+				ButtonText
 				{
 					buttonText: model.title
 					width: parent.width
