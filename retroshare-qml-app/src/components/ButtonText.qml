@@ -4,7 +4,7 @@ import QtQuick.Controls 2.0
 Item
 {
 	id: button
-	property alias buttonText: innerText.text;
+	property alias text: innerText.text;
 	property alias buttonTextPixelSize: innerText.font.pixelSize
 	property alias innerAnchors: innerElements.anchors;
 	property alias rectangleButton: rectangleButton;
@@ -12,13 +12,16 @@ Item
 	property var iconUrl
 	property int iconHeight: 20
 
-	property color color
-	property color hoverColor
-	property color pressColor
+	property color color: "lightsteelblue"
+	property color hoverColor: color
+	property color pressColor: color
 	property int fontSize
 	property int borderWidth
-	property int borderRadius
+	property int borderRadius: 3
 	property int innerMargin: 10
+
+	height: innerText.height + innerMargin + innerMargin
+	width: innerText.width + innerMargin + innerMargin + icon.width + icon.width
 
 	scale: state === "Pressed" ? 0.96 : 1.0
 	onEnabledChanged: state = ""
@@ -29,7 +32,7 @@ Item
 		id: rectangleButton
 		anchors.fill: parent
 		radius: borderRadius
-		color: button.enabled ? button.color : "grey"
+		color: button.enabled ? button.color : "lavender"
 		border.width: borderWidth
 		border.color: "black"
 
@@ -59,6 +62,7 @@ Item
 				font.pointSize: fontSize
 				anchors.left: icon.right
 				anchors.verticalCenter: parent.verticalCenter
+				color: button.enabled ? "black" : "grey"
 			}
 		}
 	}

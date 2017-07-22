@@ -153,7 +153,7 @@ ApplicationWindow
 
 		}
 
-		BtnIcon
+		ButtonIcon
 		{
 			property bool searchIconVisibility: false
 			property var onClickCB: function (){}
@@ -190,7 +190,7 @@ ApplicationWindow
 		Component
 		{
 			id: rsIcon
-			BtnIcon
+			ButtonIcon
 			{
 				height: imageLoader.height
 				width: imageLoader.height
