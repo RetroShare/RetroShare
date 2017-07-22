@@ -12,9 +12,9 @@ Item
 	property var iconUrl
 	property int iconHeight: 20
 
-	property color color
-	property color hoverColor
-	property color pressColor
+	property color color: "lightsteelblue"
+	property color hoverColor: color
+	property color pressColor: color
 	property int fontSize
 	property int borderWidth
 	property int borderRadius
