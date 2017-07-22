@@ -57,5 +57,8 @@
         <file>icons/options.svg</file>
         <file>icons/network.svg</file>
         <file>icons/back.png</file>
+        <file>icons/attach-image.svg</file>
+        <file>icons/invite.svg</file>
+        <file>icons/leave.svg</file>
     </qresource>
 </RCC>
