@@ -21,7 +21,7 @@ Item
 	property int innerMargin: 10
 
 	height: innerText.height + innerMargin + innerMargin
-	width: innerText.width + innerMargin + innerMargin
+	width: innerText.width + innerMargin + innerMargin + icon.width + icon.width
 
 	scale: state === "Pressed" ? 0.96 : 1.0
 	onEnabledChanged: state = ""
