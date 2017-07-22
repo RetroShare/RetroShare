@@ -66,37 +66,29 @@ Item
 		anchors.top: parent.top
 		anchors.bottom: bottomButton.top
 		model: jsonModel.model
+		anchors.horizontalCenter: parent.horizontalCenter
+		spacing: 3
 		delegate: Item
 		{
 			property bool isOnline: jsonModel.isOnline(model.pgp_id)
 			height: 54
 			width: parent.width
+			anchors.horizontalCenter: parent.horizontalCenter
 
-			Image
+			ButtonText
 			{
-				id: statusImage
-				source:  isOnline?
-							"icons/state-ok.svg" :
-							"icons/state-offline.svg"
-
-				height: parent.height - 4
-				sourceSize.height: height
-				fillMode: Image.PreserveAspectFit
-				anchors.left: parent.left
-				anchors.leftMargin: 3
-				anchors.verticalCenter: parent.verticalCenter
-			}
-			Text
-			{
+				id: locationButton
+//				anchors.horizontalCenter: parent.horizontalCenter
 				text: model.name
-				anchors.verticalCenter: parent.verticalCenter
-				anchors.left: statusImage.right
-				anchors.leftMargin: 10
-				font.pixelSize: 15
-			}
-			MouseArea
-			{
-				anchors.fill: parent
+				borderRadius:0
+				iconUrl: isOnline?
+							 "/icons/state-ok.svg" :
+							 "/icons/state-offline.svg"
+				color: "white"
+				pressColor: "lightsteelblue"
+				buttonTextPixelSize: 18
+				iconHeight:parent.height - 4
+
 				onClicked:
 				{
 					stackView.push(
