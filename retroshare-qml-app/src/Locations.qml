@@ -34,14 +34,14 @@ Item
 		{
 			name: "selectLocation"
 			PropertyChanges { target: locationsListView; visible: true }
-			PropertyChanges { target: bottomButton; visible: true }
+			PropertyChanges { target: createNewButton; visible: true }
 			PropertyChanges { target: loginView; visible: false }
 		},
 		State
 		{
 			name: "createLocation"
 			PropertyChanges { target: locationsListView; visible: false }
-			PropertyChanges { target: bottomButton; visible: false }
+			PropertyChanges { target: createNewButton; visible: false }
 			PropertyChanges
 			{
 				target: loginView
@@ -59,8 +59,8 @@ Item
 								JSON.stringify(jsonData))
 					mainWindow.user_name = login
 					locationView.state = "selectLocation"
-					bottomButton.enabled = false
-					bottomButton.text = "Creating profile..."
+					createNewButton.enabled = false
+					createNewButton.text = "Creating profile..."
 				}
 			}
 		},
@@ -68,7 +68,7 @@ Item
 		{
 			name: "login"
 			PropertyChanges { target: locationsListView; visible: false }
-			PropertyChanges { target: bottomButton; visible: false }
+			PropertyChanges { target: createNewButton; visible: false }
 			PropertyChanges
 			{
 				target: loginView
@@ -116,6 +116,15 @@ Item
 	onFocusChanged: focus && requestLocationsList()
 	Component.onCompleted: requestLocationsList()
 
+	Button
+	{
+		id: createNewButton
+		text: "Create new location"
+		anchors.top: parent.top
+		anchors.horizontalCenter: parent.horizontalCenter
+		onClicked: locationView.state = "createLocation"
+	}
+
 	JSONListModel
 	{
 		id: locationsModel
@@ -125,12 +134,17 @@ Item
 	{
 		id: locationsListView
 		width: parent.width
-		anchors.top: parent.top
-		anchors.bottom: bottomButton.top
+		height: parent.height - createNewButton.height
+		anchors.top: createNewButton.bottom
+		anchors.topMargin: 10
+		anchors.bottom: parent.bottom
+		anchors.horizontalCenter: parent.horizontalCenter
 		model: locationsModel.model
+		clip: true
 		delegate: Button
 		{
 			text: model.name
+			anchors.horizontalCenter: parent.horizontalCenter
 			onClicked:
 			{
 				loginView.login = text
@@ -140,15 +154,6 @@ Item
 			}
 		}
 		visible: false
-	}
-
-	Button
-	{
-		id: bottomButton
-		text: "Create new location"
-		anchors.bottom: parent.bottom
-		anchors.horizontalCenter: parent.horizontalCenter
-		onClicked: locationView.state = "createLocation"
 	}
 
 	RsLoginPassView
@@ -192,8 +197,8 @@ Item
 				else
 				{
 					// if Already logged in
-					bottomButton.enabled = false
-					bottomButton.text = "Unlocking location..."
+					createNewButton.enabled = false
+					createNewButton.text = "Unlocking location..."
 					locationView.attemptLogin = false
 					locationView.state = "selectLocation"
 					locationsListView.enabled = false
