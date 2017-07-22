@@ -55,5 +55,7 @@
         <file>icons/network-disconnect.svg</file>
         <file>components/CustomFileChooser.qml</file>
         <file>icons/options.svg</file>
+        <file>icons/network.svg</file>
+        <file>icons/back.png</file>
     </qresource>
 </RCC>
