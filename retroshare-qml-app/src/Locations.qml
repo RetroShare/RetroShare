@@ -181,13 +181,15 @@ Item
 		visible: false
 	}
 
-	Button
+	ButtonText
 	{
 		id: bottomButton
 		text: "Create new location"
 		anchors.bottom: parent.bottom
 		anchors.horizontalCenter: parent.horizontalCenter
 		onClicked: locationView.state = "createLocation"
+		buttonTextPixelSize: 15
+		iconUrl: "/icons/add.svg"
 	}
 
 	RsLoginPassView
