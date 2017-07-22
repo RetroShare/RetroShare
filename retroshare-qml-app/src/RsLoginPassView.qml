@@ -24,6 +24,7 @@ Item
 {
 	id: loginView
 	property string buttonText: qsTr("Unlock")
+	property string cancelText: qsTr("Cancel")
 	property string iconUrl: "qrc:/icons/emblem-locked.svg"
 	property string login
 	property bool loginPreset: false
@@ -32,6 +33,7 @@ Item
 	property string password: advancedMode ? "" : hardcodedPassword
 	property string suggestionText
 	signal submit(string login, string password)
+	signal cancel()
 
 	Component.onCompleted: loginPreset = login.length > 0
 
@@ -130,6 +132,12 @@ Item
 				id: bottomButton
 				text: loginView.buttonText
 				onClicked: loginView.submit(nameField.text, passwordField.text)
+			}
+			Button
+			{
+				id: cancelButton
+				text: loginView.cancelText
+				onClicked: loginView.cancel()
 			}
 		}
 	}

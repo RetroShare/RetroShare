@@ -62,6 +62,10 @@ Item
 					createNewButton.enabled = false
 					createNewButton.text = "Creating profile..."
 				}
+				onCancel:
+				{
+					locationView.state = "selectLocation"
+				}
 			}
 		},
 		State
@@ -82,6 +86,10 @@ Item
 								   JSON.stringify({id: locationView.sslid}) )
 					locationView.attemptLogin = true
 					attemptTimer.start()
+				}
+				onCancel:
+				{
+					locationView.state = "selectLocation"
 				}
 			}
 		}
