@@ -60,5 +60,7 @@
         <file>icons/attach-image.svg</file>
         <file>icons/invite.svg</file>
         <file>icons/leave.svg</file>
+        <file>icons/paste.svg</file>
+        <file>icons/share.svg</file>
     </qresource>
 </RCC>
