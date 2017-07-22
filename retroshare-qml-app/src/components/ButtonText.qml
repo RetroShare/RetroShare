@@ -32,7 +32,7 @@ Item
 		id: rectangleButton
 		anchors.fill: parent
 		radius: borderRadius
-		color: button.enabled ? button.color : "grey"
+		color: button.enabled ? button.color : "lavender"
 		border.width: borderWidth
 		border.color: "black"
 
@@ -62,6 +62,7 @@ Item
 				font.pointSize: fontSize
 				anchors.left: icon.right
 				anchors.verticalCenter: parent.verticalCenter
+				color: button.enabled ? "black" : "grey"
 			}
 		}
 	}
