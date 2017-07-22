@@ -113,7 +113,7 @@ Drawer
 
 				ButtonText
 				{
-					buttonText: model.title
+					text: model.title
 					width: parent.width
 					height: parent.height
 					color:  menuItem.styles.defaultColor

@@ -4,7 +4,7 @@ import QtQuick.Controls 2.0
 Item
 {
 	id: button
-	property alias buttonText: innerText.text;
+	property alias text: innerText.text;
 	property alias buttonTextPixelSize: innerText.font.pixelSize
 	property alias innerAnchors: innerElements.anchors;
 	property alias rectangleButton: rectangleButton;
