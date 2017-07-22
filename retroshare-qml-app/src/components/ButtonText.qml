@@ -53,6 +53,7 @@ Item
 
 				anchors.margins:(iconUrl)? innerMargin : 0
 				anchors.verticalCenter: parent.verticalCenter
+				sourceSize.height: height
 			}
 
 			Text
