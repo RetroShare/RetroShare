@@ -20,6 +20,8 @@ import QtQuick 2.7
 import QtQuick.Controls 2.0
 import org.retroshare.qml_components.LibresapiLocalClient 1.0
 
+import "components/."
+
 Item
 {
 	id: locationView
@@ -34,14 +36,14 @@ Item
 		{
 			name: "selectLocation"
 			PropertyChanges { target: locationsListView; visible: true }
-			PropertyChanges { target: createNewButton; visible: true }
+			PropertyChanges { target: bottomButton; visible: true }
 			PropertyChanges { target: loginView; visible: false }
 		},
 		State
 		{
 			name: "createLocation"
 			PropertyChanges { target: locationsListView; visible: false }
-			PropertyChanges { target: createNewButton; visible: false }
+			PropertyChanges { target: bottomButton; visible: false }
 			PropertyChanges
 			{
 				target: loginView
@@ -59,12 +61,8 @@ Item
 								JSON.stringify(jsonData))
 					mainWindow.user_name = login
 					locationView.state = "selectLocation"
-					createNewButton.enabled = false
-					createNewButton.text = "Creating profile..."
-				}
-				onCancel:
-				{
-					locationView.state = "selectLocation"
+					bottomButton.enabled = false
+					bottomButton.text = "Creating profile..."
 				}
 			}
 		},
@@ -72,7 +70,7 @@ Item
 		{
 			name: "login"
 			PropertyChanges { target: locationsListView; visible: false }
-			PropertyChanges { target: createNewButton; visible: false }
+			PropertyChanges { target: bottomButton; visible: false }
 			PropertyChanges
 			{
 				target: loginView
@@ -86,10 +84,6 @@ Item
 								   JSON.stringify({id: locationView.sslid}) )
 					locationView.attemptLogin = true
 					attemptTimer.start()
-				}
-				onCancel:
-				{
-					locationView.state = "selectLocation"
 				}
 			}
 		}
@@ -124,15 +118,6 @@ Item
 	onFocusChanged: focus && requestLocationsList()
 	Component.onCompleted: requestLocationsList()
 
-	Button
-	{
-		id: createNewButton
-		text: "Create new location"
-		anchors.top: parent.top
-		anchors.horizontalCenter: parent.horizontalCenter
-		onClicked: locationView.state = "createLocation"
-	}
-
 	JSONListModel
 	{
 		id: locationsModel
@@ -142,26 +127,67 @@ Item
 	{
 		id: locationsListView
 		width: parent.width
-		height: parent.height - createNewButton.height
-		anchors.top: createNewButton.bottom
-		anchors.topMargin: 10
-		anchors.bottom: parent.bottom
+		anchors.top: parent.top
+		anchors.bottom: bottomButton.top
 		anchors.horizontalCenter: parent.horizontalCenter
 		model: locationsModel.model
-		clip: true
-		delegate: Button
+		spacing: 3
+		delegate: Item
 		{
-			text: model.name
-			anchors.horizontalCenter: parent.horizontalCenter
-			onClicked:
+			id: delegate
+			width: parent.width
+			height: locationButton.height + 5
+			Rectangle
 			{
-				loginView.login = text
-				locationView.sslid = model.id
-				locationView.state = "login"
-				mainWindow.user_name = model.name
+				id: backgroundRectangle
+				anchors.fill: parent.fill
+				anchors.horizontalCenter: parent.horizontalCenter
+				width: parent.width /2
+				height: parent.height
+
+				color:"transparent"
+
+				Rectangle
+				{
+					    id: borderBottom
+						width:  parent.width
+						height: 1
+						anchors.bottom: parent.bottom
+						anchors.right: parent.right
+						color: "lightgrey"
+				}
+			}
+
+			ButtonText
+			{
+				id: locationButton
+				anchors.horizontalCenter: parent.horizontalCenter
+				text: model.name
+				borderRadius:0
+				iconUrl: "/icons/edit-image-face-detect.svg"
+				color: "white"
+				pressColor: "lightsteelblue"
+				buttonTextPixelSize: 20
+
+				onClicked:
+				{
+					loginView.login = text
+					locationView.sslid = model.id
+					locationView.state = "login"
+					mainWindow.user_name = model.name
+				}
 			}
 		}
 		visible: false
+	}
+
+	Button
+	{
+		id: bottomButton
+		text: "Create new location"
+		anchors.bottom: parent.bottom
+		anchors.horizontalCenter: parent.horizontalCenter
+		onClicked: locationView.state = "createLocation"
 	}
 
 	RsLoginPassView
@@ -205,8 +231,8 @@ Item
 				else
 				{
 					// if Already logged in
-					createNewButton.enabled = false
-					createNewButton.text = "Unlocking location..."
+					bottomButton.enabled = false
+					bottomButton.text = "Unlocking location..."
 					locationView.attemptLogin = false
 					locationView.state = "selectLocation"
 					locationsListView.enabled = false
