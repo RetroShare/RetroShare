@@ -17,7 +17,7 @@ Item
 	property color pressColor: color
 	property int fontSize
 	property int borderWidth
-	property int borderRadius
+	property int borderRadius: 3
 	property int innerMargin: 10
 
 	height: innerText.height + innerMargin + innerMargin

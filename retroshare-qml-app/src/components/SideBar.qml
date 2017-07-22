@@ -123,6 +123,7 @@ Drawer
 					iconUrl: (model.icon)? model.icon : undefined
 					innerMargin: 20
 					buttonTextPixelSize: menuItem.styles.pixelSize
+					borderRadius: 0
 				}
 
 
