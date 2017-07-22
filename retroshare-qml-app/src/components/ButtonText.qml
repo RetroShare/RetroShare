@@ -20,6 +20,9 @@ Item
 	property int borderRadius
 	property int innerMargin: 10
 
+	height: 50
+	width: innerText.width + innerMargin + innerMargin
+
 	scale: state === "Pressed" ? 0.96 : 1.0
 	onEnabledChanged: state = ""
 	signal clicked
