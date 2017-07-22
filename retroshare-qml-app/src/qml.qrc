@@ -31,7 +31,7 @@
         <file>ChatBubbleDelegate.qml</file>
         <file>icons/send-message.svg</file>
         <file>icons/attach.svg</file>
-        <file>components/BtnIcon.qml</file>
+        <file>components/ButtonIcon.qml</file>
         <file>icons/smiley.svg</file>
         <file>icons/microphone_mute.svg</file>
         <file>icons/microphone.svg</file>
@@ -40,7 +40,7 @@
         <file>components/AvatarOrColorHash.qml</file>
         <file>components/SideBar.qml</file>
         <file>styles/SideBarStyle.qml</file>
-        <file>components/Btn.qml</file>
+        <file>components/ButtonText.qml</file>
         <file>icons/netgraph.svg</file>
         <file>icons/search.svg</file>
         <file>icons/exit.svg</file>
@@ -54,5 +54,13 @@
         <file>icons/network-connect.svg</file>
         <file>icons/network-disconnect.svg</file>
         <file>components/CustomFileChooser.qml</file>
+        <file>icons/options.svg</file>
+        <file>icons/network.svg</file>
+        <file>icons/back.png</file>
+        <file>icons/attach-image.svg</file>
+        <file>icons/invite.svg</file>
+        <file>icons/leave.svg</file>
+        <file>icons/paste.svg</file>
+        <file>icons/share.svg</file>
     </qresource>
 </RCC>

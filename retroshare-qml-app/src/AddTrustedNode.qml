@@ -21,6 +21,7 @@ import QtQuick.Controls 2.0
 import org.retroshare.qml_components.LibresapiLocalClient 1.0
 import "." //Needed for ClipboardWrapper singleton
 import "URI.js" as UriJs
+import "components/."
 
 Item
 {
@@ -29,43 +30,46 @@ Item
 	Column
 	{
 		anchors.fill: parent
+		spacing: 7
 
 		Text
 		{
-			text: qsTr("Import/export node from/to clipboard")
+			text: qsTr("Import node from clipboard")
 			font.bold: true
 			wrapMode: Text.Wrap
-		}
+			anchors.horizontalCenter: parent.horizontalCenter
 
-		Button
-		{
-			text: qsTr("Export own certificate link")
-			onClicked:
+			font.pixelSize: 13
+
+			Rectangle
 			{
-				console.log("onClicked", text)
-				rsApi.request(
-					"/peers/self/certificate/", "",
-					function(par)
-					{
-						var radix = JSON.parse(par.response).data.cert_string
-						var name = mainWindow.user_name
-						var encodedName = UriJs.URI.encode(name)
-						var nodeUrl = (
-							"retroshare://certificate?" +
-							"name=" + encodedName +
-							"&radix=" + UriJs.URI.encode(radix) +
-							"&location=" + encodedName )
-						ClipboardWrapper.postToClipBoard(nodeUrl)
-						linkCopiedPopup.itemName = name
-						linkCopiedPopup.open()
-						platformGW.shareUrl(nodeUrl);
-					})
+				id: backgroundRectangle
+				anchors.fill: parent.fill
+				anchors.horizontalCenter: parent.horizontalCenter
+				width: parent.width + 20
+				height: parent.height + 5
+
+				color:"transparent"
+
+				Rectangle
+				{
+					    id: borderBottom
+						width:  parent.width
+						height: 1
+						anchors.bottom: parent.bottom
+						anchors.right: parent.right
+						color: "lightgrey"
+				}
 			}
 		}
 
-		Button
+		ButtonText
 		{
+			id: importButton
 			text: qsTr("Import trusted node")
+			anchors.horizontalCenter: parent.horizontalCenter
+			iconUrl: "/icons/paste.svg"
+			fontSize: 14
 
 			onClicked:
 			{
@@ -106,9 +110,70 @@ Item
 			}
 		}
 
-		Button
+		Text
 		{
+			text: qsTr("Export node")
+			font.bold: true
+			wrapMode: Text.Wrap
+			anchors.horizontalCenter: parent.horizontalCenter
+
+			font.pixelSize: 13
+
+			Rectangle
+			{
+				anchors.fill: parent.fill
+				anchors.horizontalCenter: parent.horizontalCenter
+				width: parent.width + 20
+				height: parent.height + 5
+
+				color:"transparent"
+
+				Rectangle
+				{
+					    width:  parent.width
+						height: 1
+						anchors.bottom: parent.bottom
+						anchors.right: parent.right
+						color: "lightgrey"
+				}
+			}
+		}
+
+		ButtonText
+		{
+			anchors.horizontalCenter: parent.horizontalCenter
+			text: qsTr("Export own certificate link")
+			iconUrl: "/icons/share.svg"
+			fontSize: 14
+			onClicked:
+			{
+				console.log("onClicked", text)
+				rsApi.request(
+					"/peers/self/certificate/", "",
+					function(par)
+					{
+						var radix = JSON.parse(par.response).data.cert_string
+						var name = mainWindow.user_name
+						var encodedName = UriJs.URI.encode(name)
+						var nodeUrl = (
+							"retroshare://certificate?" +
+							"name=" + encodedName +
+							"&radix=" + UriJs.URI.encode(radix) +
+							"&location=" + encodedName )
+						ClipboardWrapper.postToClipBoard(nodeUrl)
+						linkCopiedPopup.itemName = name
+						linkCopiedPopup.open()
+						platformGW.shareUrl(nodeUrl);
+					})
+			}
+		}
+
+		ButtonText
+		{
+			anchors.horizontalCenter: parent.horizontalCenter
 			text: qsTr("Export own plain certificate")
+			fontSize: 14
+			iconUrl: "/icons/share.svg"
 			onClicked:
 			{
 				rsApi.request(

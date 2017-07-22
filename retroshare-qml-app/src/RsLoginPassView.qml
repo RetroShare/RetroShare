@@ -19,11 +19,13 @@
 import QtQuick 2.7
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.0
+import "components/."
 
 Item
 {
 	id: loginView
 	property string buttonText: qsTr("Unlock")
+	property string cancelText: qsTr("Cancel")
 	property string iconUrl: "qrc:/icons/emblem-locked.svg"
 	property string login
 	property bool loginPreset: false
@@ -32,6 +34,7 @@ Item
 	property string password: advancedMode ? "" : hardcodedPassword
 	property string suggestionText
 	signal submit(string login, string password)
+	signal cancel()
 
 	Component.onCompleted: loginPreset = login.length > 0
 
@@ -118,18 +121,32 @@ Item
 			Layout.alignment: Qt.AlignHCenter | Qt.AlignBottom
 			spacing: 3
 
-			Button
+			ButtonIcon
 			{
-				text: qsTr("Advanced...")
 				visible: !loginView.loginPreset
 				onClicked: loginView.advancedMode = !loginView.advancedMode
+				imgUrl: "/icons/options.svg"
+				height: bottomButton.height - 5
+				width: height
+				anchors.verticalCenter: bottomButton.verticalCenter
 			}
 
-			Button
+			ButtonText
 			{
 				id: bottomButton
 				text: loginView.buttonText
 				onClicked: loginView.submit(nameField.text, passwordField.text)
+				iconUrl: "/icons/network.svg"
+				buttonTextPixelSize: 15
+			}
+			ButtonIcon
+			{
+				id: cancelButton
+				onClicked: loginView.cancel()
+				height: bottomButton.height - 5
+				width: height
+				imgUrl: "/icons/back.png"
+				anchors.verticalCenter: bottomButton.verticalCenter
 			}
 		}
 	}
