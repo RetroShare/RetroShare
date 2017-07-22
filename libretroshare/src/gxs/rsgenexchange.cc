@@ -3038,8 +3038,8 @@ void RsGenExchange::processRecvdMessages()
 
 			    if(vit == mMsgPendingValidate.end())
 				    mMsgPendingValidate.push_back(GxsPendingItem<RsNxsMsg*, RsGxsGrpMsgIdPair>(msg, id,time(NULL)));
-				else
-					delete msg ;
+//				else
+//					delete msg ;
 		    }
 	    }
 
