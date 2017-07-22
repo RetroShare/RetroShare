@@ -162,9 +162,14 @@ Item
 		anchors.horizontalCenter: parent.horizontalCenter
 		spacing: 6
 
-		Button
+		ButtonText
 		{
 			text: qsTr("Revoke")
+
+			borderRadius: 0
+			buttonTextPixelSize: 14
+			iconUrl: "/icons/leave.svg"
+
 			onClicked:
 				rsApi.request(
 					"/peers/"+nodeDetailsRoot.pgpId+"/delete", "",
@@ -172,11 +177,16 @@ Item
 					{ stackView.push("qrc:/TrustedNodesView.qml") })
 		}
 
-		Button
+		ButtonText
 		{
 			text: qsTr("Entrust")
 
 			visible: nodeDetailsRoot.nodeCert.length > 0
+
+			borderRadius: 0
+			buttonTextPixelSize: 14
+			iconUrl: "/icons/invite.svg"
+
 			onClicked:
 			{
 				var jsonData =

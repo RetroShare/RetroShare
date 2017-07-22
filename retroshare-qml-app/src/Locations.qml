@@ -199,6 +199,7 @@ Item
 		onClicked: locationView.state = "createLocation"
 		buttonTextPixelSize: 15
 		iconUrl: "/icons/add.svg"
+		borderRadius: 0
 	}
 
 	RsLoginPassView

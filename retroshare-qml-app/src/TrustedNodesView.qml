@@ -20,6 +20,7 @@ import QtQuick 2.7
 import QtQuick.Controls 2.0
 import "jsonpath.js" as JSONPath
 import "." //Needed for TokensManager singleton
+import "components/."
 
 Item
 {
@@ -113,12 +114,17 @@ Item
 		}
 	}
 
-	Button
+	ButtonText
 	{
 		id: bottomButton
 		text: qsTr("Add Trusted Node")
 		anchors.bottom: parent.bottom
 		onClicked: stackView.push("qrc:/AddTrustedNode.qml")
-		width: parent.width
+		anchors.horizontalCenter: parent.horizontalCenter
+//		width: parent.width
+
+		borderRadius: 0
+		buttonTextPixelSize: 14
+		iconUrl: "/icons/add.svg"
 	}
 }

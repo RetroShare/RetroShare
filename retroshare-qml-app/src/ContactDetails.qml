@@ -30,7 +30,7 @@ Item
 	property bool isOwn:  cntDt.md.own
 	property string objectName: "contactDetails"
 
-	Button
+	ButtonText
 	{
 		id: avatarPicker
 
@@ -39,6 +39,11 @@ Item
 
 		anchors.top: parent.top
 		anchors.horizontalCenter: parent.horizontalCenter
+
+		buttonTextPixelSize: 14
+		iconUrl: "/icons/attach-image.svg"
+		borderRadius: 0
+
 
 		onClicked:
 		{
@@ -154,9 +159,11 @@ Item
 
 		spacing: 6
 
-		Button
+		ButtonText
 		{
 			text: qsTr("Contact full link")
+			borderRadius: 0
+			buttonTextPixelSize: 14
 			onClicked:
 			{
 				rsApi.request(
@@ -182,10 +189,12 @@ Item
 			}
 		}
 
-		Button
+		ButtonText
 		{
 			text: qsTr("Contact short link")
 			enabled: false
+			borderRadius: 0
+			buttonTextPixelSize: 14
 		}
 	}
 }
