@@ -239,6 +239,8 @@ template<class T> int test_RsItem(uint16_t servtype)
 //	displayRawPacket(std::cerr, (void *) buffer, 16 * 8 + sersize2);
 
         delete[] buffer ;
+		delete output ;
+		delete rsfis ;
 
         return 1;
 }
