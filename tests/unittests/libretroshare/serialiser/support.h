@@ -173,10 +173,9 @@ template<class T> int test_RsItem()
 	EXPECT_TRUE(done2) ;
 	EXPECT_TRUE(sersize2 == sersize);
 
-//	displayRawPacket(std::cerr, (void *) buffer, 16 * 8 + sersize2);
-
+	delete output ;
 	delete[] buffer ;
-	//delete rsfis;
+	delete rsfis;
 
 	return 1;
 }
