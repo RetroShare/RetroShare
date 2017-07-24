@@ -223,14 +223,14 @@ public:
      * @param msg map of message and decoded meta data information
      * @return error code
      */
-    virtual int storeMessage(std::map<RsNxsMsg*, RsGxsMsgMetaData*>& msgs) = 0;
+    virtual int storeMessage(const std::list<RsNxsMsg*>& msgs) = 0;
 
     /*!
      * Stores a list of groups in data store
      * @param grp map of group and decoded meta data
      * @return error code
      */
-    virtual int storeGroup(std::map<RsNxsGrp*, RsGxsGrpMetaData*>& grsp) = 0;
+    virtual int storeGroup(const std::list<RsNxsGrp*>& grsp) = 0;
 
 
     /*!
@@ -238,7 +238,7 @@ public:
 	 * @param grp map of group and decoded meta data
 	 * @return error code
 	 */
-    virtual int updateGroup(std::map<RsNxsGrp*, RsGxsGrpMetaData*>& grsp) = 0;
+    virtual int updateGroup(const std::list<RsNxsGrp*>& grsp) = 0;
 
     /*!
      * @param metaData

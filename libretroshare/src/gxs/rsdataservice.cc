@@ -702,20 +702,20 @@ RsNxsMsg* RsDataService::locked_getMessage(RetroCursor &c)
     return NULL;
 }
 
-int RsDataService::storeMessage(std::map<RsNxsMsg *, RsGxsMsgMetaData *> &msg)
+int RsDataService::storeMessage(const std::list<RsNxsMsg*>& msg)
 {
 
     RsStackMutex stack(mDbMutex);
 
-    std::map<RsNxsMsg*, RsGxsMsgMetaData* >::iterator mit = msg.begin();
-
     // start a transaction
     mDb->beginTransaction();
 
-    for(; mit != msg.end(); ++mit)
+    for(std::list<RsNxsMsg*>::const_iterator mit = msg.begin(); mit != msg.end(); ++mit)
     {
-        RsNxsMsg* msgPtr = mit->first;
-        RsGxsMsgMetaData* msgMetaPtr = mit->second;
+        RsNxsMsg* msgPtr = *mit;
+        RsGxsMsgMetaData* msgMetaPtr = msgPtr->metaData;
+
+		assert(msgMetaPtr != NULL);
 
 #ifdef RS_DATA_SERVICE_DEBUG
         std::cerr << "RsDataService::storeMessage() ";
@@ -790,16 +790,6 @@ int RsDataService::storeMessage(std::map<RsNxsMsg *, RsGxsMsgMetaData *> &msg)
     // finish transaction
     bool ret = mDb->commitTransaction();
 
-    for(mit = msg.begin(); mit != msg.end(); ++mit)
-    {
-        //TODO: API encourages aliasing, remove this abomination
-        if(mit->second != mit->first->metaData)
-            delete mit->second;
-
-        delete mit->first;
-        ;
-    }
-
     return ret;
 }
 
@@ -811,103 +801,93 @@ bool RsDataService::validSize(RsNxsMsg* msg) const
 }
 
 
-int RsDataService::storeGroup(std::map<RsNxsGrp *, RsGxsGrpMetaData *> &grp)
+int RsDataService::storeGroup(const std::list<RsNxsGrp*>& grp)
 {
 
     RsStackMutex stack(mDbMutex);
 
-    std::map<RsNxsGrp*, RsGxsGrpMetaData* >::iterator sit = grp.begin();
-
     // begin transaction
     mDb->beginTransaction();
 
-    for(; sit != grp.end(); ++sit)
-    {
+    for(std::list<RsNxsGrp*>::const_iterator sit = grp.begin();sit != grp.end(); ++sit)
+	{
+		RsNxsGrp* grpPtr = *sit;
+		RsGxsGrpMetaData* grpMetaPtr = grpPtr->metaData;
 
-        RsNxsGrp* grpPtr = sit->first;
-        RsGxsGrpMetaData* grpMetaPtr = sit->second;
+		assert(grpMetaPtr != NULL);
 
-        // if data is larger than max item size do not add
-        if(!validSize(grpPtr)) continue;
+		// if data is larger than max item size do not add
+		if(!validSize(grpPtr)) continue;
 
 #ifdef RS_DATA_SERVICE_DEBUG
-    std::cerr << "RsDataService::storeGroup() GrpId: " << grpPtr->grpId.toStdString();
-    std::cerr << " CircleType: " << (uint32_t) grpMetaPtr->mCircleType;
-    std::cerr << " CircleId: " << grpMetaPtr->mCircleId.toStdString();
-    std::cerr << std::endl;
+		std::cerr << "RsDataService::storeGroup() GrpId: " << grpPtr->grpId.toStdString();
+		std::cerr << " CircleType: " << (uint32_t) grpMetaPtr->mCircleType;
+		std::cerr << " CircleId: " << grpMetaPtr->mCircleId.toStdString();
+		std::cerr << std::endl;
 #endif
 
-        /*!
-         * STORE data, data len,
-         * grpId, flags, publish time stamp, identity,
-         * id signature, admin signatue, key set, last posting ts
-         * and meta data
-         **/
-        ContentValue cv;
+		/*!
+		 * STORE data, data len,
+		 * grpId, flags, publish time stamp, identity,
+		 * id signature, admin signatue, key set, last posting ts
+		 * and meta data
+		 **/
+		ContentValue cv;
 
-        uint32_t dataLen = grpPtr->grp.TlvSize();
-        char grpData[dataLen];
-        uint32_t offset = 0;
-        grpPtr->grp.SetTlv(grpData, dataLen, &offset);
-        cv.put(KEY_NXS_DATA, dataLen, grpData);
+		uint32_t dataLen = grpPtr->grp.TlvSize();
+		char grpData[dataLen];
+		uint32_t offset = 0;
+		grpPtr->grp.SetTlv(grpData, dataLen, &offset);
+		cv.put(KEY_NXS_DATA, dataLen, grpData);
 
-        cv.put(KEY_NXS_DATA_LEN, (int32_t) dataLen);
-        cv.put(KEY_GRP_ID, grpPtr->grpId.toStdString());
-        cv.put(KEY_GRP_NAME, grpMetaPtr->mGroupName);
-        cv.put(KEY_ORIG_GRP_ID, grpMetaPtr->mOrigGrpId.toStdString());
-        cv.put(KEY_NXS_SERV_STRING, grpMetaPtr->mServiceString);
-        cv.put(KEY_NXS_FLAGS, (int32_t)grpMetaPtr->mGroupFlags);
-        cv.put(KEY_TIME_STAMP, (int32_t)grpMetaPtr->mPublishTs);
-        cv.put(KEY_GRP_SIGN_FLAGS, (int32_t)grpMetaPtr->mSignFlags);
-        cv.put(KEY_GRP_CIRCLE_ID, grpMetaPtr->mCircleId.toStdString());
-        cv.put(KEY_GRP_CIRCLE_TYPE, (int32_t)grpMetaPtr->mCircleType);
-        cv.put(KEY_GRP_INTERNAL_CIRCLE, grpMetaPtr->mInternalCircle.toStdString());
-        cv.put(KEY_GRP_ORIGINATOR, grpMetaPtr->mOriginator.toStdString());
-        cv.put(KEY_GRP_AUTHEN_FLAGS, (int32_t)grpMetaPtr->mAuthenFlags);
-        cv.put(KEY_PARENT_GRP_ID, grpMetaPtr->mParentGrpId.toStdString());
-        cv.put(KEY_NXS_HASH, grpMetaPtr->mHash.toStdString());
-        cv.put(KEY_RECV_TS, (int32_t)grpMetaPtr->mRecvTS);
-        cv.put(KEY_GRP_REP_CUTOFF, (int32_t)grpMetaPtr->mReputationCutOff);
-        cv.put(KEY_NXS_IDENTITY, grpMetaPtr->mAuthorId.toStdString());
+		cv.put(KEY_NXS_DATA_LEN, (int32_t) dataLen);
+		cv.put(KEY_GRP_ID, grpPtr->grpId.toStdString());
+		cv.put(KEY_GRP_NAME, grpMetaPtr->mGroupName);
+		cv.put(KEY_ORIG_GRP_ID, grpMetaPtr->mOrigGrpId.toStdString());
+		cv.put(KEY_NXS_SERV_STRING, grpMetaPtr->mServiceString);
+		cv.put(KEY_NXS_FLAGS, (int32_t)grpMetaPtr->mGroupFlags);
+		cv.put(KEY_TIME_STAMP, (int32_t)grpMetaPtr->mPublishTs);
+		cv.put(KEY_GRP_SIGN_FLAGS, (int32_t)grpMetaPtr->mSignFlags);
+		cv.put(KEY_GRP_CIRCLE_ID, grpMetaPtr->mCircleId.toStdString());
+		cv.put(KEY_GRP_CIRCLE_TYPE, (int32_t)grpMetaPtr->mCircleType);
+		cv.put(KEY_GRP_INTERNAL_CIRCLE, grpMetaPtr->mInternalCircle.toStdString());
+		cv.put(KEY_GRP_ORIGINATOR, grpMetaPtr->mOriginator.toStdString());
+		cv.put(KEY_GRP_AUTHEN_FLAGS, (int32_t)grpMetaPtr->mAuthenFlags);
+		cv.put(KEY_PARENT_GRP_ID, grpMetaPtr->mParentGrpId.toStdString());
+		cv.put(KEY_NXS_HASH, grpMetaPtr->mHash.toStdString());
+		cv.put(KEY_RECV_TS, (int32_t)grpMetaPtr->mRecvTS);
+		cv.put(KEY_GRP_REP_CUTOFF, (int32_t)grpMetaPtr->mReputationCutOff);
+		cv.put(KEY_NXS_IDENTITY, grpMetaPtr->mAuthorId.toStdString());
 
-        offset = 0;
-        char keySetData[grpMetaPtr->keys.TlvSize()];
-        grpMetaPtr->keys.SetTlv(keySetData, grpMetaPtr->keys.TlvSize(), &offset);
-        cv.put(KEY_KEY_SET, grpMetaPtr->keys.TlvSize(), keySetData);
+		offset = 0;
+		char keySetData[grpMetaPtr->keys.TlvSize()];
+		grpMetaPtr->keys.SetTlv(keySetData, grpMetaPtr->keys.TlvSize(), &offset);
+		cv.put(KEY_KEY_SET, grpMetaPtr->keys.TlvSize(), keySetData);
 
-        offset = 0;
-        char metaData[grpPtr->meta.TlvSize()];
-        grpPtr->meta.SetTlv(metaData, grpPtr->meta.TlvSize(), &offset);
-        cv.put(KEY_NXS_META, grpPtr->meta.TlvSize(), metaData);
+		offset = 0;
+		char metaData[grpPtr->meta.TlvSize()];
+		grpPtr->meta.SetTlv(metaData, grpPtr->meta.TlvSize(), &offset);
+		cv.put(KEY_NXS_META, grpPtr->meta.TlvSize(), metaData);
 
-        // local meta data
-        cv.put(KEY_GRP_SUBCR_FLAG, (int32_t)grpMetaPtr->mSubscribeFlags);
-        cv.put(KEY_GRP_POP, (int32_t)grpMetaPtr->mPop);
-        cv.put(KEY_MSG_COUNT, (int32_t)grpMetaPtr->mVisibleMsgCount);
-        cv.put(KEY_GRP_STATUS, (int32_t)grpMetaPtr->mGroupStatus);
-        cv.put(KEY_GRP_LAST_POST, (int32_t)grpMetaPtr->mLastPost);
+		// local meta data
+		cv.put(KEY_GRP_SUBCR_FLAG, (int32_t)grpMetaPtr->mSubscribeFlags);
+		cv.put(KEY_GRP_POP, (int32_t)grpMetaPtr->mPop);
+		cv.put(KEY_MSG_COUNT, (int32_t)grpMetaPtr->mVisibleMsgCount);
+		cv.put(KEY_GRP_STATUS, (int32_t)grpMetaPtr->mGroupStatus);
+		cv.put(KEY_GRP_LAST_POST, (int32_t)grpMetaPtr->mLastPost);
 
-        locked_clearGrpMetaCache(grpMetaPtr->mGroupId);
+		locked_clearGrpMetaCache(grpMetaPtr->mGroupId);
 
-        if (!mDb->sqlInsert(GRP_TABLE_NAME, "", cv))
-    {
-        std::cerr << "RsDataService::storeGroup() sqlInsert Failed";
-        std::cerr << std::endl;
-        std::cerr << "\t For GroupId: " << grpMetaPtr->mGroupId.toStdString();
-        std::cerr << std::endl;
-    }
-    }
+		if (!mDb->sqlInsert(GRP_TABLE_NAME, "", cv))
+		{
+			std::cerr << "RsDataService::storeGroup() sqlInsert Failed";
+			std::cerr << std::endl;
+			std::cerr << "\t For GroupId: " << grpMetaPtr->mGroupId.toStdString();
+			std::cerr << std::endl;
+		}
+	}
     // finish transaction
     bool ret = mDb->commitTransaction();
-
-    for(sit = grp.begin(); sit != grp.end(); ++sit)
-    {
-    //TODO: API encourages aliasing, remove this abomination
-            if(sit->second != sit->first->metaData)
-                delete sit->second;
-        delete sit->first;
-
-    }
 
     return ret;
 }
@@ -918,21 +898,21 @@ void RsDataService::locked_clearGrpMetaCache(const RsGxsGroupId& gid)
     mGrpMetaDataCache_ContainsAllDatabase = false;
 }
 
-int RsDataService::updateGroup(std::map<RsNxsGrp *, RsGxsGrpMetaData *> &grp)
+int RsDataService::updateGroup(const std::list<RsNxsGrp *> &grp)
 {
 
     RsStackMutex stack(mDbMutex);
 
-    std::map<RsNxsGrp*, RsGxsGrpMetaData* >::iterator sit = grp.begin();
-
     // begin transaction
     mDb->beginTransaction();
 
-    for(; sit != grp.end(); ++sit)
+    for( std::list<RsNxsGrp*>::const_iterator sit = grp.begin(); sit != grp.end(); ++sit)
     {
 
-        RsNxsGrp* grpPtr = sit->first;
-        RsGxsGrpMetaData* grpMetaPtr = sit->second;
+        RsNxsGrp* grpPtr = *sit;
+        RsGxsGrpMetaData* grpMetaPtr = grpPtr->metaData;
+
+		assert(grpMetaPtr != NULL);
 
         // if data is larger than max item size do not add
         if(!validSize(grpPtr)) continue;
@@ -990,15 +970,6 @@ int RsDataService::updateGroup(std::map<RsNxsGrp *, RsGxsGrpMetaData *> &grp)
     }
     // finish transaction
     bool ret = mDb->commitTransaction();
-
-    for(sit = grp.begin(); sit != grp.end(); ++sit)
-    {
-    //TODO: API encourages aliasing, remove this abomination
-            if(sit->second != sit->first->metaData)
-                delete sit->second;
-        delete sit->first;
-
-    }
 
     return ret;
 }

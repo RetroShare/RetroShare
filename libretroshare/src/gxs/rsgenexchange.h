@@ -850,7 +850,7 @@ private:
      * @param msgs messages to be filtered
      * @param msgIdsNotify message notification map to be filtered
      */
-    void removeDeleteExistingMessages(RsGeneralDataService::MsgStoreMap& msgs, GxsMsgReq& msgIdsNotify);
+    void removeDeleteExistingMessages(std::list<RsNxsMsg*>& msgs, GxsMsgReq& msgIdsNotify);
 
     RsMutex mGenMtx;
     RsGxsDataAccess* mDataAccess;

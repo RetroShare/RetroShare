@@ -38,7 +38,7 @@ class RsGxsDataAccess : public RsTokenService
 {
 public:
     RsGxsDataAccess(RsGeneralDataService* ds);
-    virtual ~RsGxsDataAccess() { return ;}
+    virtual ~RsGxsDataAccess() ;
 
 public:
 

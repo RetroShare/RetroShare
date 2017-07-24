@@ -127,21 +127,21 @@ public:
      * @param msg map of message and decoded meta data information
      * @return error code
      */
-    int storeMessage(std::map<RsNxsMsg*, RsGxsMsgMetaData*>& msg);
+    int storeMessage(const std::list<RsNxsMsg*>& msg);
 
     /*!
      * Stores a list of groups in data store
      * @param grp map of group and decoded meta data
      * @return error code
      */
-    int storeGroup(std::map<RsNxsGrp*, RsGxsGrpMetaData*>& grp);
+    int storeGroup(const std::list<RsNxsGrp*>& grp);
 
     /*!
 	 * Updates group entries in Db
 	 * @param grp map of group and decoded meta data
 	 * @return error code
 	 */
-    int updateGroup(std::map<RsNxsGrp*, RsGxsGrpMetaData*>& grsp);
+    int updateGroup(const std::list<RsNxsGrp*>& grsp);
 
     /*!
      * @param metaData The meta data item to update

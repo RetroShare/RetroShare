@@ -117,6 +117,14 @@ RsGenExchange::~RsGenExchange()
     delete mDataStore;
     mDataStore = NULL;
 
+	for(uint32_t i=0;i<mNotifications.size();++i)
+		delete mNotifications[i] ;
+
+	for(uint32_t i=0;i<mGrpsToPublish.size();++i)
+		delete mGrpsToPublish[i].mItem ;
+
+	mNotifications.clear();
+	mGrpsToPublish.clear();
 }
 
 bool RsGenExchange::getGroupServerUpdateTS(const RsGxsGroupId& gid, time_t& grp_server_update_TS, time_t& msg_server_update_TS) 
@@ -2264,6 +2272,8 @@ void RsGenExchange::publishMsgs()
                 
 				computeHash(msg->msg, msg->metaData->mHash);
 				mDataAccess->addMsgData(msg);
+				delete msg ;
+
 				msgChangeMap[grpId].push_back(msgId);
 
 				delete[] metaDataBuff;
@@ -2664,9 +2674,9 @@ void RsGenExchange::publishGrps()
 							    mDataAccess->updateGroupData(grp);
 						    else
 							    mDataAccess->addGroupData(grp);
-#warning csoler: this is bad: addGroupData/updateGroupData actially deletes grp. But it may be used below? grp should be a class object and not deleted manually!
 
-                                                     groups_to_subscribe.push_back(grpId) ;
+							delete grp ;
+							groups_to_subscribe.push_back(grpId) ;
 					    }
 					    else
 					    {
@@ -2885,9 +2895,8 @@ void RsGenExchange::processRecvdMessages()
 
 	    std::vector<RsNxsMsg*>::iterator vit = mReceivedMsgs.begin();
 	    GxsMsgReq msgIds;
-	    std::map<RsNxsMsg*, RsGxsMsgMetaData*> msgs;
-
-	    std::map<RsGxsGroupId, RsGxsGrpMetaData*> grpMetas;
+	    RsNxsMsgDataTemporaryList msgs;
+		RsGxsGrpMetaTemporaryMap grpMetas;
 
 	    // coalesce group meta retrieval for performance
 	    for(; vit != mReceivedMsgs.end(); ++vit)
@@ -2961,7 +2970,7 @@ void RsGenExchange::processRecvdMessages()
 			    if(validateReturn == VALIDATE_SUCCESS)
 			    {
 				    meta->mMsgStatus = GXS_SERV::GXS_MSG_STATUS_UNPROCESSED | GXS_SERV::GXS_MSG_STATUS_GUI_NEW | GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD;
-				    msgs.insert(std::make_pair(msg, meta));
+				    msgs.push_back(msg);
 
 				    std::vector<RsGxsMessageId> &msgv = msgIds[msg->grpId];
 				    if (std::find(msgv.begin(), msgv.end(), msg->msgId) == msgv.end())
@@ -3038,14 +3047,8 @@ void RsGenExchange::processRecvdMessages()
 
 			    if(vit == mMsgPendingValidate.end())
 				    mMsgPendingValidate.push_back(GxsPendingItem<RsNxsMsg*, RsGxsGrpMsgIdPair>(msg, id,time(NULL)));
-//				else
-//					delete msg ;
 		    }
 	    }
-
-	    // clean up resources from group meta retrieval
-	    freeAndClearContainerResource<std::map<RsGxsGroupId, RsGxsGrpMetaData*>,
-	                    RsGxsGrpMetaData*>(grpMetas);
 
 	    if(!msgIds.empty())
 	    {
@@ -3091,7 +3094,7 @@ void RsGenExchange::processRecvdGroups()
 	std::vector<RsGxsGroupId> existingGrpIds;
 	std::list<RsGxsGroupId> grpIds;
 
-	std::map<RsNxsGrp*, RsGxsGrpMetaData*> grps;
+	RsNxsGrpDataTemporaryList grps;
 
 	mDataStore->retrieveGroupIds(existingGrpIds);
 
@@ -3145,7 +3148,7 @@ void RsGenExchange::processRecvdGroups()
 
 					meta->mSubscribeFlags = GXS_SERV::GROUP_SUBSCRIBE_NOT_SUBSCRIBED;
                     
-					grps.insert(std::make_pair(grp, meta));
+					grps.push_back(grp);
 					grpIds.push_back(grp->grpId);
 				}
 				else
@@ -3250,7 +3253,9 @@ void RsGenExchange::performUpdateValidation()
 #endif
 
 	vit = mGroupUpdates.begin();
-	std::map<RsNxsGrp*, RsGxsGrpMetaData*> grps;
+
+	RsNxsGrpDataTemporaryList grps ;
+
 	for(; vit != mGroupUpdates.end(); ++vit)
 	{
 		GroupUpdate& gu = *vit;
@@ -3265,7 +3270,7 @@ void RsGenExchange::performUpdateValidation()
             
             		gu.newGrp->metaData->mSubscribeFlags = gu.oldGrpMeta->mSubscribeFlags ;
             
-			grps.insert(std::make_pair(gu.newGrp, gu.newGrp->metaData));
+			grps.push_back(gu.newGrp);
 		}
 		else
 		{
@@ -3353,14 +3358,14 @@ void RsGenExchange::setGroupReputationCutOff(uint32_t& token, const RsGxsGroupId
     mGrpLocMetaMap.insert(std::make_pair(token, g));
 }
 
-void RsGenExchange::removeDeleteExistingMessages( RsGeneralDataService::MsgStoreMap& msgs, GxsMsgReq& msgIdsNotify) 
+void RsGenExchange::removeDeleteExistingMessages( std::list<RsNxsMsg*>& msgs, GxsMsgReq& msgIdsNotify)
 {
 	// first get grp ids of messages to be stored
 
 	RsGxsGroupId::std_set mGrpIdsUnique;
 
-	for(RsGeneralDataService::MsgStoreMap::const_iterator cit = msgs.begin(); cit != msgs.end(); ++cit)
-		mGrpIdsUnique.insert(cit->second->mGroupId);
+	for(std::list<RsNxsMsg*>::const_iterator cit = msgs.begin(); cit != msgs.end(); ++cit)
+		mGrpIdsUnique.insert((*cit)->metaData->mGroupId);
 
 	//RsGxsGroupId::std_list grpIds(mGrpIdsUnique.begin(), mGrpIdsUnique.end());
 	//RsGxsGroupId::std_list::const_iterator it = grpIds.begin();
@@ -3381,13 +3386,10 @@ void RsGenExchange::removeDeleteExistingMessages( RsGeneralDataService::MsgStore
 #endif
 	}
 
-	//RsGeneralDataService::MsgStoreMap::iterator cit2 = msgs.begin();
-	RsGeneralDataService::MsgStoreMap filtered;
-
 	// now for each msg to be stored that exist in the retrieved msg/grp "index" delete and erase from map
-	for(RsGeneralDataService::MsgStoreMap::iterator cit2 = msgs.begin(); cit2 != msgs.end(); ++cit2)
+	for(std::list<RsNxsMsg*>::iterator cit2 = msgs.begin(); cit2 != msgs.end(); ++cit2)
 	{
-		const RsGxsMessageId::std_vector& msgIds = msgIdReq[cit2->second->mGroupId];
+		const RsGxsMessageId::std_vector& msgIds = msgIdReq[(*cit2)->metaData->mGroupId];
 
 #ifdef GEN_EXCH_DEBUG
 		std::cerr << "    grpid=" << cit2->second->mGroupId << ", msgid=" << cit2->second->mMsgId ;
@@ -3395,38 +3397,27 @@ void RsGenExchange::removeDeleteExistingMessages( RsGeneralDataService::MsgStore
 
 		// Avoid storing messages that are already in the database, as well as messages that are too old (or generally do not pass the database storage test)
 		//
-		if(std::find(msgIds.begin(), msgIds.end(), cit2->second->mMsgId) == msgIds.end() && messagePublicationTest(*cit2->second))
-		{
-			// passes tests, so add to filtered list
-			//
-			filtered.insert(*cit2);
-#ifdef GEN_EXCH_DEBUG
-			std::cerr << "    keeping " << cit2->second->mMsgId << std::endl;
-#endif
-		}
-		else	// remove message from list
+		if(std::find(msgIds.begin(), msgIds.end(), (*cit2)->metaData->mMsgId) != msgIds.end() || !messagePublicationTest( *(*cit2)->metaData))
 		{
 			// msg exist in retrieved index
-			RsGxsMessageId::std_vector& notifyIds = msgIdsNotify[cit2->second->mGroupId];
-			RsGxsMessageId::std_vector::iterator it2 = std::find(notifyIds.begin(),
-					notifyIds.end(), cit2->second->mMsgId);
+			RsGxsMessageId::std_vector& notifyIds = msgIdsNotify[ (*cit2)->metaData->mGroupId];
+			RsGxsMessageId::std_vector::iterator it2 = std::find(notifyIds.begin(), notifyIds.end(), (*cit2)->metaData->mMsgId);
 			if(it2 != notifyIds.end())
 			{
 				notifyIds.erase(it2);
 				if (notifyIds.empty())
 				{
-					msgIdsNotify.erase(cit2->second->mGroupId);
+					msgIdsNotify.erase( (*cit2)->metaData->mGroupId);
 				}
 			}
 #ifdef GEN_EXCH_DEBUG
 			std::cerr << "    discarding " << cit2->second->mMsgId << std::endl;
 #endif
 
-			delete cit2->first;
+			delete *cit2;
+			msgs.erase(cit2);
 			// cit2->second will be deleted too in the destructor of cit2->first (RsNxsMsg)
 		}
 	}
-
-	msgs = filtered;
 }
 

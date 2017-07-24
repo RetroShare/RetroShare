@@ -45,6 +45,11 @@ RsGxsDataAccess::RsGxsDataAccess(RsGeneralDataService* ds) :
     mDataStore(ds), mDataMutex("RsGxsDataAccess"), mNextToken(0) {}
 
 
+RsGxsDataAccess::~RsGxsDataAccess()
+{
+    for(std::map<uint32_t, GxsRequest*>::const_iterator it(mRequests.begin());it!=mRequests.end();++it)
+		delete it->second ;
+}
 bool RsGxsDataAccess::requestGroupInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts,
 		const std::list<RsGxsGroupId> &groupIds)
 {
@@ -1803,8 +1808,8 @@ bool RsGxsDataAccess::addGroupData(RsNxsGrp* grp) {
 
 	RsStackMutex stack(mDataMutex);
 
-	std::map<RsNxsGrp*, RsGxsGrpMetaData*> grpM;
-	grpM.insert(std::make_pair(grp, grp->metaData));
+	std::list<RsNxsGrp*> grpM;
+	grpM.push_back(grp);
 	return mDataStore->storeGroup(grpM);
 }
 
@@ -1812,8 +1817,8 @@ bool RsGxsDataAccess::updateGroupData(RsNxsGrp* grp) {
 
 	RsStackMutex stack(mDataMutex);
 
-	std::map<RsNxsGrp*, RsGxsGrpMetaData*> grpM;
-	grpM.insert(std::make_pair(grp, grp->metaData));
+	std::list<RsNxsGrp*> grpM;
+	grpM.push_back(grp);
 	return mDataStore->updateGroup(grpM);
 }
 
@@ -1821,8 +1826,8 @@ bool RsGxsDataAccess::addMsgData(RsNxsMsg* msg) {
 
 	RsStackMutex stack(mDataMutex);
 
-	std::map<RsNxsMsg*, RsGxsMsgMetaData*> msgM;
-	msgM.insert(std::make_pair(msg, msg->metaData));
+	std::list<RsNxsMsg*> msgM;
+	msgM.push_back(msg);
 	return mDataStore->storeMessage(msgM);
 }
 

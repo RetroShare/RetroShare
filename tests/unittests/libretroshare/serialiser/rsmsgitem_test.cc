@@ -104,7 +104,7 @@ void init_item(RsChatAvatarItem& cai)
 {
 	std::string image_data;
 	randString(LARGE_STR, image_data);
-	cai.image_data = new unsigned char[image_data.size()];
+	cai.image_data = (unsigned char*)malloc(image_data.size());
 
 	memcpy(cai.image_data, image_data.c_str(), image_data.size());
 	cai.image_size = image_data.size();

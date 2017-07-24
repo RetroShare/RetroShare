@@ -33,26 +33,19 @@
 class RsGixs ;
 class RsGenExchange ;
 
-/*!
- * Handy function for cleaning out meta result containers
- * @param container
- */
-template <class Container, class Item>
-void freeAndClearContainerResource(Container container)
-{
-	typename Container::iterator meta_it = container.begin();
-
-	for(; meta_it != container.end(); ++meta_it)
-        	if(meta_it->second != NULL)
-			delete meta_it->second;
-
-	container.clear();
-}
-
 // temporary holds a map of pointers to class T, and destroys all pointers on delete.
 
+class non_copiable
+{
+public:
+	non_copiable() {}
+private:
+	non_copiable& operator=(const non_copiable&) { return *this ;}
+	non_copiable(const non_copiable&) {}
+};
+
 template<class IdClass,class IdData>
-class t_RsGxsGenericDataTemporaryMap: public std::map<IdClass,IdData *>
+class t_RsGxsGenericDataTemporaryMap: public std::map<IdClass,IdData *>, public non_copiable
 {
 public:
     virtual ~t_RsGxsGenericDataTemporaryMap()
@@ -71,7 +64,7 @@ public:
 };
 
 template<class T>
-class t_RsGxsGenericDataTemporaryMapVector: public std::map<RsGxsGroupId,std::vector<T*> >
+class t_RsGxsGenericDataTemporaryMapVector: public std::map<RsGxsGroupId,std::vector<T*> >, public non_copiable
 {
 public:
     virtual ~t_RsGxsGenericDataTemporaryMapVector()
@@ -93,11 +86,32 @@ public:
     }
 };
 
+template<class T>
+class t_RsGxsGenericDataTemporaryList: public std::list<T*>, public non_copiable
+{
+public:
+    virtual ~t_RsGxsGenericDataTemporaryList()
+    {
+        clear() ;
+    }
+
+    virtual void clear()
+    {
+        for(typename t_RsGxsGenericDataTemporaryList<T>::iterator it = this->begin();it!=this->end();++it)
+            delete *it;
+
+        std::list<T*>::clear() ;
+    }
+};
+
 typedef t_RsGxsGenericDataTemporaryMap<RsGxsGroupId,RsGxsGrpMetaData> RsGxsGrpMetaTemporaryMap;
 typedef t_RsGxsGenericDataTemporaryMap<RsGxsGroupId,RsNxsGrp>         RsNxsGrpDataTemporaryMap;
 
 typedef t_RsGxsGenericDataTemporaryMapVector<RsGxsMsgMetaData>        RsGxsMsgMetaTemporaryMap ;
 typedef t_RsGxsGenericDataTemporaryMapVector<RsNxsMsg>                RsNxsMsgDataTemporaryMap ;
+
+typedef t_RsGxsGenericDataTemporaryList<RsNxsGrp>                     RsNxsGrpDataTemporaryList ;
+typedef t_RsGxsGenericDataTemporaryList<RsNxsMsg>                     RsNxsMsgDataTemporaryList ;
 
 #ifdef UNUSED
 template<class T>

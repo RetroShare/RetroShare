@@ -71,12 +71,9 @@ class RsGroupNetworkStatsRecord
  * Incoming transaction are in 3 different states
  *   1. START 2. RECEIVING 3. END
  */
-class RsGxsNetService : public RsNetworkExchangeService, public p3ThreadedService,
-    public p3Config
+class RsGxsNetService : public RsNetworkExchangeService, public p3ThreadedService, public p3Config
 {
 public:
-
-	typedef RsSharedPtr<RsGxsNetService> pointer;
 
 	static const uint32_t FRAGMENT_SIZE;
     /*!
