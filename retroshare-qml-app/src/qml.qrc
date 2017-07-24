@@ -62,5 +62,6 @@
         <file>icons/leave.svg</file>
         <file>icons/paste.svg</file>
         <file>icons/share.svg</file>
+        <file>icons/info.svg</file>
     </qresource>
 </RCC>
