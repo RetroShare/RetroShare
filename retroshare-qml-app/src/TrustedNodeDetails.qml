@@ -110,48 +110,63 @@ Item
 
 		}
 
-		delegate: Column
+		delegate:
+		MouseArea
 		{
-			height: 60
 			width: parent.width
-			leftPadding: 4
-			spacing: 4
+			height: innerCol.height
 
-			Row
+			onClicked:
 			{
-				id: idRow
-				height: 30
+				console.log("triggerLocationConnectionAttempt()")
+			}
+
+			Column
+			{
+				id: innerCol
+				height: 60
+				width: parent.width
+				leftPadding: 4
 				spacing: 4
 
-				Image
+				Row
 				{
-					id: statusImage
-					source: model.is_online ?
-								"icons/network-connect.svg" :
-								"icons/network-disconnect.svg"
+					id: idRow
+					height: 30
+					spacing: 4
 
-					height: parent.height - 4
-					sourceSize.height: height
-					fillMode: Image.PreserveAspectFit
-					anchors.verticalCenter: parent.verticalCenter
+					Image
+					{
+						id: statusImage
+						source: model.is_online ?
+									"icons/network-connect.svg" :
+									"icons/network-disconnect.svg"
+
+						height: parent.height - 4
+						sourceSize.height: height
+						fillMode: Image.PreserveAspectFit
+						anchors.verticalCenter: parent.verticalCenter
+					}
+					Text
+					{
+						id: locNameText
+						text: model.location
+						anchors.verticalCenter: parent.verticalCenter
+					}
 				}
-				Text
+
+				TextAndIcon
 				{
-					id: locNameText
-					text: model.location
-					anchors.verticalCenter: parent.verticalCenter
+					width: parent.width
+					innerText:  model.peer_id
+					anchors.horizontalCenter: parent.horizontalCenter
+					iconUrl:  "/icons/keyring.svg"
+
 				}
-			}
-
-			TextAndIcon
-			{
-				width: parent.width
-				innerText:  model.peer_id
-				anchors.horizontalCenter: parent.horizontalCenter
-				iconUrl:  "/icons/keyring.svg"
-
 			}
 		}
+
+
 	}
 
 	Row
