@@ -90,14 +90,11 @@ bool     RsTlvBinaryData::setBinData(const void *data, uint32_t size)
 
 void RsTlvBinaryData::TlvClear()
 {
-	if (bin_data)
-	{
-		free(bin_data);
-	}
+	free(bin_data);
 	TlvShallowClear();
 }
 
-void  	RsTlvBinaryData::TlvShallowClear()
+void RsTlvBinaryData::TlvShallowClear()
 {
 	bin_data = NULL;
 	bin_len = 0;
