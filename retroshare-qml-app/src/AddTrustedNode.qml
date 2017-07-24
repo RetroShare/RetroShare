@@ -87,8 +87,6 @@ Item
 			{
 				id: importButton
 				text: qsTr("Import trusted node")
-//				anchors.horizontalCenter: parent.horizontalCenter
-				iconUrl: "/icons/paste.svg"
 				fontSize: 14
 
 				onClicked:
@@ -182,9 +180,7 @@ Item
 			ButtonText
 			{
 				id: btRsCert
-//				anchors.horizontalCenter: parent.horizontalCenter
 				text: qsTr("Export own certificate link")
-				iconUrl: "/icons/share.svg"
 				fontSize: 14
 				onClicked:
 				{
@@ -247,7 +243,6 @@ Item
 				id: btPlainCert
 				text: qsTr("Export own plain certificate")
 				fontSize: 14
-				iconUrl: "/icons/share.svg"
 				onClicked:
 				{
 					rsApi.request(
