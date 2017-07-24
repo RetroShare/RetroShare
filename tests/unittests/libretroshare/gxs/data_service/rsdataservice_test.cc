@@ -5,6 +5,7 @@
 #include "libretroshare/gxs/common/data_support.h"
 #include "rsdataservice_test.h"
 #include "gxs/rsgds.h"
+#include "gxs/rsgxsutil.h"
 #include "gxs/rsdataservice.h"
 
 #define DATA_BASE_NAME "msg_grp_Store"
@@ -221,7 +222,8 @@ void test_messageStoresAndRetrieve()
     // first selective retrieval
 
     GxsMsgResult msgResult;
-    GxsMsgMetaResult msgMetaResult;
+
+	RsGxsMetaDataTemporaryMapVector<RsGxsMsgMetaData> msgMetaResult ;
     dStore->retrieveNxsMsgs(req, msgResult, false);
 
     dStore->retrieveGxsMsgMetaData(req, msgMetaResult);

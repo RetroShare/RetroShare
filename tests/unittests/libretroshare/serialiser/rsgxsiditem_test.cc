@@ -38,11 +38,9 @@ bool operator==(const RsGxsIdGroupItem& it1,const RsGxsIdGroupItem& it2)
 
 	return true ;
 }
-RsSerialType* init_item(RsGxsIdGroupItem& item)
+void init_item(RsGxsIdGroupItem& item)
 {
     item.mPgpIdSign = "hello";
-
-	return new RsGxsIdSerialiser();
 }
 
 
@@ -50,7 +48,7 @@ TEST(libretroshare_serialiser, RsGxsIdItem)
 {
 	for(uint32_t i=0;i<20;++i)
 	{
-		test_RsItem< RsGxsIdGroupItem >();
+		test_RsItem< RsGxsIdGroupItem,RsGxsIdSerialiser >();
 	}
 }
 

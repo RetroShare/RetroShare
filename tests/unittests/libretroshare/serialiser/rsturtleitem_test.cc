@@ -237,11 +237,12 @@ TEST(libretroshare_serialiser, RsTurtleItem)
 		//test_RsItem<RsTurtleFileMapItem       >();
 		//test_RsItem<RsTurtleFileDataItem      >();
 		//test_RsItem<RsTurtleFileRequestItem   >();
-		test_RsItem<RsTurtleTunnelOkItem      >();
-		test_RsItem<RsTurtleOpenTunnelItem    >();
-		test_RsItem<RsTurtleSearchResultItem  >();
-		test_RsItem<RsTurtleStringSearchRequestItem >(); 
-		test_RsItem<RsTurtleRegExpSearchRequestItem >();
+
+		test_RsItem<RsTurtleTunnelOkItem      ,RsTurtleSerialiser>();
+		test_RsItem<RsTurtleOpenTunnelItem    ,RsTurtleSerialiser>();
+		test_RsItem<RsTurtleSearchResultItem  ,RsTurtleSerialiser>();
+		test_RsItem<RsTurtleStringSearchRequestItem ,RsTurtleSerialiser>();
+		test_RsItem<RsTurtleRegExpSearchRequestItem ,RsTurtleSerialiser>();
 	}
 }
 
