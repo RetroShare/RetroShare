@@ -210,6 +210,17 @@ Item
 			}
 		}
 
+		ButtonText
+		{
+			onClicked: plainCertificateRow.visible = !plainCertificateRow.visible
+			iconUrl: "/icons/options.svg"
+			anchors.horizontalCenter: parent.horizontalCenter
+			color: "white"
+			borderWidth: 1
+			text: qsTr("Advanced")
+
+		}
+
 		Row
 		{
 			id: plainCertificateRow
