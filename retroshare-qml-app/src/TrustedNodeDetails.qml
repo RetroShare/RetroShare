@@ -32,6 +32,11 @@ Item
 
 	property var locations
 
+	function attemptConnectionCB (par)
+	{
+		console.log("attemptConnectionCB()", par.response)
+	}
+
 
 	Image
 	{
@@ -119,6 +124,9 @@ Item
 			onClicked:
 			{
 				console.log("triggerLocationConnectionAttempt()")
+				rsApi.request("/peers/attempt_connection/",
+							  JSON.stringify({peer_id: model.peer_id}) , attemptConnectionCB)
+
 			}
 
 			Column
