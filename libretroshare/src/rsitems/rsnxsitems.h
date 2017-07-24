@@ -280,9 +280,10 @@ class RsNxsGrp : public RsNxsItem
 
 public:
 
-    RsNxsGrp(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_GRP_ITEM), grp(servtype), meta(servtype),
-    metaData(NULL) { clear();}
-    virtual ~RsNxsGrp() { if(metaData) delete metaData; }
+	RsNxsGrp(uint16_t servtype) :
+	    RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_GRP_ITEM), grp(servtype),
+	    meta(servtype), metaData(NULL) { clear(); }
+	virtual ~RsNxsGrp() { delete metaData; }
 
     RsNxsGrp* clone() const;
 
