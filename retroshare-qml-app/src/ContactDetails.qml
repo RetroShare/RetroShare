@@ -40,7 +40,7 @@ Item
 		anchors.horizontalCenter: parent.horizontalCenter
 
 		buttonTextPixelSize: 14
-		iconUrl: "/icons/attach-image.svg"
+		iconUrl: (isOwn)? "/icons/attach-image.svg": "/icons/chat-bubble.svg"
 		borderRadius: 0
 
 
