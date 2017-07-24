@@ -272,6 +272,8 @@ bool GxsSecurity::generateKeyPair(RsTlvPublicRSAKey& public_key,RsTlvPrivateRSAK
 	RSA_generate_key_ex(rsa, 2048, ebn, NULL);
     RSA *rsa_pub = RSAPublicKey_dup(rsa);
     
+	BN_clear_free(ebn) ;
+
     public_key.keyFlags = RSTLV_KEY_TYPE_PUBLIC_ONLY ;
     private_key.keyFlags = RSTLV_KEY_TYPE_FULL ;
 
