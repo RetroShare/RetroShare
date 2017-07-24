@@ -51,37 +51,37 @@ void freeAndClearContainerResource(Container container)
 
 // temporary holds a map of pointers to class T, and destroys all pointers on delete.
 
-template<class T>
-class RsGxsMetaDataTemporaryMap: public std::map<RsGxsGroupId,T*>
+template<class IdClass,class IdData>
+class t_RsGxsGenericDataTemporaryMap: public std::map<IdClass,IdData *>
 {
 public:
-    virtual ~RsGxsMetaDataTemporaryMap()
+    virtual ~t_RsGxsGenericDataTemporaryMap()
     {
         clear() ;
     }
 
     virtual void clear()
     {
-        for(typename RsGxsMetaDataTemporaryMap<T>::iterator it = this->begin();it!=this->end();++it)
+        for(typename t_RsGxsGenericDataTemporaryMap<IdClass,IdData>::iterator it = this->begin();it!=this->end();++it)
             if(it->second != NULL)
 		    delete it->second ;
 
-        std::map<RsGxsGroupId,T*>::clear() ;
+        std::map<IdClass,IdData*>::clear() ;
     }
 };
 
 template<class T>
-class RsGxsMetaDataTemporaryMapVector: public std::map<RsGxsGroupId,std::vector<T*> >
+class t_RsGxsGenericDataTemporaryMapVector: public std::map<RsGxsGroupId,std::vector<T*> >
 {
 public:
-    virtual ~RsGxsMetaDataTemporaryMapVector()
+    virtual ~t_RsGxsGenericDataTemporaryMapVector()
     {
         clear() ;
     }
 
     virtual void clear()
     {
-        for(typename RsGxsMetaDataTemporaryMapVector<T>::iterator it = this->begin();it!=this->end();++it)
+        for(typename t_RsGxsGenericDataTemporaryMapVector<T>::iterator it = this->begin();it!=this->end();++it)
         {
             for(uint32_t i=0;i<it->second.size();++i)
 				delete it->second[i] ;
@@ -92,6 +92,13 @@ public:
         std::map<RsGxsGroupId,std::vector<T*> >::clear() ;
     }
 };
+
+typedef t_RsGxsGenericDataTemporaryMap<RsGxsGroupId,RsGxsGrpMetaData> RsGxsGrpMetaTemporaryMap;
+typedef t_RsGxsGenericDataTemporaryMap<RsGxsGroupId,RsNxsGrp>         RsNxsGrpDataTemporaryMap;
+
+typedef t_RsGxsGenericDataTemporaryMapVector<RsGxsMsgMetaData>        RsGxsMsgMetaTemporaryMap ;
+typedef t_RsGxsGenericDataTemporaryMapVector<RsNxsMsg>                RsNxsMsgDataTemporaryMap ;
+
 #ifdef UNUSED
 template<class T>
 class RsGxsMetaDataTemporaryMapVector: public std::vector<T*>

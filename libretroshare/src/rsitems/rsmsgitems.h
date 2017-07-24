@@ -238,7 +238,7 @@ class RsMsgParentId : public RsMessageItem
 class RsMsgSerialiser: public RsServiceSerializer
 {
 	public:
-		RsMsgSerialiser(SerializationFlags flags)
+		RsMsgSerialiser(SerializationFlags flags = RsServiceSerializer::SERIALIZATION_FLAG_NONE)
 			:RsServiceSerializer(RS_SERVICE_TYPE_MSG,RsGenericSerializer::FORMAT_BINARY,flags){}
 
 		virtual     ~RsMsgSerialiser() {}

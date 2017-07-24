@@ -39,8 +39,10 @@ void test_groupStoreAndRetrieve(){
     std::map<RsNxsGrp*, RsGxsGrpMetaData*> grps, grps_copy;
     RsNxsGrp* grp;
     RsGxsGrpMetaData* grpMeta;
-    for(int i = 0; i < nGrp; i++){
-        std::pair<RsNxsGrp*, RsGxsGrpMetaData*> p;
+
+    for(int i = 0; i < nGrp; i++)
+	{
+		std::pair<RsNxsGrp*, RsGxsGrpMetaData*> p;
        grp = new RsNxsGrp(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM);
        grpMeta = new RsGxsGrpMetaData();
        p.first = grp;
@@ -64,8 +66,9 @@ void test_groupStoreAndRetrieve(){
     grps.clear();
     grps = grps_copy;
 
-    std::map<RsGxsGroupId, RsNxsGrp*> gR;
-    std::map<RsGxsGroupId, RsGxsGrpMetaData*> grpMetaR;
+    RsNxsGrpDataTemporaryMap gR;
+    RsGxsGrpMetaTemporaryMap grpMetaR;
+
     dStore->retrieveNxsGrps(gR, false, false);
     dStore->retrieveGxsGrpMetaData(grpMetaR);
 
@@ -119,12 +122,6 @@ void test_groupStoreAndRetrieve(){
             break;
         }
 
-        /* release resources */
-        delete l_Meta;
-        delete r_Meta;
-        delete l;
-        delete r;
-
         remove(grpId.toStdString().c_str());
     }
 
@@ -158,8 +155,8 @@ void test_messageStoresAndRetrieve()
     int nMsgs = rand()%120;
     GxsMsgReq req;
 
-    std::map<RsGxsMessageId, RsNxsMsg*> VergrpId0, VergrpId1;
-    std::map<RsGxsMessageId, RsGxsMsgMetaData*> VerMetagrpId0, VerMetagrpId1;
+	t_RsGxsGenericDataTemporaryMap<RsGxsMessageId,RsNxsMsg> VergrpId0, VergrpId1;
+    t_RsGxsGenericDataTemporaryMap<RsGxsMessageId, RsGxsMsgMetaData> VerMetagrpId0, VerMetagrpId1;
 
     for(int i=0; i<nMsgs; i++)
     {
@@ -221,11 +218,10 @@ void test_messageStoresAndRetrieve()
     // now retrieve msgs for comparison
     // first selective retrieval
 
-    GxsMsgResult msgResult;
+	t_RsGxsGenericDataTemporaryMapVector<RsNxsMsg> 	       msgResult ; //GxsMsgResult msgResult;. The temporary version cleans up itself.
+	t_RsGxsGenericDataTemporaryMapVector<RsGxsMsgMetaData> msgMetaResult ;
 
-	RsGxsMetaDataTemporaryMapVector<RsGxsMsgMetaData> msgMetaResult ;
     dStore->retrieveNxsMsgs(req, msgResult, false);
-
     dStore->retrieveGxsMsgMetaData(req, msgMetaResult);
 
     // now look at result for grpId 1

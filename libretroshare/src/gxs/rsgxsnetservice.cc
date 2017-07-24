@@ -551,14 +551,13 @@ void RsGxsNetService::syncWithPeers()
 
 #ifndef GXS_DISABLE_SYNC_MSGS
 
-    typedef RsGxsMetaDataTemporaryMap<RsGxsGrpMetaData> GrpMetaMap;
-    GrpMetaMap grpMeta;
+    RsGxsGrpMetaTemporaryMap grpMeta;
 
     mDataStore->retrieveGxsGrpMetaData(grpMeta);
 
-    GrpMetaMap toRequest;
+    RsGxsGrpMetaTemporaryMap toRequest;
 
-    for(GrpMetaMap::iterator mit = grpMeta.begin(); mit != grpMeta.end(); ++mit)
+    for(RsGxsGrpMetaTemporaryMap::iterator mit = grpMeta.begin(); mit != grpMeta.end(); ++mit)
     {
 	    RsGxsGrpMetaData* meta = mit->second;
 
@@ -596,7 +595,7 @@ void RsGxsNetService::syncWithPeers()
 	GXSNETDEBUG_P_(peerId) << "  syncing messages with peer " << peerId << std::endl;
 #endif
 
-        GrpMetaMap::const_iterator mmit = toRequest.begin();
+        RsGxsGrpMetaTemporaryMap::const_iterator mmit = toRequest.begin();
         for(; mmit != toRequest.end(); ++mmit)
         {
             const RsGxsGrpMetaData* meta = mmit->second;
@@ -678,7 +677,7 @@ void RsGxsNetService::syncGrpStatistics()
 #ifdef NXS_NET_DEBUG_6
     GXSNETDEBUG___<< "Sync-ing group statistics." << std::endl;
 #endif
-    RsGxsMetaDataTemporaryMap<RsGxsGrpMetaData> grpMeta;
+    RsGxsGrpMetaTemporaryMap grpMeta;
 
     mDataStore->retrieveGxsGrpMetaData(grpMeta);
 
@@ -751,7 +750,7 @@ void RsGxsNetService::handleRecvSyncGrpStatistics(RsNxsSyncGrpStatsItem *grs)
 #ifdef NXS_NET_DEBUG_6
 	    GXSNETDEBUG_PG(grs->PeerId(),grs->grpId) << "Received Grp update stats Request for group " << grs->grpId << " from friend " << grs->PeerId() << std::endl;
 #endif
-	RsGxsMetaDataTemporaryMap<RsGxsGrpMetaData> grpMetas;
+	RsGxsGrpMetaTemporaryMap grpMetas;
 	    grpMetas[grs->grpId] = NULL;
 
 	    mDataStore->retrieveGxsGrpMetaData(grpMetas);
@@ -1905,7 +1904,7 @@ void RsGxsNetService::updateClientSyncTS()
 
 void RsGxsNetService::updateServerSyncTS()
 {
-	RsGxsMetaDataTemporaryMap<RsGxsGrpMetaData> gxsMap;
+	RsGxsGrpMetaTemporaryMap gxsMap;
 
 #ifdef NXS_NET_DEBUG_0
     	GXSNETDEBUG___<< "updateServerSyncTS(): updating last modification time stamp of local data." << std::endl;
@@ -2719,7 +2718,7 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
     GXSNETDEBUG_PG(item->PeerId(),grpId) << "  grpId = " << grpId << std::endl;
     GXSNETDEBUG_PG(item->PeerId(),grpId) << "  retrieving grp mesta data..." << std::endl;
 #endif
-    RsGxsMetaDataTemporaryMap<RsGxsGrpMetaData> grpMetaMap;
+    RsGxsGrpMetaTemporaryMap grpMetaMap;
     grpMetaMap[grpId] = NULL;
 
     mDataStore->retrieveGxsGrpMetaData(grpMetaMap);
@@ -2977,7 +2976,7 @@ void RsGxsNetService::locked_genReqGrpTransaction(NxsTransaction* tr)
 #endif
 
     std::list<RsNxsSyncGrpItem*> grpItemL;
-    RsGxsMetaDataTemporaryMap<RsGxsGrpMetaData> grpMetaMap;
+    RsGxsGrpMetaTemporaryMap grpMetaMap;
 
     for(std::list<RsNxsItem*>::iterator lit = tr->mItems.begin(); lit != tr->mItems.end(); ++lit)
     {
@@ -3086,7 +3085,7 @@ void RsGxsNetService::locked_genSendGrpsTransaction(NxsTransaction* tr)
 
 	std::list<RsNxsItem*>::iterator lit = tr->mItems.begin();
 
-    	RsGxsMetaDataTemporaryMap<RsNxsGrp> grps ;
+    	t_RsGxsGenericDataTemporaryMap<RsGxsGroupId,RsNxsGrp> grps ;
 
 	for(;lit != tr->mItems.end(); ++lit)
 	{
@@ -3803,7 +3802,7 @@ void RsGxsNetService::handleRecvSyncGroup(RsNxsSyncGrpReqItem *item)
 	    return;
     }
 
-    RsGxsMetaDataTemporaryMap<RsGxsGrpMetaData> grp;
+    RsGxsGrpMetaTemporaryMap grp;
     mDataStore->retrieveGxsGrpMetaData(grp);
 
 #ifdef NXS_NET_DEBUG_0
@@ -4089,7 +4088,7 @@ void RsGxsNetService::handleRecvSyncMessage(RsNxsSyncMsgReqItem *item,bool item_
 	    return;
     }
 
-    RsGxsMetaDataTemporaryMap<RsGxsGrpMetaData> grpMetas;
+    RsGxsGrpMetaTemporaryMap grpMetas;
     grpMetas[item->grpId] = NULL;
 
     mDataStore->retrieveGxsGrpMetaData(grpMetas);
@@ -4628,7 +4627,7 @@ void RsGxsNetService::sharePublishKeysPending()
 
         // Get the meta data for this group Id
         //
-        RsGxsMetaDataTemporaryMap<RsGxsGrpMetaData> grpMetaMap;
+        RsGxsGrpMetaTemporaryMap grpMetaMap;
         grpMetaMap[mit->first] = NULL;
         mDataStore->retrieveGxsGrpMetaData(grpMetaMap);
 
@@ -4712,7 +4711,7 @@ void RsGxsNetService::handleRecvPublishKeys(RsNxsGroupPublishKeyItem *item)
 
 	// Get the meta data for this group Id
 	//
-	RsGxsMetaDataTemporaryMap<RsGxsGrpMetaData> grpMetaMap;
+	RsGxsGrpMetaTemporaryMap grpMetaMap;
 	grpMetaMap[item->grpId] = NULL;
 
 	mDataStore->retrieveGxsGrpMetaData(grpMetaMap);
