@@ -109,7 +109,7 @@ Item
 	ButtonText
 	{
 		id: bottomButton
-		text: qsTr("Add Trusted Node")
+		text: qsTr("Add/Share Trusted Node")
 		anchors.bottom: parent.bottom
 		onClicked: stackView.push("qrc:/AddTrustedNode.qml")
 		anchors.horizontalCenter: parent.horizontalCenter
