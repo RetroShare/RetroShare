@@ -48,9 +48,11 @@ public:
 	void addContextMenuAction(QAction *action);
 
 	QColor textColorQuote() const { return highliter->textColorQuote();}
+	bool onlyPlainText() const {return mOnlyPlainText;}
 
 public slots:
 	void setTextColorQuote(QColor textColorQuote) { highliter->setTextColorQuote(textColorQuote);}
+	void setOnlyPlainText(bool bOnlyPlainText) {mOnlyPlainText = bOnlyPlainText;}
 
 signals:
 	void calculateContextMenuActions();
@@ -80,6 +82,7 @@ private:
 	QString mCompleterStartString;
 	QList<QAction*> mContextMenuActions;
 	RsSyntaxHighlighter *highliter;
+	bool mOnlyPlainText;
 };
 
 #endif // MIMETEXTEDIT_H
