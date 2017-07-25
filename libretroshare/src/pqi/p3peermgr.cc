@@ -2320,6 +2320,7 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
             std::cerr << "(II) Loaded group in new format. ID = " << info.id << std::endl;
             groupList[info.id] = info ;
 
+			delete *it ;
             continue;
         }
 	    RsPeerBandwidthLimitsItem *pblitem = dynamic_cast<RsPeerBandwidthLimitsItem*>(*it) ;
