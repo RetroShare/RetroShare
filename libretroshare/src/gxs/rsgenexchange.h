@@ -863,8 +863,8 @@ private:
 
     std::vector<RsNxsMsg*> mReceivedMsgs;
 
-    typedef std::vector<GxsPendingItem<RsNxsGrp*, RsGxsGroupId> > NxsGrpPendValidVect;
-    NxsGrpPendValidVect mReceivedGrps;
+    typedef std::map<RsGxsGroupId,GxsPendingItem<RsNxsGrp*, RsGxsGroupId> > NxsGrpPendValidVect;
+    NxsGrpPendValidVect mGrpPendingValidate;
 
     std::vector<GxsGrpPendingSign> mGrpsToPublish;
     typedef std::vector<GxsGrpPendingSign> NxsGrpSignPendVect;
@@ -885,11 +885,10 @@ private:
     /// authentication policy
     uint32_t mAuthenPolicy;
 
-    std::map<uint32_t, GxsPendingItem<RsGxsMsgItem*, uint32_t> >
-    	mMsgPendingSign;
+    std::map<uint32_t, GxsPendingItem<RsGxsMsgItem*, uint32_t> > mMsgPendingSign;
 
-    std::vector<GxsPendingItem<RsNxsMsg*, RsGxsGrpMsgIdPair> > mMsgPendingValidate;
-    typedef std::vector<GxsPendingItem<RsNxsMsg*, RsGxsGrpMsgIdPair> > NxsMsgPendingVect;
+    typedef std::map<RsGxsMessageId,GxsPendingItem<RsNxsMsg*, RsGxsGrpMsgIdPair> > NxsMsgPendingVect;
+    NxsMsgPendingVect mMsgPendingValidate;
 
     bool mCleaning;
     time_t mLastClean;
