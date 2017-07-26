@@ -395,7 +395,7 @@ ChatPage::load()
 	 // load personal invites
 	 //
 #ifdef TO_BE_DONE
-	 for()
+	 for(;;)
 	 {
 		 QListWidgetItem *item = new QListWidgetItem;
 		 item->setData(Qt::DisplayRole,tr("Private chat invite from")+" "+QString::fromUtf8(detail.name.c_str())) ;

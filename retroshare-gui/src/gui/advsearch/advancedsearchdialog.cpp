@@ -128,6 +128,8 @@ RsRegularExpression::Expression * AdvancedSearchDialog::getRsExpr()
     
 
     // iterate through the items in elements and
+#warning Phenom (2017-07-21): I don't know if it is a real memLeak for wholeExpression. If not remove this warning and add a comment how it is deleted.
+    // cppcheck-suppress memleak
     for (int i = 1; i < expressions->size(); ++i) {
         // extract the expression information and compound it with the
         // first expression
