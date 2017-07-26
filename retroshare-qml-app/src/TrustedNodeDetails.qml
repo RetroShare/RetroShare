@@ -112,7 +112,7 @@ Item
 
 		delegate: Column
 		{
-			height: 60
+			height: idRow.height + gxsInfo.height
 			width: parent.width
 			leftPadding: 4
 			spacing: 4
@@ -145,6 +145,7 @@ Item
 
 			TextAndIcon
 			{
+				id: gxsInfo
 				width: parent.width
 				innerText:  model.peer_id
 				anchors.horizontalCenter: parent.horizontalCenter
