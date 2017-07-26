@@ -903,7 +903,7 @@ int printSSLError(SSL *ssl, int retval, int err, unsigned long err2, std::string
 {
 	(void) ssl; /* remove unused parameter warnings */
 
-	std::string reason;
+	//std::string reason;
 
 	std::string mainreason = std::string("UNKNOWN ERROR CODE");
 	if (err == SSL_ERROR_NONE)
