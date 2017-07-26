@@ -155,7 +155,7 @@ struct RsMsgMetaData
     time_t      mChildTs;
     std::string mServiceString; // Service Specific Free-Form extra storage.
 
-    const std::ostream &print(std::ostream &out, std::string indent = "", std::string varName = "") const {
+    const std::ostream &print(std::ostream &out, const std::string &indent = "", const std::string &varName = "") const {
         out
             << indent << varName << " of RsMsgMetaData Values ###################" << std::endl
             << indent << "  mGroupId: " << mGroupId.toStdString() << std::endl
@@ -239,7 +239,7 @@ public:
 class StringUpdateItem : public UpdateItem
 {
 public:
-    StringUpdateItem(const std::string update) : mUpdate(update) {}
+    explicit StringUpdateItem(const std::string &update) : mUpdate(update) {}
     const std::string& getUpdate() const { return mUpdate; }
 
 private:
@@ -253,7 +253,7 @@ public:
     // expand as support is added for other utypes
     enum UpdateType { DESCRIPTION, NAME };
 
-    RsGxsGroupUpdateMeta(const RsGxsGroupId& groupId) : mGroupId(groupId) {}
+    explicit RsGxsGroupUpdateMeta(const RsGxsGroupId& groupId) : mGroupId(groupId) {}
 
     typedef std::map<UpdateType, std::string> GxsMetaUpdate;
 
