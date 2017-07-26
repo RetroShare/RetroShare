@@ -36,7 +36,7 @@ struct RsItem;
 class pqiloopback: public PQInterface
 {
 public:
-	pqiloopback(const RsPeerId& id);
+	explicit pqiloopback(const RsPeerId& id);
 virtual ~pqiloopback();
 
 // search Interface.
