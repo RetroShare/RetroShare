@@ -141,6 +141,13 @@ QtObject
 			}
 
 		}
+	}
+
+	property QtObject facesCache: QtObject
+	{
+		id: facesCache
+		property var iconCache: ({})
+		property var callbackCache: ({})
 
 	}
 
