@@ -182,7 +182,7 @@ public:
     RsPeerId   peer_id ;
     uint32_t   count ;
 
-    RSTrafficClue() { TS=0;size=0;service_id=0;service_sub_id=0; count=0; }
+    RSTrafficClue() { TS=0;size=0;priority=0;service_id=0;service_sub_id=0; count=0; }
     RSTrafficClue& operator+=(const RSTrafficClue& tc) { size += tc.size; count += tc.count ; return *this ;}
 };
 
