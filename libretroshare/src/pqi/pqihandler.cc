@@ -196,7 +196,7 @@ bool	pqihandler::AddSearchModule(SearchModule *mod)
 {
 	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
 	// if peerid used -> error.
-	std::map<RsPeerId, SearchModule *>::iterator it;
+	//std::map<RsPeerId, SearchModule *>::iterator it;
 	if (mod->peerid != mod->pqi->PeerId())
 	{
 		// ERROR!
