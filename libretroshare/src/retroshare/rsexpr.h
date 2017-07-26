@@ -393,7 +393,7 @@ class PopExpression: public RelExpression<int>
 public:
     PopExpression(enum RelOperator op, int v): RelExpression<int>(op,v,v){}
     PopExpression(enum RelOperator op, int lv, int hv): RelExpression<int>(op,lv,hv) {}
-    PopExpression(const LinearizedExpression& e) ;
+    explicit PopExpression(const LinearizedExpression& e) ;
     bool eval(const ExpFileEntry& file);
 
 	virtual std::string toStdString() const { return RelExpression<int>::toStdString("POPULARITY"); }
