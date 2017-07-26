@@ -2,20 +2,21 @@ import QtQuick 2.0
 import QtQuick.Controls 2.0
 
 
-ToolButton
+Item
 {
-	height: icon.height + 5
+	height: innerText.implicitHeight
+
+	property int iconHeight: 25
 
 	property alias iconUrl: icon.source
 	property alias innerText: innerText.text
-
 
 	Image
 	{
 		id: icon
 
-		height: innerText.contentHeight
-		width: innerText.contentHeight
+		height: iconHeight
+		width: height
 
 		fillMode: Image.PreserveAspectFit
 		anchors.left: parent.left
