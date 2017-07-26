@@ -100,15 +100,17 @@ bool operator==(const RsTlvKeySignatureSet& , const RsTlvKeySignatureSet& );
  * @param T the item you want to test
  */
 
-template<class T> int test_RsItem()
+template<class ItemClass,class ItemSerialiser> int test_RsItem()
 {
 	/* make a serialisable RsTurtleItem */
 
 	RsSerialiser srl;
 
 	/* initialise */
-	T rsfi ;
-	RsSerialType *rsfis = init_item(rsfi) ;
+	ItemClass rsfi ;
+	RsSerialType *rsfis = new ItemSerialiser;
+
+	init_item(rsfi);
 
 	/* attempt to serialise it before we add it to the serialiser */
 	std::cerr << "### These errors are expected." << std::endl;
@@ -149,7 +151,7 @@ template<class T> int test_RsItem()
 
 	EXPECT_TRUE(sersize2 == sersize);
 
-	T *outfi = dynamic_cast<T *>(output);
+	ItemClass *outfi = dynamic_cast<ItemClass *>(output);
 
 	EXPECT_TRUE(outfi != NULL);
 	if (!outfi)
@@ -173,23 +175,24 @@ template<class T> int test_RsItem()
 	EXPECT_TRUE(done2) ;
 	EXPECT_TRUE(sersize2 == sersize);
 
-//	displayRawPacket(std::cerr, (void *) buffer, 16 * 8 + sersize2);
-
+	std::cerr << "Deleting output" <<std::endl;
+	delete output ;
 	delete[] buffer ;
-	//delete rsfis;
 
 	return 1;
 }
 
-template<class T> int test_RsItem(uint16_t servtype)
+template<class ItemClass,class ItemSerialiser> int test_RsItem(uint16_t servtype)
 {
         /* make a serialisable RsTurtleItem */
 
         RsSerialiser srl;
 
         /* initialise */
-        T rsfi(servtype) ;
-        RsSerialType *rsfis = init_item(rsfi) ; // deleted on destruction of srl
+        ItemClass rsfi(servtype) ;
+        RsSerialType *rsfis = new ItemSerialiser(servtype) ;
+
+		init_item(rsfi) ; // deleted on destruction of srl
 
         /* attempt to serialise it before we add it to the serialiser */
         std::cerr << "### These errors are expected." << std::endl;
@@ -224,7 +227,7 @@ template<class T> int test_RsItem(uint16_t servtype)
         EXPECT_TRUE(output != NULL);
         EXPECT_TRUE(sersize2 == sersize);
 
-        T *outfi = dynamic_cast<T *>(output);
+        ItemClass *outfi = dynamic_cast<ItemClass *>(output);
 
         EXPECT_TRUE(outfi != NULL);
 
@@ -240,6 +243,7 @@ template<class T> int test_RsItem(uint16_t servtype)
 //	displayRawPacket(std::cerr, (void *) buffer, 16 * 8 + sersize2);
 
         delete[] buffer ;
+		delete output ;
 
         return 1;
 }

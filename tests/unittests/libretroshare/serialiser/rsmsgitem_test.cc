@@ -33,19 +33,16 @@
 #include "rstlvutil.h"
 
 
-RsSerialType* init_item(RsChatMsgItem& cmi)
+void init_item(RsChatMsgItem& cmi)
 {
 	cmi.chatFlags = rand()%34;
 	cmi.sendTime = rand()%422224;
 	randString(LARGE_STR, cmi.message);
-
-	return new RsChatSerialiser();
 }
-RsSerialType* init_item(RsChatLobbyListRequestItem& )
+void init_item(RsChatLobbyListRequestItem& )
 {
-	return new RsChatSerialiser();
 }
-RsSerialType* init_item(RsChatLobbyListItem& cmi)
+void init_item(RsChatLobbyListItem& cmi)
 {
 	int n = rand()%20 ;
 
@@ -59,41 +56,33 @@ RsSerialType* init_item(RsChatLobbyListItem& cmi)
         info.flags = ChatLobbyFlags(RSRandom::random_u32()%3) ;
         cmi.lobbies.push_back(info);
 	}
-
-	return new RsChatSerialiser();
 }
-RsSerialType* init_item(RsChatLobbyMsgItem& cmi)
+void init_item(RsChatLobbyMsgItem& cmi)
 {
-	RsSerialType *serial = init_item( *dynamic_cast<RsChatMsgItem*>(&cmi)) ;
+	init_item( *dynamic_cast<RsChatMsgItem*>(&cmi)) ;
 
 	cmi.msg_id = RSRandom::random_u64() ;
 	cmi.lobby_id = RSRandom::random_u64() ;
 	cmi.nick = "My nickname" ;
 	cmi.parent_msg_id = RSRandom::random_u64() ;
-
-	return serial ;
 }
-RsSerialType *init_item(RsChatLobbyEventItem& cmi)
+void init_item(RsChatLobbyEventItem& cmi)
 {
 	cmi.lobby_id = RSRandom::random_u64() ;
 	cmi.msg_id = RSRandom::random_u64() ;
 	randString(20, cmi.nick);
 	cmi.event_type = RSRandom::random_u32()%256 ;
 	randString(20, cmi.string1);
-
-	return new RsChatSerialiser();
 }
 
-RsSerialType* init_item(RsChatLobbyInviteItem& cmi)
+void init_item(RsChatLobbyInviteItem& cmi)
 {
 	cmi.lobby_id = RSRandom::random_u64() ;
 	cmi.lobby_name = "Name of the lobby" ;
 	cmi.lobby_topic = "Topic of the lobby" ;
-
-	return new RsChatSerialiser();
 }
 
-RsSerialType* init_item(RsPrivateChatMsgConfigItem& pcmi)
+void init_item(RsPrivateChatMsgConfigItem& pcmi)
 {
     pcmi.configPeerId = RsPeerId::random();
 	pcmi.chatFlags = rand()%34;
@@ -101,33 +90,27 @@ RsSerialType* init_item(RsPrivateChatMsgConfigItem& pcmi)
 	pcmi.sendTime = rand()%422224;
 	randString(LARGE_STR, pcmi.message);
 	pcmi.recvTime = rand()%344443;
-
-	return new RsChatSerialiser();
 }
 
-RsSerialType* init_item(RsChatStatusItem& csi)
+void init_item(RsChatStatusItem& csi)
 {
 
 	randString(SHORT_STR, csi.status_string);
 	csi.flags = rand()%232;
 
-	return new RsChatSerialiser();
-
 }
 
-RsSerialType* init_item(RsChatAvatarItem& cai)
+void init_item(RsChatAvatarItem& cai)
 {
 	std::string image_data;
 	randString(LARGE_STR, image_data);
-	cai.image_data = new unsigned char[image_data.size()];
+	cai.image_data = (unsigned char*)malloc(image_data.size());
 
 	memcpy(cai.image_data, image_data.c_str(), image_data.size());
 	cai.image_size = image_data.size();
-
-	return new RsChatSerialiser();
 }
 
-RsSerialType* init_item(RsMsgItem& mi)
+void init_item(RsMsgItem& mi)
 {
 	init_item(mi.attachment);
 	init_item(mi.rspeerid_msgbcc);
@@ -141,21 +124,17 @@ RsSerialType* init_item(RsMsgItem& mi)
 	mi.recvTime = rand()%44252;
 	mi.sendTime = mi.recvTime;
 	mi.msgFlags = mi.recvTime;
-
-	return new RsMsgSerialiser(RsServiceSerializer::SERIALIZATION_FLAG_NONE);
 }
 
-RsSerialType* init_item(RsMsgTagType& mtt)
+void init_item(RsMsgTagType& mtt)
 {
 	mtt.rgb_color = rand()%5353;
 	mtt.tagId = rand()%24242;
 	randString(SHORT_STR, mtt.text);
-
-	return new RsMsgSerialiser(RsServiceSerializer::SERIALIZATION_FLAG_NONE);
 }
 
 
-RsSerialType* init_item(RsMsgTags& mt)
+void init_item(RsMsgTags& mt)
 {
 	mt.msgId = rand()%3334;
 
@@ -163,24 +142,18 @@ RsSerialType* init_item(RsMsgTags& mt)
 	for (i = 0; i < 10; i++) {
 		mt.tagIds.push_back(rand()%21341);
 	}
-
-	return new RsMsgSerialiser(RsServiceSerializer::SERIALIZATION_FLAG_NONE);
 }
 
-RsSerialType* init_item(RsMsgSrcId& ms)
+void init_item(RsMsgSrcId& ms)
 {
 	ms.msgId = rand()%434;
     ms.srcId = RsPeerId::random();
-
-	return new RsMsgSerialiser(RsServiceSerializer::SERIALIZATION_FLAG_NONE);
 }
 
-RsSerialType* init_item(RsMsgParentId& ms)
+void init_item(RsMsgParentId& ms)
 {
 	ms.msgId = rand()%354;
 	ms.msgParentId = rand()%476;
-
-	return new RsMsgSerialiser(RsServiceSerializer::SERIALIZATION_FLAG_NONE);
 }
 
 bool operator ==(const struct VisibleChatLobbyInfo& l, const struct VisibleChatLobbyInfo& r)
@@ -335,19 +308,19 @@ bool operator ==(const RsMsgParentId& msLeft, const RsMsgParentId& msRight)
 
 TEST(libretroshare_serialiser, RsMsgItem)
 {
-	test_RsItem<RsChatMsgItem >();
-	test_RsItem<RsChatLobbyMsgItem >();
-	test_RsItem<RsChatLobbyInviteItem >();
-	test_RsItem<RsChatLobbyEventItem >();
-	test_RsItem<RsChatLobbyListRequestItem >();
-	test_RsItem<RsChatLobbyListItem >();
-	test_RsItem<RsChatStatusItem >();
-	test_RsItem<RsChatAvatarItem >();
-	test_RsItem<RsMsgItem >();
-	test_RsItem<RsMsgTagType>();
-	test_RsItem<RsMsgTags>();
-	test_RsItem<RsMsgSrcId>();
-	test_RsItem<RsMsgParentId>();
+	test_RsItem<RsChatMsgItem              ,RsChatSerialiser>();
+	test_RsItem<RsChatLobbyMsgItem         ,RsChatSerialiser>();
+	test_RsItem<RsChatLobbyInviteItem      ,RsChatSerialiser>();
+	test_RsItem<RsChatLobbyEventItem       ,RsChatSerialiser>();
+	test_RsItem<RsChatLobbyListRequestItem ,RsChatSerialiser>();
+	test_RsItem<RsChatLobbyListItem        ,RsChatSerialiser>();
+	test_RsItem<RsChatStatusItem           ,RsChatSerialiser>();
+	test_RsItem<RsChatAvatarItem           ,RsChatSerialiser>();
+	test_RsItem<RsMsgItem                  ,RsMsgSerialiser>();
+	test_RsItem<RsMsgTagType               ,RsMsgSerialiser>();
+	test_RsItem<RsMsgTags                  ,RsMsgSerialiser>();
+	test_RsItem<RsMsgSrcId                 ,RsMsgSerialiser>();
+	test_RsItem<RsMsgParentId              ,RsMsgSerialiser>();
 }
 
 

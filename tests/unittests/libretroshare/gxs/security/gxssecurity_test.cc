@@ -63,7 +63,7 @@ TEST(libretroshare_gxs, GxsSecurity)
 	// create some random data and sign it / verify the signature.
 	
 	uint32_t data_len = 1000 + RSRandom::random_u32()%100 ;
-	char *data = new char[data_len] ;
+	RsTemporaryMemory data(data_len) ;
 
 	RSRandom::random_bytes((unsigned char *)data,data_len) ;
 
@@ -71,8 +71,8 @@ TEST(libretroshare_gxs, GxsSecurity)
 
 	RsTlvKeySignature signature ;
 
-	EXPECT_TRUE(GxsSecurity::getSignature(data,data_len,priv_key,signature) );
-	EXPECT_TRUE(GxsSecurity::validateSignature(data,data_len,pub_key,signature) );
+	EXPECT_TRUE(GxsSecurity::getSignature((char*)(unsigned char*)data,data_len,priv_key,signature) );
+	EXPECT_TRUE(GxsSecurity::validateSignature((char*)(unsigned char*)data,data_len,pub_key,signature) );
 
 	std::cerr << "  Signature: size=" << signature.signData.bin_len << ", Hash=" << RsDirUtil::sha1sum((const uint8_t*)signature.signData.bin_data,signature.signData.bin_len) << std::endl;
 
@@ -95,6 +95,9 @@ TEST(libretroshare_gxs, GxsSecurity)
 	//
 	EXPECT_TRUE(data_len == outlen2) ;
 	EXPECT_TRUE(!memcmp(data,out2,outlen2)) ;
+
+	free(out2) ;
+	free(out) ;
 }
 
 

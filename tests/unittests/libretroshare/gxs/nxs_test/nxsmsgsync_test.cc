@@ -17,6 +17,20 @@
 
 using namespace rs_nxs_test;
 
+rs_nxs_test::NxsMsgSync::~NxsMsgSync()
+{
+	for(std::map<RsPeerId,RsNxsNetMgr*>::const_iterator it(mNxsNetMgrs.begin());it!=mNxsNetMgrs.end();++it)
+		delete it->second ;
+
+	for(DataMap::const_iterator it(mDataServices.begin());it!=mDataServices.end();++it)
+		delete it->second ;
+
+	delete mRep ;
+	delete mCircles;
+	delete mPgpUtils;
+}
+
+
 rs_nxs_test::NxsMsgSync::NxsMsgSync()
  : mPgpUtils(NULL), mServType(0) {
 	int numPeers = 2;
@@ -79,8 +93,8 @@ rs_nxs_test::NxsMsgSync::NxsMsgSync()
 			// first store grp
 			RsGeneralDataService* ds = mit->second;
 			RsNxsGrp* grp_clone = grp->clone();
-			RsGeneralDataService::GrpStoreMap gsp;
-			gsp.insert(std::make_pair(grp_clone, grp_clone->metaData));
+			RsNxsGrpDataTemporaryList gsp;
+			gsp.push_back(grp_clone);
 			ds->storeGroup(gsp);
 
 			RsGxsGroupId grpId = grp->grpId;
@@ -95,10 +109,12 @@ rs_nxs_test::NxsMsgSync::NxsMsgSync()
 				msg->grpId = grp->grpId;
 				RsGxsMsgMetaData* msgMeta = new RsGxsMsgMetaData();
 				init_item(msgMeta);
+				msg->metaData = msgMeta;
 				msgMeta->mGroupId = grp->grpId;
 				msgMeta->mMsgId = msg->msgId;
-				RsGeneralDataService::MsgStoreMap msm;
-				msm.insert(std::make_pair(msg , msgMeta));
+
+				RsNxsMsgDataTemporaryList msm;
+				msm.push_back(msg);
 				RsGxsMessageId msgId = msg->msgId;
 				ds->storeMessage(msm);
 
