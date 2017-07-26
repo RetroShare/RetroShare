@@ -194,6 +194,26 @@ Drawer
 								ClipboardWrapper.getFromClipBoard(),
 									handleIntentUri);
 					},
+					"Share identity": function()
+					{
+						rsApi.request(
+							"/peers/self/certificate/", "",
+							function(par)
+							{
+								var radix = JSON.parse(par.response).data.cert_string
+								var name = mainWindow.user_name
+								var encodedName = UriJs.URI.encode(name)
+								var nodeUrl = (
+									"retroshare://certificate?" +
+									"name=" + encodedName +
+									"&radix=" + UriJs.URI.encode(radix) +
+									"&location=" + encodedName )
+								ClipboardWrapper.postToClipBoard(nodeUrl)
+								linkCopiedPopup.itemName = name
+								linkCopiedPopup.open()
+								platformGW.shareUrl(nodeUrl);
+							})
+					},
 					"Terminate Core": function()
 					{
 						rsApi.request("/control/shutdown");
@@ -217,6 +237,12 @@ Drawer
 					title: "Paste Link"
 					showOnCoreReady: true
 					icon: "/icons/add.svg"
+				}
+				ListElement
+				{
+					title: "Share identity"
+					showOnCoreReady: true
+					icon: "/icons/share.svg"
 				}
 				ListElement
 				{
