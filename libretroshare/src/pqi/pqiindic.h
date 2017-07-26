@@ -36,7 +36,7 @@
 class Indicator
 {
 	public:
-	Indicator(uint16_t n = 1)
+	explicit Indicator(uint16_t n = 1)
 	:num(n), changeFlags(n) {IndicateChanged();}
 void	IndicateChanged()
 	{
