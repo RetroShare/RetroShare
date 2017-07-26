@@ -75,7 +75,7 @@ void test_groupStoreAndRetrieve(){
             break;
         }
 
-        RsNxsGrp *l = (*mit);
+        RsNxsGrp *l = *mit;
         RsNxsGrp *r = gR[grpId];
 
         // assign transaction number
