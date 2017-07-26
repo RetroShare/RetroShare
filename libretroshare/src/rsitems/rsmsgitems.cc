@@ -52,7 +52,6 @@ RsItem *RsMsgSerialiser::create_item(uint16_t service,uint8_t type) const
 	case RS_PKT_SUBTYPE_MSG_TAGS 	 	   : return new RsMsgTags() ;                  //= 0x04;
 	case RS_PKT_SUBTYPE_MSG_SRC_TAG 	   : return new RsMsgSrcId();                  //= 0x05;
 	case RS_PKT_SUBTYPE_MSG_PARENT_TAG 	   : return new RsMsgParentId() ;              //= 0x06;
-	case RS_PKT_SUBTYPE_MSG_INVITE    	   : return new RsPublicMsgInviteConfigItem(); //= 0x07;
 	case RS_PKT_SUBTYPE_MSG_GROUTER_MAP    : return new RsMsgGRouterMap();             //= 0x08;
 	case RS_PKT_SUBTYPE_MSG_DISTANT_MSG_MAP : return new RsMsgDistantMessagesHashMap();//= 0x09;
 	default:
@@ -80,11 +79,6 @@ void 	RsMsgItem::clear()
 	attachment.TlvClear();
 }
 
-void RsPublicMsgInviteConfigItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
-{
-    RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_HASH_SHA1,hash,"hash") ;
-    RsTypeSerializer::serial_process<uint32_t>(j,ctx,(uint32_t&)time_stamp,"time_stamp") ;
-}
 void RsMsgTagType::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_NAME,text,"text") ;
@@ -169,11 +163,6 @@ void RsMsgTagType::clear()
 	rgb_color = 0;
 }
 
-void RsPublicMsgInviteConfigItem::clear()
-{
-	hash.clear() ;
-	time_stamp = 0 ;
-}
 void RsMsgTags::clear()
 {
 	msgId = 0;

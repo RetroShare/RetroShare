@@ -175,21 +175,6 @@ class RsMsgSrcId : public RsMessageItem
 		uint32_t msgId;
 		RsPeerId srcId;
 };
-class RsPublicMsgInviteConfigItem : public RsMessageItem
-{
-	public:
-		RsPublicMsgInviteConfigItem() : RsMessageItem(RS_PKT_SUBTYPE_MSG_INVITE) {}
-
-		virtual void serial_process(RsGenericSerializer::SerializeJob /* j */,RsGenericSerializer::SerializeContext& /* ctx */);
-
-		virtual ~RsPublicMsgInviteConfigItem() {}
-		virtual void clear();
-
-		// ----------- Specific fields ------------- //
-		//
-		std::string hash ;
-		time_t time_stamp ;
-};
 
 class RsMsgGRouterMap : public RsMessageItem
 {
