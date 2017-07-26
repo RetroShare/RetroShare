@@ -3340,7 +3340,7 @@ void RsGenExchange::removeDeleteExistingMessages( std::list<RsNxsMsg*>& msgs, Gx
 	}
 
 	// now for each msg to be stored that exist in the retrieved msg/grp "index" delete and erase from map
-	for(std::list<RsNxsMsg*>::iterator cit2 = msgs.begin(); cit2 != msgs.end(); ++cit2)
+	for(std::list<RsNxsMsg*>::iterator cit2 = msgs.begin(); cit2 != msgs.end();)
 	{
 		const RsGxsMessageId::std_vector& msgIds = msgIdReq[(*cit2)->metaData->mGroupId];
 
@@ -3352,7 +3352,8 @@ void RsGenExchange::removeDeleteExistingMessages( std::list<RsNxsMsg*>& msgs, Gx
 		//
 		if(std::find(msgIds.begin(), msgIds.end(), (*cit2)->metaData->mMsgId) != msgIds.end() || !messagePublicationTest( *(*cit2)->metaData))
 		{
-			// msg exist in retrieved index
+			// msg exist in retrieved index. We should use a std::set here instead of a vector.
+
 			RsGxsMessageId::std_vector& notifyIds = msgIdsNotify[ (*cit2)->metaData->mGroupId];
 			RsGxsMessageId::std_vector::iterator it2 = std::find(notifyIds.begin(), notifyIds.end(), (*cit2)->metaData->mMsgId);
 			if(it2 != notifyIds.end())
@@ -3368,9 +3369,10 @@ void RsGenExchange::removeDeleteExistingMessages( std::list<RsNxsMsg*>& msgs, Gx
 #endif
 
 			delete *cit2;
-			msgs.erase(cit2);
-			// cit2->second will be deleted too in the destructor of cit2->first (RsNxsMsg)
+			cit2 = msgs.erase(cit2);
 		}
+		else
+			++cit2;
 	}
 }
 
