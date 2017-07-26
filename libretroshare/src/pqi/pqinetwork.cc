@@ -124,10 +124,6 @@ std::string socket_errorType(int err)
 	{
 		return std::string("EAGAIN");
 	}
-	else if (err == EISCONN)
-	{
-		return std::string("EISCONN");
-	}
 	else if (err == ENOTCONN)
 	{
 		return std::string("ENOTCONN");
@@ -223,10 +219,6 @@ std::string socket_errorType(int err)
 	else if (err == WSAENOPROTOOPT)
 	{
 		return std::string("WSAENOPROTOOPT");
-	}
-	else if (err == WSAENOTSOCK)
-	{
-		return std::string("WSAENOTSOCK");
 	}
 	else if (err == WSAEISCONN)
 	{
