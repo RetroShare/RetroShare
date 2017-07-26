@@ -499,24 +499,23 @@ int RsInit::InitRetroShare(int _argc, char **_argv, bool /* strictCheck */)
 			}
 		}
 
-#ifdef TO_REMOVE
-		/* check that we have selected someone */
-		RsPeerId preferredId;
-		bool existingUser = rsAccounts->getPreferredAccountId(preferredId);
+#ifdef RS_AUTOLOGIN
+	/* check that we have selected someone */
+	RsPeerId preferredId;
+	bool existingUser = rsAccounts->getPreferredAccountId(preferredId);
 
-		if (existingUser)
+	if (existingUser)
+	{
+		if(RsLoginHandler::getSSLPassword(preferredId,false,rsInitConfig->passwd))
 		{
-			if (rsInitConfig->passwd != "")
-
-			if(RsLoginHandler::getSSLPassword(preferredId,false,rsInitConfig->passwd))
-			{
-				RsInit::setAutoLogin(true);
-				std::cerr << "Autologin has succeeded" << std::endl;
-				return RS_INIT_HAVE_ACCOUNT;
-			}
+			RsInit::setAutoLogin(true);
+			std::cerr << "Autologin has succeeded" << std::endl;
+			return RS_INIT_HAVE_ACCOUNT;
 		}
+	}
 #endif
-		return RS_INIT_OK;
+
+	return RS_INIT_OK;
 }
 
 
