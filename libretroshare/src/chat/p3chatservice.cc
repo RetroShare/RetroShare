@@ -161,6 +161,9 @@ class p3ChatService::AvatarInfo
 			if (&ai == this)
 				return *this;
 
+			free( _image_data );
+			_image_data = NULL ;
+			_image_size = 0 ;
 			init(ai._image_data,ai._image_size) ;
 			_peer_is_new = ai._peer_is_new;
 			_own_is_new = ai._own_is_new;
