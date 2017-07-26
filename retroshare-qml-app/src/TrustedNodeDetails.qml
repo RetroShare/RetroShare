@@ -96,6 +96,8 @@ Item
 		clip: true
 		snapMode: ListView.SnapToItem
 
+		spacing:7
+
 		header:Rectangle
 		{
 			color: "aliceblue"
@@ -132,10 +134,10 @@ Item
 			Column
 			{
 				id: innerCol
-				height: 60
+				height: idRow.height + gxsInfo.height
 				width: parent.width
 				leftPadding: 4
-				spacing: 4
+				spacing: 6
 
 				Row
 				{
@@ -165,6 +167,7 @@ Item
 
 				TextAndIcon
 				{
+					id: gxsInfo
 					width: parent.width
 					innerText:  model.peer_id
 					anchors.horizontalCenter: parent.horizontalCenter
@@ -173,8 +176,6 @@ Item
 				}
 			}
 		}
-
-
 	}
 
 	Row
