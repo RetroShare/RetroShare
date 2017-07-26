@@ -535,7 +535,7 @@ public:
 					return QVariant();
 
 				FileProgressInfo pinfo;
-				pinfo.cmap = fcinfo.chunks;
+				pinfo.cmap = CompressedChunkMap(fcinfo.chunks);
 				pinfo.type = FileProgressInfo::DOWNLOAD_LINE;
 				pinfo.progress = (fileInfo.size == 0) ? 0 : (fileInfo.transfered * 100.0 / fileInfo.size);
 				pinfo.nb_chunks = pinfo.cmap._map.empty() ? 0 : fcinfo.chunks.size();
@@ -1513,7 +1513,7 @@ int TransfersDialog::addDLItem(int row, const FileInfo &fileInfo)
 	}
 
 	FileProgressInfo pinfo;
-	pinfo.cmap = fcinfo.chunks;
+	pinfo.cmap = CompressedChunkMap(fcinfo.chunks);
 	pinfo.type = FileProgressInfo::DOWNLOAD_LINE;
 	pinfo.progress = (fileInfo.size == 0) ? 0 : (completed * 100.0 / fileInfo.size);
 	pinfo.nb_chunks = pinfo.cmap._map.empty() ? 0 : fcinfo.chunks.size();

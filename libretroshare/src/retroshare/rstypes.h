@@ -310,7 +310,7 @@ class CompressedChunkMap : public RsSerializable
 	public:
 		CompressedChunkMap() {}
 
-		CompressedChunkMap(const std::vector<FileChunksInfo::ChunkState>& uncompressed_data)
+		explicit CompressedChunkMap(const std::vector<FileChunksInfo::ChunkState>& uncompressed_data)
 		{
 			_map.resize( getCompressedSize(uncompressed_data.size()),0 ) ;
 
@@ -323,7 +323,7 @@ class CompressedChunkMap : public RsSerializable
 					set(i) ;
 		}
 
-		CompressedChunkMap(uint32_t nb_chunks,uint32_t value)
+		explicit CompressedChunkMap(uint32_t nb_chunks,uint32_t value)
 		{
 			_map.resize(getCompressedSize(nb_chunks),value) ;
 		}
@@ -396,11 +396,11 @@ typedef t_CRCMap<Sha1CheckSum> 	Sha1Map ;
 /* class which encapsulates download details */
 class DwlDetails {
 public:
-	DwlDetails() { return; }
-    DwlDetails(const std::string& fname, const RsFileHash& hash, int count, std::string dest,
-			uint32_t flags, std::list<std::string> srcIds, uint32_t queue_pos)
+	DwlDetails() : count(0), flags(0), queue_position(0), retries(0) {}
+	DwlDetails(const std::string& fname, const RsFileHash& hash, int count, const std::string& dest,
+			uint32_t flags, const std::list<std::string>& srcIds, uint32_t queue_pos)
 	: fname(fname), hash(hash), count(count), dest(dest), flags(flags),
-	srcIds(srcIds), queue_position(queue_pos), retries(0) { return; }
+	srcIds(srcIds), queue_position(queue_pos), retries(0) {}
 
 	/* download details */
 	std::string fname;
