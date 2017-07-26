@@ -133,6 +133,14 @@ QtObject
 			}
 			return ""
 		}
+		function delIdentityAvatar (gxsId)
+		{
+			if (identityDetails[gxsId] && identityDetails[gxsId].avatar !== undefined)
+			{
+				identityDetails[gxsId].avatar = ""
+			}
+
+		}
 
 	}
 

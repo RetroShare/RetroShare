@@ -65,7 +65,7 @@ Item
 									if (jP.returncode === "ok")
 									{
 										console.log("Avatar changed! ")
-										topFace.getDetails()
+										topFace.refresh()
 									}
 								})
 			}

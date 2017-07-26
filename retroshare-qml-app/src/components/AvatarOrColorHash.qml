@@ -105,6 +105,13 @@ Item
 
 		}
 	}
+	function refresh()
+	{
+		ChatCache.contactsCache.delIdentityAvatar(gxs_id)
+		compRoot.avatarAttemptCnt = 0
+		getDetails()
+
+	}
 
 	Component.onCompleted: startComponent ()
 
