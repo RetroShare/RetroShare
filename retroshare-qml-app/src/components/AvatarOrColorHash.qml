@@ -142,6 +142,8 @@ Item
 	{
 		visible: !compRoot.has_avatar
 		hash: compRoot.gxs_id
+		anchors.fill: parent
+		iconSize: parent.height
 	}
 
 	MouseArea

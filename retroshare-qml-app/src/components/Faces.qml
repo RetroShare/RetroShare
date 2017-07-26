@@ -24,7 +24,7 @@ Item
 			{
 				for (y = 0 ;  y< nPieces ; y++)
 				{
-					ctx.drawImage(images[y], 0, 0	)
+					ctx.drawImage(images[y], 0, 0, iconSize, iconSize )
 				}
 			}
 		}
