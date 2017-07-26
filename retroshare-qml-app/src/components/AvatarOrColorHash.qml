@@ -138,9 +138,8 @@ Item
 		visible: compRoot.has_avatar
 	}
 
-	ColorHash
+	Faces
 	{
-		anchors.fill: parent
 		visible: !compRoot.has_avatar
 		hash: compRoot.gxs_id
 	}

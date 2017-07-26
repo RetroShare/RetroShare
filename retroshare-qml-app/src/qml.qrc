@@ -742,6 +742,6 @@
         <file>icons/faces/male64/mouth7.png</file>
         <file>icons/faces/male64/mouth8.png</file>
         <file>icons/faces/male64/mouth9.png</file>
-        <file>components/Faces.js</file>
+        <file>components/Faces.qml</file>
     </qresource>
 </RCC>
