@@ -185,8 +185,9 @@ int	pqiperson::tick()
 				connectStr = " In Connection Attempt ";
 
 			std::cerr << "pqiperson::tick() Id: " << PeerId().toStdString()
-					  << "activepqi: " << activepqi << " inConnectAttempt:"
-					  << connectStr << std::endl;
+					  << "activepqi: " << activepqi
+					  << "status: " << statusStr
+					  << " inConnectAttempt:" << connectStr << std::endl;
 #endif
 	
 			// tick the children.
