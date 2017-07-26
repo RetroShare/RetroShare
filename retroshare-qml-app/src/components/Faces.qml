@@ -1,19 +1,32 @@
 import QtQuick 2.7
+import Qt.labs.settings 1.0
+import "../" // Needed by ChatCache (where stores generated faces)
 
 Item
 {
 
-	id: faceRoot
+	id: faces
 
 	property string hash
+	property var facesCache: ChatCache.facesCache
+
+
+	Image
+	{
+		id: faceAvatar
+		width: iconSize
+		height: iconSize
+	}
 
 	Canvas
 	{
 		id: faceCanvas
 		width: iconSize
 		height: iconSize
+		visible: false
 
 		property var images
+		property var callback
 
 
 		onPaint:
@@ -27,6 +40,13 @@ Item
 					ctx.drawImage(images[y], 0, 0, iconSize, iconSize )
 				}
 			}
+
+
+			if (callback)
+			{
+				var data = faceCanvas.toDataURL()
+				callback(data)
+			}
 		}
 	}
 
@@ -35,9 +55,6 @@ Item
 		createFromHex(hash)
 	}
 
-
-	property var iconCache: ({})
-	property var callbackCache: ({})
 
 	property var facesPath: "/icons/faces/"
 
@@ -108,13 +125,14 @@ Item
 		var onloads = [];
 		for (var i=0; i<nPieces; i++)
 		{
-			onloads.push(src(gender, i, data[i+1]))
-			faceCanvas.loadImage(src(gender, i, data[i+1]))
+			var url = src(gender, i, data[i+1])
+			onloads.push(url)
+			faceCanvas.loadImage(url)
 		}
 		faceCanvas.images = onloads
+		faceCanvas.callback = callback
 		faceCanvas.requestPaint()
 	}
-
 
 	// Create the identicon
 	function createFromHex(dataHex)
@@ -122,32 +140,34 @@ Item
 		var iconId = [dataHex, iconSize];
 		var update = function(data)
 		    {
-			    iconCache[iconId] = data;
-//				element.html('<img class="identicon" width='+iconSize+' height='+iconSize+' src="'+data+'">');
+			    facesCache.iconCache[iconId] = data;
+			    faceAvatar.source =  data
 		    }
-		if (iconCache.hasOwnProperty(iconId))
+
+		if (facesCache.iconCache.hasOwnProperty(iconId))
 		{
-			update(iconCache[iconId]);
+			update(facesCache.iconCache[iconId])
 		}
-		else if(callbackCache.hasOwnProperty(iconId))
+		else if(facesCache.callbackCache.hasOwnProperty(iconId))
 		{
-			callbackCache[iconId].push(update);
+			facesCache.callbackCache[iconId].push(update)
 		}
 		else
 		{
 			var onImageGenerated = function(data)
 			    {
-				    callbackCache[iconId].forEach(function(callback)
+
+				    facesCache.callbackCache[iconId].forEach(function(callback)
 					    {
 						    callback(data);
 					    })
 			    }
 
-		callbackCache[iconId] = [update];
-		if (dataHex)
-		{
-			generateImage(calcDataFromFingerprint(dataHex), onImageGenerated);
+			facesCache.callbackCache[iconId] = [update];
+			if (dataHex)
+			{
+				generateImage(calcDataFromFingerprint(dataHex), onImageGenerated);
+			}
 		}
-	  }
 	}
 }
