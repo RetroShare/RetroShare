@@ -63,9 +63,9 @@ class RsGxsForums: public RsGxsIfaceHelper
 {
 public:
 
-	RsGxsForums(RsGxsIface *gxs)
-	    :RsGxsIfaceHelper(gxs)  { return; }
-	virtual ~RsGxsForums() { return; }
+	explicit RsGxsForums(RsGxsIface *gxs)
+	  :RsGxsIfaceHelper(gxs)  {}
+	virtual ~RsGxsForums() {}
 
 	/* Specific Service Data */
 	virtual bool getGroupData(const uint32_t &token, std::vector<RsGxsForumGroup> &groups) = 0;
