@@ -192,7 +192,7 @@ class NetInterface;
 class PQInterface: public RateInterface
 {
 	public:
-		PQInterface(const RsPeerId &id) :peerId(id) { return; }
+		explicit PQInterface(const RsPeerId &id) :peerId(id) { return; }
 		virtual	~PQInterface() { return; }
 
 		/*!
