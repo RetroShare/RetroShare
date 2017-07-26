@@ -326,7 +326,6 @@ void    p3LinkMgrIMPL::statusTick()
 	std::cerr << "p3LinkMgrIMPL::statusTick()" << std::endl;
 #endif
 	std::list<RsPeerId> retryIds;
-	std::list<RsPeerId>::iterator it2;
         //std::list<std::string> dummyToRemove;
 
       {
@@ -362,8 +361,8 @@ void    p3LinkMgrIMPL::statusTick()
       }
 
 #ifndef P3CONNMGR_NO_AUTO_CONNECTION 
-
-        for(it2 = retryIds.begin(); it2 != retryIds.end(); ++it2)
+	std::list<RsPeerId>::iterator it2;
+	for(it2 = retryIds.begin(); it2 != retryIds.end(); ++it2)
 	{
 #ifdef LINKMGR_DEBUG_TICK
 		std::cerr << "p3LinkMgrIMPL::statusTick() RETRY TIMEOUT for: ";
