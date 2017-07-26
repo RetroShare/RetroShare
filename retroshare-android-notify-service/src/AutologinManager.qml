@@ -31,7 +31,7 @@ QtObject
 	property int loginAttemptCount: 0
 	property bool attemptingLogin: false
 
-	property int loginNotificationTime: 0
+	property var loginNotificationTime: 0
 
 	function delay(msecs, func)
 	{
