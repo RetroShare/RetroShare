@@ -39,6 +39,8 @@
 #include <list>
 #include <set>
 
+// The class 't_RsGenericIdType' has 'copy constructor' but lack of 'operator='.
+// cppcheck-suppress copyCtorAndEqOperator
 template<uint32_t ID_SIZE_IN_BYTES,bool UPPER_CASE,uint32_t UNIQUE_IDENTIFIER> class t_RsGenericIdType
 {
 	public:
