@@ -52,7 +52,7 @@
 class RsReputationItem: public RsItem
 {
 	public:
-		RsReputationItem(uint8_t reputation_subtype) : RsItem(RS_PKT_VERSION_SERVICE,RS_SERVICE_GXS_TYPE_REPUTATION,reputation_subtype) 
+		explicit RsReputationItem(uint8_t reputation_subtype) : RsItem(RS_PKT_VERSION_SERVICE,RS_SERVICE_GXS_TYPE_REPUTATION,reputation_subtype)
 		{ 
 			setPriorityLevel(QOS_PRIORITY_RS_GXSREPUTATION_ITEM);
 		}
@@ -64,7 +64,10 @@ class RsReputationItem: public RsItem
 class RsGxsReputationConfigItem: public RsReputationItem
 {
 public:
-	RsGxsReputationConfigItem()  :RsReputationItem(RS_PKT_SUBTYPE_GXS_REPUTATION_CONFIG_ITEM) {}
+	RsGxsReputationConfigItem()
+	  :RsReputationItem(RS_PKT_SUBTYPE_GXS_REPUTATION_CONFIG_ITEM)
+	  , mLatestUpdate(0), mLastQuery(0)
+	{}
 
 	virtual ~RsGxsReputationConfigItem() {}
 	virtual void clear() {}
@@ -73,7 +76,7 @@ public:
 
 	RsPeerId mPeerId;
 	uint32_t mLatestUpdate; // timestamp they returned.
-    uint32_t mLastQuery;	// when we sent out.
+	uint32_t mLastQuery;	// when we sent out.
 };
 
 #ifdef TO_REMOVE
@@ -83,7 +86,10 @@ public:
 class RsGxsReputationSetItem_deprecated3: public RsReputationItem
 {
 public:
-    RsGxsReputationSetItem_deprecated3()  :RsReputationItem(RS_PKT_SUBTYPE_GXS_REPUTATION_SET_ITEM_deprecated3) {}
+	RsGxsReputationSetItem_deprecated3()
+	  :RsReputationItem(RS_PKT_SUBTYPE_GXS_REPUTATION_SET_ITEM_deprecated3)
+	  , mOwnOpinion(0), mOwnOpinionTS(0), mIdentityFlags(0)
+	{}
 
     virtual ~RsGxsReputationSetItem_deprecated3() {}
     virtual void clear() {}
@@ -126,7 +132,10 @@ public:
 class RsGxsReputationBannedNodeSetItem: public RsReputationItem
 {
 public:
-    RsGxsReputationBannedNodeSetItem()  :RsReputationItem(RS_PKT_SUBTYPE_GXS_REPUTATION_BANNED_NODE_SET_ITEM) {}
+	RsGxsReputationBannedNodeSetItem()
+	  :RsReputationItem(RS_PKT_SUBTYPE_GXS_REPUTATION_BANNED_NODE_SET_ITEM)
+	  , mLastActivityTS(0)
+	{}
 
     virtual ~RsGxsReputationBannedNodeSetItem() {}
     virtual void clear();
@@ -141,7 +150,10 @@ public:
 class RsGxsReputationUpdateItem: public RsReputationItem
 {
 public:
-    RsGxsReputationUpdateItem()  :RsReputationItem(RS_PKT_SUBTYPE_GXS_REPUTATION_UPDATE_ITEM) {}
+	RsGxsReputationUpdateItem()
+	  :RsReputationItem(RS_PKT_SUBTYPE_GXS_REPUTATION_UPDATE_ITEM)
+	  , mLatestUpdate(0)
+	{}
 
     virtual ~RsGxsReputationUpdateItem() {}
     virtual void clear();  
@@ -155,7 +167,10 @@ public:
 class RsGxsReputationRequestItem: public RsReputationItem
 {
 public:
-    RsGxsReputationRequestItem()  :RsReputationItem(RS_PKT_SUBTYPE_GXS_REPUTATION_REQUEST_ITEM) {}
+	RsGxsReputationRequestItem()
+	  :RsReputationItem(RS_PKT_SUBTYPE_GXS_REPUTATION_REQUEST_ITEM)
+	  , mLastUpdate(0)
+	{}
 
     virtual ~RsGxsReputationRequestItem() {}
     virtual void clear() {}
