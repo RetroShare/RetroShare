@@ -46,7 +46,7 @@ const uint8_t RS_PKT_SUBTYPE_DISC_CONTACT            = 0x05;
 class RsDiscItem: public RsItem
 {
 	protected:
-		RsDiscItem(uint8_t subtype) :RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_DISC, subtype) {}
+		explicit RsDiscItem(uint8_t subtype) :RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_DISC, subtype) {}
 };
 
 
@@ -59,7 +59,8 @@ class RsDiscPgpListItem: public RsDiscItem
 public:
 
 	RsDiscPgpListItem()
-	    :RsDiscItem(RS_PKT_SUBTYPE_DISC_PGP_LIST)
+	  :RsDiscItem(RS_PKT_SUBTYPE_DISC_PGP_LIST)
+	  , mode(0)
 	{
 		setPriorityLevel(QOS_PRIORITY_RS_DISC_PGP_LIST);
 	}
@@ -100,7 +101,9 @@ class RsDiscContactItem: public RsDiscItem
 public:
 
 	RsDiscContactItem()
-	    :RsDiscItem(RS_PKT_SUBTYPE_DISC_CONTACT)
+	  :RsDiscItem(RS_PKT_SUBTYPE_DISC_CONTACT)
+	  , netMode(0), vs_disc(0), vs_dht(0), lastContact(0)
+	  , isHidden(false), hiddenPort(0)
 	{
 		setPriorityLevel(QOS_PRIORITY_RS_DISC_CONTACT);
 	}
