@@ -42,13 +42,14 @@
 class RsBwCtrlAllowedItem: public RsItem
 {
 public:
-	RsBwCtrlAllowedItem()  :RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_BWCTRL,  RS_PKT_SUBTYPE_BWCTRL_ALLOWED_ITEM)
+	RsBwCtrlAllowedItem()
+	  :RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_BWCTRL,  RS_PKT_SUBTYPE_BWCTRL_ALLOWED_ITEM)
+	  , allowedBw(0)
 	{
 		setPriorityLevel(QOS_PRIORITY_RS_BWCTRL_ALLOWED_ITEM);
-		return;
 	}
 
-    virtual ~RsBwCtrlAllowedItem() {}
+	virtual ~RsBwCtrlAllowedItem() {}
 	virtual void clear();
 
 	void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
