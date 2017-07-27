@@ -43,8 +43,8 @@ const uint8_t RS_PKT_SUBTYPE_GXSID_LOCAL_INFO_ITEM = 0x05;
 
 class RsGxsIdItem: public RsGxsGrpItem
 {
-    public:
-        RsGxsIdItem(uint8_t item_subtype) : RsGxsGrpItem(RS_SERVICE_GXS_TYPE_GXSID,item_subtype) {}
+public:
+	explicit RsGxsIdItem(uint8_t item_subtype) : RsGxsGrpItem(RS_SERVICE_GXS_TYPE_GXSID,item_subtype) {}
 };
 
 class RsGxsIdGroupItem : public RsGxsIdItem
