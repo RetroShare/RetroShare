@@ -12,7 +12,7 @@
 class RsItem: public RsMemoryManagement::SmallObject
 {
 	public:
-		RsItem(uint32_t t);
+		explicit RsItem(uint32_t t);
 		RsItem(uint8_t ver, uint8_t cls, uint8_t t, uint8_t subtype);
 #ifdef DO_STATISTICS
 		void *operator new(size_t s) ;
