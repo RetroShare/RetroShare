@@ -83,7 +83,8 @@ const uint32_t RS_MSG_FLAGS_SYSTEM                = RS_MSG_FLAGS_USER_REQUEST | 
 class RsMessageItem: public RsItem
 {
 	public:
-		RsMessageItem(uint8_t msg_subtype) : RsItem(RS_PKT_VERSION_SERVICE,RS_SERVICE_TYPE_MSG,msg_subtype) 
+		explicit RsMessageItem(uint8_t msg_subtype)
+		  : RsItem(RS_PKT_VERSION_SERVICE,RS_SERVICE_TYPE_MSG,msg_subtype)
 		{
 			setPriorityLevel(QOS_PRIORITY_RS_MSG_ITEM) ;
 		}
@@ -96,7 +97,10 @@ class RsMessageItem: public RsItem
 class RsMsgItem: public RsMessageItem
 {
 	public:
-		RsMsgItem() :RsMessageItem(RS_PKT_SUBTYPE_DEFAULT) {}
+		RsMsgItem()
+		  : RsMessageItem(RS_PKT_SUBTYPE_DEFAULT)
+		  , msgFlags(0), msgId(0), sendTime(0), recvTime(0)
+		{}
 
 		virtual ~RsMsgItem() {}
 		virtual void clear();
@@ -128,7 +132,10 @@ class RsMsgItem: public RsMessageItem
 class RsMsgTagType : public RsMessageItem
 {
 	public:
-		RsMsgTagType() :RsMessageItem(RS_PKT_SUBTYPE_MSG_TAG_TYPE) {}
+		RsMsgTagType()
+		  : RsMessageItem(RS_PKT_SUBTYPE_MSG_TAG_TYPE)
+		  , rgb_color(0), tagId(0)
+		{}
 
 		virtual void serial_process(RsGenericSerializer::SerializeJob /* j */,RsGenericSerializer::SerializeContext& /* ctx */);
 
@@ -146,7 +153,9 @@ class RsMsgTags : public RsMessageItem
 {
 public:
 	RsMsgTags()
-		:RsMessageItem(RS_PKT_SUBTYPE_MSG_TAGS) {}
+	  : RsMessageItem(RS_PKT_SUBTYPE_MSG_TAGS)
+	  , msgId(0)
+	{}
 
 		virtual void serial_process(RsGenericSerializer::SerializeJob /* j */,RsGenericSerializer::SerializeContext& /* ctx */);
 
@@ -162,7 +171,10 @@ public:
 class RsMsgSrcId : public RsMessageItem
 {
 	public:
-		RsMsgSrcId() : RsMessageItem(RS_PKT_SUBTYPE_MSG_SRC_TAG) {}
+		RsMsgSrcId()
+		  : RsMessageItem(RS_PKT_SUBTYPE_MSG_SRC_TAG)
+		  , msgId(0)
+		{}
 
 		virtual void serial_process(RsGenericSerializer::SerializeJob /* j */,RsGenericSerializer::SerializeContext& /* ctx */);
 
@@ -207,7 +219,10 @@ class RsMsgDistantMessagesHashMap : public RsMessageItem
 class RsMsgParentId : public RsMessageItem
 {
 	public:
-		RsMsgParentId() : RsMessageItem(RS_PKT_SUBTYPE_MSG_PARENT_TAG) {}
+		RsMsgParentId()
+		  : RsMessageItem(RS_PKT_SUBTYPE_MSG_PARENT_TAG)
+		  , msgId(0), msgParentId(0)
+		{}
 
 		virtual void serial_process(RsGenericSerializer::SerializeJob /* j */,RsGenericSerializer::SerializeContext& /* ctx */);
 
@@ -223,8 +238,8 @@ class RsMsgParentId : public RsMessageItem
 class RsMsgSerialiser: public RsServiceSerializer
 {
 	public:
-		RsMsgSerialiser(SerializationFlags flags = RsServiceSerializer::SERIALIZATION_FLAG_NONE)
-			:RsServiceSerializer(RS_SERVICE_TYPE_MSG,RsGenericSerializer::FORMAT_BINARY,flags){}
+		explicit RsMsgSerialiser(SerializationFlags flags = RsServiceSerializer::SERIALIZATION_FLAG_NONE)
+		  :RsServiceSerializer(RS_SERVICE_TYPE_MSG,RsGenericSerializer::FORMAT_BINARY,flags) {}
 
 		virtual     ~RsMsgSerialiser() {}
 
