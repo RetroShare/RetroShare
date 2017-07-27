@@ -117,8 +117,8 @@ class RsWiki: public RsGxsIfaceHelper
 {
 	public:
 
-	RsWiki(RsGxsIface *gxs): RsGxsIfaceHelper(gxs)  { return; }
-virtual ~RsWiki() { return; }
+	explicit RsWiki(RsGxsIface *gxs): RsGxsIfaceHelper(gxs) {}
+	virtual ~RsWiki() {}
 
 	/* Specific Service Data */
 virtual bool getCollections(const uint32_t &token, std::vector<RsWikiCollection> &collections) = 0;
