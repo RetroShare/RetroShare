@@ -55,7 +55,7 @@ const uint8_t RS_PKT_SUBTYPE_FT_CACHE_REQUEST = 0x0B;
 class RsFileTransferItem: public RsItem
 {
 	public:
-		RsFileTransferItem(uint8_t ft_subtype)  : RsItem(RS_PKT_VERSION_SERVICE,RS_SERVICE_TYPE_FILE_TRANSFER,ft_subtype)  {}
+		explicit RsFileTransferItem(uint8_t ft_subtype)  : RsItem(RS_PKT_VERSION_SERVICE,RS_SERVICE_TYPE_FILE_TRANSFER,ft_subtype)  {}
 
 		virtual ~RsFileTransferItem() {}
 
@@ -65,7 +65,9 @@ class RsFileTransferItem: public RsItem
 class RsFileTransferDataRequestItem: public RsFileTransferItem
 {
 	public:
-	RsFileTransferDataRequestItem() :RsFileTransferItem(RS_PKT_SUBTYPE_FT_DATA_REQUEST)
+	RsFileTransferDataRequestItem()
+	  :RsFileTransferItem(RS_PKT_SUBTYPE_FT_DATA_REQUEST)
+	  , fileoffset(0), chunksize(0)
 	{ 
 		setPriorityLevel(QOS_PRIORITY_RS_FILE_REQUEST) ;
 	}
@@ -104,7 +106,9 @@ class RsFileTransferDataItem: public RsFileTransferItem
 class RsFileTransferChunkMapRequestItem: public RsFileTransferItem
 {
 	public:
-		RsFileTransferChunkMapRequestItem() :RsFileTransferItem(RS_PKT_SUBTYPE_FT_CHUNK_MAP_REQUEST)
+		RsFileTransferChunkMapRequestItem()
+		  :RsFileTransferItem(RS_PKT_SUBTYPE_FT_CHUNK_MAP_REQUEST)
+		  , is_client(false)
 		{
 			setPriorityLevel(QOS_PRIORITY_RS_FILE_MAP_REQUEST) ;
 		}
@@ -123,7 +127,8 @@ class RsFileTransferChunkMapItem: public RsFileTransferItem
 {
 	public:
 		RsFileTransferChunkMapItem() 
-			:RsFileTransferItem(RS_PKT_SUBTYPE_FT_CHUNK_MAP)
+		  :RsFileTransferItem(RS_PKT_SUBTYPE_FT_CHUNK_MAP)
+		  , is_client(false)
 		{
 			setPriorityLevel(QOS_PRIORITY_RS_FILE_MAP) ;
 		}
@@ -135,14 +140,16 @@ class RsFileTransferChunkMapItem: public RsFileTransferItem
 		// Private data part.
 		//
 		bool is_client ; 		// is the request for a client, or a server ? 
-        RsFileHash hash ;	// hash of the file for which we request the chunk map
+		RsFileHash hash ;	// hash of the file for which we request the chunk map
 		CompressedChunkMap compressed_map ; // Chunk map of the file.
 };
 
 class RsFileTransferSingleChunkCrcRequestItem: public RsFileTransferItem
 {
 	public:
-		RsFileTransferSingleChunkCrcRequestItem() :RsFileTransferItem(RS_PKT_SUBTYPE_FT_CHUNK_CRC_REQUEST)
+		RsFileTransferSingleChunkCrcRequestItem()
+		  :RsFileTransferItem(RS_PKT_SUBTYPE_FT_CHUNK_CRC_REQUEST)
+		  , chunk_number(0)
 		{
 			setPriorityLevel(QOS_PRIORITY_RS_CHUNK_CRC_REQUEST) ;
 		}
@@ -153,14 +160,16 @@ class RsFileTransferSingleChunkCrcRequestItem: public RsFileTransferItem
 
 		// Private data part.
 		//
-        RsFileHash hash ;		// hash of the file for which we request the crc
+		RsFileHash hash ;		// hash of the file for which we request the crc
 		uint32_t chunk_number ;	// chunk number
 };
 
 class RsFileTransferSingleChunkCrcItem: public RsFileTransferItem
 {
 	public:
-		RsFileTransferSingleChunkCrcItem() :RsFileTransferItem(RS_PKT_SUBTYPE_FT_CHUNK_CRC)
+		RsFileTransferSingleChunkCrcItem()
+		  :RsFileTransferItem(RS_PKT_SUBTYPE_FT_CHUNK_CRC)
+		  , chunk_number(0)
 		{
 			setPriorityLevel(QOS_PRIORITY_RS_CHUNK_CRC) ;
 		}
