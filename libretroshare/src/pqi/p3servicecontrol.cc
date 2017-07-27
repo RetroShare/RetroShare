@@ -1367,7 +1367,7 @@ void RsServicePermissions::resetPermission(const RsPeerId& peerId)
 
 RsServiceInfo::RsServiceInfo(
 		const uint16_t service_type,
-		const std::string service_name,
+		const std::string& service_name,
 		const uint16_t version_major,
 		const uint16_t version_minor,
 		const uint16_t min_version_major,
