@@ -41,7 +41,7 @@ class RsGxsCommentItem : public RsGxsMsgItem
 {
 public:
 
-	RsGxsCommentItem(uint16_t service_type): RsGxsMsgItem(service_type,  RS_PKT_SUBTYPE_GXSCOMMENT_COMMENT_ITEM) {}
+	explicit RsGxsCommentItem(uint16_t service_type): RsGxsMsgItem(service_type,  RS_PKT_SUBTYPE_GXSCOMMENT_COMMENT_ITEM) {}
 	virtual ~RsGxsCommentItem() {}
     void clear(){}
 
@@ -55,7 +55,7 @@ class RsGxsVoteItem : public RsGxsMsgItem
 {
 public:
 
-	RsGxsVoteItem(uint16_t service_type): RsGxsMsgItem(service_type, RS_PKT_SUBTYPE_GXSCOMMENT_VOTE_ITEM) {}
+	explicit RsGxsVoteItem(uint16_t service_type): RsGxsMsgItem(service_type, RS_PKT_SUBTYPE_GXSCOMMENT_VOTE_ITEM) {}
 	virtual ~RsGxsVoteItem() {}
     void clear(){}
 
@@ -68,7 +68,7 @@ class RsGxsCommentSerialiser : public RsServiceSerializer
 {
 public:
 
-	RsGxsCommentSerialiser(uint16_t service_type) :RsServiceSerializer(service_type) {}
+	explicit RsGxsCommentSerialiser(uint16_t service_type) :RsServiceSerializer(service_type) {}
 	virtual     ~RsGxsCommentSerialiser() {}
 
     virtual RsItem *create_item(uint16_t service_id,uint8_t item_subtype) const ;
