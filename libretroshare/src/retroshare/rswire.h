@@ -108,8 +108,8 @@ class RsWire: public RsGxsIfaceHelper
 {
 	public:
 
-	RsWire(RsGxsIface *gxs): RsGxsIfaceHelper(gxs)  { return; }
-virtual ~RsWire() { return; }
+	explicit RsWire(RsGxsIface *gxs): RsGxsIfaceHelper(gxs) {}
+	virtual ~RsWire() {}
 
 	/* Specific Service Data */
 virtual bool getGroupData(const uint32_t &token, std::vector<RsWireGroup> &groups) = 0;
