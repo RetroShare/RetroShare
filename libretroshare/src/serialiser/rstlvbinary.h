@@ -37,9 +37,9 @@ class RsTlvBinaryData: public RsTlvItem
 {
 public:
 	RsTlvBinaryData();
-	RsTlvBinaryData(uint16_t t);
+	explicit RsTlvBinaryData(uint16_t t);
 	RsTlvBinaryData(const RsTlvBinaryData& b); // as per rule of three
-	void operator=(const RsTlvBinaryData& b); // as per rule of three
+	RsTlvBinaryData& operator=(const RsTlvBinaryData& b); // as per rule of three
         
 	virtual ~RsTlvBinaryData(); // as per rule of three
         

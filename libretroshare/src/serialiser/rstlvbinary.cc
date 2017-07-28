@@ -58,10 +58,12 @@ RsTlvBinaryData::~RsTlvBinaryData()
 	TlvClear();
 }
 
-void RsTlvBinaryData::operator =(const RsTlvBinaryData& b){
+RsTlvBinaryData& RsTlvBinaryData::operator =(const RsTlvBinaryData& b){
 
-    setBinData(b.bin_data, b.bin_len);
-    tlvtype = b.tlvtype;
+	setBinData(b.bin_data, b.bin_len);
+	tlvtype = b.tlvtype;
+
+	return *this;
 }
 
 /// used to allocate memory andinitialize binary data member 
