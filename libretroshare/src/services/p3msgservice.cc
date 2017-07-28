@@ -1185,7 +1185,7 @@ bool 	p3MsgService::MessageSend(MessageInfo &info)
 
 	if (msg)
 	{
-		std::list<RsPgpId>::iterator it ;
+		//std::list<RsPgpId>::iterator it ;
 
 		if (msg->msgFlags & RS_MSG_FLAGS_SIGNED)
 			msg->msgFlags |= RS_MSG_FLAGS_SIGNATURE_CHECKS;	// this is always true, since we are sending the message
