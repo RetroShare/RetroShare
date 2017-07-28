@@ -1011,9 +1011,11 @@ int RsServer::StartupRetroShare()
 		RestrictedUdpLayer *url = (RestrictedUdpLayer *) mDhtStack->getUdpLayer();
 		url->addRestrictedPortRange(lport, uport);
 	}
-#else
+#else //LOCALNET_TESTING
+#ifdef RS_USE_BITDHT
 	rsUdpStack *mDhtStack = new rsUdpStack(tmpladdr);
 #endif
+#endif //LOCALNET_TESTING
 
 #ifdef RS_USE_BITDHT
 
@@ -1153,10 +1155,10 @@ int RsServer::StartupRetroShare()
 #ifdef RS_USE_DHT_STUNNER
 	mNetMgr->setAddrAssist(new stunAddrAssist(mDhtStunner), new stunAddrAssist(mProxyStunner));
 #endif // RS_USE_DHT_STUNNER
-#else
+#else //RS_USE_BITDHT
 	/* install NULL Pointer for rsDht Interface */
 	rsDht = NULL;
-#endif
+#endif //RS_USE_BITDHT
 
 
 	/**************************** BITDHT ***********************************/
@@ -1605,7 +1607,7 @@ int RsServer::StartupRetroShare()
 #endif
 	//mConfigMgr->addConfiguration("photo.cfg", photo_ns);
 	//mConfigMgr->addConfiguration("wire.cfg", wire_ns);
-#endif
+#endif //RS_ENABLE_GXS
 	mConfigMgr->addConfiguration("I2PBOB.cfg", mI2pBob);
 
 	mPluginsManager->addConfigurations(mConfigMgr) ;
