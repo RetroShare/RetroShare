@@ -64,7 +64,7 @@ RsItem::RsItem(uint32_t t)
 class Counter
 {
 	public: 
-		Counter(int i): _i(i) {}
+		static Counter(int i): _i(i) {}
 		Counter(): _i(0) {} 
 
 		int v() const { return _i ; }
@@ -538,7 +538,7 @@ uint16_t  getRsItemService(uint32_t type)
 }
 
 
-std::ostream &printRsItemBase(std::ostream &out, std::string clsName, uint16_t indent)
+std::ostream &printRsItemBase(std::ostream &out, const std::string &clsName, uint16_t indent)
 {
         printIndent(out, indent);
 	out << "RsItem: " << clsName << " ####################################";
@@ -546,7 +546,7 @@ std::ostream &printRsItemBase(std::ostream &out, std::string clsName, uint16_t i
         return out;
 }
 
-std::ostream &printRsItemEnd(std::ostream &out, std::string clsName, uint16_t indent)
+std::ostream &printRsItemEnd(std::ostream &out, const std::string &clsName, uint16_t indent)
 {
         printIndent(out, indent);
         out << "###################### " << clsName << " #####################";
