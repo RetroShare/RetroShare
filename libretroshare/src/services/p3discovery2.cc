@@ -913,7 +913,7 @@ void p3discovery2::processContactInfo(const SSLID &fromId, const RsDiscContactIt
 		/* insert! */
 		DiscSslInfo sslInfo;
 		it->second.mSslIds[item->sslId] = sslInfo;
-		sit = it->second.mSslIds.find(item->sslId);
+		//sit = it->second.mSslIds.find(item->sslId);
 
 		should_notify_discovery = true;
 
