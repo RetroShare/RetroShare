@@ -559,7 +559,9 @@ bool p3GxsReputation::SendReputations(RsGxsReputationRequestItem *request)
 	tit = mUpdated.upper_bound(last_update); // could skip some - (fixed below).
 
 	int count = 0;
+#ifdef DEBUG_REPUTATION
 	int totalcount = 0;
+#endif
 	RsGxsReputationUpdateItem *pkt = new RsGxsReputationUpdateItem();
     
 	pkt->PeerId(peerId);
@@ -596,7 +598,9 @@ bool p3GxsReputation::SendReputations(RsGxsReputationRequestItem *request)
 		}
 		
 		count++;
+#ifdef DEBUG_REPUTATION
 		totalcount++;
+#endif
 
 		if (count > kMaximumSetSize)
 		{
@@ -966,11 +970,8 @@ void p3GxsReputation::banNode(const RsPgpId& id,bool b)
     }
     else
     {
-        if(mBannedPgpIds.find(id) != mBannedPgpIds.end())
-        {
-            mBannedPgpIds.erase(id) ;
+        if( mBannedPgpIds.erase(id) > 0)
             IndicateConfigChanged();
-        }
     }
 }
 bool p3GxsReputation::isNodeBanned(const RsPgpId& id)

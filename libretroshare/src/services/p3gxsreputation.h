@@ -50,10 +50,10 @@ class ReputationConfig
 {
 public:
 	ReputationConfig()
-    :mPeerId(), mLatestUpdate(0), mLastQuery(0) { return; }
+	  : mPeerId(), mLatestUpdate(0), mLastQuery(0) {}
 
-	ReputationConfig(const RsPeerId& peerId)
-    :mPeerId(peerId), mLatestUpdate(0), mLastQuery(0) { return; }
+	explicit ReputationConfig(const RsPeerId& peerId)
+	  : mPeerId(peerId), mLatestUpdate(0), mLastQuery(0) {}
 
 	RsPeerId mPeerId;
 	time_t mLatestUpdate;
@@ -70,10 +70,18 @@ class Reputation
 {
 public:
 	Reputation()
-        	:mOwnOpinion(RsReputations::OPINION_NEUTRAL), mOwnOpinionTs(0),mFriendAverage(1.0f), mReputationScore(RsReputations::OPINION_NEUTRAL),mIdentityFlags(0){ }
-                                                                                            
-	Reputation(const RsGxsId& /*about*/)
-        	:mOwnOpinion(RsReputations::OPINION_NEUTRAL), mOwnOpinionTs(0),mFriendAverage(1.0f), mReputationScore(RsReputations::OPINION_NEUTRAL),mIdentityFlags(0){ }
+	  : mOwnOpinion(RsReputations::OPINION_NEUTRAL), mOwnOpinionTs(0)
+	  , mFriendAverage(1.0f), mFriendsPositive(0), mFriendsNegative(0)
+	  , mReputationScore(RsReputations::OPINION_NEUTRAL), mIdentityFlags(0)
+	  , mLastUsedTS(0)
+	{}
+
+	explicit Reputation(const RsGxsId& /*about*/)
+	  : mOwnOpinion(RsReputations::OPINION_NEUTRAL), mOwnOpinionTs(0)
+	  , mFriendAverage(1.0f), mFriendsPositive(0), mFriendsNegative(0)
+	  , mReputationScore(RsReputations::OPINION_NEUTRAL), mIdentityFlags(0)
+	  , mLastUsedTS(0)
+	{}
 
 	void updateReputation();
 
@@ -104,7 +112,7 @@ public:
 class p3GxsReputation: public p3Service, public p3Config, public RsGixsReputation, public RsReputations /* , public pqiMonitor */
 {
 public:
-    p3GxsReputation(p3LinkMgr *lm);
+    explicit p3GxsReputation(p3LinkMgr *lm);
     virtual RsServiceInfo getServiceInfo();
 
     /***** Interface for RsReputations *****/
