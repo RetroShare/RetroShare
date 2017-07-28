@@ -165,8 +165,8 @@ GenCertDialog::GenCertDialog(bool onlyGenerateIdentity, QWidget *parent)
 #if QT_VERSION >= 0x040700
 	ui.node_input->setPlaceholderText(tr("Node name")) ;
 	ui.hiddenaddr_input->setPlaceholderText(tr("Tor/I2P address")) ;
-	ui.name_input->setPlaceholderText(tr("Username"));
-	ui.nickname_input->setPlaceholderText(tr("Identity name"));
+	ui.name_input->setPlaceholderText(tr("Profile"));
+	ui.nickname_input->setPlaceholderText(tr("Chat name"));
 	ui.password_input->setPlaceholderText(tr("Password"));
 	ui.password_input_2->setPlaceholderText(tr("Password again"));
 #endif
