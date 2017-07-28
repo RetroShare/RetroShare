@@ -48,8 +48,8 @@ class p3StatusService: public p3Service, public p3Config, public pqiServiceMonit
 {
 	public:
 
-	p3StatusService(p3ServiceControl *sc);
-virtual ~p3StatusService();
+	explicit p3StatusService(p3ServiceControl *sc);
+	virtual ~p3StatusService();
 
 virtual RsServiceInfo getServiceInfo();
 
