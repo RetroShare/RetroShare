@@ -49,14 +49,14 @@
 class RsTlvServiceInfoMapRef: public RsTlvGenericMapRef<uint32_t, RsServiceInfo>
 {
 public:
-        RsTlvServiceInfoMapRef(std::map<uint32_t, RsServiceInfo> &refmap)
-        :RsTlvGenericMapRef<uint32_t, RsServiceInfo>(
-		SERVICE_INFO_MAP,
-		SERVICE_INFO_KEY,
-		SERVICE_ID,
-		SERVICE_INFO, 
-		refmap)
-	{ 
+	explicit RsTlvServiceInfoMapRef(std::map<uint32_t, RsServiceInfo> &refmap)
+	  : RsTlvGenericMapRef<uint32_t, RsServiceInfo>(
+	      SERVICE_INFO_MAP,
+	      SERVICE_INFO_KEY,
+	      SERVICE_ID,
+	      SERVICE_INFO,
+	      refmap)
+	{
 		return;
 	}
 };
@@ -81,8 +81,10 @@ class RsServiceInfoListItem: public RsItem
 class RsServiceInfoPermissionsItem: public RsItem
 {
 	public:
-	RsServiceInfoPermissionsItem()  :RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_SERVICEINFO,  RS_PKT_SUBTYPE_SERVICEPERMISSIONS_ITEM)
-	{ 
+	RsServiceInfoPermissionsItem()
+	  : RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_SERVICEINFO,  RS_PKT_SUBTYPE_SERVICEPERMISSIONS_ITEM)
+	  , allowedBw(0)
+	{
 		setPriorityLevel(QOS_PRIORITY_RS_SERVICE_INFO_ITEM);
 		return; 
 	}
@@ -92,7 +94,7 @@ class RsServiceInfoPermissionsItem: public RsItem
 
 	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 
-	uint32_t	allowedBw; // Units are bytes/sec => 4Gb/s; 
+	uint32_t	allowedBw; // Units are Bytes/sec => 4GB/s;
 };
 
 class RsServiceInfoSerialiser: public RsServiceSerializer
