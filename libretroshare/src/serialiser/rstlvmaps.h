@@ -35,8 +35,9 @@
 class RsTlvOpinionMapRef: public RsTlvGenericMapRef<std::string, uint32_t>
 {
 public:
-	RsTlvOpinionMapRef(std::map<std::string, uint32_t> &refmap)
-	:RsTlvGenericMapRef(OPINION, STRING_INT_PAIR, refmap) { return; }
+	explicit RsTlvOpinionMapRef(std::map<std::string, uint32_t> &refmap)
+	  :RsTlvGenericMapRef(OPINION, STRING_INT_PAIR, refmap)
+	{}
 };
 
 
