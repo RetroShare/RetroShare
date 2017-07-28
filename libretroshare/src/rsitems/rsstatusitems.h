@@ -37,7 +37,9 @@
 class RsStatusItem: public RsItem
 {
 public:
-	RsStatusItem()  :RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_STATUS,  RS_PKT_SUBTYPE_DEFAULT)
+	RsStatusItem()
+	  : RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_STATUS,  RS_PKT_SUBTYPE_DEFAULT)
+	  , sendTime(0), status(0), recvTime(0)
 	{ 
 		setPriorityLevel(QOS_PRIORITY_RS_STATUS_ITEM); 
 	}
