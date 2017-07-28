@@ -27,6 +27,8 @@
 #include "rsitems/rsgxschannelitems.h"
 #include "util/radix64.h"
 #include "util/rsmemory.h"
+#include "util/rsstring.h"
+
 
 #include <retroshare/rsidentity.h>
 #include <retroshare/rsfiles.h>
@@ -1052,13 +1054,15 @@ bool SSGxsChannelGroup::load(const std::string &input)
 
     
     RsTemporaryMemory tmpmem(input.length());
+    //sscanf() without field width limits can crash with huge input data.
+    std::string s1 = "v2 {D:%d} {P:%"; s1.append(rs_to_string(input.length())).append("[^}]}");
 
     if (1 == sscanf(input.c_str(), "D:%d", &download_val))
     {
         if (download_val == 1)
             mAutoDownload = true;
     }
-    else  if( 2 == sscanf(input.c_str(),"v2 {D:%d} {P:%[^}]}",&download_val,(unsigned char*)tmpmem))
+    else  if( 2 == sscanf(input.c_str(),s1.c_str(),&download_val,(unsigned char*)tmpmem))
     {
         if (download_val == 1)
             mAutoDownload = true;
