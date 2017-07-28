@@ -595,11 +595,10 @@ bool GetTlvString(const void *data, uint32_t size, uint32_t *offset,
     }
 
     char *strdata = (char *) right_shift_void_pointer(tlvstart, TLV_HEADER_SIZE);
-    uint32_t strsize = tlvsize - TLV_HEADER_SIZE; /* remove the header */
-    if (strsize <= 0) {
+    if (tlvsize <= TLV_HEADER_SIZE) {/* remove the header */
         in = "";
     } else {
-        in = std::string(strdata, strsize);
+        in = std::string(strdata, tlvsize - TLV_HEADER_SIZE);
     }
 
 #ifdef TLV_BASE_DEBUG
