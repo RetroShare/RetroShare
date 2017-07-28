@@ -64,7 +64,7 @@ RsItem::RsItem(uint32_t t)
 class Counter
 {
 	public: 
-		static Counter(int i): _i(i) {}
+		explicit Counter(int i): _i(i) {}
 		Counter(): _i(0) {} 
 
 		int v() const { return _i ; }

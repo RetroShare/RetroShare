@@ -104,8 +104,8 @@ uint32_t getRsPktMaxSize();
 
 
 /* helper fns for printing */
-std::ostream &printRsItemBase(std::ostream &o, std::string n, uint16_t i);
-std::ostream &printRsItemEnd(std::ostream &o, std::string n, uint16_t i);
+std::ostream &printRsItemBase(std::ostream &o, const std::string &n, uint16_t i);
+std::ostream &printRsItemEnd(std::ostream &o, const std::string &n, uint16_t i);
 
 /* defined in rstlvtypes.cc - redeclared here for ease */
 std::ostream &printIndent(std::ostream &out, uint16_t indent);
