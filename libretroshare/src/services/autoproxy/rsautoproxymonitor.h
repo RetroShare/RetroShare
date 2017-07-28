@@ -185,13 +185,13 @@ private:
 
 public:
 	static void taskAsync(autoProxyType::autoProxyType_enum type, autoProxyTask::autoProxyTask_enum task, autoProxyCallback *cb = NULL, void *data = NULL);
-	static void taskAsync(std::vector<autoProxyType::autoProxyType_enum> types, autoProxyTask::autoProxyTask_enum task, autoProxyCallback *cb = NULL, void *data = NULL);
+	static void taskAsync(const std::vector<autoProxyType::autoProxyType_enum> &types, autoProxyTask::autoProxyTask_enum task, autoProxyCallback *cb = NULL, void *data = NULL);
 	static void taskSync (autoProxyType::autoProxyType_enum type, autoProxyTask::autoProxyTask_enum task, void *data = NULL);
-	static void taskSync (std::vector<autoProxyType::autoProxyType_enum> types, autoProxyTask::autoProxyTask_enum task, void *data = NULL);
+	static void taskSync (const std::vector<autoProxyType::autoProxyType_enum> &types, autoProxyTask::autoProxyTask_enum task, void *data = NULL);
 
 	// usefull helpers
 	static void taskError(taskTicket *t);
-	static void taskDone(taskTicket *t, autoProxyStatus::autoProxyStatus_enum status);
+	static void taskDone(taskTicket* &t, autoProxyStatus::autoProxyStatus_enum status);
 	static taskTicket *getTicket();
 
 	// autoProxyCallback interface

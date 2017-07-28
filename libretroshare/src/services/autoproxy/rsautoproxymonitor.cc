@@ -161,7 +161,7 @@ void rsAutoProxyMonitor::taskAsync(autoProxyType::autoProxyType_enum type, autoP
 	taskAsync(types, task, cb, data);
 }
 
-void rsAutoProxyMonitor::taskAsync(std::vector<autoProxyType::autoProxyType_enum> types, autoProxyTask::autoProxyTask_enum task, autoProxyCallback *cb, void *data)
+void rsAutoProxyMonitor::taskAsync(const std::vector<autoProxyType::autoProxyType_enum> &types, autoProxyTask::autoProxyTask_enum task, autoProxyCallback *cb, void *data)
 {
 	if (!isAsyncTask(task)) {
 		// Usually the services will reject this ticket.
@@ -189,7 +189,7 @@ void rsAutoProxyMonitor::taskSync(autoProxyType::autoProxyType_enum type, autoPr
 	taskSync(types, task, data);
 }
 
-void rsAutoProxyMonitor::taskSync(std::vector<autoProxyType::autoProxyType_enum> types, autoProxyTask::autoProxyTask_enum task, void *data)
+void rsAutoProxyMonitor::taskSync(const std::vector<autoProxyType::autoProxyType_enum> &types, autoProxyTask::autoProxyTask_enum task, void *data)
 {
 	if (isAsyncTask(task)) {
 		// Usually the services will reject this ticket.
@@ -214,7 +214,7 @@ void rsAutoProxyMonitor::taskError(taskTicket *t)
 	taskDone(t, autoProxyStatus::error);
 }
 
-void rsAutoProxyMonitor::taskDone(taskTicket *t, autoProxyStatus::autoProxyStatus_enum status)
+void rsAutoProxyMonitor::taskDone(taskTicket* &t, autoProxyStatus::autoProxyStatus_enum status)
 {
 	bool cleanUp = false;
 
