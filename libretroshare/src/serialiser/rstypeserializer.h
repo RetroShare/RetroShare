@@ -57,9 +57,11 @@
  * C++ dynamic dispatching that may have a noticeable impact on runtime
  * performances.
  */
+#pragma GCC diagnostic ignored "-Wstrict-aliasing"
 #define RS_REGISTER_SERIAL_MEMBER_TYPED(I, T) do {\
 	RsTypeSerializer::serial_process<T>(j, ctx, reinterpret_cast<T&>(I), #I);\
 	} while(0)
+#pragma GCC diagnostic pop
 
 /** @def RS_REGISTER_ITEM_TYPE(T)
  * Use this macro into `youritem.cc` only if you need to process members of

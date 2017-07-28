@@ -144,11 +144,12 @@ void RsBanListToolButton::applyIp()
 
 	uint32_t list_type;
 	switch (mList) {
-	case LIST_WHITELIST:
-		list_type = RSBANLIST_TYPE_WHITELIST;
+		case LIST_BLACKLIST:
+			list_type = RSBANLIST_TYPE_BLACKLIST;
 		break;
-	case LIST_BLACKLIST:
-		list_type = RSBANLIST_TYPE_BLACKLIST;
+		case LIST_WHITELIST:
+		default:
+			list_type = RSBANLIST_TYPE_WHITELIST;
 		break;
 	}
 
@@ -156,11 +157,12 @@ void RsBanListToolButton::applyIp()
 	bool changed = false;
 
 	switch (mMode) {
-	case MODE_ADD:
-		changed = rsBanList->addIpRange(addr, masked_bytes, list_type, "");
+		case MODE_REMOVE:
+			changed = rsBanList->removeIpRange(addr, masked_bytes, list_type);
 		break;
-	case MODE_REMOVE:
-		changed = rsBanList->removeIpRange(addr, masked_bytes, list_type);
+		case MODE_ADD:
+		default:
+			changed = rsBanList->addIpRange(addr, masked_bytes, list_type, "");
 		break;
 	}
 
