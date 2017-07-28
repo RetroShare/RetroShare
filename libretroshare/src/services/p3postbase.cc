@@ -625,7 +625,7 @@ bool extractPostCache(const std::string &str, PostStats &s)
 {
 
 	uint32_t iupvotes, idownvotes, icomments;
-	if (3 == sscanf(str.c_str(), "%d %d %d", &icomments, &iupvotes, &idownvotes))
+	if (3 == sscanf(str.c_str(), "%u %u %u", &icomments, &iupvotes, &idownvotes))
 	{
 		s.comments = icomments;
 		s.up_votes = iupvotes;
