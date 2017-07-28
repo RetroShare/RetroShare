@@ -37,7 +37,7 @@
 class RsTlvStringSet: public RsTlvItem
 {
 	public:
-	 RsTlvStringSet(uint16_t type);
+explicit RsTlvStringSet(uint16_t type);
 virtual ~RsTlvStringSet() { return; }
 virtual uint32_t TlvSize() const;
 virtual void	 TlvClear();
