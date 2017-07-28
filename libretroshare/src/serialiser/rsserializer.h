@@ -169,7 +169,7 @@ struct RsItem;
 class RsSerialType
 {
 public:
-	RsSerialType(uint32_t t); /* only uses top 24bits */
+	explicit RsSerialType(uint32_t t); /* only uses top 24bits */
 	RsSerialType(uint8_t ver, uint8_t cls, uint8_t t);
 	RsSerialType(uint8_t ver, uint16_t service);
 
