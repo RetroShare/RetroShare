@@ -42,7 +42,7 @@ class NotifyTxt: public NotifyClient
 		virtual void notifyErrorMsg(int list, int sev, std::string msg);
 		virtual void notifyChat();
 		virtual bool askForPassword(const std::string& title, const std::string& question, bool prev_is_bad, std::string& password,bool& cancel);
-		virtual bool askForPluginConfirmation(const std::string& plugin_file, const std::string& plugin_hash);
+		virtual bool askForPluginConfirmation(const std::string& plugin_file, const std::string& plugin_hash,bool first_time);
 
 		virtual void notifyTurtleSearchResult(uint32_t search_id,const std::list<TurtleFileInfo>& found_files);
 

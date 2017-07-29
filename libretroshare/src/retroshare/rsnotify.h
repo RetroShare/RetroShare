@@ -244,7 +244,7 @@ class NotifyClient
 		virtual void notifyHistoryChanged             (uint32_t           /* msgId     */, int /* type */) {}
 
 		virtual bool askForPassword                   (const std::string& /* title     */, const std::string& /* key_details     */, bool               /* prev_is_bad */, std::string& /* password */,bool& /* cancelled */ ) { return false ;}
-		virtual bool askForPluginConfirmation         (const std::string& /* plugin_filename */, const std::string& /* plugin_file_hash */) { return false ;}
+		virtual bool askForPluginConfirmation         (const std::string& /* plugin_filename */, const std::string& /* plugin_file_hash */,bool /* first_time */) { return false ;}
 
 };
 #endif

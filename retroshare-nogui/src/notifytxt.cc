@@ -84,7 +84,7 @@ void NotifyTxt::notifyChat()
 	return;
 }
 
-bool NotifyTxt::askForPluginConfirmation(const std::string& plugin_file_name, const std::string& plugin_file_hash)
+bool NotifyTxt::askForPluginConfirmation(const std::string& plugin_file_name, const std::string& plugin_file_hash, bool /* first_time */)
 {
 	std::cerr << "The following plugin is not registered as accepted or denied. You probably upgraded the main executable or the plugin itself." << std::endl;
 	std::cerr << "   Hash: " << plugin_file_hash << std::endl;

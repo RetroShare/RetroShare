@@ -106,7 +106,7 @@ class RsPluginManager: public RsPluginHandler, public p3Config
 
 	private:
 		bool loadPlugin(RsPlugin *) ;
-		bool loadPlugin(const std::string& shared_library_name) ;
+		bool loadPlugin(const std::string& shared_library_name, bool first_time) ;
         RsFileHash hashPlugin(const std::string& shared_library_name) ;
 
 		std::vector<PluginInfo> _plugins ;
