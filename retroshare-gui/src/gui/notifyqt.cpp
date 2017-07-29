@@ -785,6 +785,13 @@ void NotifyQt::notifyListPreChange(int list, int /*type*/)
 	 * uses Flags, to detect changes
 	 */
 
+void NotifyQt::resetCachedPassphrases()
+{
+	std::cerr << "Clearing PGP passphrase." << std::endl;
+
+	rsNotify->clearPgpPassphrase() ;
+}
+
 void NotifyQt::enable()
 {
 	QMutexLocker m(&_mutex) ;

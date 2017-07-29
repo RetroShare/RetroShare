@@ -117,8 +117,6 @@ void StartDialog::loadPerson()
 
 	bool res = Rshare::loadCertificate(accountId, ui.autologin_checkbox->isChecked()) ;
 
-    rsNotify->clearPgpPassphrase();
-
     if(res)
 		accept();
 }

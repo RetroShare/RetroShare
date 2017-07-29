@@ -587,8 +587,6 @@ void GenCertDialog::genPerson()
 	std::cout << "RsAccounts::GenerateSSLCertificate" << std::endl;
 	bool okGen = RsAccounts::GenerateSSLCertificate(PGPId, "", genLoc, "", isHiddenLoc, sslPasswd, sslId, err);
 
-	rsNotify->clearPgpPassphrase() ;
-
 	if (okGen)
 	{
 		/* complete the process */

@@ -155,6 +155,7 @@ class NotifyQt: public QObject, public NotifyClient
 	public slots:
 		void UpdateGUI(); /* called by timer */
 		void SetDisableAll(bool bValue);
+		void resetCachedPassphrases() ;
 
 	private slots:
 		void runningTick();
