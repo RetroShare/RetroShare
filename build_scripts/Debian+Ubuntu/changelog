@@ -1,5 +1,45 @@
 retroshare (0.6.3-1.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
+  a16220e csoler Sat, 29 Jul 2017 20:24:13 +0200 switched to RC2
+  d10dbf1 csoler Sat, 29 Jul 2017 20:20:53 +0200 Merge pull request #966 from csoler/v0.6.3
+  b8260e5 csoler Fri, 28 Jul 2017 18:41:34 +0200 fixed wording in GenCertDialog
+  4fdbf39 csoler Fri, 28 Jul 2017 18:32:47 +0200 fixed image replication in profile creation window
+  c6b6835 csoler Thu, 27 Jul 2017 20:43:08 +0200 exclude own friends from key removal pre-selection
+  e861f87 csoler Wed, 26 Jul 2017 21:44:24 +0200 removed unused msg item class that caused aliasing warnings (serialisation of time_t as uint32_t)
+  286e7e0 csoler Wed, 26 Jul 2017 14:01:28 +0200 Merge pull request #961 from csoler/v0.6.3
+  34ddf71 csoler Wed, 26 Jul 2017 13:54:44 +0200 Merge pull request #957 from PhenomRetroShare/Fix_CppCheckerError
+  1792273 csoler Wed, 26 Jul 2017 13:50:21 +0200 Merge pull request #946 from PhenomRetroShare/Fix_GuiAutoLogin
+  ea72c58 csoler Wed, 26 Jul 2017 12:27:38 +0200 fixed unnecessary ()
+  b0483a0 csoler Wed, 26 Jul 2017 10:23:18 +0200 fixed bug in removeDeleteExistingMsgs()
+  3ba0256 csoler Tue, 25 Jul 2017 22:23:09 +0200 Merge pull request #955 from PhenomRetroShare/Fix_CopyRSLinkWhenOnlyPlainTextInLobby
+  7820c1e csoler Tue, 25 Jul 2017 22:10:20 +0200 Merge pull request #960 from PhenomRetroShare/Add_ConfigFlagMacOSVersion
+  9881b61 csoler Tue, 25 Jul 2017 22:06:18 +0200 cleanup code in RsGenExchange
+  181a824 csoler Tue, 25 Jul 2017 21:56:20 +0200 fixed memory leak in BWGraphSource due to missing destructor
+  a382a0f csoler Tue, 25 Jul 2017 21:52:09 +0200 fixed memory leak in p3peermgr config load
+  041f989 csoler Tue, 25 Jul 2017 21:21:24 +0200 rewrote processRecvdMessages() and processRecvdGroups() in RsGenExchange. Removed mReceivedGrps and mReceivedMsgs, cleaned-up terrible branching and memory management
+  cbec818 Phenom Tue, 25 Jul 2017 18:08:37 +0200 Add qmake CONFIG flag for MacOS version.
+  461ccf3 csoler Tue, 25 Jul 2017 00:07:53 +0200 removed aliasing in storeMessages/storeGroups, removed several memory leaks in unittests, improved auto-delete structures in rsgxsutil, added deletion for members of RsGenExchange, removed shared pointers from unittests (they cause a memory leak and are only used in unittests)
+  ef24459 csoler Mon, 24 Jul 2017 18:48:13 +0200 fixed memory leak in gxssecurity test
+  79779b8 csoler Mon, 24 Jul 2017 18:45:24 +0200 fixed memory leaks in GxsSecurity
+  70f72db csoler Mon, 24 Jul 2017 18:20:21 +0200 fixed memory leak in GxsSecurity
+  bcaafc2 csoler Mon, 24 Jul 2017 14:29:30 +0200 improved template class naming for temporary Gxs grp data structures
+  df691bd csoler Mon, 24 Jul 2017 12:16:06 +0200 improved tests to avoid memory leak
+  3b1606c Gioacc Mon, 24 Jul 2017 11:52:23 +0200 Remove misguiding if
+  03cc2e6 Gioacc Mon, 24 Jul 2017 10:16:24 +0200 Remove miguiding if before delete
+  764fadf csoler Sun, 23 Jul 2017 22:58:01 +0200 suppressed memory leak in serialisation test code
+  880eb58 csoler Sun, 23 Jul 2017 22:56:27 +0200 suppressed memory leak in serialisation test code
+  0242424 csoler Sat, 22 Jul 2017 12:08:28 +0200 reverting last commit that causes crashes
+  9e2241a csoler Fri, 21 Jul 2017 23:15:50 +0200 attempt to fix memory leak in RsGenExchange. To be tested.
+  8ce10ea Phenom Fri, 21 Jul 2017 15:31:53 +0200 Fix past commit for p3idservice.cc
+  733f812 Phenom Fri, 21 Jul 2017 15:20:04 +0200 Fix CppCheck Error in utility_functions.c
+  36e3772 Phenom Fri, 21 Jul 2017 15:19:17 +0200 Fix CppCheck Error in advancedsearchdialog.cpp
+  145ce6b Phenom Fri, 21 Jul 2017 15:11:55 +0200 Fix CppCheck Error in ChatPage.cpp
+  2afc1bf Phenom Fri, 21 Jul 2017 15:04:10 +0200 Fix CppCheck Error in contentvalue.cc
+  e576743 Phenom Fri, 21 Jul 2017 14:57:43 +0200 Fix CppCheck Error in p3idservice.cc
+  8d82640 Phenom Fri, 21 Jul 2017 10:58:19 +0200 Fix copy of RSLink when on Only plain text mode in chat lobby. (sss find)
+  aa471e5 csoler Fri, 21 Jul 2017 10:25:20 +0200 fixed uninitialized memory read in GxsTrans
+  f370f59 csoler Thu, 20 Jul 2017 22:12:57 +0200 fixed typo in ppa upload script
+  581c11d csoler Thu, 20 Jul 2017 22:11:35 +0200 fixed various problems with 06 suppression in package control files
   baac33d csoler Thu, 20 Jul 2017 21:18:07 +0200 updated revision number
   f9d6a78 csoler Thu, 20 Jul 2017 18:19:10 +0200 Merge pull request #954 from PhenomRetroShare/Fix_ShowAuthorInPeopleTabAtStartUp
   5b86f44 Phenom Thu, 20 Jul 2017 14:29:31 +0200 Fix Show Author In People Tab at startup
