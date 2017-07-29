@@ -795,6 +795,6 @@ StartDialog QFrame#loginframe{
 }
 
 GenCertDialog QFrame#profileframe{
-  background-image: url(:/images/logo/background.png);
-  background-repeat: repeat;
+  border-image: url(:/images/logo/background.png) 0 0 0 0 stretch stretch;
+  border-width: 0px;
 }

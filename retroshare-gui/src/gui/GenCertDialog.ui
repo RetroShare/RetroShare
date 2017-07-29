@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>520</width>
-    <height>541</height>
+    <width>969</width>
+    <height>786</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -732,7 +732,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Use existing node</string>
+    <string>Use existing profile</string>
    </property>
   </action>
  </widget>
