@@ -443,7 +443,7 @@ void GenCertDialog::genPerson()
 	}
 	else
 	{
-		mGXSNickname = ui.node_input->text();
+		mGXSNickname = ui.name_input->text();
 	}
 
 	if (!mGXSNickname.isEmpty())
