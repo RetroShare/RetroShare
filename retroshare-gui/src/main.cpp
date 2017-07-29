@@ -397,7 +397,6 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 		uint32_t token = 0;
 		rsIdentity->createIdentity(token, params);
 	}
-
 	// I'm using a signal to transfer the hashing info to the mainwindow, because Qt schedules signals properly to
 	// avoid clashes between infos from threads.
 	//
@@ -442,6 +441,11 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 #ifdef ENABLE_WEBUI
     WebuiPage::checkStartWebui();
 #endif // ENABLE_WEBUI
+
+	// This is done using a timer, because the passphrase request from notify is asynchrouneous and therefore clearing the
+	// passphrase here makes it request for a passphrase when creating the default chat identity.
+
+	QTimer::singleShot(10000, Qt::CoarseTimer, notify, SLOT(resetCachedPassphrases())) ;
 
 	/* dive into the endless loop */
 	int ti = rshare.exec();

@@ -283,10 +283,10 @@ bool p3Notify::askForPassword                   (const std::string& title    , c
 
 	return false ;
 }
-bool p3Notify::askForPluginConfirmation         (const std::string& plugin_filename, const std::string& plugin_file_hash) 
+bool p3Notify::askForPluginConfirmation         (const std::string& plugin_filename, const std::string& plugin_file_hash,bool first_time)
 {
 	FOR_ALL_NOTIFY_CLIENTS
-		if( (*it)->askForPluginConfirmation(plugin_filename,plugin_file_hash)) 
+		if( (*it)->askForPluginConfirmation(plugin_filename,plugin_file_hash,first_time))
 			return true ;
 
 	return false ;

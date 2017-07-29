@@ -123,7 +123,7 @@ class p3Notify: public RsNotify
 		void notifyHistoryChanged             (uint32_t           /* msgId     */, int /* type */) ;
 
 		bool askForPassword                   (const std::string& title, const std::string& /* key_details     */, bool               /* prev_is_bad */, std::string&, bool *cancelled /* password */ ) ;
-		bool askForPluginConfirmation         (const std::string& /* plugin_filename */, const std::string& /* plugin_file_hash */) ;
+		bool askForPluginConfirmation         (const std::string& /* plugin_filename */, const std::string& /* plugin_file_hash */,bool first_time) ;
 
         virtual bool cachePgpPassphrase       (const std::string& /* pgp_passphrase */) ;
         virtual bool clearPgpPassphrase       () ;

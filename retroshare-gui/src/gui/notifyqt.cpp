@@ -301,8 +301,13 @@ bool NotifyQt::askForPassword(const std::string& title, const std::string& key_d
 
 	return false;
 }
-bool NotifyQt::askForPluginConfirmation(const std::string& plugin_file_name, const std::string& plugin_file_hash)
+bool NotifyQt::askForPluginConfirmation(const std::string& plugin_file_name, const std::string& plugin_file_hash, bool first_time)
 {
+	// By default, when no information is known about plugins, just dont load them. They will be enabled from the GUI by the user.
+
+	if(first_time)
+		return false ;
+
 	RsAutoUpdatePage::lockAllEvents() ;
 
 	QMessageBox dialog;
@@ -784,6 +789,13 @@ void NotifyQt::notifyListPreChange(int list, int /*type*/)
 	 *
 	 * uses Flags, to detect changes
 	 */
+
+void NotifyQt::resetCachedPassphrases()
+{
+	std::cerr << "Clearing PGP passphrase." << std::endl;
+
+	rsNotify->clearPgpPassphrase() ;
+}
 
 void NotifyQt::enable()
 {

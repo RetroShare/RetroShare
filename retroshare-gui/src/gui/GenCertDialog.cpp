@@ -443,7 +443,7 @@ void GenCertDialog::genPerson()
 	}
 	else
 	{
-		mGXSNickname = ui.node_input->text();
+		mGXSNickname = ui.name_input->text();
 	}
 
 	if (!mGXSNickname.isEmpty())
@@ -586,8 +586,6 @@ void GenCertDialog::genPerson()
 	this->hide();//To show dialog asking password PGP Key.
 	std::cout << "RsAccounts::GenerateSSLCertificate" << std::endl;
 	bool okGen = RsAccounts::GenerateSSLCertificate(PGPId, "", genLoc, "", isHiddenLoc, sslPasswd, sslId, err);
-
-	rsNotify->clearPgpPassphrase() ;
 
 	if (okGen)
 	{

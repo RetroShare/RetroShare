@@ -69,7 +69,7 @@ class NotifyQt: public QObject, public NotifyClient
 		virtual void notifyDownloadComplete(const std::string& fileHash);
 		virtual void notifyDownloadCompleteCount(uint32_t count);
 		virtual bool askForPassword(const std::string& title, const std::string& key_details, bool prev_is_bad, std::string& password, bool &cancelled);
-		virtual bool askForPluginConfirmation(const std::string& plugin_filename, const std::string& plugin_file_hash);
+		virtual bool askForPluginConfirmation(const std::string& plugin_filename, const std::string& plugin_file_hash,bool first_time);
 
 		// Queues the signature event so that it canhappen in the main GUI thread (to ask for passwd).
 		// To use this function: call is multiple times as soon as it returns true.
@@ -155,6 +155,7 @@ class NotifyQt: public QObject, public NotifyClient
 	public slots:
 		void UpdateGUI(); /* called by timer */
 		void SetDisableAll(bool bValue);
+		void resetCachedPassphrases() ;
 
 	private slots:
 		void runningTick();
