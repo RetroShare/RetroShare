@@ -294,9 +294,7 @@ void GenCertDialog::setupState()
 	ui.keylength_comboBox->setVisible(adv_state);
 
 	ui.entropy_bar->setVisible(true);
-
 	ui.genButton->setVisible(true);
-	ui.genButton->setText(generate_new?tr("Generate"):tr("Generate"));
 
 	ui.hiddenaddr_input->setVisible(hidden_state);
 	ui.hiddenaddr_label->setVisible(hidden_state);
@@ -304,20 +302,30 @@ void GenCertDialog::setupState()
 	ui.hiddenport_spinBox->setVisible(hidden_state);
 	ui.cbUseBob->setVisible(hidden_state);
 
-    if(mEntropyOk && mAllFieldsOk)
+	if(!mAllFieldsOk)
+	{
+		ui.genButton->setToolTip(tr("<p>Node creation is disabled until all fields correctly set.</p>")) ;
+
+		ui.genButton->setText(tr("Generate (locked)"));
+		ui.genButton->setEnabled(false) ;
+		ui.generate_label->setPixmap(QPixmap(IMAGE_BAD)) ;
+	}
+	else if(!mEntropyOk)
+	{
+		ui.genButton->setToolTip(tr("<p>Node creation is disabled until enough randomness is collected. Please mouve your mouse around until you reach at least 20%.</p>")) ;
+
+		ui.genButton->setText(tr("More randomness needed (move your mouse around)"));
+		ui.genButton->setEnabled(false) ;
+		ui.generate_label->setPixmap(QPixmap(IMAGE_BAD)) ;
+	}
+	else
 	{
 		ui.genButton->setEnabled(true) ;
 		//ui.genButton->setIcon(QIcon(IMAGE_GOOD)) ;
 		ui.genButton->setToolTip(tr("Click to create your node and/or profile")) ;
+		ui.genButton->setText(tr("Generate"));
 		ui.generate_label->setPixmap(QPixmap(IMAGE_GOOD)) ;
 	}
-    else
-    {
-		ui.genButton->setEnabled(false) ;
-		//ui.genButton->setIcon(QIcon(IMAGE_BAD)) ;
-		ui.genButton->setToolTip(tr("Disabled until all fields correctly set and enough randomness collected.")) ;
-		ui.generate_label->setPixmap(QPixmap(IMAGE_BAD)) ;
-    }
 }
 
 void GenCertDialog::exportIdentity()
