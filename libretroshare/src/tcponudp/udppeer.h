@@ -50,7 +50,7 @@ class UdpPeerReceiver: public UdpSubReceiver
 {
 	public:
 
-	UdpPeerReceiver(UdpPublisher *pub);
+	explicit UdpPeerReceiver(UdpPublisher *pub);
 virtual ~UdpPeerReceiver() { return; }
 
 	/* add a TCPonUDP stream */
