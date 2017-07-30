@@ -46,7 +46,7 @@ namespace rstime {
 	class RsScopeTimer
 	{
 	public:
-		RsScopeTimer(const std::string& name);
+		explicit RsScopeTimer(const std::string& name);
 		~RsScopeTimer();
 
 		void start();

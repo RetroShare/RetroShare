@@ -49,8 +49,8 @@ int rs_usleep(uint32_t micro_seconds)
 }
 
 RsScopeTimer::RsScopeTimer(const std::string& name)
+  : _name(name)
 {
-	_name = name ;
 	start();
 }
 
