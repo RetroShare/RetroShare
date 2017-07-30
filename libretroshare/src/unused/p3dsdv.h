@@ -51,9 +51,9 @@ class p3ServiceControl;
 
 class p3Dsdv: public RsDsdv, public p3Service /* , public p3Config */, public pqiServiceMonitor
 {
-	public:
-	p3Dsdv(p3ServiceControl *cm);
-virtual RsServiceInfo getServiceInfo();
+public:
+	explicit p3Dsdv(p3ServiceControl *cm);
+	virtual RsServiceInfo getServiceInfo();
 
 		/*** internal librs interface ****/
 

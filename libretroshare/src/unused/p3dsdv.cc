@@ -636,7 +636,7 @@ int p3Dsdv::clearOldRoutes()
 
 		/* backstep iterator for loop, and delete original */
 		it2 = it;
-		it--;
+		--it;
 
 #ifdef	DEBUG_DSDV
 		std::cerr << "p3Dsdv::clearOldRoutes() Deleting OLD ServiceId: " << it2->first;
