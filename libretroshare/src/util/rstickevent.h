@@ -64,9 +64,9 @@ virtual void    handle_event(uint32_t event_type, const std::string &event_label
 	class EventData
 	{
 		public:
-		EventData() :mEventType(0) { return; }
-		EventData(uint32_t etype) :mEventType(etype) { return; }
-		EventData(uint32_t etype, std::string elabel) :mEventLabel(elabel), mEventType(etype) { return; }
+		EventData() :mEventType(0) {}
+		explicit EventData(uint32_t etype) :mEventType(etype) {}
+		EventData(uint32_t etype, const std::string &elabel) :mEventLabel(elabel), mEventType(etype) {}
 
 		std::string mEventLabel;
 		uint32_t mEventType;
