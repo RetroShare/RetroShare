@@ -75,7 +75,7 @@ void RsThread::go()
 }
 void *RsThread::rsthread_init(void* p)
 {
-  RsThread *thread = (RsThread *) p;
+  RsThread *thread = reinterpret_cast<RsThread *>(p);
   if (!thread)
   {
     return NULL;
