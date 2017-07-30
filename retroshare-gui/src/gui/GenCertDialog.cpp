@@ -162,6 +162,10 @@ GenCertDialog::GenCertDialog(bool onlyGenerateIdentity, QWidget *parent)
 	ui.keylength_comboBox->addItem("High (3072 bits)", QVariant(3072));
 	ui.keylength_comboBox->addItem("Very high (4096 bits)", QVariant(4096));
 
+	// Default value.
+
+	ui.node_input->setText("My computer") ;
+
 #if QT_VERSION >= 0x040700
 	ui.node_input->setPlaceholderText(tr("Node name")) ;
 	ui.hiddenaddr_input->setPlaceholderText(tr("Tor/I2P address")) ;
@@ -280,8 +284,9 @@ void GenCertDialog::setupState()
 	ui.nickname_label->setVisible(adv_state && !mOnlyGenerateIdentity);
 	ui.nickname_input->setVisible(adv_state && !mOnlyGenerateIdentity);
 
-	ui.node_label->setVisible(true);
-	ui.node_input->setVisible(true);
+	ui.node_name_check_LB->setVisible(adv_state);
+	ui.node_label->setVisible(adv_state);
+	ui.node_input->setVisible(adv_state);
 
 	ui.password_input->setVisible(true);
 	ui.password_label->setVisible(true);
@@ -298,33 +303,38 @@ void GenCertDialog::setupState()
 
 	ui.hiddenaddr_input->setVisible(hidden_state);
 	ui.hiddenaddr_label->setVisible(hidden_state);
+
 	ui.hiddenport_label->setVisible(hidden_state);
 	ui.hiddenport_spinBox->setVisible(hidden_state);
+
 	ui.cbUseBob->setVisible(hidden_state);
 
 	if(!mAllFieldsOk)
 	{
 		ui.genButton->setToolTip(tr("<p>Node creation is disabled until all fields correctly set.</p>")) ;
 
-		ui.genButton->setText(tr("Generate (locked)"));
-		ui.genButton->setEnabled(false) ;
-		ui.generate_label->setPixmap(QPixmap(IMAGE_BAD)) ;
+		ui.genButton->setVisible(false) ;
+		ui.generate_label->setVisible(false) ;
+		ui.info_label->setText("Please fill your profile name and password...") ;
+		ui.info_label->setVisible(true) ;
 	}
 	else if(!mEntropyOk)
 	{
 		ui.genButton->setToolTip(tr("<p>Node creation is disabled until enough randomness is collected. Please mouve your mouse around until you reach at least 20%.</p>")) ;
 
-		ui.genButton->setText(tr("More randomness needed (move your mouse around)"));
-		ui.genButton->setEnabled(false) ;
-		ui.generate_label->setPixmap(QPixmap(IMAGE_BAD)) ;
+		ui.genButton->setVisible(false) ;
+		ui.generate_label->setVisible(false) ;
+		ui.info_label->setText("Need more randomness! Please move your mouse around to reach 20%") ;
+		ui.info_label->setVisible(true) ;
 	}
 	else
 	{
 		ui.genButton->setEnabled(true) ;
 		//ui.genButton->setIcon(QIcon(IMAGE_GOOD)) ;
 		ui.genButton->setToolTip(tr("Click to create your node and/or profile")) ;
-		ui.genButton->setText(tr("Generate"));
-		ui.generate_label->setPixmap(QPixmap(IMAGE_GOOD)) ;
+		ui.genButton->setVisible(true) ;
+		ui.generate_label->setVisible(false) ;
+		ui.info_label->setVisible(false) ;
 	}
 }
 

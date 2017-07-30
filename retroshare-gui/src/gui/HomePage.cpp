@@ -87,15 +87,15 @@ HomePage::HomePage(QWidget *parent) :
     int S = QFontMetricsF(font()).height();
  QString help_str = tr(
  " <h1><img width=\"%1\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Welcome to Retroshare!</h1>\
-   <p>The first thing you have to do is to <b>make friends</b>. Once you create a network of Retroshare nodes, or join an existing network,\
+   <p>You need to <b>make friends</b>! After you create a network of friends or join an existing network,\
 	  you'll be able to exchange files, chat, talk in forums, etc. </p>\
 	<div align=center>\
 	<IMG align=\"center\" width=\"%2\" src=\":/images/network_map.png\"/> \
     </div>\
-   <p>To do so, use the current page to exchange certificates with other persons you want your Retroshare node to connect to.</p> \
+   <p>To do so, copy your certificate on this page and send it to friends, and add your friends' certificate.</p> \
    <p>Another option is to search the internet for \"Retroshare chat servers\" (independently administrated). These servers allow you to exchange \
 	certificates with a dedicated Retroshare node, through which\
-	  you will be able to meet other people anonymously.</p> ").arg(QString::number(2*S)).arg(width()*0.5);
+	  you will be able to anonymously meet other people.</p> ").arg(QString::number(2*S)).arg(width()*0.5);
              registerHelpButton(ui->helpButton,help_str,"HomePage") ;
 }
 

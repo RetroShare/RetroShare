@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>675</width>
-    <height>544</height>
+    <width>1334</width>
+    <height>867</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -150,7 +150,7 @@ private and secure decentralized communication platform.
       <string/>
      </property>
      <property name="pixmap">
-      <pixmap resource="images.qrc">:/images/logo/logo_splash.png</pixmap>
+      <pixmap resource="images.qrc">:/images/logo/logo_web_nobackground.png</pixmap>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>

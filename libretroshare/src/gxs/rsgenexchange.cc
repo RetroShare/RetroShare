@@ -253,7 +253,9 @@ bool RsGenExchange::messagePublicationTest(const RsGxsMsgMetaData& meta)
 {
 	if(!mNetService)
 	{
+#ifdef GEN_EXCH_DEBUG
 		std::cerr << "(EE) No network service in service " << std::hex  << serviceType() << std::dec << ": cannot read message storage time." << std::endl;
+#endif
 		return false ;
 	}
 
@@ -1852,7 +1854,9 @@ uint32_t RsGenExchange::getStoragePeriod(const RsGxsGroupId& grpId)
 
 	if(!mNetService)
 	{
+#ifdef GEN_EXCH_DEBUG
 		std::cerr << "(EE) No network service in service " << std::hex  << serviceType() << std::dec << ": cannot read message storage time. Returning infinity." << std::endl;
+#endif
 		return false ;
 	}
 	return mNetService->getKeepAge(grpId) ;
