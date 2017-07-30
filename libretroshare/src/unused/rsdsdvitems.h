@@ -60,8 +60,9 @@ class RsDsdvDataItem: public RsItem
 {
 	public:
 	RsDsdvDataItem() 
-	:RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_DSDV, 
-		RS_PKT_SUBTYPE_DSDV_DATA), data(TLV_TYPE_BIN_GENERIC)
+	  :RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_DSDV,
+	          RS_PKT_SUBTYPE_DSDV_DATA), data(TLV_TYPE_BIN_GENERIC)
+	  , ttl(0)
 	{ 
 		setPriorityLevel(QOS_PRIORITY_RS_DSDV_DATA);
 		return; 
