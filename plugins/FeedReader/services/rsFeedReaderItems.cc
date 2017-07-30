@@ -387,11 +387,11 @@ uint32_t RsFeedReaderSerialiser::size(RsItem *item)
 
 	if (NULL != (fi = dynamic_cast<RsFeedReaderFeed*>(item)))
 	{
-		return sizeFeed((RsFeedReaderFeed*) item);
+		return sizeFeed( static_cast<RsFeedReaderFeed*>(item));
 	}
 	if (NULL != (ei = dynamic_cast<RsFeedReaderMsg*>(item)))
 	{
-		return sizeMsg((RsFeedReaderMsg*) item);
+		return sizeMsg( static_cast<RsFeedReaderMsg*>(item));
 	}
 
 	return 0;
@@ -404,11 +404,11 @@ bool RsFeedReaderSerialiser::serialise(RsItem *item, void *data, uint32_t *pktsi
 
 	if (NULL != (fi = dynamic_cast<RsFeedReaderFeed*>(item)))
 	{
-		return serialiseFeed((RsFeedReaderFeed*) item, data, pktsize);
+		return serialiseFeed( static_cast<RsFeedReaderFeed*>(item), data, pktsize);
 	}
 	if (NULL != (ei = dynamic_cast<RsFeedReaderMsg*>(item)))
 	{
-		return serialiseMsg((RsFeedReaderMsg*) item, data, pktsize);
+		return serialiseMsg( static_cast<RsFeedReaderMsg*>(item), data, pktsize);
 	}
 
 	return false;
