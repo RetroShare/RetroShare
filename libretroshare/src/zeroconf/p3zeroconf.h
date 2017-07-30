@@ -56,8 +56,8 @@ class zcBrowseResult
 class zcResolveResult
 {
 	public:
-	zcResolveResult() { return; } // :txtRecord(NULL) { return; }
-	~zcResolveResult() { return; } //{ if (txtRecord) { free(txtRecord); txtRecord = NULL; } }
+	zcResolveResult() : interfaceIndex(0), port(0), txtLen(0) {} // :txtRecord(NULL) { return; }
+	~zcResolveResult() { } //{ if (txtRecord) { free(txtRecord); txtRecord = NULL; } }
 
 	DNSServiceFlags flags;
 	uint32_t interfaceIndex;
@@ -76,8 +76,8 @@ class zcResolveResult
 class zcQueryResult
 {
 	public:
-	zcQueryResult() { return; } //:rdata(NULL) { return; }
-	~zcQueryResult() {return; } //{ if (rdata) { free(rdata); rdata = NULL; } }
+	zcQueryResult() : interfaceIndex(0), rrtype(0), rrclass(0), rdlen(0), ttl(0) {} //:rdata(NULL) { return; }
+	~zcQueryResult() {} //{ if (rdata) { free(rdata); rdata = NULL; } }
 
 	DNSServiceFlags flags;
 	uint32_t interfaceIndex;
@@ -98,9 +98,9 @@ class zcQueryResult
 class zcLocationResult
 {
 	public:
-	zcLocationResult() { return; }
-	zcLocationResult(std::string _gpgId, std::string _sslId)
-	:gpgId(_gpgId), sslId(_sslId) { return; }
+	zcLocationResult() {}
+	zcLocationResult(const std::string &_gpgId, const std::string &_sslId)
+	  : gpgId(_gpgId), sslId(_sslId) {}
 
 	std::string gpgId;
 	std::string sslId;

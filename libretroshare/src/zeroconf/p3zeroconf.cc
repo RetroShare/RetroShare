@@ -560,7 +560,7 @@ int p3ZeroConf::checkQueryResults()
 	std::cerr << "sslid = " << qr.sslId;
 	std::cerr << std::endl;
 
-	time_t now = time(NULL);
+	//time_t now = time(NULL);
 	uint32_t flags = RS_CB_FLAG_MODE_TCP;
 	uint32_t source = RS_CB_DHT; // SHOULD ADD NEW SOURCE ZC???
 	struct sockaddr_storage dummyProxyAddr, dummySrcAddr;
@@ -1391,33 +1391,33 @@ class RsZCBrowseDetails
 
 
 
-class RsZCPeerDetails
-{
-	/* passed from libretroshare */
-
-	std::string mGpgId;
-	std::string mSslId;
-
-	uint32_t mPeerStatus; /* FRIEND, FOF, ONLINE, OFFLINE */
-
-	/* Browse Info */
-
-	uint32_t mBrowseState;
-	time_t   mBrowseUpdate;
-
-	uint32_t mBrowseInterfaceIndex;
-	std::string mBrowserServiceName;
-	std::string mBrowserRegType;
-	std::string mBrowserReplyDomain;
-
-	/* Resolve Info */
-
-	uint32_t mResolveInterfaceIndex;
-	std::string mResolveFullname;
-	std::string mResolveHostTarget;
-	uint32_t mResolvePort;
-	std::string mResolveTxtRecord;
-};
+//class RsZCPeerDetails
+//{
+//	/* passed from libretroshare */
+//
+//	std::string mGpgId;
+//	std::string mSslId;
+//
+//	uint32_t mPeerStatus; /* FRIEND, FOF, ONLINE, OFFLINE */
+//
+//	/* Browse Info */
+//
+//	uint32_t mBrowseState;
+//	time_t   mBrowseUpdate;
+//
+//	uint32_t mBrowseInterfaceIndex;
+//	std::string mBrowserServiceName;
+//	std::string mBrowserRegType;
+//	std::string mBrowserReplyDomain;
+//
+//	/* Resolve Info */
+//
+//	uint32_t mResolveInterfaceIndex;
+//	std::string mResolveFullname;
+//	std::string mResolveHostTarget;
+//	uint32_t mResolvePort;
+//	std::string mResolveTxtRecord;
+//};
 
 
 
