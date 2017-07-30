@@ -265,7 +265,7 @@ int 	tou_connect(int sockfd, const struct sockaddr *serv_addr,
 		return -1;
 	}
 #else
-	UdpPeerReceiver *upr = (UdpPeerReceiver *) (tous->udpsr);
+	UdpPeerReceiver *upr = static_cast<UdpPeerReceiver *>(tous->udpsr);
 #endif
 
 	/* create a TCP stream to connect with. */
@@ -336,7 +336,7 @@ int 	tou_listenfor(int sockfd, const struct sockaddr *serv_addr,
 		return -1;
 	}
 #else
-	UdpPeerReceiver *upr = (UdpPeerReceiver *) (tous->udpsr);
+	UdpPeerReceiver *upr = static_cast<UdpPeerReceiver *>(tous->udpsr);
 #endif
 
 	/* create a TCP stream to connect with. */
@@ -620,7 +620,7 @@ int 	tou_close(int sockfd)
 		}
 		else if (tous -> udptype == TOU_RECEIVER_TYPE_UDPPEER)
 		{
-			UdpPeerReceiver *upr = (UdpPeerReceiver *) (tous->udpsr);
+			UdpPeerReceiver *upr = static_cast<UdpPeerReceiver *>(tous->udpsr);
 			upr->removeUdpPeer(tous->tcp);
 		}
 		else
