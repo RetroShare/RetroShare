@@ -227,7 +227,9 @@ int SetRedirectAndTest(struct UPNPUrls * urls,
 	char externalIPAddress[40];
 	char intClient[40];
 	char intPort[6];
+#if MINIUPNPC_API_VERSION >= 11
 	char reservedPort[6];
+#endif
 	char duration[16];
 	int r;
 	int ok = 1;
