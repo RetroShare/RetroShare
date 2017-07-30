@@ -48,7 +48,7 @@ class TouStunPeer
 		return; 
 	}
 	
-	TouStunPeer(std::string id_in, const struct sockaddr_in &addr)
+	TouStunPeer(const std::string &id_in, const struct sockaddr_in &addr)
 	:id(id_in), remote(addr), response(false), lastsend(0), failCount(0)
 	{ 
 		eaddr.sin_addr.s_addr = 0;
@@ -72,8 +72,8 @@ class UdpStunner: public UdpSubReceiver
 {
 	public:
 
-	UdpStunner(UdpPublisher *pub);
-virtual ~UdpStunner() { return; }
+	explicit UdpStunner(UdpPublisher *pub);
+	virtual ~UdpStunner() {}
 
 #ifdef UDPSTUN_ALLOW_LOCALNET
 	// For Local Testing Mode.
