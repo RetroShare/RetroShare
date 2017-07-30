@@ -148,7 +148,7 @@ void* doExtAddrSearch(void *p)
 	
 	std::vector<std::string> res ;
 
-	ExtAddrFinder *af = (ExtAddrFinder*)p ;
+	ExtAddrFinder *af = static_cast<ExtAddrFinder*>(p);
 
 	for(std::list<std::string>::const_iterator it(af->_ip_servers.begin());it!=af->_ip_servers.end();++it)
 	{
