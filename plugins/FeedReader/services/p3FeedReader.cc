@@ -1561,7 +1561,7 @@ bool p3FeedReader::loadList(std::list<RsItem *>& load)
 			msgs[mi->msgId] = mi;
 		} else if (NULL != (rskv = dynamic_cast<RsConfigKeyValueSet*>(*it))) {
 			std::list<RsTlvKeyValue>::iterator kit;
-			for(kit = rskv->tlvkvs.pairs.begin(); kit != rskv->tlvkvs.pairs.end(); kit++) {
+			for(kit = rskv->tlvkvs.pairs.begin(); kit != rskv->tlvkvs.pairs.end(); ++kit) {
 				if (kit->key == "StandardStorageTime") {
 					uint32_t value;
 					if (sscanf(kit->value.c_str(), "%u", &value) == 1) {
