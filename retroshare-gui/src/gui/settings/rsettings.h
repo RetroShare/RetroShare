@@ -35,7 +35,7 @@ public:
   /** Default constructor. The optional parameter <b>group</b> can be used to
    * set a prefix that will be prepended to keys specified to RSettings in
    * value() and setValue(). */
-  RSettings(const QString group = QString());
+  explicit RSettings(const QString group = QString());
 
     /** Default constructor. The optional parameter <b>group</b> can be used to
    * set a prefix that will be prepended to keys specified to RSettings in
