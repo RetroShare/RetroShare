@@ -268,7 +268,7 @@ class upnpThreadData
 	/* Thread routines */
 extern "C" void* doSetupUPnP(void* p)
 {
-	upnpThreadData *data = (upnpThreadData *) p;
+	upnpThreadData *data = reinterpret_cast<upnpThreadData *>(p);
 	if ((!data) || (!data->handler))
 	{
 		pthread_exit(NULL);
