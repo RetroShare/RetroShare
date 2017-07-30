@@ -344,6 +344,7 @@ static xmlNodePtr getNextItem(FeedFormat feedFormat, xmlNodePtr channel, xmlNode
 		item = item->next;
 	}
 	for (; item; item = item->next) {
+		//cppcheck-suppress duplicateExpressionTernary
 		if (item->type == XML_ELEMENT_NODE && xmlStrcasecmp(item->name, (feedFormat == FORMAT_ATOM) ? BAD_CAST"entry" : BAD_CAST"item") == 0) {
 			break;
 		}
