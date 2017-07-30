@@ -169,7 +169,7 @@ GenCertDialog::GenCertDialog(bool onlyGenerateIdentity, QWidget *parent)
 #if QT_VERSION >= 0x040700
 	ui.node_input->setPlaceholderText(tr("Node name")) ;
 	ui.hiddenaddr_input->setPlaceholderText(tr("Tor/I2P address")) ;
-	ui.name_input->setPlaceholderText(tr("Profile"));
+	ui.name_input->setPlaceholderText(tr("Username"));
 	ui.nickname_input->setPlaceholderText(tr("Chat name"));
 	ui.password_input->setPlaceholderText(tr("Password"));
 	ui.password_input_2->setPlaceholderText(tr("Password again"));
@@ -324,7 +324,7 @@ void GenCertDialog::setupState()
 
 		ui.genButton->setVisible(false) ;
 		ui.generate_label->setVisible(false) ;
-		ui.info_label->setText("Need more randomness! Please move your mouse around to reach 20%") ;
+		ui.info_label->setText("Please mouve your mouse randomply to generate enough random data to create your profile.") ;
 		ui.info_label->setVisible(true) ;
 	}
 	else
