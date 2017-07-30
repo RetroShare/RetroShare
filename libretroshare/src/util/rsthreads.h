@@ -43,7 +43,7 @@ class RsMutex
 {
 	public:
 
-	RsMutex(const std::string& name)
+	explicit RsMutex(const std::string& name)
 	{
 		/* remove unused parameter warnings */
 
@@ -91,7 +91,7 @@ class RsStackMutex
 {
 	public:
 
-		RsStackMutex(RsMutex &mtx)
+		explicit RsStackMutex(RsMutex &mtx)
 			: mMtx(mtx) 
 		{ 
 			mMtx.lock(); 
