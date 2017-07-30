@@ -80,8 +80,8 @@ class TcpStream: public UdpPeer
 	public:
 	/* Top-Level exposed */
 
-	TcpStream(UdpSubReceiver *udp);
-virtual ~TcpStream() { return; }
+	explicit TcpStream(UdpSubReceiver *udp);
+	virtual ~TcpStream() {}
 
 	/* user interface */
 int     status(std::ostream &out);

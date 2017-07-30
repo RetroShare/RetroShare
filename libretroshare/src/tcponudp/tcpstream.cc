@@ -115,6 +115,9 @@ TcpStream::TcpStream(UdpSubReceiver *lyr)
 	peerKnown(false),
 	udp(lyr)
 {
+	memset(inData, 0, sizeof inData);
+	memset(outDataRead, 0, sizeof outDataRead);
+	memset(outDataNet, 0, sizeof outDataNet);
 	sockaddr_clear(&peeraddr);
 
 	return;
@@ -2653,7 +2656,7 @@ int	setupBinaryCheck(std::string fname)
 /* uses seq number to track position -> ensure no rollover */
 int	checkData(uint8 *data, int size, int idx)
 {
-	if (bc_fd <= 0)
+	if (bc_fd == 0)
 	{
 		return -1;
 	}
