@@ -224,7 +224,7 @@ static std::string calculateLink(const std::string &baseLink, const std::string 
 	} else {
 		/* check for "/" at the end */
 		std::string::reverse_iterator it = resultLink.rend ();
-		it--;
+		--it;
 		if (*it != '/') {
 			resultLink += "/";
 		}
