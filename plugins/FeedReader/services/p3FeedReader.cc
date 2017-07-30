@@ -343,7 +343,7 @@ void p3FeedReader::stopPreviewThreads_locked()
 	}
 }
 
-RsFeedAddResult p3FeedReader::addFolder(const std::string parentId, const std::string &name, std::string &feedId)
+RsFeedAddResult p3FeedReader::addFolder(const std::string &parentId, const std::string &name, std::string &feedId)
 {
 	feedId.clear();
 
