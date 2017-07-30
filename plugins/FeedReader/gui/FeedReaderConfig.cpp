@@ -35,8 +35,6 @@ FeedReaderConfig::FeedReaderConfig(QWidget *parent, Qt::WindowFlags flags)
 
 	ui->proxyAddressLineEdit->setEnabled(false);
 	ui->proxyPortSpinBox->setEnabled(false);
-
-	loaded = false;
 }
 
 /** Destructor */
@@ -59,8 +57,6 @@ void FeedReaderConfig::load()
 	ui->useProxyCheckBox->setChecked(rsFeedReader->getStandardProxy(proxyAddress, proxyPort));
 	ui->proxyAddressLineEdit->setText(QString::fromUtf8(proxyAddress.c_str()));
 	ui->proxyPortSpinBox->setValue(proxyPort);
-
-	loaded = true;
 }
 
 bool FeedReaderConfig::save(QString &/*errmsg*/)

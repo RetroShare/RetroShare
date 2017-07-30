@@ -55,7 +55,6 @@ private slots:
 
 private:
 	Ui::FeedReaderConfig *ui;
-	bool loaded;
 };
 
 #endif
