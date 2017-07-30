@@ -66,7 +66,7 @@ extern "C" void* doSetupUPnP(void* p)
 	#ifdef UPNP_DEBUG
 	std::cerr << "doSetupUPnP Creating upnp thread." << std::endl;
 	#endif
-	upnpThreadData *data = (upnpThreadData *) p;
+	upnpThreadData *data = reinterpret_cast<upnpThreadData *>(p);
         if ((!data) || (!data->handler))
         {
                 pthread_exit(NULL);
