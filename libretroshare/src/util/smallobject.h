@@ -56,7 +56,7 @@ namespace RsMemoryManagement
 	class FixedAllocator
 	{
 		public:
-			FixedAllocator(size_t bytes) ;
+			explicit FixedAllocator(size_t bytes) ;
 			virtual ~FixedAllocator() ;
 
 			void *allocate();
@@ -81,7 +81,7 @@ namespace RsMemoryManagement
 	class SmallObjectAllocator
 	{
 		public:
-			SmallObjectAllocator(size_t maxObjectSize) ;
+			explicit SmallObjectAllocator(size_t maxObjectSize) ;
 			virtual ~SmallObjectAllocator() ;
 
 			void *allocate(size_t numBytes) ;
