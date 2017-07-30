@@ -32,7 +32,7 @@ class ToasterItem : public QObject
 
 public:
 	/** Default Constructor */
-	ToasterItem(QWidget *child = 0);
+	explicit ToasterItem(QWidget *child = 0);
 	/** Default Destructor */
 	virtual ~ToasterItem();
 
