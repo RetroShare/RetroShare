@@ -69,14 +69,14 @@ public:
             return QString::number(v/(1024*1024),10,2) + " MB/s" ;
     }
     
-    virtual void getValues(std::map<std::string,float>& vals) const
-	 {
-        vals.clear() ;
-        
-	if(video_input)
-		vals[std::string("bw")] = video_input->currentBandwidth() ;
-    }
-    
+		virtual void getValues(std::map<std::string,float>& values) const
+		{
+			values.clear() ;
+
+			if(video_input)
+				values[std::string("bw")] = video_input->currentBandwidth() ;
+		}
+
 private:
     const QVideoInputDevice *video_input ;
 };

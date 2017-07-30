@@ -111,6 +111,7 @@ protected slots:
 	 void updateIfPossible() ;
 
 protected:
+//cppcheck-suppress pureVirtualCall
     virtual void getValues(std::map<std::string,float>& values) const = 0 ;// overload this in your own class to fill in the values you want to display.
 
 #ifdef TO_REMOVE
@@ -155,7 +156,7 @@ public:
 	};
 
 	/** Default Constructor */
-	RSGraphWidget(QWidget *parent = 0);
+	explicit RSGraphWidget(QWidget *parent = 0);
 	/** Default Destructor */
 	~RSGraphWidget();
 
