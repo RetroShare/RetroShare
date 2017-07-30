@@ -96,6 +96,22 @@ void XMLWrapper::trimString(std::string &string)
 	}
 }
 
+XMLWrapper::XMLWrapper(const XMLWrapper &xml)
+{
+	mDocument = NULL;
+	mCharEncodingHandler = xmlFindCharEncodingHandler ("UTF8");
+
+	if (!mCharEncodingHandler) {
+		/* no encoding handler found */
+		std::cerr << "XMLWrapper::XMLWrapper - no encoding handler found" << std::endl;
+	}
+
+	const xmlDocPtr document = xml.getDocument();
+	if (document) {
+		mDocument = xmlCopyDoc(document, 1);
+	}
+}
+
 XMLWrapper &XMLWrapper::operator=(const XMLWrapper &xml)
 {
 	cleanup();

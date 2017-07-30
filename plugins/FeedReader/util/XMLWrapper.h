@@ -31,6 +31,7 @@ class XMLWrapper
 {
 public:
 	XMLWrapper();
+	explicit XMLWrapper(const XMLWrapper &xml);
 	~XMLWrapper();
 
 	// find better place
