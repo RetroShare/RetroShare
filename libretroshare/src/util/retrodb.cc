@@ -396,7 +396,7 @@ bool RetroDb::execSQL_bind(const std::string &query, std::list<RetroBind*> &para
     return ok;
 }
 
-void RetroDb::buildInsertQueryValue(const std::map<std::string, uint8_t> keyTypeMap,
+void RetroDb::buildInsertQueryValue(const std::map<std::string, uint8_t> &keyTypeMap,
 		const ContentValue& cv, std::string& parameter,
 		std::list<RetroBind*>& paramBindings)
 {
@@ -469,7 +469,7 @@ void RetroDb::buildInsertQueryValue(const std::map<std::string, uint8_t> keyType
 
 }
 
-void RetroDb::buildUpdateQueryValue(const std::map<std::string, uint8_t> keyTypeMap,
+void RetroDb::buildUpdateQueryValue(const std::map<std::string, uint8_t> &keyTypeMap,
 		const ContentValue& cv, std::string& parameter,
 		std::list<RetroBind*>& paramBindings)
 {
@@ -551,13 +551,13 @@ bool RetroDb::sqlDelete(const std::string &tableName, const std::string &whereCl
 }
 
 
-bool RetroDb::sqlUpdate(const std::string &tableName, std::string whereClause, const ContentValue& cv){
+bool RetroDb::sqlUpdate(const std::string &tableName, const std::string &whereClause, const ContentValue& cv){
 
     std::string sqlQuery = "UPDATE " + tableName + " SET ";
 
 
     std::map<std::string, uint8_t> keyTypeMap;
-    std::map<std::string, uint8_t>::iterator mit;
+    //std::map<std::string, uint8_t>::iterator mit;
     cv.getKeyTypeMap(keyTypeMap);
 
     // build SET part of update
