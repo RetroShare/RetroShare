@@ -2457,7 +2457,7 @@ int TcpStream::send()
 #endif
 		inSize = 0;
 		sent++;
-		maxsend -= inSize;
+		//maxsend -= inSize;
 		toSend(pkt);
 	}
 
