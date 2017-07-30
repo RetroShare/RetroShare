@@ -43,7 +43,7 @@ namespace QtSpeex {
 	public:
                 float dPeakSpeaker, dPeakSignal, dMaxMic, dPeakMic, dPeakCleanMic, dVoiceAcivityLevel;
                 float fSpeechProb;
-                SpeexInputProcessor(QObject* parent = 0);
+                explicit SpeexInputProcessor(QObject* parent = 0);
                 virtual ~SpeexInputProcessor();
 
 		bool hasPendingPackets();
@@ -89,7 +89,7 @@ namespace QtSpeex {
                 Q_OBJECT
 
         public:
-                SpeexOutputProcessor(QObject* parent = 0);
+                explicit SpeexOutputProcessor(QObject* parent = 0);
                 virtual ~SpeexOutputProcessor();
 
                 void putNetworkPacket(QString name, QByteArray packet);
