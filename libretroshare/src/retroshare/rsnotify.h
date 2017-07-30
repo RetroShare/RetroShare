@@ -205,8 +205,10 @@ class RsNotify
 
 		virtual bool GetFeedItem(RsFeedItem &item) = 0;
 
-        virtual bool cachePgpPassphrase               (const std::string& /* pgp_passphrase */) { return false ; }
-        virtual bool clearPgpPassphrase               () { return false ; }
+		virtual bool cachePgpPassphrase (const std::string& /* pgp_passphrase */) { return false ; }
+		virtual bool clearPgpPassphrase () { return false ; }
+
+		virtual bool setDisableAskPassword (const bool /*bValue*/) { return false ; }
 };
 
 class NotifyClient
