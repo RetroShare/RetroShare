@@ -54,8 +54,8 @@ template<class Key, class Value> class RsMemCache
 {
 public:
 
-	RsMemCache(uint32_t max_size = DEFAULT_MEM_CACHE_SIZE, std::string name = "UnknownMemCache")
-	        :mDataCount(0), mMaxSize(max_size), mName(name) 
+	RsMemCache(uint32_t max_size = DEFAULT_MEM_CACHE_SIZE, const std::string &name = "UnknownMemCache")
+	  : mDataCount(0), mMaxSize(max_size), mName(name)
 	{ 
 		clearStats();
 		return;
@@ -83,9 +83,9 @@ private:
 	class cache_data
 	{
 	public:
-		cache_data() { return; }
+		cache_data(): ts(0) {}
 		cache_data(Key in_key, Value in_data, time_t in_ts)
-		        :key(in_key), data(in_data), ts(in_ts) { return; }
+		        :key(in_key), data(in_data), ts(in_ts) {}
 		Key key;
 		Value data;
 		time_t ts;
