@@ -51,7 +51,7 @@ typedef /*HANDLE*/ void *rs_lock_handle_t;
 class RsStackFileLock
 {
 	public:
-		RsStackFileLock(const std::string& file_path) ;
+		explicit RsStackFileLock(const std::string& file_path) ;
 		~RsStackFileLock() ;
 
 	private:
