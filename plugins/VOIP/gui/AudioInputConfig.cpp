@@ -105,8 +105,6 @@ AudioInputConfig::AudioInputConfig(QWidget * parent, Qt::WindowFlags flags)
     /* Invoke the Qt Designer generated object setup routine */
     ui.setupUi(this);
 
-    loaded = false;
-
     inputAudioProcessor = NULL;
     inputAudioDevice = NULL;
     abSpeech = NULL;
@@ -269,7 +267,6 @@ void AudioInputConfig::loadSettings() {
         connect( ui.qsNoise, SIGNAL( valueChanged ( int ) ), this, SLOT( on_qsNoise_valueChanged(int) ) );
         connect( ui.qsAmp, SIGNAL( valueChanged ( int ) ), this, SLOT( on_qsAmp_valueChanged(int) ) );
         connect( ui.qcbTransmit, SIGNAL( currentIndexChanged ( int ) ), this, SLOT( on_qcbTransmit_currentIndexChanged(int) ) );
-        loaded = true;
 
 		  std::cerr << "AudioInputConfig:: starting video." << std::endl;
 		  videoInput->start() ;

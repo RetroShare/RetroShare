@@ -45,7 +45,7 @@ class voipGraphSource ;
 class voipGraph: public RSGraphWidget
 {
 public:
-    voipGraph(QWidget *parent) ;
+    explicit voipGraph(QWidget *parent) ;
     
     voipGraphSource *voipSource() const { return _src ; }
     
@@ -70,7 +70,6 @@ class AudioInputConfig : public ConfigPage
 		//VideoEncoder *videoEncoder ;
 		QVideoInputDevice *videoInput ;
         	VideoProcessor *videoProcessor ;
-		bool loaded;
 
         voipGraphSource *graph_source ;
 
