@@ -527,10 +527,10 @@ std::string RsRecogn::getRsaKeyId(RSA *pubkey)
     // (cyril) I removed this because this is cryptographically insane, as it allows to easily forge a RSA key with the same ID.
 
 	// copy first CERTSIGNLEN bytes...
-	if (len > CERTSIGNLEN)
-	{
-		len = CERTSIGNLEN;
-	}
+	//if (len > CERTSIGNLEN)
+	//{
+	//	len = CERTSIGNLEN;
+	//}
 
 	std::string id;
 	for(uint32_t i = 0; i < CERTSIGNLEN; i++)
