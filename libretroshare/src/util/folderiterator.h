@@ -53,7 +53,6 @@ private:
 
 #ifdef WINDOWS_SYS
     HANDLE handle;
-    bool isFirstCall;
     _WIN32_FIND_DATAW fileInfo;
 #else
     DIR* handle;
