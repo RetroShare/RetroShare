@@ -54,6 +54,17 @@ public:
     ContentValue(const ContentValue& from);//const damit die äußere klasse einen konstruktor com compielr bekommt
 
     /*!
+     * copy operator
+     * warning: Cppcheck(copyCtorAndEqOperator): The class 'ContentValue' has 'copy constructor' but lack of 'operator='.
+     */
+    ContentValue& operator =(const ContentValue& content)
+    {
+        this->~ContentValue();
+        new(this) ContentValue(content);
+        return *this;
+    }
+
+    /*!
      *
      *
      *
