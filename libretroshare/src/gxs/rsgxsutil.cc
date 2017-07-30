@@ -35,7 +35,9 @@ static const uint32_t MAX_GXS_IDS_REQUESTS_NET   =  10 ; // max number of reques
 
 //#define DEBUG_GXSUTIL 1
 
+#ifdef DEBUG_GXSUTIL
 #define GXSUTIL_DEBUG() std::cerr << "[" << time(NULL)  << "] : GXS_UTIL : " << __FUNCTION__ << " : "
+#endif
 
 RsGxsMessageCleanUp::RsGxsMessageCleanUp(RsGeneralDataService* const dataService, RsGenExchange *genex, uint32_t chunkSize)
 : mDs(dataService), mGenExchangeClient(genex), CHUNK_SIZE(chunkSize)
@@ -110,15 +112,19 @@ bool RsGxsMessageCleanUp::clean()
 				remove = remove ||  (grpMeta->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_NOT_SUBSCRIBED);
 				remove = remove || !(grpMeta->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED);
 
+#ifdef DEBUG_GXSUTIL
 				GXSUTIL_DEBUG() << "    msg id " << meta->mMsgId << " in grp " << grpId << ": keep_flag=" << bool(meta->mMsgStatus & GXS_SERV::GXS_MSG_STATUS_KEEP)
 				                << " subscribed: " << bool(grpMeta->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED) << " store_period: " << store_period
 				                << " kids: " << have_kids << " now - meta->mPublishTs: " << now - meta->mPublishTs ;
+#endif
 
 				if( remove )
 				{
 					req[grpId].push_back(meta->mMsgId);
                     
+#ifdef DEBUG_GXSUTIL
 					std::cerr << "    Scheduling for removal." << std::endl;
+#endif
 				}
 				else
 					std::cerr << std::endl;
