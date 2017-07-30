@@ -1372,7 +1372,9 @@ void p3FeedReader::cleanFeeds()
 				storageTime = fi->storageTime;
 			}
 			if (storageTime > 0) {
+#ifdef FEEDREADER_DEBUG
 				uint32_t removedMsgs = 0;
+#endif
 
 				std::map<std::string, RsFeedReaderMsg*>::iterator msgIt;
 				for (msgIt = fi->msgs.begin(); msgIt != fi->msgs.end(); ) {
@@ -1384,7 +1386,9 @@ void p3FeedReader::cleanFeeds()
 							delete(mi);
 							std::map<std::string, RsFeedReaderMsg*>::iterator deleteIt = msgIt++;
 							fi->msgs.erase(deleteIt);
+#ifdef FEEDREADER_DEBUG
 							++removedMsgs;
+#endif
 							continue;
 						}
 					}
