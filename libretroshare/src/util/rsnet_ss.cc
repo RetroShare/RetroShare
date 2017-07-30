@@ -1226,7 +1226,6 @@ bool sockaddr_storage_ipv6_isExternalNet(const struct sockaddr_storage &/*addr*/
 
 bool sockaddr_storage_inet_ntop (const sockaddr_storage &addr, std::string &dst)
 {
-	bool success = false;
 	char ipStr[255];
 
 #ifdef WINDOWS_SYS
@@ -1238,9 +1237,10 @@ bool sockaddr_storage_inet_ntop (const sockaddr_storage &addr, std::string &dst)
 	sockaddr_storage_clear(tmp);
 	sockaddr_storage_copyip(tmp, addr);
 	sockaddr * sptr = (sockaddr *) &tmp;
-	success = (0 == WSAAddressToString( sptr, sizeof(sockaddr_storage), NULL, wIpStr, &len ));
+	bool success = (0 == WSAAddressToString( sptr, sizeof(sockaddr_storage), NULL, wIpStr, &len ));
 	wcstombs(ipStr, wIpStr, len);
 #else // WINDOWS_SYS
+	bool success = false;
 	switch(addr.ss_family)
 	{
 	case AF_INET:
