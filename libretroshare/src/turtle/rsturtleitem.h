@@ -38,7 +38,7 @@ const uint8_t RS_TURTLE_SUBTYPE_CHUNK_CRC_REQUEST       = 0x15 ;
 class RsTurtleItem: public RsItem
 {
 	public:
-		RsTurtleItem(uint8_t turtle_subtype) : RsItem(RS_PKT_VERSION_SERVICE,RS_SERVICE_TYPE_TURTLE,turtle_subtype) {}
+		explicit RsTurtleItem(uint8_t turtle_subtype) : RsItem(RS_PKT_VERSION_SERVICE,RS_SERVICE_TYPE_TURTLE,turtle_subtype) {}
 };
 
 /***********************************************************************************/
@@ -67,7 +67,7 @@ class RsTurtleSearchResultItem: public RsTurtleItem
 class RsTurtleSearchRequestItem: public RsTurtleItem
 {
 	public:
-        RsTurtleSearchRequestItem(uint32_t subtype) : RsTurtleItem(subtype), request_id(0), depth(0) { setPriorityLevel(QOS_PRIORITY_RS_TURTLE_SEARCH_REQUEST) ;}
+		explicit RsTurtleSearchRequestItem(uint32_t subtype) : RsTurtleItem(subtype), request_id(0), depth(0) { setPriorityLevel(QOS_PRIORITY_RS_TURTLE_SEARCH_REQUEST) ;}
 		virtual RsTurtleSearchRequestItem *clone() const = 0 ;					// used for cloning in routing methods
 
 		virtual void performLocalSearch(std::list<TurtleFileInfo>&) const = 0 ;	// abstracts the search method
@@ -158,8 +158,8 @@ class RsTurtleTunnelOkItem: public RsTurtleItem
 class RsTurtleGenericTunnelItem: public RsTurtleItem
 {
 	public:
-        RsTurtleGenericTunnelItem(uint8_t sub_packet_id) : RsTurtleItem(sub_packet_id), direction(0), tunnel_id(0) { setPriorityLevel(QOS_PRIORITY_RS_TURTLE_GENERIC_ITEM);}
-        virtual ~RsTurtleGenericTunnelItem() {}
+		explicit RsTurtleGenericTunnelItem(uint8_t sub_packet_id) : RsTurtleItem(sub_packet_id), direction(0), tunnel_id(0) { setPriorityLevel(QOS_PRIORITY_RS_TURTLE_GENERIC_ITEM);}
+		virtual ~RsTurtleGenericTunnelItem() {}
 
 		typedef uint32_t Direction ;
 		static const Direction DIRECTION_CLIENT = 0x001 ;
