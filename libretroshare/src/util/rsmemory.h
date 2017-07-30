@@ -26,7 +26,7 @@ void *rs_malloc(size_t size) ;
 class RsTemporaryMemory
 {
 public:
-    RsTemporaryMemory(size_t s)
+    explicit RsTemporaryMemory(size_t s)
     {
 	    _mem = (unsigned char *)rs_malloc(s) ;
 
@@ -54,6 +54,7 @@ private:
     size_t _size ;
 
     // make it noncopyable
+    //cppcheck-suppress operatorEqVarError
     RsTemporaryMemory& operator=(const RsTemporaryMemory&) { return *this ;}
     RsTemporaryMemory(const RsTemporaryMemory&) {}
 };
