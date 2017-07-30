@@ -345,6 +345,7 @@ int BIO_tou_socket_non_fatal_error(int err)
 		{
 #if defined(OPENSSL_SYS_WINDOWS)
 # if defined(WSAEWOULDBLOCK)
+	// cppcheck-suppress ConfigurationNotChecked
 	case WSAEWOULDBLOCK:
 # endif
 
@@ -361,33 +362,40 @@ int BIO_tou_socket_non_fatal_error(int err)
 	case EWOULDBLOCK:
 #  endif
 # else
+	// cppcheck-suppress ConfigurationNotChecked
 	case EWOULDBLOCK:
 # endif
 #endif
 
 #if defined(ENOTCONN)
+	// cppcheck-suppress ConfigurationNotChecked
 	case ENOTCONN:
 #endif
 
 #ifdef EINTR
+	// cppcheck-suppress ConfigurationNotChecked
 	case EINTR:
 #endif
 
 #ifdef EAGAIN
 #if EWOULDBLOCK != EAGAIN
+	// cppcheck-suppress ConfigurationNotChecked
 	case EAGAIN:
 # endif
 #endif
 
 #ifdef EPROTO
+	// cppcheck-suppress ConfigurationNotChecked
 	case EPROTO:
 #endif
 
 #ifdef EINPROGRESS
+	// cppcheck-suppress ConfigurationNotChecked
 	case EINPROGRESS:
 #endif
 
 #ifdef EALREADY
+	// cppcheck-suppress ConfigurationNotChecked
 	case EALREADY:
 #endif
 
