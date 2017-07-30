@@ -43,7 +43,7 @@ public:
 	xmlNodePtr node(unsigned int index);
 
 protected:
-	XPathWrapper(XMLWrapper &xmlWrapper);
+	explicit XPathWrapper(XMLWrapper &xmlWrapper);
 
 	XMLWrapper &mXMLWrapper;
 	xmlXPathContextPtr mContext;
