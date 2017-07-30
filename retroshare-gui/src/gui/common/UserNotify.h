@@ -35,7 +35,7 @@ class UserNotify : public QObject
 	Q_OBJECT
 
 public:
-	UserNotify(QObject *parent = 0);
+	explicit UserNotify(QObject *parent = 0);
 	virtual ~UserNotify();
 
 	void initialize(QToolBar *mainToolBar, QAction *mainAction, QListWidgetItem *listItem);
