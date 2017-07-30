@@ -32,7 +32,7 @@ class ToasterNotify : public QObject
 	Q_OBJECT
 
 public:
-	ToasterNotify(QObject *parent = 0);
+	explicit ToasterNotify(QObject *parent = 0);
 	~ToasterNotify();
 
 	virtual bool hasSetting(QString &/*name*/);
