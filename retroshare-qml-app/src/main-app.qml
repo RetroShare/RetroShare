@@ -41,6 +41,7 @@ ApplicationWindow
 	{
 		addUriHandler("/certificate", certificateLinkHandler)
 		addUriHandler("/identity", contactLinkHandler)
+		addUriHandler("/contacts", openContactsViewLinkHandler)
 
 		var argc = mainArgs.length
 		for(var i=0; i<argc; ++i)
@@ -477,6 +478,15 @@ ApplicationWindow
 						)
 		}
 	}
+
+	function openContactsViewLinkHandler (uriStr)
+	{
+		if(coreReady)
+		{
+			stackView.push("qrc:/Contacts.qml" )
+		}
+	}
+
 	Popup
 	{
 		id: contactImportPopup

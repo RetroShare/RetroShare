@@ -65,12 +65,16 @@ public class RetroShareQmlActivity extends QtActivity
 	@Override
 	public void onNewIntent(Intent intent)
 	{
-		Log.i("RetroShareQmlActivity", "onNewIntent(Intent intent)");
+		Log.i("RetroShareQmlActivity", "on	NewIntent(Intent intent)");
 
 		super.onNewIntent(intent);
 
 		String uri = intent.getDataString();
-		if (uri != null) NativeCalls.notifyIntentUri(uri);
+		if (uri != null)
+		{
+			NativeCalls.notifyIntentUri(uri);
+			Log.i("RetroShareQmlActivity", "onNewIntent(Intent intent) Uri: " + uri);
+		}
 	}
 
 	@UsedByNativeCode @SuppressWarnings("unused")

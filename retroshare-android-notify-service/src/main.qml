@@ -46,7 +46,8 @@ QtObject
 						qsTr("%1 Unread %2 from %3")
 						    .arg(json.data[0].unread_count)
 						    .arg(json.data[0].unread_count > 1 ? "messages" : "message")
-						    .arg(json.data[0].remote_author_name)
+						    .arg(json.data[0].remote_author_name),
+						qsTr("/contacts")
 						)
 		}
 	}
