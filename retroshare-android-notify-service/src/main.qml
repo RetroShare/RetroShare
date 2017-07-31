@@ -47,7 +47,11 @@ QtObject
 						    .arg(json.data[0].unread_count)
 						    .arg(json.data[0].unread_count > 1 ? "messages" : "message")
 						    .arg(json.data[0].remote_author_name),
-						qsTr("/contacts")
+						qsTr("/contacts%1").arg(
+							convCnt == 1?
+								"?gxsId="+json.data[0].remote_author_id +
+								"&name="+json.data[0].remote_author_name
+							  : "")
 						)
 		}
 	}
