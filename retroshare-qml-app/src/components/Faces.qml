@@ -16,14 +16,18 @@ Item
 		id: faceAvatar
 		width: iconSize
 		height: iconSize
+		visible: true
 	}
 
 	Canvas
 	{
 		id: faceCanvas
-		width: iconSize
-		height: iconSize
+		width: canvasSizes
+		height: canvasSizes
 		visible: false
+
+		renderStrategy: Canvas.Threaded;
+		renderTarget: Canvas.Image;
 
 		property var images
 		property var callback
@@ -37,14 +41,17 @@ Item
 			{
 				for (y = 0 ;  y< nPieces ; y++)
 				{
-					ctx.drawImage(images[y], 0, 0, iconSize, iconSize )
+					ctx.drawImage(images[y], 0, 0, canvasSizes, canvasSizes )
 				}
 			}
 
+		}
 
+		onPainted:
+		{
 			if (callback)
 			{
-				var data = faceCanvas.toDataURL()
+				var data = toDataURL('image/png')
 				callback(data)
 			}
 		}
@@ -59,7 +66,7 @@ Item
 	property var facesPath: "/icons/faces/"
 
 	property var iconSize: 32
-	property var canvasSize: iconSize > 32 ? 64 : 32;
+	property var canvasSizes: iconSize > 32 ? 64 : 32;
 
 	property var nPieces: 6
 	property var pieces: []
@@ -77,7 +84,7 @@ Item
 		var head = gender === 'female' ? 'head' : 'hair';
 		var pieces = ['background', 'face', head, 'mouth', 'clothes', 'eye'];
 		var num = random % total[gender][piece] + 1;
-		return facesPath+gender+canvasSize+'/'+pieces[piece]+num+'.png';
+		return facesPath+gender+canvasSizes+'/'+pieces[piece]+num+'.png';
 	}
 
 	function calcDataFromFingerprint(dataHex)
