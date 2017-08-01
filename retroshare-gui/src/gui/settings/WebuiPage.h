@@ -39,6 +39,8 @@ public:
 
 public slots:
   void onEnableCBClicked(bool checked);
+  void onPortValueChanged(int value);
+  void onAllIPCBClicked(bool checked);
   void onApplyClicked();
 
 private:

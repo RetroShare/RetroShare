@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>GxsTransportStatistics</class>
+ <widget class="QWidget" name="GxsTransportStatistics">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1468</width>
+    <height>779</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Router Statistics</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_2">
+   <item>
+    <widget class="QGroupBox" name="groupBox">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="title">
+      <string>GroupBox</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_2">
+      <item row="0" column="0">
+       <widget class="QTreeWidget" name="treeWidget">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="contextMenuPolicy">
+         <enum>Qt::CustomContextMenu</enum>
+        </property>
+        <property name="sortingEnabled">
+         <bool>true</bool>
+        </property>
+        <attribute name="headerShowSortIndicator" stdset="0">
+         <bool>false</bool>
+        </attribute>
+        <column>
+         <property name="text">
+          <string>ID</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Destination</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Data status</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Data size</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Data hash</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Sending time (secs ago)</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Group ID</string>
+         </property>
+        </column>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox_2">
+     <property name="title">
+      <string>Gxs Transport Groups:</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QSplitter" name="splitter">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <widget class="QTreeWidget" name="groupTreeWidget">
+         <column>
+          <property name="text">
+           <string>Group ID / Author</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Number of messages / Publish TS</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Local size of data</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Subscribed</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Popularity</string>
+          </property>
+         </column>
+        </widget>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

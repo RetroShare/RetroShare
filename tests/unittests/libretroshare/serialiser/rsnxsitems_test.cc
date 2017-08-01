@@ -10,11 +10,11 @@
 
 TEST(libretroshare_serialiser, RsNxsItem)
 {
-    test_RsItem<RsNxsGrp>(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM);
-    test_RsItem<RsNxsMsg>(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM);
-    test_RsItem<RsNxsSyncGrpItem>(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM);
-    test_RsItem<RsNxsSyncMsgItem>(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM);
-    test_RsItem<RsNxsSyncGrpItem>(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM);
-    test_RsItem<RsNxsSyncMsgItem>(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM);
-    test_RsItem<RsNxsTransacItem>(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM);
+    test_RsItem<RsNxsGrp,RsNxsSerialiser>(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM);
+    test_RsItem<RsNxsMsg,RsNxsSerialiser>(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM);
+    test_RsItem<RsNxsSyncGrpItem,RsNxsSerialiser>(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM);
+    test_RsItem<RsNxsSyncMsgItem,RsNxsSerialiser>(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM);
+    test_RsItem<RsNxsSyncGrpItem,RsNxsSerialiser>(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM);
+    test_RsItem<RsNxsSyncMsgItem,RsNxsSerialiser>(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM);
+    test_RsItem<RsNxsTransacItem,RsNxsSerialiser>(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM);
 }

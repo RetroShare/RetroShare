@@ -52,6 +52,7 @@ class NotifyQt: public QObject, public NotifyClient
 		virtual void notifyOwnAvatarChanged() ;
         virtual void notifyChatLobbyEvent(uint64_t /* lobby id */, uint32_t /* event type */, const RsGxsId & /*nickname*/, const std::string& /* any string */) ;
 		virtual void notifyChatLobbyTimeShift(int time_shift) ;
+		void notifyConnectionWithoutCert();
 
 		virtual void notifyOwnStatusMessageChanged() ;
 		virtual void notifyDiskFull(uint32_t loc,uint32_t size_in_mb) ;
@@ -68,7 +69,7 @@ class NotifyQt: public QObject, public NotifyClient
 		virtual void notifyDownloadComplete(const std::string& fileHash);
 		virtual void notifyDownloadCompleteCount(uint32_t count);
 		virtual bool askForPassword(const std::string& title, const std::string& key_details, bool prev_is_bad, std::string& password, bool &cancelled);
-		virtual bool askForPluginConfirmation(const std::string& plugin_filename, const std::string& plugin_file_hash);
+		virtual bool askForPluginConfirmation(const std::string& plugin_filename, const std::string& plugin_file_hash,bool first_time);
 
 		// Queues the signature event so that it canhappen in the main GUI thread (to ask for passwd).
 		// To use this function: call is multiple times as soon as it returns true.
@@ -143,6 +144,7 @@ class NotifyQt: public QObject, public NotifyClient
 		void chatLobbyInviteReceived() ;
 		void deferredSignatureHandlingRequested() ;
 		void chatLobbyTimeShift(int time_shift) ;
+		void connectionWithoutCert();
 
 		/* Notify from GUI */
 		void chatFontChanged();
@@ -153,6 +155,7 @@ class NotifyQt: public QObject, public NotifyClient
 	public slots:
 		void UpdateGUI(); /* called by timer */
 		void SetDisableAll(bool bValue);
+		void resetCachedPassphrases() ;
 
 	private slots:
 		void runningTick();

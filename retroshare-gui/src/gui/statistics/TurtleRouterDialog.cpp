@@ -142,7 +142,7 @@ void TurtleRouterDialog::updateTunnelRequests(	const std::vector<std::vector<std
 			num /= 1024.0f,++k;
 		sprintf(tmp,"%3.2f %s",num,units[k].c_str()) ;
 
-		QString str = tr("Tunnel id") + ": " + QString::fromUtf8(tunnels_info[i][0].c_str()) + "\t [" + QString::fromUtf8(tunnels_info[i][2].c_str()) + "] --> [" + QString::fromUtf8(tunnels_info[i][1].c_str()) + "]\t\t " + tr("last transfer") + ": " + QString::fromStdString(tunnels_info[i][4]) + " " + "\t " + tr("Speed") + ": " + QString::fromStdString(tmp) ;
+		QString str = tr("Tunnel id") + ": " + QString::fromUtf8(tunnels_info[i][0].c_str()) + "\t" + tr("Speed") + ":  " + QString::fromStdString(tmp) + "\t " + tr("last transfer") + ": " + QString::fromStdString(tunnels_info[i][4])+ "\t" + QString::fromUtf8(tunnels_info[i][2].c_str()) + " -> " + QString::fromUtf8(tunnels_info[i][1].c_str());
 		stl.clear() ;
 		stl.push_back(str) ;
 		QTreeWidgetItem *item = new QTreeWidgetItem(stl);

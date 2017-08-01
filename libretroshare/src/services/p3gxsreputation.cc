@@ -127,16 +127,16 @@
  * 	[X]  Implement a system to allow not storing info when we don't have it
  */
 
-static const uint32_t LOWER_LIMIT                         = 0;        // used to filter valid Opinion values from serialized data
+//static const uint32_t LOWER_LIMIT                         = 0;        // used to filter valid Opinion values from serialized data
 static const uint32_t UPPER_LIMIT                         = 2;        // used to filter valid Opinion values from serialized data
-static const int      kMaximumPeerAge                     = 180;      // half a year.
+//static const int      kMaximumPeerAge                     = 180;      // half a year.
 static const int      kMaximumSetSize                     = 100;      // max set of updates to send at once.
 static const int      CLEANUP_PERIOD        = 600 ;     // 10 minutes
-static const int      ACTIVE_FRIENDS_ONLINE_DELAY         = 86400*7 ; // 1 week.
+//static const int      ACTIVE_FRIENDS_ONLINE_DELAY         = 86400*7 ; // 1 week.
 static const int      kReputationRequestPeriod            = 600;      // 10 mins
 static const int      kReputationStoreWait                = 180;      // 3 minutes.
-static const float    REPUTATION_ASSESSMENT_THRESHOLD_X1  = 0.5f ;    // reputation under which the peer gets killed. Warning there's a 1 shift with what's shown in GUI. Be careful.
-static const uint32_t PGP_AUTO_BAN_THRESHOLD_DEFAULT      = 2 ;       // above this, auto ban any GXS id signed by this node
+//static const float    REPUTATION_ASSESSMENT_THRESHOLD_X1  = 0.5f ;    // reputation under which the peer gets killed. Warning there's a 1 shift with what's shown in GUI. Be careful.
+//static const uint32_t PGP_AUTO_BAN_THRESHOLD_DEFAULT      = 2 ;       // above this, auto ban any GXS id signed by this node
 static const uint32_t IDENTITY_FLAGS_UPDATE_DELAY         = 100 ;     // 
 static const uint32_t BANNED_NODES_UPDATE_DELAY           = 313 ;     // update approx every 5 mins. Chosen to not be a multiple of IDENTITY_FLAGS_UPDATE_DELAY
 static const uint32_t REPUTATION_INFO_KEEP_DELAY_DEFAULT          = 86400*35; // remove old reputation info 5 days after last usage limit, in case the ID would come back..

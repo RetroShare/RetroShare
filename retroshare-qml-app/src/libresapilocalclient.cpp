@@ -1,6 +1,6 @@
 /*
  * RetroShare Android QML App
- * Copyright (C) 2016  Gioacchino Mazzurco <gio@eigenlab.org>
+ * Copyright (C) 2016-2017  Gioacchino Mazzurco <gio@eigenlab.org>
  * Copyright (C) 2016  Manu Pineda <manu@cooperativa.cat>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,46 +20,120 @@
 #include "libresapilocalclient.h"
 
 #include <QJSEngine>
+#include <QtDebug>
 
-
-void LibresapiLocalClient::openConnection(QString socketPath)
+void LibresapiLocalClient::openConnection(const QString& socketPath)
 {
 	connect(& mLocalSocket, SIGNAL(error(QLocalSocket::LocalSocketError)),
 	        this, SLOT(socketError(QLocalSocket::LocalSocketError)));
 	connect(& mLocalSocket, SIGNAL(readyRead()),
 	        this, SLOT(read()));
-	mLocalSocket.connectToServer(socketPath);
+	mSocketPath = socketPath;
+	socketConnectAttempt();
 }
 
 int LibresapiLocalClient::request( const QString& path, const QString& jsonData,
                                    QJSValue callback )
 {
+#ifdef QT_DEBUG
+	if(mDebug)
+		qDebug() << reqCount++ << __PRETTY_FUNCTION__ << path << jsonData
+		         << callback.toString();
+#endif // QT_DEBUG
+
 	QByteArray data;
 	data.append(path); data.append('\n');
 	data.append(jsonData); data.append('\n');
-	callbackQueue.enqueue(callback);
-	mLocalSocket.write(data);
-
-	return 1;
+	processingQueue.enqueue(PQRecord(path, jsonData, callback));
+	int ret = mLocalSocket.write(data);
+	if(ret < 0) socketError(mLocalSocket.error());
+	return ret;
 }
 
-void LibresapiLocalClient::socketError(QLocalSocket::LocalSocketError)
+void LibresapiLocalClient::socketError(QLocalSocket::LocalSocketError error)
 {
-	qDebug() << "Socket Eerror!!" << mLocalSocket.errorString();
+	qCritical() << __PRETTY_FUNCTION__ << "Socket error! " << error
+	            << mLocalSocket.errorString();
+
+	if(mLocalSocket.state() == QLocalSocket::UnconnectedState &&
+	        !mConnectAttemptTimer.isActive())
+	{
+		qDebug() << __PRETTY_FUNCTION__ << "Socket:" << mSocketPath
+		         << "is not connected, scheduling a connect attempt again";
+
+		mConnectAttemptTimer.start();
+	}
 }
 
 void LibresapiLocalClient::read()
 {
-	QString receivedMsg(mLocalSocket.readLine());
-	QJSValue callback(callbackQueue.dequeue());
-	if(callback.isCallable())
+	if(processingQueue.isEmpty())
 	{
-		QJSValue params = callback.engine()->newObject();
-		params.setProperty("response", receivedMsg);
-
-		callback.call(QJSValueList { params });
+		qCritical() << __PRETTY_FUNCTION__ << "callbackQueue is empty "
+		            << "something really fishy is happening!";
+		return;
 	}
+
+	if(!mLocalSocket.canReadLine())
+	{
+		qWarning() << __PRETTY_FUNCTION__
+		           << "Strange, can't read a complete line!";
+		return;
+	}
+
+	QByteArray&& ba(mLocalSocket.readLine());
+	if(ba.size() < 2)
+	{
+		qWarning() << __PRETTY_FUNCTION__ << "Got answer of less then 2 bytes,"
+		           << "something fishy is happening!";
+		return;
+	}
+
+	QString receivedMsg(ba);
+	PQRecord&& p(processingQueue.dequeue());
+
+#ifdef QT_DEBUG
+	if(mDebug)
+		qDebug() << ansCount++ << __PRETTY_FUNCTION__ << receivedMsg << p.mPath
+		         << p.mJsonData << p.mCallback.toString();
+#endif // QT_DEBUG
 
 	emit goodResponseReceived(receivedMsg); /// @deprecated
 	emit responseReceived(receivedMsg);
+
+	if(p.mCallback.isCallable())
+	{
+		QJSValue&& params(p.mCallback.engine()->newObject());
+		params.setProperty("response", receivedMsg);
+
+		p.mCallback.call(QJSValueList { params });
+	}
+
+	// In case of multiple reply coaleshed in the same signal
+	if(mLocalSocket.bytesAvailable() > 0) read();
 }
+
+LibresapiLocalClient::PQRecord::PQRecord( const QString&
+#ifdef QT_DEBUG
+                                          path
+#endif //QT_DEBUG
+                                          , const QString&
+#ifdef QT_DEBUG
+                                          jsonData
+#endif //QT_DEBUG
+                                          , const QJSValue& callback) :
+#ifdef QT_DEBUG
+    mPath(path), mJsonData(jsonData),
+#endif //QT_DEBUG
+    mCallback(callback) {}
+
+#ifdef QT_DEBUG
+void LibresapiLocalClient::setDebug(bool v)
+{
+	if(v != mDebug)
+	{
+		mDebug = v;
+		emit debugChanged();
+	}
+}
+#endif // QT_DEBUG

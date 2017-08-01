@@ -69,15 +69,18 @@ void RsNxsSyncMsgItem::serial_process(RsGenericSerializer::SerializeJob j,RsGene
     RsTypeSerializer::serial_process          (j,ctx,msgId            ,"msgId") ;
     RsTypeSerializer::serial_process          (j,ctx,authorId         ,"authorId") ;
 }
-void RsNxsMsg::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
+
+void RsNxsMsg::serial_process( RsGenericSerializer::SerializeJob j,
+                               RsGenericSerializer::SerializeContext& ctx )
 {
-    RsTypeSerializer::serial_process<uint32_t> (j,ctx,transactionNumber,"transactionNumber") ;
-    RsTypeSerializer::serial_process<uint8_t>  (j,ctx,pos              ,"pos") ;
-    RsTypeSerializer::serial_process           (j,ctx,msgId            ,"msgId") ;
-    RsTypeSerializer::serial_process           (j,ctx,grpId            ,"grpId") ;
-    RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,msg              ,"msg") ;
-    RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,meta             ,"meta") ;
+	RS_REGISTER_SERIAL_MEMBER_TYPED(transactionNumber, uint32_t);
+	RS_REGISTER_SERIAL_MEMBER_TYPED(pos, uint8_t);
+	RS_REGISTER_SERIAL_MEMBER(msgId);
+	RS_REGISTER_SERIAL_MEMBER(grpId);
+	RS_REGISTER_SERIAL_MEMBER_TYPED(msg, RsTlvItem);
+	RS_REGISTER_SERIAL_MEMBER_TYPED(meta, RsTlvItem);
 }
+
 void RsNxsGrp::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process<uint32_t> (j,ctx,transactionNumber,"transactionNumber") ;
@@ -149,11 +152,14 @@ void RsNxsMsg::clear()
     meta.TlvClear();
 }
 
+std::ostream&RsNxsMsg::print(std::ostream& out, uint16_t /*indent*/)
+{ return out; }
+
 void RsNxsGrp::clear()
 {
-    grpId.clear();
-    grp.TlvClear();
-    meta.TlvClear();
+	grpId.clear();
+	grp.TlvClear();
+	meta.TlvClear();
 }
 
 RsNxsGrp* RsNxsGrp::clone() const {

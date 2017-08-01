@@ -609,8 +609,8 @@ void SharedFilesDialog::copyLink (const QModelIndexList& lst, bool remote)
                     continue;
                 }
 
-                RetroShareLink link;
-                if (link.createFile(QString::fromUtf8(details.name.c_str()), details.count, details.hash.toStdString().c_str())) {
+                RetroShareLink link = RetroShareLink::createFile(QString::fromUtf8(details.name.c_str()), details.count, details.hash.toStdString().c_str());
+                if (link.valid()) {
                     urls.push_back(link) ;
                 }
             }
@@ -622,8 +622,8 @@ void SharedFilesDialog::copyLink (const QModelIndexList& lst, bool remote)
 				has_unhashed_files = true;
 				continue;
 			}
-            RetroShareLink link;
-            if (link.createFile(QString::fromUtf8(details.name.c_str()), details.count, details.hash.toStdString().c_str())) {
+            RetroShareLink link = RetroShareLink::createFile(QString::fromUtf8(details.name.c_str()), details.count, details.hash.toStdString().c_str());
+            if (link.valid()) {
                 urls.push_back(link) ;
             }
         }

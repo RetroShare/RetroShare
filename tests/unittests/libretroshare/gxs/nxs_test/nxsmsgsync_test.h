@@ -17,6 +17,7 @@ namespace rs_nxs_test {
 	public:
 
 		NxsMsgSync();
+		virtual ~NxsMsgSync();
 		void getPeers(std::list<RsPeerId>& peerIds);
 		RsGeneralDataService* getDataService(const RsPeerId& peerId);
 		RsNxsNetMgr* getDummyNetManager(const RsPeerId& peerId);

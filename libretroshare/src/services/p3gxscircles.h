@@ -199,6 +199,7 @@ virtual RsServiceInfo getServiceInfo();
 
 
 	virtual bool getGroupData(const uint32_t &token, std::vector<RsGxsCircleGroup> &groups);
+	virtual bool getMsgData(const uint32_t &token, std::vector<RsGxsCircleMsg> &msgs);
     virtual void createGroup(uint32_t& token, RsGxsCircleGroup &group);
     virtual void updateGroup(uint32_t &token, RsGxsCircleGroup &group);
 

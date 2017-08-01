@@ -129,7 +129,7 @@ virtual bool notifyPeer(const RsPeerId& id);
 
 	/* extract current peer status */
 virtual bool getPeerStatus(const RsPeerId& id,
-			struct sockaddr_in &laddr, struct sockaddr_in &raddr,
+			struct sockaddr_storage &laddr, struct sockaddr_storage &raddr,
 			uint32_t &type, uint32_t &mode);
 
 	/* stun */

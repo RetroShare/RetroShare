@@ -521,12 +521,14 @@ int	pqiperson::connect(uint32_t type, const sockaddr_storage &raddr,
 		return 0;
 	}
 
+	pqiconnect *pqi = it->second;
+
 #ifdef PERSON_DEBUG
 	std::cerr << "pqiperson::connect() resetting for new connection attempt" << std::endl;
 #endif
 
 	/* set the parameters */
-	(it->second)->reset();
+	pqi->reset();
 
 #ifdef PERSON_DEBUG
 	std::cerr << "pqiperson::connect() clearing rate cap" << std::endl;
@@ -538,22 +540,22 @@ int	pqiperson::connect(uint32_t type, const sockaddr_storage &raddr,
 #endif
 	
 	// These two are universal.
-	(it->second)->connect_parameter(NET_PARAM_CONNECT_DELAY, delay);
-	(it->second)->connect_parameter(NET_PARAM_CONNECT_TIMEOUT, timeout);
+	pqi->connect_parameter(NET_PARAM_CONNECT_DELAY, delay);
+	pqi->connect_parameter(NET_PARAM_CONNECT_TIMEOUT, timeout);
 
 	// these 5 are only used by UDP connections.
-	(it->second)->connect_parameter(NET_PARAM_CONNECT_PERIOD, period);
-	(it->second)->connect_parameter(NET_PARAM_CONNECT_FLAGS, flags);
-	(it->second)->connect_parameter(NET_PARAM_CONNECT_BANDWIDTH, bandwidth);
+	pqi->connect_parameter(NET_PARAM_CONNECT_PERIOD, period);
+	pqi->connect_parameter(NET_PARAM_CONNECT_FLAGS, flags);
+	pqi->connect_parameter(NET_PARAM_CONNECT_BANDWIDTH, bandwidth);
 
-	(it->second)->connect_additional_address(NET_PARAM_CONNECT_PROXY, proxyaddr);
-	(it->second)->connect_additional_address(NET_PARAM_CONNECT_SOURCE, srcaddr);
+	pqi->connect_additional_address(NET_PARAM_CONNECT_PROXY, proxyaddr);
+	pqi->connect_additional_address(NET_PARAM_CONNECT_SOURCE, srcaddr);
 
 	// These are used by Proxy/Hidden 
-	(it->second)->connect_parameter(NET_PARAM_CONNECT_DOMAIN_ADDRESS, domain_addr);
-	(it->second)->connect_parameter(NET_PARAM_CONNECT_REMOTE_PORT, domain_port);
+	pqi->connect_parameter(NET_PARAM_CONNECT_DOMAIN_ADDRESS, domain_addr);
+	pqi->connect_parameter(NET_PARAM_CONNECT_REMOTE_PORT, domain_port);
 
-	(it->second)->connect(raddr);
+	pqi->connect(raddr);
 		
 	// flag if we started a new connectionAttempt.
 	inConnectAttempt = true;

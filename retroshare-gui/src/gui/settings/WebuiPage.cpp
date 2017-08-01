@@ -4,6 +4,7 @@
 #include <QMessageBox>
 #include <QDesktopServices>
 #include <QUrl>
+#include <QSpinBox>
 
 #include "util/misc.h"
 #include "api/ApiServer.h"
@@ -26,6 +27,8 @@ WebuiPage::WebuiPage(QWidget */*parent*/, Qt::WindowFlags /*flags*/)
 {
     ui.setupUi(this);
     connect(ui.enableWebUI_CB, SIGNAL(clicked(bool)), this, SLOT(onEnableCBClicked(bool)));
+    connect(ui.port_SB, SIGNAL(valueChanged(int)), this, SLOT(onPortValueChanged(int)));
+    connect(ui.allIp_CB, SIGNAL(clicked(bool)), this, SLOT(onAllIPCBClicked(bool)));
     connect(ui.applyStartBrowser_PB, SIGNAL(clicked()), this, SLOT(onApplyClicked()));
 }
 
@@ -63,11 +66,11 @@ bool WebuiPage::updateParams(QString &errmsg)
 
 void WebuiPage::load()
 {
-    std::cerr << "WebuiPage::load()" << std::endl;
-    whileBlocking(ui.enableWebUI_CB)->setChecked(Settings->getWebinterfaceEnabled());
-    onEnableCBClicked(Settings->getWebinterfaceEnabled());
-    whileBlocking(ui.port_SB)->setValue(Settings->getWebinterfacePort());
-    whileBlocking(ui.allIp_CB)->setChecked(Settings->getWebinterfaceAllowAllIps());
+	std::cerr << "WebuiPage::load()" << std::endl;
+	whileBlocking(ui.enableWebUI_CB)->setChecked(Settings->getWebinterfaceEnabled());
+	whileBlocking(ui.port_SB)->setValue(Settings->getWebinterfacePort());
+	whileBlocking(ui.allIp_CB)->setChecked(Settings->getWebinterfaceAllowAllIps());
+	onEnableCBClicked(Settings->getWebinterfaceEnabled());
 }
 
 QString WebuiPage::helpText() const
@@ -139,19 +142,22 @@ QString WebuiPage::helpText() const
 
 void WebuiPage::onEnableCBClicked(bool checked)
 {
-    if(checked)
-    {
-        ui.params_GB->setEnabled(true);
-        ui.applyStartBrowser_PB->setEnabled(true);
-    }
-    else
-    {
-        ui.params_GB->setEnabled(false);
-        ui.applyStartBrowser_PB->setEnabled(false);
-    }
+	ui.params_GB->setEnabled(checked);
+	ui.applyStartBrowser_PB->setEnabled(checked);
+	QString S;
+	updateParams(S);
+}
 
-    QString S;
-    updateParams(S);
+void WebuiPage::onPortValueChanged(int /*value*/)
+{
+	QString S;
+	updateParams(S);
+}
+
+void WebuiPage::onAllIPCBClicked(bool /*checked*/)
+{
+	QString S;
+	updateParams(S);
 }
 
 void WebuiPage::onApplyClicked()

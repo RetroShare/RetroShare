@@ -19,14 +19,17 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#include <QMessageBox>
-
-#include "rshare.h"
-#include "retroshare/rsinit.h"
 #include "StartDialog.h"
+
 #include "LogoBar.h"
-#include "retroshare/rsnotify.h"
+#include "rshare.h"
 #include "settings/rsharesettings.h"
+
+#include "retroshare/rsinit.h"
+#include "retroshare/rsnotify.h"
+
+#include <QLineEdit>
+#include <QMessageBox>
 
 #include <iostream>
 
@@ -74,7 +77,7 @@ StartDialog::StartDialog(QWidget *parent)
 	}
 
 	QObject::connect(ui.loadName,SIGNAL(currentIndexChanged(int)),this,SLOT(updateSelectedProfile(int))) ;
-	QObject::connect(ui.password_input,SIGNAL(returnPressed()),this,SLOT(loadPerson())) ;
+	//QObject::connect(ui.password_input,SIGNAL(returnPressed()),this,SLOT(loadPerson())) ;//Already called by StartDialog.returnPressed->loadButton.clicked
 	QObject::connect(ui.loadButton, SIGNAL(clicked()), this, SLOT(loadPerson()));
 
 	if (pidx > 0)
@@ -87,8 +90,9 @@ StartDialog::StartDialog(QWidget *parent)
 
 void StartDialog::updateSelectedProfile(int)
 {
-    ui.password_input->clear();
-    ui.password_input->setFocus();
+	ui.password_input->clear();
+	ui.password_input->setPlaceholderText(tr("Password"));
+	ui.password_input->setFocus();
 }
 
 void StartDialog::closeEvent (QCloseEvent * event)
@@ -111,16 +115,22 @@ void StartDialog::loadPerson()
 	QVariant data = ui.loadName->itemData(pgpidx);
 	RsPeerId accountId = RsPeerId((data.toString()).toStdString());
 
-    // Cache the passphrase, so that it is not asked again.
-
+	// Cache the passphrase, so that it is not asked again.
 	rsNotify->cachePgpPassphrase(ui.password_input->text().toUtf8().constData()) ;
+	rsNotify->setDisableAskPassword(true);
 
 	bool res = Rshare::loadCertificate(accountId, ui.autologin_checkbox->isChecked()) ;
 
-    rsNotify->clearPgpPassphrase();
+	rsNotify->setDisableAskPassword(false);
 
-    if(res)
+	if(res)
 		accept();
+	else
+	{
+		ui.password_input->setPlaceholderText(tr("Wrong password"));
+		ui.password_input->setText("");
+		ui.password_input->setFocus();
+	}
 }
 
 void StartDialog::on_labelProfile_linkActivated(QString /*link*/)

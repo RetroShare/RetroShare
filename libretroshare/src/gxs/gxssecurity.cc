@@ -272,6 +272,8 @@ bool GxsSecurity::generateKeyPair(RsTlvPublicRSAKey& public_key,RsTlvPrivateRSAK
 	RSA_generate_key_ex(rsa, 2048, ebn, NULL);
     RSA *rsa_pub = RSAPublicKey_dup(rsa);
     
+	BN_clear_free(ebn) ;
+
     public_key.keyFlags = RSTLV_KEY_TYPE_PUBLIC_ONLY ;
     private_key.keyFlags = RSTLV_KEY_TYPE_FULL ;
 
@@ -359,7 +361,8 @@ bool GxsSecurity::getSignature(const char *data, uint32_t data_len, const RsTlvP
 	ok &= EVP_SignUpdate(mdctx, data, data_len) == 1;
 
 	unsigned int siglen = EVP_PKEY_size(key_priv);
-	unsigned char sigbuf[siglen];
+    unsigned char sigbuf[siglen] ;
+	memset(sigbuf,0,siglen) ;
 	ok &= EVP_SignFinal(mdctx, sigbuf, &siglen, key_priv) == 1;
 
 	// clean up
@@ -578,6 +581,8 @@ bool GxsSecurity::encrypt(uint8_t *& out, uint32_t &outlen, const uint8_t *in, u
 
 	// intialize context and send store encrypted cipher in ek
 	if(!EVP_SealInit(ctx, EVP_aes_128_cbc(), &ek, &eklen, iv, &public_key, 1)) return false;
+
+	EVP_PKEY_free(public_key) ;
 
 	// now assign memory to out accounting for data, and cipher block size, key length, and key length val
 	out = (uint8_t*)rs_malloc(inlen + cipher_block_size + size_net_ekl + eklen + EVP_MAX_IV_LENGTH) ;
@@ -856,6 +861,7 @@ bool GxsSecurity::decrypt(uint8_t *& out, uint32_t & outlen, const uint8_t *in, 
         std::cerr << "(EE) Cannot decrypt data. Most likely reason: private GXS key is missing." << std::endl;
         return false;
     }
+	EVP_PKEY_free(privateKey) ;
 
 	 if(inlen < (uint32_t)in_offset)
 	 {

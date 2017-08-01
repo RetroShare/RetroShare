@@ -97,6 +97,7 @@ install:
   # Install toolchain
   #- C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-toolchain mingw-w64-x86_64-toolchain" #Already installed
   # Install other binutils
+  - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-curl mingw-w64-x86_64-curl"
   - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-miniupnpc mingw-w64-x86_64-miniupnpc"
   - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-sqlite3 mingw-w64-x86_64-sqlite3"
   - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-speex mingw-w64-x86_64-speex"

@@ -163,6 +163,7 @@ bool RsCompress::uncompress_memory_chunk(const uint8_t *input_mem,const uint32_t
 			switch (ret) {
 				case Z_NEED_DICT:
 					ret = Z_DATA_ERROR;     /* and fall through */
+					/* fallthrough */
 				case Z_DATA_ERROR:
 				case Z_MEM_ERROR:
 					(void)inflateEnd(&strm);

@@ -28,7 +28,8 @@
 
 class QToolButton;
 class QActionGroup;
-#if QT_VERSION < 0x040700
+//#if QT_VERSION < 0x040700
+#if QT_VERSION < 0x050000//PlaceHolder text only shown when not have focus in Qt4
 class QLabel;
 #endif
 
@@ -55,7 +56,8 @@ signals:
 
 protected:
 	void resizeEvent(QResizeEvent *);
-#if QT_VERSION < 0x040700
+//#if QT_VERSION < 0x040700
+#if 0//PlaceHolder text only shown when not have focus in Qt4
 	void focusInEvent(QFocusEvent *event);
 	void focusOutEvent(QFocusEvent *event);
 #endif
@@ -72,7 +74,8 @@ private:
 	QActionGroup *mActionGroup;
 	QMap<int, QString> mDescription;
 
-#if QT_VERSION < 0x040700
+//#if QT_VERSION < 0x040700
+#if QT_VERSION < 0x050000//PlaceHolder text only shown when not have focus in Qt4
 	QLabel *mFilterLabel;
 #endif
 };

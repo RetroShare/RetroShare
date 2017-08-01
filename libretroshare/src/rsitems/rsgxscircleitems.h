@@ -78,7 +78,7 @@ public:
 
 	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 
-	RsGxsCircleMsg msg;
+	RsGxsCircleMsg mMsg;
 };
 
 class RsGxsCircleSubscriptionRequestItem: public RsGxsMsgItem

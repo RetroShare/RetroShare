@@ -1,6 +1,6 @@
 /*
  * RetroShare Android QML App
- * Copyright (C) 2016  Gioacchino Mazzurco <gio@eigenlab.org>
+ * Copyright (C) 2016-2017  Gioacchino Mazzurco <gio@eigenlab.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -26,11 +26,15 @@ import android.util.Log;
 
 import org.qtproject.qt5.android.bindings.QtActivity;
 
+import org.retroshare.android.qml_app.jni.NativeCalls;
+
 public class RetroShareQmlActivity extends QtActivity
 {
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
+		Log.i("RetroShareQmlActivity", "onCreate()");
+
 		if (!isMyServiceRunning(RetroShareAndroidService.class))
 		{
 			Log.i("RetroShareQmlActivity", "onCreate(): RetroShareAndroidService is not running, let's start it by Intent");
@@ -39,8 +43,38 @@ public class RetroShareQmlActivity extends QtActivity
 		}
 		else Log.v("RetroShareQmlActivity", "onCreate(): RetroShareAndroidService already running");
 
+		if (!isMyServiceRunning(RetroShareAndroidNotifyService.class))
+		{
+			Log.i("RetroShareQmlActivity", "onCreate(): RetroShareAndroidNotifyService is not running, let's start it by Intent");
+			Intent rsIntent = new Intent(this, RetroShareAndroidNotifyService.class);
+			startService(rsIntent);
+		}
+		else Log.v("RetroShareQmlActivity", "onCreate(): RetroShareAndroidNotifyService already running");
+
 		super.onCreate(savedInstanceState);
 	}
+
+	@Override
+	public void onNewIntent(Intent intent)
+	{
+		Log.i("RetroShareQmlActivity", "onNewIntent(Intent intent)");
+
+		super.onNewIntent(intent);
+
+		String uri = intent.getDataString();
+		if (uri != null) NativeCalls.notifyIntentUri(uri);
+	}
+
+	@UsedByNativeCode @SuppressWarnings("unused")
+	public void shareUrl(String urlStr)
+	{
+		Intent shareIntent = new Intent()
+				.setAction(Intent.ACTION_SEND)
+				.putExtra(Intent.EXTRA_TEXT, urlStr)
+				.setType("text/plain");
+		startActivity(Intent.createChooser(shareIntent,"")); // TODO: Need proper title?
+	}
+
 
 	private boolean isMyServiceRunning(Class<?> serviceClass)
 	{

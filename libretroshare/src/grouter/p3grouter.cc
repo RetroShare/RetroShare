@@ -1902,7 +1902,9 @@ bool p3GRouter::encryptDataItem(RsGRouterGenericDataItem *item,const RsGxsId& de
     uint32_t encrypted_size =0;
     uint32_t error_status ;
 
-    if(!mGixs->encryptData(item->data_bytes,item->data_size,encrypted_data,encrypted_size,destination_key,true,error_status))
+	if(!mGixs->encryptData( item->data_bytes, item->data_size, encrypted_data,
+	                        encrypted_size, destination_key, error_status,
+	                        true ))
     {
         std::cerr << "(EE) Cannot encrypt: " ;
         if(error_status == RsGixs::RS_GIXS_ERROR_KEY_NOT_AVAILABLE) std::cerr << " key not available for ID = " << destination_key << std::endl;
@@ -1936,7 +1938,9 @@ bool p3GRouter::decryptDataItem(RsGRouterGenericDataItem *item)
     uint32_t decrypted_size =0;
     uint32_t error_status ;
 
-    if(!mGixs->decryptData(item->data_bytes,item->data_size,decrypted_data,decrypted_size,item->destination_key,error_status))
+	if(!mGixs->decryptData( item->data_bytes, item->data_size, decrypted_data,
+	                        decrypted_size, item->destination_key, error_status,
+	                        true ))
     {
         if(error_status == RsGixs::RS_GIXS_ERROR_KEY_NOT_AVAILABLE)
             std::cerr << "(EE) Cannot decrypt incoming message. Key " << item->destination_key << " unknown." << std::endl;
@@ -1986,7 +1990,7 @@ bool p3GRouter::signDataItem(RsGRouterAbstractMsgItem *item,const RsGxsId& signi
         std::cerr << "Created    signature for data hash: " << RsDirUtil::sha1sum(data,data_size) << " and key id=" << signing_id << std::endl;
 //#endif
         // Check signature
-        RsIdentityUsage::UsageCode info;
+        RsIdentityUsage::UsageCode info = RsIdentityUsage::GLOBAL_ROUTER_SIGNATURE_CREATION;
         uint32_t error;
 
         if(verifySignedDataItem(item,info,error))

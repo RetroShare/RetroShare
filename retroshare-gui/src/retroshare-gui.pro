@@ -4,7 +4,7 @@ TEMPLATE = app
 QT     += network xml
 CONFIG += qt gui uic qrc resources idle bitdht
 CONFIG += link_prl
-TARGET = RetroShare06
+TARGET = retroshare
 DEFINES += TARGET=\\\"$${TARGET}\\\"
 
 # Plz never commit the .pro with these flags enabled.
@@ -101,11 +101,11 @@ unix {
 	INSTALLS += icon_files
 
 	desktop_files.path = "$${PREFIX}/share/applications"
-	desktop_files.files = ../../data/retroshare06.desktop
+	desktop_files.files = ../../data/retroshare.desktop
 	INSTALLS += desktop_files
 
 	pixmap_files.path = "$${PREFIX}/share/pixmaps"
-	pixmap_files.files = ../../data/retroshare06.xpm
+	pixmap_files.files = ../../data/retroshare.xpm
 	INSTALLS += pixmap_files
 
 }
@@ -374,6 +374,7 @@ HEADERS +=  rshare.h \
             gui/statistics/BandwidthStatsWidget.h \
             gui/statistics/DhtWindow.h \
             gui/statistics/GlobalRouterStatistics.h \
+            gui/statistics/GxsTransportStatistics.h \
             gui/statistics/StatisticsWindow.h \
             gui/statistics/BwCtrlWindow.h \
             gui/statistics/RttStatistics.h \
@@ -459,7 +460,6 @@ HEADERS +=  rshare.h \
             gui/settings/ChatPage.h \
             gui/settings/ChannelPage.h \
             gui/settings/PostedPage.h \
-            gui/settings/RelayPage.h \
             gui/settings/ServicePermissionsPage.h \
             gui/settings/AddFileAssociationDialog.h \
             gui/settings/GroupFrameSettingsWidget.h \
@@ -550,6 +550,7 @@ HEADERS +=  rshare.h \
             gui/NewsFeed.h \
             gui/feeds/FeedItem.h \
             gui/feeds/FeedHolder.h \
+            gui/feeds/GxsCircleItem.h \
             gui/feeds/PeerItem.h \
             gui/feeds/MsgItem.h \
             gui/feeds/ChatMsgItem.h \
@@ -641,7 +642,6 @@ FORMS +=    gui/StartDialog.ui \
             gui/settings/ChatPage.ui \
             gui/settings/ChannelPage.ui \
             gui/settings/PostedPage.ui \
-            gui/settings/RelayPage.ui \
             gui/settings/ServicePermissionsPage.ui \
             gui/settings/PluginItem.ui \
             gui/settings/GroupFrameSettingsWidget.ui \
@@ -655,6 +655,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/advsearch/AdvancedSearchDialog.ui \
             gui/advsearch/expressionwidget.ui \
             gui/NewsFeed.ui \
+            gui/feeds/GxsCircleItem.ui \
             gui/feeds/PeerItem.ui \
             gui/feeds/MsgItem.ui \
             gui/feeds/ChatMsgItem.ui \
@@ -680,10 +681,11 @@ FORMS +=    gui/StartDialog.ui \
             gui/statistics/TurtleRouterDialog.ui \
             gui/statistics/TurtleRouterStatistics.ui \
             gui/statistics/GlobalRouterStatistics.ui \
+            gui/statistics/GxsTransportStatistics.ui \
             gui/statistics/StatisticsWindow.ui \
             gui/statistics/BwCtrlWindow.ui \
             gui/statistics/RttStatistics.ui \
-            gui/GetStartedDialog.ui \
+            gui/GetStartedDialog.ui
 
 
 #            gui/ForumsDialog.ui \
@@ -866,7 +868,6 @@ SOURCES +=  main.cpp \
             gui/settings/ChatPage.cpp \
             gui/settings/ChannelPage.cpp \
             gui/settings/PostedPage.cpp \
-            gui/settings/RelayPage.cpp \
             gui/settings/ServicePermissionsPage.cpp \
             gui/settings/AddFileAssociationDialog.cpp \
             gui/settings/GroupFrameSettingsWidget.cpp \
@@ -898,6 +899,7 @@ SOURCES +=  main.cpp \
             gui/NewsFeed.cpp \
             gui/feeds/FeedItem.cpp \
             gui/feeds/FeedHolder.cpp \
+            gui/feeds/GxsCircleItem.cpp \
             gui/feeds/PeerItem.cpp \
             gui/feeds/MsgItem.cpp \
             gui/feeds/ChatMsgItem.cpp \
@@ -917,6 +919,7 @@ SOURCES +=  main.cpp \
             gui/statistics/TurtleRouterDialog.cpp \
             gui/statistics/TurtleRouterStatistics.cpp \
             gui/statistics/GlobalRouterStatistics.cpp \
+            gui/statistics/GxsTransportStatistics.cpp \
             gui/statistics/StatisticsWindow.cpp \
             gui/statistics/BwCtrlWindow.cpp \
             gui/statistics/RttStatistics.cpp \

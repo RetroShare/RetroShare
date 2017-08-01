@@ -23,6 +23,8 @@ class ApiServer;
 class RsControlModule: public ResourceRouter, NotifyClient, private RsSingleJobThread
 {
 public:
+    enum RunState { WAITING_INIT, FATAL_ERROR, WAITING_ACCOUNT_SELECT, WAITING_STARTUP, RUNNING_OK, RUNNING_OK_NO_FULL_CONTROL};
+
     // ApiServer will be called once RS is started, to load additional api modules
     // full_control: set to true if this module should handle rsinit and login
     // set to false if rsinit is handled by the Qt gui
@@ -31,6 +33,9 @@ public:
 
     // returns true if the process should terminate
     bool processShouldExit();
+
+	// returns the current state of the software booting process
+	RunState runState() const { return mRunState ; }
 
 	// from NotifyClient
 	virtual bool askForPassword(const std::string &title, const std::string& key_details, bool prev_is_bad , std::string& password,bool& canceled) override;
@@ -42,7 +47,6 @@ protected:
     virtual void run();
 
 private:
-    enum RunState { WAITING_INIT, FATAL_ERROR, WAITING_ACCOUNT_SELECT, WAITING_STARTUP, RUNNING_OK, RUNNING_OK_NO_FULL_CONTROL};
     void handleRunState(Request& req, Response& resp);
     void handleIdentities(Request& req, Response& resp);
     void handleLocations(Request& req, Response& resp);
@@ -78,7 +82,8 @@ private:
     // to notify that a password callback is waiting
     // to answer the request, clear the flag and set the password
     bool mWantPassword;
-    bool mPrevIsBad ;
+	bool mPrevIsBad;
+	int mCountAttempts;
     std::string mTitle;
     std::string mKeyName;
     std::string mPassword;

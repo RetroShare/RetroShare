@@ -25,7 +25,8 @@
 #include <QToolButton>
 #include <QStyle>
 #include <QMenu>
-#if QT_VERSION < 0x040700
+//#if QT_VERSION < 0x040700
+#if QT_VERSION < 0x050000//PlaceHolder text only shown when not have focus in Qt4
 #include <QLabel>
 #endif
 
@@ -52,7 +53,8 @@ LineEditClear::LineEditClear(QWidget *parent)
 	connect(mClearButton, SIGNAL(clicked()), this, SLOT(clear()));
 	connect(this, SIGNAL(textChanged(const QString&)), this, SLOT(updateClearButton(const QString&)));
 
-#if QT_VERSION < 0x040700
+//#if QT_VERSION < 0x040700
+#if QT_VERSION < 0x050000//PlaceHolder text only shown when not have focus in Qt4
 	mFilterLabel = new QLabel("", this);
 	mFilterLabel->setStyleSheet("QLabel { color: gray; }");
 #endif
@@ -72,15 +74,17 @@ void LineEditClear::resizeEvent(QResizeEvent *)
 	int frameWidth = style()->pixelMetric(QStyle::PM_DefaultFrameWidth);
 	mClearButton->move(rect().right() - frameWidth - sz.width() + 2, (rect().bottom() - sz.height()) / 2 + 2);
 
-#if QT_VERSION < 0x040700
+//#if QT_VERSION < 0x040700
+#if QT_VERSION < 0x050000//PlaceHolder text only shown when not have focus in Qt4
 	sz = mFilterLabel->sizeHint();
-	mFilterLabel->move(frameWidth + (mFilterButton ? mFilterButton->sizeHint().width() + 5 : 0), (rect().bottom() + 1 - sz.height())/2);
+	mFilterLabel->move(frameWidth + (mFilterButton ? mFilterButton->sizeHint().width() + 5 : 5), (rect().bottom() + 1 - sz.height())/2);
 #endif
 }
 
 void LineEditClear::setPlaceholderText(const QString &text)
 {
-#if QT_VERSION < 0x040700
+//#if QT_VERSION < 0x040700
+#if QT_VERSION < 0x050000//PlaceHolder text only shown when not have focus in Qt4
 	mFilterLabel->setText(text);
 #else
 	QLineEdit::setPlaceholderText(text);
@@ -89,7 +93,8 @@ void LineEditClear::setPlaceholderText(const QString &text)
 	setToolTip(text);
 }
 
-#if QT_VERSION < 0x040700
+//#if QT_VERSION < 0x040700
+#if 0//PlaceHolder text only shown when not have focus in Qt4
 void LineEditClear::focusInEvent(QFocusEvent *event)
 {
 	mFilterLabel->setVisible(false);
@@ -137,6 +142,9 @@ void LineEditClear::showFilterIcon()
 void LineEditClear::updateClearButton(const QString& text)
 {
 	mClearButton->setVisible(!text.isEmpty());
+#if QT_VERSION < 0x050000//PlaceHolder text only shown when not have focus in Qt4
+	mFilterLabel->setVisible(text.isEmpty());
+#endif
 }
 
 void LineEditClear::addFilter(const QIcon &icon, const QString &text, int id, const QString &description)

@@ -2480,7 +2480,7 @@ static int parse_secret_key(ops_region_t *region,ops_parse_info_t *pinfo)
 	 {
 	    case OPS_S2KS_SALTED:
 	       hashes[n].add(&hashes[n],C.secret_key.salt,OPS_SALT_SIZE);
-	       // flow through...
+				/* fallthrough */
 	    case OPS_S2KS_SIMPLE:
 	       hashes[n].add(&hashes[n],(unsigned char*)passphrase,l);
 	       break;
@@ -3247,7 +3247,7 @@ int ops_parse(ops_parse_info_t *pinfo,ops_boolean_t limit_packets)
    } while (r > 0);
 
    return pinfo->errors ? 0 : 1;
-   return r == -1 ? 0 : 1;
+   //return r == -1 ? 0 : 1;
 }
 
 /**

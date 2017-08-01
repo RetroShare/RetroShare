@@ -599,7 +599,8 @@ bool AuthSSLimpl::SignData(const void *data, const uint32_t len, std::string &si
 
 	EVP_MD_CTX *mdctx = EVP_MD_CTX_create();
         unsigned int signlen = EVP_PKEY_size(mOwnPrivateKey);
-	unsigned char signature[signlen];
+	unsigned char signature[signlen] ;
+	memset(signature,0,signlen) ;
 
 	if (0 == EVP_SignInit(mdctx, EVP_sha1()))
 	{
@@ -1586,20 +1587,26 @@ bool    AuthSSLimpl::FailedCertificate(X509 *x509, const RsPgpId& gpgid,
 
 		switch(auth_diagnostic)
 		{
-			case RS_SSL_HANDSHAKE_DIAGNOSTIC_CERTIFICATE_MISSING: 	RsServer::notify()->AddFeedItem(RS_FEED_ITEM_SEC_MISSING_CERTIFICATE, gpgid.toStdString(), sslid.toStdString(), sslcn, ip_address);
-																					  	break ;
-			case RS_SSL_HANDSHAKE_DIAGNOSTIC_CERTIFICATE_NOT_VALID: 	RsServer::notify()->AddFeedItem(RS_FEED_ITEM_SEC_BAD_CERTIFICATE, gpgid.toStdString(), sslid.toStdString(), sslcn, ip_address);
-																					  	break ;
-			case RS_SSL_HANDSHAKE_DIAGNOSTIC_ISSUER_UNKNOWN: 			RsServer::notify()->AddFeedItem(RS_FEED_ITEM_SEC_UNKNOWN_IN     , gpgid.toStdString(), sslid.toStdString(), sslcn, ip_address);
-																					  	break ;
-			case RS_SSL_HANDSHAKE_DIAGNOSTIC_MALLOC_ERROR:				RsServer::notify()->AddFeedItem(RS_FEED_ITEM_SEC_INTERNAL_ERROR , gpgid.toStdString(), sslid.toStdString(), sslcn, ip_address);
-																					  	break ;
-			case RS_SSL_HANDSHAKE_DIAGNOSTIC_WRONG_SIGNATURE: 			RsServer::notify()->AddFeedItem(RS_FEED_ITEM_SEC_WRONG_SIGNATURE, gpgid.toStdString(), sslid.toStdString(), sslcn, ip_address);
-																					  	break ;
-			case RS_SSL_HANDSHAKE_DIAGNOSTIC_OK: 							
-			case RS_SSL_HANDSHAKE_DIAGNOSTIC_UNKNOWN:
-			default:
-																						RsServer::notify()->AddFeedItem(RS_FEED_ITEM_SEC_CONNECT_ATTEMPT, gpgid.toStdString(), sslid.toStdString(), sslcn, ip_address);
+		case RS_SSL_HANDSHAKE_DIAGNOSTIC_CERTIFICATE_MISSING:
+			RsServer::notify()->notifyConnectionWithoutCert();
+			RsServer::notify()->AddFeedItem(RS_FEED_ITEM_SEC_MISSING_CERTIFICATE, gpgid.toStdString(), sslid.toStdString(), sslcn, ip_address);
+			break ;
+		case RS_SSL_HANDSHAKE_DIAGNOSTIC_CERTIFICATE_NOT_VALID:
+			RsServer::notify()->AddFeedItem(RS_FEED_ITEM_SEC_BAD_CERTIFICATE, gpgid.toStdString(), sslid.toStdString(), sslcn, ip_address);
+			break ;
+		case RS_SSL_HANDSHAKE_DIAGNOSTIC_ISSUER_UNKNOWN:
+			RsServer::notify()->AddFeedItem(RS_FEED_ITEM_SEC_UNKNOWN_IN     , gpgid.toStdString(), sslid.toStdString(), sslcn, ip_address);
+			break ;
+		case RS_SSL_HANDSHAKE_DIAGNOSTIC_MALLOC_ERROR:
+			RsServer::notify()->AddFeedItem(RS_FEED_ITEM_SEC_INTERNAL_ERROR , gpgid.toStdString(), sslid.toStdString(), sslcn, ip_address);
+			break ;
+		case RS_SSL_HANDSHAKE_DIAGNOSTIC_WRONG_SIGNATURE:
+			RsServer::notify()->AddFeedItem(RS_FEED_ITEM_SEC_WRONG_SIGNATURE, gpgid.toStdString(), sslid.toStdString(), sslcn, ip_address);
+			break ;
+		case RS_SSL_HANDSHAKE_DIAGNOSTIC_OK:
+		case RS_SSL_HANDSHAKE_DIAGNOSTIC_UNKNOWN:
+		default:
+			RsServer::notify()->AddFeedItem(RS_FEED_ITEM_SEC_CONNECT_ATTEMPT, gpgid.toStdString(), sslid.toStdString(), sslcn, ip_address);
 		}
 
 #ifdef AUTHSSL_DEBUG

@@ -149,6 +149,8 @@ GenCertDialog::GenCertDialog(bool onlyGenerateIdentity, QWidget *parent)
 	connect(ui.node_input,       SIGNAL(textChanged(QString)), this, SLOT(updateCheckLabels()));
 	connect(ui.reuse_existing_node_CB, SIGNAL(toggled(bool)), this, SLOT(updateCheckLabels()));
 
+	connect(ui.cbUseBob, SIGNAL(clicked(bool)), this, SLOT(useBobChecked(bool)));;
+
 	entropy_timer = new QTimer ;
 	entropy_timer->start(20) ;
 	QObject::connect(entropy_timer,SIGNAL(timeout()),this,SLOT(grabMouse())) ;
@@ -160,11 +162,15 @@ GenCertDialog::GenCertDialog(bool onlyGenerateIdentity, QWidget *parent)
 	ui.keylength_comboBox->addItem("High (3072 bits)", QVariant(3072));
 	ui.keylength_comboBox->addItem("Very high (4096 bits)", QVariant(4096));
 
+	// Default value.
+
+	ui.node_input->setText("My computer") ;
+
 #if QT_VERSION >= 0x040700
 	ui.node_input->setPlaceholderText(tr("Node name")) ;
 	ui.hiddenaddr_input->setPlaceholderText(tr("Tor/I2P address")) ;
 	ui.name_input->setPlaceholderText(tr("Username"));
-	ui.nickname_input->setPlaceholderText(tr("Identity name"));
+	ui.nickname_input->setPlaceholderText(tr("Chat name"));
 	ui.password_input->setPlaceholderText(tr("Password"));
 	ui.password_input_2->setPlaceholderText(tr("Password again"));
 #endif
@@ -240,7 +246,7 @@ void GenCertDialog::mouseMoveEvent(QMouseEvent *e)
 
 void GenCertDialog::setupState()
 {
-	bool adv_state    = ui.adv_checkbox->isChecked();
+	bool adv_state = ui.adv_checkbox->isChecked();
 
     if(!adv_state)
     {
@@ -278,8 +284,9 @@ void GenCertDialog::setupState()
 	ui.nickname_label->setVisible(adv_state && !mOnlyGenerateIdentity);
 	ui.nickname_input->setVisible(adv_state && !mOnlyGenerateIdentity);
 
-	ui.node_label->setVisible(true);
-	ui.node_input->setVisible(true);
+	ui.node_name_check_LB->setVisible(adv_state);
+	ui.node_label->setVisible(adv_state);
+	ui.node_input->setVisible(adv_state);
 
 	ui.password_input->setVisible(true);
 	ui.password_label->setVisible(true);
@@ -292,29 +299,43 @@ void GenCertDialog::setupState()
 	ui.keylength_comboBox->setVisible(adv_state);
 
 	ui.entropy_bar->setVisible(true);
-
 	ui.genButton->setVisible(true);
-	ui.genButton->setText(generate_new?tr("Generate"):tr("Generate"));
 
 	ui.hiddenaddr_input->setVisible(hidden_state);
 	ui.hiddenaddr_label->setVisible(hidden_state);
+
 	ui.hiddenport_label->setVisible(hidden_state);
 	ui.hiddenport_spinBox->setVisible(hidden_state);
 
-    if(mEntropyOk && mAllFieldsOk)
+	ui.cbUseBob->setVisible(hidden_state);
+
+	if(!mAllFieldsOk)
+	{
+		ui.genButton->setToolTip(tr("<p>Node creation is disabled until all fields correctly set.</p>")) ;
+
+		ui.genButton->setVisible(false) ;
+		ui.generate_label->setVisible(false) ;
+		ui.info_label->setText("Please fill your profile name and password...") ;
+		ui.info_label->setVisible(true) ;
+	}
+	else if(!mEntropyOk)
+	{
+		ui.genButton->setToolTip(tr("<p>Node creation is disabled until enough randomness is collected. Please mouve your mouse around until you reach at least 20%.</p>")) ;
+
+		ui.genButton->setVisible(false) ;
+		ui.generate_label->setVisible(false) ;
+		ui.info_label->setText("Please mouve your mouse randomply to generate enough random data to create your profile.") ;
+		ui.info_label->setVisible(true) ;
+	}
+	else
 	{
 		ui.genButton->setEnabled(true) ;
 		//ui.genButton->setIcon(QIcon(IMAGE_GOOD)) ;
 		ui.genButton->setToolTip(tr("Click to create your node and/or profile")) ;
-		ui.generate_label->setPixmap(QPixmap(IMAGE_GOOD)) ;
+		ui.genButton->setVisible(true) ;
+		ui.generate_label->setVisible(false) ;
+		ui.info_label->setVisible(false) ;
 	}
-    else
-    {
-		ui.genButton->setEnabled(false) ;
-		//ui.genButton->setIcon(QIcon(IMAGE_BAD)) ;
-		ui.genButton->setToolTip(tr("Disabled until all fields correctly set and enough randomness collected.")) ;
-		ui.generate_label->setPixmap(QPixmap(IMAGE_BAD)) ;
-    }
 }
 
 void GenCertDialog::exportIdentity()
@@ -379,7 +400,22 @@ void GenCertDialog::updateCheckLabels()
 	else
 		ui.randomness_check_LB->setPixmap(QPixmap(IMAGE_BAD)) ;
 
-    setupState();
+	setupState();
+}
+
+void GenCertDialog::useBobChecked(bool checked)
+{
+	if (checked) {
+		ui.hiddenaddr_input->setPlaceholderText(tr("I2P instance address with BOB enabled"));
+		ui.hiddenaddr_label->setText(tr("I2P instance address"));
+
+		ui.hiddenport_spinBox->setEnabled(false);
+	} else {
+		ui.hiddenaddr_input->setPlaceholderText(tr("hidden service address"));
+		ui.hiddenaddr_label->setText(tr("hidden address"));
+
+		ui.hiddenport_spinBox->setEnabled(true);
+	}
 }
 
 bool GenCertDialog::importIdentity()
@@ -425,7 +461,7 @@ void GenCertDialog::genPerson()
 	}
 	else
 	{
-		mGXSNickname = ui.node_input->text();
+		mGXSNickname = ui.name_input->text();
 	}
 
 	if (!mGXSNickname.isEmpty())
@@ -454,15 +490,13 @@ void GenCertDialog::genPerson()
 	{
 		std::string hl = ui.hiddenaddr_input->text().toStdString();
 		uint16_t port  = ui.hiddenport_spinBox->value();
-		if (!RsInit::SetHiddenLocation(hl, port))	/* parses it */
-		{
-			/* Message Dialog */
-			QMessageBox::warning(this,
-				tr("Invalid hidden node"),
-			tr("Please enter a valid address of the form: 31769173498.onion:7800 or [52 characters].b32.i2p"),
-			QMessageBox::Ok);
-			return;
-		}
+		bool useBob    = ui.cbUseBob->isChecked();
+
+		if (useBob && hl.empty())
+			hl = "127.0.0.1";
+
+		RsInit::SetHiddenLocation(hl, port, useBob);	/* parses it */
+
 		isHiddenLoc = true;
 	}
 
@@ -570,8 +604,6 @@ void GenCertDialog::genPerson()
 	this->hide();//To show dialog asking password PGP Key.
 	std::cout << "RsAccounts::GenerateSSLCertificate" << std::endl;
 	bool okGen = RsAccounts::GenerateSSLCertificate(PGPId, "", genLoc, "", isHiddenLoc, sslPasswd, sslId, err);
-
-	rsNotify->clearPgpPassphrase() ;
 
 	if (okGen)
 	{

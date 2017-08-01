@@ -189,6 +189,17 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
     Q_INIT_RESOURCE(images);
     Q_INIT_RESOURCE(icons);
 
+	// Loop through all command-line args/values to get help wanted before RsInit exit.
+	for (int i = 0; i < args.size(); ++i) {
+		QString arg;
+		/* Get the argument name and set a blank value */
+		arg = args.at(i);
+		if ((arg.toLower() == "-h") || (arg.toLower() == "--help")) {
+			QApplication dummyApp (argc, argv); // needed for QMessageBox
+			Rshare::showUsageMessageBox();
+		}
+	}
+
 	// This is needed to allocate rsNotify, so that it can be used to ask for PGP passphrase
 	//
 	RsControl::earlyInitNotificationSystem() ;
@@ -386,7 +397,6 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 		uint32_t token = 0;
 		rsIdentity->createIdentity(token, params);
 	}
-
 	// I'm using a signal to transfer the hashing info to the mainwindow, because Qt schedules signals properly to
 	// avoid clashes between infos from threads.
 	//
@@ -431,6 +441,11 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 #ifdef ENABLE_WEBUI
     WebuiPage::checkStartWebui();
 #endif // ENABLE_WEBUI
+
+	// This is done using a timer, because the passphrase request from notify is asynchrouneous and therefore clearing the
+	// passphrase here makes it request for a passphrase when creating the default chat identity.
+
+	QTimer::singleShot(10000, notify, SLOT(resetCachedPassphrases())) ;
 
 	/* dive into the endless loop */
 	int ti = rshare.exec();

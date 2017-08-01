@@ -59,13 +59,13 @@
 #define MAX_ATTEMPTS                10
 #define MAX_PROCESS_COUNT_PER_TIMER 50
 
-const int kRecognTagClass_DEVELOPMENT = 1;
-
-const int kRecognTagType_Dev_Ambassador 	= 1;
-const int kRecognTagType_Dev_Contributor 	= 2;
-const int kRecognTagType_Dev_Translator 	= 3;
-const int kRecognTagType_Dev_Patcher     	= 4;
-const int kRecognTagType_Dev_Developer	 	= 5;
+//const int kRecognTagClass_DEVELOPMENT = 1;
+//
+//const int kRecognTagType_Dev_Ambassador 	= 1;
+//const int kRecognTagType_Dev_Contributor 	= 2;
+//const int kRecognTagType_Dev_Translator 	= 3;
+//const int kRecognTagType_Dev_Patcher     	= 4;
+//const int kRecognTagType_Dev_Developer	 	= 5;
 
 
 void ReputationItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const

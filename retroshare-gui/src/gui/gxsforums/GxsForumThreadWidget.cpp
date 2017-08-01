@@ -2018,12 +2018,13 @@ void GxsForumThreadWidget::copyMessageLink()
 		return;
 	}
 
-	RetroShareLink link;
-    QTreeWidgetItem *item = ui->threadTreeWidget->currentItem();
+	QTreeWidgetItem *item = ui->threadTreeWidget->currentItem();
 
-    QString thread_title = (item != NULL)?item->text(COLUMN_THREAD_TITLE):QString() ;
+	QString thread_title = (item != NULL)?item->text(COLUMN_THREAD_TITLE):QString() ;
 
-    if (link.createGxsMessageLink(RetroShareLink::TYPE_FORUM, groupId(), mThreadId, thread_title)) {
+	RetroShareLink link = RetroShareLink::createGxsMessageLink(RetroShareLink::TYPE_FORUM, groupId(), mThreadId, thread_title);
+
+	if (link.valid()) {
 		QList<RetroShareLink> urls;
 		urls.push_back(link);
 		RSLinkClipboard::copyLinks(urls);
@@ -2068,8 +2069,7 @@ void GxsForumThreadWidget::createthread()
 
 static QString buildReplyHeader(const RsMsgMetaData &meta)
 {
-	RetroShareLink link;
-	link.createMessage(meta.mAuthorId, "");
+	RetroShareLink link = RetroShareLink::createMessage(meta.mAuthorId, "");
 	QString from = link.toHtml();
 
 	QString header = QString("<span>-----%1-----").arg(QApplication::translate("GxsForumThreadWidget", "Original Message"));

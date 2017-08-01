@@ -151,7 +151,7 @@ void init_item(RsGxsMsgMetaData* metaMsg)
 
 
 
-RsSerialType* init_item(RsNxsGrp& nxg)
+void init_item(RsNxsGrp& nxg,RsSerialType **ser)
 {
     nxg.clear();
 
@@ -160,11 +160,12 @@ RsSerialType* init_item(RsNxsGrp& nxg)
     init_item(nxg.grp);
     init_item(nxg.meta);
 
-    return new RsNxsSerialiser(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM);
+    if(ser)
+    *ser = new RsNxsSerialiser(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM);
 }
 
 
-RsSerialType* init_item(RsNxsMsg& nxm)
+void init_item(RsNxsMsg& nxm,RsSerialType **ser)
 {
     nxm.clear();
 
@@ -174,20 +175,22 @@ RsSerialType* init_item(RsNxsMsg& nxm)
     init_item(nxm.meta);
     nxm.transactionNumber = rand()%23;
 
-    return new RsNxsSerialiser(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM);
+    if(ser)
+    *ser = new RsNxsSerialiser(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM);
 }
 
-RsSerialType* init_item(RsNxsSyncGrpReqItem& rsg)
+void init_item(RsNxsSyncGrpReqItem& rsg,RsSerialType **ser)
 {
     rsg.clear();
     rsg.flag = RsNxsSyncGrpItem::FLAG_USE_SYNC_HASH;
     rsg.createdSince = rand()%2423;
     randString(3124,rsg.syncHash);
 
-    return new RsNxsSerialiser(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM);
+    if(ser)
+    *ser = new RsNxsSerialiser(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM);
 }
 
-RsSerialType* init_item(RsNxsSyncMsgReqItem& rsgm)
+void init_item(RsNxsSyncMsgReqItem& rsgm,RsSerialType **ser)
 {
     rsgm.clear();
 
@@ -197,10 +200,11 @@ RsSerialType* init_item(RsNxsSyncMsgReqItem& rsgm)
     init_random(rsgm.grpId) ;
     randString(SHORT_STR, rsgm.syncHash);
 
-    return new RsNxsSerialiser(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM);
+    if(ser)
+    *ser = new RsNxsSerialiser(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM);
 }
 
-RsSerialType* init_item(RsNxsSyncGrpItem& rsgl)
+void init_item(RsNxsSyncGrpItem& rsgl,RsSerialType **ser)
 {
     rsgl.clear();
 
@@ -209,10 +213,11 @@ RsSerialType* init_item(RsNxsSyncGrpItem& rsgl)
     rsgl.publishTs = rand()%23;
     init_random(rsgl.grpId) ;
 
-    return new RsNxsSerialiser(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM);
+    if(ser)
+    *ser = new RsNxsSerialiser(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM);
 }
 
-RsSerialType* init_item(RsNxsSyncMsgItem& rsgml)
+void init_item(RsNxsSyncMsgItem& rsgml,RsSerialType **ser)
 {
     rsgml.clear();
 
@@ -221,11 +226,12 @@ RsSerialType* init_item(RsNxsSyncMsgItem& rsgml)
     init_random(rsgml.grpId) ;
     init_random(rsgml.msgId) ;
 
-    return new RsNxsSerialiser(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM);
+    if(ser)
+		*ser = new RsNxsSerialiser(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM);
 }
 
-RsSerialType* init_item(RsNxsTransacItem &rstx){
-
+void init_item(RsNxsTransacItem &rstx,RsSerialType **ser)
+{
     rstx.clear();
 
     rstx.timestamp = rand()%14141;
@@ -233,7 +239,8 @@ RsSerialType* init_item(RsNxsTransacItem &rstx){
     rstx.nItems = rand()%33132;
     rstx.transactionNumber = rand()%242112;
 
-    return new RsNxsSerialiser(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM);
+	if(ser)
+		*ser = new RsNxsSerialiser(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM);
 }
 
 

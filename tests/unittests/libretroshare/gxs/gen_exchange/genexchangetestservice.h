@@ -11,6 +11,7 @@ class GenExchangeTestService : public RsGenExchange
 {
 public:
     GenExchangeTestService(RsGeneralDataService* dataServ, RsNetworkExchangeService* nxs, RsGixs* gixs);
+	virtual ~GenExchangeTestService();
 
     void notifyChanges(std::vector<RsGxsNotify*>& changes);
 
@@ -104,6 +105,7 @@ public:
 
     void service_tick();
 
+	RsSerialType *mSerializer ;
 };
 
 #endif // GENEXCHANGETESTSERVICE_H

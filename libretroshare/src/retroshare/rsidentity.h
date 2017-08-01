@@ -91,11 +91,11 @@ class GxsReputation
 };
 
 
-class RsGxsIdGroup
+struct RsGxsIdGroup
 {
-	public:
-    RsGxsIdGroup(): mLastUsageTS(0), mPgpKnown(false),mIsAContact(false) { return; }
-	~RsGxsIdGroup() { return; }
+	RsGxsIdGroup() :
+	    mLastUsageTS(0), mPgpKnown(false), mIsAContact(false) {}
+	~RsGxsIdGroup() {}
 
 
 	RsGroupMetaData mMeta;
@@ -305,8 +305,10 @@ public:
     virtual bool setAsRegularContact(const RsGxsId& id,bool is_a_contact) = 0 ;
     virtual bool isARegularContact(const RsGxsId& id) = 0 ;
 
-	virtual bool serialiseIdentityToMemory(const RsGxsId& id,std::string& radix_string)=0;
-    virtual bool deserialiseIdentityFromMemory(const std::string& radix_string)=0;
+	virtual bool serialiseIdentityToMemory( const RsGxsId& id,
+	                                        std::string& radix_string ) = 0;
+	virtual bool deserialiseIdentityFromMemory( const std::string& radix_string,
+	                                            RsGxsId* id = nullptr ) = 0;
 
     /*!
      * \brief overallReputationLevel

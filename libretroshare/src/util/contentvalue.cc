@@ -185,6 +185,7 @@ void ContentValue::put(const std::string &key, uint32_t len, const char* value){
     mKvData.insert(std::pair<std::string, std::pair<uint32_t, char*> >
                    (key, std::pair<uint32_t, char*>(len, dest)));
     //delete[] dest; //Deleted by clearData()
+    // cppcheck-suppress memleak
 }
 
 bool ContentValue::getAsBool(const std::string &key, bool& value) const{

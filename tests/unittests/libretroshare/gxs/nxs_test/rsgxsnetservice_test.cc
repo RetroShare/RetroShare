@@ -15,8 +15,7 @@
 // disabled, because it fails after rebase to current master (did not fail in 2015, fails in 2016)
 TEST(libretroshare_gxs, DISABLED_gxs_grp_sync)
 {
-	rs_nxs_test::NxsTestScenario::pointer gsync_test = rs_nxs_test::NxsTestScenario::pointer(
-			new rs_nxs_test::NxsGrpSync());
+	rs_nxs_test::NxsTestScenario *gsync_test = new rs_nxs_test::NxsGrpSync();
 	rs_nxs_test::NxsTestHub tHub(gsync_test);
 	tHub.StartTest();
 
@@ -28,13 +27,13 @@ TEST(libretroshare_gxs, DISABLED_gxs_grp_sync)
 	ASSERT_TRUE(tHub.testsPassed());
 
 	tHub.CleanUpTest();
+	delete gsync_test ;
 }
 
 // disabled, not implemented (does currently the same as NxsGrpSync)
 TEST(libretroshare_gxs, DISABLED_gxs_grp_sync_delayed)
 {
-	rs_nxs_test::NxsTestScenario::pointer gsync_test = rs_nxs_test::NxsTestScenario::pointer(
-			new rs_nxs_test::NxsGrpSyncDelayed());
+	rs_nxs_test::NxsTestScenario *gsync_test = new rs_nxs_test::NxsGrpSyncDelayed();
 	rs_nxs_test::NxsTestHub tHub(gsync_test);
 	tHub.StartTest();
 
@@ -47,12 +46,12 @@ TEST(libretroshare_gxs, DISABLED_gxs_grp_sync_delayed)
 
 	tHub.CleanUpTest();
 
+	delete gsync_test ;
 }
 
 TEST(libretroshare_gxs, gxs_msg_sync)
 {
-	rs_nxs_test::NxsTestScenario::pointer gsync_test = rs_nxs_test::NxsTestScenario::pointer(
-			new rs_nxs_test::NxsMsgSync);
+	rs_nxs_test::NxsTestScenario *gsync_test = new rs_nxs_test::NxsMsgSync();
 	rs_nxs_test::NxsTestHub tHub(gsync_test);
 	tHub.StartTest();
 
@@ -64,6 +63,7 @@ TEST(libretroshare_gxs, gxs_msg_sync)
 	ASSERT_TRUE(tHub.testsPassed());
 
 	tHub.CleanUpTest();
+	delete gsync_test ;
 }
 
 TEST(libretroshare_gxs, gxs_msg_sync_delayed)

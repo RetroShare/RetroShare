@@ -395,7 +395,7 @@ void GxsChannelPostsWidget::filterChanged(int filter)
 	return bVisible;
 }
 
-void GxsChannelPostsWidget::createPostItem(const RsGxsChannelPost &post, bool related)
+void GxsChannelPostsWidget::createPostItem(const RsGxsChannelPost& post, bool related)
 {
 	GxsChannelPostItem *item = NULL;
 
@@ -407,10 +407,8 @@ void GxsChannelPostsWidget::createPostItem(const RsGxsChannelPost &post, bool re
         if(item)
 		{
 			ui->feedWidget->removeFeedItem(item) ;
-			RsGxsChannelGroup dummyGroup;
-			dummyGroup.mMeta.mGroupId = groupId();
-			dummyGroup.mMeta.mSubscribeFlags = 0xffffffff;
-			GxsChannelPostItem *item = new GxsChannelPostItem(this, 0, dummyGroup, post, true, false);
+
+			GxsChannelPostItem *item = new GxsChannelPostItem(this, 0, post, true, false,post.mOlderVersions);
 			ui->feedWidget->addFeedItem(item, ROLE_PUBLISH, QDateTime::fromTime_t(post.mMeta.mPublishTs));
 
 			return ;
@@ -426,11 +424,7 @@ void GxsChannelPostsWidget::createPostItem(const RsGxsChannelPost &post, bool re
 		item->setPost(post);
 		ui->feedWidget->setSort(item, ROLE_PUBLISH, QDateTime::fromTime_t(post.mMeta.mPublishTs));
 	} else {
-		/* Group is not always available because of the TokenQueue */
-		RsGxsChannelGroup dummyGroup;
-		dummyGroup.mMeta.mGroupId = groupId();
-		dummyGroup.mMeta.mSubscribeFlags = 0xffffffff;
-		GxsChannelPostItem *item = new GxsChannelPostItem(this, 0, dummyGroup, post, true, false);
+		GxsChannelPostItem *item = new GxsChannelPostItem(this, 0, post, true, false,post.mOlderVersions);
 		ui->feedWidget->addFeedItem(item, ROLE_PUBLISH, QDateTime::fromTime_t(post.mMeta.mPublishTs));
 	}
 
@@ -509,13 +503,15 @@ void GxsChannelPostsWidget::insertChannelPosts(std::vector<RsGxsChannelPost> &po
 
             uint32_t current_index = new_versions[i] ;
             uint32_t source_index  = new_versions[i] ;
+#ifdef DEBUG_CHANNEL
             RsGxsMessageId source_msg_id = posts[source_index].mMeta.mMsgId ;
+#endif
 
             // What we do is everytime we find a replacement post, we climb up the replacement graph until we find the original post
             // (or the most recent version of it). When we reach this post, we replace it with the data of the source post.
             // In the mean time, all other posts have their MsgId cleared, so that the posts are removed from the list.
 
-            std::vector<uint32_t> versions ;
+            //std::vector<uint32_t> versions ;
             std::map<RsGxsMessageId,uint32_t>::const_iterator vit ;
 
             while(search_map.end() != (vit=search_map.find(posts[current_index].mMeta.mOrigMsgId)))
@@ -527,7 +523,7 @@ void GxsChannelPostsWidget::insertChannelPosts(std::vector<RsGxsChannelPost> &po
 				// Now replace the post only if the new versionis more recent. It may happen indeed that the same post has been corrected multiple
 				// times. In this case, we only need to replace the post with the newest version
 
-				uint32_t prev_index = current_index ;
+				//uint32_t prev_index = current_index ;
 				current_index = vit->second ;
 
 				if(posts[current_index].mMeta.mMsgId.isNull())	// This handles the branching situation where this post has been already erased. No need to go down further.

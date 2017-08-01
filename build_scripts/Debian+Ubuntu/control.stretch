@@ -1,4 +1,4 @@
-Source: retroshare06
+Source: retroshare
 Section: devel
 Priority: standard
 Maintainer: Cyril Soler <csoler@users.sourceforge.net>
@@ -6,34 +6,36 @@ Build-Depends: debhelper (>= 7),  libglib2.0-dev, libupnp-dev, libssl-dev, libxs
 Standards-Version: 3.9.6
 Homepage: http://retroshare.sourceforge.net
 
-Package: retroshare06-voip-plugin
+Package: retroshare-voip-plugin
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, retroshare06, libspeex1, libspeexdsp1, libqt5multimedia5
+Conflicts: retroshare06-voip-plugin
+Depends: ${shlibs:Depends}, ${misc:Depends}, retroshare, libspeex1, libspeexdsp1, libqt5multimedia5
 Description: RetroShare VOIP plugin
  This package provides a plugin for RetroShare, a secured Friend-to-Friend communication 
  plateform. The plugin adds voice-over-IP functionality to the private chat window. Both
  friends chatting together need the plugin installed to be able to talk together.
 
-Package: retroshare06-feedreader-plugin
+Package: retroshare-feedreader-plugin
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, retroshare06
+Conflicts: retroshare06-feedreader-plugin
+Depends: ${shlibs:Depends}, ${misc:Depends}, retroshare
 Description: RetroShare FeedReader plugin
  This package provides a plugin for RetroShare, a secured Friend-to-Friend communication 
  plateform. The plugin adds a RSS feed reader tab to retroshare.
 
-Package: retroshare06-nogui
+Package: retroshare-nogui
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, gnome-keyring
-Conflicts: retroshare06
+Conflicts: retroshare,retroshare06-nogui
 Description: Secure communication with friends
  This is the command-line client for RetroShare network. This client
  can be contacted and talked-to using SSL. Clients exist for portable
  devices running e.g. Android. 
 
-Package: retroshare06
+Package: retroshare
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, gnome-keyring
-Conflicts: retroshare06-nogui
+Conflicts: retroshare-nogui,retroshare06
 Description: Secure communication with friends
  RetroShare is a Open Source cross-platform, private and secure decentralised 
  commmunication platform. It lets you to securely chat and share files with your 

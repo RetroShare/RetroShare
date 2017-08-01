@@ -283,7 +283,7 @@ void GxsForumsFillThread::run()
 		// Now make sure that message parents are consistent. Indeed, an old post may have the old version of a post as parent. So we need to change that parent
 		// to the newest version. So we create a map of which is the most recent version of each message, so that parent messages can be searched in it.
 
-        for(uint32_t i=1;i<(*it).size();++i)
+        for(int i=1;i<(*it).size();++i)
             most_recent_versions[(*it)[i].second] = (*it)[0].second ;
     }
     mPostVersions = mTmp ;

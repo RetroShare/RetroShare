@@ -37,6 +37,7 @@ class DhtWindow;
 class BwCtrlWindow;
 class TurtleRouterStatistics;
 class GlobalRouterStatistics;
+class GxsTransportStatistics;
 class RttStatistics;
 
 class StatisticsWindow : public QMainWindow {
@@ -53,6 +54,7 @@ public:
 
   DhtWindow *dhtw;
   GlobalRouterStatistics *grsdlg;
+  GxsTransportStatistics *gxsdlg;
   BwCtrlWindow *bwdlg;
   TurtleRouterStatistics *trsdlg;
   RttStatistics *rttdlg;

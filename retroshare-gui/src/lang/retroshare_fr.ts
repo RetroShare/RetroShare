@@ -1777,14 +1777,14 @@ Double-cliquez sur un salon pour entrer et discuter.</translation>
         <location line="+114"/>
         <location line="+114"/>
         <source>Style:</source>
-        <translation>Style :</translation>
+        <translation>Style :</translation>
     </message>
     <message>
         <location line="-212"/>
         <location line="+114"/>
         <location line="+114"/>
         <source>Variant:</source>
-        <translation>Variante :</translation>
+        <translation>Variante :</translation>
     </message>
     <message>
         <location line="-525"/>
@@ -2577,7 +2577,7 @@ après la conversion en HTML.</translation>
     <message>
         <location line="+34"/>
         <source>Name:</source>
-        <translation>Nom :</translation>
+        <translation>Nom :</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -6697,8 +6697,8 @@ et l&apos;utiliser au moyen du bouton d&apos;importation afin de le charger</tra
     </message>
     <message>
         <location line="+16"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Install RetroShare with a package installer to get&lt;/p&gt;&lt;p&gt;/usr/share/applications/retroshare06.desktop&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Installer RetroShare avec un gestionnaire de paquets afin d&apos;obtenir &lt;/p&gt;&lt;p&gt;/usr/share/applications/retroshare06.desktop&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Install RetroShare with a package installer to get&lt;/p&gt;&lt;p&gt;/usr/share/applications/retroshare.desktop&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Installer RetroShare avec un gestionnaire de paquets afin d&apos;obtenir &lt;/p&gt;&lt;p&gt;/usr/share/applications/retroshare.desktop&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7746,7 +7746,7 @@ Les publications sont conservés pendant %1  jours et synchronisés au cours des
     <message>
         <location filename="../gui/feeds/GxsChannelPostItem.ui" line="+199"/>
         <source>New Comment:</source>
-        <translation>Nouveau commentaire :</translation>
+        <translation>Nouveau commentaire :</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -15231,7 +15231,7 @@ comportements malveillants des extensions.</translation>
     <message>
         <location line="-100"/>
         <source>New Comment:</source>
-        <translation>Nouveau commentaire :</translation>
+        <translation>Nouveau commentaire :</translation>
     </message>
     <message>
         <location line="+10"/>

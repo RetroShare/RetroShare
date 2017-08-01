@@ -18,6 +18,12 @@ no_retroshare_plugins:CONFIG -= retroshare_plugins
 CONFIG *= no_retroshare_android_service
 retroshare_android_service:CONFIG -= no_retroshare_android_service
 
+# To enable RetroShare-android-notify-service append the following
+# assignation to qmake command line
+# "CONFIG+=retroshare_android_notify_service"
+CONFIG *= no_retroshare_android_notify_service
+retroshare_android_notify_service:CONFIG -= no_retroshare_android_notify_service
+
 # To enable RetroShare-QML-app append the following assignation to
 # qmake command line "CONFIG+=retroshare_qml_app"
 CONFIG *= no_retroshare_qml_app
@@ -55,22 +61,41 @@ rs_autologin:CONFIG -= no_rs_autologin
 CONFIG *= rs_gxs
 no_rs_gxs:CONFIG -= rs_gxs
 
-# To disable Deprecated Warning append the following
-# assignation to qmake command line "CONFIG+=rs_nodeprecatedwarning"
-CONFIG *= no_rs_nodeprecatedwarning
-rs_nodeprecatedwarning:CONFIG -= no_rs_nodeprecatedwarning
+# To enable RS Deprecated Warnings append the following assignation to qmake
+# command line "CONFIG+=rs_deprecatedwarning"
+CONFIG *= no_rs_deprecatedwarning
+rs_deprecatedwarning:CONFIG -= no_rs_deprecatedwarning
 
-# To disable Cpp #Warning append the following
-# assignation to qmake command line "CONFIG+=rs_nocppwarning"
-CONFIG *= no_rs_nocppwarning
-rs_nocppwarning:CONFIG -= no_rs_nocppwarning
+# To enable CPP #warning append the following assignation to qmake command
+# line "CONFIG+=rs_cppwarning"
+CONFIG *= no_rs_cppwarning
+rs_cppwarning:CONFIG -= no_rs_cppwarning
+
+# To disable GXS mail append the following assignation to qmake command line
+# "CONFIG+=no_rs_gxs_trans"
+CONFIG *= rs_gxs_trans
+#no_rs_gxs_trans:CONFIG -= rs_gxs_trans ## Disabing not supported ATM
+
+# To enable GXS based async chat append the following assignation to qmake
+# command line "CONFIG+=rs_async_chat"
+CONFIG *= no_rs_async_chat
+rs_async_chat:CONFIG -= no_rs_async_chat
+
+# To select your MacOsX version append the following assignation to qmake
+# command line "CONFIG+=rs_macos10.11" where 10.11(default for Travis_CI) depends your version
+CONFIG *= rs_macos10.11
+rs_macos10.8:CONFIG -= rs_macos10.11
+rs_macos10.9:CONFIG -= rs_macos10.11
+rs_macos10.10:CONFIG -= rs_macos10.11
+rs_macos10.12:CONFIG -= rs_macos10.11
+
 
 unix {
 	isEmpty(PREFIX)   { PREFIX   = "/usr" }
 	isEmpty(BIN_DIR)  { BIN_DIR  = "$${PREFIX}/bin" }
-	isEmpty(INC_DIR)  { INC_DIR  = "$${PREFIX}/include/retroshare06" }
+	isEmpty(INC_DIR)  { INC_DIR  = "$${PREFIX}/include/retroshare" }
 	isEmpty(LIB_DIR)  { LIB_DIR  = "$${PREFIX}/lib" }
-	isEmpty(DATA_DIR) { DATA_DIR = "$${PREFIX}/share/RetroShare06" }
+	isEmpty(DATA_DIR) { DATA_DIR = "$${PREFIX}/share/retroshare" }
 	isEmpty(PLUGIN_DIR) { PLUGIN_DIR  = "$${LIB_DIR}/retroshare/extensions6" }
 
     rs_autologin {
@@ -82,16 +107,23 @@ unix {
 }
 
 android-g++ {
+    isEmpty(NATIVE_LIBS_TOOLCHAIN_PATH) {
+        NATIVE_LIBS_TOOLCHAIN_PATH = $$(NATIVE_LIBS_TOOLCHAIN_PATH)
+    }
+    retroshare_qml_app {
+        CONFIG -= no_retroshare_android_notify_service
+        CONFIG *= retroshare_android_notify_service
+    }
     CONFIG *= no_libresapihttpserver no_sqlcipher upnp_libupnp
     CONFIG -= libresapihttpserver sqlcipher upnp_miniupnpc
     QT *= androidextras
     DEFINES *= "fopen64=fopen"
     DEFINES *= "fseeko64=fseeko"
     DEFINES *= "ftello64=ftello"
-    INCLUDEPATH += $$NDK_TOOLCHAIN_PATH/sysroot/usr/include
+    INCLUDEPATH += $$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/include
     LIBS *= -L$$NDK_TOOLCHAIN_PATH/sysroot/usr/lib/
     LIBS *= -lbz2 -lupnp -lixml -lthreadutil -lsqlite3
-    ANDROID_EXTRA_LIBS *= $$NDK_TOOLCHAIN_PATH/sysroot/usr/lib/libsqlite3.so
+    ANDROID_EXTRA_LIBS *= $$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/lib/libsqlite3.so
 #    message(LIBS: $$LIBS)
 #    message(ANDROID_EXTRA_LIBS: $$ANDROID_EXTRA_LIBS)
 #    message(ANDROID_PLATFORM: $$ANDROID_PLATFORM)
@@ -131,6 +163,36 @@ win32 {
 	}
 }
 
+rs_macos10.8 {
+	message(***retroshare.pri: Set Target and SDK to MacOS 10.8 )
+	QMAKE_MACOSX_DEPLOYMENT_TARGET=10.8
+	QMAKE_MAC_SDK = macosx10.8
+}
+
+rs_macos10.9 {
+	message(***retroshare.pri: Set Target and SDK to MacOS 10.9 )
+	QMAKE_MACOSX_DEPLOYMENT_TARGET=10.9
+	QMAKE_MAC_SDK = macosx10.9
+}
+
+rs_macos10.10 {
+	message(***retroshare.pri: Set Target and SDK to MacOS 10.10 )
+	QMAKE_MACOSX_DEPLOYMENT_TARGET=10.10
+	QMAKE_MAC_SDK = macosx10.10
+}
+
+rs_macos10.11 {
+	message(***retroshare.pri: Set Target and SDK to MacOS 10.11 )
+	QMAKE_MACOSX_DEPLOYMENT_TARGET=10.11
+	QMAKE_MAC_SDK = macosx10.11
+}
+
+rs_macos10.12 {
+	message(***retroshare.pri: Set Target and SDK to MacOS 10.12 )
+	QMAKE_MACOSX_DEPLOYMENT_TARGET=10.12
+	QMAKE_MAC_SDK = macosx10.12
+}
+
 macx {
 	message(***retroshare.pri:MacOSX)
 	BIN_DIR += "/usr/bin"
@@ -139,15 +201,7 @@ macx {
 	INC_DIR += "/opt/local/include"
 	LIB_DIR += "/usr/local/lib"
 	LIB_DIR += "/opt/local/lib"
-	!QMAKE_MACOSX_DEPLOYMENT_TARGET {
-		message(***retroshare.pri: No Target. Set it to MacOS 10.11 )
-		QMAKE_MACOSX_DEPLOYMENT_TARGET=10.11
-	}
-	!QMAKE_MAC_SDK {
-		message(***retroshare.pri: No SDK. Set it to MacOS 10.11 )
-		QMAKE_MAC_SDK = macosx10.11
-	}
-        CONFIG += c++11
+	CONFIG += c++11
 }
 
 unfinished {
@@ -169,17 +223,32 @@ rs_autologin {
     warning("You have enabled RetroShare auto-login, this is discouraged. The usage of auto-login on some linux distributions may allow someone having access to your session to steal the SSL keys of your node location and therefore compromise your security")
 }
 
-rs_nodeprecatedwarning {
+no_rs_deprecatedwarning {
     QMAKE_CXXFLAGS += -Wno-deprecated
     QMAKE_CXXFLAGS += -Wno-deprecated-declarations
     DEFINES *= RS_NO_WARN_DEPRECATED
-    warning("QMAKE: You have disable deprecated warnings.")
+    warning("QMAKE: You have disabled deprecated warnings.")
 }
 
-rs_nocppwarning {
+no_rs_cppwarning {
     QMAKE_CXXFLAGS += -Wno-cpp
     DEFINES *= RS_NO_WARN_CPP
-    warning("QMAKE: You have disable cpp warnings.")
+    warning("QMAKE: You have disabled C preprocessor warnings.")
 }
 
-rs_gxs_mail:DEFINES *= RS_GXS_MAIL
+rs_gxs_trans {
+    DEFINES *= RS_GXS_TRANS
+    greaterThan(QT_MAJOR_VERSION, 4) {
+        CONFIG += c++11
+    } else {
+        QMAKE_CXXFLAGS += -std=c++0x
+    }
+}
+
+rs_async_chat {
+    DEFINES *= RS_ASYNC_CHAT
+}
+
+rs_chatserver {
+    DEFINES *= RS_CHATSERVER
+}

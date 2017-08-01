@@ -138,7 +138,7 @@ public:
 
     /*!
      * Use this to request group related information
-     * @param token The token returned for the request, store this value to pool for request completion
+	 * @param token The token returned for the request, store this value to poll for request completion
      * @param ansType The type of result (e.g. group data, meta, ids)
      * @param opts Additional option that affect outcome of request. Please see specific services, for valid values
      * @param groupIds group id to request info for
@@ -148,7 +148,7 @@ public:
 
     /*!
      * Use this to request all group related info
-     * @param token The token returned for the request, store this value to pool for request completion
+	 * @param token The token returned for the request, store this value to poll for request completion
      * @param ansType The type of result (e.g. group data, meta, ids)
      * @param opts Additional option that affect outcome of request. Please see specific services, for valid values
      * @return
@@ -156,7 +156,7 @@ public:
     virtual bool requestGroupInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts) = 0;
 
     /*!
-     * Use this to get msg related information, store this value to pole for request completion
+	 * Use this to get msg related information, store this value to poll for request completion
      * @param token The token returned for the request
      * @param ansType The type of result wanted
      * @param opts Additional option that affect outcome of request. Please see specific services, for valid values
@@ -166,7 +166,7 @@ public:
     virtual bool requestMsgInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const GxsMsgReq& msgIds) = 0;
 
     /*!
-     * Use this to get msg related information, store this value to pole for request completion
+	 * Use this to get msg related information, store this value to poll for request completion
      * @param token The token returned for the request
      * @param ansType The type of result wanted
      * @param opts Additional option that affect outcome of request. Please see specific services, for valid values

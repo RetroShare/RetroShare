@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>516</width>
-    <height>389</height>
+    <width>440</width>
+    <height>350</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,7 +20,7 @@
   <property name="autoFillBackground">
    <bool>false</bool>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2">
+  <layout class="QVBoxLayout" name="StartDialogVLayout">
    <property name="leftMargin">
     <number>0</number>
    </property>
@@ -44,7 +44,7 @@
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
      </property>
-     <layout class="QGridLayout" name="mainGLayout">
+     <layout class="QGridLayout" name="loginframeGLayout">
       <property name="leftMargin">
        <number>0</number>
       </property>
@@ -55,19 +55,31 @@
        <number>0</number>
       </property>
       <property name="bottomMargin">
-       <number>0</number>
+       <number>9</number>
       </property>
       <item row="0" column="0" colspan="4">
        <layout class="QGridLayout" name="topGLayout">
+        <property name="leftMargin">
+         <number>16</number>
+        </property>
+        <property name="topMargin">
+         <number>16</number>
+        </property>
+        <property name="rightMargin">
+         <number>16</number>
+        </property>
+        <property name="bottomMargin">
+         <number>16</number>
+        </property>
         <item row="0" column="0">
-         <spacer name="horizontalSpacer">
+         <spacer name="topLHSpacer">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
           <property name="sizeHint" stdset="0">
            <size>
             <width>40</width>
-            <height>20</height>
+            <height>0</height>
            </size>
           </property>
          </spacer>
@@ -131,14 +143,14 @@
          </widget>
         </item>
         <item row="0" column="2">
-         <spacer name="horizontalSpacer_2">
+         <spacer name="topRHSpacer">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
           <property name="sizeHint" stdset="0">
            <size>
-            <width>48</width>
-            <height>20</height>
+            <width>40</width>
+            <height>0</height>
            </size>
           </property>
          </spacer>
@@ -146,7 +158,7 @@
        </layout>
       </item>
       <item row="1" column="2" rowspan="2">
-       <spacer name="horizontalSpacer_4">
+       <spacer name="profileRHSpacer">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
@@ -156,13 +168,13 @@
         <property name="sizeHint" stdset="0">
          <size>
           <width>60</width>
-          <height>20</height>
+          <height>0</height>
          </size>
         </property>
        </spacer>
       </item>
       <item row="4" column="0" colspan="3">
-       <spacer name="verticalSpacer">
+       <spacer name="mainVSpacer">
         <property name="orientation">
          <enum>Qt::Vertical</enum>
         </property>
@@ -175,7 +187,7 @@
        </spacer>
       </item>
       <item row="1" column="0" rowspan="2">
-       <spacer name="horizontalSpacer_3">
+       <spacer name="profileLHSpacer">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
@@ -185,7 +197,7 @@
         <property name="sizeHint" stdset="0">
          <size>
           <width>60</width>
-          <height>20</height>
+          <height>0</height>
          </size>
         </property>
        </spacer>
@@ -207,12 +219,21 @@
         <property name="title">
          <string/>
         </property>
-        <layout class="QGridLayout" name="gridLayout_3">
+        <layout class="QGridLayout" name="profilGBoxGLayout">
          <property name="leftMargin">
           <number>9</number>
          </property>
+         <property name="topMargin">
+          <number>9</number>
+         </property>
+         <property name="rightMargin">
+          <number>9</number>
+         </property>
+         <property name="bottomMargin">
+          <number>9</number>
+         </property>
          <item row="1" column="0">
-          <widget class="QLabel" name="label_9">
+          <widget class="QLabel" name="loadName_label">
            <property name="maximumSize">
             <size>
              <width>22</width>
@@ -234,7 +255,7 @@
           <widget class="QComboBox" name="loadName"/>
          </item>
          <item row="2" column="0">
-          <widget class="QLabel" name="label_11">
+          <widget class="QLabel" name="password_label">
            <property name="maximumSize">
             <size>
              <width>22</width>
@@ -253,7 +274,7 @@
           </widget>
          </item>
          <item row="2" column="1">
-          <widget class="QLineEdit" name="password_input">
+          <widget class="LineEditClear" name="password_input">
            <property name="echoMode">
             <enum>QLineEdit::Password</enum>
            </property>
@@ -294,9 +315,9 @@
        </widget>
       </item>
       <item row="3" column="1">
-       <layout class="QHBoxLayout" name="horizontalLayout">
+       <layout class="QHBoxLayout" name="newHLayout">
         <item>
-         <spacer name="horizontalSpacer_5">
+         <spacer name="newHSpacer">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
@@ -323,7 +344,7 @@ The current identities/locations will not be affected.</string>
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;Create new Profile...&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;Manage profiles and nodes...&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;Create new Profile...&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;New Profile/Node&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
          </widget>
         </item>
@@ -339,4 +360,11 @@ p, li { white-space: pre-wrap; }
   <include location="icons.qrc"/>
  </resources>
  <connections/>
+ <customwidgets>
+  <customwidget>
+   <class>LineEditClear</class>
+   <extends>QLineEdit</extends>
+   <header>gui/common/LineEditClear.h</header>
+  </customwidget>
+ </customwidgets>
 </ui>

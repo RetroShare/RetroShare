@@ -18,8 +18,12 @@
  */
 
 #ifdef __GNUC__
-#	if __GNUC__*100 + __GNUC_MINOR__ < 40700
+#	define GCC_VERSION (__GNUC__*10000+__GNUC_MINOR__*100+__GNUC_PATCHLEVEL__)
+#	if GCC_VERSION < 40700
 #		define override
 #		define final
-#	endif //GCC version
+#	endif // GCC version < 40700
+#	if GCC_VERSION < 40600
+#		define nullptr NULL
+#	endif // GCC_VERSION < 40600
 #endif //defined GNUC

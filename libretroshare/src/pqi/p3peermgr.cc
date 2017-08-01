@@ -50,18 +50,19 @@
 
 /* Network setup States */
 
-const uint32_t RS_NET_NEEDS_RESET = 	0x0000;
-const uint32_t RS_NET_UNKNOWN = 	0x0001;
-const uint32_t RS_NET_UPNP_INIT = 	0x0002;
-const uint32_t RS_NET_UPNP_SETUP =  	0x0003;
-const uint32_t RS_NET_EXT_SETUP =  	0x0004;
-const uint32_t RS_NET_DONE =    	0x0005;
-const uint32_t RS_NET_LOOPBACK =    	0x0006;
-const uint32_t RS_NET_DOWN =    	0x0007;
+//Defined and used in /libretroshare/src/pqi/p3netmgr.cc
+//const uint32_t RS_NET_NEEDS_RESET = 	0x0000;
+//const uint32_t RS_NET_UNKNOWN = 	0x0001;
+//const uint32_t RS_NET_UPNP_INIT = 	0x0002;
+//const uint32_t RS_NET_UPNP_SETUP =  	0x0003;
+//const uint32_t RS_NET_EXT_SETUP =  	0x0004;
+//const uint32_t RS_NET_DONE =    	0x0005;
+//const uint32_t RS_NET_LOOPBACK =    	0x0006;
+//const uint32_t RS_NET_DOWN =    	0x0007;
 
-const uint32_t MIN_TIME_BETWEEN_NET_RESET = 		5;
+//const uint32_t MIN_TIME_BETWEEN_NET_RESET = 		5;
 
-const uint32_t PEER_IP_CONNECT_STATE_MAX_LIST_SIZE =     	4;
+//const uint32_t PEER_IP_CONNECT_STATE_MAX_LIST_SIZE =     	4;
 
 static struct RsLog::logInfo p3peermgrzoneInfo = {RsLog::Default, "p3peermgr"};
 #define p3peermgrzone &p3peermgrzoneInfo
@@ -998,7 +999,11 @@ bool p3PeerMgrIMPL::addFriend(const RsPeerId& input_id, const RsPgpId& input_gpg
 	}
 
 	service_flags &= servicePermissionFlags(gpg_id) ; // Always reduce the permissions. 
+#ifdef RS_CHATSERVER //Defined by chatserver
+	setServicePermissionFlags(gpg_id,RS_NODE_PERM_NONE) ;
+#else
 	setServicePermissionFlags(gpg_id,service_flags) ;
+#endif
 
 #ifdef PEER_DEBUG
 	printPeerLists(std::cerr);
@@ -1528,7 +1533,7 @@ bool p3PeerMgrIMPL::addCandidateForOwnExternalAddress(const RsPeerId &from, cons
 
     if((!rsBanList->isAddressAccepted(addr_filtered,RSBANLIST_CHECKING_FLAGS_WHITELIST)) && (!sockaddr_storage_sameip(own_addr,addr_filtered)))
     {
-        std::cerr << "  Peer " << from << " reports a connexion address (" << sockaddr_storage_iptostring(addr_filtered) <<") that is not your current external address (" << sockaddr_storage_iptostring(own_addr) << "). This is weird." << std::endl;
+        std::cerr << "  Peer " << from << " reports a connection address (" << sockaddr_storage_iptostring(addr_filtered) <<") that is not your current external address (" << sockaddr_storage_iptostring(own_addr) << "). This is weird." << std::endl;
 
         RsServer::notify()->AddFeedItem(RS_FEED_ITEM_SEC_IP_WRONG_EXTERNAL_IP_REPORTED, from.toStdString(), sockaddr_storage_iptostring(own_addr), sockaddr_storage_iptostring(addr));
     }
@@ -2315,6 +2320,7 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
             std::cerr << "(II) Loaded group in new format. ID = " << info.id << std::endl;
             groupList[info.id] = info ;
 
+			delete *it ;
             continue;
         }
 	    RsPeerBandwidthLimitsItem *pblitem = dynamic_cast<RsPeerBandwidthLimitsItem*>(*it) ;
@@ -2616,7 +2622,7 @@ bool p3PeerMgrIMPL::assignPeersToGroup(const RsNodeGroupId &groupId, const std::
 
                 for (std::list<RsPgpId>::const_iterator peerIt = peerIds.begin(); peerIt != peerIds.end(); ++peerIt)
                 {
-                    std::set<RsPgpId>::iterator peerIt1 = groupItem.peerIds.find(*peerIt);
+                    //std::set<RsPgpId>::iterator peerIt1 = groupItem.peerIds.find(*peerIt);
 
                     if (assign)
                     {

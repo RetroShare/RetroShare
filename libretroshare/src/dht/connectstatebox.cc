@@ -398,6 +398,7 @@ uint32_t PeerConnectStateBox::connectCb_direct()
 				break;
 			}
 		}	/* FALLTHROUGH TO START CASE */
+		/* fallthrough */
 		default:
 		case CSB_REVERSE_WAIT:
 		case CSB_PROXY_WAIT:
@@ -411,6 +412,7 @@ uint32_t PeerConnectStateBox::connectCb_direct()
 			}
 
 		}	/* FALLTHROUGH TO START CASE */
+		/* fallthrough */
 		case CSB_START:
 		{
 			/* starting up the connection */
@@ -537,6 +539,7 @@ uint32_t PeerConnectStateBox::connectCb_unreachable()
 				break;
 			}
 		}	/* FALLTHROUGH TO START CASE */
+		/* fallthrough */
 		default:
 		case CSB_DIRECT_WAIT:
 		{
@@ -548,6 +551,7 @@ uint32_t PeerConnectStateBox::connectCb_unreachable()
 			}
 
 		}	/* FALLTHROUGH TO START CASE */
+		/* fallthrough */
 		case CSB_START:
 		{
 			/* starting up the connection */

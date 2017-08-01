@@ -39,6 +39,8 @@ TEST(libretroshare_gxs, DISABLED_RsGenExchange)
 
     //GxsPublishMsgTest testMsgPublishing(&testService, dataStore);
     //testMsgPublishing.runTests();
+
+	//delete dataStore ;	// deleted as a member of RsGenExchange
 }
 
 TEST(libretroshare_gxs, GetStats)
@@ -54,4 +56,6 @@ TEST(libretroshare_gxs, GetStats)
 
     //GxsPublishMsgTest testMsgPublishing(&testService, dataStore);
     //testMsgPublishing.runTests();
+
+	//delete dataStore ;	// deleted as a member of RsGenExchange
 }

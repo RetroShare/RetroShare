@@ -16,6 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QStringList>
 #include "ApiServerLocal.h"
 #include "JsonStream.h"
 
@@ -105,9 +106,17 @@ readPath:
 			resource_api::Request req(reqJson);
 			req.mMethod = reqMeth;
 			req.setPath(reqPath);
-			std::string resultString = mApiServer->handleRequest(req);
-			mLocalSocket->write(resultString.c_str(), resultString.length());
+
+			// Need this idiom because binary result may contains \0
+			std::string&& resultString = mApiServer->handleRequest(req);
+			QByteArray rB(resultString.data(), resultString.length());
+
+			// Dirty trick to support avatars answers
+			if(rB.contains("\n") || !rB.startsWith("{") || !rB.endsWith("}"))
+				mLocalSocket->write(rB.toBase64());
+			else mLocalSocket->write(rB);
 			mLocalSocket->write("\n\0");
+
 			mState = WAITING_PATH;
 
 			/* Because QLocalSocket is SOCK_STREAM some clients implementations

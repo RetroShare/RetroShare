@@ -521,8 +521,8 @@ static QString buildRecommendHtml(const std::set<RsPeerId> &sslIds, const RsPeer
         if (*sslIt == excludeId) {
             continue;
         }
-        RetroShareLink link;
-        if (link.createCertificate(*sslIt)) {
+        RetroShareLink link = RetroShareLink::createCertificate(*sslIt);
+        if (link.valid()) {
             text += link.toHtml() + "<br>";
         }
     }
@@ -558,8 +558,7 @@ void MessageComposer::recommendFriend(const std::set <RsPeerId> &sslIds, const R
         composer->addRecipient(TO, to);
     }
     RsPgpId ownPgpId = rsPeers->getGPGOwnId();
-    RetroShareLink link;
-    link.createPerson(ownPgpId);
+    RetroShareLink link = RetroShareLink::createPerson(ownPgpId);
     
     QString sMsgText = msg.isEmpty() ? recommendMessage() : msg;
     sMsgText += "<br><br>";
@@ -595,8 +594,8 @@ void MessageComposer::sendConnectAttemptMsg(const RsPgpId &gpgId, const RsPeerId
         return;
     }
 
-    RetroShareLink link;
-    if (link.createUnknwonSslCertificate(sslId, gpgId) == false) {
+    RetroShareLink link = RetroShareLink::createUnknwonSslCertificate(sslId, gpgId);
+    if (link.valid() == false) {
         return;
     }
 
@@ -1053,44 +1052,52 @@ MessageComposer *MessageComposer::newMsg(const std::string &msgId /* = ""*/)
 
 QString MessageComposer::buildReplyHeader(const MessageInfo &msgInfo)
 {
-    RetroShareLink link;
-    link.createMessage(msgInfo.rspeerid_srcId, "");
+    RetroShareLink link = RetroShareLink::createMessage(msgInfo.rspeerid_srcId, "");
     QString from = link.toHtml();
 
     QString to;
     for ( std::set<RsPeerId>::const_iterator  it = msgInfo.rspeerid_msgto.begin(); it != msgInfo.rspeerid_msgto.end(); ++it)
-        if (link.createMessage(*it, ""))
+    {
+        link = RetroShareLink::createMessage(*it, "");
+        if (link.valid())
         {
             if (!to.isEmpty())
                 to += ", ";
 
             to += link.toHtml();
         }
+    }
     for ( std::set<RsGxsId>::const_iterator  it = msgInfo.rsgxsid_msgto.begin(); it != msgInfo.rsgxsid_msgto.end(); ++it)
-        if (link.createMessage(*it, ""))
+    {
+        link = RetroShareLink::createMessage(*it, "");
+        if (link.valid())
         {
             if (!to.isEmpty())
                 to += ", ";
 
             to += link.toHtml();
         }
-
+    }
 
     QString cc;
-    for (std::set<RsPeerId>::const_iterator it = msgInfo.rspeerid_msgcc.begin(); it != msgInfo.rspeerid_msgcc.end(); ++it)
-        if (link.createMessage(*it, "")) {
+    for (std::set<RsPeerId>::const_iterator it = msgInfo.rspeerid_msgcc.begin(); it != msgInfo.rspeerid_msgcc.end(); ++it) {
+        link = RetroShareLink::createMessage(*it, "");
+        if (link.valid()) {
             if (!cc.isEmpty()) {
                 cc += ", ";
             }
             cc += link.toHtml();
         }
-    for (std::set<RsGxsId>::const_iterator it = msgInfo.rsgxsid_msgcc.begin(); it != msgInfo.rsgxsid_msgcc.end(); ++it)
-        if (link.createMessage(*it, "")) {
+    }
+    for (std::set<RsGxsId>::const_iterator it = msgInfo.rsgxsid_msgcc.begin(); it != msgInfo.rsgxsid_msgcc.end(); ++it) {
+        link = RetroShareLink::createMessage(*it, "");
+        if (link.valid()) {
             if (!cc.isEmpty()) {
                 cc += ", ";
             }
             cc += link.toHtml();
         }
+    }
 
 
     QString header = QString("<span>-----%1-----").arg(tr("Original Message"));
@@ -2780,8 +2787,7 @@ void MessageComposer::sendInvite(const RsGxsId &to, const QString &/*msg*/, bool
 
 
     RsPeerId ownId = rsPeers->getOwnId();
-    RetroShareLink link;
-    link.createCertificate(ownId);
+    RetroShareLink link = RetroShareLink::createCertificate(ownId);
         
     QString sMsgText = inviteMessage();
     sMsgText += "<br><br>";

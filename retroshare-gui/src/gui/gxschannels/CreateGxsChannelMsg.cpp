@@ -357,8 +357,8 @@ void CreateGxsChannelMsg::addAttachment(const RsFileHash &hash, const std::strin
 
 	uint32_t flags = SFI_TYPE_CHANNEL | SFI_FLAG_ALLOW_DELETE ;
 
-    if(assume_file_ready)
-        flags |= SFI_FLAG_ASSUME_FILE_READY;
+	if( assume_file_ready )
+		flags |= SFI_FLAG_ASSUME_FILE_READY ;
 
 	if (local)
 		flags |= SFI_STATE_LOCAL;

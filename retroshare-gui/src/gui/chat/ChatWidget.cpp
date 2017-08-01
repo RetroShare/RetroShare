@@ -201,6 +201,8 @@ ChatWidget::ChatWidget(QWidget *parent) :
 	menu->addMenu(fontmenu);
 	
 	ui->actionSendAsPlainText->setChecked(Settings->getChatSendAsPlainTextByDef());
+	ui->chatTextEdit->setOnlyPlainText(ui->actionSendAsPlainText->isChecked());
+	connect(ui->actionSendAsPlainText, SIGNAL(toggled(bool)), ui->chatTextEdit, SLOT(setOnlyPlainText(bool)) );
 
 	ui->textBrowser->resetImagesStatus(Settings->getChatLoadEmbeddedImages());
 	ui->textBrowser->installEventFilter(this);
@@ -418,9 +420,11 @@ ChatWidget::ChatType ChatWidget::chatType()
 
 void ChatWidget::blockSending(QString msg)
 {
-    sendingBlocked = true;
-    ui->sendButton->setEnabled(false);
-    ui->sendButton->setToolTip(msg);
+#ifndef RS_ASYNC_CHAT
+	sendingBlocked = true;
+	ui->sendButton->setEnabled(false);
+#endif
+	ui->sendButton->setToolTip(msg);
 }
 
 void ChatWidget::unblockSending()
@@ -689,7 +693,11 @@ bool ChatWidget::eventFilter(QObject *obj, QEvent *event)
 
 				if (!anchors.isEmpty()){
 					if (anchors.at(0).startsWith(PERSONID)){
-						RsGxsId mId = RsGxsId(QString(anchors.at(0)).replace(PERSONID,"").toStdString());
+						QString strId = QString(anchors.at(0)).replace(PERSONID,"");
+						if (strId.contains(" "))
+							strId.truncate(strId.indexOf(" "));
+
+						RsGxsId mId = RsGxsId(strId.toStdString());
 						if(!mId.isNull()) {
 							RsIdentityDetails details;
 							if (rsIdentity->getIdDetails(mId, details)){
@@ -1011,8 +1019,25 @@ void ChatWidget::addChatMsg(bool incoming, const QString &name, const RsGxsId gx
 	
 	//replace Name anchors with GXS Id
 	if (!gxsId.isNull()) {
+		RsIdentityDetails details;
+		QString strPreName = "";
+
+		QString strGxsId = QString::fromStdString(gxsId.toStdString());
+		rsIdentity->getIdDetails(gxsId, details);
+		bool isUnsigned = !(details.mFlags & RS_IDENTITY_FLAGS_PGP_LINKED);
+		if(isUnsigned && ui->textBrowser->getShowImages()) {
+			QIcon icon = QIcon(":/icons/anonymous_blue_128.png");
+			int height = ui->textBrowser->fontMetrics().height()*0.8;
+			QImage image(icon.pixmap(height,height).toImage());
+			QByteArray byteArray;
+			QBuffer buffer(&byteArray);
+			image.save(&buffer, "PNG"); // writes the image in PNG format inside the buffer
+			QString iconBase64 = QString::fromLatin1(byteArray.toBase64().data());
+			strPreName = QString("<img src=\"data:image/png;base64,%1\" alt=\"[unsigned]\" />").arg(iconBase64);
+		}
+
 		formatMsg.replace(QString("<a name=\"name\">")
-		                  ,QString("<a name=\"").append(PERSONID).append("%1\">").arg(strGxsId) );
+		                  ,QString(strPreName).append("<a name=\"").append(PERSONID).append("%1 %2\">").arg(strGxsId, isUnsigned ? tr(" Unsigned"):""));
 	} else {
 		formatMsg.replace(QString("<a name=\"name\">"),"");
   }
@@ -1561,14 +1586,14 @@ void ChatWidget::fileHashingFinished(QList<HashedFile> hashedFiles)
 	QList<HashedFile>::iterator it;
 	for (it = hashedFiles.begin(); it != hashedFiles.end(); ++it) {
 		HashedFile& hashedFile = *it;
-		QString ext = QFileInfo(hashedFile.filename).suffix();
+		//QString ext = QFileInfo(hashedFile.filename).suffix();
 
 		RetroShareLink link;
 
 		if(mDefaultExtraFileFlags & RS_FILE_REQ_ANONYMOUS_ROUTING)
-            link.createFile(hashedFile.filename, hashedFile.size, QString::fromStdString(hashedFile.hash.toStdString()));
+			link = RetroShareLink::createFile(hashedFile.filename, hashedFile.size, QString::fromStdString(hashedFile.hash.toStdString()));
 		else
-            link.createExtraFile(hashedFile.filename, hashedFile.size, QString::fromStdString(hashedFile.hash.toStdString()),QString::fromStdString(rsPeers->getOwnId().toStdString()));
+			link = RetroShareLink::createExtraFile(hashedFile.filename, hashedFile.size, QString::fromStdString(hashedFile.hash.toStdString()),QString::fromStdString(rsPeers->getOwnId().toStdString()));
 
 		if (hashedFile.flag & HashedFile::Picture) {
 			message += QString("<img src=\"file:///%1\" width=\"100\" height=\"100\">").arg(hashedFile.filepath);
@@ -1580,6 +1605,7 @@ void ChatWidget::fileHashingFinished(QList<HashedFile> hashedFiles)
 			}
 		}
 		message += link.toHtmlSize();
+
 		if (it != hashedFiles.end()) {
 			message += "<BR>";
 		}

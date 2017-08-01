@@ -14,6 +14,8 @@
 
 #include "GetPluginInterfaces.h"
 
+//#define DEBUG_CONTROL_MODULE 1
+
 namespace resource_api{
 
 RsControlModule::RsControlModule(int argc, char **argv, StateTokenServer* sts, ApiServer *apiserver, bool full_control):
@@ -26,6 +28,7 @@ RsControlModule::RsControlModule(int argc, char **argv, StateTokenServer* sts, A
     mAutoLoginNextTime(false),
     mWantPassword(false),
     mPrevIsBad(false),
+    mCountAttempts(0),
     mPassword("")
 {
     mStateToken = sts->getNewToken();
@@ -60,11 +63,21 @@ bool RsControlModule::processShouldExit()
 
 bool RsControlModule::askForPassword(const std::string &title, const std::string &key_details, bool prev_is_bad, std::string &password, bool& cancelled)
 {
+#ifdef DEBUG_CONTROL_MODULE
+	std::cerr << "RsControlModule::askForPassword(): current passwd is \"" << mPassword << "\"" << std::endl;
+#endif
 	cancelled = false ;
     {
 		RS_STACK_MUTEX(mDataMtx); // ********** LOCKED **********
 
-		mPrevIsBad = prev_is_bad;
+		mCountAttempts++;
+		if(mCountAttempts == 3)
+		{
+			mPrevIsBad = prev_is_bad;
+			mCountAttempts = 0;
+		}
+		else
+			mPrevIsBad = false;
 
         if(mFixedPassword != "")
 		{
@@ -106,7 +119,9 @@ bool RsControlModule::askForPassword(const std::string &title, const std::string
 
 void RsControlModule::run()
 {
+#ifdef DEBUG_CONTROL_MODULE
     std::cerr << "RsControlModule: initialising libretroshare..." << std::endl;
+#endif
 
     RsInit::InitRsConfig();
     int initResult = RsInit::InitRetroShare(argc, argv, true);
@@ -117,11 +132,11 @@ void RsControlModule::run()
         std::stringstream ss;
         switch (initResult) {
         case RS_INIT_AUTH_FAILED:
-            ss << "RsInit::InitRetroShare AuthGPG::InitAuth failed" << std::endl;
+            ss << "RsControlModule::run() AuthGPG::InitAuth failed" << std::endl;
             break;
         default:
             /* Unexpected return code */
-            ss << "RsInit::InitRetroShare unexpected return code " << initResult << std::endl;
+            ss << "ControlModule::run() unexpected return code " << initResult << std::endl;
             break;
         }
         // FATAL ERROR, we can't recover from this. Just send the message to the user.
@@ -133,33 +148,57 @@ void RsControlModule::run()
     RsControl::earlyInitNotificationSystem();
     rsNotify->registerNotifyClient(this);
 
+#ifdef DEBUG_CONTROL_MODULE
+	std::cerr << "RsControlModule::run() Entering login wait loop." << std::endl;
+#endif
     bool login_ok = false;
     while(!login_ok)
     {
+#ifdef DEBUG_CONTROL_MODULE
+		std::cerr << "RsControlModule::run() reseting passwd." << std::endl;
+#endif
 		{
 			RsStackMutex stack(mDataMtx); // ********** LOCKED **********
 			mPassword = "";
 		}
 
         // skip account selection if autologin is available
-        if(initResult != RS_INIT_HAVE_ACCOUNT)
-            setRunState(WAITING_ACCOUNT_SELECT);
+		bool wait_for_account_select = (initResult != RS_INIT_HAVE_ACCOUNT);
 
         // wait for login request
         bool auto_login = false;
-        bool wait_for_account_select = (initResult != RS_INIT_HAVE_ACCOUNT);
+
+		if(wait_for_account_select)
+		{
+#ifdef DEBUG_CONTROL_MODULE
+			std::cerr << "RsControlModule::run() wait_for_account_select=true => setting run state to WAITING_ACCOUNT_SELECT." << std::endl;
+#endif
+			setRunState(WAITING_ACCOUNT_SELECT);
+		}
+
         while(wait_for_account_select && !processShouldExit())
         {
-            usleep(5*1000);
+#ifdef DEBUG_CONTROL_MODULE
+			std::cerr << "RsControlModule::run() while(wait_for_account_select) mLoadPeerId=" << mLoadPeerId << std::endl;
+#endif
+            usleep(500*1000);
             RsStackMutex stack(mDataMtx); // ********** LOCKED **********
-            wait_for_account_select = mLoadPeerId.isNull();
+
+			if(!mLoadPeerId.isNull())
+			{
+                wait_for_account_select = wait_for_account_select && !RsAccounts::SelectAccount(mLoadPeerId);
+#ifdef DEBUG_CONTROL_MODULE
+				std::cerr << "RsControlModule::run() mLoadPeerId != NULL, account selection result: " << !wait_for_account_select << std::endl;
+#endif
+			}
+
             auto_login = mAutoLoginNextTime;
-            if(!wait_for_account_select)
-            {
-                wait_for_account_select = !RsAccounts::SelectAccount(mLoadPeerId);
-                if(wait_for_account_select)
-                    setRunState(WAITING_ACCOUNT_SELECT);
-            }
+
+            //if(!wait_for_account_select)
+            //{
+            //    if(wait_for_account_select)
+            //        setRunState(WAITING_ACCOUNT_SELECT);
+            //}
         }
 
         if(processShouldExit())
@@ -167,6 +206,9 @@ void RsControlModule::run()
 
         bool autoLogin = (initResult == RS_INIT_HAVE_ACCOUNT) | auto_login;
         std::string lockFile;
+#ifdef DEBUG_CONTROL_MODULE
+		std::cerr << "RsControlModule::run() trying to load certificate..." << std::endl;
+#endif
         int retVal = RsInit::LockAndLoadCertificates(autoLogin, lockFile);
 
         std::string error_string;
@@ -191,16 +233,24 @@ void RsControlModule::run()
             std::cerr << "RsControlModule::run() LockAndLoadCertificates failed. Unexpected switch value: " << retVal << std::endl;
             break;
         }
+#ifdef DEBUG_CONTROL_MODULE
+		std::cerr << "RsControlModule::run() Error string: \"" << error_string << "\"" << std::endl;
+#endif
 
 		{
 			RsStackMutex stack(mDataMtx); // ********** LOCKED **********
 			mLoadPeerId.clear();
 		}
     }
+#ifdef DEBUG_CONTROL_MODULE
+	std::cerr << "RsControlModule::run() login is ok. Starting up..." << std::endl;
+#endif
 
 	{
 		RsStackMutex stack(mDataMtx); // ********** LOCKED **********
 		mFixedPassword = mPassword;
+
+		std::cerr << "***Reseting mPasswd " << std::endl;
 		mPassword = "";
 	}
 
@@ -323,13 +373,20 @@ void RsControlModule::handlePassword(Request &req, Response &resp)
     RsStackMutex stack(mDataMtx); // ********** LOCKED **********
     std::string passwd;
     req.mStream << makeKeyValueReference("password", passwd);
-    if(passwd != "" && mWantPassword)
+    if(passwd != "")// && mWantPassword)
     {
         // client sends password
         mPassword = passwd;
         mWantPassword = false;
         mStateTokenServer->replaceToken(mStateToken);
+#ifdef DEBUG_CONTROL_MODULE
+		std::cerr << "RsControlModule::handlePassword(): setting mPasswd=\"" << mPassword <<  "\"" << std::endl;
+#endif
     }
+#ifdef DEBUG_CONTROL_MODULE
+	else
+		std::cerr << "RsControlModule::handlePassword(): not setting mPasswd=\"" << mPassword <<  "\"!!!" << std::endl;
+#endif
 
     resp.mDataStream
             << makeKeyValueReference("want_password", mWantPassword)
@@ -443,8 +500,10 @@ void RsControlModule::handleCreateLocation(Request &req, Response &resp)
         }
     }
 
-    if(hidden_port)
-        RsInit::SetHiddenLocation(hidden_address, hidden_port);
+	if(hidden_port) {
+		/// TODO add bob to webui
+		RsInit::SetHiddenLocation(hidden_address, hidden_port, false);
+	}
 
     std::string ssl_password = RSRandom::random_alphaNumericString(RsInit::getSslPwdLen()) ;
 

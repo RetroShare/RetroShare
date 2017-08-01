@@ -452,7 +452,7 @@ int 	pqissl::ConnectAttempt()
   	  		rslog(RSL_DEBUG_BASIC, pqisslzone, 
 			  "pqissl::ConnectAttempt() STATE = Not Waiting, starting connection");
 #endif
-
+			/* fallthrough */
 		case WAITING_DELAY:
 
 #ifdef PQISSL_LOG_DEBUG 
