@@ -1,6 +1,7 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.0
 import "emoji.js" as EmojiJSON
+//import "../../fonts/."
 
 Rectangle {
     id: emojiPicker
@@ -8,6 +9,10 @@ Rectangle {
     property variant emojiParsedJson
     property int buttonWidth: 40
     property TextArea textArea
+
+	FontLoader { id: emojiFont; source: "/fonts/OpenSansEmoji.ttf" }
+	property var supportedEmojiFonts: ["Android Emoji"]
+	property var rootFontName: emojiFont.name
 
     //displays all Emoji of one categroy by modifying the ListModel of emojiGrid
     function categoryChangedHandler (newCategoryName){
@@ -34,6 +39,22 @@ Rectangle {
 
         textArea.insert(textArea.cursorPosition, strAppnd)
     }
+
+	// If native emoji font exists use it, else use RS emoji font
+	function selectFont ()
+	{
+		var fontFamilies =  Qt.fontFamilies()
+		return fontFamilies.some(function (f)
+		{
+			if (supportedEmojiFonts.indexOf(f) !== -1)
+			{
+				console.log("Compatible native emoji font found: " +f)
+				rootFontName = f
+				return true
+			}
+			return false
+		})
+	}
 
     //parses JSON, publishes button handlers and inits textArea
     function completedHandler() {
@@ -63,7 +84,6 @@ Rectangle {
         }
     }
 
-
     //all emoji of one category
     ListModel {
         id: emojiByCategory
@@ -81,6 +101,7 @@ Rectangle {
             width: buttonWidth
             height: buttonWidth
             color: emojiPicker.color
+			fontName: rootFontName
         }
     }
 
@@ -112,6 +133,7 @@ Rectangle {
             width: buttonWidth
             height: buttonWidth
             color: emojiPicker.color
+			fontName: rootFontName
         }
     }
 
@@ -119,6 +141,10 @@ Rectangle {
         id: emojiCategoryButtons
     }
 
-    Component.onCompleted: completedHandler()
+	Component.onCompleted:
+	{
+		selectFont()
+		completedHandler()
+	}
 }
 

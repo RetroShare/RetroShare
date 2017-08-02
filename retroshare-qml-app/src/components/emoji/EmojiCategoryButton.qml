@@ -5,6 +5,8 @@ Rectangle {
     id: emojiCategoryButton
     property string categoryName
 
+	property var fontName
+
 
     function completedHandler() {
         categoryName = eCatName
@@ -38,6 +40,7 @@ Rectangle {
         text: qsTr(eCatText)
         font.pixelSize: emojiCategoryButton.width - 8
         anchors.centerIn: parent
+		font.family: fontName
     }
 
 
