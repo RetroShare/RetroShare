@@ -1,18 +1,15 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.0
 import "emoji.js" as EmojiJSON
-//import "../../fonts/."
 
 Rectangle {
     id: emojiPicker
     property EmojiCategoryButton currSelEmojiButton
     property variant emojiParsedJson
     property int buttonWidth: 40
-    property TextArea textArea
+	property TextArea textArea
 
-	FontLoader { id: emojiFont; source: "/fonts/OpenSansEmoji.ttf" }
-	property var supportedEmojiFonts: ["Android Emoji"]
-	property var rootFontName: emojiFont.name
+	property var rootFontName: theme.emojiFontName
 
     //displays all Emoji of one categroy by modifying the ListModel of emojiGrid
     function categoryChangedHandler (newCategoryName){
@@ -38,22 +35,6 @@ Rectangle {
 		strAppnd += selectedEmoji
 
         textArea.insert(textArea.cursorPosition, strAppnd)
-    }
-
-	// If native emoji font exists use it, else use RS emoji font
-	function selectFont ()
-	{
-		var fontFamilies =  Qt.fontFamilies()
-		return fontFamilies.some(function (f)
-		{
-			if (supportedEmojiFonts.indexOf(f) !== -1)
-			{
-				console.log("Compatible native emoji font found: " +f)
-				rootFontName = f
-				return true
-			}
-			return false
-		})
 	}
 
     //parses JSON, publishes button handlers and inits textArea
@@ -143,7 +124,6 @@ Rectangle {
 
 	Component.onCompleted:
 	{
-		selectFont()
 		completedHandler()
 	}
 }
