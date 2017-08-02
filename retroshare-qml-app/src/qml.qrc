@@ -743,5 +743,6 @@
         <file>icons/faces/male64/mouth8.png</file>
         <file>icons/faces/male64/mouth9.png</file>
         <file>components/Faces.qml</file>
+        <file>fonts/OpenSansEmoji.ttf</file>
     </qresource>
 </RCC>
