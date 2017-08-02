@@ -279,44 +279,8 @@ bool doPortRestrictions = false;
 #endif
 #endif
 
-int RsInit::InitRetroShare(int _argc, char **_argv, bool /* strictCheck */)
+int RsInit::InitRetroShare(int argc, char **argv, bool /* strictCheck */)
 {
-	/******************************** WINDOWS/UNIX SPECIFIC PART ******************/
-#ifdef WINDOWS_SYS
-		/* THIS IS A HACK TO ALLOW WINDOWS TO ACCEPT COMMANDLINE ARGUMENTS */
-
-		int argc;
-		int i;
-		const int MAX_ARGS = 32;
-		int j;
-		char *argv[MAX_ARGS];
-		char *wholeline = (char*)GetCommandLine();
-		int cmdlen = strlen(wholeline);
-		// duplicate line, so we can put in spaces..
-		char dupline[cmdlen+1];
-		strcpy(dupline, wholeline);
-
-		/* break wholeline down ....
-   		 * NB. This is very simplistic, and will not
-   		 * handle multiple spaces, or quotations etc, only for debugging purposes
-   		 */
-		argv[0] = dupline;
-		for(i = 1, j = 0; (j + 1 < cmdlen) && (i < MAX_ARGS);)
-		{
-			/* find next space. */
-			for(;(j + 1 < cmdlen) && (dupline[j] != ' ');j++);
-			if (j + 1 < cmdlen)
-			{
-				dupline[j] = '\0';
-				argv[i++] = &(dupline[j+1]);
-			}
-		}
-		argc = i;
-#else
-	char **argv = _argv ;
-	int argc = _argc ;
-#endif
-
 #ifdef DEBUG_RSINIT
 		for(int i=0; i<argc; i++)
 			printf("%d: %s\n", i, argv[i]);
