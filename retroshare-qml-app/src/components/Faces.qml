@@ -22,8 +22,8 @@ Item
 	Canvas
 	{
 		id: faceCanvas
-		width: canvasSizes
-		height: canvasSizes
+		width: iconSize
+		height: iconSize
 		visible: false
 
 		renderStrategy: Canvas.Threaded;
@@ -41,7 +41,7 @@ Item
 			{
 				for (y = 0 ;  y< nPieces ; y++)
 				{
-					ctx.drawImage(images[y], 0, 0, canvasSizes, canvasSizes )
+					ctx.drawImage(images[y], 0, 0, iconSize, iconSize )
 				}
 			}
 
@@ -147,8 +147,24 @@ Item
 		var iconId = [dataHex, iconSize];
 		var update = function(data)
 		    {
-			    facesCache.iconCache[iconId] = data;
-			    faceAvatar.source =  data
+			    // This conditions are for solve a bug on an Lg S3.
+			    // On this device the toDataURL() is incompleted.
+			    // So for see the complete avatar at least at first execution we'll show the canvas,
+			    // instead of the image component.
+			    // See issue: https://gitlab.com/angesoc/RetroShare/issues/37
+			    if (facesCache.iconCache[iconId])
+				{
+					faceAvatar.source =  data
+					faceAvatar.visible = true
+					faceCanvas.visible =  false
+				}
+				else
+				{
+					faceCanvas.visible =  true
+					faceAvatar.visible =  false
+				}
+
+				facesCache.iconCache[iconId] = data;
 		    }
 
 		if (facesCache.iconCache.hasOwnProperty(iconId))
