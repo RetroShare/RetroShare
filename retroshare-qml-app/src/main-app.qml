@@ -18,6 +18,7 @@
 
 import QtQuick 2.1
 import QtQuick.Controls 2.0
+import QtGraphicalEffects 1.0
 import org.retroshare.qml_components.LibresapiLocalClient 1.0
 import "URI.js" as UriJs
 import "." //Needed for TokensManager and ClipboardWrapper singleton
@@ -221,10 +222,23 @@ ApplicationWindow
 
 	}
 
+	DropShadow
+	{
+		anchors.fill: toolBar
+		horizontalOffset: 0
+		verticalOffset: 1
+		radius: 12
+		samples: 25
+		color: "#80000000"
+		source: toolBar
+	}
+
 	StackView
 	{
 		id: stackView
 		anchors.fill: parent
+		anchors.top: toolBar.bottom
+		anchors.topMargin: 5
 		focus: true
 		onCurrentItemChanged:
 		{
