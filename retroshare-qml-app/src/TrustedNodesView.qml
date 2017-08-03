@@ -84,7 +84,7 @@ Item
 				iconUrl: isOnline?
 							 "/icons/state-ok.svg" :
 							 "/icons/state-offline.svg"
-				color: "white"
+				color: "transparent"
 				pressColor: "lightsteelblue"
 				buttonTextPixelSize: 18
 				iconHeight:parent.height - 4
