@@ -41,6 +41,7 @@ ApplicationWindow
 	{
 		addUriHandler("/certificate", certificateLinkHandler)
 		addUriHandler("/identity", contactLinkHandler)
+		addUriHandler("/contacts", openContactsViewLinkHandler)
 
 		var argc = mainArgs.length
 		for(var i=0; i<argc; ++i)
@@ -477,6 +478,32 @@ ApplicationWindow
 						)
 		}
 	}
+
+	function openContactsViewLinkHandler (uriStr)
+	{
+		console.log("openContactsViewLinkHandler(uriStr)" , uriStr)
+		if(coreReady)
+		{
+			var uri = new UriJs.URI(uriStr)
+			var query = UriJs.URI.parseQuery(uri.search());
+			if (query.gxsId && query.name)
+			{
+
+				ChatCache.chatHelper.startDistantChat(ChatCache.contactsCache.own.gxs_id,
+													  query.gxsId,
+													  query.name,
+													  function (chatId)
+													  {
+														  stackView.push("qrc:/ChatView.qml", {'chatId': chatId})
+													  })
+			}
+			else
+			{
+				stackView.push("qrc:/Contacts.qml" )
+			}
+		}
+	}
+
 	Popup
 	{
 		id: contactImportPopup
