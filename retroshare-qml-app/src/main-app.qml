@@ -60,6 +60,7 @@ ApplicationWindow
 	header: ToolBar
 	{
 		id: toolBar
+		height: 50
 		property alias titleText: toolBarText.text
 		property alias loaderSource: imageLoader.sourceComponent
 		property alias gxsSource: imageLoader.gxsSource
@@ -217,11 +218,6 @@ ApplicationWindow
 			}
 
 		}
-
-
-
-
-
 
 	}
 
