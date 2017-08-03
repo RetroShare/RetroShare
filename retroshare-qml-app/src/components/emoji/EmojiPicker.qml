@@ -7,7 +7,9 @@ Rectangle {
     property EmojiCategoryButton currSelEmojiButton
     property variant emojiParsedJson
     property int buttonWidth: 40
-    property TextArea textArea
+	property TextArea textArea
+
+	property var rootFontName: theme.emojiFontName
 
     //displays all Emoji of one categroy by modifying the ListModel of emojiGrid
     function categoryChangedHandler (newCategoryName){
@@ -33,7 +35,7 @@ Rectangle {
 		strAppnd += selectedEmoji
 
         textArea.insert(textArea.cursorPosition, strAppnd)
-    }
+	}
 
     //parses JSON, publishes button handlers and inits textArea
     function completedHandler() {
@@ -63,7 +65,6 @@ Rectangle {
         }
     }
 
-
     //all emoji of one category
     ListModel {
         id: emojiByCategory
@@ -81,6 +82,7 @@ Rectangle {
             width: buttonWidth
             height: buttonWidth
             color: emojiPicker.color
+			fontName: rootFontName
         }
     }
 
@@ -112,6 +114,7 @@ Rectangle {
             width: buttonWidth
             height: buttonWidth
             color: emojiPicker.color
+			fontName: rootFontName
         }
     }
 
@@ -119,6 +122,9 @@ Rectangle {
         id: emojiCategoryButtons
     }
 
-    Component.onCompleted: completedHandler()
+	Component.onCompleted:
+	{
+		completedHandler()
+	}
 }
 

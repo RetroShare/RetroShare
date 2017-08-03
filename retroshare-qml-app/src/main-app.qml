@@ -585,4 +585,37 @@ ApplicationWindow
 			onTriggered: linkCopiedPopup.close()
 		}
 	}
+
+	FontLoader { id: emojiFont; source: "/fonts/OpenSansEmoji.ttf" }
+
+	QtObject
+	{
+		id: theme
+
+		property var emojiFontName: emojiFont.name
+
+		property var supportedEmojiFonts: ["Android Emoji"]
+		property var rootFontName: emojiFont.name
+
+		// If native emoji font exists use it, else use RS emoji font
+		function selectFont ()
+		{
+			var fontFamilies =  Qt.fontFamilies()
+			fontFamilies.some(function (f)
+			{
+				if (supportedEmojiFonts.indexOf(f) !== -1)
+				{
+					emojiFontName = f
+					return true
+				}
+				return false
+			})
+		}
+
+		Component.onCompleted:
+		{
+			selectFont()
+		}
+	}
+
 }

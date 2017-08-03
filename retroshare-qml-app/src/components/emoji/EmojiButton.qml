@@ -4,6 +4,7 @@ import QtQuick.Controls.Styles 1.2
 Rectangle {
     id: emojiButton
 
+	property var fontName
 
     Text {
         id: emojiText
@@ -11,6 +12,7 @@ Rectangle {
         text: qsTr(eCatText)
         font.pixelSize: emojiButton.width - 8
         anchors.centerIn: parent
+		font.family: fontName
     }
 
 
