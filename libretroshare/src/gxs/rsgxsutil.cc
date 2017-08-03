@@ -126,8 +126,10 @@ bool RsGxsMessageCleanUp::clean()
 					std::cerr << "    Scheduling for removal." << std::endl;
 #endif
 				}
+#ifdef DEBUG_GXSUTIL
 				else
 					std::cerr << std::endl;
+#endif
 
 				delete meta;
 			}
