@@ -136,6 +136,7 @@ Item
 		id: contactAvatar
 		anchors.fill: parent
 		visible: compRoot.has_avatar
+		fillMode: Image.PreserveAspectFit
 	}
 
 	Faces

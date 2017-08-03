@@ -145,7 +145,7 @@ Item
 		{
 			id: delegate
 			width: parent.width
-			height: locationButton.height + 5
+			height: 60
 			Rectangle
 			{
 				id: backgroundRectangle
@@ -171,6 +171,7 @@ Item
 			{
 				id: locationButton
 				anchors.horizontalCenter: parent.horizontalCenter
+				anchors.verticalCenter: parent.verticalCenter
 				text: model.name
 				borderRadius:0
 				iconUrl: "/icons/edit-image-face-detect.svg"

@@ -257,6 +257,7 @@ Item
 					}
 					function reset ()
 					{
+						msgField.text = ""
 						Qt.inputMethod.reset()
 					}
 				}
@@ -362,13 +363,13 @@ Item
 	{
 		if (emojiPicker.state == "EMOJI_SHOWN") emojiPicker.state = "EMOJI_HIDDEN"
 
-		var msgText = getCompleteMessageText()
+		msgField.text = getCompleteMessageText () + " " // Needed to prevent pre edit text problems
+		var msgText = msgField.text
 
 		var jsonData = {"chat_id":chatView.chatId, "msg":msgText}
 		rsApi.request( "/chat/send_message", JSON.stringify(jsonData),
 					   function(par)
 					   {
-						    msgField.text = ""
 						   msgField.reset();
 					   })
 	}
