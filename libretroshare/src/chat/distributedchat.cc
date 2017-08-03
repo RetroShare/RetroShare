@@ -577,14 +577,18 @@ void DistributedChatService::handleRecvChatLobbyList(RsChatLobbyListItem *item)
 		}
 
 		RsIdentityDetails idd ;
-		if(IS_PGP_SIGNED_LOBBY(flags)
-		   && (!rsIdentity->getIdDetails(gxsId,idd)
-		       || !(idd.mFlags & RS_IDENTITY_FLAGS_PGP_LINKED)) )
+		if(!rsIdentity->getIdDetails(gxsId,idd))
+			std::cerr << "(EE) Lobby auto-subscribe: Can't get Id detail for:" << gxsId.toStdString().c_str() << std::endl;
+		else
 		{
-			std::cerr << "(EE) Attempt to auto-subscribe to signed lobby with non signed Id. Remove it." << std::endl;
-			setLobbyAutoSubscribe(*it, false);
-		} else {
-			joinVisibleChatLobby(*it,gxsId);
+			if(IS_PGP_SIGNED_LOBBY(flags)
+			   && !(idd.mFlags & RS_IDENTITY_FLAGS_PGP_LINKED) )
+			{
+				std::cerr << "(EE) Attempt to auto-subscribe to signed lobby with non signed Id. Remove it." << std::endl;
+				setLobbyAutoSubscribe(*it, false);
+			} else {
+				joinVisibleChatLobby(*it,gxsId);
+			}
 		}
 	}
 
