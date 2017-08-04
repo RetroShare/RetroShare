@@ -195,7 +195,7 @@ linux-* {
 	LIBS *= -lpthread -ldl
 }
 
-unix {
+linux-* {
 	DEFINES *= PLUGIN_DIR=\"\\\"$${PLUGIN_DIR}\\\"\"
 	DEFINES *= DATA_DIR=\"\\\"$${DATA_DIR}\\\"\"
 
