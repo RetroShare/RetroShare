@@ -310,7 +310,7 @@ SectionEnd
 SectionGroupEnd
 
 Section $(Section_AutoStart) Section_AutoStart
-  WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Run" "RetroShare"   "$INSTDIR\${APPNAME}06.exe -m"
+  WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Run" "RetroShare"   "$INSTDIR\retroshare.exe -m"
 SectionEnd
 
 ;Section $(Section_AutoStart) Section_AutoStart
