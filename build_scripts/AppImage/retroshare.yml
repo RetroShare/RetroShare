@@ -3,6 +3,8 @@ union: true
 
 ingredients:
   dist: trusty
+  packages:
+    - libqt4-svg
   sources: 
     - deb http://archive.ubuntu.com/ubuntu trusty main restricted universe multiverse
     - deb http://archive.ubuntu.com/ubuntu trusty-updates main restricted universe multiverse
