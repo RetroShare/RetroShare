@@ -83,6 +83,12 @@ mkdir -p ${workdir}/src
 echo Checking out latest snapshot...
 cd ${workdir}/src
 git clone --depth 1 https://github.com/RetroShare/RetroShare.git --single-branch --branch $branch .
+
+if ! test "$hhsh" = "" ; then
+	echo Checking out revision $hhsh
+	git checkout $hhsh
+fi
+
 cd -
 
 if ! test -d ${workdir}/src/libretroshare/; then
