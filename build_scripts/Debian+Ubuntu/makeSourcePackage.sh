@@ -4,7 +4,7 @@
 version="0.6.3"
 gitpath="https://github.com/RetroShare/RetroShare.git"
 workdir=retroshare-${version}
-branch="master"
+branch="v0.6.3-official_release"
 #bubba3="Y"		# comment out to compile for bubba3
 ######################################################
 
@@ -84,10 +84,10 @@ echo Checking out latest snapshot...
 cd ${workdir}/src
 git clone --depth 1 https://github.com/RetroShare/RetroShare.git --single-branch --branch $branch .
 
-if ! test "$hhsh" = "" ; then
-	echo Checking out revision $hhsh
-	git checkout $hhsh
-fi
+#  if ! test "$hhsh" = "" ; then
+#  	echo Checking out revision $hhsh
+#  	git checkout $hhsh
+#  fi
 
 cd -
 
