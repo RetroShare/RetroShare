@@ -321,6 +321,9 @@ mac {
 		# We need a explicit path here, to force using the home version of sqlite3 that really encrypts the database.
 		LIBS += /usr/local/lib/libsqlcipher.a
 		#LIBS += -lsqlite3
+
+		DEFINES *= PLUGIN_DIR=\"\\\"$${PLUGIN_DIR}\\\"\"
+		DEFINES *= DATA_DIR=\"\\\"$${DATA_DIR}\\\"\"
 }
 
 ################################# FreeBSD ##########################################
