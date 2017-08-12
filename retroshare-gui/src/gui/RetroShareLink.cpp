@@ -316,16 +316,15 @@ void RetroShareLink::fromUrl(const QUrl& url)
         RsGxsId id(gxsid.toStdString()) ;
 
         if(!id.isNull())
-			createIdentity(id,name,radix) ;
+            *this = createIdentity(id,name,radix) ;
         else
             std::cerr << "(EE) identity link is not valid." << std::endl;
         return ;
     }
 
 	if (url.host() == HOST_MESSAGE) {
-		_type = TYPE_MESSAGE;
 		std::string id = urlQuery.queryItemValue(MESSAGE_ID).toStdString();
-		createMessage(RsPeerId(id), urlQuery.queryItemValue(MESSAGE_SUBJECT));
+		*this = createMessage(RsPeerId(id), urlQuery.queryItemValue(MESSAGE_SUBJECT));
 		return;
 	}
 
