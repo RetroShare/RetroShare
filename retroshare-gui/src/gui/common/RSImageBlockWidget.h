@@ -31,6 +31,7 @@ namespace Ui {
 class RSImageBlockWidget;
 }
 
+//cppcheck-suppress noConstructor
 class RSImageBlockWidget : public QWidget
 {
 	Q_OBJECT
