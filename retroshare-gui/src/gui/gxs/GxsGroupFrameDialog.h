@@ -131,7 +131,9 @@ private slots:
 	void loadComment(const RsGxsGroupId &grpId, const QVector<RsGxsMessageId>& msg_versions,const RsGxsMessageId &most_recent_msgId, const QString &title);
 
 private:
+//cppcheck-suppress pureVirtualCall
 	virtual QString text(TextType type) = 0;
+//cppcheck-suppress pureVirtualCall
 	virtual QString icon(IconType type) = 0;
 	virtual QString settingsGroupName() = 0;
 
