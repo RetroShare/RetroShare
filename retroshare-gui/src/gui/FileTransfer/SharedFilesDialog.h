@@ -30,6 +30,8 @@
 
 #include <set>
 
+#include <QTreeView>
+
 class RetroshareDirModel;
 class QSortFilterProxyModel;
 
@@ -49,10 +51,13 @@ public:
 
 protected:
   QTreeView *directoryView() ;
+//cppcheck-suppress pureVirtualCall
   virtual void showProperColumns() = 0 ;
+//cppcheck-suppress pureVirtualCall
   virtual bool isRemote() const = 0 ;
 
 protected slots:
+//cppcheck-suppress pureVirtualCall
   virtual void spawnCustomPopupMenu(QPoint point) = 0;
 
 private slots:
