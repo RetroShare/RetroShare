@@ -41,14 +41,14 @@
 const QString RsCollection::ExtensionString = QString("rscollection") ;
 
 RsCollection::RsCollection(QObject *parent)
-	: QObject(parent), _xml_doc("RsCollection")
+	: QObject(parent), _xml_doc("RsCollection"), _saved(false)
 {
 	_root = _xml_doc.createElement("RsCollection");
 	_xml_doc.appendChild(_root);
 }
 
 RsCollection::RsCollection(const FileTree& fr)
-	: _xml_doc("RsCollection")
+	: _xml_doc("RsCollection"), _saved(false)
 {
 	_root = _xml_doc.createElement("RsCollection");
 	_xml_doc.appendChild(_root);
@@ -57,7 +57,7 @@ RsCollection::RsCollection(const FileTree& fr)
 }
 
 RsCollection::RsCollection(const std::vector<DirDetails>& file_infos,FileSearchFlags flags, QObject *parent)
-	: QObject(parent), _xml_doc("RsCollection")
+	: QObject(parent), _xml_doc("RsCollection"), _saved(false)
 {
 	_root = _xml_doc.createElement("RsCollection");
 	_xml_doc.appendChild(_root);
