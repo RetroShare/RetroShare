@@ -55,7 +55,7 @@ class RSHumanReadableDelegate: public QAbstractItemDelegate
 		{
 			// This part of the code is copied from DLListDelegate.cpp
 			//
-			QPalette::ColorGroup cg = option.state & QStyle::State_Enabled ? QPalette::Normal : QPalette::Disabled;
+			QPalette::ColorGroup cg = (option.state & QStyle::State_Enabled) ? QPalette::Normal : QPalette::Disabled;
 			QVariant value = index.data(Qt::TextColorRole);
 
 			if(value.isValid() && qvariant_cast<QColor>(value).isValid()) 
