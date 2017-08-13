@@ -207,7 +207,7 @@ void GlobalRouterStatistics::personDetails()
 }
 
 GlobalRouterStatisticsWidget::GlobalRouterStatisticsWidget(QWidget *parent)
-	: QWidget(parent)
+  : QWidget(parent), mNumberOfKnownKeys(0), mMinWheelZoneX(0), mMinWheelZoneY(0), mMaxWheelZoneX(0), mMaxWheelZoneY(0)
 {
     float size = QFontMetricsF(font()).height() ;
     float fact = size/14.0 ;
@@ -284,11 +284,11 @@ void GlobalRouterStatisticsWidget::updateContent()
     oy += celly ;
 
 
-    std::map<QString, std::vector<QString> > tos ;
+    //std::map<QString, std::vector<QString> > tos ;
    
     // Now draw the matrix
 
-    QString prob_string ;
+    //QString prob_string ;
     painter.setFont(times_f) ;
     QString Q = tr("Routing matrix  (") ;
 
