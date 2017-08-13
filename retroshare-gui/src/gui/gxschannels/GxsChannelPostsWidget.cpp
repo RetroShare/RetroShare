@@ -690,7 +690,7 @@ static void setAllMessagesReadCallback(FeedItem *feedItem, void *data)
 		return;
 	}
 
-	GxsChannelPostsReadData *readData = (GxsChannelPostsReadData*) data;
+	GxsChannelPostsReadData *readData = static_cast<GxsChannelPostsReadData*>(data);
 	bool is_not_new = !channelPostItem->isUnread() ;
 
 	if(is_not_new == readData->mRead)
