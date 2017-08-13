@@ -203,10 +203,10 @@ void PhotoShare::OpenSlideShow()
     // TODO.
     if (!mAlbumSelected) {
         // ALERT.
-        int ret = QMessageBox::information(this, tr("PhotoShare"),
-                                           tr("Please select an album before\n"
-                                              "requesting to edit it!"),
-                                           QMessageBox::Ok);
+        QMessageBox::information(this, tr("PhotoShare"),
+                                       tr("Please select an album before\n"
+                                          "requesting to edit it!"),
+                                       QMessageBox::Ok);
         return;
     }
 
