@@ -84,7 +84,7 @@
 //static const unsigned int ROLE_SORT = Qt::UserRole + 1 ;
 
 /** Constructor */
-NetworkDialog::NetworkDialog(QWidget */*parent*/)
+NetworkDialog::NetworkDialog(QWidget */*parent = NULL*/, Qt::WindowFlags /*flags = 0*/)
 {
     /* Invoke the Qt Designer generated object setup routine */
     ui.setupUi(this);
