@@ -1153,9 +1153,8 @@ QTreeWidgetItem *GxsForumThreadWidget::convertMsgToThreadWidget(const RsGxsForum
 
     uint32_t idflags =0;
 	RsReputations::ReputationLevel reputation_level = rsReputations->overallReputationLevel(msg.mMeta.mAuthorId,&idflags) ;
-	bool redacted = false;
 
-	redacted = (reputation_level == RsReputations::REPUTATION_LOCALLY_NEGATIVE);
+	bool redacted = (reputation_level == RsReputations::REPUTATION_LOCALLY_NEGATIVE);
 
 	GxsIdRSTreeWidgetItem *item = new GxsIdRSTreeWidgetItem(mThreadCompareRole,GxsIdDetails::ICON_TYPE_AVATAR );
 	item->moveToThread(ui->threadTreeWidget->thread());
@@ -1475,7 +1474,7 @@ void GxsForumThreadWidget::fillChildren(QTreeWidgetItem *parentItem, QTreeWidget
 {
 	int index = 0;
 	int newIndex;
-	int newCount = newParentItem->childCount();
+	//int newCount = newParentItem->childCount();
 
 	QTreeWidgetItem *childItem;
 	QTreeWidgetItem *newChildItem;
@@ -1520,7 +1519,7 @@ void GxsForumThreadWidget::fillChildren(QTreeWidgetItem *parentItem, QTreeWidget
 			childItem = newParentItem->takeChild(newIndex);
 			parentItem->addChild(childItem);
 			newIndex--;
-			newCount--;
+			//newCount--;
 		}
 
 		uint32_t status = childItem->data(COLUMN_THREAD_DATA, ROLE_THREAD_STATUS).toUInt();

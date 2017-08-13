@@ -17,6 +17,7 @@ namespace Ui {
 class GxsForumThreadWidget;
 }
 
+//cppcheck-suppress noConstructor
 class GxsForumThreadWidget : public GxsMessageFrameWidget
 {
 	Q_OBJECT
