@@ -1077,7 +1077,7 @@ struct AddFeedItemIfUniqueData
 
 static bool addFeedItemIfUniqueCallback(FeedItem *feedItem, void *data)
 {
-	AddFeedItemIfUniqueData *findData = (AddFeedItemIfUniqueData*) data;
+	AddFeedItemIfUniqueData *findData = static_cast<AddFeedItemIfUniqueData*>(data);
 	if (!findData || findData->mId1.empty()) {
 		return false;
 	}
