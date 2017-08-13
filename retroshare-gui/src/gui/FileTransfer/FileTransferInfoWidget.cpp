@@ -43,6 +43,7 @@ static const float tab_size_factor        	   = 20.0;// size between tabulated e
 FileTransferInfoWidget::FileTransferInfoWidget(QWidget * /*parent*/, Qt::WindowFlags /*f*/ )
 {
 	QRect TaskGraphRect = geometry();
+	x=0; y=0;
 	maxWidth = TaskGraphRect.width();
 	maxHeight = 0;
 	pixmap = QPixmap(size());
