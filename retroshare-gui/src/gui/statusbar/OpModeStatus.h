@@ -23,6 +23,7 @@
 
 #include <QComboBox>
 
+//cppcheck-suppress noConstructor
 class OpModeStatus : public QComboBox
 {
 	Q_OBJECT
