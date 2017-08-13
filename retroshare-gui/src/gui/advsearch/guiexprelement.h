@@ -57,7 +57,7 @@ class GuiExprElement: public QWidget
     Q_OBJECT
 
 public:
-    GuiExprElement(QWidget * parent = 0);
+    explicit GuiExprElement(QWidget * parent = 0);
     virtual void adjustForSearchType(ExprSearchType) {}
     virtual ~GuiExprElement(){}
     virtual void set(int){}
@@ -133,7 +133,7 @@ class ExprOpElement : public GuiExprElement
     Q_OBJECT
     
 public:
-    ExprOpElement(QWidget * parent = 0);
+    explicit ExprOpElement(QWidget * parent = 0);
     RsRegularExpression::LogicalOperator getLogicalOperator();
     QString toString();
 private:
@@ -146,7 +146,7 @@ class ExprTermsElement : public GuiExprElement
     Q_OBJECT
     
 public:
-    ExprTermsElement(QWidget * parent = 0);
+    explicit ExprTermsElement(QWidget * parent = 0);
     int getTermsIndex();
     RsRegularExpression::RelOperator getRelOperator();
     RsRegularExpression::StringOperator getStringOperator();

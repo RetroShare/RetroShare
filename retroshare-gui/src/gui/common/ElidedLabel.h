@@ -57,7 +57,7 @@ class ElidedLabel : public QLabel
 
 public:
 	ElidedLabel(const QString &text, QWidget *parent = 0);
-	ElidedLabel(QWidget *parent = 0);
+	explicit ElidedLabel(QWidget *parent = 0);
 
 	const QString & text() const { return mContent; }
 	bool isElided() const { return mElided; }

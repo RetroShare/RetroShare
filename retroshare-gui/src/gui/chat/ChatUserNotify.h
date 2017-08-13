@@ -36,7 +36,7 @@ public:
     static void getPeersWithWaitingChat(std::vector<RsPeerId>& peers);
     static void clearWaitingChat(ChatId id);
 
-	ChatUserNotify(QObject *parent = 0);
+	explicit ChatUserNotify(QObject *parent = 0);
     ~ChatUserNotify();
 
 	virtual bool hasSetting(QString *name, QString *group);

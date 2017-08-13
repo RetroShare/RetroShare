@@ -34,7 +34,7 @@ class MimeTextEdit : public RSTextEdit
 	Q_PROPERTY(QColor textColorQuote READ textColorQuote WRITE setTextColorQuote)
 
 public:
-	MimeTextEdit(QWidget *parent = 0);
+	explicit MimeTextEdit(QWidget *parent = 0);
 
 	//Form here: http://qt-project.org/doc/qt-4.8/tools-customcompleter.html
 	void setCompleter(QCompleter *completer);

@@ -31,7 +31,7 @@ class HashingStatus : public QWidget
     Q_OBJECT
 
 public:
-    HashingStatus(QWidget *parent = 0);
+    explicit HashingStatus(QWidget *parent = 0);
     ~HashingStatus();
 
     void setCompactMode(bool compact) {_compactMode = compact; }

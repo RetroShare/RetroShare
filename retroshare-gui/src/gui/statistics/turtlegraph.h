@@ -32,7 +32,7 @@ class TurtleGraphSource: public RSGraphSource
 class TurtleGraph: public RSGraphWidget
 {
 	public:
-		TurtleGraph(QWidget *parent)
+		explicit TurtleGraph(QWidget *parent)
 			: RSGraphWidget(parent)
 		{
             TurtleGraphSource *src = new TurtleGraphSource() ;

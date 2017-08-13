@@ -38,7 +38,7 @@
 template<class TURTLE_REQ_DISPLAY_INFO> class TRHistogram
 {
 	public:
-		TRHistogram(const std::vector<TURTLE_REQ_DISPLAY_INFO>& info) :_infos(info) {}
+		explicit TRHistogram(const std::vector<TURTLE_REQ_DISPLAY_INFO>& info) :_infos(info) {}
 
 		QColor colorScale(float f)
 		{

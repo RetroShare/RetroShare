@@ -31,7 +31,7 @@ class GxsForumsDialog : public GxsGroupFrameDialog
 	Q_OBJECT
 
 public:
-	GxsForumsDialog(QWidget *parent = 0);
+	explicit GxsForumsDialog(QWidget *parent = 0);
 	~GxsForumsDialog();
 
 	virtual QIcon iconPixmap() const { return QIcon(IMAGE_GXSFORUMS) ; } //MainPage

@@ -45,7 +45,7 @@ class SearchDialog : public MainPage
 
 public:
 /** Default Constructor */
-    SearchDialog(QWidget *parent = 0);
+    explicit SearchDialog(QWidget *parent = 0);
 /** Default Destructor */
     ~SearchDialog();
 

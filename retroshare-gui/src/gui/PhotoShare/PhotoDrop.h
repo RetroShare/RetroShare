@@ -51,7 +51,7 @@ class PhotoDrop : public QWidget
 
 public:
 
-    PhotoDrop(QWidget *parent = 0);
+    explicit PhotoDrop(QWidget *parent = 0);
     void clear();
     PhotoItem *getSelectedPhotoItem();
     int	getPhotoCount();

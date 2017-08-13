@@ -62,7 +62,7 @@
 class RsHtmlMsg : public RsHtml
 {
 public:
-	RsHtmlMsg(uint msgFlags) : RsHtml()
+	explicit RsHtmlMsg(uint msgFlags) : RsHtml()
 	{
 		this->msgFlags = msgFlags;
 	}

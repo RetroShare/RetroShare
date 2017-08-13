@@ -13,7 +13,7 @@ public:
     // zero setup: create an instance of this class and destroy it when not needed anymore
     // no need to call start or stop or something
     // parameter api must not be null
-    TerminalApiClient(ApiServer* api);
+    explicit TerminalApiClient(ApiServer* api);
     ~TerminalApiClient();
 protected:
     // from RsThread

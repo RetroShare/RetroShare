@@ -46,7 +46,7 @@ class NetworkDialog : public RsAutoUpdatePage
 
 public:
   /** Default Constructor */
-  NetworkDialog(QWidget *parent = 0);
+  explicit NetworkDialog(QWidget *parent = 0);
 
   virtual void updateDisplay() ; // overloaded from RsAutoUpdatePage
 

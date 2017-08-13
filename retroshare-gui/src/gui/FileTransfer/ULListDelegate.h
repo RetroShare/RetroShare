@@ -46,7 +46,7 @@ class ULListDelegate: public QAbstractItemDelegate {
 	Q_OBJECT
 
 	public:
-		ULListDelegate(QObject *parent=0);
+		explicit ULListDelegate(QObject *parent=0);
 		~ULListDelegate();
 		void paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const;
 		QSize sizeHint(const QStyleOptionViewItem & option, const QModelIndex & index) const;

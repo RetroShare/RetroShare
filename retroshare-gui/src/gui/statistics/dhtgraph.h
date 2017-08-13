@@ -57,7 +57,7 @@ class DHTGraphSource: public RSGraphSource
 class DhtGraph : public RSGraphWidget
 {
 	public:
-		DhtGraph(QWidget *parent = 0)
+		explicit DhtGraph(QWidget *parent = 0)
 			: RSGraphWidget(parent)
 		{
 			DHTGraphSource *src = new DHTGraphSource() ;

@@ -35,7 +35,7 @@ class GlobalRouterStatistics: public RsAutoUpdatePage, public Ui::GlobalRouterSt
 	Q_OBJECT
 
 	public:
-		GlobalRouterStatistics(QWidget *parent = NULL) ;
+		explicit GlobalRouterStatistics(QWidget *parent = NULL) ;
 		~GlobalRouterStatistics();
 		
 		// Cache for peer names.
@@ -64,7 +64,7 @@ class GlobalRouterStatisticsWidget:  public QWidget
 	Q_OBJECT
 
 	public:
-		GlobalRouterStatisticsWidget(QWidget *parent = NULL) ;
+		explicit GlobalRouterStatisticsWidget(QWidget *parent = NULL) ;
 
 		virtual void paintEvent(QPaintEvent *event) ;
 		virtual void resizeEvent(QResizeEvent *event);

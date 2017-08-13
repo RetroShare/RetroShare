@@ -354,7 +354,7 @@ BWGraphSource::BWGraphSource()
 
     for(std::map<uint32_t,RsServiceInfo>::const_iterator it(rspsi.mServiceList.begin());it!=rspsi.mServiceList.end();++it)
     {
-        mServiceInfoMap[ (it->first >> 8) & 0xffff ] = it->second ;
+        mServiceInfoMap[ (it->first >> 8) & 0xffff ] = RsServiceInfoWithNames(it->second) ;
 
         rsServiceControl->getServiceItemNames(it->first,mServiceInfoMap[(it->first >> 8) & 0xffff].item_names) ;
     }

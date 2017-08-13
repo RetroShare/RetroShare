@@ -12,7 +12,7 @@ class HeaderFrame : public QFrame
 	Q_OBJECT
     
 public:
-	HeaderFrame(QWidget *parent = 0);
+	explicit HeaderFrame(QWidget *parent = 0);
 	~HeaderFrame();
 
 	void setHeaderText(const QString &headerText);

@@ -58,7 +58,7 @@ enum EmbeddedType
 class EmbedInHtml
 {
 protected:
-	EmbedInHtml(EmbeddedType newType) : myType(newType) {}
+	explicit EmbedInHtml(EmbeddedType newType) : myType(newType) {}
 
 public:
 	const EmbeddedType myType;
@@ -400,7 +400,7 @@ void RsHtml::embedHtml(QTextDocument *textDocument, QDomDocument& doc, QDomEleme
 									element.setAttribute("title", title);
 								}
 								if (textDocument && (flag & RSHTML_FORMATTEXT_REPLACE_LINKS)) {
-									replaceAnchorWithImg(doc, element, textDocument, url);
+									replaceAnchorWithImg(doc, element, textDocument, RetroShareLink(url));
 								}
 							}
 						}
@@ -469,7 +469,7 @@ void RsHtml::embedHtml(QTextDocument *textDocument, QDomDocument& doc, QDomEleme
 											insertedTag.setAttribute("title", title);
 										}
 										if (textDocument && (flag & RSHTML_FORMATTEXT_REPLACE_LINKS)) {
-											replaceAnchorWithImg(doc, insertedTag, textDocument, url);
+											replaceAnchorWithImg(doc, insertedTag, textDocument, RetroShareLink(url));
 										}
 									}
 								}

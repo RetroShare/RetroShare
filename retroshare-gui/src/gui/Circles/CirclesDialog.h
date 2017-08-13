@@ -37,7 +37,7 @@ class CirclesDialog : public RsGxsUpdateBroadcastPage, public TokenResponse
 	Q_OBJECT
 
 public:
-	CirclesDialog(QWidget *parent = 0);
+	explicit CirclesDialog(QWidget *parent = 0);
 	~CirclesDialog();
 
 	virtual QIcon iconPixmap() const { return QIcon(IMAGE_CIRCLES) ; } //MainPage

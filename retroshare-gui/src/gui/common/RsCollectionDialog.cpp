@@ -65,7 +65,7 @@
 class FSMSortFilterProxyModel : public QSortFilterProxyModel
 {
 public:
-	FSMSortFilterProxyModel( QObject *parent) : QSortFilterProxyModel(parent)
+	explicit FSMSortFilterProxyModel( QObject *parent) : QSortFilterProxyModel(parent)
 	{}
 
 protected:

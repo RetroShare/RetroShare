@@ -188,7 +188,7 @@ class TreeStyle_RDM: public RetroshareDirModel
 	Q_OBJECT
 
 	public:
-		TreeStyle_RDM(bool mode);
+		explicit TreeStyle_RDM(bool mode);
 		virtual ~TreeStyle_RDM() ;
 
 	protected:
@@ -229,7 +229,7 @@ class FlatStyle_RDM: public RetroshareDirModel
 	Q_OBJECT 
 
 	public:
-		FlatStyle_RDM(bool mode);
+		explicit FlatStyle_RDM(bool mode);
 		virtual ~FlatStyle_RDM() ;
 
 		//Overloaded from RetroshareDirModel

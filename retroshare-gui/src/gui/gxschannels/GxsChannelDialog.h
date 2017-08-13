@@ -32,7 +32,7 @@ class GxsChannelDialog : public GxsGroupFrameDialog
 
 public:
 	/** Default Constructor */
-	GxsChannelDialog(QWidget *parent = 0);
+	explicit GxsChannelDialog(QWidget *parent = 0);
 	/** Default Destructor */
 	~GxsChannelDialog();
 

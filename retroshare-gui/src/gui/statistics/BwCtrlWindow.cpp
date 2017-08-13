@@ -43,7 +43,7 @@
 class BWListDelegate: public QAbstractItemDelegate
 {
 public:
-    BWListDelegate(QObject *parent=0);
+    explicit BWListDelegate(QObject *parent=0);
     virtual ~BWListDelegate();
     void paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const;
     QSize sizeHint(const QStyleOptionViewItem &, const QModelIndex &) const;

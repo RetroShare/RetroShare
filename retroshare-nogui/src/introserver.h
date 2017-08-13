@@ -83,7 +83,7 @@ class storeData
 class RsIntroStore
 {
 	public:
-	RsIntroStore(std::string storefile);
+	explicit RsIntroStore(std::string storefile);
 bool	loadPeers();
 bool	addPeer(const RsPeerDetails &pd);
 bool	removePeer(std::string gpgId);

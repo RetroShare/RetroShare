@@ -35,7 +35,7 @@ class AdvancedSearchDialog : public QDialog, public Ui::AdvancedSearchDialog
     Q_OBJECT
         
 public:
-    AdvancedSearchDialog(QWidget * parent = 0 );
+    explicit AdvancedSearchDialog(QWidget * parent = 0 );
     RsRegularExpression::Expression * getRsExpr();
     QString getSearchAsString();
 signals:

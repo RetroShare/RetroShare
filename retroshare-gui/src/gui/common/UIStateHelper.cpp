@@ -32,27 +32,27 @@
 class UIStateHelperObject
 {
 public:
-	UIStateHelperObject(QLabel *widget)
+	explicit UIStateHelperObject(QLabel *widget)
 	{
 		init();
 		mLabel = widget;
 	}
-	UIStateHelperObject(ElidedLabel *widget)
+	explicit UIStateHelperObject(ElidedLabel *widget)
 	{
 		init();
 		mElidedLabel = widget;
 	}
-	UIStateHelperObject(QLineEdit *widget)
+	explicit UIStateHelperObject(QLineEdit *widget)
 	{
 		init();
 		mLineEdit = widget;
 	}
-	UIStateHelperObject(RSTreeWidget *widget)
+	explicit UIStateHelperObject(RSTreeWidget *widget)
 	{
 		init();
 		mTreeWidget = widget;
 	}
-	UIStateHelperObject(RSTextBrowser *widget)
+	explicit UIStateHelperObject(RSTextBrowser *widget)
 	{
 		init();
 		mRSTextBrowser = widget;
@@ -300,37 +300,41 @@ void UIStateHelper::addLoadPlaceholder(int index, RSTextBrowser *widget, bool cl
 void UIStateHelper::addClear(int index, QLabel *widget)
 {
 	UIStateHelperData *data = findData(index, true);
-	if (data->mClear.contains(widget)) {
+	UIStateHelperObject object = UIStateHelperObject(widget);
+	if (data->mClear.contains(object)) {
 		return;
 	}
-	data->mClear.push_back(UIStateHelperObject(widget));
+	data->mClear.push_back(object);
 }
 
 void UIStateHelper::addClear(int index, QLineEdit *widget)
 {
 	UIStateHelperData *data = findData(index, true);
-	if (data->mClear.contains(widget)) {
+	UIStateHelperObject object = UIStateHelperObject(widget);
+	if (data->mClear.contains(object)) {
 		return;
 	}
-	data->mClear.push_back(UIStateHelperObject(widget));
+	data->mClear.push_back(object);
 }
 
 void UIStateHelper::addClear(int index, RSTreeWidget *widget)
 {
 	UIStateHelperData *data = findData(index, true);
-	if (data->mClear.contains(widget)) {
+	UIStateHelperObject object = UIStateHelperObject(widget);
+	if (data->mClear.contains(object)) {
 		return;
 	}
-	data->mClear.push_back(UIStateHelperObject(widget));
+	data->mClear.push_back(object);
 }
 
 void UIStateHelper::addClear(int index, RSTextBrowser *widget)
 {
 	UIStateHelperData *data = findData(index, true);
-	if (data->mClear.contains(widget)) {
+	UIStateHelperObject object = UIStateHelperObject(widget);
+	if (data->mClear.contains(object)) {
 		return;
 	}
-	data->mClear.push_back(UIStateHelperObject(widget));
+	data->mClear.push_back(object);
 }
 
 bool UIStateHelper::isWidgetVisible(QWidget *widget)

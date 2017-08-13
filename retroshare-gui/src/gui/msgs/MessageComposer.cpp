@@ -97,7 +97,7 @@
 class MessageItemDelegate : public QItemDelegate
 {
 public:
-    MessageItemDelegate(QObject *parent = 0) : QItemDelegate(parent)
+    explicit MessageItemDelegate(QObject *parent = 0) : QItemDelegate(parent)
     {
     }
 

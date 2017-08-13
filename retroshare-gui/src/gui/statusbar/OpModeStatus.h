@@ -32,7 +32,7 @@ class OpModeStatus : public QComboBox
 	Q_PROPERTY(QColor opMode_Minimal_Color READ getOpMode_Minimal_Color WRITE setOpMode_Minimal_Color DESIGNABLE true)
 
 public:
-	OpModeStatus(QWidget *parent = 0);
+	explicit OpModeStatus(QWidget *parent = 0);
 
 	QColor getOpMode_Full_Color() const;
 	void setOpMode_Full_Color( QColor c );

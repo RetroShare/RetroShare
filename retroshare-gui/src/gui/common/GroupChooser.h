@@ -30,7 +30,7 @@
 class GroupChooser : public QComboBox
 {
 public:
-    GroupChooser(QWidget *parent = NULL);
+    explicit GroupChooser(QWidget *parent = NULL);
 
     void loadGroups(uint32_t chooserFlags, const RsNodeGroupId& defaultId);
     bool getChosenGroup(RsNodeGroupId& id);

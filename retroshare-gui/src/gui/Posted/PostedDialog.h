@@ -34,7 +34,7 @@ class PostedDialog : public GxsGroupFrameDialog
 
 public:
 	/** Default Constructor */
-	PostedDialog(QWidget *parent = 0);
+	explicit PostedDialog(QWidget *parent = 0);
 	/** Default Destructor */
 	~PostedDialog();
 

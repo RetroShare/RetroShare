@@ -6,7 +6,7 @@
 class FriendRecommendDialog: public QDialog
 {
 public:
-	FriendRecommendDialog(QWidget *parent) ;
+	explicit FriendRecommendDialog(QWidget *parent) ;
 	virtual ~FriendRecommendDialog() ;
 
 	static void showIt();

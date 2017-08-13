@@ -16,7 +16,7 @@ public:
     class RsServiceInfoWithNames: public RsServiceInfo
     {
     public:
-        RsServiceInfoWithNames(const RsServiceInfo& s) : RsServiceInfo(s) {}
+        explicit RsServiceInfoWithNames(const RsServiceInfo& s) : RsServiceInfo(s) {}
         RsServiceInfoWithNames(){}
 
 		std::map<uint8_t,std::string> item_names ;
@@ -86,7 +86,7 @@ private:
 class BWGraph: public RSGraphWidget
 {
 	public:
-        BWGraph(QWidget *parent);
+        explicit BWGraph(QWidget *parent);
         ~BWGraph();
 
     void setSelector(int selector_type, int graph_type, const std::string& selector_client_string = std::string())  { _local_source->setSelector(selector_type,graph_type,selector_client_string) ; }

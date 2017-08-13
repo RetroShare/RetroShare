@@ -65,7 +65,7 @@ class GxsTransportStatistics: public RsGxsUpdateBroadcastPage, public TokenRespo
 	Q_OBJECT
 
 public:
-	GxsTransportStatistics(QWidget *parent = NULL) ;
+	explicit GxsTransportStatistics(QWidget *parent = NULL) ;
 	~GxsTransportStatistics();
 
 	// Cache for peer names.

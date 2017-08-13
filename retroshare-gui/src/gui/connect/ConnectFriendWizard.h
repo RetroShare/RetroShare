@@ -32,7 +32,7 @@ class ConnectFriendWizard : public QWizard
 public:
 	enum Page { Page_Intro, Page_Text, Page_Cert, Page_ErrorMessage, Page_Conclusion, Page_Foff, Page_Rsid, Page_WebMail, Page_Email, Page_FriendRequest, Page_FriendRecommendations };
 
-	ConnectFriendWizard(QWidget *parent = 0);
+	explicit ConnectFriendWizard(QWidget *parent = 0);
 	~ConnectFriendWizard();
 
 	void setCertificate(const QString &certificate, bool friendRequest);
@@ -136,7 +136,7 @@ friend class ConnectFriendWizard; // for access to registerField
 	Q_OBJECT
 
 public:
-	ConnectFriendPage(QWidget *parent = 0);
+	explicit ConnectFriendPage(QWidget *parent = 0);
 
 	void setComplete(bool isComplete);
 	virtual bool isComplete() const;

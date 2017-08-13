@@ -45,7 +45,7 @@ class RSFeedWidget : public QWidget
 	Q_OBJECT
 
 public:
-	RSFeedWidget(QWidget *parent = 0);
+	explicit RSFeedWidget(QWidget *parent = 0);
 	virtual ~RSFeedWidget();
 
 	QString placeholderText();

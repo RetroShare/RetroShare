@@ -63,7 +63,7 @@ class NewsFeed : public RsAutoUpdatePage, public FeedHolder, public TokenRespons
 
 public:
 	/** Default Constructor */
-	NewsFeed(QWidget *parent = 0);
+	explicit NewsFeed(QWidget *parent = 0);
 	/** Default Destructor */
 	virtual ~NewsFeed();
 

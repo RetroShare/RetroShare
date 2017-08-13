@@ -7,7 +7,7 @@ class GroupSelectionBox: public QListWidget
 	Q_OBJECT
 
 public:
-	GroupSelectionBox(QWidget *parent);
+	explicit GroupSelectionBox(QWidget *parent);
 
     static void selectGroups(const std::list<RsNodeGroupId>& default_groups) ;
 
@@ -25,7 +25,7 @@ class GroupSelectionDialog: public QDialog
     Q_OBJECT
 
 public:
-    GroupSelectionDialog(QWidget *parent) ;
+    explicit GroupSelectionDialog(QWidget *parent) ;
     virtual ~GroupSelectionDialog() ;
 
     static std::list<RsNodeGroupId> selectGroups(const std::list<RsNodeGroupId>& default_groups) ;

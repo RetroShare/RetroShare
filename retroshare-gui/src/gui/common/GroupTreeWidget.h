@@ -71,7 +71,7 @@ class GroupTreeWidget : public QWidget
 	Q_PROPERTY(QColor textColorPrivateKey READ textColorPrivateKey WRITE setTextColorPrivateKey)
 
 public:
-	GroupTreeWidget(QWidget *parent = 0);
+	explicit GroupTreeWidget(QWidget *parent = 0);
 	~GroupTreeWidget();
 
 	// Add a tool button to the tool area

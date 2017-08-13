@@ -672,7 +672,7 @@ void GxsChannelPostsWidget::insertPosts(const uint32_t &token)
 class GxsChannelPostsReadData
 {
 public:
-	GxsChannelPostsReadData(bool read)
+	explicit GxsChannelPostsReadData(bool read)
 	{
 		mRead = read;
 		mLastToken = 0;

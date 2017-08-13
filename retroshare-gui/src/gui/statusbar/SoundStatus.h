@@ -31,7 +31,7 @@ class SoundStatus : public QWidget
 	Q_OBJECT
 
 public:
-	SoundStatus(QWidget *parent = 0);
+	explicit SoundStatus(QWidget *parent = 0);
 
 private slots:
 	void mute(bool isMute);

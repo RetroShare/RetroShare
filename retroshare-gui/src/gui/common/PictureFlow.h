@@ -64,7 +64,7 @@ public:
 	/// \brief PictureFlow
 	/// \param parent
 	///Creates a new PictureFlow widget.
-	PictureFlow(QWidget* parent = 0);
+	explicit PictureFlow(QWidget* parent = 0);
 
 	///
 	/// \brief ~PictureFlow

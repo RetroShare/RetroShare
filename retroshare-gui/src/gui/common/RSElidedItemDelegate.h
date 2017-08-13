@@ -32,7 +32,7 @@ class RSElidedItemDelegate : public RSItemDelegate
 	Q_PROPERTY(QRect rectElision READ rectElision)
 
 public:
-	RSElidedItemDelegate(QObject *parent = 0);
+	explicit RSElidedItemDelegate(QObject *parent = 0);
 
 	void paint (QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 

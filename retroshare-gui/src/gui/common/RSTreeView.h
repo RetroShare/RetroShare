@@ -30,7 +30,7 @@ class RSTreeView : public QTreeView
 	Q_OBJECT
 
 public:
-	RSTreeView(QWidget *parent = 0);
+	explicit RSTreeView(QWidget *parent = 0);
 
 	void setPlaceholderText(const QString &text);
 

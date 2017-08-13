@@ -65,7 +65,7 @@
 class MultiLinesCommentDelegate: public QStyledItemDelegate
 {
 public:
-    MultiLinesCommentDelegate(QFontMetricsF f) : qf(f){}
+    explicit MultiLinesCommentDelegate(QFontMetricsF f) : qf(f){}
 
     QSize sizeHint(const QStyleOptionViewItem &/*option*/, const QModelIndex &index) const
     {

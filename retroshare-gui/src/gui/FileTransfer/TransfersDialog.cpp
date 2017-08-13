@@ -742,7 +742,7 @@ private:
 class SortByNameItem : public QStandardItem
 {
 public:
-	SortByNameItem(QHeaderView *header) : QStandardItem()
+	explicit SortByNameItem(QHeaderView *header) : QStandardItem()
 	{
 		this->header = header;
 	}
@@ -780,7 +780,7 @@ private:
 class ProgressItem : public SortByNameItem
 {
 public:
-	ProgressItem(QHeaderView *header) : SortByNameItem(header) {}
+	explicit ProgressItem(QHeaderView *header) : SortByNameItem(header) {}
 
 	virtual bool operator<(const QStandardItem &other) const
 	{

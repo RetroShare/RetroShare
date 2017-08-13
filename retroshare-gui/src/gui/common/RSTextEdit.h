@@ -30,7 +30,7 @@ class RSTextEdit : public QTextEdit
 	Q_OBJECT
 
 public:
-	RSTextEdit(QWidget *parent = 0);
+	explicit RSTextEdit(QWidget *parent = 0);
 
 #if QT_VERSION < 0x050200
 	void setPlaceholderText(const QString &text);

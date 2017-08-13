@@ -35,7 +35,7 @@ class MainPageStack : public QStackedWidget
 
 public:
   /** Constructor. */
-  MainPageStack(QWidget *parent = 0);
+  explicit MainPageStack(QWidget *parent = 0);
 
   /** Adds a Mainuration page to the stack. */
   void add(MainPage *page, QAction *action);

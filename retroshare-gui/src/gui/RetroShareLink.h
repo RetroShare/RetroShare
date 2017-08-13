@@ -78,8 +78,8 @@ class RetroShareLink
 
 	public:
 		RetroShareLink();
-		RetroShareLink(const QUrl& url);
-		RetroShareLink(const QString& url);
+		explicit RetroShareLink(const QUrl& url);
+		explicit RetroShareLink(const QString& url);
 
 		static RetroShareLink createFile(const QString& name, uint64_t size, const QString& hash);
 		static RetroShareLink createPerson(const RsPgpId &id);

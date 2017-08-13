@@ -149,7 +149,7 @@ class LocalSharedFilesDialog : public SharedFilesDialog
 	Q_OBJECT
 
 	public:
-		LocalSharedFilesDialog(QWidget *parent=NULL) ;
+		explicit LocalSharedFilesDialog(QWidget *parent=NULL) ;
 		virtual ~LocalSharedFilesDialog();
 
 		virtual void spawnCustomPopupMenu(QPoint point);
@@ -185,7 +185,7 @@ class RemoteSharedFilesDialog : public SharedFilesDialog
 	Q_OBJECT
 
 	public:
-		RemoteSharedFilesDialog(QWidget *parent=NULL) ;
+		explicit RemoteSharedFilesDialog(QWidget *parent=NULL) ;
 		virtual ~RemoteSharedFilesDialog() ;
 
 		virtual void spawnCustomPopupMenu(QPoint point);

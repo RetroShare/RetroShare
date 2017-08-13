@@ -30,7 +30,7 @@ class StyledLabel : public QLabel
 	Q_PROPERTY(int fontSizeFactor READ fontSizeFactor WRITE setFontSizeFactor)
 
 public:
-	StyledLabel(QWidget *parent = NULL);
+	explicit StyledLabel(QWidget *parent = NULL);
 	StyledLabel(const QString &text, QWidget *parent = NULL);
 
 	int fontSizeFactor();

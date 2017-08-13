@@ -62,7 +62,7 @@ class RsCollection : public QObject
 
 public:
 
-	RsCollection(QObject *parent = 0) ;
+	explicit RsCollection(QObject *parent = 0) ;
 	// create from list of files and directories
 	RsCollection(const std::vector<DirDetails>& file_entries, FileSearchFlags flags, QObject *parent = 0) ;
 	RsCollection(const FileTree& fr);

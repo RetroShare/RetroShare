@@ -55,7 +55,7 @@ class BwCtrlWindow : public RsAutoUpdatePage,  public Ui::BwCtrlWindow
     Q_OBJECT
 public:
 
-    BwCtrlWindow(QWidget *parent = 0);
+    explicit BwCtrlWindow(QWidget *parent = 0);
     ~BwCtrlWindow();
 
     void updateBandwidth();

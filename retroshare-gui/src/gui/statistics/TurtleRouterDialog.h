@@ -12,7 +12,7 @@ class TurtleRouterDialog: public RsAutoUpdatePage, public Ui::TurtleRouterDialog
 	Q_OBJECT
 
 	public:
-		TurtleRouterDialog(QWidget *parent = NULL) ;
+		explicit TurtleRouterDialog(QWidget *parent = NULL) ;
 		~TurtleRouterDialog();
 		
 		// Cache for peer names.
@@ -42,7 +42,7 @@ class GxsTunnelsDialog: public RsAutoUpdatePage
     Q_OBJECT
 
 public:
-    GxsTunnelsDialog(QWidget *parent = NULL) ;
+    explicit GxsTunnelsDialog(QWidget *parent = NULL) ;
     ~GxsTunnelsDialog();
 
     // Cache for peer names.
