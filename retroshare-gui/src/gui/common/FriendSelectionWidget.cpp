@@ -81,8 +81,8 @@ static void setSelected(FriendSelectionWidget::Modus modus, QTreeWidgetItem *ite
 	}
 }
 
-FriendSelectionWidget::FriendSelectionWidget(QWidget *parent) 
-	: RsGxsUpdateBroadcastPage(rsIdentity,parent), ui(new Ui::FriendSelectionWidget)
+FriendSelectionWidget::FriendSelectionWidget(QWidget *parent, Qt::WindowFlags flags/* = 0*/)
+	: RsGxsUpdateBroadcastPage(rsIdentity,parent,flags), ui(new Ui::FriendSelectionWidget)
 {
 	ui->setupUi(this);
 

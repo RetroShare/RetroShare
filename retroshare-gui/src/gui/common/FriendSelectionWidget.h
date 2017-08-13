@@ -72,7 +72,7 @@ public:
     Q_DECLARE_FLAGS(ShowTypes, ShowType)
 
 public:
-	explicit FriendSelectionWidget(QWidget *parent = 0);
+	FriendSelectionWidget(QWidget *parent = 0, Qt::WindowFlags flags = 0);
 	~FriendSelectionWidget();
 
 	void setHeaderText(const QString &text);
