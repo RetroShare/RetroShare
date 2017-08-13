@@ -28,6 +28,7 @@
 
 #include "pqi/pqimonitor.h"
 #include "pqi/pqiipset.h"
+#include "retroshare/rspeers.h"
 
 //#include "pqi/p3dhtmgr.h"
 //#include "pqi/p3upnpmgr.h"
@@ -130,6 +131,8 @@ virtual uint32_t getNatTypeMode() = 0;
 virtual uint32_t getNatHoleMode() = 0;
 virtual uint32_t getConnectModes() = 0;
 
+virtual void setPreferredNetInterface(const std::string& netint)=0;
+
 	/* Shut It Down! */
 virtual bool	shutdown() = 0; /* blocking shutdown call */
 
@@ -148,6 +151,8 @@ virtual bool    getUPnPState() = 0;
 virtual bool	getUPnPEnabled() = 0;
 virtual bool	getDHTEnabled() = 0;
 
+
+virtual bool getNetInterfaceList(std::list<NetInterfaceInfo>& netinterfaces) =0;
 
 /************************************************************************************************/
 /************************************************************************************************/
@@ -185,6 +190,7 @@ virtual uint32_t getNetworkMode();
 virtual uint32_t getNatTypeMode();
 virtual uint32_t getNatHoleMode();
 virtual uint32_t getConnectModes();
+virtual void setPreferredNetInterface(const std::string& netint);
 
 	/* Shut It Down! */
 virtual bool	shutdown(); /* blocking shutdown call */
@@ -275,6 +281,7 @@ bool netAssistSetAddress(const struct sockaddr_storage &laddr,
 
 bool netAssistAttach(bool on);
 
+bool getNetInterfaceList(std::list<NetInterfaceInfo>& netinterfaces) ;
 
 	/* Internal Functions */
 void 	netReset();
@@ -357,6 +364,7 @@ void 	netStatusReset_locked();
 	uint32_t mOldNatType;
 	uint32_t mOldNatHole;
 
+	std::string mPreferredNetInterface ;
 };
 
 #endif // MRK_PQI_NET_MANAGER_HEADER

@@ -802,10 +802,43 @@ void ServerPage::updateStatus()
         }
     }
 
+	ui.label_netInterface->setVisible(!mIsHiddenNode) ;
+	ui.netInterfaces_CB->setVisible(!mIsHiddenNode) ;
+
     if (mIsHiddenNode) {
         updateStatusHiddenNode();
         return;
     }
+
+	std::list<NetInterfaceInfo> netlist ;
+	rsPeers->getNetInterfaceList(netlist) ;
+
+	whileBlocking(ui.netInterfaces_CB)->clear();
+	whileBlocking(ui.netInterfaces_CB)->addItem(tr("Auto")) ;
+
+	std::map<std::string,NetInterfaceInfo> int_map;
+
+	for(auto it(netlist.begin());it!=netlist.end();++it)
+		int_map[it->name].type |= it->type ;
+
+	for(auto it(int_map.begin());it!=int_map.end();++it)
+	{
+		QString txt ;
+		txt += QString::fromStdString(it->first);
+		txt += " (" ;
+
+		switch(it->second.type)
+		{
+		case NetInterfaceInfo::NETWORK_INTERFACE_TYPE_IPV4 | NetInterfaceInfo::NETWORK_INTERFACE_TYPE_IPV6: txt += "IPv4/IPv6" ; break;
+		case                                                 NetInterfaceInfo::NETWORK_INTERFACE_TYPE_IPV6: txt += "IPv6" ; break;
+		case NetInterfaceInfo::NETWORK_INTERFACE_TYPE_IPV4                                                : txt += "IPv4" ; break;
+		default:
+			txt += tr("Not connected") ;
+		}
+		txt += ")" ;
+
+		whileBlocking(ui.netInterfaces_CB)->addItem(txt) ;
+	}
 
     /* load up configuration from rsPeers */
     RsPeerDetails detail;

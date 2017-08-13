@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1220</width>
-    <height>896</height>
+    <width>1283</width>
+    <height>917</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" name="ServerPageVLayout">
@@ -46,6 +46,13 @@
          </property>
          <item>
           <layout class="QVBoxLayout" name="netConfLabelVLayout">
+           <item>
+            <widget class="QLabel" name="label_netInterface">
+             <property name="text">
+              <string>Network interface</string>
+             </property>
+            </widget>
+           </item>
            <item>
             <widget class="QLabel" name="label_netmode">
              <property name="text">
@@ -114,7 +121,7 @@
            <property name="spacing">
             <number>6</number>
            </property>
-           <item row="5" column="0">
+           <item row="6" column="0">
             <widget class="QSpinBox" name="totalDownloadRate">
              <property name="sizePolicy">
               <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
@@ -139,17 +146,17 @@
              </property>
             </widget>
            </item>
-           <item row="2" column="0">
+           <item row="3" column="0">
             <widget class="QLineEdit" name="localAddress"/>
            </item>
-           <item row="2" column="1">
+           <item row="3" column="1">
             <widget class="QLabel" name="localPortLabel">
              <property name="text">
               <string>Port:</string>
              </property>
             </widget>
            </item>
-           <item row="2" column="2">
+           <item row="3" column="2">
             <widget class="QSpinBox" name="localPort">
              <property name="toolTip">
               <string>Acceptable ports range from 10 to 65535. Normally Ports below 1024 are reserved by your system.</string>
@@ -165,17 +172,17 @@
              </property>
             </widget>
            </item>
-           <item row="3" column="0">
+           <item row="4" column="0">
             <widget class="QLineEdit" name="extAddress"/>
            </item>
-           <item row="3" column="1">
+           <item row="4" column="1">
             <widget class="QLabel" name="extPortLabel">
              <property name="text">
               <string>Port:</string>
              </property>
             </widget>
            </item>
-           <item row="3" column="2">
+           <item row="4" column="2">
             <widget class="QSpinBox" name="extPort">
              <property name="toolTip">
               <string>Acceptable ports range from 10 to 65535. Normally ports below 1024 are reserved by your system.</string>
@@ -191,10 +198,10 @@
              </property>
             </widget>
            </item>
-           <item row="4" column="0">
+           <item row="5" column="0">
             <widget class="QLineEdit" name="dynDNS"/>
            </item>
-           <item row="1" column="0">
+           <item row="2" column="0">
             <widget class="QComboBox" name="netModeComboBox">
              <item>
               <property name="text">
@@ -213,7 +220,7 @@
              </item>
             </widget>
            </item>
-           <item row="0" column="0">
+           <item row="1" column="0">
             <widget class="QComboBox" name="discComboBox">
              <property name="minimumSize">
               <size>
@@ -246,7 +253,7 @@
              </item>
             </widget>
            </item>
-           <item row="3" column="3">
+           <item row="4" column="3">
             <layout class="QGridLayout" name="gLayout_ext">
              <property name="leftMargin">
               <number>6</number>
@@ -282,7 +289,7 @@
              </item>
             </layout>
            </item>
-           <item row="2" column="3">
+           <item row="3" column="3">
             <layout class="QGridLayout" name="gLayout_netLimited">
              <property name="leftMargin">
               <number>6</number>
@@ -315,7 +322,7 @@
              </item>
             </layout>
            </item>
-           <item row="6" column="0">
+           <item row="7" column="0">
             <widget class="QSpinBox" name="totalUploadRate">
              <property name="sizePolicy">
               <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
@@ -343,7 +350,7 @@
              </property>
             </widget>
            </item>
-           <item row="1" column="3">
+           <item row="2" column="3">
             <layout class="QGridLayout" name="gLayout_upnp">
              <property name="leftMargin">
               <number>6</number>
@@ -376,7 +383,7 @@
              </item>
             </layout>
            </item>
-           <item row="0" column="3">
+           <item row="1" column="3">
             <layout class="QGridLayout" name="gLayout_hiddenMode">
              <property name="leftMargin">
               <number>6</number>
@@ -418,7 +425,7 @@
              </item>
             </layout>
            </item>
-           <item row="5" column="1" rowspan="2" colspan="3">
+           <item row="6" column="1" rowspan="2" colspan="3">
             <widget class="QLabel" name="label_warningBandwidth">
              <property name="styleSheet">
               <string notr="true">	border: 1px solid #DCDC41;
@@ -432,6 +439,9 @@
 These values don't take into account the Relays.</string>
              </property>
             </widget>
+           </item>
+           <item row="0" column="0">
+            <widget class="QComboBox" name="netInterfaces_CB"/>
            </item>
           </layout>
          </item>

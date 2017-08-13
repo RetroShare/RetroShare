@@ -1001,6 +1001,17 @@ void p3NetMgrIMPL::netExtCheck()
  ************************************** Interfaces    *****************************************
  **********************************************************************************************/
 
+bool p3NetMgrIMPL::getNetInterfaceList(std::list<NetInterfaceInfo>& netint)
+{
+		if (!getLocalNetworkInterfaces(netint))
+		{
+			std::cerr << "(EE) Cannot access list of available network interfaces" << std::endl;
+			return false ;
+		}
+		return true ;
+}
+
+
 bool p3NetMgrIMPL::checkNetAddress()
 {
 	bool addrChanged = false;

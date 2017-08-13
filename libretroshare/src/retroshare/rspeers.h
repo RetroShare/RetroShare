@@ -38,6 +38,8 @@
  * A peer is another RS instance, means associated with an SSL certificate
  * A same GPG person can have multiple peer running with different SSL certs signed by the same GPG key
  * Thus a peer have SSL cert details, and also the parent GPG details
+ *
+ * This file should be split into rspeers.h (for peers only) and rsnetwork.h (which would handle network connectivity)
  */
 class RsPeers;
 extern RsPeers *rsPeers;
@@ -196,6 +198,25 @@ static const RsNodeGroupId RS_GROUP_ID_FAVORITES ("00000000000000000000000000000
 #define RS_GROUP_DEFAULT_NAME_COWORKERS  "Co-Workers"
 #define RS_GROUP_DEFAULT_NAME_OTHERS     "Other Contacts"
 #define RS_GROUP_DEFAULT_NAME_FAVORITES  "Favorites"
+
+struct NetInterfaceInfo
+{
+	enum {
+		NETWORK_INTERFACE_STATUS_DOWN        = 0x00,
+		NETWORK_INTERFACE_STATUS_UP          = 0x01,
+		NETWORK_INTERFACE_STATUS_CONNECTED   = 0x02
+	};
+	enum {
+		NETWORK_INTERFACE_TYPE_UNKNOWN       = 0x00,
+		NETWORK_INTERFACE_TYPE_IPV4          = 0x01,
+		NETWORK_INTERFACE_TYPE_IPV6          = 0x02,
+	};
+
+	std::string name ;
+	std::string ip_address ;
+	int status ;
+	int type ;
+};
 
 const uint32_t RS_GROUP_FLAG_STANDARD = 0x0001;
 
@@ -377,6 +398,7 @@ public:
 
 	virtual bool getProxyServer(const uint32_t type, std::string &addr, uint16_t &port,uint32_t& status_flags) = 0;
 	virtual bool setProxyServer(const uint32_t type, const std::string &addr, const uint16_t port) = 0;
+	virtual bool getNetInterfaceList(std::list<NetInterfaceInfo>& netinterfaces) = 0;
 
 	virtual void getIPServersList(std::list<std::string>& ip_servers) = 0;
 	virtual void allowServerIPDetermination(bool) = 0;

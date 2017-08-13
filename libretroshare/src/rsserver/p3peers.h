@@ -104,6 +104,7 @@ public:
 	virtual bool getProxyServer(const uint32_t type, std::string &addr, uint16_t &port,uint32_t& status);
 	virtual bool setProxyServer(const uint32_t type, const std::string &addr, const uint16_t port);
 	virtual bool isProxyAddress(const uint32_t type, const sockaddr_storage &addr);
+	virtual bool getNetInterfaceList(std::list<NetInterfaceInfo>& netinterfaces) ;
 
 	virtual void getIPServersList(std::list<std::string>& ip_servers);
 	virtual void allowServerIPDetermination(bool);

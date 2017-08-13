@@ -90,12 +90,15 @@ extern int errno; /* Define extern errno, to duplicate unix behaviour */
 #include <string>
 #include <list>
 
+struct NetInterfaceInfo;
+
 // Same def - different functions...
 void showSocketError(std::string &out);
 
 std::string socket_errorType(int err);
 
 bool getLocalAddresses(std::list<struct sockaddr_storage> & addrs);
+bool getLocalNetworkInterfaces(std::list<NetInterfaceInfo> & addrs);
 
 /* universal socket interface */
 

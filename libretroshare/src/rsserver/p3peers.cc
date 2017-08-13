@@ -534,6 +534,11 @@ bool p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
 	return true;
 }
 
+bool p3Peers::getNetInterfaceList(std::list<NetInterfaceInfo>& netinterfaces)
+{
+	return mNetMgr->getNetInterfaceList(netinterfaces);
+}
+
 bool p3Peers::isProxyAddress(const uint32_t type, const sockaddr_storage& addr)
 {
     uint16_t port ;

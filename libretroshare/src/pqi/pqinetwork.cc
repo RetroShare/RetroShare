@@ -31,6 +31,7 @@
 
 #include "pqi/pqinetwork.h"
 #include "util/rsnet.h"
+#include "retroshare/rspeers.h"
 
 #include <errno.h>
 #include <iostream>
@@ -359,6 +360,102 @@ bool getLocalAddresses(std::list<sockaddr_storage> & addrs)
 	return !addrs.empty();
 }
 
+bool getLocalNetworkInterfaces(std::list<NetInterfaceInfo> & addrs)
+{
+	addrs.clear();
+
+#ifdef WINDOWS_SYS
+	// Seems strange to me but M$ documentation suggests to allocate this way...
+	DWORD bf_size = 16000;
+	IP_ADAPTER_ADDRESSES* adapter_addresses = (IP_ADAPTER_ADDRESSES*) rs_malloc(bf_size);
+
+    	if(adapter_addresses == NULL)
+            return false ;
+
+	DWORD error = GetAdaptersAddresses(AF_UNSPEC,
+									   GAA_FLAG_SKIP_MULTICAST |
+									   GAA_FLAG_SKIP_DNS_SERVER |
+									   GAA_FLAG_SKIP_FRIENDLY_NAME,
+									   NULL,
+									   adapter_addresses,
+									   &bf_size);
+	if (error != ERROR_SUCCESS)
+	{
+	   std::cerr << "FATAL ERROR: getLocalAddresses failed!" << std::endl;
+	   return false ;
+	}
+
+	IP_ADAPTER_ADDRESSES* adapter(NULL);
+	for(adapter = adapter_addresses; NULL != adapter; adapter = adapter->Next)
+	{
+		IP_ADAPTER_UNICAST_ADDRESS* address;
+		for ( address = adapter->FirstUnicastAddress; address; address = address->Next)
+		{
+			sockaddr_storage tmp;
+			sockaddr_storage_clear(tmp);
+			if (sockaddr_storage_copyip(tmp, * reinterpret_cast<sockaddr_storage*>(address->Address.lpSockaddr)))
+				addrs.push_back(tmp);
+		}
+	}
+	free(adapter_addresses);
+#elif defined(__ANDROID__)
+	foreach(QHostAddress qAddr, QNetworkInterface::allAddresses())
+	{
+		sockaddr_storage tmpAddr;
+		sockaddr_storage_clear(tmpAddr);
+		if(sockaddr_storage_ipv4_aton(tmpAddr, qAddr.toString().toStdString().c_str()))
+			addrs.push_back(tmpAddr);
+	}
+#else // not  WINDOWS_SYS not ANDROID => Linux and other unixes
+	struct ifaddrs *ifsaddrs, *ifa;
+	if(getifaddrs(&ifsaddrs) != 0)
+	{
+	   std::cerr << "FATAL ERROR: getLocalAddresses failed!" << std::endl;
+	   return false ;
+	}
+	for ( ifa = ifsaddrs; ifa; ifa = ifa->ifa_next )
+	{
+		NetInterfaceInfo info ;
+		sockaddr_storage *ss_addr = reinterpret_cast<sockaddr_storage*>(ifa->ifa_addr);
+
+		if ( ifa->ifa_addr && (ifa->ifa_flags & IFF_UP))// && (ss_addr->ss_family == AF_INET || ss_addr->ss_family == AF_INET6))
+		{
+			info.name   = std::string(ifa->ifa_name) ;
+
+			if(ss_addr->ss_family == AF_INET)
+				info.type = NetInterfaceInfo::NETWORK_INTERFACE_TYPE_IPV4 ;
+			else if(ss_addr->ss_family == AF_INET6)
+				info.type = NetInterfaceInfo::NETWORK_INTERFACE_TYPE_IPV6 ;
+			else
+				info.type = NetInterfaceInfo::NETWORK_INTERFACE_TYPE_UNKNOWN ;
+
+			sockaddr_storage tmp;
+			sockaddr_storage_clear(tmp);
+
+			if (sockaddr_storage_copyip(tmp, * reinterpret_cast<sockaddr_storage*>(ifa->ifa_addr)))
+			{
+				sockaddr_storage_dump(tmp, &info.ip_address);
+				info.status = NetInterfaceInfo::NETWORK_INTERFACE_STATUS_CONNECTED ;
+			}
+			else
+				info.status = NetInterfaceInfo::NETWORK_INTERFACE_STATUS_UP ;
+
+			addrs.push_back(info);
+		}
+	}
+	freeifaddrs(ifsaddrs);
+#endif // WINDOWS_SYS
+
+#ifdef NET_DEBUG
+	std::list<sockaddr_storage>::iterator it;
+	std::cout << "getLocalAddresses(...) returning: <" ;
+	for(it = addrs.begin(); it != addrs.end(); ++it)
+			std::cout << sockaddr_storage_iptostring(*it) << ", ";
+	std::cout << ">" << std::endl;
+#endif
+
+	return !addrs.empty();
+}
 
 /*************************************************************
  * Socket Library Wrapper Functions 
