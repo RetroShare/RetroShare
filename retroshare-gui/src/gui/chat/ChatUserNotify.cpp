@@ -94,9 +94,8 @@ unsigned int ChatUserNotify::getNewCount()
 
 void ChatUserNotify::iconClicked()
 {
-	ChatDialog *chatDialog = NULL;
-    // ChatWidget removes the waiting chat from the list with clearWaitingChat()
-    chatDialog = ChatDialog::getChat(waitingChats.begin()->first, RS_CHAT_OPEN | RS_CHAT_FOCUS);
+	// ChatWidget removes the waiting chat from the list with clearWaitingChat()
+	ChatDialog *chatDialog = ChatDialog::getChat(waitingChats.begin()->first, RS_CHAT_OPEN | RS_CHAT_FOCUS);
 
 	if (chatDialog == NULL) {
 		MainWindow::showWindow(MainWindow::Friends);
