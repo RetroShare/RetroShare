@@ -360,7 +360,7 @@ bool UIStateHelper::isWidgetVisible(QWidget *widget)
 
 			UIStates states = it.value();
 
-			if (states & (UISTATE_LOADING_VISIBLE | UISTATE_LOADING_INVISIBLE)) {
+			if (states & UIStates(UISTATE_LOADING_VISIBLE | UISTATE_LOADING_INVISIBLE)) {
 				if (states & UISTATE_LOADING_VISIBLE) {
 					if (data->mLoading) {
 						++visibleCount;
@@ -376,7 +376,7 @@ bool UIStateHelper::isWidgetVisible(QWidget *widget)
 				}
 			}
 
-			if (states & (UISTATE_ACTIVE_VISIBLE | UISTATE_ACTIVE_INVISIBLE)) {
+			if (states & UIStates(UISTATE_ACTIVE_VISIBLE | UISTATE_ACTIVE_INVISIBLE)) {
 				if (states & UISTATE_ACTIVE_VISIBLE) {
 					if (data->mActive) {
 						++visibleCount;
@@ -423,7 +423,7 @@ bool UIStateHelper::isWidgetEnabled(QWidget *widget)
 
 			UIStates states = it.value();
 
-			if (states & (UISTATE_LOADING_ENABLED | UISTATE_LOADING_DISABLED)) {
+			if (states & UIStates(UISTATE_LOADING_ENABLED | UISTATE_LOADING_DISABLED)) {
 				if (states & UISTATE_LOADING_ENABLED) {
 					if (!data->mLoading) {
 						enabled = false;
@@ -437,7 +437,7 @@ bool UIStateHelper::isWidgetEnabled(QWidget *widget)
 				}
 			}
 
-			if (states & (UISTATE_ACTIVE_ENABLED | UISTATE_ACTIVE_DISABLED)) {
+			if (states & UIStates(UISTATE_ACTIVE_ENABLED | UISTATE_ACTIVE_DISABLED)) {
 				if (states & UISTATE_ACTIVE_ENABLED) {
 					if (!data->mActive) {
 						enabled = false;
@@ -490,7 +490,7 @@ void UIStateHelper::updateData(UIStateHelperData *data)
 		QWidget *widget = it.key();
 		UIStates states = it.value();
 
-		if (states & (UISTATE_LOADING_VISIBLE | UISTATE_LOADING_INVISIBLE | UISTATE_ACTIVE_VISIBLE | UISTATE_ACTIVE_INVISIBLE)) {
+		if (states & UIStates(UISTATE_LOADING_VISIBLE | UISTATE_LOADING_INVISIBLE | UISTATE_ACTIVE_VISIBLE | UISTATE_ACTIVE_INVISIBLE)) {
 			bool visible = isWidgetVisible(widget);
 			widget->setVisible(visible);
 
@@ -503,7 +503,7 @@ void UIStateHelper::updateData(UIStateHelperData *data)
 			}
 		}
 
-		if (states & (UISTATE_LOADING_ENABLED | UISTATE_LOADING_DISABLED | UISTATE_ACTIVE_ENABLED | UISTATE_ACTIVE_DISABLED)) {
+		if (states & UIStates(UISTATE_LOADING_ENABLED | UISTATE_LOADING_DISABLED | UISTATE_ACTIVE_ENABLED | UISTATE_ACTIVE_DISABLED)) {
 			widget->setEnabled(isWidgetEnabled(widget));
 		}
 	}
