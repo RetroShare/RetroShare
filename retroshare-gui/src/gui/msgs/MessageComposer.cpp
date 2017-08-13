@@ -745,7 +745,7 @@ void MessageComposer::buildCompleter()
     std::list<RsPeerId>::iterator peerIt;
     rsPeers->getFriendList(peers);
     
-    std::list<RsGxsId> gxsIds;
+    //std::list<RsGxsId> gxsIds;
     QList<QTreeWidgetItem*> gxsitems ;
 
     ui.friendSelectionWidget->items(gxsitems,FriendSelectionWidget::IDTYPE_GXS) ;
@@ -1010,9 +1010,9 @@ MessageComposer *MessageComposer::newMsg(const std::string &msgId /* = ""*/)
         std::list<RsGroupInfo> groupInfoList;
         rsPeers->getGroupInfoList(groupInfoList);
 
-        std::list<std::string> groupIds;
-        std::list<std::string>::iterator groupIt;
-
+    //       std::list<std::string> groupIds;
+    //       std::list<std::string>::iterator groupIt;
+    //
     //       calculateGroupsOfSslIds(groupInfoList, msgInfo.msgto, groupIds);
     //       for (groupIt = groupIds.begin(); groupIt != groupIds.end(); ++groupIt ) {
     //           msgComposer->addRecipient(MessageComposer::TO, *groupIt, true) ;
@@ -1473,8 +1473,7 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
         rsMail->getMessageTag(mi.msgId, tagInfo);
 
         /* insert new tags */
-        std::list<uint32_t>::iterator tag;
-        for (tag = m_tagIds.begin(); tag != m_tagIds.end(); ++tag) {
+        for (std::list<uint32_t>::iterator tag = m_tagIds.begin(); tag != m_tagIds.end(); ++tag) {
             if (std::find(tagInfo.tagIds.begin(), tagInfo.tagIds.end(), *tag) == tagInfo.tagIds.end()) {
                 rsMail->setMessageTag(mi.msgId, *tag, true);
             } else {
@@ -1483,7 +1482,7 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
         }
 
         /* remove deleted tags */
-        for (tag = tagInfo.tagIds.begin(); tag != tagInfo.tagIds.end(); ++tag) {
+        for (std::list<uint32_t>::iterator tag = tagInfo.tagIds.begin(); tag != tagInfo.tagIds.end(); ++tag) {
             rsMail->setMessageTag(mi.msgId, *tag, false);
         }
     }
