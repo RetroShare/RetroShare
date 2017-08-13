@@ -148,7 +148,7 @@ void NotifyQt::notifyOwnAvatarChanged()
 class SignatureEventData
 {
 	public:
-		SignatureEventData(const void *_data,int32_t _len,unsigned int _signlen, std::string _reason)
+		SignatureEventData(const void *_data,int32_t _len,unsigned int _signlen, const std::string &_reason)
 		{
 			// We need a new memory chnk because there's no guarranty _sign nor _signlen are not in the stack
 
@@ -509,16 +509,16 @@ void NotifyQt::notifyConnectionWithoutCert()
 void NotifyQt::handleChatLobbyTimeShift(int /*shift*/)
 {
 	return ; // we say nothing. The help dialog of lobbies explains this already.
-	static bool already = false ;
-
-	if(!already)
-	{
-		already = true ;
-
-		QString string = tr("For the chat lobbies to work properly, the time of your computer needs to be correct. Please check that this is the case (A possible time shift of several minutes was detected with your friends).") ;
-
-		QMessageBox::warning(NULL,tr("Please check your system clock."),string) ;
-	}
+	//static bool already = false ;
+	//
+	//if(!already)
+	//{
+	//	already = true ;
+	//
+	//	QString string = tr("For the chat lobbies to work properly, the time of your computer needs to be correct. Please check that this is the case (A possible time shift of several minutes was detected with your friends).") ;
+	//
+	//	QMessageBox::warning(NULL,tr("Please check your system clock."),string) ;
+	//}
 }
 
 void NotifyQt::notifyChatLobbyEvent(uint64_t lobby_id,uint32_t event_type,const RsGxsId& nickname,const std::string& str)
