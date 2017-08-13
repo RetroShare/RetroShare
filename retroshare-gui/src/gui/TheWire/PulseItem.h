@@ -49,7 +49,7 @@ class PulseItem : public QWidget, private Ui::PulseItem
 public:
 	PulseItem(PulseHolder *parent, const RsPhotoAlbum &album, const RsPhotoThumbnail &thumbnail);
 	PulseItem(PulseHolder *parent, const RsPhotoPhoto &photo, const RsPhotoThumbnail &thumbnail);
-	PulseItem(PulseHolder *parent, std::string url); // for new photos.
+	PulseItem(PulseHolder *parent, const std::string &url); // for new photos.
 
 	bool getPhotoThumbnail(RsPhotoThumbnail &nail);
 

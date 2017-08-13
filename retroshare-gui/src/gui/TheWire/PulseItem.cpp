@@ -70,7 +70,7 @@ PulseItem::PulseItem(PulseHolder *parent, const RsPhotoPhoto &photo, const RsPho
 }
 
 
-PulseItem::PulseItem(PulseHolder *parent, std::string path) // for new photos.
+PulseItem::PulseItem(PulseHolder *parent, const std::string &path) // for new photos.
 :QWidget(NULL), mParent(parent), mType(PHOTO_ITEM_TYPE_NEW) 
 {
 	setupUi(this);
