@@ -35,10 +35,10 @@ private:
 	bool isEventForThis(QObject *obj, QEvent *event, QPoint &point);
 
 	QString _uuid;
-	int _lenght;//Because cursor end position move durring editing
 	QTextEdit* _textEdit;
 	QWidget* _textEditViewPort;
 	QTextCursor* _textCursor;
+	int _lenght;//Because cursor end position move durring editing
 	bool _mouseOver;
 	bool _pressed;
 
