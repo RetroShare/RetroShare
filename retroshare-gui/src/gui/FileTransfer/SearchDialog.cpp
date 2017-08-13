@@ -183,8 +183,8 @@ SearchDialog::SearchDialog(QWidget *parent, Qt::WindowFlags flags/* = 0*/)
 
     // set header text aligment
     QTreeWidgetItem * headerItem = ui.searchResultWidget->headerItem();
-    headerItem->setTextAlignment(SR_NAME_COL, Qt::AlignRight   | Qt::AlignRight);
-    headerItem->setTextAlignment(SR_SIZE_COL, Qt::AlignRight | Qt::AlignRight);
+    headerItem->setTextAlignment(SR_NAME_COL, Qt::AlignRight);
+    headerItem->setTextAlignment(SR_SIZE_COL, Qt::AlignRight);
 
     ui.searchResultWidget->sortItems(SR_NAME_COL, Qt::AscendingOrder);
 
