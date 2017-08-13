@@ -72,7 +72,7 @@ MainPageStack::setCurrentPage(MainPage *page)
 void
 MainPageStack::setCurrentIndex(int index)
 {
-  setCurrentPage((MainPage *)widget(index));
+  setCurrentPage(static_cast<MainPage *>(widget(index)) );
 }
 
 /** Shows the Main page associated with the activated action. */
