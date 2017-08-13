@@ -38,6 +38,7 @@
 #include <QModelIndex>
 #include <QHeaderView>
 #include <QPainter>
+#include <QTreeWidgetItem>
 #include <limits>
 
 class BWListDelegate: public QAbstractItemDelegate
@@ -75,7 +76,7 @@ void BWListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 	if(value.isValid() && qvariant_cast<QColor>(value).isValid()) {
 		opt.palette.setColor(QPalette::Text, qvariant_cast<QColor>(value));
 	}
-	QPalette::ColorGroup cg = option.state & QStyle::State_Enabled ? QPalette::Normal : QPalette::Disabled;
+	QPalette::ColorGroup cg = (option.state & QStyle::State_Enabled) ? QPalette::Normal : QPalette::Disabled;
 	if(option.state & QStyle::State_Selected){
 		painter->setPen(opt.palette.color(cg, QPalette::HighlightedText));
 	} else {
@@ -273,9 +274,9 @@ void BwCtrlWindow::updateBandwidth()
 				break;
 			}
 		}
-#endif
 
 		if (!peer_item)
+#endif
 		{
 			/* insert */
 			peer_item = new QTreeWidgetItem();
