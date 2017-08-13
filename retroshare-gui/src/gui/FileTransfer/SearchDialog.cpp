@@ -84,8 +84,8 @@ QMap<int, QString> * SearchDialog::FileTypeExtensionMap = new QMap<int, QString>
 bool SearchDialog::initialised = false;
 
 /** Constructor */
-SearchDialog::SearchDialog(QWidget *parent)
-: MainPage(parent),
+SearchDialog::SearchDialog(QWidget *parent, Qt::WindowFlags flags/* = 0*/)
+: MainPage(parent, flags),
 	advSearchDialog(NULL),
 	nextSearchId(1)
 {
