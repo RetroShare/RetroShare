@@ -74,7 +74,9 @@ class FlowLayoutItem : public QWidget
 	Q_OBJECT
 
 public:
-	FlowLayoutItem(QString name=QString(), QWidget *parent=0) : QWidget(parent), m_myName(name){
+	FlowLayoutItem(QString name=QString(), QWidget *parent=0)
+	  : QWidget(parent), m_myName(name), m_isSelected(false), m_isCurrent(false)
+	{
 		setFocusPolicy(Qt::StrongFocus);
 		setAcceptDrops(true);
 	}
