@@ -274,7 +274,7 @@ PluginManager::viewWidgetDestroyed(QObject* obj )
 void 
 PluginManager::removePlugin(QString pluginName)
 {
-    QWidget* result = 0;
+    //QWidget* result = 0;
     int plIndex = names.indexOf( pluginName ) ;
     if (plIndex >=0 )
     {
