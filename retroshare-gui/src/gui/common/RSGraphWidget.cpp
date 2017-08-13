@@ -588,15 +588,15 @@ void RSGraphWidget::paintDots(const QVector<QPointF>& points, QColor color)
 /** Paints selected total indicators on the graph. */
 void RSGraphWidget::paintTotals()
 {
-    float FS = QFontMetricsF(font()).height();
+    //float FS = QFontMetricsF(font()).height();
     //float fact = FS/14.0 ;
 
   //int x = SCALE_WIDTH*fact + FS, y = 0;
-  int rowHeight = FS;
+  //int rowHeight = FS;
 
 #if !defined(Q_OS_MAC)
   /* On Mac, we don't need vertical spacing between the text rows. */
-  rowHeight += 5;
+  //rowHeight += 5;
 #endif
 }
 
