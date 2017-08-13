@@ -69,7 +69,7 @@ private:
 class Idle::Private
 {
 public:
-	Private() {}
+	Private() : active(false), idleTime(0) {}
 
 	QPoint lastMousePos;
 	QDateTime idleSince;
