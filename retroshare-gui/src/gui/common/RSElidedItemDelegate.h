@@ -23,7 +23,7 @@
 #define RSELIDEDITEMDELEGATE_H
 
 #include <gui/common/RSItemDelegate.h>
-
+// cppcheck-suppress noConstructor
 class RSElidedItemDelegate : public RSItemDelegate
 {
 	Q_OBJECT
