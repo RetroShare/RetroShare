@@ -189,7 +189,7 @@ void RSPermissionMatrixWidget::mouseMoveEvent(QMouseEvent *e)
     }
     else
     {
-        service_id = ~0 ;
+        //service_id = ~0 ;
         peer_id.clear() ;
     }
 }
@@ -262,7 +262,7 @@ void RSPermissionMatrixWidget::paintEvent(QPaintEvent *)
                   it = ssllist.erase(it);
                   break;
               default:
-                  it++;
+                  ++it;
                   break;
               }
           }
@@ -334,7 +334,7 @@ void RSPermissionMatrixWidget::paintEvent(QPaintEvent *)
       int X = matrix_start_x + S*fCOL_SIZE/2 - 2 + i*S*fCOL_SIZE - text_width/2;
 
       int height_index = 0 ;
-      while(last_width[height_index] > X-5 && height_index < ((int)last_width.size()-1) )
+      while(height_index < ((int)last_width.size()-1) && last_width[height_index] > X-5 )
           ++height_index ;
 
       int Y = S*fMATRIX_START_Y - S*fICON_SIZE_Y - 2 - line_height * height_index;
@@ -515,7 +515,7 @@ void RSPermissionMatrixWidget::paintEvent(QPaintEvent *)
       _painter->drawText(QPointF(x,y), peer_name)     ; y += line_height ;
       _painter->drawText(QPointF(x,y), peer_id)       ; y += line_height ;
       _painter->drawText(QPointF(x,y), remote_status) ; y += line_height ;
-      _painter->drawText(QPointF(x,y), local_status)  ; y += line_height ;
+      _painter->drawText(QPointF(x,y), local_status)  ; //y += line_height ;
   }
 
   _max_height = S*fMATRIX_START_Y + (peer_ids.size()+3) * S*fROW_SIZE ;
