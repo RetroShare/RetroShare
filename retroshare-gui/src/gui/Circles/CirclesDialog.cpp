@@ -148,11 +148,9 @@ void CirclesDialog::reloadAll()
 	requestGroupMeta();
 
 	/* grab all ids */
-    std::list<RsPgpId> friend_pgpIds;
-    std::list<RsPgpId> all_pgpIds;
-    std::list<RsPgpId>::iterator it;
+	std::list<RsPgpId> friend_pgpIds;
+	std::list<RsPgpId> all_pgpIds;
 
-    std::set<RsPgpId> friend_set;
 
 	rsPeers->getGPGAcceptedList(friend_pgpIds);
 	rsPeers->getGPGAllList(all_pgpIds);
@@ -170,6 +168,8 @@ void CirclesDialog::reloadAll()
 	fofItem->setText(0, tr("Friends Of Friends"));
 	ui.treeWidget_friends->addTopLevelItem(fofItem);
 
+	std::set<RsPgpId> friend_set;
+	std::list<RsPgpId>::iterator it;
 	for(it = friend_pgpIds.begin(); it != friend_pgpIds.end(); ++it)
 	{
 		RsPeerDetails details;
