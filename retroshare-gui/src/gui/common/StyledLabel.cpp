@@ -25,12 +25,12 @@
 
 /** Constructor */
 StyledLabel::StyledLabel(QWidget *parent)
-    : QLabel(parent)
+    : QLabel(parent), mFontSizeFactor(100)
 {
 }
 
 StyledLabel::StyledLabel(const QString &text, QWidget *parent)
-    : QLabel(text, parent)
+    : QLabel(text, parent), mFontSizeFactor(100)
 {
 }
 
