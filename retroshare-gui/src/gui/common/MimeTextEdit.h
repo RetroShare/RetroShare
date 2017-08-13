@@ -26,6 +26,7 @@
 #include "RSTextEdit.h"
 #include "util/RsSyntaxHighlighter.h"
 
+//cppcheck-suppress noConstructor
 class MimeTextEdit : public RSTextEdit
 {
 	Q_OBJECT
