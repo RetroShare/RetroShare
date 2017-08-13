@@ -14,7 +14,7 @@ Item
 	Image
 	{
 		id: imageAvatar
-		width: iconSize
+		width: height
 		height: iconSize
 		visible: true
 	}
@@ -22,8 +22,8 @@ Item
 	Canvas
 	{
 		id: canvasAvatar
-		width: iconSize
-		height: iconSize
+		width: height
+		height: canvasSizes
 		visible: false
 
 		renderStrategy: Canvas.Threaded;
@@ -157,11 +157,17 @@ Item
 					imageAvatar.source =  data
 					imageAvatar.visible = true
 					canvasAvatar.visible =  false
+
+					canvasAvatar.height = 0
+					imageAvatar.height = iconSize
 				}
 				else
 				{
 					canvasAvatar.visible =  true
 					imageAvatar.visible =  false
+
+					canvasAvatar.height = iconSize
+					imageAvatar.height = 0
 				}
 
 				facesCache.iconCache[iconId] = data;
