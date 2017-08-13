@@ -40,7 +40,7 @@ class MessagesDialog : public MainPage
 
 public:
   /** Default Constructor */
-  explicit MessagesDialog(QWidget *parent = 0);
+  MessagesDialog(QWidget *parent = 0, Qt::WindowFlags flags = 0);
   /** Default Destructor */
   ~MessagesDialog();
 

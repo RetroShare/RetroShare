@@ -119,8 +119,8 @@ void MessagesDialog::LockUpdate::setUpdate(bool bUpdate)
 }
 
 /** Constructor */
-MessagesDialog::MessagesDialog(QWidget *parent)
-: MainPage(parent)
+MessagesDialog::MessagesDialog(QWidget *parent, Qt::WindowFlags flags/* = 0*/)
+: MainPage(parent, flags)
 {
     /* Invoke the Qt Designer generated object setup routine */
     ui.setupUi(this);
@@ -1466,7 +1466,7 @@ void MessagesDialog::setMsgStar(const QList<QTreeWidgetItem*> &items, bool star)
 void MessagesDialog::insertMsgTxtAndFiles(QTreeWidgetItem *item, bool bSetToRead)
 {
     /* get its Ids */
-    std::string cid;
+    //std::string cid;
     std::string mid;
 
     if (item == NULL) {
