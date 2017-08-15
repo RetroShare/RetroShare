@@ -48,7 +48,7 @@ int 	displayPeers();
 int 	addCertificateFile(std::string);
 int 	addNewUser(std::string certificate);
 int 	setupChatLobbies(std::string &genericLobbyName);
-int 	createConfigFiles(std::string peersDir, std::string lobbyName);
+int 	createConfigFiles(const std::string &peersDir, const std::string &lobbyName);
 int 	restoreStoredPeers();
 int 	removeAllPeers();
 
@@ -83,7 +83,7 @@ class storeData
 class RsIntroStore
 {
 	public:
-	explicit RsIntroStore(std::string storefile);
+	explicit RsIntroStore(const std::string &storefile);
 bool	loadPeers();
 bool	addPeer(const RsPeerDetails &pd);
 bool	removePeer(std::string gpgId);
