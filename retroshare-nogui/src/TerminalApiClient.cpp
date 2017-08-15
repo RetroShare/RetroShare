@@ -124,7 +124,7 @@ void TerminalApiClient::data_tick()
     const int IO_POLL_PERIOD          = 20;
     int last_io_poll  = 0;
     int last_char = 0;
-    bool enter_was_pressed = false;
+    //bool enter_was_pressed = false;
     std::string inbuf;
 #endif
 
@@ -163,16 +163,16 @@ void TerminalApiClient::data_tick()
             last_char = 0;
             if(term.kbhit())
             {
-                enter_was_pressed = false;
+                //enter_was_pressed = false;
                 last_char = term.getch();
                 if(last_char > 127)
                     std::cout << "Warning: non ASCII characters probably won't work." << std::endl;
                 if(last_char >= ' ')// space is the first printable ascii character
                     inbuf += (char) last_char;
                 if(last_char == '\r' || last_char == '\n')
-                    enter_was_pressed = true;
+                    //enter_was_pressed = true;
                 else
-                    enter_was_pressed = false;
+                    //enter_was_pressed = false;
                 // send echo
                 if(ask_for_password)
 				{
@@ -239,7 +239,7 @@ void TerminalApiClient::data_tick()
 
 				std::string s = readStringFromKeyboard(false) ;
 
-				if(sscanf(s.c_str(),"%lu",&selected_account_number) != 1)
+				if(sscanf(s.c_str(),"%zu",&selected_account_number) != 1)
 					continue ;
 
 				if(selected_account_number >= accounts.size())
@@ -346,7 +346,7 @@ void TerminalApiClient::readAvailableAccounts(std::vector<AccountInfo>& accounts
 	if(!resps.hasMore())
 		std::cout << "Error: No Accounts. Use the Qt-GUI or the webinterface to create an account." << std::endl;
 
-	int i = 0;
+	//int i = 0;
 	accounts.clear();
 
 	while(resps.hasMore())
@@ -366,7 +366,7 @@ void TerminalApiClient::readAvailableAccounts(std::vector<AccountInfo>& accounts
 		info.ssl_id = RsPeerId(id) ;
 
 		accounts.push_back(info);
-		i++;
+		//i++;
 	}
 }
 
