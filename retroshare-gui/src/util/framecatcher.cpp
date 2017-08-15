@@ -25,7 +25,7 @@
 
 #include <iostream>
 
-framecatcher::framecatcher(): xine(NULL), stream(NULL), vo_port(NULL){
+framecatcher::framecatcher(): xine(NULL), stream(NULL), vo_port(NULL) , length(0){
 
 	// start up drivers
 	std::string vo_driver = "auto";
