@@ -21,21 +21,21 @@
 
 #include "util/RsAction.h"
 
-RsAction::RsAction(QWidget * parent, std::string rsid)
+RsAction::RsAction(QWidget * parent, const std::string &rsid)
 	: QAction(parent), RsId(rsid) 
 {
 	connect(this, SIGNAL( triggered( bool ) ), this, SLOT( triggerEvent( bool ) ) );
 }
 
 
-RsAction::RsAction(const QString & text, QObject * parent, std::string rsid)
+RsAction::RsAction(const QString & text, QObject * parent, const std::string &rsid)
 	: QAction(text, parent), RsId(rsid) 
 {
 	connect(this, SIGNAL( triggered( bool ) ), this, SLOT( triggerEvent( bool ) ) );
 }
 
 
-RsAction::RsAction(const QIcon & icon, const QString & text, QObject * parent , std::string rsid)
+RsAction::RsAction(const QIcon & icon, const QString & text, QObject * parent , const std::string &rsid)
 	: QAction(icon, text, parent), RsId(rsid) 
 {
 	connect(this, SIGNAL( triggered( bool ) ), this, SLOT( triggerEvent( bool ) ) );
