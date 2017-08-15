@@ -35,7 +35,7 @@ class ProfileView : public QDialog
 public:
   /** Default Constructor */
 
-  ProfileView(QWidget *parent = 0);
+  explicit ProfileView(QWidget *parent = 0);
   /** Default Destructor */
 
 void setPeerId(std::string id);
