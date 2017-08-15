@@ -43,7 +43,7 @@ extern "C" int xerrhandler(Display* dpy, XErrorEvent* err)
 class IdlePlatform::Private
 {
 public:
-	Private() {}
+	Private() : ss_info(NULL) {}
 
 	XScreenSaverInfo *ss_info;
 };
@@ -116,6 +116,7 @@ public:
 	Private()
 	{
 		GetLastInputInfo = NULL;
+		IdleUIGetLastInputTime = NULL;
 		lib = 0;
 	}
 
@@ -330,13 +331,13 @@ int IdlePlatform::secondsIdle() {
 	return d->mSecondsIdle;
 }
 
-#else
+#else //MAC_IDLE
 
-IdlePlatform::IdlePlatform() {}
+IdlePlatform::IdlePlatform() : d(NULL) {}
 IdlePlatform::~IdlePlatform() {}
 bool IdlePlatform::init() { return false; }
 int IdlePlatform::secondsIdle() { return 0; }
 
-#endif
-#endif
-#endif
+#endif //MAC_IDLE
+#endif //WINDOWS_SYS
+#endif //HAVE_XSS
