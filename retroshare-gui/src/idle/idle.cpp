@@ -115,9 +115,9 @@ int Idle::secondsIdle()
 		d->startTime = beginIdle;
 	}
 	// beginIdle earlier than startTime?
-	else if(t > 0) {
-		// do nothing
-	}
+	//else if(t > 0) {  //t is always > 0
+	//	// do nothing
+	//}
 	
 	// how long have we been idle?
 	int idleTime = d->startTime.secsTo(QDateTime::currentDateTime());
