@@ -21,6 +21,7 @@ Item
 		anchors.fill: parent
 		width: parent.width
 		height: parent.height
+		color: "transparent"
 
 		Rectangle
 		{
