@@ -579,7 +579,7 @@ void MessageWidget::fill(const std::string &msgId)
 	ui.dateText->setText(DateTime::formatDateTime(msgInfo.ts));
 
     RsPeerId ownId = rsPeers->getOwnId();
-	 QString tooltip_string ;
+	QString tooltip_string ;
 
 //	if ((msgInfo.msgflags & RS_MSG_BOXMASK) == RS_MSG_OUTBOX) // outgoing message are from me
 //	{
@@ -587,27 +587,27 @@ void MessageWidget::fill(const std::string &msgId)
 //		link.createMessage(ownId, "");
 //	}
 
-     if(msgInfo.msgflags & RS_MSG_DISTANT)	// distant message
-     {
-         tooltip_string = PeerDefs::rsidFromId(msgInfo.rsgxsid_srcId) ;
-         link.createMessage(msgInfo.rsgxsid_srcId, "");
-     }
-     else
-     {
-         tooltip_string = PeerDefs::rsidFromId(msgInfo.rspeerid_srcId) ;
-         link.createMessage(msgInfo.rspeerid_srcId, "");
-     }
+	if(msgInfo.msgflags & RS_MSG_DISTANT)	// distant message
+	{
+		tooltip_string = PeerDefs::rsidFromId(msgInfo.rsgxsid_srcId) ;
+		link = RetroShareLink::createMessage(msgInfo.rsgxsid_srcId, "");
+	}
+	else
+	{
+		tooltip_string = PeerDefs::rsidFromId(msgInfo.rspeerid_srcId) ;
+		link = RetroShareLink::createMessage(msgInfo.rspeerid_srcId, "");
+	}
 
-    if ((msgInfo.msgflags & RS_MSG_SYSTEM) && msgInfo.rspeerid_srcId == ownId) {
+	if ((msgInfo.msgflags & RS_MSG_SYSTEM) && msgInfo.rspeerid_srcId == ownId) {
 		ui.fromText->setText("RetroShare");
 	} else {
 		ui.fromText->setText(link.toHtml());
 		ui.fromText->setToolTip(tooltip_string) ;
 	}
 
-		ui.subjectText->setText(QString::fromUtf8(msgInfo.title.c_str()));
+	ui.subjectText->setText(QString::fromUtf8(msgInfo.title.c_str()));
 
-        // emoticons disabled because of crazy cost.
+	// emoticons disabled because of crazy cost.
 	//text = RsHtmlMsg(msgInfo.msgflags).formatText(ui.msgText->document(), QString::fromUtf8(msgInfo.msg.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS);
 	text = RsHtmlMsg(msgInfo.msgflags).formatText(ui.msgText->document(), QString::fromUtf8(msgInfo.msg.c_str()),  RSHTML_FORMATTEXT_EMBED_LINKS);
 	ui.msgText->resetImagesStatus(Settings->getMsgLoadEmbeddedImages() || (msgInfo.msgflags & RS_MSG_LOAD_EMBEDDED_IMAGES));
