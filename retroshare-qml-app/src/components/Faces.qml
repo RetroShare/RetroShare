@@ -13,17 +13,17 @@ Item
 
 	Image
 	{
-		id: faceAvatar
-		width: iconSize
+		id: imageAvatar
+		width: height
 		height: iconSize
 		visible: true
 	}
 
 	Canvas
 	{
-		id: faceCanvas
-		width: iconSize
-		height: iconSize
+		id: canvasAvatar
+		width: height
+		height: canvasSizes
 		visible: false
 
 		renderStrategy: Canvas.Threaded;
@@ -134,11 +134,11 @@ Item
 		{
 			var url = src(gender, i, data[i+1])
 			onloads.push(url)
-			faceCanvas.loadImage(url)
+			canvasAvatar.loadImage(url)
 		}
-		faceCanvas.images = onloads
-		faceCanvas.callback = callback
-		faceCanvas.requestPaint()
+		canvasAvatar.images = onloads
+		canvasAvatar.callback = callback
+		canvasAvatar.requestPaint()
 	}
 
 	// Create the identicon
@@ -154,14 +154,20 @@ Item
 			    // See issue: https://gitlab.com/angesoc/RetroShare/issues/37
 			    if (facesCache.iconCache[iconId])
 				{
-					faceAvatar.source =  data
-					faceAvatar.visible = true
-					faceCanvas.visible =  false
+					imageAvatar.source =  data
+					imageAvatar.visible = true
+					canvasAvatar.visible =  false
+
+					canvasAvatar.height = 0
+					imageAvatar.height = iconSize
 				}
 				else
 				{
-					faceCanvas.visible =  true
-					faceAvatar.visible =  false
+					canvasAvatar.visible =  true
+					imageAvatar.visible =  false
+
+					canvasAvatar.height = iconSize
+					imageAvatar.height = 0
 				}
 
 				facesCache.iconCache[iconId] = data;
