@@ -1189,7 +1189,7 @@ int RsServer::StartupRetroShare()
 #ifdef __APPLE__
 	plugins_directories.push_back(rsAccounts->PathDataDirectory()) ;
 #endif
-#ifndef WINDOWS_SYS
+#if !defined(WINDOWS_SYS) && defined(PLUGIN_DIR)
 	plugins_directories.push_back(std::string(PLUGIN_DIR)) ;
 #endif
 	std::string extensions_dir = rsAccounts->PathBaseDirectory() + "/extensions6/" ;

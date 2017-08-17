@@ -19,6 +19,7 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.0
 import "." //Needed for ClipboardWrapper singleton
+import "./components"
 import "URI.js" as UriJs
 
 Item
@@ -26,6 +27,61 @@ Item
 	id: cntDt
 	property var md
 	property bool is_contact: cntDt.md.is_contact
+	property bool isOwn:  cntDt.md.own
+	property string objectName: "contactDetails"
+
+	ButtonText
+	{
+		id: avatarPicker
+
+		text: (isOwn)? qsTr("Change your Avatar") : qsTr("Start Chat!")
+
+		anchors.top: parent.top
+		anchors.horizontalCenter: parent.horizontalCenter
+
+		buttonTextPixelSize: 14
+		iconUrl: (isOwn)? "/icons/attach-image.svg": "/icons/chat-bubble.svg"
+		borderRadius: 0
+
+
+		onClicked:
+		{
+			if (isOwn) fileChooser.open()
+			else startDistantChat ()
+		}
+		function startDistantChat ()
+		{
+			ChatCache.chatHelper.startDistantChat(ChatCache.contactsCache.own.gxs_id,
+												  cntDt.md.gxs_id,
+												  cntDt.md.name,
+												  function (chatId)
+												  {
+													  stackView.push("qrc:/ChatView.qml", {'chatId': chatId})
+												  })
+		}
+		CustomFileChooser
+		{
+			id: fileChooser
+			onResultFileChanged:
+			{
+				console.log("Result file changed! " , resultFile)
+
+				var base64Image = androidImagePicker.imageToBase64(resultFile)
+
+				rsApi.request("/identity/set_avatar", JSON.stringify({"gxs_id": cntDt.md.gxs_id, "avatar": base64Image }),
+							    function (par)
+								{
+									var jP  = JSON.parse(par.response)
+									if (jP.returncode === "ok")
+									{
+										console.log("Avatar changed! ")
+										topFace.refresh()
+									}
+								})
+			}
+		}
+	}
+
 
 	AvatarOrColorHash
 	{
@@ -33,7 +89,7 @@ Item
 
 		gxs_id: cntDt.md.gxs_id
 
-		anchors.top: parent.top
+		anchors.top: avatarPicker.bottom
 		anchors.topMargin: 6
 		anchors.horizontalCenter: parent.horizontalCenter
 	}
@@ -68,10 +124,11 @@ Item
 			Image
 			{
 				source: cntDt.is_contact ?
-							"qrc:/icons/rating.png" :
-							"qrc:/icons/rating-unrated.png"
-				height: parent.height - 4
+							"qrc:/icons/rating.svg" :
+							"qrc:/icons/rating-unrated.svg"
+				height: parent.height -4
 				fillMode: Image.PreserveAspectFit
+				sourceSize.height: height
 				anchors.verticalCenter: parent.verticalCenter
 
 				MouseArea
@@ -112,9 +169,11 @@ Item
 
 		spacing: 6
 
-		Button
+		ButtonText
 		{
 			text: qsTr("Contact full link")
+			borderRadius: 0
+			buttonTextPixelSize: 14
 			onClicked:
 			{
 				rsApi.request(
@@ -140,10 +199,12 @@ Item
 			}
 		}
 
-		Button
+		ButtonText
 		{
 			text: qsTr("Contact short link")
 			enabled: false
+			borderRadius: 0
+			buttonTextPixelSize: 14
 		}
 	}
 }

@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 8">
+  <defs id="defs3051">
+    <style type="text/css" id="current-color-scheme">
+      .ColorScheme-NeutralText {
+        color:#f67400;
+      }
+      </style>
+  </defs>
+  <path
+      style="fill:currentColor;fill-opacity:1;stroke:none" 
+     class="ColorScheme-NeutralText"
+    d="M 1 0 C 0.4459807 0 0 0.446 0 1 L 0 7 C 0 7.5541 0.4459807 8 1 8 L 7 8 C 7.554019 8 8 7.5541 8 7 L 8 1 C 8 0.446 7.554019 0 7 0 L 1 0 z "
+      />
+    <path
+       style="fill:#ffffff;fill-opacity:1;stroke:none"
+       d="M 4 1 C 2.8954237 1 1.9999904 1.8954 2 3 L 2.0019531 4 L 1 4 L 1 7 L 7 7 L 7 4 L 6 4 L 6 3 C 6.00001 1.8954 5.104576 1 4 1 z M 4 2 C 4.552285 2 5 2.4477 5 3 L 5 4 L 3 4 L 3 3 C 3 2.4477 3.447715 2 4 2 z "
+        />
+</svg>

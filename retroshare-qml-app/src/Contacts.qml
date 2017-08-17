@@ -30,14 +30,30 @@ Item
 	property bool searching: false
 	onSearchingChanged: !searching && contactsSortWorker.sendMessage({})
 
-	Component.onCompleted: refreshAll()
+	property string objectName:"contactsView"
+
+	Component.onCompleted:
+	{
+		refreshAll()
+	}
 	onFocusChanged: focus && refreshAll()
+
+	function changeState ()
+	{
+		toolBar.state = "CONTACTSVIEW"
+		toolBar.searchBtnCb = toggleSearchBox
+	}
 
 	WorkerScript
 	{
 		id: contactsSortWorker
 		source: "qrc:/ContactSort.js"
 		onMessage: contactsListModel.json = JSON.stringify(messageObject)
+	}
+
+	function toggleSearchBox (){
+		if (searching) searching = false
+		else searching = true
 	}
 
 	function refreshAll()
@@ -51,6 +67,7 @@ Item
 	{
 		console.log("contactsView.refreshContactsCB()", visible)
 		var token = JSON.parse(par.response).statetoken
+		ChatCache.contactsCache.contactsList = JSON.parse(par.response).data
 		TokensManager.registerToken(token, refreshContacts)
 		contactsSortWorker.sendMessage(
 					{'action': 'refreshContacts', 'response': par.response})
@@ -71,6 +88,7 @@ Item
 
 		if(json.data.length > 0)
 		{
+			ChatCache.contactsCache.own = json.data[0]
 			contactsView.own_gxs_id = json.data[0].gxs_id
 			contactsView.own_nick = json.data[0].name
 			if(mainWindow.user_name.length === 0)
@@ -101,6 +119,11 @@ Item
 		TokensManager.registerToken(json.statetoken, refreshUnread)
 		contactsSortWorker.sendMessage(
 					{'action': 'refreshUnread', 'response': par.response})
+		json.data.forEach (function (chat)
+		{
+			ChatCache.lastMessageCache.updateLastMessageCache(chat.chat_id)
+			ChatCache.lastMessageCache.setRemoteGXS (chat.chat_id, { gxs: chat.remote_author_id, name: chat.remote_author_name})
+		})
 	}
 	function refreshUnread()
 	{
@@ -108,13 +131,6 @@ Item
 		if(!visible) return
 		rsApi.request("/chat/unread_msgs", "", refreshUnreadCallback)
 	}
-
-	function startChatCallback(par)
-	{
-		var chId = JSON.parse(par.response).data.chat_id
-		stackView.push("qrc:/ChatView.qml", {'chatId': chId})
-	}
-
 
 	/** This must be equivalent to
 		p3GxsTunnelService::makeGxsTunnelId(...) */
@@ -143,30 +159,58 @@ Item
 	Rectangle
 	{
 		id: searchBox
-		visible: contactsView.searching
+//		visible: contactsView.searching
 
-		height: searchText.height
-		width: searchText.width
+		height: searchText.height + 10
+		width: parent.width * 0.9
 		anchors.right: parent.right
 		anchors.top: parent.top
-
-		Image
-		{
-			id: searchIcon
-			height: searchText.height - 4
-			width: searchText.height - 4
-			anchors.verticalCenter: parent.verticalCenter
-			source: "qrc:/icons/edit-find.png"
-		}
+		anchors.leftMargin: 5
+		anchors.rightMargin: 5
+		anchors.horizontalCenter: parent.horizontalCenter
+		color: "white"
 
 		TextField
 		{
 			id: searchText
-			anchors.left: searchIcon.right
 			anchors.verticalCenter: parent.verticalCenter
+//			placeholderText : "Search contacts..."
+			width: parent.width
+			anchors.leftMargin: 5
+			height: 0
+
+			background: Rectangle
+			{
+				border.width: 2
+				radius: 5
+				border.color: searchText.focus ? "cornflowerblue" : "lightgrey"
+				color: searchText.focus ? "white" : "ghostwhite"
+			}
+
 			onTextChanged:
 				contactsSortWorker.sendMessage(
 					        {'action': 'searchContact', 'sexp': text})
+		}
+
+		states:
+		[
+			State
+			{
+				when: contactsView.searching;
+				PropertyChanges {   target: searchText; height: implicitHeight  }
+				PropertyChanges {   target: searchText; placeholderText : "Search contacts..." }
+				PropertyChanges {   target: searchBox; height: searchText.height + 10   }
+			},
+			State
+			{
+				when: !contactsView.searching;
+				PropertyChanges {   target: searchText; height: 0   }
+				PropertyChanges {   target: searchBox; height: 0   }
+			}
+		]
+		transitions: Transition
+		{
+			NumberAnimation { property: "height"; duration: 500; easing.type: Easing.InOutQuad}
 		}
 	}
 
@@ -187,4 +231,5 @@ Item
 
 		property bool defaultIdentityCreated: false
 	}
+
 }

@@ -20,6 +20,8 @@ import QtQuick 2.7
 import QtQuick.Controls 2.0
 import org.retroshare.qml_components.LibresapiLocalClient 1.0
 
+import "components/."
+
 Item
 {
 	id: locationView
@@ -47,7 +49,7 @@ Item
 				target: loginView
 				visible: true
 				buttonText: qsTr("Save")
-				iconUrl: "qrc:/icons/edit-image-face-detect.png"
+				iconUrl: "qrc:/icons/edit-image-face-detect.svg"
 				suggestionText: qsTr("Create your profile")
 				onSubmit:
 				{
@@ -62,6 +64,11 @@ Item
 					bottomButton.enabled = false
 					bottomButton.text = "Creating profile..."
 				}
+				onCancel:
+				{
+					locationView.state = "selectLocation"
+				}
+
 			}
 		},
 		State
@@ -82,6 +89,10 @@ Item
 								   JSON.stringify({id: locationView.sslid}) )
 					locationView.attemptLogin = true
 					attemptTimer.start()
+				}
+				onCancel:
+				{
+					locationView.state = "selectLocation"
 				}
 			}
 		}
@@ -127,28 +138,69 @@ Item
 		width: parent.width
 		anchors.top: parent.top
 		anchors.bottom: bottomButton.top
+		anchors.horizontalCenter: parent.horizontalCenter
 		model: locationsModel.model
-		delegate: Button
+		spacing: 3
+		delegate: Item
 		{
-			text: model.name
-			onClicked:
+			id: delegate
+			width: parent.width
+			height: 60
+			Rectangle
 			{
-				loginView.login = text
-				locationView.sslid = model.id
-				locationView.state = "login"
-				mainWindow.user_name = model.name
+				id: backgroundRectangle
+				anchors.fill: parent.fill
+				anchors.horizontalCenter: parent.horizontalCenter
+				width: parent.width /2
+				height: parent.height
+
+				color:"transparent"
+
+				Rectangle
+				{
+					    id: borderBottom
+						width:  parent.width
+						height: 1
+						anchors.bottom: parent.bottom
+						anchors.right: parent.right
+						color: "lightgrey"
+				}
+			}
+
+			ButtonText
+			{
+				id: locationButton
+				anchors.horizontalCenter: parent.horizontalCenter
+				anchors.verticalCenter: parent.verticalCenter
+				text: model.name
+				borderRadius:0
+				iconUrl: "/icons/edit-image-face-detect.svg"
+				color: "white"
+				pressColor: "lightsteelblue"
+				buttonTextPixelSize: 20
+
+				onClicked:
+				{
+					loginView.login = text
+					locationView.sslid = model.id
+					locationView.state = "login"
+					mainWindow.user_name = model.name
+				}
 			}
 		}
 		visible: false
 	}
 
-	Button
+	ButtonText
 	{
 		id: bottomButton
 		text: "Create new location"
 		anchors.bottom: parent.bottom
 		anchors.horizontalCenter: parent.horizontalCenter
 		onClicked: locationView.state = "createLocation"
+		buttonTextPixelSize: 15
+		iconUrl: "/icons/add.svg"
+		borderRadius: 0
 	}
 
 	RsLoginPassView
