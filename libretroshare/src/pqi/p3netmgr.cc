@@ -1001,14 +1001,39 @@ void p3NetMgrIMPL::netExtCheck()
  ************************************** Interfaces    *****************************************
  **********************************************************************************************/
 
+void p3NetMgrIMPL::setPreferredNetworkInterface(const std::string& netintstr)
+{
+	mPreferredNetInterface = netintstr;
+
+	checkNetAddress();
+}
+std::string p3NetMgrIMPL::getPreferredNetworkInterface()
+{
+	return mPreferredNetInterface ;
+}
 bool p3NetMgrIMPL::getNetInterfaceList(std::list<NetInterfaceInfo>& netint)
 {
-		if (!getLocalNetworkInterfaces(netint))
-		{
-			std::cerr << "(EE) Cannot access list of available network interfaces" << std::endl;
-			return false ;
-		}
-		return true ;
+	std::list<LocalNetIntInfo> i ;
+	netint.clear();
+
+	if (!getLocalNetworkInterfaces(i))
+	{
+		std::cerr << "(EE) Cannot access list of available network interfaces" << std::endl;
+		return false ;
+	}
+
+	for(auto it(i.begin());it!=i.end();++it)
+	{
+		NetInterfaceInfo inf ;
+		inf.ip_address_string = sockaddr_storage_iptostring((*it).ip_address) ;
+		inf.name              = (*it).name ;
+		inf.type              = (*it).type ;
+		inf.status            = (*it).status ;
+
+		if(!inf.ip_address_string.empty())
+			netint.push_back(inf) ;
+	}
+	return true ;
 }
 
 
@@ -1032,17 +1057,19 @@ bool p3NetMgrIMPL::checkNetAddress()
 	else
 	{
 		// TODO: Sat Oct 24 15:51:24 CEST 2015 The fact of having just one local address is a flawed assumption, this should be redesigned soon.
-		std::list<sockaddr_storage> addrs;
-		std::list<sockaddr_storage>::iterator it;
-		if (getLocalAddresses(addrs))
-			for(it = addrs.begin(); (it != addrs.end() && !validAddr); ++it)
-				if(sockaddr_storage_isValidNet(*it) && !sockaddr_storage_isLoopbackNet(*it))
+		std::list<LocalNetIntInfo> netints ;
+
+		if (getLocalNetworkInterfaces(netints))
+			for(auto it = netints.begin(); it != netints.end(); ++it)
+				if(sockaddr_storage_isValidNet((*it).ip_address) && !sockaddr_storage_isLoopbackNet((*it).ip_address)
+				        && (mPreferredNetInterface.empty() || (*it).name == mPreferredNetInterface))
 				{
-					prefAddr = *it;
+					prefAddr = (*it).ip_address;
 					validAddr = true;
 #if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
 					std::cout << "p3NetMgrIMPL::checkNetAddress() prefAddr: " << sockaddr_storage_iptostring(prefAddr) << std::endl;
 #endif
+					break ;
 				}
 	}
 

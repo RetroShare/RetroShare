@@ -97,8 +97,16 @@ void showSocketError(std::string &out);
 
 std::string socket_errorType(int err);
 
+struct LocalNetIntInfo
+{
+	std::string name ;
+	sockaddr_storage ip_address ;
+	uint32_t type ;					// NetInterfaceInfo::NETWORK_INTERFACE_TYPE_IPV4/6
+	uint32_t status ;				// NetInterfaceInfo::NETWORK_INTERFACE_STATUS_CONNECTED
+};
+
 bool getLocalAddresses(std::list<struct sockaddr_storage> & addrs);
-bool getLocalNetworkInterfaces(std::list<NetInterfaceInfo> & addrs);
+bool getLocalNetworkInterfaces(std::list<LocalNetIntInfo>& addrs);
 
 /* universal socket interface */
 

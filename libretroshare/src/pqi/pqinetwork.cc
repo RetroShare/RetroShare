@@ -360,7 +360,7 @@ bool getLocalAddresses(std::list<sockaddr_storage> & addrs)
 	return !addrs.empty();
 }
 
-bool getLocalNetworkInterfaces(std::list<NetInterfaceInfo> & addrs)
+bool getLocalNetworkInterfaces(std::list<LocalNetIntInfo> & addrs)
 {
 	addrs.clear();
 
@@ -415,10 +415,10 @@ bool getLocalNetworkInterfaces(std::list<NetInterfaceInfo> & addrs)
 	}
 	for ( ifa = ifsaddrs; ifa; ifa = ifa->ifa_next )
 	{
-		NetInterfaceInfo info ;
+		LocalNetIntInfo info ;
 		sockaddr_storage *ss_addr = reinterpret_cast<sockaddr_storage*>(ifa->ifa_addr);
 
-		if ( ifa->ifa_addr && (ifa->ifa_flags & IFF_UP))// && (ss_addr->ss_family == AF_INET || ss_addr->ss_family == AF_INET6))
+		if ( ifa->ifa_addr && (ifa->ifa_flags & IFF_UP))
 		{
 			info.name   = std::string(ifa->ifa_name) ;
 
@@ -434,7 +434,7 @@ bool getLocalNetworkInterfaces(std::list<NetInterfaceInfo> & addrs)
 
 			if (sockaddr_storage_copyip(tmp, * reinterpret_cast<sockaddr_storage*>(ifa->ifa_addr)))
 			{
-				sockaddr_storage_dump(tmp, &info.ip_address);
+				info.ip_address = tmp ;
 				info.status = NetInterfaceInfo::NETWORK_INTERFACE_STATUS_CONNECTED ;
 			}
 			else

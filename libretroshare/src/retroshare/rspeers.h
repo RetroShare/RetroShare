@@ -213,7 +213,7 @@ struct NetInterfaceInfo
 	};
 
 	std::string name ;
-	std::string ip_address ;
+	std::string ip_address_string ;
 	int status ;
 	int type ;
 };
@@ -399,6 +399,8 @@ public:
 	virtual bool getProxyServer(const uint32_t type, std::string &addr, uint16_t &port,uint32_t& status_flags) = 0;
 	virtual bool setProxyServer(const uint32_t type, const std::string &addr, const uint16_t port) = 0;
 	virtual bool getNetInterfaceList(std::list<NetInterfaceInfo>& netinterfaces) = 0;
+	virtual bool setPreferredNetworkInterface(const std::string& netint) = 0;
+	virtual std::string getPreferredNetworkInterface() = 0;
 
 	virtual void getIPServersList(std::list<std::string>& ip_servers) = 0;
 	virtual void allowServerIPDetermination(bool) = 0;

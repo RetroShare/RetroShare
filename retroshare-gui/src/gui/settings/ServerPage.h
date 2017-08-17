@@ -83,6 +83,7 @@ private slots:
     void ipFilterContextMenu(const QPoint &);
     void ipWhiteListContextMenu(const QPoint &point);
     void removeBannedIp();
+	void updatePreferredNetInterface();
 
     // server
     void saveAddresses();

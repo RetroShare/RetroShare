@@ -534,6 +534,16 @@ bool p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
 	return true;
 }
 
+bool p3Peers::setPreferredNetworkInterface(const std::string& netint)
+{
+	mNetMgr->setPreferredNetworkInterface(netint);
+	return true;
+}
+std::string p3Peers::getPreferredNetworkInterface()
+{
+	return mNetMgr->getPreferredNetworkInterface();
+}
+
 bool p3Peers::getNetInterfaceList(std::list<NetInterfaceInfo>& netinterfaces)
 {
 	return mNetMgr->getNetInterfaceList(netinterfaces);

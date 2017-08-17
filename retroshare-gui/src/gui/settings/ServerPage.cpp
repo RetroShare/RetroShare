@@ -153,6 +153,7 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
     connect( ui.cleanKnownIPs_PB, SIGNAL( clicked( ) ), this, SLOT( clearKnownAddressList() ) );
     connect( ui.testIncoming_PB, SIGNAL( clicked( ) ), this, SLOT( saveAndTestInProxy() ) );
     connect( ui.showDiscStatusBar,SIGNAL(toggled(bool)),this,SLOT(updateShowDiscStatusBar())) ;
+    connect( ui.netInterfaces_CB,SIGNAL(activated(int)),this,SLOT(updatePreferredNetInterface())) ;
 
 #ifdef SERVER_DEBUG
     std::cerr << "ServerPage::ServerPage() called";
@@ -198,6 +199,19 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
 	QObject::connect(ui.enableCheckBox,SIGNAL(toggled(bool)),this,SLOT(updateRelayMode()));
 	QObject::connect(ui.serverCheckBox,SIGNAL(toggled(bool)),this,SLOT(updateRelayMode()));
 
+}
+
+void ServerPage::updatePreferredNetInterface()
+{
+	std::string net_int_string ;
+
+	if(ui.netInterfaces_CB->currentIndex() == 0)
+		net_int_string = "" ;
+	else
+		net_int_string = ui.netInterfaces_CB->itemData(ui.netInterfaces_CB->currentIndex(),Qt::UserRole).toString().toStdString();
+
+	std::cerr << "New net string: \"" << net_int_string << "\"" << std::endl;
+	rsPeers->setPreferredNetworkInterface(net_int_string);
 }
 
 void ServerPage::saveAndTestInProxy()
@@ -813,13 +827,19 @@ void ServerPage::updateStatus()
 	std::list<NetInterfaceInfo> netlist ;
 	rsPeers->getNetInterfaceList(netlist) ;
 
+	QString current_item = ui.netInterfaces_CB->itemText(ui.netInterfaces_CB->currentIndex());
+
 	whileBlocking(ui.netInterfaces_CB)->clear();
 	whileBlocking(ui.netInterfaces_CB)->addItem(tr("Auto")) ;
 
 	std::map<std::string,NetInterfaceInfo> int_map;
 
 	for(auto it(netlist.begin());it!=netlist.end();++it)
+	{
+		std::cerr << "Interface: " << (*it).name << " type: " << (*it).type << ", IP: " << (*it).ip_address_string << ", status: " << (*it).status << std::endl;
 		int_map[it->name].type |= it->type ;
+	}
+	uint32_t indx=0;
 
 	for(auto it(int_map.begin());it!=int_map.end();++it)
 	{
@@ -838,6 +858,13 @@ void ServerPage::updateStatus()
 		txt += ")" ;
 
 		whileBlocking(ui.netInterfaces_CB)->addItem(txt) ;
+
+		ui.netInterfaces_CB->setItemData(indx,QString::fromStdString(it->second.name),Qt::UserRole);
+
+		if(it->second.name == current_item.toStdString())
+			ui.netInterfaces_CB->setCurrentIndex(indx) ;
+
+		indx++;
 	}
 
     /* load up configuration from rsPeers */
