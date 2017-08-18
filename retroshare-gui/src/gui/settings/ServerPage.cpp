@@ -205,12 +205,14 @@ void ServerPage::updatePreferredNetInterface()
 {
 	std::string net_int_string ;
 
+	//std::cerr << "Current index: " << ui.netInterfaces_CB->currentIndex() << std::endl;
+
 	if(ui.netInterfaces_CB->currentIndex() == 0)
 		net_int_string = "" ;
 	else
 		net_int_string = ui.netInterfaces_CB->itemData(ui.netInterfaces_CB->currentIndex(),Qt::UserRole).toString().toStdString();
 
-	std::cerr << "New net string: \"" << net_int_string << "\"" << std::endl;
+	//std::cerr << "New net string: \"" << net_int_string << "\"" << std::endl;
 	rsPeers->setPreferredNetworkInterface(net_int_string);
 }
 
@@ -827,19 +829,22 @@ void ServerPage::updateStatus()
 	std::list<NetInterfaceInfo> netlist ;
 	rsPeers->getNetInterfaceList(netlist) ;
 
+	std::string preferred_net_int = rsPeers->getPreferredNetworkInterface();
+
 	QString current_item = ui.netInterfaces_CB->itemText(ui.netInterfaces_CB->currentIndex());
 
 	whileBlocking(ui.netInterfaces_CB)->clear();
 	whileBlocking(ui.netInterfaces_CB)->addItem(tr("Auto")) ;
+	whileBlocking(ui.netInterfaces_CB)->setItemData(0,QString(),Qt::UserRole);
 
-	std::map<std::string,NetInterfaceInfo> int_map;
+	std::map<std::string,uint32_t> int_map;
 
 	for(auto it(netlist.begin());it!=netlist.end();++it)
 	{
-		std::cerr << "Interface: " << (*it).name << " type: " << (*it).type << ", IP: " << (*it).ip_address_string << ", status: " << (*it).status << std::endl;
-		int_map[it->name].type |= it->type ;
+		//std::cerr << "Interface: " << (*it).name << " type: " << (*it).type << ", IP: " << (*it).ip_address_string << ", status: " << (*it).status << std::endl;
+		int_map[it->name] |= it->type ;
 	}
-	uint32_t indx=0;
+	uint32_t indx=1;
 
 	for(auto it(int_map.begin());it!=int_map.end();++it)
 	{
@@ -847,7 +852,7 @@ void ServerPage::updateStatus()
 		txt += QString::fromStdString(it->first);
 		txt += " (" ;
 
-		switch(it->second.type)
+		switch(it->second)
 		{
 		case NetInterfaceInfo::NETWORK_INTERFACE_TYPE_IPV4 | NetInterfaceInfo::NETWORK_INTERFACE_TYPE_IPV6: txt += "IPv4/IPv6" ; break;
 		case                                                 NetInterfaceInfo::NETWORK_INTERFACE_TYPE_IPV6: txt += "IPv6" ; break;
@@ -858,11 +863,10 @@ void ServerPage::updateStatus()
 		txt += ")" ;
 
 		whileBlocking(ui.netInterfaces_CB)->addItem(txt) ;
+		whileBlocking(ui.netInterfaces_CB)->setItemData(indx,QString::fromStdString(it->first),Qt::UserRole);
 
-		ui.netInterfaces_CB->setItemData(indx,QString::fromStdString(it->second.name),Qt::UserRole);
-
-		if(it->second.name == current_item.toStdString())
-			ui.netInterfaces_CB->setCurrentIndex(indx) ;
+		if(it->first == preferred_net_int)
+			whileBlocking(ui.netInterfaces_CB)->setCurrentIndex(indx) ;
 
 		indx++;
 	}
