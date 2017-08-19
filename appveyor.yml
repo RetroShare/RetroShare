@@ -85,6 +85,7 @@ environment:
 #  - cmd: echo This is batch again
 #  - cmd: set MY_VAR=12345
 install:
+  - git submodule update --init
   # Configuring MSys2
   - set PATH=C:\msys64\usr\bin;%PATH%
   - set PATH=C:\msys64\mingw32\bin;%PATH%

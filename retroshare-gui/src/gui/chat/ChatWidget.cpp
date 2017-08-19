@@ -72,8 +72,15 @@
  * #define CHAT_DEBUG 1
  *****/
 
-ChatWidget::ChatWidget(QWidget *parent) :
-    QWidget(parent), sendingBlocked(false), ui(new Ui::ChatWidget)
+ChatWidget::ChatWidget(QWidget *parent)
+  : QWidget(parent)
+  , completionPosition(0), newMessages(false), typing(false), peerStatus(0)
+  , sendingBlocked(false), useCMark(false)
+  , lastStatusSendTime(0)
+  , firstShow(true), inChatCharFormatChanged(false), firstSearch(true)
+  , lastUpdateCursorPos(0), lastUpdateCursorEnd(0)
+  , completer(NULL), notify(NULL)
+  , ui(new Ui::ChatWidget)
 {
 	ui->setupUi(this);
 
@@ -84,16 +91,7 @@ ChatWidget::ChatWidget(QWidget *parent) :
 	int butt_size(iconSize.height() + fmm);
 	QSize buttonSize = QSize(butt_size, butt_size);
 
-	newMessages = false;
-	typing = false;
-	peerStatus = 0;
-	firstShow = true;
-	firstSearch = true;
-	inChatCharFormatChanged = false;
-	completer = NULL;
 	lastMsgDate = QDate::currentDate();
-
-	lastStatusSendTime = 0 ;
 
 	//Resize Tool buttons
 	ui->emoteiconButton->setFixedSize(buttonSize);
@@ -144,7 +142,6 @@ ChatWidget::ChatWidget(QWidget *parent) :
 	connect(ui->actionSearchWithoutLimit, SIGNAL(triggered()), this, SLOT(toogle_SeachWithoutLimit()));
 	connect(ui->searchButton, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuSearchButton(QPoint)));
 
-	notify=NULL;
 	ui->notifyButton->setVisible(false);
 
 	ui->markButton->setToolTip(tr("<b>Mark this selected text</b><br><i>Ctrl+M</i>"));
@@ -194,6 +191,7 @@ ChatWidget::ChatWidget(QWidget *parent) :
 	fontmenu->addAction(ui->actionResetFont);
 	fontmenu->addAction(ui->actionNoEmbed);
 	fontmenu->addAction(ui->actionSendAsPlainText);
+	fontmenu->addAction(ui->actionSend_as_CommonMark);
 
 	QMenu *menu = new QMenu();
 	menu->addAction(ui->actionClearChatHistory);
@@ -206,6 +204,10 @@ ChatWidget::ChatWidget(QWidget *parent) :
 	ui->actionSendAsPlainText->setChecked(Settings->getChatSendAsPlainTextByDef());
 	ui->chatTextEdit->setOnlyPlainText(ui->actionSendAsPlainText->isChecked());
 	connect(ui->actionSendAsPlainText, SIGNAL(toggled(bool)), ui->chatTextEdit, SLOT(setOnlyPlainText(bool)) );
+
+	connect(ui->actionSend_as_CommonMark, SIGNAL(toggled(bool)), this, SLOT(setUseCMark(bool)) );
+	ui->cmPreview->setVisible(false);
+	connect(ui->chatTextEdit, SIGNAL(textChanged()), this, SLOT(updateCMPreview()) );
 
 	ui->textBrowser->resetImagesStatus(Settings->getChatLoadEmbeddedImages());
 	ui->textBrowser->installEventFilter(this);
@@ -981,6 +983,11 @@ void ChatWidget::addChatMsg(bool incoming, const QString &name, const RsGxsId gx
 			formatTextFlag |= RSHTML_FORMATTEXT_EMBED_SMILEYS;
 	}
 
+	//Use CommonMark
+	if (message.contains("CMark=\"true\"")) {
+		formatTextFlag |= RSHTML_FORMATTEXT_USE_CMARK;
+	}
+
 	// Always fix colors
 	formatTextFlag |= RSHTML_FORMATTEXT_FIX_COLORS;
 	qreal desiredContrast = Settings->valueFromGroup("Chat", "MinimumContrast", 4.5).toDouble();
@@ -1229,7 +1236,9 @@ void ChatWidget::sendChat()
 		text = chatWidget->toPlainText();
 		text.replace(QChar(-4),"");//Char used when image on text.
 	} else {
-		RsHtml::optimizeHtml(chatWidget, text, (ui->actionNoEmbed->isChecked() ? RSHTML_FORMATTEXT_NO_EMBED : 0));
+		RsHtml::optimizeHtml(chatWidget, text,
+		                     (ui->actionNoEmbed->isChecked() ? RSHTML_FORMATTEXT_NO_EMBED : 0)
+		                     + (ui->actionSend_as_CommonMark->isChecked() ? RSHTML_FORMATTEXT_USE_CMARK : 0) );
 	}
 	std::string msg = text.toUtf8().constData();
 
@@ -1821,6 +1830,22 @@ bool ChatWidget::setStyle()
 	}
 
 	return false;
+}
+
+void ChatWidget::setUseCMark(const bool bUseCMark)
+{
+	useCMark = bUseCMark;
+	ui->cmPreview->setVisible(useCMark);
+	updateCMPreview();
+}
+
+void ChatWidget::updateCMPreview()
+{
+	if (!useCMark) return;
+
+	QString message = ui->chatTextEdit->toHtml();
+	QString formattedMessage = RsHtml().formatText(ui->cmPreview->document(), message, RSHTML_FORMATTEXT_USE_CMARK);
+	ui->cmPreview->setHtml(formattedMessage);
 }
 
 void ChatWidget::quote()

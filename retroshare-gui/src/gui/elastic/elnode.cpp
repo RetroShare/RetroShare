@@ -54,7 +54,7 @@
 
 #include <retroshare/rspeers.h>
 #include "edge.h"
-#include "node.h"
+#include "elnode.h"
 #include "graphwidget.h"
 
 #define IMAGE_AUTHED         ":/images/accepted16.png"

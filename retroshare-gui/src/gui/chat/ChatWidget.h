@@ -128,6 +128,8 @@ public:
 
 public slots:
 	void updateStatus(const QString &peer_id, int status);
+	void setUseCMark(const bool bUseCMark);
+	void updateCMPreview();
 
 private slots:
 	//void pasteCreateMsgLink() ;
@@ -222,7 +224,8 @@ private:
 	bool typing;
 	int peerStatus;
 
-    bool sendingBlocked;
+	bool sendingBlocked;
+	bool useCMark;
 
 	time_t lastStatusSendTime;
 

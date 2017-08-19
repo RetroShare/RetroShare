@@ -34,7 +34,7 @@
 #include "gui/FriendsDialog.h"
 #include "gui/MainWindow.h"
 #include "gui/chat/ChatWidget.h"
-#include "gui/common/html.h"
+#include "gui/common/rshtml.h"
 #include "gui/common/FriendSelectionDialog.h"
 #include "gui/common/RSTreeWidgetItem.h"
 #include "gui/gxs/GxsIdChooser.h"
