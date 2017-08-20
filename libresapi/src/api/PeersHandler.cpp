@@ -45,12 +45,37 @@ namespace resource_api
 
 void peerDetailsToStream(StreamBase& stream, RsPeerDetails& details)
 {
+    std::string nodeType_string;
+    if(details.isHiddenNode)
+    {
+        switch (details.hiddenType)
+        {
+            case RS_HIDDEN_TYPE_I2P:
+                nodeType_string = "I2P";
+            break;
+            case RS_HIDDEN_TYPE_TOR:
+                nodeType_string = "TOR";
+            break;
+            case RS_HIDDEN_TYPE_NONE:
+                nodeType_string = "None";
+            break;
+            case RS_HIDDEN_TYPE_UNKNOWN:
+                nodeType_string = "Unknown";
+            break;
+            default:
+                nodeType_string = "Undefined";
+        }
+    }else{
+        nodeType_string = "Normal";
+    }
+
     stream
         << makeKeyValueReference("peer_id", details.id)
         << makeKeyValueReference("name", details.name)
         << makeKeyValueReference("location", details.location)
         << makeKeyValueReference("pgp_id", details.gpg_id)
-	    << makeKeyValueReference("pgp_id", details.gpg_id);
+        << makeKeyValueReference("isHiddenNode", details.isHiddenNode)
+        << makeKeyValueReference("nodeType",  nodeType_string );
 
 	if(details.state & RS_PEER_STATE_CONNECTED)
 	{
