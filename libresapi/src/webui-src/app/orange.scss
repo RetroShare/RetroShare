@@ -1,13 +1,14 @@
 body {
-    background-color: #666;
-    color: orange;
-    font-family: times;
+    background-color: #CCC;
+    color: #666;
+    font-family: sans;
     margin: 0em;
     /*padding: 1.5em;*/
     padding: 2mm;
     font-size: 1.1em;
     box-sizing: border-box;
 }
+h2{text-transform: uppercase;}
 
 #overlay{
     z-index: 10;
@@ -40,48 +41,81 @@ body {
 }
 td{
     padding: 0.3em;
-    border-style: solid;
+    border-style: none;
     border-width: 0.1em;
-    border-color: lime;
+    border-color: orange;
 }
-hr {
-    color: lime;
+
+li {
+    list-style: none;
 }
-.menu{
-    border-style: solid;
-    border-color: lime;
-    border-width: 0.1em;
-    cursor: pointer;
-    padding: 0.0em;
-}
+
 .btn{
-    border-style: solid;
-    border-color: lime;
-    border-width: 0.1em;
     cursor: pointer;
     padding: 0.1em;
 }
 
-.btn2, .box {
-    border-style: solid;
-    border-color: orangered;
-    border-color: limeGreen;
-    border-width: 1px;
-    border-radius: 3mm;
-    padding: 2mm;
-    font-size: 10mm;
+input[type="button"]{
+    border:solid 1px  rgba(0,0,0,0);
+    border-radius: 10px;
+    font-size: 6mm;
     cursor: pointer;
-    margin-bottom: 2mm;
     color: #333;
-    background-color: #e9810c;
+    background-color: #f79e3a;
     width: 26vw;
     display: inline-grid;
     margin: 0.2rem;
-    padding: 2.5rem;
+    padding: 0.5rem;
     text-align: center;
     text-transform: capitalize;
     box-shadow: 5px 5px 5px #333;
     word-break: break-all;
+}
+
+.btn2, .box {
+    border:solid 1px  rgba(0,0,0,0);
+    border-radius: 10px;
+    font-size: 6mm;
+    cursor: pointer;
+    color: #333;
+    background-color: #f79e3a;
+    width: 26vw;
+    display: inline-grid;
+    margin: 0.2rem;
+    padding: 0.5rem;
+    text-align: center;
+    text-transform: capitalize;
+    box-shadow: 5px 5px 5px #333;
+    word-break: break-all;
+}
+.menu{
+    border: solid 1px rgba(0,0,0,0);
+    border-radius: 10px;
+    font-size: 0.8em;
+    cursor: pointer;
+    background-color: #f79e3a;
+    display: inline-grid;
+    margin: 0.2rem;
+    padding: 0.5rem;
+    text-align: center;
+    text-transform: capitalize;
+}
+
+span.menu:nth-child(2){
+    background-color: rgba(0,0,0,0);
+}
+
+div.btn2:nth-child(9) {
+    border: rgba(0,0,0,0);
+    background-color: rgba(0,0,0,0);
+    text-decoration: underline;
+    box-shadow: unset;
+    margin-top: 1em;
+    text-align: left !important;
+    font-size: 1em;
+}
+div.btn2:nth-child(9):hover{
+    color:#666;
 }
 .btn2:hover{
     background-color:orangered;
@@ -90,8 +124,8 @@ hr {
 
 .btnSmall{
     border-style: solid;
-    /*border-color: lime;*/
-    border-color: limeGreen;
+    /*border-color: orange;*/
+    border-color: orange;
     /*border-width: 1px;*/
     border-radius: 3mm;
     padding: 1mm;
@@ -122,11 +156,8 @@ hr {
 }
 
 
-input,textarea{
-    color: lime;
-    font-family: monospace;
-    background-color: black;
-    border-color: lime;
+input, textarea{
+    border-color: orange;
     font-size: 10mm;
     border-radius: 3mm;
     border-width: 1mm;
@@ -139,16 +170,14 @@ input,textarea{
     /* make the text input fit small screens*/
     box-sizing: border-box;
 }
-input:hover{
-    background-color: midnightblue;
+input[type="button"]:hover{
+    background-color:orangered;
 }
 
 textarea#txtNewMsg{
-    color: lime;
+    color: orange;
     font-family: monospace;
-    background-color: black;
-    border-color: lime;
-    font-size: 100%;
+   font-size: 100%;
     border-radius: 3mm;
     border-width: 1mm;
     padding: 2mm;
@@ -165,10 +194,10 @@ textarea#txtNewMsg{
 
 
 input#txtMsgKeyword{
-    color: lime;
+  /*  color: orange;
     font-family: monospace;
-    background-color: black;
-    border-color: lime;
+    background-color: black;*/
+    border-color: orange;
     font-size: 100%;
     border-radius: 3mm;
     border-width: 1mm;
