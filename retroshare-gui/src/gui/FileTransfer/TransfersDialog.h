@@ -29,6 +29,9 @@
 
 #include "ui_TransfersDialog.h"
 
+#include <QItemSelectionModel>
+#include <QSortFilterProxyModel>
+
 #define IMAGE_TRANSFERS      	":/icons/ktorrent_128.png"
 
 class QShortcut;
@@ -153,6 +156,8 @@ private slots:
     void setShowDLLastDLColumn(bool show);
     void setShowDLPath(bool show);
 
+    void filterChanged(const QString &text);
+
 signals:
     void playFiles(QStringList files);
 
@@ -160,6 +165,7 @@ private:
     QString getPeerName(const RsPeerId &peer_id) const ;
 
     QStandardItemModel *DLListModel;
+    QSortFilterProxyModel *DLLFilterModel;
     QStandardItemModel *ULListModel;
     QItemSelectionModel *selection;
     QItemSelectionModel *selectionUp;
@@ -263,6 +269,7 @@ public slots:
     QString getFileName(int row, QStandardItemModel *model);
     QString getStatus(int row, QStandardItemModel *model);
     QString getID(int row, QStandardItemModel *model);
+    QString getID(int row, QSortFilterProxyModel *filter);
     QString getPriority(int row, QStandardItemModel *model);
     qlonglong getFileSize(int row, QStandardItemModel *model);
     qlonglong getTransfered(int row, QStandardItemModel *model);
