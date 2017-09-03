@@ -1089,7 +1089,23 @@ bool p3FileDatabase::search(const RsFileHash &hash, FileSearchFlags hintflags, F
 
     if(hintflags & RS_FILE_HINTS_REMOTE)
     {
-        NOT_IMPLEMENTED();
+        EntryIndex indx;
+		bool found = false ;
+		
+		for(uint32_t i=0;i<mRemoteDirectories.size();++i)
+			if(mRemoteDirectories[i] != NULL && mRemoteDirectories[i]->searchHash(hash,indx))
+			{
+				TransferInfo ti ;
+				ti.peerId = mRemoteDirectories[i]->peerId();
+				        
+				info.hash = hash ;
+				info.peers.push_back(ti) ;
+
+				found = true ;
+			}
+		
+		if(found)
+			return true;
     }
     return false;
 }

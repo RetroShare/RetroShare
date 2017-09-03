@@ -923,7 +923,12 @@ bool RemoteDirectoryStorage::deserialiseUpdateDirEntry(const EntryIndex& indx,co
     return true ;
 }
 
+int RemoteDirectoryStorage::searchHash(const RsFileHash& hash, EntryIndex& result) const
+{
+    RS_STACK_MUTEX(mDirStorageMtx) ;
 
+    return mFileHierarchy->searchHash(hash,result);
+}
 
 
 
