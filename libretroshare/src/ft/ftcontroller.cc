@@ -69,8 +69,9 @@
  * #define CONTROL_DEBUG 1
  * #define DEBUG_DWLQUEUE 1
  *****/
+#define CONTROL_DEBUG 1
 
-static const int32_t SAVE_TRANSFERS_DELAY 			= 301	; // save transfer progress every 301 seconds.
+static const int32_t SAVE_TRANSFERS_DELAY 			= 60;//301	; // save transfer progress every 301 seconds.
 static const int32_t INACTIVE_CHUNKS_CHECK_DELAY 	= 240	; // time after which an inactive chunk is released
 static const int32_t MAX_TIME_INACTIVE_REQUEUED 	= 120 ; // time after which an inactive ftFileControl is bt-queued
 
@@ -222,8 +223,8 @@ void ftController::data_tick()
 		usleep(1*1000*1000); // 1 sec
 
 #ifdef CONTROL_DEBUG
-		std::cerr << "ftController::run()";
-		std::cerr << std::endl;
+		//std::cerr << "ftController::run()";
+		//std::cerr << std::endl;
 #endif
 		bool doPending = false;
 		{
@@ -280,12 +281,24 @@ void ftController::data_tick()
 
 void ftController::searchForDirectSources()
 {
+#ifdef CONTROL_DEBUG
+	std::cerr << "ftController::searchForDirectSources()" << std::endl;
+#endif
 	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
-	if (!mSearch) return;
+	if (!mSearch)
+	{
+#ifdef CONTROL_DEBUG
+		std::cerr << "  search module not available!" << std::endl;
+#endif
+		return;
+	}
 
 	for(std::map<RsFileHash,ftFileControl*>::iterator it(mDownloads.begin()); it != mDownloads.end(); ++it )
 		if(it->second->mState != ftFileControl::QUEUED && it->second->mState != ftFileControl::PAUSED )
 		{
+#ifdef CONTROL_DEBUG
+			std::cerr << "  file " << it->first << ":" << std::endl;
+#endif
 			FileInfo info ;	// Info needs to be re-allocated each time, to start with a clear list of peers (it's not cleared down there)
 
 			if( mSearch->search(it->first, RS_FILE_HINTS_REMOTE | RS_FILE_HINTS_SPEC_ONLY, info) )
@@ -300,8 +313,19 @@ void ftController::searchForDirectSources()
 					if( bAllowDirectDL )
 						if( it->second->mTransfer->addFileSource(pit->peerId) ) /* if the sources don't exist already - add in */
 							setPeerState( it->second->mTransfer, pit->peerId, FT_CNTRL_STANDARD_RATE, mServiceCtrl->isPeerConnected(mFtServiceType, pit->peerId) );
+#ifdef CONTROL_DEBUG
+					std::cerr << "    found source " << pit->peerId << ", allowDirectDL=" << bAllowDirectDL << ". " << (bAllowDirectDL?"adding":"not adding") << std::endl;
+#endif
 				}
+#ifdef CONTROL_DEBUG
+			else
+				std::cerr << "    search returned empty.: " << std::endl;
+#endif
 		}
+#ifdef CONTROL_DEBUG
+		else
+			std::cerr << "  file " << it->first << ": state is " << it->second->mState << ": ignored." << std::endl;
+#endif
 }
 
 void ftController::tickTransfers()
@@ -311,7 +335,7 @@ void ftController::tickTransfers()
 	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 
 #ifdef CONTROL_DEBUG
-	std::cerr << "ticking transfers." << std::endl ;
+	//	std::cerr << "ticking transfers." << std::endl ;
 #endif
 	// Collect all non queued files.
 	//
