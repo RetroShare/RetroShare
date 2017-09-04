@@ -512,7 +512,7 @@ void PeersHandler::handleWildcard(Request &req, Response &resp)
 				locationStream.getStreamToMember();
 
 				int bestPeerState = 0;
-                uint32_t lastConnect = 0;
+				uint32_t lastConnect = 0;
 				unsigned int bestRSState = 0;
 				std::string bestCustomStateString;
 
@@ -526,10 +526,10 @@ void PeersHandler::handleWildcard(Request &req, Response &resp)
 							unread = unread_msgs.find(vit->id)->second;
 						stream << makeKeyValueReference("unread_msgs", unread);
 						peerInfoToStream(stream,*vit, mRsPeers, grpInfo, have_avatar(mRsMsgs, vit->id));
-                        
-                        // Get latest contact timestamp
-                        if(vit->lastConnect > lastConnect)
-                            lastConnect = vit->lastConnect;
+						
+						// Get latest contact timestamp
+						if(vit->lastConnect > lastConnect)
+							lastConnect = vit->lastConnect;
 
 						/* Custom state string */
 						std::string customStateString;
@@ -608,7 +608,7 @@ void PeersHandler::handleWildcard(Request &req, Response &resp)
 					state_string = "undefined";
 
 				itemStream << makeKeyValue("state_string", state_string);
-                itemStream << makeKeyValue("last_contact", lastConnect);
+				itemStream << makeKeyValue("last_contact", lastConnect);
 			}
 			resp.mStateToken = getCurrentStateToken();
 		}
@@ -644,26 +644,26 @@ void PeersHandler::handleWildcard(Request &req, Response &resp)
 			std::string error_string;
 			RsPeerDetails peerDetails;
 			//std::string debug_string = " ";
-            RsPgpId own_pgp = mRsPeers->getGPGOwnId();
-            RsPeerId ownpeer_id = mRsPeers->getOwnId();
+			RsPgpId own_pgp = mRsPeers->getGPGOwnId();
+			RsPeerId ownpeer_id = mRsPeers->getOwnId();
 			do{
-                
-                if (!cert_string.empty())
-                {
-                    RsPgpId pgp_id ;
-                    RsPeerId ssl_id ;
-                    std::string error_string ;
+				
+				if (!cert_string.empty())
+				{
+					RsPgpId pgp_id ;
+					RsPeerId ssl_id ;
+					std::string error_string ;
 
-                    if(!mRsPeers->loadCertificateFromString(cert_string,ssl_id,pgp_id,error_string))
-                    {
-                        std::cerr << "handleWildcard::loadCertificateFromString(): cannot load that certificate. " ;
-                        std::cerr << error_string << std::endl;
-                        resp.mDebug << "cannot load that certificate " << std::endl;
-                        resp.mDebug << error_string << std::endl;
-                        break ;
-                    }
-                }
-                
+					if(!mRsPeers->loadCertificateFromString(cert_string,ssl_id,pgp_id,error_string))
+					{
+						std::cerr << "handleWildcard::loadCertificateFromString(): cannot load that certificate. " ;
+						std::cerr << error_string << std::endl;
+						resp.mDebug << "cannot load that certificate " << std::endl;
+						resp.mDebug << error_string << std::endl;
+						break ;
+					}
+				}
+				
 				std::cerr << "handleWildcard addPeer: loadDetailsFromStringCert" << std::endl;
 				
 				if(!mRsPeers->loadDetailsFromStringCert(cert_string, peerDetails, error_code))
@@ -679,34 +679,34 @@ void PeersHandler::handleWildcard(Request &req, Response &resp)
 				{
 					resp.mDebug << "Error: failed to add peer gpg_id.isNull" << std::endl;
 					resp.mDebug << error_string << std::endl;
-                    break;
+					break;
 				}
-                
-                if(peerDetails.gpg_id == own_pgp)
-                {
-                    if(peerDetails.id == ownpeer_id)
-                    {
-                        std::cerr << "handleWildcard addPeer: is own peer_id, ignore" << std::endl;
-                        resp.mDebug << "Error: failed to add peer_id, because its your own peer_id" << std::endl;
-                        resp.mDebug << error_string << std::endl;
-                        break;
-                    }
-                    
-                    std::cerr << "handleWildcard addPeer: is own pgp_id, update only" << std::endl;
-                    
-                }else{
 				
-                    if(!mRsPeers->addFriend(peerDetails.id, peerDetails.gpg_id, flags))
-                    {
-                        resp.mDebug << "Error: failed to addFriend" << std::endl;
-                        resp.mDebug << error_string << std::endl;
-                        break;
-                    }
-                    
-                    std::cerr << "handleWildcard addPeer: addFriend ok " << peerDetails.gpg_id << std::endl;
-                    
-               }
-                
+				if(peerDetails.gpg_id == own_pgp)
+				{
+					if(peerDetails.id == ownpeer_id)
+					{
+						std::cerr << "handleWildcard addPeer: is own peer_id, ignore" << std::endl;
+						resp.mDebug << "Error: failed to add peer_id, because its your own peer_id" << std::endl;
+						resp.mDebug << error_string << std::endl;
+						break;
+					}
+					
+					std::cerr << "handleWildcard addPeer: is own pgp_id, update only" << std::endl;
+					
+				}else{
+				
+					if(!mRsPeers->addFriend(peerDetails.id, peerDetails.gpg_id, flags))
+					{
+						resp.mDebug << "Error: failed to addFriend" << std::endl;
+						resp.mDebug << error_string << std::endl;
+						break;
+					}
+					
+					std::cerr << "handleWildcard addPeer: addFriend ok " << peerDetails.gpg_id << std::endl;
+					
+			   }
+				
 				ok = true;
 				
 				// Retrun node details to response, after succes of adding peers
@@ -723,8 +723,8 @@ void PeersHandler::handleWildcard(Request &req, Response &resp)
 				if (peerDetails.isHiddenNode)
 				{
 					std::cerr << "handleWildcard addPeer: setting hidden node.";
-                    std::cerr << peerDetails.hiddenNodeAddress;
-                    std::cerr << " Port: " << peerDetails.hiddenNodePort << std::endl;
+					std::cerr << peerDetails.hiddenNodeAddress;
+					std::cerr << " Port: " << peerDetails.hiddenNodePort << std::endl;
 					mRsPeers->setHiddenNode(peerDetails.id, peerDetails.hiddenNodeAddress, peerDetails.hiddenNodePort);
 				}
 				else
@@ -732,21 +732,21 @@ void PeersHandler::handleWildcard(Request &req, Response &resp)
 					//let's check if there is ip adresses in the certificate.
 					if (!peerDetails.extAddr.empty() && peerDetails.extPort) {
 						std::cerr << "handleWildcard addPeer: setting ip ext address." ;
-                        std::cerr << peerDetails.extAddr;
-                        std::cerr << " Port: " << peerDetails.extPort;
-                        std::cerr << std::endl;
+						std::cerr << peerDetails.extAddr;
+						std::cerr << " Port: " << peerDetails.extPort;
+						std::cerr << std::endl;
 						mRsPeers->setExtAddress(peerDetails.id, peerDetails.extAddr, peerDetails.extPort);
 					}
 					if (!peerDetails.localAddr.empty() && peerDetails.localPort) {
 						std::cerr << "handleWildcard addPeer: setting ip local address." ;
-                        std::cerr << peerDetails.localAddr;
-                        std::cerr << " Port: " << peerDetails.localPort << std::endl;
+						std::cerr << peerDetails.localAddr;
+						std::cerr << " Port: " << peerDetails.localPort << std::endl;
 						mRsPeers->setLocalAddress(peerDetails.id, peerDetails.localAddr, peerDetails.localPort);
 					}
 					if (!peerDetails.dyndns.empty()) {
 					   
 						std::cerr << "handleWildcard addPeer: setting DynDNS." ;
-                        std::cerr << peerDetails.dyndns << std::endl;
+						std::cerr << peerDetails.dyndns << std::endl;
 						mRsPeers->setDynDNS(peerDetails.id, peerDetails.dyndns);
 					}
 				}
@@ -815,17 +815,17 @@ void PeersHandler::handleRemoveNode(Request &req, Response &resp)
 	req.mStream << makeKeyValueReference("gpg_id", gpg_id);
 	RsPeerId peerId(ssl_peer_id);
 	RsPgpId gpgId(gpg_id);
-    
+	
 	if(!gpgId.isNull()){
-        mRsPeers->removeFriend(gpgId);
-        resp.mDataStream << makeKeyValue("gpg_id", gpg_id);
+		mRsPeers->removeFriend(gpgId);
+		resp.mDataStream << makeKeyValue("gpg_id", gpg_id);
 		resp.setOk(); 
-    }else if(!peerId.isNull()){
+	}else if(!peerId.isNull()){
 		mRsPeers->removeFriendLocation(peerId);
-        resp.mDataStream << makeKeyValue("peer_id", ssl_peer_id);
+		resp.mDataStream << makeKeyValue("peer_id", ssl_peer_id);
 		resp.setOk();        
 	}else{
-        resp.setFail("handleRemoveNode Invalid peer_id or gpg_id");
+		resp.setFail("handleRemoveNode Invalid peer_id or gpg_id");
 	}
 }
 
@@ -843,60 +843,60 @@ void PeersHandler::handleGetInactiveUsers(Request &req, Response &resp)
 {
 	std::string datetime;
 	req.mStream << makeKeyValueReference("datetime", datetime);
-    
-    uint32_t before = strtoul(datetime.c_str(), NULL, 10);
-    
-    if(datetime.empty()){
-        std::cerr << "PeersHandler:datetime is empty" << std::endl;
-        before = time(NULL);
-    }
-    
+	
+	uint32_t before = strtoul(datetime.c_str(), NULL, 10);
+	
+	if(datetime.empty()){
+		std::cerr << "PeersHandler:datetime is empty" << std::endl;
+		before = time(NULL);
+	}
+	
   
-    // list all peers
-   	std::list<RsPeerId> peers;
-    mRsPeers->getFriendList(peers);
-    
-    // Make pair of gpg_id and last connect time
-    std::map<RsPgpId, uint32_t> mapRsPgpId;
-    
-    // get all peers' infomations
-    for(std::list<RsPeerId>::iterator lt = peers.begin(); lt != peers.end(); ++lt)
-    {
-        RsPeerDetails details;
-        mRsPeers->getPeerDetails(*lt, details);
-        // Search for exist pgp_id, update the last connect time
-        if(mapRsPgpId.find(details.gpg_id) != mapRsPgpId.end()){
-            if(mapRsPgpId[details.gpg_id] < details.lastConnect)
-                mapRsPgpId[details.gpg_id] = details.lastConnect;
-        }else{
-            mapRsPgpId.insert(std::make_pair(details.gpg_id, details.lastConnect));
-        }
-        
-    }
-    
-    // mark response as list, in case it is empty
-    resp.mDataStream.getStreamToMember();
-    
-    std::map<RsPgpId, uint32_t>::iterator lit;
-    for( lit = mapRsPgpId.begin(); lit != mapRsPgpId.end(); ++lit)
+	// list all peers
+	std::list<RsPeerId> peers;
+	mRsPeers->getFriendList(peers);
+	
+	// Make pair of gpg_id and last connect time
+	std::map<RsPgpId, uint32_t> mapRsPgpId;
+	
+	// get all peers' infomations
+	for(std::list<RsPeerId>::iterator lt = peers.begin(); lt != peers.end(); ++lt)
 	{
-        
-        if (lit->second < before)
+		RsPeerDetails details;
+		mRsPeers->getPeerDetails(*lt, details);
+		// Search for exist pgp_id, update the last connect time
+		if(mapRsPgpId.find(details.gpg_id) != mapRsPgpId.end()){
+			if(mapRsPgpId[details.gpg_id] < details.lastConnect)
+				mapRsPgpId[details.gpg_id] = details.lastConnect;
+		}else{
+			mapRsPgpId.insert(std::make_pair(details.gpg_id, details.lastConnect));
+		}
+		
+	}
+	
+	// mark response as list, in case it is empty
+	resp.mDataStream.getStreamToMember();
+	
+	std::map<RsPgpId, uint32_t>::iterator lit;
+	for( lit = mapRsPgpId.begin(); lit != mapRsPgpId.end(); ++lit)
+	{
+		
+		if (lit->second < before)
 		{
-            
+			
 			std::cerr << "YES Adding OLD: " <<  mRsPeers->getGPGName(lit->first);
 			std::cerr << "last_contact: " << lit->second <<std::endl;
-            
-            StreamBase& itemStream = resp.mDataStream.getStreamToMember();
-            itemStream << makeKeyValue("pgp_id", lit->first.toStdString());
-            itemStream << makeKeyValue("name", mRsPeers->getGPGName(lit->first));
-            itemStream << makeKeyValue("last_contact", lit->second);
+			
+			StreamBase& itemStream = resp.mDataStream.getStreamToMember();
+			itemStream << makeKeyValue("pgp_id", lit->first.toStdString());
+			itemStream << makeKeyValue("name", mRsPeers->getGPGName(lit->first));
+			itemStream << makeKeyValue("last_contact", lit->second);
 
 		}
 
-    }
-    
-    resp.setOk();
+	}
+	
+	resp.setOk();
 	
 }
 
