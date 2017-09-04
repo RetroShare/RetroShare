@@ -1073,24 +1073,39 @@ bool p3FileDatabase::search(const RsFileHash &hash, FileSearchFlags hintflags, F
         RsFileHash real_hash ;
         EntryIndex indx;
 
-        if(!mLocalSharedDirs->searchHash(hash,real_hash,indx))
-            return false;
+        if(mLocalSharedDirs->searchHash(hash,real_hash,indx))
+		{
+			mLocalSharedDirs->getFileInfo(indx,info) ;
 
-        mLocalSharedDirs->getFileInfo(indx,info) ;
+			if(!real_hash.isNull())
+			{
+				info.hash = real_hash ;
+				info.transfer_info_flags |= RS_FILE_REQ_ENCRYPTED ;
+			}
 
-        if(!real_hash.isNull())
-        {
-            info.hash = real_hash ;
-            info.transfer_info_flags |= RS_FILE_REQ_ENCRYPTED ;
-        }
-
-        return true;
+			return true;
+		}
     }
 
     if(hintflags & RS_FILE_HINTS_REMOTE)
     {
-        NOT_IMPLEMENTED();
-        return false;
+        EntryIndex indx;
+		bool found = false ;
+		
+		for(uint32_t i=0;i<mRemoteDirectories.size();++i)
+			if(mRemoteDirectories[i] != NULL && mRemoteDirectories[i]->searchHash(hash,indx))
+			{
+				TransferInfo ti ;
+				ti.peerId = mRemoteDirectories[i]->peerId();
+				        
+				info.hash = hash ;
+				info.peers.push_back(ti) ;
+
+				found = true ;
+			}
+		
+		if(found)
+			return true;
     }
     return false;
 }
