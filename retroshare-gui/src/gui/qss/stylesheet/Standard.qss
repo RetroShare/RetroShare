@@ -697,7 +697,7 @@ GenCertDialog QLineEdit#hiddenaddr_input {
   background: white;
 	font: bold;
 }
-GenCertDialog QLineEdit#password_input_2 { 
+GenCertDialog QLineEdit#password2_input {
   border: 2px solid #0099cc;
   border-radius: 6px;
   background: white;

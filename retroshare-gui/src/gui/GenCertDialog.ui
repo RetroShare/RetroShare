@@ -50,12 +50,12 @@
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout">
+     <layout class="QVBoxLayout" name="profileframeVLayout">
       <property name="leftMargin">
        <number>9</number>
       </property>
       <item>
-       <widget class="QLabel" name="label">
+       <widget class="QLabel" name="RSLabel">
         <property name="text">
          <string/>
         </property>
@@ -115,7 +115,7 @@
         <property name="styleSheet">
          <string notr="true"/>
         </property>
-        <layout class="QGridLayout" name="gridLayout">
+        <layout class="QGridLayout" name="profile_groupBoxGLayout">
          <property name="leftMargin">
           <number>24</number>
          </property>
@@ -176,7 +176,7 @@
             </widget>
            </item>
            <item row="8" column="2">
-            <widget class="QLineEdit" name="password_input_2">
+            <widget class="QLineEdit" name="password2_input">
              <property name="sizePolicy">
               <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
                <horstretch>0</horstretch>
@@ -283,7 +283,7 @@
             </widget>
            </item>
            <item row="4" column="2">
-            <layout class="QHBoxLayout" name="horizontalLayout_2">
+            <layout class="QHBoxLayout" name="nameHLayout">
              <item>
               <widget class="QLineEdit" name="name_input">
                <property name="sizePolicy">
@@ -604,7 +604,7 @@
             </widget>
            </item>
            <item row="8" column="1">
-            <widget class="QLabel" name="password_label_2">
+            <widget class="QLabel" name="password2_label">
              <property name="maximumSize">
               <size>
                <width>24</width>
@@ -713,7 +713,7 @@
        </widget>
       </item>
       <item>
-       <spacer name="verticalSpacer_2">
+       <spacer name="mainVSpacer">
         <property name="orientation">
          <enum>Qt::Vertical</enum>
         </property>
@@ -750,7 +750,7 @@
   <tabstop>name_input</tabstop>
   <tabstop>node_input</tabstop>
   <tabstop>password_input</tabstop>
-  <tabstop>password_input_2</tabstop>
+  <tabstop>password2_input</tabstop>
   <tabstop>keylength_comboBox</tabstop>
   <tabstop>exportIdentity_PB</tabstop>
   <tabstop>genPGPuser</tabstop>

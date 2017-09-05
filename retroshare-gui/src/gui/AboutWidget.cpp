@@ -60,8 +60,8 @@ AboutWidget::AboutWidget(QWidget* parent)
 
     updateTitle();
 
-    QObject::connect(help_button,SIGNAL(clicked()),this,SLOT(on_help_button_clicked()));
-    QObject::connect(copy_button,SIGNAL(clicked()),this,SLOT(on_copy_button_clicked()));
+    //QObject::connect(help_button,SIGNAL(clicked()),this,SLOT(on_help_button_clicked()));
+    //QObject::connect(copy_button,SIGNAL(clicked()),this,SLOT(on_copy_button_clicked()));
 }
 
 void AboutWidget::installAWidget() {
@@ -226,6 +226,9 @@ void AWidget::initImages()
 
     /* Draw RetroShare version */
     p.drawText(QPointF(10, 50), QString("%1 : %2").arg(tr("Retroshare version"), Rshare::retroshareVersion(true)));
+#ifdef RS_ONLYHIDDENNODE
+    p.drawText(QPointF(10, 70), QString("Only Hidden Node"));
+#endif
 
     /* Draw Qt's version number */
     p.drawText(QPointF(10, 90), QString("Qt %1 : %2").arg(tr("version"), QT_VERSION_STR));
@@ -938,6 +941,9 @@ void AboutWidget::on_copy_button_clicked()
     QString rsVerString = "RetroShare Version: ";
     rsVerString+=Rshare::retroshareVersion(true);
     verInfo+=rsVerString;
+#ifdef RS_ONLYHIDDENNODE
+    verInfo+=" " + tr("Only Hidden Node");
+#endif
     verInfo+="\n";
 
 
