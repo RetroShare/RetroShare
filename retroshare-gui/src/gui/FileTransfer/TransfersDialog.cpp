@@ -19,19 +19,21 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#include <QMenu>
-#include <QInputDialog>
-#include <QFileDialog>
-#include <QStandardItemModel>
-#include <QTreeView>
-#include <QShortcut>
-#include <QFileInfo>
 #include <QDateTime>
 #include <QDir>
+#include <QFileDialog>
+#include <QFileInfo>
+#include <QHeaderView>
+#include <QInputDialog>
+#include <QMenu>
 #include <QMessageBox>
-#include <gui/common/RsUrlHandler.h>
-#include <gui/common/RsCollectionFile.h>
+#include <QShortcut>
+#include <QStandardItemModel>
+
 #include <gui/common/FilesDefs.h>
+#include <gui/common/RsCollectionFile.h>
+#include <gui/common/RsUrlHandler.h>
+#include <gui/common/RSTreeView.h>
 
 #include <algorithm>
 #include <limits>
@@ -204,7 +206,12 @@ TransfersDialog::TransfersDialog(QWidget *parent)
     DLListModel->setHeaderData(COLUMN_ID, Qt::Horizontal, tr("Hash"));
     DLListModel->setHeaderData(COLUMN_LASTDL, Qt::Horizontal, tr("Last Time Seen", "i.e: Last Time Receiced Data"));
     DLListModel->setHeaderData(COLUMN_PATH, Qt::Horizontal, tr("Path", "i.e: Where file is saved"));
-    ui.downloadList->setModel(DLListModel);
+
+    DLLFilterModel = new QSortFilterProxyModel(this);
+    DLLFilterModel->setSourceModel( DLListModel);
+    DLLFilterModel->setFilterCaseSensitivity(Qt::CaseInsensitive);
+    ui.downloadList->setModel(DLLFilterModel);
+
     //ui.downloadList->hideColumn(ID);
     DLDelegate = new DLListDelegate();
     ui.downloadList->setItemDelegate(DLDelegate);
@@ -262,7 +269,14 @@ TransfersDialog::TransfersDialog(QWidget *parent)
 
     // set default column and sort order for download
     ui.downloadList->sortByColumn(COLUMN_NAME, Qt::AscendingOrder);
-    
+
+    connect(ui.filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterChanged(QString)));
+    /* Add filter actions */
+    QString headerName = DLListModel->headerData(COLUMN_NAME, Qt::Horizontal).toString();
+    ui.filterLineEdit->addFilter(QIcon(), headerName, COLUMN_NAME , QString("%1 %2").arg(tr("Search"), headerName));
+    QString headerID = DLListModel->headerData(COLUMN_ID, Qt::Horizontal).toString();
+    ui.filterLineEdit->addFilter(QIcon(), headerID, COLUMN_ID , QString("%1 %2").arg(tr("Search"), headerID));
+
     connect( ui.uploadsList, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( uploadsListCustomPopupMenu( QPoint ) ) );
 
     // Set Upload list model
@@ -649,15 +663,16 @@ void TransfersDialog::downloadListCustomPopupMenu( QPoint /*point*/ )
 	{
 		add_CopyLink = true ;
 
-		QModelIndexList lst = ui.downloadList->selectionModel ()->selectedIndexes ();
-
 		//Look for all selected items
-		for (int i = 0; i < lst.count(); ++i) {
+		std::set<RsFileHash>::const_iterator it = items.begin();
+		std::set<RsFileHash>::const_iterator end = items.end();
+		for (; it != end ; ++it) {
+			RsFileHash fileHash = *it;
+
 			//Look only for first column == File  List
-			if ( lst[i].column() == 0) {
-				//Get Info for current  item
-				if (rsFiles->FileDetails(RsFileHash(getID(lst[i].row(), DLListModel).toStdString())
-				                         , RS_FILE_HINTS_DOWNLOAD, info)) {
+			//Get Info for current  item
+			if (rsFiles->FileDetails(fileHash
+			                         , RS_FILE_HINTS_DOWNLOAD, info)) {
 					/*const uint32_t FT_STATE_FAILED        = 0x0000;
 					 *const uint32_t FT_STATE_OKAY          = 0x0001;
 					 *const uint32_t FT_STATE_WAITING       = 0x0002;
@@ -697,9 +712,8 @@ void TransfersDialog::downloadListCustomPopupMenu( QPoint /*point*/ )
 						}//if (RsCollectionFile::ExtensionString == info
 					}// if(pos !=  std::string::npos)
 
-				}// if (rsFiles->FileDetails(lst[i].data(COLUMN_ID), RS_FILE_HINTS_DOWNLOAD, info))
-			}// if (lst[i].column() == 0)
-		}// for (int i = 0; i < lst.count(); ++i)
+			}// if FileDetails
+		}// for items iterate
 	}// if (!items.empty())
 
 	if (atLeastOne_Waiting || atLeastOne_Downloading || atLeastOne_Queued || atLeastOne_Paused) {
@@ -779,7 +793,7 @@ void TransfersDialog::downloadListCustomPopupMenu( QPoint /*point*/ )
 		contextMnu.addSeparator() ;//--------------------------------------------
 	}//if (add_CopyLink || add_PasteLink)
 
-	if (DLListModel->rowCount()>0 ) {
+	if (DLLFilterModel->rowCount()>0 ) {
 		contextMnu.addAction( expandAllAct ) ;
 		contextMnu.addAction( collapseAllAct ) ;
 	}
@@ -1372,10 +1386,10 @@ void TransfersDialog::insertTransfers()
 	ui.uploadsList->setSortingEnabled(true);
 	
 	downloads = tr("Downloads") + " (" + QString::number(DLListModel->rowCount()) + ")";
-	uploads    = tr("Uploads") + " (" + QString::number(ULListModel->rowCount()) + ")" ;
+	uploads   = tr("Uploads")   + " (" + QString::number(ULListModel->rowCount()) + ")" ;
 
-	ui.tabWidget->setTabText(0,  downloads);
-	ui.tabWidget_2->setTabText(0, uploads);
+	ui.tabWidget->setTabText(0, downloads);
+	ui.tabWidget_UL->setTabText(0, uploads);
 
 }
 
@@ -1512,18 +1526,11 @@ void TransfersDialog::showDetailsDialog()
 
 void TransfersDialog::updateDetailsDialog()
 {
-    RsFileHash file_hash ;
-    std::set<int> rows;
-    std::set<int>::iterator it;
-    getSelectedItems(NULL, &rows);
+	std::set<RsFileHash> items;
+	getSelectedItems(&items, NULL);
 
-    if (rows.size()) {
-        int row = *rows.begin();
-
-        file_hash = RsFileHash(getID(row, DLListModel).toStdString());
-    }
-
-    detailsDialog()->setFileHash(file_hash);
+	if (!items.empty())
+		detailsDialog()->setFileHash(*items.begin());
 }
 
 void TransfersDialog::pasteLink()
@@ -1540,39 +1547,23 @@ void TransfersDialog::getSelectedItems(std::set<RsFileHash> *ids, std::set<int> 
 	if (ids) ids->clear();
 	if (rows) rows->clear();
 
-	int i, imax = DLListModel->rowCount();
+	QModelIndexList selectedRows = selection->selectedRows(COLUMN_ID);
+
+	int i, imax = selectedRows.count();
 	for (i = 0; i < imax; ++i) {
-		bool isParentSelected = false;
-		bool isChildSelected = false;
+		QModelIndex index = selectedRows.at(i);
+		if (index.parent().isValid())
+			index = index.model()->index(index.parent().row(), COLUMN_ID);
 
-		QStandardItem *parent = DLListModel->item(i);
-		if (!parent) continue;
-		QModelIndex pindex = parent->index();
-		if (selection->isSelected(pindex)) {
-			isParentSelected = true;
-		} else {
-			int j, jmax = parent->rowCount();
-			for (j = 0; j < jmax && !isChildSelected; ++j) {
-				QStandardItem *child = parent->child(j);
-				if (!child) continue;
-				QModelIndex cindex = child->index();
-				if (selection->isSelected(cindex)) {
-					isChildSelected = true;
-				}
-			}
+		if (ids) {
+			ids->insert(RsFileHash(index.data(Qt::DisplayRole).toString().toStdString()));
+			ids->insert(RsFileHash(index.data(Qt::UserRole   ).toString().toStdString()));
 		}
 
-		/* if transfered file or it's peers are selected control it*/
-		if (isParentSelected || isChildSelected) {
-			if (ids) {
-                QStandardItem *id = DLListModel->item(i, COLUMN_ID);
-                ids->insert(RsFileHash(id->data(Qt::DisplayRole).toString().toStdString()));
-                ids->insert(RsFileHash(id->data(Qt::UserRole   ).toString().toStdString()));
-			}
-			if (rows) {
-				rows->insert(i);
-			}
+		if (rows) {
+			rows->insert(index.row());
 		}
+
 	}
 }
 
@@ -1945,20 +1936,13 @@ void TransfersDialog::clearcompleted()
 
 void TransfersDialog::showFileDetails()
 {
-    RsFileHash file_hash ;
-	int nb_select = 0 ;
-
-	for(int i = 0; i <= DLListModel->rowCount(); ++i)
-		if(selection->isRowSelected(i, QModelIndex())) 
-		{
-	        file_hash = RsFileHash(getID(i, DLListModel).toStdString());
-			  ++nb_select ;
-		}
-	if(nb_select != 1)
-        detailsDialog()->setFileHash(RsFileHash()) ;
+	std::set<RsFileHash> items ;
+	getSelectedItems(&items, NULL) ;
+	if(items.size() != 1)
+		detailsDialog()->setFileHash(RsFileHash());
 	else
-		detailsDialog()->setFileHash(file_hash) ;
-	
+		detailsDialog()->setFileHash(*items.begin()) ;
+
 	updateDetailsDialog ();
 }
 
@@ -1986,6 +1970,13 @@ QString TransfersDialog::getStatus(int row, QStandardItemModel *model)
 QString TransfersDialog::getID(int row, QStandardItemModel *model)
 {
     return model->data(model->index(row, COLUMN_ID), Qt::UserRole).toString().left(40); // gets only the "hash" part of the name
+}
+
+QString TransfersDialog::getID(int row, QSortFilterProxyModel *filter)
+{
+	QModelIndex index = filter->mapToSource(filter->index(row, COLUMN_ID));
+
+	return filter->sourceModel()->data(index, Qt::UserRole).toString().left(40); // gets only the "hash" part of the name
 }
 
 QString TransfersDialog::getPriority(int row, QStandardItemModel *model)
@@ -2249,4 +2240,12 @@ void TransfersDialog::expandAll()
 void TransfersDialog::collapseAll()
 {
 	ui.downloadList->collapseAll();
+}
+
+void TransfersDialog::filterChanged(const QString& /*text*/)
+{
+	int filterColumn = ui.filterLineEdit->currentFilter();
+	QString text = ui.filterLineEdit->text();
+	DLLFilterModel->setFilterKeyColumn(filterColumn);
+	DLLFilterModel->setFilterRegExp(text);
 }
