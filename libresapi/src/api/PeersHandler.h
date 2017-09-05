@@ -72,6 +72,9 @@ private:
 
 	void handleGetNodeOptions(Request& req, Response& resp);
 	void handleSetNodeOptions(Request& req, Response& resp);
+	
+	void handleRemoveNode(Request &req, Response &resp);
+	void handleGetInactiveUsers(Request &req, Response &resp);
 
     // a helper which ensures proper mutex locking
     StateToken getCurrentStateToken();
