@@ -102,36 +102,35 @@ Rectangle
     //seperator
 	Rectangle
 	{
+		color: "black"
+		anchors.bottom: parent.bottom
+		anchors.bottomMargin: buttonWidth
+		width: parent.width
+		height: 1
+	}
+	Rectangle
+	{
         color: emojiPicker.color
         anchors.bottom: parent.bottom
         width: parent.width
         height: buttonWidth
-    }
-	Rectangle
-	{
-        color: "black"
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: buttonWidth
-        width: parent.width
-        height: 1
-    }
 
-    //emoji category selector
-	ListView
-	{
-        width: parent.width
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: buttonWidth
-        orientation: ListView.Horizontal
-
-        model: emojiCategoryButtons
-		delegate: EmojiCategoryButton
+		//emoji category selector
+		ListView
 		{
-            width: buttonWidth
-            height: buttonWidth
-            color: emojiPicker.color
-			fontName: rootFontName
-        }
+			width: parent.width
+			orientation: ListView.Horizontal
+			anchors.fill: parent
+
+			model: emojiCategoryButtons
+			delegate: EmojiCategoryButton
+			{
+				width: buttonWidth
+				height: buttonWidth
+				color: emojiPicker.color
+				fontName: rootFontName
+			}
+		}
     }
 
 	ListModel
