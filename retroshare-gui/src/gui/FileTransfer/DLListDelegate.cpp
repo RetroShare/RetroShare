@@ -229,6 +229,8 @@ void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
                         painter->drawText(option.rect.translated(pixmap.size().width(), 0), Qt::AlignLeft, temp);
                         break;
     case COLUMN_LASTDL:
+        if (index.data().value<QString>().isEmpty())
+            break;
         qi64Value = index.data().value<qint64>();
         if (qi64Value < std::numeric_limits<qint64>::max()){
             QDateTime qdtLastDL = QDateTime::fromTime_t(qi64Value);
