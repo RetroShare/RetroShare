@@ -1,30 +1,37 @@
 import QtQuick 2.7
 import QtQuick.Controls.Styles 1.2
 
-Rectangle {
+Rectangle
+{
     id: emojiCategoryButton
     property string categoryName
 
 	property var fontName
 
 
-    function completedHandler() {
+	function completedHandler()
+	{
         categoryName = eCatName
 
         //initialize
-        if (parent.currSelEmojiButton === undefined) {
+		if (parent.currSelEmojiButton === undefined)
+		{
             clickedHandler()
         }
     }
 
-    function pressedHandler() {
-        if (state != "SELECTED") {
+	function pressedHandler()
+	{
+		if (state != "SELECTED")
+		{
             state = state == "PRESSED" ? "RELEASED" :  "PRESSED"
         }
     }
 
-    function clickedHandler() {
-        if (parent.currSelEmojiButton !== undefined) {
+	function clickedHandler()
+	{
+		if (parent.currSelEmojiButton !== undefined)
+		{
             parent.currSelEmojiButton.state = "RELEASED"
         }
 
@@ -34,7 +41,8 @@ Rectangle {
     }
 
 
-    Text {
+	Text
+	{
         id: emojiText
         color: "gray"
         text: qsTr(eCatText)
@@ -45,31 +53,39 @@ Rectangle {
 
 
     state: "RELEASED"
-    states: [
-        State {
+	states:
+		[
+		State
+		{
             name: "PRESSED"
-            PropertyChanges {
+			PropertyChanges
+			{
                 target: emojiText
                 font.pixelSize: emojiCategoryButton.width - 10
             }
         },
-        State {
+		State
+		{
             name: "RELEASED"
-            PropertyChanges {
+			PropertyChanges
+			{
                 target: emojiText
                 font.pixelSize: emojiCategoryButton.width - 8
             }
         },
-        State {
+		State
+		{
             name: "SELECTED"
-            PropertyChanges {
+			PropertyChanges
+			{
                 target: emojiCategoryButton
                 color: "#ADD6FF"
             }
         }
     ]
 
-    MouseArea {
+	MouseArea
+	{
         anchors.fill: parent
         hoverEnabled: true
         onEntered: emojiText.color = "black"

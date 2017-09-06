@@ -1,12 +1,14 @@
 import QtQuick 2.7
 import QtQuick.Controls.Styles 1.2
 
-Rectangle {
+Rectangle
+{
     id: emojiButton
 
 	property var fontName
 
-    Text {
+	Text
+	{
         id: emojiText
         color: "gray"
         text: qsTr(eCatText)
@@ -17,17 +19,22 @@ Rectangle {
 
 
     state: "RELEASED"
-    states: [
-        State {
+	states:
+		[
+		State
+		{
             name: "PRESSED"
-            PropertyChanges {
+			PropertyChanges
+			{
                 target: emojiText
                 font.pixelSize: emojiButton.width - 10
             }
         },
-        State {
+		State
+		{
             name: "RELEASED"
-            PropertyChanges {
+			PropertyChanges
+			{
                 target: emojiText
                 font.pixelSize: emojiButton.width - 8
             }
@@ -35,20 +42,25 @@ Rectangle {
     ]
 
 
-    MouseArea {
+	MouseArea
+	{
         anchors.fill: parent
         hoverEnabled: true
 
-        onEntered: {
+		onEntered:
+		{
             emojiText.color = "black"
         }
-        onExited: {
+		onExited:
+		{
             emojiText.color = "gray"
         }
-        onPressedChanged: {
+		onPressedChanged:
+		{
             emojiButton.state = emojiButton.state == "PRESSED" ? "RELEASED" :  "PRESSED"
         }
-        onClicked: {
+		onClicked:
+		{
             Qt.emojiClickedHandler(emojiText.text)
         }
     }
