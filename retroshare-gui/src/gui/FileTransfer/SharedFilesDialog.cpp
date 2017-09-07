@@ -32,20 +32,17 @@
 #include <QStyledItemDelegate>
 
 #include "SharedFilesDialog.h"
-#include "settings/AddFileAssociationDialog.h"
-#include "util/RsAction.h"
-#include "msgs/MessageComposer.h"
-#include "settings/rsharesettings.h"
-#ifdef RS_USE_LINKS
-#include "AddLinksDialog.h"
-#endif
-#include "RetroShareLink.h"
-#include "ShareManager.h"
-#include "RemoteDirModel.h"
-#include "common/PeerDefs.h"
-#include "util/QtVersion.h"
+#include "gui/notifyqt.h"
+#include "gui/RemoteDirModel.h"
+#include "gui/RetroShareLink.h"
+#include "gui/ShareManager.h"
+#include "gui/common/PeerDefs.h"
 #include "gui/common/RsCollectionFile.h"
-#include "notifyqt.h"
+#include "gui/msgs/MessageComposer.h"
+#include "gui/settings/AddFileAssociationDialog.h"
+#include "gui/settings/rsharesettings.h"
+#include "util/QtVersion.h"
+#include "util/RsAction.h"
 
 #include <retroshare/rspeers.h>
 #include <retroshare/rsfiles.h>
@@ -213,12 +210,6 @@ SharedFilesDialog::SharedFilesDialog(RetroshareDirModel *_tree_model,RetroshareD
   connect( copylinkhtmlAct , SIGNAL( triggered() ), this, SLOT( copyLinkhtml() ) );
   sendlinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Send retroshare Links" ), this );
   connect( sendlinkAct , SIGNAL( triggered() ), this, SLOT( sendLinkTo( ) ) );
-#ifdef RS_USE_LINKS
-  sendlinkCloudAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Send retroshare Links to Cloud" ), this );
-  connect( sendlinkCloudAct , SIGNAL( triggered() ), this, SLOT( sendLinkToCloud(  ) ) );
-  addlinkCloudAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Add Links to Cloud" ), this );
-  connect( addlinkCloudAct , SIGNAL( triggered() ), this, SLOT( addLinkToCloud(  ) ) );
-#endif
 
 	collCreateAct= new QAction(QIcon(IMAGE_COLLCREATE), tr("Create Collection..."), this) ;
 	connect(collCreateAct,SIGNAL(triggered()),this,SLOT(collCreate())) ;
@@ -672,31 +663,6 @@ void SharedFilesDialog::sendLinkTo()
     /* window will destroy itself! */
 }
 
-#ifdef RS_USE_LINKS
-void SharedFilesDialog::sendLinkToCloud()
-{
-	copyLink();
-
-	AddLinksDialog *nAddLinksDialog = new AddLinksDialog(QApplication::clipboard()->text());
-
-	nAddLinksDialog->addLinkComment();
-	nAddLinksDialog->close();
-
-	/* window will destroy itself! */
-}
-
-void SharedFilesDialog::addLinkToCloud()
-{
-	copyLink();
-
-	AddLinksDialog *nAddLinksDialog = new AddLinksDialog(QApplication::clipboard()->text());
-
-	nAddLinksDialog->show();
-
-	/* window will destroy itself! */
-}
-#endif
-
 void SharedFilesDialog::collCreate()
 {
 	QModelIndexList lst = getSelected();
@@ -1057,11 +1023,6 @@ void LocalSharedFilesDialog::spawnCustomPopupMenu( QPoint point )
 			contextMnu.addSeparator() ;//------------------------------------
 			contextMnu.addMenu(&collectionMenu) ;
 			contextMnu.addSeparator() ;//------------------------------------
-#ifdef RS_USE_LINKS
-			contextMnu.addAction(sendlinkCloudAct) ;
-			contextMnu.addAction(addlinkCloudAct) ;
-			contextMnu.addSeparator() ;//------------------------------------
-#endif
 			contextMnu.addAction(QIcon(IMAGE_MSG), tr("Recommend in a message to"), this, SLOT(recommendFilesToMsg())) ;
 		break ;
 

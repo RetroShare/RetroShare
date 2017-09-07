@@ -15,7 +15,6 @@
 class QTimer;
 class NetworkDialog;
 class FriendsDialog;
-class SharedFilesDialog;
 class TransfersDialog;
 class ChatDialog;
 class MessagesDialog;

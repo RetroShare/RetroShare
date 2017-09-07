@@ -46,7 +46,7 @@
 #include "ULListDelegate.h"
 #include "FileTransferInfoWidget.h"
 #include <gui/FileTransfer/SearchDialog.h>
-#include <gui/SharedFilesDialog.h>
+#include <gui/FileTransfer/SharedFilesDialog.h>
 #include "xprogressbar.h"
 #include <gui/settings/rsharesettings.h>
 #include "util/misc.h"
