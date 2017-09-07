@@ -10,7 +10,7 @@ Rectangle
     property int buttonWidth: 40
 	property TextArea textArea
 
-	property bool androidMode: true // On Desktop appears on top of text field, instead appears in place of virtual keyboard (under text field)
+	property bool androidMode: Qt.platform.os === "android" // On Desktop appears on top of text field, instead appears in place of virtual keyboard (under text field)
 
 
 	property var rootFontName: theme.emojiFontName
