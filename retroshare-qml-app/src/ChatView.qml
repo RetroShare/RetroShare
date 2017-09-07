@@ -285,7 +285,6 @@ Item
 			onClicked: {
 				if (emojiPicker.state == "EMOJI_HIDDEN") {
 					emojiPicker.state = "EMOJI_SHOWN"
-					Qt.inputMethod.hide();
 				} else {
 					emojiPicker.state = "EMOJI_HIDDEN"
 				}
