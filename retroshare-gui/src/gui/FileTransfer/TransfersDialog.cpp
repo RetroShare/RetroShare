@@ -979,7 +979,8 @@ int TransfersDialog::addDLItem(int row, const FileInfo &fileInfo)
 
 	DLListModel->setData(DLListModel->index(row, COLUMN_COMPLETED), QVariant((qlonglong)completed));
 	DLListModel->setData(DLListModel->index(row, COLUMN_DLSPEED), QVariant((double)fileDlspeed));
-	DLListModel->setData(DLListModel->index(row, COLUMN_PROGRESS), QVariant::fromValue(pinfo));
+	DLListModel->setData(DLListModel->index(row, COLUMN_PROGRESS), QVariant((float)pinfo.progress));
+	DLListModel->setData(DLListModel->index(row, COLUMN_PROGRESS), QVariant::fromValue(pinfo), Qt::UserRole);
 	DLListModel->setData(DLListModel->index(row, COLUMN_STATUS), QVariant(status));
 	DLListModel->setData(DLListModel->index(row, COLUMN_PRIORITY), QVariant(priority));
 	DLListModel->setData(DLListModel->index(row, COLUMN_REMAINING), QVariant((qlonglong)remaining));
@@ -1083,7 +1084,8 @@ int TransfersDialog::addPeerToDLItem(QStandardItem *dlItem, const QString& name,
 		iSize->setData(QVariant(QString()), Qt::DisplayRole);
 		iCompleted->setData(QVariant(QString()), Qt::DisplayRole);
 		iDlSpeed->setData(QVariant((double)dlspeed), Qt::DisplayRole);
-		iProgress->setData(QVariant::fromValue(peerInfo), Qt::DisplayRole);
+		iProgress->setData(QVariant((float)peerInfo.progress), Qt::DisplayRole);
+		iProgress->setData(QVariant::fromValue(peerInfo), Qt::UserRole);
 		iSource->setData(QVariant(QString()), Qt::DisplayRole);
 
 		iPriority->setData(QVariant(QString()), Qt::DisplayRole);	// blank field for priority
@@ -1113,7 +1115,8 @@ int TransfersDialog::addPeerToDLItem(QStandardItem *dlItem, const QString& name,
 	} else {
 		// just update the child (peer)
 		dlItem->child(childRow, COLUMN_DLSPEED)->setData(QVariant((double)dlspeed), Qt::DisplayRole);
-		dlItem->child(childRow, COLUMN_PROGRESS)->setData(QVariant::fromValue(peerInfo), Qt::DisplayRole);
+		dlItem->child(childRow, COLUMN_PROGRESS)->setData(QVariant((float)peerInfo.progress), Qt::DisplayRole);
+		dlItem->child(childRow, COLUMN_PROGRESS)->setData(QVariant::fromValue(peerInfo), Qt::UserRole);
 
 		siName = dlItem->child(childRow,COLUMN_NAME);
 		siStatus = dlItem->child(childRow, COLUMN_STATUS);

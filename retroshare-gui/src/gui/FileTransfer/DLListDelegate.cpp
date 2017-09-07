@@ -161,7 +161,7 @@ void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
         case COLUMN_PROGRESS:
 			{
 				// create a xProgressBar
-				FileProgressInfo pinfo = index.data().value<FileProgressInfo>() ;
+				FileProgressInfo pinfo = index.data(Qt::UserRole).value<FileProgressInfo>() ;
 
 //				std::cerr << "drawing progress info: nb_chunks = " << pinfo.nb_chunks ;
 //				for(uint i=0;i<pinfo.cmap._map.size();++i)
