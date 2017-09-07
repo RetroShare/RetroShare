@@ -95,7 +95,7 @@ private slots:
     /** removes finished Downloads**/
     void clearcompleted();
 
-    void copyLink();
+    void dlCopyLink();
     void pasteLink();
     void renameFile();
     void setDestinationDirectory();
@@ -109,9 +109,9 @@ private slots:
 
     void pauseFileTransfer();
     void resumeFileTransfer();
-    void openFolderTransfer();
-    void openTransfer();
-    void previewTransfer();
+    void dlOpenFolder();
+    void dlOpenFile();
+    void dlPreviewFile();
 
     void ulOpenFolder();
     void ulCopyLink();
@@ -235,7 +235,7 @@ private:
     bool m_bProcessSettings;
     void processSettings(bool bLoad);
 
-    void getSelectedItems(std::set<RsFileHash> *ids, std::set<int> *rows);
+    void getDLSelectedItems(std::set<RsFileHash> *ids, std::set<int> *rows);
     void getULSelectedItems(std::set<RsFileHash> *ids, std::set<int> *rows);
     bool controlTransferFile(uint32_t flags);
     void changePriority(int priority);
@@ -255,12 +255,11 @@ private:
     Ui::TransfersDialog ui;
 
 public slots:
-	// these two functions add entries to the transfers dialog, and return the row id of the entry modified/added
-	//
-    int addItem(int row, const FileInfo &fileInfo);
-    int addPeerToItem(QStandardItem *dlItem, const QString& name, const QString& coreID, double dlspeed, uint32_t status, const FileProgressInfo& peerInfo);
-
-    int addUploadItem(const QString& symbol, const QString& name, const QString& coreID, qlonglong size, const FileProgressInfo& pinfo, double dlspeed, const QString& sources,const QString& source_id, const QString& status, qlonglong completed, qlonglong remaining);
+    // these four functions add entries to the transfers dialog, and return the row id of the entry modified/added
+    int addDLItem(int row, const FileInfo &fileInfo);
+    int addPeerToDLItem(QStandardItem *dlItem, const QString& name, const QString& coreID, double dlspeed, uint32_t status, const FileProgressInfo& peerInfo);
+    int addULItem(int row, const FileInfo &fileInfo);
+    int addPeerToULItem(QStandardItem *ulItem, const RsPeerId& peer_ID, const QString &coreID, qlonglong completed, double ulspeed, const FileProgressInfo& peerInfo);
 
     void showFileDetails() ;
 

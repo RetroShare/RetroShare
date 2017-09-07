@@ -30,11 +30,8 @@
 #define COLUMN_UTRANSFERRED 2
 #define COLUMN_ULSPEED      3
 #define COLUMN_UPROGRESS    4
-#define COLUMN_USTATUS      5
-#define COLUMN_USERNAME     6
-#define COLUMN_UHASH        7
-#define COLUMN_UUSERID      8
-#define COLUMN_UCOUNT        9
+#define COLUMN_UHASH        5
+#define COLUMN_UCOUNT       6
 
 
 #define MAX_CHAR_TMP 128
