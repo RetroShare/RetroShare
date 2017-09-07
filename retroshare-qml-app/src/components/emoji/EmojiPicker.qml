@@ -10,6 +10,9 @@ Rectangle
     property int buttonWidth: 40
 	property TextArea textArea
 
+	property bool androidMode: true // On Desktop appears on top of text field, instead appears in place of virtual keyboard (under text field)
+
+
 	property var rootFontName: theme.emojiFontName
 
     //displays all Emoji of one categroy by modifying the ListModel of emojiGrid
@@ -84,9 +87,14 @@ Rectangle
 	{
         id: emojiGrid
         width: parent.width
-        anchors.fill: parent
-        anchors.bottomMargin: buttonWidth
-        cellWidth: buttonWidth; cellHeight: buttonWidth
+		anchors.fill: parent
+		anchors
+		{
+			bottomMargin: if (!androidMode) buttonWidth
+			topMargin: if (androidMode) buttonWidth
+		}
+
+		cellWidth: buttonWidth; cellHeight: buttonWidth
 
         model: emojiByCategory
 		delegate: EmojiButton
@@ -102,18 +110,29 @@ Rectangle
     //seperator
 	Rectangle
 	{
-		color: "black"
-		anchors.bottom: parent.bottom
-		anchors.bottomMargin: buttonWidth
+		color: "gray"
+		anchors
+		{
+			bottom: if (!androidMode) parent.bottom
+			top: if (androidMode)  parent.top
+			bottomMargin: if (!androidMode) buttonWidth
+			topMargin: if (androidMode) buttonWidth
+		}
+
 		width: parent.width
 		height: 1
 	}
 	Rectangle
 	{
-        color: emojiPicker.color
-        anchors.bottom: parent.bottom
+		color: emojiPicker.color
         width: parent.width
         height: buttonWidth
+
+		anchors
+		{
+			bottom: if (!androidMode) parent.bottom
+			top: if (androidMode)  parent.top
+		}
 
 		//emoji category selector
 		ListView
