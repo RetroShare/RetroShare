@@ -19,43 +19,43 @@ Item
 		visible: true
 	}
 
-	Canvas
-	{
-		id: canvasAvatar
-		width: height
-		height: canvasSizes
-		visible: false
+//	Canvas
+//	{
+//		id: canvasAvatar
+//		width: height
+//		height: canvasSizes
+//		visible: false
 
-		renderStrategy: Canvas.Threaded;
-		renderTarget: Canvas.Image;
+//		renderStrategy: Canvas.Threaded;
+//		renderTarget: Canvas.Image;
 
-		property var images
-		property var callback
+//		property var images
+//		property var callback
 
 
-		onPaint:
-		{
-			var ctx = getContext("2d");
+//		onPaint:
+//		{
+//			var ctx = getContext("2d");
 
-			if (images)
-			{
-				for (y = 0 ;  y< nPieces ; y++)
-				{
-					ctx.drawImage(images[y], 0, 0, iconSize, iconSize )
-				}
-			}
+//			if (images)
+//			{
+//				for (y = 0 ;  y< nPieces ; y++)
+//				{
+//					ctx.drawImage(images[y], 0, 0, iconSize, iconSize )
+//				}
+//			}
 
-		}
+//		}
 
-		onPainted:
-		{
-			if (callback)
-			{
-				var data = toDataURL('image/png')
-				callback(data)
-			}
-		}
-	}
+//		onPainted:
+//		{
+//			if (callback)
+//			{
+//				var data = toDataURL('image/png')
+//				callback(data)
+//			}
+//		}
+//	}
 
 	Component.onCompleted:
 	{
@@ -134,11 +134,14 @@ Item
 		{
 			var url = src(gender, i, data[i+1])
 			onloads.push(url)
-			canvasAvatar.loadImage(url)
+//			canvasAvatar.loadImage(url)
 		}
-		canvasAvatar.images = onloads
-		canvasAvatar.callback = callback
-		canvasAvatar.requestPaint()
+//		canvasAvatar.images = onloads
+//		canvasAvatar.callback = callback
+		var datas = androidImagePicker.faceImage(onloads, iconSize)
+		console.log("@@@@@@@ url " , datas)
+		callback("data:image/png;base64,"+datas)
+//		canvasAvatar.requestPaint()
 	}
 
 	// Create the identicon
@@ -156,17 +159,17 @@ Item
 				{
 					imageAvatar.source =  data
 					imageAvatar.visible = true
-					canvasAvatar.visible =  false
+//					canvasAvatar.visible =  false
 
-					canvasAvatar.height = 0
+//					canvasAvatar.height = 0
 					imageAvatar.height = iconSize
 				}
 				else
 				{
-					canvasAvatar.visible =  true
+//					canvasAvatar.visible =  true
 					imageAvatar.visible =  false
 
-					canvasAvatar.height = iconSize
+//					canvasAvatar.height = iconSize
 					imageAvatar.height = 0
 				}
 
