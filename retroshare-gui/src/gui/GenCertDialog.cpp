@@ -331,7 +331,7 @@ void GenCertDialog::setupState()
 
 		ui.genButton->setVisible(false) ;
 		ui.generate_label->setVisible(false) ;
-		ui.info_label->setText("Please mouve your mouse randomly to generate enough random data to create your profile.") ;
+		ui.info_label->setText("Please move your mouse randomly to generate enough random data to create your profile.") ;
 		ui.info_label->setVisible(true) ;
 	}
 	else
