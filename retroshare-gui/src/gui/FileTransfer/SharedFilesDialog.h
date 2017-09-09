@@ -62,10 +62,6 @@ private slots:
   void copyLink();
   void copyLinkhtml();
   void sendLinkTo();
-#ifdef RS_USE_LINKS
-  void sendLinkToCloud();
-  void addLinkToCloud();
-#endif
 
   void collCreate();
   void collModif();
@@ -118,10 +114,6 @@ protected:
   /** Defines the actions for the context menu for QTreeWidget */
   QAction* copylinkAct;
   QAction* sendlinkAct;
-#ifdef RS_USE_LINKS
-  QAction* sendlinkCloudAct;
-  QAction* addlinkCloudAct;
-#endif
   QAction* sendchatlinkAct;
   QAction* copylinkhtmlAct;
 
