@@ -55,9 +55,9 @@ TransferPage::TransferPage(QWidget * parent, Qt::WindowFlags flags)
 	QObject::connect(ui.shareDownloadDirectoryCB,    SIGNAL(toggled(bool)),    this,SLOT(updateShareDownloadDirectory())) ;
 	QObject::connect(ui.followSymLinks_CB,           SIGNAL(toggled(bool)),    this,SLOT(updateFollowSymLinks())) ;
 
-	QObject::connect(ui.prefixesIgnoreList_LE,       SIGNAL(textChanged(QString)),	this,SLOT(updateIgnoreLists())) ;
+	QObject::connect(ui.prefixesIgnoreList_LE,       SIGNAL(editingFinished()),	this,SLOT(updateIgnoreLists())) ;
 	QObject::connect(ui.prefixesIgnoreList_CB,       SIGNAL(toggled(bool)),    		this,SLOT(updateIgnoreLists())) ;
-	QObject::connect(ui.suffixesIgnoreList_LE,       SIGNAL(textChanged(QString)),  this,SLOT(updateIgnoreLists())) ;
+	QObject::connect(ui.suffixesIgnoreList_LE,       SIGNAL(editingFinished()),  this,SLOT(updateIgnoreLists())) ;
 	QObject::connect(ui.suffixesIgnoreList_CB,       SIGNAL(toggled(bool)),    		this,SLOT(updateIgnoreLists())) ;
 }
 

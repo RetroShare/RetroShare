@@ -85,6 +85,8 @@ void p3FileDatabase::setIgnoreLists(const std::list<std::string>& ignored_prefix
 {
     RS_STACK_MUTEX(mFLSMtx) ;
     mLocalDirWatcher->setIgnoreLists(ignored_prefixes,ignored_suffixes,ignore_flags) ;
+
+    IndicateConfigChanged();
 }
 bool p3FileDatabase::getIgnoreLists(std::list<std::string>& ignored_prefixes,std::list<std::string>& ignored_suffixes, uint32_t& ignore_flags)
 {
