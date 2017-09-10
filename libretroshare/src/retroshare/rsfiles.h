@@ -263,6 +263,8 @@ class RsFiles
         virtual bool watchEnabled() =0;
         virtual bool followSymLinks() const=0;
         virtual void setFollowSymLinks(bool b)=0 ;
+		virtual void togglePauseHashingProcess() =0;		// pauses/resumes the hashing process.
+		virtual bool hashingProcessPaused() =0;
 
 		virtual bool	getShareDownloadDirectory() = 0;
 		virtual bool 	shareDownloadDirectory(bool share) = 0;

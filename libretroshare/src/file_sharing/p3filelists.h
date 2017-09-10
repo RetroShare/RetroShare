@@ -148,6 +148,8 @@ class p3FileDatabase: public p3Service, public p3Config, public ftSearch //, pub
 
 		void forceDirectoryCheck();              // Force re-sweep the directories and see what's changed
 		bool inDirectoryCheck();
+		void togglePauseHashingProcess();
+		bool hashingProcessPaused();
 
     protected:
 

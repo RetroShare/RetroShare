@@ -442,7 +442,10 @@ bool p3FileDatabase::loadList(std::list<RsItem *>& load)
 				std::string b ;
 				for(uint32_t i=0;i<kit->value.size();++i)
 					if(kit->value[i] == ';')
+					{
 						ignored_prefixes.push_back(b) ;
+						b.clear();
+					}
 					else
 						b.push_back(kit->value[i]) ;
 			}
@@ -451,7 +454,10 @@ bool p3FileDatabase::loadList(std::list<RsItem *>& load)
 				std::string b ;
 				for(uint32_t i=0;i<kit->value.size();++i)
 					if(kit->value[i] == ';')
+					{
 						ignored_suffixes.push_back(b) ;
+						b.clear();
+					}
 					else
 						b.push_back(kit->value[i]) ;
 			}
@@ -971,6 +977,16 @@ uint32_t p3FileDatabase::getType(void *ref) const
 void p3FileDatabase::forceDirectoryCheck()              // Force re-sweep the directories and see what's changed
 {
     mLocalDirWatcher->forceUpdate();
+}
+void p3FileDatabase::togglePauseHashingProcess()
+{
+    RS_STACK_MUTEX(mFLSMtx) ;
+    mLocalDirWatcher->togglePauseHashingProcess();
+}
+bool p3FileDatabase::hashingProcessPaused()
+{
+    RS_STACK_MUTEX(mFLSMtx) ;
+    return  mLocalDirWatcher->hashingProcessPaused();
 }
 bool p3FileDatabase::inDirectoryCheck()
 {

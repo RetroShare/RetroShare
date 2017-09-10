@@ -844,6 +844,9 @@ void ftServer::setWatchEnabled(bool b)             { mFileDatabase->setWatchEnab
 void ftServer::setWatchPeriod(int minutes)         { mFileDatabase->setWatchPeriod(minutes*60) ; }
 void ftServer::setFollowSymLinks(bool b)           { mFileDatabase->setFollowSymLinks(b) ; }
 
+void ftServer::togglePauseHashingProcess()  { mFileDatabase->togglePauseHashingProcess() ; }
+bool ftServer::hashingProcessPaused() { return mFileDatabase->hashingProcessPaused() ; }
+
 bool ftServer::getShareDownloadDirectory()
 {
 	std::list<SharedDirInfo> dirList;

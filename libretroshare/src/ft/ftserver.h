@@ -225,6 +225,8 @@ public:
     virtual bool watchEnabled() ;
 	virtual bool followSymLinks() const;
 	virtual void setFollowSymLinks(bool b);
+	virtual void togglePauseHashingProcess();
+	virtual bool hashingProcessPaused();
 
     /***************************************************************/
     /*************** Data Transfer Interface ***********************/

@@ -40,6 +40,8 @@ public:
 
     void forceUpdate();
     bool inDirectoryCheck() const ;
+	void togglePauseHashingProcess();
+	bool hashingProcessPaused();
 
     void setHashSalt(const RsFileHash& hash) { mHashSalt = hash; }
     const RsFileHash& hashSalt() const { return mHashSalt; }

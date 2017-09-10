@@ -22,7 +22,9 @@
 #include <QLayout>
 #include <QLabel>
 #include <QMovie>
+#include <QToolButton>
 
+#include "retroshare/rsfiles.h"
 #include "hashingstatus.h"
 #include "gui/common/ElidedLabel.h"
 #include "gui/notifyqt.h"
@@ -61,13 +63,14 @@ HashingStatus::~HashingStatus()
 
 void HashingStatus::updateHashingInfo(const QString& s)
 {
-    if (s.isEmpty()) {
+    if (s.isEmpty())
+	{
         statusHashing->hide() ;
         hashloader->hide() ;
 
         movie->stop() ;
     } else {
-        hashloader->setToolTip(s) ;
+        setToolTip(s + "\n"+QObject::tr("Click to pause the hashing process"));
 
         if (_compactMode) {
             statusHashing->hide() ;
@@ -79,4 +82,25 @@ void HashingStatus::updateHashingInfo(const QString& s)
 
         movie->start() ;
     }
+}
+
+void HashingStatus::mousePressEvent(QMouseEvent *)
+{
+	rsFiles->togglePauseHashingProcess() ;
+
+	if(rsFiles->hashingProcessPaused())
+	{
+		movie->stop() ;
+		hashloader->setPixmap(QPixmap(":/images/resume.png")) ;
+
+		mLastText = statusHashing->text();
+		statusHashing->setText(QObject::tr("[Hashing is paused]"));
+        setToolTip(QObject::tr("Click to resume the hashing process"));
+	}
+	else
+	{
+		hashloader->setMovie(movie) ;
+		statusHashing->setText(mLastText);
+		movie->start() ;
+	}
 }

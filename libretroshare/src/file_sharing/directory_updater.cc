@@ -275,6 +275,15 @@ bool LocalDirectoryUpdater::filterFile(const std::string& fname) const
 	return true ;
 }
 
+void LocalDirectoryUpdater::togglePauseHashingProcess()
+{
+	mHashCache->togglePauseHashingProcess() ;
+}
+bool LocalDirectoryUpdater::hashingProcessPaused()
+{
+	return mHashCache->hashingProcessPaused();
+}
+
 bool LocalDirectoryUpdater::inDirectoryCheck() const
 {
     return mHashCache->isRunning();
