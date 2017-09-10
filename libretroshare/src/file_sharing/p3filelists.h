@@ -127,6 +127,9 @@ class p3FileDatabase: public p3Service, public p3Config, public ftSearch //, pub
         void updateShareFlags(const SharedDirInfo& info) ;
         bool convertSharedFilePath(const std::string& path,std::string& fullpath);
 
+		void setIgnoreLists(const std::list<std::string>& ignored_prefixes,const std::list<std::string>& ignored_suffixes, uint32_t ignore_flags) ;
+		bool getIgnoreLists(std::list<std::string>& ignored_prefixes,std::list<std::string>& ignored_suffixes, uint32_t& ignore_flags) ;
+
         // computes/gathers statistics about shared directories
 
 		int getSharedDirStatistics(const RsPeerId& pid,SharedDirStats& stats);

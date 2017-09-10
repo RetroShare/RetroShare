@@ -232,16 +232,17 @@ void LocalDirectoryUpdater::recursUpdateSharedDir(const std::string& cumulated_p
        // now go through list of subfiles and request the hash to hashcache
 
        for(DirectoryStorage::FileIterator dit(mSharedDirectories,indx);dit;++dit)
-       {
-          // ask about the hash. If not present, ask HashCache. If not present, or different, the callback will update it.
+		   if(filterFile(dit.name()))
+		   {
+			   // ask about the hash. If not present, ask HashCache. If not present, or different, the callback will update it.
 
-          RsFileHash hash ;
+			   RsFileHash hash ;
 
-          // mSharedDirectories des two things: store H(F), and compute H(H(F)), which is used in FT. The later is always needed.
+			   // mSharedDirectories does two things: store H(F), and compute H(H(F)), which is used in FT. The later is always needed.
 
-          if(mHashCache->requestHash(cumulated_path + "/" + dit.name(),dit.size(),dit.modtime(),hash,this,*dit))
-             mSharedDirectories->updateHash(*dit,hash,hash != dit.hash());
-       }
+			   if(mHashCache->requestHash(cumulated_path + "/" + dit.name(),dit.size(),dit.modtime(),hash,this,*dit))
+				   mSharedDirectories->updateHash(*dit,hash,hash != dit.hash());
+		   }
     }
 #ifdef DEBUG_LOCAL_DIR_UPDATER
     else
@@ -257,6 +258,21 @@ void LocalDirectoryUpdater::recursUpdateSharedDir(const std::string& cumulated_p
 #endif
         recursUpdateSharedDir(cumulated_path + "/" + stored_dir_it.name(), *stored_dir_it,existing_directories) ;
     }
+}
+
+bool LocalDirectoryUpdater::filterFile(const std::string& fname) const
+{
+	if(mIgnoreFlags & RS_FILE_SHARE_FLAGS_IGNORE_SUFFIXES)
+		for(auto it(mIgnoredSuffixes.begin());it!=mIgnoredSuffixes.end();++it)
+			if(fname.size() >= (*it).size() && fname.substr( fname.size() - (*it).size()) == *it)
+				return false ;
+
+	if(mIgnoreFlags & RS_FILE_SHARE_FLAGS_IGNORE_PREFIXES)
+		for(auto it(mIgnoredPrefixes.begin());it!=mIgnoredPrefixes.end();++it)
+			if(fname.size() >= (*it).size() && fname.substr( 0,(*it).size()) == *it)
+				return false ;
+
+	return true ;
 }
 
 bool LocalDirectoryUpdater::inDirectoryCheck() const
@@ -301,5 +317,19 @@ bool LocalDirectoryUpdater::followSymLinks() const
     return mFollowSymLinks ;
 }
 
+void LocalDirectoryUpdater::setIgnoreLists(const std::list<std::string>& ignored_prefixes,const std::list<std::string>& ignored_suffixes,uint32_t ignore_flags)
+{
+	mIgnoredPrefixes = ignored_prefixes ;
+	mIgnoredSuffixes = ignored_suffixes ;
+	mIgnoreFlags = ignore_flags;
+}
+bool LocalDirectoryUpdater::getIgnoreLists(std::list<std::string>& ignored_prefixes,std::list<std::string>& ignored_suffixes,uint32_t& ignore_flags) const
+{
+	 ignored_prefixes = mIgnoredPrefixes;
+	 ignored_suffixes = mIgnoredSuffixes;
+	 ignore_flags     = mIgnoreFlags    ;
+
+	 return true;
+}
 
 

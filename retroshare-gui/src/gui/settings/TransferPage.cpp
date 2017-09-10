@@ -54,6 +54,30 @@ TransferPage::TransferPage(QWidget * parent, Qt::WindowFlags flags)
 	QObject::connect(ui.autoCheckDirectoriesDelay_SB,SIGNAL(valueChanged(int)),this,SLOT(updateAutoScanDirectoriesPeriod())) ;
 	QObject::connect(ui.shareDownloadDirectoryCB,    SIGNAL(toggled(bool)),    this,SLOT(updateShareDownloadDirectory())) ;
 	QObject::connect(ui.followSymLinks_CB,           SIGNAL(toggled(bool)),    this,SLOT(updateFollowSymLinks())) ;
+
+	QObject::connect(ui.prefixesIgnoreList_LE,       SIGNAL(textChanged(QString)),	this,SLOT(updateIgnoreLists())) ;
+	QObject::connect(ui.prefixesIgnoreList_CB,       SIGNAL(toggled(bool)),    		this,SLOT(updateIgnoreLists())) ;
+	QObject::connect(ui.suffixesIgnoreList_LE,       SIGNAL(textChanged(QString)),  this,SLOT(updateIgnoreLists())) ;
+	QObject::connect(ui.suffixesIgnoreList_CB,       SIGNAL(toggled(bool)),    		this,SLOT(updateIgnoreLists())) ;
+}
+
+void TransferPage::updateIgnoreLists()
+{
+	uint32_t flags = 0 ;
+	if(ui.prefixesIgnoreList_CB->isChecked()) flags |= RS_FILE_SHARE_FLAGS_IGNORE_PREFIXES ;
+	if(ui.suffixesIgnoreList_CB->isChecked()) flags |= RS_FILE_SHARE_FLAGS_IGNORE_SUFFIXES ;
+
+	std::list<std::string> lp,ls ;
+	{ QStringList L = ui.prefixesIgnoreList_LE->text().split(';') ; for(QStringList::const_iterator it(L.begin());it!=L.end();++it) lp.push_back((*it).toStdString()) ; }
+	{ QStringList L = ui.suffixesIgnoreList_LE->text().split(';') ; for(QStringList::const_iterator it(L.begin());it!=L.end();++it) ls.push_back((*it).toStdString()) ; }
+
+	rsFiles->setIgnoreLists(lp,ls,flags) ;
+
+	std::cerr << "Setting ignore lists: " << std::endl;
+
+	std::cerr << "  flags: " << flags << std::endl;
+	std::cerr << "  prefixes: " ; for(auto it(lp.begin());it!=lp.end();++it) std::cerr << "\"" << *it << "\" " ; std::cerr << std::endl;
+	std::cerr << "  suffixes: " ; for(auto it(ls.begin());it!=ls.end();++it) std::cerr << "\"" << *it << "\" " ; std::cerr << std::endl;
 }
 
 void TransferPage::updateMaxTRUpRate(int b)
@@ -125,6 +149,32 @@ void TransferPage::load()
 			case RS_FILE_PERM_DIRECT_DL_NO:  whileBlocking(ui._filePermDirectDL_CB)->setCurrentIndex(1) ; break ;
 			default:                         whileBlocking(ui._filePermDirectDL_CB)->setCurrentIndex(2) ; break ;
 		}
+
+	std::list<std::string> suffixes, prefixes;
+	uint32_t ignore_flags ;
+
+	rsFiles->getIgnoreLists(prefixes,suffixes,ignore_flags) ;
+
+	QString ignore_prefixes_string,ignore_suffixes_string ;
+
+	for(auto it(prefixes.begin());it!=prefixes.end();)
+	{
+		ignore_prefixes_string += QString::fromStdString(*it) ;
+
+		if(++it != prefixes.end())
+			ignore_prefixes_string += ";" ;
+	}
+	for(auto it(suffixes.begin());it!=suffixes.end();)
+	{
+		ignore_suffixes_string += QString::fromStdString(*it) ;
+
+		if(++it != suffixes.end())
+			ignore_suffixes_string += ";" ;
+	}
+	whileBlocking(ui.prefixesIgnoreList_CB)->setChecked( ignore_flags & RS_FILE_SHARE_FLAGS_IGNORE_PREFIXES ) ;
+	whileBlocking(ui.suffixesIgnoreList_CB)->setChecked( ignore_flags & RS_FILE_SHARE_FLAGS_IGNORE_SUFFIXES ) ;
+	whileBlocking(ui.prefixesIgnoreList_LE)->setText( ignore_prefixes_string );
+	whileBlocking(ui.suffixesIgnoreList_LE)->setText( ignore_suffixes_string );
 }
 
 void TransferPage::updateDefaultStrategy(int i)
