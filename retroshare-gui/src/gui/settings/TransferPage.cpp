@@ -73,11 +73,13 @@ void TransferPage::updateIgnoreLists()
 
 	rsFiles->setIgnoreLists(lp,ls,flags) ;
 
+#ifdef DEBUG_TRANSFERS_PAGE
 	std::cerr << "Setting ignore lists: " << std::endl;
 
 	std::cerr << "  flags: " << flags << std::endl;
 	std::cerr << "  prefixes: " ; for(auto it(lp.begin());it!=lp.end();++it) std::cerr << "\"" << *it << "\" " ; std::cerr << std::endl;
 	std::cerr << "  suffixes: " ; for(auto it(ls.begin());it!=ls.end();++it) std::cerr << "\"" << *it << "\" " ; std::cerr << std::endl;
+#endif
 }
 
 void TransferPage::updateMaxTRUpRate(int b)
