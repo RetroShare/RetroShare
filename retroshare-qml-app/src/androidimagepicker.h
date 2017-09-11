@@ -74,7 +74,7 @@ public slots:
 		int counter = 0;
 		for (QVariantList::iterator j = onloads.begin(); j != onloads.end(); j++)
 		{
-			QString path = (*j).toString();
+			QString path = ":/"+(*j).toString();
 			QImageReader reader;
 			reader.setFileName(path);
 			QImage image = reader.read();
