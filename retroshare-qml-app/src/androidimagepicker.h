@@ -43,30 +43,19 @@ public slots:
 		QString localPath = url.toLocalFile();
 
 		qDebug() << "imageToBase64() local path:" << localPath ;
-
-		// Read the image
-		QImageReader reader;
-		reader.setFileName(localPath);
-		QImage image = reader.read();
+		QImage image= getImage (localPath);
 
 		image = image.scaled(96,96,Qt::KeepAspectRatio,Qt::SmoothTransformation);
 
-		// Transform image into PNG format
-		QByteArray ba;
-		QBuffer    buffer( &ba );
-		buffer.open( QIODevice::WriteOnly );
-		image.save( &buffer, "png" );
+		qDebug() << "imageToBase64() encoding" ;
 
-		// Get Based 64 image string
-		QString encoded = QString(ba.toBase64());
-
-		qDebug() << "imageToBase64() encoded" ;
-
-		return encoded;
+		return imageToB64(image);
 	}
 
-	static QString base64FaceAvatarGenerator (QVariantList onloads, int size)
+	static QString b64AvatarGen (QVariantList onloads, int size)
 	{
+		qDebug() << "b64AvatarGen(): Generating face Avatar from";
+
 		QImage result(size, size, QImage::Format_ARGB32_Premultiplied);
 		QPainter painter(&result);
 
@@ -74,27 +63,32 @@ public slots:
 		int counter = 0;
 		for (QVariantList::iterator j = onloads.begin(); j != onloads.end(); j++)
 		{
-			QString path = ":/"+(*j).toString();
-			QImageReader reader;
-			reader.setFileName(path);
-			QImage image = reader.read();
+			QImage image = getImage (":/"+(*j).toString());
 			painter.drawImage(0, 0, image); // xi, yi is the position for imagei
-			qDebug() << "Generating face Avatar from: " << (*j).toString(); // Print QVariant
 			counter++;
 		}
 		painter.end();
 
+		return imageToB64(result);
+	}
+
+	static QImage getImage (QString  const& path)
+	{
+		QImageReader reader;
+		reader.setFileName(path);
+		return reader.read();
+	}
+
+	static QString imageToB64 (QImage image)
+	{
 		// Transform image into PNG format
 		QByteArray ba;
 		QBuffer    buffer( &ba );
 		buffer.open( QIODevice::WriteOnly );
-		result.save( &buffer, "png" );
+		image.save( &buffer, "png" );
 
 		// Get Based 64 image string
-		QString encoded = QString(ba.toBase64());
-
-		return encoded;
-
+		return QString(ba.toBase64());
 	}
 
 
