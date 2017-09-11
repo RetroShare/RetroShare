@@ -157,7 +157,7 @@ void HashStorage::data_tick()
 			paused = mHashingProcessPaused ;
 		}
 
-		if(paused)
+		if(paused)	// we need to wait off mutex!!
 		{
 			usleep(MAX_INACTIVITY_SLEEP_TIME) ;
 			std::cerr << "Hashing process currently paused." << std::endl;
