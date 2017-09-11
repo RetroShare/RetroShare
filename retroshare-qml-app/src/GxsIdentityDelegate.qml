@@ -50,7 +50,14 @@ Item
 				console.log("GxsIntentityDelegate onclicked:", model.name,
 							model.gxs_id)
 				contactsView.searching = false
-				if(model.own) contactsView.own_gxs_id = model.gxs_id
+				if(model.own)
+				{
+					contactsView.own_gxs_id = model.gxs_id
+					stackView.push(
+								"qrc:/ContactDetails.qml",
+								{md: ChatCache.contactsCache.getContactFromGxsId(model.gxs_id)})
+
+				}
 				else
 				{
 					startDistantChat()
