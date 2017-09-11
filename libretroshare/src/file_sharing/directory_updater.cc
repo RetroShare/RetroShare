@@ -36,20 +36,14 @@
 //=============================================================================================================//
 
 LocalDirectoryUpdater::LocalDirectoryUpdater(HashStorage *hc,LocalDirectoryStorage *lds)
-    : mHashCache(hc),mSharedDirectories(lds)
+    : mHashCache(hc), mSharedDirectories(lds)
+    , mLastSweepTime(0), mLastTSUpdateTime(0)
+    , mDelayBetweenDirectoryUpdates(DELAY_BETWEEN_DIRECTORY_UPDATES)
+    , mIsEnabled(false), mFollowSymLinks(FOLLOW_SYMLINKS_DEFAULT)
+    /* Can be left to false, but setting it to true will force to re-hash any file that has been left unhashed in the last session.*/
+    , mNeedsFullRecheck(true)
+    , mIsChecking(false), mForceUpdate(false), mIgnoreFlags (0)
 {
-    mLastSweepTime = 0;
-    mLastTSUpdateTime = 0;
-
-    mDelayBetweenDirectoryUpdates = DELAY_BETWEEN_DIRECTORY_UPDATES;
-    mIsEnabled = false ;
-    mFollowSymLinks = FOLLOW_SYMLINKS_DEFAULT ;
-
-    // Can be left to false, but setting it to true will force to re-hash any file that has been left unhashed in the last session.
-
-    mNeedsFullRecheck = true ;
-    mIsChecking = false ;
-    mForceUpdate = false ;
 }
 
 bool LocalDirectoryUpdater::isEnabled() const
