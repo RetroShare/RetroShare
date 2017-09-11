@@ -126,23 +126,22 @@ int	pqihandler::tick()
 	}
 
 	time_t now = time(NULL) ;
-    
+
 	if(now > mLastRateCapUpdate + 5)
 	{
-                // every 5 secs, update the max rates for all modules
-        
+		// every 5 secs, update the max rates for all modules
+
 		RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
 		for(std::map<RsPeerId, SearchModule *>::iterator it = mods.begin(); it != mods.end(); ++it)
-            	{
-            		// This is rather inelegant, but pqihandler has searchModules that are dynamically allocated, so the max rates
-            		// need to be updated from inside.
-	    		uint32_t maxUp,maxDn ;
-            		rsPeers->getPeerMaximumRates(it->first,maxUp,maxDn);
-                    
-                    	it->second->pqi->setRateCap(maxDn,maxUp);// mind the order! Dn first, than Up. 
+		{
+			// This is rather inelegant, but pqihandler has searchModules that are dynamically allocated, so the max rates
+			// need to be updated from inside.
+			uint32_t maxUp = 0,maxDn =0 ;
+			if (rsPeers->getPeerMaximumRates(it->first,maxUp,maxDn) )
+				it->second->pqi->setRateCap(maxDn,maxUp);// mind the order! Dn first, than Up.
 		}
-        
-        	mLastRateCapUpdate = now ;
+
+		mLastRateCapUpdate = now ;
 	}
 
 	UpdateRates();
