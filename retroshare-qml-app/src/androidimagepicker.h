@@ -65,7 +65,7 @@ public slots:
 		return encoded;
 	}
 
-	static QString faceImage (QVariantList onloads, int size)
+	static QString base64FaceAvatarGenerator (QVariantList onloads, int size)
 	{
 		QImage result(size, size, QImage::Format_ARGB32_Premultiplied);
 		QPainter painter(&result);

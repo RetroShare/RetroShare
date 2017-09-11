@@ -134,7 +134,7 @@ Item
 			var url = src(gender, i, data[i+1])
 			onloads.push(url)
 		}
-		var base64Image = androidImagePicker.faceImage(onloads, canvasSizes)
+		var base64Image = androidImagePicker.b64AvatarGen(onloads, canvasSizes)
 		callback("data:image/png;base64,"+base64Image)
 	}
 
