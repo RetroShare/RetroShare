@@ -213,6 +213,9 @@ public:
     virtual bool   updateShareFlags(const SharedDirInfo& dir); 	// updates the flags. The directory should already exist !
     virtual bool 	removeSharedDirectory(std::string dir);
 
+	virtual bool getIgnoreLists(std::list<std::string>& ignored_prefixes, std::list<std::string>& ignored_suffixes, uint32_t& ignore_flags) ;
+	virtual void setIgnoreLists(const std::list<std::string>& ignored_prefixes, const std::list<std::string>& ignored_suffixes,uint32_t ignore_flags) ;
+
     virtual bool	getShareDownloadDirectory();
     virtual bool 	shareDownloadDirectory(bool share);
 
@@ -222,6 +225,8 @@ public:
     virtual bool watchEnabled() ;
 	virtual bool followSymLinks() const;
 	virtual void setFollowSymLinks(bool b);
+	virtual void togglePauseHashingProcess();
+	virtual bool hashingProcessPaused();
 
     /***************************************************************/
     /*************** Data Transfer Interface ***********************/

@@ -826,6 +826,16 @@ bool 	ftServer::removeSharedDirectory(std::string dir)
 
 	return true;
 }
+
+bool ftServer::getIgnoreLists(std::list<std::string>& ignored_prefixes, std::list<std::string>& ignored_suffixes,uint32_t& ignore_flags)
+{
+	return mFileDatabase->getIgnoreLists(ignored_prefixes,ignored_suffixes,ignore_flags) ;
+}
+void ftServer::setIgnoreLists(const std::list<std::string>& ignored_prefixes, const std::list<std::string>& ignored_suffixes, uint32_t ignore_flags)
+{
+	mFileDatabase->setIgnoreLists(ignored_prefixes,ignored_suffixes,ignore_flags) ;
+}
+
 bool ftServer::watchEnabled()                      { return mFileDatabase->watchEnabled() ; }
 int  ftServer::watchPeriod() const                 { return mFileDatabase->watchPeriod()/60 ; }
 bool ftServer::followSymLinks() const              { return mFileDatabase->followSymLinks() ; }
@@ -833,6 +843,9 @@ bool ftServer::followSymLinks() const              { return mFileDatabase->follo
 void ftServer::setWatchEnabled(bool b)             { mFileDatabase->setWatchEnabled(b) ; }
 void ftServer::setWatchPeriod(int minutes)         { mFileDatabase->setWatchPeriod(minutes*60) ; }
 void ftServer::setFollowSymLinks(bool b)           { mFileDatabase->setFollowSymLinks(b) ; }
+
+void ftServer::togglePauseHashingProcess()  { mFileDatabase->togglePauseHashingProcess() ; }
+bool ftServer::hashingProcessPaused() { return mFileDatabase->hashingProcessPaused() ; }
 
 bool ftServer::getShareDownloadDirectory()
 {

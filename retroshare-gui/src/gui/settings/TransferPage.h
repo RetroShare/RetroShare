@@ -50,6 +50,7 @@ class TransferPage: public ConfigPage
 		void updateEncryptionPolicy(int);
 		void updateMaxUploadSlots(int);
 		void updateFilePermDirectDL(int);
+		void updateIgnoreLists();
 
 		void editDirectories() ;
 		void setIncomingDirectory();

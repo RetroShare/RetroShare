@@ -81,6 +81,19 @@ p3FileDatabase::p3FileDatabase(p3ServiceControl *mpeers)
     addSerialType(new RsFileListsSerialiser()) ;
 }
 
+void p3FileDatabase::setIgnoreLists(const std::list<std::string>& ignored_prefixes,const std::list<std::string>& ignored_suffixes, uint32_t ignore_flags)
+{
+    RS_STACK_MUTEX(mFLSMtx) ;
+    mLocalDirWatcher->setIgnoreLists(ignored_prefixes,ignored_suffixes,ignore_flags) ;
+
+    IndicateConfigChanged();
+}
+bool p3FileDatabase::getIgnoreLists(std::list<std::string>& ignored_prefixes,std::list<std::string>& ignored_suffixes, uint32_t& ignore_flags)
+{
+    RS_STACK_MUTEX(mFLSMtx) ;
+    return mLocalDirWatcher->getIgnoreLists(ignored_prefixes,ignored_suffixes,ignore_flags) ;
+}
+
 RsSerialiser *p3FileDatabase::setupSerialiser()
 {
     // This one is for saveList/loadList
@@ -345,6 +358,28 @@ cleanup = true;
 
         rskv->tlvkvs.pairs.push_back(kv);
     }
+	{
+		std::list<std::string> prefix_list,suffix_list;
+		uint32_t flags ;
+
+		mLocalDirWatcher->getIgnoreLists(prefix_list,suffix_list,flags) ;
+
+		std::string prefix_string, suffix_string ;
+
+		for(auto it(prefix_list.begin());it!=prefix_list.end();++it) prefix_string += *it + ";" ;
+		for(auto it(suffix_list.begin());it!=suffix_list.end();++it) suffix_string += *it + ";" ;
+
+        RsTlvKeyValue kv;
+
+        kv.key = IGNORED_PREFIXES_SS; kv.value = prefix_string; rskv->tlvkvs.pairs.push_back(kv);
+        kv.key = IGNORED_SUFFIXES_SS; kv.value = suffix_string; rskv->tlvkvs.pairs.push_back(kv);
+
+        std::string s ;
+        rs_sprintf(s, "%lu", flags) ;
+
+        kv.key = IGNORE_LIST_FLAGS_SS; kv.value = s; rskv->tlvkvs.pairs.push_back(kv);
+	}
+
     /* Add KeyValue to saveList */
     sList.push_back(rskv);
 
@@ -363,6 +398,8 @@ bool p3FileDatabase::loadList(std::list<RsItem *>& load)
 #endif
 
     std::list<SharedDirInfo> dirList;
+	std::list<std::string> ignored_prefixes,ignored_suffixes ;
+	uint32_t ignore_flags ;
 
     for(std::list<RsItem *>::iterator it = load.begin(); it != load.end(); ++it)
     {
@@ -400,6 +437,37 @@ bool p3FileDatabase::loadList(std::list<RsItem *>& load)
                 std::cerr << "Initing directory watcher with saved secret salt..." << std::endl;
                 mLocalDirWatcher->setHashSalt(RsFileHash(kit->value)) ;
             }
+			else if(kit->key == IGNORED_PREFIXES_SS)
+			{
+				std::string b ;
+				for(uint32_t i=0;i<kit->value.size();++i)
+					if(kit->value[i] == ';')
+					{
+						ignored_prefixes.push_back(b) ;
+						b.clear();
+					}
+					else
+						b.push_back(kit->value[i]) ;
+			}
+			else if(kit->key == IGNORED_SUFFIXES_SS)
+			{
+				std::string b ;
+				for(uint32_t i=0;i<kit->value.size();++i)
+					if(kit->value[i] == ';')
+					{
+						ignored_suffixes.push_back(b) ;
+						b.clear();
+					}
+					else
+						b.push_back(kit->value[i]) ;
+			}
+			else if(kit->key == IGNORE_LIST_FLAGS_SS)
+			{
+                int t=0 ;
+                if(sscanf(kit->value.c_str(),"%d",&t) == 1)
+                    ignore_flags = (uint32_t)t ;
+			}
+
             delete *it ;
             continue ;
         }
@@ -427,6 +495,8 @@ bool p3FileDatabase::loadList(std::list<RsItem *>& load)
 
     /* set directories */
     mLocalSharedDirs->setSharedDirectoryList(dirList);
+	mLocalDirWatcher->setIgnoreLists(ignored_prefixes,ignored_suffixes,ignore_flags) ;
+
     load.clear() ;
 
     return true;
@@ -907,6 +977,16 @@ uint32_t p3FileDatabase::getType(void *ref) const
 void p3FileDatabase::forceDirectoryCheck()              // Force re-sweep the directories and see what's changed
 {
     mLocalDirWatcher->forceUpdate();
+}
+void p3FileDatabase::togglePauseHashingProcess()
+{
+    RS_STACK_MUTEX(mFLSMtx) ;
+    mLocalDirWatcher->togglePauseHashingProcess();
+}
+bool p3FileDatabase::hashingProcessPaused()
+{
+    RS_STACK_MUTEX(mFLSMtx) ;
+    return  mLocalDirWatcher->hashingProcessPaused();
 }
 bool p3FileDatabase::inDirectoryCheck()
 {

@@ -199,25 +199,26 @@ void LocalDirectoryUpdater::recursUpdateSharedDir(const std::string& cumulated_p
        std::set<std::string> subdirs ;
 
        for(;dirIt.isValid();dirIt.next())
-       {
-          switch(dirIt.file_type())
-          {
-          case librs::util::FolderIterator::TYPE_FILE:	subfiles[dirIt.file_name()].modtime = dirIt.file_modtime() ;
-             subfiles[dirIt.file_name()].size = dirIt.file_size();
+		   if(filterFile(dirIt.file_name()))
+		   {
+			   switch(dirIt.file_type())
+			   {
+			   case librs::util::FolderIterator::TYPE_FILE:	subfiles[dirIt.file_name()].modtime = dirIt.file_modtime() ;
+				   subfiles[dirIt.file_name()].size = dirIt.file_size();
 #ifdef DEBUG_LOCAL_DIR_UPDATER
-             std::cerr << "  adding sub-file \"" << dirIt.file_name() << "\"" << std::endl;
+				   std::cerr << "  adding sub-file \"" << dirIt.file_name() << "\"" << std::endl;
 #endif
-             break;
+				   break;
 
-          case librs::util::FolderIterator::TYPE_DIR:  	subdirs.insert(dirIt.file_name());
+			   case librs::util::FolderIterator::TYPE_DIR:  	subdirs.insert(dirIt.file_name());
 #ifdef DEBUG_LOCAL_DIR_UPDATER
-             std::cerr << "  adding sub-dir \"" << dirIt.file_name() << "\"" << std::endl;
+				   std::cerr << "  adding sub-dir \"" << dirIt.file_name() << "\"" << std::endl;
 #endif
-             break;
-          default:
-             std::cerr << "(EE) Dir entry of unknown type with path \"" << cumulated_path << "/" << dirIt.file_name() << "\"" << std::endl;
-          }
-       }
+				   break;
+			   default:
+				   std::cerr << "(EE) Dir entry of unknown type with path \"" << cumulated_path << "/" << dirIt.file_name() << "\"" << std::endl;
+			   }
+		   }
        // update folder modificatoin time, which is the only way to detect e.g. removed or renamed files.
 
        mSharedDirectories->setDirectoryLocalModTime(indx,dirIt.dir_modtime()) ;
@@ -232,16 +233,16 @@ void LocalDirectoryUpdater::recursUpdateSharedDir(const std::string& cumulated_p
        // now go through list of subfiles and request the hash to hashcache
 
        for(DirectoryStorage::FileIterator dit(mSharedDirectories,indx);dit;++dit)
-       {
-          // ask about the hash. If not present, ask HashCache. If not present, or different, the callback will update it.
+	   {
+		   // ask about the hash. If not present, ask HashCache. If not present, or different, the callback will update it.
 
-          RsFileHash hash ;
+		   RsFileHash hash ;
 
-          // mSharedDirectories des two things: store H(F), and compute H(H(F)), which is used in FT. The later is always needed.
+		   // mSharedDirectories does two things: store H(F), and compute H(H(F)), which is used in FT. The later is always needed.
 
-          if(mHashCache->requestHash(cumulated_path + "/" + dit.name(),dit.size(),dit.modtime(),hash,this,*dit))
-             mSharedDirectories->updateHash(*dit,hash,hash != dit.hash());
-       }
+		   if(mHashCache->requestHash(cumulated_path + "/" + dit.name(),dit.size(),dit.modtime(),hash,this,*dit))
+			   mSharedDirectories->updateHash(*dit,hash,hash != dit.hash());
+	   }
     }
 #ifdef DEBUG_LOCAL_DIR_UPDATER
     else
@@ -257,6 +258,36 @@ void LocalDirectoryUpdater::recursUpdateSharedDir(const std::string& cumulated_p
 #endif
         recursUpdateSharedDir(cumulated_path + "/" + stored_dir_it.name(), *stored_dir_it,existing_directories) ;
     }
+}
+
+bool LocalDirectoryUpdater::filterFile(const std::string& fname) const
+{
+	if(mIgnoreFlags & RS_FILE_SHARE_FLAGS_IGNORE_SUFFIXES)
+		for(auto it(mIgnoredSuffixes.begin());it!=mIgnoredSuffixes.end();++it)
+			if(fname.size() >= (*it).size() && fname.substr( fname.size() - (*it).size()) == *it)
+			{
+				std::cerr << "(II) ignoring file " << fname << ", because it matches suffix \"" << *it << "\"" << std::endl;
+				return false ;
+			}
+
+	if(mIgnoreFlags & RS_FILE_SHARE_FLAGS_IGNORE_PREFIXES)
+		for(auto it(mIgnoredPrefixes.begin());it!=mIgnoredPrefixes.end();++it)
+			if(fname.size() >= (*it).size() && fname.substr( 0,(*it).size()) == *it)
+			{
+				std::cerr << "(II) ignoring file " << fname << ", because it matches prefix \"" << *it << "\"" << std::endl;
+				return false ;
+			}
+
+	return true ;
+}
+
+void LocalDirectoryUpdater::togglePauseHashingProcess()
+{
+	mHashCache->togglePauseHashingProcess() ;
+}
+bool LocalDirectoryUpdater::hashingProcessPaused()
+{
+	return mHashCache->hashingProcessPaused();
 }
 
 bool LocalDirectoryUpdater::inDirectoryCheck() const
@@ -301,5 +332,19 @@ bool LocalDirectoryUpdater::followSymLinks() const
     return mFollowSymLinks ;
 }
 
+void LocalDirectoryUpdater::setIgnoreLists(const std::list<std::string>& ignored_prefixes,const std::list<std::string>& ignored_suffixes,uint32_t ignore_flags)
+{
+	mIgnoredPrefixes = ignored_prefixes ;
+	mIgnoredSuffixes = ignored_suffixes ;
+	mIgnoreFlags = ignore_flags;
+}
+bool LocalDirectoryUpdater::getIgnoreLists(std::list<std::string>& ignored_prefixes,std::list<std::string>& ignored_suffixes,uint32_t& ignore_flags) const
+{
+	 ignored_prefixes = mIgnoredPrefixes;
+	 ignored_suffixes = mIgnoredSuffixes;
+	 ignore_flags     = mIgnoreFlags    ;
+
+	 return true;
+}
 
 

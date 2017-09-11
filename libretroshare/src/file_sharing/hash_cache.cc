@@ -44,6 +44,7 @@ HashStorage::HashStorage(const std::string& save_file_name)
     mTotalSizeToHash = 0;
     mTotalFilesToHash = 0;
     mMaxStorageDurationDays = DEFAULT_HASH_STORAGE_DURATION_DAYS ;
+	mHashingProcessPaused = false;
 
     {
         RS_STACK_MUTEX(mHashMtx) ;
@@ -52,6 +53,18 @@ HashStorage::HashStorage(const std::string& save_file_name)
             try_load_import_old_hash_cache();
     }
 }
+
+void HashStorage::togglePauseHashingProcess()
+{
+	RS_STACK_MUTEX(mHashMtx) ;
+	mHashingProcessPaused = !mHashingProcessPaused ;
+}
+bool HashStorage::hashingProcessPaused()
+{
+	RS_STACK_MUTEX(mHashMtx) ;
+	return mHashingProcessPaused;
+}
+
 static std::string friendlyUnit(uint64_t val)
 {
     const std::string units[5] = {"B","KB","MB","GB","TB"};
@@ -78,12 +91,14 @@ void HashStorage::data_tick()
     RsFileHash hash;
     uint64_t size = 0;
 
+
     {
         bool empty ;
         uint32_t st ;
 
         {
             RS_STACK_MUTEX(mHashMtx) ;
+
             if(mChanged && mLastSaveTime + MIN_INTERVAL_BETWEEN_HASH_CACHE_SAVE < time(NULL))
             {
                 locked_save();
@@ -136,6 +151,19 @@ void HashStorage::data_tick()
         }
         mInactivitySleepTime = DEFAULT_INACTIVITY_SLEEP_TIME;
 
+		bool paused = false ;
+        {
+            RS_STACK_MUTEX(mHashMtx) ;
+			paused = mHashingProcessPaused ;
+		}
+
+		if(paused)	// we need to wait off mutex!!
+		{
+			usleep(MAX_INACTIVITY_SLEEP_TIME) ;
+			std::cerr << "Hashing process currently paused." << std::endl;
+			return;
+		}
+		else
         {
             RS_STACK_MUTEX(mHashMtx) ;
 
