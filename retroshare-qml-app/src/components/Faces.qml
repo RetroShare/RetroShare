@@ -138,9 +138,8 @@ Item
 		}
 //		canvasAvatar.images = onloads
 //		canvasAvatar.callback = callback
-		var datas = androidImagePicker.faceImage(onloads, iconSize)
-		console.log("@@@@@@@ url " , datas)
-		callback("data:image/png;base64,"+datas)
+		var base64Image = androidImagePicker.faceImage(onloads, canvasSizes)
+		callback("data:image/png;base64,"+base64Image)
 //		canvasAvatar.requestPaint()
 	}
 
