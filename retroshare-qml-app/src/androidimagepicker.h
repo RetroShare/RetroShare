@@ -79,18 +79,7 @@ public slots:
 			reader.setFileName(path);
 			QImage image = reader.read();
 			painter.drawImage(0, 0, image); // xi, yi is the position for imagei
-//			if (counter == 0)
-//			{
-//				base = QImage(bg.size(), QImage::Format_ARGB32_Premultiplied);
-//				qDebug() << "FIIIRST ";
-
-//			}
-//			else
-//			{
-
-//			}
-			qDebug() << "iterating through QVariantList ";
-			qDebug() << (*j).toString(); // Print QVariant
+			qDebug() << "Generating face Avatar from: " << (*j).toString(); // Print QVariant
 			counter++;
 		}
 		painter.end();
@@ -104,21 +93,7 @@ public slots:
 		// Get Based 64 image string
 		QString encoded = QString(ba.toBase64());
 
-		qDebug() << "@@@@@ encoded avatar " << encoded ;
-
 		return encoded;
-
-	}
-
-	QImage getImageFromPath (QString localPath)
-	{
-		qDebug() << "getImageFromPath() local path:" << localPath ;
-
-		// Read the image
-		QImageReader reader;
-		reader.setFileName(localPath);
-		QImage image = reader.read();
-		return image;
 
 	}
 

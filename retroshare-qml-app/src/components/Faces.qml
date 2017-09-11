@@ -16,7 +16,6 @@ Item
 		id: imageAvatar
 		width: height
 		height: iconSize
-		visible: true
 	}
 
 //	Canvas
@@ -134,13 +133,9 @@ Item
 		{
 			var url = src(gender, i, data[i+1])
 			onloads.push(url)
-//			canvasAvatar.loadImage(url)
 		}
-//		canvasAvatar.images = onloads
-//		canvasAvatar.callback = callback
 		var base64Image = androidImagePicker.faceImage(onloads, canvasSizes)
 		callback("data:image/png;base64,"+base64Image)
-//		canvasAvatar.requestPaint()
 	}
 
 	// Create the identicon
@@ -148,32 +143,11 @@ Item
 	{
 		var iconId = [dataHex, iconSize];
 		var update = function(data)
-		    {
-			    // This conditions are for solve a bug on an Lg S3.
-			    // On this device the toDataURL() is incompleted.
-			    // So for see the complete avatar at least at first execution we'll show the canvas,
-			    // instead of the image component.
-			    // See issue: https://gitlab.com/angesoc/RetroShare/issues/37
-			    if (facesCache.iconCache[iconId])
-				{
-					imageAvatar.source =  data
-					imageAvatar.visible = true
-//					canvasAvatar.visible =  false
-
-//					canvasAvatar.height = 0
-					imageAvatar.height = iconSize
-				}
-				else
-				{
-//					canvasAvatar.visible =  true
-					imageAvatar.visible =  false
-
-//					canvasAvatar.height = iconSize
-					imageAvatar.height = 0
-				}
-
-				facesCache.iconCache[iconId] = data;
-		    }
+		{
+			imageAvatar.source =  data
+			imageAvatar.height = iconSize
+			facesCache.iconCache[iconId] = data;
+		}
 
 		if (facesCache.iconCache.hasOwnProperty(iconId))
 		{
@@ -186,13 +160,13 @@ Item
 		else
 		{
 			var onImageGenerated = function(data)
-			    {
+			{
 
-				    facesCache.callbackCache[iconId].forEach(function(callback)
-					    {
-						    callback(data);
-					    })
-			    }
+				facesCache.callbackCache[iconId].forEach(function(callback)
+				{
+					callback(data);
+				})
+			}
 
 			facesCache.callbackCache[iconId] = [update];
 			if (dataHex)
