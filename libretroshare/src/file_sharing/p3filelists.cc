@@ -399,7 +399,16 @@ bool p3FileDatabase::loadList(std::list<RsItem *>& load)
 
     std::list<SharedDirInfo> dirList;
 	std::list<std::string> ignored_prefixes,ignored_suffixes ;
-	uint32_t ignore_flags ;
+	uint32_t ignore_flags = RS_FILE_SHARE_FLAGS_IGNORE_PREFIXES | RS_FILE_SHARE_FLAGS_IGNORE_SUFFIXES ;
+
+	// OS-dependent default ignore lists
+#ifdef WINDOWS_SYS
+	ignored_suffixes.push_back( ".bak" );
+#else
+	ignored_prefixes.push_back( "." );
+	ignored_suffixes.push_back( "~" );
+	ignored_suffixes.push_back( ".part" );
+#endif
 
     for(std::list<RsItem *>::iterator it = load.begin(); it != load.end(); ++it)
     {
@@ -439,6 +448,8 @@ bool p3FileDatabase::loadList(std::list<RsItem *>& load)
             }
 			else if(kit->key == IGNORED_PREFIXES_SS)
 			{
+				ignored_prefixes.clear();
+
 				std::string b ;
 				for(uint32_t i=0;i<kit->value.size();++i)
 					if(kit->value[i] == ';')
@@ -451,6 +462,8 @@ bool p3FileDatabase::loadList(std::list<RsItem *>& load)
 			}
 			else if(kit->key == IGNORED_SUFFIXES_SS)
 			{
+				ignored_suffixes.clear();
+
 				std::string b ;
 				for(uint32_t i=0;i<kit->value.size();++i)
 					if(kit->value[i] == ';')
