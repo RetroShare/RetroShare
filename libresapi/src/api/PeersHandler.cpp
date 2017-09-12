@@ -235,6 +235,7 @@ PeersHandler::PeersHandler(StateTokenServer* sts, RsNotify* notify, RsPeers *pee
     mStateTokenServer(sts),
     mNotify(notify),
     mRsPeers(peers), mRsMsgs(msgs),
+    status(0),
     mMtx("PeersHandler Mutex")
 {
     mNotify->registerNotifyClient(this);
