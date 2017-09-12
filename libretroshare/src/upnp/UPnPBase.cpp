@@ -487,6 +487,7 @@ m_timeout(1801),
 m_SCPD(NULL)
 {
 	int errcode;
+	m_SID[0] = 0;
 	
 	std::vector<char> vscpdURL(URLBase.length() + m_SCPDURL.length() + 1);
 	char *scpdURL = &vscpdURL[0];
