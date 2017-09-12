@@ -1478,6 +1478,7 @@ upnpEventSubscriptionExpired:
 		struct Upnp_Event_Subscribe *es_event =
 			(struct Upnp_Event_Subscribe *)Event;
 		Upnp_SID newSID;
+		newSID[0] = 0;
 		int TimeOut = 1801;
 		int ret = UpnpSubscribe(
 			upnpCP->m_UPnPClientHandle,
