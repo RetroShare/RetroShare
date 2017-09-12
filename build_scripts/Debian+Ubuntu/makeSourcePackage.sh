@@ -4,7 +4,8 @@
 version="0.6.3"
 gitpath="https://github.com/RetroShare/RetroShare.git"
 workdir=retroshare-${version}
-branch="v0.6.3-official_release"
+branch="master"
+#branch="v0.6.3-official_release"
 #bubba3="Y"		# comment out to compile for bubba3
 ######################################################
 
@@ -54,7 +55,7 @@ while [ ${#} -gt 0 ]; do
 done
 
 if test "${dist}" = "" ; then
-	dist="precise trusty vivid xenial yakkety zesty"
+	dist="precise trusty vivid xenial zesty"
 fi
 
 echo Attempting to get revision number...
