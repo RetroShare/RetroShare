@@ -2156,7 +2156,7 @@ int bdConnectManager::recvedConnectionRequest(bdId *id, bdId *srcConnAddr, bdId 
 #endif
 
 		/* we are actually the end node, store stuff, get auth and on with it! */
-		point = BD_PROXY_CONNECTION_END_POINT;
+		//point = BD_PROXY_CONNECTION_END_POINT;
 
 		conn->ConnectionRequestDirect(id, srcConnAddr, destConnAddr);
 
@@ -2284,7 +2284,7 @@ int bdConnectManager::recvedConnectionRequest(bdId *id, bdId *srcConnAddr, bdId 
 			std::cerr << std::endl;
 #endif
 
-			point = BD_PROXY_CONNECTION_END_POINT;
+			//point = BD_PROXY_CONNECTION_END_POINT;
 
 			conn->ConnectionRequestEnd(id, srcConnAddr, destConnAddr, mode);
 
