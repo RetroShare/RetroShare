@@ -799,8 +799,8 @@ int bdNodeManager::checkStatus()
 		if (pit == mActivePeers.end())
 		{
 			/* only internal! - disable Callback / Ping */
-			doPing = false;
-			doCallback = false;
+			//doPing = false;
+			//doCallback = false;
 #ifdef DEBUG_MGR
 			std::cerr << "bdNodeManager::checkStatus() Internal: no cb for id: ";
 			mFns->bdPrintNodeId(std::cerr, &(it->first));
