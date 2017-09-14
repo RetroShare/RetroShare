@@ -78,7 +78,9 @@ RsGxsImage::~RsGxsImage()
 
 RsGxsImage &RsGxsImage::operator=(const RsGxsImage &a)
 {
-	copy(a.mData, a.mSize);
+	if (&a != this)
+		copy(a.mData, a.mSize);
+
 	return *this;
 }
 
@@ -127,8 +129,11 @@ void RsGxsImage::copy(uint8_t *data, uint32_t size)
 	if (data && size)
 	{
 		mData = allocate(size);
-		memcpy(mData, data, size);
-		mSize = size;
+		if (mData)
+		{
+			memcpy(mData, data, size);
+			mSize = size;
+		}
 	}
 }
 
