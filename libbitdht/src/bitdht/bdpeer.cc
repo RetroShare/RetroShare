@@ -89,10 +89,10 @@ int operator<(const bdNodeId &a, const bdNodeId &b)
 	bdPrintNodeId(std::cerr, &b);
 	std::cerr <<  ")" << std::endl;
 #endif
-	
+
 	uint8_t *a_data = (uint8_t *) a.data;
 	uint8_t *b_data = (uint8_t *) b.data;
-	for(int i = 0; i < BITDHT_KEY_LEN; i++)	
+	for(int i = 0; i < BITDHT_KEY_LEN; i++)
 	{
 		if (*a_data < *b_data)
 		{
@@ -151,7 +151,7 @@ int operator==(const bdNodeId &a, const bdNodeId &b)
 {
 	uint8_t *a_data = (uint8_t *) a.data;
 	uint8_t *b_data = (uint8_t *) b.data;
-	for(int i = 0; i < BITDHT_KEY_LEN; i++)	
+	for(int i = 0; i < BITDHT_KEY_LEN; i++)
 	{
 		if (*a_data < *b_data)
 		{
@@ -220,8 +220,8 @@ int     bdSpace::setAttachedFlag(uint32_t withflags, int count)
 	return 1;
 }
 
-int bdSpace::find_nearest_nodes_with_flags(const bdNodeId *id, int number, 
-		std::list<bdId> /* excluding */, 
+int bdSpace::find_nearest_nodes_with_flags(const bdNodeId *id, int number,
+		std::list<bdId> /* excluding */,
 		std::multimap<bdMetric, bdId> &nearest, uint32_t with_flags)
 {
 	std::multimap<bdMetric, bdId> closest;
@@ -246,7 +246,7 @@ int bdSpace::find_nearest_nodes_with_flags(const bdNodeId *id, int number,
 	/* iterate through the buckets, and sort by distance */
 	for(it = buckets.begin(); it != buckets.end(); it++)
 	{
-		for(eit = it->entries.begin(); eit != it->entries.end(); eit++) 
+		for(eit = it->entries.begin(); eit != it->entries.end(); eit++)
 		{
 			if ((!with_flags) || ((with_flags & eit->mPeerFlags) == with_flags))
 			{
@@ -352,7 +352,7 @@ int bdSpace::find_node(const bdNodeId *id, int number, std::list<bdId> &matchIds
 
 	std::list<bdPeer>::iterator eit;
 	int matchCount = 0;
-	for(eit = buck.entries.begin(); eit != buck.entries.end(); eit++) 
+	for(eit = buck.entries.begin(); eit != buck.entries.end(); eit++)
 	{
 #ifdef DEBUG_BD_SPACE
         std::cerr << "bdSpace::find_node() Checking Against Peer: ";
@@ -420,7 +420,7 @@ int bdSpace::find_exactnode(const bdId *id, bdPeer &peer)
 	bdBucket &buck = buckets[buckno];
 
 	std::list<bdPeer>::iterator eit;
-	for(eit = buck.entries.begin(); eit != buck.entries.end(); eit++) 
+	for(eit = buck.entries.begin(); eit != buck.entries.end(); eit++)
 	{
 		if (*id == eit->mPeerId)
 		{
@@ -455,10 +455,10 @@ int bdSpace::clean_node_flags(uint32_t flags)
 	for(bit = buckets.begin(); bit != buckets.end(); bit++)
 	{
 		std::list<bdPeer>::iterator eit;
-		for(eit = bit->entries.begin(); eit != bit->entries.end(); eit++) 
+		for(eit = bit->entries.begin(); eit != bit->entries.end(); eit++)
 		{
 			if (flags & eit->mPeerFlags)
-			{	
+			{
 #ifdef DEBUG_BD_SPACE
                 std::cerr << "bdSpace::clean_node_flags() Found Match: ";
 		  		mFns->bdPrintId(std::cerr, &(eit->mPeerId));
@@ -485,8 +485,8 @@ int bdSpace::clean_node_flags(uint32_t flags)
 
 int	bdSpace::scanOutOfDatePeers(std::list<bdId> &peerIds)
 {
-	/* 
-	 * 
+	/*
+	 *
 	 */
 	bool doAttached = (mAttachedCount > 0);
 	uint32_t attachedCount = 0;
@@ -501,7 +501,7 @@ int	bdSpace::scanOutOfDatePeers(std::list<bdId> &peerIds)
 	/* iterate through the buckets, and sort by distance */
 	for(it = buckets.begin(); it != buckets.end(); it++)
 	{
-		for(eit = it->entries.begin(); eit != it->entries.end(); ) 
+		for(eit = it->entries.begin(); eit != it->entries.end(); )
 		{
 			bool added = false;
 			if (doAttached)
@@ -519,7 +519,7 @@ int	bdSpace::scanOutOfDatePeers(std::list<bdId> &peerIds)
 					attachedCount++;
 				}
 			}
-				
+
 
 			/* timeout on last send time! */
 			if ((!added) && (ts - eit->mLastSendTime > BITDHT_MAX_SEND_PERIOD ))
@@ -528,7 +528,7 @@ int	bdSpace::scanOutOfDatePeers(std::list<bdId> &peerIds)
 		 	 	 * 1) They are out-of-date: mLastRecvTime is too old.
 			 	 * 2) They don't have 0x0001 flag (we haven't received a PONG) and never sent.
 			 	 */
-				if ((ts - eit->mLastRecvTime > BITDHT_MAX_SEND_PERIOD ) || 
+				if ((ts - eit->mLastRecvTime > BITDHT_MAX_SEND_PERIOD ) ||
 					!(eit->mPeerFlags & BITDHT_PEER_STATUS_RECV_PONG))
 				{
 					peerIds.push_back(eit->mPeerId);
@@ -537,7 +537,7 @@ int	bdSpace::scanOutOfDatePeers(std::list<bdId> &peerIds)
 			}
 
 
-			/* we also want to remove very old entries (should it happen here?) 
+			/* we also want to remove very old entries (should it happen here?)
 			 * which are not pushed out by newer entries (will happen in for closer buckets)
 			 */
 
@@ -547,7 +547,7 @@ int	bdSpace::scanOutOfDatePeers(std::list<bdId> &peerIds)
 			{
 				discard = true;
 			}
-		
+
 			/* discard peers which have not responded to anything (ie have no flags set) */
 			/* changed into have not id'ed themselves, as we've added ping to list of flags. */
 			if ((ts - eit->mFoundTime > BITDHT_MAX_RESPONSE_PERIOD ) &&
@@ -555,11 +555,11 @@ int	bdSpace::scanOutOfDatePeers(std::list<bdId> &peerIds)
 			{
 				discard = true;
 			}
-			
+
 
 			/* INCREMENT */
 			if (discard)
-			{	
+			{
 				eit = it->entries.erase(eit);
 			}
 			else
@@ -583,7 +583,7 @@ int	bdSpace::scanOutOfDatePeers(std::list<bdId> &peerIds)
 }
 
 
-/* Attached should be changed to preferentially choose the ones we want 
+/* Attached should be changed to preferentially choose the ones we want
  * If we have RELAYS enabled - then we want them to attach to the RELAYS
  * Not sure about this yet!
  *
@@ -592,8 +592,8 @@ int	bdSpace::scanOutOfDatePeers(std::list<bdId> &peerIds)
 
 int	bdSpace::updateAttachedPeers()
 {
-	/* 
-	 * 
+	/*
+	 *
 	 */
 	bool doAttached = (mAttachedCount > 0);
 	uint32_t attachedCount = 0;
@@ -614,7 +614,7 @@ int	bdSpace::updateAttachedPeers()
 	std::list<bdPeer>::reverse_iterator eit;
 
 
-	/* skip the first bucket, as we don't want to ping ourselves! */	
+	/* skip the first bucket, as we don't want to ping ourselves! */
 	it = buckets.begin();
 	if (it != buckets.end())
 	{
@@ -625,7 +625,7 @@ int	bdSpace::updateAttachedPeers()
 	for(; it != buckets.end(); it++)
 	{
 		/* start from the back, as these are the most recently seen (and more likely to be the old ATTACHED) */
-		for(eit = it->entries.rbegin(); eit != it->entries.rend(); eit++) 
+		for(eit = it->entries.rbegin(); eit != it->entries.rend(); eit++)
 		{
 			if (doAttached)
 			{
@@ -673,7 +673,7 @@ int	bdSpace::updateAttachedPeers()
  * BITDHT_PEER_STATUS_DHT_ENGINE  (dbXXxx)
  * BITDHT_PEER_STATUS_DHT_APPL    (XXRSxx)
  * BITDHT_PEER_STATUS_DHT_VERSION (XXxx50)
- * 
+ *
  */
 
 int     bdSpace::add_peer(const bdId *id, uint32_t peerflags)
@@ -681,7 +681,7 @@ int     bdSpace::add_peer(const bdId *id, uint32_t peerflags)
 	/* find the peer */
 	bool add = false;
 	time_t ts = time(NULL);
-	
+
 #ifdef DEBUG_BD_SPACE
 	fprintf(stderr, "bdSpace::add_peer()\n");
 #endif
@@ -693,7 +693,7 @@ int     bdSpace::add_peer(const bdId *id, uint32_t peerflags)
 
 #ifdef DEBUG_BD_SPACE
 	fprintf(stderr, "peer:");
-	mFns->bdPrintId(std::cerr, id);	
+	mFns->bdPrintId(std::cerr, id);
 	fprintf(stderr, " bucket: %d", bucket);
 	fprintf(stderr, "\n");
 #endif
@@ -734,7 +734,7 @@ int     bdSpace::add_peer(const bdId *id, uint32_t peerflags)
 
 			return 1;
 		}
-		
+
 		/* find lowest score */
 		if (it->mPeerFlags < minScore)
 		{
@@ -751,7 +751,7 @@ int     bdSpace::add_peer(const bdId *id, uint32_t peerflags)
 #endif
 		add = true;
 	}
-	else 
+	else
 	{
 		/* check head of list */
 		bdPeer &peer = buck.entries.front();
@@ -778,7 +778,7 @@ int     bdSpace::add_peer(const bdId *id, uint32_t peerflags)
 			}
 
 #ifdef DEBUG_BD_SPACE
-			std::cerr << "Inserting due to Priority: minScore: " << minScore 
+			std::cerr << "Inserting due to Priority: minScore: " << minScore
 				<< " new Peer Score: " << peerscore <<  << std::endl;
 #endif
 		}
@@ -839,10 +839,10 @@ bool    bdSpace::flagpeer(const bdId *id, uint32_t flags, uint32_t ex_flags)
 		{
 #ifdef DEBUG_BD_SPACE
 			fprintf(stderr, "peer:");
-			mFns->bdPrintId(std::cerr, id);	
+			mFns->bdPrintId(std::cerr, id);
 			fprintf(stderr, " bucket: %d", bucket);
 			fprintf(stderr, "\n");
-			fprintf(stderr, "Original Flags: %x Extra: %x\n", 
+			fprintf(stderr, "Original Flags: %x Extra: %x\n",
 				it->mPeerFlags, it->mExtraFlags);
 #endif
 			it->mPeerFlags |= flags;
@@ -862,16 +862,14 @@ bool    bdSpace::flagpeer(const bdId *id, uint32_t flags, uint32_t ex_flags)
 
 int     bdSpace::printDHT()
 {
-	std::map<bdMetric, bdId> closest;
-	std::map<bdMetric, bdId>::iterator mit;
-
 	std::vector<bdBucket>::iterator it;
-	std::list<bdPeer>::iterator eit;
 
 	/* iterate through the buckets, and sort by distance */
 	int i = 0;
 
 #ifdef BITDHT_DEBUG
+	std::list<bdPeer>::iterator eit;
+
 	fprintf(stderr, "bdSpace::printDHT()\n");
 	for(it = buckets.begin(); it != buckets.end(); it++, i++)
 	{
@@ -880,7 +878,7 @@ int     bdSpace::printDHT()
 			fprintf(stderr, "Bucket %d ----------------------------\n", i);
 		}
 
-		for(eit = it->entries.begin(); eit != it->entries.end(); eit++) 
+		for(eit = it->entries.begin(); eit != it->entries.end(); eit++)
 		{
 			bdMetric dist;
 			mFns->bdDistance(&(mOwnId), &(eit->mPeerId.id), &dist);
@@ -909,8 +907,8 @@ int     bdSpace::printDHT()
 	i = 0;
 	for(it = buckets.begin(); it != buckets.end(); it++, i++)
 	{
-		int size = it->entries.size();
-		int shift = BITDHT_KEY_BITLEN - i;
+		size_t size = it->entries.size();
+		uint8_t shift = BITDHT_KEY_BITLEN - i;
 		bool toBig = false;
 
 		if (shift > BITDHT_ULLONG_BITS - mFns->bdBucketBitSize() - 1)
@@ -918,16 +916,19 @@ int     bdSpace::printDHT()
 			toBig = true;
 			shift = BITDHT_ULLONG_BITS - mFns->bdBucketBitSize() - 1;
 		}
-		unsigned long long no_nets = ((unsigned long long) 1 << shift);
+		if (shift >= sizeof(unsigned long long))
+			shift = sizeof(unsigned long long) -1 ;
+
+		unsigned long long no_nets = (unsigned long long)(1ULL << shift);
 
 		/* use doPrint so it acts as a single switch */
 		if (size && !doAvg && !doPrint)
-		{	
+		{
 			doAvg = true;
 		}
 
 		if (size && !doPrint)
-		{	
+		{
 			doPrint = true;
 		}
 
@@ -942,10 +943,10 @@ int     bdSpace::printDHT()
 		if (doPrint)
 		{
 			if (size)
-				fprintf(stderr, "Bucket %d: %d peers: ", i, size);
+				fprintf(stderr, "Bucket %d: %lu peers: ", i, size);
 #ifdef BITDHT_DEBUG
 			else
-				fprintf(stderr, "Bucket %d: %d peers: ", i, size);
+				fprintf(stderr, "Bucket %d: %lu peers: ", i, size);
 #endif
 		}
 		if (toBig)
@@ -967,7 +968,7 @@ int     bdSpace::printDHT()
 		{
 			no_peers = no_nets * size;
 			if (size)
-			{	
+			{
 				if (doPrint)
 					bd_fprintf(stderr, "Estimated NetSize = %llu\n", no_peers);
 			}
@@ -991,14 +992,14 @@ int     bdSpace::printDHT()
 			if (no_peers != 0)
 			{
 				sum += no_peers;
-				count++;	
+				count++;
 #ifdef BITDHT_DEBUG
-				fprintf(stderr, "Est: %d: %llu => %llu / %d\n", 
+				fprintf(stderr, "Est: %d: %llu => %llu / %d\n",
 					i, no_peers, sum, count);
 #endif
 			}
 		}
-			
+
 	}
 	if (count == 0)
 	{
@@ -1044,18 +1045,21 @@ uint32_t  bdSpace::calcNetworkSizeWithFlag(uint32_t withFlag)
 	int i = 0;
 	for(it = buckets.begin(); it != buckets.end(); it++, i++)
 	{
-		int size = 0;
+		size_t size = 0;
 		std::list<bdPeer>::iterator lit;
 		for(lit = it->entries.begin(); lit != it->entries.end(); lit++)
 			if (withFlag & lit->mPeerFlags)
 				size++;
 
-		int shift = BITDHT_KEY_BITLEN - i;
+		uint8_t shift = BITDHT_KEY_BITLEN - i;
 
 		if (shift > BITDHT_ULLONG_BITS - mFns->bdBucketBitSize() - 1)
 			continue ;
 
-		unsigned long long no_nets = ((unsigned long long) 1 << shift);
+		if (shift >= sizeof(unsigned long long))
+			shift = sizeof(unsigned long long) -1 ;
+
+		unsigned long long no_nets = (unsigned long long)(1ULL << shift);
 
 		no_peers = no_nets * size;
 
@@ -1122,7 +1126,7 @@ uint32_t  bdSpace::calcNetworkSizeWithFlag_old(uint32_t withFlag)
 
 		totalcount += size;
 
-		int shift = BITDHT_KEY_BITLEN - i;
+		uint8_t shift = BITDHT_KEY_BITLEN - i;
 		bool toBig = false;
 
 		if (shift > BITDHT_ULLONG_BITS - mFns->bdBucketBitSize() - 1)
@@ -1130,8 +1134,10 @@ uint32_t  bdSpace::calcNetworkSizeWithFlag_old(uint32_t withFlag)
 			toBig = true;
 			shift = BITDHT_ULLONG_BITS - mFns->bdBucketBitSize() - 1;
 		}
-		unsigned long long no_nets = ((unsigned long long) 1 << shift);
+		if (shift >= sizeof(unsigned long long))
+			shift = sizeof(unsigned long long) -1 ;
 
+		unsigned long long no_nets = (unsigned long long)(1ULL << shift);
 
 		/* use doPrint so it acts as a single switch */
 		if (size && !doAvg && !doPrint)
@@ -1204,7 +1210,7 @@ uint32_t  bdSpace::calcSpaceSizeWithFlag(uint32_t withFlag)
 
 	/* little summary */
 	uint32_t totalcount = 0;
-	
+
 	it = buckets.begin();
 	if (it != buckets.end())
 	{
