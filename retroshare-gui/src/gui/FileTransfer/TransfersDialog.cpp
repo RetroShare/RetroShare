@@ -408,22 +408,26 @@ TransfersDialog::TransfersDialog(QWidget *parent)
 	connect(chunkProgressiveAct, SIGNAL(triggered()), this, SLOT(chunkProgressive()));
 	playAct = new QAction(QIcon(IMAGE_PLAY), tr( "Play" ), this );
 	connect( playAct , SIGNAL( triggered() ), this, SLOT( dlOpenFile() ) );
-		renameFileAct = new QAction(QIcon(IMAGE_RENAMEFILE), tr("Rename file..."), this);
-		connect(renameFileAct, SIGNAL(triggered()), this, SLOT(renameFile()));
-		specifyDestinationDirectoryAct = new QAction(QIcon(IMAGE_SEARCH),tr("Specify..."),this) ;
-		connect(specifyDestinationDirectoryAct,SIGNAL(triggered()),this,SLOT(chooseDestinationDirectory()));
-		expandAllAct= new QAction(QIcon(IMAGE_EXPAND),tr("Expand all"),this);
-		connect(expandAllAct,SIGNAL(triggered()),this,SLOT(expandAll()));
-		collapseAllAct= new QAction(QIcon(IMAGE_COLLAPSE),tr("Collapse all"),this);
-		connect(collapseAllAct,SIGNAL(triggered()),this,SLOT(collapseAll()));
-		collCreateAct= new QAction(QIcon(IMAGE_COLLCREATE), tr("Create Collection..."), this);
-		connect(collCreateAct,SIGNAL(triggered()),this,SLOT(collCreate()));
-		collModifAct= new QAction(QIcon(IMAGE_COLLMODIF), tr("Modify Collection..."), this);
-		connect(collModifAct,SIGNAL(triggered()),this,SLOT(collModif()));
-		collViewAct= new QAction(QIcon(IMAGE_COLLVIEW), tr("View Collection..."), this);
-		connect(collViewAct,SIGNAL(triggered()),this,SLOT(collView()));
-		collOpenAct = new QAction(QIcon(IMAGE_COLLOPEN), tr( "Download from collection file..." ), this );
-		connect(collOpenAct, SIGNAL(triggered()), this, SLOT(collOpen()));
+	renameFileAct = new QAction(QIcon(IMAGE_RENAMEFILE), tr("Rename file..."), this);
+	connect(renameFileAct, SIGNAL(triggered()), this, SLOT(renameFile()));
+	specifyDestinationDirectoryAct = new QAction(QIcon(IMAGE_SEARCH),tr("Specify..."),this) ;
+	connect(specifyDestinationDirectoryAct,SIGNAL(triggered()),this,SLOT(chooseDestinationDirectory()));
+	expandAllDLAct= new QAction(QIcon(IMAGE_EXPAND),tr("Expand all"),this);
+	connect(expandAllDLAct,SIGNAL(triggered()),this,SLOT(expandAllDL()));
+	collapseAllDLAct= new QAction(QIcon(IMAGE_COLLAPSE),tr("Collapse all"),this);
+	connect(collapseAllDLAct,SIGNAL(triggered()),this,SLOT(collapseAllDL()));
+	expandAllULAct= new QAction(QIcon(IMAGE_EXPAND),tr("Expand all"),this);
+	connect(expandAllULAct,SIGNAL(triggered()),this,SLOT(expandAllUL()));
+	collapseAllULAct= new QAction(QIcon(IMAGE_COLLAPSE),tr("Collapse all"),this);
+	connect(collapseAllULAct,SIGNAL(triggered()),this,SLOT(collapseAllUL()));
+	collCreateAct= new QAction(QIcon(IMAGE_COLLCREATE), tr("Create Collection..."), this);
+	connect(collCreateAct,SIGNAL(triggered()),this,SLOT(collCreate()));
+	collModifAct= new QAction(QIcon(IMAGE_COLLMODIF), tr("Modify Collection..."), this);
+	connect(collModifAct,SIGNAL(triggered()),this,SLOT(collModif()));
+	collViewAct= new QAction(QIcon(IMAGE_COLLVIEW), tr("View Collection..."), this);
+	connect(collViewAct,SIGNAL(triggered()),this,SLOT(collView()));
+	collOpenAct = new QAction(QIcon(IMAGE_COLLOPEN), tr( "Download from collection file..." ), this );
+	connect(collOpenAct, SIGNAL(triggered()), this, SLOT(collOpen()));
 
     /** Setup the actions for the header context menu */
     showDLSizeAct= new QAction(tr("Size"),this);
@@ -777,8 +781,8 @@ void TransfersDialog::downloadListCustomPopupMenu( QPoint /*point*/ )
 	}//if (add_CopyLink || add_PasteLink)
 
 	if (DLLFilterModel->rowCount()>0 ) {
-		contextMnu.addAction( expandAllAct ) ;
-		contextMnu.addAction( collapseAllAct ) ;
+		contextMnu.addAction( expandAllDLAct ) ;
+		contextMnu.addAction( collapseAllDLAct ) ;
 	}
 
 	contextMnu.addSeparator() ;//-----------------------------------------------
@@ -830,21 +834,29 @@ void TransfersDialog::downloadListHeaderCustomPopupMenu( QPoint /*point*/ )
 
 void TransfersDialog::uploadsListCustomPopupMenu( QPoint /*point*/ )
 {
-    std::set<RsFileHash> items;
-    getULSelectedItems(&items, NULL);
+	std::set<RsFileHash> items;
+	getULSelectedItems(&items, NULL);
 
-    bool single = (items.size() == 1);
+	bool single = (items.size() == 1);
 
-    bool add_CopyLink = !items.empty();
+	bool add_CopyLink = !items.empty();
 
-    QMenu contextMnu( this );
-    if(single)
-        contextMnu.addAction( ulOpenFolderAct);
+	QMenu contextMnu( this );
+	if(single)
+		contextMnu.addAction( ulOpenFolderAct);
 
-    if (add_CopyLink)
-        contextMnu.addAction( ulCopyLinkAct);
+	if (add_CopyLink)
+		contextMnu.addAction( ulCopyLinkAct);
 
-    contextMnu.exec(QCursor::pos());
+	if (ULListModel->rowCount()>0 ) {
+		if(single || add_CopyLink)
+			contextMnu.addSeparator() ;//-----------------------------------------------
+
+		contextMnu.addAction( expandAllULAct ) ;
+		contextMnu.addAction( collapseAllULAct ) ;
+	}
+
+	contextMnu.exec(QCursor::pos());
 }
 
 void TransfersDialog::chooseDestinationDirectory()
@@ -1176,9 +1188,15 @@ int TransfersDialog::addULItem(int row, const FileInfo &fileInfo)
 
 	ULListModel->setData(ULListModel->index(row, COLUMN_USIZE), QVariant((qlonglong)fileSize));
 
+	//Reset Parent info if child present
+	ULListModel->setData(ULListModel->index(row, COLUMN_UNAME),        QVariant(QString()), Qt::ToolTipRole);
+	ULListModel->setData(ULListModel->index(row, COLUMN_UTRANSFERRED), QVariant());
+	ULListModel->setData(ULListModel->index(row, COLUMN_UPROGRESS),    QVariant());
+
 	QStandardItem *ulItem = ULListModel->item(row);
 	std::set<int> used_rows ;
 	double peerULSpeedTotal = 0;
+	bool bOnlyOne = ( fileInfo.peers.size() == 1 );
 
 	for(std::list<TransferInfo>::const_iterator pit = fileInfo.peers.begin()
 	    ; pit != fileInfo.peers.end(); ++pit)
@@ -1219,9 +1237,17 @@ int TransfersDialog::addULItem(int row, const FileInfo &fileInfo)
 			peerpinfo.progress = (fileInfo.size>0)?((transferInfo.transfered % chunk_size)*100.0/fileInfo.size):0 ;
 		}
 
-		int row_id = addPeerToULItem(ulItem, transferInfo.peerId, hashFileAndPeerId, completed, peerULSpeed, peerpinfo);
+		if (bOnlyOne)
+		{
+			//Only one peer so update parent
+			ULListModel->setData(ULListModel->index(row, COLUMN_UNAME),        QVariant(getPeerName(transferInfo.peerId)), Qt::ToolTipRole);
+			ULListModel->setData(ULListModel->index(row, COLUMN_UTRANSFERRED), QVariant(completed));
+			ULListModel->setData(ULListModel->index(row, COLUMN_UPROGRESS),    QVariant::fromValue(peerpinfo));
+		} else {
+			int row_id = addPeerToULItem(ulItem, transferInfo.peerId, hashFileAndPeerId, completed, peerULSpeed, peerpinfo);
 
-		used_rows.insert(row_id);
+			used_rows.insert(row_id);
+		}
 		peerULSpeedTotal += peerULSpeed;
 
 	}
@@ -2280,13 +2306,22 @@ void TransfersDialog::setShowDLPath(bool show)
     }
 }
 
-void TransfersDialog::expandAll()
+void TransfersDialog::expandAllDL()
 {
 	ui.downloadList->expandAll();
 }
-void TransfersDialog::collapseAll()
+void TransfersDialog::collapseAllDL()
 {
 	ui.downloadList->collapseAll();
+}
+
+void TransfersDialog::expandAllUL()
+{
+	ui.uploadsList->expandAll();
+}
+void TransfersDialog::collapseAllUL()
+{
+	ui.uploadsList->collapseAll();
 }
 
 void TransfersDialog::filterChanged(const QString& /*text*/)
