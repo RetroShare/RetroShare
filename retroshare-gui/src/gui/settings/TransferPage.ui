@@ -98,7 +98,11 @@
          </widget>
         </item>
         <item>
-         <widget class="QLineEdit" name="suffixesIgnoreList_LE"/>
+         <widget class="QLineEdit" name="suffixesIgnoreList_LE">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Add any combination of suffixes separated by &amp;quot;;&amp;quot; for instance &amp;quot;~;.bak;.old&amp;quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>
@@ -112,7 +116,11 @@
          </widget>
         </item>
         <item>
-         <widget class="QLineEdit" name="prefixesIgnoreList_LE"/>
+         <widget class="QLineEdit" name="prefixesIgnoreList_LE">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Add any combination of prefixes, separated by &amp;quot;;&amp;quot; for instance &amp;quot;.;~&amp;quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>
