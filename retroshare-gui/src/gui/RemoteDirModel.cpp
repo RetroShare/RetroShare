@@ -87,7 +87,11 @@ void RetroshareDirModel::treeStyle()
 	                     QIcon::Normal, QIcon::On);
 	peerIcon = QIcon(":/images/user/identity16.png");
 }
-
+void TreeStyle_RDM::update()
+{
+	preMods() ;
+	postMods() ;
+}
 void TreeStyle_RDM::updateRef(const QModelIndex& indx) const
 {
     rsFiles->requestDirUpdate(indx.internalPointer()) ;
