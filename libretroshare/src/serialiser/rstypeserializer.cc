@@ -557,11 +557,13 @@ template<> bool RsTypeSerializer::deserialize(const uint8_t data[],uint32_t size
 
     ok = ok && (NULL != r.first);
 
-    memcpy(r.first,&data[offset],r.second) ;
-    offset += r.second ;
-
-    if(!ok)
+    if (ok)
+    {
+        memcpy(r.first,&data[offset],r.second) ;
+        offset += r.second ;
+    } else  {
         offset = saved_offset ;
+    }
 
     return ok;
 }
