@@ -448,7 +448,7 @@ void PeersHandler::handleWildcard(Request &req, Response &resp)
 				std::list<RsGroupInfo> grpInfo;
 				mRsPeers->getGroupInfoList(grpInfo);
 				RsPeerDetails details;
-				ok &= mRsPeers->getPeerDetails(RsPeerId(str), details);
+				if (mRsPeers->getPeerDetails(RsPeerId(str), details))
 				ok = peerInfoToStream(resp.mDataStream, details, mRsPeers, grpInfo, have_avatar(mRsMsgs, RsPeerId(str)));
 			}
 		}
