@@ -120,7 +120,7 @@ bool loadStringFromFile(const std::string& file, std::string& str);
 int createLockFile(const std::string& lock_file_path, rs_lock_handle_t& lock_handle) ;
 
 // Removes the lock file with specified handle.
-void releaseLockFile(rs_lock_handle_t lockHandle) ;
+void releaseLockFile(rs_lock_handle_t &lockHandle) ;
 
 std::wstring 	getWideTopDir(std::wstring);
 std::wstring 	getWideRootDir(std::wstring);

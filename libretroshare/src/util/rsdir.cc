@@ -892,7 +892,7 @@ int RsDirUtil::createLockFile(const std::string& lock_file_path, rs_lock_handle_
 	/******************************** WINDOWS/UNIX SPECIFIC PART ******************/
 }
 
-void RsDirUtil::releaseLockFile(rs_lock_handle_t lockHandle)
+void RsDirUtil::releaseLockFile(rs_lock_handle_t &lockHandle)
 {
 	/******************************** WINDOWS/UNIX SPECIFIC PART ******************/
 #ifndef WINDOWS_SYS
