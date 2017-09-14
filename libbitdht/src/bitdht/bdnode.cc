@@ -402,14 +402,16 @@ void bdNode::iteration()
 		}
 
 	}
-
-	/* allow each query to send up to one query... until maxMsgs has been reached */
-	int sentQueries = mQueryMgr->iterateQueries(mMaxAllowedMsgs-sentMsgs);
-	sentMsgs += sentQueries;
+	/* allow each query to send up to one query... until mMaxAllowedMsgs has been reached */
+#ifdef DEBUG_NODE_ACTIONS
+	int sentQueries =
+#endif
+	mQueryMgr->iterateQueries(mMaxAllowedMsgs-sentMsgs);
+	//sentMsgs += sentQueries;
 
 	
 #ifdef DEBUG_NODE_ACTIONS 
-	std::cerr << "bdNode::iteration() maxMsgs: " << maxMsgs << " sentPings: " << sentPings;
+	std::cerr << "bdNode::iteration() mMaxAllowedMsgs: " << mMaxAllowedMsgs << " sentPings: " << sentPings;
 	std::cerr << " / " << allowedPings;
 	std::cerr << " sentQueries: " << sentQueries;
 	std::cerr << std::endl;
