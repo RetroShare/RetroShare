@@ -924,7 +924,6 @@ m_WanService(NULL)
 	// Start UPnP
 	int ret;
 	char *ipAddress = NULL;
-	unsigned short port = 0;
 #ifdef UPNP_DEBUG
 	int resLog = UpnpInitLog();
 	std::cerr << "UPnPControlPoint::CUPnPControlPoint() Init log : " << resLog << std::endl;
@@ -939,14 +938,17 @@ m_WanService(NULL)
 #endif
 		goto error;
 	}
-	port = UpnpGetServerPort();
-	ipAddress = UpnpGetServerIpAddress();
 #ifdef UPNP_DEBUG
-	std::cerr << "UPnPControlPoint::CUPnPControlPoint() bound to " << ipAddress << ":" <<
-		port << "." << std::endl;
-#else
-	// unused variable
-	(void)port;
+	unsigned short port =
+#endif
+	UpnpGetServerPort();
+#ifdef UPNP_DEBUG
+	ipAddress =
+#endif
+	UpnpGetServerIpAddress();
+#ifdef UPNP_DEBUG
+	std::cerr << "UPnPControlPoint::CUPnPControlPoint() bound to " << ipAddress << ":"
+	          << port << "." << std::endl;
 #endif
 
 	ret = UpnpRegisterClient(
