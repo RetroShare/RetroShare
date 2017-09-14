@@ -689,7 +689,7 @@ RsGxsMsgMetaData* RsDataService::locked_getMsgMeta(RetroCursor &c, int colOffset
     msgMeta->mMsgFlags = c.getInt32(mColMsgMeta_NxsFlags + colOffset);
     msgMeta->mPublishTs = c.getInt32(mColMsgMeta_TimeStamp + colOffset);
 
-    offset = 0; data_len = 0;
+    offset = 0;
 
     // thread and parent id
     c.getString(mColMsgMeta_MsgThreadId + colOffset, temp);
