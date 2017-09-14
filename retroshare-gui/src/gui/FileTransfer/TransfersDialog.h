@@ -101,8 +101,10 @@ private slots:
     void setDestinationDirectory();
     void chooseDestinationDirectory();
 
-    void expandAll();
-    void collapseAll();
+    void expandAllDL();
+    void collapseAllDL();
+    void expandAllUL();
+    void collapseAllUL();
 
 //    void rootdecorated();
 //    void rootisnotdecorated();
@@ -207,8 +209,10 @@ private:
     QAction *detailsFileAct;
     QAction *renameFileAct;
     QAction *specifyDestinationDirectoryAct;
-    QAction *expandAllAct;
-    QAction *collapseAllAct;
+    QAction *expandAllDLAct;
+    QAction *collapseAllDLAct;
+    QAction *expandAllULAct;
+    QAction *collapseAllULAct;
     QAction *collCreateAct;
     QAction *collModifAct;
     QAction *collViewAct;
