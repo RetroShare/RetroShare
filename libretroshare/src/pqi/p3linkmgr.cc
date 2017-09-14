@@ -1210,7 +1210,7 @@ void    p3LinkMgrIMPL::peerStatus(const RsPeerId& id, const pqiIpAddrSet &addrs,
 		 * we should switch the DHT search back on.
 		 */
 
-		peerNetMode = 0; //it->second.netMode &= (~RS_NET_MODE_ACTUAL); /* clear actual flags */
+		//it->second.netMode &= (~RS_NET_MODE_ACTUAL); /* clear actual flags */
 		if (flags & RS_NET_FLAGS_EXTERNAL_ADDR)
 		{
 			peerNetMode = RS_NET_MODE_EXT;
