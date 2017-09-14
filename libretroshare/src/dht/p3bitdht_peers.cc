@@ -155,7 +155,7 @@ bool 	p3BitDht::dropPeer(const RsPeerId& pid)
 #endif
 	
 			//addFriend(pid);
-			dpd = addInternalPeer_locked(pid, RSDHT_PEERTYPE_FOF);
+			addInternalPeer_locked(pid, RSDHT_PEERTYPE_FOF);
 			
 			return false;
 		}
