@@ -743,7 +743,6 @@ int pqissl::Initiate_Connection()
 #endif
 
 			net_internal_close(osock);
-			osock = -1;
 			waiting = WAITING_FAIL_INTERFACE;
 			return -1;
 		}
