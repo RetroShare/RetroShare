@@ -1166,6 +1166,7 @@ void SearchDialog::insertFile(qulonglong searchId, const FileDetail& file, int s
 	// 1 - look in result window whether the file already exists.
 	//
 	bool found = false ;
+	bool altname = false ;
 	int sources;
 	int friendSource = 0;
 	int anonymousSource = 0;
@@ -1193,7 +1194,11 @@ void SearchDialog::insertFile(qulonglong searchId, const FileDetail& file, int s
 			(*it)->setText(SR_SOURCES_COL,modifiedResult);
 			(*it)->setData(SR_SOURCES_COL, ROLE_SORT, fltRes);
 			QTreeWidgetItem *item = (*it);
+			
 			found = true ;
+			
+			if(QString::compare((*it)->text(SR_NAME_COL), QString::fromUtf8(file.name.c_str()), Qt::CaseInsensitive)!=0)
+				altname = true;
 
 			if (!item->data(SR_DATA_COL, SR_ROLE_LOCAL).toBool()) {
 			
@@ -1233,9 +1238,20 @@ void SearchDialog::insertFile(qulonglong searchId, const FileDetail& file, int s
 					item->setForeground(i, brush);
 				}
 			}
-			break ;
-		}
 
+		if(altname)
+		{
+			QTreeWidgetItem *item = new RSTreeWidgetItem(compareResultRole);
+			item->setText(SR_NAME_COL, QString::fromUtf8(file.name.c_str()));
+			item->setText(SR_HASH_COL, QString::fromStdString(file.hash.toStdString()));
+			setIconAndType(item, QString::fromUtf8(file.name.c_str()));
+			item->setText(SR_SIZE_COL, QString::number(file.size));
+			setIconAndType(item, QString::fromUtf8(file.name.c_str()));
+			(*it)->addChild(item);
+		}
+	
+	}
+	
 	if(!found)
 	{
 		++nb_results[searchId] ;
