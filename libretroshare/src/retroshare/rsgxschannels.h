@@ -46,6 +46,7 @@ extern RsGxsChannels *rsGxsChannels;
 class RsGxsChannelGroup
 {
 	public:
+	RsGxsChannelGroup() : mAutoDownload(false) {}
 	RsGroupMetaData mMeta;
 	std::string mDescription;
 	RsGxsImage mImage;
