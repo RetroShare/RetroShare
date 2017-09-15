@@ -704,8 +704,10 @@ bool p3FileDatabase::convertPointerToEntryIndex(const void *p, EntryIndex& e, ui
 {
     // trust me, I can do this ;-)
 
+#pragma GCC diagnostic ignored "-Wstrict-aliasing"
     e   = EntryIndex(  *reinterpret_cast<uint32_t*>(&p) & ENTRY_INDEX_BIT_MASK ) ;
     friend_index = (*reinterpret_cast<uint32_t*>(&p)) >> NB_ENTRY_INDEX_BITS ;
+#pragma GCC diagnostic pop
 
     if(friend_index == 0)
     {
