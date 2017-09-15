@@ -281,6 +281,7 @@ TransfersDialog::TransfersDialog(QWidget *parent)
     // Set Upload list model
     ULListModel = new QStandardItemModel(0,COLUMN_UCOUNT);
     ULListModel->setHeaderData(COLUMN_UNAME, Qt::Horizontal, tr("Name", "i.e: file name"));
+    ULListModel->setHeaderData(COLUMN_UPEER, Qt::Horizontal, tr("Peer", "i.e: user name / tunnel id"));
     ULListModel->setHeaderData(COLUMN_USIZE, Qt::Horizontal, tr("Size", "i.e: file size"));
     ULListModel->setHeaderData(COLUMN_UTRANSFERRED, Qt::Horizontal, tr("Transferred", ""));
     ULListModel->setHeaderData(COLUMN_ULSPEED, Qt::Horizontal, tr("Speed", "i.e: upload speed"));
@@ -306,12 +307,14 @@ TransfersDialog::TransfersDialog(QWidget *parent)
     /* Set header resize modes and initial section sizes Uploads TreeView*/
     QHeaderView * upheader = ui.uploadsList->header () ;
     QHeaderView_setSectionResizeModeColumn(upheader, COLUMN_UNAME, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeModeColumn(upheader, COLUMN_UPEER, QHeaderView::Interactive);
     QHeaderView_setSectionResizeModeColumn(upheader, COLUMN_USIZE, QHeaderView::Interactive);
     QHeaderView_setSectionResizeModeColumn(upheader, COLUMN_UTRANSFERRED, QHeaderView::Interactive);
     QHeaderView_setSectionResizeModeColumn(upheader, COLUMN_ULSPEED, QHeaderView::Interactive);
     QHeaderView_setSectionResizeModeColumn(upheader, COLUMN_UPROGRESS, QHeaderView::Interactive);
 
     upheader->resizeSection ( COLUMN_UNAME, 260 );
+    upheader->resizeSection ( COLUMN_UPEER, 120 );
     upheader->resizeSection ( COLUMN_USIZE, 70 );
     upheader->resizeSection ( COLUMN_UTRANSFERRED, 75 );
     upheader->resizeSection ( COLUMN_ULSPEED, 75 );
@@ -1189,7 +1192,7 @@ int TransfersDialog::addULItem(int row, const FileInfo &fileInfo)
 	ULListModel->setData(ULListModel->index(row, COLUMN_USIZE), QVariant((qlonglong)fileSize));
 
 	//Reset Parent info if child present
-	ULListModel->setData(ULListModel->index(row, COLUMN_UNAME),        QVariant(QString()), Qt::ToolTipRole);
+	ULListModel->setData(ULListModel->index(row, COLUMN_UPEER),        QVariant(QString::number(fileInfo.peers.size())));
 	ULListModel->setData(ULListModel->index(row, COLUMN_UTRANSFERRED), QVariant());
 	ULListModel->setData(ULListModel->index(row, COLUMN_UPROGRESS),    QVariant());
 
@@ -1240,7 +1243,7 @@ int TransfersDialog::addULItem(int row, const FileInfo &fileInfo)
 		if (bOnlyOne)
 		{
 			//Only one peer so update parent
-			ULListModel->setData(ULListModel->index(row, COLUMN_UNAME),        QVariant(getPeerName(transferInfo.peerId)), Qt::ToolTipRole);
+			ULListModel->setData(ULListModel->index(row, COLUMN_UPEER),        QVariant(getPeerName(transferInfo.peerId)));
 			ULListModel->setData(ULListModel->index(row, COLUMN_UTRANSFERRED), QVariant(completed));
 			ULListModel->setData(ULListModel->index(row, COLUMN_UPROGRESS),    QVariant::fromValue(peerpinfo));
 		} else {
@@ -1288,6 +1291,7 @@ int TransfersDialog::addPeerToULItem(QStandardItem *ulItem, const RsPeerId& peer
 		QHeaderView *header = ui.uploadsList->header();
 
 		QStandardItem *iName  = new QStandardItem(); //COLUMN_UNAME
+		QStandardItem *iPeer  = new QStandardItem(); //COLUMN_UPEER
 		QStandardItem *iSize  = new SortByNameItem(header); //COLUMN_USIZE
 		QStandardItem *iTransferred  = new SortByNameItem(header); //COLUMN_UTRANSFERRED
 		QStandardItem *iULSpeed  = new SortByNameItem(header); //COLUMN_ULSPEED
@@ -1295,7 +1299,8 @@ int TransfersDialog::addPeerToULItem(QStandardItem *ulItem, const RsPeerId& peer
 		QStandardItem *iHash  = new SortByNameItem(header); //COLUMN_UHASH
 
 		QList<QStandardItem*> items;
-		iName->setData(     QVariant(getPeerName(peer_ID)), Qt::DisplayRole);
+		iName->setData(     QVariant(QString()), Qt::DisplayRole);
+		iPeer->setData(     QVariant(getPeerName(peer_ID)), Qt::DisplayRole);
 		iSize->setData(     QVariant(QString()), Qt::DisplayRole);
 		iTransferred->setData(QVariant((qlonglong)completed), Qt::DisplayRole);
 		iULSpeed->setData(  QVariant((double)ulspeed), Qt::DisplayRole);
@@ -1304,6 +1309,7 @@ int TransfersDialog::addPeerToULItem(QStandardItem *ulItem, const RsPeerId& peer
 		iHash->setData(     QVariant(coreID), Qt::UserRole);
 
 		items.append(iName);
+		items.append(iPeer);
 		items.append(iSize);
 		items.append(iTransferred);
 		items.append(iULSpeed);
