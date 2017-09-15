@@ -1197,7 +1197,7 @@ void SearchDialog::insertFile(qulonglong searchId, const FileDetail& file, int s
 			
 			found = true ;
 			
-			if(QString::compare((*it)->text(SR_NAME_COL), QString::fromUtf8(file.name.c_str()), Qt::CaseInsensitive)!=0)
+			if(QString::compare((*it)->text(SR_NAME_COL), QString::fromUtf8(file.name.c_str()), Qt::CaseSensitive)!=0)
 				altname = true;
 
 			if (!item->data(SR_DATA_COL, SR_ROLE_LOCAL).toBool()) {
