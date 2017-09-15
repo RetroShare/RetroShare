@@ -59,6 +59,7 @@ struct TurtleRequestDisplayInfo
 	RsPeerId source_peer_id ;	// Peer that relayed the request
 	uint32_t age ;						// Age in seconds
 	uint32_t depth ;					// Depth of the request. Might be altered.
+	std::string keywords;
 };
 
 class TurtleTrafficStatisticsInfo
