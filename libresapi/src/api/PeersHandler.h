@@ -72,10 +72,19 @@ private:
 
 	void handleGetNodeOptions(Request& req, Response& resp);
 	void handleSetNodeOptions(Request& req, Response& resp);
-	
+
+	/**
+	 *  \brief Remove specific location from trusted nodes
+	 *
+	 *  \param [in] req request from user either peer_id is needed.
+	 *  \param [out] resp response to user
+	 */
 	void handleRemoveNode(Request &req, Response &resp);
+
+
 	void handleGetInactiveUsers(Request &req, Response &resp);
-	// a helper which ensures proper mutex locking
+
+	/// Helper which ensures proper mutex locking
 	StateToken getCurrentStateToken();
 
 	StateTokenServer* mStateTokenServer;

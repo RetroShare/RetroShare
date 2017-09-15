@@ -764,40 +764,19 @@ void PeersHandler::handleExamineCert(Request &req, Response &resp)
 	}
 }
 
-/**
- *  \brief Remove specific location or user
- *  
- *  \param [in] req request from user either peer_id or gpg_id is needed.
- *  \param [in] resp response to user
- *  \return 
- *  
- *  \details 
- */
 void PeersHandler::handleRemoveNode(Request &req, Response &resp)
 {
 	std::string ssl_peer_id;
-	std::string gpg_id;
 	req.mStream << makeKeyValueReference("peer_id", ssl_peer_id);
-	req.mStream << makeKeyValueReference("gpg_id", gpg_id);
 	RsPeerId peerId(ssl_peer_id);
-	RsPgpId gpgId(gpg_id);
-	
-	if(!gpgId.isNull())
-	{
-		mRsPeers->removeFriend(gpgId);
-		resp.mDataStream << makeKeyValue("gpg_id", gpg_id);
-		resp.setOk(); 
-	}
-	else if(!peerId.isNull())
+
+	if(!peerId.isNull())
 	{
 		mRsPeers->removeFriendLocation(peerId);
 		resp.mDataStream << makeKeyValue("peer_id", ssl_peer_id);
-		resp.setOk();        
+		resp.setOk();
 	}
-	else
-	{
-		resp.setFail("handleRemoveNode Invalid peer_id or gpg_id");
-	}
+	else resp.setFail("handleRemoveNode Invalid peer_id");
 }
 
 /**
