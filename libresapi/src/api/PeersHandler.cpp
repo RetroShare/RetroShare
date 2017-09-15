@@ -779,30 +779,15 @@ void PeersHandler::handleRemoveNode(Request &req, Response &resp)
 	else resp.setFail("handleRemoveNode Invalid peer_id");
 }
 
-/**
- *  \brief Retrieve inactive user list before specific UNIX time
- *  
- *  \param [in] req request from user, datatime in UNIX timestamp.
- *  \param [in] resp response to request
- *  \return a pgp_id list.
- *  
- *  \details Combine this with handleRemoveNode, 
- *  batch remove inactive users are possible and convenient.
- */
 void PeersHandler::handleGetInactiveUsers(Request &req, Response &resp)
 {
 	std::string datetime;
 	req.mStream << makeKeyValueReference("datetime", datetime);
+
+	uint32_t before;
+	if(datetime.empty()) before = time(NULL);
+	else before = strtoul(datetime.c_str(), NULL, 10);
 	
-	uint32_t before = strtoul(datetime.c_str(), NULL, 10);
-	
-	if(datetime.empty())
-	{
-		std::cerr << "PeersHandler:datetime is empty" << std::endl;
-		before = time(NULL);
-	}
-	
-  
 	// list all peers
 	std::list<RsPeerId> peers;
 	mRsPeers->getFriendList(peers);
@@ -811,7 +796,8 @@ void PeersHandler::handleGetInactiveUsers(Request &req, Response &resp)
 	std::map<RsPgpId, uint32_t> mapRsPgpId;
 	
 	// get all peers' infomations
-	for(std::list<RsPeerId>::iterator lt = peers.begin(); lt != peers.end(); ++lt)
+	for( std::list<RsPeerId>::iterator lt = peers.begin(); lt != peers.end();
+	     ++lt )
 	{
 		RsPeerDetails details;
 		mRsPeers->getPeerDetails(*lt, details);
@@ -823,37 +809,28 @@ void PeersHandler::handleGetInactiveUsers(Request &req, Response &resp)
 		}
 		else
 		{
-			mapRsPgpId.insert(std::make_pair(details.gpg_id, details.lastConnect));
+			mapRsPgpId.insert(
+			            std::make_pair(details.gpg_id, details.lastConnect) );
 		}
-		
 	}
-	
+
 	// mark response as list, in case it is empty
 	resp.mDataStream.getStreamToMember();
-	
+
 	std::map<RsPgpId, uint32_t>::iterator lit;
 	for( lit = mapRsPgpId.begin(); lit != mapRsPgpId.end(); ++lit)
 	{
-		
 		if (lit->second < before)
 		{
-			
-			std::cerr << "YES Adding OLD: " <<  mRsPeers->getGPGName(lit->first);
-			std::cerr << "last_contact: " << lit->second <<std::endl;
-			
-			StreamBase& itemStream = resp.mDataStream.getStreamToMember();
-			itemStream << makeKeyValue("pgp_id", lit->first.toStdString());
-			itemStream << makeKeyValue("name", mRsPeers->getGPGName(lit->first));
-			itemStream << makeKeyValue("last_contact", lit->second);
-
+			resp.mDataStream.getStreamToMember()
+			        << makeKeyValue("pgp_id", lit->first.toStdString())
+			        << makeKeyValue("name", mRsPeers->getGPGName(lit->first))
+			        << makeKeyValue("last_contact", lit->second);
 		}
-
 	}
-	
-	resp.setOk();
-	
-}
 
+	resp.setOk();
+}
 
 void PeersHandler::handleGetNetworkOptions(Request& /*req*/, Response& resp)
 {

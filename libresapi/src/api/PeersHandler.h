@@ -81,7 +81,13 @@ private:
 	 */
 	void handleRemoveNode(Request &req, Response &resp);
 
-
+	/**
+	 *  \brief Retrieve inactive user list before specific UNIX time
+	 *
+	 *  \param [in] req request from user, datatime in UNIX timestamp.
+	 *  \param [in] resp response to request
+	 *  \return a pgp_id list.
+	 */
 	void handleGetInactiveUsers(Request &req, Response &resp);
 
 	/// Helper which ensures proper mutex locking
