@@ -172,6 +172,7 @@ class TurtleRequestInfo
 		uint32_t	time_stamp ;			// last time the tunnel was actually used. Used for cleaning old tunnels.
 		int depth ;							// depth of the request. Used to optimize tunnel length.
 		std::set<uint32_t> responses; // responses to this request. Useful to avoid spamming tunnel responses.
+		std::string keywords;
 };
 
 class TurtleTunnel

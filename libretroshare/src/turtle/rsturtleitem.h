@@ -71,7 +71,9 @@ class RsTurtleSearchRequestItem: public RsTurtleItem
 		virtual RsTurtleSearchRequestItem *clone() const = 0 ;					// used for cloning in routing methods
 
 		virtual void performLocalSearch(std::list<TurtleFileInfo>&) const = 0 ;	// abstracts the search method
-
+		
+		virtual std::string GetKeywords() = 0;
+		
 		uint32_t request_id ; 		// randomly generated request id.
 		uint16_t depth ;				// Used for limiting search depth.
 };
@@ -82,7 +84,9 @@ class RsTurtleStringSearchRequestItem: public RsTurtleSearchRequestItem
 		RsTurtleStringSearchRequestItem() : RsTurtleSearchRequestItem(RS_TURTLE_SUBTYPE_STRING_SEARCH_REQUEST) {} 
 			
 		std::string match_string ;	// string to match
-
+		
+		std::string GetKeywords() { return match_string; }
+		
 		virtual RsTurtleSearchRequestItem *clone() const { return new RsTurtleStringSearchRequestItem(*this) ; }
 		virtual void performLocalSearch(std::list<TurtleFileInfo>&) const ;
 
@@ -99,6 +103,8 @@ class RsTurtleRegExpSearchRequestItem: public RsTurtleSearchRequestItem
 
         RsRegularExpression::LinearizedExpression expr ;	// Reg Exp in linearised mode
 
+		std::string GetKeywords() { return expr.GetStrings(); }
+		
 		virtual RsTurtleSearchRequestItem *clone() const { return new RsTurtleRegExpSearchRequestItem(*this) ; }
 		virtual void performLocalSearch(std::list<TurtleFileInfo>&) const ;
 
