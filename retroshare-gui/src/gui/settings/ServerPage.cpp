@@ -64,7 +64,9 @@ const static uint32_t hiddenServiceIncomingTab = 2;
 //#define SERVER_DEBUG 1
 
 ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
-    : ConfigPage(parent, flags), mIsHiddenNode(false), mHiddenType(RS_HIDDEN_TYPE_NONE)
+    : ConfigPage(parent, flags), mOngoingConnectivityCheck(0)
+    , mIsHiddenNode(false), mHiddenType(RS_HIDDEN_TYPE_NONE)
+    , mBobAccessible(false)
 {
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);
