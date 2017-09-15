@@ -32,11 +32,6 @@
 #include "Operators.h"
 #include "ApiTypes.h"
 
-//#include "util/rsdebug.h"
-
-//static struct RsLog::logInfo peersHandlerInfo = {RsLog::Default, "peersHandler"};
-//#define peerhandlerzone &peersHandlerInfo
-
 namespace resource_api
 {
 
@@ -636,142 +631,107 @@ void PeersHandler::handleWildcard(Request &req, Response &resp)
 			{
 				flags = RS_NODE_PERM_DEFAULT;
 			}
-			//RsPeerId peer_id;
-			//RsPgpId pgp_id;
-			//std::string cleanCert;
+
 			uint32_t error_code;
 			std::string error_string;
 			RsPeerDetails peerDetails;
-			//std::string debug_string = " ";
+
 			RsPgpId own_pgp = mRsPeers->getGPGOwnId();
 			RsPeerId ownpeer_id = mRsPeers->getOwnId();
+
 			do
 			{
 				
 				if (!cert_string.empty())
 				{
-					RsPgpId pgp_id ;
-					RsPeerId ssl_id ;
-					std::string error_string ;
+					RsPgpId pgp_id;
+					RsPeerId ssl_id;
+					std::string error_string;
 
-					if(!mRsPeers->loadCertificateFromString(cert_string,ssl_id,pgp_id,error_string))
+					if(!mRsPeers->loadCertificateFromString( cert_string,
+					                                         ssl_id, pgp_id,
+					                                         error_string ))
 					{
-						std::cerr << "handleWildcard::loadCertificateFromString(): cannot load that certificate. " ;
-						std::cerr << error_string << std::endl;
-						resp.mDebug << "cannot load that certificate " << std::endl;
-						resp.mDebug << error_string << std::endl;
-						break ;
+						resp.mDebug << "cannot load that certificate "
+						            << std::endl << error_string << std::endl;
+						break;
 					}
 				}
-				
-				std::cerr << "handleWildcard addPeer: loadDetailsFromStringCert" << std::endl;
-				
-				if(!mRsPeers->loadDetailsFromStringCert(cert_string, peerDetails, error_code))
+
+				if(!mRsPeers->loadDetailsFromStringCert( cert_string,
+				                                         peerDetails,
+				                                         error_code ))
 				{
-					resp.mDebug << "Error: failed to add peer can not get peerDetails" << std::endl;
-					resp.mDebug << error_code << std::endl;
+					resp.mDebug << "Error: failed to add peer can not get "
+					            << "peerDetails" << std::endl << error_code
+					            << std::endl;
 					break;
-				}            
-				
-				std::cerr << "handleWildcard addPeer: peerDetails.gpg_id" << std::endl;
-				 
+				}
+
 				if(peerDetails.gpg_id.isNull())
 				{
-					resp.mDebug << "Error: failed to add peer gpg_id.isNull" << std::endl;
-					resp.mDebug << error_string << std::endl;
+					resp.mDebug << "Error: failed to add peer gpg_id.isNull"
+					            << std::endl << error_string << std::endl;
 					break;
 				}
-				
-				if(peerDetails.gpg_id == own_pgp)
+
+				if(peerDetails.id == ownpeer_id)
 				{
-					if(peerDetails.id == ownpeer_id)
-					{
-						std::cerr << "handleWildcard addPeer: is own peer_id, ignore" << std::endl;
-						resp.mDebug << "Error: failed to add peer_id, because its your own peer_id" << std::endl;
-						resp.mDebug << error_string << std::endl;
-						break;
-					}
-					
-					std::cerr << "handleWildcard addPeer: is own pgp_id, update only" << std::endl;
-					
+					std::cerr << __PRETTY_FUNCTION__ << " addPeer: is own "
+					          << "peer_id, ignore" << std::endl;
+					resp.mDebug << "Error: failed to add peer_id, because "
+					            << "its your own peer_id" << std::endl
+					            << error_string << std::endl;
+					break;
 				}
-				else
+
+				if(!mRsPeers->addFriend( peerDetails.id, peerDetails.gpg_id,
+				                         flags ))
 				{
-				
-					if(!mRsPeers->addFriend(peerDetails.id, peerDetails.gpg_id, flags))
-					{
-						resp.mDebug << "Error: failed to addFriend" << std::endl;
-						resp.mDebug << error_string << std::endl;
-						break;
-					}
-					
-					std::cerr << "handleWildcard addPeer: addFriend ok " << peerDetails.gpg_id << std::endl;
-					
-			   }
-				
+					std::cerr << __PRETTY_FUNCTION__
+					          << "Error: failed to addFriend" << std::endl;
+					resp.mDebug << "Error: failed to addFriend" << std::endl
+					            << error_string << std::endl;
+					break;
+				}
+
 				ok = true;
-				
+
 				// Retrun node details to response, after succes of adding peers
 				peerDetailsToStream(resp.mDataStream, peerDetails);
-				
-				std::cerr << "handleWildcard addPeer: peerDetailsToStream" << std::endl;
-				
+
 				if (!peerDetails.location.empty()) 
 				{
-					std::cerr << "handleWildcard addPeer: setting peer node." << std::endl;
 					mRsPeers->setLocation(peerDetails.id, peerDetails.location);
 				}
 				
 				// Update new address even the peer already existed.
 				if (peerDetails.isHiddenNode)
 				{
-					std::cerr << "handleWildcard addPeer: setting hidden node.";
-					std::cerr << peerDetails.hiddenNodeAddress;
-					std::cerr << " Port: " << peerDetails.hiddenNodePort << std::endl;
-					mRsPeers->setHiddenNode(peerDetails.id, peerDetails.hiddenNodeAddress, peerDetails.hiddenNodePort);
+					mRsPeers->setHiddenNode( peerDetails.id,
+					                         peerDetails.hiddenNodeAddress,
+					                         peerDetails.hiddenNodePort );
 				}
 				else
 				{
 					//let's check if there is ip adresses in the certificate.
-					if (!peerDetails.extAddr.empty() && peerDetails.extPort) 
-					{
-						std::cerr << "handleWildcard addPeer: setting ip ext address." ;
-						std::cerr << peerDetails.extAddr;
-						std::cerr << " Port: " << peerDetails.extPort;
-						std::cerr << std::endl;
-						mRsPeers->setExtAddress(peerDetails.id, peerDetails.extAddr, peerDetails.extPort);
-					}
-					if (!peerDetails.localAddr.empty() && peerDetails.localPort) 
-					{
-						std::cerr << "handleWildcard addPeer: setting ip local address." ;
-						std::cerr << peerDetails.localAddr;
-						std::cerr << " Port: " << peerDetails.localPort << std::endl;
-						mRsPeers->setLocalAddress(peerDetails.id, peerDetails.localAddr, peerDetails.localPort);
-					}
-					if (!peerDetails.dyndns.empty()) 
-					{
-					   
-						std::cerr << "handleWildcard addPeer: setting DynDNS." ;
-						std::cerr << peerDetails.dyndns << std::endl;
+					if (!peerDetails.extAddr.empty() && peerDetails.extPort)
+						mRsPeers->setExtAddress( peerDetails.id,
+						                         peerDetails.extAddr,
+						                         peerDetails.extPort );
+					if (!peerDetails.localAddr.empty() && peerDetails.localPort)
+						mRsPeers->setLocalAddress( peerDetails.id,
+						                           peerDetails.localAddr,
+						                           peerDetails.localPort );
+					if (!peerDetails.dyndns.empty())
 						mRsPeers->setDynDNS(peerDetails.id, peerDetails.dyndns);
-					}
 				}
-				
-				// std::cerr << debug_string << std::endl;
-				// resp.mDebug << debug_string  << std::endl;
-				// rslog(RSL_WARNING, peerhandlerzone, debug_string );
-			
-			}while(0);
+			}
+			while(false);
 		}
 	}
-	if(ok)
-	{
-		resp.setOk();
-	}
-	else
-	{
-		resp.setFail();
-	}
+	if(ok) resp.setOk();
+	else resp.setFail();
 }
 
 void PeersHandler::handleAttemptConnection(Request &req, Response &resp)
