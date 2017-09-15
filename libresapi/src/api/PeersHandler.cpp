@@ -28,6 +28,7 @@
 #include <retroshare/rsconfig.h>
 
 #include <algorithm>
+#include <time.h>
 
 #include "Operators.h"
 #include "ApiTypes.h"
