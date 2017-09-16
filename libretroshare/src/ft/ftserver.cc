@@ -1228,7 +1228,7 @@ bool ftServer::encryptItem(RsTurtleGenericTunnelItem *clear_item,const RsFileHas
 	uint32_t total_data_size = ENCRYPTED_FT_HEADER_SIZE + ENCRYPTED_FT_INITIALIZATION_VECTOR_SIZE + ENCRYPTED_FT_EDATA_SIZE + item_serialized_size + ENCRYPTED_FT_AUTHENTICATION_TAG_SIZE  ;
 
 #ifdef SERVER_DEBUG
-	FTSERVER_DEBUG() << "  clear part size : " << clear_item->serial_size() << std::endl;
+	FTSERVER_DEBUG() << "  clear part size : " << size(clear_item) << std::endl;
 	FTSERVER_DEBUG() << "  total item size : " << total_data_size << std::endl;
 #endif
 
