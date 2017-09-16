@@ -254,8 +254,8 @@ void GxsChannelPostsWidget::insertChannelDetails(const RsGxsChannelGroup &group)
 
 	ui->subscribeToolButton->setSubscribed(IS_GROUP_SUBSCRIBED(group.mMeta.mSubscribeFlags));
 
-    bool autoDownload ;
-            rsGxsChannels->getChannelAutoDownload(group.mMeta.mGroupId,autoDownload);
+	bool autoDownload = false;
+	rsGxsChannels->getChannelAutoDownload(group.mMeta.mGroupId,autoDownload);
 	setAutoDownload(autoDownload);
 
 	if (IS_GROUP_SUBSCRIBED(group.mMeta.mSubscribeFlags)) {
