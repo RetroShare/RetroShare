@@ -2014,7 +2014,8 @@ bool ftController::loadList(std::list<RsItem *>& load)
 			/* This will get stored on a waiting list - until the
 			 * config files are fully loaded
 			 */
-			
+#ifdef TO_REMOVE
+			(csoler) I removed this because RS_FILE_HINTS_NETWORK_WIDE is actually equal to RS_FILE_REQ_ENCRYPTED, so this test removed the encrypted flag when loading!!
 			// Compatibility with previous versions. 
 			if(rsft->flags & RS_FILE_HINTS_NETWORK_WIDE.toUInt32())
 			{
@@ -2022,6 +2023,7 @@ bool ftController::loadList(std::list<RsItem *>& load)
 				rsft->flags &= ~RS_FILE_HINTS_NETWORK_WIDE.toUInt32() ;
 				rsft->flags |=  RS_FILE_REQ_ANONYMOUS_ROUTING.toUInt32() ;
 			}
+#endif
 
 #ifdef CONTROL_DEBUG
 			std::cerr << "ftController::loadList(): requesting " << rsft->file.name << ", " << rsft->file.hash << ", " << rsft->file.filesize << std::endl ;
