@@ -129,21 +129,28 @@ std::string RsCertificate::toStdString() const
 }
 
 RsCertificate::RsCertificate(const std::string& str)
-	: 
-	location_name(""), 
-	pgp_version("Version: OpenPGP:SDK v0.9"),
-		dns_name(""),only_pgp(true)
+  : binary_pgp_key(NULL), binary_pgp_key_size(0)
+  , location_name(""), pgp_version("Version: OpenPGP:SDK v0.9")
+  , dns_name(""), hidden_node_address("")
+  , only_pgp(true), hidden_node(false)
 {
-	uint32_t err_code ;
-	binary_pgp_key = NULL ;
+	ipv4_external_ip_and_port[0] = 0;
+	ipv4_internal_ip_and_port[0] = 0;
 
-	if(!initFromString(str,err_code)) 
+	uint32_t err_code ;
+	if(!initFromString(str,err_code))
 		throw err_code ;
 }
 
 RsCertificate::RsCertificate(const RsPeerDetails& Detail, const unsigned char *binary_pgp_block,size_t binary_pgp_block_size)
-	:pgp_version("Version: OpenPGP:SDK v0.9")
+  : binary_pgp_key(NULL), binary_pgp_key_size(0)
+  , location_name(""), pgp_version("Version: OpenPGP:SDK v0.9")
+  , dns_name(""), hidden_node_address("")
+  , only_pgp(true), hidden_node(false)
 {
+	ipv4_external_ip_and_port[0] = 0;
+	ipv4_internal_ip_and_port[0] = 0;
+
 	if(binary_pgp_block_size == 0 || binary_pgp_block == NULL)
 		throw std::runtime_error("Cannot init a certificate with a void key block.") ;
 
