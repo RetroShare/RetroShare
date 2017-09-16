@@ -162,7 +162,7 @@ void TurtleRouterDialog::updateTunnelRequests(	const std::vector<std::vector<std
 
 	for(uint i=0;i<search_reqs_info.size();++i)
 	{
-		QString str = tr("Request id: %1\t from [%2]\t %3 secs ago\t\t %4").arg(search_reqs_info[i].request_id,0,16).arg(getPeerName(search_reqs_info[i].source_peer_id)).arg(search_reqs_info[i].age).arg(QString::fromUtf8(search_reqs_info[i].keywords.c_str()));
+		QString str = tr("Request id: %1\t from [%2]\t %3 secs ago\t\t %4").arg(search_reqs_info[i].request_id,0,16).arg(getPeerName(search_reqs_info[i].source_peer_id)).arg(search_reqs_info[i].age).arg(QString::fromUtf8(search_reqs_info[i].keywords.c_str(),search_reqs_info[i].keywords.length()));
 	
 		stl.clear() ;
 		stl.push_back(str) ;
