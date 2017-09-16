@@ -55,7 +55,10 @@ const float RSPermissionMatrixWidget::fMATRIX_START_Y =100/16.0 ;
 
 /** Default contructor */
 RSPermissionMatrixWidget::RSPermissionMatrixWidget(QWidget *parent)
-  :QFrame(parent)
+  : QFrame(parent)
+  , _current_service_id(0), matrix_start_x(0)
+  , _max_width(400), _max_height(0)
+  , mHideOffline(false)
 {
   _painter = new QPainter();
 
@@ -64,11 +67,6 @@ RSPermissionMatrixWidget::RSPermissionMatrixWidget(QWidget *parent)
   _timer = new QTimer ;
   QObject::connect(_timer,SIGNAL(timeout()),this,SLOT(updateDisplay())) ;
   _timer->start(5000);
-
-  _max_width = 400 ;
-  _max_height = 0 ;
-
-  mHideOffline = false;
 }
 
 void RSPermissionMatrixWidget::setHideOffline(bool hide)
@@ -356,7 +354,7 @@ void RSPermissionMatrixWidget::paintEvent(QPaintEvent *)
 
       _painter->setPen(pen) ;
 
-      QRect info_pos( X-5,Y-line_height-2, text_width + 10, line_height + 5) ;
+      //QRect info_pos( X-5,Y-line_height-2, text_width + 10, line_height + 5) ;
 
       //_painter->fillRect(info_pos,brush) ;
       //_painter->drawRect(info_pos) ;
