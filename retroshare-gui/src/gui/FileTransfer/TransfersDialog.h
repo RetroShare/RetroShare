@@ -164,7 +164,7 @@ signals:
     void playFiles(QStringList files);
 
 private:
-    QString getPeerName(const RsPeerId &peer_id) const ;
+    QString getPeerName(const RsPeerId &peer_id, QString &iconName, QString &tooltip) const ;
 
     QStandardItemModel *DLListModel;
     QSortFilterProxyModel *DLLFilterModel;
@@ -261,9 +261,9 @@ private:
 public slots:
     // these four functions add entries to the transfers dialog, and return the row id of the entry modified/added
     int addDLItem(int row, const FileInfo &fileInfo);
-    int addPeerToDLItem(QStandardItem *dlItem, const QString& name, const QString& coreID, double dlspeed, uint32_t status, const FileProgressInfo& peerInfo);
+    int addPeerToDLItem(QStandardItem* dlItem, const RsPeerId &peer_ID, const QString &coreID, double dlspeed, uint32_t status, const FileProgressInfo &peerInfo);
     int addULItem(int row, const FileInfo &fileInfo);
-    int addPeerToULItem(QStandardItem *ulItem, const RsPeerId& peer_ID, const QString &coreID, qlonglong completed, double ulspeed, const FileProgressInfo& peerInfo);
+    int addPeerToULItem(QStandardItem* ulItem, const RsPeerId &peer_ID, const QString &coreID, qlonglong completed, double ulspeed, const FileProgressInfo &peerInfo);
 
     void showFileDetails() ;
 

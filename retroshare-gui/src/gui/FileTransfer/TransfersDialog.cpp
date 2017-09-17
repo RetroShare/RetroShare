@@ -89,9 +89,12 @@
 #define IMAGE_FRIENDSFILES         ":/icons/svg/folders.svg"
 #define IMAGE_MYFILES              ":icons/svg/folders1.svg"
 #define IMAGE_RENAMEFILE           ":images/filecomments.png"
-#define IMAGE_STREAMING             ":images/streaming.png"
+#define IMAGE_STREAMING            ":images/streaming.png"
+#define IMAGE_TUNNEL_ANON_E2E      ":/images/blue_lock.png"
+#define IMAGE_TUNNEL_ANON          ":/images/blue_lock_open.png"
+#define IMAGE_TUNNEL_FRIEND        ":/icons/avatar_128.png"
 
-Q_DECLARE_METATYPE(FileProgressInfo) 
+Q_DECLARE_METATYPE(FileProgressInfo)
 
 class SortByNameItem : public QStandardItem
 {
@@ -281,6 +284,7 @@ TransfersDialog::TransfersDialog(QWidget *parent)
     // Set Upload list model
     ULListModel = new QStandardItemModel(0,COLUMN_UCOUNT);
     ULListModel->setHeaderData(COLUMN_UNAME, Qt::Horizontal, tr("Name", "i.e: file name"));
+    ULListModel->setHeaderData(COLUMN_UPEER, Qt::Horizontal, tr("Peer", "i.e: user name / tunnel id"));
     ULListModel->setHeaderData(COLUMN_USIZE, Qt::Horizontal, tr("Size", "i.e: file size"));
     ULListModel->setHeaderData(COLUMN_UTRANSFERRED, Qt::Horizontal, tr("Transferred", ""));
     ULListModel->setHeaderData(COLUMN_ULSPEED, Qt::Horizontal, tr("Speed", "i.e: upload speed"));
@@ -306,12 +310,14 @@ TransfersDialog::TransfersDialog(QWidget *parent)
     /* Set header resize modes and initial section sizes Uploads TreeView*/
     QHeaderView * upheader = ui.uploadsList->header () ;
     QHeaderView_setSectionResizeModeColumn(upheader, COLUMN_UNAME, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeModeColumn(upheader, COLUMN_UPEER, QHeaderView::Interactive);
     QHeaderView_setSectionResizeModeColumn(upheader, COLUMN_USIZE, QHeaderView::Interactive);
     QHeaderView_setSectionResizeModeColumn(upheader, COLUMN_UTRANSFERRED, QHeaderView::Interactive);
     QHeaderView_setSectionResizeModeColumn(upheader, COLUMN_ULSPEED, QHeaderView::Interactive);
     QHeaderView_setSectionResizeModeColumn(upheader, COLUMN_UPROGRESS, QHeaderView::Interactive);
 
     upheader->resizeSection ( COLUMN_UNAME, 260 );
+    upheader->resizeSection ( COLUMN_UPEER, 120 );
     upheader->resizeSection ( COLUMN_USIZE, 70 );
     upheader->resizeSection ( COLUMN_UTRANSFERRED, 75 );
     upheader->resizeSection ( COLUMN_ULSPEED, 75 );
@@ -1013,7 +1019,6 @@ int TransfersDialog::addDLItem(int row, const FileInfo &fileInfo)
 		{
 			const TransferInfo &transferInfo = *pit;
 
-			QString peerName = getPeerName(transferInfo.peerId);
 			//unique combination: fileHash + peerId, variant: hash + peerName (too long)
 			QString hashFileAndPeerId = fileHash + QString::fromStdString(transferInfo.peerId.toStdString());
 
@@ -1027,7 +1032,7 @@ int TransfersDialog::addDLItem(int row, const FileInfo &fileInfo)
 			peerpinfo.progress = 0.0;	// we don't display completion for sources.
 			peerpinfo.nb_chunks = peerpinfo.cmap._map.empty() ? 0 : fcinfo.chunks.size();
 
-			int row_id = addPeerToDLItem(dlItem, peerName, hashFileAndPeerId, peerDlspeed, transferInfo.status, peerpinfo);
+			int row_id = addPeerToDLItem(dlItem, transferInfo.peerId, hashFileAndPeerId, peerDlspeed, transferInfo.status, peerpinfo);
 
 			used_rows.insert(row_id);
 
@@ -1052,7 +1057,7 @@ int TransfersDialog::addDLItem(int row, const FileInfo &fileInfo)
 	return row;
 }
 
-int TransfersDialog::addPeerToDLItem(QStandardItem *dlItem, const QString& name, const QString& coreID, double dlspeed, uint32_t status, const FileProgressInfo& peerInfo)
+int TransfersDialog::addPeerToDLItem(QStandardItem *dlItem, const RsPeerId& peer_ID, const QString& coreID, double dlspeed, uint32_t status, const FileProgressInfo& peerInfo)
 {
 	// try to find the item
 	int childRow = -1;
@@ -1092,7 +1097,11 @@ int TransfersDialog::addPeerToDLItem(QStandardItem *dlItem, const QString& name,
 		siStatus = iStatus;
 
 		QList<QStandardItem*> items;
-		iName->setData(QVariant(" " + name), Qt::DisplayRole);
+		QString iconName;
+		QString tooltip;
+		iName->setData(QVariant(getPeerName(peer_ID, iconName, tooltip)), Qt::DisplayRole);
+		iName->setData(QIcon(iconName), Qt::DecorationRole);
+		iName->setData(QVariant(tooltip), Qt::ToolTipRole);
 		iSize->setData(QVariant(QString()), Qt::DisplayRole);
 		iCompleted->setData(QVariant(QString()), Qt::DisplayRole);
 		iDlSpeed->setData(QVariant((double)dlspeed), Qt::DisplayRole);
@@ -1137,27 +1146,27 @@ int TransfersDialog::addPeerToDLItem(QStandardItem *dlItem, const QString& name,
 	switch (status) {
 	case FT_STATE_FAILED:
 			siStatus->setData(QVariant(tr("Failed"))) ;
-			siName->setData(QIcon(":/images/Client1.png"), Qt::DecorationRole);
+			siName->setData(QIcon(":/images/Client1.png"), Qt::StatusTipRole);
 		break ;
 		case FT_STATE_OKAY:
 			siStatus->setData(QVariant(tr("Okay")));
-			siName->setData(QIcon(":/images/Client2.png"), Qt::DecorationRole);
+			siName->setData(QIcon(":/images/Client2.png"), Qt::StatusTipRole);
 		break ;
 		case FT_STATE_WAITING:
 			siStatus->setData(QVariant(tr("")));
-			siName->setData(QIcon(":/images/Client3.png"), Qt::DecorationRole);
+			siName->setData(QIcon(":/images/Client3.png"), Qt::StatusTipRole);
 		break ;
 		case FT_STATE_DOWNLOADING:
 			siStatus->setData(QVariant(tr("Transferring")));
-			siName->setData(QIcon(":/images/Client0.png"), Qt::DecorationRole);
+			siName->setData(QIcon(":/images/Client0.png"), Qt::StatusTipRole);
 		break ;
 		case FT_STATE_COMPLETE:
 			siStatus->setData(QVariant(tr("Complete")));
-			siName->setData(QIcon(":/images/Client0.png"), Qt::DecorationRole);
+			siName->setData(QIcon(":/images/Client0.png"), Qt::StatusTipRole);
 		break ;
 		default:
 			siStatus->setData(QVariant(tr("")));
-			siName->setData(QIcon(":/images/Client4.png"), Qt::DecorationRole);
+			siName->setData(QIcon(":/images/Client4.png"), Qt::StatusTipRole);
 	}
 
 	return childRow;
@@ -1165,6 +1174,9 @@ int TransfersDialog::addPeerToDLItem(QStandardItem *dlItem, const QString& name,
 
 int TransfersDialog::addULItem(int row, const FileInfo &fileInfo)
 {
+	if (fileInfo.peers.empty())
+		return -1; //No Peers, nothing to do.
+
 	QString fileHash  = QString::fromStdString(fileInfo.hash.toStdString());
 
 	RsPeerId ownId = rsPeers->getOwnId();
@@ -1189,7 +1201,9 @@ int TransfersDialog::addULItem(int row, const FileInfo &fileInfo)
 	ULListModel->setData(ULListModel->index(row, COLUMN_USIZE), QVariant((qlonglong)fileSize));
 
 	//Reset Parent info if child present
-	ULListModel->setData(ULListModel->index(row, COLUMN_UNAME),        QVariant(QString()), Qt::ToolTipRole);
+	ULListModel->setData(ULListModel->index(row, COLUMN_UPEER),        QVariant(QString(tr("%1 tunnels").arg(fileInfo.peers.size()))) );
+	ULListModel->setData(ULListModel->index(row, COLUMN_UPEER),        QIcon(), Qt::DecorationRole);
+	ULListModel->setData(ULListModel->index(row, COLUMN_UPEER),        QVariant(), Qt::ToolTipRole);
 	ULListModel->setData(ULListModel->index(row, COLUMN_UTRANSFERRED), QVariant());
 	ULListModel->setData(ULListModel->index(row, COLUMN_UPROGRESS),    QVariant());
 
@@ -1240,7 +1254,11 @@ int TransfersDialog::addULItem(int row, const FileInfo &fileInfo)
 		if (bOnlyOne)
 		{
 			//Only one peer so update parent
-			ULListModel->setData(ULListModel->index(row, COLUMN_UNAME),        QVariant(getPeerName(transferInfo.peerId)), Qt::ToolTipRole);
+			QString iconName;
+			QString tooltip;
+			ULListModel->setData(ULListModel->index(row, COLUMN_UPEER),        QVariant(getPeerName(transferInfo.peerId, iconName, tooltip)));
+			ULListModel->setData(ULListModel->index(row, COLUMN_UPEER),        QIcon(iconName), Qt::DecorationRole);
+			ULListModel->setData(ULListModel->index(row, COLUMN_UPEER),        QVariant(tooltip), Qt::ToolTipRole);
 			ULListModel->setData(ULListModel->index(row, COLUMN_UTRANSFERRED), QVariant(completed));
 			ULListModel->setData(ULListModel->index(row, COLUMN_UPROGRESS),    QVariant::fromValue(peerpinfo));
 		} else {
@@ -1288,6 +1306,7 @@ int TransfersDialog::addPeerToULItem(QStandardItem *ulItem, const RsPeerId& peer
 		QHeaderView *header = ui.uploadsList->header();
 
 		QStandardItem *iName  = new QStandardItem(); //COLUMN_UNAME
+		QStandardItem *iPeer  = new QStandardItem(); //COLUMN_UPEER
 		QStandardItem *iSize  = new SortByNameItem(header); //COLUMN_USIZE
 		QStandardItem *iTransferred  = new SortByNameItem(header); //COLUMN_UTRANSFERRED
 		QStandardItem *iULSpeed  = new SortByNameItem(header); //COLUMN_ULSPEED
@@ -1295,7 +1314,12 @@ int TransfersDialog::addPeerToULItem(QStandardItem *ulItem, const RsPeerId& peer
 		QStandardItem *iHash  = new SortByNameItem(header); //COLUMN_UHASH
 
 		QList<QStandardItem*> items;
-		iName->setData(     QVariant(getPeerName(peer_ID)), Qt::DisplayRole);
+		iName->setData(     QVariant(QString()), Qt::DisplayRole);
+		QString iconName;
+		QString tooltip;
+		iPeer->setData(     QVariant(getPeerName(peer_ID, iconName, tooltip)), Qt::DisplayRole);
+		iPeer->setData(     QIcon(iconName), Qt::DecorationRole);
+		iPeer->setData(     QVariant(tooltip), Qt::ToolTipRole);
 		iSize->setData(     QVariant(QString()), Qt::DisplayRole);
 		iTransferred->setData(QVariant((qlonglong)completed), Qt::DisplayRole);
 		iULSpeed->setData(  QVariant((double)ulspeed), Qt::DisplayRole);
@@ -1304,6 +1328,7 @@ int TransfersDialog::addPeerToULItem(QStandardItem *ulItem, const RsPeerId& peer
 		iHash->setData(     QVariant(coreID), Qt::UserRole);
 
 		items.append(iName);
+		items.append(iPeer);
 		items.append(iSize);
 		items.append(iTransferred);
 		items.append(iULSpeed);
@@ -1466,22 +1491,30 @@ void TransfersDialog::insertTransfers()
 
 }
 
-QString TransfersDialog::getPeerName(const RsPeerId& id) const
+QString TransfersDialog::getPeerName(const RsPeerId& id, QString &iconName, QString &tooltip) const
 {
 	QString res = QString::fromUtf8(rsPeers->getPeerName(id).c_str()) ;
 
-	// This is because turtle tunnels have no name (I didn't want to bother with
+	// csoler 2009-06-03: This is because turtle tunnels have no name (I didn't want to bother with
 	// connect mgr). In such a case their id can suitably hold for a name.
 	//
 	if(res == "")
-    {
-        if(rsFiles->isEncryptedSource(id))
-        return tr("Anonymous end-to-end encrypted tunnel 0x")+QString::fromStdString(id.toStdString()).left(8) ;
-            else
-        return tr("Anonymous tunnel 0x")+QString::fromStdString(id.toStdString()).left(8) ;
-    }
-	else
-		return res ;
+	{
+		if(rsFiles->isEncryptedSource(id))
+		{
+			iconName = IMAGE_TUNNEL_ANON_E2E;
+			tooltip = tr("Anonymous end-to-end encrypted tunnel 0x")+QString::fromStdString(id.toStdString()).left(8);
+			return tr("Tunnel 0x")+QString::fromStdString(id.toStdString()).left(8);
+		}
+
+		iconName = IMAGE_TUNNEL_ANON;
+		tooltip = tr("Anonymous tunnel 0x")+QString::fromStdString(id.toStdString()).left(8);
+		return tr("Tunnel 0x")+QString::fromStdString(id.toStdString()).left(8);
+	}
+
+	iconName = IMAGE_TUNNEL_FRIEND;
+	tooltip = res;
+	return res ;
 }
 
 void TransfersDialog::forceCheck()
