@@ -1,5 +1,23 @@
 retroshare (0.6.3-1.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
+  46d26bf csoler Tue, 12 Sep 2017 21:05:59 +0200 updated ubuntu packagign script
+  f3c627d csoler Sat, 16 Sep 2017 22:13:53 +0200 Merge pull request #1042 from csoler/v0.6-FT
+  8189d66 csoler Sat, 16 Sep 2017 22:13:15 +0200 fixed bug causing anon FT to not resume when restarting RS when the server enforces encryption
+  195127f Gioacc Fri, 15 Sep 2017 16:23:38 +0200 Merge pull request #965 from PhenomRetroShare/Fix_GccWarning
+  6ad2306 Gioacc Fri, 15 Sep 2017 16:19:48 +0200 Merge pull request #1039 from PhenomRetroShare/Fix_WinCompil
+  f416686 Phenom Fri, 15 Sep 2017 15:04:43 +0200 Fix Windows Build
+  62eefa4 Gioacc Fri, 15 Sep 2017 09:33:01 +0200 Remove cruft from PeersHandler::handleGetInactiveUsers
+  341c94e Gioacc Fri, 15 Sep 2017 09:03:50 +0200 PeersHandler::handleRemoveNode only remove location
+  7888ec6 Gioacc Fri, 15 Sep 2017 08:56:54 +0200 Remove extra cruft
+  016cafd Gioacc Fri, 15 Sep 2017 08:25:30 +0200 Merge branch 'master' of https://github.com/myfingerhurt/RetroShare into myfingerhurt-webui-PR1014
+  331cdd0 csoler Thu, 14 Sep 2017 22:10:25 +0200 Merge pull request #1031 from PhenomRetroShare/Fix_UninitializedStatusInPeersHandler
+  d5eac2c csoler Thu, 14 Sep 2017 22:06:01 +0200 Merge pull request #1033 from PhenomRetroShare/Add_UploadExpColAll
+  d7dae0e csoler Thu, 14 Sep 2017 22:02:39 +0200 Merge pull request #1034 from csoler/v0.6-FT
+  1d231e6 csoler Thu, 14 Sep 2017 22:01:52 +0200 fixed bug causing file lists to not refresh/show until a friend makes a change
+  5511a0b csoler Thu, 14 Sep 2017 21:28:34 +0200 added tooltip for file ignore list
+  dff0d50 Phenom Thu, 14 Sep 2017 19:22:37 +0200 Add Expand/Collapse All in Upload List
+  a0ebddb Phenom Fri, 28 Jul 2017 20:00:29 +0200 Fic Gcc warnings:
+  4b1161d csoler Tue, 12 Sep 2017 21:03:44 +0200 updated changelog
   762d025 csoler Tue, 12 Sep 2017 17:40:54 +0200 Merge pull request #1027 from PhenomRetroShare/Fix_UninitializedPeerMaxRates
   8884a32 Phenom Mon, 11 Sep 2017 20:18:06 +0200 Fix Uninitilized Peer Max Rates.
   66bf188 csoler Mon, 11 Sep 2017 22:20:27 +0200 Merge pull request #1029 from PhenomRetroShare/Fix_UninitValueInLocalDirUpd
