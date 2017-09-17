@@ -96,6 +96,9 @@ void LocalDirectoryUpdater::forceUpdate()
 {
     mForceUpdate = true ;
 	mLastSweepTime = 0 ;
+
+	if(mHashCache != NULL && mHashCache->hashingProcessPaused())
+		mHashCache->togglePauseHashingProcess();
 }
 
 bool LocalDirectoryUpdater::sweepSharedDirectories()
