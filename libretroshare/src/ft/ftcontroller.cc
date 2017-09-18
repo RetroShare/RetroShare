@@ -826,62 +826,63 @@ bool 	ftController::isActiveAndNoPending()
 
 bool	ftController::handleAPendingRequest()
 {
-	ftPendingRequest req;
-	{ 
-		RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
+	uint32_t nb_requests_handled = 0 ;
+	static const uint32_t MAX_SIMULTANEOUS_PENDING_REQUESTS = 100 ;
 
-		if (mPendingRequests.size() < 1)
+	while(!mPendingRequests.empty() && nb_requests_handled++ < MAX_SIMULTANEOUS_PENDING_REQUESTS)
+	{
+		ftPendingRequest req;
 		{
-			return false;
+			RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
+
+			req = mPendingRequests.front();
+			mPendingRequests.pop_front();
 		}
-		req = mPendingRequests.front();
-		mPendingRequests.pop_front();
-	}
 #ifdef CONTROL_DEBUG
-	std::cerr << "Requesting pending hash " << req.mHash << std::endl ;
+		std::cerr << "Requesting pending hash " << req.mHash << std::endl ;
 #endif
 
-	FileRequest(req.mName, req.mHash, req.mSize, req.mDest, TransferRequestFlags(req.mFlags), req.mSrcIds, req.mState);
+		FileRequest(req.mName, req.mHash, req.mSize, req.mDest, TransferRequestFlags(req.mFlags), req.mSrcIds, req.mState);
 
-	{ 
-		// See whether there is a pendign chunk map recorded for this hash.
-		//
-		RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
-
-        std::map<RsFileHash,RsFileTransfer*>::iterator it(mPendingChunkMaps.find(req.mHash)) ;
-
-		if(it != mPendingChunkMaps.end())
 		{
-			RsFileTransfer *rsft = it->second ;
-            std::map<RsFileHash, ftFileControl*>::iterator fit = mDownloads.find(rsft->file.hash);
+			// See whether there is a pendign chunk map recorded for this hash.
+			//
+			RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 
-			if((fit==mDownloads.end() || (fit->second)->mCreator == NULL))
+			std::map<RsFileHash,RsFileTransfer*>::iterator it(mPendingChunkMaps.find(req.mHash)) ;
+
+			if(it != mPendingChunkMaps.end())
 			{
-				// This should never happen, because the last call to FileRequest must have created the fileCreator!!
-				//
-				std::cerr << "ftController::loadList(): Error: could not find hash " << rsft->file.hash << " in mDownloads list !" << std::endl ;
+				RsFileTransfer *rsft = it->second ;
+				std::map<RsFileHash, ftFileControl*>::iterator fit = mDownloads.find(rsft->file.hash);
+
+				if((fit==mDownloads.end() || (fit->second)->mCreator == NULL))
+				{
+					// This should never happen, because the last call to FileRequest must have created the fileCreator!!
+					//
+					std::cerr << "ftController::loadList(): Error: could not find hash " << rsft->file.hash << " in mDownloads list !" << std::endl ;
+				}
+				else
+				{
+#ifdef CONTROL_DEBUG
+					std::cerr << "Hash " << req.mHash << " is in downloads" << std::endl ;
+					std::cerr << "  setting chunk strategy to " << rsft->chunk_strategy << std::endl;
+#endif
+					(fit->second)->mCreator->setAvailabilityMap(rsft->compressed_chunk_map) ;
+					(fit->second)->mCreator->setChunkStrategy((FileChunksInfo::ChunkStrategy)(rsft->chunk_strategy)) ;
+					(fit->second)->mState=rsft->state;
+				}
+
+				delete rsft ;
+				mPendingChunkMaps.erase(it) ;
 			}
+#ifdef CONTROL_DEBUG
 			else
-			{
-#ifdef CONTROL_DEBUG
-				std::cerr << "Hash " << req.mHash << " is in downloads" << std::endl ;
-				std::cerr << "  setting chunk strategy to " << rsft->chunk_strategy << std::endl;
+				std::cerr << "No pending chunkmap for hash " << req.mHash << std::endl ;
 #endif
-				(fit->second)->mCreator->setAvailabilityMap(rsft->compressed_chunk_map) ;
-				(fit->second)->mCreator->setChunkStrategy((FileChunksInfo::ChunkStrategy)(rsft->chunk_strategy)) ;
-				(fit->second)->mState=rsft->state;
-			}
-
-			delete rsft ;
-			mPendingChunkMaps.erase(it) ;
 		}
-#ifdef CONTROL_DEBUG
-		else
-			std::cerr << "No pending chunkmap for hash " << req.mHash << std::endl ;
-#endif
 	}
-
-	return true ;
+	return !mPendingRequests.empty();
 }
 
 bool ftController::alreadyHaveFile(const RsFileHash& hash, FileInfo &info)
