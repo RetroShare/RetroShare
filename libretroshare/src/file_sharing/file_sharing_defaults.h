@@ -53,9 +53,14 @@ static const uint32_t MIN_INTERVAL_BETWEEN_REMOTE_DIRECTORY_SAVE   = 23 ;    // 
 static const uint32_t MAX_DIR_SYNC_RESPONSE_DATA_SIZE              = 20000 ; // Maximum RsItem data size in bytes for serialised directory transmission
 static const uint32_t DEFAULT_HASH_STORAGE_DURATION_DAYS           = 30 ;    // remember deleted/inaccessible files for 30 days
 
-static const uint32_t NB_FRIEND_INDEX_BITS                    = 10 ;			// Do not change this!
-static const uint32_t NB_ENTRY_INDEX_BITS                     = 22 ;			// Do not change this!
-static const uint32_t ENTRY_INDEX_BIT_MASK                    = 0x003fffff ;	// used for storing (EntryIndex,Friend) couples into a 32bits pointer. Depends on the two values just before. Dont change!
+static const uint32_t NB_FRIEND_INDEX_BITS_32BITS                    = 10 ;			// Do not change this!
+static const uint32_t NB_ENTRY_INDEX_BITS_32BITS                     = 22 ;			// Do not change this!
+static const uint32_t ENTRY_INDEX_BIT_MASK_32BITS                    = 0x003fffff ;	// used for storing (EntryIndex,Friend) couples into a 32bits pointer. Depends on the two values just before. Dont change!
+
+static const uint64_t NB_FRIEND_INDEX_BITS_64BITS                    = 24 ;			// Do not change this!
+static const uint64_t NB_ENTRY_INDEX_BITS_64BITS                     = 40 ;			// Do not change this!
+static const uint64_t ENTRY_INDEX_BIT_MASK_64BITS                    = 0x0000000fffffffff ;	// used for storing (EntryIndex,Friend) couples into a 32bits pointer. Depends on the two values just before. Dont change!
+
 static const uint32_t DELAY_BEFORE_DROP_REQUEST               = 600; 			// every 10 min
 
 static const bool FOLLOW_SYMLINKS_DEFAULT = true;

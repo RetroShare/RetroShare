@@ -205,8 +205,9 @@ class p3FileDatabase: public p3Service, public p3Config, public ftSearch //, pub
 
         // utility functions to make/get a pointer out of an (EntryIndex,PeerId) pair. This is further documented in the .cc
 
-        static bool convertEntryIndexToPointer(const EntryIndex &e, uint32_t friend_index, void *& p);
-        static bool convertPointerToEntryIndex(const void *p, EntryIndex& e, uint32_t& friend_index) ;
+		template<int BYTES> static bool convertEntryIndexToPointer(const EntryIndex &e, uint32_t friend_index, void *& p);
+        template<int BYTES> static bool convertPointerToEntryIndex(const void *p, EntryIndex& e, uint32_t& friend_index) ;
+
         uint32_t locked_getFriendIndex(const RsPeerId& pid);
 
         void handleDirSyncRequest (RsFileListsSyncRequestItem *) ;
