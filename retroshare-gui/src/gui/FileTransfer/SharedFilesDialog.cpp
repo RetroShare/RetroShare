@@ -622,7 +622,7 @@ void SharedFilesDialog::copyLink (const QModelIndexList& lst, bool remote)
     RSLinkClipboard::copyLinks(urls) ;
 
     if(has_unhashed_files)
-        QMessageBox::warning(NULL,tr("Some files have been omitted"),tr("Some files have been ommitted because their hash is not available yet.")) ;
+        QMessageBox::warning(NULL,tr("Some files have been omitted"),tr("Some files have been omitted because their hash is not available yet.")) ;
 }
 
 void SharedFilesDialog::copyLink()
