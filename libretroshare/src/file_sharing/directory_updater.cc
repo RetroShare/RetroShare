@@ -158,7 +158,7 @@ bool LocalDirectoryUpdater::sweepSharedDirectories()
     return true ;
 }
 
-void LocalDirectoryUpdater::recursUpdateSharedDir(const std::string& cumulated_path, DirectoryStorage::EntryIndex indx,std::set<std::string>& existing_directories,int current_depth)
+void LocalDirectoryUpdater::recursUpdateSharedDir(const std::string& cumulated_path, DirectoryStorage::EntryIndex indx,std::set<std::string>& existing_directories,uint32_t current_depth)
 {
 #ifdef DEBUG_LOCAL_DIR_UPDATER
     std::cerr << "[directory storage]   parsing directory " << cumulated_path << ", index=" << indx << std::endl;
@@ -209,7 +209,11 @@ void LocalDirectoryUpdater::recursUpdateSharedDir(const std::string& cumulated_p
 #endif
 				   break;
 
-			   case librs::util::FolderIterator::TYPE_DIR:  	subdirs.insert(dirIt.file_name());
+			   case librs::util::FolderIterator::TYPE_DIR:
+
+				   if(mMaxShareDepth > 0u && current_depth <= mMaxShareDepth)
+					   subdirs.insert(dirIt.file_name());
+
 #ifdef DEBUG_LOCAL_DIR_UPDATER
 				   std::cerr << "  adding sub-dir \"" << dirIt.file_name() << "\"" << std::endl;
 #endif
@@ -250,7 +254,6 @@ void LocalDirectoryUpdater::recursUpdateSharedDir(const std::string& cumulated_p
 
     // go through the list of sub-dirs and recursively update
 
-	if(mMaxShareDepth > 0 && current_depth <= mMaxShareDepth)
 		for(DirectoryStorage::DirIterator stored_dir_it(mSharedDirectories,indx) ; stored_dir_it; ++stored_dir_it)
 		{
 #ifdef DEBUG_LOCAL_DIR_UPDATER
@@ -352,7 +355,7 @@ int LocalDirectoryUpdater::maxShareDepth() const
 	return mMaxShareDepth ;
 }
 
-void LocalDirectoryUpdater::setMaxShareDepth(int d)
+void LocalDirectoryUpdater::setMaxShareDepth(uint32_t d)
 {
 	if(d != mMaxShareDepth)
         mNeedsFullRecheck = true ;
@@ -367,5 +370,8 @@ bool LocalDirectoryUpdater::ignoreDuplicates() const
 
 void LocalDirectoryUpdater::setIgnoreDuplicates(bool b)
 {
+	if(b != mIgnoreDuplicates)
+        mNeedsFullRecheck = true ;
+
 	mIgnoreDuplicates = b ;
 }

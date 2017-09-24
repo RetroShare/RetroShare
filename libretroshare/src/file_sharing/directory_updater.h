@@ -58,7 +58,7 @@ public:
     void setIgnoreLists(const std::list<std::string>& ignored_prefixes,const std::list<std::string>& ignored_suffixes,uint32_t ignore_flags) ;
     bool getIgnoreLists(std::list<std::string>& ignored_prefixes,std::list<std::string>& ignored_suffixes,uint32_t& ignore_flags) const ;
 
-	void setMaxShareDepth(int i) ;
+	void setMaxShareDepth(uint32_t i) ;
 	int  maxShareDepth() const;
 
 	void setIgnoreDuplicates(bool b) ;
@@ -70,7 +70,7 @@ protected:
     virtual void hash_callback(uint32_t client_param, const std::string& name, const RsFileHash& hash, uint64_t size);
     virtual bool hash_confirm(uint32_t client_param) ;
 
-    void recursUpdateSharedDir(const std::string& cumulated_path, DirectoryStorage::EntryIndex indx, std::set<std::string>& existing_directories, int current_depth);
+    void recursUpdateSharedDir(const std::string& cumulated_path, DirectoryStorage::EntryIndex indx, std::set<std::string>& existing_directories, uint32_t current_depth);
     bool sweepSharedDirectories();
 
 private:
