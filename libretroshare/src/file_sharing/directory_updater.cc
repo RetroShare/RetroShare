@@ -40,9 +40,10 @@ LocalDirectoryUpdater::LocalDirectoryUpdater(HashStorage *hc,LocalDirectoryStora
     , mLastSweepTime(0), mLastTSUpdateTime(0)
     , mDelayBetweenDirectoryUpdates(DELAY_BETWEEN_DIRECTORY_UPDATES)
     , mIsEnabled(false), mFollowSymLinks(FOLLOW_SYMLINKS_DEFAULT)
+    , mIgnoreDuplicates(true)
     /* Can be left to false, but setting it to true will force to re-hash any file that has been left unhashed in the last session.*/
     , mNeedsFullRecheck(true)
-    , mIsChecking(false), mForceUpdate(false), mIgnoreFlags (0)
+    , mIsChecking(false), mForceUpdate(false), mIgnoreFlags (0),  mMaxShareDepth(0)
 {
 }
 
@@ -344,4 +345,25 @@ bool LocalDirectoryUpdater::getIgnoreLists(std::list<std::string>& ignored_prefi
 	 return true;
 }
 
+int LocalDirectoryUpdater::maxShareDepth() const
+{
+	return mMaxShareDepth ;
+}
 
+void LocalDirectoryUpdater::setMaxShareDepth(int d)
+{
+	if(d != mMaxShareDepth)
+        mNeedsFullRecheck = true ;
+
+	mMaxShareDepth = d ;
+}
+
+bool LocalDirectoryUpdater::ignoreDuplicates() const
+{
+	return mIgnoreDuplicates;
+}
+
+void LocalDirectoryUpdater::setIgnoreDuplicates(bool b)
+{
+	mIgnoreDuplicates = b ;
+}

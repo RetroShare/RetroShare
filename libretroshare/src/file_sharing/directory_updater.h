@@ -58,6 +58,12 @@ public:
     void setIgnoreLists(const std::list<std::string>& ignored_prefixes,const std::list<std::string>& ignored_suffixes,uint32_t ignore_flags) ;
     bool getIgnoreLists(std::list<std::string>& ignored_prefixes,std::list<std::string>& ignored_suffixes,uint32_t& ignore_flags) const ;
 
+	void setMaxShareDepth(int i) ;
+	int  maxShareDepth() const;
+
+	void setIgnoreDuplicates(bool b) ;
+	bool ignoreDuplicates() const;
+
 protected:
     virtual void data_tick() ;
 
@@ -81,11 +87,14 @@ private:
     uint32_t mDelayBetweenDirectoryUpdates;
     bool mIsEnabled ;
     bool mFollowSymLinks;
+    bool mIgnoreDuplicates;
     bool mNeedsFullRecheck ;
     bool mIsChecking ;
     bool mForceUpdate ;
 
 	uint32_t mIgnoreFlags ;
+	uint32_t mMaxShareDepth ;
+
 	std::list<std::string> mIgnoredPrefixes ;
 	std::list<std::string> mIgnoredSuffixes ;
 };

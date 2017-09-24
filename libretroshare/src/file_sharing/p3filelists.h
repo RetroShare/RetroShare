@@ -130,6 +130,12 @@ class p3FileDatabase: public p3Service, public p3Config, public ftSearch //, pub
 		void setIgnoreLists(const std::list<std::string>& ignored_prefixes,const std::list<std::string>& ignored_suffixes, uint32_t ignore_flags) ;
 		bool getIgnoreLists(std::list<std::string>& ignored_prefixes,std::list<std::string>& ignored_suffixes, uint32_t& ignore_flags) ;
 
+		void setIgnoreDuplicates(bool i) ;
+		bool ignoreDuplicates() const ;
+
+		void setMaxShareDepth(int i) ;
+		int  maxShareDepth() const ;
+
         // computes/gathers statistics about shared directories
 
 		int getSharedDirStatistics(const RsPeerId& pid,SharedDirStats& stats);
