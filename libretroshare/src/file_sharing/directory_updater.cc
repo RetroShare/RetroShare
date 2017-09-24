@@ -148,7 +148,7 @@ bool LocalDirectoryUpdater::sweepSharedDirectories()
         std::cerr << "[directory storage]   recursing into " << stored_dir_it.name() << std::endl;
 #endif
 
-        recursUpdateSharedDir(stored_dir_it.name(), *stored_dir_it,existing_dirs) ;		// here we need to use the list that was stored, instead of the shared dir list, because the two
+        recursUpdateSharedDir(stored_dir_it.name(), *stored_dir_it,existing_dirs,1) ;		// here we need to use the list that was stored, instead of the shared dir list, because the two
                                                                             // are not necessarily in the same order.
     }
 
@@ -158,15 +158,16 @@ bool LocalDirectoryUpdater::sweepSharedDirectories()
     return true ;
 }
 
-void LocalDirectoryUpdater::recursUpdateSharedDir(const std::string& cumulated_path, DirectoryStorage::EntryIndex indx,std::set<std::string>& existing_directories)
+void LocalDirectoryUpdater::recursUpdateSharedDir(const std::string& cumulated_path, DirectoryStorage::EntryIndex indx,std::set<std::string>& existing_directories,int current_depth)
 {
 #ifdef DEBUG_LOCAL_DIR_UPDATER
     std::cerr << "[directory storage]   parsing directory " << cumulated_path << ", index=" << indx << std::endl;
 #endif
 
-    if(mFollowSymLinks)
+    if(mFollowSymLinks && mIgnoreDuplicates)
 	{
 		std::string real_path = RsDirUtil::removeSymLinks(cumulated_path) ;
+
 		if(existing_directories.end() != existing_directories.find(real_path))
 		{
             std::cerr << "(WW) Directory " << cumulated_path << " has real path " << real_path << " which already belongs to another shared directory. Ignoring" << std::endl;
@@ -249,13 +250,14 @@ void LocalDirectoryUpdater::recursUpdateSharedDir(const std::string& cumulated_p
 
     // go through the list of sub-dirs and recursively update
 
-    for(DirectoryStorage::DirIterator stored_dir_it(mSharedDirectories,indx) ; stored_dir_it; ++stored_dir_it)
-    {
+	if(mMaxShareDepth > 0 && current_depth <= mMaxShareDepth)
+		for(DirectoryStorage::DirIterator stored_dir_it(mSharedDirectories,indx) ; stored_dir_it; ++stored_dir_it)
+		{
 #ifdef DEBUG_LOCAL_DIR_UPDATER
-        std::cerr << "  recursing into " << stored_dir_it.name() << std::endl;
+			std::cerr << "  recursing into " << stored_dir_it.name() << std::endl;
 #endif
-        recursUpdateSharedDir(cumulated_path + "/" + stored_dir_it.name(), *stored_dir_it,existing_directories) ;
-    }
+			recursUpdateSharedDir(cumulated_path + "/" + stored_dir_it.name(), *stored_dir_it,existing_directories,current_depth+1) ;
+		}
 }
 
 bool LocalDirectoryUpdater::filterFile(const std::string& fname) const

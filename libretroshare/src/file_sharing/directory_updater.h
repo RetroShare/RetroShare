@@ -70,7 +70,7 @@ protected:
     virtual void hash_callback(uint32_t client_param, const std::string& name, const RsFileHash& hash, uint64_t size);
     virtual bool hash_confirm(uint32_t client_param) ;
 
-    void recursUpdateSharedDir(const std::string& cumulated_path, DirectoryStorage::EntryIndex indx, std::set<std::string>& existing_directories);
+    void recursUpdateSharedDir(const std::string& cumulated_path, DirectoryStorage::EntryIndex indx, std::set<std::string>& existing_directories, int current_depth);
     bool sweepSharedDirectories();
 
 private:
