@@ -211,7 +211,7 @@ void LocalDirectoryUpdater::recursUpdateSharedDir(const std::string& cumulated_p
 
 			   case librs::util::FolderIterator::TYPE_DIR:
 
-				   if(mMaxShareDepth > 0u && current_depth <= mMaxShareDepth)
+				   if( (mMaxShareDepth > 0u && current_depth <= mMaxShareDepth) || (mMaxShareDepth==0 && current_depth < 64))	// 64 is here as a safe limit, to make loops impossible.
 					   subdirs.insert(dirIt.file_name());
 
 #ifdef DEBUG_LOCAL_DIR_UPDATER
