@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1312</width>
-    <height>1305</height>
+    <width>1339</width>
+    <height>1519</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" name="TransferPageVLayout">
@@ -165,57 +165,47 @@
      <property name="title">
       <string>Incoming Directory</string>
      </property>
-     <widget class="QLineEdit" name="incomingDir">
-      <property name="geometry">
-       <rect>
-        <x>21</x>
-        <y>52</y>
-        <width>244</width>
-        <height>36</height>
-       </rect>
-      </property>
-      <property name="readOnly">
-       <bool>true</bool>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="incomingButton">
-      <property name="geometry">
-       <rect>
-        <x>1224</x>
-        <y>54</y>
-        <width>31</width>
-        <height>31</height>
-       </rect>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>31</width>
-        <height>31</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>31</width>
-        <height>31</height>
-       </size>
-      </property>
-      <property name="toolTip">
-       <string>Browse</string>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-      <property name="icon">
-       <iconset resource="../images.qrc">
-        <normaloff>:/images/directoryselect_24x24_shadow.png</normaloff>:/images/directoryselect_24x24_shadow.png</iconset>
-      </property>
-      <property name="iconSize">
-       <size>
-        <width>24</width>
-        <height>24</height>
-       </size>
-      </property>
-     </widget>
+     <layout class="QHBoxLayout" name="horizontalLayout_4">
+      <item>
+       <widget class="QLineEdit" name="incomingDir">
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="incomingButton">
+        <property name="minimumSize">
+         <size>
+          <width>31</width>
+          <height>31</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>31</width>
+          <height>31</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>Browse</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="../images.qrc">
+          <normaloff>:/images/directoryselect_24x24_shadow.png</normaloff>:/images/directoryselect_24x24_shadow.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>24</width>
+          <height>24</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </item>
    <item>
