@@ -90,7 +90,15 @@ void LocalDirectoryUpdater::data_tick()
         }
     }
 
-    usleep(10*1000*1000);
+	for(uint32_t i=0;i<10;++i)
+	{
+		usleep(1*1000*1000);
+
+		{
+		if(mForceUpdate)
+			break ;
+		}
+	}
 }
 
 void LocalDirectoryUpdater::forceUpdate()
