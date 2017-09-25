@@ -60,6 +60,8 @@
 #include <retroshare/rsdisc.h>
 #include <retroshare/rsplugin.h>
 
+#include <retroshare/rsturtle.h>
+
 /* Images for context menu icons */
 #define IMAGE_INFO                 ":/images/fileinfo.png"
 #define IMAGE_CANCEL               ":/images/delete.png"
@@ -1500,16 +1502,17 @@ QString TransfersDialog::getPeerName(const RsPeerId& id, QString &iconName, QStr
 	//
 	if(res == "")
 	{
+		res = QString::fromUtf8(rsTurtle->getPeerNameForVirtualPeerId(id).c_str());
 		if(rsFiles->isEncryptedSource(id))
 		{
 			iconName = IMAGE_TUNNEL_ANON_E2E;
 			tooltip = tr("Anonymous end-to-end encrypted tunnel 0x")+QString::fromStdString(id.toStdString()).left(8);
-			return tr("Tunnel 0x")+QString::fromStdString(id.toStdString()).left(8);
+			return tr("Tunnel") + " via " + res ;
 		}
 
 		iconName = IMAGE_TUNNEL_ANON;
 		tooltip = tr("Anonymous tunnel 0x")+QString::fromStdString(id.toStdString()).left(8);
-		return tr("Tunnel 0x")+QString::fromStdString(id.toStdString()).left(8);
+		return tr("Tunnel") + " via " + res ;
 	}
 
 	iconName = IMAGE_TUNNEL_FRIEND;
