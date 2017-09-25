@@ -1502,7 +1502,7 @@ QString TransfersDialog::getPeerName(const RsPeerId& id, QString &iconName, QStr
 	//
 	if(res == "")
 	{
-		res = QString::fromStdString(rsTurtle->getPeerNameForVirtualPeerId(id));
+		res = QString::fromUtf8(rsTurtle->getPeerNameForVirtualPeerId(id).c_str());
 		if(rsFiles->isEncryptedSource(id))
 		{
 			iconName = IMAGE_TUNNEL_ANON_E2E;
