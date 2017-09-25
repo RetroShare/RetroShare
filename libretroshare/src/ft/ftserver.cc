@@ -839,10 +839,14 @@ void ftServer::setIgnoreLists(const std::list<std::string>& ignored_prefixes, co
 bool ftServer::watchEnabled()                      { return mFileDatabase->watchEnabled() ; }
 int  ftServer::watchPeriod() const                 { return mFileDatabase->watchPeriod()/60 ; }
 bool ftServer::followSymLinks() const              { return mFileDatabase->followSymLinks() ; }
+bool ftServer::ignoreDuplicates()                  { return mFileDatabase->ignoreDuplicates() ; }
+int  ftServer::maxShareDepth() const               { return mFileDatabase->maxShareDepth() ; }
 
 void ftServer::setWatchEnabled(bool b)             { mFileDatabase->setWatchEnabled(b) ; }
 void ftServer::setWatchPeriod(int minutes)         { mFileDatabase->setWatchPeriod(minutes*60) ; }
 void ftServer::setFollowSymLinks(bool b)           { mFileDatabase->setFollowSymLinks(b) ; }
+void ftServer::setIgnoreDuplicates(bool ignore)    { mFileDatabase->setIgnoreDuplicates(ignore); }
+void ftServer::setMaxShareDepth(int depth)         { mFileDatabase->setMaxShareDepth(depth) ; }
 
 void ftServer::togglePauseHashingProcess()  { mFileDatabase->togglePauseHashingProcess() ; }
 bool ftServer::hashingProcessPaused() { return mFileDatabase->hashingProcessPaused() ; }

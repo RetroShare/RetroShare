@@ -335,10 +335,29 @@ cleanup = true;
         rskv->tlvkvs.pairs.push_back(kv);
     }
 	{
+        std::string s ;
+        rs_sprintf(s, "%d", maxShareDepth()) ;
+
+        RsTlvKeyValue kv;
+
+        kv.key = MAX_SHARE_DEPTH;
+        kv.value = s ;
+
+        rskv->tlvkvs.pairs.push_back(kv);
+    }
+	{
         RsTlvKeyValue kv;
 
         kv.key = FOLLOW_SYMLINKS_SS;
         kv.value = followSymLinks()?"YES":"NO" ;
+
+        rskv->tlvkvs.pairs.push_back(kv);
+    }
+	{
+        RsTlvKeyValue kv;
+
+        kv.key = IGNORE_DUPLICATES;
+        kv.value = ignoreDuplicates()?"YES":"NO" ;
 
         rskv->tlvkvs.pairs.push_back(kv);
     }
@@ -400,6 +419,7 @@ bool p3FileDatabase::loadList(std::list<RsItem *>& load)
     std::list<SharedDirInfo> dirList;
 	std::list<std::string> ignored_prefixes,ignored_suffixes ;
 	uint32_t ignore_flags = RS_FILE_SHARE_FLAGS_IGNORE_PREFIXES | RS_FILE_SHARE_FLAGS_IGNORE_SUFFIXES ;
+	uint32_t max_share_depth = 0;
 
 	// OS-dependent default ignore lists
 #ifdef WINDOWS_SYS
@@ -433,9 +453,13 @@ bool p3FileDatabase::loadList(std::list<RsItem *>& load)
                 if(sscanf(kit->value.c_str(),"%d",&t) == 1)
                     setWatchPeriod(t);
             }
-            else if(kit->key == FOLLOW_SYMLINKS_SS)
+			else if(kit->key == FOLLOW_SYMLINKS_SS)
             {
                 setFollowSymLinks(kit->value == "YES") ;
+            }
+            else if(kit->key == IGNORE_DUPLICATES)
+            {
+                setIgnoreDuplicates(kit->value == "YES") ;
             }
             else if(kit->key == WATCH_FILE_ENABLED_SS)
             {
@@ -480,6 +504,12 @@ bool p3FileDatabase::loadList(std::list<RsItem *>& load)
                 if(sscanf(kit->value.c_str(),"%d",&t) == 1)
                     ignore_flags = (uint32_t)t ;
 			}
+			else if(kit->key == MAX_SHARE_DEPTH)
+			{
+                int t=0 ;
+                if(sscanf(kit->value.c_str(),"%d",&t) == 1)
+                    max_share_depth = (uint32_t)t ;
+			}
 
             delete *it ;
             continue ;
@@ -509,6 +539,7 @@ bool p3FileDatabase::loadList(std::list<RsItem *>& load)
     /* set directories */
     mLocalSharedDirs->setSharedDirectoryList(dirList);
 	mLocalDirWatcher->setIgnoreLists(ignored_prefixes,ignored_suffixes,ignore_flags) ;
+	mLocalDirWatcher->setMaxShareDepth(max_share_depth);
 
     load.clear() ;
 
@@ -1069,6 +1100,28 @@ bool p3FileDatabase::followSymLinks() const
 {
     RS_STACK_MUTEX(mFLSMtx) ;
     return mLocalDirWatcher->followSymLinks() ;
+}
+void p3FileDatabase::setIgnoreDuplicates(bool i)
+{
+    RS_STACK_MUTEX(mFLSMtx) ;
+    mLocalDirWatcher->setIgnoreDuplicates(i) ;
+    IndicateConfigChanged();
+}
+bool p3FileDatabase::ignoreDuplicates() const
+{
+    RS_STACK_MUTEX(mFLSMtx) ;
+    return mLocalDirWatcher->ignoreDuplicates() ;
+}
+void p3FileDatabase::setMaxShareDepth(int i)
+{
+    RS_STACK_MUTEX(mFLSMtx) ;
+    mLocalDirWatcher->setMaxShareDepth(i) ;
+    IndicateConfigChanged();
+}
+int  p3FileDatabase::maxShareDepth() const
+{
+    RS_STACK_MUTEX(mFLSMtx) ;
+    return mLocalDirWatcher->maxShareDepth() ;
 }
 void p3FileDatabase::setWatchEnabled(bool b)
 {

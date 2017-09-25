@@ -223,8 +223,10 @@ bool HashStorage::requestHash(const std::string& full_path,uint64_t size,time_t 
 #endif
     RS_STACK_MUTEX(mHashMtx) ;
 
+	std::string real_path = RsDirUtil::removeSymLinks(full_path) ;
+
     time_t now = time(NULL) ;
-    std::map<std::string,HashStorageInfo>::iterator it = mFiles.find(full_path) ;
+    std::map<std::string,HashStorageInfo>::iterator it = mFiles.find(real_path) ;
 
     // On windows we compare the time up to +/- 3600 seconds. This avoids re-hashing files in case of daylight saving change.
     //
@@ -261,7 +263,7 @@ bool HashStorage::requestHash(const std::string& full_path,uint64_t size,time_t 
 
     // we need to schedule a re-hashing
 
-    if(mFilesToHash.find(full_path) != mFilesToHash.end())
+    if(mFilesToHash.find(real_path) != mFilesToHash.end())
         return false ;
 
     FileHashJob job ;
@@ -272,7 +274,10 @@ bool HashStorage::requestHash(const std::string& full_path,uint64_t size,time_t 
     job.full_path = full_path ;
     job.ts = mod_time ;
 
-    mFilesToHash[full_path] = job;
+	// We store the files indexed by their real path, so that we allow to not re-hash files that are pointed multiple times through the directory links
+	// The client will be notified with the full path instead of the real path.
+
+    mFilesToHash[real_path] = job;
 
     mTotalSizeToHash += size ;
     ++mTotalFilesToHash;

@@ -60,8 +60,11 @@ const uint32_t RS_FILE_RATE_STREAM_VIDEO = 0x00000006;
 const uint32_t RS_FILE_PEER_ONLINE 	 = 0x00001000;
 const uint32_t RS_FILE_PEER_OFFLINE 	 = 0x00002000;
 
-const uint32_t RS_FILE_SHARE_FLAGS_IGNORE_PREFIXES = 0x0001 ;
-const uint32_t RS_FILE_SHARE_FLAGS_IGNORE_SUFFIXES = 0x0002 ;
+const uint32_t RS_FILE_SHARE_FLAGS_IGNORE_PREFIXES          = 0x0001 ;
+const uint32_t RS_FILE_SHARE_FLAGS_IGNORE_SUFFIXES          = 0x0002 ;
+const uint32_t RS_FILE_SHARE_FLAGS_IGNORE_DUPLICATES        = 0x0004 ;
+
+const uint32_t RS_FILE_SHARE_PARAMETER_DEFAULT_MAXIMUM_DEPTH = 8;
 
 /************************************
  * Used To indicate where to search.
@@ -268,6 +271,12 @@ class RsFiles
 
 		virtual bool	getShareDownloadDirectory() = 0;
 		virtual bool 	shareDownloadDirectory(bool share) = 0;
+
+        virtual void setMaxShareDepth(int depth) =0;
+        virtual int  maxShareDepth() const=0;
+
+		virtual bool	ignoreDuplicates() = 0;
+		virtual void 	setIgnoreDuplicates(bool ignore) = 0;
 
 };
 

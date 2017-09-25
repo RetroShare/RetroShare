@@ -228,6 +228,12 @@ public:
 	virtual void togglePauseHashingProcess();
 	virtual bool hashingProcessPaused();
 
+	virtual void setMaxShareDepth(int depth) ;
+	virtual int  maxShareDepth() const;
+
+	virtual bool ignoreDuplicates() ;
+	virtual void setIgnoreDuplicates(bool ignore) ;
+
     /***************************************************************/
     /*************** Data Transfer Interface ***********************/
     /***************************************************************/
