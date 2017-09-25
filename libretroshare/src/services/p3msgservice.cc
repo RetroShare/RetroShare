@@ -41,7 +41,8 @@
 
 #include "pgp/pgpkeyutil.h"
 #include "rsserver/p3face.h"
-#include "serialiser/rsconfigitems.h"
+
+#include "rsitems/rsconfigitems.h"
 
 #include "grouter/p3grouter.h"
 #include "grouter/groutertypes.h"
@@ -65,6 +66,8 @@
 //#define DISABLE_DISTANT_MESSAGES 
 //#define DEBUG_DISTANT_MSG
 
+typedef unsigned int uint;
+
 using namespace Rs::Msgs;
 
 static struct RsLog::logInfo msgservicezoneInfo = {RsLog::Default, "msgservice"};
@@ -83,23 +86,29 @@ static const uint32_t RS_MSG_DISTANT_MESSAGE_HASH_KEEP_TIME = 2*30*86400 ; // ke
  * (3) from storage...
  */
 
-p3MsgService::p3MsgService(p3ServiceControl *sc, p3IdService *id_serv)
-	:p3Service(), p3Config(), mIdService(id_serv), mServiceCtrl(sc), mMsgMtx("p3MsgService"), mMsgUniqueId(0) 
+p3MsgService::p3MsgService( p3ServiceControl *sc, p3IdService *id_serv,
+                            p3GxsTrans& gxsMS )
+    : p3Service(), p3Config(),
+      gxsOngoingMutex("p3MsgService Gxs Outgoing Mutex"), mIdService(id_serv),
+      mServiceCtrl(sc), mMsgMtx("p3MsgService"), mMsgUniqueId(0),
+      recentlyReceivedMutex("p3MsgService recently received hash mutex"),
+      mGxsTransServ(gxsMS)
 {
-	_serialiser = new RsMsgSerialiser();	// this serialiser is used for services. It's not the same than the one returned by setupSerialiser(). We need both!!
+	_serialiser = new RsMsgSerialiser(RsServiceSerializer::SERIALIZATION_FLAG_NONE);	// this serialiser is used for services. It's not the same than the one returned by setupSerialiser(). We need both!!
 	addSerialType(_serialiser);
 
-    mMsgUniqueId = 1 ;	// MsgIds are not transmitted, but only used locally as a storage index. As such, thay do not need to be different
-    			// at friends nodes.
-    
-    mShouldEnableDistantMessaging = true ;
-    mDistantMessagingEnabled      = false ;
-    mDistantMessagePermissions      = RS_DISTANT_MESSAGING_CONTACT_PERMISSION_FLAG_FILTER_NONE ;
+	/* MsgIds are not transmitted, but only used locally as a storage index.
+	 * As such, thay do not need to be different at friends nodes. */
+	mMsgUniqueId = 1;
 
-    /* Initialize standard tag types */
-    if(sc)
-	    initStandardTagTypes();
+	mShouldEnableDistantMessaging = true;
+	mDistantMessagingEnabled = false;
+	mDistantMessagePermissions = RS_DISTANT_MESSAGING_CONTACT_PERMISSION_FLAG_FILTER_NONE;
 
+	if(sc) initStandardTagTypes(); // Initialize standard tag types
+
+	mGxsTransServ.registerGxsTransClient( GxsTransSubServices::P3_MSG_SERVICE,
+	                                      this );
 }
 
 const std::string MSG_APP_NAME = "msg";
@@ -141,11 +150,11 @@ int	p3MsgService::tick()
 
 	if(now > last_management_time + 5)
 	{
-		manageDistantPeers() ;
-		checkOutgoingMessages(); 
-        	cleanListOfReceivedMessageHashes();
+		manageDistantPeers();
+		checkOutgoingMessages();
+		cleanListOfReceivedMessageHashes();
 
-		last_management_time = now ;
+		last_management_time = now;
 	}
 
 	return 0;
@@ -153,21 +162,21 @@ int	p3MsgService::tick()
 
 void p3MsgService::cleanListOfReceivedMessageHashes()
 {
-    RS_STACK_MUTEX(mMsgMtx); /********** STACK LOCKED MTX ******/
+	RS_STACK_MUTEX(recentlyReceivedMutex);
 
-    time_t now = time(NULL) ;
-    
-    for(std::map<Sha1CheckSum,uint32_t>::iterator it(mRecentlyReceivedDistantMessageHashes.begin());it!=mRecentlyReceivedDistantMessageHashes.end();)
-	    if(now > RS_MSG_DISTANT_MESSAGE_HASH_KEEP_TIME + it->second)
-	    {
-		    std::cerr << "p3MsgService(): cleanListOfReceivedMessageHashes(). Removing old hash " << it->first << ", aged " << now - it->second << " secs ago" << std::endl;
-		    std::map<Sha1CheckSum,uint32_t>::iterator  tmp(it) ;
-		    ++tmp ;
-		    mRecentlyReceivedDistantMessageHashes.erase(it) ;
-		    it=tmp ;
-	    }
-	    else
-		    ++it ;
+	time_t now = time(NULL);
+
+	for( auto it = mRecentlyReceivedMessageHashes.begin();
+	     it != mRecentlyReceivedMessageHashes.end(); )
+		if( now > RS_MSG_DISTANT_MESSAGE_HASH_KEEP_TIME + it->second )
+		{
+			std::cerr << "p3MsgService(): cleanListOfReceivedMessageHashes(). "
+			          << "Removing old hash " << it->first << ", aged "
+			          << now - it->second << " secs ago" << std::endl;
+
+			it = mRecentlyReceivedMessageHashes.erase(it);
+		}
+		else ++it;
 }
 
 int	p3MsgService::status()
@@ -348,111 +357,112 @@ void p3MsgService::checkSizeAndSendMessage(RsMsgItem *msg)
     sendItem(msg) ;
 }
 
-int     p3MsgService::checkOutgoingMessages()
+int p3MsgService::checkOutgoingMessages()
 {
-    /* iterate through the outgoing queue 
-	 *
-	 * if online, send
-	 */
+	bool changed = false;
+	std::list<RsMsgItem*> output_queue;
 
-    bool changed = false ;
-    std::list<RsMsgItem*> output_queue ;
+	{
+		RS_STACK_MUTEX(mMsgMtx); /********** STACK LOCKED MTX ******/
 
-    {
-	    RS_STACK_MUTEX(mMsgMtx); /********** STACK LOCKED MTX ******/
-        
-	    const RsPeerId& ownId = mServiceCtrl->getOwnId();
+		const RsPeerId& ownId = mServiceCtrl->getOwnId();
 
-	    std::list<uint32_t>::iterator it;
-	    std::list<uint32_t> toErase;
+		std::list<uint32_t>::iterator it;
+		std::list<uint32_t> toErase;
 
-	    std::map<uint32_t, RsMsgItem *>::iterator mit;
-	    for(mit = msgOutgoing.begin(); mit != msgOutgoing.end(); ++mit)
-	    {
-		    if (mit->second->msgFlags & RS_MSG_FLAGS_TRASH)
-			    continue;
+		std::map<uint32_t, RsMsgItem *>::iterator mit;
+		for( mit = msgOutgoing.begin(); mit != msgOutgoing.end(); ++mit )
+		{
+			if (mit->second->msgFlags & RS_MSG_FLAGS_TRASH) continue;
 
-		    /* find the certificate */
-		    RsPeerId pid = mit->second->PeerId();
-		    bool should_send = false ;
+			/* find the certificate */
+			RsPeerId pid = mit->second->PeerId();
+			bool should_send = false;
 
-		    if( pid == ownId) 
-			    should_send = true ;
+			if( pid == ownId) should_send = true;
 
-		    if( mServiceCtrl->isPeerConnected(getServiceInfo().mServiceType, pid) ) /* FEEDBACK Msg to Ourselves */
-			    should_send = true ;
+			// FEEDBACK Msg to Ourselves
+			if( mServiceCtrl->isPeerConnected(getServiceInfo().mServiceType,
+			                                  pid) )
+				should_send = true;
 
-		    if((mit->second->msgFlags & RS_MSG_FLAGS_DISTANT) && !(mit->second->msgFlags & RS_MSG_FLAGS_ROUTED))
-				    should_send = true ;
+			if( (mit->second->msgFlags & RS_MSG_FLAGS_DISTANT) &&
+			        !(mit->second->msgFlags & RS_MSG_FLAGS_ROUTED))
+				should_send = true;
 
-		    if(should_send)
-		    {
-			    /* send msg */
-			    pqioutput(PQL_DEBUG_BASIC, msgservicezone, 
-			              "p3MsgService::checkOutGoingMessages() Sending out message");
-			    /* remove the pending flag */
+			if(should_send)
+			{
+				/* send msg */
+				pqioutput( PQL_DEBUG_BASIC, msgservicezone,
+				           "p3MsgService::checkOutGoingMessages() Sending out message");
+				/* remove the pending flag */
 
-			    output_queue.push_back(mit->second) ;
+				output_queue.push_back(mit->second) ;
 
-			    // When the message is a distant msg, dont remove it yet from the list. Only mark it as being sent, so that we don't send it again.
-			    //
-			    if(!(mit->second->msgFlags & RS_MSG_FLAGS_DISTANT))
-			    {
-				    (mit->second)->msgFlags &= ~RS_MSG_FLAGS_PENDING;
-				    toErase.push_back(mit->first);
-				    changed = true ;
-			    }
-			    else
-			    {
+				/* When the message is a distant msg, dont remove it yet from
+				 * the list. Only mark it as being sent, so that we don't send
+				 * it again. */
+				if(!(mit->second->msgFlags & RS_MSG_FLAGS_DISTANT))
+				{
+					(mit->second)->msgFlags &= ~RS_MSG_FLAGS_PENDING;
+					toErase.push_back(mit->first);
+					changed = true;
+				}
+				else
+				{
 #ifdef DEBUG_DISTANT_MSG
-				    std::cerr << "Message id " << mit->first << " is distant: kept in outgoing, and marked as ROUTED" << std::endl;
+					std::cerr << "Message id " << mit->first << " is distant: "
+					          << "kept in outgoing, and marked as ROUTED"
+					          << std::endl;
 #endif
-				    mit->second->msgFlags |= RS_MSG_FLAGS_ROUTED ;
-			    }
-		    }
-		    else
-		    {
-			    pqioutput(PQL_DEBUG_BASIC, msgservicezone, 
-			              "p3MsgService::checkOutGoingMessages() Delaying until available...");
-		    }
-	    }
+					mit->second->msgFlags |= RS_MSG_FLAGS_ROUTED;
+				}
+			}
+			else
+			{
+				pqioutput( PQL_DEBUG_BASIC, msgservicezone,
+				           "p3MsgService::checkOutGoingMessages() Delaying until available...");
+			}
+		}
 
-	    /* clean up */
-	    for(it = toErase.begin(); it != toErase.end(); ++it)
-	    {
-		    mit = msgOutgoing.find(*it);
-		    if (mit != msgOutgoing.end())
-		    {
-			    msgOutgoing.erase(mit);
-		    }
+		/* clean up */
+		for(it = toErase.begin(); it != toErase.end(); ++it)
+		{
+			mit = msgOutgoing.find(*it);
+			if ( mit != msgOutgoing.end() ) msgOutgoing.erase(mit);
 
-		    std::map<uint32_t, RsMsgSrcId*>::iterator srcIt = mSrcIds.find(*it);
-		    if (srcIt != mSrcIds.end()) {
-			    delete (srcIt->second);
-			    mSrcIds.erase(srcIt);
-		    }
-	    }
+			std::map<uint32_t, RsMsgSrcId*>::iterator srcIt = mSrcIds.find(*it);
+			if (srcIt != mSrcIds.end())
+			{
+				delete (srcIt->second);
+				mSrcIds.erase(srcIt);
+			}
+		}
 
-	    if (toErase.size() > 0)
-	    {
-		    IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
-	    }
-    }
+		if (toErase.size() > 0) IndicateConfigChanged();
+	}
 
-    for(std::list<RsMsgItem*>::const_iterator it(output_queue.begin());it!=output_queue.end();++it)
-	    if((*it)->msgFlags & RS_MSG_FLAGS_DISTANT)		// don't split distant messages. The global router takes care of it.
-		    sendDistantMsgItem(*it) ;
-	    else
-		    checkSizeAndSendMessage(*it) ;
+	for( std::list<RsMsgItem*>::const_iterator it(output_queue.begin());
+	     it != output_queue.end(); ++it )
+		if( (*it)->msgFlags & RS_MSG_FLAGS_DISTANT ) // don't split distant messages. The global router takes care of it.
+			sendDistantMsgItem(*it);
+		else
+			checkSizeAndSendMessage(*it);
 
-    if(changed)
-	    RsServer::notify()->notifyListChange(NOTIFY_LIST_MESSAGELIST,NOTIFY_TYPE_MOD);
+	if(changed)
+		RsServer::notify()->notifyListChange(NOTIFY_LIST_MESSAGELIST,NOTIFY_TYPE_MOD);
 
-    return 0;
+	return 0;
 }
 
-bool    p3MsgService::saveList(bool& cleanup, std::list<RsItem*>& itemList)
+bool p3MsgService::saveList(bool& cleanup, std::list<RsItem*>& itemList)
 {
+	RsMsgGRouterMap* gxsmailmap = new RsMsgGRouterMap;
+	{
+		RS_STACK_MUTEX(gxsOngoingMutex);
+		gxsmailmap->ongoing_msgs = gxsOngoingMessages;
+	}
+	itemList.push_front(gxsmailmap);
 
 	std::map<uint32_t, RsMsgItem *>::iterator mit;
 	std::map<uint32_t, RsMsgTagType* >::iterator mit2;
@@ -460,9 +470,7 @@ bool    p3MsgService::saveList(bool& cleanup, std::list<RsItem*>& itemList)
 	std::map<uint32_t, RsMsgSrcId* >::iterator lit;
 	std::map<uint32_t, RsMsgParentId* >::iterator mit4;
 
-    MsgTagType stdTags;
-
-    cleanup = true;
+	cleanup = true;
 
 	mMsgMtx.lock();
 
@@ -489,10 +497,13 @@ bool    p3MsgService::saveList(bool& cleanup, std::list<RsItem*>& itemList)
     grmap->ongoing_msgs = _ongoing_messages ;
 
     itemList.push_back(grmap) ;
-    
-    RsMsgDistantMessagesHashMap *ghm = new RsMsgDistantMessagesHashMap ;
-    ghm->hash_map = mRecentlyReceivedDistantMessageHashes ;
-    itemList.push_back(ghm) ;
+
+	RsMsgDistantMessagesHashMap *ghm = new RsMsgDistantMessagesHashMap;
+	{
+		RS_STACK_MUTEX(recentlyReceivedMutex);
+		ghm->hash_map = mRecentlyReceivedMessageHashes;
+	}
+	itemList.push_back(ghm);
 
 	RsConfigKeyValueSet *vitem = new RsConfigKeyValueSet ;
 	RsTlvKeyValue kv;
@@ -504,7 +515,7 @@ bool    p3MsgService::saveList(bool& cleanup, std::list<RsItem*>& itemList)
         kv.value = RsUtil::NumberToString(mDistantMessagePermissions) ;
 	vitem->tlvkvs.pairs.push_back(kv) ;
 
-	itemList.push_back(vitem) ;
+	itemList.push_back(vitem);
 
 	return true;
 }
@@ -519,7 +530,7 @@ RsSerialiser* p3MsgService::setupSerialiser()	// this serialiser is used for con
 {
 	RsSerialiser *rss = new RsSerialiser ;
 
-	rss->addSerialType(new RsMsgSerialiser(true));
+	rss->addSerialType(new RsMsgSerialiser(RsServiceSerializer::SERIALIZATION_FLAG_CONFIG));
 	rss->addSerialType(new RsGeneralConfigSerialiser());
 
 	return rss;
@@ -566,8 +577,19 @@ void p3MsgService::initStandardTagTypes()
 	}
 }
 
-bool    p3MsgService::loadList(std::list<RsItem*>& load)
+bool p3MsgService::loadList(std::list<RsItem*>& load)
 {
+	auto gxsmIt = load.begin();
+	RsMsgGRouterMap* gxsmailmap = dynamic_cast<RsMsgGRouterMap*>(*gxsmIt);
+	if(gxsmailmap)
+	{
+		{
+			RS_STACK_MUTEX(gxsOngoingMutex);
+			gxsOngoingMessages = gxsmailmap->ongoing_msgs;
+		}
+		delete *gxsmIt; load.erase(gxsmIt);
+	}
+
     RsMsgItem *mitem;
     RsMsgTagType* mtt;
     RsMsgTags* mti;
@@ -577,7 +599,7 @@ bool    p3MsgService::loadList(std::list<RsItem*>& load)
     RsMsgDistantMessagesHashMap *ghm;
 
     std::list<RsMsgItem*> items;
-    std::list<RsItem*>::iterator it;
+	std::list<RsItem*>::iterator it;
     std::map<uint32_t, RsMsgTagType*>::iterator tagIt;
     std::map<uint32_t, RsPeerId> srcIdMsgMap;
     std::map<uint32_t, RsPeerId>::iterator srcIt;
@@ -585,9 +607,9 @@ bool    p3MsgService::loadList(std::list<RsItem*>& load)
     uint32_t max_msg_id = 0 ;
     
     // load items and calculate next unique msgId
-    for(it = load.begin(); it != load.end(); ++it)
+	for(it = load.begin(); it != load.end(); ++it)
     {
-	    if (NULL != (mitem = dynamic_cast<RsMsgItem *>(*it)))
+		if (NULL != (mitem = dynamic_cast<RsMsgItem *>(*it)))
 	    {
 		    /* STORE MsgID */
 		    if (mitem->msgId > max_msg_id) 
@@ -595,18 +617,21 @@ bool    p3MsgService::loadList(std::list<RsItem*>& load)
 		    
 		    items.push_back(mitem);
 	    }
-	    else if (NULL != (grm = dynamic_cast<RsMsgGRouterMap *>(*it)))
+		else if (NULL != (grm = dynamic_cast<RsMsgGRouterMap *>(*it)))
 	    {
-		    // merge.
-		    for(std::map<GRouterMsgPropagationId,uint32_t>::const_iterator bit(grm->ongoing_msgs.begin());bit!=grm->ongoing_msgs.end();++bit)
-			    _ongoing_messages.insert(*bit) ;
-
-            delete *it ;
-            continue ;
-	    }
-        else if(NULL != (ghm = dynamic_cast<RsMsgDistantMessagesHashMap*>(*it)))
-        {
-            mRecentlyReceivedDistantMessageHashes = ghm->hash_map ;
+			typedef std::map<GRouterMsgPropagationId,uint32_t> tT;
+			for( tT::const_iterator bit = grm->ongoing_msgs.begin();
+			     bit != grm->ongoing_msgs.end(); ++bit )
+				_ongoing_messages.insert(*bit);
+			delete *it;
+			continue;
+		}
+		else if(NULL != (ghm = dynamic_cast<RsMsgDistantMessagesHashMap*>(*it)))
+		{
+			{
+				RS_STACK_MUTEX(recentlyReceivedMutex);
+				mRecentlyReceivedMessageHashes = ghm->hash_map;
+			}
 #ifdef DEBUG_DISTANT_MSG
             std::cerr << "  loaded recently received message map: " << std::endl;
             
@@ -631,23 +656,23 @@ bool    p3MsgService::loadList(std::list<RsItem*>& load)
 		    }
 
 	    }
-	    else if(NULL != (mti = dynamic_cast<RsMsgTags *>(*it)))
+		else if(NULL != (mti = dynamic_cast<RsMsgTags *>(*it)))
 	    {
 		    mMsgTags.insert(std::pair<uint32_t, RsMsgTags* >(mti->msgId, mti));
 	    }
-	    else if(NULL != (msi = dynamic_cast<RsMsgSrcId *>(*it)))
+		else if(NULL != (msi = dynamic_cast<RsMsgSrcId *>(*it)))
 	    {
 		    srcIdMsgMap.insert(std::pair<uint32_t, RsPeerId>(msi->msgId, msi->srcId));
 		    mSrcIds.insert(std::pair<uint32_t, RsMsgSrcId*>(msi->msgId, msi)); // does not need to be kept
 	    }
-	    else if(NULL != (msp = dynamic_cast<RsMsgParentId *>(*it)))
+		else if(NULL != (msp = dynamic_cast<RsMsgParentId *>(*it)))
 	    {
 		    mParentId.insert(std::pair<uint32_t, RsMsgParentId*>(msp->msgId, msp));
 	    }
 
 	    RsConfigKeyValueSet *vitem = NULL ;
 
-	    if(NULL != (vitem = dynamic_cast<RsConfigKeyValueSet*>(*it)))
+		if(NULL != (vitem = dynamic_cast<RsConfigKeyValueSet*>(*it)))
 	    {
 		    for(std::list<RsTlvKeyValue>::const_iterator kit = vitem->tlvkvs.pairs.begin(); kit != vitem->tlvkvs.pairs.end(); ++kit) 
 		    {
@@ -678,7 +703,7 @@ bool    p3MsgService::loadList(std::list<RsItem*>& load)
 			    }
 		    }
 
-		    delete *it ;
+			delete *it ;
 		    continue ;
 	    }
     }
@@ -696,7 +721,7 @@ bool    p3MsgService::loadList(std::list<RsItem*>& load)
 		    mitem->msgId = getNewUniqueMsgId();
 	    }
 
-	    RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
+		RS_STACK_MUTEX(mMsgMtx);
 
 	    srcIt = srcIdMsgMap.find(mitem->msgId);
 	    if(srcIt != srcIdMsgMap.end()) {
@@ -1110,16 +1135,17 @@ uint32_t     p3MsgService::sendMessage(RsMsgItem *item)	// no from field because
 
     return item->msgId;
 }
-uint32_t     p3MsgService::sendDistantMessage(RsMsgItem *item,const RsGxsId& from)
-{
-	if(!item)
-		return 0 ;
 
-	item->msgId     = getNewUniqueMsgId(); /* grabs Mtx as well */
-	item->msgFlags |= (RS_MSG_FLAGS_DISTANT | RS_MSG_FLAGS_OUTGOING | RS_MSG_FLAGS_PENDING); /* add pending flag */
+uint32_t p3MsgService::sendDistantMessage(RsMsgItem *item, const RsGxsId& from)
+{
+	if(!item) return 0;
+
+	item->msgId  = getNewUniqueMsgId(); /* grabs Mtx as well */
+	item->msgFlags |= ( RS_MSG_FLAGS_DISTANT | RS_MSG_FLAGS_OUTGOING |
+	                    RS_MSG_FLAGS_PENDING ); /* add pending flag */
 
 	{
-		RS_STACK_MUTEX(mMsgMtx) ;
+		RS_STACK_MUTEX(mMsgMtx);
 
 		/* STORE MsgID */
 		msgOutgoing[item->msgId] = item;
@@ -1131,17 +1157,16 @@ uint32_t     p3MsgService::sendDistantMessage(RsMsgItem *item,const RsGxsId& fro
 
 			RsMsgSrcId* msi = new RsMsgSrcId();
 			msi->msgId = item->msgId;
-			msi->srcId = RsPeerId(from) ;
+			msi->srcId = RsPeerId(from);
 			mSrcIds.insert(std::pair<uint32_t, RsMsgSrcId*>(msi->msgId, msi));
 		}
 	}
 
 	IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 
-	RsServer::notify()->notifyListChange(NOTIFY_LIST_MESSAGELIST, NOTIFY_TYPE_ADD);
-
+	RsServer::notify()->notifyListChange( NOTIFY_LIST_MESSAGELIST,
+	                                      NOTIFY_TYPE_ADD );
 	return item->msgId;
-
 }
 
 bool 	p3MsgService::MessageSend(MessageInfo &info)
@@ -1856,73 +1881,91 @@ void p3MsgService::manageDistantPeers()
     }
 }
 
-void p3MsgService::notifyDataStatus(const GRouterMsgPropagationId& id, const RsGxsId &signer_id, uint32_t data_status)
+void p3MsgService::notifyDataStatus( const GRouterMsgPropagationId& id,
+                                     const RsGxsId &signer_id,
+                                     uint32_t data_status )
 {
-    if(data_status == GROUTER_CLIENT_SERVICE_DATA_STATUS_FAILED)
-    {
-	    RS_STACK_MUTEX(mMsgMtx); /********** STACK LOCKED MTX ******/
+	if(data_status == GROUTER_CLIENT_SERVICE_DATA_STATUS_FAILED)
+	{
+		RS_STACK_MUTEX(mMsgMtx);
 
-	    std::cerr << "(WW) p3MsgService::notifyDataStatus: Global router tells us that item ID " << id << " could not be delivered on time." ;
-	    std::map<GRouterMsgPropagationId,uint32_t>::iterator it = _ongoing_messages.find(id) ;
-            
-	    if(it == _ongoing_messages.end())
-	    {
-		    std::cerr << "  (EE) cannot find pending message to acknowledge. Weird. grouter id = " << id << std::endl;
-		    return ;
-	    }
-	    uint32_t msg_id = it->second ;
-	    std::cerr << "  message id = " << msg_id << std::endl;
-	    mDistantOutgoingMsgSigners[msg_id] = signer_id ;	// this is needed because it's not saved in config, but we should probably include it in _ongoing_messages
+		std::cerr << "(WW) p3MsgService::notifyDataStatus: Global router tells "
+		          << "us that item ID " << id
+		          << " could not be delivered on time.";
 
-	    std::map<uint32_t,RsMsgItem*>::iterator mit = msgOutgoing.find(msg_id) ;
+		auto it = _ongoing_messages.find(id);
+		if(it == _ongoing_messages.end())
+		{
+			std::cerr << " (EE) cannot find pending message to acknowledge. "
+			          << "Weird. grouter id = " << id << std::endl;
+			return;
+		}
 
-	    if(mit == msgOutgoing.end())
-	    {
-		    std::cerr << "  (EE) message has been notified as not delivered, but it not on outgoing list. Something's wrong!!" << std::endl;
-		    return ;
-	    }
-        std::cerr << "  reseting the ROUTED flag so that the message is requested again" << std::endl;
+		uint32_t msg_id = it->second;
+		std::cerr << " message id = " << msg_id << std::endl;
 
-	    mit->second->msgFlags &= ~RS_MSG_FLAGS_ROUTED ;	// clear the routed flag so that the message is requested again
-	    return ;
-    }
-    
-    if(data_status == GROUTER_CLIENT_SERVICE_DATA_STATUS_RECEIVED)
-    {
-	    RS_STACK_MUTEX(mMsgMtx); /********** STACK LOCKED MTX ******/
+		/* this is needed because it's not saved in config, but we should
+		 * probably include it in _ongoing_messages */
+		mDistantOutgoingMsgSigners[msg_id] = signer_id;
+
+		std::map<uint32_t,RsMsgItem*>::iterator mit = msgOutgoing.find(msg_id);
+		if(mit == msgOutgoing.end())
+		{
+			std::cerr << "  (II) message has been notified as not delivered, "
+			          << "but it's not in outgoing list. Probably it has been "
+			          << "delivered successfully by other means."
+			          << std::endl;
+		}
+		else
+		{
+			std::cerr << "  reseting the ROUTED flag so that the message is "
+			          << "requested again" << std::endl;
+
+			// clear the routed flag so that the message is requested again
+			mit->second->msgFlags &= ~RS_MSG_FLAGS_ROUTED;
+		}
+		return;
+	}
+
+	if(data_status == GROUTER_CLIENT_SERVICE_DATA_STATUS_RECEIVED)
+	{
+		RS_STACK_MUTEX(mMsgMtx);
 #ifdef DEBUG_DISTANT_MSG
-	    std::cerr << "p3MsgService::acknowledgeDataReceived(): acknowledging data received for msg propagation id  " << id << std::endl;
+		std::cerr << "p3MsgService::acknowledgeDataReceived(): acknowledging data received for msg propagation id  " << id << std::endl;
 #endif
-	    std::map<GRouterMsgPropagationId,uint32_t>::iterator it = _ongoing_messages.find(id) ;
+		auto it = _ongoing_messages.find(id);
+		if(it == _ongoing_messages.end())
+		{
+			std::cerr << "  (EE) cannot find pending message to acknowledge. "
+			          << "Weird. grouter id = " << id << std::endl;
+			return;
+		}
 
-	    if(it == _ongoing_messages.end())
-	    {
-		    std::cerr << "  (EE) cannot find pending message to acknowledge. Weird. grouter id = " << id << std::endl;
-		    return ;
-	    }
+		uint32_t msg_id = it->second;
 
-	    uint32_t msg_id = it->second ;
+		// we should now remove the item from the msgOutgoing list.
+		std::map<uint32_t,RsMsgItem*>::iterator it2 = msgOutgoing.find(msg_id);
+		if(it2 == msgOutgoing.end())
+		{
+			std::cerr << "(II) message has been notified as delivered, but it's"
+			          << " not in outgoing list. Probably it has been delivered"
+			          << " successfully by other means." << std::endl;
+			return;
+		}
 
-	    // we should now remove the item from the msgOutgoing list.
+		delete it2->second;
+		msgOutgoing.erase(it2);
 
-	    std::map<uint32_t,RsMsgItem*>::iterator it2 = msgOutgoing.find(msg_id) ;
+		RsServer::notify()->notifyListChange( NOTIFY_LIST_MESSAGELIST,
+		                                      NOTIFY_TYPE_ADD );
+		IndicateConfigChanged();
 
-	    if(it2 == msgOutgoing.end())
-	    {
-		    std::cerr << "(EE) message has been ACKed, but is not in outgoing list. Something's wrong!!" << std::endl;
-		    return ;
-	    }
-
-	    delete it2->second ;
-	    msgOutgoing.erase(it2) ;
-
-	    RsServer::notify()->notifyListChange(NOTIFY_LIST_MESSAGELIST,NOTIFY_TYPE_ADD);
-	    IndicateConfigChanged() ;
-        
-        	return ;
-    }
-    std::cerr << "p3MsgService: unhandled data status info from global router for msg ID " << id << ": this is a bug." << std::endl;
+		return;
+	}
+	std::cerr << "p3MsgService: unhandled data status info from global router"
+	          << " for msg ID " << id << ": this is a bug." << std::endl;
 }
+
 bool p3MsgService::acceptDataFromPeer(const RsGxsId& to_gxs_id)
 {
     if(mDistantMessagePermissions & RS_DISTANT_MESSAGING_CONTACT_PERMISSION_FLAG_FILTER_NON_CONTACTS)
@@ -1948,104 +1991,292 @@ uint32_t p3MsgService::getDistantMessagingPermissionFlags()
 {
     return mDistantMessagePermissions ;
 }
-            
-void p3MsgService::receiveGRouterData(const RsGxsId &destination_key, const RsGxsId &signing_key, GRouterServiceId &/*client_id*/, uint8_t *data, uint32_t data_size)
+
+bool p3MsgService::receiveGxsTransMail( const RsGxsId& authorId,
+                                const RsGxsId& recipientId,
+                                const uint8_t* data, uint32_t dataSize )
 {
-    std::cerr << "p3MsgService::receiveGRouterData(): received message item of size " << data_size << ", for key " << destination_key << std::endl;
+	std::cout << __PRETTY_FUNCTION__ << " " << authorId << ", " << recipientId
+	          << ",, " << dataSize << std::endl;
 
-    // first make sure that we havn't already received the data. Since we allow to re-send messages, it's necessary to check.
-    
-    Sha1CheckSum hash = RsDirUtil::sha1sum(data,data_size) ;
-    
-    if(mRecentlyReceivedDistantMessageHashes.find(hash) != mRecentlyReceivedDistantMessageHashes.end())
-    {
-        std::cerr << "(WW) receiving distant message of hash " << hash << " more than once. This is not a bug, unless it happens very often." << std::endl;
+	Sha1CheckSum hash = RsDirUtil::sha1sum(data, dataSize);
+
+	{
+		RS_STACK_MUTEX(recentlyReceivedMutex);
+		if( mRecentlyReceivedMessageHashes.find(hash) !=
+		        mRecentlyReceivedMessageHashes.end() )
+		{
+			std::cerr << __PRETTY_FUNCTION__ << " (II) receiving "
+			          << "message of hash " << hash << " more than once. "
+			          << "Probably it has arrived  before by other means."
+			          << std::endl;
+			return true;
+		}
+		mRecentlyReceivedMessageHashes[hash] = time(NULL);
+	}
+
+	IndicateConfigChanged();
+
+	RsItem *item = _serialiser->deserialise(const_cast<uint8_t*>(data), &dataSize);
+	RsMsgItem *msg_item = dynamic_cast<RsMsgItem*>(item);
+
+	if(msg_item)
+	{
+		std::cerr << __PRETTY_FUNCTION__ << " Encrypted item correctly "
+		          << "deserialised. Passing on to incoming list."
+		          << std::endl;
+
+		msg_item->msgFlags |= RS_MSG_FLAGS_DISTANT;
+		/* we expect complete msgs - remove partial flag just in case
+			 * someone has funny ideas */
+		msg_item->msgFlags &= ~RS_MSG_FLAGS_PARTIAL;
+
+		// hack to pass on GXS id.
+		msg_item->PeerId(RsPeerId(authorId));
+		handleIncomingItem(msg_item);
+	}
+	else
+	{
+		std::cerr << __PRETTY_FUNCTION__ << " Item could not be "
+		          << "deserialised. Format error??" << std::endl;
+		return false;
+	}
+
+	return true;
+}
+
+bool p3MsgService::notifyGxsTransSendStatus( RsGxsTransId mailId,
+                                             GxsTransSendStatus status )
+{
+	std::cout << __PRETTY_FUNCTION__ << " " << mailId << ", "
+	          << static_cast<uint>(status) << std::endl;
+
+	if( status == GxsTransSendStatus::RECEIPT_RECEIVED )
+	{
+		uint32_t msg_id;
+
+		{
+			RS_STACK_MUTEX(gxsOngoingMutex);
+
+			auto it = gxsOngoingMessages.find(mailId);
+			if(it == gxsOngoingMessages.end())
+			{
+				std::cerr << __PRETTY_FUNCTION__<< " "
+				          << mailId
+				          << ", " << static_cast<uint>(status)
+				          << " (EE) cannot find pending message to acknowledge!"
+				          << std::endl;
+				return false;
+			}
+
+			msg_id = it->second;
+		}
+
+		// we should now remove the item from the msgOutgoing list.
+
+		{
+			RS_STACK_MUTEX(mMsgMtx);
+
+			auto it2 = msgOutgoing.find(msg_id);
+			if(it2 == msgOutgoing.end())
+			{
+				std::cerr << __PRETTY_FUNCTION__ << " " << mailId
+				          << ", " << static_cast<uint>(status) << " (II) "
+				          << "received receipt for message that is not in "
+				          << "outgoing list, probably it has been acknoweldged "
+				          << "before by other means." << std::endl;
+				return true;
+			}
+
+			delete it2->second;
+			msgOutgoing.erase(it2);
+		}
+
+		RsServer::notify()->notifyListChange( NOTIFY_LIST_MESSAGELIST,
+		                                      NOTIFY_TYPE_ADD );
+		IndicateConfigChanged();
+
+		return true;
+	}
+
+	if( status >= GxsTransSendStatus::FAILED_RECEIPT_SIGNATURE )
+	{
+		uint32_t msg_id;
+
+		{
+			RS_STACK_MUTEX(gxsOngoingMutex);
+
+			std::cerr << __PRETTY_FUNCTION__ << " mail delivery "
+			          << "mailId: " << mailId
+			          << " failed with " << static_cast<uint32_t>(status);
+
+			auto it = gxsOngoingMessages.find(mailId);
+			if(it == gxsOngoingMessages.end())
+			{
+				std::cerr << " cannot find pending message to notify"
+				          << std::endl;
+				return false;
+			}
+
+			msg_id = it->second;
+		}
+
+		std::cerr << " message id = " << msg_id << std::endl;
+
+		{
+			RS_STACK_MUTEX(mMsgMtx);
+			auto mit = msgOutgoing.find(msg_id);
+			if( mit == msgOutgoing.end() )
+			{
+				std::cerr << " message has been notified as not delivered, "
+				          << "but it not on outgoing list."
+				          << std::endl;
+				return true;
+			}
+			std::cerr << "  reseting the ROUTED flag so that the message is "
+			          << "requested again" << std::endl;
+
+			// clear the routed flag so that the message is requested again
+			mit->second->msgFlags &= ~RS_MSG_FLAGS_ROUTED;
+			return true;
+		}
+	}
+
+	return true;
+}
+
+void p3MsgService::receiveGRouterData( const RsGxsId &destination_key,
+                                       const RsGxsId &signing_key,
+                                       GRouterServiceId &/*client_id*/,
+                                       uint8_t *data, uint32_t data_size )
+{
+	std::cerr << "p3MsgService::receiveGRouterData(): received message item of"
+	          << " size " << data_size << ", for key " << destination_key
+	          << std::endl;
+
+	/* first make sure that we havn't already received the data. Since we allow
+	 * to re-send messages, it's necessary to check. */
+
+	Sha1CheckSum hash = RsDirUtil::sha1sum(data, data_size);
+
+	{
+		RS_STACK_MUTEX(recentlyReceivedMutex);
+		if( mRecentlyReceivedMessageHashes.find(hash) !=
+		        mRecentlyReceivedMessageHashes.end() )
+		{
+			std::cerr << "p3MsgService::receiveGRouterData(...) (II) receiving"
+			          << "distant message of hash " << hash << " more than once"
+			          << ". Probably it has arrived  before by other means."
+			          << std::endl;
+			free(data);
+			return;
+		}
+		mRecentlyReceivedMessageHashes[hash] = time(NULL);
+	}
+
+	IndicateConfigChanged() ;
+
+	RsItem *item = _serialiser->deserialise(data,&data_size) ;
 	free(data) ;
-        return ;
-    }
-    mRecentlyReceivedDistantMessageHashes[hash] = time(NULL) ;
-    IndicateConfigChanged() ;
-    
-    RsItem *item = _serialiser->deserialise(data,&data_size) ;
-    free(data) ;
 
-    RsMsgItem *msg_item = dynamic_cast<RsMsgItem*>(item) ;
+	RsMsgItem *msg_item = dynamic_cast<RsMsgItem*>(item) ;
 
-    if(msg_item != NULL)
-    {
-        std::cerr << "  Encrypted item correctly deserialised. Passing on to incoming list." << std::endl;
+	if(msg_item != NULL)
+	{
+		std::cerr << "  Encrypted item correctly deserialised. Passing on to incoming list." << std::endl;
 
-	msg_item->msgFlags |= RS_MSG_FLAGS_DISTANT ;
-	/* we expect complete msgs - remove partial flag just in case someone has funny ideas */
-	msg_item->msgFlags &= ~RS_MSG_FLAGS_PARTIAL;
+		msg_item->msgFlags |= RS_MSG_FLAGS_DISTANT ;
+		/* we expect complete msgs - remove partial flag just in case someone has funny ideas */
+		msg_item->msgFlags &= ~RS_MSG_FLAGS_PARTIAL;
 
-        msg_item->PeerId(RsPeerId(signing_key)) ;	// hack to pass on GXS id.
-        handleIncomingItem(msg_item) ;
-    }
-    else
-        std::cerr << "  Item could not be deserialised. Format error??" << std::endl;
+		msg_item->PeerId(RsPeerId(signing_key)) ;	// hack to pass on GXS id.
+		handleIncomingItem(msg_item) ;
+	}
+	else
+		std::cerr << "  Item could not be deserialised. Format error??" << std::endl;
 }
 
 void p3MsgService::sendDistantMsgItem(RsMsgItem *msgitem)
 {
-    RsGxsId destination_key_id(msgitem->PeerId()) ;
-    RsGxsId signing_key_id ;
+	RsGxsId destination_key_id(msgitem->PeerId());
+	RsGxsId signing_key_id;
 
-    msgitem->msgFlags |= RS_MSG_FLAGS_DISTANT ;// just in case, but normally we should always have this flag set, when ending up here.
-    
-    {
-        RS_STACK_MUTEX(mMsgMtx) ;
+	/* just in case, but normally we should always have this flag set, when
+	 * ending up here. */
+	msgitem->msgFlags |= RS_MSG_FLAGS_DISTANT;
 
-        std::map<uint32_t,RsGxsId>::const_iterator it = mDistantOutgoingMsgSigners.find(msgitem->msgId) ;
-        
-        if(it == mDistantOutgoingMsgSigners.end())
-        {
-            std::cerr << "(EE) no signer registered for distant message " << msgitem->msgId << ". Cannot send!" << std::endl;
-            return ;
-        }
-            
-        signing_key_id = it->second ;
+	{
+		RS_STACK_MUTEX(mMsgMtx);
 
-        if(signing_key_id.isNull())
-        {
-            std::cerr << "ERROR: cannot find signing key id for msg id " << msgitem->msgId << std::endl;
-            std::cerr << "  available keys are:" << std::endl;
-            for(std::map<uint32_t,RsGxsId>::const_iterator it(mDistantOutgoingMsgSigners.begin());it!=mDistantOutgoingMsgSigners.end();++it)
-                std::cerr << "    " << it->first << " " << it->second << std::endl;
-            return ;
-        }
-    }
+		std::map<uint32_t,RsGxsId>::const_iterator it =
+		        mDistantOutgoingMsgSigners.find(msgitem->msgId);
+
+		if(it == mDistantOutgoingMsgSigners.end())
+		{
+			std::cerr << "(EE) no signer registered for distant message "
+			          << msgitem->msgId << ". Cannot send!" << std::endl;
+			return;
+		}
+
+		signing_key_id = it->second;
+
+		if(signing_key_id.isNull())
+		{
+			std::cerr << "ERROR: cannot find signing key id for msg id "
+			          << msgitem->msgId << " available keys are:" << std::endl;
+			typedef std::map<uint32_t,RsGxsId>::const_iterator itT;
+			for( itT it = mDistantOutgoingMsgSigners.begin();
+			     it != mDistantOutgoingMsgSigners.end(); ++it )
+				std::cerr << "\t" << it->first << " " << it->second
+				          << std::endl;
+			return;
+		}
+	}
 #ifdef DEBUG_DISTANT_MSG
-    std::cerr << "p3MsgService::sendDistanteMsgItem(): sending distant msg item" << std::endl;
-    std::cerr << "  msg ID  : " << msgitem->msgId << std::endl;
-    std::cerr << "  to peer : " << destination_key_id << std::endl;
-    std::cerr << "  signing : " << signing_key_id << std::endl;
+	std::cerr << "p3MsgService::sendDistanteMsgItem(): sending distant msg item"
+	          << " msg ID: " << msgitem->msgId << " to peer:"
+	          << destination_key_id << " signing: " << signing_key_id
+	          << std::endl;
 #endif
 
-    // The item is serialized and turned into a generic turtle item. Use use the explicit serialiser to make sure that the msgId is not included
+	/* The item is serialized and turned into a generic turtle item. Use use the
+	 * explicit serialiser to make sure that the msgId is not included */
 
-    uint32_t msg_serialized_rssize = msgitem->serial_size(false) ;
+    uint32_t msg_serialized_rssize = RsMsgSerialiser(RsServiceSerializer::SERIALIZATION_FLAG_NONE).size(msgitem) ;
     RsTemporaryMemory msg_serialized_data(msg_serialized_rssize) ;
 
-    if(!msgitem->serialise(msg_serialized_data,msg_serialized_rssize,false))
+    if(!RsMsgSerialiser(RsServiceSerializer::SERIALIZATION_FLAG_NONE).serialise(msgitem,msg_serialized_data,&msg_serialized_rssize))
     {
         std::cerr << "(EE) p3MsgService::sendTurtleData(): Serialization error." << std::endl;
         return ;
     }
 #ifdef DEBUG_DISTANT_MSG
-    std::cerr << "  serialised size : " << msg_serialized_rssize << std::endl;
+	std::cerr << "  serialised size : " << msg_serialized_rssize << std::endl;
 #endif
 
-    GRouterMsgPropagationId grouter_message_id ;
-    mGRouter->sendData(destination_key_id,GROUTER_CLIENT_ID_MESSAGES,msg_serialized_data,msg_serialized_rssize,signing_key_id,grouter_message_id) ;
+	GRouterMsgPropagationId grouter_message_id;
+	mGRouter->sendData( destination_key_id, GROUTER_CLIENT_ID_MESSAGES,
+	                    msg_serialized_data, msg_serialized_rssize,
+	                    signing_key_id, grouter_message_id );
+	RsGxsTransId gxsMailId;
+	mGxsTransServ.sendData( gxsMailId, GxsTransSubServices::P3_MSG_SERVICE,
+	                         signing_key_id, destination_key_id,
+	                         msg_serialized_data, msg_serialized_rssize );
 
-    // now store the grouter id along with the message id, so that we can keep track of received messages
+	/* now store the grouter id along with the message id, so that we can keep
+	 * track of received messages */
 
-    {
-        RS_STACK_MUTEX(mMsgMtx) ;
-        _ongoing_messages[grouter_message_id] = msgitem->msgId ;
-    }
-    IndicateConfigChanged();	// save _ongoing_messages
+	{
+		RS_STACK_MUTEX(mMsgMtx);
+		_ongoing_messages[grouter_message_id] = msgitem->msgId;
+	}
+
+	{
+		RS_STACK_MUTEX(gxsOngoingMutex);
+		gxsOngoingMessages[gxsMailId] = msgitem->msgId;
+	}
+
+	IndicateConfigChanged(); // save _ongoing_messages
 }
 
 

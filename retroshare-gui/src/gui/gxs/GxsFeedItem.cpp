@@ -64,7 +64,10 @@ void GxsFeedItem::comments(const QString &title)
 
 	if (mFeedHolder)
 	{
-		mFeedHolder->openComments(feedId(), groupId(), messageId(), title);
+        if(mMessageVersions.empty())
+			mFeedHolder->openComments(feedId(), groupId(),QVector<RsGxsMessageId>(1,messageId()), messageId(), title);
+		else
+			mFeedHolder->openComments(feedId(), groupId(),mMessageVersions, messageId(), title);
 	}
 }
 
@@ -78,8 +81,8 @@ void GxsFeedItem::copyMessageLink()
 		return;
 	}
 
-	RetroShareLink link;
-	if (link.createGxsMessageLink(getLinkType(), groupId(), mMessageId, messageName())) {
+	RetroShareLink link = RetroShareLink::createGxsMessageLink(getLinkType(), groupId(), mMessageId, messageName());
+	if (link.valid()) {
 		QList<RetroShareLink> urls;
 		urls.push_back(link);
 		RSLinkClipboard::copyLinks(urls);
@@ -153,12 +156,12 @@ void GxsFeedItem::requestComment()
 	opts.mReqType = GXS_REQUEST_TYPE_MSG_RELATED_DATA;
 	opts.mOptions = RS_TOKREQOPT_MSG_THREAD | RS_TOKREQOPT_MSG_LATEST;
 
-	RsGxsGrpMsgIdPair msgIdPair;
-	msgIdPair.first = groupId();
-	msgIdPair.second = messageId();
-
 	std::vector<RsGxsGrpMsgIdPair> msgIds;
-	msgIds.push_back(msgIdPair);
+
+	for(int i=0;i<mMessageVersions.size();++i)
+		msgIds.push_back(std::make_pair(groupId(),mMessageVersions[i])) ;
+
+	msgIds.push_back(std::make_pair(groupId(),messageId()));
 
 	uint32_t token;
 	mLoadQueue->requestMsgRelatedInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, mTokenTypeComment);

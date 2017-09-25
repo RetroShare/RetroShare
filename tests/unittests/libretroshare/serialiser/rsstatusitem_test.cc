@@ -25,14 +25,13 @@
 
 
 #include "support.h"
-#include "serialiser/rsstatusitems.h"
+#include "rsitems/rsstatusitems.h"
 
-RsSerialType* init_item(RsStatusItem& rsi)
+void init_item(RsStatusItem& rsi)
 {
 
 	rsi.sendTime = rand()%5353;
 	rsi.status = rand()%2032;
-	return new RsStatusSerialiser();
 }
 
 bool operator ==(RsStatusItem& rsi1, RsStatusItem& rsi2)
@@ -48,5 +47,5 @@ bool operator ==(RsStatusItem& rsi1, RsStatusItem& rsi2)
 
 TEST(libretroshare_serialiser, test_RsStatusItem)
 {
-	test_RsItem<RsStatusItem >();
+	test_RsItem<RsStatusItem,RsStatusSerialiser >();
 }

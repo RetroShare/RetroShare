@@ -1,0 +1,6 @@
+singleton TokensManager 1.0 TokensManager.qml
+singleton ClipboardWrapper 1.0 ClipboardWrapper.qml
+singleton ChatCache ChatCache.qml
+singleton StyleChat styles/ChatStyle.qml
+singleton StyleSideBar styles/SideBarStyle.qml
+

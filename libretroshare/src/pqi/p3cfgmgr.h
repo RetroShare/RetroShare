@@ -144,7 +144,6 @@ void	setHash(const RsFileHash& h);
  * Class data is protected by mutex's so that anyone can call these
  * functions, at any time.
  */
-
 class p3ConfigMgr
 {
 	public:
@@ -177,7 +176,7 @@ class p3ConfigMgr
          */
         void	addConfiguration(std::string file, pqiConfig *conf);
 
-		/* saves config, and disables further saving
+		/** saves config, and disables further saving
 		 * used for exiting the system
 		 */
 		void	completeConfiguration();
@@ -209,55 +208,54 @@ class p3ConfigMgr
 /***************************************************************************************************/
 
 
-//! abstract class for configuration saving, aimed at rs services that uses RsItem config data
-/*!
- * The aim of this class is to provide a way for rs services and object to save particular
- * configurations an items (and load them up as well).
+/**
+ * @brief Abstract class for configuration saving.
+ * Aimed at rs services that uses RsItem config data, provide a way for RS
+ * services to save and load particular configurations as items.
  */
-class p3Config: public pqiConfig
+class p3Config : public pqiConfig
 {
-	public:
-
+public:
 	p3Config();
 
-virtual bool	loadConfiguration(RsFileHash &loadHash);
-virtual bool	saveConfiguration();
+	virtual bool loadConfiguration(RsFileHash &loadHash);
+	virtual bool saveConfiguration();
 
+protected:
 
-	protected:
+	/// Key Functions to be overloaded for Full Configuration
+	virtual RsSerialiser *setupSerialiser() = 0;
 
-	/* Key Functions to be overloaded for Full Configuration */
-virtual RsSerialiser *setupSerialiser() = 0;
+	/**
+	 * saves list of derived object
+	 * @param cleanup this inform you if you need to call saveDone() to
+	 *   unlock/allow access to resources pointed to by handles (list)
+	 *   returned by function: thus false, call saveDone after returned list
+	 *   finished with and vice versa
+	 * @return list of config items derived object wants to saves
+	 */
+	virtual bool saveList(bool &cleanup, std::list<RsItem *>&) = 0;
 
-/**
- * saves list of derived object
- * @param cleanup this inform you if you need to call saveDone() to unlock/allow
- * access to resources pointed to by handles (list)  returned by function: thus false, call saveDone after returned list finished with
- * and vice versa
- * @return list of config items derived object wants to saves
- */
-virtual bool saveList(bool &cleanup, std::list<RsItem *>&) = 0;
+	/**
+	 * loads up list of configs items for derived object
+	 * @param load list of config items to load up
+	 */
+	virtual bool loadList(std::list<RsItem *>& load) = 0;
 
-/**
- * loads up list of configs items for derived object
- * @param load list of config items to load up
- */
-virtual bool	loadList(std::list<RsItem *>& load) = 0;
-
-/**
- * callback for mutex unlocking
- * in derived classes (should only be needed if cleanup = false)
- */
-virtual void    saveDone() { return; }
+	/**
+	 * callback for mutex unlocking
+	 * in derived classes (should only be needed if cleanup = false)
+	 */
+	virtual void saveDone() {}
 
 private:
 
-bool loadConfig();
-bool saveConfig();
+	bool loadConfig();
+	bool saveConfig();
 
-bool loadAttempt(const std::string&,const std::string&, std::list<RsItem *>& load);
-
-}; /* end of p3Config */
+	bool loadAttempt( const std::string&, const std::string&,
+	                  std::list<RsItem *>& load );
+}; // end of p3Config
 
 
 class p3GeneralConfig: public p3Config

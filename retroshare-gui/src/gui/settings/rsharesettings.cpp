@@ -799,9 +799,9 @@ bool RshareSettings::getRetroShareProtocol()
 		}
 	}
 #elif defined(Q_OS_LINUX)
-	QFile desktop("/usr/share/applications/retroshare06.desktop");
+	QFile desktop("/usr/share/applications/retroshare.desktop");
 	if (!desktop.exists()) {
-		desktop.setFileName("/usr/share/applications/RetroShare06.desktop");
+		desktop.setFileName("/usr/share/applications/retroshare.desktop");
 	}
 	if (desktop.exists()) {
 		desktop.open(QIODevice::ReadOnly | QIODevice::Text);
@@ -1066,7 +1066,7 @@ void RshareSettings::setForumLoadEmoticons(bool value)
 /* Channel */
 bool RshareSettings::getChannelLoadThread()
 {
-	return valueFromGroup("Channel", "LoadThread", true).toBool();
+	return valueFromGroup("Channel", "LoadThread", false).toBool();
 }
 
 void RshareSettings::setChannelLoadThread(bool value)

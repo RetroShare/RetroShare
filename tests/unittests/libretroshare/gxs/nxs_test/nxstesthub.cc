@@ -53,13 +53,14 @@ public:
 	{
 		return recvItem(i);
 	}
+	bool getServiceItemNames(uint32_t /*service_type*/, std::map<uint8_t,std::string>& /*names*/) { return false; }
 private:
 	RsPeerId mPeerId;
 	RecvPeerItemIface* mRecvIface;
 
 };
 
-rs_nxs_test::NxsTestHub::NxsTestHub(NxsTestScenario::pointer testScenario)
+rs_nxs_test::NxsTestHub::NxsTestHub(NxsTestScenario *testScenario)
  : mTestScenario(testScenario), mMtx("NxsTestHub Mutex")
 {
 	std::list<RsPeerId> peers;
@@ -72,31 +73,43 @@ rs_nxs_test::NxsTestHub::NxsTestHub(NxsTestScenario::pointer testScenario)
 
 	for(; cit != peers.end(); cit++)
 	{
-		RsGxsNetService::pointer ns = RsGxsNetService::pointer(
-				new RsGxsNetService(
-				mTestScenario->getServiceType(),
-				mTestScenario->getDataService(*cit),
-				mTestScenario->getDummyNetManager(*cit),
-				new NotifyWithPeerId(*cit, *this),
-				mTestScenario->getServiceInfo(),
-				mTestScenario->getDummyReputations(*cit),
-				mTestScenario->getDummyCircles(*cit),
-				NULL,
-				mTestScenario->getDummyPgpUtils(),
-				true
-				)
-		);
+		NotifyWithPeerId *noti =  new NotifyWithPeerId(*cit, *this) ;
 
-		NxsTestHubConnection *connection =
-				new NxsTestHubConnection(*cit, this);
+		mNotifys.push_back(noti) ;
+
+		RsGxsNetService *ns =  new RsGxsNetService(
+									mTestScenario->getServiceType(),
+									mTestScenario->getDataService(*cit),
+									mTestScenario->getDummyNetManager(*cit),
+									noti,
+									mTestScenario->getServiceInfo(),
+									mTestScenario->getDummyReputations(*cit),
+									mTestScenario->getDummyCircles(*cit),
+									NULL,
+									mTestScenario->getDummyPgpUtils(),
+									true
+									);
+
+		NxsTestHubConnection *connection = new NxsTestHubConnection(*cit, this);
 		ns->setServiceServer(connection);
+
+		mConnections.push_back(connection) ;
 
 		mPeerNxsMap.insert(std::make_pair(*cit, ns));
 	}
 }
 
 
-rs_nxs_test::NxsTestHub::~NxsTestHub() {
+rs_nxs_test::NxsTestHub::~NxsTestHub()
+{
+	for(PeerNxsMap::const_iterator it(mPeerNxsMap.begin());it!=mPeerNxsMap.end();++it)
+		delete it->second ;
+
+	for(std::list<NotifyWithPeerId*>::const_iterator it(mNotifys.begin());it!=mNotifys.end();++it)
+		delete *it ;
+
+	for(std::list<NxsTestHubConnection*>::const_iterator it(mConnections.begin());it!=mConnections.end();++it)
+		delete *it ;
 }
 
 
@@ -136,7 +149,7 @@ void rs_nxs_test::NxsTestHub::notifyNewMessages(const RsPeerId& pid,
 {
     RS_STACK_MUTEX(mMtx); /***** MTX LOCKED *****/
 
-	std::map<RsNxsMsg*, RsGxsMsgMetaData*> toStore;
+	RsNxsMsgDataTemporaryList toStore;
 	std::vector<RsNxsMsg*>::iterator it = messages.begin();
 	for(; it != messages.end(); it++)
 	{
@@ -144,13 +157,17 @@ void rs_nxs_test::NxsTestHub::notifyNewMessages(const RsPeerId& pid,
 		RsGxsMsgMetaData* meta = new RsGxsMsgMetaData();
         // local meta is not touched by the deserialisation routine
         // have to initialise it
+
+		msg->metaData = meta ;
+
         meta->mMsgStatus = 0;
         meta->mMsgSize = 0;
         meta->mChildTs = 0;
         meta->recvTS = 0;
         meta->validated = false;
 		meta->deserialise(msg->meta.bin_data, &(msg->meta.bin_len));
-		toStore.insert(std::make_pair(msg, meta));
+
+		toStore.push_back(msg);
 	}
 
 	RsGeneralDataService* ds = mTestScenario->getDataService(pid);
@@ -162,14 +179,15 @@ void rs_nxs_test::NxsTestHub::notifyNewGroups(const RsPeerId& pid, std::vector<R
 {
     RS_STACK_MUTEX(mMtx); /***** MTX LOCKED *****/
 
-	std::map<RsNxsGrp*, RsGxsGrpMetaData*> toStore;
+	RsNxsGrpDataTemporaryList toStore;
 	std::vector<RsNxsGrp*>::iterator it = groups.begin();
 	for(; it != groups.end(); it++)
 	{
 		RsNxsGrp* grp = *it;
 		RsGxsGrpMetaData* meta = new RsGxsGrpMetaData();
+		grp->metaData = meta ;
 		meta->deserialise(grp->meta.bin_data, grp->meta.bin_len);
-		toStore.insert(std::make_pair(grp, meta));
+		toStore.push_back(grp);
 	}
 
 	RsGeneralDataService* ds = mTestScenario->getDataService(pid);
@@ -226,7 +244,7 @@ void rs_nxs_test::NxsTestHub::data_tick()
 	// then tick net services
 	for(; it != mPeerNxsMap.end(); it++)
 	{
-		RsGxsNetService::pointer s = it->second;
+		RsGxsNetService *s = it->second;
 		s->tick();
 
 	}

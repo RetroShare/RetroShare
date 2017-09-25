@@ -39,6 +39,7 @@ class RsChatLobbyListRequestItem ;
 class RsChatLobbyListItem ;
 class RsChatLobbyEventItem ;
 class RsChatLobbyBouncingObject ;
+class RsChatLobbyInviteItem_Deprecated ; // to be removed (deprecated since May 2017)
 class RsChatLobbyInviteItem ;
 class RsChatLobbyMsgItem ;
 class RsChatLobbyConnectChallengeItem ;
@@ -111,6 +112,7 @@ class DistributedChatService
 
 		/// receive and handle chat lobby item
 		bool recvLobbyChat(RsChatLobbyMsgItem*,const RsPeerId& src_peer_id) ;
+		void handleRecvLobbyInvite_Deprecated(RsChatLobbyInviteItem_Deprecated*) ; // to be removed (deprecated since May 2017)
 		void handleRecvLobbyInvite(RsChatLobbyInviteItem*) ;
 		void checkAndRedirectMsgToLobby(RsChatMsgItem*) ;
 		void handleConnectionChallenge(RsChatLobbyConnectChallengeItem *item) ;
@@ -156,7 +158,8 @@ class DistributedChatService
 		time_t last_lobby_challenge_time ; 					// prevents bruteforce attack
 		time_t last_visible_lobby_info_request_time ;	// allows to ask for updates
 		bool _should_reset_lobby_counts ;
-        RsGxsId _default_identity ;
+		RsGxsId _default_identity;
+		std::map<ChatLobbyId,RsGxsId> _lobby_default_identity;
 
 		uint32_t mServType ;
 		RsMutex mDistributedChatMtx ;

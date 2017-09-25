@@ -22,9 +22,8 @@
 #ifndef SERVERPAGE_H
 #define SERVERPAGE_H
 
-#include <retroshare-gui/configpage.h>
 #include "ui_ServerPage.h"
-#include "RsAutoUpdatePage.h"
+
 #include <inttypes.h>
 /* get OS-specific definitions for:
  * 	struct sockaddr_storage
@@ -35,11 +34,18 @@
     #include <winsock2.h>
 #endif
 
+#include <services/autoproxy/rsautoproxymonitor.h>
+#include <services/autoproxy/p3i2pbob.h>
+
+#include <retroshare-gui/configpage.h>
+#include <retroshare-gui/RsAutoUpdatePage.h>
+
+
 class QNetworkReply;
 class QNetworkAccessManager;
 class BanListPeer;
 
-class ServerPage: public ConfigPage
+class ServerPage: public ConfigPage, public autoProxyCallback
 {
     Q_OBJECT
 
@@ -61,6 +67,7 @@ private slots:
     // ban list
     void updateSelectedBlackListIP(int row, int, int, int);
     void updateSelectedWhiteListIP(int row,int,int,int);
+	void saveAndTestInProxy();
     void addIpRangeToBlackList();
     void addIpRangeToWhiteList();
     void moveToWhiteList0();
@@ -88,7 +95,50 @@ private slots:
     void handleNetworkReply(QNetworkReply *reply);
     void updateInProxyIndicator();
 
+	// i2p bob
+	void startBOB();
+	void restartBOB();
+	void stopBOB();
+	void getNewKey();
+	void loadKey();
+	void enableBob(bool checked);
+	void tunnelSettingsChanged(int);
+
+	void toggleBobAdvancedSettings(bool checked);
+
+	void syncI2PProxyPortNormal(int i);
+	void syncI2PProxyPortBob(int i);
+
+	void syncI2PProxyAddrNormal(QString);
+	void syncI2PProxyAddrBob(QString);
+
+	void connectionWithoutCert();
+
+	//Relay Tab
+	void updateRelayOptions();
+	void updateEnabled();
+	void checkKey();
+	void addServer();
+	void removeServer();
+	void loadServers();
+	void updateTotals();
+	void updateRelayMode();
+
+	// autoProxyCallback interface
+public:
+	void taskFinished(taskTicket *&ticket);
+
 private:
+	void loadCommon();
+	void saveCommon();
+	void saveBob();
+	void updateStatusBob();
+
+	void setUpBobElements();
+	void enableBobElements(bool enable);
+
+	void updateInProxyIndicatorResult(bool success);
+
     // ban list
     void addPeerToIPTable(QTableWidget *table, int row, const BanListPeer &blp);
     bool removeCurrentRowFromBlackList(sockaddr_storage& collected_addr,int& masked_bytes);
@@ -104,9 +154,12 @@ private:
     Ui::ServerPage ui;
 
     QNetworkAccessManager *manager ;
+	int mOngoingConnectivityCheck;
 
-    bool mIsHiddenNode;
+	bool mIsHiddenNode;
 	uint32_t mHiddenType;
+	bobSettings mBobSettings;
+	bool mBobAccessible; // keeps track wether bob is accessable or not to en/disable the corresponding buttons
 };
 
 #endif // !SERVERPAGE_H

@@ -33,7 +33,7 @@
 #include <openssl/evp.h>
 #include <openssl/rsa.h>
 
-#include "serialiser/rsgxsrecognitems.h"
+#include "rsitems/rsgxsrecognitems.h"
 #include "retroshare/rsgxsifacetypes.h"
 
 namespace RsRecogn {

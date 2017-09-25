@@ -24,7 +24,7 @@
  */
 
 #include "services/p3statusservice.h"
-#include "serialiser/rsstatusitems.h"
+#include "rsitems/rsstatusitems.h"
 #include "rsserver/p3face.h"
 #include "retroshare/rsiface.h"
 

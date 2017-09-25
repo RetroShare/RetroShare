@@ -2,6 +2,7 @@
 
 #include <list>
 #include "retroshare/rsids.h"
+#include "rsitems/rsitem.h"
 #include "pqi/p3linkmgr.h"
 
 #include "SetPacket.h"

@@ -94,6 +94,22 @@ template<uint32_t ID_SIZE_IN_BYTES,bool UPPER_CASE,uint32_t UNIQUE_IDENTIFIER> c
 		inline bool operator==(const t_RsGenericIdType<ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER>& fp) const { return !memcmp(bytes,fp.bytes,ID_SIZE_IN_BYTES) ; }
 		inline bool operator!=(const t_RsGenericIdType<ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER>& fp) const { return !!memcmp(bytes,fp.bytes,ID_SIZE_IN_BYTES); }
 		inline bool operator< (const t_RsGenericIdType<ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER>& fp) const { return (memcmp(bytes,fp.bytes,ID_SIZE_IN_BYTES) < 0) ; }
+		inline t_RsGenericIdType<ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER>
+		operator~ () const
+		{
+			t_RsGenericIdType<ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER> ret;
+			for(uint32_t i=0; i < ID_SIZE_IN_BYTES; ++i)
+				ret.bytes[i] = ~bytes[i];
+			return ret;
+		}
+		inline t_RsGenericIdType<ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER>
+		operator| (const t_RsGenericIdType<ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER>& fp) const
+		{
+			t_RsGenericIdType<ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER> ret;
+			for(uint32_t i=0; i < ID_SIZE_IN_BYTES; ++i)
+				ret.bytes[i] = bytes[i] | fp.bytes[i];
+			return ret;
+		}
 
 		inline bool isNull() const 
 		{ 
@@ -120,7 +136,7 @@ template<uint32_t ID_SIZE_IN_BYTES,bool UPPER_CASE,uint32_t UNIQUE_IDENTIFIER> c
 			offset += SIZE_IN_BYTES ;
 			return true ;
 		}
-		bool deserialise(void *data,uint32_t pktsize,uint32_t& offset)
+		bool deserialise(const void *data,uint32_t pktsize,uint32_t& offset)
 		{
 			if(offset + SIZE_IN_BYTES > pktsize)
 				return false ;

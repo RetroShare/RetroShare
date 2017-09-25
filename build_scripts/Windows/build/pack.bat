@@ -116,7 +116,7 @@ echo copy external binaries
 copy "%RootPath%\libs\bin\*.dll" "%RsDeployPath%" %Quite%
 
 echo copy dependencies
-call :copy_dependencies "%RsDeployPath%\RetroShare06.exe" "%RsDeployPath%"
+call :copy_dependencies "%RsDeployPath%\retroshare.exe" "%RsDeployPath%"
 
 echo copy Qt DLL's
 copy "%QtPath%\Qt%QtMainVersion1%Svg%QtMainVersion2%.dll" "%RsDeployPath%" %Quite%

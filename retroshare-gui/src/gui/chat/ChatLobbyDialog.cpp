@@ -19,45 +19,42 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
  *  Boston, MA  02110-1301, USA.
  *
- *  ccr . 2016 Jan 26
- *
- *  Play sound on incoming messages.
- *
  ****************************************************************/
 
-#include <unistd.h>
 
-#include <QMessageBox>
 #include <QInputDialog>
 #include <QMenu>
+#include <QMessageBox>
 #include <QWidgetAction>
 
 #include "ChatLobbyDialog.h"
-#include "gui/ChatLobbyWidget.h"
+
 #include "ChatTabWidget.h"
-#include "gui/settings/rsharesettings.h"
-#include "gui/settings/RsharePeerSettings.h"
-#include "gui/MainWindow.h"
+#include "gui/ChatLobbyWidget.h"
 #include "gui/FriendsDialog.h"
-#include "gui/msgs/MessageComposer.h"
-#include <gui/common/html.h>
-#include "gui/common/RSTreeWidgetItem.h"
+#include "gui/MainWindow.h"
+#include "gui/common/html.h"
 #include "gui/common/FriendSelectionDialog.h"
-#include "gui/gxs/GxsIdTreeWidgetItem.h"
+#include "gui/common/RSTreeWidgetItem.h"
 #include "gui/gxs/GxsIdChooser.h"
 #include "gui/gxs/GxsIdDetails.h"
-#include "util/HandleRichText.h"
-#include "gui/SoundManager.h"
+#include "gui/gxs/GxsIdTreeWidgetItem.h"
 #include "gui/Identity/IdDialog.h"
+#include "gui/msgs/MessageComposer.h"
+#include "gui/settings/RsharePeerSettings.h"
+#include "gui/settings/rsharesettings.h"
+#include "util/HandleRichText.h"
+#include "util/QtVersion.h"
 
 #include <retroshare/rsnotify.h>
 
 #include <time.h>
+#include <unistd.h>
 
-#define COLUMN_ICON      0
-#define COLUMN_NAME      1
-#define COLUMN_ACTIVITY  2
-#define COLUMN_ID        3
+#define COLUMN_NAME      0
+#define COLUMN_ACTIVITY  1
+#define COLUMN_ID        2
+#define COLUMN_ICON      3
 #define COLUMN_COUNT     4
 
 #define ROLE_SORT            Qt::UserRole + 1
@@ -80,12 +77,16 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::Wi
 	connect(ui.filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterChanged(QString)));
 
             int S = QFontMetricsF(font()).height() ;
-    ui.participantsList->setIconSize(QSize(1.3*S,1.3*S));
+    ui.participantsList->setIconSize(QSize(1.4*S,1.4*S));
 
     ui.participantsList->setColumnCount(COLUMN_COUNT);
-    ui.participantsList->setColumnWidth(COLUMN_ICON, 1.4*S);
+    ui.participantsList->setColumnWidth(COLUMN_ICON, 1.7*S);
     ui.participantsList->setColumnHidden(COLUMN_ACTIVITY,true);
     ui.participantsList->setColumnHidden(COLUMN_ID,true);
+    
+    /* Set header resize modes and initial section sizes */
+	QHeaderView * header = ui.participantsList->header();
+	QHeaderView_setSectionResizeModeColumn(header, COLUMN_NAME, QHeaderView::Stretch);
 
     muteAct = new QAction(QIcon(), tr("Mute participant"), this);
     voteNegativeAct = new QAction(QIcon(":/icons/png/thumbs-down.png"), tr("Ban this person (Sets negative opinion)"), this);
@@ -304,7 +305,7 @@ void ChatLobbyDialog::showInPeopleTab()
     idDialog->navigate(nickname);
 }
 
-void ChatLobbyDialog::init()
+void ChatLobbyDialog::init(const ChatId &/*id*/, const QString &/*title*/)
 {
     ChatLobbyInfo linfo ;
 
@@ -472,7 +473,6 @@ void ChatLobbyDialog::addChatMsg(const ChatMessage& msg)
 
         ui.chatWidget->addChatMsg(msg.incoming, name, gxs_id, sendTime, recvTime, message, ChatWidget::MSGTYPE_NORMAL);
         emit messageReceived(msg.incoming, id(), sendTime, name, message) ;
-        SoundManager::play(SOUND_NEW_LOBBY_MESSAGE);
 
         // This is a trick to translate HTML into text.
         QTextEdit editor;

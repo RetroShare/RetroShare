@@ -38,7 +38,7 @@ class RsGxsDataAccess : public RsTokenService
 {
 public:
     RsGxsDataAccess(RsGeneralDataService* ds);
-    virtual ~RsGxsDataAccess() { return ;}
+    virtual ~RsGxsDataAccess() ;
 
 public:
 
@@ -417,6 +417,13 @@ private:
      * @param req Request object to satisfy
      */
     bool getGroupStatistic(GroupStatisticRequest* req);
+
+    /*!
+     *
+     * Attempts to retrieve group data in serialized format
+     * @param req Request object to satisfy
+     */
+	bool getGroupSerializedData(GroupSerializedDataReq* req);
 
     /*!
      *

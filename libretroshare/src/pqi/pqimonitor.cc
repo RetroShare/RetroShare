@@ -61,14 +61,20 @@ void    pqiConnectCbDummy::peerStatus(const RsPeerId& id, const pqiIpAddrSet &ad
 	std::cerr << out << std::endl;
 }
 
-void    pqiConnectCbDummy::peerConnectRequest(const RsPeerId& id, 
-                        	const struct sockaddr_storage &raddr, uint32_t source)
+void pqiConnectCbDummy::peerConnectRequest(const RsPeerId &id, const sockaddr_storage &raddr
+                                         , const sockaddr_storage &proxyaddr, const sockaddr_storage &srcaddr
+                                         , uint32_t source, uint32_t flags, uint32_t delay, uint32_t bandwidth)
 {
 	std::cerr << "pqiConnectCbDummy::peerConnectRequest()";
 	std::cerr << " id: " << id;
 	std::cerr << " raddr: " << sockaddr_storage_tostring(raddr);
+	std::cerr << " proxyaddr: " << sockaddr_storage_tostring(proxyaddr);
+	std::cerr << " srcaddr: " << sockaddr_storage_tostring(srcaddr);
 	std::cerr << " source: " << source;
-    std::cerr << std::endl;
+	std::cerr << " flags: " << flags;
+	std::cerr << " delay: " << delay;
+	std::cerr << " bandwidth: " << bandwidth;
+	std::cerr << std::endl;
 }
 
 void pqiMonitor::disconnectPeer(const RsPeerId &/*peer*/)

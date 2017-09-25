@@ -30,10 +30,11 @@
 #include "util/rsnet.h"
 
 #include "services/p3banlist.h"
-#include "serialiser/rsbanlistitems.h"
-#include "serialiser/rsconfigitems.h"
 #include "retroshare/rsdht.h"
 #include "retroshare/rsbanlist.h"
+
+#include "rsitems/rsbanlistitems.h"
+#include "rsitems/rsconfigitems.h"
 
 #include <sys/time.h>
 #include <sstream>
@@ -52,11 +53,6 @@
 #define RSBANLIST_SEND_PERIOD				600	// 10 Minutes.
 
 #define RSBANLIST_DELAY_BETWEEN_TALK_TO_DHT 		240	// every 4 mins.
-#define RSBANLIST_DEFAULT_AUTORANGE_LIMIT    		3	// default number of IPs in same range to trigger a complete IP range filter.
-#define RSBANLIST_DEFAULT_AUTORANGE_ENABLED  		true
-#define RSBANLIST_DEFAULT_FRIEND_GATHERING_ENABLED  	false
-#define RSBANLIST_DEFAULT_DHT_GATHERING_ENABLED  	false
-#define RSBANLIST_DEFAULT_ENABLED  			true
 
 /************ IMPLEMENTATION NOTES *********************************
  * 
@@ -66,20 +62,14 @@
  */
 RsBanList *rsBanList = NULL ;
 
-p3BanList::p3BanList(p3ServiceControl *sc, p3NetMgr *nm)
-	:p3Service(), mBanMtx("p3BanList"), mServiceCtrl(sc), mNetMgr(nm) 
-{
-	addSerialType(new RsBanListSerialiser());
-
-    mSentListTime = 0;
-    mLastDhtInfoRequest = 0 ;
-
-    mIPFilteringEnabled = RSBANLIST_DEFAULT_ENABLED ;
-    mAutoRangeLimit = RSBANLIST_DEFAULT_AUTORANGE_LIMIT ;
-    mAutoRangeIps = RSBANLIST_DEFAULT_AUTORANGE_ENABLED ;
-    mIPFriendGatheringEnabled = RSBANLIST_DEFAULT_FRIEND_GATHERING_ENABLED ;
-    mIPDHTGatheringEnabled = RSBANLIST_DEFAULT_DHT_GATHERING_ENABLED ;
-}
+p3BanList::p3BanList(p3ServiceControl *sc, p3NetMgr */*nm*/) :
+    p3Service(), mBanMtx("p3BanList"), mServiceCtrl(sc), mSentListTime(0),
+    mLastDhtInfoRequest(0), mIPFilteringEnabled(true),
+    // default number of IPs in same range to trigger a complete IP /24 filter.
+    mAutoRangeLimit(100),
+    mAutoRangeIps(false), mIPFriendGatheringEnabled(false),
+    mIPDHTGatheringEnabled(false)
+{ addSerialType(new RsBanListSerialiser()); }
 
 const std::string BANLIST_APP_NAME = "banlist";
 const uint16_t BANLIST_APP_MAJOR_VERSION  =       1;

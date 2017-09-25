@@ -361,7 +361,7 @@ void pqissl::getCryptoParams(RsPeerCryptoParams& params)
 
 bool pqissl::actAsServer()
 {
-#if OPENSSL_VERSION_NUMBER < 0x10100000L
+#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
 	return (bool)ssl_connection->server;
 #else
 	return (bool)SSL_is_server(ssl_connection);
@@ -452,7 +452,7 @@ int 	pqissl::ConnectAttempt()
   	  		rslog(RSL_DEBUG_BASIC, pqisslzone, 
 			  "pqissl::ConnectAttempt() STATE = Not Waiting, starting connection");
 #endif
-
+			/* fallthrough */
 		case WAITING_DELAY:
 
 #ifdef PQISSL_LOG_DEBUG 
@@ -1009,7 +1009,7 @@ int 	pqissl::Basic_Connection_Complete()
 
 			return -1;
 		}
-		else if ((err == ECONNREFUSED))
+		else if (err == ECONNREFUSED)
 		{
 			rslog(RSL_WARNING, pqisslzone, "pqissl::Basic_Connection_Complete() ECONNREFUSED: cert: " + PeerId().toStdString());
 
@@ -1230,7 +1230,7 @@ int 	pqissl::Extract_Failed_SSL_Certificate()
 	RsPeerId sslid ;
 	getX509id(peercert, sslid) ;
 
-#if OPENSSL_VERSION_NUMBER < 0x10100000L
+#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
 	RsPgpId gpgid(getX509CNString(peercert->cert_info->issuer));
 	std::string sslcn = getX509CNString(peercert->cert_info->subject);
 #else

@@ -23,7 +23,8 @@
  *
  */
 
-#include "serialiser/rsserviceserialiser.h"
+#include "serialiser/rsserializer.h"
+#include "services/autoproxy/rsautoproxymonitor.h"
 #include "util/rsdebug.h"
 
 #include "pqi/pqisslpersongrp.h"
@@ -49,6 +50,7 @@ static struct RsLog::logInfo pqipersongrpzoneInfo = {RsLog::Default, "pqipersong
 #endif
 
 #include "pqi/pqisslproxy.h"
+#include "pqi/pqissli2pbob.h"
 
 pqilistener * pqisslpersongrp::locked_createListener(const struct sockaddr_storage &laddr)
 {
@@ -76,29 +78,34 @@ pqiperson * pqisslpersongrp::locked_createPerson(const RsPeerId& id, pqilistener
         std::cerr << std::endl;
 #endif
 
-		pqisslproxy *pqis   = new pqisslproxy((pqissllistener *) listener, pqip, mLinkMgr);
-	
-		/* construct the serialiser ....
-		 * Needs:
-		 * * FileItem
-		 * * FileData
-		 * * ServiceGeneric
-		 */
+		// Use pqicI2PBOB for I2P
+		pqiconnect *pqicSOCKSProxy, *pqicI2PBOB;
+		{
+			pqisslproxy  *pqis = new pqisslproxy((pqissllistener *) listener, pqip, mLinkMgr);
+			RsSerialiser *rss  = new RsSerialiser();
+			rss->addSerialType(new RsRawSerialiser());
+			pqicSOCKSProxy = new pqiconnect(pqip, rss, pqis);
+		}
+		if (rsAutoProxyMonitor::instance()->isEnabled(autoProxyType::I2PBOB))
+		{
+			pqissli2pbob *pqis = new pqissli2pbob((pqissllistener *) listener, pqip, mLinkMgr);
+			RsSerialiser *rss  = new RsSerialiser();
+			rss->addSerialType(new RsRawSerialiser());
 
-	
-		RsSerialiser *rss = new RsSerialiser();
-		rss->addSerialType(new RsServiceSerialiser());
-	
-		pqiconnect *pqisc = new pqiconnect(pqip, rss, pqis);
-	
+			pqicI2PBOB = new pqiconnect(pqip, rss, pqis);
+		} else {
+			pqicI2PBOB = pqicSOCKSProxy;
+		}
+
+
 		/* first select type based on peer */
 		uint32_t typePeer = mPeerMgr->getHiddenType(id);
 		switch (typePeer) {
 		case RS_HIDDEN_TYPE_TOR:
-			pqip -> addChildInterface(PQI_CONNECT_HIDDEN_TOR_TCP, pqisc);
+			pqip -> addChildInterface(PQI_CONNECT_HIDDEN_TOR_TCP, pqicSOCKSProxy);
 			break;
 		case RS_HIDDEN_TYPE_I2P:
-			pqip -> addChildInterface(PQI_CONNECT_HIDDEN_I2P_TCP, pqisc);
+			pqip -> addChildInterface(PQI_CONNECT_HIDDEN_I2P_TCP, pqicI2PBOB);
 			break;
 		default:
 			/* peer is not a hidden one but we are */
@@ -106,7 +113,7 @@ pqiperson * pqisslpersongrp::locked_createPerson(const RsPeerId& id, pqilistener
 			uint32_t typeOwn = mPeerMgr->getHiddenType(AuthSSL::getAuthSSL()->OwnId());
 			switch (typeOwn) {
 			case RS_HIDDEN_TYPE_I2P:
-				pqip -> addChildInterface(PQI_CONNECT_HIDDEN_I2P_TCP, pqisc);
+				pqip -> addChildInterface(PQI_CONNECT_HIDDEN_I2P_TCP, pqicI2PBOB);
 				break;
 			default:
 				/* this case shouldn't happen! */
@@ -116,8 +123,9 @@ pqiperson * pqisslpersongrp::locked_createPerson(const RsPeerId& id, pqilistener
 				std::cerr << " - mPeerMgr->isHiddenPeer(id): " << mPeerMgr->isHiddenPeer(id) << std::endl;
 				std::cerr << " - hidden types: peer=" << typePeer << " own=" << typeOwn << std::endl;
 				std::cerr << " --> falling back to Tor" << std::endl;
+				/* fallthrough */
 			case RS_HIDDEN_TYPE_TOR:
-				pqip -> addChildInterface(PQI_CONNECT_HIDDEN_TOR_TCP, pqisc);
+				pqip -> addChildInterface(PQI_CONNECT_HIDDEN_TOR_TCP, pqicSOCKSProxy);
 				break;
 			}
 		}
@@ -141,7 +149,7 @@ pqiperson * pqisslpersongrp::locked_createPerson(const RsPeerId& id, pqilistener
 		ssl_tunnels[id] = pqis ;	// keeps for getting crypt info per peer.
 	
 		RsSerialiser *rss = new RsSerialiser();
-		rss->addSerialType(new RsServiceSerialiser());
+		rss->addSerialType(new RsRawSerialiser());
 	
 		pqiconnect *pqisc = new pqiconnect(pqip, rss, pqis);
 	
@@ -151,7 +159,7 @@ pqiperson * pqisslpersongrp::locked_createPerson(const RsPeerId& id, pqilistener
 		pqissludp *pqius 	= new pqissludp(pqip, mLinkMgr);
 	
 		RsSerialiser *rss2 = new RsSerialiser();
-		rss2->addSerialType(new RsServiceSerialiser());
+		rss2->addSerialType(new RsRawSerialiser());
 		
 		pqiconnect *pqiusc 	= new pqiconnect(pqip, rss2, pqius);
 	

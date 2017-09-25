@@ -207,9 +207,9 @@ void GxsChannelPostsWidget::openChat(const RsPeerId & /*peerId*/)
 }
 
 // Callback from Widget->FeedHolder->ServiceDialog->CommentContainer->CommentDialog,
-void GxsChannelPostsWidget::openComments(uint32_t /*type*/, const RsGxsGroupId &groupId, const RsGxsMessageId &msgId, const QString &title)
+void GxsChannelPostsWidget::openComments(uint32_t /*type*/, const RsGxsGroupId &groupId, const QVector<RsGxsMessageId>& msg_versions,const RsGxsMessageId &msgId, const QString &title)
 {
-	emit loadComment(groupId, msgId, title);
+	emit loadComment(groupId, msg_versions,msgId, title);
 }
 
 void GxsChannelPostsWidget::createMsg()
@@ -395,10 +395,28 @@ void GxsChannelPostsWidget::filterChanged(int filter)
 	return bVisible;
 }
 
-void GxsChannelPostsWidget::createPostItem(const RsGxsChannelPost &post, bool related)
+void GxsChannelPostsWidget::createPostItem(const RsGxsChannelPost& post, bool related)
 {
 	GxsChannelPostItem *item = NULL;
-	if (related) {
+
+    if(!post.mMeta.mOrigMsgId.isNull())
+    {
+		FeedItem *feedItem = ui->feedWidget->findGxsFeedItem(post.mMeta.mGroupId, post.mMeta.mOrigMsgId);
+		item = dynamic_cast<GxsChannelPostItem*>(feedItem);
+
+        if(item)
+		{
+			ui->feedWidget->removeFeedItem(item) ;
+
+			GxsChannelPostItem *item = new GxsChannelPostItem(this, 0, post, true, false,post.mOlderVersions);
+			ui->feedWidget->addFeedItem(item, ROLE_PUBLISH, QDateTime::fromTime_t(post.mMeta.mPublishTs));
+
+			return ;
+		}
+    }
+
+	if (related)
+    {
 		FeedItem *feedItem = ui->feedWidget->findGxsFeedItem(post.mMeta.mGroupId, post.mMeta.mMsgId);
 		item = dynamic_cast<GxsChannelPostItem*>(feedItem);
 	}
@@ -406,11 +424,7 @@ void GxsChannelPostsWidget::createPostItem(const RsGxsChannelPost &post, bool re
 		item->setPost(post);
 		ui->feedWidget->setSort(item, ROLE_PUBLISH, QDateTime::fromTime_t(post.mMeta.mPublishTs));
 	} else {
-		/* Group is not always available because of the TokenQueue */
-		RsGxsChannelGroup dummyGroup;
-		dummyGroup.mMeta.mGroupId = groupId();
-		dummyGroup.mMeta.mSubscribeFlags = 0xffffffff;
-		GxsChannelPostItem *item = new GxsChannelPostItem(this, 0, dummyGroup, post, true, false);
+		GxsChannelPostItem *item = new GxsChannelPostItem(this, 0, post, true, false,post.mOlderVersions);
 		ui->feedWidget->addFeedItem(item, ROLE_PUBLISH, QDateTime::fromTime_t(post.mMeta.mPublishTs));
 	}
 
@@ -438,8 +452,6 @@ void GxsChannelPostsWidget::insertChannelPosts(std::vector<RsGxsChannelPost> &po
 		return;
 	}
 
-    std::vector<RsGxsChannelPost>::const_reverse_iterator it;
-
 	int count = posts.size();
 	int pos = 0;
 
@@ -447,18 +459,129 @@ void GxsChannelPostsWidget::insertChannelPosts(std::vector<RsGxsChannelPost> &po
 		ui->feedWidget->setSortingEnabled(false);
 	}
 
-    for (it = posts.rbegin(); it != posts.rend(); ++it)
-	{
-		if (thread && thread->stopped()) {
-			break;
-		}
+    // collect new versions of posts if any
 
-		if (thread) {
-			thread->emitAddPost(qVariantFromValue(*it), related, ++pos, count);
-		} else {
-			createPostItem(*it, related);
+#ifdef DEBUG_CHANNEL
+    std::cerr << "Inserting channel posts" << std::endl;
+#endif
+
+    std::vector<uint32_t> new_versions ;
+    for (uint32_t i=0;i<posts.size();++i)
+    {
+		if(posts[i].mMeta.mOrigMsgId == posts[i].mMeta.mMsgId)
+			posts[i].mMeta.mOrigMsgId.clear();
+
+#ifdef DEBUG_CHANNEL
+        std::cerr << "  " << i << ": msg_id=" << posts[i].mMeta.mMsgId << ": orig msg id = " << posts[i].mMeta.mOrigMsgId << std::endl;
+#endif
+
+        if(!posts[i].mMeta.mOrigMsgId.isNull())
+            new_versions.push_back(i) ;
+    }
+
+#ifdef DEBUG_CHANNEL
+    std::cerr << "New versions: " << new_versions.size() << std::endl;
+#endif
+
+    if(!new_versions.empty())
+    {
+#ifdef DEBUG_CHANNEL
+        std::cerr << "  New versions present. Replacing them..." << std::endl;
+        std::cerr << "  Creating search map."  << std::endl;
+#endif
+
+        // make a quick search map
+        std::map<RsGxsMessageId,uint32_t> search_map ;
+		for (uint32_t i=0;i<posts.size();++i)
+            search_map[posts[i].mMeta.mMsgId] = i ;
+
+        for(uint32_t i=0;i<new_versions.size();++i)
+        {
+#ifdef DEBUG_CHANNEL
+            std::cerr << "  Taking care of new version  at index " << new_versions[i] << std::endl;
+#endif
+
+            uint32_t current_index = new_versions[i] ;
+            uint32_t source_index  = new_versions[i] ;
+#ifdef DEBUG_CHANNEL
+            RsGxsMessageId source_msg_id = posts[source_index].mMeta.mMsgId ;
+#endif
+
+            // What we do is everytime we find a replacement post, we climb up the replacement graph until we find the original post
+            // (or the most recent version of it). When we reach this post, we replace it with the data of the source post.
+            // In the mean time, all other posts have their MsgId cleared, so that the posts are removed from the list.
+
+            //std::vector<uint32_t> versions ;
+            std::map<RsGxsMessageId,uint32_t>::const_iterator vit ;
+
+            while(search_map.end() != (vit=search_map.find(posts[current_index].mMeta.mOrigMsgId)))
+            {
+#ifdef DEBUG_CHANNEL
+                std::cerr << "    post at index " << current_index << " replaces a post at position " << vit->second ;
+#endif
+
+				// Now replace the post only if the new versionis more recent. It may happen indeed that the same post has been corrected multiple
+				// times. In this case, we only need to replace the post with the newest version
+
+				//uint32_t prev_index = current_index ;
+				current_index = vit->second ;
+
+				if(posts[current_index].mMeta.mMsgId.isNull())	// This handles the branching situation where this post has been already erased. No need to go down further.
+                {
+#ifdef DEBUG_CHANNEL
+                    std::cerr << "  already erased. Stopping." << std::endl;
+#endif
+                    break ;
+                }
+
+				if(posts[current_index].mMeta.mPublishTs < posts[source_index].mMeta.mPublishTs)
+				{
+#ifdef DEBUG_CHANNEL
+                    std::cerr << " and is more recent => following" << std::endl;
+#endif
+                    for(std::set<RsGxsMessageId>::const_iterator itt(posts[current_index].mOlderVersions.begin());itt!=posts[current_index].mOlderVersions.end();++itt)
+						posts[source_index].mOlderVersions.insert(*itt);
+
+					posts[source_index].mOlderVersions.insert(posts[current_index].mMeta.mMsgId);
+					posts[current_index].mMeta.mMsgId.clear();	    // clear the msg Id so the post will be ignored
+				}
+#ifdef DEBUG_CHANNEL
+                else
+                    std::cerr << " but is older -> Stopping" << std::endl;
+#endif
+            }
+        }
+    }
+
+#ifdef DEBUG_CHANNEL
+    std::cerr << "Now adding posts..." << std::endl;
+#endif
+
+    for (std::vector<RsGxsChannelPost>::const_reverse_iterator it = posts.rbegin(); it != posts.rend(); ++it)
+    {
+#ifdef DEBUG_CHANNEL
+		std::cerr << "  adding post: " << (*it).mMeta.mMsgId ;
+#endif
+
+        if(!(*it).mMeta.mMsgId.isNull())
+		{
+#ifdef DEBUG_CHANNEL
+            std::cerr << " added" << std::endl;
+#endif
+
+			if (thread && thread->stopped())
+				break;
+
+			if (thread)
+				thread->emitAddPost(qVariantFromValue(*it), related, ++pos, count);
+			else
+				createPostItem(*it, related);
 		}
-	}
+#ifdef DEBUG_CHANNEL
+        else
+            std::cerr << " skipped" << std::endl;
+#endif
+    }
 
 	if (!thread) {
 		ui->feedWidget->setSortingEnabled(true);

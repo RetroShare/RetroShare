@@ -172,6 +172,8 @@ int test_TlvSet(std::vector<RsTlvItem *> items, int maxsize)
 	test_CreateTlvStack(std::cerr, items, data, &size);
 	test_StepThroughTlvStack(std::cerr, data, size);
 
+	free(data) ;
+
 	return 1;
 }
 

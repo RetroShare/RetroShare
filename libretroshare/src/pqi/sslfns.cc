@@ -602,7 +602,7 @@ bool getX509id(X509 *x509, RsPeerId& xid)
 	}
 
 	// get the signature from the cert, and copy to the array.
-#if OPENSSL_VERSION_NUMBER < 0x10100000L
+#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
 	ASN1_BIT_STRING *signature = x509->signature;
 #else
 	const ASN1_BIT_STRING *signature = NULL ;
@@ -627,7 +627,7 @@ bool getX509id(X509 *x509, RsPeerId& xid)
 	 * more randomness
 	 */
 
-#warning this is cryptographically horrible. We should do a hash of the public key here!!!
+#warning csoler 2017-02-19: This is cryptographically horrible. We should do a hash of the public key here!!!
 
 	xid = RsPeerId(&signdata[signlen - CERTSIGNLEN]) ;
 
@@ -700,7 +700,7 @@ int	LoadCheckX509(const char *cert_file, RsPgpId& issuerName, std::string &locat
 	if (valid)
 	{
 		// extract the name.
-#if OPENSSL_VERSION_NUMBER < 0x10100000L
+#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
 		issuerName = RsPgpId(std::string(getX509CNString(x509->cert_info->issuer)));
 		location = getX509LocString(x509->cert_info->subject);
 #else

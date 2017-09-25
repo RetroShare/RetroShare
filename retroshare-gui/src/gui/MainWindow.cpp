@@ -29,10 +29,6 @@
 #include <QUrl>
 #include <QtDebug>
 
-#ifdef BLOGS
-#include "gui/unfinished/blogs/BlogsDialog.h"
-#endif 
-
 #include <retroshare/rsplugin.h>
 #include <retroshare/rsconfig.h>
 
@@ -43,9 +39,9 @@
 #include "HomePage.h"
 #include "NetworkDialog.h"
 #include "gui/FileTransfer/SearchDialog.h"
+#include "gui/FileTransfer/SharedFilesDialog.h"
 #include "gui/FileTransfer/TransfersDialog.h"
 #include "MessagesDialog.h"
-#include "SharedFilesDialog.h"
 #include "PluginsPage.h"
 #include "NewsFeed.h"
 #include "ShareManager.h"
@@ -265,7 +261,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     statusBar()->addPermanentWidget(ratesstatus);
 
     opModeStatus = new OpModeStatus();
-    opModeStatus->setVisible(Settings->valueFromGroup("StatusBar", "ShowOpMode", QVariant(true)).toBool());
+    opModeStatus->setVisible(Settings->valueFromGroup("StatusBar", "ShowOpMode", QVariant(false)).toBool());
     statusBar()->addPermanentWidget(opModeStatus);
 
     soundStatus = new SoundStatus();
@@ -377,10 +373,6 @@ void MainWindow::initStackedPage()
 #ifdef RS_USE_WIKI
   WikiDialog *wikiDialog = NULL;
   addPage(wikiDialog = new WikiDialog(ui->stackPages), grp, &notify);
-#endif
-
-#ifdef BLOGS
-  addPage(blogsFeed = new BlogsDialog(ui->stackPages), grp, NULL);
 #endif
 
  std::cerr << "Looking for interfaces in existing plugins:" << std::endl;
@@ -676,7 +668,8 @@ void MainWindow::updateTrayCombine()
 
         }
     }
-    notifyMenu->menuAction()->setVisible(visible);
+    if (notifyMenu)
+        notifyMenu->menuAction()->setVisible(visible);
 
     // update tray icon
     updateFriends();
@@ -914,11 +907,6 @@ void SetForegroundWindowInternal(HWND hWnd)
 		 case Forums:
                          _instance->ui->stackPages->setCurrentPage( _instance->gxsforumDialog );
                          return true ;
-#ifdef BLOGS
-		 case Blogs:
-			 Page = _instance->blogsFeed;
-			 return true ;
-#endif
 		case Posted:
 			_instance->ui->stackPages->setCurrentPage( _instance->postedDialog );
 			return true ;
@@ -959,22 +947,12 @@ void SetForegroundWindowInternal(HWND hWnd)
    if (page == _instance->messagesDialog) {
        return Messages;
    }
-#ifdef RS_USE_LINKS
-   if (page == _instance->linksDialog) {
-       return Links;
-   }
-#endif
 #if 0
    if (page == _instance->channelFeed) {
        return Channels;
    }
    if (page == _instance->forumsDialog) {
        return Forums;
-   }
-#endif
-#ifdef BLOGS
-   if (page == _instance->blogsFeed) {
-       return Blogs;
    }
 #endif
 
@@ -1008,20 +986,12 @@ void SetForegroundWindowInternal(HWND hWnd)
 			return _instance->transfersDialog->searchDialog;
 		case Messages:
 			return _instance->messagesDialog;
-#ifdef RS_USE_LINKS
-		case Links:
-			return _instance->linksDialog;
-#endif
 		case Channels:
 			return _instance->gxschannelDialog;
 		case Forums:
 			return _instance->gxsforumDialog;
 		case Posted:
 			return _instance->postedDialog;
-#ifdef BLOGS
-		case Blogs:
-			return _instance->blogsFeed;
-#endif
 	}
 
    return NULL;
@@ -1207,7 +1177,7 @@ void MainWindow::showHelpDialog(const QString &topic)
 void
 MainWindow::retranslateUi()
 {
-  retranslateUi();
+  //retranslateUi();
   foreach (MainPage *page, ui->stackPages->pages()) {
     page->retranslateUi();
   }
@@ -1491,6 +1461,23 @@ void MainWindow::processLastArgs()
 		/* Now use files from the command line, because no RetroShare was running */
 		openRsCollection(Rshare::files()->takeFirst());
 	}
+	/* Handle the -opmode options. */
+	if (opModeStatus) {
+		QString opmode = Rshare::opmode().toLower();
+		if (opmode == "noturtle") {
+			opModeStatus->setCurrentIndex(RS_OPMODE_NOTURTLE - 1);
+		} else if (opmode == "gaming") {
+			opModeStatus->setCurrentIndex(RS_OPMODE_GAMING - 1);
+		} else if (opmode == "minimal") {
+			opModeStatus->setCurrentIndex(RS_OPMODE_MINIMAL - 1);
+		} else {
+			opModeStatus->setCurrentIndex(RS_OPMODE_FULL - 1);
+		}
+		opModeStatus->setOpMode();
+	} else {
+		std::cerr << "ERR: MainWindow::processLastArgs opModeStatus is not initialized.";
+	}
+
 }
 
 void MainWindow::switchVisibilityStatus(StatusElement e,bool b)

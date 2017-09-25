@@ -77,7 +77,7 @@ public:
 	std::string descString() const { return _desc_string ; }
 
     void calculateForces(const double *data,int width,int height,int W,int H,float x,float y,float speedf);
-    bool advance();
+    bool progress();
 
     QRectF boundingRect() const;
     QPainterPath shape() const;

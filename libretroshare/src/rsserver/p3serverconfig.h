@@ -91,6 +91,7 @@ virtual bool setConfigurationOption(uint32_t key, const std::string &opt);
 	/* Operating Mode */
 virtual uint32_t getOperatingMode();
 virtual bool     setOperatingMode(uint32_t opMode);
+virtual bool     setOperatingMode(const std::string &opModeStr);
 
 virtual int SetMaxDataRates( int downKb, int upKb );
 virtual int GetMaxDataRates( int &downKb, int &upKb );

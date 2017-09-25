@@ -8,18 +8,17 @@
 #include <gtest/gtest.h>
 
 #include "support.h"
-#include "serialiser/rsgxsupdateitems.h"
+#include "rsitems/rsgxsupdateitems.h"
 #define RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM	0x0010
 
-RsSerialType* init_item(RsGxsGrpUpdateItem& i)
+void init_item(RsGxsGrpUpdateItem& i)
 {
 	i.clear();
 	i.grpUpdateTS = rand()%2424;
     i.peerID = RsPeerId::random();
-	return new RsGxsUpdateSerialiser(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM);
 }
 
-RsSerialType* init_item(RsGxsMsgUpdateItem& i)
+void init_item(RsGxsMsgUpdateItem& i)
 {
 	i.clear();
     i.peerID = RsPeerId::random();
@@ -33,24 +32,19 @@ RsSerialType* init_item(RsGxsMsgUpdateItem& i)
         info.time_stamp = rand()%45;
         i.msgUpdateInfos[RsGxsGroupId::random()] = info;
 	}
-
-	return new RsGxsUpdateSerialiser(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM);
 }
 
-RsSerialType* init_item(RsGxsServerGrpUpdateItem& i)
+void init_item(RsGxsServerGrpUpdateItem& i)
 {
 	i.clear();
 	i.grpUpdateTS = rand()%2424;
-
-	return new RsGxsUpdateSerialiser(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM);
 }
 
-RsSerialType* init_item(RsGxsServerMsgUpdateItem& i)
+void init_item(RsGxsServerMsgUpdateItem& i)
 {
 	i.clear();
     i.grpId = RsGxsGroupId::random();
 	i.msgUpdateTS = rand()%4252;
-	return new RsGxsUpdateSerialiser(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM);
 }
 
 bool operator ==(const RsGxsGrpUpdateItem& l, const RsGxsGrpUpdateItem& r)
@@ -105,8 +99,8 @@ bool operator ==(const RsGxsServerMsgUpdateItem& l,
 
 TEST(libretroshare_serialiser, RsGxsGrpUpateItem)
 {
-    test_RsItem<RsGxsGrpUpdateItem>(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM);
-    test_RsItem<RsGxsMsgUpdateItem>(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM);
-    test_RsItem<RsGxsServerGrpUpdateItem>(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM);
-    test_RsItem<RsGxsServerMsgUpdateItem>(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM);
+    test_RsItem<RsGxsGrpUpdateItem,RsGxsUpdateSerialiser>(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM);
+    test_RsItem<RsGxsMsgUpdateItem,RsGxsUpdateSerialiser>(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM);
+    test_RsItem<RsGxsServerGrpUpdateItem,RsGxsUpdateSerialiser>(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM);
+    test_RsItem<RsGxsServerMsgUpdateItem,RsGxsUpdateSerialiser>(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM);
 }

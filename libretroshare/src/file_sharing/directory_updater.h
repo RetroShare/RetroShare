@@ -40,6 +40,8 @@ public:
 
     void forceUpdate();
     bool inDirectoryCheck() const ;
+	void togglePauseHashingProcess();
+	bool hashingProcessPaused();
 
     void setHashSalt(const RsFileHash& hash) { mHashSalt = hash; }
     const RsFileHash& hashSalt() const { return mHashSalt; }
@@ -53,6 +55,9 @@ public:
     void setEnabled(bool b) ;
     bool isEnabled() const ;
 
+    void setIgnoreLists(const std::list<std::string>& ignored_prefixes,const std::list<std::string>& ignored_suffixes,uint32_t ignore_flags) ;
+    bool getIgnoreLists(std::list<std::string>& ignored_prefixes,std::list<std::string>& ignored_suffixes,uint32_t& ignore_flags) const ;
+
 protected:
     virtual void data_tick() ;
 
@@ -63,6 +68,8 @@ protected:
     bool sweepSharedDirectories();
 
 private:
+	bool filterFile(const std::string& fname) const ;	// reponds true if the file passes the ignore lists test.
+
     HashStorage *mHashCache ;
     LocalDirectoryStorage *mSharedDirectories ;
 
@@ -77,5 +84,9 @@ private:
     bool mNeedsFullRecheck ;
     bool mIsChecking ;
     bool mForceUpdate ;
+
+	uint32_t mIgnoreFlags ;
+	std::list<std::string> mIgnoredPrefixes ;
+	std::list<std::string> mIgnoredSuffixes ;
 };
 

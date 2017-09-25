@@ -78,7 +78,7 @@ class dhtPeerEntry
         public:
 	dhtPeerEntry();
 
-        std::string id;
+        RsPeerId id;
         uint32_t state;
         time_t lastTS;
 
@@ -97,7 +97,7 @@ class p3DhtMgr: public pqiNetAssistConnect, public RsThread
 	/* 
 	 */
 	public:
-	p3DhtMgr(std::string id, pqiConnectCb *cb);
+	p3DhtMgr(RsPeerId id, pqiConnectCb *cb);
 
 	/********** External DHT Interface ************************
 	 * These Functions are the external interface
@@ -121,15 +121,15 @@ virtual bool 	setExternalInterface(struct sockaddr_in laddr,
 			struct sockaddr_in raddr, uint32_t type);
 
 	/* add / remove peers */
-virtual bool 	findPeer(std::string id);
-virtual bool 	dropPeer(std::string id);
+virtual bool findPeer(const RsPeerId& id);
+virtual bool dropPeer(const RsPeerId& id);
 
 	/* post DHT key saying we should connect (callback when done) */
-virtual bool 	notifyPeer(std::string id); 
+virtual bool notifyPeer(const RsPeerId& id);
 
 	/* extract current peer status */
-virtual bool 	getPeerStatus(std::string id, 
-			struct sockaddr_in &laddr, struct sockaddr_in &raddr, 
+virtual bool getPeerStatus(const RsPeerId& id,
+			struct sockaddr_storage &laddr, struct sockaddr_storage &raddr,
 			uint32_t &type, uint32_t &mode);
 
 	/* stun */
@@ -154,17 +154,17 @@ virtual bool dhtResultBootstrap(std::string idhash);
 	protected:
 
 	/* can block briefly (called only from thread) */
-virtual bool dhtPublish(std::string id,  
+virtual bool dhtPublish(std::string idhash,
 		struct sockaddr_in &laddr, 
 		struct sockaddr_in &raddr, 
 				uint32_t type, std::string sign);
 
-virtual bool dhtNotify(std::string peerid, std::string ownId, 
+virtual bool dhtNotify(std::string idhash, std::string ownIdHash,
 		std::string sign);
 
-virtual	bool dhtSearch(std::string id, uint32_t mode);
+virtual	bool dhtSearch(std::string idhash, uint32_t mode);
 
-virtual bool dhtBootstrap(std::string storehash, std::string ownIdHash, 
+virtual bool dhtBootstrap(std::string idhash, std::string ownIdHash,
 		std::string sign); /* to publish bootstrap */
 
 
@@ -232,7 +232,7 @@ std::string randomBootstrapId();
 
 	dhtPeerEntry ownEntry;
 	time_t ownNotifyTS;
-	std::map<std::string, dhtPeerEntry> peers;
+	std::map<RsPeerId, dhtPeerEntry> peers;
 
 	std::list<std::string> stunIds;
 	bool     mStunRequired;

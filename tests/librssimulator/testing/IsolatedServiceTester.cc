@@ -1,6 +1,7 @@
 
 #include <list>
 #include "retroshare/rsids.h"
+#include "rsitems/rsitem.h"
 #include "serialiser/rsserial.h"
 
 #include "testing/IsolatedServiceTester.h"

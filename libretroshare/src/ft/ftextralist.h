@@ -109,66 +109,69 @@ const uint32_t CLEANUP_PERIOD		= 600; /* 10 minutes */
 class ftExtraList: public RsTickingThread, public p3Config, public ftSearch
 {
 
-	public:
+public:
 
-		ftExtraList();
+	ftExtraList();
 
-		/***
+	/***
 		 * If the File is alreay Hashed, then just add it in.
 		 **/
 
-bool		addExtraFile(std::string path, const RsFileHash &hash,
-				uint64_t size, uint32_t period, TransferRequestFlags flags);
+	bool		addExtraFile(std::string path, const RsFileHash &hash,
+	                         uint64_t size, uint32_t period, TransferRequestFlags flags);
 
-bool		removeExtraFile(const RsFileHash& hash, TransferRequestFlags flags);
-bool 		moveExtraFile(std::string fname, const RsFileHash& hash, uint64_t size,
-                                std::string destpath);
+	bool		removeExtraFile(const RsFileHash& hash, TransferRequestFlags flags);
+	bool 		moveExtraFile(std::string fname, const RsFileHash& hash, uint64_t size,
+	                          std::string destpath);
 
 
-		/***
-		 * Hash file, and add to the files, 
+	/***
+		 * Hash file, and add to the files,
 		 * file is removed after period.
 		 **/
 
-bool 		hashExtraFile(std::string path, uint32_t period, TransferRequestFlags flags);
-bool	 	hashExtraFileDone(std::string path, FileInfo &info);
+	bool 		hashExtraFile(std::string path, uint32_t period, TransferRequestFlags flags);
+	bool	 	hashExtraFileDone(std::string path, FileInfo &info);
 
-		/***
-		 * Search Function - used by File Transfer 
+	/***
+		 * Search Function - used by File Transfer
 		 * implementation of ftSearch.
 		 *
 		 **/
-virtual bool    search(const RsFileHash &hash, FileSearchFlags hintflags, FileInfo &info) const;
+	virtual bool    search(const RsFileHash &hash, FileSearchFlags hintflags, FileInfo &info) const;
 
-		/***
-		 * Thread Main Loop 
+	/***
+		 * Thread Main Loop
 		 **/
-virtual void data_tick();
+	virtual void data_tick();
 
-		/***
+	/***
 		 * Configuration - store extra files.
 		 *
 		 **/
-        protected:
-virtual RsSerialiser *setupSerialiser();
-virtual bool saveList(bool &cleanup, std::list<RsItem*>&);
-virtual bool    loadList(std::list<RsItem *>& load);
+protected:
+	virtual RsSerialiser *setupSerialiser();
+	virtual bool saveList(bool &cleanup, std::list<RsItem*>&);
+	virtual bool    loadList(std::list<RsItem *>& load);
 
-	private:
+	static RsFileHash makeEncryptedHash(const RsFileHash& hash);
 
-		/* Worker Functions */
-void	hashAFile();
-bool	cleanupOldFiles();
-bool    cleanupEntry(std::string path, TransferRequestFlags flags);
+private:
 
-		mutable RsMutex extMutex;
+	/* Worker Functions */
+	void	hashAFile();
+	bool	cleanupOldFiles();
+	bool    cleanupEntry(std::string path, TransferRequestFlags flags);
 
-		std::list<FileDetails> mToHash;
+	mutable RsMutex extMutex;
 
-        std::map<std::string, RsFileHash> mHashedList; /* path -> hash ( not saved ) */
-        std::map<RsFileHash, FileDetails> mFiles;
+	std::list<FileDetails> mToHash;
 
-    time_t cleanup ;
+	std::map<std::string, RsFileHash> mHashedList; /* path -> hash ( not saved ) */
+	std::map<RsFileHash, FileDetails> mFiles;
+	std::map<RsFileHash, RsFileHash>  mHashOfHash;	/* sha1(hash) map so as to answer requests to encrypted transfers */
+
+	time_t cleanup ;
 };
 
 

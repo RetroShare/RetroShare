@@ -60,6 +60,7 @@
 /* Images for context menu icons */
 #define IMAGE_MESSAGE          ":/images/mail_new.png"
 #define IMAGE_MESSAGEREPLY     ":/images/mail_reply.png"
+#define IMAGE_MESSAGEEDIT      ":/images/edit_16.png"
 #define IMAGE_MESSAGEREMOVE    ":/images/mail_delete.png"
 #define IMAGE_DOWNLOAD         ":/images/start.png"
 #define IMAGE_DOWNLOADALL      ":/images/startall.png"
@@ -160,6 +161,7 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
     mTokenTypeNegativeAuthor     = nextTokenType();
     mTokenTypeNeutralAuthor      = nextTokenType();
     mTokenTypePositiveAuthor     = nextTokenType();
+	mTokenTypeEditForumMessage   = nextTokenType();
 
 	setUpdateWhenInvisible(true);
 
@@ -199,6 +201,7 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 
     ui->threadTreeWidget->setItemDelegateForColumn(COLUMN_THREAD_DISTRIBUTION,new DistributionItemDelegate()) ;
 
+	connect(ui->versions_CB, SIGNAL(currentIndexChanged(int)), this, SLOT(changedVersion()));
 	connect(ui->threadTreeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(threadListCustomPopupMenu(QPoint)));
 	connect(ui->postText, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuTextBrowser(QPoint)));
 
@@ -483,11 +486,14 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
 
 	QMenu contextMnu(this);
 
+	QAction *editAct = new QAction(QIcon(IMAGE_MESSAGEEDIT), tr("Edit"), &contextMnu);
+	connect(editAct, SIGNAL(triggered()), this, SLOT(editforummessage()));
+
 	QAction *replyAct = new QAction(QIcon(IMAGE_MESSAGEREPLY), tr("Reply"), &contextMnu);
 	connect(replyAct, SIGNAL(triggered()), this, SLOT(replytoforummessage()));
 
     QAction *replyauthorAct = new QAction(QIcon(IMAGE_MESSAGEREPLY), tr("Reply to author with private message"), &contextMnu);
-    connect(replyauthorAct, SIGNAL(triggered()), this, SLOT(replytomessage()));
+    connect(replyauthorAct, SIGNAL(triggered()), this, SLOT(reply_with_private_message()));
 
     QAction *flagaspositiveAct = new QAction(QIcon(IMAGE_POSITIVE_OPINION), tr("Give positive opinion"), &contextMnu);
     flagaspositiveAct->setToolTip(tr("This will block/hide messages from this person, and notify friend nodes.")) ;
@@ -526,7 +532,7 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
 	QAction *markMsgAsUnreadChildren = new QAction(QIcon(":/images/message-mail.png"), tr("Mark as unread") + " (" + tr ("with children") + ")", &contextMnu);
 	connect(markMsgAsUnreadChildren, SIGNAL(triggered()), this, SLOT(markMsgAsUnreadChildren()));
 
-	QAction *showinpeopleAct = new QAction(QIcon(":/images/message-mail.png"), tr("Show author in people tab"), &contextMnu);
+	QAction *showinpeopleAct = new QAction(QIcon(":/images/info16.png"), tr("Show author in people tab"), &contextMnu);
 	connect(showinpeopleAct, SIGNAL(triggered()), this, SLOT(showInPeopleTab()));
 
 	if (IS_GROUP_SUBSCRIBED(mSubscribeFlags)) {
@@ -572,6 +578,18 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
         replyauthorAct->setDisabled (true);
 	}
 
+	QList<QTreeWidgetItem*> selectedItems = ui->threadTreeWidget->selectedItems();
+
+	if(selectedItems.size() == 1)
+	{
+		QTreeWidgetItem *item = *selectedItems.begin();
+		GxsIdRSTreeWidgetItem *gxsIdItem = dynamic_cast<GxsIdRSTreeWidgetItem*>(item);
+
+		RsGxsId author_id;
+		if(gxsIdItem && gxsIdItem->getId(author_id) && rsIdentity->isOwnId(author_id))
+			contextMnu.addAction(editAct);
+	}
+
 	contextMnu.addAction(replyAct);
   contextMnu.addAction(newthreadAct);
     QAction* action = contextMnu.addAction(QIcon(IMAGE_COPYLINK), tr("Copy RetroShare Link"), this, SLOT(copyMessageLink()));
@@ -584,8 +602,6 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
     contextMnu.addSeparator();
     contextMnu.addAction(expandAll);
 	contextMnu.addAction(collapseAll);
-
-	QList<QTreeWidgetItem*> selectedItems = ui->threadTreeWidget->selectedItems();
 
     if(selectedItems.size() == 1)
 	{
@@ -680,6 +696,17 @@ void GxsForumThreadWidget::togglethreadview_internal()
 	}
 }
 
+void GxsForumThreadWidget::changedVersion()
+{
+	mThreadId = RsGxsMessageId(ui->versions_CB->itemData(ui->versions_CB->currentIndex()).toString().toStdString()) ;
+
+	if (mFillThread) {
+		return;
+	}
+	ui->postText->resetImagesStatus(Settings->getForumLoadEmbeddedImages()) ;
+    insertMessage();
+}
+
 void GxsForumThreadWidget::changedThread()
 {
 	/* just grab the ids of the current item */
@@ -687,8 +714,10 @@ void GxsForumThreadWidget::changedThread()
 
 	if (!item || !item->isSelected()) {
 		mThreadId.clear();
+        mOrigThreadId.clear();
 	} else {
-		mThreadId = RsGxsMessageId(item->data(COLUMN_THREAD_MSGID, Qt::DisplayRole).toString().toStdString());
+
+		mThreadId = mOrigThreadId = RsGxsMessageId(item->data(COLUMN_THREAD_MSGID, Qt::DisplayRole).toString().toStdString());
 	}
 
 	if (mFillThread) {
@@ -1014,10 +1043,12 @@ void GxsForumThreadWidget::fillThreadFinished()
 				mLastViewType = thread->mViewType;
 				mLastForumID = groupId();
 				ui->threadTreeWidget->insertTopLevelItems(0, thread->mItems);
+                mPostVersions = thread->mPostVersions;
 
 				// clear list
 				thread->mItems.clear();
 			} else {
+                mPostVersions = thread->mPostVersions;
 				fillThreads(thread->mItems, thread->mExpandNewMessages, thread->mItemToExpand);
 
 				// cleanup list
@@ -1507,6 +1538,9 @@ void GxsForumThreadWidget::insertMessage()
 		mStateHelper->setActive(mTokenTypeMessageData, false);
 		mStateHelper->clear(mTokenTypeMessageData);
 
+        ui->versions_CB->hide();
+        ui->time_label->show();
+
 		ui->postText->clear();
         //ui->threadTitle->clear();
 		return;
@@ -1516,6 +1550,9 @@ void GxsForumThreadWidget::insertMessage()
 	{
 		mStateHelper->setActive(mTokenTypeMessageData, false);
 		mStateHelper->clear(mTokenTypeMessageData);
+
+        ui->versions_CB->hide();
+        ui->time_label->show();
 
         //ui->threadTitle->setText(tr("Forum Description"));
 		ui->postText->setText(mForumDescription);
@@ -1535,6 +1572,8 @@ void GxsForumThreadWidget::insertMessage()
 		// there is something wrong
 		mStateHelper->setWidgetEnabled(ui->previousButton, false);
 		mStateHelper->setWidgetEnabled(ui->nextButton, false);
+        ui->versions_CB->hide();
+        ui->time_label->show();
 		return;
 	}
 
@@ -1548,6 +1587,47 @@ void GxsForumThreadWidget::insertMessage()
 	ui->lineLeft->hide();
 	ui->by_text_label->hide();
 	ui->by_label->hide();
+
+    // add/show combobox for versions, if applicable, and enable it. If no older versions of the post available, hide the combobox.
+
+    std::cerr << "Looking into existing versions  for post " << mThreadId << ", thread history: " << mPostVersions.size() << std::endl;
+
+    QMap<RsGxsMessageId,QVector<QPair<time_t,RsGxsMessageId> > >::const_iterator it = mPostVersions.find(mOrigThreadId) ;
+
+	ui->versions_CB->blockSignals(true) ;
+
+    while(ui->versions_CB->count() > 0)
+		ui->versions_CB->removeItem(0);
+
+    if(it != mPostVersions.end())
+    {
+		std::cerr << (*it).size() << " versions found " << std::endl;
+
+		ui->versions_CB->setVisible(true) ;
+        ui->time_label->hide();
+
+        int current_index = 0 ;
+
+        for(int i=0;i<(*it).size();++i)
+        {
+            ui->versions_CB->insertItem(i, ((i==0)?tr("(Latest) "):tr("(Old) "))+" "+DateTime::formatLongDateTime( (*it)[i].first));
+            ui->versions_CB->setItemData(i,QString::fromStdString((*it)[i].second.toStdString()));
+
+            std::cerr << "  added new post version " << (*it)[i].first << " " << (*it)[i].second << std::endl;
+
+            if(mThreadId == (*it)[i].second)
+                current_index = i ;
+        }
+
+        ui->versions_CB->setCurrentIndex(current_index) ;
+    }
+    else
+    {
+    	ui->versions_CB->hide();
+        ui->time_label->show();
+    }
+
+	ui->versions_CB->blockSignals(false) ;
 
 	/* request Post */
 	RsGxsGrpMsgIdPair msgId = std::make_pair(groupId(), mThreadId);
@@ -1764,10 +1844,26 @@ void GxsForumThreadWidget::setMsgReadStatus(QList<QTreeWidgetItem*> &rows, bool 
 			// LIKE THIS BELOW...
 			//std::string grpId = (*Row)->data(COLUMN_THREAD_DATA, ROLE_THREAD_GROUPID).toString().toStdString();
 
-            RsGxsGrpMsgIdPair msgPair = std::make_pair(groupId(), RsGxsMessageId(msgId));
+			RsGxsGrpMsgIdPair msgPair = std::make_pair( groupId(), RsGxsMessageId(msgId) );
 
 			uint32_t token;
 			rsGxsForums->setMessageReadStatus(token, msgPair, read);
+
+			// Look if older version exist to mark them too
+			QMap<RsGxsMessageId,QVector<QPair<time_t,RsGxsMessageId> > >::const_iterator it = mPostVersions.find(RsGxsMessageId(msgId)) ;
+			if(it != mPostVersions.end())
+			{
+				std::cerr << (*it).size() << " versions found " << std::endl;
+				for(int i=0;i<(*it).size();++i)
+				{
+					RsGxsMessageId found = (*it)[i].second;
+					if(found != RsGxsMessageId(msgId))
+					{
+						msgPair = std::make_pair( groupId(), found );
+						rsGxsForums->setMessageReadStatus(token, msgPair, read);
+					}
+				}
+			}
 
 			/* Add message id to ignore list for the next updateDisplay */
 			mIgnoredMsgId.push_back(RsGxsMessageId(msgId));
@@ -1922,12 +2018,13 @@ void GxsForumThreadWidget::copyMessageLink()
 		return;
 	}
 
-	RetroShareLink link;
-    QTreeWidgetItem *item = ui->threadTreeWidget->currentItem();
+	QTreeWidgetItem *item = ui->threadTreeWidget->currentItem();
 
-    QString thread_title = (item != NULL)?item->text(COLUMN_THREAD_TITLE):QString() ;
+	QString thread_title = (item != NULL)?item->text(COLUMN_THREAD_TITLE):QString() ;
 
-    if (link.createGxsMessageLink(RetroShareLink::TYPE_FORUM, groupId(), mThreadId, thread_title)) {
+	RetroShareLink link = RetroShareLink::createGxsMessageLink(RetroShareLink::TYPE_FORUM, groupId(), mThreadId, thread_title);
+
+	if (link.valid()) {
 		QList<RetroShareLink> urls;
 		urls.push_back(link);
 		RSLinkClipboard::copyLinks(urls);
@@ -1951,7 +2048,7 @@ void GxsForumThreadWidget::createmessage()
 		return;
 	}
 
-	CreateGxsForumMsg *cfm = new CreateGxsForumMsg(groupId(), mThreadId);
+	CreateGxsForumMsg *cfm = new CreateGxsForumMsg(groupId(), mThreadId,RsGxsMessageId());
 	cfm->show();
 
 	/* window will destroy itself! */
@@ -1964,7 +2061,7 @@ void GxsForumThreadWidget::createthread()
 		return;
 	}
 
-	CreateGxsForumMsg *cfm = new CreateGxsForumMsg(groupId(), RsGxsMessageId());
+	CreateGxsForumMsg *cfm = new CreateGxsForumMsg(groupId(), RsGxsMessageId(),RsGxsMessageId());
 	cfm->show();
 
 	/* window will destroy itself! */
@@ -1972,8 +2069,7 @@ void GxsForumThreadWidget::createthread()
 
 static QString buildReplyHeader(const RsMsgMetaData &meta)
 {
-	RetroShareLink link;
-	link.createMessage(meta.mAuthorId, "");
+	RetroShareLink link = RetroShareLink::createMessage(meta.mAuthorId, "");
 	QString from = link.toHtml();
 
 	QString header = QString("<span>-----%1-----").arg(QApplication::translate("GxsForumThreadWidget", "Original Message"));
@@ -2018,7 +2114,7 @@ void GxsForumThreadWidget::flagperson()
 	mTokenQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, token_type);
 }
 
-void GxsForumThreadWidget::replytomessage()
+void GxsForumThreadWidget::reply_with_private_message()
 {
 	if (groupId().isNull() || mThreadId.isNull()) {
 		QMessageBox::information(this, tr("RetroShare"),tr("You cant reply to a non-existant Message"));
@@ -2027,9 +2123,19 @@ void GxsForumThreadWidget::replytomessage()
 
 	// Get Message ... then complete replyMessageData().
 	RsGxsGrpMsgIdPair postId = std::make_pair(groupId(), mThreadId);
-	requestMsgData_ReplyMessage(postId);
+	requestMsgData_ReplyWithPrivateMessage(postId);
 }
+void GxsForumThreadWidget::editforummessage()
+{
+	if (groupId().isNull() || mThreadId.isNull()) {
+		QMessageBox::information(this, tr("RetroShare"),tr("You cant reply to a non-existant Message"));
+		return;
+	}
 
+	// Get Message ... then complete replyMessageData().
+	RsGxsGrpMsgIdPair postId = std::make_pair(groupId(), mThreadId);
+	requestMsgData_EditForumMessage(postId);
+}
 void GxsForumThreadWidget::replytoforummessage()
 {
 	if (groupId().isNull() || mThreadId.isNull()) {
@@ -2082,6 +2188,29 @@ void GxsForumThreadWidget::showAuthorInPeople(const RsGxsForumMsg& msg)
 	requestMsgData_ShowAuthorInPeople(postId);
 }
 
+void GxsForumThreadWidget::editForumMessageData(const RsGxsForumMsg& msg)
+{
+	if ((msg.mMeta.mGroupId != groupId()) || (msg.mMeta.mMsgId != mThreadId))
+	{
+		std::cerr << "GxsForumThreadWidget::replyMessageData() ERROR Message Ids have changed!";
+		std::cerr << std::endl;
+		return;
+	}
+
+	if (!msg.mMeta.mAuthorId.isNull())
+	{
+		CreateGxsForumMsg *cfm = new CreateGxsForumMsg(groupId(), msg.mMeta.mParentId, msg.mMeta.mMsgId, msg.mMeta.mAuthorId);
+
+		cfm->insertPastedText(QString::fromUtf8(msg.mMsg.c_str())) ;
+		cfm->show();
+
+		/* window will destroy itself! */
+	}
+	else
+	{
+		QMessageBox::information(this, tr("RetroShare"),tr("You cant reply to an Anonymous Author"));
+	}
+}
 void GxsForumThreadWidget::replyForumMessageData(const RsGxsForumMsg &msg)
 {
 	if ((msg.mMeta.mGroupId != groupId()) || (msg.mMeta.mMsgId != mThreadId))
@@ -2093,10 +2222,12 @@ void GxsForumThreadWidget::replyForumMessageData(const RsGxsForumMsg &msg)
 
 	if (!msg.mMeta.mAuthorId.isNull())
 	{
-	CreateGxsForumMsg *cfm = new CreateGxsForumMsg(groupId(), mThreadId);
-	QTextDocument doc ;
+	CreateGxsForumMsg *cfm = new CreateGxsForumMsg(groupId(), mThreadId,RsGxsMessageId());
+
+//	QTextDocument doc ;
 //	doc.setHtml(QString::fromUtf8(msg.mMsg.c_str()) );
 //	std::string cited_text(doc.toPlainText().toStdString()) ;
+
 	RsHtml::makeQuotedText(ui->postText);
 
 	cfm->insertPastedText(RsHtml::makeQuotedText(ui->postText)) ;
@@ -2317,7 +2448,8 @@ void GxsForumThreadWidget::loadMessageData(const uint32_t &token)
 /*********************** **** **** **** ***********************/
 /*********************** **** **** **** ***********************/
 
-void GxsForumThreadWidget::requestMsgData_ReplyMessage(const RsGxsGrpMsgIdPair &msgId)
+
+void GxsForumThreadWidget::requestMsgData_ReplyWithPrivateMessage(const RsGxsGrpMsgIdPair &msgId)
 {
 	RsTokReqOptions opts;
 	opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
@@ -2352,7 +2484,23 @@ void GxsForumThreadWidget::requestMsgData_ShowAuthorInPeople(const RsGxsGrpMsgId
 	uint32_t token;
 	mTokenQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, mTokenTypeShowAuthorInPeople);
 }
+void GxsForumThreadWidget::requestMsgData_EditForumMessage(const RsGxsGrpMsgIdPair &msgId)
+{
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
 
+#ifdef DEBUG_FORUMS
+    std::cerr << "GxsForumThreadWidget::requestMsgData_ReplyMessage(" << msgId.first << "," << msgId.second << ")";
+    std::cerr << std::endl;
+#endif
+
+	GxsMsgReq msgIds;
+	std::vector<RsGxsMessageId> &vect = msgIds[msgId.first];
+	vect.push_back(msgId.second);
+
+	uint32_t token;
+	mTokenQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, mTokenTypeEditForumMessage);
+}
 void GxsForumThreadWidget::requestMsgData_ReplyForumMessage(const RsGxsGrpMsgIdPair &msgId)
 {
 	RsTokReqOptions opts;
@@ -2396,6 +2544,31 @@ void GxsForumThreadWidget::loadMsgData_ReplyMessage(const uint32_t &token)
 	}
 }
 
+void GxsForumThreadWidget::loadMsgData_EditForumMessage(const uint32_t &token)
+{
+#ifdef DEBUG_FORUMS
+    std::cerr << "GxsForumThreadWidget::loadMsgData_EditMessage()";
+    std::cerr << std::endl;
+#endif
+
+	std::vector<RsGxsForumMsg> msgs;
+	if (rsGxsForums->getMsgData(token, msgs))
+	{
+		if (msgs.size() != 1)
+		{
+			std::cerr << "GxsForumThreadWidget::loadMsgData_EditMessage() ERROR Wrong number of answers";
+			std::cerr << std::endl;
+			return;
+		}
+
+		editForumMessageData(msgs[0]);
+	}
+	else
+	{
+		std::cerr << "GxsForumThreadWidget::loadMsgData_ReplyMessage() ERROR Missing Message Data...";
+		std::cerr << std::endl;
+	}
+}
 void GxsForumThreadWidget::loadMsgData_ReplyForumMessage(const uint32_t &token)
 {
 #ifdef DEBUG_FORUMS
@@ -2523,6 +2696,10 @@ void GxsForumThreadWidget::loadRequest(const TokenQueue *queue, const TokenReque
 			return;
 		}
         
+		if (req.mUserType == mTokenTypeEditForumMessage) {
+			loadMsgData_EditForumMessage(req.mToken);
+			return;
+		}
 		if (req.mUserType == mTokenTypeShowAuthorInPeople) {
 			loadMsgData_ShowAuthorInPeople(req.mToken);
 			return;

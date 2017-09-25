@@ -27,7 +27,7 @@
 #include "pqi/p3linkmgr.h"
 #include "util/rsdebug.h"
 #include "util/rsprint.h"
-#include "serialiser/rsserviceserialiser.h"
+#include "serialiser/rsserializer.h"
 
 #include <stdio.h>
 
@@ -699,7 +699,7 @@ pqiperson * pqipersongrpDummy::locked_createPerson(const RsPeerId& id, pqilisten
 	NetBinDummy *d1 = new NetBinDummy(pqip, id, PQI_CONNECT_TCP);
 
 	RsSerialiser *rss = new RsSerialiser();
-	rss->addSerialType(new RsServiceSerialiser());
+	rss->addSerialType(new RsRawSerialiser());
 
 	pqiconnect *pqic = new pqiconnect(pqip, rss, d1);
 
@@ -709,7 +709,7 @@ pqiperson * pqipersongrpDummy::locked_createPerson(const RsPeerId& id, pqilisten
 	NetBinDummy *d2 = new NetBinDummy(pqip, id, PQI_CONNECT_UDP);
 
 	RsSerialiser *rss2 = new RsSerialiser();
-	rss2->addSerialType(new RsServiceSerialiser());
+	rss2->addSerialType(new RsRawSerialiser());
 
 	pqiconnect *pqic2 	= new pqiconnect(pqip, rss2, d2);
 

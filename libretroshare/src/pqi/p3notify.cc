@@ -237,6 +237,7 @@ void p3Notify::notifyOwnStatusMessageChanged()                                  
 void p3Notify::notifyDiskFull               (uint32_t           location  , uint32_t                         size_limit_in_MB ) { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyDiskFull          (location,size_limit_in_MB) ; }
 void p3Notify::notifyPeerStatusChanged      (const std::string& peer_id   , uint32_t                         status           ) { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyPeerStatusChanged (peer_id,status) ; }
 void p3Notify::notifyGxsChange              (const RsGxsChanges& changes) {FOR_ALL_NOTIFY_CLIENTS (*it)->notifyGxsChange(changes) ;}
+void p3Notify::notifyConnectionWithoutCert  ()                                                                                  { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyConnectionWithoutCert(); }
 
 void p3Notify::notifyPeerStatusChangedSummary   ()                                                                              { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyPeerStatusChangedSummary() ; }
 void p3Notify::notifyDiscInfoChanged            ()                                                                              { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyDiscInfoChanged         () ; } 
@@ -266,6 +267,12 @@ bool p3Notify::clearPgpPassphrase()
     return true ;
 }
 
+bool p3Notify::setDisableAskPassword(const bool bValue)
+{
+	_disableAskPassword = bValue;
+	return true;
+}
+
 bool p3Notify::askForPassword                   (const std::string& title    , const std::string& key_details    , bool               prev_is_bad , std::string& password,bool *cancelled)
 {
     if(!prev_is_bad && !cached_pgp_passphrase.empty())
@@ -277,15 +284,16 @@ bool p3Notify::askForPassword                   (const std::string& title    , c
     }
 
 	FOR_ALL_NOTIFY_CLIENTS
-        if( (*it)->askForPassword(title,key_details,prev_is_bad,password,*cancelled))
-			return true ;
+		if (!_disableAskPassword)
+			if( (*it)->askForPassword(title,key_details,prev_is_bad,password,*cancelled) )
+				return true;
 
 	return false ;
 }
-bool p3Notify::askForPluginConfirmation         (const std::string& plugin_filename, const std::string& plugin_file_hash) 
+bool p3Notify::askForPluginConfirmation         (const std::string& plugin_filename, const std::string& plugin_file_hash,bool first_time)
 {
 	FOR_ALL_NOTIFY_CLIENTS
-		if( (*it)->askForPluginConfirmation(plugin_filename,plugin_file_hash)) 
+		if( (*it)->askForPluginConfirmation(plugin_filename,plugin_file_hash,first_time))
 			return true ;
 
 	return false ;

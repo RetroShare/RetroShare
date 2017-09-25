@@ -407,6 +407,13 @@ void SearchDialog::download()
 				for(std::list<RsPeerId>::const_iterator it(srcIds.begin()); it!=srcIds.end(); ++it) {
 					std::cout << *it << "-" << std::endl;
 				}//for(std::list<RsPeerId>::const_iterator
+				//QColor foreground = QColor(0, 128, 0); // green
+				QColor foreground = textColorDownloading();
+				QBrush brush(foreground);
+				for (int i = 0; i < item->columnCount(); ++i)
+				{
+					item->setForeground(i, brush);
+				}
 			}//if(!rsFiles -> FileRequest(
 		}//if (item->text(SR_HASH_COL).isEmpty())
 	}//for (int i = 0
@@ -705,8 +712,8 @@ void SearchDialog::copySearchLink()
     std::cerr << "SearchDialog::copySearchLink(): keywords: " << keywords.toStdString();
     std::cerr << std::endl;
 
-    RetroShareLink link;
-    if (link.createSearch(keywords)) {
+    RetroShareLink link = RetroShareLink::createSearch(keywords);
+    if (link.valid()) {
         QList<RetroShareLink> urls;
         urls.push_back(link);
         RSLinkClipboard::copyLinks(urls);
@@ -1189,6 +1196,11 @@ void SearchDialog::insertFile(qulonglong searchId, const FileDetail& file, int s
 			found = true ;
 
 			if (!item->data(SR_DATA_COL, SR_ROLE_LOCAL).toBool()) {
+			
+				FileInfo fi;
+				if (rsFiles->FileDetails(file.hash, RS_FILE_HINTS_DOWNLOAD, fi))
+					break;
+				
 				QColor foreground;
 
 				int sources = friendSource + anonymousSource ;
@@ -1280,6 +1292,12 @@ void SearchDialog::insertFile(qulonglong searchId, const FileDetail& file, int s
 				foreground = ui.searchResultWidget->palette().color(QPalette::Text);
 				setForeground = true;
 			}
+		}
+		if (rsFiles->FileDetails(file.hash, RS_FILE_HINTS_DOWNLOAD, fi))
+		{
+			//foreground = QColor(0, 128, 0); // green
+			foreground = textColorDownloading();
+			setForeground = true;
 		}
 
 		if (setForeground) {
@@ -1425,11 +1443,11 @@ void SearchDialog::copyResultLink()
 			 qulonglong fsize = item->text(SR_SIZE_COL).toULongLong();
 			 QString fname = item->text(SR_NAME_COL);
 
-			 RetroShareLink link;
-			 if (link.createFile(fname, fsize, fhash)) {
-				 std::cerr << "new link added to clipboard: " << link.toString().toStdString() << std::endl ;
-				 urls.push_back(link) ;
-			 }
+			RetroShareLink link = RetroShareLink::createFile(fname, fsize, fhash);
+			if (link.valid()) {
+				std::cerr << "new link added to clipboard: " << link.toString().toStdString() << std::endl ;
+				urls.push_back(link) ;
+			}
 		 } 
 	 }
 	 RSLinkClipboard::copyLinks(urls) ;

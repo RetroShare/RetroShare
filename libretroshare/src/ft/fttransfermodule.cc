@@ -53,7 +53,7 @@ const uint32_t FT_TM_MAX_RESETS  		       = 5;
 const uint32_t FT_TM_MINIMUM_CHUNK 		       = 1024; /* ie 1Kb / sec */
 const uint32_t FT_TM_RESTART_DOWNLOAD 	       = 20; /* 20 seconds */
 const uint32_t FT_TM_DOWNLOAD_TIMEOUT 	       = 10; /* 10 seconds */
-const uint32_t FT_TM_CRC_MAP_MAX_WAIT_PER_GIG = 20; /* 20 seconds per gigabyte */
+//const uint32_t FT_TM_CRC_MAP_MAX_WAIT_PER_GIG = 20; /* 20 seconds per gigabyte */
 
 // const double FT_TM_MAX_INCREASE = 1.00;
 // const double FT_TM_MIN_INCREASE = -0.10;
@@ -62,13 +62,13 @@ const double FT_TM_RATE_INCREASE_SLOWER  = 0.05 ;
 const double FT_TM_RATE_INCREASE_AVERAGE = 0.3 ;
 const double FT_TM_RATE_INCREASE_FASTER  = 1.0 ;
 
-const int32_t FT_TM_FAST_RTT    = 1.0;
-const int32_t FT_TM_STD_RTT     = 5.0;
-const int32_t FT_TM_SLOW_RTT    = 20.0;
+//const int32_t FT_TM_FAST_RTT    = 1.0;
+//const int32_t FT_TM_STD_RTT     = 5.0;
+//const int32_t FT_TM_SLOW_RTT    = 20.0;
 
-const uint32_t FT_TM_CRC_MAP_STATE_NOCHECK 	= 0 ;
-const uint32_t FT_TM_CRC_MAP_STATE_DONT_HAVE = 1 ;
-const uint32_t FT_TM_CRC_MAP_STATE_HAVE 		= 2 ;
+//const uint32_t FT_TM_CRC_MAP_STATE_NOCHECK 	= 0 ;
+//const uint32_t FT_TM_CRC_MAP_STATE_DONT_HAVE = 1 ;
+//const uint32_t FT_TM_CRC_MAP_STATE_HAVE 		= 2 ;
 
 #define FT_TM_FLAG_DOWNLOADING 	0
 #define FT_TM_FLAG_CANCELED		1

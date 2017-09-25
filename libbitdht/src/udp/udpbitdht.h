@@ -119,7 +119,7 @@ void clearDataTransferred();
 
 	bdMutex dhtMtx; /* for all class data (below) */
 	bdNodeManager *mBitDhtManager;
-	bdDhtFunctions *mFns;
+	//bdDhtFunctions *mFns;
 
 
 	uint32_t mReadBytes;

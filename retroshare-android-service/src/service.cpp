@@ -1,6 +1,6 @@
 /*
  * RetroShare Android Service
- * Copyright (C) 2016  Gioacchino Mazzurco <gio@eigenlab.org>
+ * Copyright (C) 2016-2017  Gioacchino Mazzurco <gio@eigenlab.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -18,17 +18,16 @@
 
 #include <QCoreApplication>
 #include <QDebug>
+#include <QMetaObject>
+#include <QDir>
 
 #ifdef __ANDROID__
-#	include <QtAndroidExtras>
 #	include "util/androiddebug.h"
 #endif
 
-#include "retroshare/rsinit.h"
 #include "api/ApiServer.h"
 #include "api/ApiServerLocal.h"
 #include "api/RsControlModule.h"
-
 
 using namespace resource_api;
 
@@ -38,26 +37,31 @@ int main(int argc, char *argv[])
 	AndroidStdIOCatcher dbg; (void) dbg;
 #endif
 
-	QCoreApplication a(argc, argv);
+	QCoreApplication app(argc, argv);
 	ApiServer api;
 	RsControlModule ctrl_mod(argc, argv, api.getStateTokenServer(), &api, true);
-	api.addResourceHandler("control", dynamic_cast<resource_api::ResourceRouter*>(&ctrl_mod), &resource_api::RsControlModule::handleRequest);
+	api.addResourceHandler(
+	            "control",
+	            dynamic_cast<resource_api::ResourceRouter*>(&ctrl_mod),
+	            &resource_api::RsControlModule::handleRequest);
 
-	QString sockPath = QString::fromStdString(RsAccounts::ConfigDirectory());
+
+	QString sockPath = QDir::homePath() + "/.retroshare";
 	sockPath.append("/libresapi.sock");
 	qDebug() << "Listening on:" << sockPath;
-	ApiServerLocal apiServerLocal(&api, sockPath); (void) apiServerLocal;
 
-#ifdef __ANDROID__
-	qDebug() << "Is service.cpp running as a service?" << QtAndroid::androidService().isValid();
-	qDebug() << "Is service.cpp running as an activity?" << QtAndroid::androidActivity().isValid();
-#endif
+	ApiServerLocal apiServerLocal(&api, sockPath); (void) apiServerLocal;
 
 	while (!ctrl_mod.processShouldExit())
 	{
-		a.processEvents();
+		app.processEvents();
 		usleep(20000);
 	}
 
-	return 0;
+	/* Since QCoreApplication::quit() is a no-op until the event loop has been
+	 * started, we need to defer the call until it starts. Thus, we queue a
+	 * deferred method call to quit() */
+	QMetaObject::invokeMethod(&app, "quit", Qt::QueuedConnection);
+
+	return app.exec();
 }

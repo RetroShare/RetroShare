@@ -46,6 +46,7 @@
 
 class p3heartbeat;
 class p3discovery2;
+class p3I2pBob;
 
 /* GXS Classes - just declare the classes.
    so we don't have to totally recompile to switch */
@@ -129,7 +130,7 @@ class RsServer: public RsControl, public RsTickingThread
 		 * This function is responsible for ensuring Retroshare exits in a legal state:
 		 * i.e. releases all held resources and saves current configuration
 		 */
-		virtual void 	rsGlobalShutDown( ); 
+		virtual void 	rsGlobalShutDown( );
 
 		/****************************************/
 
@@ -164,6 +165,7 @@ class RsServer: public RsControl, public RsTickingThread
 		p3ChatService *chatSrv;
 		p3StatusService *mStatusSrv;
 		p3GxsTunnelService *mGxsTunnels;
+		p3I2pBob *mI2pBob;
 
         // This list contains all threaded services. It will be used to shut them down properly.
 
@@ -179,6 +181,7 @@ class RsServer: public RsControl, public RsTickingThread
 //		p3GxsForums *mGxsForums;
 //		p3GxsChannels *mGxsChannels;
 //		p3Wire *mWire;
+		p3GxsTrans* mGxsTrans;
 
 		/* Config */
 		p3ConfigMgr     *mConfigMgr;

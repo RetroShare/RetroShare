@@ -45,7 +45,7 @@ void ULListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 	QPixmap pixmap;
 	qlonglong fileSize;
 	double ulspeed, multi;
-	QString temp , status;
+	QString temp;
 	qlonglong transferred;
 
 	// prepare
@@ -65,7 +65,12 @@ void ULListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 	}
 
 	// draw the background color
-    if(index.column() != COLUMN_UPROGRESS) {
+	bool bDrawBackground = true;
+	if(index.column() == COLUMN_UPROGRESS) {
+		FileProgressInfo pinfo = index.data().value<FileProgressInfo>() ;
+		bDrawBackground = (pinfo.type == FileProgressInfo::UNINIT);
+	}
+	if( bDrawBackground ) {
 		if(option.showDecorationSelected && (option.state & QStyle::State_Selected)) {
 			if(cg == QPalette::Normal && !(option.state & QStyle::State_Active)) {
 				cg = QPalette::Inactive;
@@ -78,6 +83,7 @@ void ULListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 			}
 		}
 	}
+
 	switch(index.column()) {
         case COLUMN_USIZE:
 			fileSize = index.data().toLongLong();
@@ -128,15 +134,17 @@ void ULListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
                         }
 			painter->drawText(option.rect, Qt::AlignRight, temp);
 			break;
-        case COLUMN_UPROGRESS:
+		case COLUMN_UPROGRESS:
 			{
 				FileProgressInfo pinfo = index.data().value<FileProgressInfo>() ;
+				if (pinfo.type == FileProgressInfo::UNINIT)
+					break;
 
 				// create a xProgressBar
 				painter->save() ;
 				xProgressBar progressBar(pinfo,option.rect,painter,0);// the 3rd param is the  color schema (0 is the default value)
 
-                QString ext = QFileInfo(QString::fromStdString(index.sibling(index.row(), COLUMN_UNAME).data().toString().toStdString())).suffix();;
+				QString ext = QFileInfo(QString::fromStdString(index.sibling(index.row(), COLUMN_UNAME).data().toString().toStdString())).suffix();;
 				if (ext == "rsfc" || ext == "rsrl" || ext == "dist" || ext == "rsfb")
 					progressBar.setColorSchema( 9);
 				else
@@ -150,8 +158,9 @@ void ULListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 			}
 			painter->drawText(option.rect, Qt::AlignCenter, newopt.text);
 			break;
-        case COLUMN_UNAME:
-        		// decoration
+		case COLUMN_UNAME:
+		case COLUMN_UPEER:
+			// decoration
 			value = index.data(Qt::DecorationRole);
 			pixmap = qvariant_cast<QIcon>(value).pixmap(option.decorationSize, option.state & QStyle::State_Enabled ? QIcon::Normal : QIcon::Disabled, option.state & QStyle::State_Open ? QIcon::On : QIcon::Off);
 			pixmapRect = (pixmap.isNull() ? QRect(0, 0, 0, 0): QRect(QPoint(0, 0), option.decorationSize));
@@ -160,9 +169,6 @@ void ULListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 				painter->drawPixmap(p, pixmap);
 			}
 			painter->drawText(option.rect.translated(pixmap.size().width(), 0), Qt::AlignLeft, index.data().toString());
-			break;
-        case COLUMN_USTATUS:
-			painter->drawText(option.rect.translated(pixmap.size().width(), 0), Qt::AlignCenter, index.data().toString());
 			break;
 		default:
 			painter->drawText(option.rect, Qt::AlignCenter, index.data().toString());

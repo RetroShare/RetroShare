@@ -19,13 +19,15 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#include <QUrl>
-#include <QDesktopServices>
-#include <QMessageBox>
+#include <QCheckBox>
 #include <QClipboard>
+#include <QDesktopServices>
 #include <QFileDialog>
-#include <QTextStream>
+#include <QLayout>
+#include <QMessageBox>
 #include <QTextCodec>
+#include <QTextStream>
+#include <QUrl>
 
 #if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
 #include <QUrlQuery>
@@ -107,7 +109,7 @@ ConnectFriendWizard::ConnectFriendWizard(QWidget *parent) :
 	ui->foffRadioButton->hide();
 	ui->rsidRadioButton->hide();
 	
-	ui->fr_label->hide();
+	ui->cp_Label->hide();
 	ui->requestinfolabel->hide();
 	
     connect(ui->acceptNoSignGPGCheckBox,SIGNAL(toggled(bool)), ui->_options_GB,SLOT(setEnabled(bool))) ;
@@ -135,7 +137,7 @@ ConnectFriendWizard::ConnectFriendWizard(QWidget *parent) :
 	else
 	{
 		ui->userFrame->hide(); // certificates page - top half with own cert and it's functions
-		ui->horizontalLayout_13->hide(); // Advanced options - key sign, whitelist, direct source ...
+		ui->cp_Frame->hide(); // Advanced options - key sign, whitelist, direct source ...
 		AdvancedVisible=false;
 		ui->trustLabel->hide();
 		ui->trustEdit->hide();
@@ -145,7 +147,25 @@ ConnectFriendWizard::ConnectFriendWizard(QWidget *parent) :
     rsPeers->getPeerCount (&friendCount, &onlineCount, false);
 	if(friendCount<30)
 		ui->makefriend_infolabel->hide();
-  
+
+	//Add warning to direct source checkbox depends general setting.
+	switch (rsFiles->filePermDirectDL())
+	{
+		case RS_FILE_PERM_DIRECT_DL_YES:
+			ui->_direct_transfer_CB->setIcon(QIcon(":/icons/warning_yellow_128.png"));
+			ui->_direct_transfer_CB->setToolTip(ui->_direct_transfer_CB->toolTip().append(tr("\nWarning: In your File-Transfer option, you select allow direct download to Yes.")));
+			ui->_direct_transfer_CB_2->setIcon(QIcon(":/icons/warning_yellow_128.png"));
+			ui->_direct_transfer_CB_2->setToolTip(ui->_direct_transfer_CB_2->toolTip().append(tr("\nWarning: In your File-Transfer option, you select allow direct download to Yes.")));
+			break ;
+		case RS_FILE_PERM_DIRECT_DL_NO:
+			ui->_direct_transfer_CB->setIcon(QIcon(":/icons/warning_yellow_128.png"));
+			ui->_direct_transfer_CB->setToolTip(ui->_direct_transfer_CB->toolTip().append(tr("\nWarning: In your File-Transfer option, you select allow direct download to No.")));
+			ui->_direct_transfer_CB_2->setIcon(QIcon(":/icons/warning_yellow_128.png"));
+			ui->_direct_transfer_CB_2->setToolTip(ui->_direct_transfer_CB_2->toolTip().append(tr("\nWarning: In your File-Transfer option, you select allow direct download to No.")));
+			break ;
+
+		default: break ;
+	}
 	updateStylesheet();
 }
 
@@ -279,7 +299,7 @@ void ConnectFriendWizard::setCertificate(const QString &certificate, bool friend
         //setStartId(friendRequest ? Page_FriendRequest : Page_Conclusion);
         setStartId(Page_Conclusion);
         if (friendRequest){
-        ui->fr_label->show();
+        ui->cp_Label->show();
         ui->requestinfolabel->show();
         setTitleText(ui->ConclusionPage, tr("Friend request"));
         ui->ConclusionPage->setSubTitle(tr("Details about the request"));
@@ -305,7 +325,7 @@ void ConnectFriendWizard::setGpgId(const RsPgpId &gpgId, const RsPeerId &sslId, 
     //setStartId(friendRequest ? Page_FriendRequest : Page_Conclusion);
     setStartId(Page_Conclusion);
     if (friendRequest){
-    ui->fr_label->show();
+    ui->cp_Label->show();
     ui->requestinfolabel->show();
     setTitleText(ui->ConclusionPage,tr("Friend request"));
     ui->ConclusionPage->setSubTitle(tr("Details about the request"));
@@ -345,6 +365,7 @@ void ConnectFriendWizard::initializePage(int id)
 		connect(ui->userCertOldFormatButton, SIGNAL(clicked()), this, SLOT(toggleFormatState()));
 		connect(ui->userCertCopyButton, SIGNAL(clicked()), this, SLOT(copyCert()));
 		connect(ui->userCertPasteButton, SIGNAL(clicked()), this, SLOT(pasteCert()));
+		connect(ui->userCertOpenButton, SIGNAL(clicked()), this, SLOT(openCert()));
 		connect(ui->userCertSaveButton, SIGNAL(clicked()), this, SLOT(saveCert()));
 		connect(ui->userCertMailButton, SIGNAL(clicked()), this, SLOT(runEmailClient()));
 		connect(ui->friendCertEdit, SIGNAL(textChanged()), this, SLOT(friendCertChanged()));
@@ -519,7 +540,7 @@ void ConnectFriendWizard::initializePage(int id)
 				}
 			}
 
-			ui->fr_label->setText(tr("You have a friend request from") + " " + QString::fromUtf8(peerDetails.name.c_str()));
+			ui->cp_Label->setText(tr("You have a friend request from") + " " + QString::fromUtf8(peerDetails.name.c_str()));
 			ui->nameEdit->setText(QString::fromUtf8(peerDetails.name.c_str()));
 			ui->trustEdit->setText(trustString);
 			ui->emailEdit->setText(QString::fromUtf8(peerDetails.email.c_str()));
@@ -618,7 +639,7 @@ void ConnectFriendWizard::initializePage(int id)
 
 			ui->fr_nodeEdit->setText(loc);
 			
-			ui->fr_label_3->setText(tr("You have a friend request from") + " " + QString::fromUtf8(peerDetails.name.c_str()));
+			ui->fr_InfoTopLabel->setText(tr("You have a friend request from") + " " + QString::fromUtf8(peerDetails.name.c_str()));
 
 			fillGroups(this, ui->fr_groupComboBox, groupId);
 		}
@@ -1077,6 +1098,22 @@ void ConnectFriendWizard::pasteCert()
 	ui->friendCertEdit->setPlainText(clipboard->text());
 }
 
+void ConnectFriendWizard::openCert()
+{
+	QString fileName ;
+	if(!misc::getOpenFileName(this, RshareSettings::LASTDIR_CERT, tr("Select Certificate"), tr("RetroShare Certificate (*.rsc );;All Files (*)"),fileName))
+		return ;
+
+	if (!fileName.isNull()) {
+		QFile fileCert(fileName);
+		if (fileCert.open(QIODevice::ReadOnly )) {
+			QByteArray arrayCert(fileCert.readAll());
+			ui->friendCertEdit->setPlainText(QString::fromUtf8(arrayCert));
+			fileCert.close();
+		}
+	}
+}
+
 void ConnectFriendWizard::saveCert()
 {
 	QString fileName = QFileDialog::getSaveFileName(this, tr("Save as..."), "", tr("RetroShare Certificate (*.rsc );;All Files (*)"));
@@ -1328,13 +1365,13 @@ void ConnectFriendWizard::toggleAdvanced()
 {
 	if(AdvancedVisible)
 	{
-		ui->horizontalLayout_13->hide();
+		ui->cp_Frame->hide();
 		ui->toggleadvancedButton->setText("Show advanced options");
 		AdvancedVisible=false;
 	}
 	else
 	{
-		ui->horizontalLayout_13->show();
+		ui->cp_Frame->show();
 		ui->toggleadvancedButton->setText("Hide advanced options");
 		AdvancedVisible=true;
 	}

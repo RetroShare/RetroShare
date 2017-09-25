@@ -29,41 +29,37 @@
 #include "util/rsthreads.h"
 
 
-/*
- *
- * A little helper class, to manage callbacks from requests
- *
- */
-
-class GxsTokenQueueItem
+struct GxsTokenQueueItem
 {
-	public:
-	GxsTokenQueueItem(const uint32_t token, const uint32_t req_type)
-	:mToken(token),mReqType(req_type) { return; }
 
-	GxsTokenQueueItem(): mToken(0), mReqType(0) { return; }
+	GxsTokenQueueItem(const uint32_t token, const uint32_t req_type) :
+	    mToken(token), mReqType(req_type) {}
+
+	GxsTokenQueueItem(): mToken(0), mReqType(0) {}
 
 	uint32_t mToken;
 	uint32_t mReqType;
 };
 
 
+/**
+ * A little helper class, to manage callbacks from requests
+ */
 class GxsTokenQueue
 {
-	public:
+public:
+	GxsTokenQueue(RsGenExchange *gxs) :
+	    mGenExchange(gxs), mQueueMtx("GxsTokenQueueMtx") {}
 
-	GxsTokenQueue(RsGenExchange *gxs)
-	:mGenExchange(gxs), mQueueMtx("GxsTokenQueueMtx") { return; }
-bool	queueRequest(uint32_t token, uint32_t req_type);
+	bool queueRequest(uint32_t token, uint32_t req_type);
+	void checkRequests(); /// must be called by
 
-void	checkRequests(); // must be called by
+protected:
 
-	protected:
+	/// This must be overloaded to complete the functionality.
+	virtual void handleResponse(uint32_t token, uint32_t req_type);
 
-	// This must be overloaded to complete the functionality.
-virtual void handleResponse(uint32_t token, uint32_t req_type);
-
-	private:
+private:
 	RsGenExchange *mGenExchange;
 	RsMutex mQueueMtx;
 	std::list<GxsTokenQueueItem> mQueue;

@@ -80,7 +80,7 @@ void BWGraphSource::update()
     {
         std::list<std::pair<qint64,float> >& lst(_points[it->first]) ;
 
-        if(!lst.empty() && fabsf(lst.back().first - ms) > _update_period_msecs*1.2 )
+        if(!lst.empty() && fabsf((float)(lst.back().first - ms)) > _update_period_msecs*1.2 )
         {
             lst.push_back(std::make_pair(lst.back().first,0)) ;
             lst.push_back(std::make_pair(              ms,0)) ;
@@ -107,16 +107,25 @@ void BWGraphSource::update()
 
     // remove empty lists
 
+    float duration = 0.0f;
+
     for(std::map<std::string,std::list<std::pair<qint64,float> > >::iterator it=_points.begin();it!=_points.end();)
         if(it->second.empty())
-    {
-        std::map<std::string,std::list<std::pair<qint64,float> > >::iterator tmp(it) ;
-        ++tmp;
-        _points.erase(it) ;
-        it=tmp ;
-    }
+		{
+			std::map<std::string,std::list<std::pair<qint64,float> > >::iterator tmp(it) ;
+			++tmp;
+			_points.erase(it) ;
+			it=tmp ;
+		}
         else
+        {
+            float d = it->second.back().first - it->second.front().first;
+
+            if(duration < d)
+                duration = d ;
+
             ++it ;
+        }
 
     // also clears history
 
@@ -138,9 +147,34 @@ void BWGraphSource::update()
                 break ;
     }
 
+    // now update the totals, and possibly convert into an average if the unit requires it.
+
+    updateTotals();
+
+    if(_current_unit == UNIT_KILOBYTES)
+        for(std::map<std::string,float>::iterator it(_totals.begin());it!=_totals.end();++it)
+            it->second /= (duration/1000.0) ;
+
 #ifdef BWGRAPH_DEBUG
     std::cerr << "Traffic history has size " << mTrafficHistory.size() << std::endl;
 #endif
+}
+
+std::string BWGraphSource::makeSubItemName(uint16_t service_id,uint8_t sub_item_type) const
+{
+    RsServiceInfoWithNames& s(mServiceInfoMap[service_id]) ;
+
+    if(s.item_names.empty())
+		return "item #"+QString("%1").arg(sub_item_type,2,16,QChar('0')).toStdString() ;
+    else
+    {
+        std::map<uint8_t,std::string>::const_iterator it = s.item_names.find(sub_item_type) ;
+
+        if(it == s.item_names.end())
+            return "item #"+QString("%1").arg(sub_item_type,2,16,QChar('0')).toStdString() + " (undocumented)";
+
+        return QString("%1").arg(sub_item_type,2,16,QChar('0')).toStdString()+": " + it->second ;
+    }
 }
 
 void BWGraphSource::convertTrafficClueToValues(const std::list<RSTrafficClue>& lst,std::map<std::string,float>& vals) const
@@ -162,7 +196,7 @@ void BWGraphSource::convertTrafficClueToValues(const std::list<RSTrafficClue>& l
 
 			for(uint32_t i=0;i<256;++i)
 				if(clue_per_sub_id[i].count > 0)
-					vals["item #"+QString::number(i,16).toStdString()] = (_current_unit == UNIT_KILOBYTES)?(clue_per_sub_id[i].size):(clue_per_sub_id[i].count) ;
+					vals[makeSubItemName(clue_per_sub_id[i].service_id,i)] = (_current_unit == UNIT_KILOBYTES)?(clue_per_sub_id[i].size):(clue_per_sub_id[i].count) ;
 		}
 			break ;
 
@@ -209,6 +243,7 @@ void BWGraphSource::convertTrafficClueToValues(const std::list<RSTrafficClue>& l
 			break ;
 
 		case GRAPH_TYPE_ALL: std::cerr << "(WW) Impossible situation. Cannot draw graph in mode All/All. Reverting to sum." << std::endl;
+			/* fallthrough */
 		case GRAPH_TYPE_SUM:		// all friends, sum of services => one curve per friend
 		{
 			RSTrafficClue total ;
@@ -233,11 +268,14 @@ void BWGraphSource::convertTrafficClueToValues(const std::list<RSTrafficClue>& l
 
 			for(std::list<RSTrafficClue>::const_iterator  it(lst.begin());it!=lst.end();++it)
 				if(it->service_id == _current_selected_service)
+                {
 					clue_per_sub_id[it->service_sub_id] += *it ;
+					clue_per_sub_id[it->service_sub_id].service_id = it->service_id ;
+                }
 
 			for(uint32_t i=0;i<256;++i)
 				if(clue_per_sub_id[i].count > 0)
-					vals["item #"+QString::number(i,16).toStdString()] = (_current_unit == UNIT_KILOBYTES)?(clue_per_sub_id[i].size):(clue_per_sub_id[i].count) ;
+					vals[makeSubItemName(clue_per_sub_id[i].service_id,i)] = (_current_unit == UNIT_KILOBYTES)?(clue_per_sub_id[i].size):(clue_per_sub_id[i].count) ;
 		}
 			break ;
 
@@ -297,7 +335,11 @@ BWGraphSource::BWGraphSource()
     rsServiceControl->getOwnServices(rspsi) ;
 
     for(std::map<uint32_t,RsServiceInfo>::const_iterator it(rspsi.mServiceList.begin());it!=rspsi.mServiceList.end();++it)
+    {
         mServiceInfoMap[ (it->first >> 8) & 0xffff ] = it->second ;
+
+        rsServiceControl->getServiceItemNames(it->first,mServiceInfoMap[(it->first >> 8) & 0xffff].item_names) ;
+    }
 }
 
 void BWGraphSource::getValues(std::map<std::string,float>& values) const
@@ -359,9 +401,9 @@ QString BWGraphSource::displayValue(float v) const
     return QString() ;
 }
 
-QString BWGraphSource::legend(int i,float v) const
+QString BWGraphSource::legend(int i,float v,bool show_value) const
 {
-        return RSGraphSource::legend(i,v) ;//+ " Total: " + niceNumber(_total_recv) ;
+	return RSGraphSource::legend(i,v,show_value) ;
 }
 QString BWGraphSource::niceNumber(float v) const
 {
@@ -446,6 +488,7 @@ void BWGraphSource::setUnit(int unit)
 
     recomputeCurrentCurves() ;
 }
+
 void BWGraphSource::setDirection(int dir)
 {
     if(dir == _current_direction)

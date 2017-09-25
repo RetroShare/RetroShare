@@ -1,12 +1,15 @@
 #include "genexchangetestservice.h"
 
-GenExchangeTestService::GenExchangeTestService(RsGeneralDataService *dataServ, RsNetworkExchangeService * netService,
-                                               RsGixs* gixs)
-    : RsGenExchange(dataServ, netService, new RsDummySerialiser(), RS_SERVICE_TYPE_DUMMY, gixs, 0)
+GenExchangeTestService::GenExchangeTestService(RsGeneralDataService *dataServ, RsNetworkExchangeService * netService, RsGixs* gixs)
+    : RsGenExchange(dataServ, netService, mSerializer = new RsDummySerialiser(), RS_SERVICE_TYPE_DUMMY, gixs, 0)
 {
 
 }
 
+GenExchangeTestService::~GenExchangeTestService()
+{
+	delete mSerializer ;
+}
 RsServiceInfo GenExchangeTestService::getServiceInfo()
 {
 	RsServiceInfo info;

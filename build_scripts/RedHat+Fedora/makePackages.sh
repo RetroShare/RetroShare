@@ -34,7 +34,7 @@ echo "Using revision: ${REV}"
 echo "Hit ENTER if this is correct. Otherwise hit Ctrl+C"
 read tmp
 
-WORKDIR="retroshare06-${FULL_VERSION}"
+WORKDIR="retroshare-${FULL_VERSION}"
 
 if [[ -d ${WORKDIR} ]]
 then
@@ -80,6 +80,6 @@ do
 done
 popd >/dev/null
 tar -zcf rpm-build/rpm/SOURCES/${WORKDIR}.tar.gz ${WORKDIR}
-rpmbuild --define="%rev ${REV}" --define="%_usrsrc $PWD/rpm-build" --define="%_topdir %{_usrsrc}/rpm" -ba retroshare06.spec
+rpmbuild --define="%rev ${REV}" --define="%_usrsrc $PWD/rpm-build" --define="%_topdir %{_usrsrc}/rpm" -ba retroshare.spec
 rm -rf ${WORKDIR}
 exit 0

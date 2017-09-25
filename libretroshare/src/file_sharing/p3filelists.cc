@@ -22,7 +22,7 @@
  * Please report all bugs and problems to "retroshare.project@gmail.com".
  *
  */
-#include "serialiser/rsserviceids.h"
+#include "rsitems/rsserviceids.h"
 
 #include "file_sharing/p3filelists.h"
 #include "file_sharing/directory_storage.h"
@@ -79,6 +79,19 @@ p3FileDatabase::p3FileDatabase(p3ServiceControl *mpeers)
     // This is for the transmission of data
 
     addSerialType(new RsFileListsSerialiser()) ;
+}
+
+void p3FileDatabase::setIgnoreLists(const std::list<std::string>& ignored_prefixes,const std::list<std::string>& ignored_suffixes, uint32_t ignore_flags)
+{
+    RS_STACK_MUTEX(mFLSMtx) ;
+    mLocalDirWatcher->setIgnoreLists(ignored_prefixes,ignored_suffixes,ignore_flags) ;
+
+    IndicateConfigChanged();
+}
+bool p3FileDatabase::getIgnoreLists(std::list<std::string>& ignored_prefixes,std::list<std::string>& ignored_suffixes, uint32_t& ignore_flags)
+{
+    RS_STACK_MUTEX(mFLSMtx) ;
+    return mLocalDirWatcher->getIgnoreLists(ignored_prefixes,ignored_suffixes,ignore_flags) ;
 }
 
 RsSerialiser *p3FileDatabase::setupSerialiser()
@@ -345,6 +358,28 @@ cleanup = true;
 
         rskv->tlvkvs.pairs.push_back(kv);
     }
+	{
+		std::list<std::string> prefix_list,suffix_list;
+		uint32_t flags ;
+
+		mLocalDirWatcher->getIgnoreLists(prefix_list,suffix_list,flags) ;
+
+		std::string prefix_string, suffix_string ;
+
+		for(auto it(prefix_list.begin());it!=prefix_list.end();++it) prefix_string += *it + ";" ;
+		for(auto it(suffix_list.begin());it!=suffix_list.end();++it) suffix_string += *it + ";" ;
+
+        RsTlvKeyValue kv;
+
+        kv.key = IGNORED_PREFIXES_SS; kv.value = prefix_string; rskv->tlvkvs.pairs.push_back(kv);
+        kv.key = IGNORED_SUFFIXES_SS; kv.value = suffix_string; rskv->tlvkvs.pairs.push_back(kv);
+
+        std::string s ;
+        rs_sprintf(s, "%lu", flags) ;
+
+        kv.key = IGNORE_LIST_FLAGS_SS; kv.value = s; rskv->tlvkvs.pairs.push_back(kv);
+	}
+
     /* Add KeyValue to saveList */
     sList.push_back(rskv);
 
@@ -363,6 +398,17 @@ bool p3FileDatabase::loadList(std::list<RsItem *>& load)
 #endif
 
     std::list<SharedDirInfo> dirList;
+	std::list<std::string> ignored_prefixes,ignored_suffixes ;
+	uint32_t ignore_flags = RS_FILE_SHARE_FLAGS_IGNORE_PREFIXES | RS_FILE_SHARE_FLAGS_IGNORE_SUFFIXES ;
+
+	// OS-dependent default ignore lists
+#ifdef WINDOWS_SYS
+	ignored_suffixes.push_back( ".bak" );
+#else
+	ignored_prefixes.push_back( "." );
+	ignored_suffixes.push_back( "~" );
+	ignored_suffixes.push_back( ".part" );
+#endif
 
     for(std::list<RsItem *>::iterator it = load.begin(); it != load.end(); ++it)
     {
@@ -400,6 +446,41 @@ bool p3FileDatabase::loadList(std::list<RsItem *>& load)
                 std::cerr << "Initing directory watcher with saved secret salt..." << std::endl;
                 mLocalDirWatcher->setHashSalt(RsFileHash(kit->value)) ;
             }
+			else if(kit->key == IGNORED_PREFIXES_SS)
+			{
+				ignored_prefixes.clear();
+
+				std::string b ;
+				for(uint32_t i=0;i<kit->value.size();++i)
+					if(kit->value[i] == ';')
+					{
+						ignored_prefixes.push_back(b) ;
+						b.clear();
+					}
+					else
+						b.push_back(kit->value[i]) ;
+			}
+			else if(kit->key == IGNORED_SUFFIXES_SS)
+			{
+				ignored_suffixes.clear();
+
+				std::string b ;
+				for(uint32_t i=0;i<kit->value.size();++i)
+					if(kit->value[i] == ';')
+					{
+						ignored_suffixes.push_back(b) ;
+						b.clear();
+					}
+					else
+						b.push_back(kit->value[i]) ;
+			}
+			else if(kit->key == IGNORE_LIST_FLAGS_SS)
+			{
+                int t=0 ;
+                if(sscanf(kit->value.c_str(),"%d",&t) == 1)
+                    ignore_flags = (uint32_t)t ;
+			}
+
             delete *it ;
             continue ;
         }
@@ -427,6 +508,8 @@ bool p3FileDatabase::loadList(std::list<RsItem *>& load)
 
     /* set directories */
     mLocalSharedDirs->setSharedDirectoryList(dirList);
+	mLocalDirWatcher->setIgnoreLists(ignored_prefixes,ignored_suffixes,ignore_flags) ;
+
     load.clear() ;
 
     return true;
@@ -586,10 +669,15 @@ uint32_t p3FileDatabase::locked_getFriendIndex(const RsPeerId& pid)
 #endif
         }
 
-        if(mRemoteDirectories.size() >= (1 << NB_FRIEND_INDEX_BITS) )
+        if(sizeof(void*)==4 && mRemoteDirectories.size() >= (1u << NB_FRIEND_INDEX_BITS_32BITS) )
         {
-            std::cerr << "(EE) FriendIndexTab is full. This is weird. Do you really have more than " << (1<<NB_FRIEND_INDEX_BITS) << " friends??" << std::endl;
-            return 1 << NB_FRIEND_INDEX_BITS ;
+            std::cerr << "(EE) FriendIndexTab is full. This is weird. Do you really have more than " << (1<<NB_FRIEND_INDEX_BITS_32BITS) << " friends??" << std::endl;
+            return 1 << NB_FRIEND_INDEX_BITS_32BITS ;
+        }
+        else if(sizeof(void*)==8 && mRemoteDirectories.size() >= (1ull << NB_FRIEND_INDEX_BITS_64BITS) )
+        {
+            std::cerr << "(EE) FriendIndexTab is full. This is weird. Do you really have more than " << (1<<NB_FRIEND_INDEX_BITS_64BITS) << " friends??" << std::endl;
+            return 1 << NB_FRIEND_INDEX_BITS_64BITS ;
         }
 
         mFriendIndexMap[pid] = found;
@@ -617,12 +705,14 @@ uint32_t p3FileDatabase::locked_getFriendIndex(const RsPeerId& pid)
     }
 }
 
-bool p3FileDatabase::convertPointerToEntryIndex(const void *p, EntryIndex& e, uint32_t& friend_index)
+template<> bool p3FileDatabase::convertPointerToEntryIndex<4>(const void *p, EntryIndex& e, uint32_t& friend_index)
 {
     // trust me, I can do this ;-)
 
-    e   = EntryIndex(  *reinterpret_cast<uint32_t*>(&p) & ENTRY_INDEX_BIT_MASK ) ;
-    friend_index = (*reinterpret_cast<uint32_t*>(&p)) >> NB_ENTRY_INDEX_BITS ;
+#pragma GCC diagnostic ignored "-Wstrict-aliasing"
+    e   = EntryIndex(  *reinterpret_cast<uint32_t*>(&p) & ENTRY_INDEX_BIT_MASK_32BITS ) ;
+    friend_index = (*reinterpret_cast<uint32_t*>(&p)) >> NB_ENTRY_INDEX_BITS_32BITS ;
+#pragma GCC diagnostic pop
 
     if(friend_index == 0)
     {
@@ -633,7 +723,7 @@ bool p3FileDatabase::convertPointerToEntryIndex(const void *p, EntryIndex& e, ui
 
     return true;
 }
-bool p3FileDatabase::convertEntryIndexToPointer(const EntryIndex& e, uint32_t fi, void *& p)
+template<> bool p3FileDatabase::convertEntryIndexToPointer<4>(const EntryIndex& e, uint32_t fi, void *& p)
 {
     // the pointer is formed the following way:
     //
@@ -645,23 +735,69 @@ bool p3FileDatabase::convertEntryIndexToPointer(const EntryIndex& e, uint32_t fi
 
     uint32_t fe = (uint32_t)e ;
 
-    if(fi+1 >= (1<<NB_FRIEND_INDEX_BITS) || fe >= (1<< NB_ENTRY_INDEX_BITS))
+    if(fi+1 >= (1u<<NB_FRIEND_INDEX_BITS_32BITS) || fe >= (1u<< NB_ENTRY_INDEX_BITS_32BITS))
     {
         P3FILELISTS_ERROR() << "(EE) cannot convert entry index " << e << " of friend with index " << fi << " to pointer." << std::endl;
         return false ;
     }
 
-    p = reinterpret_cast<void*>( ( (1+fi) << NB_ENTRY_INDEX_BITS ) + (fe & ENTRY_INDEX_BIT_MASK)) ;
+    p = reinterpret_cast<void*>( ( (1u+fi) << NB_ENTRY_INDEX_BITS_32BITS ) + (fe & ENTRY_INDEX_BIT_MASK_32BITS)) ;
 
     return true;
 }
+template<> bool p3FileDatabase::convertPointerToEntryIndex<8>(const void *p, EntryIndex& e, uint32_t& friend_index)
+{
+    // trust me, I can do this ;-)
 
+#pragma GCC diagnostic ignored "-Wstrict-aliasing"
+    e   = EntryIndex(  *reinterpret_cast<uint64_t*>(&p) & ENTRY_INDEX_BIT_MASK_64BITS ) ;
+    friend_index = (*reinterpret_cast<uint64_t*>(&p)) >> NB_ENTRY_INDEX_BITS_64BITS ;
+#pragma GCC diagnostic pop
+
+    if(friend_index == 0)
+    {
+        std::cerr << "(EE) Cannot find friend index in pointer. Encoded value is zero!" << std::endl;
+        return false;
+    }
+    friend_index--;
+
+#ifdef DEBUG_P3FILELISTS
+	std::cerr << "Generated index " << e <<" friend " << friend_index << " from pointer " << p << std::endl;
+#endif
+    return true;
+}
+template<> bool p3FileDatabase::convertEntryIndexToPointer<8>(const EntryIndex& e, uint32_t fi, void *& p)
+{
+    // the pointer is formed the following way:
+    //
+    //		[ 24 bits   |  40 bits ]
+    //
+    // This means that the whoel software has the following build-in limitation:
+    //	  * 1.6M friends
+    //	  * 1T shared files.
+
+    uint64_t fe = (uint64_t)e ;
+
+    if(fi+1 >= (1ull<<NB_FRIEND_INDEX_BITS_64BITS) || fe >= (1ull<< NB_ENTRY_INDEX_BITS_64BITS))
+    {
+        P3FILELISTS_ERROR() << "(EE) cannot convert entry index " << e << " of friend with index " << fi << " to pointer." << std::endl;
+        return false ;
+    }
+
+    p = reinterpret_cast<void*>( ( (1ull+fi) << NB_ENTRY_INDEX_BITS_64BITS ) + (fe & ENTRY_INDEX_BIT_MASK_64BITS)) ;
+
+#ifdef DEBUG_P3FILELISTS
+	std::cerr << "Generated pointer " << p << " from friend " << fi << " and index " << e << std::endl;
+#endif
+
+    return true;
+}
 void p3FileDatabase::requestDirUpdate(void *ref)
 {
     uint32_t fi;
     DirectoryStorage::EntryIndex e ;
 
-    convertPointerToEntryIndex(ref,e,fi);
+    convertPointerToEntryIndex<sizeof(void*)>(ref,e,fi);
 
     if(fi == 0)
         return ;	// not updating current directory (should we?)
@@ -690,13 +826,13 @@ bool p3FileDatabase::findChildPointer( void *ref, int row, void *& result,
             if(row != 0)
                 return false ;
 
-            convertEntryIndexToPointer(0,0,result);
+            convertEntryIndexToPointer<sizeof(void*)>(0,0,result);
 
             return true ;
         }
         else if((uint32_t)row < mRemoteDirectories.size())
         {
-            convertEntryIndexToPointer(mRemoteDirectories[row]->root(),row+1,result);
+            convertEntryIndexToPointer<sizeof(void*)>(mRemoteDirectories[row]->root(),row+1,result);
             return true;
         }
         else
@@ -706,7 +842,7 @@ bool p3FileDatabase::findChildPointer( void *ref, int row, void *& result,
     uint32_t fi;
     DirectoryStorage::EntryIndex e ;
 
-    convertPointerToEntryIndex(ref,e,fi);
+    convertPointerToEntryIndex<sizeof(void*)>(ref,e,fi);
 
     // check consistency
     if( (fi == 0 && !(flags & RS_FILE_HINTS_LOCAL)) ||  (fi > 0 && (flags & RS_FILE_HINTS_LOCAL)))
@@ -721,7 +857,7 @@ bool p3FileDatabase::findChildPointer( void *ref, int row, void *& result,
     EntryIndex c = 0;
     bool res = storage->getChildIndex(e,row,c);
 
-    convertEntryIndexToPointer(c,fi,result) ;
+    convertEntryIndexToPointer<sizeof(void*)>(c,fi,result) ;
 
     return res;
 }
@@ -785,7 +921,7 @@ int p3FileDatabase::RequestDirDetails(void *ref, DirDetails& d, FileSearchFlags 
         if(flags & RS_FILE_HINTS_LOCAL)
         {
             void *p;
-            convertEntryIndexToPointer(0,0,p);
+            convertEntryIndexToPointer<sizeof(void*)>(0,0,p);
 
             DirStub stub;
             stub.type = DIR_TYPE_PERSON;
@@ -797,7 +933,7 @@ int p3FileDatabase::RequestDirDetails(void *ref, DirDetails& d, FileSearchFlags 
             if(mRemoteDirectories[i] != NULL)
             {
                void *p;
-               convertEntryIndexToPointer(mRemoteDirectories[i]->root(),i+1,p);
+               convertEntryIndexToPointer<sizeof(void*)>(mRemoteDirectories[i]->root(),i+1,p);
 
                DirStub stub;
                stub.type = DIR_TYPE_PERSON;
@@ -818,7 +954,7 @@ int p3FileDatabase::RequestDirDetails(void *ref, DirDetails& d, FileSearchFlags 
     uint32_t fi;
     DirectoryStorage::EntryIndex e ;
 
-    convertPointerToEntryIndex(ref,e,fi);
+    convertPointerToEntryIndex<sizeof(void*)>(ref,e,fi);
 
     // check consistency
     if( (fi == 0 && !(flags & RS_FILE_HINTS_LOCAL)) ||  (fi > 0 && (flags & RS_FILE_HINTS_LOCAL)))
@@ -841,10 +977,10 @@ int p3FileDatabase::RequestDirDetails(void *ref, DirDetails& d, FileSearchFlags 
     // update indexes. This is a bit hacky, but does the job. The cast to intptr_t is the proper way to convert
     // a pointer into an int.
 
-    convertEntryIndexToPointer((intptr_t)d.ref,fi,d.ref) ;
+    convertEntryIndexToPointer<sizeof(void*)>((intptr_t)d.ref,fi,d.ref) ;
 
     for(uint32_t i=0;i<d.children.size();++i)
-        convertEntryIndexToPointer((intptr_t)d.children[i].ref,fi,d.children[i].ref);
+        convertEntryIndexToPointer<sizeof(void*)>((intptr_t)d.children[i].ref,fi,d.children[i].ref);
 
     if(e == 0)	// root
     {
@@ -858,7 +994,7 @@ int p3FileDatabase::RequestDirDetails(void *ref, DirDetails& d, FileSearchFlags 
         else
             d.prow = storage->parentRow(e) ;
 
-        convertEntryIndexToPointer((intptr_t)d.parent,fi,d.parent) ;
+        convertEntryIndexToPointer<sizeof(void*)>((intptr_t)d.parent,fi,d.parent) ;
     }
 
     d.id = storage->peerId();
@@ -891,7 +1027,7 @@ uint32_t p3FileDatabase::getType(void *ref) const
     if(ref == NULL)
         return DIR_TYPE_ROOT ;
 
-    convertPointerToEntryIndex(ref,e,fi);
+    convertPointerToEntryIndex<sizeof(void*)>(ref,e,fi);
 
     if(e == 0)
         return DIR_TYPE_PERSON ;
@@ -907,6 +1043,16 @@ uint32_t p3FileDatabase::getType(void *ref) const
 void p3FileDatabase::forceDirectoryCheck()              // Force re-sweep the directories and see what's changed
 {
     mLocalDirWatcher->forceUpdate();
+}
+void p3FileDatabase::togglePauseHashingProcess()
+{
+    RS_STACK_MUTEX(mFLSMtx) ;
+    mLocalDirWatcher->togglePauseHashingProcess();
+}
+bool p3FileDatabase::hashingProcessPaused()
+{
+    RS_STACK_MUTEX(mFLSMtx) ;
+    return  mLocalDirWatcher->hashingProcessPaused();
 }
 bool p3FileDatabase::inDirectoryCheck()
 {
@@ -961,7 +1107,7 @@ int p3FileDatabase::SearchKeywords(const std::list<std::string>& keywords, std::
             for(std::list<EntryIndex>::iterator it(firesults.begin());it!=firesults.end();++it)
             {
                 void *p=NULL;
-                convertEntryIndexToPointer(*it,0,p);
+                convertEntryIndexToPointer<sizeof(void*)>(*it,0,p);
                 *it = (intptr_t)p ;
             }
         }
@@ -985,7 +1131,7 @@ int p3FileDatabase::SearchKeywords(const std::list<std::string>& keywords, std::
                     for(std::list<EntryIndex>::iterator it(local_results.begin());it!=local_results.end();++it)
                     {
                         void *p=NULL;
-                        convertEntryIndexToPointer(*it,i+1,p);
+                        convertEntryIndexToPointer<sizeof(void*)>(*it,i+1,p);
                         firesults.push_back((intptr_t)p) ;
                     }
                 }
@@ -1019,7 +1165,7 @@ int p3FileDatabase::SearchBoolExp(RsRegularExpression::Expression *exp, std::lis
             for(std::list<EntryIndex>::iterator it(firesults.begin());it!=firesults.end();++it)
             {
                 void *p=NULL;
-                convertEntryIndexToPointer(*it,0,p);
+                convertEntryIndexToPointer<sizeof(void*)>(*it,0,p);
                 *it = (intptr_t)p ;
             }
         }
@@ -1043,7 +1189,7 @@ int p3FileDatabase::SearchBoolExp(RsRegularExpression::Expression *exp, std::lis
                     for(std::list<EntryIndex>::iterator it(local_results.begin());it!=local_results.end();++it)
                     {
                         void *p=NULL;
-                        convertEntryIndexToPointer(*it,i+1,p);
+                        convertEntryIndexToPointer<sizeof(void*)>(*it,i+1,p);
                         firesults.push_back((intptr_t)p) ;
                     }
 
@@ -1073,24 +1219,39 @@ bool p3FileDatabase::search(const RsFileHash &hash, FileSearchFlags hintflags, F
         RsFileHash real_hash ;
         EntryIndex indx;
 
-        if(!mLocalSharedDirs->searchHash(hash,real_hash,indx))
-            return false;
+        if(mLocalSharedDirs->searchHash(hash,real_hash,indx))
+		{
+			mLocalSharedDirs->getFileInfo(indx,info) ;
 
-        mLocalSharedDirs->getFileInfo(indx,info) ;
+			if(!real_hash.isNull())
+			{
+				info.hash = real_hash ;
+				info.transfer_info_flags |= RS_FILE_REQ_ENCRYPTED ;
+			}
 
-        if(!real_hash.isNull())
-        {
-            info.hash = real_hash ;
-            info.transfer_info_flags |= RS_FILE_REQ_ENCRYPTED ;
-        }
-
-        return true;
+			return true;
+		}
     }
 
     if(hintflags & RS_FILE_HINTS_REMOTE)
     {
-        NOT_IMPLEMENTED();
-        return false;
+        EntryIndex indx;
+		bool found = false ;
+		
+		for(uint32_t i=0;i<mRemoteDirectories.size();++i)
+			if(mRemoteDirectories[i] != NULL && mRemoteDirectories[i]->searchHash(hash,indx))
+			{
+				TransferInfo ti ;
+				ti.peerId = mRemoteDirectories[i]->peerId();
+				        
+				info.hash = hash ;
+				info.peers.push_back(ti) ;
+
+				found = true ;
+			}
+		
+		if(found)
+			return true;
     }
     return false;
 }
@@ -1193,6 +1354,7 @@ void p3FileDatabase::tickRecv()
 	  {
           RsFileListsSyncResponseItem *sitem = dynamic_cast<RsFileListsSyncResponseItem*>(item);
 		  handleDirSyncResponse(sitem) ;
+          item = sitem ;
       }
 		  break ;
       default:

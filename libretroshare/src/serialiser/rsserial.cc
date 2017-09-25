@@ -25,15 +25,20 @@
  */
 
 #include "serialiser/rsbaseserial.h"
-#include "serialiser/rsserial.h"
+
 #include "util/rsthreads.h"
 #include "util/rsstring.h"
 #include "util/rsprint.h"
+
+#include "rsitems/rsitem.h"
+#include "rsitems/itempriorities.h"
 
 #include <math.h>
 #include <map>
 #include <vector>
 #include <iostream>
+#include <typeinfo>
+
 
 /***
  * #define RSSERIAL_DEBUG 		1
@@ -219,6 +224,7 @@ uint32_t    RsSerialType::size(RsItem *)
 
 bool        RsSerialType::serialise(RsItem */*item*/, void */*data*/, uint32_t */*size*/)
 {
+    std::cerr << "(EE) Empty method called for missing serialize() method in serializer class " << typeid(this).name() << std::endl;
 #ifdef  RSSERIAL_DEBUG
 	std::cerr << "RsSerialType::serialise()" << std::endl;
 #endif
@@ -381,7 +387,7 @@ RsItem *    RsSerialiser::deserialise(void *data, uint32_t *size)
 	//std::cerr << "RsSerialiser::deserialise() RsItem Type: " << std::hex << getRsItemId(data) << " Size: " << pkt_size;
 	//std::cerr << std::endl;
 
-	if (pkt_size != *size)
+	if (pkt_size > *size)
 	{
 #ifdef  RSSERIAL_ERROR_DEBUG
 		std::cerr << "RsSerialiser::deserialise() ERROR Size mismatch(2)";
@@ -437,7 +443,7 @@ RsItem *    RsSerialiser::deserialise(void *data, uint32_t *size)
 		uint32_t failedtype = getRsItemId(data);
 		std::cerr << "RsSerialiser::deserialise() FAILED PACKET Size: ";
 		std::cerr << getRsItemSize(data) << " ID: ";
-		std::cerr << std::hex << failedtype << std::dec;
+		std::cerr << std::hex << failedtype << std::endl;
 		std::cerr << "RsSerialiser::deserialise() FAILED PACKET: ";
 		std::cerr << " Version: " << std::hex << (uint32_t) getRsItemVersion(failedtype) << std::dec;
 		std::cerr << " Class: " << std::hex << (uint32_t) getRsItemClass(failedtype) << std::dec;

@@ -93,6 +93,7 @@ private slots:
 	void editIdentity();
 	void chatIdentity();
 	void sendMsg();
+	void copyRetroshareLink();
   void on_closeInfoFrameButton_clicked();
 
 	void updateSelection();
@@ -132,6 +133,7 @@ private:
 
 	void requestRepList();
 	void insertRepList(uint32_t token);
+	void handleSerializedGroupData(uint32_t token);
 
 	void requestIdEdit(std::string &id);
 	void showIdEdit(uint32_t token);
@@ -152,6 +154,7 @@ private:
 	std::map<uint32_t, CircleUpdateOrder> mCircleUpdates ;
 
 	RsGxsGroupId mId;
+	RsGxsGroupId mIdToNavigate;
 	int filter;
 
 	/* UI -  Designer */

@@ -12,6 +12,7 @@
 
 /*!
  * Not thread safe!!
+ * And also has a memory leak. Do not use (csoler, 24 Jul 2017).
  */
 template<class T>
 class RsSharedPtr

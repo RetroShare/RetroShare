@@ -77,16 +77,18 @@ const uint32_t RS_FEED_TYPE_FILES    = 0x0400;
 const uint32_t RS_FEED_TYPE_SECURITY = 0x0800;
 const uint32_t RS_FEED_TYPE_POSTED   = 0x1000;
 const uint32_t RS_FEED_TYPE_SECURITY_IP = 0x2000;
+const uint32_t RS_FEED_TYPE_CIRCLE   = 0x4000;
 
-const uint32_t RS_FEED_ITEM_PEER_CONNECT	    = RS_FEED_TYPE_PEER  | 0x0001;
-const uint32_t RS_FEED_ITEM_PEER_DISCONNECT	 = RS_FEED_TYPE_PEER  | 0x0002;
-const uint32_t RS_FEED_ITEM_PEER_HELLO		    = RS_FEED_TYPE_PEER  | 0x0003;
-const uint32_t RS_FEED_ITEM_PEER_NEW		    = RS_FEED_TYPE_PEER  | 0x0004;
+const uint32_t RS_FEED_ITEM_PEER_CONNECT            = RS_FEED_TYPE_PEER  | 0x0001;
+const uint32_t RS_FEED_ITEM_PEER_DISCONNECT         = RS_FEED_TYPE_PEER  | 0x0002;
+const uint32_t RS_FEED_ITEM_PEER_HELLO              = RS_FEED_TYPE_PEER  | 0x0003;
+const uint32_t RS_FEED_ITEM_PEER_NEW                = RS_FEED_TYPE_PEER  | 0x0004;
+const uint32_t RS_FEED_ITEM_PEER_OFFSET             = RS_FEED_TYPE_PEER  | 0x0005;
 
-const uint32_t RS_FEED_ITEM_SEC_CONNECT_ATTEMPT	    = RS_FEED_TYPE_SECURITY  | 0x0001;
-const uint32_t RS_FEED_ITEM_SEC_AUTH_DENIED	       = RS_FEED_TYPE_SECURITY  | 0x0002;
-const uint32_t RS_FEED_ITEM_SEC_UNKNOWN_IN	       = RS_FEED_TYPE_SECURITY  | 0x0003;
-const uint32_t RS_FEED_ITEM_SEC_UNKNOWN_OUT	       = RS_FEED_TYPE_SECURITY  | 0x0004;
+const uint32_t RS_FEED_ITEM_SEC_CONNECT_ATTEMPT     = RS_FEED_TYPE_SECURITY  | 0x0001;
+const uint32_t RS_FEED_ITEM_SEC_AUTH_DENIED         = RS_FEED_TYPE_SECURITY  | 0x0002;
+const uint32_t RS_FEED_ITEM_SEC_UNKNOWN_IN          = RS_FEED_TYPE_SECURITY  | 0x0003;
+const uint32_t RS_FEED_ITEM_SEC_UNKNOWN_OUT         = RS_FEED_TYPE_SECURITY  | 0x0004;
 const uint32_t RS_FEED_ITEM_SEC_WRONG_SIGNATURE     = RS_FEED_TYPE_SECURITY  | 0x0005;
 const uint32_t RS_FEED_ITEM_SEC_BAD_CERTIFICATE     = RS_FEED_TYPE_SECURITY  | 0x0006;
 const uint32_t RS_FEED_ITEM_SEC_INTERNAL_ERROR      = RS_FEED_TYPE_SECURITY  | 0x0007;
@@ -113,9 +115,12 @@ const uint32_t RS_FEED_ITEM_POSTED_NEW       = RS_FEED_TYPE_POSTED  | 0x0001;
 //const uint32_t RS_FEED_ITEM_POSTED_UPDATE    = RS_FEED_TYPE_POSTED  | 0x0002;
 const uint32_t RS_FEED_ITEM_POSTED_MSG       = RS_FEED_TYPE_POSTED  | 0x0003;
 
-const uint32_t RS_FEED_ITEM_CHAT_NEW		 = RS_FEED_TYPE_CHAT  | 0x0001;
-const uint32_t RS_FEED_ITEM_MESSAGE		 = RS_FEED_TYPE_MSG   | 0x0001;
-const uint32_t RS_FEED_ITEM_FILES_NEW		 = RS_FEED_TYPE_FILES | 0x0001;
+const uint32_t RS_FEED_ITEM_CHAT_NEW         = RS_FEED_TYPE_CHAT  | 0x0001;
+const uint32_t RS_FEED_ITEM_MESSAGE          = RS_FEED_TYPE_MSG   | 0x0001;
+const uint32_t RS_FEED_ITEM_FILES_NEW        = RS_FEED_TYPE_FILES | 0x0001;
+
+const uint32_t RS_FEED_ITEM_CIRCLE_MEMB_REQ  = RS_FEED_TYPE_CIRCLE  | 0x0001;
+const uint32_t RS_FEED_ITEM_CIRCLE_INVIT_REC = RS_FEED_TYPE_CIRCLE  | 0x0002;
 
 const uint32_t RS_MESSAGE_CONNECT_ATTEMPT    = 0x0001;
 
@@ -200,8 +205,10 @@ class RsNotify
 
 		virtual bool GetFeedItem(RsFeedItem &item) = 0;
 
-        virtual bool cachePgpPassphrase               (const std::string& /* pgp_passphrase */) { return false ; }
-        virtual bool clearPgpPassphrase               () { return false ; }
+		virtual bool cachePgpPassphrase (const std::string& /* pgp_passphrase */) { return false ; }
+		virtual bool clearPgpPassphrase () { return false ; }
+
+		virtual bool setDisableAskPassword (const bool /*bValue*/) { return false ; }
 };
 
 class NotifyClient
@@ -227,6 +234,7 @@ class NotifyClient
 		virtual void notifyDiskFull                   (uint32_t           /* location  */, uint32_t                         /* size limit in MB */) {}
 		virtual void notifyPeerStatusChanged          (const std::string& /* peer_id   */, uint32_t                         /* status           */) {}
         virtual void notifyGxsChange                  (const RsGxsChanges& /* changes  */) {}
+		virtual void notifyConnectionWithoutCert      () {}
 
 		/* one or more peers has changed the states */
 		virtual void notifyPeerStatusChangedSummary   () {}
@@ -238,7 +246,7 @@ class NotifyClient
 		virtual void notifyHistoryChanged             (uint32_t           /* msgId     */, int /* type */) {}
 
 		virtual bool askForPassword                   (const std::string& /* title     */, const std::string& /* key_details     */, bool               /* prev_is_bad */, std::string& /* password */,bool& /* cancelled */ ) { return false ;}
-		virtual bool askForPluginConfirmation         (const std::string& /* plugin_filename */, const std::string& /* plugin_file_hash */) { return false ;}
+		virtual bool askForPluginConfirmation         (const std::string& /* plugin_filename */, const std::string& /* plugin_file_hash */,bool /* first_time */) { return false ;}
 
 };
 #endif

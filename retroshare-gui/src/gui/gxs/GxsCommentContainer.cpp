@@ -54,7 +54,7 @@ void GxsCommentContainer::setup()
 	ui.tabWidget->hideCloseButton(index);
 }
 
-void GxsCommentContainer::commentLoad(const RsGxsGroupId &grpId, const RsGxsMessageId &msgId, const QString &title)
+void GxsCommentContainer::commentLoad(const RsGxsGroupId &grpId, const std::set<RsGxsMessageId>& msg_versions,const RsGxsMessageId &msgId, const QString &title)
 {
 	QString comments = title;
 	if (title.length() > MAX_COMMENT_TITLE)
@@ -68,7 +68,7 @@ void GxsCommentContainer::commentLoad(const RsGxsGroupId &grpId, const RsGxsMess
 	QWidget *commentHeader = createHeaderWidget(grpId, msgId);
 	commentDialog->setCommentHeader(commentHeader);
 
-	commentDialog->commentLoad(grpId, msgId);
+	commentDialog->commentLoad(grpId, msg_versions, msgId);
 
 	ui.tabWidget->addTab(commentDialog, comments);
 }

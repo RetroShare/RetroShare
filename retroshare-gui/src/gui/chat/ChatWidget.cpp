@@ -48,6 +48,7 @@
 #include "gui/common/FilesDefs.h"
 #include "gui/common/Emoticons.h"
 #include "gui/chat/ChatLobbyDialog.h"
+#include "gui/gxs/GxsIdDetails.h"
 #include "util/misc.h"
 #include "util/HandleRichText.h"
 #include "gui/chat/ChatUserNotify.h"//For BradCast
@@ -65,6 +66,8 @@
 
 #define FMM 2.5//fontMetricsMultiplicator
 
+#define PERSONID "PersonId:"
+
 /*****
  * #define CHAT_DEBUG 1
  *****/
@@ -76,7 +79,7 @@ ChatWidget::ChatWidget(QWidget *parent) :
 
 	int iconHeight = FMM*QFontMetricsF(font()).height() ;
 	QSize iconSize = QSize(iconHeight,iconHeight);
-	QSize buttonSize = QSize(iconSize + QSize(FMM,FMM));
+	QSize buttonSize = QSize(iconSize + QSize((int)FMM,(int)FMM));
 
 	newMessages = false;
 	typing = false;
@@ -198,6 +201,8 @@ ChatWidget::ChatWidget(QWidget *parent) :
 	menu->addMenu(fontmenu);
 	
 	ui->actionSendAsPlainText->setChecked(Settings->getChatSendAsPlainTextByDef());
+	ui->chatTextEdit->setOnlyPlainText(ui->actionSendAsPlainText->isChecked());
+	connect(ui->actionSendAsPlainText, SIGNAL(toggled(bool)), ui->chatTextEdit, SLOT(setOnlyPlainText(bool)) );
 
 	ui->textBrowser->resetImagesStatus(Settings->getChatLoadEmbeddedImages());
 	ui->textBrowser->installEventFilter(this);
@@ -258,7 +263,7 @@ void ChatWidget::addChatBarWidget(QWidget *w)
 {
 	int iconHeight = FMM*QFontMetricsF(font()).height() ;
 	QSize iconSize = QSize(iconHeight,iconHeight);
-	QSize buttonSize = QSize(iconSize + QSize(FMM,FMM));
+	QSize buttonSize = QSize(iconSize + QSize((int)FMM,(int)FMM));
 	w->setFixedSize(buttonSize);
 	ui->pluginButtonFrame->layout()->addWidget(w) ;
 }
@@ -415,9 +420,11 @@ ChatWidget::ChatType ChatWidget::chatType()
 
 void ChatWidget::blockSending(QString msg)
 {
-    sendingBlocked = true;
-    ui->sendButton->setEnabled(false);
-    ui->sendButton->setToolTip(msg);
+#ifndef RS_ASYNC_CHAT
+	sendingBlocked = true;
+	ui->sendButton->setEnabled(false);
+#endif
+	ui->sendButton->setToolTip(msg);
 }
 
 void ChatWidget::unblockSending()
@@ -587,6 +594,9 @@ bool ChatWidget::eventFilter(QObject *obj, QEvent *event)
 					if (ui->textBrowser->checkImage(helpEvent->pos(), imageStr)) {
 						toolTipText = imageStr;
 					}
+				} else if (toolTipText.startsWith(PERSONID)){
+					toolTipText = toolTipText.replace(PERSONID, tr("Person id: ") );
+					toolTipText = toolTipText.append(tr("\nDouble click on it to add his name on text writer.") );
 				}
 			}
 			if (!toolTipText.isEmpty()){
@@ -663,6 +673,43 @@ bool ChatWidget::eventFilter(QObject *obj, QEvent *event)
 					ui->leSearch->setPalette(qpSave_leSearch);
 				}
 			}
+		}
+	} else if (obj == ui->textBrowser->viewport()) {
+		if (event->type() == QEvent::MouseButtonDblClick)	{
+
+			QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
+			QTextCursor cursor = ui->textBrowser->cursorForPosition(mouseEvent->pos());
+			cursor.select(QTextCursor::WordUnderCursor);
+			if (!cursor.selectedText().isEmpty()){
+				QRegExp rx("<a name=\"(.*)\"",Qt::CaseSensitive, QRegExp::RegExp2);
+				rx.setMinimal(true);
+				QString sel=cursor.selection().toHtml();
+				QStringList anchors;
+				int pos=0;
+				while ((pos = rx.indexIn(sel,pos)) != -1) {
+					anchors << rx.cap(1);
+					pos += rx.matchedLength();
+				}
+
+				if (!anchors.isEmpty()){
+					if (anchors.at(0).startsWith(PERSONID)){
+						QString strId = QString(anchors.at(0)).replace(PERSONID,"");
+						if (strId.contains(" "))
+							strId.truncate(strId.indexOf(" "));
+
+						RsGxsId mId = RsGxsId(strId.toStdString());
+						if(!mId.isNull()) {
+							RsIdentityDetails details;
+							if (rsIdentity->getIdDetails(mId, details)){
+								QString text = QString("@").append(GxsIdDetails::getName(details)).append(" ");
+								ui->chatTextEdit->textCursor().insertText(text);
+							}
+						}
+					}
+				}
+
+			}
+
 		}
 	} else {
 		if (event->type() == QEvent::WindowActivate) {
@@ -962,10 +1009,29 @@ void ChatWidget::addChatMsg(bool incoming, const QString &name, const RsGxsId gx
 	formatMsg.replace(QString("<a name=\"date\">"),QString("<a name=\"%1\">").arg(timeStamp));
 	formatMsg.replace(QString("<a name=\"time\">"),QString("<a name=\"%1\">").arg(timeStamp));
 	//replace Name anchors with GXS Id
-	QString strGxsId = "";
-	if (!gxsId.isNull())
-		strGxsId = QString::fromStdString(gxsId.toStdString());
-	formatMsg.replace(QString("<a name=\"name\">"),QString("<a name=\"Person Id: %1\">").arg(strGxsId));
+	if (!gxsId.isNull()) {
+		RsIdentityDetails details;
+		QString strPreName = "";
+
+		QString strGxsId = QString::fromStdString(gxsId.toStdString());
+		rsIdentity->getIdDetails(gxsId, details);
+		bool isUnsigned = !(details.mFlags & RS_IDENTITY_FLAGS_PGP_LINKED);
+		if(isUnsigned && ui->textBrowser->getShowImages()) {
+			QIcon icon = QIcon(":/icons/anonymous_blue_128.png");
+			int height = ui->textBrowser->fontMetrics().height()*0.8;
+			QImage image(icon.pixmap(height,height).toImage());
+			QByteArray byteArray;
+			QBuffer buffer(&byteArray);
+			image.save(&buffer, "PNG"); // writes the image in PNG format inside the buffer
+			QString iconBase64 = QString::fromLatin1(byteArray.toBase64().data());
+			strPreName = QString("<img src=\"data:image/png;base64,%1\" alt=\"[unsigned]\" />").arg(iconBase64);
+		}
+
+		formatMsg.replace(QString("<a name=\"name\">")
+		                  ,QString(strPreName).append("<a name=\"").append(PERSONID).append("%1 %2\">").arg(strGxsId, isUnsigned ? tr(" Unsigned"):""));
+	} else {
+		formatMsg.replace(QString("<a name=\"name\">"),"");
+	}
 
 	QTextCursor textCursor = QTextCursor(ui->textBrowser->textCursor());
 	textCursor.movePosition(QTextCursor::End);
@@ -1397,7 +1463,8 @@ void ChatWidget::colorChanged()
 void ChatWidget::chooseFont()
 {
 	bool ok;
-	QFont font = QFontDialog::getFont(&ok, currentFont, this);
+	//Use NULL as parent as with this QFontDialog don't take care of title nether options.
+	QFont font = QFontDialog::getFont(&ok, currentFont, NULL, tr("Choose your font."),QFontDialog::DontUseNativeDialog);
 	if (ok) {
 		currentFont = font;
 		setFont();
@@ -1510,14 +1577,14 @@ void ChatWidget::fileHashingFinished(QList<HashedFile> hashedFiles)
 	QList<HashedFile>::iterator it;
 	for (it = hashedFiles.begin(); it != hashedFiles.end(); ++it) {
 		HashedFile& hashedFile = *it;
-		QString ext = QFileInfo(hashedFile.filename).suffix();
+		//QString ext = QFileInfo(hashedFile.filename).suffix();
 
 		RetroShareLink link;
 
 		if(mDefaultExtraFileFlags & RS_FILE_REQ_ANONYMOUS_ROUTING)
-            link.createFile(hashedFile.filename, hashedFile.size, QString::fromStdString(hashedFile.hash.toStdString()));
+			link = RetroShareLink::createFile(hashedFile.filename, hashedFile.size, QString::fromStdString(hashedFile.hash.toStdString()));
 		else
-            link.createExtraFile(hashedFile.filename, hashedFile.size, QString::fromStdString(hashedFile.hash.toStdString()),QString::fromStdString(rsPeers->getOwnId().toStdString()));
+			link = RetroShareLink::createExtraFile(hashedFile.filename, hashedFile.size, QString::fromStdString(hashedFile.hash.toStdString()),QString::fromStdString(rsPeers->getOwnId().toStdString()));
 
 		if (hashedFile.flag & HashedFile::Picture) {
 			message += QString("<img src=\"file:///%1\" width=\"100\" height=\"100\">").arg(hashedFile.filepath);
@@ -1529,6 +1596,7 @@ void ChatWidget::fileHashingFinished(QList<HashedFile> hashedFiles)
 			}
 		}
 		message += link.toHtmlSize();
+
 		if (it != hashedFiles.end()) {
 			message += "<BR>";
 		}

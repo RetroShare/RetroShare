@@ -1,4 +1,4 @@
-/* Copyright (C) 2004 Xavier Décoret <Xavier.Decoret@imag.fr>
+/* Copyright (C) 2004 Xavier Decoret <Xavier.Decoret@imag.fr>
  *
  * argstream is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -71,8 +71,8 @@ namespace
 			private:
 				std::string shortName_;
 				std::string longName_;
-				std::string valueName_;
 				T*          value_;
+				std::string valueName_;
 				T           initialValue_;
 				std::string description_;  
 				bool        mandatory_;
@@ -252,8 +252,8 @@ namespace
 			inline bool helpRequested() const;
 			inline bool isOk() const;
 			inline std::string errorLog() const;
-			inline std::string usage() const;
-			inline bool defaultErrorHandling(bool ignoreUnused=false) const;
+			inline std::string usage(bool skipCommandLine = false) const;
+			inline bool defaultErrorHandling(bool ignoreUnused=false,bool skipCommandLine=false) const;
 			static inline char uniqueLetter();
 		protected:
 			void parse(int argc,char** argv);
@@ -282,8 +282,8 @@ namespace
 				bool mandatory)
 		:  shortName_(1,s),
 		longName_(l),
-		valueName_(valueName),
 		value_(&v),
+		valueName_(valueName),
 		initialValue_(v),
 		description_(desc),
 		mandatory_(mandatory)
@@ -296,8 +296,8 @@ namespace
 				const char* desc,
 				bool mandatory)
 		:  longName_(l),
-		valueName_(valueName),
 		value_(&v),
+		valueName_(valueName),
 		initialValue_(v),
 		description_(desc),
 		mandatory_(mandatory)
@@ -310,8 +310,8 @@ namespace
 				const char* desc,
 				bool mandatory)
 		:  shortName_(1,s),
-		valueName_(valueName),
 		value_(&v),
+		valueName_(valueName),
 		initialValue_(v),
 		description_(desc),
 		mandatory_(mandatory)
@@ -569,10 +569,12 @@ namespace
 			return helpRequested_;
 		}
 	inline std::string
-		argstream::usage() const
+		argstream::usage(bool skipCommandLine) const
 		{
 			std::ostringstream os;
-			os<<"usage: "<<progName_<<cmdLine_<<'\n';
+
+			if(!skipCommandLine)
+			   os<<"usage: "<<progName_<<cmdLine_<<'\n';
 			unsigned int lmax = 0;
 			for (std::deque<help_entry>::const_iterator
 					iter = argHelps_.begin();iter != argHelps_.end();++iter)
@@ -820,11 +822,11 @@ namespace
 			return s;
 		}
 	inline bool
-		argstream::defaultErrorHandling(bool ignoreUnused) const
+		argstream::defaultErrorHandling(bool ignoreUnused,bool skipCommandLine) const
 		{
 			if (helpRequested_)
 			{
-				std::cout<<usage();
+				std::cout<<usage(skipCommandLine);
 				exit(1);
 			}
 			if (!isOk_)

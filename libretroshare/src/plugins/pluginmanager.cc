@@ -9,8 +9,7 @@
 #include <serialiser/rstlvtypes.h>
 #endif
 
-#include <serialiser/rspluginitems.h>
-
+#include <rsitems/rspluginitems.h>
 
 #include <rsserver/p3face.h>
 #include <util/rsdir.h>
@@ -34,7 +33,7 @@
 
 std::string RsPluginManager::_plugin_entry_symbol              = "RETROSHARE_PLUGIN_provide" ;
 std::string RsPluginManager::_plugin_revision_symbol           = "RETROSHARE_PLUGIN_revision" ;
-std::string RsPluginManager::_plugin_API_symbol           		= "RETROSHARE_PLUGIN_api" ;
+std::string RsPluginManager::_plugin_API_symbol         		= "RETROSHARE_PLUGIN_api" ;
 
 std::string RsPluginManager::_local_cache_dir ;
 std::string RsPluginManager::_remote_cache_dir ;
@@ -51,9 +50,14 @@ RsPluginManager::RsPluginManager(const RsFileHash &hash)
 	_allow_all_plugins = false ;
 }
 
+bool RsPluginManager::loadConfiguration(RsFileHash &loadHash)
+{
+	return p3Config::loadConfiguration(loadHash);
+}
+
 void RsPluginManager::loadConfiguration()
 {
-    RsFileHash dummyHash ;
+	RsFileHash dummyHash;
 	p3Config::loadConfiguration(dummyHash);
 }
 
@@ -136,6 +140,8 @@ void RsPluginManager::loadPlugins(const std::vector<std::string>& plugin_directo
 
 	// 0 - get the list of files to read
 
+	bool first_time = (_accepted_hashes.empty()) && _rejected_hashes.empty() ;
+
 	for(uint32_t i=0;i<plugin_directories.size();++i)
 	{
 		librs::util::FolderIterator dirIt(plugin_directories[i],true);
@@ -160,7 +166,7 @@ void RsPluginManager::loadPlugins(const std::vector<std::string>& plugin_directo
 			std::cerr << "Found plugin " << fullname << std::endl;
 			std::cerr << "  Loading plugin..." << std::endl;
 
-			loadPlugin(fullname) ;
+			loadPlugin(fullname, first_time) ;
 		}
 		dirIt.closedir();
 	}
@@ -258,7 +264,7 @@ bool RsPluginManager::loadPlugin(RsPlugin *p)
 	return true;
 }
 
-bool RsPluginManager::loadPlugin(const std::string& plugin_name)
+bool RsPluginManager::loadPlugin(const std::string& plugin_name,bool first_time)
 {
 	std::cerr << "  Loading plugin " << plugin_name << std::endl;
 
@@ -285,7 +291,7 @@ bool RsPluginManager::loadPlugin(const std::string& plugin_name)
 	if(!_allow_all_plugins)
 	{
 		if(_accepted_hashes.find(pinfo.file_hash) == _accepted_hashes.end() && _rejected_hashes.find(pinfo.file_hash) == _rejected_hashes.end() )
-            if(!RsServer::notify()->askForPluginConfirmation(pinfo.file_name,pinfo.file_hash.toStdString()))
+			if(!RsServer::notify()->askForPluginConfirmation(pinfo.file_name,pinfo.file_hash.toStdString(),first_time))
 				_rejected_hashes.insert(pinfo.file_hash) ;		// accepted hashes are treated at the end, for security.
 
 		if(_rejected_hashes.find(pinfo.file_hash) != _rejected_hashes.end() )
@@ -499,12 +505,15 @@ bool RsPluginManager::loadList(std::list<RsItem*>& list)
 		delete (*it);
 	}
 
+	// Rejected hashes are always kept, so that RS wont ask again if the executable hash has changed.
+	//
+	_rejected_hashes = rejected_hash_candidates ;
+
 	if(reference_executable_hash == _current_executable_hash)
 	{
 		std::cerr << "(II) Executable hash matches. Updating the list of accepted/rejected plugins." << std::endl;
 
 		_accepted_hashes = accepted_hash_candidates ;
-		_rejected_hashes = rejected_hash_candidates ;
 	}
 	else
 		std::cerr << "(WW) Executable hashes do not match. Executable hash has changed. Discarding the list of accepted/rejected plugins." << std::endl;

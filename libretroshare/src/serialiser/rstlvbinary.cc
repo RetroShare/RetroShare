@@ -90,14 +90,11 @@ bool     RsTlvBinaryData::setBinData(const void *data, uint32_t size)
 
 void RsTlvBinaryData::TlvClear()
 {
-	if (bin_data)
-	{
-		free(bin_data);
-	}
+	free(bin_data);
 	TlvShallowClear();
 }
 
-void  	RsTlvBinaryData::TlvShallowClear()
+void RsTlvBinaryData::TlvShallowClear()
 {
 	bin_data = NULL;
 	bin_len = 0;
@@ -188,6 +185,34 @@ bool     RsTlvBinaryData::GetTlv(void *data, uint32_t size, uint32_t *offset)
 
 	return ok;
 }
+std::ostream &RsTlvBinaryDataRef::print(std::ostream &out, uint16_t indent) const
+{
+        uint16_t int_Indent = indent + 2;
+
+        uint32_t i;
+        std::ostringstream sout;
+        printIndent(sout, indent);
+        sout << "RsTlvBinaryData: Type: " << tlvtype << " Size: " << mSizeRef;
+        sout << std::hex;
+
+        for(i = 0; i < mSizeRef; i++)
+        {
+                if (i % 16 == 0)
+                {
+                        sout << std::endl;
+        		printIndent(sout, int_Indent);
+                }
+                sout << std::setw(2) << std::setfill('0')
+                        << (int) (((unsigned char *) mDataRef)[i]) << ":";
+        }
+
+        sout << std::endl;
+        out << sout.str();
+
+        printEnd(out, "RsTlvBinaryData", indent);
+        return out;
+
+}
 
 std::ostream &RsTlvBinaryData::print(std::ostream &out, uint16_t indent) const
 {
@@ -218,5 +243,89 @@ std::ostream &RsTlvBinaryData::print(std::ostream &out, uint16_t indent) const
 
 }
 
+bool     RsTlvBinaryDataRef::SetTlv(void *data, uint32_t size, uint32_t *offset) const
+{
+	/* must check sizes */
+	uint32_t tlvsize = TlvSize();
+	uint32_t tlvend  = *offset + tlvsize;
 
+	if (size < tlvend)
+		return false; /* not enough space */
 
+	bool ok = true;
+
+	/* start at data[offset] */
+	ok &= SetTlvBase(data, tlvend, offset, tlvtype, tlvsize);
+
+	/* add mandatory data */
+
+	// Warning: this is actually not an error if bin_len=0, as it does not
+	// corrupt the packet structure. We thus still return true in this case.
+	//
+	if (mDataRef != NULL && mSizeRef > 0)
+	{
+		memcpy(&(((uint8_t *) data)[*offset]), mDataRef, mSizeRef);
+		*offset += mSizeRef;
+	}
+	return ok;
+}
+bool     RsTlvBinaryDataRef::GetTlv(void *data, uint32_t size, uint32_t *offset)
+{
+	if (size < *offset + TLV_HEADER_SIZE)
+	{
+		return false; /* not enough space to get the header */
+	}
+
+	uint16_t tlvtype_in = GetTlvType( &(((uint8_t *) data)[*offset])  );
+	uint32_t tlvsize = GetTlvSize( &(((uint8_t *) data)[*offset])  );
+	uint32_t tlvend = *offset + tlvsize;
+
+	if (size < tlvend)    /* check size */
+		return false; /* not enough space */
+
+	if (tlvsize < TLV_HEADER_SIZE)
+		return false; /* bad tlv size */
+
+	if (tlvtype != tlvtype_in) /* check type */
+		return false;
+
+	/* skip the header */
+	(*offset) += TLV_HEADER_SIZE;
+
+	mDataRef = (uint8_t*)rs_malloc(tlvsize - TLV_HEADER_SIZE) ;
+
+	if(mDataRef == NULL)
+		return false ;
+
+	mSizeRef = tlvsize - TLV_HEADER_SIZE;
+
+	memcpy(mDataRef,&(((uint8_t *) data)[*offset]), tlvsize - TLV_HEADER_SIZE);
+	*offset += mSizeRef;
+
+	/***************************************************************************
+		 * NB: extra components could be added (for future expansion of the type).
+		 *            or be present (if this code is reading an extended version).
+		 *
+		 * We must chew up the extra characters to conform with TLV specifications
+		  ***************************************************************************/
+	if (*offset != tlvend)
+	{
+#ifdef TLV_DEBUG
+		std::cerr << "RsTlvBinaryData::GetTlv() Warning extra bytes at end of item";
+		std::cerr << std::endl;
+#endif
+		*offset = tlvend;
+	}
+
+	return true;
+}
+
+uint32_t RsTlvBinaryDataRef::TlvSize() const
+{
+	uint32_t s = TLV_HEADER_SIZE; /* header */
+
+	if (mDataRef != NULL)
+		s += mSizeRef; // len is the size of data
+
+	return s;
+}

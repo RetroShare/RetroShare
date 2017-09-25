@@ -1,6 +1,8 @@
 
 #include "SetFilter.h"
 
+#include "rsitems/rsitem.h"
+
 bool SetFilter::filter(const SetPacket &pkt)
 {
 	switch(mFilterMode)

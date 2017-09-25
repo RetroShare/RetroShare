@@ -42,7 +42,8 @@
 struct RsLog::logInfo p3netmgrzoneInfo = {RsLog::Default, "p3netmgr"};
 #define p3netmgrzone &p3netmgrzoneInfo
 
-#include "serialiser/rsconfigitems.h"
+#include "rsitems/rsconfigitems.h"
+
 #include "retroshare/rsiface.h"
 #include "retroshare/rsconfig.h"
 #include "retroshare/rsbanlist.h"
@@ -56,19 +57,19 @@ const uint32_t RS_NET_UPNP_SETUP =  	0x0003;
 const uint32_t RS_NET_EXT_SETUP =  	0x0004;
 const uint32_t RS_NET_DONE =    	0x0005;
 const uint32_t RS_NET_LOOPBACK =    	0x0006;
-const uint32_t RS_NET_DOWN =    	0x0007;
+//const uint32_t RS_NET_DOWN =    	0x0007;
 
 /* Stun modes (TODO) */
-const uint32_t RS_STUN_DHT =      	0x0001;
-const uint32_t RS_STUN_DONE =      	0x0002;
-const uint32_t RS_STUN_LIST_MIN =      	100;
-const uint32_t RS_STUN_FOUND_MIN =     	10;
+//const uint32_t RS_STUN_DHT =      	0x0001;
+//const uint32_t RS_STUN_DONE =      	0x0002;
+//const uint32_t RS_STUN_LIST_MIN =      	100;
+//const uint32_t RS_STUN_FOUND_MIN =     	10;
 
 const uint32_t MAX_UPNP_INIT = 		60; /* seconds UPnP timeout */
 const uint32_t MAX_UPNP_COMPLETE = 	600; /* 10 min... seems to take a while */
-const uint32_t MAX_NETWORK_INIT =	70; /* timeout before network reset */
+//const uint32_t MAX_NETWORK_INIT =	70; /* timeout before network reset */
 
-const uint32_t MIN_TIME_BETWEEN_NET_RESET = 		5;
+//const uint32_t MIN_TIME_BETWEEN_NET_RESET = 		5;
 
 /****
  * #define NETMGR_DEBUG 1

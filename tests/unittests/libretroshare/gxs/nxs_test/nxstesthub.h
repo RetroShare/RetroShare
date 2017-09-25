@@ -11,7 +11,8 @@
 // hence one could envision synchronising between an arbitrary number
 // of peers
 
-
+class NotifyWithPeerId;
+class NxsTestHubConnection ;
 
 namespace rs_nxs_test
 {
@@ -44,7 +45,7 @@ namespace rs_nxs_test
 		 * This constructs the test hub
 		 * for a give scenario in mind
 		 */
-		NxsTestHub(NxsTestScenario::pointer testScenario);
+		NxsTestHub(NxsTestScenario* testScenario);
 
 		/*!
 		 * This cleans up what ever testing resources are left
@@ -101,13 +102,14 @@ namespace rs_nxs_test
 
 	    typedef std::pair<RsPeerId, RsRawItem*> PayLoad;
 
-	    typedef std::map<RsPeerId, RsGxsNetService::pointer > PeerNxsMap ;
+	    typedef std::map<RsPeerId, RsGxsNetService* > PeerNxsMap ;
 
-		NxsTestScenario::pointer mTestScenario;
+		NxsTestScenario *mTestScenario;
 		RsMutex mMtx;
 		PeerNxsMap mPeerNxsMap;
 		std::queue<PayLoad> mPayLoad;
-
+		std::list<NotifyWithPeerId*> mNotifys;
+		std::list<NxsTestHubConnection *> mConnections;
 	};
 }
 #endif // NXSTESTHUB_H

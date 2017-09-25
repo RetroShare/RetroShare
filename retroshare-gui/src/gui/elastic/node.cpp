@@ -215,7 +215,7 @@ void Node::calculateForces(const double *map,int width,int height,int W,int H,fl
 	newPos.setY(qMin(qMax(newPos.y(), sceneRect.top()) , sceneRect.bottom()));
 }
 
-bool Node::advance()
+bool Node::progress()
 {
 	if(_type == GraphWidget::ELASTIC_NODE_TYPE_OWN)
 		return false;

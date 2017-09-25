@@ -29,6 +29,9 @@
 
 #include "ui_TransfersDialog.h"
 
+#include <QItemSelectionModel>
+#include <QSortFilterProxyModel>
+
 #define IMAGE_TRANSFERS      	":/icons/ktorrent_128.png"
 
 class QShortcut;
@@ -92,23 +95,25 @@ private slots:
     /** removes finished Downloads**/
     void clearcompleted();
 
-    void copyLink();
+    void dlCopyLink();
     void pasteLink();
     void renameFile();
     void setDestinationDirectory();
     void chooseDestinationDirectory();
 
-    void expandAll();
-    void collapseAll();
+    void expandAllDL();
+    void collapseAllDL();
+    void expandAllUL();
+    void collapseAllUL();
 
 //    void rootdecorated();
 //    void rootisnotdecorated();
 
     void pauseFileTransfer();
     void resumeFileTransfer();
-    void openFolderTransfer();
-    void openTransfer();
-    void previewTransfer();
+    void dlOpenFolder();
+    void dlOpenFile();
+    void dlPreviewFile();
 
     void ulOpenFolder();
     void ulCopyLink();
@@ -153,13 +158,16 @@ private slots:
     void setShowDLLastDLColumn(bool show);
     void setShowDLPath(bool show);
 
+    void filterChanged(const QString &text);
+
 signals:
     void playFiles(QStringList files);
 
 private:
-    QString getPeerName(const RsPeerId &peer_id) const ;
+    QString getPeerName(const RsPeerId &peer_id, QString &iconName, QString &tooltip) const ;
 
     QStandardItemModel *DLListModel;
+    QSortFilterProxyModel *DLLFilterModel;
     QStandardItemModel *ULListModel;
     QItemSelectionModel *selection;
     QItemSelectionModel *selectionUp;
@@ -201,8 +209,10 @@ private:
     QAction *detailsFileAct;
     QAction *renameFileAct;
     QAction *specifyDestinationDirectoryAct;
-    QAction *expandAllAct;
-    QAction *collapseAllAct;
+    QAction *expandAllDLAct;
+    QAction *collapseAllDLAct;
+    QAction *expandAllULAct;
+    QAction *collapseAllULAct;
     QAction *collCreateAct;
     QAction *collModifAct;
     QAction *collViewAct;
@@ -229,7 +239,7 @@ private:
     bool m_bProcessSettings;
     void processSettings(bool bLoad);
 
-    void getSelectedItems(std::set<RsFileHash> *ids, std::set<int> *rows);
+    void getDLSelectedItems(std::set<RsFileHash> *ids, std::set<int> *rows);
     void getULSelectedItems(std::set<RsFileHash> *ids, std::set<int> *rows);
     bool controlTransferFile(uint32_t flags);
     void changePriority(int priority);
@@ -249,12 +259,11 @@ private:
     Ui::TransfersDialog ui;
 
 public slots:
-	// these two functions add entries to the transfers dialog, and return the row id of the entry modified/added
-	//
-    int addItem(int row, const FileInfo &fileInfo);
-    int addPeerToItem(QStandardItem *dlItem, const QString& name, const QString& coreID, double dlspeed, uint32_t status, const FileProgressInfo& peerInfo);
-
-    int addUploadItem(const QString& symbol, const QString& name, const QString& coreID, qlonglong size, const FileProgressInfo& pinfo, double dlspeed, const QString& sources,const QString& source_id, const QString& status, qlonglong completed, qlonglong remaining);
+    // these four functions add entries to the transfers dialog, and return the row id of the entry modified/added
+    int addDLItem(int row, const FileInfo &fileInfo);
+    int addPeerToDLItem(QStandardItem* dlItem, const RsPeerId &peer_ID, const QString &coreID, double dlspeed, uint32_t status, const FileProgressInfo &peerInfo);
+    int addULItem(int row, const FileInfo &fileInfo);
+    int addPeerToULItem(QStandardItem* ulItem, const RsPeerId &peer_ID, const QString &coreID, qlonglong completed, double ulspeed, const FileProgressInfo &peerInfo);
 
     void showFileDetails() ;
 
@@ -263,6 +272,7 @@ public slots:
     QString getFileName(int row, QStandardItemModel *model);
     QString getStatus(int row, QStandardItemModel *model);
     QString getID(int row, QStandardItemModel *model);
+    QString getID(int row, QSortFilterProxyModel *filter);
     QString getPriority(int row, QStandardItemModel *model);
     qlonglong getFileSize(int row, QStandardItemModel *model);
     qlonglong getTransfered(int row, QStandardItemModel *model);

@@ -180,7 +180,7 @@ ToasterItem* VOIPToasterNotify::testToasterItem(QString tag)
 	if (tag == "Invitation") toaster = new ToasterItem(new VOIPToasterItem(ownId, tr("Test VOIP Invitation"), VOIPToasterItem::Invitation));
 #endif
 	if (tag == "AudioCall") toaster = new ToasterItem(new VOIPToasterItem(ownId, tr("Test VOIP Audio Call"), VOIPToasterItem::AudioCall));
-	if (tag == "VideoCall") toaster = new ToasterItem(new VOIPToasterItem(ownId, tr("Test VOIP Video Call"), VOIPToasterItem::VideoCall));
+	if (tag == "VideoCall" || toaster == NULL) toaster = new ToasterItem(new VOIPToasterItem(ownId, tr("Test VOIP Video Call"), VOIPToasterItem::VideoCall));
 
 	return toaster;
 }

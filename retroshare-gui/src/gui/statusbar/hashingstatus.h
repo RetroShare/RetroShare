@@ -35,6 +35,7 @@ public:
     ~HashingStatus();
 
     void setCompactMode(bool compact) {_compactMode = compact; }
+	void mousePressEvent(QMouseEvent *);
 
 public slots:
     void updateHashingInfo(const QString&) ;
@@ -42,6 +43,7 @@ public slots:
 private:
     ElidedLabel *statusHashing;
     QLabel *hashloader;
+	QString mLastText ;
     QMovie *movie;
     bool _compactMode;
 };

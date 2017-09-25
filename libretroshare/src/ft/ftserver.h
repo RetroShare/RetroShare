@@ -68,7 +68,7 @@ class p3PeerMgr;
 class p3ServiceControl;
 class p3FileDatabase;
 
-class ftServer: public p3Service, public RsFiles, public ftDataSend, public RsTurtleClientService
+class ftServer: public p3Service, public RsFiles, public ftDataSend, public RsTurtleClientService, public RsServiceSerializer
 {
 
 public:
@@ -97,7 +97,8 @@ public:
     //
     virtual bool handleTunnelRequest(const RsFileHash& hash,const RsPeerId& peer_id) ;
     virtual void receiveTurtleData(RsTurtleGenericTunnelItem *item,const RsFileHash& hash,const RsPeerId& virtual_peer_id,RsTurtleGenericTunnelItem::Direction direction) ;
-    virtual RsTurtleGenericTunnelItem *deserialiseItem(void *data,uint32_t size) const ;
+    virtual RsItem *create_item(uint16_t service,uint8_t item_type) const ;
+	virtual RsServiceSerializer *serializer() { return this ; }
 
     void addVirtualPeer(const TurtleFileHash&, const TurtleVirtualPeerId&,RsTurtleGenericTunnelItem::Direction dir) ;
     void removeVirtualPeer(const TurtleFileHash&, const TurtleVirtualPeerId&) ;
@@ -137,6 +138,10 @@ public:
     virtual void setFreeDiskSpaceLimit(uint32_t size_in_mb) ;
     virtual void setDefaultEncryptionPolicy(uint32_t policy) ;	// RS_FILE_CTRL_ENCRYPTION_POLICY_STRICT/PERMISSIVE
     virtual uint32_t defaultEncryptionPolicy() ;
+	virtual void setMaxUploadSlotsPerFriend(uint32_t n) ;
+	virtual uint32_t getMaxUploadSlotsPerFriend() ;
+	virtual void setFilePermDirectDL(uint32_t perm) ;
+	virtual uint32_t filePermDirectDL() ;
 
     /***
          * Control of Downloads Priority.
@@ -208,6 +213,9 @@ public:
     virtual bool   updateShareFlags(const SharedDirInfo& dir); 	// updates the flags. The directory should already exist !
     virtual bool 	removeSharedDirectory(std::string dir);
 
+	virtual bool getIgnoreLists(std::list<std::string>& ignored_prefixes, std::list<std::string>& ignored_suffixes, uint32_t& ignore_flags) ;
+	virtual void setIgnoreLists(const std::list<std::string>& ignored_prefixes, const std::list<std::string>& ignored_suffixes,uint32_t ignore_flags) ;
+
     virtual bool	getShareDownloadDirectory();
     virtual bool 	shareDownloadDirectory(bool share);
 
@@ -217,6 +225,8 @@ public:
     virtual bool watchEnabled() ;
 	virtual bool followSymLinks() const;
 	virtual void setFollowSymLinks(bool b);
+	virtual void togglePauseHashingProcess();
+	virtual bool hashingProcessPaused();
 
     /***************************************************************/
     /*************** Data Transfer Interface ***********************/
@@ -265,6 +275,7 @@ protected:
     bool findEncryptedHash(const RsPeerId& virtual_peer_id, RsFileHash& encrypted_hash);
     bool encryptHash(const RsFileHash& hash, RsFileHash& hash_of_hash);
 
+	bool checkUploadLimit(const RsPeerId& pid,const RsFileHash& hash);
 private:
 
     /**** INTERNAL FUNCTIONS ***/
@@ -292,6 +303,7 @@ private:
 
     std::map<RsFileHash,RsFileHash> mEncryptedHashes ; // This map is such that sha1(it->second) = it->first
     std::map<RsPeerId,RsFileHash> mEncryptedPeerIds ;  // This map holds the hash to be used with each peer id
+    std::map<RsPeerId,std::map<RsFileHash,time_t> > mUploadLimitMap ;
 };
 
 

@@ -25,6 +25,8 @@ element * cons(element *new, element *list) {
 element *reverse(element *list) {
     element *new = NULL;
     element *next = NULL;
+#warning Phenom (2017-07-21): I don't know if it is a real memLeak for new. If not remove this warning and add a comment how it is deleted.
+    /* cppcheck-suppress memleak */
     while (list != NULL) {
         next = list->next;
         new = cons(list, new);

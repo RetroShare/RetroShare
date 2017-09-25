@@ -27,8 +27,8 @@
 
 #include "services/p3idservice.h"
 #include "pgp/pgpauxutils.h"
-#include "serialiser/rsgxsiditems.h"
-#include "serialiser/rsconfigitems.h"
+#include "rsitems/rsgxsiditems.h"
+#include "rsitems/rsconfigitems.h"
 #include "retroshare/rsgxsflags.h"
 #include "util/rsrandom.h"
 #include "util/rsstring.h"
@@ -70,6 +70,8 @@ static const time_t MAX_KEEP_KEYS_SIGNED_KNOWN =    30 * 86400 ; // signed ident
 
 static const uint32_t MAX_DELAY_BEFORE_CLEANING=    1800 ; // clean old keys every 30 mins
 
+static const uint32_t MAX_SERIALISED_IDENTITY_AGE  = 600 ; // after 10 mins, a serialised identity record must be renewed.
+
 RsIdentity *rsIdentity = NULL;
 
 /******
@@ -97,13 +99,12 @@ RsIdentity *rsIdentity = NULL;
 #define BG_REPUTATION 	3
 
 
-#define GXSIDREQ_CACHELOAD	0x0001
-#define GXSIDREQ_CACHEOWNIDS	0x0002
-
-#define GXSIDREQ_PGPHASH 	0x0010
-#define GXSIDREQ_RECOGN 	0x0020
-
-#define GXSIDREQ_OPINION 	0x0030
+#define GXSIDREQ_CACHELOAD	         0x0001
+#define GXSIDREQ_CACHEOWNIDS	     0x0002
+#define GXSIDREQ_PGPHASH 	         0x0010
+#define GXSIDREQ_RECOGN 	         0x0020
+#define GXSIDREQ_OPINION 	         0x0030
+#define GXSIDREQ_SERIALIZE_TO_MEMORY 0x0040
 
 #define GXSIDREQ_CACHETEST 	0x1000
 
@@ -407,11 +408,15 @@ public:
         bool is_signed_id = (bool)(entry.details.mFlags & RS_IDENTITY_FLAGS_PGP_LINKED) ;
         bool is_a_contact = (bool)(entry.details.mFlags & RS_IDENTITY_FLAGS_IS_A_CONTACT) ;
 
+#ifdef DEBUG_IDS
         std::cerr << "Identity: " << gxs_id << ": banned: " << is_id_banned << ", own: " << is_own_id << ", contact: " << is_a_contact << ", signed: " << is_signed_id << ", known: " << is_known_id;
+#endif
 
         if(is_own_id || is_a_contact)
         {
+#ifdef DEBUG_IDS
             std::cerr << " => kept" << std::endl;
+#endif
             return true ;
         }
 
@@ -420,7 +425,7 @@ public:
         bool no_ts = (it == mLastUsageTS.end()) ;
 
         time_t last_usage_ts = no_ts?0:(it->second.TS);
-        time_t max_keep_time ;
+        time_t max_keep_time = 0;
         bool should_check = true ;
 
         if(no_ts)
@@ -439,15 +444,21 @@ public:
         else
             max_keep_time = MAX_KEEP_KEYS_DEFAULT ;
 
+#ifdef DEBUG_IDS
         std::cerr << ". Max keep = " << max_keep_time/86400 << " days. Unused for " << (now - last_usage_ts + 86399)/86400 << " days " ;
+#endif
 
         if(should_check && now > last_usage_ts + max_keep_time)
         {
+#ifdef DEBUG_IDS
             std::cerr << " => delete " << std::endl;
+#endif
             ids_to_delete.push_back(gxs_id) ;
         }
+#ifdef DEBUG_IDS
         else
             std::cerr << " => keep " << std::endl;
+#endif
 
         return true;
     }
@@ -484,7 +495,9 @@ void p3IdService::cleanUnusedKeys()
 
     for(std::list<RsGxsId>::const_iterator it(ids_to_delete.begin());it!=ids_to_delete.end();++it)
     {
+#ifdef DEBUG_IDS
         std::cerr << "Deleting identity " << *it << " which is too old." << std::endl;
+#endif
         uint32_t token ;
         RsGxsIdGroup group;
         group.mMeta.mGroupId=RsGxsGroupId(*it);
@@ -518,7 +531,9 @@ bool p3IdService::acceptNewGroup(const RsGxsGrpMetaData *grpMeta)
 {
     bool res = !rsReputations->isIdentityBanned(RsGxsId(grpMeta->mGroupId)) ;
 
+#ifdef DEBUG_IDS
     std::cerr << "p3IdService::acceptNewGroup: ID=" << grpMeta->mGroupId << ": " << (res?"ACCEPTED":"DENIED") << std::endl;
+#endif
 
     return res ;
 }
@@ -683,6 +698,89 @@ bool p3IdService::getOwnIds(std::list<RsGxsId> &ownIds)
     return true ;
 }
 
+bool p3IdService::serialiseIdentityToMemory( const RsGxsId& id,
+                                             std::string& radix_string )
+{
+	RS_STACK_MUTEX(mIdMtx);
+
+    // look into cache. If available, return the data. If not, request it.
+
+    std::map<RsGxsId,SerialisedIdentityStruct>::const_iterator it = mSerialisedIdentities.find(id);
+
+    if(it != mSerialisedIdentities.end())
+    {
+        Radix64::encode(it->second.mMem,it->second.mSize,radix_string) ;
+
+        if(it->second.mLastUsageTS + MAX_SERIALISED_IDENTITY_AGE > time(NULL))
+			return true ;
+
+        std::cerr << "Identity " << id << " will be re-serialised, because the last record is too old." << std::endl;
+    }
+
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
+	uint32_t token = 0;
+    std::list<RsGxsGroupId> groupIds;
+
+    groupIds.push_back(RsGxsGroupId(id)) ;
+
+	RsGenExchange::getTokenService()->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, groupIds);
+	GxsTokenQueue::queueRequest(token, GXSIDREQ_SERIALIZE_TO_MEMORY);
+
+	return false;
+}
+
+void p3IdService::handle_get_serialized_grp(uint32_t token)
+{
+    // store the serialized data in cache.
+
+    unsigned char *mem = NULL;
+    uint32_t size;
+    RsGxsGroupId id ;
+
+	if(!RsGenExchange::getSerializedGroupData(token,id, mem,size))
+    {
+        std::cerr << "(EE) call to RsGenExchage::getSerializedGroupData() failed." << std::endl;
+        return ;
+    }
+
+    std::cerr << "Received serialised group from RsGenExchange." << std::endl;
+
+    std::map<RsGxsId,SerialisedIdentityStruct>::const_iterator it = mSerialisedIdentities.find(RsGxsId(id));
+
+    if(it != mSerialisedIdentities.end())
+        free(it->second.mMem) ;
+
+    SerialisedIdentityStruct s ;
+    s.mMem = mem ;
+    s.mSize = size ;
+    s.mLastUsageTS = time(NULL) ;
+
+    mSerialisedIdentities[RsGxsId(id)] = s ;
+}
+
+bool p3IdService::deserialiseIdentityFromMemory(const std::string& radix_string,
+                                                RsGxsId* id /* = nullptr */)
+{
+	std::vector<uint8_t> mem = Radix64::decode(radix_string);
+
+	if(mem.empty())
+	{
+		std::cerr << __PRETTY_FUNCTION__ << "Cannot decode radix string \""
+		          << radix_string << "\"" << std::endl;
+		return false;
+	}
+
+	if( !RsGenExchange::deserializeGroupData(
+	            mem.data(), mem.size(), reinterpret_cast<RsGxsGroupId*>(id)) )
+	{
+		std::cerr << __PRETTY_FUNCTION__ << "Cannot load identity from radix "
+		          << "string \"" << radix_string << "\"" << std::endl;
+		return false;
+	}
+
+	return true;
+}
 
 bool p3IdService::createIdentity(uint32_t& token, RsIdentityParameters &params)
 {
@@ -695,7 +793,7 @@ bool p3IdService::createIdentity(uint32_t& token, RsIdentityParameters &params)
 
     if (params.isPgpLinked)
     {
-#warning Backward compatibility issue to fix here in v0.7.0
+#warning csoler 2017-02-07: Backward compatibility issue to fix here in v0.7.0
 
         // This is a hack, because a bad decision led to having RSGXSID_GROUPFLAG_REALID be equal to GXS_SERV::FLAG_PRIVACY_PRIVATE.
         // In order to keep backward compatibility, we'll also add the new value
@@ -866,7 +964,9 @@ bool p3IdService::requestKey(const RsGxsId &id, const std::list<RsPeerId>& peers
         // Normally we should call getIdDetails(), but since the key is not known, we need to digg a possibly old information
         // from the reputation system, which keeps its own list of banned keys. Of course, the owner ID is not known at this point.
 
+#ifdef DEBUG_IDS
         std::cerr << "p3IdService::requesting key " << id <<std::endl;
+#endif
 
         RsReputations::ReputationInfo info ;
         rsReputations->getReputationInfo(id,RsPgpId(),info) ;
@@ -1035,13 +1135,20 @@ bool p3IdService::validateData(const uint8_t *data,uint32_t data_size,const RsTl
     timeStampKey(signature.keyId,info);
     return true ;
 }
-bool p3IdService::encryptData(const uint8_t *decrypted_data,uint32_t decrypted_data_size,uint8_t *& encrypted_data,uint32_t& encrypted_data_size,const RsGxsId& encryption_key_id,bool force_load,uint32_t& error_status)
+
+bool p3IdService::encryptData( const uint8_t *decrypted_data,
+                               uint32_t decrypted_data_size,
+                               uint8_t *& encrypted_data,
+                               uint32_t& encrypted_data_size,
+                               const RsGxsId& encryption_key_id,
+                               uint32_t& error_status,
+                               bool force_load )
 {
     RsTlvPublicRSAKey encryption_key ;
 
     // get the key, and let the cache find it.
-    for(int i=0;i<(force_load?6:1);++i)
-        if(getKey(encryption_key_id,encryption_key))
+	for(int i=0; i<(force_load?6:1);++i)
+		if(getKey(encryption_key_id,encryption_key))
             break ;
         else
             usleep(500*1000) ; // sleep half a sec.
@@ -1065,18 +1172,114 @@ bool p3IdService::encryptData(const uint8_t *decrypted_data,uint32_t decrypted_d
     return true ;
 }
 
-bool p3IdService::decryptData(const uint8_t *encrypted_data,uint32_t encrypted_data_size,uint8_t *& decrypted_data,uint32_t& decrypted_size,const RsGxsId& key_id,uint32_t& error_status)
+bool p3IdService::encryptData( const uint8_t* decrypted_data,
+                               uint32_t decrypted_data_size,
+                               uint8_t*& encrypted_data,
+                               uint32_t& encrypted_data_size,
+                               const std::set<RsGxsId>& encrypt_ids,
+                               uint32_t& error_status, bool force_load )
+{
+	std::set<const RsGxsId*> keyNotYetFoundIds;
+
+	for( std::set<RsGxsId>::const_iterator it = encrypt_ids.begin();
+	     it != encrypt_ids.end(); ++it )
+	{
+		const RsGxsId& gId(*it);
+		if(gId.isNull())
+		{
+			std::cerr << "p3IdService::encryptData(...) (EE) got null GXS id"
+			          << std::endl;
+			return false;
+		}
+		else keyNotYetFoundIds.insert(&gId);
+	}
+
+	if(keyNotYetFoundIds.empty())
+	{
+		std::cerr << "p3IdService::encryptData(...) (EE) got empty GXS ids set"
+		          << std::endl;
+		print_stacktrace();
+		return false;
+	}
+
+	std::vector<RsTlvPublicRSAKey> encryption_keys;
+	int maxRounds = force_load ? 6 : 1;
+	for( int i=0; i < maxRounds; ++i )
+	{
+		for( std::set<const RsGxsId*>::iterator it = keyNotYetFoundIds.begin();
+		     it !=keyNotYetFoundIds.end(); )
+		{
+			RsTlvPublicRSAKey encryption_key;
+			if(getKey(**it, encryption_key) && !encryption_key.keyId.isNull())
+			{
+				encryption_keys.push_back(encryption_key);
+				it = keyNotYetFoundIds.erase(it);
+			}
+			else
+			{
+				++it;
+			}
+		}
+
+		if(keyNotYetFoundIds.empty()) break;
+		else usleep(500*1000);
+	}
+
+	if(!keyNotYetFoundIds.empty())
+	{
+		std::cerr << "p3IdService::encryptData(...) (EE) Cannot get "
+		          << "encryption key for: ";
+		for( std::set<const RsGxsId*>::iterator it = keyNotYetFoundIds.begin();
+		     it !=keyNotYetFoundIds.end(); ++it )
+			std::cerr << **it << " ";
+		std::cerr << std::endl;
+		print_stacktrace();
+
+		error_status = RS_GIXS_ERROR_KEY_NOT_AVAILABLE;
+		return false;
+	}
+
+	if(!GxsSecurity::encrypt( encrypted_data, encrypted_data_size,
+	                          decrypted_data, decrypted_data_size,
+	                          encryption_keys ))
+	{
+		std::cerr << "p3IdService::encryptData(...) (EE) Encryption failed."
+		          << std::endl;
+		print_stacktrace();
+
+		error_status = RS_GIXS_ERROR_UNKNOWN;
+		return false ;
+	}
+
+	for( std::set<RsGxsId>::const_iterator it = encrypt_ids.begin();
+	     it != encrypt_ids.end(); ++it )
+	{
+		timeStampKey( *it,
+		              RsIdentityUsage(
+		                  serviceType(),
+		                  RsIdentityUsage::IDENTITY_GENERIC_ENCRYPTION ) );
+	}
+
+	error_status = RS_GIXS_ERROR_NO_ERROR;
+	return true;
+}
+
+bool p3IdService::decryptData( const uint8_t *encrypted_data,
+                               uint32_t encrypted_data_size,
+                               uint8_t *& decrypted_data,
+                               uint32_t& decrypted_size,
+                               const RsGxsId& key_id, uint32_t& error_status,
+                               bool force_load )
 {
     RsTlvPrivateRSAKey encryption_key ;
 
     // Get the key, and let the cache find it. It's our own key, so we should be able to find it, even if it takes
     // some seconds.
 
-    for(int i=0;i<4;++i)
-        if(getPrivateKey(key_id,encryption_key))
-            break ;
-        else
-            usleep(500*1000) ; // sleep half a sec.
+	int maxRounds = force_load ? 6 : 1;
+	for(int i=0; i<maxRounds ;++i)
+		if(getPrivateKey(key_id,encryption_key)) break;
+		else usleep(500*1000) ; // sleep half a sec.
 
     if(encryption_key.keyId.isNull())
     {
@@ -1090,13 +1293,110 @@ bool p3IdService::decryptData(const uint8_t *encrypted_data,uint32_t encrypted_d
         std::cerr << "  (EE) Decryption failed." << std::endl;
         error_status = RS_GIXS_ERROR_UNKNOWN ;
         return false ;
-    }
-    error_status = RS_GIXS_ERROR_NO_ERROR ;
-    timeStampKey(key_id,RsIdentityUsage(serviceType(),RsIdentityUsage::IDENTITY_GENERIC_DECRYPTION)) ;
+	}
+	error_status = RS_GIXS_ERROR_NO_ERROR;
+	timeStampKey( key_id,
+	              RsIdentityUsage(
+	                  serviceType(),
+	                  RsIdentityUsage::IDENTITY_GENERIC_DECRYPTION) );
 
     return true ;
 }
 
+bool p3IdService::decryptData( const uint8_t* encrypted_data,
+                               uint32_t encrypted_data_size,
+                               uint8_t*& decrypted_data,
+                               uint32_t& decrypted_data_size,
+                               const std::set<RsGxsId>& decrypt_ids,
+                               uint32_t& error_status,
+                               bool force_load )
+{
+	std::set<const RsGxsId*> keyNotYetFoundIds;
+
+	for( std::set<RsGxsId>::const_iterator it = decrypt_ids.begin();
+	     it != decrypt_ids.end(); ++it )
+	{
+		const RsGxsId& gId(*it);
+		if(gId.isNull())
+		{
+			std::cerr << "p3IdService::decryptData(...) (EE) got null GXS id"
+			          << std::endl;
+			print_stacktrace();
+			return false;
+		}
+		else keyNotYetFoundIds.insert(&gId);
+	}
+
+	if(keyNotYetFoundIds.empty())
+	{
+		std::cerr << "p3IdService::decryptData(...) (EE) got empty GXS ids set"
+		          << std::endl;
+		print_stacktrace();
+		return false;
+	}
+
+	std::vector<RsTlvPrivateRSAKey> decryption_keys;
+	int maxRounds = force_load ? 6 : 1;
+	for( int i=0; i < maxRounds; ++i )
+	{
+		for( std::set<const RsGxsId*>::iterator it = keyNotYetFoundIds.begin();
+		     it !=keyNotYetFoundIds.end(); )
+		{
+			RsTlvPrivateRSAKey decryption_key;
+			if( getPrivateKey(**it, decryption_key)
+			        && !decryption_key.keyId.isNull() )
+			{
+				decryption_keys.push_back(decryption_key);
+				it = keyNotYetFoundIds.erase(it);
+			}
+			else
+			{
+				++it;
+			}
+		}
+
+		if(keyNotYetFoundIds.empty()) break;
+		else usleep(500*1000);
+	}
+
+	if(!keyNotYetFoundIds.empty())
+	{
+		std::cerr << "p3IdService::decryptData(...) (EE) Cannot get private key"
+		          << " for: ";
+		for( std::set<const RsGxsId*>::iterator it = keyNotYetFoundIds.begin();
+		     it !=keyNotYetFoundIds.end(); ++it )
+			std::cerr << **it << " ";
+		std::cerr << std::endl;
+		print_stacktrace();
+
+		error_status = RS_GIXS_ERROR_KEY_NOT_AVAILABLE;
+		return false;
+	}
+
+	if(!GxsSecurity::decrypt( decrypted_data, decrypted_data_size,
+	                          encrypted_data, encrypted_data_size,
+	                          decryption_keys ))
+	{
+		std::cerr << "p3IdService::decryptData(...) (EE) Decryption failed."
+		          << std::endl;
+		print_stacktrace();
+
+		error_status = RS_GIXS_ERROR_UNKNOWN;
+		return false ;
+	}
+
+	for( std::set<RsGxsId>::const_iterator it = decrypt_ids.begin();
+	     it != decrypt_ids.end(); ++it )
+	{
+		timeStampKey( *it,
+		              RsIdentityUsage(
+		                  serviceType(),
+		                  RsIdentityUsage::IDENTITY_GENERIC_DECRYPTION ) );
+	}
+
+	error_status = RS_GIXS_ERROR_NO_ERROR;
+	return true;
+}
 
 #ifdef TO_BE_REMOVED
 /********************************************************************************/
@@ -1379,6 +1679,28 @@ bool p3IdService::getGroupData(const uint32_t &token, std::vector<RsGxsIdGroup> 
     return ok;
 }
 
+bool p3IdService::getGroupSerializedData(const uint32_t &token, std::map<RsGxsId,std::string>& serialized_groups)
+{
+    unsigned char *mem = NULL;
+    uint32_t size;
+    RsGxsGroupId id ;
+
+    serialized_groups.clear() ;
+
+	if(!RsGenExchange::getSerializedGroupData(token,id, mem,size))
+    {
+        std::cerr << "(EE) call to RsGenExchage::getSerializedGroupData() failed." << std::endl;
+        return false;
+    }
+
+    std::string radix ;
+
+    Radix64::encode(mem,size,radix) ;
+
+    serialized_groups[RsGxsId(id)] = radix ;
+
+    return true;
+}
 
 /********************************************************************************/
 /********************************************************************************/
@@ -4083,29 +4405,31 @@ void p3IdService::handleResponse(uint32_t token, uint32_t req_type)
 	// stuff.
 	switch(req_type)
 	{
-		case GXSIDREQ_CACHEOWNIDS:
-			cache_load_ownids(token);
-			break;
-		case GXSIDREQ_CACHELOAD:
-			cache_load_for_token(token);
-			break;
-		case GXSIDREQ_PGPHASH:
-			pgphash_handlerequest(token);
-			break;
-		case GXSIDREQ_RECOGN:
-			recogn_handlerequest(token);
-			break;
-		case GXSIDREQ_CACHETEST:
-			cachetest_handlerequest(token);
-			break;
-		case GXSIDREQ_OPINION:
-			opinion_handlerequest(token);
-			break;
-		default:
-			/* error */
-			std::cerr << "p3IdService::handleResponse() Unknown Request Type: " << req_type;
-			std::cerr << std::endl;
-			break;
+	case GXSIDREQ_CACHEOWNIDS:
+		cache_load_ownids(token);
+		break;
+	case GXSIDREQ_CACHELOAD:
+		cache_load_for_token(token);
+		break;
+	case GXSIDREQ_PGPHASH:
+		pgphash_handlerequest(token);
+		break;
+	case GXSIDREQ_RECOGN:
+		recogn_handlerequest(token);
+		break;
+	case GXSIDREQ_CACHETEST:
+		cachetest_handlerequest(token);
+		break;
+	case GXSIDREQ_OPINION:
+		opinion_handlerequest(token);
+		break;
+	case GXSIDREQ_SERIALIZE_TO_MEMORY:
+		handle_get_serialized_grp(token);
+		break;
+	default:
+		std::cerr << "p3IdService::handleResponse() Unknown Request Type: "
+		          << req_type << std::endl;
+		break;
 	}
 }
 

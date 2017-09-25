@@ -41,9 +41,19 @@ class GxsChannelPostItem : public GxsFeedItem
 	Q_OBJECT
 
 public:
-	GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome, bool autoUpdate);
-	GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsChannelGroup &group, const RsGxsChannelPost &post, bool isHome, bool autoUpdate);
-	GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsChannelPost &post, bool isHome, bool autoUpdate);
+	// This one is used in NewFeed for incoming channel posts. Only the group and msg ids are known at this point.
+	// It can be used for all apparences of channel posts. But in rder to merge comments from the previous versions of the post, the list of
+	// previous posts should be supplied. It's optional. If not supplied only the comments of the new version will be displayed.
+
+	GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome, bool autoUpdate, const std::set<RsGxsMessageId>& older_versions = std::set<RsGxsMessageId>());
+
+	// This method can be called when additional information is known about the post. In this case, the widget will be initialized with some
+	// minimap information from the post and completed when the use displays it, which shouldn't cost anything more.
+
+	GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsChannelPost& post, bool isHome, bool autoUpdate, const std::set<RsGxsMessageId>& older_versions = std::set<RsGxsMessageId>());
+
+	//GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsChannelGroup &group, const RsGxsChannelPost &post, bool isHome, bool autoUpdate);
+	//GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsChannelPost &post, bool isHome, bool autoUpdate);
 	virtual ~GxsChannelPostItem();
 
 	bool setGroup(const RsGxsChannelGroup &group, bool doFill = true);
@@ -58,9 +68,16 @@ public:
     bool isUnread() const ;
 
 protected:
+	void init(const RsGxsMessageId& messageId,const std::set<RsGxsMessageId>& older_versions);
+
 	/* FeedItem */
 	virtual void doExpand(bool open);
 	virtual void expandFill(bool first);
+
+	// This does nothing except triggering the loading of the post data and comments. This function is mainly used to detect
+	// when the post is actually made visible.
+
+	virtual void paintEvent(QPaintEvent *);
 
 	/* GxsGroupFeedItem */
 	virtual QString groupName();
@@ -78,6 +95,7 @@ private slots:
 	void readAndClearItem();
 	void download();
 	void play();
+	void edit();
 	void loadComments();
 
 	void readToggled(bool checked);
@@ -100,6 +118,7 @@ private:
 private:
 	bool mInFill;
 	bool mCloseOnRead;
+	bool mLoaded;
 
 	RsGxsChannelGroup mGroup;
 	RsGxsChannelPost mPost;

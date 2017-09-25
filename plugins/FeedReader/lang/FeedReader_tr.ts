@@ -269,7 +269,7 @@
     <message>
         <location filename="../gui/FeedReaderConfig.h" line="+50"/>
         <source>FeedReader</source>
-        <translation>AkışOkuyucu</translation>
+        <translation>FeedReader</translation>
     </message>
 </context>
 <context>
@@ -600,7 +600,7 @@
     <message>
         <location line="+5"/>
         <source>FeedReader</source>
-        <translation>AkışOkuyucu</translation>
+        <translation>FeedReader</translation>
     </message>
 </context>
 <context>
@@ -777,7 +777,7 @@
     <message>
         <location filename="../gui/FeedReaderUserNotify.cpp" line="+40"/>
         <source>FeedReader Message</source>
-        <translation>AkışOkuyucu İletisi</translation>
+        <translation>FeedReader İletisi</translation>
     </message>
 </context>
 <context>

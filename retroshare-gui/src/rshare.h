@@ -107,12 +107,14 @@ public:
   /** Initialize plugins. */
   static void initPlugins();
 
-  /** Returns the current language. */
-  static QString language() { return _language; }
   /** Returns the current GUI style. */
   static QString style() { return _style; }
   /** Returns the current GUI stylesheet. */
   static QString stylesheet() { return _stylesheet; }
+  /** Returns the current language. */
+  static QString language() { return _language; }
+	/** Returns the operating mode. */
+  static QString opmode() { return _opmode; }
   /** Returns links passed by arguments. */
   static QStringList* links() { return &_links; }
   /** Returns files passed by arguments. */
@@ -181,11 +183,12 @@ private:
   static bool argNeedsValue(QString argName);
 
   static QMap<QString, QString> _args; /**< List of command-line arguments.  */
+  static Log _log;                     /**< Logs debugging messages to file or stdout. */
   static QString _style;               /**< The current GUI style.           */
   static QString _stylesheet;          /**< The current GUI stylesheet.      */
   static QString _language;            /**< The current language.            */
   static QString _dateformat;          /**< The format for dates in feed items etc. */
-  static Log _log;                     /**< Logs debugging messages to file or stdout. */
+	static QString _opmode;              /**< The operating mode passed by args. */
   static QStringList _links;           /**< List of links passed by arguments. */
   static QStringList _files;           /**< List of files passed by arguments. */
   static QDateTime mStartupTime;       // startup time

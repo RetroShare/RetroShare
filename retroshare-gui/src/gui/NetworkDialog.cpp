@@ -227,7 +227,7 @@ void NetworkDialog::removeUnusedKeys()
 			std::cerr << "Skipping public/secret key pair " << *it << std::endl;
 			continue ;
 		}
-		if(now > (time_t) (THREE_MONTHS + details.lastUsed))
+		if(now > (time_t) (THREE_MONTHS + details.lastUsed) && !details.accept_connection)
 		{
 			std::cerr << "Adding " << *it << " to pre-selection." << std::endl;
             pre_selected.insert(*it) ;
@@ -323,8 +323,8 @@ void NetworkDialog::copyLink()
     RsPgpId peer_id ( wi->text(COLUMN_PEERID).toStdString() ) ;
 
 	QList<RetroShareLink> urls;
-	RetroShareLink link;
-	if (link.createPerson(peer_id)) {
+	RetroShareLink link = RetroShareLink::createPerson(peer_id);
+	if (link.valid()) {
 		urls.push_back(link);
 	}
 

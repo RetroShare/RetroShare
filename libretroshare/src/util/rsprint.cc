@@ -54,9 +54,12 @@ std::string RsUtil::BinToHex(const std::string &bin)
 	return BinToHex(bin.c_str(), bin.length());
 }
 
-std::string RsUtil::BinToHex(const unsigned char *arr, const uint32_t len)
+std::string RsUtil::BinToHex(const unsigned char *arr, const uint32_t len,uint32_t max_len)
 {
-    return BinToHex((char*)arr,len) ;
+	if(max_len > 0)
+		return BinToHex((char*)arr,std::min(max_len,len)) + ((len > max_len)?"...":"") ;
+	else
+		return BinToHex((char*)arr,len) ;
 }
 std::string RsUtil::BinToHex(const char *arr, const uint32_t len)
 {
@@ -126,3 +129,24 @@ std::string RsUtil::HashId(const std::string &id, bool reverse)
 //	out << std::setprecision(15) << getCurrentTS();
 //	return out.str();
 //}
+
+std::vector<uint8_t> RsUtil::BinToSha256(const std::vector<uint8_t> &in)
+{
+	std::vector<uint8_t> out;
+
+	SHA256_CTX *sha_ctx = new SHA256_CTX;
+	uint8_t     sha_hash[SHA256_DIGEST_LENGTH] = {0};
+
+	SHA256_Init(sha_ctx);
+	SHA256_Update(sha_ctx, in.data(), in.size());
+	SHA256_Final(sha_hash, sha_ctx);
+
+	for(uint16_t i = 0; i < SHA256_DIGEST_LENGTH; i++)
+	{
+		out.push_back(sha_hash[i]);
+	}
+
+	/* cleanup */
+	delete sha_ctx;
+	return out;
+}

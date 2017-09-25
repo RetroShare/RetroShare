@@ -22,6 +22,7 @@
 #include "ChannelPage.h"
 #include "rsharesettings.h"
 #include "util/misc.h"
+#include "gui/notifyqt.h"
 
 ChannelPage::ChannelPage(QWidget * parent, Qt::WindowFlags flags)
     : ConfigPage(parent, flags)
@@ -33,10 +34,14 @@ ChannelPage::ChannelPage(QWidget * parent, Qt::WindowFlags flags)
 	ui.groupFrameSettingsWidget->setOpenAllInNewTabText(tr("Open each channel in a new tab"));
     ui.groupFrameSettingsWidget->setType(GroupFrameSettings::Channel) ;
 
-    connect(ui.loadThreadCheckBox,SIGNAL(toggled(bool)),this,SLOT(updateLoadThread)) ;
+    connect(ui.loadThreadCheckBox,SIGNAL(toggled(bool)),this,SLOT(updateLoadThread())) ;
 }
 
-void ChannelPage::updateLoadThread() { Settings->setChannelLoadThread(ui.loadThreadCheckBox->isChecked()); }
+void ChannelPage::updateLoadThread()
+{
+	Settings->setChannelLoadThread(ui.loadThreadCheckBox->isChecked());
+    NotifyQt::getInstance()->notifySettingsChanged();
+}
 
 ChannelPage::~ChannelPage()
 {

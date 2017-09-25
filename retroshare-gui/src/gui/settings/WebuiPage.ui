@@ -6,14 +6,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>442</width>
+    <width>497</width>
     <height>404</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QVBoxLayout" name="WebuiPageVLayout">
    <item>
     <widget class="QCheckBox" name="enableWebUI_CB">
      <property name="text">
@@ -29,7 +29,7 @@
      <property name="title">
       <string>Web parameters</string>
      </property>
-     <layout class="QGridLayout" name="gridLayout">
+     <layout class="QGridLayout" name="params_GBGLayout">
       <item row="0" column="1">
        <widget class="QSpinBox" name="port_SB">
         <property name="minimum">
@@ -41,7 +41,7 @@
        </widget>
       </item>
       <item row="0" column="0">
-       <widget class="QLabel" name="label_2">
+       <widget class="QLabel" name="port_Label">
         <property name="text">
          <string>Port:</string>
         </property>
@@ -65,7 +65,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QLabel" name="label">
+    <widget class="QLabel" name="noteLabel">
      <property name="text">
       <string>Note: these settings do not affect retroshare-nogui. Retroshare-nogui has a command line switch to activate the web interface.</string>
      </property>
@@ -75,7 +75,7 @@
     </widget>
    </item>
    <item>
-    <spacer name="verticalSpacer">
+    <spacer name="mainVSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>

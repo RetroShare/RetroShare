@@ -23,8 +23,9 @@
  *
  */
 
-#include <sstream>
+#include <iomanip>
 #include <math.h>
+#include <sstream>
 #include <unistd.h>
 
 #include "util/rsprint.h"
@@ -54,7 +55,7 @@ static const time_t 	MIN_DELAY_BETWEEN_PUBLIC_LOBBY_REQ =   20 ; // don't ask fo
 static const time_t 	LOBBY_LIST_AUTO_UPDATE_TIME        =  121 ; // regularly ask for available lobbies every 5 minutes, to allow auto-subscribe to work
 
 static const uint32_t MAX_ALLOWED_LOBBIES_IN_LIST_WARNING = 50 ;
-static const uint32_t MAX_MESSAGES_PER_SECONDS_NUMBER     =  5 ; // max number of messages from a given peer in a window for duration below
+//static const uint32_t MAX_MESSAGES_PER_SECONDS_NUMBER     =  5 ; // max number of messages from a given peer in a window for duration below
 static const uint32_t MAX_MESSAGES_PER_SECONDS_PERIOD     = 10 ; // duration window for max number of messages before messages get dropped.
 
 #define        IS_PUBLIC_LOBBY(flags) (flags & RS_CHAT_LOBBY_FLAGS_PUBLIC    )
@@ -222,7 +223,7 @@ bool DistributedChatService::checkSignature(RsChatLobbyBouncingObject *obj,const
 
     mGixs->requestKey(obj->signature.keyId,peer_list,RsIdentityUsage(RS_SERVICE_TYPE_CHAT,RsIdentityUsage::CHAT_LOBBY_MSG_VALIDATION,RsGxsGroupId(),RsGxsMessageId(),obj->lobby_id));
 
-    uint32_t size = obj->signed_serial_size() ;
+    uint32_t size = RsChatSerialiser(RsServiceSerializer::SERIALIZATION_FLAG_SIGNATURE).size(dynamic_cast<RsItem*>(obj)) ;
     RsTemporaryMemory memory(size) ;
 
 #ifdef DEBUG_CHAT_LOBBIES
@@ -230,7 +231,7 @@ bool DistributedChatService::checkSignature(RsChatLobbyBouncingObject *obj,const
     std::cerr << "   signature id: " << obj->signature.keyId << std::endl;
 #endif
 
-    if(!obj->serialise_signed_part(memory,size))
+    if(!RsChatSerialiser(RsServiceSerializer::SERIALIZATION_FLAG_SIGNATURE).serialise(dynamic_cast<RsItem*>(obj),memory,&size))
     {
 	    std::cerr << "  (EE) Cannot serialise message item. " << std::endl;
 	    return false ;
@@ -239,7 +240,7 @@ bool DistributedChatService::checkSignature(RsChatLobbyBouncingObject *obj,const
     uint32_t error_status ;
     RsIdentityUsage use_info(RS_SERVICE_TYPE_CHAT,RsIdentityUsage::CHAT_LOBBY_MSG_VALIDATION,RsGxsGroupId(),RsGxsMessageId(),obj->lobby_id) ;
 
-    if(!mGixs->validateData(memory,obj->signed_serial_size(),obj->signature,false,use_info,error_status))
+    if(!mGixs->validateData(memory,size,obj->signature,false,use_info,error_status))
     {
 	    bool res = false ;
 
@@ -415,7 +416,7 @@ void DistributedChatService::checkSizeAndSendLobbyMessage(RsChatItem *msg)
     //
     static const uint32_t MAX_ITEM_SIZE = 32000 ;
 
-    if(msg->serial_size() > MAX_ITEM_SIZE)
+    if(RsChatSerialiser().size(msg) > MAX_ITEM_SIZE)
     {
         std::cerr << "(EE) Chat item exceeds maximum serial size. It will be dropped." << std::endl;
         delete msg ;
@@ -428,14 +429,14 @@ bool DistributedChatService::handleRecvItem(RsChatItem *item)
 {
 	switch(item->PacketSubType())
 	{
-        case RS_PKT_SUBTYPE_CHAT_LOBBY_SIGNED_EVENT:    handleRecvChatLobbyEventItem    (dynamic_cast<RsChatLobbyEventItem            *>(item)) ; break ;
-        case RS_PKT_SUBTYPE_CHAT_LOBBY_INVITE:          handleRecvLobbyInvite           (dynamic_cast<RsChatLobbyInviteItem           *>(item)) ; break ;
-		case RS_PKT_SUBTYPE_CHAT_LOBBY_CHALLENGE:       handleConnectionChallenge       (dynamic_cast<RsChatLobbyConnectChallengeItem *>(item)) ; break ;
-		case RS_PKT_SUBTYPE_CHAT_LOBBY_UNSUBSCRIBE:     handleFriendUnsubscribeLobby    (dynamic_cast<RsChatLobbyUnsubscribeItem      *>(item)) ; break ;
-		case RS_PKT_SUBTYPE_CHAT_LOBBY_LIST_REQUEST:    handleRecvChatLobbyListRequest  (dynamic_cast<RsChatLobbyListRequestItem      *>(item)) ; break ;
-		case RS_PKT_SUBTYPE_CHAT_LOBBY_LIST:            handleRecvChatLobbyList         (dynamic_cast<RsChatLobbyListItem             *>(item)) ; break ;
-		default:
-																		return false ;
+		case RS_PKT_SUBTYPE_CHAT_LOBBY_SIGNED_EVENT:      handleRecvChatLobbyEventItem     (dynamic_cast<RsChatLobbyEventItem            *>(item)) ; break ;
+		case RS_PKT_SUBTYPE_CHAT_LOBBY_INVITE_DEPRECATED: handleRecvLobbyInvite_Deprecated (dynamic_cast<RsChatLobbyInviteItem_Deprecated*>(item)) ; break ; // to be removed (deprecated since May 2017)
+		case RS_PKT_SUBTYPE_CHAT_LOBBY_INVITE:            handleRecvLobbyInvite            (dynamic_cast<RsChatLobbyInviteItem           *>(item)) ; break ;
+		case RS_PKT_SUBTYPE_CHAT_LOBBY_CHALLENGE:         handleConnectionChallenge        (dynamic_cast<RsChatLobbyConnectChallengeItem *>(item)) ; break ;
+		case RS_PKT_SUBTYPE_CHAT_LOBBY_UNSUBSCRIBE:       handleFriendUnsubscribeLobby     (dynamic_cast<RsChatLobbyUnsubscribeItem      *>(item)) ; break ;
+		case RS_PKT_SUBTYPE_CHAT_LOBBY_LIST_REQUEST:      handleRecvChatLobbyListRequest   (dynamic_cast<RsChatLobbyListRequestItem      *>(item)) ; break ;
+		case RS_PKT_SUBTYPE_CHAT_LOBBY_LIST:              handleRecvChatLobbyList          (dynamic_cast<RsChatLobbyListItem             *>(item)) ; break ;
+		default:                                          return false ;
 	}
 	return true ;
 }
@@ -535,8 +536,9 @@ void DistributedChatService::handleRecvChatLobbyList(RsChatLobbyListItem *item)
 #ifdef DEBUG_CHAT_LOBBIES
 				std::cerr << "    lobby is flagged as autosubscribed. Adding it to subscribe list." << std::endl;
 #endif
-                ChatLobbyId clid = item->lobbies[i].id;
-				chatLobbyToSubscribe.push_back(clid);
+				ChatLobbyId clid = item->lobbies[i].id;
+				if(_chat_lobbys.find(clid) == _chat_lobbys.end())
+					chatLobbyToSubscribe.push_back(clid);
 			}
 
 			// for subscribed lobbies, check that item->PeerId() is among the participating friends. If not, add him!
@@ -554,9 +556,41 @@ void DistributedChatService::handleRecvChatLobbyList(RsChatLobbyListItem *item)
 		}
 	}
 
-    std::list<ChatLobbyId>::iterator it;
-    for (it = chatLobbyToSubscribe.begin(); it != chatLobbyToSubscribe.end(); ++it)
-        joinVisibleChatLobby(*it,_default_identity);
+	std::list<ChatLobbyId>::iterator it;
+	for (it = chatLobbyToSubscribe.begin(); it != chatLobbyToSubscribe.end(); ++it)
+	{
+		RsGxsId gxsId = _lobby_default_identity[*it];
+		if (gxsId.isNull())
+			gxsId = _default_identity;
+
+		//Check if gxsId can connect to this lobby
+		ChatLobbyFlags flags(0);
+		std::map<ChatLobbyId,VisibleChatLobbyRecord>::const_iterator vlIt = _visible_lobbies.find(*it) ;
+		if(vlIt != _visible_lobbies.end())
+			flags = vlIt->second.lobby_flags;
+		else
+		{
+			std::map<ChatLobbyId,ChatLobbyEntry>::const_iterator clIt = _chat_lobbys.find(*it) ;
+
+			if(clIt != _chat_lobbys.end())
+				flags = clIt->second.lobby_flags;
+		}
+
+		RsIdentityDetails idd ;
+		if(!rsIdentity->getIdDetails(gxsId,idd))
+			std::cerr << "(EE) Lobby auto-subscribe: Can't get Id detail for:" << gxsId.toStdString().c_str() << std::endl;
+		else
+		{
+			if(IS_PGP_SIGNED_LOBBY(flags)
+			   && !(idd.mFlags & RS_IDENTITY_FLAGS_PGP_LINKED) )
+			{
+				std::cerr << "(EE) Attempt to auto-subscribe to signed lobby with non signed Id. Remove it." << std::endl;
+				setLobbyAutoSubscribe(*it, false);
+			} else {
+				joinVisibleChatLobby(*it,gxsId);
+			}
+		}
+	}
 
 	 for(std::list<ChatLobbyId>::const_iterator it = invitationNeeded.begin();it!=invitationNeeded.end();++it)
 		 invitePeerToLobby(*it,item->PeerId(),false) ;
@@ -970,10 +1004,10 @@ bool DistributedChatService::locked_initLobbyBouncableObject(const ChatLobbyId& 
 
     // now sign the object, if the lobby expects it
 
-        uint32_t size = item.signed_serial_size() ;
+        uint32_t size = RsChatSerialiser(RsServiceSerializer::SERIALIZATION_FLAG_SIGNATURE).size(dynamic_cast<RsItem*>(&item)) ;
         RsTemporaryMemory memory(size) ;
 
-        if(!item.serialise_signed_part(memory,size))
+        if(!RsChatSerialiser(RsServiceSerializer::SERIALIZATION_FLAG_SIGNATURE).serialise(dynamic_cast<RsItem*>(&item),memory,&size))
         {
             std::cerr << "(EE) Cannot sign message item. " << std::endl;
             return false ;
@@ -1233,14 +1267,45 @@ void DistributedChatService::invitePeerToLobby(const ChatLobbyId& lobby_id, cons
 
 	RsChatLobbyInviteItem *item = new RsChatLobbyInviteItem ;
 
-	item->lobby_id = lobby_id ;
-	item->lobby_name = it->second.lobby_name ;
-	item->lobby_topic = it->second.lobby_topic ;
-    item->lobby_flags = connexion_challenge?RS_CHAT_LOBBY_FLAGS_CHALLENGE:(it->second.lobby_flags) ;
+	item->lobby_id    =  lobby_id ;
+	item->lobby_name  =  it->second.lobby_name ;
+	item->lobby_topic =  it->second.lobby_topic ;
+	item->lobby_flags =  connexion_challenge?RS_CHAT_LOBBY_FLAGS_CHALLENGE:(it->second.lobby_flags) ;
 	item->PeerId(peer_id) ;
 
 	sendChatItem(item) ;
+
+	//FOR BACKWARD COMPATIBILITY
+	{// to be removed (deprecated since May 2017)
+		RsChatLobbyInviteItem_Deprecated *item = new RsChatLobbyInviteItem_Deprecated ;
+
+		item->lobby_id    =  lobby_id ;
+		item->lobby_name  =  it->second.lobby_name ;
+		item->lobby_topic =  it->second.lobby_topic ;
+		item->lobby_flags =  connexion_challenge?RS_CHAT_LOBBY_FLAGS_CHALLENGE:(it->second.lobby_flags) ;
+		item->PeerId(peer_id) ;
+
+		sendChatItem(item) ;
+	}
 }
+
+// to be removed (deprecated since May 2017)
+void DistributedChatService::handleRecvLobbyInvite_Deprecated(RsChatLobbyInviteItem_Deprecated *item)
+{
+#ifdef DEBUG_CHAT_LOBBIES
+	std::cerr << "Received deprecated invite to lobby from " << item->PeerId() << " to lobby " << std::hex << item->lobby_id << std::dec << ", named " << item->lobby_name << item->lobby_topic << std::endl;
+#endif
+	RsChatLobbyInviteItem* newItem = new RsChatLobbyInviteItem();
+
+	newItem->lobby_id = item->lobby_id ;
+	newItem->lobby_name = item->lobby_name ;
+	newItem->lobby_topic = item->lobby_topic ;
+	newItem->lobby_flags = item->lobby_flags ;
+	newItem->PeerId( item->PeerId() );
+
+	handleRecvLobbyInvite(newItem);
+}
+
 void DistributedChatService::handleRecvLobbyInvite(RsChatLobbyInviteItem *item) 
 {
 #ifdef DEBUG_CHAT_LOBBIES
@@ -1259,10 +1324,10 @@ void DistributedChatService::handleRecvLobbyInvite(RsChatLobbyInviteItem *item)
 		{
 #ifdef DEBUG_CHAT_LOBBIES
 			std::cerr << "  Lobby already exists. " << std::endl;
-            std::cerr << "     privacy levels: " << item->lobby_flags << " vs. " << it->second.lobby_flags ;
+			std::cerr << "     privacy levels: " << item->lobby_flags << " vs. " << it->second.lobby_flags ;
 #endif
 
-            if((!IS_CONNEXION_CHALLENGE(item->lobby_flags)) && EXTRACT_PRIVACY_FLAGS(item->lobby_flags) != EXTRACT_PRIVACY_FLAGS(it->second.lobby_flags))
+			if ((!IS_CONNEXION_CHALLENGE(item->lobby_flags)) && EXTRACT_PRIVACY_FLAGS(item->lobby_flags) != EXTRACT_PRIVACY_FLAGS(it->second.lobby_flags))
 			{
 				std::cerr << " : Don't match. Cancelling." << std::endl;
 				return ;
@@ -1274,10 +1339,22 @@ void DistributedChatService::handleRecvLobbyInvite(RsChatLobbyInviteItem *item)
 			std::cerr << "  Adding new friend " << item->PeerId() << " to lobby." << std::endl;
 #endif
 
+			// to be removed (deprecated since May 2017)
+			{ //Update Topics if have received deprecated before (withou topic)
+				if(it->second.lobby_topic.empty() && !item->lobby_topic.empty())
+					it->second.lobby_topic = item->lobby_topic;
+			}
+
 			it->second.participating_friends.insert(item->PeerId()) ;
 			return ;
 		}
 
+		// to be removed (deprecated since May 2017)
+		{//check if invitation is already received by deprecated version
+			std::map<ChatLobbyId,ChatLobbyInvite>::const_iterator it(_lobby_invites_queue.find( item->lobby_id)) ;
+			if(it != _lobby_invites_queue.end())
+				return ;
+		}
 		// Don't record the invitation if it's a challenge response item or a lobby we don't have.
 		//
         if(IS_CONNEXION_CHALLENGE(item->lobby_flags))
@@ -1290,7 +1367,7 @@ void DistributedChatService::handleRecvLobbyInvite(RsChatLobbyInviteItem *item)
 		invite.peer_id = item->PeerId() ;
 		invite.lobby_name = item->lobby_name ;
 		invite.lobby_topic = item->lobby_topic ;
-        invite.lobby_flags = item->lobby_flags ;
+		invite.lobby_flags = item->lobby_flags ;
 
 		_lobby_invites_queue[item->lobby_id] = invite ;
 	}
@@ -1722,13 +1799,18 @@ bool DistributedChatService::setIdentityForChatLobby(const ChatLobbyId& lobby_id
 
 void DistributedChatService::setLobbyAutoSubscribe(const ChatLobbyId& lobby_id, const bool autoSubscribe)
 {
-	if(autoSubscribe)
-		_known_lobbies_flags[lobby_id] |=  RS_CHAT_LOBBY_FLAGS_AUTO_SUBSCRIBE ;
-	else
+	if(autoSubscribe){
+		_known_lobbies_flags[lobby_id] |=  RS_CHAT_LOBBY_FLAGS_AUTO_SUBSCRIBE;
+		RsGxsId gxsId;
+		if (getIdentityForChatLobby(lobby_id, gxsId))
+			_lobby_default_identity[lobby_id] = gxsId;
+	} else {
 		_known_lobbies_flags[lobby_id] &= ~RS_CHAT_LOBBY_FLAGS_AUTO_SUBSCRIBE ;
-    
+		_lobby_default_identity.erase(lobby_id);
+	}
+
 	RsServer::notify()->notifyListChange(NOTIFY_LIST_CHAT_LOBBY_LIST, NOTIFY_TYPE_ADD) ;
-    triggerConfigSave();
+	triggerConfigSave();
 }
 
 bool DistributedChatService::getLobbyAutoSubscribe(const ChatLobbyId& lobby_id)
@@ -1848,7 +1930,7 @@ void DistributedChatService::cleanLobbyCaches()
 void DistributedChatService::addToSaveList(std::list<RsItem*>& list) const
 {
 	/* Save Lobby Auto Subscribe */
-    for(std::map<ChatLobbyId,ChatLobbyFlags>::const_iterator it=_known_lobbies_flags.begin();it!=_known_lobbies_flags.end();++it)
+	for(std::map<ChatLobbyId,ChatLobbyFlags>::const_iterator it=_known_lobbies_flags.begin(); it!=_known_lobbies_flags.end(); ++it)
 	{
 		RsChatLobbyConfigItem *clci = new RsChatLobbyConfigItem ;
 		clci->lobby_Id=it->first;
@@ -1856,37 +1938,85 @@ void DistributedChatService::addToSaveList(std::list<RsItem*>& list) const
 
 		list.push_back(clci) ;
 	}
+
 	/* Save Default Nick Name */
+	{
+		RsConfigKeyValueSet *vitem = new RsConfigKeyValueSet ;
+		RsTlvKeyValue kv;
+		kv.key = "DEFAULT_IDENTITY";
+		kv.value = _default_identity.toStdString();
+		vitem->tlvkvs.pairs.push_back(kv);
+		list.push_back(vitem);
+	}
 
-	RsConfigKeyValueSet *vitem = new RsConfigKeyValueSet ;
-	RsTlvKeyValue kv;
-    kv.key = "DEFAULT_IDENTITY" ;
-    kv.value = _default_identity.toStdString() ;
-	vitem->tlvkvs.pairs.push_back(kv) ;
+	/* Save Default Nick Name by Lobby*/
+	for(std::map<ChatLobbyId,RsGxsId>::const_iterator it=_lobby_default_identity.begin(); it!=_lobby_default_identity.end(); ++it)
+	{
+		RsConfigKeyValueSet *vitem = new RsConfigKeyValueSet ;
+		ChatLobbyId cli = it->first;
+		RsGxsId gxsId = it->second;
 
-	list.push_back(vitem) ;
+		std::stringstream stream;
+		stream << std::setfill ('0') << std::setw(sizeof(ChatLobbyId)*2)
+		       << std::hex << cli;
+		std::string strCli( stream.str() );
+
+		RsTlvKeyValue kv;
+		kv.key = "LOBBY_DEFAULT_IDENTITY:"+strCli;
+		kv.value = gxsId.toStdString();
+		vitem->tlvkvs.pairs.push_back(kv);
+		list.push_back(vitem);
+	}
+
 }
 
 bool DistributedChatService::processLoadListItem(const RsItem *item)
 {
-    const RsConfigKeyValueSet *vitem = NULL ;
+	const RsConfigKeyValueSet *vitem = NULL;
+	const std::string strldID = "LOBBY_DEFAULT_IDENTITY:";
 
 	if(NULL != (vitem = dynamic_cast<const RsConfigKeyValueSet*>(item)))
-		for(std::list<RsTlvKeyValue>::const_iterator kit = vitem->tlvkvs.pairs.begin(); kit != vitem->tlvkvs.pairs.end(); ++kit) 
-            if(kit->key == "DEFAULT_IDENTITY")
-	    {
+		for(std::list<RsTlvKeyValue>::const_iterator kit = vitem->tlvkvs.pairs.begin(); kit != vitem->tlvkvs.pairs.end(); ++kit)
+		{
+			if( kit->key == "DEFAULT_IDENTITY" )
+			{
 #ifdef DEBUG_CHAT_LOBBIES
-		    std::cerr << "Loaded config default nick name for distributed chat: " << kit->value << std::endl ;
+				std::cerr << "Loaded config default nick name for distributed chat: " << kit->value << std::endl ;
 #endif
-		    if (!kit->value.empty())
-		    {
-			    _default_identity = RsGxsId(kit->value) ;
-			    if(_default_identity.isNull())
-				    std::cerr << "ERROR: default identity is malformed." << std::endl;
-		    }
+				if (!kit->value.empty())
+				{
+					_default_identity = RsGxsId(kit->value) ;
+					if(_default_identity.isNull())
+						std::cerr << "ERROR: default identity is malformed." << std::endl;
+				}
 
-		    return true;
-	    }
+				return true;
+			}
+
+			if( kit->key.compare(0, strldID.length(), strldID) == 0)
+			{
+#ifdef DEBUG_CHAT_LOBBIES
+				std::cerr << "Loaded config lobby default nick name: " << kit->key << " " << kit->value << std::endl ;
+#endif
+
+				std::string strCli = kit->key.substr(strldID.length());
+				std::stringstream stream;
+				stream << std::hex << strCli;
+				ChatLobbyId cli = 0;
+				stream >> cli;
+
+				if (!kit->value.empty() && (cli != 0))
+				{
+					RsGxsId gxsId(kit->value);
+					if (gxsId.isNull())
+						std::cerr << "ERROR: lobby default identity is malformed." << std::endl;
+					else
+						_lobby_default_identity[cli] = gxsId ;
+				}
+
+				return true;
+			}
+		}
 
 	const RsChatLobbyConfigItem *clci = NULL ;
 

@@ -76,11 +76,20 @@ RWindow::restoreWindowState()
     m_bSaveStateOnClose = true; // now we save the window state on close
 
 #if QT_VERSION >= 0x040200
-  QByteArray geometry = getSetting("Geometry", QByteArray()).toByteArray();
-  if (geometry.isEmpty())
+  QByteArray geo = getSetting("Geometry", QByteArray()).toByteArray();
+  if (geo.isEmpty())
+  {
     adjustSize();
+    QRect rect = geometry();
+    int h = fontMetrics().height()*40;
+    if (rect.height()<h)
+    {
+      rect.setHeight(h);
+      setGeometry(rect);
+    }
+  }
   else
-    restoreGeometry(geometry);
+    restoreGeometry(geo);
 #else
   QRect screen = QDesktopWidget().availableGeometry();
 

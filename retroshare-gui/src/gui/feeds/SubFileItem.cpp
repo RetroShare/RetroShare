@@ -66,7 +66,7 @@
 
 
 
-const uint32_t SFI_DEFAULT_PERIOD 	= (30 * 3600 * 24); /* 30 Days */
+//const uint32_t SFI_DEFAULT_PERIOD 	= (30 * 3600 * 24); /* 30 Days */
 
 /** Constructor */
 SubFileItem::SubFileItem(const RsFileHash &hash, const std::string &name, const std::string &path, uint64_t size, uint32_t flags, const RsPeerId &srcId)
@@ -97,11 +97,12 @@ SubFileItem::SubFileItem(const RsFileHash &hash, const std::string &name, const 
 
 void SubFileItem::Setup()
 {
-  connect( playButton, SIGNAL( clicked( void ) ), this, SLOT( play ( void ) ) );
-  connect( downloadButton, SIGNAL( clicked( void ) ), this, SLOT( download ( void ) ) );
-  connect( cancelButton, SIGNAL( clicked( void ) ), this, SLOT( cancel ( void ) ) );
-  connect( copyLinkButton, SIGNAL( clicked( void ) ), this, SLOT( copyLink ( void ) ) );
-  connect( saveButton, SIGNAL( clicked( void ) ), this, SLOT( save ( void ) ) );
+  connect( playButton, SIGNAL( clicked( ) ), this, SLOT( play ( ) ) );
+  connect( downloadButton, SIGNAL( clicked( ) ), this, SLOT( download ( ) ) );
+  connect( cancelButton, SIGNAL( clicked( ) ), this, SLOT( cancel( ) ) );
+  connect( deleteButton, SIGNAL( clicked( ) ), this, SLOT( del( ) ) );
+  connect( copyLinkButton, SIGNAL( clicked( ) ), this, SLOT( copyLink ( ) ) );
+  connect( saveButton, SIGNAL( clicked( ) ), this, SLOT( save ( ) ) );
 
   /* once off check - if remote, check if we have it 
    * NB: This check might be expensive - and it'll happen often!
@@ -129,11 +130,20 @@ void SubFileItem::Setup()
 	}
   }
 
+  deleteButton->setVisible(mFlag & SFI_FLAG_ALLOW_DELETE);
+  downloadButton->setVisible(mMode < SFI_STATE_LOCAL);
+  cancelButton->setVisible(mMode < SFI_STATE_LOCAL);
+
   smaller();
   updateItemStatic();
   updateItem();
 }
 
+
+void SubFileItem::del()
+{
+    emit wantsToBeDeleted();
+}
 
 bool SubFileItem::done()
 {
@@ -176,7 +186,7 @@ void SubFileItem::updateItemStatic()
 	}
 
 	/* get full path for local file */
-	if ((mMode == SFI_STATE_LOCAL) || (mMode == SFI_STATE_UPLOAD))
+	if (((mMode == SFI_STATE_LOCAL) || (mMode == SFI_STATE_UPLOAD)))
 	{
 #ifdef DEBUG_ITEM
 		std::cerr << "SubFileItem::updateItemStatic() STATE=Local/Upload checking path";
@@ -190,7 +200,10 @@ void SubFileItem::updateItemStatic()
 			/* look up path */
 			if (!rsFiles->FileDetails(mFileHash, hintflags, fi))
 			{
-				mMode = SFI_STATE_ERROR;
+				if(mFlag & SFI_FLAG_ASSUME_FILE_READY)
+					mMode = SFI_STATE_REMOTE;
+				else
+					mMode = SFI_STATE_ERROR;
 #ifdef DEBUG_ITEM
 			std::cerr << "SubFileItem::updateItemStatic() STATE=>Error No Details";
 			std::cerr << std::endl;
@@ -241,6 +254,7 @@ void SubFileItem::updateItemStatic()
 		case SFI_STATE_REMOTE:
 			playButton->setEnabled(false);
 			downloadButton->setEnabled(true);
+			downloadButton->setVisible(true);
 			cancelButton->setEnabled(false);
 
 			progressBar->setValue(0);
@@ -713,8 +727,8 @@ void SubFileItem::copyLink()
 		return;
 	}
 
-	RetroShareLink link;
-    if (link.createFile(QString::fromUtf8(mFileName.c_str()), mFileSize, QString::fromStdString(mFileHash.toStdString()))) {
+	RetroShareLink link = RetroShareLink::createFile(QString::fromUtf8(mFileName.c_str()), mFileSize, QString::fromStdString(mFileHash.toStdString()));
+	if (link.valid()) {
 		QList<RetroShareLink> urls;
 		urls.push_back(link);
 		RSLinkClipboard::copyLinks(urls);

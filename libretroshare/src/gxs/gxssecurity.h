@@ -28,16 +28,18 @@
  */
 
 #include "serialiser/rstlvkeys.h"
-#include "serialiser/rsnxsitems.h"
+
+#include "rsitems/rsnxsitems.h"
 
 #include <openssl/ssl.h>
 #include <openssl/evp.h>
 
 
 /*!
- * This contains functionality for performing security
- * operations needed to validate data received in RsGenExchange
+ * This contains functionality for performing basic security operations needed
+ * in RsGenExchange operations.
  * Also has routine for creating security objects around msgs and groups
+ * TODO: Those functions doesn't do param checking!
  */
 class GxsSecurity 
 {

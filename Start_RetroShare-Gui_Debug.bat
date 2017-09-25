@@ -4,8 +4,8 @@ set RSPATH=.\retroshare-gui\src\debug
 
 set PATH=%QTDIR%\bin;%LIBS%\bin;%PATH%
 
-If not exist %RSPATH%\RetroShare06.exe (
+If not exist %RSPATH%\retroshare.exe (
   build-all-mingw32make.bat
 )
 
-%RSPATH%\RetroShare06.exe
+%RSPATH%\retroshare.exe

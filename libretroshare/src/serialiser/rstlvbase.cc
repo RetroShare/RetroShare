@@ -32,7 +32,7 @@
 //*********************
 
 // A facility func
-inline void* right_shift_void_pointer(void* p, uint32_t len) {
+inline void* right_shift_void_pointer(const void* p, uint32_t len) {
 
 	return (void*)( (uint8_t*)p + len);
 }
@@ -550,7 +550,7 @@ static bool find_decoded_string(const std::string& in,const std::string& suspici
 }
 
 //tested
-bool GetTlvString(void *data, uint32_t size, uint32_t *offset, 
+bool GetTlvString(const void *data, uint32_t size, uint32_t *offset,
 			uint16_t type, std::string &in) 
 {
     if (!data)

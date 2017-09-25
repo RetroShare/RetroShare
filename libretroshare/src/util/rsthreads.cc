@@ -61,6 +61,16 @@ int RS_pthread_setname_np(pthread_t __target_thread, const char *__buf) {
 	#include <iostream>
 #endif
 
+void RsThread::go()
+{
+    mShouldStopSemaphore.set(0) ;
+    mHasStoppedSemaphore.set(0) ;
+
+    runloop();
+
+    mHasStoppedSemaphore.set(1);
+    mShouldStopSemaphore.set(0);
+}
 void *RsThread::rsthread_init(void* p)
 {
   RsThread *thread = (RsThread *) p;
@@ -76,7 +86,7 @@ void *RsThread::rsthread_init(void* p)
     std::cerr << "[Thread ID:" << std::hex << pthread_self() << std::dec << "] thread is started. Calling runloop()..." << std::endl;
 #endif
     
-  thread -> runloop();
+  thread->go();
   return NULL;
 }
 RsThread::RsThread() 
@@ -169,6 +179,7 @@ void RsThread::start(const std::string &threadName)
     THREAD_DEBUG << "pqithreadstreamer::start() initing should_stop=0" << std::endl;
 #endif
     mShouldStopSemaphore.set(0) ;
+	mHasStoppedSemaphore.set(0) ;
 
     int err ;
 
@@ -216,14 +227,11 @@ RsTickingThread::RsTickingThread()
 
 void RsSingleJobThread::runloop()
 {
-    mHasStoppedSemaphore.set(0) ;
     run() ;
 }
 
 void RsTickingThread::runloop()
 {
-    mHasStoppedSemaphore.set(0) ;	// first time we are 100% the thread is actually running.
-
 #ifdef DEBUG_THREADS
     THREAD_DEBUG << "RsTickingThread::runloop(). Setting stopped=0" << std::endl;
 #endif
@@ -235,7 +243,6 @@ void RsTickingThread::runloop()
 #ifdef DEBUG_THREADS
             THREAD_DEBUG << "pqithreadstreamer::runloop(): asked to stop. setting hasStopped=1, and returning. Thread ends." << std::endl;
 #endif
-            mHasStoppedSemaphore.set(1);
             return ;
         }
 

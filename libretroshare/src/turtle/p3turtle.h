@@ -295,6 +295,8 @@ class p3turtle: public p3Service, public RsTurtle, public p3Config
 		///
 		virtual int tick();
 
+		virtual void getItemNames(std::map<uint8_t,std::string>& names) const;
+
 		/************* from p3Config *******************/
 		virtual RsSerialiser *setupSerialiser() ;
 		virtual bool saveList(bool& cleanup, std::list<RsItem*>&) ;

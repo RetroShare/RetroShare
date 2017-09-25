@@ -60,24 +60,26 @@ class p3ServiceServerIface;
 
 class pqiService
 {
-	protected:
+protected:
 
 	pqiService() // our type of packets.
-	:mServiceServer(NULL) { return; }
+	    :mServiceServer(NULL) { return; }
 
-virtual ~pqiService() { return; }
+	virtual ~pqiService() { return; }
 
-	public:
-void 	setServiceServer(p3ServiceServerIface *server);
-	// 
-virtual bool	recv(RsRawItem *) = 0;
-virtual bool	send(RsRawItem *item);
+public:
+	void 	setServiceServer(p3ServiceServerIface *server);
+	//
+	virtual bool	recv(RsRawItem *) = 0;
+	virtual bool	send(RsRawItem *item);
 
-virtual RsServiceInfo getServiceInfo() = 0;
+	virtual RsServiceInfo getServiceInfo() = 0;
 
-virtual int	tick() { return 0; }
+	virtual int	tick() { return 0; }
 
-	private:
+	virtual void getItemNames(std::map<uint8_t,std::string>& /*names*/) const {}	// This does nothing by default. Service should derive it in order to give info for the UI
+
+private:
 	p3ServiceServerIface *mServiceServer; // const, no need for mutex.
 };
 
@@ -97,10 +99,10 @@ public:
 	virtual ~p3ServiceServerIface() {}
 
 
-virtual bool	recvItem(RsRawItem *) = 0;
-virtual bool	sendItem(RsRawItem *) = 0;
+	virtual bool	recvItem(RsRawItem *) = 0;
+	virtual bool	sendItem(RsRawItem *) = 0;
 
-
+	virtual bool    getServiceItemNames(uint32_t service_type,std::map<uint8_t,std::string>& names) =0;
 };
 
 class p3ServiceServer : public p3ServiceServerIface
@@ -108,13 +110,15 @@ class p3ServiceServer : public p3ServiceServerIface
 public:
 	p3ServiceServer(pqiPublisher *pub, p3ServiceControl *ctrl);
 
-int	addService(pqiService *, bool defaultOn);
-int	removeService(pqiService *);
+	int	addService(pqiService *, bool defaultOn);
+	int	removeService(pqiService *);
 
-bool	recvItem(RsRawItem *);
-bool	sendItem(RsRawItem *);
+	bool	recvItem(RsRawItem *);
+	bool	sendItem(RsRawItem *);
 
-int	tick();
+	bool getServiceItemNames(uint32_t service_type, std::map<uint8_t,std::string>& names) ;
+
+	int	tick();
 public:
 
 private:
@@ -122,7 +126,7 @@ private:
 	pqiPublisher *mPublisher;	// constant no need for mutex.
 	p3ServiceControl *mServiceControl;
 
-	RsMutex srvMtx; 
+	RsMutex srvMtx;
 	std::map<uint32_t, pqiService *> services;
 
 };

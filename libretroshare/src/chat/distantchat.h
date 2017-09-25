@@ -45,10 +45,15 @@ public:
     bool processLoadListItem(const RsItem *item) ;
     void addToSaveList(std::list<RsItem*>& list) const;
     
-    // Creates the invite if the public key of the distant peer is available.
-    // Om success, stores the invite in the map above, so that we can respond to tunnel requests.
-    //
-    bool initiateDistantChatConnexion(const RsGxsId& to_gxs_id, const RsGxsId &from_gxs_id, DistantChatPeerId& dcpid, uint32_t &error_code) ;
+	/**
+	 * Creates the invite if the public key of the distant peer is available.
+	 * On success, stores the invite in the map above, so that we can respond
+	 * to tunnel requests. */
+	bool initiateDistantChatConnexion( const RsGxsId& to_gxs_id,
+	                                   const RsGxsId &from_gxs_id,
+	                                   DistantChatPeerId& dcpid,
+	                                   uint32_t &error_code,
+	                                   bool notify = true );
     bool closeDistantChatConnexion(const DistantChatPeerId &tunnel_id) ;
     
     // Sets flags to only allow connexion from some people.

@@ -1,9 +1,11 @@
 #!/bin/sh
 
 ###################### PARAMETERS ####################
-version="0.6.2"
+version="0.6.3"
 gitpath="https://github.com/RetroShare/RetroShare.git"
-workdir=retroshare06-${version}
+workdir=retroshare-${version}
+branch="master"
+#branch="v0.6.3-official_release"
 #bubba3="Y"		# comment out to compile for bubba3
 ######################################################
 
@@ -53,7 +55,7 @@ while [ ${#} -gt 0 ]; do
 done
 
 if test "${dist}" = "" ; then
-	dist="precise trusty vivid xenial yakkety"
+	dist="precise trusty vivid xenial zesty"
 fi
 
 echo Attempting to get revision number...
@@ -66,6 +68,7 @@ echo "  "Commit count       : ${ccount}
 echo "  "Date               : ${date}
 echo "  "Time               : ${time}
 echo "  "Hash               : ${hhsh}
+echo "  "Using branch       : ${branch}
 echo "  "Using revision     : ${rev}
 
 echo Done.
@@ -80,7 +83,13 @@ echo Extracting base archive...
 mkdir -p ${workdir}/src
 echo Checking out latest snapshot...
 cd ${workdir}/src
-git clone --depth 1 https://github.com/RetroShare/RetroShare.git .
+git clone --depth 1 https://github.com/RetroShare/RetroShare.git --single-branch --branch $branch .
+
+#  if ! test "$hhsh" = "" ; then
+#  	echo Checking out revision $hhsh
+#  	git checkout $hhsh
+#  fi
+
 cd -
 
 if ! test -d ${workdir}/src/libretroshare/; then
@@ -114,6 +123,8 @@ for i in ${dist}; do
 
     if test "${i}" = "lucid" ; then
         cp ../control.ubuntu_lucid debian/control
+    elif test "${i}" = "zesty" ; then
+        cp ../control.zesty debian/control
     elif test "${i}" = "squeeze" ; then
         cp ../control.squeeze_bubba3 debian/control
     elif test "${i}" = "precise" ; then

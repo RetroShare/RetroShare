@@ -5,6 +5,8 @@
 #include "util/rsdir.h"
 #include "rsaccounts.h"
 
+//#define DEBUG_RSLOGINHANDLER 1
+
 bool RsLoginHandler::getSSLPassword( const RsPeerId& ssl_id,
                                      bool enable_gpg_ask_passwd,
                                      std::string& ssl_passwd )
@@ -59,15 +61,21 @@ bool RsLoginHandler::getSSLPasswdFromGPGFile(const RsPeerId& ssl_id,std::string&
 
 	fclose(sslPassphraseFile);
 
+#ifdef DEBUG_RSLOGINHANDLER
 	std::cerr << "opening sslPassphraseFile : "
 	          << getSSLPasswdFileName(ssl_id).c_str() << std::endl;
+#endif
 
 	std::string plain;
-	if ( AuthGPG::getAuthGPG()->decryptTextFromFile(
-	         plain, getSSLPasswdFileName(ssl_id)) )
+	if ( AuthGPG::getAuthGPG()->decryptTextFromFile( plain, getSSLPasswdFileName(ssl_id)) )
 	{
-		std::cerr << "Decrypting went ok !" << std::endl;
 		sslPassword = plain;
+#ifdef DEBUG_RSLOGINHANDLER
+		if(sslPassword.length() > 0)
+			std::cerr << "Decrypting went ok !" << std::endl;
+		else
+			std::cerr << "Passphrase is empty!" << std::endl;
+#endif
 
 		return sslPassword.length() > 0 ;
 	}
@@ -185,7 +193,9 @@ extern BOOL WINAPI CryptUnprotectData(
 
 bool RsLoginHandler::tryAutoLogin(const RsPeerId& ssl_id,std::string& ssl_passwd)
 {
+#ifdef DEBUG_RSLOGINHANDLER
 	std::cerr << "RsTryAutoLogin()" << std::endl;
+#endif
 
 	/******************************** WINDOWS/UNIX SPECIFIC PART ******************/
 #ifndef __HAIKU__
@@ -194,7 +204,9 @@ bool RsLoginHandler::tryAutoLogin(const RsPeerId& ssl_id,std::string& ssl_passwd
 
 	gchar *passwd = NULL;
 
+#ifdef DEBUG_RSLOGINHANDLER
 	std::cerr << "Using attribute: " << ssl_id << std::endl;
+#endif
 	if( gnome_keyring_find_password_sync(&my_schema, &passwd,"RetroShare SSL Id",ssl_id.toStdString().c_str(),NULL) == GNOME_KEYRING_RESULT_OK )
 	{
 		std::cerr << "Got SSL passwd ********************" /*<< passwd*/ << " from gnome keyring" << std::endl;
@@ -203,7 +215,9 @@ bool RsLoginHandler::tryAutoLogin(const RsPeerId& ssl_id,std::string& ssl_passwd
 	}
 	else
 	{
+#ifdef DEBUG_RSLOGINHANDLER
 		std::cerr << "Could not get passwd from gnome keyring" << std::endl;
+#endif
 		return false ;
 	}
 

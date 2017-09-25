@@ -2394,7 +2394,7 @@ static int parse_secret_key(ops_region_t *region,ops_parse_info_t *pinfo)
    else if(C.secret_key.s2k_usage != OPS_S2KU_NONE)
    {
       // this is V3 style, looks just like a V4 simple hash
-      C.secret_key.algorithm=C.secret_key.s2k_usage;
+      C.secret_key.algorithm=(ops_symmetric_algorithm_t)C.secret_key.s2k_usage;
       C.secret_key.s2k_usage=OPS_S2KU_ENCRYPTED;
       C.secret_key.s2k_specifier=OPS_S2KS_SIMPLE;
       C.secret_key.hash_algorithm=OPS_HASH_MD5;
@@ -2480,7 +2480,7 @@ static int parse_secret_key(ops_region_t *region,ops_parse_info_t *pinfo)
 	 {
 	    case OPS_S2KS_SALTED:
 	       hashes[n].add(&hashes[n],C.secret_key.salt,OPS_SALT_SIZE);
-	       // flow through...
+				/* fallthrough */
 	    case OPS_S2KS_SIMPLE:
 	       hashes[n].add(&hashes[n],(unsigned char*)passphrase,l);
 	       break;
@@ -3247,7 +3247,7 @@ int ops_parse(ops_parse_info_t *pinfo,ops_boolean_t limit_packets)
    } while (r > 0);
 
    return pinfo->errors ? 0 : 1;
-   return r == -1 ? 0 : 1;
+   //return r == -1 ? 0 : 1;
 }
 
 /**

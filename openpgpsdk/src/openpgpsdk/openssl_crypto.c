@@ -45,7 +45,7 @@ void test_secret_key(const ops_secret_key_t *skey)
     {
     RSA* test=RSA_new();
 
-#if OPENSSL_VERSION_NUMBER < 0x10100000L
+#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
     test->n=BN_dup(skey->public_key.key.rsa.n);
     test->e=BN_dup(skey->public_key.key.rsa.e);
     test->d=BN_dup(skey->key.rsa.d);
@@ -402,7 +402,7 @@ ops_boolean_t ops_dsa_verify(const unsigned char *hash,size_t hash_length,
 
     osig=DSA_SIG_new();
 
-#if OPENSSL_VERSION_NUMBER < 0x10100000L
+#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
     osig->r=sig->r;
     osig->s=sig->s;
 #else
@@ -417,7 +417,7 @@ ops_boolean_t ops_dsa_verify(const unsigned char *hash,size_t hash_length,
 			 already_said=ops_true ;
 		 }
 
-#if OPENSSL_VERSION_NUMBER < 0x10100000L
+#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
 		 osig->r=NULL;			// in this case, the values are not copied.
 		 osig->s=NULL;
 #endif
@@ -427,7 +427,7 @@ ops_boolean_t ops_dsa_verify(const unsigned char *hash,size_t hash_length,
 	 }
 
     odsa=DSA_new();
-#if OPENSSL_VERSION_NUMBER < 0x10100000L
+#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
     odsa->p=dsa->p;
     odsa->q=dsa->q;
     odsa->g=dsa->g;
@@ -471,7 +471,7 @@ ops_boolean_t ops_dsa_verify(const unsigned char *hash,size_t hash_length,
 		return ops_false ;
 	 }
 
-#if OPENSSL_VERSION_NUMBER < 0x10100000L
+#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
     osig->r=NULL;
     osig->s=NULL;
 
@@ -503,7 +503,7 @@ int ops_rsa_public_decrypt(unsigned char *out,const unsigned char *in,
     int n;
 
     orsa=RSA_new();
-#if OPENSSL_VERSION_NUMBER < 0x10100000L
+#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
     orsa->n=rsa->n;
     orsa->e=rsa->e;
 #else
@@ -512,7 +512,7 @@ int ops_rsa_public_decrypt(unsigned char *out,const unsigned char *in,
 
     n=RSA_public_decrypt(length,in,out,orsa,RSA_NO_PADDING);
 
-#if OPENSSL_VERSION_NUMBER < 0x10100000L
+#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
     orsa->n=orsa->e=NULL;
 #endif
     RSA_free(orsa);
@@ -538,7 +538,7 @@ int ops_rsa_private_encrypt(unsigned char *out,const unsigned char *in,
     int n;
 
     orsa=RSA_new();
-#if OPENSSL_VERSION_NUMBER < 0x10100000L
+#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
     orsa->n=rsa->n;	// XXX: do we need n?
     orsa->d=srsa->d;
     orsa->p=srsa->q;
@@ -564,7 +564,7 @@ int ops_rsa_private_encrypt(unsigned char *out,const unsigned char *in,
 
     n=RSA_private_encrypt(length,in,out,orsa,RSA_NO_PADDING);
 
-#if OPENSSL_VERSION_NUMBER < 0x10100000L
+#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
     orsa->n=orsa->d=orsa->p=orsa->q=NULL;
     orsa->e=NULL;
 #endif
@@ -592,7 +592,7 @@ int ops_rsa_private_decrypt(unsigned char *out,const unsigned char *in,
     char errbuf[1024];
 
     orsa=RSA_new();
-#if OPENSSL_VERSION_NUMBER < 0x10100000L
+#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
     orsa->n=rsa->n;	// XXX: do we need n?
     orsa->d=srsa->d;
     orsa->p=srsa->q;
@@ -618,7 +618,7 @@ int ops_rsa_private_decrypt(unsigned char *out,const unsigned char *in,
         ERR_error_string(err,&errbuf[0]);
         fprintf(stderr,"openssl error : %s\n",errbuf);
         }
-#if OPENSSL_VERSION_NUMBER < 0x10100000L
+#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
     orsa->n=orsa->d=orsa->p=orsa->q=NULL;
     orsa->e=NULL;
 #endif
@@ -644,7 +644,7 @@ int ops_rsa_public_encrypt(unsigned char *out,const unsigned char *in,
     //    printf("ops_rsa_public_encrypt: length=%ld\n", length);
 
     orsa=RSA_new();
-#if OPENSSL_VERSION_NUMBER < 0x10100000L
+#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
     orsa->n=rsa->n;
     orsa->e=rsa->e;
 #else
@@ -664,7 +664,7 @@ int ops_rsa_public_encrypt(unsigned char *out,const unsigned char *in,
 	    BIO_free(fd_out) ;
     }
 
-#if OPENSSL_VERSION_NUMBER < 0x10100000L
+#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
     orsa->n=orsa->e=NULL;
 #endif
     RSA_free(orsa);
@@ -744,7 +744,7 @@ ops_boolean_t ops_rsa_generate_keypair(const int numbits, const unsigned long e,
     skey->public_key.days_valid=0;
     skey->public_key.algorithm= OPS_PKA_RSA;
 
-#if OPENSSL_VERSION_NUMBER < 0x10100000L
+#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
     skey->public_key.key.rsa.n=BN_dup(rsa->n);
     skey->public_key.key.rsa.e=BN_dup(rsa->e);
     skey->key.rsa.d=BN_dup(rsa->d);
@@ -766,7 +766,7 @@ ops_boolean_t ops_rsa_generate_keypair(const int numbits, const unsigned long e,
     skey->octet_count=0;
     skey->checksum=0;
 
-#if OPENSSL_VERSION_NUMBER < 0x10100000L
+#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
     skey->key.rsa.p=BN_dup(rsa->p);
     skey->key.rsa.q=BN_dup(rsa->q);
     skey->key.rsa.u=BN_mod_inverse(NULL,rsa->p, rsa->q, ctx);
@@ -888,7 +888,7 @@ DSA_SIG* ops_dsa_sign(unsigned char* hashbuf, unsigned hashsize, const ops_dsa_s
     DSA_SIG *dsasig;
 
     odsa=DSA_new();
-#if OPENSSL_VERSION_NUMBER < 0x10100000L
+#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
     odsa->p=dsa->p;
     odsa->q=dsa->q;
     odsa->g=dsa->g;
@@ -901,7 +901,7 @@ DSA_SIG* ops_dsa_sign(unsigned char* hashbuf, unsigned hashsize, const ops_dsa_s
 
     dsasig=DSA_do_sign(hashbuf,hashsize,odsa);
 
-#if OPENSSL_VERSION_NUMBER < 0x10100000L
+#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
     odsa->p=odsa->q=odsa->g=odsa->pub_key=odsa->priv_key=NULL;
 #endif
     DSA_free(odsa);

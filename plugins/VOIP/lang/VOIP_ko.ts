@@ -1,4 +1,4 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="ko" version="2.1">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="ko" version="2.0">
 <context>
     <name>AudioInput</name>
     <message>
@@ -75,7 +75,7 @@
     <message>
         <location line="-10"/>
         <source>Speech Above</source>
-        <translation type="unfinished"/>
+        <translation>위 내용 읽기</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -125,50 +125,75 @@
     <message>
         <location line="+32"/>
         <source>Echo Cancellation Processing</source>
+        <translation>반향 차단 처리</translation>
+    </message>
+    <message>
+        <location line="+15"/>
+        <source>Video Processing</source>
+        <translation>동영상 처리</translation>
+    </message>
+    <message>
+        <location line="+43"/>
+        <source>Available bandwidth:</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+13"/>
-        <source>Video Processing</source>
+        <location line="+7"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Use this field to simulate the maximum bandwidth available so as to preview what the encoded video will look like with the corresponding compression rate.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>KB/s</source>
+        <translation>KB/s</translation>
+    </message>
+    <message>
+        <location line="+21"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Display encoded (and then decoded) frame, to check the codec&apos;s quality. If not selected, the image above only shows the frame that is grabbed from your camera.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>preview</source>
         <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>AudioInputConfig</name>
     <message>
-        <location filename="../gui/AudioInputConfig.cpp" line="+115"/>
+        <location filename="../gui/AudioInputConfig.cpp" line="+202"/>
         <source>Continuous</source>
-        <translation type="unfinished"/>
+        <translation>연속</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Voice Activity</source>
-        <translation type="unfinished"/>
+        <translation>음성 동작</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Push To Talk</source>
-        <translation type="unfinished"/>
+        <translation>말하려면 누름</translation>
     </message>
     <message>
         <location line="+105"/>
         <source>%1 s</source>
-        <translation type="unfinished"/>
+        <translation>%1 초</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Off</source>
-        <translation type="unfinished"/>
+        <translation>끔</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>-%1 dB</source>
-        <translation type="unfinished"/>
+        <translation>-%1 dB</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.h" line="+75"/>
+        <location filename="../gui/AudioInputConfig.h" line="+94"/>
         <source>VOIP</source>
-        <translation type="unfinished"/>
+        <translation>VOIP</translation>
     </message>
 </context>
 <context>
@@ -176,24 +201,24 @@
     <message>
         <location filename="../gui/AudioStats.ui" line="+14"/>
         <source>Audio Statistics</source>
-        <translation type="unfinished"/>
+        <translation>오디오 통계</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Input Levels</source>
-        <translation type="unfinished"/>
+        <translation>입력 레벨</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Peak microphone level</source>
-        <translation type="unfinished"/>
+        <translation>마이크로폰 피크 레벨</translation>
     </message>
     <message>
         <location line="+7"/>
         <location line="+20"/>
         <location line="+20"/>
         <source>Peak power in last frame</source>
-        <translation type="unfinished"/>
+        <translation>최근 프레임 피크 세기</translation>
     </message>
     <message>
         <location line="-37"/>
@@ -223,17 +248,17 @@
     <message>
         <location line="+13"/>
         <source>Signal Analysis</source>
-        <translation type="unfinished"/>
+        <translation>신호 분석</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Microphone power</source>
-        <translation type="unfinished"/>
+        <translation>마이크로폰 신호 세기</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>How close the current input level is to ideal</source>
-        <translation type="unfinished"/>
+        <translation>현재 입력 레벨을 이상적으로 조절하는 수단</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -243,12 +268,12 @@
     <message>
         <location line="+10"/>
         <source>Signal-To-Noise ratio</source>
-        <translation type="unfinished"/>
+        <translation>신호대 잡음율 </translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Signal-To-Noise ratio from the microphone</source>
-        <translation type="unfinished"/>
+        <translation>마이크로폰 신호대 잡음율</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -364,7 +389,7 @@
         <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+6"/>
         <source>This is the audio tuning wizard for RetroShare. This will help you correctly set the input levels of your sound card, and also set the correct parameters for sound processing in Retroshare. </source>
         <translation type="unfinished"/>
     </message>
@@ -379,20 +404,20 @@
         <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+6"/>
         <source>&lt;p &gt;Open your sound control panel and go to the recording settings. Make sure the microphone is selected as active input with maximum recording volume. If there's an option to enable a &amp;quot;Microphone boost&amp;quot; make sure it's checked. &lt;/p&gt;
 &lt;p&gt;Speak loudly, as when you are annoyed or excited. Decrease the volume in the sound control panel until the bar below stays as high as possible in the green and orange but not the red zone while you speak. &lt;/p&gt;</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+16"/>
+        <location line="+11"/>
         <source>Talk normally, and adjust the slider below so that the bar moves into green when you talk, and doesn&apos;t go into the orange zone.</source>
         <translation type="unfinished"/>
     </message>
     <message>
         <location line="+44"/>
         <source>Stop looping echo for this wizard</source>
-        <translation type="unfinished"/>
+        <translation>이 마법사에서 잔향 반복 멈춤</translation>
     </message>
     <message>
         <location line="+20"/>
@@ -402,12 +427,12 @@
     <message>
         <location line="+3"/>
         <source>Use high contrast graphics</source>
-        <translation type="unfinished"/>
+        <translation>고대비 그래픽 사용</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Voice Activity Detection</source>
-        <translation type="unfinished"/>
+        <translation>음성 흐름 감지</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -422,12 +447,12 @@
     <message>
         <location line="+12"/>
         <source>Push To Talk:</source>
-        <translation type="unfinished"/>
+        <translation>말하려면 누름:</translation>
     </message>
     <message>
         <location line="+29"/>
         <source>Voice Detection</source>
-        <translation type="unfinished"/>
+        <translation>음성 감지</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -437,7 +462,7 @@
     <message>
         <location line="+64"/>
         <source>Continuous transmission</source>
-        <translation type="unfinished"/>
+        <translation>연속 전송</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -447,18 +472,18 @@
     <message>
         <location line="+3"/>
         <source>Enjoy using RetroShare</source>
-        <translation type="unfinished"/>
+        <translation>RetroShare를 즐기세요</translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+6"/>
         <source>Congratulations. You should now be ready to enjoy a richer sound experience with Retroshare.</source>
-        <translation type="unfinished"/>
+        <translation>축하합니다. Retroshare에서 더욱 풍부한 음향을 즐길 준비가 끝났습니다.</translation>
     </message>
 </context>
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="+124"/>
+        <location filename="../VOIPPlugin.cpp" line="+128"/>
         <source>&lt;h3&gt;RetroShare VOIP plugin&lt;/h3&gt;&lt;br/&gt;   * Contributors: Cyril Soler, Josselin Jacquard&lt;br/&gt;</source>
         <translation type="unfinished"/>
     </message>
@@ -496,131 +521,257 @@
 <context>
     <name>VOIP</name>
     <message>
-        <location line="+49"/>
+        <location line="+47"/>
         <source>This plugin provides voice communication between friends in RetroShare.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+40"/>
+        <location line="+4"/>
+        <location line="+4"/>
+        <location line="+4"/>
+        <source>VOIP</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="-11"/>
+        <source>Incoming audio call</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Incoming video call</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Outgoing audio call</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Outgoing video call</source>
         <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>VOIPChatWidgetHolder</name>
     <message>
-        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="+63"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="+70"/>
+        <location line="+146"/>
         <source>Mute</source>
-        <translation type="unfinished"/>
+        <translation>음소거</translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="-128"/>
+        <location line="+138"/>
         <source>Start Call</source>
-        <translation type="unfinished"/>
+        <translation>통화 시작</translation>
     </message>
     <message>
-        <location line="+28"/>
+        <location line="-121"/>
+        <location line="+131"/>
         <source>Start Video Call</source>
-        <translation type="unfinished"/>
+        <translation>화상 통화 시작</translation>
     </message>
     <message>
-        <location line="-14"/>
+        <location line="-121"/>
+        <location line="+131"/>
         <source>Hangup Call</source>
+        <translation>전화 걸기</translation>
+    </message>
+    <message>
+        <location line="-113"/>
+        <location line="+626"/>
+        <source>Hide Chat Text</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+79"/>
-        <source>Mute yourself</source>
+        <location line="-608"/>
+        <location line="+106"/>
+        <location line="+523"/>
+        <source>Fullscreen mode</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="-412"/>
+        <source>%1 inviting you to start an audio conversation. Do you want Accept or Decline the invitation?</source>
         <translation type="unfinished"/>
     </message>
     <message>
         <location line="+2"/>
+        <source>Accept Audio Call</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+17"/>
+        <source>Decline Audio Call</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Refuse audio call</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+33"/>
+        <source>%1 inviting you to start a video conversation. Do you want Accept or Decline the invitation?</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+19"/>
+        <source>Decline Video Call</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Refuse video call</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+102"/>
+        <source>Mute yourself</source>
+        <translation>자체 음소거</translation>
+    </message>
+    <message>
+        <location line="+2"/>
         <source>Unmute yourself</source>
+        <translation>자체 음소거 해제</translation>
+    </message>
+    <message>
+        <location line="+589"/>
+        <source>Waiting your friend respond your video call.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+19"/>
-        <location line="+37"/>
-        <location line="+38"/>
-        <location line="+18"/>
-        <location line="+13"/>
-        <location line="+92"/>
+        <location line="+14"/>
+        <source>Your friend is calling you for video. Respond.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="-781"/>
+        <location line="+53"/>
+        <location line="+188"/>
+        <location line="+24"/>
+        <location line="+57"/>
+        <location line="+28"/>
+        <location line="+284"/>
+        <location line="+11"/>
+        <location line="+11"/>
+        <location line="+21"/>
+        <location line="+11"/>
         <source>VoIP Status</source>
-        <translation type="unfinished"/>
+        <translation>VoIP 상태</translation>
     </message>
     <message>
-        <location line="-198"/>
-        <source>Outgoing Call stopped.</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location line="+19"/>
+        <location line="-467"/>
         <source>Hold Call</source>
+        <translation>전화 걸기 유지</translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>Outgoing Call is started...</source>
+        <translation>전화 걸기를 시작했습니다...</translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Resume Call</source>
+        <translation>다시 전화 걸기</translation>
+    </message>
+    <message>
+        <location line="+16"/>
+        <source>Outgoing Audio Call stopped.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+18"/>
-        <source>Outgoing Call is started...</source>
-        <translation type="unfinished"/>
+        <location line="+46"/>
+        <source>Shut camera off</source>
+        <translation>카메라 끄기</translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>You&apos;re now sending video...</source>
+        <translation>동영상 전송 중...</translation>
+    </message>
+    <message>
+        <location line="-266"/>
+        <location line="+279"/>
+        <source>Activate camera</source>
+        <translation>카메라 활성화</translation>
     </message>
     <message>
         <location line="+15"/>
-        <source>Resume Call</source>
+        <source>Video call stopped</source>
+        <translation>화상 통화를 멈추었습니다</translation>
+    </message>
+    <message>
+        <location line="-295"/>
+        <source>Accept Video Call</source>
+        <translation>화상 통화 받기</translation>
+    </message>
+    <message>
+        <location line="-52"/>
+        <source>Activate audio</source>
+        <translation>오디오 활성화</translation>
+    </message>
+    <message>
+        <location line="+384"/>
+        <source>Show Chat Text</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+19"/>
+        <source>Return to normal view.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+228"/>
+        <source>%1 hang up. Your call is closed.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>%1 hang up. Your audio call is closed.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>%1 hang up. Your video call is closed.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+21"/>
+        <source>%1 accepted your audio call.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>%1 accepted your video call.</source>
         <translation type="unfinished"/>
     </message>
     <message>
         <location line="+20"/>
-        <source>Shut camera off</source>
+        <source>Waiting your friend respond your audio call.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+4"/>
-        <source>You&apos;re now sending video...</source>
+        <location line="+14"/>
+        <source>Your friend is calling you for audio. Respond.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+12"/>
-        <location line="+21"/>
-        <source>Activate camera</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location line="-15"/>
-        <source>Video call stopped</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location line="+13"/>
-        <source>%1 inviting you to start a video conversation. do you want Accept or Decline the invitation?</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Accept Video Call</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location line="+91"/>
-        <source>%1 inviting you to start a audio conversation. do you want Accept or Decline the invitation?</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Accept Call</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Activate audio</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location line="+21"/>
+        <location line="+17"/>
+        <location line="+58"/>
         <source>Answer</source>
-        <translation type="unfinished"/>
+        <translation>응답</translation>
     </message>
 </context>
 <context>
     <name>VOIPPlugin</name>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="+5"/>
+        <location filename="../VOIPPlugin.cpp" line="-48"/>
         <source>VOIP</source>
-        <translation type="unfinished"/>
+        <translation>VOIP</translation>
     </message>
 </context>
 <context>
@@ -628,11 +779,16 @@
     <message>
         <location filename="../gui/VOIPToasterItem.cpp" line="+43"/>
         <source>Answer</source>
-        <translation type="unfinished"/>
+        <translation>응답</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Answer with video</source>
+        <translation>화상 응답</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPToasterItem.ui" line="+232"/>
+        <source>Decline</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -641,42 +797,42 @@
     <message>
         <location filename="../gui/VOIPToasterNotify.cpp" line="+56"/>
         <source>VOIP</source>
-        <translation type="unfinished"/>
+        <translation>VOIP</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Accept</source>
-        <translation type="unfinished"/>
+        <translation>받기</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Bandwidth Information</source>
-        <translation type="unfinished"/>
+        <translation>대역폭 정보</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Audio or Video Data</source>
-        <translation type="unfinished"/>
+        <translation>음성 또는 화상 데이터</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>HangUp</source>
-        <translation type="unfinished"/>
+        <translation>전화 걸기</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Invitation</source>
-        <translation type="unfinished"/>
+        <translation>초대</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Audio Call</source>
-        <translation type="unfinished"/>
+        <translation>전화</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Video Call</source>
-        <translation type="unfinished"/>
+        <translation>화상 통화</translation>
     </message>
     <message>
         <location line="+110"/>
@@ -742,6 +898,14 @@
         <location line="+25"/>
         <location line="+24"/>
         <source>calling</source>
+        <translation>거는 중</translation>
+    </message>
+</context>
+<context>
+    <name>voipGraphSource</name>
+    <message>
+        <location filename="../gui/AudioInputConfig.cpp" line="-260"/>
+        <source>Required bandwidth</source>
         <translation type="unfinished"/>
     </message>
 </context>

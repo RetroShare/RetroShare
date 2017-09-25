@@ -652,6 +652,7 @@ uint32_t GxsGroupDialog::getGroupSignFlags()
     {
     case 0: break ;
     case 2: signFlags |= GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG_KNOWN;	// no break below, since we want *both* flags in this case.
+        /* fallthrough */
     case 1:  signFlags |= GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG;
 	    break ;
     }
@@ -863,7 +864,8 @@ void GxsGroupDialog::requestGroup(const RsGxsGroupId &groupId)
 	std::cerr << std::endl;
 
 	uint32_t token;
-	mInternalTokenQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, groupIds, GXSGROUP_INTERNAL_LOADGROUP);
+	if (mInternalTokenQueue)
+		mInternalTokenQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, groupIds, GXSGROUP_INTERNAL_LOADGROUP) ;
 }
 
 void GxsGroupDialog::loadGroup(uint32_t token)

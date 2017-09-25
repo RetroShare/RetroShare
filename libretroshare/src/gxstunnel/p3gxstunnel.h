@@ -230,9 +230,9 @@ private:
     void handleRecvDHPublicKey(RsGxsTunnelDHPublicKeyItem *item) ;
     bool locked_sendDHPublicKey(const DH *dh, const RsGxsId& own_gxs_id, const RsPeerId& virtual_peer_id) ;
     bool locked_initDHSessionKey(DH *&dh);
-    
+	uint64_t locked_getPacketCounter();
+
     TurtleVirtualPeerId virtualPeerIdFromHash(const TurtleFileHash& hash) ;	// ... and to a hash for p3turtle
-    RsGxsTunnelId makeGxsTunnelId(const RsGxsId &own_id, const RsGxsId &distant_id) const;	// creates a unique ID from two GXS ids.
 
     // item handling
     
@@ -253,8 +253,15 @@ private:
     RsGixs 	*mGixs ;
     RsMutex  	 mGxsTunnelMtx ;
     
+	uint64_t mCurrentPacketCounter ;
+
     std::map<uint32_t,RsGxsTunnelClientService*> mRegisteredServices ;
     
     void debug_dump();
+
+public:
+	/// creates a unique tunnel ID from two GXS ids.
+	static RsGxsTunnelId makeGxsTunnelId( const RsGxsId &own_id,
+	                                      const RsGxsId &distant_id );
 };
 

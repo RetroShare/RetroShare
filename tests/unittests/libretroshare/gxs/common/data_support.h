@@ -1,6 +1,6 @@
 #pragma once
 
-#include "serialiser/rsnxsitems.h"
+#include "rsitems/rsnxsitems.h"
 #include "gxs/rsgxsdata.h"
 
 #define RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM 0x012
@@ -21,13 +21,13 @@ void init_item(RsGxsGrpMetaData* metaGrp);
 void init_item(RsGxsMsgMetaData* metaMsg);
 
 
-RsSerialType* init_item(RsNxsGrp& nxg);
-RsSerialType* init_item(RsNxsMsg& nxm);
-RsSerialType* init_item(RsNxsSyncGrpReqItem &rsg);
-RsSerialType* init_item(RsNxsSyncMsgReqItem &rsgm);
-RsSerialType* init_item(RsNxsSyncGrpItem& rsgl);
-RsSerialType* init_item(RsNxsSyncMsgItem& rsgml);
-RsSerialType* init_item(RsNxsTransacItem& rstx);
+void init_item(RsNxsGrp& nxg            ,RsSerialType ** = NULL);
+void init_item(RsNxsMsg& nxm            ,RsSerialType ** = NULL);
+void init_item(RsNxsSyncGrpReqItem &rsg ,RsSerialType ** = NULL);
+void init_item(RsNxsSyncMsgReqItem &rsgm,RsSerialType ** = NULL);
+void init_item(RsNxsSyncGrpItem& rsgl   ,RsSerialType ** = NULL);
+void init_item(RsNxsSyncMsgItem& rsgml  ,RsSerialType ** = NULL);
+void init_item(RsNxsTransacItem& rstx   ,RsSerialType ** = NULL);
 
 template<typename T>
 void copy_all_but(T& ex, const std::list<T>& s, std::list<T>& d)

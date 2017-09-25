@@ -1,7 +1,7 @@
 #define RS_MAJOR_VERSION     0
 #define RS_MINOR_VERSION     6
-#define RS_BUILD_NUMBER      2
-#define RS_BUILD_NUMBER_ADD  "x" // <-- do we need this?
+#define RS_BUILD_NUMBER      3
+#define RS_BUILD_NUMBER_ADD  "" // <-- do we need this?
 // The revision number should be the 4 first bytes of the git revision hash, which is obtained using:
 //    git log --pretty="%H" | head -1 | cut -c1-8
 //

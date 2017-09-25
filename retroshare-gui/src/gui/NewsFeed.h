@@ -58,7 +58,7 @@ public:
 	virtual QScrollArea *getScrollArea();
 	virtual void deleteFeedItem(QWidget *item, uint32_t type);
 	virtual void openChat(const RsPeerId& peerId);
-	virtual void openComments(uint32_t type, const RsGxsGroupId &groupId, const RsGxsMessageId &msgId, const QString &title);
+	virtual void openComments(uint32_t type, const RsGxsGroupId &groupId, const QVector<RsGxsMessageId> &versions, const RsGxsMessageId &msgId, const QString &title);
 
 	static void testFeeds(uint notifyFlags);
 	static void testFeed(FeedNotify *feedNotify);
@@ -83,12 +83,14 @@ private slots:
 
 private:
 	void addFeedItem(FeedItem *item);
-	void addFeedItemIfUnique(FeedItem *item, int itemType, const RsPeerId &sslId, const std::string& ipAddr, const std::string& ipAddrReported, bool replace);
+	void addFeedItemIfUnique(FeedItem *item, int itemType, const std::string& id1, const std::string& id2, const std::string& id3, const std::string& id4, bool replace);
+	void remUniqueFeedItem(FeedItem *item, int itemType, const std::string& id1, const std::string& id2, const std::string& id3, const std::string& id4);
 
 	void addFeedItemPeerConnect(const RsFeedItem &fi);
 	void addFeedItemPeerDisconnect(const RsFeedItem &fi);
-	void addFeedItemPeerNew(const RsFeedItem &fi);
 	void addFeedItemPeerHello(const RsFeedItem &fi);
+	void addFeedItemPeerNew(const RsFeedItem &fi);
+	void addFeedItemPeerOffset(const RsFeedItem &fi);
 
 	void addFeedItemSecurityConnectAttempt(const RsFeedItem &fi);
 	void addFeedItemSecurityAuthDenied(const RsFeedItem &fi);
@@ -118,6 +120,10 @@ private:
 	void addFeedItemMessage(const RsFeedItem &fi);
 	void addFeedItemFilesNew(const RsFeedItem &fi);
 
+	void addFeedItemCircleMembReq(const RsFeedItem &fi);
+	void remFeedItemCircleMembReq(const RsFeedItem &fi);
+	void addFeedItemCircleInvitRec(const RsFeedItem &fi);
+
 	virtual void loadChannelGroup(const uint32_t &token);
 	virtual void loadChannelPost(const uint32_t &token);
 	virtual void loadChannelPublishKey(const uint32_t &token);
@@ -129,8 +135,12 @@ private:
 	virtual void loadPostedGroup(const uint32_t &token);
 	virtual void loadPostedMessage(const uint32_t &token);
 
+	virtual void loadCircleGroup(const uint32_t &token);
+	virtual void loadCircleMessage(const uint32_t &token);
+
 private:
 	TokenQueue *mTokenQueueChannel;
+	TokenQueue *mTokenQueueCircle;
 	TokenQueue *mTokenQueueForum;
 	TokenQueue *mTokenQueuePosted;
 

@@ -46,7 +46,7 @@ protected:
 	/** Default destructor */
 	virtual ~PopupChatDialog();
 
-    virtual void init(const ChatId &chat_id, const QString &title);
+	virtual void init(const ChatId &chat_id, const QString &title);
 	virtual void showDialog(uint chatflags);
 	virtual ChatWidget *getChatWidget();
 	virtual bool hasPeerStatus() { return true; }

@@ -59,6 +59,7 @@ RSGraphSource::RSGraphSource()
 #endif
     _timer = new QTimer ;
     _digits = 2 ;
+    _filtering_enabled = true;
 
     QObject::connect(_timer,SIGNAL(timeout()),this,SLOT(updateIfPossible())) ;
 }
@@ -99,6 +100,11 @@ QString RSGraphSource::displayValue(float v) const
     return QString::number(v,'f',_digits) + " " + unitName() ;
 }
 
+void RSGraphSource::getCumulatedValues(std::vector<float>& vals) const
+{
+    for(std::map<std::string,float>::const_iterator it = _totals.begin();it!=_totals.end();++it)
+        vals.push_back(it->second) ;
+}
 void RSGraphSource::getCurrentValues(std::vector<QPointF>& vals) const
 {
     std::map<std::string,std::list<std::pair<qint64,float> > >::const_iterator it = _points.begin();
@@ -108,15 +114,18 @@ void RSGraphSource::getCurrentValues(std::vector<QPointF>& vals) const
         vals.push_back(QPointF( (now - it->second.back().first)/1000.0f,it->second.back().second)) ;
 }
 
-QString RSGraphSource::legend(int i,float v) const
+QString RSGraphSource::legend(int i,float v,bool show_value) const
 {
-    return displayName(i) + " (" + displayValue(v) + " )";
+    return displayName(i) + (show_value?(" (" + displayValue(v) + ")"):"");
 }
 
 void RSGraphSource::getDataPoints(int index,std::vector<QPointF>& pts,float filter_factor) const
 {
     pts.clear() ;
     qint64 now = getTime() ;
+
+	if(!_filtering_enabled)
+		filter_factor = 0 ;
 
     std::map<std::string,std::list<std::pair<qint64,float> > >::const_iterator it = _points.begin();
 
@@ -209,11 +218,30 @@ void RSGraphSource::update()
     }
         else
             ++it ;
+
+    updateTotals();
+}
+
+void RSGraphSource::updateTotals()
+{
+    // now compute totals
+
+    _totals.clear();
+
+    for(std::map<std::string,std::list<std::pair<qint64,float> > >::const_iterator it(_points.begin());it!=_points.end();++it)
+    {
+        float& f = _totals[it->first] ;
+
+        f = 0.0f ;
+        for(std::list<std::pair<qint64,float> >::const_iterator it2=it->second.begin();it2!=it->second.end();++it2)
+			f += (*it2).second ;
+    }
 }
 
 void RSGraphSource::reset()
 {
-    _points.clear() ;
+    _points.clear();
+    _totals.clear();
 }
 
 void RSGraphSource::setCollectionTimeLimit(qint64 s) { _time_limit_msecs = s ; }
@@ -235,6 +263,7 @@ RSGraphWidget::RSGraphWidget(QWidget *parent)
   _maxPoints = getNumPoints();  
   _maxValue = MINUSER_SCALE;
 
+  _linewidthscale = 1.0f;
   _opacity = 0.6 ;
   _flags = 0;
   _time_scale = 5.0f ; // in pixels per second.
@@ -242,11 +271,13 @@ RSGraphWidget::RSGraphWidget(QWidget *parent)
   _timer = new QTimer ;
   QObject::connect(_timer,SIGNAL(timeout()),this,SLOT(updateIfPossible())) ;
 
+
   _y_scale = 1.0f ;
   _timer->start(1000);
 
     float FS = QFontMetricsF(font()).height();
   setMinimumHeight(12*FS);
+  _graph_base = FS*GRAPH_BASE;
 }
 
 void RSGraphWidget::updateIfPossible()
@@ -267,7 +298,13 @@ RSGraphWidget::~RSGraphWidget()
     delete _source ;
 }
 
-/** Gets the width of the desktop, which is the maximum number of points 
+void RSGraphWidget::setFiltering(bool b)
+{
+    if(_source != NULL)
+        _source->setFiltering(b) ;
+}
+
+/** Gets the width of the desktop, which is the maximum number of points
  * we can plot in the graph. */
 int
 RSGraphWidget::getNumPoints()
@@ -285,15 +322,6 @@ RSGraphWidget::resetGraph()
   _maxValue = MINUSER_SCALE;
   updateIfPossible();
 }
-
-/** Toggles display of respective graph lines and counters. */
-//void
-//DhtGraph::setShowCounters(bool showRSDHT, bool showALLDHT)
-//{
-//  _showRSDHT = showRSDHT;
-//  _showALLDHT = showALLDHT;
-//  this->update();
-//}
 
 /** Overloads default QWidget::paintEvent. Draws the actual 
  * bandwidth graph. */
@@ -317,9 +345,11 @@ void RSGraphWidget::paintEvent(QPaintEvent *)
 
   /* Paint the scale */
   paintScale1();
-  /* Plot the rsDHT/allDHT data */
+
+  /* Plot the data */
   paintData();
-  /* Paint the rsDHT/allDHT totals */
+
+  /* Paint the totals */
   paintTotals();
 
   // part of the scale that needs to write over the data curves.
@@ -332,28 +362,32 @@ void RSGraphWidget::paintEvent(QPaintEvent *)
   _painter->end();
 }
 
-QSizeF RSGraphWidget::sizeHint(Qt::SizeHint which, const QSizeF& /* constraint */) const
-{
-    float FS = QFontMetricsF(font()).height();
-    //float fact = FS/14.0 ;
+//QSizeF RSGraphWidget::sizeHint(Qt::SizeHint which, const QSizeF& /* constraint */) const
+//{
+//    float FS = QFontMetricsF(font()).height();
+//    //float fact = FS/14.0 ;
+//
+//    switch(which)
+//    {
+//default:
+//    case Qt::MinimumSize:
+//    case Qt::PreferredSize:
+//        return QSizeF(70*FS,12*FS);
+//    case Qt::MaximumSize:
+//        return QSizeF(700*FS,120*FS);
+//    }
+//}
 
-    switch(which)
-    {
-default:
-    case Qt::MinimumSize:
-    case Qt::PreferredSize:
-        return QSizeF(70*FS,12*FS);
-    case Qt::MaximumSize:
-        return QSizeF(700*FS,120*FS);
-    }
-}
-
-QColor RSGraphWidget::getColor(int i)
+QColor RSGraphWidget::getColor(const std::string& name)
 {
+    uint32_t r = 57 ;
+    for(uint32_t i=0;i<name.length();++i)
+        r = (113*name[i] + r)^0x93859aeb;
+
     // shuffle the colors a little bit
-    int h = (i*86243)%359 ;
+    int h = (r*86243)%359 ;
 
-    return QColor::fromHsv(h,128+127*(i&1),255) ;
+    return QColor::fromHsv(h,255,255) ;
 }
 
 void RSGraphWidget::setCurvesOpacity(float f)
@@ -384,18 +418,26 @@ void RSGraphWidget::paintData()
           QVector<QPointF> points ;
           pointsFromData(values,points) ;
 
-          /* Plot the bandwidth data as area graphs */
-          if (_flags & RSGRAPH_FLAGS_PAINT_STYLE_PLAIN)
-              paintIntegral(points, getColor(i), _opacity);
+          QColor pcolor = getColor(source.displayName(i).toStdString()) ;
 
-          /* Plot the bandwidth as solid lines. If the graph style is currently an
-   * area graph, we end up outlining the integrals. */
-          paintLine(points, getColor(i));
+          /* Plot the bandwidth as solid lines. If the graph style is currently an area graph, we end up outlining the integrals. */
+
+          if(_flags & RSGRAPH_FLAGS_PAINT_STYLE_DOTS)
+			  paintDots(points, pcolor);
+          else
+			  paintLine(points, pcolor);
+
+          /* Plot the data as area graphs */
+
+		  points.push_front(QPointF( _rec.width(), _rec.height() - _graph_base)) ; // add a point in the lower right corner, to close the path.
+
+          if (_flags & RSGRAPH_FLAGS_PAINT_STYLE_PLAIN)
+              paintIntegral(points, pcolor, _opacity);
       }
   if(_maxValue > 0.0f)
   {
       if(_flags & RSGRAPH_FLAGS_LOG_SCALE_Y)
-          _y_scale = _rec.height()*0.8 / log(_maxValue) ;
+          _y_scale = _rec.height()*0.8 / log(std::max((qreal)2.0,(qreal)_maxValue)) ;
       else
           _y_scale = _rec.height()*0.8/_maxValue ;
   }
@@ -436,43 +478,44 @@ void RSGraphWidget::pointsFromData(const std::vector<QPointF>& values,QVector<QP
 		qreal px = x - (values[i].x()-last)*_time_scale ;
 		qreal py = y -  valueToPixels(values[i].y()) ;
 
-		if(px >= SCALE_WIDTH*fact && last_px < SCALE_WIDTH*fact)
+		if(!(_flags & RSGRAPH_FLAGS_PAINT_STYLE_DOTS))
 		{
-			float alpha = (SCALE_WIDTH*fact - last_px)/(px - last_px) ;
-			float ipx = SCALE_WIDTH*fact ;
-			float ipy = (1-alpha)*last_py + alpha*py ;
+			if(px >= SCALE_WIDTH*fact && last_px < SCALE_WIDTH*fact)
+			{
+				float alpha = (SCALE_WIDTH*fact - last_px)/(px - last_px) ;
+				float ipx = SCALE_WIDTH*fact ;
+				float ipy = (1-alpha)*last_py + alpha*py ;
 
-			points << QPointF(ipx,y) ;
-			points << QPointF(ipx,ipy) ;
-		}
-		else if(i==0)
-		{
-			if(px < SCALE_WIDTH*fact)
-				points << QPointF(SCALE_WIDTH*fact,py) ;
-			else
-				points << QPointF(px,y) ;
+				points << QPointF(ipx,y - _graph_base) ;
+				points << QPointF(ipx,ipy) ;
+			}
+			else if(i==0)
+			{
+				if(px < SCALE_WIDTH*fact)
+					points << QPointF(SCALE_WIDTH*fact,py) ;
+				else
+					points << QPointF(px,y - _graph_base) ;
+			}
 		}
 
 		if(px < SCALE_WIDTH*fact)
 			continue ;
 
+		if((_flags & RSGRAPH_FLAGS_PAINT_STYLE_DOTS) && values[i].y() == 0)
+            continue ;
+
 		_maxValue = std::max(_maxValue,values[i].y()) ;
 
 		// remove midle point when 3 consecutive points have the same value.
 
-		if(points.size() > 1 && points[points.size()-2].y() == points.back().y() && points.back().y() == py)
-			points.pop_back() ;
-
-		//         	if(fabs(px - last_px)/_time_scale > min_x_no_data_threshold)
-		//            {
-		//                points << QPointF(last_px,y) ;
-		//                points << QPointF(px,y) ;
-		//            }
+		if(!(_flags & RSGRAPH_FLAGS_PAINT_STYLE_DOTS))
+			if(points.size() > 1 && points[points.size()-2].y() == points.back().y() && points.back().y() == py)
+				points.pop_back() ;
 
 		points << QPointF(px,py) ;
 
-		if(i==values.size()-1)
-			points << QPointF(px,y) ;
+		if(!(_flags & RSGRAPH_FLAGS_PAINT_STYLE_DOTS) && (i==values.size()-1))
+			points << QPointF(px,py) ;
 
 		last_px = px ;
 		last_py = py ;
@@ -483,17 +526,17 @@ void RSGraphWidget::pointsFromData(const std::vector<QPointF>& values,QVector<QP
 qreal RSGraphWidget::valueToPixels(qreal val)
 {
         if(_flags & RSGRAPH_FLAGS_LOG_SCALE_Y)
-            return log(std::max((qreal)1.0,val))*_y_scale ;
+            return _graph_base + log(std::max((qreal)1.0,val))*_y_scale ;
         else
-            return val*_y_scale ;
+            return _graph_base + val*_y_scale ;
 }
 
 qreal RSGraphWidget::pixelsToValue(qreal val)
 {
         if(_flags & RSGRAPH_FLAGS_LOG_SCALE_Y)
-            return exp(val / _y_scale) ;
+            return exp( (val - _graph_base) / _y_scale) ;
         else
-            return val/_y_scale ;
+            return (val - _graph_base)/_y_scale ;
 }
 
 /** Plots an integral using the data points in <b>points</b>. The area will be
@@ -515,11 +558,27 @@ void RSGraphWidget::paintLine(const QVector<QPointF>& points, QColor color, Qt::
 {
   /* Save the current brush, plot the line, and restore the old brush */
   QPen oldPen = _painter->pen();
-  _painter->setPen(QPen(color, lineStyle));
+
+  QPen newPen(color, lineStyle);
+  newPen.setWidth(2.0f*_linewidthscale);
+  _painter->setPen(newPen);
   _painter->drawPolyline(points.data(), points.size());
   _painter->setPen(oldPen);
 }
+void RSGraphWidget::paintDots(const QVector<QPointF>& points, QColor color)
+{
+  /* Save the current brush, plot the line, and restore the old brush */
+  QPen oldPen = _painter->pen();
+  _painter->setPen(QPen(color, oldPen.style()));
+   QBrush oldBrush = _painter->brush();
+  _painter->setBrush(QBrush(color));
 
+  for(int i=0;i<points.size();++i)
+	  _painter->drawEllipse(QRect(points[i].x()-2.5*_linewidthscale,points[i].y()-2.5*_linewidthscale,5*_linewidthscale,5*_linewidthscale)) ;
+
+  _painter->setPen(oldPen);
+  _painter->setBrush(oldBrush);
+}
 /** Paints selected total indicators on the graph. */
 void RSGraphWidget::paintTotals()
 {
@@ -558,8 +617,8 @@ void RSGraphWidget::paintScale1()
     float fact = FS/14.0 ;
 
     int top = _rec.y();
-	int bottom = _rec.height();
-	qreal paintStep = (bottom - (bottom/10)) / 4;
+	int bottom = _rec.height() - _graph_base;
+	qreal paintStep = (bottom - top) / 5;
 
 	/* Draw the other marks in their correctly scaled locations */
 	qreal scale;
@@ -570,16 +629,23 @@ void RSGraphWidget::paintScale1()
 
 	QString unit_name = _source->unitName() ;
 
-	for (int i = 1; i < 5; i++)
+	for (int i = 0; i < 5; i++)
 	{
-		pos = bottom - (i * paintStep);
+		pos = bottom - (i * paintStep) ;
 
-		scale = pixelsToValue(i * paintStep);
+		scale = pixelsToValue(_graph_base + i * paintStep);
+
+        // If legend contains integers only the value should be rounded to the nearest integer
+		if(_flags & RSGRAPH_FLAGS_LEGEND_INTEGER)
+        {
+            scale = (int)scale ;
+            pos = bottom - (valueToPixels(scale) - _graph_base) ;
+        }
 
 		QString text = _source->displayValue(scale) ;
 
 		_painter->setPen(SCALE_COLOR);
-        _painter->drawText(QPointF(5*fact, pos+0.5*FS),  text);
+        _painter->drawText(QPointF(SCALE_WIDTH*fact - QFontMetricsF(font()).width(text) - 4*fact, pos+0.4*FS),  text);
 		_painter->setPen(GRID_COLOR);
         _painter->drawLine(QPointF(SCALE_WIDTH*fact, pos),  QPointF(_rec.width(), pos));
 	}
@@ -617,6 +683,11 @@ void RSGraphWidget::wheelEvent(QWheelEvent *e)
 		    _time_filter *= 1.1 ;
 	    else
 		    _time_filter /= 1.1 ;
+    else if(e->modifiers() & Qt::ControlModifier)
+        if(e->delta() > 0)
+            _linewidthscale *= 1.2 ;
+		else
+            _linewidthscale /= 1.2 ;
     else
 	    if(e->delta() > 0)
 		    _time_scale *= 1.1 ;
@@ -630,8 +701,19 @@ void RSGraphWidget::paintLegend()
 {
   //int bottom = _rec.height();
 
-  std::vector<QPointF> vals ;
-  _source->getCurrentValues(vals) ;
+  std::vector<float> vals ;
+
+  if(_flags & RSGRAPH_FLAGS_LEGEND_CUMULATED)
+	  _source->getCumulatedValues(vals) ;
+  else
+  {
+	  std::vector<QPointF> cvals ;
+	  _source->getCurrentValues(cvals) ;
+
+      for(uint32_t i=0;i<cvals.size();++i)
+          vals.push_back(cvals[i].y()) ;
+  }
+
   int j=0;
 
     float FS = QFontMetricsF(font()).height();
@@ -640,15 +722,20 @@ void RSGraphWidget::paintLegend()
     for(uint i=0;i<vals.size();++i)
       if( _masked_entries.find(_source->displayName(i).toStdString()) == _masked_entries.end() )
       {
-          if( _rec.width() - (vals[i].x()-0)*_time_scale < SCALE_WIDTH*fact )
-              continue ;
+//          if( _rec.width() - (vals[i].x()-0)*_time_scale < SCALE_WIDTH*fact )
+//              continue ;
 
           qreal paintStep = 4*fact+FS;
           qreal pos = 15*fact+j*paintStep;
-          QString text = _source->legend(i,vals[i].y()) ;
+
+          QString text = _source->legend(i,vals[i]) ;
 
           QPen oldPen = _painter->pen();
-          _painter->setPen(QPen(getColor(i), Qt::SolidLine));
+
+          QPen pen(getColor(_source->displayName(i).toStdString()), Qt::SolidLine) ;
+		  pen.setWidth(_linewidthscale);
+
+          _painter->setPen(pen);
           _painter->drawLine(QPointF(SCALE_WIDTH*fact+10.0*fact, pos+FS/3),  QPointF(SCALE_WIDTH*fact+30.0*fact, pos+FS/3));
           _painter->setPen(oldPen);
 

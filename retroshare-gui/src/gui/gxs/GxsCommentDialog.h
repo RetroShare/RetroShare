@@ -39,10 +39,10 @@ public:
 	virtual ~GxsCommentDialog();
 
 	void setCommentHeader(QWidget *header);
-	void commentLoad(const RsGxsGroupId &grpId, const RsGxsMessageId &msgId);
+	void commentLoad(const RsGxsGroupId &grpId, const std::set<RsGxsMessageId> &msg_versions, const RsGxsMessageId &most_recent_msgId);
 
 	RsGxsGroupId groupId() { return mGrpId; }
-	RsGxsMessageId messageId() { return mMsgId; }
+	RsGxsMessageId messageId() { return mMostRecentMsgId; }
 
 private slots:
 	void refresh();
@@ -51,7 +51,8 @@ private slots:
 
 private:
 	RsGxsGroupId   mGrpId;
-	RsGxsMessageId mMsgId;
+	RsGxsMessageId mMostRecentMsgId;
+	std::set<RsGxsMessageId> mMsgVersions;
 
 	/* UI - from Designer */
 	Ui::GxsCommentDialog *ui;

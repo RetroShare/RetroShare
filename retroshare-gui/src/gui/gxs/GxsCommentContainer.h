@@ -40,7 +40,7 @@ public:
 	GxsCommentContainer(QWidget *parent = 0);
 	void setup();
 
-	void commentLoad(const RsGxsGroupId &grpId, const RsGxsMessageId &msgId, const QString &title);
+	void commentLoad(const RsGxsGroupId &grpId, const std::set<RsGxsMessageId> &msg_versions, const RsGxsMessageId &msgId, const QString &title);
 
 	virtual GxsServiceDialog *createServiceDialog() = 0;
 	virtual QString getServiceName() = 0;
@@ -67,9 +67,9 @@ public:
 
 	virtual ~GxsServiceDialog() { return; }
 
-	void commentLoad(const RsGxsGroupId &grpId, const RsGxsMessageId &msgId, const QString &title)
+	void commentLoad(const RsGxsGroupId &grpId, const std::set<RsGxsMessageId>& msg_versions,const RsGxsMessageId &msgId, const QString &title)
 	{
-		mContainer->commentLoad(grpId, msgId, title);
+		mContainer->commentLoad(grpId, msg_versions,msgId, title);
 	}
 
 private:

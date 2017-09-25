@@ -66,6 +66,7 @@ private slots:
 	void showHelpUserCert();
 	void copyCert();
 	void pasteCert();
+	void openCert();
 	void saveCert();
 	void friendCertChanged();
 	void cleanFriendCert();

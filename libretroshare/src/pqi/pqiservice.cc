@@ -27,7 +27,9 @@
 #include "util/rsdebug.h"
 #include "util/rsstring.h"
 
+#ifdef  SERVICE_DEBUG
 const int pqiservicezone = 60478;
+#endif
 
 /****
  * #define SERVICE_DEBUG 1
@@ -79,9 +81,24 @@ int	p3ServiceServer::addService(pqiService *ts, bool defaultOn)
 	services[info.mServiceType] = ts;
 
 	// This doesn't need to be in Mutex.
-	mServiceControl->registerService(info, defaultOn);
+	mServiceControl->registerService(info,defaultOn);
 
 	return 1;
+}
+
+bool p3ServiceServer::getServiceItemNames(uint32_t service_type,std::map<uint8_t,std::string>& names)
+{
+	RsStackMutex stack(srvMtx); /********* LOCKED *********/
+
+ 	std::map<uint32_t, pqiService *>::iterator it=services.find(service_type) ;
+
+	if(it != services.end())
+    {
+	   it->second->getItemNames(names) ;
+       return true ;
+    }
+    else
+        return false ;
 }
 
 int p3ServiceServer::removeService(pqiService *ts)
