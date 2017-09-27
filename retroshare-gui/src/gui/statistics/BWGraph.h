@@ -32,6 +32,7 @@ public:
 
     // re-derived from RSGraphSource
 
+	virtual void getCumulatedValues(std::vector<float>& vals) const;
     virtual void getValues(std::map<std::string,float>& values) const;
     virtual QString displayValue(float v) const;
     virtual QString legend(int i,float v,bool show_value=true) const;
@@ -66,6 +67,8 @@ private:
 
     int _friend_graph_type ;
     int _service_graph_type ;
+
+	float _total_duration_seconds ;
 
     RsPeerId    _current_selected_friend ;
     uint16_t    _current_selected_service ;

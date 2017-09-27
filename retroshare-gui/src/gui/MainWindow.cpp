@@ -196,7 +196,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     this->setWindowIcon(QIcon(QString::fromUtf8(":/icons/logo_128.png")));
 
     /* Create all the dialogs of which we only want one instance */
-    _bandwidthGraph = new BandwidthGraph();
+    _bandwidthGraph = NULL ;
 
     #ifdef UNFINISHED
     applicationWindow = new ApplicationWindow();
@@ -559,7 +559,7 @@ void MainWindow::createTrayIcon()
 #ifdef ENABLE_WEBUI
     trayMenu->addAction(QIcon(":/images/emblem-web.png"), tr("Show web interface"), this, SLOT(showWebinterface()));
 #endif // ENABLE_WEBUI
-    trayMenu->addAction(QIcon(IMAGE_BWGRAPH), tr("Bandwidth Graph"), _bandwidthGraph, SLOT(showWindow()));
+    trayMenu->addAction(QIcon(IMAGE_BWGRAPH), tr("Bandwidth Graph"), this, SLOT(showBandwidthGraph()));
     trayMenu->addAction(QIcon(IMAGE_DHT), tr("Statistics"), this, SLOT(showStatisticsWindow()));
 
 
@@ -583,6 +583,14 @@ void MainWindow::createTrayIcon()
 
     connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(toggleVisibility(QSystemTrayIcon::ActivationReason)));
     trayIcon->show();
+}
+
+void MainWindow::showBandwidthGraph()
+{
+	if(_bandwidthGraph == NULL)
+		_bandwidthGraph = new BandwidthGraph();
+
+	_bandwidthGraph->showWindow();
 }
 
 void MainWindow::createNotifyIcons()
