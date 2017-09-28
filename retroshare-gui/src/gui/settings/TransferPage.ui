@@ -126,7 +126,7 @@
         <item>
          <widget class="QCheckBox" name="suffixesIgnoreList_CB">
           <property name="text">
-           <string>ignore files with these suffixes:</string>
+           <string>Ignore files ending with... :</string>
           </property>
          </widget>
         </item>
@@ -144,7 +144,7 @@
         <item>
          <widget class="QCheckBox" name="prefixesIgnoreList_CB">
           <property name="text">
-           <string>ignore files with these prefixes:</string>
+           <string>ignore files starting with... :</string>
           </property>
          </widget>
         </item>
