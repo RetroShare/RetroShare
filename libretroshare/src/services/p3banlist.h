@@ -141,22 +141,22 @@ private:
     int printBanSet_locked(std::ostream &out);
     bool isWhiteListed_locked(const sockaddr_storage &addr);
 
+    p3ServiceControl *mServiceCtrl;
+    //p3NetMgr *mNetMgr;
     time_t mSentListTime;
     std::map<RsPeerId, BanList> mBanSources;
     std::map<struct sockaddr_storage, BanListPeer> mBanSet;
     std::map<struct sockaddr_storage, BanListPeer> mBanRanges;
     std::map<struct sockaddr_storage, BanListPeer> mWhiteListedRanges;
 
-    p3ServiceControl *mServiceCtrl;
-    //p3NetMgr *mNetMgr;
     time_t mLastDhtInfoRequest ;
+
+    uint32_t mAutoRangeLimit ;
+    bool mAutoRangeIps ;
 
     bool mIPFilteringEnabled ;
     bool mIPFriendGatheringEnabled ;
     bool mIPDHTGatheringEnabled ;
-
-    uint32_t mAutoRangeLimit ;
-    bool mAutoRangeIps ;
 };
 
 #endif // SERVICE_RSBANLIST_HEADER

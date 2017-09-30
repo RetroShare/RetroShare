@@ -62,13 +62,14 @@
  */
 RsBanList *rsBanList = NULL ;
 
-p3BanList::p3BanList(p3ServiceControl *sc, p3NetMgr */*nm*/) :
-    p3Service(), mBanMtx("p3BanList"), mServiceCtrl(sc), mSentListTime(0),
-    mLastDhtInfoRequest(0), mIPFilteringEnabled(true),
-    // default number of IPs in same range to trigger a complete IP /24 filter.
-    mAutoRangeLimit(100),
-    mAutoRangeIps(false), mIPFriendGatheringEnabled(false),
-    mIPDHTGatheringEnabled(false)
+p3BanList::p3BanList(p3ServiceControl *sc, p3NetMgr */*nm*/)
+  : p3Service(), mBanMtx("p3BanList"), mServiceCtrl(sc)
+  , mSentListTime(0), mLastDhtInfoRequest(0)
+  // default number of IPs in same range to trigger a complete IP /24 filter.
+  , mAutoRangeLimit(100), mAutoRangeIps(false)
+  , mIPFilteringEnabled(true)
+  , mIPFriendGatheringEnabled(false)
+  , mIPDHTGatheringEnabled(false)
 { addSerialType(new RsBanListSerialiser()); }
 
 const std::string BANLIST_APP_NAME = "banlist";
