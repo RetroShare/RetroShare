@@ -119,7 +119,7 @@ void TokenQueue::doPoll(float dt)
 
 void TokenQueue::pollRequests()
 {
-	double pollPeriod = 0.5; // max poll period.
+	double pollPeriod = 0.1; // max poll period.
 
 	if (mRequests.empty())	{
 		return;
