@@ -70,8 +70,8 @@ void TransferPage::updateIgnoreLists()
 	if(ui.suffixesIgnoreList_CB->isChecked()) flags |= RS_FILE_SHARE_FLAGS_IGNORE_SUFFIXES ;
 
 	std::list<std::string> lp,ls ;
-	{ QStringList L = ui.prefixesIgnoreList_LE->text().split(';') ; for(QStringList::const_iterator it(L.begin());it!=L.end();++it) lp.push_back((*it).toStdString()) ; }
-	{ QStringList L = ui.suffixesIgnoreList_LE->text().split(';') ; for(QStringList::const_iterator it(L.begin());it!=L.end();++it) ls.push_back((*it).toStdString()) ; }
+	{ QStringList L = ui.prefixesIgnoreList_LE->text().split(';') ; for(QStringList::const_iterator it(L.begin());it!=L.end();++it) if(!(*it).isNull()) lp.push_back((*it).toStdString()) ; }
+	{ QStringList L = ui.suffixesIgnoreList_LE->text().split(';') ; for(QStringList::const_iterator it(L.begin());it!=L.end();++it) if(!(*it).isNull()) ls.push_back((*it).toStdString()) ; }
 
 	rsFiles->setIgnoreLists(lp,ls,flags) ;
 
