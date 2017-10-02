@@ -191,9 +191,9 @@ void HashStorage::data_tick()
 #endif
 
                 RS_STACK_MUTEX(mHashMtx) ;
-                HashStorageInfo& info(mFiles[job.full_path]);
+                HashStorageInfo& info(mFiles[job.real_path]);
 
-                info.filename = job.full_path ;
+                info.filename = job.real_path ;
                 info.size = size ;
                 info.modf_stamp = job.ts ;
                 info.time_stamp = time(NULL);
@@ -219,7 +219,7 @@ bool HashStorage::requestHash(const std::string& full_path,uint64_t size,time_t 
     // check if the hash is up to date w.r.t. cache.
 
 #ifdef HASHSTORAGE_DEBUG
-    std::cerr << "HASH Requested for file " << full_path << ": ";
+    std::cerr << "HASH Requested for file " << full_path << ": mod_time: " << mod_time << ", size: " << size << " :" ;
 #endif
     RS_STACK_MUTEX(mHashMtx) ;
 
@@ -272,6 +272,7 @@ bool HashStorage::requestHash(const std::string& full_path,uint64_t size,time_t 
     job.size = size ;
     job.client_param = client_param ;
     job.full_path = full_path ;
+    job.real_path = real_path ;
     job.ts = mod_time ;
 
 	// We store the files indexed by their real path, so that we allow to not re-hash files that are pointed multiple times through the directory links
@@ -443,7 +444,7 @@ bool HashStorage::writeHashStorageInfo(unsigned char *& data,uint32_t&  total_si
 
 std::ostream& operator<<(std::ostream& o,const HashStorage::HashStorageInfo& info)
 {
-    return o << info.hash << " " << info.size << " " << info.filename ;
+    return o << info.hash << " " << info.modf_stamp << " " << info.size << " " << info.filename ;
 }
 
 /********************************************************************************************************************************/

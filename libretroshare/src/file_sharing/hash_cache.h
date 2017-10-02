@@ -118,7 +118,8 @@ private:
 
     struct FileHashJob
     {
-        std::string full_path;
+        std::string full_path;		// canonicalized file name (means: symlinks removed, loops removed, etc)
+        std::string real_path;		// path supplied by the client.
         uint64_t size ;
         HashStorageClient *client;
         uint32_t client_param ;

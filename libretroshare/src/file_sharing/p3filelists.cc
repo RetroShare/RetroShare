@@ -494,7 +494,8 @@ bool p3FileDatabase::loadList(std::list<RsItem *>& load)
 				for(uint32_t i=0;i<kit->value.size();++i)
 					if(kit->value[i] == ';')
 					{
-						ignored_suffixes.push_back(b) ;
+						if(!b.empty())		// security!
+							ignored_suffixes.push_back(b) ;
 						b.clear();
 					}
 					else
