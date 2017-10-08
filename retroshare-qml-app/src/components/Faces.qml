@@ -4,12 +4,10 @@ import "../" // Needed by ChatCache (where stores generated faces)
 
 Item
 {
-
 	id: faces
 
 	property string hash
 	property var facesCache: ChatCache.facesCache
-
 
 	Image
 	{
@@ -18,49 +16,10 @@ Item
 		height: iconSize
 	}
 
-//	Canvas
-//	{
-//		id: canvasAvatar
-//		width: height
-//		height: canvasSizes
-//		visible: false
+	Component.onCompleted: createFromHex(hash)
 
-//		renderStrategy: Canvas.Threaded;
-//		renderTarget: Canvas.Image;
-
-//		property var images
-//		property var callback
-
-
-//		onPaint:
-//		{
-//			var ctx = getContext("2d");
-
-//			if (images)
-//			{
-//				for (y = 0 ;  y< nPieces ; y++)
-//				{
-//					ctx.drawImage(images[y], 0, 0, iconSize, iconSize )
-//				}
-//			}
-
-//		}
-
-//		onPainted:
-//		{
-//			if (callback)
-//			{
-//				var data = toDataURL('image/png')
-//				callback(data)
-//			}
-//		}
-//	}
-
-	Component.onCompleted:
-	{
-		createFromHex(hash)
-	}
-
+	/* TODO: Is there a reason why we are using var and not proper type for the
+	 * following properties? */
 
 	property var facesPath: "/icons/faces/"
 
