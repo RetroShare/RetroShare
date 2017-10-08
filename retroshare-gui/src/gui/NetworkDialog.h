@@ -25,6 +25,11 @@
 
 #include "ui_NetworkDialog.h"
 #include "RsAutoUpdatePage.h"
+#include "gui/NetworkDialog/pgpid_item_model.h"
+#include "gui/NetworkDialog/pgpid_item_proxy.h"
+
+//tmp
+class  QTreeWidgetItem;
 
 class RSTreeWidgetItemCompareRole ;
 
@@ -42,9 +47,8 @@ public:
   /** Default Constructor */
   NetworkDialog(QWidget *parent = 0);
 
-  //void load();
   virtual void updateDisplay() ; // overloaded from RsAutoUpdatePage
-  
+
   QColor backgroundColorSelf() const { return mBackgroundColorSelf; }
   QColor backgroundColorOwnSign() const { return mBackgroundColorOwnSign; }
   QColor backgroundColorAcceptConnection() const { return mBackgroundColorAcceptConnection; }
@@ -68,7 +72,7 @@ protected:
 
 private slots:
 
-	void removeUnusedKeys() ;
+  void removeUnusedKeys() ;
   void makeFriend() ;
   void denyFriend() ;
 //  void deleteCert() ;
@@ -104,10 +108,11 @@ private slots:
 //  void on_actionTabsTriangular_activated();
   
   void filterColumnChanged(int);
-  void filterItems(const QString &text);
+//  void filterItems(const QString &text);
+
+
 
 private:
-  QTreeWidgetItem *getCurrentNeighbour();
 
 //  class NetworkView *networkview;
   
@@ -121,6 +126,12 @@ private:
   QColor mBackgroundColorDenied;
 
   RSTreeWidgetItemCompareRole *compareNetworkRole ;
+
+  //iinternal long lived data
+  std::list<RsPgpId> neighs;
+
+  pgpid_item_model *PGPIdItemModel;
+  pgpid_item_proxy *PGPIdItemProxy;
 
   /** Qt Designer generated object */
   Ui::NetworkDialog ui;
