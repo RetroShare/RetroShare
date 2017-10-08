@@ -28,7 +28,7 @@ Item
 {
 	id: chatView
 	property string chatId
-	property var gxsInfo: ""
+	property var gxsInfo: ({})
 	property int token: 0
 
 	property string objectName:"chatView"
@@ -64,7 +64,7 @@ Item
 	function changeState ()
 	{
 		toolBar.state = "CHATVIEW"
-		gxsInfo=  ChatCache.lastMessageCache.getGxsFromChatId(chatView.chatId)
+		gxsInfo = ChatCache.lastMessageCache.getGxsFromChatId(chatView.chatId)
 		toolBar.gxsSource = gxsInfo.gxs
 		toolBar.titleText =  gxsInfo.name
 	}
