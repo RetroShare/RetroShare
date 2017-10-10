@@ -28,7 +28,7 @@ Item
 {
 	id: chatView
 	property string chatId
-	property var gxsInfo: ""
+	property var gxsInfo: ({})
 	property int token: 0
 
 	property string objectName:"chatView"
@@ -64,7 +64,7 @@ Item
 	function changeState ()
 	{
 		toolBar.state = "CHATVIEW"
-		gxsInfo=  ChatCache.lastMessageCache.getGxsFromChatId(chatView.chatId)
+		gxsInfo = ChatCache.lastMessageCache.getGxsFromChatId(chatView.chatId)
 		toolBar.gxsSource = gxsInfo.gxs
 		toolBar.titleText =  gxsInfo.name
 	}
@@ -100,7 +100,7 @@ Item
 
 		anchors.fill: parent
 		anchors.topMargin: parent.height / 2
-		anchors.bottomMargin: categorySelectorHeight
+		anchors.bottomMargin: if(!androidMode) categorySelectorHeight
 
 		property int categorySelectorHeight: 50
 
@@ -114,6 +114,7 @@ Item
 				name: "EMOJI_HIDDEN"
 				PropertyChanges { target: emojiPicker; anchors.topMargin: parent.height }
 				PropertyChanges { target: emojiPicker; anchors.bottomMargin: -1 }
+				PropertyChanges { target: emojiPicker; height: 0 }
 			},
 			State {
 				name: "EMOJI_SHOWN"
@@ -132,7 +133,7 @@ Item
 		id: inferiorPanel
 		height:  ( msgComposer.height > styles.height)? msgComposer.height: styles.height
 		width: parent.width
-		anchors.bottom: parent.bottom
+		anchors.bottom: emojiPicker.androidMode ? emojiPicker.top : parent.bottom
 
 		Rectangle
 		{

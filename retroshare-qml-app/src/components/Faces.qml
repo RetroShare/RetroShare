@@ -4,64 +4,22 @@ import "../" // Needed by ChatCache (where stores generated faces)
 
 Item
 {
-
 	id: faces
 
 	property string hash
 	property var facesCache: ChatCache.facesCache
-
 
 	Image
 	{
 		id: imageAvatar
 		width: height
 		height: iconSize
-		visible: true
 	}
 
-	Canvas
-	{
-		id: canvasAvatar
-		width: height
-		height: canvasSizes
-		visible: false
+	Component.onCompleted: createFromHex(hash)
 
-		renderStrategy: Canvas.Threaded;
-		renderTarget: Canvas.Image;
-
-		property var images
-		property var callback
-
-
-		onPaint:
-		{
-			var ctx = getContext("2d");
-
-			if (images)
-			{
-				for (y = 0 ;  y< nPieces ; y++)
-				{
-					ctx.drawImage(images[y], 0, 0, iconSize, iconSize )
-				}
-			}
-
-		}
-
-		onPainted:
-		{
-			if (callback)
-			{
-				var data = toDataURL('image/png')
-				callback(data)
-			}
-		}
-	}
-
-	Component.onCompleted:
-	{
-		createFromHex(hash)
-	}
-
+	/* TODO: Is there a reason why we are using var and not proper type for the
+	 * following properties? */
 
 	property var facesPath: "/icons/faces/"
 
@@ -134,11 +92,9 @@ Item
 		{
 			var url = src(gender, i, data[i+1])
 			onloads.push(url)
-			canvasAvatar.loadImage(url)
 		}
-		canvasAvatar.images = onloads
-		canvasAvatar.callback = callback
-		canvasAvatar.requestPaint()
+		var base64Image = androidImagePicker.b64AvatarGen(onloads, canvasSizes)
+		callback("data:image/png;base64,"+base64Image)
 	}
 
 	// Create the identicon
@@ -146,32 +102,11 @@ Item
 	{
 		var iconId = [dataHex, iconSize];
 		var update = function(data)
-		    {
-			    // This conditions are for solve a bug on an Lg S3.
-			    // On this device the toDataURL() is incompleted.
-			    // So for see the complete avatar at least at first execution we'll show the canvas,
-			    // instead of the image component.
-			    // See issue: https://gitlab.com/angesoc/RetroShare/issues/37
-			    if (facesCache.iconCache[iconId])
-				{
-					imageAvatar.source =  data
-					imageAvatar.visible = true
-					canvasAvatar.visible =  false
-
-					canvasAvatar.height = 0
-					imageAvatar.height = iconSize
-				}
-				else
-				{
-					canvasAvatar.visible =  true
-					imageAvatar.visible =  false
-
-					canvasAvatar.height = iconSize
-					imageAvatar.height = 0
-				}
-
-				facesCache.iconCache[iconId] = data;
-		    }
+		{
+			imageAvatar.source =  data
+			imageAvatar.height = iconSize
+			facesCache.iconCache[iconId] = data;
+		}
 
 		if (facesCache.iconCache.hasOwnProperty(iconId))
 		{
@@ -184,13 +119,13 @@ Item
 		else
 		{
 			var onImageGenerated = function(data)
-			    {
+			{
 
-				    facesCache.callbackCache[iconId].forEach(function(callback)
-					    {
-						    callback(data);
-					    })
-			    }
+				facesCache.callbackCache[iconId].forEach(function(callback)
+				{
+					callback(data);
+				})
+			}
 
 			facesCache.callbackCache[iconId] = [update];
 			if (dataHex)
