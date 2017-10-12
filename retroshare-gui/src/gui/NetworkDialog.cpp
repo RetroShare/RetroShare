@@ -71,7 +71,7 @@
 #define COLUMN_LAST_USED   5
 #define COLUMN_COUNT 6
 
-RsPeerId getNeighRsCertId(QTreeWidgetItem *i);
+//RsPeerId getNeighRsCertId(QTreeWidgetItem *i);
 
 /******
  * #define NET_DEBUG 1
@@ -88,19 +88,16 @@ NetworkDialog::NetworkDialog(QWidget *parent)
     connect( ui.filterLineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(filterItems(QString)));
     connect( ui.filterLineEdit, SIGNAL(filterChanged(int)), this, SLOT(filterColumnChanged(int)));
 
-    connect( ui.onlyTrustedKeys, SIGNAL(clicked()), this, SLOT(securedUpdateDisplay()));
-
-
-/*    compareNetworkRole = new RSTreeWidgetItemCompareRole;
-    compareNetworkRole->setRole(COLUMN_LAST_USED, ROLE_SORT); */
 
     //list data model
     float f = QFontMetricsF(font()).height()/14.0 ;
     PGPIdItemModel = new pgpid_item_model(neighs, f, this);
     PGPIdItemProxy = new pgpid_item_proxy(this);
+    connect(ui.onlyTrustedKeys, SIGNAL(toggled(bool)), PGPIdItemProxy, SLOT(use_only_trusted_keys(bool)));
     PGPIdItemProxy->setSourceModel(PGPIdItemModel);
     PGPIdItemProxy->setFilterKeyColumn(COLUMN_PEERNAME);
     PGPIdItemProxy->setFilterCaseSensitivity(Qt::CaseInsensitive);
+    PGPIdItemProxy->setSortRole(Qt::EditRole); //use edit role to get raw data since we do not have edit for this model.
     ui.connectTreeWidget->setModel(PGPIdItemProxy);
     ui.connectTreeWidget->setContextMenuPolicy(Qt::CustomContextMenu);
     ui.connectTreeWidget->verticalHeader()->hide();
@@ -253,7 +250,8 @@ void NetworkDialog::removeUnusedKeys()
 		}
 		QMessageBox::warning(NULL,tr("Keyring info"),tr("Key removal has failed. Your keyring remains intact.\n\nReported error:")+" "+error_string ) ;
 	}
-	insertConnect() ;
+    updateDisplay();
+//	insertConnect() ;
 }
 
 void NetworkDialog::denyFriend()
@@ -346,113 +344,14 @@ void NetworkDialog::copyLink()
 //	/* window will destroy itself! */
 //}
 
-/* get the list of Neighbours from the RsIface.  */
-void NetworkDialog::insertConnect()
-{
-//	static time_t last_time = 0 ;
-
-//	if (!rsPeers)
-//		return;
-
-     //these are GPG ids
-//    std::list<RsPgpId>::iterator it;
-//	rsPeers->getGPGAllList(neighs);
-
-	/* get a link to the table */
-//    QTreeView *connectWidget = ui.connectTreeWidget;
-	/* disable sorting while editing the table */
-//	connectWidget->setSortingEnabled(false);
-
-	//remove items
-//	int index = 0;
-
-/*	for(it = neighs.begin(); it != neighs.end(); ++it)
-    {
-#ifdef NET_DEBUG
-		std::cerr << "NetworkDialog::insertConnect() inserting gpg key : " << *it << std::endl;
-#endif */
-
-		/**
-		 * Determinated the Background Color
-		 */
-/*		QColor backgrndcolor;
-
-		if (detail.accept_connection)
-		{
-			if (detail.ownsign) 
-			{
-				backgrndcolor = backgroundColorOwnSign();
-			} 
-			else 
-			{
-				backgrndcolor = backgroundColorAcceptConnection();
-			}
-		} 
-		else 
-		{
-
-			if (detail.hasSignedMe)
-			{
-				backgrndcolor = backgroundColorHasSignedMe();
-			}
-			else
-			{
-				backgrndcolor = backgroundColorDenied();
-			}
-		}
-
-		// Color each Background column in the Network Tab except the first one => 1-9
-		// whith the determinated color
-        for(int i = 0; i <COLUMN_COUNT; ++i)
-			item -> setBackground(i,QBrush(backgrndcolor));
-
-		if( (detail.accept_connection || detail.validLvl >= RS_TRUST_LVL_MARGINAL) || !ui.onlyTrustedKeys->isChecked()) 
-            connectWidget->addTopLevelItem(item); */
-//    }
-
-	// add self to network.
-//	RsPeerDetails ownGPGDetails;
-//	rsPeers->getGPGDetails(rsPeers->getGPGOwnId(), ownGPGDetails);
-	/* make a widget per friend */
-/*	QTreeWidgetItem *self_item;
-    QList<QTreeWidgetItem *> list = connectWidget->findItems(QString::fromStdString(ownGPGDetails.gpg_id.toStdString()), Qt::MatchExactly, COLUMN_PEERID);
-	if (list.size() == 1) {
-		self_item = list.front();
-	} else {
-		self_item = new RSTreeWidgetItem(compareNetworkRole, 0);
-		self_item->setChildIndicatorPolicy(QTreeWidgetItem::DontShowIndicatorWhenChildless);
-	}
-    self_item -> setText(COLUMN_CHECK, "0");
-    self_item->setIcon(COLUMN_CHECK,(QIcon(IMAGE_AUTHED)));
-	self_item->setText(COLUMN_PEERNAME, QString::fromUtf8(ownGPGDetails.name.c_str()) + " (" + tr("yourself") + ")");
-    self_item->setText(COLUMN_I_AUTH_PEER,"N/A");
-	self_item->setText(COLUMN_PEERID, QString::fromStdString(ownGPGDetails.gpg_id.toStdString()));
-
-	// Color each Background column in the Network Tab except the first one => 1-9
-    for(int i=0;i<COLUMN_COUNT;++i)
-	{
-		self_item->setBackground(i,backgroundColorSelf()) ;
-	}
-    connectWidget->addTopLevelItem(self_item); */
-
-	/* enable sorting */
-//	connectWidget->setSortingEnabled(true);
-	/* update display */
-//	connectWidget->update();
-
-//	if (ui.filterLineEdit->text().isEmpty() == false) {
-//		filterItems(ui.filterLineEdit->text());
-//	}
-
-}
 
 
 /* Utility Fns */
-RsPeerId getNeighRsCertId(QTreeWidgetItem *i)
+/*RsPeerId getNeighRsCertId(QTreeWidgetItem *i)
 {
 	RsPeerId id ( (i -> text(COLUMN_PEERID)).toStdString() );
 	return id;
-}   
+} */
 void NetworkDialog::on_actionAddFriend_activated()
 {
 //  /* Create a new input dialog, which allows users to create files, too */
@@ -585,42 +484,7 @@ void NetworkDialog::filterColumnChanged(int col)
     //filterItems(ui.filterLineEdit->text());
 }
 
-/*void NetworkDialog::filterItems(const QString &text)
-{
-    int filterColumn = ui.filterLineEdit->currentFilter();
 
-    int count = ui.connectTreeWidget->topLevelItemCount ();
-    for (int index = 0; index < count; ++index) {
-        filterItem(ui.connectTreeWidget->topLevelItem(index), text, filterColumn);
-    }
-}*/
-
-bool NetworkDialog::filterItem(QTreeWidgetItem *item, const QString &text, int filterColumn)
-{
-    bool visible = true;
-
-    if (text.isEmpty() == false) {
-        if (item->text(filterColumn).contains(text, Qt::CaseInsensitive) == false) {
-            visible = false;
-        }
-    }
-
-    int visibleChildCount = 0;
-    int count = item->childCount();
-    for (int index = 0; index < count; ++index) {
-        if (filterItem(item->child(index), text, filterColumn)) {
-            ++visibleChildCount;
-        }
-    }
-
-    if (visible || visibleChildCount) {
-        item->setHidden(false);
-    } else {
-        item->setHidden(true);
-    }
-
-    return (visible || visibleChildCount);
-}
 
 void NetworkDialog::updateDisplay()
 {

@@ -62,7 +62,7 @@ public:
   void setBackgroundColorDenied(QColor color) { mBackgroundColorDenied = color; }
 
 private:
-  void  insertConnect();
+//  void  insertConnect();
 //  std::string loadneighbour();
   /* void loadneighbour(); */
   //void updateNewDiscoveryInfo() ;
@@ -116,7 +116,7 @@ private:
 
 //  class NetworkView *networkview;
   
-  bool filterItem(QTreeWidgetItem *item, const QString &text, int filterColumn);
+//  bool filterItem(QTreeWidgetItem *item, const QString &text, int filterColumn);
 
   /* Color definitions (for standard see qss.default) */
   QColor mBackgroundColorSelf;
