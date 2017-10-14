@@ -1,5 +1,46 @@
 retroshare (0.6.3-1.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
+  d61a5cd csoler Mon,  2 Oct 2017 22:23:26 +0200 attempt at fixing the re-hash bug. Now only using canonicalized filenames in hash cache
+  22942dc csoler Sun,  1 Oct 2017 20:20:26 +0200 fixed bug causing suffix/prefix lists to contain an empty string
+  bc05aaa csoler Sat, 30 Sep 2017 18:58:31 +0200 switched tokenQueue speed to 10 calls/sec, thus improving loading speeds. Still need to test for CPU load
+  65977c0 csoler Sat, 30 Sep 2017 18:29:29 +0200 Merge pull request #1054 from PhenomRetroShare/Fix_GccWarningd
+  06ebaa5 csoler Sat, 30 Sep 2017 18:28:24 +0200 Merge pull request #1055 from felisucoibi/master
+  06063c5 felisu Sat, 30 Sep 2017 11:34:18 +0200 removed extra space
+  b84c898 felisu Sat, 30 Sep 2017 00:29:07 +0200 Removed ... from text
+  ef6fd38 felisu Thu, 28 Sep 2017 22:42:30 +0200 Changed prefixes and sifixes for startign with and ending with to be understandable.
+  7f851f6 Phenom Thu, 28 Sep 2017 19:24:26 +0200 Fix Gcc Warning in p3banlist
+  e66c0d1 csoler Wed, 27 Sep 2017 22:26:14 +0200 removed updateTotals() method. Replaced it with costless on-the-fly update of totals
+  a00d2c9 csoler Tue, 26 Sep 2017 21:12:17 +0200 changed lobby to char room in chat system msgs
+  8eae374 csoler Mon, 25 Sep 2017 22:14:34 +0200 Merge pull request #1053 from csoler/v0.6-FT
+  0d9b6e7 csoler Mon, 25 Sep 2017 22:09:35 +0200 fixd broken layout
+  cbeefda csoler Mon, 25 Sep 2017 21:35:59 +0200 Merge pull request #744 from RetroPooh/tunnel-names
+  f98f16f Pooh   Mon, 25 Sep 2017 22:31:49 +0300 Update TransfersDialog.cpp
+  5970ff2 csoler Mon, 25 Sep 2017 21:14:30 +0200 Merge pull request #1052 from csoler/v0.6-FT
+  40cda11 csoler Mon, 25 Sep 2017 21:05:42 +0200 removed delay when calling forceUpdate() on directories
+  b969f31 csoler Mon, 25 Sep 2017 20:59:32 +0200 Merge pull request #1050 from csoler/v0.6-FT
+  d8cb3fe csoler Mon, 25 Sep 2017 20:56:35 +0200 fixed not rehashing files that already exist in a different directory pointed by a symlink
+  72dc1c7 Pooh   Mon, 25 Sep 2017 21:50:12 +0300 Update TransfersDialog.cpp
+  c47e6f6 Pooh   Mon, 25 Sep 2017 21:43:41 +0300 Merge branch 'master' into tunnel-names
+  4766a89 csoler Sun, 24 Sep 2017 23:51:47 +0200 added an additional hard limit to directory depth, just in case
+  f497905 csoler Sun, 24 Sep 2017 23:43:52 +0200 fixed limitation of directory depth when indexing files
+  abd7e25 csoler Sun, 24 Sep 2017 18:14:45 +0200 added checks for mMaxShareDepth and mIgnoreDuplicates
+  2a99df4 csoler Sun, 24 Sep 2017 17:53:06 +0200 added UI and parameters for two new options in shared files: max share depth and ignore duplicates
+  932eb49 csoler Sat, 23 Sep 2017 13:49:53 +0200 Merge pull request #1049 from Steve-V/minor-spelling-fix
+  82c9c95 Steve- Fri, 22 Sep 2017 19:58:13 -0500 spelling fix ommitted -> omitted
+  73cbf6c csoler Thu, 21 Sep 2017 23:47:11 +0200 Merge pull request #1047 from csoler/v0.6-FT
+  a2ccf97 csoler Wed, 20 Sep 2017 22:57:32 +0200 removed the 4M files limit on 64bits systems
+  308f8ca defnax Tue, 19 Sep 2017 18:34:58 +0200 update qrc file
+  58ccf0b csoler Mon, 18 Sep 2017 22:50:35 +0200 Merge pull request #1045 from csoler/v0.6-FT
+  bc2c9d5 csoler Mon, 18 Sep 2017 22:49:51 +0200 adding pending transfers 100 at a time instead of 1 at a time when loading
+  52ca6d0 defnax Mon, 18 Sep 2017 20:49:40 +0200 Added Crystall Ball to emote file
+  bf7d346 csoler Sun, 17 Sep 2017 20:27:44 +0200 Merge pull request #1043 from csoler/v0.6-FT
+  e21dec4 csoler Sun, 17 Sep 2017 20:26:46 +0200 Merge pull request #1038 from PhenomRetroShare/Add_UploadUserColumn
+  d8f621e csoler Sun, 17 Sep 2017 20:14:45 +0200 make forceDirectoryCheck() to desactivate the pause, in case it was left activated
+  
+ -- Retroshare Dev Team <contact@retroshare.net>  Sat, 14 Oct 2017 15:00:00 +0100
+
+retroshare (0.6.3-1.20170917.c2f321d7~trusty) trusty; urgency=low
+
   46d26bf csoler Tue, 12 Sep 2017 21:05:59 +0200 updated ubuntu packagign script
   f3c627d csoler Sat, 16 Sep 2017 22:13:53 +0200 Merge pull request #1042 from csoler/v0.6-FT
   8189d66 csoler Sat, 16 Sep 2017 22:13:15 +0200 fixed bug causing anon FT to not resume when restarting RS when the server enforces encryption
