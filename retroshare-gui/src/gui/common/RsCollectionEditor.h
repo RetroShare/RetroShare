@@ -56,16 +56,16 @@ public:
 };
 Q_DECLARE_METATYPE(ColFileInfo)
 
-class RsCollectionFile : public QObject
+class RsCollectionEditor : public QObject
 {
 	Q_OBJECT
 
 public:
 
-	RsCollectionFile(QObject *parent = 0) ;
+	RsCollectionEditor(QObject *parent = 0) ;
 		// create from list of files and directories
-	RsCollectionFile(const std::vector<DirDetails>& file_entries, QObject *parent = 0) ;
-	virtual ~RsCollectionFile() ;
+	RsCollectionEditor(const std::vector<DirDetails>& file_entries, QObject *parent = 0) ;
+	virtual ~RsCollectionEditor() ;
 
 	static const QString ExtensionString ;
 

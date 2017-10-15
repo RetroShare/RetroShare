@@ -26,7 +26,7 @@
 #include <QTimer>
 
 #include <retroshare-gui/RsAutoUpdatePage.h>
-#include <gui/common/RsCollectionFile.h>
+#include <gui/common/RsCollectionEditor.h>
 #include <gui/common/RsUrlHandler.h>
 #include <gui/common/FilesDefs.h>
 #include <gui/common/GroupDefs.h>
@@ -1065,7 +1065,7 @@ void RetroshareDirModel::createCollectionFile(QWidget *parent, const QModelIndex
 	std::vector <DirDetails> dirVec;
 	getDirDetailsFromSelect(list, dirVec);
 
-	RsCollectionFile(dirVec).openNewColl(parent);
+	RsCollectionEditor(dirVec).openNewColl(parent);
 }
 
 void RetroshareDirModel::downloadSelected(const QModelIndexList &list)

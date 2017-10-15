@@ -476,7 +476,6 @@ HEADERS +=  rshare.h \
             gui/common/ElidedLabel.h \
             gui/common/vmessagebox.h \
             gui/common/RsUrlHandler.h \
-            gui/common/RsCollectionFile.h \
             gui/common/RsCollectionDialog.h \
             gui/common/rwindow.h \
             gui/common/html.h \
@@ -565,7 +564,8 @@ HEADERS +=  rshare.h \
             gui/GetStartedDialog.h \
         gui/statistics/BWGraph.h \
     util/RsSyntaxHighlighter.h \
-    util/imageutil.h
+    util/imageutil.h \
+    gui/common/RsCollectionEditor.h
 
 #            gui/ForumsDialog.h \
 #            gui/forums/ForumDetails.h \
@@ -791,7 +791,6 @@ SOURCES +=  main.cpp \
             gui/common/RSGraphWidget.cpp \
             gui/common/ElidedLabel.cpp \
             gui/common/vmessagebox.cpp \
-            gui/common/RsCollectionFile.cpp \
             gui/common/RsCollectionDialog.cpp \
             gui/common/RsUrlHandler.cpp \
             gui/common/rwindow.cpp \
@@ -925,7 +924,8 @@ SOURCES +=  main.cpp \
             gui/statistics/RttStatistics.cpp \
             gui/statistics/BWGraph.cpp \
     util/RsSyntaxHighlighter.cpp \
-    util/imageutil.cpp
+    util/imageutil.cpp \
+    gui/common/RsCollectionEditor.cpp
 
 #            gui/ForumsDialog.cpp \
 #            gui/forums/ForumDetails.cpp \

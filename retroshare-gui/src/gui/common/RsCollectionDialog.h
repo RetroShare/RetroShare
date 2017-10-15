@@ -22,7 +22,7 @@
  ****************************************************************/
 
 #include "ui_RsCollectionDialog.h"
-#include "RsCollectionFile.h"
+#include "RsCollectionEditor.h"
 #include <QFileSystemModel>
 #include <QSortFilterProxyModel>
 

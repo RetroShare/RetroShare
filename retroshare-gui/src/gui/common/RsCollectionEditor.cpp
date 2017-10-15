@@ -24,7 +24,7 @@
 #include <stdexcept>
 #include <retroshare/rsfiles.h>
 
-#include "RsCollectionFile.h"
+#include "RsCollectionEditor.h"
 #include "RsCollectionDialog.h"
 #include "util/misc.h"
 
@@ -36,14 +36,14 @@
 #include <QMessageBox>
 #include <QIcon>
 
-const QString RsCollectionFile::ExtensionString = QString("rscollection") ;
+const QString RsCollectionEditor::ExtensionString = QString("rscollection") ;
 
-RsCollectionFile::RsCollectionFile(QObject *parent)
+RsCollectionEditor::RsCollectionEditor(QObject *parent)
 	: QObject(parent), _xml_doc("RsCollection")
 {
 }
 
-RsCollectionFile::RsCollectionFile(const std::vector<DirDetails>& file_infos, QObject *parent)
+RsCollectionEditor::RsCollectionEditor(const std::vector<DirDetails>& file_infos, QObject *parent)
 	: QObject(parent), _xml_doc("RsCollection")
 {
 	QDomElement root = _xml_doc.createElement("RsCollection");
@@ -53,11 +53,11 @@ RsCollectionFile::RsCollectionFile(const std::vector<DirDetails>& file_infos, QO
 		recursAddElements(_xml_doc,file_infos[i],root) ;
 }
 
-RsCollectionFile::~RsCollectionFile()
+RsCollectionEditor::~RsCollectionEditor()
 {
 }
 
-void RsCollectionFile::downloadFiles() const
+void RsCollectionEditor::downloadFiles() const
 {
 	// print out the element names of all elements that are direct children
 	// of the outermost element.
@@ -87,7 +87,7 @@ static QString purifyFileName(const QString& input,bool& bad)
 	return output ;
 }
 
-void RsCollectionFile::recursCollectColFileInfos(const QDomElement& e,std::vector<ColFileInfo>& colFileInfos,const QString& current_path, bool bad_chars_in_parent) const
+void RsCollectionEditor::recursCollectColFileInfos(const QDomElement& e,std::vector<ColFileInfo>& colFileInfos,const QString& current_path, bool bad_chars_in_parent) const
 {
 	QDomNode n = e.firstChild() ;
 
@@ -139,7 +139,7 @@ void RsCollectionFile::recursCollectColFileInfos(const QDomElement& e,std::vecto
 }
 
 
-void RsCollectionFile::recursAddElements(QDomDocument& doc,const DirDetails& details,QDomElement& e) const
+void RsCollectionEditor::recursAddElements(QDomDocument& doc,const DirDetails& details,QDomElement& e) const
 {
 	if (details.type == DIR_TYPE_FILE)
 	{
@@ -175,7 +175,7 @@ void RsCollectionFile::recursAddElements(QDomDocument& doc,const DirDetails& det
 	}
 }
 
-void RsCollectionFile::recursAddElements(QDomDocument& doc,const ColFileInfo& colFileInfo,QDomElement& e) const
+void RsCollectionEditor::recursAddElements(QDomDocument& doc,const ColFileInfo& colFileInfo,QDomElement& e) const
 {
 	if (colFileInfo.type == DIR_TYPE_FILE)
 	{
@@ -208,7 +208,7 @@ static void showErrorBox(const QString& fileName, const QString& error)
 	mb.exec();
 }
 
-bool RsCollectionFile::load(const QString& fileName, bool showError /* = true*/)
+bool RsCollectionEditor::load(const QString& fileName, bool showError /* = true*/)
 {
 
 	if (!checkFile(fileName,showError)) return false;
@@ -238,7 +238,7 @@ bool RsCollectionFile::load(const QString& fileName, bool showError /* = true*/)
 	}
 
 	// check that the file is a valid rscollection file, and not a lol bomb or some shit like this
-bool RsCollectionFile::checkFile(const QString& fileName, bool showError)
+bool RsCollectionEditor::checkFile(const QString& fileName, bool showError)
 {
 	QFile file(fileName);
 
@@ -306,10 +306,10 @@ bool RsCollectionFile::checkFile(const QString& fileName, bool showError)
 	return false;
 }
 
-bool RsCollectionFile::load(QWidget *parent)
+bool RsCollectionEditor::load(QWidget *parent)
 {
 	QString fileName;
-	if (!misc::getOpenFileName(parent, RshareSettings::LASTDIR_EXTRAFILE, QApplication::translate("RsCollectionFile", "Open collection file"), QApplication::translate("RsCollectionFile", "Collection files") + " (*." + RsCollectionFile::ExtensionString + ")", fileName))
+	if (!misc::getOpenFileName(parent, RshareSettings::LASTDIR_EXTRAFILE, QApplication::translate("RsCollectionFile", "Open collection file"), QApplication::translate("RsCollectionFile", "Collection files") + " (*." + RsCollectionEditor::ExtensionString + ")", fileName))
 		return false;
 
 	std::cerr << "Got file name: " << fileName.toStdString() << std::endl;
@@ -317,7 +317,7 @@ bool RsCollectionFile::load(QWidget *parent)
 	return load(fileName, true);
 }
 
-bool RsCollectionFile::save(const QString& fileName) const
+bool RsCollectionEditor::save(const QString& fileName) const
 {
 	QFile file(fileName);
 
@@ -337,14 +337,14 @@ bool RsCollectionFile::save(const QString& fileName) const
 	return true;
 }
 
-bool RsCollectionFile::save(QWidget *parent) const
+bool RsCollectionEditor::save(QWidget *parent) const
 {
 	QString fileName;
-	if(!misc::getSaveFileName(parent, RshareSettings::LASTDIR_EXTRAFILE, QApplication::translate("RsCollectionFile", "Create collection file"), QApplication::translate("RsCollectionFile", "Collection files") + " (*." + RsCollectionFile::ExtensionString + ")", fileName))
+	if(!misc::getSaveFileName(parent, RshareSettings::LASTDIR_EXTRAFILE, QApplication::translate("RsCollectionFile", "Create collection file"), QApplication::translate("RsCollectionFile", "Collection files") + " (*." + RsCollectionEditor::ExtensionString + ")", fileName))
 		return false;
 
-	if (!fileName.endsWith("." + RsCollectionFile::ExtensionString))
-		fileName += "." + RsCollectionFile::ExtensionString ;
+	if (!fileName.endsWith("." + RsCollectionEditor::ExtensionString))
+		fileName += "." + RsCollectionEditor::ExtensionString ;
 
 	std::cerr << "Got file name: " << fileName.toStdString() << std::endl;
 
@@ -352,17 +352,17 @@ bool RsCollectionFile::save(QWidget *parent) const
 }
 
 
-bool RsCollectionFile::openNewColl(QWidget *parent)
+bool RsCollectionEditor::openNewColl(QWidget *parent)
 {
 	QString fileName;
 	if(!misc::getSaveFileName(parent, RshareSettings::LASTDIR_EXTRAFILE
 														, QApplication::translate("RsCollectionFile", "Create collection file")
-														, QApplication::translate("RsCollectionFile", "Collection files") + " (*." + RsCollectionFile::ExtensionString + ")"
+														, QApplication::translate("RsCollectionFile", "Collection files") + " (*." + RsCollectionEditor::ExtensionString + ")"
 														, fileName,0, QFileDialog::DontConfirmOverwrite))
 		return false;
 
-	if (!fileName.endsWith("." + RsCollectionFile::ExtensionString))
-		fileName += "." + RsCollectionFile::ExtensionString ;
+	if (!fileName.endsWith("." + RsCollectionEditor::ExtensionString))
+		fileName += "." + RsCollectionEditor::ExtensionString ;
 
 	std::cerr << "Got file name: " << fileName.toStdString() << std::endl;
 
@@ -419,7 +419,7 @@ bool RsCollectionFile::openNewColl(QWidget *parent)
 	return _saved;
 }
 
-bool RsCollectionFile::openColl(const QString& fileName, bool readOnly /* = false */, bool showError /* = true*/)
+bool RsCollectionEditor::openColl(const QString& fileName, bool readOnly /* = false */, bool showError /* = true*/)
 {
 	if (load(fileName, showError)) {
 		std::vector<ColFileInfo> colFileInfos ;
@@ -437,7 +437,7 @@ bool RsCollectionFile::openColl(const QString& fileName, bool readOnly /* = fals
 	return false;
 }
 
-qulonglong RsCollectionFile::size()
+qulonglong RsCollectionEditor::size()
 {
 	QDomElement docElem = _xml_doc.documentElement();
 
@@ -453,14 +453,14 @@ qulonglong RsCollectionFile::size()
 	return size;
 }
 
-bool RsCollectionFile::isCollectionFile(const QString &fileName)
+bool RsCollectionEditor::isCollectionFile(const QString &fileName)
 {
 	QString ext = QFileInfo(fileName).suffix().toLower();
 
-	return (ext == RsCollectionFile::ExtensionString);
+	return (ext == RsCollectionEditor::ExtensionString);
 }
 
-void RsCollectionFile::saveColl(std::vector<ColFileInfo> colFileInfos, const QString &fileName)
+void RsCollectionEditor::saveColl(std::vector<ColFileInfo> colFileInfos, const QString &fileName)
 {
 
 	QDomElement root = _xml_doc.elementsByTagName("RsCollection").at(0).toElement();

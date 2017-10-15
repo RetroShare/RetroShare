@@ -43,7 +43,7 @@
 #include "msgs/MessageComposer.h"
 #include "util/misc.h"
 #include "common/PeerDefs.h"
-#include "common/RsCollectionFile.h"
+#include "common/RsCollectionEditor.h"
 #include <gui/common/RsUrlHandler.h>
 #include "gui/connect/ConnectFriendWizard.h"
 #include "gui/connect/ConfCertDialog.h"
@@ -972,10 +972,10 @@ QString RetroShareLink::toHtmlSize() const
 {
 	QString size = QString("(%1)").arg(misc::friendlyUnit(_size));
 
-	if (type() == TYPE_FILE && RsCollectionFile::isCollectionFile(name())) {
+	if (type() == TYPE_FILE && RsCollectionEditor::isCollectionFile(name())) {
 		FileInfo finfo;
 		if (rsFiles->FileDetails(RsFileHash(hash().toStdString()), RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_LOCAL, finfo)) {
-			RsCollectionFile collection;
+			RsCollectionEditor collection;
 			if (collection.load(QString::fromUtf8(finfo.path.c_str()), false)) {
 				size += QString(" [%1]").arg(misc::friendlyUnit(collection.size()));
 			}

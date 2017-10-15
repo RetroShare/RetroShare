@@ -37,7 +37,7 @@
 #include "gui/RetroShareLink.h"
 #include "gui/ShareManager.h"
 #include "gui/common/PeerDefs.h"
-#include "gui/common/RsCollectionFile.h"
+#include "gui/common/RsCollectionEditor.h"
 #include "gui/msgs/MessageComposer.h"
 #include "gui/settings/AddFileAssociationDialog.h"
 #include "gui/settings/rsharesettings.h"
@@ -499,17 +499,12 @@ void RemoteSharedFilesDialog::spawnCustomPopupMenu( QPoint point )
 
 	QMenu contextMnu( this ) ;
 
-	//bool bIsRsColl = currentFile.endsWith(RsCollectionFile::ExtensionString);
 	collCreateAct->setEnabled(true);
-	//collModifAct->setEnabled(bIsRsColl);
-	//collViewAct->setEnabled(bIsRsColl);
 	collOpenAct->setEnabled(true);
 
 	QMenu collectionMenu(tr("Collection"), this);
 	collectionMenu.setIcon(QIcon(IMAGE_LIBRARY));
 	collectionMenu.addAction(collCreateAct);
-	//collectionMenu.addAction(collModifAct);
-	//collectionMenu.addAction(collViewAct);
 	collectionMenu.addAction(collOpenAct);
 
 	QAction *downloadAct = new QAction(QIcon(IMAGE_DOWNLOAD), tr( "Download" ), &contextMnu ) ;
@@ -517,18 +512,12 @@ void RemoteSharedFilesDialog::spawnCustomPopupMenu( QPoint point )
 	contextMnu.addAction( downloadAct) ;
 
 	if ( type == DIR_TYPE_FILE ) {
-		//QAction *copyremotelinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Copy retroshare Link" ), &contextMnu ) ;
-		//connect( copyremotelinkAct , SIGNAL( triggered() ), this, SLOT( copyLink() ) ) ;
-
-		//QAction *sendremotelinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Send retroshare Link" ), &contextMnu ) ;
-		//connect( sendremotelinkAct , SIGNAL( triggered() ), this, SLOT( sendremoteLinkTo(  ) ) ) ;
-
 		contextMnu.addSeparator() ;//------------------------------------
 		contextMnu.addAction( copylinkAct) ;
 		contextMnu.addAction( sendlinkAct) ;
 		contextMnu.addSeparator() ;//------------------------------------
 		contextMnu.addAction(QIcon(IMAGE_MSG), tr("Recommend in a message to"), this, SLOT(recommendFilesToMsg())) ;
-	}//if (type == DIR_TYPE_FILE)
+	}
 
 	contextMnu.addSeparator() ;//------------------------------------
 	contextMnu.addMenu(&collectionMenu) ;
@@ -542,7 +531,7 @@ QModelIndexList SharedFilesDialog::getSelected()
 	QModelIndexList proxyList ;
 	for (QModelIndexList::iterator index = list.begin(); index != list.end(); ++index ) {
 		proxyList.append(proxyModel->mapToSource(*index)) ;
-	}//for (QModelIndexList::iterator index
+	}
 
 	return proxyList ;
 }
@@ -692,8 +681,8 @@ void SharedFilesDialog::collModif()
 	QFileInfo qinfo;
 	qinfo.setFile(QString::fromUtf8(path.c_str()));
 	if (qinfo.exists()) {
-		if (qinfo.absoluteFilePath().endsWith(RsCollectionFile::ExtensionString)) {
-			RsCollectionFile collection;
+		if (qinfo.absoluteFilePath().endsWith(RsCollectionEditor::ExtensionString)) {
+			RsCollectionEditor collection;
 			collection.openColl(qinfo.absoluteFilePath());
 		}//if (qinfo.absoluteFilePath().endsWith(RsCollectionFile::ExtensionString))
 	}//if (qinfo.exists())
@@ -722,8 +711,8 @@ void SharedFilesDialog::collView()
 	QFileInfo qinfo;
 	qinfo.setFile(QString::fromUtf8(path.c_str()));
 	if (qinfo.exists()) {
-		if (qinfo.absoluteFilePath().endsWith(RsCollectionFile::ExtensionString)) {
-			RsCollectionFile collection;
+		if (qinfo.absoluteFilePath().endsWith(RsCollectionEditor::ExtensionString)) {
+			RsCollectionEditor collection;
 			collection.openColl(qinfo.absoluteFilePath(), true);
 		}//if (qinfo.absoluteFilePath().endsWith(RsCollectionFile::ExtensionString))
 	}//if (qinfo.exists())
@@ -752,8 +741,8 @@ void SharedFilesDialog::collOpen()
 			QFileInfo qinfo;
 			qinfo.setFile(QString::fromUtf8(path.c_str()));
 			if (qinfo.exists()) {
-				if (qinfo.absoluteFilePath().endsWith(RsCollectionFile::ExtensionString)) {
-					RsCollectionFile collection;
+				if (qinfo.absoluteFilePath().endsWith(RsCollectionEditor::ExtensionString)) {
+					RsCollectionEditor collection;
 					if (collection.load(qinfo.absoluteFilePath())) {
 						collection.downloadFiles();
 						return;
@@ -763,7 +752,7 @@ void SharedFilesDialog::collOpen()
 		}
 	}
 
-	RsCollectionFile collection;
+	RsCollectionEditor collection;
 	if (collection.load(this)) {
 		collection.downloadFiles();
 	}//if (collection.load(this))
@@ -995,7 +984,7 @@ void LocalSharedFilesDialog::spawnCustomPopupMenu( QPoint point )
 
 	QMenu contextMnu(this) ;
 
-	bool bIsRsColl = currentFile.endsWith(RsCollectionFile::ExtensionString);
+	bool bIsRsColl = currentFile.endsWith(RsCollectionEditor::ExtensionString);
 	collCreateAct->setEnabled(true);
 	collModifAct->setEnabled(bIsRsColl);
 	collViewAct->setEnabled(bIsRsColl);

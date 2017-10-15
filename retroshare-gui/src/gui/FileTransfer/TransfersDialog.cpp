@@ -31,7 +31,7 @@
 #include <QStandardItemModel>
 
 #include <gui/common/FilesDefs.h>
-#include <gui/common/RsCollectionFile.h>
+#include <gui/common/RsCollectionEditor.h>
 #include <gui/common/RsUrlHandler.h>
 #include <gui/common/RSTreeView.h>
 
@@ -50,7 +50,7 @@
 #include "xprogressbar.h"
 #include <gui/settings/rsharesettings.h>
 #include "util/misc.h"
-#include <gui/common/RsCollectionFile.h>
+#include <gui/common/RsCollectionEditor.h>
 #include "TransferUserNotify.h"
 #include "util/QtVersion.h"
 #include "util/RsFile.h"
@@ -702,7 +702,7 @@ void TransfersDialog::downloadListCustomPopupMenu( QPoint /*point*/ )
 							add_PlayOption = !add_PreviewOption ;
 						}// if (misc::isPreviewable(info.fname.substr(pos + 1).c_str()))
 						// Check if the file is a collection
-						if (RsCollectionFile::ExtensionString == info.fname.substr(pos + 1).c_str()) {
+						if (RsCollectionEditor::ExtensionString == info.fname.substr(pos + 1).c_str()) {
 							add_CollActions = (info.downloadStatus == FT_STATE_COMPLETE);
 						}//if (RsCollectionFile::ExtensionString == info
 					}// if(pos !=  std::string::npos)
@@ -2155,7 +2155,7 @@ void TransfersDialog::collCreate()
 		dirVec.push_back(details);
 	}//for (it = items.begin();
 
-	RsCollectionFile(dirVec).openNewColl(this);
+	RsCollectionEditor(dirVec).openNewColl(this);
 }
 
 void TransfersDialog::collModif()
@@ -2180,8 +2180,8 @@ void TransfersDialog::collModif()
 		QFileInfo qinfo;
 		qinfo.setFile(QString::fromUtf8(path.c_str()));
 		if (qinfo.exists()) {
-			if (qinfo.absoluteFilePath().endsWith(RsCollectionFile::ExtensionString)) {
-				RsCollectionFile collection;
+			if (qinfo.absoluteFilePath().endsWith(RsCollectionEditor::ExtensionString)) {
+				RsCollectionEditor collection;
 				collection.openColl(qinfo.absoluteFilePath());
 			}//if (qinfo.absoluteFilePath().endsWith(RsCollectionFile::ExtensionString))
 		}//if (qinfo.exists())
@@ -2210,8 +2210,8 @@ void TransfersDialog::collView()
 		QFileInfo qinfo;
 		qinfo.setFile(QString::fromUtf8(path.c_str()));
 		if (qinfo.exists()) {
-			if (qinfo.absoluteFilePath().endsWith(RsCollectionFile::ExtensionString)) {
-				RsCollectionFile collection;
+			if (qinfo.absoluteFilePath().endsWith(RsCollectionEditor::ExtensionString)) {
+				RsCollectionEditor collection;
 				collection.openColl(qinfo.absoluteFilePath(), true);
 			}//if (qinfo.absoluteFilePath().endsWith(RsCollectionFile::ExtensionString))
 		}//if (qinfo.exists())
@@ -2240,8 +2240,8 @@ void TransfersDialog::collOpen()
 				QFileInfo qinfo;
 				qinfo.setFile(QString::fromUtf8(path.c_str()));
 				if (qinfo.exists()) {
-					if (qinfo.absoluteFilePath().endsWith(RsCollectionFile::ExtensionString)) {
-						RsCollectionFile collection;
+					if (qinfo.absoluteFilePath().endsWith(RsCollectionEditor::ExtensionString)) {
+						RsCollectionEditor collection;
 						if (collection.load(qinfo.absoluteFilePath())) {
 							collection.downloadFiles();
 							return;
@@ -2252,7 +2252,7 @@ void TransfersDialog::collOpen()
 		}
 	}
 
-	RsCollectionFile collection;
+	RsCollectionEditor collection;
 	if (collection.load(this)) {
 		collection.downloadFiles();
 	}//if (collection.load(this))

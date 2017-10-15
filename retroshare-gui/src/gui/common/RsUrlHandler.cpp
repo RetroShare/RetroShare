@@ -22,14 +22,14 @@
 #include <stdexcept>
 #include <QDesktopServices>
 #include <QUrl>
-#include "RsCollectionFile.h"
+#include "RsCollectionEditor.h"
 #include "RsUrlHandler.h"
 
 bool RsUrlHandler::openUrl(const QUrl& url)
 {
-	if(url.scheme() == QString("file") && url.toLocalFile().endsWith("."+RsCollectionFile::ExtensionString))
+	if(url.scheme() == QString("file") && url.toLocalFile().endsWith("."+RsCollectionEditor::ExtensionString))
 	{
-		RsCollectionFile collection ;
+		RsCollectionEditor collection ;
 		if(collection.load(url.toLocalFile()))
 		{
 			collection.downloadFiles() ;

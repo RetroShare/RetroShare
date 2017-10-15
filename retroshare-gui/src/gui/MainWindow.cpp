@@ -103,7 +103,7 @@
 #include "gui/statistics/StatisticsWindow.h"
 
 #include "gui/connect/ConnectFriendWizard.h"
-#include "gui/common/RsCollectionFile.h"
+#include "gui/common/RsCollectionEditor.h"
 #include "settings/rsettingswin.h"
 #include "settings/rsharesettings.h"
 #include "settings/WebuiPage.h"
@@ -1020,7 +1020,7 @@ void MainWindow::newRsCollection()
 {
     std::vector <DirDetails> dirVec;
 
-    RsCollectionFile(dirVec).openNewColl(this);
+    RsCollectionEditor(dirVec).openNewColl(this);
 }
 
 /** Shows Share Manager */
@@ -1448,8 +1448,8 @@ void MainWindow::openRsCollection(const QString &filename)
 {
 	QFileInfo qinfo(filename);
 	if (qinfo.exists()) {
-		if (qinfo.absoluteFilePath().endsWith(RsCollectionFile::ExtensionString)) {
-			RsCollectionFile collection;
+		if (qinfo.absoluteFilePath().endsWith(RsCollectionEditor::ExtensionString)) {
+			RsCollectionEditor collection;
 			collection.openColl(qinfo.absoluteFilePath());
 		}
 	}
