@@ -58,6 +58,7 @@
 //#define DEBUG_RSLINK 1
 
 #define HOST_FILE        "file"
+#define HOST_COLLECTION  "collection"
 #define HOST_EXTRAFILE   "extra"
 #define HOST_PERSON      "person"
 #define HOST_FORUM       "forum"
@@ -74,6 +75,10 @@
 #define FILE_SIZE       "size"
 #define FILE_HASH       "hash"
 #define FILE_SOURCE     "src"
+
+#define COLLECTION_NAME "name"
+#define COLLECTION_SIZE "size"
+#define COLLECTION_DATA "radix"
 
 #define PERSON_NAME     "name"
 #define PERSON_HASH     "hash"
@@ -328,6 +333,19 @@ void RetroShareLink::fromUrl(const QUrl& url)
 		return;
 	}
 
+	if (url.host() == HOST_COLLECTION) {
+		bool ok;
+		_type  = TYPE_COLLECTION;
+		_radix = decodedQueryItemValue(urlQuery, COLLECTION_DATA);
+		_size  = urlQuery.queryItemValue(COLLECTION_SIZE).toULongLong(&ok);
+		_name  = urlQuery.queryItemValue(COLLECTION_NAME).toULongLong(&ok);
+
+#ifdef DEBUG_RSLINK
+        std::cerr << "Got a certificate link!!" << std::endl;
+#endif
+		check() ;
+		return;
+	}
 	if (url.host() == HOST_CERTIFICATE) {
 		_type = TYPE_CERTIFICATE;
 		_radix = decodedQueryItemValue(urlQuery, CERTIFICATE_RADIX);
@@ -400,6 +418,20 @@ RetroShareLink RetroShareLink::createFile(const QString& name, uint64_t size, co
 	return link;
 }
 
+RetroShareLink RetroShareLink::createCollection(const QString& name, const uint64_t size,const QString& radix_data)
+{
+	RetroShareLink link;
+	link.clear();
+
+	link._name  = name;
+	link._size  = size;
+	link._radix = radix_data ;
+	link._type = TYPE_COLLECTION;
+
+	link.check();
+
+	return link;
+}
 RetroShareLink RetroShareLink::createPublicMsgInvite(time_t time_stamp,const QString& issuer_pgp_id,const QString& hash)
 {
 	RetroShareLink link;
@@ -608,6 +640,8 @@ void RetroShareLink::check()
 			if(!checkSSLId(_SSLid))
 				_valid = false;			// no break! We also test file stuff below.
 			/* fallthrough */
+		case TYPE_COLLECTION:
+
 		case TYPE_FILE:
 			if(_size > (((uint64_t)1)<<40))	// 1TB. Who has such large files?
 				_valid = false;
@@ -615,7 +649,7 @@ void RetroShareLink::check()
 			if(!checkName(_name))
 				_valid = false;
 
-			if(!checkHash(_hash))
+			if(!checkRadix64(_radix))
 				_valid = false;
 			break;
 
@@ -717,6 +751,8 @@ QString RetroShareLink::title() const
 				rsPeers->getGPGDetails(RsPgpId(_GPGid.toStdString()), detail) ;
 				return QObject::tr("Click to send a private message to %1 (%2).").arg(QString::fromUtf8(detail.name.c_str())).arg(_GPGid) ;
 			}
+		case TYPE_COLLECTION:
+			return QObject::tr("Click to browse/download this file collection");
 		case TYPE_EXTRAFILE:
 			return QObject::tr("%1 (%2, Extra - Source included)").arg(hash()).arg(misc::friendlyUnit(size()));
 		case TYPE_FILE:
@@ -860,6 +896,13 @@ QString RetroShareLink::toString() const
 
 			break;
 
+		case TYPE_COLLECTION:
+			url.setScheme(RSLINK_SCHEME);
+			url.setHost(HOST_COLLECTION) ;
+			urlQuery.addQueryItem(CERTIFICATE_RADIX, encodeItem(_radix));
+			urlQuery.addQueryItem(CERTIFICATE_NAME, encodeItem(_name));
+			break;
+
 		case TYPE_CERTIFICATE:
 			url.setScheme(RSLINK_SCHEME);
 			url.setHost(HOST_CERTIFICATE) ;
@@ -884,6 +927,9 @@ QString RetroShareLink::niceName() const
 
 	if(type() == TYPE_IDENTITY)
 		return QObject::tr("Identity link (name=%1, ID=%2)").arg(_name).arg(_hash) ;
+
+	if(type() == TYPE_COLLECTION)
+		return QObject::tr("Click to browse/download this file collection");
 
 	if(type() == TYPE_PUBLIC_MSG) {
 		RsPeerDetails detail;
@@ -1095,6 +1141,7 @@ static void processList(const QStringList &list, const QString &textSingular, co
 				case TYPE_SEARCH:
 				case TYPE_MESSAGE:
 				case TYPE_IDENTITY:
+				case TYPE_COLLECTION:
 				case TYPE_CERTIFICATE:
 				case TYPE_PUBLIC_MSG:
 				case TYPE_PRIVATE_CHAT:
@@ -1336,6 +1383,15 @@ static void processList(const QStringList &list, const QString &textSingular, co
 				}
 			break;
 
+			case TYPE_COLLECTION:
+				{
+					//FileHierarchy fh ;
+					//fh.initFromRadix(_radix);
+
+					QMessageBox::information(NULL,"Unimplemented code","File collection links not handled yet.") ;
+				}
+				break;
+
 			case TYPE_PERSON:
 				{
 #ifdef DEBUG_RSLINK
@@ -1347,34 +1403,6 @@ static void processList(const QStringList &list, const QString &textSingular, co
                         PGPKeyDialog::showIt(detail.gpg_id,PGPKeyDialog::PageDetails) ;
                     else
                         personNotFound.append(PeerDefs::rsid(link.name().toUtf8().constData(), RsPgpId(link.hash().toStdString())));
-
-//					needNotifySuccess = true;
-
-//					RsPeerDetails detail;
-//					if (rsPeers->getGPGDetails(RsPgpId(link.hash().toStdString()), detail))
-//					{
-//						if (RsPgpId(detail.gpg_id) == rsPeers->getGPGOwnId()) {
-//							// it's me, do nothing
-//							break;
-//						}
-//
-//						if (detail.accept_connection) {
-//							// peer connection is already accepted
-//							personExist.append(PeerDefs::rsid(detail));
-//							break;
-//						}
-//
-//						if (rsPeers->addFriend(RsPeerId(), RsPgpId(link.hash().toStdString()))) {
-//							ConfCertDialog::loadAll();
-//							personAdded.append(PeerDefs::rsid(detail));
-//							break;
-//						}
-//
-//						personFailed.append(PeerDefs::rsid(link.name().toUtf8().constData(), RsPgpId(link.hash().toStdString())));
-//						break;
-//					}
-//
-//					personNotFound.append(PeerDefs::rsid(link.name().toUtf8().constData(), RsPgpId(link.hash().toStdString())));
 				}
 			break;
 

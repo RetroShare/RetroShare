@@ -69,7 +69,8 @@ class RetroShareLink
 		    TYPE_PRIVATE_CHAT  = 0x09,
             TYPE_PUBLIC_MSG    = 0x0a,
             TYPE_POSTED        = 0x0b,
-            TYPE_IDENTITY      = 0x0c
+            TYPE_IDENTITY      = 0x0c,
+            TYPE_COLLECTION    = 0x0d
 		};
 
 	public:
@@ -80,6 +81,7 @@ class RetroShareLink
 		static RetroShareLink createIdentity(const RsGxsId& gxs_id,const QString& name,const QString& radix_data) ;
 		static RetroShareLink createExtraFile(const QString& name, uint64_t size, const QString& hash, const QString& ssl_id);
 		static RetroShareLink createFile(const QString& name, uint64_t size, const QString& hash);
+		static RetroShareLink createCollection(const QString& name, const uint64_t size,const QString& radix_data);
 		static RetroShareLink createPublicMsgInvite(time_t time_stamp,const QString& pgp_id,const QString& hash) ;
 		static RetroShareLink createPerson(const RsPgpId &id);
 		static RetroShareLink createCertificate(const RsPeerId &ssl_id) ;
