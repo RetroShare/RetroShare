@@ -5,7 +5,7 @@
 [ -z ${ANDROID_NDK_ARCH+x} ] && export ANDROID_NDK_ARCH="arm"
 [ -z ${ANDROID_NDK_ABI_VER+x} ] && export ANDROID_NDK_ABI_VER="4.9"
 [ -z ${ANDROID_PLATFORM_VER+x} ] && export ANDROID_PLATFORM_VER="18"
-[ -z ${NDK_TOOLCHAIN_PATH+x} ] && export NDK_TOOLCHAIN_PATH="/home/$(whoami)/Development/android-toolchains/retroshare-android-${ANDROID_PLATFORM_VER}-${ANDROID_NDK_ARCH}-abi${ANDROID_NDK_ABI_VER}/"
+[ -z ${NDK_TOOLCHAIN_PATH+x} ] && export NDK_TOOLCHAIN_PATH="${HOME}/Builds/android-toolchains/retroshare-android-${ANDROID_PLATFORM_VER}-${ANDROID_NDK_ARCH}-abi${ANDROID_NDK_ABI_VER}/"
 [ -z ${HOST_NUM_CPU+x} ] && export HOST_NUM_CPU=4
 
 runDir="$(pwd)"
