@@ -134,6 +134,36 @@ struct SharedDirStats
     uint64_t total_shared_size ;
 };
 
+// This class represents a tree of directories and files, only with their names size and hash. It is used to create collection links in the GUI
+// and to transmit directory information between services. This class is independent from the existing FileHierarchy classes used in storage because
+// we need a very copact serialization and storage size since we create links with it. Besides, we cannot afford to risk the leak of other local information
+// by using the orignal classes.
+
+class FileTree
+{
+public:
+	virtual ~FileTree() {}
+
+	static FileTree *create(void *ref) ;
+	static FileTree *create(const std::string& radix64_string) ;
+
+	virtual std::string toRadix64() const =0 ;
+
+	// These methods allow the user to browse the hierarchy
+
+	struct FileData {
+		std::string name ;
+		uint64_t    size ;
+		RsFileHash  hash ;
+	};
+
+	virtual uint32_t root() const { return 0;}
+	virtual bool getDirectoryContent(uint32_t index,std::vector<uint32_t>& subdirs,std::vector<FileData>& subfiles) const = 0;
+
+	uint32_t mTotalFiles ;
+	uint64_t mTotalSize ;
+};
+
 class RsFiles
 {
 	public:
