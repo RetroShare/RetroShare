@@ -1,50 +1,48 @@
 #include "pgpid_item_proxy.h"
 
+//TODO: include only required headers here
+#include <retroshare/rsiface.h>
+#include <retroshare/rspeers.h>
+#include <retroshare/rsdisc.h>
+#include <retroshare/rsmsgs.h>
+
+
+//TODO: set this defines in one place
+// Defines for key list columns
+#define COLUMN_CHECK 0
+#define COLUMN_PEERNAME    1
+#define COLUMN_I_AUTH_PEER 2
+#define COLUMN_PEER_AUTH_ME 3
+#define COLUMN_PEERID      4
+#define COLUMN_LAST_USED   5
+#define COLUMN_COUNT 6
+
+
+
 pgpid_item_proxy::pgpid_item_proxy(QObject *parent) :
-    //QAbstractProxyModel(parent)
     QSortFilterProxyModel(parent)
 {
 
 }
 
-
-/*QModelIndex pgpid_item_proxy::mapFromSource(const QModelIndex &sourceIndex) const
+void pgpid_item_proxy::use_only_trusted_keys(bool val)
 {
-    if(sourceIndex.isValid())
-        return createIndex(sourceIndex.row(), sourceIndex.column(), sourceIndex.internalPointer());
-    else
-        return QModelIndex();
+    only_trusted_keys = val;
+    filterChanged();
 }
 
-
-QModelIndex pgpid_item_proxy::mapToSource(const QModelIndex &proxyIndex) const
+bool pgpid_item_proxy::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const
 {
-    if(proxyIndex.isValid())
-        return sourceModel()->index(proxyIndex.row(), proxyIndex.column());
-    else
-        return QModelIndex();}
-
-
-QModelIndex pgpid_item_proxy::index(int row, int column, const QModelIndex &parent) const
-{
-    const QModelIndex sourceParent = mapToSource(parent);
-    const QModelIndex sourceIndex = sourceModel()->index(row, column, sourceParent);
-    return mapFromSource(sourceIndex);
+    if(only_trusted_keys)
+    {
+        if(!rsPeers)
+            return false;
+        RsPgpId peer_id (sourceModel()->data(sourceModel()->index(sourceRow, COLUMN_PEERID, sourceParent)).toString().toStdString());
+        RsPeerDetails details;
+        if(!rsPeers->getGPGDetails(peer_id, details))
+            return false;
+        if(details.validLvl < RS_TRUST_LVL_MARGINAL)
+            return false;
+    }
+    return QSortFilterProxyModel::filterAcceptsRow(sourceRow, sourceParent);
 }
-
-QModelIndex pgpid_item_proxy::parent(const QModelIndex &child) const
-{
-    const QModelIndex sourceIndex = mapToSource(child);
-    const QModelIndex sourceParent = sourceIndex.parent();
-    return mapFromSource(sourceParent);
-}
-int pgpid_item_proxy::rowCount(const QModelIndex &parent) const
-{
-    //TODO:
-    return sourceModel()->rowCount(parent);
-}
-int pgpid_item_proxy::columnCount(const QModelIndex &parent) const
-{
-    return sourceModel()->columnCount(parent);
-}
-*/

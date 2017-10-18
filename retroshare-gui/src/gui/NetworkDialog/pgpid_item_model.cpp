@@ -7,7 +7,7 @@
 #define IMAGE_TRUSTED        ":/images/rs-2.png"
 
 /*TODO:
- * using list here for internal data storage is not best options
+ * using list here for internal data storage is not best option
 */
 pgpid_item_model::pgpid_item_model(std::list<RsPgpId> &neighs_, float &_font_height,  QObject *parent)
     : QAbstractTableModel(parent), neighs(neighs_), font_height(_font_height)
@@ -95,26 +95,6 @@ QVariant pgpid_item_model::headerData(int section, Qt::Orientation orientation, 
     return QVariant();
 }
 
-/*QModelIndex pgpid_item_model::index(int row, int column, const QModelIndex &parent) const
-{
-    return createIndex(row, column);
-}*/
-
-/*QModelIndex pgpid_item_model::parent(const QModelIndex &index) const
-{
-    if(index.row() > -1 && index.column() > -1)
-        return createIndex(-1, -1);
-    if (!index.isValid())
-        return QModelIndex();
-    return QModelIndex();
-}*/
-
-/*bool pgpid_item_model::hasChildren(const QModelIndex &parent) const
-{
-    if(parent.column() == -1 && parent.row() == -1)
-        return true;
-    return false;
-} */
 
 int pgpid_item_model::rowCount(const QModelIndex &/*parent*/) const
 {
@@ -125,20 +105,6 @@ int pgpid_item_model::columnCount(const QModelIndex &/*parent*/) const
 {
     return COLUMN_COUNT;
 }
-
-//bool pgpid_item_model::insertRows(int position, int rows, const QModelIndex &/*index*/)
-//{
-//    beginInsertRows(QModelIndex(), position, position+rows-1);
-//    endInsertRows();
-//    return true;
-//}
-
-//bool pgpid_item_model::removeRows(int position, int rows, const QModelIndex &/*index*/)
-//{
-//     beginRemoveRows(QModelIndex(), position, position+rows-1);
-//     endRemoveRows();
-//     return true;
-//}
 
 
 QVariant pgpid_item_model::data(const QModelIndex &index, int role) const
@@ -159,7 +125,32 @@ QVariant pgpid_item_model::data(const QModelIndex &index, int role) const
     if (!rsPeers->getGPGDetails(*it, detail))
         return QVariant();
     //shit code end
-    if(role == Qt::DisplayRole)
+    if(role == Qt::EditRole) //some columns return raw data for editrole, used for proper filtering
+    {
+        switch(index.column())
+        {
+        case COLUMN_LAST_USED:
+            return detail.lastUsed;
+            break;
+        case COLUMN_I_AUTH_PEER:
+        {
+            if (detail.ownsign)
+                return RS_TRUST_LVL_ULTIMATE;
+            return detail.trustLvl;
+        }
+            break;
+        case COLUMN_PEER_AUTH_ME:
+            return detail.hasSignedMe;
+            break;
+        case COLUMN_CHECK:
+            return detail.accept_connection;
+            break;
+        default:
+            break;
+        }
+
+    }
+    if(role == Qt::DisplayRole || role == Qt::EditRole)
     {
         switch(index.column())
         {
@@ -211,10 +202,8 @@ QVariant pgpid_item_model::data(const QModelIndex &index, int role) const
             else
                 lst_used_str = tr("%1 days ago").arg((int)( last_time_used / 86400 )) ;
 
-//            QString lst_used_sort_str = QString::number(detail.lastUsed,'f',10);
 
             return lst_used_str;
-//            item->setData(COLUMN_LAST_USED,ROLE_SORT,lst_used_sort_str) ;
         }
             break;
         case COLUMN_CHECK:
@@ -290,11 +279,6 @@ QVariant pgpid_item_model::data(const QModelIndex &index, int role) const
 
     return QVariant();
 }
-
-/*void pgpid_item_model::sort(int column, Qt::SortOrder order)
-{
-
-} */
 
 
 //following code is just a poc, it's still suboptimal, unefficient, but much better then existing rs code
