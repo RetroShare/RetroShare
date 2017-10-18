@@ -69,7 +69,7 @@
 #define HOST_CERTIFICATE "certificate"
 #define HOST_PUBLIC_MSG  "public_msg"
 #define HOST_IDENTITY    "identity"
-#define HOST_REGEXP      "file|extra|person|forum|channel|posted|search|message|certificate|private_chat|public_msg|identity"
+#define HOST_REGEXP      "file|collection|extra|person|forum|channel|posted|search|message|certificate|private_chat|public_msg|identity"
 
 #define FILE_NAME       "name"
 #define FILE_SIZE       "size"
@@ -79,6 +79,7 @@
 #define COLLECTION_NAME "name"
 #define COLLECTION_SIZE "size"
 #define COLLECTION_DATA "radix"
+#define COLLECTION_COUNT "files"
 
 #define PERSON_NAME     "name"
 #define PERSON_HASH     "hash"
@@ -337,8 +338,9 @@ void RetroShareLink::fromUrl(const QUrl& url)
 		bool ok;
 		_type  = TYPE_COLLECTION;
 		_radix = decodedQueryItemValue(urlQuery, COLLECTION_DATA);
+		_name  = decodedQueryItemValue(urlQuery, COLLECTION_NAME);
 		_size  = urlQuery.queryItemValue(COLLECTION_SIZE).toULongLong(&ok);
-		_name  = urlQuery.queryItemValue(COLLECTION_NAME).toULongLong(&ok);
+		_count = urlQuery.queryItemValue(COLLECTION_COUNT).toULongLong(&ok);
 
 #ifdef DEBUG_RSLINK
         std::cerr << "Got a certificate link!!" << std::endl;
@@ -418,12 +420,13 @@ RetroShareLink RetroShareLink::createFile(const QString& name, uint64_t size, co
 	return link;
 }
 
-RetroShareLink RetroShareLink::createCollection(const QString& name, const uint64_t size,const QString& radix_data)
+RetroShareLink RetroShareLink::createCollection(const QString& name, uint64_t size, uint32_t count, const QString& radix_data)
 {
 	RetroShareLink link;
 	link.clear();
 
 	link._name  = name;
+	link._count = count;
 	link._size  = size;
 	link._radix = radix_data ;
 	link._type = TYPE_COLLECTION;
@@ -899,8 +902,10 @@ QString RetroShareLink::toString() const
 		case TYPE_COLLECTION:
 			url.setScheme(RSLINK_SCHEME);
 			url.setHost(HOST_COLLECTION) ;
-			urlQuery.addQueryItem(CERTIFICATE_RADIX, encodeItem(_radix));
-			urlQuery.addQueryItem(CERTIFICATE_NAME, encodeItem(_name));
+			urlQuery.addQueryItem(COLLECTION_NAME, encodeItem(_name));
+			urlQuery.addQueryItem(COLLECTION_SIZE, QString::number(_size));
+			urlQuery.addQueryItem(COLLECTION_DATA, encodeItem(_radix));
+			urlQuery.addQueryItem(COLLECTION_COUNT, QString::number(_count));
 			break;
 
 		case TYPE_CERTIFICATE:
@@ -925,11 +930,14 @@ QString RetroShareLink::niceName() const
 	if (type() == TYPE_PERSON)
 		return PeerDefs::rsid(name().toUtf8().constData(), RsPgpId(hash().toStdString()));
 
+	if(type() == TYPE_COLLECTION)
+		return QObject::tr("%1 (%2 files, %3)").arg(_name).arg(_count).arg(misc::friendlyUnit(_size));
+
 	if(type() == TYPE_IDENTITY)
 		return QObject::tr("Identity link (name=%1, ID=%2)").arg(_name).arg(_hash) ;
 
 	if(type() == TYPE_COLLECTION)
-		return QObject::tr("Click to browse/download this file collection");
+		return QObject::tr("File directory (Total %s) Click to browse/download this file collection").arg(misc::friendlyUnit(_size));
 
 	if(type() == TYPE_PUBLIC_MSG) {
 		RsPeerDetails detail;

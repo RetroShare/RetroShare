@@ -3,7 +3,11 @@
 class FileTreeImpl: public FileTree
 {
 public:
-	FileTreeImpl() {}
+	FileTreeImpl()
+	{
+		mTotalFiles = 0 ;
+		mTotalSize = 0 ;
+	}
 
 	virtual std::string toRadix64() const ;
 	virtual bool getDirectoryContent(uint32_t index,std::vector<uint32_t>& subdirs,std::vector<FileData>& subfiles) const ;

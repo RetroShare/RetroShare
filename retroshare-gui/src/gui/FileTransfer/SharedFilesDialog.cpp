@@ -578,7 +578,7 @@ void SharedFilesDialog::copyLink (const QModelIndexList& lst, bool remote)
 			std::cerr << "Created collection file tree:" << std::endl;
 			ft->print();
 
-			RetroShareLink link = RetroShareLink::createCollection(QString::fromUtf8(details.name.c_str()), details.count,QString::fromStdString(ft->toRadix64())) ;
+			RetroShareLink link = RetroShareLink::createCollection(QString::fromUtf8(details.name.c_str()),ft->mTotalSize,ft->mTotalFiles,QString::fromStdString(ft->toRadix64())) ;
 
 			if(link.valid())
 				urls.push_back(link) ;

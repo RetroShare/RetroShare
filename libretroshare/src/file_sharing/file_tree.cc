@@ -55,6 +55,9 @@ void FileTreeImpl::recurs_buildFileTree(FileTreeImpl& ft,uint32_t index,const Di
 
 				ft.mDirs[index].subfiles.push_back(ft.mFiles.size()) ;
 				ft.mFiles.push_back(f) ;
+
+				ft.mTotalFiles++ ;
+				ft.mTotalSize += f.size ;
 			}
 			else if(dd.children[i].type == DIR_TYPE_DIR)
 			{
@@ -264,7 +267,8 @@ bool FileTreeImpl::serialise(unsigned char *& buffer,uint32_t& buffer_size) cons
 
 void FileTreeImpl::print() const
 {
-	recurs_print(0,"") ;
+	std::cerr << "File hierarchy: name=" << mDirs[0].name << " size=" << mTotalSize << std::endl;
+	recurs_print(0,"  ") ;
 }
 
 void FileTreeImpl::recurs_print(uint32_t index,const std::string& indent) const

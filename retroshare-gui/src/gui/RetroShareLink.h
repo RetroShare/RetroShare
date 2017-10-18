@@ -81,7 +81,7 @@ class RetroShareLink
 		static RetroShareLink createIdentity(const RsGxsId& gxs_id,const QString& name,const QString& radix_data) ;
 		static RetroShareLink createExtraFile(const QString& name, uint64_t size, const QString& hash, const QString& ssl_id);
 		static RetroShareLink createFile(const QString& name, uint64_t size, const QString& hash);
-		static RetroShareLink createCollection(const QString& name, const uint64_t size,const QString& radix_data);
+		static RetroShareLink createCollection(const QString& name, uint64_t size,uint32_t count,const QString& radix_data);
 		static RetroShareLink createPublicMsgInvite(time_t time_stamp,const QString& pgp_id,const QString& hash) ;
 		static RetroShareLink createPerson(const RsPgpId &id);
 		static RetroShareLink createCertificate(const RsPeerId &ssl_id) ;
@@ -169,6 +169,7 @@ class RetroShareLink
 		QString  _encrypted_chat_info ; // encrypted data string for the recipient of a chat invite
 		time_t   _time_stamp ; 				// time stamp at which the link will expire.
         QString  _radix_group_data;
+		uint32_t _count ;
 
 		unsigned int _subType; // for general use as sub type for _type (RSLINK_SUBTYPE_...)
 };
