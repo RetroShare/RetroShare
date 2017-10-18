@@ -58,6 +58,7 @@
 class bdNodeId
 {
         public:
+        bdNodeId() { data[0] = 0; /*for (int i=0; i<BITDHT_KEY_LEN; ++i) data[i] = 0;*/}
         unsigned char data[BITDHT_KEY_LEN];
 };
 
