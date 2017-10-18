@@ -30,15 +30,63 @@ FileTree *FileTree::create(const std::string& radix64_string)
 	return ft ;
 }
 
-static void recurs_buildFileTree(FileTreeImpl& ft,uint32_t index,void *ref)
+void FileTreeImpl::recurs_buildFileTree(FileTreeImpl& ft,uint32_t index,const DirDetails& dd,bool remote)
 {
+	if(ft.mDirs.size() <= index)
+		ft.mDirs.resize(index+1) ;
+
+	ft.mDirs[index].name = dd.name ;
+	ft.mDirs[index].subfiles.clear();
+	ft.mDirs[index].subdirs.clear();
+
+	DirDetails dd2 ;
+
+	FileSearchFlags flags = remote?RS_FILE_HINTS_REMOTE:RS_FILE_HINTS_LOCAL ;
+
+	for(uint32_t i=0;i<dd.children.size();++i)
+		if(rsFiles->RequestDirDetails(dd.children[i].ref,dd2,flags))
+		{
+			if(dd.children[i].type == DIR_TYPE_FILE)
+			{
+				FileTree::FileData f ;
+				f.name = dd2.name ;
+				f.size = dd2.count ;
+				f.hash = dd2.hash ;
+
+				ft.mDirs[index].subfiles.push_back(ft.mFiles.size()) ;
+				ft.mFiles.push_back(f) ;
+			}
+			else if(dd.children[i].type == DIR_TYPE_DIR)
+			{
+				ft.mDirs[index].subdirs.push_back(ft.mDirs.size());
+				recurs_buildFileTree(ft,ft.mDirs.size(),dd2,remote) ;
+			}
+			else
+				std::cerr << "(EE) Unsupported DirDetails type." << std::endl;
+		}
+		else
+			std::cerr << "(EE) Cannot request dir details for pointer " << dd.children[i].ref << std::endl;
 }
 
-FileTree *FileTree::create(void *ref)
+bool FileTreeImpl::getDirectoryContent(uint32_t index,std::vector<uint32_t>& subdirs,std::vector<FileData>& subfiles) const
+{
+	if(index >= mDirs.size())
+		return false ;
+
+	subdirs = mDirs[index].subdirs ;
+
+	subfiles.clear() ;
+	for(uint32_t i=0;i<mDirs[index].subfiles.size();++i)
+		subfiles.push_back(mFiles[mDirs[index].subfiles[i]]);
+
+	return true ;
+}
+
+FileTree *FileTree::create(const DirDetails& dd, bool remote)
 {
 	FileTreeImpl *ft = new FileTreeImpl ;
 
-	recurs_buildFileTree(*ft,0,ref) ;
+	FileTreeImpl::recurs_buildFileTree(*ft,0,dd,remote) ;
 
 	return ft ;
 }
@@ -81,16 +129,12 @@ bool FileTreeImpl::deserialise(unsigned char *buffer,uint32_t buffer_size)
 
             if(FileListIO::readField(buffer,buffer_size,buffer_offset,FILE_LIST_IO_TAG_LOCAL_FILE_ENTRY,node_section_data,node_section_size))
             {
-                std::string file_name ;
-                uint64_t    file_size ;
-                RsFileHash  file_hash ;
-
                 if(!FileListIO::readField(node_section_data,node_section_size,node_section_offset,FILE_LIST_IO_TAG_FILE_NAME     ,mFiles[i].name   )) throw read_error(node_section_data,node_section_size,node_section_offset,FILE_LIST_IO_TAG_FILE_NAME     ) ;
                 if(!FileListIO::readField(node_section_data,node_section_size,node_section_offset,FILE_LIST_IO_TAG_FILE_SIZE     ,mFiles[i].size   )) throw read_error(node_section_data,node_section_size,node_section_offset,FILE_LIST_IO_TAG_FILE_SIZE     ) ;
                 if(!FileListIO::readField(node_section_data,node_section_size,node_section_offset,FILE_LIST_IO_TAG_FILE_SHA1_HASH,mFiles[i].hash   )) throw read_error(node_section_data,node_section_size,node_section_offset,FILE_LIST_IO_TAG_FILE_SHA1_HASH) ;
 
                 mTotalFiles++ ;
-                mTotalSize += file_size ;
+                mTotalSize += mFiles[i].size ;
             }
             else
                 throw read_error(buffer,buffer_size,buffer_offset,FILE_LIST_IO_TAG_LOCAL_FILE_ENTRY) ;

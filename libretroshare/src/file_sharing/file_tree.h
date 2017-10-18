@@ -15,6 +15,8 @@ public:
 protected:
 	void recurs_print(uint32_t index,const std::string& indent) const;
 
+	static void recurs_buildFileTree(FileTreeImpl& ft,uint32_t index,const DirDetails& dd,bool remote);
+
 	struct DirData {
 		std::string name;
 		std::vector<uint32_t> subdirs ;
@@ -22,4 +24,6 @@ protected:
 	};
 	std::vector<FileData> mFiles ;
 	std::vector<DirData> mDirs ;
+
+	friend class FileTree ;
 };

@@ -144,7 +144,7 @@ class FileTree
 public:
 	virtual ~FileTree() {}
 
-	static FileTree *create(void *ref) ;
+	static FileTree *create(const DirDetails& dd, bool remote) ;
 	static FileTree *create(const std::string& radix64_string) ;
 
 	virtual std::string toRadix64() const =0 ;
@@ -159,6 +159,8 @@ public:
 
 	virtual uint32_t root() const { return 0;}
 	virtual bool getDirectoryContent(uint32_t index,std::vector<uint32_t>& subdirs,std::vector<FileData>& subfiles) const = 0;
+
+	virtual void print() const=0;
 
 	uint32_t mTotalFiles ;
 	uint64_t mTotalSize ;

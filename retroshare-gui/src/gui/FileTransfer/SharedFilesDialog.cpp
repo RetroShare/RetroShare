@@ -511,7 +511,8 @@ void RemoteSharedFilesDialog::spawnCustomPopupMenu( QPoint point )
 	connect( downloadAct , SIGNAL( triggered() ), this, SLOT( downloadRemoteSelected() ) ) ;
 	contextMnu.addAction( downloadAct) ;
 
-	if ( type == DIR_TYPE_FILE ) {
+	//if ( type == DIR_TYPE_FILE )
+	{
 		contextMnu.addSeparator() ;//------------------------------------
 		contextMnu.addAction( copylinkAct) ;
 		contextMnu.addAction( sendlinkAct) ;
@@ -572,6 +573,18 @@ void SharedFilesDialog::copyLink (const QModelIndexList& lst, bool remote)
 
         if (details.type == DIR_TYPE_DIR)
         {
+			FileTree *ft = FileTree::create(details,remote) ;
+
+			std::cerr << "Created collection file tree:" << std::endl;
+			ft->print();
+
+			RetroShareLink link = RetroShareLink::createCollection(QString::fromUtf8(details.name.c_str()), details.count,QString::fromStdString(ft->toRadix64())) ;
+
+			if(link.valid())
+				urls.push_back(link) ;
+
+			delete ft ;
+#ifdef TO_REMOVE
             for(uint32_t j=0;j<details.children.size();++j)
             {
                 const DirStub& dirStub = details.children[j];
@@ -594,6 +607,7 @@ void SharedFilesDialog::copyLink (const QModelIndexList& lst, bool remote)
                     urls.push_back(link) ;
                 }
             }
+#endif
         }
         else
         {
