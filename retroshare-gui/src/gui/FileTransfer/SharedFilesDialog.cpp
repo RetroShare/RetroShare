@@ -37,7 +37,7 @@
 #include "gui/RetroShareLink.h"
 #include "gui/ShareManager.h"
 #include "gui/common/PeerDefs.h"
-#include "gui/common/RsCollectionEditor.h"
+#include "gui/common/RsCollection.h"
 #include "gui/msgs/MessageComposer.h"
 #include "gui/settings/AddFileAssociationDialog.h"
 #include "gui/settings/rsharesettings.h"
@@ -695,11 +695,11 @@ void SharedFilesDialog::collModif()
 	QFileInfo qinfo;
 	qinfo.setFile(QString::fromUtf8(path.c_str()));
 	if (qinfo.exists()) {
-		if (qinfo.absoluteFilePath().endsWith(RsCollectionEditor::ExtensionString)) {
-			RsCollectionEditor collection;
+		if (qinfo.absoluteFilePath().endsWith(RsCollection::ExtensionString)) {
+			RsCollection collection;
 			collection.openColl(qinfo.absoluteFilePath());
-		}//if (qinfo.absoluteFilePath().endsWith(RsCollectionFile::ExtensionString))
-	}//if (qinfo.exists())
+		}
+	}
 }
 
 void SharedFilesDialog::collView()
@@ -725,11 +725,11 @@ void SharedFilesDialog::collView()
 	QFileInfo qinfo;
 	qinfo.setFile(QString::fromUtf8(path.c_str()));
 	if (qinfo.exists()) {
-		if (qinfo.absoluteFilePath().endsWith(RsCollectionEditor::ExtensionString)) {
-			RsCollectionEditor collection;
+		if (qinfo.absoluteFilePath().endsWith(RsCollection::ExtensionString)) {
+			RsCollection collection;
 			collection.openColl(qinfo.absoluteFilePath(), true);
-		}//if (qinfo.absoluteFilePath().endsWith(RsCollectionFile::ExtensionString))
-	}//if (qinfo.exists())
+		}
+	}
 }
 
 void SharedFilesDialog::collOpen()
@@ -755,8 +755,8 @@ void SharedFilesDialog::collOpen()
 			QFileInfo qinfo;
 			qinfo.setFile(QString::fromUtf8(path.c_str()));
 			if (qinfo.exists()) {
-				if (qinfo.absoluteFilePath().endsWith(RsCollectionEditor::ExtensionString)) {
-					RsCollectionEditor collection;
+				if (qinfo.absoluteFilePath().endsWith(RsCollection::ExtensionString)) {
+					RsCollection collection;
 					if (collection.load(qinfo.absoluteFilePath())) {
 						collection.downloadFiles();
 						return;
@@ -766,10 +766,10 @@ void SharedFilesDialog::collOpen()
 		}
 	}
 
-	RsCollectionEditor collection;
+	RsCollection collection;
 	if (collection.load(this)) {
 		collection.downloadFiles();
-	}//if (collection.load(this))
+	}
 }
 
 void LocalSharedFilesDialog::playselectedfiles()
@@ -998,7 +998,7 @@ void LocalSharedFilesDialog::spawnCustomPopupMenu( QPoint point )
 
 	QMenu contextMnu(this) ;
 
-	bool bIsRsColl = currentFile.endsWith(RsCollectionEditor::ExtensionString);
+	bool bIsRsColl = currentFile.endsWith(RsCollection::ExtensionString);
 	collCreateAct->setEnabled(true);
 	collModifAct->setEnabled(bIsRsColl);
 	collViewAct->setEnabled(bIsRsColl);

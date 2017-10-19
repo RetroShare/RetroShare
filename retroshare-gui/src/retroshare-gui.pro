@@ -565,7 +565,7 @@ HEADERS +=  rshare.h \
         gui/statistics/BWGraph.h \
     util/RsSyntaxHighlighter.h \
     util/imageutil.h \
-    gui/common/RsCollectionEditor.h
+    gui/common/RsCollection.h
 
 #            gui/ForumsDialog.h \
 #            gui/forums/ForumDetails.h \
@@ -925,7 +925,7 @@ SOURCES +=  main.cpp \
             gui/statistics/BWGraph.cpp \
     util/RsSyntaxHighlighter.cpp \
     util/imageutil.cpp \
-    gui/common/RsCollectionEditor.cpp
+    gui/common/RsCollection.cpp
 
 #            gui/ForumsDialog.cpp \
 #            gui/forums/ForumDetails.cpp \

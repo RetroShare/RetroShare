@@ -43,7 +43,7 @@
 #include "msgs/MessageComposer.h"
 #include "util/misc.h"
 #include "common/PeerDefs.h"
-#include "common/RsCollectionEditor.h"
+#include "common/RsCollection.h"
 #include <gui/common/RsUrlHandler.h>
 #include "gui/connect/ConnectFriendWizard.h"
 #include "gui/connect/ConfCertDialog.h"
@@ -980,10 +980,10 @@ QString RetroShareLink::toHtmlSize() const
 {
 	QString size = QString("(%1)").arg(misc::friendlyUnit(_size));
 
-	if (type() == TYPE_FILE && RsCollectionEditor::isCollectionFile(name())) {
+	if (type() == TYPE_FILE && RsCollection::isCollectionFile(name())) {
 		FileInfo finfo;
 		if (rsFiles->FileDetails(RsFileHash(hash().toStdString()), RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_LOCAL, finfo)) {
-			RsCollectionEditor collection;
+			RsCollection collection;
 			if (collection.load(QString::fromUtf8(finfo.path.c_str()), false)) {
 				size += QString(" [%1]").arg(misc::friendlyUnit(collection.size()));
 			}
@@ -1393,10 +1393,9 @@ static void processList(const QStringList &list, const QString &textSingular, co
 
 			case TYPE_COLLECTION:
 				{
-					FileTree *ft = FileTree::create(_radix.toStdString()) ;
+					FileTree *ft = FileTree::create(link.radix().toStdString()) ;
 
-					RsCollectionEditor colled(*ft,NULL) ;
-					colled.exec();
+					RsCollection(*ft).downloadFiles() ;
 
 					delete ft;
 				}

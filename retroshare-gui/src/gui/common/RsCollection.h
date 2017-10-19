@@ -56,17 +56,17 @@ public:
 };
 Q_DECLARE_METATYPE(ColFileInfo)
 
-class RsCollectionEditor : public QObject
+class RsCollection : public QObject
 {
 	Q_OBJECT
 
 public:
 
-	RsCollectionEditor(QObject *parent = 0) ;
+	RsCollection(QObject *parent = 0) ;
 	// create from list of files and directories
-	RsCollectionEditor(const std::vector<DirDetails>& file_entries, QObject *parent = 0) ;
-	RsCollectionEditor(const FileTree& fr, QObject *parent);
-	virtual ~RsCollectionEditor() ;
+	RsCollection(const std::vector<DirDetails>& file_entries, QObject *parent = 0) ;
+	RsCollection(const FileTree& fr);
+	virtual ~RsCollection() ;
 
 	static const QString ExtensionString ;
 
@@ -75,9 +75,6 @@ public:
 	// Loads file from disk.
 	bool load(QWidget *parent);
 	bool load(const QString& fileName, bool showError = true);
-
-	// Loads from FileTree
-	bool load(const FileTree& f);
 
 	// Save to disk
 	bool save(QWidget *parent) const ;
@@ -102,6 +99,8 @@ private:
 
 	void recursAddElements(QDomDocument&,const DirDetails&,QDomElement&) const ;
 	void recursAddElements(QDomDocument&,const ColFileInfo&,QDomElement&) const;
+	void recursAddElements(QDomDocument& doc,const FileTree& ft,uint32_t index,QDomElement& e) const;
+
 	void recursCollectColFileInfos(const QDomElement&,std::vector<ColFileInfo>& colFileInfos,const QString& current_dir,bool bad_chars_in_parent) const ;
 	// check that the file is a valid rscollection file, and not a lol bomb or some shit like this
 	static bool checkFile(const QString &fileName, bool showError);

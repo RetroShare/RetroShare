@@ -29,7 +29,7 @@
 #include <QDateTime>
 #include <QInputDialog>
 #include "RsCollectionDialog.h"
-#include "RsCollectionEditor.h"
+#include "RsCollection.h"
 #include "util/misc.h"
 #define COLUMN_FILE     0
 #define COLUMN_FILEPATH 1
@@ -591,12 +591,12 @@ void RsCollectionDialog::changeFileName()
 	QString fileName;
 	if(!misc::getSaveFileName(this, RshareSettings::LASTDIR_EXTRAFILE
 														, QApplication::translate("RsCollectionFile", "Create collection file")
-														, QApplication::translate("RsCollectionFile", "Collection files") + " (*." + RsCollectionEditor::ExtensionString + ")"
+														, QApplication::translate("RsCollectionFile", "Collection files") + " (*." + RsCollection::ExtensionString + ")"
 														, fileName,0, QFileDialog::DontConfirmOverwrite))
 		return;
 
-	if (!fileName.endsWith("." + RsCollectionEditor::ExtensionString))
-		fileName += "." + RsCollectionEditor::ExtensionString ;
+	if (!fileName.endsWith("." + RsCollection::ExtensionString))
+		fileName += "." + RsCollection::ExtensionString ;
 
 	std::cerr << "Got file name: " << fileName.toStdString() << std::endl;
 
@@ -604,7 +604,7 @@ void RsCollectionDialog::changeFileName()
 
 	if(file.exists())
 	{
-		RsCollectionEditor collFile;
+		RsCollection collFile;
 		if (!collFile.checkFile(fileName,true)) return;
 
 		QMessageBox mb;

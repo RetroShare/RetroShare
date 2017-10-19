@@ -31,7 +31,7 @@
 #include <QStandardItemModel>
 
 #include <gui/common/FilesDefs.h>
-#include <gui/common/RsCollectionEditor.h>
+#include <gui/common/RsCollection.h>
 #include <gui/common/RsUrlHandler.h>
 #include <gui/common/RSTreeView.h>
 
@@ -50,7 +50,7 @@
 #include "xprogressbar.h"
 #include <gui/settings/rsharesettings.h>
 #include "util/misc.h"
-#include <gui/common/RsCollectionEditor.h>
+#include <gui/common/RsCollection.h>
 #include "TransferUserNotify.h"
 #include "util/QtVersion.h"
 #include "util/RsFile.h"
@@ -679,20 +679,20 @@ void TransfersDialog::downloadListCustomPopupMenu( QPoint /*point*/ )
 					 */
 					if (info.downloadStatus == FT_STATE_WAITING) {
 						atLeastOne_Waiting = true ;
-					}//if (info.downloadStatus == FT_STATE_WAITING)
+					}
 					if (info.downloadStatus == FT_STATE_DOWNLOADING) {
 						atLeastOne_Downloading=true ;
-					}//if (info.downloadStatus == FT_STATE_DOWNLOADING)
+					}
 					if (info.downloadStatus == FT_STATE_COMPLETE) {
 						atLeastOne_Complete = true ;
 						add_OpenFileOption = single ;
-					}//if (info.downloadStatus == FT_STATE_COMPLETE)
+					}
 					if (info.downloadStatus == FT_STATE_QUEUED) {
 						atLeastOne_Queued = true ;
-					}//if(info.downloadStatus == FT_STATE_QUEUED)
+					}
 					if (info.downloadStatus == FT_STATE_PAUSED) {
 						atLeastOne_Paused = true ;
-					}//if (info.downloadStatus == FT_STATE_PAUSED)
+					}
 
 					size_t pos = info.fname.find_last_of('.') ;
 					if (pos !=  std::string::npos) {
@@ -700,23 +700,23 @@ void TransfersDialog::downloadListCustomPopupMenu( QPoint /*point*/ )
 						if (misc::isPreviewable(info.fname.substr(pos + 1).c_str())) {
 							add_PreviewOption = (info.downloadStatus != FT_STATE_COMPLETE) ;
 							add_PlayOption = !add_PreviewOption ;
-						}// if (misc::isPreviewable(info.fname.substr(pos + 1).c_str()))
+						}
 						// Check if the file is a collection
-						if (RsCollectionEditor::ExtensionString == info.fname.substr(pos + 1).c_str()) {
+						if (RsCollection::ExtensionString == info.fname.substr(pos + 1).c_str()) {
 							add_CollActions = (info.downloadStatus == FT_STATE_COMPLETE);
-						}//if (RsCollectionFile::ExtensionString == info
-					}// if(pos !=  std::string::npos)
+						}
+					}
 
-			}// if FileDetails
-		}// for items iterate
-	}// if (!items.empty())
+			}
+		}
+	}
 
 	if (atLeastOne_Waiting || atLeastOne_Downloading || atLeastOne_Queued || atLeastOne_Paused) {
 		contextMnu.addMenu( &prioritySpeedMenu) ;
 	}
 	if (atLeastOne_Queued) {
 		contextMnu.addMenu( &priorityQueueMenu) ;
-	}//if (atLeastOne_Queued)
+	}
 
 	if ( (!items.empty())
 	     && (atLeastOne_Downloading || atLeastOne_Queued || atLeastOne_Waiting || atLeastOne_Paused)) {
@@ -724,7 +724,7 @@ void TransfersDialog::downloadListCustomPopupMenu( QPoint /*point*/ )
 
 		if (single) {
 			contextMnu.addAction( renameFileAct) ;
-		}//if (single)
+		}
 
 		QMenu *directoryMenu = contextMnu.addMenu(QIcon(IMAGE_OPENFOLDER), tr("Set destination directory")) ;
 		directoryMenu->addAction(specifyDestinationDirectoryAct) ;
@@ -745,27 +745,27 @@ void TransfersDialog::downloadListCustomPopupMenu( QPoint /*point*/ )
 			act->setData(QString::fromUtf8( (*it).filename.c_str() ) ) ;
 			connect(act, SIGNAL(triggered()), this, SLOT(setDestinationDirectory())) ;
 			directoryMenu->addAction( act) ;
-		 }//for (std::list<SharedDirInfo>::const_iterator it
-	 }//if ( (!items.empty()) &&
+		 }
+	 }
 
 	if (atLeastOne_Paused) {
 		contextMnu.addAction(resumeAct) ;
-	}//if (atLeastOne_Paused)
+	}
 	if (atLeastOne_Downloading || atLeastOne_Queued || atLeastOne_Waiting) {
 		contextMnu.addAction(pauseAct) ;
-	}//if (atLeastOne_Downloading || atLeastOne_Queued || atLeastOne_Waiting)
+	}
 
 	if (!atLeastOne_Complete && !items.empty()) {
 			contextMnu.addAction(forceCheckAct) ;
 			contextMnu.addAction(cancelAct) ;
-	}//if (!atLeastOne_Complete && !items.empty())
+	}
 	if (add_PlayOption) {
 		contextMnu.addAction(playAct) ;
-	}//if (add_PlayOption)
+	}
 
 	if (atLeastOne_Paused || atLeastOne_Downloading || atLeastOne_Complete || add_PlayOption) {
 		contextMnu.addSeparator() ;//------------------------------------------------
-	}//if (atLeastOne_Paused ||
+	}
 
 	if (single) {
 		if (add_OpenFileOption) contextMnu.addAction( openFileAct) ;
@@ -773,20 +773,20 @@ void TransfersDialog::downloadListCustomPopupMenu( QPoint /*point*/ )
 		contextMnu.addAction( openFolderAct) ;
 		contextMnu.addAction( detailsFileAct) ;
 		contextMnu.addSeparator() ;//--------------------------------------------
-	}//if (single)
+	}
 
 	contextMnu.addAction( clearCompletedAct) ;
 	contextMnu.addSeparator() ;//------------------------------------------------
 
 	if (add_CopyLink) {
 		contextMnu.addAction( copyLinkAct) ;
-	}//if (add_CopyLink)
+	}
 	if (add_PasteLink) {
 		contextMnu.addAction( pasteLinkAct) ;
-	}//if (add_PasteLink)
+	}
 	if (add_CopyLink || add_PasteLink) {
 		contextMnu.addSeparator() ;//--------------------------------------------
-	}//if (add_CopyLink || add_PasteLink)
+	}
 
 	if (DLLFilterModel->rowCount()>0 ) {
 		contextMnu.addAction( expandAllDLAct ) ;
@@ -2153,9 +2153,9 @@ void TransfersDialog::collCreate()
 		details.type = DIR_TYPE_FILE;
 
 		dirVec.push_back(details);
-	}//for (it = items.begin();
+	}
 
-	RsCollectionEditor(dirVec).openNewColl(this);
+	RsCollection(dirVec).openNewColl(this);
 }
 
 void TransfersDialog::collModif()
@@ -2180,12 +2180,12 @@ void TransfersDialog::collModif()
 		QFileInfo qinfo;
 		qinfo.setFile(QString::fromUtf8(path.c_str()));
 		if (qinfo.exists()) {
-			if (qinfo.absoluteFilePath().endsWith(RsCollectionEditor::ExtensionString)) {
-				RsCollectionEditor collection;
+			if (qinfo.absoluteFilePath().endsWith(RsCollection::ExtensionString)) {
+				RsCollection collection;
 				collection.openColl(qinfo.absoluteFilePath());
-			}//if (qinfo.absoluteFilePath().endsWith(RsCollectionFile::ExtensionString))
-		}//if (qinfo.exists())
-	}//if (info.downloadStatus == FT_STATE_COMPLETE)
+			}
+		}
+	}
 }
 
 void TransfersDialog::collView()
@@ -2210,12 +2210,12 @@ void TransfersDialog::collView()
 		QFileInfo qinfo;
 		qinfo.setFile(QString::fromUtf8(path.c_str()));
 		if (qinfo.exists()) {
-			if (qinfo.absoluteFilePath().endsWith(RsCollectionEditor::ExtensionString)) {
-				RsCollectionEditor collection;
+			if (qinfo.absoluteFilePath().endsWith(RsCollection::ExtensionString)) {
+				RsCollection collection;
 				collection.openColl(qinfo.absoluteFilePath(), true);
-			}//if (qinfo.absoluteFilePath().endsWith(RsCollectionFile::ExtensionString))
-		}//if (qinfo.exists())
-	}//if (info.downloadStatus == FT_STATE_COMPLETE)
+			}
+		}
+	}
 }
 
 void TransfersDialog::collOpen()
@@ -2240,8 +2240,8 @@ void TransfersDialog::collOpen()
 				QFileInfo qinfo;
 				qinfo.setFile(QString::fromUtf8(path.c_str()));
 				if (qinfo.exists()) {
-					if (qinfo.absoluteFilePath().endsWith(RsCollectionEditor::ExtensionString)) {
-						RsCollectionEditor collection;
+					if (qinfo.absoluteFilePath().endsWith(RsCollection::ExtensionString)) {
+						RsCollection collection;
 						if (collection.load(qinfo.absoluteFilePath())) {
 							collection.downloadFiles();
 							return;
@@ -2252,10 +2252,10 @@ void TransfersDialog::collOpen()
 		}
 	}
 
-	RsCollectionEditor collection;
+	RsCollection collection;
 	if (collection.load(this)) {
 		collection.downloadFiles();
-	}//if (collection.load(this))
+	}
 }
 
 void TransfersDialog::setShowDLSizeColumn(bool show)
