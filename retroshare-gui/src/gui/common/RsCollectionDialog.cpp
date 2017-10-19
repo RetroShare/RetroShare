@@ -243,26 +243,26 @@ bool RsCollectionDialog::eventFilter(QObject *obj, QEvent *event)
 					for (it = selectedItems.begin(); it != selectedItems.end(); ++it) {
 						if ((*it)->checkState(COLUMN_FILE) != checkState)
 							(*it)->setCheckState(COLUMN_FILE, checkState);
-					}//for (it
-				}//if (item)
+					}
+				}
 
 				return true; // eat event
-			}//if (keyEvent && keyEvent->key() == Qt::Key_Space)
+			}
 
 			if (keyEvent && (keyEvent->key() == Qt::Key_Delete)) {
 				// Delete pressed
 				remove();
 				return true; // eat event
-			}//if (keyEvent && keyEvent->key() == Qt::Key_Delete)
+			}
 
 			if (keyEvent && (keyEvent->key() == Qt::Key_Plus)) {
 				// Plus pressed
 				makeDir();
 				return true; // eat event
-			}//if (keyEvent && keyEvent->key() == Qt::Key_Plus)
+			}
 
-		}//if (event->type() == QEvent::KeyPress)
-	}//if (obj == ui._fileEntriesTW)
+		}
+	}
 
 	if (obj == ui._systemFileTW) {
 		if (event->type() == QEvent::KeyPress) {
@@ -277,9 +277,9 @@ bool RsCollectionDialog::eventFilter(QObject *obj, QEvent *event)
 				}
 
 				return true; // eat event
-			}//if (keyEvent && keyEvent->key() == Qt::Key_Enter...
-		}//if (event->type() == QEvent::KeyPress)
-	}//if (obj == ui._systemFileTW)
+			}
+		}
+	}
 
 	// pass the event on to the parent class
 	return QDialog::eventFilter(obj, event);
@@ -452,7 +452,7 @@ bool RsCollectionDialog::addChild(QTreeWidgetItem* parent, const std::vector<Col
 				item->setToolTip(COLUMN_FILEC, tr("Real File Count=%1").arg(1));
 				item->setData(COLUMN_FILEC, ROLE_FILEC, 1);
 				item->setData(COLUMN_FILEC, ROLE_SELFILEC, 1);
-			}//if (colFileInfo.type==DIR_TYPE_DIR
+			}
 			item->setFont(COLUMN_FILE, font);
 
 			if (colFileInfo.filename_has_wrong_characters)
@@ -487,12 +487,12 @@ bool RsCollectionDialog::addChild(QTreeWidgetItem* parent, const std::vector<Col
 						itemParent->setText(COLUMN_FILEC, QString("%1").arg(parentSelFileCount));
 
 						itemParent = itemParent->parent();
-					}//while (itemParent)
-				}//if (itemParent)
-			}//if (colFileInfo.type==DIR_TYPE_FILE)
+					}
+				}
+			}
 
 			founds.push_back(item);
-		}//(founds.empty())
+		}
 
 		if (!founds.empty()) {
 
@@ -624,7 +624,7 @@ void RsCollectionDialog::changeFileName()
 			if (qddOldFile.setContent(&file)) {
 				QDomElement docOldElem = qddOldFile.elementsByTagName("RsCollection").at(0).toElement();
 				collFile.recursCollectColFileInfos(docOldElem,_newColFileInfos,QString(),false);
-			}//(qddOldFile.setContent(&file))
+			}
 
 		} else if (mb.clickedButton()==btnCancel) {
 			return;
@@ -636,7 +636,7 @@ void RsCollectionDialog::changeFileName()
 		//create a new empty file to check if name if good.
 		if (!file.open(QFile::WriteOnly)) return;
 		file.remove();
-	}//if(file.exists())
+	}
 
 	_fileName = fileName;
 
@@ -686,7 +686,7 @@ void RsCollectionDialog::addRecursive(bool recursive)
 				} else {
 					continue;
 				}
-			}//if (fileInfo.isDir())
+			}
 			if (fileInfo.isFile()){
 				fileToHash.append(fileInfo.absoluteFilePath());
 				++count;
@@ -694,9 +694,9 @@ void RsCollectionDialog::addRecursive(bool recursive)
 					_listOfFilesAddedInDir.insert(fileInfo.absoluteFilePath(),fileInfo.absolutePath());
 				else
 					_listOfFilesAddedInDir.insert(fileInfo.absoluteFilePath(),"");
-			}//if (fileInfo.isFile())
-		}//if (index.column()==0)
-	}//foreach (QModelIndex index, milSelectionList)
+			}
+		}
+	}
 
 	// Process Dirs
 	QTreeWidgetItem *item = NULL;
@@ -705,8 +705,8 @@ void RsCollectionDialog::addRecursive(bool recursive)
 	if (item) {
 		while (item->data(COLUMN_HASH, ROLE_TYPE).toUInt() != DIR_TYPE_DIR) {
 			item = item->parent();//Only Dir as Parent
-		}//while
-	}//if (item)
+		}
+	}
 
 	int index = 0;
 	while (index < dirToAdd.count())
@@ -722,7 +722,7 @@ void RsCollectionDialog::addRecursive(bool recursive)
 		//QMap is ordered, so we get parent before child
 		//Iterator is moved inside this function
 		processItem(dirToAdd, index, root);
-	}//while (index < dirToAdd.count())
+	}
 
 	//Update liste before attach files to be sure when file is hashed, parent directory exists.
 	updateList();
@@ -736,9 +736,9 @@ void RsCollectionDialog::addRecursive(bool recursive)
 		} else if(item) {
 			if (item->data(COLUMN_HASH, ROLE_NAME) != "") {
 				it.value() = item->text(COLUMN_FILEPATH);
-			}//if (item->data(COLUMN_HASH, ROLE_NAME) != "")
-		}//if (dirToAdd.contains(path))
-	}//for (QHash<QString,QString>::Iterator it
+			}
+		}
+	}
 
 	// Process Files once all done
 	ui._hashBox->addAttachments(fileToHash,RS_FILE_REQ_ANONYMOUS_ROUTING /*, 0*/);
@@ -781,13 +781,13 @@ bool RsCollectionDialog::addAllChild(QFileInfo &fileInfoParent
 				default:
 					// should never be reached
 				break;
-			}//switch (ret)
+			}
 		}
 		if (fileInfo.isDir()) {
 			dirToAdd.insert(fileInfo.absoluteFilePath(),fileInfo.absolutePath());
 			++count;
 			if (!addAllChild(fileInfo, dirToAdd, fileToHash, count)) return false;
-		}//if (fileInfo.isDir())
+		}
 		if (fileInfo.isFile()){
 			fileToHash.append(fileInfo.absoluteFilePath());
 			++count;
@@ -795,8 +795,8 @@ bool RsCollectionDialog::addAllChild(QFileInfo &fileInfoParent
 				_listOfFilesAddedInDir.insert(fileInfo.absoluteFilePath(),fileInfo.absolutePath());
 			else
 				_listOfFilesAddedInDir.insert(fileInfo.absoluteFilePath(),"");
-		}//if (fileInfo.isFile())
-	}//foreach (QFileInfo fileInfo, dirParent.entryInfoList())
+		}
+	}
 	return true;
 }
 
@@ -821,10 +821,10 @@ void RsCollectionDialog::remove()
 					item->setSelected(false);
 				} else {
 					listDir += item->data(COLUMN_HASH, ROLE_NAME).toString() +"<br>";
-				}//if (listDir.contains(item->data(COLUMN_HASH, ROLE_PATH).toString()))
-			}//if (item->data(COLUMN_HASH, ROLE_TYPE).toUInt() == DIR_TYPE_DIR)
-		}//if (item != getRootItem())
-	}//for (int curs = 0; curs < count; ++curs)
+				}
+			}
+		}
+	}
 
 	//If directories, ask to remove them or not
 	if (!listDir.isEmpty()){
@@ -870,14 +870,14 @@ void RsCollectionDialog::remove()
 			case QMessageBox::Cancel: {
 				delete msgBox;
 				return;
-			}//case QMessageBox::Cancel:
+			}
 			break;
 			default:
 				// should never be reached
 			break;
-		}//switch (ret)
+		}
 		delete msgBox;
-	}//if (!listDir.isEmpty())
+	}
 
 	//Remove wanted items
 	int leftItem = 0;
@@ -966,7 +966,7 @@ void RsCollectionDialog::processItem(QMap<QString, QString> &dirToAdd
 		} else {
 			_newColFileInfos.push_back(newChild);
 		}
-	}//(index < count)
+	}
 }
 
 /**
@@ -1006,13 +1006,13 @@ void RsCollectionDialog::makeDir()
 					default:
 						// should never be reached
 					break;
-				}//switch (ret)
-			}//if (badChar)
+				}
+			}
 		} else {//if (ok && !childName.isEmpty())
 			return;
-		}//if (ok && !childName.isEmpty())
+		}
 
-	}//while (!nameOK)
+	}
 
 	// Process all selected items
 	int count = ui._fileEntriesTW->selectedItems().count();
@@ -1040,8 +1040,8 @@ void RsCollectionDialog::makeDir()
 			if (item == getRootItem()) newChild.path = "";
 
 			_newColFileInfos.push_back(newChild);
-		}//if (item)
-	}//for (; curs < count; ++curs)
+		}
+	}
 
 
 	updateList();
@@ -1074,7 +1074,7 @@ void RsCollectionDialog::fileHashingFinished(QList<HashedFile> hashedFiles)
 			//File Added in directory, find its parent
 			colFileInfo.path = _listOfFilesAddedInDir.value(hashedFile.filepath,"");
 			_listOfFilesAddedInDir.remove(hashedFile.filepath);
-		}//if (_listOfFilesAddedInDir.value(hashedFile.filepath,"")!="")
+		}
 
 		_newColFileInfos.push_back(colFileInfo);
 
@@ -1112,7 +1112,7 @@ void RsCollectionDialog::itemChanged(QTreeWidgetItem *item, int col)
 		itemParent->setText(COLUMN_FILEC, QString("%1").arg(parentFileCount));
 
 		itemParent = itemParent->parent();
-	}//while (itemParent)
+	}
 
 	updateSizes() ;
 
@@ -1258,8 +1258,8 @@ void RsCollectionDialog::download()
 				                     std::list<RsPeerId>());
 		} else {//if (item->checkState(COLUMN_FILE) == Qt::Checked)
 			std::cerr<<"Skipping file : " << item->data(COLUMN_HASH,ROLE_NAME).toString().toStdString() << std::endl;
-		}//if (item->checkState(COLUMN_FILE) == Qt::Checked)
-	}//while ((item = *itemIterator) != NULL)
+		}
+	}
 
 	close();
 }
