@@ -63,20 +63,24 @@ class RsCollectionEditor : public QObject
 public:
 
 	RsCollectionEditor(QObject *parent = 0) ;
-		// create from list of files and directories
+	// create from list of files and directories
 	RsCollectionEditor(const std::vector<DirDetails>& file_entries, QObject *parent = 0) ;
+	RsCollectionEditor(const FileTree& fr, QObject *parent);
 	virtual ~RsCollectionEditor() ;
 
 	static const QString ExtensionString ;
 
 
 
-		// Loads file from disk.
-		bool load(QWidget *parent);
+	// Loads file from disk.
+	bool load(QWidget *parent);
 	bool load(const QString& fileName, bool showError = true);
 
-		// Save to disk
-		bool save(QWidget *parent) const ;
+	// Loads from FileTree
+	bool load(const FileTree& f);
+
+	// Save to disk
+	bool save(QWidget *parent) const ;
 	bool save(const QString& fileName) const ;
 
 	// Open new collection
@@ -84,28 +88,28 @@ public:
 	// Open existing collection
 	bool openColl(const QString& fileName, bool readOnly = false, bool showError = true);
 
-		// Download the content.
-		void downloadFiles() const ;
+	// Download the content.
+	void downloadFiles() const ;
 
-		qulonglong size();
+	qulonglong size();
 
 	static bool isCollectionFile(const QString& fileName);
 
 private slots:
 	void saveColl(std::vector<ColFileInfo> colFileInfos, const QString& fileName);
 
-	private:
+private:
 
-		void recursAddElements(QDomDocument&,const DirDetails&,QDomElement&) const ;
+	void recursAddElements(QDomDocument&,const DirDetails&,QDomElement&) const ;
 	void recursAddElements(QDomDocument&,const ColFileInfo&,QDomElement&) const;
 	void recursCollectColFileInfos(const QDomElement&,std::vector<ColFileInfo>& colFileInfos,const QString& current_dir,bool bad_chars_in_parent) const ;
 	// check that the file is a valid rscollection file, and not a lol bomb or some shit like this
 	static bool checkFile(const QString &fileName, bool showError);
 
-		QDomDocument _xml_doc ;
+	QDomDocument _xml_doc ;
 	QString _fileName ;
 	bool _saved;
 
-		friend class RsCollectionDialog ;
+	friend class RsCollectionDialog ;
 };
 

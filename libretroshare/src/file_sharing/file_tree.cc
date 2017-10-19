@@ -71,11 +71,12 @@ void FileTreeImpl::recurs_buildFileTree(FileTreeImpl& ft,uint32_t index,const Di
 			std::cerr << "(EE) Cannot request dir details for pointer " << dd.children[i].ref << std::endl;
 }
 
-bool FileTreeImpl::getDirectoryContent(uint32_t index,std::vector<uint32_t>& subdirs,std::vector<FileData>& subfiles) const
+bool FileTreeImpl::getDirectoryContent(uint32_t index,std::string& name,std::vector<uint32_t>& subdirs,std::vector<FileData>& subfiles) const
 {
 	if(index >= mDirs.size())
 		return false ;
 
+	name = mDirs[index].name;
 	subdirs = mDirs[index].subdirs ;
 
 	subfiles.clear() ;

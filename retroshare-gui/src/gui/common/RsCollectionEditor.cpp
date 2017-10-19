@@ -43,6 +43,15 @@ RsCollectionEditor::RsCollectionEditor(QObject *parent)
 {
 }
 
+RsCollectionEditor::RsCollectionEditor(const FileTree& fr, QObject *parent)
+	: QObject(parent), _xml_doc("RsCollection")
+{
+	QDomElement root = _xml_doc.createElement("RsCollection");
+	_xml_doc.appendChild(root);
+
+	recursAddElements(_xml_doc,fr,0,root) ;
+}
+
 RsCollectionEditor::RsCollectionEditor(const std::vector<DirDetails>& file_infos, QObject *parent)
 	: QObject(parent), _xml_doc("RsCollection")
 {
@@ -186,7 +195,7 @@ void RsCollectionEditor::recursAddElements(QDomDocument& doc,const ColFileInfo& 
 		f.setAttribute(QString("size"),QString::number(colFileInfo.size)) ;
 
 		e.appendChild(f) ;
-}
+	}
 	else if (colFileInfo.type == DIR_TYPE_DIR)
 	{
 		QDomElement d = doc.createElement("Directory") ;
@@ -194,11 +203,39 @@ void RsCollectionEditor::recursAddElements(QDomDocument& doc,const ColFileInfo& 
 		d.setAttribute(QString("name"),colFileInfo.name) ;
 
 		for (std::vector<ColFileInfo>::const_iterator it = colFileInfo.children.begin(); it != colFileInfo.children.end(); ++it)
-{
+		{
 			recursAddElements(doc,(*it),d) ;
 		}
 
 		e.appendChild(d) ;
+	}
+}
+
+void RsCollectionEditor::recursAddElements(QDomDocument& doc,const FileTree& ft,uint32_t index,QDomElement& e) const
+{
+	std::vector<uint32_t> subdirs ;
+	std::vector<FileTree::FileData> subfiles ;
+	std::string name;
+
+	if(!ft.getDirectoryContent(index,name,subdirs,subfiles))
+		return ;
+
+	QDomElement d = doc.createElement("Directory") ;
+	d.setAttribute(QString::fromUtf8()("name"),QString::fromUtf8(name.c_str())) ;
+	e.appendChild(d) ;
+
+	for (uint32_t i=0;i<subdirs.size();++i)
+		recursAddElements(doc,ft,subdirs[i],d) ;
+
+	for(uint32_t i=0;i<subfiles.size();++i)
+	{
+		QDomElement f = doc.createElement("File") ;
+
+		f.setAttribute(QString("name"),QString::fromUtf8(subfiles[i].name.c_str())) ;
+		f.setAttribute(QString("sha1"),QString::fromStdString(subfiles[i].hash)) ;
+		f.setAttribute(QString("size"),QString::number(subfiles[i].size)) ;
+
+		e.appendChild(f) ;
 	}
 }
 
@@ -304,6 +341,10 @@ bool RsCollectionEditor::checkFile(const QString& fileName, bool showError)
 		return true;
 		}
 	return false;
+}
+
+bool RsCollectionEditor::load(const FileTree& f)
+{
 }
 
 bool RsCollectionEditor::load(QWidget *parent)

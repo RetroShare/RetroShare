@@ -1393,10 +1393,12 @@ static void processList(const QStringList &list, const QString &textSingular, co
 
 			case TYPE_COLLECTION:
 				{
-					//FileHierarchy fh ;
-					//fh.initFromRadix(_radix);
+					FileTree *ft = FileTree::create(_radix.toStdString()) ;
 
-					QMessageBox::information(NULL,"Unimplemented code","File collection links not handled yet.") ;
+					RsCollectionEditor colled(*ft,NULL) ;
+					colled.exec();
+
+					delete ft;
 				}
 				break;
 

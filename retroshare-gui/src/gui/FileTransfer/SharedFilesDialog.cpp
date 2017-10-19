@@ -1014,6 +1014,7 @@ void LocalSharedFilesDialog::spawnCustomPopupMenu( QPoint point )
 	switch (type) {
 		case DIR_TYPE_DIR :
 			contextMnu.addAction(openfolderAct) ;
+			contextMnu.addAction(copylinkAct) ;
 			contextMnu.addSeparator() ;//------------------------------------
 			contextMnu.addMenu(&collectionMenu) ;
 		break ;

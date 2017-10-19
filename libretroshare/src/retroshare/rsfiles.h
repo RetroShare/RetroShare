@@ -158,7 +158,7 @@ public:
 	};
 
 	virtual uint32_t root() const { return 0;}
-	virtual bool getDirectoryContent(uint32_t index,std::vector<uint32_t>& subdirs,std::vector<FileData>& subfiles) const = 0;
+	virtual bool getDirectoryContent(uint32_t index,std::string& name,std::vector<uint32_t>& subdirs,std::vector<FileData>& subfiles) const = 0;
 
 	virtual void print() const=0;
 
