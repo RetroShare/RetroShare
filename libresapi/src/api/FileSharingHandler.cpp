@@ -41,12 +41,6 @@ FileSharingHandler::FileSharingHandler(StateTokenServer *sts, RsFiles *files):
 	addResourceHandler("download", this, &FileSharingHandler::handleDownload);
 
 	mStateToken = mStateTokenServer->getNewToken();
-	mStateTokenServer->registerTickClient(this);
-}
-
-FileSharingHandler::~FileSharingHandler()
-{
-	mStateTokenServer->unregisterTickClient(this);
 }
 
 void FileSharingHandler::handleWildcard(Request & /*req*/, Response & /*resp*/)

@@ -30,7 +30,6 @@ class FileSharingHandler: public ResourceRouter
 {
 public:
 	FileSharingHandler(StateTokenServer* sts, RsFiles* files);
-	    virtual ~FileSharingHandler();
 
 private:
 	void handleWildcard(Request& req, Response& resp);
