@@ -236,7 +236,7 @@ public:
         mForumHandler(ifaces.mGxsForums),
         mServiceControlHandler(ifaces.mServiceControl),
         mFileSearchHandler(sts, ifaces.mNotify, ifaces.mTurtle, ifaces.mFiles),
-        mTransfersHandler(sts, ifaces.mFiles),
+	    mTransfersHandler(sts, ifaces.mFiles, ifaces.mPeers),
         mChatHandler(sts, ifaces.mNotify, ifaces.mMsgs, ifaces.mPeers, ifaces.mIdentity, &mPeersHandler),
         mApiPluginHandler(sts, ifaces),
 	    mChannelsHandler(ifaces.mGxsChannels),

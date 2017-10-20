@@ -6,14 +6,15 @@
 namespace resource_api
 {
 
-TransfersHandler::TransfersHandler(StateTokenServer *sts, RsFiles *files):
-    mStateTokenServer(sts), mFiles(files), mLastUpdateTS(0)
+TransfersHandler::TransfersHandler(StateTokenServer *sts, RsFiles *files, RsPeers *peers):
+    mStateTokenServer(sts), mFiles(files), mRsPeers(peers), mLastUpdateTS(0)
 {
-    addResourceHandler("*", this, &TransfersHandler::handleWildcard);
-    addResourceHandler("downloads", this, &TransfersHandler::handleDownloads);
-    addResourceHandler("control_download", this, &TransfersHandler::handleControlDownload);
-    mStateToken = mStateTokenServer->getNewToken();
-    mStateTokenServer->registerTickClient(this);
+	addResourceHandler("*", this, &TransfersHandler::handleWildcard);
+	addResourceHandler("downloads", this, &TransfersHandler::handleDownloads);
+	addResourceHandler("uploads", this, &TransfersHandler::handleUploads);
+	addResourceHandler("control_download", this, &TransfersHandler::handleControlDownload);
+	mStateToken = mStateTokenServer->getNewToken();
+	mStateTokenServer->registerTickClient(this);
 }
 
 TransfersHandler::~TransfersHandler()
@@ -28,6 +29,7 @@ void TransfersHandler::tick()
     if(time(0) > (mLastUpdateTS + UPDATE_PERIOD_SECONDS))
         mStateTokenServer->replaceToken(mStateToken);
 
+	bool replace = false;
     // extra check: was the list of files changed?
     // if yes, replace state token immediately
     std::list<RsFileHash> dls;
@@ -35,11 +37,18 @@ void TransfersHandler::tick()
     // there is no guarantee of the order
     // so have to sort before comparing the lists
     dls.sort();
-    if(!std::equal(dls.begin(), dls.end(), mDownloadsAtLastCheck.begin()))
-    {
-        mDownloadsAtLastCheck.swap(dls);
-        mStateTokenServer->replaceToken(mStateToken);
-    }
+	if(!std::equal(dls.begin(), dls.end(), mDownloadsAtLastCheck.begin()))
+		mDownloadsAtLastCheck.swap(dls);
+
+	std::list<RsFileHash> upls;
+	mFiles->FileUploads(upls);
+
+	upls.sort();
+	if(!std::equal(upls.begin(), upls.end(), mUploadsAtLastCheck.begin()))
+		mUploadsAtLastCheck.swap(upls);
+
+	if(replace)
+		mStateTokenServer->replaceToken(mStateToken);
 }
 
 void TransfersHandler::handleWildcard(Request & /*req*/, Response & /*resp*/)
@@ -50,20 +59,30 @@ void TransfersHandler::handleWildcard(Request & /*req*/, Response & /*resp*/)
 void TransfersHandler::handleControlDownload(Request &req, Response &resp)
 {
     mStateTokenServer->replaceToken(mStateToken);
-    RsFileHash hash;
+
+	std::string hashString;
     std::string action;
     req.mStream << makeKeyValueReference("action", action);
+	req.mStream << makeKeyValueReference("hash", hashString);
+	RsFileHash hash(hashString);
+
     if(action == "begin")
     {
         std::string fname;
         double size;
         req.mStream << makeKeyValueReference("name", fname);
-        req.mStream << makeKeyValueReference("size", size);
-        req.mStream << makeKeyValueReference("hash", hash);
-        std::list<RsPeerId> scrIds;
+		req.mStream << makeKeyValueReference("size", size);
+
+		std::list<RsPeerId> srcIds;
+		FileInfo finfo;
+		mFiles->FileDetails(hash, RS_FILE_HINTS_REMOTE, finfo);
+
+		for(std::list<TransferInfo>::const_iterator it(finfo.peers.begin());it!=finfo.peers.end();++it)
+			srcIds.push_back((*it).peerId);
+
         bool ok = req.mStream.isOK();
         if(ok)
-            ok = mFiles->FileRequest(fname, hash, size, "", RS_FILE_REQ_ANONYMOUS_ROUTING, scrIds);
+			ok = mFiles->FileRequest(fname, hash, size, "", RS_FILE_REQ_ANONYMOUS_ROUTING, srcIds);
         if(ok)
             resp.setOk();
         else
@@ -71,7 +90,6 @@ void TransfersHandler::handleControlDownload(Request &req, Response &resp)
         return;
     }
 
-    req.mStream << makeKeyValueReference("id", hash);
     if(!req.mStream.isOK())
     {
         resp.setFail("error: could not deserialise the request");
@@ -126,20 +144,11 @@ void TransfersHandler::handleDownloads(Request & /* req */, Response &resp)
             double size = fi.size;
             double transfered = fi.transfered;
             stream << makeKeyValueReference("size", size)
-                   << makeKeyValueReference("transfered", transfered)
+			       << makeKeyValueReference("transferred", transfered)
                    << makeKeyValue("transfer_rate", fi.tfRate);
 
             std::string dl_status;
-            /*
-            const uint32_t FT_STATE_FAILED			= 0x0000 ;
-            const uint32_t FT_STATE_OKAY				= 0x0001 ;
-            const uint32_t FT_STATE_WAITING 			= 0x0002 ;
-            const uint32_t FT_STATE_DOWNLOADING		= 0x0003 ;
-            const uint32_t FT_STATE_COMPLETE 		= 0x0004 ;
-            const uint32_t FT_STATE_QUEUED   		= 0x0005 ;
-            const uint32_t FT_STATE_PAUSED   		= 0x0006 ;
-            const uint32_t FT_STATE_CHECKING_HASH	= 0x0007 ;
-            */
+
             switch(fi.downloadStatus)
             {
             case FT_STATE_FAILED:
@@ -174,6 +183,96 @@ void TransfersHandler::handleDownloads(Request & /* req */, Response &resp)
         }
     }
     resp.setOk();
+}
+
+void TransfersHandler::handleUploads(Request & /* req */, Response &resp)
+{
+	tick();
+	resp.mStateToken = mStateToken;
+	resp.mDataStream.getStreamToMember();
+
+	RsPeerId ownId = mRsPeers->getOwnId();
+
+	for(std::list<RsFileHash>::iterator lit = mUploadsAtLastCheck.begin();
+	    lit != mUploadsAtLastCheck.end(); ++lit)
+	{
+		FileInfo fi;
+		if(mFiles->FileDetails(*lit, RS_FILE_HINTS_UPLOAD, fi))
+		{
+			std::list<TransferInfo>::iterator pit;
+			for(pit = fi.peers.begin(); pit != fi.peers.end(); ++pit)
+			{
+				if (pit->peerId == ownId) //don't display transfer to ourselves
+					continue ;
+
+				std::string sourceName = mRsPeers->getPeerName(pit->peerId);
+				bool isAnon = false;
+				bool isEncryptedE2E = false;
+
+				if(sourceName == "")
+				{
+					isAnon = true;
+					sourceName = pit->peerId.toStdString();
+
+					if(rsFiles->isEncryptedSource(pit->peerId))
+						isEncryptedE2E = true;
+				}
+
+				std::string status;
+				switch(pit->status)
+				{
+				    case FT_STATE_FAILED:
+					    status = "Failed";
+					    break;
+				    case FT_STATE_OKAY:
+					    status = "Okay";
+					    break;
+				    case FT_STATE_WAITING:
+					    status = "Waiting";
+					    break;
+				    case FT_STATE_DOWNLOADING:
+					    status = "Uploading";
+					    break;
+				    case FT_STATE_COMPLETE:
+					    status = "Complete";
+					    break;
+				    default:
+					    status = "Complete";
+					    break;
+				}
+
+				CompressedChunkMap cChunkMap;
+
+				if(!rsFiles->FileUploadChunksDetails(*lit, pit->peerId, cChunkMap))
+					continue;
+
+				double dlspeed  	= pit->tfRate;
+				double fileSize		= fi.size;
+				double completed 	= pit->transfered;
+
+				uint32_t chunk_size = 1024*1024;
+				uint32_t nb_chunks = (uint32_t)((fi.size + (uint64_t)chunk_size - 1) / (uint64_t)(chunk_size));
+				uint32_t filled_chunks = cChunkMap.filledChunks(nb_chunks);
+
+				if(filled_chunks > 0 && nb_chunks > 0)
+					completed = cChunkMap.computeProgress(fi.size, chunk_size);
+				else
+					completed = pit->transfered % chunk_size;
+
+				resp.mDataStream.getStreamToMember()
+				    << makeKeyValueReference("hash", fi.hash)
+				    << makeKeyValueReference("name", fi.fname)
+				    << makeKeyValueReference("source", sourceName)
+				    << makeKeyValueReference("size", fileSize)
+				    << makeKeyValueReference("transferred", completed)
+				    << makeKeyValueReference("is_anonymous", isAnon)
+				    << makeKeyValueReference("is_encrypted_e2e", isEncryptedE2E)
+				    << makeKeyValueReference("transfer_rate", dlspeed)
+				    << makeKeyValueReference("status", status);
+			}
+		}
+	}
+	resp.setOk();
 }
 
 } // namespace resource_api
