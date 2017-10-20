@@ -2,6 +2,7 @@
 
 #include "FileSearchHandler.h"
 
+#include <retroshare/rspeers.h>
 #include <retroshare/rsexpr.h>
 #include <sstream>
 
@@ -10,13 +11,14 @@
 namespace resource_api
 {
 
-FileSearchHandler::FileSearchHandler(StateTokenServer *sts, RsNotify *notify, RsTurtle *turtle, RsFiles */*files*/):
-    mStateTokenServer(sts), mNotify(notify), mTurtle(turtle),// mFiles(files),
+FileSearchHandler::FileSearchHandler(StateTokenServer *sts, RsNotify *notify, RsTurtle *turtle, RsFiles *files):
+    mStateTokenServer(sts), mNotify(notify), mTurtle(turtle), mRsFiles(files),
     mMtx("FileSearchHandler")
 {
     mNotify->registerNotifyClient(this);
     addResourceHandler("*", this, &FileSearchHandler::handleWildcard);
-    addResourceHandler("create_search", this, &FileSearchHandler::handleCreateSearch);
+	addResourceHandler("create_search", this, &FileSearchHandler::handleCreateSearch);
+	addResourceHandler("get_search_result", this, &FileSearchHandler::handleGetSearchResult);
 
     mSearchesStateToken = mStateTokenServer->getNewToken();
 }
@@ -102,8 +104,11 @@ void FileSearchHandler::handleWildcard(Request &req, Response &resp)
                         << makeKeyValueReference("id", fd.hash)
                         << makeKeyValueReference("name", fd.name)
                         << makeKeyValueReference("hash", fd.hash)
+				        << makeKeyValueReference("path", fd.path)
+				        << makeKeyValue("peer_id", fd.id.toStdString())
                         << makeKeyValueReference("size", size)
-                        << makeKeyValueReference("rank", fd.rank);
+				        << makeKeyValueReference("rank", fd.rank)
+				        << makeKeyValueReference("age", fd.age);
             }
         }
     }
@@ -194,7 +199,7 @@ void FileSearchHandler::handleCreateSearch(Request &req, Response &resp)
     if(local)
     {
         std::list<DirDetails> local_results;
-        rsFiles->SearchBoolExp(&exprs, local_results, RS_FILE_HINTS_LOCAL);
+		mRsFiles->SearchBoolExp(&exprs, local_results, RS_FILE_HINTS_LOCAL);
 
         for(std::list<DirDetails>::iterator lit = local_results.begin(); lit != local_results.end(); ++lit)
         {
@@ -206,7 +211,7 @@ void FileSearchHandler::handleCreateSearch(Request &req, Response &resp)
     if(remote)
     {
         std::list<DirDetails> remote_results;
-        rsFiles->SearchBoolExp(&exprs, remote_results, RS_FILE_HINTS_REMOTE);
+		mRsFiles->SearchBoolExp(&exprs, remote_results, RS_FILE_HINTS_REMOTE);
         for(std::list<DirDetails>::iterator lit = remote_results.begin(); lit != remote_results.end(); ++lit)
         {
             FileDetail fd;
@@ -237,6 +242,62 @@ void FileSearchHandler::handleCreateSearch(Request &req, Response &resp)
     }
     resp.mDataStream << makeKeyValueReference("search_id", idstr);
     resp.setOk();
+}
+
+void FileSearchHandler::handleGetSearchResult(Request& req, Response& resp)
+{
+	std::string search_id;
+	req.mStream << makeKeyValueReference("search_id", search_id);
+
+	if(search_id.size() != 8)
+	{
+		resp.setFail("Error: id has wrong size, should be 8 characters");
+		return;
+	}
+
+	uint32_t id = 0;
+	for(uint8_t i = 0; i < 8; i++)
+	{
+		id += (uint32_t(search_id[i]-'A')) << (i*4);
+	}
+
+	{
+		RsStackMutex stackMtx(mMtx); // ********** STACK LOCKED MTX **********
+		std::map<uint32_t, Search>::iterator mit = mSearches.find(id);
+		if(mit == mSearches.end())
+		{
+			resp.setFail("Error: search id invalid");
+			return;
+		}
+
+		Search& search = mit->second;
+		resp.mStateToken = search.mStateToken;
+		resp.mDataStream.getStreamToMember();
+
+		RsPgpId ownId = rsPeers->getGPGOwnId();
+		for(std::list<FileDetail>::iterator lit = search.mResults.begin(); lit != search.mResults.end(); ++lit)
+		{
+			FileDetail& fd = *lit;
+			bool isFriend = rsPeers->isFriend(fd.id);
+			bool isOwn = false;
+			if(ownId == rsPeers->getGPGId(fd.id))
+				isOwn = true;
+
+			double size = fd.size;
+			resp.mDataStream.getStreamToMember()
+			        << makeKeyValueReference("id", fd.hash)
+			        << makeKeyValueReference("name", fd.name)
+			        << makeKeyValueReference("hash", fd.hash)
+			        << makeKeyValueReference("path", fd.path)
+			        << makeKeyValue("peer_id", fd.id.toStdString())
+			        << makeKeyValueReference("is_friends", isFriend)
+			        << makeKeyValueReference("is_own", isOwn)
+			        << makeKeyValueReference("size", size)
+			        << makeKeyValueReference("rank", fd.rank)
+			        << makeKeyValueReference("age", fd.age);
+		}
+	}
+	resp.setOk();
 }
 
 } // namespace resource_api
