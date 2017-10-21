@@ -666,8 +666,7 @@ void TransfersDialog::downloadListCustomPopupMenu( QPoint /*point*/ )
 
 			//Look only for first column == File  List
 			//Get Info for current  item
-			if (rsFiles->FileDetails(fileHash
-			                         , RS_FILE_HINTS_DOWNLOAD, info)) {
+			if (rsFiles->FileDetails(fileHash, RS_FILE_HINTS_DOWNLOAD, info)) {
 					/*const uint32_t FT_STATE_FAILED        = 0x0000;
 					 *const uint32_t FT_STATE_OKAY          = 0x0001;
 					 *const uint32_t FT_STATE_WAITING       = 0x0002;
@@ -677,22 +676,21 @@ void TransfersDialog::downloadListCustomPopupMenu( QPoint /*point*/ )
 					 *const uint32_t FT_STATE_PAUSED        = 0x0006;
 					 *const uint32_t FT_STATE_CHECKING_HASH = 0x0007;
 					 */
-					if (info.downloadStatus == FT_STATE_WAITING) {
+					if (info.downloadStatus == FT_STATE_WAITING)
 						atLeastOne_Waiting = true ;
-					}
-					if (info.downloadStatus == FT_STATE_DOWNLOADING) {
+
+					if (info.downloadStatus == FT_STATE_DOWNLOADING)
 						atLeastOne_Downloading=true ;
-					}
+
 					if (info.downloadStatus == FT_STATE_COMPLETE) {
 						atLeastOne_Complete = true ;
 						add_OpenFileOption = single ;
 					}
-					if (info.downloadStatus == FT_STATE_QUEUED) {
+					if (info.downloadStatus == FT_STATE_QUEUED)
 						atLeastOne_Queued = true ;
-					}
-					if (info.downloadStatus == FT_STATE_PAUSED) {
+
+					if (info.downloadStatus == FT_STATE_PAUSED)
 						atLeastOne_Paused = true ;
-					}
 
 					size_t pos = info.fname.find_last_of('.') ;
 					if (pos !=  std::string::npos) {
@@ -748,24 +746,21 @@ void TransfersDialog::downloadListCustomPopupMenu( QPoint /*point*/ )
 		 }
 	 }
 
-	if (atLeastOne_Paused) {
+	if (atLeastOne_Paused)
 		contextMnu.addAction(resumeAct) ;
-	}
-	if (atLeastOne_Downloading || atLeastOne_Queued || atLeastOne_Waiting) {
+
+	if (atLeastOne_Downloading || atLeastOne_Queued || atLeastOne_Waiting)
 		contextMnu.addAction(pauseAct) ;
-	}
 
 	if (!atLeastOne_Complete && !items.empty()) {
 			contextMnu.addAction(forceCheckAct) ;
 			contextMnu.addAction(cancelAct) ;
 	}
-	if (add_PlayOption) {
+	if (add_PlayOption)
 		contextMnu.addAction(playAct) ;
-	}
 
-	if (atLeastOne_Paused || atLeastOne_Downloading || atLeastOne_Complete || add_PlayOption) {
-		contextMnu.addSeparator() ;//------------------------------------------------
-	}
+	if (atLeastOne_Paused || atLeastOne_Downloading || atLeastOne_Complete || add_PlayOption)
+		contextMnu.addSeparator() ;
 
 	if (single) {
 		if (add_OpenFileOption) contextMnu.addAction( openFileAct) ;
@@ -776,7 +771,7 @@ void TransfersDialog::downloadListCustomPopupMenu( QPoint /*point*/ )
 	}
 
 	contextMnu.addAction( clearCompletedAct) ;
-	contextMnu.addSeparator() ;//------------------------------------------------
+	contextMnu.addSeparator() ;
 
 	if (add_CopyLink) {
 		contextMnu.addAction( copyLinkAct) ;
@@ -785,7 +780,7 @@ void TransfersDialog::downloadListCustomPopupMenu( QPoint /*point*/ )
 		contextMnu.addAction( pasteLinkAct) ;
 	}
 	if (add_CopyLink || add_PasteLink) {
-		contextMnu.addSeparator() ;//--------------------------------------------
+		contextMnu.addSeparator() ;
 	}
 
 	if (DLLFilterModel->rowCount()>0 ) {
@@ -2153,7 +2148,7 @@ void TransfersDialog::collCreate()
 		details.type = DIR_TYPE_FILE;
 
 		dirVec.push_back(details);
-	}
+	}//for (it = items.begin();
 
 	RsCollection(dirVec).openNewColl(this);
 }
@@ -2258,89 +2253,18 @@ void TransfersDialog::collOpen()
 	}
 }
 
-void TransfersDialog::setShowDLSizeColumn(bool show)
-{
-    if ( (!ui.downloadList->isColumnHidden(COLUMN_SIZE)) != show) {
-        ui.downloadList->setColumnHidden(COLUMN_SIZE, !show);
-    }
-}
-
-void TransfersDialog::setShowDLCompleteColumn(bool show)
-{
-    if ( (!ui.downloadList->isColumnHidden(COLUMN_COMPLETED)) != show) {
-        ui.downloadList->setColumnHidden(COLUMN_COMPLETED, !show);
-    }
-}
-
-void TransfersDialog::setShowDLDLSpeedColumn(bool show)
-{
-    if ( (!ui.downloadList->isColumnHidden(COLUMN_DLSPEED)) != show) {
-        ui.downloadList->setColumnHidden(COLUMN_DLSPEED, !show);
-    }
-}
-
-void TransfersDialog::setShowDLProgressColumn(bool show)
-{
-    if ( (!ui.downloadList->isColumnHidden(COLUMN_PROGRESS)) != show) {
-        ui.downloadList->setColumnHidden(COLUMN_PROGRESS, !show);
-    }
-}
-
-void TransfersDialog::setShowDLSourcesColumn(bool show)
-{
-    if ( (!ui.downloadList->isColumnHidden(COLUMN_SOURCES)) != show) {
-        ui.downloadList->setColumnHidden(COLUMN_SOURCES, !show);
-    }
-}
-
-void TransfersDialog::setShowDLStatusColumn(bool show)
-{
-    if ( (!ui.downloadList->isColumnHidden(COLUMN_STATUS)) != show) {
-        ui.downloadList->setColumnHidden(COLUMN_STATUS, !show);
-    }
-}
-
-void TransfersDialog::setShowDLPriorityColumn(bool show)
-{
-    if ( (!ui.downloadList->isColumnHidden(COLUMN_PRIORITY)) != show) {
-        ui.downloadList->setColumnHidden(COLUMN_PRIORITY, !show);
-    }
-}
-
-void TransfersDialog::setShowDLRemainingColumn(bool show)
-{
-    if ( (!ui.downloadList->isColumnHidden(COLUMN_REMAINING)) != show) {
-        ui.downloadList->setColumnHidden(COLUMN_REMAINING, !show);
-    }
-}
-
-void TransfersDialog::setShowDLDownloadTimeColumn(bool show)
-{
-    if ( (!ui.downloadList->isColumnHidden(COLUMN_DOWNLOADTIME)) != show) {
-        ui.downloadList->setColumnHidden(COLUMN_DOWNLOADTIME, !show);
-    }
-}
-
-void TransfersDialog::setShowDLIDColumn(bool show)
-{
-    if ( (!ui.downloadList->isColumnHidden(COLUMN_ID)) != show) {
-        ui.downloadList->setColumnHidden(COLUMN_ID, !show);
-    }
-}
-
-void TransfersDialog::setShowDLLastDLColumn(bool show)
-{
-    if ( (!ui.downloadList->isColumnHidden(COLUMN_LASTDL)) != show) {
-        ui.downloadList->setColumnHidden(COLUMN_LASTDL, !show);
-    }
-}
-
-void TransfersDialog::setShowDLPath(bool show)
-{
-    if ( (!ui.downloadList->isColumnHidden(COLUMN_PATH)) != show) {
-        ui.downloadList->setColumnHidden(COLUMN_PATH, !show);
-    }
-}
+void TransfersDialog::setShowDLSizeColumn        (bool show) { ui.downloadList->setColumnHidden(COLUMN_SIZE,         !show); }
+void TransfersDialog::setShowDLCompleteColumn    (bool show) { ui.downloadList->setColumnHidden(COLUMN_COMPLETED,    !show); }
+void TransfersDialog::setShowDLDLSpeedColumn     (bool show) { ui.downloadList->setColumnHidden(COLUMN_DLSPEED,      !show); }
+void TransfersDialog::setShowDLProgressColumn    (bool show) { ui.downloadList->setColumnHidden(COLUMN_PROGRESS,     !show); }
+void TransfersDialog::setShowDLSourcesColumn     (bool show) { ui.downloadList->setColumnHidden(COLUMN_SOURCES,      !show); }
+void TransfersDialog::setShowDLStatusColumn      (bool show) { ui.downloadList->setColumnHidden(COLUMN_STATUS,       !show); }
+void TransfersDialog::setShowDLPriorityColumn    (bool show) { ui.downloadList->setColumnHidden(COLUMN_PRIORITY,     !show); }
+void TransfersDialog::setShowDLRemainingColumn   (bool show) { ui.downloadList->setColumnHidden(COLUMN_REMAINING,    !show); }
+void TransfersDialog::setShowDLDownloadTimeColumn(bool show) { ui.downloadList->setColumnHidden(COLUMN_DOWNLOADTIME, !show); }
+void TransfersDialog::setShowDLIDColumn          (bool show) { ui.downloadList->setColumnHidden(COLUMN_ID,           !show); }
+void TransfersDialog::setShowDLLastDLColumn      (bool show) { ui.downloadList->setColumnHidden(COLUMN_LASTDL,       !show); }
+void TransfersDialog::setShowDLPath              (bool show) { ui.downloadList->setColumnHidden(COLUMN_PATH,         !show); }
 
 void TransfersDialog::expandAllDL()
 {
