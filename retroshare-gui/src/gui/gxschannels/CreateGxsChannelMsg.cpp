@@ -411,6 +411,11 @@ void CreateGxsChannelMsg::addExtraFile()
 	}
 }
 
+void CreateGxsChannelMsg::addHtmlText(const QString& text)
+{
+	msgEdit->setHtml(text) ;
+}
+
 void CreateGxsChannelMsg::addAttachment(const std::string &path)
 {
 	/* add a SubFileItem to the attachment section */

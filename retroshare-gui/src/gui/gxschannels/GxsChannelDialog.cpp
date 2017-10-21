@@ -27,6 +27,7 @@
 #include "GxsChannelDialog.h"
 #include "GxsChannelGroupDialog.h"
 #include "GxsChannelPostsWidget.h"
+#include "CreateGxsChannelMsg.h"
 #include "GxsChannelUserNotify.h"
 #include "gui/gxs/GxsGroupShareKey.h"
 #include "gui/feeds/GxsChannelPostItem.h"
@@ -76,9 +77,18 @@ UserNotify *GxsChannelDialog::getUserNotify(QObject *parent)
 	return new GxsChannelUserNotify(rsGxsChannels, parent);
 }
 
-void GxsChannelDialog::shareOnChannel(const RsGxsGroupId& channel_id,const QList<RetroShareLink>& file_link)
+void GxsChannelDialog::shareOnChannel(const RsGxsGroupId& channel_id,const QList<RetroShareLink>& file_links)
 {
 	std::cerr << "Sharing file link on channel " << channel_id << ": Not yet implemented!" << std::endl;
+
+	CreateGxsChannelMsg *msgDialog = new CreateGxsChannelMsg(channel_id) ;
+
+	QString txt ;
+	for(QList<RetroShareLink>::const_iterator it(file_links.begin());it!=file_links.end();++it)
+		txt += (*it).toHtml() + "\n" ;
+
+	msgDialog->addHtmlText(txt);
+	msgDialog->show();
 }
 
 QString GxsChannelDialog::text(TextType type)
