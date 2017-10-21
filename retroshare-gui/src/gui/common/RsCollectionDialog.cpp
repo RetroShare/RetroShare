@@ -138,7 +138,11 @@ RsCollectionDialog::RsCollectionDialog(const QString& collectionFileName
 	
 	
 	ui.headerFrame->setHeaderImage(QPixmap(":/images/library64.png"));
-	ui.headerFrame->setHeaderText(tr("Collection Editor"));
+
+	if(creation)
+		ui.headerFrame->setHeaderText(tr("Collection Editor"));
+	else
+		ui.headerFrame->setHeaderText(tr("Download files"));
 
 	// 1 - add all elements to the list.
 

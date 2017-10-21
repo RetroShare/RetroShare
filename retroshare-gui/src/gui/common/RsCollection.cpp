@@ -214,9 +214,7 @@ void RsCollection::recursAddElements(QDomDocument& doc,const ColFileInfo& colFil
 		d.setAttribute(QString("name"),colFileInfo.name) ;
 
 		for (std::vector<ColFileInfo>::const_iterator it = colFileInfo.children.begin(); it != colFileInfo.children.end(); ++it)
-		{
 			recursAddElements(doc,(*it),d) ;
-		}
 
 		e.appendChild(d) ;
 	}
