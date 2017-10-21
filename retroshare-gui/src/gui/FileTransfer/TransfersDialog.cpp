@@ -1640,8 +1640,27 @@ void TransfersDialog::updateDetailsDialog()
 
 void TransfersDialog::pasteLink()
 {
-	RSLinkClipboard::process(RetroShareLink::TYPE_FILE);
-	RSLinkClipboard::process(RetroShareLink::TYPE_FILE_TREE);
+	QList<RetroShareLink> links ;
+
+	// We want to capture and process all links at once here, because we're possibly pasting a large collection of files. So we first
+	// merge all links into a single RsCollection and then process it.
+
+	RsCollection col ;
+	RSLinkClipboard::pasteLinks(links,RetroShareLink::TYPE_FILE_TREE);
+
+	for(QList<RetroShareLink>::const_iterator it(links.begin());it!=links.end();++it)
+	{
+		FileTree *ft = FileTree::create((*it).radix().toStdString()) ;
+
+		col.merge_in(*ft) ;
+	}
+	links.clear();
+	RSLinkClipboard::pasteLinks(links,RetroShareLink::TYPE_FILE);
+
+	for(QList<RetroShareLink>::const_iterator it(links.begin());it!=links.end();++it)
+		col.merge_in((*it).name(),(*it).size(),RsFileHash((*it).hash().toStdString())) ;
+
+	col.downloadFiles();
 }
 
 void TransfersDialog::getDLSelectedItems(std::set<RsFileHash> *ids, std::set<int> *rows)

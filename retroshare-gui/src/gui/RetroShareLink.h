@@ -192,7 +192,7 @@ class RSLinkClipboard
 		// Get the liste of pasted links, either from the internal RS links, or by default
 		// from the clipboard.
 		//
-		static void pasteLinks(QList<RetroShareLink> &links) ;
+		static void pasteLinks(QList<RetroShareLink> &links,RetroShareLink::enumType type = RetroShareLink::TYPE_UNKNOWN) ;
 
 		// Produces a list of links with no html structure.
 		static QString toString() ;
@@ -215,10 +215,10 @@ class RSLinkClipboard
 		//
 		static int process(RetroShareLink::enumType type = RetroShareLink::TYPE_UNKNOWN, uint flag = RSLINK_PROCESS_NOTIFY_ALL);
 
-		static void parseText(QString text, QList<RetroShareLink> &links) ;
+		static void parseText(QString text, QList<RetroShareLink> &links, RetroShareLink::enumType type = RetroShareLink::TYPE_UNKNOWN) ;
 
 	private:
-		static void parseClipboard(QList<RetroShareLink> &links) ;
+		static void parseClipboard(QList<RetroShareLink> &links, RetroShareLink::enumType type = RetroShareLink::TYPE_UNKNOWN) ;
 };
 
 #endif

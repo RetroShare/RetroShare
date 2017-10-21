@@ -41,25 +41,21 @@ const QString RsCollection::ExtensionString = QString("rscollection") ;
 RsCollection::RsCollection(QObject *parent)
 	: QObject(parent), _xml_doc("RsCollection")
 {
+	_root = _xml_doc.createElement("RsCollection");
+	_xml_doc.appendChild(_root);
 }
 
 RsCollection::RsCollection(const FileTree& fr)
 	: _xml_doc("RsCollection")
 {
-	QDomElement root = _xml_doc.createElement("RsCollection");
-	_xml_doc.appendChild(root);
-
-	recursAddElements(_xml_doc,fr,0,root) ;
+	recursAddElements(_xml_doc,fr,0,_root) ;
 }
 
 RsCollection::RsCollection(const std::vector<DirDetails>& file_infos, QObject *parent)
 	: QObject(parent), _xml_doc("RsCollection")
 {
-	QDomElement root = _xml_doc.createElement("RsCollection");
-	_xml_doc.appendChild(root);
-
 	for(uint32_t i = 0;i<file_infos.size();++i)
-		recursAddElements(_xml_doc,file_infos[i],root) ;
+		recursAddElements(_xml_doc,file_infos[i],_root) ;
 }
 
 RsCollection::~RsCollection()
@@ -94,6 +90,21 @@ static QString purifyFileName(const QString& input,bool& bad)
 			}
 
 	return output ;
+}
+
+void RsCollection::merge_in(const QString& fname,uint64_t size,const RsFileHash& hash)
+{
+	ColFileInfo info ;
+	info.type = DIR_TYPE_FILE ;
+	info.name = fname ;
+	info.size = size ;
+	info.hash = QString::fromStdString(hash.toStdString()) ;
+
+	recursAddElements(_xml_doc,info,_root) ;
+}
+void RsCollection::merge_in(const FileTree& tree)
+{
+	recursAddElements(_xml_doc,tree,0,_root) ;
 }
 
 void RsCollection::recursCollectColFileInfos(const QDomElement& e,std::vector<ColFileInfo>& colFileInfos,const QString& current_path, bool bad_chars_in_parent) const
@@ -235,7 +246,7 @@ void RsCollection::recursAddElements(QDomDocument& doc,const FileTree& ft,uint32
 		f.setAttribute(QString("sha1"),QString::fromStdString(subfiles[i].hash.toStdString())) ;
 		f.setAttribute(QString("size"),QString::number(subfiles[i].size)) ;
 
-		e.appendChild(f) ;
+		d.appendChild(f) ;
 	}
 }
 

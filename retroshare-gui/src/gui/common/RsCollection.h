@@ -68,9 +68,10 @@ public:
 	RsCollection(const FileTree& fr);
 	virtual ~RsCollection() ;
 
+	void merge_in(const QString& fname,uint64_t size,const RsFileHash& hash) ;
+	void merge_in(const FileTree& tree) ;
+
 	static const QString ExtensionString ;
-
-
 
 	// Loads file from disk.
 	bool load(QWidget *parent);
@@ -108,6 +109,7 @@ private:
 	QDomDocument _xml_doc ;
 	QString _fileName ;
 	bool _saved;
+	QDomElement _root ;
 
 	friend class RsCollectionDialog ;
 };

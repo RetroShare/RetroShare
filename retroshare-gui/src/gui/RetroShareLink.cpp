@@ -1716,17 +1716,17 @@ void RSLinkClipboard::copyLinks(const QList<RetroShareLink>& links)
 	QApplication::clipboard()->setText(res) ;
 }
 
-void RSLinkClipboard::pasteLinks(QList<RetroShareLink> &links)
+void RSLinkClipboard::pasteLinks(QList<RetroShareLink> &links,RetroShareLink::enumType type)
 {
-	return parseClipboard(links);
+	return parseClipboard(links,type);
 }
 
-void RSLinkClipboard::parseClipboard(QList<RetroShareLink> &links)
+void RSLinkClipboard::parseClipboard(QList<RetroShareLink> &links,RetroShareLink::enumType type)
 {
 	// parse clipboard for links.
 	//
 	QString text = QApplication::clipboard()->text() ;
-	parseText(text, links);
+	parseText(text, links,type);
 }
 
 QString RSLinkClipboard::toString()
@@ -1771,26 +1771,18 @@ bool RSLinkClipboard::empty(RetroShareLink::enumType type /* = RetroShareLink::T
 	return true;
 }
 
-/*static*/ int RSLinkClipboard::process(RetroShareLink::enumType type /* = RetroShareLink::TYPE_UNKNOWN*/, uint flag /* = RSLINK_PROCESS_NOTIFY_ALL*/)
+int RSLinkClipboard::process(RetroShareLink::enumType type /* = RetroShareLink::TYPE_UNKNOWN*/, uint flag /* = RSLINK_PROCESS_NOTIFY_ALL*/)
 {
 	QList<RetroShareLink> links;
-	pasteLinks(links);
+	pasteLinks(links,type);
 
-	QList<RetroShareLink> linksToProcess;
-	for (int i = 0; i < links.size(); ++i) {
-		if (links[i].valid() && (type == RetroShareLink::TYPE_UNKNOWN || links[i].type() == type)) {
-			linksToProcess.append(links[i]);
-		}
-	}
-
-	if (linksToProcess.isEmpty()) {
+	if (links.isEmpty())
 		return 0;
-	}
 
-	return RetroShareLink::process(linksToProcess, flag);
+	return RetroShareLink::process(links, flag);
 }
 
-void RSLinkClipboard::parseText(QString text, QList<RetroShareLink> &links)
+void RSLinkClipboard::parseText(QString text, QList<RetroShareLink> &links,RetroShareLink::enumType type )
 {
 	links.clear();
 
@@ -1805,7 +1797,7 @@ void RSLinkClipboard::parseText(QString text, QList<RetroShareLink> &links)
 		QString url(text.mid(pos, rx.matchedLength()));
 		RetroShareLink link(url);
 
-		if(link.valid())
+		if(link.valid() && (type == RetroShareLink::TYPE_UNKNOWN || type == link.type()))
 		{
 			// check that the link is not already in the list:
 			bool already = false ;
