@@ -652,7 +652,8 @@ void TransfersDialog::downloadListCustomPopupMenu( QPoint /*point*/ )
 
 	QMenu contextMnu( this );
 
-	if(!RSLinkClipboard::empty(RetroShareLink::TYPE_FILE)) add_PasteLink=true;
+	if(!RSLinkClipboard::empty(RetroShareLink::TYPE_FILE))      add_PasteLink=true;
+	if(!RSLinkClipboard::empty(RetroShareLink::TYPE_FILE_TREE)) add_PasteLink=true;
 
 	if(!items.empty())
 	{
@@ -1640,6 +1641,7 @@ void TransfersDialog::updateDetailsDialog()
 void TransfersDialog::pasteLink()
 {
 	RSLinkClipboard::process(RetroShareLink::TYPE_FILE);
+	RSLinkClipboard::process(RetroShareLink::TYPE_FILE_TREE);
 }
 
 void TransfersDialog::getDLSelectedItems(std::set<RsFileHash> *ids, std::set<int> *rows)

@@ -70,7 +70,7 @@ class RetroShareLink
             TYPE_PUBLIC_MSG    = 0x0a,
             TYPE_POSTED        = 0x0b,
             TYPE_IDENTITY      = 0x0c,
-            TYPE_COLLECTION    = 0x0d
+            TYPE_FILE_TREE     = 0x0d
 		};
 
 	public:

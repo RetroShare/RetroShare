@@ -517,7 +517,7 @@ void RemoteSharedFilesDialog::spawnCustomPopupMenu( QPoint point )
 		contextMnu.addAction( copylinkAct) ;
 		contextMnu.addAction( sendlinkAct) ;
 		contextMnu.addSeparator() ;//------------------------------------
-		contextMnu.addAction(QIcon(IMAGE_MSG), tr("Recommend in a message to"), this, SLOT(recommendFilesToMsg())) ;
+		contextMnu.addAction(QIcon(IMAGE_MSG), tr("Recommend in a message to..."), this, SLOT(recommendFilesToMsg())) ;
 	}
 
 	contextMnu.addSeparator() ;//------------------------------------
@@ -578,7 +578,9 @@ void SharedFilesDialog::copyLink (const QModelIndexList& lst, bool remote)
 			std::cerr << "Created collection file tree:" << std::endl;
 			ft->print();
 
-			RetroShareLink link = RetroShareLink::createCollection(QString::fromUtf8(details.name.c_str()),ft->mTotalSize,ft->mTotalFiles,QString::fromStdString(ft->toRadix64())) ;
+			QString dir_name = QDir(QString::fromUtf8(details.name.c_str())).dirName();
+
+			RetroShareLink link = RetroShareLink::createCollection(dir_name,ft->mTotalSize,ft->mTotalFiles,QString::fromStdString(ft->toRadix64())) ;
 
 			if(link.valid())
 				urls.push_back(link) ;
@@ -1027,12 +1029,12 @@ void LocalSharedFilesDialog::spawnCustomPopupMenu( QPoint point )
 			contextMnu.addSeparator() ;//------------------------------------
 			contextMnu.addMenu(&collectionMenu) ;
 			contextMnu.addSeparator() ;//------------------------------------
-			contextMnu.addAction(QIcon(IMAGE_MSG), tr("Recommend in a message to"), this, SLOT(recommendFilesToMsg())) ;
+			contextMnu.addAction(QIcon(IMAGE_MSG), tr("Recommend in a message to..."), this, SLOT(recommendFilesToMsg())) ;
 		break ;
 
 		default :
 		return ;
-	}//switch (type)
+	}
 
 	contextMnu.exec(QCursor::pos()) ;
 }

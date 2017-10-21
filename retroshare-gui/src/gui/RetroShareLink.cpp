@@ -336,7 +336,7 @@ void RetroShareLink::fromUrl(const QUrl& url)
 
 	if (url.host() == HOST_COLLECTION) {
 		bool ok;
-		_type  = TYPE_COLLECTION;
+		_type  = TYPE_FILE_TREE;
 		_radix = decodedQueryItemValue(urlQuery, COLLECTION_DATA);
 		_name  = decodedQueryItemValue(urlQuery, COLLECTION_NAME);
 		_size  = urlQuery.queryItemValue(COLLECTION_SIZE).toULongLong(&ok);
@@ -429,7 +429,7 @@ RetroShareLink RetroShareLink::createCollection(const QString& name, uint64_t si
 	link._count = count;
 	link._size  = size;
 	link._radix = radix_data ;
-	link._type = TYPE_COLLECTION;
+	link._type = TYPE_FILE_TREE;
 
 	link.check();
 
@@ -643,7 +643,7 @@ void RetroShareLink::check()
 			if(!checkSSLId(_SSLid))
 				_valid = false;			// no break! We also test file stuff below.
 			/* fallthrough */
-		case TYPE_COLLECTION:
+		case TYPE_FILE_TREE:
 
 		case TYPE_FILE:
 			if(_size > (((uint64_t)1)<<40))	// 1TB. Who has such large files?
@@ -754,7 +754,7 @@ QString RetroShareLink::title() const
 				rsPeers->getGPGDetails(RsPgpId(_GPGid.toStdString()), detail) ;
 				return QObject::tr("Click to send a private message to %1 (%2).").arg(QString::fromUtf8(detail.name.c_str())).arg(_GPGid) ;
 			}
-		case TYPE_COLLECTION:
+		case TYPE_FILE_TREE:
 			return QObject::tr("Click to browse/download this file collection");
 		case TYPE_EXTRAFILE:
 			return QObject::tr("%1 (%2, Extra - Source included)").arg(hash()).arg(misc::friendlyUnit(size()));
@@ -899,7 +899,7 @@ QString RetroShareLink::toString() const
 
 			break;
 
-		case TYPE_COLLECTION:
+		case TYPE_FILE_TREE:
 			url.setScheme(RSLINK_SCHEME);
 			url.setHost(HOST_COLLECTION) ;
 			urlQuery.addQueryItem(COLLECTION_NAME, encodeItem(_name));
@@ -930,13 +930,13 @@ QString RetroShareLink::niceName() const
 	if (type() == TYPE_PERSON)
 		return PeerDefs::rsid(name().toUtf8().constData(), RsPgpId(hash().toStdString()));
 
-	if(type() == TYPE_COLLECTION)
+	if(type() == TYPE_FILE_TREE)
 		return QObject::tr("%1 (%2 files, %3)").arg(_name).arg(_count).arg(misc::friendlyUnit(_size));
 
 	if(type() == TYPE_IDENTITY)
 		return QObject::tr("Identity link (name=%1, ID=%2)").arg(_name).arg(_hash) ;
 
-	if(type() == TYPE_COLLECTION)
+	if(type() == TYPE_FILE_TREE)
 		return QObject::tr("File directory (Total %s) Click to browse/download this file collection").arg(misc::friendlyUnit(_size));
 
 	if(type() == TYPE_PUBLIC_MSG) {
@@ -1149,7 +1149,7 @@ static void processList(const QStringList &list, const QString &textSingular, co
 				case TYPE_SEARCH:
 				case TYPE_MESSAGE:
 				case TYPE_IDENTITY:
-				case TYPE_COLLECTION:
+				case TYPE_FILE_TREE:
 				case TYPE_CERTIFICATE:
 				case TYPE_PUBLIC_MSG:
 				case TYPE_PRIVATE_CHAT:
@@ -1391,7 +1391,7 @@ static void processList(const QStringList &list, const QString &textSingular, co
 				}
 			break;
 
-			case TYPE_COLLECTION:
+			case TYPE_FILE_TREE:
 				{
 					FileTree *ft = FileTree::create(link.radix().toStdString()) ;
 
