@@ -76,6 +76,11 @@ UserNotify *GxsChannelDialog::getUserNotify(QObject *parent)
 	return new GxsChannelUserNotify(rsGxsChannels, parent);
 }
 
+void GxsChannelDialog::shareOnChannel(const RsGxsGroupId& channel_id,const QList<RetroShareLink>& file_link)
+{
+	std::cerr << "Sharing file link on channel " << channel_id << ": Not yet implemented!" << std::endl;
+}
+
 QString GxsChannelDialog::text(TextType type)
 {
 	switch (type) {

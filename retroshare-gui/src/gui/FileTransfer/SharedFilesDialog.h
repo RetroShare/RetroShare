@@ -24,6 +24,7 @@
 
 #include <set>
 #include "RsAutoUpdatePage.h"
+#include "gui/RetroShareLink.h"
 #include "ui_SharedFilesDialog.h"
 
 class RetroshareDirModel;
@@ -68,10 +69,6 @@ private slots:
   void collView();
   void collOpen();
 
-//==  void showFrame(bool show);
-//==  void showFrameRemote(bool show);
-//==  void showFrameSplitted(bool show);
-
   void recommendFilesToMsg();
 	
   void indicatorChanged(int index);
@@ -103,6 +100,7 @@ protected:
 
   //QMenu* contextMnu2;
 
+  void copyLinks(const QModelIndexList& lst, bool remote, QList<RetroShareLink>& urls, bool& has_unhashed_files);
   void copyLink (const QModelIndexList& lst, bool remote);
 
   void FilterItems();
@@ -161,6 +159,7 @@ class LocalSharedFilesDialog : public SharedFilesDialog
 		void runCommandForFile();
 		void tryToAddNewAssotiation();
 		void forceCheck();
+  		void shareOnChannel();
 
 		QAction* fileAssotiationAction(const QString fileName);
 

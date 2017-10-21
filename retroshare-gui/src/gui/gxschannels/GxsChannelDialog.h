@@ -42,6 +42,8 @@ public:
 
 	virtual UserNotify *getUserNotify(QObject *parent);
 
+	void shareOnChannel(const RsGxsGroupId& channel_id, const QList<RetroShareLink>& file_link) ;
+
 protected:
 	/* GxsGroupFrameDialog */
 	virtual RetroShareLink::enumType getLinkType() { return RetroShareLink::TYPE_CHANNEL; }
