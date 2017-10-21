@@ -19,7 +19,7 @@ public:
 protected:
 	void recurs_print(uint32_t index,const std::string& indent) const;
 
-	static void recurs_buildFileTree(FileTreeImpl& ft,uint32_t index,const DirDetails& dd,bool remote);
+	static void recurs_buildFileTree(FileTreeImpl& ft, uint32_t index, const DirDetails& dd, bool remote, bool remove_top_dirs);
 
 	struct DirData {
 		std::string name;

@@ -1,5 +1,6 @@
 #include <iomanip>
 #include <util/radix64.h>
+#include <util/rsdir.h>
 
 #include "file_sharing_defaults.h"
 #include "filelist_io.h"
@@ -30,12 +31,16 @@ FileTree *FileTree::create(const std::string& radix64_string)
 	return ft ;
 }
 
-void FileTreeImpl::recurs_buildFileTree(FileTreeImpl& ft,uint32_t index,const DirDetails& dd,bool remote)
+void FileTreeImpl::recurs_buildFileTree(FileTreeImpl& ft,uint32_t index,const DirDetails& dd,bool remote,bool remove_top_dirs)
 {
 	if(ft.mDirs.size() <= index)
 		ft.mDirs.resize(index+1) ;
 
-	ft.mDirs[index].name = dd.name ;
+	if(remove_top_dirs)
+		ft.mDirs[index].name = RsDirUtil::getTopDir(dd.name) ;
+	else
+		ft.mDirs[index].name = dd.name ;
+
 	ft.mDirs[index].subfiles.clear();
 	ft.mDirs[index].subdirs.clear();
 
@@ -62,7 +67,7 @@ void FileTreeImpl::recurs_buildFileTree(FileTreeImpl& ft,uint32_t index,const Di
 			else if(dd.children[i].type == DIR_TYPE_DIR)
 			{
 				ft.mDirs[index].subdirs.push_back(ft.mDirs.size());
-				recurs_buildFileTree(ft,ft.mDirs.size(),dd2,remote) ;
+				recurs_buildFileTree(ft,ft.mDirs.size(),dd2,remote,remove_top_dirs) ;
 			}
 			else
 				std::cerr << "(EE) Unsupported DirDetails type." << std::endl;
@@ -86,11 +91,11 @@ bool FileTreeImpl::getDirectoryContent(uint32_t index,std::string& name,std::vec
 	return true ;
 }
 
-FileTree *FileTree::create(const DirDetails& dd, bool remote)
+FileTree *FileTree::create(const DirDetails& dd, bool remote,bool remove_top_dirs)
 {
 	FileTreeImpl *ft = new FileTreeImpl ;
 
-	FileTreeImpl::recurs_buildFileTree(*ft,0,dd,remote) ;
+	FileTreeImpl::recurs_buildFileTree(*ft,0,dd,remote,remove_top_dirs) ;
 
 	return ft ;
 }

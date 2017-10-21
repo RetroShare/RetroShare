@@ -144,7 +144,7 @@ class FileTree
 public:
 	virtual ~FileTree() {}
 
-	static FileTree *create(const DirDetails& dd, bool remote) ;
+	static FileTree *create(const DirDetails& dd, bool remote, bool remove_top_dirs = true) ;
 	static FileTree *create(const std::string& radix64_string) ;
 
 	virtual std::string toRadix64() const =0 ;
