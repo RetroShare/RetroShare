@@ -48,12 +48,18 @@ RsCollection::RsCollection(QObject *parent)
 RsCollection::RsCollection(const FileTree& fr)
 	: _xml_doc("RsCollection")
 {
+	_root = _xml_doc.createElement("RsCollection");
+	_xml_doc.appendChild(_root);
+
 	recursAddElements(_xml_doc,fr,0,_root) ;
 }
 
 RsCollection::RsCollection(const std::vector<DirDetails>& file_infos, QObject *parent)
 	: QObject(parent), _xml_doc("RsCollection")
 {
+	_root = _xml_doc.createElement("RsCollection");
+	_xml_doc.appendChild(_root);
+
 	for(uint32_t i = 0;i<file_infos.size();++i)
 		recursAddElements(_xml_doc,file_infos[i],_root) ;
 }
