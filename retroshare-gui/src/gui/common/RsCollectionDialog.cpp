@@ -23,6 +23,7 @@
 
 #include <QCheckBox>
 #include <QMessageBox>
+#include <QMenu>
 #include <QTextEdit>
 #include <QDir>
 #include <QKeyEvent>
@@ -50,6 +51,7 @@
 
 #define MAX_FILE_ADDED_BEFORE_ASK  500 //Number of file added in Recursive mode before asking to continue
 
+#define IMAGE_SEARCH               ":/icons/svg/magnifying-glass.svg"
 
 /**
  * @brief The FSMSortFilterProxyModel class sort directory before file.
@@ -140,9 +142,21 @@ RsCollectionDialog::RsCollectionDialog(const QString& collectionFileName
 	ui.headerFrame->setHeaderImage(QPixmap(":/images/library64.png"));
 
 	if(creation)
+	{
 		ui.headerFrame->setHeaderText(tr("Collection Editor"));
+		ui.downloadFolder_LE->hide();
+		ui.downloadFolder_LB->hide();
+	}
 	else
+	{
 		ui.headerFrame->setHeaderText(tr("Download files"));
+		ui.downloadFolder_LE->show();
+		ui.downloadFolder_LB->show();
+
+		ui.downloadFolder_LE->setText(QString::fromUtf8(rsFiles->getDownloadDirectory().c_str())) ;
+
+		QObject::connect(ui.downloadFolder_LE,SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(openDestinationDirectoryMenu(QPoint)));
+	}
 
 	// 1 - add all elements to the list.
 
@@ -213,6 +227,46 @@ RsCollectionDialog::RsCollectionDialog(const QString& collectionFileName
 		QMessageBox::warning(NULL,tr("Bad filenames have been cleaned"),tr("Some filenames or directory names contained forbidden characters.\nCharacters <b>\",|,/,\\,&lt;,&gt;,*,?</b> will be replaced by '_'.\n Concerned files are listed in red.")) ;
 }
 
+void RsCollectionDialog::openDestinationDirectoryMenu(QPoint)
+{
+	QMenu contextMnu( this );
+
+	// pop a menu with existing entries and also a custom entry
+	// Now get the list of existing  directories.
+
+	std::list< SharedDirInfo> dirs ;
+	rsFiles->getSharedDirectories( dirs) ;
+
+	for (std::list<SharedDirInfo>::const_iterator it(dirs.begin());it!=dirs.end();++it){
+		// Check for existence of directory name
+		QFile directory( QString::fromUtf8((*it).filename.c_str())) ;
+
+		if (!directory.exists()) continue ;
+		if (!(directory.permissions() & QFile::WriteOwner)) continue ;
+
+		contextMnu.addAction(QString::fromUtf8((*it).filename.c_str()), this, SLOT(setDestinationDirectory()))->setData(QString::fromUtf8( (*it).filename.c_str() ) ) ;
+	}
+
+	contextMnu.addAction( QIcon(IMAGE_SEARCH),tr("Specify..."),this,SLOT(chooseDestinationDirectory()));
+
+	contextMnu.exec(QCursor::pos()) ;
+}
+
+void RsCollectionDialog::setDestinationDirectory()
+{
+	QString dest_dir(qobject_cast<QAction*>(sender())->data().toString()) ;
+	ui.downloadFolder_LE->setText(dest_dir) ;
+}
+
+void RsCollectionDialog::chooseDestinationDirectory()
+{
+	QString dest_dir = QFileDialog::getExistingDirectory(this,tr("Choose directory")) ;
+
+	if(dest_dir.isNull())
+		return ;
+
+	ui.downloadFolder_LE->setText(dest_dir) ;
+}
 /**
  * @brief RsCollectionDialog::~RsCollectionDialog
  */
@@ -1226,7 +1280,7 @@ void RsCollectionDialog::download()
 {
 	std::cerr << "Downloading!" << std::endl;
 
-	QString dldir = QString::fromUtf8(rsFiles->getDownloadDirectory().c_str()) ;
+	QString dldir = ui.downloadFolder_LE->text();
 
 	std::cerr << "downloading all these files:" << std::endl;
 

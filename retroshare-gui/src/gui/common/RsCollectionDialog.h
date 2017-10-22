@@ -49,6 +49,9 @@ private slots:
 	void add() ;
 	void addRecursive() ;
 	void remove() ;
+	void chooseDestinationDirectory();
+	void setDestinationDirectory();
+	void openDestinationDirectoryMenu(QPoint pt);
 	void processItem(QMap<QString, QString> &dirToAdd
 	                 , int &index
                    , ColFileInfo &parent
