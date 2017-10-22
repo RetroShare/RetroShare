@@ -1116,7 +1116,7 @@ static bool addFeedItemIfUniqueCallback(FeedItem *feedItem, void *data)
 
 	if (findData->mSecurityIpItem) {
 		SecurityIpItem *securityIpItem = dynamic_cast<SecurityIpItem*>(feedItem);
-		if (securityIpItem && securityIpItem->isSame(findData->mId1, findData->mId2, findData->mType)) {
+		if (securityIpItem && securityIpItem->isSame(RsPeerId(findData->mId1), findData->mId2, findData->mId3, findData->mType)) {
 			return true;
 		}
 		return false;
