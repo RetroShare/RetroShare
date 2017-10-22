@@ -10,6 +10,9 @@
     <height>778</height>
    </rect>
   </property>
+  <property name="contextMenuPolicy">
+   <enum>Qt::CustomContextMenu</enum>
+  </property>
   <property name="windowTitle">
    <string>Collection</string>
   </property>
@@ -422,7 +425,7 @@
             <item>
              <widget class="QLineEdit" name="downloadFolder_LE">
               <property name="contextMenuPolicy">
-               <enum>Qt::PreventContextMenu</enum>
+               <enum>Qt::CustomContextMenu</enum>
               </property>
               <property name="toolTip">
                <string>Right click to change download directory</string>
