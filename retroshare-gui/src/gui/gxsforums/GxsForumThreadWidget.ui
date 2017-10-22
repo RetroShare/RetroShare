@@ -84,6 +84,9 @@
             <property name="toolTip">
              <string>Start new Thread for Selected Forum</string>
             </property>
+            <property name="text">
+             <string>New Thread</string>
+            </property>
             <property name="icon">
              <iconset resource="../images.qrc">
               <normaloff>:/images/mail_new.png</normaloff>:/images/mail_new.png</iconset>
@@ -93,6 +96,9 @@
               <width>24</width>
               <height>16</height>
              </size>
+            </property>
+            <property name="toolButtonStyle">
+             <enum>Qt::ToolButtonTextBesideIcon</enum>
             </property>
             <property name="autoRaise">
              <bool>true</bool>
@@ -306,8 +312,8 @@
           <widget class="QToolButton" name="newmessageButton">
            <property name="maximumSize">
             <size>
-             <width>24</width>
-             <height>24</height>
+             <width>16777215</width>
+             <height>16777215</height>
             </size>
            </property>
            <property name="focusPolicy">
@@ -316,10 +322,16 @@
            <property name="toolTip">
             <string>Reply Message</string>
            </property>
+           <property name="text">
+            <string>Reply</string>
+           </property>
            <property name="icon">
             <iconset resource="../images.qrc">
              <normaloff>:/images/mail_reply.png</normaloff>:/images/mail_reply.png</iconset>
            </property>
+            <property name="toolButtonStyle">
+             <enum>Qt::ToolButtonTextBesideIcon</enum>
+            </property>
            <property name="autoRaise">
             <bool>true</bool>
            </property>
@@ -358,7 +370,7 @@
            </property>
           </widget>
          </item>
-         <item row="0" column="8">
+         <item row="0" column="9">
           <widget class="Line" name="lineRight">
            <property name="orientation">
             <enum>Qt::Vertical</enum>
@@ -471,7 +483,7 @@
            </property>
           </widget>
          </item>
-         <item row="0" column="9">
+         <item row="0" column="8">
           <widget class="QComboBox" name="versions_CB"/>
          </item>
          <item row="0" column="7">
