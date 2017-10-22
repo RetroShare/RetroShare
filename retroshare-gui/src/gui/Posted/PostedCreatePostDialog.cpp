@@ -27,6 +27,8 @@
 
 #include "util/TokenQueue.h"
 
+#include "gui/settings/rsharesettings.h"
+
 #include <iostream>
 
 PostedCreatePostDialog::PostedCreatePostDialog(TokenQueue* tokenQ, RsPosted *posted, const RsGxsGroupId& grpId, QWidget *parent):
@@ -35,7 +37,7 @@ PostedCreatePostDialog::PostedCreatePostDialog(TokenQueue* tokenQ, RsPosted *pos
 	ui(new Ui::PostedCreatePostDialog)
 {
 	ui->setupUi(this);
-
+	Settings->loadWidgetInformation(this);
 	connect(ui->submitButton, SIGNAL(clicked()), this, SLOT(createPost()));
 	connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(close()));
 	
@@ -50,6 +52,7 @@ PostedCreatePostDialog::PostedCreatePostDialog(TokenQueue* tokenQ, RsPosted *pos
 
 PostedCreatePostDialog::~PostedCreatePostDialog()
 {
+	Settings->saveWidgetInformation(this);
 	delete ui;
 }
 

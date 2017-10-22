@@ -83,7 +83,7 @@ ConfCertDialog::ConfCertDialog(const RsPeerId& id, const RsPgpId &pgp_id, QWidge
 {
     /* Invoke Qt Designer generated QObject setup routine */
     ui.setupUi(this);
-
+	Settings->loadWidgetInformation(this);
     ui.headerFrame->setHeaderImage(QPixmap(":/images/user/identityinfo64.png"));
     //ui.headerFrame->setHeaderText(tr("Friend node details"));
 
@@ -105,6 +105,7 @@ ConfCertDialog::ConfCertDialog(const RsPeerId& id, const RsPgpId &pgp_id, QWidge
 
 ConfCertDialog::~ConfCertDialog()
 {
+	Settings->saveWidgetInformation(this);
     QMap<RsPeerId, ConfCertDialog*>::iterator it = instances_ssl.find(peerId);
     if (it != instances_ssl.end())
 	    instances_ssl.erase(it);
