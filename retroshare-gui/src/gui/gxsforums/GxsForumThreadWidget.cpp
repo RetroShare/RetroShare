@@ -231,6 +231,7 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 	/* Set own item delegate */
 	RSElidedItemDelegate *itemDelegate = new RSElidedItemDelegate(this);
 	itemDelegate->setSpacing(QSize(0, 2));
+	itemDelegate->setOnlyPlainText(true);
 	ui->threadTreeWidget->setItemDelegate(itemDelegate);
 
 	/* Set header resize modes and initial section sizes */
