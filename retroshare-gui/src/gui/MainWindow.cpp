@@ -186,7 +186,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
         if(pd.netMode == RS_NETMODE_HIDDEN)
             hiddenmode = true;
     }
-	
+
     setWindowTitle(tr("RetroShare %1 a secure decentralized communication platform").arg(Rshare::retroshareVersion(true)) + " - " + nameAndLocation);
     connect(rApp, SIGNAL(newArgsReceived(QStringList)), this, SLOT(receiveNewArgs(QStringList)));
 
