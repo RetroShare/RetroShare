@@ -31,32 +31,32 @@ CONTRIBUTE
 
 TODO
 ----
-[ ] make stylesheets or find reusable sass/css components
+ - [ ] make stylesheets or find reusable sass/css components
 google material design has nice rules for color, spacing and everything: https://www.google.de/design/spec/material-design/introduction.html
-[ ] find icons, maybe use google material design iconfont
-[X] use urls/mithril routing for the menu. urls could replace state stored in rs.content
-[X] drag and drop private key upload and import
-[X] link from peer location to chat (use urls and mithril routing)
-[X] add/remove friend, own cert
-[X] downloads, search
-[ ] make reusable infinite list controller, the js part to load data from Pagination.h (tweak Pagination.h to make everything work)
+ - [ ] find icons, maybe use google material design iconfont
+ - [X] use urls/mithril routing for the menu. urls could replace state stored in rs.content
+ - [X] drag and drop private key upload and import
+ - [X] link from peer location to chat (use urls and mithril routing)
+ - [X] add/remove friend, own cert
+ - [X] downloads, search
+ - [ ] make reusable infinite list controller, the js part to load data from Pagination.h (tweak Pagination.h to make everything work)
 should provide forward, backward and follow-list-end
-[ ] backend: view/create identities
-[ ] backend: chat lobby participants list
-[X] chat: send_message
-[ ] backend: chat typing notifications
-[ ] make routines to handle retroshare links
-[ ] backend: edit shared folders
-[ ] backend: view shared files
-[ ] redirect if a url is not usable in the current runstate (e.g. redirect from login page to home page, after login)
-[X] sort friendslist
+ - [ ] backend: view/create identities
+ - [ ] backend: chat lobby participants list
+ - [X] chat: send_message
+ - [ ] backend: chat typing notifications
+ - [ ] make routines to handle retroshare links
+ - [ ] backend: edit shared folders
+ - [ ] backend: view shared files
+ - [ ] redirect if a url is not usable in the current runstate (e.g. redirect from login page to home page, after login)
+ - [X] sort friendslist
 
 need 4 master
 -------------
-[X] unsubscribe lobby
-[X] unread chat message counter in menu
-[X] list chat-lobby participants
-[X] creating app.js on build (no need for npm on regulary build)
+ - [X] unsubscribe lobby
+ - [X] unread chat message counter in menu
+ - [X] list chat-lobby participants
+ - [X] creating app.js on build (no need for npm on regulary build)
 
 url-handling (brainstorming)
 ----------------------------
