@@ -210,8 +210,9 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     connect(ui->listWidget, SIGNAL(currentRowChanged(int)), this, SLOT(setNewPage(int)));
     connect(ui->stackPages, SIGNAL(currentChanged(int)), this, SLOT(setNewPage(int)));
 
-    //ui->stackPages->setCurrentIndex(Settings->getLastPageInMainWindow());
-    setNewPage(Settings->getLastPageInMainWindow());
+	int lastpageindex = Settings->getLastPageInMainWindow();
+	if(lastpageindex < ui->stackPages->count())	//Do not crash when a page was removed after last run
+		setNewPage(lastpageindex);
 
     ui->splitter->setStretchFactor(0, 0);
     ui->splitter->setStretchFactor(1, 1);

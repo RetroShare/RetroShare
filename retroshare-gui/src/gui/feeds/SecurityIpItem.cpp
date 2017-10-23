@@ -79,9 +79,9 @@ void SecurityIpItem::setup()
 	updateItem();
 }
 
-bool SecurityIpItem::isSame(const std::string& ipAddr, const std::string& ipAddrReported, uint32_t type)
+bool SecurityIpItem::isSame(const RsPeerId &sslId, const std::string& ipAddr, const std::string& ipAddrReported, uint32_t type)
 {
-	if (mType == type && mIpAddr == ipAddr && mIpAddrReported == ipAddrReported) {
+	if (mType == type && mSslId==sslId && mIpAddr == ipAddr && mIpAddrReported == ipAddrReported) {
 		return true;
 	}
 

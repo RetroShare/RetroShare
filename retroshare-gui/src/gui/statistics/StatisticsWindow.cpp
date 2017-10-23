@@ -95,6 +95,8 @@ StatisticsWindow::StatisticsWindow(QWidget *parent) :
 {
     ui->setupUi(this);
    
+	Settings->loadWidgetInformation(this);
+	
     initStackedPage();
     connect(ui->stackPages, SIGNAL(currentChanged(int)), this, SLOT(setNewPage(int)));
     ui->stackPages->setCurrentIndex(0);
@@ -107,6 +109,11 @@ StatisticsWindow::~StatisticsWindow()
 {
     delete ui;
     mInstance = NULL;
+}
+
+void StatisticsWindow::closeEvent (QCloseEvent * /*event*/)
+{
+	Settings->saveWidgetInformation(this);
 }
 
 void StatisticsWindow::changeEvent(QEvent *e)

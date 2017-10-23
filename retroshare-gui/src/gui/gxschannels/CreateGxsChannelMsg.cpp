@@ -50,7 +50,7 @@ CreateGxsChannelMsg::CreateGxsChannelMsg(const RsGxsGroupId &cId, RsGxsMessageId
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	setupUi(this);
-
+	Settings->loadWidgetInformation(this);
 	mChannelQueue = new TokenQueue(rsGxsChannels->getTokenService(), this);
 
 	headerFrame->setHeaderImage(QPixmap(":/images/channels.png"));
@@ -95,6 +95,7 @@ CreateGxsChannelMsg::CreateGxsChannelMsg(const RsGxsGroupId &cId, RsGxsMessageId
 
 CreateGxsChannelMsg::~CreateGxsChannelMsg()
 {
+	Settings->saveWidgetInformation(this);
 #ifdef CHANNELS_FRAME_CATCHER
 	delete fCatcher;
 #endif
