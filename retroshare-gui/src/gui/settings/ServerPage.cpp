@@ -1022,7 +1022,7 @@ void ServerPage::loadHiddenNode()
     ui.textlabel_hiddenMode->show();
     ui.iconlabel_hiddenMode->show() ;
     ui.iconlabel_hiddenMode->setPixmap(QPixmap(":/images/ledon1.png"));
-	
+    
     // CHANGE OPTIONS ON
     whileBlocking(ui.discComboBox)->removeItem(3);
     whileBlocking(ui.discComboBox)->removeItem(2);
