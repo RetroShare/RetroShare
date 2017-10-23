@@ -141,6 +141,7 @@
 #define IMAGE_BLOGS             ":/images/kblogger.png"
 #define IMAGE_DHT               ":/images/dht16.png"
 
+/*static*/ bool MainWindow::hiddenmode = false;
 
 /*static*/ MainWindow *MainWindow::_instance = NULL;
 
@@ -182,6 +183,8 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     RsPeerDetails pd;
     if (rsPeers->getPeerDetails(rsPeers->getOwnId(), pd)) {
         nameAndLocation = QString("%1 (%2)").arg(QString::fromUtf8(pd.name.c_str())).arg(QString::fromUtf8(pd.location.c_str()));
+        if(pd.netMode == RS_NETMODE_HIDDEN)
+            hiddenmode = true;
     }
 
     setWindowTitle(tr("RetroShare %1 a secure decentralized communication platform").arg(Rshare::retroshareVersion(true)) + " - " + nameAndLocation);
@@ -242,13 +245,17 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     statusBar()->addWidget(peerstatus);
 
     natstatus = new NATStatus();
-    natstatus->setVisible(Settings->valueFromGroup("StatusBar", "ShowNAT", QVariant(true)).toBool());
+    if(hiddenmode) natstatus->setVisible(false);
+    else natstatus->setVisible(Settings->valueFromGroup("StatusBar", "ShowNAT", QVariant(true)).toBool());
     statusBar()->addWidget(natstatus);
-    
+    natstatus->getNATStatus();
+	
     dhtstatus = new DHTStatus();
-    dhtstatus->setVisible(Settings->valueFromGroup("StatusBar", "ShowDHT", QVariant(true)).toBool());
+    if(hiddenmode) dhtstatus->setVisible(false);
+    else dhtstatus->setVisible(Settings->valueFromGroup("StatusBar", "ShowDHT", QVariant(true)).toBool());
     statusBar()->addWidget(dhtstatus);
-
+    dhtstatus->getDHTStatus();
+	
     hashingstatus = new HashingStatus();
     hashingstatus->setVisible(Settings->valueFromGroup("StatusBar", "ShowHashing", QVariant(true)).toBool());
     statusBar()->addPermanentWidget(hashingstatus, 1);
@@ -703,11 +710,14 @@ void MainWindow::updateStatus()
     if (ratesstatus)
         ratesstatus->getRatesStatus(downKb, upKb);
 
+    if(!hiddenmode)
+    {
     if (natstatus)
         natstatus->getNATStatus();
         
     if (dhtstatus)
         dhtstatus->getDHTStatus();
+    }
 
     if (discstatus) {
         discstatus->update();
@@ -1577,10 +1587,13 @@ void MainWindow::setCompactStatusMode(bool compact)
 	//statusComboBox: TODO Show only icon
 	peerstatus->setCompactMode(compact);
 	updateFriends();
+    if(!hiddenmode)
+    {
 	natstatus->setCompactMode(compact);
 	natstatus->getNATStatus();
 	dhtstatus->setCompactMode(compact);
 	dhtstatus->getDHTStatus();
+    }
 	hashingstatus->setCompactMode(compact);
 	ratesstatus->setCompactMode(compact);
 	//opModeStatus: TODO Show only ???
