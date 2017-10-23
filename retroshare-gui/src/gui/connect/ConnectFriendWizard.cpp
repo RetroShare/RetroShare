@@ -475,33 +475,17 @@ void ConnectFriendWizard::initializePage(int id)
 			else
 				ui->addKeyToKeyring_CB->setToolTip(tr("Check this to add the key to your keyring\nThis might be useful for sending\ndistant messages to this peer\neven if you don't make friends.")) ;
 
-			//set the radio button to sign the GPG key
-			if (peerDetails.accept_connection && !peerDetails.ownsign) {
-				//gpg key connection is already accepted, don't propose to accept it again
-				ui->signGPGCheckBox->setChecked(false);
-				ui->acceptNoSignGPGCheckBox->hide();
-                ui->acceptNoSignGPGCheckBox->setChecked(false);
-			}
-			if (!peerDetails.accept_connection && peerDetails.ownsign) {
-				//gpg key is already signed, don't propose to sign it again
+			if(tmp_det.accept_connection) {
 				ui->acceptNoSignGPGCheckBox->setChecked(true);
-				ui->signGPGCheckBox->hide();
-				ui->signGPGCheckBox->setChecked(false);
+				ui->acceptNoSignGPGCheckBox->setEnabled(false);
+				ui->acceptNoSignGPGCheckBox->setToolTip(tr("This key is already on your trusted list"));
 			}
-			if (!peerDetails.accept_connection && !peerDetails.ownsign) {
-				ui->acceptNoSignGPGCheckBox->setChecked(true);
-				ui->signGPGCheckBox->show();
-				ui->signGPGCheckBox->setChecked(false);
-				ui->acceptNoSignGPGCheckBox->show();
-			}
-			if (peerDetails.accept_connection && peerDetails.ownsign) {
-				ui->acceptNoSignGPGCheckBox->setChecked(false);
-				ui->acceptNoSignGPGCheckBox->hide();
-				ui->signGPGCheckBox->setChecked(false);
-				ui->signGPGCheckBox->hide();
-				ui->alreadyRegisteredLabel->show();
-			} else {
+			else
 				ui->alreadyRegisteredLabel->hide();
+			if(tmp_det.ownsign) {
+				ui->signGPGCheckBox->setChecked(true);
+				ui->signGPGCheckBox->setEnabled(false);
+				ui->signGPGCheckBox->setToolTip(tr("You have already signed this key"));
 			}
 
 			QString trustString;
