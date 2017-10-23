@@ -303,7 +303,8 @@ void ServerPage::load()
     if (mIsHiddenNode)
     {
         mHiddenType = detail.hiddenType;
-        ui.tabWidget->setTabEnabled(1,false) ;
+        ui.tabWidget->setTabEnabled(1,false) ; // ip filter
+		ui.tabWidget->setTabEnabled(3,false) ; // relay
         loadHiddenNode();
         return;
     }
@@ -1004,10 +1005,24 @@ void ServerPage::loadHiddenNode()
     ui.iconlabel_upnp->hide();
     ui.label_nat->hide();
 
+	ui.label_warningBandwidth->hide();
+	ui.iconlabel_netLimited->hide();
+	ui.textlabel_netLimited->hide();
+	ui.iconlabel_ext->hide();
+	ui.textlabel_ext->hide();
+	ui.extPortLabel->hide();
+	
+	ui.ipAddressLabel->hide();
+	ui.cleanKnownIPs_PB->hide();
+	
+	ui.ipAddressList->hide();
+	ui.allowIpDeterminationCB->hide();
+	ui.IPServersLV->hide();
+	
     ui.textlabel_hiddenMode->show();
     ui.iconlabel_hiddenMode->show() ;
     ui.iconlabel_hiddenMode->setPixmap(QPixmap(":/images/ledon1.png"));
-
+	
     // CHANGE OPTIONS ON
     whileBlocking(ui.discComboBox)->removeItem(3);
     whileBlocking(ui.discComboBox)->removeItem(2);
