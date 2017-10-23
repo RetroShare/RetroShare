@@ -152,7 +152,6 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
     connect( ui.allowIpDeterminationCB, SIGNAL( toggled( bool ) ), this, SLOT( toggleIpDetermination(bool) ) );
     connect( ui.cleanKnownIPs_PB, SIGNAL( clicked( ) ), this, SLOT( clearKnownAddressList() ) );
     connect( ui.testIncoming_PB, SIGNAL( clicked( ) ), this, SLOT( saveAndTestInProxy() ) );
-    connect( ui.showDiscStatusBar,SIGNAL(toggled(bool)),this,SLOT(updateShowDiscStatusBar())) ;
 
 #ifdef SERVER_DEBUG
     std::cerr << "ServerPage::ServerPage() called";
@@ -160,7 +159,6 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
 #endif
 
     connect(ui.netModeComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(saveAddresses()));
-    connect(ui.discComboBox,   SIGNAL(currentIndexChanged(int)),this,SLOT(saveAddresses()));
     connect(ui.localAddress,   SIGNAL(textChanged(QString)),this,SLOT(saveAddresses()));
     connect(ui.extAddress,     SIGNAL(textChanged(QString)),this,SLOT(saveAddresses()));
     connect(ui.dynDNS,         SIGNAL(textChanged(QString)),this,SLOT(saveAddresses()));
@@ -277,8 +275,6 @@ void ServerPage::toggleTunnelConnection(bool b)
         //rsPeers->allowTunnelConnection(b) ;
 }
 
-void ServerPage::updateShowDiscStatusBar() { Settings->setStatusBarFlag(STATUSBAR_DISC, ui.showDiscStatusBar->isChecked()); }
-
 /** Loads the settings for this page */
 void ServerPage::load()
 {
@@ -380,7 +376,6 @@ void ServerPage::load()
         /* set DynDNS */
         whileBlocking(ui.dynDNS) -> setText(QString::fromStdString(detail.dyndns));
 
-        whileBlocking(ui.showDiscStatusBar)->setChecked(Settings->getStatusBarFlags() & STATUSBAR_DISC);
 
         whileBlocking(ui.ipAddressList)->clear();
         for(std::list<std::string>::const_iterator it(detail.ipAddressList.begin());it!=detail.ipAddressList.end();++it)
@@ -1047,9 +1042,6 @@ void ServerPage::loadHiddenNode()
         /* set the server address */
 
     whileBlocking(ui.extAddress)->setText(tr("Hidden - See Config"));
-
-    whileBlocking(ui.showDiscStatusBar)->setChecked(Settings->getStatusBarFlags() & STATUSBAR_DISC);
-    ui.showDiscStatusBar->hide() ;	// hidden because not functional at the moment.
 
     //ui._turtle_enabled_CB->setChecked(rsTurtle->enabled()) ;
 

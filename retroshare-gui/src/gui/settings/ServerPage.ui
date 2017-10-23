@@ -482,13 +482,6 @@ These values don't take into account the Relays.</string>
         </widget>
        </item>
        <item row="3" column="0">
-        <widget class="QCheckBox" name="showDiscStatusBar">
-         <property name="text">
-          <string>Show Discovery information in statusbar</string>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="0">
         <widget class="QCheckBox" name="allowIpDeterminationCB">
          <property name="toolTip">
           <string>If you uncheck this, RetroShare can only determine your IP 
@@ -504,7 +497,7 @@ behind a firewall or a VPN.</string>
          </property>
         </widget>
        </item>
-       <item row="5" column="0">
+       <item row="4" column="0">
         <widget class="QListWidget" name="IPServersLV">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
@@ -517,7 +510,7 @@ behind a firewall or a VPN.</string>
          </property>
         </widget>
        </item>
-       <item row="6" column="0">
+       <item row="5" column="0">
         <spacer name="tabNetConfVSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -531,7 +524,6 @@ behind a firewall or a VPN.</string>
         </spacer>
        </item>
       </layout>
-      <zorder>showDiscStatusBar</zorder>
       <zorder>allowIpDeterminationCB</zorder>
       <zorder>IPServersLV</zorder>
       <zorder>ipAddressList</zorder>
@@ -2097,7 +2089,6 @@ If you have issues connecting over Tor check the Tor logs too.</string>
   <tabstop>extAddress</tabstop>
   <tabstop>extPort</tabstop>
   <tabstop>dynDNS</tabstop>
-  <tabstop>showDiscStatusBar</tabstop>
  </tabstops>
  <resources>
   <include location="../images.qrc"/>
