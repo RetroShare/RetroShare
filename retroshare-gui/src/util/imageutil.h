@@ -11,7 +11,7 @@ public:
 	ImageUtil();
 
 	static void extractImage(QWidget *window, QTextCursor cursor);
-	static void optimizeSize(QString &html, const QImage& original, QImage &optimized, int maxPixels = -1, int maxBytes = -1);
+	static bool optimizeSize(QString &html, const QImage& original, QImage &optimized, int maxPixels = -1, int maxBytes = -1);
 
 	private:
 		static int checkSize(QString& embeddedImage, const QImage& img, int maxBytes = -1);

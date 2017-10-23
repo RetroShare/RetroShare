@@ -1107,7 +1107,7 @@ QString RsHtml::toHtml(QString text, bool realHtml)
 }
 
 /** Loads image and converts image to embedded image HTML fragment **/
-bool RsHtml::makeEmbeddedImage(const QString &fileName, QString &embeddedImage, const int maxPixels)
+bool RsHtml::makeEmbeddedImage(const QString &fileName, QString &embeddedImage, const int maxPixels, const int maxBytes)
 {
 	QImage image;
 
@@ -1115,16 +1115,15 @@ bool RsHtml::makeEmbeddedImage(const QString &fileName, QString &embeddedImage, 
 		fprintf (stderr, "RsHtml::makeEmbeddedImage() - image \"%s\" can't be load\n", fileName.toLatin1().constData());
 		return false;
 	}
-	return RsHtml::makeEmbeddedImage(image, embeddedImage, maxPixels);
+	return RsHtml::makeEmbeddedImage(image, embeddedImage, maxPixels, maxBytes);
 }
 
 /** Converts image to embedded image HTML fragment **/
-bool RsHtml::makeEmbeddedImage(const QImage &originalImage, QString &embeddedImage, const int maxPixels)
+bool RsHtml::makeEmbeddedImage(const QImage &originalImage, QString &embeddedImage, const int maxPixels, const int maxBytes)
 {
 	RsScopeTimer s("Embed image");
 	QImage opt;
-	ImageUtil::optimizeSize(embeddedImage, originalImage, opt, maxPixels, 6000-500);
-	// -500 bytes: keep space for html stuff
+	return ImageUtil::optimizeSize(embeddedImage, originalImage, opt, maxPixels, maxBytes);
 }
 
 QString RsHtml::plainText(const QString &text)

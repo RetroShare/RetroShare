@@ -198,6 +198,8 @@ private:
 	void setColorAndFont(bool both);
 	void processSettings(bool load);
 
+	uint32_t maxMessageSize();
+
 	void completeNickname(bool reverse);
     QAbstractItemModel *modelFromPeers();
 
