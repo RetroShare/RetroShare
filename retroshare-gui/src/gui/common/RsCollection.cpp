@@ -36,6 +36,8 @@
 #include <QMessageBox>
 #include <QIcon>
 
+// #define COLLECTION_DEBUG 1
+
 const QString RsCollection::ExtensionString = QString("rscollection") ;
 
 RsCollection::RsCollection(QObject *parent)
@@ -116,14 +118,17 @@ void RsCollection::merge_in(const FileTree& tree)
 void RsCollection::recursCollectColFileInfos(const QDomElement& e,std::vector<ColFileInfo>& colFileInfos,const QString& current_path, bool bad_chars_in_parent) const
 {
 	QDomNode n = e.firstChild() ;
-
+#ifdef COLLECTION_DEBUG
 	std::cerr << "Parsing element " << e.tagName().toStdString() << std::endl;
+#endif
 
 	while(!n.isNull()) 
 	{
 		QDomElement ee = n.toElement(); // try to convert the node to an element.
 
+#ifdef COLLECTION_DEBUG
 		std::cerr << "  Seeing child " << ee.tagName().toStdString() << std::endl;
+#endif
 
 		if(ee.tagName() == QString("File"))
 		{
