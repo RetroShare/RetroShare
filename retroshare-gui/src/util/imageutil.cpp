@@ -11,8 +11,8 @@
 #include <QTextDocumentFragment>
 #include <QBuffer>
 #include <QtGlobal>
-#include <QtMath>
 #include <QSet>
+#include <cmath>
 #include <iostream>
 
 ImageUtil::ImageUtil() {}
@@ -65,11 +65,11 @@ bool ImageUtil::optimizeSize(QString &html, const QImage& original, QImage &opti
 	double whratio = (qreal)original.width() / (qreal)original.height();
 	int maxwidth;
 	if(maxPixels > 0)
-		maxwidth = qSqrt((qreal)(maxPixels) * whratio);
+		maxwidth = (int)sqrt((double)(maxPixels) * whratio);
 	else
 		maxwidth = original.width();
 
-	int minwidth = qSqrt(100.0 * whratio);
+	int minwidth = (int)sqrt(100.0 * whratio);
 
 	//if maxBytes not defined, do not reduce color space, just downscale
 	if(maxBytes <= 0) {
@@ -91,7 +91,7 @@ bool ImageUtil::optimizeSize(QString &html, const QImage& original, QImage &opti
 		double m = (maxsize - minsize) / ((double)maxwidth * (double)maxwidth / whratio - (double)minwidth * (double)minwidth / whratio);
 		double b = maxsize - m * ((double)maxwidth * (double)maxwidth / whratio);
 		double a = ((double)(maxBytes - region/2) - b) / m; //maxBytes - region/2 target the center of the accepted region
-		int nextwidth = qSqrt((qreal)(a * whratio));
+		int nextwidth = (int)sqrt(a * whratio);
 		double nextsize = (double)checkSize(html, optimized = original.scaledToWidth(nextwidth, Qt::SmoothTransformation).convertToFormat(QImage::Format_Indexed8, ct), maxBytes);
 		if(nextsize <= maxBytes) {
 			minsize = nextsize;
