@@ -111,7 +111,7 @@ ChatWidget::ChatWidget(QWidget *parent) :
 	ui->searchButton->setFixedSize(buttonSize);
 	ui->searchButton->setIconSize(iconSize);
 	ui->sendButton->setFixedHeight(iconHeight);
-  ui->sendButton->setIconSize(iconSize);
+	ui->sendButton->setIconSize(iconSize);
   
 	//Initialize search
 	iCharToStartSearch=Settings->getChatSearchCharToStartSearch();
@@ -295,6 +295,7 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
 	this->title = title;
 
 	ui->titleLabel->setText(RsHtml::plainText(title));
+	ui->chatTextEdit->setMaxBytes(this->maxMessageSize() - 200);
 
     RsPeerId ownId = rsPeers->getOwnId();
 	setName(QString::fromUtf8(rsPeers->getPeerName(ownId).c_str()));
@@ -450,6 +451,25 @@ void ChatWidget::processSettings(bool load)
 	}
 
 	Settings->endGroup();
+}
+
+uint32_t ChatWidget::maxMessageSize()
+{
+	uint32_t maxMessageSize = 0;
+	switch (chatType()) {
+	case CHATTYPE_UNKNOWN:
+		break;
+	case CHATTYPE_PRIVATE:
+		maxMessageSize = rsMsgs->getMaxMessageSecuritySize(RS_CHAT_TYPE_PRIVATE);
+		break;
+	case CHATTYPE_LOBBY:
+		maxMessageSize = rsMsgs->getMaxMessageSecuritySize(RS_CHAT_TYPE_LOBBY);
+		break;
+	case CHATTYPE_DISTANT:
+		maxMessageSize = rsMsgs->getMaxMessageSecuritySize(RS_CHAT_TYPE_DISTANT);
+		break;
+	}
+	return maxMessageSize;
 }
 
 bool ChatWidget::eventFilter(QObject *obj, QEvent *event)
@@ -1169,20 +1189,7 @@ void ChatWidget::updateLenOfChatTextEdit()
 	RsHtml::optimizeHtml(chatWidget, text);
 	std::wstring msg = text.toStdWString();
 
-	uint32_t maxMessageSize = 0;
-	switch (chatType()) {
-	case CHATTYPE_UNKNOWN:
-		break;
-	case CHATTYPE_PRIVATE:
-		maxMessageSize = rsMsgs->getMaxMessageSecuritySize(RS_CHAT_TYPE_PRIVATE);
-		break;
-	case CHATTYPE_LOBBY:
-		maxMessageSize = rsMsgs->getMaxMessageSecuritySize(RS_CHAT_TYPE_LOBBY);
-		break;
-	case CHATTYPE_DISTANT:
-		maxMessageSize = rsMsgs->getMaxMessageSecuritySize(RS_CHAT_TYPE_DISTANT);
-		break;
-	}
+	uint32_t maxMessageSize = this->maxMessageSize();
 
 	int charRemains = 0;
 	if (maxMessageSize > 0) {
@@ -1561,7 +1568,8 @@ void ChatWidget::addExtraPicture()
 	QString file;
 	if (misc::getOpenFileName(window(), RshareSettings::LASTDIR_IMAGES, tr("Load Picture File"), "Pictures (*.png *.xpm *.jpg *.jpeg)", file)) {
 		QString encodedImage;
-		if (RsHtml::makeEmbeddedImage(file, encodedImage, 640*480)) {
+		uint32_t maxMessageSize = this->maxMessageSize();
+		if (RsHtml::makeEmbeddedImage(file, encodedImage, 640*480, maxMessageSize - 200)) {		//-200 for the html stuff
 			QTextDocumentFragment fragment = QTextDocumentFragment::fromHtml(encodedImage);
 			ui->chatTextEdit->textCursor().insertFragment(fragment);
 		}
