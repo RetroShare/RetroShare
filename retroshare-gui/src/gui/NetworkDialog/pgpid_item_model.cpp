@@ -290,27 +290,11 @@ void pgpid_item_model::data_updated(std::list<RsPgpId> &new_neighs)
     size_t old_size = neighs.size(), new_size = 0;
     std::list<RsPgpId> old_neighs = neighs;
 
-    //find all bad elements in list
-    std::list<RsPgpId> bad_elements;
-    for(std::list<RsPgpId>::iterator it = new_neighs.begin(); it != new_neighs.end(); ++it)
-    {
-        if (*it == rsPeers->getGPGOwnId())
-            bad_elements.push_back(*it);
-        RsPeerDetails detail;
-        if (!rsPeers->getGPGDetails(*it, detail))
-            bad_elements.push_back(*it);
-
-    }
-    //remove all  bad elements from list
-    for(std::list<RsPgpId>::iterator it = bad_elements.begin(); it != bad_elements.end(); ++it)
-    {
-        std::list<RsPgpId>::iterator it2 = std::find(new_neighs.begin(), new_neighs.end(), *it);
-        if(it2 != new_neighs.end())
-            new_neighs.remove(*it2);
-    }
     new_size = new_neighs.size();
     //set model data to new cleaned up data
     neighs = new_neighs;
+    neighs.sort();
+    neighs.unique(); //remove possible dups
 
     //reflect actual row count in model
     if(old_size < new_size)
@@ -326,7 +310,6 @@ void pgpid_item_model::data_updated(std::list<RsPgpId> &new_neighs)
         endRemoveRows();
     }
     //update data in ui, to avoid unnecessary redraw and ui updates, updating only changed elements
-    //i guessing what order is unchanged between rsPeers->getGPGAllList() calls
     //TODO: libretroshare should implement a way to obtain only changed elements via some signalling non-blocking api.
     {
         size_t ii1 = 0;
