@@ -95,10 +95,11 @@ StatisticsWindow::StatisticsWindow(QWidget *parent) :
 {
     ui->setupUi(this);
    
+	Settings->loadWidgetInformation(this);
+	
     initStackedPage();
     connect(ui->stackPages, SIGNAL(currentChanged(int)), this, SLOT(setNewPage(int)));
     ui->stackPages->setCurrentIndex(0);
-
 	int toolSize = Settings->getToolButtonSize();
 	ui->toolBar->setToolButtonStyle(Settings->getToolButtonStyle());
 	ui->toolBar->setIconSize(QSize(toolSize,toolSize));
@@ -108,6 +109,11 @@ StatisticsWindow::~StatisticsWindow()
 {
     delete ui;
     mInstance = NULL;
+}
+
+void StatisticsWindow::closeEvent (QCloseEvent * /*event*/)
+{
+	Settings->saveWidgetInformation(this);
 }
 
 void StatisticsWindow::changeEvent(QEvent *e)
@@ -147,9 +153,19 @@ void StatisticsWindow::initStackedPage()
   ui->stackPages->add(rttdlg = new RttStatistics(ui->stackPages),
                       action = createPageAction(QIcon(IMAGE_RTT), tr("RTT Statistics"), grp));
                    
-  ui->stackPages->add(dhtw = new DhtWindow(ui->stackPages),
+	bool showdht = true;
+	RsPeerDetails detail;
+	if (rsPeers->getPeerDetails(rsPeers->getOwnId(), detail))
+	{
+		if(detail.netMode == RS_NETMODE_HIDDEN)
+			showdht = false;
+	}
+	if(showdht)
+	{
+	ui->stackPages->add(dhtw = new DhtWindow(ui->stackPages),
                    action = createPageAction(QIcon(IMAGE_DHT), tr("DHT"), grp));
-
+	}
+	
    /*std::cerr << "Looking for interfaces in existing plugins:" << std::endl;
 	 for(int i = 0;i<rsPlugins->nbPlugins();++i)
 	 {

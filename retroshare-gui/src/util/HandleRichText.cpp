@@ -35,6 +35,8 @@
 #include "HandleRichText.h"
 #include "gui/RetroShareLink.h"
 #include "util/ObjectPainter.h"
+#include "util/imageutil.h"
+#include "util/rsscopetimer.h"
 
 #include <iostream>
 
@@ -227,6 +229,7 @@ bool RsHtml::canReplaceAnchor(QDomDocument &/*doc*/, QDomElement &/*element*/, c
 	switch (link.type()) {
 	case RetroShareLink::TYPE_UNKNOWN:
 	case RetroShareLink::TYPE_FILE:
+	case RetroShareLink::TYPE_FILE_TREE:
 	case RetroShareLink::TYPE_PERSON:
 	case RetroShareLink::TYPE_FORUM:
 	case RetroShareLink::TYPE_CHANNEL:
@@ -257,6 +260,7 @@ void RsHtml::anchorStylesheetForImg(QDomDocument &/*doc*/, QDomElement &/*elemen
 	switch (link.type()) {
 	case RetroShareLink::TYPE_UNKNOWN:
 	case RetroShareLink::TYPE_FILE:
+	case RetroShareLink::TYPE_FILE_TREE:
 	case RetroShareLink::TYPE_PERSON:
 	case RetroShareLink::TYPE_FORUM:
 	case RetroShareLink::TYPE_CHANNEL:
@@ -1105,7 +1109,7 @@ QString RsHtml::toHtml(QString text, bool realHtml)
 }
 
 /** Loads image and converts image to embedded image HTML fragment **/
-bool RsHtml::makeEmbeddedImage(const QString &fileName, QString &embeddedImage, const int maxPixels)
+bool RsHtml::makeEmbeddedImage(const QString &fileName, QString &embeddedImage, const int maxPixels, const int maxBytes)
 {
 	QImage image;
 
@@ -1113,54 +1117,15 @@ bool RsHtml::makeEmbeddedImage(const QString &fileName, QString &embeddedImage, 
 		fprintf (stderr, "RsHtml::makeEmbeddedImage() - image \"%s\" can't be load\n", fileName.toLatin1().constData());
 		return false;
 	}
-	return RsHtml::makeEmbeddedImage(image, embeddedImage, maxPixels);
+	return RsHtml::makeEmbeddedImage(image, embeddedImage, maxPixels, maxBytes);
 }
 
 /** Converts image to embedded image HTML fragment **/
-bool RsHtml::makeEmbeddedImage(const QImage &originalImage, QString &embeddedImage, const int maxPixels)
+bool RsHtml::makeEmbeddedImage(const QImage &originalImage, QString &embeddedImage, const int maxPixels, const int maxBytes)
 {
-	QByteArray bytearray;
-	QBuffer buffer(&bytearray);
-	QImage resizedImage;
-	const QImage *image = &originalImage;
-
-	if (maxPixels > 0) {
-		QSize imgSize = originalImage.size();
-		if ((imgSize.height() * imgSize.width()) > maxPixels) {
-			// image is too large - resize keeping aspect ratio
-			QSize newSize;
-			newSize.setWidth(int(qSqrt((maxPixels * imgSize.width()) / imgSize.height())));
-			newSize.setHeight(int((imgSize.height() * newSize.width()) / imgSize.width()));
-
-			// ask user
-			QMessageBox msgBox;
-			msgBox.setText(QString(QApplication::translate("RsHtml", "Image is oversized for transmission.\nReducing image to %1x%2 pixels?")).arg(newSize.width()).arg(newSize.height()));
-			msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
-			msgBox.setDefaultButton(QMessageBox::Ok);
-			if (msgBox.exec() != QMessageBox::Ok) {
-				return false;
-			}
-			resizedImage = originalImage.scaled(newSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-			image = &resizedImage;
-		}
-	}
-
-	if (buffer.open(QIODevice::WriteOnly)) {
-		if (image->save(&buffer, "PNG")) {
-			QByteArray encodedByteArray = bytearray.toBase64();
-
-			embeddedImage = "<img src=\"data:image/png;base64,";
-			embeddedImage.append(encodedByteArray);
-			embeddedImage.append("\">");
-		} else {
-            //fprintf (stderr, "RsHtml::makeEmbeddedImage() - image can't be saved to buffer\n");
-			return false;
-		}
-	} else {
-		fprintf (stderr, "RsHtml::makeEmbeddedImage() - buffer can't be opened\n");
-		return false;
-	}
-	return true;
+	RsScopeTimer s("Embed image");
+	QImage opt;
+	return ImageUtil::optimizeSize(embeddedImage, originalImage, opt, maxPixels, maxBytes);
 }
 
 QString RsHtml::plainText(const QString &text)

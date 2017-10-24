@@ -33,13 +33,15 @@
 
 #include "SharedFilesDialog.h"
 #include "gui/notifyqt.h"
+#include "gui/MainWindow.h"
 #include "gui/RemoteDirModel.h"
 #include "gui/RetroShareLink.h"
 #include "gui/ShareManager.h"
 #include "gui/common/PeerDefs.h"
-#include "gui/common/RsCollectionFile.h"
+#include "gui/common/RsCollection.h"
 #include "gui/msgs/MessageComposer.h"
 #include "gui/settings/AddFileAssociationDialog.h"
+#include "gui/gxschannels/GxsChannelDialog.h"
 #include "gui/settings/rsharesettings.h"
 #include "util/QtVersion.h"
 #include "util/RsAction.h"
@@ -61,6 +63,7 @@
 #define IMAGE_OPENFOLDER     ":/images/folderopen.png"
 #define IMAGE_OPENFILE       ":/images/fileopen.png"
 #define IMAGE_LIBRARY        ":/images/library.png"
+#define IMAGE_CHANNEL        ":/images/channels32.png"
 #define IMAGE_COLLCREATE     ":/images/library_add.png"
 #define IMAGE_COLLMODIF      ":/images/library_edit.png"
 #define IMAGE_COLLVIEW       ":/images/library_view.png"
@@ -154,9 +157,6 @@ SharedFilesDialog::SharedFilesDialog(RetroshareDirModel *_tree_model,RetroshareD
 	connect(notify, SIGNAL(filesPreModChanged(bool)), this, SLOT(preModDirectories(bool)));
 	connect(notify, SIGNAL(filesPostModChanged(bool)), this, SLOT(postModDirectories(bool)));
 
-//==	connect(ui.localButton, SIGNAL(toggled(bool)), this, SLOT(showFrame(bool)));
-//==	connect(ui.remoteButton, SIGNAL(toggled(bool)), this, SLOT(showFrameRemote(bool)));
-//==	connect(ui.splittedButton, SIGNAL(toggled(bool)), this, SLOT(showFrameSplitted(bool)));
 	connect(ui.viewType_CB, SIGNAL(currentIndexChanged(int)), this, SLOT(changeCurrentViewModel(int)));
 
 	connect( ui.dirTreeView, SIGNAL( customContextMenuRequested( QPoint ) ), this,  SLOT( spawnCustomPopupMenu( QPoint ) ) );
@@ -499,36 +499,24 @@ void RemoteSharedFilesDialog::spawnCustomPopupMenu( QPoint point )
 
 	QMenu contextMnu( this ) ;
 
-	//bool bIsRsColl = currentFile.endsWith(RsCollectionFile::ExtensionString);
 	collCreateAct->setEnabled(true);
-	//collModifAct->setEnabled(bIsRsColl);
-	//collViewAct->setEnabled(bIsRsColl);
 	collOpenAct->setEnabled(true);
 
 	QMenu collectionMenu(tr("Collection"), this);
 	collectionMenu.setIcon(QIcon(IMAGE_LIBRARY));
 	collectionMenu.addAction(collCreateAct);
-	//collectionMenu.addAction(collModifAct);
-	//collectionMenu.addAction(collViewAct);
 	collectionMenu.addAction(collOpenAct);
 
 	QAction *downloadAct = new QAction(QIcon(IMAGE_DOWNLOAD), tr( "Download" ), &contextMnu ) ;
 	connect( downloadAct , SIGNAL( triggered() ), this, SLOT( downloadRemoteSelected() ) ) ;
 	contextMnu.addAction( downloadAct) ;
 
-	if ( type == DIR_TYPE_FILE ) {
-		//QAction *copyremotelinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Copy retroshare Link" ), &contextMnu ) ;
-		//connect( copyremotelinkAct , SIGNAL( triggered() ), this, SLOT( copyLink() ) ) ;
+	contextMnu.addSeparator() ;//------------------------------------
+	contextMnu.addAction( copylinkAct) ;
+	contextMnu.addAction( sendlinkAct) ;
+	contextMnu.addSeparator() ;//------------------------------------
+	contextMnu.addAction(QIcon(IMAGE_MSG), tr("Recommend in a message to..."), this, SLOT(recommendFilesToMsg())) ;
 
-		//QAction *sendremotelinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Send retroshare Link" ), &contextMnu ) ;
-		//connect( sendremotelinkAct , SIGNAL( triggered() ), this, SLOT( sendremoteLinkTo(  ) ) ) ;
-
-		contextMnu.addSeparator() ;//------------------------------------
-		contextMnu.addAction( copylinkAct) ;
-		contextMnu.addAction( sendlinkAct) ;
-		contextMnu.addSeparator() ;//------------------------------------
-		contextMnu.addAction(QIcon(IMAGE_MSG), tr("Recommend in a message to"), this, SLOT(recommendFilesToMsg())) ;
-	}//if (type == DIR_TYPE_FILE)
 
 	contextMnu.addSeparator() ;//------------------------------------
 	contextMnu.addMenu(&collectionMenu) ;
@@ -542,7 +530,7 @@ QModelIndexList SharedFilesDialog::getSelected()
 	QModelIndexList proxyList ;
 	for (QModelIndexList::iterator index = list.begin(); index != list.end(); ++index ) {
 		proxyList.append(proxyModel->mapToSource(*index)) ;
-	}//for (QModelIndexList::iterator index
+	}
 
 	return proxyList ;
 }
@@ -567,62 +555,59 @@ void RemoteSharedFilesDialog::downloadRemoteSelected()
 	model -> downloadSelected(lst) ;
 }
 
-void SharedFilesDialog::copyLink (const QModelIndexList& lst, bool remote)
+void SharedFilesDialog::copyLinks(const QModelIndexList& lst, bool remote,QList<RetroShareLink>& urls,bool& has_unhashed_files)
 {
-    std::vector<DirDetails> dirVec;
+	std::vector<DirDetails> dirVec;
 
-	 model->getDirDetailsFromSelect(lst, dirVec);
+	model->getDirDetailsFromSelect(lst, dirVec);
 
-    QList<RetroShareLink> urls ;
+	has_unhashed_files = false;
 
-    bool has_unhashed_files = false;
+	for (int i = 0, n = dirVec.size(); i < n; ++i)
+	{
+		const DirDetails& details = dirVec[i];
 
-    for (int i = 0, n = dirVec.size(); i < n; ++i)
-    {
-        const DirDetails& details = dirVec[i];
+		if (details.type == DIR_TYPE_DIR)
+		{
+			FileTree *ft = FileTree::create(details,remote) ;
 
-        if (details.type == DIR_TYPE_DIR)
-        {
-            for(uint32_t j=0;j<details.children.size();++j)
-            {
-                const DirStub& dirStub = details.children[j];
+			std::cerr << "Created collection file tree:" << std::endl;
+			ft->print();
 
-                DirDetails details;
-                FileSearchFlags flags = remote?RS_FILE_HINTS_REMOTE:RS_FILE_HINTS_LOCAL ;
+			QString dir_name = QDir(QString::fromUtf8(details.name.c_str())).dirName();
 
-                // do not recursive copy sub dirs.
-                if (!rsFiles->RequestDirDetails(dirStub.ref, details, flags) || details.type != DIR_TYPE_FILE)
-                    continue;
+			RetroShareLink link = RetroShareLink::createCollection(dir_name,ft->mTotalSize,ft->mTotalFiles,QString::fromStdString(ft->toRadix64())) ;
 
-                if(details.hash.isNull())
-                {
-                    has_unhashed_files = true;
-                    continue;
-                }
+			if(link.valid())
+				urls.push_back(link) ;
 
-                RetroShareLink link = RetroShareLink::createFile(QString::fromUtf8(details.name.c_str()), details.count, details.hash.toStdString().c_str());
-                if (link.valid()) {
-                    urls.push_back(link) ;
-                }
-            }
-        }
-        else
-        {
-            if(details.hash.isNull())
+			delete ft ;
+		}
+		else
+		{
+			if(details.hash.isNull())
 			{
 				has_unhashed_files = true;
 				continue;
 			}
-            RetroShareLink link = RetroShareLink::createFile(QString::fromUtf8(details.name.c_str()), details.count, details.hash.toStdString().c_str());
-            if (link.valid()) {
-                urls.push_back(link) ;
-            }
-        }
-    }
+			RetroShareLink link = RetroShareLink::createFile(QString::fromUtf8(details.name.c_str()), details.count, details.hash.toStdString().c_str());
+			if (link.valid()) {
+				urls.push_back(link) ;
+			}
+		}
+	}
+}
+
+void SharedFilesDialog::copyLink (const QModelIndexList& lst, bool remote)
+{
+	QList<RetroShareLink> urls ;
+	bool has_unhashed_files = false;
+
+	copyLinks(lst,remote,urls,has_unhashed_files) ;
     RSLinkClipboard::copyLinks(urls) ;
 
     if(has_unhashed_files)
-        QMessageBox::warning(NULL,tr("Some files have been omitted"),tr("Some files have been omitted because their hash is not available yet.")) ;
+        QMessageBox::warning(NULL,tr("Some files have been omitted"),tr("Some files have been omitted because they have not been indexed yet.")) ;
 }
 
 void SharedFilesDialog::copyLink()
@@ -692,11 +677,11 @@ void SharedFilesDialog::collModif()
 	QFileInfo qinfo;
 	qinfo.setFile(QString::fromUtf8(path.c_str()));
 	if (qinfo.exists()) {
-		if (qinfo.absoluteFilePath().endsWith(RsCollectionFile::ExtensionString)) {
-			RsCollectionFile collection;
+		if (qinfo.absoluteFilePath().endsWith(RsCollection::ExtensionString)) {
+			RsCollection collection;
 			collection.openColl(qinfo.absoluteFilePath());
-		}//if (qinfo.absoluteFilePath().endsWith(RsCollectionFile::ExtensionString))
-	}//if (qinfo.exists())
+		}
+	}
 }
 
 void SharedFilesDialog::collView()
@@ -722,11 +707,11 @@ void SharedFilesDialog::collView()
 	QFileInfo qinfo;
 	qinfo.setFile(QString::fromUtf8(path.c_str()));
 	if (qinfo.exists()) {
-		if (qinfo.absoluteFilePath().endsWith(RsCollectionFile::ExtensionString)) {
-			RsCollectionFile collection;
+		if (qinfo.absoluteFilePath().endsWith(RsCollection::ExtensionString)) {
+			RsCollection collection;
 			collection.openColl(qinfo.absoluteFilePath(), true);
-		}//if (qinfo.absoluteFilePath().endsWith(RsCollectionFile::ExtensionString))
-	}//if (qinfo.exists())
+		}
+	}
 }
 
 void SharedFilesDialog::collOpen()
@@ -752,8 +737,8 @@ void SharedFilesDialog::collOpen()
 			QFileInfo qinfo;
 			qinfo.setFile(QString::fromUtf8(path.c_str()));
 			if (qinfo.exists()) {
-				if (qinfo.absoluteFilePath().endsWith(RsCollectionFile::ExtensionString)) {
-					RsCollectionFile collection;
+				if (qinfo.absoluteFilePath().endsWith(RsCollection::ExtensionString)) {
+					RsCollection collection;
 					if (collection.load(qinfo.absoluteFilePath())) {
 						collection.downloadFiles();
 						return;
@@ -763,10 +748,10 @@ void SharedFilesDialog::collOpen()
 		}
 	}
 
-	RsCollectionFile collection;
+	RsCollection collection;
 	if (collection.load(this)) {
 		collection.downloadFiles();
-	}//if (collection.load(this))
+	}
 }
 
 void LocalSharedFilesDialog::playselectedfiles()
@@ -995,7 +980,7 @@ void LocalSharedFilesDialog::spawnCustomPopupMenu( QPoint point )
 
 	QMenu contextMnu(this) ;
 
-	bool bIsRsColl = currentFile.endsWith(RsCollectionFile::ExtensionString);
+	bool bIsRsColl = currentFile.endsWith(RsCollection::ExtensionString);
 	collCreateAct->setEnabled(true);
 	collModifAct->setEnabled(bIsRsColl);
 	collViewAct->setEnabled(bIsRsColl);
@@ -1011,6 +996,7 @@ void LocalSharedFilesDialog::spawnCustomPopupMenu( QPoint point )
 	switch (type) {
 		case DIR_TYPE_DIR :
 			contextMnu.addAction(openfolderAct) ;
+			contextMnu.addAction(copylinkAct) ;
 			contextMnu.addSeparator() ;//------------------------------------
 			contextMnu.addMenu(&collectionMenu) ;
 		break ;
@@ -1023,14 +1009,51 @@ void LocalSharedFilesDialog::spawnCustomPopupMenu( QPoint point )
 			contextMnu.addSeparator() ;//------------------------------------
 			contextMnu.addMenu(&collectionMenu) ;
 			contextMnu.addSeparator() ;//------------------------------------
-			contextMnu.addAction(QIcon(IMAGE_MSG), tr("Recommend in a message to"), this, SLOT(recommendFilesToMsg())) ;
+			contextMnu.addAction(QIcon(IMAGE_MSG), tr("Recommend in a message to..."), this, SLOT(recommendFilesToMsg())) ;
 		break ;
 
 		default :
 		return ;
-	}//switch (type)
+	}
 
-	contextMnu.exec(QCursor::pos()) ;
+	GxsChannelDialog *channelDialog = dynamic_cast<GxsChannelDialog*>(MainWindow::getPage(MainWindow::Channels));
+
+	if(channelDialog != NULL)
+	{
+		QMenu shareChannelMenu(tr("Share on channel...")) ;
+		shareChannelMenu.setIcon(QIcon(IMAGE_CHANNEL));
+
+		std::list<RsGroupMetaData> grp_metas ;
+		channelDialog->getGroupList(grp_metas) ;
+
+		for(auto it(grp_metas.begin());it!=grp_metas.end();++it)
+			if(IS_GROUP_PUBLISHER((*it).mSubscribeFlags))
+				shareChannelMenu.addAction(QString::fromUtf8((*it).mGroupName.c_str()), this, SLOT(shareOnChannel()))->setData(QString::fromStdString((*it).mGroupId.toStdString())) ;
+
+		contextMnu.addMenu(&shareChannelMenu) ;
+		contextMnu.exec(QCursor::pos()) ;		// added here because the shareChannelMenu QMenu object is deleted afterwards
+	}
+	else
+		contextMnu.exec(QCursor::pos()) ;
+}
+
+void LocalSharedFilesDialog::shareOnChannel()
+{
+	RsGxsGroupId groupId(qobject_cast<QAction*>(sender())->data().toString().toStdString());
+
+	GxsChannelDialog *channelDialog = dynamic_cast<GxsChannelDialog*>(MainWindow::getPage(MainWindow::Channels));
+
+	if(channelDialog == NULL)
+		return ;
+
+	std::list<DirDetails> files_info ;
+
+	QList<RetroShareLink> file_links_list ;
+	bool has_unhashed_files ;
+
+	copyLinks(getSelected(),false,file_links_list,has_unhashed_files) ;
+
+	channelDialog->shareOnChannel(groupId,file_links_list) ;
 }
 
 //============================================================================

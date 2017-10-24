@@ -169,6 +169,9 @@
         <property name="toolTip">
          <string>Post to Channel</string>
         </property>
+        <property name="text">
+         <string>Add new post</string>
+        </property>
         <property name="icon">
          <iconset resource="../images.qrc">
           <normaloff>:/images/mail_send.png</normaloff>:/images/mail_send.png</iconset>
@@ -178,6 +181,9 @@
           <width>32</width>
           <height>16</height>
          </size>
+        </property>
+        <property name="toolButtonStyle">
+         <enum>Qt::ToolButtonTextBesideIcon</enum>
         </property>
         <property name="autoRaise">
          <bool>true</bool>

@@ -65,7 +65,7 @@ PGPKeyDialog::PGPKeyDialog(const RsPeerId& id, const RsPgpId &pgp_id, QWidget *p
 {
     /* Invoke Qt Designer generated QObject setup routine */
     ui.setupUi(this);
-
+	Settings->loadWidgetInformation(this);
 //	 if(id.isNull())
 //		 ui._useOldFormat_CB->setChecked(true) ;
 //	 else
@@ -100,6 +100,7 @@ PGPKeyDialog::PGPKeyDialog(const RsPeerId& id, const RsPgpId &pgp_id, QWidget *p
 
 PGPKeyDialog::~PGPKeyDialog()
 {
+	Settings->saveWidgetInformation(this);
         QMap<RsPgpId, PGPKeyDialog*>::iterator it = instances_pgp.find(pgpId);
         if (it != instances_pgp.end())
             instances_pgp.erase(it);

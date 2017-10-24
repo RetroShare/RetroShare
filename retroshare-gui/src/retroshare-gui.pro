@@ -476,7 +476,6 @@ HEADERS +=  rshare.h \
             gui/common/ElidedLabel.h \
             gui/common/vmessagebox.h \
             gui/common/RsUrlHandler.h \
-            gui/common/RsCollectionFile.h \
             gui/common/RsCollectionDialog.h \
             gui/common/rwindow.h \
             gui/common/html.h \
@@ -568,7 +567,7 @@ HEADERS +=  rshare.h \
     util/imageutil.h \
     gui/NetworkDialog/pgpid_item_model.h \
     gui/NetworkDialog/pgpid_item_proxy.h
-
+    gui/common/RsCollection.h
 #            gui/ForumsDialog.h \
 #            gui/forums/ForumDetails.h \
 #            gui/forums/EditForumDetails.h \
@@ -793,7 +792,6 @@ SOURCES +=  main.cpp \
             gui/common/RSGraphWidget.cpp \
             gui/common/ElidedLabel.cpp \
             gui/common/vmessagebox.cpp \
-            gui/common/RsCollectionFile.cpp \
             gui/common/RsCollectionDialog.cpp \
             gui/common/RsUrlHandler.cpp \
             gui/common/rwindow.cpp \
@@ -930,7 +928,7 @@ SOURCES +=  main.cpp \
     util/imageutil.cpp \
     gui/NetworkDialog/pgpid_item_model.cpp \
     gui/NetworkDialog/pgpid_item_proxy.cpp
-
+    gui/common/RsCollection.cpp
 #            gui/ForumsDialog.cpp \
 #            gui/forums/ForumDetails.cpp \
 #            gui/forums/EditForumDetails.cpp \

@@ -47,6 +47,7 @@ file_lists {
 			file_sharing/directory_updater.h \
 			file_sharing/rsfilelistitems.h \
 			file_sharing/dir_hierarchy.h \
+			file_sharing/file_tree.h \
 			file_sharing/file_sharing_defaults.h
 
 	SOURCES *= file_sharing/p3filelists.cc \
@@ -55,6 +56,7 @@ file_lists {
 			file_sharing/directory_storage.cc \
 			file_sharing/directory_updater.cc \
 			file_sharing/dir_hierarchy.cc \
+			file_sharing/file_tree.cc \
 			file_sharing/rsfilelistitems.cc
 }
 
@@ -916,7 +918,7 @@ test_bitdht {
 ################################# Android #####################################
 
 android-g++ {
-## ifaddrs is missing on Android add them don't use the one from
+## ifaddrs is missing on Android to add them don't use the one from
 ## https://github.com/morristech/android-ifaddrs
 ## because they crash, use QNetworkInterface from Qt instead
     CONFIG *= qt

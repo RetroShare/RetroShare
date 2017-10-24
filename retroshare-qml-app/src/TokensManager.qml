@@ -28,6 +28,13 @@ QtObject
 	property var tokens: ({})
 	function registerToken(token, callback)
 	{
+		if(!maybeToken(token))
+		{
+			console.error("TokensManager attempt to register a non int token")
+			console.trace()
+			return
+		}
+
 		if (Array.isArray(tokens[token]))
 		{
 			if(QT_DEBUG)
@@ -72,6 +79,7 @@ QtObject
 		delete tokens[token]
 	}
 	function isTokenValid(token) { return Array.isArray(tokens[token]) }
+	function maybeToken(value) { return Number(value) === parseInt(value) }
 
 	property alias refreshInterval: refreshTokensTimer.interval
 
@@ -81,16 +89,22 @@ QtObject
 
 		onResponseReceived:
 		{
+			/* TODO: This is vital enough and if some fails appens can create
+			 * difficult to debug unexpected behaviours in any place of the app.
+			 * We should do some more checking on the data received here
+			 */
 			var jsonData = JSON.parse(msg).data
+			// console.log("refreshTokensApi got expired tokens:", msg)
 			var arrayLength = jsonData.length
-			for (var i = 0; i < arrayLength; i++)
-			{
+			for (var i = 0; i < arrayLength; ++i)
 				tokensManager.tokenExpire(jsonData[i])
-			}
 		}
 
 		Component.onCompleted:
 		{
+			/* Disable debugging only for this instance of LibresapiLocalClient
+			 * as it is particularly noisy and repetitive, and not useful in
+			 * most of the cases */
 			if(QT_DEBUG) debug = false
 
 			openConnection(apiSocketPath)
@@ -99,8 +113,13 @@ QtObject
 
 		function refreshTokens()
 		{
-			request("/statetokenservice/*",
-					'['+Object.keys(tokensManager.tokens)+']')
+			var tokensArr = Object.keys(tokensManager.tokens)
+
+			// Filter to avoid "undefined" being sent toghether with tokens
+			var tokensStr = '['+ tokensArr.filter(maybeToken) +']'
+
+			// console.log("refreshTokensApi checking tokens:", tokensStr)
+			request("/statetokenservice/*", tokensStr)
 		}
 	}
 

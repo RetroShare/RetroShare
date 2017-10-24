@@ -50,6 +50,8 @@ public:
 	QColor textColorQuote() const { return highliter->textColorQuote();}
 	bool onlyPlainText() const {return mOnlyPlainText;}
 
+	void setMaxBytes(int limit) {mMaxBytes = limit;}
+
 public slots:
 	void setTextColorQuote(QColor textColorQuote) { highliter->setTextColorQuote(textColorQuote);}
 	void setOnlyPlainText(bool bOnlyPlainText) {mOnlyPlainText = bOnlyPlainText;}
@@ -83,6 +85,7 @@ private:
 	QList<QAction*> mContextMenuActions;
 	RsSyntaxHighlighter *highliter;
 	bool mOnlyPlainText;
+	int mMaxBytes = -1;	//limit content size, for pasting images
 };
 
 #endif // MIMETEXTEDIT_H

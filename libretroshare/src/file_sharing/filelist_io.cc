@@ -22,11 +22,21 @@
  * Please report all bugs and problems to "retroshare.project@gmail.com".
  *
  */
+
+#include <sstream>
 #include "retroshare/rsids.h"
 #include "pqi/authssl.h"
 #include "util/rsdir.h"
+#include "util/rsprint.h"
 #include "serialiser/rsbaseserial.h"
 #include "filelist_io.h"
+
+FileListIO::read_error::read_error(unsigned char *sec,uint32_t size,uint32_t offset,uint8_t expected_tag)
+{
+	std::ostringstream s ;
+	s << "At offset " << offset << "/" << size << ": expected section tag " << std::hex << (int)expected_tag << std::dec << " but got " << RsUtil::BinToHex(&sec[offset],std::min((int)size-(int)offset, 15)) << "..." << std::endl;
+	err_string = s.str();
+}
 
 template<> bool FileListIO::serialise(unsigned char *buff,uint32_t size,uint32_t& offset,const uint32_t     & val)  { return setRawUInt32(buff,size,&offset,val) ; }
 template<> bool FileListIO::serialise(unsigned char *buff,uint32_t size,uint32_t& offset,const uint64_t     & val)  { return setRawUInt64(buff,size,&offset,val) ; }

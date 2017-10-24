@@ -55,7 +55,7 @@ while [ ${#} -gt 0 ]; do
 done
 
 if test "${dist}" = "" ; then
-	dist="precise trusty vivid xenial zesty"
+	dist="precise trusty xenial zesty artful"
 fi
 
 echo Attempting to get revision number...
@@ -121,23 +121,11 @@ for i in ${dist}; do
     echo copying changelog for ${i}
     sed -e s/XXXXXX/"${rev}"/g -e s/YYYYYY/"${i}"/g ../changelog > debian/changelog
 
-    if test "${i}" = "lucid" ; then
-        cp ../control.ubuntu_lucid debian/control
-    elif test "${i}" = "zesty" ; then
-        cp ../control.zesty debian/control
-    elif test "${i}" = "squeeze" ; then
-        cp ../control.squeeze_bubba3 debian/control
-    elif test "${i}" = "precise" ; then
-        cp ../control.precise debian/control
-    elif test "${i}" = "xenial" ; then
-        cp ../control.xenial debian/control
-    elif test "${i}" = "yakkety" ; then
-        cp ../control.yakkety debian/control
-    elif test "${i}" = "stretch" ; then
-        cp ../control.${i} debian/control
-    elif test "${i}" = "jessie" ; then
-        cp ../control.${i} debian/control
+    if test -f ../control."${i}" ; then
+		echo \/\!\\ Using specific control file for distribution "${i}"
+        cp ../control."${i}" debian/control
     else
+		echo Using standard control file control."${i}" for distribution "${i}"
         cp ../debian/control debian/control
     fi
 
