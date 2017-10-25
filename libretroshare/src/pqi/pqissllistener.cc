@@ -378,6 +378,11 @@ int	pqissllistenbase::acceptconnection()
         if(rsBanList != NULL && !rsBanList->isAddressAccepted(remote_addr, RSBANLIST_CHECKING_FLAGS_BLACKLIST))
         {
             std::cerr << " => early rejected at this point, because of blacklist." << std::endl;
+#ifndef WINDOWS_SYS
+            close(fd);
+#else
+            closesocket(fd);
+#endif
             return false ;
         }
         else
