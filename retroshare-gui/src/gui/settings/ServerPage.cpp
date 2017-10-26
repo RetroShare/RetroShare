@@ -152,7 +152,6 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
     connect( ui.allowIpDeterminationCB, SIGNAL( toggled( bool ) ), this, SLOT( toggleIpDetermination(bool) ) );
     connect( ui.cleanKnownIPs_PB, SIGNAL( clicked( ) ), this, SLOT( clearKnownAddressList() ) );
     connect( ui.testIncoming_PB, SIGNAL( clicked( ) ), this, SLOT( saveAndTestInProxy() ) );
-    connect( ui.showDiscStatusBar,SIGNAL(toggled(bool)),this,SLOT(updateShowDiscStatusBar())) ;
     connect( ui.netInterfaces_CB,SIGNAL(activated(int)),this,SLOT(updatePreferredNetInterface())) ;
 
 #ifdef SERVER_DEBUG
