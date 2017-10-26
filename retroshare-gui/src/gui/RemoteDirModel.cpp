@@ -26,7 +26,7 @@
 #include <QTimer>
 
 #include <retroshare-gui/RsAutoUpdatePage.h>
-#include <gui/common/RsCollectionFile.h>
+#include <gui/common/RsCollection.h>
 #include <gui/common/RsUrlHandler.h>
 #include <gui/common/FilesDefs.h>
 #include <gui/common/GroupDefs.h>
@@ -87,7 +87,11 @@ void RetroshareDirModel::treeStyle()
 	                     QIcon::Normal, QIcon::On);
 	peerIcon = QIcon(":/images/user/identity16.png");
 }
-
+void TreeStyle_RDM::update()
+{
+	preMods() ;
+	postMods() ;
+}
 void TreeStyle_RDM::updateRef(const QModelIndex& indx) const
 {
     rsFiles->requestDirUpdate(indx.internalPointer()) ;
@@ -1061,7 +1065,7 @@ void RetroshareDirModel::createCollectionFile(QWidget *parent, const QModelIndex
 	std::vector <DirDetails> dirVec;
 	getDirDetailsFromSelect(list, dirVec);
 
-	RsCollectionFile(dirVec).openNewColl(parent);
+	RsCollection(dirVec).openNewColl(parent);
 }
 
 void RetroshareDirModel::downloadSelected(const QModelIndexList &list)

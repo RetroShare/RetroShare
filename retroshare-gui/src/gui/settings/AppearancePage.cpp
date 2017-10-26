@@ -301,8 +301,15 @@ void AppearancePage::load()
 	whileBlocking(ui.checkBoxDisableSysTrayToolTip)->setChecked(Settings->valueFromGroup("StatusBar", "DisableSysTrayToolTip", QVariant(false)).toBool());
 	whileBlocking(ui.checkBoxShowStatusStatus)->  setChecked(Settings->valueFromGroup("StatusBar", "ShowStatus",  QVariant(true)).toBool());
 	whileBlocking(ui.checkBoxShowPeerStatus)->    setChecked(Settings->valueFromGroup("StatusBar", "ShowPeer",    QVariant(true)).toBool());
-	whileBlocking(ui.checkBoxShowNATStatus)->     setChecked(Settings->valueFromGroup("StatusBar", "ShowNAT",     QVariant(true)).toBool());
-	whileBlocking(ui.checkBoxShowDHTStatus)->     setChecked(Settings->valueFromGroup("StatusBar", "ShowDHT",     QVariant(true)).toBool());
+	if(MainWindow::hiddenmode)	{
+		whileBlocking(ui.checkBoxShowNATStatus)->     setChecked(0);
+		whileBlocking(ui.checkBoxShowDHTStatus)->     setChecked(0);
+		ui.checkBoxShowNATStatus->setVisible(false);
+		ui.checkBoxShowDHTStatus->setVisible(false);
+	} else {
+		whileBlocking(ui.checkBoxShowNATStatus)->     setChecked(Settings->valueFromGroup("StatusBar", "ShowNAT",     QVariant(true)).toBool());
+		whileBlocking(ui.checkBoxShowDHTStatus)->     setChecked(Settings->valueFromGroup("StatusBar", "ShowDHT",     QVariant(true)).toBool());
+	}
 	whileBlocking(ui.checkBoxShowHashingStatus)-> setChecked(Settings->valueFromGroup("StatusBar", "ShowHashing", QVariant(true)).toBool());
 	whileBlocking(ui.checkBoxShowDiscStatus)->    setChecked(Settings->valueFromGroup("StatusBar", "ShowDisc",    QVariant(true)).toBool());
 	whileBlocking(ui.checkBoxShowRateStatus)->    setChecked(Settings->valueFromGroup("StatusBar", "ShowRate",    QVariant(true)).toBool());

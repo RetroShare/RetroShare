@@ -70,8 +70,8 @@
  * #define DEBUG_DWLQUEUE 1
  *****/
 
-static const int32_t SAVE_TRANSFERS_DELAY 			= 301	; // save transfer progress every 301 seconds.
-static const int32_t INACTIVE_CHUNKS_CHECK_DELAY 	= 240	; // time after which an inactive chunk is released
+static const int32_t SAVE_TRANSFERS_DELAY 			= 301 ; // save transfer progress every 301 seconds.
+static const int32_t INACTIVE_CHUNKS_CHECK_DELAY 	= 240 ; // time after which an inactive chunk is released
 static const int32_t MAX_TIME_INACTIVE_REQUEUED 	= 120 ; // time after which an inactive ftFileControl is bt-queued
 
 static const int32_t FT_FILECONTROL_QUEUE_ADD_END 			= 0 ;
@@ -222,8 +222,8 @@ void ftController::data_tick()
 		usleep(1*1000*1000); // 1 sec
 
 #ifdef CONTROL_DEBUG
-		std::cerr << "ftController::run()";
-		std::cerr << std::endl;
+		//std::cerr << "ftController::run()";
+		//std::cerr << std::endl;
 #endif
 		bool doPending = false;
 		{
@@ -234,14 +234,14 @@ void ftController::data_tick()
 		time_t now = time(NULL) ;
 		if(now > last_save_time + SAVE_TRANSFERS_DELAY)
 		{
-			searchForDirectSources() ;
-
 			IndicateConfigChanged() ;
 			last_save_time = now ;
 		}
 
 		if(now > last_clean_time + INACTIVE_CHUNKS_CHECK_DELAY)
 		{
+			searchForDirectSources() ;
+
 			RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 
 			for(std::map<RsFileHash,ftFileControl*>::iterator it(mDownloads.begin());it!=mDownloads.end();++it)
@@ -280,12 +280,24 @@ void ftController::data_tick()
 
 void ftController::searchForDirectSources()
 {
+#ifdef CONTROL_DEBUG
+	std::cerr << "ftController::searchForDirectSources()" << std::endl;
+#endif
 	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
-	if (!mSearch) return;
+	if (!mSearch)
+	{
+#ifdef CONTROL_DEBUG
+		std::cerr << "  search module not available!" << std::endl;
+#endif
+		return;
+	}
 
 	for(std::map<RsFileHash,ftFileControl*>::iterator it(mDownloads.begin()); it != mDownloads.end(); ++it )
 		if(it->second->mState != ftFileControl::QUEUED && it->second->mState != ftFileControl::PAUSED )
 		{
+#ifdef CONTROL_DEBUG
+			std::cerr << "  file " << it->first << ":" << std::endl;
+#endif
 			FileInfo info ;	// Info needs to be re-allocated each time, to start with a clear list of peers (it's not cleared down there)
 
 			if( mSearch->search(it->first, RS_FILE_HINTS_REMOTE | RS_FILE_HINTS_SPEC_ONLY, info) )
@@ -300,8 +312,19 @@ void ftController::searchForDirectSources()
 					if( bAllowDirectDL )
 						if( it->second->mTransfer->addFileSource(pit->peerId) ) /* if the sources don't exist already - add in */
 							setPeerState( it->second->mTransfer, pit->peerId, FT_CNTRL_STANDARD_RATE, mServiceCtrl->isPeerConnected(mFtServiceType, pit->peerId) );
+#ifdef CONTROL_DEBUG
+					std::cerr << "    found source " << pit->peerId << ", allowDirectDL=" << bAllowDirectDL << ". " << (bAllowDirectDL?"adding":"not adding") << std::endl;
+#endif
 				}
+#ifdef CONTROL_DEBUG
+			else
+				std::cerr << "    search returned empty.: " << std::endl;
+#endif
 		}
+#ifdef CONTROL_DEBUG
+		else
+			std::cerr << "  file " << it->first << ": state is " << it->second->mState << ": ignored." << std::endl;
+#endif
 }
 
 void ftController::tickTransfers()
@@ -311,7 +334,7 @@ void ftController::tickTransfers()
 	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 
 #ifdef CONTROL_DEBUG
-	std::cerr << "ticking transfers." << std::endl ;
+	//	std::cerr << "ticking transfers." << std::endl ;
 #endif
 	// Collect all non queued files.
 	//
@@ -803,62 +826,63 @@ bool 	ftController::isActiveAndNoPending()
 
 bool	ftController::handleAPendingRequest()
 {
-	ftPendingRequest req;
-	{ 
-		RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
+	uint32_t nb_requests_handled = 0 ;
+	static const uint32_t MAX_SIMULTANEOUS_PENDING_REQUESTS = 100 ;
 
-		if (mPendingRequests.size() < 1)
+	while(!mPendingRequests.empty() && nb_requests_handled++ < MAX_SIMULTANEOUS_PENDING_REQUESTS)
+	{
+		ftPendingRequest req;
 		{
-			return false;
+			RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
+
+			req = mPendingRequests.front();
+			mPendingRequests.pop_front();
 		}
-		req = mPendingRequests.front();
-		mPendingRequests.pop_front();
-	}
 #ifdef CONTROL_DEBUG
-	std::cerr << "Requesting pending hash " << req.mHash << std::endl ;
+		std::cerr << "Requesting pending hash " << req.mHash << std::endl ;
 #endif
 
-	FileRequest(req.mName, req.mHash, req.mSize, req.mDest, TransferRequestFlags(req.mFlags), req.mSrcIds, req.mState);
+		FileRequest(req.mName, req.mHash, req.mSize, req.mDest, TransferRequestFlags(req.mFlags), req.mSrcIds, req.mState);
 
-	{ 
-		// See whether there is a pendign chunk map recorded for this hash.
-		//
-		RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
-
-        std::map<RsFileHash,RsFileTransfer*>::iterator it(mPendingChunkMaps.find(req.mHash)) ;
-
-		if(it != mPendingChunkMaps.end())
 		{
-			RsFileTransfer *rsft = it->second ;
-            std::map<RsFileHash, ftFileControl*>::iterator fit = mDownloads.find(rsft->file.hash);
+			// See whether there is a pendign chunk map recorded for this hash.
+			//
+			RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 
-			if((fit==mDownloads.end() || (fit->second)->mCreator == NULL))
+			std::map<RsFileHash,RsFileTransfer*>::iterator it(mPendingChunkMaps.find(req.mHash)) ;
+
+			if(it != mPendingChunkMaps.end())
 			{
-				// This should never happen, because the last call to FileRequest must have created the fileCreator!!
-				//
-				std::cerr << "ftController::loadList(): Error: could not find hash " << rsft->file.hash << " in mDownloads list !" << std::endl ;
+				RsFileTransfer *rsft = it->second ;
+				std::map<RsFileHash, ftFileControl*>::iterator fit = mDownloads.find(rsft->file.hash);
+
+				if((fit==mDownloads.end() || (fit->second)->mCreator == NULL))
+				{
+					// This should never happen, because the last call to FileRequest must have created the fileCreator!!
+					//
+					std::cerr << "ftController::loadList(): Error: could not find hash " << rsft->file.hash << " in mDownloads list !" << std::endl ;
+				}
+				else
+				{
+#ifdef CONTROL_DEBUG
+					std::cerr << "Hash " << req.mHash << " is in downloads" << std::endl ;
+					std::cerr << "  setting chunk strategy to " << rsft->chunk_strategy << std::endl;
+#endif
+					(fit->second)->mCreator->setAvailabilityMap(rsft->compressed_chunk_map) ;
+					(fit->second)->mCreator->setChunkStrategy((FileChunksInfo::ChunkStrategy)(rsft->chunk_strategy)) ;
+					(fit->second)->mState=rsft->state;
+				}
+
+				delete rsft ;
+				mPendingChunkMaps.erase(it) ;
 			}
+#ifdef CONTROL_DEBUG
 			else
-			{
-#ifdef CONTROL_DEBUG
-				std::cerr << "Hash " << req.mHash << " is in downloads" << std::endl ;
-				std::cerr << "  setting chunk strategy to " << rsft->chunk_strategy << std::endl;
+				std::cerr << "No pending chunkmap for hash " << req.mHash << std::endl ;
 #endif
-				(fit->second)->mCreator->setAvailabilityMap(rsft->compressed_chunk_map) ;
-				(fit->second)->mCreator->setChunkStrategy((FileChunksInfo::ChunkStrategy)(rsft->chunk_strategy)) ;
-				(fit->second)->mState=rsft->state;
-			}
-
-			delete rsft ;
-			mPendingChunkMaps.erase(it) ;
 		}
-#ifdef CONTROL_DEBUG
-		else
-			std::cerr << "No pending chunkmap for hash " << req.mHash << std::endl ;
-#endif
 	}
-
-	return true ;
+	return !mPendingRequests.empty();
 }
 
 bool ftController::alreadyHaveFile(const RsFileHash& hash, FileInfo &info)
@@ -1991,7 +2015,8 @@ bool ftController::loadList(std::list<RsItem *>& load)
 			/* This will get stored on a waiting list - until the
 			 * config files are fully loaded
 			 */
-			
+#ifdef TO_REMOVE
+			(csoler) I removed this because RS_FILE_HINTS_NETWORK_WIDE is actually equal to RS_FILE_REQ_ENCRYPTED, so this test removed the encrypted flag when loading!!
 			// Compatibility with previous versions. 
 			if(rsft->flags & RS_FILE_HINTS_NETWORK_WIDE.toUInt32())
 			{
@@ -1999,6 +2024,7 @@ bool ftController::loadList(std::list<RsItem *>& load)
 				rsft->flags &= ~RS_FILE_HINTS_NETWORK_WIDE.toUInt32() ;
 				rsft->flags |=  RS_FILE_REQ_ANONYMOUS_ROUTING.toUInt32() ;
 			}
+#endif
 
 #ifdef CONTROL_DEBUG
 			std::cerr << "ftController::loadList(): requesting " << rsft->file.name << ", " << rsft->file.hash << ", " << rsft->file.filesize << std::endl ;

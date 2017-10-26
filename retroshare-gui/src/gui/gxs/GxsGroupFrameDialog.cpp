@@ -121,6 +121,13 @@ GxsGroupFrameDialog::~GxsGroupFrameDialog()
 	delete(ui);
 }
 
+void GxsGroupFrameDialog::getGroupList(std::list<RsGroupMetaData>& group_list)
+{
+	group_list = mCachedGroupMetas ;
+
+	if(group_list.empty())
+		requestGroupSummary();
+}
 void GxsGroupFrameDialog::initUi()
 {
 	registerHelpButton(ui->helpButton, getHelpString(),pageName()) ;
@@ -926,6 +933,8 @@ void GxsGroupFrameDialog::loadGroupSummary(const uint32_t &token)
 	std::list<RsGroupMetaData> groupInfo;
 	RsUserdata *userdata = NULL;
 	loadGroupSummaryToken(token, groupInfo, userdata);
+
+	mCachedGroupMetas = groupInfo ;
 
 	insertGroupsData(groupInfo, userdata);
 

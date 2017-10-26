@@ -81,6 +81,8 @@ public:
 
 	virtual QString getHelpString() const =0;
 
+	virtual void getGroupList(std::list<RsGroupMetaData>& groups) ;
+
 protected:
 	virtual void showEvent(QShowEvent *event);
 	virtual void updateDisplay(bool complete);
@@ -197,6 +199,8 @@ private:
 
 	/** Qt Designer generated object */
 	Ui::GxsGroupFrameDialog *ui;
+
+	std::list<RsGroupMetaData> mCachedGroupMetas;
 };
 
 #endif

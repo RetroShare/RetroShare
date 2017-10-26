@@ -1,0 +1,36 @@
+Aug 09, 2017
+============
+
+Building packages for debian stretch requires an extra dependency of libsqlcipher0-3.4.1, which is not shipped mainstream with Debian.
+As a consequence, the package needs to be added to pbuilder before it's creating the .deb
+
+0 - create the .dsc for debian stretch using the RS packaging script
+
+   > ./makeSourcePackage.sh -distribution stretch
+
+   This should produce the file retroshare_0.6.3-1.20170806.3ae85dbc~stretch.dsc
+
+1 - add /home/csoler/pbuilder/stretch_result as an extra deb repository for pbuilder:
+
+   > cat ~/.pbuilderrc
+   HOOKDIR="/var/cache/pbuilder/hook.d"
+   BINDMOUNTS="/home/csoler/pbuilder/stretch_result"
+   
+   > cat /var/cache/pbuilder/hook.d/D70results
+   cd /home/csoler/pbuilder/stretch_result
+   /usr/bin/dpkg-scanpackages . /dev/null > /home/csoler/pbuilder/stretch_result/Packages
+   /usr/bin/apt-get update
+
+2 - make sure that the directory /home/csoler/pbuilder/stretch-result/ contains the packages needed:
+
+   > ls -l ~/pbuilder/stretch_result/
+   total 1344
+   -rw-r--r-- libsqlcipher0_3.4.1-1_amd64.deb
+   -rw-r--r-- libsqlcipher-dev_3.4.1-1_amd64.deb
+
+3 - build the package using additional arguments to pbuilder-dist:
+
+   > pbuilder-dist stretch build --override-config --othermirror "deb [trusted=yes] file:///home/csoler/pbuilder/stretch_result ./" retroshare_0.6.3-1.20170806.3ae85dbc~stretch.dsc
+
+Sources:
+   * http://blog.anthonywong.net/2014/10/26/how-to-include-local-packages-for-pbuilder/

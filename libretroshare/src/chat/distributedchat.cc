@@ -1441,7 +1441,7 @@ bool DistributedChatService::acceptLobbyInvite(const ChatLobbyId& lobby_id,const
 		item->lobby_id = entry.lobby_id ;
 		item->msg_id = 0 ;
         item->parent_msg_id = 0 ;
-        item->nick = "Lobby management" ;
+        item->nick = "Chat room management" ;
 		item->message = std::string("Welcome to chat lobby") ;
 		item->PeerId(entry.virtual_peer_id) ;
 		item->chatFlags = RS_CHAT_FLAG_PRIVATE | RS_CHAT_FLAG_LOBBY ;

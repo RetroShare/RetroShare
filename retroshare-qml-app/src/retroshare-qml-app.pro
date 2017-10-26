@@ -1,11 +1,12 @@
 !include("../../retroshare.pri"): error("Could not include file ../../retroshare.pri")
 
-QT += core network qml quick
+QT += core network qml quick svg
 
 CONFIG += c++11
 
 HEADERS += libresapilocalclient.h \
     rsqmlappengine.h \
+    androidimagepicker.h \
     platforminteracions.h
 SOURCES += main-app.cpp \
     libresapilocalclient.cpp \

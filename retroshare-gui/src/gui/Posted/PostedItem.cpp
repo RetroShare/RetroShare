@@ -104,8 +104,6 @@ void PostedItem::setup()
 
 	ui->clearButton->hide();
 	ui->readAndClearButton->hide();
-
-	ui->frame_notes->hide();
 }
 
 bool PostedItem::setGroup(const RsPostedGroup &group, bool doFill)
@@ -278,11 +276,12 @@ void PostedItem::fill()
 
 	// FIX THIS UP LATER.
 	ui->notes->setText(QString::fromUtf8(mPost.mNotes.c_str()));
+	if(ui->notes->text().isEmpty())
+		ui->frame_notes->hide();
 	// differences between Feed or Top of Comment.
 	if (mFeedHolder)
 	{
 		// feed.
-		ui->frame_notes->hide();
 		//frame_comment->show();
 		ui->commentButton->show();
 
@@ -303,14 +302,6 @@ void PostedItem::fill()
 	else
 	{
 		// no feed.
-		if(ui->notes->text().isEmpty())
-		{
-			ui->frame_notes->hide();
-		}
-		else
-		{
-			ui->frame_notes->show();
-		}
 		//frame_comment->hide();
 		ui->commentButton->hide();
 

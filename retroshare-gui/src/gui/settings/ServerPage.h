@@ -88,7 +88,6 @@ private slots:
     // server
     void saveAddresses();
     void saveRates();
-	void updateShowDiscStatusBar() ;
     void toggleUPnP();
     void toggleIpDetermination(bool) ;
     void toggleTunnelConnection(bool) ;

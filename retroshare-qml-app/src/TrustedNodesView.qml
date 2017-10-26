@@ -20,6 +20,7 @@ import QtQuick 2.7
 import QtQuick.Controls 2.0
 import "jsonpath.js" as JSONPath
 import "." //Needed for TokensManager singleton
+import "components/."
 
 Item
 {
@@ -65,34 +66,29 @@ Item
 		anchors.top: parent.top
 		anchors.bottom: bottomButton.top
 		model: jsonModel.model
+		anchors.horizontalCenter: parent.horizontalCenter
+		spacing: 3
 		delegate: Item
 		{
-			height: 30
+			property bool isOnline: jsonModel.isOnline(model.pgp_id)
+			height: 54
 			width: parent.width
+			anchors.horizontalCenter: parent.horizontalCenter
 
-			Image
+			ButtonText
 			{
-				id: statusImage
-				source: jsonModel.isOnline(model.pgp_id) ?
-							"icons/state-ok.png" :
-							"icons/state-offline.png"
-
-				height: parent.height - 4
-				fillMode: Image.PreserveAspectFit
-				anchors.left: parent.left
-				anchors.leftMargin: 3
-				anchors.verticalCenter: parent.verticalCenter
-			}
-			Text
-			{
+				id: locationButton
+//				anchors.horizontalCenter: parent.horizontalCenter
 				text: model.name
-				anchors.verticalCenter: parent.verticalCenter
-				anchors.left: statusImage.right
-				anchors.leftMargin: 10
-			}
-			MouseArea
-			{
-				anchors.fill: parent
+				borderRadius:0
+				iconUrl: isOnline?
+							 "/icons/state-ok.svg" :
+							 "/icons/state-offline.svg"
+				color: "transparent"
+				pressColor: "lightsteelblue"
+				buttonTextPixelSize: 18
+				iconHeight:parent.height - 4
+
 				onClicked:
 				{
 					stackView.push(
@@ -100,6 +96,7 @@ Item
 								{
 									pgpName: model.name,
 									pgpId: model.pgp_id,
+									isOnline: isOnline,
 									locations: jsonModel.getLocations(
 												   model.pgp_id)
 								}
@@ -109,12 +106,17 @@ Item
 		}
 	}
 
-	Button
+	ButtonText
 	{
 		id: bottomButton
-		text: qsTr("Add Trusted Node")
+		text: qsTr("Add/Share Trusted Node")
 		anchors.bottom: parent.bottom
 		onClicked: stackView.push("qrc:/AddTrustedNode.qml")
-		width: parent.width
+		anchors.horizontalCenter: parent.horizontalCenter
+//		width: parent.width
+
+		borderRadius: 0
+		buttonTextPixelSize: 14
+		iconUrl: "/icons/add.svg"
 	}
 }

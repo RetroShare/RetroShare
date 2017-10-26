@@ -31,7 +31,7 @@ QtObject
 	property int loginAttemptCount: 0
 	property bool attemptingLogin: false
 
-	property int loginNotificationTime: 0
+	property var loginNotificationTime: 0
 
 	function delay(msecs, func)
 	{
@@ -58,7 +58,11 @@ QtObject
 		var runState = jsonReponse.data.runstate
 		if(typeof(runState) !== 'string')
 		{
-			console.log("runStateCallback(par)", "Core hanged!", par.response)
+			coreReady = false
+			console.log("runStateCallback(par)",
+						"Core hanged!",
+						"typeof(runState):", typeof(runState),
+						"par.response:", par.response)
 			return
 		}
 
@@ -70,7 +74,7 @@ QtObject
 			break
 		case "fatal_error":
 			coreReady = false
-			console.log("Core hanged")
+			console.log("Core hanged! runState:", runState)
 			break
 		case "waiting_account_select":
 			coreReady = false
@@ -145,7 +149,11 @@ QtObject
 		interval: 700
 		repeat: true
 		triggeredOnStart: true
-		onTriggered: rsApi.request("/control/password/", "", attemptPasswordCB)
+		onTriggered:
+		{
+			if(am.coreReady) attemptPasswordCBCB()
+			else rsApi.request("/control/password/", "", attemptPasswordCB)
+		}
 
 		function attemptPasswordCB(par)
 		{

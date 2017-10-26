@@ -492,13 +492,6 @@ These values don't take into account the Relays.</string>
         </widget>
        </item>
        <item row="3" column="0">
-        <widget class="QCheckBox" name="showDiscStatusBar">
-         <property name="text">
-          <string>Show Discovery information in statusbar</string>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="0">
         <widget class="QCheckBox" name="allowIpDeterminationCB">
          <property name="toolTip">
           <string>If you uncheck this, RetroShare can only determine your IP 
@@ -514,7 +507,7 @@ behind a firewall or a VPN.</string>
          </property>
         </widget>
        </item>
-       <item row="5" column="0">
+       <item row="4" column="0">
         <widget class="QListWidget" name="IPServersLV">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
@@ -527,7 +520,7 @@ behind a firewall or a VPN.</string>
          </property>
         </widget>
        </item>
-       <item row="6" column="0">
+       <item row="5" column="0">
         <spacer name="tabNetConfVSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -541,7 +534,6 @@ behind a firewall or a VPN.</string>
         </spacer>
        </item>
       </layout>
-      <zorder>showDiscStatusBar</zorder>
       <zorder>allowIpDeterminationCB</zorder>
       <zorder>IPServersLV</zorder>
       <zorder>ipAddressList</zorder>
@@ -841,7 +833,7 @@ behind a firewall or a VPN.</string>
            <item>
             <widget class="QLabel" name="hiddenpage_outHeader">
              <property name="text">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Outgoing Connctions&lt;/p&gt;&lt;p&gt;Configure your Tor and I2P SOCKS proxy here. &lt;br/&gt;If you prefer to use BOB to automatically manage I2P check the other tab.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Configure your Tor and I2P SOCKS proxy here. &lt;br/&gt;If you prefer to use BOB to automatically manage I2P check the other tab.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
             </widget>
            </item>
@@ -1485,7 +1477,7 @@ You can connect to Hidden Nodes, even if you are running a standard Node, so why
            <item>
             <widget class="QLabel" name="hiddenpage_inHeader">
              <property name="text">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Incoming Connection&lt;/p&gt;&lt;p&gt;Setup your hidden address (and port if needed)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Setup your hidden address (and port if needed)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
             </widget>
            </item>
@@ -1737,19 +1729,7 @@ If you have issues connecting over Tor check the Tor logs too.</string>
           <string>Relay options</string>
          </property>
          <layout class="QGridLayout" name="relayOptionGBoxGLayout">
-          <property name="leftMargin">
-           <number>0</number>
-          </property>
-          <property name="topMargin">
-           <number>0</number>
-          </property>
-          <property name="rightMargin">
-           <number>0</number>
-          </property>
-          <property name="bottomMargin">
-           <number>0</number>
-          </property>
-          <property name="spacing">
+          <property name="verticalSpacing">
            <number>0</number>
           </property>
           <item row="0" column="0">
@@ -2119,7 +2099,6 @@ If you have issues connecting over Tor check the Tor logs too.</string>
   <tabstop>extAddress</tabstop>
   <tabstop>extPort</tabstop>
   <tabstop>dynDNS</tabstop>
-  <tabstop>showDiscStatusBar</tabstop>
  </tabstops>
  <resources>
   <include location="../images.qrc"/>

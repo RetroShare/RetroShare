@@ -160,7 +160,8 @@ void ftServer::SetupFtServer()
 void ftServer::connectToFileDatabase(p3FileDatabase *fdb)
 {
 	mFileDatabase = fdb ;
-	mFtSearch->addSearchMode(fdb, RS_FILE_HINTS_LOCAL | RS_FILE_HINTS_REMOTE);
+	mFtSearch->addSearchMode(fdb, RS_FILE_HINTS_LOCAL);	// due to a bug in addSearchModule, modules can only be added one by one. Using | between flags wont work.
+	mFtSearch->addSearchMode(fdb, RS_FILE_HINTS_REMOTE);
 }
 void ftServer::connectToTurtleRouter(p3turtle *fts)
 {
@@ -825,13 +826,30 @@ bool 	ftServer::removeSharedDirectory(std::string dir)
 
 	return true;
 }
+
+bool ftServer::getIgnoreLists(std::list<std::string>& ignored_prefixes, std::list<std::string>& ignored_suffixes,uint32_t& ignore_flags)
+{
+	return mFileDatabase->getIgnoreLists(ignored_prefixes,ignored_suffixes,ignore_flags) ;
+}
+void ftServer::setIgnoreLists(const std::list<std::string>& ignored_prefixes, const std::list<std::string>& ignored_suffixes, uint32_t ignore_flags)
+{
+	mFileDatabase->setIgnoreLists(ignored_prefixes,ignored_suffixes,ignore_flags) ;
+}
+
 bool ftServer::watchEnabled()                      { return mFileDatabase->watchEnabled() ; }
 int  ftServer::watchPeriod() const                 { return mFileDatabase->watchPeriod()/60 ; }
 bool ftServer::followSymLinks() const              { return mFileDatabase->followSymLinks() ; }
+bool ftServer::ignoreDuplicates()                  { return mFileDatabase->ignoreDuplicates() ; }
+int  ftServer::maxShareDepth() const               { return mFileDatabase->maxShareDepth() ; }
 
 void ftServer::setWatchEnabled(bool b)             { mFileDatabase->setWatchEnabled(b) ; }
 void ftServer::setWatchPeriod(int minutes)         { mFileDatabase->setWatchPeriod(minutes*60) ; }
 void ftServer::setFollowSymLinks(bool b)           { mFileDatabase->setFollowSymLinks(b) ; }
+void ftServer::setIgnoreDuplicates(bool ignore)    { mFileDatabase->setIgnoreDuplicates(ignore); }
+void ftServer::setMaxShareDepth(int depth)         { mFileDatabase->setMaxShareDepth(depth) ; }
+
+void ftServer::togglePauseHashingProcess()  { mFileDatabase->togglePauseHashingProcess() ; }
+bool ftServer::hashingProcessPaused() { return mFileDatabase->hashingProcessPaused() ; }
 
 bool ftServer::getShareDownloadDirectory()
 {
@@ -1214,7 +1232,7 @@ bool ftServer::encryptItem(RsTurtleGenericTunnelItem *clear_item,const RsFileHas
 	uint32_t total_data_size = ENCRYPTED_FT_HEADER_SIZE + ENCRYPTED_FT_INITIALIZATION_VECTOR_SIZE + ENCRYPTED_FT_EDATA_SIZE + item_serialized_size + ENCRYPTED_FT_AUTHENTICATION_TAG_SIZE  ;
 
 #ifdef SERVER_DEBUG
-	FTSERVER_DEBUG() << "  clear part size : " << clear_item->serial_size() << std::endl;
+	FTSERVER_DEBUG() << "  clear part size : " << size(clear_item) << std::endl;
 	FTSERVER_DEBUG() << "  total item size : " << total_data_size << std::endl;
 #endif
 

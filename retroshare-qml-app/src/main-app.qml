@@ -16,11 +16,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import QtQuick 2.7
+import QtQuick 2.1
 import QtQuick.Controls 2.0
+import QtGraphicalEffects 1.0
 import org.retroshare.qml_components.LibresapiLocalClient 1.0
 import "URI.js" as UriJs
 import "." //Needed for TokensManager and ClipboardWrapper singleton
+import "components/."
+
 
 ApplicationWindow
 {
@@ -39,6 +42,7 @@ ApplicationWindow
 	{
 		addUriHandler("/certificate", certificateLinkHandler)
 		addUriHandler("/identity", contactLinkHandler)
+		addUriHandler("/contacts", openContactsViewLinkHandler)
 
 		var argc = mainArgs.length
 		for(var i=0; i<argc; ++i)
@@ -54,94 +58,225 @@ ApplicationWindow
 	function addUriHandler(path, fun) { uriHandlersRegister[path] = fun }
 	function delUriHandler(path, fun) { delete uriHandlersRegister[path] }
 
+
 	header: ToolBar
 	{
 		id: toolBar
+		height: 50
+		property alias titleText: toolBarText.text
+		property alias loaderSource: imageLoader.sourceComponent
+		property alias gxsSource: imageLoader.gxsSource
+		property string defaultLabel: "RetroShare"
 
-		Image
+		property var iconsSize: (coreReady)? height - 10 : 0
+
+		property var searchBtnCb
+
+		function openMainPage ()
 		{
-			id: rsIcon
-			fillMode: Image.PreserveAspectFit
-			height: Math.max(30, parent.height - 4)
-			anchors.verticalCenter: parent.verticalCenter
-			source: "icons/retroshare.png"
+			if (stackView.currentItem.objectName != "contactsView" )
+			{
+				stackView.push("qrc:/Contacts.qml")
+			}
 		}
-		Label
+
+		states:
+		[
+			State
+			{
+				name: "DEFAULT"
+				PropertyChanges { target: toolBar; titleText: defaultLabel}
+				PropertyChanges { target: toolBar; loaderSource: rsIcon}
+			},
+			State
+			{
+				name: "CHATVIEW"
+				PropertyChanges { target: toolBarText; mouseA.visible: false }
+				PropertyChanges { target: toolBar; loaderSource: userHash }
+//				PropertyChanges { target: toolBar; backBtnVisible: true }
+			},
+			State
+			{
+				name: "CONTACTSVIEW"
+				PropertyChanges { target: toolBar; titleText: defaultLabel}
+				PropertyChanges { target: toolBar; loaderSource: rsIcon}
+				PropertyChanges { target: searchIcon; searchIconVisibility: true}
+			}
+		]
+
+		Item
 		{
-			text: "RetroShare"
-			anchors.verticalCenter: parent.verticalCenter
-			anchors.left: rsIcon.right
-			anchors.leftMargin: 20
+			id: tolbarLeftPadding
+			width: 4
 		}
+
 		MouseArea
 		{
+			id: menu
 			height: parent.height
 			width: parent.height
+
+			anchors.left: tolbarLeftPadding.right
+			anchors.verticalCenter: parent.verticalCenter
+
+			onClicked: sideBar.open()
+
+			Image
+			{
+				source: "qrc:/icons/application-menu.svg"
+				height: parent.height - 10
+				width: height
+				sourceSize.height: height
+				sourceSize.width: height
+				anchors.centerIn: parent
+			}
+
+			SideBar {
+				id: sideBar
+			}
+		}
+
+
+
+		Label
+		{
+			property alias mouseA: mouseA
+			id: toolBarText
+			anchors.verticalCenter: parent.verticalCenter
+			anchors.left: menu.right
+			anchors.leftMargin: 20
+
+			MouseArea {
+				id: mouseA
+				visible: true
+				anchors.fill: parent
+				onClicked: {  toolBar.openMainPage() }
+			}
+
+		}
+
+		ButtonIcon
+		{
+			property bool searchIconVisibility: false
+			property var onClickCB: function (){}
+
+			id: searchIcon
+			height: toolBar.iconsSize
+			width: toolBar.iconsSize
+			anchors.verticalCenter: parent.verticalCenter
+			imgUrl: "qrc:/icons/search.svg"
+			anchors.right: imageLoader.left
+			anchors.rightMargin: 5
+			visible: searchIconVisibility && coreReady
+			onClicked:
+			{
+				toolBar.searchBtnCb()
+			}
+		}
+
+		Loader
+		{
+			id: imageLoader
+			height:  toolBar.height - 4
+
+			asynchronous: true
+
 			anchors.right: parent.right
 			anchors.rightMargin: 2
 			anchors.verticalCenter: parent.verticalCenter
 
-			onClicked: menu.open()
+			property string gxsSource;
 
-			Image
+		}
+
+		Component
+		{
+			id: rsIcon
+			ButtonIcon
 			{
-				source: "qrc:/icons/application-menu.png"
-				height: parent.height - 10
-				width: parent.height - 10
-				anchors.centerIn: parent
-			}
-
-			Menu
-			{
-				id: menu
-				y: parent.y + parent.height
-
-				MenuItem
+				height: imageLoader.height
+				width: imageLoader.height
+				fillMode: Image.PreserveAspectFit
+				imgUrl: "/icons/retroshare.png"
+				onClicked:
 				{
-					text: qsTr("Trusted Nodes")
-					//iconSource: "qrc:/icons/document-share.png"
-					onTriggered: stackView.push("qrc:/TrustedNodesView.qml")
-					enabled: mainWindow.coreReady
-				}
-				MenuItem
-				{
-					text: qsTr("Search Contacts")
-					onTriggered:
-						stackView.push("qrc:/Contacts.qml",
-									   {'searching': true} )
-					enabled: mainWindow.coreReady
-				}
-				MenuItem
-				{
-					text: "Paste Link"
-					onTriggered: UriJs.URI.withinString(
-									 ClipboardWrapper.getFromClipBoard(),
-									 handleIntentUri)
-
-					enabled: mainWindow.coreReady
-				}
-				MenuItem
-				{
-					text: "Terminate Core"
-					onTriggered: rsApi.request("/control/shutdown")
-					visible: !Q_OS_ANDROID
+					if (coreReady) toolBar.openMainPage()
 				}
 			}
 		}
+
+		Component
+		{
+			id: userHash
+
+			AvatarOrColorHash
+			{
+				id: colorHash
+
+				gxs_id: imageLoader.gxsSource
+				height: toolBar.height - 4
+				anchors.leftMargin: 2
+			}
+
+		}
+
+	}
+
+	DropShadow
+	{
+		anchors.fill: toolBar
+		horizontalOffset: 0
+		verticalOffset: 1
+		radius: 12
+		samples: 25
+		color: "#80000000"
+		source: toolBar
 	}
 
 	StackView
 	{
 		id: stackView
 		anchors.fill: parent
+		anchors.top: toolBar.bottom
+		anchors.topMargin: 5
 		focus: true
-		onCurrentItemChanged: if (currentItem) currentItem.focus = true
+		onCurrentItemChanged:
+		{
+			if (currentItem)
+			{
+				setStatus  (currentItem)
+			}
+		}
+
 		Keys.onReleased:
-			if (event.key === Qt.Key_Back && stackView.depth > 1)
+		{
+			if ((event.key === Qt.Key_Back ||  Qt.Key_Backspace)   && stackView.depth > 1)
 			{
 				stackView.pop();
 				event.accepted = true;
+				setStatus (stackView.currentItem)
 			}
+		}
+
+		function setStatus (currentItem)
+		{
+			if (currentItem)
+			{
+				if (currentItem.objectName != "chatView" &&
+						currentItem.objectName != "contactsView" &&
+						toolBar.state != "DEFAULT")
+				{
+					 toolBar.state = "DEFAULT"
+				}
+				else if (typeof currentItem.changeState === 'function')
+				{
+					currentItem.changeState ()
+				}
+
+				currentItem.focus = true
+			}
+		}
+
 
 		state: "core_down"
 		initialItem: BusyOverlay { message: qsTr("Connecting to core...") }
@@ -239,7 +374,7 @@ ApplicationWindow
 
 	function handleIntentUri(uriStr)
 	{
-		console.log("handleIntentUri(uriStr)")
+		console.log("handleIntentUri(uriStr)", uriStr)
 
 		if(!Array.isArray(uriStr.match(/:\/\/[a-zA-Z.-]*\//g)))
 		{
@@ -257,13 +392,23 @@ ApplicationWindow
 
 		var uri = new UriJs.URI(uriStr)
 		var hPath = uri.path() // no nesting ATM segmentCoded()
-		console.log(hPath)
+		console.log("hPath", hPath)
+
+		var authority = uri.authority()
+		console.log("authority", authority)
 
 		if(typeof uriHandlersRegister[hPath] == "function")
 		{
 			console.log("handleIntentUri(uriStr)", "found handler for path",
 						hPath, uriHandlersRegister[hPath])
 			uriHandlersRegister[hPath](uriStr)
+		}
+
+		else if (typeof uriHandlersRegister[authority] == "function" )
+		{
+			console.log("handleIntentUri(uriStr)", "found handler for path",
+						authority, uriHandlersRegister[authority])
+			uriHandlersRegister[authority](uriStr)
 		}
 	}
 
@@ -342,6 +487,32 @@ ApplicationWindow
 						)
 		}
 	}
+
+	function openContactsViewLinkHandler (uriStr)
+	{
+		console.log("openContactsViewLinkHandler(uriStr)" , uriStr)
+		if(coreReady)
+		{
+			var uri = new UriJs.URI(uriStr)
+			var query = UriJs.URI.parseQuery(uri.search());
+			if (query.gxsId && query.name)
+			{
+
+				ChatCache.chatHelper.startDistantChat(ChatCache.contactsCache.own.gxs_id,
+													  query.gxsId,
+													  query.name,
+													  function (chatId)
+													  {
+														  stackView.push("qrc:/ChatView.qml", {'chatId': chatId})
+													  })
+			}
+			else
+			{
+				stackView.push("qrc:/Contacts.qml" )
+			}
+		}
+	}
+
 	Popup
 	{
 		id: contactImportPopup
@@ -423,4 +594,37 @@ ApplicationWindow
 			onTriggered: linkCopiedPopup.close()
 		}
 	}
+
+	FontLoader { id: emojiFont; source: "/fonts/OpenSansEmoji.ttf" }
+
+	QtObject
+	{
+		id: theme
+
+		property var emojiFontName: emojiFont.name
+
+		property var supportedEmojiFonts: ["Android Emoji"]
+		property var rootFontName: emojiFont.name
+
+		// If native emoji font exists use it, else use RS emoji font
+		function selectFont ()
+		{
+			var fontFamilies =  Qt.fontFamilies()
+			fontFamilies.some(function (f)
+			{
+				if (supportedEmojiFonts.indexOf(f) !== -1)
+				{
+					emojiFontName = f
+					return true
+				}
+				return false
+			})
+		}
+
+		Component.onCompleted:
+		{
+			selectFont()
+		}
+	}
+
 }

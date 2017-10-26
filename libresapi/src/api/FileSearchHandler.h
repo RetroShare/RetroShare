@@ -19,12 +19,13 @@ public:
     virtual void notifyTurtleSearchResult(uint32_t search_id, const std::list<TurtleFileInfo>& files);
 private:
     void handleWildcard(Request& req, Response& resp);
-    void handleCreateSearch(Request& req, Response& resp);
+	void handleCreateSearch(Request& req, Response& resp);
+	void handleGetSearchResult(Request& req, Response& resp);
 
     StateTokenServer* mStateTokenServer;
     RsNotify* mNotify;
     RsTurtle* mTurtle;
-    //RsFiles* mFiles;
+	RsFiles* mRsFiles;
 
     class Search{
     public:

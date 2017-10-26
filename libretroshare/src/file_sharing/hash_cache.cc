@@ -44,6 +44,7 @@ HashStorage::HashStorage(const std::string& save_file_name)
     mTotalSizeToHash = 0;
     mTotalFilesToHash = 0;
     mMaxStorageDurationDays = DEFAULT_HASH_STORAGE_DURATION_DAYS ;
+	mHashingProcessPaused = false;
 
     {
         RS_STACK_MUTEX(mHashMtx) ;
@@ -52,6 +53,18 @@ HashStorage::HashStorage(const std::string& save_file_name)
             try_load_import_old_hash_cache();
     }
 }
+
+void HashStorage::togglePauseHashingProcess()
+{
+	RS_STACK_MUTEX(mHashMtx) ;
+	mHashingProcessPaused = !mHashingProcessPaused ;
+}
+bool HashStorage::hashingProcessPaused()
+{
+	RS_STACK_MUTEX(mHashMtx) ;
+	return mHashingProcessPaused;
+}
+
 static std::string friendlyUnit(uint64_t val)
 {
     const std::string units[5] = {"B","KB","MB","GB","TB"};
@@ -78,12 +91,14 @@ void HashStorage::data_tick()
     RsFileHash hash;
     uint64_t size = 0;
 
+
     {
         bool empty ;
         uint32_t st ;
 
         {
             RS_STACK_MUTEX(mHashMtx) ;
+
             if(mChanged && mLastSaveTime + MIN_INTERVAL_BETWEEN_HASH_CACHE_SAVE < time(NULL))
             {
                 locked_save();
@@ -136,6 +151,19 @@ void HashStorage::data_tick()
         }
         mInactivitySleepTime = DEFAULT_INACTIVITY_SLEEP_TIME;
 
+		bool paused = false ;
+        {
+            RS_STACK_MUTEX(mHashMtx) ;
+			paused = mHashingProcessPaused ;
+		}
+
+		if(paused)	// we need to wait off mutex!!
+		{
+			usleep(MAX_INACTIVITY_SLEEP_TIME) ;
+			std::cerr << "Hashing process currently paused." << std::endl;
+			return;
+		}
+		else
         {
             RS_STACK_MUTEX(mHashMtx) ;
 
@@ -163,9 +191,9 @@ void HashStorage::data_tick()
 #endif
 
                 RS_STACK_MUTEX(mHashMtx) ;
-                HashStorageInfo& info(mFiles[job.full_path]);
+                HashStorageInfo& info(mFiles[job.real_path]);
 
-                info.filename = job.full_path ;
+                info.filename = job.real_path ;
                 info.size = size ;
                 info.modf_stamp = job.ts ;
                 info.time_stamp = time(NULL);
@@ -191,12 +219,14 @@ bool HashStorage::requestHash(const std::string& full_path,uint64_t size,time_t 
     // check if the hash is up to date w.r.t. cache.
 
 #ifdef HASHSTORAGE_DEBUG
-    std::cerr << "HASH Requested for file " << full_path << ": ";
+    std::cerr << "HASH Requested for file " << full_path << ": mod_time: " << mod_time << ", size: " << size << " :" ;
 #endif
     RS_STACK_MUTEX(mHashMtx) ;
 
+	std::string real_path = RsDirUtil::removeSymLinks(full_path) ;
+
     time_t now = time(NULL) ;
-    std::map<std::string,HashStorageInfo>::iterator it = mFiles.find(full_path) ;
+    std::map<std::string,HashStorageInfo>::iterator it = mFiles.find(real_path) ;
 
     // On windows we compare the time up to +/- 3600 seconds. This avoids re-hashing files in case of daylight saving change.
     //
@@ -233,7 +263,7 @@ bool HashStorage::requestHash(const std::string& full_path,uint64_t size,time_t 
 
     // we need to schedule a re-hashing
 
-    if(mFilesToHash.find(full_path) != mFilesToHash.end())
+    if(mFilesToHash.find(real_path) != mFilesToHash.end())
         return false ;
 
     FileHashJob job ;
@@ -242,9 +272,13 @@ bool HashStorage::requestHash(const std::string& full_path,uint64_t size,time_t 
     job.size = size ;
     job.client_param = client_param ;
     job.full_path = full_path ;
+    job.real_path = real_path ;
     job.ts = mod_time ;
 
-    mFilesToHash[full_path] = job;
+	// We store the files indexed by their real path, so that we allow to not re-hash files that are pointed multiple times through the directory links
+	// The client will be notified with the full path instead of the real path.
+
+    mFilesToHash[real_path] = job;
 
     mTotalSizeToHash += size ;
     ++mTotalFilesToHash;
@@ -410,7 +444,7 @@ bool HashStorage::writeHashStorageInfo(unsigned char *& data,uint32_t&  total_si
 
 std::ostream& operator<<(std::ostream& o,const HashStorage::HashStorageInfo& info)
 {
-    return o << info.hash << " " << info.size << " " << info.filename ;
+    return o << info.hash << " " << info.modf_stamp << " " << info.size << " " << info.filename ;
 }
 
 /********************************************************************************************************************************/

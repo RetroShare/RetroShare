@@ -24,7 +24,7 @@ before_install:
 #Fix for opencv and numpy already installed by system
   - if [ $TRAVIS_OS_NAME == osx ]; then rm '/usr/local/bin/f2py'; fi
   - if [ $TRAVIS_OS_NAME == osx ]; then rm -r '/usr/local/lib/python2.7/site-packages/numpy'; fi
-  - if [ $TRAVIS_OS_NAME == osx ]; then brew install homebrew/science/opencv; fi
+  - if [ $TRAVIS_OS_NAME == osx ]; then brew install opencv; fi
 
 # FIX: Now openssl is not linked in /usr/local/include and lib
   - if [ $TRAVIS_OS_NAME == osx ]; then ln -s /usr/local/opt/openssl/include/* /usr/local/include/; fi

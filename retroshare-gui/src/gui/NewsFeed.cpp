@@ -35,10 +35,6 @@
 #include <retroshare/rsposted.h>
 
 #include "feeds/ChatMsgItem.h"
-#ifdef BLOGS
-#include "feeds/BlogNewItem.h"
-#include "feeds/BlogMsgItem.h"
-#endif
 #include "feeds/GxsCircleItem.h"
 #include "feeds/GxsChannelGroupItem.h"
 #include "feeds/GxsChannelPostItem.h"
@@ -1120,7 +1116,7 @@ static bool addFeedItemIfUniqueCallback(FeedItem *feedItem, void *data)
 
 	if (findData->mSecurityIpItem) {
 		SecurityIpItem *securityIpItem = dynamic_cast<SecurityIpItem*>(feedItem);
-		if (securityIpItem && securityIpItem->isSame(findData->mId1, findData->mId2, findData->mType)) {
+		if (securityIpItem && securityIpItem->isSame(RsPeerId(findData->mId1), findData->mId2, findData->mId3, findData->mType)) {
 			return true;
 		}
 		return false;
@@ -1480,15 +1476,7 @@ void NewsFeed::addFeedItemPostedMsg(const RsFeedItem &fi)
 #if 0
 void NewsFeed::addFeedItemBlogNew(const RsFeedItem &fi)
 {
-#ifdef BLOGS
-	/* make new widget */
-	BlogNewItem *bni = new BlogNewItem(this, NEWSFEED_BLOGNEWLIST, fi.mId1, false, true);
-
-	/* add to layout */
-	addFeedItem(bni);
-#else
 	Q_UNUSED(fi);
-#endif
 
 #ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemBlogNew()";
@@ -1498,15 +1486,7 @@ void NewsFeed::addFeedItemBlogNew(const RsFeedItem &fi)
 
 void NewsFeed::addFeedItemBlogMsg(const RsFeedItem &fi)
 {
-#ifdef BLOGS
-	/* make new widget */
-	BlogMsgItem *bm = new BlogMsgItem(this, NEWSFEED_BLOGMSGLIST, fi.mId1, fi.mId2, false);
-
-	/* add to layout */
-	addFeedItem(bm);
-#else
 	Q_UNUSED(fi);
-#endif
 
 #ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemBlogMsg()";

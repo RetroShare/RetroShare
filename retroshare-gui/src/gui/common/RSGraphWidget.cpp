@@ -102,8 +102,8 @@ QString RSGraphSource::displayValue(float v) const
 
 void RSGraphSource::getCumulatedValues(std::vector<float>& vals) const
 {
-    for(std::map<std::string,float>::const_iterator it = _totals.begin();it!=_totals.end();++it)
-        vals.push_back(it->second) ;
+    for(std::map<std::string,ZeroInitFloat>::const_iterator it = _totals.begin();it!=_totals.end();++it)
+        vals.push_back(it->second.v) ;
 }
 void RSGraphSource::getCurrentValues(std::vector<QPointF>& vals) const
 {
@@ -196,10 +196,15 @@ void RSGraphSource::update()
 
         lst.push_back(std::make_pair(ms,it->second)) ;
 
-        for(std::list<std::pair<qint64,float> >::iterator it2=lst.begin();it2!=lst.end();)
+        float& total ( _totals[it->first].v );
+
+		total += it->second ;
+
+        for(std::list<std::pair<qint64,float> >::iterator it2=lst.begin();it2!=lst.end();) // This loop should be very fast, since we only remove the first elements, if applicable.
             if( ms - (*it2).first > _time_limit_msecs)
             {
                 //std::cerr << "  removing old value with time " << (*it).first/1000.0f << std::endl;
+				total -= (*it2).second ;
                 it2 = lst.erase(it2) ;
             }
             else
@@ -210,33 +215,34 @@ void RSGraphSource::update()
 
     for(std::map<std::string,std::list<std::pair<qint64,float> > >::iterator it=_points.begin();it!=_points.end();)
         if(it->second.empty())
-    {
-        std::map<std::string,std::list<std::pair<qint64,float> > >::iterator tmp(it) ;
-        ++tmp;
-        _points.erase(it) ;
-        it=tmp ;
-    }
+		{
+			std::map<std::string,std::list<std::pair<qint64,float> > >::iterator tmp(it) ;
+			++tmp;
+			_totals.erase(it->first) ;
+			_points.erase(it) ;
+			it=tmp ;
+		}
         else
             ++it ;
-
-    updateTotals();
 }
 
+#ifdef TO_REMOVE
 void RSGraphSource::updateTotals()
 {
+	std::cerr << "RsGraphSource::updateTotals() for " << _points.size() << " values" << std::endl;
     // now compute totals
 
     _totals.clear();
 
     for(std::map<std::string,std::list<std::pair<qint64,float> > >::const_iterator it(_points.begin());it!=_points.end();++it)
     {
-        float& f = _totals[it->first] ;
+        float& f = _totals[it->first].v ;
 
-        f = 0.0f ;
         for(std::list<std::pair<qint64,float> >::const_iterator it2=it->second.begin();it2!=it->second.end();++it2)
 			f += (*it2).second ;
     }
 }
+#endif
 
 void RSGraphSource::reset()
 {

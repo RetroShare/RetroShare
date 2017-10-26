@@ -32,7 +32,6 @@
 #include "gui/NetworkView.h"
 #include "gui/QuickStartWizard.h"
 #include "gui/RetroShareLink.h"
-#include "gui/SharedFilesDialog.h"
 #include "gui/SoundManager.h"
 #include "gui/StartDialog.h"
 #include "gui/chat/ChatDialog.h"

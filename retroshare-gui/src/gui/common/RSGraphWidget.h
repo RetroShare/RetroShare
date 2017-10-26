@@ -43,6 +43,17 @@
 #define RSDHT_COLOR   Qt::magenta
 #define ALLDHT_COLOR  Qt::yellow
 
+struct ZeroInitFloat
+{
+	ZeroInitFloat() { v=0; }
+	ZeroInitFloat(float f) { v=f; }
+
+	float operator()() const { return v ; }
+	float& operator()() { return v ; }
+
+	float v ;
+};
+
 // This class provides a source value that the graph can retrieve on demand.
 // In order to use your own source, derive from RSGraphSource and overload the value() method.
 //
@@ -102,13 +113,15 @@ protected slots:
 protected:
     virtual void getValues(std::map<std::string,float>& values) const = 0 ;// overload this in your own class to fill in the values you want to display.
 
+#ifdef TO_REMOVE
 	void updateTotals();
+#endif
     qint64 getTime() const ;						   // returns time in ms since RS has started
 
     // Storage of collected events. The string is any string used to represent the collected data.
 
     std::map<std::string, std::list<std::pair<qint64,float> > > _points ;
-    std::map<std::string, float> _totals ;
+    std::map<std::string, ZeroInitFloat> _totals ;
 
     QTimer *_timer ;
 

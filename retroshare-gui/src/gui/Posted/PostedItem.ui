@@ -60,7 +60,7 @@
         </property>
        </widget>
       </item>
-			<item>
+      <item>
        <layout class="QHBoxLayout" name="newCommHLayout">
         <property name="topMargin">
          <number>0</number>
@@ -327,30 +327,29 @@
    <item>
     <widget class="QFrame" name="frame_notes">
      <property name="frameShape">
-      <enum>QFrame::Box</enum>
+      <enum>QFrame::NoFrame</enum>
      </property>
      <property name="frameShadow">
       <enum>QFrame::Sunken</enum>
      </property>
-     <widget class="QLabel" name="notes">
-      <property name="geometry">
-       <rect>
-        <x>2</x>
-        <y>2</y>
-        <width>16</width>
-        <height>17</height>
-       </rect>
+     <layout class="QGridLayout" name="gridLayout">
+      <property name="margin">
+       <number>1</number>
       </property>
-      <property name="styleSheet">
-       <string notr="true"/>
+      <property name="spacing">
+       <number>1</number>
       </property>
-      <property name="text">
-       <string/>
-      </property>
-      <property name="wordWrap">
-       <bool>true</bool>
-      </property>
-     </widget>
+      <item row="0" column="0">
+       <widget class="QLabel" name="notes">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </item>
   </layout>

@@ -45,7 +45,7 @@
 /** @def RS_REGISTER_SERIAL_MEMBER_TYPED(I, T)
  * This macro usage is similar to @see RS_REGISTER_SERIAL_MEMBER(I) but it
  * permit to force serialization/deserialization type, it is expecially useful
- * with enum class members ot RsTlvItem derivative members, be very careful with
+ * with enum class members or RsTlvItem derivative members, be very careful with
  * the type you pass, as reinterpret_cast on a reference is used that is
  * expecially permissive so you can shot your feet if not carefull enough.
  *
@@ -57,9 +57,11 @@
  * C++ dynamic dispatching that may have a noticeable impact on runtime
  * performances.
  */
+#pragma GCC diagnostic ignored "-Wstrict-aliasing"
 #define RS_REGISTER_SERIAL_MEMBER_TYPED(I, T) do {\
 	RsTypeSerializer::serial_process<T>(j, ctx, reinterpret_cast<T&>(I), #I);\
 	} while(0)
+#pragma GCC diagnostic pop
 
 /** @def RS_REGISTER_ITEM_TYPE(T)
  * Use this macro into `youritem.cc` only if you need to process members of

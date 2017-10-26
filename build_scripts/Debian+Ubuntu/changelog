@@ -1,5 +1,179 @@
 retroshare (0.6.3-1.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
+  d61a5cd csoler Mon,  2 Oct 2017 22:23:26 +0200 attempt at fixing the re-hash bug. Now only using canonicalized filenames in hash cache
+  22942dc csoler Sun,  1 Oct 2017 20:20:26 +0200 fixed bug causing suffix/prefix lists to contain an empty string
+  bc05aaa csoler Sat, 30 Sep 2017 18:58:31 +0200 switched tokenQueue speed to 10 calls/sec, thus improving loading speeds. Still need to test for CPU load
+  65977c0 csoler Sat, 30 Sep 2017 18:29:29 +0200 Merge pull request #1054 from PhenomRetroShare/Fix_GccWarningd
+  06ebaa5 csoler Sat, 30 Sep 2017 18:28:24 +0200 Merge pull request #1055 from felisucoibi/master
+  06063c5 felisu Sat, 30 Sep 2017 11:34:18 +0200 removed extra space
+  b84c898 felisu Sat, 30 Sep 2017 00:29:07 +0200 Removed ... from text
+  ef6fd38 felisu Thu, 28 Sep 2017 22:42:30 +0200 Changed prefixes and sifixes for startign with and ending with to be understandable.
+  7f851f6 Phenom Thu, 28 Sep 2017 19:24:26 +0200 Fix Gcc Warning in p3banlist
+  e66c0d1 csoler Wed, 27 Sep 2017 22:26:14 +0200 removed updateTotals() method. Replaced it with costless on-the-fly update of totals
+  a00d2c9 csoler Tue, 26 Sep 2017 21:12:17 +0200 changed lobby to char room in chat system msgs
+  8eae374 csoler Mon, 25 Sep 2017 22:14:34 +0200 Merge pull request #1053 from csoler/v0.6-FT
+  0d9b6e7 csoler Mon, 25 Sep 2017 22:09:35 +0200 fixd broken layout
+  cbeefda csoler Mon, 25 Sep 2017 21:35:59 +0200 Merge pull request #744 from RetroPooh/tunnel-names
+  f98f16f Pooh   Mon, 25 Sep 2017 22:31:49 +0300 Update TransfersDialog.cpp
+  5970ff2 csoler Mon, 25 Sep 2017 21:14:30 +0200 Merge pull request #1052 from csoler/v0.6-FT
+  40cda11 csoler Mon, 25 Sep 2017 21:05:42 +0200 removed delay when calling forceUpdate() on directories
+  b969f31 csoler Mon, 25 Sep 2017 20:59:32 +0200 Merge pull request #1050 from csoler/v0.6-FT
+  d8cb3fe csoler Mon, 25 Sep 2017 20:56:35 +0200 fixed not rehashing files that already exist in a different directory pointed by a symlink
+  72dc1c7 Pooh   Mon, 25 Sep 2017 21:50:12 +0300 Update TransfersDialog.cpp
+  c47e6f6 Pooh   Mon, 25 Sep 2017 21:43:41 +0300 Merge branch 'master' into tunnel-names
+  4766a89 csoler Sun, 24 Sep 2017 23:51:47 +0200 added an additional hard limit to directory depth, just in case
+  f497905 csoler Sun, 24 Sep 2017 23:43:52 +0200 fixed limitation of directory depth when indexing files
+  abd7e25 csoler Sun, 24 Sep 2017 18:14:45 +0200 added checks for mMaxShareDepth and mIgnoreDuplicates
+  2a99df4 csoler Sun, 24 Sep 2017 17:53:06 +0200 added UI and parameters for two new options in shared files: max share depth and ignore duplicates
+  932eb49 csoler Sat, 23 Sep 2017 13:49:53 +0200 Merge pull request #1049 from Steve-V/minor-spelling-fix
+  82c9c95 Steve- Fri, 22 Sep 2017 19:58:13 -0500 spelling fix ommitted -> omitted
+  73cbf6c csoler Thu, 21 Sep 2017 23:47:11 +0200 Merge pull request #1047 from csoler/v0.6-FT
+  a2ccf97 csoler Wed, 20 Sep 2017 22:57:32 +0200 removed the 4M files limit on 64bits systems
+  308f8ca defnax Tue, 19 Sep 2017 18:34:58 +0200 update qrc file
+  58ccf0b csoler Mon, 18 Sep 2017 22:50:35 +0200 Merge pull request #1045 from csoler/v0.6-FT
+  bc2c9d5 csoler Mon, 18 Sep 2017 22:49:51 +0200 adding pending transfers 100 at a time instead of 1 at a time when loading
+  52ca6d0 defnax Mon, 18 Sep 2017 20:49:40 +0200 Added Crystall Ball to emote file
+  bf7d346 csoler Sun, 17 Sep 2017 20:27:44 +0200 Merge pull request #1043 from csoler/v0.6-FT
+  e21dec4 csoler Sun, 17 Sep 2017 20:26:46 +0200 Merge pull request #1038 from PhenomRetroShare/Add_UploadUserColumn
+  d8f621e csoler Sun, 17 Sep 2017 20:14:45 +0200 make forceDirectoryCheck() to desactivate the pause, in case it was left activated
+  
+ -- Retroshare Dev Team <contact@retroshare.net>  Sat, 14 Oct 2017 15:00:00 +0100
+
+retroshare (0.6.3-1.20170917.c2f321d7~trusty) trusty; urgency=low
+
+  46d26bf csoler Tue, 12 Sep 2017 21:05:59 +0200 updated ubuntu packagign script
+  f3c627d csoler Sat, 16 Sep 2017 22:13:53 +0200 Merge pull request #1042 from csoler/v0.6-FT
+  8189d66 csoler Sat, 16 Sep 2017 22:13:15 +0200 fixed bug causing anon FT to not resume when restarting RS when the server enforces encryption
+  195127f Gioacc Fri, 15 Sep 2017 16:23:38 +0200 Merge pull request #965 from PhenomRetroShare/Fix_GccWarning
+  6ad2306 Gioacc Fri, 15 Sep 2017 16:19:48 +0200 Merge pull request #1039 from PhenomRetroShare/Fix_WinCompil
+  f416686 Phenom Fri, 15 Sep 2017 15:04:43 +0200 Fix Windows Build
+  62eefa4 Gioacc Fri, 15 Sep 2017 09:33:01 +0200 Remove cruft from PeersHandler::handleGetInactiveUsers
+  341c94e Gioacc Fri, 15 Sep 2017 09:03:50 +0200 PeersHandler::handleRemoveNode only remove location
+  7888ec6 Gioacc Fri, 15 Sep 2017 08:56:54 +0200 Remove extra cruft
+  016cafd Gioacc Fri, 15 Sep 2017 08:25:30 +0200 Merge branch 'master' of https://github.com/myfingerhurt/RetroShare into myfingerhurt-webui-PR1014
+  331cdd0 csoler Thu, 14 Sep 2017 22:10:25 +0200 Merge pull request #1031 from PhenomRetroShare/Fix_UninitializedStatusInPeersHandler
+  d5eac2c csoler Thu, 14 Sep 2017 22:06:01 +0200 Merge pull request #1033 from PhenomRetroShare/Add_UploadExpColAll
+  d7dae0e csoler Thu, 14 Sep 2017 22:02:39 +0200 Merge pull request #1034 from csoler/v0.6-FT
+  1d231e6 csoler Thu, 14 Sep 2017 22:01:52 +0200 fixed bug causing file lists to not refresh/show until a friend makes a change
+  5511a0b csoler Thu, 14 Sep 2017 21:28:34 +0200 added tooltip for file ignore list
+  dff0d50 Phenom Thu, 14 Sep 2017 19:22:37 +0200 Add Expand/Collapse All in Upload List
+  a0ebddb Phenom Fri, 28 Jul 2017 20:00:29 +0200 Fic Gcc warnings:
+  4b1161d csoler Tue, 12 Sep 2017 21:03:44 +0200 updated changelog
+  762d025 csoler Tue, 12 Sep 2017 17:40:54 +0200 Merge pull request #1027 from PhenomRetroShare/Fix_UninitializedPeerMaxRates
+  8884a32 Phenom Mon, 11 Sep 2017 20:18:06 +0200 Fix Uninitilized Peer Max Rates.
+  66bf188 csoler Mon, 11 Sep 2017 22:20:27 +0200 Merge pull request #1029 from PhenomRetroShare/Fix_UninitValueInLocalDirUpd
+  cf90867 Phenom Mon, 11 Sep 2017 21:50:08 +0200 Fix unitialized value in LocalDirectoryUpdater.
+  3b7809a csoler Mon, 11 Sep 2017 20:49:11 +0200 Merge pull request #1028 from csoler/v0.6-FT
+  551ef63 csoler Mon, 11 Sep 2017 19:36:06 +0200 added default ignore list on linux
+  c5f91e3 csoler Mon, 11 Sep 2017 19:05:19 +0200 Merge pull request #1026 from csoler/v0.6-FT
+  0ca0b72 csoler Mon, 11 Sep 2017 19:02:07 +0200 moved file ignore test to a more appropriate place
+  eff5c5d csoler Sun, 10 Sep 2017 22:07:36 +0200 added pause to file hashing
+  ea25d4b csoler Sun, 10 Sep 2017 20:22:17 +0200 improved update of ignore list
+  884b3a6 csoler Sun, 10 Sep 2017 19:58:57 +0200 added infrastructure to add a ignore list in shared files
+  b3e1597 csoler Sat,  9 Sep 2017 18:34:25 +0200 Merge pull request #1025 from Ppjet6/master
+  c85664e Maxime Sat,  9 Sep 2017 13:54:30 +0100 Typo in GenCertDialog
+  1e2a227 csoler Sat,  9 Sep 2017 14:48:35 +0200 Merge pull request #1023 from Ppjet6/master
+  1bc9ef6 csoler Sat,  9 Sep 2017 14:48:02 +0200 Merge pull request #1022 from PhenomRetroShare/Fix_MoveSharedFilesDialog
+  64d0290 Maxime Sat,  9 Sep 2017 03:47:38 +0100 Typo in GenCertDialog
+  4336a4a Phenom Thu,  7 Sep 2017 19:37:53 +0200 Move SharedFilesDialog to /gui/FileTransfer/
+  54ee650 csoler Thu,  7 Sep 2017 18:54:04 +0200 Merge pull request #1021 from PhenomRetroShare/Fix_ProgressSorting
+  d81f9a3 Phenom Thu,  7 Sep 2017 18:09:21 +0200 Fix File Transfert Progress Sorting.
+  1dc6bef csoler Thu,  7 Sep 2017 18:08:34 +0200 Merge pull request #1019 from PhenomRetroShare/Add_GroupedUpLoadItem
+  3b4e84c Phenom Wed,  6 Sep 2017 19:57:33 +0200 Regroup Upload Items by file in TransfersDialog.
+  f9102e5 csoler Tue,  5 Sep 2017 20:59:16 +0200 Merge pull request #1001 from PhenomRetroShare/Add_OnlyHiddenNodeCF
+  9ceba80 csoler Tue,  5 Sep 2017 20:46:33 +0200 Merge pull request #1015 from PhenomRetroShare/Fix_TravisCI_MacOS
+  671b418 csoler Tue,  5 Sep 2017 20:46:05 +0200 Merge pull request #1008 from PhenomRetroShare/Add_FilterInDownloadList
+  32888f0 Phenom Tue,  5 Sep 2017 16:18:47 +0200 Fix Travis CI build for MacOS
+  bc6ea65 csoler Mon,  4 Sep 2017 16:52:59 +0200 Merge pull request #1000 from PhenomRetroShare/Fix_RemovePngPng
+  c6ffe07 csoler Mon,  4 Sep 2017 16:48:17 +0200 Merge pull request #1009 from csoler/v0.6-FT
+  160ab7b csoler Sun,  3 Sep 2017 23:32:48 +0200 added missing code for remote search by hash, fixing the bug of direct sources not added
+  8d14603 csoler Sun,  3 Sep 2017 22:52:31 +0200 fixed bug preventing search by hash to be called on own files
+  063783a csoler Sun,  3 Sep 2017 14:59:14 +0200 Merge pull request #1004 from digitigrafo/master
+  a73ea43 Phenom Sat,  2 Sep 2017 17:57:04 +0200 Add a filter to DownLoad list
+  e1e1fb4 cri    Thu, 24 Aug 2017 15:31:17 +0200 revert build orange skin
+  4fc91be cri    Thu, 24 Aug 2017 15:08:29 +0200 rwd style
+  d845a3e cri    Thu, 24 Aug 2017 14:32:22 +0200 orange css skin >48em
+  ea4495f cri    Wed, 23 Aug 2017 11:16:26 +0200 added new orange skin
+  7f8386f csoler Sun, 20 Aug 2017 21:17:19 +0200 Merge pull request #998 from myfingerhurt/master
+  5d59d56 Phenom Sun, 20 Aug 2017 13:17:28 +0200 Add Only Hidden Node configure flag
+  cb7cfb4 Phenom Sat, 19 Aug 2017 23:55:39 +0200 Remove *.png.png duplicated Files
+  130099f ben    Fri, 18 Aug 2017 16:27:30 +0900 add new keys for WebUI api peers handling, distinguishable hidden node and clear node when examining certificate
+  32f43b9 Gioacc Fri, 18 Aug 2017 01:37:39 +0200 Merge branch 'GSoC2017-evaluation-final'
+  106f03d csoler Wed, 16 Aug 2017 22:26:48 +0200 Merge pull request #993 from PhenomRetroShare/Fix_OpenMessageForAllFile
+  526d8e7 csoler Wed, 16 Aug 2017 22:26:13 +0200 Merge pull request #990 from PhenomRetroShare/Fix_RelaySettingLayoutMargin
+  06158a9 csoler Wed, 16 Aug 2017 22:25:41 +0200 Merge pull request #992 from PhenomRetroShare/Fix_MailFromText
+  291bddb csoler Wed, 16 Aug 2017 22:24:17 +0200 Merge pull request #995 from PhenomRetroShare/Fix_AppVeyor
+  2a0b9ee csoler Wed, 16 Aug 2017 22:23:15 +0200 Merge pull request #991 from PhenomRetroShare/Fix_TravisMacCompil
+  79f09f1 Angela Wed, 16 Aug 2017 14:09:38 +0200 Merge branch 'qml_app_ui_improvements' into GSoC2017-evaluation-final
+  18f7733 Angela Wed, 16 Aug 2017 14:09:26 +0200 Merge branch 'qml_app_face_generator' into GSoC2017-evaluation-final
+  73a6fee Phenom Sun, 13 Aug 2017 14:34:28 +0200 Fix AppVeyor build by disabling SQLCipher
+  a87c31f Angela Sun, 13 Aug 2017 13:04:54 +0200 Fix canvas face displaced down
+  5a1a84f Angela Sun, 13 Aug 2017 13:02:49 +0200 Refactor use better variable names
+  16856ca csoler Sat, 12 Aug 2017 22:32:46 +0200 fixed yml script for AppImage
+  041447b Phenom Sat, 12 Aug 2017 15:10:07 +0200 Add "No to All" for RSLink Open message.
+  6b2bc7d Phenom Sat, 12 Aug 2017 13:40:28 +0200 Fix From text in Mail
+  5a1c316 Phenom Sat, 12 Aug 2017 11:49:33 +0200 Fix Travis MacOs Compilation
+  55bb105 Phenom Sat, 12 Aug 2017 11:21:14 +0200 Fix Relay Setting Layout Margin
+  03d6751 csoler Fri, 11 Aug 2017 19:33:23 +0200 fixed branching problem in makeSOurcePackage.sh
+  c3460c3 csoler Fri, 11 Aug 2017 19:27:49 +0200 merged previsous revisions
+  b8a556a csoler Fri, 11 Aug 2017 19:00:15 +0200 added qt-svg as a dependency
+  c331f66 csoler Fri, 11 Aug 2017 11:07:59 +0200 added appImage generation system
+  545bcde csoler Thu, 10 Aug 2017 10:36:30 +0200 added info for building/packaging on debian stretch
+  3ae85db thunde Sun,  6 Aug 2017 14:10:23 +0200 Fixed version number in rsversion.in
+  529eabe Gioacc Sun,  6 Aug 2017 11:47:57 +0200 Merge pull request #986 from ngleb/fix-cpp-comment
+  b686771 Gleb N Sun,  6 Aug 2017 14:27:26 +0700 fix C++ comment to avoid compilation error
+  52dbd91 thunde Wed,  2 Aug 2017 10:18:58 +0200 Removed Windows specific hack to get commandline arguments.
+  ee86768 thunde Sat,  5 Aug 2017 14:19:49 +0200 Fixed name of executable for autostart in Windows Installer
+  3e25d96 csoler Fri,  4 Aug 2017 21:38:44 +0200 fixed unix -> linux-* target in .pri, as qt4 doesnt seem to recognise unix
+  27ee9ca csoler Thu,  3 Aug 2017 22:55:27 +0200 Merge pull request #982 from csoler/v0.6.3
+  11832e3 csoler Thu,  3 Aug 2017 22:51:40 +0200 updated version number
+  4e02c5f csoler Thu,  3 Aug 2017 21:29:52 +0200 Merge pull request #979 from PhenomRetroShare/Fix_LobbyAutoSubscribe
+  4b820a0 csoler Thu,  3 Aug 2017 21:08:54 +0200 Merge pull request #981 from csoler/v0.6.3
+  84b32f0 csoler Thu,  3 Aug 2017 20:09:48 +0200 removed newline that comes with debug info
+  c0f28f5 Angela Thu,  3 Aug 2017 18:31:05 +0200 Set transparent background color
+  785bd65 Angela Thu,  3 Aug 2017 18:20:14 +0200 Add shadow to the toolbar
+  9f52ffb Angela Thu,  3 Aug 2017 17:29:18 +0200 Increase toolbar size
+  c790a5b Angela Thu,  3 Aug 2017 16:48:47 +0200 Merge branch 'qml_app_ui_improvements' into GSoC2017-evaluation-II
+  83f8860 Angela Thu,  3 Aug 2017 16:48:37 +0200 Merge branch 'qml_app_emoji_font' into GSoC2017-evaluation-II
+  d70293c Angela Thu,  3 Aug 2017 16:48:27 +0200 Merge branch 'qml_app_notify_unread' into GSoC2017-evaluation-II
+  54c8e26 Angela Wed,  2 Aug 2017 18:09:40 +0200 Set emoji font declaration global for all app
+  0a5b350 Angela Wed,  2 Aug 2017 17:34:29 +0200 Set RS emoji font as default if no emoji native font is detected
+  1cdb3db Angela Wed,  2 Aug 2017 16:51:29 +0200 Add OpenSansEmoji font
+  beed9be Angela Wed,  2 Aug 2017 15:16:15 +0200 Set bigger row height
+  e6a3b35 Angela Wed,  2 Aug 2017 12:46:58 +0200 Set image PreserveAspectFit
+  bf3a230 Angela Wed,  2 Aug 2017 12:34:19 +0200 Fix partially bug: incomplete toDataURL
+  6190efe Angela Tue,  1 Aug 2017 16:59:15 +0200 Improve code
+  27bedf8 Phenom Tue,  1 Aug 2017 10:15:42 +0200 Fix Lobby auto-subscribe.
+  7d5f601 csoler Mon, 31 Jul 2017 19:22:15 +0200 Merge pull request #978 from G10h4ck/cxx11_comp
+  541b1ea Gioacc Mon, 31 Jul 2017 18:26:51 +0200 Introduce C++11 compatibility macro for gcc < 4.6
+  e39b310 Angela Mon, 31 Jul 2017 17:42:45 +0200 Open chat when click notification of one chat new message
+  c86b7c7 Angela Mon, 31 Jul 2017 16:52:03 +0200 Open contacts view on click unread notification
+  93d778a Angela Mon, 31 Jul 2017 16:11:21 +0200 Show info from message sender when is in only one conversation
+  c6f562b Angela Mon, 31 Jul 2017 15:34:29 +0200 Fix reset text area with a preedit text message
+  a041584 csoler Mon, 31 Jul 2017 01:10:35 +0200 Merge pull request #976 from csoler/v0.6.3
+  7ad0ec1 csoler Mon, 31 Jul 2017 01:10:01 +0200 reduced size of GenCertDialog window (guess) and fixed username
+  0636142 csoler Sun, 30 Jul 2017 21:29:37 +0200 Merge pull request #973 from PhenomRetroShare/Fix_DontShowAnonIconWhenImageDisabled
+  2588068 csoler Sun, 30 Jul 2017 21:29:14 +0200 Merge pull request #953 from PhenomRetroShare/Fix_NewWindowForPassword
+  39436f3 csoler Sun, 30 Jul 2017 18:45:56 +0200 Merge pull request #974 from PhenomRetroShare/Fix_WebUI_SettingSaving
+  c2a3e46 Phenom Sun, 30 Jul 2017 18:29:03 +0200 Fix WebUI Setting Saving.
+  eb75946 Phenom Sun, 30 Jul 2017 15:30:56 +0200 Fix Don't show Anonymous Icon when Images are disabled in ChatWidget
+  a2f8b5e csoler Sun, 30 Jul 2017 14:42:28 +0200 Merge pull request #972 from csoler/v0.6.3
+  c5fc8f8 csoler Sun, 30 Jul 2017 14:40:53 +0200 replaced images in homepage with the logo without flares
+  cd6c9cf csoler Sun, 30 Jul 2017 14:38:17 +0200 simplified text on homepage
+  e82b6fc csoler Sun, 30 Jul 2017 14:31:52 +0200 improved GenCertDialog with small indicator text, and hide location by default
+  5dc25e3 Phenom Wed, 19 Jul 2017 19:39:21 +0200 Fix Ask Password in new window if wrong in StartDialog.
+  b387f15 csoler Sun, 30 Jul 2017 10:36:44 +0200 fixed compilation on qt5
+  f5c4561 csoler Sat, 29 Jul 2017 23:41:45 +0200 Merge pull request #968 from csoler/v0.6.3
+  2e1bd2d csoler Sat, 29 Jul 2017 23:39:48 +0200 improved text on cert creation button
+  09faa60 csoler Sat, 29 Jul 2017 23:16:47 +0200 Merge pull request #967 from csoler/v0.6.3
+  e8415c4 csoler Sat, 29 Jul 2017 23:12:56 +0200 made RS not to ask for plugin confirmation on first load
+  345f24e csoler Sat, 29 Jul 2017 22:37:14 +0200 fixed clearing of PGP passphrase after creation of default identity
+  6f7e656 csoler Sat, 29 Jul 2017 21:48:12 +0200 Defautl GXS nickname was built from location. Changed it to use profile name
+
+ -- Retroshare Dev Team <contact@retroshare.net>  Tue, 12 Sep 2017 22:00:00 +0100
+
+retroshare (0.6.3-1.20170811.03d67515~trusty) trusty; urgency=low
+
   a16220e csoler Sat, 29 Jul 2017 20:24:13 +0200 switched to RC2
   d10dbf1 csoler Sat, 29 Jul 2017 20:20:53 +0200 Merge pull request #966 from csoler/v0.6.3
   b8260e5 csoler Fri, 28 Jul 2017 18:41:34 +0200 fixed wording in GenCertDialog

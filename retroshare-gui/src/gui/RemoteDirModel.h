@@ -177,6 +177,7 @@ class TreeStyle_RDM: public RetroshareDirModel
 
 	protected:
         virtual void updateRef(const QModelIndex&) const ;
+		virtual void update() ;
 
         /* These are all overloaded Virtual Functions */
 		virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;

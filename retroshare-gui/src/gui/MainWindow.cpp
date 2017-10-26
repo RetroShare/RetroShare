@@ -29,10 +29,6 @@
 #include <QUrl>
 #include <QtDebug>
 
-#ifdef BLOGS
-#include "gui/unfinished/blogs/BlogsDialog.h"
-#endif 
-
 #include <retroshare/rsplugin.h>
 #include <retroshare/rsconfig.h>
 
@@ -43,9 +39,9 @@
 #include "HomePage.h"
 #include "NetworkDialog.h"
 #include "gui/FileTransfer/SearchDialog.h"
+#include "gui/FileTransfer/SharedFilesDialog.h"
 #include "gui/FileTransfer/TransfersDialog.h"
 #include "MessagesDialog.h"
-#include "SharedFilesDialog.h"
 #include "PluginsPage.h"
 #include "NewsFeed.h"
 #include "ShareManager.h"
@@ -107,7 +103,7 @@
 #include "gui/statistics/StatisticsWindow.h"
 
 #include "gui/connect/ConnectFriendWizard.h"
-#include "gui/common/RsCollectionFile.h"
+#include "gui/common/RsCollection.h"
 #include "settings/rsettingswin.h"
 #include "settings/rsharesettings.h"
 #include "settings/WebuiPage.h"
@@ -145,6 +141,7 @@
 #define IMAGE_BLOGS             ":/images/kblogger.png"
 #define IMAGE_DHT               ":/images/dht16.png"
 
+/*static*/ bool MainWindow::hiddenmode = false;
 
 /*static*/ MainWindow *MainWindow::_instance = NULL;
 
@@ -186,6 +183,8 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     RsPeerDetails pd;
     if (rsPeers->getPeerDetails(rsPeers->getOwnId(), pd)) {
         nameAndLocation = QString("%1 (%2)").arg(QString::fromUtf8(pd.name.c_str())).arg(QString::fromUtf8(pd.location.c_str()));
+        if(pd.netMode == RS_NETMODE_HIDDEN)
+            hiddenmode = true;
     }
 
     setWindowTitle(tr("RetroShare %1 a secure decentralized communication platform").arg(Rshare::retroshareVersion(true)) + " - " + nameAndLocation);
@@ -200,7 +199,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     this->setWindowIcon(QIcon(QString::fromUtf8(":/icons/logo_128.png")));
 
     /* Create all the dialogs of which we only want one instance */
-    _bandwidthGraph = new BandwidthGraph();
+    _bandwidthGraph = NULL ;
 
     #ifdef UNFINISHED
     applicationWindow = new ApplicationWindow();
@@ -211,8 +210,9 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     connect(ui->listWidget, SIGNAL(currentRowChanged(int)), this, SLOT(setNewPage(int)));
     connect(ui->stackPages, SIGNAL(currentChanged(int)), this, SLOT(setNewPage(int)));
 
-    //ui->stackPages->setCurrentIndex(Settings->getLastPageInMainWindow());
-    setNewPage(Settings->getLastPageInMainWindow());
+	int lastpageindex = Settings->getLastPageInMainWindow();
+	if(lastpageindex < ui->stackPages->count())	//Do not crash when a page was removed after last run
+		setNewPage(lastpageindex);
 
     ui->splitter->setStretchFactor(0, 0);
     ui->splitter->setStretchFactor(1, 1);
@@ -245,13 +245,17 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     statusBar()->addWidget(peerstatus);
 
     natstatus = new NATStatus();
-    natstatus->setVisible(Settings->valueFromGroup("StatusBar", "ShowNAT", QVariant(true)).toBool());
+    if(hiddenmode) natstatus->setVisible(false);
+    else natstatus->setVisible(Settings->valueFromGroup("StatusBar", "ShowNAT", QVariant(true)).toBool());
     statusBar()->addWidget(natstatus);
-    
+    natstatus->getNATStatus();
+	
     dhtstatus = new DHTStatus();
-    dhtstatus->setVisible(Settings->valueFromGroup("StatusBar", "ShowDHT", QVariant(true)).toBool());
+    if(hiddenmode) dhtstatus->setVisible(false);
+    else dhtstatus->setVisible(Settings->valueFromGroup("StatusBar", "ShowDHT", QVariant(true)).toBool());
     statusBar()->addWidget(dhtstatus);
-
+    dhtstatus->getDHTStatus();
+	
     hashingstatus = new HashingStatus();
     hashingstatus->setVisible(Settings->valueFromGroup("StatusBar", "ShowHashing", QVariant(true)).toBool());
     statusBar()->addPermanentWidget(hashingstatus, 1);
@@ -377,10 +381,6 @@ void MainWindow::initStackedPage()
 #ifdef RS_USE_WIKI
   WikiDialog *wikiDialog = NULL;
   addPage(wikiDialog = new WikiDialog(ui->stackPages), grp, &notify);
-#endif
-
-#ifdef BLOGS
-  addPage(blogsFeed = new BlogsDialog(ui->stackPages), grp, NULL);
 #endif
 
  std::cerr << "Looking for interfaces in existing plugins:" << std::endl;
@@ -567,7 +567,7 @@ void MainWindow::createTrayIcon()
 #ifdef ENABLE_WEBUI
     trayMenu->addAction(QIcon(":/images/emblem-web.png"), tr("Show web interface"), this, SLOT(showWebinterface()));
 #endif // ENABLE_WEBUI
-    trayMenu->addAction(QIcon(IMAGE_BWGRAPH), tr("Bandwidth Graph"), _bandwidthGraph, SLOT(showWindow()));
+    trayMenu->addAction(QIcon(IMAGE_BWGRAPH), tr("Bandwidth Graph"), this, SLOT(showBandwidthGraph()));
     trayMenu->addAction(QIcon(IMAGE_DHT), tr("Statistics"), this, SLOT(showStatisticsWindow()));
 
 
@@ -591,6 +591,14 @@ void MainWindow::createTrayIcon()
 
     connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(toggleVisibility(QSystemTrayIcon::ActivationReason)));
     trayIcon->show();
+}
+
+void MainWindow::showBandwidthGraph()
+{
+	if(_bandwidthGraph == NULL)
+		_bandwidthGraph = new BandwidthGraph();
+
+	_bandwidthGraph->showWindow();
 }
 
 void MainWindow::createNotifyIcons()
@@ -702,11 +710,14 @@ void MainWindow::updateStatus()
     if (ratesstatus)
         ratesstatus->getRatesStatus(downKb, upKb);
 
+    if(!hiddenmode)
+    {
     if (natstatus)
         natstatus->getNATStatus();
         
     if (dhtstatus)
         dhtstatus->getDHTStatus();
+    }
 
     if (discstatus) {
         discstatus->update();
@@ -915,11 +926,6 @@ void SetForegroundWindowInternal(HWND hWnd)
 		 case Forums:
                          _instance->ui->stackPages->setCurrentPage( _instance->gxsforumDialog );
                          return true ;
-#ifdef BLOGS
-		 case Blogs:
-			 Page = _instance->blogsFeed;
-			 return true ;
-#endif
 		case Posted:
 			_instance->ui->stackPages->setCurrentPage( _instance->postedDialog );
 			return true ;
@@ -960,22 +966,12 @@ void SetForegroundWindowInternal(HWND hWnd)
    if (page == _instance->messagesDialog) {
        return Messages;
    }
-#ifdef RS_USE_LINKS
-   if (page == _instance->linksDialog) {
-       return Links;
-   }
-#endif
 #if 0
    if (page == _instance->channelFeed) {
        return Channels;
    }
    if (page == _instance->forumsDialog) {
        return Forums;
-   }
-#endif
-#ifdef BLOGS
-   if (page == _instance->blogsFeed) {
-       return Blogs;
    }
 #endif
 
@@ -1009,20 +1005,12 @@ void SetForegroundWindowInternal(HWND hWnd)
 			return _instance->transfersDialog->searchDialog;
 		case Messages:
 			return _instance->messagesDialog;
-#ifdef RS_USE_LINKS
-		case Links:
-			return _instance->linksDialog;
-#endif
 		case Channels:
 			return _instance->gxschannelDialog;
 		case Forums:
 			return _instance->gxsforumDialog;
 		case Posted:
 			return _instance->postedDialog;
-#ifdef BLOGS
-		case Blogs:
-			return _instance->blogsFeed;
-#endif
 	}
 
    return NULL;
@@ -1043,7 +1031,7 @@ void MainWindow::newRsCollection()
 {
     std::vector <DirDetails> dirVec;
 
-    RsCollectionFile(dirVec).openNewColl(this);
+    RsCollection(dirVec).openNewColl(this);
 }
 
 /** Shows Share Manager */
@@ -1471,8 +1459,8 @@ void MainWindow::openRsCollection(const QString &filename)
 {
 	QFileInfo qinfo(filename);
 	if (qinfo.exists()) {
-		if (qinfo.absoluteFilePath().endsWith(RsCollectionFile::ExtensionString)) {
-			RsCollectionFile collection;
+		if (qinfo.absoluteFilePath().endsWith(RsCollection::ExtensionString)) {
+			RsCollection collection;
 			collection.openColl(qinfo.absoluteFilePath());
 		}
 	}
@@ -1599,10 +1587,13 @@ void MainWindow::setCompactStatusMode(bool compact)
 	//statusComboBox: TODO Show only icon
 	peerstatus->setCompactMode(compact);
 	updateFriends();
+    if(!hiddenmode)
+    {
 	natstatus->setCompactMode(compact);
 	natstatus->getNATStatus();
 	dhtstatus->setCompactMode(compact);
 	dhtstatus->getDHTStatus();
+    }
 	hashingstatus->setCompactMode(compact);
 	ratesstatus->setCompactMode(compact);
 	//opModeStatus: TODO Show only ???

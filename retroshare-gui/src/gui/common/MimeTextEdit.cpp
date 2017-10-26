@@ -69,7 +69,7 @@ void MimeTextEdit::insertFromMimeData(const QMimeData* source)
 			QImage image = qvariant_cast<QImage>(source->imageData());
 			if (image.isNull() == false) {
 				QString	encodedImage;
-				if (RsHtml::makeEmbeddedImage(image, encodedImage, 640*480)) {
+				if (RsHtml::makeEmbeddedImage(image, encodedImage, 640*480, mMaxBytes)) {
 					QTextDocumentFragment fragment = QTextDocumentFragment::fromHtml(encodedImage);
 					textCursor().insertFragment(fragment);
 					return;

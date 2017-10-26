@@ -803,7 +803,8 @@ static bool checkAccount(std::string accountdir, AccountDetails &account,std::ma
 
 	/* Use RetroShare's exe dir */
 	dataDirectory = ".";
-
+#elif defined(ANDROID)
+	dataDirectory = defaultBaseDirectory()+"/usr/share/retroshare";
 #elif defined(DATA_DIR)
 	dataDirectory = DATA_DIR;
 	// For all other OS the data directory must be set in libretroshare.pro

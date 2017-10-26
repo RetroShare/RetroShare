@@ -144,7 +144,7 @@ GenCertDialog::GenCertDialog(bool onlyGenerateIdentity, QWidget *parent)
 	connect(ui.exportIdentity_PB, SIGNAL(clicked()), this, SLOT(exportIdentity()));
 
 	connect(ui.password_input,   SIGNAL(textChanged(QString)), this, SLOT(updateCheckLabels()));
-	connect(ui.password_input_2, SIGNAL(textChanged(QString)), this, SLOT(updateCheckLabels()));
+	connect(ui.password2_input, SIGNAL(textChanged(QString)), this, SLOT(updateCheckLabels()));
 	connect(ui.name_input,       SIGNAL(textChanged(QString)), this, SLOT(updateCheckLabels()));
 	connect(ui.node_input,       SIGNAL(textChanged(QString)), this, SLOT(updateCheckLabels()));
 	connect(ui.reuse_existing_node_CB, SIGNAL(toggled(bool)), this, SLOT(updateCheckLabels()));
@@ -172,7 +172,7 @@ GenCertDialog::GenCertDialog(bool onlyGenerateIdentity, QWidget *parent)
 	ui.name_input->setPlaceholderText(tr("Username"));
 	ui.nickname_input->setPlaceholderText(tr("Chat name"));
 	ui.password_input->setPlaceholderText(tr("Password"));
-	ui.password_input_2->setPlaceholderText(tr("Password again"));
+	ui.password2_input->setPlaceholderText(tr("Password again"));
 #endif
 
 	ui.nickname_input->setMaxLength(RSID_MAXIMUM_NICKNAME_SIZE);
@@ -188,6 +188,13 @@ GenCertDialog::GenCertDialog(bool onlyGenerateIdentity, QWidget *parent)
 
     mAllFieldsOk = false ;
     mEntropyOk = false ;
+
+#ifdef RS_ONLYHIDDENNODE
+	ui.adv_checkbox->setChecked(true);
+	ui.adv_checkbox->setVisible(false);
+	ui.nodeType_CB->setCurrentIndex(1);
+	ui.nodeType_CB->setEnabled(false);
+#endif
 
 	initKeyList();
     setupState();
@@ -292,8 +299,8 @@ void GenCertDialog::setupState()
 	ui.password_label->setVisible(true);
 
 	ui.password2_check_LB->setVisible(generate_new);
-	ui.password_input_2->setVisible(generate_new);
-	ui.password_label_2->setVisible(generate_new);
+	ui.password2_input->setVisible(generate_new);
+	ui.password2_label->setVisible(generate_new);
 
 	ui.keylength_label->setVisible(adv_state);
 	ui.keylength_comboBox->setVisible(adv_state);
@@ -324,7 +331,7 @@ void GenCertDialog::setupState()
 
 		ui.genButton->setVisible(false) ;
 		ui.generate_label->setVisible(false) ;
-		ui.info_label->setText("Please mouve your mouse randomply to generate enough random data to create your profile.") ;
+		ui.info_label->setText("Please move your mouse randomly to generate enough random data to create your profile.") ;
 		ui.info_label->setVisible(true) ;
 	}
 	else
@@ -385,7 +392,7 @@ void GenCertDialog::updateCheckLabels()
         mAllFieldsOk = false ;
 		ui.password_check_LB   ->setPixmap(bad) ;
     }
-    if(ui.password_input->text().length() >= 3 && ui.password_input->text() == ui.password_input_2->text())
+    if(ui.password_input->text().length() >= 3 && ui.password_input->text() == ui.password2_input->text())
 		ui.password2_check_LB   ->setPixmap(good) ;
     else
     {
@@ -533,7 +540,7 @@ void GenCertDialog::genPerson()
 			return;
 		}
 
-		if(ui.password_input->text() != ui.password_input_2->text())
+		if(ui.password_input->text() != ui.password2_input->text())
 		{
 			QMessageBox::warning(this,
 								 tr("PGP key pair generation failure"),
@@ -550,8 +557,8 @@ void GenCertDialog::genPerson()
 		ui.name_input->hide();
 		ui.nickname_label->hide();
 		ui.nickname_input->hide();
-		ui.password_label_2->hide();
-		ui.password_input_2->hide();
+		ui.password2_label->hide();
+		ui.password2_input->hide();
 		ui.password2_check_LB->hide();
 		ui.password_check_LB->hide();
 		ui.password_label->hide();

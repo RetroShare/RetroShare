@@ -38,8 +38,8 @@
 
 #include "libresapilocalclient.h"
 #include "rsqmlappengine.h"
+#include "androidimagepicker.h"
 #include "platforminteracions.h"
-
 
 int main(int argc, char *argv[])
 {
@@ -52,6 +52,7 @@ int main(int argc, char *argv[])
 	            "org.retroshare.qml_components.LibresapiLocalClient", 1, 0,
 	            "LibresapiLocalClient");
 
+
 	QString sockPath = QDir::homePath() + "/.retroshare";
 	sockPath.append("/libresapi.sock");
 
@@ -60,6 +61,14 @@ int main(int argc, char *argv[])
 
 	RsQmlAppEngine engine(true);
 	QQmlContext& rootContext = *engine.rootContext();
+
+	qmlRegisterType<AndroidImagePicker>(
+	            "org.retroshare.qml_components.AndroidImagePicker", 1, 0,
+	            "AndroidImagePicker");
+
+	AndroidImagePicker androidImagePicker;
+	engine.rootContext()->setContextProperty("androidImagePicker",
+	                                  &androidImagePicker);
 
 	QStringList mainArgs = app.arguments();
 

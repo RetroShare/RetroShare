@@ -59,7 +59,6 @@ class NetworkDialog;
 class SearchDialog;
 class TransfersDialog;
 class MessagesDialog;
-class SharedFilesDialog;
 class MessengerWindow;
 class PluginsPage;
 class HomePage;
@@ -68,14 +67,6 @@ class BandwidthGraph;
 class MainPage;
 class NewsFeed;
 class UserNotify;
-
-#ifdef RS_USE_LINKS
-class LinksDialog;
-#endif
-
-#ifdef BLOGS
-class BlogsDialog;
-#endif
 
 #ifdef UNFINISHED
 class ApplicationWindow;
@@ -98,12 +89,6 @@ public:
         Channels           = 6,  /** Channels page. */
         Forums             = 7,  /** Forums page. */
         Search             = 8,  /** Search page. */
-#ifdef BLOGS
-        Blogs              = 9,  /** Blogs page. */
-#endif
-#ifdef RS_USE_LINKS
-        Links              = 10,  /** Links page. */
-#endif
         Posted             = 11,  /** Posted links */
         People             = 12,   /** People page. */
         Options            = 13   /** People page. */
@@ -163,7 +148,6 @@ public:
 	 ChatLobbyWidget   *chatLobbyDialog;
 	 MessagesDialog    *messagesDialog;
 	 SettingsPage      *settingsDialog;
-	 SharedFilesDialog *sharedfilesDialog;
 	 GxsChannelDialog  *gxschannelDialog ;
 	 GxsForumsDialog   *gxsforumDialog ;
 	 PostedDialog      *postedDialog;
@@ -171,14 +155,6 @@ public:
 //    ForumsDialog      *forumsDialog;
 //    ChannelFeed       *channelFeed;
     Idle              *idle;
-
-#ifdef RS_USE_LINKS
-    LinksDialog       *linksDialog;
-#endif
-
-#ifdef BLOGS
-    BlogsDialog       *blogsFeed;
-#endif
 
 #ifdef UNFINISHED
     ApplicationWindow   *applicationWindow;
@@ -208,6 +184,8 @@ public:
     ToasterDisable *toasterDisableInstance();
     SysTrayStatus *sysTrayStatusInstance();
 
+    static bool hiddenmode;
+	
 public slots:
     void receiveNewArgs(QStringList args);
     void displayErrorMessage(int,int,const QString&) ;
@@ -222,6 +200,7 @@ public slots:
     //! Go to a specific part of the control panel.
     void setNewPage(int page);
     void setCompactStatusMode(bool compact);
+    void showBandwidthGraph();
 
     void toggleStatusToolTip(bool toggle);
 protected:

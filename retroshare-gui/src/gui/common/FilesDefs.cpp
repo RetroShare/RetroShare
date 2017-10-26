@@ -23,7 +23,7 @@
 #include <QFileInfo>
 
 #include "FilesDefs.h"
-#include "RsCollectionFile.h"
+#include "RsCollection.h"
 
 static QString getInfoFromFilename(const QString& filename, bool anyForUnknown, bool image)
 {
@@ -54,7 +54,7 @@ static QString getInfoFromFilename(const QString& filename, bool anyForUnknown, 
 		return image ? ":/images/FileTypeDocument.png" : QApplication::translate("FilesDefs", "Document");
 	} else if (ext == "pdf") {
 		return image ? ":/images/mimetypes/pdf.png" : QApplication::translate("FilesDefs", "Document");
-	} else if (ext == RsCollectionFile::ExtensionString) {
+	} else if (ext == RsCollection::ExtensionString) {
 		return image ? ":/images/mimetypes/rscollection-16.png" : QApplication::translate("FilesDefs", "RetroShare collection file");
 	} else if (ext == "sub" || ext == "srt") {
 		return image ? ":/images/FileTypeAny.png" : QApplication::translate("FilesDefs", "Subtitles");

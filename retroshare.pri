@@ -56,6 +56,11 @@ no_sqlcipher:CONFIG -= sqlcipher
 CONFIG *= no_rs_autologin
 rs_autologin:CONFIG -= no_rs_autologin
 
+# To have only hidden node generation append the following assignation
+# to qmake command line "CONFIG+=rs_onlyhiddennode"
+CONFIG *= no_rs_onlyhiddennode
+rs_onlyhiddennode:CONFIG -= no_rs_onlyhiddennode
+
 # To disable GXS (General eXchange System) append the following
 # assignation to qmake command line "CONFIG+=no_rs_gxs"
 CONFIG *= rs_gxs
@@ -128,7 +133,7 @@ android-g++ {
 #    message(ANDROID_EXTRA_LIBS: $$ANDROID_EXTRA_LIBS)
 #    message(ANDROID_PLATFORM: $$ANDROID_PLATFORM)
 #    message(ANDROID_PLATFORM_ROOT_PATH: $$ANDROID_PLATFORM_ROOT_PATH)
-#    message(NDK_TOOLCHAIN_PATH: $$NDK_TOOLCHAIN_PATH)
+#    message(NATIVE_LIBS_TOOLCHAIN_PATH: $$NATIVE_LIBS_TOOLCHAIN_PATH)
 }
 
 win32 {
@@ -221,6 +226,11 @@ no_sqlcipher:DEFINES *= NO_SQLCIPHER
 rs_autologin {
     DEFINES *= RS_AUTOLOGIN
     warning("You have enabled RetroShare auto-login, this is discouraged. The usage of auto-login on some linux distributions may allow someone having access to your session to steal the SSL keys of your node location and therefore compromise your security")
+}
+
+rs_onlyhiddennode {
+    DEFINES *= RS_ONLYHIDDENNODE
+    warning("QMAKE: You have enabled only hidden node.")
 }
 
 no_rs_deprecatedwarning {

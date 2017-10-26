@@ -41,7 +41,7 @@ namespace RsRegularExpression { class Expression; }
 /* These are used mainly by ftController at the moment */
 const uint32_t RS_FILE_CTRL_PAUSE	 		= 0x00000100;
 const uint32_t RS_FILE_CTRL_START	 		= 0x00000200;
-const uint32_t RS_FILE_CTRL_FORCE_CHECK	= 0x00000400;
+const uint32_t RS_FILE_CTRL_FORCE_CHECK	    = 0x00000400;
 
 const uint32_t RS_FILE_CTRL_ENCRYPTION_POLICY_STRICT     = 0x00000001 ;
 const uint32_t RS_FILE_CTRL_ENCRYPTION_POLICY_PERMISSIVE = 0x00000002 ;
@@ -59,6 +59,12 @@ const uint32_t RS_FILE_RATE_STREAM_VIDEO = 0x00000006;
 
 const uint32_t RS_FILE_PEER_ONLINE 	 = 0x00001000;
 const uint32_t RS_FILE_PEER_OFFLINE 	 = 0x00002000;
+
+const uint32_t RS_FILE_SHARE_FLAGS_IGNORE_PREFIXES          = 0x0001 ;
+const uint32_t RS_FILE_SHARE_FLAGS_IGNORE_SUFFIXES          = 0x0002 ;
+const uint32_t RS_FILE_SHARE_FLAGS_IGNORE_DUPLICATES        = 0x0004 ;
+
+const uint32_t RS_FILE_SHARE_PARAMETER_DEFAULT_MAXIMUM_DEPTH = 8;
 
 /************************************
  * Used To indicate where to search.
@@ -126,6 +132,38 @@ struct SharedDirStats
 {
     uint32_t total_number_of_files ;
     uint64_t total_shared_size ;
+};
+
+// This class represents a tree of directories and files, only with their names size and hash. It is used to create collection links in the GUI
+// and to transmit directory information between services. This class is independent from the existing FileHierarchy classes used in storage because
+// we need a very copact serialization and storage size since we create links with it. Besides, we cannot afford to risk the leak of other local information
+// by using the orignal classes.
+
+class FileTree
+{
+public:
+	virtual ~FileTree() {}
+
+	static FileTree *create(const DirDetails& dd, bool remote, bool remove_top_dirs = true) ;
+	static FileTree *create(const std::string& radix64_string) ;
+
+	virtual std::string toRadix64() const =0 ;
+
+	// These methods allow the user to browse the hierarchy
+
+	struct FileData {
+		std::string name ;
+		uint64_t    size ;
+		RsFileHash  hash ;
+	};
+
+	virtual uint32_t root() const { return 0;}
+	virtual bool getDirectoryContent(uint32_t index,std::string& name,std::vector<uint32_t>& subdirs,std::vector<FileData>& subfiles) const = 0;
+
+	virtual void print() const=0;
+
+	uint32_t mTotalFiles ;
+	uint64_t mTotalSize ;
 };
 
 class RsFiles
@@ -251,15 +289,26 @@ class RsFiles
 		virtual bool    updateShareFlags(const SharedDirInfo& dir) = 0;	// updates the flags. The directory should already exist !
 		virtual bool    removeSharedDirectory(std::string dir) = 0;
 
+		virtual bool getIgnoreLists(std::list<std::string>& ignored_prefixes, std::list<std::string>& ignored_suffixes,uint32_t& flags) =0;
+		virtual void setIgnoreLists(const std::list<std::string>& ignored_prefixes, const std::list<std::string>& ignored_suffixes,uint32_t flags) =0;
+
         virtual void setWatchPeriod(int minutes) =0;
         virtual void setWatchEnabled(bool b) =0;
-        virtual int watchPeriod() const =0;
+        virtual int  watchPeriod() const =0;
         virtual bool watchEnabled() =0;
         virtual bool followSymLinks() const=0;
         virtual void setFollowSymLinks(bool b)=0 ;
+		virtual void togglePauseHashingProcess() =0;		// pauses/resumes the hashing process.
+		virtual bool hashingProcessPaused() =0;
 
 		virtual bool	getShareDownloadDirectory() = 0;
 		virtual bool 	shareDownloadDirectory(bool share) = 0;
+
+        virtual void setMaxShareDepth(int depth) =0;
+        virtual int  maxShareDepth() const=0;
+
+		virtual bool	ignoreDuplicates() = 0;
+		virtual void 	setIgnoreDuplicates(bool ignore) = 0;
 
 };
 

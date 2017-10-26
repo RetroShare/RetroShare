@@ -1,14 +1,12 @@
 Compile Retroshare for Android
 ==============================
 
-== Introduction
-
 Compiling an application for Android is not as easy as one would imagine,
 expecially one like RetroShare that has a big codebase and is not well
-documented.
-This document is aimed to empower the reader so she can hopefully succed or at
-least have a significant help in compiling her own RetroShare APK package
+documented. This document is aimed to empower the reader so she can hopefully
+succed or at least have a significant help in compiling her own RetroShare APK
 installable on Android.
+
 
 == Preparing The Environement
 
@@ -21,7 +19,7 @@ on your Android phone Qt for Android examples.
 But RetroShare is not as simple to compile as those examples. The good news is
 that Android NDK ships all the necessary to build a custom toolchain that is
 suitable to build RetroShare.
-In order to build the toolchain with needed library RetroShare provides the
+In order to build the toolchain with needed libraries RetroShare provides the
 +android-prepare-toolchain.sh+ script; before you execute it you should define
 some variables the script cannot determine in an easy and reliable manner by
 itself in your terminal.
@@ -33,7 +31,7 @@ export ANDROID_NDK_PATH="/opt/android-ndk/"
 
 ## The path where your fresh compiled toolchain will be installed, make sure
 ## the parent exists
-export NDK_TOOLCHAIN_PATH="/home/$(whoami)/Development/android-toolchains/retroshare-android/"
+export NDK_TOOLCHAIN_PATH="${HOME}/Builds/android-toolchains/retroshare-android/"
 
 ## The CPU architecture of the Android device you want to target
 export ANDROID_NDK_ARCH="arm"

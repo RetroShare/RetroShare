@@ -161,7 +161,7 @@ void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
         case COLUMN_PROGRESS:
 			{
 				// create a xProgressBar
-				FileProgressInfo pinfo = index.data().value<FileProgressInfo>() ;
+				FileProgressInfo pinfo = index.data(Qt::UserRole).value<FileProgressInfo>() ;
 
 //				std::cerr << "drawing progress info: nb_chunks = " << pinfo.nb_chunks ;
 //				for(uint i=0;i<pinfo.cmap._map.size();++i)
@@ -215,20 +215,38 @@ void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 				temp = "" ;
 			painter->drawText(option.rect, Qt::AlignCenter, temp);
 			break;
-        case COLUMN_NAME:
-        		// decoration
-                        value = index.data(Qt::DecorationRole);
-                        temp = index.data().toString();
-                        pixmap = qvariant_cast<QIcon>(value).pixmap(option.decorationSize, option.state & QStyle::State_Enabled ? QIcon::Normal : QIcon::Disabled, option.state & QStyle::State_Open ? QIcon::On : QIcon::Off);
-                        pixmapRect = (pixmap.isNull() ? QRect(0, 0, 0, 0): QRect(QPoint(0, 0), option.decorationSize));
-                        if (pixmapRect.isValid()){
-                                QPoint p = QStyle::alignedRect(option.direction, Qt::AlignLeft, pixmap.size(), option.rect).topLeft();
-                                painter->drawPixmap(p, pixmap);
-                                temp = " " + temp;
-                        }
-                        painter->drawText(option.rect.translated(pixmap.size().width(), 0), Qt::AlignLeft, temp);
-                        break;
+		case COLUMN_NAME:
+		{
+			// decoration
+			int pixOffset = 0;
+			value = index.data(Qt::StatusTipRole);
+			temp = index.data().toString();
+			pixmap = qvariant_cast<QIcon>(value).pixmap(option.decorationSize, option.state & QStyle::State_Enabled ? QIcon::Normal : QIcon::Disabled, option.state & QStyle::State_Open ? QIcon::On : QIcon::Off);
+			pixmapRect = (pixmap.isNull() ? QRect(0, 0, 0, 0): QRect(QPoint(0, 0), option.decorationSize));
+			if (pixmapRect.isValid()){
+				QPoint p = QStyle::alignedRect(option.direction, Qt::AlignLeft, pixmap.size(), option.rect).topLeft();
+				p.setX( p.x() + pixOffset);
+				painter->drawPixmap(p, pixmap);
+				temp = " " + temp;
+				pixOffset += pixmap.size().width();
+			}
+			value = index.data(Qt::DecorationRole);
+			temp = index.data().toString();
+			pixmap = qvariant_cast<QIcon>(value).pixmap(option.decorationSize, option.state & QStyle::State_Enabled ? QIcon::Normal : QIcon::Disabled, option.state & QStyle::State_Open ? QIcon::On : QIcon::Off);
+			pixmapRect = (pixmap.isNull() ? QRect(0, 0, 0, 0): QRect(QPoint(0, 0), option.decorationSize));
+			if (pixmapRect.isValid()){
+				QPoint p = QStyle::alignedRect(option.direction, Qt::AlignLeft, pixmap.size(), option.rect).topLeft();
+				p.setX( p.x() + pixOffset);
+				painter->drawPixmap(p, pixmap);
+				temp = " " + temp;
+				pixOffset += pixmap.size().width();
+			}
+			painter->drawText(option.rect.translated(pixOffset, 0), Qt::AlignLeft, temp);
+		}
+		break;
     case COLUMN_LASTDL:
+        if (index.data().value<QString>().isEmpty())
+            break;
         qi64Value = index.data().value<qint64>();
         if (qi64Value < std::numeric_limits<qint64>::max()){
             QDateTime qdtLastDL = QDateTime::fromTime_t(qi64Value);

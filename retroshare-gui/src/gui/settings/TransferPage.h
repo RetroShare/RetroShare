@@ -50,6 +50,8 @@ class TransferPage: public ConfigPage
 		void updateEncryptionPolicy(int);
 		void updateMaxUploadSlots(int);
 		void updateFilePermDirectDL(int);
+		void updateIgnoreLists();
+		void updateMaxShareDepth(int);
 
 		void editDirectories() ;
 		void setIncomingDirectory();
@@ -60,6 +62,7 @@ class TransferPage: public ConfigPage
 		void updateAutoScanDirectoriesPeriod()  ;
 		void updateShareDownloadDirectory()     ;
 		void updateFollowSymLinks()             ;
+		void updateIgnoreDuplicates()           ;
 
 	private:
 

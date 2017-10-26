@@ -236,7 +236,8 @@ public:
         mForumHandler(ifaces.mGxsForums),
         mServiceControlHandler(ifaces.mServiceControl),
         mFileSearchHandler(sts, ifaces.mNotify, ifaces.mTurtle, ifaces.mFiles),
-        mTransfersHandler(sts, ifaces.mFiles),
+	    mFileSharingHandler(sts, ifaces.mFiles),
+	    mTransfersHandler(sts, ifaces.mFiles, ifaces.mPeers),
         mChatHandler(sts, ifaces.mNotify, ifaces.mMsgs, ifaces.mPeers, ifaces.mIdentity, &mPeersHandler),
         mApiPluginHandler(sts, ifaces),
 	    mChannelsHandler(ifaces.mGxsChannels),
@@ -259,6 +260,8 @@ public:
                                    &ServiceControlHandler::handleRequest);
         router.addResourceHandler("filesearch", dynamic_cast<ResourceRouter*>(&mFileSearchHandler),
                                    &FileSearchHandler::handleRequest);
+		router.addResourceHandler("filesharing", dynamic_cast<ResourceRouter*>(&mFileSharingHandler),
+		                           &FileSharingHandler::handleRequest);
         router.addResourceHandler("transfers", dynamic_cast<ResourceRouter*>(&mTransfersHandler),
                                    &TransfersHandler::handleRequest);
         router.addResourceHandler("chat", dynamic_cast<ResourceRouter*>(&mChatHandler),
@@ -280,6 +283,7 @@ public:
     ForumHandler mForumHandler;
     ServiceControlHandler mServiceControlHandler;
     FileSearchHandler mFileSearchHandler;
+	FileSharingHandler mFileSharingHandler;
     TransfersHandler mTransfersHandler;
     ChatHandler mChatHandler;
     ApiPluginHandler mApiPluginHandler;

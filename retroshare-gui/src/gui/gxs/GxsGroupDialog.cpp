@@ -34,6 +34,8 @@
 #include <retroshare/rspeers.h>
 #include <retroshare/rsgxscircles.h>
 
+#include <gui/settings/rsharesettings.h>
+
 #include <iostream>
 
 // Control of Publish Signatures.
@@ -66,7 +68,7 @@ GxsGroupDialog::GxsGroupDialog(TokenQueue *tokenExternalQueue, uint32_t enableFl
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	ui.setupUi(this);
-
+	
 	mInternalTokenQueue = NULL;
 
 	init();
@@ -87,6 +89,7 @@ GxsGroupDialog::GxsGroupDialog(TokenQueue *tokenExternalQueue, RsTokenService *t
 
 GxsGroupDialog::~GxsGroupDialog()
 {
+	Settings->saveWidgetInformation(this);
 	if (mInternalTokenQueue) {
 		delete(mInternalTokenQueue);
 	}
@@ -134,6 +137,7 @@ void GxsGroupDialog::init()
     	ui.personal_required->setChecked(true) ;	// this is always true
 
 	initMode();
+	Settings->loadWidgetInformation(this);
 }
 
 QIcon GxsGroupDialog::serviceWindowIcon()

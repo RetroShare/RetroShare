@@ -69,7 +69,8 @@ class RetroShareLink
 		    TYPE_PRIVATE_CHAT  = 0x09,
             TYPE_PUBLIC_MSG    = 0x0a,
             TYPE_POSTED        = 0x0b,
-            TYPE_IDENTITY      = 0x0c
+            TYPE_IDENTITY      = 0x0c,
+            TYPE_FILE_TREE     = 0x0d
 		};
 
 	public:
@@ -80,6 +81,7 @@ class RetroShareLink
 		static RetroShareLink createIdentity(const RsGxsId& gxs_id,const QString& name,const QString& radix_data) ;
 		static RetroShareLink createExtraFile(const QString& name, uint64_t size, const QString& hash, const QString& ssl_id);
 		static RetroShareLink createFile(const QString& name, uint64_t size, const QString& hash);
+		static RetroShareLink createCollection(const QString& name, uint64_t size,uint32_t count,const QString& radix_data);
 		static RetroShareLink createPublicMsgInvite(time_t time_stamp,const QString& pgp_id,const QString& hash) ;
 		static RetroShareLink createPerson(const RsPgpId &id);
 		static RetroShareLink createCertificate(const RsPeerId &ssl_id) ;
@@ -167,6 +169,7 @@ class RetroShareLink
 		QString  _encrypted_chat_info ; // encrypted data string for the recipient of a chat invite
 		time_t   _time_stamp ; 				// time stamp at which the link will expire.
         QString  _radix_group_data;
+		uint32_t _count ;
 
 		unsigned int _subType; // for general use as sub type for _type (RSLINK_SUBTYPE_...)
 };
@@ -189,7 +192,7 @@ class RSLinkClipboard
 		// Get the liste of pasted links, either from the internal RS links, or by default
 		// from the clipboard.
 		//
-		static void pasteLinks(QList<RetroShareLink> &links) ;
+		static void pasteLinks(QList<RetroShareLink> &links,RetroShareLink::enumType type = RetroShareLink::TYPE_UNKNOWN) ;
 
 		// Produces a list of links with no html structure.
 		static QString toString() ;
@@ -212,10 +215,10 @@ class RSLinkClipboard
 		//
 		static int process(RetroShareLink::enumType type = RetroShareLink::TYPE_UNKNOWN, uint flag = RSLINK_PROCESS_NOTIFY_ALL);
 
-		static void parseText(QString text, QList<RetroShareLink> &links) ;
+		static void parseText(QString text, QList<RetroShareLink> &links, RetroShareLink::enumType type = RetroShareLink::TYPE_UNKNOWN) ;
 
 	private:
-		static void parseClipboard(QList<RetroShareLink> &links) ;
+		static void parseClipboard(QList<RetroShareLink> &links, RetroShareLink::enumType type = RetroShareLink::TYPE_UNKNOWN) ;
 };
 
 #endif

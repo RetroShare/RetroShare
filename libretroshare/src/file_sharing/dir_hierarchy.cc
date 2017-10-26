@@ -35,6 +35,8 @@
 
 //#define DEBUG_DIRECTORY_STORAGE 1
 
+typedef FileListIO::read_error read_error;
+
 /******************************************************************************************************************/
 /*                                              Internal File Hierarchy Storage                                   */
 /******************************************************************************************************************/
@@ -1040,22 +1042,6 @@ bool InternalFileHierarchyStorage::save(const std::string& fname)
         return false;
     }
 }
-
-class read_error
-{
-public:
-    read_error(unsigned char *sec,uint32_t size,uint32_t offset,uint8_t expected_tag)
-    {
-        std::ostringstream s ;
-        s << "At offset " << offset << "/" << size << ": expected section tag " << std::hex << (int)expected_tag << std::dec << " but got " << RsUtil::BinToHex(&sec[offset],std::min((int)size-(int)offset, 15)) << "..." << std::endl;
-        err_string = s.str();
-    }
-    read_error(const std::string& s) : err_string(s) {}
-
-    const std::string& what() const { return err_string ; }
-private:
-    std::string err_string ;
-};
 
 bool InternalFileHierarchyStorage::load(const std::string& fname)
 {

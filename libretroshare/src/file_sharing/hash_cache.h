@@ -84,6 +84,8 @@ public:
     uint32_t rememberHashFilesDuration() const { return mMaxStorageDurationDays ; }
     void clear() { mFiles.clear(); mChanged=true; }												// drop all known hashes. Not something to do, except if you want to rehash the entire database
     bool empty() const { return mFiles.empty() ; }
+	void togglePauseHashingProcess() ;
+	bool hashingProcessPaused();
 
     // Functions called by the thread
 
@@ -112,10 +114,12 @@ private:
     std::map<std::string, HashStorageInfo> mFiles ;	// stored as (full_path, hash_info)
     std::string mFilePath ;							// file where the hash database is stored
     bool mChanged ;
+	bool mHashingProcessPaused ;
 
     struct FileHashJob
     {
-        std::string full_path;
+        std::string full_path;		// canonicalized file name (means: symlinks removed, loops removed, etc)
+        std::string real_path;		// path supplied by the client.
         uint64_t size ;
         HashStorageClient *client;
         uint32_t client_param ;
