@@ -9,6 +9,7 @@
 #include "ServiceControlHandler.h"
 #include "StateTokenServer.h"
 #include "FileSearchHandler.h"
+#include "FileSharingHandler.h"
 #include "TransfersHandler.h"
 #include "LivereloadHandler.h"
 #include "TmpBlobStore.h"
