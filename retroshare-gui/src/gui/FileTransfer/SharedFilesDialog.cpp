@@ -1027,7 +1027,7 @@ void LocalSharedFilesDialog::spawnCustomPopupMenu( QPoint point )
 		channelDialog->getGroupList(grp_metas) ;
 
 		for(auto it(grp_metas.begin());it!=grp_metas.end();++it)
-			if(IS_GROUP_PUBLISHER((*it).mSubscribeFlags))
+			if(IS_GROUP_PUBLISHER((*it).mSubscribeFlags) && IS_GROUP_SUBSCRIBED((*it).mSubscribeFlags)
 				shareChannelMenu.addAction(QString::fromUtf8((*it).mGroupName.c_str()), this, SLOT(shareOnChannel()))->setData(QString::fromStdString((*it).mGroupId.toStdString())) ;
 
 		contextMnu.addMenu(&shareChannelMenu) ;
