@@ -963,6 +963,15 @@ void  SharedFilesDialog::postModDirectories(bool local)
 	QCoreApplication::flush();
 }
 
+class ChannelCompare
+{
+public:
+	bool operator()(const std::pair<std::string,RsGxsGroupId>& id1,const std::pair<std::string,RsGxsGroupId>& id2) const
+	{
+		return id1.first < id2.first ;
+	}
+};
+
 void LocalSharedFilesDialog::spawnCustomPopupMenu( QPoint point )
 {
 	if (!rsPeers) return; /* not ready yet! */
@@ -1026,9 +1035,16 @@ void LocalSharedFilesDialog::spawnCustomPopupMenu( QPoint point )
 		std::list<RsGroupMetaData> grp_metas ;
 		channelDialog->getGroupList(grp_metas) ;
 
+		std::vector<std::pair<std::string,RsGxsGroupId> > chnls ; // I dont use a std::map because two or more channels may have the same name.
+
 		for(auto it(grp_metas.begin());it!=grp_metas.end();++it)
 			if(IS_GROUP_PUBLISHER((*it).mSubscribeFlags) && IS_GROUP_SUBSCRIBED((*it).mSubscribeFlags))
-				shareChannelMenu.addAction(QString::fromUtf8((*it).mGroupName.c_str()), this, SLOT(shareOnChannel()))->setData(QString::fromStdString((*it).mGroupId.toStdString())) ;
+				chnls.push_back(std::make_pair((*it).mGroupName, (*it).mGroupId));
+
+		std::sort(chnls.begin(),chnls.end(),ChannelCompare()) ;
+
+		for(auto it(chnls.begin());it!=chnls.end();++it)
+				shareChannelMenu.addAction(QString::fromUtf8((*it).first.c_str()), this, SLOT(shareOnChannel()))->setData(QString::fromStdString((*it).second.toStdString())) ;
 
 		contextMnu.addMenu(&shareChannelMenu) ;
 		contextMnu.exec(QCursor::pos()) ;		// added here because the shareChannelMenu QMenu object is deleted afterwards

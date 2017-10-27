@@ -87,6 +87,12 @@ void GxsChannelDialog::shareOnChannel(const RsGxsGroupId& channel_id,const QList
 	for(QList<RetroShareLink>::const_iterator it(file_links.begin());it!=file_links.end();++it)
 		txt += (*it).toHtml() + "\n" ;
 
+	if(!file_links.empty())
+	{
+		QString subject = (*file_links.begin()).name() ;
+		msgDialog->addSubject(subject);
+	}
+
 	msgDialog->addHtmlText(txt);
 	msgDialog->show();
 }
