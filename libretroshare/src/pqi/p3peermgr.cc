@@ -2265,8 +2265,7 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
 			    {
 				    mNetMgr->setPreferredNetworkInterface(kit->value) ;
 #ifdef PEER_DEBUG
-				    std::cerr << "Loaded proxyIpAddress for Tor: " << proxyIpAddressTor;
-				    std::cerr << std::endl ;
+				    std::cerr << "Setting preferred network interface to \"" << kit->value << "\"" << std::endl;
 #endif
 
 			    }

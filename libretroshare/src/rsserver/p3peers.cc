@@ -536,7 +536,7 @@ bool p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
 
 bool p3Peers::setPreferredNetworkInterface(const std::string& netint)
 {
-	if(netint != mNetMgr->getPreferredNetworkInterface())
+	if(netint != mNetMgr->getPreferredNetworkInterface())	// The config variables are saved in the PeerMgr. That's a mess. We should clean this up.
 		mPeerMgr->IndicateConfigChanged();
 
 	mNetMgr->setPreferredNetworkInterface(netint);
