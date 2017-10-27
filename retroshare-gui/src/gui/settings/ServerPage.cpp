@@ -838,7 +838,8 @@ void ServerPage::updateStatus()
 	for(auto it(netlist.begin());it!=netlist.end();++it)
 	{
 		//std::cerr << "Interface: " << (*it).name << " type: " << (*it).type << ", IP: " << (*it).ip_address_string << ", status: " << (*it).status << std::endl;
-		int_map[it->name] |= it->type ;
+		//We must include IP too, because it is possible to have multiple interfaces with same name, but different IP
+		int_map[it->name + " " + it->ip_address_string] |= it->type ;
 	}
 	uint32_t indx=1;
 
