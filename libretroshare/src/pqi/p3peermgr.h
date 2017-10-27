@@ -135,6 +135,8 @@ virtual bool 	getAssociatedPeers(const RsPgpId &gpg_id, std::list<RsPeerId> &ids
 virtual bool 	removeAllFriendLocations(const RsPgpId &gpgid) = 0;
 
 
+virtual void 	IndicateConfigChanged()=0; // This is a trick to allow
+
 	/******************** Groups **********************/
 	/* This is solely used by p3peers - makes sense   */
 
@@ -249,6 +251,7 @@ public:
     virtual bool    getAssociatedPeers(const RsPgpId &gpg_id, std::list<RsPeerId> &ids);
     virtual bool    removeAllFriendLocations(const RsPgpId &gpgid);
 
+	virtual void    IndicateConfigChanged() { p3Config::IndicateConfigChanged() ;} // This is a trick to allow
 
     /******************** Groups **********************/
     /* This is solely used by p3peers - makes sense   */

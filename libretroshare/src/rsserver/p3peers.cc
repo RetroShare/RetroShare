@@ -536,6 +536,9 @@ bool p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
 
 bool p3Peers::setPreferredNetworkInterface(const std::string& netint)
 {
+	if(netint != mNetMgr->getPreferredNetworkInterface())
+		mPeerMgr->IndicateConfigChanged();
+
 	mNetMgr->setPreferredNetworkInterface(netint);
 	return true;
 }

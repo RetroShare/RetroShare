@@ -234,6 +234,11 @@ void    addNetListener(pqiNetListener *listener);
 	// SHOULD MAKE THIS PROTECTED.
 bool	checkNetAddress(); /* check our address is sensible */
 
+bool getNetInterfaceList(std::list<NetInterfaceInfo>& netinterfaces) ;
+void setPreferredNetworkInterface(const std::string& netint) ;
+std::string getPreferredNetworkInterface() ;
+
+
 protected:
 
 void 	slowTick();
@@ -279,10 +284,6 @@ bool netAssistSetAddress(const struct sockaddr_storage &laddr,
 					uint32_t mode);
 
 bool netAssistAttach(bool on);
-
-bool getNetInterfaceList(std::list<NetInterfaceInfo>& netinterfaces) ;
-void setPreferredNetworkInterface(const std::string& netint) ;
-std::string getPreferredNetworkInterface() ;
 
 	/* Internal Functions */
 void 	netReset();

@@ -83,7 +83,8 @@ static const std::string kConfigKeyProxyServerIpAddrTor = "PROXY_SERVER_IPADDR";
 static const std::string kConfigKeyProxyServerPortTor = "PROXY_SERVER_PORT";
 static const std::string kConfigKeyProxyServerIpAddrI2P = "PROXY_SERVER_IPADDR_I2P";
 static const std::string kConfigKeyProxyServerPortI2P = "PROXY_SERVER_PORT_I2P";
-	
+static const std::string kConfigKeyPreferredNetInt = "PREFERRED_NET_INTERFACE";
+
 void  printConnectState(std::ostream &out, peerState &peer);
 
 peerState::peerState()
@@ -2035,6 +2036,9 @@ bool p3PeerMgrIMPL::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 	kv.value = (useExtAddrFinder)?"TRUE":"FALSE" ;
 	vitem->tlvkvs.pairs.push_back(kv) ;
 
+	kv.key = kConfigKeyPreferredNetInt ;
+	kv.value = mNetMgr->getPreferredNetworkInterface() ;
+	vitem->tlvkvs.pairs.push_back(kv) ;
 
 	// Store Proxy Server.
 	// Tor
@@ -2257,6 +2261,15 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
 				    std::cerr << "setting use_extr_addr_finder to " << useExtAddrFinder << std::endl ;
 #endif
 			    } 
+				else if (kit->key == kConfigKeyPreferredNetInt)
+			    {
+				    mNetMgr->setPreferredNetworkInterface(kit->value) ;
+#ifdef PEER_DEBUG
+				    std::cerr << "Loaded proxyIpAddress for Tor: " << proxyIpAddressTor;
+				    std::cerr << std::endl ;
+#endif
+
+			    }
 			    // Tor
 			    else if (kit->key == kConfigKeyProxyServerIpAddrTor)
 			    {
