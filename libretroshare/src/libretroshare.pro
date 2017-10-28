@@ -553,7 +553,7 @@ SOURCES +=	ft/ftchunkmap.cc \
 			ft/ftfilesearch.cc \
 			ft/ftserver.cc \
 			ft/fttransfermodule.cc \
-			ft/ftturtlefiletransferitem.cc 
+                        ft/ftturtlefiletransferitem.cc
 
 SOURCES += crypto/chacha20.cpp \
 			  crypto/hashstream.cc
@@ -583,6 +583,8 @@ SOURCES +=	pqi/authgpg.cc \
 			pqi/pqiloopback.cc \
 			pqi/pqimonitor.cc \
 			pqi/pqinetwork.cc \
+                        pqi/pqinetwork_unix.cc \
+                        pqi/pqinetwork_win.cc \
 			pqi/pqiperson.cc \
 			pqi/pqipersongrp.cc \
 			pqi/pqiservice.cc \
