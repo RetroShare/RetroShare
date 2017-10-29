@@ -41,7 +41,8 @@ public:
 
 	void newMsg(); /* cleanup */
 	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req);
-void  insertPastedText(QString msg) ;
+	void insertPastedText(const QString& msg) ;
+	void setSubject(const QString& msg);
 
 private slots:
 	void fileHashingFinished(QList<HashedFile> hashedFiles);

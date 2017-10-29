@@ -42,6 +42,7 @@
 #include "gui/msgs/MessageComposer.h"
 #include "gui/settings/AddFileAssociationDialog.h"
 #include "gui/gxschannels/GxsChannelDialog.h"
+#include "gui/gxsforums/GxsForumsDialog.h"
 #include "gui/settings/rsharesettings.h"
 #include "util/QtVersion.h"
 #include "util/RsAction.h"
@@ -64,6 +65,7 @@
 #define IMAGE_OPENFILE       ":/images/fileopen.png"
 #define IMAGE_LIBRARY        ":/images/library.png"
 #define IMAGE_CHANNEL        ":/images/channels32.png"
+#define IMAGE_FORUMS         ":/icons/png/forums.png"
 #define IMAGE_COLLCREATE     ":/images/library_add.png"
 #define IMAGE_COLLMODIF      ":/images/library_edit.png"
 #define IMAGE_COLLVIEW       ":/images/library_view.png"
@@ -963,6 +965,15 @@ void  SharedFilesDialog::postModDirectories(bool local)
 	QCoreApplication::flush();
 }
 
+class ChannelCompare
+{
+public:
+	bool operator()(const std::pair<std::string,RsGxsGroupId>& id1,const std::pair<std::string,RsGxsGroupId>& id2) const
+	{
+		return id1.first < id2.first ;
+	}
+};
+
 void LocalSharedFilesDialog::spawnCustomPopupMenu( QPoint point )
 {
 	if (!rsPeers) return; /* not ready yet! */
@@ -1017,26 +1028,55 @@ void LocalSharedFilesDialog::spawnCustomPopupMenu( QPoint point )
 	}
 
 	GxsChannelDialog *channelDialog = dynamic_cast<GxsChannelDialog*>(MainWindow::getPage(MainWindow::Channels));
+	QMenu shareChannelMenu(tr("Share on channel...")) ; // added here because the shareChannelMenu QMenu object is deleted afterwards
 
 	if(channelDialog != NULL)
 	{
-		QMenu shareChannelMenu(tr("Share on channel...")) ;
 		shareChannelMenu.setIcon(QIcon(IMAGE_CHANNEL));
 
 		std::list<RsGroupMetaData> grp_metas ;
 		channelDialog->getGroupList(grp_metas) ;
 
+		std::vector<std::pair<std::string,RsGxsGroupId> > grplist ; // I dont use a std::map because two or more channels may have the same name.
+
 		for(auto it(grp_metas.begin());it!=grp_metas.end();++it)
 			if(IS_GROUP_PUBLISHER((*it).mSubscribeFlags) && IS_GROUP_SUBSCRIBED((*it).mSubscribeFlags))
-				shareChannelMenu.addAction(QString::fromUtf8((*it).mGroupName.c_str()), this, SLOT(shareOnChannel()))->setData(QString::fromStdString((*it).mGroupId.toStdString())) ;
+				grplist.push_back(std::make_pair((*it).mGroupName, (*it).mGroupId));
+
+		std::sort(grplist.begin(),grplist.end(),ChannelCompare()) ;
+
+		for(auto it(grplist.begin());it!=grplist.end();++it)
+				shareChannelMenu.addAction(QString::fromUtf8((*it).first.c_str()), this, SLOT(shareOnChannel()))->setData(QString::fromStdString((*it).second.toStdString())) ;
 
 		contextMnu.addMenu(&shareChannelMenu) ;
-		contextMnu.exec(QCursor::pos()) ;		// added here because the shareChannelMenu QMenu object is deleted afterwards
 	}
-	else
-		contextMnu.exec(QCursor::pos()) ;
-}
 
+	GxsForumsDialog *forumsDialog = dynamic_cast<GxsForumsDialog*>(MainWindow::getPage(MainWindow::Forums));
+	QMenu shareForumMenu(tr("Share on forum...")) ; // added here because the shareChannelMenu QMenu object is deleted afterwards
+
+	if(forumsDialog != NULL)
+	{
+		shareForumMenu.setIcon(QIcon(IMAGE_FORUMS));
+
+		std::list<RsGroupMetaData> grp_metas ;
+		forumsDialog->getGroupList(grp_metas) ;
+
+		std::vector<std::pair<std::string,RsGxsGroupId> > grplist ; // I dont use a std::map because two or more channels may have the same name.
+
+		for(auto it(grp_metas.begin());it!=grp_metas.end();++it)
+			if(IS_GROUP_SUBSCRIBED((*it).mSubscribeFlags))
+				grplist.push_back(std::make_pair((*it).mGroupName, (*it).mGroupId));
+
+		std::sort(grplist.begin(),grplist.end(),ChannelCompare()) ;
+
+		for(auto it(grplist.begin());it!=grplist.end();++it)
+			shareForumMenu.addAction(QString::fromUtf8((*it).first.c_str()), this, SLOT(shareInForum()))->setData(QString::fromStdString((*it).second.toStdString())) ;
+
+		contextMnu.addMenu(&shareForumMenu) ;
+	}
+
+	contextMnu.exec(QCursor::pos()) ;
+}
 void LocalSharedFilesDialog::shareOnChannel()
 {
 	RsGxsGroupId groupId(qobject_cast<QAction*>(sender())->data().toString().toStdString());
@@ -1054,6 +1094,24 @@ void LocalSharedFilesDialog::shareOnChannel()
 	copyLinks(getSelected(),false,file_links_list,has_unhashed_files) ;
 
 	channelDialog->shareOnChannel(groupId,file_links_list) ;
+}
+void LocalSharedFilesDialog::shareInForum()
+{
+	RsGxsGroupId groupId(qobject_cast<QAction*>(sender())->data().toString().toStdString());
+
+	GxsForumsDialog *forumsDialog = dynamic_cast<GxsForumsDialog*>(MainWindow::getPage(MainWindow::Forums));
+
+	if(forumsDialog == NULL)
+		return ;
+
+	std::list<DirDetails> files_info ;
+
+	QList<RetroShareLink> file_links_list ;
+	bool has_unhashed_files ;
+
+	copyLinks(getSelected(),false,file_links_list,has_unhashed_files) ;
+
+	forumsDialog->shareInMessage(groupId,file_links_list) ;
 }
 
 //============================================================================

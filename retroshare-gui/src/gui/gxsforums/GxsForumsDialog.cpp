@@ -22,6 +22,7 @@
 #include "GxsForumsDialog.h"
 #include "GxsForumGroupDialog.h"
 #include "GxsForumThreadWidget.h"
+#include "CreateGxsForumMsg.h"
 #include "GxsForumUserNotify.h"
 #include "gui/notifyqt.h"
 #include "gui/gxs/GxsGroupShareKey.h"
@@ -58,6 +59,24 @@ QString GxsForumsDialog::getHelpString() const
                 ").arg(QString::number(rsGxsForums->getDefaultStoragePeriod()/86400)).arg(QString::number(rsGxsForums->getDefaultSyncPeriod()/86400));
 
 	return hlp_str ;	
+}
+
+void GxsForumsDialog::shareInMessage(const RsGxsGroupId& forum_id,const QList<RetroShareLink>& file_links)
+{
+	CreateGxsForumMsg *msgDialog = new CreateGxsForumMsg(forum_id,RsGxsMessageId(),RsGxsMessageId(),RsGxsId()) ;
+
+	QString txt ;
+	for(QList<RetroShareLink>::const_iterator it(file_links.begin());it!=file_links.end();++it)
+		txt += (*it).toHtml() + "\n" ;
+
+	if(!file_links.empty())
+	{
+		QString subject = (*file_links.begin()).name() ;
+		msgDialog->setSubject(subject);
+	}
+
+	msgDialog->insertPastedText(txt);
+	msgDialog->show();
 }
 
 UserNotify *GxsForumsDialog::getUserNotify(QObject *parent)
