@@ -187,15 +187,32 @@ void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 			}
 			painter->drawText(option.rect, Qt::AlignCenter, newopt.text);
 			break;
-	case COLUMN_SOURCES:
-	{
-		double dblValue = index.data().toDouble();
+		case COLUMN_SOURCES:
+		{
+			double dblValue = index.data().toDouble();
 
-		temp = dblValue!=0 ? QString("%1 (%2)").arg((int)dblValue).arg((int)((fmod(dblValue,1)*1000)+0.5)) : "";
-		painter->drawText(option.rect, Qt::AlignCenter, temp);
-	}
-			break;
-        case COLUMN_DOWNLOADTIME:
+			temp = dblValue!=0 ? QString("%1 (%2)").arg((int)dblValue).arg((int)((fmod(dblValue,1)*1000)+0.5)) : "";
+			painter->drawText(option.rect, Qt::AlignCenter, temp);
+		}
+		break;
+		case COLUMN_PRIORITY:
+		{
+			double dblValue = index.data().toDouble();
+			if (dblValue == 0.0)
+				temp = "";
+			else if (dblValue == 0.1)
+				temp = tr("Faster");
+			else if (dblValue == 0.2)
+				temp = tr("Average");
+			else if (dblValue == 0.3)
+				temp = tr("Slower");
+			else
+				temp = QString::number((uint32_t)dblValue);
+
+			painter->drawText(option.rect, Qt::AlignCenter, temp);
+		}
+		break;
+		case COLUMN_DOWNLOADTIME:
 			downloadtime = index.data().toLongLong();
 			minutes = downloadtime / 60;
 			seconds = downloadtime % 60;
