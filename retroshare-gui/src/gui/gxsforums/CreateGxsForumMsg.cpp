@@ -152,12 +152,13 @@ void  CreateGxsForumMsg::newMsg()
 		mStateHelper->setActive(CREATEGXSFORUMMSG_FORUMINFO, false);
 		mStateHelper->setActive(CREATEGXSFORUMMSG_PARENTMSG, false);
 		mStateHelper->setActive(CREATEGXSFORUMMSG_ORIGMSG, false);
+
 		mStateHelper->clear(CREATEGXSFORUMMSG_FORUMINFO);
 		mStateHelper->clear(CREATEGXSFORUMMSG_PARENTMSG);
 		mStateHelper->clear(CREATEGXSFORUMMSG_ORIGMSG);
 		ui.forumName->setText(tr("No Forum"));
 		return;
-	}//if ( mForumId.isNull())
+	}
 
 	{/* request Data */
 		mStateHelper->setLoading(CREATEGXSFORUMMSG_FORUMINFO, true);
@@ -192,7 +193,7 @@ void  CreateGxsForumMsg::newMsg()
 
 		uint32_t token;
 		mForumQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, CREATEGXSFORUMMSG_PARENTMSG);
-	}//if (mParentId.isNull())
+	}
 
 	if (mOrigMsgId.isNull()) {
 		mStateHelper->setActive(CREATEGXSFORUMMSG_ORIGMSG, true);
@@ -212,7 +213,7 @@ void  CreateGxsForumMsg::newMsg()
 
 		uint32_t token;
 		mForumQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, CREATEGXSFORUMMSG_ORIGMSG);
-	}//if (mParentId.isNull())
+	}
 }
 
 void  CreateGxsForumMsg::loadFormInformation()
@@ -307,17 +308,14 @@ void  CreateGxsForumMsg::loadFormInformation()
 	}
 
 	ui.forumName->setText(misc::removeNewLine(name));
-	ui.forumSubject->setText(misc::removeNewLine(subj));
-	//ui.forumSubject->setReadOnly(!mOrigMsgId.isNull());
+
+	if(!subj.isNull())
+		ui.forumSubject->setText(misc::removeNewLine(subj));
 
 	if (ui.forumSubject->text().isEmpty())
-	{
 		ui.forumSubject->setFocus();
-	}
 	else
-	{
 		ui.forumMessage->setFocus();
-	}
 
 #ifdef TOGXS
 	if (mForumMeta.mGroupFlags & RS_DISTRIB_AUTHEN_REQ)
@@ -687,8 +685,12 @@ void CreateGxsForumMsg::loadRequest(const TokenQueue *queue, const TokenRequest 
             }
         }
 }
+void CreateGxsForumMsg::setSubject(const QString& msg)
+{
+	ui.forumSubject->setText(msg);
+}
 
-void CreateGxsForumMsg::insertPastedText(QString msg)
+void CreateGxsForumMsg::insertPastedText(const QString& msg)
 {
 	ui.forumMessage->append(msg);
 }

@@ -160,6 +160,7 @@ class LocalSharedFilesDialog : public SharedFilesDialog
 		void tryToAddNewAssotiation();
 		void forceCheck();
   		void shareOnChannel();
+  		void shareInForum();
 
 		QAction* fileAssotiationAction(const QString fileName);
 

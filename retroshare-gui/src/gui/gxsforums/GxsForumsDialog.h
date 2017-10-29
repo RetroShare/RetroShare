@@ -40,6 +40,8 @@ public:
 
 	virtual UserNotify *getUserNotify(QObject *parent);
 
+	void shareInMessage(const RsGxsGroupId& forum_id, const QList<RetroShareLink>& file_link) ;
+	
 protected:
 	virtual QString getHelpString() const ;
 	virtual RetroShareLink::enumType getLinkType() { return RetroShareLink::TYPE_FORUM; }
