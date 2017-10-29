@@ -43,8 +43,7 @@ public:
 	void start();
 	double duration();
 
-private:
-	double currentTime();
+	static double currentTime();
 
 private:
 	std::string _name ;

@@ -24,6 +24,7 @@
  */
 #include "util/rsdir.h"
 #include "util/rsprint.h"
+#include "util/rsscopetimer.h"
 #include "rsserver/p3face.h"
 #include "pqi/authssl.h"
 #include "hash_cache.h"
@@ -43,8 +44,11 @@ HashStorage::HashStorage(const std::string& save_file_name)
     mLastSaveTime = 0 ;
     mTotalSizeToHash = 0;
     mTotalFilesToHash = 0;
+	mCurrentHashingSpeed = 0 ;
     mMaxStorageDurationDays = DEFAULT_HASH_STORAGE_DURATION_DAYS ;
 	mHashingProcessPaused = false;
+	mHashedBytes = 0 ;
+	mHashingTime = 0 ;
 
     {
         RS_STACK_MUTEX(mHashMtx) ;
@@ -178,32 +182,48 @@ void HashStorage::data_tick()
 #endif
 
             std::string tmpout;
-            rs_sprintf(tmpout, "%lu/%lu (%s - %d%%) : %s", (unsigned long int)mHashCounter+1, (unsigned long int)mTotalFilesToHash, friendlyUnit(mTotalHashedSize).c_str(), int(mTotalHashedSize/double(mTotalSizeToHash)*100.0), job.full_path.c_str()) ;
+
+			if(mCurrentHashingSpeed > 0)
+				rs_sprintf(tmpout, "%lu/%lu (%s - %d%%, %d MB/s) : %s", (unsigned long int)mHashCounter+1, (unsigned long int)mTotalFilesToHash, friendlyUnit(mTotalHashedSize).c_str(), int(mTotalHashedSize/double(mTotalSizeToHash)*100.0), mCurrentHashingSpeed,job.full_path.c_str()) ;
+			else
+				rs_sprintf(tmpout, "%lu/%lu (%s - %d%%) : %s", (unsigned long int)mHashCounter+1, (unsigned long int)mTotalFilesToHash, friendlyUnit(mTotalHashedSize).c_str(), int(mTotalHashedSize/double(mTotalSizeToHash)*100.0), job.full_path.c_str()) ;
 
             RsServer::notify()->notifyHashingInfo(NOTIFY_HASHTYPE_HASH_FILE, tmpout) ;
 
-            if(RsDirUtil::getFileHash(job.full_path, hash,size, this))
-            {
-                // store the result
+			double seconds_origin = RsScopeTimer::currentTime() ;
+
+			if(RsDirUtil::getFileHash(job.full_path, hash,size, this))
+			{
+				// store the result
 
 #ifdef HASHSTORAGE_DEBUG
-                std::cerr << "done."<< std::endl;
+				std::cerr << "done."<< std::endl;
 #endif
 
-                RS_STACK_MUTEX(mHashMtx) ;
-                HashStorageInfo& info(mFiles[job.real_path]);
+				RS_STACK_MUTEX(mHashMtx) ;
+				HashStorageInfo& info(mFiles[job.real_path]);
 
-                info.filename = job.real_path ;
-                info.size = size ;
-                info.modf_stamp = job.ts ;
-                info.time_stamp = time(NULL);
-                info.hash = hash;
+				info.filename = job.real_path ;
+				info.size = size ;
+				info.modf_stamp = job.ts ;
+				info.time_stamp = time(NULL);
+				info.hash = hash;
 
-                mChanged = true ;
-                mTotalHashedSize += size ;
-            }
-            else
-                std::cerr << "ERROR: cannot hash file " << job.full_path << std::endl;
+				mChanged = true ;
+				mTotalHashedSize += size ;
+			}
+			else
+				std::cerr << "ERROR: cannot hash file " << job.full_path << std::endl;
+
+			mHashingTime += RsScopeTimer::currentTime() - seconds_origin ;
+			mHashedBytes += size ;
+
+			if(mHashingTime > 3)
+			{
+				mCurrentHashingSpeed = (int)(mHashedBytes / mHashingTime ) / (1024*1024) ;
+				mHashingTime = 0 ;
+				mHashedBytes = 0 ;
+			}
 
             ++mHashCounter ;
         }

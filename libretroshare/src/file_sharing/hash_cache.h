@@ -140,5 +140,11 @@ private:
     uint64_t mTotalHashedSize ;
     uint64_t mTotalFilesToHash ;
     time_t mLastSaveTime ;
+
+	// The following is used to estimate hashing speed.
+
+	double mHashingTime ;
+	uint64_t mHashedBytes ;
+	uint32_t mCurrentHashingSpeed ; // in MB/s
 };
 
