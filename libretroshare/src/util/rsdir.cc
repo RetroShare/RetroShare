@@ -536,7 +536,10 @@ bool RsDirUtil::getFileHash(const std::string& filepath, RsFileHash &hash, uint6
 	int  len;
 	SHA_CTX *sha_ctx = new SHA_CTX;
 	unsigned char sha_buf[SHA_DIGEST_LENGTH];
-	unsigned char gblBuf[512];
+
+	static const uint32_t HASH_BUFFER_SIZE = 1024*1024*10 ;// allocate a 10MB buffer. Too small a buffer will cause multiple HD hits and slow down the hashing process.
+	RsTemporaryMemory gblBuf(HASH_BUFFER_SIZE) ;
+	//unsigned char gblBuf[512];
 
 	/* determine size */
  	fseeko64(fd, 0, SEEK_END);
@@ -548,7 +551,7 @@ bool RsDirUtil::getFileHash(const std::string& filepath, RsFileHash &hash, uint6
 	int runningCheckCount = 0;
 
 	SHA1_Init(sha_ctx);
-	while(isRunning && (len = fread(gblBuf,1, 512, fd)) > 0)
+	while(isRunning && (len = fread(gblBuf,1, HASH_BUFFER_SIZE, fd)) > 0)
 	{
 		SHA1_Update(sha_ctx, gblBuf, len);
 
