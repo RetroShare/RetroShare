@@ -184,6 +184,7 @@ int     getDhtBucket(const int idx, bdBucket &bucket);
 
 uint32_t calcNetworkSize();
 uint32_t calcNetworkSizeWithFlag(uint32_t withFlag);
+uint32_t calcNetworkSizeWithFlag_old(uint32_t withFlag);
 uint32_t calcSpaceSize();
 uint32_t calcSpaceSizeWithFlag(uint32_t withFlag);
 

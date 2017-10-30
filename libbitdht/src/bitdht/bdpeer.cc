@@ -1025,82 +1025,77 @@ int     bdSpace::getDhtBucket(const int idx, bdBucket &bucket)
 
 uint32_t  bdSpace::calcNetworkSize()
 {
+	return calcNetworkSizeWithFlag(~0u) ;
+}
+
+uint32_t  bdSpace::calcNetworkSizeWithFlag(uint32_t withFlag)
+{
 	std::vector<bdBucket>::iterator it;
 
 	/* little summary */
 	unsigned long long sum = 0;
 	unsigned long long no_peers = 0;
 	uint32_t count = 0;
-	bool doPrint = false;
-	bool doAvg = false;
+//	bool doPrint = false;
+//	bool doAvg = false;
+
+	std::cerr << "Estimating DHT network size. Flags=" << std::hex << withFlag << std::dec << std::endl;
 
 	int i = 0;
 	for(it = buckets.begin(); it != buckets.end(); it++, i++)
 	{
-		int size = it->entries.size();
+		int size = 0;
+		std::list<bdPeer>::iterator lit;
+		for(lit = it->entries.begin(); lit != it->entries.end(); lit++)
+			if (withFlag & lit->mPeerFlags)
+				size++;
+
 		int shift = BITDHT_KEY_BITLEN - i;
-		bool toBig = false;
 
 		if (shift > BITDHT_ULLONG_BITS - mFns->bdBucketBitSize() - 1)
-		{
-			toBig = true;
-			shift = BITDHT_ULLONG_BITS - mFns->bdBucketBitSize() - 1;
-		}
+			continue ;
+
 		unsigned long long no_nets = ((unsigned long long) 1 << shift);
 
-		/* use doPrint so it acts as a single switch */
-		if (size && !doAvg && !doPrint)
-		{	
-			doAvg = true;
-		}
+//		/* use doPrint so it acts as a single switch */
+//		if (size && !doAvg && !doPrint)
+//			doAvg = true;
+//
+//		if (size && !doPrint)
+//			doPrint = true;
 
-		if (size && !doPrint)
-		{	
-			doPrint = true;
-		}
+//		if (size == 0)
+//		{
+//			/* reset counters - if empty slot - to discount outliers in average */
+//			sum = 0;
+//			no_peers = 0;
+//			count = 0;
+//		}
 
-		if (size == 0)
+		no_peers = no_nets * size;
+
+		if(size < mFns->bdNodesPerBucket() && size > 0)
 		{
-			/* reset counters - if empty slot - to discount outliers in average */
-			sum = 0;
-			no_peers = 0;
-			count = 0;
+			sum += no_peers;
+			count++;
 		}
 
-		if (!toBig)
-		{
-			no_peers = no_nets * size;
-		}
-
-		if (doPrint && doAvg && !toBig)
-		{
-			if (size == mFns->bdNodesPerBucket())
-			{
-				/* last average */
-				doAvg = false;
-			}
-			if (no_peers != 0)
-			{
-				sum += no_peers;
-				count++;	
-			}
-		}
+		std::cerr << "  Bucket " << shift << ": " << size << " / " << mFns->bdNodesPerBucket() << " peers. no_nets=" << no_nets << ". no_peers=" << no_peers << "." << std::endl;
 	}
 
 
 	uint32_t NetSize = 0;
 	if (count != 0)
-	{
 		NetSize = sum / count;
-	}
+
+	std::cerr << "Estimated net size: " << NetSize << ". Old style estimate: " << calcNetworkSizeWithFlag_old(withFlag) << std::endl;
 
 	//std::cerr << "bdSpace::calcNetworkSize() : " << NetSize;
 	//std::cerr << std::endl;
 
 	return NetSize;
 }
-
-uint32_t  bdSpace::calcNetworkSizeWithFlag(uint32_t withFlag)
+uint32_t  bdSpace::calcNetworkSizeWithFlag_old(uint32_t withFlag)
 {
 	std::vector<bdBucket>::iterator it;
 
@@ -1140,12 +1135,12 @@ uint32_t  bdSpace::calcNetworkSizeWithFlag(uint32_t withFlag)
 
 		/* use doPrint so it acts as a single switch */
 		if (size && !doAvg && !doPrint)
-		{	
+		{
 			doAvg = true;
 		}
 
 		if (size && !doPrint)
-		{	
+		{
 			doPrint = true;
 		}
 
@@ -1172,7 +1167,7 @@ uint32_t  bdSpace::calcNetworkSizeWithFlag(uint32_t withFlag)
 			if (no_peers != 0)
 			{
 				sum += no_peers;
-				count++;	
+				count++;
 			}
 		}
 	}
@@ -1189,7 +1184,6 @@ uint32_t  bdSpace::calcNetworkSizeWithFlag(uint32_t withFlag)
 
 	return NetSize;
 }
-
 
 uint32_t  bdSpace::calcSpaceSize()
 {
