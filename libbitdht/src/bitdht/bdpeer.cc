@@ -1080,7 +1080,8 @@ uint32_t  bdSpace::calcNetworkSizeWithFlag(uint32_t withFlag)
 			count++;
 		}
 
-		std::cerr << "  Bucket " << shift << ": " << size << " / " << mFns->bdNodesPerBucket() << " peers. no_nets=" << no_nets << ". no_peers=" << no_peers << "." << std::endl;
+		if(size > 0)
+			std::cerr << "  Bucket " << shift << ": " << size << " / " << mFns->bdNodesPerBucket() << " peers. no_nets=" << no_nets << ". no_peers=" << no_peers << "." << std::endl;
 	}
 
 
