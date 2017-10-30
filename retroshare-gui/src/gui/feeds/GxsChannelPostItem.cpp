@@ -516,7 +516,12 @@ void GxsChannelPostItem::fill()
 
 	ui->datetimelabel->setText(DateTime::formatLongDateTime(mPost.mMeta.mPublishTs));
 
-	ui->filelabel->setText(QString("(%1 %2) %3").arg(mPost.mCount).arg(tr("Files")).arg(misc::friendlyUnit(mPost.mSize)));
+	if ( (mPost.mCount != 0) || (mPost.mSize != 0) ) {
+		ui->filelabel->setVisible(true);
+		ui->filelabel->setText(QString("(%1 %2) %3").arg(mPost.mCount).arg(tr("Files")).arg(misc::friendlyUnit(mPost.mSize)));
+	} else {
+		ui->filelabel->setVisible(false);
+	}
 
 	if (mFileItems.empty() == false) {
 		std::list<SubFileItem *>::iterator it;
