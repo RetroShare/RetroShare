@@ -234,9 +234,11 @@ function lobby(lobbyid){
         ];
     } else {
 
-		var el = document.getElementById("CharLobbyName");
-        el.innerText = lobdt.name;
-		
+        var cln = document.getElementById("ChatLobbyName");
+        if (cln != null) {
+            cln.innerText = lobdt.name;
+        }
+
         msg = m(".chat.bottom",[
             m("div","enter new message, Ctrl+Enter to submit:"),
             m("textarea",{
@@ -388,7 +390,7 @@ module.exports = {
                                     "h2",
                                     {
                                         style:{margin:"0px"},
-                                        id:"CharLobbyName"
+                                        id:"ChatLobbyName"
                                     },
                                     "Lobby Name"
                                 )
