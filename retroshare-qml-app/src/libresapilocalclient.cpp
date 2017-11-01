@@ -107,11 +107,12 @@ void LibresapiLocalClient::read()
 		params.setProperty("response", receivedMsg);
 
 		QJSValue temp =  p.mCallback.call(QJSValueList { params });
-		if(temp.isError()) {
-			qDebug()
-			    << "Uncaught exception:"
-			    << temp.property("stack").toString()
-			    << temp.toString();
+		if(temp.isError())
+		{
+			qCritical() << __PRETTY_FUNCTION__
+			            << "JavaScript callback uncaught exception:"
+			            << temp.property("stack").toString()
+			            << temp.toString();
 		}
 	}
 
