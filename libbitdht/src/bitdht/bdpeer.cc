@@ -1036,10 +1036,10 @@ uint32_t  bdSpace::calcNetworkSizeWithFlag(uint32_t withFlag)
 	unsigned long long sum = 0;
 	unsigned long long no_peers = 0;
 	uint32_t count = 0;
-//	bool doPrint = false;
-//	bool doAvg = false;
 
+#ifdef BITDHT_DEBUG
 	std::cerr << "Estimating DHT network size. Flags=" << std::hex << withFlag << std::dec << std::endl;
+#endif
 
 	int i = 0;
 	for(it = buckets.begin(); it != buckets.end(); it++, i++)
@@ -1057,21 +1057,6 @@ uint32_t  bdSpace::calcNetworkSizeWithFlag(uint32_t withFlag)
 
 		unsigned long long no_nets = ((unsigned long long) 1 << shift);
 
-//		/* use doPrint so it acts as a single switch */
-//		if (size && !doAvg && !doPrint)
-//			doAvg = true;
-//
-//		if (size && !doPrint)
-//			doPrint = true;
-
-//		if (size == 0)
-//		{
-//			/* reset counters - if empty slot - to discount outliers in average */
-//			sum = 0;
-//			no_peers = 0;
-//			count = 0;
-//		}
-
 		no_peers = no_nets * size;
 
 		if(size < mFns->bdNodesPerBucket() && size > 0)
@@ -1080,8 +1065,10 @@ uint32_t  bdSpace::calcNetworkSizeWithFlag(uint32_t withFlag)
 			count++;
 		}
 
+#ifdef BITDHT_DEBUG
 		if(size > 0)
 			std::cerr << "  Bucket " << shift << ": " << size << " / " << mFns->bdNodesPerBucket() << " peers. no_nets=" << no_nets << ". no_peers=" << no_peers << "." << std::endl;
+#endif
 	}
 
 
@@ -1089,13 +1076,25 @@ uint32_t  bdSpace::calcNetworkSizeWithFlag(uint32_t withFlag)
 	if (count != 0)
 		NetSize = sum / count;
 
+#ifdef BITDHT_DEBUG
 	std::cerr << "Estimated net size: " << NetSize << ". Old style estimate: " << calcNetworkSizeWithFlag_old(withFlag) << std::endl;
-
-	//std::cerr << "bdSpace::calcNetworkSize() : " << NetSize;
-	//std::cerr << std::endl;
+#endif
 
 	return NetSize;
 }
+
+/* (csoler) This is the old method for computing the DHT size estimate. The method is based on averaging the
+ *          estimate given by each bucket: n 2^b where n is the bucket size and b is the number of similar bits
+ *          in this bucket. The idea is that buckets that are not empty nor full give a estimate of the network
+ *          size.
+ *
+ *          The existing implementation of this method was not using all non empty/full buckets, in order to avoid
+ *          outliers, but this method is also biased, and tends to give a lower value (because it skips the largest buckets)
+ *          especially when the network is very sparse.
+ *
+ *          The new implementation respects the original estimate without bias, but it still notoriously wrong. Only averaging
+ *          the estimate over a large period of time would produce a reliable value.
+ */
 uint32_t  bdSpace::calcNetworkSizeWithFlag_old(uint32_t withFlag)
 {
 	std::vector<bdBucket>::iterator it;
