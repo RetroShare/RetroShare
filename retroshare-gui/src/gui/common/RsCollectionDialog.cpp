@@ -157,7 +157,8 @@ RsCollectionDialog::RsCollectionDialog(const QString& collectionFileName
 
 		ui.downloadFolder_LE->setText(QString::fromUtf8(rsFiles->getDownloadDirectory().c_str())) ;
 
-		QObject::connect(ui.downloadFolder_LE,SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(openDestinationDirectoryMenu(QPoint)));
+		QObject::connect(ui.downloadFolder_LE,SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(openDestinationDirectoryMenu()));
+		QObject::connect(ui.destinationDir_TB,SIGNAL(pressed()), this, SLOT(openDestinationDirectoryMenu()));
 	}
 
 	// 1 - add all elements to the list.
@@ -229,7 +230,7 @@ RsCollectionDialog::RsCollectionDialog(const QString& collectionFileName
 		QMessageBox::warning(NULL,tr("Bad filenames have been cleaned"),tr("Some filenames or directory names contained forbidden characters.\nCharacters <b>\",|,/,\\,&lt;,&gt;,*,?</b> will be replaced by '_'.\n Concerned files are listed in red.")) ;
 }
 
-void RsCollectionDialog::openDestinationDirectoryMenu(QPoint)
+void RsCollectionDialog::openDestinationDirectoryMenu()
 {
 	QMenu contextMnu( this );
 

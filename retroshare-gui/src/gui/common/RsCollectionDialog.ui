@@ -423,6 +423,17 @@
              </widget>
             </item>
             <item>
+             <widget class="QToolButton" name="destinationDir_TB">
+              <property name="text">
+               <string>...</string>
+              </property>
+              <property name="icon">
+               <iconset resource="../images.qrc">
+                <normaloff>:/images/start.png</normaloff>:/images/start.png</iconset>
+              </property>
+             </widget>
+            </item>
+            <item>
              <widget class="QLineEdit" name="downloadFolder_LE">
               <property name="contextMenuPolicy">
                <enum>Qt::CustomContextMenu</enum>

@@ -51,7 +51,7 @@ private slots:
 	void remove() ;
 	void chooseDestinationDirectory();
 	void setDestinationDirectory();
-	void openDestinationDirectoryMenu(QPoint pt);
+	void openDestinationDirectoryMenu();
 	void processItem(QMap<QString, QString> &dirToAdd
 	                 , int &index
                    , ColFileInfo &parent
