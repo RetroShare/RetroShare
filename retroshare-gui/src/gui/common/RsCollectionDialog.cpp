@@ -152,6 +152,8 @@ RsCollectionDialog::RsCollectionDialog(const QString& collectionFileName
 		ui.headerFrame->setHeaderText(tr("Download files"));
 		ui.downloadFolder_LE->show();
 		ui.downloadFolder_LB->show();
+		ui.label_filename->hide();
+		ui._filename_TL->hide();
 
 		ui.downloadFolder_LE->setText(QString::fromUtf8(rsFiles->getDownloadDirectory().c_str())) ;
 
