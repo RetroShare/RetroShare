@@ -190,7 +190,7 @@ void RsInit::InitRsConfig()
 	rsInitConfig->passwd         = "";
 	rsInitConfig->debugLevel	= PQL_WARNING;
 	rsInitConfig->udpListenerOnly = false;
-	rsInitConfig->opModeStr = std::string("FULL");
+	rsInitConfig->opModeStr = std::string("");
 
 	/* setup the homePath (default save location) */
 	//	rsInitConfig->homePath = getHomePath();
