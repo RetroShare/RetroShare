@@ -76,8 +76,6 @@
 #define ROLE_CONTACT_ID       Qt::UserRole
 #define ROLE_CONTACT_SORT     Qt::UserRole + 1
 
-#define COLOR_CONNECT Qt::blue
-
 #define COLUMN_RECIPIENT_TYPE  0
 #define COLUMN_RECIPIENT_ICON  1
 #define COLUMN_RECIPIENT_NAME  2
