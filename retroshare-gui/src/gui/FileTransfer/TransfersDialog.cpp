@@ -885,7 +885,7 @@ int TransfersDialog::addDLItem(int row, const FileInfo &fileInfo)
 		default:                    status = tr("Unknown"); break;
 	}
 
-	double priority = 0;
+	double priority = PRIORITY_NULL;
 
 	if (fileInfo.downloadStatus == FT_STATE_QUEUED) {
 		priority = fileInfo.queue_position;
@@ -893,10 +893,10 @@ int TransfersDialog::addDLItem(int row, const FileInfo &fileInfo)
 		priority = 0;
 	} else {
 		switch (fileInfo.priority) {
-			case SPEED_LOW:     priority = 0.3; break;
-			case SPEED_NORMAL:  priority = 0.2; break;
-			case SPEED_HIGH:    priority = 0.1; break;
-			default:            priority = 0.2; break;
+			case SPEED_LOW:     priority = PRIORITY_SLOWER; break;
+			case SPEED_NORMAL:  priority = PRIORITY_AVERAGE; break;
+			case SPEED_HIGH:    priority = PRIORITY_FASTER; break;
+			default:            priority = PRIORITY_AVERAGE; break;
 		}
 	}
 
@@ -1082,7 +1082,7 @@ int TransfersDialog::addPeerToDLItem(QStandardItem *dlItem, const RsPeerId& peer
 		iProgress->setData(QVariant::fromValue(peerInfo), Qt::UserRole);
 		iSource->setData(QVariant(QString()), Qt::DisplayRole);
 
-		iPriority->setData(QVariant((double)0.0), Qt::DisplayRole);	// blank field for priority
+		iPriority->setData(QVariant((double)PRIORITY_NULL), Qt::DisplayRole);	// blank field for priority
 		iRemaining->setData(QVariant(QString()), Qt::DisplayRole);
 		iDownloadTime->setData(QVariant(QString()), Qt::DisplayRole);
 		iID->setData(QVariant()      , Qt::DisplayRole);

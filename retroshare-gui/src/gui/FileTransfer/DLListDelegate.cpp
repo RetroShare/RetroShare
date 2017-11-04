@@ -198,13 +198,13 @@ void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 		case COLUMN_PRIORITY:
 		{
 			double dblValue = index.data().toDouble();
-			if (dblValue == 0.0)
+			if (dblValue == PRIORITY_NULL)
 				temp = "";
-			else if (dblValue == 0.1)
+			else if (dblValue == PRIORITY_FASTER)
 				temp = tr("Faster");
-			else if (dblValue == 0.2)
+			else if (dblValue == PRIORITY_AVERAGE)
 				temp = tr("Average");
-			else if (dblValue == 0.3)
+			else if (dblValue == PRIORITY_SLOWER)
 				temp = tr("Slower");
 			else
 				temp = QString::number((uint32_t)dblValue);
