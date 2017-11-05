@@ -64,9 +64,10 @@ bool ImageUtil::optimizeSize(QString &html, const QImage& original, QImage &opti
 	//Downscale the image to fit into maxPixels
 	double whratio = (qreal)original.width() / (qreal)original.height();
 	int maxwidth;
-	if(maxPixels > 0)
-		maxwidth = (int)sqrt((double)(maxPixels) * whratio);
-	else
+	if(maxPixels > 0) {
+		int maxwidth2 = (int)sqrt((double)(maxPixels) * whratio);
+		maxwidth = (original.width() > maxwidth2) ? maxwidth2 : original.width();
+	} else
 		maxwidth = original.width();
 
 	int minwidth = (int)sqrt(100.0 * whratio);
