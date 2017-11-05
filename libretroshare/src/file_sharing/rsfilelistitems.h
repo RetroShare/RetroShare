@@ -49,7 +49,7 @@ const uint8_t RS_PKT_SUBTYPE_FILELISTS_CONFIG_ITEM      = 0x03;
 class RsFileListsItem : public RsItem
 {
 public:
-    RsFileListsItem(uint8_t subtype)
+    explicit RsFileListsItem(uint8_t subtype)
         : RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_FILE_DATABASE, subtype)
     {
         setPriorityLevel(QOS_PRIORITY_RS_SLOW_SYNC_REQUEST);	// this is the default. Someitems may be faster, on demand.
@@ -75,7 +75,7 @@ class RsFileListsSyncRequestItem : public RsFileListsItem
 {
 public:
 
-    RsFileListsSyncRequestItem() : RsFileListsItem(RS_PKT_SUBTYPE_FILELISTS_SYNC_REQ_ITEM) {}
+    RsFileListsSyncRequestItem() : RsFileListsItem(RS_PKT_SUBTYPE_FILELISTS_SYNC_REQ_ITEM), flags(0), last_known_recurs_modf_TS(0), request_id(0) {}
 
     virtual void clear(){}
 
@@ -91,7 +91,7 @@ class RsFileListsSyncResponseItem : public RsFileListsItem
 {
 public:
 
-    RsFileListsSyncResponseItem() : RsFileListsItem(RS_PKT_SUBTYPE_FILELISTS_SYNC_RSP_ITEM) {}
+    RsFileListsSyncResponseItem() : RsFileListsItem(RS_PKT_SUBTYPE_FILELISTS_SYNC_RSP_ITEM), flags(0), last_known_recurs_modf_TS(0), request_id(0) {}
 
     virtual void clear();
 

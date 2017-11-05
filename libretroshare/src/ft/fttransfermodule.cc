@@ -155,7 +155,7 @@ bool ftTransferModule::addFileSource(const RsPeerId& peerId)
 		/* add in new source */
 		peerInfo pInfo(peerId);
 		mFileSources.insert(std::pair<RsPeerId,peerInfo>(peerId,pInfo));
-		mit = mFileSources.find(peerId);
+		//mit = mFileSources.find(peerId);
 
 		mMultiplexor->sendChunkMapRequest(peerId, mHash,false) ;
 #ifdef FT_DEBUG
@@ -545,7 +545,7 @@ bool ftTransferModule::isCheckingHash()
 class HashThread: public RsSingleJobThread
 {
 	public:
-		HashThread(ftFileCreator *m) 
+		explicit HashThread(ftFileCreator *m)
 			: _hashThreadMtx("HashThread"), _m(m),_finished(false),_hash("") {}
 
         virtual void run()

@@ -56,7 +56,7 @@ class HashThread ;
 class peerInfo
 {
 public:
-	peerInfo(const RsPeerId& peerId_in):peerId(peerId_in),state(PQIPEER_NOT_ONLINE),desiredRate(0),actualRate(0),
+	explicit peerInfo(const RsPeerId& peerId_in):peerId(peerId_in),state(PQIPEER_NOT_ONLINE),desiredRate(0),actualRate(0),
 		lastTS(0),
 		recvTS(0), lastTransfers(0), nResets(0), 
 		rtt(0), rttActive(false), rttStart(0), rttOffset(0),
@@ -111,7 +111,7 @@ public:
 	};
         
         ftFileStatus():hash(""),stat(PQIFILE_INIT) {}
-	ftFileStatus(const RsFileHash& hash_in):hash(hash_in),stat(PQIFILE_INIT) {}
+	explicit ftFileStatus(const RsFileHash& hash_in):hash(hash_in),stat(PQIFILE_INIT) {}
 
 	RsFileHash hash;
 	Status stat;

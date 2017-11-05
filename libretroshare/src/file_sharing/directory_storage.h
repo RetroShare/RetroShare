@@ -97,7 +97,7 @@ class DirectoryStorage
 		class FileIterator
 		{
 			public:
-                FileIterator(DirIterator& d);	// crawls all files in specified directory
+                explicit FileIterator(DirIterator& d);	// crawls all files in specified directory
                 FileIterator(DirectoryStorage *d,EntryIndex e);		// crawls all files in specified directory
 
 				FileIterator& operator++() ;
