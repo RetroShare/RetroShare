@@ -53,7 +53,7 @@ typedef uint64_t		GxsTunnelDHSessionId ;
 class RsGxsTunnelItem: public RsItem
 {
 	public:
-		RsGxsTunnelItem(uint8_t item_subtype) : RsItem(RS_PKT_VERSION_SERVICE,RS_SERVICE_TYPE_GXS_TUNNEL,item_subtype) 
+		explicit RsGxsTunnelItem(uint8_t item_subtype) : RsItem(RS_PKT_VERSION_SERVICE,RS_SERVICE_TYPE_GXS_TUNNEL,item_subtype)
 		{
 			setPriorityLevel(QOS_PRIORITY_RS_CHAT_ITEM) ;
 		}
@@ -72,8 +72,8 @@ class RsGxsTunnelItem: public RsItem
 class RsGxsTunnelDataItem: public RsGxsTunnelItem
 {
 public:
-    RsGxsTunnelDataItem() :RsGxsTunnelItem(RS_PKT_SUBTYPE_GXS_TUNNEL_DATA) { data=NULL ;data_size=0;service_id=0;unique_item_counter=0; }
-    RsGxsTunnelDataItem(uint8_t subtype) :RsGxsTunnelItem(subtype) { data=NULL ;data_size=0; }
+    RsGxsTunnelDataItem() :RsGxsTunnelItem(RS_PKT_SUBTYPE_GXS_TUNNEL_DATA), unique_item_counter(0), flags(0), service_id(0), data_size(0), data(NULL) {}
+    explicit RsGxsTunnelDataItem(uint8_t subtype) :RsGxsTunnelItem(subtype) , unique_item_counter(0), flags(0), service_id(0), data_size(0), data(NULL) {}
 
     virtual ~RsGxsTunnelDataItem() {}
     virtual void clear() {}
@@ -108,7 +108,7 @@ class RsGxsTunnelStatusItem: public RsGxsTunnelItem
 class RsGxsTunnelDataAckItem: public RsGxsTunnelItem
 {
 	public:
-		RsGxsTunnelDataAckItem() :RsGxsTunnelItem(RS_PKT_SUBTYPE_GXS_TUNNEL_DATA_ACK) {}
+		RsGxsTunnelDataAckItem() :RsGxsTunnelItem(RS_PKT_SUBTYPE_GXS_TUNNEL_DATA_ACK), unique_item_counter(0) {}
 		RsGxsTunnelDataAckItem(void *data,uint32_t size) ; // deserialization
 
 		virtual ~RsGxsTunnelDataAckItem() {}
@@ -125,7 +125,7 @@ class RsGxsTunnelDataAckItem: public RsGxsTunnelItem
 class RsGxsTunnelDHPublicKeyItem: public RsGxsTunnelItem
 {
 	public:
-		RsGxsTunnelDHPublicKeyItem() :RsGxsTunnelItem(RS_PKT_SUBTYPE_GXS_TUNNEL_DH_PUBLIC_KEY) {}
+		RsGxsTunnelDHPublicKeyItem() :RsGxsTunnelItem(RS_PKT_SUBTYPE_GXS_TUNNEL_DH_PUBLIC_KEY), public_key(NULL) {}
 		RsGxsTunnelDHPublicKeyItem(void *data,uint32_t size) ; // deserialization
 
 		virtual ~RsGxsTunnelDHPublicKeyItem() ;
@@ -141,8 +141,8 @@ class RsGxsTunnelDHPublicKeyItem: public RsGxsTunnelItem
 
 	private:
 		// make the object non copy-able
-		RsGxsTunnelDHPublicKeyItem(const RsGxsTunnelDHPublicKeyItem&) : RsGxsTunnelItem(RS_PKT_SUBTYPE_GXS_TUNNEL_DH_PUBLIC_KEY) {}
-		const RsGxsTunnelDHPublicKeyItem& operator=(const RsGxsTunnelDHPublicKeyItem&) { return *this ;}
+		RsGxsTunnelDHPublicKeyItem(const RsGxsTunnelDHPublicKeyItem&) : RsGxsTunnelItem(RS_PKT_SUBTYPE_GXS_TUNNEL_DH_PUBLIC_KEY), public_key(NULL) {}
+		const RsGxsTunnelDHPublicKeyItem& operator=(const RsGxsTunnelDHPublicKeyItem&) { public_key = NULL; return *this ;}
 };
 
 class RsGxsTunnelSerialiser: public RsServiceSerializer

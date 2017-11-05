@@ -59,7 +59,7 @@ const uint8_t QOS_PRIORITY_RS_GROUTER = 4 ;			// relevant for items that travel 
 class RsGRouterItem: public RsItem
 {
 	public:
-		RsGRouterItem(uint8_t grouter_subtype) : RsItem(RS_PKT_VERSION_SERVICE,RS_SERVICE_TYPE_GROUTER,grouter_subtype) {}
+		explicit RsGRouterItem(uint8_t grouter_subtype) : RsItem(RS_PKT_VERSION_SERVICE,RS_SERVICE_TYPE_GROUTER,grouter_subtype) {}
 
         virtual ~RsGRouterItem() {}
 
@@ -90,7 +90,7 @@ class RsGRouterNonCopyableObject
 class RsGRouterAbstractMsgItem: public RsGRouterItem
 {
 public:
-    RsGRouterAbstractMsgItem(uint8_t pkt_subtype) : RsGRouterItem(pkt_subtype) {}
+    explicit RsGRouterAbstractMsgItem(uint8_t pkt_subtype) : RsGRouterItem(pkt_subtype), flags(0) {}
     virtual ~RsGRouterAbstractMsgItem() {}
 
     GRouterMsgPropagationId routing_id ;
@@ -103,7 +103,7 @@ public:
 class RsGRouterGenericDataItem: public RsGRouterAbstractMsgItem, public RsGRouterNonCopyableObject
 {
     public:
-        RsGRouterGenericDataItem() : RsGRouterAbstractMsgItem(RS_PKT_SUBTYPE_GROUTER_DATA) { setPriorityLevel(QOS_PRIORITY_RS_GROUTER) ; }
+        RsGRouterGenericDataItem() : RsGRouterAbstractMsgItem(RS_PKT_SUBTYPE_GROUTER_DATA), data_size(0), data_bytes(NULL), duplication_factor(0) { setPriorityLevel(QOS_PRIORITY_RS_GROUTER) ; }
         virtual ~RsGRouterGenericDataItem() { clear() ; }
 
         virtual void clear()
@@ -144,7 +144,7 @@ class RsGRouterSignedReceiptItem: public RsGRouterAbstractMsgItem
 class RsGRouterTransactionItem: public RsGRouterItem
 {
     public:
-        RsGRouterTransactionItem(uint8_t pkt_subtype) : RsGRouterItem(pkt_subtype) {}
+        explicit RsGRouterTransactionItem(uint8_t pkt_subtype) : RsGRouterItem(pkt_subtype) {}
 
 		virtual ~RsGRouterTransactionItem() {}
 
@@ -156,7 +156,7 @@ class RsGRouterTransactionItem: public RsGRouterItem
 class RsGRouterTransactionChunkItem: public RsGRouterTransactionItem, public RsGRouterNonCopyableObject
 {
 public:
-	RsGRouterTransactionChunkItem() : RsGRouterTransactionItem(RS_PKT_SUBTYPE_GROUTER_TRANSACTION_CHUNK) { setPriorityLevel(QOS_PRIORITY_RS_GROUTER) ; }
+	RsGRouterTransactionChunkItem() : RsGRouterTransactionItem(RS_PKT_SUBTYPE_GROUTER_TRANSACTION_CHUNK), chunk_start(0), chunk_size(0), total_size(0), chunk_data(NULL) { setPriorityLevel(QOS_PRIORITY_RS_GROUTER) ; }
 
 	virtual ~RsGRouterTransactionChunkItem()  { free(chunk_data) ; }
 
@@ -217,7 +217,7 @@ class RsGRouterMatrixCluesItem: public RsGRouterItem
 class RsGRouterMatrixTrackItem: public RsGRouterItem
 {
 	public:
-        RsGRouterMatrixTrackItem() : RsGRouterItem(RS_PKT_SUBTYPE_GROUTER_MATRIX_TRACK)
+        RsGRouterMatrixTrackItem() : RsGRouterItem(RS_PKT_SUBTYPE_GROUTER_MATRIX_TRACK), time_stamp(0)
 		{ setPriorityLevel(0) ; }	// this item is never sent through the network
 
 		virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
@@ -271,7 +271,7 @@ class RsGRouterRoutingInfoItem: public RsGRouterItem, public GRouterRoutingInfo,
 class RsGRouterSerialiser: public RsServiceSerializer
 {
 public:
-    RsGRouterSerialiser(SerializationFlags flags = SERIALIZATION_FLAG_NONE) : RsServiceSerializer(RS_SERVICE_TYPE_GROUTER,RsGenericSerializer::FORMAT_BINARY,flags) {}
+    explicit RsGRouterSerialiser(SerializationFlags flags = SERIALIZATION_FLAG_NONE) : RsServiceSerializer(RS_SERVICE_TYPE_GROUTER,RsGenericSerializer::FORMAT_BINARY,flags) {}
 
     virtual RsItem *create_item(uint16_t service,uint8_t subtype) const ;
 };

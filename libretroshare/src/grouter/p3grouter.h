@@ -79,7 +79,7 @@ class GRouterDataInfo
 {
     // ! This class does not have a copy constructor that duplicates the incoming data buffer. This is on purpose!
 public:
-    GRouterDataInfo()
+    GRouterDataInfo() : last_activity_TS(0)
     {
         incoming_data_buffer = NULL ;
     }
@@ -339,7 +339,7 @@ private:
     p3ServiceControl *mServiceControl ;
     p3turtle *mTurtle ;
     RsGixs *mGixs ;
-    p3LinkMgr *mLinkMgr ;
+    //p3LinkMgr *mLinkMgr ;
 
     // Multi-thread protection mutex.
     //
