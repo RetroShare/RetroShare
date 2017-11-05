@@ -159,32 +159,6 @@ public:
 	}
 };
 
-class PriorityItem : public SortByNameItem
-{
-	public:
-		PriorityItem(QHeaderView *header) : SortByNameItem(header) {}
-
-		virtual bool operator<(const QStandardItem &other) const
-		{
-			const int role = model() ? model()->sortRole() : Qt::DisplayRole;
-
-			QString l = data(role).value<QString>();
-			QString r = other.data(role).value<QString>();
-
-			bool bl,br ;
-			int nl = l.toInt(&bl) ;
-			int nr = r.toInt(&br) ;
-
-			if(bl && br)
-				return nl < nr ;
-
-			if(bl ^ br)
-				return br ;
-
-			return SortByNameItem::operator<(other);
-		}
-};
-
 /** Constructor */
 TransfersDialog::TransfersDialog(QWidget *parent)
 : RsAutoUpdatePage(1000,parent)
@@ -911,16 +885,18 @@ int TransfersDialog::addDLItem(int row, const FileInfo &fileInfo)
 		default:                    status = tr("Unknown"); break;
 	}
 
-	QString priority;
+	double priority = PRIORITY_NULL;
 
 	if (fileInfo.downloadStatus == FT_STATE_QUEUED) {
-		priority = QString::number(fileInfo.queue_position);
+		priority = fileInfo.queue_position;
+	} else if (fileInfo.downloadStatus == FT_STATE_COMPLETE) {
+		priority = 0;
 	} else {
 		switch (fileInfo.priority) {
-			case SPEED_LOW:     priority = tr("Slower");break;
-			case SPEED_NORMAL:  priority = tr("Average");break;
-			case SPEED_HIGH:    priority = tr("Faster");break;
-			default:            priority = tr("Average");break;
+			case SPEED_LOW:     priority = PRIORITY_SLOWER; break;
+			case SPEED_NORMAL:  priority = PRIORITY_AVERAGE; break;
+			case SPEED_HIGH:    priority = PRIORITY_FASTER; break;
+			default:            priority = PRIORITY_AVERAGE; break;
 		}
 	}
 
@@ -982,7 +958,6 @@ int TransfersDialog::addDLItem(int row, const FileInfo &fileInfo)
 
 		// change progress column to own class for sorting
 		DLListModel->setItem(row, COLUMN_PROGRESS, new ProgressItem(NULL));
-		DLListModel->setItem(row, COLUMN_PRIORITY, new PriorityItem(NULL));
 
 		DLListModel->setData(DLListModel->index(row, COLUMN_SIZE), QVariant((qlonglong) fileInfo.size));
 		DLListModel->setData(DLListModel->index(row, COLUMN_ID), fileHash, Qt::DisplayRole);
@@ -1107,7 +1082,7 @@ int TransfersDialog::addPeerToDLItem(QStandardItem *dlItem, const RsPeerId& peer
 		iProgress->setData(QVariant::fromValue(peerInfo), Qt::UserRole);
 		iSource->setData(QVariant(QString()), Qt::DisplayRole);
 
-		iPriority->setData(QVariant(QString()), Qt::DisplayRole);	// blank field for priority
+		iPriority->setData(QVariant((double)PRIORITY_NULL), Qt::DisplayRole);	// blank field for priority
 		iRemaining->setData(QVariant(QString()), Qt::DisplayRole);
 		iDownloadTime->setData(QVariant(QString()), Qt::DisplayRole);
 		iID->setData(QVariant()      , Qt::DisplayRole);
