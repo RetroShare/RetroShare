@@ -32,9 +32,6 @@
 
 #include <iostream>
 
-#define COLOR_NORMAL QColor(248, 248, 248)
-#define COLOR_NEW    QColor(220, 236, 253)
-
 /** Constructor */
 
 PostedItem::PostedItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome, bool autoUpdate) :
@@ -427,16 +424,9 @@ void PostedItem::setReadStatus(bool isNew, bool isUnread)
 
 	ui->newLabel->setVisible(isNew);
 
-	/* unpolish widget to clear the stylesheet's palette cache */
-	ui->mainFrame->style()->unpolish(ui->mainFrame);
-
-	QPalette palette = ui->mainFrame->palette();
-	palette.setColor(ui->mainFrame->backgroundRole(), isNew ? COLOR_NEW : COLOR_NORMAL); // QScrollArea
-	palette.setColor(QPalette::Base, isNew ? COLOR_NEW : COLOR_NORMAL); // QTreeWidget
-	ui->mainFrame->setPalette(palette);
-
 	ui->mainFrame->setProperty("new", isNew);
-	Rshare::refreshStyleSheet(ui->mainFrame, false);
+	ui->mainFrame->style()->unpolish(ui->mainFrame);
+	ui->mainFrame->style()->polish(  ui->mainFrame);
 }
 
 void PostedItem::readToggled(bool checked)

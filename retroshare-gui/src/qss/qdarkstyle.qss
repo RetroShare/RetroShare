@@ -35,7 +35,7 @@ QProgressBar::chunk:horizontal {
 }
 
 QFrame#titleBarFrame, QFrame#toolBarFrame
-{       
+{
      background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
                                        stop:0 #616161, stop: 0.5 #505050,
                                        stop: 0.6 #434343, stop:1 #656565);
@@ -72,6 +72,15 @@ QWidget:item:selected
 {
     background-color: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1,
     stop: 0 #78879b, stop: 1 #78879b);
+}
+
+ForumsDialog, GxsForumThreadWidget
+{
+	qproperty-textColorRead: gray;
+	qproperty-textColorUnread: white;
+	qproperty-textColorUnreadChildren: gray;
+	qproperty-textColorNotSubscribed: white;
+	qproperty-textColorMissing: red;
 }
 
 QMenuBar
@@ -1078,4 +1087,11 @@ OpModeStatus[opMode="Gaming"] {
 }
 OpModeStatus[opMode="Minimal"] {
 	background: #700000;
+}
+
+[new=false] {
+	background: #202020;
+}
+[new=true] {
+	background: #005000;
 }

@@ -243,3 +243,10 @@ OpModeStatus[opMode="Gaming"] {
 OpModeStatus[opMode="Minimal"] {
 	background: #FFCCCC;
 }
+
+[new=false] {
+	background: #F8F8F8;
+}
+[new=true] {
+	background: #DCECFD;
+}

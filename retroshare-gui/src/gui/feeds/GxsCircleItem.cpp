@@ -39,9 +39,6 @@
  * #define DEBUG_ITEM 1
  ****/
 
-#define COLOR_NORMAL QColor(248, 248, 248)
-#define COLOR_NEW    QColor(220, 236, 253)
-
 #define CIRCLESDIALOG_GROUPUPDATE  3
 
 
