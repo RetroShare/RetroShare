@@ -374,8 +374,7 @@ bool getLocalNetworkInterfaces(std::list<LocalNetIntInfo> & addrs)
 
 	DWORD error = GetAdaptersAddresses(AF_UNSPEC,
 									   GAA_FLAG_SKIP_MULTICAST |
-									   GAA_FLAG_SKIP_DNS_SERVER |
-									   GAA_FLAG_SKIP_FRIENDLY_NAME,
+									   GAA_FLAG_SKIP_DNS_SERVER,
 									   NULL,
 									   adapter_addresses,
 									   &bf_size);
@@ -391,10 +390,36 @@ bool getLocalNetworkInterfaces(std::list<LocalNetIntInfo> & addrs)
 		IP_ADAPTER_UNICAST_ADDRESS* address;
 		for ( address = adapter->FirstUnicastAddress; address; address = address->Next)
 		{
+			LocalNetIntInfo info;
+			//TODO better conversion from unicode
+			std::wstring ws(adapter->FriendlyName);
+			std::string str(ws.begin(), ws.end());
+			info.name = str;
+
 			sockaddr_storage tmp;
 			sockaddr_storage_clear(tmp);
 			if (sockaddr_storage_copyip(tmp, * reinterpret_cast<sockaddr_storage*>(address->Address.lpSockaddr)))
-				addrs.push_back(tmp);
+			{
+				info.ip_address = tmp ;
+				info.status = NetInterfaceInfo::NETWORK_INTERFACE_STATUS_CONNECTED ;
+			}
+			else
+				info.status = NetInterfaceInfo::NETWORK_INTERFACE_STATUS_UP ;
+
+			switch(reinterpret_cast<sockaddr_storage*>(address->Address.lpSockaddr)->ss_family)
+			{
+				case AF_INET:
+					info.type = NetInterfaceInfo::NETWORK_INTERFACE_TYPE_IPV4;
+					break;
+				case AF_INET6:
+					info.type = NetInterfaceInfo::NETWORK_INTERFACE_TYPE_IPV6;
+					break;
+				default:
+					info.type = NetInterfaceInfo::NETWORK_INTERFACE_TYPE_UNKNOWN;
+					break;
+			}
+
+			addrs.push_back(info);
 		}
 	}
 	free(adapter_addresses);
