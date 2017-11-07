@@ -1,5 +1,168 @@
 retroshare (0.6.3-1.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
+  68b35f3 Phenom Tue, 15 Aug 2017 19:45:26 +0200 Fix CppCheck in notifytxt.cc
+  0b8d684 Phenom Tue, 15 Aug 2017 19:11:32 +0200 Fix CppCheck in framecatcher.cpp
+  deb6693 Phenom Tue, 15 Aug 2017 19:00:17 +0200 Fix CppCheck in idle.cpp
+  589e61f Phenom Sun, 13 Aug 2017 20:44:34 +0200 Fix CppCheck in rsettings.cpp
+  5554f4a Phenom Sun, 13 Aug 2017 19:47:16 +0200 Fix CppCheck in MimeTextEdit.h
+  8438d70 Phenom Sun, 13 Aug 2017 18:47:36 +0200 Fix CppCheck in GroupTreeWidget.h
+  f82ec64 Phenom Fri, 28 Jul 2017 09:38:24 +0200 Fix CppCheck in rsrttitems.h
+  7e47be5 Phenom Thu, 27 Jul 2017 20:41:17 +0200 Fix CppCheck rsitem.h
+  4780713 Phenom Thu, 27 Jul 2017 20:27:02 +0200 Fix CppCheck in rsgxsrecognitems.h
+  732898a Phenom Thu, 27 Jul 2017 20:29:03 +0200 Fix CppCheck in rsgxsupdateitems.h
+  942eba3 Phenom Thu, 27 Jul 2017 19:33:31 +0200 Fix CppCheck in rsconfigitems.h
+  a1fb8f7 Phenom Thu, 27 Jul 2017 16:56:10 +0200 Fix CppCheck in rswire.h
+  a248ee7 Phenom Thu, 27 Jul 2017 16:54:56 +0200 Fix CppCheck in rsservicecontrol.h
+  1c862de Phenom Thu, 27 Jul 2017 12:56:12 +0200 Fix CppCheck in rsposted.h
+  ba75294 Phenom Thu, 27 Jul 2017 12:53:47 +0200 Fix CppChecker in rsidentity.h
+  fee7d45 Phenom Wed, 26 Jul 2017 11:43:11 +0200 Fix CppCheck in rsgxsforums.h
+  10c46ee Phenom Thu, 27 Jul 2017 12:54:57 +0200 Fix CppChecker in rsphoto.h
+  dd4ed2a Phenom Wed, 26 Jul 2017 11:39:54 +0200 Fix CppCheck in rsgxschannels.h
+  6219b31 Phenom Wed, 26 Jul 2017 10:52:40 +0200 Fix CppCheck in pqiqos.h
+  87947b1 Phenom Wed, 26 Jul 2017 10:35:57 +0200 Fix CppCheck in pqiindic.h
+  225058a csoler Sun,  5 Nov 2017 19:37:03 +0100 Merge pull request #1100 from hunbernd/feature/image-embed3
+  5d03ceb hunber Sun,  5 Nov 2017 18:58:07 +0100 Fixed resize bug
+  2046249 Phenom Wed, 26 Jul 2017 10:33:55 +0200 Fix CppCheck in pqihandler.cc
+  b77d027 Phenom Wed, 26 Jul 2017 10:30:33 +0200 Fix CppCheck in p3linkmgr.cc
+  73e1ddc Phenom Wed, 26 Jul 2017 10:29:17 +0200 Fix CppCheck in pqi_base.h
+  50a9d8a Phenom Fri, 21 Jul 2017 19:08:38 +0200 Fix CppCheck in p3servicecontrol
+  d21b41f Phenom Fri, 21 Jul 2017 19:02:34 +0200 Fix CppCheck in p3netmgr.cc
+  6a0fd11 Phenom Fri, 21 Jul 2017 18:59:59 +0200 Fix CppCheck in p3historymgr.cc
+  bd56035 Phenom Fri, 21 Jul 2017 18:42:42 +0200 Fix CppCheck in p3cfgmgr.h
+  0a82ff0 Phenom Fri, 21 Jul 2017 18:40:43 +0200 Fix CppCheck in authssl.cc
+  4fc7787 Phenom Fri, 21 Jul 2017 18:12:59 +0200 Fix CppCheck in authgpg
+  cd040f6 Phenom Fri, 21 Jul 2017 18:09:54 +0200 Fix CppCheck in pluginmanager.h
+  60d4762 Phenom Fri, 21 Jul 2017 18:03:35 +0200 Fix CppCheck in rscertificate.h
+  f91756a Phenom Fri, 21 Jul 2017 17:57:15 +0200 Fix CppCheck in pgphandler.h
+  aeb7b33 csoler Sun,  5 Nov 2017 17:00:26 +0100 Merge pull request #1099 from csoler/v0.6-PRTest
+  722d98e Phenom Fri, 21 Jul 2017 17:30:26 +0200 Fix CppCheck in rsgxstunnelitems.h
+  4ed663a Phenom Fri, 21 Jul 2017 17:23:02 +0200 Fix CppCheck in p3gxstunnel.h
+  242cc9d Phenom Fri, 21 Jul 2017 17:22:16 +0200 Fix CppCheck in p3gxstransitems.h
+  3702cf2 Phenom Fri, 21 Jul 2017 17:20:11 +0200 Fix CppCheck in p3gxstrans.h
+  77c1ab4 Phenom Fri, 21 Jul 2017 16:31:17 +0200 Fix CppCheck in rsgxsdataaccess.h
+  718c09e Phenom Fri, 21 Jul 2017 16:29:49 +0200 Fix CppCheck in rsgixs.h
+  eb7655c Phenom Fri, 21 Jul 2017 16:18:09 +0200 Fix CppCheck in rsgenexchange.cc
+  344bc27 Phenom Fri, 21 Jul 2017 15:55:40 +0200 Fix CppCheck in gxstokenqueue.h
+  f81c6ae Phenom Fri, 21 Jul 2017 15:54:29 +0200 Fix CppCheck in p3grouter
+  1072194 Phenom Fri, 21 Jul 2017 14:01:20 +0200 Fix CppCheck in grouteritems.h
+  10233ef Phenom Fri, 21 Jul 2017 13:53:44 +0200 Fix CppCheck in groutertypes.h
+  5dbefc5 csoler Sun,  5 Nov 2017 16:36:49 +0100 Merge pull request #1098 from csoler/v0.6-PRTest
+  a622194 Phenom Fri, 21 Jul 2017 13:46:38 +0200 Fix CppCheck in ftturtlefiletransferitem.h
+  edfd2ad Phenom Fri, 21 Jul 2017 13:36:10 +0200 Fix CppCheck in fttransfermodule
+  c8548b2 Phenom Fri, 21 Jul 2017 13:33:11 +0200 Fix CppCheck in ftserver.cc
+  51ed032 Phenom Fri, 21 Jul 2017 13:13:48 +0200 Fix CppCheck ftfilecreator.cc
+  6893449 Phenom Fri, 21 Jul 2017 13:00:03 +0200 Fix CppCheck in ftchunkmap.h
+  f8d4d6c Phenom Fri, 21 Jul 2017 12:57:17 +0200 Fix CppCheck in p3filelists.h
+  0d5b1ed Phenom Fri, 21 Jul 2017 12:47:04 +0200 Fix CppCheck in rsfilelistitems.h
+  0e014d6 Phenom Fri, 21 Jul 2017 12:43:06 +0200 Fix CppCheck in p3filelists.cc
+  d9965ac Phenom Fri, 21 Jul 2017 12:39:05 +0200 Fix CppCheck in hash_cache.h
+  f18a842 Phenom Fri, 21 Jul 2017 12:27:45 +0200 Fix CppCheck in directory_storage.h and directory_storage.cc
+  1456bdd Phenom Fri, 21 Jul 2017 12:18:42 +0200 Fix CppCheck in dir_hierarchy.h and dir_hierarchy.cc
+  b426941 csoler Sun,  5 Nov 2017 13:57:31 +0100 Merge pull request #1086 from PhenomRetroShare/Fix_SpeedQueuePositionSorting
+  8a4c1bd csoler Sun,  5 Nov 2017 13:56:39 +0100 Merge pull request #1097 from PhenomRetroShare/Add_MoveFixedColorToQss
+  f27d312 Phenom Sat,  4 Nov 2017 23:37:02 +0100 Move some Fixed Color to Qss files
+  8072d24 Phenom Sat,  4 Nov 2017 13:57:55 +0100 Use macro for priority values instead of constants.
+  c5c406b Phenom Sun, 29 Oct 2017 16:45:45 +0100 Fix Speed/Queue Position column sorting
+  37f6e7e csoler Fri,  3 Nov 2017 23:49:30 +0100 Merge pull request #1064 from PhenomRetroShare/Fix_OpModeRestore
+  1bcebb8 defnax Fri,  3 Nov 2017 13:26:51 +0100 attempt to fix
+  fc26ebc defnax Fri,  3 Nov 2017 13:04:38 +0100 Fixed one Emojione icon
+  eb6bc79 defnax Fri,  3 Nov 2017 03:02:40 +0100 reorder the main people emoticons
+  48bd151 csoler Thu,  2 Nov 2017 23:16:30 +0100 removed useless root item in RsCollection dialog
+  2d18335 csoler Thu,  2 Nov 2017 22:52:30 +0100 added tool button to choose DL directory in rscollection dialog
+  6381608 csoler Thu,  2 Nov 2017 22:46:53 +0100 remove filename field in RsCollectionDialog when downloading a collection of links
+  aa4c209 csoler Thu,  2 Nov 2017 22:20:43 +0100 fixed formula to compute score based on up/dn votes in comments
+  42c720f csoler Wed,  1 Nov 2017 20:36:57 +0100 Merge pull request #1082 from RetroPooh/forumoptsimagescb
+  1a01181 csoler Wed,  1 Nov 2017 20:35:29 +0100 Merge pull request #1063 from PhenomRetroShare/Fix_BlankPageWhenClearLobbyInWebInterface
+  d8c4f88 csoler Wed,  1 Nov 2017 20:34:35 +0100 Merge pull request #1094 from PhenomRetroShare/Add_HideFileLabelInChannelPost
+  2d8e9d5 csoler Wed,  1 Nov 2017 20:33:54 +0100 Merge pull request #1090 from csoler/v0.6-DHT
+  a9c4362 csoler Wed,  1 Nov 2017 20:31:49 +0100 removed debug info. Added explaination about the new method
+  fe5dd00 Gioacc Wed,  1 Nov 2017 14:34:01 +0100 Add context to debug message
+  346d5c1 Gioacc Wed,  1 Nov 2017 14:13:04 +0100 Merge pull request #1087 from Emotyco/libresapilocal_debug
+  f409e8e defnax Wed,  1 Nov 2017 00:24:03 +0100 Update to Emojione 3.0
+  a4eedf7 Phenom Mon, 30 Oct 2017 18:35:56 +0100 Hide zero File Label (size) in channel post.
+  69278e6 csoler Mon, 30 Oct 2017 11:07:36 +0100 only print non empty buckets
+  9f9c34c csoler Mon, 30 Oct 2017 10:58:48 +0100 tried to improve DHT size estimation code
+  b77e895 csoler Sun, 29 Oct 2017 21:31:10 +0100 Merge pull request #1084 from csoler/v0.6-Links2
+  337980e csoler Sun, 29 Oct 2017 21:28:12 +0100 Merge pull request #1088 from csoler/v0.6-FileLists
+  3bb694f csoler Sun, 29 Oct 2017 21:24:34 +0100 added display of hashing speed. Changed hashing buffer size to 10MB to improve performance
+  9ad635a csoler Sun, 29 Oct 2017 20:33:56 +0100 added post into forum menu entry in SharedFilesDialog
+  c41f6a2 Konrad Sun, 29 Oct 2017 19:40:37 +0100 Added: Debug output in Android app of callback functions
+  0c97d5b csoler Fri, 27 Oct 2017 22:03:42 +0200 added sorting of channels to push to, and auto-fill of channel subject
+  2e9f520 csoler Thu, 26 Oct 2017 19:41:13 +0200 fixed compilation
+  299d0b6 csoler Thu, 26 Oct 2017 19:40:12 +0200 added missing test for subscribed channels in share-on-channel menu
+  0c3fc05 Gioacc Thu, 26 Oct 2017 08:18:30 +0200 Merge pull request #1066 from Emotyco/libresapi_filesharing
+  54d49f1 RetroP Thu, 26 Oct 2017 00:05:45 +0300 friendlist - hide id column by default
+  f8fca19 RetroP Wed, 25 Oct 2017 23:07:34 +0300 removed wrong tooltip for hidden node in options
+  5296641 RetroP Wed, 25 Oct 2017 20:50:34 +0300 fix saving of forum options checkbox for load images
+  0931779 csoler Wed, 25 Oct 2017 18:51:16 +0200 Merge pull request #1081 from Artistic-Cabbage/close-fd-after-blacklist
+  3975999 Arthur Wed, 25 Oct 2017 17:42:09 +0200 Add missing close after blacklisted connection attempt.
+  1c2d17b csoler Tue, 24 Oct 2017 18:47:34 +0200 Merge pull request #1077 from hunbernd/feature/image-embed3
+  cd5eb5c hunber Tue, 24 Oct 2017 18:23:22 +0200 Got rid of QMath
+  06f489e csoler Mon, 23 Oct 2017 22:14:06 +0200 Merge pull request #1065 from csoler/v0.6-Links2
+  603ea7e csoler Mon, 23 Oct 2017 22:12:52 +0200 removed debug info from RsCollection
+  f4fae15 csoler Mon, 23 Oct 2017 21:15:40 +0200 Merge pull request #1078 from RetroPooh/addfr-cb
+  ead8cb2 csoler Mon, 23 Oct 2017 21:13:56 +0200 Merge pull request #1076 from RetroPooh/chatsearchbut
+  7af436d csoler Mon, 23 Oct 2017 21:12:26 +0200 Merge pull request #1075 from Kcchouette/patch-1
+  e441cae csoler Mon, 23 Oct 2017 21:11:08 +0200 Merge pull request #1074 from RetroPooh/sett-nodiscocb
+  b275039 csoler Mon, 23 Oct 2017 21:09:54 +0200 Merge pull request #1073 from RetroPooh/hid1
+  1d7d53a csoler Mon, 23 Oct 2017 21:07:23 +0200 Merge pull request #1070 from RetroPooh/posted-descr
+  e2bbbad RetroP Mon, 23 Oct 2017 20:01:35 +0300 fix checkboxes state for already accepted/signed keys on add friend dialog
+  64481de hunber Mon, 23 Oct 2017 17:04:20 +0200 Set the proper size limits
+  b968974 RetroP Mon, 23 Oct 2017 17:51:39 +0300 fix chat search button position
+  f434e65 hunber Sun, 11 Jun 2017 00:31:20 +0200 Use binary search to find the right file size
+  c17a8e7 hunber Sat, 10 Jun 2017 01:43:02 +0200 Optimalizations
+  af48173 hunber Fri,  9 Jun 2017 23:29:39 +0200 Convert image into 4 bit color table format
+  9af2730 hunber Thu,  8 Jun 2017 23:00:33 +0200 Downscale image automatically
+  e24febf Kcchou Mon, 23 Oct 2017 14:52:10 +0200 Fix some markdown checkbox
+  4a1ddcc RetroP Mon, 23 Oct 2017 12:24:56 +0300 removed show discovery checkbox from network options, it is in appearance now
+  4594c1a Pooh   Mon, 23 Oct 2017 11:51:22 +0300 Update MainWindow.cpp
+  1cc6506 Pooh   Mon, 23 Oct 2017 11:49:05 +0300 Update ServerPage.cpp
+  a0f6a74 Pooh   Mon, 23 Oct 2017 11:46:39 +0300 Merge branch 'master' into hid1
+  78037a6 RetroP Mon, 23 Oct 2017 11:42:03 +0300 disable nat/dht indicators for hidden mode, hide irrelevant network options elements
+  0359795 csoler Sun, 22 Oct 2017 20:08:22 +0200 fixed regression preventing context menu to open in destination directory for RsCollection
+  01c82c3 csoler Sun, 22 Oct 2017 20:02:27 +0200 Merge pull request #1072 from hunbernd/fix/html-in-forum-title
+  a81956c csoler Sun, 22 Oct 2017 20:01:49 +0200 Merge pull request #1071 from hunbernd/fix/crash-at-startup-removed-buttons
+  0c39b5c hunber Sun, 22 Oct 2017 19:44:14 +0200 Fix bug causing RS to crash at startup when some icons were removed from toolbar For example: disabled plugins
+  4e16042 hunber Sun, 22 Oct 2017 19:11:52 +0200 Part of the forum title is not displayed when it is enclosed in < >
+  723016e RetroP Sun, 22 Oct 2017 19:39:44 +0300 fix descriptions display in Posted
+  6a0ccc4 csoler Sun, 22 Oct 2017 18:28:36 +0200 added means to select download directory in RsCollectionDialog
+  ee2120a csoler Sun, 22 Oct 2017 17:36:19 +0200 fixed bug causing FileTree links to open empty
+  f503510 csoler Sun, 22 Oct 2017 16:00:08 +0200 Merge pull request #1069 from RetroPooh/postbuttonlabels
+  34eb971 csoler Sun, 22 Oct 2017 15:57:24 +0200 Merge pull request #1068 from RetroPooh/winsize
+  9cc09d6 csoler Sun, 22 Oct 2017 15:55:48 +0200 Merge pull request #1067 from PhenomRetroShare/Fix_SecurityIpItemIsSame
+  749a34d RetroP Sun, 22 Oct 2017 15:55:08 +0300 add text labels to post buttons in forums and channels; fix version selector placement
+  b48916c RetroP Sun, 22 Oct 2017 13:49:38 +0300 add windows size/pos saving
+  ef13e03 Phenom Sun, 22 Oct 2017 11:52:00 +0200 Fix SecurityIpItem isSame
+  b6aeacb csoler Sat, 21 Oct 2017 23:48:27 +0200 fixed share on channel code
+  770add8 csoler Sat, 21 Oct 2017 21:23:40 +0200 added code to share a file/dir on channel
+  edffbc3 csoler Sat, 21 Oct 2017 18:09:26 +0200 fixed bug in removing top dirs when creating file hierarhies
+  cbcf402 csoler Sat, 21 Oct 2017 17:42:17 +0200 setup proper title in RsCollectionEditor when in download mode
+  2cfa866 csoler Sat, 21 Oct 2017 17:35:06 +0200 merge of trees and single files before paste in DL queue so that all use the CollectionEditor
+  fe516c6 csoler Sat, 21 Oct 2017 16:16:23 +0200 fixed pasting of FileTree links in download queue
+  6581fa0 csoler Sat, 21 Oct 2017 15:44:45 +0200 code cleaning
+  b6f102c Gioacc Sat, 21 Oct 2017 13:00:36 +0200 Fix TokenManager.qml JSON API request
+  fca10c2 Konrad Fri, 20 Oct 2017 21:24:52 +0200 Removed in libresapi unused code that caused compilation error
+  ef52e09 Konrad Fri, 20 Oct 2017 20:57:37 +0200 Added in Libresapi: Handlers to interact with shared files
+  0ebe885 Konrad Fri, 20 Oct 2017 20:55:56 +0200 Added in Libresapi: Handler to get uploading files
+  2293b60 Konrad Fri, 20 Oct 2017 20:49:59 +0200 Added in Libresapi: Handler to get search result
+  0fbcf01 csoler Thu, 19 Oct 2017 22:20:23 +0200 code cleaning. Removed comments at end of conditional
+  74d5069 csoler Thu, 19 Oct 2017 22:14:04 +0200 renamed RsCollectionEditor into RsCollection. Added download of FileTree links
+  32be006 csoler Thu, 19 Oct 2017 10:19:56 +0200 various improvements to collection links
+  9206dac csoler Wed, 18 Oct 2017 23:20:19 +0200 fixed up collection link display
+  e1d5014 csoler Wed, 18 Oct 2017 22:32:15 +0200 added copy links from file hierarchy
+  f98edd4 csoler Wed, 18 Oct 2017 00:04:04 +0200 added FileTree class to implement a compact representation of file hierarchies
+  847c1b2 csoler Sun, 15 Oct 2017 21:10:29 +0200 renamed RsCollectionFile into RsCollectionEditor
+  68763f5 csoler Sun, 15 Oct 2017 20:52:21 +0200 added links machinery to handle file hierarchies
+  e63217e Phenom Tue, 17 Oct 2017 15:39:25 +0200 Fix OpMode Restore
+  130e3d6 Phenom Tue, 17 Oct 2017 14:57:09 +0200 Fix Blank Page When Clear Lobby in Web Interface
+  034d88c Gioacc Mon, 16 Oct 2017 20:07:52 +0200 Fix android compilation with newer Qt
+  ebf99a4 csoler Sat, 14 Oct 2017 18:10:55 +0200 removed vivid in defautl ubuntu distr list
+  f161aa8 csoler Sat, 14 Oct 2017 14:57:20 +0200 updated changelog
+
+ -- Retroshare Dev Team <contact@retroshare.net>  Thu, 07 Nov 2017 22:00:00 +0100
+
+retroshare (0.6.3-1.20171014.1f624042~trusty) trusty; urgency=low
+
   d61a5cd csoler Mon,  2 Oct 2017 22:23:26 +0200 attempt at fixing the re-hash bug. Now only using canonicalized filenames in hash cache
   22942dc csoler Sun,  1 Oct 2017 20:20:26 +0200 fixed bug causing suffix/prefix lists to contain an empty string
   bc05aaa csoler Sat, 30 Sep 2017 18:58:31 +0200 switched tokenQueue speed to 10 calls/sec, thus improving loading speeds. Still need to test for CPU load
