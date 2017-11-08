@@ -1129,7 +1129,8 @@ static void processList(const QStringList &list, const QString &textSingular, co
 		links.append(*linkIt);
 	}
 
-	if (flag & RSLINK_PROCESS_NOTIFY_ASK) {
+	if (flag & RSLINK_PROCESS_NOTIFY_ASK)
+	{
 		/* ask for some types of link */
 		QStringList fileAdd;
 		QStringList personAdd;
@@ -1153,41 +1154,14 @@ static void processList(const QStringList &list, const QString &textSingular, co
 				case TYPE_CERTIFICATE:
 				case TYPE_PUBLIC_MSG:
 				case TYPE_PRIVATE_CHAT:
-					// no need to ask
-					break;
-
 				case TYPE_FILE:
 				case TYPE_EXTRAFILE:
-					fileAdd.append(link.name());
+					// no need to ask
 					break;
 
 				case TYPE_PERSON:
 					personAdd.append(PeerDefs::rsid(link.name().toUtf8().constData(), RsPgpId(link.hash().toStdString())));
 					break;
-			}
-		}
-
-		QString content;
-		if (!fileAdd.isEmpty()) {
-			processList(fileAdd, QObject::tr("Add file"), QObject::tr("Add files"), content);
-		}
-
-        //if (personAdd.size()) {
-        //	processList(personAdd, QObject::tr("Add friend"), QObject::tr("Add friends"), content);
-        //}
-
-		if (content.isEmpty() == false) {
-			QString question = "<html><body>";
-			if (links.size() == 1) {
-				question += QObject::tr("Do you want to process the link ?");
-			} else {
-				question += QObject::tr("Do you want to process %1 links ?").arg(links.size());
-			}
-			question += "<br><br>" + content + "</body></html>";
-
-			QMessageBox mb(QObject::tr("Confirmation"), question, QMessageBox::Question, QMessageBox::Yes,QMessageBox::No, 0);
-			if (mb.exec() == QMessageBox::No) {
-				return 0;
 			}
 		}
 	}
@@ -1305,9 +1279,8 @@ static void processList(const QStringList &list, const QString &textSingular, co
         	}
             break;
 
-			case TYPE_FILE:
 			case TYPE_EXTRAFILE:
-				{
+			{
 #ifdef DEBUG_RSLINK
 					std::cerr << " RetroShareLink::process FileRequest : fileName : " << link.name().toUtf8().constData() << ". fileHash : " << link.hash().toStdString() << ". fileSize : " << link.size() << std::endl;
 #endif
@@ -1388,8 +1361,17 @@ static void processList(const QStringList &list, const QString &textSingular, co
 					} else {
 						if (!bFileOpened) fileExist.append(link.name());
 					}
-				}
+			}
 			break;
+
+			case TYPE_FILE:
+			{
+					RsCollection col ;
+					col.merge_in(link.name(),link.size(),RsFileHash(link.hash().toStdString())) ;
+					col.downloadFiles();
+			}
+			break;
+
 
 			case TYPE_FILE_TREE:
 				{
