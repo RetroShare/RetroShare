@@ -41,7 +41,7 @@ class FileProgressInfo
 	public:
 		typedef enum { UNINIT, DOWNLOAD_LINE, UPLOAD_LINE, DOWNLOAD_SOURCE } LineType ;
 
-		FileProgressInfo() : type(UNINIT), progress(0.0) {}
+		FileProgressInfo() : type(UNINIT), progress(0.0), nb_chunks(0) {}
 
 		LineType type ;
 		CompressedChunkMap cmap ;
