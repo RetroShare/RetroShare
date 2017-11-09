@@ -99,7 +99,7 @@ public:
 	{
 	public:
 		read_error(unsigned char *sec,uint32_t size,uint32_t offset,uint8_t expected_tag);
-		read_error(const std::string& s) : err_string(s) {}
+		explicit read_error(const std::string& s) : err_string(s) {}
 
 		const std::string& what() const { return err_string ; }
 	private:
