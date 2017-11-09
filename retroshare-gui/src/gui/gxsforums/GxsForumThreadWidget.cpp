@@ -1885,7 +1885,7 @@ void GxsForumThreadWidget::setMsgReadStatus(QList<QTreeWidgetItem*> &rows, bool 
 
 	mInMsgAsReadUnread = false;
 
-	if (changedItems.size()) {
+	if (!changedItems.empty()) {
 		for (std::list<QTreeWidgetItem*>::iterator it = changedItems.begin(); it != changedItems.end(); ++it) {
 			calculateIconsAndFonts(*it);
 		}
