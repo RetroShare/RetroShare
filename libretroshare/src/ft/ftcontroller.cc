@@ -2042,7 +2042,7 @@ bool ftController::loadList(std::list<RsItem *>& load)
 			 * config files are fully loaded
 			 */
 #ifdef TO_REMOVE
-			(csoler) I removed this because RS_FILE_HINTS_NETWORK_WIDE is actually equal to RS_FILE_REQ_ENCRYPTED, so this test removed the encrypted flag when loading!!
+			//*** (csoler) I removed this because RS_FILE_HINTS_NETWORK_WIDE is actually equal to RS_FILE_REQ_ENCRYPTED, so this test removed the encrypted flag when loading!!
 			// Compatibility with previous versions. 
 			if(rsft->flags & RS_FILE_HINTS_NETWORK_WIDE.toUInt32())
 			{
