@@ -699,9 +699,9 @@ void CreateGxsChannelMsg::sendMessage(const std::string &subject, const std::str
 			post.mThumbnail.copy((uint8_t *) ba.data(), ba.size());
 		}
 
+#ifdef ENABLE_GENERATE
 		int generateCount = 0;
 
-#ifdef ENABLE_GENERATE
 		if (generateCheckBox->isChecked()) {
 			generateCount = generateSpinBox->value();
 			if (QMessageBox::question(this, tr("Generate mass data"), tr("Do you really want to generate %1 messages ?").arg(generateCount), QMessageBox::Yes|QMessageBox::No, QMessageBox::No) == QMessageBox::No) {
@@ -711,16 +711,18 @@ void CreateGxsChannelMsg::sendMessage(const std::string &subject, const std::str
 #endif
 
 		uint32_t token;
-		if (generateCount) {
 #ifdef ENABLE_GENERATE
+		if (generateCount) {
 			for (int count = 0; count < generateCount; ++count) {
 				RsGxsChannelPost generatePost = post;
 				generatePost.mMeta.mMsgName = QString("%1 %2").arg(QString::fromUtf8(post.mMeta.mMsgName.c_str())).arg(count + 1, 3, 10, QChar('0')).toUtf8().constData();
 
 				rsGxsChannels->createPost(token, generatePost);
 			}
+		}
+		else
 #endif
-		} else {
+		{
 			rsGxsChannels->createPost(token, post);
 		}
 	}
