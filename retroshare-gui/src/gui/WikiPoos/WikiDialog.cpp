@@ -367,7 +367,7 @@ void WikiDialog::loadGroupMeta(const uint32_t &token)
 	return;
 	}
 
-	if (groupMeta.size() > 0)
+	if (!groupMeta.empty())
 	{
 		insertGroupsData(groupMeta);
 	}
