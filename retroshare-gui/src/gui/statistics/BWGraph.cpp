@@ -344,6 +344,8 @@ BWGraphSource::BWGraphSource()
     _friend_graph_type = GRAPH_TYPE_SUM;
     _service_graph_type = GRAPH_TYPE_SUM;
 
+    _total_duration_seconds = 0;
+
     _current_selected_friend.clear() ;
     _current_selected_service = 0;
     _current_unit = UNIT_KILOBYTES;
