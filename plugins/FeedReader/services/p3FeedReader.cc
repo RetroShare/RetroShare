@@ -1401,7 +1401,7 @@ void p3FeedReader::cleanFeeds()
 		}
 		mLastClean = currentTime;
 
-		if (removedMsgIds.size()) {
+		if (!removedMsgIds.empty()) {
 			IndicateConfigChanged();
 
 			if (mNotify) {
