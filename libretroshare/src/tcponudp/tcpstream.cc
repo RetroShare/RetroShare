@@ -1068,7 +1068,7 @@ int	TcpStream::cleanup()
 		delete db;
 	}
 
-	while(outPkt.size() > 0)
+	while(!outPkt.empty())
 	{
 		TcpPacket *pkt = outPkt.front();
 		outPkt.pop_front();
@@ -1086,7 +1086,7 @@ int	TcpStream::cleanup()
 		delete db;
 	}
 
-	while(inPkt.size() > 0)
+	while(!inPkt.empty())
 	{
 		TcpPacket *pkt = inPkt.front();
 		inPkt.pop_front();
