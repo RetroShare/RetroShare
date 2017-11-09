@@ -2587,7 +2587,7 @@ bool p3IdService::cache_start_load()
         mCacheLoad_ToCache.clear();
     }
 
-    if (groupIds.size() > 0)
+    if (!groupIds.empty())
     {
 #ifdef DEBUG_IDS
         std::cerr << "p3IdService::cache_start_load() #Groups: " << groupIds.size();
