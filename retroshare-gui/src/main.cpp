@@ -296,7 +296,7 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 			/* check for existing Certificate */
 			bool genCert = false;
 			std::list<RsPeerId> accountIds;
-			if (RsAccounts::GetAccountIds(accountIds) && (accountIds.size() > 0))
+			if (RsAccounts::GetAccountIds(accountIds) && (!accountIds.empty()))
 			{
 				StartDialog sd;
 				if (sd.exec() == QDialog::Rejected) {
