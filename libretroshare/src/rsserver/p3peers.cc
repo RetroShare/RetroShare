@@ -1019,13 +1019,13 @@ bool p3Peers::setProxyServer(const uint32_t type, const std::string &addr_str, c
 	addrv4p->sin_family = AF_INET;
 	addrv4p->sin_port = htons(port);
 
-	int ret = 1;
+	//int ret = 1;
 /********************************** WINDOWS/UNIX SPECIFIC PART *******************/
 #ifndef WINDOWS_SYS
-	if (ret && (0 != inet_aton(addr_str.c_str(), &(addrv4p->sin_addr))))
+	if (/*ret &&*/ (0 != inet_aton(addr_str.c_str(), &(addrv4p->sin_addr))))
 #else
 	addrv4p->sin_addr.s_addr = inet_addr(addr_str.c_str());
-	if (ret)
+	if (true /*ret*/)
 #endif
 /********************************** WINDOWS/UNIX SPECIFIC PART *******************/
 	{
