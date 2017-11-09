@@ -439,7 +439,7 @@ int p3MsgService::checkOutgoingMessages()
 			}
 		}
 
-		if (toErase.size() > 0) IndicateConfigChanged();
+		if (!toErase.empty()) IndicateConfigChanged();
 	}
 
 	for( std::list<RsMsgItem*>::const_iterator it(output_queue.begin());
