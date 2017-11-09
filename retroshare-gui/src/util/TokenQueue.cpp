@@ -154,7 +154,7 @@ void TokenQueue::pollRequests()
 //		}
 	}
 
-	if (mRequests.size() > 0)
+	if (!mRequests.empty())
 	{
 		doPoll(pollPeriod);
 	}
