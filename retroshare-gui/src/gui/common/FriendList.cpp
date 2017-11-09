@@ -588,7 +588,7 @@ void FriendList::insertPeers()
     std::list<RsPeerId> ownSslContacts;
     RsPgpId ownId = rsPeers->getGPGOwnId();
     rsPeers->getAssociatedSSLIds(ownId, ownSslContacts);
-    if (ownSslContacts.size() > 0) {
+    if (!ownSslContacts.empty()) {
         gpgFriends.push_back(ownId);
     }
 
