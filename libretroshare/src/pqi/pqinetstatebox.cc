@@ -417,7 +417,7 @@ void pqiNetStateBox::determineNetworkState()
 			}
 			else 
 			{
-				bool isExtAddress = false;
+				/*bool isExtAddress = false;
 	
 				if (isExtAddress)
 				{
@@ -428,7 +428,7 @@ void pqiNetStateBox::determineNetworkState()
 	
 					//mExtAddrStable = true;
 				}
-				else if (mPortForwardSet)
+				else*/ if (mPortForwardSet)
 				{
 					mNetworkMode = RSNET_NETWORK_BEHINDNAT;
 					// Use Fallback Guess.
@@ -479,7 +479,7 @@ void pqiNetStateBox::determineNetworkState()
 		{
 			/* if we reach this point, we really need a Web "WhatsMyIp" Check of our Ext Ip Address. */
 			/* Check for the possibility of an EXT address ... */
-			bool isExtAddress = false;
+			/*bool isExtAddress = false;
 
 			//mExtAddress = ... from WhatsMyIp.
 
@@ -492,7 +492,7 @@ void pqiNetStateBox::determineNetworkState()
 				//mExtAddrStable = true;
 				mNetStateMode = RSNET_NETSTATE_WARNING_NODHT;
 			}
-			else if (mPortForwardSet)
+			else*/ if (mPortForwardSet)
 			{
 				mNetworkMode = RSNET_NETWORK_BEHINDNAT;
 				mNatTypeMode = RSNET_NATTYPE_UNKNOWN;
