@@ -1041,7 +1041,7 @@ void NotifyQt::testToasters(uint notifyFlags, /*RshareSettings::enumToasterPosit
 			case RS_POPUP_CHATLOBBY:
 				{
 					std::list<RsGxsId> gxsid;
-					if(rsIdentity->getOwnIds(gxsid) && (gxsid.size() > 0)){
+					if(rsIdentity->getOwnIds(gxsid) && (!gxsid.empty())){
 						toaster = new ToasterItem(new ChatLobbyToaster(0, gxsid.front(), message));
 					}
 					break;
