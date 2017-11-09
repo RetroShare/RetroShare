@@ -40,8 +40,8 @@ const int UPDATE_PERIOD_SECONDS = 5;
 
 void TransfersHandler::tick()
 {
-    if(time(0) > (mLastUpdateTS + UPDATE_PERIOD_SECONDS))
-        mStateTokenServer->replaceToken(mStateToken);
+	if(time(0) > (mLastUpdateTS + UPDATE_PERIOD_SECONDS))
+		mStateTokenServer->replaceToken(mStateToken);
 
 	bool replace = false;
     // extra check: was the list of files changed?
