@@ -2330,7 +2330,7 @@ void RsGxsNetService::processCompletedTransactions()
 	 * Depending on transaction we may have to respond to peer
 	 * responsible for transaction
 	 */
-	while(mComplTransactions.size()>0)
+	while(!mComplTransactions.empty())
 	{
 
 		NxsTransaction* tr = mComplTransactions.front();
@@ -2406,7 +2406,7 @@ void RsGxsNetService::locked_processCompletedIncomingTrans(NxsTransaction* tr)
 #endif
             std::vector<RsNxsGrp*> grps;
 
-            while(tr->mItems.size() != 0)
+            while(!tr->mItems.empty())
             {
                 RsNxsGrp* grp = dynamic_cast<RsNxsGrp*>(tr->mItems.front());
 
@@ -2462,7 +2462,7 @@ void RsGxsNetService::locked_processCompletedIncomingTrans(NxsTransaction* tr)
             RsGxsGroupId grpId;
             //time_t now = time(NULL) ;
 
-            while(tr->mItems.size() > 0)
+            while(!tr->mItems.empty())
             {
                 RsNxsMsg* msg = dynamic_cast<RsNxsMsg*>(tr->mItems.front());
                 if(msg)
