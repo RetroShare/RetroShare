@@ -357,7 +357,7 @@ void ImHistoryBrowser::itemSelectionChanged()
     std::list<uint32_t> msgIds;
     getSelectedItems(msgIds);
 
-    if (msgIds.size()) {
+    if (!msgIds.empty()) {
         // activate buttons
         ui.copyButton->setEnabled(true);
         ui.removeButton->setEnabled(true);
@@ -392,7 +392,7 @@ void ImHistoryBrowser::customContextMenuRequested(QPoint /*pos*/)
         }
     }
 
-    if (msgIds.size()) {
+    if (!msgIds.empty()) {
         connect(selectAll, SIGNAL(triggered()), ui.listWidget, SLOT(selectAll()));
         connect(copyMessage, SIGNAL(triggered()), this, SLOT(copyMessage()));
         connect(removeMessages, SIGNAL(triggered()), this, SLOT(removeMessages()));
