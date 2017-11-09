@@ -813,7 +813,7 @@ int p3PeerMgrIMPL::getFriendCount(bool ssl, bool online)
 	std::list<RsPeerId> ownSslIds;
 	getAssociatedPeers(AuthGPG::getAuthGPG()->getGPGOwnId(), ownSslIds);
 
-	return gpgIds.size() + ((ownSslIds.size() > 0) ? 1 : 0);
+	return gpgIds.size() + ((!ownSslIds.empty()) ? 1 : 0);
 }
 
 bool p3PeerMgrIMPL::getFriendNetStatus(const RsPeerId &id, peerState &state)
