@@ -1005,7 +1005,7 @@ bool p3GxsCircles::cache_start_load()
 		mCacheLoad_ToCache.clear();
 	}
 
-	if (groupIds.size() > 0)
+	if (!groupIds.empty())
 	{
 #ifdef DEBUG_CIRCLES
 		std::cerr << "p3GxsCircles::cache_start_load() #Groups: " << groupIds.size();
