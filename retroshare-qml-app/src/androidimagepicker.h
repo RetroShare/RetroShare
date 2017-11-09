@@ -60,12 +60,12 @@ public slots:
 		QPainter painter(&result);
 
 
-		int counter = 0;
+		//int counter = 0;
 		for(QVariantList::iterator j = onloads.begin(); j != onloads.end(); ++j)
 		{
 			QImage image = getImage (":/"+(*j).toString());
 			painter.drawImage(0, 0, image); // xi, yi is the position for imagei
-			++counter;
+			//++counter;
 		}
 		painter.end();
 
