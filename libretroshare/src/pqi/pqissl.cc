@@ -1264,7 +1264,7 @@ int pqissl::Authorise_SSL_Connection()
 	//      (pqissl's case) sslcert->serveraddr or sslcert->localaddr.
 
 	AuthSSL::getAuthSSL()->CheckCertificate(PeerId(), peercert);
-	bool certCorrect = true; /* WE know it okay already! */
+	//bool certCorrect = true; /* WE know it okay already! */
 
     uint32_t check_result ;
     uint32_t checking_flags = RSBANLIST_CHECKING_FLAGS_BLACKLIST;
@@ -1281,7 +1281,7 @@ int pqissl::Authorise_SSL_Connection()
 		return 0 ;
     }
 	// check it's the right one.
-	if (certCorrect)
+	//if (certCorrect)
 	{
 		// then okay...
 		rslog(RSL_WARNING, pqisslzone, "pqissl::Authorise_SSL_Connection() Accepting Conn. Peer: " + PeerId().toStdString());
