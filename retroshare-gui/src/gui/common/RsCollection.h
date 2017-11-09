@@ -65,7 +65,7 @@ public:
 	explicit RsCollection(QObject *parent = 0) ;
 	// create from list of files and directories
 	RsCollection(const std::vector<DirDetails>& file_entries, FileSearchFlags flags, QObject *parent = 0) ;
-	RsCollection(const FileTree& fr);
+	explicit RsCollection(const FileTree& fr);
 	virtual ~RsCollection() ;
 
 	void merge_in(const QString& fname,uint64_t size,const RsFileHash& hash) ;
