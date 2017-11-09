@@ -146,9 +146,9 @@ bool p3BandwidthControl::checkAvailableBandwidth()
 		/* if delta > 0 ... then need update (to allow more data) */
 
 		/* for the moment - always send an update */
+#if 0
 		bool updatePeer = true;
 
-#if 0
 		/* if changed significantly */
 		if (sig)
 		{
@@ -166,7 +166,9 @@ bool p3BandwidthControl::checkAvailableBandwidth()
 		bit->second.mRates = it->second;
 		bit->second.mRateUpdateTs = now;
 
+#if 0
 		if (updatePeer)
+#endif
 		{
 #define ALLOC_FACTOR (1.0)
 			// save value sent,
