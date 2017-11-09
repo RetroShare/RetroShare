@@ -243,7 +243,7 @@ bool	ftExtraList::cleanupOldFiles()
 		if ((time_t)it->second.info.age < now)
 			toRemove.push_back(it->first);
 
-	if (toRemove.size() > 0)
+	if (!toRemove.empty())
 	{
         std::map<RsFileHash, FileDetails>::iterator it;
 
