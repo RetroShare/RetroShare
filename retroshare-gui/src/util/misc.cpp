@@ -87,11 +87,9 @@ bool misc::isPreviewable(QString extension)
     if(extension == "AC3") return true;
     if(extension == "MP4") return true;
     if(extension == "MP2") return true;
-    if(extension == "AVI") return true;
     if(extension == "FLAC") return true;
     if(extension == "AU") return true;
     if(extension == "MPE") return true;
-    if(extension == "MOV") return true;
     if(extension == "MKV") return true;
     if(extension == "AIF") return true;
     if(extension == "AIFF") return true;
