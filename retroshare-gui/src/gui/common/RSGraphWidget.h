@@ -46,7 +46,7 @@
 struct ZeroInitFloat
 {
 	ZeroInitFloat() { v=0; }
-	ZeroInitFloat(float f) { v=f; }
+	explicit ZeroInitFloat(float f) { v=f; }
 
 	float operator()() const { return v ; }
 	float& operator()() { return v ; }
