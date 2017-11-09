@@ -217,7 +217,7 @@ void MsgItem::updateItem()
 			return;
 		}
 	}
-	if (mFileItems.size() > 0)
+	if (!mFileItems.empty())
 	{
 		playButton->setEnabled(true);
 	}
