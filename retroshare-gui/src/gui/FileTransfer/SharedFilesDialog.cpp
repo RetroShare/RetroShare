@@ -1192,7 +1192,7 @@ void LocalSharedFilesDialog::shareOnChannel()
 	if(channelDialog == NULL)
 		return ;
 
-	std::list<DirDetails> files_info ;
+	//std::list<DirDetails> files_info ;
 
 	QList<RetroShareLink> file_links_list ;
 	bool has_unhashed_files ;
@@ -1210,7 +1210,7 @@ void LocalSharedFilesDialog::shareInForum()
 	if(forumsDialog == NULL)
 		return ;
 
-	std::list<DirDetails> files_info ;
+	//std::list<DirDetails> files_info ;
 
 	QList<RetroShareLink> file_links_list ;
 	bool has_unhashed_files ;
