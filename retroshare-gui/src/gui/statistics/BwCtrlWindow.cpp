@@ -285,7 +285,7 @@ void BwCtrlWindow::updateBandwidth()
 		std::string name = rsPeers->getPeerName(it->first);
 
 		peer_item -> setData(COLUMN_PEERID, Qt::DisplayRole, QString::fromStdString(it->first.toStdString()));
-		peer_item -> setData(COLUMN_RSNAME, Qt::DisplayRole, QString::fromStdString(name));
+		peer_item -> setData(COLUMN_RSNAME, Qt::DisplayRole, QString::fromUtf8(name.c_str()));
 
 		peer_item -> setData(COLUMN_IN_RATE, Qt::DisplayRole, it->second.mRateIn);
 		peer_item -> setData(COLUMN_IN_MAX, Qt::DisplayRole, it->second.mRateMaxIn);
