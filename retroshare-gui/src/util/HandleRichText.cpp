@@ -388,6 +388,20 @@ void RsHtml::embedHtml(QTextDocument *textDocument, QDomDocument& doc, QDomEleme
 								replaceAnchorWithImg(doc, element, textDocument, link);
 							}
 						}
+						else
+						{
+							QUrl url(element.attribute("href"));
+							if(url.isValid())
+							{
+								QString title = url.host();
+								if (!title.isEmpty()) {
+									element.setAttribute("title", title);
+								}
+								if (textDocument && (flag & RSHTML_FORMATTEXT_REPLACE_LINKS)) {
+									replaceAnchorWithImg(doc, element, textDocument, url);
+								}
+							}
+						}
 					} else {
 						if (textDocument && (flag & RSHTML_FORMATTEXT_REPLACE_LINKS)) {
 							RetroShareLink link(element.attribute("href"));
@@ -441,6 +455,20 @@ void RsHtml::embedHtml(QTextDocument *textDocument, QDomDocument& doc, QDomEleme
 
 									if (textDocument && (flag & RSHTML_FORMATTEXT_REPLACE_LINKS)) {
 										replaceAnchorWithImg(doc, insertedTag, textDocument, link);
+									}
+								}
+								else
+								{
+									QUrl url(myRE.cap(0));
+									if(url.isValid())
+									{
+										QString title = url.host();
+										if (!title.isEmpty()) {
+											insertedTag.setAttribute("title", title);
+										}
+										if (textDocument && (flag & RSHTML_FORMATTEXT_REPLACE_LINKS)) {
+											replaceAnchorWithImg(doc, insertedTag, textDocument, url);
+										}
 									}
 								}
 							}
