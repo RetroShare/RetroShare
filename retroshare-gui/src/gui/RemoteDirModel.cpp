@@ -1065,10 +1065,12 @@ void RetroshareDirModel::createCollectionFile(QWidget *parent, const QModelIndex
 	std::vector <DirDetails> dirVec;
 	getDirDetailsFromSelect(list, dirVec);
 
-	RsCollection(dirVec).openNewColl(parent);
+	FileSearchFlags f = RemoteMode?RS_FILE_HINTS_REMOTE:RS_FILE_HINTS_LOCAL ;
+
+	RsCollection(dirVec,f).openNewColl(parent);
 }
 
-void RetroshareDirModel::downloadSelected(const QModelIndexList &list)
+void RetroshareDirModel::downloadSelected(const QModelIndexList &list,bool interactive)
 {
 	if (!RemoteMode)
 	{
@@ -1085,35 +1087,38 @@ void RetroshareDirModel::downloadSelected(const QModelIndexList &list)
 	 std::vector <DirDetails> dirVec;
 
    getDirDetailsFromSelect(list, dirVec);
+   FileSearchFlags f = RemoteMode?RS_FILE_HINTS_REMOTE:RS_FILE_HINTS_LOCAL ;
 
-	/* Fire off requests */
-    for (int i = 0, n = dirVec.size(); i < n; ++i)
-    {
-        if (!RemoteMode)
-        {
-            continue; /* don't try to download local stuff */
-        }
+   if(interactive)
+	   RsCollection(dirVec,f).downloadFiles() ;
+   else /* Fire off requests */
+	   for (int i = 0, n = dirVec.size(); i < n; ++i)
+	   {
+		   if (!RemoteMode)
+		   {
+			   continue; /* don't try to download local stuff */
+		   }
 
-        const DirDetails& details = dirVec[i];
+		   const DirDetails& details = dirVec[i];
 
-        /* if it is a file */
-        if (details.type == DIR_TYPE_FILE)
-        {
-            std::cerr << "RetroshareDirModel::downloadSelected() Calling File Request";
-            std::cerr << std::endl;
-            std::list<RsPeerId> srcIds;
-            srcIds.push_back(details.id);
-            rsFiles -> FileRequest(details.name, details.hash,
-                    details.count, "", RS_FILE_REQ_ANONYMOUS_ROUTING, srcIds);
-        }
-        /* if it is a dir, copy all files included*/
-        else if (details.type == DIR_TYPE_DIR)
-        {
-        	int prefixLen = details.path.rfind(details.name);
-        	if (prefixLen < 0) continue;
-        	downloadDirectory(details, prefixLen);
-        }
-    }
+		   /* if it is a file */
+		   if (details.type == DIR_TYPE_FILE)
+		   {
+			   std::cerr << "RetroshareDirModel::downloadSelected() Calling File Request";
+			   std::cerr << std::endl;
+			   std::list<RsPeerId> srcIds;
+			   srcIds.push_back(details.id);
+			   rsFiles -> FileRequest(details.name, details.hash,
+			                          details.count, "", RS_FILE_REQ_ANONYMOUS_ROUTING, srcIds);
+		   }
+		   /* if it is a dir, copy all files included*/
+		   else if (details.type == DIR_TYPE_DIR)
+		   {
+			   int prefixLen = details.path.rfind(details.name);
+			   if (prefixLen < 0) continue;
+			   downloadDirectory(details, prefixLen);
+		   }
+	   }
 }
 
 /* recursively download a directory */

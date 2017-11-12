@@ -223,7 +223,7 @@ private slots:
 
     /** Toolbar fns. */
     void addFriend();
-    void newRsCollection();
+    //void newRsCollection();
     void showMessengerWindow();
     void showStatisticsWindow();
 #ifdef ENABLE_WEBUI

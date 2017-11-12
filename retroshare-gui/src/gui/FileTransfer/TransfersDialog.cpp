@@ -2133,7 +2133,8 @@ void TransfersDialog::collCreate()
 	std::set<RsFileHash>::iterator it ;
 	getDLSelectedItems(&items, NULL);
 
-	for (it = items.begin(); it != items.end(); ++it) {
+	for (it = items.begin(); it != items.end(); ++it)
+	{
 		FileInfo info;
 		if (!rsFiles->FileDetails(*it, RS_FILE_HINTS_DOWNLOAD, info)) continue;
 
@@ -2144,9 +2145,9 @@ void TransfersDialog::collCreate()
 		details.type = DIR_TYPE_FILE;
 
 		dirVec.push_back(details);
-	}//for (it = items.begin();
+	}
 
-	RsCollection(dirVec).openNewColl(this);
+	RsCollection(dirVec,RS_FILE_HINTS_LOCAL).openNewColl(this);
 }
 
 void TransfersDialog::collModif()

@@ -445,10 +445,10 @@ void SearchDialog::collCreate()
 			details.type = DIR_TYPE_FILE;
 
 			dirVec.push_back(details);
-		}//if (!item->text(SR_HASH_COL).isEmpty())
-	}//for (int i = 0; i < numdls; ++i)
+		}
+	}
 
-	RsCollection(dirVec).openNewColl(this);
+	RsCollection(dirVec,RS_FILE_HINTS_LOCAL).openNewColl(this);
 }
 
 void SearchDialog::collModif()
