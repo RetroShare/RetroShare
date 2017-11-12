@@ -55,6 +55,8 @@ public slots:
 	void updateAutoLogin()        ;
 	void updateRunRSOnBoot()      ;
 	void updateRegisterRSProtocol();
+	void updateAltBrowser();
+	void updateAltBrowserUseAlways();
 
 private:
 	/** Qt Designer generated object */

@@ -28,6 +28,7 @@
 #include <QString>
 #include <QUrl>
 #include <QtDebug>
+#include <QProcess>
 
 #include <retroshare/rsplugin.h>
 #include <retroshare/rsconfig.h>
@@ -142,6 +143,8 @@
 #define IMAGE_DHT               ":/images/dht16.png"
 
 /*static*/ bool MainWindow::hiddenmode = false;
+/*static*/ QString MainWindow::altbrowser = "";
+/*static*/ bool MainWindow::altbrowserUseAlways = false;
 
 /*static*/ MainWindow *MainWindow::_instance = NULL;
 
@@ -195,6 +198,9 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     QDesktopServices::setUrlHandler("http", this, "externalLinkActivated");
     QDesktopServices::setUrlHandler("https", this, "externalLinkActivated");
 
+	altbrowser = Settings->getAltBrowser();
+	altbrowserUseAlways = Settings->getAltBrowserUseAlways();
+	
     // Setting icons
     this->setWindowIcon(QIcon(QString::fromUtf8(":/icons/logo_128.png")));
 
@@ -1409,6 +1415,16 @@ void MainWindow::externalLinkActivated(const QUrl &url)
 {
 	static bool already_warned = false ;
 
+	if(MainWindow::altbrowserUseAlways)
+	{
+		if(!altbrowser.isEmpty())
+		{
+			QStringList args(url.toString());
+			QProcess::startDetached(altbrowser, args);
+		}
+		return;
+	}
+	
 	if(!already_warned)
 	{
 		QMessageBox mb(QObject::tr("Confirmation"), QObject::tr("Do you want this link to be handled by your system?")+"<br/><br/>"+ url.toString()+"<br/><br/>"+tr("Make sure this link has not been forged to drag you to a malicious website."), QMessageBox::Question, QMessageBox::Yes,QMessageBox::No, 0);
@@ -1423,7 +1439,21 @@ void MainWindow::externalLinkActivated(const QUrl &url)
 			mb.layout()->addWidget(checkbox) ;
 		}
 
+		QAbstractButton *useAltBrowser = mb.addButton(tr("Use Alt.Browser"), QMessageBox::ActionRole);
+
+		if(altbrowser.isEmpty())
+		{
+			useAltBrowser->setEnabled(false);
+			useAltBrowser->setToolTip(tr("Alternative Browser is not configured, you can set it in settings"));
+		}
 		int res = mb.exec() ;
+		
+		if (mb.clickedButton()==useAltBrowser)
+		{
+			QStringList args(url.toString());
+			QProcess::startDetached(altbrowser, args);
+			return;
+		}
 
 		if (res == QMessageBox::No) 
 			return ;

@@ -30,6 +30,7 @@
 #include <util/misc.h>
 #include <QSystemTrayIcon>
 #include "rsharesettings.h"
+#include "gui/MainWindow.h"
 
 /** Constructor */
 GeneralPage::GeneralPage(QWidget * parent, Qt::WindowFlags flags) :
@@ -92,11 +93,31 @@ GeneralPage::GeneralPage(QWidget * parent, Qt::WindowFlags flags) :
     //connect(ui.runStartWizard_PB,                           SIGNAL(clicked()),         this,SLOT(runStartWizard())) ;
     connect(ui.checkAdvanced,                               SIGNAL(toggled(bool)),     this,SLOT(updateAdvancedMode())) ;
     connect(ui.registerRetroShareProtocol,                  SIGNAL(toggled(bool)),     this,SLOT(updateRegisterRSProtocol())) ;
+	
+    connect(ui.altBrowserButton, SIGNAL(clicked( bool ) ), this , SLOT( updateAltBrowser() ) );
+    connect(ui.altBrowserUseAlwaysCB, SIGNAL(toggled(bool)), this, SLOT(updateAltBrowserUseAlways())) ;
 }
 
 /** Destructor */
 GeneralPage::~GeneralPage()
 {
+}
+
+void GeneralPage::updateAltBrowser()
+{
+	QString fileName = QFileDialog::getOpenFileName(this, "Select browser executable", QDir::homePath()/*, "Programs (*.exe)"*/);
+	if(!fileName.isEmpty())
+	{
+		ui.altBrowser->setText(fileName);
+		MainWindow::altbrowser = fileName;
+		Settings->setAltBrowser(fileName);
+	}
+}
+
+void GeneralPage::updateAltBrowserUseAlways()
+{
+	Settings->setAltBrowserUseAlways(ui.altBrowserUseAlwaysCB->isChecked());
+	MainWindow::altbrowserUseAlways = ui.altBrowserUseAlwaysCB->isChecked();
 }
 
 void GeneralPage::updateAdvancedMode()
@@ -169,4 +190,7 @@ void GeneralPage::load()
   whileBlocking(ui.useLocalServer)->setChecked(Settings->getUseLocalServer());
 
   whileBlocking(ui.idleSpinBox)->setValue(Settings->getMaxTimeBeforeIdle());
+  
+  whileBlocking(ui.altBrowser)->setText(Settings->getAltBrowser());
+  whileBlocking(ui.altBrowserUseAlwaysCB)->setChecked(Settings->getAltBrowserUseAlways());
 }
