@@ -28,6 +28,7 @@
 #include <string>
 #include <list>
 #include <stdint.h>
+#include "util/rsprint.h"
 #include "retroshare/rstypes.h"
 
 /******************************************************************************************
@@ -127,6 +128,7 @@ public:
     virtual ~Expression() {};
 
     virtual void linearize(LinearizedExpression& e) const = 0 ;
+	virtual std::string toStdString() const = 0 ;
 };
 
 class CompoundExpression : public Expression 
@@ -155,6 +157,18 @@ public:
         delete Rexp;
     }
 
+	virtual std::string toStdString() const
+	{
+		switch(Op)
+		{
+		case AndOp: return "(" + Lexp->toStdString() + ") AND (" + Rexp->toStdString() +")" ;
+		case  OrOp: return "(" + Lexp->toStdString() + ") OR (" + Rexp->toStdString() +")" ;
+		case XorOp: return "(" + Lexp->toStdString() + ") XOR (" + Rexp->toStdString() +")" ;
+		default:
+			return "" ;
+		}
+	}
+
     virtual void linearize(LinearizedExpression& e) const ;
 private:
     Expression *Lexp;
@@ -169,6 +183,7 @@ public:
     StringExpression(enum StringOperator op, std::list<std::string> &t, bool ic): Op(op),terms(t), IgnoreCase(ic){}
 
     virtual void linearize(LinearizedExpression& e) const ;
+	virtual std::string toStdString(const std::string& varstr) const;
 protected:
     bool evalStr(const std::string &str);
 
@@ -184,6 +199,7 @@ public:
     RelExpression(enum RelOperator op, T lv, T hv): Op(op), LowerValue(lv), HigherValue(hv) {}
 
     virtual void linearize(LinearizedExpression& e) const ;
+	virtual std::string toStdString(const std::string& typestr) const;
 protected:
     bool evalRel(T val);
 
@@ -214,6 +230,22 @@ bool RelExpression<T>::evalRel(T val) {
     }
 }
 
+template <class T>
+std::string RelExpression<T>::toStdString(const std::string& typestr) const
+{
+	std::string LowerValueStr = RsUtil::NumberToString(LowerValue) ;
+
+    switch (Op) {
+    case Equals:		 return typestr + " = " + LowerValueStr ;
+    case GreaterEquals:  return typestr + " <= "+ LowerValueStr ;
+    case Greater:		 return typestr + " < " + LowerValueStr ;
+    case SmallerEquals:  return typestr + " >= "+ LowerValueStr ;
+    case Smaller:		 return typestr + " > " + LowerValueStr ;
+    case InRange:		 return LowerValueStr + " <= " + typestr + " <= " + RsUtil::NumberToString(HigherValue) ;
+    default:
+        return "";
+    }
+}
 
 /******************************************************************************************
 Binary Predicate for Case Insensitive search 
@@ -245,6 +277,8 @@ public:
         StringExpression(op,t,ic) {}
     bool eval(const ExpFileEntry& file);
 
+	virtual std::string toStdString() const { return StringExpression::toStdString("NAME"); }
+
     virtual void linearize(LinearizedExpression& e) const
     {
         e._tokens.push_back(LinearizedExpression::EXPR_NAME) ;
@@ -257,6 +291,8 @@ public:
     PathExpression(enum StringOperator op, std::list<std::string> &t, bool ic):
         StringExpression(op,t,ic) {}
     bool eval(const ExpFileEntry& file);
+
+	virtual std::string toStdString()const { return StringExpression::toStdString("PATH"); }
 
     virtual void linearize(LinearizedExpression& e) const
     {
@@ -271,6 +307,8 @@ public:
         StringExpression(op,t,ic) {}
     bool eval(const ExpFileEntry& file);
 
+	virtual std::string toStdString()const { return StringExpression::toStdString("EXTENSION"); }
+
     virtual void linearize(LinearizedExpression& e) const
     {
         e._tokens.push_back(LinearizedExpression::EXPR_EXT) ;
@@ -283,6 +321,8 @@ public:
     HashExpression(enum StringOperator op, std::list<std::string> &t):
         StringExpression(op,t, true) {}
     bool eval(const ExpFileEntry& file);
+
+	virtual std::string toStdString() const { return StringExpression::toStdString("HASH"); }
 
     virtual void linearize(LinearizedExpression& e) const
     {
@@ -304,6 +344,8 @@ public:
         RelExpression<int>(op,lv,hv) {}
     bool eval(const ExpFileEntry& file);
 
+	virtual std::string toStdString() const { return RelExpression<int>::toStdString("DATE"); }
+
     virtual void linearize(LinearizedExpression& e) const
     {
         e._tokens.push_back(LinearizedExpression::EXPR_DATE) ;
@@ -318,6 +360,8 @@ public:
     SizeExpression(enum RelOperator op, int lv, int hv):
         RelExpression<int>(op,lv,hv) {}
     bool eval(const ExpFileEntry& file);
+
+	virtual std::string toStdString() const { return RelExpression<int>::toStdString("SIZE"); }
 
     virtual void linearize(LinearizedExpression& e) const
     {
@@ -334,6 +378,8 @@ public:
         RelExpression<int>(op,lv,hv) {}
     bool eval(const ExpFileEntry& file);
 
+	virtual std::string toStdString() const { return RelExpression<int>::toStdString("SIZE"); }
+
     virtual void linearize(LinearizedExpression& e) const
     {
         e._tokens.push_back(LinearizedExpression::EXPR_SIZE_MB) ;
@@ -347,6 +393,8 @@ public:
     PopExpression(enum RelOperator op, int lv, int hv): RelExpression<int>(op,lv,hv) {}
     PopExpression(const LinearizedExpression& e) ;
     bool eval(const ExpFileEntry& file);
+
+	virtual std::string toStdString() const { return RelExpression<int>::toStdString("POPULARITY"); }
 
     virtual void linearize(LinearizedExpression& e) const
     {
