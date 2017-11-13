@@ -1785,6 +1785,10 @@ void RsTurtleRegExpSearchRequestItem::performLocalSearch(std::list<TurtleFileInf
 	if(exp == NULL)
 		return ;
 
+#ifdef P3TURTLE_DEBUG
+	std::cerr << "Local search on exp: " << exp->toStdString() << std::endl;
+#endif
+
 	// now, search!
     rsFiles->SearchBoolExp(exp,initialResults,RS_FILE_HINTS_LOCAL | RS_FILE_HINTS_SEARCHABLE,PeerId());
 

@@ -128,6 +128,32 @@ static bool StrContains( const std::string & str1, const std::string & str2,
 }
 
 
+std::string StringExpression::toStdString(const std::string& varstr) const
+{
+	std::string strlist ;
+	for (auto iter = terms.begin(); iter != terms.end(); ++iter )
+		strlist += *iter + ",";
+
+	if(!strlist.empty())
+		strlist.pop_back();	// pops the last ","
+
+	switch(Op)
+	{
+	case ContainsAllStrings:  return varstr + " CONTAINS ALL "+strlist ;
+	case ContainsAnyStrings:  if(terms.size() == 1)
+			return varstr + " CONTAINS "+strlist ;
+		else
+			return varstr + " CONTAINS ONE OF "+strlist ;
+	case EqualsString:  	  if(terms.size() == 1)
+			return varstr + " IS "+strlist ;
+		else
+			return varstr + " IS ONE OF "+strlist ;
+
+	default:
+		return "" ;
+	}
+}
+
 bool StringExpression :: evalStr ( const std::string &str ){
     std::list<std::string>::iterator iter;
     switch (Op) {
