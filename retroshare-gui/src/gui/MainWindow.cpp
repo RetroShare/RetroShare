@@ -1027,12 +1027,12 @@ void MainWindow::addFriend()
 }
 
 /** New RSCollection ShortCut */
-void MainWindow::newRsCollection()
-{
-    std::vector <DirDetails> dirVec;
-
-    RsCollection(dirVec).openNewColl(this);
-}
+// void MainWindow::newRsCollection()
+// {
+//     std::vector <DirDetails> dirVec;
+//
+//     RsCollection(dirVec).openNewColl(this);
+// }
 
 /** Shows Share Manager */
 void MainWindow::openShareManager()
