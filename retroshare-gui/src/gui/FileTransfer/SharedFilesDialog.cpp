@@ -509,7 +509,9 @@ void RemoteSharedFilesDialog::spawnCustomPopupMenu( QPoint point )
 	collectionMenu.addAction(collCreateAct);
 	collectionMenu.addAction(collOpenAct);
 
-	if(type == DIR_TYPE_DIR)
+	QModelIndexList list = ui.dirTreeView->selectionModel()->selectedRows() ;
+
+	if(type == DIR_TYPE_DIR || list.size() > 1)
 	{
 		QAction *downloadActI = new QAction(QIcon(IMAGE_DOWNLOAD), tr( "Download..." ), &contextMnu ) ;
 		connect( downloadActI , SIGNAL( triggered() ), this, SLOT( downloadRemoteSelectedInteractive() ) ) ;
