@@ -132,7 +132,7 @@ std::string StringExpression::toStdString(const std::string& varstr) const
 {
 	std::string strlist ;
 	for (auto iter = terms.begin(); iter != terms.end(); ++iter )
-		strlist += *iter + ",";
+		strlist += *iter + " ";
 
 	if(!strlist.empty())
 		strlist.pop_back();	// pops the last ","
