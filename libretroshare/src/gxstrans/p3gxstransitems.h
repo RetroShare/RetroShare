@@ -39,7 +39,7 @@ public:
 class RsGxsTransBaseMsgItem : public RsGxsMsgItem
 {
 public:
-	RsGxsTransBaseMsgItem(GxsTransItemsSubtypes subtype) :
+	explicit RsGxsTransBaseMsgItem(GxsTransItemsSubtypes subtype) :
 	    RsGxsMsgItem( RS_SERVICE_TYPE_GXS_TRANS,
 	                  static_cast<uint8_t>(subtype) ), mailId(0) {}
 

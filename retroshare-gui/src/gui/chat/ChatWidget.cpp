@@ -499,7 +499,7 @@ bool ChatWidget::eventFilter(QObject *obj, QEvent *event)
 							bTextselected=true;
 						}
 					}
-					ui->searchButton->setChecked(!ui->searchButton->isChecked() | bTextselected);
+					ui->searchButton->setChecked(!ui->searchButton->isChecked() || bTextselected);
 					ui->leSearch->setVisible(bTextselected);//To discard re-selection of text
 					on_searchButton_clicked(ui->searchButton->isChecked());
 					return true; // eat event

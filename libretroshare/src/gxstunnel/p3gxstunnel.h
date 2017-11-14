@@ -124,7 +124,7 @@ static const uint32_t GXS_TUNNEL_AES_KEY_SIZE = 16 ;
 class p3GxsTunnelService: public RsGxsTunnelService, public RsTurtleClientService, public p3Service
 {
 public:
-    p3GxsTunnelService(RsGixs *pids) ;
+    explicit p3GxsTunnelService(RsGixs *pids) ;
     virtual void connectToTurtleRouter(p3turtle *) ;
 
     // Creates the invite if the public key of the distant peer is available.

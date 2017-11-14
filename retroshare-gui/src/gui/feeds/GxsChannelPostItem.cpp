@@ -44,9 +44,6 @@
  * #define DEBUG_ITEM 1
  ****/
 
-#define COLOR_NORMAL QColor(248, 248, 248)
-#define COLOR_NEW    QColor(220, 236, 253)
-
 GxsChannelPostItem::GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome, bool autoUpdate,const std::set<RsGxsMessageId>& older_versions) :
     GxsFeedItem(feedHolder, feedId, groupId, messageId, isHome, rsGxsChannels, autoUpdate)
 {
@@ -69,9 +66,9 @@ void GxsChannelPostItem::init(const RsGxsMessageId& messageId,const std::set<RsG
 		v.push_back(*it) ;
 
 	if(older_versions.find(messageId) == older_versions.end())
-        v.push_back(messageId);
+		v.push_back(messageId);
 
-    setMessageVersions(v) ;
+	setMessageVersions(v) ;
 
 	setup();
 
@@ -212,10 +209,9 @@ void GxsChannelPostItem::setup()
 	ui->subjectLabel->setMinimumWidth(100);
 	ui->warning_label->setMinimumWidth(100);
 
-	ui->mainFrame->setProperty("state", "");
-	QPalette palette = ui->mainFrame->palette();
-	palette.setColor(ui->mainFrame->backgroundRole(), COLOR_NORMAL);
-	ui->mainFrame->setPalette(palette);
+	ui->mainFrame->setProperty("new", false);
+	ui->mainFrame->style()->unpolish(ui->mainFrame);
+	ui->mainFrame->style()->polish(  ui->mainFrame);
 
 	ui->expandFrame->hide();
 }
@@ -516,7 +512,12 @@ void GxsChannelPostItem::fill()
 
 	ui->datetimelabel->setText(DateTime::formatLongDateTime(mPost.mMeta.mPublishTs));
 
-	ui->filelabel->setText(QString("(%1 %2) %3").arg(mPost.mCount).arg(tr("Files")).arg(misc::friendlyUnit(mPost.mSize)));
+	if ( (mPost.mCount != 0) || (mPost.mSize != 0) ) {
+		ui->filelabel->setVisible(true);
+		ui->filelabel->setText(QString("(%1 %2) %3").arg(mPost.mCount).arg(tr("Files")).arg(misc::friendlyUnit(mPost.mSize)));
+	} else {
+		ui->filelabel->setVisible(false);
+	}
 
 	if (mFileItems.empty() == false) {
 		std::list<SubFileItem *>::iterator it;
@@ -579,16 +580,9 @@ void GxsChannelPostItem::setReadStatus(bool isNew, bool isUnread)
 
 	ui->newLabel->setVisible(isNew);
 
-	/* unpolish widget to clear the stylesheet's palette cache */
-	ui->mainFrame->style()->unpolish(ui->mainFrame);
-
-	QPalette palette = ui->mainFrame->palette();
-	palette.setColor(ui->mainFrame->backgroundRole(), isNew ? COLOR_NEW : COLOR_NORMAL); // QScrollArea
-	palette.setColor(QPalette::Base, isNew ? COLOR_NEW : COLOR_NORMAL); // QTreeWidget
-	ui->mainFrame->setPalette(palette);
-
 	ui->mainFrame->setProperty("new", isNew);
-	Rshare::refreshStyleSheet(ui->mainFrame, false);
+	ui->mainFrame->style()->unpolish(ui->mainFrame);
+	ui->mainFrame->style()->polish(  ui->mainFrame);
 }
 
 void GxsChannelPostItem::setFileCleanUpWarning(uint32_t time_left)

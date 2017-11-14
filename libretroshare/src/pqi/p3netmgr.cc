@@ -923,8 +923,8 @@ void p3NetMgrIMPL::netExtCheck()
 				//pqiNotify *notify = getPqiNotify();
 				//if (notify)
 				{
-					std::string title =
-					                "Warning: Bad Firewall Configuration";
+					//std::string title =
+					//                "Warning: Bad Firewall Configuration";
 
 					std::string msg;
 					msg +=  "               **** WARNING ****     \n";
@@ -1814,7 +1814,7 @@ void p3NetMgrIMPL::updateNetStateBox_temporal()
 		std::cerr << std::endl;
 		std::cerr << "\tNetState: " << netstatestr;
 		std::cerr << std::endl;
-		std::cerr << "\tConnectModes: " << netstatestr;
+		std::cerr << "\tConnectModes: " << connectstr;
 		std::cerr << std::endl;
 		std::cerr << "\tNetworkMode: " << netmodestr;
 		std::cerr << std::endl;

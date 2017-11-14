@@ -53,7 +53,9 @@
 class RsGxsRecognReqItem: public RsItem
 {
 public:
-	RsGxsRecognReqItem()  :RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_GXS_RECOGN,  RS_PKT_SUBTYPE_RECOGN_REQ)
+	RsGxsRecognReqItem()
+	  :RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_GXS_RECOGN,  RS_PKT_SUBTYPE_RECOGN_REQ)
+	  , issued_at(0), period(0), tag_class(0), tag_type(0)
 	{
 		setPriorityLevel(QOS_PRIORITY_DEFAULT);
 		return;
@@ -79,7 +81,9 @@ public:
 class RsGxsRecognTagItem: public RsItem
 {
 	public:
-	RsGxsRecognTagItem()  :RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_GXS_RECOGN,  RS_PKT_SUBTYPE_RECOGN_TAG)
+	RsGxsRecognTagItem()
+	  :RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_GXS_RECOGN,  RS_PKT_SUBTYPE_RECOGN_TAG)
+	  , valid_from(0), valid_to(0), tag_class(0), tag_type(0)
 	{ 
 		setPriorityLevel(QOS_PRIORITY_DEFAULT);
 		return; 

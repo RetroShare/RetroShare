@@ -40,7 +40,7 @@ RSettings::RSettings(const QString settingsGroup)
         beginGroup(settingsGroup);
 }
 
-RSettings::RSettings(std::string fileName, const QString settingsGroup)
+RSettings::RSettings(const std::string &fileName, const QString settingsGroup)
 : QSettings(QString::fromStdString(fileName), QSettings::IniFormat)
 {
   m_bValid = true;

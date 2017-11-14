@@ -45,12 +45,9 @@ class GroupItemInfo
 {
 public:
 	GroupItemInfo()
-	{
-		popularity = 0;
-		publishKey = false;
-        subscribeFlags = 0;
-        max_visible_posts =0;
-	}
+	  : popularity(0), publishKey(false), adminKey(false)
+	  , subscribeFlags(0), max_visible_posts(0)
+	{}
 
 public:
 	QString   id;
@@ -65,6 +62,7 @@ public:
     quint32  max_visible_posts ;
 };
 
+//cppcheck-suppress noConstructor
 class GroupTreeWidget : public QWidget
 {
 	Q_OBJECT

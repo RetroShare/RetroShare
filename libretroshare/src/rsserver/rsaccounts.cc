@@ -56,7 +56,7 @@
 RsAccountsDetail *rsAccounts;
 
 /* Uses private class - so must be hidden */
-static bool checkAccount(std::string accountdir, AccountDetails &account,std::map<std::string,std::vector<std::string> >& unsupported_keys);
+static bool checkAccount(const std::string &accountdir, AccountDetails &account,std::map<std::string,std::vector<std::string> >& unsupported_keys);
 
 AccountDetails::AccountDetails()
   :mSslId(""), mAccountDir(""), mPgpId(""), mPgpName(""), mPgpEmail(""),
@@ -660,7 +660,7 @@ bool RsAccountsDetail::getAvailableAccounts(std::map<RsPeerId, AccountDetails> &
 
 
 
-static bool checkAccount(std::string accountdir, AccountDetails &account,std::map<std::string,std::vector<std::string> >& unsupported_keys)
+static bool checkAccount(const std::string &accountdir, AccountDetails &account,std::map<std::string,std::vector<std::string> >& unsupported_keys)
 {
 	/* check if the cert/key file exists */
 
@@ -671,7 +671,7 @@ static bool checkAccount(std::string accountdir, AccountDetails &account,std::ma
     basename += "user";
 
 	std::string cert_name = basename + "_cert.pem";
-	std::string userName;
+	//std::string userName;
 
 #ifdef AUTHSSL_DEBUG
 	std::cerr << "checkAccount() dir: " << accountdir << std::endl;
@@ -806,6 +806,7 @@ static bool checkAccount(std::string accountdir, AccountDetails &account,std::ma
 #elif defined(ANDROID)
 	dataDirectory = defaultBaseDirectory()+"/usr/share/retroshare";
 #elif defined(DATA_DIR)
+	// cppcheck-suppress ConfigurationNotChecked
 	dataDirectory = DATA_DIR;
 	// For all other OS the data directory must be set in libretroshare.pro
 #else
@@ -1003,7 +1004,7 @@ bool     RsAccountsDetail::GenerateSSLCertificate(const RsPgpId& pgp_id, const s
 
 	int nbits = 4096;
 
-	std::string pgp_name = AuthGPG::getAuthGPG()->getGPGName(pgp_id);
+	//std::string pgp_name = AuthGPG::getAuthGPG()->getGPGName(pgp_id);
 
 	// Create the filename .....
 	// Temporary Directory for creating files....
@@ -1054,8 +1055,7 @@ bool     RsAccountsDetail::GenerateSSLCertificate(const RsPgpId& pgp_id, const s
         bool gen_ok = true;
 
 		/* Print the signed Certificate! */
-		BIO *bio_out = NULL;
-		bio_out = BIO_new(BIO_s_file());
+		BIO *bio_out = BIO_new(BIO_s_file());
 		BIO_set_fp(bio_out,stdout,BIO_NOCLOSE);
 
 		/* Print it out */

@@ -144,6 +144,7 @@ QList<int> sizes;
     RsAutoUpdatePage::lockAllEvents();
     ui.friendList->setColumnVisible(FriendList::COLUMN_LAST_CONTACT, false);
     ui.friendList->setColumnVisible(FriendList::COLUMN_IP, false);
+    ui.friendList->setColumnVisible(FriendList::COLUMN_ID, false);
     ui.friendList->setShowGroups(true);
     processSettings(true);
     RsAutoUpdatePage::unlockAllEvents();

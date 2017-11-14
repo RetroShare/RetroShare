@@ -173,7 +173,7 @@ class p3PeerMgr;
 class p3I2pBob : public RsTickingThread, public p3Config, public autoProxyService
 {
 public:
-	p3I2pBob(p3PeerMgr *peerMgr);
+	explicit p3I2pBob(p3PeerMgr *peerMgr);
 
 	// autoProxyService interface
 public:

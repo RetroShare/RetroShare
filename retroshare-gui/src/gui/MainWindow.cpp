@@ -1489,7 +1489,7 @@ void MainWindow::processLastArgs()
 			opModeStatus->setCurrentIndex(RS_OPMODE_GAMING - 1);
 		} else if (opmode == "minimal") {
 			opModeStatus->setCurrentIndex(RS_OPMODE_MINIMAL - 1);
-		} else {
+		} else if (opmode != "") {
 			opModeStatus->setCurrentIndex(RS_OPMODE_FULL - 1);
 		}
 		opModeStatus->setOpMode();

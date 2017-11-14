@@ -83,7 +83,7 @@ bool ftFileCreator::getFileData(const RsPeerId& peer_id,uint64_t offset, uint32_
         // try if we have data from an incomplete or not veryfied chunk
         if(!have_it && allow_unverified)
         {
-            std::map<uint64_t, ftChunk>::iterator it;
+            //std::map<uint64_t, ftChunk>::iterator it;
             have_it = true;
             // this map contains chunks which are currently being downloaded
             for(std::map<uint64_t,ftChunk>::iterator it=mChunks.begin(); it!=mChunks.end(); ++it)
@@ -542,6 +542,7 @@ bool ftFileCreator::getMissingChunk(const RsPeerId& peer_id,uint32_t size_hint,u
 	mChunks[chunk.offset] = chunk ;
 
 	offset = chunk.offset ;
+	// cppcheck-suppress unreadVariable
 	size = chunk.size ;
 
 	++chunks_for_this_peer ;	// increase number of chunks for this peer.

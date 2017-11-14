@@ -266,8 +266,8 @@ class RsIdentity: public RsGxsIfaceHelper
 
 public:
 
-    RsIdentity(RsGxsIface *gxs): RsGxsIfaceHelper(gxs)  { return; }
-    virtual ~RsIdentity() { return; }
+    explicit RsIdentity(RsGxsIface *gxs): RsGxsIfaceHelper(gxs) {}
+    virtual ~RsIdentity() {}
 
     /********************************************************************************************/
     /********************************************************************************************/

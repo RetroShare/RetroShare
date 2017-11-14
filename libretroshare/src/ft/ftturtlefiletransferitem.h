@@ -33,7 +33,7 @@
 class RsTurtleFileRequestItem: public RsTurtleGenericTunnelItem
 {
 	public:
-		RsTurtleFileRequestItem() : RsTurtleGenericTunnelItem(RS_TURTLE_SUBTYPE_FILE_REQUEST) { setPriorityLevel(QOS_PRIORITY_RS_TURTLE_FILE_REQUEST);}
+		RsTurtleFileRequestItem() : RsTurtleGenericTunnelItem(RS_TURTLE_SUBTYPE_FILE_REQUEST), chunk_offset(0), chunk_size(0) { setPriorityLevel(QOS_PRIORITY_RS_TURTLE_FILE_REQUEST);}
 
 		virtual bool shouldStampTunnel() const { return false ; }
 		virtual Direction travelingDirection() const { return DIRECTION_SERVER ; }
@@ -49,7 +49,7 @@ class RsTurtleFileRequestItem: public RsTurtleGenericTunnelItem
 class RsTurtleFileDataItem: public RsTurtleGenericTunnelItem
 {
 	public:
-		RsTurtleFileDataItem() : RsTurtleGenericTunnelItem(RS_TURTLE_SUBTYPE_FILE_DATA) { setPriorityLevel(QOS_PRIORITY_RS_TURTLE_FILE_DATA) ;}
+		RsTurtleFileDataItem() : RsTurtleGenericTunnelItem(RS_TURTLE_SUBTYPE_FILE_DATA), chunk_offset(0), chunk_size(0), chunk_data(NULL) { setPriorityLevel(QOS_PRIORITY_RS_TURTLE_FILE_DATA) ;}
         ~RsTurtleFileDataItem() { clear() ; }
 
 		virtual bool shouldStampTunnel() const { return true ; }
@@ -99,13 +99,13 @@ class RsTurtleFileMapItem: public RsTurtleGenericTunnelItem
 class RsTurtleChunkCrcRequestItem: public RsTurtleGenericTunnelItem			
 {
 	public:
-		RsTurtleChunkCrcRequestItem() : RsTurtleGenericTunnelItem(RS_TURTLE_SUBTYPE_CHUNK_CRC_REQUEST) { setPriorityLevel(QOS_PRIORITY_RS_CHUNK_CRC_REQUEST);}
+		RsTurtleChunkCrcRequestItem() : RsTurtleGenericTunnelItem(RS_TURTLE_SUBTYPE_CHUNK_CRC_REQUEST), chunk_number(0) { setPriorityLevel(QOS_PRIORITY_RS_CHUNK_CRC_REQUEST);}
 
 		virtual bool shouldStampTunnel() const { return false ; }
 		virtual Direction travelingDirection() const { return DIRECTION_SERVER ; }
 
 		uint32_t chunk_number ; // id of the chunk to CRC.
-												
+
         void clear() {}
 		void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 };
@@ -113,7 +113,7 @@ class RsTurtleChunkCrcRequestItem: public RsTurtleGenericTunnelItem
 class RsTurtleChunkCrcItem: public RsTurtleGenericTunnelItem			
 {
 	public:
-		RsTurtleChunkCrcItem() : RsTurtleGenericTunnelItem(RS_TURTLE_SUBTYPE_CHUNK_CRC) { setPriorityLevel(QOS_PRIORITY_RS_CHUNK_CRC);}
+		RsTurtleChunkCrcItem() : RsTurtleGenericTunnelItem(RS_TURTLE_SUBTYPE_CHUNK_CRC), chunk_number(0) { setPriorityLevel(QOS_PRIORITY_RS_CHUNK_CRC);}
 
 		virtual bool shouldStampTunnel() const { return true ; }
 		virtual Direction travelingDirection() const { return DIRECTION_CLIENT ; }

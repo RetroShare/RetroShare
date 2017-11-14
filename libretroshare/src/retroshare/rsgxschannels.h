@@ -79,9 +79,9 @@ class RsGxsChannels: public RsGxsIfaceHelper, public RsGxsCommentService
 {
 	public:
 
-	RsGxsChannels(RsGxsIface *gxs)
-	:RsGxsIfaceHelper(gxs)  { return; }
-virtual ~RsGxsChannels() { return; }
+	explicit RsGxsChannels(RsGxsIface *gxs)
+	  :RsGxsIfaceHelper(gxs)  {}
+	virtual ~RsGxsChannels() {}
 
 	/* Specific Service Data */
 virtual bool getGroupData(const uint32_t &token, std::vector<RsGxsChannelGroup> &groups) = 0;

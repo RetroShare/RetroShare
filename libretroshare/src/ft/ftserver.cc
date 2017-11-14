@@ -131,8 +131,8 @@ void ftServer::SetupFtServer()
 {
 
 	/* setup FiStore/Monitor */
-	std::string localcachedir = mConfigPath + "/cache/local";
-	std::string remotecachedir = mConfigPath + "/cache/remote";
+	//std::string localcachedir = mConfigPath + "/cache/local";
+	//std::string remotecachedir = mConfigPath + "/cache/remote";
 	RsPeerId ownId = mServiceCtrl->getOwnId();
 
 	/* search/extras List */

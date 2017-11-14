@@ -576,7 +576,7 @@ bool LocalDirectoryStorage::getFileInfo(DirectoryStorage::EntryIndex i,FileInfo&
     info.transfered = 0;
     info.tfRate = 0; /* in kbytes */
     info.downloadStatus = FT_STATE_COMPLETE ;
-    std::list<TransferInfo> peers;
+    //std::list<TransferInfo> peers;
 
     info.priority  = SPEED_NORMAL;
     info.lastTS = 0;

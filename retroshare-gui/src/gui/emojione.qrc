@@ -558,6 +558,7 @@
     <file>emojione/1F640.png</file>
     <file>emojione/1F641.png</file>
     <file>emojione/1F642.png</file>
+    <file>emojione/1f644.png</file>
     <file>emojione/1F645.png</file>
     <file>emojione/1F646.png</file>
     <file>emojione/1F647.png</file>
@@ -654,6 +655,7 @@
     <file>emojione/2611.png</file>
     <file>emojione/2614.png</file>
     <file>emojione/2615.png</file>
+    <file>emojione/2639.png</file>
     <file>emojione/2620.png</file>
     <file>emojione/2708.png</file>
     <file>emojione/2744.png</file>
@@ -668,6 +670,12 @@
     <file>emojione/1f914.png</file>
     <file>emojione/1f915.png</file>
     <file>emojione/1f916.png</file>
+    <file>emojione/1f917.png</file>
+    <file>emojione/1f922.png</file>
+    <file>emojione/1f923.png</file>
+    <file>emojione/1f924.png</file>
+    <file>emojione/1f925.png</file>
+    <file>emojione/1f927.png</file>
     <file>emojione/1f643.png</file>
     <file>emojione/emotes.acs</file>
   </qresource>

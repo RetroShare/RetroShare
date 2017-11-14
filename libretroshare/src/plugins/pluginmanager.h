@@ -45,7 +45,7 @@ public:
 class RsPluginManager: public RsPluginHandler, public p3Config
 {
 	public:
-        RsPluginManager(const RsFileHash& current_executable_sha1_hash) ;
+		explicit RsPluginManager(const RsFileHash& current_executable_sha1_hash) ;
 		virtual ~RsPluginManager() {}
 		
 		// ------------ Derived from RsPluginHandler ----------------//

@@ -72,9 +72,11 @@ class RsPeerNetItem: public RsItem
 {
 public:
 	RsPeerNetItem()
-	    :RsItem(RS_PKT_VERSION1, RS_PKT_CLASS_CONFIG,
-	            RS_PKT_TYPE_PEER_CONFIG,
-	            RS_PKT_SUBTYPE_PEER_NET) {}
+	  :RsItem(RS_PKT_VERSION1, RS_PKT_CLASS_CONFIG,
+	          RS_PKT_TYPE_PEER_CONFIG,
+	          RS_PKT_SUBTYPE_PEER_NET)
+	  , netMode(0), vs_disc(0), vs_dht(0), lastContact(0), domain_port(0)
+	{}
 
     virtual ~RsPeerNetItem(){}
 	virtual void clear();
@@ -143,7 +145,7 @@ class RsPeerBandwidthLimitsItem : public RsItem
 class RsNodeGroupItem: public RsItem
 {
 public:
-    RsNodeGroupItem(): RsItem(RS_PKT_VERSION1, RS_PKT_CLASS_CONFIG, RS_PKT_TYPE_PEER_CONFIG, RS_PKT_SUBTYPE_NODE_GROUP){}
+    RsNodeGroupItem(): RsItem(RS_PKT_VERSION1, RS_PKT_CLASS_CONFIG, RS_PKT_TYPE_PEER_CONFIG, RS_PKT_SUBTYPE_NODE_GROUP), flag(0) {}
     virtual ~RsNodeGroupItem() {}
 
     virtual void clear() { pgpList.TlvClear();}
@@ -240,7 +242,7 @@ const uint32_t RS_FILE_CONFIG_CLEANUP_DELETE = 0x0001;
 class RsFileConfigItem: public RsItem
 {
 public:
-    RsFileConfigItem() :RsItem(RS_PKT_VERSION1, RS_PKT_CLASS_CONFIG, RS_PKT_TYPE_FILE_CONFIG, RS_PKT_SUBTYPE_FILE_ITEM) {}
+    RsFileConfigItem() :RsItem(RS_PKT_VERSION1, RS_PKT_CLASS_CONFIG, RS_PKT_TYPE_FILE_CONFIG, RS_PKT_SUBTYPE_FILE_ITEM), flags(0) {}
     virtual ~RsFileConfigItem() {}
     virtual void clear() { parent_groups.TlvClear(); }
 

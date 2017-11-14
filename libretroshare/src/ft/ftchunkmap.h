@@ -34,7 +34,7 @@ class ftChunk
 	public:
 		typedef uint64_t ChunkId ;
 
-		ftChunk():offset(0), size(0), ts(0),ref_cnt(NULL) {}
+		ftChunk():offset(0), size(0), id(0), ts(0),ref_cnt(NULL) {}
 
 		friend std::ostream& operator<<(std::ostream& o,const ftChunk& f) ;
 

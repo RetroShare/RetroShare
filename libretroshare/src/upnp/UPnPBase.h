@@ -66,8 +66,8 @@ private:
 	
 public:
 	CUPnPPortMapping(
-		int in_port = 0,
 		int ex_port = 0,
+		int in_port = 0,
 		const std::string &protocol = stdEmptyString,
 		bool enabled = false,
 		const std::string &description = stdEmptyString);
@@ -106,7 +106,7 @@ public:
 	CUPnPControlPoint &m_ctrlPoint;
 	
 public:
-	CUPnPLib(CUPnPControlPoint &ctrlPoint);
+	explicit CUPnPLib(CUPnPControlPoint &ctrlPoint);
 	~CUPnPLib() {}
 
 	// Convenience function so we don't have to write explicit calls 
@@ -574,7 +574,7 @@ public:
 	CUPnPService *m_WanService;
 	std::string m_getStateVariableLastResult;
 	static CUPnPControlPoint *s_CtrlPoint;
-	CUPnPControlPoint(unsigned short udpPort);
+	explicit CUPnPControlPoint(unsigned short udpPort);
 	~CUPnPControlPoint();
 	char* getInternalIpAddress();
 	std::string getExternalAddress();

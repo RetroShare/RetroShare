@@ -97,11 +97,17 @@ class GRouterRoutingInfo
     // ovoids lots of duplications if the class is copied.
 public:
     GRouterRoutingInfo()
-    {
-        data_transaction_TS = 0 ;	// this is not serialised.
-        data_item = NULL ;
-        receipt_item = NULL ;
-    }
+      : data_status(0)
+      , tunnel_status(0)
+      , received_time_TS(0)
+      , last_sent_TS(0)
+      , last_tunnel_request_TS(0)
+      , sending_attempts(0)
+      , routing_flags(0)
+      , data_item(NULL)
+      , receipt_item(NULL)
+      , data_transaction_TS(0) // this is not serialised.
+    {}
 
     uint32_t data_status ;		// pending, waiting, etc.
     uint32_t tunnel_status ;		// status of tunnel handling.

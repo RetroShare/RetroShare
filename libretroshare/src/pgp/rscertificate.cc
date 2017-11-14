@@ -72,7 +72,7 @@ void RsCertificate::addPacket(uint8_t ptag, const unsigned char *mem, size_t siz
 
 std::string RsCertificate::toStdString() const
 {
-	std::string res ;
+	//std::string res ;
 	size_t BS = 1000 ;
 	size_t p = 0 ;
 	unsigned char *buf = new unsigned char[BS] ;

@@ -42,6 +42,11 @@
 #define COLUMN_PATH 12
 #define COLUMN_COUNT 13
 
+#define PRIORITY_NULL 0.0
+#define PRIORITY_FASTER 0.1
+#define PRIORITY_AVERAGE 0.2
+#define PRIORITY_SLOWER 0.3
+
 
 #define MAX_CHAR_TMP 128
 

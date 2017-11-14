@@ -106,7 +106,14 @@ void LibresapiLocalClient::read()
 		QJSValue&& params(p.mCallback.engine()->newObject());
 		params.setProperty("response", receivedMsg);
 
-		p.mCallback.call(QJSValueList { params });
+		QJSValue temp =  p.mCallback.call(QJSValueList { params });
+		if(temp.isError())
+		{
+			qCritical() << __PRETTY_FUNCTION__
+			            << "JavaScript callback uncaught exception:"
+			            << temp.property("stack").toString()
+			            << temp.toString();
+		}
 	}
 
 	// In case of multiple reply coaleshed in the same signal

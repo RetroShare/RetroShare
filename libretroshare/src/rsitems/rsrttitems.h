@@ -43,17 +43,20 @@ const uint8_t RS_PKT_SUBTYPE_RTT_PONG = 0x02;
 class RsRttItem: public RsItem
 {
 	public:
-		RsRttItem(uint8_t subtype) : RsItem(RS_PKT_VERSION_SERVICE,RS_SERVICE_TYPE_RTT,subtype)
-	{ setPriorityLevel(QOS_PRIORITY_RS_RTT_PING) ;}	// should be refined later.
+		explicit RsRttItem(uint8_t subtype) : RsItem(RS_PKT_VERSION_SERVICE,RS_SERVICE_TYPE_RTT,subtype)
+		{ setPriorityLevel(QOS_PRIORITY_RS_RTT_PING) ;}	// should be refined later.
 
-		virtual ~RsRttItem() {};
-		virtual void clear() {};
+		virtual ~RsRttItem() {}
+		virtual void clear() {}
 };
 
 class RsRttPingItem: public RsRttItem
 {
 	public:
-		RsRttPingItem() :RsRttItem(RS_PKT_SUBTYPE_RTT_PING) {}
+		RsRttPingItem()
+		  : RsRttItem(RS_PKT_SUBTYPE_RTT_PING)
+		  , mSeqNo(0), mPingTS(0)
+		{}
 
         virtual ~RsRttPingItem(){}
         virtual void clear(){}
@@ -67,7 +70,10 @@ class RsRttPingItem: public RsRttItem
 class RsRttPongItem: public RsRttItem
 {
 	public:
-		RsRttPongItem() :RsRttItem(RS_PKT_SUBTYPE_RTT_PONG) {}
+		RsRttPongItem()
+		  : RsRttItem(RS_PKT_SUBTYPE_RTT_PONG)
+		  , mSeqNo(0), mPingTS(0), mPongTS(0)
+		{}
 
         virtual ~RsRttPongItem(){}
         virtual void clear(){}

@@ -887,7 +887,10 @@ void InternalFileHierarchyStorage::print() const
             std::cerr << "(EE) Error: unknown type node found!" << std::endl;
         }
 
-    std::cerr << "Total nodes: " << mNodes.size() << " (" << nfiles << " files, " << ndirs << " dirs, " << nempty << " empty slots)" << std::endl;
+    std::cerr << "Total nodes: " << mNodes.size() << " (" << nfiles << " files, " << ndirs << " dirs, " << nempty << " empty slots";
+    if (nunknown > 0) std::cerr << ", " << nunknown << " unknown";
+    std::cerr << ")" << std::endl;
+
 
     recursPrint(0,DirectoryStorage::EntryIndex(0));
 

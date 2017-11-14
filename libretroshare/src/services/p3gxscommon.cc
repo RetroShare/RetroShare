@@ -394,18 +394,28 @@ bool p3GxsCommentService::getGxsRelatedComments(const uint32_t &token, std::vect
 
 double p3GxsCommentService::calculateBestScore(int upVotes, int downVotes)
 {
-	static float z = 1.0;
 
 	float score;
-	int n = upVotes - downVotes;
+	int n = upVotes + downVotes;
+
 	if(n==0)
-	{
 		score = 0.0;
-	}
 	else
 	{
-		float phat = upVotes;
-		score = sqrt(phat+z*z/(2*n)-z*((phat*(1-phat)+z*z/(4*n))/n))/(1+z*z/n);
+		// See https://github.com/reddit/reddit/blob/master/r2/r2/lib/db/_sorts.pyx#L45 for the source of this nice formula.
+		//     http://www.evanmiller.org/how-not-to-sort-by-average-rating.html for the mathematical explanation.
+
+		float p = upVotes/n;
+		float z = 1.281551565545 ;
+
+		float left  = p + 1/(2*n)*z*z ;
+		float right = z*sqrt(p*(1-p)/n + z*z/(4*n*n)) ;
+		float under = 1+1/n*z*z ;
+
+		score = (left - right)/under ;
+
+		//static float z = 1.0;
+		//score = sqrt(phat+z*z/(2*n)-z*((phat*(1-phat)+z*z/(4*n))/n))/(1+z*z/n);
 	}
 	return score;
 }

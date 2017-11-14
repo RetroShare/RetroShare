@@ -92,8 +92,10 @@ class PGPHandler
 
 		// The client should supply a memory chunk to store the data. The length will be updated to the real length of the data.
 		//
-		bool encryptDataBin(const RsPgpId& key_id,const void *data, const uint32_t len, unsigned char *encrypted_data, unsigned int *encrypted_data_len) ;
-		bool decryptDataBin(const RsPgpId& key_id,const void *data, const uint32_t len, unsigned char *decrypted_data, unsigned int *decrypted_data_len) ;
+		bool encryptDataBin(const RsPgpId& key_id,const void *data, const uint32_t len
+		                    , unsigned char *encrypted_data, unsigned int *encrypted_data_len) ;
+		bool decryptDataBin(const RsPgpId& key_id,const void *encrypted_data, const uint32_t encrypted_len
+		                    , unsigned char *data, unsigned int *data_len) ;
 
 		bool encryptTextToFile(const RsPgpId& key_id,const std::string& text,const std::string& outfile) ;
 		bool decryptTextFromFile(const RsPgpId& key_id,std::string& text,const std::string& encrypted_inputfile) ;

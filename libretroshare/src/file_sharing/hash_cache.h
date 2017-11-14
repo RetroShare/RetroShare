@@ -54,7 +54,7 @@ public:
 class HashStorage: public RsTickingThread
 {
 public:
-    HashStorage(const std::string& save_file_name) ;
+    explicit HashStorage(const std::string& save_file_name) ;
 
     /*!
      * \brief requestHash  Requests the hash for the given file, assuming size and mod_time are the same.
@@ -140,5 +140,11 @@ private:
     uint64_t mTotalHashedSize ;
     uint64_t mTotalFilesToHash ;
     time_t mLastSaveTime ;
+
+	// The following is used to estimate hashing speed.
+
+	double mHashingTime ;
+	uint64_t mHashedBytes ;
+	uint32_t mCurrentHashingSpeed ; // in MB/s
 };
 

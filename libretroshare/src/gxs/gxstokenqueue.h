@@ -48,7 +48,7 @@ struct GxsTokenQueueItem
 class GxsTokenQueue
 {
 public:
-	GxsTokenQueue(RsGenExchange *gxs) :
+	explicit GxsTokenQueue(RsGenExchange *gxs) :
 	    mGenExchange(gxs), mQueueMtx("GxsTokenQueueMtx") {}
 
 	bool queueRequest(uint32_t token, uint32_t req_type);

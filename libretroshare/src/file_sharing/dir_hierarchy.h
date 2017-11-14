@@ -68,7 +68,7 @@ public:
     class DirEntry: public FileStorageNode
     {
     public:
-        DirEntry(const std::string& name) : dir_name(name), dir_modtime(0),dir_most_recent_time(0),dir_update_time(0) {}
+        explicit DirEntry(const std::string& name) : dir_name(name), dir_modtime(0),dir_most_recent_time(0),dir_update_time(0) {}
         virtual ~DirEntry() {}
 
         virtual uint32_t type() const { return FileStorageNode::TYPE_DIR ; }

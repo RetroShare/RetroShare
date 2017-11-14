@@ -246,6 +246,7 @@ sslcert::sslcert(X509 *x509, const RsPeerId& pid)
 	certificate = x509;
 	id = pid;
 #if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
+	// cppcheck-suppress useInitializationList
 	name = getX509CNString(x509->cert_info->subject);
 	org = getX509OrgString(x509->cert_info->subject);
 	location = getX509LocString(x509->cert_info->subject);
@@ -363,7 +364,8 @@ static  int initLib = 0;
 	//
 	// std::string dh_prime_2048_dec = "30651576830996935311378276950670996791883170963804289256203421500259588715033040934547350194073369837229137842804826417332761673984632102152477971341551955103053338169949165519208562998954887445690136488713010579430413255432398961330773637820158790237012997356731669148258317860643591694814197514454546928317578771868379525705082166818553884557266645700906836702542808787791878865135741211056957383668479369231868698451684633965462539374994559481908068730787128654626819903401038534403722014687647173327537458614224702967073490136394698912372792187651228785689025073104374674728645661275001416541267543884923191810923";
 	//
-	std::string dh_prime_2048_hex = "B3B86A844550486C7EA459FA468D3A8EFD71139593FE1C658BBEFA9B2FC0AD2628242C2CDC2F91F5B220ED29AAC271192A7374DFA28CDDCA70252F342D0821273940344A7A6A3CB70C7897A39864309F6CAC5C7EA18020EF882693CA2C12BB211B7BA8367D5A7C7252A5B5E840C9E8F081469EBA0B98BCC3F593A4D9C4D5DF539362084F1B9581316C1F80FDAD452FD56DBC6B8ED0775F596F7BB22A3FE2B4753764221528D33DB4140DE58083DB660E3E105123FC963BFF108AC3A268B7380FFA72005A1515C371287C5706FFA6062C9AC73A9B1A6AC842C2764CDACFC85556607E86611FDF486C222E4896CDF6908F239E177ACC641FCBFF72A758D1C10CBB" ;
+	//Not used (should be here: /libretroshare/src/gxstunnel/p3gxstunnel.cc:1131
+	//std::string dh_prime_2048_hex = "B3B86A844550486C7EA459FA468D3A8EFD71139593FE1C658BBEFA9B2FC0AD2628242C2CDC2F91F5B220ED29AAC271192A7374DFA28CDDCA70252F342D0821273940344A7A6A3CB70C7897A39864309F6CAC5C7EA18020EF882693CA2C12BB211B7BA8367D5A7C7252A5B5E840C9E8F081469EBA0B98BCC3F593A4D9C4D5DF539362084F1B9581316C1F80FDAD452FD56DBC6B8ED0775F596F7BB22A3FE2B4753764221528D33DB4140DE58083DB660E3E105123FC963BFF108AC3A268B7380FFA72005A1515C371287C5706FFA6062C9AC73A9B1A6AC842C2764CDACFC85556607E86611FDF486C222E4896CDF6908F239E177ACC641FCBFF72A758D1C10CBB" ;
 
 	std::string dh_prime_4096_hex = "A6F5777292D9E6BB95559C9124B9119E6771F11F2048C8FE74F4E8140494520972A087EF1D60B73894F1C5D509DD15D96CF379E9DDD46CE51B748085BACB440D915565782C73AF3A9580CE788441D1DA4D114E3D302CAB45A061ABCFC1F7E9200AE019CB923B77E096FA9377454A16FFE91D86535FF23E075B3E714F785CD7606E9CBD9D06F01CAFA2271883D649F13ABE170D714F6B6EC064C5BF35C4F4BDA5EF5ED5E70D5DC78F1AC1CDC04EEDAE8ADD65C4A9E27368E0B2C8595DD7626D763BFFB15364B3CCA9FCE814B9226B35FE652F4B041F0FF6694D6A482B0EF48CA41163D083AD2DE7B7A068BB05C0453E9D008551C7F67993A3EF2C4874F0244F78C4E0997BD31AB3BD88446916B499B2513DD5BA002063BD38D2CE55D29D071399D5CEE99458AF6FDC104A61CA3FACDAC803CBDE62B4C0EAC946D0E12F05CE9E94497110D64E611D957423B8AA412D84EC83E6E70E0977A31D6EE056D0527D4667D7242A77C9B679D191562E4026DA9C35FF85666296D872ED548E0FFE1A677FCC373C1F490CAB4F53DFD8735C0F1DF02FEAD824A217FDF4E3404D38A5BBC719C6622630FCD34F6F1968AF1B66A4AB1A9FCF653DA96EB3A42AF6FCFEA0547B8F314A527C519949007D7FA1726FF3D33EC46393B0207AA029E5EA574BDAC94D78894B22A2E3303E65A3F820DF57DB44951DE4E973C016C57F7A242D0BC53BC563AF" ;
 
@@ -816,8 +818,6 @@ X509 *AuthSSLimpl::SignX509ReqWithGPG(X509_REQ *req, long /*days*/)
         const EVP_MD *type = EVP_sha1();
 
         EVP_MD_CTX *ctx = EVP_MD_CTX_create();
-        unsigned char *buf_in=NULL;
-        unsigned char *buf_hashout=NULL,*buf_sigout=NULL;
         int inl=0,hashoutl=0;
         int sigoutl=0;
         X509_ALGOR *a;
@@ -854,17 +854,18 @@ X509 *AuthSSLimpl::SignX509ReqWithGPG(X509_REQ *req, long /*days*/)
         /* input buffer */
 #if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
         inl=i2d(data,NULL);
-        buf_in=(unsigned char *)OPENSSL_malloc((unsigned int)inl);
+        unsigned char *buf_in=(unsigned char *)OPENSSL_malloc((unsigned int)inl);
         unsigned char *p=NULL;
 #else
+        unsigned char *buf_in=NULL;
         inl=i2d_re_X509_tbs(x509,&buf_in) ;	// this does the i2d over x509->cert_info
 #endif
 
         hashoutl=EVP_MD_size(type);
-        buf_hashout=(unsigned char *)OPENSSL_malloc((unsigned int)hashoutl);
+        unsigned char *buf_hashout=(unsigned char *)OPENSSL_malloc((unsigned int)hashoutl);
 
         sigoutl=2048; // hashoutl; //EVP_PKEY_size(pkey);
-        buf_sigout=(unsigned char *)OPENSSL_malloc((unsigned int)sigoutl);
+        unsigned char *buf_sigout=(unsigned char *)OPENSSL_malloc((unsigned int)sigoutl);
 
         if ((buf_in == NULL) || (buf_hashout == NULL) || (buf_sigout == NULL))
                 {
@@ -995,25 +996,24 @@ bool AuthSSLimpl::AuthX509WithGPG(X509 *x509,uint32_t& diagnostic)
 	const EVP_MD *type = EVP_sha1();
 
 	EVP_MD_CTX *ctx = EVP_MD_CTX_create();
-	unsigned char *buf_in=NULL;
-	unsigned char *buf_hashout=NULL,*buf_sigout=NULL;
 	int inl=0,hashoutl=0;
 	int sigoutl=0;
 
 	/* input buffer */
 #if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
 	inl=i2d(data,NULL);
-	buf_in=(unsigned char *)OPENSSL_malloc((unsigned int)inl);
+	unsigned char *buf_in=(unsigned char *)OPENSSL_malloc((unsigned int)inl);
 	unsigned char *p=NULL;
 #else
+	unsigned char *buf_in=NULL;
 	inl=i2d_re_X509_tbs(x509,&buf_in) ;	// this does the i2d over x509->cert_info
 #endif
 
 	hashoutl=EVP_MD_size(type);
-	buf_hashout=(unsigned char *)OPENSSL_malloc((unsigned int)hashoutl);
+	unsigned char *buf_hashout=(unsigned char *)OPENSSL_malloc((unsigned int)hashoutl);
 
 	sigoutl=2048; //hashoutl; //EVP_PKEY_size(pkey);
-	buf_sigout=(unsigned char *)OPENSSL_malloc((unsigned int)sigoutl);
+	unsigned char *buf_sigout=(unsigned char *)OPENSSL_malloc((unsigned int)sigoutl);
 
 #ifdef AUTHSSL_DEBUG
 	std::cerr << "Buffer Sizes: in: " << inl;
@@ -1445,10 +1445,9 @@ bool    AuthSSLimpl::decrypt(void *&out, int &outlen, const void *in, int inlen)
 //        outlen = inlen;
         EVP_CIPHER_CTX *ctx = EVP_CIPHER_CTX_new();
         int eklen = 0, net_ekl = 0;
-        unsigned char *ek = NULL;
         unsigned char iv[EVP_MAX_IV_LENGTH];
         int ek_mkl = EVP_PKEY_size(mOwnPrivateKey);
-        ek = (unsigned char*)malloc(ek_mkl);
+        unsigned char *ek = (unsigned char*)malloc(ek_mkl);
         
         if(ek == NULL)
         {
@@ -1505,7 +1504,7 @@ bool    AuthSSLimpl::decrypt(void *&out, int &outlen, const void *in, int inlen)
             return false;
         }
 
-        in_offset += out_currOffset;
+        //in_offset += out_currOffset;
         outlen += out_currOffset;
 
         if(!EVP_OpenFinal(ctx, (unsigned char*)out + out_currOffset, &out_currOffset)) {

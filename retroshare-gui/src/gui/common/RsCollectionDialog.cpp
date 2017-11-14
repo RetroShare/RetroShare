@@ -146,16 +146,20 @@ RsCollectionDialog::RsCollectionDialog(const QString& collectionFileName
 		ui.headerFrame->setHeaderText(tr("Collection Editor"));
 		ui.downloadFolder_LE->hide();
 		ui.downloadFolder_LB->hide();
+		ui.destinationDir_TB->hide();
 	}
 	else
 	{
 		ui.headerFrame->setHeaderText(tr("Download files"));
 		ui.downloadFolder_LE->show();
 		ui.downloadFolder_LB->show();
+		ui.label_filename->hide();
+		ui._filename_TL->hide();
 
 		ui.downloadFolder_LE->setText(QString::fromUtf8(rsFiles->getDownloadDirectory().c_str())) ;
 
-		QObject::connect(ui.downloadFolder_LE,SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(openDestinationDirectoryMenu(QPoint)));
+		QObject::connect(ui.downloadFolder_LE,SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(openDestinationDirectoryMenu()));
+		QObject::connect(ui.destinationDir_TB,SIGNAL(pressed()), this, SLOT(openDestinationDirectoryMenu()));
 	}
 
 	// 1 - add all elements to the list.
@@ -227,7 +231,7 @@ RsCollectionDialog::RsCollectionDialog(const QString& collectionFileName
 		QMessageBox::warning(NULL,tr("Bad filenames have been cleaned"),tr("Some filenames or directory names contained forbidden characters.\nCharacters <b>\",|,/,\\,&lt;,&gt;,*,?</b> will be replaced by '_'.\n Concerned files are listed in red.")) ;
 }
 
-void RsCollectionDialog::openDestinationDirectoryMenu(QPoint)
+void RsCollectionDialog::openDestinationDirectoryMenu()
 {
 	QMenu contextMnu( this );
 
@@ -398,30 +402,34 @@ void RsCollectionDialog::processSettings(bool bLoad)
  */
 QTreeWidgetItem* RsCollectionDialog::getRootItem()
 {
-	QTreeWidgetItem* root= ui._fileEntriesTW->topLevelItem(0);
-	if (!root) {
-		root= new QTreeWidgetItem;
-		root->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsUserCheckable | Qt::ItemIsTristate);
-		root->setText(COLUMN_FILE, "/");
-		root->setToolTip(COLUMN_FILE,tr("This is the root directory."));
-		root->setText(COLUMN_FILEPATH, "/");
-		root->setText(COLUMN_HASH, "");
-		root->setData(COLUMN_HASH, ROLE_NAME, "");
-		root->setData(COLUMN_HASH, ROLE_PATH, "");
-		root->setData(COLUMN_HASH, ROLE_TYPE, DIR_TYPE_DIR);
-		root->setText(COLUMN_SIZE, misc::friendlyUnit(0));
-		root->setToolTip(COLUMN_SIZE, tr("Real Size: Waiting child..."));
-		root->setData(COLUMN_SIZE, ROLE_SIZE, 0);
-		root->setData(COLUMN_SIZE, ROLE_SELSIZE, 0);
-		root->setText(COLUMN_FILEC, "0");
-		root->setToolTip(COLUMN_FILEC, tr("Real File Count: Waiting child..."));
-		root->setData(COLUMN_FILEC, ROLE_FILEC, 0);
-		root->setData(COLUMN_FILEC, ROLE_SELFILEC, 0);
-		ui._fileEntriesTW->addTopLevelItem(root);
-	}
-	root->setExpanded(true);
+	return ui._fileEntriesTW->invisibleRootItem();
 
-	return root;
+// (csoler) I removed this code because it does the job of the invisibleRootItem() method.
+//
+//	QTreeWidgetItem* root= ui._fileEntriesTW->topLevelItem(0);
+//	if (!root) {
+//		root= new QTreeWidgetItem;
+//		root->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsUserCheckable | Qt::ItemIsTristate);
+//		root->setText(COLUMN_FILE, "/");
+//		root->setToolTip(COLUMN_FILE,tr("This is the root directory."));
+//		root->setText(COLUMN_FILEPATH, "/");
+//		root->setText(COLUMN_HASH, "");
+//		root->setData(COLUMN_HASH, ROLE_NAME, "");
+//		root->setData(COLUMN_HASH, ROLE_PATH, "");
+//		root->setData(COLUMN_HASH, ROLE_TYPE, DIR_TYPE_DIR);
+//		root->setText(COLUMN_SIZE, misc::friendlyUnit(0));
+//		root->setToolTip(COLUMN_SIZE, tr("Real Size: Waiting child..."));
+//		root->setData(COLUMN_SIZE, ROLE_SIZE, 0);
+//		root->setData(COLUMN_SIZE, ROLE_SELSIZE, 0);
+//		root->setText(COLUMN_FILEC, "0");
+//		root->setToolTip(COLUMN_FILEC, tr("Real File Count: Waiting child..."));
+//		root->setData(COLUMN_FILEC, ROLE_FILEC, 0);
+//		root->setData(COLUMN_FILEC, ROLE_SELFILEC, 0);
+//		ui._fileEntriesTW->addTopLevelItem(root);
+//	}
+//	root->setExpanded(true);
+//
+//	return root;
 }
 
 /**
@@ -512,6 +520,7 @@ bool RsCollectionDialog::addChild(QTreeWidgetItem* parent, const std::vector<Col
 				item->setData(COLUMN_FILEC, ROLE_SELFILEC, 1);
 			}
 			item->setFont(COLUMN_FILE, font);
+			item->setChildIndicatorPolicy(QTreeWidgetItem::DontShowIndicatorWhenChildless);
 
 			if (colFileInfo.filename_has_wrong_characters)
 			{

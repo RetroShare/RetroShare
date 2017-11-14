@@ -159,7 +159,7 @@ class RsPhotoComment
 public:
     RsPhotoComment();
 
-    RsPhotoComment(const RsGxsPhotoCommentItem& comment);
+    explicit RsPhotoComment(const RsGxsPhotoCommentItem& comment);
 
     RsPhotoComment& operator=(const RsGxsPhotoCommentItem& comment);
 

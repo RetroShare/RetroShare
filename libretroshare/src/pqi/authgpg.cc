@@ -127,11 +127,12 @@ AuthGPG::AuthGPG(const std::string& path_to_public_keyring,const std::string& pa
 	gpgMtxService("AuthGPG-service"),
 	gpgMtxEngine("AuthGPG-engine"),
 	gpgMtxData("AuthGPG-data"),
-	gpgKeySelected(false)
+	mStoreKeyTime(0),
+	gpgKeySelected(false),
+	_force_sync_database(false),
+	mCount(0)
 {
-	_force_sync_database = false ;
-    mCount = 0;
-    start("AuthGPG");
+	start("AuthGPG");
 }
 
 /* This function is called when retroshare is first started

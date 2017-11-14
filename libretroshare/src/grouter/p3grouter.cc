@@ -204,7 +204,7 @@
 const std::string p3GRouter::SERVICE_INFO_APP_NAME = "Global Router" ;
 
 p3GRouter::p3GRouter(p3ServiceControl *sc, RsGixs *is)
-    : p3Service(), p3Config(), mServiceControl(sc), mGixs(is), grMtx("GRouter")
+    : p3Service(), p3Config(), mServiceControl(sc), mTurtle(NULL), mGixs(is), grMtx("GRouter")
 {
 	addSerialType(new RsGRouterSerialiser()) ;
 
@@ -2292,6 +2292,8 @@ bool p3GRouter::saveList(bool& cleanup,std::list<RsItem*>& items)
     {
         RsGRouterRoutingInfoItem *item = new RsGRouterRoutingInfoItem ;
 
+#warning: Cppcheck(cstyleCast): C-style pointer casting
+        // cppcheck-suppress cstyleCast
         *(GRouterRoutingInfo*)item = it->second ;	// copy all members
 
         item->data_item = it->second.data_item->duplicate() ;	// deep copy, because we call delete on the object, and the item might be removed before we handle it in the client.

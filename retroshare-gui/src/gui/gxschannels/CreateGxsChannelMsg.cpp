@@ -412,6 +412,11 @@ void CreateGxsChannelMsg::addExtraFile()
 	}
 }
 
+void CreateGxsChannelMsg::addSubject(const QString& text)
+{
+	subjectEdit->setText(text) ;
+}
+
 void CreateGxsChannelMsg::addHtmlText(const QString& text)
 {
 	msgEdit->setHtml(text) ;
