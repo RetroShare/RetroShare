@@ -103,7 +103,13 @@ class RsTurtleRegExpSearchRequestItem: public RsTurtleSearchRequestItem
 
         RsRegularExpression::LinearizedExpression expr ;	// Reg Exp in linearised mode
 
-		std::string GetKeywords() { return expr.GetStrings(); }
+		std::string GetKeywords()
+		{
+			RsRegularExpression::Expression *ex = RsRegularExpression::LinearizedExpression::toExpr(expr);
+			std::string exs = ex->toStdString();
+			delete ex;
+			return exs;
+		}
 		
 		virtual RsTurtleSearchRequestItem *clone() const { return new RsTurtleRegExpSearchRequestItem(*this) ; }
 		virtual void performLocalSearch(std::list<TurtleFileInfo>&) const ;
