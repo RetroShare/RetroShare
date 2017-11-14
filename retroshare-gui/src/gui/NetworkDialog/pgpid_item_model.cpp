@@ -47,7 +47,7 @@ QVariant pgpid_item_model::headerData(int section, Qt::Orientation orientation, 
             switch(section)
             {
             case COLUMN_CHECK:
-                return QString(tr(""));
+                return QString(tr("Connections"));
                 break;
             case COLUMN_PEERNAME:
                 return QString(tr("Profile"));
@@ -210,11 +210,11 @@ QVariant pgpid_item_model::data(const QModelIndex &index, int role) const
         {
             if (detail.accept_connection)
             {
-                return QString("0");
+                return tr("Accepted");
             }
             else
             {
-                return QString("1");
+                return tr(" - ");
             }
         }
             break;
