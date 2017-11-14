@@ -795,8 +795,7 @@ void SearchDialog::advancedSearch(RsRegularExpression::Expression* expression)
 	TurtleRequestId req_id = rsTurtle->turtleSearch(e) ;
 
 	// This will act before turtle results come to the interface, thanks to the signals scheduling policy.
-	// The text "bool exp" should be replaced by an appropriate text describing the actual search.
-	initSearchResult("bool exp",req_id, ui.FileTypeComboBox->currentIndex(), true) ;
+	initSearchResult(QString::fromStdString(e.GetStrings()),req_id, ui.FileTypeComboBox->currentIndex(), true) ;
 
 	rsFiles -> SearchBoolExp(expression, results, RS_FILE_HINTS_REMOTE);// | DIR_FLAGS_NETWORK_WIDE | DIR_FLAGS_BROWSABLE);
 

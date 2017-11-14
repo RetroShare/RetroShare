@@ -225,6 +225,17 @@ void LinearizedExpression::readStringExpr(const LinearizedExpression& e,int& n_i
         strings.push_back(e._strings[n_strings++]) ;
 }
 
+std::string LinearizedExpression::GetStrings()
+{
+	std::string str;
+	for (std::vector<std::string>::const_iterator i = this->_strings.begin(); i != this->_strings.end(); ++i)
+	{
+		str += *i;
+		str += " ";
+	}
+	return str;
+}
+
 Expression *LinearizedExpression::toExpr(const LinearizedExpression& e,int& n_tok,int& n_ints,int& n_strings) 
 {
     LinearizedExpression::token tok = static_cast<LinearizedExpression::token>(e._tokens[n_tok++]) ;

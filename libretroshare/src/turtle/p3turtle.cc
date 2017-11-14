@@ -907,6 +907,7 @@ void p3turtle::handleSearchRequest(RsTurtleSearchRequestItem *item)
 	req.origin = item->PeerId() ;
 	req.time_stamp = time(NULL) ;
 	req.depth = item->depth ;
+	req.keywords = item->GetKeywords() ;
 
 	// If it's not for us, perform a local search. If something found, forward the search result back.
 
@@ -2101,6 +2102,7 @@ void p3turtle::getInfo(	std::vector<std::vector<std::string> >& hashes_info,
 		info.source_peer_id 	= it->second.origin ;
 		info.age 				= now - it->second.time_stamp ;
 		info.depth 				= it->second.depth ;
+		info.keywords 			= it->second.keywords ;
 
 		search_reqs_info.push_back(info) ;
 	}

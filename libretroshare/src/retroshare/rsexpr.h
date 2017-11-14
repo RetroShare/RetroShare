@@ -86,7 +86,9 @@ public:
                     EXPR_SIZE_MB = 8 } token ;
 
     static Expression *toExpr(const LinearizedExpression& e) ;
-
+	
+	std::string GetStrings();
+	
 private:
     static Expression *toExpr(const LinearizedExpression& e,int&,int&,int&) ;
     static void readStringExpr(const LinearizedExpression& e,int& n_ints,int& n_strings,std::list<std::string>& strings,bool& b,StringOperator& op) ;
