@@ -413,9 +413,8 @@ bool RsCollection::save(QWidget *parent) const
 }
 
 
-bool RsCollection::openNewColl(QWidget *parent)
+bool RsCollection::openNewColl(QWidget *parent, QString fileName)
 {
-	QString fileName;
 	if(!misc::getSaveFileName(parent, RshareSettings::LASTDIR_EXTRAFILE
 														, QApplication::translate("RsCollectionFile", "Create collection file")
 														, QApplication::translate("RsCollectionFile", "Collection files") + " (*." + RsCollection::ExtensionString + ")"

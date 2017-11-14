@@ -1066,8 +1066,17 @@ void RetroshareDirModel::createCollectionFile(QWidget *parent, const QModelIndex
 	getDirDetailsFromSelect(list, dirVec);
 
 	FileSearchFlags f = RemoteMode?RS_FILE_HINTS_REMOTE:RS_FILE_HINTS_LOCAL ;
-
-	RsCollection(dirVec,f).openNewColl(parent);
+	
+	QString dir_name;
+	if(!RemoteMode)
+	{
+		if(dirVec.size())
+		{
+			const DirDetails& details = dirVec[0];
+			dir_name = QDir(QString::fromUtf8(details.name.c_str())).dirName();
+		}
+	}
+	RsCollection(dirVec,f).openNewColl(parent,dir_name);
 }
 
 void RetroshareDirModel::downloadSelected(const QModelIndexList &list,bool interactive)
