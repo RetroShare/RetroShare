@@ -1,0 +1,14 @@
+V07_NON_BACKWARD_COMPATIBLE_CHANGE_001:
+
+	What: Computes the node id by performing a sha256 hash of the certificate's PGP signature, instead of simply picking up the last 20 bytes of it. 
+	
+	Why: There is no real risk in forging a certificate with the same ID as the authentication is performed over the PGP signature of the certificate
+			which hashes the full SSL certificate (i.e. the full serialized CERT_INFO structure). However the possibility to 
+			create two certificates with the same IDs is a problem, as it can be used to cause disturbance in the software.
+
+	Backward compat: makes connexions impossible with non patched peers, probably because the SSL id that is computed is not the same on both side, 
+						and in particular unpatched peers see a cerficate with ID different (because computed with the old method) than the ID that was 
+						submitted when making friends.
+
+	Note: the advantage of basing the ID on the signature rather than the public key is not very clear, given that the signature is based on a hash 
+			of the public key (and the rest of the certificate info).

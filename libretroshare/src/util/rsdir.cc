@@ -610,6 +610,27 @@ Sha1CheckSum RsDirUtil::sha1sum(const unsigned char *data, uint32_t size)
 	return Sha1CheckSum(sha_buf) ;
 }
 
+Sha256CheckSum RsDirUtil::sha256sum(const unsigned char *data, uint32_t size)
+{
+	SHA256_CTX sha_ctx ;
+
+	if(SHA256_DIGEST_LENGTH != 32)
+		throw std::runtime_error("Warning: can't compute Sha2561Sum with sum size != 32") ;
+
+	SHA256_Init(&sha_ctx);
+	while(size > 512)
+	{
+		SHA256_Update(&sha_ctx, data, 512);
+		data = &data[512] ;
+		size -= 512 ;
+	}
+	SHA256_Update(&sha_ctx, data, size);
+
+	unsigned char sha_buf[SHA256_DIGEST_LENGTH];
+	SHA256_Final(&sha_buf[0], &sha_ctx);
+
+	return Sha256CheckSum(sha_buf) ;
+}
 bool RsDirUtil::saveStringToFile(const std::string &file, const std::string &str)
 {
     std::ofstream out(file.c_str(), std::ios_base::out | std::ios_base::binary);
