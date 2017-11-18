@@ -122,7 +122,7 @@ MessageWidget *MessageWidget::openMsg(const std::string &msgId, bool window)
 
 /** Constructor */
 MessageWidget::MessageWidget(bool controlled, QWidget *parent, Qt::WindowFlags flags)
-: QWidget(parent, flags)
+  : QWidget(parent, flags), toolButtonReply(NULL)
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	ui.setupUi(this);
@@ -196,6 +196,7 @@ void MessageWidget::connectAction(enumActionType actionType, QToolButton* button
 		break;
 	case ACTION_REPLY:
 		connect(button, SIGNAL(clicked()), this, SLOT(reply()));
+		toolButtonReply = button;
 		break;
 	case ACTION_REPLY_ALL:
 		connect(button, SIGNAL(clicked()), this, SLOT(replyAll()));
@@ -600,9 +601,11 @@ void MessageWidget::fill(const std::string &msgId)
 
 	if ((msgInfo.msgflags & RS_MSG_SYSTEM) && msgInfo.rspeerid_srcId == ownId) {
 		ui.fromText->setText("RetroShare");
+		if (toolButtonReply) toolButtonReply->setEnabled(false);
 	} else {
 		ui.fromText->setText(link.toHtml());
 		ui.fromText->setToolTip(tooltip_string) ;
+		if (toolButtonReply) toolButtonReply->setEnabled(true);
 	}
 
 	ui.subjectText->setText(QString::fromUtf8(msgInfo.title.c_str()));

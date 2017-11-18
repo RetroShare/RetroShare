@@ -68,7 +68,7 @@ MessageWindow::MessageWindow(QWidget *parent, Qt::WindowFlags flags)
 	QMenu *printmenu = new QMenu();
 	printmenu->addAction(ui.actionPrint);
 	printmenu->addAction(ui.actionPrint_Preview);
-	ui.printbutton->setMenu(printmenu);
+	ui.printButton->setMenu(printmenu);
 
 	// create view menu
 	QMenu *viewmenu = new QMenu();
@@ -120,7 +120,7 @@ void MessageWindow::addWidget(MessageWidget *widget)
 		msgWidget->connectAction(MessageWidget::ACTION_REPLY, ui.replymessageButton);
 		msgWidget->connectAction(MessageWidget::ACTION_REPLY_ALL, ui.replyallmessageButton);
 		msgWidget->connectAction(MessageWidget::ACTION_FORWARD, ui.forwardmessageButton);
-		msgWidget->connectAction(MessageWidget::ACTION_PRINT, ui.printbutton);
+		msgWidget->connectAction(MessageWidget::ACTION_PRINT, ui.printButton);
 		msgWidget->connectAction(MessageWidget::ACTION_PRINT, ui.actionPrint);
 		msgWidget->connectAction(MessageWidget::ACTION_PRINT, actionPrint);
 		msgWidget->connectAction(MessageWidget::ACTION_PRINT_PREVIEW, ui.actionPrint_Preview);
@@ -216,7 +216,7 @@ void MessageWindow::setToolbarButtonStyle(Qt::ToolButtonStyle style)
 	ui.replyallmessageButton->setToolButtonStyle(style);
 	ui.forwardmessageButton->setToolButtonStyle(style);
 	ui.tagButton->setToolButtonStyle(style);
-	ui.printbutton->setToolButtonStyle(style);
+	ui.printButton->setToolButtonStyle(style);
 	ui.viewtoolButton->setToolButtonStyle(style);
 }
 
