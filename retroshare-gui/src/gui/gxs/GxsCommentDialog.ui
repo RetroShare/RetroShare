@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_3">
+  <layout class="QVBoxLayout" name="GxsCommentDialogVLayout">
    <item>
     <widget class="QFrame" name="postFrame">
      <property name="sizePolicy">
@@ -22,7 +22,7 @@
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout">
+     <layout class="QVBoxLayout" name="postFrameVLayout">
       <property name="leftMargin">
        <number>9</number>
       </property>
@@ -36,7 +36,7 @@
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
+    <layout class="QHBoxLayout" name="toolBarHLayout">
      <item>
       <widget class="QPushButton" name="hotSortButton">
        <property name="text">
@@ -80,7 +80,7 @@
       </widget>
      </item>
      <item>
-      <spacer name="horizontalSpacer">
+      <spacer name="toolBarHSpacer">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
@@ -93,7 +93,7 @@
       </spacer>
      </item>
      <item>
-      <widget class="QLabel" name="label_2">
+      <widget class="QLabel" name="idLabel">
        <property name="text">
         <string>Voter ID:</string>
        </property>
