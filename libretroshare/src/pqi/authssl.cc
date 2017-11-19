@@ -43,7 +43,8 @@
 #include "pgp/pgpkeyutil.h"
 
 #include "retroshare/rspeers.h" // for RsPeerDetails structure 
-#include "retroshare/rsids.h" // for RsPeerDetails structure 
+#include "retroshare/rsdefines.h"
+#include "retroshare/rsids.h" // for RsPeerDetails structure
 #include "rsserver/p3face.h" 
 
 /******************** notify of new Cert **************************/
@@ -821,7 +822,7 @@ X509 *AuthSSLimpl::SignX509ReqWithGPG(X509_REQ *req, long /*days*/)
         ASN1_BIT_STRING *signature = const_cast<ASN1_BIT_STRING*>(tmp_signature);
 #endif
         //EVP_PKEY *pkey = NULL;
-#ifdef  V07_NON_BACKWARD_COMPATIBLE_CHANGE_002
+#if V07_NON_BACKWARD_COMPATIBLE_CHANGE_002
         const EVP_MD *type = EVP_sha256();
 #else
         const EVP_MD *type = EVP_sha1();
@@ -871,7 +872,7 @@ X509 *AuthSSLimpl::SignX509ReqWithGPG(X509_REQ *req, long /*days*/)
         inl=i2d_re_X509_tbs(x509,&buf_in) ;	// this does the i2d over x509->cert_info
 #endif
 
-#ifdef V07_NON_BACKWARD_COMPATIBLE_CHANGE_003
+#if V07_NON_BACKWARD_COMPATIBLE_CHANGE_003
         sigoutl=2048; // hashoutl; //EVP_PKEY_size(pkey);
         unsigned char *buf_sigout=(unsigned char *)OPENSSL_malloc((unsigned int)sigoutl);
 
@@ -965,8 +966,10 @@ X509 *AuthSSLimpl::SignX509ReqWithGPG(X509_REQ *req, long /*days*/)
         /* cleanup */
         if(buf_in != NULL)
             OPENSSL_free(buf_in) ;
+#if !V07_NON_BACKWARD_COMPATIBLE_CHANGE_003
         if(buf_hashout != NULL)
             OPENSSL_free(buf_hashout) ;
+#endif
         if(buf_sigout != NULL)
             OPENSSL_free(buf_sigout) ;
         std::cerr << "GPGAuthMgr::SignX509Req() err: FAIL" << std::endl;
@@ -1025,7 +1028,7 @@ bool AuthSSLimpl::AuthX509WithGPG(X509 *x509,uint32_t& diagnostic)
 #endif
 
 
-#ifdef  V07_NON_BACKWARD_COMPATIBLE_CHANGE_002
+#if V07_NON_BACKWARD_COMPATIBLE_CHANGE_002
 	const EVP_MD *type = EVP_sha256();
 #else
 	const EVP_MD *type = EVP_sha1();
@@ -1075,7 +1078,7 @@ bool AuthSSLimpl::AuthX509WithGPG(X509 *x509,uint32_t& diagnostic)
 	i2d(data,&p);
 #endif
 
-#ifndef V07_NON_BACKWARD_COMPATIBLE_CHANGE_003
+#if !V07_NON_BACKWARD_COMPATIBLE_CHANGE_003
 	/* data in buf_in, ready to be hashed */
 	EVP_DigestInit_ex(ctx,type, NULL);
 	EVP_DigestUpdate(ctx,(unsigned char *)buf_in,inl);
@@ -1108,7 +1111,7 @@ bool AuthSSLimpl::AuthX509WithGPG(X509 *x509,uint32_t& diagnostic)
 	std::cerr << "AuthSSLimpl::AuthX509() verifying the gpg sig with keyprint : " << pd.fpr << std::endl;
 	std::cerr << "Sigoutl = " << sigoutl << std::endl ;
 	std::cerr << "pd.fpr = " << pd.fpr << std::endl ;
-#ifndef V07_NON_BACKWARD_COMPATIBLE_CHANGE_003
+#if !V07_NON_BACKWARD_COMPATIBLE_CHANGE_003
 	std::cerr << "hashoutl = " << hashoutl << std::endl ;
 #endif
 #endif
@@ -1173,7 +1176,7 @@ bool AuthSSLimpl::AuthX509WithGPG(X509 *x509,uint32_t& diagnostic)
 
 	// passed, verify the signature itself
 
-#ifdef V07_NON_BACKWARD_COMPATIBLE_CHANGE_003
+#if V07_NON_BACKWARD_COMPATIBLE_CHANGE_003
 	if (!AuthGPG::getAuthGPG()->VerifySignBin(buf_in, inl, buf_sigout, (unsigned int) sigoutl, pd.fpr)) {
 #else
 	if (!AuthGPG::getAuthGPG()->VerifySignBin(buf_hashout, hashoutl, buf_sigout, (unsigned int) sigoutl, pd.fpr)) {
