@@ -533,6 +533,7 @@ bool	AuthSSLimpl::validateOwnCertificate(X509 *x509, EVP_PKEY *pkey)
 	/* standard authentication */
 	if (!AuthX509WithGPG(x509,diagnostic))
 	{
+		std::cerr << "Validate Own certificate ERROR: diagnostic = " << diagnostic << std::endl;
 		return false;
 	}
 	return true;
@@ -1024,7 +1025,11 @@ bool AuthSSLimpl::AuthX509WithGPG(X509 *x509,uint32_t& diagnostic)
 #endif
 
 
+#ifdef  V07_NON_BACKWARD_COMPATIBLE_CHANGE_002
+	const EVP_MD *type = EVP_sha256();
+#else
 	const EVP_MD *type = EVP_sha1();
+#endif
 
 	EVP_MD_CTX *ctx = EVP_MD_CTX_create();
 	int inl=0,hashoutl=0;
@@ -1119,25 +1124,42 @@ bool AuthSSLimpl::AuthX509WithGPG(X509 *x509,uint32_t& diagnostic)
 		return false ;
 	}
 
+	std::string sigtypestring ;
+
 	switch(signature_info.signature_type)
 	{
-		case PGP_PACKET_TAG_SIGNATURE_TYPE_STANDALONE_SIG  :
+		case PGP_PACKET_TAG_SIGNATURE_TYPE_BINARY_DOCUMENT :
 		break ;
 
+		case PGP_PACKET_TAG_SIGNATURE_TYPE_STANDALONE_SIG  :
 		case PGP_PACKET_TAG_SIGNATURE_TYPE_CANONICAL_TEXT  :
-		case PGP_PACKET_TAG_SIGNATURE_TYPE_BINARY_DOCUMENT :
 		case PGP_PACKET_TAG_SIGNATURE_TYPE_UNKNOWN         :
 		default:
 		diagnostic = RS_SSL_HANDSHAKE_DIAGNOSTIC_WRONG_SIGNATURE_TYPE ;
 		return false ;
 	}
 
+	switch(signature_info.public_key_algorithm)
+	{
+		case PGP_PACKET_TAG_PUBLIC_KEY_ALGORITHM_RSA_ES :
+		case PGP_PACKET_TAG_PUBLIC_KEY_ALGORITHM_RSA_S  : sigtypestring = "RSA" ;
+														  break ;
+
+		case PGP_PACKET_TAG_PUBLIC_KEY_ALGORITHM_DSA    : sigtypestring = "DSA" ;
+														  break ;
+
+		case PGP_PACKET_TAG_PUBLIC_KEY_ALGORITHM_RSA_E  :
+		case PGP_PACKET_TAG_PUBLIC_KEY_ALGORITHM_UNKNOWN:
+	default:
+		diagnostic = RS_SSL_HANDSHAKE_DIAGNOSTIC_HASH_ALGORITHM_NOT_ACCEPTED ;
+		return false ;
+	}
+
 	switch(signature_info.hash_algorithm)
 	{
-		case  PGP_PACKET_TAG_HASH_ALGORITHM_SHA1  :
-		case  PGP_PACKET_TAG_HASH_ALGORITHM_SHA256:
-		case  PGP_PACKET_TAG_HASH_ALGORITHM_SHA512:
-		break ;
+		case  PGP_PACKET_TAG_HASH_ALGORITHM_SHA1  : sigtypestring += "+SHA1"   ; break;
+		case  PGP_PACKET_TAG_HASH_ALGORITHM_SHA256: sigtypestring += "+SHA256" ; break;
+		case  PGP_PACKET_TAG_HASH_ALGORITHM_SHA512: sigtypestring += "+SHA512" ; break;
 
 		// We dont accept signatures with unknown or week hash algorithms.
 
@@ -1148,20 +1170,6 @@ bool AuthSSLimpl::AuthX509WithGPG(X509 *x509,uint32_t& diagnostic)
 			return false ;
 	}
 
-	switch(signature_info.public_key_algorithm)
-	{
-		case PGP_PACKET_TAG_PUBLIC_KEY_ALGORITHM_RSA_ES :
-		case PGP_PACKET_TAG_PUBLIC_KEY_ALGORITHM_RSA_S  :
-		case PGP_PACKET_TAG_PUBLIC_KEY_ALGORITHM_DSA    :
-		break ;
-
-		case PGP_PACKET_TAG_PUBLIC_KEY_ALGORITHM_RSA_E  :
-		case PGP_PACKET_TAG_PUBLIC_KEY_ALGORITHM_UNKNOWN:
-	default:
-		diagnostic = RS_SSL_HANDSHAKE_DIAGNOSTIC_HASH_ALGORITHM_NOT_ACCEPTED ;
-		return false ;
-	}
-	}
 
 	// passed, verify the signature itself
 
@@ -1173,6 +1181,9 @@ bool AuthSSLimpl::AuthX509WithGPG(X509 *x509,uint32_t& diagnostic)
 		sigoutl = 0;
 		diagnostic = RS_SSL_HANDSHAKE_DIAGNOSTIC_WRONG_SIGNATURE ;
 		goto err;
+	}
+
+	std::cerr << "Verified signature of type " << sigtypestring << " on certificate using PGP key with fingerprint " << pd.fpr.toStdString() << std::endl;
 	}
 
 #ifdef AUTHSSL_DEBUG
