@@ -1186,7 +1186,10 @@ bool AuthSSLimpl::AuthX509WithGPG(X509 *x509,uint32_t& diagnostic)
 		goto err;
 	}
 
-	std::cerr << "Verified signature of type " << sigtypestring << " on certificate using PGP key with fingerprint " << pd.fpr.toStdString() << std::endl;
+	RsPeerId peerIdstr ;
+	getX509id(x509, peerIdstr) ;
+
+	std::cerr << "Verified signature of type " << sigtypestring << " on certificate " << peerIdstr << " using PGP key with fingerprint " << pd.fpr.toStdString() << std::endl;
 	}
 
 #ifdef AUTHSSL_DEBUG
