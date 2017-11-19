@@ -1382,7 +1382,7 @@ ops_secret_key_t *secret_key = NULL ;
 	// then do the signature.
 
 	ops_boolean_t not_raw = !use_raw_signature ;
-#if V07_NON_BACKWARD_COMPATIBLE_CHANGE_002
+#ifdef V07_NON_BACKWARD_COMPATIBLE_CHANGE_002
 	ops_memory_t *memres = ops_sign_buf(data,len,OPS_SIG_BINARY,OPS_HASH_SHA256,secret_key,ops_false,ops_false,not_raw,not_raw) ;
 #else
 	ops_memory_t *memres = ops_sign_buf(data,len,OPS_SIG_BINARY,OPS_HASH_SHA1,secret_key,ops_false,ops_false,not_raw,not_raw) ;

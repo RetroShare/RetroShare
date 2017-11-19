@@ -611,7 +611,7 @@ bool getX509id(X509 *x509, RsPeerId& xid)
     X509_get0_signature(&signature,&algor,x509);
 #endif
 
-#if V07_NON_BACKWARD_COMPATIBLE_CHANGE_001
+#ifdef V07_NON_BACKWARD_COMPATIBLE_CHANGE_001
 	//	What: Computes the node id by performing a sha256 hash of the certificate's PGP signature, instead of simply picking up the last 20 bytes of it.
 	//
 	//	Why: There is no real risk in forging a certificate with the same ID as the authentication is performed over the PGP signature of the certificate
