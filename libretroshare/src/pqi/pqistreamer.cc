@@ -98,13 +98,23 @@ static double getCurrentTS()
 }
 
 pqistreamer::pqistreamer(RsSerialiser *rss, const RsPeerId& id, BinInterface *bio_in, int bio_flags_in)
-	:PQInterface(id), mStreamerMtx("pqistreamer"),
-	mBio(bio_in), mBio_flags(bio_flags_in), mRsSerialiser(rss), 
-	mPkt_wpending(NULL), mPkt_wpending_size(0),
-	mTotalRead(0), mTotalSent(0),
-	mCurrRead(0), mCurrSent(0),
-	mAvgReadCount(0), mAvgSentCount(0),
-	mAvgDtOut(0), mAvgDtIn(0)
+  :PQInterface(id), mStreamerMtx("pqistreamer"),
+    mBio(bio_in), mBio_flags(bio_flags_in), mRsSerialiser(rss),
+    mPkt_wpending(NULL), mPkt_wpending_size(0),
+    /* allocated once */
+    mPkt_rpend_size(0), mPkt_rpending(0),
+    mReading_state(reading_state_initial),
+    mFailed_read_attempts(0), // reset failed read, as no packet is still read.
+    mIncomingSize(0),
+    mTotalRead(0), mTotalSent(0),
+    mCurrRead(0), mCurrSent(0),
+    mAvgReadCount(0), mAvgSentCount(0),
+    mAvgDtOut(0), mAvgDtIn(0),
+    mLastIncomingTs(0),
+    mStatisticsTimeStamp(0),
+    mAcceptsPacketSlicing(false), // by default. Will be turned into true when everyone's ready.
+    mLastSentPacketSlicingProbe(0)
+
 {
 
     // 100 B/s (minimal)
@@ -115,18 +125,7 @@ pqistreamer::pqistreamer(RsSerialiser *rss, const RsPeerId& id, BinInterface *bi
 
     RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
 
-    mAcceptsPacketSlicing = false ; // by default. Will be turned into true when everyone's ready.
-    mLastSentPacketSlicingProbe = 0 ;
-
-    mAvgLastUpdate = mCurrSentTS = mCurrReadTS = getCurrentTS();
-
-    mIncomingSize = 0 ;
-
-    mStatisticsTimeStamp = 0 ;
-    /* allocated once */
-    mPkt_rpend_size = 0;
-    mPkt_rpending = 0;
-    mReading_state = reading_state_initial ;
+    mCurrSentTS = mCurrReadTS = mAvgLastUpdate = getCurrentTS();
 
     pqioutput(PQL_DEBUG_ALL, pqistreamerzone, "pqistreamer::pqistreamer() Initialisation!");
 
@@ -135,10 +134,6 @@ pqistreamer::pqistreamer(RsSerialiser *rss, const RsPeerId& id, BinInterface *bi
 	    pqioutput(PQL_ALERT, pqistreamerzone, "pqistreamer::pqistreamer() NULL bio, FATAL ERROR!");
 	    exit(1);
     }
-
-    mFailed_read_attempts = 0;  // reset failed read, as no packet is still read.
-
-    return;
 }
 
 pqistreamer::~pqistreamer()
