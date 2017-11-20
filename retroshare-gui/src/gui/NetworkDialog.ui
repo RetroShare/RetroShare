@@ -41,7 +41,7 @@
      <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
-     <widget class="QTreeWidget" name="connectTreeWidget">
+     <widget class="QTableView" name="connectTreeWidget">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
         <horstretch>0</horstretch>
@@ -66,63 +66,6 @@
         <height>16</height>
        </size>
       </property>
-      <property name="uniformRowHeights">
-       <bool>true</bool>
-      </property>
-      <property name="sortingEnabled">
-       <bool>true</bool>
-      </property>
-      <property name="animated">
-       <bool>true</bool>
-      </property>
-      <property name="allColumnsShowFocus">
-       <bool>true</bool>
-      </property>
-      <property name="wordWrap">
-       <bool>true</bool>
-      </property>
-      <attribute name="headerCascadingSectionResizes">
-       <bool>true</bool>
-      </attribute>
-      <attribute name="headerDefaultSectionSize">
-       <number>200</number>
-      </attribute>
-      <attribute name="headerStretchLastSection">
-       <bool>true</bool>
-      </attribute>
-      <column>
-       <property name="text">
-        <string/>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>Profile</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>Did I authenticated peer</string>
-       </property>
-       <property name="toolTip">
-        <string>Did I sign his PGP key</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>Has signed my key</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>Cert Id</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>Last used</string>
-       </property>
-      </column>
      </widget>
     </widget>
    </item>
