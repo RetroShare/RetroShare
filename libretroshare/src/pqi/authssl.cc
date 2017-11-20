@@ -828,8 +828,7 @@ X509 *AuthSSLimpl::SignX509ReqWithGPG(X509_REQ *req, long /*days*/)
 #endif
 
         EVP_MD_CTX *ctx = EVP_MD_CTX_create();
-        int inl=0,hashoutl=0;
-        int sigoutl=0;
+        int inl=0;
         X509_ALGOR *a;
 
         /* FIX ALGORITHMS */
@@ -861,21 +860,29 @@ X509 *AuthSSLimpl::SignX509ReqWithGPG(X509_REQ *req, long /*days*/)
 
         std::cerr << "Algorithms Fixed" << std::endl;
 
+        unsigned int sigoutl=2048; // hashoutl; //EVP_PKEY_size(pkey);
+        unsigned char *buf_sigout=(unsigned char *)OPENSSL_malloc((unsigned int)sigoutl);
+
         /* input buffer */
 #if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
         inl=i2d(data,NULL);
         unsigned char *buf_in=(unsigned char *)OPENSSL_malloc((unsigned int)inl);
-        i2d(data,&buf_in);
+
+		if(buf_in == NULL)
+		{
+			sigoutl=0;
+			fprintf(stderr, "AuthSSLimpl::SignX509Req: ASN1err(ASN1_F_ASN1_SIGN,ERR_R_MALLOC_FAILURE)\n");
+			return NULL ;
+		}
+		unsigned char *p=buf_in;	// This because i2d modifies the pointer after writing to it.
+		i2d(data,&p);
 #else
         unsigned char *buf_in=NULL;
         inl=i2d_re_X509_tbs(x509,&buf_in) ;	// this does the i2d over x509->cert_info
 #endif
 
 #ifdef V07_NON_BACKWARD_COMPATIBLE_CHANGE_003
-        sigoutl=2048; // hashoutl; //EVP_PKEY_size(pkey);
-        unsigned char *buf_sigout=(unsigned char *)OPENSSL_malloc((unsigned int)sigoutl);
-
-        if ((buf_in == NULL) || (buf_sigout == NULL))
+        if((buf_in == NULL) || (buf_sigout == NULL))
 		{
 			sigoutl=0;
 			fprintf(stderr, "AuthSSLimpl::SignX509Req: ASN1err(ASN1_F_ASN1_SIGN,ERR_R_MALLOC_FAILURE)\n");
@@ -890,11 +897,8 @@ X509 *AuthSSLimpl::SignX509ReqWithGPG(X509_REQ *req, long /*days*/)
                 goto err;
         }
 #else
-        hashoutl=EVP_MD_size(type);
+        unsigned int hashoutl=EVP_MD_size(type);
         unsigned char *buf_hashout=(unsigned char *)OPENSSL_malloc((unsigned int)hashoutl);
-
-        sigoutl=2048; // hashoutl; //EVP_PKEY_size(pkey);
-        unsigned char *buf_sigout=(unsigned char *)OPENSSL_malloc((unsigned int)sigoutl);
 
         if((buf_hashout == NULL) || (buf_sigout == NULL))
 		{
@@ -951,12 +955,11 @@ X509 *AuthSSLimpl::SignX509ReqWithGPG(X509_REQ *req, long /*days*/)
         EVP_MD_CTX_destroy(ctx) ;
 
 		// debug
-		{
-		int pkey_nid = OBJ_obj2nid(x509->cert_info->key->algor->algorithm);
-		const char* sslbuf = OBJ_nid2ln(pkey_nid);
-
-		std::cerr << "Signature hash algorithm: " << sslbuf << std::endl;
-		}
+		// {
+		// int pkey_nid = OBJ_obj2nid(x509->sig_alg->algorithm);
+		// const char* sslbuf = OBJ_nid2ln(pkey_nid);
+		// std::cerr << "Signature hash algorithm: " << sslbuf << std::endl;
+		// }
 
         return x509;
 
