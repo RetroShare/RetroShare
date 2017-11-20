@@ -930,7 +930,9 @@ X509 *AuthSSLimpl::SignX509ReqWithGPG(X509_REQ *req, long /*days*/)
 #endif
 
         std::cerr << "Buffer Sizes: in: " << inl;
+#ifndef V07_NON_BACKWARD_COMPATIBLE_CHANGE_003
         std::cerr << "  HashOut: " << hashoutl;
+#endif
         std::cerr << "  SigOut: " << sigoutl;
         std::cerr << std::endl;
 
