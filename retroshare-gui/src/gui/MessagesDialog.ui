@@ -49,7 +49,7 @@
      <property name="frameShadow">
       <enum>QFrame::Sunken</enum>
      </property>
-     <layout class="QGridLayout" name="gridLayout">
+     <layout class="QGridLayout" name="toolBarFrameGLayout">
       <property name="leftMargin">
        <number>2</number>
       </property>
@@ -66,7 +66,7 @@
        <number>6</number>
       </property>
       <item row="0" column="9">
-       <widget class="Line" name="line_2">
+       <widget class="Line" name="toolBarFrameLineR">
         <property name="orientation">
          <enum>Qt::Vertical</enum>
         </property>
@@ -219,7 +219,7 @@
        </widget>
       </item>
       <item row="0" column="12">
-       <widget class="QToolButton" name="printbutton">
+       <widget class="QToolButton" name="printButton">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -454,7 +454,7 @@
          <enum>Qt::NoFocus</enum>
         </property>
         <property name="icon">
-         <iconset resource="images.qrc">
+         <iconset resource="icons.qrc">
           <normaloff>:/icons/help_64.png</normaloff>:/icons/help_64.png</iconset>
         </property>
         <property name="checkable">
@@ -466,7 +466,7 @@
        </widget>
       </item>
       <item row="0" column="14">
-       <spacer name="horizontalSpacer">
+       <spacer name="toolBarFrameSpacerR">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
@@ -479,7 +479,7 @@
        </spacer>
       </item>
       <item row="0" column="2">
-       <spacer name="horizontalSpacer_2">
+       <spacer name="toolBarFrameSpacerL">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
@@ -495,7 +495,7 @@
        </spacer>
       </item>
       <item row="0" column="5">
-       <widget class="Line" name="line">
+       <widget class="Line" name="toolBarFrameLineL">
         <property name="orientation">
          <enum>Qt::Vertical</enum>
         </property>
@@ -513,7 +513,7 @@
       <attribute name="title">
        <string notr="true">Main Tab</string>
       </attribute>
-      <layout class="QGridLayout" name="gridLayout_4">
+      <layout class="QGridLayout" name="tabGLayout">
        <property name="leftMargin">
         <number>0</number>
        </property>
@@ -535,7 +535,7 @@
           <enum>Qt::Horizontal</enum>
          </property>
          <widget class="QFrame" name="sideBarFrame">
-          <layout class="QGridLayout" name="gridLayout_3">
+          <layout class="QGridLayout" name="sideBarFrameGLayout">
            <property name="leftMargin">
             <number>0</number>
            </property>
@@ -629,7 +629,7 @@
             </widget>
            </item>
            <item row="4" column="0">
-            <widget class="QLabel" name="total_label">
+            <widget class="QLabel" name="totalLabel">
              <property name="minimumSize">
               <size>
                <width>0</width>
@@ -646,7 +646,7 @@
              <property name="autoFillBackground">
               <bool>true</bool>
              </property>
-             <layout class="QHBoxLayout" name="horizontalLayout_2">
+             <layout class="QHBoxLayout" name="folderFrameHLayout">
               <property name="topMargin">
                <number>3</number>
               </property>
@@ -687,7 +687,7 @@
              <property name="frameShadow">
               <enum>QFrame::Raised</enum>
              </property>
-             <layout class="QHBoxLayout" name="horizontalLayout_3">
+             <layout class="QHBoxLayout" name="quickViewFrameHLayout">
               <property name="topMargin">
                <number>3</number>
               </property>
@@ -726,38 +726,33 @@
           <property name="orientation">
            <enum>Qt::Vertical</enum>
           </property>
-          <widget class="QSplitter" name="msgSplitter_2">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
+          <widget class="RSTreeWidget" name="messageTreeWidget">
+           <property name="contextMenuPolicy">
+            <enum>Qt::CustomContextMenu</enum>
            </property>
-           <widget class="RSTreeWidget" name="messageTreeWidget">
-            <property name="contextMenuPolicy">
-             <enum>Qt::CustomContextMenu</enum>
+           <property name="selectionMode">
+            <enum>QAbstractItemView::ExtendedSelection</enum>
+           </property>
+           <property name="rootIsDecorated">
+            <bool>false</bool>
+           </property>
+           <property name="sortingEnabled">
+            <bool>true</bool>
+           </property>
+           <property name="allColumnsShowFocus">
+            <bool>true</bool>
+           </property>
+           <property name="expandsOnDoubleClick">
+            <bool>false</bool>
+           </property>
+           <column>
+            <property name="text">
+             <string notr="true">1</string>
             </property>
-            <property name="selectionMode">
-             <enum>QAbstractItemView::ExtendedSelection</enum>
-            </property>
-            <property name="rootIsDecorated">
-             <bool>false</bool>
-            </property>
-            <property name="sortingEnabled">
-             <bool>true</bool>
-            </property>
-            <property name="allColumnsShowFocus">
-             <bool>true</bool>
-            </property>
-            <property name="expandsOnDoubleClick">
-             <bool>false</bool>
-            </property>
-            <column>
-             <property name="text">
-              <string notr="true">1</string>
-             </property>
-            </column>
-           </widget>
-           <widget class="QWidget" name="layoutWidget">
-            <layout class="QGridLayout" name="msgLayout"/>
-           </widget>
+           </column>
+          </widget>
+          <widget class="QWidget" name="layoutWidget">
+           <layout class="QGridLayout" name="msgLayout"/>
           </widget>
          </widget>
         </widget>
@@ -839,6 +834,11 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>StyledLabel</class>
+   <extends>QLabel</extends>
+   <header>gui/common/StyledLabel.h</header>
+  </customwidget>
+  <customwidget>
    <class>LineEditClear</class>
    <extends>QLineEdit</extends>
    <header location="global">gui/common/LineEditClear.h</header>
@@ -854,19 +854,14 @@
    <header>gui/common/RSTabWidget.h</header>
    <container>1</container>
   </customwidget>
-  <customwidget>
-   <class>StyledLabel</class>
-   <extends>QLabel</extends>
-   <header>gui/common/StyledLabel.h</header>
-  </customwidget>
  </customwidgets>
  <tabstops>
   <tabstop>replymessageButton</tabstop>
   <tabstop>listWidget</tabstop>
  </tabstops>
  <resources>
-  <include location="images.qrc"/>
   <include location="icons.qrc"/>
+  <include location="images.qrc"/>
  </resources>
  <connections/>
 </ui>
