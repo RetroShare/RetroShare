@@ -56,6 +56,12 @@ retroshare_qml_app {
     }
 }
 
+retroshare_plugins {
+    SUBDIRS += plugins
+    plugins.file = plugins/plugins.pro
+    plugins.depends = retroshare_gui
+    plugins.target = plugins
+}
 
 wikipoos {
     SUBDIRS += pegmarkdown
