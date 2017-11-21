@@ -273,7 +273,7 @@ rs_chatserver {
 #           which hashes the full SSL certificate (i.e. the full serialized CERT_INFO structure). However the possibility to
 #           create two certificates with the same IDs is a problem, as it can be used to cause disturbance in the software.
 #
-#     Backward compat: makes connexions impossible with non patched peers, probably because the SSL id that is computed is not the same on both side,
+#     Backward compat: connexions impossible with non patched peers older than Nov 2017, probably because the SSL id that is computed is not the same on both side,
 #                    and in particular unpatched peers see a cerficate with ID different (because computed with the old method) than the ID that was
 #                    submitted when making friends.
 #
@@ -286,7 +286,7 @@ rs_chatserver {
 #
 #     Why:  Sha1 is likely to be prone to primary collisions anytime soon, so it is urgent to turn to a more secure solution.
 #
-#     Backward compat: unpatched peers are able to verify signatures since openpgp-sdk already handle it.
+#     Backward compat: unpatched peers after Nov 2017 are able to verify signatures since openpgp-sdk already handle it.
 #
 #  V07_NON_BACKWARD_COMPATIBLE_CHANGE_003:
 #
@@ -294,7 +294,7 @@ rs_chatserver {
 #
 #  	 Why: hasing twice is not per se a security issue, but it makes it harder to change the settings for hashing.
 #
-#  	 Backward compat: patched peers cannot connect to non patched peers.
+#  	 Backward compat: patched peers cannot connect to non patched peers older than Nov 2017.
 ###########################################################################################################################################################
 
 rs_v07_changes {

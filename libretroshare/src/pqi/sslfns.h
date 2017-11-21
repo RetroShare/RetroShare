@@ -61,7 +61,15 @@ int EVP_CIPHER_CTX_rand_key(EVP_CIPHER_CTX *ctx, unsigned char *key);
 
 #endif
 
+// Certificates serial number is used to store the protocol version for the handshake. (*) means current version.
+//
+//   06_0000:  < Nov.2017.
+// * 06_0001:  > Nov 2017.   SSL id is computed by hashing the entire signature of the cert instead of simply picking up the last bytes.
+//   07_0001:                Signatures are performed using SHA256+RSA instead of SHA1+RSA
 
+static const uint32_t RS_CERTIFICATE_VERSION_NUMBER_06_0000 = 0x00060000 ;	// means version RS-0.6, certificate version 0. Default version before patch.
+static const uint32_t RS_CERTIFICATE_VERSION_NUMBER_06_0001 = 0x00060001 ;	// means version RS-0.6, certificate version 1.
+static const uint32_t RS_CERTIFICATE_VERSION_NUMBER_07_0001 = 0x00070001 ;	// means version RS-0.7, certificate version 1.
 
 X509_REQ *GenerateX509Req(
 		std::string pkey_file, std::string passwd,
@@ -121,6 +129,9 @@ std::string getX509LocString(X509_NAME *name);
 std::string getX509OrgString(X509_NAME *name);
 std::string getX509CountryString(X509_NAME *name);
 std::string getX509Info(X509 *cert);
+
+uint64_t getX509SerialNumber(X509 *cert);
+uint32_t getX509RetroshareCertificateVersion(X509 *cert) ;
 
 /********** SSL ERROR STUFF ******************************************/
 
