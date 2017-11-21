@@ -1,4 +1,5 @@
 #include "pgpid_item_model.h"
+#include <time.h>
 #include <retroshare/rspeers.h>
 #include <QIcon>
 
