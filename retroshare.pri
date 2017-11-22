@@ -297,6 +297,7 @@ rs_chatserver {
 #  	 Backward compat: patched peers cannot connect to non patched peers older than Nov 2017.
 ###########################################################################################################################################################
 
+#CONFIG += rs_v07_changes
 rs_v07_changes {
 	DEFINES += V07_NON_BACKWARD_COMPATIBLE_CHANGE_001
 	DEFINES += V07_NON_BACKWARD_COMPATIBLE_CHANGE_002
