@@ -71,6 +71,8 @@ public slots:
     void makeComment();
     void replyToComment();
 
+    void copyComment();
+
     void voteUp();
     void voteDown();
 
@@ -89,6 +91,7 @@ protected:
     std::set<RsGxsMessageId> mMsgVersions;
     RsGxsMessageId mLatestMsgId;
     RsGxsMessageId mCurrentCommentMsgId;
+    QString mCurrentCommentText;
     RsGxsId mVoterId;
 
     std::map<RsGxsMessageId, QTreeWidgetItem *> mLoadingMap;
