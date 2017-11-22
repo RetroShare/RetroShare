@@ -1035,7 +1035,6 @@ bool AuthSSLimpl::AuthX509WithGPG(X509 *x509,uint32_t& diagnostic)
 
 	EVP_MD_CTX *ctx = EVP_MD_CTX_create();
 	int inl=0;
-	int sigoutl=0;
 
 	const unsigned char *signed_data = NULL ;
 	uint32_t signed_data_length =0;
@@ -1050,22 +1049,12 @@ bool AuthSSLimpl::AuthX509WithGPG(X509 *x509,uint32_t& diagnostic)
 	inl=i2d_re_X509_tbs(x509,&buf_in) ;	// this does the i2d over x509->cert_info
 #endif
 
-	sigoutl=2048; //hashoutl; //EVP_PKEY_size(pkey);
-	unsigned char *buf_sigout=(unsigned char *)OPENSSL_malloc((unsigned int)sigoutl);
-
-#ifdef AUTHSSL_DEBUG
-	std::cerr << "Buffer Sizes: in: " << inl;
-	std::cerr << "  HashOut: " << hashoutl;
-	std::cerr << "  SigOut: " << sigoutl;
-	std::cerr << std::endl;
-#endif
-
-	if ((buf_in == NULL) || (buf_sigout == NULL))
+	if(buf_in == NULL)
 	{
-		sigoutl=0;
 		fprintf(stderr, "AuthSSLimpl::AuthX509: ASN1err(ASN1_F_ASN1_SIGN,ERR_R_MALLOC_FAILURE)\n");
 		diagnostic = RS_SSL_HANDSHAKE_DIAGNOSTIC_MALLOC_ERROR ;
-		goto err;
+
+		return false ;
 	}
 
 #ifdef AUTHSSL_DEBUG
@@ -1076,36 +1065,14 @@ bool AuthSSLimpl::AuthX509WithGPG(X509 *x509,uint32_t& diagnostic)
 	p=buf_in;
 	i2d(data,&p);
 #endif
-	{ // this is to avoid cross-initialization jumps to err.
+
+	{ // this scope is to avoid cross-initialization jumps to err.
 
 		const Sha1CheckSum sha1 = RsDirUtil::sha1sum(buf_in,inl) ;	// olds the memory until destruction
 
 		if(certificate_version < RS_CERTIFICATE_VERSION_NUMBER_07_0001)
 		{
-			//		const EVP_MD *type = EVP_sha1();
-			//
-			//		int hashoutl=EVP_MD_size(type);
-			//		unsigned char *buf_hashout = (unsigned char *)OPENSSL_malloc((unsigned int)hashoutl);
-			//
-			//		if(buf_hashout == NULL)
-			//		{
-			//			hashoutl=0;
-			//			sigoutl=0;
-			//			fprintf(stderr, "AuthSSLimpl::AuthX509: ASN1err(ASN1_F_ASN1_SIGN,ERR_R_MALLOC_FAILURE)\n");
-			//			diagnostic = RS_SSL_HANDSHAKE_DIAGNOSTIC_MALLOC_ERROR ;
-			//			goto err;
-			//		}
-			//		/* data in buf_in, ready to be hashed */
-			//		EVP_DigestInit_ex(ctx,type, NULL);
-			//		EVP_DigestUpdate(ctx,(unsigned char *)buf_in,inl);
-			//
-			//		if (!EVP_DigestFinal(ctx,(unsigned char *)buf_hashout, (unsigned int *)&hashoutl))
-			//		{
-			//			hashoutl=0;
-			//			fprintf(stderr, "AuthSSLimpl::AuthX509: ASN1err(ASN1_F_ASN1_SIGN,ERR_R_EVP_LIB)\n");
-			//			diagnostic = RS_SSL_HANDSHAKE_DIAGNOSTIC_MALLOC_ERROR ;
-			//			goto err;
-			//		}
+			// If the certificate belongs to 0.6 version, we hash it here, and then re-hash the hash it in the PGP signature.
 
 			signed_data = sha1.toByteArray() ;
 			signed_data_length = sha1.SIZE_IN_BYTES;
@@ -1115,15 +1082,6 @@ bool AuthSSLimpl::AuthX509WithGPG(X509 *x509,uint32_t& diagnostic)
 			signed_data = buf_in ;
 			signed_data_length = inl ;
 		}
-
-		/* copy data into signature */
-		if(sigoutl < signature->length)
-		{
-			diagnostic = RS_SSL_HANDSHAKE_DIAGNOSTIC_MALLOC_ERROR ;
-			goto err;
-		}
-		sigoutl = signature->length;
-		memmove(buf_sigout, signature->data, sigoutl);
 
 		/* NOW check sign via GPG Functions */
 		//get the fingerprint of the key that is supposed to sign
@@ -1136,12 +1094,12 @@ bool AuthSSLimpl::AuthX509WithGPG(X509 *x509,uint32_t& diagnostic)
 		// Take a early look at signature parameters. In particular we dont accept signatures with unsecure hash algorithms.
 
 		PGPSignatureInfo signature_info ;
-		PGPKeyManagement::parseSignature(buf_sigout,sigoutl,signature_info) ;
+		PGPKeyManagement::parseSignature(signature->data,signature->length,signature_info) ;
 
 		if(signature_info.signature_version != PGP_PACKET_TAG_SIGNATURE_VERSION_V4)
 		{
 			diagnostic = RS_SSL_HANDSHAKE_DIAGNOSTIC_WRONG_SIGNATURE_VERSION ;
-			return false ;
+			goto err ;
 		}
 
 		std::string sigtypestring ;
@@ -1156,7 +1114,7 @@ bool AuthSSLimpl::AuthX509WithGPG(X509 *x509,uint32_t& diagnostic)
 		case PGP_PACKET_TAG_SIGNATURE_TYPE_UNKNOWN         :
 		default:
 			diagnostic = RS_SSL_HANDSHAKE_DIAGNOSTIC_WRONG_SIGNATURE_TYPE ;
-			return false ;
+			goto err ;
 		}
 
 		switch(signature_info.public_key_algorithm)
@@ -1172,7 +1130,7 @@ bool AuthSSLimpl::AuthX509WithGPG(X509 *x509,uint32_t& diagnostic)
 		case PGP_PACKET_TAG_PUBLIC_KEY_ALGORITHM_UNKNOWN:
 		default:
 			diagnostic = RS_SSL_HANDSHAKE_DIAGNOSTIC_HASH_ALGORITHM_NOT_ACCEPTED ;
-			return false ;
+			goto err ;
 		}
 
 		switch(signature_info.hash_algorithm)
@@ -1187,14 +1145,13 @@ bool AuthSSLimpl::AuthX509WithGPG(X509 *x509,uint32_t& diagnostic)
 		case  PGP_PACKET_TAG_HASH_ALGORITHM_UNKNOWN:
 		default:
 			diagnostic = RS_SSL_HANDSHAKE_DIAGNOSTIC_HASH_ALGORITHM_NOT_ACCEPTED ;
-			return false ;
+			goto err ;
 		}
 
 		// passed, verify the signature itself
 
-		if (!AuthGPG::getAuthGPG()->VerifySignBin(signed_data, signed_data_length, buf_sigout, (unsigned int) sigoutl, pd.fpr))
+		if (!AuthGPG::getAuthGPG()->VerifySignBin(signed_data, signed_data_length, signature->data, signature->length, pd.fpr))
 		{
-			sigoutl = 0;
 			diagnostic = RS_SSL_HANDSHAKE_DIAGNOSTIC_WRONG_SIGNATURE ;
 			goto err;
 		}
@@ -1202,8 +1159,12 @@ bool AuthSSLimpl::AuthX509WithGPG(X509 *x509,uint32_t& diagnostic)
 		RsPeerId peerIdstr ;
 		getX509id(x509, peerIdstr) ;
 
-		std::cerr << "Verified signature of type " << sigtypestring << " on certificate " << peerIdstr << " Version " << std::hex << certificate_version
-		          << std::dec << " using PGP key with fingerprint " << pd.fpr.toStdString() << std::endl;
+		std::string fpr = pd.fpr.toStdString();
+		std::cerr << "Verified " << sigtypestring << " signature of certificate " << peerIdstr << ", Version " << std::hex << certificate_version
+		          << std::dec << " using PGP key " ;
+		for(uint32_t i=0;i<fpr.length();i+=4)
+			std::cerr << fpr.substr(i,4) << " " ;
+		std::cerr << std::endl;
 	}
 
 #ifdef AUTHSSL_DEBUG
@@ -1212,7 +1173,6 @@ bool AuthSSLimpl::AuthX509WithGPG(X509 *x509,uint32_t& diagnostic)
     EVP_MD_CTX_destroy(ctx) ;
 
 	OPENSSL_free(buf_in) ;
-	OPENSSL_free(buf_sigout) ;
 
 	diagnostic = RS_SSL_HANDSHAKE_DIAGNOSTIC_OK ;
 
@@ -1223,8 +1183,7 @@ err:
 
 	if(buf_in != NULL)
 		OPENSSL_free(buf_in) ;
-	if(buf_sigout != NULL)
-		OPENSSL_free(buf_sigout) ;
+
 	return false;
 }
 
