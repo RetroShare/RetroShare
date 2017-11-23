@@ -101,7 +101,8 @@ bool    	cleanupDirectoryFaster(const std::string& dir, const std::set<std::stri
 bool 		hashFile(const std::string& filepath,   std::string &name, RsFileHash &hash, uint64_t &size);
 bool 		getFileHash(const std::string& filepath,RsFileHash &hash, uint64_t &size, RsThread *thread = NULL);
 
-Sha1CheckSum sha1sum(const uint8_t *data,uint32_t size) ;
+Sha1CheckSum   sha1sum(const uint8_t *data,uint32_t size) ;
+Sha256CheckSum sha256sum(const uint8_t *data,uint32_t size) ;
 
 bool saveStringToFile(const std::string& file, const std::string& str);
 bool loadStringFromFile(const std::string& file, std::string& str);
