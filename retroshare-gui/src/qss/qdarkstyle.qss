@@ -44,7 +44,7 @@ QFrame#titleBarFrame, QFrame#toolBarFrame
 QToolTip
 {
     border: 1px solid #3A3939;
-    background-color: rgb(90, 102, 117);;
+    background-color: rgb(90, 102, 117);
     color: white;
     padding: 1px;
     opacity: 200;
@@ -330,7 +330,7 @@ QTextEdit
 
 QPlainTextEdit
 {
-    background-color: #201F1F;;
+    background-color: #201F1F;
     color: silver;
     border-radius: 3px;
     border: 1px solid #3A3939;
@@ -870,11 +870,11 @@ QTreeView::branch:open:has-children:has-siblings:hover  {
 QListView::item:!selected:hover, QListView::item:!selected:hover, QTreeView::item:!selected:hover  {
     background: rgba(0, 0, 0, 0);
     outline: 0;
-    color: #FFFFFF
+    color: #FFFFFF;
 }
 
 QListView::item:selected:hover, QListView::item:selected:hover, QTreeView::item:selected:hover  {
-    background: #78879b;;
+    background: #78879b;
     color: #FFFFFF;
 }
 
