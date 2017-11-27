@@ -834,6 +834,10 @@ QTreeView::item {
     background-color: #201F1F;
 }
 
+QTreeView::item:!selected {
+    color: #C0C0C0;
+}
+
 QTreeView:branch:selected, QTreeView:branch:hover
 {
     background: url(qdarkstyle/transparent.png);
