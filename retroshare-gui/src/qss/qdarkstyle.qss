@@ -875,13 +875,13 @@ QTreeView::branch:open:has-children:has-siblings:hover  {
     image: url(qdarkstyle/branch_open-on.png);
     }
 
-QListView::item:!selected:hover, QListView::item:!selected:hover, QTreeView::item:!selected:hover  {
+QListView::item:!selected:hover, QTableView::item:!selected:hover, QTreeView::item:!selected:hover  {
     background: rgba(0, 0, 0, 0);
     outline: 0;
     color: #FFFFFF;
 }
 
-QListView::item:selected:hover, QListView::item:selected:hover, QTreeView::item:selected:hover  {
+QListView::item:selected:hover, QTableView::item:selected:hover, QTreeView::item:selected:hover  {
     background: #78879b;
     color: #FFFFFF;
 }
