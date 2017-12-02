@@ -76,11 +76,11 @@ QWidget:item:selected
 
 ForumsDialog, GxsForumThreadWidget
 {
-	qproperty-textColorRead: gray;
+	qproperty-textColorRead: darkgray;
 	qproperty-textColorUnread: white;
-	qproperty-textColorUnreadChildren: gray;
+	qproperty-textColorUnreadChildren: red;
 	qproperty-textColorNotSubscribed: white;
-	qproperty-textColorMissing: red;
+	qproperty-textColorMissing: darkred;
 }
 
 QMenuBar
