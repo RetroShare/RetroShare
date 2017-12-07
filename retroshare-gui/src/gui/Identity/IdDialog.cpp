@@ -221,7 +221,9 @@ IdDialog::IdDialog(QWidget *parent) :
 	connect(ui->inviteButton, SIGNAL(clicked()), this, SLOT(sendInvite()));
 
 
-	ui->avLabel_Person->setPixmap(QPixmap(":/icons/png/people.png"));
+	QFontMetricsF f(ui->avLabel_Person->font()) ;
+
+	ui->avLabel_Person->setPixmap(QPixmap(":/icons/png/people.png").scaled(f.height()*4,f.height()*4,Qt::IgnoreAspectRatio,Qt::SmoothTransformation));
 	ui->avlabel_Circles->setPixmap(QPixmap(":/icons/png/circles.png"));
 
 	ui->headerTextLabel_Person->setText(tr("People"));
@@ -1768,8 +1770,14 @@ void IdDialog::insertIdDetails(uint32_t token)
 	std::cerr << "Setting header frame image : " << pixmap.width() << " x " << pixmap.height() << std::endl;
 #endif
 
-    ui->avLabel_Person->setPixmap(pixmap);
-    ui->avatarLabel->setPixmap(pixmap);
+    //ui->avLabel_Person->setPixmap(pixmap);
+    //ui->avatarLabel->setPixmap(pixmap);
+	QFontMetricsF f(ui->avLabel_Person->font()) ;
+    ui->avLabel_Person->setPixmap(pixmap.scaled(f.height()*4,f.height()*4,Qt::KeepAspectRatio,Qt::SmoothTransformation));
+
+	QFontMetricsF g(ui->inviteButton->font()) ;
+    ui->avatarLabel->setPixmap(pixmap.scaled(ui->inviteButton->width(),ui->inviteButton->width(),Qt::IgnoreAspectRatio,Qt::SmoothTransformation));
+	ui->avatarLabel->setScaledContents(true);
 
 	if (data.mPgpKnown)
 	{
