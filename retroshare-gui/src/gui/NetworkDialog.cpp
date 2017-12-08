@@ -84,10 +84,9 @@
 //static const unsigned int ROLE_SORT = Qt::UserRole + 1 ;
 
 /** Constructor */
-NetworkDialog::NetworkDialog(QWidget *parent)
+NetworkDialog::NetworkDialog(QWidget */*parent*/)
 {
     /* Invoke the Qt Designer generated object setup routine */
-    Q_UNUSED(parent);
     ui.setupUi(this);
   
     connect( ui.filterLineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(filterItems(QString)));
@@ -160,15 +159,15 @@ void NetworkDialog::changeEvent(QEvent *e)
 void NetworkDialog::connectTreeWidgetCostumPopupMenu( QPoint /*point*/ )
 {
 
-    QModelIndexList l = ui.connectTreeWidget->selectionModel()->selection().indexes();
-    if(l.empty())
-    {
-        return;
-    }
+	QModelIndexList l = ui.connectTreeWidget->selectionModel()->selection().indexes();
+	if(l.empty())
+	{
+		return;
+	}
 
 	QMenu *contextMnu = new QMenu;
 
-    RsPgpId peer_id(ui.connectTreeWidget->model()->data(ui.connectTreeWidget->model()->index(l.begin()->row(), COLUMN_PEERID)).toString().toStdString()) ;
+	RsPgpId peer_id(ui.connectTreeWidget->model()->data(ui.connectTreeWidget->model()->index(l.begin()->row(), COLUMN_PEERID)).toString().toStdString()) ;
 
 	// That's what context menus are made for
 	RsPeerDetails detail;
