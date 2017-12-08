@@ -119,7 +119,7 @@ QVariant pgpid_item_model::data(const QModelIndex &index, int role) const
 
     std::list<RsPgpId>::iterator it = neighs.begin();
     for(int i = 0; i < index.row(); i++)
-        it++;
+        ++it;
     RsPeerDetails detail;
     if (!rsPeers->getGPGDetails(*it, detail))
         return QVariant();
