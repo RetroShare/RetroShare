@@ -52,7 +52,8 @@ addons:
     branch_pattern: coverity_scan
 
 before_script:
-  - qmake QMAKE_CC=$CC QMAKE_CXX=$CXX CONFIG+=no_sqlcipher CONFIG+=tests
+  - if [ $TRAVIS_OS_NAME == linux ]; then qmake QMAKE_CC=$CC QMAKE_CXX=$CXX CONFIG+=no_sqlcipher CONFIG+=tests ; fi
+  - if [ $TRAVIS_OS_NAME == osx ]; then qmake QMAKE_CC=$CC QMAKE_CXX=$CXX CONFIG+=no_sqlcipher CONFIG+=tests CONFIG+=rs_macos10.12 ; fi
 
 script:
   - if [ $TRAVIS_OS_NAME == linux ] && [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then make && tests/unittests/unittests >/dev/null 2>&1 ; fi
