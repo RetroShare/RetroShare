@@ -11,7 +11,7 @@ class pgpid_item_proxy :
     Q_OBJECT
 
 public:
-    pgpid_item_proxy(QObject *parent = nullptr);
+    explicit pgpid_item_proxy(QObject *parent = nullptr);
     bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const override;
 public slots:
     void use_only_trusted_keys(bool val);
