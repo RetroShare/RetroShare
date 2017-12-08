@@ -189,7 +189,7 @@ bool PGPKeyManagement::parseSignature(const unsigned char *signature, size_t sig
     if(signature_type != 4)
         return false ;
     
-	info.signature_version    = data[0] ; data += 1 ;	// skip version number
+    info.signature_version    = data[0] ; data += 1 ;	// skip version number
     info.signature_type       = data[0] ; data += 1 ;	// skip signature type
     info.public_key_algorithm = data[0] ; data += 1 ;	// skip public key algorithm
     info.hash_algorithm       = data[0] ; data += 1 ;	// skip hash algorithm
