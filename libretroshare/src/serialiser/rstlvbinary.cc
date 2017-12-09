@@ -59,9 +59,11 @@ RsTlvBinaryData::~RsTlvBinaryData()
 }
 
 RsTlvBinaryData& RsTlvBinaryData::operator =(const RsTlvBinaryData& b){
-
-	setBinData(b.bin_data, b.bin_len);
-	tlvtype = b.tlvtype;
+	if (&b != this)
+	{
+		setBinData(b.bin_data, b.bin_len);
+		tlvtype = b.tlvtype;
+	}
 
 	return *this;
 }
