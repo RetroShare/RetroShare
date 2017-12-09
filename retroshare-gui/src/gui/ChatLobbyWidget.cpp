@@ -559,7 +559,7 @@ void ChatLobbyWidget::updateDisplay()
 			QTreeWidgetItem *itemLoop = lobby_other_item->child(childIndex);
 			if (itemLoop->type() == TYPE_LOBBY && itemLoop->data(COLUMN_DATA, ROLE_ID).toULongLong() == lobby.lobby_id) {
 				delete(lobby_other_item->takeChild(lobby_other_item->indexOfChild(itemLoop)));
-				childCnt = lobby_other_item->childCount();
+				//childCnt = lobby_other_item->childCount();
 				break;
 			}
 		}
