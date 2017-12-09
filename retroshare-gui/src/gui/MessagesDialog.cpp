@@ -1230,7 +1230,7 @@ void MessagesDialog::insertMessages()
             if (filterColumn == COLUMN_CONTENT) {
                 // need content for filter
                 if (gotInfo || rsMail->getMessage(it->msgId, msgInfo)) {
-                    gotInfo = true;
+                    //gotInfo = true;
                     QTextDocument doc;
                     doc.setHtml(QString::fromUtf8(msgInfo.msg.c_str()));
                     item->setText(COLUMN_CONTENT, doc.toPlainText().replace(QString("\n"), QString(" ")));
