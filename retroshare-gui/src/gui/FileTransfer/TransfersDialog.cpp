@@ -1778,7 +1778,7 @@ int TransfersDialog::addULItem(int row, const FileInfo &fileInfo)
 
 		//unique combination: fileHash + peerId, variant: hash + peerName (too long)
 		QString hashFileAndPeerId = fileHash + QString::fromStdString(transferInfo.peerId.toStdString());
-		qlonglong completed = transferInfo.transfered;
+		qlonglong completed;//= transferInfo.transfered;
 
 		double peerULSpeed = transferInfo.tfRate * 1024.0;
 
