@@ -292,55 +292,57 @@ static void list_init(ops_list_t *list)
     }
  
 static void list_free_strings(ops_list_t *list)
-    {
-    unsigned i;
+{
+	unsigned i;
 
-    for(i=0; i < list->used ; i++)
+	for(i=0; i < list->used ; i++)
 	{
-	free(list->strings[i]);
-	list->strings[i]=NULL;
+		free(list->strings[i]);
+		list->strings[i]=NULL;
 	}
-    }
+}
 
 static void list_free(ops_list_t *list)
-    {
-    if (list->strings)
-	free(list->strings);
-    list_init(list);
-    }
+{
+	if (list->strings)
+		free(list->strings);
+
+	list_init(list);
+}
 
 static unsigned int list_resize(ops_list_t *list)
-    {
-    /* We only resize in one direction - upwards.
-       Algorithm used : double the current size then add 1
-    */
+{
+	/* We only resize in one direction - upwards.
+			 Algorithm used : double the current size then add 1
+		*/
 
-    int newsize=0;
+	int newsize=0;
 
-    newsize=list->size*2 + 1;
-    list->strings=realloc(list->strings,newsize*sizeof(char *));
-    if (list->strings)
+	newsize=list->size*2 + 1;
+	list->strings=realloc(list->strings,newsize*sizeof(char *));
+	if (list->strings)
 	{
-	list->size=newsize;
-	return 1;
+		list->size=newsize;
+		return 1;
 	}
-    else
+	else
 	{
-	/* xxx - realloc failed. error message? - rachel */
-	return 0;
+		/* xxx - realloc failed. error message? - rachel */
+		list_init(list);
+		return 0;
 	}
-    }
+}
 
 static unsigned int add_str(ops_list_t *list,char *str)
-    {
-    if (list->size==list->used) 
-	if (!list_resize(list))
-	    return 0;
+{
+	if (list->size==list->used)
+		if (!list_resize(list))
+			return 0;
 
-    list->strings[list->used]=str;
-    list->used++;
-    return 1;
-    }
+	list->strings[list->used]=str;
+	list->used++;
+	return 1;
+}
 
 static char *str_from_bitfield_or_null(unsigned char octet, ops_bit_map_t *map)
     {
@@ -393,52 +395,62 @@ void ops_text_free(ops_text_t *text)
 // XXX: should this (and many others) be ops_boolean_t?
 /*! generic function which adds text derived from single octet map to text */
 static unsigned int add_str_from_octet_map(ops_text_t *text,char *str,
-					   unsigned char octet)
-    {
-    if (str && !add_str(&text->known,str)) 
+                                           unsigned char octet)
+{
+	if (str && !add_str(&text->known,str))
 	{
-	/* value recognised, but there was a problem adding it to the list */
-	/* XXX - should print out error msg here, Ben? - rachel */
-	return 0;
+		/* value recognised, but there was a problem adding it to the list */
+		/* XXX - should print out error msg here, Ben? - rachel */
+		return 0;
 	}
-    else if (!str)
+	else if (!str)
 	{
-	/* value not recognised and there was a problem adding it to the unknown list */
-    unsigned len=2+2+1; /* 2 for "0x", 2 for single octet in hex format, 1 for NULL */
-	str=malloc(len);
-	snprintf(str,len,"0x%x",octet);
-	if (!add_str(&text->unknown,str))
-	    return 0;
+		/* value not recognised and there was a problem adding it to the unknown list */
+		unsigned len=2+2+1; /* 2 for "0x", 2 for single octet in hex format, 1 for NULL */
+		str=malloc(len);
+		if (!str)
+		{
+			return 0;
+		}
+		snprintf(str,len,"0x%x",octet);
+		if (!add_str(&text->unknown,str))
+		{
+			free(str);
+			return 0;
+		}
 	}
-    return 1;
-    }
+	return 1;
+}
 
 /*! generic function which adds text derived from single bit map to text */
 static unsigned int add_str_from_bit_map(ops_text_t *text, char *str, unsigned char bit)
-    {
-    char *fmt_unknown="Unknown bit(0x%x)";
+{
+	char *fmt_unknown="Unknown bit(0x%x)";
 
-    if (str && !add_str(&text->known,str)) 
+	if (str && !add_str(&text->known,str))
 	{
-	/* value recognised, but there was a problem adding it to the list */
-	/* XXX - should print out error msg here, Ben? - rachel */
-	return 0;
+		/* value recognised, but there was a problem adding it to the list */
+		/* XXX - should print out error msg here, Ben? - rachel */
+		return 0;
 	}
-    else if (!str)
+	else if (!str)
 	{
-	/* value not recognised and there was a problem adding it to the unknown list */
-	/* 2 chars of the string are the format definition, 
-	   this will be replaced in the output by 2 chars of hex,
-	   so the length will be correct */
-    unsigned len=strlen(fmt_unknown)+1;  
-	str=malloc(len);
+		/* value not recognised and there was a problem adding it to the unknown list */
+		/* 2 chars of the string are the format definition,
+		 this will be replaced in the output by 2 chars of hex,
+		 so the length will be correct */
+		unsigned len=strlen(fmt_unknown)+1;
+		str=malloc(len);
 
-	snprintf(str,len,fmt_unknown,bit);
-	if (!add_str(&text->unknown,str))
-	    return 0;
+		snprintf(str,len,fmt_unknown,bit);
+		if (!add_str(&text->unknown,str))
+		{
+			free(str);
+			return 0;
+		}
 	}
-    return 1;
-    }
+	return 1;
+}
 
 /**
  * Produce a structure containing human-readable textstrings
@@ -449,38 +461,40 @@ static unsigned int add_str_from_bit_map(ops_text_t *text, char *str, unsigned c
  */ 
 
 static ops_text_t *text_from_bytemapped_octets(ops_data_t *data, 
-				const char *(*text_fn)(unsigned char octet))
-    {
+                                               const char *(*text_fn)(unsigned char octet))
+{
 
-    ops_text_t *text=NULL;
-    const char *str;
-    unsigned i;
+	ops_text_t *text=NULL;
+	const char *str;
+	unsigned i;
 
-    /*! allocate and initialise ops_text_t structure to store derived strings */
-    text=malloc(sizeof(ops_text_t));
-    if (!text)
-	return NULL;
+	/*! allocate and initialise ops_text_t structure to store derived strings */
+	text=malloc(sizeof(ops_text_t));
+	if (!text)
+		return NULL;
 
-    ops_text_init(text);
+	ops_text_init(text);
 
-    /*! for each octet in field ... */
-    for(i=0 ; i < data->len ; i++)
+	/*! for each octet in field ... */
+	for(i=0 ; i < data->len ; i++)
 	{
-	/*! derive string from octet */
-	str=(*text_fn)(data->contents[i]);
+		/*! derive string from octet */
+		str=(*text_fn)(data->contents[i]);
 
-	/*! and add to text */
-	if (!add_str_from_octet_map(text,strdup(str),data->contents[i]))
-	    {
-	    ops_text_free(text);
-	    return NULL;
-	    }
+		/*! and add to text */
+		char *str2 = strdup(str);
+		if (!add_str_from_octet_map(text,str2,data->contents[i]))
+		{
+			free(str2);
+			ops_text_free(text);
+			return NULL;
+		}
 
 	}
-    /*! All values have been added to either the known or the unknown list */
-    /*! Return text */
-    return text;
-    }
+	/*! All values have been added to either the known or the unknown list */
+	/*! Return text */
+	return text;
+}
 
 /**
  * Produce a structure containing human-readable textstrings
@@ -755,36 +769,38 @@ const char *ops_show_ss_key_flag(unsigned char octet, ops_bit_map_t *map)
  * \return pointer to structure, if no error
  */
 ops_text_t *ops_showall_ss_key_flags(ops_ss_key_flags_t ss_key_flags)
-    {
-    ops_text_t *text=NULL;
-    const char *str;
-    int i=0;
-    unsigned char mask, bit;
+{
+	ops_text_t *text=NULL;
+	const char *str;
+	int i=0;
+	unsigned char mask, bit;
 
-    text=malloc(sizeof(ops_text_t));
-    if (!text)
-	return NULL;
+	text=malloc(sizeof(ops_text_t));
+	if (!text)
+		return NULL;
 
-    ops_text_init(text);
+	ops_text_init(text);
 
-    /* xxx - TBD: extend to handle multiple octets of bits - rachel */
+	/* xxx - TBD: extend to handle multiple octets of bits - rachel */
 
-    for (i=0,mask=0x80 ; i < 8 ; i++,mask=mask >> 1)
-	    {
-	    bit=ss_key_flags.data.contents[0]&mask;
-	    if(bit)
+	for (i=0,mask=0x80 ; i < 8 ; i++,mask=mask >> 1)
+	{
+		bit=ss_key_flags.data.contents[0]&mask;
+		if(bit)
 		{
-		str=ops_show_ss_key_flag(bit,&ss_key_flags_map[0]);
-		if(!add_str_from_bit_map(text,strdup(str),bit))
-		    {
-		    ops_text_free(text);
-		    return NULL;
-		    }
+			str=ops_show_ss_key_flag(bit,&ss_key_flags_map[0]);
+			char *str2 = strdup(str);
+			if(!add_str_from_bit_map(text,str2,bit))
+			{
+				free(str2);
+				ops_text_free(text);
+				return NULL;
+			}
 		}
-	    }
-/* xxx - must add error text if more than one octet. Only one currently specified -- rachel */
-    return text;
-    }
+	}
+	/* xxx - must add error text if more than one octet. Only one currently specified -- rachel */
+	return text;
+}
 
 /**
  * \ingroup Core_Print
@@ -810,37 +826,40 @@ const char *ops_show_ss_key_server_prefs(unsigned char prefs,
  * 
 */
 ops_text_t *ops_showall_ss_key_server_prefs(ops_ss_key_server_prefs_t ss_key_server_prefs)
-    {
-    ops_text_t *text=NULL;
-    const char *str;
-    int i=0;
-    unsigned char mask, bit;
+{
+	ops_text_t *text=NULL;
+	const char *str;
+	int i=0;
+	unsigned char mask, bit;
 
-    text=malloc(sizeof(ops_text_t));
-    if (!text)
-	return NULL;
+	text=malloc(sizeof(ops_text_t));
+	if (!text)
+		return NULL;
 
-    ops_text_init(text);
+	ops_text_init(text);
 
-    /* xxx - TBD: extend to handle multiple octets of bits - rachel */
+	/* xxx - TBD: extend to handle multiple octets of bits - rachel */
 
-    for (i=0,mask=0x80 ; i < 8 ; i++,mask=mask >> 1)
-	    {
-	    bit=ss_key_server_prefs.data.contents[0]&mask;
-	    if (bit)
+	for (i=0,mask=0x80 ; i < 8 ; i++,mask=mask >> 1)
+	{
+		bit=ss_key_server_prefs.data.contents[0]&mask;
+		if (bit)
 		{
-		str=ops_show_ss_key_server_prefs(bit,
-						 &ss_key_server_prefs_map[0]);
-		if(!add_str_from_bit_map( text, strdup(str), bit))
-		    {
-		    ops_text_free(text);
-		    return NULL;
-		    }
+			str=ops_show_ss_key_server_prefs(bit,
+			                                 &ss_key_server_prefs_map[0]);
+
+			char *str2 = strdup(str);
+			if(!add_str_from_bit_map( text, str2, bit))
+			{
+				free(str2);
+				ops_text_free(text);
+				return NULL;
+			}
 		}
-	    }
-/* xxx - must add error text if more than one octet. Only one currently specified -- rachel */
-    return text;
-    }
+	}
+	/* xxx - must add error text if more than one octet. Only one currently specified -- rachel */
+	return text;
+}
 
 /**
  * \ingroup Core_Print
