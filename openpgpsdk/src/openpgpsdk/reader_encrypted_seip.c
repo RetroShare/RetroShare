@@ -212,7 +212,7 @@ static int se_ip_data_reader(void *dest_, size_t len, ops_error_t **errors,
     memcpy(dest_, arg->plaintext+arg->plaintext_offset, n);
     arg->plaintext_available-=n;
     arg->plaintext_offset+=n;
-    len-=n;
+    //len-=n;
 
     return n;
     }
