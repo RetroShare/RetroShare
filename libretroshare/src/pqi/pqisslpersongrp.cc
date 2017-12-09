@@ -109,6 +109,10 @@ pqiperson * pqisslpersongrp::locked_createPerson(const RsPeerId& id, pqilistener
 			break;
 		case RS_HIDDEN_TYPE_I2P:
 			pqip -> addChildInterface(PQI_CONNECT_HIDDEN_I2P_TCP, pqicI2PBOB);
+			//Delete default Proxy as not used
+			if (pqicI2PBOB != pqicSOCKSProxy)
+				delete pqicSOCKSProxy;
+
 			break;
 		default:
 			/* peer is not a hidden one but we are */
@@ -117,6 +121,10 @@ pqiperson * pqisslpersongrp::locked_createPerson(const RsPeerId& id, pqilistener
 			switch (typeOwn) {
 			case RS_HIDDEN_TYPE_I2P:
 				pqip -> addChildInterface(PQI_CONNECT_HIDDEN_I2P_TCP, pqicI2PBOB);
+				//Delete default Proxy as not used
+				if (pqicI2PBOB != pqicSOCKSProxy)
+					delete pqicSOCKSProxy;
+
 				break;
 			default:
 				/* this case shouldn't happen! */
