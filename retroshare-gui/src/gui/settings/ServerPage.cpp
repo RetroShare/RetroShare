@@ -382,7 +382,7 @@ void ServerPage::load()
      * None: (dark net)
      */
 
-        netIndex = 3; // NONE.
+        //netIndex = 3; // NONE.
         if (detail.vs_dht != RS_VS_DHT_OFF)
         {
             if (detail.vs_disc != RS_VS_DISC_OFF)
