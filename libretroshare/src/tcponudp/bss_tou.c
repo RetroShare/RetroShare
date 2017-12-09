@@ -243,7 +243,7 @@ static long tou_socket_ctrl(BIO *b, int cmd, long num, void *ptr)
 	switch (cmd)
 		{
 	case BIO_CTRL_RESET:
-		num=0;
+		//num=0;
 		/* fallthrough */
 	case BIO_C_FILE_SEEK:
 		ret=0;
