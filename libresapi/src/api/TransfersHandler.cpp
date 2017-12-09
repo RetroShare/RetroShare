@@ -261,7 +261,7 @@ void TransfersHandler::handleUploads(Request & /* req */, Response &resp)
 
 				double dlspeed  	= pit->tfRate;
 				double fileSize		= fi.size;
-				double completed 	= pit->transfered;
+				double completed 	= 0;
 
 				uint32_t chunk_size = 1024*1024;
 				uint32_t nb_chunks = (uint32_t)((fi.size + (uint64_t)chunk_size - 1) / (uint64_t)(chunk_size));
