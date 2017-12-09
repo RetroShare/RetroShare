@@ -168,10 +168,10 @@ FlowLayoutWidget::FlowLayoutWidget(QWidget *parent, int margin/*=-1*/, int hSpac
 	FlowLayoutWidget(margin, hSpacing, vSpacing);
 }
 
-FlowLayoutWidget::FlowLayoutWidget(int margin/*=-1*/, int hSpacing/*=-1*/, int vSpacing/*=-1*/)
+FlowLayoutWidget::FlowLayoutWidget(int /*margin=-1*/, int /*hSpacing=-1*/, int /*vSpacing=-1*/)
 {
-	FlowLayout *fl = new FlowLayout(this, margin, hSpacing, vSpacing);
-	Q_UNUSED(fl)
+	//FlowLayout *fl = new FlowLayout(this, margin, hSpacing, vSpacing);
+	//Q_UNUSED(fl)
 	this->installEventFilter(this);
 	this->setMouseTracking(true);
 	this->setAcceptDrops(true);
