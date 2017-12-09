@@ -217,34 +217,34 @@ static int set_lastseen_headerline(dearmour_arg_t* arg, char* buf, ops_error_t *
     }
 
 static int read_char(dearmour_arg_t *arg,ops_error_t **errors,
-		     ops_reader_info_t *rinfo,
-		     ops_parse_cb_info_t *cbinfo,
-		     ops_boolean_t skip)
-    {
-    unsigned char c[1];
+                     ops_reader_info_t *rinfo,
+                     ops_parse_cb_info_t *cbinfo,
+                     ops_boolean_t skip)
+{
+	unsigned char c[1];
 
-    do
+	do
 	{
-	if(arg->npushed_back)
-	    {
-	    c[0]=arg->pushed_back[--arg->npushed_back];
-	    if(!arg->npushed_back)
+		if(arg->npushed_back > 0)
 		{
-		free(arg->pushed_back);
-		arg->pushed_back=NULL;
+			c[0]=arg->pushed_back[--arg->npushed_back];
+			if(arg->npushed_back == 0)
+			{
+				free(arg->pushed_back);
+				arg->pushed_back=NULL;
+			}
 		}
-	    }
-	/* XXX: should ops_stacked_read exist? Shouldn't this be a limited_read? */
-	else if(ops_stacked_read(c,1,errors,rinfo,cbinfo) != 1)
-	    return -1;
+		/* XXX: should ops_stacked_read exist? Shouldn't this be a limited_read? */
+		else if(ops_stacked_read(c,1,errors,rinfo,cbinfo) != 1)
+			return -1;
 	}
-    while(skip && c[0] == '\r');
+	while(skip && c[0] == '\r');
 
-    arg->prev_nl=arg->seen_nl;
-    arg->seen_nl=c[0] == '\n';
+	arg->prev_nl=arg->seen_nl;
+	arg->seen_nl=c[0] == '\n';
 
-    return c[0];
-    }
+	return c[0];
+}
 
 static int eat_whitespace(int first,
 			  dearmour_arg_t *arg,ops_error_t **errors,
