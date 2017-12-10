@@ -166,8 +166,6 @@
 //                                                                       |                                       |
 //                          (Only send if rand() < sendingProb())        +---comes from mClientMsgUpdateMap -----+
 //
-//
-//
 // Suggestions
 // ===========
 //    * handleRecvSyncGroup should use mit->second.mLastPost to limit the sending of already known data
@@ -194,6 +192,53 @@
 //       Problem: without msg, we cannot know the grpId!!
 //
 //    * mClientMsgUpdateMap[peerid][grpId] is only updated when new msgs are received. Up to date groups will keep asking for lists!
+//
+// Distant sync
+// ============
+//
+// Distant sync uses tunnels to sync subscribed GXS groups that are not supplied by friends. Peers can subscribe to a GXS group using a RS link
+// which GXS uses to request updates through tunnels.
+//   * The whole exchange should be kept private and anonymous between the two distant peers, so we use the same trick than for FT: encrypt the data using the group ID.
+//   * The same node shouldn't be known as a common server for different GXS groups
+//
+//   GXS net service:
+//   	* talks to virtual peers, treated like normal peers
+//   	* virtual peers only depend on the server ID, not on tunnel ID, and be kept constant accross time so that ClientGroupUpdateMap is kept consistent
+//      * does not use tunnels if friends can already supply the data (??) This causes issues with "islands".
+//
+//   Tunnels:
+//	    * a specific service named GxsSyncTunnelService handles the creation/management of sync tunnels:
+//	    * tunnel data need to be encrypted.
+//
+//              bool manageTunnels(const RsGxsGroupId&) ;													// start managing tunnels for this group
+//              bool releaseTunnels(const RsGxsGroupId&) ;													// stop managing tunnels for this group
+//              bool sendData(const unsigned char *data,uint32_t size,const RsPeerId& virtual_peer) ;		// send data to this virtual peer
+//              bool getVirtualPeers(const RsGxsGroupId&, std::list<RsPeerId>& peers) ; 					// returns the virtual peers for this group
+//
+//   Proposed protocol:
+//      * request tunnels based on H(GroupId)
+//      * encrypt tunnel data using chacha20+HMAC-SHA256 using AEAD( GroupId, 96bits IV, tunnel ID ) (similar to what FT does)
+//      * when tunnel is established, exchange virtual peer names: vpid = H( GroupID | Random bias )
+//      * when vpid is known, notify the client (GXS net service) which can use the virtual peer to sync
+//
+//      * only use a single tunnel per virtual peer ID
+//
+//              Client  ------------------ TR(H(GroupId)) -------------->  Server
+//
+//              Client  <-------------------- T OK ----------------------  Server
+//
+//           [Encrypted traffic using H(GroupId, 96bits IV, tunnel ID)]
+//
+//              Client  <--------- VPID = H( Random IV | GroupId ) ------  Server
+//                 |                                                         |
+//                 +--------------> Mark the virtual peer active <-----------+
+//
+//   Unsolved problems:
+//      * if we want to preserve anonymity, we cannot prevent GXS from duplicating the data from virtual/real peers that actually are the same peers.
+//      * ultimately we should only use tunnels to sync GXS. The mix between tunnels and real peers is not a problem but will cause unnecessary traffic.
+//
+//   Notes:
+//      * given that GXS only talks to peers once every 2 mins, it's likely that keep-alive packets will be needed
 
 
 #include <unistd.h>
