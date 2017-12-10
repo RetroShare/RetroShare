@@ -1726,7 +1726,7 @@ void MessageComposer::editingRecipientFinished()
     if (row >= rowCount)  // not found
         return;
 
-    enumType type;
+    enumType type = TO;
     std::string id; // dummy
     destinationType dtype ;
 
