@@ -104,6 +104,23 @@ const char *RsDirUtil::scanf_string_for_uint(int bytes)
 	return strgs[0] ;
 }
 
+bool RsDirUtil::splitDirFromFile(const std::string& full_path,std::string& dir, std::string& file)
+{
+	int i = full_path.rfind('/', full_path.size()-1);
+
+	if(i == full_path.size()-1)	// '/' not found!
+	{
+		file = full_path ;
+		dir = "." ;
+		return true ;
+	}
+
+	dir.assign(full_path,0,i+1) ;
+	file.assign(full_path,i+1,full_path.size()) ;
+
+	return true ;
+}
+
 void RsDirUtil::removeTopDir(const std::string& dir, std::string& path)
 {
 	path.clear();
@@ -245,6 +262,19 @@ bool RsDirUtil::fileExists(const std::string& filename)
 
 bool RsDirUtil::moveFile(const std::string& source,const std::string& dest)
 {
+	// Check that the destination directory exists. If not, create it.
+
+	std::string dest_dir ;
+	std::string dest_file ;
+
+	splitDirFromFile(dest,dest_dir,dest_file) ;
+
+	std::cerr << "Moving file " << source << " to " << dest << std::endl;
+	std::cerr << "Checking that directory " << dest_dir << " actually exists." << std::endl;
+
+	if(!checkCreateDirectory(dest_dir))
+		return false ;
+
     // First try a rename
 	//
 
@@ -458,7 +488,7 @@ bool	RsDirUtil::checkCreateDirectory(const std::string& dir)
 			std::cerr << "check_create_directory() Fatal Error et oui--";
 			std::cerr <<std::endl<< "\tcannot create:" <<dir<<std::endl;
 #endif
-			return 0;
+			return false;
 		}
 
 #ifdef RSDIR_DEBUG
@@ -466,7 +496,7 @@ bool	RsDirUtil::checkCreateDirectory(const std::string& dir)
 		std::cerr <<std::endl<< "\tcreated:" <<dir<<std::endl;
 #endif
 
-		return 1;
+		return true;
 	}
 
 #ifdef RSDIR_DEBUG
@@ -480,7 +510,7 @@ bool	RsDirUtil::checkCreateDirectory(const std::string& dir)
 	closedir(direc) ;
 #endif
 
-	return 1;
+	return true;
 }
 
 
