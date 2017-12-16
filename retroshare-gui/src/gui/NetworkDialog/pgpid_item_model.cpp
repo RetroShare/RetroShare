@@ -2,10 +2,8 @@
 #include <time.h>
 #include <retroshare/rspeers.h>
 #include <QIcon>
+#include <QBrush>
 
-#define IMAGE_AUTHED         ":/images/accepted16.png"
-#define IMAGE_DENIED         ":/images/denied16.png"
-#define IMAGE_TRUSTED        ":/images/rs-2.png"
 
 /*TODO:
  * using list here for internal data storage is not best option
@@ -151,6 +149,7 @@ QVariant pgpid_item_model::data(const QModelIndex &index, int role) const
         }
 
     }
+    //we using editrole only where it is useful, for other data we use display, so no "else if" here
     if(role == Qt::DisplayRole || role == Qt::EditRole)
     {
         switch(index.column())
@@ -261,23 +260,29 @@ QVariant pgpid_item_model::data(const QModelIndex &index, int role) const
     }
     else if(role == Qt::BackgroundRole)
     {
-        switch(index.column())
+        if (detail.accept_connection)
         {
-        default:
-        {
-            //TODO: add access to bckground colors from networkdialog
-            if (detail.accept_connection)
+            if (detail.ownsign)
             {
-                if (detail.ownsign)
-                    ;
+                return QBrush(mBackgroundColorOwnSign);
+            }
+            else
+            {
+                return QBrush(mBackgroundColorAcceptConnection);
             }
         }
-            break;
-
+        else
+        {
+            if (detail.hasSignedMe)
+            {
+                return QBrush(mBackgroundColorHasSignedMe);
+            }
+            else
+            {
+                return QBrush(mBackgroundColorDenied);
+            }
         }
     }
-
-
     return QVariant();
 }
 
@@ -300,14 +305,14 @@ void pgpid_item_model::data_updated(std::list<RsPgpId> &new_neighs)
     //reflect actual row count in model
     if(old_size < new_size)
     {
-        beginInsertRows(QModelIndex(), old_size - 1, old_size - 1 + new_size - old_size);
-        insertRows(old_size - 1 , new_size - old_size);
+        beginInsertRows(QModelIndex(), old_size, new_size);
+        insertRows(old_size, new_size - old_size);
         endInsertRows();
     }
     else if(new_size < old_size)
     {
-        beginRemoveRows(QModelIndex(), new_size - 1, new_size - 1 + old_size - new_size);
-        removeRows(old_size - 1, old_size - new_size);
+        beginRemoveRows(QModelIndex(), new_size, old_size);
+        removeRows(old_size, old_size - new_size);
         endRemoveRows();
     }
     //update data in ui, to avoid unnecessary redraw and ui updates, updating only changed elements
