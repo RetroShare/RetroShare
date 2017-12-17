@@ -87,7 +87,7 @@ CONFIG *= no_rs_async_chat
 rs_async_chat:CONFIG -= no_rs_async_chat
 
 # To select your MacOsX version append the following assignation to qmake
-# command line "CONFIG+=rs_macos10.11" where 10.11(default for Travis_CI) depends your version
+# command line "CONFIG+=rs_macos10.11" where 10.11 depends your version
 CONFIG *= rs_macos10.11
 rs_macos10.8:CONFIG -= rs_macos10.11
 rs_macos10.9:CONFIG -= rs_macos10.11
@@ -196,6 +196,8 @@ rs_macos10.12 {
 	message(***retroshare.pri: Set Target and SDK to MacOS 10.12 )
 	QMAKE_MACOSX_DEPLOYMENT_TARGET=10.12
 	QMAKE_MAC_SDK = macosx10.12
+	QMAKE_CXXFLAGS += -Wno-nullability-completeness
+	QMAKE_CFLAGS += -Wno-nullability-completeness
 }
 
 macx {
