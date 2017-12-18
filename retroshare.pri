@@ -168,39 +168,39 @@ win32 {
 	}
 }
 
-rs_macos10.8 {
-	message(***retroshare.pri: Set Target and SDK to MacOS 10.8 )
-	QMAKE_MACOSX_DEPLOYMENT_TARGET=10.8
-	QMAKE_MAC_SDK = macosx10.8
-}
-
-rs_macos10.9 {
-	message(***retroshare.pri: Set Target and SDK to MacOS 10.9 )
-	QMAKE_MACOSX_DEPLOYMENT_TARGET=10.9
-	QMAKE_MAC_SDK = macosx10.9
-}
-
-rs_macos10.10 {
-	message(***retroshare.pri: Set Target and SDK to MacOS 10.10 )
-	QMAKE_MACOSX_DEPLOYMENT_TARGET=10.10
-	QMAKE_MAC_SDK = macosx10.10
-}
-
-rs_macos10.11 {
-	message(***retroshare.pri: Set Target and SDK to MacOS 10.11 )
-	QMAKE_MACOSX_DEPLOYMENT_TARGET=10.11
-	QMAKE_MAC_SDK = macosx10.11
-}
-
-rs_macos10.12 {
-	message(***retroshare.pri: Set Target and SDK to MacOS 10.12 )
-	QMAKE_MACOSX_DEPLOYMENT_TARGET=10.12
-	QMAKE_MAC_SDK = macosx10.12
-	QMAKE_CXXFLAGS += -Wno-nullability-completeness
-	QMAKE_CFLAGS += -Wno-nullability-completeness
-}
-
 macx {
+	rs_macos10.8 {
+		message(***retroshare.pri: Set Target and SDK to MacOS 10.8 )
+		QMAKE_MACOSX_DEPLOYMENT_TARGET=10.8
+		QMAKE_MAC_SDK = macosx10.8
+	}
+
+	rs_macos10.9 {
+		message(***retroshare.pri: Set Target and SDK to MacOS 10.9 )
+		QMAKE_MACOSX_DEPLOYMENT_TARGET=10.9
+		QMAKE_MAC_SDK = macosx10.9
+	}
+
+	rs_macos10.10 {
+		message(***retroshare.pri: Set Target and SDK to MacOS 10.10 )
+		QMAKE_MACOSX_DEPLOYMENT_TARGET=10.10
+		QMAKE_MAC_SDK = macosx10.10
+	}
+
+	rs_macos10.11 {
+		message(***retroshare.pri: Set Target and SDK to MacOS 10.11 )
+		QMAKE_MACOSX_DEPLOYMENT_TARGET=10.11
+		QMAKE_MAC_SDK = macosx10.11
+	}
+
+	rs_macos10.12 {
+		message(***retroshare.pri: Set Target and SDK to MacOS 10.12 )
+		QMAKE_MACOSX_DEPLOYMENT_TARGET=10.12
+		QMAKE_MAC_SDK = macosx10.12
+		QMAKE_CXXFLAGS += -Wno-nullability-completeness
+		QMAKE_CFLAGS += -Wno-nullability-completeness
+	}
+
 	message(***retroshare.pri:MacOSX)
 	BIN_DIR += "/usr/bin"
 	INC_DIR += "/usr/include"
