@@ -740,6 +740,7 @@ HEADERS += rsitems/rsnxsitems.h \
 	gxs/rsgxs.h \
 	gxs/rsdataservice.h \
 	gxs/rsgxsnetservice.h \
+	gxs/rsgxsnettunnel.h \
 	retroshare/rsgxsflags.h \
 	retroshare/rsgxsifacetypes.h \
 	gxs/rsgenexchange.h \
@@ -765,6 +766,7 @@ SOURCES += rsitems/rsnxsitems.cc \
 	gxs/rsdataservice.cc \
 	gxs/rsgenexchange.cc \
 	gxs/rsgxsnetservice.cc \
+	gxs/rsgxsnettunnel.cc \
 	gxs/rsgxsdata.cc \
 	rsitems/rsgxsitems.cc \
 	gxs/rsgxsdataaccess.cc \
