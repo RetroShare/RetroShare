@@ -106,6 +106,50 @@ To enable enable _protection_: +Android menu -> Settings -> Privacy & security
 
 Other devices may offer similar _features_ please report them.
 
+== Debugging with GDB
+
+QtCreator actually support debugging only for the foreground activity, so to
+debug what's happening in the core extra trickery is needed.
+First of all you need to authorize root access to applications, then once you
+plug your sacrifical Android phone run this commands
+
+.Run gdbserver as root on Android phone
+[source,bash]
+--------------------------------------------------------------------------------
+## Open a shell from your workstation on the connected Android phone
+adb shell
+
+## take note of the PID of the RetroShare process
+ps | grep retroshare
+
+## take the note of the phone IP
+ip address show
+
+## Gain root permissions on the shell
+su
+
+## Attach with gdbserver and listen on one TCP port
+gdbserver :4567 --attach $RETROSHARE_PID
+--------------------------------------------------------------------------------
+
+
+.Prepare and run Android NDK GDB on your workstation
+[source,bash]
+--------------------------------------------------------------------------------
+## Extract system lib from the phone to a temporary directory on your computer
+adb pull /system/lib /tmp/system_lib
+
+## Start Android NDK GDB of your phone architecture passing the executable
+/opt/android-ndk/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/bin/arm-linux-androideabi-gdb RetroShare-Android_for_armeabi_v7a_GCC_4_9_Qt_5_9_2_android_armv7-Debug/retroshare-android-service/src/libretroshare-android-service.so
+
+## Instruct GDB how and where to find libraries
+(gdb) set auto-solib-add on
+(gdb) set solib-search-path /tmp/system_lib
+
+## Connect to the gdbserver running on the phone
+(gdb) target remote $PHONE_IP:4567
+--------------------------------------------------------------------------------
+
 
 == Furter Readings
 
@@ -115,3 +159,5 @@ Other devices may offer similar _features_ please report them.
 - link:retroshare://file?name=Android%20Native%20Development%20Kit%20Cookbook.pdf&size=29214468&hash=0123361c1b14366ce36118e82b90faf7c7b1b136[]
 - link:https://groups.google.com/forum/#!topic/android-developers/srATPaL0aRU[]
 - link:https://stackoverflow.com/questions/31638986/protected-apps-setting-on-huawei-phones-and-how-to-handle-it[]
+- link:https://tthtlc.wordpress.com/2012/09/19/how-to-do-remote-debugging-via-gdbserver-running-inside-the-android-phone/[]
+- link:https://source.android.com/devices/tech/debug/gdb[]
