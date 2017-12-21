@@ -46,6 +46,10 @@
 #include "lang/languagesupport.h"
 #include "util/RsGxsUpdateBroadcast.h"
 
+#ifdef RETROTOR
+#include "TorControl/TorManager.h"
+#endif
+
 #include "retroshare/rsidentity.h"
 
 #ifdef SIGFPE_DEBUG
@@ -274,8 +278,26 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 	RshareSettings::Create ();
 
 	/* Setup The GUI Stuff */
-	Rshare rshare(args, argc, argv, 
-	              QString::fromUtf8(RsAccounts::ConfigDirectory().c_str()));
+	Rshare rshare(args, argc, argv,  QString::fromUtf8(RsAccounts::ConfigDirectory().c_str()));
+
+#ifdef RETROTOR
+	// Start the Tor engine, and make sure it provides a viable hidden service
+
+	/* Tor control manager */
+     Tor::TorManager *torManager = Tor::TorManager::instance();
+     torManager->setDataDirectory(Rshare::dataDirectory() + QString("/tor/"));
+     //torManager->setDataDirectory(QString("./tor"));//settings->filePath()).path() + QString("/tor/"));
+
+	 Tor::TorControl *torControl = torManager->control();
+     torManager->start();
+
+	 while(torManager->configurationNeeded())
+	 {
+		 usleep(1000*1000) ;
+
+		 // we should display some configuration window here!
+	 }
+#endif
 
 	/* Start RetroShare */
 	QSplashScreen splashScreen(QPixmap(":/images/logo/logo_splash.png")/* , Qt::WindowStaysOnTopHint*/);

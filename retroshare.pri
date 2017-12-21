@@ -3,6 +3,10 @@
 CONFIG *= retroshare_gui
 no_retroshare_gui:CONFIG -= retroshare_gui
 
+# To build the RetroTor executable, just include the following option
+
+CONFIG *= retrotor
+
 # To disable RetroShare-nogui append the following
 # assignation to qmake command line "CONFIG+=no_retroshare_nogui"
 CONFIG *= retroshare_nogui

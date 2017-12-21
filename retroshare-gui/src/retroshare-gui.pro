@@ -1,7 +1,7 @@
 !include("../../retroshare.pri"): error("Could not include file ../../retroshare.pri")
 
 TEMPLATE = app
-QT     += network xml
+QT     += network xml 
 CONFIG += qt gui uic qrc resources idle bitdht
 CONFIG += link_prl
 TARGET = retroshare
@@ -20,6 +20,9 @@ profiling {
 	QMAKE_LFLAGS *= -pg 
 }
 
+retrotor {
+	DEFINES *= RETROTOR
+}
 
 #QMAKE_CFLAGS += -fmudflap 
 #LIBS *= /usr/lib/gcc/x86_64-linux-gnu/4.4/libmudflap.a /usr/lib/gcc/x86_64-linux-gnu/4.4/libmudflapth.a
@@ -324,6 +327,47 @@ DEPENDPATH += $$PWD/../../libresapi/src
 INCLUDEPATH += $$PWD/../../libresapi/src
 PRE_TARGETDEPS *= $$OUT_PWD/../../libresapi/src/lib/libresapi.a
 LIBS += $$OUT_PWD/../../libresapi/src/lib/libresapi.a
+
+retrotor {
+HEADERS += 	TorControl/AddOnionCommand.h \
+				TorControl/AuthenticateCommand.h \
+				TorControl/GetConfCommand.h \
+				TorControl/HiddenService.h \
+				TorControl/ProtocolInfoCommand.h \
+				TorControl/SetConfCommand.h \
+				TorControl/TorControlCommand.h \
+				TorControl/TorControl.h \
+				TorControl/TorControlSocket.h \
+				TorControl/TorManager.h \
+				TorControl/TorProcess.h \
+				TorControl/TorProcess_p.h \
+				TorControl/TorSocket.h \
+				TorControl/Useful.h            \
+				TorControl/CryptoKey.h         \
+				TorControl/PendingOperation.h  \
+				TorControl/SecureRNG.h         \
+				TorControl/Settings.h          \
+				TorControl/StringUtil.h        \
+				TorControl/TorProcess_p.h        
+
+SOURCES += 	TorControl/AddOnionCommand.cpp \
+				TorControl/AuthenticateCommand.cpp \
+				TorControl/GetConfCommand.cpp \
+				TorControl/HiddenService.cpp \
+				TorControl/ProtocolInfoCommand.cpp \
+				TorControl/SetConfCommand.cpp \
+				TorControl/TorControlCommand.cpp \
+				TorControl/TorControl.cpp \
+				TorControl/TorControlSocket.cpp \
+				TorControl/TorManager.cpp \
+				TorControl/TorProcess.cpp \
+				TorControl/TorSocket.cpp \
+				TorControl/CryptoKey.cpp         \
+				TorControl/PendingOperation.cpp  \
+				TorControl/SecureRNG.cpp         \
+				TorControl/Settings.cpp          \
+				TorControl/StringUtil.cpp        
+}
 
 # Input
 HEADERS +=  rshare.h \
