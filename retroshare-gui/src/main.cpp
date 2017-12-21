@@ -289,21 +289,25 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 	torManager->setDataDirectory(Rshare::dataDirectory() + QString("/tor/"));
 	torManager->start();
 
-	TorControlDialog tcd(torManager) ;
-	tcd.show();
+	// We do not need to show this dialog. If too much of a pain, we may hide it and only show when it reports an error.
 
-	while(tcd.checkForTor() == TorControlDialog::TOR_STATUS_UNKNOWN)	// runs until some status is reached: either tor works, or it fails.
 	{
-		QCoreApplication::processEvents();
-		usleep(1000) ;
-	}
+		TorControlDialog tcd(torManager) ;
+		tcd.show();
 
-	tcd.hide();
+		while(tcd.checkForTor() == TorControlDialog::TOR_STATUS_UNKNOWN)	// runs until some status is reached: either tor works, or it fails.
+		{
+			QCoreApplication::processEvents();
+			usleep(1000) ;
+		}
 
-	if(tcd.checkForTor() != TorControlDialog::TOR_STATUS_OK)
-	{
-		QMessageBox::critical(NULL,QObject::tr("Tor not found!"),QObject::tr("Tor wasn't found on your system. Please install it and re-start Retroshare.")) ;
-		return 1 ;
+		tcd.hide();
+
+		if(tcd.checkForTor() != TorControlDialog::TOR_STATUS_OK)
+		{
+			QMessageBox::critical(NULL,QObject::tr("Tor not found!"),QObject::tr("Tor wasn't found on your system. Please install it and re-start Retroshare.")) ;
+			return 1 ;
+		}
 	}
 #endif
 
@@ -374,22 +378,25 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 #ifdef RETROTOR
 	// Now that we know the Tor service running, and we know the SSL id, we can make sure it provides a viable hidden service
 
-	/* Tor control manager */
-
-	tcd.show();
-
-	while(tcd.checkForHiddenService() == TorControlDialog::HIDDEN_SERVICE_STATUS_UNKNOWN)	// runs until some status is reached: either tor works, or it fails.
 	{
-		QCoreApplication::processEvents();
-		usleep(1000) ;
-	}
+		torManager->setDataDirectory(Rshare::dataDirectory() + QString("/tor/"));	// re-set it, because now it's changed to the specific location that is run
 
-	tcd.hide();
+		TorControlDialog tcd(torManager) ;
+		tcd.show();
 
-	if(tcd.checkForHiddenService() != TorControlDialog::HIDDEN_SERVICE_STATUS_OK)
-	{
-		QMessageBox::critical(NULL,QObject::tr("Cannot start a hidden tor service!"),QObject::tr("It was not possible to start a hidden service.")) ;
-		return 1 ;
+		while(tcd.checkForHiddenService() == TorControlDialog::HIDDEN_SERVICE_STATUS_UNKNOWN)	// runs until some status is reached: either tor works, or it fails.
+		{
+			QCoreApplication::processEvents();
+			usleep(1000) ;
+		}
+
+		tcd.hide();
+
+		if(tcd.checkForHiddenService() != TorControlDialog::HIDDEN_SERVICE_STATUS_OK)
+		{
+			QMessageBox::critical(NULL,QObject::tr("Cannot start a hidden tor service!"),QObject::tr("It was not possible to start a hidden service.")) ;
+			return 1 ;
+		}
 	}
 #endif
 

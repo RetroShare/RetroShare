@@ -10,6 +10,9 @@ DESTDIR = lib
 
 #CONFIG += dsdv
 
+retrotor {
+	DEFINES *= RETROTOR
+}
 # the dht stunner is used to obtain RS' external ip addr. when it is natted
 # this system is unreliable and rs supports a newer and better one (asking connected peers)
 # CONFIG += useDhtStunner

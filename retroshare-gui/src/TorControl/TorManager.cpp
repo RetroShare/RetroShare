@@ -118,6 +118,7 @@ QString TorManager::dataDirectory() const
 void TorManager::setDataDirectory(const QString &path)
 {
     d->dataDir = QDir::fromNativeSeparators(path);
+
     if (!d->dataDir.isEmpty() && !d->dataDir.endsWith(QLatin1Char('/')))
         d->dataDir.append(QLatin1Char('/'));
 }
