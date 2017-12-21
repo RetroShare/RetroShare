@@ -282,23 +282,29 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 	Rshare rshare(args, argc, argv,  QString::fromUtf8(RsAccounts::ConfigDirectory().c_str()));
 
 #ifdef RETROTOR
-	// Start the Tor engine, and make sure it provides a viable hidden service
+	// First check that we can start the Tor engine, if not, quit.
 
 	/* Tor control manager */
 	Tor::TorManager *torManager = Tor::TorManager::instance();
 	torManager->setDataDirectory(Rshare::dataDirectory() + QString("/tor/"));
-	//torManager->setDataDirectory(QString("./tor"));//settings->filePath()).path() + QString("/tor/"));
-
 	torManager->start();
 
 	TorControlDialog tcd(torManager) ;
-	tcd.exec();
-//	tcd.show() ;
-//
-//	while(true)
-//	{
-//		QCoreApplication::processEvents();
-//	}
+	tcd.show();
+
+	while(tcd.checkForTor() == TorControlDialog::TOR_STATUS_UNKNOWN)	// runs until some status is reached: either tor works, or it fails.
+	{
+		QCoreApplication::processEvents();
+		usleep(1000) ;
+	}
+
+	tcd.hide();
+
+	if(tcd.checkForTor() != TorControlDialog::TOR_STATUS_OK)
+	{
+		QMessageBox::critical(NULL,QObject::tr("Tor not found!"),QObject::tr("Tor wasn't found on your system. Please install it and re-start Retroshare.")) ;
+		return 1 ;
+	}
 #endif
 
 	/* Start RetroShare */
@@ -330,9 +336,10 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 			if (genCert)
 			{
 				GenCertDialog gd(false);
-				if (gd.exec () == QDialog::Rejected) {
+
+				if (gd.exec () == QDialog::Rejected)
 					return 1;
-				}
+
 				sDefaultGXSIdToCreate = gd.getGXSNickname();
 			}
 
@@ -363,6 +370,28 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 	Rshare::resetLanguageAndStyle();
 
 	SoundManager::create();
+
+#ifdef RETROTOR
+	// Now that we know the Tor service running, and we know the SSL id, we can make sure it provides a viable hidden service
+
+	/* Tor control manager */
+
+	tcd.show();
+
+	while(tcd.checkForHiddenService() == TorControlDialog::HIDDEN_SERVICE_STATUS_UNKNOWN)	// runs until some status is reached: either tor works, or it fails.
+	{
+		QCoreApplication::processEvents();
+		usleep(1000) ;
+	}
+
+	tcd.hide();
+
+	if(tcd.checkForHiddenService() != TorControlDialog::HIDDEN_SERVICE_STATUS_OK)
+	{
+		QMessageBox::critical(NULL,QObject::tr("Cannot start a hidden tor service!"),QObject::tr("It was not possible to start a hidden service.")) ;
+		return 1 ;
+	}
+#endif
 
 	splashScreen.showMessage(rshare.translate("SplashScreen", "Load configuration"), Qt::AlignHCenter | Qt::AlignBottom);
 

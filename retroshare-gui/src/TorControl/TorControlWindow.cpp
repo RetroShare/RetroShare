@@ -1,8 +1,13 @@
+#include <unistd.h>
+
 #include <QTimer>
 #include <QFile>
+#include <QTcpServer>
+
 #include <iostream>
 
 #include "TorControlWindow.h"
+#include "TorManager.h"
 #include "TorControl.h"
 #include "HiddenService.h"
 
@@ -19,37 +24,51 @@ TorControlDialog::TorControlDialog(Tor::TorManager *tm,QWidget *parent)
     QObject::connect(tm->control(),SIGNAL(bootstrapStatusChanged()),this,SLOT(statusChanged()));
     QObject::connect(tm->control(),SIGNAL(connectivityChanged()),this,SLOT(statusChanged()));
 
-    QTimer::singleShot(2000,this,SLOT(checkForHiddenService())) ;
-    //void configurationNeededChanged();
+    //QTimer::singleShot(2000,this,SLOT(checkForHiddenService())) ;
+
+    mIncomingServer = new QTcpServer(this) ;
+    mHiddenService = NULL ;
+
+    connect(mIncomingServer, SIGNAL(QTcpServer::newConnection()), this, SLOT(onIncomingConnection()));
+}
+
+void TorControlDialog::onIncomingConnection()
+{
+    std::cerr << "Incoming connection !!" << std::endl;
 }
 
 void TorControlDialog::setupHiddenService()
 {
-    QString keyData = m_settings->read("serviceKey").toString();
+    /*
+    QString keyData   = m_settings->read("serviceKey").toString();
     QString legacyDir = m_settings->read("dataDirectory").toString();
 
     if (!keyData.isEmpty())
     {
         CryptoKey key;
-        if (!key.loadFromData(QByteArray::fromBase64(keyData.toLatin1()), CryptoKey::PrivateKey, CryptoKey::DER)) {
+        if (!key.loadFromData(QByteArray::fromBase64(keyData.toLatin1()), CryptoKey::PrivateKey, CryptoKey::DER))
+        {
             qWarning() << "Cannot load service key from configuration";
             return;
         }
 
-        m_hiddenService = new Tor::HiddenService(key, legacyDir, this);
+        mHiddenService = new Tor::HiddenService(key, legacyDir, this);
     }
     else if (!legacyDir.isEmpty() && QFile::exists(legacyDir + QLatin1String("/private_key")))
     {
         qDebug() << "Attempting to load key from legacy filesystem format in" << legacyDir;
 
         CryptoKey key;
-        if (!key.loadFromFile(legacyDir + QLatin1String("/private_key"), CryptoKey::PrivateKey)) {
+        if (!key.loadFromFile(legacyDir + QLatin1String("/private_key"), CryptoKey::PrivateKey))
+        {
             qWarning() << "Cannot load legacy format key from" << legacyDir << "for conversion";
             return;
-        } else {
+        }
+        else
+        {
             keyData = QString::fromLatin1(key.encodedPrivateKey(CryptoKey::DER).toBase64());
             m_settings->write("serviceKey", keyData);
-            m_hiddenService = new Tor::HiddenService(key, legacyDir, this);
+            mHiddenService = new Tor::HiddenService(key, legacyDir, this);
         }
     }
     else if (!m_settings->read("initializing").toBool())
@@ -59,52 +78,54 @@ void TorControlDialog::setupHiddenService()
     }
     else
     {
-        m_hiddenService = new Tor::HiddenService(legacyDir, this);
+        mHiddenService = new Tor::HiddenService(legacyDir, this);
 
-        connect(m_hiddenService, &Tor::HiddenService::privateKeyChanged, this, [&]()
+        connect(mHiddenService, &Tor::HiddenService::privateKeyChanged, this, [&]()
         {
-                QString key = QString::fromLatin1(m_hiddenService->privateKey().encodedPrivateKey(CryptoKey::DER).toBase64());
+                QString key = QString::fromLatin1(mHiddenService->privateKey().encodedPrivateKey(CryptoKey::DER).toBase64());
                 m_settings->write("serviceKey", key);
             }
         );
     }
 
-    Q_ASSERT(m_hiddenService);
-    connect(m_hiddenService, SIGNAL(statusChanged(int,int)), SLOT(onStatusChanged(int,int)));
+    Q_ASSERT(mHiddenService);
+    connect(mHiddenService, SIGNAL(statusChanged(int,int)), SLOT(onStatusChanged(int,int)));
 
     // Generally, these are not used, and we bind to localhost and port 0
     // for an automatic (and portable) selection.
+
     QHostAddress address(m_settings->read("localListenAddress").toString());
+
     if (address.isNull())
         address = QHostAddress::LocalHost;
+
     quint16 port = (quint16)m_settings->read("localListenPort").toInt();
 
-    m_incomingServer = new QTcpServer(this);
-    if (!m_incomingServer->listen(address, port)) {
+    if (!mIncomingServer->listen(address, port))
+    {
         // XXX error case
-        qWarning() << "Failed to open incoming socket:" << m_incomingServer->errorString();
+        qWarning() << "Failed to open incoming socket:" << mIncomingServer->errorString();
         return;
     }
 
-    connect(m_incomingServer, &QTcpServer::newConnection, this, &UserIdentity::onIncomingConnection);
-
-    m_hiddenService->addTarget(9878, m_incomingServer->serverAddress(), m_incomingServer->serverPort());
-    torControl->addHiddenService(m_hiddenService);
+    mHiddenService->addTarget(9878, mIncomingServer->serverAddress(), mIncomingServer->serverPort());
+    torControl->addHiddenService(mHiddenService);
+    */
 }
 
-void TorControlDialog::checkForHiddenService()
-{
-	QList<Tor::HiddenService*> hidden_services = mTorManager->control()->hiddenServices();
-
-	std::cerr << "Checking for hidden services:" << std::endl;
-
-	if(hidden_services.empty())
-	{
-		setupHiddenService();
-
-		QTimer::singleShot(2000,this,SLOT(checkForHiddenService())) ;
-	}
-}
+// void TorControlDialog::checkForHiddenService()
+// {
+// 	QList<Tor::HiddenService*> hidden_services = mTorManager->control()->hiddenServices();
+//
+// 	std::cerr << "Checking for hidden services:" << std::endl;
+//
+// 	if(hidden_services.empty())
+// 	{
+// 		setupHiddenService();
+//
+// 		QTimer::singleShot(2000,this,SLOT(checkForHiddenService())) ;
+// 	}
+// }
 
 void TorControlDialog::statusChanged()
 {
@@ -120,7 +141,7 @@ void TorControlDialog::statusChanged()
 	case Tor::TorControl::NotConnected:		status_str = "Not connected" ; break ;
 	case Tor::TorControl::Connecting:		status_str = "Connecting" ; break ;
 	case Tor::TorControl::Authenticating:	status_str = "Authenticating" ; break ;
-	case Tor::TorControl::Connected:			status_str = "Connected" ; break ;
+	case Tor::TorControl::Connected:		status_str = "Connected" ; break ;
 	}
 
 	switch(torstatus)
@@ -128,7 +149,7 @@ void TorControlDialog::statusChanged()
 	default:
 	case Tor::TorControl::TorUnknown: 	torstatus_str = "Unknown" ; break ;
 	case Tor::TorControl::TorOffline: 	torstatus_str = "Tor offline" ; break ;
-	case Tor::TorControl::TorReady: 		torstatus_str = "Tor ready" ; break ;
+	case Tor::TorControl::TorReady: 	torstatus_str = "Tor ready" ; break ;
 	}
 
 	torStatus_LB->setText(torstatus_str + "(" + status_str + ")") ;
@@ -174,3 +195,24 @@ void TorControlDialog::showLog()
     torLog_TB->setText(s) ;
 	 QCoreApplication::processEvents() ;
 }
+
+TorControlDialog::TorStatus TorControlDialog::checkForTor()
+{
+	switch(mTorManager->control()->status())
+	{
+	case Tor::TorControl::Connected: usleep(2*1000*1000);return TOR_STATUS_OK ;
+	case Tor::TorControl::Error:     return TOR_STATUS_FAIL ;
+
+	default:
+		return TOR_STATUS_UNKNOWN ;
+	}
+}
+
+TorControlDialog::HiddenServiceStatus TorControlDialog::checkForHiddenService()
+{
+	return HIDDEN_SERVICE_STATUS_UNKNOWN ;
+}
+
+
+
+
