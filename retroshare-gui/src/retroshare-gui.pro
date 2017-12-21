@@ -22,6 +22,10 @@ profiling {
 
 retrotor {
 	DEFINES *= RETROTOR
+
+	FORMS   += TorControl/TorControlWindow.ui
+	SOURCES += TorControl/TorControlWindow.cpp
+	HEADERS += TorControl/TorControlWindow.h
 }
 
 #QMAKE_CFLAGS += -fmudflap 

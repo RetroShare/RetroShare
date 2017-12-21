@@ -48,6 +48,7 @@
 
 #ifdef RETROTOR
 #include "TorControl/TorManager.h"
+#include "TorControl/TorControlWindow.h"
 #endif
 
 #include "retroshare/rsidentity.h"
@@ -284,19 +285,20 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 	// Start the Tor engine, and make sure it provides a viable hidden service
 
 	/* Tor control manager */
-     Tor::TorManager *torManager = Tor::TorManager::instance();
-     torManager->setDataDirectory(Rshare::dataDirectory() + QString("/tor/"));
-     //torManager->setDataDirectory(QString("./tor"));//settings->filePath()).path() + QString("/tor/"));
+	Tor::TorManager *torManager = Tor::TorManager::instance();
+	torManager->setDataDirectory(Rshare::dataDirectory() + QString("/tor/"));
+	//torManager->setDataDirectory(QString("./tor"));//settings->filePath()).path() + QString("/tor/"));
 
-	 Tor::TorControl *torControl = torManager->control();
-     torManager->start();
+	torManager->start();
 
-	 while(torManager->configurationNeeded())
-	 {
-		 usleep(1000*1000) ;
-
-		 // we should display some configuration window here!
-	 }
+	TorControlDialog tcd(torManager) ;
+	tcd.exec();
+//	tcd.show() ;
+//
+//	while(true)
+//	{
+//		QCoreApplication::processEvents();
+//	}
 #endif
 
 	/* Start RetroShare */
