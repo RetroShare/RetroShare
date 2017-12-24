@@ -27,13 +27,13 @@ public:
     explicit pgpid_item_model(std::list<RsPgpId> &neighs, float &font_height, QObject *parent = nullptr);
 
     // Header:
-    QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
+    QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const ;
 
 
-    int rowCount(const QModelIndex &parent = QModelIndex()) const override;
-    int columnCount(const QModelIndex &parent = QModelIndex()) const override;
+    int rowCount(const QModelIndex &parent = QModelIndex()) const ;
+    int columnCount(const QModelIndex &parent = QModelIndex()) const ;
 
-    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const ;
 
     void setBackgroundColorSelf(QColor color) { mBackgroundColorSelf = color; }
     void setBackgroundColorOwnSign(QColor color) { mBackgroundColorOwnSign = color; }
