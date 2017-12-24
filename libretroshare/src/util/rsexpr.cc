@@ -135,7 +135,7 @@ std::string StringExpression::toStdString(const std::string& varstr) const
 		strlist += *iter + " ";
 
 	if(!strlist.empty())
-		strlist.pop_back();	// pops the last ","
+		strlist.resize(strlist.size()-1);	//strlist.pop_back();	// pops the last ",". c++11 is needed for pop_back()
 
 	switch(Op)
 	{
