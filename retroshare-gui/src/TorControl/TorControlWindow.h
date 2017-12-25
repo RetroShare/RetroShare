@@ -21,9 +21,10 @@ public:
 	};
 
 	enum HiddenServiceStatus {
-		HIDDEN_SERVICE_STATUS_UNKNOWN = 0x00,
-		HIDDEN_SERVICE_STATUS_OK      = 0x01,
-		HIDDEN_SERVICE_STATUS_FAIL    = 0x02
+		HIDDEN_SERVICE_STATUS_UNKNOWN   = 0x00,	// no information known.
+		HIDDEN_SERVICE_STATUS_FAIL      = 0x01, // some error occurred
+		HIDDEN_SERVICE_STATUS_REQUESTED = 0x02, // one service at least has been requested. Still being tested.
+		HIDDEN_SERVICE_STATUS_OK        = 0x03	// one service responds and has been tested
 	};
 
 	// Should be called multiple times in a loop until it returns something else than *_UNKNOWN
@@ -34,11 +35,10 @@ public:
 protected slots:
 	void showLog();
 	void statusChanged();
-//	void checkForHiddenService();
 	void onIncomingConnection();
 
 private:
-	void setupHiddenService();
+	HiddenServiceStatus mHiddenServiceStatus ;
 
 	Tor::TorManager *mTorManager ;
 	Tor::HiddenService *mHiddenService ;

@@ -60,6 +60,7 @@ class TorManager : public QObject
     Q_PROPERTY(QString dataDirectory READ dataDirectory WRITE setDataDirectory)
 
 public:
+
     explicit TorManager(QObject *parent = 0);
     static TorManager *instance();
 
@@ -68,6 +69,12 @@ public:
 
     QString dataDirectory() const;
     void setDataDirectory(const QString &path);
+
+    QString hiddenServiceDirectory() const;
+    void setHiddenServiceDirectory(const QString &path);
+
+	// Starts a hidden service, loading it from the config directory that has been set earlier.
+	bool setupHiddenService() ;
 
     // True on first run or when the Tor configuration wizard needs to be shown
     bool configurationNeeded() const;
@@ -79,6 +86,9 @@ public:
 
 public slots:
     void start();
+
+private slots:
+	void hiddenServicePrivateKeyChanged();
 
 signals:
     void configurationNeededChanged();

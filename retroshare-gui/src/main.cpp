@@ -379,7 +379,7 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 	// Now that we know the Tor service running, and we know the SSL id, we can make sure it provides a viable hidden service
 
 	{
-		torManager->setDataDirectory(Rshare::dataDirectory() + QString("/tor/"));	// re-set it, because now it's changed to the specific location that is run
+		torManager->setDataDirectory(Rshare::dataDirectory() + QString("/hidden_service/"));	// re-set it, because now it's changed to the specific location that is run
 
 		TorControlDialog tcd(torManager) ;
 		tcd.show();

@@ -37,96 +37,6 @@ void TorControlDialog::onIncomingConnection()
     std::cerr << "Incoming connection !!" << std::endl;
 }
 
-void TorControlDialog::setupHiddenService()
-{
-    /*
-    QString keyData   = m_settings->read("serviceKey").toString();
-    QString legacyDir = m_settings->read("dataDirectory").toString();
-
-    if (!keyData.isEmpty())
-    {
-        CryptoKey key;
-        if (!key.loadFromData(QByteArray::fromBase64(keyData.toLatin1()), CryptoKey::PrivateKey, CryptoKey::DER))
-        {
-            qWarning() << "Cannot load service key from configuration";
-            return;
-        }
-
-        mHiddenService = new Tor::HiddenService(key, legacyDir, this);
-    }
-    else if (!legacyDir.isEmpty() && QFile::exists(legacyDir + QLatin1String("/private_key")))
-    {
-        qDebug() << "Attempting to load key from legacy filesystem format in" << legacyDir;
-
-        CryptoKey key;
-        if (!key.loadFromFile(legacyDir + QLatin1String("/private_key"), CryptoKey::PrivateKey))
-        {
-            qWarning() << "Cannot load legacy format key from" << legacyDir << "for conversion";
-            return;
-        }
-        else
-        {
-            keyData = QString::fromLatin1(key.encodedPrivateKey(CryptoKey::DER).toBase64());
-            m_settings->write("serviceKey", keyData);
-            mHiddenService = new Tor::HiddenService(key, legacyDir, this);
-        }
-    }
-    else if (!m_settings->read("initializing").toBool())
-    {
-        qWarning() << "Missing private key for initialized identity";
-        return;
-    }
-    else
-    {
-        mHiddenService = new Tor::HiddenService(legacyDir, this);
-
-        connect(mHiddenService, &Tor::HiddenService::privateKeyChanged, this, [&]()
-        {
-                QString key = QString::fromLatin1(mHiddenService->privateKey().encodedPrivateKey(CryptoKey::DER).toBase64());
-                m_settings->write("serviceKey", key);
-            }
-        );
-    }
-
-    Q_ASSERT(mHiddenService);
-    connect(mHiddenService, SIGNAL(statusChanged(int,int)), SLOT(onStatusChanged(int,int)));
-
-    // Generally, these are not used, and we bind to localhost and port 0
-    // for an automatic (and portable) selection.
-
-    QHostAddress address(m_settings->read("localListenAddress").toString());
-
-    if (address.isNull())
-        address = QHostAddress::LocalHost;
-
-    quint16 port = (quint16)m_settings->read("localListenPort").toInt();
-
-    if (!mIncomingServer->listen(address, port))
-    {
-        // XXX error case
-        qWarning() << "Failed to open incoming socket:" << mIncomingServer->errorString();
-        return;
-    }
-
-    mHiddenService->addTarget(9878, mIncomingServer->serverAddress(), mIncomingServer->serverPort());
-    torControl->addHiddenService(mHiddenService);
-    */
-}
-
-// void TorControlDialog::checkForHiddenService()
-// {
-// 	QList<Tor::HiddenService*> hidden_services = mTorManager->control()->hiddenServices();
-//
-// 	std::cerr << "Checking for hidden services:" << std::endl;
-//
-// 	if(hidden_services.empty())
-// 	{
-// 		setupHiddenService();
-//
-// 		QTimer::singleShot(2000,this,SLOT(checkForHiddenService())) ;
-// 	}
-// }
-
 void TorControlDialog::statusChanged()
 {
 	int status = mTorManager->control()->status();
@@ -210,9 +120,32 @@ TorControlDialog::TorStatus TorControlDialog::checkForTor()
 
 TorControlDialog::HiddenServiceStatus TorControlDialog::checkForHiddenService()
 {
-	return HIDDEN_SERVICE_STATUS_UNKNOWN ;
+	std::cerr << "Checking for hidden services:" << std::endl;
+
+	switch(mHiddenServiceStatus)
+	{
+	case HIDDEN_SERVICE_STATUS_UNKNOWN: {
+
+		if(!mTorManager->setupHiddenService())
+		{
+			mHiddenServiceStatus = HIDDEN_SERVICE_STATUS_FAIL ;
+			return mHiddenServiceStatus ;
+		}
+		mHiddenServiceStatus = HIDDEN_SERVICE_STATUS_REQUESTED ;
+		break ;
+	}
+
+	case HIDDEN_SERVICE_STATUS_REQUESTED: {
+		QList<Tor::HiddenService*> hidden_services = mTorManager->control()->hiddenServices();
+
+		if(mHiddenService == NULL)
+			mHiddenService = *(hidden_services.begin()) ;
+	}
+	case  HIDDEN_SERVICE_STATUS_OK : break;
+
+	default: break ;
+	}
+
+	return mHiddenServiceStatus ;
 }
-
-
-
 

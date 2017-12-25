@@ -35,11 +35,15 @@
 #include "TorManager.h"
 #include "TorProcess.h"
 #include "TorControl.h"
+#include "CryptoKey.h"
+#include "HiddenService.h"
 #include "GetConfCommand.h"
 #include "Settings.h"
 #include <QFile>
 #include <QDir>
 #include <QCoreApplication>
+#include <QTcpServer>
+#include <QTextStream>
 
 using namespace Tor;
 
@@ -55,9 +59,12 @@ public:
     TorProcess *process;
     TorControl *control;
     QString dataDir;
+    QString hiddenServiceDir;
     QStringList logMessages;
     QString errorMessage;
     bool configNeeded;
+
+	HiddenService *hiddenService ;
 
     explicit TorManagerPrivate(TorManager *parent = 0);
 
@@ -121,6 +128,100 @@ void TorManager::setDataDirectory(const QString &path)
 
     if (!d->dataDir.isEmpty() && !d->dataDir.endsWith(QLatin1Char('/')))
         d->dataDir.append(QLatin1Char('/'));
+}
+
+QString TorManager::hiddenServiceDirectory() const
+{
+    return d->hiddenServiceDir;
+}
+void TorManager::setHiddenServiceDirectory(const QString &path)
+{
+    d->hiddenServiceDir = QDir::fromNativeSeparators(path);
+
+    if (!d->hiddenServiceDir.isEmpty() && !d->hiddenServiceDir.endsWith(QLatin1Char('/')))
+        d->hiddenServiceDir.append(QLatin1Char('/'));
+}
+
+bool TorManager::setupHiddenService()
+{
+    QString keyData   ;//= m_settings->read("serviceKey").toString();
+    QString legacyDir = d->hiddenServiceDir;
+
+//    if (!keyData.isEmpty())
+//    {
+//        CryptoKey key;
+//        if (!key.loadFromData(QByteArray::fromBase64(keyData.toLatin1()), CryptoKey::PrivateKey, CryptoKey::DER))
+//        {
+//            qWarning() << "Cannot load service key from configuration";
+//            return;
+//        }
+//
+//        mHiddenService = new Tor::HiddenService(key, legacyDir, this);
+//    }
+//    else
+
+	if (!legacyDir.isEmpty() && QFile::exists(legacyDir + QLatin1String("/private_key")))
+    {
+        qDebug() << "Attempting to load key from legacy filesystem format in" << legacyDir;
+
+        CryptoKey key;
+        if (!key.loadFromFile(legacyDir + QLatin1String("/private_key"), CryptoKey::PrivateKey))
+        {
+            qWarning() << "Cannot load legacy format key from" << legacyDir << "for conversion";
+            return false;
+        }
+        else
+        {
+            keyData = QString::fromLatin1(key.encodedPrivateKey(CryptoKey::DER).toBase64());
+            d->hiddenService = new Tor::HiddenService(key, legacyDir, this);
+        }
+    }
+//    else if (!m_settings->read("initializing").toBool())
+//    {
+//        qWarning() << "Missing private key for initialized identity";
+//        return;
+//    }
+    else
+    {
+        d->hiddenService = new Tor::HiddenService(legacyDir, this);
+
+        connect(d->hiddenService, SIGNAL(Tor::HiddenService::privateKeyChanged), this, SLOT(hiddenServicePrivateKeyChanged())) ;
+    }
+
+    Q_ASSERT(d->hiddenService);
+    connect(d->hiddenService, SIGNAL(statusChanged(int,int)), SLOT(onStatusChanged(int,int)));
+
+    // Generally, these are not used, and we bind to localhost and port 0
+    // for an automatic (and portable) selection.
+
+    QHostAddress address = QHostAddress::LocalHost;	// we only listen from localhost
+
+    quint16 port = 7934;//(quint16)m_settings->read("localListenPort").toInt();
+
+    if (!QTcpServer().listen(address, port))
+    {
+        // XXX error case
+        qWarning() << "Failed to open incoming socket on port :" << port;
+        return false;
+    }
+
+    //d->hiddenService->addTarget(9878, mIncomingServer->serverAddress(), mIncomingServer->serverPort());
+    d->hiddenService->addTarget(9878, QHostAddress::LocalHost,7934);
+    torControl->addHiddenService(d->hiddenService);
+
+	return true ;
+}
+
+void TorManager::hiddenServicePrivateKeyChanged()
+{
+	QString key = QString::fromLatin1(d->hiddenService->privateKey().encodedPrivateKey(CryptoKey::DER).toBase64());
+
+	QFile outfile(d->hiddenServiceDir + QLatin1String("/private_key")) ;
+    outfile.open( QIODevice::WriteOnly | QIODevice::Text );
+    QTextStream s(&outfile);
+
+    s << key ;
+    outfile.close();
 }
 
 bool TorManager::configurationNeeded() const

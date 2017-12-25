@@ -78,6 +78,7 @@ public:
         TorReady
     };
 
+
     explicit TorControl(QObject *parent = 0);
 
     /* Information */
