@@ -104,7 +104,7 @@ void TorSocket::reconnect()
 
     m_connectTimer.stop();
     if (!m_host.isEmpty() && m_port) {
-        qDebug() << "Attempting reconnection of socket to" << m_host << m_port;
+        std::cerr << "Attempting reconnection of socket to" << m_host.toStdString() << ":" << m_port << std::endl;
         connectToHost(m_host, m_port);
     }
 }
@@ -150,6 +150,6 @@ void TorSocket::onFailed()
     if (reconnectEnabled() && !m_connectTimer.isActive()) {
         m_connectAttempts++;
         m_connectTimer.start(reconnectInterval() * 1000);
-        qDebug() << "Reconnecting socket to" << m_host << m_port << "in" << m_connectTimer.interval() / 1000 << "seconds";
+        std::cerr << "Reconnecting socket to" << m_host.toStdString() << ":" << m_port << "in" << m_connectTimer.interval() / 1000 << "seconds" << std::endl;
     }
 }

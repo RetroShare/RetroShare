@@ -30,6 +30,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <iostream>
+
 #include "TorControlSocket.h"
 #include "TorControlCommand.h"
 #include <QDebug>
@@ -55,7 +57,7 @@ void TorControlSocket::sendCommand(TorControlCommand *command, const QByteArray 
     commandQueue.append(command);
     write(data);
 
-    qDebug() << "torctrl: Sent" << data.trimmed();
+    std::cerr << "torctrl: Sent: \"" << QString(data.trimmed()).toStdString() << "\"" << std::endl;
 }
 
 void TorControlSocket::registerEvent(const QByteArray &event, TorControlCommand *command)

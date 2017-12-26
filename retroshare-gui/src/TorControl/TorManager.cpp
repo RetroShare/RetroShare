@@ -147,6 +147,13 @@ bool TorManager::setupHiddenService()
     QString keyData   ;//= m_settings->read("serviceKey").toString();
     QString legacyDir = d->hiddenServiceDir;
 
+	std::cerr << "TorManager: setting up hidden service." << std::endl;
+
+	if(legacyDir.isNull())
+	{
+		std::cerr << "legacy dir not set! Cannot proceed." << std::endl;
+		return false ;
+	}
 //    if (!keyData.isEmpty())
 //    {
 //        CryptoKey key;
@@ -160,9 +167,11 @@ bool TorManager::setupHiddenService()
 //    }
 //    else
 
+	std::cerr << "Using legacy dir: " << legacyDir.toStdString() << std::endl;
+
 	if (!legacyDir.isEmpty() && QFile::exists(legacyDir + QLatin1String("/private_key")))
     {
-        qDebug() << "Attempting to load key from legacy filesystem format in" << legacyDir;
+        std::cerr << "Attempting to load key from legacy filesystem format in " << legacyDir.toStdString() << std::endl;
 
         CryptoKey key;
         if (!key.loadFromFile(legacyDir + QLatin1String("/private_key"), CryptoKey::PrivateKey))
@@ -170,11 +179,12 @@ bool TorManager::setupHiddenService()
             qWarning() << "Cannot load legacy format key from" << legacyDir << "for conversion";
             return false;
         }
-        else
-        {
-            keyData = QString::fromLatin1(key.encodedPrivateKey(CryptoKey::DER).toBase64());
-            d->hiddenService = new Tor::HiddenService(key, legacyDir, this);
-        }
+
+		keyData = QString::fromLatin1(key.encodedPrivateKey(CryptoKey::DER).toBase64());
+		d->hiddenService = new Tor::HiddenService(key, legacyDir, this);
+
+		std::cerr << "Got key from legacy dir: " << std::endl;
+		std::cerr << keyData.toStdString() << std::endl;
     }
 //    else if (!m_settings->read("initializing").toBool())
 //    {
@@ -185,11 +195,13 @@ bool TorManager::setupHiddenService()
     {
         d->hiddenService = new Tor::HiddenService(legacyDir, this);
 
-        connect(d->hiddenService, SIGNAL(Tor::HiddenService::privateKeyChanged), this, SLOT(hiddenServicePrivateKeyChanged())) ;
+		std::cerr << "Creating new hidden service." << std::endl;
+
+        connect(d->hiddenService, SIGNAL(privateKeyChanged()), this, SLOT(hiddenServicePrivateKeyChanged())) ;
     }
 
     Q_ASSERT(d->hiddenService);
-    connect(d->hiddenService, SIGNAL(statusChanged(int,int)), SLOT(onStatusChanged(int,int)));
+    connect(d->hiddenService, SIGNAL(statusChanged(int,int)), this, SLOT(hiddenServiceStatusChanged(int,int)));
 
     // Generally, these are not used, and we bind to localhost and port 0
     // for an automatic (and portable) selection.
@@ -198,18 +210,27 @@ bool TorManager::setupHiddenService()
 
     quint16 port = 7934;//(quint16)m_settings->read("localListenPort").toInt();
 
+	std::cerr << "Testing host address: " << address.toString().toStdString() << ":" << port ;
+
     if (!QTcpServer().listen(address, port))
     {
         // XXX error case
-        qWarning() << "Failed to open incoming socket on port :" << port;
+		std::cerr << " Failed to open incoming socket" << std::endl;
         return false;
     }
 
+	std::cerr << " OK - Adding hidden service to TorControl." << std::endl;
+
     //d->hiddenService->addTarget(9878, mIncomingServer->serverAddress(), mIncomingServer->serverPort());
     d->hiddenService->addTarget(9878, QHostAddress::LocalHost,7934);
-    torControl->addHiddenService(d->hiddenService);
+    control()->addHiddenService(d->hiddenService);
 
 	return true ;
+}
+
+void hiddenServiceStatusChanged(int old_status,int new_status)
+{
+	std::cerr << "Hidden service status changed from " << old_status << " to " << new_status << std::endl;
 }
 
 void TorManager::hiddenServicePrivateKeyChanged()
@@ -220,8 +241,25 @@ void TorManager::hiddenServicePrivateKeyChanged()
     outfile.open( QIODevice::WriteOnly | QIODevice::Text );
     QTextStream s(&outfile);
 
-    s << key ;
+	s << "-----BEGIN RSA PRIVATE KEY-----" << endl;
+
+	for(uint32_t i=0;i<key.length();i+=64)
+	    s << key.mid(i,64) << endl ;
+
+	s << "-----END RSA PRIVATE KEY-----" << endl;
+
     outfile.close();
+
+	std::cerr << "Hidden service private key changed!" << std::endl;
+	std::cerr << key.toStdString() << std::endl;
+
+	QFile outfile2(d->hiddenServiceDir + QLatin1String("/hostname")) ;
+    outfile2.open( QIODevice::WriteOnly | QIODevice::Text );
+    QTextStream t(&outfile2);
+
+	t << d->hiddenService->hostname() << endl;
+
+	outfile2.close();
 }
 
 bool TorManager::configurationNeeded() const
@@ -329,7 +367,8 @@ void TorManager::start()
 
 void TorManagerPrivate::processStateChanged(int state)
 {
-    qDebug() << Q_FUNC_INFO << state << TorProcess::Ready << process->controlPassword() << process->controlHost() << process->controlPort();
+    std::cerr << Q_FUNC_INFO << "state: " << state << " passwd=\"" << QString(process->controlPassword()).toStdString() << "\" " << process->controlHost().toString().toStdString()
+	         << ":" << process->controlPort() << std::endl;
     if (state == TorProcess::Ready) {
         control->setAuthPassword(process->controlPassword());
         control->connect(process->controlHost(), process->controlPort());
@@ -338,13 +377,13 @@ void TorManagerPrivate::processStateChanged(int state)
 
 void TorManagerPrivate::processErrorChanged(const QString &errorMessage)
 {
-    qDebug() << "tor error:" << errorMessage;
+    std::cerr << "tor error:" << errorMessage.toStdString() << std::endl;
     setError(errorMessage);
 }
 
 void TorManagerPrivate::processLogMessage(const QString &message)
 {
-    qDebug() << "tor:" << message;
+    std::cerr << "tor:" << message.toStdString() << std::endl;
     if (logMessages.size() >= 50)
         logMessages.takeFirst();
     logMessages.append(message);

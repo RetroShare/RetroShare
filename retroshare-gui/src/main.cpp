@@ -45,6 +45,7 @@
 #include "idle/idle.h"
 #include "lang/languagesupport.h"
 #include "util/RsGxsUpdateBroadcast.h"
+#include "util/rsdir.h"
 
 #ifdef RETROTOR
 #include "TorControl/TorManager.h"
@@ -281,35 +282,35 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 	/* Setup The GUI Stuff */
 	Rshare rshare(args, argc, argv,  QString::fromUtf8(RsAccounts::ConfigDirectory().c_str()));
 
-#ifdef RETROTOR
-	// First check that we can start the Tor engine, if not, quit.
-
-	/* Tor control manager */
-	Tor::TorManager *torManager = Tor::TorManager::instance();
-	torManager->setDataDirectory(Rshare::dataDirectory() + QString("/tor/"));
-	torManager->start();
-
-	// We do not need to show this dialog. If too much of a pain, we may hide it and only show when it reports an error.
-
-	{
-		TorControlDialog tcd(torManager) ;
-		tcd.show();
-
-		while(tcd.checkForTor() == TorControlDialog::TOR_STATUS_UNKNOWN)	// runs until some status is reached: either tor works, or it fails.
-		{
-			QCoreApplication::processEvents();
-			usleep(1000) ;
-		}
-
-		tcd.hide();
-
-		if(tcd.checkForTor() != TorControlDialog::TOR_STATUS_OK)
-		{
-			QMessageBox::critical(NULL,QObject::tr("Tor not found!"),QObject::tr("Tor wasn't found on your system. Please install it and re-start Retroshare.")) ;
-			return 1 ;
-		}
-	}
-#endif
+// #ifdef RETROTOR
+// 	// First check that we can start the Tor engine, if not, quit.
+//
+// 	/* Tor control manager */
+// 	Tor::TorManager *torManager = Tor::TorManager::instance();
+// 	torManager->setDataDirectory(Rshare::dataDirectory() + QString("/tor/"));
+// 	torManager->start();
+//
+// 	// We do not need to show this dialog. If too much of a pain, we may hide it and only show when it reports an error.
+// 	TorControlDialog tcd(torManager) ;
+//
+// 	{
+// 		tcd.show();
+//
+// 		while(tcd.checkForTor() == TorControlDialog::TOR_STATUS_UNKNOWN)	// runs until some status is reached: either tor works, or it fails.
+// 		{
+// 			QCoreApplication::processEvents();
+// 			usleep(1000) ;
+// 		}
+//
+// 		tcd.hide();
+//
+// 		if(tcd.checkForTor() != TorControlDialog::TOR_STATUS_OK)
+// 		{
+// 			QMessageBox::critical(NULL,QObject::tr("Tor not found!"),QObject::tr("Tor wasn't found on your system. Please install it and re-start Retroshare.")) ;
+// 			return 1 ;
+// 		}
+// 	}
+// #endif
 
 	/* Start RetroShare */
 	QSplashScreen splashScreen(QPixmap(":/images/logo/logo_splash.png")/* , Qt::WindowStaysOnTopHint*/);
@@ -378,16 +379,25 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 #ifdef RETROTOR
 	// Now that we know the Tor service running, and we know the SSL id, we can make sure it provides a viable hidden service
 
-	{
-		torManager->setDataDirectory(Rshare::dataDirectory() + QString("/hidden_service/"));	// re-set it, because now it's changed to the specific location that is run
+	QString tor_hidden_service_dir = QString::fromStdString(RsAccounts::AccountDirectory()) + QString("/hidden_service/") ;
 
+	Tor::TorManager *torManager = Tor::TorManager::instance();
+	torManager->setDataDirectory(Rshare::dataDirectory() + QString("/tor/"));
+	torManager->setHiddenServiceDirectory(tor_hidden_service_dir);	// re-set it, because now it's changed to the specific location that is run
+
+	RsDirUtil::checkCreateDirectory(std::string(tor_hidden_service_dir.toUtf8())) ;
+
+	torManager->setupHiddenService();
+	torManager->start();
+
+	{
 		TorControlDialog tcd(torManager) ;
 		tcd.show();
 
-		while(tcd.checkForHiddenService() == TorControlDialog::HIDDEN_SERVICE_STATUS_UNKNOWN)	// runs until some status is reached: either tor works, or it fails.
+		while(tcd.checkForHiddenService() != 1+TorControlDialog::HIDDEN_SERVICE_STATUS_OK)	// runs until some status is reached: either tor works, or it fails.
 		{
 			QCoreApplication::processEvents();
-			usleep(1000) ;
+			usleep(0.2*1000*1000) ;
 		}
 
 		tcd.hide();

@@ -16,8 +16,6 @@ TorControlDialog::TorControlDialog(Tor::TorManager *tm,QWidget *parent)
 {
 	setupUi(this) ;
 
-	QObject::connect(tm,SIGNAL(errorChanged()),this,SLOT(showLog())) ;
-
 	QObject::connect(tm->control(),SIGNAL(statusChanged(int,int)),this,SLOT(statusChanged())) ;
     QObject::connect(tm->control(),SIGNAL(connected()),this,SLOT(statusChanged()));
     QObject::connect(tm->control(),SIGNAL(disconnected()),this,SLOT(statusChanged()));
@@ -28,8 +26,14 @@ TorControlDialog::TorControlDialog(Tor::TorManager *tm,QWidget *parent)
 
     mIncomingServer = new QTcpServer(this) ;
     mHiddenService = NULL ;
+	mHiddenServiceStatus = HIDDEN_SERVICE_STATUS_UNKNOWN;
 
     connect(mIncomingServer, SIGNAL(QTcpServer::newConnection()), this, SLOT(onIncomingConnection()));
+
+	QTimer *timer = new QTimer ;
+
+	QObject::connect(timer,SIGNAL(timeout()),this,SLOT(showLog())) ;
+	timer->start(500) ;
 }
 
 void TorControlDialog::onIncomingConnection()
@@ -103,14 +107,16 @@ void TorControlDialog::showLog()
         s += *it + "\n" ;
 
     torLog_TB->setText(s) ;
-	 QCoreApplication::processEvents() ;
+//	 QCoreApplication::processEvents() ;
+
+//	 std::cerr << s.toStdString() << std::endl;
 }
 
 TorControlDialog::TorStatus TorControlDialog::checkForTor()
 {
 	switch(mTorManager->control()->status())
 	{
-	case Tor::TorControl::Connected: usleep(2*1000*1000);return TOR_STATUS_OK ;
+	case Tor::TorControl::Connected: usleep(1*1000*1000);return TOR_STATUS_OK ;
 	case Tor::TorControl::Error:     return TOR_STATUS_FAIL ;
 
 	default:
@@ -120,32 +126,60 @@ TorControlDialog::TorStatus TorControlDialog::checkForTor()
 
 TorControlDialog::HiddenServiceStatus TorControlDialog::checkForHiddenService()
 {
-	std::cerr << "Checking for hidden services:" << std::endl;
+	std::cerr << "Checking for hidden services:" ;
 
 	switch(mHiddenServiceStatus)
 	{
+	default:
 	case HIDDEN_SERVICE_STATUS_UNKNOWN: {
+
+		std::cerr << " trying to setup. " ;
 
 		if(!mTorManager->setupHiddenService())
 		{
 			mHiddenServiceStatus = HIDDEN_SERVICE_STATUS_FAIL ;
+			std::cerr << "Failed."  << std::endl;
 			return mHiddenServiceStatus ;
 		}
+		std::cerr << "Done."  << std::endl;
 		mHiddenServiceStatus = HIDDEN_SERVICE_STATUS_REQUESTED ;
-		break ;
+		return mHiddenServiceStatus ;
 	}
 
 	case HIDDEN_SERVICE_STATUS_REQUESTED: {
 		QList<Tor::HiddenService*> hidden_services = mTorManager->control()->hiddenServices();
 
-		if(mHiddenService == NULL)
-			mHiddenService = *(hidden_services.begin()) ;
-	}
-	case  HIDDEN_SERVICE_STATUS_OK : break;
+		if(hidden_services.empty())
+		{
+			std::cerr << "Not ready yet." << std::endl;
+			return mHiddenServiceStatus ;
+		}
+		else
+		{
+			if(mHiddenService == NULL)
+				mHiddenService = *(hidden_services.begin()) ;
 
-	default: break ;
-	}
+			Tor::HiddenService::Status hss = mHiddenService->status();
 
-	return mHiddenServiceStatus ;
+			std::cerr << "New service acquired. Status is " << hss ;
+
+			if(hss == Tor::HiddenService::Online)
+			{
+				mHiddenServiceStatus = HIDDEN_SERVICE_STATUS_OK ;
+				std::cerr << ": published and running!" << std::endl;
+
+				return mHiddenServiceStatus ;
+			}
+			else
+			{
+				std::cerr << ": not ready yet." << std::endl;
+				return mHiddenServiceStatus ;
+			}
+		}
+	}
+	case  HIDDEN_SERVICE_STATUS_OK :
+			std::cerr << "New service acquired." << std::endl;
+			return mHiddenServiceStatus ;
+	}
 }
 

@@ -4,6 +4,7 @@ TEMPLATE = app
 QT     += network xml 
 CONFIG += qt gui uic qrc resources idle bitdht
 CONFIG += link_prl
+CONFIG += console
 TARGET = retroshare
 DEFINES += TARGET=\\\"$${TARGET}\\\"
 

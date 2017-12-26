@@ -33,6 +33,8 @@
 #ifndef TORCONTROL_H
 #define TORCONTROL_H
 
+#include <iostream>
+
 #include <QObject>
 #include <QHostAddress>
 #include "PendingOperation.h"
