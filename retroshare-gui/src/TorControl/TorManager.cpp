@@ -95,6 +95,7 @@ TorManagerPrivate::TorManagerPrivate(TorManager *parent)
     , process(0)
     , control(new TorControl(this))
     , configNeeded(false)
+    , hiddenService(NULL)
 {
     connect(control, SIGNAL(statusChanged(int,int)), SLOT(controlStatusChanged(int)));
 }
@@ -144,6 +145,12 @@ void TorManager::setHiddenServiceDirectory(const QString &path)
 
 bool TorManager::setupHiddenService()
 {
+	if(d->hiddenService != NULL)
+	{
+		std::cerr << "TorManager: setupHiddenService() called twice! Not doing anything this time." << std::endl;
+		return true ;
+	}
+
     QString keyData   ;//= m_settings->read("serviceKey").toString();
     QString legacyDir = d->hiddenServiceDir;
 
