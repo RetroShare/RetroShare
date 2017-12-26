@@ -7,7 +7,7 @@ namespace Tor {
 	class TorManager ;
 }
 
-class TorControlDialog: public QDialog, public Ui::TorControlDialog
+class TorControlDialog: public QWidget, public Ui::TorControlDialog
 {
 	Q_OBJECT
 

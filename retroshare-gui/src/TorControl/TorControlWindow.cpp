@@ -3,6 +3,7 @@
 #include <QTimer>
 #include <QFile>
 #include <QTcpServer>
+#include <QGraphicsDropShadowEffect>
 
 #include <iostream>
 
@@ -34,6 +35,19 @@ TorControlDialog::TorControlDialog(Tor::TorManager *tm,QWidget *parent)
 
 	QObject::connect(timer,SIGNAL(timeout()),this,SLOT(showLog())) ;
 	timer->start(500) ;
+
+	// Hide some debug output for the released version
+//	torLog_TB->hide();
+	torBootstrapStatus_LB->hide();
+	label_2->hide();
+
+	setWindowFlags( Qt::Dialog | Qt::FramelessWindowHint );
+
+	adjustSize();
+
+//	QGraphicsDropShadowEffect *effect = new QGraphicsDropShadowEffect(this);
+//	effect->setBlurRadius(30.0);
+//	setGraphicsEffect(effect);
 }
 
 void TorControlDialog::onIncomingConnection()
@@ -66,7 +80,8 @@ void TorControlDialog::statusChanged()
 	case Tor::TorControl::TorReady: 	torstatus_str = "Tor ready" ; break ;
 	}
 
-	torStatus_LB->setText(torstatus_str + "(" + status_str + ")") ;
+	//torStatus_LB->setText(torstatus_str + "(" + status_str + ")") ;
+	torStatus_LB->setText(status_str) ;
 
 	QVariantMap qvm = mTorManager->control()->bootstrapStatus();
 	QString bootstrapstatus_str ;
@@ -79,23 +94,29 @@ void TorControlDialog::statusChanged()
 	QList<Tor::HiddenService*> hidden_services = mTorManager->control()->hiddenServices();
 
 	if(hidden_services.empty())
-		hiddenService_LB->setText(QString("None")) ;
+	{
+		hiddenServiceAddress_LB->setText(QString("[Not ready]")) ;
+		onionAddress_LB->setText(QString("[Not ready]")) ;
+	}
 	else
 	{
 		QString hiddenservices_str ;
 
 		for(auto it(hidden_services.begin());it!=hidden_services.end();++it)
 		{
-			hiddenservices_str += (*it)->hostname();
+			onionAddress_LB->setText((*it)->hostname());
 
 			for(auto it2((*it)->targets().begin());it2!=(*it)->targets().end();++it2)
-				hiddenservices_str += QString::number((*it2).servicePort) + ":" + (*it2).targetAddress.toString() + ":" + QString::number((*it2).targetPort) + " " ;
+			{
+				hiddenServiceAddress_LB->setText(QString::number((*it2).servicePort) + ":" + (*it2).targetAddress.toString() + ":" + QString::number((*it2).targetPort));
+				break ;
+			}
+			break ;
 		}
-
-		hiddenService_LB->setText(hiddenservices_str) ;
 	}
 
 	showLog();
+	adjustSize();
 }
 
 void TorControlDialog::showLog()
@@ -106,10 +127,9 @@ void TorControlDialog::showLog()
     for(QStringList::const_iterator it(logmsgs.begin());it!=logmsgs.end();++it)
         s += *it + "\n" ;
 
-    torLog_TB->setText(s) ;
-//	 QCoreApplication::processEvents() ;
+//    torLog_TB->setText(s) ;
 
-//	 std::cerr << s.toStdString() << std::endl;
+	 std::cerr << s.toStdString() << std::endl;
 }
 
 TorControlDialog::TorStatus TorControlDialog::checkForTor()

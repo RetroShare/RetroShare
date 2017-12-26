@@ -313,8 +313,6 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 // #endif
 
 	/* Start RetroShare */
-	QSplashScreen splashScreen(QPixmap(":/images/logo/logo_splash.png")/* , Qt::WindowStaysOnTopHint*/);
-
 	QString sDefaultGXSIdToCreate = "";
 	switch (initResult) {
 	case RS_INIT_OK:
@@ -348,13 +346,13 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 				sDefaultGXSIdToCreate = gd.getGXSNickname();
 			}
 
-			splashScreen.show();
+			//splashScreen.show();
 		}
 		break;
 	case RS_INIT_HAVE_ACCOUNT:
 		{
-			splashScreen.show();
-			splashScreen.showMessage(rshare.translate("SplashScreen", "Load profile"), Qt::AlignHCenter | Qt::AlignBottom);
+			//splashScreen.show();
+			//splashScreen.showMessage(rshare.translate("SplashScreen", "Load profile"), Qt::AlignHCenter | Qt::AlignBottom);
 
 			RsPeerId preferredId;
 			RsAccounts::GetPreferredAccountId(preferredId);
@@ -394,7 +392,12 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 		TorControlDialog tcd(torManager) ;
 		tcd.show();
 
-		while(tcd.checkForHiddenService() != 1+TorControlDialog::HIDDEN_SERVICE_STATUS_OK)	// runs until some status is reached: either tor works, or it fails.
+		while(tcd.checkForHiddenService() != TorControlDialog::HIDDEN_SERVICE_STATUS_OK)	// runs until some status is reached: either tor works, or it fails.
+		{
+			QCoreApplication::processEvents();
+			usleep(0.2*1000*1000) ;
+		}
+		for(uint32_t i=0;i<10;++i)	// give some time (2 secs) to see what's going on
 		{
 			QCoreApplication::processEvents();
 			usleep(0.2*1000*1000) ;
@@ -410,6 +413,9 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 	}
 #endif
 
+	QSplashScreen splashScreen(QPixmap(":/images/logo/logo_splash.png")/* , Qt::WindowStaysOnTopHint*/);
+
+	splashScreen.show();
 	splashScreen.showMessage(rshare.translate("SplashScreen", "Load configuration"), Qt::AlignHCenter | Qt::AlignBottom);
 
 	/* stop Retroshare if startup fails */
