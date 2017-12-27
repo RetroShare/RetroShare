@@ -5,16 +5,18 @@
 
 #include <retroshare/rsfiles.h>
 #include <retroshare/rspeers.h>
+#include <retroshare/rsnotify.h>
 
 namespace resource_api
 {
 
-class TransfersHandler: public ResourceRouter, Tickable
+class TransfersHandler: public ResourceRouter, Tickable, NotifyClient
 {
 public:
-	TransfersHandler(StateTokenServer* sts, RsFiles* files, RsPeers *peers);
+	TransfersHandler(StateTokenServer* sts, RsFiles* files, RsPeers *peers, RsNotify* notify);
     virtual ~TransfersHandler();
 
+	virtual void notifyListChange(int list, int type);
     // from Tickable
     virtual void tick();
 private:
@@ -26,6 +28,7 @@ private:
     StateTokenServer* mStateTokenServer;
     RsFiles* mFiles;
 	RsPeers* mRsPeers;
+	RsNotify* mNotify;
 
     StateToken mStateToken;
     time_t mLastUpdateTS;

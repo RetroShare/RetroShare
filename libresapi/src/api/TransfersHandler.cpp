@@ -6,8 +6,9 @@
 namespace resource_api
 {
 
-TransfersHandler::TransfersHandler(StateTokenServer *sts, RsFiles *files, RsPeers *peers):
-    mStateTokenServer(sts), mFiles(files), mRsPeers(peers), mLastUpdateTS(0)
+TransfersHandler::TransfersHandler(StateTokenServer *sts, RsFiles *files, RsPeers *peers,
+                                   RsNotify* notify):
+    mStateTokenServer(sts), mFiles(files), mRsPeers(peers), mLastUpdateTS(0), mNotify(notify)
 {
 	addResourceHandler("*", this, &TransfersHandler::handleWildcard);
 	addResourceHandler("downloads", this, &TransfersHandler::handleDownloads);
@@ -15,11 +16,23 @@ TransfersHandler::TransfersHandler(StateTokenServer *sts, RsFiles *files, RsPeer
 	addResourceHandler("control_download", this, &TransfersHandler::handleControlDownload);
 	mStateToken = mStateTokenServer->getNewToken();
 	mStateTokenServer->registerTickClient(this);
+	mNotify->registerNotifyClient(this);
 }
 
 TransfersHandler::~TransfersHandler()
 {
     mStateTokenServer->unregisterTickClient(this);
+	mNotify->unregisterNotifyClient(this);
+}
+
+void TransfersHandler::notifyListChange(int list, int /* type */)
+{
+	//RsStackMutex stack(mMtx); /********** STACK LOCKED MTX ******/
+	if(list == NOTIFY_LIST_TRANSFERLIST)
+	{
+		mStateTokenServer->discardToken(mStateToken);
+		mStateToken = mStateTokenServer->getNewToken();
+	}
 }
 
 const int UPDATE_PERIOD_SECONDS = 5;
