@@ -53,6 +53,7 @@
 #endif
 
 #include "retroshare/rsidentity.h"
+#include "retroshare/rspeers.h"
 
 #ifdef SIGFPE_DEBUG
 #include <fenv.h>
@@ -282,36 +283,6 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 	/* Setup The GUI Stuff */
 	Rshare rshare(args, argc, argv,  QString::fromUtf8(RsAccounts::ConfigDirectory().c_str()));
 
-// #ifdef RETROTOR
-// 	// First check that we can start the Tor engine, if not, quit.
-//
-// 	/* Tor control manager */
-// 	Tor::TorManager *torManager = Tor::TorManager::instance();
-// 	torManager->setDataDirectory(Rshare::dataDirectory() + QString("/tor/"));
-// 	torManager->start();
-//
-// 	// We do not need to show this dialog. If too much of a pain, we may hide it and only show when it reports an error.
-// 	TorControlDialog tcd(torManager) ;
-//
-// 	{
-// 		tcd.show();
-//
-// 		while(tcd.checkForTor() == TorControlDialog::TOR_STATUS_UNKNOWN)	// runs until some status is reached: either tor works, or it fails.
-// 		{
-// 			QCoreApplication::processEvents();
-// 			usleep(1000) ;
-// 		}
-//
-// 		tcd.hide();
-//
-// 		if(tcd.checkForTor() != TorControlDialog::TOR_STATUS_OK)
-// 		{
-// 			QMessageBox::critical(NULL,QObject::tr("Tor not found!"),QObject::tr("Tor wasn't found on your system. Please install it and re-start Retroshare.")) ;
-// 			return 1 ;
-// 		}
-// 	}
-// #endif
-
 	/* Start RetroShare */
 	QString sDefaultGXSIdToCreate = "";
 	switch (initResult) {
@@ -425,10 +396,34 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 		return 1;
 	}
 
+#ifdef RETROTOR
+	// Tor works with viable hidden service. Let's use it!
+
+	QString service_id ;
+	QString onion_address ;
+	uint16_t service_port ;
+	uint16_t service_target_port ;
+	QHostAddress service_target_address ;
+
+	torManager->getHiddenServiceInfo(service_id,onion_address,service_port,service_target_address,service_target_port);
+
+	std::cerr << "Got hidden service info: " << std::endl;
+	std::cerr << "  onion address  : " << onion_address.toStdString() << std::endl;
+	std::cerr << "  service_id     : " << service_id.toStdString() << std::endl;
+	std::cerr << "  service port   : " << service_port << std::endl;
+	std::cerr << "  target port    : " << service_target_port << std::endl;
+	std::cerr << "  target address : " << service_target_address.toString().toStdString() << std::endl;
+
+	std::cerr << "Setting proxy server to " << service_target_address.toString().toStdString() << ":" << service_target_port << std::endl;
+
+	rsPeers->setLocalAddress(rsPeers->getOwnId(), service_target_address.toString().toStdString(), service_target_port);
+	rsPeers->setHiddenNode(rsPeers->getOwnId(), onion_address.toStdString(), service_port);
+#endif
 
 	Rshare::initPlugins();
 
 	splashScreen.showMessage(rshare.translate("SplashScreen", "Create interface"), Qt::AlignHCenter | Qt::AlignBottom);
+	QCoreApplication::processEvents();	// forces splashscreen to show up
 
 	RsharePeerSettings::Create();
 

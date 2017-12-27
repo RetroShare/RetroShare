@@ -37,6 +37,7 @@
 
 #include <QObject>
 #include <QStringList>
+#include <QHostAddress>
 
 namespace Tor
 {
@@ -83,6 +84,8 @@ public:
 
     bool hasError() const;
     QString errorMessage() const;
+
+	bool getHiddenServiceInfo(QString& service_id,QString& service_onion_address,uint16_t& service_port, QHostAddress& service_target_address,uint16_t& target_port);
 
 public slots:
     void start();

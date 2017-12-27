@@ -91,28 +91,21 @@ void TorControlDialog::statusChanged()
 
 	torBootstrapStatus_LB->setText(bootstrapstatus_str) ;
 
-	QList<Tor::HiddenService*> hidden_services = mTorManager->control()->hiddenServices();
+	QString service_id ;
+	QString onion_address ;
+	QHostAddress service_target_address ;
+	uint16_t service_port ;
+	uint16_t target_port ;
 
-	if(hidden_services.empty())
+	if(mTorManager->getHiddenServiceInfo(service_id,onion_address,service_port, service_target_address,target_port))
 	{
-		hiddenServiceAddress_LB->setText(QString("[Not ready]")) ;
-		onionAddress_LB->setText(QString("[Not ready]")) ;
+		hiddenServiceAddress_LB->setText(QString::number(service_port) + ":" + service_target_address.toString() + ":" + QString::number(target_port));
+		onionAddress_LB->setText(onion_address);
 	}
 	else
 	{
-		QString hiddenservices_str ;
-
-		for(auto it(hidden_services.begin());it!=hidden_services.end();++it)
-		{
-			onionAddress_LB->setText((*it)->hostname());
-
-			for(auto it2((*it)->targets().begin());it2!=(*it)->targets().end();++it2)
-			{
-				hiddenServiceAddress_LB->setText(QString::number((*it2).servicePort) + ":" + (*it2).targetAddress.toString() + ":" + QString::number((*it2).targetPort));
-				break ;
-			}
-			break ;
-		}
+		hiddenServiceAddress_LB->setText(QString("[Not ready]")) ;
+		onionAddress_LB->setText(QString("[Not ready]")) ;
 	}
 
 	showLog();

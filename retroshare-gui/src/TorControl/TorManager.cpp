@@ -372,6 +372,32 @@ void TorManager::start()
     }
 }
 
+bool TorManager::getHiddenServiceInfo(QString& service_id,QString& service_onion_address,uint16_t& service_port, QHostAddress& service_target_address,uint16_t& target_port)
+{
+	QList<Tor::HiddenService*> hidden_services = control()->hiddenServices();
+
+	if(hidden_services.empty())
+		return false ;
+
+	// Only return the first one.
+
+	for(auto it(hidden_services.begin());it!=hidden_services.end();++it)
+	{
+		service_onion_address = (*it)->hostname();
+		service_id = (*it)->privateKey().torServiceID();
+
+		for(auto it2((*it)->targets().begin());it2!=(*it)->targets().end();++it2)
+		{
+			service_port = (*it2).servicePort ;
+			service_target_address = (*it2).targetAddress ;
+			target_port = (*it2).targetPort;
+			break ;
+		}
+		break ;
+	}
+	return true ;
+}
+
 void TorManagerPrivate::processStateChanged(int state)
 {
     std::cerr << Q_FUNC_INFO << "state: " << state << " passwd=\"" << QString(process->controlPassword()).toStdString() << "\" " << process->controlHost().toString().toStdString()
