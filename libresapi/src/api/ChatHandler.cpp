@@ -1082,6 +1082,7 @@ void ChatHandler::handleSendMessage(Request &req, Response &resp)
         resp.setOk();
     else
         resp.setFail("failed to send message");
+}
 
 void ChatHandler::handleMarkMessageAsRead(Request &req, Response &resp)
 {
