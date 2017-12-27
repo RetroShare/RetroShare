@@ -130,7 +130,8 @@ private:
     void handleClearLobby(Request& req, Response& resp);
     ResponseTask* handleLobbyParticipants(Request& req, Response& resp);
     void handleMessages(Request& req, Response& resp);
-    void handleSendMessage(Request& req, Response& resp);
+	void handleSendMessage(Request& req, Response& resp);
+	void handleMarkMessageAsRead(Request& req, Response& resp);
     void handleMarkChatAsRead(Request& req, Response& resp);
     void handleInfo(Request& req, Response& resp);
     ResponseTask *handleReceiveStatus(Request& req, Response& resp);

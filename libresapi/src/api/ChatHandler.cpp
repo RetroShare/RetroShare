@@ -45,6 +45,7 @@ StreamBase& operator << (StreamBase& left, ChatHandler::Msg& m)
 {
     left << makeKeyValueReference("incoming", m.incoming)
          << makeKeyValueReference("was_send", m.was_send)
+	     << makeKeyValueReference("read", m.read)
          << makeKeyValueReference("author_id", m.author_id)
          << makeKeyValueReference("author_name", m.author_name)
          << makeKeyValueReference("msg", m.msg)
@@ -175,7 +176,8 @@ ChatHandler::ChatHandler(StateTokenServer *sts, RsNotify *notify, RsMsgs *msgs, 
 	addResourceHandler("answer_to_invitation", this, &ChatHandler::handleAnswerToInvitation);
     addResourceHandler("lobby_participants", this, &ChatHandler::handleLobbyParticipants);
     addResourceHandler("messages", this, &ChatHandler::handleMessages);
-    addResourceHandler("send_message", this, &ChatHandler::handleSendMessage);
+	addResourceHandler("send_message", this, &ChatHandler::handleSendMessage);
+	addResourceHandler("mark_message_as_read", this, &ChatHandler::handleMarkMessageAsRead);
     addResourceHandler("mark_chat_as_read", this, &ChatHandler::handleMarkChatAsRead);
     addResourceHandler("info", this, &ChatHandler::handleInfo);
     addResourceHandler("receive_status", this, &ChatHandler::handleReceiveStatus);
@@ -1080,6 +1082,43 @@ void ChatHandler::handleSendMessage(Request &req, Response &resp)
         resp.setOk();
     else
         resp.setFail("failed to send message");
+
+void ChatHandler::handleMarkMessageAsRead(Request &req, Response &resp)
+{
+	std::string chat_id_string;
+	std::string msg_id;
+	req.mStream << makeKeyValueReference("chat_id", chat_id_string)
+	            << makeKeyValueReference("msg_id", msg_id);
+
+	ChatId chatId(chat_id_string);
+	if(chatId.isNotSet())
+	{
+		resp.setFail(chat_id_string + " is not a valid chat id");
+		return;
+	}
+
+	std::map<ChatId, std::list<Msg> >::iterator mit = mMsgs.find(chatId);
+	if(mit == mMsgs.end())
+	{
+		resp.setFail("chat not found. Maybe this chat does not have messages yet?");
+		return;
+	}
+
+	std::list<Msg>& msgs = mit->second;
+	for(std::list<Msg>::iterator lit = msgs.begin(); lit != msgs.end(); ++lit)
+	{
+		if(id((*lit)) == msg_id)
+			(*lit).read = true;
+	}
+
+	// lobby list contains unread msgs, so update it
+	if(chatId.isLobbyId())
+		mStateTokenServer->replaceToken(mLobbiesStateToken);
+	if(chatId.isPeerId() && mUnreadMsgNotify)
+		mUnreadMsgNotify->notifyUnreadMsgCountChanged(chatId.toPeerId(), 0);
+
+	mStateTokenServer->replaceToken(mMsgStateToken);
+	mStateTokenServer->replaceToken(mUnreadMsgsStateToken);
 }
 
 void ChatHandler::handleMarkChatAsRead(Request &req, Response &resp)
@@ -1109,6 +1148,7 @@ void ChatHandler::handleMarkChatAsRead(Request &req, Response &resp)
     if(id.isPeerId() && mUnreadMsgNotify)
         mUnreadMsgNotify->notifyUnreadMsgCountChanged(id.toPeerId(), 0);
 
+	mStateTokenServer->replaceToken(mMsgStateToken);
     mStateTokenServer->replaceToken(mUnreadMsgsStateToken);
 }
 
@@ -1150,7 +1190,8 @@ protected:
             // lobby and distant require to fetch a gxs_id
             if(mId.isLobbyId())
             {
-                requestGxsId(mInfo.author_id);
+				if(!mInfo.author_id.isNull())
+					requestGxsId(mInfo.author_id);
             }
             else if(mId.isDistantChatId())
             {
@@ -1163,6 +1204,7 @@ protected:
         else
         {
             std::string name = "BUG: case not handled in SendTypingLabelInfo";
+			RsGxsId author_id = mInfo.author_id;
             if(mId.isPeerId())
             {
                 name = mPeers->getPeerName(mId.toPeerId());
@@ -1172,6 +1214,7 @@ protected:
                 DistantChatPeerInfo dcpinfo ;
                 rsMsgs->getDistantChatStatus(mId.toDistantChatId(), dcpinfo);
                 name = getName(dcpinfo.to_id);
+				author_id = dcpinfo.to_id;
             }
             else if(mId.isLobbyId())
             {
@@ -1183,6 +1226,7 @@ protected:
             }
             uint32_t ts = mInfo.timestamp;
             resp.mDataStream << makeKeyValueReference("author_name", name)
+			                 << makeKeyValue("author_id", author_id.toStdString())
                              << makeKeyValueReference("timestamp", ts)
                              << makeKeyValueReference("status_string", mInfo.status);
             resp.mStateToken = mInfo.state_token;
@@ -1207,6 +1251,7 @@ ResponseTask* ChatHandler::handleReceiveStatus(Request &req, Response &resp)
         locked_storeTypingInfo(id, "");
         mit = mTypingLabelInfo.find(id);
     }
+
     return new SendTypingLabelInfo(mRsIdentity, mRsPeers, id, mit->second);
 }
 
