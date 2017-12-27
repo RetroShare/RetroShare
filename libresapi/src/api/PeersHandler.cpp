@@ -250,6 +250,7 @@ PeersHandler::PeersHandler( StateTokenServer* sts, RsNotify* notify,
 	addResourceHandler("set_network_options", this, &PeersHandler::handleSetNetworkOptions);
 	addResourceHandler("get_pgp_options", this, &PeersHandler::handleGetPGPOptions);
 	addResourceHandler("set_pgp_options", this, &PeersHandler::handleSetPGPOptions);
+	addResourceHandler("get_node_name", this, &PeersHandler::handleGetNodeName);
 	addResourceHandler("get_node_options", this, &PeersHandler::handleGetNodeOptions);
 	addResourceHandler("set_node_options", this, &PeersHandler::handleSetNodeOptions);
 	addResourceHandler("examine_cert", this, &PeersHandler::handleExamineCert);
@@ -1135,6 +1136,28 @@ void PeersHandler::handleSetPGPOptions(Request& req, Response& resp)
 		mRsPeers->signGPGCertificate(pgp);
 
 	resp.mStateToken = getCurrentStateToken();
+
+	resp.setOk();
+}
+
+void PeersHandler::handleGetNodeName(Request& req, Response& resp)
+{
+	std::string peer_id;
+	req.mStream << makeKeyValueReference("peer_id", peer_id);
+
+	RsPeerId peerId(peer_id);
+	RsPeerDetails detail;
+	if(!mRsPeers->getPeerDetails(peerId, detail))
+	{
+		resp.setFail();
+		return;
+	}
+
+	resp.mDataStream << makeKeyValue("peer_id", detail.id.toStdString());
+	resp.mDataStream << makeKeyValue("name", detail.name);
+	resp.mDataStream << makeKeyValue("location", detail.location);
+	resp.mDataStream << makeKeyValue("pgp_id", detail.gpg_id.toStdString());
+	resp.mDataStream << makeKeyValue("last_contact", detail.lastConnect);
 
 	resp.setOk();
 }
