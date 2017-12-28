@@ -59,7 +59,17 @@
 ///
 /// \brief hiddenServiceIncomingTab index of hidden serice incoming tab
 ///
-const static uint32_t hiddenServiceIncomingTab = 2;
+///
+
+#ifdef RETROTOR
+const static uint32_t TAB_HIDDEN_SERVICE_INCOMING = 1;
+const static uint32_t TAB_IP_FILTERS              = 99;	// This is a trick: these tabs do not exist, so enabling/disabling them has no effect
+const static uint32_t TAB_RELAYS                  = 99;
+#else
+const static uint32_t TAB_IP_FILTERS              = 1;
+const static uint32_t TAB_HIDDEN_SERVICE_INCOMING = 2;
+const static uint32_t TAB_RELAYS                  = 3;
+#endif
 
 //#define SERVER_DEBUG 1
 
@@ -71,6 +81,24 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
 
   manager = NULL ;
 
+#ifdef RETROTOR
+	ui.tabWidget->removeTab(3) ;	// remove relays. Not useful in Tor mode.
+	ui.tabWidget->removeTab(1) ;	// remove IP filters. Not useful in Tor mode.
+
+	ui.hiddenServiceTab->removeTab(1) ; // remove the Automatic I2P/BOB tab
+	ui.hiddenpage_proxyAddress_i2p->hide() ;
+	ui.hiddenpage_proxyLabel_i2p->hide() ;
+	ui.hiddenpage_proxyPort_i2p->hide() ;
+	ui.label_i2p_outgoing->hide() ;
+	ui.iconlabel_i2p_outgoing->hide() ;
+	ui.plainTextEdit->hide() ;
+	ui.hiddenpage_configuration->hide() ;
+	ui.l_hiddenpage_configuration->hide() ;
+	ui.hiddenpageInHelpPlainTextEdit->hide() ;
+
+	ui.hiddenpage_outHeader->setText(tr("Tor has been automatically configured by Retroshare. You shouldn't need to change anything here.")) ;
+	ui.hiddenpage_inHeader->setText(tr("Tor has been automatically configured by Retroshare. You shouldn't need to change anything here.")) ;
+#endif
     ui.filteredIpsTable->setHorizontalHeaderItem(COLUMN_RANGE,new QTableWidgetItem(tr("IP Range"))) ;
     ui.filteredIpsTable->setHorizontalHeaderItem(COLUMN_STATUS,new QTableWidgetItem(tr("Status"))) ;
     ui.filteredIpsTable->setHorizontalHeaderItem(COLUMN_ORIGIN,new QTableWidgetItem(tr("Origin"))) ;
@@ -98,7 +126,7 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
     for(std::list<std::string>::const_iterator it(ip_servers.begin());it!=ip_servers.end();++it)
         ui.IPServersLV->addItem(QString::fromStdString(*it)) ;
 
-    ui.hiddenServiceTab->setTabEnabled(hiddenServiceIncomingTab, false);
+    ui.hiddenServiceTab->setTabEnabled(TAB_HIDDEN_SERVICE_INCOMING, false);
     ui.gbBob->setEnabled(false);
     ui.swBobAdvanced->setCurrentIndex(0);
 
@@ -195,7 +223,6 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
 
 	QObject::connect(ui.enableCheckBox,SIGNAL(toggled(bool)),this,SLOT(updateRelayMode()));
 	QObject::connect(ui.serverCheckBox,SIGNAL(toggled(bool)),this,SLOT(updateRelayMode()));
-
 }
 
 void ServerPage::saveAndTestInProxy()
@@ -299,8 +326,8 @@ void ServerPage::load()
     if (mIsHiddenNode)
     {
         mHiddenType = detail.hiddenType;
-        ui.tabWidget->setTabEnabled(1,false) ; // ip filter
-		ui.tabWidget->setTabEnabled(3,false) ; // relay
+        ui.tabWidget->setTabEnabled(TAB_IP_FILTERS,false) ; // ip filter
+		ui.tabWidget->setTabEnabled(TAB_RELAYS,false) ; // relay
         loadHiddenNode();
         return;
     }
@@ -856,6 +883,8 @@ void ServerPage::toggleUPnP()
         settingChangeable = true;
     }
 
+	// Shouldn't we use readOnly instead of enabled??
+
     if (settingChangeable)
     {
         ui.localAddress->setEnabled(false);
@@ -1048,7 +1077,7 @@ void ServerPage::loadHiddenNode()
     ui.label_dynDNS->setVisible(false);
     ui.dynDNS      ->setVisible(false);
 
-    ui.hiddenServiceTab->setTabEnabled(hiddenServiceIncomingTab, true);
+    ui.hiddenServiceTab->setTabEnabled(TAB_HIDDEN_SERVICE_INCOMING, true);
 
     /* Addresses must be set here - otherwise can't edit it */
         /* set local address */

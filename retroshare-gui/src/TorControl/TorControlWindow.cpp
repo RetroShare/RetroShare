@@ -29,6 +29,7 @@ TorControlDialog::TorControlDialog(Tor::TorManager *tm,QWidget *parent)
     mIncomingServer = new QTcpServer(this) ;
     mHiddenService = NULL ;
 	mHiddenServiceStatus = HIDDEN_SERVICE_STATUS_UNKNOWN;
+	//mBootstrapPhaseFinished = false ;
 
     connect(mIncomingServer, SIGNAL(QTcpServer::newConnection()), this, SLOT(onIncomingConnection()));
 
@@ -51,19 +52,19 @@ void TorControlDialog::onIncomingConnection()
 
 void TorControlDialog::statusChanged()
 {
-	int status = mTorManager->control()->status();
+	int tor_control_status = mTorManager->control()->status();
 	int torstatus = mTorManager->control()->torStatus();
 
-	QString status_str,torstatus_str ;
+	QString tor_control_status_str,torstatus_str ;
 
-	switch(status)
+	switch(tor_control_status)
 	{
 	default:
-	case Tor::TorControl::Error :			status_str = "Error" ; break ;
-	case Tor::TorControl::NotConnected:		status_str = "Not connected" ; break ;
-	case Tor::TorControl::Connecting:		status_str = "Connecting" ; break ;
-	case Tor::TorControl::Authenticating:	status_str = "Authenticating" ; break ;
-	case Tor::TorControl::Connected:		status_str = "Connected" ; break ;
+	case Tor::TorControl::Error :			tor_control_status_str = "Error" ; break ;
+	case Tor::TorControl::NotConnected:		tor_control_status_str = "Not connected" ; break ;
+	case Tor::TorControl::Connecting:		tor_control_status_str = "Connecting" ; break ;
+	case Tor::TorControl::Authenticating:	tor_control_status_str = "Authenticating" ; break ;
+	case Tor::TorControl::Connected:		tor_control_status_str = "Connected" ; break ;
 	}
 
 	switch(torstatus)
@@ -74,11 +75,14 @@ void TorControlDialog::statusChanged()
 	case Tor::TorControl::TorReady: 	torstatus_str = "Tor ready" ; break ;
 	}
 
-	//torStatus_LB->setText(torstatus_str + "(" + status_str + ")") ;
-	torStatus_LB->setText(status_str) ;
+	torStatus_LB->setText(torstatus_str) ;
+	//torStatus_LB->setText(tor_control_status_str) ;
 
 	QVariantMap qvm = mTorManager->control()->bootstrapStatus();
 	QString bootstrapstatus_str ;
+
+	std::cerr << "Tor control status: " << tor_control_status_str.toStdString() << std::endl;
+	std::cerr << "Tor status: " << torstatus_str.toStdString() << std::endl;
 
 	std::cerr << "Bootstrap status map: " << std::endl;
 
@@ -142,11 +146,9 @@ void TorControlDialog::showLog()
 
 TorControlDialog::TorStatus TorControlDialog::checkForTor()
 {
-	switch(mTorManager->control()->status())
+	switch(mTorManager->control()->torStatus())
 	{
-	case Tor::TorControl::Connected: usleep(1*1000*1000);return TOR_STATUS_OK ;
-	case Tor::TorControl::Error:     return TOR_STATUS_FAIL ;
-
+	case Tor::TorControl::TorReady:  usleep(1*1000*1000);return TOR_STATUS_OK ;
 	default:
 		return TOR_STATUS_UNKNOWN ;
 	}

@@ -363,16 +363,16 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 		TorControlDialog tcd(torManager) ;
 		tcd.show();
 
-		while(tcd.checkForHiddenService() != TorControlDialog::HIDDEN_SERVICE_STATUS_OK)	// runs until some status is reached: either tor works, or it fails.
+		while(tcd.checkForTor() != TorControlDialog::TOR_STATUS_OK || tcd.checkForHiddenService() != TorControlDialog::HIDDEN_SERVICE_STATUS_OK)	// runs until some status is reached: either tor works, or it fails.
 		{
 			QCoreApplication::processEvents();
 			usleep(0.2*1000*1000) ;
 		}
-		for(uint32_t i=0;i<10;++i)	// give some time (2 secs) to see what's going on
-		{
-			QCoreApplication::processEvents();
-			usleep(0.2*1000*1000) ;
-		}
+//		for(uint32_t i=0;i<10;++i)	// give some time (2 secs) to see what's going on
+//		{
+//			QCoreApplication::processEvents();
+//			usleep(0.2*1000*1000) ;
+//		}
 
 		tcd.hide();
 
