@@ -57,7 +57,7 @@ void TorControlSocket::sendCommand(TorControlCommand *command, const QByteArray 
     commandQueue.append(command);
     write(data);
 
-    std::cerr << "torctrl: Sent: \"" << QString(data.trimmed()).toStdString() << "\"" << std::endl;
+    std::cerr << "[TOR CTRL] Sent: \"" << QString(data.trimmed()).toStdString() << "\"" << std::endl;
 }
 
 void TorControlSocket::registerEvent(const QByteArray &event, TorControlCommand *command)

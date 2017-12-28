@@ -403,9 +403,12 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 	QString onion_address ;
 	uint16_t service_port ;
 	uint16_t service_target_port ;
+	uint16_t proxy_server_port ;
 	QHostAddress service_target_address ;
+	QHostAddress proxy_server_address ;
 
 	torManager->getHiddenServiceInfo(service_id,onion_address,service_port,service_target_address,service_target_port);
+	torManager->getProxyServerInfo(proxy_server_address,proxy_server_port) ;
 
 	std::cerr << "Got hidden service info: " << std::endl;
 	std::cerr << "  onion address  : " << onion_address.toStdString() << std::endl;
@@ -418,6 +421,7 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 
 	rsPeers->setLocalAddress(rsPeers->getOwnId(), service_target_address.toString().toStdString(), service_target_port);
 	rsPeers->setHiddenNode(rsPeers->getOwnId(), onion_address.toStdString(), service_port);
+	rsPeers->setProxyServer(RS_HIDDEN_TYPE_TOR, proxy_server_address.toString().toStdString(),proxy_server_port) ;
 #endif
 
 	Rshare::initPlugins();

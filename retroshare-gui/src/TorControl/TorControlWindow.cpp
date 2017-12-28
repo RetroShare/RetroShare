@@ -1,4 +1,5 @@
 #include <unistd.h>
+#include <set>
 
 #include <QTimer>
 #include <QFile>
@@ -37,17 +38,10 @@ TorControlDialog::TorControlDialog(Tor::TorManager *tm,QWidget *parent)
 	timer->start(500) ;
 
 	// Hide some debug output for the released version
-//	torLog_TB->hide();
-	torBootstrapStatus_LB->hide();
-	label_2->hide();
 
 	setWindowFlags( Qt::Dialog | Qt::FramelessWindowHint );
 
 	adjustSize();
-
-//	QGraphicsDropShadowEffect *effect = new QGraphicsDropShadowEffect(this);
-//	effect->setBlurRadius(30.0);
-//	setGraphicsEffect(effect);
 }
 
 void TorControlDialog::onIncomingConnection()
@@ -86,10 +80,15 @@ void TorControlDialog::statusChanged()
 	QVariantMap qvm = mTorManager->control()->bootstrapStatus();
 	QString bootstrapstatus_str ;
 
-	for(auto it(qvm.begin());it!=qvm.end();++it)
-		bootstrapstatus_str += it.key() + ":" + it.value().toString();
+	std::cerr << "Bootstrap status map: " << std::endl;
 
-	torBootstrapStatus_LB->setText(bootstrapstatus_str) ;
+	for(auto it(qvm.begin());it!=qvm.end();++it)
+		std::cerr << "  " << it.key().toStdString() << " : " << it.value().toString().toStdString() << std::endl;
+
+	if(!qvm["progress"].toString().isNull())
+		torBootstrapStatus_LB->setText(qvm["progress"].toString() + " % (" + qvm["summary"].toString() + ")") ;
+	else
+		torBootstrapStatus_LB->setText(tr("[Waiting for Tor...]")) ;
 
 	QString service_id ;
 	QString onion_address ;
@@ -110,19 +109,35 @@ void TorControlDialog::statusChanged()
 
 	showLog();
 	adjustSize();
+
+	QCoreApplication::processEvents();	// forces update
 }
 
 void TorControlDialog::showLog()
 {
+	static std::set<QString> already_seen ;
+
     QString s ;
     QStringList logmsgs = mTorManager->logMessages() ;
+	bool can_print = false ;
 
     for(QStringList::const_iterator it(logmsgs.begin());it!=logmsgs.end();++it)
+	{
         s += *it + "\n" ;
 
-//    torLog_TB->setText(s) ;
+		if(already_seen.find(*it) == already_seen.end())
+		{
+			can_print = true ;
+			already_seen.insert(*it);
+		}
 
-	 std::cerr << s.toStdString() << std::endl;
+		if(can_print)
+			std::cerr << "[TOR DEBUG LOG] " << (*it).toStdString() << std::endl;
+	}
+
+//    torLog_TB->setText(s) ;:
+
+	std::cerr << "Connexion Proxy: " << mTorManager->control()->socksAddress().toString().toStdString() << ":" << mTorManager->control()->socksPort() << std::endl;
 }
 
 TorControlDialog::TorStatus TorControlDialog::checkForTor()

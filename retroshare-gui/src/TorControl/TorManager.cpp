@@ -372,6 +372,14 @@ void TorManager::start()
     }
 }
 
+bool TorManager::getProxyServerInfo(QHostAddress& proxy_server_adress,uint16_t& proxy_server_port)
+{
+	proxy_server_adress = control()->socksAddress();
+	proxy_server_port   = control()->socksPort();
+
+	return proxy_server_port > 1023 ;
+}
+
 bool TorManager::getHiddenServiceInfo(QString& service_id,QString& service_onion_address,uint16_t& service_port, QHostAddress& service_target_address,uint16_t& target_port)
 {
 	QList<Tor::HiddenService*> hidden_services = control()->hiddenServices();
@@ -488,7 +496,7 @@ bool TorManagerPrivate::createDefaultTorrc(const QString &path)
     static const char defaultTorrcContent[] =
         "SocksPort auto\n"
         "AvoidDiskWrites 1\n"
-        "DisableNetwork 1\n"
+//        "DisableNetwork 1\n"	// (cyril) I removed this because it prevents Tor to bootstrap.
         "__ReloadTorrcOnSIGHUP 0\n";
 
     QFile file(path);

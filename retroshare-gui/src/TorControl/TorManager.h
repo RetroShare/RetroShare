@@ -86,6 +86,7 @@ public:
     QString errorMessage() const;
 
 	bool getHiddenServiceInfo(QString& service_id,QString& service_onion_address,uint16_t& service_port, QHostAddress& service_target_address,uint16_t& target_port);
+	bool getProxyServerInfo(QHostAddress& proxy_server_adress,uint16_t& proxy_server_port);
 
 public slots:
     void start();
