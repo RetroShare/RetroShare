@@ -175,6 +175,10 @@ ChatHandler::ChatHandler(StateTokenServer *sts, RsNotify *notify, RsMsgs *msgs, 
 	addResourceHandler("get_invitations_to_lobby", this, &ChatHandler::handleGetInvitationsToLobby);
 	addResourceHandler("answer_to_invitation", this, &ChatHandler::handleAnswerToInvitation);
     addResourceHandler("lobby_participants", this, &ChatHandler::handleLobbyParticipants);
+	addResourceHandler("get_default_identity_for_chat_lobby", this, &ChatHandler::handleGetDefaultIdentityForChatLobby);
+	addResourceHandler("set_default_identity_for_chat_lobby", this, &ChatHandler::handleSetDefaultIdentityForChatLobby);
+	addResourceHandler("get_identity_for_chat_lobby", this, &ChatHandler::handleGetIdentityForChatLobby);
+	addResourceHandler("set_identity_for_chat_lobby", this, &ChatHandler::handleSetIdentityForChatLobby);
     addResourceHandler("messages", this, &ChatHandler::handleMessages);
 	addResourceHandler("send_message", this, &ChatHandler::handleSendMessage);
 	addResourceHandler("mark_message_as_read", this, &ChatHandler::handleMarkMessageAsRead);
@@ -1032,6 +1036,82 @@ ResponseTask* ChatHandler::handleLobbyParticipants(Request &req, Response &resp)
         return 0;
     }
     return new SendLobbyParticipantsTask(mRsIdentity, mit->second);
+}
+
+void ChatHandler::handleGetDefaultIdentityForChatLobby(Request& req, Response& resp)
+{
+	RsGxsId gxsId;
+	mRsMsgs->getDefaultIdentityForChatLobby(gxsId);
+	resp.mDataStream << makeKeyValue("gxs_id", gxsId.toStdString());
+	resp.setOk();
+}
+
+void ChatHandler::handleSetDefaultIdentityForChatLobby(Request& req, Response& resp)
+{
+	std::string gxs_id;
+	req.mStream << makeKeyValueReference("gxs_id", gxs_id);
+	RsGxsId gxsId(gxs_id);
+
+	if(gxsId.isNull())
+	{
+		resp.setFail("Error: gxs_id must not be null");
+		return;
+	}
+
+	if(mRsMsgs->setDefaultIdentityForChatLobby(gxsId))
+		resp.setOk();
+	else
+		resp.setFail("Failure to change default identity for chat lobby");
+}
+
+void ChatHandler::handleGetIdentityForChatLobby(Request& req, Response& resp)
+{
+	RsGxsId gxsId;
+	std::string chat_id;
+	req.mStream << makeKeyValueReference("chat_id", chat_id);
+	ChatId chatId(chat_id);
+
+	if(chatId.isNotSet())
+	{
+		resp.setFail("Error: chat_id must not be null");
+		return;
+	}
+
+	if(mRsMsgs->getIdentityForChatLobby(chatId.toLobbyId(), gxsId))
+	{
+		resp.mDataStream << makeKeyValue("gxs_id", gxsId.toStdString());
+		resp.setOk();
+	}
+	else
+		resp.setFail();
+}
+
+void ChatHandler::handleSetIdentityForChatLobby(Request& req, Response& resp)
+{
+	std::string chat_id;
+	req.mStream << makeKeyValueReference("chat_id", chat_id);
+	ChatId chatId(chat_id);
+
+	if(chatId.isNotSet())
+	{
+		resp.setFail("Error: chat_id must not be null");
+		return;
+	}
+
+	std::string gxs_id;
+	req.mStream << makeKeyValueReference("gxs_id", gxs_id);
+	RsGxsId gxsId(gxs_id);
+
+	if(gxsId.isNull())
+	{
+		resp.setFail("Error: gxs_id must not be null");
+		return;
+	}
+
+	if(mRsMsgs->setIdentityForChatLobby(chatId.toLobbyId(), gxsId))
+		resp.setOk();
+	else
+		resp.setFail();
 }
 
 void ChatHandler::handleMessages(Request &req, Response &resp)
