@@ -1435,10 +1435,12 @@ void ChatHandler::handleCloseDistantChatConnexion(Request& req, Response& resp)
 {
 	std::string distant_chat_hex;
 	req.mStream << makeKeyValueReference("distant_chat_hex", distant_chat_hex);
+	ChatId chatId(distant_chat_hex);
 
-	DistantChatPeerId chat_id(distant_chat_hex);
-	if (mRsMsgs->closeDistantChatConnexion(chat_id)) resp.setOk();
-	else resp.setFail("Failed to close distant chat");
+	if (mRsMsgs->closeDistantChatConnexion(chatId.toDistantChatId()))
+		resp.setOk();
+	else
+		resp.setFail("Failed to close distant chat");
 }
 
 void ChatHandler::handleCreateLobby(Request& req, Response& resp)
