@@ -27,12 +27,16 @@ time=`git log --pretty=format:"%aD" | head -1 | cut -d\  -f5 | sed -e s/://g`
 hhsh=`git log --pretty=format:"%H" | head -1 | cut -c1-8`
 
 rev=${date}.${hhsh}
+useretrotor="false"
 
 while [ ${#} -gt 0 ]; do
     case ${1} in
         "-rev") shift
             rev=${1}
             shift
+            ;;
+        "-retrotor") shift
+		  		useretrotor="true"
             ;;
         "-distribution") shift
             dist=${1}
@@ -70,6 +74,10 @@ echo "  "Time               : ${time}
 echo "  "Hash               : ${hhsh}
 echo "  "Using branch       : ${branch}
 echo "  "Using revision     : ${rev}
+
+if test ${useretrotor} = "true"; then
+	echo "  "Specific flags     : retrotor
+fi
 
 echo Done.
 version="${version}"."${rev}"
@@ -120,6 +128,10 @@ echo Calling debuild...
 for i in ${dist}; do
     echo copying changelog for ${i}
     sed -e s/XXXXXX/"${rev}"/g -e s/YYYYYY/"${i}"/g ../changelog > debian/changelog
+
+	 if test ${useretrotor} = "true"; then
+	 	cp ../rules.retrotor debian/rules
+	 fi
 
     if test -f ../control."${i}" ; then
 		echo \/\!\\ Using specific control file for distribution "${i}"
