@@ -4,7 +4,9 @@
 #include "pqi/pqinetstatebox.h"
 #include "time.h"
 
+#ifdef RS_USE_BITDHT
 #include "bitdht/bdiface.h"
+#endif
 
 // External Interface.
 

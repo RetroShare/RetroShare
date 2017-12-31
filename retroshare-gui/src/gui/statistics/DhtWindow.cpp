@@ -279,6 +279,7 @@ void DhtWindow::updateNetStatus()
 
 void DhtWindow::updateNetPeers()
 {
+#ifdef RS_USE_BITDHT
 	//QTreeWidget *peerTreeWidget = ui.peerTreeWidget;
 
 	std::list<RsPeerId> peerIds;
@@ -364,7 +365,6 @@ void DhtWindow::updateNetPeers()
     QHeaderView * _header = ui.peerTreeWidget->header () ;
     _header->resizeSection ( PTW_COL_RSNAME, 170 );
     
-
 		/* update the data */
 		RsDhtNetPeer status;
 		rsDht->getNetPeerStatus(*it, status);
@@ -518,6 +518,7 @@ void DhtWindow::updateNetPeers()
 
 
 	//peerSummaryLabel->setText(connstr);
+#endif
 }
 
 

@@ -484,6 +484,7 @@ void ConnectProgressDialog::updateLookupStatus()
 
 	ui->LookupProgressBar->setValue(calcProgress(now, mLookupTS, CONNECT_LOOKUP_TYPICAL, CONNECT_LOOKUP_SLOW, CONNECT_LOOKUP_PERIOD));
 
+#ifdef RS_USE_BITDHT
 	/* now actually look at the DHT Details */
 	RsDhtNetPeer status;
 	rsDht->getNetPeerStatus(mId, status);
@@ -520,6 +521,7 @@ void ConnectProgressDialog::updateLookupStatus()
 			mLookupStatus = CONNECT_LOOKUP_ONLINE;
 			break;
 	}
+#endif
 }
 
 
@@ -572,6 +574,7 @@ void ConnectProgressDialog::updateUdpStatus()
 
 	ui->UdpProgressBar->setValue(calcProgress(now, mUdpTS, CONNECT_UDP_TYPICAL, CONNECT_UDP_SLOW, CONNECT_UDP_PERIOD));
 
+#ifdef RS_USE_BITDHT
 	/* now lookup details from Dht */
 	RsDhtNetPeer status;
 	rsDht->getNetPeerStatus(mId, status);
@@ -599,6 +602,7 @@ void ConnectProgressDialog::updateUdpStatus()
 			}
 		}
 	}
+#endif
 }
 
 
