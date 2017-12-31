@@ -36,7 +36,7 @@ while [ ${#} -gt 0 ]; do
             shift
             ;;
         "-retrotor") shift
-		  		useretrotor="true"
+	  		useretrotor="true"
             ;;
         "-distribution") shift
             dist=${1}
@@ -57,6 +57,11 @@ while [ ${#} -gt 0 ]; do
             ;;
     esac
 done
+
+if test "${useretrotor}" = "true"; then
+	gitpath="https://github.com/csoler/RetroShare.git"
+	branch="v0.6-TorOnly"
+fi
 
 if test "${dist}" = "" ; then
 	dist="precise trusty xenial zesty artful"
@@ -91,7 +96,7 @@ echo Extracting base archive...
 mkdir -p ${workdir}/src
 echo Checking out latest snapshot...
 cd ${workdir}/src
-git clone --depth 1 https://github.com/RetroShare/RetroShare.git --single-branch --branch $branch .
+git clone --depth 1 ${gitpath} --single-branch --branch $branch .
 
 #  if ! test "$hhsh" = "" ; then
 #  	echo Checking out revision $hhsh
@@ -131,15 +136,14 @@ for i in ${dist}; do
 
 	 if test ${useretrotor} = "true"; then
 	 	cp ../rules.retrotor debian/rules
-	 fi
-
-    if test -f ../control."${i}" ; then
+	 	cp ../control.trusty_retrotor debian/control
+    elif test -f ../control."${i}" ; then
 		echo \/\!\\ Using specific control file for distribution "${i}"
-        cp ../control."${i}" debian/control
+      cp ../control."${i}" debian/control
     else
 		echo Using standard control file control."${i}" for distribution "${i}"
-        cp ../debian/control debian/control
-    fi
+      cp ../debian/control debian/control
+	 fi
 
     debuild -S -k${gpgkey}
 done
