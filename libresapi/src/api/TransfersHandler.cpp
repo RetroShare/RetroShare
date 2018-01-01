@@ -8,7 +8,8 @@ namespace resource_api
 
 TransfersHandler::TransfersHandler(StateTokenServer *sts, RsFiles *files, RsPeers *peers,
                                    RsNotify* notify):
-    mStateTokenServer(sts), mFiles(files), mRsPeers(peers), mLastUpdateTS(0), mNotify(notify)
+    mStateTokenServer(sts), mFiles(files), mRsPeers(peers), mLastUpdateTS(0), mNotify(notify),
+   mMtx("TransfersHandler")
 {
 	addResourceHandler("*", this, &TransfersHandler::handleWildcard);
 	addResourceHandler("downloads", this, &TransfersHandler::handleDownloads);
@@ -27,9 +28,9 @@ TransfersHandler::~TransfersHandler()
 
 void TransfersHandler::notifyListChange(int list, int /* type */)
 {
-	//RsStackMutex stack(mMtx); /********** STACK LOCKED MTX ******/
 	if(list == NOTIFY_LIST_TRANSFERLIST)
 	{
+		RS_STACK_MUTEX(mMtx); // ********** LOCKED **********
 		mStateTokenServer->discardToken(mStateToken);
 		mStateToken = mStateTokenServer->getNewToken();
 	}

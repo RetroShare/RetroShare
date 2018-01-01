@@ -16,6 +16,8 @@ public:
 	TransfersHandler(StateTokenServer* sts, RsFiles* files, RsPeers *peers, RsNotify* notify);
     virtual ~TransfersHandler();
 
+	// from NotifyClient
+	// may be called from foreign thread
 	virtual void notifyListChange(int list, int type);
     // from Tickable
     virtual void tick();
@@ -30,6 +32,7 @@ private:
 	RsPeers* mRsPeers;
 	RsNotify* mNotify;
 
+	RsMutex mMtx;
     StateToken mStateToken;
     time_t mLastUpdateTS;
 
