@@ -55,10 +55,10 @@ private:
 
 	void handleDownload(Request& req, Response& resp);
 
-	StateToken mLocalDirStateToken;
-	StateToken mRemoteDirStateToken;
+	StateToken mLocalDirStateToken; // Token indicating change in local shared files
+	StateToken mRemoteDirStateToken; // Token indicating change in remote (friends') shared files
 	StateTokenServer* mStateTokenServer;
-	RsMutex mMtx;
+	RsMutex mMtx; // Inherited virtual functions of NotifyClient may be called from foreing thread
 
 	RsFiles* mRsFiles;
 	RsNotify* mNotify;
