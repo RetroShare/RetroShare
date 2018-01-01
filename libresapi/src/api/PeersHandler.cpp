@@ -267,9 +267,9 @@ PeersHandler::~PeersHandler()
 
 void PeersHandler::notifyListChange(int list, int /* type */)
 {
-	RsStackMutex stack(mMtx); /********** STACK LOCKED MTX ******/
 	if(list == NOTIFY_LIST_FRIENDS)
 	{
+		RS_STACK_MUTEX(mMtx); // ********** LOCKED **********
 		mStateTokenServer->discardToken(mStateToken);
 		mStateToken = mStateTokenServer->getNewToken();
 	}
@@ -277,13 +277,13 @@ void PeersHandler::notifyListChange(int list, int /* type */)
 
 void PeersHandler::notifyPeerStatusChanged(const std::string& /*peer_id*/, uint32_t /*state*/)
 {
-	RsStackMutex stack(mMtx); /********** STACK LOCKED MTX ******/
+	RS_STACK_MUTEX(mMtx); // ********** LOCKED **********
 	mStateTokenServer->replaceToken(mStateToken);
 }
 
 void PeersHandler::notifyPeerHasNewAvatar(std::string /*peer_id*/)
 {
-	RsStackMutex stack(mMtx); /********** STACK LOCKED MTX ******/
+	RS_STACK_MUTEX(mMtx); // ********** LOCKED **********
 	mStateTokenServer->replaceToken(mStateToken);
 }
 
@@ -295,7 +295,7 @@ void PeersHandler::tick()
 	{
 		mOnlinePeers = online;
 
-		RsStackMutex stack(mMtx); /********** STACK LOCKED MTX ******/
+		RS_STACK_MUTEX(mMtx); // ********** LOCKED **********
 		mStateTokenServer->discardToken(mStateToken);
 		mStateToken = mStateTokenServer->getNewToken();
 	}
@@ -306,7 +306,7 @@ void PeersHandler::tick()
 	{
 		status = statusInfo.status;
 
-		RsStackMutex stack(mMtx); /********** STACK LOCKED MTX ******/
+		RS_STACK_MUTEX(mMtx); // ********** LOCKED **********
 		mStateTokenServer->discardToken(mStringStateToken);
 		mStringStateToken = mStateTokenServer->getNewToken();
 	}
@@ -316,7 +316,7 @@ void PeersHandler::tick()
 	{
 		custom_state_string = custom_state;
 
-		RsStackMutex stack(mMtx); /********** STACK LOCKED MTX ******/
+		RS_STACK_MUTEX(mMtx); // ********** LOCKED **********
 		mStateTokenServer->discardToken(mCustomStateToken);
 		mCustomStateToken = mStateTokenServer->getNewToken();
 	}
@@ -324,7 +324,7 @@ void PeersHandler::tick()
 
 void PeersHandler::notifyUnreadMsgCountChanged(const RsPeerId &peer, uint32_t count)
 {
-	RsStackMutex stack(mMtx); /********** STACK LOCKED MTX ******/
+	RS_STACK_MUTEX(mMtx); // ********** LOCKED **********
 	mUnreadMsgsCounts[peer] = count;
 	mStateTokenServer->replaceToken(mStateToken);
 }
@@ -460,7 +460,7 @@ void PeersHandler::handleWildcard(Request &req, Response &resp)
 		{
 			std::map<RsPeerId, uint32_t> unread_msgs;
 			{
-				RsStackMutex stack(mMtx); /********** STACK LOCKED MTX ******/
+				RS_STACK_MUTEX(mMtx); // ********** LOCKED **********
 				unread_msgs = mUnreadMsgsCounts;
 			}
 			std::list<StatusInfo> statusInfo;
@@ -1281,7 +1281,7 @@ void PeersHandler::handleSetNodeOptions(Request& req, Response& resp)
 
 StateToken PeersHandler::getCurrentStateToken()
 {
-	RsStackMutex stack(mMtx); /********** STACK LOCKED MTX ******/
+	RS_STACK_MUTEX(mMtx); // ********** LOCKED **********
 	if(mStateToken.isNull())
 		mStateToken = mStateTokenServer->getNewToken();
 	return mStateToken;

@@ -56,13 +56,13 @@ void FileSharingHandler::notifyListChange(int list, int /* type */)
 {
 	if(list == NOTIFY_LIST_DIRLIST_LOCAL)
 	{
-		RsStackMutex stack(mMtx); /********** STACK LOCKED MTX ******/
+		RS_STACK_MUTEX(mMtx);
 		mStateTokenServer->discardToken(mLocalDirStateToken);
 		mLocalDirStateToken = mStateTokenServer->getNewToken();
 	}
 	else if(list == NOTIFY_LIST_DIRLIST_FRIENDS)
 	{
-		RsStackMutex stack(mMtx); /********** STACK LOCKED MTX ******/
+		RS_STACK_MUTEX(mMtx);
 		mStateTokenServer->discardToken(mRemoteDirStateToken);
 		mRemoteDirStateToken = mStateTokenServer->getNewToken();
 	}

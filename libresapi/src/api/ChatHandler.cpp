@@ -200,13 +200,13 @@ ChatHandler::~ChatHandler()
 
 void ChatHandler::notifyChatMessage(const ChatMessage &msg)
 {
-    RS_STACK_MUTEX(mMtx); /********** LOCKED **********/
+	RS_STACK_MUTEX(mMtx); // ********** LOCKED **********
     mRawMsgs.push_back(msg);
 }
 
 void ChatHandler::notifyChatCleared(const ChatId &chat_id)
 {
-    RS_STACK_MUTEX(mMtx); /********** LOCKED **********/
+	RS_STACK_MUTEX(mMtx); // ********** LOCKED **********
     //Remove processed messages
     std::list<Msg>& msgs = mMsgs[chat_id];
     msgs.clear();
@@ -225,14 +225,14 @@ void ChatHandler::notifyChatCleared(const ChatId &chat_id)
 
 void ChatHandler::notifyChatStatus(const ChatId &chat_id, const std::string &status)
 {
-    RS_STACK_MUTEX(mMtx); /********** LOCKED **********/
+	RS_STACK_MUTEX(mMtx); // ********** LOCKED **********
     locked_storeTypingInfo(chat_id, status);
 }
 
 void ChatHandler::notifyChatLobbyEvent(uint64_t lobby_id, uint32_t event_type,
                                        const RsGxsId &nickname, const std::string& any_string)
 {
-    RS_STACK_MUTEX(mMtx); /********** LOCKED **********/
+	RS_STACK_MUTEX(mMtx); // ********** LOCKED **********
     if(event_type == RS_CHAT_LOBBY_EVENT_PEER_STATUS)
     {
         locked_storeTypingInfo(ChatId(lobby_id), any_string, nickname);
@@ -243,14 +243,14 @@ void ChatHandler::notifyListChange(int list, int /*type*/)
 {
 	if(list == NOTIFY_LIST_CHAT_LOBBY_INVITATION)
 	{
-		RS_STACK_MUTEX(mMtx); /********** LOCKED **********/
+		RS_STACK_MUTEX(mMtx); // ********** LOCKED **********
 		mStateTokenServer->replaceToken(mInvitationsStateToken);
 	}
 }
 
 void ChatHandler::tick()
 {
-    RS_STACK_MUTEX(mMtx); /********** LOCKED **********/
+	RS_STACK_MUTEX(mMtx); // ********** LOCKED **********
 
     // first fetch lobbies
     std::vector<Lobby> lobbies;
@@ -868,7 +868,7 @@ void ChatHandler::locked_storeTypingInfo(const ChatId &chat_id, std::string stat
 
 void ChatHandler::handleWildcard(Request &/*req*/, Response &resp)
 {
-    RS_STACK_MUTEX(mMtx); /********** LOCKED **********/
+	RS_STACK_MUTEX(mMtx); // ********** LOCKED **********
     resp.mDataStream.getStreamToMember();
     for(std::map<ChatId, std::list<Msg> >::iterator mit = mMsgs.begin(); mit != mMsgs.end(); ++mit)
     {
@@ -882,7 +882,7 @@ void ChatHandler::handleLobbies(Request &/*req*/, Response &resp)
     tick();
 
 	{
-    RS_STACK_MUTEX(mMtx); /********** LOCKED **********/
+		RS_STACK_MUTEX(mMtx); // ********** LOCKED **********
     resp.mDataStream.getStreamToMember();
     for(std::vector<Lobby>::iterator vit = mLobbies.begin(); vit != mLobbies.end(); ++vit)
     {
@@ -1021,7 +1021,7 @@ void ChatHandler::handleAnswerToInvitation(Request& req, Response& resp)
 
 ResponseTask* ChatHandler::handleLobbyParticipants(Request &req, Response &resp)
 {
-    RS_STACK_MUTEX(mMtx); /********** LOCKED **********/
+	RS_STACK_MUTEX(mMtx); // ********** LOCKED **********
 
     ChatId id(req.mPath.top());
     if(!id.isLobbyId())
@@ -1122,7 +1122,7 @@ void ChatHandler::handleMessages(Request &req, Response &resp)
 	tick();
 
 	{
-    RS_STACK_MUTEX(mMtx); /********** LOCKED **********/
+		RS_STACK_MUTEX(mMtx); // ********** LOCKED **********
 	ChatId id(req.mPath.top());
 
     // make response a list
@@ -1204,7 +1204,7 @@ void ChatHandler::handleMarkMessageAsRead(Request &req, Response &resp)
 
 void ChatHandler::handleMarkChatAsRead(Request &req, Response &resp)
 {
-    RS_STACK_MUTEX(mMtx); /********** LOCKED **********/
+	RS_STACK_MUTEX(mMtx); // ********** LOCKED **********
 	ChatId id(req.mPath.top());
 
     if(id.isNotSet())
@@ -1235,7 +1235,7 @@ void ChatHandler::handleMarkChatAsRead(Request &req, Response &resp)
 
 void ChatHandler::handleInfo(Request &req, Response &resp)
 {
-    RS_STACK_MUTEX(mMtx); /********** LOCKED **********/
+	RS_STACK_MUTEX(mMtx); // ********** LOCKED **********
     ChatId id(req.mPath.top());
     if(id.isNotSet())
     {
@@ -1319,7 +1319,7 @@ protected:
 
 ResponseTask* ChatHandler::handleReceiveStatus(Request &req, Response &resp)
 {
-    RS_STACK_MUTEX(mMtx); /********** LOCKED **********/
+	RS_STACK_MUTEX(mMtx); // ********** LOCKED **********
     ChatId id(req.mPath.top());
     if(id.isNotSet())
     {
@@ -1354,7 +1354,7 @@ void ChatHandler::handleSendStatus(Request &req, Response &resp)
 
 void ChatHandler::handleUnreadMsgs(Request &/*req*/, Response &resp)
 {
-    RS_STACK_MUTEX(mMtx); /********** LOCKED **********/
+	RS_STACK_MUTEX(mMtx); // ********** LOCKED **********
 
     resp.mDataStream.getStreamToMember();
 	for( std::map<ChatId, std::list<Msg> >::const_iterator mit = mMsgs.begin();
