@@ -6,15 +6,6 @@ Build-Depends: debhelper (>= 7),  libglib2.0-dev, libupnp-dev, libssl-dev, libxs
 Standards-Version: 3.9.6
 Homepage: http://retroshare.sourceforge.net
 
-Package: retroshare-voip-plugin
-Architecture: any
-Conflicts: retroshare06-voip-plugin
-Depends: ${shlibs:Depends}, ${misc:Depends}, retrotor, libspeex1, libspeexdsp1, libqt5multimedia5
-Description: RetroShare VOIP plugin
- This package provides a plugin for RetroShare, a secured Friend-to-Friend communication 
- plateform. The plugin adds voice-over-IP functionality to the private chat window. Both
- friends chatting together need the plugin installed to be able to talk together.
-
 Package: retrotor
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, gnome-keyring, tor
