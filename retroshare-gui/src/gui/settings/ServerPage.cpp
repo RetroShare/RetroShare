@@ -487,6 +487,9 @@ void ServerPage::toggleIpFiltering(bool b)
 
 void ServerPage::loadFilteredIps()
 {
+	if(rsBanList == NULL)
+		return ;
+
     if(rsBanList->ipFilteringEnabled())
     {
         whileBlocking(ui.denyAll_CB)->setChecked(true) ;

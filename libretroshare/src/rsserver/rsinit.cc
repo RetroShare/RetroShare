@@ -1518,9 +1518,14 @@ int RsServer::StartupRetroShare()
 #endif
 
 	// new services to test.
+#ifndef RETROTOR
     p3BanList *mBanList = new p3BanList(serviceCtrl, mNetMgr);
     rsBanList = mBanList ;
 	pqih -> addService(mBanList, true);
+#else
+    rsBanList = NULL ;
+#endif
+
 #ifdef RS_USE_BITDHT
 	mBitDht->setupPeerSharer(mBanList);
 #endif
@@ -1589,7 +1594,9 @@ int RsServer::StartupRetroShare()
 	mConfigMgr->addConfiguration("p3History.cfg", mHistoryMgr);
 	mConfigMgr->addConfiguration("p3Status.cfg", mStatusSrv);
 	mConfigMgr->addConfiguration("turtle.cfg", tr);
+#ifndef RETROTOR
 	mConfigMgr->addConfiguration("banlist.cfg", mBanList);
+#endif
 	mConfigMgr->addConfiguration("servicecontrol.cfg", serviceCtrl);
 	mConfigMgr->addConfiguration("reputations.cfg", mReputations);
 #ifdef ENABLE_GROUTER

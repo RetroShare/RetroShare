@@ -3,7 +3,10 @@
 CONFIG *= retroshare_gui
 no_retroshare_gui:CONFIG -= retroshare_gui
 
-# To build the RetroTor executable, just uncomment the following option
+# To build the RetroTor executable, just uncomment the following option.
+# RetroTor is a version of RS that automatically configures Tor for its own usage
+# using only hidden nodes. It will not start if Tor is not working.
+
 # CONFIG *= retrotor
 
 # To disable RetroShare-nogui append the following
@@ -229,6 +232,10 @@ no_sqlcipher:DEFINES *= NO_SQLCIPHER
 rs_autologin {
     DEFINES *= RS_AUTOLOGIN
     warning("You have enabled RetroShare auto-login, this is discouraged. The usage of auto-login on some linux distributions may allow someone having access to your session to steal the SSL keys of your node location and therefore compromise your security")
+}
+
+retrotor {
+    DEFINES *= RS_ONLYHIDDENNODE
 }
 
 rs_onlyhiddennode {
