@@ -10,7 +10,7 @@ ingredients:
     - retroshare/testing
   packages:
     - libqt4-svg
-    - tor
+    - tor 
     - retrotor
 
 script:

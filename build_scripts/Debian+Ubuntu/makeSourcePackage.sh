@@ -59,6 +59,10 @@ while [ ${#} -gt 0 ]; do
 done
 
 if test "${useretrotor}" = "true"; then
+	if ! test "${dist}" = "xenial"; then
+		echo ERROR: retro-tor can only be packaged for xenial for now.
+		exit 1;
+	fi
 	gitpath="https://github.com/csoler/RetroShare.git"
 	branch="v0.6-TorOnly"
 fi
@@ -136,7 +140,7 @@ for i in ${dist}; do
 
 	 if test ${useretrotor} = "true"; then
 	 	cp ../rules.retrotor debian/rules
-	 	cp ../control.trusty_retrotor debian/control
+	 	cp ../control.xenial_retrotor debian/control
     elif test -f ../control."${i}" ; then
 		echo \/\!\\ Using specific control file for distribution "${i}"
       cp ../control."${i}" debian/control
