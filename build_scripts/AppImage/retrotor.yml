@@ -6,10 +6,11 @@ ingredients:
   sources: 
     - deb http://archive.ubuntu.com/ubuntu trusty main restricted universe multiverse
     - deb http://archive.ubuntu.com/ubuntu trusty-updates main restricted universe multiverse
+    - deb http://deb.torproject.org/torproject.org/ trusty main
   ppas:
     - retroshare/testing
   packages:
-    - libqt4-svg
+    - libqt5svg5
     - tor 
     - retrotor
 
