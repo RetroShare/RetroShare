@@ -1403,12 +1403,32 @@ bool DistributedChatService::acceptLobbyInvite(const ChatLobbyId& lobby_id,const
 			return false;
 		}
 
+		std::map<ChatLobbyId,VisibleChatLobbyRecord>::const_iterator vid = _visible_lobbies.find(lobby_id) ;
+
+		if(_visible_lobbies.end() == vid)
+		{
+			std::cerr << " (EE) Cannot subscribe a non visible chat lobby!!" << std::endl;
+			return false ;
+		}
+
+		RsIdentityDetails det ;
+		if( (!rsIdentity->getIdDetails(identity,det)) || !(det.mFlags & RS_IDENTITY_FLAGS_IS_OWN_ID))
+		{
+			std::cerr << " (EE) Cannot subscribe with identity " << identity << " because it is not ours! Something's wrong here." << std::endl;
+			return false ;
+		}
+
+		if( (vid->second.lobby_flags & RS_CHAT_LOBBY_FLAGS_PGP_SIGNED ) && !(det.mFlags & RS_IDENTITY_FLAGS_PGP_LINKED))
+		{
+			std::cerr << " (EE) Cannot subscribe with identity " << identity << " because it is unsigned and the lobby requires signed ids only." << std::endl;
+			return false ;
+		}
+
 		if(_chat_lobbys.find(lobby_id) != _chat_lobbys.end())
 		{
 			std::cerr << "  (II) Lobby already exists. Weird." << std::endl;
 			return true ;
 		}
-
 
 #ifdef DEBUG_CHAT_LOBBIES
 		std::cerr << "  Creating new Lobby entry." << std::endl;
@@ -1491,11 +1511,12 @@ void DistributedChatService::denyLobbyInvite(const ChatLobbyId& lobby_id)
 
 bool DistributedChatService::joinVisibleChatLobby(const ChatLobbyId& lobby_id,const RsGxsId& gxs_id)
 {
-    if(!mGixs->isOwnId(gxs_id))
-    {
-        std::cerr << "(EE) Cannot lobby using gxs id " << gxs_id << std::endl;
-        return false ;
-    }
+	RsIdentityDetails det ;
+	if( (!rsIdentity->getIdDetails(gxs_id,det)) || !(det.mFlags & RS_IDENTITY_FLAGS_IS_OWN_ID))
+	{
+		std::cerr << " (EE) Cannot subscribe with identity " << gxs_id << " because it is not ours! Something's wrong here." << std::endl;
+		return false ;
+	}
 
 #ifdef DEBUG_CHAT_LOBBIES
 	std::cerr << "Joining public chat lobby " << std::hex << lobby_id << std::dec << std::endl;
@@ -1525,6 +1546,12 @@ bool DistributedChatService::joinVisibleChatLobby(const ChatLobbyId& lobby_id,co
 			std::cerr << "  lobby already in participating list. Returning!" << std::endl;
 #endif
 			return true ;
+		}
+
+		if( (it->second.lobby_flags & RS_CHAT_LOBBY_FLAGS_PGP_SIGNED ) && !(det.mFlags & RS_IDENTITY_FLAGS_PGP_LINKED))
+		{
+			std::cerr << " (EE) Cannot subscribe with identity " << gxs_id << " because it is unsigned and the lobby requires signed ids only." << std::endl;
+			return false ;
 		}
 
 #ifdef DEBUG_CHAT_LOBBIES
