@@ -38,7 +38,7 @@ RsDisc *rsDisc = NULL;
  * #define P3DISC_DEBUG	1
  ****/
 
-bool populateContactInfo(const peerState &detail, RsDiscContactItem *pkt)
+static bool populateContactInfo(const peerState &detail, RsDiscContactItem *pkt,bool include_ip_information)
 {
 	pkt->clear();
 
@@ -62,14 +62,24 @@ bool populateContactInfo(const peerState &detail, RsDiscContactItem *pkt)
 	{
 		pkt->isHidden = false;
 
-		pkt->localAddrV4.addr = detail.localaddr;
-		pkt->extAddrV4.addr = detail.serveraddr;
-		sockaddr_storage_clear(pkt->localAddrV6.addr);
-		sockaddr_storage_clear(pkt->extAddrV6.addr);
+		if(include_ip_information)
+		{
+			pkt->localAddrV4.addr = detail.localaddr;
+			pkt->extAddrV4.addr = detail.serveraddr;
+			sockaddr_storage_clear(pkt->localAddrV6.addr);
+			sockaddr_storage_clear(pkt->extAddrV6.addr);
 
-		pkt->dyndns = detail.dyndns;
-		detail.ipAddrs.mLocal.loadTlv(pkt->localAddrList);
-		detail.ipAddrs.mExt.loadTlv(pkt->extAddrList);
+			pkt->dyndns = detail.dyndns;
+			detail.ipAddrs.mLocal.loadTlv(pkt->localAddrList);
+			detail.ipAddrs.mExt.loadTlv(pkt->extAddrList);
+		}
+		else
+		{
+			sockaddr_storage_clear(pkt->localAddrV6.addr);
+			sockaddr_storage_clear(pkt->extAddrV6.addr);
+			sockaddr_storage_clear(pkt->localAddrV4.addr);
+			sockaddr_storage_clear(pkt->extAddrV4.addr);
+		}
 	}
 
 	return true;
@@ -334,9 +344,8 @@ void p3discovery2::sendOwnContactInfo(const SSLID &sslid)
 	if (mPeerMgr->getOwnNetStatus(detail)) 
 	{
 		RsDiscContactItem *pkt = new RsDiscContactItem();
-		populateContactInfo(detail, pkt);
+		populateContactInfo(detail, pkt, !rsPeers->isHiddenNode(sslid));	// we dont send our own IP to an hidden node. It will not use it anyway.
 		pkt->version = RsUtil::retroshareVersion();
-
 		pkt->PeerId(sslid);
 
 #ifdef P3DISC_DEBUG
@@ -372,6 +381,7 @@ void p3discovery2::recvOwnContactInfo(const SSLID &fromId, const RsDiscContactIt
 	mPeerMgr->setVisState(fromId, item->vs_disc, item->vs_dht);
 
 	setPeerVersion(fromId, item->version);
+
 	updatePeerAddresses(item);
 
 	// This information will be sent out to online peers, at the receipt of their PGPList.
@@ -423,13 +433,10 @@ void p3discovery2::recvOwnContactInfo(const SSLID &fromId, const RsDiscContactIt
 void p3discovery2::updatePeerAddresses(const RsDiscContactItem *item)
 {
 	if (item->isHidden)
-	{
 		mPeerMgr->setHiddenDomainPort(item->sslId, item->hiddenAddr, item->hiddenPort);
-	}
 	else
 	{
         mPeerMgr->setDynDNS(item->sslId, item->dyndns);
-
 		updatePeerAddressList(item);
 	}
 }
@@ -440,7 +447,7 @@ void p3discovery2::updatePeerAddressList(const RsDiscContactItem *item)
 	if (item->isHidden)
 	{
 	}
-	else
+	else if(!mPeerMgr->isHiddenNode(rsPeers->getOwnId()))	// we don't store IP addresses if we're a hidden node. Normally they should not be sent to us, except for old peers.
 	{
 		pqiIpAddrSet addrsFromPeer;	
 		addrsFromPeer.mLocal.extractFromTlv(item->localAddrList);
@@ -817,7 +824,7 @@ void p3discovery2::sendContactInfo_locked(const PGPID &aboutId, const SSLID &toI
             if (mPeerMgr->getFriendNetStatus(sit->first, detail))
 			{
 				RsDiscContactItem *pkt = new RsDiscContactItem();
-				populateContactInfo(detail, pkt);
+				populateContactInfo(detail, pkt,!mPeerMgr->isHiddenNode(toId));// never send IPs to an hidden node. The node will not use them anyway.
 				pkt->PeerId(toId);
 
                 // send to each peer its own connection address.
