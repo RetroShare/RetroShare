@@ -1085,10 +1085,19 @@ void ChatLobbyWidget::readChatLobbyInvites()
                        QMessageBox::Question, QMessageBox::Yes,QMessageBox::No, 0);
 
 
-        QLabel *label = new QLabel(tr("Choose an identity for this chat room:"));
+        QLabel *label ;
         GxsIdChooser *idchooser = new GxsIdChooser ;
-        idchooser->loadIds(IDCHOOSER_ID_REQUIRED,default_id) ;
 
+		if( (*it).lobby_flags & RS_CHAT_LOBBY_FLAGS_PGP_SIGNED )
+		{
+			idchooser->loadIds(IDCHOOSER_ID_REQUIRED | IDCHOOSER_NON_ANONYMOUS,default_id) ;
+			label = new QLabel(tr("Choose a non anonymous identity for this chat room:"));
+		}
+		else
+		{
+			idchooser->loadIds(IDCHOOSER_ID_REQUIRED,default_id) ;
+			label = new QLabel(tr("Choose an identity for this chat room:"));
+		}
 
         QGridLayout* layout = qobject_cast<QGridLayout*>(mb.layout());
         if (layout) {
