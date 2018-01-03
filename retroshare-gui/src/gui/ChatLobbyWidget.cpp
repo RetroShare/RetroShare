@@ -1078,8 +1078,20 @@ void ChatLobbyWidget::readChatLobbyInvites()
     RsGxsId default_id ;
     rsMsgs->getDefaultIdentityForChatLobby(default_id) ;
 
+	std::list<ChatLobbyId> subscribed_lobbies ;
+	rsMsgs->getChatLobbyList(subscribed_lobbies) ;
+
     for(std::list<ChatLobbyInvite>::const_iterator it(invites.begin());it!=invites.end();++it)
     {
+		// first check if the lobby is already subscribed. If so, just ignore the request.
+
+		bool found = false ;
+		for(auto it2(subscribed_lobbies.begin());it2!=subscribed_lobbies.end() && !found;++it2)
+			found = found || (*it2 == (*it).lobby_id) ;
+
+		if(found)
+			continue ;
+
         QMessageBox mb(QObject::tr("Join chat room"),
                        tr("%1 invites you to chat room named %2").arg(QString::fromUtf8(rsPeers->getPeerName((*it).peer_id).c_str())).arg(RsHtml::plainText(it->lobby_name)),
                        QMessageBox::Question, QMessageBox::Yes,QMessageBox::No, 0);
