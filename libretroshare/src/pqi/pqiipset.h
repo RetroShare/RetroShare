@@ -68,6 +68,12 @@ class pqiIpAddrSet
 	void 	printAddrs(std::string &out) const;
 	pqiIpAddrList mLocal;
 	pqiIpAddrList mExt;
+
+	void clear()
+	{
+		mLocal.mAddrs.clear();
+		mExt.mAddrs.clear();
+	}
 };
 
 	

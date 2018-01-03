@@ -94,6 +94,7 @@ public:
 	virtual bool setLocation(const RsPeerId &ssl_id, const std::string &location);//location is shown in the gui to differentiate ssl certs
 	virtual bool setHiddenNode(const RsPeerId &id, const std::string &hidden_node_address);
 	virtual bool setHiddenNode(const RsPeerId &id, const std::string &address, uint16_t port);
+	virtual bool isHiddenNode(const RsPeerId &id);
 
 	virtual	bool setLocalAddress(const RsPeerId &id, const std::string &addr, uint16_t port);
 	virtual	bool setExtAddress(const RsPeerId &id, const std::string &addr, uint16_t port);

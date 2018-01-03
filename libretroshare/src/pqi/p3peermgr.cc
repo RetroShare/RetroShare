@@ -519,6 +519,25 @@ uint32_t p3PeerMgrIMPL::getHiddenType(const RsPeerId &ssl_id)
 	return (it->second).hiddenType;
 }
 
+bool p3PeerMgrIMPL::isHiddenNode(const RsPeerId& id)
+{
+	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+
+	if (id == AuthSSL::getAuthSSL()->OwnId())
+		return mOwnState.hiddenNode ;
+	else
+	{
+		std::map<RsPeerId,peerState>::const_iterator it = mFriendList.find(id);
+
+		if (it == mFriendList.end())
+		{
+			std::cerr << "p3PeerMgrIMPL::isHiddenNode() Peer Not Found" << std::endl;
+			return false;
+		}
+		return it->second.hiddenNode ;
+	}
+}
+
 /**
  * @brief sets hidden domain and port for a given ssl ID
  * @param ssl_id peer to set domain and port for
@@ -1632,6 +1651,8 @@ bool    p3PeerMgrIMPL::updateAddressList(const RsPeerId& id, const pqiIpAddrSet 
     cleanIpList(clean_set.mExt.mAddrs,id,mLinkMgr) ;
     cleanIpList(clean_set.mLocal.mAddrs,id,mLinkMgr) ;
 
+	bool am_I_a_hidden_node = isHiddenNode(getOwnId()) ;
+
 	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
 	/* check if it is our own ip */
@@ -1655,7 +1676,12 @@ bool    p3PeerMgrIMPL::updateAddressList(const RsPeerId& id, const pqiIpAddrSet 
 	}
 
 	/* "it" points to peer */
-    it->second.ipAddrs.updateAddrs(clean_set);
+
+	if(!am_I_a_hidden_node)
+		it->second.ipAddrs.updateAddrs(clean_set);
+	else
+		it->second.ipAddrs.clear();
+
 #ifdef PEER_DEBUG
 	std::cerr << "p3PeerMgrIMPL::setLocalAddress() Updated Address for: " << id;
 	std::cerr << std::endl;
@@ -2173,6 +2199,7 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
 #endif
 
     RsPeerId ownId = getOwnId();
+	bool am_I_a_hidden_node = isHiddenNode(ownId) ;
 
     /* load the list of peers */
     std::list<RsItem *>::iterator it;
@@ -2220,16 +2247,20 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
 		    }
 		    else
 		    {
-			    setLocalAddress(peer_id, pitem->localAddrV4.addr);
-			    setExtAddress(peer_id, pitem->extAddrV4.addr);
-			    setDynDNS (peer_id, pitem->dyndns);
-
-			    /* convert addresses */
 			    pqiIpAddrSet addrs;
-			    addrs.mLocal.extractFromTlv(pitem->localAddrList);
-			    addrs.mExt.extractFromTlv(pitem->extAddrList);
 
-			    updateAddressList(peer_id, addrs);
+				if(!am_I_a_hidden_node)	// clear IPs if w're a hidden node. Friend's clear node IPs where previously sent.
+				{
+					setLocalAddress(peer_id, pitem->localAddrV4.addr);
+					setExtAddress(peer_id, pitem->extAddrV4.addr);
+					setDynDNS (peer_id, pitem->dyndns);
+
+					/* convert addresses */
+					addrs.mLocal.extractFromTlv(pitem->localAddrList);
+					addrs.mExt.extractFromTlv(pitem->extAddrList);
+				}
+
+				updateAddressList(peer_id, addrs);
 		    }
 
 		    delete(*it);
