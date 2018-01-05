@@ -1,10 +1,16 @@
 #pragma once
 
-#include <QTreeWidget>
-#include <retroshare/rsmsgs.h>
 #include "ui_ChatLobbyWidget.h"
+
 #include "RsAutoUpdatePage.h"
 #include "chat/ChatLobbyUserNotify.h"
+#include "gui/gxs/GxsIdChooser.h"
+
+
+#include <retroshare/rsmsgs.h>
+
+#include <QAbstractButton>
+#include <QTreeWidget>
 
 #define IMAGE_CHATLOBBY			    ":/icons/png/chat-lobbies.png"
 
@@ -82,6 +88,7 @@ private slots:
     void setShowSubscribeColumn(bool show);
 
 	void updateNotify(ChatLobbyId id, unsigned int count) ;
+	void idChooserCurrentIndexChanged(int index);
 
 private:
 	void autoSubscribeLobby(QTreeWidgetItem *item);
@@ -113,6 +120,9 @@ private:
 	int getNumColVisible();
 
 	ChatLobbyUserNotify* myChatLobbyUserNotify;
+
+	QAbstractButton* myInviteYesButton;
+	GxsIdChooser* myInviteIdChooser;
 
 	/* UI - from Designer */
 	Ui::ChatLobbyWidget ui;
