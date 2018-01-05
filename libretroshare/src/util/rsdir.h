@@ -83,6 +83,11 @@ const char *scanf_string_for_uint(int bytes) ;
 
 int     	breakupDirList(const std::string& path, std::list<std::string> &subdirs);
 
+// Splits the path into parent directory and file. File can be empty if full_path is a dir ending with '/'
+// if full_path does not contain a directory, then dir will be "." and file will be full_path.
+
+bool        splitDirFromFile(const std::string& full_path,std::string& dir, std::string& file);
+
 bool 		copyFile(const std::string& source,const std::string& dest);
 bool 		moveFile(const std::string& source,const std::string& dest);
 bool 		removeFile(const std::string& file);
@@ -101,7 +106,8 @@ bool    	cleanupDirectoryFaster(const std::string& dir, const std::set<std::stri
 bool 		hashFile(const std::string& filepath,   std::string &name, RsFileHash &hash, uint64_t &size);
 bool 		getFileHash(const std::string& filepath,RsFileHash &hash, uint64_t &size, RsThread *thread = NULL);
 
-Sha1CheckSum sha1sum(const uint8_t *data,uint32_t size) ;
+Sha1CheckSum   sha1sum(const uint8_t *data,uint32_t size) ;
+Sha256CheckSum sha256sum(const uint8_t *data,uint32_t size) ;
 
 bool saveStringToFile(const std::string& file, const std::string& str);
 bool loadStringFromFile(const std::string& file, std::string& str);

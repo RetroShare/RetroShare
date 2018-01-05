@@ -128,6 +128,32 @@ static bool StrContains( const std::string & str1, const std::string & str2,
 }
 
 
+std::string StringExpression::toStdString(const std::string& varstr) const
+{
+	std::string strlist ;
+	for (auto iter = terms.begin(); iter != terms.end(); ++iter )
+		strlist += *iter + " ";
+
+	if(!strlist.empty())
+		strlist.resize(strlist.size()-1);	//strlist.pop_back();	// pops the last ",". c++11 is needed for pop_back()
+
+	switch(Op)
+	{
+	case ContainsAllStrings:  return varstr + " CONTAINS ALL "+strlist ;
+	case ContainsAnyStrings:  if(terms.size() == 1)
+			return varstr + " CONTAINS "+strlist ;
+		else
+			return varstr + " CONTAINS ONE OF "+strlist ;
+	case EqualsString:  	  if(terms.size() == 1)
+			return varstr + " IS "+strlist ;
+		else
+			return varstr + " IS ONE OF "+strlist ;
+
+	default:
+		return "" ;
+	}
+}
+
 bool StringExpression :: evalStr ( const std::string &str ){
     std::list<std::string>::iterator iter;
     switch (Op) {
@@ -197,6 +223,17 @@ void LinearizedExpression::readStringExpr(const LinearizedExpression& e,int& n_i
     strings.clear() ;
     for(int i=0;i<n;++i)
         strings.push_back(e._strings[n_strings++]) ;
+}
+
+std::string LinearizedExpression::GetStrings()
+{
+	std::string str;
+	for (std::vector<std::string>::const_iterator i = this->_strings.begin(); i != this->_strings.end(); ++i)
+	{
+		str += *i;
+		str += " ";
+	}
+	return str;
 }
 
 Expression *LinearizedExpression::toExpr(const LinearizedExpression& e,int& n_tok,int& n_ints,int& n_strings) 

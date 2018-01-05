@@ -56,14 +56,20 @@ RsCollection::RsCollection(const FileTree& fr)
 	recursAddElements(_xml_doc,fr,0,_root) ;
 }
 
-RsCollection::RsCollection(const std::vector<DirDetails>& file_infos, QObject *parent)
+RsCollection::RsCollection(const std::vector<DirDetails>& file_infos,FileSearchFlags flags, QObject *parent)
 	: QObject(parent), _xml_doc("RsCollection")
 {
 	_root = _xml_doc.createElement("RsCollection");
 	_xml_doc.appendChild(_root);
 
+	if(! ( (flags & RS_FILE_HINTS_LOCAL) || (flags & RS_FILE_HINTS_REMOTE)))
+	{
+		std::cerr << "(EE) Wrong flags passed to RsCollection constructor. Please fix the code!" << std::endl;
+		return ;
+	}
+
 	for(uint32_t i = 0;i<file_infos.size();++i)
-		recursAddElements(_xml_doc,file_infos[i],_root) ;
+		recursAddElements(_xml_doc,file_infos[i],_root,flags) ;
 }
 
 RsCollection::~RsCollection()
@@ -170,7 +176,7 @@ void RsCollection::recursCollectColFileInfos(const QDomElement& e,std::vector<Co
 }
 
 
-void RsCollection::recursAddElements(QDomDocument& doc,const DirDetails& details,QDomElement& e) const
+void RsCollection::recursAddElements(QDomDocument& doc,const DirDetails& details,QDomElement& e,FileSearchFlags flags) const
 {
 	if (details.type == DIR_TYPE_FILE)
 	{
@@ -194,12 +200,11 @@ void RsCollection::recursAddElements(QDomDocument& doc,const DirDetails& details
 				continue;
 
 			DirDetails subDirDetails;
-			FileSearchFlags flags = RS_FILE_HINTS_LOCAL;
 
             if (!rsFiles->RequestDirDetails(details.children[i].ref, subDirDetails, flags))
 				continue;
 
-			recursAddElements(doc,subDirDetails,d) ;
+			recursAddElements(doc,subDirDetails,d,flags) ;
 		}
 
 		e.appendChild(d) ;
@@ -408,9 +413,8 @@ bool RsCollection::save(QWidget *parent) const
 }
 
 
-bool RsCollection::openNewColl(QWidget *parent)
+bool RsCollection::openNewColl(QWidget *parent, QString fileName)
 {
-	QString fileName;
 	if(!misc::getSaveFileName(parent, RshareSettings::LASTDIR_EXTRAFILE
 														, QApplication::translate("RsCollectionFile", "Create collection file")
 														, QApplication::translate("RsCollectionFile", "Collection files") + " (*." + RsCollection::ExtensionString + ")"

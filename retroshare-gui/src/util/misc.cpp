@@ -363,7 +363,7 @@ bool misc::getSaveFileName(QWidget *parent, RshareSettings::enumLastDir type
 													 , QString &file, QString *selectedFilter
 													 , QFileDialog::Options options)
 {
-    QString lastDir = Settings->getLastDir(type);
+    QString lastDir = Settings->getLastDir(type) + "/" + file;
 
     file = QFileDialog::getSaveFileName(parent, caption, lastDir, filter, selectedFilter, QFileDialog::DontUseNativeDialog | options);
 

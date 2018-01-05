@@ -138,6 +138,8 @@ private:
 	void requestIdEdit(std::string &id);
 	void showIdEdit(uint32_t token);
 
+	void clearPerson();
+
 private:
 	TokenQueue *mIdQueue;
 	TokenQueue *mCircleQueue;

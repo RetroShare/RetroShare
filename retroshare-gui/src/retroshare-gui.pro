@@ -614,8 +614,9 @@ HEADERS +=  rshare.h \
         gui/statistics/BWGraph.h \
     util/RsSyntaxHighlighter.h \
     util/imageutil.h \
+    gui/NetworkDialog/pgpid_item_model.h \
+    gui/NetworkDialog/pgpid_item_proxy.h \
     gui/common/RsCollection.h
-
 #            gui/ForumsDialog.h \
 #            gui/forums/ForumDetails.h \
 #            gui/forums/EditForumDetails.h \
@@ -974,8 +975,9 @@ SOURCES +=  main.cpp \
             gui/statistics/BWGraph.cpp \
     util/RsSyntaxHighlighter.cpp \
     util/imageutil.cpp \
+    gui/NetworkDialog/pgpid_item_model.cpp \
+    gui/NetworkDialog/pgpid_item_proxy.cpp \
     gui/common/RsCollection.cpp
-
 #            gui/ForumsDialog.cpp \
 #            gui/forums/ForumDetails.cpp \
 #            gui/forums/EditForumDetails.cpp \

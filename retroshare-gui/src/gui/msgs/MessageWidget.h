@@ -95,6 +95,8 @@ private:
 
 	QList<QLabel*> tagLabels;
 
+	QToolButton* toolButtonReply;
+
 	/** Qt Designer generated object */
 	Ui::MessageWidget ui;
 };

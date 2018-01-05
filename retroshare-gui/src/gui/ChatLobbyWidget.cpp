@@ -1078,17 +1078,38 @@ void ChatLobbyWidget::readChatLobbyInvites()
     RsGxsId default_id ;
     rsMsgs->getDefaultIdentityForChatLobby(default_id) ;
 
+	std::list<ChatLobbyId> subscribed_lobbies ;
+	rsMsgs->getChatLobbyList(subscribed_lobbies) ;
+
     for(std::list<ChatLobbyInvite>::const_iterator it(invites.begin());it!=invites.end();++it)
     {
+		// first check if the lobby is already subscribed. If so, just ignore the request.
+
+		bool found = false ;
+		for(auto it2(subscribed_lobbies.begin());it2!=subscribed_lobbies.end() && !found;++it2)
+			found = found || (*it2 == (*it).lobby_id) ;
+
+		if(found)
+			continue ;
+
         QMessageBox mb(QObject::tr("Join chat room"),
                        tr("%1 invites you to chat room named %2").arg(QString::fromUtf8(rsPeers->getPeerName((*it).peer_id).c_str())).arg(RsHtml::plainText(it->lobby_name)),
                        QMessageBox::Question, QMessageBox::Yes,QMessageBox::No, 0);
 
 
-        QLabel *label = new QLabel(tr("Choose an identity for this chat room:"));
+        QLabel *label ;
         GxsIdChooser *idchooser = new GxsIdChooser ;
-        idchooser->loadIds(IDCHOOSER_ID_REQUIRED,default_id) ;
 
+		if( (*it).lobby_flags & RS_CHAT_LOBBY_FLAGS_PGP_SIGNED )
+		{
+			idchooser->loadIds(IDCHOOSER_ID_REQUIRED | IDCHOOSER_NON_ANONYMOUS,default_id) ;
+			label = new QLabel(tr("Choose a non anonymous identity for this chat room:"));
+		}
+		else
+		{
+			idchooser->loadIds(IDCHOOSER_ID_REQUIRED,default_id) ;
+			label = new QLabel(tr("Choose an identity for this chat room:"));
+		}
 
         QGridLayout* layout = qobject_cast<QGridLayout*>(mb.layout());
         if (layout) {

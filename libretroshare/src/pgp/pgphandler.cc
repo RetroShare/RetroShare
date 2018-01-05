@@ -1382,7 +1382,11 @@ ops_secret_key_t *secret_key = NULL ;
 	// then do the signature.
 
 	ops_boolean_t not_raw = !use_raw_signature ;
-	ops_memory_t *memres = ops_sign_buf(data,len,(ops_sig_type_t)0x00,secret_key,ops_false,ops_false,not_raw,not_raw) ;
+#ifdef V07_NON_BACKWARD_COMPATIBLE_CHANGE_002
+	ops_memory_t *memres = ops_sign_buf(data,len,OPS_SIG_BINARY,OPS_HASH_SHA256,secret_key,ops_false,ops_false,not_raw,not_raw) ;
+#else
+	ops_memory_t *memres = ops_sign_buf(data,len,OPS_SIG_BINARY,OPS_HASH_SHA1,secret_key,ops_false,ops_false,not_raw,not_raw) ;
+#endif
 
 	if(!memres)
 		return false ;
@@ -1695,16 +1699,16 @@ bool PGPHandler::mergeKeySignatures(ops_keydata_t *dst,const ops_keydata_t *src)
 
 bool PGPHandler::parseSignature(unsigned char *sign, unsigned int signlen,RsPgpId& issuer_id) 
 {
-    uint64_t issuer ;
+	PGPSignatureInfo info ;
     
-    if(!PGPKeyManagement::parseSignature(sign,signlen,issuer))
+    if(!PGPKeyManagement::parseSignature(sign,signlen,info))
         return false ;
     
     unsigned char bytes[8] ;
     for(int i=0;i<8;++i)
     {
-        bytes[7-i] = issuer & 0xff ;
-        issuer >>= 8 ;
+        bytes[7-i] = info.issuer & 0xff ;
+        info.issuer >>= 8 ;
     }
     issuer_id = RsPgpId(bytes) ;
     

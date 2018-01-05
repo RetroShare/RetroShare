@@ -209,6 +209,12 @@
           </item>
           <item row="3" column="2" colspan="2">
            <widget class="RSTextBrowser" name="ccText">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="maximumSize">
              <size>
               <width>16777215</width>
@@ -238,6 +244,12 @@
           </item>
           <item row="4" column="2" colspan="2">
            <widget class="RSTextBrowser" name="bccText">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="maximumSize">
              <size>
               <width>16777215</width>

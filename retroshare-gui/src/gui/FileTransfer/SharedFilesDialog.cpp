@@ -509,9 +509,20 @@ void RemoteSharedFilesDialog::spawnCustomPopupMenu( QPoint point )
 	collectionMenu.addAction(collCreateAct);
 	collectionMenu.addAction(collOpenAct);
 
-	QAction *downloadAct = new QAction(QIcon(IMAGE_DOWNLOAD), tr( "Download" ), &contextMnu ) ;
-	connect( downloadAct , SIGNAL( triggered() ), this, SLOT( downloadRemoteSelected() ) ) ;
-	contextMnu.addAction( downloadAct) ;
+	QModelIndexList list = ui.dirTreeView->selectionModel()->selectedRows() ;
+
+	if(type == DIR_TYPE_DIR || list.size() > 1)
+	{
+		QAction *downloadActI = new QAction(QIcon(IMAGE_DOWNLOAD), tr( "Download..." ), &contextMnu ) ;
+		connect( downloadActI , SIGNAL( triggered() ), this, SLOT( downloadRemoteSelectedInteractive() ) ) ;
+		contextMnu.addAction( downloadActI) ;
+	}
+	else
+	{
+		QAction *downloadAct = new QAction(QIcon(IMAGE_DOWNLOAD), tr( "Download" ), &contextMnu ) ;
+		connect( downloadAct , SIGNAL( triggered() ), this, SLOT( downloadRemoteSelected() ) ) ;
+		contextMnu.addAction( downloadAct) ;
+	}
 
 	contextMnu.addSeparator() ;//------------------------------------
 	contextMnu.addAction( copylinkAct) ;
@@ -545,7 +556,16 @@ void RemoteSharedFilesDialog::expanded(const QModelIndex& indx)
 
     model->updateRef(proxyModel->mapToSource(indx)) ;
 }
+void RemoteSharedFilesDialog::downloadRemoteSelectedInteractive()
+{
+	/* call back to the model (which does all the interfacing?  */
 
+	std::cerr << "Downloading Files" ;
+	std::cerr << std::endl ;
+
+	QModelIndexList lst = getSelected() ;
+	model -> downloadSelected(lst,true) ;
+}
 void RemoteSharedFilesDialog::downloadRemoteSelected()
 {
 	/* call back to the model (which does all the interfacing?  */
@@ -554,7 +574,7 @@ void RemoteSharedFilesDialog::downloadRemoteSelected()
 	std::cerr << std::endl ;
 
 	QModelIndexList lst = getSelected() ;
-	model -> downloadSelected(lst) ;
+	model -> downloadSelected(lst,false) ;
 }
 
 void SharedFilesDialog::copyLinks(const QModelIndexList& lst, bool remote,QList<RetroShareLink>& urls,bool& has_unhashed_files)

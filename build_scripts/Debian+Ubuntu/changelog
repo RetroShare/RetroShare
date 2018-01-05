@@ -1,5 +1,78 @@
 retroshare (0.6.3-1.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
+  c2d5579 csoler Thu, 21 Dec 2017 17:06:32 +0100 storage of chat room icons in local variables to avoid re-reading them from qrc everytime (patch from sss)
+  acd8355 Gioacc Wed, 20 Dec 2017 18:24:28 +0100 Add some documentation on how to debug retroshare on android
+  c0d8333 csoler Mon, 18 Dec 2017 16:10:52 +0100 Merge pull request #1136 from csoler/v0.6-FT
+  ed0e280 csoler Mon, 18 Dec 2017 16:01:27 +0100 Merge pull request #1135 from PhenomRetroShare/Fix_DontSetMacOsTargetIfNotMacOs
+  4950ffb Phenom Fri, 15 Dec 2017 10:01:30 +0100 Don't Set Target and SDK if not  MacOS
+  0895b3d csoler Sun, 17 Dec 2017 13:55:50 +0100 Merge pull request #1134 from PhenomRetroShare/Fix_TravisCI_MacOS_Compil
+  3007fec csoler Sat, 16 Dec 2017 17:46:44 +0100 fixed colors in keyring with new ModelIndex based view (patch from sss)
+  99e35b1 csoler Sat, 16 Dec 2017 15:04:16 +0100 rename file in partials into real name before moving it; check for destination directory before moving file
+  a3acd58 Phenom Fri,  8 Dec 2017 19:00:34 +0100 Fix TravisCI on MacOS compilation.
+  acbcba8 csoler Thu,  7 Dec 2017 17:20:27 +0100 attempt to fix icon sizes in identity dialog
+  d2c8ba1 csoler Mon,  4 Dec 2017 16:33:45 +0100 Merge pull request #1117 from chelovechishko/qdarkstyle_fix
+  22292fc csoler Mon,  4 Dec 2017 16:32:37 +0100 Merge pull request #1118 from RetroPooh/net_settings_antifreeze
+  621ed71 csoler Mon,  4 Dec 2017 16:31:48 +0100 Merge pull request #1120 from sehraf/pr_fixForumDownloadAll
+  0503f42 csoler Mon,  4 Dec 2017 16:30:29 +0100 Merge pull request #1119 from RetroPooh/chan-fix-cyr
+  49b4057 sehraf Sat,  2 Dec 2017 15:00:24 +0100 fix 'download all' button for forum. Now all file links are opened in one collection dialog instead of each link in one separate dialog.
+  98d2772 chelov Sat,  2 Dec 2017 17:10:15 +0900 gui: make forums_dialog slightly more readable sometimes
+  8ec69df RetroP Wed, 29 Nov 2017 19:23:52 +0300 fix cyrillic text sent wrong in channel post
+  a88c2ef RetroP Wed, 29 Nov 2017 17:17:49 +0300 fix freezes in network settings
+  b99a1a5 defnax Tue, 28 Nov 2017 19:36:39 +0100 fixed the emote file for unshown emotes on gui
+  d1cdba8 Chelov Mon, 27 Nov 2017 14:48:14 +0900 gui: fix probably mistake with names in qdarkstyle.qss
+  8c34a50 Chelov Mon, 27 Nov 2017 11:16:37 +0900 gui: fix default color of some text in friends list in qdarkstyle.qss
+  d566a2a Chelov Mon, 27 Nov 2017 10:54:19 +0900 gui: fix keyring background color in qdarkstyle.qss
+  c05dd30 Chelov Mon, 27 Nov 2017 10:40:24 +0900 gui: fix doubled semicolons in qdarkstyle.qss
+  63b3acb csoler Thu, 23 Nov 2017 21:27:03 +0100 Merge pull request #1113 from csoler/v0.6-SSL110Fix
+  1faa274 csoler Wed, 22 Nov 2017 23:46:57 +0100 simplified memory management in certificate signature verification code
+  669f2ba csoler Wed, 22 Nov 2017 22:56:40 +0100 fixed a few bugs in signature verification code accross versions
+  c8c90ab csoler Wed, 22 Nov 2017 20:31:49 +0100 Merge pull request #1115 from PhenomRetroShare/Add_CopyComment
+  f6d69e0 csoler Wed, 22 Nov 2017 00:02:11 +0100 ensured maximum backward compatibility for crypto changes that will occur in future v0.7
+  6d4c942 Gioacc Tue, 21 Nov 2017 13:28:24 +0100 Removed unnecessary executable flag on some files
+  49d2366 csoler Tue, 21 Nov 2017 09:29:52 +0100 fixed windows compilation
+  ea241f6 csoler Tue, 21 Nov 2017 09:27:21 +0100 restored plugins removed by previous commit
+  d905144 csoler Mon, 20 Nov 2017 23:18:53 +0100 Merge pull request #1114 from PhenomRetroShare/Fix_DisableReplyToSystemMessage
+  d1d66bb csoler Mon, 20 Nov 2017 23:17:16 +0100 Merge pull request #1079 from csoler/v0.6-Keyring
+  e2c1661 csoler Mon, 20 Nov 2017 22:44:34 +0100 fixed compilation with v0.7 defines
+  cd51afb csoler Mon, 20 Nov 2017 22:26:14 +0100 fixed small bug in signature and compilation
+  9367aa0 csoler Sun, 19 Nov 2017 20:15:36 +0100 changed #ifs into #ifdefs because it us more robust, and moved the definition of variables to retroshare.pri
+  ef1a613 csoler Sun, 19 Nov 2017 19:57:38 +0100 added proper debug output for signature verification
+  863e625 csoler Sun, 19 Nov 2017 19:34:54 +0100 centralized the defines into a single file
+  e72bd9f csoler Sun, 19 Nov 2017 18:38:46 +0100 fixed bug causing certificate rejection
+  b4fdd4e csoler Sun, 19 Nov 2017 18:21:56 +0100 added two additional non packward compatible changes for future version 0.7, and improvements of verifications of certificate signatures
+  46a6bdc Phenom Sat, 18 Nov 2017 19:48:38 +0100 Add Copy action for Gxs Comments.
+  71efb9f Phenom Sat, 18 Nov 2017 18:49:42 +0100 Disable ReplyTo if System Message.
+  7472f78 csoler Wed, 15 Nov 2017 23:24:43 +0100 added sha256 calculation functions, and non backward compatible SSL Id computation code to active later (0.7)
+  ce14219 csoler Tue, 14 Nov 2017 21:39:46 +0100 merged with upstream/master
+  9f8f0e9 csoler Tue, 14 Nov 2017 21:36:04 +0100 fixed column names in keyring
+  ba7cf49 csoler Tue, 14 Nov 2017 20:53:24 +0100 Merge pull request #1037 from RetroPooh/searchspy
+  556f93c csoler Tue, 14 Nov 2017 20:51:25 +0100 Merge pull request #1108 from RetroPooh/smallfixes2
+  2f6517a csoler Tue, 14 Nov 2017 20:50:57 +0100 Merge pull request #1112 from RetroPooh/coll_name_as_dir
+  fdced92 csoler Tue, 14 Nov 2017 20:41:48 +0100 Merge pull request #1111 from RetroPooh/searstr
+  1f207ba RetroP Tue, 14 Nov 2017 19:52:48 +0300 create collection dialog filename as dir name
+  919d650 RetroP Tue, 14 Nov 2017 16:09:05 +0300 in search strings change comma to space for better look
+  9aa6dd3 Pooh   Tue, 14 Nov 2017 14:34:22 +0300 Update rsturtleitem.h
+  8368a76 csoler Mon, 13 Nov 2017 23:38:25 +0100 Merge pull request #1110 from csoler/v0.6-FT
+  5fab053 csoler Mon, 13 Nov 2017 23:37:53 +0100 added toStdString() method to search strings so as to display what is searched
+  7304c48 csoler Mon, 13 Nov 2017 22:32:30 +0100 Merge pull request #1109 from csoler/v0.6-Links2
+  5d6225a RetroP Tue, 14 Nov 2017 00:14:16 +0300 sort by time, nicer look
+  1669cd4 csoler Mon, 13 Nov 2017 22:08:05 +0100 use "download..." menu with RsCollectionDialog with multiple files and directories
+  f369ac1 RetroP Mon, 13 Nov 2017 19:05:16 +0300 fix mail fields stretching with CC BCC
+  45c8e9e csoler Mon, 13 Nov 2017 11:01:48 +0100 Merge pull request #1107 from csoler/v0.6-Links2
+  5997c10 csoler Sun, 12 Nov 2017 22:46:29 +0100 fixed bug causing RsCollection to fail on remote files. Now using RsCollectionDialog when downloading directories from friend shared files
+  c0951b3 csoler Sun, 12 Nov 2017 21:33:21 +0100 Merge pull request #1040 from RetroPooh/searchmultinames2
+  240d3a6 csoler Sat, 11 Nov 2017 16:33:30 +0100 Merge pull request #1104 from RetroPooh/linkaddrtooltips
+  cb77243 csoler Sat, 11 Nov 2017 16:31:33 +0100 Merge pull request #1105 from RetroPooh/smallfixes1
+  9b66e7e RetroP Fri, 10 Nov 2017 18:32:18 +0300 fix non-latin peer name display in bw stats
+  792f7ff RetroP Fri, 10 Nov 2017 18:31:41 +0300 fix status led icons for distant chat
+  df244fd RetroP Fri, 10 Nov 2017 16:01:11 +0300 add tooltips with address to urls
+  7feb630 csoler Wed,  8 Nov 2017 20:11:26 +0100 Merge pull request #1102 from csoler/v0.6-Links2
+  6a8bc8b csoler Wed,  8 Nov 2017 18:11:46 +0100 use of RsCollectionDialog for processing single file links. Only "extra" links still require the older processing system because RsCollections cannot have sources for each entry
+
+ -- Retroshare Dev Team <contact@retroshare.net>  Thu, 24 Dec 2017 10:00:00 +0100
+
+retroshare (0.6.3-1.20171107.c67143d4~wily) wily; urgency=low
+
   68b35f3 Phenom Tue, 15 Aug 2017 19:45:26 +0200 Fix CppCheck in notifytxt.cc
   0b8d684 Phenom Tue, 15 Aug 2017 19:11:32 +0200 Fix CppCheck in framecatcher.cpp
   deb6693 Phenom Tue, 15 Aug 2017 19:00:17 +0200 Fix CppCheck in idle.cpp

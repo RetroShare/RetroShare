@@ -191,10 +191,11 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
     connect(ui.extAddress,     SIGNAL(textChanged(QString)),this,SLOT(saveAddresses()));
     connect(ui.dynDNS,         SIGNAL(textChanged(QString)),this,SLOT(saveAddresses()));
 
-    connect(ui.hiddenpage_proxyAddress_tor, SIGNAL(textChanged(QString)),this,SLOT(saveAddresses()));
-    connect(ui.hiddenpage_proxyPort_tor,    SIGNAL(valueChanged(int)),this,SLOT(saveAddresses()));
-    connect(ui.hiddenpage_proxyAddress_i2p, SIGNAL(textChanged(QString)),this,SLOT(saveAddresses()));
-    connect(ui.hiddenpage_proxyPort_i2p,    SIGNAL(valueChanged(int)),this,SLOT(saveAddresses()));
+    connect(ui.tabWidget, SIGNAL(currentChanged(int)), this, SLOT(tabChanged(int)));
+    connect(ui.hiddenpage_proxyAddress_tor, SIGNAL(editingFinished()),this,SLOT(saveAddresses()));
+    connect(ui.hiddenpage_proxyPort_tor,    SIGNAL(editingFinished()),this,SLOT(saveAddresses()));
+    connect(ui.hiddenpage_proxyAddress_i2p, SIGNAL(editingFinished()),this,SLOT(saveAddresses()));
+    connect(ui.hiddenpage_proxyPort_i2p,    SIGNAL(editingFinished()),this,SLOT(saveAddresses()));
 
     connect(ui.totalDownloadRate,SIGNAL(valueChanged(int)),this,SLOT(saveRates()));
     connect(ui.totalUploadRate,  SIGNAL(valueChanged(int)),this,SLOT(saveRates()));
@@ -422,7 +423,6 @@ void ServerPage::load()
         whileBlocking(ui.hiddenpage_proxyAddress_i2p) -> setText(QString::fromStdString(proxyaddr));
         whileBlocking(ui.hiddenpage_proxyPort_i2p) -> setValue(proxyport);
 
-        updateOutProxyIndicator();
     }
 
 	//Relay Tab
@@ -873,8 +873,6 @@ void ServerPage::updateStatus()
     else
         ui.iconlabel_ext->setPixmap(QPixmap(":/images/ledoff1.png"));
 
-    // check for Tor
-    updateOutProxyIndicator();
 }
 
 void ServerPage::toggleUPnP()
@@ -909,6 +907,9 @@ void ServerPage::saveAddresses()
     bool saveAddr = false;
 
     saveCommon();
+
+	if(ui.tabWidget->currentIndex() == 2) // hidden services tab
+		updateOutProxyIndicator();
 
     if (mIsHiddenNode) {
         saveAddressesHiddenNode();
@@ -989,6 +990,12 @@ void ServerPage::saveAddresses()
 void ServerPage::saveRates()
 {
     rsConfig->SetMaxDataRates( ui.totalDownloadRate->value(), ui.totalUploadRate->value() );
+}
+
+void ServerPage::tabChanged(int page)
+{
+	if(page == 2)
+		updateOutProxyIndicator();
 }
 
 /***********************************************************************************/
@@ -1131,8 +1138,6 @@ void ServerPage::loadHiddenNode()
     whileBlocking(ui.hiddenpage_proxyAddress_i2p) -> setText(QString::fromStdString(proxyaddr));
     whileBlocking(ui.hiddenpage_proxyPort_i2p) -> setValue(proxyport);
 
-    updateOutProxyIndicator();
-
     QString expected = "";
     switch (mHiddenType) {
     case RS_HIDDEN_TYPE_I2P:
@@ -1220,8 +1225,6 @@ void ServerPage::updateStatusHiddenNode()
         ui.iconlabel_ext->setPixmap(QPixmap(":/images/ledoff1.png"));
 
 #endif
-
-    updateOutProxyIndicator();
 }
 
 void ServerPage::saveAddressesHiddenNode()
@@ -1553,8 +1556,6 @@ void ServerPage::loadCommon()
     whileBlocking(ui.hiddenpage_proxyAddress_i2p_2)->setText(QString::fromStdString(proxyaddr)); // this one is for bob tab
     whileBlocking(ui.hiddenpage_proxyPort_i2p) -> setValue(proxyport);
     whileBlocking(ui.hiddenpage_proxyPort_i2p_2)->setValue(proxyport); // this one is for bob tab
-
-    updateOutProxyIndicator();
 
     // don't use whileBlocking here
     ui.cb_enableBob->setChecked(mBobSettings.enableBob);

@@ -290,6 +290,12 @@
            <layout class="QVBoxLayout" name="scrollAreaWidgetContentsVLayout">
             <item>
              <widget class="QFrame" name="headerFramePerson">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <property name="frameShape">
                <enum>QFrame::StyledPanel</enum>
               </property>
@@ -477,6 +483,12 @@ border-image: url(:/images/closepressed.png)
                </item>
                <item row="0" column="0" rowspan="2">
                 <widget class="QLabel" name="avLabel_Person">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
                  <property name="minimumSize">
                   <size>
                    <width>64</width>
@@ -485,8 +497,8 @@ border-image: url(:/images/closepressed.png)
                  </property>
                  <property name="maximumSize">
                   <size>
-                   <width>64</width>
-                   <height>64</height>
+                   <width>1000</width>
+                   <height>1000</height>
                   </size>
                  </property>
                  <property name="styleSheet">

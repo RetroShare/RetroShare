@@ -1220,6 +1220,11 @@ static void processList(const QStringList &list, const QString &textSingular, co
     errorList << &fileExist << &personExist << &personFailed << &personNotFound << &forumUnknown << &forumMsgUnknown << &channelUnknown << &channelMsgUnknown << &postedUnknown << &postedMsgUnknown << &messageReceipientNotAccepted << &messageReceipientUnknown;
 	// not needed: forumFound, channelFound, messageStarted
 
+	// we want to merge all single file links into one collection
+	// if a collection tree link is found it is processed independen for the other file links
+	RsCollection col;
+	bool fileLinkFound = false;
+
 	for (linkIt = links.begin(); linkIt != links.end(); ++linkIt) {
 		const RetroShareLink &link = *linkIt;
 
@@ -1364,12 +1369,9 @@ static void processList(const QStringList &list, const QString &textSingular, co
 			}
 			break;
 
-			case TYPE_FILE:
-			{
-					RsCollection col ;
-					col.merge_in(link.name(),link.size(),RsFileHash(link.hash().toStdString())) ;
-					col.downloadFiles();
-			}
+		    case TYPE_FILE:
+			    col.merge_in(link.name(),link.size(),RsFileHash(link.hash().toStdString())) ;
+				fileLinkFound = true;
 			break;
 
 
@@ -1556,6 +1558,10 @@ static void processList(const QStringList &list, const QString &textSingular, co
 				++countUnknown;
 		}
 	}
+
+	// were single file links found?
+	if (fileLinkFound)
+		col.downloadFiles();
 
 	int countProcessed = 0;
 	int countError = 0;

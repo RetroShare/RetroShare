@@ -21,13 +21,14 @@
  *
  */
 
-#include <QMimeData>
-#include <QTextDocument>
 #include <QAbstractTextDocumentLayout>
 #include <QApplication>
+#include <QClipboard>
 #include <QDateTime>
 #include <QMenu>
+#include <QMimeData>
 #include <QPainter>
+#include <QTextDocument>
 
 #include "gui/common/RSElidedItemDelegate.h"
 #include "gui/gxs/GxsCommentTreeWidget.h"
@@ -54,7 +55,8 @@
 #define POST_COLOR_ROLE     (Qt::UserRole+2)
 
 /* Images for context menu icons */
-#define IMAGE_MESSAGE		":/images/folder-draft.png"
+#define IMAGE_MESSAGE       ":/images/folder-draft.png"
+#define IMAGE_COPY          ":/images/copy.png"
 #define IMAGE_VOTEUP        ":/images/vote_up.png"
 #define IMAGE_VOTEDOWN      ":/images/vote_down.png"
 
@@ -170,6 +172,7 @@ void GxsCommentTreeWidget::setCurrentCommentMsgId(QTreeWidgetItem *current, QTre
 	if(current)
 	{
 		mCurrentCommentMsgId = RsGxsMessageId(current->text(PCITEM_COLUMN_MSGID).toStdString());
+		mCurrentCommentText = current->text(PCITEM_COLUMN_COMMENT);
 	}
 }
 
@@ -180,6 +183,8 @@ void GxsCommentTreeWidget::customPopUpMenu(const QPoint& /*point*/)
 	action->setDisabled(mCurrentCommentMsgId.isNull());
 	action = contextMnu.addAction(QIcon(IMAGE_MESSAGE), tr("Submit Comment"), this, SLOT(makeComment()));
 	action->setDisabled(mMsgVersions.empty());
+	action = contextMnu.addAction(QIcon(IMAGE_COPY), tr("Copy Comment"), this, SLOT(copyComment()));
+	action->setDisabled(mCurrentCommentMsgId.isNull());
 
 	contextMnu.addSeparator();
 
@@ -306,6 +311,14 @@ void GxsCommentTreeWidget::replyToComment()
 	msgId.second = mCurrentCommentMsgId;
 	GxsCreateCommentDialog pcc(mTokenQueue, mCommentService, msgId, mLatestMsgId, this);
 	pcc.exec();
+}
+
+void GxsCommentTreeWidget::copyComment()
+{
+	QMimeData *mimeData = new QMimeData();
+	mimeData->setHtml("<html>"+mCurrentCommentText+"</html>");
+	QClipboard *clipboard = QApplication::clipboard();
+	clipboard->setMimeData(mimeData, QClipboard::Clipboard);
 }
 
 void GxsCommentTreeWidget::setup(RsTokenService *token_service, RsGxsCommentService *comment_service)

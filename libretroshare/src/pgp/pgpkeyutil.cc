@@ -160,7 +160,7 @@ uint32_t PGPKeyManagement::compute24bitsCRC(unsigned char *octets, size_t len)
     return crc & 0xFFFFFFL;
 }
 
-bool PGPKeyManagement::parseSignature(const unsigned char *signature, size_t sign_len, uint64_t& issuer)
+bool PGPKeyManagement::parseSignature(const unsigned char *signature, size_t sign_len, PGPSignatureInfo& info)
 {
     unsigned char *data = (unsigned char *)signature ;
 
@@ -189,10 +189,10 @@ bool PGPKeyManagement::parseSignature(const unsigned char *signature, size_t sig
     if(signature_type != 4)
         return false ;
     
-    data += 1 ;	// skip version number 
-    data += 1 ;	// skip signature type
-    data += 1 ;	// skip public key algorithm
-    data += 1 ;	// skip hash algorithm
+	info.signature_version    = data[0] ; data += 1 ;	// skip version number
+    info.signature_type       = data[0] ; data += 1 ;	// skip signature type
+    info.public_key_algorithm = data[0] ; data += 1 ;	// skip public key algorithm
+    info.hash_algorithm       = data[0] ; data += 1 ;	// skip hash algorithm
 
     uint32_t hashed_size = 256u*data[0] + data[1] ;
     data += 2 ;
@@ -214,7 +214,7 @@ bool PGPKeyManagement::parseSignature(const unsigned char *signature, size_t sig
 	    if(subpacket_type == PGPKeyParser::PGP_PACKET_TAG_ISSUER && subpacket_size == 9)
 	    {
 		    issuer_found = true ;
-		    issuer = PGPKeyParser::read_KeyID(data) ;
+		    info.issuer = PGPKeyParser::read_KeyID(data) ;
 	    }
 	    else
 		    data += subpacket_size-1 ;	// we remove the size of subpacket type
