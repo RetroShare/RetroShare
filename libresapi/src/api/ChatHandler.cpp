@@ -113,6 +113,8 @@ StreamBase& operator << (StreamBase& left, ChatHandler::ChatInfo& info)
 {
     left << makeKeyValueReference("remote_author_id", info.remote_author_id)
          << makeKeyValueReference("remote_author_name", info.remote_author_name)
+	     << makeKeyValueReference("own_author_id", info.own_author_id)
+	     << makeKeyValueReference("own_author_name", info.own_author_name)
          << makeKeyValueReference("is_broadcast", info.is_broadcast)
          << makeKeyValueReference("is_distant_chat_id", info.is_distant_chat_id)
          << makeKeyValueReference("is_lobby", info.is_lobby)
@@ -435,16 +437,21 @@ void ChatHandler::tick()
             }
             else if(msg.chat_id.isDistantChatId())
 			{
-				RsIdentityDetails details;
+				RsIdentityDetails detailsRemoteIdentity;
+				RsIdentityDetails detailsOwnIdentity;
 				DistantChatPeerInfo dcpinfo;
 
 				if( !gxs_id_failed &&
 				        rsMsgs->getDistantChatStatus(
-				            msg.chat_id.toDistantChatId(), dcpinfo ) &&
-				        mRsIdentity->getIdDetails(dcpinfo.to_id, details) )
+				            msg.chat_id.toDistantChatId(), dcpinfo )
+				        && mRsIdentity->getIdDetails(dcpinfo.to_id, detailsRemoteIdentity)
+				        && mRsIdentity->getIdDetails(dcpinfo.own_id, detailsOwnIdentity))
 				{
-					info.remote_author_id = details.mId.toStdString();
-					info.remote_author_name = details.mNickname;
+					info.remote_author_id = detailsRemoteIdentity.mId.toStdString();
+					info.remote_author_name = detailsRemoteIdentity.mNickname;
+
+					info.own_author_id = detailsOwnIdentity.mId.toStdString();
+					info.own_author_name = detailsOwnIdentity.mNickname;
 				}
                 else
                 {

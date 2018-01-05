@@ -104,6 +104,8 @@ public:
         bool is_distant_chat_id;
         bool is_lobby;
         bool is_peer;
+		std::string own_author_id;
+		std::string own_author_name;
         std::string remote_author_id;
         std::string remote_author_name;
     };
