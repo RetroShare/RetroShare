@@ -61,12 +61,12 @@ private:
 	StateToken mLocalDirStateToken;
 
 	/// Token indicating change in remote (friends') shared files
-	StateToken mLocalDirStateToken;
+	StateToken mRemoteDirStateToken;
 
 	StateTokenServer* mStateTokenServer;
 
 	/**
-	 Protects mLocalDirStateToken and mLocalDirStateToken that may be changed in foreign thread
+	 Protects mLocalDirStateToken and mRemoteDirStateToken that may be changed in foreign thread
 	 @see FileSharingHandler::notifyListChange(...)
 	*/
 	RsMutex mMtx;
