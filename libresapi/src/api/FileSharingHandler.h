@@ -34,8 +34,10 @@ public:
 	FileSharingHandler(StateTokenServer* sts, RsFiles* files, RsNotify& notify);
 	~FileSharingHandler();
 
-	// from NotifyClient
-	// note: this may get called from foreign threads
+	/**
+	 Derived from NotifyClient
+	 This function may be called from foreign thread
+	*/
 	virtual void notifyListChange(int list, int type);
 
 private:
@@ -55,10 +57,19 @@ private:
 
 	void handleDownload(Request& req, Response& resp);
 
-	StateToken mLocalDirStateToken; // Token indicating change in local shared files
-	StateToken mRemoteDirStateToken; // Token indicating change in remote (friends') shared files
+	/// Token indicating change in local shared files
+	StateToken mLocalDirStateToken;
+
+	/// Token indicating change in remote (friends') shared files
+	StateToken mLocalDirStateToken;
+
 	StateTokenServer* mStateTokenServer;
-	RsMutex mMtx; // Inherited virtual functions of NotifyClient may be called from foreing thread
+
+	/**
+	 Protects mLocalDirStateToken and mLocalDirStateToken that may be changed in foreign thread
+	 @see FileSharingHandler::notifyListChange(...)
+	*/
+	RsMutex mMtx;
 
 	RsFiles* mRsFiles;
 	RsNotify& mNotify;
