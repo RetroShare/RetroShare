@@ -31,7 +31,7 @@ namespace resource_api
 class FileSharingHandler: public ResourceRouter, NotifyClient
 {
 public:
-	FileSharingHandler(StateTokenServer* sts, RsFiles* files, RsNotify* notify);
+	FileSharingHandler(StateTokenServer* sts, RsFiles* files, RsNotify& notify);
 	~FileSharingHandler();
 
 	// from NotifyClient
@@ -61,7 +61,7 @@ private:
 	RsMutex mMtx; // Inherited virtual functions of NotifyClient may be called from foreing thread
 
 	RsFiles* mRsFiles;
-	RsNotify* mNotify;
+	RsNotify& mNotify;
 };
 
 } // namespace resource_api

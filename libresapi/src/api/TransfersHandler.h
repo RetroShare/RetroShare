@@ -13,7 +13,7 @@ namespace resource_api
 class TransfersHandler: public ResourceRouter, Tickable, NotifyClient
 {
 public:
-	TransfersHandler(StateTokenServer* sts, RsFiles* files, RsPeers *peers, RsNotify* notify);
+	TransfersHandler(StateTokenServer* sts, RsFiles* files, RsPeers *peers, RsNotify& notify);
     virtual ~TransfersHandler();
 
 	// from NotifyClient
@@ -30,7 +30,7 @@ private:
     StateTokenServer* mStateTokenServer;
     RsFiles* mFiles;
 	RsPeers* mRsPeers;
-	RsNotify* mNotify;
+	RsNotify& mNotify;
 
 	RsMutex mMtx;
     StateToken mStateToken;

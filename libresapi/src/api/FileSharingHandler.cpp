@@ -22,7 +22,7 @@ namespace resource_api
 {
 
 FileSharingHandler::FileSharingHandler(StateTokenServer *sts, RsFiles *files,
-                                       RsNotify* notify):
+                                       RsNotify& notify):
     mStateTokenServer(sts), mRsFiles(files), mNotify(notify),
     mMtx("FileSharingHandler Mtx")
 {
@@ -44,12 +44,12 @@ FileSharingHandler::FileSharingHandler(StateTokenServer *sts, RsFiles *files,
 
 	mLocalDirStateToken = mStateTokenServer->getNewToken();
 	mRemoteDirStateToken = mStateTokenServer->getNewToken();
-	mNotify->registerNotifyClient(this);
+	mNotify.registerNotifyClient(this);
 }
 
 FileSharingHandler::~FileSharingHandler()
 {
-	mNotify->unregisterNotifyClient(this);
+	mNotify.unregisterNotifyClient(this);
 }
 
 void FileSharingHandler::notifyListChange(int list, int /* type */)
