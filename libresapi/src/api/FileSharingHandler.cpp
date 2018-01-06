@@ -21,8 +21,10 @@
 namespace resource_api
 {
 
-FileSharingHandler::FileSharingHandler(StateTokenServer *sts, RsFiles *files):
-    mStateTokenServer(sts), mRsFiles(files)
+FileSharingHandler::FileSharingHandler(StateTokenServer *sts, RsFiles *files,
+                                       RsNotify& notify):
+    mStateTokenServer(sts), mRsFiles(files), mNotify(notify),
+    mMtx("FileSharingHandler Mtx")
 {
 	addResourceHandler("*", this, &FileSharingHandler::handleWildcard);
 	addResourceHandler("force_check", this, &FileSharingHandler::handleForceCheck);
@@ -40,7 +42,30 @@ FileSharingHandler::FileSharingHandler(StateTokenServer *sts, RsFiles *files):
 
 	addResourceHandler("download", this, &FileSharingHandler::handleDownload);
 
-	mStateToken = mStateTokenServer->getNewToken();
+	mLocalDirStateToken = mStateTokenServer->getNewToken();
+	mRemoteDirStateToken = mStateTokenServer->getNewToken();
+	mNotify.registerNotifyClient(this);
+}
+
+FileSharingHandler::~FileSharingHandler()
+{
+	mNotify.unregisterNotifyClient(this);
+}
+
+void FileSharingHandler::notifyListChange(int list, int /* type */)
+{
+	if(list == NOTIFY_LIST_DIRLIST_LOCAL)
+	{
+		RS_STACK_MUTEX(mMtx);
+		mStateTokenServer->discardToken(mLocalDirStateToken);
+		mLocalDirStateToken = mStateTokenServer->getNewToken();
+	}
+	else if(list == NOTIFY_LIST_DIRLIST_FRIENDS)
+	{
+		RS_STACK_MUTEX(mMtx);
+		mStateTokenServer->discardToken(mRemoteDirStateToken);
+		mRemoteDirStateToken = mStateTokenServer->getNewToken();
+	}
 }
 
 void FileSharingHandler::handleWildcard(Request & /*req*/, Response & /*resp*/)
@@ -104,6 +129,7 @@ void FileSharingHandler::handleGetSharedDir(Request& req, Response& resp)
 			        << makeKeyValue("name", dirDetails.name)
 			        << makeKeyValue("path", dirDetails.path)
 			        << makeKeyValue("hash", dirDetails.hash.toStdString())
+			        << makeKeyValue("peer_id", dirDetails.id.toStdString())
 			        << makeKeyValue("parent_reference", *reinterpret_cast<int*>(&dirDetails.parent))
 			        << makeKeyValue("reference", *reinterpret_cast<int*>(&dirDetails.ref))
 			        << makeKeyValue("count", static_cast<int>(dirDetails.count))
@@ -140,6 +166,8 @@ void FileSharingHandler::handleGetSharedDir(Request& req, Response& resp)
 			        << makeKeyValueReference("contain_folders", contain_folders);
 		}
 	}
+
+	resp.mStateToken = mLocalDirStateToken;
 }
 
 void FileSharingHandler::handleSetSharedDir(Request& req, Response& resp)
@@ -231,10 +259,16 @@ void FileSharingHandler::handleGetDirectoryParent(Request& req, Response& resp)
 
 	FileSearchFlags flags;
 	if(remote)
+	{
 		flags |= RS_FILE_HINTS_REMOTE;
+		resp.mStateToken = mRemoteDirStateToken;
+	}
 
 	if(local)
+	{
 		flags |= RS_FILE_HINTS_LOCAL;
+		resp.mStateToken = mLocalDirStateToken;
+	}
 
 	DirDetails dirDetails;
 	mRsFiles->RequestDirDetails(ref, dirDetails, flags);
@@ -282,6 +316,7 @@ void FileSharingHandler::handleGetDirectoryParent(Request& req, Response& resp)
 			        << makeKeyValue("name", dirDetails.name)
 			        << makeKeyValue("path", dirDetails.path)
 			        << makeKeyValue("hash", dirDetails.hash.toStdString())
+			        << makeKeyValue("peer_id", dirDetails.id.toStdString())
 			        << makeKeyValue("parent_reference", *reinterpret_cast<int*>(&dirDetails.parent))
 			        << makeKeyValue("reference", *reinterpret_cast<int*>(&dirDetails.ref))
 			        << makeKeyValue("count", static_cast<int>(dirDetails.count))
@@ -334,10 +369,16 @@ void FileSharingHandler::handleGetDirectoryChilds(Request& req, Response& resp)
 
 	FileSearchFlags flags;
 	if(remote)
+	{
 		flags |= RS_FILE_HINTS_REMOTE;
+		resp.mStateToken = mRemoteDirStateToken;
+	}
 
 	if(local)
+	{
 		flags |= RS_FILE_HINTS_LOCAL;
+		resp.mStateToken = mLocalDirStateToken;
+	}
 
 	DirDetails dirDetails;
 	mRsFiles->RequestDirDetails(ref, dirDetails, flags);
@@ -385,6 +426,7 @@ void FileSharingHandler::handleGetDirectoryChilds(Request& req, Response& resp)
 			        << makeKeyValue("name", dirDetails.name)
 			        << makeKeyValue("path", dirDetails.path)
 			        << makeKeyValue("hash", dirDetails.hash.toStdString())
+			        << makeKeyValue("peer_id", dirDetails.id.toStdString())
 			        << makeKeyValue("parent_reference", *reinterpret_cast<int*>(&dirDetails.parent))
 			        << makeKeyValue("reference", *reinterpret_cast<int*>(&dirDetails.ref))
 			        << makeKeyValue("count", static_cast<int>(dirDetails.count))

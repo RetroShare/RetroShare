@@ -31,7 +31,7 @@ FileSearchHandler::~FileSearchHandler()
 
 void FileSearchHandler::notifyTurtleSearchResult(uint32_t search_id, const std::list<TurtleFileInfo>& files)
 {
-    RsStackMutex stackMtx(mMtx); // ********** STACK LOCKED MTX **********
+	RS_STACK_MUTEX(mMtx); // ********** LOCKED **********
     std::map<uint32_t, Search>::iterator mit = mSearches.find(search_id);
     if(mit == mSearches.end())
         return;
@@ -85,7 +85,7 @@ void FileSearchHandler::handleWildcard(Request &req, Response &resp)
         }
 
         {
-            RsStackMutex stackMtx(mMtx); // ********** STACK LOCKED MTX **********
+			RS_STACK_MUTEX(mMtx); // ********** LOCKED **********
             std::map<uint32_t, Search>::iterator mit = mSearches.find(id);
             if(mit == mSearches.end())
             {
@@ -115,7 +115,7 @@ void FileSearchHandler::handleWildcard(Request &req, Response &resp)
     else
     {
         // list searches
-        RsStackMutex stackMtx(mMtx); // ********** STACK LOCKED MTX **********
+		RS_STACK_MUTEX(mMtx); // ********** LOCKED **********
         resp.mDataStream.getStreamToMember();
         for(std::map<uint32_t, Search>::iterator mit = mSearches.begin(); mit != mSearches.end(); ++mit)
         {
@@ -221,7 +221,7 @@ void FileSearchHandler::handleCreateSearch(Request &req, Response &resp)
     }
 
     {
-        RsStackMutex stackMtx(mMtx); // ********** STACK LOCKED MTX **********
+		RS_STACK_MUTEX(mMtx); // ********** LOCKED **********
 
         Search& search = mSearches[search_id];
         search.mStateToken = mStateTokenServer->getNewToken();
@@ -262,7 +262,7 @@ void FileSearchHandler::handleGetSearchResult(Request& req, Response& resp)
 	}
 
 	{
-		RsStackMutex stackMtx(mMtx); // ********** STACK LOCKED MTX **********
+		RS_STACK_MUTEX(mMtx); // ********** LOCKED **********
 		std::map<uint32_t, Search>::iterator mit = mSearches.find(id);
 		if(mit == mSearches.end())
 		{
