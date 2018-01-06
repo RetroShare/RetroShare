@@ -22,13 +22,13 @@
 #include "MessageUserNotify.h"
 #include "gui/notifyqt.h"
 #include "gui/MainWindow.h"
-#include "util/RsIcon.h"
 
 #include "gui/msgs/MessageInterface.h"
 
 MessageUserNotify::MessageUserNotify(QObject *parent) :
 	UserNotify(parent)
 {
+	mIcon = RsIcon(":/icons/svg/messages-trans.svg");
 	connect(NotifyQt::getInstance(), SIGNAL(messagesChanged()), this, SLOT(updateIcon()));
 }
 
@@ -42,12 +42,13 @@ bool MessageUserNotify::hasSetting(QString *name, QString *group)
 
 QIcon MessageUserNotify::getIcon()
 {
-	return RsIcon(":/icons/svg/messages-trans.svg");
+	return mIcon;
 }
 
 QIcon MessageUserNotify::getMainIcon(bool hasNew)
 {
-	return RsIcon(":/icons/svg/messages-trans.svg", hasNew);
+	mIcon.setOnNotify(hasNew);
+	return mIcon;
 }
 
 unsigned int MessageUserNotify::getNewCount()

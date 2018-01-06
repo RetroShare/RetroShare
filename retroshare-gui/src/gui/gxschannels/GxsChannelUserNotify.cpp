@@ -21,11 +21,11 @@
 
 #include "GxsChannelUserNotify.h"
 #include "gui/MainWindow.h"
-#include "util/RsIcon.h"
 
 GxsChannelUserNotify::GxsChannelUserNotify(RsGxsIfaceHelper *ifaceImpl, QObject *parent) :
     GxsUserNotify(ifaceImpl, parent)
 {
+	mIcon = RsIcon(":/icons/svg/channels-trans.svg");
 }
 
 bool GxsChannelUserNotify::hasSetting(QString *name, QString *group)
@@ -38,12 +38,13 @@ bool GxsChannelUserNotify::hasSetting(QString *name, QString *group)
 
 QIcon GxsChannelUserNotify::getIcon()
 {
-	return RsIcon(":/icons/svg/channels-trans.svg");
+	return mIcon;
 }
 
 QIcon GxsChannelUserNotify::getMainIcon(bool hasNew)
 {
-	return RsIcon(":/icons/svg/channels-trans.svg", hasNew);
+	mIcon.setOnNotify(hasNew);
+	return mIcon;
 }
 
 void GxsChannelUserNotify::iconClicked()

@@ -19,35 +19,38 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#include <time.h>
+#include "FriendsDialog.h"
+
+#include "MainWindow.h"
+#include "NetworkDialog.h"
+#include "NetworkView.h"
+#include "NewsFeed.h"
+#include "notifyqt.h"
+#include "RetroShareLink.h"
+#include "chat/ChatUserNotify.h"
+#include "connect/ConnectFriendWizard.h"
+#include "groups/CreateGroup.h"
+#include "gui/Identity/IdDialog.h"
+#ifdef RS_USE_CIRCLES
+#include "gui/Circles/CirclesDialog.h"
+#endif
+#include "profile/ProfileWidget.h"
+#include "profile/StatusMessage.h"
+#include "settings/rsharesettings.h"
+#include "util/DateTime.h"
+#include "util/misc.h"
+#include "util/RsIcon.h"
+
+#include <retroshare/rspeers.h>
+#include <retroshare/rshistory.h>
 
 #include <QDropEvent>
 #include <QMenu>
 #include <QTimer>
 #include <QMessageBox>
 
-#include <retroshare/rspeers.h>
-#include <retroshare/rshistory.h>
+#include <time.h>
 
-#include "chat/ChatUserNotify.h"
-#include "connect/ConnectFriendWizard.h"
-#include "groups/CreateGroup.h"
-#include "MainWindow.h"
-#include "NewsFeed.h"
-#include "notifyqt.h"
-#include "profile/ProfileWidget.h"
-#include "profile/StatusMessage.h"
-#include "RetroShareLink.h"
-#include "settings/rsharesettings.h"
-#include "util/misc.h"
-#include "util/DateTime.h"
-#include "FriendsDialog.h"
-#include "NetworkView.h"
-#include "NetworkDialog.h"
-#include "gui/Identity/IdDialog.h"
-#ifdef RS_USE_CIRCLES
-#include "gui/Circles/CirclesDialog.h"
-#endif
 /* Images for Newsfeed icons */
 //#define IMAGE_NEWSFEED           ""
 //#define IMAGE_NEWSFEED_NEW       ":/images/message-state-new.png"
@@ -68,6 +71,7 @@ FriendsDialog::FriendsDialog(QWidget *parent)
 {
     /* Invoke the Qt Designer generated object setup routine */
     ui.setupUi(this);
+    setIconPixmap(RsIcon(IMAGE_NETWORK));
     ui.titleBarPixmap->setIcon(iconPixmap());
 
     if (instance == NULL) {

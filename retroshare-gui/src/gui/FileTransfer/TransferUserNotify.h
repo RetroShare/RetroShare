@@ -23,6 +23,7 @@
 #define TRANSFERUSERNOTIFY_H
 
 #include "gui/common/UserNotify.h"
+#include "util/RsIcon.h"
 
 class TransferUserNotify : public UserNotify
 {
@@ -45,6 +46,7 @@ private:
 	virtual void iconClicked();
 
 	unsigned int newTransferCount;
+	RsIcon mIcon;
 };
 
 #endif // TRANSFERUSERNOTIFY_H

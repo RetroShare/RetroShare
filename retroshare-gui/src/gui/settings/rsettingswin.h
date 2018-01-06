@@ -24,11 +24,10 @@
 
 #include "ui_settingsw.h"
 
-#include <QDialog>
-
-#include <retroshare-gui/configpage.h>
 #include "mainpage.h"
-#include <util/RsIcon.h>
+#include <retroshare-gui/configpage.h>
+
+#include <QDialog>
 
 class FloatingHelpBrowser;
 
@@ -48,7 +47,7 @@ public:
 
 	void postModDirectories(bool update_local);
 
-	virtual QIcon iconPixmap() const { return RsIcon(IMAGE_PREFERENCES) ; } //MainPage
+	//virtual QIcon iconPixmap() const { return RsIcon(IMAGE_PREFERENCES) ; } //MainPage
 	virtual QString pageName() const { return tr("Preferences") ; } //MainPage
 
 protected:

@@ -20,13 +20,16 @@
  ****************************************************************/
 
 #include "gui/GetStartedDialog.h"
-#include "gui/connect/ConnectFriendWizard.h"
-#include "retroshare/rspeers.h"
-#include "retroshare/rsdisc.h"
-#include "retroshare/rsconfig.h"
 
-#include "retroshare-gui/RsAutoUpdatePage.h"
 #include "rshare.h"
+#include "gui/connect/ConnectFriendWizard.h"
+#include "retroshare-gui/RsAutoUpdatePage.h"
+#include "util/RsIcon.h"
+
+#include "retroshare/rsconfig.h"
+#include "retroshare/rsdisc.h"
+#include "retroshare/rspeers.h"
+
 
 #include <QDesktopServices>
 
@@ -45,6 +48,7 @@ GetStartedDialog::GetStartedDialog(QWidget *parent)
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	ui.setupUi(this);
+	setIconPixmap(RsIcon(IMG_HELP));
 
 	mTimer = NULL;
 	mInviteTimer = NULL;

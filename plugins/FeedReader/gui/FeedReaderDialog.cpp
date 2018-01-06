@@ -61,6 +61,7 @@ FeedReaderDialog::FeedReaderDialog(RsFeedReader *feedReader, FeedReaderNotify *n
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	ui->setupUi(this);
+	setIconPixmap(RsIcon(IMAGE_FEEDREADER));
 	ui->titleBarPixmap->setIcon(iconPixmap());
 
 	mProcessSettings = false;

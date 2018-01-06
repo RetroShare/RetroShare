@@ -19,21 +19,14 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#include <QDateTime>
-#include <QKeyEvent>
-#include <QMessageBox>
-#include <QStandardItemModel>
-#include <QShortcut>
-#include <QTimer>
-
 #include "MessagesDialog.h"
 
 #include "notifyqt.h"
-#include "common/TagDefs.h"
 #include "common/PeerDefs.h"
 #include "common/RSElidedItemDelegate.h"
-#include "gxs/GxsIdTreeWidgetItem.h"
+#include "common/TagDefs.h"
 #include "gxs/GxsIdDetails.h"
+#include "gxs/GxsIdTreeWidgetItem.h"
 #include "msgs/MessageComposer.h"
 #include "msgs/MessageInterface.h"
 #include "msgs/MessageUserNotify.h"
@@ -42,13 +35,21 @@
 #include "settings/rsharesettings.h"
 
 #include "util/DateTime.h"
-#include "util/RsProtectedTimer.h"
 #include "util/QtVersion.h"
+#include "util/RsIcon.h"
+#include "util/RsProtectedTimer.h"
 
 #include <retroshare/rspeers.h>
 #include <retroshare/rsmsgs.h>
 
 #include <algorithm>
+
+#include <QDateTime>
+#include <QKeyEvent>
+#include <QMessageBox>
+#include <QStandardItemModel>
+#include <QShortcut>
+#include <QTimer>
 
 /* Images for context menu icons */
 #define IMAGE_MESSAGE          ":/images/folder-draft.png"
@@ -124,6 +125,7 @@ MessagesDialog::MessagesDialog(QWidget *parent)
 {
     /* Invoke the Qt Designer generated object setup routine */
     ui.setupUi(this);
+    setIconPixmap(RsIcon(IMAGE_MESSAGES));
     ui.titleBarPixmap->setIcon(iconPixmap());
 
     inProcessSettings = false;

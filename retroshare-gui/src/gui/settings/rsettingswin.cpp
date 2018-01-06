@@ -19,32 +19,36 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#include <QMessageBox>
+#include "rsettingswin.h"
 
-#include <retroshare/rsplugin.h>
-#include <rshare.h>
+#include "AboutPage.h"
+#include "AppearancePage.h"
+#include "ChannelPage.h"
+#include "ChatPage.h"
+#include "CryptoPage.h"
+#include "FileAssociationsPage.h"
+#include "ForumPage.h"
 #include "GeneralPage.h"
-#include "ServerPage.h"
+#include "MessagePage.h"
 #include "NetworkPage.h"
 #include "NotifyPage.h"
-#include "CryptoPage.h"
-#include "AppearancePage.h"
-#include "FileAssociationsPage.h"
+#include "PeoplePage.h"
+#include "PluginsPage.h"
+#include "PostedPage.h"
+#include "rshare.h"
+#include "rsharesettings.h"
+#include "ServerPage.h"
+#include "ServicePermissionsPage.h"
 #include "SoundPage.h"
 #include "TransferPage.h"
-#include "ChatPage.h"
-#include "ChannelPage.h"
-#include "PeoplePage.h"
-#include "MessagePage.h"
-#include "ForumPage.h"
-#include "AboutPage.h"
-#include "PostedPage.h"
-#include "PluginsPage.h"
-#include "ServicePermissionsPage.h"
-#include "rsharesettings.h"
 #include "gui/notifyqt.h"
 #include "gui/common/FloatingHelpBrowser.h"
 #include "gui/common/RSElidedItemDelegate.h"
+#include "util/RsIcon.h"
+
+#include <retroshare/rsplugin.h>
+
+#include <QMessageBox>
 
 #ifdef ENABLE_WEBUI
 #	include "WebuiPage.h"
@@ -54,8 +58,6 @@
 
 #define ITEM_SPACING 2
 
-#include "rsettingswin.h"
-
 //RSettingsWin *RSettingsWin::_instance = NULL;
 int SettingsPage::lastPage = 0;
 
@@ -63,6 +65,7 @@ SettingsPage::SettingsPage(QWidget *parent)
     : MainPage(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint)
 {
     ui.setupUi(this);
+    setIconPixmap(RsIcon(IMAGE_PREFERENCES));
     setAttribute(Qt::WA_DeleteOnClose, true);
 
     /* Initialize help browser */

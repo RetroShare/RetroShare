@@ -21,12 +21,12 @@
 
 #include "GxsForumUserNotify.h"
 #include "gui/MainWindow.h"
-#include "util/RsIcon.h"
 
 GxsForumUserNotify::GxsForumUserNotify(RsGxsIfaceHelper *ifaceImpl, QObject *parent) :
     GxsUserNotify(ifaceImpl, parent)
 {
 	mCountChildMsgs = true;
+	mIcon = RsIcon(":/icons/svg/forums-trans.svg");
 }
 
 bool GxsForumUserNotify::hasSetting(QString *name, QString *group)
@@ -39,12 +39,13 @@ bool GxsForumUserNotify::hasSetting(QString *name, QString *group)
 
 QIcon GxsForumUserNotify::getIcon()
 {
-	return RsIcon(":/icons/svg/forums-trans.svg");
+	return mIcon;
 }
 
 QIcon GxsForumUserNotify::getMainIcon(bool hasNew)
 {
-	return RsIcon(":/icons/svg/forums-trans.svg", hasNew);
+	mIcon.setOnNotify(hasNew);
+	return mIcon;
 }
 
 void GxsForumUserNotify::iconClicked()

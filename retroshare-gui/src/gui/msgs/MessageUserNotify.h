@@ -23,6 +23,7 @@
 #define MESSAGEUSERNOTIFY_H
 
 #include "gui/common/UserNotify.h"
+#include "util/RsIcon.h"
 
 class MessageUserNotify : public UserNotify
 {
@@ -38,6 +39,9 @@ private:
 	virtual QIcon getMainIcon(bool hasNew);
 	virtual unsigned int getNewCount();
 	virtual void iconClicked();
+
+private:
+	RsIcon mIcon;
 };
 
 #endif // MESSAGEUSERNOTIFY_H

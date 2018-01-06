@@ -23,6 +23,7 @@
 #define FEEDREADERUSERNOTIFY_H
 
 #include "gui/common/UserNotify.h"
+#include "util/RsIcon.h"
 
 class FeedReaderDialog;
 class RsFeedReader;
@@ -49,6 +50,7 @@ private:
 	FeedReaderDialog *mFeedReaderDialog;
 	RsFeedReader *mFeedReader;
 	FeedReaderNotify *mNotify;
+	RsIcon mIcon;
 };
 
 #endif // FEEDREADERUSERNOTIFY_H

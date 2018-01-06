@@ -19,21 +19,24 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#include <QMenu>
-#include <QFileDialog>
-
-#include <retroshare/rsfiles.h>
 
 #include "GxsChannelDialog.h"
+
+#include "CreateGxsChannelMsg.h"
 #include "GxsChannelGroupDialog.h"
 #include "GxsChannelPostsWidget.h"
-#include "CreateGxsChannelMsg.h"
 #include "GxsChannelUserNotify.h"
+#include "gui/notifyqt.h"
+#include "gui/common/GroupTreeWidget.h"
 #include "gui/gxs/GxsGroupShareKey.h"
 #include "gui/feeds/GxsChannelPostItem.h"
 #include "gui/settings/rsharesettings.h"
-#include "gui/notifyqt.h"
-#include "gui/common/GroupTreeWidget.h"
+#include "util/RsIcon.h"
+
+#include <retroshare/rsfiles.h>
+
+#include <QMenu>
+#include <QFileDialog>
 
 class GxsChannelGroupInfoData : public RsUserdata
 {
@@ -49,6 +52,7 @@ public:
 GxsChannelDialog::GxsChannelDialog(QWidget *parent)
 	: GxsGroupFrameDialog(rsGxsChannels, parent,true)
 {
+	setIconPixmap(RsIcon(IMAGE_GXSCHANNELS));
 }
 
 GxsChannelDialog::~GxsChannelDialog()

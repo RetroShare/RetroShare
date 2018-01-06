@@ -19,6 +19,38 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
+#include "TransfersDialog.h"
+
+#include "DetailsDialog.h"
+#include "DLListDelegate.h"
+#include "FileTransferInfoWidget.h"
+#include "TransferUserNotify.h"
+#include "ULListDelegate.h"
+#include "xprogressbar.h"
+#include <gui/RetroShareLink.h>
+#include <gui/common/FilesDefs.h>
+#include <gui/common/RsCollection.h>
+#include <gui/common/RsUrlHandler.h>
+#include <gui/common/RSTreeView.h>
+#include <gui/FileTransfer/SearchDialog.h>
+#include <gui/FileTransfer/SharedFilesDialog.h>
+#include <gui/settings/rsharesettings.h>
+
+#include "util/misc.h"
+#include "util/QtVersion.h"
+#include "util/RsFile.h"
+#include "util/RsIcon.h"
+
+#include <retroshare/rsdisc.h>
+#include <retroshare/rsfiles.h>
+#include <retroshare/rspeers.h>
+#include <retroshare/rsplugin.h>
+#include <retroshare/rsturtle.h>
+
+#include <algorithm>
+#include <limits>
+#include <math.h>
+
 #include <QDateTime>
 #include <QDir>
 #include <QFileDialog>
@@ -29,38 +61,6 @@
 #include <QMessageBox>
 #include <QShortcut>
 #include <QStandardItemModel>
-
-#include <gui/common/FilesDefs.h>
-#include <gui/common/RsCollection.h>
-#include <gui/common/RsUrlHandler.h>
-#include <gui/common/RSTreeView.h>
-
-#include <algorithm>
-#include <limits>
-#include <math.h>
-
-#include "TransfersDialog.h"
-#include <gui/RetroShareLink.h>
-#include "DetailsDialog.h"
-#include "DLListDelegate.h"
-#include "ULListDelegate.h"
-#include "FileTransferInfoWidget.h"
-#include <gui/FileTransfer/SearchDialog.h>
-#include <gui/FileTransfer/SharedFilesDialog.h>
-#include "xprogressbar.h"
-#include <gui/settings/rsharesettings.h>
-#include "util/misc.h"
-#include <gui/common/RsCollection.h>
-#include "TransferUserNotify.h"
-#include "util/QtVersion.h"
-#include "util/RsFile.h"
-
-#include <retroshare/rsfiles.h>
-#include <retroshare/rspeers.h>
-#include <retroshare/rsdisc.h>
-#include <retroshare/rsplugin.h>
-
-#include <retroshare/rsturtle.h>
 
 /* Images for context menu icons */
 #define IMAGE_INFO                 ":/images/fileinfo.png"
@@ -806,6 +806,7 @@ TransfersDialog::TransfersDialog(QWidget *parent)
 {
     /* Invoke the Qt Designer generated object setup routine */
     ui.setupUi(this);
+    setIconPixmap(RsIcon(IMAGE_TRANSFERS));
     ui.titleBarPixmap->setIcon(iconPixmap());
 
     m_bProcessSettings = false;

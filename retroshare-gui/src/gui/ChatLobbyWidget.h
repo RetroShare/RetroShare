@@ -41,7 +41,7 @@ public:
 	/** Default destructor */
 	~ChatLobbyWidget();
 
-	virtual QIcon iconPixmap() const { return RsIcon(IMAGE_CHATLOBBY) ; } //MainPage
+	//virtual QIcon iconPixmap() const { return RsIcon(IMAGE_CHATLOBBY) ; } //MainPage
 	virtual QString pageName() const { return tr("Chats") ; } //MainPage
 	virtual QString helpText() const { return ""; } //MainPage
 

@@ -23,6 +23,7 @@
 #define NEWSFEEDUSERNOTIFY_H
 
 #include "gui/common/UserNotify.h"
+#include "util/RsIcon.h"
 
 class NewsFeed;
 
@@ -42,6 +43,7 @@ private:
 
 private:
 	unsigned int mNewFeedCount;
+	RsIcon mIcon;
 };
 
 #endif // NEWSFEEDUSERNOTIFY_H

@@ -23,7 +23,6 @@
 #define _GXS_CHANNEL_DIALOG_H
 
 #include "gui/gxs/GxsGroupFrameDialog.h"
-#include "util/RsIcon.h"
 
 #define IMAGE_GXSCHANNELS ":/icons/svg/channels-trans.svg"
 
@@ -37,7 +36,7 @@ public:
 	/** Default Destructor */
 	~GxsChannelDialog();
 
-	virtual QIcon iconPixmap() const { return RsIcon(IMAGE_GXSCHANNELS) ; } //MainPage
+	//virtual QIcon iconPixmap() const { return RsIcon(IMAGE_GXSCHANNELS) ; } //MainPage
 	virtual QString pageName() const { return tr("Channels") ; } //MainPage
 	virtual QString helpText() const { return ""; } //MainPage
 

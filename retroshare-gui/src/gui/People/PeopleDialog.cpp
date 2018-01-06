@@ -21,26 +21,28 @@
  *
  */
 
-
 #include "PeopleDialog.h"
+
 #include "gui/Circles/CreateCircleDialog.h"
 #include "gui/common/FlowLayout.h"
-#include "gui/settings/rsharesettings.h"
-#include "gui/msgs/MessageComposer.h"
 #include "gui/gxs/GxsIdDetails.h"
 #include "gui/gxs/RsGxsUpdateBroadcastBase.h"
 #include "gui/Identity/IdDetailsDialog.h"
+#include "gui/msgs/MessageComposer.h"
+#include "gui/settings/rsharesettings.h"
+#include "util/RsIcon.h"
 
-#include "retroshare/rspeers.h"
 #include "retroshare/rsidentity.h"
+#include "retroshare/rsids.h"
 #include "retroshare/rsgxscircles.h"
 #include "retroshare/rsgxsflags.h"
 #include "retroshare/rsmsgs.h" 
-#include "retroshare/rsids.h" 
+#include "retroshare/rspeers.h"
 
-#include <iostream>
 #include <QMenu>
 #include <QMessageBox>
+
+#include <iostream>
 
 /******
  * #define PEOPLE_DIALOG_DEBUG 1
@@ -57,6 +59,7 @@ PeopleDialog::PeopleDialog(QWidget *parent)
 	: RsGxsUpdateBroadcastPage(rsIdentity, parent)
 {
 	setupUi(this);
+	setIconPixmap(RsIcon(IMAGE_IDENTITY));
 	titleBarPixmap->setIcon(iconPixmap());
 
 	/* Setup TokenQueue */

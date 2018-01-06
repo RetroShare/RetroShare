@@ -28,7 +28,6 @@
 
 #include <retroshare/rsidentity.h>
 
-#include "util/RsIcon.h"
 #include "util/TokenQueue.h"
 
 #define IMAGE_IDDIALOG ":/icons/svg/people-trans.svg"
@@ -57,7 +56,7 @@ public:
 	IdDialog(QWidget *parent = 0);
 	~IdDialog();
 
-	virtual QIcon iconPixmap() const { return RsIcon(IMAGE_IDDIALOG) ; } //MainPage
+	//virtual QIcon iconPixmap() const { return RsIcon(IMAGE_IDDIALOG) ; } //MainPage
 	virtual QString pageName() const { return tr("People") ; } //MainPage
 	virtual QString helpText() const { return ""; } //MainPage
 

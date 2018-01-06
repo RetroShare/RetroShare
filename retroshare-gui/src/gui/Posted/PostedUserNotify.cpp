@@ -21,11 +21,11 @@
 
 #include "PostedUserNotify.h"
 #include "gui/MainWindow.h"
-#include "util/RsIcon.h"
 
 PostedUserNotify::PostedUserNotify(RsGxsIfaceHelper *ifaceImpl, QObject *parent) :
     GxsUserNotify(ifaceImpl, parent)
 {
+	mIcon = RsIcon(":/icons/svg/posted-trans.svg");
 }
 
 bool PostedUserNotify::hasSetting(QString *name, QString *group)
@@ -38,12 +38,13 @@ bool PostedUserNotify::hasSetting(QString *name, QString *group)
 
 QIcon PostedUserNotify::getIcon()
 {
-	return RsIcon(":/icons/svg/posted-trans.svg");
+	return mIcon;
 }
 
 QIcon PostedUserNotify::getMainIcon(bool hasNew)
 {
-	return RsIcon(":/icons/svg/posted-trans.svg", hasNew);
+	mIcon.setOnNotify(hasNew);
+	return mIcon;
 }
 
 void PostedUserNotify::iconClicked()

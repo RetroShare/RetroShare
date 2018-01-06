@@ -40,6 +40,7 @@ ChatLobbyUserNotify::ChatLobbyUserNotify(QObject *parent) :
 {
 	_name = tr("Chats");
 	_group = "ChatLobby";
+	_icon = RsIcon(":/icons/svg/chat-lobbies-trans.svg");
 
 	_bCheckForNickName = Settings->valueFromGroup(_group, "CheckForNickName", true).toBool();
 	_bCountUnRead = Settings->valueFromGroup(_group, "CountUnRead", true).toBool();
@@ -104,12 +105,13 @@ void ChatLobbyUserNotify::setTextCaseSensitive(bool value)
 
 QIcon ChatLobbyUserNotify::getIcon()
 {
-	return RsIcon(":/icons/svg/chat-lobbies-trans.svg");
+	return _icon;
 }
 
 QIcon ChatLobbyUserNotify::getMainIcon(bool hasNew)
 {
-	return RsIcon(":/icons/svg/chat-lobbies-trans.svg", hasNew);
+	_icon.setOnNotify(hasNew);
+	return _icon;
 }
 
 unsigned int ChatLobbyUserNotify::getNewCount()

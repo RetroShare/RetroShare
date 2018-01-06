@@ -22,12 +22,12 @@
 #include "TransferUserNotify.h"
 #include "gui/notifyqt.h"
 #include "gui/MainWindow.h"
-#include "util/RsIcon.h"
 
 TransferUserNotify::TransferUserNotify(QObject *parent) :
 	UserNotify(parent)
 {
 	newTransferCount = 0;
+	mIcon = RsIcon(":/icons/svg/filesharing-trans.svg");
 
 	connect(NotifyQt::getInstance(), SIGNAL(downloadCompleteCountChanged(int)), this, SLOT(downloadCountChanged(int)));
 }
@@ -42,12 +42,13 @@ bool TransferUserNotify::hasSetting(QString *name, QString *group)
 
 QIcon TransferUserNotify::getIcon()
 {
-	return RsIcon(":/icons/svg/filesharing-trans.svg");
+	return mIcon;
 }
 
 QIcon TransferUserNotify::getMainIcon(bool hasNew)
 {
-	return RsIcon(":/icons/svg/filesharing-trans.svg", hasNew);
+	mIcon.setOnNotify(hasNew);
+	return mIcon;
 }
 
 unsigned int TransferUserNotify::getNewCount()

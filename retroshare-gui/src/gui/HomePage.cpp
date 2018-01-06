@@ -47,7 +47,8 @@ HomePage::HomePage(QWidget *parent) :
 	MainPage(parent),
 	ui(new Ui::HomePage)
 {
-    ui->setupUi(this);
+	ui->setupUi(this);
+	setIconPixmap(RsIcon(IMAGE_HOME));
 
 		updateOwnCert();
 		

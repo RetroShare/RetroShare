@@ -25,7 +25,6 @@
 #define MRK_POSTED_DIALOG_H
 
 #include "gui/gxs/GxsGroupFrameDialog.h"
-#include "util/RsIcon.h"
 
 #define IMAGE_POSTED ":/icons/svg/posted-trans.svg"
 
@@ -39,7 +38,7 @@ public:
 	/** Default Destructor */
 	~PostedDialog();
 
-	virtual QIcon iconPixmap() const { return RsIcon(IMAGE_POSTED) ; } //MainPage
+	//virtual QIcon iconPixmap() const { return RsIcon(IMAGE_POSTED) ; } //MainPage
 	virtual QString pageName() const { return tr("Links") ; } //MainPage
 	virtual QString helpText() const { return ""; } //MainPage
 

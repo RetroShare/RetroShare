@@ -56,8 +56,9 @@ static ChatUserNotify* instance = 0;
 ChatUserNotify::ChatUserNotify(QObject *parent) :
     UserNotify(parent)
 {
-    connect(NotifyQt::getInstance(), SIGNAL(chatMessageReceived(ChatMessage)), this, SLOT(chatMessageReceived(ChatMessage)));
-    instance = this;
+	mIcon = RsIcon(":/icons/svg/network-trans.svg");
+	connect(NotifyQt::getInstance(), SIGNAL(chatMessageReceived(ChatMessage)), this, SLOT(chatMessageReceived(ChatMessage)));
+	instance = this;
 }
 
 ChatUserNotify::~ChatUserNotify()
@@ -75,12 +76,13 @@ bool ChatUserNotify::hasSetting(QString *name, QString *group)
 
 QIcon ChatUserNotify::getIcon()
 {
-	return RsIcon(":/icons/svg/network-trans.svg");
+	return mIcon;
 }
 
 QIcon ChatUserNotify::getMainIcon(bool hasNew)
 {
-	return RsIcon(":/icons/svg/network-trans.svg", hasNew);
+	mIcon.setOnNotify(hasNew);
+	return mIcon;
 }
 
 unsigned int ChatUserNotify::getNewCount()

@@ -23,17 +23,16 @@
 
 #pragma once
 
-#include <map>
+#include "ui_PeopleDialog.h"
+
+#include "gui/gxs/RsGxsUpdateBroadcastPage.h"
+#include "gui/People/CircleWidget.h"
+#include "gui/People/IdentityWidget.h"
+#include "util/TokenQueue.h"
 
 #include <retroshare/rsidentity.h>
 
-#include "gui/People/CircleWidget.h"
-#include "gui/People/IdentityWidget.h"
-#include "gui/gxs/RsGxsUpdateBroadcastPage.h"
-#include "util/RsIcon.h"
-#include "util/TokenQueue.h"
-
-#include "ui_PeopleDialog.h"
+#include <map>
 
 #define IMAGE_IDENTITY ":/icons/svg/people-trans.svg"
 
@@ -47,12 +46,12 @@ class PeopleDialog : public RsGxsUpdateBroadcastPage, public Ui::PeopleDialog, p
 	static const uint32_t PD_REFRESH   ;
 	static const uint32_t PD_CIRCLES   ;
 
-		PeopleDialog(QWidget *parent = 0);
-		~PeopleDialog();
+	PeopleDialog(QWidget *parent = 0);
+	~PeopleDialog();
 
-		virtual QIcon iconPixmap() const { return RsIcon(IMAGE_IDENTITY) ; } //MainPage
-		virtual QString pageName() const { return tr("People") ; } //MainPage
-		virtual QString helpText() const { return ""; } //MainPage
+	//virtual QIcon iconPixmap() const { return RsIcon(IMAGE_IDENTITY) ; } //MainPage
+	virtual QString pageName() const { return tr("People") ; } //MainPage
+	virtual QString helpText() const { return ""; } //MainPage
 
 	void loadRequest(const TokenQueue * queue, const TokenRequest &req) ;
 

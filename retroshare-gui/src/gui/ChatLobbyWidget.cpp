@@ -13,6 +13,7 @@
 #include "gui/settings/rsharesettings.h"
 #include "util/HandleRichText.h"
 #include "util/QtVersion.h"
+#include "util/RsIcon.h"
 
 #include "retroshare/rsmsgs.h"
 #include "retroshare/rspeers.h"
@@ -65,6 +66,7 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WindowFlags flags)
   : RsAutoUpdatePage(5000, parent, flags)
 {
 	ui.setupUi(this);
+	setIconPixmap(RsIcon(IMAGE_CHATLOBBY));
 	ui.titleBarPixmap->setIcon(iconPixmap());
 
 	m_bProcessSettings = false;

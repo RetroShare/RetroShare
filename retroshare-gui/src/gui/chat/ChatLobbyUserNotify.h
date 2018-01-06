@@ -23,7 +23,10 @@
 #define CHATLOBBYUSERNOTIFY_H
 
 #include "gui/common/UserNotify.h"
+#include "util/RsIcon.h"
+
 #include <retroshare/rsmsgs.h>
+
 #include <QDateTime>
 #include <QMetaType>
 
@@ -82,6 +85,7 @@ private:
 
 	QString _name;
 	QString _group;
+	RsIcon _icon;
 
 	typedef std::map<QString, MsgData> msg_map;
 	typedef	std::map<ChatLobbyId, msg_map> lobby_map;

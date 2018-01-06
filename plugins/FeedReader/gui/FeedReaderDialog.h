@@ -47,7 +47,7 @@ public:
 	FeedReaderDialog(RsFeedReader *feedReader, FeedReaderNotify *notify, QWidget *parent = 0);
 	~FeedReaderDialog();
 
-	virtual QIcon iconPixmap() const { return RsIcon(IMAGE_FEEDREADER) ; } //MainPage
+	//virtual QIcon iconPixmap() const { return RsIcon(IMAGE_FEEDREADER) ; } //MainPage
 
 	virtual UserNotify *getUserNotify(QObject *parent);
 

@@ -19,21 +19,12 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#include <QTimer>
-#include <QDateTime>
-
 #include "NewsFeed.h"
 #include "ui_NewsFeed.h"
 
-#include <retroshare/rsbanlist.h>
-#include <retroshare/rsgxschannels.h>
-#include <retroshare/rsgxsforums.h>
-#include <retroshare/rsmsgs.h>
-#include <retroshare/rsnotify.h>
-#include <retroshare/rspeers.h>
-#include <retroshare/rsplugin.h>
-#include <retroshare/rsposted.h>
-
+#include "notifyqt.h"
+#include "chat/ChatDialog.h"
+#include "common/FeedNotify.h"
 #include "feeds/ChatMsgItem.h"
 #include "feeds/GxsCircleItem.h"
 #include "feeds/GxsChannelGroupItem.h"
@@ -46,17 +37,24 @@
 #include "feeds/PostedGroupItem.h"
 #include "feeds/SecurityItem.h"
 #include "feeds/SecurityIpItem.h"
-
-#include "settings/rsettingswin.h"
-#include "settings/rsharesettings.h"
-
-#include "chat/ChatDialog.h"
-#include "Posted/PostedItem.h"
 #include "msgs/MessageComposer.h"
 #include "msgs/MessageInterface.h"
+#include "Posted/PostedItem.h"
+#include "settings/rsettingswin.h"
+#include "settings/rsharesettings.h"
+#include "util/RsIcon.h"
 
-#include "common/FeedNotify.h"
-#include "notifyqt.h"
+#include <retroshare/rsbanlist.h>
+#include <retroshare/rsgxschannels.h>
+#include <retroshare/rsgxsforums.h>
+#include <retroshare/rsmsgs.h>
+#include <retroshare/rsnotify.h>
+#include <retroshare/rspeers.h>
+#include <retroshare/rsplugin.h>
+#include <retroshare/rsposted.h>
+
+#include <QTimer>
+#include <QDateTime>
 
 #define ROLE_RECEIVED FEED_TREEWIDGET_SORTROLE
 
@@ -77,6 +75,7 @@ NewsFeed::NewsFeed(QWidget *parent) :
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	ui->setupUi(this);
+	setIconPixmap(RsIcon(IMAGE_NEWSFEED));
 	ui->titleBarPixmap->setIcon(iconPixmap());
 
 	mTokenQueueChannel = NULL;

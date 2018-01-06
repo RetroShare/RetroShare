@@ -48,7 +48,7 @@ public:
 	explicit HomePage(QWidget *parent);
 	~HomePage();
 	
-	virtual QIcon iconPixmap() const { return RsIcon(IMAGE_HOME); } // MainPage
+	//virtual QIcon iconPixmap() const { return RsIcon(IMAGE_HOME); } // MainPage
 	virtual QString pageName() const { return tr("Home"); } // MainPage
 	virtual QString helpText() const { return ""; } // MainPage
 

@@ -24,7 +24,6 @@
 #include "FeedReaderDialog.h"
 #include "gui/settings/rsharesettings.h"
 #include "gui/MainWindow.h"
-#include "util/RsIcon.h"
 
 #include "interface/rsFeedReader.h"
 #include "retroshare/rsiface.h"
@@ -32,6 +31,7 @@
 FeedReaderUserNotify::FeedReaderUserNotify(FeedReaderDialog *feedReaderDialog, RsFeedReader *feedReader, FeedReaderNotify *notify, QObject *parent) :
 	UserNotify(parent), mFeedReaderDialog(feedReaderDialog), mFeedReader(feedReader), mNotify(notify)
 {
+	mIcon = RsIcon(":/images/feedreader-trans.svg");
 	connect(mNotify, SIGNAL(feedChanged(QString,int)), this, SLOT(feedChanged(QString,int)), Qt::QueuedConnection);
 	connect(mNotify, SIGNAL(msgChanged(QString,QString,int)), this, SLOT(updateIcon()), Qt::QueuedConnection);
 }
@@ -46,12 +46,13 @@ bool FeedReaderUserNotify::hasSetting(QString *name, QString *group)
 
 QIcon FeedReaderUserNotify::getIcon()
 {
-	return RsIcon(":/images/feedreader-trans.svg");
+	return mIcon;
 }
 
 QIcon FeedReaderUserNotify::getMainIcon(bool hasNew)
 {
-	return RsIcon(":/images/feedreader-trans.svg", hasNew);
+	mIcon.setOnNotify(hasNew);
+	return mIcon;
 }
 
 unsigned int FeedReaderUserNotify::getNewCount()

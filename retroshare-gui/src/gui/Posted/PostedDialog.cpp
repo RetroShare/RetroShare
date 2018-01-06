@@ -26,9 +26,10 @@
 #include "PostedGroupDialog.h"
 #include "PostedListWidget.h"
 #include "PostedUserNotify.h"
+#include "gui/common/GroupTreeWidget.h"
 #include "gui/gxs/GxsGroupShareKey.h"
 #include "gui/settings/rsharesettings.h"
-#include "gui/common/GroupTreeWidget.h"
+#include "util/RsIcon.h"
 
 #include <retroshare/rsposted.h>
 
@@ -45,6 +46,7 @@ public:
 PostedDialog::PostedDialog(QWidget *parent)
     : GxsGroupFrameDialog(rsPosted, parent)
 {
+	setIconPixmap(RsIcon(IMAGE_POSTED));
 }
 
 PostedDialog::~PostedDialog()

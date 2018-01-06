@@ -40,7 +40,7 @@ public:
 	/** Default Destructor */
 	~GetStartedDialog();
 
-	virtual QIcon iconPixmap() const { return QIcon(IMG_HELP) ; } //MainPage
+	//virtual QIcon iconPixmap() const { return QIcon(IMG_HELP) ; } //MainPage
 	virtual QString pageName() const { return tr("Getting Started") ; } //MainPage
 	virtual QString helpText() const { return ""; } //MainPage
 

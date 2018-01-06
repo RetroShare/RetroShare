@@ -23,7 +23,6 @@
 #define _GXSFORUMSDIALOG_H
 
 #include "gui/gxs/GxsGroupFrameDialog.h"
-#include "util/RsIcon.h"
 
 #define IMAGE_GXSFORUMS ":/icons/svg/forums-trans.svg"
 
@@ -35,7 +34,7 @@ public:
 	GxsForumsDialog(QWidget *parent = 0);
 	~GxsForumsDialog();
 
-	virtual QIcon iconPixmap() const { return RsIcon(IMAGE_GXSFORUMS) ; } //MainPage
+	//virtual QIcon iconPixmap() const { return RsIcon(IMAGE_GXSFORUMS) ; } //MainPage
 	virtual QString pageName() const { return tr("Forums") ; } //MainPage
 	virtual QString helpText() const { return ""; } //MainPage
 

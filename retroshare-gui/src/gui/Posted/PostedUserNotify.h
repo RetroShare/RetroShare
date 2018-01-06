@@ -23,6 +23,7 @@
 #define POSTEDUSERNOTIFY_H
 
 #include "gui/gxs/GxsUserNotify.h"
+#include "util/RsIcon.h"
 
 class PostedUserNotify : public GxsUserNotify
 {
@@ -37,6 +38,9 @@ private:
 	virtual QIcon getIcon();
 	virtual QIcon getMainIcon(bool hasNew);
 	virtual void iconClicked();
+
+private:
+	RsIcon mIcon;
 };
 
 #endif // POSTEDUSERNOTIFY_H

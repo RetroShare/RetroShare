@@ -21,7 +21,27 @@
  *
  */
 
-#include <unistd.h>
+#include "IdDialog.h"
+#include "ui_IdDialog.h"
+
+#include "IdEditDialog.h"
+#include "gui/chat/ChatDialog.h"
+#include "gui/Circles/CreateCircleDialog.h"
+#include "gui/common/UIStateHelper.h"
+#include "gui/gxs/GxsIdDetails.h"
+#include "gui/gxs/RsGxsUpdateBroadcastBase.h"
+#include "gui/msgs/MessageComposer.h"
+#include "gui/settings/rsharesettings.h"
+#include "gui/RetroShareLink.h"
+#include "retroshare-gui/RsAutoUpdatePage.h"
+#include "util/misc.h"
+#include "util/QtVersion.h"
+#include "util/RsIcon.h"
+
+#include "retroshare/rsgxsflags.h"
+#include "retroshare/rsmsgs.h" 
+#include "retroshare/rspeers.h"
+#include "retroshare/rsservicecontrol.h"
 
 #include <QCheckBox>
 #include <QMessageBox>
@@ -30,28 +50,9 @@
 #include <QStyledItemDelegate>
 #include <QPainter>
 
-#include "IdDialog.h"
-#include "ui_IdDialog.h"
-#include "IdEditDialog.h"
-#include "gui/RetroShareLink.h"
-#include "gui/chat/ChatDialog.h"
-#include "gui/Circles/CreateCircleDialog.h"
-#include "gui/common/UIStateHelper.h"
-#include "gui/gxs/GxsIdDetails.h"
-#include "gui/gxs/RsGxsUpdateBroadcastBase.h"
-#include "gui/msgs/MessageComposer.h"
-#include "gui/settings/rsharesettings.h"
-#include "retroshare-gui/RsAutoUpdatePage.h"
-#include "util/misc.h"
-#include "util/QtVersion.h"
-
-#include "retroshare/rsgxsflags.h"
-#include "retroshare/rsmsgs.h" 
-#include "retroshare/rspeers.h"
-#include "retroshare/rsservicecontrol.h"
-
-#include <iostream>
 #include <algorithm>
+#include <iostream>
+#include <unistd.h>
 
 /******
  * #define ID_DEBUG 1
@@ -146,6 +147,7 @@ IdDialog::IdDialog(QWidget *parent) :
     ui(new Ui::IdDialog)
 {
 	ui->setupUi(this);
+	setIconPixmap(RsIcon(IMAGE_IDDIALOG));
 	ui->titleBarPixmap->setIcon(iconPixmap());
 
 	mIdQueue = NULL;

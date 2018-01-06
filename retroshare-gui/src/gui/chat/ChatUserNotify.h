@@ -22,8 +22,10 @@
 #ifndef CHATUSERNOTIFY_H
 #define CHATUSERNOTIFY_H
 
-#include <retroshare/rsmsgs.h>
 #include "gui/common/UserNotify.h"
+#include "util/RsIcon.h"
+
+#include <retroshare/rsmsgs.h>
 
 // this class uses lots of global state
 // so only one instance is allowed
@@ -49,6 +51,9 @@ private:
 	virtual QIcon getMainIcon(bool hasNew);
 	virtual unsigned int getNewCount();
 	virtual void iconClicked();
+
+private:
+	RsIcon mIcon;
 };
 
 #endif // CHATUSERNOTIFY_H

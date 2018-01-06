@@ -20,13 +20,15 @@
  ****************************************************************/
 
 #include "GxsForumsDialog.h"
+
+#include "CreateGxsForumMsg.h"
 #include "GxsForumGroupDialog.h"
 #include "GxsForumThreadWidget.h"
-#include "CreateGxsForumMsg.h"
 #include "GxsForumUserNotify.h"
 #include "gui/notifyqt.h"
-#include "gui/gxs/GxsGroupShareKey.h"
 #include "gui/common/GroupTreeWidget.h"
+#include "gui/gxs/GxsGroupShareKey.h"
+#include "util/RsIcon.h"
 
 class GxsForumGroupInfoData : public RsUserdata
 {
@@ -41,6 +43,7 @@ public:
 GxsForumsDialog::GxsForumsDialog(QWidget *parent)
 	: GxsGroupFrameDialog(rsGxsForums, parent)
 {
+	setIconPixmap(RsIcon(IMAGE_GXSFORUMS));
 	mCountChildMsgs = true;
 }
 

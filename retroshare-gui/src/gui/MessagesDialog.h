@@ -26,7 +26,6 @@
 
 #include "mainpage.h"
 #include "ui_MessagesDialog.h"
-#include "util/RsIcon.h"
 
 #define IMAGE_MESSAGES ":/icons/svg/messages-trans.svg"
 
@@ -45,7 +44,7 @@ public:
   /** Default Destructor */
   ~MessagesDialog();
 
-  virtual QIcon iconPixmap() const { return RsIcon(IMAGE_MESSAGES) ; } //MainPage
+  //virtual QIcon iconPixmap() const { return RsIcon(IMAGE_MESSAGES) ; } //MainPage
   virtual QString pageName() const { return tr("Mail") ; } //MainPage
   virtual QString helpText() const { return ""; } //MainPage
 
