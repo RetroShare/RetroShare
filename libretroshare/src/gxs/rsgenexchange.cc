@@ -3220,7 +3220,6 @@ void RsGenExchange::performUpdateValidation()
 			gu.newGrp = NULL ;
 		}
 
-		delete gu.oldGrpMeta;
 		gu.oldGrpMeta = NULL ;
 	}
 	// notify the client
