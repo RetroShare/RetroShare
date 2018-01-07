@@ -223,7 +223,7 @@ public:
      * @param groupInfo
      * @return false if could not redeem token
      */
-    bool getGroupMeta(const uint32_t &token, std::list<RsGroupMetaData> &groupInfo);
+    bool getGroupMeta(const uint32_t &token, std::list<RsGroupMetaData>& groupInfo);
 
     /*!
      * retrieves message meta data associated to a request token
@@ -765,7 +765,7 @@ private:
      * 		   SIGN_FAIL_TRY_LATER for Id sign key not avail (but requested), try later
      */
     int createMsgSignatures(RsTlvKeySignatureSet& signSet, RsTlvBinaryData& msgData,
-                             const RsGxsMsgMetaData& msgMeta, RsGxsGrpMetaData& grpMeta);
+                             const RsGxsMsgMetaData& msgMeta, const RsGxsGrpMetaData& grpMeta);
 
     /*!
      * convenience function to create sign for groups
@@ -835,7 +835,7 @@ private:
      * @param newGrp the new group that updates the old group (must have meta data member initialised)
      * @return
      */
-    bool updateValid(RsGxsGrpMetaData& oldGrp, RsNxsGrp& newGrp) const;
+    bool updateValid(const RsGxsGrpMetaData& oldGrp, RsNxsGrp& newGrp) const;
 
     /*!
      * convenience function for checking private publish and admin keys are present

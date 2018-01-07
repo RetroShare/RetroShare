@@ -33,7 +33,7 @@ RsGxsGrpMetaData::RsGxsGrpMetaData()
     clear();
 }
 
-uint32_t RsGxsGrpMetaData::serial_size(uint32_t api_version)
+uint32_t RsGxsGrpMetaData::serial_size(uint32_t api_version) const
 {
     uint32_t s = 8; // header size
 

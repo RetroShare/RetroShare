@@ -32,7 +32,7 @@
 
 
 typedef std::map< RsGxsGroupId, std::map<RsGxsMessageId, RsGxsMsgMetaData*> > MsgMetaFilter;
-typedef std::map< RsGxsGroupId, RsGxsGrpMetaData* > GrpMetaFilter;
+typedef std::map< RsGxsGroupId, const RsGxsGrpMetaData* > GrpMetaFilter;
 
 class RsGxsDataAccess : public RsTokenService
 {
@@ -209,7 +209,7 @@ public:
      * @param token request token to be redeemed
      * @param groupInfo
      */
-    bool getGroupSummary(const uint32_t &token, std::list<RsGxsGrpMetaData*> &groupInfo);
+    bool getGroupSummary(const uint32_t &token, std::list<const RsGxsGrpMetaData*>& groupInfo);
 
     /*!
      *

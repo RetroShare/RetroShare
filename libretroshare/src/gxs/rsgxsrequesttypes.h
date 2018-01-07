@@ -52,7 +52,7 @@ public:
 
 public:
 	std::list<RsGxsGroupId> mGroupIds;
-	std::list<RsGxsGrpMetaData*> mGroupMetaData;
+	std::list<const RsGxsGrpMetaData*> mGroupMetaData;
 };
 
 class GroupIdReq : public GxsRequest
