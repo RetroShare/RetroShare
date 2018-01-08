@@ -833,6 +833,14 @@ QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
     background: rgba(255, 255, 255, 10);
 }
 
+FriendList {
+    qproperty-textColorStatusAway: lightgray;
+    qproperty-textColorStatusBusy: lightgray;
+    qproperty-textColorStatusOnline: green;
+    qproperty-textColorStatusInactive: lightgray;
+    qproperty-textColorStatusOffline: gray;
+}
+
 QTreeView, QListView
 {
     border: 1px solid #78879b;
