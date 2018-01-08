@@ -761,16 +761,24 @@ void GxsForumThreadWidget::calculateIconsAndFonts(QTreeWidgetItem *item, bool &h
 	bool isNew = IS_MSG_NEW(status);
 	bool unread = IS_MSG_UNREAD(status);
 	bool missing = item->data(COLUMN_THREAD_DATA, ROLE_THREAD_MISSING).toBool();
+	bool is_column_thread_read_hidden = ui->threadTreeWidget->
+		isColumnHidden(COLUMN_THREAD_READ);
 
 	// set icon
 	if (missing) {
-		item->setIcon(COLUMN_THREAD_READ, QIcon());
+		if (!is_column_thread_read_hidden) {
+			item->setIcon(COLUMN_THREAD_READ, QIcon());
+			}
 		item->setIcon(COLUMN_THREAD_TITLE, QIcon());
 	} else {
-		if (unread) {
-			item->setIcon(COLUMN_THREAD_READ, QIcon(":/images/message-state-unread.png"));
-		} else {
-			item->setIcon(COLUMN_THREAD_READ, QIcon(":/images/message-state-read.png"));
+		if (!is_column_thread_read_hidden) {
+			if (unread) {
+				item->setIcon(COLUMN_THREAD_READ,
+					QIcon(":/images/message-state-unread.png"));
+			} else {
+				item->setIcon(COLUMN_THREAD_READ,
+					QIcon(":/images/message-state-read.png"));
+			}
 		}
 		if (isNew) {
 			item->setIcon(COLUMN_THREAD_TITLE, QIcon(":/images/message-state-new.png"));
