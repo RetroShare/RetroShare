@@ -74,6 +74,15 @@ QWidget:item:selected
     stop: 0 #78879b, stop: 1 #78879b);
 }
 
+QTableWidget::item {
+    color: #C0C0C0;
+    background-color: #201F1F;
+}
+
+QTableWidget::item:selected {
+    color: black;
+}
+
 ForumsDialog, GxsForumThreadWidget
 {
 	qproperty-textColorRead: darkgray;
