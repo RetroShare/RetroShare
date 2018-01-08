@@ -859,6 +859,14 @@ RSTreeWidget#idTreeWidget::item:!selected {
     color: #C0C0C0;
 }
 
+NetworkDialog {
+    qproperty-backgroundColorSelf: darkred;
+    qproperty-backgroundColorOwnSign: darkred;
+    qproperty-backgroundColorAcceptConnection: black;
+    qproperty-backgroundColorHasSignedMe: darkred;
+    qproperty-backgroundColorDenied: #201F1F;
+}
+
 QTreeView:branch:selected, QTreeView:branch:hover
 {
     background: url(qdarkstyle/transparent.png);
