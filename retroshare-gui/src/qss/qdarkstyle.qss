@@ -851,7 +851,11 @@ QTreeView::item {
     background-color: #201F1F;
 }
 
-QTreeView::item:!selected {
+QTreeView::item:selected {
+    color: black;
+}
+
+RSTreeWidget#idTreeWidget::item:!selected {
     color: #C0C0C0;
 }
 
