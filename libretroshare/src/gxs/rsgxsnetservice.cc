@@ -559,7 +559,7 @@ void RsGxsNetService::syncWithPeers()
 
     for(RsGxsGrpMetaTemporaryMap::iterator mit = grpMeta.begin(); mit != grpMeta.end(); ++mit)
     {
-	    RsGxsGrpMetaData* meta = mit->second;
+	    const RsGxsGrpMetaData* meta = mit->second;
 
 	    // This was commented out because we want to know how many messages are available for unsubscribed groups.
 
@@ -689,7 +689,7 @@ void RsGxsNetService::syncGrpStatistics()
 
     time_t now = time(NULL) ;
 
-    for(std::map<RsGxsGroupId,RsGxsGrpMetaData*>::const_iterator it(grpMeta.begin());it!=grpMeta.end();++it)
+    for(auto it(grpMeta.begin());it!=grpMeta.end();++it)
     {
 	    const RsGxsGrpConfig& rec = locked_getGrpConfig(it->first) ;
 
@@ -755,7 +755,7 @@ void RsGxsNetService::handleRecvSyncGrpStatistics(RsNxsSyncGrpStatsItem *grs)
 
 	    mDataStore->retrieveGxsGrpMetaData(grpMetas);
 
-	    RsGxsGrpMetaData* grpMeta = grpMetas[grs->grpId];
+	    const RsGxsGrpMetaData* grpMeta = grpMetas[grs->grpId];
 
 	if(grpMeta == NULL)
             {
@@ -1951,7 +1951,7 @@ void RsGxsNetService::updateServerSyncTS()
     	// finally, update timestamps.
 	bool change = false;
 
-	for(std::map<RsGxsGroupId, RsGxsGrpMetaData*>::const_iterator mit = gxsMap.begin();mit != gxsMap.end(); ++mit)
+	for(auto mit = gxsMap.begin();mit != gxsMap.end(); ++mit)
 	{
         	// Check if the group is subscribed and restricted to a circle. If the circle has changed, update the
         	// global TS to reflect that change to clients who may be able to see/subscribe to that particular group.
@@ -2722,7 +2722,7 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
     grpMetaMap[grpId] = NULL;
 
     mDataStore->retrieveGxsGrpMetaData(grpMetaMap);
-    RsGxsGrpMetaData* grpMeta = grpMetaMap[grpId];
+    const RsGxsGrpMetaData* grpMeta = grpMetaMap[grpId];
 
     if(grpMeta == NULL) // this should not happen, but just in case...
     {
@@ -3028,7 +3028,7 @@ void RsGxsNetService::locked_genReqGrpTransaction(NxsTransaction* tr)
         RsNxsSyncGrpItem*& grpSyncItem = *llit;
         const RsGxsGroupId& grpId = grpSyncItem->grpId;
 
-	std::map<RsGxsGroupId, RsGxsGrpMetaData*>::const_iterator metaIter = grpMetaMap.find(grpId);
+	std::map<RsGxsGroupId, const RsGxsGrpMetaData*>::const_iterator metaIter = grpMetaMap.find(grpId);
         bool haveItem = false;
         bool latestVersion = false;
 
@@ -3825,9 +3825,9 @@ void RsGxsNetService::handleRecvSyncGroup(RsNxsSyncGrpReqItem *item)
     GXSNETDEBUG_P_(peer) << "  Group list beings being sent: " << std::endl;
 #endif
 
-    for(std::map<RsGxsGroupId, RsGxsGrpMetaData*>::iterator mit = grp.begin(); mit != grp.end(); ++mit)
+    for(auto mit = grp.begin(); mit != grp.end(); ++mit)
     {
-	    RsGxsGrpMetaData* grpMeta = mit->second;
+	    const RsGxsGrpMetaData* grpMeta = mit->second;
 
 	    // Only send info about subscribed groups.
 
@@ -3899,7 +3899,7 @@ void RsGxsNetService::handleRecvSyncGroup(RsNxsSyncGrpReqItem *item)
 
 
 
-bool RsGxsNetService::canSendGrpId(const RsPeerId& sslId, RsGxsGrpMetaData& grpMeta, std::vector<GrpIdCircleVet>& /* toVet */, bool& should_encrypt)
+bool RsGxsNetService::canSendGrpId(const RsPeerId& sslId, const RsGxsGrpMetaData& grpMeta, std::vector<GrpIdCircleVet>& /* toVet */, bool& should_encrypt)
 {
 #ifdef NXS_NET_DEBUG_4
 	GXSNETDEBUG_PG(sslId,grpMeta.mGroupId) << "RsGxsNetService::canSendGrpId()"<< std::endl;
@@ -4092,7 +4092,7 @@ void RsGxsNetService::handleRecvSyncMessage(RsNxsSyncMsgReqItem *item,bool item_
     grpMetas[item->grpId] = NULL;
 
     mDataStore->retrieveGxsGrpMetaData(grpMetas);
-    RsGxsGrpMetaData* grpMeta = grpMetas[item->grpId];
+    const RsGxsGrpMetaData* grpMeta = grpMetas[item->grpId];
 
     if(grpMeta == NULL)
     {
@@ -4633,7 +4633,7 @@ void RsGxsNetService::sharePublishKeysPending()
 
         // Find the publish keys in the retrieved info
 
-        RsGxsGrpMetaData *grpMeta = grpMetaMap[mit->first] ;
+        const RsGxsGrpMetaData *grpMeta = grpMetaMap[mit->first] ;
 
         if(grpMeta == NULL)
         {
@@ -4718,7 +4718,7 @@ void RsGxsNetService::handleRecvPublishKeys(RsNxsGroupPublishKeyItem *item)
 
 	// update the publish keys in this group meta info
 
-	RsGxsGrpMetaData *grpMeta = grpMetaMap[item->grpId] ;
+	const RsGxsGrpMetaData *grpMeta = grpMetaMap[item->grpId] ;
 	if (!grpMeta) {
 		std::cerr << "(EE) RsGxsNetService::handleRecvPublishKeys() grpMeta not found." << std::endl;
 		return ;
@@ -4760,9 +4760,10 @@ void RsGxsNetService::handleRecvPublishKeys(RsNxsGroupPublishKeyItem *item)
 
 	// Store/update the info.
 
-	grpMeta->keys.private_keys[item->private_key.keyId] = item->private_key ;
+	RsTlvSecurityKeySet keys = grpMeta->keys ;
+	keys.private_keys[item->private_key.keyId] = item->private_key ;
 
-	bool ret = mDataStore->updateGroupKeys(item->grpId,grpMeta->keys, grpMeta->mSubscribeFlags | GXS_SERV::GROUP_SUBSCRIBE_PUBLISH) ;
+	bool ret = mDataStore->updateGroupKeys(item->grpId,keys, grpMeta->mSubscribeFlags | GXS_SERV::GROUP_SUBSCRIBE_PUBLISH) ;
 
 	if(ret)
 	{

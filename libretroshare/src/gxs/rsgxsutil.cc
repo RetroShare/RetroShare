@@ -42,13 +42,10 @@ static const uint32_t MAX_GXS_IDS_REQUESTS_NET   =  10 ; // max number of reques
 RsGxsMessageCleanUp::RsGxsMessageCleanUp(RsGeneralDataService* const dataService, RsGenExchange *genex, uint32_t chunkSize)
 : mDs(dataService), mGenExchangeClient(genex), CHUNK_SIZE(chunkSize)
 {
-
-	std::map<RsGxsGroupId, RsGxsGrpMetaData*> grpMeta;
+	RsGxsGrpMetaTemporaryMap grpMeta;
 	mDs->retrieveGxsGrpMetaData(grpMeta);
 
-	std::map<RsGxsGroupId, RsGxsGrpMetaData*>::iterator cit = grpMeta.begin();
-
-	for(;cit != grpMeta.end(); ++cit)
+	for(auto cit=grpMeta.begin();cit != grpMeta.end(); ++cit)
 		mGrpMeta.push_back(cit->second);
 }
 
@@ -64,7 +61,7 @@ bool RsGxsMessageCleanUp::clean()
 #endif
 	while(!mGrpMeta.empty())
 	{
-		RsGxsGrpMetaData* grpMeta = mGrpMeta.back();
+		const RsGxsGrpMetaData* grpMeta = mGrpMeta.back();
 		const RsGxsGroupId& grpId = grpMeta->mGroupId;
 		mGrpMeta.pop_back();
 		GxsMsgReq req;
@@ -136,8 +133,6 @@ bool RsGxsMessageCleanUp::clean()
 		}
 
 		mDs->removeMsgs(req);
-
-		delete grpMeta;
 
 		i++;
 		if(i > CHUNK_SIZE) break;
