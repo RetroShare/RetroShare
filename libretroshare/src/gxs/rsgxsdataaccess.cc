@@ -1016,7 +1016,7 @@ bool RsGxsDataAccess::getGroupSummary(GroupMetaReq* req)
 
 	mDataStore->retrieveGxsGrpMetaData(grpMeta);
 
-	std::map<RsGxsGroupId, const RsGxsGrpMetaData*>::iterator mit = grpMeta.begin();
+	std::map<RsGxsGroupId, RsGxsGrpMetaData*>::iterator mit = grpMeta.begin();
 
 	for(; mit != grpMeta.end(); ++mit)
 		req->mGroupMetaData.push_back(mit->second);

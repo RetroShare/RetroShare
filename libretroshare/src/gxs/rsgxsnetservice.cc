@@ -559,7 +559,7 @@ void RsGxsNetService::syncWithPeers()
 
     for(RsGxsGrpMetaTemporaryMap::iterator mit = grpMeta.begin(); mit != grpMeta.end(); ++mit)
     {
-	    const RsGxsGrpMetaData* meta = mit->second;
+	    RsGxsGrpMetaData* meta = mit->second;
 
 	    // This was commented out because we want to know how many messages are available for unsubscribed groups.
 
@@ -3028,7 +3028,7 @@ void RsGxsNetService::locked_genReqGrpTransaction(NxsTransaction* tr)
         RsNxsSyncGrpItem*& grpSyncItem = *llit;
         const RsGxsGroupId& grpId = grpSyncItem->grpId;
 
-	std::map<RsGxsGroupId, const RsGxsGrpMetaData*>::const_iterator metaIter = grpMetaMap.find(grpId);
+	std::map<RsGxsGroupId, RsGxsGrpMetaData*>::const_iterator metaIter = grpMetaMap.find(grpId);
         bool haveItem = false;
         bool latestVersion = false;
 

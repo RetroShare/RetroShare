@@ -61,7 +61,7 @@ public:
     ContentValue val;
 };
 
-typedef std::map<RsGxsGroupId,const RsGxsGrpMetaData*> RsGxsGrpMetaTemporaryMap;
+typedef std::map<RsGxsGroupId,RsGxsGrpMetaData*> RsGxsGrpMetaTemporaryMap;
 
 /*!
  * This allows modification of local

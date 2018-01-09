@@ -105,7 +105,7 @@ public:
     }
 };
 
-typedef std::map<RsGxsGroupId,const RsGxsGrpMetaData*>                RsGxsGrpMetaTemporaryMap;
+typedef std::map<RsGxsGroupId,RsGxsGrpMetaData*>                	  RsGxsGrpMetaTemporaryMap;
 typedef t_RsGxsGenericDataTemporaryMap<RsGxsGroupId,RsNxsGrp>         RsNxsGrpDataTemporaryMap;
 
 typedef t_RsGxsGenericDataTemporaryMapVector<RsGxsMsgMetaData>        RsGxsMsgMetaTemporaryMap ;

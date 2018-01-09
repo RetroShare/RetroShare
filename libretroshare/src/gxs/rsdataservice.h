@@ -208,7 +208,7 @@ private:
      * extracts a grp meta item from a cursor at its
      * current position
      */
-    RsGxsGrpMetaData* locked_getNewGrpMeta(RetroCursor& c, int colOffset);
+    RsGxsGrpMetaData* locked_getGrpMeta(RetroCursor& c, int colOffset, bool use_cache);
 
     /*!
      * extracts a msg item from a cursor at its
@@ -346,8 +346,9 @@ private:
     // the entre list of grp metadata is requested (which happens quite often)
     
     void locked_clearGrpMetaCache(const RsGxsGroupId& gid);
+	void locked_updateGrpMetaCache(const RsGxsGrpMetaData& meta);
 
-    std::map<RsGxsGroupId,const RsGxsGrpMetaData*> mGrpMetaDataCache ;
+    std::map<RsGxsGroupId,RsGxsGrpMetaData*> mGrpMetaDataCache ;
     bool mGrpMetaDataCache_ContainsAllDatabase ;
 };
 

@@ -32,7 +32,7 @@
 
 
 typedef std::map< RsGxsGroupId, std::map<RsGxsMessageId, RsGxsMsgMetaData*> > MsgMetaFilter;
-typedef std::map< RsGxsGroupId, const RsGxsGrpMetaData* > GrpMetaFilter;
+typedef std::map< RsGxsGroupId, RsGxsGrpMetaData* > GrpMetaFilter;
 
 class RsGxsDataAccess : public RsTokenService
 {
