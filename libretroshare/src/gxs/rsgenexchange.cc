@@ -2076,7 +2076,7 @@ bool RsGenExchange::processGrpMask(const RsGxsGroupId& grpId, ContentValue &grpC
     // first find out which mask is involved
     int32_t value, mask, currValue;
     std::string key;
-    RsGxsGrpMetaData* grpMeta = NULL;
+    const RsGxsGrpMetaData* grpMeta = NULL;
     bool ok = false;
 
 	RsGxsGrpMetaTemporaryMap grpMetaMap;
@@ -2087,7 +2087,8 @@ bool RsGenExchange::processGrpMask(const RsGxsGroupId& grpId, ContentValue &grpC
 
     if((mit = grpMetaMap.find(grpId)) != grpMetaMap.end())
     {
-        const RsGxsGrpMetaData *grpMeta = mit->second;
+        grpMeta = mit->second;
+
         if (!grpMeta)
         {
 #ifdef GEN_EXCH_DEBUG
