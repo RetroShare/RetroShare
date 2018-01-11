@@ -731,15 +731,6 @@ bool ChatWidget::eventFilter(QObject *obj, QEvent *event)
 			}
 
 		}
-	} else {
-		if (event->type() == QEvent::WindowActivate) {
-			if (isVisible() && (window() == NULL || window()->isActiveWindow())) {
-				newMessages = false;
-				emit infoChanged(this);
-				focusDialog();
-                ChatUserNotify::clearWaitingChat(chatId);
-			}
-		}
 	}
 	// pass the event on to the parent class
 	return QWidget::eventFilter(obj, event);
@@ -889,7 +880,17 @@ void ChatWidget::showEvent(QShowEvent */*event*/)
 {
 	newMessages = false;
 	emit infoChanged(this);
-	focusDialog();
+	// if user waded through the jungle of history just let him on
+	// own decide whether to continue the journey or start typing
+	QScrollBar *scrollbar = ui->textBrowser->verticalScrollBar();
+	bool is_scrollbar_at_end = scrollbar->value() == scrollbar->maximum();
+	bool is_chat_text_edit_empty = ui->chatTextEdit->toPlainText().isEmpty();
+	if (is_scrollbar_at_end || !is_chat_text_edit_empty) {
+		focusDialog();
+	} else {
+		// otherwise focus will be get even not chat itself
+		ui->textBrowser->setFocus();
+	}
     ChatUserNotify::clearWaitingChat(chatId);
 
 	if (firstShow) {
