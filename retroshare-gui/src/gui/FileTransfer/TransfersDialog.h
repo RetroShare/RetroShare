@@ -45,6 +45,20 @@ class SearchDialog;
 class LocalSharedFilesDialog;
 class RemoteSharedFilesDialog;
 
+
+//shitcode begin
+class TransfersDialog_dirty_icon_cache
+{
+public:
+    TransfersDialog_dirty_icon_cache();
+    QIcon& get_icon(const QString& filename);
+private:
+    QIcon FileTypePicture, FileTypeVideo, FileTypeAudio, FileTypeArchive, FileTypeProgram, FileTypeCDImage, FileTypeDocument, \
+        pdf, rscollection_16, FileTypeAny, patch, source_cpp, source_h, source_c;
+};
+
+//shitcode end
+
 class TransfersDialog : public RsAutoUpdatePage
 {
 Q_OBJECT
@@ -246,6 +260,8 @@ private:
     void setChunkStrategy(FileChunksInfo::ChunkStrategy s) ;
 
     QTreeView *downloadList;
+
+    TransfersDialog_dirty_icon_cache icon_cache;
 
     /** Adds a new action to the toolbar. */
     void addAction(QAction *action, const char *slot = 0);
