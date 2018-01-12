@@ -2080,7 +2080,7 @@ bool RsGenExchange::processGrpMask(const RsGxsGroupId& grpId, ContentValue &grpC
     bool ok = false;
 
 	RsGxsGrpMetaTemporaryMap grpMetaMap;
-    std::map<RsGxsGroupId, const RsGxsGrpMetaData* >::iterator mit;
+    std::map<RsGxsGroupId, RsGxsGrpMetaData* >::iterator mit;
     grpMetaMap.insert(std::make_pair(grpId, (RsGxsGrpMetaData*)(NULL)));
 
     mDataStore->retrieveGxsGrpMetaData(grpMetaMap);
@@ -2362,7 +2362,7 @@ void RsGenExchange::processGroupUpdatePublish()
 	{
 		GroupUpdatePublish& gup = *vit;
 		const RsGxsGroupId& groupId = gup.grpItem->meta.mGroupId;
-		std::map<RsGxsGroupId, const RsGxsGrpMetaData*>::iterator mit = grpMeta.find(groupId);
+		std::map<RsGxsGroupId, RsGxsGrpMetaData*>::iterator mit = grpMeta.find(groupId);
 
 		const RsGxsGrpMetaData* meta = NULL;
 		if(mit == grpMeta.end() || mit->second == NULL)
@@ -2929,7 +2929,7 @@ void RsGenExchange::processRecvdMessages()
 #ifdef GEN_EXCH_DEBUG
 		    std::cerr << "    deserialised info: grp id=" << meta->mGroupId << ", msg id=" << meta->mMsgId ;
 #endif
-			std::map<RsGxsGroupId, const RsGxsGrpMetaData*>::iterator mit = grpMetas.find(msg->grpId);
+			std::map<RsGxsGroupId, RsGxsGrpMetaData*>::iterator mit = grpMetas.find(msg->grpId);
 
 #ifdef GEN_EXCH_DEBUG
 			    std::cerr << "    msg info         : grp id=" << msg->grpId << ", msg id=" << msg->msgId << std::endl;
@@ -3186,7 +3186,7 @@ void RsGenExchange::performUpdateValidation()
 	for(; vit != mGroupUpdates.end(); ++vit)
 	{
 		GroupUpdate& gu = *vit;
-		std::map<RsGxsGroupId, const RsGxsGrpMetaData*>::iterator mit = grpMetas.find(gu.newGrp->grpId);
+		std::map<RsGxsGroupId, RsGxsGrpMetaData*>::iterator mit = grpMetas.find(gu.newGrp->grpId);
 		gu.oldGrpMeta = mit->second;
 		gu.validUpdate = updateValid(*(gu.oldGrpMeta), *(gu.newGrp));
 	}

@@ -486,14 +486,12 @@ bool RsDataService::finishReleaseUpdate(int release, bool result)
     return result;
 }
 
-RsGxsGrpMetaData* RsDataService::locked_getNewGrpMeta(RetroCursor &c, int colOffset)
+RsGxsGrpMetaData* RsDataService::locked_getGrpMeta(RetroCursor &c, int colOffset,bool use_cache)
 {
 #ifdef RS_DATA_SERVICE_DEBUG
     std::cerr << "RsDataService::locked_getGrpMeta()";
     std::cerr << std::endl;
 #endif
-
-    RsGxsGrpMetaData* grpMeta = new RsGxsGrpMetaData();
 
     bool ok = true;
 
@@ -505,6 +503,25 @@ RsGxsGrpMetaData* RsDataService::locked_getNewGrpMeta(RetroCursor &c, int colOff
     // grpId
     std::string tempId;
     c.getString(mColGrpMeta_GrpId + colOffset, tempId);
+
+    RsGxsGrpMetaData* grpMeta ;
+	RsGxsGroupId grpId(tempId) ;
+
+	if(use_cache)
+	{
+		auto it = mGrpMetaDataCache.find(grpId) ;
+
+		if(it != mGrpMetaDataCache.end())
+			grpMeta = it->second ;
+		else
+		{
+			grpMeta = new RsGxsGrpMetaData();
+			mGrpMetaDataCache[grpId] = grpMeta ;
+		}
+	}
+	else
+		grpMeta = new RsGxsGrpMetaData();
+
     grpMeta->mGroupId = RsGxsGroupId(tempId);
     c.getString(mColGrpMeta_NxsIdentity + colOffset, tempId);
     grpMeta->mAuthorId = RsGxsId(tempId);
@@ -557,7 +574,8 @@ RsGxsGrpMetaData* RsDataService::locked_getNewGrpMeta(RetroCursor &c, int colOff
         return grpMeta;
     else
 	{
-        delete grpMeta;
+		if(!use_cache)
+			delete grpMeta;
 		return NULL;
 	}
 }
@@ -877,7 +895,7 @@ int RsDataService::storeGroup(const std::list<RsNxsGrp*>& grp)
 		cv.put(KEY_GRP_STATUS, (int32_t)grpMetaPtr->mGroupStatus);
 		cv.put(KEY_GRP_LAST_POST, (int32_t)grpMetaPtr->mLastPost);
 
-		locked_clearGrpMetaCache(grpMetaPtr->mGroupId);
+		locked_updateGrpMetaCache(*grpMetaPtr);
 
 		if (!mDb->sqlInsert(GRP_TABLE_NAME, "", cv))
 		{
@@ -893,9 +911,17 @@ int RsDataService::storeGroup(const std::list<RsNxsGrp*>& grp)
     return ret;
 }
 
+void RsDataService::locked_updateGrpMetaCache(const RsGxsGrpMetaData& meta)
+{
+	auto it = mGrpMetaDataCache.find(meta.mGroupId) ;
+
+	if(it != mGrpMetaDataCache.end())
+		*(it->second) = meta ;
+}
+
 void RsDataService::locked_clearGrpMetaCache(const RsGxsGroupId& gid)
 {
-    std::map<RsGxsGroupId,const RsGxsGrpMetaData*>::iterator it = mGrpMetaDataCache.find(gid) ;
+    auto it = mGrpMetaDataCache.find(gid) ;
 
 	if(it != mGrpMetaDataCache.end())
 	{
@@ -973,7 +999,7 @@ int RsDataService::updateGroup(const std::list<RsNxsGrp *> &grp)
 
         mDb->sqlUpdate(GRP_TABLE_NAME, "grpId='" + grpPtr->grpId.toStdString() + "'", cv);
 
-        locked_clearGrpMetaCache(grpMetaPtr->mGroupId);
+        locked_updateGrpMetaCache(*grpMetaPtr);
     }
     // finish transaction
     bool ret = mDb->commitTransaction();
@@ -1104,7 +1130,7 @@ void RsDataService::locked_retrieveGroups(RetroCursor* c, std::vector<RsNxsGrp*>
             if(g)
             {
                 if (metaOffset) {
-                    g->metaData = locked_getNewGrpMeta(*c, metaOffset);
+                    g->metaData = locked_getGrpMeta(*c, metaOffset,false);
                 }
                 grps.push_back(g);
             }
@@ -1305,8 +1331,6 @@ int RsDataService::retrieveGxsGrpMetaData(RsGxsGrpMetaTemporaryMap& grp)
 #endif
 
 			grp = mGrpMetaDataCache ;
-            //for(std::map<RsGxsGroupId,RsGxsGrpMetaData>::const_iterator it(mGrpMetaDataCache.begin());it!=mGrpMetaDataCache.end();++it)
-	        //    grp[it->first] = new RsGxsGrpMetaData(it->second);
         }
         else
 		{
@@ -1314,11 +1338,6 @@ int RsDataService::retrieveGxsGrpMetaData(RsGxsGrpMetaTemporaryMap& grp)
 			std::cerr << "RsDataService::retrieveGxsGrpMetaData() retrieving all" << std::endl;
 #endif
 			// clear the cache
-
-			for(auto it(mGrpMetaDataCache.begin());it!=mGrpMetaDataCache.end();++it)
-				delete it->second ;
-
-			mGrpMetaDataCache.clear();
 
 			RetroCursor* c = mDb->sqlQuery(GRP_TABLE_NAME, mGrpMetaColumns, "", "");
 
@@ -1328,12 +1347,11 @@ int RsDataService::retrieveGxsGrpMetaData(RsGxsGrpMetaTemporaryMap& grp)
 
 				while(valid)
 				{
-					RsGxsGrpMetaData* g = locked_getNewGrpMeta(*c, 0);
+					RsGxsGrpMetaData* g = locked_getGrpMeta(*c, 0,true);
 
 					if(g)
 					{
 						grp[g->mGroupId] = g;
-						mGrpMetaDataCache[g->mGroupId] = g ;
 #ifdef RS_DATA_SERVICE_DEBUG_CACHE
 						std::cerr << (void *)this << ": Retrieving (all) Grp metadata grpId=" << g->mGroupId << std::endl;
 #endif
@@ -1353,11 +1371,11 @@ int RsDataService::retrieveGxsGrpMetaData(RsGxsGrpMetaTemporaryMap& grp)
     }
 	else
     {
-			std::map<RsGxsGroupId, const RsGxsGrpMetaData *>::iterator mit = grp.begin();
+		std::map<RsGxsGroupId, RsGxsGrpMetaData *>::iterator mit = grp.begin();
 
           for(; mit != grp.end(); ++mit)
           {
-              std::map<RsGxsGroupId, const RsGxsGrpMetaData*>::const_iterator itt = mGrpMetaDataCache.find(mit->first) ;
+              std::map<RsGxsGroupId, RsGxsGrpMetaData*>::const_iterator itt = mGrpMetaDataCache.find(mit->first) ;
 
               if(itt != mGrpMetaDataCache.end())
               {
@@ -1385,12 +1403,11 @@ int RsDataService::retrieveGxsGrpMetaData(RsGxsGrpMetaTemporaryMap& grp)
 #endif
 					  while(valid)
 					  {
-						  RsGxsGrpMetaData* g = locked_getNewGrpMeta(*c, 0);
+						  RsGxsGrpMetaData* g = locked_getGrpMeta(*c, 0,true);
 
 						  if(g)
 						  {
 							  grp[g->mGroupId] = g;
-							  mGrpMetaDataCache[g->mGroupId] = g ;
 #ifdef RS_DATA_SERVICE_DEBUG_CACHE
 							  std::cerr << ". Got it. Updating cache." << std::endl;
 #endif
