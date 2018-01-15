@@ -113,6 +113,8 @@ const std::string RsGeneralDataService::MSG_META_STATUS = KEY_MSG_STATUS;
 
 const uint32_t RsGeneralDataService::GXS_MAX_ITEM_SIZE = 1572864; // 1.5 Mbytes
 
+static const uint32_t CACHE_ENTRY_GRACE_PERIOD = 600 ; // 10 minutes
+
 static int addColumn(std::list<std::string> &list, const std::string &attribute)
 {
     list.push_back(attribute);
@@ -921,14 +923,36 @@ void RsDataService::locked_updateGrpMetaCache(const RsGxsGrpMetaData& meta)
 
 void RsDataService::locked_clearGrpMetaCache(const RsGxsGroupId& gid)
 {
+	time_t now = time(NULL) ;
     auto it = mGrpMetaDataCache.find(gid) ;
+
+	// We dont actually delete the item, because it might be used by a calling client.
+	// In this case, the memory will not be used for long, so we keep it into a list for a safe amount
+	// of time and delete it later. Using smart pointers here would be more elegant, but that would need
+	// to be implemented thread safe, which is difficult in this case.
 
 	if(it != mGrpMetaDataCache.end())
 	{
-		delete it->second ;
+		std::cerr << "(II) moving database cache entry " << (void*)(*it).second << " to dead list." << std::endl;
+
+		mOldCachedItems.push_back(std::make_pair(now,it->second)) ;
+
 		mGrpMetaDataCache.erase(it) ;
 		mGrpMetaDataCache_ContainsAllDatabase = false;
 	}
+
+	// We also take that opportunity to delete old entries.
+
+	auto it2(mOldCachedItems.begin());
+
+	while(it2!=mOldCachedItems.end() && (*it2).first + CACHE_ENTRY_GRACE_PERIOD < now)
+	{
+		std::cerr << "(II) deleting old GXS database cache entry " << (void*)(*it2).second << ", " << now - (*it2).first << " seconds old." << std::endl;
+
+		delete (*it2).second ;
+		it2 = mOldCachedItems.erase(it2) ;
+	}
+
 }
 
 int RsDataService::updateGroup(const std::list<RsNxsGrp *> &grp)
