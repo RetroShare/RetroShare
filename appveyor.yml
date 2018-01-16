@@ -12,7 +12,7 @@
 #---------------------------------#
 
 # version format
-version: RetroShare 0.6.0.{build}-{branch}
+version: RetroShare-git-{branch}-{build}
 
 # you can use {branch} name in version format too
 # version: 1.0.{build}-{branch}
@@ -106,6 +106,7 @@ install:
   - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-ffmpeg mingw-w64-x86_64-ffmpeg"
   - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-libmicrohttpd mingw-w64-x86_64-libmicrohttpd"
   - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-libxslt mingw-w64-x86_64-libxslt"
+  - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-rapidjson mingw-w64-x86_64-rapidjson"
 
   # Hack for new MSys2
   - copy C:\msys64\mingw32\i686-w64-mingw32\bin\ar.exe C:\msys64\mingw32\bin\i686-w64-mingw32-ar.exe
