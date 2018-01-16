@@ -36,8 +36,8 @@
 #include "rsitems/rsnxsitems.h"
 #include "gxs/rsgxsdata.h"
 #include "rsgxs.h"
+#include "rsgxsutil.h"
 #include "util/contentvalue.h"
-
 
 class RsGxsSearchModule  {
 
@@ -60,6 +60,8 @@ public:
     RsGxsGrpMsgIdPair msgId;
     ContentValue val;
 };
+
+typedef std::map<RsGxsGroupId,RsGxsGrpMetaData*> RsGxsGrpMetaTemporaryMap;
 
 /*!
  * This allows modification of local
@@ -168,7 +170,7 @@ public:
      *            , if grpId is failed to be retrieved it will be erased from map
      * @return error code
      */
-    virtual int retrieveGxsGrpMetaData(std::map<RsGxsGroupId, RsGxsGrpMetaData*>& grp) = 0;
+    virtual int retrieveGxsGrpMetaData(RsGxsGrpMetaTemporaryMap& grp) = 0;
 
     /*!
      * Retrieves meta data of all groups stored (most current versions only)

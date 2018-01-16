@@ -32,6 +32,7 @@
 
 class RsGixs ;
 class RsGenExchange ;
+class RsGeneralDataService ;
 
 // temporary holds a map of pointers to class T, and destroys all pointers on delete.
 
@@ -104,7 +105,7 @@ public:
     }
 };
 
-typedef t_RsGxsGenericDataTemporaryMap<RsGxsGroupId,RsGxsGrpMetaData> RsGxsGrpMetaTemporaryMap;
+typedef std::map<RsGxsGroupId,RsGxsGrpMetaData*>                	  RsGxsGrpMetaTemporaryMap;
 typedef t_RsGxsGenericDataTemporaryMap<RsGxsGroupId,RsNxsGrp>         RsNxsGrpDataTemporaryMap;
 
 typedef t_RsGxsGenericDataTemporaryMapVector<RsGxsMsgMetaData>        RsGxsMsgMetaTemporaryMap ;
@@ -178,7 +179,7 @@ private:
 	RsGeneralDataService* const mDs;
     RsGenExchange *mGenExchangeClient;
 	uint32_t CHUNK_SIZE;
-	std::vector<RsGxsGrpMetaData*> mGrpMeta;
+	std::vector<const RsGxsGrpMetaData*> mGrpMeta;
 };
 
 /*!
@@ -226,7 +227,7 @@ class GroupUpdate
 public:
 	GroupUpdate() : oldGrpMeta(NULL), newGrp(NULL), validUpdate(false)
 	{}
-	RsGxsGrpMetaData* oldGrpMeta;
+	const RsGxsGrpMetaData* oldGrpMeta;
 	RsNxsGrp* newGrp;
 	bool validUpdate;
 };

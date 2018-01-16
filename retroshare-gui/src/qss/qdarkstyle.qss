@@ -74,6 +74,15 @@ QWidget:item:selected
     stop: 0 #78879b, stop: 1 #78879b);
 }
 
+QTableWidget::item {
+    color: #C0C0C0;
+    background-color: #201F1F;
+}
+
+QTableWidget::item:selected {
+    color: black;
+}
+
 ForumsDialog, GxsForumThreadWidget
 {
 	qproperty-textColorRead: darkgray;
@@ -824,6 +833,14 @@ QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
     background: rgba(255, 255, 255, 10);
 }
 
+FriendList {
+    qproperty-textColorStatusAway: lightgray;
+    qproperty-textColorStatusBusy: lightgray;
+    qproperty-textColorStatusOnline: green;
+    qproperty-textColorStatusInactive: lightgray;
+    qproperty-textColorStatusOffline: gray;
+}
+
 QTreeView, QListView
 {
     border: 1px solid #78879b;
@@ -834,8 +851,20 @@ QTreeView::item {
     background-color: #201F1F;
 }
 
-QTreeView::item:!selected {
+QTreeView::item:selected {
+    color: black;
+}
+
+RSTreeWidget#idTreeWidget::item:!selected {
     color: #C0C0C0;
+}
+
+NetworkDialog {
+    qproperty-backgroundColorSelf: darkred;
+    qproperty-backgroundColorOwnSign: darkred;
+    qproperty-backgroundColorAcceptConnection: black;
+    qproperty-backgroundColorHasSignedMe: darkred;
+    qproperty-backgroundColorDenied: #201F1F;
 }
 
 QTreeView:branch:selected, QTreeView:branch:hover

@@ -374,7 +374,7 @@ void IdentityHandler::handleAddContact(Request& req, Response& resp)
 	mRsIdentity->setAsRegularContact(RsGxsId(gxs_id), true);
 
 	{
-		RsStackMutex stack(mMtx); /********** STACK LOCKED MTX ******/
+		RS_STACK_MUTEX(mMtx); // ********** LOCKED **********
 		mStateTokenServer->replaceToken(mStateToken);
 	}
 
@@ -389,7 +389,7 @@ void IdentityHandler::handleRemoveContact(Request& req, Response& resp)
 	mRsIdentity->setAsRegularContact(RsGxsId(gxs_id), false);
 
 	{
-		RsStackMutex stack(mMtx); /********** STACK LOCKED MTX ******/
+		RS_STACK_MUTEX(mMtx); // ********** LOCKED **********
 		mStateTokenServer->replaceToken(mStateToken);
 	}
 

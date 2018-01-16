@@ -51,7 +51,7 @@ public:
     RsGxsGrpMetaData();
     bool deserialise(void *data, uint32_t &pktsize);
     bool serialise(void* data, uint32_t &pktsize, uint32_t api_version);
-    uint32_t serial_size(uint32_t api_version);
+    uint32_t serial_size(uint32_t api_version) const;
     void clear();
     void operator =(const RsGroupMetaData& rMeta);
 

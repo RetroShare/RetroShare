@@ -28,7 +28,8 @@
 
 GroupMetaReq::~GroupMetaReq()
 {
-	rsstd::delete_all(mGroupMetaData.begin(), mGroupMetaData.end());
+	//rsstd::delete_all(mGroupMetaData.begin(), mGroupMetaData.end());	// now memory ownership is kept by the cache.
+	mGroupMetaData.clear();
 }
 
 GroupDataReq::~GroupDataReq()

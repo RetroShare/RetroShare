@@ -1658,9 +1658,8 @@ bool p3IdService::getGroupData(const uint32_t &token, std::vector<RsGxsIdGroup> 
                     group.mPgpKnown = false;
                     group.mPgpId.clear();
 
-                    std::cerr << "p3IdService::getGroupData() Failed to decode ServiceString \""
-                              << group.mMeta.mServiceString << "\"" ;
-                    std::cerr << std::endl;
+					if(!group.mMeta.mServiceString.empty())
+						std::cerr << "p3IdService::getGroupData() " << group.mMeta.mGroupId << " (" << group.mMeta.mGroupName << ") : Failed to decode, or no ServiceString \"" << group.mMeta.mServiceString << "\"" << std::endl;
                 }
 
                 group.mIsAContact =  (mContacts.find(RsGxsId(group.mMeta.mGroupId)) != mContacts.end());
@@ -2252,7 +2251,7 @@ void RsGxsIdCache::updateServiceString(std::string serviceString)
 #ifdef DEBUG_RECOGN
             std::cerr << "RsGxsIdCache::updateServiceString() updating recogntags";
             std::cerr << std::endl;
-#endif // DEBUG_RECOGN
+#endif
             if (ssdata.recogntags.publishTs == mPublishTs)
             {
                 std::list<RsRecognTag>::iterator it;
@@ -2264,7 +2263,7 @@ void RsGxsIdCache::updateServiceString(std::string serviceString)
 #ifdef DEBUG_RECOGN
                         std::cerr << "RsGxsIdCache::updateServiceString() Valid Tag: " << it->tag_class << ":" << it->tag_type;
                         std::cerr << std::endl;
-#endif // DEBUG_RECOGN
+#endif
                         details.mRecognTags.push_back(*it);
                     }
                     else
@@ -2272,7 +2271,7 @@ void RsGxsIdCache::updateServiceString(std::string serviceString)
 #ifdef DEBUG_RECOGN
                         std::cerr << "RsGxsIdCache::updateServiceString() Invalid Tag: " << it->tag_class << ":" << it->tag_type;
                         std::cerr << std::endl;
-#endif // DEBUG_RECOGN
+#endif
                     }
                 }
             }
@@ -2281,7 +2280,7 @@ void RsGxsIdCache::updateServiceString(std::string serviceString)
 #ifdef DEBUG_RECOGN
                 std::cerr << "RsGxsIdCache::updateServiceString() recogntags old publishTs";
                 std::cerr << std::endl;
-#endif // DEBUG_RECOGN
+#endif
             }
 
         }
@@ -2290,7 +2289,7 @@ void RsGxsIdCache::updateServiceString(std::string serviceString)
 #ifdef DEBUG_RECOGN
             std::cerr << "RsGxsIdCache::updateServiceString() recogntags unprocessed";
             std::cerr << std::endl;
-#endif // DEBUG_RECOGN
+#endif
         }
 
         // copy over Reputation scores.

@@ -104,6 +104,8 @@ public:
         bool is_distant_chat_id;
         bool is_lobby;
         bool is_peer;
+		std::string own_author_id;
+		std::string own_author_name;
         std::string remote_author_id;
         std::string remote_author_name;
     };
@@ -129,8 +131,13 @@ private:
 	void handleAnswerToInvitation(Request& req, Response& resp);
     void handleClearLobby(Request& req, Response& resp);
     ResponseTask* handleLobbyParticipants(Request& req, Response& resp);
+	void handleGetDefaultIdentityForChatLobby(Request& req, Response& resp);
+	void handleSetDefaultIdentityForChatLobby(Request& req, Response& resp);
+	void handleGetIdentityForChatLobby(Request& req, Response& resp);
+	void handleSetIdentityForChatLobby(Request& req, Response& resp);
     void handleMessages(Request& req, Response& resp);
-    void handleSendMessage(Request& req, Response& resp);
+	void handleSendMessage(Request& req, Response& resp);
+	void handleMarkMessageAsRead(Request& req, Response& resp);
     void handleMarkChatAsRead(Request& req, Response& resp);
     void handleInfo(Request& req, Response& resp);
     ResponseTask *handleReceiveStatus(Request& req, Response& resp);
