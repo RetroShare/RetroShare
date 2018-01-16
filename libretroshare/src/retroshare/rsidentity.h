@@ -6,7 +6,8 @@
  *
  * RetroShare C++ Interface.
  *
- * Copyright 2012-2012 by Robert Fernie.
+ * Copyright (C) 2012  Robert Fernie.
+ * Copyright (C) 2018  Gioacchino Mazzurco <gio@eigenlab.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -36,6 +37,9 @@
 #include "retroshare/rsids.h"
 #include "serialiser/rstlvimage.h"
 #include "retroshare/rsgxscommon.h"
+#include "serialiser/rsserializable.h"
+#include "serialiser/rstypeserializer.h"
+#include "util/rsdeprecate.h"
 
 /* The Main Interface Class - for information about your Peers */
 class RsIdentity;
@@ -63,6 +67,7 @@ extern RsIdentity *rsIdentity;
 #define RSID_RELATION_OTHER   	0x0008
 #define RSID_RELATION_UNKNOWN 	0x0010
 
+/// @deprecated remove toghether with RsGxsIdGroup::mRecognTags
 #define RSRECOGN_MAX_TAGINFO	5
 
 // Unicode symbols. NOT utf-8 bytes, because of multi byte characters
@@ -77,26 +82,35 @@ static const uint32_t RS_IDENTITY_FLAGS_PGP_KNOWN    = 0x0004;
 static const uint32_t RS_IDENTITY_FLAGS_IS_OWN_ID    = 0x0008;
 static const uint32_t RS_IDENTITY_FLAGS_IS_DEPRECATED= 0x0010;	// used to denote keys with deprecated fingerprint format.
 
-class GxsReputation
+struct GxsReputation : RsSerializable
 {
-        public:
-        GxsReputation();
+	GxsReputation();
 
-        bool updateIdScore(bool pgpLinked, bool pgpKnown);
-        bool update();    // checks ranges and calculates overall score.
-        int mOverallScore;
-        int mIdScore;      // PGP, Known, etc.
-        int mOwnOpinion;
-        int mPeerOpinion;
+	bool updateIdScore(bool pgpLinked, bool pgpKnown);
+	bool update(); /// checks ranges and calculates overall score.
+
+	int32_t mOverallScore;
+	int32_t mIdScore; /// PGP, Known, etc.
+	int32_t mOwnOpinion;
+	int32_t mPeerOpinion;
+
+	/// @see RsSerializable
+	void serial_process( RsGenericSerializer::SerializeJob j,
+	                     RsGenericSerializer::SerializeContext& ctx )
+	{
+		RS_REGISTER_SERIAL_MEMBER(mOverallScore);
+		RS_REGISTER_SERIAL_MEMBER(mIdScore);
+		RS_REGISTER_SERIAL_MEMBER(mOwnOpinion);
+		RS_REGISTER_SERIAL_MEMBER(mPeerOpinion);
+	}
 };
 
 
-struct RsGxsIdGroup
+struct RsGxsIdGroup : RsSerializable
 {
 	RsGxsIdGroup() :
 	    mLastUsageTS(0), mPgpKnown(false), mIsAContact(false) {}
 	~RsGxsIdGroup() {}
-
 
 	RsGroupMetaData mMeta;
 
@@ -120,7 +134,7 @@ struct RsGxsIdGroup
 	std::string mPgpIdSign;   
 
 	// Recognition Strings. MAX# defined above.
-	std::list<std::string> mRecognTags;
+	RS_DEPRECATED std::list<std::string> mRecognTags;
 
     // Avatar
     RsGxsImage mImage ;
@@ -131,8 +145,11 @@ struct RsGxsIdGroup
     bool mIsAContact;	// change that into flags one day
     RsPgpId mPgpId;
     GxsReputation mReputation;
-};
 
+	/// @see RsSerializable
+	void serial_process( RsGenericSerializer::SerializeJob j,
+	                     RsGenericSerializer::SerializeContext& ctx );
+};
 
 std::ostream &operator<<(std::ostream &out, const RsGxsIdGroup &group);
 
@@ -149,12 +166,11 @@ class RsRecognTag
 };
 
 
-class RsRecognTagDetails
+struct RsRecognTagDetails
 {
-	public:
-	RsRecognTagDetails()
-	:valid_from(0), valid_to(0), tag_class(0), tag_type(0), 
-	is_valid(false), is_pending(false) { return; }
+	RsRecognTagDetails() :
+	    valid_from(0), valid_to(0), tag_class(0), tag_type(0), is_valid(false),
+	    is_pending(false) {}
 	
 	time_t valid_from;
 	time_t valid_to;
@@ -167,105 +183,168 @@ class RsRecognTagDetails
 	bool is_pending;
 };
 
-class RsIdOpinion
-{
-	public:
-	RsGxsId id;
-	int rating;
-};
-	
 
-class RsIdentityParameters
+struct RsIdentityParameters
 {
-	public:
-	RsIdentityParameters(): isPgpLinked(false) { return; }
+	RsIdentityParameters() :
+	    isPgpLinked(false) {}
+
 	bool isPgpLinked;
-    std::string nickname;
-    RsGxsImage mImage ;
+	std::string nickname;
+	RsGxsImage mImage;
 };
 
-class RsIdentityUsage
+struct RsIdentityUsage : RsSerializable
 {
-public:
-    enum UsageCode { UNKNOWN_USAGE                      = 0x00,
-                   GROUP_ADMIN_SIGNATURE_CREATION       = 0x01,	// These 2 are normally not normal GXS identities, but nothing prevents it to happen either.
-                   GROUP_ADMIN_SIGNATURE_VALIDATION     = 0x02,
-                   GROUP_AUTHOR_SIGNATURE_CREATION      = 0x03, // not typically used, since most services do not require group author signatures
-                   GROUP_AUTHOR_SIGNATURE_VALIDATION    = 0x04,
-                   MESSAGE_AUTHOR_SIGNATURE_CREATION    = 0x05, // most common use case. Messages are signed by authors in e.g. forums.
-                   MESSAGE_AUTHOR_SIGNATURE_VALIDATION  = 0x06,
-                   GROUP_AUTHOR_KEEP_ALIVE              = 0x07, // Identities are stamped regularly by crawlign the set of messages for all groups. That helps keepign the useful identities in hand.
-                   MESSAGE_AUTHOR_KEEP_ALIVE            = 0x08, // Identities are stamped regularly by crawlign the set of messages for all groups. That helps keepign the useful identities in hand.
-                   CHAT_LOBBY_MSG_VALIDATION            = 0x09, // Chat lobby msgs are signed, so each time one comes, or a chat lobby event comes, a signature verificaiton happens.
-                   GLOBAL_ROUTER_SIGNATURE_CHECK        = 0x0a, // Global router message validation
-                   GLOBAL_ROUTER_SIGNATURE_CREATION     = 0x0b, // Global router message signature
-                   GXS_TUNNEL_DH_SIGNATURE_CHECK        = 0x0c, //
-                   GXS_TUNNEL_DH_SIGNATURE_CREATION     = 0x0d, //
-                   IDENTITY_DATA_UPDATE                 = 0x0e, // Group update on that identity data. Can be avatar, name, etc.
-                   IDENTITY_GENERIC_SIGNATURE_CHECK     = 0x0f, // Any signature verified for that identity
-                   IDENTITY_GENERIC_SIGNATURE_CREATION  = 0x10, // Any signature made by that identity
-		           IDENTITY_GENERIC_ENCRYPTION          = 0x11,
-		           IDENTITY_GENERIC_DECRYPTION          = 0x12,
-		           CIRCLE_MEMBERSHIP_CHECK              = 0x13
-                 } ;
+	enum UsageCode : uint8_t
+	{
+		UNKNOWN_USAGE                        = 0x00,
 
-    explicit RsIdentityUsage(uint16_t service,const RsIdentityUsage::UsageCode& code,const RsGxsGroupId& gid=RsGxsGroupId(),const RsGxsMessageId& mid=RsGxsMessageId(),uint64_t additional_id=0,const std::string& comment = std::string());
+		/** These 2 are normally not normal GXS identities, but nothing prevents
+		 * it to happen either. */
+		GROUP_ADMIN_SIGNATURE_CREATION       = 0x01,
+		GROUP_ADMIN_SIGNATURE_VALIDATION     = 0x02,
 
-    uint16_t 		mServiceId;		// Id of the service using that identity, as understood by rsServiceControl
-    UsageCode		mUsageCode; 	// Specific code to use. Will allow forming the correct translated message in the GUI if necessary.
-    RsGxsGroupId 	mGrpId;	  		// Group ID using the identity
+		/** Not typically used, since most services do not require group author
+		 * signatures */
+		GROUP_AUTHOR_SIGNATURE_CREATION      = 0x03,
+		GROUP_AUTHOR_SIGNATURE_VALIDATION    = 0x04,
 
-	RsGxsMessageId  mMsgId;		   	// Message ID using the identity
-	uint64_t        mAdditionalId; 	// Some additional ID. Can be used for e.g. chat lobbies.
-    std::string 	mComment ;		// additional comment to be used mainly for debugging, but not GUI display
+		/// most common use case. Messages are signed by authors in e.g. forums.
+		MESSAGE_AUTHOR_SIGNATURE_CREATION    = 0x05,
+		MESSAGE_AUTHOR_SIGNATURE_VALIDATION  = 0x06,
 
-    bool operator<(const RsIdentityUsage& u) const
-    {
-        return mHash < u.mHash ;
-    }
-    RsFileHash mHash ;
+		/** Identities are stamped regularly by crawlign the set of messages for
+		 * all groups. That helps keepign the useful identities in hand. */
+		GROUP_AUTHOR_KEEP_ALIVE              = 0x07,
+		MESSAGE_AUTHOR_KEEP_ALIVE            = 0x08,
+
+		/** Chat lobby msgs are signed, so each time one comes, or a chat lobby
+		 * event comes, a signature verificaiton happens. */
+		CHAT_LOBBY_MSG_VALIDATION            = 0x09,
+
+		/// Global router message validation
+		GLOBAL_ROUTER_SIGNATURE_CHECK        = 0x0a,
+
+		/// Global router message signature
+		GLOBAL_ROUTER_SIGNATURE_CREATION     = 0x0b,
+
+		GXS_TUNNEL_DH_SIGNATURE_CHECK        = 0x0c,
+		GXS_TUNNEL_DH_SIGNATURE_CREATION     = 0x0d,
+
+		/// Group update on that identity data. Can be avatar, name, etc.
+		IDENTITY_DATA_UPDATE                 = 0x0e,
+
+		/// Any signature verified for that identity
+		IDENTITY_GENERIC_SIGNATURE_CHECK     = 0x0f,
+
+		/// Any signature made by that identity
+		IDENTITY_GENERIC_SIGNATURE_CREATION  = 0x10,
+
+		IDENTITY_GENERIC_ENCRYPTION          = 0x11,
+		IDENTITY_GENERIC_DECRYPTION          = 0x12,
+		CIRCLE_MEMBERSHIP_CHECK              = 0x13
+	} ;
+
+	RsIdentityUsage( uint16_t service, const RsIdentityUsage::UsageCode& code,
+	                 const RsGxsGroupId& gid = RsGxsGroupId(),
+	                 const RsGxsMessageId& mid = RsGxsMessageId(),
+	                 uint64_t additional_id=0,
+	                 const std::string& comment = std::string() );
+
+	/// Id of the service using that identity, as understood by rsServiceControl
+	uint16_t mServiceId;
+
+	/** Specific code to use. Will allow forming the correct translated message
+	 * in the GUI if necessary. */
+	UsageCode mUsageCode;
+
+	/// Group ID using the identity
+	RsGxsGroupId mGrpId;
+
+	/// Message ID using the identity
+	RsGxsMessageId mMsgId;
+
+	/// Some additional ID. Can be used for e.g. chat lobbies.
+	uint64_t mAdditionalId;
+
+	/// additional comment to be used mainly for debugging, but not GUI display
+	std::string mComment;
+
+	bool operator<(const RsIdentityUsage& u) const { return mHash < u.mHash; }
+	RsFileHash mHash ;
+
+	/// @see RsSerializable
+	void serial_process( RsGenericSerializer::SerializeJob j,
+	                     RsGenericSerializer::SerializeContext& ctx )
+	{
+		RS_REGISTER_SERIAL_MEMBER(mServiceId);
+		RS_REGISTER_SERIAL_MEMBER_TYPED(mUsageCode, uint8_t);
+		RS_REGISTER_SERIAL_MEMBER(mGrpId);
+		RS_REGISTER_SERIAL_MEMBER(mMsgId);
+		RS_REGISTER_SERIAL_MEMBER(mAdditionalId);
+		RS_REGISTER_SERIAL_MEMBER(mComment);
+		RS_REGISTER_SERIAL_MEMBER(mHash);
+	}
+
+	friend class RsTypeSerializer;
+private:
+	/** Accessible only to friend class RsTypeSerializer needed for
+	 * deserialization */
+	RsIdentityUsage();
 };
 
-class RsIdentityDetails
+RS_REGISTER_SERIALIZABLE_TYPE_DECL(RsIdentityUsage)
+
+
+struct RsIdentityDetails : RsSerializable
 {
-public:
-    RsIdentityDetails()
-            : mFlags(0), mLastUsageTS(0) { return; }
+    RsIdentityDetails() : mFlags(0), mLastUsageTS(0) {}
 
     RsGxsId mId;
 
-    // identity details.
     std::string mNickname;
 
-    uint32_t mFlags ;
+	uint32_t mFlags;
 
-    // PGP Stuff.
-    RsPgpId mPgpId;
+	RsPgpId mPgpId;
 
-    // Recogn details.
-    std::list<RsRecognTag> mRecognTags;
+	/// @deprecated Recogn details.
+	RS_DEPRECATED std::list<RsRecognTag> mRecognTags;
 
-    // Cyril: Reputation details. At some point we might want to merge information
-    // between the two into a single global score. Since the old reputation system
-    // is not finished yet, I leave this in place. We should decide what to do with it.
-    RsReputations::ReputationInfo mReputation;
+	/** Cyril: Reputation details. At some point we might want to merge
+	 * information between the two into a single global score. Since the old
+	 * reputation system is not finished yet, I leave this in place. We should
+	 * decide what to do with it.
+	 */
+	RsReputations::ReputationInfo mReputation;
 
-    // avatar
-    RsGxsImage mAvatar ;
+	RsGxsImage mAvatar;
 
-    // last usage
-    time_t mLastUsageTS ;
-    std::map<RsIdentityUsage,time_t> mUseCases ;
+	time_t mLastUsageTS;
+
+	std::map<RsIdentityUsage,time_t> mUseCases;
+
+	/// @see RsSerializable
+	virtual void serial_process(RsGenericSerializer::SerializeJob j,
+	                            RsGenericSerializer::SerializeContext& ctx)
+	{
+		RS_REGISTER_SERIAL_MEMBER(mId);
+		RS_REGISTER_SERIAL_MEMBER(mNickname);
+		RS_REGISTER_SERIAL_MEMBER(mFlags);
+		RS_REGISTER_SERIAL_MEMBER(mPgpId);
+		//RS_REGISTER_SERIAL_MEMBER_TYPED(mReputation, RsSerializable);
+		//RS_REGISTER_SERIAL_MEMBER_TYPED(mAvatar, RsSerializable);
+		RS_REGISTER_SERIAL_MEMBER(mLastUsageTS);
+		RS_REGISTER_SERIAL_MEMBER(mUseCases);
+	}
 };
 
 
 
 
-class RsIdentity: public RsGxsIfaceHelper
+struct RsIdentity : RsGxsIfaceHelper
 {
-
-public:
-
     explicit RsIdentity(RsGxsIface *gxs): RsGxsIfaceHelper(gxs) {}
     virtual ~RsIdentity() {}
 

@@ -3,7 +3,8 @@
  *
  * RetroShare Serialiser.
  *
- * Copyright 2017 by Cyril Soler
+ * Copyright (C) 2017  Cyril Soler
+ * Copyright (C) 2018  Gioacchino Mazzurco <gio@eigenlab.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -32,83 +33,91 @@
 #include "retroshare/rsids.h"
 
 #include "serialiser/rsserializer.h"
+#include "serialiser/rsserializable.h"
 
-/** @def RS_REGISTER_SERIAL_MEMBER(I)
- * Use this macro to register the members of `YourItem` for serial processing
- * inside `YourItem::serial_process(j, ctx)`
- *
- * Inspired by http://stackoverflow.com/a/39345864
+#include <rapidjson/document.h>
+
+/** INTERNAL ONLY helper to avoid copy paste code for std::{vector,list,set}<T>
+ * Can't use a template function because T is needed for const_cast */
+#define RsTypeSerializer_PRIVATE_TO_JSON_ARRAY() do \
+{ \
+	using namespace rapidjson; \
+\
+	Document::AllocatorType& allocator = ctx.mJson.GetAllocator(); \
+\
+	Value arrKey; arrKey.SetString(memberName.c_str(), allocator); \
+\
+	Value arr(kArrayType); \
+\
+	for (auto& el : v) \
+    { \
+	    /* Use same allocator to avoid deep copy */\
+	    RsGenericSerializer::SerializeContext elCtx(\
+	                nullptr, 0, RsGenericSerializer::FORMAT_BINARY,\
+	                RsGenericSerializer::SERIALIZATION_FLAG_NONE,\
+	                &allocator );\
+\
+	    /* If el is const the default serial_process template is matched */ \
+	    /* also when specialization is necessary so the compilation break */ \
+	    serial_process(j, elCtx, const_cast<T&>(el), memberName); \
+\
+	    elCtx.mOk = elCtx.mOk && elCtx.mJson.HasMember(arrKey);\
+	    if(elCtx.mOk) arr.PushBack(elCtx.mJson[arrKey], allocator);\
+	    else\
+        {\
+	        ctx.mOk = false;\
+	        break;\
+	    }\
+	}\
+\
+	ctx.mJson.AddMember(arrKey, arr, allocator);\
+} while (false)
+
+/** INTERNAL ONLY helper to avoid copy paste code for std::{vector,list,set}<T>
+ * Can't use a template function because std::{vector,list,set}<T> has different
+ * name for insert/push_back function
  */
-#define RS_REGISTER_SERIAL_MEMBER(I) \
-	do { RsTypeSerializer::serial_process(j, ctx, I, #I); } while(0)
+#define RsTypeSerializer_PRIVATE_FROM_JSON_ARRAY(INSERT_FUN) do\
+{\
+	using namespace rapidjson;\
+\
+	bool& ok(ctx.mOk);\
+	Document& jDoc(ctx.mJson);\
+	Document::AllocatorType& allocator = jDoc.GetAllocator();\
+\
+	Value arrKey;\
+	arrKey.SetString(memberName.c_str(), memberName.length());\
+\
+	ok = ok && jDoc.IsObject();\
+	ok = ok && jDoc.HasMember(arrKey);\
+\
+	if(ok && jDoc[arrKey].IsArray())\
+    {\
+	    for (auto&& arrEl : jDoc[arrKey].GetArray())\
+        {\
+	        RsGenericSerializer::SerializeContext elCtx(\
+	                    nullptr, 0, RsGenericSerializer::FORMAT_BINARY,\
+	                    RsGenericSerializer::SERIALIZATION_FLAG_NONE,\
+	                    &allocator );\
+	        elCtx.mJson.AddMember(arrKey, arrEl, allocator);\
+\
+	        T el;\
+	        serial_process(j, elCtx, el, memberName); \
+	        ok = ok && elCtx.mOk;\
+\
+	        if(ok) v.INSERT_FUN(el);\
+	        else break;\
+	    }\
+	}\
+} while(false)
 
-/** @def RS_REGISTER_SERIAL_MEMBER_TYPED(I, T)
- * This macro usage is similar to @see RS_REGISTER_SERIAL_MEMBER(I) but it
- * permit to force serialization/deserialization type, it is expecially useful
- * with enum class members or RsTlvItem derivative members, be very careful with
- * the type you pass, as reinterpret_cast on a reference is used that is
- * expecially permissive so you can shot your feet if not carefull enough.
- *
- * If you are using this with an RsItem derivative (so passing RsItem as T)
- * consider to register your item type with @see RS_REGISTER_ITEM_TYPE(T) in
- * association with @see RS_REGISTER_SERIAL_MEMBER(I) that rely on template
- * function generation, as in this particular case
- * RS_REGISTER_SERIAL_MEMBER_TYPED(I, T) would cause the serial code rely on
- * C++ dynamic dispatching that may have a noticeable impact on runtime
- * performances.
- */
-#pragma GCC diagnostic ignored "-Wstrict-aliasing"
-#define RS_REGISTER_SERIAL_MEMBER_TYPED(I, T) do {\
-	RsTypeSerializer::serial_process<T>(j, ctx, reinterpret_cast<T&>(I), #I);\
-	} while(0)
-#pragma GCC diagnostic pop
-
-/** @def RS_REGISTER_ITEM_TYPE(T)
- * Use this macro into `youritem.cc` only if you need to process members of
- * subtypes of RsItem.
- *
- * The usage of this macro is strictly needed only in some cases, for example if
- * you are registering for serialization a member of a container that contains
- * items of subclasses of RsItem like * `std::map<uint64_t, RsChatMsgItem>`
- *
- * @code{.cpp}
-struct PrivateOugoingMapItem : RsChatItem
-{
-	PrivateOugoingMapItem() : RsChatItem(RS_PKT_SUBTYPE_OUTGOING_MAP) {}
-
-	void serial_process( RsGenericSerializer::SerializeJob j,
-						 RsGenericSerializer::SerializeContext& ctx );
-
-	std::map<uint64_t, RsChatMsgItem> store;
-};
-
-RS_REGISTER_ITEM_TYPE(RsChatMsgItem)
-
-void PrivateOugoingMapItem::serial_process(
-		RsGenericSerializer::SerializeJob j,
-		RsGenericSerializer::SerializeContext& ctx )
-{
-	// store is of type
-	RS_REGISTER_SERIAL_MEMBER(store);
-}
- * @endcode
- *
- * If you use this macro with a lot of different item types this can cause the
- * generated binary grow in size, consider the usage of
- * @see RS_REGISTER_SERIAL_MEMBER_TYPED(I, T) passing RsItem as type in that
- * case.
- */
-#define RS_REGISTER_ITEM_TYPE(T) template<> \
-	void RsTypeSerializer::serial_process<T>( \
-	        RsGenericSerializer::SerializeJob j,\
-	        RsGenericSerializer::SerializeContext& ctx, T& item,\
-	const std::string& /*name*/) { item.serial_process(j, ctx); }
+std::ostream &operator<<(std::ostream &out, const RsJson &jDoc);
 
 struct RsTypeSerializer
 {
 	/** This type should be used to pass a parameter to drive the serialisation
 	 * if needed */
-	struct TlvMemBlock_proxy: public std::pair<void*&,uint32_t&>
+	struct TlvMemBlock_proxy : std::pair<void*&,uint32_t&>
 	{
 		TlvMemBlock_proxy(void*& p, uint32_t& s) :
 		    std::pair<void*&,uint32_t&>(p,s) {}
@@ -120,7 +129,7 @@ struct RsTypeSerializer
 	template<typename T>
 	static void serial_process( RsGenericSerializer::SerializeJob j,
 	                            RsGenericSerializer::SerializeContext& ctx,
-	                            T& member,const std::string& member_name)
+	                            T& member, const std::string& member_name )
 	{
 		switch(j)
 		{
@@ -137,6 +146,12 @@ struct RsTypeSerializer
 			break;
 		case RsGenericSerializer::PRINT:
 			print_data(member_name,member);
+			break;
+		case RsGenericSerializer::TO_JSON:
+			ctx.mOk = ctx.mOk && to_JSON(member_name, member, ctx.mJson);
+			break;
+		case RsGenericSerializer::FROM_JSON:
+			ctx.mOk = ctx.mOk && from_JSON(member_name, member, ctx.mJson);
 			break;
 		default:
 			ctx.mOk = false;
@@ -165,7 +180,15 @@ struct RsTypeSerializer
 			        serialize(ctx.mData,ctx.mSize,ctx.mOffset,type_id,member);
 			break;
 		case RsGenericSerializer::PRINT:
-			print_data(member_name,type_id,member);
+			print_data(member_name, member);
+			break;
+		case RsGenericSerializer::TO_JSON:
+			ctx.mOk = ctx.mOk &&
+			        to_JSON(member_name, type_id, member, ctx.mJson);
+			break;
+		case RsGenericSerializer::FROM_JSON:
+			ctx.mOk = ctx.mOk &&
+			        from_JSON(member_name, type_id, member, ctx.mJson);
 			break;
 		default:
 			ctx.mOk = false;
@@ -178,7 +201,7 @@ struct RsTypeSerializer
 	static void serial_process( RsGenericSerializer::SerializeJob j,
 	                            RsGenericSerializer::SerializeContext& ctx,
 	                            std::map<T,U>& v,
-	                            const std::string& member_name )
+	                            const std::string& memberName )
 	{
 		switch(j)
 		{
@@ -225,11 +248,11 @@ struct RsTypeSerializer
 		case RsGenericSerializer::PRINT:
 		{
 			if(v.empty())
-				std::cerr << "  Empty map \"" << member_name << "\""
+				std::cerr << "  Empty map \"" << memberName << "\""
 				          << std::endl;
 			else
 				std::cerr << "  std::map of " << v.size() << " elements: \""
-				          << member_name << "\"" << std::endl;
+				          << memberName << "\"" << std::endl;
 
 			for(typename std::map<T,U>::iterator it(v.begin());it!=v.end();++it)
 			{
@@ -242,6 +265,95 @@ struct RsTypeSerializer
 			}
 			break;
 		}
+		case RsGenericSerializer::TO_JSON:
+		{
+			using namespace rapidjson;
+
+			Document::AllocatorType& allocator = ctx.mJson.GetAllocator();
+			Value arrKey; arrKey.SetString(memberName.c_str(),
+			                               memberName.length(), allocator);
+			Value arr(kArrayType);
+
+			for (auto& kv : v)
+			{
+				// Use same allocator to avoid deep copy
+				RsGenericSerializer::SerializeContext kCtx(
+				            nullptr, 0, RsGenericSerializer::FORMAT_BINARY,
+				            RsGenericSerializer::SERIALIZATION_FLAG_NONE,
+				            &allocator );
+				serial_process<T>(j, kCtx, const_cast<T&>(kv.first), "key");
+
+				RsGenericSerializer::SerializeContext vCtx(
+				            nullptr, 0, RsGenericSerializer::FORMAT_BINARY,
+				            RsGenericSerializer::SERIALIZATION_FLAG_NONE,
+				            &allocator );
+				serial_process<U>(j, vCtx, const_cast<U&>(kv.second), "value");
+
+				if(kCtx.mOk && vCtx.mOk)
+				{
+					Value el(kObjectType);
+					el.AddMember("key", kCtx.mJson["key"], allocator);
+					el.AddMember("value", vCtx.mJson["value"], allocator);
+
+					arr.PushBack(el, allocator);
+				}
+			}
+
+			ctx.mJson.AddMember(arrKey, arr, allocator);
+
+			break;
+		}
+		case RsGenericSerializer::FROM_JSON:
+		{
+			using namespace rapidjson;
+
+			bool& ok(ctx.mOk);
+			Document& jDoc(ctx.mJson);
+			Document::AllocatorType& allocator = jDoc.GetAllocator();
+
+			Value arrKey;
+			arrKey.SetString(memberName.c_str(), memberName.length());
+
+			ok = ok && jDoc.IsObject();
+			ok = ok && jDoc.HasMember(arrKey);
+
+			if(ok && jDoc[arrKey].IsArray())
+			{
+				for (auto&& kvEl : jDoc[arrKey].GetArray())
+				{
+					ok = ok && kvEl.IsObject();
+					ok = ok && kvEl.HasMember("key");
+					ok = ok && kvEl.HasMember("value");
+					if (!ok) break;
+
+					RsGenericSerializer::SerializeContext kCtx(
+					            nullptr, 0, RsGenericSerializer::FORMAT_BINARY,
+					            RsGenericSerializer::SERIALIZATION_FLAG_NONE,
+					            &allocator );
+					ok && (kCtx.mJson.
+					       AddMember("key", kvEl["key"], allocator), true);
+
+					T key;
+					ok = ok && (serial_process(j, kCtx, key, "key"), kCtx.mOk);
+
+					RsGenericSerializer::SerializeContext vCtx(
+					            nullptr, 0, RsGenericSerializer::FORMAT_BINARY,
+					            RsGenericSerializer::SERIALIZATION_FLAG_NONE,
+					            &allocator );
+					ok && (vCtx.mJson.
+					       AddMember("value", kvEl["value"], allocator), true);
+
+					U value;
+					ok = ok && ( serial_process(j, vCtx, value, "value"),
+					             vCtx.mOk );
+
+					if(ok) v.insert(std::pair<T,U>(key,value));
+					else break;
+				}
+			}
+
+			break;
+		}
 		default: break;
 		}
 	}
@@ -251,7 +363,7 @@ struct RsTypeSerializer
 	static void serial_process( RsGenericSerializer::SerializeJob j,
 	                            RsGenericSerializer::SerializeContext& ctx,
 	                            std::vector<T>& v,
-	                            const std::string& member_name )
+	                            const std::string& memberName )
 	{
 		switch(j)
 		{
@@ -259,7 +371,7 @@ struct RsTypeSerializer
 		{
 			ctx.mOffset += 4;
 			for(uint32_t i=0;i<v.size();++i)
-				serial_process(j,ctx,v[i],member_name);
+				serial_process(j,ctx,v[i],memberName);
 			break;
 		}
 		case RsGenericSerializer::DESERIALIZE:
@@ -268,7 +380,7 @@ struct RsTypeSerializer
 			serial_process(j,ctx,n,"temporary size");
 			v.resize(n);
 			for(uint32_t i=0;i<v.size();++i)
-				serial_process(j,ctx,v[i],member_name);
+				serial_process(j,ctx,v[i],memberName);
 			break;
 		}
 		case RsGenericSerializer::SERIALIZE:
@@ -276,7 +388,7 @@ struct RsTypeSerializer
 			uint32_t n=v.size();
 			serial_process(j,ctx,n,"temporary size");
 			for(uint32_t i=0; i<v.size(); ++i)
-				serial_process(j,ctx,v[i],member_name);
+				serial_process(j,ctx,v[i],memberName);
 			break;
 		}
 		case RsGenericSerializer::PRINT:
@@ -289,10 +401,16 @@ struct RsTypeSerializer
 			for(uint32_t i=0;i<v.size();++i)
 			{
 				std::cerr << "  " ;
-				serial_process(j,ctx,v[i],member_name);
+				serial_process(j,ctx,v[i],memberName);
 			}
 			break;
 		}
+		case RsGenericSerializer::TO_JSON:
+			RsTypeSerializer_PRIVATE_TO_JSON_ARRAY();
+			break;
+		case RsGenericSerializer::FROM_JSON:
+			RsTypeSerializer_PRIVATE_FROM_JSON_ARRAY(push_back);
+			break;
 		default: break;
 		}
 	}
@@ -301,7 +419,7 @@ struct RsTypeSerializer
 	template<typename T>
 	static void serial_process( RsGenericSerializer::SerializeJob j,
 	                            RsGenericSerializer::SerializeContext& ctx,
-	                            std::set<T>& v, const std::string& member_name )
+	                            std::set<T>& v, const std::string& memberName )
 	{
 		switch(j)
 		{
@@ -311,7 +429,7 @@ struct RsTypeSerializer
 			for(typename std::set<T>::iterator it(v.begin());it!=v.end();++it)
 				// the const cast here is a hack to avoid serial_process to
 				// instantiate serialise(const T&)
-				serial_process(j,ctx,const_cast<T&>(*it) ,member_name);
+				serial_process(j,ctx,const_cast<T&>(*it) ,memberName);
 			break;
 		}
 		case RsGenericSerializer::DESERIALIZE:
@@ -321,7 +439,7 @@ struct RsTypeSerializer
 			for(uint32_t i=0; i<n; ++i)
 			{
 				T tmp;
-				serial_process<T>(j,ctx,tmp,member_name);
+				serial_process<T>(j,ctx,tmp,memberName);
 				v.insert(tmp);
 			}
 			break;
@@ -333,7 +451,7 @@ struct RsTypeSerializer
 			for(typename std::set<T>::iterator it(v.begin());it!=v.end();++it)
 				// the const cast here is a hack to avoid serial_process to
 				// instantiate serialise(const T&)
-				serial_process(j,ctx,const_cast<T&>(*it) ,member_name);
+				serial_process(j,ctx,const_cast<T&>(*it) ,memberName);
 			break;
 		}
 		case RsGenericSerializer::PRINT:
@@ -343,6 +461,12 @@ struct RsTypeSerializer
 			               << std::endl;
 			break;
 		}
+		case RsGenericSerializer::TO_JSON:
+			RsTypeSerializer_PRIVATE_TO_JSON_ARRAY();
+			break;
+		case RsGenericSerializer::FROM_JSON:
+			RsTypeSerializer_PRIVATE_FROM_JSON_ARRAY(insert);
+			break;
 		default: break;
 		}
 	}
@@ -352,7 +476,7 @@ struct RsTypeSerializer
 	static void serial_process( RsGenericSerializer::SerializeJob j,
 	                            RsGenericSerializer::SerializeContext& ctx,
 	                            std::list<T>& v,
-	                            const std::string& member_name )
+	                            const std::string& memberName )
 	{
 		switch(j)
 		{
@@ -360,7 +484,7 @@ struct RsTypeSerializer
 		{
 			ctx.mOffset += 4;
 			for(typename std::list<T>::iterator it(v.begin());it!=v.end();++it)
-				serial_process(j,ctx,*it ,member_name);
+				serial_process(j,ctx,*it ,memberName);
 			break;
 		}
 		case RsGenericSerializer::DESERIALIZE:
@@ -370,7 +494,7 @@ struct RsTypeSerializer
 			for(uint32_t i=0;i<n;++i)
 			{
 				T tmp;
-				serial_process<T>(j,ctx,tmp,member_name);
+				serial_process<T>(j,ctx,tmp,memberName);
 				v.push_back(tmp);
 			}
 			break;
@@ -380,7 +504,7 @@ struct RsTypeSerializer
 			uint32_t n=v.size();
 			serial_process(j,ctx,n,"temporary size");
 			for(typename std::list<T>::iterator it(v.begin());it!=v.end();++it)
-				serial_process(j,ctx,*it ,member_name);
+				serial_process(j,ctx,*it ,memberName);
 			break;
 		}
 		case RsGenericSerializer::PRINT:
@@ -390,6 +514,12 @@ struct RsTypeSerializer
 			               << std::endl;
 			break;
 		}
+		case RsGenericSerializer::TO_JSON:
+			RsTypeSerializer_PRIVATE_TO_JSON_ARRAY();
+			break;
+		case RsGenericSerializer::FROM_JSON:
+			RsTypeSerializer_PRIVATE_FROM_JSON_ARRAY(push_back);
+			break;
 		default: break;
 		}
 	}
@@ -399,7 +529,7 @@ struct RsTypeSerializer
 	static void serial_process( RsGenericSerializer::SerializeJob j,
 	                            RsGenericSerializer::SerializeContext& ctx,
 	                            t_RsFlags32<N>& v,
-	                            const std::string& /*member_name*/)
+	                            const std::string& memberName )
 	{
 		switch(j)
 		{
@@ -421,16 +551,27 @@ struct RsTypeSerializer
 			std::cerr << "  Flags of type " << std::hex << N << " : "
 			          << v.toUInt32() << std::endl;
 			break;
+		case RsGenericSerializer::TO_JSON:
+			ctx.mOk = to_JSON(memberName, v.toUInt32(), ctx.mJson);
+			break;
+		case RsGenericSerializer::FROM_JSON:
+		{
+			uint32_t f;
+			ctx.mOk = from_JSON(memberName, f, ctx.mJson);
+			v = t_RsFlags32<N>(f);
+			break;
+		}
+		default: break;
 		}
 	}
 
-/** TODO
- * Serialization format is inside context, but context is not passed to
- * following functions, that need to know the format to do the job, actually
- * RsGenericSerializer::FORMAT_BINARY is assumed in all of them!!
- */
 
 protected:
+
+//============================================================================//
+// Generic types declarations                                                 //
+//============================================================================//
+
 	template<typename T> static bool serialize(
 	        uint8_t data[], uint32_t size, uint32_t &offset, const T& member );
 
@@ -442,17 +583,41 @@ protected:
 	template<typename T> static void print_data(
 	        const std::string& name, const T& member);
 
+	template<typename T> static bool to_JSON( const std::string& membername,
+	                                          const T& member, RsJson& jDoc );
+
+	template<typename T> static bool from_JSON( const std::string& memberName,
+	                                            T& member, RsJson& jDoc );
+
+//============================================================================//
+// Generic types + type_id declarations                                       //
+//============================================================================//
 
 	template<typename T> static bool serialize(
 	        uint8_t data[], uint32_t size, uint32_t &offset, uint16_t type_id,
 	        const T& member );
+
 	template<typename T> static bool deserialize(
 	        const uint8_t data[], uint32_t size, uint32_t &offset,
 	        uint16_t type_id, T& member );
+
 	template<typename T> static uint32_t serial_size(
 	        uint16_t type_id,const T& member );
-	template<typename T> static void print_data(
-	        const std::string& name,uint16_t type_id,const T& member );
+
+	template<typename T> static void print_data( const std::string& n,
+	        uint16_t type_id,const T& member );
+
+	template<typename T> static bool to_JSON( const std::string& membername,
+	                                          uint16_t type_id,
+	                                          const T& member, RsJson& jVal );
+
+	template<typename T> static bool from_JSON( const std::string& memberName,
+	                                            uint16_t type_id,
+	                                            T& member, RsJson& jDoc );
+
+//============================================================================//
+// t_RsGenericId<...> declarations                                            //
+//============================================================================//
 
 	template<uint32_t ID_SIZE_IN_BYTES,bool UPPER_CASE,uint32_t UNIQUE_IDENTIFIER>
 	static bool serialize(
@@ -466,13 +631,29 @@ protected:
 
 	template<uint32_t ID_SIZE_IN_BYTES,bool UPPER_CASE,uint32_t UNIQUE_IDENTIFIER>
 	static uint32_t serial_size(
-	        const t_RsGenericIdType<ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER>& member );
+	        const t_RsGenericIdType<
+	        ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER>& member );
 
 	template<uint32_t ID_SIZE_IN_BYTES,bool UPPER_CASE,uint32_t UNIQUE_IDENTIFIER>
 	static void print_data(
 	        const std::string& name,
 	        const t_RsGenericIdType<ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER>& member );
 
+	template<uint32_t ID_SIZE_IN_BYTES,bool UPPER_CASE,uint32_t UNIQUE_IDENTIFIER>
+	static bool to_JSON(
+	        const std::string& membername,
+	        const t_RsGenericIdType<ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER>& member,
+	        RsJson& jVal );
+
+	template<uint32_t ID_SIZE_IN_BYTES,bool UPPER_CASE,uint32_t UNIQUE_IDENTIFIER>
+	static bool from_JSON(
+	        const std::string& memberName,
+	        t_RsGenericIdType<ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER>& member,
+	        RsJson& jDoc );
+
+//============================================================================//
+// t_RsTlvList<...> declarations                                              //
+//============================================================================//
 
 	template<class TLV_CLASS,uint32_t TLV_TYPE>
 	static bool serialize(
@@ -491,16 +672,33 @@ protected:
 	static void print_data(
 	        const std::string& name,
 	        const t_RsTlvList<TLV_CLASS,TLV_TYPE>& member);
+
+	template<class TLV_CLASS,uint32_t TLV_TYPE>
+	static bool to_JSON( const std::string& membername,
+	                     const t_RsTlvList<TLV_CLASS,TLV_TYPE>& member,
+	                     RsJson& jVal );
+
+	template<class TLV_CLASS,uint32_t TLV_TYPE>
+	static bool from_JSON( const std::string& memberName,
+	                       t_RsTlvList<TLV_CLASS,TLV_TYPE>& member,
+	                       RsJson& jDoc );
 };
 
 
+//============================================================================//
+//                            t_RsGenericId<...>                              //
+//============================================================================//
 
-// t_RsGenericId<>
 template<uint32_t ID_SIZE_IN_BYTES,bool UPPER_CASE,uint32_t UNIQUE_IDENTIFIER>
 bool RsTypeSerializer::serialize (
         uint8_t data[], uint32_t size, uint32_t &offset,
-        const t_RsGenericIdType<ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER>& member )
-{ return (*const_cast<const t_RsGenericIdType<ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER> *>(&member)).serialise(data,size,offset); }
+        const t_RsGenericIdType<
+        ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER>& member )
+{
+	return (*const_cast<const t_RsGenericIdType<
+	      ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER> *>(&member)
+	      ).serialise(data,size,offset);
+}
 
 template<uint32_t ID_SIZE_IN_BYTES,bool UPPER_CASE,uint32_t UNIQUE_IDENTIFIER>
 bool RsTypeSerializer::deserialize(
@@ -522,8 +720,45 @@ void RsTypeSerializer::print_data(
 	          << member << std::endl;
 }
 
+template<uint32_t ID_SIZE_IN_BYTES,bool UPPER_CASE,uint32_t UNIQUE_IDENTIFIER>
+bool RsTypeSerializer::to_JSON( const std::string& memberName,
+                                const t_RsGenericIdType<ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER>& member,
+                                RsJson& jDoc )
+{
+	rapidjson::Document::AllocatorType& allocator = jDoc.GetAllocator();
 
-// t_RsTlvList<>
+	rapidjson::Value key;
+	key.SetString(memberName.c_str(), memberName.length(), allocator);
+
+	const std::string vStr = member.toStdString();
+	rapidjson::Value value;
+	value.SetString(vStr.c_str(), vStr.length(), allocator);
+
+	jDoc.AddMember(key, value, allocator);
+
+	return true;
+}
+
+template<uint32_t ID_SIZE_IN_BYTES,bool UPPER_CASE,uint32_t UNIQUE_IDENTIFIER>
+bool RsTypeSerializer::from_JSON( const std::string& membername,
+                                  t_RsGenericIdType<ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER>& member,
+                                  RsJson& jVal )
+{
+	const char* mName = membername.c_str();
+	bool ret = jVal.HasMember(mName);
+	if(ret)
+	{
+		rapidjson::Value& v = jVal[mName];
+		ret = ret && v.IsString();
+		ret && (member = t_RsGenericIdType<ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER>(std::string(v.GetString())), false);
+	}
+	return ret;
+}
+
+//============================================================================//
+//                             t_RsTlvList<...>                               //
+//============================================================================//
+
 template<class TLV_CLASS,uint32_t TLV_TYPE>
 bool RsTypeSerializer::serialize(
         uint8_t data[], uint32_t size, uint32_t &offset,
@@ -552,4 +787,77 @@ void RsTypeSerializer::print_data(
 {
 	std::cerr << "  [t_RsTlvString<" << std::hex << TLV_TYPE << ">] : size="
 	          << member.mList.size() << std::endl;
+}
+
+template<class TLV_CLASS,uint32_t TLV_TYPE> /* static */
+bool RsTypeSerializer::to_JSON( const std::string& memberName,
+                                const t_RsTlvList<TLV_CLASS,TLV_TYPE>& member,
+                                RsJson& jDoc )
+{
+	rapidjson::Document::AllocatorType& allocator = jDoc.GetAllocator();
+
+	rapidjson::Value key;
+	key.SetString(memberName.c_str(), memberName.length(), allocator);
+
+	rapidjson::Value value;
+	const char* tName = typeid(member).name();
+	value.SetString(tName, allocator);
+
+	jDoc.AddMember(key, value, allocator);
+
+	std::cerr << __PRETTY_FUNCTION__ << " JSON serialization for type "
+	          << typeid(member).name() << " " << memberName
+	          << " not available." << std::endl;
+	print_stacktrace();
+	return true;
+}
+
+template<class TLV_CLASS,uint32_t TLV_TYPE>
+bool RsTypeSerializer::from_JSON( const std::string& memberName,
+                                  t_RsTlvList<TLV_CLASS,TLV_TYPE>& member,
+                                  RsJson& /*jVal*/ )
+{
+	std::cerr << __PRETTY_FUNCTION__ << " JSON deserialization for type "
+	          << typeid(member).name() << " " << memberName
+	          << " not available." << std::endl;
+	print_stacktrace();
+	return true;
+}
+
+
+//============================================================================//
+// Generic types                                                              //
+//============================================================================//
+
+template<typename T> /*static*/
+bool RsTypeSerializer::to_JSON(const std::string& memberName, const T& member,
+                                RsJson& jDoc )
+{
+	rapidjson::Document::AllocatorType& allocator = jDoc.GetAllocator();
+
+	rapidjson::Value key;
+	key.SetString(memberName.c_str(), memberName.length(), allocator);
+
+	rapidjson::Value value;
+	const char* tName = typeid(member).name();
+	value.SetString(tName, allocator);
+
+	jDoc.AddMember(key, value, allocator);
+
+	std::cerr << __PRETTY_FUNCTION__ << " JSON serialization for type "
+	          << typeid(member).name() << " " << memberName
+	          << " not available." << std::endl;
+	print_stacktrace();
+	return true;
+}
+
+template<typename T> /*static*/
+bool RsTypeSerializer::from_JSON( const std::string& memberName,
+                                  T& member, RsJson& /*jDoc*/ )
+{
+	std::cerr << __PRETTY_FUNCTION__ << " JSON deserialization for type "
+	          << typeid(member).name() << " " << memberName
+	          << " not available." << std::endl;
+	print_stacktrace();
+	return true;
 }

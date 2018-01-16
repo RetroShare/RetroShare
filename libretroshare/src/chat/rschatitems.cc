@@ -207,7 +207,7 @@ void RsPrivateChatMsgConfigItem::get(RsChatMsgItem *ci)
 
 /* Necessary to serialize `store` that is an STL container with RsChatMsgItem
  * inside which is a subtype of RsItem */
-RS_REGISTER_ITEM_TYPE(RsChatMsgItem)
+RS_REGISTER_SERIALIZABLE_TYPE_DEF(RsChatMsgItem)
 
 void PrivateOugoingMapItem::serial_process(
         RsGenericSerializer::SerializeJob j,

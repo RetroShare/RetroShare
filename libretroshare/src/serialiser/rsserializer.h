@@ -3,7 +3,8 @@
  *
  * RetroShare Serialiser.
  *
- * Copyright 2016 by Cyril Soler
+ * Copyright (C) 2016  Cyril Soler
+ * Copyright (C) 2018  Gioacchino Mazzurco <gio@eigenlab.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -153,9 +154,11 @@
 #include <string.h>
 #include <iostream>
 #include <string>
+#include <rapidjson/document.h>
 
 #include "retroshare/rsflags.h"
 #include "serialiser/rsserial.h"
+#include "util/rsdeprecate.h"
 
 class RsItem ;
 
@@ -194,106 +197,125 @@ class RsRawSerialiser: public RsSerialType
 		virtual	RsItem *    deserialise(void *data, uint32_t *size);
 };
 
-// Top class for all services and config serializers.
+typedef rapidjson::Document RsJson;
 
-class RsGenericSerializer: public RsSerialType
+/// Top class for all services and config serializers.
+struct RsGenericSerializer : RsSerialType
 {
-public:
-		typedef enum { SIZE_ESTIMATE = 0x01, SERIALIZE   = 0x02, DESERIALIZE  = 0x03, PRINT=0x04 } SerializeJob ;
-		typedef enum { FORMAT_BINARY = 0x01, FORMAT_JSON = 0x02 }                                  SerializationFormat ;
+	typedef enum
+	{
+		SIZE_ESTIMATE = 0x01,
+		SERIALIZE     = 0x02,
+		DESERIALIZE   = 0x03,
+		PRINT         = 0x04,
+		TO_JSON,
+		FROM_JSON
+	} SerializeJob;
 
-		class SerializeContext
-		{
-		public:
 
+	/** @deprecated use SerializeJob instead */
+	RS_DEPRECATED typedef enum
+	{
+		FORMAT_BINARY = 0x01,
+		FORMAT_JSON = 0x02
+	} SerializationFormat;
 
-			SerializeContext(uint8_t *data,uint32_t size,SerializationFormat format,SerializationFlags flags)
-			    : mData(data),mSize(size),mOffset(0),mOk(true),mFormat(format),mFlags(flags) {}
+	struct SerializeContext
+	{
+		/** Allow shared allocator usage to avoid costly JSON deepcopy for
+		 *  nested RsSerializable */
+		SerializeContext(
+		        uint8_t *data, uint32_t size, SerializationFormat format,
+		        SerializationFlags flags,
+		        RsJson::AllocatorType* allocator = nullptr) :
+		    mData(data), mSize(size), mOffset(0), mOk(true), mFormat(format),
+		    mFlags(flags), mJson(rapidjson::kObjectType, allocator) {}
 
-			unsigned char *mData ;
-			uint32_t mSize ;
-			uint32_t mOffset ;
-			bool mOk ;
-			SerializationFormat mFormat ;
-			SerializationFlags mFlags ;
-		};
+		unsigned char *mData;
+		uint32_t mSize;
+		uint32_t mOffset;
+		bool mOk;
+		RS_DEPRECATED SerializationFormat mFormat;
+		SerializationFlags mFlags;
+		RsJson mJson;
+	};
 
-    	// These are convenience flags to be used by the items when processing the data. The names of the flags
-    	// are not very important. What matters is that the serial_process() method of each item correctly
-    	// deals with the data when it sees the flags, if the serialiser sets them. By default the flags are not
-    	// set and shouldn't be handled.
-    	// When deriving a new serializer, the user can set his own flags, using compatible values
+	/** These are convenience flags to be used by the items when processing the
+	 * data. The names of the flags are not very important. What matters is that
+	 * the serial_process() method of each item correctly deals with the data
+	 * when it sees the flags, if the serialiser sets them.
+	 * By default the flags are not set and shouldn't be handled.
+	 * When deriving a new serializer, the user can set his own flags, using
+	 * compatible values
+	 */
+	static const SerializationFlags SERIALIZATION_FLAG_NONE;           // 0x0000
+	static const SerializationFlags SERIALIZATION_FLAG_CONFIG;         // 0x0001
+	static const SerializationFlags SERIALIZATION_FLAG_SIGNATURE;      // 0x0002
+	static const SerializationFlags SERIALIZATION_FLAG_SKIP_HEADER;    // 0x0004
 
-        static const SerializationFlags SERIALIZATION_FLAG_NONE ;			// 0x0000
-        static const SerializationFlags SERIALIZATION_FLAG_CONFIG ;			// 0x0001
-        static const SerializationFlags SERIALIZATION_FLAG_SIGNATURE ;		// 0x0002
-        static const SerializationFlags SERIALIZATION_FLAG_SKIP_HEADER ;	// 0x0004
-
-        // The following functions overload RsSerialType. They *should not* need to be further overloaded.
-
-		RsItem *deserialise(void *data,uint32_t *size) =0;
-		bool serialise(RsItem *item,void *data,uint32_t *size) ;
-		uint32_t size(RsItem *item) ;
-        void print(RsItem *item) ;
+	/**
+	 * The following functions overload RsSerialType.
+	 * They *should not* need to be further overloaded.
+	 */
+	RsItem *deserialise(void *data,uint32_t *size) = 0;
+	bool serialise(RsItem *item,void *data,uint32_t *size);
+	uint32_t size(RsItem *item);
+	void print(RsItem *item);
 
 protected:
-    	RsGenericSerializer(uint8_t serial_class,
-                            uint8_t serial_type,
-                            SerializationFormat format,
-                            SerializationFlags                    flags  )
-            : RsSerialType(RS_PKT_VERSION1,serial_class,serial_type), mFormat(format),mFlags(flags)
-        {}
+	RsGenericSerializer(
+	        uint8_t serial_class, uint8_t serial_type,
+	        SerializationFormat format, SerializationFlags flags ) :
+	    RsSerialType( RS_PKT_VERSION1, serial_class, serial_type),
+	    mFormat(format), mFlags(flags) {}
 
-    	RsGenericSerializer(uint16_t service,
-                            SerializationFormat format,
-                            SerializationFlags                    flags  )
-            : RsSerialType(RS_PKT_VERSION_SERVICE,service), mFormat(format),mFlags(flags)
-        {}
+	RsGenericSerializer(
+	        uint16_t service, SerializationFormat format,
+	        SerializationFlags flags ) :
+	    RsSerialType( RS_PKT_VERSION_SERVICE, service ), mFormat(format),
+	    mFlags(flags) {}
 
-        SerializationFormat mFormat ;
-        SerializationFlags mFlags ;
-
+	SerializationFormat mFormat;
+	SerializationFlags mFlags;
 };
 
-// Top class for service serializers. Derive your on service serializer from this class and overload creat_item().
 
-class RsServiceSerializer: public RsGenericSerializer
+/** Top class for service serializers.
+ * Derive your on service serializer from this class and overload creat_item().
+ */
+struct RsServiceSerializer : RsGenericSerializer
 {
-public:
-		RsServiceSerializer(uint16_t service_id,
-		                    SerializationFormat format = FORMAT_BINARY,
-		                    SerializationFlags  flags  = SERIALIZATION_FLAG_NONE)
+	RsServiceSerializer(
+	        uint16_t service_id, SerializationFormat format = FORMAT_BINARY,
+	        SerializationFlags flags = SERIALIZATION_FLAG_NONE ) :
+	    RsGenericSerializer(service_id, format, flags) {}
 
-		    : RsGenericSerializer(service_id,format,flags) {}
+	/*! should be overloaded to create the correct type of item depending on the
+	 * data */
+	virtual RsItem *create_item( uint16_t /* service */,
+	                             uint8_t /* item_sub_id */ ) const = 0;
 
-		/*! create_item
-		 * 	should be overloaded to create the correct type of item depending on the data
-		 */
-		virtual RsItem *create_item(uint16_t /* service */, uint8_t /* item_sub_id */) const=0;
-
-		RsItem *deserialise(void *data,uint32_t *size) ;
+	RsItem *deserialise(void *data, uint32_t *size);
 };
 
-// Top class for config serializers. Config serializers are only used internally by RS core. The development of new services or plugins do not need this.
 
-class RsConfigSerializer: public RsGenericSerializer
+/** Top class for config serializers.
+ * Config serializers are only used internally by RS core.
+ * The development of new services or plugins do not need this.
+ */
+struct RsConfigSerializer : RsGenericSerializer
 {
-public:
 	RsConfigSerializer(uint8_t config_class,
 	                   uint8_t config_type,
 	                   SerializationFormat format = FORMAT_BINARY,
-	                   SerializationFlags  flags  = SERIALIZATION_FLAG_NONE)
+	                   SerializationFlags  flags  = SERIALIZATION_FLAG_NONE) :
+	    RsGenericSerializer(config_class,config_type,format,flags) {}
 
-	    : RsGenericSerializer(config_class,config_type,format,flags) {}
+	/*! should be overloaded to create the correct type of item depending on the
+	 * data */
+	virtual RsItem *create_item(uint8_t /* item_type */,
+	                            uint8_t /* item_sub_type */) const = 0;
 
-		/*! create_item
-		 * 	should be overloaded to create the correct type of item depending on the data
-		 */
-		virtual RsItem *create_item(uint8_t /* item_type */, uint8_t /* item_sub_type */) const=0;
-
-		RsItem *deserialise(void *data,uint32_t *size) ;
+	RsItem *deserialise(void *data,uint32_t *size);
 };
-
-
-
 

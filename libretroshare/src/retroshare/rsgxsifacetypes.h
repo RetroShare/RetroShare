@@ -1,6 +1,26 @@
 /*
  * rsgxsifacetypes.h
  *
+ * Copyright (C) 2013  crispy
+ * Copyright (C) 2018  Gioacchino Mazzurco <gio@eigenlab.org>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/*
+ * rsgxsifacetypes.h
+ *
  *  Created on: 28 Feb 2013
  *      Author: crispy
  */
@@ -13,8 +33,10 @@
 #include <string>
 #include <inttypes.h>
 
-#include <retroshare/rstypes.h>
-#include <retroshare/rsids.h>
+#include "retroshare/rstypes.h"
+#include "retroshare/rsids.h"
+#include "serialiser/rsserializable.h"
+#include "serialiser/rstypeserializer.h"
 
 typedef GXSGroupId   RsGxsGroupId;
 typedef Sha1CheckSum RsGxsMessageId;
@@ -34,7 +56,7 @@ typedef std::map<RsGxsGroupId, std::vector<RsMsgMetaData> > MsgMetaResult;
 class RsGxsGrpMetaData;
 class RsGxsMsgMetaData;
 
-struct RsGroupMetaData
+struct RsGroupMetaData : RsSerializable
 {
 	// (csoler) The correct default value to be used in mCircleType is GXS_CIRCLE_TYPE_PUBLIC, which is defined in rsgxscircles.h,
     // but because of a loop in the includes, I cannot include it here. So I replaced with its current value 0x0001.
@@ -73,6 +95,30 @@ struct RsGroupMetaData
     std::string mServiceString; // Service Specific Free-Form extra storage.
     RsPeerId mOriginator;
     RsGxsCircleId mInternalCircle;
+
+	/// @see RsSerializable
+	void serial_process( RsGenericSerializer::SerializeJob j,
+	                     RsGenericSerializer::SerializeContext& ctx )
+	{
+		RS_REGISTER_SERIAL_MEMBER(mGroupId);
+		RS_REGISTER_SERIAL_MEMBER(mGroupName);
+		RS_REGISTER_SERIAL_MEMBER(mGroupFlags);
+		RS_REGISTER_SERIAL_MEMBER(mSignFlags);
+		RS_REGISTER_SERIAL_MEMBER(mPublishTs);
+		RS_REGISTER_SERIAL_MEMBER(mAuthorId);
+		RS_REGISTER_SERIAL_MEMBER(mCircleId);
+		RS_REGISTER_SERIAL_MEMBER(mCircleType);
+		RS_REGISTER_SERIAL_MEMBER(mAuthenFlags);
+		RS_REGISTER_SERIAL_MEMBER(mParentGrpId);
+		RS_REGISTER_SERIAL_MEMBER(mSubscribeFlags);
+		RS_REGISTER_SERIAL_MEMBER(mPop);
+		RS_REGISTER_SERIAL_MEMBER(mVisibleMsgCount);
+		RS_REGISTER_SERIAL_MEMBER(mLastPost);
+		RS_REGISTER_SERIAL_MEMBER(mGroupStatus);
+		RS_REGISTER_SERIAL_MEMBER(mServiceString);
+		RS_REGISTER_SERIAL_MEMBER(mOriginator);
+		RS_REGISTER_SERIAL_MEMBER(mInternalCircle);
+	}
 };
 
 

@@ -3,7 +3,8 @@
  *
  * Id interface for RetroShare.
  *
- * Copyright 2012-2012 by Robert Fernie.
+ * Copyright (C) 2012  Robert Fernie
+ * Copyright (C) 2018  Gioacchino Mazzurco <gio@eigenlab.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -4505,11 +4506,30 @@ void p3IdService::handle_event(uint32_t event_type, const std::string &/*elabel*
 	}
 }
 
-RsIdentityUsage::RsIdentityUsage(uint16_t service,const RsIdentityUsage::UsageCode& code,const RsGxsGroupId& gid,const RsGxsMessageId& mid,uint64_t additional_id,const std::string& comment)
-    	: mServiceId(service), mUsageCode(code), mGrpId(gid), mMsgId(mid),mAdditionalId(additional_id),mComment(comment)
+void RsGxsIdGroup::serial_process(
+        RsGenericSerializer::SerializeJob j,
+        RsGenericSerializer::SerializeContext& ctx )
+{
+	RS_REGISTER_SERIAL_MEMBER_TYPED(mMeta, RsSerializable);
+	RS_REGISTER_SERIAL_MEMBER(mPgpIdHash);
+	//RS_REGISTER_SERIAL_MEMBER(mPgpIdSign);
+	RS_REGISTER_SERIAL_MEMBER(mRecognTags);
+	//RS_REGISTER_SERIAL_MEMBER(mImage);
+	RS_REGISTER_SERIAL_MEMBER(mLastUsageTS);
+	RS_REGISTER_SERIAL_MEMBER(mPgpKnown);
+	RS_REGISTER_SERIAL_MEMBER(mIsAContact);
+	RS_REGISTER_SERIAL_MEMBER(mPgpId);
+	RS_REGISTER_SERIAL_MEMBER_TYPED(mReputation, RsSerializable);
+}
+
+RsIdentityUsage::RsIdentityUsage(
+        uint16_t service, const RsIdentityUsage::UsageCode& code,
+        const RsGxsGroupId& gid, const RsGxsMessageId& mid,
+        uint64_t additional_id,const std::string& comment ) :
+    mServiceId(service), mUsageCode(code), mGrpId(gid), mMsgId(mid),
+    mAdditionalId(additional_id), mComment(comment)
 {
 #ifdef DEBUG_IDS
-	// This is a hack, since it will hash also mHash, but because it is initialized to 0, and only computed in the constructor here, it should be ok.
     std::cerr << "New identity usage: " << std::endl;
     std::cerr << "  service=" << std::hex << service << std::endl;
     std::cerr << "  code   =" << std::hex << code << std::endl;
@@ -4519,6 +4539,9 @@ RsIdentityUsage::RsIdentityUsage(uint16_t service,const RsIdentityUsage::UsageCo
     std::cerr << "  commnt =\"" << std::hex << comment << "\"" << std::endl;
 #endif
 
+	/* This is a hack, since it will hash also mHash, but because it is
+	 * initialized to 0, and only computed in the constructor here, it should
+	 * be ok. */
     librs::crypto::HashStream hs(librs::crypto::HashStream::SHA1) ;
 
     hs << (uint32_t)service ;
@@ -4535,5 +4558,7 @@ RsIdentityUsage::RsIdentityUsage(uint16_t service,const RsIdentityUsage::UsageCo
 #endif
 }
 
+RsIdentityUsage::RsIdentityUsage() :
+    mServiceId(0), mUsageCode(UNKNOWN_USAGE), mAdditionalId(0) {}
 
-
+RS_REGISTER_SERIALIZABLE_TYPE_DEF(RsIdentityUsage)

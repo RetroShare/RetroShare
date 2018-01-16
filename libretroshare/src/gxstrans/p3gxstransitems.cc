@@ -1,6 +1,6 @@
 /*
  * GXS Mailing Service
- * Copyright (C) 2016-2017  Gioacchino Mazzurco <gio@eigenlab.org>
+ * Copyright (C) 2016-2018  Gioacchino Mazzurco <gio@eigenlab.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -38,11 +38,15 @@ OutgoingRecord::OutgoingRecord( RsGxsId rec, GxsTransSubServices cs,
 	memcpy(&mailData[0], data, size);
 }
 
+// for mailItem
+RS_REGISTER_SERIALIZABLE_TYPE_DEF(RsGxsTransMailItem)
 
-RS_REGISTER_ITEM_TYPE(RsGxsTransMailItem)         // for mailItem
-RS_REGISTER_ITEM_TYPE(RsNxsTransPresignedReceipt) // for presignedReceipt
+// for presignedReceipt
+RS_REGISTER_SERIALIZABLE_TYPE_DEF(RsNxsTransPresignedReceipt)
 
-void OutgoingRecord_deprecated::serial_process(RsGenericSerializer::SerializeJob j, RsGenericSerializer::SerializeContext& ctx)
+void OutgoingRecord_deprecated::serial_process(
+        RsGenericSerializer::SerializeJob j,
+        RsGenericSerializer::SerializeContext& ctx )
 {
 	RS_REGISTER_SERIAL_MEMBER_TYPED(status, uint8_t);
 	RS_REGISTER_SERIAL_MEMBER(recipient);
