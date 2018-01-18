@@ -352,7 +352,7 @@ HEADERS += 	TorControl/AddOnionCommand.h \
 				TorControl/PendingOperation.h  \
 				TorControl/SecureRNG.h         \
 				TorControl/Settings.h          \
-				TorControl/StringUtil.h        \
+				TorControl/StrUtil.h        \
 				TorControl/TorProcess_p.h        
 
 SOURCES += 	TorControl/AddOnionCommand.cpp \
@@ -371,7 +371,7 @@ SOURCES += 	TorControl/AddOnionCommand.cpp \
 				TorControl/PendingOperation.cpp  \
 				TorControl/SecureRNG.cpp         \
 				TorControl/Settings.cpp          \
-				TorControl/StringUtil.cpp        
+				TorControl/StrUtil.cpp        
 }
 
 # Input

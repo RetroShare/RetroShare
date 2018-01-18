@@ -30,7 +30,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "StringUtil.h"
+#include "StrUtil.h"
 
 QByteArray quotedString(const QByteArray &string)
 {

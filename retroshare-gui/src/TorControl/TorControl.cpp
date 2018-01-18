@@ -38,7 +38,7 @@
 #include "SetConfCommand.h"
 #include "GetConfCommand.h"
 #include "AddOnionCommand.h"
-#include "StringUtil.h"
+#include "StrUtil.h"
 #include "Settings.h"
 #include "PendingOperation.h"
 #include <QHostAddress>

@@ -31,7 +31,7 @@
  */
 
 #include "SetConfCommand.h"
-#include "StringUtil.h"
+#include "StrUtil.h"
 
 using namespace Tor;
 

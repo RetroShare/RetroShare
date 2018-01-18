@@ -32,7 +32,7 @@
 
 #include "ProtocolInfoCommand.h"
 #include "TorControl.h"
-#include "StringUtil.h"
+#include "StrUtil.h"
 #include <QList>
 
 using namespace Tor;

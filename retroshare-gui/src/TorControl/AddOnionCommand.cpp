@@ -33,7 +33,7 @@
 #include "AddOnionCommand.h"
 #include "HiddenService.h"
 #include "CryptoKey.h"
-#include "StringUtil.h"
+#include "StrUtil.h"
 
 using namespace Tor;
 
