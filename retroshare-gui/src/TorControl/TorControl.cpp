@@ -30,6 +30,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <time.h>
+
 #include "TorControl.h"
 #include "TorControlSocket.h"
 #include "HiddenService.h"
