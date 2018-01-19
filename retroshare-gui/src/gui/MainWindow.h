@@ -46,6 +46,7 @@ class OpModeStatus;
 class SoundStatus;
 class ToasterDisable;
 class SysTrayStatus;
+class TorStatus ;
 //class ForumsDialog;
 class GxsChannelDialog ;
 class GxsForumsDialog ;
@@ -293,6 +294,7 @@ private:
     SoundStatus *soundStatus;
     ToasterDisable *toasterDisable;
     SysTrayStatus *sysTrayStatus;
+    TorStatus *torstatus;
 
     /* Status */
     std::set <QObject*> m_apStatusObjects; // added objects for status

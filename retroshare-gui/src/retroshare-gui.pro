@@ -581,6 +581,7 @@ HEADERS +=  rshare.h \
             gui/statusbar/peerstatus.h \
             gui/statusbar/natstatus.h \
             gui/statusbar/dhtstatus.h \
+            gui/statusbar/torstatus.h \
             gui/statusbar/ratesstatus.h \
             gui/statusbar/hashingstatus.h \
             gui/statusbar/discstatus.h \
@@ -923,6 +924,7 @@ SOURCES +=  main.cpp \
             gui/statusbar/peerstatus.cpp \
             gui/statusbar/natstatus.cpp \
             gui/statusbar/dhtstatus.cpp \
+            gui/statusbar/torstatus.cpp \
             gui/statusbar/ratesstatus.cpp \
             gui/statusbar/hashingstatus.cpp \
             gui/statusbar/discstatus.cpp \
