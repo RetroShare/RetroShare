@@ -247,27 +247,34 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
 
 	if(hiddenmode)
 	{
+#ifdef RETROTOR
 		torstatus = new TorStatus();
 		torstatus->setVisible(Settings->valueFromGroup("StatusBar", "ShowTor", QVariant(true)).toBool());
 		statusBar()->addWidget(torstatus);
 		torstatus->getTorStatus();
+#else
+		torstatus = NULL ;
+#endif
+
+		natstatus = NULL ;
+		dhtstatus = NULL ;
 	}
 	else
+	{
 		torstatus = NULL ;
 
-#ifndef RETROTOR
-    natstatus = new NATStatus();
-    if(hiddenmode) natstatus->setVisible(false);
-    else natstatus->setVisible(Settings->valueFromGroup("StatusBar", "ShowNAT", QVariant(true)).toBool());
-    statusBar()->addWidget(natstatus);
-    natstatus->getNATStatus();
-	
-    dhtstatus = new DHTStatus();
-    if(hiddenmode) dhtstatus->setVisible(false);
-    else dhtstatus->setVisible(Settings->valueFromGroup("StatusBar", "ShowDHT", QVariant(true)).toBool());
-    statusBar()->addWidget(dhtstatus);
-    dhtstatus->getDHTStatus();
-#endif
+		natstatus = new NATStatus();
+		if(hiddenmode) natstatus->setVisible(false);
+		else natstatus->setVisible(Settings->valueFromGroup("StatusBar", "ShowNAT", QVariant(true)).toBool());
+		statusBar()->addWidget(natstatus);
+		natstatus->getNATStatus();
+
+		dhtstatus = new DHTStatus();
+		if(hiddenmode) dhtstatus->setVisible(false);
+		else dhtstatus->setVisible(Settings->valueFromGroup("StatusBar", "ShowDHT", QVariant(true)).toBool());
+		statusBar()->addWidget(dhtstatus);
+		dhtstatus->getDHTStatus();
+	}
 	
     hashingstatus = new HashingStatus();
     hashingstatus->setVisible(Settings->valueFromGroup("StatusBar", "ShowHashing", QVariant(true)).toBool());
