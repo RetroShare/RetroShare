@@ -389,6 +389,8 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 	splashScreen.show();
 	splashScreen.showMessage(rshare.translate("SplashScreen", "Load configuration"), Qt::AlignHCenter | Qt::AlignBottom);
 
+	QCoreApplication::processEvents();
+
 	/* stop Retroshare if startup fails */
 	if (!RsControl::instance()->StartupRetroShare())
 	{

@@ -62,12 +62,20 @@
 ///
 
 #ifdef RETROTOR
+const static uint32_t TAB_HIDDEN_SERVICE_OUTGOING = 0;
 const static uint32_t TAB_HIDDEN_SERVICE_INCOMING = 1;
+
+const static uint32_t TAB_NETWORK                 = 0;
+const static uint32_t TAB_HIDDEN_SERVICE          = 1;
 const static uint32_t TAB_IP_FILTERS              = 99;	// This is a trick: these tabs do not exist, so enabling/disabling them has no effect
 const static uint32_t TAB_RELAYS                  = 99;
 #else
-const static uint32_t TAB_IP_FILTERS              = 1;
+const static uint32_t TAB_HIDDEN_SERVICE_OUTGOING = 0;
 const static uint32_t TAB_HIDDEN_SERVICE_INCOMING = 2;
+
+const static uint32_t TAB_NETWORK                 = 0;
+const static uint32_t TAB_IP_FILTERS              = 1;
+const static uint32_t TAB_HIDDEN_SERVICE          = 2;
 const static uint32_t TAB_RELAYS                  = 3;
 #endif
 
@@ -908,7 +916,7 @@ void ServerPage::saveAddresses()
 
     saveCommon();
 
-	if(ui.tabWidget->currentIndex() == 2) // hidden services tab
+	if(ui.tabWidget->currentIndex() == TAB_HIDDEN_SERVICE) // hidden services tab
 		updateOutProxyIndicator();
 
     if (mIsHiddenNode) {
