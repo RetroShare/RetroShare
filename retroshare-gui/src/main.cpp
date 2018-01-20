@@ -357,7 +357,12 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 	RsDirUtil::checkCreateDirectory(std::string(tor_hidden_service_dir.toUtf8())) ;
 
 	torManager->setupHiddenService();
-	torManager->start();
+
+	if(! torManager->start() || torManager->hasError())
+	{
+		QMessageBox::critical(NULL,QObject::tr("Cannot start Tor Manager!"),QObject::tr("Tor cannot be started on your system: \n\n")+torManager->errorMessage()) ;
+		return 1 ;
+	}
 
 	{
 		TorControlDialog tcd(torManager) ;
@@ -368,11 +373,6 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 			QCoreApplication::processEvents();
 			usleep(0.2*1000*1000) ;
 		}
-//		for(uint32_t i=0;i<10;++i)	// give some time (2 secs) to see what's going on
-//		{
-//			QCoreApplication::processEvents();
-//			usleep(0.2*1000*1000) ;
-//		}
 
 		tcd.hide();
 

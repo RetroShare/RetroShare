@@ -114,8 +114,6 @@ void TorStatus::getTorStatus()
 
 #define MIN_RS_NET_SIZE		10
 
-	std::cerr << "(II) tor status: net=" << netState << " tor_control= " << tor_control_status << " tor_status=" << torstatus << std::endl;
-
 	if(torstatus == Tor::TorControl::TorOffline || !online || !tor_control_ok)
 	{
 		// RED - some issue.

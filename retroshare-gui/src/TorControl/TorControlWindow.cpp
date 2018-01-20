@@ -76,7 +76,11 @@ void TorControlDialog::statusChanged()
 	}
 
 	torStatus_LB->setText(torstatus_str) ;
-	//torStatus_LB->setText(tor_control_status_str) ;
+
+	if(torstatus == Tor::TorControl::TorUnknown)
+		torStatus_LB->setToolTip(tr("Check that Tor is accessible in your executable path")) ;
+	else
+		torStatus_LB->setToolTip("") ;
 
 	QVariantMap qvm = mTorManager->control()->bootstrapStatus();
 	QString bootstrapstatus_str ;

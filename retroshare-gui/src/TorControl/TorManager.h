@@ -89,7 +89,7 @@ public:
 	bool getProxyServerInfo(QHostAddress& proxy_server_adress,uint16_t& proxy_server_port);
 
 public slots:
-    void start();
+    bool start();
 
 private slots:
 	void hiddenServicePrivateKeyChanged();

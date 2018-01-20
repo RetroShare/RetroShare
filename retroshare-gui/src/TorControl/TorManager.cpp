@@ -272,7 +272,7 @@ QString TorManager::errorMessage() const
     return d->errorMessage;
 }
 
-void TorManager::start()
+bool TorManager::start()
 {
     if (!d->errorMessage.isEmpty()) {
         d->errorMessage.clear();
@@ -304,7 +304,7 @@ void TorManager::start()
 
         if (!port) {
             d->setError(QStringLiteral("Invalid control port settings from environment or configuration"));
-            return;
+            return false;
         }
 
         if (address.isNull())
@@ -320,7 +320,7 @@ void TorManager::start()
 
         if (executable.isEmpty()) {
             d->setError(QStringLiteral("Cannot find tor executable"));
-            return;
+            return false;
         }
 
         if (!d->process) {
@@ -333,13 +333,13 @@ void TorManager::start()
 
         if (!QFile::exists(d->dataDir) && !d->createDataDir(d->dataDir)) {
             d->setError(QStringLiteral("Cannot write data location: %1").arg(d->dataDir));
-            return;
+            return false;
         }
 
         QString defaultTorrc = d->dataDir + QStringLiteral("default_torrc");
         if (!QFile::exists(defaultTorrc) && !d->createDefaultTorrc(defaultTorrc)) {
             d->setError(QStringLiteral("Cannot write data files: %1").arg(defaultTorrc));
-            return;
+            return false;
         }
 
         QFile torrc(d->dataDir + QStringLiteral("torrc"));
@@ -353,6 +353,7 @@ void TorManager::start()
         d->process->setDefaultTorrc(defaultTorrc);
         d->process->start();
     }
+	return true ;
 }
 
 bool TorManager::getProxyServerInfo(QHostAddress& proxy_server_adress,uint16_t& proxy_server_port)

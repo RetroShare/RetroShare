@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>600</width>
-    <height>188</height>
+    <height>228</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -54,7 +54,7 @@
      <item>
       <layout class="QGridLayout" name="gridLayout">
        <item row="0" column="0">
-        <widget class="QLabel" name="label">
+        <widget class="QLabel" name="torStatusTxt_LB">
          <property name="text">
           <string>Tor status:</string>
          </property>
@@ -66,19 +66,19 @@
        <item row="0" column="1">
         <widget class="QLabel" name="torStatus_LB">
          <property name="text">
-          <string>TextLabel</string>
+          <string>Unknown</string>
          </property>
         </widget>
        </item>
        <item row="1" column="1">
         <widget class="QLabel" name="torBootstrapStatus_LB">
          <property name="text">
-          <string>TextLabel</string>
+          <string>Not started</string>
          </property>
         </widget>
        </item>
        <item row="2" column="0">
-        <widget class="QLabel" name="label_3">
+        <widget class="QLabel" name="HiddenServiceAddressTxt_LB">
          <property name="text">
           <string>Hidden service address:</string>
          </property>
@@ -88,7 +88,7 @@
         </widget>
        </item>
        <item row="1" column="0">
-        <widget class="QLabel" name="label_2">
+        <widget class="QLabel" name="torBootstrapStatusTxt_LB">
          <property name="text">
           <string>Tor bootstrap status:</string>
          </property>
@@ -100,12 +100,12 @@
        <item row="2" column="1">
         <widget class="QLabel" name="hiddenServiceAddress_LB">
          <property name="text">
-          <string>TextLabel</string>
+          <string>Not set</string>
          </property>
         </widget>
        </item>
        <item row="3" column="0">
-        <widget class="QLabel" name="label_5">
+        <widget class="QLabel" name="onionAddressTxt_LB">
          <property name="text">
           <string>Onion address:</string>
          </property>
@@ -117,7 +117,7 @@
        <item row="3" column="1">
         <widget class="QLabel" name="onionAddress_LB">
          <property name="text">
-          <string>TextLabel</string>
+          <string>Not set</string>
          </property>
         </widget>
        </item>
