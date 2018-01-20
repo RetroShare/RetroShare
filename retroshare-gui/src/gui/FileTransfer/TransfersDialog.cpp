@@ -966,7 +966,7 @@ int TransfersDialog::addDLItem(int row, const FileInfo &fileInfo)
 	QString fileName = QString::fromUtf8(fileInfo.fname.c_str());
 
 	DLListModel->setData(DLListModel->index(row, COLUMN_NAME), fileName);
-        DLListModel->setData(DLListModel->index(row, COLUMN_NAME), icon_cache.get_icon(fileName), Qt::DecorationRole);
+	DLListModel->setData(DLListModel->index(row, COLUMN_NAME), FilesDefs::getIconFromFilename(fileName), Qt::DecorationRole);
 
 	DLListModel->setData(DLListModel->index(row, COLUMN_COMPLETED), QVariant((qlonglong)completed));
 	DLListModel->setData(DLListModel->index(row, COLUMN_DLSPEED), QVariant((double)fileDlspeed));
@@ -1166,7 +1166,7 @@ int TransfersDialog::addULItem(int row, const FileInfo &fileInfo)
 		//ULListModel->setItem(row, COLUMN_UPROGRESS, new ProgressItem(NULL));
 
 		ULListModel->setData(ULListModel->index(row, COLUMN_UNAME), fileName);
-                ULListModel->setData(ULListModel->index(row, COLUMN_UNAME), icon_cache.get_icon((fileName)), Qt::DecorationRole);
+		ULListModel->setData(ULListModel->index(row, COLUMN_UNAME), FilesDefs::getIconFromFilename(fileName), Qt::DecorationRole);
 		ULListModel->setData(ULListModel->index(row, COLUMN_UHASH), fileHash);
 		ULListModel->setData(ULListModel->index(row, COLUMN_UHASH), fileHash, Qt::UserRole);
 	}
@@ -2288,65 +2288,3 @@ void TransfersDialog::filterChanged(const QString& /*text*/)
 	DLLFilterModel->setFilterKeyColumn(filterColumn);
 	DLLFilterModel->setFilterRegExp(text);
 }
-
-//shitcode begin
-
-TransfersDialog_dirty_icon_cache::TransfersDialog_dirty_icon_cache() :
-    FileTypePicture(":/images/FileTypePicture.png"), FileTypeVideo(":/images/FileTypeVideo.png"), FileTypeAudio(":/images/FileTypeAudio.png"),
-    FileTypeArchive(":/images/FileTypeArchive.png"), FileTypeProgram(":/images/FileTypeProgram.png"), FileTypeCDImage(":/images/FileTypeCDImage.png"),
-    FileTypeDocument(":/images/FileTypeDocument.png"), pdf(":/images/mimetypes/pdf.png"), rscollection_16(":/images/mimetypes/rscollection-16.png"),
-    FileTypeAny(":/images/FileTypeAny.png"), patch(":/images/mimetypes/patch.png"), source_cpp(":/images/mimetypes/source_cpp.png"),
-    source_h(":/images/mimetypes/source_h.png"), source_c(":/images/mimetypes/source_c.png")
-{
-}
-
-QIcon& TransfersDialog_dirty_icon_cache::get_icon(const QString& filename)
-{
-    //mostly copypaste from static QString getInfoFromFilename(const QString& filename, bool anyForUnknown, bool image)
-    QString ext = QFileInfo(filename).suffix().toLower();
-
-    if (ext == "jpg" || ext == "jpeg" || ext == "tif" || ext == "tiff" || ext == "png" || ext == "gif" || ext == "bmp" || ext == "ico" || ext == "svg") {
-            return FileTypePicture;
-    } else if (ext == "avi" || ext == "mpg" || ext == "mpeg" || ext == "wmv" || ext == "divx" || ext == "ts" ||
-                       ext == "mkv" || ext == "mp4" || ext == "flv" || ext == "mov" || ext == "asf" || ext == "xvid" ||
-                       ext == "vob" || ext == "qt" || ext == "rm" || ext == "3gp" || ext == "ogm") {
-            return  FileTypeVideo;
-    } else if (ext == "ogg" || ext == "mp3" || ext == "mp1" || ext == "mp2" || ext == "wav" || ext == "wma" || ext == "m4a" || ext == "flac" ||ext == "xpm") {
-            return FileTypeAudio;
-    } else if (ext == "tar" || ext == "bz2" || ext == "zip" || ext == "gz" || ext == "7z" || ext == "msi" ||
-                       ext == "rar" || ext == "rpm" || ext == "ace" || ext == "jar" || ext == "tgz" || ext == "lha" ||
-                       ext == "cab" || ext == "cbz"|| ext == "cbr" || ext == "alz" || ext == "sit" || ext == "arj" || ext == "deb") {
-            return FileTypeArchive;
-    } else if (ext == "app" || ext == "bat" || ext == "cgi" || ext == "com" ||
-                       ext == "exe" || ext == "js" || ext == "pif" ||
-                       ext == "py" || ext == "pl" || ext == "sh" || ext == "vb" || ext == "ws") {
-            return FileTypeProgram;
-    } else if (ext == "iso" || ext == "nrg" || ext == "mdf" || ext == "img" || ext == "dmg" || ext == "bin" || ext == "uif") {
-            return FileTypeCDImage;
-    } else if (ext == "txt" || ext == "ui" ||
-                       ext == "doc" || ext == "rtf" || ext == "sxw" || ext == "xls" || ext == "pps" || ext == "xml" || ext == "nfo" ||
-                       ext == "reg" || ext == "sxc" || ext == "odt" || ext == "ods" || ext == "dot" || ext == "ppt" || ext == "css" || ext == "crt" ||
-                       ext == "html" || ext == "htm" || ext == "php") {
-            return FileTypeDocument;
-    } else if (ext == "pdf") {
-            return pdf;
-    } else if (ext == RsCollection::ExtensionString) {
-            return rscollection_16;
-    } else if (ext == "sub" || ext == "srt") {
-            return FileTypeAny;
-    } else if (ext == "nds") {
-            return FileTypeAny;
-    } else if (ext == "patch" || ext == "diff") {
-            return patch;
-    } else if (ext == "cpp") {
-            return source_cpp;
-    } else if (ext == "h") {
-            return source_h;
-    } else if (ext == "c") {
-            return source_c;
-    }
-
-    return FileTypeAny;
-}
-
-//shitcode end
