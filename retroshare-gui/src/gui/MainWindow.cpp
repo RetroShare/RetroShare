@@ -1617,6 +1617,10 @@ void MainWindow::setCompactStatusMode(bool compact)
 	dhtstatus->setCompactMode(compact);
 	dhtstatus->getDHTStatus();
     }
+
+	if(torstatus)
+		torstatus->setCompactMode(compact) ;
+
 	hashingstatus->setCompactMode(compact);
 	ratesstatus->setCompactMode(compact);
 	//opModeStatus: TODO Show only ???
