@@ -161,18 +161,6 @@ bool TorManager::setupHiddenService()
 		std::cerr << "legacy dir not set! Cannot proceed." << std::endl;
 		return false ;
 	}
-//    if (!keyData.isEmpty())
-//    {
-//        CryptoKey key;
-//        if (!key.loadFromData(QByteArray::fromBase64(keyData.toLatin1()), CryptoKey::PrivateKey, CryptoKey::DER))
-//        {
-//            qWarning() << "Cannot load service key from configuration";
-//            return;
-//        }
-//
-//        mHiddenService = new Tor::HiddenService(key, legacyDir, this);
-//    }
-//    else
 
 	std::cerr << "Using legacy dir: " << legacyDir.toStdString() << std::endl;
 
@@ -193,11 +181,6 @@ bool TorManager::setupHiddenService()
 		std::cerr << "Got key from legacy dir: " << std::endl;
 		std::cerr << keyData.toStdString() << std::endl;
     }
-//    else if (!m_settings->read("initializing").toBool())
-//    {
-//        qWarning() << "Missing private key for initialized identity";
-//        return;
-//    }
     else
     {
         d->hiddenService = new Tor::HiddenService(legacyDir, this);
@@ -235,7 +218,7 @@ bool TorManager::setupHiddenService()
 	return true ;
 }
 
-void hiddenServiceStatusChanged(int old_status,int new_status)
+void TorManager::hiddenServiceStatusChanged(int old_status,int new_status)
 {
 	std::cerr << "Hidden service status changed from " << old_status << " to " << new_status << std::endl;
 }

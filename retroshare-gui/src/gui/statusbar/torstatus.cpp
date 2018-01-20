@@ -60,6 +60,28 @@ void TorStatus::getTorStatus()
 	statusTor->setVisible(!_compactMode);
 	QString text = _compactMode?statusTor->text():"";
 
+	/* check local network state. We cannot make sure that Tor is running yet. */
+	uint32_t netState = rsConfig -> getNetState();
+	bool online ;
+
+	switch(netState)
+	{
+		default:
+		case RSNET_NETSTATE_BAD_UNKNOWN:
+		case RSNET_NETSTATE_BAD_OFFLINE: online = false ;
+										 break ;
+
+		case RSNET_NETSTATE_WARNING_RESTART:
+
+		case RSNET_NETSTATE_BAD_NATSYM:
+		case RSNET_NETSTATE_BAD_NODHT_NAT:
+		case RSNET_NETSTATE_WARNING_NATTED:
+		case RSNET_NETSTATE_WARNING_NODHT:
+		case RSNET_NETSTATE_GOOD:
+		case RSNET_NETSTATE_ADV_FORWARD: online = true ;
+										 break ;
+	}
+
 	/* now the extra bit .... switch on check boxes */
 
 	int S = QFontMetricsF(torstatusLabel->font()).height();
@@ -70,15 +92,16 @@ void TorStatus::getTorStatus()
 	int torstatus = Tor::TorManager::instance()->control()->torStatus();
 
 	QString tor_control_status_str,torstatus_str ;
+	bool tor_control_ok ;
 
 	switch(tor_control_status)
 	{
 	default:
-	case Tor::TorControl::Error :			tor_control_status_str = "Error" ; break ;
-	case Tor::TorControl::NotConnected:		tor_control_status_str = "Not connected" ; break ;
-	case Tor::TorControl::Connecting:		tor_control_status_str = "Connecting" ; break ;
-	case Tor::TorControl::Authenticating:	tor_control_status_str = "Authenticating" ; break ;
-	case Tor::TorControl::Connected:		tor_control_status_str = "Connected" ; break ;
+	case Tor::TorControl::Error :			tor_control_ok = false ; tor_control_status_str = "Error" ; break ;
+	case Tor::TorControl::NotConnected:		tor_control_ok = false ; tor_control_status_str = "Not connected" ; break ;
+	case Tor::TorControl::Connecting:		tor_control_ok = false ; tor_control_status_str = "Connecting" ; break ;
+	case Tor::TorControl::Authenticating:	tor_control_ok = false ; tor_control_status_str = "Authenticating" ; break ;
+	case Tor::TorControl::Connected:		tor_control_ok = true  ; tor_control_status_str = "Connected" ; break ;
 	}
 
 	switch(torstatus)
@@ -91,13 +114,15 @@ void TorStatus::getTorStatus()
 
 #define MIN_RS_NET_SIZE		10
 
-	if(torstatus == Tor::TorControl::TorOffline)
+	std::cerr << "(II) tor status: net=" << netState << " tor_control= " << tor_control_status << " tor_status=" << torstatus << std::endl;
+
+	if(torstatus == Tor::TorControl::TorOffline || !online || !tor_control_ok)
 	{
 		// RED - some issue.
 		torstatusLabel->setPixmap(QPixmap(":/icons/tor-stopping.png").scaledToHeight(1.5*S,Qt::SmoothTransformation));
 		torstatusLabel->setToolTip( text + tr("Tor is currently offline"));
 	}
-	else if(torstatus == Tor::TorControl::TorReady)
+	else if(torstatus == Tor::TorControl::TorReady && online && tor_control_ok)
 	{
 		torstatusLabel->setPixmap(QPixmap(":/icons/tor-on.png").scaledToHeight(1.5*S,Qt::SmoothTransformation));
 		torstatusLabel->setToolTip( text + tr("Tor is OK"));

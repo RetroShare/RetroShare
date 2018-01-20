@@ -275,7 +275,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
 		statusBar()->addWidget(dhtstatus);
 		dhtstatus->getDHTStatus();
 	}
-	
+
     hashingstatus = new HashingStatus();
     hashingstatus->setVisible(Settings->valueFromGroup("StatusBar", "ShowHashing", QVariant(true)).toBool());
     statusBar()->addPermanentWidget(hashingstatus, 1);

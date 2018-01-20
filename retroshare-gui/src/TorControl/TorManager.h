@@ -93,6 +93,7 @@ public slots:
 
 private slots:
 	void hiddenServicePrivateKeyChanged();
+	void hiddenServiceStatusChanged(int old_status,int new_status);
 
 signals:
     void configurationNeededChanged();
