@@ -87,7 +87,7 @@
 
 // Define to avoid using the search in treeview, because it is really slow for now.
 //
-#define DONT_USE_SEARCH_IN_TREE_VIEW 1
+//#define DONT_USE_SEARCH_IN_TREE_VIEW 1
 
 //#define DEBUG_SHARED_FILES_DIALOG 1
 
