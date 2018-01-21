@@ -55,7 +55,7 @@ public:
 
 	void serial_process( RsGenericSerializer::SerializeJob j,
 	                     RsGenericSerializer::SerializeContext& ctx )
-	{ RS_REGISTER_SERIAL_MEMBER_TYPED(mailId, uint64_t); }
+	{ RS_PROCESS_SERIAL_MEMBER_TYPED(mailId, uint64_t); }
 };
 
 class RsGxsTransPresignedReceipt : public RsGxsTransBaseMsgItem
@@ -140,9 +140,9 @@ public:
 	                     RsGenericSerializer::SerializeContext& ctx )
 	{
 		RsGxsTransBaseMsgItem::serial_process(j, ctx);
-		RS_REGISTER_SERIAL_MEMBER_TYPED(cryptoType, uint8_t);
-		RS_REGISTER_SERIAL_MEMBER(recipientHint);
-		RS_REGISTER_SERIAL_MEMBER(payload);
+		RS_PROCESS_SERIAL_MEMBER_TYPED(cryptoType, uint8_t);
+		RS_PROCESS_SERIAL_MEMBER(recipientHint);
+		RS_PROCESS_SERIAL_MEMBER(payload);
 	}
 
 	void clear()

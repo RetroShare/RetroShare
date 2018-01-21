@@ -98,10 +98,10 @@ struct GxsReputation : RsSerializable
 	void serial_process( RsGenericSerializer::SerializeJob j,
 	                     RsGenericSerializer::SerializeContext& ctx )
 	{
-		RS_REGISTER_SERIAL_MEMBER(mOverallScore);
-		RS_REGISTER_SERIAL_MEMBER(mIdScore);
-		RS_REGISTER_SERIAL_MEMBER(mOwnOpinion);
-		RS_REGISTER_SERIAL_MEMBER(mPeerOpinion);
+		RS_PROCESS_SERIAL_MEMBER(mOverallScore);
+		RS_PROCESS_SERIAL_MEMBER(mIdScore);
+		RS_PROCESS_SERIAL_MEMBER(mOwnOpinion);
+		RS_PROCESS_SERIAL_MEMBER(mPeerOpinion);
 	}
 };
 
@@ -278,13 +278,13 @@ struct RsIdentityUsage : RsSerializable
 	void serial_process( RsGenericSerializer::SerializeJob j,
 	                     RsGenericSerializer::SerializeContext& ctx )
 	{
-		RS_REGISTER_SERIAL_MEMBER(mServiceId);
-		RS_REGISTER_SERIAL_MEMBER_TYPED(mUsageCode, uint8_t);
-		RS_REGISTER_SERIAL_MEMBER(mGrpId);
-		RS_REGISTER_SERIAL_MEMBER(mMsgId);
-		RS_REGISTER_SERIAL_MEMBER(mAdditionalId);
-		RS_REGISTER_SERIAL_MEMBER(mComment);
-		RS_REGISTER_SERIAL_MEMBER(mHash);
+		RS_PROCESS_SERIAL_MEMBER(mServiceId);
+		RS_PROCESS_SERIAL_MEMBER_TYPED(mUsageCode, uint8_t);
+		RS_PROCESS_SERIAL_MEMBER(mGrpId);
+		RS_PROCESS_SERIAL_MEMBER(mMsgId);
+		RS_PROCESS_SERIAL_MEMBER(mAdditionalId);
+		RS_PROCESS_SERIAL_MEMBER(mComment);
+		RS_PROCESS_SERIAL_MEMBER(mHash);
 	}
 
 	friend class RsTypeSerializer;
@@ -329,14 +329,14 @@ struct RsIdentityDetails : RsSerializable
 	virtual void serial_process(RsGenericSerializer::SerializeJob j,
 	                            RsGenericSerializer::SerializeContext& ctx)
 	{
-		RS_REGISTER_SERIAL_MEMBER(mId);
-		RS_REGISTER_SERIAL_MEMBER(mNickname);
-		RS_REGISTER_SERIAL_MEMBER(mFlags);
-		RS_REGISTER_SERIAL_MEMBER(mPgpId);
-		//RS_REGISTER_SERIAL_MEMBER_TYPED(mReputation, RsSerializable);
-		//RS_REGISTER_SERIAL_MEMBER_TYPED(mAvatar, RsSerializable);
-		RS_REGISTER_SERIAL_MEMBER(mLastUsageTS);
-		RS_REGISTER_SERIAL_MEMBER(mUseCases);
+		RS_PROCESS_SERIAL_MEMBER(mId);
+		RS_PROCESS_SERIAL_MEMBER(mNickname);
+		RS_PROCESS_SERIAL_MEMBER(mFlags);
+		RS_PROCESS_SERIAL_MEMBER(mPgpId);
+		//RS_PROCESS_SERIAL_MEMBER_TYPED(mReputation, RsSerializable);
+		//RS_PROCESS_SERIAL_MEMBER_TYPED(mAvatar, RsSerializable);
+		RS_PROCESS_SERIAL_MEMBER(mLastUsageTS);
+		RS_PROCESS_SERIAL_MEMBER(mUseCases);
 	}
 };
 

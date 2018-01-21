@@ -22,32 +22,33 @@
 /** @brief Minimal ancestor for all serializable structs in RetroShare
  * If you want your struct to be easly serializable you should inherit from this
  * struct.
+ * If you want your struct to be serializable as part of a container like an
+ * `std::vector<T>` @see RS_REGISTER_SERIALIZABLE_TYPE(T)
  */
 struct RsSerializable
 {
 	/** Register struct members to serialize in this method taking advantage of
 	 * the helper macros
-	 * @see RS_REGISTER_SERIAL_MEMBER(I)
-	 * @see RS_REGISTER_SERIAL_MEMBER_TYPED(I, T)
-	 * @see RS_REGISTER_SERIALIZABLE_TYPE(T)
+	 * @see RS_PROCESS_SERIAL_MEMBER(I)
+	 * @see RS_PROCESS_SERIAL_MEMBER_TYPED(I, T)
 	 */
 	virtual void serial_process(RsGenericSerializer::SerializeJob j,
 	                            RsGenericSerializer::SerializeContext& ctx) = 0;
 };
 
 
-/** @def RS_REGISTER_SERIAL_MEMBER(I)
+/** @def RS_PROCESS_SERIAL_MEMBER(I)
  * Use this macro to register the members of `YourSerializable` for serial
  * processing inside `YourSerializable::serial_process(j, ctx)`
  *
  * Inspired by http://stackoverflow.com/a/39345864
  */
-#define RS_REGISTER_SERIAL_MEMBER(I) \
+#define RS_PROCESS_SERIAL_MEMBER(I) \
 	do { RsTypeSerializer::serial_process(j, ctx, I, #I); } while(0)
 
 
-/** @def RS_REGISTER_SERIAL_MEMBER_TYPED(I, T)
- * This macro usage is similar to @see RS_REGISTER_SERIAL_MEMBER(I) but it
+/** @def RS_PROCESS_SERIAL_MEMBER_TYPED(I, T)
+ * This macro usage is similar to @see RS_PROCESS_SERIAL_MEMBER(I) but it
  * permit to force serialization/deserialization type, it is expecially useful
  * with enum class members or RsTlvItem derivative members, be very careful with
  * the type you pass, as reinterpret_cast on a reference is used that is
@@ -56,14 +57,14 @@ struct RsSerializable
  * If you are using this with an RsSerializable derivative (so passing
  * RsSerializable as T) consider to register your item type with
  * @see RS_REGISTER_SERIALIZABLE_TYPE(T) in
- * association with @see RS_REGISTER_SERIAL_MEMBER(I) that rely on template
+ * association with @see RS_PROCESS_SERIAL_MEMBER(I) that rely on template
  * function generation, as in this particular case
- * RS_REGISTER_SERIAL_MEMBER_TYPED(I, T) would cause the serial code rely on
+ * RS_PROCESS_SERIAL_MEMBER_TYPED(I, T) would cause the serial code rely on
  * C++ dynamic dispatching that may have a noticeable impact on runtime
  * performances.
  */
 #pragma GCC diagnostic ignored "-Wstrict-aliasing"
-#define RS_REGISTER_SERIAL_MEMBER_TYPED(I, T) do {\
+#define RS_PROCESS_SERIAL_MEMBER_TYPED(I, T) do {\
 	RsTypeSerializer::serial_process<T>(j, ctx, reinterpret_cast<T&>(I), #I);\
 	} while(0)
 #pragma GCC diagnostic pop
@@ -96,13 +97,13 @@ void PrivateOugoingMapItem::serial_process(
 		RsGenericSerializer::SerializeContext& ctx )
 {
 	// store is of type
-	RS_REGISTER_SERIAL_MEMBER(store);
+	RS_PROCESS_SERIAL_MEMBER(store);
 }
  * @endcode
  *
  * If you use this macro with a lot of different item types this can cause the
  * generated binary grow in size, consider the usage of
- * @see RS_REGISTER_SERIAL_MEMBER_TYPED(I, T) passing RsSerializable as type in
+ * @see RS_PROCESS_SERIAL_MEMBER_TYPED(I, T) passing RsSerializable as type in
  * that case.
  */
 #define RS_REGISTER_SERIALIZABLE_TYPE_DEF(T) template<> /*static*/\

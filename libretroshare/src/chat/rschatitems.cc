@@ -212,4 +212,4 @@ RS_REGISTER_SERIALIZABLE_TYPE_DEF(RsChatMsgItem)
 void PrivateOugoingMapItem::serial_process(
         RsGenericSerializer::SerializeJob j,
         RsGenericSerializer::SerializeContext& ctx )
-{ RS_REGISTER_SERIAL_MEMBER(store); }
+{ RS_PROCESS_SERIAL_MEMBER(store); }

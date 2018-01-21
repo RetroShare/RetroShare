@@ -73,12 +73,12 @@ void RsNxsSyncMsgItem::serial_process(RsGenericSerializer::SerializeJob j,RsGene
 void RsNxsMsg::serial_process( RsGenericSerializer::SerializeJob j,
                                RsGenericSerializer::SerializeContext& ctx )
 {
-	RS_REGISTER_SERIAL_MEMBER_TYPED(transactionNumber, uint32_t);
-	RS_REGISTER_SERIAL_MEMBER_TYPED(pos, uint8_t);
-	RS_REGISTER_SERIAL_MEMBER(msgId);
-	RS_REGISTER_SERIAL_MEMBER(grpId);
-	RS_REGISTER_SERIAL_MEMBER_TYPED(msg, RsTlvItem);
-	RS_REGISTER_SERIAL_MEMBER_TYPED(meta, RsTlvItem);
+	RS_PROCESS_SERIAL_MEMBER_TYPED(transactionNumber, uint32_t);
+	RS_PROCESS_SERIAL_MEMBER_TYPED(pos, uint8_t);
+	RS_PROCESS_SERIAL_MEMBER(msgId);
+	RS_PROCESS_SERIAL_MEMBER(grpId);
+	RS_PROCESS_SERIAL_MEMBER_TYPED(msg, RsTlvItem);
+	RS_PROCESS_SERIAL_MEMBER_TYPED(meta, RsTlvItem);
 }
 
 void RsNxsGrp::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)

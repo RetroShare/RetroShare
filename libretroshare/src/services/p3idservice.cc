@@ -4510,16 +4510,16 @@ void RsGxsIdGroup::serial_process(
         RsGenericSerializer::SerializeJob j,
         RsGenericSerializer::SerializeContext& ctx )
 {
-	RS_REGISTER_SERIAL_MEMBER_TYPED(mMeta, RsSerializable);
-	RS_REGISTER_SERIAL_MEMBER(mPgpIdHash);
-	//RS_REGISTER_SERIAL_MEMBER(mPgpIdSign);
-	RS_REGISTER_SERIAL_MEMBER(mRecognTags);
-	//RS_REGISTER_SERIAL_MEMBER(mImage);
-	RS_REGISTER_SERIAL_MEMBER(mLastUsageTS);
-	RS_REGISTER_SERIAL_MEMBER(mPgpKnown);
-	RS_REGISTER_SERIAL_MEMBER(mIsAContact);
-	RS_REGISTER_SERIAL_MEMBER(mPgpId);
-	RS_REGISTER_SERIAL_MEMBER_TYPED(mReputation, RsSerializable);
+	RS_PROCESS_SERIAL_MEMBER_TYPED(mMeta, RsSerializable);
+	RS_PROCESS_SERIAL_MEMBER(mPgpIdHash);
+	//RS_PROCESS_SERIAL_MEMBER(mPgpIdSign);
+	RS_PROCESS_SERIAL_MEMBER(mRecognTags);
+	//RS_PROCESS_SERIAL_MEMBER(mImage);
+	RS_PROCESS_SERIAL_MEMBER(mLastUsageTS);
+	RS_PROCESS_SERIAL_MEMBER(mPgpKnown);
+	RS_PROCESS_SERIAL_MEMBER(mIsAContact);
+	RS_PROCESS_SERIAL_MEMBER(mPgpId);
+	RS_PROCESS_SERIAL_MEMBER_TYPED(mReputation, RsSerializable);
 }
 
 RsIdentityUsage::RsIdentityUsage(
