@@ -54,7 +54,7 @@ void FileSharingHandler::handleForceCheck(Request&, Response& resp)
 	resp.setOk();
 }
 
-void FileSharingHandler::handleGetSharedDir(Request& req, Response& resp)
+void FileSharingHandler::handleGetSharedDir(Request& /*req*/, Response& resp)
 {
 	DirDetails dirDetails;
 	mRsFiles->RequestDirDetails(NULL, dirDetails, RS_FILE_HINTS_LOCAL);
