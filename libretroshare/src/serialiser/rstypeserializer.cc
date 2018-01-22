@@ -32,7 +32,6 @@
 #include "util/rsprint.h"
 
 #include <iomanip>
-#include <typeinfo>
 #include <time.h>
 #include <string>
 #include <typeinfo> // for typeid
