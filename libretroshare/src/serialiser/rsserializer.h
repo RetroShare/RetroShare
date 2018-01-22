@@ -160,7 +160,7 @@
 #include "serialiser/rsserial.h"
 #include "util/rsdeprecate.h"
 
-class RsItem ;
+struct RsItem;
 
 #define SERIALIZE_ERROR() std::cerr << __PRETTY_FUNCTION__ << " : " 
 

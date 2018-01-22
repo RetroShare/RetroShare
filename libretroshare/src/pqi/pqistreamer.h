@@ -38,7 +38,7 @@
 #include "retroshare/rstypes.h"   // for RsPeerId
 #include "util/rsthreads.h"       // for RsMutex
 
-class RsItem;
+struct RsItem;
 class RsSerialiser;
 
 struct PartialPacketRecord

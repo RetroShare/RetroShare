@@ -4,7 +4,7 @@
 #include "retroshare/rsids.h"
 #include "SetPacket.h"
 
-class RsItem;
+struct RsItem;
 
 class SetFilter
 {
