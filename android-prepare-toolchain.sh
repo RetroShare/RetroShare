@@ -145,8 +145,17 @@ build_libmicrohttpd()
 	cd ..
 }
 
+build_rapidjson()
+{
+	B_dir="rapidjson-1.1.0"
+	[ -f $B_dir.tar.gz ] || wget -O $B_dir.tar.gz https://github.com/Tencent/rapidjson/archive/v1.1.0.tar.gz
+	tar -xf $B_dir.tar.gz
+	cp -r rapidjson-1.1.0/include/rapidjson/ "${SYSROOT}/usr/include/rapidjson"
+}
+
 build_toolchain
 build_bzlib
 build_openssl
 build_sqlite
 build_libupnp
+build_rapidjson

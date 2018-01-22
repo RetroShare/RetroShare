@@ -36,6 +36,8 @@
 #include "serialiser/rsserializable.h"
 
 #include <rapidjson/document.h>
+#include <typeinfo> // for typeid
+
 
 /** INTERNAL ONLY helper to avoid copy paste code for std::{vector,list,set}<T>
  * Can't use a template function because T is needed for const_cast */
