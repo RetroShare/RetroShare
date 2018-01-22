@@ -42,7 +42,7 @@
 #include "util/rsdeprecate.h"
 
 /* The Main Interface Class - for information about your Peers */
-class RsIdentity;
+struct RsIdentity;
 extern RsIdentity *rsIdentity;
 
 
@@ -287,7 +287,7 @@ struct RsIdentityUsage : RsSerializable
 		RS_PROCESS_SERIAL_MEMBER(mHash);
 	}
 
-	friend class RsTypeSerializer;
+	friend struct RsTypeSerializer;
 private:
 	/** Accessible only to friend class RsTypeSerializer needed for
 	 * deserialization */

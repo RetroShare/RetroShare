@@ -332,8 +332,8 @@ struct RsTypeSerializer
 					            nullptr, 0, RsGenericSerializer::FORMAT_BINARY,
 					            RsGenericSerializer::SERIALIZATION_FLAG_NONE,
 					            &allocator );
-					ok && (kCtx.mJson.
-					       AddMember("key", kvEl["key"], allocator), true);
+					if(ok)
+						kCtx.mJson.AddMember("key", kvEl["key"], allocator);
 
 					T key;
 					ok = ok && (serial_process(j, kCtx, key, "key"), kCtx.mOk);
@@ -342,8 +342,8 @@ struct RsTypeSerializer
 					            nullptr, 0, RsGenericSerializer::FORMAT_BINARY,
 					            RsGenericSerializer::SERIALIZATION_FLAG_NONE,
 					            &allocator );
-					ok && (vCtx.mJson.
-					       AddMember("value", kvEl["value"], allocator), true);
+					if(ok)
+						vCtx.mJson.AddMember("value", kvEl["value"], allocator);
 
 					U value;
 					ok = ok && ( serial_process(j, vCtx, value, "value"),
@@ -752,7 +752,7 @@ bool RsTypeSerializer::from_JSON( const std::string& membername,
 	{
 		rapidjson::Value& v = jVal[mName];
 		ret = ret && v.IsString();
-		ret && (member = t_RsGenericIdType<ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER>(std::string(v.GetString())), false);
+		if(ret) member = t_RsGenericIdType<ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER>(std::string(v.GetString()));
 	}
 	return ret;
 }
