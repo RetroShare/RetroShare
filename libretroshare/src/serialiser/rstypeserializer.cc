@@ -199,7 +199,6 @@ template<> bool RsTypeSerializer::to_JSON( const std::string& memberName, \
 SIMPLE_TO_JSON_DEF(bool)
 SIMPLE_TO_JSON_DEF(int32_t)
 
-#ifdef __ANDROID__
 template<> bool RsTypeSerializer::to_JSON( const std::string& memberName,
                                            const time_t& member, RsJson& jDoc )
 {
@@ -208,6 +207,7 @@ template<> bool RsTypeSerializer::to_JSON( const std::string& memberName,
 	rapidjson::Value key;
 	key.SetString(memberName.c_str(), memberName.length(), allocator);
 
+	// without this compilation may break depending on how time_t is defined
 	int64_t tValue = member;
 	rapidjson::Value value(tValue);
 
@@ -215,9 +215,6 @@ template<> bool RsTypeSerializer::to_JSON( const std::string& memberName,
 
 	return true;
 }
-#else
-SIMPLE_TO_JSON_DEF(time_t)
-#endif
 
 SIMPLE_TO_JSON_DEF(uint8_t)
 SIMPLE_TO_JSON_DEF(uint16_t)
