@@ -160,4 +160,5 @@ adb pull /system/lib /tmp/system_lib
 - link:https://groups.google.com/forum/#!topic/android-developers/srATPaL0aRU[]
 - link:https://stackoverflow.com/questions/31638986/protected-apps-setting-on-huawei-phones-and-how-to-handle-it[]
 - link:https://tthtlc.wordpress.com/2012/09/19/how-to-do-remote-debugging-via-gdbserver-running-inside-the-android-phone/[]
+- link:https://source.android.com/devices/tech/debug/[]
 - link:https://source.android.com/devices/tech/debug/gdb[]
