@@ -1332,11 +1332,14 @@ void SharedFilesDialog::FilterItems()
 		std::list<std::string> keywords ;
 		std::list<DirDetails> result_list ;
 
-		if(text.isNull())
+		if(text == "")
 		{
 			int rowCount = ui.dirTreeView->model()->rowCount();
+
 			for (int row = 0; row < rowCount; ++row)
 				recursMakeAllVisible(ui.dirTreeView,ui.dirTreeView->model()->index(row, COLUMN_NAME)) ;
+
+			setCursor(Qt::ArrowCursor);
 			return ;
 		}
 		keywords.push_back(text.toStdString());
