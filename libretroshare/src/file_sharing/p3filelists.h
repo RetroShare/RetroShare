@@ -159,7 +159,7 @@ class p3FileDatabase: public p3Service, public p3Config, public ftSearch //, pub
 
     protected:
 
-        int filterResults(const std::list<EntryIndex>& firesults,std::list<DirDetails>& results,FileSearchFlags flags,const RsPeerId& peer_id) const;
+        int filterResults(const std::list<void*>& firesults,std::list<DirDetails>& results,FileSearchFlags flags,const RsPeerId& peer_id) const;
         std::string makeRemoteFileName(const RsPeerId& pid) const;
 
         // Derived from p3Config
