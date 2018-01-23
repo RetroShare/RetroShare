@@ -87,7 +87,7 @@
 
 // Define to avoid using the search in treeview, because it is really slow for now.
 //
-#define DONT_USE_SEARCH_IN_TREE_VIEW 1
+//#define DONT_USE_SEARCH_IN_TREE_VIEW 1
 
 //#define DEBUG_SHARED_FILES_DIALOG 1
 
@@ -1246,6 +1246,73 @@ void SharedFilesDialog::startFilter()
     FilterItems();
 }
 
+// This macro make the search expand all items that contain the searched text.
+// A bug however, makes RS expand everything when nothing is selected, which is a pain.
+
+#define EXPAND_WHILE_SEARCHING 1
+
+static void recursMakeAllVisible(QTreeView *tree,const QModelIndex& indx)
+{
+	int rowCount = tree->model()->rowCount(indx);
+
+	for (int row = 0; row < rowCount; ++row)
+	{
+		QModelIndex child_index = indx.child(row,0);
+
+		tree->setRowHidden(child_index.row(), indx, false) ;
+
+		recursMakeAllVisible(tree,child_index);
+	}
+#ifdef EXPAND_WHILE_SEARCHING
+	tree->setExpanded(indx,false) ;
+#endif
+}
+
+//#define DEBUG_SHARED_FILES_DIALOG
+
+static void recursMakeVisible(QTreeView *tree,const QSortFilterProxyModel *proxyModel,const QModelIndex& indx,uint32_t depth,const std::vector<std::set<void*> >& pointers)
+{
+#ifdef DEBUG_SHARED_FILES_DIALOG
+	for(uint32_t i=0;i<depth;++i) std::cerr << "  " ; std::cerr << "depth " << depth << ": current ref=" << proxyModel->mapToSource(indx).internalPointer() << std::endl;
+#endif
+	int rowCount = tree->model()->rowCount(indx);
+	const std::set<void*>& ptrs(pointers[depth+1]) ;
+
+#ifdef DEBUG_SHARED_FILES_DIALOG
+	std::cerr << "Pointers are: " << std::endl;
+	for(auto it(ptrs.begin());it!=ptrs.end();++it)
+		std::cerr << *it << std::endl;
+#endif
+	tree->setRowHidden(indx.row(), indx.parent(), false) ;
+#ifdef EXPAND_WHILE_SEARCHING
+	tree->setExpanded(indx,true) ;
+#endif
+
+    for (int row = 0; row < rowCount; ++row)
+	{
+		QModelIndex child_index = indx.child(row,0);
+
+		if(ptrs.find(proxyModel->mapToSource(child_index).internalPointer()) != ptrs.end())
+		{
+#ifdef DEBUG_SHARED_FILES_DIALOG
+			for(uint32_t i=0;i<depth+1;++i) std::cerr << "  " ;	std::cerr << "object " << proxyModel->mapToSource(child_index).internalPointer() << " visible" << std::endl;
+#endif
+			recursMakeVisible(tree,proxyModel,child_index,depth+1,pointers) ;
+		}
+		else
+		{
+			tree->setRowHidden(child_index.row(), indx, true) ;
+#ifdef EXPAND_WHILE_SEARCHING
+			tree->setExpanded(child_index,false) ;
+#endif
+
+#ifdef DEBUG_SHARED_FILES_DIALOG
+			for(uint32_t i=0;i<depth+1;++i) std::cerr << "  " ;	std::cerr << "object " << proxyModel->mapToSource(child_index).internalPointer() << " hidden" << std::endl;
+#endif
+		}
+	}
+}
+
 void SharedFilesDialog::FilterItems()
 {
 #ifdef DONT_USE_SEARCH_IN_TREE_VIEW
@@ -1253,18 +1320,95 @@ void SharedFilesDialog::FilterItems()
         return;
 #endif
 
+	setCursor(Qt::WaitCursor);
+	ui.dirTreeView->blockSignals(true) ;
+
     QString text = ui.filterPatternLineEdit->text();
 
-    setCursor(Qt::WaitCursor);
-	 QCoreApplication::processEvents() ;
+	if(proxyModel == tree_proxyModel)
+	{
+		QCoreApplication::processEvents() ;
 
+		std::list<std::string> keywords ;
+		std::list<DirDetails> result_list ;
+
+		if(text.isNull())
+		{
+			int rowCount = ui.dirTreeView->model()->rowCount();
+			for (int row = 0; row < rowCount; ++row)
+				recursMakeAllVisible(ui.dirTreeView,ui.dirTreeView->model()->index(row, COLUMN_NAME)) ;
+			return ;
+		}
+		keywords.push_back(text.toStdString());
+		FileSearchFlags flags = isRemote()?RS_FILE_HINTS_REMOTE:RS_FILE_HINTS_LOCAL;
+
+		rsFiles->SearchKeywords(keywords,result_list, flags) ;
+
+#ifdef DEBUG_SHARED_FILES_DIALOG
+		std::cerr << "Found this result: " << std::endl;
+#endif
+		std::vector<std::set<void*> > pointers(2,std::set<void*>());	// at least two levels need to be here.
+
+		// Then show only the ones we need
+		for(auto it(result_list.begin());it!=result_list.end();++it)
+		{
+#ifdef DEBUG_SHARED_FILES_DIALOG
+			std::cerr << (void*)(*it).ref << "  parents: " ;
+#endif
+
+			DirDetails& det(*it) ;
+			void *p = NULL;
+			std::list<void*> lst ;
+
+			lst.push_back(det.ref) ;
+
+			while(det.type == DIR_TYPE_FILE || det.type == DIR_TYPE_DIR)
+			{
+				p = det.parent ;
+				rsFiles->RequestDirDetails( p, det, flags);
+
+#ifdef DEBUG_SHARED_FILES_DIALOG
+				std::cerr << " " << (void*)p << "(" << (int)det.type << ")";
+#endif
+
+				lst.push_front(p) ;
+			}
+
+#ifdef DEBUG_SHARED_FILES_DIALOG
+			std::cerr << std::endl;
+#endif
+
+			uint32_t u=0;
+			for(auto it2(lst.begin());it2!=lst.end();++it2,++u)
+			{
+				if(pointers.size() <= u)
+					pointers.resize(u+5) ;
+
+				pointers[u].insert(*it2) ;
+			}
+		}
+
+		int rowCount = ui.dirTreeView->model()->rowCount();
+		for (int row = 0; row < rowCount; ++row)
+			recursMakeVisible(ui.dirTreeView,proxyModel,ui.dirTreeView->model()->index(row, COLUMN_NAME),0,pointers);
+	}
+	else
+	{
+		int rowCount = ui.dirTreeView->model()->rowCount();
+		for (int row = 0; row < rowCount; ++row)
+			flat_FilterItem(ui.dirTreeView->model()->index(row, COLUMN_NAME), text, 0);
+	}
+
+#ifdef DEPRECATED_CODE
     int rowCount = ui.dirTreeView->model()->rowCount();
     for (int row = 0; row < rowCount; ++row)
 		 if(proxyModel == tree_proxyModel)
 			 tree_FilterItem(ui.dirTreeView->model()->index(row, COLUMN_NAME), text, 0);
 		 else
 			 flat_FilterItem(ui.dirTreeView->model()->index(row, COLUMN_NAME), text, 0);
+#endif
 
+	ui.dirTreeView->blockSignals(false) ;
     setCursor(Qt::ArrowCursor);
 }
 
