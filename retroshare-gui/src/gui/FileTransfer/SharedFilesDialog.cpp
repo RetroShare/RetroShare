@@ -31,6 +31,7 @@
 #include <QSortFilterProxyModel>
 #include <QStyledItemDelegate>
 
+#include "rshare.h"
 #include "SharedFilesDialog.h"
 #include "gui/notifyqt.h"
 #include "gui/MainWindow.h"
@@ -49,6 +50,7 @@
 
 #include <retroshare/rspeers.h>
 #include <retroshare/rsfiles.h>
+#include <retroshare/rsexpr.h>
 
 
 /* Images for context menu icons */
@@ -84,6 +86,8 @@
 /*define viewType_CB value */
 #define VIEW_TYPE_TREE       0
 #define VIEW_TYPE_FLAT       1
+
+#define MAX_SEARCH_RESULTS   3000
 
 // Define to avoid using the search in treeview, because it is really slow for now.
 //
@@ -1226,6 +1230,63 @@ void SharedFilesDialog::filterRegExpChanged()
     } else {
         ui.filterStartButton->show();
     }
+
+	bool valid = false ;
+	QColor color ;
+
+	if(text.length() > 0 && text.length() < 3)
+	{
+		std::cout << "setting palette 1" << std::endl ;
+		valid = false;
+		//color = QApplication::palette().color(QPalette::Disabled, QPalette::Base);
+
+		ui.filterStartButton->setEnabled(false) ;
+		ui.filterPatternFrame->setToolTip(tr("Search string should be at least 3 characters long.")) ;
+		return ;
+	}
+
+	if(text.length() > 0 && proxyModel == tree_proxyModel)
+	{
+		std::list<DirDetails> result_list ;
+		std::list<std::string> keywords;
+
+		QStringList lst = text.split(" ",QString::SkipEmptyParts) ;
+
+		for(auto it(lst.begin());it!=lst.end();++it)
+			keywords.push_back((*it).toStdString());
+
+		FileSearchFlags flags = isRemote()?RS_FILE_HINTS_REMOTE:RS_FILE_HINTS_LOCAL;
+
+		if(keywords.size() > 1)
+		{
+			RsRegularExpression::NameExpression exp(RsRegularExpression::ContainsAllStrings,keywords,true);
+			rsFiles->SearchBoolExp(&exp,result_list, flags) ;
+		}
+		else
+			rsFiles->SearchKeywords(keywords,result_list, flags) ;
+
+		uint32_t nb_results = result_list.size();
+
+		if(nb_results > MAX_SEARCH_RESULTS)
+		{
+			ui.filterStartButton->setEnabled(false) ;
+			ui.filterPatternFrame->setToolTip(tr("More than 3000 results. Add more/longer search words to select less.")) ;
+			return ;
+		}
+	}
+
+	ui.filterStartButton->setEnabled(true) ;
+	ui.filterPatternFrame->setToolTip(QString());
+
+	/* unpolish widget to clear the stylesheet's palette cache */
+	// ui.filterPatternFrame->style()->unpolish(ui.filterPatternFrame);
+
+	// QPalette palette = ui.filterPatternLineEdit->palette();
+	// palette.setColor(ui.filterPatternLineEdit->backgroundRole(), color);
+	// ui.filterPatternLineEdit->setPalette(palette);
+
+	// //ui.searchLineFrame->setProperty("valid", valid);
+	// Rshare::refreshStyleSheet(ui.filterPatternFrame, false);
 }
 
 /* clear Filter */
@@ -1342,11 +1403,28 @@ void SharedFilesDialog::FilterItems()
 			setCursor(Qt::ArrowCursor);
 			return ;
 		}
-		keywords.push_back(text.toStdString());
+
+		if(text.length() < 3)
+			return ;
+
 		FileSearchFlags flags = isRemote()?RS_FILE_HINTS_REMOTE:RS_FILE_HINTS_LOCAL;
+		QStringList lst = text.split(" ",QString::SkipEmptyParts) ;
 
-		rsFiles->SearchKeywords(keywords,result_list, flags) ;
+		for(auto it(lst.begin());it!=lst.end();++it)
+			keywords.push_back((*it).toStdString());
 
+		if(keywords.size() > 1)
+		{
+			RsRegularExpression::NameExpression exp(RsRegularExpression::ContainsAllStrings,keywords,true);
+			rsFiles->SearchBoolExp(&exp,result_list, flags) ;
+		}
+		else
+			rsFiles->SearchKeywords(keywords,result_list, flags) ;
+
+		std::cerr << "Found " << result_list.size() << " results" << std::endl;
+
+		if(result_list.size() > MAX_SEARCH_RESULTS)
+			return ;
 #ifdef DEBUG_SHARED_FILES_DIALOG
 		std::cerr << "Found this result: " << std::endl;
 #endif
