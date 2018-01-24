@@ -1236,9 +1236,7 @@ void SharedFilesDialog::filterRegExpChanged()
 
 	if(text.length() > 0 && text.length() < 3)
 	{
-		std::cout << "setting palette 1" << std::endl ;
 		valid = false;
-		//color = QApplication::palette().color(QPalette::Disabled, QPalette::Base);
 
 		ui.filterStartButton->setEnabled(false) ;
 		ui.filterPatternFrame->setToolTip(tr("Search string should be at least 3 characters long.")) ;
@@ -1314,13 +1312,13 @@ void SharedFilesDialog::startFilter()
 
 static void recursMakeAllVisible(QTreeView *tree,const QModelIndex& indx)
 {
+	tree->setRowHidden(indx.row(), indx.parent(), false) ;
+
 	int rowCount = tree->model()->rowCount(indx);
 
 	for (int row = 0; row < rowCount; ++row)
 	{
 		QModelIndex child_index = indx.child(row,0);
-
-		tree->setRowHidden(child_index.row(), indx, false) ;
 
 		recursMakeAllVisible(tree,child_index);
 	}
@@ -1349,6 +1347,8 @@ static void recursMakeVisible(QTreeView *tree,const QSortFilterProxyModel *proxy
 	tree->setExpanded(indx,true) ;
 #endif
 
+	bool found = false ;
+
     for (int row = 0; row < rowCount; ++row)
 	{
 		QModelIndex child_index = indx.child(row,0);
@@ -1359,6 +1359,7 @@ static void recursMakeVisible(QTreeView *tree,const QSortFilterProxyModel *proxy
 			for(uint32_t i=0;i<depth+1;++i) std::cerr << "  " ;	std::cerr << "object " << proxyModel->mapToSource(child_index).internalPointer() << " visible" << std::endl;
 #endif
 			recursMakeVisible(tree,proxyModel,child_index,depth+1,pointers) ;
+			found = true ;
 		}
 		else
 		{
@@ -1372,6 +1373,9 @@ static void recursMakeVisible(QTreeView *tree,const QSortFilterProxyModel *proxy
 #endif
 		}
 	}
+
+	if(!found && depth == 0)
+		tree->setRowHidden(indx.row(), indx.parent(), true) ;
 }
 
 void SharedFilesDialog::FilterItems()
@@ -1421,7 +1425,9 @@ void SharedFilesDialog::FilterItems()
 		else
 			rsFiles->SearchKeywords(keywords,result_list, flags) ;
 
+#ifdef DEBUG_SHARED_FILES_DIALOG
 		std::cerr << "Found " << result_list.size() << " results" << std::endl;
+#endif
 
 		if(result_list.size() > MAX_SEARCH_RESULTS)
 			return ;
