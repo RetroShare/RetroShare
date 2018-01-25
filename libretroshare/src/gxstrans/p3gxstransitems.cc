@@ -48,24 +48,24 @@ void OutgoingRecord_deprecated::serial_process(
         RsGenericSerializer::SerializeJob j,
         RsGenericSerializer::SerializeContext& ctx )
 {
-	RS_PROCESS_SERIAL_MEMBER_TYPED(status, uint8_t);
-	RS_PROCESS_SERIAL_MEMBER(recipient);
-	RS_PROCESS_SERIAL_MEMBER(mailItem);
-	RS_PROCESS_SERIAL_MEMBER(mailData);
-	RS_PROCESS_SERIAL_MEMBER_TYPED(clientService, uint16_t);
-	RS_PROCESS_SERIAL_MEMBER(presignedReceipt);
+	RS_SERIAL_PROCESS(status);
+	RS_SERIAL_PROCESS(recipient);
+	RS_SERIAL_PROCESS(mailItem);
+	RS_SERIAL_PROCESS(mailData);
+	RS_SERIAL_PROCESS(clientService);
+	RS_SERIAL_PROCESS(presignedReceipt);
 }
 
 void OutgoingRecord::serial_process(RsGenericSerializer::SerializeJob j,
                                     RsGenericSerializer::SerializeContext& ctx)
 {
-	RS_PROCESS_SERIAL_MEMBER_TYPED(status, uint8_t);
-	RS_PROCESS_SERIAL_MEMBER(recipient);
-	RS_PROCESS_SERIAL_MEMBER(author);
-	RS_PROCESS_SERIAL_MEMBER(group_id);
-	RS_PROCESS_SERIAL_MEMBER(sent_ts);
-	RS_PROCESS_SERIAL_MEMBER(mailItem);
-	RS_PROCESS_SERIAL_MEMBER(mailData);
-	RS_PROCESS_SERIAL_MEMBER_TYPED(clientService, uint16_t);
-	RS_PROCESS_SERIAL_MEMBER(presignedReceipt);
+	RS_SERIAL_PROCESS(status);
+	RS_SERIAL_PROCESS(recipient);
+	RS_SERIAL_PROCESS(author);
+	RS_SERIAL_PROCESS(group_id);
+	RS_SERIAL_PROCESS(sent_ts);
+	RS_SERIAL_PROCESS(mailItem);
+	RS_SERIAL_PROCESS(mailData);
+	RS_SERIAL_PROCESS(clientService);
+	RS_SERIAL_PROCESS(presignedReceipt);
 }

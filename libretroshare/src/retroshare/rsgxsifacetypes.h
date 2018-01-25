@@ -100,24 +100,24 @@ struct RsGroupMetaData : RsSerializable
 	void serial_process( RsGenericSerializer::SerializeJob j,
 	                     RsGenericSerializer::SerializeContext& ctx )
 	{
-		RS_PROCESS_SERIAL_MEMBER(mGroupId);
-		RS_PROCESS_SERIAL_MEMBER(mGroupName);
-		RS_PROCESS_SERIAL_MEMBER(mGroupFlags);
-		RS_PROCESS_SERIAL_MEMBER(mSignFlags);
-		RS_PROCESS_SERIAL_MEMBER(mPublishTs);
-		RS_PROCESS_SERIAL_MEMBER(mAuthorId);
-		RS_PROCESS_SERIAL_MEMBER(mCircleId);
-		RS_PROCESS_SERIAL_MEMBER(mCircleType);
-		RS_PROCESS_SERIAL_MEMBER(mAuthenFlags);
-		RS_PROCESS_SERIAL_MEMBER(mParentGrpId);
-		RS_PROCESS_SERIAL_MEMBER(mSubscribeFlags);
-		RS_PROCESS_SERIAL_MEMBER(mPop);
-		RS_PROCESS_SERIAL_MEMBER(mVisibleMsgCount);
-		RS_PROCESS_SERIAL_MEMBER(mLastPost);
-		RS_PROCESS_SERIAL_MEMBER(mGroupStatus);
-		RS_PROCESS_SERIAL_MEMBER(mServiceString);
-		RS_PROCESS_SERIAL_MEMBER(mOriginator);
-		RS_PROCESS_SERIAL_MEMBER(mInternalCircle);
+		RS_SERIAL_PROCESS(mGroupId);
+		RS_SERIAL_PROCESS(mGroupName);
+		RS_SERIAL_PROCESS(mGroupFlags);
+		RS_SERIAL_PROCESS(mSignFlags);
+		RS_SERIAL_PROCESS(mPublishTs);
+		RS_SERIAL_PROCESS(mAuthorId);
+		RS_SERIAL_PROCESS(mCircleId);
+		RS_SERIAL_PROCESS(mCircleType);
+		RS_SERIAL_PROCESS(mAuthenFlags);
+		RS_SERIAL_PROCESS(mParentGrpId);
+		RS_SERIAL_PROCESS(mSubscribeFlags);
+		RS_SERIAL_PROCESS(mPop);
+		RS_SERIAL_PROCESS(mVisibleMsgCount);
+		RS_SERIAL_PROCESS(mLastPost);
+		RS_SERIAL_PROCESS(mGroupStatus);
+		RS_SERIAL_PROCESS(mServiceString);
+		RS_SERIAL_PROCESS(mOriginator);
+		RS_SERIAL_PROCESS(mInternalCircle);
 	}
 };
 

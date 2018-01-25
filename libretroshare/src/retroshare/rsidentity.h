@@ -98,10 +98,10 @@ struct GxsReputation : RsSerializable
 	void serial_process( RsGenericSerializer::SerializeJob j,
 	                     RsGenericSerializer::SerializeContext& ctx )
 	{
-		RS_PROCESS_SERIAL_MEMBER(mOverallScore);
-		RS_PROCESS_SERIAL_MEMBER(mIdScore);
-		RS_PROCESS_SERIAL_MEMBER(mOwnOpinion);
-		RS_PROCESS_SERIAL_MEMBER(mPeerOpinion);
+		RS_SERIAL_PROCESS(mOverallScore);
+		RS_SERIAL_PROCESS(mIdScore);
+		RS_SERIAL_PROCESS(mOwnOpinion);
+		RS_SERIAL_PROCESS(mPeerOpinion);
 	}
 };
 
@@ -278,13 +278,13 @@ struct RsIdentityUsage : RsSerializable
 	void serial_process( RsGenericSerializer::SerializeJob j,
 	                     RsGenericSerializer::SerializeContext& ctx )
 	{
-		RS_PROCESS_SERIAL_MEMBER(mServiceId);
-		RS_PROCESS_SERIAL_MEMBER_TYPED(mUsageCode, uint8_t);
-		RS_PROCESS_SERIAL_MEMBER(mGrpId);
-		RS_PROCESS_SERIAL_MEMBER(mMsgId);
-		RS_PROCESS_SERIAL_MEMBER(mAdditionalId);
-		RS_PROCESS_SERIAL_MEMBER(mComment);
-		RS_PROCESS_SERIAL_MEMBER(mHash);
+		RS_SERIAL_PROCESS(mServiceId);
+		RS_SERIAL_PROCESS(mUsageCode);
+		RS_SERIAL_PROCESS(mGrpId);
+		RS_SERIAL_PROCESS(mMsgId);
+		RS_SERIAL_PROCESS(mAdditionalId);
+		RS_SERIAL_PROCESS(mComment);
+		RS_SERIAL_PROCESS(mHash);
 	}
 
 	friend struct RsTypeSerializer;
@@ -329,14 +329,14 @@ struct RsIdentityDetails : RsSerializable
 	virtual void serial_process(RsGenericSerializer::SerializeJob j,
 	                            RsGenericSerializer::SerializeContext& ctx)
 	{
-		RS_PROCESS_SERIAL_MEMBER(mId);
-		RS_PROCESS_SERIAL_MEMBER(mNickname);
-		RS_PROCESS_SERIAL_MEMBER(mFlags);
-		RS_PROCESS_SERIAL_MEMBER(mPgpId);
-		//RS_PROCESS_SERIAL_MEMBER_TYPED(mReputation, RsSerializable);
-		//RS_PROCESS_SERIAL_MEMBER_TYPED(mAvatar, RsSerializable);
-		RS_PROCESS_SERIAL_MEMBER(mLastUsageTS);
-		RS_PROCESS_SERIAL_MEMBER(mUseCases);
+		RS_SERIAL_PROCESS(mId);
+		RS_SERIAL_PROCESS(mNickname);
+		RS_SERIAL_PROCESS(mFlags);
+		RS_SERIAL_PROCESS(mPgpId);
+		//RS_SERIAL_PROCESS(mReputation);
+		//RS_SERIAL_PROCESS(mAvatar);
+		RS_SERIAL_PROCESS(mLastUsageTS);
+		RS_SERIAL_PROCESS(mUseCases);
 	}
 };
 
