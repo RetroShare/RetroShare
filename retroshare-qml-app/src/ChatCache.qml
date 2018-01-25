@@ -160,7 +160,8 @@ QtObject
 
 		function startDistantChat (own_gxs_id, gxs_id, name, cb)
 		{
-			console.log("startDistantChat()")
+			console.log( "startDistantChat(own_gxs_id, gxs_id, name, cb)",
+						 own_gxs_id, gxs_id, name, cb )
 			chatHelper.gxs_id = gxs_id
 			chatHelper.name = name
 			chatHelper.cb = cb

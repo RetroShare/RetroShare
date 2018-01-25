@@ -54,18 +54,18 @@ public slots:
 
 	static QString b64AvatarGen (QVariantList onloads, int size)
 	{
-		qDebug() << "b64AvatarGen(): Generating face Avatar from";
+		qDebug() << "Generating hash face avatar";
 
 		QImage result(size, size, QImage::Format_ARGB32_Premultiplied);
 		QPainter painter(&result);
 
 
 		int counter = 0;
-		for (QVariantList::iterator j = onloads.begin(); j != onloads.end(); j++)
+		for(QVariantList::iterator j = onloads.begin(); j != onloads.end(); ++j)
 		{
 			QImage image = getImage (":/"+(*j).toString());
 			painter.drawImage(0, 0, image); // xi, yi is the position for imagei
-			counter++;
+			++counter;
 		}
 		painter.end();
 
