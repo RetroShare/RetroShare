@@ -1,6 +1,6 @@
 /*
  * RetroShare Android Service
- * Copyright (C) 2016-2017  Gioacchino Mazzurco <gio@eigenlab.org>
+ * Copyright (C) 2016-2018  Gioacchino Mazzurco <gio@eigenlab.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -18,8 +18,8 @@
 
 #include <QCoreApplication>
 #include <QDebug>
-#include <QMetaObject>
 #include <QDir>
+#include <QTimer>
 
 #ifdef __ANDROID__
 #	include "util/androiddebug.h"
@@ -52,16 +52,10 @@ int main(int argc, char *argv[])
 
 	ApiServerLocal apiServerLocal(&api, sockPath); (void) apiServerLocal;
 
-	while (!ctrl_mod.processShouldExit())
-	{
-		app.processEvents();
-		usleep(20000);
-	}
-
-	/* Since QCoreApplication::quit() is a no-op until the event loop has been
-	 * started, we need to defer the call until it starts. Thus, we queue a
-	 * deferred method call to quit() */
-	QMetaObject::invokeMethod(&app, "quit", Qt::QueuedConnection);
+	QTimer shouldExitTimer;
+	QObject::connect( &shouldExitTimer, &QTimer::timeout, [&](){
+		if(ctrl_mod.processShouldExit()) app.quit(); });
+	shouldExitTimer.start();
 
 	return app.exec();
 }
