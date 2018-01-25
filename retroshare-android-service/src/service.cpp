@@ -20,6 +20,7 @@
 #include <QDebug>
 #include <QDir>
 #include <QTimer>
+#include <csignal>
 
 #ifdef __ANDROID__
 #	include "util/androiddebug.h"
@@ -38,6 +39,13 @@ int main(int argc, char *argv[])
 #endif
 
 	QCoreApplication app(argc, argv);
+
+	signal(SIGINT, &QCoreApplication::exit);
+	signal(SIGTERM, &QCoreApplication::exit);
+#ifdef SIGBREAK
+	signal(SIGBREAK, &QCoreApplication::exit);
+#endif // def SIGBREAK
+
 	ApiServer api;
 	RsControlModule ctrl_mod(argc, argv, api.getStateTokenServer(), &api, true);
 	api.addResourceHandler(
