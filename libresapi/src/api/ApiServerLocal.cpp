@@ -22,15 +22,22 @@
 
 namespace resource_api{
 
-ApiServerLocal::ApiServerLocal(ApiServer* server, const QString &listenPath, QObject *parent) :
+ApiServerLocal::ApiServerLocal(ApiServer* server,
+                               const QString &listenPath, QObject *parent) :
     QObject(parent), serverThread(this),
-    localListener(server, listenPath) // Must have no parent to be movable to other thread
+    // Must have no parent to be movable to other thread
+    localListener(server, listenPath)
 {
+	qRegisterMetaType<QAbstractSocket::SocketState>();
 	localListener.moveToThread(&serverThread);
 	serverThread.start();
 }
 
-ApiServerLocal::~ApiServerLocal() { serverThread.quit(); }
+ApiServerLocal::~ApiServerLocal()
+{
+	serverThread.quit();
+	serverThread.wait();
+}
 
 ApiLocalListener::ApiLocalListener(ApiServer *server,
                                    const QString &listenPath,
@@ -62,8 +69,12 @@ ApiLocalConnectionHandler::ApiLocalConnectionHandler(
 
 ApiLocalConnectionHandler::~ApiLocalConnectionHandler()
 {
-	mLocalSocket->close();
-	delete mLocalSocket;
+	/* Any attempt of closing the socket here also deferred method call, causes
+	 * crash when the core is asked to stop, at least from the JSON API call.
+	 * QMetaObject::invokeMethod(&app, "close", Qt::QueuedConnection)
+	 * mLocalSocket->disconnectFromServer()
+	 * mLocalSocket->close() */
+	mLocalSocket->deleteLater();
 }
 
 void ApiLocalConnectionHandler::handlePendingRequests()
