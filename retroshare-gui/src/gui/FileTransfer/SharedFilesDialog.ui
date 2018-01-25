@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1156</width>
+    <width>1407</width>
     <height>402</height>
    </rect>
   </property>
@@ -53,7 +53,7 @@
          <string/>
         </property>
         <property name="pixmap">
-         <pixmap resource="icons.qrc">:/icons/svg/folders.svg</pixmap>
+         <pixmap resource="../icons.qrc">:/icons/svg/folders.svg</pixmap>
         </property>
         <property name="scaledContents">
          <bool>true</bool>
@@ -89,7 +89,7 @@
          <string>Configure shared directories</string>
         </property>
         <property name="icon">
-         <iconset resource="images.qrc">
+         <iconset resource="../images.qrc">
           <normaloff>:/images/add-share24.png</normaloff>:/images/add-share24.png</iconset>
         </property>
        </widget>
@@ -105,15 +105,41 @@
            <string/>
           </property>
           <property name="pixmap">
-           <pixmap resource="images.qrc">:/images/find-16.png</pixmap>
+           <pixmap resource="../images.qrc">:/images/find-16.png</pixmap>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QLineEdit" name="filterPatternLineEdit">
-          <property name="toolTip">
-           <string>Search files</string>
+         <widget class="QFrame" name="filterPatternFrame">
+          <property name="minimumSize">
+           <size>
+            <width>50</width>
+            <height>0</height>
+           </size>
           </property>
+          <property name="frameShape">
+           <enum>QFrame::StyledPanel</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Raised</enum>
+          </property>
+          <layout class="QHBoxLayout" name="horizontalLayout_3">
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QLineEdit" name="filterPatternLineEdit"/>
+           </item>
+          </layout>
          </widget>
         </item>
         <item>
@@ -140,7 +166,7 @@
            <string>Start Search</string>
           </property>
           <property name="icon">
-           <iconset resource="images.qrc">
+           <iconset resource="../images.qrc">
             <normaloff>:/images/start.png</normaloff>:/images/start.png</iconset>
           </property>
           <property name="flat">
@@ -214,7 +240,7 @@ border-image: url(:/images/closepressed.png)
           <string>All</string>
          </property>
          <property name="icon">
-          <iconset resource="images.qrc">
+          <iconset resource="../images.qrc">
            <normaloff>:/images/view_calendar_list.png</normaloff>:/images/view_calendar_list.png</iconset>
          </property>
         </item>
@@ -223,7 +249,7 @@ border-image: url(:/images/closepressed.png)
           <string>One day old</string>
          </property>
          <property name="icon">
-          <iconset resource="images.qrc">
+          <iconset resource="../images.qrc">
            <normaloff>:/images/view_calendar_day.png</normaloff>:/images/view_calendar_day.png</iconset>
          </property>
         </item>
@@ -232,7 +258,7 @@ border-image: url(:/images/closepressed.png)
           <string>One Week old</string>
          </property>
          <property name="icon">
-          <iconset resource="images.qrc">
+          <iconset resource="../images.qrc">
            <normaloff>:/images/view_calendar_week.png</normaloff>:/images/view_calendar_week.png</iconset>
          </property>
         </item>
@@ -241,7 +267,7 @@ border-image: url(:/images/closepressed.png)
           <string>One month old</string>
          </property>
          <property name="icon">
-          <iconset resource="images.qrc">
+          <iconset resource="../images.qrc">
            <normaloff>:/images/view_calendar_month.png</normaloff>:/images/view_calendar_month.png</iconset>
          </property>
         </item>
@@ -282,7 +308,7 @@ border-image: url(:/images/closepressed.png)
          <string>Download</string>
         </property>
         <property name="icon">
-         <iconset resource="images.qrc">
+         <iconset resource="../images.qrc">
           <normaloff>:/images/download16.png</normaloff>:/images/download16.png</iconset>
         </property>
        </widget>
@@ -363,8 +389,8 @@ border-image: url(:/images/closepressed.png)
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="images.qrc"/>
-  <include location="icons.qrc"/>
+  <include location="../icons.qrc"/>
+  <include location="../images.qrc"/>
  </resources>
  <connections/>
 </ui>

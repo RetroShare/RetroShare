@@ -87,10 +87,10 @@ protected:
   Ui::SharedFilesDialog ui;
   virtual void processSettings(bool bLoad) = 0;
 
-  void recursRestoreExpandedItems(const QModelIndex& index,const std::string& path,const std::set<std::string>& exp,const std::set<std::string>& sel);
-  void recursSaveExpandedItems(const QModelIndex& index, const std::string &path, std::set<std::string> &exp, std::set<std::string>& sel);
-  void saveExpandedPathsAndSelection(std::set<std::string>& paths, std::set<std::string>& selected_indexes) ;
-  void restoreExpandedPathsAndSelection(const std::set<std::string>& paths, const std::set<std::string>& selected_indexes) ;
+  void recursRestoreExpandedItems(const QModelIndex& index, const std::string& path, const std::set<std::string>& exp, const std::set<std::string>& vis, const std::set<std::string>& sel);
+  void recursSaveExpandedItems(const QModelIndex& index, const std::string &path, std::set<std::string> &exp,std::set<std::string>& vis, std::set<std::string>& sel);
+  void saveExpandedPathsAndSelection(std::set<std::string>& paths,std::set<std::string>& visible_indexes, std::set<std::string>& selected_indexes) ;
+  void restoreExpandedPathsAndSelection(const std::set<std::string>& paths,const std::set<std::string>& visible_indexes, const std::set<std::string>& selected_indexes) ;
 
 protected:
   //now context menu are created again every time theu are called ( in some
