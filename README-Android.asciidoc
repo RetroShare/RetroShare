@@ -89,7 +89,7 @@ surprised if you are not able to connect to dynamic IP trusted nodes after not
 using the app for a relatively long time. Once this happens getting a fresh
 certificate link from your friends should work around the issue.
 
-WARNING: Some versions of QtCreator try to find the Android SDK in
+TIP: Some versions of QtCreator try to find the Android SDK in
 +/opt/android/sdk+. A workaround to this is to make a symbolic link there
 pointing to your SDK installation path, like
 +mkdir -p /opt/android/sdk && ln -s /home/user/android-sdk-linux
@@ -115,8 +115,21 @@ Other devices may offer similar _features_ please report them.
 
 QtCreator actually support debugging only for the foreground activity, so to
 debug what's happening in the core extra trickery is needed.
-First of all you need to authorize root access to applications, then once you
-plug your sacrifical Android phone run this commands
+
+- Run the App in Debug mode from QtCreator "Start Debugging" button
+- Enable QtCreator debugger console view Menu->Window->Debugger Log
+- Run +show solib-search-path+ in the QtCreator GDB console
+- Take note of the output you get in the right pane of the console
+- Thanks https://stackoverflow.com/a/31164313 for the idea
+
+TIP: QtCreator GDB console seems a bit buggy and easly trigger timeout
+message when a command is run, in that case attempt to run the command while the
+debugging is paused or at breakpoint, or with other similar tricks.
+
+CAUTION: Following steps require root access on your Android device
+
+Now on your phone yuo need to authorize root access to applications, then once
+you plug your sacrifical Android phone run this commands
 
 .Run gdbserver as root on Android phone
 [source,bash]
@@ -124,36 +137,41 @@ plug your sacrifical Android phone run this commands
 ## Open a shell from your workstation on the connected Android phone
 adb shell
 
-## take note of the PID of the RetroShare process
-ps | grep retroshare
-
-## take the note of the phone IP
+## take the note of the phone IP address
 ip address show
 
 ## Gain root permissions on the shell
 su
 
 ## Attach with gdbserver and listen on one TCP port
-gdbserver :4567 --attach $RETROSHARE_PID
+gdbserver :4567 --attach $(pgrep org.retroshare.android.qml_app:rs)
 --------------------------------------------------------------------------------
 
 
 .Prepare and run Android NDK GDB on your workstation
 [source,bash]
 --------------------------------------------------------------------------------
-## Extract system lib from the phone to a temporary directory on your computer
-adb pull /system/lib /tmp/system_lib
+## Setup some convenience variables
+NDK_GDB="${ANDROID_NDK_PATH}/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/bin/arm-linux-androideabi-gdb"
+RS_BUILD_PATH="${HOME}/Builds/RetroShare-Android_for_armeabi_v7a_GCC_4_9_Qt_5_9_2_android_armv7-Debug/"
 
 ## Start Android NDK GDB of your phone architecture passing the executable
-/opt/android-ndk/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/bin/arm-linux-androideabi-gdb RetroShare-Android_for_armeabi_v7a_GCC_4_9_Qt_5_9_2_android_armv7-Debug/retroshare-android-service/src/libretroshare-android-service.so
+$NDK_GDB $RS_BUILD_PATH/retroshare-android-service/src/libretroshare-android-service.so
 
-## Instruct GDB how and where to find libraries
+## Instruct GDB how and where to find debugging symbols
 (gdb) set auto-solib-add on
-(gdb) set solib-search-path /tmp/system_lib
+(gdb) set solib-search-path THE:BIG:LIST:OF:DIRECTORIES:YOU:TAKE:NOTE:BEFORE
 
 ## Connect to the gdbserver running on the phone
 (gdb) target remote $PHONE_IP:4567
+
+## Have fun debugging
+(gdb)
 --------------------------------------------------------------------------------
+
+TIP: Some time WiFi power saving on Android mess with the GDB connection,
+to prevent that from appening open another +adb shell+ and live +ping+ toward
+your work-station running
 
 
 == Furter Readings
@@ -167,3 +185,4 @@ adb pull /system/lib /tmp/system_lib
 - link:https://tthtlc.wordpress.com/2012/09/19/how-to-do-remote-debugging-via-gdbserver-running-inside-the-android-phone/[]
 - link:https://source.android.com/devices/tech/debug/[]
 - link:https://source.android.com/devices/tech/debug/gdb[]
+- link:https://fw4spl-org.github.io/fw4spl-blog/2015/07/27/Native-debugging-on-Android-with-QtCreator.html[]
