@@ -65,7 +65,8 @@ template<> bool RsTypeSerializer::serialize(uint8_t data[], uint32_t size, uint3
 }
 template<> bool RsTypeSerializer::serialize(uint8_t /*data*/[], uint32_t /*size*/, uint32_t& /*offset*/, const int32_t& /*member*/)
 {
-	// TODO: nice to have but not used ATM
+	std::cerr << __PRETTY_FUNCTION__ << " Not implemented!" << std::endl;
+	print_stacktrace();
 	return false;
 }
 template<> bool RsTypeSerializer::serialize(uint8_t data[], uint32_t size, uint32_t &offset, const uint8_t& member)
@@ -98,7 +99,8 @@ template<> bool RsTypeSerializer::deserialize(const uint8_t data[], uint32_t siz
 }
 template<> bool RsTypeSerializer::deserialize(const uint8_t /*data*/[], uint32_t /*size*/, uint32_t& /*offset*/, int32_t& /*member*/)
 {
-	// TODO: nice to have but not used ATM
+	std::cerr << __PRETTY_FUNCTION__ << " Not implemented!" << std::endl;
+	print_stacktrace();
 	return false;
 }
 template<> bool RsTypeSerializer::deserialize(const uint8_t data[], uint32_t size, uint32_t &offset, uint8_t& member)
@@ -128,7 +130,9 @@ template<> uint32_t RsTypeSerializer::serial_size(const bool& /* member*/)
 }
 template<> uint32_t RsTypeSerializer::serial_size(const int32_t& /* member*/)
 {
-	return 4;
+	std::cerr << __PRETTY_FUNCTION__ << " Not implemented!" << std::endl;
+	print_stacktrace();
+	return 0;
 }
 template<> uint32_t RsTypeSerializer::serial_size(const uint8_t& /* member*/)
 { 
@@ -513,8 +517,9 @@ bool RsTypeSerializer::to_JSON( const std::string& memberName,
 
 template<> /*static*/
 bool RsTypeSerializer::from_JSON( const std::string& /*memberName*/,
-                                  RsTlvItem& /*member*/, RsJson& /*jVal*/)
+                                  RsTlvItem& member, RsJson& /*jVal*/)
 {
+	member.TlvClear();
 	return true;
 }
 
@@ -580,6 +585,30 @@ template<> void RsTypeSerializer::print_data(const std::string& n, const RsTypeS
     std::cerr << "  [Binary data] " << n << ", length=" << s.second << " data=" << RsUtil::BinToHex((uint8_t*)s.first,std::min(50u,s.second)) << ((s.second>50)?"...":"") << std::endl;
 }
 
+template<> /*static*/
+bool RsTypeSerializer::to_JSON(
+        const std::string& memberName,
+        const RsTypeSerializer::TlvMemBlock_proxy& member, RsJson& jDoc )
+{
+	rapidjson::Document::AllocatorType& allocator = jDoc.GetAllocator();
+
+	rapidjson::Value key;
+	key.SetString(memberName.c_str(), memberName.length(), allocator);
+
+	rapidjson::Value value;
+	const char* tName = typeid(member).name();
+	value.SetString(tName, allocator);
+
+	jDoc.AddMember(key, value, allocator);
+
+	return true;
+}
+
+template<> /*static*/
+bool RsTypeSerializer::from_JSON( const std::string& /*memberName*/,
+                                  RsTypeSerializer::TlvMemBlock_proxy&,
+                                  RsJson& /*jVal*/)
+{ return true; }
 
 //============================================================================//
 //                    RsSerializable and derivated                            //

@@ -76,4 +76,4 @@ std::ostream &operator<<(std::ostream &out, const FileInfo &info)
 	return out;
 }
 
-
+RS_REGISTER_SERIALIZABLE_TYPE_DEF(CompressedChunkMap)

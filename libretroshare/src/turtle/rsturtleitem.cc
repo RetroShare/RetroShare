@@ -140,6 +140,9 @@ template<> void RsTypeSerializer::print_data(const std::string& n, const RsRegul
     std::cerr << "  [RegExpr    ] " << n << ", tokens=" << expr._tokens.size() << " ints=" << expr._ints.size() << " strings=" << expr._strings.size() << std::endl;
 }
 
+RS_TYPE_SERIALIZER_TO_JSON_NOT_IMPLEMENTED_DEF(RsRegularExpression::LinearizedExpression)
+RS_TYPE_SERIALIZER_FROM_JSON_NOT_IMPLEMENTED_DEF(RsRegularExpression::LinearizedExpression)
+
 void RsTurtleSearchResultItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,request_id,"request_id") ;
@@ -192,6 +195,9 @@ template<> void RsTypeSerializer::print_data(const std::string& n, const TurtleF
 {
     std::cerr << "  [FileInfo  ] " << n << " size=" << i.size << " hash=" << i.hash << ", name=" << i.name << std::endl;
 }
+
+RS_TYPE_SERIALIZER_TO_JSON_NOT_IMPLEMENTED_DEF(TurtleFileInfo)
+RS_TYPE_SERIALIZER_FROM_JSON_NOT_IMPLEMENTED_DEF(TurtleFileInfo)
 
 void RsTurtleOpenTunnelItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {

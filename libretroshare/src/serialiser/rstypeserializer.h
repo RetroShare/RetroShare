@@ -828,38 +828,48 @@ bool RsTypeSerializer::from_JSON( const std::string& memberName,
 
 
 //============================================================================//
-// Generic types                                                              //
+// Not implemented types macros                                               //
 //============================================================================//
 
-template<typename T> /*static*/
-bool RsTypeSerializer::to_JSON(const std::string& memberName, const T& member,
-                                RsJson& jDoc )
-{
-	rapidjson::Document::AllocatorType& allocator = jDoc.GetAllocator();
-
-	rapidjson::Value key;
-	key.SetString(memberName.c_str(), memberName.length(), allocator);
-
-	rapidjson::Value value;
-	const char* tName = typeid(member).name();
-	value.SetString(tName, allocator);
-
-	jDoc.AddMember(key, value, allocator);
-
-	std::cerr << __PRETTY_FUNCTION__ << " JSON serialization for type "
-	          << typeid(member).name() << " " << memberName
-	          << " not available." << std::endl;
-	print_stacktrace();
-	return true;
+/**
+ * @def RS_TYPE_SERIALIZER_TO_JSON_NOT_IMPLEMENTED_DEF(T)
+ * @def RS_TYPE_SERIALIZER_FROM_JSON_NOT_IMPLEMENTED_DEF(T)
+ * Helper macros for types that has not yet implemented to/from JSON
+ * should be deleted from the code as soon as they are not needed anymore
+ */
+#define RS_TYPE_SERIALIZER_TO_JSON_NOT_IMPLEMENTED_DEF(T) \
+template<> /*static*/ \
+bool RsTypeSerializer::to_JSON(const std::string& memberName, T const& member, \
+	                            RsJson& jDoc ) \
+{ \
+	rapidjson::Document::AllocatorType& allocator = jDoc.GetAllocator(); \
+ \
+	rapidjson::Value key; \
+	key.SetString(memberName.c_str(), memberName.length(), allocator); \
+ \
+	rapidjson::Value value; \
+	const char* tName = typeid(member).name(); \
+	value.SetString(tName, allocator); \
+ \
+	jDoc.AddMember(key, value, allocator); \
+ \
+	std::cerr << __FILE__ << __LINE__ << __PRETTY_FUNCTION__ \
+	          << " JSON serialization for type " \
+	          << typeid(member).name() << " " << memberName \
+	          << " not available." << std::endl; \
+	print_stacktrace(); \
+	return true; \
 }
 
-template<typename T> /*static*/
-bool RsTypeSerializer::from_JSON( const std::string& memberName,
-                                  T& member, RsJson& /*jDoc*/ )
-{
-	std::cerr << __PRETTY_FUNCTION__ << " JSON deserialization for type "
-	          << typeid(member).name() << " " << memberName
-	          << " not available." << std::endl;
-	print_stacktrace();
-	return true;
+#define RS_TYPE_SERIALIZER_FROM_JSON_NOT_IMPLEMENTED_DEF(T) \
+template<> /*static*/ \
+bool RsTypeSerializer::from_JSON( const std::string& memberName, \
+	                              T& member, RsJson& /*jDoc*/ ) \
+{ \
+	std::cerr << __FILE__ << __LINE__ << __PRETTY_FUNCTION__ \
+	          << " JSON deserialization for type " \
+	          << typeid(member).name() << " " << memberName \
+	          << " not available." << std::endl; \
+	print_stacktrace(); \
+	return true; \
 }

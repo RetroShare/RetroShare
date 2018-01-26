@@ -36,6 +36,8 @@
 
 #include <retroshare/rsids.h>
 #include <retroshare/rsflags.h>
+#include <serialiser/rsserializable.h>
+#include <serialiser/rstypeserializer.h>
 
 #define USE_NEW_CHUNK_CHECKING_CODE
 
@@ -118,13 +120,21 @@ class Condition
 	std::string name;
 };
 
-class PeerBandwidthLimits
+struct PeerBandwidthLimits : RsSerializable
 {
-public:
-    PeerBandwidthLimits() : max_up_rate_kbs(0), max_dl_rate_kbs(0) {}
-    
-    uint32_t max_up_rate_kbs ;
-    uint32_t max_dl_rate_kbs ;
+	PeerBandwidthLimits() : max_up_rate_kbs(0), max_dl_rate_kbs(0) {}
+
+	uint32_t max_up_rate_kbs;
+	uint32_t max_dl_rate_kbs;
+
+
+	/// @see RsSerializable
+	void serial_process(RsGenericSerializer::SerializeJob j,
+	                    RsGenericSerializer::SerializeContext& ctx)
+	{
+		RS_SERIAL_PROCESS(max_up_rate_kbs);
+		RS_SERIAL_PROCESS(max_dl_rate_kbs);
+	}
 };
 
 //class SearchRequest // unused stuff.
@@ -295,7 +305,7 @@ class FileChunksInfo
 		std::map<uint32_t, std::vector<SliceInfo> > pending_slices ;
 };
 
-class CompressedChunkMap
+class CompressedChunkMap : public RsSerializable
 {
 	public:
 		CompressedChunkMap() {}
@@ -345,9 +355,16 @@ class CompressedChunkMap
 		inline void   set(uint32_t j) { _map[j >> 5] |=  (1 << (j & 31)) ; }
 		inline void reset(uint32_t j) { _map[j >> 5] &= ~(1 << (j & 31)) ; }
 
-		/// compressed map, one bit per chunk
-		std::vector<uint32_t> _map ;
+	/// compressed map, one bit per chunk
+	std::vector<uint32_t> _map;
+
+	/// @see RsSerializable
+	void serial_process(RsGenericSerializer::SerializeJob j,
+	                    RsGenericSerializer::SerializeContext& ctx)
+	{ RS_SERIAL_PROCESS(_map); }
 };
+
+RS_REGISTER_SERIALIZABLE_TYPE_DECL(CompressedChunkMap)
 
 template<class CRCTYPE> class t_CRCMap
 {

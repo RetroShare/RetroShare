@@ -28,18 +28,11 @@
 
 
 
-#if 0
-#include <map>
-#include "rsitems/rsserviceids.h"
-#include "serialiser/rsserial.h"
-#include "serialiser/rstlvbase.h"
-#include "serialiser/rstlvtypes.h"
-#include "serialiser/rstlvkeys.h"
-#endif
-
 #include "gxs/rsgxs.h"
 #include "gxs/rsgxsdata.h"
 #include "serialiser/rstlvidset.h"
+#include "serialiser/rstypeserializer.h"
+#include "serialiser/rsserializable.h"
 
 
 const uint8_t RS_PKT_SUBTYPE_GXS_GRP_UPDATE             = 0x01;
@@ -140,16 +133,26 @@ public:
 class RsGxsMsgUpdate
 {
 public:
-    struct MsgUpdateInfo
+	struct MsgUpdateInfo : RsSerializable
     {
         MsgUpdateInfo(): time_stamp(0), message_count(0) {}
 
         uint32_t time_stamp ;
         uint32_t message_count ;
+
+		/// @see RsSerializable
+		void serial_process(RsGenericSerializer::SerializeJob j,
+		                    RsGenericSerializer::SerializeContext& ctx)
+		{
+			RS_SERIAL_PROCESS(time_stamp);
+			RS_SERIAL_PROCESS(message_count);
+		}
     };
 
     std::map<RsGxsGroupId, MsgUpdateInfo> msgUpdateInfos;
 };
+
+RS_REGISTER_SERIALIZABLE_TYPE_DECL(RsGxsMsgUpdate::MsgUpdateInfo)
 
 class RsGxsMsgUpdateItem : public RsGxsNetServiceItem, public RsGxsMsgUpdate
 {
