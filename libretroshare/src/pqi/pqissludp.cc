@@ -35,6 +35,7 @@
 
 #include "util/rsdebug.h"
 #include "util/rsnet.h"
+#include "util/rstime.h"
 #include "util/rsstring.h"
 
 #include "pqi/p3linkmgr.h"
@@ -571,7 +572,7 @@ bool 	pqissludp::moretoread(uint32_t usec)
 		{
 			return true;
 		}
-		usleep(usec);
+		rstime::rs_usleep(usec);
 	}
 
 	/* check for more to read first ... if nothing... check error
@@ -655,7 +656,7 @@ bool 	pqissludp::cansend(uint32_t usec)
 			return true;
 		}
 
-		usleep(usec);
+		rstime::rs_usleep(usec);
 	}
 
 	rslog(RSL_DEBUG_ALL, pqissludpzone, 

@@ -36,7 +36,7 @@
 #include "gui/RetroShareLink.h"
 #include "util/ObjectPainter.h"
 #include "util/imageutil.h"
-#include "util/rsscopetimer.h"
+#include "util/rstime.h"
 
 #include <iostream>
 
@@ -1151,7 +1151,7 @@ bool RsHtml::makeEmbeddedImage(const QString &fileName, QString &embeddedImage, 
 /** Converts image to embedded image HTML fragment **/
 bool RsHtml::makeEmbeddedImage(const QImage &originalImage, QString &embeddedImage, const int maxPixels, const int maxBytes)
 {
-	RsScopeTimer s("Embed image");
+	rstime::RsScopeTimer s("Embed image");
 	QImage opt;
 	return ImageUtil::optimizeSize(embeddedImage, originalImage, opt, maxPixels, maxBytes);
 }

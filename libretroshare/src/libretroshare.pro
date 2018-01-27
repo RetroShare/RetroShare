@@ -547,7 +547,7 @@ HEADERS +=	util/folderiterator.h \
 			util/rsmemcache.h \
 			util/rstickevent.h \
 			util/rsrecogn.h \
-			util/rsscopetimer.h \
+			util/rstime.h \
             util/stacktrace.h \
             util/rsdeprecate.h \
             util/cxx11retrocompat.h
@@ -695,7 +695,7 @@ SOURCES +=	util/folderiterator.cc \
 			util/rsrandom.cc \
 			util/rstickevent.cc \
 			util/rsrecogn.cc \
-			util/rsscopetimer.cc
+			util/rstime.cc
 
 
 upnp_miniupnpc {

@@ -7,6 +7,7 @@
 #include <QGraphicsDropShadowEffect>
 
 #include <iostream>
+#include "util/rstime.h"
 
 #include "TorControlWindow.h"
 #include "TorManager.h"
@@ -152,7 +153,7 @@ TorControlDialog::TorStatus TorControlDialog::checkForTor()
 {
 	switch(mTorManager->control()->torStatus())
 	{
-	case Tor::TorControl::TorReady:  usleep(1*1000*1000);return TOR_STATUS_OK ;
+	case Tor::TorControl::TorReady:  rstime::rs_usleep(1*1000*1000);return TOR_STATUS_OK ;
 	default:
 		return TOR_STATUS_UNKNOWN ;
 	}

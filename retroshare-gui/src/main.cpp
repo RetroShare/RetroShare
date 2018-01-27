@@ -46,6 +46,7 @@
 #include "lang/languagesupport.h"
 #include "util/RsGxsUpdateBroadcast.h"
 #include "util/rsdir.h"
+#include "util/rstime.h"
 
 #ifdef RETROTOR
 #include "TorControl/TorManager.h"
@@ -371,7 +372,7 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 		while(tcd.checkForTor() != TorControlDialog::TOR_STATUS_OK || tcd.checkForHiddenService() != TorControlDialog::HIDDEN_SERVICE_STATUS_OK)	// runs until some status is reached: either tor works, or it fails.
 		{
 			QCoreApplication::processEvents();
-			usleep(0.2*1000*1000) ;
+			rstime::rs_usleep(0.2*1000*1000) ;
 		}
 
 		tcd.hide();

@@ -35,7 +35,7 @@
 #include <algorithm>
 
 #ifdef RS_DATA_SERVICE_DEBUG_TIME
-#include <util/rsscopetimer.h>
+#include <util/rstime.h>
 #endif
 
 #include "rsdataservice.h"
@@ -1066,7 +1066,7 @@ bool RsDataService::validSize(RsNxsGrp* grp) const
 int RsDataService::retrieveNxsGrps(std::map<RsGxsGroupId, RsNxsGrp *> &grp, bool withMeta, bool /* cache */)
 {
 #ifdef RS_DATA_SERVICE_DEBUG_TIME
-    RsScopeTimer timer("");
+    rstime::RsScopeTimer timer("");
     int resultCount = 0;
     int requestedGroups = grp.size();
 #endif
@@ -1166,7 +1166,7 @@ void RsDataService::locked_retrieveGroups(RetroCursor* c, std::vector<RsNxsGrp*>
 int RsDataService::retrieveNxsMsgs(const GxsMsgReq &reqIds, GxsMsgResult &msg, bool /* cache */, bool withMeta)
 {
 #ifdef RS_DATA_SERVICE_DEBUG_TIME
-    RsScopeTimer timer("");
+    rstime::RsScopeTimer timer("");
     int resultCount = 0;
 #endif
 
@@ -1254,7 +1254,7 @@ int RsDataService::retrieveGxsMsgMetaData(const GxsMsgReq& reqIds, GxsMsgMetaRes
     RsStackMutex stack(mDbMutex);
 
 #ifdef RS_DATA_SERVICE_DEBUG_TIME
-    RsScopeTimer timer("");
+    rstime::RsScopeTimer timer("");
     int resultCount = 0;
 #endif
 
@@ -1341,7 +1341,7 @@ int RsDataService::retrieveGxsGrpMetaData(RsGxsGrpMetaTemporaryMap& grp)
     RsStackMutex stack(mDbMutex);
 
 #ifdef RS_DATA_SERVICE_DEBUG_TIME
-    RsScopeTimer timer("");
+    rstime::RsScopeTimer timer("");
     int resultCount = 0;
     int requestedGroups = grp.size();
 #endif
@@ -1549,7 +1549,7 @@ int RsDataService::retrieveGroupIds(std::vector<RsGxsGroupId> &grpIds)
     RsStackMutex stack(mDbMutex);
 
 #ifdef RS_DATA_SERVICE_DEBUG_TIME
-    RsScopeTimer timer("");
+    rstime::RsScopeTimer timer("");
     int resultCount = 0;
 #endif
 
@@ -1586,7 +1586,7 @@ int RsDataService::retrieveGroupIds(std::vector<RsGxsGroupId> &grpIds)
 int RsDataService::retrieveMsgIds(const RsGxsGroupId& grpId, RsGxsMessageId::std_vector& msgIds)
 {
 #ifdef RS_DATA_SERVICE_DEBUG_TIME
-    RsScopeTimer timer("");
+    rstime::RsScopeTimer timer("");
     int resultCount = 0;
 #endif
 

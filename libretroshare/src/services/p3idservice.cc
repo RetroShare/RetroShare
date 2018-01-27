@@ -34,6 +34,7 @@
 #include "util/rsstring.h"
 #include "util/radix64.h"
 #include "util/rsdir.h"
+#include "util/rstime.h"
 #include "crypto/hashstream.h"
 #include "gxs/gxssecurity.h"
 #include "retroshare/rspeers.h"
@@ -1071,7 +1072,7 @@ bool p3IdService::signData(const uint8_t *data,uint32_t data_size,const RsGxsId&
 #ifdef DEBUG_IDS
             std::cerr << "  Cannot get key. Waiting for caching. try " << i << "/6" << std::endl;
 #endif
-            usleep(500 * 1000) ;	// sleep for 500 msec.
+            rstime::rs_usleep(500 * 1000) ;	// sleep for 500 msec.
         }
         else
             break ;
@@ -1110,7 +1111,7 @@ bool p3IdService::validateData(const uint8_t *data,uint32_t data_size,const RsTl
 #ifdef DEBUG_IDS
             std::cerr << "  Cannot get key. Waiting for caching. try " << i << "/6" << std::endl;
 #endif
-            if(force_load) usleep(500 * 1000) ;	// sleep for 500 msec.
+            if(force_load) rstime::rs_usleep(500 * 1000) ;	// sleep for 500 msec.
         }
         else
             break ;
@@ -1151,7 +1152,7 @@ bool p3IdService::encryptData( const uint8_t *decrypted_data,
 		if(getKey(encryption_key_id,encryption_key))
             break ;
         else
-            usleep(500*1000) ; // sleep half a sec.
+            rstime::rs_usleep(500*1000) ; // sleep half a sec.
 
     if(encryption_key.keyId.isNull())
     {
@@ -1222,7 +1223,7 @@ bool p3IdService::encryptData( const uint8_t* decrypted_data,
 		}
 
 		if(keyNotYetFoundIds.empty()) break;
-		else usleep(500*1000);
+		else rstime::rs_usleep(500*1000);
 	}
 
 	if(!keyNotYetFoundIds.empty())
@@ -1279,7 +1280,7 @@ bool p3IdService::decryptData( const uint8_t *encrypted_data,
 	int maxRounds = force_load ? 6 : 1;
 	for(int i=0; i<maxRounds ;++i)
 		if(getPrivateKey(key_id,encryption_key)) break;
-		else usleep(500*1000) ; // sleep half a sec.
+		else rstime::rs_usleep(500*1000) ; // sleep half a sec.
 
     if(encryption_key.keyId.isNull())
     {
@@ -1356,7 +1357,7 @@ bool p3IdService::decryptData( const uint8_t* encrypted_data,
 		}
 
 		if(keyNotYetFoundIds.empty()) break;
-		else usleep(500*1000);
+		else rstime::rs_usleep(500*1000);
 	}
 
 	if(!keyNotYetFoundIds.empty())
