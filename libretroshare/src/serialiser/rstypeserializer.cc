@@ -251,8 +251,8 @@ bool RsTypeSerializer::from_JSON( const std::string& memberName, time_t& member,
                                   RsJson& jDoc )
 {
 	SAFE_GET_JSON_V();
-	ret = ret && v.IsUint();
-	if(ret) member = v.GetUint();
+	ret = ret && v.IsInt();
+	if(ret) member = v.GetInt();
 	return ret;
 }
 
@@ -298,7 +298,7 @@ bool RsTypeSerializer::from_JSON( const std::string& memberName,
 
 
 //============================================================================//
-//                                 FLoats                                     //
+//                                 Floats                                     //
 //============================================================================//
 
 template<> uint32_t RsTypeSerializer::serial_size(const float&){ return 4; }
