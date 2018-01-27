@@ -27,6 +27,7 @@
 #include <thread>
 #include <sys/time.h>
 #include <sys/unistd.h>
+#include <unistd.h>
 #include "rstime.h"
 
 namespace rstime {
