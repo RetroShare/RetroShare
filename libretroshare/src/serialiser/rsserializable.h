@@ -23,13 +23,10 @@
 /** @brief Minimal ancestor for all serializable structs in RetroShare.
  * If you want your struct to be easly serializable you should inherit from this
  * struct.
- * If you want your struct to be serializable as part of a container like an
- * `std::vector<T>` @see RS_REGISTER_SERIALIZABLE_TYPE_DEF(T) and
- * @see RS_REGISTER_SERIALIZABLE_TYPE_DECL(T)
  */
 struct RsSerializable
 {
-	/** Register struct members to serialize in this method taking advantage of
+	/** Process struct members to serialize in this method taking advantage of
 	 * the helper macro @see RS_SERIAL_PROCESS(I)
 	 */
 	virtual void serial_process(RsGenericSerializer::SerializeJob j,
@@ -37,7 +34,7 @@ struct RsSerializable
 };
 
 /** @def RS_SERIAL_PROCESS(I)
- * Use this macro to register the members of `YourSerializable` for serial
+ * Use this macro to process the members of `YourSerializable` for serial
  * processing inside `YourSerializable::serial_process(j, ctx)`
  *
  * Pay special attention for member of enum type which must be declared

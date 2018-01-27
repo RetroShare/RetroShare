@@ -75,7 +75,7 @@ struct RsItem : RsMemoryManagement::SmallObject, RsSerializable
 
 	/**
 	 * TODO: This default implementation should be removed and childs structs
-	 * implement RsSerializable(...) as soon as all the codebase is ported to
+	 * implement ::serial_process(...) as soon as all the codebase is ported to
 	 * the new serialization system
 	 */
 	virtual void serial_process(RsGenericSerializer::SerializeJob,
