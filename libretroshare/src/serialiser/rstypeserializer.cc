@@ -44,16 +44,17 @@ static const uint32_t MAX_SERIALIZED_CHUNK_SIZE = 10*1024*1024 ; // 10 MB.
 
 #define SAFE_GET_JSON_V() \
 	const char* mName = memberName.c_str(); \
-	bool ret = jVal.HasMember(mName); \
+	bool ret = jDoc.HasMember(mName); \
 	if(!ret) \
     { \
 	    std::cerr << __PRETTY_FUNCTION__ << " \"" << memberName \
 	              << "\" not found in JSON:" << std::endl \
-	              << jVal << std::endl << std::endl; \
+	              << jDoc << std::endl << std::endl; \
 	    print_stacktrace(); \
 	    return false; \
 	} \
-	rapidjson::Value& v = jVal[mName]
+	rapidjson::Value& v = jDoc[mName]
+
 
 //============================================================================//
 //                             Integer types                                  //
@@ -227,7 +228,7 @@ SIMPLE_TO_JSON_DEF(uint64_t)
 
 template<> /*static*/
 bool RsTypeSerializer::from_JSON( const std::string& memberName, bool& member,
-                                  RsJson& jVal )
+                                  RsJson& jDoc )
 {
 	SAFE_GET_JSON_V();
 	ret = ret && v.IsBool();
@@ -237,7 +238,7 @@ bool RsTypeSerializer::from_JSON( const std::string& memberName, bool& member,
 
 template<> /*static*/
 bool RsTypeSerializer::from_JSON( const std::string& memberName,
-                                  int32_t& member, RsJson& jVal )
+                                  int32_t& member, RsJson& jDoc )
 {
 	SAFE_GET_JSON_V();
 	ret = ret && v.IsInt();
@@ -247,7 +248,7 @@ bool RsTypeSerializer::from_JSON( const std::string& memberName,
 
 template<> /*static*/
 bool RsTypeSerializer::from_JSON( const std::string& memberName, time_t& member,
-                                  RsJson& jVal )
+                                  RsJson& jDoc )
 {
 	SAFE_GET_JSON_V();
 	ret = ret && v.IsUint();
@@ -257,7 +258,7 @@ bool RsTypeSerializer::from_JSON( const std::string& memberName, time_t& member,
 
 template<> /*static*/
 bool RsTypeSerializer::from_JSON( const std::string& memberName,
-                                  uint8_t& member, RsJson& jVal )
+                                  uint8_t& member, RsJson& jDoc )
 {
 	SAFE_GET_JSON_V();
 	ret = ret && v.IsUint();
@@ -267,7 +268,7 @@ bool RsTypeSerializer::from_JSON( const std::string& memberName,
 
 template<> /*static*/
 bool RsTypeSerializer::from_JSON( const std::string& memberName,
-                                  uint16_t& member, RsJson& jVal )
+                                  uint16_t& member, RsJson& jDoc )
 {
 	SAFE_GET_JSON_V();
 	ret = ret && v.IsUint();
@@ -277,7 +278,7 @@ bool RsTypeSerializer::from_JSON( const std::string& memberName,
 
 template<> /*static*/
 bool RsTypeSerializer::from_JSON( const std::string& memberName,
-                                  uint32_t& member, RsJson& jVal )
+                                  uint32_t& member, RsJson& jDoc )
 {
 	SAFE_GET_JSON_V();
 	ret = ret && v.IsUint();
@@ -287,7 +288,7 @@ bool RsTypeSerializer::from_JSON( const std::string& memberName,
 
 template<> /*static*/
 bool RsTypeSerializer::from_JSON( const std::string& memberName,
-                                  uint64_t& member, RsJson& jVal )
+                                  uint64_t& member, RsJson& jDoc )
 {
 	SAFE_GET_JSON_V();
 	ret = ret && v.IsUint();
@@ -319,7 +320,7 @@ SIMPLE_TO_JSON_DEF(float)
 
 template<> /*static*/
 bool RsTypeSerializer::from_JSON( const std::string& memberName,
-                                  float& member, RsJson& jVal )
+                                  float& member, RsJson& jDoc )
 {
 	SAFE_GET_JSON_V();
 	ret = ret && v.IsFloat();
@@ -371,7 +372,7 @@ bool RsTypeSerializer::to_JSON( const std::string& membername,
 }
 template<> /*static*/
 bool RsTypeSerializer::from_JSON( const std::string& memberName,
-                                  std::string& member, RsJson& jVal )
+                                  std::string& member, RsJson& jDoc )
 {
 	SAFE_GET_JSON_V();
 	ret = ret && v.IsString();
@@ -416,9 +417,9 @@ bool RsTypeSerializer::to_JSON( const std::string& memberName,
 template<> /*static*/
 bool RsTypeSerializer::from_JSON( const std::string& memberName,
                                   uint16_t /*sub_type*/,
-                                  std::string& member, RsJson& jVal )
+                                  std::string& member, RsJson& jDoc )
 {
-	return from_JSON<std::string>(memberName, member, jVal);
+	return from_JSON<std::string>(memberName, member, jDoc);
 }
 
 //============================================================================//
@@ -463,9 +464,9 @@ bool RsTypeSerializer::to_JSON( const std::string& memberName,
 template<> /*static*/
 bool RsTypeSerializer::from_JSON( const std::string& memberName,
                                   uint16_t /*sub_type*/,
-                                  uint32_t& member, RsJson& jVal )
+                                  uint32_t& member, RsJson& jDoc )
 {
-	return from_JSON<uint32_t>(memberName, member, jVal);
+	return from_JSON<uint32_t>(memberName, member, jDoc);
 }
 
 
@@ -517,7 +518,7 @@ bool RsTypeSerializer::to_JSON( const std::string& memberName,
 
 template<> /*static*/
 bool RsTypeSerializer::from_JSON( const std::string& /*memberName*/,
-                                  RsTlvItem& member, RsJson& /*jVal*/)
+                                  RsTlvItem& member, RsJson& /*jDoc*/)
 {
 	member.TlvClear();
 	return true;
@@ -607,133 +608,8 @@ bool RsTypeSerializer::to_JSON(
 template<> /*static*/
 bool RsTypeSerializer::from_JSON( const std::string& /*memberName*/,
                                   RsTypeSerializer::TlvMemBlock_proxy&,
-                                  RsJson& /*jVal*/)
+                                  RsJson& /*jDoc*/)
 { return true; }
-
-//============================================================================//
-//                    RsSerializable and derivated                            //
-//============================================================================//
-
-template<> uint32_t RsTypeSerializer::serial_size(const RsSerializable& s)
-{
-	RsGenericSerializer::SerializeContext ctx(
-	            NULL, 0, RsGenericSerializer::FORMAT_BINARY,
-	            RsGenericSerializer::SERIALIZATION_FLAG_NONE );
-
-	ctx.mOffset = 8;	// header size
-	const_cast<RsSerializable&>(s).serial_process(
-	            RsGenericSerializer::SIZE_ESTIMATE, ctx );
-
-	return ctx.mOffset;
-}
-
-template<> bool RsTypeSerializer::serialize( uint8_t data[], uint32_t size,
-                                             uint32_t &offset,
-                                             const RsSerializable& s )
-{
-	RsGenericSerializer::SerializeContext ctx(
-	            data, size, RsGenericSerializer::FORMAT_BINARY,
-	            RsGenericSerializer::SERIALIZATION_FLAG_NONE );
-	ctx.mOffset = offset;
-	const_cast<RsSerializable&>(s).serial_process(
-	            RsGenericSerializer::SERIALIZE, ctx );
-	return true;
-}
-
-template<> bool RsTypeSerializer::deserialize( const uint8_t data[],
-                                               uint32_t size, uint32_t& offset,
-                                               RsSerializable& s )
-{
-	RsGenericSerializer::SerializeContext ctx(
-	            const_cast<uint8_t*>(data), size,
-	            RsGenericSerializer::FORMAT_BINARY,
-	            RsGenericSerializer::SERIALIZATION_FLAG_NONE );
-	ctx.mOffset = offset;
-	const_cast<RsSerializable&>(s).serial_process(
-	            RsGenericSerializer::DESERIALIZE, ctx );
-	return true;
-}
-
-template<> void RsTypeSerializer::print_data( const std::string& /*n*/,
-                                              const RsSerializable& s )
-{
-	RsGenericSerializer::SerializeContext ctx(
-	            NULL, 0,
-	            RsGenericSerializer::FORMAT_BINARY,
-	            RsGenericSerializer::SERIALIZATION_FLAG_NONE );
-	const_cast<RsSerializable&>(s).serial_process( RsGenericSerializer::PRINT,
-	                                               ctx );
-}
-
-template<> /*static*/
-bool RsTypeSerializer::to_JSON( const std::string& memberName,
-                                const RsSerializable& member, RsJson& jDoc )
-{
-	rapidjson::Document::AllocatorType& allocator = jDoc.GetAllocator();
-
-	// Reuse allocator to avoid deep copy later
-	RsGenericSerializer::SerializeContext ctx(
-	            NULL, 0, RsGenericSerializer::FORMAT_BINARY,
-	            RsGenericSerializer::SERIALIZATION_FLAG_NONE,
-	            &allocator );
-
-	const_cast<RsSerializable&>(member).serial_process(
-	            RsGenericSerializer::TO_JSON, ctx );
-
-	rapidjson::Value key;
-	key.SetString(memberName.c_str(), memberName.length(), allocator);
-
-	/* Because the passed allocator is reused it doesn't go out of scope and
-	 * there is no need of deep copy and we can take advantage of the much
-	 * faster rapidjson move semantic */
-	jDoc.AddMember(key, ctx.mJson, allocator);
-
-	return ctx.mOk;
-}
-
-template<> /*static*/
-bool RsTypeSerializer::from_JSON( const std::string& memberName,
-                                  RsSerializable& member, RsJson& jVal )
-{
-	SAFE_GET_JSON_V();
-
-	if(ret)
-	{
-		RsGenericSerializer::SerializeContext ctx(
-		            NULL, 0, RsGenericSerializer::FORMAT_BINARY,
-		            RsGenericSerializer::SERIALIZATION_FLAG_NONE );
-
-		ctx.mJson.SetObject() = v; // Beware of move semantic!!
-		member.serial_process(RsGenericSerializer::FROM_JSON, ctx);
-		ret = ret && ctx.mOk;
-	}
-
-	return ret;
-}
-
-template<> /*static*/
-void RsTypeSerializer::serial_process<RsSerializable>(
-        RsGenericSerializer::SerializeJob j,
-        RsGenericSerializer::SerializeContext& ctx, RsSerializable& object,
-        const std::string& objName )
-{
-	switch (j)
-	{
-	case RsGenericSerializer::SIZE_ESTIMATE: // fall-through
-	case RsGenericSerializer::SERIALIZE: // fall-through
-	case RsGenericSerializer::DESERIALIZE: // fall-through
-	case RsGenericSerializer::PRINT: // fall-through
-		object.serial_process(j, ctx);
-	break;
-	case RsGenericSerializer::TO_JSON:
-		ctx.mOk = ctx.mOk && to_JSON(objName, object, ctx.mJson);
-		break;
-	case RsGenericSerializer::FROM_JSON:
-		ctx.mOk = ctx.mOk && from_JSON(objName, object, ctx.mJson);
-		break;
-	default: break;
-	}
-}
 
 
 //============================================================================//

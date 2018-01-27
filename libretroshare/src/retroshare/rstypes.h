@@ -364,7 +364,6 @@ class CompressedChunkMap : public RsSerializable
 	{ RS_SERIAL_PROCESS(_map); }
 };
 
-RS_REGISTER_SERIALIZABLE_TYPE_DECL(CompressedChunkMap)
 
 template<class CRCTYPE> class t_CRCMap
 {

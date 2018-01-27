@@ -38,12 +38,6 @@ OutgoingRecord::OutgoingRecord( RsGxsId rec, GxsTransSubServices cs,
 	memcpy(&mailData[0], data, size);
 }
 
-// for mailItem
-RS_REGISTER_SERIALIZABLE_TYPE_DEF(RsGxsTransMailItem)
-
-// for presignedReceipt
-RS_REGISTER_SERIALIZABLE_TYPE_DEF(RsNxsTransPresignedReceipt)
-
 void OutgoingRecord_deprecated::serial_process(
         RsGenericSerializer::SerializeJob j,
         RsGenericSerializer::SerializeContext& ctx )

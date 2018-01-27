@@ -152,7 +152,6 @@ public:
     std::map<RsGxsGroupId, MsgUpdateInfo> msgUpdateInfos;
 };
 
-RS_REGISTER_SERIALIZABLE_TYPE_DECL(RsGxsMsgUpdate::MsgUpdateInfo)
 
 class RsGxsMsgUpdateItem : public RsGxsNetServiceItem, public RsGxsMsgUpdate
 {

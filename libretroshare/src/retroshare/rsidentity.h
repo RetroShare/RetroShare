@@ -294,8 +294,6 @@ private:
 	RsIdentityUsage();
 };
 
-RS_REGISTER_SERIALIZABLE_TYPE_DECL(RsIdentityUsage)
-
 
 struct RsIdentityDetails : RsSerializable
 {

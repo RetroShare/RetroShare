@@ -193,7 +193,6 @@ void RsPeerStunItem::serial_process(RsGenericSerializer::SerializeJob j,RsGeneri
     RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,stunList,"stunList") ;
 }
 
-RS_REGISTER_SERIALIZABLE_TYPE_DEF(PeerBandwidthLimits)
 
 RsNodeGroupItem::RsNodeGroupItem(const RsGroupInfo& g)
     :RsItem(RS_PKT_VERSION1, RS_PKT_CLASS_CONFIG, RS_PKT_TYPE_PEER_CONFIG, RS_PKT_SUBTYPE_NODE_GROUP)

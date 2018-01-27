@@ -97,10 +97,6 @@ void RsGxsMsgUpdateItem::serial_process(RsGenericSerializer::SerializeJob j,RsGe
     RsTypeSerializer::serial_process(j,ctx,msgUpdateInfos,"msgUpdateInfos");
 }
 
-RS_REGISTER_SERIALIZABLE_TYPE_DEF(RsGxsMsgUpdate::MsgUpdateInfo)
-
-
-
 void RsGxsServerMsgUpdateItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process          (j,ctx,grpId,"grpId");
@@ -113,5 +109,3 @@ void RsGxsGrpConfigItem::serial_process(RsGenericSerializer::SerializeJob j,RsGe
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,msg_send_delay,"msg_send_delay") ;
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,msg_req_delay,"msg_req_delay") ;
 }
-
-

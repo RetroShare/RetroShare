@@ -37,6 +37,8 @@
 
 #include <rapidjson/document.h>
 #include <typeinfo> // for typeid
+#include <type_traits>
+#include <errno.h>
 
 
 /** INTERNAL ONLY helper to avoid copy paste code for std::{vector,list,set}<T>
@@ -129,9 +131,10 @@ struct RsTypeSerializer
 
 	/// Generic types
 	template<typename T>
-	static void serial_process( RsGenericSerializer::SerializeJob j,
+	typename std::enable_if<std::is_same<RsTlvItem,T>::value || !(std::is_base_of<RsSerializable,T>::value || std::is_enum<T>::value || std::is_base_of<RsTlvItem,T>::value)>::type
+	static /*void*/ serial_process( RsGenericSerializer::SerializeJob j,
 	                            RsGenericSerializer::SerializeContext& ctx,
-	                            T& member, const std::string& member_name )
+	                            T& member, const std::string& member_name)
 	{
 		switch(j)
 		{
@@ -156,8 +159,10 @@ struct RsTypeSerializer
 			ctx.mOk = ctx.mOk && from_JSON(member_name, member, ctx.mJson);
 			break;
 		default:
-			ctx.mOk = false;
-			throw std::runtime_error("Unknown serial job");
+			std::cerr << __PRETTY_FUNCTION__ << " Unknown serial job: "
+			          << static_cast<std::underlying_type<decltype(j)>::type>(j)
+			          << std::endl;
+			exit(EINVAL);
 		}
 	}
 
@@ -193,8 +198,10 @@ struct RsTypeSerializer
 			        from_JSON(member_name, type_id, member, ctx.mJson);
 			break;
 		default:
-			ctx.mOk = false;
-			throw std::runtime_error("Unknown serial job");
+			std::cerr << __PRETTY_FUNCTION__ << " Unknown serial job: "
+			          << static_cast<std::underlying_type<decltype(j)>::type>(j)
+			          << std::endl;
+			exit(EINVAL);
 		}
 	}
 
@@ -567,6 +574,118 @@ struct RsTypeSerializer
 		}
 	}
 
+	/**
+	 * @brief serial process enum types
+	 *
+	 * On declaration of your member of enum type you must specify the
+	 * underlying type otherwise the serialization format may differ in an
+	 * uncompatible way depending on the compiler/platform.
+	 */
+	template<typename E>
+	typename std::enable_if<std::is_enum<E>::value>::type
+	static /*void*/ serial_process( RsGenericSerializer::SerializeJob j,
+	                                RsGenericSerializer::SerializeContext& ctx,
+	                                E& member,
+	                                const std::string& memberName )
+	{
+#ifdef RSSERIAL_DEBUG
+		std::cerr << __PRETTY_FUNCTION__  << " processing enum: "
+		          << typeid(E).name() << " as "
+		          << typeid(typename std::underlying_type<E>::type).name()
+		          << std::endl;
+#endif
+		serial_process(
+		      j, ctx,
+		      reinterpret_cast<typename std::underlying_type<E>::type&>(member),
+		      memberName );
+	}
+
+	/// RsSerializable and derivatives
+	template<typename T>
+	typename std::enable_if<std::is_base_of<RsSerializable,T>::value>::type
+	static /*void*/ serial_process( RsGenericSerializer::SerializeJob j,
+	                                RsGenericSerializer::SerializeContext& ctx,
+	                                T& member,
+	                                const std::string& memberName )
+	{
+		switch(j)
+		{
+		case RsGenericSerializer::SIZE_ESTIMATE: // fallthrough
+		case RsGenericSerializer::DESERIALIZE: // fallthrough
+		case RsGenericSerializer::SERIALIZE: // fallthrough
+		case RsGenericSerializer::PRINT:
+			member.serial_process(j, ctx);
+			break;
+		case RsGenericSerializer::TO_JSON:
+		{
+			rapidjson::Document& jDoc(ctx.mJson);
+			rapidjson::Document::AllocatorType& allocator = jDoc.GetAllocator();
+
+			// Reuse allocator to avoid deep copy later
+			RsGenericSerializer::SerializeContext lCtx(
+			            nullptr, 0, RsGenericSerializer::FORMAT_BINARY,
+			            RsGenericSerializer::SERIALIZATION_FLAG_NONE,
+			            &allocator );
+
+			member.serial_process(j, lCtx);
+
+			rapidjson::Value key;
+			key.SetString(memberName.c_str(), memberName.length(), allocator);
+
+			/* Because the passed allocator is reused it doesn't go out of scope and
+			 * there is no need of deep copy and we can take advantage of the much
+			 * faster rapidjson move semantic */
+			jDoc.AddMember(key, lCtx.mJson, allocator);
+
+			ctx.mOk = ctx.mOk && lCtx.mOk;
+			break;
+		}
+		case RsGenericSerializer::FROM_JSON:
+		{
+			rapidjson::Document& jDoc(ctx.mJson);
+			const char* mName = memberName.c_str();
+			ctx.mOk = ctx.mOk && jDoc.HasMember(mName);
+
+			if(!ctx.mOk)
+			{
+				std::cerr << __PRETTY_FUNCTION__ << " \"" << memberName
+				          << "\" not found in JSON:" << std::endl
+				          << jDoc << std::endl << std::endl;
+				print_stacktrace();
+				break;
+			}
+
+			rapidjson::Value& v = jDoc[mName];
+
+			RsGenericSerializer::SerializeContext lCtx(
+			            nullptr, 0, RsGenericSerializer::FORMAT_BINARY,
+			            RsGenericSerializer::SERIALIZATION_FLAG_NONE );
+			lCtx.mJson.SetObject() = v; // Beware of move semantic!!
+
+			member.serial_process(j, lCtx);
+			ctx.mOk = ctx.mOk && lCtx.mOk;
+
+			break;
+		}
+		default:
+			std::cerr << __PRETTY_FUNCTION__ << " Unknown serial job: "
+			          << static_cast<std::underlying_type<decltype(j)>::type>(j)
+			          << std::endl;
+			exit(EINVAL);
+			break;
+		}
+	}
+
+	/// RsTlvItem derivatives only
+	template<typename T>
+	typename std::enable_if<std::is_base_of<RsTlvItem,T>::value && !std::is_same<RsTlvItem,T>::value>::type
+	static /*void*/ serial_process( RsGenericSerializer::SerializeJob j,
+	                                RsGenericSerializer::SerializeContext& ctx,
+	                                T& member,
+	                                const std::string& memberName )
+	{
+		serial_process(j, ctx, static_cast<RsTlvItem&>(member), memberName);
+	}
 
 protected:
 

@@ -4560,5 +4560,3 @@ RsIdentityUsage::RsIdentityUsage(
 
 RsIdentityUsage::RsIdentityUsage() :
     mServiceId(0), mUsageCode(UNKNOWN_USAGE), mAdditionalId(0) {}
-
-RS_REGISTER_SERIALIZABLE_TYPE_DEF(RsIdentityUsage)
