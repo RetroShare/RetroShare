@@ -60,9 +60,12 @@ int main(int argc, char *argv[])
 
 	ApiServerLocal apiServerLocal(&api, sockPath); (void) apiServerLocal;
 
+	// This ugly but RsControlModule has no other way to callback for stop
 	QTimer shouldExitTimer;
+	shouldExitTimer.setTimerType(Qt::VeryCoarseTimer);
+	shouldExitTimer.setInterval(1000);
 	QObject::connect( &shouldExitTimer, &QTimer::timeout, [&](){
-		if(ctrl_mod.processShouldExit()) app.quit(); });
+		if(ctrl_mod.processShouldExit()) app.quit(); } );
 	shouldExitTimer.start();
 
 	return app.exec();
