@@ -17,8 +17,12 @@
  */
 
 #include <QStringList>
+#include <QFileInfo>
+#include <QDir>
+
 #include "ApiServerLocal.h"
 #include "JsonStream.h"
+
 
 namespace resource_api{
 
@@ -44,12 +48,37 @@ ApiLocalListener::ApiLocalListener(ApiServer *server,
                                    QObject *parent) :
     QObject(parent), mApiServer(server), mLocalServer(this)
 {
-	mLocalServer.removeServer(listenPath);
+	QFileInfo fileInfo(listenPath);
+	if(fileInfo.exists())
+	{
+		std::cerr << __PRETTY_FUNCTION__ << listenPath.toLatin1().data()
+		          << " already exists. "
+		          << "Removing it assuming it's a past crash leftover! "
+		          << "Are you sure another instance is not listening there?"
+		          << std::endl;
+		mLocalServer.removeServer(listenPath);
+	}
 #if QT_VERSION >= 0x050000
 	mLocalServer.setSocketOptions(QLocalServer::UserAccessOption);
 #endif
-	connect(&mLocalServer, SIGNAL(newConnection()), this, SLOT(handleConnection()));
-	mLocalServer.listen(listenPath);
+	connect( &mLocalServer, &QLocalServer::newConnection,
+	         this, &ApiLocalListener::handleConnection );
+
+	QDir&& lDir(fileInfo.absoluteDir());
+	if(!lDir.exists())
+	{
+		std::cerr << __PRETTY_FUNCTION__ << " Directory for listening socket "
+		          << listenPath.toLatin1().data() << " doesn't exists. "
+		          << " Creating it!" << std::endl;
+		lDir.mkpath(lDir.absolutePath());
+	}
+
+	if(!mLocalServer.listen(listenPath))
+	{
+		std::cerr << __PRETTY_FUNCTION__ << " mLocalServer.listen("
+		          << listenPath.toLatin1().data() << ") failed with: "
+		          << mLocalServer.errorString().toLatin1().data() << std::endl;
+	}
 }
 
 void ApiLocalListener::handleConnection()
