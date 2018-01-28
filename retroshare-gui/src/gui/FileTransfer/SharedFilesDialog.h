@@ -132,6 +132,7 @@ protected:
   QString currentFile;
 
   QString lastFilterString;
+  QString mLastFilterText ;
 };
 
 class LocalSharedFilesDialog : public SharedFilesDialog

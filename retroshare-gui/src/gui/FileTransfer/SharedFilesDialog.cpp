@@ -283,6 +283,7 @@ void SharedFilesDialog::hideEvent(QHideEvent *)
 	if(model!=NULL)
 		model->setVisible(false) ;
 }
+
 void SharedFilesDialog::showEvent(QShowEvent *)
 {
 	if(model!=NULL)
@@ -291,8 +292,8 @@ void SharedFilesDialog::showEvent(QShowEvent *)
 
         saveExpandedPathsAndSelection(expanded_indexes,hidden_indexes,selected_indexes);
 
-        model->setVisible(true) ;
-		model->update() ;
+		  model->setVisible(true) ;
+		  model->update() ;
 
         restoreExpandedPathsAndSelection(expanded_indexes,hidden_indexes,selected_indexes);
     }
@@ -928,7 +929,10 @@ void SharedFilesDialog::recursSaveExpandedItems(const QModelIndex& index,const s
         sel.insert(local_path) ;
 
     if(ui.dirTreeView->isRowHidden(index.row(),index.parent()))
+	 {
         vis.insert(local_path) ;
+		  return ;
+	 }
 
     if(ui.dirTreeView->isExpanded(index))
     {
@@ -959,9 +963,10 @@ void SharedFilesDialog::recursRestoreExpandedItems(const QModelIndex& index, con
     if(sel.find(local_path) != sel.end())
         ui.dirTreeView->selectionModel()->select(index, QItemSelectionModel::Select | QItemSelectionModel::Rows);
 
-	ui.dirTreeView->setRowHidden(index.row(),index.parent(), vis.find(local_path) != vis.end()) ;
+	 bool invisible = vis.find(local_path) != vis.end();
+	ui.dirTreeView->setRowHidden(index.row(),index.parent(),invisible ) ;
 
-    if(exp.find(local_path) != exp.end())
+    if(!invisible && exp.find(local_path) != exp.end())
     {
 #ifdef DEBUG_SHARED_FILES_DIALOG
         std::cerr << "re expanding index " << local_path << std::endl;
@@ -1393,6 +1398,26 @@ static void recursMakeVisible(QTreeView *tree,const QSortFilterProxyModel *proxy
 		tree->setRowHidden(indx.row(), indx.parent(), true) ;
 }
 
+class QCursorContextBlocker
+{
+	public:
+		QCursorContextBlocker(QWidget *w)
+			: mW(w)
+		{
+			mW->setCursor(Qt::WaitCursor);
+			mW->blockSignals(true) ;
+		}
+
+		~QCursorContextBlocker()
+		{
+			mW->setCursor(Qt::ArrowCursor);
+			mW->blockSignals(false) ;
+		}
+
+	private:
+		QWidget *mW ;
+};
+
 void SharedFilesDialog::FilterItems()
 {
 #ifdef DONT_USE_SEARCH_IN_TREE_VIEW
@@ -1400,10 +1425,19 @@ void SharedFilesDialog::FilterItems()
         return;
 #endif
 
-	setCursor(Qt::WaitCursor);
-	ui.dirTreeView->blockSignals(true) ;
+	QString text = ui.filterPatternLineEdit->text();
 
-    QString text = ui.filterPatternLineEdit->text();
+	if(mLastFilterText == text)	// do not filter again if we already did. This is an optimization
+	{
+		std::cerr << "Last text is equal to text. skipping" << std::endl;
+		return ;
+	}
+
+	std::cerr << "New last text. Performing the filter" << std::endl;
+	mLastFilterText = text ;
+	model->update() ;
+
+	QCursorContextBlocker q(ui.dirTreeView) ;
 
 	if(proxyModel == tree_proxyModel)
 	{
@@ -1418,8 +1452,7 @@ void SharedFilesDialog::FilterItems()
 
 			for (int row = 0; row < rowCount; ++row)
 				recursMakeAllVisible(ui.dirTreeView,ui.dirTreeView->model()->index(row, COLUMN_NAME)) ;
-
-			setCursor(Qt::ArrowCursor);
+			
 			return ;
 		}
 
@@ -1509,9 +1542,6 @@ void SharedFilesDialog::FilterItems()
 		 else
 			 flat_FilterItem(ui.dirTreeView->model()->index(row, COLUMN_NAME), text, 0);
 #endif
-
-	ui.dirTreeView->blockSignals(false) ;
-    setCursor(Qt::ArrowCursor);
 }
 
 bool SharedFilesDialog::flat_FilterItem(const QModelIndex &index, const QString &text, int /*level*/)
