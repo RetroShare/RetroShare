@@ -1045,7 +1045,8 @@ ResponseTask* ChatHandler::handleLobbyParticipants(Request &req, Response &resp)
     return new SendLobbyParticipantsTask(mRsIdentity, mit->second);
 }
 
-void ChatHandler::handleGetDefaultIdentityForChatLobby(Request& req, Response& resp)
+void ChatHandler::handleGetDefaultIdentityForChatLobby(Request& /*req*/,
+                                                       Response& resp)
 {
 	RsGxsId gxsId;
 	mRsMsgs->getDefaultIdentityForChatLobby(gxsId);

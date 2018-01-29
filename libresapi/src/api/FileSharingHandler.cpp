@@ -23,8 +23,8 @@ namespace resource_api
 
 FileSharingHandler::FileSharingHandler(StateTokenServer *sts, RsFiles *files,
                                        RsNotify& notify):
-    mStateTokenServer(sts), mRsFiles(files), mNotify(notify),
-    mMtx("FileSharingHandler Mtx")
+    mStateTokenServer(sts), mMtx("FileSharingHandler Mtx"), mRsFiles(files),
+    mNotify(notify)
 {
 	addResourceHandler("*", this, &FileSharingHandler::handleWildcard);
 	addResourceHandler("force_check", this, &FileSharingHandler::handleForceCheck);
@@ -79,7 +79,7 @@ void FileSharingHandler::handleForceCheck(Request&, Response& resp)
 	resp.setOk();
 }
 
-void FileSharingHandler::handleGetSharedDir(Request& req, Response& resp)
+void FileSharingHandler::handleGetSharedDir(Request& /*req*/, Response& resp)
 {
 	DirDetails dirDetails;
 	mRsFiles->RequestDirDetails(NULL, dirDetails, RS_FILE_HINTS_LOCAL);

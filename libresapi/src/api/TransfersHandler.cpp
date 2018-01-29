@@ -8,8 +8,8 @@ namespace resource_api
 
 TransfersHandler::TransfersHandler(StateTokenServer *sts, RsFiles *files, RsPeers *peers,
                                    RsNotify& notify):
-    mStateTokenServer(sts), mFiles(files), mRsPeers(peers), mLastUpdateTS(0), mNotify(notify),
-   mMtx("TransfersHandler")
+    mStateTokenServer(sts), mFiles(files), mRsPeers(peers), mNotify(notify),
+   mMtx("TransfersHandler"), mLastUpdateTS(0)
 {
 	addResourceHandler("*", this, &TransfersHandler::handleWildcard);
 	addResourceHandler("downloads", this, &TransfersHandler::handleDownloads);
