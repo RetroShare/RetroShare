@@ -46,6 +46,12 @@ unix {
 	INSTALLS += data_files
 }
 
+android-* {
+    # see https://community.kde.org/Necessitas/Assets
+    bdboot.files=bitdht/bdboot.txt
+    bdboot.path=/assets/values
+    INSTALLS += bdboot
+}
 
 #################### Cross compilation for windows under Linux ####################
 

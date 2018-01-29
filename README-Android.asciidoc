@@ -84,11 +84,6 @@ CONFIG+=no_retroshare_gui CONFIG+=no_retroshare_nogui CONFIG+=no_retroshare_plug
 WARNING: SQLCipher is not supported yet on RetroShare for Android. This poses a
 major security concern, we are working to fix this ASAP.
 
-WARNING: DHT is not supported yet on RetroShare for Android. So don't be
-surprised if you are not able to connect to dynamic IP trusted nodes after not
-using the app for a relatively long time. Once this happens getting a fresh
-certificate link from your friends should work around the issue.
-
 TIP: Some versions of QtCreator try to find the Android SDK in
 +/opt/android/sdk+. A workaround to this is to make a symbolic link there
 pointing to your SDK installation path, like
