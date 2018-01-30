@@ -19,8 +19,3 @@ android-g++ {
 
 HEADERS += libresapilocalclient.h notificationsbridge.h
 SOURCES += libresapilocalclient.cpp main.cpp
-
-DEPENDPATH *= ../../libretroshare/src
-INCLUDEPATH *= ../../libretroshare/src
-PRE_TARGETDEPS *= ../../libretroshare/src/lib/libretroshare.a
-LIBS *= ../../libretroshare/src/lib/libretroshare.a
