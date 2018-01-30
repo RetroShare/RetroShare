@@ -46,6 +46,7 @@ export HOST_NUM_CPU=1
 ./android-prepare-toolchain.sh
 -------------------------------------------------------------------------------
 
+
 == Preparing Qt Creator
 
 Now that your environement is set up you should configure Qt Creator for Android
@@ -81,14 +82,12 @@ and add the following configurations
 CONFIG+=no_retroshare_gui CONFIG+=no_retroshare_nogui CONFIG+=no_retroshare_plugins CONFIG+=retroshare_android_service CONFIG+=libresapilocalserver CONFIG+=no_libresapihttpserver CONFIG+=retroshare_qml_app
 -------------------------------------------------------------------------------
 
-WARNING: SQLCipher is not supported yet on RetroShare for Android. This poses a
-major security concern, we are working to fix this ASAP.
-
 TIP: Some versions of QtCreator try to find the Android SDK in
 +/opt/android/sdk+. A workaround to this is to make a symbolic link there
 pointing to your SDK installation path, like
 +mkdir -p /opt/android/sdk && ln -s /home/user/android-sdk-linux
 /opt/android/sdk+
+
 
 == Quircks
 
@@ -105,6 +104,7 @@ To enable enable _protection_: +Android menu -> Settings -> Privacy & security
 {empty} +
 
 Other devices may offer similar _features_ please report them.
+
 
 == Debugging with GDB
 

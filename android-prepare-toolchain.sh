@@ -11,6 +11,7 @@
 [ -z ${OPENSSL_SOURCE_VERSION+x} ] && export OPENSSL_SOURCE_VERSION="1.0.2n"
 [ -z ${SQLITE_SOURCE_YEAR+x} ] && export SQLITE_SOURCE_YEAR="2018"
 [ -z ${SQLITE_SOURCE_VERSION+x} ] && export SQLITE_SOURCE_VERSION="3220000"
+[ -z ${SQLCIPHER_SOURCE_VERSION+x} ] && export SQLCIPHER_SOURCE_VERSION="3.4.2"
 [ -z ${LIBUPNP_SOURCE_VERSION+x} ] && export LIBUPNP_SOURCE_VERSION="1.6.24"
 
 
@@ -105,11 +106,18 @@ build_sqlite()
 
 build_sqlcipher()
 {
-	echo "sqlcipher not supported yet on android"
-	return 0
-
-	cd sqlcipher
-	./configure --enable-tempstore=yes CFLAGS="-DSQLITE_HAS_CODEC" LDFLAGS="${SYSROOT}/usr/lib/libcrypto.a"
+	B_dir="sqlcipher-${SQLCIPHER_SOURCE_VERSION}"
+	T_file="${B_dir}.tar.gz"
+	[ -f $T_file ] || wget -O $T_file https://github.com/sqlcipher/sqlcipher/archive/v${SQLCIPHER_SOURCE_VERSION}.tar.gz
+	rm -rf $B_dir
+	tar -xf $T_file
+	cd $B_dir
+	./configure --build=$(sh ./config.guess) \
+		--host=${ANDROID_NDK_ARCH}-linux \
+		--prefix="${SYSROOT}/usr" --with-sysroot="${SYSROOT}" \
+		--enable-tempstore=yes \
+		--disable-tcl --disable-shared \
+		CFLAGS="-DSQLITE_HAS_CODEC" LDFLAGS="${SYSROOT}/usr/lib/libcrypto.a"
 	make -j${HOST_NUM_CPU}
 	make install
 	cd ..
@@ -153,6 +161,7 @@ build_toolchain
 build_bzlib
 build_openssl
 build_sqlite
+build_sqlcipher
 build_libupnp
 
 echo NDK_TOOLCHAIN_PATH=${NDK_TOOLCHAIN_PATH}

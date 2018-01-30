@@ -920,21 +920,25 @@ test_bitdht {
 android-* {
 ## ifaddrs is missing on Android to add them don't use the one from
 ## https://github.com/morristech/android-ifaddrs
-## because they crash, use QNetworkInterface from Qt instead
+## because it crash, use QNetworkInterface from Qt instead
     CONFIG *= qt
     QT *= network
 
-## Add this here and not in retroshare.pri because static library are very
-## sensible to order in command line, has to be in the end of file for the
-## same reason
+    DEFINES *= "fopen64=fopen"
+    DEFINES *= "fseeko64=fseeko"
+    DEFINES *= "ftello64=ftello"
+    LIBS *= -lbz2 -lupnp -lixml -lthreadutil -lsqlite3
+
+## Static library are verysensible to order in command line, has to be in the
+## end of file for this reason
+
+    LIBS += -L$$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/lib/ -lsqlcipher
+    PRE_TARGETDEPS += $$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/lib/libsqlcipher.a
+
     LIBS += -L$$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/lib/ -lssl
-    INCLUDEPATH += $$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/include
-    DEPENDPATH += $$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/include
     PRE_TARGETDEPS += $$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/lib/libssl.a
 
     LIBS += -L$$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/lib/ -lcrypto
-    INCLUDEPATH += $$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/include
-    DEPENDPATH += $$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/include
     PRE_TARGETDEPS += $$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/lib/libcrypto.a
 
     HEADERS += util/androiddebug.h
