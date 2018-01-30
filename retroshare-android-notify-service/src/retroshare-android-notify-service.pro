@@ -12,7 +12,7 @@ RESOURCES += qml.qrc
 
 TEMPLATE = app
 
-android-g++ {
+android-* {
     TEMPLATE = lib
     QT += androidextras
 }

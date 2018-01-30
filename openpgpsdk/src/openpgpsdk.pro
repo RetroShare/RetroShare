@@ -122,7 +122,7 @@ SOURCES += openpgpsdk/opsstring.c
 
 ################################# Android #####################################
 
-android-g++ {
+android-* {
 
 ## Add this here and not in retroshare.pri because static library are very
 ## sensible to order in command line

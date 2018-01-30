@@ -917,7 +917,7 @@ test_bitdht {
 
 ################################# Android #####################################
 
-android-g++ {
+android-* {
 ## ifaddrs is missing on Android to add them don't use the one from
 ## https://github.com/morristech/android-ifaddrs
 ## because they crash, use QNetworkInterface from Qt instead

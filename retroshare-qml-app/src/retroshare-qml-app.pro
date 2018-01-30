@@ -17,7 +17,7 @@ RESOURCES += qml.qrc
 
 # Platform interaction specific code
 
-android-g++ {
+android-* {
     QT += androidextras
     HEADERS += NativeCalls.h androidplatforminteracions.h
     SOURCES += NativeCalls.cpp androidplatforminteracions.cpp

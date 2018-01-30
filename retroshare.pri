@@ -111,7 +111,7 @@ linux-* {
     }
 }
 
-android-g++ {
+android-* {
     isEmpty(NATIVE_LIBS_TOOLCHAIN_PATH) {
         NATIVE_LIBS_TOOLCHAIN_PATH = $$(NATIVE_LIBS_TOOLCHAIN_PATH)
     }
