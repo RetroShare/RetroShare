@@ -17,32 +17,68 @@
  */
 
 #include <QStringList>
+#include <QFileInfo>
+#include <QDir>
+
 #include "ApiServerLocal.h"
 #include "JsonStream.h"
 
+
 namespace resource_api{
 
-ApiServerLocal::ApiServerLocal(ApiServer* server, const QString &listenPath, QObject *parent) :
+ApiServerLocal::ApiServerLocal(ApiServer* server,
+                               const QString &listenPath, QObject *parent) :
     QObject(parent), serverThread(this),
-    localListener(server, listenPath) // Must have no parent to be movable to other thread
+    // Must have no parent to be movable to other thread
+    localListener(server, listenPath)
 {
+	qRegisterMetaType<QAbstractSocket::SocketState>();
 	localListener.moveToThread(&serverThread);
 	serverThread.start();
 }
 
-ApiServerLocal::~ApiServerLocal() { serverThread.quit(); }
+ApiServerLocal::~ApiServerLocal()
+{
+	serverThread.quit();
+	serverThread.wait();
+}
 
 ApiLocalListener::ApiLocalListener(ApiServer *server,
                                    const QString &listenPath,
                                    QObject *parent) :
     QObject(parent), mApiServer(server), mLocalServer(this)
 {
-	mLocalServer.removeServer(listenPath);
+	QFileInfo fileInfo(listenPath);
+	if(fileInfo.exists())
+	{
+		std::cerr << __PRETTY_FUNCTION__ << listenPath.toLatin1().data()
+		          << " already exists. "
+		          << "Removing it assuming it's a past crash leftover! "
+		          << "Are you sure another instance is not listening there?"
+		          << std::endl;
+		mLocalServer.removeServer(listenPath);
+	}
 #if QT_VERSION >= 0x050000
 	mLocalServer.setSocketOptions(QLocalServer::UserAccessOption);
 #endif
-	connect(&mLocalServer, SIGNAL(newConnection()), this, SLOT(handleConnection()));
-	mLocalServer.listen(listenPath);
+	connect( &mLocalServer, &QLocalServer::newConnection,
+	         this, &ApiLocalListener::handleConnection );
+
+	QDir&& lDir(fileInfo.absoluteDir());
+	if(!lDir.exists())
+	{
+		std::cerr << __PRETTY_FUNCTION__ << " Directory for listening socket "
+		          << listenPath.toLatin1().data() << " doesn't exists. "
+		          << " Creating it!" << std::endl;
+		lDir.mkpath(lDir.absolutePath());
+	}
+
+	if(!mLocalServer.listen(listenPath))
+	{
+		std::cerr << __PRETTY_FUNCTION__ << " mLocalServer.listen("
+		          << listenPath.toLatin1().data() << ") failed with: "
+		          << mLocalServer.errorString().toLatin1().data() << std::endl;
+	}
 }
 
 void ApiLocalListener::handleConnection()
@@ -62,8 +98,12 @@ ApiLocalConnectionHandler::ApiLocalConnectionHandler(
 
 ApiLocalConnectionHandler::~ApiLocalConnectionHandler()
 {
-	mLocalSocket->close();
-	delete mLocalSocket;
+	/* Any attempt of closing the socket here also deferred method call, causes
+	 * crash when the core is asked to stop, at least from the JSON API call.
+	 * QMetaObject::invokeMethod(&app, "close", Qt::QueuedConnection)
+	 * mLocalSocket->disconnectFromServer()
+	 * mLocalSocket->close() */
+	mLocalSocket->deleteLater();
 }
 
 void ApiLocalConnectionHandler::handlePendingRequests()

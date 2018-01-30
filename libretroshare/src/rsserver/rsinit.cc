@@ -35,6 +35,11 @@
 #include "util/rswin.h"
 #endif
 
+#ifdef __ANDROID__
+#	include <QFile> // To install bdboot.txt
+#	include <QString> // for String::fromStdString(...)
+#endif
+
 #include "util/argstream.h"
 #include "util/rsdebug.h"
 #include "util/rsdir.h"
@@ -1042,7 +1047,32 @@ int RsServer::StartupRetroShare()
 	uint64_t tmp_size ;
 	if (!RsDirUtil::checkFile(bootstrapfile,tmp_size,true))
 	{
-		std::cerr << "DHT bootstrap file not in ConfigDir: " << bootstrapfile << std::endl;
+		std::cerr << "DHT bootstrap file not in ConfigDir: " << bootstrapfile
+		          << std::endl;
+#ifdef __ANDROID__
+		QFile bdbootRF("assets:/values/bdboot.txt");
+		if(!bdbootRF.open(QIODevice::ReadOnly | QIODevice::Text))
+			std::cerr << __PRETTY_FUNCTION__
+			          << " bdbootRF(assets:/values/bdboot.txt).open(...) fail: "
+			          << bdbootRF.errorString().toStdString() << std::endl;
+		else
+		{
+			QFile bdbootCF(QString::fromStdString(bootstrapfile));
+			if(!bdbootCF.open(QIODevice::WriteOnly | QIODevice::Text))
+				std::cerr << __PRETTY_FUNCTION__  << " bdbootCF("
+				          << bootstrapfile << ").open(...) fail: "
+				          << bdbootRF.errorString().toStdString() << std::endl;
+			else
+			{
+				bdbootCF.write(bdbootRF.readAll());
+				bdbootCF.close();
+				std::cerr << "Installed DHT bootstrap file not in ConfigDir: "
+				          << bootstrapfile << std::endl;
+			}
+
+			bdbootRF.close();
+		}
+#else
 		std::string installfile = rsAccounts->PathDataDirectory();
 		installfile += "/";
 		installfile += BITDHT_BOOTSTRAP_FILENAME;
@@ -1064,6 +1094,7 @@ int RsServer::StartupRetroShare()
 		{
 			std::cerr << "No Installation DHT bootstrap file to copy" << std::endl;
 		}
+#endif // def __ANDROID__
 	}
 
 	/* construct the rest of the stack, important to build them in the correct order! */

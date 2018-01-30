@@ -1,6 +1,6 @@
 /*
  * RetroShare Android Service
- * Copyright (C) 2016-2017  Gioacchino Mazzurco <gio@eigenlab.org>
+ * Copyright (C) 2016-2018  Gioacchino Mazzurco <gio@eigenlab.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -18,8 +18,9 @@
 
 #include <QCoreApplication>
 #include <QDebug>
-#include <QMetaObject>
 #include <QDir>
+#include <QTimer>
+#include <csignal>
 
 #ifdef __ANDROID__
 #	include "util/androiddebug.h"
@@ -38,6 +39,13 @@ int main(int argc, char *argv[])
 #endif
 
 	QCoreApplication app(argc, argv);
+
+	signal(SIGINT, &QCoreApplication::exit);
+	signal(SIGTERM, &QCoreApplication::exit);
+#ifdef SIGBREAK
+	signal(SIGBREAK, &QCoreApplication::exit);
+#endif // def SIGBREAK
+
 	ApiServer api;
 	RsControlModule ctrl_mod(argc, argv, api.getStateTokenServer(), &api, true);
 	api.addResourceHandler(
@@ -52,16 +60,13 @@ int main(int argc, char *argv[])
 
 	ApiServerLocal apiServerLocal(&api, sockPath); (void) apiServerLocal;
 
-	while (!ctrl_mod.processShouldExit())
-	{
-		app.processEvents();
-		usleep(20000);
-	}
-
-	/* Since QCoreApplication::quit() is a no-op until the event loop has been
-	 * started, we need to defer the call until it starts. Thus, we queue a
-	 * deferred method call to quit() */
-	QMetaObject::invokeMethod(&app, "quit", Qt::QueuedConnection);
+	// This ugly but RsControlModule has no other way to callback for stop
+	QTimer shouldExitTimer;
+	shouldExitTimer.setTimerType(Qt::VeryCoarseTimer);
+	shouldExitTimer.setInterval(1000);
+	QObject::connect( &shouldExitTimer, &QTimer::timeout, [&](){
+		if(ctrl_mod.processShouldExit()) app.quit(); } );
+	shouldExitTimer.start();
 
 	return app.exec();
 }

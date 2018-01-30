@@ -111,7 +111,7 @@ linux-* {
     }
 }
 
-android-g++ {
+android-* {
     isEmpty(NATIVE_LIBS_TOOLCHAIN_PATH) {
         NATIVE_LIBS_TOOLCHAIN_PATH = $$(NATIVE_LIBS_TOOLCHAIN_PATH)
     }
@@ -119,21 +119,11 @@ android-g++ {
         CONFIG -= no_retroshare_android_notify_service
         CONFIG *= retroshare_android_notify_service
     }
-    CONFIG *= no_libresapihttpserver no_sqlcipher upnp_libupnp
-    CONFIG -= libresapihttpserver sqlcipher upnp_miniupnpc
+    CONFIG *= no_libresapihttpserver upnp_libupnp
+    CONFIG -= libresapihttpserver upnp_miniupnpc
     QT *= androidextras
-    DEFINES *= "fopen64=fopen"
-    DEFINES *= "fseeko64=fseeko"
-    DEFINES *= "ftello64=ftello"
     INCLUDEPATH += $$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/include
     LIBS *= -L$$NDK_TOOLCHAIN_PATH/sysroot/usr/lib/
-    LIBS *= -lbz2 -lupnp -lixml -lthreadutil -lsqlite3
-    ANDROID_EXTRA_LIBS *= $$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/lib/libsqlite3.so
-#    message(LIBS: $$LIBS)
-#    message(ANDROID_EXTRA_LIBS: $$ANDROID_EXTRA_LIBS)
-#    message(ANDROID_PLATFORM: $$ANDROID_PLATFORM)
-#    message(ANDROID_PLATFORM_ROOT_PATH: $$ANDROID_PLATFORM_ROOT_PATH)
-#    message(NATIVE_LIBS_TOOLCHAIN_PATH: $$NATIVE_LIBS_TOOLCHAIN_PATH)
 }
 
 win32 {
