@@ -153,7 +153,7 @@ Drawer
 
 				Component.onCompleted:
 				{
-					if (model.showOnOsAndroid && !Q_OS_ANDROID)
+					if (!model.showOnOsAndroid && Q_OS_ANDROID)
 					{
 						menuItem.visible = false
 						menuItem.height = 0
@@ -251,7 +251,8 @@ Drawer
 				ListElement
 				{
 					title: "Options"
-					showOnOsAndroid: false
+					showOnCoreReady: true
+					showOnOsAndroid: true
 					icon: "/icons/options.svg"
 				}
 				ListElement
