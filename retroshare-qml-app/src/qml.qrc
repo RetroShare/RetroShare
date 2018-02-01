@@ -744,5 +744,7 @@
         <file>icons/faces/male64/mouth9.png</file>
         <file>components/Faces.qml</file>
         <file>fonts/OpenSansEmoji.ttf</file>
+        <file>Options.qml</file>
+        <file>AppSettings.qml</file>
     </qresource>
 </RCC>

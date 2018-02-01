@@ -214,6 +214,10 @@ Drawer
 								platformGW.shareUrl(nodeUrl);
 							})
 					},
+					"Options": function()
+					{
+						stackView.push("qrc:/Options.qml")
+					},
 					"Terminate Core": function()
 					{
 						rsApi.request("/control/shutdown");
@@ -246,11 +250,16 @@ Drawer
 				}
 				ListElement
 				{
+					title: "Options"
+					showOnOsAndroid: false
+					icon: "/icons/options.svg"
+				}
+				ListElement
+				{
 					title: "Terminate Core"
 					showOnOsAndroid: false
 					icon: "/icons/exit.svg"
 				}
-
 			}
 
 			ScrollIndicator.vertical: ScrollIndicator { }
