@@ -104,10 +104,12 @@ Drawer
 					target: mainWindow
 					onCoreReadyChanged:
 					{
+						console.log("Drawer onCoreReadyChanged",
+									model.title,
+									model.showOnCoreReady,
+									mainWindow.coreReady)
 						if (model.showOnCoreReady)
-						{
-							setVisible(mainWindow.coreReady)
-						}
+							menuItem.setVisible(mainWindow.coreReady)
 					}
 				}
 
@@ -147,30 +149,20 @@ Drawer
 					}
 				}
 
-
-
 				visible: (model.showOnCoreReady)? setVisible(mainWindow.coreReady) : true
 
 				Component.onCompleted:
 				{
 					if (!model.showOnOsAndroid && Q_OS_ANDROID)
-					{
-						menuItem.visible = false
-						menuItem.height = 0
-					}
+						setVisible(false)
 				}
 
 				function setVisible(b)
 				{
 					menuItem.visible = b
-					if (!b)
-					{
-						menuItem.height = 0
-					}
-					else
-					{
-						menuItem.height = styles.height
-					}
+					if (!b) menuItem.height = 0
+					else menuItem.height = styles.height
+					return b;
 				}
 			}
 

@@ -630,11 +630,10 @@ ApplicationWindow
 	property var netStatus: ({})
 	function refreshNetStatus(optCallback)
 	{
-		console.log("refreshNetStatus(optCallback)", optCallback)
+		console.log("refreshNetStatus(optCallback)")
 		rsApi.request("/peers/get_network_options", "", function(par)
 		{
 			var json = JSON.parse(par.response)
-			console.log("got", par.response)
 			mainWindow.netStatus = json.data
 			if(typeof(optCallback) === "function") optCallback();
 		})

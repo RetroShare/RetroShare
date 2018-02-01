@@ -154,8 +154,8 @@ QtObject
 	property QtObject chatHelper: QtObject
 	{
 		id: chatHelper
-		property var gxs_id
-		property var name
+		property string gxs_id
+		property string name
 		property var cb
 
 		function startDistantChat (own_gxs_id, gxs_id, name, cb)
