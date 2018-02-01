@@ -1,6 +1,6 @@
 /*
  * RetroShare Android QML App
- * Copyright (C) 2017  Gioacchino Mazzurco <gio@eigenlab.org>
+ * Copyright (C) 2017-2018  Gioacchino Mazzurco <gio@eigenlab.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -30,7 +30,7 @@ QtObject
 	{
 		if(!maybeToken(token))
 		{
-			console.error("TokensManager attempt to register a non int token")
+			console.error("TokensManager attempt to register a non int token: ", token)
 			console.trace()
 			return
 		}
@@ -60,8 +60,41 @@ QtObject
 		}
 		else tokens[token] = [callback]
 	}
+	function unRegisterToken(token, callback)
+	{
+		if(!maybeToken(token))
+		{
+			console.error("TokensManager attempt to unregister a non int token: ", token)
+			console.trace()
+			return
+		}
+
+		var remCount = 0;
+		var arrLen = tokens[token].length
+		for(var i=0; i<arrLen; ++i)
+		{
+			if(callback === tokens[token][i])
+			{
+				tokens[token].splice(i,1)
+				++remCount
+			}
+		}
+
+		if(remCount === 0)
+		{
+			console.warn("TokensManager attempt to unregister unregistered callback", token, callback.name)
+			console.trace()
+		}
+	}
 	function tokenExpire(token)
 	{
+		if(!maybeToken(token))
+		{
+			console.error("TokensManager attempt to expire a non int token: ", token)
+			console.trace()
+			return
+		}
+
 		if(Array.isArray(tokens[token]))
 		{
 			var arrLen = tokens[token].length
