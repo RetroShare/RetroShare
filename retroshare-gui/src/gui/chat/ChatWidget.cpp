@@ -172,7 +172,7 @@ ChatWidget::ChatWidget(QWidget *parent) :
 
 	connect(ui->textBrowser, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuTextBrowser(QPoint)));
 
-	connect(ui->chatTextEdit, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenu(QPoint)));
+	//connect(ui->chatTextEdit, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenu(QPoint)));
 	// reset text and color after removing all characters from the QTextEdit and after calling QTextEdit::clear
 	connect(ui->chatTextEdit, SIGNAL(currentCharFormatChanged(QTextCharFormat)), this, SLOT(chatCharFormatChanged()));
 	connect(ui->chatTextEdit, SIGNAL(textChanged()), this, SLOT(updateLenOfChatTextEdit()));

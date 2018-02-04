@@ -38,7 +38,7 @@
 #include <retroshare/rsnotify.h>
 #include <retroshare/rspeers.h>
 
-static std::map<ChatId, ChatDialog*> chatDialogs2;
+static std::map<ChatId, ChatDialog*> chatDialogsList;
 
 ChatDialog::ChatDialog(QWidget *parent, Qt::WindowFlags flags) :
 	QWidget(parent, flags)
@@ -49,8 +49,8 @@ ChatDialog::ChatDialog(QWidget *parent, Qt::WindowFlags flags) :
 ChatDialog::~ChatDialog()
 {
     std::map<ChatId, ChatDialog *>::iterator it;
-    if (chatDialogs2.end() != (it = chatDialogs2.find(mChatId))) {
-        chatDialogs2.erase(it);
+    if (chatDialogsList.end() != (it = chatDialogsList.find(mChatId))) {
+        chatDialogsList.erase(it);
 	}
 }
 
@@ -78,7 +78,7 @@ void ChatDialog::init(const ChatId &id, const QString &title)
 /*static*/ ChatDialog* ChatDialog::getExistingChat(ChatId id)
 {
     std::map<ChatId, ChatDialog*>::iterator it;
-    if (chatDialogs2.end() != (it = chatDialogs2.find(id))) {
+    if (chatDialogsList.end() != (it = chatDialogsList.find(id))) {
         /* exists already */
         return it->second;
     }
@@ -122,7 +122,7 @@ void ChatDialog::init(const ChatId &id, const QString &title)
                 }
             }
             if(cd)
-                chatDialogs2[id] = cd;
+                chatDialogsList[id] = cd;
         }
     }
 
@@ -142,14 +142,14 @@ void ChatDialog::init(const ChatId &id, const QString &title)
 	/* ChatDialog destuctor removes the entry from the map */
 	std::list<ChatDialog*> list;
 
-    std::map<ChatId, ChatDialog*>::iterator it;
-    for (it = chatDialogs2.begin(); it != chatDialogs2.end(); ++it) {
+	std::map<ChatId, ChatDialog*>::iterator it;
+	for (it = chatDialogsList.begin(); it != chatDialogsList.end(); ++it) {
 		if (it->second) {
 			list.push_back(it->second);
 		}
 	}
 
-    chatDialogs2.clear();
+	chatDialogsList.clear();
 
 	std::list<ChatDialog*>::iterator it1;
 	for (it1 = list.begin(); it1 != list.end(); ++it1) {
