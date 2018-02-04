@@ -500,7 +500,7 @@ void FileSharingHandler::handleDownload(Request& req, Response& resp)
 	FileInfo finfo;
 	mRsFiles->FileDetails(hash, RS_FILE_HINTS_REMOTE, finfo);
 
-	for(std::list<TransferInfo>::const_iterator it(finfo.peers.begin());it!=finfo.peers.end();++it)
+	for(std::vector<TransferInfo>::const_iterator it(finfo.peers.begin());it!=finfo.peers.end();++it)
 		srcIds.push_back((*it).peerId);
 
 	if(!mRsFiles->FileRequest(name, hash, static_cast<uint64_t>(size), "",

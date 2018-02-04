@@ -301,7 +301,7 @@ void ftController::searchForDirectSources()
 			FileInfo info ;	// Info needs to be re-allocated each time, to start with a clear list of peers (it's not cleared down there)
 
 			if( mSearch->search(it->first, RS_FILE_HINTS_REMOTE | RS_FILE_HINTS_SPEC_ONLY, info) )
-				for( std::list<TransferInfo>::const_iterator pit = info.peers.begin(); pit != info.peers.end(); ++pit )
+				for( std::vector<TransferInfo>::const_iterator pit = info.peers.begin(); pit != info.peers.end(); ++pit )
 				{
 					bool bAllowDirectDL = false;
                     switch (mFilePermDirectDLPolicy) {
@@ -1029,7 +1029,7 @@ bool 	ftController::FileRequest(const std::string& fname, const RsFileHash& hash
 	}
 
 	std::list<RsPeerId>::const_iterator it;
-	std::list<TransferInfo>::const_iterator pit;
+	std::vector<TransferInfo>::const_iterator pit;
 
 #ifdef CONTROL_DEBUG
 	std::cerr << "ftController::FileRequest(" << fname << ",";

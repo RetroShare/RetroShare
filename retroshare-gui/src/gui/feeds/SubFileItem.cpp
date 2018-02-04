@@ -630,7 +630,7 @@ void SubFileItem::download()
 	FileInfo finfo ;
 	rsFiles->FileDetails(mFileHash,RS_FILE_HINTS_REMOTE,finfo) ;
 
-	for(std::list<TransferInfo>::const_iterator it(finfo.peers.begin());it!=finfo.peers.end();++it)
+	for(std::vector<TransferInfo>::const_iterator it(finfo.peers.begin());it!=finfo.peers.end();++it)
 		sources.push_back((*it).peerId) ;
 
 	// TEMP

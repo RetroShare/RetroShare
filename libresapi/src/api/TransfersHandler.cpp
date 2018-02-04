@@ -91,7 +91,7 @@ void TransfersHandler::handleControlDownload(Request &req, Response &resp)
 		FileInfo finfo;
 		mFiles->FileDetails(hash, RS_FILE_HINTS_REMOTE, finfo);
 
-		for(std::list<TransferInfo>::const_iterator it(finfo.peers.begin());it!=finfo.peers.end();++it)
+		for(std::vector<TransferInfo>::const_iterator it(finfo.peers.begin());it!=finfo.peers.end();++it)
 			srcIds.push_back((*it).peerId);
 
         bool ok = req.mStream.isOK();
@@ -213,8 +213,7 @@ void TransfersHandler::handleUploads(Request & /* req */, Response &resp)
 		FileInfo fi;
 		if(mFiles->FileDetails(*lit, RS_FILE_HINTS_UPLOAD, fi))
 		{
-			std::list<TransferInfo>::iterator pit;
-			for(pit = fi.peers.begin(); pit != fi.peers.end(); ++pit)
+			for( std::vector<TransferInfo>::iterator pit = fi.peers.begin(); pit != fi.peers.end(); ++pit)
 			{
 				if (pit->peerId == ownId) //don't display transfer to ourselves
 					continue ;
