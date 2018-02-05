@@ -125,7 +125,7 @@ public:
 	}
 	int columnCount(const QModelIndex &parent = QModelIndex()) const
 	{
-		return 14 ;
+		return 13 ;
 	}
 	bool hasChildren(const QModelIndex &parent = QModelIndex()) const
 	{
@@ -303,7 +303,7 @@ public:
 
 	QVariant displayRole(const FileInfo& fileInfo,int source_id,int col) const
 	{
-		if(source_id == 0)
+		if(source_id == -1)  // toplevel
 			switch(col)
 			{
 			case COLUMN_NAME:           return QVariant(QString::fromUtf8(fileInfo.fname.c_str()));
@@ -378,6 +378,42 @@ public:
 				return QVariant(strPathAfterDL);
 			}
 
+			case COLUMN_SOURCES:
+			{
+				int active = 0;
+				QString fileHash = QString::fromStdString(fileInfo.hash.toStdString());
+
+				if (fileInfo.downloadStatus != FT_STATE_COMPLETE)
+					for (std::vector<TransferInfo>::const_iterator pit = fileInfo.peers.begin() ; pit != fileInfo.peers.end(); ++pit)
+					{
+						const TransferInfo& transferInfo = *pit;
+
+					//	//unique combination: fileHash + peerId, variant: hash + peerName (too long)
+					//	QString hashFileAndPeerId = fileHash + QString::fromStdString(transferInfo.peerId.toStdString());
+
+					//	double peerDlspeed = 0;
+					//	if ((uint32_t)transferInfo.status == FT_STATE_DOWNLOADING && fileInfo.downloadStatus != FT_STATE_PAUSED && fileInfo.downloadStatus != FT_STATE_COMPLETE)
+					//		peerDlspeed = transferInfo.tfRate * 1024.0;
+
+					//	FileProgressInfo peerpinfo;
+					//	peerpinfo.cmap = fcinfo.compressed_peer_availability_maps[transferInfo.peerId];
+					//	peerpinfo.type = FileProgressInfo::DOWNLOAD_SOURCE ;
+					//	peerpinfo.progress = 0.0;	// we don't display completion for sources.
+					//	peerpinfo.nb_chunks = peerpinfo.cmap._map.empty() ? 0 : fcinfo.chunks.size();
+
+						// get the sources (number of online peers)
+						if (transferInfo.tfRate > 0 && fileInfo.downloadStatus == FT_STATE_DOWNLOADING)
+							++active;
+					}
+
+				return QVariant( active + (float)fileInfo.peers.size()/1000 );
+
+			}
+
+			case COLUMN_SIZE: return QVariant((qlonglong) fileInfo.size);
+
+			case COLUMN_ID:   return QVariant(QString::fromStdString(fileInfo.hash.toStdString()));
+
 			default:
 				return QVariant("[ TODO ]");
 			}
@@ -415,6 +451,9 @@ public:
 
 			return QVariant::fromValue(pinfo);
 		}
+
+		case COLUMN_ID:   return QVariant(QString::fromStdString(fileInfo.hash.toStdString()));
+
 
 		default:
 			return QVariant();
