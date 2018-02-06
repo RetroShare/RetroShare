@@ -108,8 +108,6 @@ public:
 
 	int rowCount(const QModelIndex& parent = QModelIndex()) const
 	{
-		std::cerr << "in rowCount()" << std::endl;
-
 		void *ref = (parent.isValid())?parent.internalPointer():NULL ;
 
 		if(!ref)
@@ -129,8 +127,6 @@ public:
 	}
 	bool hasChildren(const QModelIndex &parent = QModelIndex()) const
 	{
-		std::cerr << "in hasChildren()" << std::endl;
-
 		void *ref = (parent.isValid())?parent.internalPointer():NULL ;
 		uint32_t entry = 0;
 		int source_id=0 ;
@@ -138,16 +134,14 @@ public:
 		if(!ref)
 			return true ;
 
-		if(!convertRefPointerToTabEntry(ref,entry,source_id) || entry >= mDownloads.size())
+		if(!convertRefPointerToTabEntry(ref,entry,source_id) || entry >= mDownloads.size() || source_id > -1)
 			return false ;
 
 		return !mDownloads[entry].peers.empty();	// costly
 	}
 
-	QModelIndex index(int row, int column, const QModelIndex & parent) const
+	QModelIndex index(int row, int column, const QModelIndex & parent = QModelIndex()) const
 	{
-		std::cerr << "in index() row=" << row << " column=" << column << std::endl;
-
 		if(row < 0)
 			return QModelIndex();
 
@@ -161,8 +155,6 @@ public:
 			if(!convertTabEntryToRefPointer(row,-1,subref))
 				return QModelIndex() ;
 
-			std::cerr << "normal behavior (no parent). subref=" << subref << std::endl;
-
 			return createIndex(row,column,subref) ;
 		}
 
@@ -175,14 +167,10 @@ public:
 		if(!convertTabEntryToRefPointer(entry,row,subref))
 			return QModelIndex() ;
 
-		std::cerr << "normal behavior. subref=" << subref << std::endl;
-
 		return createIndex(row,column,subref) ;
 	}
 	QModelIndex parent(const QModelIndex& child) const
 	{
-		std::cerr << "in parent()" << std::endl;
-
 		void *ref = (child.isValid())?child.internalPointer():NULL ;
 		uint32_t entry = 0;
 		int source_id=0 ;
@@ -206,8 +194,6 @@ public:
 
 	QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const
 	{
-		std::cerr << "in headerData()" << std::endl;
-
 		if(role != Qt::DisplayRole)
 			return QVariant();
 
@@ -232,8 +218,6 @@ public:
 
 	QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const
 	{
-		std::cerr << "in data()" << std::endl;
-
 		if(!index.isValid())
 			return QVariant();
 
@@ -256,10 +240,7 @@ public:
 		int source_id=0 ;
 
 		if(!ref)
-		{
-			std::cerr << "ref=NULL!" << std::endl;
 			return false ;
-		}
 
 		if(!convertRefPointerToTabEntry(ref,entry,source_id) || entry >= mDownloads.size())
 		{
@@ -406,7 +387,7 @@ public:
 							++active;
 					}
 
-				return QVariant( active + (float)fileInfo.peers.size()/1000 );
+				return QVariant( (float)active + fileInfo.peers.size()/1000.0f );
 
 			}
 
@@ -418,46 +399,121 @@ public:
 				return QVariant("[ TODO ]");
 			}
 		else
-			return QVariant("[ TODO ]");
+		{
+			uint32_t chunk_size = 1024*1024 ;
+
+			switch(col)
+			{
+			default:
+			case COLUMN_SOURCES:
+			case COLUMN_COMPLETED:
+			case COLUMN_REMAINING:
+			case COLUMN_LASTDL:
+			case COLUMN_ID:
+			case COLUMN_PATH:
+			case COLUMN_DOWNLOADTIME:
+			case COLUMN_SIZE:     return QVariant();
+			case COLUMN_PROGRESS: return QVariant( (fileInfo.size>0)?((fileInfo.peers[source_id].transfered % chunk_size)*100.0/fileInfo.size):0.0) ;
+			case COLUMN_DLSPEED:
+			{
+				double peerDlspeed = 0;
+				if((uint32_t)fileInfo.peers[source_id].status == FT_STATE_DOWNLOADING && fileInfo.downloadStatus != FT_STATE_PAUSED && fileInfo.downloadStatus != FT_STATE_COMPLETE)
+					peerDlspeed = fileInfo.peers[source_id].tfRate * 1024.0;
+
+				return QVariant((double)peerDlspeed) ;
+			}
+			case COLUMN_NAME:
+			{
+				QString iconName,tooltip;
+				return  QVariant(TransfersDialog::getPeerName(fileInfo.peers[source_id].peerId, iconName, tooltip));
+			}
+
+			case COLUMN_PRIORITY: return QVariant((double)PRIORITY_NULL);
+			}
+		}
+
+		return QVariant("[ERROR]");
 	}
 
 	virtual QVariant userRole(const FileInfo& fileInfo,int source_id,int col) const
 	{
-		switch(col)
-		{
-		case COLUMN_PROGRESS:
-		{
-			FileChunksInfo fcinfo;
-			if (!rsFiles->FileDownloadChunksDetails(fileInfo.hash, fcinfo))
-				return -1;
+		if(source_id == -1)
+			switch(col)
+			{
+			case COLUMN_PROGRESS:
+			{
+				FileChunksInfo fcinfo;
+				if (!rsFiles->FileDownloadChunksDetails(fileInfo.hash, fcinfo))
+					return -1;
 
-			FileProgressInfo pinfo;
-			pinfo.cmap = fcinfo.chunks;
-			pinfo.type = FileProgressInfo::DOWNLOAD_LINE;
-			pinfo.progress = (fileInfo.size == 0) ? 0 : (fileInfo.transfered * 100.0 / fileInfo.size);
-			pinfo.nb_chunks = pinfo.cmap._map.empty() ? 0 : fcinfo.chunks.size();
+				FileProgressInfo pinfo;
+				pinfo.cmap = fcinfo.chunks;
+				pinfo.type = FileProgressInfo::DOWNLOAD_LINE;
+				pinfo.progress = (fileInfo.size == 0) ? 0 : (fileInfo.transfered * 100.0 / fileInfo.size);
+				pinfo.nb_chunks = pinfo.cmap._map.empty() ? 0 : fcinfo.chunks.size();
 
-			for (uint32_t i = 0; i < fcinfo.chunks.size(); ++i)
-				switch(fcinfo.chunks[i])
+				for (uint32_t i = 0; i < fcinfo.chunks.size(); ++i)
+					switch(fcinfo.chunks[i])
+					{
+					case FileChunksInfo::CHUNK_CHECKING: pinfo.chunks_in_checking.push_back(i);
+						break ;
+					case FileChunksInfo::CHUNK_ACTIVE: 	 pinfo.chunks_in_progress.push_back(i);
+						break ;
+					case FileChunksInfo::CHUNK_DONE:
+					case FileChunksInfo::CHUNK_OUTSTANDING:
+						break ;
+					}
+
+				return QVariant::fromValue(pinfo);
+			}
+
+			case COLUMN_ID:   return QVariant(QString::fromStdString(fileInfo.hash.toStdString()));
+
+
+			default:
+				return QVariant();
+			}
+		else
+			switch(col)
+			{
+			case COLUMN_PROGRESS:
+			{
+				FileProgressInfo peerpinfo ;
+
+				if(!rsFiles->FileUploadChunksDetails(fileInfo.hash, fileInfo.peers[source_id].peerId, peerpinfo.cmap) )
+					return QVariant();
+
+				// Estimate the completion. We need something more accurate, meaning that we need to
+				// transmit the completion info.
+				//
+				uint32_t chunk_size = 1024*1024 ;
+				uint32_t nb_chunks = (uint32_t)((fileInfo.size + (uint64_t)chunk_size - 1) / (uint64_t)(chunk_size)) ;
+
+				uint32_t filled_chunks = peerpinfo.cmap.filledChunks(nb_chunks) ;
+				peerpinfo.type = FileProgressInfo::UPLOAD_LINE ;
+				peerpinfo.nb_chunks = peerpinfo.cmap._map.empty()?0:nb_chunks ;
+				qlonglong completed ;
+
+				if(filled_chunks > 0 && nb_chunks > 0)
 				{
-				case FileChunksInfo::CHUNK_CHECKING: pinfo.chunks_in_checking.push_back(i);
-					break ;
-				case FileChunksInfo::CHUNK_ACTIVE: 	 pinfo.chunks_in_progress.push_back(i);
-					break ;
-				case FileChunksInfo::CHUNK_DONE:
-				case FileChunksInfo::CHUNK_OUTSTANDING:
-					break ;
+					completed = peerpinfo.cmap.computeProgress(fileInfo.size,chunk_size) ;
+					peerpinfo.progress = completed / (float)fileInfo.size * 100.0f ;
+				}
+				else
+				{
+					completed = fileInfo.peers[source_id].transfered % chunk_size ;	// use the position with respect to last request.
+					peerpinfo.progress = (fileInfo.size>0)?((fileInfo.peers[source_id].transfered % chunk_size)*100.0/fileInfo.size):0 ;
 				}
 
-			return QVariant::fromValue(pinfo);
-		}
+				return QVariant::fromValue(peerpinfo);
+			}
 
-		case COLUMN_ID:   return QVariant(QString::fromStdString(fileInfo.hash.toStdString()));
+			case COLUMN_ID: return QVariant(QString::fromStdString(fileInfo.hash.toStdString()) + QString::fromStdString(fileInfo.peers[source_id].peerId.toStdString()));
 
+			default:
+				return QVariant();
+			}
 
-		default:
-			return QVariant();
-		}
 	}
 
 	virtual QVariant sortRole(const QModelIndex&,const DirDetails&,int) const
@@ -468,14 +524,25 @@ public:
 	QVariant decorationRole(const FileInfo& fileInfo,int source_id,int col) const
 	{
 		if(col == COLUMN_NAME)
-			return QVariant(FilesDefs::getIconFromFilename(QString::fromUtf8(fileInfo.fname.c_str())));
+		{
+			if(source_id == -1)
+				return QVariant(FilesDefs::getIconFromFilename(QString::fromUtf8(fileInfo.fname.c_str())));
+			else
+			{
+				QString iconName,tooltip;
+				TransfersDialog::getPeerName(fileInfo.peers[source_id].peerId, iconName, tooltip);
+
+				return QVariant(iconName);
+			}
+		}
 		else
 			return QVariant();
 	}
 
-
 	void update_transfers()
 	{
+		beginResetModel();
+
 		std::list<RsFileHash> downHashes;
 		rsFiles->FileDownloads(downHashes);
 
@@ -489,7 +556,7 @@ public:
 			FileInfo& fileInfo(mDownloads[i]);
 			rsFiles->FileDetails(*it, RS_FILE_HINTS_DOWNLOAD, fileInfo);
 		}
-		beginResetModel();
+
 		endResetModel();
 
 		QModelIndex topLeft = createIndex(0,0), bottomRight = createIndex(mDownloads.size(), COLUMN_COUNT-1);
@@ -693,10 +760,11 @@ TransfersDialog::TransfersDialog(QWidget *parent)
 //    DLListModel->setHeaderData(COLUMN_LASTDL, Qt::Horizontal, tr("Last Time Seen", "i.e: Last Time Receiced Data"));
 //    DLListModel->setHeaderData(COLUMN_PATH, Qt::Horizontal, tr("Path", "i.e: Where file is saved"));
 
-    DLLFilterModel = new QSortFilterProxyModel(this);
-    DLLFilterModel->setSourceModel( DLListModel);
-    DLLFilterModel->setFilterCaseSensitivity(Qt::CaseInsensitive);
-    ui.downloadList->setModel(DLLFilterModel);
+//    DLLFilterModel = new QSortFilterProxyModel(this);
+//    DLLFilterModel->setSourceModel( DLListModel);
+//    DLLFilterModel->setFilterCaseSensitivity(Qt::CaseInsensitive);
+//    ui.downloadList->setModel(DLLFilterModel);
+    ui.downloadList->setModel(DLListModel);
 
     DLDelegate = new DLListDelegate();
     ui.downloadList->setItemDelegate(DLDelegate);
@@ -1834,7 +1902,17 @@ void TransfersDialog::updateDisplay()
 
 void TransfersDialog::insertTransfers() 
 {
+	std::set<QString> expanded_hashes ;
+
+    for(int row = 0; row < DLListModel->rowCount(); ++row)
+		if(ui.downloadList->isExpanded(DLListModel->index(row,0,QModelIndex())))
+			expanded_hashes.insert(DLListModel->index(row,COLUMN_ID).data(Qt::DisplayRole).toString());
+
 	DLListModel->update_transfers();
+
+    for(int row = 0; row < DLListModel->rowCount(); ++row)
+		if(expanded_hashes.find(DLListModel->index(row,COLUMN_ID).data(Qt::DisplayRole).toString()) != expanded_hashes.end())
+			ui.downloadList->setExpanded(DLListModel->index(row,0,QModelIndex()),true);
 
 //	/* disable for performance issues, enable after insert all transfers */
 //	ui.downloadList->setSortingEnabled(false);
@@ -1971,7 +2049,7 @@ void TransfersDialog::insertTransfers()
 
 }
 
-QString TransfersDialog::getPeerName(const RsPeerId& id, QString &iconName, QString &tooltip) const
+QString TransfersDialog::getPeerName(const RsPeerId& id, QString &iconName, QString &tooltip)
 {
 	QString res = QString::fromUtf8(rsPeers->getPeerName(id).c_str()) ;
 

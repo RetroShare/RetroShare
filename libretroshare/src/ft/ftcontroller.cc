@@ -1622,6 +1622,8 @@ bool 	ftController::FileDetails(const RsFileHash &hash, FileInfo &info)
 	bool isDownloading = false;
 	bool isSuspended = false;
 
+	info.peers.clear();
+
 	for(pit = peerIds.begin(); pit != peerIds.end(); ++pit)
 	{
 		if (it->second->mTransfer->getPeerState(*pit, state, tfRate))

@@ -79,6 +79,7 @@ public:
 	 LocalSharedFilesDialog *localSharedFiles ;
 	 RemoteSharedFilesDialog *remoteSharedFiles ;
 
+    static QString getPeerName(const RsPeerId &peer_id, QString &iconName, QString &tooltip) ;
 public slots:
     void insertTransfers();
 
@@ -165,7 +166,6 @@ signals:
     void playFiles(QStringList files);
 
 private:
-    QString getPeerName(const RsPeerId &peer_id, QString &iconName, QString &tooltip) const ;
 
     RsDownloadListModel *DLListModel;
     QSortFilterProxyModel *DLLFilterModel;
