@@ -34,6 +34,7 @@ RSTreeWidget::RSTreeWidget(QWidget *parent) : QTreeWidget(parent)
 {
 	mEnableColumnCustomize = false;
 	mSettingsVersion = 0; // disabled
+	mFilterReasonRole = -1; // disabled
 
 	QHeaderView *h = header();
 	h->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -84,6 +85,12 @@ void RSTreeWidget::mousePressEvent(QMouseEvent *event)
 	QTreeWidget::mousePressEvent(event);
 }
 
+void RSTreeWidget::setFilterReasonRole(int role /*=-1*/)
+{
+	if (role > Qt::UserRole)
+		mFilterReasonRole = role;
+}
+
 void RSTreeWidget::filterItems(int filterColumn, const QString &text, int role)
 {
 	int count = topLevelItemCount();
@@ -101,6 +108,13 @@ void RSTreeWidget::filterItems(int filterColumn, const QString &text, int role)
 bool RSTreeWidget::filterItem(QTreeWidgetItem *item, int filterColumn, const QString &text, int role)
 {
 	bool itemVisible = true;
+	//Get who hide this item
+	int filterReason = 0;
+	if (mFilterReasonRole >= Qt::UserRole)
+		filterReason = item->data(filterColumn, mFilterReasonRole).toInt();
+	//Remove this filter for last test
+	if (filterReason & FILTER_REASON_TEXT)
+		filterReason -= FILTER_REASON_TEXT;
 
 	if (!text.isEmpty()) {
 		if (!item->data(filterColumn, role).toString().contains(text, Qt::CaseInsensitive)) {
@@ -116,11 +130,62 @@ bool RSTreeWidget::filterItem(QTreeWidgetItem *item, int filterColumn, const QSt
 		}
 	}
 
-	if (itemVisible || visibleChildCount) {
-		item->setHidden(false);
-	} else {
-		item->setHidden(true);
+	if (!itemVisible && !visibleChildCount) {
+		filterReason |= FILTER_REASON_TEXT;
 	}
+	item->setHidden(filterReason != 0);
+	//Update hiding reason
+	if (mFilterReasonRole >= Qt::UserRole)
+		item->setData(filterColumn, mFilterReasonRole, filterReason);
+
+	return (itemVisible || visibleChildCount);
+}
+
+void RSTreeWidget::filterMinValItems(int filterColumn, const double &value, int role)
+{
+	int count = topLevelItemCount();
+	for (int index = 0; index < count; ++index) {
+		filterMinValItem(topLevelItem(index), filterColumn, value, role);
+	}
+
+	QTreeWidgetItem *item = currentItem();
+	if (item && item->isHidden()) {
+		// active item is hidden, deselect it
+		setCurrentItem(NULL);
+	}
+}
+
+bool RSTreeWidget::filterMinValItem(QTreeWidgetItem *item, int filterColumn, const double &value, int role)
+{
+	bool itemVisible = true;
+	//Get who hide this item
+	int filterReason = 0;
+	if (mFilterReasonRole >= Qt::UserRole)
+		filterReason = item->data(filterColumn, mFilterReasonRole).toInt();
+	//Remove this filter for last test
+	if (filterReason & FILTER_REASON_MINVAL)
+		filterReason -= FILTER_REASON_MINVAL;
+
+	bool ok = false;
+	if ((item->data(filterColumn, role).toDouble(&ok) < value) && ok ) {
+		itemVisible = false;
+	}
+
+	int visibleChildCount = 0;
+	int count = item->childCount();
+	for (int index = 0; index < count; ++index) {
+		if (filterMinValItem(item->child(index), filterColumn, value, role)) {
+			++visibleChildCount;
+		}
+	}
+
+	if (!itemVisible && !visibleChildCount) {
+		filterReason |= FILTER_REASON_MINVAL;
+	}
+	item->setHidden(filterReason != 0);
+	//Update hiding reason
+	if (mFilterReasonRole >= Qt::UserRole)
+		item->setData(filterColumn, mFilterReasonRole, filterReason);
 
 	return (itemVisible || visibleChildCount);
 }
@@ -294,6 +359,6 @@ void RSTreeWidget::columnVisible()
 void RSTreeWidget::resort()
 {
 	if (isSortingEnabled()) {
-		sortByColumn(header()->sortIndicatorSection(), header()->sortIndicatorOrder());
+		sortItems(header()->sortIndicatorSection(), header()->sortIndicatorOrder());
 	}
 }
