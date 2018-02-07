@@ -229,7 +229,6 @@ bool RsHtml::canReplaceAnchor(QDomDocument &/*doc*/, QDomElement &/*element*/, c
 	switch (link.type()) {
 	case RetroShareLink::TYPE_UNKNOWN:
 	case RetroShareLink::TYPE_FILE:
-	case RetroShareLink::TYPE_FILE_TREE:
 	case RetroShareLink::TYPE_PERSON:
 	case RetroShareLink::TYPE_FORUM:
 	case RetroShareLink::TYPE_CHANNEL:
@@ -240,6 +239,8 @@ bool RsHtml::canReplaceAnchor(QDomDocument &/*doc*/, QDomElement &/*element*/, c
 	case RetroShareLink::TYPE_PUBLIC_MSG:
 	case RetroShareLink::TYPE_POSTED:
 	case RetroShareLink::TYPE_IDENTITY:
+	case RetroShareLink::TYPE_FILE_TREE:
+	case RetroShareLink::TYPE_CHAT_ROOM:
 		// not yet implemented
 		break;
 
@@ -260,7 +261,6 @@ void RsHtml::anchorStylesheetForImg(QDomDocument &/*doc*/, QDomElement &/*elemen
 	switch (link.type()) {
 	case RetroShareLink::TYPE_UNKNOWN:
 	case RetroShareLink::TYPE_FILE:
-	case RetroShareLink::TYPE_FILE_TREE:
 	case RetroShareLink::TYPE_PERSON:
 	case RetroShareLink::TYPE_FORUM:
 	case RetroShareLink::TYPE_CHANNEL:
@@ -271,6 +271,8 @@ void RsHtml::anchorStylesheetForImg(QDomDocument &/*doc*/, QDomElement &/*elemen
 	case RetroShareLink::TYPE_PUBLIC_MSG:
 	case RetroShareLink::TYPE_POSTED:
 	case RetroShareLink::TYPE_IDENTITY:
+	case RetroShareLink::TYPE_FILE_TREE:
+	case RetroShareLink::TYPE_CHAT_ROOM:
 		// not yet implemented
 		break;
 
