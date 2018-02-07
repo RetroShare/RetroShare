@@ -106,6 +106,8 @@ public:
 	explicit RsDownloadListModel(QObject *parent = NULL) : QAbstractItemModel(parent) {}
 	~RsDownloadListModel(){}
 
+	enum Roles{ SortRole = Qt::UserRole+1 };
+
 	int rowCount(const QModelIndex& parent = QModelIndex()) const
 	{
 		void *ref = (parent.isValid())?parent.internalPointer():NULL ;
@@ -255,6 +257,7 @@ public:
 		case Qt::DisplayRole:    return displayRole   (finfo,source_id,index.column()) ;
 		case Qt::DecorationRole: return decorationRole(finfo,source_id,index.column()) ;
 		case Qt::UserRole:       return userRole      (finfo,source_id,index.column()) ;
+		//case SortRole:       	 return sortRole      (finfo,source_id,index.column()) ;
 		default:
 			return QVariant();
 		}
@@ -516,10 +519,10 @@ public:
 
 	}
 
-	virtual QVariant sortRole(const QModelIndex&,const DirDetails&,int) const
-	{
-		std::cerr << "Unimplemented: " << __PRETTY_FUNCTION__ << std::endl;
-	}
+//	virtual QVariant sortRole(const FileInfo& fileInfo,int source_id,int col) const
+//	{
+//		return QString::fromStdString(fileInfo.hash.toStdString()) ;
+//	}
 
 	QVariant decorationRole(const FileInfo& fileInfo,int source_id,int col) const
 	{
@@ -548,7 +551,7 @@ public:
 
 		mDownloads.resize(downHashes.size()) ;
 
-		std::cerr << "updating file list: found " << mDownloads.size() << " transfers." << std::endl;
+		//std::cerr << "updating file list: found " << mDownloads.size() << " transfers." << std::endl;
 
 		uint32_t i=0;
 		for(auto it(downHashes.begin());it!=downHashes.end();++it,++i)
@@ -745,26 +748,11 @@ TransfersDialog::TransfersDialog(QWidget *parent)
 	DLListModel = new RsDownloadListModel ;
 
     // Set Download list model
-//    DLListModel = new QStandardItemModel(0,COLUMN_COUNT);
-//    DLListModel->setHeaderData(COLUMN_NAME, Qt::Horizontal, tr("Name", "i.e: file name"));
-//    DLListModel->setHeaderData(COLUMN_SIZE, Qt::Horizontal, tr("Size", "i.e: file size"));
-//    DLListModel->setHeaderData(COLUMN_COMPLETED, Qt::Horizontal, tr("Completed", ""));
-//    DLListModel->setHeaderData(COLUMN_DLSPEED, Qt::Horizontal, tr("Speed", "i.e: Download speed"));
-//    DLListModel->setHeaderData(COLUMN_PROGRESS, Qt::Horizontal, tr("Progress / Availability", "i.e: % downloaded"));
-//    DLListModel->setHeaderData(COLUMN_SOURCES, Qt::Horizontal, tr("Sources", "i.e: Sources"));
-//    DLListModel->setHeaderData(COLUMN_STATUS, Qt::Horizontal, tr("Status"));
-//    DLListModel->setHeaderData(COLUMN_PRIORITY, Qt::Horizontal, tr("Speed / Queue position"));
-//    DLListModel->setHeaderData(COLUMN_REMAINING, Qt::Horizontal, tr("Remaining"));
-//    DLListModel->setHeaderData(COLUMN_DOWNLOADTIME, Qt::Horizontal, tr("Download time", "i.e: Estimated Time of Arrival / Time left"));
-//    DLListModel->setHeaderData(COLUMN_ID, Qt::Horizontal, tr("Hash"));
-//    DLListModel->setHeaderData(COLUMN_LASTDL, Qt::Horizontal, tr("Last Time Seen", "i.e: Last Time Receiced Data"));
-//    DLListModel->setHeaderData(COLUMN_PATH, Qt::Horizontal, tr("Path", "i.e: Where file is saved"));
 
-//    DLLFilterModel = new QSortFilterProxyModel(this);
-//    DLLFilterModel->setSourceModel( DLListModel);
-//    DLLFilterModel->setFilterCaseSensitivity(Qt::CaseInsensitive);
-//    ui.downloadList->setModel(DLLFilterModel);
-    ui.downloadList->setModel(DLListModel);
+    DLLFilterModel = new QSortFilterProxyModel(this);
+    DLLFilterModel->setSourceModel( DLListModel);
+    DLLFilterModel->setFilterCaseSensitivity(Qt::CaseInsensitive);
+    ui.downloadList->setModel(DLLFilterModel);
 
     DLDelegate = new DLListDelegate();
     ui.downloadList->setItemDelegate(DLDelegate);
@@ -790,33 +778,19 @@ TransfersDialog::TransfersDialog(QWidget *parent)
 
 //    /* Set header resize modes and initial section sizes Downloads TreeView*/
     QHeaderView * dlheader = ui.downloadList->header () ;
-//    QHeaderView_setSectionResizeModeColumn(dlheader, COLUMN_NAME, QHeaderView::Interactive);
-//    QHeaderView_setSectionResizeModeColumn(dlheader, COLUMN_SIZE, QHeaderView::Interactive);
-//    QHeaderView_setSectionResizeModeColumn(dlheader, COLUMN_COMPLETED, QHeaderView::Interactive);
-//    QHeaderView_setSectionResizeModeColumn(dlheader, COLUMN_DLSPEED, QHeaderView::Interactive);
-//    QHeaderView_setSectionResizeModeColumn(dlheader, COLUMN_PROGRESS, QHeaderView::Interactive);
-//    QHeaderView_setSectionResizeModeColumn(dlheader, COLUMN_SOURCES, QHeaderView::Interactive);
-//    QHeaderView_setSectionResizeModeColumn(dlheader, COLUMN_STATUS, QHeaderView::Interactive);
-//    QHeaderView_setSectionResizeModeColumn(dlheader, COLUMN_PRIORITY, QHeaderView::Interactive);
-//    QHeaderView_setSectionResizeModeColumn(dlheader, COLUMN_REMAINING, QHeaderView::Interactive);
-//    QHeaderView_setSectionResizeModeColumn(dlheader, COLUMN_DOWNLOADTIME, QHeaderView::Interactive);
-//    QHeaderView_setSectionResizeModeColumn(dlheader, COLUMN_ID, QHeaderView::Interactive);
-//    QHeaderView_setSectionResizeModeColumn(dlheader, COLUMN_LASTDL, QHeaderView::Interactive);
-//    QHeaderView_setSectionResizeModeColumn(dlheader, COLUMN_PATH, QHeaderView::Interactive);
-
-//    dlheader->resizeSection ( COLUMN_NAME, 170 );
-//    dlheader->resizeSection ( COLUMN_SIZE, 70 );
-//    dlheader->resizeSection ( COLUMN_COMPLETED, 75 );
-//    dlheader->resizeSection ( COLUMN_DLSPEED, 75 );
-//    dlheader->resizeSection ( COLUMN_PROGRESS, 170 );
-//    dlheader->resizeSection ( COLUMN_SOURCES, 90 );
-//    dlheader->resizeSection ( COLUMN_STATUS, 100 );
-//    dlheader->resizeSection ( COLUMN_PRIORITY, 100 );
-//    dlheader->resizeSection ( COLUMN_REMAINING, 100 );
-//    dlheader->resizeSection ( COLUMN_DOWNLOADTIME, 100 );
-//    dlheader->resizeSection ( COLUMN_ID, 100 );
-//    dlheader->resizeSection ( COLUMN_LASTDL, 100 );
-//    dlheader->resizeSection ( COLUMN_PATH, 100 );
+    QHeaderView_setSectionResizeModeColumn(dlheader, COLUMN_NAME, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeModeColumn(dlheader, COLUMN_SIZE, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeModeColumn(dlheader, COLUMN_COMPLETED, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeModeColumn(dlheader, COLUMN_DLSPEED, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeModeColumn(dlheader, COLUMN_PROGRESS, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeModeColumn(dlheader, COLUMN_SOURCES, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeModeColumn(dlheader, COLUMN_STATUS, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeModeColumn(dlheader, COLUMN_PRIORITY, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeModeColumn(dlheader, COLUMN_REMAINING, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeModeColumn(dlheader, COLUMN_DOWNLOADTIME, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeModeColumn(dlheader, COLUMN_ID, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeModeColumn(dlheader, COLUMN_LASTDL, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeModeColumn(dlheader, COLUMN_PATH, QHeaderView::Interactive);
 
     // set default column and sort order for download
     ui.downloadList->sortByColumn(COLUMN_NAME, Qt::AscendingOrder);
@@ -882,23 +856,11 @@ TransfersDialog::TransfersDialog(QWidget *parent)
 
 	 ui.tabWidget->addTab(localSharedFiles = new LocalSharedFilesDialog(), QIcon(IMAGE_MYFILES), tr("My files")) ;
 
-	 //ui.tabWidget->addTab( new TurtleRouterStatistics(), tr("Router Statistics")) ;
-	 //ui.tabWidget->addTab( new TurtleRouterDialog(), tr("Router Requests")) ;
-
 	 for(int i=0;i<rsPlugins->nbPlugins();++i)
 		 if(rsPlugins->plugin(i) != NULL && rsPlugins->plugin(i)->qt_transfers_tab() != NULL)
 			 ui.tabWidget->addTab( rsPlugins->plugin(i)->qt_transfers_tab(),QString::fromUtf8(rsPlugins->plugin(i)->qt_transfers_tab_name().c_str()) ) ;
 
 	 ui.tabWidget->setCurrentWidget(ui.uploadsTab);
-
-//    TurtleRouterDialog *trdl = new TurtleRouterDialog();
-//    ui.tunnelInfoWidget->setWidget(trdl);
-//    ui.tunnelInfoWidget->setWidgetResizable(true);
-//    ui.tunnelInfoWidget->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-//    ui.tunnelInfoWidget->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
-//    ui.tunnelInfoWidget->viewport()->setBackgroundRole(QPalette::NoRole);
-//    ui.tunnelInfoWidget->setFrameStyle(QFrame::NoFrame);
-//    ui.tunnelInfoWidget->setFocusPolicy(Qt::NoFocus);
 
     /** Setup the actions for the context menu */
 
@@ -909,14 +871,8 @@ TransfersDialog::TransfersDialog(QWidget *parent)
    resumeAct = new QAction(QIcon(IMAGE_RESUME), tr("Resume"), this);
    connect(resumeAct, SIGNAL(triggered()), this, SLOT(resumeFileTransfer()));
 
-//#ifdef USE_NEW_CHUNK_CHECKING_CODE
-	// *********WARNING**********
-	// csoler: this has been suspended because it needs the file transfer to consider a file as complete only if all chunks are
-	// 			verified by hash. As users are goign to slowly switch to new checking code, this will not be readily available.
-	//
    forceCheckAct = new QAction(QIcon(IMAGE_CANCEL), tr( "Force Check" ), this );
    connect( forceCheckAct , SIGNAL( triggered() ), this, SLOT( forceCheck() ) );
-//#endif
 
    cancelAct = new QAction(QIcon(IMAGE_CANCEL), tr( "Cancel" ), this );
    connect( cancelAct , SIGNAL( triggered() ), this, SLOT( cancel() ) );
@@ -1136,18 +1092,6 @@ void TransfersDialog::processSettings(bool bLoad)
     Settings->endGroup();
     m_bProcessSettings = false;
 }
-
-// replaced by shortcut
-//void TransfersDialog::keyPressEvent(QKeyEvent *e)
-//{
-//	if(e->key() == Qt::Key_Delete)
-//	{
-//		cancel() ;
-//		e->accept() ;
-//	}
-//	else
-//		RsAutoUpdatePage::keyPressEvent(e) ;
-//}
 
 void TransfersDialog::downloadListCustomPopupMenu( QPoint /*point*/ )
 {
@@ -1914,8 +1858,9 @@ void TransfersDialog::insertTransfers()
 		if(expanded_hashes.find(DLListModel->index(row,COLUMN_ID).data(Qt::DisplayRole).toString()) != expanded_hashes.end())
 			ui.downloadList->setExpanded(DLListModel->index(row,0,QModelIndex()),true);
 
+	ui.downloadList->setSortingEnabled(true);
+
 //	/* disable for performance issues, enable after insert all transfers */
-//	ui.downloadList->setSortingEnabled(false);
 //
 //	/* get the download lists */
 //	std::list<RsFileHash> downHashes;
