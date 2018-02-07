@@ -257,7 +257,6 @@ public:
 		case Qt::DisplayRole:    return displayRole   (finfo,source_id,index.column()) ;
 		case Qt::DecorationRole: return decorationRole(finfo,source_id,index.column()) ;
 		case Qt::UserRole:       return userRole      (finfo,source_id,index.column()) ;
-		//case SortRole:       	 return sortRole      (finfo,source_id,index.column()) ;
 		default:
 			return QVariant();
 		}
@@ -518,11 +517,6 @@ public:
 			}
 
 	}
-
-//	virtual QVariant sortRole(const FileInfo& fileInfo,int source_id,int col) const
-//	{
-//		return QString::fromStdString(fileInfo.hash.toStdString()) ;
-//	}
 
 	QVariant decorationRole(const FileInfo& fileInfo,int source_id,int col) const
 	{
@@ -1847,16 +1841,33 @@ void TransfersDialog::updateDisplay()
 void TransfersDialog::insertTransfers() 
 {
 	std::set<QString> expanded_hashes ;
+	std::set<QString> selected_hashes ;
+
+	ui.downloadList->setSortingEnabled(false);
 
     for(int row = 0; row < DLListModel->rowCount(); ++row)
-		if(ui.downloadList->isExpanded(DLListModel->index(row,0,QModelIndex())))
+	{
+		QModelIndex index = DLListModel->index(row,0,QModelIndex());
+
+		if(ui.downloadList->isExpanded(index))
 			expanded_hashes.insert(DLListModel->index(row,COLUMN_ID).data(Qt::DisplayRole).toString());
+
+		if(ui.downloadList->selectionModel()->selection().contains(index))
+			selected_hashes.insert(DLListModel->index(row,COLUMN_ID).data(Qt::DisplayRole).toString());
+	}
 
 	DLListModel->update_transfers();
 
     for(int row = 0; row < DLListModel->rowCount(); ++row)
-		if(expanded_hashes.find(DLListModel->index(row,COLUMN_ID).data(Qt::DisplayRole).toString()) != expanded_hashes.end())
-			ui.downloadList->setExpanded(DLListModel->index(row,0,QModelIndex()),true);
+	{
+		QModelIndex index = DLListModel->index(row,0,QModelIndex());
+
+		if(expanded_hashes.end() != expanded_hashes.find(DLListModel->index(row,COLUMN_ID).data(Qt::DisplayRole).toString()))
+			ui.downloadList->setExpanded(index,true);
+
+		if(selected_hashes.end() != selected_hashes.find(DLListModel->index(row,COLUMN_ID).data(Qt::DisplayRole).toString()))
+			ui.downloadList->selectionModel()->select(index, QItemSelectionModel::Select | QItemSelectionModel::Rows);
+	}
 
 	ui.downloadList->setSortingEnabled(true);
 
