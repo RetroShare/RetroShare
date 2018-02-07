@@ -1964,10 +1964,10 @@ QString IdDialog::createUsageString(const RsIdentityUsage& u) const
 
     switch(u.mServiceId)
     {
-    case RS_SERVICE_GXS_TYPE_CHANNELS:  service_name = tr("Channels") ;service_type = RetroShareLink::TYPE_CHANNEL ; break ;
-    case RS_SERVICE_GXS_TYPE_FORUMS:    service_name = tr("Forums") ;  service_type = RetroShareLink::TYPE_FORUM   ; break ;
-    case RS_SERVICE_GXS_TYPE_POSTED:    service_name = tr("Posted") ;  service_type = RetroShareLink::TYPE_POSTED  ; break ;
-    case RS_SERVICE_TYPE_CHAT:      	service_name = tr("Chat") ;  break ;
+    case RS_SERVICE_GXS_TYPE_CHANNELS:  service_name = tr("Channels") ;service_type = RetroShareLink::TYPE_CHANNEL   ; break ;
+    case RS_SERVICE_GXS_TYPE_FORUMS:    service_name = tr("Forums") ;  service_type = RetroShareLink::TYPE_FORUM     ; break ;
+    case RS_SERVICE_GXS_TYPE_POSTED:    service_name = tr("Posted") ;  service_type = RetroShareLink::TYPE_POSTED    ; break ;
+    case RS_SERVICE_TYPE_CHAT:          service_name = tr("Chat")   ;  service_type = RetroShareLink::TYPE_CHAT_ROOM ; break ;
     default:
         service_name = tr("Unknown"); service_type = RetroShareLink::TYPE_UNKNOWN ;
     }
@@ -1994,8 +1994,8 @@ QString IdDialog::createUsageString(const RsIdentityUsage& u) const
 	}
     case RsIdentityUsage::CHAT_LOBBY_MSG_VALIDATION:             // Chat lobby msgs are signed, so each time one comes, or a chat lobby event comes, a signature verificaiton happens.
     {
-        // there is no link for chat lobby yet.
-		return tr("Message in chat lobby %1").arg(u.mAdditionalId) ;
+		RetroShareLink l = RetroShareLink::createChatRoom(ChatId(ChatLobbyId(u.mAdditionalId)),QString::number(u.mAdditionalId));
+		return tr("Message in chat room %1").arg(l.toHtml()) ;
     }
     case RsIdentityUsage::GLOBAL_ROUTER_SIGNATURE_CHECK:         // Global router message validation
     {

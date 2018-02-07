@@ -50,7 +50,7 @@ public:
 
 	void setCurrentChatPage(ChatLobbyDialog *) ;	// used by ChatLobbyDialog to raise.
 	void addChatPage(ChatLobbyDialog *) ;
-	void showLobbyAnchor(ChatLobbyId id, QString anchor) ;
+	bool showLobbyAnchor(ChatLobbyId id, QString anchor) ;
 
 	uint unreadCount();
 
@@ -78,6 +78,7 @@ protected slots:
 	void updatePeerEntering(ChatLobbyId);
 	void updatePeerLeaving(ChatLobbyId);
 	void autoSubscribeItem();
+	void copyItemLink();
 
 private slots:
 	void filterColumnChanged(int);

@@ -7,6 +7,7 @@
 #include "chat/ChatTabWidget.h"
 #include "chat/CreateLobbyDialog.h"
 #include "common/RSTreeWidgetItem.h"
+#include "gui/RetroShareLink.h"
 #include "gui/gxs/GxsIdDetails.h"
 #include "gui/Identity/IdEditDialog.h"
 #include "gui/settings/rsharesettings.h"
@@ -58,6 +59,7 @@
 #define IMAGE_TYPING		      ":images/typing.png" 
 #define IMAGE_MESSAGE	      ":images/chat.png" 
 #define IMAGE_AUTOSUBSCRIBE   ":images/accepted16.png"
+#define IMAGE_COPYRSLINK      ":/images/copyrslink.png"
 
 ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WindowFlags flags)
   : RsAutoUpdatePage(5000, parent, flags)
@@ -321,6 +323,8 @@ void ChatLobbyWidget::lobbyTreeWidgetCustomPopupMenu(QPoint)
             contextMnu.addAction(QIcon(IMAGE_AUTOSUBSCRIBE), tr("Remove Auto Subscribe"), this, SLOT(autoSubscribeItem()));
         else if(!own_identities.empty())
             contextMnu.addAction(QIcon(IMAGE_SUBSCRIBE), tr("Add Auto Subscribe"), this, SLOT(autoSubscribeItem()));
+
+        contextMnu.addAction(QIcon(IMAGE_COPYRSLINK), tr("Copy RetroShare Link"), this, SLOT(copyItemLink()));
     }
 
         contextMnu.addSeparator();//-------------------------------------------------------------------
@@ -743,7 +747,7 @@ void ChatLobbyWidget::subscribeChatLobbyAs()
         ChatDialog::chatFriend(ChatId(id),true) ;
 }
 
-void ChatLobbyWidget::showLobbyAnchor(ChatLobbyId id, QString anchor)
+bool ChatLobbyWidget::showLobbyAnchor(ChatLobbyId id, QString anchor)
 {
 	QTreeWidgetItem *item = getTreeWidgetItem(id) ;
 
@@ -758,13 +762,14 @@ void ChatLobbyWidget::showLobbyAnchor(ChatLobbyId id, QString anchor)
 				ChatLobbyDialog *cldCW=NULL ;
 				if (NULL != (cldCW = dynamic_cast<ChatLobbyDialog *>(ui.stackedWidget->currentWidget())))
 					cldCW->getChatWidget()->scrollToAnchor(anchor);
-
-				ui.lobbyTreeWidget->setCurrentItem(item);
 			}
 
+			ui.lobbyTreeWidget->setCurrentItem(item);
+			return true;
 		}
 	}
 
+	return false;
 }
 
 void ChatLobbyWidget::subscribeChatLobbyAtItem(QTreeWidgetItem *item)
@@ -888,6 +893,24 @@ void ChatLobbyWidget::subscribeItem()
 void ChatLobbyWidget::autoSubscribeItem()
 {
     autoSubscribeLobby(ui.lobbyTreeWidget->currentItem());
+}
+
+void ChatLobbyWidget::copyItemLink()
+{
+	QTreeWidgetItem *item = ui.lobbyTreeWidget->currentItem();
+	if (item == NULL || item->type() != TYPE_LOBBY) {
+		return;
+	}
+
+	ChatLobbyId id = item->data(COLUMN_DATA, ROLE_ID).toULongLong();
+	QString name = item->text(COLUMN_NAME);
+
+	RetroShareLink link = RetroShareLink::createChatRoom(ChatId(id),name);
+	if (link.valid()) {
+		QList<RetroShareLink> urls;
+		urls.push_back(link);
+		RSLinkClipboard::copyLinks(urls);
+	}
 }
 
 QTreeWidgetItem *ChatLobbyWidget::getTreeWidgetItem(ChatLobbyId id)
