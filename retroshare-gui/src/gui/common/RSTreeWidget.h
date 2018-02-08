@@ -24,6 +24,9 @@
 
 #include <QTreeWidget>
 
+#define FILTER_REASON_TEXT           0x0001
+#define FILTER_REASON_MINVAL         0x0002
+
 /* Subclassing QTreeWidget */
 class RSTreeWidget : public QTreeWidget
 {
@@ -35,7 +38,9 @@ public:
 	QString placeholderText() { return mPlaceholderText; }
 	void setPlaceholderText(const QString &text);
 
+	void setFilterReasonRole(int role = -1);
 	void filterItems(int filterColumn, const QString &text, int role = Qt::DisplayRole);
+	void filterMinValItems(int filterColumn, const double &value, int role = Qt::DisplayRole);
 
 	void setSettingsVersion(qint32 version);
 	void processSettings(bool load);
@@ -58,6 +63,7 @@ signals:
 
 private:
 	bool filterItem(QTreeWidgetItem *item, int filterColumn, const QString &text, int role);
+	bool filterMinValItem(QTreeWidgetItem *item, int filterColumn, const double &value, int role);
 
 private slots:
 	void headerContextMenuRequested(const QPoint &pos);
@@ -74,6 +80,7 @@ private:
 	QMap<int, bool> mColumnCustomizable;
 	QList<QAction*> mContextMenuActions;
 	QList<QMenu*> mContextMenuMenus;
+	int mFilterReasonRole;
 };
 
 #endif
