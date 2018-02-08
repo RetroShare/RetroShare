@@ -1840,99 +1840,46 @@ void TransfersDialog::updateDisplay()
 
 void TransfersDialog::insertTransfers() 
 {
+	// Since downloads use an AstractItemModel, we just need to update it, while saving the selected and expanded items.
+
 	std::set<QString> expanded_hashes ;
 	std::set<QString> selected_hashes ;
 
 	ui.downloadList->setSortingEnabled(false);
+    ui.downloadList->blockSignals(true) ;
 
-    for(int row = 0; row < DLListModel->rowCount(); ++row)
+	std::cerr << "Updating transfers..." << std::endl;
+
+	QAbstractItemModel *model = ui.downloadList->model();
+
+    for(int row = 0; row < model->rowCount(); ++row)
 	{
-		QModelIndex index = DLListModel->index(row,0,QModelIndex());
+		QModelIndex index = model->index(row,0,QModelIndex());
 
 		if(ui.downloadList->isExpanded(index))
-			expanded_hashes.insert(DLListModel->index(row,COLUMN_ID).data(Qt::DisplayRole).toString());
+			expanded_hashes.insert(model->index(row,COLUMN_ID).data(Qt::DisplayRole).toString());
 
 		if(ui.downloadList->selectionModel()->selection().contains(index))
-			selected_hashes.insert(DLListModel->index(row,COLUMN_ID).data(Qt::DisplayRole).toString());
+			selected_hashes.insert(model->index(row,COLUMN_ID).data(Qt::DisplayRole).toString());
 	}
 
 	DLListModel->update_transfers();
 
-    for(int row = 0; row < DLListModel->rowCount(); ++row)
+    for(int row = 0; row < model->rowCount(); ++row)
 	{
-		QModelIndex index = DLListModel->index(row,0,QModelIndex());
+		QModelIndex index = model->index(row,0,QModelIndex());
 
-		if(expanded_hashes.end() != expanded_hashes.find(DLListModel->index(row,COLUMN_ID).data(Qt::DisplayRole).toString()))
+		if(expanded_hashes.end() != expanded_hashes.find(model->index(row,COLUMN_ID).data(Qt::DisplayRole).toString()))
 			ui.downloadList->setExpanded(index,true);
 
-		if(selected_hashes.end() != selected_hashes.find(DLListModel->index(row,COLUMN_ID).data(Qt::DisplayRole).toString()))
+		if(selected_hashes.end() != selected_hashes.find(model->index(row,COLUMN_ID).data(Qt::DisplayRole).toString()))
 			ui.downloadList->selectionModel()->select(index, QItemSelectionModel::Select | QItemSelectionModel::Rows);
 	}
 
 	ui.downloadList->setSortingEnabled(true);
+    ui.downloadList->blockSignals(false) ;
 
-//	/* disable for performance issues, enable after insert all transfers */
-//
-//	/* get the download lists */
-//	std::list<RsFileHash> downHashes;
-//	rsFiles->FileDownloads(downHashes);
-//
-//	/* build set for quick search */
-//	std::set<RsFileHash> hashs;
-//
-//	for (std::list<RsFileHash>::iterator it = downHashes.begin(); it != downHashes.end(); ++it) {
-//		hashs.insert(*it);
-//	}
-//
-//	/* add downloads, first iterate all rows in list */
-//
-//	int rowCount = DLListModel->rowCount();
-//
-//	for (int row = 0; row < rowCount; ) {
-//		RsFileHash hash ( DLListModel->item(row, COLUMN_ID)->data(Qt::UserRole).toString().toStdString());
-//
-//		std::set<RsFileHash>::iterator hashIt = hashs.find(hash);
-//		if (hashIt == hashs.end()) {
-//			// remove not existing downloads
-//			DLListModel->removeRow(row);
-//			rowCount = DLListModel->rowCount();
-//			continue;
-//		}
-//
-//		FileInfo fileInfo;
-//		if (!rsFiles->FileDetails(hash, RS_FILE_HINTS_DOWNLOAD, fileInfo)) {
-//			DLListModel->removeRow(row);
-//			rowCount = DLListModel->rowCount();
-//			continue;
-//		}
-//
-//		hashs.erase(hashIt);
-//
-//		if (addDLItem(row, fileInfo) < 0) {
-//			DLListModel->removeRow(row);
-//			rowCount = DLListModel->rowCount();
-//			continue;
-//		}
-//
-//		++row;
-//	}
-//
-//	/* then add new downloads to the list */
-//
-//	for (std::set<RsFileHash>::iterator hashIt = hashs.begin()
-//	     ; hashIt != hashs.end(); ++hashIt)
-//	{
-//		FileInfo fileInfo;
-//		if (!rsFiles->FileDetails(*hashIt, RS_FILE_HINTS_DOWNLOAD, fileInfo)) {
-//			continue;
-//		}
-//
-//		addDLItem(-1, fileInfo);
-//	}
-//
-//	ui.downloadList->setSortingEnabled(true);
-
-	// Now show upload hashes
+	// Now show upload hashes. Here we use the "old" way, since the number of uploads is generally not so large.
 	//
 
 	/* disable for performance issues, enable after insert all transfers */
