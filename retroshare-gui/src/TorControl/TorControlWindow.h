@@ -29,7 +29,7 @@ public:
 
 	// Should be called multiple times in a loop until it returns something else than *_UNKNOWN
 
-	TorStatus checkForTor() ;
+	TorStatus checkForTor(QString& error_msg) ;
 	HiddenServiceStatus checkForHiddenService() ;
 
 protected slots:
@@ -38,6 +38,7 @@ protected slots:
 	void onIncomingConnection();
 
 private:
+	QString mErrorMsg ;
 	HiddenServiceStatus mHiddenServiceStatus ;
 
 	Tor::TorManager *mTorManager ;

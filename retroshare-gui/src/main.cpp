@@ -367,12 +367,19 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 
 	{
 		TorControlDialog tcd(torManager) ;
+		QString error_msg ;
 		tcd.show();
 
-		while(tcd.checkForTor() != TorControlDialog::TOR_STATUS_OK || tcd.checkForHiddenService() != TorControlDialog::HIDDEN_SERVICE_STATUS_OK)	// runs until some status is reached: either tor works, or it fails.
+		while(tcd.checkForTor(error_msg) != TorControlDialog::TOR_STATUS_OK || tcd.checkForHiddenService() != TorControlDialog::HIDDEN_SERVICE_STATUS_OK)	// runs until some status is reached: either tor works, or it fails.
 		{
 			QCoreApplication::processEvents();
 			rstime::rs_usleep(0.2*1000*1000) ;
+
+			if(!error_msg.isNull())
+			{
+				QMessageBox::critical(NULL,QObject::tr("Cannot start Tor"),QObject::tr("Sorry but Tor cannot be started on your system!\n\nThe error reported is:\"")+error_msg+"\"") ;
+				return 1;
+			}
 		}
 
 		tcd.hide();

@@ -24,6 +24,7 @@ TorControlDialog::TorControlDialog(Tor::TorManager *tm,QWidget *parent)
     QObject::connect(tm->control(),SIGNAL(disconnected()),this,SLOT(statusChanged()));
     QObject::connect(tm->control(),SIGNAL(bootstrapStatusChanged()),this,SLOT(statusChanged()));
     QObject::connect(tm->control(),SIGNAL(connectivityChanged()),this,SLOT(statusChanged()));
+    QObject::connect(tm           ,SIGNAL(errorChanged()),this,SLOT(statusChanged()));
 
     //QTimer::singleShot(2000,this,SLOT(checkForHiddenService())) ;
 
@@ -57,6 +58,9 @@ void TorControlDialog::statusChanged()
 	int torstatus = mTorManager->control()->torStatus();
 
 	QString tor_control_status_str,torstatus_str ;
+
+	if(mTorManager->hasError())
+		mErrorMsg = mTorManager->errorMessage() ;
 
 	switch(tor_control_status)
 	{
@@ -149,8 +153,14 @@ void TorControlDialog::showLog()
 	std::cerr << "Connexion Proxy: " << mTorManager->control()->socksAddress().toString().toStdString() << ":" << mTorManager->control()->socksPort() << std::endl;
 }
 
-TorControlDialog::TorStatus TorControlDialog::checkForTor()
+TorControlDialog::TorStatus TorControlDialog::checkForTor(QString& error_msg)
 {
+	if(!mErrorMsg.isNull())
+	{
+		error_msg = mErrorMsg ;
+		return TorControlDialog::TOR_STATUS_FAIL ;
+	}
+
 	switch(mTorManager->control()->torStatus())
 	{
 	case Tor::TorControl::TorReady:  rstime::rs_usleep(1*1000*1000);return TOR_STATUS_OK ;
