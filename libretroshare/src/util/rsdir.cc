@@ -24,31 +24,31 @@
  *
  */
 
+#include "util/folderiterator.h"
+#include "util/rsdir.h"
+#include "util/rsmemory.h"
+#include "util/rsrandom.h"
+#include "util/rsstring.h"
+#include "util/rsthreads.h"
+#include "util/rstime.h"
+#include "retroshare/rsnotify.h"
+#include "retroshare/rstypes.h"
+
+#include <algorithm>
+#include <dirent.h>
+#include <fcntl.h>
+#include <fstream>
+#include <iomanip>
+#include <iostream>
+#include <stdexcept>
+#include <stdio.h>
+#include <sstream>
+#include <unistd.h>
+#include <openssl/sha.h>
 // Includes for directory creation.
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <fcntl.h>
-#include <unistd.h>
 
-#include "util/rsdir.h"
-#include "util/rsstring.h"
-#include "util/rsrandom.h"
-#include "util/rstime.h"
-#include "util/rsmemory.h"
-#include "util/folderiterator.h"
-#include "retroshare/rstypes.h"
-#include "retroshare/rsnotify.h"
-#include "rsthreads.h"
-#include <iostream>
-#include <algorithm>
-#include <stdio.h>
-#include <dirent.h>
-#include <openssl/sha.h>
-#include <iomanip>
-#include <sstream>
-
-#include <fstream>
-#include <stdexcept>
 
 #if defined(WIN32) || defined(__CYGWIN__)
 #include "util/rsstring.h"
@@ -107,7 +107,7 @@ const char *RsDirUtil::scanf_string_for_uint(int bytes)
 
 bool RsDirUtil::splitDirFromFile(const std::string& full_path,std::string& dir, std::string& file)
 {
-	int i = full_path.rfind('/', full_path.size()-1);
+	std::string::size_type i = full_path.rfind('/', full_path.size()-1);
 
 	if(i == full_path.size()-1)	// '/' not found!
 	{
