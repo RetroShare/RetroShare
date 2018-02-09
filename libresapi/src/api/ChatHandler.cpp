@@ -1237,7 +1237,7 @@ void ChatHandler::handleMarkChatAsRead(Request &req, Response &resp)
     if(id.isPeerId() && mUnreadMsgNotify)
         mUnreadMsgNotify->notifyUnreadMsgCountChanged(id.toPeerId(), 0);
 
-	mStateTokenServer->replaceToken(mMsgStateToken);
+    mStateTokenServer->replaceToken(mMsgStateToken);
     mStateTokenServer->replaceToken(mUnreadMsgsStateToken);
 }
 
