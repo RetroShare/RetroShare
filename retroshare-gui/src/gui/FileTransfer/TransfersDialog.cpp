@@ -538,23 +538,39 @@ public:
 
 	void update_transfers()
 	{
-		beginResetModel();
+//		beginResetModel();
 
 		std::list<RsFileHash> downHashes;
 		rsFiles->FileDownloads(downHashes);
 
+        size_t old_size = mDownloads.size();
+
 		mDownloads.resize(downHashes.size()) ;
+
+        if(old_size < mDownloads.size())
+        {
+            beginInsertRows(QModelIndex(), old_size, mDownloads.size());
+            insertRows(old_size, mDownloads.size() - old_size);
+            endInsertRows();
+        }
+        else if(mDownloads.size() < old_size)
+        {
+            beginRemoveRows(QModelIndex(), mDownloads.size(), old_size);
+            removeRows(old_size, old_size - mDownloads.size());
+            endRemoveRows();
+        }
 
 		//std::cerr << "updating file list: found " << mDownloads.size() << " transfers." << std::endl;
 
 		uint32_t i=0;
+
 		for(auto it(downHashes.begin());it!=downHashes.end();++it,++i)
 		{
 			FileInfo& fileInfo(mDownloads[i]);
 			rsFiles->FileDetails(*it, RS_FILE_HINTS_DOWNLOAD, fileInfo);
 		}
 
-		endResetModel();
+//		endResetModel();
 
 		QModelIndex topLeft = createIndex(0,0), bottomRight = createIndex(mDownloads.size(), COLUMN_COUNT-1);
 		emit dataChanged(topLeft, bottomRight);
@@ -1845,45 +1861,15 @@ void TransfersDialog::insertTransfers()
 	std::set<QString> expanded_hashes ;
 	std::set<QString> selected_hashes ;
 
-	ui.downloadList->setSortingEnabled(false);
-    ui.downloadList->blockSignals(true) ;
-
 	std::cerr << "Updating transfers..." << std::endl;
 
-	QAbstractItemModel *model = ui.downloadList->model();
-
-    for(int row = 0; row < model->rowCount(); ++row)
-	{
-		QModelIndex index = model->index(row,0,QModelIndex());
-
-		if(ui.downloadList->isExpanded(index))
-			expanded_hashes.insert(model->index(row,COLUMN_ID).data(Qt::DisplayRole).toString());
-
-		if(ui.downloadList->selectionModel()->selection().contains(index))
-			selected_hashes.insert(model->index(row,COLUMN_ID).data(Qt::DisplayRole).toString());
-	}
-
 	DLListModel->update_transfers();
-
-    for(int row = 0; row < model->rowCount(); ++row)
-	{
-		QModelIndex index = model->index(row,0,QModelIndex());
-
-		if(expanded_hashes.end() != expanded_hashes.find(model->index(row,COLUMN_ID).data(Qt::DisplayRole).toString()))
-			ui.downloadList->setExpanded(index,true);
-
-		if(selected_hashes.end() != selected_hashes.find(model->index(row,COLUMN_ID).data(Qt::DisplayRole).toString()))
-			ui.downloadList->selectionModel()->select(index, QItemSelectionModel::Select | QItemSelectionModel::Rows);
-	}
-
-	ui.downloadList->setSortingEnabled(true);
-    ui.downloadList->blockSignals(false) ;
 
 	// Now show upload hashes. Here we use the "old" way, since the number of uploads is generally not so large.
 	//
 
 	/* disable for performance issues, enable after insert all transfers */
-	ui.uploadsList->setSortingEnabled(false);
+    ui.uploadsList->setSortingEnabled(false);
 
 	/* get the upload lists */
 	std::list<RsFileHash> upHashes;
