@@ -248,7 +248,7 @@ void GxsChannelFilesStatusWidget::download()
 	FileInfo fileInfo;
 	rsFiles->FileDetails(mFile.mHash, RS_FILE_HINTS_REMOTE, fileInfo);
 
-	for(std::list<TransferInfo>::const_iterator it = fileInfo.peers.begin(); it != fileInfo.peers.end(); ++it) {
+	for(std::vector<TransferInfo>::const_iterator it = fileInfo.peers.begin(); it != fileInfo.peers.end(); ++it) {
 		sources.push_back((*it).peerId);
 	}
 

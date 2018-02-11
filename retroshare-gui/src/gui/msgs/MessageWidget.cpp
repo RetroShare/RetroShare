@@ -323,7 +323,7 @@ void MessageWidget::getcurrentrecommended()
 			fi.fname = it->data().toString().toUtf8().constData();
 			break ;
 		case COLUMN_FILE_SIZE:
-			fi.size = it->data().toULongLong() ;
+			fi.size = it->data(Qt::UserRole).toULongLong() ;
 			break ;
 		case COLUMN_FILE_HASH:
 			fi.hash = RsFileHash(it->data().toString().toStdString()) ;
@@ -502,6 +502,7 @@ void MessageWidget::fill(const std::string &msgId)
 		QTreeWidgetItem *item = new QTreeWidgetItem;
 		item->setText(COLUMN_FILE_NAME, QString::fromUtf8(it->fname.c_str()));
 		item->setText(COLUMN_FILE_SIZE, misc::friendlyUnit(it->size));
+		item->setData(COLUMN_FILE_SIZE, Qt::UserRole, QVariant(qulonglong(it->size)) );
 		item->setText(COLUMN_FILE_HASH, QString::fromStdString(it->hash.toStdString()));
 		item->setTextAlignment( COLUMN_FILE_SIZE, Qt::AlignRight );
 

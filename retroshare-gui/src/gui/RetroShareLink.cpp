@@ -1572,7 +1572,7 @@ static void processList(const QStringList &list, const QString &textSingular, co
 				FileInfo finfo ;
 				rsFiles->FileDetails(RsFileHash(link.hash().toStdString()), RS_FILE_HINTS_REMOTE, finfo) ;
 
-				for(std::list<TransferInfo>::const_iterator it(finfo.peers.begin());it!=finfo.peers.end();++it)
+				for(std::vector<TransferInfo>::const_iterator it(finfo.peers.begin());it!=finfo.peers.end();++it)
 				{
 #ifdef DEBUG_RSLINK
 					std::cerr << "  adding peerid " << (*it).peerId << std::endl ;
