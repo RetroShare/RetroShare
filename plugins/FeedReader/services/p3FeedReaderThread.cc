@@ -22,6 +22,7 @@
 #include "p3FeedReaderThread.h"
 #include "rsFeedReaderItems.h"
 #include "util/rsstring.h"
+#include "util/rstime.h"
 #include "util/CURLWrapper.h"
 #include "util/XMLWrapper.h"
 #include "util/HTMLWrapper.h"
@@ -51,11 +52,8 @@ p3FeedReaderThread::~p3FeedReaderThread()
 
 void p3FeedReaderThread::data_tick()
 {
-#ifdef WIN32
-		Sleep(1000);
-#else
-		usleep(1000000);
-#endif
+		rstime::rs_usleep(1000000);
+
 		/* every second */
 
 		switch (mType) {

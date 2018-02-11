@@ -40,6 +40,7 @@
 #endif
 #include "util/rsdiscspace.h"
 #include "util/rsmemory.h"
+#include "util/rstime.h"
 
 #include "ft/ftcontroller.h"
 
@@ -219,7 +220,7 @@ void ftController::data_tick()
 	/* check the queues */
 
 		//Waiting 1 sec before start
-		usleep(1*1000*1000); // 1 sec
+		rstime::rs_usleep(1*1000*1000); // 1 sec
 
 #ifdef CONTROL_DEBUG
 		//std::cerr << "ftController::run()";

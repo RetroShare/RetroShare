@@ -25,6 +25,7 @@
  */
 
 
+#include "util/rstime.h"
 #include "rsserver/p3face.h"
 #include "retroshare/rsplugin.h"
 
@@ -134,11 +135,7 @@ RsServer::~RsServer()
         /* Thread Fn: Run the Core */
 void 	RsServer::data_tick()
 {
-#ifndef WINDOWS_SYS
-    usleep((int) (mTimeDelta * 1000000));
-#else
-    Sleep((int) (mTimeDelta * 1000));
-#endif
+	rstime::rs_usleep(mTimeDelta * 1000000);
 
     double ts = getCurrentTS();
     double delta = ts - mLastts;

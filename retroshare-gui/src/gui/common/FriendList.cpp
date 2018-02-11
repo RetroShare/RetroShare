@@ -342,7 +342,8 @@ void FriendList::peerTreeWidgetCustomPopupMenu()
 
 //         QMenu *lobbyMenu = NULL;
 
-         switch (type) {
+         switch (type)
+		 {
          case TYPE_GROUP:
              {
                  bool standard = c->data(COLUMN_DATA, ROLE_STANDARD).toBool();
@@ -448,10 +449,10 @@ void FriendList::peerTreeWidgetCustomPopupMenu()
                      contextMenu->addAction(QIcon(IMAGE_EXPORTFRIEND), tr("Recommend this node to..."), this, SLOT(recommendfriend()));
                  }
 
-                 contextMenu->addAction(QIcon(IMAGE_CONNECT), tr("Attempt to connect"), this, SLOT(connectfriend()));
+				 if(!rsPeers->isHiddenNode(rsPeers->getOwnId()) || rsPeers->isHiddenNode( RsPeerId(getRsId(c)) ))
+					 contextMenu->addAction(QIcon(IMAGE_CONNECT), tr("Attempt to connect"), this, SLOT(connectfriend()));
 
                  contextMenu->addAction(QIcon(IMAGE_COPYLINK), tr("Copy certificate link"), this, SLOT(copyFullCertificate()));
-
 
                  //this is a SSL key
                  contextMenu->addAction(QIcon(IMAGE_REMOVEFRIEND), tr("Remove Friend Node"), this, SLOT(removefriend()));

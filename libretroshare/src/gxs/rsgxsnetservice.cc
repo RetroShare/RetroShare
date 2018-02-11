@@ -210,6 +210,7 @@
 #include "retroshare/rspeers.h"
 #include "pgp/pgpauxutils.h"
 #include "util/rsdir.h"
+#include "util/rstime.h"
 #include "util/rsmemory.h"
 #include "util/stacktrace.h"
 
@@ -1787,7 +1788,7 @@ void RsGxsNetService::data_tick()
     static const double timeDelta = 0.5;
 
         //Start waiting as nothing to do in runup
-        usleep((int) (timeDelta * 1000 * 1000)); // timeDelta sec
+        rstime::rs_usleep((int) (timeDelta * 1000 * 1000)); // timeDelta sec
 
         if(mUpdateCounter >= 120) // 60 seconds
         {

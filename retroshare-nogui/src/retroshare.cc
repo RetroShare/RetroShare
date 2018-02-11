@@ -30,7 +30,8 @@
 #include "notifytxt.h"
 
 #include <unistd.h>
-#include <util/argstream.h>
+#include "util/argstream.h"
+#include "util/rstime.h"
 #include <iostream>
 #ifdef WINDOWS_SYS
 #include <winsock2.h>
@@ -105,7 +106,7 @@ int main(int argc, char **argv)
 
     while(ctrl_mod.processShouldExit() == false)
     {
-        usleep(1000*1000);
+        rstime::rs_usleep(1000*1000);
 
 		if(!tac.isRunning() && !already)
 		{
@@ -224,7 +225,7 @@ int main(int argc, char **argv)
 #endif
 		}
 
-		usleep(1000);
+		rstime::rs_usleep(1000);
 
 	}
 	return 1;

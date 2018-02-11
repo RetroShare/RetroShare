@@ -195,6 +195,10 @@ GenCertDialog::GenCertDialog(bool onlyGenerateIdentity, QWidget *parent)
 	ui.nodeType_CB->setCurrentIndex(1);
 	ui.nodeType_CB->setEnabled(false);
 #endif
+#ifdef RETROTOR
+	ui.adv_checkbox->setChecked(false);
+	ui.adv_checkbox->setVisible(true);
+#endif
 
 	initKeyList();
     setupState();
@@ -255,10 +259,16 @@ void GenCertDialog::setupState()
 {
 	bool adv_state = ui.adv_checkbox->isChecked();
 
+#ifdef RETROTOR
+	bool retrotor = true ;
+#else
+	bool retrotor = false ;
+#endif
+
     if(!adv_state)
     {
         ui.reuse_existing_node_CB->setChecked(false) ;
-        ui.nodeType_CB->setCurrentIndex(0) ;
+        ui.nodeType_CB->setCurrentIndex(retrotor?1:0) ;
         ui.keylength_comboBox->setCurrentIndex(0) ;
     }
 	bool hidden_state = ui.nodeType_CB->currentIndex()==1;
@@ -271,8 +281,8 @@ void GenCertDialog::setupState()
 	setWindowTitle(generate_new?tr("Create new profile and new Retroshare node"):tr("Create new Retroshare node"));
 	//ui.headerFrame->setHeaderText(generate_new?tr("Create a new profile and node"):tr("Create a new node"));
 
-    ui.label_nodeType->setVisible(adv_state) ;
-    ui.nodeType_CB->setVisible(adv_state) ;
+    ui.label_nodeType->setVisible(adv_state && !retrotor) ;
+    ui.nodeType_CB->setVisible(adv_state && !retrotor) ;
     ui.reuse_existing_node_CB->setEnabled(adv_state) ;
     ui.importIdentity_PB->setVisible(adv_state && !generate_new) ;
     ui.exportIdentity_PB->setVisible(adv_state && !generate_new) ;
@@ -308,13 +318,13 @@ void GenCertDialog::setupState()
 	ui.entropy_bar->setVisible(true);
 	ui.genButton->setVisible(true);
 
-	ui.hiddenaddr_input->setVisible(hidden_state);
-	ui.hiddenaddr_label->setVisible(hidden_state);
+	ui.hiddenaddr_input->setVisible(hidden_state && !retrotor);
+	ui.hiddenaddr_label->setVisible(hidden_state && !retrotor);
 
-	ui.hiddenport_label->setVisible(hidden_state);
-	ui.hiddenport_spinBox->setVisible(hidden_state);
+	ui.hiddenport_label->setVisible(hidden_state && !retrotor);
+	ui.hiddenport_spinBox->setVisible(hidden_state && !retrotor);
 
-	ui.cbUseBob->setVisible(hidden_state);
+	ui.cbUseBob->setVisible(hidden_state && !retrotor);
 
 	if(!mAllFieldsOk)
 	{

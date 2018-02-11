@@ -23,29 +23,40 @@
  *
  */
 
-// Use this class to measure and display time duration of a given environment:
-//
-// {
-//     RsScopeTimer timer("callToMeasure()") ;
-//
-//     callToMeasure() ;
-// }
-//
-
 #include <string>
 
-class RsScopeTimer
-{
-public:
-	RsScopeTimer(const std::string& name);
-	~RsScopeTimer();
+namespace rstime {
 
-	void start();
-	double duration();
+	/*!
+	 * \brief This is a cross-system definition of usleep, which accepts any 32 bits number of micro-seconds.
+	 */
 
-	static double currentTime();
+	int rs_usleep(uint32_t micro_seconds);
 
-private:
-	std::string _name ;
-	double _seconds ;
-};
+	/* Use this class to measure and display time duration of a given environment:
+
+	 {
+	     RsScopeTimer timer("callToMeasure()") ;
+
+	     callToMeasure() ;
+	 }
+
+	*/
+
+	class RsScopeTimer
+	{
+	public:
+		RsScopeTimer(const std::string& name);
+		~RsScopeTimer();
+
+		void start();
+		double duration();
+
+		static double currentTime();
+
+	private:
+		std::string _name ;
+		double _seconds ;
+	};
+
+}

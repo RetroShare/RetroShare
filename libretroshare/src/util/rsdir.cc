@@ -33,6 +33,7 @@
 #include "util/rsdir.h"
 #include "util/rsstring.h"
 #include "util/rsrandom.h"
+#include "util/rstime.h"
 #include "util/rsmemory.h"
 #include "util/folderiterator.h"
 #include "retroshare/rstypes.h"
@@ -711,7 +712,7 @@ bool RsDirUtil::renameFile(const std::string& from, const std::string& to)
 #endif
 			/* set errno? */
 			return false ;
-		usleep(100 * 1000);		// 100 msec
+		rstime::rs_usleep(100 * 1000);		// 100 msec
 
 		if (loops >= 30)
 			return false ;
@@ -917,7 +918,7 @@ RsStackFileLock::RsStackFileLock(const std::string& file_path)
 	while(RsDirUtil::createLockFile(file_path,_file_handle))
 	{
 		std::cerr << "Cannot acquire file lock " << file_path << ", waiting 1 sec." << std::endl;
-		usleep(1 * 1000 * 1000) ; // 1 sec
+		rstime::rs_usleep(1 * 1000 * 1000) ; // 1 sec
 	}
 #ifdef RSDIR_DEBUG 
 	std::cerr << "Acquired file handle " << _file_handle << ", lock file:" << file_path << std::endl;
@@ -1321,7 +1322,7 @@ bool RsDirUtil::renameWideFile(const std::wstring& from, const std::wstring& to)
 #endif
 			/* set errno? */
 			return false ;
-		usleep(100 * 1000); //100 msec
+		rstime::rs_usleep(100 * 1000); //100 msec
 
 		if (loops >= 30)
 			return false ;

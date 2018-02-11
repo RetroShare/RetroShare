@@ -142,9 +142,9 @@ class RsAccountsDetail
 
 		static bool defaultBaseDirectory();
 
-		bool getAvailableAccounts(std::map<RsPeerId, AccountDetails> &accounts, 
+		bool getAvailableAccounts(std::map<RsPeerId, AccountDetails> &accounts,
 			int& failing_accounts,
-			std::map<std::string,std::vector<std::string> >& unsupported_keys);
+			std::map<std::string,std::vector<std::string> >& unsupported_keys, bool hidden_only=false);
 
 		bool setupAccount(const std::string& accountdir);
 

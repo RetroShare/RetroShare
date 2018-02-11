@@ -46,7 +46,8 @@
 #include "util/HandleRichText.h"
 #include "util/QtVersion.h"
 
-#include <retroshare/rsnotify.h>
+#include "retroshare/rsnotify.h"
+#include "util/rstime.h"
 
 #include <time.h>
 #include <unistd.h>
@@ -339,7 +340,7 @@ void ChatLobbyDialog::init(const ChatId &/*id*/, const QString &/*title*/)
         if(rsIdentity->getIdDetails(gxs_id,details))
             break ;
         else
-            usleep(1000*300) ;
+            rstime::rs_usleep(1000*300) ;
 
     ui.chatWidget->setName(QString::fromUtf8(details.mNickname.c_str()));
     //ui.chatWidget->addToolsAction(ui.actionChangeNickname);

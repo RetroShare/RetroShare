@@ -718,7 +718,7 @@ void p3NetMgrIMPL::netExtCheck()
 #endif
 				if(sockaddr_storage_isValidNet(tmpip))
 				{
-					if(rsBanList->isAddressAccepted(tmpip,RSBANLIST_CHECKING_FLAGS_BLACKLIST))
+					if( (rsBanList==NULL) || rsBanList->isAddressAccepted(tmpip,RSBANLIST_CHECKING_FLAGS_BLACKLIST))
 					{
 						// must be stable???
 						isStable = true;
@@ -761,7 +761,7 @@ void p3NetMgrIMPL::netExtCheck()
 				/* input network bits */
 				if (mDhtStunner->getExternalAddr(tmpaddr, isstable))
 				{
-					if(rsBanList->isAddressAccepted(tmpaddr,RSBANLIST_CHECKING_FLAGS_BLACKLIST))
+					if((rsBanList == NULL) || rsBanList->isAddressAccepted(tmpaddr,RSBANLIST_CHECKING_FLAGS_BLACKLIST))
 					{
 						// must be stable???
 						isStable = (isstable == 1);

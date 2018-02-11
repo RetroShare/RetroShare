@@ -71,8 +71,11 @@ RsAccountsDetail::RsAccountsDetail() : mAccountsLocked(false), mPreferredId("")
 bool RsAccountsDetail::loadAccounts()
 {
 	int failing_accounts ;
-
-	getAvailableAccounts(mAccounts,failing_accounts,mUnsupportedKeys);
+#ifdef RETROTOR
+	getAvailableAccounts(mAccounts,failing_accounts,mUnsupportedKeys,true);
+#else
+	getAvailableAccounts(mAccounts,failing_accounts,mUnsupportedKeys,false);
+#endif
 
 	loadPreferredAccount();
 	checkPreferredId();
@@ -512,7 +515,7 @@ bool RsAccountsDetail::getAccountOptions(bool &ishidden, bool &isFirstTimeRun)
 
 
 /* directories with valid certificates in the expected location */
-bool RsAccountsDetail::getAvailableAccounts(std::map<RsPeerId, AccountDetails> &accounts,int& failing_accounts,std::map<std::string,std::vector<std::string> >& unsupported_keys)
+bool RsAccountsDetail::getAvailableAccounts(std::map<RsPeerId, AccountDetails> &accounts,int& failing_accounts,std::map<std::string,std::vector<std::string> >& unsupported_keys,bool hidden_only)
 {
 	failing_accounts = 0 ;
 	/* get the directories */
@@ -614,6 +617,9 @@ bool RsAccountsDetail::getAvailableAccounts(std::map<RsPeerId, AccountDetails> &
 			std::cerr << "getAvailableAccounts() Skipping Invalid Prefix dir: " << *it << std::endl;
 			continue;
 		}
+
+		if(hidden_only && !hidden_location)
+			continue ;
 
 		if(valid_prefix && isHexaString(lochex) && (lochex).length() == 32)
 		{

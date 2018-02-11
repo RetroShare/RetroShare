@@ -64,6 +64,9 @@ ConnectProgressDialog::ConnectProgressDialog(const RsPeerId& id, QWidget *parent
 	ui->headerFrame->setHeaderText(tr("Connection Assistant"));
 
 	connect(ui->buttonBox, SIGNAL(accepted()), this, SLOT(stopAndClose()));
+
+	mAmIHiddenNode = rsPeers->isHiddenNode(rsPeers->getOwnId()) ;
+	mIsPeerHiddenNode = rsPeers->isHiddenNode(id) ;
 }
 
 ConnectProgressDialog::~ConnectProgressDialog()
@@ -165,14 +168,34 @@ void ConnectProgressDialog::initDialog()
 	ui->NetResult->setText(tr("N/A"));
 	ui->ContactResult->setText(tr("N/A"));
 
+#ifdef RS_USE_BITDHT
+	if(!mIsPeerHiddenNode && !mAmIHiddenNode)
+	{
 	ui->DhtResult->setText(tr("DHT Startup"));
 	ui->DhtProgressBar->setValue(0);
+	}
+#else
+	if(mIsPeerHiddenNode || mAmIHiddenNode)
+	{
+		ui->DhtResult->hide();
+		ui->DhtLabel->hide();
+		ui->DhtProgressBar->hide();
+	}
+#endif
+	if(mIsPeerHiddenNode || mAmIHiddenNode)
+	{
+		ui->UdpResult->hide();
+		ui->UdpProgressBar->hide();
+		ui->UdpLabel->hide();
+	}
+	else
+	{
+		ui->UdpResult->setText(tr("N/A"));
+		ui->UdpProgressBar->setValue(0);
+	}
 
 	ui->LookupResult->setText(tr("N/A"));
 	ui->LookupProgressBar->setValue(0);
-
-	ui->UdpResult->setText(tr("N/A"));
-	ui->UdpProgressBar->setValue(0);
 
 	sayInProgress();
 
@@ -219,7 +242,9 @@ void ConnectProgressDialog::updateStatus()
 
 			updateNetworkStatus();
 			updateContactStatus();
+#ifdef RS_USE_BITDHT
 			updateDhtStatus();
+#endif
 			updateLookupStatus();
 			updateUdpStatus();
 
@@ -443,6 +468,7 @@ void ConnectProgressDialog::updateLookupStatus()
 			break;
 	}
 
+#ifdef RS_USE_BITDHT
 	time_t now = time(NULL);
 	switch(mDhtStatus)
 	{
@@ -520,6 +546,7 @@ void ConnectProgressDialog::updateLookupStatus()
 			mLookupStatus = CONNECT_LOOKUP_ONLINE;
 			break;
 	}
+#endif
 }
 
 
@@ -572,6 +599,7 @@ void ConnectProgressDialog::updateUdpStatus()
 
 	ui->UdpProgressBar->setValue(calcProgress(now, mUdpTS, CONNECT_UDP_TYPICAL, CONNECT_UDP_SLOW, CONNECT_UDP_PERIOD));
 
+#ifdef RS_USE_BITDHT
 	/* now lookup details from Dht */
 	RsDhtNetPeer status;
 	rsDht->getNetPeerStatus(mId, status);
@@ -599,6 +627,7 @@ void ConnectProgressDialog::updateUdpStatus()
 			}
 		}
 	}
+#endif
 }
 
 

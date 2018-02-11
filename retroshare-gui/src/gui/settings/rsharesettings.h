@@ -187,6 +187,10 @@ public:
 	/** Sets whether the bandwidth graph is always on top. */
 	void setBWGraphAlwaysOnTop(bool alwaysOnTop);
 
+#ifdef RETROTOR
+	void setHiddenServiceKey() ;
+#endif
+
 	uint getNewsFeedFlags();
 	void setNewsFeedFlags(uint flags);
 
