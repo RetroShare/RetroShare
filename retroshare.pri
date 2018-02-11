@@ -237,7 +237,7 @@ rs_autologin {
 }
 
 retrotor {
-    DEFINES *= RS_ONLYHIDDENNODE
+    CONFIG *= rs_onlyhiddennode
 }
 
 rs_onlyhiddennode {
