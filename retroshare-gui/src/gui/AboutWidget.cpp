@@ -225,9 +225,10 @@ void AWidget::initImages()
     //p.drawPixmap(QRect(10, 10, width()-10, 60), image);
 
     /* Draw RetroShare version */
-    p.drawText(QPointF(10, 50), QString("%1 : %2").arg(tr("Retroshare version"), Rshare::retroshareVersion(true)));
 #ifdef RS_ONLYHIDDENNODE
-    p.drawText(QPointF(10, 70), QString("Only Hidden Node"));
+    p.drawText(QPointF(10, 50), QString("%1 : %2 (With embedded Tor)").arg(tr("Retroshare version"), Rshare::retroshareVersion(true)));
+#else
+    p.drawText(QPointF(10, 50), QString("%1 : %2").arg(tr("Retroshare version"), Rshare::retroshareVersion(true)));
 #endif
 
     /* Draw Qt's version number */

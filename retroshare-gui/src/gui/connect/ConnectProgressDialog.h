@@ -97,6 +97,9 @@ private:
         time_t mUdpTS;
         uint32_t mUdpStatus;
 
+		bool mAmIHiddenNode ;
+		bool mIsPeerHiddenNode ;
+
     /** Qt Designer generated object */
     Ui::ConnectProgressDialog *ui;
 };

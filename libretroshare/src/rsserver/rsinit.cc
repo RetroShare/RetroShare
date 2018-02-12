@@ -70,6 +70,11 @@
 #include <sys/param.h>
 #endif
 
+// This needs to be defined here, because when USE_BITDHT is unset, the variable, that is defined in libbitdht (not compiled!) will be missing.
+#ifndef RS_USE_BITDHT
+RsDht *rsDht = NULL ;
+#endif
+
 // for blocking signals
 #include <signal.h>
 
@@ -830,9 +835,10 @@ RsGRouter *rsGRouter = NULL ;
 #include "pqi/p3linkmgr.h"
 #include "pqi/p3netmgr.h"
 	
-	
+#ifndef RETROTOR
 #include "tcponudp/tou.h"
 #include "tcponudp/rsudpstack.h"
+#endif
 
 	
 #ifdef RS_USE_BITDHT
@@ -1186,9 +1192,9 @@ int RsServer::StartupRetroShare()
 #ifdef RS_USE_DHT_STUNNER
 	mNetMgr->setAddrAssist(new stunAddrAssist(mDhtStunner), new stunAddrAssist(mProxyStunner));
 #endif // RS_USE_DHT_STUNNER
-#else //RS_USE_BITDHT
-	/* install NULL Pointer for rsDht Interface */
-	rsDht = NULL;
+// #else //RS_USE_BITDHT
+// 	/* install NULL Pointer for rsDht Interface */
+// 	rsDht = NULL;
 #endif //RS_USE_BITDHT
 
 
@@ -1505,7 +1511,11 @@ int RsServer::StartupRetroShare()
 	interfaces.mMsgs   = rsMsgs;
 	interfaces.mTurtle = rsTurtle;
 	interfaces.mDisc   = rsDisc;
+#ifdef RS_USE_BITDHT
 	interfaces.mDht    = rsDht;
+#else
+	interfaces.mDht    = NULL;
+#endif
 	interfaces.mNotify = mNotify;
     interfaces.mServiceControl = serviceCtrl;
     interfaces.mPluginHandler  = mPluginsManager;
@@ -1539,10 +1549,17 @@ int RsServer::StartupRetroShare()
 #endif
 
 	// new services to test.
+#ifndef RETROTOR
     p3BanList *mBanList = new p3BanList(serviceCtrl, mNetMgr);
     rsBanList = mBanList ;
 	pqih -> addService(mBanList, true);
+#else
+    rsBanList = NULL ;
+#endif
+
+#ifdef RS_USE_BITDHT
 	mBitDht->setupPeerSharer(mBanList);
+#endif
 
 	p3BandwidthControl *mBwCtrl = new p3BandwidthControl(pqih);
 	pqih -> addService(mBwCtrl, true); 
@@ -1608,7 +1625,9 @@ int RsServer::StartupRetroShare()
 	mConfigMgr->addConfiguration("p3History.cfg", mHistoryMgr);
 	mConfigMgr->addConfiguration("p3Status.cfg", mStatusSrv);
 	mConfigMgr->addConfiguration("turtle.cfg", tr);
+#ifndef RETROTOR
 	mConfigMgr->addConfiguration("banlist.cfg", mBanList);
+#endif
 	mConfigMgr->addConfiguration("servicecontrol.cfg", serviceCtrl);
 	mConfigMgr->addConfiguration("reputations.cfg", mReputations);
 #ifdef ENABLE_GROUTER

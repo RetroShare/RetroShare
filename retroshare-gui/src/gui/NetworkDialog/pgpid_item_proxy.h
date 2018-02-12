@@ -1,6 +1,8 @@
 #ifndef PGPID_ITEM_PROXY_H
 #define PGPID_ITEM_PROXY_H
 
+#include "util/cxx11retrocompat.h"
+
 #include <QSortFilterProxyModel>
 
 class pgpid_item_proxy :

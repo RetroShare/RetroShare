@@ -31,6 +31,7 @@
 #include "gxssecurity.h"
 #include "util/contentvalue.h"
 #include "util/rsprint.h"
+#include "util/rstime.h"
 #include "retroshare/rsgxsflags.h"
 #include "retroshare/rsgxscircles.h"
 #include "retroshare/rsgrouter.h"
@@ -138,7 +139,7 @@ void RsGenExchange::data_tick()
 	static const double timeDelta = 0.1; // slow tick in sec
 
 	tick();
-	usleep((int) (timeDelta * 1000 *1000)); // timeDelta sec
+	rstime::rs_usleep((int) (timeDelta * 1000 *1000)); // timeDelta sec
 }
 
 void RsGenExchange::tick()

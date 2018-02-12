@@ -27,12 +27,16 @@ time=`git log --pretty=format:"%aD" | head -1 | cut -d\  -f5 | sed -e s/://g`
 hhsh=`git log --pretty=format:"%H" | head -1 | cut -c1-8`
 
 rev=${date}.${hhsh}
+useretrotor="false"
 
 while [ ${#} -gt 0 ]; do
     case ${1} in
         "-rev") shift
             rev=${1}
             shift
+            ;;
+        "-retrotor") shift
+	  		useretrotor="true"
             ;;
         "-distribution") shift
             dist=${1}
@@ -54,6 +58,15 @@ while [ ${#} -gt 0 ]; do
     esac
 done
 
+if test "${useretrotor}" = "true"; then
+	if ! test "${dist}" = "trusty"; then
+		echo ERROR: retro-tor can only be packaged for trusty for now.
+		exit 1;
+	fi
+	gitpath="https://github.com/csoler/RetroShare.git"
+	branch="v0.6-TorOnly"
+fi
+
 if test "${dist}" = "" ; then
 	dist="precise trusty xenial zesty artful"
 fi
@@ -71,6 +84,10 @@ echo "  "Hash               : ${hhsh}
 echo "  "Using branch       : ${branch}
 echo "  "Using revision     : ${rev}
 
+if test ${useretrotor} = "true"; then
+	echo "  "Specific flags     : retrotor
+fi
+
 echo Done.
 version="${version}"."${rev}"
 echo Got version number ${version}. 
@@ -83,7 +100,7 @@ echo Extracting base archive...
 mkdir -p ${workdir}/src
 echo Checking out latest snapshot...
 cd ${workdir}/src
-git clone --depth 1 https://github.com/RetroShare/RetroShare.git --single-branch --branch $branch .
+git clone --depth 1 ${gitpath} --single-branch --branch $branch .
 
 #  if ! test "$hhsh" = "" ; then
 #  	echo Checking out revision $hhsh
@@ -121,13 +138,16 @@ for i in ${dist}; do
     echo copying changelog for ${i}
     sed -e s/XXXXXX/"${rev}"/g -e s/YYYYYY/"${i}"/g ../changelog > debian/changelog
 
-    if test -f ../control."${i}" ; then
+	 if test ${useretrotor} = "true"; then
+	 	cp ../rules.retrotor debian/rules
+	 	cp ../control.trusty_retrotor debian/control
+    elif test -f ../control."${i}" ; then
 		echo \/\!\\ Using specific control file for distribution "${i}"
-        cp ../control."${i}" debian/control
+      cp ../control."${i}" debian/control
     else
 		echo Using standard control file control."${i}" for distribution "${i}"
-        cp ../debian/control debian/control
-    fi
+      cp ../debian/control debian/control
+	 fi
 
     debuild -S -k${gpgkey}
 done

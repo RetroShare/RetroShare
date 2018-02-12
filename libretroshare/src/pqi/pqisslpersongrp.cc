@@ -36,6 +36,9 @@ static struct RsLog::logInfo pqipersongrpzoneInfo = {RsLog::Default, "pqipersong
 /****
  * #define PQI_DISABLE_UDP 1
  ***/
+#ifdef RETROTOR
+#define PQI_DISABLE_UDP 1
+#endif
 
 /********************************** SSL Specific features ***************************/
 

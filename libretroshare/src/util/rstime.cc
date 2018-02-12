@@ -24,8 +24,29 @@
  */
 
 #include <iostream>
+#include <thread>
 #include <sys/time.h>
-#include "rsscopetimer.h"
+#include <sys/unistd.h>
+#include <unistd.h>
+#include "rstime.h"
+
+namespace rstime {
+
+int rs_usleep(uint32_t micro_seconds)
+{
+	while(micro_seconds >= 1000000)
+	{
+		// usleep cannot be called with 1000000 or more.
+
+		usleep(500000) ;
+		usleep(500000) ;
+
+		micro_seconds -= 1000000 ;
+	}
+	usleep(micro_seconds) ;
+
+	return 0 ;
+}
 
 RsScopeTimer::RsScopeTimer(const std::string& name)
 {
@@ -56,4 +77,6 @@ void RsScopeTimer::start()
 double RsScopeTimer::duration()
 {
 	return currentTime() - _seconds;
+}
+
 }
