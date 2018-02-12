@@ -63,8 +63,8 @@ if test "${useretrotor}" = "true"; then
 		echo ERROR: retro-tor can only be packaged for trusty for now.
 		exit 1;
 	fi
-	gitpath="https://github.com/csoler/RetroShare.git"
-	branch="v0.6-TorOnly"
+	#gitpath="https://github.com/csoler/RetroShare.git"
+	#branch="v0.6-TorOnly"
 fi
 
 if test "${dist}" = "" ; then
