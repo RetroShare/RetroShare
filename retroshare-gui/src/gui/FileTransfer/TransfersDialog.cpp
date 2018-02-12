@@ -154,7 +154,7 @@ public:
 
 		if(!ref)	// top level. The entry is that of a transfer
 		{
-			if(!convertTabEntryToRefPointer(row,-1,subref))
+			if(row >= mDownloads.size() || !convertTabEntryToRefPointer(row,-1,subref))
 				return QModelIndex() ;
 
 			return createIndex(row,column,subref) ;
