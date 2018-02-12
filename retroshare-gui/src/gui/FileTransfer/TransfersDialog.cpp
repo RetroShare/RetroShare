@@ -1861,8 +1861,6 @@ void TransfersDialog::insertTransfers()
 	std::set<QString> expanded_hashes ;
 	std::set<QString> selected_hashes ;
 
-	std::cerr << "Updating transfers..." << std::endl;
-
 	DLListModel->update_transfers();
 
 	// Now show upload hashes. Here we use the "old" way, since the number of uploads is generally not so large.
