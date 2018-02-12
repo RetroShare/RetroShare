@@ -154,7 +154,7 @@ public:
 
 		if(!ref)	// top level. The entry is that of a transfer
 		{
-			if(!convertTabEntryToRefPointer(row,-1,subref))
+			if(row >= mDownloads.size() || !convertTabEntryToRefPointer(row,-1,subref))
 				return QModelIndex() ;
 
 			return createIndex(row,column,subref) ;
@@ -1860,8 +1860,6 @@ void TransfersDialog::insertTransfers()
 
 	std::set<QString> expanded_hashes ;
 	std::set<QString> selected_hashes ;
-
-	std::cerr << "Updating transfers..." << std::endl;
 
 	DLListModel->update_transfers();
 

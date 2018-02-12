@@ -1081,34 +1081,76 @@ void RsCollectionDialog::makeDir()
 
 	}
 
-	// Process all selected items
-	int count = ui._fileEntriesTW->selectedItems().count();
-	int curs = 0;
-	if (count == 0) curs = -1;
-	for (; curs < count; ++curs)
+
+	QList<QTreeWidgetItem*> selected = ui._fileEntriesTW->selectedItems();
+
+	if(selected.empty())
 	{
-		QTreeWidgetItem *item = NULL;
-		if (curs >= 0) {
-			item= ui._fileEntriesTW->selectedItems().at(curs);
-		} else {
-			item = getRootItem();
-		}
-		if (item) {
-			while (item->data(COLUMN_HASH, ROLE_TYPE).toUInt() != DIR_TYPE_DIR) {
+		QTreeWidgetItem *item = getRootItem();
+
+		ColFileInfo newChild;
+		newChild.name = childName;
+		newChild.filename_has_wrong_characters = false;
+		newChild.size = 0;
+		newChild.type = DIR_TYPE_DIR;
+		newChild.path = item->data(COLUMN_HASH, ROLE_PATH).toString()
+		        + "/" + item->data(COLUMN_HASH, ROLE_NAME).toString();
+		if (item == getRootItem()) newChild.path = "";
+
+		_newColFileInfos.push_back(newChild);
+	}
+	else
+		for(auto it(selected.begin());it!=selected.end();++it)
+		{
+			QTreeWidgetItem *item = *it;
+
+			while(item->data(COLUMN_HASH, ROLE_TYPE).toUInt() != DIR_TYPE_DIR)
 				item = item->parent();//Only Dir as Parent
-			}
+
 			ColFileInfo newChild;
 			newChild.name = childName;
 			newChild.filename_has_wrong_characters = false;
 			newChild.size = 0;
 			newChild.type = DIR_TYPE_DIR;
-			newChild.path = item->data(COLUMN_HASH, ROLE_PATH).toString()
-			                + "/" + item->data(COLUMN_HASH, ROLE_NAME).toString();
-			if (item == getRootItem()) newChild.path = "";
+
+			if (item == getRootItem())
+				newChild.path = "";
+			else
+				newChild.path = item->data(COLUMN_HASH, ROLE_PATH).toString() + "/" + item->data(COLUMN_HASH, ROLE_NAME).toString();
 
 			_newColFileInfos.push_back(newChild);
 		}
-	}
+
+
+//	// Process all selected items
+//	int count = ui._fileEntriesTW->selectedItems().count();
+//	int curs = 0;
+//	if (count == 0) curs = -1;
+//
+//	for (; curs < count; ++curs)
+//	{
+//		QTreeWidgetItem *item = NULL;
+//		if (curs >= 0) {
+//			item= ui._fileEntriesTW->selectedItems().at(curs);
+//		} else {
+//			item = getRootItem();
+//		}
+//		if (item) {
+//			while (item->parent() != NULL && item->data(COLUMN_HASH, ROLE_TYPE).toUInt() != DIR_TYPE_DIR) {
+//				item = item->parent();//Only Dir as Parent
+//			}
+//			ColFileInfo newChild;
+//			newChild.name = childName;
+//			newChild.filename_has_wrong_characters = false;
+//			newChild.size = 0;
+//			newChild.type = DIR_TYPE_DIR;
+//			newChild.path = item->data(COLUMN_HASH, ROLE_PATH).toString()
+//			                + "/" + item->data(COLUMN_HASH, ROLE_NAME).toString();
+//			if (item == getRootItem()) newChild.path = "";
+//
+//			_newColFileInfos.push_back(newChild);
+//		}
+//	}
 
 
 	updateList();
