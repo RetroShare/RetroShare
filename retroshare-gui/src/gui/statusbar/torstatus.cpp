@@ -59,6 +59,9 @@ void TorStatus::getTorStatus()
 {
 	statusTor->setVisible(!_compactMode);
 	QString text = _compactMode?statusTor->text():"";
+	int S = QFontMetricsF(torstatusLabel->font()).height();
+
+#ifdef RETROTOR
 
 	/* check local network state. We cannot make sure that Tor is running yet. */
 	uint32_t netState = rsConfig -> getNetState();
@@ -84,9 +87,6 @@ void TorStatus::getTorStatus()
 
 	/* now the extra bit .... switch on check boxes */
 
-	int S = QFontMetricsF(torstatusLabel->font()).height();
-
-#ifdef RETROTOR
 	// get Tor status
 	int tor_control_status = Tor::TorManager::instance()->control()->status();
 	int torstatus = Tor::TorManager::instance()->control()->torStatus();
