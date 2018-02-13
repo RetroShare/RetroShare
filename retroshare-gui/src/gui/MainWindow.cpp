@@ -733,8 +733,8 @@ void MainWindow::updateStatus()
     if (ratesstatus)
         ratesstatus->getRatesStatus(downKb, upKb);
 
-	if(torstatus)
-		torstatus->getTorStatus();
+    if(torstatus)
+        torstatus->getTorStatus();
 
     if(!hiddenmode)
     {
