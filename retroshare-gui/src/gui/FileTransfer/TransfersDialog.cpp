@@ -143,7 +143,7 @@ public:
 #endif
 		return mDownloads[entry].peers.size();
 	}
-	int columnCount(const QModelIndex &parent = QModelIndex()) const
+	int columnCount(const QModelIndex &/*parent*/ = QModelIndex()) const
 	{
 		return COLUMN_COUNT ;
 	}
@@ -251,7 +251,7 @@ public:
 		return createIndex(entry,child.column(),parent_ref) ;
 	}
 
-	QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const
+	QVariant headerData(int section, Qt::Orientation /*orientation*/, int role = Qt::DisplayRole) const
 	{
 		if(role != Qt::DisplayRole)
 			return QVariant();
@@ -280,7 +280,7 @@ public:
 		if(!index.isValid())
 			return QVariant();
 
-		int coln = index.column() ;
+		//int coln = index.column() ;
 
 		switch(role)
 		{
