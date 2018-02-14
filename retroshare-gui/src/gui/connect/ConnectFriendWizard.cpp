@@ -293,17 +293,27 @@ void ConnectFriendWizard::setCertificate(const QString &certificate, bool friend
 #ifdef FRIEND_WIZARD_DEBUG
 		std::cerr << "ConnectFriendWizard got id : " << peerDetails.id << "; gpg_id : " << peerDetails.gpg_id << std::endl;
 #endif
-        mCertificate = certificate.toUtf8().constData();
 
-        // Cyril: I disabled this because it seems to be not used anymore.
-        //setStartId(friendRequest ? Page_FriendRequest : Page_Conclusion);
-        setStartId(Page_Conclusion);
-        if (friendRequest){
-        ui->cp_Label->show();
-        ui->requestinfolabel->show();
-        setTitleText(ui->ConclusionPage, tr("Friend request"));
-        ui->ConclusionPage->setSubTitle(tr("Details about the request"));
-        }
+		if(peerDetails.id == rsPeers->getOwnId())
+		{
+			setField("errorMessage", tr("This is your own certificate! You would not want to make friend with yourself. Wouldn't you?") ) ;
+			error = false;
+			setStartId(Page_ErrorMessage);
+		}
+		else
+		{
+			mCertificate = certificate.toUtf8().constData();
+
+			// Cyril: I disabled this because it seems to be not used anymore.
+			//setStartId(friendRequest ? Page_FriendRequest : Page_Conclusion);
+			setStartId(Page_Conclusion);
+			if (friendRequest){
+				ui->cp_Label->show();
+				ui->requestinfolabel->show();
+				setTitleText(ui->ConclusionPage, tr("Friend request"));
+				ui->ConclusionPage->setSubTitle(tr("Details about the request"));
+			}
+		}
     } else {
 		// error message
 		setField("errorMessage", tr("Certificate Load Failed") + ": \n\n" + getErrorString(cert_load_error_code)) ;
@@ -497,8 +507,8 @@ void ConnectFriendWizard::initializePage(int id)
 			else
 				ui->alreadyRegisteredLabel->hide();
 			if(tmp_det.ownsign) {
-				ui->signGPGCheckBox->setChecked(true);
-				ui->signGPGCheckBox->setEnabled(false);
+				ui->signGPGCheckBox->setChecked(false);	// if already signed, we dont allow to sign it again, and dont show the box.
+				ui->signGPGCheckBox->setVisible(false);
 				ui->signGPGCheckBox->setToolTip(tr("You have already signed this key"));
 			}
 
@@ -702,6 +712,13 @@ bool ConnectFriendWizard::validateCurrentPage()
 #ifdef FRIEND_WIZARD_DEBUG
 				std::cerr << "ConnectFriendWizard got id : " << peerDetails.id << "; gpg_id : " << peerDetails.gpg_id << std::endl;
 #endif
+
+				if(peerDetails.id == rsPeers->getOwnId())
+				{
+					setField("errorMessage", tr("This is your own certificate! You would not want to make friend with yourself. Wouldn't you?") ) ;
+					error = false;
+				}
+
 				break;
 			}
 			// error message
@@ -735,6 +752,12 @@ bool ConnectFriendWizard::validateCurrentPage()
 #ifdef FRIEND_WIZARD_DEBUG
 					std::cerr << "ConnectFriendWizard got id : " << peerDetails.id << "; gpg_id : " << peerDetails.gpg_id << std::endl;
 #endif
+
+					if(peerDetails.id == rsPeers->getOwnId())
+					{
+						setField("errorMessage", tr("This is your own certificate! You would not want to make friend with yourself. Wouldn't you?") ) ;
+						error = false;
+					}
 				} else {
 					setField("errorMessage", QString(tr("Certificate Load Failed:something is wrong with %1")).arg(fn) + " : " + getErrorString(cert_error_code));
 					error = false;
