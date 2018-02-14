@@ -445,10 +445,6 @@ void ConnectFriendWizard::initializePage(int id)
 		break;
 	case Page_Conclusion:
 		{
-			if(peerDetails.id == rsPeers->getOwnId())
-			{
-			}
-
 			bool peerIsHiddenNode = peerDetails.isHiddenNode ;
 			bool amIHiddenNode = rsPeers->isHiddenNode(rsPeers->getOwnId()) ;
 
