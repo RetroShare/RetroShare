@@ -128,6 +128,24 @@ StreamBase& JsonStream::operator<<(ValueReference<std::string> value)
     return *this;
 }
 
+StreamBase& JsonStream::operator<<(ValueReference<intptr_t> value)
+{
+    if(serialise())
+    {
+        setType(TYPE_ARRAY);
+        mArray.push_back(value.value);
+    }
+    else
+    {
+        if(checkDeserialisation() && arrayBoundsOk())
+        {
+            valueToIntPtr(mArray[mArrayNextRead], value.value);
+            mArrayNextRead++;
+        }
+    }
+    return *this;
+}
+
 StreamBase& JsonStream::getStreamToMember()
 {
     setType(TYPE_ARRAY);
@@ -209,6 +227,23 @@ StreamBase& JsonStream::operator<<(KeyValueReference<std::string> keyValue)
         if(checkDeserialisation() && checkObjectMember(keyValue.key))
         {
             valueToString(mObject[keyValue.key], keyValue.value);
+        }
+    }
+    return *this;
+}
+
+StreamBase& JsonStream::operator<<(KeyValueReference<intptr_t> keyValue)
+{
+    if(serialise())
+    {
+        setType(TYPE_OBJECT);
+        mObject[keyValue.key] = keyValue.value;
+    }
+    else
+    {
+        if(checkDeserialisation() && checkObjectMember(keyValue.key))
+        {
+            valueToIntPtr(mObject[keyValue.key], keyValue.value);
         }
     }
     return *this;
@@ -469,6 +504,19 @@ void JsonStream::valueToString(json::Value &value, std::string& str)
     {
         mIsOk = false;
         mErrorLog += "JsonStream::valueToString() Error: wrong type\n";
+    }
+}
+
+void JsonStream::valueToIntPtr(json::Value &value, intptr_t& intptr)
+{
+    if(value.GetType() == json::IntPtrVal)
+    {
+        intptr = value.ToIntPtr();
+    }
+    else
+    {
+        mIsOk = false;
+        mErrorLog += "JsonStream::valueToIntPtr() Error: wrong type\n";
     }
 }
 

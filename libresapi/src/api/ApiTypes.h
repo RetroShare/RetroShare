@@ -101,6 +101,7 @@ public:
     virtual StreamBase& operator<<(ValueReference<int> value) = 0;
     virtual StreamBase& operator<<(ValueReference<double> value) = 0;
     virtual StreamBase& operator<<(ValueReference<std::string> value) = 0;
+    virtual StreamBase& operator<<(ValueReference<intptr_t> value) = 0;
     // usefull if the new array member should be an array or object
     // the reference should be at least valid until another method of this class gets called
     virtual StreamBase& getStreamToMember() = 0;
@@ -110,6 +111,7 @@ public:
     virtual StreamBase& operator<<(KeyValueReference<int> keyValue) = 0;
     virtual StreamBase& operator<<(KeyValueReference<double> keyValue) = 0;
     virtual StreamBase& operator<<(KeyValueReference<std::string> keyValue) = 0;
+    virtual StreamBase& operator<<(KeyValueReference<intptr_t> keyValue) = 0;
     // usefull if the new object member should be an array or object
     // the reference should be at least valid until another method of this class gets called
     virtual StreamBase& getStreamToMember(std::string name) = 0;

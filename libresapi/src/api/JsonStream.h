@@ -28,6 +28,7 @@ public:
     virtual StreamBase& operator<<(ValueReference<int> value);
     virtual StreamBase& operator<<(ValueReference<double> value);
     virtual StreamBase& operator<<(ValueReference<std::string> value);
+    virtual StreamBase& operator<<(ValueReference<intptr_t> value);
     // usefull if the new array member should be an array or object
     // the reference should be at least valid until another method of this class gets called
     virtual StreamBase& getStreamToMember();
@@ -37,6 +38,7 @@ public:
     virtual StreamBase& operator<<(KeyValueReference<int> keyValue);
     virtual StreamBase& operator<<(KeyValueReference<double> keyValue);
     virtual StreamBase& operator<<(KeyValueReference<std::string> keyValue);
+    virtual StreamBase& operator<<(KeyValueReference<intptr_t> keyValue);
     // usefull if the new object member should be an array or object
     // the reference should be at least valid until another method of this class gets called
     virtual StreamBase& getStreamToMember(std::string name);
@@ -96,6 +98,7 @@ private:
     void valueToInt(json::Value& value, int& integer);
     void valueToDouble(json::Value& value, double& doubleVal);
     void valueToString(json::Value& value, std::string& str);
+    void valueToIntPtr(json::Value& value, intptr_t& intptr);
 
     void deleteCurrentChild();
     json::Value getJsonValue();

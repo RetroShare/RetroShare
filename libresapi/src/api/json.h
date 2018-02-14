@@ -251,7 +251,8 @@ namespace json
 		DoubleVal,
 		ObjectVal,
 		ArrayVal,
-		BoolVal
+		BoolVal,
+		IntPtrVal
 	};
 
 	class Value;
@@ -376,26 +377,28 @@ namespace json
 	{
 		protected:
 
-			ValueType						mValueType;
-			int								mIntVal;
-			float							mFloatVal;
-			double 							mDoubleVal;
-			std::string						mStringVal;
-			Object							mObjectVal;
-			Array							mArrayVal;
-			bool 							mBoolVal;
+			ValueType    mValueType;
+			int          mIntVal;
+			float        mFloatVal;
+			double       mDoubleVal;
+			std::string  mStringVal;
+			Object       mObjectVal;
+			Array        mArrayVal;
+			bool         mBoolVal;
+			intptr_t     mIntPtrVal;
 
 		public:
 
-			Value() 					: mValueType(NULLVal), mIntVal(0), mFloatVal(0), mDoubleVal(0), mBoolVal(false) {}
-			Value(int v)				: mValueType(IntVal), mIntVal(v), mFloatVal((float)v), mDoubleVal((double)v), mBoolVal(false) {}
-			Value(float v)				: mValueType(FloatVal), mIntVal((int)v), mFloatVal(v), mDoubleVal((double)v), mBoolVal(false) {}
-			Value(double v)				: mValueType(DoubleVal), mIntVal((int)v), mFloatVal((float)v), mDoubleVal(v), mBoolVal(false) {}
-			Value(const std::string& v) : mValueType(StringVal), mIntVal(), mFloatVal(), mDoubleVal(), mStringVal(v), mBoolVal(false) {}
-			Value(const char* v)		: mValueType(StringVal), mIntVal(), mFloatVal(), mDoubleVal(), mStringVal(v), mBoolVal(false) {}
-			Value(const Object& v)		: mValueType(ObjectVal), mIntVal(), mFloatVal(), mDoubleVal(), mObjectVal(v), mBoolVal(false) {}
-			Value(const Array& v)		: mValueType(ArrayVal), mIntVal(), mFloatVal(), mDoubleVal(), mArrayVal(v), mBoolVal(false) {}
-			Value(bool v)				: mValueType(BoolVal), mIntVal(), mFloatVal(), mDoubleVal(), mBoolVal(v) {}
+			Value()                     : mValueType(NULLVal)   , mIntVal(0), mFloatVal(0), mDoubleVal(0), mBoolVal(false), mIntPtrVal(0) {}
+			Value(int v)                : mValueType(IntVal)    , mIntVal(v), mFloatVal((float)v), mDoubleVal((double)v), mBoolVal(false), mIntPtrVal(0) {}
+			Value(float v)              : mValueType(FloatVal)  , mIntVal((int)v), mFloatVal(v), mDoubleVal((double)v), mBoolVal(false), mIntPtrVal(0) {}
+			Value(double v)             : mValueType(DoubleVal) , mIntVal((int)v), mFloatVal((float)v), mDoubleVal(v), mBoolVal(false), mIntPtrVal(0) {}
+			Value(const std::string& v) : mValueType(StringVal) , mIntVal(), mFloatVal(), mDoubleVal(), mStringVal(v), mBoolVal(false), mIntPtrVal(0) {}
+			Value(const char* v)        : mValueType(StringVal) , mIntVal(), mFloatVal(), mDoubleVal(), mStringVal(v), mBoolVal(false), mIntPtrVal(0) {}
+			Value(const Object& v)      : mValueType(ObjectVal) , mIntVal(), mFloatVal(), mDoubleVal(), mObjectVal(v), mBoolVal(false), mIntPtrVal(0) {}
+			Value(const Array& v)       : mValueType(ArrayVal)  , mIntVal(), mFloatVal(), mDoubleVal(), mArrayVal(v), mBoolVal(false), mIntPtrVal(0) {}
+			Value(bool v)               : mValueType(BoolVal)   , mIntVal(), mFloatVal(), mDoubleVal(), mBoolVal(v), mIntPtrVal(0) {}
+			Value(intptr_t v)           : mValueType(IntPtrVal) , mIntVal((int)v), mFloatVal((float)v), mDoubleVal((double)v), mBoolVal(false), mIntPtrVal(v) {}
 			Value(const Value& v);
 
 			// Use this to determine the underlying type that this Value class represents. It will be one of the
@@ -434,20 +437,22 @@ namespace json
 
 		
 			// non-operator versions, **will throw a std::runtime_error if invalid with an appropriate error message**
-			int 				ToInt() const;
-			float 				ToFloat() const;
-			double 				ToDouble() const;
-			bool 				ToBool() const;
-			const std::string&	ToString() const;
-			Object 				ToObject() const;
-			Array 				ToArray() const;
+			int                ToInt() const;
+			float              ToFloat() const;
+			double             ToDouble() const;
+			bool               ToBool() const;
+			const std::string& ToString() const;
+			Object             ToObject() const;
+			Array              ToArray() const;
+			intptr_t           ToIntPtr() const;
 
 			// These versions do the same as above but will return your specified default value in the event there's an error, and thus **don't** throw an exception.
-			int					ToInt(int def) const					{return IsNumeric() ? mIntVal : def;}
-			float				ToFloat(float def) const				{return IsNumeric() ? mFloatVal : def;}
-			double				ToDouble(double def) const				{return IsNumeric() ? mDoubleVal : def;}
-			bool				ToBool(bool def) const					{return (mValueType == BoolVal) ? mBoolVal : def;}
-			const std::string&	ToString(const std::string& def) const	{return (mValueType == StringVal) ? mStringVal : def;}
+			int                ToInt(int def) const                   {return IsNumeric() ? mIntVal : def;}
+			float              ToFloat(float def) const               {return IsNumeric() ? mFloatVal : def;}
+			double             ToDouble(double def) const             {return IsNumeric() ? mDoubleVal : def;}
+			bool               ToBool(bool def) const                 {return (mValueType == BoolVal) ? mBoolVal : def;}
+			const std::string& ToString(const std::string& def) const {return (mValueType == StringVal) ? mStringVal : def;}
+			intptr_t           ToIntPtr(intptr_t def) const           {return (mValueType == IntPtrVal) ? mIntPtrVal : def;}
 
 			
 			// Please note that as per C++ rules, implicitly casting a Value to a std::string won't work.
@@ -463,7 +468,8 @@ namespace json
 			operator bool() const;
 			operator std::string() const;
 			operator Object() const;
-			operator Array() const;			
+			operator Array() const;
+			operator intptr_t() const;
 
 			// Returns 1 for anything not an Array/ObjectVal
 			size_t size() const;
@@ -561,6 +567,8 @@ namespace json
 
 			case ArrayVal		: 	return lhs.mArrayVal == rhs.mArrayVal;
 
+			case IntPtrVal		: 	return lhs.mIntPtrVal == rhs.mIntPtrVal;
+
 			default:
 				return true;
 		}
@@ -607,6 +615,8 @@ namespace json
 			case ObjectVal		: 	return lhs.mObjectVal < rhs.mObjectVal;
 
 			case ArrayVal		: 	return lhs.mArrayVal < rhs.mArrayVal;
+
+			case IntPtrVal		: 	return lhs.mIntPtrVal < rhs.mIntPtrVal;
 
 			default:
 				return true;

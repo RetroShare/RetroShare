@@ -218,11 +218,11 @@ double Value::ToDouble() const
 	return mDoubleVal;
 }
 
-bool Value::ToBool() const		
+bool Value::ToBool() const
 {
 	if (mValueType != BoolVal)
 		throw std::runtime_error("json mValueType==BoolVal required");
-	
+
 	return mBoolVal;
 }
 
@@ -250,6 +250,14 @@ Array Value::ToArray() const
 	return mArrayVal;
 }
 
+intptr_t Value::ToIntPtr() const
+{
+	if (mValueType != IntPtrVal)
+		throw std::runtime_error("json mValueType==IntPtrVal required");
+
+	return mIntPtrVal;
+}
+
 Value::operator int() const
 { 
 	if (!IsNumeric())
@@ -274,7 +282,7 @@ Value::operator double() const
 	return mDoubleVal;
 }
 
-Value::operator bool() const 			
+Value::operator bool() const
 {
 	if (mValueType != BoolVal)
 		throw std::runtime_error("json mValueType==BoolVal required");
@@ -282,7 +290,7 @@ Value::operator bool() const
 	return mBoolVal;
 }
 
-Value::operator std::string() const 	
+Value::operator std::string() const
 {
 	if (mValueType != StringVal)
 		throw std::runtime_error("json mValueType==StringVal required");
@@ -304,6 +312,14 @@ Value::operator Array() const
 		throw std::runtime_error("json mValueType==ArrayVal required");
 
 	return mArrayVal;
+}
+
+Value::operator intptr_t() const
+{
+	if (mValueType != IntPtrVal)
+		throw std::runtime_error("json mValueType==IntPtrVal required");
+
+	return mIntPtrVal;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -511,14 +527,15 @@ std::string SerializeValue(const Value& v)
 	char buff[BUFF_SZ];
 	switch (v.GetType())
 	{
-		case IntVal			: snprintf(buff, BUFF_SZ, "%d", (int)v); str = buff; break;
-		case FloatVal		: snprintf(buff, BUFF_SZ, "%f", (float)v); str = buff; break;
-		case DoubleVal		: snprintf(buff, BUFF_SZ, "%f", (double)v); str = buff; break;
-		case BoolVal		: str = v ? "true" : "false"; break;
-		case NULLVal		: str = "null"; break;
-		case ObjectVal		: str = Serialize(v); break;
-		case ArrayVal		: str = SerializeArray(v); break;
-        case StringVal		: str = "\"" + EscapeJSONString((std::string)v) + "\""; break;
+		case IntVal    : snprintf(buff, BUFF_SZ, "%d", (int)v); str = buff; break;
+		case FloatVal  : snprintf(buff, BUFF_SZ, "%f", (float)v); str = buff; break;
+		case DoubleVal : snprintf(buff, BUFF_SZ, "%f", (double)v); str = buff; break;
+		case BoolVal   : str = v ? "true" : "false"; break;
+		case NULLVal   : str = "null"; break;
+		case ObjectVal : str = Serialize(v); break;
+		case ArrayVal  : str = SerializeArray(v); break;
+		case StringVal : str = "\"" + EscapeJSONString((std::string)v) + "\""; break;
+		case IntPtrVal : snprintf(buff, BUFF_SZ, "%ld", (intptr_t)v); str = buff; break;
 	}
 
     // snprintf creates commas on german computers

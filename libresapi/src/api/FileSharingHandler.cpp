@@ -84,7 +84,7 @@ void FileSharingHandler::handleGetSharedDir(Request& /*req*/, Response& resp)
 	DirDetails dirDetails;
 	mRsFiles->RequestDirDetails(NULL, dirDetails, RS_FILE_HINTS_LOCAL);
 
-	resp.mDataStream << makeKeyValue("parent_reference", *reinterpret_cast<int*>(&dirDetails.ref));
+	resp.mDataStream << makeKeyValue("parent_reference", reinterpret_cast<intptr_t>(&dirDetails.ref));
 	resp.mDataStream << makeKeyValue("path", dirDetails.path);
 	StreamBase &childsStream = resp.mDataStream.getStreamToMember("childs");
 
@@ -130,14 +130,13 @@ void FileSharingHandler::handleGetSharedDir(Request& /*req*/, Response& resp)
 			        << makeKeyValue("path", dirDetails.path)
 			        << makeKeyValue("hash", dirDetails.hash.toStdString())
 			        << makeKeyValue("peer_id", dirDetails.id.toStdString())
-			        << makeKeyValue("parent_reference", *reinterpret_cast<int*>(&dirDetails.parent))
-			        << makeKeyValue("reference", *reinterpret_cast<int*>(&dirDetails.ref))
+			        << makeKeyValue("parent_reference", reinterpret_cast<intptr_t>(&dirDetails.parent))
+			        << makeKeyValue("reference", reinterpret_cast<intptr_t>(&dirDetails.ref))
 			        << makeKeyValue("count", static_cast<int>(dirDetails.count))
 			        << makeKeyValueReference("type", type)
 			        << makeKeyValueReference("browsable", browsable)
 			        << makeKeyValueReference("anon_dl", anon_dl)
 			        << makeKeyValueReference("anon_search", anon_search);
-
 
 			int contain_files = 0;
 			int contain_folders = 0;
@@ -274,7 +273,7 @@ void FileSharingHandler::handleGetDirectoryParent(Request& req, Response& resp)
 	mRsFiles->RequestDirDetails(ref, dirDetails, flags);
 	mRsFiles->RequestDirDetails(dirDetails.parent, dirDetails, flags);
 
-	resp.mDataStream << makeKeyValue("parent_reference", *reinterpret_cast<int*>(&dirDetails.ref));
+	resp.mDataStream << makeKeyValue("parent_reference", reinterpret_cast<intptr_t>(&dirDetails.ref));
 	resp.mDataStream << makeKeyValue("path", dirDetails.path);
 	StreamBase &childsStream = resp.mDataStream.getStreamToMember("childs");
 
@@ -317,14 +316,13 @@ void FileSharingHandler::handleGetDirectoryParent(Request& req, Response& resp)
 			        << makeKeyValue("path", dirDetails.path)
 			        << makeKeyValue("hash", dirDetails.hash.toStdString())
 			        << makeKeyValue("peer_id", dirDetails.id.toStdString())
-			        << makeKeyValue("parent_reference", *reinterpret_cast<int*>(&dirDetails.parent))
-			        << makeKeyValue("reference", *reinterpret_cast<int*>(&dirDetails.ref))
+			        << makeKeyValue("parent_reference", reinterpret_cast<intptr_t>(&dirDetails.parent))
+			        << makeKeyValue("reference", reinterpret_cast<intptr_t>(&dirDetails.ref))
 			        << makeKeyValue("count", static_cast<int>(dirDetails.count))
 			        << makeKeyValueReference("type", type)
 			        << makeKeyValueReference("browsable", browsable)
 			        << makeKeyValueReference("anon_dl", anon_dl)
 			        << makeKeyValueReference("anon_search", anon_search);
-
 
 			int contain_files = 0;
 			int contain_folders = 0;
@@ -383,7 +381,7 @@ void FileSharingHandler::handleGetDirectoryChilds(Request& req, Response& resp)
 	DirDetails dirDetails;
 	mRsFiles->RequestDirDetails(ref, dirDetails, flags);
 
-	resp.mDataStream << makeKeyValue("parent_reference", *reinterpret_cast<int*>(&dirDetails.ref));
+	resp.mDataStream << makeKeyValue("parent_reference", reinterpret_cast<intptr_t>(&dirDetails.ref));
 	resp.mDataStream << makeKeyValue("path", dirDetails.path);
 	resp.mDataStream << makeKeyValue("hash", dirDetails.hash.toStdString());
 	StreamBase &childsStream = resp.mDataStream.getStreamToMember("childs");
@@ -427,14 +425,13 @@ void FileSharingHandler::handleGetDirectoryChilds(Request& req, Response& resp)
 			        << makeKeyValue("path", dirDetails.path)
 			        << makeKeyValue("hash", dirDetails.hash.toStdString())
 			        << makeKeyValue("peer_id", dirDetails.id.toStdString())
-			        << makeKeyValue("parent_reference", *reinterpret_cast<int*>(&dirDetails.parent))
-			        << makeKeyValue("reference", *reinterpret_cast<int*>(&dirDetails.ref))
+			        << makeKeyValue("parent_reference", reinterpret_cast<intptr_t>(&dirDetails.parent))
+			        << makeKeyValue("reference", reinterpret_cast<intptr_t>(&dirDetails.ref))
 			        << makeKeyValue("count", static_cast<int>(dirDetails.count))
 			        << makeKeyValueReference("type", type)
 			        << makeKeyValueReference("browsable", browsable)
 			        << makeKeyValueReference("anon_dl", anon_dl)
 			        << makeKeyValueReference("anon_search", anon_search);
-
 
 			int contain_files = 0;
 			int contain_folders = 0;
