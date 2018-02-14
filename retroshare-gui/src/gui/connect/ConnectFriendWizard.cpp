@@ -511,8 +511,8 @@ void ConnectFriendWizard::initializePage(int id)
 			else
 				ui->alreadyRegisteredLabel->hide();
 			if(tmp_det.ownsign) {
-				ui->signGPGCheckBox->setChecked(true);
-				ui->signGPGCheckBox->setEnabled(false);
+				ui->signGPGCheckBox->setChecked(false);	// if already signed, we dont allow to sign it again, and dont show the box.
+				ui->signGPGCheckBox->setVisible(false);
 				ui->signGPGCheckBox->setToolTip(tr("You have already signed this key"));
 			}
 
