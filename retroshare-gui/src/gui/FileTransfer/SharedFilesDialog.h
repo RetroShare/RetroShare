@@ -107,6 +107,8 @@ protected:
   bool tree_FilterItem(const QModelIndex &index, const QString &text, int level);
   bool flat_FilterItem(const QModelIndex &index, const QString &text, int level);
 
+  void restoreInvisibleItems();
+
   QModelIndexList getSelected();
 
   /** Defines the actions for the context menu for QTreeWidget */
@@ -133,6 +135,8 @@ protected:
 
   QString lastFilterString;
   QString mLastFilterText ;
+
+  QList<QModelIndex> mHiddenIndexes;
 };
 
 class LocalSharedFilesDialog : public SharedFilesDialog
