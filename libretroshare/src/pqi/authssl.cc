@@ -80,6 +80,7 @@ struct CRYPTO_dynlock_value
 	pthread_mutex_t mutex;
 };
 
+# if OPENSSL_VERSION_NUMBER < 0x10100000L
 /**
  * OpenSSL locking function.
  *
@@ -97,7 +98,9 @@ static void locking_function(int mode, int n, const char */*file*/, int /*line*/
 		pthread_mutex_unlock(&mutex_buf[n]);
 	}
 }
+#endif
 
+# if OPENSSL_VERSION_NUMBER < 0x10100000L
 /**
  * OpenSSL uniq id function.
  *
@@ -111,7 +114,9 @@ static unsigned long id_function(void)
 	return (unsigned long) pthread_self();
 #endif
 }
+#endif
 
+# if OPENSSL_VERSION_NUMBER < 0x10100000L
 /**
  * OpenSSL allocate and initialize dynamic crypto lock.
  *
@@ -130,7 +135,9 @@ static struct CRYPTO_dynlock_value *dyn_create_function(const char */*file*/, in
 
 	return value;
 }
+#endif
 
+# if OPENSSL_VERSION_NUMBER < 0x10100000L
 /**
  * OpenSSL dynamic locking function.
  *
@@ -148,7 +155,9 @@ static void dyn_lock_function(int mode, struct CRYPTO_dynlock_value *l, const ch
 		pthread_mutex_unlock(&l->mutex);
 	}
 }
+#endif
 
+# if OPENSSL_VERSION_NUMBER < 0x10100000L
 /**
  * OpenSSL destroy dynamic crypto lock.
  *
@@ -162,6 +171,7 @@ static void dyn_destroy_function(struct CRYPTO_dynlock_value *l, const char */*f
 	pthread_mutex_destroy(&l->mutex);
 	free(l);
 }
+#endif
 
 /**
  * Initialize TLS library.
@@ -178,6 +188,7 @@ bool tls_init()
 	for (int i = 0; i < CRYPTO_num_locks(); i++) {
 		pthread_mutex_init(&mutex_buf[i], NULL);
 	}
+# if OPENSSL_VERSION_NUMBER < 0x10100000L
 	/* static locks callbacks */
 	CRYPTO_set_locking_callback(locking_function);
 	CRYPTO_set_id_callback(id_function);
@@ -185,8 +196,8 @@ bool tls_init()
 	CRYPTO_set_dynlock_create_callback(dyn_create_function);
 	CRYPTO_set_dynlock_lock_callback(dyn_lock_function);
 	CRYPTO_set_dynlock_destroy_callback(dyn_destroy_function);
-
-    return true;
+#endif
+	return true;
 }
 
 /**
