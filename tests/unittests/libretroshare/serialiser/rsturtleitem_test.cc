@@ -42,6 +42,8 @@ RsSerialType* init_item(CompressedChunkMap& map)
 	map._map.clear() ;
 	for(uint32_t i=0;i<15;++i)
 		map._map.push_back(rand()) ;
+
+	return new RsTurtleSerialiser();
 }
 bool operator==(const CompressedChunkMap& m1,const CompressedChunkMap& m2)
 {
