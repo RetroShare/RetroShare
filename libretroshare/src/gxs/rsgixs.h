@@ -186,7 +186,8 @@ class RsGixsReputation
 {
 public:
 	// get Reputation.
-    virtual RsReputations::ReputationLevel overallReputationLevel(const RsGxsId& id,uint32_t *identity_flags=NULL) = 0;
+	virtual RsReputations::ReputationLevel overallReputationLevel(const RsGxsId& id,uint32_t *identity_flags=NULL) = 0;
+	virtual ~RsGixsReputation(){}
 };
 
 /*** This Class pulls all the GXS Interfaces together ****/
@@ -210,6 +211,7 @@ virtual ~RsGxsIdExchange() { return; }
 class RsGcxs
 {
 	public:
+	virtual ~RsGcxs(){}
 
         /* GXS Interface - for working out who can receive */
         virtual bool isLoaded(const RsGxsCircleId &circleId) = 0;
