@@ -55,7 +55,7 @@ class SSGxsChannelGroup
 
 
 class p3GxsChannels: public RsGenExchange, public RsGxsChannels, 
-	public GxsTokenQueue,
+	public GxsTokenQueue, public p3Config,
 	public RsTickEvent	/* only needed for testing - remove after */
 {
 	public:
@@ -67,6 +67,10 @@ virtual void service_tick();
 
 	protected:
 
+
+	virtual RsSerialiser* setupSerialiser();                            // @see p3Config::setupSerialiser()
+	virtual bool saveList(bool &cleanup, std::list<RsItem *>&saveList); // @see p3Config::saveList(bool &cleanup, std::list<RsItem *>&)
+	virtual bool loadList(std::list<RsItem *>& loadList);               // @see p3Config::loadList(std::list<RsItem *>&)
 
 	// Overloaded to cache new groups.
 virtual RsGenExchange::ServiceCreate_Return service_CreateGroup(RsGxsGrpItem* grpItem, RsTlvSecurityKeySet& keySet);
@@ -218,7 +222,7 @@ bool generateGroup(uint32_t &token, std::string groupName);
 	RsGxsMessageId mGenThreadId;
 
 	p3GxsCommentService *mCommentService;	
-    std::set<RsGxsGroupId> mKnownChannels;
+    std::map<RsGxsGroupId,time_t> mKnownChannels;
 };
 
 #endif 

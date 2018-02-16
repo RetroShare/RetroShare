@@ -84,7 +84,8 @@ const uint16_t RS_SERVICE_GXS_TYPE_REPUTATION  = 0x0219;
 const uint16_t RS_SERVICE_TYPE_GXS_RECOGN      = 0x0220;
 const uint16_t RS_SERVICE_TYPE_GXS_TRANS       = 0x0230;
 
-const uint16_t RS_SERVICE_GXS_TYPE_FORUMS_CONFIG = 0x0315;
+const uint16_t RS_SERVICE_GXS_TYPE_FORUMS_CONFIG   = 0x0315;
+const uint16_t RS_SERVICE_GXS_TYPE_CHANNELS_CONFIG = 0x0317;
 
 // Experimental Services.
 /* DSDV Testing at the moment - Service Only */

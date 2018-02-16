@@ -269,9 +269,7 @@ void p3GxsForums::notifyChanges(std::vector<RsGxsNotify *> &changes)
 void	p3GxsForums::service_tick()
 {
 	dummy_tick();
-#ifdef TO_REMOVE
 	RsTickEvent::tick_events();
-#endif
 	return;
 }
 
@@ -653,7 +651,6 @@ bool p3GxsForums::generateGroup(uint32_t &token, std::string groupName)
 }
 
 
-#ifdef TO_REMOVE
         // Overloaded from RsTickEvent for Event callbacks.
 void p3GxsForums::handle_event(uint32_t event_type, const std::string &/*elabel*/)
 {
@@ -674,5 +671,3 @@ void p3GxsForums::handle_event(uint32_t event_type, const std::string &/*elabel*
 			break;
 	}
 }
-#endif
-

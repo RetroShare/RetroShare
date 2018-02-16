@@ -39,10 +39,8 @@
  *
  */
 
-class p3GxsForums: public RsGenExchange, public RsGxsForums, public p3Config
-#ifdef TO_REMOVE
+class p3GxsForums: public RsGenExchange, public RsGxsForums, public p3Config,
 	public RsTickEvent	/* only needed for testing - remove after */
-#endif
 {
 	public:
 
@@ -57,10 +55,8 @@ virtual void service_tick();
 
 virtual void notifyChanges(std::vector<RsGxsNotify*>& changes);
 
-#ifdef TO_REMOVE
         // Overloaded from RsTickEvent.
 virtual void handle_event(uint32_t event_type, const std::string &elabel);
-#endif
 
 	virtual RsSerialiser* setupSerialiser();                            // @see p3Config::setupSerialiser()
 	virtual bool saveList(bool &cleanup, std::list<RsItem *>&saveList); // @see p3Config::saveList(bool &cleanup, std::list<RsItem *>&)
