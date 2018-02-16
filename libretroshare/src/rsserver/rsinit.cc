@@ -1649,6 +1649,7 @@ int RsServer::StartupRetroShare()
 
 	mConfigMgr->addConfiguration("identity.cfg", gxsid_ns);
 	mConfigMgr->addConfiguration("gxsforums.cfg", gxsforums_ns);
+	mConfigMgr->addConfiguration("gxsforums_srv.cfg", mGxsForums);
 	mConfigMgr->addConfiguration("gxschannels.cfg", gxschannels_ns);
 	mConfigMgr->addConfiguration("gxscircles.cfg", gxscircles_ns);
 	mConfigMgr->addConfiguration("posted.cfg", posted_ns);
