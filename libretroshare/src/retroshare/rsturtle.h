@@ -52,13 +52,20 @@ struct TurtleFileInfo
 	std::string name ;
 	uint64_t size ;
 };
-
-struct TurtleRequestDisplayInfo
+struct TurtleTunnelRequestDisplayInfo
 {
-	uint32_t request_id ;			// Id of the request
-	RsPeerId source_peer_id ;	// Peer that relayed the request
-	uint32_t age ;						// Age in seconds
-	uint32_t depth ;					// Depth of the request. Might be altered.
+	uint32_t request_id ;     // Id of the request
+	RsPeerId source_peer_id ; // Peer that relayed the request
+	uint32_t age ;            // Age in seconds
+	uint32_t depth ;          // Depth of the request. Might be altered.
+};
+struct TurtleSearchRequestDisplayInfo
+{
+	uint32_t request_id ;     // Id of the request
+	RsPeerId source_peer_id ; // Peer that relayed the request
+	uint32_t age ;            // Age in seconds
+	uint32_t depth ;          // Depth of the request. Might be altered.
+	uint32_t hits ;
 	std::string keywords;
 };
 
@@ -135,7 +142,7 @@ class RsTurtle
 		// Get info from the turtle router. I use std strings to hide the internal structs.
 		//
 		virtual void getInfo(std::vector<std::vector<std::string> >&,std::vector<std::vector<std::string> >&,
-									std::vector<TurtleRequestDisplayInfo>&,std::vector<TurtleRequestDisplayInfo>&) const = 0;
+									std::vector<TurtleSearchRequestDisplayInfo>&,std::vector<TurtleTunnelRequestDisplayInfo>&) const = 0;
 
 		// Get info about turtle traffic. See TurtleTrafficStatisticsInfo members for details.
 		//
