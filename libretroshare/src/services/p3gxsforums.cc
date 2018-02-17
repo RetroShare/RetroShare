@@ -119,7 +119,7 @@ struct RsGxsForumNotifyRecordsItem: public RsItem
 class GxsForumsConfigSerializer : public RsServiceSerializer
 {
 public:
-	GxsForumsConfigSerializer() : RsServiceSerializer(RS_SERVICE_TYPE_GXS_TRANS) {}
+	GxsForumsConfigSerializer() : RsServiceSerializer(RS_SERVICE_GXS_TYPE_FORUMS_CONFIG) {}
 	virtual ~GxsForumsConfigSerializer() {}
 
 	RsItem* create_item(uint16_t service_id, uint8_t item_sub_id) const

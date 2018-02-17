@@ -144,7 +144,7 @@ struct RsGxsForumNotifyRecordsItem: public RsItem
 class GxsChannelsConfigSerializer : public RsServiceSerializer
 {
 public:
-	GxsChannelsConfigSerializer() : RsServiceSerializer(RS_SERVICE_TYPE_GXS_TRANS) {}
+	GxsChannelsConfigSerializer() : RsServiceSerializer(RS_SERVICE_GXS_TYPE_CHANNELS_CONFIG) {}
 	virtual ~GxsChannelsConfigSerializer() {}
 
 	RsItem* create_item(uint16_t service_id, uint8_t item_sub_id) const
