@@ -95,6 +95,91 @@ uint32_t p3GxsForums::forumsAuthenPolicy()
 	return policy;
 }
 
+static const uint32_t GXS_FORUMS_CONFIG_MAX_TIME_NOTIFY_STORAGE = 86400*30*2 ; // ignore notifications for 2 months
+static const uint8_t  GXS_FORUMS_CONFIG_SUBTYPE_NOTIFY_RECORD   = 0x01 ;
+
+struct RsGxsForumNotifyRecordsItem: public RsItem
+{
+
+	RsGxsForumNotifyRecordsItem()
+	    : RsItem(RS_PKT_VERSION_SERVICE,RS_SERVICE_GXS_TYPE_FORUMS_CONFIG,GXS_FORUMS_CONFIG_SUBTYPE_NOTIFY_RECORD)
+	{}
+
+    virtual ~RsGxsForumNotifyRecordsItem() {}
+
+	void serial_process( RsGenericSerializer::SerializeJob j, RsGenericSerializer::SerializeContext& ctx )
+	{
+		RS_REGISTER_SERIAL_MEMBER(records);
+	}
+	void clear() {}
+
+	std::map<RsGxsGroupId,time_t> records;
+};
+
+class GxsForumsConfigSerializer : public RsServiceSerializer
+{
+public:
+	GxsForumsConfigSerializer() : RsServiceSerializer(RS_SERVICE_GXS_TYPE_FORUMS_CONFIG) {}
+	virtual ~GxsForumsConfigSerializer() {}
+
+	RsItem* create_item(uint16_t service_id, uint8_t item_sub_id) const
+	{
+		if(service_id != RS_SERVICE_GXS_TYPE_FORUMS_CONFIG)
+			return NULL;
+
+		switch(item_sub_id)
+		{
+		case GXS_FORUMS_CONFIG_SUBTYPE_NOTIFY_RECORD: return new RsGxsForumNotifyRecordsItem();
+		default:
+			return NULL;
+		}
+	}
+};
+
+bool p3GxsForums::saveList(bool &cleanup, std::list<RsItem *>&saveList)
+{
+	cleanup = true ;
+
+	RsGxsForumNotifyRecordsItem *item = new RsGxsForumNotifyRecordsItem ;
+
+	item->records = mKnownForums ;
+
+	saveList.push_back(item) ;
+	return true;
+}
+
+bool p3GxsForums::loadList(std::list<RsItem *>& loadList)
+{
+	while(!loadList.empty())
+	{
+		RsItem *item = loadList.front();
+		loadList.pop_front();
+
+		time_t now = time(NULL);
+
+		RsGxsForumNotifyRecordsItem *fnr = dynamic_cast<RsGxsForumNotifyRecordsItem*>(item) ;
+
+		if(fnr != NULL)
+		{
+			mKnownForums.clear();
+
+			for(auto it(fnr->records.begin());it!=fnr->records.end();++it)
+				if( it->second + GXS_FORUMS_CONFIG_MAX_TIME_NOTIFY_STORAGE < now)
+					mKnownForums.insert(*it) ;
+		}
+
+		delete item ;
+	}
+	return true;
+}
+
+RsSerialiser* p3GxsForums::setupSerialiser()
+{
+	RsSerialiser* rss = new RsSerialiser;
+	rss->addSerialType(new GxsForumsConfigSerializer());
+
+	return rss;
+}
 
 void p3GxsForums::notifyChanges(std::vector<RsGxsNotify *> &changes)
 {
@@ -145,7 +230,9 @@ void p3GxsForums::notifyChanges(std::vector<RsGxsNotify *> &changes)
                                 if(mKnownForums.find(*git) == mKnownForums.end())
                                 {
 									notify->AddFeedItem(RS_FEED_ITEM_FORUM_NEW, git->toStdString());
-                                    mKnownForums.insert(*git) ;
+                                    mKnownForums.insert(std::make_pair(*git,time(NULL))) ;
+
+									IndicateConfigChanged();
                                 }
                                 else
                                     std::cerr << "(II) Not notifying already known forum " << *git << std::endl;
@@ -584,4 +671,3 @@ void p3GxsForums::handle_event(uint32_t event_type, const std::string &/*elabel*
 			break;
 	}
 }
-

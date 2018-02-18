@@ -39,7 +39,7 @@
  *
  */
 
-class p3GxsForums: public RsGenExchange, public RsGxsForums, 
+class p3GxsForums: public RsGenExchange, public RsGxsForums, public p3Config,
 	public RsTickEvent	/* only needed for testing - remove after */
 {
 	public:
@@ -57,6 +57,10 @@ virtual void notifyChanges(std::vector<RsGxsNotify*>& changes);
 
         // Overloaded from RsTickEvent.
 virtual void handle_event(uint32_t event_type, const std::string &elabel);
+
+	virtual RsSerialiser* setupSerialiser();                            // @see p3Config::setupSerialiser()
+	virtual bool saveList(bool &cleanup, std::list<RsItem *>&saveList); // @see p3Config::saveList(bool &cleanup, std::list<RsItem *>&)
+	virtual bool loadList(std::list<RsItem *>& loadList);               // @see p3Config::loadList(std::list<RsItem *>&)
 
 	public:
 
@@ -117,7 +121,7 @@ bool generateGroup(uint32_t &token, std::string groupName);
 	int mGenCount;
 	std::vector<ForumDummyRef> mGenRefs;
 	RsGxsMessageId mGenThreadId;
-    std::set<RsGxsGroupId> mKnownForums ;
+    std::map<RsGxsGroupId,time_t> mKnownForums ;
 	
 };
 

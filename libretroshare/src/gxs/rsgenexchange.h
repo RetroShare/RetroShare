@@ -915,7 +915,6 @@ private:
     std::vector<MsgDeletePublish>   mMsgDeletePublish;
 
     std::map<RsGxsId,std::set<RsPeerId> > mRoutingClues ;
-    std::list<std::pair<RsGxsMessageId,RsPeerId> > mTrackingClues ;
 };
 
 #endif // RSGENEXCHANGE_H
