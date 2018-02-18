@@ -1403,13 +1403,14 @@ bool DistributedChatService::acceptLobbyInvite(const ChatLobbyId& lobby_id,const
 			return false;
 		}
 
-		std::map<ChatLobbyId,VisibleChatLobbyRecord>::const_iterator vid = _visible_lobbies.find(lobby_id) ;
+		//std::map<ChatLobbyId,VisibleChatLobbyRecord>::const_iterator vid = _visible_lobbies.find(lobby_id) ;
 
-		if(_visible_lobbies.end() == vid)
-		{
-			std::cerr << " (EE) Cannot subscribe a non visible chat lobby!!" << std::endl;
-			return false ;
-		}
+		//When invited to new Lobby, it is not visible.
+		//if(_visible_lobbies.end() == vid)
+		//{
+		//	std::cerr << " (EE) Cannot subscribe a non visible chat lobby!!" << std::endl;
+		//	return false ;
+		//}
 
 		RsIdentityDetails det ;
 		if( (!rsIdentity->getIdDetails(identity,det)) || !(det.mFlags & RS_IDENTITY_FLAGS_IS_OWN_ID))
@@ -1418,7 +1419,7 @@ bool DistributedChatService::acceptLobbyInvite(const ChatLobbyId& lobby_id,const
 			return false ;
 		}
 
-		if( (vid->second.lobby_flags & RS_CHAT_LOBBY_FLAGS_PGP_SIGNED ) && !(det.mFlags & RS_IDENTITY_FLAGS_PGP_LINKED))
+		if( (it->second.lobby_flags & RS_CHAT_LOBBY_FLAGS_PGP_SIGNED ) && !(det.mFlags & RS_IDENTITY_FLAGS_PGP_LINKED))
 		{
 			std::cerr << " (EE) Cannot subscribe with identity " << identity << " because it is unsigned and the lobby requires signed ids only." << std::endl;
 			return false ;
@@ -1437,8 +1438,8 @@ bool DistributedChatService::acceptLobbyInvite(const ChatLobbyId& lobby_id,const
 
 		ChatLobbyEntry entry ;
 		entry.participating_friends.insert(it->second.peer_id) ;
-        entry.lobby_flags = it->second.lobby_flags ;
-        entry.gxs_id = identity ;
+		entry.lobby_flags = it->second.lobby_flags ;
+		entry.gxs_id = identity ;
 		entry.lobby_id = lobby_id ;
 		entry.lobby_name = it->second.lobby_name ;
 		entry.lobby_topic = it->second.lobby_topic ;

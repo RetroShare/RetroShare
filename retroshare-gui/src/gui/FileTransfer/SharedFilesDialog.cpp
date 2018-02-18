@@ -966,6 +966,9 @@ void SharedFilesDialog::recursRestoreExpandedItems(const QModelIndex& index, con
 	 bool invisible = vis.find(local_path) != vis.end();
 	ui.dirTreeView->setRowHidden(index.row(),index.parent(),invisible ) ;
 
+	if(invisible)
+		mHiddenIndexes.push_back(proxyModel->mapToSource(index));
+
     if(!invisible && exp.find(local_path) != exp.end())
     {
 #ifdef DEBUG_SHARED_FILES_DIALOG
@@ -1330,26 +1333,9 @@ void SharedFilesDialog::startFilter()
 
 #define EXPAND_WHILE_SEARCHING 1
 
-static void recursMakeAllVisible(QTreeView *tree,const QModelIndex& indx)
-{
-	tree->setRowHidden(indx.row(), indx.parent(), false) ;
-
-	int rowCount = tree->model()->rowCount(indx);
-
-	for (int row = 0; row < rowCount; ++row)
-	{
-		QModelIndex child_index = indx.child(row,0);
-
-		recursMakeAllVisible(tree,child_index);
-	}
-#ifdef EXPAND_WHILE_SEARCHING
-	tree->setExpanded(indx,false) ;
-#endif
-}
-
 //#define DEBUG_SHARED_FILES_DIALOG
 
-static void recursMakeVisible(QTreeView *tree,const QSortFilterProxyModel *proxyModel,const QModelIndex& indx,uint32_t depth,const std::vector<std::set<void*> >& pointers)
+void recursMakeVisible(QTreeView *tree,const QSortFilterProxyModel *proxyModel,const QModelIndex& indx,uint32_t depth,const std::vector<std::set<void*> >& pointers,QList<QModelIndex>& hidden_list)
 {
 #ifdef DEBUG_SHARED_FILES_DIALOG
 	for(uint32_t i=0;i<depth;++i) std::cerr << "  " ; std::cerr << "depth " << depth << ": current ref=" << proxyModel->mapToSource(indx).internalPointer() << std::endl;
@@ -1378,12 +1364,13 @@ static void recursMakeVisible(QTreeView *tree,const QSortFilterProxyModel *proxy
 #ifdef DEBUG_SHARED_FILES_DIALOG
 			for(uint32_t i=0;i<depth+1;++i) std::cerr << "  " ;	std::cerr << "object " << proxyModel->mapToSource(child_index).internalPointer() << " visible" << std::endl;
 #endif
-			recursMakeVisible(tree,proxyModel,child_index,depth+1,pointers) ;
+			recursMakeVisible(tree,proxyModel,child_index,depth+1,pointers,hidden_list) ;
 			found = true ;
 		}
 		else
 		{
 			tree->setRowHidden(child_index.row(), indx, true) ;
+			hidden_list.push_back(proxyModel->mapToSource(child_index)) ;
 #ifdef EXPAND_WHILE_SEARCHING
 			tree->setExpanded(child_index,false) ;
 #endif
@@ -1395,7 +1382,23 @@ static void recursMakeVisible(QTreeView *tree,const QSortFilterProxyModel *proxy
 	}
 
 	if(!found && depth == 0)
+	{
 		tree->setRowHidden(indx.row(), indx.parent(), true) ;
+		hidden_list.push_back(proxyModel->mapToSource(indx)) ;
+	}
+}
+
+void SharedFilesDialog::restoreInvisibleItems()
+{
+	for(QList<QModelIndex>::const_iterator it(mHiddenIndexes.begin());it!=mHiddenIndexes.end();++it)
+	{
+		QModelIndex indx = proxyModel->mapFromSource(*it);
+
+		if(indx.isValid())
+			ui.dirTreeView->setRowHidden(indx.row(), indx.parent(), false) ;
+	}
+
+	mHiddenIndexes.clear();
 }
 
 class QCursorContextBlocker
@@ -1436,6 +1439,7 @@ void SharedFilesDialog::FilterItems()
 	std::cerr << "New last text. Performing the filter" << std::endl;
 	mLastFilterText = text ;
 	model->update() ;
+	restoreInvisibleItems();
 
 	QCursorContextBlocker q(ui.dirTreeView) ;
 
@@ -1447,14 +1451,7 @@ void SharedFilesDialog::FilterItems()
 		std::list<DirDetails> result_list ;
 
 		if(text == "")
-		{
-			int rowCount = ui.dirTreeView->model()->rowCount();
-
-			for (int row = 0; row < rowCount; ++row)
-				recursMakeAllVisible(ui.dirTreeView,ui.dirTreeView->model()->index(row, COLUMN_NAME)) ;
-			
 			return ;
-		}
 
 		if(text.length() < 3)
 			return ;
@@ -1525,7 +1522,7 @@ void SharedFilesDialog::FilterItems()
 
 		int rowCount = ui.dirTreeView->model()->rowCount();
 		for (int row = 0; row < rowCount; ++row)
-			recursMakeVisible(ui.dirTreeView,proxyModel,ui.dirTreeView->model()->index(row, COLUMN_NAME),0,pointers);
+			recursMakeVisible(ui.dirTreeView,proxyModel,ui.dirTreeView->model()->index(row, COLUMN_NAME),0,pointers,mHiddenIndexes);
 	}
 	else
 	{
@@ -1554,6 +1551,7 @@ bool SharedFilesDialog::flat_FilterItem(const QModelIndex &index, const QString 
 	else 
 	{
 		ui.dirTreeView->setRowHidden(index.row(), index.parent(), true);
+		mHiddenIndexes.push_back(proxyModel->mapToSource(index));
 		return true ;
 	}
 }
@@ -1584,7 +1582,10 @@ bool SharedFilesDialog::tree_FilterItem(const QModelIndex &index, const QString 
     if (visible || visibleChildCount) {
         ui.dirTreeView->setRowHidden(index.row(), index.parent(), false);
     } else {
+		{
         ui.dirTreeView->setRowHidden(index.row(), index.parent(), true);
+		mHiddenIndexes.push_back(proxyModel->mapToSource(index));
+		}
     }
 
     return (visible || visibleChildCount);

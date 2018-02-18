@@ -92,6 +92,10 @@ GeneralPage::GeneralPage(QWidget * parent, Qt::WindowFlags flags) :
     //connect(ui.runStartWizard_PB,                           SIGNAL(clicked()),         this,SLOT(runStartWizard())) ;
     connect(ui.checkAdvanced,                               SIGNAL(toggled(bool)),     this,SLOT(updateAdvancedMode())) ;
     connect(ui.registerRetroShareProtocol,                  SIGNAL(toggled(bool)),     this,SLOT(updateRegisterRSProtocol())) ;
+
+	// hide advanced checkbox, since the option is not used.
+
+	ui.advGBox->hide();
 }
 
 /** Destructor */
