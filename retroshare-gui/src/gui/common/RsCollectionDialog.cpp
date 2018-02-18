@@ -980,7 +980,11 @@ bool RsCollectionDialog::removeItem(QTreeWidgetItem *item, bool &removeOnlyFile)
 				//First uncheck item to update parent informations
 				item->setCheckState(COLUMN_FILE,Qt::Unchecked);
 				QTreeWidgetItem *parent = item->parent();
-				parent->removeChild(item);
+				if (parent) {
+					parent->removeChild(item);
+				} else {
+					getRootItem()->removeChild(item);
+				}
 				return true;
 			} else {
 				if (!removeOnlyFile) {
