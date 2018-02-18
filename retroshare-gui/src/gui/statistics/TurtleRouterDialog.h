@@ -21,8 +21,8 @@ class TurtleRouterDialog: public RsAutoUpdatePage, public Ui::TurtleRouterDialog
 	private:
 		void updateTunnelRequests(	const std::vector<std::vector<std::basic_string<char> > >&, 
 											const std::vector<std::vector<std::basic_string<char> > >&, 
-											const std::vector<TurtleRequestDisplayInfo >&, 
-											const std::vector<TurtleRequestDisplayInfo >&) ;
+											const std::vector<TurtleSearchRequestDisplayInfo >&,
+											const std::vector<TurtleTunnelRequestDisplayInfo >&) ;
 											
 		void processSettings(bool bLoad);
 		bool m_bProcessSettings;
