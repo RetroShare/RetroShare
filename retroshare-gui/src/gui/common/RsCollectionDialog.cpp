@@ -21,17 +21,23 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
+#include "RsCollectionDialog.h"
+
+#include "RsCollection.h"
+#include "util/misc.h"
+
 #include <QCheckBox>
+#include <QDateTime>
+#include <QDir>
+#include <QFileSystemModel>
+#include <QHeaderView>
+#include <QInputDialog>
+#include <QKeyEvent>
 #include <QMessageBox>
 #include <QMenu>
 #include <QTextEdit>
-#include <QDir>
-#include <QKeyEvent>
-#include <QDateTime>
-#include <QInputDialog>
-#include "RsCollectionDialog.h"
-#include "RsCollection.h"
-#include "util/misc.h"
+#include <QTreeView>
+
 #define COLUMN_FILE     0
 #define COLUMN_FILEPATH 1
 #define COLUMN_SIZE     2
@@ -366,6 +372,8 @@ void RsCollectionDialog::processSettings(bool bLoad)
 			ui._listSplitter->restoreState(Settings->value("ListSplitterState_CM").toByteArray());
 			// Load system file header configuration
 			ui._systemFileTW->header()->restoreState(Settings->value("SystemFileHeader_CM").toByteArray());
+			// Load file entries header configuration
+			ui._fileEntriesTW->header()->restoreState(Settings->value("FileEntriesHeader_CM").toByteArray());
 		} else {
 			// Load windows geometrie
 			restoreGeometry(Settings->value("WindowGeometrie").toByteArray());
@@ -374,22 +382,30 @@ void RsCollectionDialog::processSettings(bool bLoad)
 			ui._listSplitter->restoreState(Settings->value("ListSplitterState").toByteArray());
 			// Load system file header configuration
 			ui._systemFileTW->header()->restoreState(Settings->value("SystemFileHeader").toByteArray());
+			// Load file entries header configuration
+			ui._fileEntriesTW->header()->restoreState(Settings->value("FileEntriesHeader").toByteArray());
 		}
 	} else {
 		if(_creationMode && !_readOnly){
 			// Save windows geometrie
 			Settings->setValue("WindowGeometrie_CM",saveGeometry());
-			// Save splitter state
-			Settings->setValue("SplitterState_CM", ui._listSplitter->saveState());
-			// Save treeView header configuration
+			// Save splitters state
+			Settings->setValue("MainSplitterState_CM", ui._mainSplitter->saveState());
+			Settings->setValue("ListSplitterState_CM", ui._listSplitter->saveState());
+			// Save system file header configuration
 			Settings->setValue("SystemFileHeader_CM", ui._systemFileTW->header()->saveState());
+			// Save file entries header configuration
+			Settings->setValue("FileEntriesHeader_CM", ui._fileEntriesTW->header()->saveState());
 		} else {
 			// Save windows geometrie
 			Settings->setValue("WindowGeometrie",saveGeometry());
 			// Save splitter state
-			Settings->setValue("SplitterState", ui._listSplitter->saveState());
-			// Save treeView header configuration
+			Settings->setValue("MainSplitterState", ui._mainSplitter->saveState());
+			Settings->setValue("ListSplitterState", ui._listSplitter->saveState());
+			// Save system file header configuration
 			Settings->setValue("SystemFileHeader", ui._systemFileTW->header()->saveState());
+			// Save file entries header configuration
+			Settings->setValue("FileEntriesHeader", ui._fileEntriesTW->header()->saveState());
 		}
 	}
 
