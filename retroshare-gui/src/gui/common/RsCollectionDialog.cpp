@@ -797,7 +797,7 @@ void RsCollectionDialog::addRecursive(bool recursive)
 	for (QHash<QString,QString>::Iterator it = _listOfFilesAddedInDir.begin(); it != _listOfFilesAddedInDir.end() ; ++it)
 	{
 		QString path = it.value();
-		it.value() = "";
+		//it.value() = "";//Don't reset value, could be an older attachment not terminated.
 		if (dirToAdd.contains(path)){
 			it.value() = dirToAdd.value(path);
 		} else if(item) {
