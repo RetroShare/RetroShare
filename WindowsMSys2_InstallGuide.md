@@ -1,6 +1,6 @@
-##Compilation on Windows
+## Compilation on Windows
 
-###Qt Installation
+### Qt Installation
 
 Install Qt via: [Qt Download](http://www.qt.io/download/)  
 
@@ -12,7 +12,7 @@ Add to the PATH environment variable
 Depends on wich version of Qt you use.  
 Change build-all-mingw32make.bat with these values too if you don't use MSys2.  
 
-###MSYS2 INSTALLATION
+### MSYS2 INSTALLATION
 
 Choose your MSYS2 installer here: [MSYS2](http://msys2.github.io/)
 
@@ -33,7 +33,7 @@ Choose only w64-i686 if you want only compilation in 32b architecture.
 
        pacman -S mingw-w64-i686-toolchain mingw-w64-x86_64-toolchain  
 
-###Install other binutils:   
+### Install other binutils:   
        pacman -S mingw-w64-i686-miniupnpc mingw-w64-x86_64-miniupnpc  
        pacman -S mingw-w64-i686-sqlite3 mingw-w64-x86_64-sqlite3  
        pacman -S mingw-w64-i686-speex mingw-w64-x86_64-speex  
@@ -49,7 +49,7 @@ Add MSYS2 to PATH environment variable depends your windows
        ;C:\msys32\mingw32\bin
 
 
-###Git Installation
+### Git Installation
 
 Install Git Gui or other client: [Git Scm](https://git-scm.com/download/win)
 
@@ -63,7 +63,7 @@ Paste this text on git console:
 git clone https://github.com/RetroShare/RetroShare.git  
 
 
-###Last Settings
+### Last Settings
 
 
 In QtCreator Option Git add its path: *C:\Program Files\Git\bin* 
@@ -75,7 +75,7 @@ Move to build_scripts:
 
        cd /c/Development/GIT/RetroShare/msys2_build_libs/  
 
-###Compile missing library
+### Compile missing library
        make
 
 You can now compile RS into Qt Creator  
