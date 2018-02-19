@@ -4,6 +4,7 @@
  * Universal Networking Header for RetroShare.
  *
  * Copyright 2007-2008 by Robert Fernie.
+ * Copyright (C) 2015-2018  Gioacchino Mazzurco <gio@eigenlab.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -147,25 +148,25 @@ bool    isLoopbackNet(const struct in_addr *addr)
 	return (taddr == (127 << 24 | 1));
 }
 
-bool    isPrivateNet(const struct in_addr *addr)
+bool isPrivateNet(const struct in_addr *addr)
 {
 	in_addr_t taddr = ntohl(addr->s_addr);
 
-	// 10.0.0.0/8
-	// 172.16.0.0/12
-	// 192.168.0.0/16
-	// 169.254.0.0/16
-	if ((taddr>>24 == 10) ||
- 		(taddr>>20 == (172<<4 | 16>>4)) ||
- 		(taddr>>16 == (192<<8 | 168)) ||
- 		(taddr>>16 == (169<<8 | 254)))
-	{
+	if ( (taddr>>24 == 10) ||                     // 10.0.0.0/8
+	     (taddr>>20 == (172<<4 | 16>>4)) ||       // 172.16.0.0/12
+	     (taddr>>16 == (192<<8 | 168)) ||         // 192.168.0.0/16
+	     (taddr>>16 == (169<<8 | 254)) )          // 169.254.0.0/16
 		return true;
-	}
-	else
-	{
-		return false;
-	}
+
+	return false;
+}
+
+bool isLinkLocalNet(const struct in_addr *addr)
+{
+	in_addr_t taddr = ntohl(addr->s_addr);
+	if ( taddr>>16 == (169<<8 | 254) ) return true;  // 169.254.0.0/16
+
+	return false;
 }
 
 bool    isExternalNet(const struct in_addr *addr)

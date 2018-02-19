@@ -4,6 +4,7 @@
  * Universal Networking Header for RetroShare.
  *
  * Copyright 2004-2006 by Robert Fernie.
+ * Copyright (C) 2015-2018  Gioacchino Mazzurco <gio@eigenlab.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -72,6 +73,7 @@ void sockaddr_clear(struct sockaddr_in *addr);
 bool isValidNet(const struct in_addr *addr);
 bool isLoopbackNet(const struct in_addr *addr);
 bool isPrivateNet(const struct in_addr *addr);
+bool isLinkLocalNet(const struct in_addr *addr);
 bool isExternalNet(const struct in_addr *addr);
 
 // uses a re-entrant version of gethostbyname
@@ -128,6 +130,7 @@ bool sockaddr_storage_isnull(const struct sockaddr_storage &addr);
 bool sockaddr_storage_isValidNet(const struct sockaddr_storage &addr);
 bool sockaddr_storage_isLoopbackNet(const struct sockaddr_storage &addr);
 bool sockaddr_storage_isPrivateNet(const struct sockaddr_storage &addr);
+bool sockaddr_storage_isLinkLocalNet(const struct sockaddr_storage &addr);
 bool sockaddr_storage_isExternalNet(const struct sockaddr_storage &addr);
 
 bool rs_inet_ntop(const sockaddr_storage &addr, std::string &dst);
