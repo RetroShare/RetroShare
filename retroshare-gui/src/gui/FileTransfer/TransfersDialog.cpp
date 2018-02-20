@@ -139,7 +139,7 @@ public:
 		if(!convertRefPointerToTabEntry(ref,entry,source_id) || entry >= mDownloads.size() || source_id > -1)
 			return false ;
 
-		return !mDownloads[entry].peers.empty();	// costly
+		return !mDownloads[entry].peers.empty();
 	}
 
 	QModelIndex index(int row, int column, const QModelIndex & parent = QModelIndex()) const
@@ -242,12 +242,12 @@ public:
 		int source_id=0 ;
 
 		if(!ref)
-			return false ;
+			return QVariant() ;
 
 		if(!convertRefPointerToTabEntry(ref,entry,source_id) || entry >= mDownloads.size())
 		{
 			std::cerr << "Bad pointer: " << (void*)ref << std::endl;
-			return false ;
+			return QVariant() ;
 		}
 
 		const FileInfo& finfo(mDownloads[entry]) ;
@@ -549,13 +549,13 @@ public:
 
         if(old_size < mDownloads.size())
         {
-            beginInsertRows(QModelIndex(), old_size, mDownloads.size());
+            beginInsertRows(QModelIndex(), old_size, mDownloads.size()-1);
             insertRows(old_size, mDownloads.size() - old_size);
             endInsertRows();
         }
         else if(mDownloads.size() < old_size)
         {
-            beginRemoveRows(QModelIndex(), mDownloads.size(), old_size);
+            beginRemoveRows(QModelIndex(), mDownloads.size(), old_size-1);
             removeRows(old_size, old_size - mDownloads.size());
             endRemoveRows();
         }
@@ -572,7 +572,7 @@ public:
 
 //		endResetModel();
 
-		QModelIndex topLeft = createIndex(0,0), bottomRight = createIndex(mDownloads.size(), COLUMN_COUNT-1);
+		QModelIndex topLeft = createIndex(0,0), bottomRight = createIndex(mDownloads.size()-1, COLUMN_COUNT-1);
 		emit dataChanged(topLeft, bottomRight);
 
 		//shit code follow (rewrite this please)
