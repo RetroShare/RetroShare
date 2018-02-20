@@ -19,39 +19,39 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#include <set>
-
-#include <QString>
-#include <QTreeView>
-#include <QClipboard>
-#include <QMenu>
-#include <QPainter>
-#include <QProcess>
-#include <QMessageBox>
-#include <QSortFilterProxyModel>
-#include <QStyledItemDelegate>
+#include "SharedFilesDialog.h"
 
 #include "rshare.h"
-#include "SharedFilesDialog.h"
-#include "gui/notifyqt.h"
 #include "gui/MainWindow.h"
+#include "gui/notifyqt.h"
 #include "gui/RemoteDirModel.h"
 #include "gui/RetroShareLink.h"
 #include "gui/ShareManager.h"
 #include "gui/common/PeerDefs.h"
 #include "gui/common/RsCollection.h"
 #include "gui/msgs/MessageComposer.h"
-#include "gui/settings/AddFileAssociationDialog.h"
 #include "gui/gxschannels/GxsChannelDialog.h"
 #include "gui/gxsforums/GxsForumsDialog.h"
+#include "gui/settings/AddFileAssociationDialog.h"
 #include "gui/settings/rsharesettings.h"
 #include "util/QtVersion.h"
 #include "util/RsAction.h"
 
-#include <retroshare/rspeers.h>
-#include <retroshare/rsfiles.h>
 #include <retroshare/rsexpr.h>
+#include <retroshare/rsfiles.h>
+#include <retroshare/rspeers.h>
 
+#include <QClipboard>
+#include <QMenu>
+#include <QMessageBox>
+#include <QPainter>
+#include <QProcess>
+#include <QSortFilterProxyModel>
+#include <QString>
+#include <QStyledItemDelegate>
+#include <QTreeView>
+
+#include <set>
 
 /* Images for context menu icons */
 #define IMAGE_DOWNLOAD       ":/images/download16.png"
@@ -74,14 +74,6 @@
 #define IMAGE_COLLOPEN       ":/images/library.png"
 #define IMAGE_EDITSHARE      ":/images/edit_16.png"
 #define IMAGE_MYFILES        ":/icons/svg/folders1.svg"
-
-/*define dirTreeView Column */
-#define COLUMN_NAME          0
-#define COLUMN_SIZE          1
-#define COLUMN_AGE           2
-#define COLUMN_FRIEND        3
-#define COLUMN_DIR           4
-#define COLUMN_COUNT         5
 
 /*define viewType_CB value */
 #define VIEW_TYPE_TREE       0
@@ -199,10 +191,11 @@ SharedFilesDialog::SharedFilesDialog(RetroshareDirModel *_tree_model,RetroshareD
 	QHeaderView * header = ui.dirTreeView->header () ;
 
 	header->resizeSection ( COLUMN_NAME, 490 );
-    header->resizeSection ( COLUMN_SIZE, 70  );
-    header->resizeSection ( COLUMN_AGE, 100  );
-    header->resizeSection ( COLUMN_FRIEND,100);
-    header->resizeSection ( COLUMN_DIR, 100  );
+	header->resizeSection ( COLUMN_FILENB, 70  );
+	header->resizeSection ( COLUMN_SIZE, 70  );
+	header->resizeSection ( COLUMN_AGE, 100  );
+	header->resizeSection ( COLUMN_FRIEND_ACCESS,100);
+	header->resizeSection ( COLUMN_WN_VISU_DIR, 100  );
 
 	header->setStretchLastSection(false);
 
@@ -231,7 +224,7 @@ LocalSharedFilesDialog::LocalSharedFilesDialog(QWidget *parent)
 	: SharedFilesDialog(new TreeStyle_RDM(false),new FlatStyle_RDM(false),parent)
 {
 	// Hide columns after loading the settings
-	ui.dirTreeView->setColumnHidden(COLUMN_DIR, false) ;
+	ui.dirTreeView->setColumnHidden(COLUMN_WN_VISU_DIR, false) ;
 	ui.downloadButton->hide() ;
 
 	// load settings
@@ -250,14 +243,14 @@ LocalSharedFilesDialog::LocalSharedFilesDialog(QWidget *parent)
 
     ui.titleBarPixmap->setPixmap(QPixmap(IMAGE_MYFILES)) ;
 
-    ui.dirTreeView->setItemDelegateForColumn(COLUMN_FRIEND,new ShareFlagsItemDelegate()) ;
+    ui.dirTreeView->setItemDelegateForColumn(COLUMN_FRIEND_ACCESS,new ShareFlagsItemDelegate()) ;
 }
 
 RemoteSharedFilesDialog::RemoteSharedFilesDialog(QWidget *parent)
 	: SharedFilesDialog(new TreeStyle_RDM(true),new FlatStyle_RDM(true),parent)
 {
-	ui.dirTreeView->setColumnHidden(COLUMN_FRIEND, false) ;
-	ui.dirTreeView->setColumnHidden(COLUMN_DIR, true) ;
+	ui.dirTreeView->setColumnHidden(COLUMN_FRIEND_ACCESS, false) ;
+	ui.dirTreeView->setColumnHidden(COLUMN_WN_VISU_DIR, true) ;
 	ui.checkButton->hide() ;
 
 	connect(ui.downloadButton, SIGNAL(clicked()), this, SLOT(downloadRemoteSelected()));
@@ -413,7 +406,7 @@ void SharedFilesDialog::changeCurrentViewModel(int viewTypeIndex)
     QHeaderView * header = ui.dirTreeView->header () ;
 	QHeaderView_setSectionResizeModeColumn(header, COLUMN_NAME, QHeaderView::Interactive);
 
-	ui.dirTreeView->header()->headerDataChanged(Qt::Horizontal, COLUMN_NAME, COLUMN_DIR) ;
+	ui.dirTreeView->header()->headerDataChanged(Qt::Horizontal, COLUMN_NAME, COLUMN_WN_VISU_DIR) ;
 
 //    recursRestoreExpandedItems(ui.dirTreeView->rootIndex(),expanded_indexes);
     FilterItems();
@@ -423,8 +416,9 @@ void LocalSharedFilesDialog::showProperColumns()
 {
 	if(model == tree_model)
 	{
-		ui.dirTreeView->setColumnHidden(COLUMN_FRIEND, false) ;
-		ui.dirTreeView->setColumnHidden(COLUMN_DIR, false) ;
+		ui.dirTreeView->setColumnHidden(COLUMN_FILENB, false) ;
+		ui.dirTreeView->setColumnHidden(COLUMN_FRIEND_ACCESS, false) ;
+		ui.dirTreeView->setColumnHidden(COLUMN_WN_VISU_DIR, false) ;
 #ifdef DONT_USE_SEARCH_IN_TREE_VIEW
 		ui.filterLabel->hide();
 		ui.filterPatternLineEdit->hide();
@@ -434,8 +428,9 @@ void LocalSharedFilesDialog::showProperColumns()
 	}
 	else
 	{
-		ui.dirTreeView->setColumnHidden(COLUMN_FRIEND, true) ;
-		ui.dirTreeView->setColumnHidden(COLUMN_DIR, false) ;
+		ui.dirTreeView->setColumnHidden(COLUMN_FILENB, true) ;
+		ui.dirTreeView->setColumnHidden(COLUMN_FRIEND_ACCESS, true) ;
+		ui.dirTreeView->setColumnHidden(COLUMN_WN_VISU_DIR, false) ;
 #ifdef DONT_USE_SEARCH_IN_TREE_VIEW
 		ui.filterLabel->show();
 		ui.filterPatternLineEdit->show();
@@ -446,8 +441,9 @@ void RemoteSharedFilesDialog::showProperColumns()
 {
 	if(model == tree_model)
 	{
-		ui.dirTreeView->setColumnHidden(COLUMN_FRIEND, true) ;
-		ui.dirTreeView->setColumnHidden(COLUMN_DIR, true) ;
+		ui.dirTreeView->setColumnHidden(COLUMN_FILENB, false) ;
+		ui.dirTreeView->setColumnHidden(COLUMN_FRIEND_ACCESS, true) ;
+		ui.dirTreeView->setColumnHidden(COLUMN_WN_VISU_DIR, true) ;
 #ifdef DONT_USE_SEARCH_IN_TREE_VIEW
 		ui.filterLabel->hide();
 		ui.filterPatternLineEdit->hide();
@@ -457,8 +453,9 @@ void RemoteSharedFilesDialog::showProperColumns()
 	}
 	else
 	{
-		ui.dirTreeView->setColumnHidden(COLUMN_FRIEND, false) ;
-		ui.dirTreeView->setColumnHidden(COLUMN_DIR, false) ;
+		ui.dirTreeView->setColumnHidden(COLUMN_FILENB, true) ;
+		ui.dirTreeView->setColumnHidden(COLUMN_FRIEND_ACCESS, false) ;
+		ui.dirTreeView->setColumnHidden(COLUMN_WN_VISU_DIR, false) ;
 #ifdef DONT_USE_SEARCH_IN_TREE_VIEW
 		ui.filterLabel->show();
 		ui.filterPatternLineEdit->show();
@@ -1254,12 +1251,12 @@ void SharedFilesDialog::filterRegExpChanged()
         ui.filterStartButton->show();
     }
 
-	bool valid = false ;
-	QColor color ;
+	//bool valid = false ;
+	//QColor color ;
 
 	if(text.length() > 0 && text.length() < 3)
 	{
-		valid = false;
+		//valid = false;
 
 		ui.filterStartButton->setEnabled(false) ;
 		ui.filterPatternFrame->setToolTip(tr("Search string should be at least 3 characters long.")) ;
