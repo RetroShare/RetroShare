@@ -1,4 +1,6 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="fi" version="2.0">
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.1" language="fi">
 <context>
     <name>AudioInput</name>
     <message>
@@ -404,11 +406,16 @@
         <translation>Mikrofonin laiteäänenvoimakkuuden asettaminen sopivaksi.</translation>
     </message>
     <message>
-        <location line="+6"/>
-        <source>&lt;p &gt;Open your sound control panel and go to the recording settings. Make sure the microphone is selected as active input with maximum recording volume. If there's an option to enable a &amp;quot;Microphone boost&amp;quot; make sure it's checked. &lt;/p&gt;
+        <source>&lt;p &gt;Open your sound control panel and go to the recording settings. Make sure the microphone is selected as active input with maximum recording volume. If there&apos;s an option to enable a &amp;quot;Microphone boost&amp;quot; make sure it&apos;s checked. &lt;/p&gt;
 &lt;p&gt;Speak loudly, as when you are annoyed or excited. Decrease the volume in the sound control panel until the bar below stays as high as possible in the green and orange but not the red zone while you speak. &lt;/p&gt;</source>
-        <translation>&lt;p&gt;Avaa tietokoneesi ääniasetukset ja mene tallennusasetuksiin. Varmista että mikrofoni on valittuna sisääntulona ja että sen nauhoitusvoimakkuus on maksimissa. Valitse mikrofonin voimakkuuden tehostus, jos se on mahdollista.&lt;/p&gt;
+        <translation type="vanished">&lt;p&gt;Avaa tietokoneesi ääniasetukset ja mene tallennusasetuksiin. Varmista että mikrofoni on valittuna sisääntulona ja että sen nauhoitusvoimakkuus on maksimissa. Valitse mikrofonin voimakkuuden tehostus, jos se on mahdollista.&lt;/p&gt;
 &lt;p&gt;Puhu kovalla äänellä, aivan kuin olisit ärsyyntynyt tai kiihtynyt. Vähennä ohjauspaneelissa äänenvoimakkuutta kunnes alapuolen palkki pysyy puhuessasi mahdollisimman korkealla vihreällä ja oranssilla alueella, mutta ei punaisella.&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>&lt;p&gt;Open your sound control panel and go to the recording settings. Make sure the microphone is selected as active input with maximum recording volume. If there&apos;s an option to enable a &amp;quot;Microphone boost&amp;quot; make sure it&apos;s checked. &lt;/p&gt;
+&lt;p&gt;Speak loudly, as when you are annoyed or excited. Decrease the volume in the sound control panel until the bar below stays as high as possible in the green and orange but not the red zone while you speak. &lt;/p&gt;</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+11"/>
@@ -489,19 +496,27 @@
         <translation>&lt;h3&gt;Retrosharen VOIP-lisäosa&lt;/h3&gt;&lt;br/&gt; * Avustajat: Cyril Soler, Josselin Jacquard&lt;br/&gt;</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>&lt;br/&gt;The VOIP plugin adds VOIP to the private chat window of RetroShare. to use it, proceed as follows:&lt;UL&gt;</source>
-        <translation>&lt;br/&gt;VOIP-lisäosa näkyy Retrosharen yksityisessä keskusteluikkunassa. Toimi seuraavasti, kun haluat käyttää sitä:&lt;UL&gt;</translation>
+        <translation type="vanished">&lt;br/&gt;VOIP-lisäosa näkyy Retrosharen yksityisessä keskusteluikkunassa. Toimi seuraavasti, kun haluat käyttää sitä:&lt;UL&gt;</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>&lt;li&gt; setup microphone levels using the configuration panel&lt;/li&gt;</source>
         <translation>&lt;li&gt; aseta mikrofonin tasot käyttämällä asetusnäkymää&lt;/li&gt;</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>&lt;li&gt; check your microphone by looking at the VU-metters&lt;/li&gt;</source>
-        <translation>&lt;li&gt; tarkista mikrofonisi katsomalla äänitasomittaria&lt;/li&gt;</translation>
+        <translation type="vanished">&lt;li&gt; tarkista mikrofonisi katsomalla äänitasomittaria&lt;/li&gt;</translation>
+    </message>
+    <message>
+        <location line="-1"/>
+        <source>&lt;br/&gt;The VOIP plugin adds VOIP to the private chat window of RetroShare. To use it, proceed as follows:&lt;UL&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>&lt;li&gt; check your microphone by looking at the VU-meters&lt;/li&gt;</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
@@ -595,12 +610,11 @@
         <translation>Koko näyttö</translation>
     </message>
     <message>
-        <location line="-412"/>
         <source>%1 inviting you to start an audio conversation. Do you want Accept or Decline the invitation?</source>
-        <translation>%1 kutsuu sinua aloittamaan äänikeskustelun. Haluatko hyväksyä kutsun vai kieltäytyä?</translation>
+        <translation type="vanished">%1 kutsuu sinua aloittamaan äänikeskustelun. Haluatko hyväksyä kutsun vai kieltäytyä?</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="-410"/>
         <source>Accept Audio Call</source>
         <translation>Hyväksy äänipuhelu</translation>
     </message>
@@ -615,12 +629,11 @@
         <translation>Kieltäydy äänipuhelusta</translation>
     </message>
     <message>
-        <location line="+33"/>
         <source>%1 inviting you to start a video conversation. Do you want Accept or Decline the invitation?</source>
-        <translation>%1 kutsuu sinua aloittamaan videokeskustelun. Haluatko hyväksyä kutsun vai kieltäytyä?</translation>
+        <translation type="vanished">%1 kutsuu sinua aloittamaan videokeskustelun. Haluatko hyväksyä kutsun vai kieltäytyä?</translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+52"/>
         <source>Decline Video Call</source>
         <translation>Kieltäydy videopuhelusta</translation>
     </message>
@@ -640,12 +653,11 @@
         <translation>Mykistys pois itseltä</translation>
     </message>
     <message>
-        <location line="+589"/>
         <source>Waiting your friend respond your video call.</source>
-        <translation>Odotan, että ystäväsi vastaa videopuheluusi.</translation>
+        <translation type="vanished">Odotan, että ystäväsi vastaa videopuheluusi.</translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="+603"/>
         <source>Your friend is calling you for video. Respond.</source>
         <translation>Ystäväsi soittaa sinulle videolla. Vastaa.</translation>
     </message>
@@ -711,12 +723,22 @@
         <translation>Hyväksy videopuhelu</translation>
     </message>
     <message>
-        <location line="-52"/>
+        <location line="-55"/>
+        <source>%1 is inviting you to start an audio conversation. Do you want to Accept or Decline the invitation?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
         <source>Activate audio</source>
         <translation>Ota ääni käyttöön</translation>
     </message>
     <message>
-        <location line="+384"/>
+        <location line="+50"/>
+        <source>%1 is inviting you to start a video conversation. Do you want to Accept or Decline the invitation?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+334"/>
         <source>Show Chat Text</source>
         <translation>Näytä chat-teksti</translation>
     </message>
@@ -752,11 +774,20 @@
     </message>
     <message>
         <location line="+20"/>
-        <source>Waiting your friend respond your audio call.</source>
-        <translation>Odotan, että ystäväsi vastaa äänipuheluusi.</translation>
+        <source>Waiting for your friend to respond to your audio call.</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="+58"/>
+        <source>Waiting for your friend to respond to your video call.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Waiting your friend respond your audio call.</source>
+        <translation type="vanished">Odotan, että ystäväsi vastaa äänipuheluusi.</translation>
+    </message>
+    <message>
+        <location line="-44"/>
         <source>Your friend is calling you for audio. Respond.</source>
         <translation>Ystäväsi soittaa sinulle äänellä. Vastaa.</translation>
     </message>
@@ -877,8 +908,12 @@
     </message>
     <message>
         <location line="+24"/>
+        <source>Bandwidth Info received from this peer: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Bandwidth Info received from this peer:%1</source>
-        <translation>Kaistainfo vastaanotettu vertaiselta: %1</translation>
+        <translation type="vanished">Kaistainfo vastaanotettu vertaiselta: %1</translation>
     </message>
     <message>
         <location line="+24"/>
