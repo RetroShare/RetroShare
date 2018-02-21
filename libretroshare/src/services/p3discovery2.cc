@@ -26,14 +26,10 @@
 
 #include "services/p3discovery2.h"
 #include "pqi/p3peermgr.h"
-#include "pqi/pqinetwork.h"        // for getLocalAddresses
 #include "util/rsversioninfo.h"
 
 #include "retroshare/rsiface.h"
 #include "rsserver/p3face.h"
-
-#include <vector>    // for std::vector
-#include <algorithm> // for std::random_shuffle
 
 
 // Interface pointer.
@@ -43,9 +39,7 @@ RsDisc *rsDisc = NULL;
  * #define P3DISC_DEBUG	1
  ****/
 
-static bool populateContactInfo( const peerState &detail,
-                                 RsDiscContactItem *pkt,
-                                 bool include_ip_information )
+static bool populateContactInfo(const peerState &detail, RsDiscContactItem *pkt,bool include_ip_information)
 {
 	pkt->clear();
 
@@ -348,43 +342,8 @@ void p3discovery2::sendOwnContactInfo(const SSLID &sslid)
 	std::cerr << std::endl;
 #endif
 	peerState detail;
-	if (mPeerMgr->getOwnNetStatus(detail))
+	if (mPeerMgr->getOwnNetStatus(detail)) 
 	{
-		/* Workaround to spread multiple local ip addresses when presents. This
-		 * is needed because RS wrongly assumes that there is just one active
-		 * local ip address at time. */
-		std::vector<sockaddr_storage> addrs;
-		if(!detail.hiddenNode && getLocalAddresses(addrs))
-		{
-			/* To work around MAX_ADDRESS_LIST_SIZE addresses limitation,
-			 *  let's shuffle the list of
-			 *  local addresses in the hope that with enough time every local
-			 *  address is advertised to trusted nodes so they may try to
-			 *  connect to all of them including the most convenient if a local
-			 *  connection exists.*/
-			std::random_shuffle(addrs.begin(), addrs.end());
-
-			for (auto it = addrs.begin(); it!=addrs.end(); ++it)
-			{
-				sockaddr_storage& addr(*it);
-				if( sockaddr_storage_isValidNet(addr) &&
-				    !sockaddr_storage_isLoopbackNet(addr) &&
-				    !sockaddr_storage_sameip(addr, detail.localaddr) )
-				{
-					pqiIpAddress pqiIp;
-					sockaddr_storage_clear(pqiIp.mAddr);
-					pqiIp.mAddr.ss_family = addr.ss_family;
-					sockaddr_storage_copyip(pqiIp.mAddr, addr);
-					sockaddr_storage_setport(
-					            pqiIp.mAddr,
-					            sockaddr_storage_port(detail.localaddr) );
-					pqiIp.mSeenTime = time(nullptr);
-					pqiIp.mSrc = 0;
-					detail.ipAddrs.updateLocalAddrs(pqiIp);
-				}
-			}
-		}
-
 		RsDiscContactItem *pkt = new RsDiscContactItem();
 		/* Cyril: we dont send our own IP to an hidden node. It will not use it
 		 *   anyway. */
@@ -502,7 +461,6 @@ void p3discovery2::updatePeerAddressList(const RsDiscContactItem *item)
 	{
 	}
 	else if(!mPeerMgr->isHiddenNode(rsPeers->getOwnId()))
-	{
 		/* Cyril: we don't store IP addresses if we're a hidden node.
 		 * Normally they should not be sent to us, except for old peers. */
 		/* G10h4ck: sending IP information also to hidden nodes has proven very
@@ -513,7 +471,7 @@ void p3discovery2::updatePeerAddressList(const RsDiscContactItem *item)
 		 *   permission matrix. Disabling this instead will make life more
 		 *   difficult for average user, that moreover whould have no way to
 		 *   revert an hardcoded policy. */
-
+	{
 		pqiIpAddrSet addrsFromPeer;	
 		addrsFromPeer.mLocal.extractFromTlv(item->localAddrList);
 		addrsFromPeer.mExt.extractFromTlv(item->extAddrList);
