@@ -25,6 +25,7 @@
  */
 
 #include <time.h>
+#include <vector>
 
 #include "pqi/p3netmgr.h"
 
@@ -1018,13 +1019,25 @@ bool p3NetMgrIMPL::checkNetAddress()
 		/* TODO: Sat Oct 24 15:51:24 CEST 2015 The fact of having just one local
 		 *  address is a flawed assumption, this should be redesigned as soon as
 		 *  possible. It will require complete reenginering of the network layer
-		 *  code.
-		 */
-		std::list<sockaddr_storage> addrs;
+		 *  code. */
+
+		std::vector<sockaddr_storage> addrs;
 		if (getLocalAddresses(addrs))
 		{
-			for (auto&& addr : addrs)
+
+			/* To work around one address limitation, to shuffle the list of
+			 *  local addresses in the hope that with enough time every local
+			 *  address is advertised to trusted nodes so they may try to
+			 *  connect to all of them including the most convenient if a local
+			 *  connection exists, is a bad idea. It would cause net reset every
+			 *  time a different local address is selected, potentially breaking
+			 *  broader RS assumptions.
+			 */
+			//std::random_shuffle(addrs.begin(), addrs.end());
+
+			for (auto it = addrs.begin(); it!=addrs.end(); ++it)
 			{
+				sockaddr_storage& addr(*it);
 				if( sockaddr_storage_isValidNet(addr) &&
 				    !sockaddr_storage_isLoopbackNet(addr) &&
 				    !sockaddr_storage_isLinkLocalNet(addr))
@@ -1035,10 +1048,11 @@ bool p3NetMgrIMPL::checkNetAddress()
 				}
 			}
 
-			// If no satisfactory local address has been found yet relax and
-			// accept also link local addresses
-			if(!validAddr) for (auto&& addr : addrs)
+			/* If no satisfactory local address has been found yet relax and
+			 * accept also link local addresses */
+			if(!validAddr) for (auto it = addrs.begin(); it!=addrs.end(); ++it)
 			{
+				sockaddr_storage& addr(*it);
 				if( sockaddr_storage_isValidNet(addr) &&
 				    !sockaddr_storage_isLoopbackNet(addr) )
 				{
