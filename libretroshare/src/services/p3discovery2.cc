@@ -356,7 +356,8 @@ void p3discovery2::sendOwnContactInfo(const SSLID &sslid)
 		std::vector<sockaddr_storage> addrs;
 		if(!detail.hiddenNode && getLocalAddresses(addrs))
 		{
-			/* To work around 4 addresses limitation, let's shuffle the list of
+			/* To work around MAX_ADDRESS_LIST_SIZE addresses limitation,
+			 *  let's shuffle the list of
 			 *  local addresses in the hope that with enough time every local
 			 *  address is advertised to trusted nodes so they may try to
 			 *  connect to all of them including the most convenient if a local
