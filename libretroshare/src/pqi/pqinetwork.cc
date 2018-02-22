@@ -438,43 +438,17 @@ int unix_fcntl_nonblock(int fd)
 }
 
 
-int unix_connect(int fd, const struct sockaddr *serv_addr, socklen_t socklen)
+int unix_connect(int fd, const sockaddr_storage &serv_addr)
 {
 #ifdef NET_DEBUG
-	std::cerr << "unix_connect()";
-	std::cerr << std::endl;
+	std::cerr << __PRETTY_FUNCTION__ << std::endl;
 #endif
 
-	const struct sockaddr_storage *ss_addr = (struct sockaddr_storage *) serv_addr;
-	socklen_t len = socklen;
-
-	switch (ss_addr->ss_family)
-	{
-		case AF_INET:
-			len = sizeof(struct sockaddr_in);
-			break;
-		case AF_INET6:
-			len = sizeof(struct sockaddr_in6);
-			break;
-	}
-
-	if (len > socklen)
-	{
-		std::cerr << "unix_connect() ERROR len > socklen";
-		std::cerr << std::endl;
-
-		len = socklen;
-		//return EINVAL;
-	}
-
-	int ret = connect(fd, serv_addr, len);
+	int ret = connect( fd, (const struct sockaddr *) &serv_addr,
+	                   sizeof(struct sockaddr_in6) );
 
 /******************* WINDOWS SPECIFIC PART ******************/
 #ifdef WINDOWS_SYS // WINDOWS
-
-#ifdef NET_DEBUG
-	std::cerr << "unix_connect()" << std::endl;
-#endif
 	if (ret != 0)
 	{
 		errno = WinToUnixError(WSAGetLastError());

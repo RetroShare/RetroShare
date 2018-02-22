@@ -4,6 +4,7 @@
  * 3P/PQI network interface for RetroShare.
  *
  * Copyright 2004-2006 by Robert Fernie.
+ * Copyright (C) 2015-2018  Gioacchino Mazzurco <gio@eigenlab.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -96,44 +97,14 @@ static const int PQISSL_SSL_CONNECT_TIMEOUT = 30;
  *
  */
 
-pqissl::pqissl(pqissllistener *l, PQInterface *parent, p3LinkMgr *lm)
-	:NetBinInterface(parent, parent->PeerId()), 
-	mLinkMgr(lm), pqil(l), 
-	mSslMtx("pqissl"),
-	active(false), certvalid(false), waiting(WAITING_NOT), 
-	sslmode(PQISSL_ACTIVE), ssl_connection(NULL), sockfd(-1), 
-	readpkt(NULL), pktlen(0), total_len(0),
-	attempt_ts(0),
-	n_read_zero(0), mReadZeroTS(0), ssl_connect_timeout(0),
-	mConnectDelay(0), mConnectTS(0),
-	mConnectTimeout(0), mTimeoutTS(0)
-{
-	RsStackMutex stack(mSslMtx); /**** LOCKED MUTEX ****/
-
-	/* set address to zero */
-        sockaddr_storage_clear(remote_addr);
-
-#ifdef PQISSL_LOG_DEBUG 
-    rslog(RSL_DEBUG_BASIC, pqisslzone, "pqissl for PeerId: " + PeerId());
-#endif
-
-#if 0
-	if (!(AuthSSL::getAuthSSL()->isAuthenticated(PeerId())))
-	{
-  	  rslog(RSL_ALERT, pqisslzone, 
-	    "pqissl::Warning Certificate Not Approved!");
-
-  	  rslog(RSL_ALERT, pqisslzone, 
-	    "\t pqissl will not initialise....");
-
-	}
-#else
-  	  rslog(RSL_DEBUG_BASIC, pqisslzone, 
-	    "pqissl::Warning SSL Certificate Approval Not CHECKED??");
-#endif
-
-	return;
-}
+pqissl::pqissl(pqissllistener *l, PQInterface *parent, p3LinkMgr *lm) :
+    NetBinInterface(parent, parent->PeerId()),
+    mLinkMgr(lm), pqil(l), mSslMtx("pqissl"), active(false), certvalid(false),
+    waiting(WAITING_NOT), sslmode(PQISSL_ACTIVE), ssl_connection(NULL),
+    sockfd(-1), readpkt(NULL), pktlen(0), total_len(0), attempt_ts(0),
+    n_read_zero(0), mReadZeroTS(0), ssl_connect_timeout(0), mConnectDelay(0),
+    mConnectTS(0), mConnectTimeout(0), mTimeoutTS(0)
+{ sockaddr_storage_clear(remote_addr); }
 
 	pqissl::~pqissl()
 { 
@@ -151,11 +122,8 @@ pqissl::pqissl(pqissllistener *l, PQInterface *parent, p3LinkMgr *lm)
 
 int	pqissl::connect(const struct sockaddr_storage &raddr)
 {
-	RsStackMutex stack(mSslMtx); /**** LOCKED MUTEX ****/
-
-	// reset failures
+	RS_STACK_MUTEX(mSslMtx);
 	remote_addr = raddr;
-
 	return ConnectAttempt();
 }
 
@@ -613,7 +581,7 @@ int 	pqissl::Delay_Connection()
 }
 
 
-int 	pqissl::Initiate_Connection()
+int pqissl::Initiate_Connection()
 {
 	int err;
 	struct sockaddr_storage addr = remote_addr;
@@ -636,7 +604,7 @@ int 	pqissl::Initiate_Connection()
 #endif
 
 	// open socket connection to addr.
-	int osock = unix_socket(PF_INET, SOCK_STREAM, 0);
+	int osock = unix_socket(PF_INET6, SOCK_STREAM, 0);
 
 #ifdef PQISSL_LOG_DEBUG 
 	{
@@ -736,10 +704,26 @@ int 	pqissl::Initiate_Connection()
 #endif
 #endif // WINDOWS_SYS
 
+	/* Systems that supports dual stack sockets defines IPV6_V6ONLY and some set
+	 * it to 1 by default. This enable dual stack socket on such systems.
+	 * Systems which don't support dual stack (only Windows older then XP SP3)
+	 * will support IPv6 only and not IPv4 */
+#ifdef IPV6_V6ONLY
+	int no = 0;
+	err = setsockopt(sockfd, IPPROTO_IPV6, IPV6_V6ONLY, (void *)&no, sizeof(no));
+#ifdef PQISSL_DEBUG
+	if (err) std::cerr << __PRETTY_FUNCTION__
+	                   << " Error setting IPv6 socket dual stack" << std::endl;
+	else std::cerr << __PRETTY_FUNCTION__
+	               << " Setting IPv6 socket dual stack" << std::endl;
+#endif // PQISSL_DEBUG
+#endif // IPV6_V6ONLY
+
 	mTimeoutTS = time(NULL) + mConnectTimeout;
 	//std::cerr << "Setting Connect Timeout " << mConnectTimeout << " Seconds into Future " << std::endl;
 
-	if (0 != (err = unix_connect(osock, (struct sockaddr *) &addr, sizeof(addr))))
+	sockaddr_storage_ipv4_to_ipv6(addr);
+	if (0 != (err = unix_connect(osock, addr)))
 	{
 		std::string out;
 		rs_sprintf(out, "pqissl::Initiate_Connection() connect returns:%d -> errno: %d error: %s\n", err, errno, socket_errorType(errno).c_str());

@@ -265,6 +265,33 @@ bool sockaddr_storage_ipv4_aton(struct sockaddr_storage &addr, const char *name)
 	return (1 == inet_aton(name, &(ipv4_ptr->sin_addr)));
 }
 
+bool sockaddr_storage_ipv4_to_ipv6(sockaddr_storage &addr)
+{
+#ifdef SS_DEBUG
+	std::cerr << __PRETTY_FUNCTION__ << std::endl;
+#endif
+
+	if ( addr.ss_family == AF_INET6 ) return true;
+
+	if ( addr.ss_family == AF_INET )
+	{
+		sockaddr_in & addr_ipv4 = (sockaddr_in &) addr;
+		sockaddr_in6 & addr_ipv6 = (sockaddr_in6 &) addr;
+
+		u_int32_t ip = addr_ipv4.sin_addr.s_addr;
+		u_int16_t port = addr_ipv4.sin_port;
+
+		sockaddr_storage_clear(addr);
+		addr_ipv6.sin6_family = AF_INET6;
+		addr_ipv6.sin6_port = port;
+		addr_ipv6.sin6_addr.s6_addr32[3] = ip;
+		addr_ipv6.sin6_addr.s6_addr16[5] = (u_int16_t) 0xffff;
+
+		return true;
+	}
+
+	return false;
+}
 
 /******************************** Comparisions **********************************/
 

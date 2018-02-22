@@ -4,6 +4,7 @@
  * 3P/PQI network interface for RetroShare.
  *
  * Copyright 2004-2006 by Robert Fernie.
+ * Copyright (C) 2015-2018  Gioacchino Mazzurco <gio@eigenlab.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -114,7 +115,7 @@ virtual bool cansend(uint32_t usec);
 
 virtual int close(); /* BinInterface version of reset() */
 virtual RsFileHash gethash(); /* not used here */
-virtual bool bandwidthLimited() { return true ; } // replace by !sameLAN to avoid bandwidth limiting on LAN
+virtual bool bandwidthLimited() { return true ; }
 
 public:
 
