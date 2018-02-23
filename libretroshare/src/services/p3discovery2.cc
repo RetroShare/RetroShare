@@ -3,7 +3,8 @@
  *
  * Services for RetroShare.
  *
- * Copyright 2004-2013 by Robert Fernie.
+ * Copyright (C) 2004-2013 Robert Fernie.
+ * Copyright (C) 2018  Gioacchino Mazzurco <gio@eigenlab.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -25,10 +26,14 @@
 
 #include "services/p3discovery2.h"
 #include "pqi/p3peermgr.h"
+#include "pqi/pqinetwork.h"        // for getLocalAddresses
 #include "util/rsversioninfo.h"
 
 #include "retroshare/rsiface.h"
 #include "rsserver/p3face.h"
+
+#include <vector>    // for std::vector
+#include <algorithm> // for std::random_shuffle
 
 
 // Interface pointer.
@@ -38,7 +43,9 @@ RsDisc *rsDisc = NULL;
  * #define P3DISC_DEBUG	1
  ****/
 
-static bool populateContactInfo(const peerState &detail, RsDiscContactItem *pkt,bool include_ip_information)
+static bool populateContactInfo( const peerState &detail,
+                                 RsDiscContactItem *pkt,
+                                 bool include_ip_information )
 {
 	pkt->clear();
 
@@ -341,10 +348,56 @@ void p3discovery2::sendOwnContactInfo(const SSLID &sslid)
 	std::cerr << std::endl;
 #endif
 	peerState detail;
-	if (mPeerMgr->getOwnNetStatus(detail)) 
+	if (mPeerMgr->getOwnNetStatus(detail))
 	{
+		/* Workaround to spread multiple local ip addresses when presents. This
+		 * is needed because RS wrongly assumes that there is just one active
+		 * local ip address at time. */
+		std::vector<sockaddr_storage> addrs;
+		if(!detail.hiddenNode && getLocalAddresses(addrs))
+		{
+			/* To work around MAX_ADDRESS_LIST_SIZE addresses limitation,
+			 *  let's shuffle the list of
+			 *  local addresses in the hope that with enough time every local
+			 *  address is advertised to trusted nodes so they may try to
+			 *  connect to all of them including the most convenient if a local
+			 *  connection exists.*/
+			std::random_shuffle(addrs.begin(), addrs.end());
+
+			for (auto it = addrs.begin(); it!=addrs.end(); ++it)
+			{
+				sockaddr_storage& addr(*it);
+				if( sockaddr_storage_isValidNet(addr) &&
+				    !sockaddr_storage_isLoopbackNet(addr) &&
+				    !sockaddr_storage_sameip(addr, detail.localaddr) )
+				{
+					pqiIpAddress pqiIp;
+					sockaddr_storage_clear(pqiIp.mAddr);
+					pqiIp.mAddr.ss_family = addr.ss_family;
+					sockaddr_storage_copyip(pqiIp.mAddr, addr);
+					sockaddr_storage_setport(
+					            pqiIp.mAddr,
+					            sockaddr_storage_port(detail.localaddr) );
+					pqiIp.mSeenTime = time(nullptr);
+					pqiIp.mSrc = 0;
+					detail.ipAddrs.updateLocalAddrs(pqiIp);
+				}
+			}
+		}
+
 		RsDiscContactItem *pkt = new RsDiscContactItem();
-		populateContactInfo(detail, pkt, !rsPeers->isHiddenNode(sslid));	// we dont send our own IP to an hidden node. It will not use it anyway.
+		/* Cyril: we dont send our own IP to an hidden node. It will not use it
+		 *   anyway. */
+		populateContactInfo(detail, pkt, !rsPeers->isHiddenNode(sslid));
+		/* G10h4ck: sending IP information also to hidden nodes has proven very
+		 *   helpful in the usecase of non hidden nodes, that share a common
+		 *   hidden trusted node, to discover each other IP.
+		 *   Advanced/corner case non hidden node users that want to hide their
+		 *   IP to a specific hidden ~trusted~ node can do it through the
+		 *   permission matrix. Disabling this instead will make life more
+		 *   difficult for average user, that moreover whould have no way to
+		 *   revert an hardcoded policy. */
+		//populateContactInfo(detail, pkt, true);
 		pkt->version = RsUtil::retroshareVersion();
 		pkt->PeerId(sslid);
 
@@ -433,10 +486,11 @@ void p3discovery2::recvOwnContactInfo(const SSLID &fromId, const RsDiscContactIt
 void p3discovery2::updatePeerAddresses(const RsDiscContactItem *item)
 {
 	if (item->isHidden)
-		mPeerMgr->setHiddenDomainPort(item->sslId, item->hiddenAddr, item->hiddenPort);
+		mPeerMgr->setHiddenDomainPort(item->sslId, item->hiddenAddr,
+		                              item->hiddenPort);
 	else
 	{
-        mPeerMgr->setDynDNS(item->sslId, item->dyndns);
+		mPeerMgr->setDynDNS(item->sslId, item->dyndns);
 		updatePeerAddressList(item);
 	}
 }
@@ -447,8 +501,19 @@ void p3discovery2::updatePeerAddressList(const RsDiscContactItem *item)
 	if (item->isHidden)
 	{
 	}
-	else if(!mPeerMgr->isHiddenNode(rsPeers->getOwnId()))	// we don't store IP addresses if we're a hidden node. Normally they should not be sent to us, except for old peers.
+	else if(!mPeerMgr->isHiddenNode(rsPeers->getOwnId()))
 	{
+		/* Cyril: we don't store IP addresses if we're a hidden node.
+		 * Normally they should not be sent to us, except for old peers. */
+		/* G10h4ck: sending IP information also to hidden nodes has proven very
+		 *   helpful in the usecase of non hidden nodes, that share a common
+		 *   hidden trusted node, to discover each other IP.
+		 *   Advanced/corner case non hidden node users that want to hide their
+		 *   IP to a specific hidden ~trusted~ node can do it through the
+		 *   permission matrix. Disabling this instead will make life more
+		 *   difficult for average user, that moreover whould have no way to
+		 *   revert an hardcoded policy. */
+
 		pqiIpAddrSet addrsFromPeer;	
 		addrsFromPeer.mLocal.extractFromTlv(item->localAddrList);
 		addrsFromPeer.mExt.extractFromTlv(item->extAddrList);
@@ -471,13 +536,12 @@ void p3discovery2::updatePeerAddressList(const RsDiscContactItem *item)
 void p3discovery2::sendPGPList(const SSLID &toId)
 {
 	updatePgpFriendList();
-	
-	RsStackMutex stack(mDiscMtx); /********** STACK LOCKED MTX ******/
+
+	RS_STACK_MUTEX(mDiscMtx);
 
 
 #ifdef P3DISC_DEBUG
-	std::cerr << "p3discovery2::sendPGPList() to " << toId;
-	std::cerr << std::endl;
+	std::cerr << "p3discovery2::sendPGPList() to " << toId << std::endl;
 #endif
 
 	RsDiscPgpListItem *pkt = new RsDiscPgpListItem();
@@ -508,7 +572,7 @@ void p3discovery2::updatePgpFriendList()
 	std::cerr << std::endl;
 #endif
 	
-	RsStackMutex stack(mDiscMtx); /********** STACK LOCKED MTX ******/
+	RS_STACK_MUTEX(mDiscMtx);
 
 #define PGP_MAX_UPDATE_PERIOD 300
 	
@@ -863,26 +927,20 @@ void p3discovery2::sendContactInfo_locked(const PGPID &aboutId, const SSLID &toI
 
 void p3discovery2::processContactInfo(const SSLID &fromId, const RsDiscContactItem *item)
 {
-	RsStackMutex stack(mDiscMtx); /********** STACK LOCKED MTX ******/
+	(void) fromId; // remove unused parameter warnings, debug only
+
+	RS_STACK_MUTEX(mDiscMtx);
 
 	if (item->sslId == rsPeers->getOwnId())
-    {
-        if(sockaddr_storage_isExternalNet(item->currentConnectAddress.addr))
-            mPeerMgr->addCandidateForOwnExternalAddress(item->PeerId(), item->currentConnectAddress.addr) ;
-#ifdef P3DISC_DEBUG
-		std::cerr << "p3discovery2::processContactInfo(" << fromId << ") PGPID: ";
-		std::cerr << item->pgpId << " Ignoring Info on self";
-		std::cerr << std::endl;
-#else
-		/* remove unused parameter warnings */
-		(void) fromId;
-#endif		
-        delete item;
+	{
+		if(sockaddr_storage_isExternalNet(item->currentConnectAddress.addr))
+			mPeerMgr->addCandidateForOwnExternalAddress(
+			            item->PeerId(), item->currentConnectAddress.addr);
+
+		delete item;
 		return;
 	}
 
-
-	/* */
 	std::map<PGPID, DiscPgpInfo>::iterator it;
 	it = mFriendList.find(item->pgpId);
 	if (it == mFriendList.end())
@@ -895,7 +953,8 @@ void p3discovery2::processContactInfo(const SSLID &fromId, const RsDiscContactIt
 		std::cerr << std::endl;
 #endif		
 		
-		/* THESE ARE OUR FRIEND OF FRIENDS ... pass this information along to NetMgr & DHT...
+		/* THESE ARE OUR FRIEND OF FRIENDS ... pass this information along to
+		 * NetMgr & DHT...
 		 * as we can track FOF and use them as potential Proxies / Relays
 		 */
 
@@ -941,7 +1000,10 @@ void p3discovery2::processContactInfo(const SSLID &fromId, const RsDiscContactIt
 			// set last seen to RS_PEER_OFFLINE_NO_DISC minus 1 so that it won't be shared with other friends
 			// until a first connection is established
 
-			mPeerMgr->addFriend(item->sslId, item->pgpId, item->netMode, RS_VS_DISC_OFF, RS_VS_DHT_FULL, time(NULL) - RS_PEER_OFFLINE_NO_DISC - 1, RS_NODE_PERM_ALL);
+			mPeerMgr->addFriend( item->sslId, item->pgpId, item->netMode,
+			                     RS_VS_DISC_OFF, RS_VS_DHT_FULL,
+			                     time(NULL) - RS_PEER_OFFLINE_NO_DISC - 1,
+			                     RS_NODE_PERM_ALL );
 			updatePeerAddresses(item);
 		}
 	}

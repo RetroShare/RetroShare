@@ -3,7 +3,8 @@
  *
  * 3P/PQI network interface for RetroShare.
  *
- * Copyright 2004-2006 by Robert Fernie.
+ * Copyright (C) 2004-2006  Robert Fernie.
+ * Copyright (C) 2015-2018  Gioacchino Mazzurco <gio@eigenlab.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -284,7 +285,7 @@ int inet_aton(const char *name, struct in_addr *addr)
 #	include <net/if.h>
 #endif // WINDOWS_SYS
 
-bool getLocalAddresses(std::list<sockaddr_storage> & addrs)
+bool getLocalAddresses(std::vector<sockaddr_storage>& addrs)
 {
 	addrs.clear();
 

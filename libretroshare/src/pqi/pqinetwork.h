@@ -3,7 +3,8 @@
  *
  * 3P/PQI network interface for RetroShare.
  *
- * Copyright 2004-2006 by Robert Fernie.
+ * Copyright (C) 2004-2006  Robert Fernie.
+ * Copyright (C) 2015-2018  Gioacchino Mazzurco <gio@eigenlab.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,10 +25,10 @@
  */
 
 
-
 #ifndef MRK_PQI_NETWORKING_HEADER
 #define MRK_PQI_NETWORKING_HEADER
 
+#include <vector>
 
 /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 #ifndef WINDOWS_SYS
@@ -95,7 +96,7 @@ void showSocketError(std::string &out);
 
 std::string socket_errorType(int err);
 
-bool getLocalAddresses(std::list<struct sockaddr_storage> & addrs);
+bool getLocalAddresses(std::vector<sockaddr_storage> & addrs);
 
 /* universal socket interface */
 
