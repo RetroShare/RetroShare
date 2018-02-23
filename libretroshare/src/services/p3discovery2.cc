@@ -387,7 +387,7 @@ void p3discovery2::sendOwnContactInfo(const SSLID &sslid)
 		RsDiscContactItem *pkt = new RsDiscContactItem();
 		/* Cyril: we dont send our own IP to an hidden node. It will not use it
 		 *   anyway. */
-		//populateContactInfo(detail, pkt, !rsPeers->isHiddenNode(sslid));
+		populateContactInfo(detail, pkt, !rsPeers->isHiddenNode(sslid));
 		/* G10h4ck: sending IP information also to hidden nodes has proven very
 		 *   helpful in the usecase of non hidden nodes, that share a common
 		 *   hidden trusted node, to discover each other IP.
@@ -396,7 +396,7 @@ void p3discovery2::sendOwnContactInfo(const SSLID &sslid)
 		 *   permission matrix. Disabling this instead will make life more
 		 *   difficult for average user, that moreover whould have no way to
 		 *   revert an hardcoded policy. */
-		populateContactInfo(detail, pkt, true);
+		//populateContactInfo(detail, pkt, true);
 		pkt->version = RsUtil::retroshareVersion();
 		pkt->PeerId(sslid);
 
@@ -500,10 +500,10 @@ void p3discovery2::updatePeerAddressList(const RsDiscContactItem *item)
 	if (item->isHidden)
 	{
 	}
-	else
+	else if(!mPeerMgr->isHiddenNode(rsPeers->getOwnId()))
+	{
 		/* Cyril: we don't store IP addresses if we're a hidden node.
 		 * Normally they should not be sent to us, except for old peers. */
-		// if(!mPeerMgr->isHiddenNode(rsPeers->getOwnId()))
 		/* G10h4ck: sending IP information also to hidden nodes has proven very
 		 *   helpful in the usecase of non hidden nodes, that share a common
 		 *   hidden trusted node, to discover each other IP.
@@ -512,7 +512,7 @@ void p3discovery2::updatePeerAddressList(const RsDiscContactItem *item)
 		 *   permission matrix. Disabling this instead will make life more
 		 *   difficult for average user, that moreover whould have no way to
 		 *   revert an hardcoded policy. */
-	{
+
 		pqiIpAddrSet addrsFromPeer;	
 		addrsFromPeer.mLocal.extractFromTlv(item->localAddrList);
 		addrsFromPeer.mExt.extractFromTlv(item->extAddrList);
