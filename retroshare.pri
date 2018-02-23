@@ -14,10 +14,10 @@ no_retroshare_gui:CONFIG -= retroshare_gui
 CONFIG *= retroshare_nogui
 no_retroshare_nogui:CONFIG -= retroshare_nogui
 
-# To disable RetroShare plugins append the following
-# assignation to qmake command line "CONFIG+=no_retroshare_plugins"
-CONFIG *= retroshare_plugins
-no_retroshare_plugins:CONFIG -= retroshare_plugins
+# To enable RetroShare plugins append the following
+# assignation to qmake command line "CONFIG+=retroshare_plugins"
+CONFIG *= no_retroshare_plugins
+retroshare_plugins:CONFIG -= no_retroshare_plugins
 
 # To enable RetroShare-android-service append the following assignation to
 # qmake command line "CONFIG+=retroshare_android_service"
