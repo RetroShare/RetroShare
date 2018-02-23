@@ -789,9 +789,9 @@ void MessageWidget::sendInvite()
 	if (!rsMail->getMessage(currMsgId, mi))
 		return;
 
-    if ((QMessageBox::question(this, tr("Send invite?"),tr("Do you really want send a invite with your Certificate?"),QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes))== QMessageBox::Yes)
-	{
-      MessageComposer::sendInvite(mi.rsgxsid_srcId);
-	}    
+    //if ((QMessageBox::question(this, tr("Send invite?"),tr("Do you really want send a invite with your Certificate?"),QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes))== QMessageBox::Yes)
+	//{
+      MessageComposer::sendInvite(mi.rsgxsid_srcId,false);
+	//}
 
 }
