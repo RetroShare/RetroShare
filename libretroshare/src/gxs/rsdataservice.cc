@@ -933,7 +933,9 @@ void RsDataService::locked_clearGrpMetaCache(const RsGxsGroupId& gid)
 
 	if(it != mGrpMetaDataCache.end())
 	{
+#ifdef RS_DATA_SERVICE_DEBUG
 		std::cerr << "(II) moving database cache entry " << (void*)(*it).second << " to dead list." << std::endl;
+#endif
 
 		mOldCachedItems.push_back(std::make_pair(now,it->second)) ;
 
@@ -947,7 +949,9 @@ void RsDataService::locked_clearGrpMetaCache(const RsGxsGroupId& gid)
 
 	while(it2!=mOldCachedItems.end() && (*it2).first + CACHE_ENTRY_GRACE_PERIOD < now)
 	{
+#ifdef RS_DATA_SERVICE_DEBUG
 		std::cerr << "(II) deleting old GXS database cache entry " << (void*)(*it2).second << ", " << now - (*it2).first << " seconds old." << std::endl;
+#endif
 
 		delete (*it2).second ;
 		it2 = mOldCachedItems.erase(it2) ;
