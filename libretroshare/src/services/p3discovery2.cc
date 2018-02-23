@@ -43,7 +43,9 @@ RsDisc *rsDisc = NULL;
  * #define P3DISC_DEBUG	1
  ****/
 
-static bool populateContactInfo(const peerState &detail, RsDiscContactItem *pkt,bool include_ip_information)
+static bool populateContactInfo( const peerState &detail,
+                                 RsDiscContactItem *pkt,
+                                 bool include_ip_information )
 {
 	pkt->clear();
 
@@ -352,7 +354,7 @@ void p3discovery2::sendOwnContactInfo(const SSLID &sslid)
 		 * is needed because RS wrongly assumes that there is just one active
 		 * local ip address at time. */
 		std::vector<sockaddr_storage> addrs;
-		if(getLocalAddresses(addrs))
+		if(!detail.hiddenNode && getLocalAddresses(addrs))
 		{
 			/* To work around 4 addresses limitation, let's shuffle the list of
 			 *  local addresses in the hope that with enough time every local
