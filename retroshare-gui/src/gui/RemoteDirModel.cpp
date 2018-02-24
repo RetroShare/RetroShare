@@ -50,20 +50,39 @@ static const size_t   FLAT_VIEW_MAX_REFS_TABLE_SIZE       = 10000 ; //
 static const uint32_t FLAT_VIEW_MIN_DELAY_BETWEEN_UPDATES = 120 ;	// dont rebuild ref list more than every 2 mins.
 
 RetroshareDirModel::RetroshareDirModel(bool mode, QObject *parent)
-        : QAbstractItemModel(parent),
-         ageIndicator(IND_ALWAYS),
-         RemoteMode(mode), nIndex(1), indexSet(1) /* ass zero index cant be used */
+  : QAbstractItemModel(parent), _visible(false)
+  , ageIndicator(IND_ALWAYS)
+  , RemoteMode(mode)//, nIndex(1), indexSet(1) /* ass zero index cant be used */
+  , mLastRemote(false), mLastReq(0), mUpdating(false)
 {
-	_visible = false ;
 #if QT_VERSION < QT_VERSION_CHECK (5, 0, 0)
 	setSupportedDragActions(Qt::CopyAction);
 #endif
 	treeStyle();
 
-    mDirDetails.ref = (void*)intptr_t(0xffffffff) ;
-    mLastRemote = false ;
-    mUpdating = false;
+	mDirDetails.ref = (void*)intptr_t(0xffffffff) ;
 }
+
+TreeStyle_RDM::TreeStyle_RDM(bool mode)
+  : RetroshareDirModel(mode), _showEmpty(false)
+{
+	_showEmptyAct = new QAction(QIcon(), tr("Show Empty"), this);
+	_showEmptyAct->setCheckable(true);
+	_showEmptyAct->setChecked(_showEmpty);
+	connect(_showEmptyAct, SIGNAL(toggled(bool)), this, SLOT(showEmpty(bool)));
+}
+
+FlatStyle_RDM::FlatStyle_RDM(bool mode)
+  : RetroshareDirModel(mode), _ref_mutex("Flat file list")
+{
+	_needs_update = true ;
+
+	{
+		RS_STACK_MUTEX(_ref_mutex) ;
+		_last_update = 0 ;
+	}
+}
+
 
 // QAbstractItemModel::setSupportedDragActions() was replaced by virtual QAbstractItemModel::supportedDragActions()
 #if QT_VERSION >= QT_VERSION_CHECK (5, 0, 0)
@@ -77,7 +96,6 @@ static bool isNewerThanEpoque(uint32_t ts)
 {
     return ts > 0 ;	// this should be conservative enough
 }
-
 
 void RetroshareDirModel::treeStyle()
 {
@@ -95,6 +113,21 @@ void TreeStyle_RDM::update()
 void TreeStyle_RDM::updateRef(const QModelIndex& indx) const
 {
     rsFiles->requestDirUpdate(indx.internalPointer()) ;
+}
+
+QMenu* TreeStyle_RDM::getContextMenu(QMenu* contextMenu)
+{
+	if (!contextMenu){
+		contextMenu = new QMenu();
+	} else {
+		if (RemoteMode)
+			contextMenu->addSeparator();
+	}
+
+	if (RemoteMode)
+		contextMenu->addAction( _showEmptyAct) ;
+
+	return contextMenu;
 }
 
 bool TreeStyle_RDM::hasChildren(const QModelIndex &parent) const
@@ -171,9 +204,13 @@ int TreeStyle_RDM::rowCount(const QModelIndex &parent) const
 
 	void *ref = (parent.isValid())? parent.internalPointer() : NULL ;
 
-    DirDetails details ;
+	if ((!ref) && RemoteMode)
+		_parentRow.clear(); //Only clear it when asking root child number and in remote mode.
 
-    if (! requestDirDetails(ref, RemoteMode,details))
+
+	DirDetails details ;
+
+	if (! requestDirDetails(ref, RemoteMode,details))
 	{
 #ifdef RDM_DEBUG
 		std::cerr << "lookup failed -> 0";
@@ -181,7 +218,7 @@ int TreeStyle_RDM::rowCount(const QModelIndex &parent) const
 #endif
 		return 0;
 	}
-    if (details.type == DIR_TYPE_FILE)
+	if (details.type == DIR_TYPE_FILE)
 	{
 #ifdef RDM_DEBUG
 		std::cerr << "lookup FILE: 0";
@@ -195,9 +232,21 @@ int TreeStyle_RDM::rowCount(const QModelIndex &parent) const
 	std::cerr << "lookup PER/DIR #" << details->count;
 	std::cerr << std::endl;
 #endif
-    return details.count;
+	if ((details.type == DIR_TYPE_ROOT) && !_showEmpty && RemoteMode)
+	{
+		DirDetails childDetails;
+		//Scan all children to know if they are empty.
+		//And save their real row index
+		//Prefer do like that than modify requestDirDetails with a new flag (rsFiles->RequestDirDetails)
+		for(uint64_t i = 0; i < details.count; ++i)
+		{
+			if (requestDirDetails(details.children[i].ref, RemoteMode,childDetails) && (childDetails.count > 0))
+				_parentRow.push_back(i);
+		}
+		return _parentRow.size();
+	}
+	return details.count;
 }
-
 int FlatStyle_RDM::rowCount(const QModelIndex &parent) const
 {
 	Q_UNUSED(parent);
@@ -210,6 +259,7 @@ int FlatStyle_RDM::rowCount(const QModelIndex &parent) const
 
 	return _ref_entries.size() ;
 }
+
 int TreeStyle_RDM::columnCount(const QModelIndex &/*parent*/) const
 {
 	return COLUMN_COUNT;
@@ -218,6 +268,7 @@ int FlatStyle_RDM::columnCount(const QModelIndex &/*parent*/) const
 {
 	return COLUMN_COUNT;
 }
+
 QString RetroshareDirModel::getFlagsString(FileStorageFlags flags)
 {
 	char str[11] = "-  -  -" ;
@@ -252,7 +303,6 @@ QString RetroshareDirModel::getGroupsString(FileStorageFlags flags,const std::li
 
 	return groups_str ;
 }
-
 
 QString RetroshareDirModel::getAgeIndicatorString(const DirDetails &details) const
 {
@@ -496,17 +546,6 @@ QVariant TreeStyle_RDM::displayRole(const DirDetails& details,int coln) const
 	return QVariant();
 } /* end of DisplayRole */
 
-FlatStyle_RDM::FlatStyle_RDM(bool mode)
-    : RetroshareDirModel(mode), _ref_mutex("Flat file list")
-{
-	_needs_update = true ;
-
-	{
-		RS_STACK_MUTEX(_ref_mutex) ;
-        _last_update = 0 ;
-	}
-}
-
 void FlatStyle_RDM::update()
 {
 	if(_needs_update)
@@ -650,7 +689,6 @@ QVariant TreeStyle_RDM::sortRole(const QModelIndex& /*index*/,const DirDetails& 
 	}
 	return QVariant();
 }
-
 QVariant FlatStyle_RDM::sortRole(const QModelIndex& /*index*/,const DirDetails& details,int coln) const
 {
 	/*
@@ -677,9 +715,6 @@ QVariant FlatStyle_RDM::sortRole(const QModelIndex& /*index*/,const DirDetails& 
 	}
 	return QVariant();
 } /* end of SortRole */
-
-
-
 
 QVariant RetroshareDirModel::data(const QModelIndex &index, int role) const
 {
@@ -771,6 +806,7 @@ QVariant RetroshareDirModel::data(const QModelIndex &index, int role) const
 	return QVariant();
 }
 
+/****
 //void RetroshareDirModel::getAgeIndicatorRec(const DirDetails &details, QString &ret) const {
 //	if (details.type == DIR_TYPE_FILE) {
 //		ret = getAgeIndicatorString(details);
@@ -786,6 +822,7 @@ QVariant RetroshareDirModel::data(const QModelIndex &index, int role) const
 //		}
 //	}
 //}
+****/
 
 QVariant TreeStyle_RDM::headerData(int section, Qt::Orientation orientation, int role) const
 {
@@ -895,8 +932,8 @@ QModelIndex TreeStyle_RDM::index(int row, int column, const QModelIndex & parent
 	std::cerr << ": row:" << row << " col:" << column << " ";
 #endif
 
-    // This function is used extensively. There's no way we can use requestDirDetails() in it, which would
-    // cause far too much overhead. So we use a dedicated function that only grabs the required information.
+	// This function is used extensively. There's no way we can use requestDirDetails() in it, which would
+	// cause far too much overhead. So we use a dedicated function that only grabs the required information.
 
 	if(row < 0)
 		return QModelIndex() ;
@@ -910,15 +947,19 @@ QModelIndex TreeStyle_RDM::index(int row, int column, const QModelIndex & parent
 	  }
 	 ********/
 
+	//If on root and don't show empty child, get real parent row
+	if ((!ref) && (!_showEmpty) && RemoteMode && ((size_t)row >= _parentRow.size()))
+		return QModelIndex();
 
-    void *result ;
+	int parentRow = ((!ref) && (!_showEmpty) && RemoteMode) ? _parentRow[row] : row ;
 
-    if(rsFiles->findChildPointer(ref, row, result,  ((RemoteMode) ? RS_FILE_HINTS_REMOTE : RS_FILE_HINTS_LOCAL)))
-        return createIndex(row, column, result) ;
-    else
+	void *result ;
+
+	if(rsFiles->findChildPointer(ref, parentRow, result,  ((RemoteMode) ? RS_FILE_HINTS_REMOTE : RS_FILE_HINTS_LOCAL)))
+		return createIndex(row, column, result) ;
+	else
 		return QModelIndex();
 }
-
 QModelIndex FlatStyle_RDM::index(int row, int column, const QModelIndex & parent) const
 {
 	Q_UNUSED(parent);
@@ -964,10 +1005,10 @@ QModelIndex TreeStyle_RDM::parent( const QModelIndex & index ) const
 	}
 	void *ref = index.internalPointer();
 
-    DirDetails details ;
+	DirDetails details ;
 
-    if (! requestDirDetails(ref, RemoteMode,details))
-    {
+	if (! requestDirDetails(ref, RemoteMode,details))
+	{
 #ifdef RDM_DEBUG
 		std::cerr << "Failed Lookup -> invalid";
 		std::cerr << std::endl;
@@ -975,7 +1016,7 @@ QModelIndex TreeStyle_RDM::parent( const QModelIndex & index ) const
 		return QModelIndex();
 	}
 
-    if (!(details.parent))
+	if (!(details.parent))
 	{
 #ifdef RDM_DEBUG
 		std::cerr << "success. parent is Root/NULL --> invalid";
@@ -988,9 +1029,10 @@ QModelIndex TreeStyle_RDM::parent( const QModelIndex & index ) const
 	std::cerr << "success index(" << details->prow << ",0," << details->parent << ")";
 	std::cerr << std::endl;
 
-    std::cerr << "Creating index 3 row=" << details.prow << ", column=" << 0 << ", ref=" << (void*)details.parent << std::endl;
+	std::cerr << "Creating index 3 row=" << details.prow << ", column=" << 0 << ", ref=" << (void*)details.parent << std::endl;
 #endif
-    return createIndex(details.prow, COLUMN_NAME, details.parent);
+
+	return createIndex(details.prow, COLUMN_NAME, details.parent);
 }
 QModelIndex FlatStyle_RDM::parent( const QModelIndex & index ) const
 {
@@ -1039,7 +1081,7 @@ Qt::ItemFlags RetroshareDirModel::flags( const QModelIndex & index ) const
 
 
 
-/* Callback from */
+/* Callback from Core*/
 void RetroshareDirModel::preMods()
 {
     emit layoutAboutToBeChanged();
@@ -1056,7 +1098,7 @@ void RetroshareDirModel::preMods()
 #endif
 }
 
-/* Callback from */
+/* Callback from Core*/
 void RetroshareDirModel::postMods()
 {
 //	emit layoutAboutToBeChanged();
@@ -1073,6 +1115,30 @@ void RetroshareDirModel::postMods()
 	endResetModel();
 #endif
 	emit layoutChanged();
+}
+
+void FlatStyle_RDM::postMods()
+{
+    time_t now = time(NULL);
+
+    if(_last_update + FLAT_VIEW_MIN_DELAY_BETWEEN_UPDATES > now)
+        return ;
+
+    if(visible())
+	{
+        emit layoutAboutToBeChanged();
+
+        {
+            RS_STACK_MUTEX(_ref_mutex) ;
+            _ref_stack.clear() ;
+            _ref_stack.push_back(NULL) ; // init the stack with the topmost parent directory
+            _ref_entries.clear();
+            _last_update = now;
+        }
+        QTimer::singleShot(100,this,SLOT(updateRefs())) ;
+    }
+	else
+		_needs_update = true ;
 }
 
 bool RetroshareDirModel::requestDirDetails(void *ref, bool remote,DirDetails& d) const
@@ -1475,35 +1541,11 @@ int RetroshareDirModel::getType ( const QModelIndex & index ) const
 	return rsFiles->getType(index.internalPointer(),flags);
 }
 
-FlatStyle_RDM::~FlatStyle_RDM()
-{
-}
-
 TreeStyle_RDM::~TreeStyle_RDM()
 {
 }
-void FlatStyle_RDM::postMods()
+FlatStyle_RDM::~FlatStyle_RDM()
 {
-    time_t now = time(NULL);
-
-    if(_last_update + FLAT_VIEW_MIN_DELAY_BETWEEN_UPDATES > now)
-        return ;
-
-    if(visible())
-	{
-        emit layoutAboutToBeChanged();
-
-        {
-            RS_STACK_MUTEX(_ref_mutex) ;
-            _ref_stack.clear() ;
-            _ref_stack.push_back(NULL) ; // init the stack with the topmost parent directory
-            _ref_entries.clear();
-            _last_update = now;
-        }
-        QTimer::singleShot(100,this,SLOT(updateRefs())) ;
-    }
-	else
-		_needs_update = true ;
 }
 
 void FlatStyle_RDM::updateRefs()
@@ -1563,3 +1605,8 @@ void FlatStyle_RDM::updateRefs()
     RetroshareDirModel::postMods() ;
 }
 
+void TreeStyle_RDM::showEmpty(const bool value)
+{
+	_showEmpty = value;
+	update();
+}
