@@ -41,6 +41,7 @@
 #include "util/rsdebug.h"
 #include "util/rsstring.h"
 #include "util/rsnet.h"
+#include "util/stacktrace.h"
 
 static struct RsLog::logInfo pqinetzoneInfo = {RsLog::Default, "pqinet"};
 #define pqinetzone &pqinetzoneInfo
@@ -335,15 +336,17 @@ bool getLocalAddresses(std::vector<sockaddr_storage>& addrs)
 	struct ifaddrs *ifsaddrs, *ifa;
 	if(getifaddrs(&ifsaddrs) != 0) 
 	{
-	   std::cerr << "FATAL ERROR: getLocalAddresses failed!" << std::endl;
-	   return false ;
+		std::cerr << __PRETTY_FUNCTION__ << " FATAL ERROR: " << errno << " "
+		          << strerror(errno) << std::endl;
+		print_stacktrace();
+		return false;
 	}
 	for ( ifa = ifsaddrs; ifa; ifa = ifa->ifa_next )
 		if ( ifa->ifa_addr && (ifa->ifa_flags & IFF_UP) )
 		{
 			sockaddr_storage tmp;
 			sockaddr_storage_clear(tmp);
-			if (sockaddr_storage_copyip(tmp, * reinterpret_cast<sockaddr_storage*>(ifa->ifa_addr)))
+			if (sockaddr_storage_copyip(tmp, *reinterpret_cast<sockaddr_storage*>(ifa->ifa_addr)))
 				addrs.push_back(tmp);
 		}
 	freeifaddrs(ifsaddrs);

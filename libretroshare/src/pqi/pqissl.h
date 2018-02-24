@@ -119,12 +119,9 @@ virtual bool bandwidthLimited() { return true ; }
 
 public:
 
-/* Completion of the SSL connection, 
- * this is public, so it can be called by
- * the listener (should make friends??) 
- */
+/// initiate incoming connection.
+int accept(SSL *ssl, int fd, const struct sockaddr_storage &foreign_addr);
 
-int	accept(SSL *ssl, int fd, const struct sockaddr_storage &foreign_addr); 
 void getCryptoParams(RsPeerCryptoParams& params) ;
 bool actAsServer();
 
@@ -140,7 +137,10 @@ protected:
 	RsMutex mSslMtx; /**** MUTEX protects data and fn below ****/
 
 virtual int reset_locked();
-int	accept_locked(SSL *ssl, int fd, const struct sockaddr_storage &foreign_addr); 
+
+	/// initiate incoming connection.
+	int accept_locked( SSL *ssl, int fd,
+	                   const sockaddr_storage& foreign_addr );
 
 	// A little bit of information to describe 
 	// the SSL state, this is needed

@@ -4,6 +4,7 @@
  * RetroShare C++ Interface.
  *
  * Copyright 2004-2008 by Robert Fernie.
+ * Copyright (C) 2015-2018  Gioacchino Mazzurco <gio@eigenlab.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -900,68 +901,33 @@ bool 	p3Peers::setHiddenNode(const RsPeerId &id, const std::string &address, uin
 	return true;
 }
 
-bool 	p3Peers::setLocalAddress(const RsPeerId &id, const std::string &addr_str, uint16_t port)
+bool p3Peers::setLocalAddress(const RsPeerId &id,
+                              const std::string &addr_str, uint16_t port)
 {
 #ifdef P3PEERS_DEBUG
-        std::cerr << "p3Peers::setLocalAddress() " << id << std::endl;
+	std::cerr << __PRETTY_FUNCTION__ << " " << id << " " << addr_str << " "
+	          << port << std::endl;
 #endif
 
-        if(port < 1024)
-        {
-            std::cerr << "(EE) attempt to use a port that is reserved to the system: " << port << std::endl;
-            return false ;
-        }
-
-	struct sockaddr_storage addr;
-	struct sockaddr_in *addrv4p = (struct sockaddr_in *) &addr;
-	addrv4p->sin_family = AF_INET;
-	addrv4p->sin_port = htons(port);
-
-	int ret = 1;
-/********************************** WINDOWS/UNIX SPECIFIC PART *******************/
-#ifndef WINDOWS_SYS
-	if (ret && (0 != inet_aton(addr_str.c_str(), &(addrv4p->sin_addr))))
-#else
-	addrv4p->sin_addr.s_addr = inet_addr(addr_str.c_str());
-	if (ret)
-#endif
-/********************************** WINDOWS/UNIX SPECIFIC PART *******************/
-	{
-		return mPeerMgr->setLocalAddress(id, addr);
-	}
+	sockaddr_storage addr;
+	if (sockaddr_storage_inet_pton(addr, addr_str))
+		if (sockaddr_storage_setport(addr, port))
+			return mPeerMgr->setLocalAddress(id, addr);
 	return false;
 }
 
-bool 	p3Peers::setExtAddress(const RsPeerId &id, const std::string &addr_str, uint16_t port)
+bool p3Peers::setExtAddress(const RsPeerId &id,
+                            const std::string &addr_str, uint16_t port)
 {
 #ifdef P3PEERS_DEBUG
-        std::cerr << "p3Peers::setExtAddress() " << id << std::endl;
+	std::cerr << __PRETTY_FUNCTION__ << " " << id << " " << addr_str << " "
+	          << port << std::endl;
 #endif
-        if(port < 1024)
-        {
-            std::cerr << "(EE) attempt to use a port that is reserved to the system: " << port << std::endl;
-            return false ;
-        }
 
-
-	// NOTE THIS IS IPV4 FOR NOW.
-	struct sockaddr_storage addr;
-	struct sockaddr_in *addrv4p = (struct sockaddr_in *) &addr;
-	addrv4p->sin_family = AF_INET;
-	addrv4p->sin_port = htons(port);
-
-	int ret = 1;
-/********************************** WINDOWS/UNIX SPECIFIC PART *******************/
-#ifndef WINDOWS_SYS
-	if (ret && (0 != inet_aton(addr_str.c_str(), &(addrv4p->sin_addr))))
-#else
-	addrv4p->sin_addr.s_addr = inet_addr(addr_str.c_str());
-	if (ret)
-#endif
-/********************************** WINDOWS/UNIX SPECIFIC PART *******************/
-	{
-		return mPeerMgr->setExtAddress(id, addr);
-	}
+	sockaddr_storage addr;
+	if (sockaddr_storage_inet_pton(addr, addr_str))
+		if (sockaddr_storage_setport(addr, port))
+			return mPeerMgr->setExtAddress(id, addr);
 	return false;
 }
 

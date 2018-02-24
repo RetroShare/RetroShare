@@ -39,7 +39,9 @@ RsDisc *rsDisc = NULL;
  * #define P3DISC_DEBUG	1
  ****/
 
-static bool populateContactInfo(const peerState &detail, RsDiscContactItem *pkt,bool include_ip_information)
+static bool populateContactInfo( const peerState &detail,
+                                 RsDiscContactItem *pkt,
+                                 bool include_ip_information )
 {
 	pkt->clear();
 
@@ -342,7 +344,7 @@ void p3discovery2::sendOwnContactInfo(const SSLID &sslid)
 	std::cerr << std::endl;
 #endif
 	peerState detail;
-	if (mPeerMgr->getOwnNetStatus(detail)) 
+	if (mPeerMgr->getOwnNetStatus(detail))
 	{
 		RsDiscContactItem *pkt = new RsDiscContactItem();
 		/* Cyril: we dont send our own IP to an hidden node. It will not use it
@@ -461,6 +463,7 @@ void p3discovery2::updatePeerAddressList(const RsDiscContactItem *item)
 	{
 	}
 	else if(!mPeerMgr->isHiddenNode(rsPeers->getOwnId()))
+	{
 		/* Cyril: we don't store IP addresses if we're a hidden node.
 		 * Normally they should not be sent to us, except for old peers. */
 		/* G10h4ck: sending IP information also to hidden nodes has proven very
@@ -471,13 +474,13 @@ void p3discovery2::updatePeerAddressList(const RsDiscContactItem *item)
 		 *   permission matrix. Disabling this instead will make life more
 		 *   difficult for average user, that moreover whould have no way to
 		 *   revert an hardcoded policy. */
-	{
-		pqiIpAddrSet addrsFromPeer;	
+		pqiIpAddrSet addrsFromPeer;
 		addrsFromPeer.mLocal.extractFromTlv(item->localAddrList);
 		addrsFromPeer.mExt.extractFromTlv(item->extAddrList);
 
 #ifdef P3DISC_DEBUG
-		std::cerr << "Setting address list to peer " << item->sslId << ", to be:" << std::endl ;
+		std::cerr << "Setting address list to peer " << item->sslId
+		          << ", to be:" << std::endl ;
 
 		std::string addrstr;
 		addrsFromPeer.printAddrs(addrstr);

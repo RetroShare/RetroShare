@@ -1038,12 +1038,15 @@ bool p3NetMgrIMPL::checkNetAddress()
 			}
 
 			/* If no satisfactory local address has been found yet relax and
-			 * accept also link local addresses */
+			 * accept also IPv4 link local addresses, IPv6 link local is not
+			 * accepted because of sin6_scope_id that depends on the host using
+			 * it as an outgoing connection endpoint */
 			if(!validAddr) for (auto it = addrs.begin(); it!=addrs.end(); ++it)
 			{
 				sockaddr_storage& addr(*it);
 				if( sockaddr_storage_isValidNet(addr) &&
-				    !sockaddr_storage_isLoopbackNet(addr) )
+				    !sockaddr_storage_isLoopbackNet(addr) &&
+				    !sockaddr_storage_ipv6_isLinkLocalNet(addr) )
 				{
 					prefAddr = addr;
 					validAddr = true;

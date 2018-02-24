@@ -4,6 +4,7 @@
  * 3P/PQI network interface for RetroShare.
  *
  * Copyright 2007-2011 by Robert Fernie.
+ * Copyright (C) 2015-2018  Gioacchino Mazzurco <gio@eigenlab.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,6 +24,9 @@
  *
  */
 
+#include <vector>    // for std::vector
+#include <algorithm> // for std::random_shuffle
+
 #include "rsserver/p3face.h"
 #include "util/rsnet.h"
 #include "pqi/authgpg.h"
@@ -32,6 +36,7 @@
 #include "pqi/p3linkmgr.h"
 #include "pqi/p3netmgr.h"
 #include "pqi/p3historymgr.h"
+#include "pqi/pqinetwork.h"        // for getLocalAddresses
 
 //#include "pqi/p3dhtmgr.h" // Only need it for constants.
 //#include "tcponudp/tou.h"
@@ -1227,38 +1232,85 @@ void p3PeerMgrIMPL::printPeerLists(std::ostream &out)
  * as it doesn't call back to there.
  */
 
-bool 	p3PeerMgrIMPL::UpdateOwnAddress(const struct sockaddr_storage &localAddr, const struct sockaddr_storage &extAddr)
+bool p3PeerMgrIMPL::UpdateOwnAddress( const sockaddr_storage& localAddr,
+                                      const sockaddr_storage& extAddr )
 {
 #ifdef PEER_DEBUG
-    std::cerr << "p3PeerMgrIMPL::UpdateOwnAddress(";
-    std::cerr << sockaddr_storage_tostring(localAddr);
-    std::cerr << ", ";
-    std::cerr << sockaddr_storage_tostring(extAddr);
-    std::cerr << ")" << std::endl;
+	std::cerr << "p3PeerMgrIMPL::UpdateOwnAddress("
+	          << sockaddr_storage_tostring(localAddr) << ", "
+	          << sockaddr_storage_tostring(extAddr) << ")" << std::endl;
 #endif
 
-    if((rsBanList != NULL) && !rsBanList->isAddressAccepted(localAddr, RSBANLIST_CHECKING_FLAGS_BLACKLIST))
-    {
-        std::cerr << "(SS) Trying to set own IP to a banned IP " << sockaddr_storage_iptostring(localAddr) << ". This probably means that a friend in under traffic re-routing attack." << std::endl;
-        return false ;
-    }
+	if( rsBanList &&
+	         !rsBanList->isAddressAccepted(localAddr,
+	                                       RSBANLIST_CHECKING_FLAGS_BLACKLIST) )
+	{
+		std::cerr << "(SS) Trying to set own IP to a banned IP "
+		          << sockaddr_storage_iptostring(localAddr) << ". This probably"
+		          << "means that a friend in under traffic re-routing attack."
+		          << std::endl;
+		return false;
+	}
 
-    {
-        RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+	{
+		RS_STACK_MUTEX(mPeerMtx);
 
-        //update ip address list
-        pqiIpAddress ipAddressTimed;
-        ipAddressTimed.mAddr = localAddr;
-        ipAddressTimed.mSeenTime = time(NULL);
-        ipAddressTimed.mSrc = 0 ;
-        mOwnState.ipAddrs.updateLocalAddrs(ipAddressTimed);
+		//update ip address list
+		pqiIpAddress ipAddressTimed;
+		ipAddressTimed.mAddr = localAddr;
+		ipAddressTimed.mSeenTime = time(NULL);
+		ipAddressTimed.mSrc = 0;
+		mOwnState.ipAddrs.updateLocalAddrs(ipAddressTimed);
 
-        mOwnState.localaddr = localAddr;
-    }
+		if(!mOwnState.hiddenNode)
+		{
+			/* Workaround to spread multiple local ip addresses when presents.
+			 * This is needed because RS wrongly assumes that there is just one
+			 * active local ip address at time. */
+			std::vector<sockaddr_storage> addrs;
+			if(getLocalAddresses(addrs))
+			{
+				/* To work around MAX_ADDRESS_LIST_SIZE addresses limitation,
+				 *  let's shuffle the list of local addresses in the hope that
+				 *  with enough time every local address is advertised to
+				 *  trusted nodes so they may try to connect to all of them
+				 *  including the most convenient if a local connection exists.
+				 */
+				std::random_shuffle(addrs.begin(), addrs.end());
+
+				for (auto it = addrs.begin(); it!=addrs.end(); ++it)
+				{
+					sockaddr_storage& addr(*it);
+					if( sockaddr_storage_isValidNet(addr) &&
+					    !sockaddr_storage_isLoopbackNet(addr) &&
+					    /* Avoid IPv6 link local addresses as we don't have
+						 * implemented the logic needed to handle sin6_scope_id.
+						 * To properly handle sin6_scope_id it would probably
+						 * require deep reenginering of the RetroShare
+						 * networking stack */
+					    !sockaddr_storage_ipv6_isLinkLocalNet(addr) )
+					{
+						pqiIpAddress pqiIp;
+						sockaddr_storage_clear(pqiIp.mAddr);
+						pqiIp.mAddr.ss_family = addr.ss_family;
+						sockaddr_storage_copyip(pqiIp.mAddr, addr);
+						sockaddr_storage_setport(
+						            pqiIp.mAddr,
+						            sockaddr_storage_port(localAddr) );
+						pqiIp.mSeenTime = time(nullptr);
+						pqiIp.mSrc = 0;
+						mOwnState.ipAddrs.updateLocalAddrs(pqiIp);
+					}
+				}
+			}
+		}
+
+		mOwnState.localaddr = localAddr;
+	}
 
 
-    {
-        RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+	{
+		RS_STACK_MUTEX(mPeerMtx);
 
         //update ip address list
         pqiIpAddress ipAddressTimed;
