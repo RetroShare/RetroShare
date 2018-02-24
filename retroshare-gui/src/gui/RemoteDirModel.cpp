@@ -46,7 +46,7 @@
  ****/
 
 static const uint32_t FLAT_VIEW_MAX_REFS_PER_SECOND       = 2000 ;
-static const uint32_t FLAT_VIEW_MAX_REFS_TABLE_SIZE       = 10000 ; //
+static const size_t   FLAT_VIEW_MAX_REFS_TABLE_SIZE       = 10000 ; //
 static const uint32_t FLAT_VIEW_MIN_DELAY_BETWEEN_UPDATES = 120 ;	// dont rebuild ref list more than every 2 mins.
 
 RetroshareDirModel::RetroshareDirModel(bool mode, QObject *parent)
@@ -516,6 +516,13 @@ void FlatStyle_RDM::update()
 	}
 }
 
+bool FlatStyle_RDM::isMaxRefsTableSize(size_t *maxSize/*=NULL*/)
+{
+	if (maxSize)
+		*maxSize = FLAT_VIEW_MAX_REFS_TABLE_SIZE;
+
+	return (_ref_entries.size() >= FLAT_VIEW_MAX_REFS_TABLE_SIZE);
+}
 QString FlatStyle_RDM::computeDirectoryPath(const DirDetails& details) const
 {
 	QString dir ;
@@ -1515,7 +1522,7 @@ void FlatStyle_RDM::updateRefs()
     {
         RS_STACK_MUTEX(_ref_mutex) ;
 
-        while(!_ref_stack.empty())
+        while( !_ref_stack.empty() && (_ref_entries.size() <= FLAT_VIEW_MAX_REFS_TABLE_SIZE) )
         {
             void *ref = _ref_stack.back() ;
 #ifdef RDM_DEBUG
@@ -1539,7 +1546,7 @@ void FlatStyle_RDM::updateRefs()
             // Limit the size of the table to display, otherwise it becomes impossible to Qt.
 
             if(_ref_entries.size() > FLAT_VIEW_MAX_REFS_TABLE_SIZE)
-                return ;
+                continue;
 
             if(++nb_treated_refs > FLAT_VIEW_MAX_REFS_PER_SECOND) 	// we've done enough, let's give back hand to
             {															// the user and setup a timer to finish the job later.
