@@ -2886,7 +2886,9 @@ void RsGenExchange::processRecvdMessages()
 
 		    if(!accept_new_msg || gpsi.mFirstTryTS + VALIDATE_MAX_WAITING_TIME < now)
 		    {
+#ifdef GEN_EXCH_DEBUG
 				std::cerr << "Pending validation grp=" << gpsi.mId.first << ", msg=" << gpsi.mId.second << ", has exceeded validation time limit. The author's key can probably not be obtained. This is unexpected." << std::endl;
+#endif
 
 			    delete gpsi.mItem;
 			    pend_it = mMsgPendingValidate.erase(pend_it);
