@@ -1,13 +1,22 @@
 #!/bin/sh
 
 ###################### PARAMETERS ####################
-version="0.6.3"
 gitpath="https://github.com/RetroShare/RetroShare.git"
-workdir=retroshare-${version}
 branch="master"
 #branch="v0.6.3-official_release"
 #bubba3="Y"		# comment out to compile for bubba3
 ######################################################
+
+RS_MAJOR_VERSION=`fgrep RS_MAJOR_VERSION ../../libretroshare/src/retroshare/rsversion.h | cut -d\\  -f3- | sed -e s\/\ \/\/g | cut -c1`
+RS_MINOR_VERSION=`fgrep RS_MINOR_VERSION ../../libretroshare/src/retroshare/rsversion.h | cut -d\\  -f3- | sed -e s\/\ \/\/g | cut -c1`
+RS_BUILD_NUMBER=`fgrep RS_BUILD_NUMBER ../../libretroshare/src/retroshare/rsversion.h | grep -v BUILD_NUMBER_ADD | cut -d\\  -f3- | sed -e s\/\ \/\/g | cut -c1`
+
+#  echo "RS_MAJOR_VERSION="${RS_MAJOR_VERSION}
+#  echo "RS_MINOR_VERSION="${RS_MINOR_VERSION}
+#  echo "RS_BUILD_NUMBER="${RS_BUILD_NUMBER}
+
+version_number="${RS_MAJOR_VERSION}"'.'"${RS_MINOR_VERSION}"'.'"${RS_BUILD_NUMBER}"
+workdir=retroshare-${version_number}
 
 echo This script is going to build the debian source package for RetroShare, from the Git repository.
 
@@ -75,22 +84,25 @@ echo Attempting to get revision number...
 ccount=`git rev-list --count --all`
 ccount=`expr $ccount + 8613 - 8267`
 
-echo "  "Using PGP key id   : ${gpgkey}
-echo "  "Using distributions: ${dist}
-echo "  "Commit count       : ${ccount}
-echo "  "Date               : ${date}
-echo "  "Time               : ${time}
-echo "  "Hash               : ${hhsh}
-echo "  "Using branch       : ${branch}
-echo "  "Using revision     : ${rev}
+echo "  Workdir            :"${workdir}
+echo "  Version            :"${version_number}
+echo "  Using revision     :"${rev}
+echo "  Commit count       :"${ccount}
+echo "  Hash               :"${hhsh}
+echo "  Date               :"${date}
+echo "  Time               :"${time}
+echo "  Using branch       :"${branch}
+echo "  Using distributions:"${dist}
+echo "  Using PGP key id   :"${gpgkey}
 
 if test ${useretrotor} = "true"; then
 	echo "  "Specific flags     : retrotor
 fi
 
 echo Done.
-version="${version}"."${rev}"
-echo Got version number ${version}. 
+version="${version_number}"."${rev}"
+echo Got version number ${version} 
+echo
 echo Please check that the changelog is up to date. 
 echo Hit ENTER if this is correct. Otherwise hit Ctrl+C 
 read tmp
@@ -136,7 +148,7 @@ echo Cleaning...
 echo Calling debuild...
 for i in ${dist}; do
     echo copying changelog for ${i}
-    sed -e s/XXXXXX/"${rev}"/g -e s/YYYYYY/"${i}"/g ../changelog > debian/changelog
+    sed -e s/XXXXXX/"${rev}"/g -e s/YYYYYY/"${i}"/g -e s/ZZZZZZ/"${version_number}"/g ../changelog > debian/changelog
 
 	 if test ${useretrotor} = "true"; then
 	 	cp ../rules.retrotor debian/rules

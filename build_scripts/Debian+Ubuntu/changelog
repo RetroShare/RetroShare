@@ -1,4 +1,4 @@
-retroshare (0.6.3-1.XXXXXX~YYYYYY) YYYYYY; urgency=low
+retroshare (ZZZZZZ-1.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
   9352a7c csoler Thu,  8 Feb 2018 10:34:46 +0100 Merge pull request #1168 from PhenomRetroShare/Add_ConnFilterInFriendSel
   bf8bd4b Phenom Wed,  7 Feb 2018 19:00:08 +0100 Add Only Connected in FriendSelectionWidget.
