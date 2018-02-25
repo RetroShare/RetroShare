@@ -29,7 +29,7 @@ class TorStatus : public QWidget
 {
     Q_OBJECT
 public:
-    TorStatus(QWidget *parent = 0);
+    explicit TorStatus(QWidget *parent = 0);
 
     void getTorStatus( );
     void setCompactMode(bool compact) {_compactMode = compact; }
