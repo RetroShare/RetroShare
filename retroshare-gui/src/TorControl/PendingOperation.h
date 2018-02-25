@@ -58,7 +58,7 @@ class PendingOperation : public QObject
     Q_PROPERTY(QString errorMessage READ errorMessage NOTIFY finished FINAL)
 
 public:
-    PendingOperation(QObject *parent = 0);
+    explicit PendingOperation(QObject *parent = 0);
 
     bool isFinished() const;
     bool isSuccess() const;
