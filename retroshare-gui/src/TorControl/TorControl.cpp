@@ -93,7 +93,7 @@ public:
     QVariantMap bootstrapStatus;
     bool hasOwnership;
 
-    TorControlPrivate(TorControl *parent);
+    explicit TorControlPrivate(TorControl *parent);
 
     void setStatus(TorControl::Status status);
     void setTorStatus(TorControl::TorStatus status);
@@ -646,7 +646,7 @@ class SaveConfigOperation : public PendingOperation
     Q_OBJECT
 
 public:
-    SaveConfigOperation(QObject *parent)
+    explicit SaveConfigOperation(QObject *parent)
         : PendingOperation(parent), command(0)
     {
     }
