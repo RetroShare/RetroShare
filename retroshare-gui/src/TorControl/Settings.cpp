@@ -54,7 +54,7 @@ public:
     QJsonObject jsonRoot;
     SettingsObject *rootObject;
 
-    SettingsFilePrivate(SettingsFile *qp);
+    explicit SettingsFilePrivate(SettingsFile *qp);
     virtual ~SettingsFilePrivate();
 
     void reset();
@@ -293,7 +293,7 @@ static void findModifiedRecursive(ModifiedList &modified, const QStringList &pat
         QJsonObject newObject = newValue.toObject();
 
         // Iterate keys of the original object and compare to new
-        for (QJsonObject::iterator it = oldObject.begin(); it != oldObject.end(); it++) {
+        for (QJsonObject::iterator it = oldObject.begin(); it != oldObject.end(); ++it) {
             QJsonValue newSubValue = newObject.value(it.key());
             if (*it == newSubValue)
                 continue;
@@ -305,7 +305,7 @@ static void findModifiedRecursive(ModifiedList &modified, const QStringList &pat
         }
 
         // Iterate keys of the new object that may not be in original
-        for (QJsonObject::iterator it = newObject.begin(); it != newObject.end(); it++) {
+        for (QJsonObject::iterator it = newObject.begin(); it != newObject.end(); ++it) {
             if (oldObject.contains(it.key()))
                 continue;
 
@@ -356,7 +356,7 @@ bool SettingsFilePrivate::write(const QStringList &path, const QJsonValue &value
     ModifiedList modified;
     findModifiedRecursive(modified, path, originalValue, value);
 
-    for (ModifiedList::iterator it = modified.begin(); it != modified.end(); it++)
+    for (ModifiedList::iterator it = modified.begin(); it != modified.end(); ++it)
         emit this->modified(it->first, it->second);
 
     return true;
