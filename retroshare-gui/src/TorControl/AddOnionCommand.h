@@ -52,7 +52,7 @@ class AddOnionCommand : public TorControlCommand
     Q_PROPERTY(bool successful READ isSuccessful CONSTANT)
 
 public:
-    AddOnionCommand(HiddenService *service);
+    explicit AddOnionCommand(HiddenService *service);
 
     QByteArray build();
 
