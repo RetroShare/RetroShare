@@ -59,7 +59,7 @@ public:
     QTimer controlPortTimer;
     int controlPortAttempts;
 
-    TorProcessPrivate(TorProcess *q);
+    explicit TorProcessPrivate(TorProcess *q);
 
     QString torrcPath() const;
     QString controlPortFilePath() const;
