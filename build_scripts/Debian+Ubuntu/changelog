@@ -74,7 +74,7 @@ retroshare (ZZZZZZ-1.XXXXXX~YYYYYY) YYYYYY; urgency=low
   faf4517 csoler Thu,  8 Feb 2018 15:26:21 +0100 proper error handlign when Tor is not available
   644fce8 csoler Thu,  8 Feb 2018 11:14:12 +0100 fixed download menu from Messages
 
- -- Retroshare Dev Team <contact@retroshare.net>  Dim, 25 Feb 2018 12:00:00 +0100
+ -- Retroshare Dev Team <contact@retroshare.net>  Sun, 25 Feb 2018 12:00:00 +0100
 
 retroshare (0.6.3-1.20180210~4beadfe4) xenial; urgency=low
 
