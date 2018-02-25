@@ -280,7 +280,7 @@ public:
 		if(!index.isValid())
 			return QVariant();
 
-		int coln = index.column() ;
+		//int coln = index.column() ;
 
 		switch(role)
 		{
@@ -1914,8 +1914,8 @@ void TransfersDialog::insertTransfers()
 {
 	// Since downloads use an AstractItemModel, we just need to update it, while saving the selected and expanded items.
 
-	std::set<QString> expanded_hashes ;
-	std::set<QString> selected_hashes ;
+	//std::set<QString> expanded_hashes ;
+	//std::set<QString> selected_hashes ;
 
 	DLListModel->update_transfers();
 
