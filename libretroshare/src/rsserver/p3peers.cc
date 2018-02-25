@@ -333,26 +333,26 @@ bool p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
 		d.hiddenNodePort = 0;
 		d.hiddenType = RS_HIDDEN_TYPE_NONE;
 
-		if (sockaddr_storage_isnull(ps.localaddr))
-		{
-			d.localAddr	= "INVALID_IP";
-			d.localPort	= 0;
-		}
-		else
+		if (sockaddr_storage_ipv6_to_ipv4(ps.localaddr))
 		{
 			d.localAddr	= sockaddr_storage_iptostring(ps.localaddr);
 			d.localPort	= sockaddr_storage_port(ps.localaddr);
 		}
-
-		if (sockaddr_storage_isnull(ps.serveraddr))
-		{
-			d.extAddr = "INVALID_IP";
-			d.extPort = 0;
-		}
 		else
+		{
+			d.localAddr	= "INVALID_IP";
+			d.localPort	= 0;
+		}
+
+		if (sockaddr_storage_ipv6_to_ipv4(ps.serveraddr))
 		{
 			d.extAddr = sockaddr_storage_iptostring(ps.serveraddr);
 			d.extPort = sockaddr_storage_port(ps.serveraddr);
+		}
+		else
+		{
+			d.extAddr = "INVALID_IP";
+			d.extPort = 0;
 		}
 
 		d.dyndns        = ps.dyndns;
@@ -1051,22 +1051,22 @@ std::string p3Peers::getPGPKey(const RsPgpId& pgp_id,bool include_signatures)
 	unsigned char *mem_block = NULL;
 	size_t mem_block_size = 0;
 
-	if(!AuthGPG::getAuthGPG()->exportPublicKey(RsPgpId(pgp_id),mem_block,mem_block_size,false,include_signatures))
+	if( !AuthGPG::getAuthGPG()->exportPublicKey(
+	             RsPgpId(pgp_id), mem_block, mem_block_size,
+	             false, include_signatures ) )
 	{
-		std::cerr << "Cannot output certificate for id \"" << pgp_id << "\". Sorry." << std::endl;
+		std::cerr << "Cannot output certificate for id \"" << pgp_id
+		          << "\". Sorry." << std::endl;
 		return "" ;
 	}
 
-	RsPeerDetails Detail ;
+	RsPeerDetails Detail;
+	if(!getGPGDetails(pgp_id,Detail)) return "";
 
-	if(!getGPGDetails(pgp_id,Detail) )
-		return "" ;
+	RsCertificate cert( Detail,mem_block,mem_block_size );
+	delete[] mem_block ;
 
-	RsCertificate cert( Detail,mem_block,mem_block_size ) ;
-
-    delete[] mem_block ;
-
-	return cert.armouredPGPKey() ;
+	return cert.armouredPGPKey();
 }
 
 
