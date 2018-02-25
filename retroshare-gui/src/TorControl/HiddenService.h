@@ -64,7 +64,7 @@ public:
         Online /* Published */
     };
 
-    HiddenService(QObject *parent = 0);
+    explicit HiddenService(QObject *parent = 0);
     HiddenService(const QString &dataPath, QObject *parent = 0);
     HiddenService(const CryptoKey &privateKey, const QString &dataPath = QString(), QObject *parent = 0);
 
