@@ -1483,7 +1483,7 @@ void SharedFilesDialog::restoreInvisibleItems()
 class QCursorContextBlocker
 {
 	public:
-		QCursorContextBlocker(QWidget *w)
+		explicit QCursorContextBlocker(QWidget *w)
 			: mW(w)
 		{
 			mW->setCursor(Qt::WaitCursor);
