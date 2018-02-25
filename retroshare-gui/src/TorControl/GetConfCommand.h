@@ -54,7 +54,7 @@ public:
     };
     const Type type;
 
-    GetConfCommand(Type type);
+    explicit GetConfCommand(Type type);
 
     QByteArray build(const QByteArray &key);
     QByteArray build(const QList<QByteArray> &keys);
