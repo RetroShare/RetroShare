@@ -51,6 +51,11 @@ void *Chunk::allocate(size_t blockSize)
 void Chunk::deallocate(void *p,size_t blockSize)
 {
 	assert(p >= _data) ;
+	if (blockSize == 0)
+	{
+		std::cerr << "(EE) Chunk::deallocate called with blockSize==0" << std::endl;
+		std::abort();
+	}
 
 	unsigned char *toRelease = static_cast<unsigned char *>(p) ;
 
