@@ -122,7 +122,7 @@ MessageWidget *MessageWidget::openMsg(const std::string &msgId, bool window)
 
 /** Constructor */
 MessageWidget::MessageWidget(bool controlled, QWidget *parent, Qt::WindowFlags flags)
-: QWidget(parent, flags)
+  : QWidget(parent, flags), toolButtonReply(NULL)
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	ui.setupUi(this);
@@ -196,6 +196,7 @@ void MessageWidget::connectAction(enumActionType actionType, QToolButton* button
 		break;
 	case ACTION_REPLY:
 		connect(button, SIGNAL(clicked()), this, SLOT(reply()));
+		toolButtonReply = button;
 		break;
 	case ACTION_REPLY_ALL:
 		connect(button, SIGNAL(clicked()), this, SLOT(replyAll()));
@@ -322,7 +323,7 @@ void MessageWidget::getcurrentrecommended()
 			fi.fname = it->data().toString().toUtf8().constData();
 			break ;
 		case COLUMN_FILE_SIZE:
-			fi.size = it->data().toULongLong() ;
+			fi.size = it->data(Qt::UserRole).toULongLong() ;
 			break ;
 		case COLUMN_FILE_HASH:
 			fi.hash = RsFileHash(it->data().toString().toStdString()) ;
@@ -501,6 +502,7 @@ void MessageWidget::fill(const std::string &msgId)
 		QTreeWidgetItem *item = new QTreeWidgetItem;
 		item->setText(COLUMN_FILE_NAME, QString::fromUtf8(it->fname.c_str()));
 		item->setText(COLUMN_FILE_SIZE, misc::friendlyUnit(it->size));
+		item->setData(COLUMN_FILE_SIZE, Qt::UserRole, QVariant(qulonglong(it->size)) );
 		item->setText(COLUMN_FILE_HASH, QString::fromStdString(it->hash.toStdString()));
 		item->setTextAlignment( COLUMN_FILE_SIZE, Qt::AlignRight );
 
@@ -600,9 +602,11 @@ void MessageWidget::fill(const std::string &msgId)
 
 	if ((msgInfo.msgflags & RS_MSG_SYSTEM) && msgInfo.rspeerid_srcId == ownId) {
 		ui.fromText->setText("RetroShare");
+		if (toolButtonReply) toolButtonReply->setEnabled(false);
 	} else {
 		ui.fromText->setText(link.toHtml());
 		ui.fromText->setToolTip(tooltip_string) ;
+		if (toolButtonReply) toolButtonReply->setEnabled(true);
 	}
 
 	ui.subjectText->setText(QString::fromUtf8(msgInfo.title.c_str()));
@@ -785,9 +789,9 @@ void MessageWidget::sendInvite()
 	if (!rsMail->getMessage(currMsgId, mi))
 		return;
 
-    if ((QMessageBox::question(this, tr("Send invite?"),tr("Do you really want send a invite with your Certificate?"),QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes))== QMessageBox::Yes)
-	{
-      MessageComposer::sendInvite(mi.rsgxsid_srcId);
-	}    
+    //if ((QMessageBox::question(this, tr("Send invite?"),tr("Do you really want send a invite with your Certificate?"),QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes))== QMessageBox::Yes)
+	//{
+      MessageComposer::sendInvite(mi.rsgxsid_srcId,false);
+	//}
 
 }

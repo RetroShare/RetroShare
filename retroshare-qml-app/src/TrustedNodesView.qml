@@ -1,6 +1,6 @@
 /*
  * RetroShare Android QML App
- * Copyright (C) 2016-2017  Gioacchino Mazzurco <gio@eigenlab.org>
+ * Copyright (C) 2016-2018  Gioacchino Mazzurco <gio@eigenlab.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -28,6 +28,7 @@ Item
 	property int token: 0
 
 	Component.onCompleted: refreshData()
+	Component.onDestruction: TokensManager.unRegisterToken(token, refreshData)
 	onVisibleChanged: visible && refreshData()
 
 	function refreshDataCallback(par)

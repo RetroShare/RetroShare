@@ -882,6 +882,11 @@ bool 	p3Peers::setHiddenNode(const RsPeerId &id, const std::string &hidden_node_
 }
 
 
+bool p3Peers::isHiddenNode(const RsPeerId &id)
+{
+	return mPeerMgr->isHiddenNode(id) ;
+}
+
 bool 	p3Peers::setHiddenNode(const RsPeerId &id, const std::string &address, uint16_t port)
 {
 #ifdef P3PEERS_DEBUG

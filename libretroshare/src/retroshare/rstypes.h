@@ -208,7 +208,7 @@ class FileInfo
 		uint64_t transfered;
 		double   tfRate; /* in kbytes */
 		uint32_t  downloadStatus; 	// FT_STATE_DOWNLOADING & co. See rstypes.h
-		std::list<TransferInfo> peers;
+		std::vector<TransferInfo> peers;
 
 		DwlSpeed priority ;
 		time_t lastTS;

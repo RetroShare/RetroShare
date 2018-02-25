@@ -368,7 +368,7 @@ void SearchDialog::getSourceFriendsForHash(const RsFileHash& hash,std::list<RsPe
 	FileInfo finfo ;
 	rsFiles->FileDetails(hash, RS_FILE_HINTS_REMOTE,finfo) ;
 
-	for(std::list<TransferInfo>::const_iterator it(finfo.peers.begin());it!=finfo.peers.end();++it)
+	for(std::vector<TransferInfo>::const_iterator it(finfo.peers.begin());it!=finfo.peers.end();++it)
 	{
 		std::cerr << "  adding peerid " << (*it).peerId << std::endl ;
 		srcIds.push_back((*it).peerId) ;
@@ -445,10 +445,10 @@ void SearchDialog::collCreate()
 			details.type = DIR_TYPE_FILE;
 
 			dirVec.push_back(details);
-		}//if (!item->text(SR_HASH_COL).isEmpty())
-	}//for (int i = 0; i < numdls; ++i)
+		}
+	}
 
-	RsCollection(dirVec).openNewColl(this);
+	RsCollection(dirVec,RS_FILE_HINTS_LOCAL).openNewColl(this);
 }
 
 void SearchDialog::collModif()
@@ -795,8 +795,7 @@ void SearchDialog::advancedSearch(RsRegularExpression::Expression* expression)
 	TurtleRequestId req_id = rsTurtle->turtleSearch(e) ;
 
 	// This will act before turtle results come to the interface, thanks to the signals scheduling policy.
-	// The text "bool exp" should be replaced by an appropriate text describing the actual search.
-	initSearchResult("bool exp",req_id, ui.FileTypeComboBox->currentIndex(), true) ;
+	initSearchResult(QString::fromStdString(e.GetStrings()),req_id, ui.FileTypeComboBox->currentIndex(), true) ;
 
 	rsFiles -> SearchBoolExp(expression, results, RS_FILE_HINTS_REMOTE);// | DIR_FLAGS_NETWORK_WIDE | DIR_FLAGS_BROWSABLE);
 
@@ -1166,6 +1165,7 @@ void SearchDialog::insertFile(qulonglong searchId, const FileDetail& file, int s
 	// 1 - look in result window whether the file already exists.
 	//
 	bool found = false ;
+	bool altname = false ;
 	int sources;
 	int friendSource = 0;
 	int anonymousSource = 0;
@@ -1193,7 +1193,11 @@ void SearchDialog::insertFile(qulonglong searchId, const FileDetail& file, int s
 			(*it)->setText(SR_SOURCES_COL,modifiedResult);
 			(*it)->setData(SR_SOURCES_COL, ROLE_SORT, fltRes);
 			QTreeWidgetItem *item = (*it);
+			
 			found = true ;
+			
+			if(QString::compare((*it)->text(SR_NAME_COL), QString::fromUtf8(file.name.c_str()), Qt::CaseSensitive)!=0)
+				altname = true;
 
 			if (!item->data(SR_DATA_COL, SR_ROLE_LOCAL).toBool()) {
 			
@@ -1233,9 +1237,20 @@ void SearchDialog::insertFile(qulonglong searchId, const FileDetail& file, int s
 					item->setForeground(i, brush);
 				}
 			}
-			break ;
-		}
 
+		if(altname)
+		{
+			QTreeWidgetItem *item = new RSTreeWidgetItem(compareResultRole);
+			item->setText(SR_NAME_COL, QString::fromUtf8(file.name.c_str()));
+			item->setText(SR_HASH_COL, QString::fromStdString(file.hash.toStdString()));
+			setIconAndType(item, QString::fromUtf8(file.name.c_str()));
+			item->setText(SR_SIZE_COL, QString::number(file.size));
+			setIconAndType(item, QString::fromUtf8(file.name.c_str()));
+			(*it)->addChild(item);
+		}
+	
+	}
+	
 	if(!found)
 	{
 		++nb_results[searchId] ;

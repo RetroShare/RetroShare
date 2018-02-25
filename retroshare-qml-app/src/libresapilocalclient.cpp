@@ -1,6 +1,6 @@
 /*
  * RetroShare Android QML App
- * Copyright (C) 2016-2017  Gioacchino Mazzurco <gio@eigenlab.org>
+ * Copyright (C) 2016-2018  Gioacchino Mazzurco <gio@eigenlab.org>
  * Copyright (C) 2016  Manu Pineda <manu@cooperativa.cat>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -41,12 +41,25 @@ int LibresapiLocalClient::request( const QString& path, const QString& jsonData,
 		         << callback.toString();
 #endif // QT_DEBUG
 
-	QByteArray data;
-	data.append(path); data.append('\n');
-	data.append(jsonData); data.append('\n');
-	processingQueue.enqueue(PQRecord(path, jsonData, callback));
-	int ret = mLocalSocket.write(data);
-	if(ret < 0) socketError(mLocalSocket.error());
+	int ret = -1;
+
+	if(mLocalSocket.isOpen())
+	{
+		QByteArray data;
+		data.append(path); data.append('\n');
+		data.append(jsonData); data.append('\n');
+		processingQueue.enqueue(PQRecord(path, jsonData, callback));
+		ret = mLocalSocket.write(data);
+		if(ret < 0) socketError(mLocalSocket.error());
+	}
+	else
+	{
+		if(!mConnectAttemptTimer.isActive()) mConnectAttemptTimer.start();
+		qDebug() << __PRETTY_FUNCTION__
+		         << "Socket not ready yet! Ignoring request: "
+		         << path << jsonData;
+	}
+
 	return ret;
 }
 
@@ -54,6 +67,23 @@ void LibresapiLocalClient::socketError(QLocalSocket::LocalSocketError error)
 {
 	qCritical() << __PRETTY_FUNCTION__ << "Socket error! " << error
 	            << mLocalSocket.errorString();
+
+#ifdef QT_DEBUG
+	QString pQueueDump;
+
+	for (auto& qe: processingQueue )
+	{
+		pQueueDump.append(qe.mPath);
+		pQueueDump.append(QChar::Space);
+		pQueueDump.append(qe.mJsonData);
+		pQueueDump.append(QChar::LineSeparator);
+	}
+
+	qDebug() << __PRETTY_FUNCTION__ << "Discarded requests dump:"
+	         << QChar::LineSeparator << pQueueDump;
+#endif //QT_DEBUG
+
+	processingQueue.clear();
 
 	if(mLocalSocket.state() == QLocalSocket::UnconnectedState &&
 	        !mConnectAttemptTimer.isActive())

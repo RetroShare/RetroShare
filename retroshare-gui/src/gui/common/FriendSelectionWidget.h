@@ -82,6 +82,7 @@ public:
 	void start();
 
 	bool isSortByState();
+	bool isFilterConnected();
 
 	int selectedItemCount();
     std::string selectedId(IdType &idType);
@@ -130,6 +131,7 @@ signals:
 
 public slots:
 	void sortByState(bool sort);
+	void filterConnected(bool filter);
 
 private slots:
 	void groupsChanged(int type);
@@ -144,7 +146,6 @@ private slots:
 private:
 	void fillList();
 	void secured_fillList();
-	bool filterItem(QTreeWidgetItem *item, const QString &text);
 
     void selectedIds(IdType idType, std::set<std::string> &ids, bool onlyDirectSelected);
     void setSelectedIds(IdType idType, const std::set<std::string> &ids, bool add);
@@ -161,6 +162,7 @@ private:
 	bool mInSslItemChanged;
 	bool mInFillList;
 	QAction *mActionSortByState;
+	QAction *mActionFilterConnected;
 
 	/* Color definitions (for standard see qss.default) */
 	QColor mTextColorOnline;

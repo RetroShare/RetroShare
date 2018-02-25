@@ -209,6 +209,12 @@
           </item>
           <item row="3" column="2" colspan="2">
            <widget class="RSTextBrowser" name="ccText">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="maximumSize">
              <size>
               <width>16777215</width>
@@ -238,6 +244,12 @@
           </item>
           <item row="4" column="2" colspan="2">
            <widget class="RSTextBrowser" name="bccText">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="maximumSize">
              <size>
               <width>16777215</width>
@@ -403,7 +415,7 @@
            <item>
             <widget class="QLabel" name="infoLabel">
              <property name="text">
-              <string notr="true">You get Invite, accept request and send your own Certificate back</string>
+              <string notr="true">You got an invite to make friend! You may accept this request and send your own Certificate back</string>
              </property>
             </widget>
            </item>

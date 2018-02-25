@@ -21,17 +21,23 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
+#include "RsCollectionDialog.h"
+
+#include "RsCollection.h"
+#include "util/misc.h"
+
 #include <QCheckBox>
+#include <QDateTime>
+#include <QDir>
+#include <QFileSystemModel>
+#include <QHeaderView>
+#include <QInputDialog>
+#include <QKeyEvent>
 #include <QMessageBox>
 #include <QMenu>
 #include <QTextEdit>
-#include <QDir>
-#include <QKeyEvent>
-#include <QDateTime>
-#include <QInputDialog>
-#include "RsCollectionDialog.h"
-#include "RsCollection.h"
-#include "util/misc.h"
+#include <QTreeView>
+
 #define COLUMN_FILE     0
 #define COLUMN_FILEPATH 1
 #define COLUMN_SIZE     2
@@ -366,6 +372,8 @@ void RsCollectionDialog::processSettings(bool bLoad)
 			ui._listSplitter->restoreState(Settings->value("ListSplitterState_CM").toByteArray());
 			// Load system file header configuration
 			ui._systemFileTW->header()->restoreState(Settings->value("SystemFileHeader_CM").toByteArray());
+			// Load file entries header configuration
+			ui._fileEntriesTW->header()->restoreState(Settings->value("FileEntriesHeader_CM").toByteArray());
 		} else {
 			// Load windows geometrie
 			restoreGeometry(Settings->value("WindowGeometrie").toByteArray());
@@ -374,22 +382,30 @@ void RsCollectionDialog::processSettings(bool bLoad)
 			ui._listSplitter->restoreState(Settings->value("ListSplitterState").toByteArray());
 			// Load system file header configuration
 			ui._systemFileTW->header()->restoreState(Settings->value("SystemFileHeader").toByteArray());
+			// Load file entries header configuration
+			ui._fileEntriesTW->header()->restoreState(Settings->value("FileEntriesHeader").toByteArray());
 		}
 	} else {
 		if(_creationMode && !_readOnly){
 			// Save windows geometrie
 			Settings->setValue("WindowGeometrie_CM",saveGeometry());
-			// Save splitter state
-			Settings->setValue("SplitterState_CM", ui._listSplitter->saveState());
-			// Save treeView header configuration
+			// Save splitters state
+			Settings->setValue("MainSplitterState_CM", ui._mainSplitter->saveState());
+			Settings->setValue("ListSplitterState_CM", ui._listSplitter->saveState());
+			// Save system file header configuration
 			Settings->setValue("SystemFileHeader_CM", ui._systemFileTW->header()->saveState());
+			// Save file entries header configuration
+			Settings->setValue("FileEntriesHeader_CM", ui._fileEntriesTW->header()->saveState());
 		} else {
 			// Save windows geometrie
 			Settings->setValue("WindowGeometrie",saveGeometry());
 			// Save splitter state
-			Settings->setValue("SplitterState", ui._listSplitter->saveState());
-			// Save treeView header configuration
+			Settings->setValue("MainSplitterState", ui._mainSplitter->saveState());
+			Settings->setValue("ListSplitterState", ui._listSplitter->saveState());
+			// Save system file header configuration
 			Settings->setValue("SystemFileHeader", ui._systemFileTW->header()->saveState());
+			// Save file entries header configuration
+			Settings->setValue("FileEntriesHeader", ui._fileEntriesTW->header()->saveState());
 		}
 	}
 
@@ -797,7 +813,7 @@ void RsCollectionDialog::addRecursive(bool recursive)
 	for (QHash<QString,QString>::Iterator it = _listOfFilesAddedInDir.begin(); it != _listOfFilesAddedInDir.end() ; ++it)
 	{
 		QString path = it.value();
-		it.value() = "";
+		//it.value() = "";//Don't reset value, could be an older attachment not terminated.
 		if (dirToAdd.contains(path)){
 			it.value() = dirToAdd.value(path);
 		} else if(item) {
@@ -980,7 +996,11 @@ bool RsCollectionDialog::removeItem(QTreeWidgetItem *item, bool &removeOnlyFile)
 				//First uncheck item to update parent informations
 				item->setCheckState(COLUMN_FILE,Qt::Unchecked);
 				QTreeWidgetItem *parent = item->parent();
-				parent->removeChild(item);
+				if (parent) {
+					parent->removeChild(item);
+				} else {
+					getRootItem()->removeChild(item);
+				}
 				return true;
 			} else {
 				if (!removeOnlyFile) {
@@ -1081,34 +1101,76 @@ void RsCollectionDialog::makeDir()
 
 	}
 
-	// Process all selected items
-	int count = ui._fileEntriesTW->selectedItems().count();
-	int curs = 0;
-	if (count == 0) curs = -1;
-	for (; curs < count; ++curs)
+
+	QList<QTreeWidgetItem*> selected = ui._fileEntriesTW->selectedItems();
+
+	if(selected.empty())
 	{
-		QTreeWidgetItem *item = NULL;
-		if (curs >= 0) {
-			item= ui._fileEntriesTW->selectedItems().at(curs);
-		} else {
-			item = getRootItem();
-		}
-		if (item) {
-			while (item->data(COLUMN_HASH, ROLE_TYPE).toUInt() != DIR_TYPE_DIR) {
+		QTreeWidgetItem *item = getRootItem();
+
+		ColFileInfo newChild;
+		newChild.name = childName;
+		newChild.filename_has_wrong_characters = false;
+		newChild.size = 0;
+		newChild.type = DIR_TYPE_DIR;
+		newChild.path = item->data(COLUMN_HASH, ROLE_PATH).toString()
+		        + "/" + item->data(COLUMN_HASH, ROLE_NAME).toString();
+		if (item == getRootItem()) newChild.path = "";
+
+		_newColFileInfos.push_back(newChild);
+	}
+	else
+		for(auto it(selected.begin());it!=selected.end();++it)
+		{
+			QTreeWidgetItem *item = *it;
+
+			while(item->data(COLUMN_HASH, ROLE_TYPE).toUInt() != DIR_TYPE_DIR)
 				item = item->parent();//Only Dir as Parent
-			}
+
 			ColFileInfo newChild;
 			newChild.name = childName;
 			newChild.filename_has_wrong_characters = false;
 			newChild.size = 0;
 			newChild.type = DIR_TYPE_DIR;
-			newChild.path = item->data(COLUMN_HASH, ROLE_PATH).toString()
-			                + "/" + item->data(COLUMN_HASH, ROLE_NAME).toString();
-			if (item == getRootItem()) newChild.path = "";
+
+			if (item == getRootItem())
+				newChild.path = "";
+			else
+				newChild.path = item->data(COLUMN_HASH, ROLE_PATH).toString() + "/" + item->data(COLUMN_HASH, ROLE_NAME).toString();
 
 			_newColFileInfos.push_back(newChild);
 		}
-	}
+
+
+//	// Process all selected items
+//	int count = ui._fileEntriesTW->selectedItems().count();
+//	int curs = 0;
+//	if (count == 0) curs = -1;
+//
+//	for (; curs < count; ++curs)
+//	{
+//		QTreeWidgetItem *item = NULL;
+//		if (curs >= 0) {
+//			item= ui._fileEntriesTW->selectedItems().at(curs);
+//		} else {
+//			item = getRootItem();
+//		}
+//		if (item) {
+//			while (item->parent() != NULL && item->data(COLUMN_HASH, ROLE_TYPE).toUInt() != DIR_TYPE_DIR) {
+//				item = item->parent();//Only Dir as Parent
+//			}
+//			ColFileInfo newChild;
+//			newChild.name = childName;
+//			newChild.filename_has_wrong_characters = false;
+//			newChild.size = 0;
+//			newChild.type = DIR_TYPE_DIR;
+//			newChild.path = item->data(COLUMN_HASH, ROLE_PATH).toString()
+//			                + "/" + item->data(COLUMN_HASH, ROLE_NAME).toString();
+//			if (item == getRootItem()) newChild.path = "";
+//
+//			_newColFileInfos.push_back(newChild);
+//		}
+//	}
 
 
 	updateList();

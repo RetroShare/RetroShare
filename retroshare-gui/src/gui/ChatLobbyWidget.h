@@ -1,10 +1,16 @@
 #pragma once
 
-#include <QTreeWidget>
-#include <retroshare/rsmsgs.h>
 #include "ui_ChatLobbyWidget.h"
+
 #include "RsAutoUpdatePage.h"
 #include "chat/ChatLobbyUserNotify.h"
+#include "gui/gxs/GxsIdChooser.h"
+
+
+#include <retroshare/rsmsgs.h>
+
+#include <QAbstractButton>
+#include <QTreeWidget>
 
 #define IMAGE_CHATLOBBY			    ":/icons/png/chat-lobbies.png"
 
@@ -44,7 +50,7 @@ public:
 
 	void setCurrentChatPage(ChatLobbyDialog *) ;	// used by ChatLobbyDialog to raise.
 	void addChatPage(ChatLobbyDialog *) ;
-	void showLobbyAnchor(ChatLobbyId id, QString anchor) ;
+	bool showLobbyAnchor(ChatLobbyId id, QString anchor) ;
 
 	uint unreadCount();
 
@@ -72,6 +78,7 @@ protected slots:
 	void updatePeerEntering(ChatLobbyId);
 	void updatePeerLeaving(ChatLobbyId);
 	void autoSubscribeItem();
+	void copyItemLink();
 
 private slots:
 	void filterColumnChanged(int);
@@ -82,6 +89,7 @@ private slots:
     void setShowSubscribeColumn(bool show);
 
 	void updateNotify(ChatLobbyId id, unsigned int count) ;
+	void idChooserCurrentIndexChanged(int index);
 
 private:
 	void autoSubscribeLobby(QTreeWidgetItem *item);
@@ -113,6 +121,9 @@ private:
 	int getNumColVisible();
 
 	ChatLobbyUserNotify* myChatLobbyUserNotify;
+
+	QAbstractButton* myInviteYesButton;
+	GxsIdChooser* myInviteIdChooser;
 
 	/* UI - from Designer */
 	Ui::ChatLobbyWidget ui;

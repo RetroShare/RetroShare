@@ -216,8 +216,49 @@ static ops_boolean_t rsa_sign(ops_hash_t *hash, const ops_rsa_public_key_t *rsa,
 	unsigned t;
 	BIGNUM *bn;
 
+	int plen ;
+	unsigned int hash_length ;
+	unsigned char *prefix ;
+
+	switch(hash->algorithm)
+	{
+	case OPS_HASH_SHA1: 	hashsize=OPS_SHA1_HASH_SIZE+sizeof prefix_sha1;
+							hash_length=OPS_SHA1_HASH_SIZE ;
+							prefix = prefix_sha1;
+							plen = sizeof prefix_sha1 ;
+							break ;
+
+	case OPS_HASH_SHA224: 	hashsize=OPS_SHA224_HASH_SIZE+sizeof prefix_sha224;
+							hash_length=OPS_SHA224_HASH_SIZE ;
+							prefix = prefix_sha224;
+							plen = sizeof prefix_sha224 ;
+							break ;
+
+	case OPS_HASH_SHA256: 	hashsize=OPS_SHA256_HASH_SIZE+sizeof prefix_sha256;
+							hash_length=OPS_SHA256_HASH_SIZE ;
+							prefix = prefix_sha256;
+							plen = sizeof prefix_sha256 ;
+							break ;
+
+	case OPS_HASH_SHA384: 	hashsize=OPS_SHA384_HASH_SIZE+sizeof prefix_sha384;
+							hash_length=OPS_SHA384_HASH_SIZE ;
+							prefix = prefix_sha384;
+							plen = sizeof prefix_sha384 ;
+							break ;
+
+	case OPS_HASH_SHA512: 	hashsize=OPS_SHA512_HASH_SIZE+sizeof prefix_sha512;
+							hash_length=OPS_SHA512_HASH_SIZE ;
+							prefix = prefix_sha512;
+							plen = sizeof prefix_sha512 ;
+							break ;
+
+	case OPS_HASH_MD5: 		fprintf(stderr,"(insecure) MD5+RSA signatures not supported in RSA sign") ;
+							return ops_false ;
+
+	default: 				fprintf(stderr,"Hash algorithm %d not supported in RSA sign",hash->algorithm) ;
+							return ops_false ;
+	}
 	// XXX: we assume hash is sha-1 for now
-	hashsize=20+sizeof prefix_sha1;
 
 	keysize=BN_num_bytes(rsa->n);
 
@@ -240,12 +281,12 @@ static ops_boolean_t rsa_sign(ops_hash_t *hash, const ops_rsa_public_key_t *rsa,
 		hashbuf[n]=0xff;
 	hashbuf[n++]=0;
 
-	memcpy(&hashbuf[n], prefix_sha1, sizeof prefix_sha1);
-	n+=sizeof prefix_sha1;
+	memcpy(&hashbuf[n], prefix, plen);
+	n+=plen;
 
 	t=hash->finish(hash, &hashbuf[n]);
 
-	if(t != 20)
+	if(t != hash_length)
 	{
 		fprintf(stderr,"Wrong hash size. Should be 20! can't sign.") ;
 		return ops_false ;
@@ -1376,12 +1417,13 @@ void example(const ops_secret_key_t *skey)
 \endcode
 */
 ops_memory_t* ops_sign_buf(const void* input, const size_t input_len,
-			   const ops_sig_type_t sig_type,
-			   const ops_secret_key_t *skey,
-			   const ops_boolean_t use_armour,
-				ops_boolean_t include_data,
-				ops_boolean_t include_creation_time,
-				ops_boolean_t include_key_id)
+                           const ops_sig_type_t sig_type,
+                           const ops_hash_algorithm_t hash_algorithm,
+                           const ops_secret_key_t *skey,
+                           const ops_boolean_t use_armour,
+                           ops_boolean_t include_data,
+                           ops_boolean_t include_creation_time,
+                           ops_boolean_t include_key_id)
     {
     // \todo allow choice of hash algorithams
     // enforce use of SHA1 for now
@@ -1392,7 +1434,7 @@ ops_memory_t* ops_sign_buf(const void* input, const size_t input_len,
     ops_create_info_t *cinfo=NULL;
     ops_memory_t *mem=ops_memory_new();
 
-    ops_hash_algorithm_t hash_alg=OPS_HASH_SHA1;
+    ops_hash_algorithm_t hash_alg=hash_algorithm ;
     ops_literal_data_type_t ld_type;
     ops_hash_t* hash=NULL;
 

@@ -84,6 +84,7 @@
 #include "statusbar/SoundStatus.h"
 #include "statusbar/ToasterDisable.h"
 #include "statusbar/SysTrayStatus.h"
+#include "statusbar/torstatus.h"
 #include <retroshare/rsstatus.h>
 
 #include <retroshare/rsiface.h>
@@ -250,18 +251,37 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     peerstatus->setVisible(Settings->valueFromGroup("StatusBar", "ShowPeer", QVariant(true)).toBool());
     statusBar()->addWidget(peerstatus);
 
-    natstatus = new NATStatus();
-    if(hiddenmode) natstatus->setVisible(false);
-    else natstatus->setVisible(Settings->valueFromGroup("StatusBar", "ShowNAT", QVariant(true)).toBool());
-    statusBar()->addWidget(natstatus);
-    natstatus->getNATStatus();
-	
-    dhtstatus = new DHTStatus();
-    if(hiddenmode) dhtstatus->setVisible(false);
-    else dhtstatus->setVisible(Settings->valueFromGroup("StatusBar", "ShowDHT", QVariant(true)).toBool());
-    statusBar()->addWidget(dhtstatus);
-    dhtstatus->getDHTStatus();
-	
+	if(hiddenmode)
+	{
+#ifdef RETROTOR
+		torstatus = new TorStatus();
+		torstatus->setVisible(Settings->valueFromGroup("StatusBar", "ShowTor", QVariant(true)).toBool());
+		statusBar()->addWidget(torstatus);
+		torstatus->getTorStatus();
+#else
+		torstatus = NULL ;
+#endif
+
+		natstatus = NULL ;
+		dhtstatus = NULL ;
+	}
+	else
+	{
+		torstatus = NULL ;
+
+		natstatus = new NATStatus();
+		if(hiddenmode) natstatus->setVisible(false);
+		else natstatus->setVisible(Settings->valueFromGroup("StatusBar", "ShowNAT", QVariant(true)).toBool());
+		statusBar()->addWidget(natstatus);
+		natstatus->getNATStatus();
+
+		dhtstatus = new DHTStatus();
+		if(hiddenmode) dhtstatus->setVisible(false);
+		else dhtstatus->setVisible(Settings->valueFromGroup("StatusBar", "ShowDHT", QVariant(true)).toBool());
+		statusBar()->addWidget(dhtstatus);
+		dhtstatus->getDHTStatus();
+	}
+
     hashingstatus = new HashingStatus();
     hashingstatus->setVisible(Settings->valueFromGroup("StatusBar", "ShowHashing", QVariant(true)).toBool());
     statusBar()->addPermanentWidget(hashingstatus, 1);
@@ -716,6 +736,9 @@ void MainWindow::updateStatus()
     if (ratesstatus)
         ratesstatus->getRatesStatus(downKb, upKb);
 
+	if(torstatus)
+		torstatus->getTorStatus();
+
     if(!hiddenmode)
     {
     if (natstatus)
@@ -1033,12 +1056,12 @@ void MainWindow::addFriend()
 }
 
 /** New RSCollection ShortCut */
-void MainWindow::newRsCollection()
-{
-    std::vector <DirDetails> dirVec;
-
-    RsCollection(dirVec).openNewColl(this);
-}
+// void MainWindow::newRsCollection()
+// {
+//     std::vector <DirDetails> dirVec;
+//
+//     RsCollection(dirVec).openNewColl(this);
+// }
 
 /** Shows Share Manager */
 void MainWindow::openShareManager()
@@ -1624,6 +1647,10 @@ void MainWindow::setCompactStatusMode(bool compact)
 	dhtstatus->setCompactMode(compact);
 	dhtstatus->getDHTStatus();
     }
+
+	if(torstatus)
+		torstatus->setCompactMode(compact) ;
+
 	hashingstatus->setCompactMode(compact);
 	ratesstatus->setCompactMode(compact);
 	//opModeStatus: TODO Show only ???

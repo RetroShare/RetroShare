@@ -74,7 +74,6 @@ Drawer
 				{
 					id: gxsText
 					text: (ChatCache.contactsCache.own)?ChatCache.contactsCache.own.gxs_id  : ""
-//					height:  contentHeight
 					wrapMode: Text.WrapAnywhere
 					width: header.width
 					anchors.top: nickText.bottom
@@ -89,27 +88,17 @@ Drawer
 			}
 
 
-
 			delegate: Item
 			{
-
 				property var styles: StyleSideBar.item
 
 				id: menuItem
 				width: parent.width
-				height: styles.height
 
-				Connections
-				{
-					target: mainWindow
-					onCoreReadyChanged:
-					{
-						if (model.showOnCoreReady)
-						{
-							setVisible(mainWindow.coreReady)
-						}
-					}
-				}
+				visible: model.showOnCoreReady ? mainWindow.coreReady : true
+				height: visible ? styles.height : 0
+				Component.onCompleted:
+					if (Q_OS_ANDROID && !model.showOnOsAndroid) visible = false
 
 				ButtonText
 				{
@@ -140,36 +129,8 @@ Drawer
 							listView.currentIndex = index
 							menuList.actions[model.title]();
 							lastItem = stackView.currentItem
-		//					titleLabel.text = model.title
-		//					stackView.replace(model.source)
 						}
 						drawer.close()
-					}
-				}
-
-
-
-				visible: (model.showOnCoreReady)? setVisible(mainWindow.coreReady) : true
-
-				Component.onCompleted:
-				{
-					if (model.showOnOsAndroid && !Q_OS_ANDROID)
-					{
-						menuItem.visible = false
-						menuItem.height = 0
-					}
-				}
-
-				function setVisible(b)
-				{
-					menuItem.visible = b
-					if (!b)
-					{
-						menuItem.height = 0
-					}
-					else
-					{
-						menuItem.height = styles.height
 					}
 				}
 			}
@@ -214,6 +175,10 @@ Drawer
 								platformGW.shareUrl(nodeUrl);
 							})
 					},
+					"Options": function()
+					{
+						stackView.push("qrc:/Options.qml")
+					},
 					"Terminate Core": function()
 					{
 						rsApi.request("/control/shutdown");
@@ -224,33 +189,44 @@ Drawer
 				{
 					title: "Contacts"
 					showOnCoreReady: true
+					showOnOsAndroid: true
 					icon: "/icons/search.svg"
 				}
 				ListElement
 				{
 					title: "Trusted Nodes"
 					showOnCoreReady: true
+					showOnOsAndroid: true
 					icon: "/icons/netgraph.svg"
 				}
 				ListElement
 				{
 					title: "Paste Link"
 					showOnCoreReady: true
+					showOnOsAndroid: true
 					icon: "/icons/add.svg"
 				}
 				ListElement
 				{
 					title: "Share identity"
 					showOnCoreReady: true
+					showOnOsAndroid: true
 					icon: "/icons/share.svg"
 				}
 				ListElement
 				{
+					title: "Options"
+					showOnCoreReady: true
+					showOnOsAndroid: true
+					icon: "/icons/options.svg"
+				}
+				ListElement
+				{
 					title: "Terminate Core"
+					showOnCoreReady: false
 					showOnOsAndroid: false
 					icon: "/icons/exit.svg"
 				}
-
 			}
 
 			ScrollIndicator.vertical: ScrollIndicator { }

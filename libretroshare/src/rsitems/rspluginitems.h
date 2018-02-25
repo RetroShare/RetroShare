@@ -36,7 +36,7 @@ const uint8_t RS_PKT_CLASS_PLUGIN_SUBTYPE_HASHSET = 0x01 ;
 class RsPluginItem: public RsItem
 {
 	public:
-		RsPluginItem(uint8_t plugin_item_subtype): RsItem(RS_PKT_VERSION1,RS_PKT_CLASS_CONFIG,RS_PKT_TYPE_PLUGIN_CONFIG,plugin_item_subtype) {}
+		explicit RsPluginItem(uint8_t plugin_item_subtype): RsItem(RS_PKT_VERSION1,RS_PKT_CLASS_CONFIG,RS_PKT_TYPE_PLUGIN_CONFIG,plugin_item_subtype) {}
 		virtual ~RsPluginItem() {}
 
 		virtual void clear() {} 

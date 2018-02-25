@@ -40,9 +40,10 @@
 #include "rsitems/rsconfigitems.h"
 #include "util/rsdir.h"
 #include "util/rsstring.h"
+#include "pgp/pgpkeyutil.h"
 
 #include "retroshare/rspeers.h" // for RsPeerDetails structure 
-#include "retroshare/rsids.h" // for RsPeerDetails structure 
+#include "retroshare/rsids.h" // for RsPeerDetails structure
 #include "rsserver/p3face.h" 
 
 /******************** notify of new Cert **************************/
@@ -54,13 +55,17 @@
 
 /* SSL connection diagnostic */
 
-const uint32_t RS_SSL_HANDSHAKE_DIAGNOSTIC_UNKNOWN               = 0x00 ; 
-const uint32_t RS_SSL_HANDSHAKE_DIAGNOSTIC_OK                    = 0x01 ; 
-const uint32_t RS_SSL_HANDSHAKE_DIAGNOSTIC_CERTIFICATE_NOT_VALID = 0x02 ; 
-const uint32_t RS_SSL_HANDSHAKE_DIAGNOSTIC_ISSUER_UNKNOWN        = 0x03 ; 
-const uint32_t RS_SSL_HANDSHAKE_DIAGNOSTIC_MALLOC_ERROR          = 0x04 ; 
-const uint32_t RS_SSL_HANDSHAKE_DIAGNOSTIC_WRONG_SIGNATURE       = 0x05 ; 
-const uint32_t RS_SSL_HANDSHAKE_DIAGNOSTIC_CERTIFICATE_MISSING   = 0x06 ; 
+const uint32_t RS_SSL_HANDSHAKE_DIAGNOSTIC_UNKNOWN                     = 0x00 ;
+const uint32_t RS_SSL_HANDSHAKE_DIAGNOSTIC_OK                          = 0x01 ;
+const uint32_t RS_SSL_HANDSHAKE_DIAGNOSTIC_CERTIFICATE_NOT_VALID       = 0x02 ;
+const uint32_t RS_SSL_HANDSHAKE_DIAGNOSTIC_ISSUER_UNKNOWN              = 0x03 ;
+const uint32_t RS_SSL_HANDSHAKE_DIAGNOSTIC_MALLOC_ERROR                = 0x04 ;
+const uint32_t RS_SSL_HANDSHAKE_DIAGNOSTIC_WRONG_SIGNATURE             = 0x05 ;
+const uint32_t RS_SSL_HANDSHAKE_DIAGNOSTIC_CERTIFICATE_MISSING         = 0x06 ;
+const uint32_t RS_SSL_HANDSHAKE_DIAGNOSTIC_HASH_ALGORITHM_NOT_ACCEPTED = 0x07 ;
+const uint32_t RS_SSL_HANDSHAKE_DIAGNOSTIC_KEY_ALGORITHM_NOT_ACCEPTED  = 0x08 ;
+const uint32_t RS_SSL_HANDSHAKE_DIAGNOSTIC_WRONG_SIGNATURE_TYPE        = 0x09 ;
+const uint32_t RS_SSL_HANDSHAKE_DIAGNOSTIC_WRONG_SIGNATURE_VERSION     = 0x0a ;
 
 /****
  * #define AUTHSSL_DEBUG 1
@@ -528,6 +533,7 @@ bool	AuthSSLimpl::validateOwnCertificate(X509 *x509, EVP_PKEY *pkey)
 	/* standard authentication */
 	if (!AuthX509WithGPG(x509,diagnostic))
 	{
+		std::cerr << "Validate Own certificate ERROR: diagnostic = " << diagnostic << std::endl;
 		return false;
 	}
 	return true;
@@ -702,7 +708,6 @@ X509 *AuthSSLimpl::SignX509ReqWithGPG(X509_REQ *req, long /*days*/)
 #define SERIAL_RAND_BITS 64
 
         //const EVP_MD *digest = EVP_sha1();
-        ASN1_INTEGER *serial = ASN1_INTEGER_new();
         EVP_PKEY *tmppkey;
         X509 *x509 = X509_new();
         if (x509 == NULL)
@@ -727,12 +732,28 @@ X509 *AuthSSLimpl::SignX509ReqWithGPG(X509_REQ *req, long /*days*/)
 
         std::cerr << "AuthSSLimpl::SignX509Req() Issuer name: " << AuthGPG::getAuthGPG()->getGPGOwnId().toStdString() << std::endl;
 
+#ifdef V07_NON_BACKWARD_COMPATIBLE_CHANGE_002
+		static const uint64_t CERTIFICATE_SERIAL_NUMBER = RS_CERTIFICATE_VERSION_NUMBER_07_0001 ;
+#else
+#ifdef V07_NON_BACKWARD_COMPATIBLE_CHANGE_001
+		static const uint64_t CERTIFICATE_SERIAL_NUMBER = RS_CERTIFICATE_VERSION_NUMBER_06_0001 ;
+#else
+		static const uint64_t CERTIFICATE_SERIAL_NUMBER = RS_CERTIFICATE_VERSION_NUMBER_06_0000 ;
+#endif
+#endif
+
         BIGNUM *btmp = BN_new();
+		BN_set_word(btmp,CERTIFICATE_SERIAL_NUMBER) ;
+
+#ifdef OLD_CODE
         if (!BN_pseudo_rand(btmp, SERIAL_RAND_BITS, 0, 0))
         {
                 std::cerr << "AuthSSLimpl::SignX509Req() rand FAIL" << std::endl;
                 return NULL;
         }
+#endif
+        ASN1_INTEGER *serial = ASN1_INTEGER_new();
+
         if (!BN_to_ASN1_INTEGER(btmp, serial))
         {
                 std::cerr << "AuthSSLimpl::SignX509Req() asn1 FAIL" << std::endl;
@@ -762,21 +783,6 @@ X509 *AuthSSLimpl::SignX509ReqWithGPG(X509_REQ *req, long /*days*/)
         // (does not leak the key creation date to the outside anymore. for more privacy)
         ASN1_TIME_set(X509_get_notBefore(x509), 0);
         ASN1_TIME_set(X509_get_notAfter(x509), 0);
-
-        // OLD code, sets validity time of cert to be between now and some days in the future
-        /*
-        if (!X509_gmtime_adj(X509_get_notBefore(x509),0))
-        {
-                std::cerr << "AuthSSLimpl::SignX509Req() notbefore FAIL" << std::endl;
-                return NULL;
-        }
-
-        if (!X509_gmtime_adj(X509_get_notAfter(x509), (long)60*60*24*days))
-        {
-                std::cerr << "AuthSSLimpl::SignX509Req() notafter FAIL" << std::endl;
-                return NULL;
-        }
-        */
 
         if (!X509_set_subject_name(x509, X509_REQ_get_subject_name(req)))
         {
@@ -815,11 +821,14 @@ X509 *AuthSSLimpl::SignX509ReqWithGPG(X509_REQ *req, long /*days*/)
         ASN1_BIT_STRING *signature = const_cast<ASN1_BIT_STRING*>(tmp_signature);
 #endif
         //EVP_PKEY *pkey = NULL;
+#ifdef V07_NON_BACKWARD_COMPATIBLE_CHANGE_002
+        const EVP_MD *type = EVP_sha256();
+#else
         const EVP_MD *type = EVP_sha1();
+#endif
 
         EVP_MD_CTX *ctx = EVP_MD_CTX_create();
-        int inl=0,hashoutl=0;
-        int sigoutl=0;
+        int inl=0;
         X509_ALGOR *a;
 
         /* FIX ALGORITHMS */
@@ -851,48 +860,66 @@ X509 *AuthSSLimpl::SignX509ReqWithGPG(X509_REQ *req, long /*days*/)
 
         std::cerr << "Algorithms Fixed" << std::endl;
 
+        unsigned int sigoutl=2048; // hashoutl; //EVP_PKEY_size(pkey);
+        unsigned char *buf_sigout=(unsigned char *)OPENSSL_malloc((unsigned int)sigoutl);
+
         /* input buffer */
 #if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
         inl=i2d(data,NULL);
         unsigned char *buf_in=(unsigned char *)OPENSSL_malloc((unsigned int)inl);
-        unsigned char *p=NULL;
+
+		if(buf_in == NULL)
+		{
+			sigoutl=0;
+			fprintf(stderr, "AuthSSLimpl::SignX509Req: ASN1err(ASN1_F_ASN1_SIGN,ERR_R_MALLOC_FAILURE)\n");
+			return NULL ;
+		}
+		unsigned char *p=buf_in;	// This because i2d modifies the pointer after writing to it.
+		i2d(data,&p);
 #else
         unsigned char *buf_in=NULL;
         inl=i2d_re_X509_tbs(x509,&buf_in) ;	// this does the i2d over x509->cert_info
 #endif
 
-        hashoutl=EVP_MD_size(type);
-        unsigned char *buf_hashout=(unsigned char *)OPENSSL_malloc((unsigned int)hashoutl);
-
-        sigoutl=2048; // hashoutl; //EVP_PKEY_size(pkey);
-        unsigned char *buf_sigout=(unsigned char *)OPENSSL_malloc((unsigned int)sigoutl);
-
-        if ((buf_in == NULL) || (buf_hashout == NULL) || (buf_sigout == NULL))
-                {
-                hashoutl=0;
-                sigoutl=0;
-                fprintf(stderr, "AuthSSLimpl::SignX509Req: ASN1err(ASN1_F_ASN1_SIGN,ERR_R_MALLOC_FAILURE)\n");
-                goto err;
-                }
+#ifdef V07_NON_BACKWARD_COMPATIBLE_CHANGE_003
+        if((buf_in == NULL) || (buf_sigout == NULL))
+		{
+			sigoutl=0;
+			fprintf(stderr, "AuthSSLimpl::SignX509Req: ASN1err(ASN1_F_ASN1_SIGN,ERR_R_MALLOC_FAILURE)\n");
+			goto err;
+		}
         std::cerr << "Buffers Allocated" << std::endl;
 
-#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
-        p=buf_in;
-        i2d(data,&p);
-#endif
+        /* NOW Sign via GPG Functions */
+        if (!AuthGPG::getAuthGPG()->SignDataBin(buf_in, inl, buf_sigout, (unsigned int *) &sigoutl,"AuthSSLimpl::SignX509ReqWithGPG()"))
+        {
+                sigoutl = 0;
+                goto err;
+        }
+#else
+        unsigned int hashoutl=EVP_MD_size(type);
+        unsigned char *buf_hashout=(unsigned char *)OPENSSL_malloc((unsigned int)hashoutl);
+
+        if((buf_hashout == NULL) || (buf_sigout == NULL))
+		{
+			hashoutl=0;
+			sigoutl=0;
+			fprintf(stderr, "AuthSSLimpl::SignX509Req: ASN1err(ASN1_F_ASN1_SIGN,ERR_R_MALLOC_FAILURE)\n");
+			goto err;
+		}
+        std::cerr << "Buffers Allocated" << std::endl;
 
         /* data in buf_in, ready to be hashed */
         EVP_DigestInit_ex(ctx,type, NULL);
         EVP_DigestUpdate(ctx,(unsigned char *)buf_in,inl);
-        if (!EVP_DigestFinal(ctx,(unsigned char *)buf_hashout,
-                        (unsigned int *)&hashoutl))
-                {
-                hashoutl=0;
-                fprintf(stderr, "AuthSSLimpl::SignX509Req: ASN1err(ASN1_F_ASN1_SIGN,ERR_R_EVP_LIB)\n");
-                goto err;
-                }
+        if (!EVP_DigestFinal(ctx,(unsigned char *)buf_hashout, (unsigned int *)&hashoutl))
+		{
+			hashoutl=0;
+			fprintf(stderr, "AuthSSLimpl::SignX509Req: ASN1err(ASN1_F_ASN1_SIGN,ERR_R_EVP_LIB)\n");
+			goto err;
+		}
 
-        std::cerr << "Digest Applied: len: " << hashoutl << std::endl;
+		std::cerr << "Digest Applied: len: " << hashoutl << std::endl;
 
         /* NOW Sign via GPG Functions */
         if (!AuthGPG::getAuthGPG()->SignDataBin(buf_hashout, hashoutl, buf_sigout, (unsigned int *) &sigoutl,"AuthSSLimpl::SignX509ReqWithGPG()"))
@@ -900,9 +927,12 @@ X509 *AuthSSLimpl::SignX509ReqWithGPG(X509_REQ *req, long /*days*/)
                 sigoutl = 0;
                 goto err;
         }
+#endif
 
         std::cerr << "Buffer Sizes: in: " << inl;
+#ifndef V07_NON_BACKWARD_COMPATIBLE_CHANGE_003
         std::cerr << "  HashOut: " << hashoutl;
+#endif
         std::cerr << "  SigOut: " << sigoutl;
         std::cerr << std::endl;
 
@@ -926,6 +956,13 @@ X509 *AuthSSLimpl::SignX509ReqWithGPG(X509_REQ *req, long /*days*/)
 
         EVP_MD_CTX_destroy(ctx) ;
 
+		// debug
+		// {
+		// int pkey_nid = OBJ_obj2nid(x509->sig_alg->algorithm);
+		// const char* sslbuf = OBJ_nid2ln(pkey_nid);
+		// std::cerr << "Signature hash algorithm: " << sslbuf << std::endl;
+		// }
+
         return x509;
 
 	/* XXX CLEANUP */
@@ -933,8 +970,10 @@ X509 *AuthSSLimpl::SignX509ReqWithGPG(X509_REQ *req, long /*days*/)
         /* cleanup */
         if(buf_in != NULL)
             OPENSSL_free(buf_in) ;
+#ifndef V07_NON_BACKWARD_COMPATIBLE_CHANGE_003
         if(buf_hashout != NULL)
             OPENSSL_free(buf_hashout) ;
+#endif
         if(buf_sigout != NULL)
             OPENSSL_free(buf_sigout) ;
         std::cerr << "GPGAuthMgr::SignX509Req() err: FAIL" << std::endl;
@@ -992,12 +1031,13 @@ bool AuthSSLimpl::AuthX509WithGPG(X509 *x509,uint32_t& diagnostic)
 	X509_get0_signature(&signature,&algor2,x509);
 #endif
 
-
-	const EVP_MD *type = EVP_sha1();
+	uint32_t certificate_version = getX509RetroshareCertificateVersion(x509) ;
 
 	EVP_MD_CTX *ctx = EVP_MD_CTX_create();
-	int inl=0,hashoutl=0;
-	int sigoutl=0;
+	int inl=0;
+
+	const unsigned char *signed_data = NULL ;
+	uint32_t signed_data_length =0;
 
 	/* input buffer */
 #if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
@@ -1009,25 +1049,12 @@ bool AuthSSLimpl::AuthX509WithGPG(X509 *x509,uint32_t& diagnostic)
 	inl=i2d_re_X509_tbs(x509,&buf_in) ;	// this does the i2d over x509->cert_info
 #endif
 
-	hashoutl=EVP_MD_size(type);
-	unsigned char *buf_hashout=(unsigned char *)OPENSSL_malloc((unsigned int)hashoutl);
-
-	sigoutl=2048; //hashoutl; //EVP_PKEY_size(pkey);
-	unsigned char *buf_sigout=(unsigned char *)OPENSSL_malloc((unsigned int)sigoutl);
-
-#ifdef AUTHSSL_DEBUG
-	std::cerr << "Buffer Sizes: in: " << inl;
-	std::cerr << "  HashOut: " << hashoutl;
-	std::cerr << "  SigOut: " << sigoutl;
-	std::cerr << std::endl;
-#endif
-
-	if ((buf_in == NULL) || (buf_hashout == NULL) || (buf_sigout == NULL)) {
-		hashoutl=0;
-		sigoutl=0;
+	if(buf_in == NULL)
+	{
 		fprintf(stderr, "AuthSSLimpl::AuthX509: ASN1err(ASN1_F_ASN1_SIGN,ERR_R_MALLOC_FAILURE)\n");
 		diagnostic = RS_SSL_HANDSHAKE_DIAGNOSTIC_MALLOC_ERROR ;
-		goto err;
+
+		return false ;
 	}
 
 #ifdef AUTHSSL_DEBUG
@@ -1038,44 +1065,106 @@ bool AuthSSLimpl::AuthX509WithGPG(X509 *x509,uint32_t& diagnostic)
 	p=buf_in;
 	i2d(data,&p);
 #endif
-	/* data in buf_in, ready to be hashed */
-	EVP_DigestInit_ex(ctx,type, NULL);
-	EVP_DigestUpdate(ctx,(unsigned char *)buf_in,inl);
-	if (!EVP_DigestFinal(ctx,(unsigned char *)buf_hashout,
-				(unsigned int *)&hashoutl))
-	{
-		hashoutl=0;
-		fprintf(stderr, "AuthSSLimpl::AuthX509: ASN1err(ASN1_F_ASN1_SIGN,ERR_R_EVP_LIB)\n");
-		diagnostic = RS_SSL_HANDSHAKE_DIAGNOSTIC_MALLOC_ERROR ;
-		goto err;
-	}
 
+	{ // this scope is to avoid cross-initialization jumps to err.
+
+		const Sha1CheckSum sha1 = RsDirUtil::sha1sum(buf_in,inl) ;	// olds the memory until destruction
+
+		if(certificate_version < RS_CERTIFICATE_VERSION_NUMBER_07_0001)
+		{
+			// If the certificate belongs to 0.6 version, we hash it here, and then re-hash the hash it in the PGP signature.
+
+			signed_data = sha1.toByteArray() ;
+			signed_data_length = sha1.SIZE_IN_BYTES;
+		}
+		else
+		{
+			signed_data = buf_in ;
+			signed_data_length = inl ;
+		}
+
+		/* NOW check sign via GPG Functions */
+		//get the fingerprint of the key that is supposed to sign
 #ifdef AUTHSSL_DEBUG
-	std::cerr << "Digest Applied: len: " << hashoutl << std::endl;
+		std::cerr << "AuthSSLimpl::AuthX509() verifying the gpg sig with keyprint : " << pd.fpr << std::endl;
+		std::cerr << "Sigoutl = " << sigoutl << std::endl ;
+		std::cerr << "pd.fpr = " << pd.fpr << std::endl ;
 #endif
 
-	/* copy data into signature */
-        if(sigoutl < signature->length)
-        {
-        diagnostic = RS_SSL_HANDSHAKE_DIAGNOSTIC_MALLOC_ERROR ;
-        goto err;
-        }
-	sigoutl = signature->length;
-	memmove(buf_sigout, signature->data, sigoutl);
+		// Take a early look at signature parameters. In particular we dont accept signatures with unsecure hash algorithms.
 
-	/* NOW check sign via GPG Functions */
-	//get the fingerprint of the key that is supposed to sign
-#ifdef AUTHSSL_DEBUG
-	std::cerr << "AuthSSLimpl::AuthX509() verifying the gpg sig with keyprint : " << pd.fpr << std::endl;
-	std::cerr << "Sigoutl = " << sigoutl << std::endl ;
-	std::cerr << "pd.fpr = " << pd.fpr << std::endl ;
-	std::cerr << "hashoutl = " << hashoutl << std::endl ;
-#endif
+		PGPSignatureInfo signature_info ;
+		PGPKeyManagement::parseSignature(signature->data,signature->length,signature_info) ;
 
-	if (!AuthGPG::getAuthGPG()->VerifySignBin(buf_hashout, hashoutl, buf_sigout, (unsigned int) sigoutl, pd.fpr)) {
-		sigoutl = 0;
-		diagnostic = RS_SSL_HANDSHAKE_DIAGNOSTIC_WRONG_SIGNATURE ;
-		goto err;
+		if(signature_info.signature_version != PGP_PACKET_TAG_SIGNATURE_VERSION_V4)
+		{
+			diagnostic = RS_SSL_HANDSHAKE_DIAGNOSTIC_WRONG_SIGNATURE_VERSION ;
+			goto err ;
+		}
+
+		std::string sigtypestring ;
+
+		switch(signature_info.signature_type)
+		{
+		case PGP_PACKET_TAG_SIGNATURE_TYPE_BINARY_DOCUMENT :
+			break ;
+
+		case PGP_PACKET_TAG_SIGNATURE_TYPE_STANDALONE_SIG  :
+		case PGP_PACKET_TAG_SIGNATURE_TYPE_CANONICAL_TEXT  :
+		case PGP_PACKET_TAG_SIGNATURE_TYPE_UNKNOWN         :
+		default:
+			diagnostic = RS_SSL_HANDSHAKE_DIAGNOSTIC_WRONG_SIGNATURE_TYPE ;
+			goto err ;
+		}
+
+		switch(signature_info.public_key_algorithm)
+		{
+		case PGP_PACKET_TAG_PUBLIC_KEY_ALGORITHM_RSA_ES :
+		case PGP_PACKET_TAG_PUBLIC_KEY_ALGORITHM_RSA_S  : sigtypestring = "RSA" ;
+			break ;
+
+		case PGP_PACKET_TAG_PUBLIC_KEY_ALGORITHM_DSA    : sigtypestring = "DSA" ;
+			break ;
+
+		case PGP_PACKET_TAG_PUBLIC_KEY_ALGORITHM_RSA_E  :
+		case PGP_PACKET_TAG_PUBLIC_KEY_ALGORITHM_UNKNOWN:
+		default:
+			diagnostic = RS_SSL_HANDSHAKE_DIAGNOSTIC_HASH_ALGORITHM_NOT_ACCEPTED ;
+			goto err ;
+		}
+
+		switch(signature_info.hash_algorithm)
+		{
+		case  PGP_PACKET_TAG_HASH_ALGORITHM_SHA1  : sigtypestring += "+SHA1"   ; break;
+		case  PGP_PACKET_TAG_HASH_ALGORITHM_SHA256: sigtypestring += "+SHA256" ; break;
+		case  PGP_PACKET_TAG_HASH_ALGORITHM_SHA512: sigtypestring += "+SHA512" ; break;
+
+			// We dont accept signatures with unknown or week hash algorithms.
+
+		case  PGP_PACKET_TAG_HASH_ALGORITHM_MD5:
+		case  PGP_PACKET_TAG_HASH_ALGORITHM_UNKNOWN:
+		default:
+			diagnostic = RS_SSL_HANDSHAKE_DIAGNOSTIC_HASH_ALGORITHM_NOT_ACCEPTED ;
+			goto err ;
+		}
+
+		// passed, verify the signature itself
+
+		if (!AuthGPG::getAuthGPG()->VerifySignBin(signed_data, signed_data_length, signature->data, signature->length, pd.fpr))
+		{
+			diagnostic = RS_SSL_HANDSHAKE_DIAGNOSTIC_WRONG_SIGNATURE ;
+			goto err;
+		}
+
+		RsPeerId peerIdstr ;
+		getX509id(x509, peerIdstr) ;
+
+		std::string fpr = pd.fpr.toStdString();
+		std::cerr << "Verified " << sigtypestring << " signature of certificate " << peerIdstr << ", Version " << std::hex << certificate_version
+		          << std::dec << " using PGP key " ;
+		for(uint32_t i=0;i<fpr.length();i+=4)
+			std::cerr << fpr.substr(i,4) << " " ;
+		std::cerr << std::endl;
 	}
 
 #ifdef AUTHSSL_DEBUG
@@ -1084,8 +1173,6 @@ bool AuthSSLimpl::AuthX509WithGPG(X509 *x509,uint32_t& diagnostic)
     EVP_MD_CTX_destroy(ctx) ;
 
 	OPENSSL_free(buf_in) ;
-	OPENSSL_free(buf_hashout) ;
-	OPENSSL_free(buf_sigout) ;
 
 	diagnostic = RS_SSL_HANDSHAKE_DIAGNOSTIC_OK ;
 
@@ -1096,10 +1183,7 @@ err:
 
 	if(buf_in != NULL)
 		OPENSSL_free(buf_in) ;
-	if(buf_hashout != NULL)
-		OPENSSL_free(buf_hashout) ;
-	if(buf_sigout != NULL)
-		OPENSSL_free(buf_sigout) ;
+
 	return false;
 }
 

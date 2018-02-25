@@ -24,7 +24,7 @@
  */
 #include "util/rsdir.h"
 #include "util/rsprint.h"
-#include "util/rsscopetimer.h"
+#include "util/rstime.h"
 #include "rsserver/p3face.h"
 #include "pqi/authssl.h"
 #include "hash_cache.h"
@@ -125,7 +125,7 @@ void HashStorage::data_tick()
             std::cerr << "nothing to hash. Sleeping for " << st << " us" << std::endl;
 #endif
 
-            usleep(st);	// when no files to hash, just wait for 2 secs. This avoids a dramatic loop.
+            rstime::rs_usleep(st);	// when no files to hash, just wait for 2 secs. This avoids a dramatic loop.
 
             if(st > MAX_INACTIVITY_SLEEP_TIME)
             {
@@ -163,7 +163,7 @@ void HashStorage::data_tick()
 
 		if(paused)	// we need to wait off mutex!!
 		{
-			usleep(MAX_INACTIVITY_SLEEP_TIME) ;
+			rstime::rs_usleep(MAX_INACTIVITY_SLEEP_TIME) ;
 			std::cerr << "Hashing process currently paused." << std::endl;
 			return;
 		}
@@ -190,7 +190,7 @@ void HashStorage::data_tick()
 
             RsServer::notify()->notifyHashingInfo(NOTIFY_HASHTYPE_HASH_FILE, tmpout) ;
 
-			double seconds_origin = RsScopeTimer::currentTime() ;
+			double seconds_origin = rstime::RsScopeTimer::currentTime() ;
 
 			if(RsDirUtil::getFileHash(job.full_path, hash,size, this))
 			{
@@ -215,7 +215,7 @@ void HashStorage::data_tick()
 			else
 				std::cerr << "ERROR: cannot hash file " << job.full_path << std::endl;
 
-			mHashingTime += RsScopeTimer::currentTime() - seconds_origin ;
+			mHashingTime += rstime::RsScopeTimer::currentTime() - seconds_origin ;
 			mHashedBytes += size ;
 
 			if(mHashingTime > 3)

@@ -45,8 +45,16 @@
 #include "idle/idle.h"
 #include "lang/languagesupport.h"
 #include "util/RsGxsUpdateBroadcast.h"
+#include "util/rsdir.h"
+#include "util/rstime.h"
+
+#ifdef RETROTOR
+#include "TorControl/TorManager.h"
+#include "TorControl/TorControlWindow.h"
+#endif
 
 #include "retroshare/rsidentity.h"
+#include "retroshare/rspeers.h"
 
 #ifdef SIGFPE_DEBUG
 #include <fenv.h>
@@ -274,12 +282,9 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 	RshareSettings::Create ();
 
 	/* Setup The GUI Stuff */
-	Rshare rshare(args, argc, argv, 
-	              QString::fromUtf8(RsAccounts::ConfigDirectory().c_str()));
+	Rshare rshare(args, argc, argv,  QString::fromUtf8(RsAccounts::ConfigDirectory().c_str()));
 
 	/* Start RetroShare */
-	QSplashScreen splashScreen(QPixmap(":/images/logo/logo_splash.png")/* , Qt::WindowStaysOnTopHint*/);
-
 	QString sDefaultGXSIdToCreate = "";
 	switch (initResult) {
 	case RS_INIT_OK:
@@ -306,19 +311,20 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 			if (genCert)
 			{
 				GenCertDialog gd(false);
-				if (gd.exec () == QDialog::Rejected) {
+
+				if (gd.exec () == QDialog::Rejected)
 					return 1;
-				}
+
 				sDefaultGXSIdToCreate = gd.getGXSNickname();
 			}
 
-			splashScreen.show();
+			//splashScreen.show();
 		}
 		break;
 	case RS_INIT_HAVE_ACCOUNT:
 		{
-			splashScreen.show();
-			splashScreen.showMessage(rshare.translate("SplashScreen", "Load profile"), Qt::AlignHCenter | Qt::AlignBottom);
+			//splashScreen.show();
+			//splashScreen.showMessage(rshare.translate("SplashScreen", "Load profile"), Qt::AlignHCenter | Qt::AlignBottom);
 
 			RsPeerId preferredId;
 			RsAccounts::GetPreferredAccountId(preferredId);
@@ -340,7 +346,58 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 
 	SoundManager::create();
 
+#ifdef RETROTOR
+	// Now that we know the Tor service running, and we know the SSL id, we can make sure it provides a viable hidden service
+
+	QString tor_hidden_service_dir = QString::fromStdString(RsAccounts::AccountDirectory()) + QString("/hidden_service/") ;
+
+	Tor::TorManager *torManager = Tor::TorManager::instance();
+	torManager->setDataDirectory(Rshare::dataDirectory() + QString("/tor/"));
+	torManager->setHiddenServiceDirectory(tor_hidden_service_dir);	// re-set it, because now it's changed to the specific location that is run
+
+	RsDirUtil::checkCreateDirectory(std::string(tor_hidden_service_dir.toUtf8())) ;
+
+	torManager->setupHiddenService();
+
+	if(! torManager->start() || torManager->hasError())
+	{
+		QMessageBox::critical(NULL,QObject::tr("Cannot start Tor Manager!"),QObject::tr("Tor cannot be started on your system: \n\n")+torManager->errorMessage()) ;
+		return 1 ;
+	}
+
+	{
+		TorControlDialog tcd(torManager) ;
+		QString error_msg ;
+		tcd.show();
+
+		while(tcd.checkForTor(error_msg) != TorControlDialog::TOR_STATUS_OK || tcd.checkForHiddenService() != TorControlDialog::HIDDEN_SERVICE_STATUS_OK)	// runs until some status is reached: either tor works, or it fails.
+		{
+			QCoreApplication::processEvents();
+			rstime::rs_usleep(0.2*1000*1000) ;
+
+			if(!error_msg.isNull())
+			{
+				QMessageBox::critical(NULL,QObject::tr("Cannot start Tor"),QObject::tr("Sorry but Tor cannot be started on your system!\n\nThe error reported is:\"")+error_msg+"\"") ;
+				return 1;
+			}
+		}
+
+		tcd.hide();
+
+		if(tcd.checkForHiddenService() != TorControlDialog::HIDDEN_SERVICE_STATUS_OK)
+		{
+			QMessageBox::critical(NULL,QObject::tr("Cannot start a hidden tor service!"),QObject::tr("It was not possible to start a hidden service.")) ;
+			return 1 ;
+		}
+	}
+#endif
+
+	QSplashScreen splashScreen(QPixmap(":/images/logo/logo_splash.png")/* , Qt::WindowStaysOnTopHint*/);
+
+	splashScreen.show();
 	splashScreen.showMessage(rshare.translate("SplashScreen", "Load configuration"), Qt::AlignHCenter | Qt::AlignBottom);
+
+	QCoreApplication::processEvents();
 
 	/* stop Retroshare if startup fails */
 	if (!RsControl::instance()->StartupRetroShare())
@@ -349,10 +406,38 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 		return 1;
 	}
 
+#ifdef RETROTOR
+	// Tor works with viable hidden service. Let's use it!
+
+	QString service_id ;
+	QString onion_address ;
+	uint16_t service_port ;
+	uint16_t service_target_port ;
+	uint16_t proxy_server_port ;
+	QHostAddress service_target_address ;
+	QHostAddress proxy_server_address ;
+
+	torManager->getHiddenServiceInfo(service_id,onion_address,service_port,service_target_address,service_target_port);
+	torManager->getProxyServerInfo(proxy_server_address,proxy_server_port) ;
+
+	std::cerr << "Got hidden service info: " << std::endl;
+	std::cerr << "  onion address  : " << onion_address.toStdString() << std::endl;
+	std::cerr << "  service_id     : " << service_id.toStdString() << std::endl;
+	std::cerr << "  service port   : " << service_port << std::endl;
+	std::cerr << "  target port    : " << service_target_port << std::endl;
+	std::cerr << "  target address : " << service_target_address.toString().toStdString() << std::endl;
+
+	std::cerr << "Setting proxy server to " << service_target_address.toString().toStdString() << ":" << service_target_port << std::endl;
+
+	rsPeers->setLocalAddress(rsPeers->getOwnId(), service_target_address.toString().toStdString(), service_target_port);
+	rsPeers->setHiddenNode(rsPeers->getOwnId(), onion_address.toStdString(), service_port);
+	rsPeers->setProxyServer(RS_HIDDEN_TYPE_TOR, proxy_server_address.toString().toStdString(),proxy_server_port) ;
+#endif
 
 	Rshare::initPlugins();
 
 	splashScreen.showMessage(rshare.translate("SplashScreen", "Create interface"), Qt::AlignHCenter | Qt::AlignBottom);
+	QCoreApplication::processEvents();	// forces splashscreen to show up
 
 	RsharePeerSettings::Create();
 
@@ -416,7 +501,7 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 	QObject::connect(notify,SIGNAL(chatStatusChanged(const QString&,const QString&,bool)),w->friendsDialog,SLOT(updatePeerStatusString(const QString&,const QString&,bool)));
 	QObject::connect(notify,SIGNAL(ownStatusMessageChanged()),w->friendsDialog,SLOT(loadmypersonalstatus()));
 
-	QObject::connect(notify,SIGNAL(logInfoChanged(const QString&))		,w->friendsDialog->networkDialog,SLOT(setLogInfo(QString))) ;
+//	QObject::connect(notify,SIGNAL(logInfoChanged(const QString&))		,w->friendsDialog->networkDialog,SLOT(setLogInfo(QString))) ;
 	QObject::connect(notify,SIGNAL(discInfoChanged())						,w->friendsDialog->networkView,SLOT(update()),Qt::QueuedConnection) ;
 	QObject::connect(notify,SIGNAL(errorOccurred(int,int,const QString&)),w,SLOT(displayErrorMessage(int,int,const QString&))) ;
 

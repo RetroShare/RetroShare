@@ -231,7 +231,7 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     QMenu *printmenu = new QMenu();
     printmenu->addAction(ui.actionPrint);
     printmenu->addAction(ui.actionPrintPreview);
-    ui.printbutton->setMenu(printmenu);
+    ui.printButton->setMenu(printmenu);
 
     QMenu *viewmenu = new QMenu();
     viewmenu->addAction(ui.actionTextBesideIcon);
@@ -346,9 +346,8 @@ void MessagesDialog::processSettings(bool load)
         }
 
         // state of splitter
-        ui.msgSplitter->restoreState(Settings->value("Splitter").toByteArray());
-        ui.msgSplitter_2->restoreState(Settings->value("Splitter2").toByteArray());
-        ui.listSplitter->restoreState(Settings->value("Splitter3").toByteArray());
+        ui.msgSplitter->restoreState(Settings->value("SplitterMsg").toByteArray());
+        ui.listSplitter->restoreState(Settings->value("SplitterList").toByteArray());
 
         /* toolbar button style */
         Qt::ToolButtonStyle style = (Qt::ToolButtonStyle) Settings->value("ToolButon_Style", Qt::ToolButtonIconOnly).toInt();
@@ -361,9 +360,8 @@ void MessagesDialog::processSettings(bool load)
         Settings->setValue("MessageTreeVersion", messageTreeVersion);
 
         // state of splitter
-        Settings->setValue("Splitter", ui.msgSplitter->saveState());
-        Settings->setValue("Splitter2", ui.msgSplitter_2->saveState());
-        Settings->setValue("Splitter3", ui.listSplitter->saveState());
+        Settings->setValue("SplitterMsg", ui.msgSplitter->saveState());
+        Settings->setValue("SplitterList", ui.listSplitter->saveState());
 
         /* toolbar button style */
         Settings->setValue("ToolButon_Style", ui.newmessageButton->toolButtonStyle());
@@ -1527,8 +1525,8 @@ void MessagesDialog::insertMsgTxtAndFiles(QTreeWidgetItem *item, bool bSetToRead
         }
     }
 
-    msgWidget->fill(mCurrMsgId);
     updateInterface();
+    msgWidget->fill(mCurrMsgId);
 }
 
 bool MessagesDialog::getCurrentMsg(std::string &cid, std::string &mid)
@@ -1607,7 +1605,7 @@ void MessagesDialog::setToolbarButtonStyle(Qt::ToolButtonStyle style)
     ui.replyallmessageButton->setToolButtonStyle(style);
     ui.forwardmessageButton->setToolButtonStyle(style);
     ui.tagButton->setToolButtonStyle(style);
-    ui.printbutton->setToolButtonStyle(style);
+    ui.printButton->setToolButtonStyle(style);
     ui.viewtoolButton->setToolButtonStyle(style);
 }
 
@@ -1710,23 +1708,23 @@ void MessagesDialog::updateMessageSummaryList()
     {
         case ROW_INBOX:
             textTotal = tr("Total:") + " "  + QString::number(inboxCount);
-            ui.total_label->setText(textTotal);
+            ui.totalLabel->setText(textTotal);
             break;
         case ROW_OUTBOX:
             textTotal = tr("Total:") + " "  + QString::number(newOutboxCount);
-            ui.total_label->setText(textTotal);
+            ui.totalLabel->setText(textTotal);
             break;
         case ROW_DRAFTBOX:
             textTotal = tr("Total:") + " "  + QString::number(newDraftCount);
-            ui.total_label->setText(textTotal);
+            ui.totalLabel->setText(textTotal);
             break;
         case ROW_SENTBOX:
             textTotal = tr("Total:") + " "  + QString::number(newSentboxCount);
-            ui.total_label->setText(textTotal);
+            ui.totalLabel->setText(textTotal);
             break;
         case ROW_TRASHBOX:
             textTotal = tr("Total:") + " "  + QString::number(trashboxCount);
-            ui.total_label->setText(textTotal);
+            ui.totalLabel->setText(textTotal);
             break;
     }
 
@@ -1967,7 +1965,7 @@ void MessagesDialog::connectActions()
 	ui.replymessageButton->disconnect();
 	ui.replyallmessageButton->disconnect();
 	ui.forwardmessageButton->disconnect();
-	ui.printbutton->disconnect();
+	ui.printButton->disconnect();
 	ui.actionPrint->disconnect();
 	ui.actionPrintPreview->disconnect();
 	ui.actionSaveAs->disconnect();
@@ -1994,7 +1992,7 @@ void MessagesDialog::connectActions()
 		msg->connectAction(MessageWidget::ACTION_REPLY, ui.replymessageButton);
 		msg->connectAction(MessageWidget::ACTION_REPLY_ALL, ui.replyallmessageButton);
 		msg->connectAction(MessageWidget::ACTION_FORWARD, ui.forwardmessageButton);
-		msg->connectAction(MessageWidget::ACTION_PRINT, ui.printbutton);
+		msg->connectAction(MessageWidget::ACTION_PRINT, ui.printButton);
 		msg->connectAction(MessageWidget::ACTION_PRINT, ui.actionPrint);
 		msg->connectAction(MessageWidget::ACTION_PRINT_PREVIEW, ui.actionPrintPreview);
 		msg->connectAction(MessageWidget::ACTION_SAVE_AS, ui.actionSaveAs);
@@ -2019,7 +2017,7 @@ void MessagesDialog::updateInterface()
 	ui.replymessageButton->setEnabled(count == 1);
 	ui.replyallmessageButton->setEnabled(count == 1);
 	ui.forwardmessageButton->setEnabled(count == 1);
-	ui.printbutton->setEnabled(count == 1);
+	ui.printButton->setEnabled(count == 1);
 	ui.actionPrint->setEnabled(count == 1);
 	ui.actionPrintPreview->setEnabled(count == 1);
 	ui.actionSaveAs->setEnabled(count == 1);

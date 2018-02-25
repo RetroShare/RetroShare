@@ -74,7 +74,7 @@ class BwCtrlData
 class p3BandwidthControl: public p3Service, public pqiServiceMonitor
 {
 	public:
-		p3BandwidthControl(pqipersongrp *pg);
+		explicit p3BandwidthControl(pqipersongrp *pg);
 		virtual RsServiceInfo getServiceInfo();
 
 		/***** overloaded from RsBanList *****/

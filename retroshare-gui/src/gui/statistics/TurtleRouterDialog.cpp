@@ -5,6 +5,7 @@
 #include "TurtleRouterDialog.h"
 #include <QPainter>
 #include <QStylePainter>
+#include <algorithm> // for sort
 
 #include "gui/settings/rsharesettings.h"
 
@@ -70,16 +71,19 @@ void TurtleRouterDialog::processSettings(bool bLoad)
 
 }
 
+bool sr_Compare( TurtleSearchRequestDisplayInfo m1,  TurtleSearchRequestDisplayInfo m2)  { return m1.age < m2.age; }
 
 void TurtleRouterDialog::updateDisplay()
 {
 	std::vector<std::vector<std::string> > hashes_info ;
 	std::vector<std::vector<std::string> > tunnels_info ;
-	std::vector<TurtleRequestDisplayInfo > search_reqs_info ;
-	std::vector<TurtleRequestDisplayInfo > tunnel_reqs_info ;
+	std::vector<TurtleSearchRequestDisplayInfo > search_reqs_info ;
+	std::vector<TurtleTunnelRequestDisplayInfo > tunnel_reqs_info ;
 
 	rsTurtle->getInfo(hashes_info,tunnels_info,search_reqs_info,tunnel_reqs_info) ;
-
+	
+	std::sort(search_reqs_info.begin(),search_reqs_info.end(),sr_Compare) ;
+	
 	updateTunnelRequests(hashes_info,tunnels_info,search_reqs_info,tunnel_reqs_info) ;
 
 }
@@ -104,8 +108,8 @@ QString TurtleRouterDialog::getPeerName(const RsPeerId& peer_id)
 
 void TurtleRouterDialog::updateTunnelRequests(	const std::vector<std::vector<std::string> >& hashes_info, 
 																const std::vector<std::vector<std::string> >& tunnels_info, 
-																const std::vector<TurtleRequestDisplayInfo >& search_reqs_info, 
-																const std::vector<TurtleRequestDisplayInfo >& tunnel_reqs_info)
+																const std::vector<TurtleSearchRequestDisplayInfo >& search_reqs_info,
+																const std::vector<TurtleTunnelRequestDisplayInfo >& tunnel_reqs_info)
 {
 	// now display this in the QTableWidgets
 
@@ -162,8 +166,8 @@ void TurtleRouterDialog::updateTunnelRequests(	const std::vector<std::vector<std
 
 	for(uint i=0;i<search_reqs_info.size();++i)
 	{
-		QString str = tr("Request id: %1\t from [%2]\t %3 secs ago").arg(search_reqs_info[i].request_id,0,16).arg(getPeerName(search_reqs_info[i].source_peer_id)).arg(search_reqs_info[i].age);
-
+		QString str = tr("Request id: %1\t %3 secs ago\t from  %2\t %4 (%5 hits)").arg(search_reqs_info[i].request_id,0,16).arg(getPeerName(search_reqs_info[i].source_peer_id), -25).arg(search_reqs_info[i].age).arg(QString::fromUtf8(search_reqs_info[i].keywords.c_str(),search_reqs_info[i].keywords.length())).arg(QString::number(search_reqs_info[i].hits));
+		
 		stl.clear() ;
 		stl.push_back(str) ;
 

@@ -1,7 +1,7 @@
 !include("../../retroshare.pri"): error("Could not include file ../../retroshare.pri")
 
 TEMPLATE = lib
-CONFIG += staticlib bitdht
+CONFIG += staticlib
 CONFIG += create_prl
 CONFIG -= qt
 TARGET = retroshare
@@ -10,7 +10,14 @@ DESTDIR = lib
 
 #CONFIG += dsdv
 
-# the dht stunner is used to obtain RS' external ip addr. when it is natted
+retrotor {
+	DEFINES *= RETROTOR
+	CONFIG -= bitdht
+} else {
+	CONFIG += bitdht
+}
+
+# the dht stunner is used to obtain RS external ip addr. when it is natted
 # this system is unreliable and rs supports a newer and better one (asking connected peers)
 # CONFIG += useDhtStunner
 
@@ -90,6 +97,7 @@ HEADERS +=	tcponudp/udppeer.h \
 		tcponudp/tcpstream.h \
 		tcponudp/tou.h \
 		tcponudp/udprelay.h \
+		pqi/pqissludp.h \
 
 SOURCES +=	tcponudp/udppeer.cc \
 		tcponudp/tcppacket.cc \
@@ -97,6 +105,7 @@ SOURCES +=	tcponudp/udppeer.cc \
 		tcponudp/tou.cc \
 		tcponudp/bss_tou.c \
 		tcponudp/udprelay.cc \
+		pqi/pqissludp.cc \
 
 	useDhtStunner {
 		HEADERS +=	dht/stunaddrassist.h \
@@ -434,7 +443,6 @@ HEADERS +=	pqi/authssl.h \
 			pqi/pqissllistener.h \
 			pqi/pqisslpersongrp.h \
                         pqi/pqissli2pbob.h \
-			pqi/pqissludp.h \
 			pqi/pqisslproxy.h \
 			pqi/pqistore.h \
 			pqi/pqistreamer.h \
@@ -539,7 +547,7 @@ HEADERS +=	util/folderiterator.h \
 			util/rsmemcache.h \
 			util/rstickevent.h \
 			util/rsrecogn.h \
-			util/rsscopetimer.h \
+			util/rstime.h \
             util/stacktrace.h \
             util/rsdeprecate.h \
             util/cxx11retrocompat.h
@@ -590,7 +598,6 @@ SOURCES +=	pqi/authgpg.cc \
 			pqi/pqissllistener.cc \
 			pqi/pqisslpersongrp.cc \
                         pqi/pqissli2pbob.cpp \
-			pqi/pqissludp.cc \
 			pqi/pqisslproxy.cc \
 			pqi/pqistore.cc \
 			pqi/pqistreamer.cc \
@@ -688,7 +695,7 @@ SOURCES +=	util/folderiterator.cc \
 			util/rsrandom.cc \
 			util/rstickevent.cc \
 			util/rsrecogn.cc \
-			util/rsscopetimer.cc
+			util/rstime.cc
 
 
 upnp_miniupnpc {
@@ -917,24 +924,28 @@ test_bitdht {
 
 ################################# Android #####################################
 
-android-g++ {
+android-* {
 ## ifaddrs is missing on Android to add them don't use the one from
 ## https://github.com/morristech/android-ifaddrs
-## because they crash, use QNetworkInterface from Qt instead
+## because it crash, use QNetworkInterface from Qt instead
     CONFIG *= qt
     QT *= network
 
-## Add this here and not in retroshare.pri because static library are very
-## sensible to order in command line, has to be in the end of file for the
-## same reason
+    DEFINES *= "fopen64=fopen"
+    DEFINES *= "fseeko64=fseeko"
+    DEFINES *= "ftello64=ftello"
+    LIBS *= -lbz2 -lupnp -lixml -lthreadutil -lsqlite3
+
+## Static library are verysensible to order in command line, has to be in the
+## end of file for this reason
+
+    LIBS += -L$$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/lib/ -lsqlcipher
+    PRE_TARGETDEPS += $$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/lib/libsqlcipher.a
+
     LIBS += -L$$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/lib/ -lssl
-    INCLUDEPATH += $$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/include
-    DEPENDPATH += $$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/include
     PRE_TARGETDEPS += $$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/lib/libssl.a
 
     LIBS += -L$$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/lib/ -lcrypto
-    INCLUDEPATH += $$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/include
-    DEPENDPATH += $$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/include
     PRE_TARGETDEPS += $$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/lib/libcrypto.a
 
     HEADERS += util/androiddebug.h

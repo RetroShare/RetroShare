@@ -23,6 +23,7 @@
 
 #include <unistd.h>
 
+#include <QCheckBox>
 #include <QMessageBox>
 #include <QMenu>
 #include <QWidgetAction>
@@ -32,21 +33,23 @@
 #include "IdDialog.h"
 #include "ui_IdDialog.h"
 #include "IdEditDialog.h"
-#include "retroshare-gui/RsAutoUpdatePage.h"
+#include "gui/RetroShareLink.h"
+#include "gui/chat/ChatDialog.h"
+#include "gui/Circles/CreateCircleDialog.h"
+#include "gui/common/UIStateHelper.h"
 #include "gui/gxs/GxsIdDetails.h"
 #include "gui/gxs/RsGxsUpdateBroadcastBase.h"
-#include "gui/common/UIStateHelper.h"
-#include "gui/chat/ChatDialog.h"
-#include "gui/settings/rsharesettings.h"
 #include "gui/msgs/MessageComposer.h"
-#include "gui/Circles/CreateCircleDialog.h"
-#include "gui/RetroShareLink.h"
+#include "gui/settings/rsharesettings.h"
+#include "retroshare-gui/RsAutoUpdatePage.h"
+#include "util/misc.h"
 #include "util/QtVersion.h"
 
-#include <retroshare/rspeers.h>
 #include "retroshare/rsgxsflags.h"
 #include "retroshare/rsmsgs.h" 
+#include "retroshare/rspeers.h"
 #include "retroshare/rsservicecontrol.h"
+
 #include <iostream>
 #include <algorithm>
 
@@ -175,32 +178,40 @@ IdDialog::IdDialog(QWidget *parent) :
 
 	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->lineEdit_Nickname);
 	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->lineEdit_KeyId);
-//	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->lineEdit_GpgHash);
+	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->lineEdit_Type);
 	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->lineEdit_GpgId);
 	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->lineEdit_GpgName);
-	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->lineEdit_Type);
 	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->lineEdit_LastUsed);
 	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->ownOpinion_CB);
-	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->overallOpinion_TF);
+	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->autoBanIdentities_CB);
 	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->neighborNodesOpinion_TF);
+	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->overallOpinion_TF);
+	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->usageStatistics_TB);
+	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->inviteButton);
+	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->label_positive);
+	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->label_negative);
 
 	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->lineEdit_Nickname);
-	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->lineEdit_GpgName);
 	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->lineEdit_KeyId);
-//	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->lineEdit_GpgHash);
-	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->lineEdit_GpgId);
 	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->lineEdit_Type);
+	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->lineEdit_GpgId);
 	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->lineEdit_GpgName);
 	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->lineEdit_LastUsed);
-	//mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->line_RatingOverall);
+	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->neighborNodesOpinion_TF);
+	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->overallOpinion_TF);
+	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->usageStatistics_TB);
 
 	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->lineEdit_Nickname);
 	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->lineEdit_KeyId);
-//	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->lineEdit_GpgHash);
-	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->lineEdit_GpgId);
 	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->lineEdit_Type);
+	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->lineEdit_GpgId);
 	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->lineEdit_GpgName);
 	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->lineEdit_LastUsed);
+	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->neighborNodesOpinion_TF);
+	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->overallOpinion_TF);
+	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->usageStatistics_TB);
+	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->label_positive);
+	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->label_negative);
 
 	//mStateHelper->addWidget(IDDIALOG_REPLIST, ui->treeWidget_RepList);
 	//mStateHelper->addLoadPlaceholder(IDDIALOG_REPLIST, ui->treeWidget_RepList);
@@ -221,22 +232,15 @@ IdDialog::IdDialog(QWidget *parent) :
 	connect(ui->inviteButton, SIGNAL(clicked()), this, SLOT(sendInvite()));
 
 
-	ui->avLabel_Person->setPixmap(QPixmap(":/icons/png/people.png"));
 	ui->avlabel_Circles->setPixmap(QPixmap(":/icons/png/circles.png"));
 
-	ui->headerTextLabel_Person->setText(tr("People"));
 	ui->headerTextLabel_Circles->setText(tr("Circles"));
 
 	/* Initialize splitter */
 	ui->mainSplitter->setStretchFactor(0, 0);
 	ui->mainSplitter->setStretchFactor(1, 1);
 	
-	ui->inviteFrame->hide();
-	
-  /*remove
-	QList<int> sizes;
-	sizes << width() << 500; // Qt calculates the right sizes
-	ui->splitter->setSizes(sizes);*/
+	clearPerson();
 
 	/* Add filter types */
 	QMenu *idTWHMenu = new QMenu(tr("Show Items"), this);
@@ -385,7 +389,22 @@ IdDialog::IdDialog(QWidget *parent) :
     connect(tmer,SIGNAL(timeout()),this,SLOT(updateCirclesDisplay())) ;
     
     tmer->start(10000) ;	// update every 10 secs. 
-}	
+}
+
+void IdDialog::clearPerson()
+{
+	QFontMetricsF f(ui->avLabel_Person->font()) ;
+
+	ui->avLabel_Person->setPixmap(QPixmap(":/icons/png/people.png").scaled(f.height()*4,f.height()*4,Qt::IgnoreAspectRatio,Qt::SmoothTransformation));
+	ui->headerTextLabel_Person->setText(tr("People"));
+
+	ui->inviteFrame->hide();
+	ui->avatarLabel->clear();
+
+	whileBlocking(ui->ownOpinion_CB)->setCurrentIndex(1);
+	whileBlocking(ui->autoBanIdentities_CB)->setChecked(false);
+
+}
 
 void IdDialog::toggleAutoBanIdentities(bool b)
 {
@@ -1582,9 +1601,9 @@ void IdDialog::insertIdList(uint32_t token)
 
 	int accept = filter;
 		
-	RsGxsIdGroup data;
+	//RsGxsIdGroup data;
 	std::vector<RsGxsIdGroup> datavector;
-	std::vector<RsGxsIdGroup>::iterator vit;
+	//std::vector<RsGxsIdGroup>::iterator vit;
     
 	if (!rsIdentity->getGroupData(token, datavector))
 	{
@@ -1595,6 +1614,7 @@ void IdDialog::insertIdList(uint32_t token)
 
 		mStateHelper->setActive(IDDIALOG_IDLIST, false);
 		mStateHelper->clear(IDDIALOG_IDLIST);
+		clearPerson();
 
 		return;
 	}
@@ -1645,8 +1665,8 @@ void IdDialog::insertIdList(uint32_t token)
 
 	/* Insert new items */
 	for (std::map<RsGxsGroupId,RsGxsIdGroup>::const_iterator vit = ids_set.begin(); vit != ids_set.end(); ++vit)
-    {
-	    data = vit->second ;
+	{
+		RsGxsIdGroup data = vit->second ;
 
 	    item = NULL;
 
@@ -1661,16 +1681,16 @@ void IdDialog::insertIdList(uint32_t token)
 
 	    Settings->endGroup();
 
-                if (fillIdListItem(vit->second, item, ownPgpId, accept))
-                {
-		    if(vit->second.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)
-			    ownItem->addChild(item);
-		    else if(vit->second.mIsAContact)
-			    contactsItem->addChild(item);
-		    else
-			    allItem->addChild(item);
-                }
-    }
+		if (fillIdListItem(data, item, ownPgpId, accept))
+		{
+			if(data.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)
+				ownItem->addChild(item);
+			else if(data.mIsAContact)
+				contactsItem->addChild(item);
+			else
+				allItem->addChild(item);
+		}
+	}
 	
 	/* count items */
 	int itemCount = contactsItem->childCount() + allItem->childCount() + ownItem->childCount();
@@ -1690,6 +1710,7 @@ void IdDialog::requestIdDetails()
 		mStateHelper->setActive(IDDIALOG_IDDETAILS, false);
 		mStateHelper->setLoading(IDDIALOG_IDDETAILS, false);
 		mStateHelper->clear(IDDIALOG_IDDETAILS);
+		clearPerson();
 
 		return;
 	}
@@ -1717,6 +1738,7 @@ void IdDialog::insertIdDetails(uint32_t token)
 	{
 		mStateHelper->setActive(IDDIALOG_IDDETAILS, false);
 		mStateHelper->clear(IDDIALOG_REPLIST);
+		clearPerson();
 
 		ui->lineEdit_KeyId->setText("ERROR GETTING KEY!");
 
@@ -1731,6 +1753,7 @@ void IdDialog::insertIdDetails(uint32_t token)
 
 		mStateHelper->setActive(IDDIALOG_IDDETAILS, false);
 		mStateHelper->clear(IDDIALOG_IDDETAILS);
+		clearPerson();
 
 		ui->lineEdit_KeyId->setText("INVALID DV SIZE");
 
@@ -1768,8 +1791,14 @@ void IdDialog::insertIdDetails(uint32_t token)
 	std::cerr << "Setting header frame image : " << pixmap.width() << " x " << pixmap.height() << std::endl;
 #endif
 
-    ui->avLabel_Person->setPixmap(pixmap);
-    ui->avatarLabel->setPixmap(pixmap);
+    //ui->avLabel_Person->setPixmap(pixmap);
+    //ui->avatarLabel->setPixmap(pixmap);
+	QFontMetricsF f(ui->avLabel_Person->font()) ;
+    ui->avLabel_Person->setPixmap(pixmap.scaled(f.height()*4,f.height()*4,Qt::KeepAspectRatio,Qt::SmoothTransformation));
+
+	QFontMetricsF g(ui->inviteButton->font()) ;
+    ui->avatarLabel->setPixmap(pixmap.scaled(ui->inviteButton->width(),ui->inviteButton->width(),Qt::IgnoreAspectRatio,Qt::SmoothTransformation));
+	ui->avatarLabel->setScaledContents(true);
 
 	if (data.mPgpKnown)
 	{
@@ -1814,7 +1843,10 @@ void IdDialog::insertIdDetails(uint32_t token)
         if (isLinkedToOwnPgpId)
             ui->lineEdit_Type->setText(tr("Identity owned by you, linked to your Retroshare node")) ;
         else
-            ui->lineEdit_Type->setText(tr("Anonymous identity, owned by you")) ;
+            if (data.mMeta.mGroupFlags & (GXS_SERV::FLAG_PRIVACY_PRIVATE | RSGXSID_GROUPFLAG_REALID))
+                ui->lineEdit_Type->setText(tr("Identity owned by you, linked to your Retroshare node but not yet validated")) ;
+            else
+                ui->lineEdit_Type->setText(tr("Anonymous identity, owned by you")) ;
     else if (data.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID_kept_for_compatibility)
     {
         if (data.mPgpKnown)
@@ -1932,10 +1964,10 @@ QString IdDialog::createUsageString(const RsIdentityUsage& u) const
 
     switch(u.mServiceId)
     {
-    case RS_SERVICE_GXS_TYPE_CHANNELS:  service_name = tr("Channels") ;service_type = RetroShareLink::TYPE_CHANNEL ; break ;
-    case RS_SERVICE_GXS_TYPE_FORUMS:    service_name = tr("Forums") ;  service_type = RetroShareLink::TYPE_FORUM   ; break ;
-    case RS_SERVICE_GXS_TYPE_POSTED:    service_name = tr("Posted") ;  service_type = RetroShareLink::TYPE_POSTED  ; break ;
-    case RS_SERVICE_TYPE_CHAT:      	service_name = tr("Chat") ;  break ;
+    case RS_SERVICE_GXS_TYPE_CHANNELS:  service_name = tr("Channels") ;service_type = RetroShareLink::TYPE_CHANNEL   ; break ;
+    case RS_SERVICE_GXS_TYPE_FORUMS:    service_name = tr("Forums") ;  service_type = RetroShareLink::TYPE_FORUM     ; break ;
+    case RS_SERVICE_GXS_TYPE_POSTED:    service_name = tr("Posted") ;  service_type = RetroShareLink::TYPE_POSTED    ; break ;
+    case RS_SERVICE_TYPE_CHAT:          service_name = tr("Chat")   ;  service_type = RetroShareLink::TYPE_CHAT_ROOM ; break ;
     default:
         service_name = tr("Unknown"); service_type = RetroShareLink::TYPE_UNKNOWN ;
     }
@@ -1962,8 +1994,8 @@ QString IdDialog::createUsageString(const RsIdentityUsage& u) const
 	}
     case RsIdentityUsage::CHAT_LOBBY_MSG_VALIDATION:             // Chat lobby msgs are signed, so each time one comes, or a chat lobby event comes, a signature verificaiton happens.
     {
-        // there is no link for chat lobby yet.
-		return tr("Message in chat lobby %1").arg(u.mAdditionalId) ;
+		RetroShareLink l = RetroShareLink::createChatRoom(ChatId(ChatLobbyId(u.mAdditionalId)),QString::number(u.mAdditionalId));
+		return tr("Message in chat room %1").arg(l.toHtml()) ;
     }
     case RsIdentityUsage::GLOBAL_ROUTER_SIGNATURE_CHECK:         // Global router message validation
     {
@@ -2576,9 +2608,10 @@ void IdDialog::sendInvite()
 
     RsGxsId id(ui->lineEdit_KeyId->text().toStdString());
     
-    if ((QMessageBox::question(this, tr("Send invite?"),tr("Do you really want send a invite with your Certificate?"),QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes))== QMessageBox::Yes)
+    //if ((QMessageBox::question(this, tr("Send invite?"),tr("Do you really want send a invite with your Certificate?"),QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes))== QMessageBox::Yes)
 	{
-        MessageComposer::sendInvite(id);
+        MessageComposer::sendInvite(id,false);
+
         ui->inviteFrame->show();
         ui->inviteButton->setEnabled(false);
 	}

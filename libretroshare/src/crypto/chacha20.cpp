@@ -38,7 +38,7 @@
 #include "crypto/chacha20.h"
 #include "util/rsprint.h"
 #include "util/rsrandom.h"
-#include "util/rsscopetimer.h"
+#include "util/rstime.h"
 
 #define rotl(x,n) { x = (x << n) | (x >> (-n & 31)) ;}
 
@@ -1385,27 +1385,27 @@ bool perform_tests()
         uint8_t received_tag[16] ;
 
         {
-            RsScopeTimer s("AEAD1") ;
+            rstime::RsScopeTimer s("AEAD1") ;
             chacha20_encrypt_rs(key, 1, nonce, ten_megabyte_data,SIZE) ;
 
             std::cerr << "  Chacha20 encryption speed             : " << SIZE / (1024.0*1024.0) / s.duration() << " MB/s" << std::endl;
         }
         {
-            RsScopeTimer s("AEAD2") ;
+            rstime::RsScopeTimer s("AEAD2") ;
             AEAD_chacha20_poly1305_rs(key,nonce,ten_megabyte_data,SIZE,aad,12,received_tag,true) ;
 
             std::cerr << "  AEAD/poly1305 own encryption speed    : " << SIZE / (1024.0*1024.0) / s.duration() << " MB/s" << std::endl;
         }
 #if OPENSSL_VERSION_NUMBER >= 0x010100000L && !defined(LIBRESSL_VERSION_NUMBER)
         {
-            RsScopeTimer s("AEAD3") ;
+            rstime::RsScopeTimer s("AEAD3") ;
             AEAD_chacha20_poly1305_openssl(key,nonce,ten_megabyte_data,SIZE,aad,12,received_tag,true) ;
 
             std::cerr << "  AEAD/poly1305 openssl encryption speed: " << SIZE / (1024.0*1024.0) / s.duration() << " MB/s" << std::endl;
         }
 #endif
         {
-            RsScopeTimer s("AEAD4") ;
+            rstime::RsScopeTimer s("AEAD4") ;
             AEAD_chacha20_sha256(key,nonce,ten_megabyte_data,SIZE,aad,12,received_tag,true) ;
 
             std::cerr << "  AEAD/sha256 encryption speed          : " << SIZE / (1024.0*1024.0) / s.duration() << " MB/s" << std::endl;

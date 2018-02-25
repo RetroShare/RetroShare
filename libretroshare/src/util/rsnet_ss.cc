@@ -4,6 +4,7 @@
  * sockaddr_storage functions for RetroShare.
  *
  * Copyright 2013-2013 by Robert Fernie.
+ * Copyright (C) 2015-2018  Gioacchino Mazzurco <gio@eigenlab.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -389,7 +390,8 @@ void sockaddr_storage_dump(const sockaddr_storage & addr, std::string * outputSt
 	std::stringstream output;
 	output << "sockaddr_storage_dump(addr) ";
 
-	switch (addr.ss_family){
+	switch (addr.ss_family)
+	{
 	case AF_INET:
 	{
 		const sockaddr_in * in = (const sockaddr_in *) & addr;
@@ -421,7 +423,8 @@ void sockaddr_storage_dump(const sockaddr_storage & addr, std::string * outputSt
 		for( uint32_t i = 0; i < sizeof(addr); ++i )
 			output << std::setw(2) << std::setfill('0') << std::hex << +buf[i];
 		// The unary +buf[i] operation forces a no-op type conversion to an int with the correct sign
-	}}
+	}
+	}
 
 	if(outputString)
 	{
@@ -575,6 +578,31 @@ bool sockaddr_storage_isPrivateNet(const struct sockaddr_storage &addr)
 #endif
 			break;
 	}
+	return false;
+}
+
+bool sockaddr_storage_isLinkLocalNet(const struct sockaddr_storage &addr)
+{
+#ifdef SS_DEBUG
+	std::cerr << __PRETTY_FUNCTION__ << std::endl;
+#endif
+
+	switch(addr.ss_family)
+	{
+	case AF_INET:
+		return isLinkLocalNet(&(to_const_ipv4_ptr(addr)->sin_addr));
+	case AF_INET6:
+		std::cerr << __PRETTY_FUNCTION__ << " for AF_INET6 not implemented"
+		          << std::endl;
+		break;
+	default:
+#ifdef SS_DEBUG
+		std::cerr << __PRETTY_FUNCTION__ <<" INVALID Family:" << std::endl;
+		sockaddr_storage_dump(addr);
+#endif
+		break;
+	}
+
 	return false;
 }
 

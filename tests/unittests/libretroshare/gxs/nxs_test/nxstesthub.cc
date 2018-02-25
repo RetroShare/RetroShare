@@ -10,6 +10,7 @@ public:
 	: mPeerId(val), mTestHub(hub){
 
 	}
+	virtual ~NotifyWithPeerId(){}
 
     void notifyNewMessages(std::vector<RsNxsMsg*>& messages)
     {

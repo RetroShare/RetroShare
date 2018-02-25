@@ -25,8 +25,14 @@
 
 #include "ui_NetworkDialog.h"
 #include "RsAutoUpdatePage.h"
+#include "gui/NetworkDialog/pgpid_item_model.h"
+#include "gui/NetworkDialog/pgpid_item_proxy.h"
+
+//tmp
+class  QTreeWidgetItem;
 
 class RSTreeWidgetItemCompareRole ;
+
 
 class NetworkDialog : public RsAutoUpdatePage
 {
@@ -42,23 +48,22 @@ public:
   /** Default Constructor */
   NetworkDialog(QWidget *parent = 0);
 
-  //void load();
   virtual void updateDisplay() ; // overloaded from RsAutoUpdatePage
-  
+
   QColor backgroundColorSelf() const { return mBackgroundColorSelf; }
   QColor backgroundColorOwnSign() const { return mBackgroundColorOwnSign; }
   QColor backgroundColorAcceptConnection() const { return mBackgroundColorAcceptConnection; }
   QColor backgroundColorHasSignedMe() const { return mBackgroundColorHasSignedMe; }
   QColor backgroundColorDenied() const { return mBackgroundColorDenied; }
 
-  void setBackgroundColorSelf(QColor color) { mBackgroundColorSelf = color; }
-  void setBackgroundColorOwnSign(QColor color) { mBackgroundColorOwnSign = color; }
-  void setBackgroundColorAcceptConnection(QColor color) { mBackgroundColorAcceptConnection = color; }
-  void setBackgroundColorHasSignedMe(QColor color) { mBackgroundColorHasSignedMe = color; }
-  void setBackgroundColorDenied(QColor color) { mBackgroundColorDenied = color; }
+  void setBackgroundColorSelf(QColor color) { PGPIdItemModel->setBackgroundColorSelf(color); mBackgroundColorSelf = color; }
+  void setBackgroundColorOwnSign(QColor color) { PGPIdItemModel->setBackgroundColorOwnSign(color); mBackgroundColorOwnSign = color; }
+  void setBackgroundColorAcceptConnection(QColor color) { PGPIdItemModel->setBackgroundColorAcceptConnection(color); mBackgroundColorAcceptConnection = color; }
+  void setBackgroundColorHasSignedMe(QColor color) { PGPIdItemModel->setBackgroundColorHasSignedMe(color); mBackgroundColorHasSignedMe = color; }
+  void setBackgroundColorDenied(QColor color) { PGPIdItemModel->setBackgroundColorDenied(color); mBackgroundColorDenied = color; }
 
 private:
-  void  insertConnect();
+//  void  insertConnect();
 //  std::string loadneighbour();
   /* void loadneighbour(); */
   //void updateNewDiscoveryInfo() ;
@@ -68,7 +73,7 @@ protected:
 
 private slots:
 
-	void removeUnusedKeys() ;
+  void removeUnusedKeys() ;
   void makeFriend() ;
   void denyFriend() ;
 //  void deleteCert() ;
@@ -104,14 +109,15 @@ private slots:
 //  void on_actionTabsTriangular_activated();
   
   void filterColumnChanged(int);
-  void filterItems(const QString &text);
+//  void filterItems(const QString &text);
+
+
 
 private:
-  QTreeWidgetItem *getCurrentNeighbour();
 
 //  class NetworkView *networkview;
   
-  bool filterItem(QTreeWidgetItem *item, const QString &text, int filterColumn);
+//  bool filterItem(QTreeWidgetItem *item, const QString &text, int filterColumn);
 
   /* Color definitions (for standard see qss.default) */
   QColor mBackgroundColorSelf;
@@ -121,6 +127,12 @@ private:
   QColor mBackgroundColorDenied;
 
   RSTreeWidgetItemCompareRole *compareNetworkRole ;
+
+  //iinternal long lived data
+  std::list<RsPgpId> neighs;
+
+  pgpid_item_model *PGPIdItemModel;
+  pgpid_item_proxy *PGPIdItemProxy;
 
   /** Qt Designer generated object */
   Ui::NetworkDialog ui;

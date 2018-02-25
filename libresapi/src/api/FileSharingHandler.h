@@ -22,14 +22,23 @@
 #include "StateTokenServer.h"
 
 #include <retroshare/rsfiles.h>
+#include <retroshare/rsnotify.h>
+#include <util/rsthreads.h>
 
 namespace resource_api
 {
 
-class FileSharingHandler: public ResourceRouter
+class FileSharingHandler: public ResourceRouter, NotifyClient
 {
 public:
-	FileSharingHandler(StateTokenServer* sts, RsFiles* files);
+	FileSharingHandler(StateTokenServer* sts, RsFiles* files, RsNotify& notify);
+	~FileSharingHandler();
+
+	/**
+	 Derived from NotifyClient
+	 This function may be called from foreign thread
+	*/
+	virtual void notifyListChange(int list, int type);
 
 private:
 	void handleWildcard(Request& req, Response& resp);
@@ -48,10 +57,22 @@ private:
 
 	void handleDownload(Request& req, Response& resp);
 
-	StateToken mStateToken;
+	/// Token indicating change in local shared files
+	StateToken mLocalDirStateToken;
+
+	/// Token indicating change in remote (friends') shared files
+	StateToken mRemoteDirStateToken;
+
 	StateTokenServer* mStateTokenServer;
 
+	/**
+	 Protects mLocalDirStateToken and mRemoteDirStateToken that may be changed in foreign thread
+	 @see FileSharingHandler::notifyListChange(...)
+	*/
+	RsMutex mMtx;
+
 	RsFiles* mRsFiles;
+	RsNotify& mNotify;
 };
 
 } // namespace resource_api

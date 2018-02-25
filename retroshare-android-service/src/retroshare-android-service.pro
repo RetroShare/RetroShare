@@ -6,10 +6,10 @@ QT += core network
 QT -= gui
 
 CONFIG += c++11
-android-g++:CONFIG += dll
+android-*:CONFIG += dll
 
-android-g++:TEMPLATE = lib
-!android-g++:TEMPLATE = app
+android-*:TEMPLATE = lib
+!android-*:TEMPLATE = app
 
 DEPENDPATH *= ../../libresapi/src
 INCLUDEPATH *= ../../libresapi/src

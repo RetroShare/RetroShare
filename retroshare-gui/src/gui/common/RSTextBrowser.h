@@ -8,6 +8,7 @@
 
 class RSImageBlockWidget;
 
+//cppcheck-suppress noConstructor
 class RSTextBrowser : public QTextBrowser
 {
 	Q_OBJECT

@@ -35,10 +35,10 @@
 
 //static const int MAX_TUNNEL_REQUESTS_DISPLAY = 10 ;
 
-class TRHistogram
+template<class TURTLE_REQ_DISPLAY_INFO> class TRHistogram
 {
 	public:
-		TRHistogram(const std::vector<TurtleRequestDisplayInfo >& info) :_infos(info) {}
+		TRHistogram(const std::vector<TURTLE_REQ_DISPLAY_INFO>& info) :_infos(info) {}
 
 		QColor colorScale(float f)
 		{
@@ -177,7 +177,7 @@ class TRHistogram
 		}
 
 	private:
-		const std::vector<TurtleRequestDisplayInfo>& _infos ;
+		const std::vector<TURTLE_REQ_DISPLAY_INFO>& _infos ;
 };
 
 TurtleRouterStatistics::TurtleRouterStatistics(QWidget *parent)
@@ -242,8 +242,8 @@ void TurtleRouterStatistics::updateDisplay()
 {
 	std::vector<std::vector<std::string> > hashes_info ;
 	std::vector<std::vector<std::string> > tunnels_info ;
-	std::vector<TurtleRequestDisplayInfo > search_reqs_info ;
-	std::vector<TurtleRequestDisplayInfo > tunnel_reqs_info ;
+	std::vector<TurtleSearchRequestDisplayInfo > search_reqs_info ;
+	std::vector<TurtleTunnelRequestDisplayInfo > tunnel_reqs_info ;
 
 	rsTurtle->getInfo(hashes_info,tunnels_info,search_reqs_info,tunnel_reqs_info) ;
 
@@ -279,8 +279,8 @@ TurtleRouterStatisticsWidget::TurtleRouterStatisticsWidget(QWidget *parent)
 
 void TurtleRouterStatisticsWidget::updateTunnelStatistics(const std::vector<std::vector<std::string> >& /*hashes_info*/,
 																const std::vector<std::vector<std::string> >& /*tunnels_info*/,
-																const std::vector<TurtleRequestDisplayInfo >& search_reqs_info, 
-																const std::vector<TurtleRequestDisplayInfo >& tunnel_reqs_info)
+																const std::vector<TurtleSearchRequestDisplayInfo >& search_reqs_info,
+																const std::vector<TurtleTunnelRequestDisplayInfo >& tunnel_reqs_info)
 
 {
 	QPixmap tmppixmap(maxWidth, maxHeight);
@@ -304,13 +304,13 @@ void TurtleRouterStatisticsWidget::updateTunnelStatistics(const std::vector<std:
 	// draw...
     int ox=5*fact,oy=5*fact ;
 
-    TRHistogram(search_reqs_info).draw(&painter,ox,oy,tr("Search requests repartition") + ":",fontHeight) ;
+    TRHistogram<TurtleSearchRequestDisplayInfo>(search_reqs_info).draw(&painter,ox,oy,tr("Search requests repartition") + ":",fontHeight) ;
 
 	painter.setPen(QColor::fromRgb(70,70,70)) ;
 	painter.drawLine(0,oy,maxWidth,oy) ;
 	oy += celly ;
 
-    TRHistogram(tunnel_reqs_info).draw(&painter,ox,oy,tr("Tunnel requests repartition") + ":",fontHeight) ;
+    TRHistogram<TurtleTunnelRequestDisplayInfo>(tunnel_reqs_info).draw(&painter,ox,oy,tr("Tunnel requests repartition") + ":",fontHeight) ;
 
 	// now give information about turtle traffic.
 	//

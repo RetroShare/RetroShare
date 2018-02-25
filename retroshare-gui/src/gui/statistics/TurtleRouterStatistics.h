@@ -62,8 +62,8 @@ class TurtleRouterStatisticsWidget:  public QWidget
 
 		void updateTunnelStatistics(	const std::vector<std::vector<std::basic_string<char> > >&, 
 												const std::vector<std::vector<std::basic_string<char> > >&, 
-												const std::vector<TurtleRequestDisplayInfo >&, 
-												const std::vector<TurtleRequestDisplayInfo >&) ;
+												const std::vector<TurtleSearchRequestDisplayInfo >&,
+												const std::vector<TurtleTunnelRequestDisplayInfo >&) ;
 
 	private:
 		static QString speedString(float f) ;

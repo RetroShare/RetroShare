@@ -630,7 +630,7 @@ void CreateGxsChannelMsg::sendMsg()
 	std::string subject = std::string(misc::removeNewLine(subjectEdit->text()).toUtf8());
 	QString text;
 	RsHtml::optimizeHtml(msgEdit, text);
-	std::string msg = text.toStdString();
+	std::string msg = std::string(text.toUtf8());
 
 	std::list<RsGxsFile> files;
 

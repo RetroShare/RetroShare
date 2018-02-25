@@ -3,15 +3,21 @@
 CONFIG *= retroshare_gui
 no_retroshare_gui:CONFIG -= retroshare_gui
 
+# To build the RetroTor executable, just uncomment the following option.
+# RetroTor is a version of RS that automatically configures Tor for its own usage
+# using only hidden nodes. It will not start if Tor is not working.
+
+# CONFIG *= retrotor
+
 # To disable RetroShare-nogui append the following
 # assignation to qmake command line "CONFIG+=no_retroshare_nogui"
 CONFIG *= retroshare_nogui
 no_retroshare_nogui:CONFIG -= retroshare_nogui
 
-# To disable RetroShare plugins append the following
-# assignation to qmake command line "CONFIG+=no_retroshare_plugins"
-CONFIG *= retroshare_plugins
-no_retroshare_plugins:CONFIG -= retroshare_plugins
+# To enable RetroShare plugins append the following
+# assignation to qmake command line "CONFIG+=retroshare_plugins"
+CONFIG *= no_retroshare_plugins
+retroshare_plugins:CONFIG -= no_retroshare_plugins
 
 # To enable RetroShare-android-service append the following assignation to
 # qmake command line "CONFIG+=retroshare_android_service"
@@ -87,7 +93,7 @@ CONFIG *= no_rs_async_chat
 rs_async_chat:CONFIG -= no_rs_async_chat
 
 # To select your MacOsX version append the following assignation to qmake
-# command line "CONFIG+=rs_macos10.11" where 10.11(default for Travis_CI) depends your version
+# command line "CONFIG+=rs_macos10.11" where 10.11 depends your version
 CONFIG *= rs_macos10.11
 rs_macos10.8:CONFIG -= rs_macos10.11
 rs_macos10.9:CONFIG -= rs_macos10.11
@@ -111,7 +117,7 @@ linux-* {
     }
 }
 
-android-g++ {
+android-* {
     isEmpty(NATIVE_LIBS_TOOLCHAIN_PATH) {
         NATIVE_LIBS_TOOLCHAIN_PATH = $$(NATIVE_LIBS_TOOLCHAIN_PATH)
     }
@@ -119,21 +125,11 @@ android-g++ {
         CONFIG -= no_retroshare_android_notify_service
         CONFIG *= retroshare_android_notify_service
     }
-    CONFIG *= no_libresapihttpserver no_sqlcipher upnp_libupnp
-    CONFIG -= libresapihttpserver sqlcipher upnp_miniupnpc
+    CONFIG *= no_libresapihttpserver upnp_libupnp
+    CONFIG -= libresapihttpserver upnp_miniupnpc
     QT *= androidextras
-    DEFINES *= "fopen64=fopen"
-    DEFINES *= "fseeko64=fseeko"
-    DEFINES *= "ftello64=ftello"
     INCLUDEPATH += $$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/include
     LIBS *= -L$$NDK_TOOLCHAIN_PATH/sysroot/usr/lib/
-    LIBS *= -lbz2 -lupnp -lixml -lthreadutil -lsqlite3
-    ANDROID_EXTRA_LIBS *= $$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/lib/libsqlite3.so
-#    message(LIBS: $$LIBS)
-#    message(ANDROID_EXTRA_LIBS: $$ANDROID_EXTRA_LIBS)
-#    message(ANDROID_PLATFORM: $$ANDROID_PLATFORM)
-#    message(ANDROID_PLATFORM_ROOT_PATH: $$ANDROID_PLATFORM_ROOT_PATH)
-#    message(NATIVE_LIBS_TOOLCHAIN_PATH: $$NATIVE_LIBS_TOOLCHAIN_PATH)
 }
 
 win32 {
@@ -168,37 +164,39 @@ win32 {
 	}
 }
 
-rs_macos10.8 {
-	message(***retroshare.pri: Set Target and SDK to MacOS 10.8 )
-	QMAKE_MACOSX_DEPLOYMENT_TARGET=10.8
-	QMAKE_MAC_SDK = macosx10.8
-}
-
-rs_macos10.9 {
-	message(***retroshare.pri: Set Target and SDK to MacOS 10.9 )
-	QMAKE_MACOSX_DEPLOYMENT_TARGET=10.9
-	QMAKE_MAC_SDK = macosx10.9
-}
-
-rs_macos10.10 {
-	message(***retroshare.pri: Set Target and SDK to MacOS 10.10 )
-	QMAKE_MACOSX_DEPLOYMENT_TARGET=10.10
-	QMAKE_MAC_SDK = macosx10.10
-}
-
-rs_macos10.11 {
-	message(***retroshare.pri: Set Target and SDK to MacOS 10.11 )
-	QMAKE_MACOSX_DEPLOYMENT_TARGET=10.11
-	QMAKE_MAC_SDK = macosx10.11
-}
-
-rs_macos10.12 {
-	message(***retroshare.pri: Set Target and SDK to MacOS 10.12 )
-	QMAKE_MACOSX_DEPLOYMENT_TARGET=10.12
-	QMAKE_MAC_SDK = macosx10.12
-}
-
 macx {
+	rs_macos10.8 {
+		message(***retroshare.pri: Set Target and SDK to MacOS 10.8 )
+		QMAKE_MACOSX_DEPLOYMENT_TARGET=10.8
+		QMAKE_MAC_SDK = macosx10.8
+	}
+
+	rs_macos10.9 {
+		message(***retroshare.pri: Set Target and SDK to MacOS 10.9 )
+		QMAKE_MACOSX_DEPLOYMENT_TARGET=10.9
+		QMAKE_MAC_SDK = macosx10.9
+	}
+
+	rs_macos10.10 {
+		message(***retroshare.pri: Set Target and SDK to MacOS 10.10 )
+		QMAKE_MACOSX_DEPLOYMENT_TARGET=10.10
+		QMAKE_MAC_SDK = macosx10.10
+	}
+
+	rs_macos10.11 {
+		message(***retroshare.pri: Set Target and SDK to MacOS 10.11 )
+		QMAKE_MACOSX_DEPLOYMENT_TARGET=10.11
+		QMAKE_MAC_SDK = macosx10.11
+	}
+
+	rs_macos10.12 {
+		message(***retroshare.pri: Set Target and SDK to MacOS 10.12 )
+		QMAKE_MACOSX_DEPLOYMENT_TARGET=10.12
+		QMAKE_MAC_SDK = macosx10.12
+		QMAKE_CXXFLAGS += -Wno-nullability-completeness
+		QMAKE_CFLAGS += -Wno-nullability-completeness
+	}
+
 	message(***retroshare.pri:MacOSX)
 	BIN_DIR += "/usr/bin"
 	INC_DIR += "/usr/include"
@@ -226,6 +224,10 @@ no_sqlcipher:DEFINES *= NO_SQLCIPHER
 rs_autologin {
     DEFINES *= RS_AUTOLOGIN
     warning("You have enabled RetroShare auto-login, this is discouraged. The usage of auto-login on some linux distributions may allow someone having access to your session to steal the SSL keys of your node location and therefore compromise your security")
+}
+
+retrotor {
+    CONFIG *= rs_onlyhiddennode
 }
 
 rs_onlyhiddennode {
@@ -261,4 +263,45 @@ rs_async_chat {
 
 rs_chatserver {
     DEFINES *= RS_CHATSERVER
+}
+
+###########################################################################################################################################################
+#
+#  V07_NON_BACKWARD_COMPATIBLE_CHANGE_001:
+#
+#     What: Computes the node id by performing a sha256 hash of the certificate's PGP signature, instead of simply picking up the last 20 bytes of it.
+#
+#     Why: There is no real risk in forging a certificate with the same ID as the authentication is performed over the PGP signature of the certificate
+#           which hashes the full SSL certificate (i.e. the full serialized CERT_INFO structure). However the possibility to
+#           create two certificates with the same IDs is a problem, as it can be used to cause disturbance in the software.
+#
+#     Backward compat: connexions impossible with non patched peers older than Nov 2017, probably because the SSL id that is computed is not the same on both side,
+#                    and in particular unpatched peers see a cerficate with ID different (because computed with the old method) than the ID that was
+#                    submitted when making friends.
+#
+#     Note: the advantage of basing the ID on the signature rather than the public key is not very clear, given that the signature is based on a hash
+#           of the public key (and the rest of the certificate info).
+#
+#  V07_NON_BACKWARD_COMPATIBLE_CHANGE_002:
+#
+#     What: Use RSA+SHA256 instead of RSA+SHA1 for PGP certificate signatures
+#
+#     Why:  Sha1 is likely to be prone to primary collisions anytime soon, so it is urgent to turn to a more secure solution.
+#
+#     Backward compat: unpatched peers after Nov 2017 are able to verify signatures since openpgp-sdk already handle it.
+#
+#  V07_NON_BACKWARD_COMPATIBLE_CHANGE_003:
+#
+#      What: Do not hash PGP certificate twice when signing
+#
+#  	 Why: hasing twice is not per se a security issue, but it makes it harder to change the settings for hashing.
+#
+#  	 Backward compat: patched peers cannot connect to non patched peers older than Nov 2017.
+###########################################################################################################################################################
+
+#CONFIG += rs_v07_changes
+rs_v07_changes {
+	DEFINES += V07_NON_BACKWARD_COMPATIBLE_CHANGE_001
+	DEFINES += V07_NON_BACKWARD_COMPATIBLE_CHANGE_002
+	DEFINES += V07_NON_BACKWARD_COMPATIBLE_CHANGE_003
 }

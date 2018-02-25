@@ -24,6 +24,7 @@
  */
 
 
+#include "util/rstime.h"
 #include "pqi/pqithreadstreamer.h"
 #include <unistd.h>
 
@@ -69,7 +70,7 @@ void	pqithreadstreamer::data_tick()
 
     if (!isactive)
     {
-        usleep(DEFAULT_STREAMER_IDLE_SLEEP);
+        rstime::rs_usleep(DEFAULT_STREAMER_IDLE_SLEEP);
         return ;
     }
 
@@ -92,7 +93,7 @@ void	pqithreadstreamer::data_tick()
 
     if (sleep_period)
     {
-        usleep(sleep_period);
+        rstime::rs_usleep(sleep_period);
     }
 }
 

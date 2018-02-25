@@ -93,9 +93,16 @@ GeneralPage::GeneralPage(QWidget * parent, Qt::WindowFlags flags) :
     //connect(ui.runStartWizard_PB,                           SIGNAL(clicked()),         this,SLOT(runStartWizard())) ;
     connect(ui.checkAdvanced,                               SIGNAL(toggled(bool)),     this,SLOT(updateAdvancedMode())) ;
     connect(ui.registerRetroShareProtocol,                  SIGNAL(toggled(bool)),     this,SLOT(updateRegisterRSProtocol())) ;
+
 	
     connect(ui.altBrowserButton, SIGNAL(clicked( bool ) ), this , SLOT( updateAltBrowser() ) );
     connect(ui.altBrowserUseAlwaysCB, SIGNAL(toggled(bool)), this, SLOT(updateAltBrowserUseAlways())) ;
+
+
+	// hide advanced checkbox, since the option is not used.
+
+	ui.advGBox->hide();
+
 }
 
 /** Destructor */

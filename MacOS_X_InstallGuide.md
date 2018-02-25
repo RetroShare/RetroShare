@@ -10,7 +10,7 @@ Add to the PATH environment variable by editing your *~/.profile* file.
 
        export PATH="/users/$USER/Qt/5.5/clang_64/bin:$PATH"
 
-Depends on wich version of Qt you use.
+Depends on which version of Qt you use.
 
 ## ***Choose if you use MacPort or HomeBrew***
 

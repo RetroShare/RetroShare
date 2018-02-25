@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="/">
+    <file>icons/onion.png</file>
     <file>icons/svg/hidden.svg</file>
     <file>icons/svg/randomness.svg</file>
     <file>icons/svg/password.svg</file>
@@ -227,6 +228,7 @@
     <file>icons/tor-logo.png</file>
     <file>icons/tor-off.png</file>
     <file>icons/tor-on.png</file>
+    <file>icons/no-tor.png</file>
     <file>icons/tor-starting.png</file>
     <file>icons/tor-stopping.png</file>
     <file>icons/user-away_64.png</file>

@@ -221,6 +221,7 @@ static const int CERT_SIGN_LEN            = 16 ;	// = CERTSIGNLEN
 static const int PGP_KEY_ID_SIZE          =  8 ;
 static const int PGP_KEY_FINGERPRINT_SIZE = 20 ;
 static const int SHA1_SIZE                = 20 ;
+static const int SHA256_SIZE              = 32 ;
 
 // These constants are random, but should be different, in order to make the various IDs incompatible with each other.
 //
@@ -236,10 +237,12 @@ static const uint32_t RS_GENERIC_ID_GROUTER_ID_TYPE          = 0x0009 ;
 static const uint32_t RS_GENERIC_ID_GXS_TUNNEL_ID_TYPE       = 0x0010 ;
 static const uint32_t RS_GENERIC_ID_GXS_DISTANT_CHAT_ID_TYPE = 0x0011 ;
 static const uint32_t RS_GENERIC_ID_NODE_GROUP_ID_TYPE       = 0x0012 ;
+static const uint32_t RS_GENERIC_ID_SHA256_ID_TYPE           = 0x0013 ;
 
 typedef t_RsGenericIdType<  SSL_ID_SIZE             , false, RS_GENERIC_ID_SSL_ID_TYPE>          SSLIdType ;
 typedef t_RsGenericIdType<  PGP_KEY_ID_SIZE         , true,  RS_GENERIC_ID_PGP_ID_TYPE>          PGPIdType ;
 typedef t_RsGenericIdType<  SHA1_SIZE               , false, RS_GENERIC_ID_SHA1_ID_TYPE>         Sha1CheckSum ;
+typedef t_RsGenericIdType<  SHA256_SIZE             , false, RS_GENERIC_ID_SHA256_ID_TYPE>       Sha256CheckSum ;
 typedef t_RsGenericIdType<  PGP_KEY_FINGERPRINT_SIZE, true,  RS_GENERIC_ID_PGP_FINGERPRINT_TYPE> PGPFingerprintType ;
 
 typedef t_RsGenericIdType<  CERT_SIGN_LEN           , false, RS_GENERIC_ID_GXS_GROUP_ID_TYPE   > GXSGroupId ;

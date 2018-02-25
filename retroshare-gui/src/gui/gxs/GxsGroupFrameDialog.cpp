@@ -656,6 +656,14 @@ void GxsGroupFrameDialog::changedGroup(const QString &groupId)
 		return;
 	}
 
+	if (groupId.isEmpty()) {
+		if (mMessageWidget) {
+			mMessageWidget->setGroupId(RsGxsGroupId());
+			ui->messageTabWidget->setCurrentWidget(mMessageWidget);
+		}
+		return;
+	}
+
 	mGroupId = RsGxsGroupId(groupId.toStdString());
 	if (mGroupId.isNull()) {
 		return;

@@ -70,6 +70,7 @@ private:
 	void handleGetPGPOptions(Request& req, Response& resp);
 	void handleSetPGPOptions(Request& req, Response& resp);
 
+	void handleGetNodeName(Request& req, Response& resp);
 	void handleGetNodeOptions(Request& req, Response& resp);
 	void handleSetNodeOptions(Request& req, Response& resp);
 

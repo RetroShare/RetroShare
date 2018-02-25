@@ -35,6 +35,7 @@
 #include "pgp/pgphandler.h"
 
 #include <util/rsdir.h>
+#include <util/rstime.h>
 #include <pgp/pgpkeyutil.h>
 #include <unistd.h>		/* for (u)sleep() */
 #include <iostream>
@@ -187,7 +188,7 @@ int AuthGPG::GPGInit(const RsPgpId &ownId)
 
 void AuthGPG::data_tick()
 {
-    usleep(100 * 1000); //100 msec
+    rstime::rs_usleep(100 * 1000); //100 msec
 
     /// every 100 milliseconds
     processServices();

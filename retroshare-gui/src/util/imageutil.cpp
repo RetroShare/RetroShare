@@ -1,6 +1,6 @@
 #include "imageutil.h"
 #include "util/misc.h"
-#include "util/rsscopetimer.h"
+#include "util/rstime.h"
 
 #include <QApplication>
 #include <QByteArray>
@@ -113,7 +113,7 @@ bool ImageUtil::optimizeSize(QString &html, const QImage& original, QImage &opti
 
 int ImageUtil::checkSize(QString &embeddedImage, const QImage &img, int maxBytes)
 {
-	RsScopeTimer st("Check size");
+	rstime::RsScopeTimer st("Check size");
 
 	QByteArray bytearray;
 	QBuffer buffer(&bytearray);
@@ -166,7 +166,7 @@ void ImageUtil::quantization(const QImage &img, QVector<QRgb> &palette)
 	int bits = 4;	// bits/pixel
 	int samplesize = 100000;	//only take this many color samples
 
-	RsScopeTimer st("Quantization");
+	rstime::RsScopeTimer st("Quantization");
 	QSet<QRgb> colors;
 
 	//collect color information

@@ -64,19 +64,19 @@ StateTokenServer::StateTokenServer():
 
 StateToken StateTokenServer::getNewToken()
 {
-    RsStackMutex stack(mMtx); /********** STACK LOCKED MTX ******/
+	RS_STACK_MUTEX(mMtx); // ********** LOCKED **********
     return locked_getNewToken();
 }
 
 void StateTokenServer::discardToken(StateToken token)
 {
-    RsStackMutex stack(mMtx); /********** STACK LOCKED MTX ******/
+	RS_STACK_MUTEX(mMtx); // ********** LOCKED **********
     locked_discardToken(token);
 }
 
 void StateTokenServer::replaceToken(StateToken &token)
 {
-    RsStackMutex stack(mMtx); /********** STACK LOCKED MTX ******/
+	RS_STACK_MUTEX(mMtx); // ********** LOCKED **********
     locked_discardToken(token);
     token = locked_getNewToken();
 }
@@ -89,13 +89,13 @@ void StateTokenServer::registerTickClient(Tickable *c)
     // avoid double registration
     unregisterTickClient(c);
 
-    RsStackMutex stack(mClientsMtx); /********** STACK LOCKED MTX ***********/
+	RS_STACK_MUTEX(mClientsMtx); // ********** LOCKED **********
     mTickClients.push_back(c);
 }
 
 void StateTokenServer::unregisterTickClient(Tickable *c)
 {
-    RsStackMutex stack(mClientsMtx); /********** STACK LOCKED MTX ***********/
+	RS_STACK_MUTEX(mClientsMtx); // ********** LOCKED **********
     std::vector<Tickable*>::iterator vit = std::find(mTickClients.begin(), mTickClients.end(), c);
     if(vit != mTickClients.end())
         mTickClients.erase(vit);
@@ -104,14 +104,14 @@ void StateTokenServer::unregisterTickClient(Tickable *c)
 void StateTokenServer::handleWildcard(Request &req, Response &resp)
 {
     {
-        RsStackMutex stack(mClientsMtx); /********** STACK LOCKED MTX ***********/
+		RS_STACK_MUTEX(mClientsMtx); // ********** LOCKED **********
         for(std::vector<Tickable*>::iterator vit = mTickClients.begin(); vit != mTickClients.end(); ++vit)
         {
             (*vit)->tick();
         }
     }
 
-    RsStackMutex stack(mMtx); /********** STACK LOCKED MTX ******/
+	RS_STACK_MUTEX(mMtx); // ********** LOCKED **********
     // want to lookpup many tokens at once, return a list of invalid tokens
     // TODO: make generic list serialiser/deserialiser
     resp.mDataStream.getStreamToMember();

@@ -29,7 +29,7 @@
 #include "util/rsnet.h"
 #include "serialiser/rstlvaddrs.h"
 
-#define MAX_ADDRESS_LIST_SIZE 4
+#define MAX_ADDRESS_LIST_SIZE 10
 
 class pqiIpAddress
 {
@@ -68,6 +68,12 @@ class pqiIpAddrSet
 	void 	printAddrs(std::string &out) const;
 	pqiIpAddrList mLocal;
 	pqiIpAddrList mExt;
+
+	void clear()
+	{
+		mLocal.mAddrs.clear();
+		mExt.mAddrs.clear();
+	}
 };
 
 	

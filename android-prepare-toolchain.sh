@@ -6,9 +6,14 @@
 [ -z ${ANDROID_NDK_ABI_VER+x} ] && export ANDROID_NDK_ABI_VER="4.9"
 [ -z ${ANDROID_PLATFORM_VER+x} ] && export ANDROID_PLATFORM_VER="18"
 [ -z ${NDK_TOOLCHAIN_PATH+x} ] && export NDK_TOOLCHAIN_PATH="${HOME}/Builds/android-toolchains/retroshare-android-${ANDROID_PLATFORM_VER}-${ANDROID_NDK_ARCH}-abi${ANDROID_NDK_ABI_VER}/"
-[ -z ${HOST_NUM_CPU+x} ] && export HOST_NUM_CPU=4
+[ -z ${HOST_NUM_CPU+x} ] && export HOST_NUM_CPU=$(grep "^processor" /proc/cpuinfo | wc -l)
+[ -z ${BZIP2_SOURCE_VERSION+x} ] && export BZIP2_SOURCE_VERSION="1.0.6"
+[ -z ${OPENSSL_SOURCE_VERSION+x} ] && export OPENSSL_SOURCE_VERSION="1.0.2n"
+[ -z ${SQLITE_SOURCE_YEAR+x} ] && export SQLITE_SOURCE_YEAR="2018"
+[ -z ${SQLITE_SOURCE_VERSION+x} ] && export SQLITE_SOURCE_VERSION="3220000"
+[ -z ${SQLCIPHER_SOURCE_VERSION+x} ] && export SQLCIPHER_SOURCE_VERSION="3.4.2"
+[ -z ${LIBUPNP_SOURCE_VERSION+x} ] && export LIBUPNP_SOURCE_VERSION="1.6.24"
 
-runDir="$(pwd)"
 
 ## You should not edit the following variables
 if [ "${ANDROID_NDK_ARCH}" == "x86" ]; then
@@ -38,9 +43,9 @@ build_toolchain()
 ## More information available at retroshare://file?name=Android%20Native%20Development%20Kit%20Cookbook.pdf&size=29214468&hash=0123361c1b14366ce36118e82b90faf7c7b1b136
 build_bzlib()
 {
-	B_dir="bzip2-1.0.6"
+	B_dir="bzip2-${BZIP2_SOURCE_VERSION}"
 	rm -rf $B_dir
-	[ -f $B_dir.tar.gz ] || wget http://www.bzip.org/1.0.6/bzip2-1.0.6.tar.gz
+	[ -f $B_dir.tar.gz ] || wget http://www.bzip.org/${BZIP2_SOURCE_VERSION}/bzip2-${BZIP2_SOURCE_VERSION}.tar.gz
 	tar -xf $B_dir.tar.gz
 	cd $B_dir
 	sed -i "/^CC=.*/d" Makefile
@@ -59,7 +64,7 @@ build_bzlib()
 ## More information available at http://doc.qt.io/qt-5/opensslsupport.html
 build_openssl()
 {
-	B_dir="openssl-1.0.2h"
+	B_dir="openssl-${OPENSSL_SOURCE_VERSION}"
 	rm -rf $B_dir
 	[ -f $B_dir.tar.gz ] || wget https://www.openssl.org/source/$B_dir.tar.gz
 	tar -xf $B_dir.tar.gz
@@ -86,8 +91,8 @@ build_openssl()
 
 build_sqlite()
 {
-	B_dir="sqlite-autoconf-3130000"
-	[ -f $B_dir.tar.gz ] || wget https://www.sqlite.org/2016/$B_dir.tar.gz
+	B_dir="sqlite-autoconf-${SQLITE_SOURCE_VERSION}"
+	[ -f $B_dir.tar.gz ] || wget https://www.sqlite.org/${SQLITE_SOURCE_YEAR}/$B_dir.tar.gz
 	tar -xf $B_dir.tar.gz
 	cd $B_dir
 	./configure --prefix="${SYSROOT}/usr" --host=${ANDROID_NDK_ARCH}-linux
@@ -101,11 +106,18 @@ build_sqlite()
 
 build_sqlcipher()
 {
-	echo "sqlcipher not supported yet on android"
-	return 0
-
-	cd sqlcipher
-	./configure --enable-tempstore=yes CFLAGS="-DSQLITE_HAS_CODEC" LDFLAGS="${SYSROOT}/usr/lib/libcrypto.a"
+	B_dir="sqlcipher-${SQLCIPHER_SOURCE_VERSION}"
+	T_file="${B_dir}.tar.gz"
+	[ -f $T_file ] || wget -O $T_file https://github.com/sqlcipher/sqlcipher/archive/v${SQLCIPHER_SOURCE_VERSION}.tar.gz
+	rm -rf $B_dir
+	tar -xf $T_file
+	cd $B_dir
+	./configure --build=$(sh ./config.guess) \
+		--host=${ANDROID_NDK_ARCH}-linux \
+		--prefix="${SYSROOT}/usr" --with-sysroot="${SYSROOT}" \
+		--enable-tempstore=yes \
+		--disable-tcl --disable-shared \
+		CFLAGS="-DSQLITE_HAS_CODEC" LDFLAGS="${SYSROOT}/usr/lib/libcrypto.a"
 	make -j${HOST_NUM_CPU}
 	make install
 	cd ..
@@ -113,9 +125,9 @@ build_sqlcipher()
 
 build_libupnp()
 {
-	B_dir="libupnp-1.6.20"
+	B_dir="libupnp-${LIBUPNP_SOURCE_VERSION}"
 	rm -rf $B_dir
-	[ -f $B_dir.tar.bz2 ] || wget https://sourceforge.net/projects/pupnp/files/pupnp/libUPnP%201.6.20/$B_dir.tar.bz2
+	[ -f $B_dir.tar.bz2 ] || wget https://sourceforge.net/projects/pupnp/files/pupnp/libUPnP%20${LIBUPNP_SOURCE_VERSION}/$B_dir.tar.bz2
 	tar -xf $B_dir.tar.bz2
 	cd $B_dir
 ## liupnp must be configured as static library because if not the linker will
@@ -149,4 +161,7 @@ build_toolchain
 build_bzlib
 build_openssl
 build_sqlite
+build_sqlcipher
 build_libupnp
+
+echo NDK_TOOLCHAIN_PATH=${NDK_TOOLCHAIN_PATH}

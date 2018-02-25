@@ -368,6 +368,7 @@ public:
 
 	virtual bool setHiddenNode(const RsPeerId &id, const std::string &hidden_node_address) = 0;
 	virtual bool setHiddenNode(const RsPeerId &id, const std::string &address, uint16_t port) = 0;
+	virtual bool isHiddenNode(const RsPeerId &id) = 0;
 
 	virtual	bool setLocalAddress(const RsPeerId &ssl_id, const std::string &addr, uint16_t port) = 0;
 	virtual	bool setExtAddress(  const RsPeerId &ssl_id, const std::string &addr, uint16_t port) = 0;

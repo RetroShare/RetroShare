@@ -227,6 +227,7 @@ void IdEditDialog::enforceNoAnonIds()
 {
     ui->radioButton_GpgId->setChecked(true);
     ui->radioButton_GpgId->setEnabled(false);
+    ui->radioButton_Pseudo->setEnabled(false);
 }
 
 void IdEditDialog::loadExistingId(uint32_t token)

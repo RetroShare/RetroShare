@@ -1,4 +1,6 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="es" version="2.1">
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.1" language="es">
 <context>
     <name>AddFeedDialog</name>
     <message>
@@ -400,7 +402,7 @@
 <context>
     <name>FeedReaderFeedItem</name>
     <message>
-        <location filename="../gui/FeedReaderFeedItem.ui" line="+196"/>
+        <location filename="../gui/FeedReaderFeedItem.ui" line="+195"/>
         <location filename="../gui/FeedReaderFeedItem.cpp" line="+116"/>
         <source>Expand</source>
         <translation>Expandir</translation>
@@ -497,7 +499,7 @@
         <translation>Buscar foros</translation>
     </message>
     <message>
-        <location line="+31"/>
+        <location line="+26"/>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="+92"/>
         <source>Title</source>
         <translation>Título</translation>
@@ -593,7 +595,7 @@
 <context>
     <name>FeedReaderPlugin</name>
     <message>
-        <location filename="../FeedReaderPlugin.cpp" line="+158"/>
+        <location filename="../FeedReaderPlugin.cpp" line="+157"/>
         <source>This plugin provides a Feedreader.</source>
         <translation>Este plugin proporciona un lector de noticias.</translation>
     </message>

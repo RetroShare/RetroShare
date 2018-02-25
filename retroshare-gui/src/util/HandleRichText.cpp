@@ -36,7 +36,7 @@
 #include "gui/RetroShareLink.h"
 #include "util/ObjectPainter.h"
 #include "util/imageutil.h"
-#include "util/rsscopetimer.h"
+#include "util/rstime.h"
 
 #include <iostream>
 
@@ -229,7 +229,6 @@ bool RsHtml::canReplaceAnchor(QDomDocument &/*doc*/, QDomElement &/*element*/, c
 	switch (link.type()) {
 	case RetroShareLink::TYPE_UNKNOWN:
 	case RetroShareLink::TYPE_FILE:
-	case RetroShareLink::TYPE_FILE_TREE:
 	case RetroShareLink::TYPE_PERSON:
 	case RetroShareLink::TYPE_FORUM:
 	case RetroShareLink::TYPE_CHANNEL:
@@ -240,6 +239,8 @@ bool RsHtml::canReplaceAnchor(QDomDocument &/*doc*/, QDomElement &/*element*/, c
 	case RetroShareLink::TYPE_PUBLIC_MSG:
 	case RetroShareLink::TYPE_POSTED:
 	case RetroShareLink::TYPE_IDENTITY:
+	case RetroShareLink::TYPE_FILE_TREE:
+	case RetroShareLink::TYPE_CHAT_ROOM:
 		// not yet implemented
 		break;
 
@@ -260,7 +261,6 @@ void RsHtml::anchorStylesheetForImg(QDomDocument &/*doc*/, QDomElement &/*elemen
 	switch (link.type()) {
 	case RetroShareLink::TYPE_UNKNOWN:
 	case RetroShareLink::TYPE_FILE:
-	case RetroShareLink::TYPE_FILE_TREE:
 	case RetroShareLink::TYPE_PERSON:
 	case RetroShareLink::TYPE_FORUM:
 	case RetroShareLink::TYPE_CHANNEL:
@@ -271,6 +271,8 @@ void RsHtml::anchorStylesheetForImg(QDomDocument &/*doc*/, QDomElement &/*elemen
 	case RetroShareLink::TYPE_PUBLIC_MSG:
 	case RetroShareLink::TYPE_POSTED:
 	case RetroShareLink::TYPE_IDENTITY:
+	case RetroShareLink::TYPE_FILE_TREE:
+	case RetroShareLink::TYPE_CHAT_ROOM:
 		// not yet implemented
 		break;
 
@@ -388,6 +390,20 @@ void RsHtml::embedHtml(QTextDocument *textDocument, QDomDocument& doc, QDomEleme
 								replaceAnchorWithImg(doc, element, textDocument, link);
 							}
 						}
+						else
+						{
+							QUrl url(element.attribute("href"));
+							if(url.isValid())
+							{
+								QString title = url.host();
+								if (!title.isEmpty()) {
+									element.setAttribute("title", title);
+								}
+								if (textDocument && (flag & RSHTML_FORMATTEXT_REPLACE_LINKS)) {
+									replaceAnchorWithImg(doc, element, textDocument, url);
+								}
+							}
+						}
 					} else {
 						if (textDocument && (flag & RSHTML_FORMATTEXT_REPLACE_LINKS)) {
 							RetroShareLink link(element.attribute("href"));
@@ -441,6 +457,20 @@ void RsHtml::embedHtml(QTextDocument *textDocument, QDomDocument& doc, QDomEleme
 
 									if (textDocument && (flag & RSHTML_FORMATTEXT_REPLACE_LINKS)) {
 										replaceAnchorWithImg(doc, insertedTag, textDocument, link);
+									}
+								}
+								else
+								{
+									QUrl url(myRE.cap(0));
+									if(url.isValid())
+									{
+										QString title = url.host();
+										if (!title.isEmpty()) {
+											insertedTag.setAttribute("title", title);
+										}
+										if (textDocument && (flag & RSHTML_FORMATTEXT_REPLACE_LINKS)) {
+											replaceAnchorWithImg(doc, insertedTag, textDocument, url);
+										}
 									}
 								}
 							}
@@ -1123,7 +1153,7 @@ bool RsHtml::makeEmbeddedImage(const QString &fileName, QString &embeddedImage, 
 /** Converts image to embedded image HTML fragment **/
 bool RsHtml::makeEmbeddedImage(const QImage &originalImage, QString &embeddedImage, const int maxPixels, const int maxBytes)
 {
-	RsScopeTimer s("Embed image");
+	rstime::RsScopeTimer s("Embed image");
 	QImage opt;
 	return ImageUtil::optimizeSize(embeddedImage, originalImage, opt, maxPixels, maxBytes);
 }

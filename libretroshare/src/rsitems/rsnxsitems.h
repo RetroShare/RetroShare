@@ -96,7 +96,7 @@ public:
 	static const uint8_t FLAG_USE_SYNC_HASH;
 	static const uint8_t FLAG_ONLY_CURRENT; // only send most current version of grps / ignores sync hash
 
-	RsNxsSyncGrpReqItem(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_SYNC_GRP_REQ_ITEM) { clear();}
+	explicit RsNxsSyncGrpReqItem(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_SYNC_GRP_REQ_ITEM) { clear();}
 	virtual void clear();
 
 	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
@@ -114,7 +114,10 @@ class RsNxsSyncGrpStatsItem : public RsNxsItem
 {
 public:
 
-    RsNxsSyncGrpStatsItem(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_SYNC_GRP_STATS_ITEM) {}
+	explicit RsNxsSyncGrpStatsItem(uint16_t servtype)
+	  : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_SYNC_GRP_STATS_ITEM)
+	  , request_type(0), number_of_posts(0), last_post_TS(0)
+	{}
 
     virtual void clear() {}
 
@@ -137,7 +140,7 @@ public:
 class RsNxsGroupPublishKeyItem : public RsNxsItem
 {
 public:
-    RsNxsGroupPublishKeyItem(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_GRP_PUBLISH_KEY_ITEM) { clear(); }
+	explicit RsNxsGroupPublishKeyItem(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_GRP_PUBLISH_KEY_ITEM) { clear(); }
 
     virtual void clear();
 
@@ -180,7 +183,7 @@ public:
     static const uint16_t FLAG_TYPE_MSGS;
     static const uint16_t FLAG_TYPE_ENCRYPTED_DATA;
 
-    RsNxsTransacItem(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_TRANSAC_ITEM) { clear(); }
+    explicit RsNxsTransacItem(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_TRANSAC_ITEM) { clear(); }
     virtual ~RsNxsTransacItem() {}
 
     virtual void clear();
@@ -208,7 +211,7 @@ public:
     static const uint8_t FLAG_RESPONSE;
     static const uint8_t FLAG_USE_SYNC_HASH;
 
-    RsNxsSyncGrpItem(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_SYNC_GRP_ITEM) { clear();}
+    explicit RsNxsSyncGrpItem(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_SYNC_GRP_ITEM) { clear();}
     virtual ~RsNxsSyncGrpItem() {}
 
     virtual void clear();
@@ -234,7 +237,7 @@ class RsNxsSessionKeyItem : public RsNxsItem
 
 public:
 
-    RsNxsSessionKeyItem(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_SESSION_KEY_ITEM) { clear(); }
+    explicit RsNxsSessionKeyItem(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_SESSION_KEY_ITEM) { clear(); }
     virtual ~RsNxsSessionKeyItem() {}
 
     virtual void clear();
@@ -254,11 +257,11 @@ class RsNxsEncryptedDataItem : public RsNxsItem
 
 public:
 
-    RsNxsEncryptedDataItem(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_ENCRYPTED_DATA_ITEM),encrypted_data(servtype) 
-    { 
-	encrypted_data.tlvtype = TLV_TYPE_BIN_ENCRYPTED ;
-	clear(); 
-    }
+	explicit RsNxsEncryptedDataItem(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_ENCRYPTED_DATA_ITEM),encrypted_data(servtype)
+	{
+		encrypted_data.tlvtype = TLV_TYPE_BIN_ENCRYPTED ;
+		clear();
+	}
     virtual ~RsNxsEncryptedDataItem() {}
     virtual void clear();
 
@@ -280,9 +283,10 @@ class RsNxsGrp : public RsNxsItem
 
 public:
 
-	RsNxsGrp(uint16_t servtype) :
-	    RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_GRP_ITEM), grp(servtype),
-	    meta(servtype), metaData(NULL) { clear(); }
+	explicit RsNxsGrp(uint16_t servtype)
+	  : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_GRP_ITEM), grp(servtype)
+	  , meta(servtype), metaData(NULL)
+	{ clear(); }
 	virtual ~RsNxsGrp() { delete metaData; }
 
     RsNxsGrp* clone() const;
@@ -324,7 +328,7 @@ public:
 #endif
     static const uint8_t FLAG_USE_HASHED_GROUP_ID;
 
-    RsNxsSyncMsgReqItem(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_SYNC_MSG_REQ_ITEM) { clear(); }
+    explicit RsNxsSyncMsgReqItem(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_SYNC_MSG_REQ_ITEM) { clear(); }
 
     virtual void clear();
 
@@ -348,7 +352,7 @@ public:
     static const uint8_t FLAG_REQUEST;
     static const uint8_t FLAG_RESPONSE;
     static const uint8_t FLAG_USE_SYNC_HASH;
-    RsNxsSyncMsgItem(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_SYNC_MSG_ITEM) { clear(); }
+    explicit RsNxsSyncMsgItem(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_SYNC_MSG_ITEM) { clear(); }
 
     virtual void clear();
 
@@ -368,9 +372,10 @@ public:
  */
 struct RsNxsMsg : RsNxsItem
 {
-	RsNxsMsg(uint16_t servtype) :
-	    RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_MSG_ITEM), meta(servtype),
-	    msg(servtype), metaData(NULL) { clear(); }
+	explicit RsNxsMsg(uint16_t servtype)
+	  : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_MSG_ITEM)
+	  , pos(0), count(0), meta(servtype), msg(servtype), metaData(NULL)
+	{ clear(); }
 	virtual ~RsNxsMsg() { delete metaData; }
 
 	virtual void serial_process( RsGenericSerializer::SerializeJob j,
@@ -407,7 +412,10 @@ class RsNxsSearchReqItem : public RsNxsItem
 {
 public:
 
-    RsNxsSearchReqItem(uint16_t servtype): RsNxsItem(servtype, RS_PKT_SUBTYPE_EXT_SEARCH_REQ), serviceSearchItem(servtype) {}
+	explicit RsNxsSearchReqItem(uint16_t servtype)
+	  : RsNxsItem(servtype, RS_PKT_SUBTYPE_EXT_SEARCH_REQ)
+	  , nHops(0), token(0), serviceSearchItem(servtype), expiration(0)
+	{}
     virtual ~RsNxsSearchReqItem() {}
     virtual void clear() {}
 
@@ -428,7 +436,9 @@ class RsNxsSearchResultMsgItem
 {
 public:
 
-    RsNxsSearchResultMsgItem() : context(0) {}
+    RsNxsSearchResultMsgItem()
+		  : token(0), context(0), expiration(0)
+		{}
     
     void clear() {}
 
@@ -497,8 +507,8 @@ class RsNxsSerialiser : public RsServiceSerializer
 {
 public:
 
-    RsNxsSerialiser(uint16_t servtype) : RsServiceSerializer(servtype), SERVICE_TYPE(servtype) {}
-    virtual ~RsNxsSerialiser() {}
+	explicit RsNxsSerialiser(uint16_t servtype) : RsServiceSerializer(servtype), SERVICE_TYPE(servtype) {}
+	virtual ~RsNxsSerialiser() {}
 
 
     virtual RsItem *create_item(uint16_t service_id,uint8_t item_subtype) const ;

@@ -39,7 +39,7 @@ class p3Status : public RsStatus
 {
 public:
 
-	p3Status(p3StatusService* statusSrv);
+	explicit p3Status(p3StatusService* statusSrv);
 	virtual ~p3Status();
 
 

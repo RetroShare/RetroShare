@@ -88,8 +88,8 @@
              <string>New Thread</string>
             </property>
             <property name="icon">
-             <iconset resource="../images.qrc">
-              <normaloff>:/images/mail_new.png</normaloff>:/images/mail_new.png</iconset>
+             <iconset resource="../icons.qrc">
+              <normaloff>:/icons/png/add.png</normaloff>:/icons/png/add.png</iconset>
             </property>
             <property name="iconSize">
              <size>
@@ -329,9 +329,9 @@
             <iconset resource="../images.qrc">
              <normaloff>:/images/mail_reply.png</normaloff>:/images/mail_reply.png</iconset>
            </property>
-            <property name="toolButtonStyle">
-             <enum>Qt::ToolButtonTextBesideIcon</enum>
-            </property>
+           <property name="toolButtonStyle">
+            <enum>Qt::ToolButtonTextBesideIcon</enum>
+           </property>
            <property name="autoRaise">
             <bool>true</bool>
            </property>
@@ -539,9 +539,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>RSTextBrowser</class>
-   <extends>QTextBrowser</extends>
-   <header>gui/common/RSTextBrowser.h</header>
+   <class>GxsIdLabel</class>
+   <extends>QLabel</extends>
+   <header>gui/gxs/GxsIdLabel.h</header>
   </customwidget>
   <customwidget>
    <class>LineEditClear</class>
@@ -554,14 +554,14 @@
    <header>gui/common/SubscribeToolButton.h</header>
   </customwidget>
   <customwidget>
+   <class>RSTextBrowser</class>
+   <extends>QTextBrowser</extends>
+   <header>gui/common/RSTextBrowser.h</header>
+  </customwidget>
+  <customwidget>
    <class>RSTreeWidget</class>
    <extends>QTreeWidget</extends>
    <header>gui/common/RSTreeWidget.h</header>
-  </customwidget>
-  <customwidget>
-   <class>GxsIdLabel</class>
-   <extends>QLabel</extends>
-   <header>gui/gxs/GxsIdLabel.h</header>
   </customwidget>
   <customwidget>
    <class>ElidedLabel</class>
@@ -577,8 +577,8 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../icons.qrc"/>
   <include location="../images.qrc"/>
+  <include location="../icons.qrc"/>
  </resources>
  <connections/>
 </ui>

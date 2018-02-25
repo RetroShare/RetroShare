@@ -64,7 +64,7 @@ public:
 
 	RsCollection(QObject *parent = 0) ;
 	// create from list of files and directories
-	RsCollection(const std::vector<DirDetails>& file_entries, QObject *parent = 0) ;
+	RsCollection(const std::vector<DirDetails>& file_entries, FileSearchFlags flags, QObject *parent = 0) ;
 	RsCollection(const FileTree& fr);
 	virtual ~RsCollection() ;
 
@@ -82,7 +82,7 @@ public:
 	bool save(const QString& fileName) const ;
 
 	// Open new collection
-	bool openNewColl(QWidget *parent);
+	bool openNewColl(QWidget *parent, QString fileName = "");
 	// Open existing collection
 	bool openColl(const QString& fileName, bool readOnly = false, bool showError = true);
 
@@ -98,7 +98,7 @@ private slots:
 
 private:
 
-	void recursAddElements(QDomDocument&,const DirDetails&,QDomElement&) const ;
+	void recursAddElements(QDomDocument&, const DirDetails&, QDomElement&, FileSearchFlags flags) const ;
 	void recursAddElements(QDomDocument&,const ColFileInfo&,QDomElement&) const;
 	void recursAddElements(QDomDocument& doc,const FileTree& ft,uint32_t index,QDomElement& e) const;
 
