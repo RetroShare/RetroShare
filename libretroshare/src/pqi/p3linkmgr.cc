@@ -1345,8 +1345,10 @@ void    p3LinkMgrIMPL::peerStatus(const RsPeerId& id, const pqiIpAddrSet &addrs,
 }
 
 /* This has become very unwieldy - as extra arguments are required for UDP connections */
-void    p3LinkMgrIMPL::peerConnectRequest(const RsPeerId& id, const struct sockaddr_storage &raddr, const struct sockaddr_storage &proxyaddr, const struct sockaddr_storage &srcaddr,
-						uint32_t source, uint32_t flags, uint32_t delay, uint32_t bandwidth)
+void p3LinkMgrIMPL::peerConnectRequest(
+        const RsPeerId& id, const sockaddr_storage &raddr,
+        const sockaddr_storage &proxyaddr, const sockaddr_storage &srcaddr,
+        uint32_t source, uint32_t flags, uint32_t delay, uint32_t bandwidth )
 {
 #ifdef LINKMGR_DEBUG
 	std::cerr << "p3LinkMgrIMPL::peerConnectRequest() id: " << id;

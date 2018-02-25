@@ -582,10 +582,12 @@ std::string sockaddr_storage_familytostring(const struct sockaddr_storage &addr)
 			break;
 		default:
 			output = "AF_INVALID";
+#ifdef SS_DEBUG
 			std::cerr << __PRETTY_FUNCTION__ << " Got invalid address!"
 			          << std::endl;
 			sockaddr_storage_dump(addr);
 			print_stacktrace();
+#endif
 			break;
 	}
 	return output;
