@@ -83,7 +83,7 @@ private:
         typedef struct rsa_st RSA;
         RSA *key;
 
-        Data(RSA *k = 0) : key(k) { }
+        explicit Data(RSA *k = 0) : key(k) { }
         ~Data();
     };
 
