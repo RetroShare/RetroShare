@@ -107,7 +107,7 @@ public:
  
   inline LogMessage(Log::LogLevel t, QIODevice *o)
     : stream(new Stream(t,o)) {}
-  inline LogMessage(const LogMessage &o) 
+  inline LogMessage(const LogMessage &o)
     : stream(o.stream) { ++stream->ref; }
   inline QString toString() const;
   ~LogMessage();
