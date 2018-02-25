@@ -151,10 +151,10 @@ class p3ChatService::AvatarInfo
 		  _image_size = 0 ;
 	  }
 
-	  AvatarInfo(const AvatarInfo& ai)
-	  {
-		  init(ai._image_data,ai._image_size) ;
-	  }
+		explicit AvatarInfo(const AvatarInfo& ai)
+		{
+			init(ai._image_data,ai._image_size) ;
+		}
 
 		AvatarInfo& operator =(const AvatarInfo& ai)
 		{
