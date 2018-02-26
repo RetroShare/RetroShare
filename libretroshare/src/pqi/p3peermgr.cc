@@ -331,8 +331,8 @@ const RsPeerId& p3PeerMgrIMPL::getOwnId()
 
 bool p3PeerMgrIMPL::getOwnNetStatus(peerState &state)
 {
-        RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
-        state = mOwnState;
+	RS_STACK_MUTEX(mPeerMtx);
+	state = mOwnState;
 	return true;
 }
 
@@ -817,15 +817,12 @@ int p3PeerMgrIMPL::getFriendCount(bool ssl, bool online)
 
 bool p3PeerMgrIMPL::getFriendNetStatus(const RsPeerId &id, peerState &state)
 {
-	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+	RS_STACK_MUTEX(mPeerMtx);
 
 	/* check for existing */
 	std::map<RsPeerId, peerState>::iterator it;
 	it = mFriendList.find(id);
-	if (it == mFriendList.end())
-	{
-		return false;
-	}
+	if (it == mFriendList.end()) return false;
 
 	state = it->second;
 	return true;
@@ -834,27 +831,24 @@ bool p3PeerMgrIMPL::getFriendNetStatus(const RsPeerId &id, peerState &state)
 
 bool p3PeerMgrIMPL::getOthersNetStatus(const RsPeerId &id, peerState &state)
 {
-	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+	RS_STACK_MUTEX(mPeerMtx);
 
 	/* check for existing */
 	std::map<RsPeerId, peerState>::iterator it;
 	it = mOthersList.find(id);
-	if (it == mOthersList.end())
-	{
-		return false;
-	}
+	if (it == mOthersList.end()) return false;
 
 	state = it->second;
 	return true;
 }
 
-int p3PeerMgrIMPL::getConnectAddresses(const RsPeerId &id, 
-					struct sockaddr_storage &lAddr, struct sockaddr_storage &eAddr, 
-					pqiIpAddrSet &histAddrs, std::string &dyndns)
+int p3PeerMgrIMPL::getConnectAddresses(
+        const RsPeerId &id, sockaddr_storage &lAddr, sockaddr_storage &eAddr,
+                    pqiIpAddrSet &histAddrs, std::string &dyndns )
 {
 
-	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
-	
+	RS_STACK_MUTEX(mPeerMtx);
+
 	/* check for existing */
 	std::map<RsPeerId, peerState>::iterator it;
 	it = mFriendList.find(id);
@@ -865,7 +859,7 @@ int p3PeerMgrIMPL::getConnectAddresses(const RsPeerId &id,
 		std::cerr << std::endl;
 		return 0;
 	}
-	
+
 	lAddr = it->second.localaddr;
 	eAddr = it->second.serveraddr;
 	histAddrs = it->second.ipAddrs;

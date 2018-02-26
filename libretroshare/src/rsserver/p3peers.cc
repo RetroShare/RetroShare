@@ -333,8 +333,9 @@ bool p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
 		d.hiddenNodePort = 0;
 		d.hiddenType = RS_HIDDEN_TYPE_NONE;
 
-		if (sockaddr_storage_ipv6_to_ipv4(ps.localaddr))
+		if(!sockaddr_storage_isnull(ps.localaddr))
 		{
+			sockaddr_storage_ipv6_to_ipv4(ps.localaddr);
 			d.localAddr	= sockaddr_storage_iptostring(ps.localaddr);
 			d.localPort	= sockaddr_storage_port(ps.localaddr);
 		}
@@ -344,8 +345,9 @@ bool p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
 			d.localPort	= 0;
 		}
 
-		if (sockaddr_storage_ipv6_to_ipv4(ps.serveraddr))
+		if(!sockaddr_storage_isnull(ps.serveraddr))
 		{
+			sockaddr_storage_ipv6_to_ipv4(ps.serveraddr);
 			d.extAddr = sockaddr_storage_iptostring(ps.serveraddr);
 			d.extPort = sockaddr_storage_port(ps.serveraddr);
 		}
@@ -417,6 +419,7 @@ bool p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
 
 	if (pcs.state & RS_PEER_S_CONNECTED)
 	{
+		sockaddr_storage_ipv6_to_ipv4(pcs.connectaddr);
 		d.connectAddr = sockaddr_storage_iptostring(pcs.connectaddr);
 		d.connectPort = sockaddr_storage_port(pcs.connectaddr);
 	}

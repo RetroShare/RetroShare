@@ -357,9 +357,9 @@ public:
     bool 	setOwnNetworkMode(uint32_t netMode);
     bool 	setOwnVisState(uint16_t vs_disc, uint16_t vs_dht);
 
-    int 	getConnectAddresses(const RsPeerId &id,
-                                struct sockaddr_storage &lAddr, struct sockaddr_storage &eAddr,
-                                pqiIpAddrSet &histAddrs, std::string &dyndns);
+	int getConnectAddresses( const RsPeerId &id, sockaddr_storage &lAddr,
+	                         sockaddr_storage &eAddr, pqiIpAddrSet &histAddrs,
+	                         std::string &dyndns );
 
 
 protected:
