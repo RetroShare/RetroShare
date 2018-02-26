@@ -143,7 +143,10 @@ void p3GxsTunnelService::flush()
 
 	    for(std::list<RsGxsTunnelDHPublicKeyItem*>::iterator it=pendingDHItems.begin();it!=pendingDHItems.end();)
 		    if(locked_sendClearTunnelData(*it) )
+			{
+				delete *it ;
 			    it = pendingDHItems.erase(it) ;
+			}
 		    else
 			    ++it ;
     }
@@ -155,7 +158,10 @@ void p3GxsTunnelService::flush()
 
 	    for(std::list<RsGxsTunnelItem*>::iterator it=pendingGxsTunnelItems.begin();it!=pendingGxsTunnelItems.end();)
 		    if(locked_sendEncryptedTunnelData(*it) )
+			{
+				delete *it ;
 			    it = pendingGxsTunnelItems.erase(it) ;
+			}
 		    else
 		    {
 			    ++it ;
@@ -744,6 +750,8 @@ void p3GxsTunnelService::receiveTurtleData(RsTurtleGenericTunnelItem *gitem,cons
         }
         else
             std::cerr << "(EE) Deserialiased item has unexpected type." << std::endl;
+
+		delete citem ;
     }
 }
 
