@@ -577,32 +577,27 @@ int 	pqissl::Delay_Connection()
 	}
 
   	rslog(RSL_WARNING, pqisslzone, 
-		 "pqissl::Initiate_Connection() Already Attempt in Progress!");
+	     "pqissl::Delay_Connection() Already Attempt in Progress!");
 	return -1;
 }
 
 
 int pqissl::Initiate_Connection()
 {
-	int err;
-	struct sockaddr_storage addr = remote_addr;
-
-#ifdef PQISSL_LOG_DEBUG 
-  	rslog(RSL_DEBUG_BASIC, pqisslzone, 
-	  "pqissl::Initiate_Connection() Attempting Outgoing Connection....");
+#ifdef PQISSL_DEBUG
+	std::cout << __PRETTY_FUNCTION__ << std::endl;
 #endif
 
-	if (waiting != WAITING_DELAY)
+	int err;
+	sockaddr_storage addr = remote_addr;
+
+
+	if(waiting != WAITING_DELAY)
 	{
-  		rslog(RSL_WARNING, pqisslzone, 
-		 "pqissl::Initiate_Connection() Already Attempt in Progress!");
+		std::cerr << __PRETTY_FUNCTION__ << " Already Attempt in Progress!"
+		          << std::endl;
 		return -1;
 	}
-
-#ifdef PQISSL_LOG_DEBUG 
-  	rslog(RSL_DEBUG_BASIC, pqisslzone, 
-	  "pqissl::Initiate_Connection() Opening Socket");
-#endif
 
 	// open socket connection to addr.
 	int osock = unix_socket(PF_INET6, SOCK_STREAM, 0);
@@ -631,7 +626,7 @@ int pqissl::Initiate_Connection()
 	  "pqissl::Initiate_Connection() Making Non-Blocking");
 #endif
 
-        err = unix_fcntl_nonblock(osock);
+	err = unix_fcntl_nonblock(osock);
 	if (err < 0)
 	{
 		std::string out;
@@ -728,61 +723,24 @@ int pqissl::Initiate_Connection()
 	sockaddr_storage_ipv4_to_ipv6(addr);
 	if (0 != (err = unix_connect(osock, addr)))
 	{
-		std::string out;
-		rs_sprintf(out, "pqissl::Initiate_Connection() connect returns:%d -> errno: %d error: %s\n", err, errno, socket_errorType(errno).c_str());
-		
-		if (errno == EINPROGRESS)
+		switch (errno)
 		{
-			// set state to waiting.....
+		case EINPROGRESS:
 			waiting = WAITING_SOCK_CONNECT;
 			sockfd = osock;
-
-#ifdef PQISSL_LOG_DEBUG 
-			out += " EINPROGRESS Waiting for Socket Connection";
-			rslog(RSL_DEBUG_BASIC, pqisslzone, out);
-#endif
-  
 			return 0;
-		}
-		else if ((errno == ENETUNREACH) || (errno == ETIMEDOUT))
-		{
-			out += "ENETUNREACHABLE: cert: " + PeerId().toStdString();
-			rslog(RSL_WARNING, pqisslzone, out);
+		default:
+			std::cerr << __PRETTY_FUNCTION__ << " Failure connect "
+			          << sockaddr_storage_tostring(addr)
+			          << " returns: "
+			          << err << " -> errno: " << errno << " "
+			          << socket_errorType(errno) << std::endl;
 
-			// Then send unreachable message.
 			net_internal_close(osock);
-			osock=-1;
-			//reset();
-
+			osock = -1;
 			waiting = WAITING_FAIL_INTERFACE;
-
 			return -1;
 		}
-
-		/* IF we get here ---- we Failed for some other reason. 
-                 * Should abandon this interface 
-		 * Known reasons to get here: EINVAL (bad address)
-		 */
-
-		rs_sprintf_append(out, "Error: Connection Failed: %d - %s", errno, socket_errorType(errno).c_str());
-
-		net_internal_close(osock);
-		osock=-1;
-		waiting = WAITING_FAIL_INTERFACE;
-
-		rslog(RSL_WARNING, pqisslzone, out);
-
-		// extra output for the moment.
-		std::cerr << out;
-
-		return -1;
-	}
-	else
-	{
-#ifdef PQISSL_LOG_DEBUG 
-  		rslog(RSL_DEBUG_BASIC, pqisslzone,
-		 "pqissl::Init_Connection() connect returned 0");
-#endif
 	}
 
 	waiting = WAITING_SOCK_CONNECT;
