@@ -363,16 +363,16 @@ bool p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
 		for(it = ps.ipAddrs.mLocal.mAddrs.begin(); 
 		    it != ps.ipAddrs.mLocal.mAddrs.end(); ++it)
 		{
+			sockaddr_storage_ipv6_to_ipv4(it->mAddr);
 			std::string toto;
-			toto += "L:";
 			toto += sockaddr_storage_tostring(it->mAddr);
 			rs_sprintf_append(toto, "    %ld sec", time(NULL) - it->mSeenTime);
 			d.ipAddressList.push_back(toto);
 		}
 		for(it = ps.ipAddrs.mExt.mAddrs.begin(); it != ps.ipAddrs.mExt.mAddrs.end(); ++it)
 		{
+			sockaddr_storage_ipv6_to_ipv4(it->mAddr);
 			std::string toto;
-			toto += "E:";
 			toto += sockaddr_storage_tostring(it->mAddr);
 			rs_sprintf_append(toto, "    %ld sec", time(NULL) - it->mSeenTime);
 			d.ipAddressList.push_back(toto);

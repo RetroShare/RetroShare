@@ -1226,9 +1226,17 @@ void p3PeerMgrIMPL::printPeerLists(std::ostream &out)
  * as it doesn't call back to there.
  */
 
-bool p3PeerMgrIMPL::UpdateOwnAddress( const sockaddr_storage& localAddr,
-                                      const sockaddr_storage& extAddr )
+bool p3PeerMgrIMPL::UpdateOwnAddress( const sockaddr_storage& pLocalAddr,
+                                      const sockaddr_storage& pExtAddr )
 {
+	sockaddr_storage localAddr;
+	sockaddr_storage_copy(pLocalAddr, localAddr);
+	sockaddr_storage_ipv6_to_ipv4(localAddr);
+
+	sockaddr_storage extAddr;
+	sockaddr_storage_copy(pExtAddr, extAddr);
+	sockaddr_storage_ipv6_to_ipv4(extAddr);
+
 #ifdef PEER_DEBUG
 	std::cerr << "p3PeerMgrIMPL::UpdateOwnAddress("
 	          << sockaddr_storage_tostring(localAddr) << ", "
@@ -1251,7 +1259,7 @@ bool p3PeerMgrIMPL::UpdateOwnAddress( const sockaddr_storage& localAddr,
 
 		//update ip address list
 		pqiIpAddress ipAddressTimed;
-		ipAddressTimed.mAddr = localAddr;
+		sockaddr_storage_copy(localAddr, ipAddressTimed.mAddr);
 		ipAddressTimed.mSeenTime = time(NULL);
 		ipAddressTimed.mSrc = 0;
 		mOwnState.ipAddrs.updateLocalAddrs(ipAddressTimed);
@@ -1284,6 +1292,7 @@ bool p3PeerMgrIMPL::UpdateOwnAddress( const sockaddr_storage& localAddr,
 						 * networking stack */
 					    !sockaddr_storage_ipv6_isLinkLocalNet(addr) )
 					{
+						sockaddr_storage_ipv6_to_ipv4(addr);
 						pqiIpAddress pqiIp;
 						sockaddr_storage_clear(pqiIp.mAddr);
 						pqiIp.mAddr.ss_family = addr.ss_family;
@@ -1299,19 +1308,19 @@ bool p3PeerMgrIMPL::UpdateOwnAddress( const sockaddr_storage& localAddr,
 			}
 		}
 
-		mOwnState.localaddr = localAddr;
+		sockaddr_storage_copy(mOwnState.localaddr, localAddr);
 	}
 
 
 	{
 		RS_STACK_MUTEX(mPeerMtx);
 
-        //update ip address list
-        pqiIpAddress ipAddressTimed;
-        ipAddressTimed.mAddr = extAddr;
-        ipAddressTimed.mSeenTime = time(NULL);
-        ipAddressTimed.mSrc = 0 ;
-        mOwnState.ipAddrs.updateExtAddrs(ipAddressTimed);
+		//update ip address list
+		pqiIpAddress ipAddressTimed;
+		sockaddr_storage_copy(extAddr, ipAddressTimed.mAddr);
+		ipAddressTimed.mSeenTime = time(NULL);
+		ipAddressTimed.mSrc = 0;
+		mOwnState.ipAddrs.updateExtAddrs(ipAddressTimed);
 
         /* Attempted Fix to MANUAL FORWARD Mode....
          * don't update the server address - if we are in this mode
@@ -1331,8 +1340,8 @@ bool p3PeerMgrIMPL::UpdateOwnAddress( const sockaddr_storage& localAddr,
             std::cerr << std::endl;
         }
         else if (mOwnState.netMode & RS_NET_MODE_EXT)
-        {
-            sockaddr_storage_copyip(mOwnState.serveraddr,extAddr);
+		{
+			sockaddr_storage_copyip(mOwnState.serveraddr, extAddr);
 
             std::cerr << "p3PeerMgrIMPL::UpdateOwnAddress() Disabling Update of Server Port ";
             std::cerr << " as MANUAL FORWARD Mode";
@@ -1342,8 +1351,8 @@ bool p3PeerMgrIMPL::UpdateOwnAddress( const sockaddr_storage& localAddr,
             std::cerr << std::endl;
         }
         else
-        {
-            mOwnState.serveraddr = extAddr;
+		{
+			sockaddr_storage_copy(extAddr, mOwnState.serveraddr);
         }
     }
 
