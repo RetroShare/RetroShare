@@ -23,6 +23,7 @@
 #include "ui_GxsChannelGroupItem.h"
 
 #include "FeedHolder.h"
+#include "gui/NewsFeed.h"
 #include "gui/RetroShareLink.h"
 
 /****
@@ -144,14 +145,14 @@ void GxsChannelGroupItem::fill()
 		ui->subscribeButton->setEnabled(true);
 	}
 
-//	if (mIsNew)
-//	{
-		ui->titleLabel->setText(tr("New Channel"));
-//	}
-//	else
-//	{
-//		ui->titleLabel->setText(tr("Updated Channel"));
-//	}
+	switch(mFeedId)
+	{
+	case NEWSFEED_CHANNELPUBKEYLIST:	ui->titleLabel->setText(tr("Publish permission received for channel: "));
+										break ;
+
+	case NEWSFEED_CHANNELNEWLIST:	 	ui->titleLabel->setText(tr("New Channel: "));
+										break ;
+	}
 
 	if (mIsHome)
 	{
