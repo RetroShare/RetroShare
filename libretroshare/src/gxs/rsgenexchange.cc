@@ -1643,7 +1643,7 @@ void RsGenExchange::notifyReceivePublishKey(const RsGxsGroupId &grpId)
 {
 	RS_STACK_MUTEX(mGenMtx);
 
-	RsGxsGroupChange* gc = new RsGxsGroupChange(RsGxsNotify::TYPE_PUBLISHKEY, false);
+	RsGxsGroupChange* gc = new RsGxsGroupChange(RsGxsNotify::TYPE_PUBLISHKEY, true);
 	gc->mGrpIdList.push_back(grpId);
 	mNotifications.push_back(gc);
 }
