@@ -2580,7 +2580,11 @@ void RsGenExchange::publishGrps()
 			    ggps.mKeys = fullKeySet;
 		    }
 		    else
+			{
+				// We should just merge the keys instead of overwriting them, because the update may not contain private parts.
+
 			    fullKeySet = ggps.mKeys;
+			}
 
 		    // find private admin key
 		    RsTlvPrivateRSAKey privAdminKey;
@@ -3216,6 +3220,13 @@ void RsGenExchange::performUpdateValidation()
 
 			gu.newGrp->metaData->mSubscribeFlags = gu.oldGrpMeta->mSubscribeFlags ;
 
+			// Also keep private keys if present
+
+			if(!gu.newGrp->metaData->keys.private_keys.empty())
+				std::cerr << "(EE) performUpdateValidation() group " <<gu.newGrp->metaData->mGroupId << " has been received with private keys. This is very unexpected!" << std::endl;
+			else
+				gu.newGrp->metaData->keys.private_keys = gu.oldGrpMeta->keys.private_keys ;
+
 			grps.push_back(gu.newGrp);
 		}
 		else
@@ -3254,7 +3265,7 @@ void RsGenExchange::performUpdateValidation()
 	mGroupUpdates.clear();
 }
 
-bool RsGenExchange::updateValid(const RsGxsGrpMetaData& oldGrpMeta, RsNxsGrp& newGrp) const
+bool RsGenExchange::updateValid(const RsGxsGrpMetaData& oldGrpMeta, const RsNxsGrp& newGrp) const
 {
 	std::map<SignType, RsTlvKeySignature>& signSet = newGrp.metaData->signSet.keySignSet;
 	std::map<SignType, RsTlvKeySignature>::iterator mit = signSet.find(INDEX_AUTHEN_ADMIN);
