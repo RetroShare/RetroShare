@@ -2760,7 +2760,7 @@ void RsGenExchange::publishGrps()
 
 	    if(!grpChanged.empty())
 	    {
-		    RsGxsGroupChange* gc = new RsGxsGroupChange(RsGxsNotify::TYPE_PUBLISH, false);
+		    RsGxsGroupChange* gc = new RsGxsGroupChange(RsGxsNotify::TYPE_RECEIVE, true);
 		    gc->mGrpIdList = grpChanged;
 		    mNotifications.push_back(gc);
 #ifdef GEN_EXCH_DEBUG
@@ -2774,8 +2774,8 @@ void RsGenExchange::publishGrps()
     // This is done off-mutex to avoid possible cross deadlocks with the net service.
     
     if(mNetService!=NULL)
-        for(std::list<RsGxsGroupId>::const_iterator it(groups_to_subscribe.begin());it!=groups_to_subscribe.end();++it)
-	    mNetService->subscribeStatusChanged((*it),true) ;
+		for(std::list<RsGxsGroupId>::const_iterator it(groups_to_subscribe.begin());it!=groups_to_subscribe.end();++it)
+			mNetService->subscribeStatusChanged((*it),true) ;
 }
 
 
