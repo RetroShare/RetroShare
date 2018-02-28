@@ -94,7 +94,7 @@ rs_async_chat:CONFIG -= no_rs_async_chat
 
 # To select your MacOsX version append the following assignation to qmake
 # command line "CONFIG+=rs_macos10.11" where 10.11 depends your version
-CONFIG *= rs_macos10.11
+macx:CONFIG *= rs_macos10.11
 rs_macos10.8:CONFIG -= rs_macos10.11
 rs_macos10.9:CONFIG -= rs_macos10.11
 rs_macos10.10:CONFIG -= rs_macos10.11
