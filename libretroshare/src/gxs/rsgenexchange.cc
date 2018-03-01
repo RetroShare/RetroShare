@@ -1643,7 +1643,7 @@ void RsGenExchange::notifyReceivePublishKey(const RsGxsGroupId &grpId)
 {
 	RS_STACK_MUTEX(mGenMtx);
 
-	RsGxsGroupChange* gc = new RsGxsGroupChange(RsGxsNotify::TYPE_PUBLISHKEY, false);
+	RsGxsGroupChange* gc = new RsGxsGroupChange(RsGxsNotify::TYPE_PUBLISHKEY, true);
 	gc->mGrpIdList.push_back(grpId);
 	mNotifications.push_back(gc);
 }
@@ -2580,7 +2580,11 @@ void RsGenExchange::publishGrps()
 			    ggps.mKeys = fullKeySet;
 		    }
 		    else
+			{
+				// We should just merge the keys instead of overwriting them, because the update may not contain private parts.
+
 			    fullKeySet = ggps.mKeys;
+			}
 
 		    // find private admin key
 		    RsTlvPrivateRSAKey privAdminKey;
@@ -2756,7 +2760,7 @@ void RsGenExchange::publishGrps()
 
 	    if(!grpChanged.empty())
 	    {
-		    RsGxsGroupChange* gc = new RsGxsGroupChange(RsGxsNotify::TYPE_PUBLISH, false);
+		    RsGxsGroupChange* gc = new RsGxsGroupChange(RsGxsNotify::TYPE_RECEIVE, true);
 		    gc->mGrpIdList = grpChanged;
 		    mNotifications.push_back(gc);
 #ifdef GEN_EXCH_DEBUG
@@ -2770,8 +2774,8 @@ void RsGenExchange::publishGrps()
     // This is done off-mutex to avoid possible cross deadlocks with the net service.
     
     if(mNetService!=NULL)
-        for(std::list<RsGxsGroupId>::const_iterator it(groups_to_subscribe.begin());it!=groups_to_subscribe.end();++it)
-	    mNetService->subscribeStatusChanged((*it),true) ;
+		for(std::list<RsGxsGroupId>::const_iterator it(groups_to_subscribe.begin());it!=groups_to_subscribe.end();++it)
+			mNetService->subscribeStatusChanged((*it),true) ;
 }
 
 
@@ -3216,6 +3220,13 @@ void RsGenExchange::performUpdateValidation()
 
 			gu.newGrp->metaData->mSubscribeFlags = gu.oldGrpMeta->mSubscribeFlags ;
 
+			// Also keep private keys if present
+
+			if(!gu.newGrp->metaData->keys.private_keys.empty())
+				std::cerr << "(EE) performUpdateValidation() group " <<gu.newGrp->metaData->mGroupId << " has been received with private keys. This is very unexpected!" << std::endl;
+			else
+				gu.newGrp->metaData->keys.private_keys = gu.oldGrpMeta->keys.private_keys ;
+
 			grps.push_back(gu.newGrp);
 		}
 		else
@@ -3254,7 +3265,7 @@ void RsGenExchange::performUpdateValidation()
 	mGroupUpdates.clear();
 }
 
-bool RsGenExchange::updateValid(const RsGxsGrpMetaData& oldGrpMeta, RsNxsGrp& newGrp) const
+bool RsGenExchange::updateValid(const RsGxsGrpMetaData& oldGrpMeta, const RsNxsGrp& newGrp) const
 {
 	std::map<SignType, RsTlvKeySignature>& signSet = newGrp.metaData->signSet.keySignSet;
 	std::map<SignType, RsTlvKeySignature>::iterator mit = signSet.find(INDEX_AUTHEN_ADMIN);

@@ -389,6 +389,8 @@ int RsGxsNetService::tick()
 
 	    should_notify = should_notify || !mNewGroupsToNotify.empty() ;
 	    should_notify = should_notify || !mNewMessagesToNotify.empty() ;
+	    should_notify = should_notify || !mNewPublishKeysToNotify.empty() ;
+	    should_notify = should_notify || !mNewStatsToNotify.empty() ;
     }
 
     if(should_notify)
@@ -451,8 +453,11 @@ void RsGxsNetService::processObserverNotifications()
     if(!grps_copy.empty()) mObserver->notifyNewGroups  (grps_copy);
     if(!msgs_copy.empty()) mObserver->notifyNewMessages(msgs_copy);
 
-    for(std::set<RsGxsGroupId>::const_iterator it(keys_copy.begin());it!=keys_copy.end();++it) mObserver->notifyReceivePublishKey(*it);
-    for(std::set<RsGxsGroupId>::const_iterator it(stat_copy.begin());it!=stat_copy.end();++it) mObserver->notifyChangedGroupStats(*it);
+    for(std::set<RsGxsGroupId>::const_iterator it(keys_copy.begin());it!=keys_copy.end();++it)
+		mObserver->notifyReceivePublishKey(*it);
+
+    for(std::set<RsGxsGroupId>::const_iterator it(stat_copy.begin());it!=stat_copy.end();++it)
+		mObserver->notifyChangedGroupStats(*it);
 }
 
 void RsGxsNetService::rejectMessage(const RsGxsMessageId& msg_id)
@@ -4756,6 +4761,7 @@ void RsGxsNetService::handleRecvPublishKeys(RsNxsGroupPublishKeyItem *item)
 #ifdef NXS_NET_DEBUG_3
 		GXSNETDEBUG_PG(item->PeerId(),item->grpId)<< "   (EE) Publish key already present in database. Discarding message." << std::endl;
 #endif
+        mNewPublishKeysToNotify.insert(item->grpId) ;
 		return ;
 	}
 

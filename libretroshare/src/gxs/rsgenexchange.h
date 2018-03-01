@@ -835,7 +835,7 @@ private:
      * @param newGrp the new group that updates the old group (must have meta data member initialised)
      * @return
      */
-    bool updateValid(const RsGxsGrpMetaData& oldGrp, RsNxsGrp& newGrp) const;
+    bool updateValid(const RsGxsGrpMetaData& oldGrp, const RsNxsGrp& newGrp) const;
 
     /*!
      * convenience function for checking private publish and admin keys are present
