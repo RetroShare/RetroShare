@@ -77,7 +77,7 @@ if test "${useretrotor}" = "true"; then
 fi
 
 if test "${dist}" = "" ; then
-	dist="precise trusty xenial zesty artful"
+	dist="trusty xenial artful"
 fi
 
 echo Attempting to get revision number...
