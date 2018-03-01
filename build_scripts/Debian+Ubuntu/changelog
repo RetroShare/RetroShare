@@ -1,5 +1,22 @@
 retroshare (ZZZZZZ-1.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
+  3d7be85 csoler Thu,  1 Mar 2018 11:46:47 +0100 Merge pull request #1199 from csoler/v0.6-SecurityFixes
+  026951f csoler Thu,  1 Mar 2018 11:45:54 +0100 added consistency check in getGroupMeta so that ADMIN/PUBLISH flags always correspond to what the key set reflects
+  028a246 csoler Thu,  1 Mar 2018 09:44:59 +0100 Merge pull request #1197 from csoler/v0.6-SecurityFixes
+  ac64d2a csoler Thu,  1 Mar 2018 09:42:47 +0100 Merge pull request #1195 from PhenomRetroShare/Fix_NoTrIconInChatWidget
+  0651f4a csoler Thu,  1 Mar 2018 09:42:06 +0100 Merge pull request #1198 from G10h4ck/master
+  0c8b3ed Gioacc Wed, 28 Feb 2018 23:32:13 +0100 Set default Mac OS X version only if macx
+  5d58943 csoler Wed, 28 Feb 2018 23:18:50 +0100 forced notification of type RECEIVE when creating a new group so that the GxsIFaceHelper updates the group list
+  29ab0e9 csoler Wed, 28 Feb 2018 22:40:04 +0100 fixed bug that would erase private publish key when a group update is received
+  165b241 csoler Tue, 27 Feb 2018 23:19:27 +0100 made add of publish key a meta group change, to force reload the list of groups
+  3bc5b45 csoler Tue, 27 Feb 2018 22:42:48 +0100 added a FeedItem to warn when publish permissions are received for a channel
+  aad9397 csoler Mon, 26 Feb 2018 23:37:19 +0100 fixed memory leak in p3GxsTunnel
+  23c389c Phenom Mon, 26 Feb 2018 23:29:06 +0100 Remove non translatable text ChatWidget.ui
+  dd9f67a csoler Sun, 25 Feb 2018 17:52:49 +0100 fixed version number problem
+  3e700ab csoler Sun, 25 Feb 2018 16:12:46 +0100 Merge pull request #1194 from G10h4ck/fixAndroidCompilation
+  9f0421c csoler Sun, 25 Feb 2018 14:39:29 +0100 attempt to fix large size in ConnectFriendDialog.ui
+  f9896a0 csoler Sun, 25 Feb 2018 11:46:18 +0100 updated ppa_upload.sh to 0.6.4
+  5c029c5 csoler Sun, 25 Feb 2018 11:43:30 +0100 fixed typo in changelog
   31ab87c csoler Fri, 23 Feb 2018 14:06:49 +0100 added rs plugins into rules for ubuntu packaging
   681f543 csoler Sat, 24 Feb 2018 22:04:26 +0100 Merge pull request #1183 from csoler/v0.6.4
   05613a2 csoler Sat, 24 Feb 2018 21:58:58 +0100 Merge pull request #1193 from csoler/v0.6-SecurityFixes
