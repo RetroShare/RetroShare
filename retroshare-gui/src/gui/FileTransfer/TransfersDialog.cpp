@@ -264,22 +264,24 @@ public:
 
 	QVariant sizeHintRole(int col) const
 	{
+		float factor = QFontMetricsF(font())/14.0f ;
+
 		switch(col)
 		{
 		default:
-		case COLUMN_NAME:         return QVariant( 170 );
-		case COLUMN_SIZE:         return QVariant( 70  );
-		case COLUMN_COMPLETED:    return QVariant( 75  );
-		case COLUMN_DLSPEED:      return QVariant( 75  );
-		case COLUMN_PROGRESS:     return QVariant( 170 );
-		case COLUMN_SOURCES:      return QVariant( 90  );
-		case COLUMN_STATUS:       return QVariant( 100 );
-		case COLUMN_PRIORITY:     return QVariant( 100 );
-		case COLUMN_REMAINING:    return QVariant( 100 );
-		case COLUMN_DOWNLOADTIME: return QVariant( 100 );
-		case COLUMN_ID:           return QVariant( 100 );
-		case COLUMN_LASTDL:       return QVariant( 100 );
-		case COLUMN_PATH:         return QVariant( 100 );
+		case COLUMN_NAME:         return QVariant( factor * 170 );
+		case COLUMN_SIZE:         return QVariant( factor * 70  );
+		case COLUMN_COMPLETED:    return QVariant( factor * 75  );
+		case COLUMN_DLSPEED:      return QVariant( factor * 75  );
+		case COLUMN_PROGRESS:     return QVariant( factor * 170 );
+		case COLUMN_SOURCES:      return QVariant( factor * 90  );
+		case COLUMN_STATUS:       return QVariant( factor * 100 );
+		case COLUMN_PRIORITY:     return QVariant( factor * 100 );
+		case COLUMN_REMAINING:    return QVariant( factor * 100 );
+		case COLUMN_DOWNLOADTIME: return QVariant( factor * 100 );
+		case COLUMN_ID:           return QVariant( factor * 100 );
+		case COLUMN_LASTDL:       return QVariant( factor * 100 );
+		case COLUMN_PATH:         return QVariant( factor * 100 );
 		}
 	}
 
