@@ -48,6 +48,7 @@ struct RsUrl
 	bool hasPort() const;
 	uint16_t port(uint16_t def = 0) const;
 	RsUrl& setPort(uint16_t port);
+	RsUrl& unsetPort();
 
 	const std::string& path() const;
 	RsUrl& setPath(const std::string& path);

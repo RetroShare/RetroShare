@@ -154,16 +154,21 @@ RsUrl& RsUrl::setHost(const std::string& host)
 }
 
 bool RsUrl::hasPort() const { return mHasPort; }
-
 uint16_t RsUrl::port(uint16_t def) const
 {
 	if(mHasPort) return mPort;
 	return def;
 }
-
 RsUrl& RsUrl::setPort(uint16_t port)
 {
 	mPort = port;
+	mHasPort = true;
+	return *this;
+}
+RsUrl& RsUrl::unsetPort()
+{
+	mPort = 0;
+	mHasPort = false;
 	return *this;
 }
 
