@@ -24,6 +24,8 @@
  *
  */
 
+#include "util/rsurl.h"
+
 #include <sstream>
 #include <iomanip>
 #include <cstdlib>
@@ -491,27 +493,32 @@ bool sockaddr_storage_sameip(const struct sockaddr_storage &addr, const struct s
 
 std::string sockaddr_storage_tostring(const struct sockaddr_storage &addr)
 {
-	std::string output;
-	output += sockaddr_storage_familytostring(addr);
+	RsUrl url;
 
 	switch(addr.ss_family)
 	{
 	case AF_INET:
-		output += "=";
-		output += sockaddr_storage_iptostring(addr);
-		output += ":";
-		output += sockaddr_storage_porttostring(addr);
+		url.setScheme("ipv4");
 		break;
 	case AF_INET6:
-		output += "=[";
-		output += sockaddr_storage_iptostring(addr);
-		output += "]:";
-		output += sockaddr_storage_porttostring(addr);
+		url.setScheme("ipv6");
 		break;
 	default:
-		break;
+		return "INVALID_IP";
 	}
-	return output;
+
+	url.setHost(sockaddr_storage_iptostring(addr))
+	   .setPort(sockaddr_storage_port(addr));
+
+	return url.toString();
+}
+
+bool sockaddr_storage_fromString(const std::string& str, sockaddr_storage &addr)
+{
+	RsUrl url(str);
+	bool valid = sockaddr_storage_inet_pton(addr, url.host());
+	if(url.hasPort()) sockaddr_storage_setport(addr, url.port());
+	return valid;
 }
 
 void sockaddr_storage_dump(const sockaddr_storage & addr, std::string * outputString)
