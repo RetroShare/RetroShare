@@ -544,7 +544,7 @@ public:
         else if(mDownloads.size() < old_size)
         {
             beginRemoveRows(QModelIndex(), mDownloads.size(), old_size-1);
-            removeRows(old_size, old_size - mDownloads.size());
+            removeRows(mDownloads.size(), old_size - mDownloads.size());
             endRemoveRows();
         }
 
@@ -555,7 +555,24 @@ public:
 		for(auto it(downHashes.begin());it!=downHashes.end();++it,++i)
 		{
 			FileInfo& fileInfo(mDownloads[i]);
+			int old_size = fileInfo.peers.size() ;
+
 			rsFiles->FileDetails(*it, RS_FILE_HINTS_DOWNLOAD, fileInfo);
+
+			int new_size = fileInfo.peers.size() ;
+
+			if(old_size < new_size)
+			{
+				beginInsertRows(index(i,0), old_size, new_size-1);
+				insertRows(old_size, new_size - old_size,index(i,0));
+				endInsertRows();
+			}
+			else if(new_size < old_size)
+			{
+				beginRemoveRows(index(i,0), new_size, old_size-1);
+				removeRows(new_size, old_size - new_size,index(i,0));
+				endRemoveRows();
+			}
 		}
 
 //		endResetModel();
