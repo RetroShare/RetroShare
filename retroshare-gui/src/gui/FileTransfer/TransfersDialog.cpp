@@ -264,22 +264,24 @@ public:
 
 	QVariant sizeHintRole(int col) const
 	{
+		float factor = QFontMetricsF(QApplication::font()).height()/14.0f ;
+
 		switch(col)
 		{
 		default:
-		case COLUMN_NAME:         return QVariant( 170 );
-		case COLUMN_SIZE:         return QVariant( 70  );
-		case COLUMN_COMPLETED:    return QVariant( 75  );
-		case COLUMN_DLSPEED:      return QVariant( 75  );
-		case COLUMN_PROGRESS:     return QVariant( 170 );
-		case COLUMN_SOURCES:      return QVariant( 90  );
-		case COLUMN_STATUS:       return QVariant( 100 );
-		case COLUMN_PRIORITY:     return QVariant( 100 );
-		case COLUMN_REMAINING:    return QVariant( 100 );
-		case COLUMN_DOWNLOADTIME: return QVariant( 100 );
-		case COLUMN_ID:           return QVariant( 100 );
-		case COLUMN_LASTDL:       return QVariant( 100 );
-		case COLUMN_PATH:         return QVariant( 100 );
+		case COLUMN_NAME:         return QVariant( factor * 170 );
+		case COLUMN_SIZE:         return QVariant( factor * 70  );
+		case COLUMN_COMPLETED:    return QVariant( factor * 75  );
+		case COLUMN_DLSPEED:      return QVariant( factor * 75  );
+		case COLUMN_PROGRESS:     return QVariant( factor * 170 );
+		case COLUMN_SOURCES:      return QVariant( factor * 90  );
+		case COLUMN_STATUS:       return QVariant( factor * 100 );
+		case COLUMN_PRIORITY:     return QVariant( factor * 100 );
+		case COLUMN_REMAINING:    return QVariant( factor * 100 );
+		case COLUMN_DOWNLOADTIME: return QVariant( factor * 100 );
+		case COLUMN_ID:           return QVariant( factor * 100 );
+		case COLUMN_LASTDL:       return QVariant( factor * 100 );
+		case COLUMN_PATH:         return QVariant( factor * 100 );
 		}
 	}
 
@@ -446,7 +448,7 @@ public:
 			{
 				FileChunksInfo fcinfo;
 				if (!rsFiles->FileDownloadChunksDetails(fileInfo.hash, fcinfo))
-					return -1;
+					return QVariant();
 
 				FileProgressInfo pinfo;
 				pinfo.cmap = fcinfo.chunks;
@@ -480,34 +482,20 @@ public:
 			{
 			case COLUMN_PROGRESS:
 			{
-				FileProgressInfo peerpinfo ;
-
-				if(!rsFiles->FileUploadChunksDetails(fileInfo.hash, fileInfo.peers[source_id].peerId, peerpinfo.cmap) )
+				FileChunksInfo fcinfo;
+				if (!rsFiles->FileDownloadChunksDetails(fileInfo.hash, fcinfo))
 					return QVariant();
 
-				// Estimate the completion. We need something more accurate, meaning that we need to
-				// transmit the completion info.
-				//
-				uint32_t chunk_size = 1024*1024 ;
-				uint32_t nb_chunks = (uint32_t)((fileInfo.size + (uint64_t)chunk_size - 1) / (uint64_t)(chunk_size)) ;
+				RsPeerId pid = fileInfo.peers[source_id].peerId;
+				CompressedChunkMap& cmap(fcinfo.compressed_peer_availability_maps[pid]) ;
 
-				uint32_t filled_chunks = peerpinfo.cmap.filledChunks(nb_chunks) ;
-				peerpinfo.type = FileProgressInfo::UPLOAD_LINE ;
-				peerpinfo.nb_chunks = peerpinfo.cmap._map.empty()?0:nb_chunks ;
-				qlonglong completed ;
+				FileProgressInfo pinfo;
+				pinfo.cmap = cmap;
+				pinfo.type = FileProgressInfo::DOWNLOAD_SOURCE;
+				pinfo.progress = 0.0; // we dont display completion for sources
+				pinfo.nb_chunks = pinfo.cmap._map.empty() ? 0 : fcinfo.chunks.size();
 
-				if(filled_chunks > 0 && nb_chunks > 0)
-				{
-					completed = peerpinfo.cmap.computeProgress(fileInfo.size,chunk_size) ;
-					peerpinfo.progress = completed / (float)fileInfo.size * 100.0f ;
-				}
-				else
-				{
-					completed = fileInfo.peers[source_id].transfered % chunk_size ;	// use the position with respect to last request.
-					peerpinfo.progress = (fileInfo.size>0)?((fileInfo.peers[source_id].transfered % chunk_size)*100.0/fileInfo.size):0 ;
-				}
-
-				return QVariant::fromValue(peerpinfo);
+				return QVariant::fromValue(pinfo);
 			}
 
 			case COLUMN_ID: return QVariant(QString::fromStdString(fileInfo.hash.toStdString()) + QString::fromStdString(fileInfo.peers[source_id].peerId.toStdString()));
@@ -556,7 +544,7 @@ public:
         else if(mDownloads.size() < old_size)
         {
             beginRemoveRows(QModelIndex(), mDownloads.size(), old_size-1);
-            removeRows(old_size, old_size - mDownloads.size());
+            removeRows(mDownloads.size(), old_size - mDownloads.size());
             endRemoveRows();
         }
 
@@ -567,7 +555,24 @@ public:
 		for(auto it(downHashes.begin());it!=downHashes.end();++it,++i)
 		{
 			FileInfo& fileInfo(mDownloads[i]);
+			int old_size = fileInfo.peers.size() ;
+
 			rsFiles->FileDetails(*it, RS_FILE_HINTS_DOWNLOAD, fileInfo);
+
+			int new_size = fileInfo.peers.size() ;
+
+			if(old_size < new_size)
+			{
+				beginInsertRows(index(i,0), old_size, new_size-1);
+				insertRows(old_size, new_size - old_size,index(i,0));
+				endInsertRows();
+			}
+			else if(new_size < old_size)
+			{
+				beginRemoveRows(index(i,0), new_size, old_size-1);
+				removeRows(new_size, old_size - new_size,index(i,0));
+				endRemoveRows();
+			}
 		}
 
 //		endResetModel();
