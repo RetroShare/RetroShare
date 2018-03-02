@@ -446,7 +446,7 @@ public:
 			{
 				FileChunksInfo fcinfo;
 				if (!rsFiles->FileDownloadChunksDetails(fileInfo.hash, fcinfo))
-					return -1;
+					return QVariant();
 
 				FileProgressInfo pinfo;
 				pinfo.cmap = fcinfo.chunks;
@@ -480,34 +480,20 @@ public:
 			{
 			case COLUMN_PROGRESS:
 			{
-				FileProgressInfo peerpinfo ;
-
-				if(!rsFiles->FileUploadChunksDetails(fileInfo.hash, fileInfo.peers[source_id].peerId, peerpinfo.cmap) )
+				FileChunksInfo fcinfo;
+				if (!rsFiles->FileDownloadChunksDetails(fileInfo.hash, fcinfo))
 					return QVariant();
 
-				// Estimate the completion. We need something more accurate, meaning that we need to
-				// transmit the completion info.
-				//
-				uint32_t chunk_size = 1024*1024 ;
-				uint32_t nb_chunks = (uint32_t)((fileInfo.size + (uint64_t)chunk_size - 1) / (uint64_t)(chunk_size)) ;
+				RsPeerId pid = fileInfo.peers[source_id].peerId;
+				CompressedChunkMap& cmap(fcinfo.compressed_peer_availability_maps[pid]) ;
 
-				uint32_t filled_chunks = peerpinfo.cmap.filledChunks(nb_chunks) ;
-				peerpinfo.type = FileProgressInfo::UPLOAD_LINE ;
-				peerpinfo.nb_chunks = peerpinfo.cmap._map.empty()?0:nb_chunks ;
-				qlonglong completed ;
+				FileProgressInfo pinfo;
+				pinfo.cmap = cmap;
+				pinfo.type = FileProgressInfo::DOWNLOAD_SOURCE;
+				pinfo.progress = 0.0; // we dont display completion for sources
+				pinfo.nb_chunks = pinfo.cmap._map.empty() ? 0 : fcinfo.chunks.size();
 
-				if(filled_chunks > 0 && nb_chunks > 0)
-				{
-					completed = peerpinfo.cmap.computeProgress(fileInfo.size,chunk_size) ;
-					peerpinfo.progress = completed / (float)fileInfo.size * 100.0f ;
-				}
-				else
-				{
-					completed = fileInfo.peers[source_id].transfered % chunk_size ;	// use the position with respect to last request.
-					peerpinfo.progress = (fileInfo.size>0)?((fileInfo.peers[source_id].transfered % chunk_size)*100.0/fileInfo.size):0 ;
-				}
-
-				return QVariant::fromValue(peerpinfo);
+				return QVariant::fromValue(pinfo);
 			}
 
 			case COLUMN_ID: return QVariant(QString::fromStdString(fileInfo.hash.toStdString()) + QString::fromStdString(fileInfo.peers[source_id].peerId.toStdString()));
