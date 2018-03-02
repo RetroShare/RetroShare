@@ -264,7 +264,7 @@ public:
 
 	QVariant sizeHintRole(int col) const
 	{
-		float factor = QFontMetricsF(font())/14.0f ;
+		float factor = QFontMetricsF(QApplication::font()).height()/14.0f ;
 
 		switch(col)
 		{
