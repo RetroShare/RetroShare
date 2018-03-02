@@ -39,6 +39,7 @@
 #endif
 
 #include "rsdataservice.h"
+#include "retroshare/rsgxsflags.h"
 #include "util/rsstring.h"
 
 #define MSG_TABLE_NAME std::string("MESSAGES")
@@ -572,6 +573,38 @@ RsGxsGrpMetaData* RsDataService::locked_getGrpMeta(RetroCursor &c, int colOffset
     c.getString(mColGrpMeta_ParentGrpId, tempId);
     grpMeta->mParentGrpId = RsGxsGroupId(tempId);
 
+	// make sure that flags and keys are actually consistent
+
+	bool have_private_admin_key = false ;
+	bool have_private_publish_key = false ;
+
+	for(auto mit = grpMeta->keys.private_keys.begin(); mit != grpMeta->keys.private_keys.end();++mit)
+	{
+		if(mit->second.keyFlags == (RSTLV_KEY_DISTRIB_PUBLISH | RSTLV_KEY_TYPE_FULL)) have_private_publish_key = true ;
+		if(mit->second.keyFlags == (RSTLV_KEY_DISTRIB_ADMIN   | RSTLV_KEY_TYPE_FULL)) have_private_admin_key = true ;
+	}
+
+	if(have_private_admin_key && !(grpMeta->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN))
+	{
+		std::cerr << "(WW) inconsistency in group " << grpMeta->mGroupId << ": group does not have flag ADMIN but an admin key was found. Updating the flags." << std::endl;
+		grpMeta->mSubscribeFlags |= GXS_SERV::GROUP_SUBSCRIBE_ADMIN;
+	}
+	if(!have_private_admin_key && (grpMeta->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN))
+	{
+		std::cerr << "(WW) inconsistency in group " << grpMeta->mGroupId << ": group has flag ADMIN but no admin key found. Updating the flags." << std::endl;
+		grpMeta->mSubscribeFlags &= ~GXS_SERV::GROUP_SUBSCRIBE_ADMIN;
+	}
+	if(have_private_publish_key && !(grpMeta->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_PUBLISH))
+	{
+		std::cerr << "(WW) inconsistency in group " << grpMeta->mGroupId << ": group does not have flag PUBLISH but an admin key was found. Updating the flags." << std::endl;
+		grpMeta->mSubscribeFlags |= GXS_SERV::GROUP_SUBSCRIBE_PUBLISH;
+	}
+	if(!have_private_publish_key && (grpMeta->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_PUBLISH))
+	{
+		std::cerr << "(WW) inconsistency in group " << grpMeta->mGroupId << ": group has flag PUBLISH but no admin key found. Updating the flags." << std::endl;
+		grpMeta->mSubscribeFlags &= ~GXS_SERV::GROUP_SUBSCRIBE_PUBLISH;
+	}
+
     if(ok)
         return grpMeta;
     else
@@ -933,7 +966,9 @@ void RsDataService::locked_clearGrpMetaCache(const RsGxsGroupId& gid)
 
 	if(it != mGrpMetaDataCache.end())
 	{
+#ifdef RS_DATA_SERVICE_DEBUG
 		std::cerr << "(II) moving database cache entry " << (void*)(*it).second << " to dead list." << std::endl;
+#endif
 
 		mOldCachedItems.push_back(std::make_pair(now,it->second)) ;
 
@@ -947,7 +982,9 @@ void RsDataService::locked_clearGrpMetaCache(const RsGxsGroupId& gid)
 
 	while(it2!=mOldCachedItems.end() && (*it2).first + CACHE_ENTRY_GRACE_PERIOD < now)
 	{
+#ifdef RS_DATA_SERVICE_DEBUG
 		std::cerr << "(II) deleting old GXS database cache entry " << (void*)(*it2).second << ", " << now - (*it2).first << " seconds old." << std::endl;
+#endif
 
 		delete (*it2).second ;
 		it2 = mOldCachedItems.erase(it2) ;

@@ -360,8 +360,9 @@ bool RsCertificate::initFromString(const std::string& instr,uint32_t& err_code)
 															  }
 															  break ;
 				default:
-															  err_code = CERTIFICATE_PARSING_ERROR_UNKNOWN_SECTION_PTAG ;
-															  return false ;
+															  std::cerr << "(WW) unknwown PTAG 0x" << std::hex << ptag << std::dec << " in certificate! Ignoring it." << std::endl;
+															  buf = &buf[s] ;
+															  break ;
 			}
 
 			total_s += s ;

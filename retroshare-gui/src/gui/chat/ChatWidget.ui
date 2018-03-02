@@ -578,12 +578,6 @@ border-image: url(:/images/closepressed.png)
              <property name="toolTip">
               <string>Send</string>
              </property>
-             <property name="whatsThis">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;QToolButton:disabled {&lt;/p&gt;&lt;p&gt;	image: url(:/icons/png/send-message-blocked.png) ;&lt;/p&gt;&lt;p&gt;}&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-             </property>
-             <property name="styleSheet">
-              <string notr="true"/>
-             </property>
              <property name="icon">
               <iconset resource="../icons.qrc">
                <normaloff>:/icons/png/send-message.png</normaloff>:/icons/png/send-message.png</iconset>
