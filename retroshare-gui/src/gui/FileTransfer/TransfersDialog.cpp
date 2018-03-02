@@ -118,7 +118,7 @@ public:
 		uint32_t entry = 0 ;
 		int source_id ;
 
-		if(!convertRefPointerToTabEntry(ref,entry,source_id) || entry >= mDownloads.size())
+		if(!convertRefPointerToTabEntry(ref,entry,source_id) || entry >= mDownloads.size() || source_id > -1)
 			return 0 ;
 
 		return mDownloads[entry].peers.size();	// costly
@@ -160,7 +160,7 @@ public:
 			return createIndex(row,column,subref) ;
 		}
 
-		if(!convertRefPointerToTabEntry(ref,entry,source_id) || entry >= mDownloads.size() || int(mDownloads[entry].peers.size()) <= source_id)
+		if(!convertRefPointerToTabEntry(ref,entry,source_id) || entry >= mDownloads.size() || int(mDownloads[entry].peers.size()) <= row)
 			return QModelIndex() ;
 
 		if(source_id != -1)
@@ -169,6 +169,7 @@ public:
 		if(!convertTabEntryToRefPointer(entry,row,subref))
 			return QModelIndex() ;
 
+		std::cerr << "Creating index (" << row << " sid=" << source_id << " ref=" << subref << ")" << std::endl;
 		return createIndex(row,column,subref) ;
 	}
 	QModelIndex parent(const QModelIndex& child) const
@@ -186,12 +187,12 @@ public:
 		if(source_id < 0)
 			return QModelIndex() ;
 
-		void *subref =NULL;
+		void *parref =NULL;
 
-		if(!convertTabEntryToRefPointer(entry,-1,subref))
+		if(!convertTabEntryToRefPointer(entry,-1,parref))
 			return QModelIndex() ;
 
-		return createIndex(entry,0,subref) ;
+		return createIndex(entry,0,parref) ;
 	}
 
 	QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const
@@ -249,6 +250,11 @@ public:
 			std::cerr << "Bad pointer: " << (void*)ref << std::endl;
 			return QVariant() ;
 		}
+
+		if(source_id >= mDownloads[entry].peers.size())
+			return QVariant() ;
+
+		std::cerr << "data row=" << index.row() << " col=" << index.column() << " entry=" << entry << " source=" << source_id << std::endl;
 
 		const FileInfo& finfo(mDownloads[entry]) ;
 
@@ -495,6 +501,7 @@ public:
 				pinfo.progress = 0.0; // we dont display completion for sources
 				pinfo.nb_chunks = pinfo.cmap._map.empty() ? 0 : fcinfo.chunks.size();
 
+				//std::cerr << "User role of source id " << source_id << std::endl;
 				return QVariant::fromValue(pinfo);
 			}
 
@@ -565,73 +572,25 @@ public:
 			{
 				beginInsertRows(index(i,0), old_size, new_size-1);
 				insertRows(old_size, new_size - old_size,index(i,0));
+				std::cerr << "called insert rows ( " << old_size << ", " << new_size - old_size << ")" << std::endl;
 				endInsertRows();
 			}
 			else if(new_size < old_size)
 			{
 				beginRemoveRows(index(i,0), new_size, old_size-1);
 				removeRows(new_size, old_size - new_size,index(i,0));
+				std::cerr << "called remove rows ( " << old_size << ", " << old_size - new_size << ")" << std::endl;
 				endRemoveRows();
 			}
 		}
 
 //		endResetModel();
 
-		QModelIndex topLeft = createIndex(0,0), bottomRight = createIndex(mDownloads.size()-1, COLUMN_COUNT-1);
-		emit dataChanged(topLeft, bottomRight);
-
-		//shit code follow (rewrite this please)
-		//		size_t old_size = neighs.size(), new_size = 0;
-		//		std::list<RsPgpId> old_neighs = neighs;
-		//
-		//    new_size = new_neighs.size();
-		//    //set model data to new cleaned up data
-		//    neighs = new_neighs;
-		//    neighs.sort();
-		//    neighs.unique(); //remove possible dups
-		//
-		//    //reflect actual row count in model
-		//    if(old_size < new_size)
-		//    {
-		//        beginInsertRows(QModelIndex(), old_size, new_size);
-		//        insertRows(old_size, new_size - old_size);
-		//        endInsertRows();
-		//    }
-		//    else if(new_size < old_size)
-		//    {
-		//        beginRemoveRows(QModelIndex(), new_size, old_size);
-		//        removeRows(old_size, old_size - new_size);
-		//        endRemoveRows();
-		//    }
-		//    //update data in ui, to avoid unnecessary redraw and ui updates, updating only changed elements
-		//    //TODO: libretroshare should implement a way to obtain only changed elements via some signalling non-blocking api.
-		//    {
-		//        size_t ii1 = 0;
-		//        for(auto i1 = neighs.begin(), end1 = neighs.end(), i2 = old_neighs.begin(), end2 = old_neighs.end(); i1 != end1; ++i1, ++i2, ii1++)
-		//        {
-		//            if(i2 == end2)
-		//                break;
-		//            if(*i1 != *i2)
-		//            {
-		//                QModelIndex topLeft = createIndex(ii1,0), bottomRight = createIndex(ii1, COLUMN_COUNT-1);
-		//                emit dataChanged(topLeft, bottomRight);
-		//            }
-		//        }
-		//    }
-		//    if(new_size > old_size)
-		//    {
-		//        QModelIndex topLeft = createIndex(old_size ? old_size -1 : 0 ,0), bottomRight = createIndex(new_size -1, COLUMN_COUNT-1);
-		//        emit dataChanged(topLeft, bottomRight);
-		//    }
-		//    //dirty solution for initial data fetch
-		//    //TODO: do it properly!
-		//    if(!old_size)
-		//    {
-		//        beginResetModel();
-		//        endResetModel();
-		//    }
-
-
+		if(!mDownloads.empty())
+		{
+			QModelIndex topLeft = createIndex(0,0), bottomRight = createIndex(mDownloads.size()-1, COLUMN_COUNT-1);
+			emit dataChanged(topLeft, bottomRight);
+		}
 	}
 private:
 	static const uint32_t TRANSFERS_NB_DOWNLOADS_BITS_32BITS     = 22 ;			// Means 2^22 simultaneous transfers
