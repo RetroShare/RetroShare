@@ -33,6 +33,7 @@
 #include <retroshare/rstypes.h>
 #include <retroshare/rsfiles.h>
 #include <retroshare/rsids.h>
+#include "util/rsurl.h"
 
 /* The Main Interface Class - for information about your Peers
  * A peer is another RS instance, means associated with an SSL certificate
@@ -370,6 +371,7 @@ public:
 	virtual bool setHiddenNode(const RsPeerId &id, const std::string &address, uint16_t port) = 0;
 	virtual bool isHiddenNode(const RsPeerId &id) = 0;
 
+	virtual bool addPeerLocator(const RsPeerId &ssl_id, const RsUrl& locator) = 0;
 	virtual	bool setLocalAddress(const RsPeerId &ssl_id, const std::string &addr, uint16_t port) = 0;
 	virtual	bool setExtAddress(  const RsPeerId &ssl_id, const std::string &addr, uint16_t port) = 0;
 	virtual	bool setDynDNS(const RsPeerId &id, const std::string &addr) = 0;

@@ -34,10 +34,10 @@ RsUrl::RsUrl(const std::string& urlStr) : mPort(0), mHasPort(false)
 
 RsUrl& RsUrl::fromString(const std::string& urlStr)
 {
-	size_t urlSize = urlStr.size();
+	size_t endI = urlStr.size()-1;
 
 	size_t schemeEndI = urlStr.find(schemeSeparator);
-	if(schemeEndI == string::npos)
+	if(schemeEndI >= endI)
 	{
 		mScheme = urlStr;
 		return *this;
@@ -46,15 +46,16 @@ RsUrl& RsUrl::fromString(const std::string& urlStr)
 	mScheme = urlStr.substr(0, schemeEndI);
 
 	size_t hostBeginI = schemeEndI + 3;
-	if(hostBeginI >= urlSize) return *this;
+	if(hostBeginI >= endI) return *this;
 
 	bool hasSquareBr = (urlStr[hostBeginI] == ipv6WrapOpen[0]);
 	size_t hostEndI;
 	if(hasSquareBr)
 	{
-		if(++hostBeginI >= urlSize) return *this;
+		if(++hostBeginI >= endI) return *this;
 		hostEndI = urlStr.find(ipv6WrapClose, hostBeginI);
 		mHost = urlStr.substr(hostBeginI, hostEndI - hostBeginI - 1);
+		++hostEndI;
 	}
 	else
 	{
@@ -64,24 +65,25 @@ RsUrl& RsUrl::fromString(const std::string& urlStr)
 		hostEndI = min(hostEndI, urlStr.find(fragmentSeparator, hostBeginI));
 
 		mHost = urlStr.substr(hostBeginI, hostEndI - hostBeginI);
-		if(hostEndI == string::npos) return *this;
 	}
+
+	if( hostEndI >= endI ) return *this;
 
 	mHasPort = (sscanf(&urlStr[hostEndI], ":%hu", &mPort) == 1);
 
-	size_t pathBeginI = urlStr.find(pathSeparator, hostEndI);
+	size_t pathBeginI = urlStr.find(pathSeparator, hostBeginI);
 	size_t pathEndI = string::npos;
-	if(pathBeginI != string::npos)
+	if(pathBeginI < endI)
 	{
 		pathEndI =               urlStr.find(querySeparator, pathBeginI);
 		pathEndI = min(pathEndI, urlStr.find(fragmentSeparator, pathBeginI));
 		mPath = UrlDecode(urlStr.substr(pathBeginI, pathEndI - pathBeginI));
-		if(pathEndI == string::npos) return *this;
+		if(pathEndI >= endI) return *this;
 	}
 
-	size_t queryBeginI = urlStr.find(querySeparator, schemeEndI);
-	size_t queryEndI = urlStr.find(fragmentSeparator, schemeEndI);
-	if(queryBeginI != string::npos)
+	size_t queryBeginI = urlStr.find(querySeparator, hostBeginI);
+	size_t queryEndI = urlStr.find(fragmentSeparator, hostBeginI);
+	if(queryBeginI < endI)
 	{
 		string qStr = urlStr.substr(queryBeginI+1, queryEndI-queryBeginI-1);
 
@@ -96,14 +98,16 @@ RsUrl& RsUrl::fromString(const std::string& urlStr)
 			kPos = vEndPos+1;
 			assPos = qStr.find(queryAssign, vEndPos);
 		}
-		while(assPos != string::npos);
+		while(assPos < endI);
 
-		if(queryEndI == string::npos) return *this;
+		if(queryEndI >= endI) return *this;
 	}
 
-	size_t fragmentBeginI = urlStr.find(fragmentSeparator, schemeEndI);
-	if(fragmentBeginI != string::npos)
+	size_t fragmentBeginI = urlStr.find(fragmentSeparator, hostBeginI);
+	if(fragmentBeginI < endI)
 		mFragment = UrlDecode(urlStr.substr(++fragmentBeginI));
+
+	return *this;
 }
 
 std::string RsUrl::toString() const

@@ -192,8 +192,7 @@ bool sockaddr_storage_copyip(struct sockaddr_storage &dst, const struct sockaddr
 uint16_t sockaddr_storage_port(const struct sockaddr_storage &addr)
 {
 #ifdef SS_DEBUG
-	std::cerr << "sockaddr_storage_port()";
-	std::cerr << std::endl;
+	std::cerr << "sockaddr_storage_port()" << std::endl;
 #endif
 	switch(addr.ss_family)
 	{
@@ -203,8 +202,10 @@ uint16_t sockaddr_storage_port(const struct sockaddr_storage &addr)
 			return sockaddr_storage_ipv6_port(addr);
 		default:
 			std::cerr << "sockaddr_storage_port() invalid addr.ss_family" << std::endl;
+#ifdef SS_DEBUG
 			sockaddr_storage_dump(addr);
 			print_stacktrace();
+#endif
 			break;
 	}
 	return 0;
@@ -504,7 +505,7 @@ std::string sockaddr_storage_tostring(const struct sockaddr_storage &addr)
 		url.setScheme("ipv6");
 		break;
 	default:
-		return "INVALID_IP";
+		return "AF_INVALID";
 	}
 
 	url.setHost(sockaddr_storage_iptostring(addr))
@@ -613,9 +614,11 @@ std::string sockaddr_storage_iptostring(const struct sockaddr_storage &addr)
 		break;
 	default:
 		output = "INVALID_IP";
-		std::cerr << __PRETTY_FUNCTION__ << " Got invalid IP:" << std::endl;
+		std::cerr << __PRETTY_FUNCTION__ << " Got invalid IP!" << std::endl;
+#ifdef SS_DEBUG
 		sockaddr_storage_dump(addr);
 		print_stacktrace();
+#endif
 		break;
 	}
 	return output;

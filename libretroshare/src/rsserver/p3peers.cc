@@ -904,6 +904,9 @@ bool 	p3Peers::setHiddenNode(const RsPeerId &id, const std::string &address, uin
 	return true;
 }
 
+bool p3Peers::addPeerLocator(const RsPeerId &ssl_id, const RsUrl& locator)
+{ return mPeerMgr->addPeerLocator(ssl_id, locator); }
+
 bool p3Peers::setLocalAddress(const RsPeerId &id,
                               const std::string &addr_str, uint16_t port)
 {
@@ -1148,11 +1151,12 @@ bool 	p3Peers::loadCertificateFromString(const std::string& cert, RsPeerId& ssl_
 	return res ;
 }
 
-bool 	p3Peers::loadDetailsFromStringCert(const std::string &certstr, RsPeerDetails &pd,uint32_t& error_code)
+bool p3Peers::loadDetailsFromStringCert( const std::string &certstr,
+                                         RsPeerDetails &pd,
+                                         uint32_t& error_code )
 {
 #ifdef P3PEERS_DEBUG
-	std::cerr << "p3Peers::LoadCertificateFromString() ";
-	std::cerr << std::endl;
+	std::cerr << "p3Peers::LoadCertificateFromString() " << std::endl;
 #endif
 	//parse the text to get ip address
 	try 
@@ -1192,9 +1196,11 @@ bool 	p3Peers::loadDetailsFromStringCert(const std::string &certstr, RsPeerDetai
 			pd.localPort = cert.loc_port_us();
 			pd.extAddr = cert.ext_ip_string();
 			pd.extPort = cert.ext_port_us();
-			pd.dyndns = cert.dns_string() ;
+			pd.dyndns = cert.dns_string();
+			for(const RsUrl& locator : cert.locators())
+				pd.ipAddressList.push_back(locator.toString());
 		}
-	} 
+	}
 	catch(uint32_t e) 
 	{
 		std::cerr << "ConnectFriendWizard : Parse ip address error :" << e << std::endl;

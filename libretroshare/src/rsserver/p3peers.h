@@ -36,6 +36,7 @@
 #endif
 
 #include "retroshare/rspeers.h"
+#include "util/rsurl.h"
 
 class p3LinkMgr;
 class p3PeerMgr;
@@ -96,7 +97,8 @@ public:
 	virtual bool setHiddenNode(const RsPeerId &id, const std::string &address, uint16_t port);
 	virtual bool isHiddenNode(const RsPeerId &id);
 
-	virtual	bool setLocalAddress(const RsPeerId &id, const std::string &addr, uint16_t port);
+	virtual bool addPeerLocator(const RsPeerId &ssl_id, const RsUrl& locator);
+	virtual bool setLocalAddress(const RsPeerId &id, const std::string &addr, uint16_t port);
 	virtual	bool setExtAddress(const RsPeerId &id, const std::string &addr, uint16_t port);
 	virtual	bool setDynDNS(const RsPeerId &id, const std::string &dyndns);
 	virtual	bool setNetworkMode(const RsPeerId &id, uint32_t netMode);

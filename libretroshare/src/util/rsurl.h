@@ -65,17 +65,17 @@ struct RsUrl
 	                             const std::string& ignoreChars = "");
 	static std::string UrlDecode(const std::string& str);
 
-	inline bool operator<(const RsUrl& rhs)
+	inline bool operator<(const RsUrl& rhs) const
 	{ return toString() < rhs.toString(); }
-	inline bool operator>(const RsUrl& rhs)
+	inline bool operator>(const RsUrl& rhs) const
 	{ return toString() > rhs.toString(); }
-	inline bool operator<=(const RsUrl& rhs)
+	inline bool operator<=(const RsUrl& rhs) const
 	{ return toString() <= rhs.toString(); }
-	inline bool operator>=(const RsUrl& rhs)
+	inline bool operator>=(const RsUrl& rhs) const
 	{ return toString() >= rhs.toString(); }
-	inline bool operator==(const RsUrl& rhs)
+	inline bool operator==(const RsUrl& rhs) const
 	{ return toString() == rhs.toString(); }
-	inline bool operator!=(const RsUrl& rhs)
+	inline bool operator!=(const RsUrl& rhs) const
 	{ return toString() != rhs.toString(); }
 
 	static const std::string schemeSeparator;
