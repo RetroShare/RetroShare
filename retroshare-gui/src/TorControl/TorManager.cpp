@@ -446,7 +446,8 @@ QString TorManagerPrivate::torExecutablePath() const
 {
     SettingsObject settings(QStringLiteral("tor"));
     QString path = settings.read("executablePath").toString();
-    if (!path.isEmpty())
+
+    if (!path.isEmpty() && QFile::exists(path))
         return path;
 
 #ifdef Q_OS_WIN
@@ -456,6 +457,7 @@ QString TorManagerPrivate::torExecutablePath() const
 #endif
 
     path = qApp->applicationDirPath();
+
     if (QFile::exists(path + filename))
         return path + filename;
 
