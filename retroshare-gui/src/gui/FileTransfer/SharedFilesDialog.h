@@ -77,6 +77,8 @@ private slots:
   void clearFilter();
   void startFilter();
 
+  void updateDirTreeView();
+
   public slots:
   void changeCurrentViewModel(int viewTypeIndex);
 signals:

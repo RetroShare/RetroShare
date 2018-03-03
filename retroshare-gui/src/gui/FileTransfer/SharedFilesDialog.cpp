@@ -163,6 +163,7 @@ SharedFilesDialog::SharedFilesDialog(RetroshareDirModel *_tree_model,RetroshareD
 
 	tree_model = _tree_model ;
 	flat_model = _flat_model ;
+	connect(flat_model, SIGNAL(layoutChanged()), this, SLOT(updateDirTreeView()) );
 
 	tree_proxyModel = new SFDSortFilterProxyModel(tree_model, this);
 	tree_proxyModel->setSourceModel(tree_model);
@@ -1323,6 +1324,21 @@ void SharedFilesDialog::startFilter()
     lastFilterString = ui.filterPatternLineEdit->text();
 
     FilterItems();
+}
+
+void SharedFilesDialog::updateDirTreeView()
+{
+	if (model == flat_model)
+	{
+		size_t maxSize = 0;
+		FlatStyle_RDM* flat = dynamic_cast<FlatStyle_RDM*>(flat_model);
+		if (flat && flat->isMaxRefsTableSize(&maxSize))
+		{
+			ui.dirTreeView->setToolTip(tr("Warning: You reach max (%1) files in flat list. No more will be added.").arg(maxSize));
+			return;
+		}
+	}
+	ui.dirTreeView->setToolTip("");
 }
 
 // This macro make the search expand all items that contain the searched text.

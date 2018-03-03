@@ -217,6 +217,8 @@ class FlatStyle_RDM: public RetroshareDirModel
 
 		virtual void update() ;
 
+		bool isMaxRefsTableSize(size_t* maxSize = NULL);
+
 	protected slots:
 		void updateRefs() ;
 
