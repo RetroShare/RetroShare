@@ -96,7 +96,14 @@
 #define IMAGE_TUNNEL_ANON          ":/images/blue_lock_open.png"
 #define IMAGE_TUNNEL_FRIEND        ":/icons/avatar_128.png"
 
+//#define DEBUG_DOWNLOADLIST 1
+
 Q_DECLARE_METATYPE(FileProgressInfo)
+
+std::ostream& operator<<(std::ostream& o, const QModelIndex& i)
+{
+	return o << i.row() << "," << i.column() << "," << i.internalPointer() ;
+}
 
 class RsDownloadListModel : public QAbstractItemModel
 {
@@ -113,19 +120,32 @@ public:
 		void *ref = (parent.isValid())?parent.internalPointer():NULL ;
 
 		if(!ref)
+		{
+#ifdef DEBUG_DOWNLOADLIST
+			std::cerr << "rowCount-1(" << parent << ") : " <<  mDownloads.size() << std::endl;
+#endif
 			return mDownloads.size() ;
+		}
 
 		uint32_t entry = 0 ;
 		int source_id ;
 
 		if(!convertRefPointerToTabEntry(ref,entry,source_id) || entry >= mDownloads.size() || source_id > -1)
+		{
+#ifdef DEBUG_DOWNLOADLIST
+			std::cerr << "rowCount-2(" << parent << ") : " <<  0 << std::endl;
+#endif
 			return 0 ;
+		}
 
-		return mDownloads[entry].peers.size();	// costly
+#ifdef DEBUG_DOWNLOADLIST
+		std::cerr << "rowCount-3(" << parent << ") : " <<  mDownloads[entry].peers.size() << std::endl;
+#endif
+		return mDownloads[entry].peers.size();
 	}
 	int columnCount(const QModelIndex &parent = QModelIndex()) const
 	{
-		return 13 ;
+		return COLUMN_COUNT ;
 	}
 	bool hasChildren(const QModelIndex &parent = QModelIndex()) const
 	{
@@ -134,65 +154,101 @@ public:
 		int source_id=0 ;
 
 		if(!ref)
+		{
+#ifdef DEBUG_DOWNLOADLIST
+			std::cerr << "hasChildren-1(" << parent << ") : " << true << std::endl;
+#endif
 			return true ;
+		}
 
 		if(!convertRefPointerToTabEntry(ref,entry,source_id) || entry >= mDownloads.size() || source_id > -1)
+		{
+#ifdef DEBUG_DOWNLOADLIST
+			std::cerr << "hasChildren-2(" << parent << ") : " << false << std::endl;
+#endif
 			return false ;
+		}
 
+#ifdef DEBUG_DOWNLOADLIST
+		std::cerr << "hasChildren-3(" << parent << ") : " << !mDownloads[entry].peers.empty() << std::endl;
+#endif
 		return !mDownloads[entry].peers.empty();
 	}
 
 	QModelIndex index(int row, int column, const QModelIndex & parent = QModelIndex()) const
 	{
-		if(row < 0)
+		if(row < 0 || column < 0 || column >= COLUMN_COUNT)
 			return QModelIndex();
 
-		void *ref = (parent.isValid())?parent.internalPointer():NULL ;
+		void *parent_ref = (parent.isValid())?parent.internalPointer():NULL ;
 		uint32_t entry = 0;
 		int source_id=0 ;
-		void *subref = NULL ;
 
-		if(!ref)	// top level. The entry is that of a transfer
+		if(!parent_ref)	// top level. The entry is that of a transfer
 		{
-			if(row >= mDownloads.size() || !convertTabEntryToRefPointer(row,-1,subref))
-				return QModelIndex() ;
+			void *ref = NULL ;
 
-			return createIndex(row,column,subref) ;
+			if(row >= (int)mDownloads.size() || !convertTabEntryToRefPointer(row,-1,ref))
+			{
+#ifdef DEBUG_DOWNLOADLIST
+				std::cerr << "index-1(" << row << "," << column << " parent=" << parent << ") : " << "NULL" << std::endl;
+#endif
+				return QModelIndex() ;
+			}
+
+#ifdef DEBUG_DOWNLOADLIST
+			std::cerr << "index-2(" << row << "," << column << " parent=" << parent << ") : " << createIndex(row,column,ref) << std::endl;
+#endif
+			return createIndex(row,column,ref) ;
 		}
 
-		if(!convertRefPointerToTabEntry(ref,entry,source_id) || entry >= mDownloads.size() || int(mDownloads[entry].peers.size()) <= row)
+		if(!convertRefPointerToTabEntry(parent_ref,entry,source_id) || entry >= mDownloads.size() || int(mDownloads[entry].peers.size()) <= row)
+		{
+#ifdef DEBUG_DOWNLOADLIST
+			std::cerr << "index-5(" << row << "," << column << " parent=" << parent << ") : " << "NULL"<< std::endl ;
+#endif
 			return QModelIndex() ;
+		}
 
 		if(source_id != -1)
 			std::cerr << "ERROR: parent.source_id != -1 in index()" << std::endl;
 
-		if(!convertTabEntryToRefPointer(entry,row,subref))
-			return QModelIndex() ;
+		void *ref = NULL ;
 
-		std::cerr << "Creating index (" << row << " sid=" << source_id << " ref=" << subref << ")" << std::endl;
-		return createIndex(row,column,subref) ;
+		if(!convertTabEntryToRefPointer(entry,row,ref))
+		{
+#ifdef DEBUG_DOWNLOADLIST
+			std::cerr << "index-4(" << row << "," << column << " parent=" << parent << ") : " << "NULL" << std::endl;
+#endif
+			return QModelIndex() ;
+		}
+
+#ifdef DEBUG_DOWNLOADLIST
+		std::cerr << "index-3(" << row << "," << column << " parent=" << parent << ") : " << createIndex(row,column,ref) << std::endl;
+#endif
+		return createIndex(row,column,ref) ;
 	}
 	QModelIndex parent(const QModelIndex& child) const
 	{
-		void *ref = (child.isValid())?child.internalPointer():NULL ;
+		void *child_ref = (child.isValid())?child.internalPointer():NULL ;
 		uint32_t entry = 0;
 		int source_id=0 ;
 
-		if(!ref)
+		if(!child_ref)
 			return QModelIndex() ;
 
-		if(!convertRefPointerToTabEntry(ref,entry,source_id) || entry >= mDownloads.size() || int(mDownloads[entry].peers.size()) <= source_id)
+		if(!convertRefPointerToTabEntry(child_ref,entry,source_id) || entry >= mDownloads.size() || int(mDownloads[entry].peers.size()) <= source_id)
 			return QModelIndex() ;
 
 		if(source_id < 0)
 			return QModelIndex() ;
 
-		void *parref =NULL;
+		void *parent_ref =NULL;
 
-		if(!convertTabEntryToRefPointer(entry,-1,parref))
+		if(!convertTabEntryToRefPointer(entry,-1,parent_ref))
 			return QModelIndex() ;
 
-		return createIndex(entry,0,parref) ;
+		return createIndex(entry,child.column(),parent_ref) ;
 	}
 
 	QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const
@@ -242,21 +298,43 @@ public:
 		uint32_t entry = 0;
 		int source_id=0 ;
 
-		if(!ref)
-			return QVariant() ;
+#ifdef DEBUG_DOWNLOADLIST
+		std::cerr << "data(" << index << ")" ;
+#endif
 
-		if(!convertRefPointerToTabEntry(ref,entry,source_id) || entry >= mDownloads.size())
+		if(!ref)
 		{
-			std::cerr << "Bad pointer: " << (void*)ref << std::endl;
+#ifdef DEBUG_DOWNLOADLIST
+			std::cerr << " [empty]" << std::endl;
+#endif
 			return QVariant() ;
 		}
 
-		if(source_id >= mDownloads[entry].peers.size())
+		if(!convertRefPointerToTabEntry(ref,entry,source_id) || entry >= mDownloads.size())
+		{
+#ifdef DEBUG_DOWNLOADLIST
+			std::cerr << "Bad pointer: " << (void*)ref << std::endl;
+#endif
 			return QVariant() ;
+		}
 
-		std::cerr << "data row=" << index.row() << " col=" << index.column() << " entry=" << entry << " source=" << source_id << std::endl;
+#ifdef DEBUG_DOWNLOADLIST
+		std::cerr << " source_id=" << source_id ;
+#endif
+
+		if(source_id >= int(mDownloads[entry].peers.size()))
+		{
+#ifdef DEBUG_DOWNLOADLIST
+			std::cerr << " [empty]" << std::endl;
+#endif
+			return QVariant() ;
+		}
 
 		const FileInfo& finfo(mDownloads[entry]) ;
+
+#ifdef DEBUG_DOWNLOADLIST
+		std::cerr << " [ok]" << std::endl;
+#endif
 
 		switch(role)
 		{
@@ -533,8 +611,6 @@ public:
 
 	void update_transfers()
 	{
-//		beginResetModel();
-
 		std::list<RsFileHash> downHashes;
 		rsFiles->FileDownloads(downHashes);
 
@@ -555,13 +631,11 @@ public:
             endRemoveRows();
         }
 
-		//std::cerr << "updating file list: found " << mDownloads.size() << " transfers." << std::endl;
-
 		uint32_t i=0;
 
 		for(auto it(downHashes.begin());it!=downHashes.end();++it,++i)
 		{
-			FileInfo& fileInfo(mDownloads[i]);
+			FileInfo fileInfo(mDownloads[i]);	// we dont update the data itself but only a copy of it....
 			int old_size = fileInfo.peers.size() ;
 
 			rsFiles->FileDetails(*it, RS_FILE_HINTS_DOWNLOAD, fileInfo);
@@ -572,30 +646,37 @@ public:
 			{
 				beginInsertRows(index(i,0), old_size, new_size-1);
 				insertRows(old_size, new_size - old_size,index(i,0));
-				std::cerr << "called insert rows ( " << old_size << ", " << new_size - old_size << ")" << std::endl;
+#ifdef DEBUG_DOWNLOADLIST
+				std::cerr << "called insert rows ( " << old_size << ", " << new_size - old_size << ",index(" << index(i,0)<< "))" << std::endl;
+#endif
 				endInsertRows();
 			}
 			else if(new_size < old_size)
 			{
 				beginRemoveRows(index(i,0), new_size, old_size-1);
 				removeRows(new_size, old_size - new_size,index(i,0));
-				std::cerr << "called remove rows ( " << old_size << ", " << old_size - new_size << ")" << std::endl;
+#ifdef DEBUG_DOWNLOADLIST
+				std::cerr << "called remove rows ( " << old_size << ", " << old_size - new_size << ",index(" << index(i,0)<< "))" << std::endl;
+#endif
 				endRemoveRows();
 			}
-		}
 
-//		endResetModel();
+			mDownloads[i] = fileInfo ; // ... because insertRows() calls rowCount() which needs to be consistent with the *old* number of rows.
 
-		if(!mDownloads.empty())
-		{
-			QModelIndex topLeft = createIndex(0,0), bottomRight = createIndex(mDownloads.size()-1, COLUMN_COUNT-1);
-			emit dataChanged(topLeft, bottomRight);
+			// This is apparently not needed.
+			//
+			// if(!mDownloads.empty())
+			// {
+			// 	QModelIndex topLeft = createIndex(0,0), bottomRight = createIndex(mDownloads.size()-1, COLUMN_COUNT-1);
+			// 	emit dataChanged(topLeft, bottomRight);
+			// 	mDownloads[i] = fileInfo ;
+			// }
 		}
 	}
 private:
-	static const uint32_t TRANSFERS_NB_DOWNLOADS_BITS_32BITS     = 22 ;			// Means 2^22 simultaneous transfers
-	static const uint32_t TRANSFERS_NB_DOWNLOADS_BIT_MASK_32BITS = 0x003fffff ;	// actual bit mask corresponding to previous number of bits
-	static const uint32_t TRANSFERS_NB_SOURCES_BITS_32BITS       = 10 ;			// Means 2^10 simultaneous sources
+	static const uint32_t TRANSFERS_NB_DOWNLOADS_BITS_32BITS   = 22 ;			                            // Means 2^22 simultaneous transfers
+	static const uint32_t TRANSFERS_NB_SOURCES_BITS_32BITS     = 10 ;			                            // Means 2^10 simultaneous sources
+	static const uint32_t TRANSFERS_NB_SOURCES_BIT_MASK_32BITS = (1 << TRANSFERS_NB_SOURCES_BITS_32BITS)-1 ;// actual bit mask corresponding to previous number of bits
 
 	static bool convertTabEntryToRefPointer(uint32_t entry,int source_id,void *& ref)
 	{
@@ -606,30 +687,33 @@ private:
 		}
 		// the pointer is formed the following way:
 		//
-		//		[ 10 bits   |  22 bits ]
+		//		[ 22 bits   |  10 bits ]
 		//
-		// This means that the whoel software has the following build-in limitation:
-		//	  * 1023 sources
+		// This means that the whole software has the following build-in limitation:
 		//	  * 4M   simultaenous file transfers
+		//	  * 1023 sources
 
-		if(uint32_t(source_id+1) >= (1u<<TRANSFERS_NB_SOURCES_BITS_32BITS) || (entry+1) >= (1u<< TRANSFERS_NB_DOWNLOADS_BITS_32BITS))
+		if(uint32_t(source_id+1) >= (1u<<TRANSFERS_NB_SOURCES_BITS_32BITS) || uint32_t(entry+1) >= (1u<< TRANSFERS_NB_DOWNLOADS_BITS_32BITS))
 		{
 			std::cerr << "(EE) cannot convert download index " << entry << " and source " << source_id << " to pointer." << std::endl;
 			return false ;
 		}
 
-		ref = reinterpret_cast<void*>( ( uint32_t(1+source_id) << TRANSFERS_NB_DOWNLOADS_BITS_32BITS ) + ( (entry+1) & TRANSFERS_NB_DOWNLOADS_BIT_MASK_32BITS)) ;
+		ref = reinterpret_cast<void*>( ( uint32_t(1+entry) << TRANSFERS_NB_SOURCES_BITS_32BITS ) + ( (source_id+1) & TRANSFERS_NB_SOURCES_BIT_MASK_32BITS)) ;
 
+		assert(ref != NULL) ;
 		return true;
 	}
 
 	static bool convertRefPointerToTabEntry(void *ref,uint32_t& entry,int& source_id)
 	{
+		assert(ref != NULL) ;
+
 		// we pack the couple (id of DL, id of source) into a single 32-bits pointer that is required by the AbstractItemModel class.
 
 #pragma GCC diagnostic ignored "-Wstrict-aliasing"
-		uint32_t ntr = uint32_t(  *reinterpret_cast<uint32_t*>(&ref)   & TRANSFERS_NB_DOWNLOADS_BIT_MASK_32BITS ) ;
-		uint32_t src =  (  *reinterpret_cast<uint32_t*>(&ref)) >> TRANSFERS_NB_DOWNLOADS_BITS_32BITS ;
+		uint32_t src = uint32_t(  *reinterpret_cast<uint32_t*>(&ref)   & TRANSFERS_NB_SOURCES_BIT_MASK_32BITS ) ;
+		uint32_t ntr =         (  *reinterpret_cast<uint32_t*>(&ref)) >> TRANSFERS_NB_SOURCES_BITS_32BITS ;
 #pragma GCC diagnostic pop
 
 		if(ntr == 0)
