@@ -1,5 +1,21 @@
 retroshare (ZZZZZZ-1.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
+  919417a csoler Sat,  3 Mar 2018 19:04:54 +0100 make sure tor executable from config path can be reached
+  b587ac8 csoler Sat,  3 Mar 2018 16:06:49 +0100 Merge pull request #1192 from PhenomRetroShare/Add_WarningMaxFlatViewFile
+  9bcff07 csoler Sat,  3 Mar 2018 15:58:11 +0100 Merge pull request #1203 from PhenomRetroShare/Fix_SharedFileDialogShowColumn
+  ead2aea csoler Sat,  3 Mar 2018 15:56:51 +0100 Merge pull request #1204 from csoler/v0.6-FT
+  dcb3f79 csoler Sat,  3 Mar 2018 15:55:52 +0100 removed some debug info in RSLink
+  1a1dc64 csoler Sat,  3 Mar 2018 15:49:45 +0100 fixed transfers list bug causing ghost entries to appear
+  58d418d Phenom Sat,  3 Mar 2018 12:08:21 +0100 Fix SharedFilesDialog show old hidden column.
+  ab45a97 Phenom Sat,  3 Mar 2018 12:05:13 +0100 Revert "Fix SharedFilesDialog show old hidden column."
+  57f87a6 csoler Fri,  2 Mar 2018 22:58:50 +0100 Merge pull request #1201 from csoler/v0.6-SecurityFixes
+  9386bb9 csoler Fri,  2 Mar 2018 22:57:14 +0100 tried to fix FT list bug.
+  952ff03 csoler Fri,  2 Mar 2018 21:28:09 +0100 Merge pull request #1200 from csoler/v0.6-SecurityFixes
+  e88eebf csoler Fri,  2 Mar 2018 21:26:38 +0100 attempt to fix wrong number of rows in DL list
+  f2a737e csoler Fri,  2 Mar 2018 18:13:09 +0100 fixed font size compilation error
+  ca402c2 csoler Fri,  2 Mar 2018 18:05:11 +0100 fixed column sizing in FT dialog
+  efa5827 csoler Fri,  2 Mar 2018 18:01:56 +0100 fixed missing peer availability maps in FT dialog
+  e5edea3 csoler Thu,  1 Mar 2018 14:10:30 +0100 removed precise and zesty which are obsolete
   3d7be85 csoler Thu,  1 Mar 2018 11:46:47 +0100 Merge pull request #1199 from csoler/v0.6-SecurityFixes
   026951f csoler Thu,  1 Mar 2018 11:45:54 +0100 added consistency check in getGroupMeta so that ADMIN/PUBLISH flags always correspond to what the key set reflects
   028a246 csoler Thu,  1 Mar 2018 09:44:59 +0100 Merge pull request #1197 from csoler/v0.6-SecurityFixes
