@@ -1308,7 +1308,7 @@ bool p3PeerMgrIMPL::UpdateOwnAddress( const sockaddr_storage& pLocalAddr,
 			}
 		}
 
-		sockaddr_storage_copy(mOwnState.localaddr, localAddr);
+		sockaddr_storage_copy(localAddr, mOwnState.localaddr);
 	}
 
 
