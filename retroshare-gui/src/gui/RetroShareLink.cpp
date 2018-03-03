@@ -1213,7 +1213,6 @@ bool RetroShareLink::checkRadix64(const QString& s)
 			return false;
 		}
 	}
-	std::cerr << "Radix check: passed" << std::endl;
 	return true ;
 }
 
@@ -1968,7 +1967,9 @@ void RSLinkClipboard::parseText(QString text, QList<RetroShareLink> &links,Retro
 {
 	links.clear();
 
+#ifdef DEBUG_RSLINK
 	std::cerr << "Parsing text:" << text.toStdString() << std::endl ;
+#endif
 
 	QRegExp rx(QString("retroshare://(%1)[^\r\n]+").arg(HOST_REGEXP));
 
