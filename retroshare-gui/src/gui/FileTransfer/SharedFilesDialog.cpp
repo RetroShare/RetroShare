@@ -335,7 +335,7 @@ void LocalSharedFilesDialog::processSettings(bool bLoad)
 }
 void RemoteSharedFilesDialog::processSettings(bool bLoad)
 {
-	Settings->beginGroup("SharedFilesDialog");
+	Settings->beginGroup("RemoteSharedFilesDialog");
 
 	if (bLoad) {
 		// load settings
