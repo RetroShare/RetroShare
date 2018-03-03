@@ -229,12 +229,6 @@ LocalSharedFilesDialog::LocalSharedFilesDialog(QWidget *parent)
 
 	// load settings
 	processSettings(true);
-	// Force to show columns even if hidden in setting
-	ui.dirTreeView->setColumnHidden(COLUMN_NAME, false) ;
-	ui.dirTreeView->setColumnHidden(COLUMN_FILENB, false) ;
-	ui.dirTreeView->setColumnHidden(COLUMN_SIZE, false) ;
-	ui.dirTreeView->setColumnHidden(COLUMN_AGE, false) ;
-	ui.dirTreeView->setColumnHidden(COLUMN_FRIEND_ACCESS, false) ;
 	// Setup the current view model.
 	//
 	changeCurrentViewModel(ui.viewType_CB->currentIndex()) ;
@@ -260,16 +254,11 @@ RemoteSharedFilesDialog::RemoteSharedFilesDialog(QWidget *parent)
 	ui.checkButton->hide() ;
 
 	connect(ui.downloadButton, SIGNAL(clicked()), this, SLOT(downloadRemoteSelected()));
-	connect(ui.dirTreeView, SIGNAL(  expanded(const QModelIndex & ) ), this, SLOT(   expanded(const QModelIndex & ) ) );
-	connect(ui.dirTreeView, SIGNAL(  doubleClicked(const QModelIndex & ) ), this, SLOT(   expanded(const QModelIndex & ) ) );
+    connect(ui.dirTreeView, SIGNAL(  expanded(const QModelIndex & ) ), this, SLOT(   expanded(const QModelIndex & ) ) );
+    connect(ui.dirTreeView, SIGNAL(  doubleClicked(const QModelIndex & ) ), this, SLOT(   expanded(const QModelIndex & ) ) );
 
 	// load settings
 	processSettings(true);
-	// Force to show columns even if hidden in setting
-	ui.dirTreeView->setColumnHidden(COLUMN_NAME, false) ;
-	ui.dirTreeView->setColumnHidden(COLUMN_FILENB, false) ;
-	ui.dirTreeView->setColumnHidden(COLUMN_SIZE, false) ;
-	ui.dirTreeView->setColumnHidden(COLUMN_AGE, false) ;
 	// Setup the current view model.
 	//
 	changeCurrentViewModel(ui.viewType_CB->currentIndex()) ;
@@ -346,7 +335,7 @@ void LocalSharedFilesDialog::processSettings(bool bLoad)
 }
 void RemoteSharedFilesDialog::processSettings(bool bLoad)
 {
-	Settings->beginGroup("SharedFilesDialog");
+	Settings->beginGroup("RemoteSharedFilesDialog");
 
 	if (bLoad) {
 		// load settings
@@ -425,10 +414,6 @@ void SharedFilesDialog::changeCurrentViewModel(int viewTypeIndex)
 
 void LocalSharedFilesDialog::showProperColumns()
 {
-	ui.dirTreeView->setColumnHidden(COLUMN_NAME, false) ;
-	ui.dirTreeView->setColumnHidden(COLUMN_SIZE, false) ;
-	ui.dirTreeView->setColumnHidden(COLUMN_AGE, false) ;
-
 	if(model == tree_model)
 	{
 		ui.dirTreeView->setColumnHidden(COLUMN_FILENB, false) ;
@@ -454,10 +439,6 @@ void LocalSharedFilesDialog::showProperColumns()
 }
 void RemoteSharedFilesDialog::showProperColumns()
 {
-	ui.dirTreeView->setColumnHidden(COLUMN_NAME, false) ;
-	ui.dirTreeView->setColumnHidden(COLUMN_SIZE, false) ;
-	ui.dirTreeView->setColumnHidden(COLUMN_AGE, false) ;
-
 	if(model == tree_model)
 	{
 		ui.dirTreeView->setColumnHidden(COLUMN_FILENB, false) ;
