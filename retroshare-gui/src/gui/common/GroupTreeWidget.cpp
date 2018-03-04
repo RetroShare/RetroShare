@@ -481,11 +481,13 @@ void GroupTreeWidget::fillGroupItems(QTreeWidgetItem *categoryItem, const QList<
 			tooltip += "\n" + QString::number(itemInfo.max_visible_posts) + " messages available" ;
 		// if(itemInfo.max_visible_posts)  // wtf? this=0 when there are some posts definitely exist - lastpost is recent
 		if(itemInfo.lastpost == QDateTime::fromTime_t(0))
-		    tooltip += "\n" + tr("Last Post") + ": "  + tr("Never") ;
+			tooltip += "\n" + tr("Last Post") + ": "  + tr("Never") ;
 		else
 			tooltip += "\n" + tr("Last Post") + ": "  + DateTime::formatLongDateTime(itemInfo.lastpost) ;
 		if(!IS_GROUP_SUBSCRIBED(itemInfo.subscribeFlags))
 			tooltip += "\n" + tr("Subscribe to download and read messages") ;
+
+		tooltip += "\n" + tr("Description") + ": " + itemInfo.description;
 
 		item->setToolTip(COLUMN_NAME, tooltip);
 		item->setToolTip(COLUMN_UNREAD, tooltip);
