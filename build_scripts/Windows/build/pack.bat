@@ -128,6 +128,12 @@ if "%QtMainVersion%"=="5" (
 	copy "%QtPath%\..\plugins\audio\qtaudio_windows.dll" "%RsDeployPath%\audio" %Quite%
 )
 
+if exist "%QtPath%\..\plugins\styles\qwindowsvistastyle.dll" (
+	echo Copy styles
+	mkdir "%RsDeployPath%\styles" %Quite%
+	copy "%QtPath%\..\plugins\styles\qwindowsvistastyle.dll" "%RsDeployPath%\styles" %Quite%
+)
+
 copy "%QtPath%\..\plugins\imageformats\*.dll" "%RsDeployPath%\imageformats" %Quite%
 del /Q "%RsDeployPath%\imageformats\*d?.dll" %Quite%
 

@@ -195,11 +195,15 @@ Section $(Section_Main) Section_Main
 
   ; Qt audio
   SetOutPath "$INSTDIR\audio"
-  File /r "${QTDIR}\plugins\audio\qtaudio_windows.dll"
+  File "${QTDIR}\plugins\audio\qtaudio_windows.dll"
 
   ; Qt platforms
   SetOutPath "$INSTDIR\platforms"
-  File /r "${QTDIR}\plugins\platforms\qwindows.dll"
+  File "${QTDIR}\plugins\platforms\qwindows.dll"
+
+  ; Qt styles
+  SetOutPath "$INSTDIR\styles"
+  File /NONFATAL "${QTDIR}\plugins\styles\qwindowsvistastyle.dll"
 
   ; MinGW binaries
   SetOutPath "$INSTDIR"

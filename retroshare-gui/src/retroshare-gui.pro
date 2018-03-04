@@ -169,6 +169,8 @@ win32 {
 	CONFIG(debug, debug|release) {
 		# show console output
 		CONFIG += console
+	} else {
+		CONFIG -= console
 	}
 
 	# Switch on extra warnings
