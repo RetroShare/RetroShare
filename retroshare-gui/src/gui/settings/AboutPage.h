@@ -39,7 +39,7 @@ public:
 	/** Loads the settings for this page */
 	virtual void load();
 
-	virtual QPixmap iconPixmap() const { return QPixmap(":/icons/settings/sound.svg") ; }
+	virtual QPixmap iconPixmap() const { return QPixmap(":/icons/svg/info.svg") ; }
 	virtual QString pageName() const { return tr("About") ; }
 	virtual QString helpText() const { return ""; }
 
