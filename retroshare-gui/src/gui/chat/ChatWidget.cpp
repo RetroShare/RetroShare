@@ -474,6 +474,7 @@ uint32_t ChatWidget::maxMessageSize()
 
 bool ChatWidget::eventFilter(QObject *obj, QEvent *event)
 {
+	//QEvent::Type type = event->type();
 	if (obj == ui->textBrowser || obj == ui->textBrowser->viewport()
 	    || obj == ui->leSearch || obj == ui->chatTextEdit) {
 		if (event->type() == QEvent::KeyPress) {
@@ -672,6 +673,17 @@ bool ChatWidget::eventFilter(QObject *obj, QEvent *event)
 					}
 				}
 			}
+		}
+		if (event->type() == QEvent::StyleChange)
+		{
+			QString colorName = currentColor.name();
+			qreal desiredContrast = Settings->valueFromGroup("Chat", "MinimumContrast", 4.5).toDouble();
+			QColor backgroundColor = ui->chatTextEdit->palette().base().color();
+			RsHtml::findBestColor(colorName, backgroundColor, desiredContrast);
+
+			currentColor = QColor(colorName);
+			ui->chatTextEdit->setTextColor(currentColor);
+			colorChanged();
 		}
 	} else if (obj == ui->leSearch) {
 		if (event->type() == QEvent::KeyPress) {
