@@ -22,10 +22,13 @@
 #ifndef _SHAREDFILESDIALOG_H
 #define _SHAREDFILESDIALOG_H
 
-#include <set>
+#include "ui_SharedFilesDialog.h"
+
 #include "RsAutoUpdatePage.h"
 #include "gui/RetroShareLink.h"
-#include "ui_SharedFilesDialog.h"
+#include "util/RsProtectedTimer.h"
+
+#include <set>
 
 class RetroshareDirModel;
 class QSortFilterProxyModel;
@@ -73,6 +76,7 @@ private slots:
 	
   void indicatorChanged(int index);
 
+  void onFilterTextEdited();
   void filterRegExpChanged();
   void clearFilter();
   void startFilter();
@@ -137,6 +141,7 @@ protected:
 
   QString lastFilterString;
   QString mLastFilterText ;
+  RsProtectedTimer* mFilterTimer;
 
   QList<QModelIndex> mHiddenIndexes;
 };

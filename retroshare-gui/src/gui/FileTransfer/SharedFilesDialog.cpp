@@ -186,7 +186,14 @@ SharedFilesDialog::SharedFilesDialog(RetroshareDirModel *_tree_model,RetroshareD
     connect(ui.filterClearButton, SIGNAL(clicked()), this, SLOT(clearFilter()));
 	connect(ui.filterStartButton, SIGNAL(clicked()), this, SLOT(startFilter()));
 	connect(ui.filterPatternLineEdit, SIGNAL(returnPressed()), this, SLOT(startFilter()));
-	connect(ui.filterPatternLineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(filterRegExpChanged()));
+	connect(ui.filterPatternLineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(onFilterTextEdited()));
+	//Hidden by default, shown on onFilterTextEdited
+	ui.filterClearButton->hide();
+	ui.filterStartButton->hide();
+
+	mFilterTimer = new RsProtectedTimer( this );
+	mFilterTimer->setSingleShot( true ); // Ensure the timer will fire only once after it was started
+	connect(mFilterTimer, SIGNAL(timeout()), this, SLOT(filterRegExpChanged()));
 
 	/* Set header resize modes and initial section sizes  */
 	QHeaderView * header = ui.dirTreeView->header () ;
@@ -1246,33 +1253,39 @@ void SharedFilesDialog::indicatorChanged(int index)
 	updateDisplay() ;
 }
 
-void SharedFilesDialog::filterRegExpChanged()
+void SharedFilesDialog::onFilterTextEdited()
 {
-    QString text = ui.filterPatternLineEdit->text();
+	QString text = ui.filterPatternLineEdit->text();
 
-    if (text.isEmpty()) {
-        ui.filterClearButton->hide();
-    } else {
-        ui.filterClearButton->show();
-    }
+	if (text.isEmpty()) {
+		ui.filterClearButton->hide();
+	} else {
+		ui.filterClearButton->show();
+	}
 
-    if (text == lastFilterString) {
-        ui.filterStartButton->hide();
-    } else {
-        ui.filterStartButton->show();
-    }
-
-	//bool valid = false ;
-	//QColor color ;
+	if (text == lastFilterString) {
+		ui.filterStartButton->hide();
+	} else {
+		ui.filterStartButton->show();
+	}
 
 	if(text.length() > 0 && text.length() < 3)
 	{
-		//valid = false;
-
 		ui.filterStartButton->setEnabled(false) ;
 		ui.filterPatternFrame->setToolTip(tr("Search string should be at least 3 characters long.")) ;
 		return ;
 	}
+
+	ui.filterStartButton->setEnabled(true) ;
+	ui.filterPatternFrame->setToolTip(QString());
+
+	mFilterTimer->start( 500 ); // This will fire filterRegExpChanged after 500 ms.
+	// If the user types something before it fires, the timer restarts counting
+}
+
+void SharedFilesDialog::filterRegExpChanged()
+{
+	QString text = ui.filterPatternLineEdit->text();
 
 	if(text.length() > 0 && proxyModel == tree_proxyModel)
 	{
@@ -1497,8 +1510,19 @@ void SharedFilesDialog::FilterItems()
 		std::cerr << "Found " << result_list.size() << " results" << std::endl;
 #endif
 
-		if(result_list.size() > MAX_SEARCH_RESULTS)
+		size_t resSize = result_list.size();
+		if(resSize == 0)
+		{
+			ui.filterPatternFrame->setToolTip(tr("No result.")) ;
 			return ;
+		}
+		if(resSize > MAX_SEARCH_RESULTS)
+		{
+			ui.filterPatternFrame->setToolTip(tr("More than %1 results. Add more/longer search words to select less.").arg(MAX_SEARCH_RESULTS)) ;
+			return ;
+		}
+		ui.filterPatternFrame->setToolTip(tr("Found %1 results.").arg(resSize)) ;
+
 #ifdef DEBUG_SHARED_FILES_DIALOG
 		std::cerr << "Found this result: " << std::endl;
 #endif
