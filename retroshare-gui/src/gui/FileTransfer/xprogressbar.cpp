@@ -320,9 +320,14 @@ void xProgressBar::paint()
 	// paint text?
 	if (displayText)
 	{
-		QLocale locale;
+		QRect bounding = painter->boundingRect(rect, Qt::AlignCenter, QLocale().toString(_pinfo.progress, 'f', 2) + "%");
+		QColor color (255-textColor.red(), 255-textColor.green(), 255-textColor.blue(), 125);
+		painter->setPen(color);
+		painter->setBrush(QBrush(color));
+		painter->drawRect(bounding.adjusted(2,2,-4,-4));
+
 		painter->setPen(textColor);
-		painter->drawText(rect, Qt::AlignCenter, locale.toString(_pinfo.progress, 'f', 2) + "%");
+		painter->drawText(rect, Qt::AlignCenter, QLocale().toString(_pinfo.progress, 'f', 2) + "%");
 	}
 
 	backgroundColor.setRgb(255, 255, 255);
