@@ -13,16 +13,12 @@ call "%~dp0build-libs\build-libs.bat" auto-copy
 if errorlevel 1 %cecho% error "Failed to build libraries." & exit /B %ERRORLEVEL%
 
 %cecho% info "Build %SourceName%"
-call "%~dp0build\build.bat" standard
+call "%~dp0build\build.bat" retrotor
 if errorlevel 1 %cecho% error "Failed to build %SourceName%." & exit /B %ERRORLEVEL%
 
 %cecho% info "Pack %SourceName%"
-call "%~dp0build\pack.bat" standard
+call "%~dp0build\pack.bat" retrotor
 if errorlevel 1 %cecho% error "Failed to pack %SourceName%." & exit /B %ERRORLEVEL%
-
-%cecho% info "Build installer"
-call "%~dp0build\build-installer.bat"
-if errorlevel 1 %cecho% error "Failed to build installer." & exit /B %ERRORLEVEL%
 
 exit /B 0
 
