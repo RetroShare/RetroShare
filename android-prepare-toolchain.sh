@@ -5,7 +5,7 @@
 [ -z ${ANDROID_NDK_ARCH+x} ] && export ANDROID_NDK_ARCH="arm"
 [ -z ${ANDROID_NDK_ABI_VER+x} ] && export ANDROID_NDK_ABI_VER="4.9"
 [ -z ${ANDROID_PLATFORM_VER+x} ] && export ANDROID_PLATFORM_VER="18"
-[ -z ${NDK_TOOLCHAIN_PATH+x} ] && export NDK_TOOLCHAIN_PATH="${HOME}/Builds/android-toolchains/retroshare-android-${ANDROID_PLATFORM_VER}-${ANDROID_NDK_ARCH}-abi${ANDROID_NDK_ABI_VER}/"
+[ -z ${NATIVE_LIBS_TOOLCHAIN_PATH+x} ] && export NATIVE_LIBS_TOOLCHAIN_PATH="${HOME}/Builds/android-toolchains/retroshare-android-${ANDROID_PLATFORM_VER}-${ANDROID_NDK_ARCH}-abi${ANDROID_NDK_ABI_VER}/"
 [ -z ${HOST_NUM_CPU+x} ] && export HOST_NUM_CPU=$(grep "^processor" /proc/cpuinfo | wc -l)
 [ -z ${BZIP2_SOURCE_VERSION+x} ] && export BZIP2_SOURCE_VERSION="1.0.6"
 [ -z ${OPENSSL_SOURCE_VERSION+x} ] && export OPENSSL_SOURCE_VERSION="1.0.2n"
@@ -23,21 +23,21 @@ else
 	cArch="${ANDROID_NDK_ARCH}"
 	eABI="eabi"
 fi
-export SYSROOT="${NDK_TOOLCHAIN_PATH}/sysroot"
+export SYSROOT="${NATIVE_LIBS_TOOLCHAIN_PATH}/sysroot"
 export PREFIX="${SYSROOT}"
-export CC="${NDK_TOOLCHAIN_PATH}/bin/${cArch}-linux-android${eABI}-gcc"
-export CXX="${NDK_TOOLCHAIN_PATH}/bin/${cArch}-linux-android${eABI}-g++"
-export AR="${NDK_TOOLCHAIN_PATH}/bin/${cArch}-linux-android${eABI}-ar"
-export RANLIB="${NDK_TOOLCHAIN_PATH}/bin/${cArch}-linux-android${eABI}-ranlib"
+export CC="${NATIVE_LIBS_TOOLCHAIN_PATH}/bin/${cArch}-linux-android${eABI}-gcc"
+export CXX="${NATIVE_LIBS_TOOLCHAIN_PATH}/bin/${cArch}-linux-android${eABI}-g++"
+export AR="${NATIVE_LIBS_TOOLCHAIN_PATH}/bin/${cArch}-linux-android${eABI}-ar"
+export RANLIB="${NATIVE_LIBS_TOOLCHAIN_PATH}/bin/${cArch}-linux-android${eABI}-ranlib"
 export ANDROID_DEV="${ANDROID_NDK_PATH}/platforms/android-${ANDROID_PLATFORM_VER}/arch-${ANDROID_NDK_ARCH}/usr"
 
 
 ## More information available at https://android.googlesource.com/platform/ndk/+/ics-mr0/docs/STANDALONE-TOOLCHAIN.html
 build_toolchain()
 {
-	rm -rf ${NDK_TOOLCHAIN_PATH}
+	rm -rf ${NATIVE_LIBS_TOOLCHAIN_PATH}
 	[ "${ANDROID_NDK_ARCH}" == "x86" ] && toolchainName="${ANDROID_NDK_ARCH}-${ANDROID_NDK_ABI_VER}" || toolchainName="${ANDROID_NDK_ARCH}-linux-androideabi-${ANDROID_NDK_ABI_VER}" 
-	${ANDROID_NDK_PATH}/build/tools/make-standalone-toolchain.sh --ndk-dir=${ANDROID_NDK_PATH} --arch=${ANDROID_NDK_ARCH} --install-dir=${NDK_TOOLCHAIN_PATH} --platform=android-${ANDROID_PLATFORM_VER} --toolchain=${toolchainName} --verbose
+	${ANDROID_NDK_PATH}/build/tools/make-standalone-toolchain.sh --ndk-dir=${ANDROID_NDK_PATH} --arch=${ANDROID_NDK_ARCH} --install-dir=${NATIVE_LIBS_TOOLCHAIN_PATH} --platform=android-${ANDROID_PLATFORM_VER} --toolchain=${toolchainName} --verbose
 }
 
 ## More information available at retroshare://file?name=Android%20Native%20Development%20Kit%20Cookbook.pdf&size=29214468&hash=0123361c1b14366ce36118e82b90faf7c7b1b136
@@ -164,4 +164,4 @@ build_sqlite
 build_sqlcipher
 build_libupnp
 
-echo NDK_TOOLCHAIN_PATH=${NDK_TOOLCHAIN_PATH}
+echo NATIVE_LIBS_TOOLCHAIN_PATH=${NATIVE_LIBS_TOOLCHAIN_PATH}

@@ -129,7 +129,7 @@ android-* {
     CONFIG -= libresapihttpserver upnp_miniupnpc
     QT *= androidextras
     INCLUDEPATH += $$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/include
-    LIBS *= -L$$NDK_TOOLCHAIN_PATH/sysroot/usr/lib/
+    LIBS *= -L$$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/lib/
 }
 
 win32 {

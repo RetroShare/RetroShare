@@ -31,7 +31,7 @@ export ANDROID_NDK_PATH="/opt/android-ndk/"
 
 ## The path where your fresh compiled toolchain will be installed, make sure
 ## the parent exists
-export NDK_TOOLCHAIN_PATH="${HOME}/Builds/android-toolchains/retroshare-android/"
+export NATIVE_LIBS_TOOLCHAIN_PATH="${HOME}/Builds/android-toolchains/retroshare-android/"
 
 ## The CPU architecture of the Android device you want to target
 export ANDROID_NDK_ARCH="arm"
@@ -66,7 +66,7 @@ _Qt Creator left pane -> Projects -> Build and Run -> Android SOMESTUFF kit ->
 Build Environement -> Add
 
 Variable: +NATIVE_LIBS_TOOLCHAIN_PATH+
-Value: +Same value as NDK_TOOLCHAIN_PATH in Preparing The Environement step+
+Value: +Same value as NATIVE_LIBS_TOOLCHAIN_PATH in Preparing The Environement step+
 
 Some of RetroShare modules like +retroshare-gui+ and +WebUI+ are not available
 on Android so to be able to compile RetroShare without errors you will have to
