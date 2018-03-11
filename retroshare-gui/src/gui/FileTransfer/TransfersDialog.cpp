@@ -602,7 +602,7 @@ public:
 				QString iconName,tooltip;
 				TransfersDialog::getPeerName(fileInfo.peers[source_id].peerId, iconName, tooltip);
 
-				return QVariant(iconName);
+				return QVariant(QIcon(iconName));
 			}
 		}
 		else
