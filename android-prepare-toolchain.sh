@@ -13,7 +13,8 @@
 [ -z ${SQLITE_SOURCE_VERSION+x} ] && export SQLITE_SOURCE_VERSION="3220000"
 [ -z ${SQLCIPHER_SOURCE_VERSION+x} ] && export SQLCIPHER_SOURCE_VERSION="3.4.2"
 [ -z ${LIBUPNP_SOURCE_VERSION+x} ] && export LIBUPNP_SOURCE_VERSION="1.6.24"
-
+[ -z ${QT_VERSION+x} ] && export QT_VERSION="5.9.4"
+[ -z ${INSTALL_QT_ANDROID+x} ] && export INSTALL_QT_ANDROID="false"
 
 ## You should not edit the following variables
 if [ "${ANDROID_NDK_ARCH}" == "x86" ]; then
@@ -38,6 +39,87 @@ build_toolchain()
 	rm -rf ${NATIVE_LIBS_TOOLCHAIN_PATH}
 	[ "${ANDROID_NDK_ARCH}" == "x86" ] && toolchainName="${ANDROID_NDK_ARCH}-${ANDROID_NDK_ABI_VER}" || toolchainName="${ANDROID_NDK_ARCH}-linux-androideabi-${ANDROID_NDK_ABI_VER}" 
 	${ANDROID_NDK_PATH}/build/tools/make-standalone-toolchain.sh --ndk-dir=${ANDROID_NDK_PATH} --arch=${ANDROID_NDK_ARCH} --install-dir=${NATIVE_LIBS_TOOLCHAIN_PATH} --platform=android-${ANDROID_PLATFORM_VER} --toolchain=${toolchainName} --verbose
+}
+
+## More information available at https://gitlab.com/relan/provisioners/merge_requests/1 and http://stackoverflow.com/a/34032216
+install_qt_android()
+{
+	QT_VERSION_CODE=$(echo $QT_VERSION | tr -d .)
+	QT_INSTALL_PATH=${NATIVE_LIBS_TOOLCHAIN_PATH}/Qt
+	QT_INSTALLER="qt-unified-linux-x64-3.0.2-online.run"
+
+	[ -f ${QT_INSTALLER} ] || wget http://master.qt.io/archive/online_installers/3.0/${QT_INSTALLER}
+	chmod a+x ${QT_INSTALLER}
+
+	QT_INSTALLER_SCRIPT=$(mktemp)
+	cat << EOF > "${QT_INSTALLER_SCRIPT}"
+function Controller() {
+    installer.autoRejectMessageBoxes();
+    installer.installationFinished.connect(function() {
+        gui.clickButton(buttons.NextButton);
+    });
+
+    var welcomePage = gui.pageWidgetByObjectName("WelcomePage");
+    welcomePage.completeChanged.connect(function() {
+        if (gui.currentPageWidget().objectName == welcomePage.objectName)
+            gui.clickButton(buttons.NextButton);
+    });
+}
+
+Controller.prototype.WelcomePageCallback = function() {
+    gui.clickButton(buttons.NextButton);
+}
+
+Controller.prototype.CredentialsPageCallback = function() {
+    gui.clickButton(buttons.NextButton);
+}
+
+Controller.prototype.IntroductionPageCallback = function() {
+    gui.clickButton(buttons.NextButton);
+}
+
+Controller.prototype.TargetDirectoryPageCallback = function() {
+    gui.currentPageWidget().TargetDirectoryLineEdit.setText("$QT_INSTALL_PATH");
+    gui.clickButton(buttons.NextButton);
+}
+
+Controller.prototype.ComponentSelectionPageCallback = function() {
+    var widget = gui.currentPageWidget();
+
+    // You can get these component names by running the installer with the
+    // --verbose flag. It will then print out a resource tree.
+
+    widget.deselectComponent("qt.tools.qtcreator");
+    widget.deselectComponent("qt.tools.doc");
+    widget.deselectComponent("qt.tools.examples");
+
+    widget.selectComponent("qt.$QT_VERSION_CODE.android_armv7");
+
+    gui.clickButton(buttons.NextButton);
+}
+
+Controller.prototype.LicenseAgreementPageCallback = function() {
+    gui.currentPageWidget().AcceptLicenseRadioButton.setChecked(true);
+    gui.clickButton(buttons.NextButton);
+}
+
+Controller.prototype.StartMenuDirectoryPageCallback = function() {
+    gui.clickButton(buttons.NextButton);
+}
+
+Controller.prototype.ReadyForInstallationPageCallback = function() {
+    gui.clickButton(buttons.NextButton);
+}
+
+Controller.prototype.FinishedPageCallback = function() {
+    var checkBoxForm = gui.currentPageWidget().LaunchQtCreatorCheckBoxForm;
+    if (checkBoxForm && checkBoxForm.launchQtCreatorCheckBox)
+        checkBoxForm.launchQtCreatorCheckBox.checked = false;
+    gui.clickButton(buttons.FinishButton);
+}
+EOF
+
+QT_QPA_PLATFORM=minimal ./${QT_INSTALLER} --script ${QT_INSTALLER_SCRIPT}
 }
 
 ## More information available at retroshare://file?name=Android%20Native%20Development%20Kit%20Cookbook.pdf&size=29214468&hash=0123361c1b14366ce36118e82b90faf7c7b1b136
@@ -158,6 +240,7 @@ build_libmicrohttpd()
 }
 
 build_toolchain
+[ "${INSTALL_QT_ANDROID}X" == "trueX" ] && install_qt_android
 build_bzlib
 build_openssl
 build_sqlite
