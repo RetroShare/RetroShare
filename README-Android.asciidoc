@@ -91,6 +91,8 @@ pointing to your SDK installation path, like
 
 == Quircks
 
+=== Protected Apps
+
 On some Android devices like +Huawei ALE-L21+ background applications are
 killed when screen is turned off unless they are in the _protected app_ list.
 At moment seems apps developers don't have a way to have the application
@@ -104,6 +106,69 @@ To enable enable _protection_: +Android menu -> Settings -> Privacy & security
 {empty} +
 
 Other devices may offer similar _features_ please report them.
+
+
+=== APK signature mismatch
+
+If you try to install a RetroShare APK that comes from a different source
+(eg: if you try to upgrade from F-Droid when you originally installed an APK
+build by yourself) Android will prevent that from happening. In that case the
+only solution is to uninstall the app and then install the new APK but if you do
+it also the application data and your precious cryptographic keys, friend list
+etc. will be lost forever.
+To avoid that you can attempt to manually backup and then restore from the
+command-line (+adb backup+ seems not working either) to change the app source
+without erasing the appliation data.
+
+CAUTION: Following steps require root access on your Android device
+
+.Backup RetroShare Android application data
+[source,bash]
+--------------------------------------------------------------------------------
+export ORIG_DIR="/data/data/org.retroshare.android.qml_app"
+export BACKUP_DIR="org.retroshare.android.qml_app.backup"
+
+adb root
+
+adb shell am force-stop org.retroshare.android.qml_app
+sleep 1s
+
+mkdir ${BACKUP_DIR}
+
+# Avoid adb pull failing
+adb shell rm ${ORIG_DIR}/files/.retroshare/libresapi.sock
+adb pull ${ORIG_DIR}/files/ ${BACKUP_DIR}/files/
+--------------------------------------------------------------------------------
+
+After this you should be able to uninstall the old APK with your preferred
+method, as example from the command-line.
+
+.Uninstall RetroShare Android from the command-line
+[source,bash]
+--------------------------------------------------------------------------------
+adb uninstall org.retroshare.android.qml_app
+--------------------------------------------------------------------------------
+
+Now you can install a different signature APK and then restore the application
+data with the following commands.
+
+[source,bash]
+--------------------------------------------------------------------------------
+export ORIG_DIR="/data/data/org.retroshare.android.qml_app"
+export BACKUP_DIR="org.retroshare.android.qml_app.backup"
+
+adb root
+
+adb shell am force-stop org.retroshare.android.qml_app
+sleep 1s
+
+APP_OWNER="$(adb shell busybox ls -lnd ${ORIG_DIR} | awk '{print $3":"$4}')"
+adb shell rm -rf ${ORIG_DIR}/files
+adb push ${BACKUP_DIR}/files/ ${ORIG_DIR}/files/
+adb shell busybox chown -R ${APP_OWNER} ${ORIG_DIR}/files/
+--------------------------------------------------------------------------------
+
+Opening RetroShare android app now should show your old profile.
 
 
 == Debugging with GDB
