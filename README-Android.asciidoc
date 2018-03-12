@@ -159,8 +159,13 @@ export BACKUP_DIR="org.retroshare.android.qml_app.backup"
 
 adb root
 
+## Launch the app to make sure the parent directory exists and has proper owner
+adb shell monkey -p org.retroshare.android.qml_app -c android.intent.category.LAUNCHER 1
+sleep 1s
+
 adb shell am force-stop org.retroshare.android.qml_app
 sleep 1s
+
 
 APP_OWNER="$(adb shell busybox ls -lnd ${ORIG_DIR} | awk '{print $3":"$4}')"
 adb shell rm -rf ${ORIG_DIR}/files
