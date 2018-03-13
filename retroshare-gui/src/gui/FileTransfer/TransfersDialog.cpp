@@ -661,7 +661,15 @@ public:
 				endRemoveRows();
 			}
 
+			uint32_t old_status = mDownloads[i].downloadStatus ;
+
 			mDownloads[i] = fileInfo ; // ... because insertRows() calls rowCount() which needs to be consistent with the *old* number of rows.
+
+			if(fileInfo.downloadStatus == FT_STATE_DOWNLOADING || old_status != fileInfo.downloadStatus)
+			{
+			 	QModelIndex topLeft = createIndex(i,0), bottomRight = createIndex(i, COLUMN_COUNT-1);
+			 	emit dataChanged(topLeft, bottomRight);
+			}
 
 			// This is apparently not needed.
 			//
