@@ -26,14 +26,10 @@
 
 #include "services/p3discovery2.h"
 #include "pqi/p3peermgr.h"
-#include "pqi/pqinetwork.h"        // for getLocalAddresses
 #include "util/rsversioninfo.h"
 
 #include "retroshare/rsiface.h"
 #include "rsserver/p3face.h"
-
-#include <vector>    // for std::vector
-#include <algorithm> // for std::random_shuffle
 
 
 // Interface pointer.
@@ -350,41 +346,6 @@ void p3discovery2::sendOwnContactInfo(const SSLID &sslid)
 	peerState detail;
 	if (mPeerMgr->getOwnNetStatus(detail))
 	{
-		/* Workaround to spread multiple local ip addresses when presents. This
-		 * is needed because RS wrongly assumes that there is just one active
-		 * local ip address at time. */
-		std::vector<sockaddr_storage> addrs;
-		if(!detail.hiddenNode && getLocalAddresses(addrs))
-		{
-			/* To work around MAX_ADDRESS_LIST_SIZE addresses limitation,
-			 *  let's shuffle the list of
-			 *  local addresses in the hope that with enough time every local
-			 *  address is advertised to trusted nodes so they may try to
-			 *  connect to all of them including the most convenient if a local
-			 *  connection exists.*/
-			std::random_shuffle(addrs.begin(), addrs.end());
-
-			for (auto it = addrs.begin(); it!=addrs.end(); ++it)
-			{
-				sockaddr_storage& addr(*it);
-				if( sockaddr_storage_isValidNet(addr) &&
-				    !sockaddr_storage_isLoopbackNet(addr) &&
-				    !sockaddr_storage_sameip(addr, detail.localaddr) )
-				{
-					pqiIpAddress pqiIp;
-					sockaddr_storage_clear(pqiIp.mAddr);
-					pqiIp.mAddr.ss_family = addr.ss_family;
-					sockaddr_storage_copyip(pqiIp.mAddr, addr);
-					sockaddr_storage_setport(
-					            pqiIp.mAddr,
-					            sockaddr_storage_port(detail.localaddr) );
-					pqiIp.mSeenTime = time(nullptr);
-					pqiIp.mSrc = 0;
-					detail.ipAddrs.updateLocalAddrs(pqiIp);
-				}
-			}
-		}
-
 		RsDiscContactItem *pkt = new RsDiscContactItem();
 		/* Cyril: we dont send our own IP to an hidden node. It will not use it
 		 *   anyway. */
@@ -513,13 +474,13 @@ void p3discovery2::updatePeerAddressList(const RsDiscContactItem *item)
 		 *   permission matrix. Disabling this instead will make life more
 		 *   difficult for average user, that moreover whould have no way to
 		 *   revert an hardcoded policy. */
-
-		pqiIpAddrSet addrsFromPeer;	
+		pqiIpAddrSet addrsFromPeer;
 		addrsFromPeer.mLocal.extractFromTlv(item->localAddrList);
 		addrsFromPeer.mExt.extractFromTlv(item->extAddrList);
 
 #ifdef P3DISC_DEBUG
-		std::cerr << "Setting address list to peer " << item->sslId << ", to be:" << std::endl ;
+		std::cerr << "Setting address list to peer " << item->sslId
+		          << ", to be:" << std::endl ;
 
 		std::string addrstr;
 		addrsFromPeer.printAddrs(addrstr);
