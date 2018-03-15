@@ -39,7 +39,7 @@
 static const uint32_t SOURCE_CHUNK_MAP_UPDATE_PERIOD	=   60 ; //! TTL for chunkmap info
 static const uint32_t INACTIVE_CHUNK_TIME_LAPSE 		= 3600 ; //! TTL for an inactive chunk
 static const uint32_t FT_CHUNKMAP_MAX_CHUNK_JUMP		=   50 ; //! Maximum chunk jump in progressive DL mode
-static const uint32_t FT_CHUNKMAP_MAX_SLICE_REASK_DELAY =   10 ; //! Maximum chunk jump in progressive DL mode
+static const uint32_t FT_CHUNKMAP_MAX_SLICE_REASK_DELAY =   10 ; //! Maximum time to re-ask a slice to another peer at end of transfer
 
 std::ostream& operator<<(std::ostream& o,const ftChunk& c)
 {
