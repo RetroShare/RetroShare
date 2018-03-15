@@ -95,7 +95,7 @@
 //		 by a mix between our own GXS id and the GXS id we're talking to. That is what the TunnelVirtualPeer is.
 //
 //      
-//	RequestTunnel(source_own_id,destination_id)                                                                              -
+//	RequestTunnel(source_own_id,destination_id)                                                                                  -
 //                            |                                                                                                  |
 //                            +---------------------------> p3Turtle::monitorTunnels(  hash(destination_id)   )                  |
 //                                                                            |                                                  |
