@@ -46,7 +46,8 @@
 #include "util/HandleRichText.h"
 #include "util/QtVersion.h"
 
-#include <retroshare/rsnotify.h>
+#include "retroshare/rsnotify.h"
+#include "util/rstime.h"
 
 #include <time.h>
 #include <unistd.h>
@@ -63,7 +64,9 @@ const static uint32_t timeToInactivity = 60 * 10;   // in seconds
 
 /** Default constructor */
 ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::WindowFlags flags)
-	: ChatDialog(parent, flags), lobbyId(lid)
+        : ChatDialog(parent, flags), lobbyId(lid),
+          bullet_red_128(":/icons/bullet_red_128.png"), bullet_grey_128(":/icons/bullet_grey_128.png"),
+          bullet_green_128(":/icons/bullet_green_128.png"), bullet_yellow_128(":/icons/bullet_yellow_128.png")
 {
 	/* Invoke Qt Designer generated QObject setup routine */
 	ui.setupUi(this);
@@ -337,7 +340,7 @@ void ChatLobbyDialog::init(const ChatId &/*id*/, const QString &/*title*/)
         if(rsIdentity->getIdDetails(gxs_id,details))
             break ;
         else
-            usleep(1000*300) ;
+            rstime::rs_usleep(1000*300) ;
 
     ui.chatWidget->setName(QString::fromUtf8(details.mNickname.c_str()));
     //ui.chatWidget->addToolsAction(ui.actionChangeNickname);
@@ -556,16 +559,16 @@ void ChatLobbyDialog::updateParticipantsList()
 
 
             if(isParticipantMuted(it2->first))
-                widgetitem->setIcon(COLUMN_ICON, QIcon(":/icons/bullet_red_128.png"));
+                widgetitem->setIcon(COLUMN_ICON, bullet_red_128);
             else if (tLastAct + timeToInactivity < now)
-                widgetitem->setIcon(COLUMN_ICON, QIcon(":/icons/bullet_grey_128.png"));
+                widgetitem->setIcon(COLUMN_ICON, bullet_grey_128);
             else
-                widgetitem->setIcon(COLUMN_ICON, QIcon(":/icons/bullet_green_128.png"));
+                widgetitem->setIcon(COLUMN_ICON, bullet_green_128);
 
             RsGxsId gxs_id;
             rsMsgs->getIdentityForChatLobby(lobbyId, gxs_id);
 
-            if (RsGxsId(participant.toStdString()) == gxs_id) widgetitem->setIcon(COLUMN_ICON, QIcon(":/icons/bullet_yellow_128.png"));
+            if (RsGxsId(participant.toStdString()) == gxs_id) widgetitem->setIcon(COLUMN_ICON, bullet_yellow_128);
 
 	    widgetitem->updateBannedState();
         

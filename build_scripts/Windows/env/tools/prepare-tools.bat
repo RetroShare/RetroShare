@@ -8,7 +8,7 @@ set SevenZipUrl=http://7-zip.org/a/7z1602.msi
 set SevenZipInstall=7z1602.msi
 ::set CurlUrl=https://bintray.com/artifact/download/vszakats/generic/curl-7.50.1-win32-mingw.7z
 ::set CurlInstall=curl-7.50.1-win32-mingw.7z
-set WgetUrl=https://eternallybored.org/misc/wget/current/wget.exe
+set WgetUrl=https://eternallybored.org/misc/wget/1.19.4/32/wget.exe
 set WgetInstall=wget.exe
 set JomUrl=http://download.qt.io/official_releases/jom/jom.zip
 set JomInstall=jom.zip
@@ -118,7 +118,7 @@ if not exist "%EnvToolsPath%\cut.exe" (
 	%cecho% info "Download Unix Tools installation"
 
 	if not exist "%EnvDownloadPath%\%UnixToolsInstall%" call "%ToolsPath%\winhttpjs.bat" %UnixToolsUrl% -saveTo "%EnvDownloadPath%\%UnixToolsInstall%"
-	if not exist "%EnvDownloadPath%\%UnixToolsInstall%" %cecho% error ""Cannot download Unix Tools installation" & goto error
+	if not exist "%EnvDownloadPath%\%UnixToolsInstall%" %cecho% error "Cannot download Unix Tools installation" & goto error
 
 	%cecho% info "Unpack Unix Tools"
 	"%EnvSevenZipExe%" x -o"%EnvTempPath%" "%EnvDownloadPath%\%UnixToolsInstall%"
@@ -134,7 +134,7 @@ if not exist "%EnvToolsPath%\sed.exe" (
 	%cecho% info "Download Unix Tools installation"
 
 	if not exist "%EnvDownloadPath%\%UnixToolsInstall%" call "%ToolsPath%\winhttpjs.bat" %UnixToolsUrl% -saveTo "%EnvDownloadPath%\%UnixToolsInstall%"
-	if not exist "%EnvDownloadPath%\%UnixToolsInstall%" %cecho% error ""Cannot download Unix Tools installation" & goto error
+	if not exist "%EnvDownloadPath%\%UnixToolsInstall%" %cecho% error "Cannot download Unix Tools installation" & goto error
 
 	%cecho% info "Unpack Unix Tools"
 	"%EnvSevenZipExe%" x -o"%EnvTempPath%" "%EnvDownloadPath%\%UnixToolsInstall%"

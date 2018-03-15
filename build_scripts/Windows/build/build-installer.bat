@@ -21,7 +21,7 @@ set /P LibsGCCVersion=<"%RootPath%\libs\gcc-version"
 if "%LibsGCCVersion%" NEQ "%GCCVersion%" echo Please use correct version of external libraries. (gcc %GCCVersion% ^<^> libs %LibsGCCVersion%).& exit /B 1
 
 :: Initialize environment
-call "%~dp0env.bat"
+call "%~dp0env.bat" standard
 if errorlevel 1 goto error_env
 
 :: Build defines for script

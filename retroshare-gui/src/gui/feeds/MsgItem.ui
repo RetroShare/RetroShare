@@ -442,7 +442,7 @@
             <item>
              <widget class="QLabel" name="infoLabel">
               <property name="text">
-               <string notr="true">You get Invite, accept request and send your own Certificate back</string>
+               <string notr="true">This message invites you to make friend! You may accept this request and send your own Certificate back</string>
               </property>
              </widget>
             </item>

@@ -1,17 +1,17 @@
 ZLIB_VERSION=1.2.3
 BZIP2_VERSION=1.0.6
 MINIUPNPC_VERSION=2.0
-OPENSSL_VERSION=1.0.2k
+OPENSSL_VERSION=1.0.2n
 SPEEX_VERSION=1.2.0
 SPEEXDSP_VERSION=1.2rc3
-OPENCV_VERSION=3.2.0
-LIBXML2_VERSION=2.9.4
-LIBXSLT_VERSION=1.1.28
-CURL_VERSION=7.53.1
+OPENCV_VERSION=3.4.1
+LIBXML2_VERSION=2.9.7
+LIBXSLT_VERSION=1.1.32
+CURL_VERSION=7.58.0
 TCL_VERSION=8.6.2
 SQLCIPHER_VERSION=2.2.1
-LIBMICROHTTPD_VERSION=0.9.52
-FFMPEG_VERSION=3.2.4
+LIBMICROHTTPD_VERSION=0.9.59
+FFMPEG_VERSION=3.4
 
 MAKEFILE_PATH=$(dir $(MAKEFILE_LIST))
 LIBS_PATH?=$(MAKEFILE_PATH)../../../../libs
@@ -137,7 +137,7 @@ libs/openssl-$(OPENSSL_VERSION): $(DOWNLOAD_PATH)/openssl-$(OPENSSL_VERSION).tar
 speex: libs/speex-$(SPEEX_VERSION)
 
 $(DOWNLOAD_PATH)/speex-$(SPEEX_VERSION).tar.gz:
-	wget http://downloads.xiph.org/releases/speex/speex-$(SPEEX_VERSION).tar.gz -O $(DOWNLOAD_PATH)/speex-$(SPEEX_VERSION).tar.gz
+	wget --no-check-certificate http://downloads.xiph.org/releases/speex/speex-$(SPEEX_VERSION).tar.gz -O $(DOWNLOAD_PATH)/speex-$(SPEEX_VERSION).tar.gz
 
 libs/speex-$(SPEEX_VERSION): $(DOWNLOAD_PATH)/speex-$(SPEEX_VERSION).tar.gz
 	# prepare
@@ -158,7 +158,7 @@ libs/speex-$(SPEEX_VERSION): $(DOWNLOAD_PATH)/speex-$(SPEEX_VERSION).tar.gz
 speexdsp: libs/speexdsp-$(SPEEXDSP_VERSION)
 
 $(DOWNLOAD_PATH)/speexdsp-$(SPEEXDSP_VERSION).tar.gz:
-	wget http://downloads.xiph.org/releases/speex/speexdsp-$(SPEEXDSP_VERSION).tar.gz -O $(DOWNLOAD_PATH)/speexdsp-$(SPEEXDSP_VERSION).tar.gz
+	wget --no-check-certificate http://downloads.xiph.org/releases/speex/speexdsp-$(SPEEXDSP_VERSION).tar.gz -O $(DOWNLOAD_PATH)/speexdsp-$(SPEEXDSP_VERSION).tar.gz
 
 libs/speexdsp-$(SPEEXDSP_VERSION): $(DOWNLOAD_PATH)/speexdsp-$(SPEEXDSP_VERSION).tar.gz
 	# prepare
@@ -187,7 +187,7 @@ libs/opencv-$(OPENCV_VERSION): $(DOWNLOAD_PATH)/opencv-$(OPENCV_VERSION).tar.gz
 	# build
 	mkdir -p opencv-$(OPENCV_VERSION)/build
 	#cd opencv-$(OPENCV_VERSION)/build && cmake .. -G"MSYS Makefiles" -DCMAKE_BUILD_TYPE=Release -DBUILD_PERF_TESTS=OFF -DBUILD_TESTS=OFF -DBUILD_SHARED_LIBS=OFF -DCMAKE_INSTALL_PREFIX="`pwd`/../../libs"
-	cd opencv-$(OPENCV_VERSION)/build && cmake .. -G"MSYS Makefiles" -DCMAKE_BUILD_TYPE=Release -DBUILD_PERF_TESTS=OFF -DBUILD_TESTS=OFF -DBUILD_SHARED_LIBS=OFF -DCMAKE_INSTALL_PREFIX="`pwd`/install"
+	cd opencv-$(OPENCV_VERSION)/build && cmake .. -G"MSYS Makefiles" -DCMAKE_BUILD_TYPE=Release -DBUILD_PERF_TESTS=OFF -DBUILD_TESTS=OFF -DBUILD_SHARED_LIBS=OFF -DENABLE_CXX11=ON -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -DSTRSAFE_NO_DEPRECATE" -DCMAKE_INSTALL_PREFIX="`pwd`/install"
 	cd opencv-$(OPENCV_VERSION)/build && make install
 	# copy files
 	mkdir -p libs/opencv-$(OPENCV_VERSION).tmp/include
@@ -228,7 +228,6 @@ libs/libxslt-$(LIBXSLT_VERSION): $(DOWNLOAD_PATH)/libxml2-$(LIBXML2_VERSION).tar
 	rm -r -f libs/libxslt-*
 	tar xvf $(DOWNLOAD_PATH)/libxml2-$(LIBXML2_VERSION).tar.gz
 	tar xvf $(DOWNLOAD_PATH)/libxslt-$(LIBXSLT_VERSION).tar.gz
-	tar xvf $(MAKEFILE_PATH)libxslt-$(LIBXSLT_VERSION)-fix.tar.gz
 	# build
 	cd libxslt-$(LIBXSLT_VERSION) && ./configure --with-libxml-src=../libxml2-$(LIBXML2_VERSION) -enable-shared=no CFLAGS=-DLIBXML_STATIC
 	cd libxslt-$(LIBXSLT_VERSION) && make
@@ -245,7 +244,7 @@ libs/libxslt-$(LIBXSLT_VERSION): $(DOWNLOAD_PATH)/libxml2-$(LIBXML2_VERSION).tar
 curl: libs/curl-$(CURL_VERSION)
 
 $(DOWNLOAD_PATH)/curl-$(CURL_VERSION).tar.gz:
-	wget --no-check-certificate http://curl.haxx.se/$(DOWNLOAD_PATH)/curl-$(CURL_VERSION).tar.gz -O $(DOWNLOAD_PATH)/curl-$(CURL_VERSION).tar.gz
+	wget --no-check-certificate http://curl.haxx.se/download/curl-$(CURL_VERSION).tar.gz -O $(DOWNLOAD_PATH)/curl-$(CURL_VERSION).tar.gz
 
 libs/curl-$(CURL_VERSION): $(DOWNLOAD_PATH)/curl-$(CURL_VERSION).tar.gz
 	# prepare

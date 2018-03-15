@@ -35,6 +35,11 @@
 #include "util/rswin.h"
 #endif
 
+#ifdef __ANDROID__
+#	include <QFile> // To install bdboot.txt
+#	include <QString> // for String::fromStdString(...)
+#endif
+
 #include "util/argstream.h"
 #include "util/rsdebug.h"
 #include "util/rsdir.h"
@@ -63,6 +68,11 @@
 
 #if (defined(__unix__) || defined(unix)) && !defined(USG)
 #include <sys/param.h>
+#endif
+
+// This needs to be defined here, because when USE_BITDHT is unset, the variable, that is defined in libbitdht (not compiled!) will be missing.
+#ifndef RS_USE_BITDHT
+RsDht *rsDht = NULL ;
 #endif
 
 // for blocking signals
@@ -825,9 +835,10 @@ RsGRouter *rsGRouter = NULL ;
 #include "pqi/p3linkmgr.h"
 #include "pqi/p3netmgr.h"
 	
-	
+#ifndef RETROTOR
 #include "tcponudp/tou.h"
 #include "tcponudp/rsudpstack.h"
+#endif
 
 	
 #ifdef RS_USE_BITDHT
@@ -1042,7 +1053,32 @@ int RsServer::StartupRetroShare()
 	uint64_t tmp_size ;
 	if (!RsDirUtil::checkFile(bootstrapfile,tmp_size,true))
 	{
-		std::cerr << "DHT bootstrap file not in ConfigDir: " << bootstrapfile << std::endl;
+		std::cerr << "DHT bootstrap file not in ConfigDir: " << bootstrapfile
+		          << std::endl;
+#ifdef __ANDROID__
+		QFile bdbootRF("assets:/values/bdboot.txt");
+		if(!bdbootRF.open(QIODevice::ReadOnly | QIODevice::Text))
+			std::cerr << __PRETTY_FUNCTION__
+			          << " bdbootRF(assets:/values/bdboot.txt).open(...) fail: "
+			          << bdbootRF.errorString().toStdString() << std::endl;
+		else
+		{
+			QFile bdbootCF(QString::fromStdString(bootstrapfile));
+			if(!bdbootCF.open(QIODevice::WriteOnly | QIODevice::Text))
+				std::cerr << __PRETTY_FUNCTION__  << " bdbootCF("
+				          << bootstrapfile << ").open(...) fail: "
+				          << bdbootRF.errorString().toStdString() << std::endl;
+			else
+			{
+				bdbootCF.write(bdbootRF.readAll());
+				bdbootCF.close();
+				std::cerr << "Installed DHT bootstrap file not in ConfigDir: "
+				          << bootstrapfile << std::endl;
+			}
+
+			bdbootRF.close();
+		}
+#else
 		std::string installfile = rsAccounts->PathDataDirectory();
 		installfile += "/";
 		installfile += BITDHT_BOOTSTRAP_FILENAME;
@@ -1064,6 +1100,7 @@ int RsServer::StartupRetroShare()
 		{
 			std::cerr << "No Installation DHT bootstrap file to copy" << std::endl;
 		}
+#endif // def __ANDROID__
 	}
 
 	/* construct the rest of the stack, important to build them in the correct order! */
@@ -1155,9 +1192,9 @@ int RsServer::StartupRetroShare()
 #ifdef RS_USE_DHT_STUNNER
 	mNetMgr->setAddrAssist(new stunAddrAssist(mDhtStunner), new stunAddrAssist(mProxyStunner));
 #endif // RS_USE_DHT_STUNNER
-#else //RS_USE_BITDHT
-	/* install NULL Pointer for rsDht Interface */
-	rsDht = NULL;
+// #else //RS_USE_BITDHT
+// 	/* install NULL Pointer for rsDht Interface */
+// 	rsDht = NULL;
 #endif //RS_USE_BITDHT
 
 
@@ -1474,7 +1511,11 @@ int RsServer::StartupRetroShare()
 	interfaces.mMsgs   = rsMsgs;
 	interfaces.mTurtle = rsTurtle;
 	interfaces.mDisc   = rsDisc;
+#ifdef RS_USE_BITDHT
 	interfaces.mDht    = rsDht;
+#else
+	interfaces.mDht    = NULL;
+#endif
 	interfaces.mNotify = mNotify;
     interfaces.mServiceControl = serviceCtrl;
     interfaces.mPluginHandler  = mPluginsManager;
@@ -1508,10 +1549,17 @@ int RsServer::StartupRetroShare()
 #endif
 
 	// new services to test.
+#ifndef RETROTOR
     p3BanList *mBanList = new p3BanList(serviceCtrl, mNetMgr);
     rsBanList = mBanList ;
 	pqih -> addService(mBanList, true);
+#else
+    rsBanList = NULL ;
+#endif
+
+#ifdef RS_USE_BITDHT
 	mBitDht->setupPeerSharer(mBanList);
+#endif
 
 	p3BandwidthControl *mBwCtrl = new p3BandwidthControl(pqih);
 	pqih -> addService(mBwCtrl, true); 
@@ -1577,7 +1625,9 @@ int RsServer::StartupRetroShare()
 	mConfigMgr->addConfiguration("p3History.cfg", mHistoryMgr);
 	mConfigMgr->addConfiguration("p3Status.cfg", mStatusSrv);
 	mConfigMgr->addConfiguration("turtle.cfg", tr);
+#ifndef RETROTOR
 	mConfigMgr->addConfiguration("banlist.cfg", mBanList);
+#endif
 	mConfigMgr->addConfiguration("servicecontrol.cfg", serviceCtrl);
 	mConfigMgr->addConfiguration("reputations.cfg", mReputations);
 #ifdef ENABLE_GROUTER
@@ -1599,7 +1649,9 @@ int RsServer::StartupRetroShare()
 
 	mConfigMgr->addConfiguration("identity.cfg", gxsid_ns);
 	mConfigMgr->addConfiguration("gxsforums.cfg", gxsforums_ns);
+	mConfigMgr->addConfiguration("gxsforums_srv.cfg", mGxsForums);
 	mConfigMgr->addConfiguration("gxschannels.cfg", gxschannels_ns);
+	mConfigMgr->addConfiguration("gxschannels_srv.cfg", mGxsChannels);
 	mConfigMgr->addConfiguration("gxscircles.cfg", gxscircles_ns);
 	mConfigMgr->addConfiguration("posted.cfg", posted_ns);
 #ifdef RS_USE_WIKI

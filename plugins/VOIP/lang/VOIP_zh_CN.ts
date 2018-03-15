@@ -1,4 +1,6 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="zh_CN" version="2.0">
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.1" language="zh_CN">
 <context>
     <name>AudioInput</name>
     <message>
@@ -404,11 +406,16 @@
         <translation>调整麦克风硬件音量至最佳设置。</translation>
     </message>
     <message>
-        <location line="+6"/>
-        <source>&lt;p &gt;Open your sound control panel and go to the recording settings. Make sure the microphone is selected as active input with maximum recording volume. If there's an option to enable a &amp;quot;Microphone boost&amp;quot; make sure it's checked. &lt;/p&gt;
+        <source>&lt;p &gt;Open your sound control panel and go to the recording settings. Make sure the microphone is selected as active input with maximum recording volume. If there&apos;s an option to enable a &amp;quot;Microphone boost&amp;quot; make sure it&apos;s checked. &lt;/p&gt;
 &lt;p&gt;Speak loudly, as when you are annoyed or excited. Decrease the volume in the sound control panel until the bar below stays as high as possible in the green and orange but not the red zone while you speak. &lt;/p&gt;</source>
-        <translation>&lt;p &gt;打开声音控制面板，录音设置。确定麦克风已设置为当前输入设备，且音量为最大。如果有 &amp;quot;麦克风增强选项（Microphone boost）&amp;quot; 请选中。&lt;/p&gt;
+        <translation type="vanished">&lt;p &gt;打开声音控制面板，录音设置。确定麦克风已设置为当前输入设备，且音量为最大。如果有 &amp;quot;麦克风增强选项（Microphone boost）&amp;quot; 请选中。&lt;/p&gt;
 &lt;p&gt;大声说话，就像您谈到兴奋处时那样，降低声音控制面板中的音量，将下面的指示条控制在绿色和橙色区域的最大值区域，但没有进入红色区域。&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>&lt;p&gt;Open your sound control panel and go to the recording settings. Make sure the microphone is selected as active input with maximum recording volume. If there&apos;s an option to enable a &amp;quot;Microphone boost&amp;quot; make sure it&apos;s checked. &lt;/p&gt;
+&lt;p&gt;Speak loudly, as when you are annoyed or excited. Decrease the volume in the sound control panel until the bar below stays as high as possible in the green and orange but not the red zone while you speak. &lt;/p&gt;</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+11"/>
@@ -489,19 +496,27 @@
         <translation>&lt;h3&gt;RetroShare VOIP 插件&lt;/h3&gt;&lt;br/&gt;   * Contributors: Cyril Soler, Josselin Jacquard&lt;br/&gt;</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>&lt;br/&gt;The VOIP plugin adds VOIP to the private chat window of RetroShare. to use it, proceed as follows:&lt;UL&gt;</source>
-        <translation>&lt;br/&gt; VOIP 插件为 RetroShare 私聊窗口提供 VOIP 功能，请按如下方法使用：&lt;UL&gt;</translation>
+        <translation type="vanished">&lt;br/&gt; VOIP 插件为 RetroShare 私聊窗口提供 VOIP 功能，请按如下方法使用：&lt;UL&gt;</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>&lt;li&gt; setup microphone levels using the configuration panel&lt;/li&gt;</source>
         <translation>&lt;li&gt; 通过配置面板，设置麦克风音量等级&lt;/li&gt;</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>&lt;li&gt; check your microphone by looking at the VU-metters&lt;/li&gt;</source>
-        <translation>&lt;li&gt; 您可以通过观察音量指示可检查麦克风是否工作正常。&lt;/li&gt;</translation>
+        <translation type="vanished">&lt;li&gt; 您可以通过观察音量指示可检查麦克风是否工作正常。&lt;/li&gt;</translation>
+    </message>
+    <message>
+        <location line="-1"/>
+        <source>&lt;br/&gt;The VOIP plugin adds VOIP to the private chat window of RetroShare. To use it, proceed as follows:&lt;UL&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>&lt;li&gt; check your microphone by looking at the VU-meters&lt;/li&gt;</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
@@ -595,12 +610,11 @@
         <translation>全屏模式</translation>
     </message>
     <message>
-        <location line="-412"/>
         <source>%1 inviting you to start an audio conversation. Do you want Accept or Decline the invitation?</source>
-        <translation>%1 邀请您加入语音聊天，您接受还是拒绝邀请？</translation>
+        <translation type="vanished">%1 邀请您加入语音聊天，您接受还是拒绝邀请？</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="-410"/>
         <source>Accept Audio Call</source>
         <translation>接受语音聊天</translation>
     </message>
@@ -615,12 +629,11 @@
         <translation>拒绝语音聊天</translation>
     </message>
     <message>
-        <location line="+33"/>
         <source>%1 inviting you to start a video conversation. Do you want Accept or Decline the invitation?</source>
-        <translation>%1 邀请您加入视频聊天，您接受还是拒绝邀请？</translation>
+        <translation type="vanished">%1 邀请您加入视频聊天，您接受还是拒绝邀请？</translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+52"/>
         <source>Decline Video Call</source>
         <translation>拒绝视频聊天</translation>
     </message>
@@ -640,12 +653,11 @@
         <translation>开启麦克风</translation>
     </message>
     <message>
-        <location line="+589"/>
         <source>Waiting your friend respond your video call.</source>
-        <translation>等待对方回应您的请求</translation>
+        <translation type="vanished">等待对方回应您的请求</translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="+603"/>
         <source>Your friend is calling you for video. Respond.</source>
         <translation>您的朋友正在呼叫您</translation>
     </message>
@@ -711,12 +723,22 @@
         <translation>接受语音呼叫</translation>
     </message>
     <message>
-        <location line="-52"/>
+        <location line="-55"/>
+        <source>%1 is inviting you to start an audio conversation. Do you want to Accept or Decline the invitation?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
         <source>Activate audio</source>
         <translation>启用麦克风</translation>
     </message>
     <message>
-        <location line="+384"/>
+        <location line="+50"/>
+        <source>%1 is inviting you to start a video conversation. Do you want to Accept or Decline the invitation?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+334"/>
         <source>Show Chat Text</source>
         <translation>显示聊天记录</translation>
     </message>
@@ -752,11 +774,20 @@
     </message>
     <message>
         <location line="+20"/>
-        <source>Waiting your friend respond your audio call.</source>
-        <translation>等待对方回应您的请求</translation>
+        <source>Waiting for your friend to respond to your audio call.</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="+58"/>
+        <source>Waiting for your friend to respond to your video call.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Waiting your friend respond your audio call.</source>
+        <translation type="vanished">等待对方回应您的请求</translation>
+    </message>
+    <message>
+        <location line="-44"/>
         <source>Your friend is calling you for audio. Respond.</source>
         <translation>您的朋友正在呼叫您</translation>
     </message>
@@ -877,8 +908,12 @@
     </message>
     <message>
         <location line="+24"/>
+        <source>Bandwidth Info received from this peer: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Bandwidth Info received from this peer:%1</source>
-        <translation>已获取对方:%1带宽信息</translation>
+        <translation type="vanished">已获取对方:%1带宽信息</translation>
     </message>
     <message>
         <location line="+24"/>

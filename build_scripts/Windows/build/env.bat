@@ -1,3 +1,18 @@
+if "%~1"=="standard" (
+	set RsRetroTor=
+	set RsType=
+) else (
+	if "%~1"=="retrotor" (
+		set RsRetroTor=1
+		set RsType=-tor
+	) else (
+		echo.
+		echo Usage: standard^|retrotor
+		echo.
+		exit /B 1
+	)
+)
+
 set BuildPath=%EnvRootPath%\builds
 set DeployPath=%EnvRootPath%\deploy
 
@@ -19,8 +34,8 @@ call "%ToolsPath%\get-qt-version.bat" QtVersion
 if "%QtVersion%"=="" echo Cannot get Qt version.& exit /B 1
 
 set RsBuildConfig=release
-set RsBuildPath=%BuildPath%\Qt-%QtVersion%-%RsBuildConfig%
-set RsDeployPath=%DeployPath%\Qt-%QtVersion%-%RsBuildConfig%
+set RsBuildPath=%BuildPath%\Qt-%QtVersion%%RsType%-%RsBuildConfig%
+set RsDeployPath=%DeployPath%\Qt-%QtVersion%%RsType%-%RsBuildConfig%
 set RsPackPath=%DeployPath%
 set RsArchiveAdd=
 

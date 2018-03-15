@@ -3,15 +3,21 @@
 CONFIG *= retroshare_gui
 no_retroshare_gui:CONFIG -= retroshare_gui
 
+# To build the RetroTor executable, just uncomment the following option.
+# RetroTor is a version of RS that automatically configures Tor for its own usage
+# using only hidden nodes. It will not start if Tor is not working.
+
+# CONFIG *= retrotor
+
 # To disable RetroShare-nogui append the following
 # assignation to qmake command line "CONFIG+=no_retroshare_nogui"
 CONFIG *= retroshare_nogui
 no_retroshare_nogui:CONFIG -= retroshare_nogui
 
-# To disable RetroShare plugins append the following
-# assignation to qmake command line "CONFIG+=no_retroshare_plugins"
-CONFIG *= retroshare_plugins
-no_retroshare_plugins:CONFIG -= retroshare_plugins
+# To enable RetroShare plugins append the following
+# assignation to qmake command line "CONFIG+=retroshare_plugins"
+CONFIG *= no_retroshare_plugins
+retroshare_plugins:CONFIG -= no_retroshare_plugins
 
 # To enable RetroShare-android-service append the following assignation to
 # qmake command line "CONFIG+=retroshare_android_service"
@@ -87,8 +93,8 @@ CONFIG *= no_rs_async_chat
 rs_async_chat:CONFIG -= no_rs_async_chat
 
 # To select your MacOsX version append the following assignation to qmake
-# command line "CONFIG+=rs_macos10.11" where 10.11(default for Travis_CI) depends your version
-CONFIG *= rs_macos10.11
+# command line "CONFIG+=rs_macos10.11" where 10.11 depends your version
+macx:CONFIG *= rs_macos10.11
 rs_macos10.8:CONFIG -= rs_macos10.11
 rs_macos10.9:CONFIG -= rs_macos10.11
 rs_macos10.10:CONFIG -= rs_macos10.11
@@ -111,7 +117,7 @@ linux-* {
     }
 }
 
-android-g++ {
+android-* {
     isEmpty(NATIVE_LIBS_TOOLCHAIN_PATH) {
         NATIVE_LIBS_TOOLCHAIN_PATH = $$(NATIVE_LIBS_TOOLCHAIN_PATH)
     }
@@ -119,21 +125,11 @@ android-g++ {
         CONFIG -= no_retroshare_android_notify_service
         CONFIG *= retroshare_android_notify_service
     }
-    CONFIG *= no_libresapihttpserver no_sqlcipher upnp_libupnp
-    CONFIG -= libresapihttpserver sqlcipher upnp_miniupnpc
+    CONFIG *= no_libresapihttpserver upnp_libupnp
+    CONFIG -= libresapihttpserver upnp_miniupnpc
     QT *= androidextras
-    DEFINES *= "fopen64=fopen"
-    DEFINES *= "fseeko64=fseeko"
-    DEFINES *= "ftello64=ftello"
     INCLUDEPATH += $$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/include
-    LIBS *= -L$$NDK_TOOLCHAIN_PATH/sysroot/usr/lib/
-    LIBS *= -lbz2 -lupnp -lixml -lthreadutil -lsqlite3
-    ANDROID_EXTRA_LIBS *= $$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/lib/libsqlite3.so
-#    message(LIBS: $$LIBS)
-#    message(ANDROID_EXTRA_LIBS: $$ANDROID_EXTRA_LIBS)
-#    message(ANDROID_PLATFORM: $$ANDROID_PLATFORM)
-#    message(ANDROID_PLATFORM_ROOT_PATH: $$ANDROID_PLATFORM_ROOT_PATH)
-#    message(NATIVE_LIBS_TOOLCHAIN_PATH: $$NATIVE_LIBS_TOOLCHAIN_PATH)
+    LIBS *= -L$$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/lib/
 }
 
 win32 {
@@ -168,37 +164,39 @@ win32 {
 	}
 }
 
-rs_macos10.8 {
-	message(***retroshare.pri: Set Target and SDK to MacOS 10.8 )
-	QMAKE_MACOSX_DEPLOYMENT_TARGET=10.8
-	QMAKE_MAC_SDK = macosx10.8
-}
-
-rs_macos10.9 {
-	message(***retroshare.pri: Set Target and SDK to MacOS 10.9 )
-	QMAKE_MACOSX_DEPLOYMENT_TARGET=10.9
-	QMAKE_MAC_SDK = macosx10.9
-}
-
-rs_macos10.10 {
-	message(***retroshare.pri: Set Target and SDK to MacOS 10.10 )
-	QMAKE_MACOSX_DEPLOYMENT_TARGET=10.10
-	QMAKE_MAC_SDK = macosx10.10
-}
-
-rs_macos10.11 {
-	message(***retroshare.pri: Set Target and SDK to MacOS 10.11 )
-	QMAKE_MACOSX_DEPLOYMENT_TARGET=10.11
-	QMAKE_MAC_SDK = macosx10.11
-}
-
-rs_macos10.12 {
-	message(***retroshare.pri: Set Target and SDK to MacOS 10.12 )
-	QMAKE_MACOSX_DEPLOYMENT_TARGET=10.12
-	QMAKE_MAC_SDK = macosx10.12
-}
-
 macx {
+	rs_macos10.8 {
+		message(***retroshare.pri: Set Target and SDK to MacOS 10.8 )
+		QMAKE_MACOSX_DEPLOYMENT_TARGET=10.8
+		QMAKE_MAC_SDK = macosx10.8
+	}
+
+	rs_macos10.9 {
+		message(***retroshare.pri: Set Target and SDK to MacOS 10.9 )
+		QMAKE_MACOSX_DEPLOYMENT_TARGET=10.9
+		QMAKE_MAC_SDK = macosx10.9
+	}
+
+	rs_macos10.10 {
+		message(***retroshare.pri: Set Target and SDK to MacOS 10.10 )
+		QMAKE_MACOSX_DEPLOYMENT_TARGET=10.10
+		QMAKE_MAC_SDK = macosx10.10
+	}
+
+	rs_macos10.11 {
+		message(***retroshare.pri: Set Target and SDK to MacOS 10.11 )
+		QMAKE_MACOSX_DEPLOYMENT_TARGET=10.11
+		QMAKE_MAC_SDK = macosx10.11
+	}
+
+	rs_macos10.12 {
+		message(***retroshare.pri: Set Target and SDK to MacOS 10.12 )
+		QMAKE_MACOSX_DEPLOYMENT_TARGET=10.12
+		QMAKE_MAC_SDK = macosx10.12
+		QMAKE_CXXFLAGS += -Wno-nullability-completeness
+		QMAKE_CFLAGS += -Wno-nullability-completeness
+	}
+
 	message(***retroshare.pri:MacOSX)
 	BIN_DIR += "/usr/bin"
 	INC_DIR += "/usr/include"
@@ -226,6 +224,10 @@ no_sqlcipher:DEFINES *= NO_SQLCIPHER
 rs_autologin {
     DEFINES *= RS_AUTOLOGIN
     warning("You have enabled RetroShare auto-login, this is discouraged. The usage of auto-login on some linux distributions may allow someone having access to your session to steal the SSL keys of your node location and therefore compromise your security")
+}
+
+retrotor {
+    CONFIG *= rs_onlyhiddennode
 }
 
 rs_onlyhiddennode {

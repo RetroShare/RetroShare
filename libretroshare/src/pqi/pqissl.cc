@@ -1321,14 +1321,14 @@ int 	pqissl::Authorise_SSL_Connection()
     if (rsPeers->servicePermissionFlags(PeerId()) & RS_NODE_PERM_REQUIRE_WL)
         checking_flags |= RSBANLIST_CHECKING_FLAGS_WHITELIST;
 
-    if(!rsBanList->isAddressAccepted(remote_addr,checking_flags,&check_result))
+    if(rsBanList!=NULL && !rsBanList->isAddressAccepted(remote_addr,checking_flags,&check_result))
     {
-	std::cerr << "(SS) refusing connection attempt from IP address " << sockaddr_storage_iptostring(remote_addr) << ". Reason: " <<
+		std::cerr << "(SS) refusing connection attempt from IP address " << sockaddr_storage_iptostring(remote_addr) << ". Reason: " <<
         ((check_result == RSBANLIST_CHECK_RESULT_NOT_WHITELISTED)?"not whitelisted (peer requires whitelist)":"blacklisted") << std::endl;
             
         RsServer::notify()->AddFeedItem(RS_FEED_ITEM_SEC_IP_BLACKLISTED, PeerId().toStdString(), sockaddr_storage_iptostring(remote_addr), "", "", check_result);
-    reset_locked();
-    return 0 ;
+		reset_locked();
+		return 0 ;
     }
 	// check it's the right one.
 	if (certCorrect)
@@ -1371,12 +1371,12 @@ int	pqissl::accept_locked(SSL *ssl, int fd, const struct sockaddr_storage &forei
     if (rsPeers->servicePermissionFlags(PeerId()) & RS_NODE_PERM_REQUIRE_WL)
         checking_flags |= RSBANLIST_CHECKING_FLAGS_WHITELIST;
 
-    if(!rsBanList->isAddressAccepted(foreign_addr,checking_flags,&check_result))
+    if(rsBanList!=NULL && !rsBanList->isAddressAccepted(foreign_addr,checking_flags,&check_result))
     {
         std::cerr << "(SS) refusing incoming SSL connection from blacklisted foreign address " << sockaddr_storage_iptostring(foreign_addr)
               << ". Reason: " << check_result << "." << std::endl;
         RsServer::notify()->AddFeedItem(RS_FEED_ITEM_SEC_IP_BLACKLISTED, PeerId().toStdString(), sockaddr_storage_iptostring(foreign_addr), "", "", check_result);
-            reset_locked();
+		reset_locked();
         return -1;
     }
 	if (waiting != WAITING_NOT)

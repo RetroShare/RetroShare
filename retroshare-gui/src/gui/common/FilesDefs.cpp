@@ -19,11 +19,14 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
+#include "FilesDefs.h"
+
+#include "RsCollection.h"
+
 #include <QApplication>
 #include <QFileInfo>
 
-#include "FilesDefs.h"
-#include "RsCollection.h"
+#include <map>
 
 static QString getInfoFromFilename(const QString& filename, bool anyForUnknown, bool image)
 {
@@ -85,7 +88,19 @@ QString FilesDefs::getImageFromFilename(const QString& filename, bool anyForUnkn
 
 QIcon FilesDefs::getIconFromFilename(const QString& filename)
 {
-	return QIcon(getInfoFromFilename(filename, true, true));
+	QString sImage = getInfoFromFilename(filename, true, true);
+	static std::map<QString,QIcon> mIconCache;
+	QIcon icon;
+	auto item = mIconCache.find(sImage);
+	if (item == mIconCache.end())
+	{
+		icon = QIcon(sImage);
+		mIconCache[sImage] = icon;
+	}
+	else
+		icon = item->second;
+
+	return icon;
 }
 
 QString FilesDefs::getNameFromFilename(const QString &filename)

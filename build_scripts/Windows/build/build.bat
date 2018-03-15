@@ -21,7 +21,7 @@ set /P LibsGCCVersion=<"%RootPath%\libs\gcc-version"
 if "%LibsGCCVersion%" NEQ "%GCCVersion%" echo Please use correct version of external libraries. (gcc %GCCVersion% ^<^> libs %LibsGCCVersion%).& exit /B 1
 
 :: Initialize environment
-call "%~dp0env.bat"
+call "%~dp0env.bat" %*
 if errorlevel 1 goto error_env
 
 :: Check git executable
@@ -36,7 +36,7 @@ echo.
 echo === Version
 echo.
 
-title Build - %SourceName%-%RsBuildConfig% [Version]
+title Build - %SourceName%%RsType%-%RsBuildConfig% [Version]
 
 pushd "%SourcePath%\retroshare-gui\src\gui\images"
 :: Touch resource file
@@ -50,16 +50,19 @@ echo.
 echo === qmake
 echo.
 
-title Build - %SourceName%-%RsBuildConfig% [qmake]
+title Build - %SourceName%%RsType%-%RsBuildConfig% [qmake]
 
-qmake "%SourcePath%\RetroShare.pro" -r "CONFIG+=%RsBuildConfig% version_detail_bash_script rs_autologin"
+set RS_QMAKE_CONFIG=%RsBuildConfig% version_detail_bash_script rs_autologin retroshare_plugins
+if "%RsRetroTor%"=="1" set RS_QMAKE_CONFIG=%RS_QMAKE_CONFIG% retrotor
+
+qmake "%SourcePath%\RetroShare.pro" -r "CONFIG+=%RS_QMAKE_CONFIG%"
 if errorlevel 1 goto error
 
 echo.
 echo === make
 echo.
 
-title Build - %SourceName%-%RsBuildConfig% [make]
+title Build - %SourceName%%RsType%-%RsBuildConfig% [make]
 
 if exist "%EnvJomExe%" (
 	"%EnvJomExe%"

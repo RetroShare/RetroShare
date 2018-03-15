@@ -3,4 +3,5 @@ singleton ClipboardWrapper 1.0 ClipboardWrapper.qml
 singleton ChatCache ChatCache.qml
 singleton StyleChat styles/ChatStyle.qml
 singleton StyleSideBar styles/SideBarStyle.qml
+singleton AppSettings 1.0 AppSettings.qml
 

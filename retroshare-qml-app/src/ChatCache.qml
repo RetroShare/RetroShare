@@ -154,13 +154,14 @@ QtObject
 	property QtObject chatHelper: QtObject
 	{
 		id: chatHelper
-		property var gxs_id
-		property var name
+		property string gxs_id
+		property string name
 		property var cb
 
 		function startDistantChat (own_gxs_id, gxs_id, name, cb)
 		{
-			console.log("startDistantChat()")
+			console.log( "startDistantChat(own_gxs_id, gxs_id, name, cb)",
+						 own_gxs_id, gxs_id, name, cb )
 			chatHelper.gxs_id = gxs_id
 			chatHelper.name = name
 			chatHelper.cb = cb

@@ -173,8 +173,8 @@
          <string>Add new post</string>
         </property>
         <property name="icon">
-         <iconset resource="../images.qrc">
-          <normaloff>:/images/mail_send.png</normaloff>:/images/mail_send.png</iconset>
+         <iconset resource="../icons.qrc">
+          <normaloff>:/icons/png/add.png</normaloff>:/icons/png/add.png</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -619,6 +619,7 @@ p, li { white-space: pre-wrap; }
  </customwidgets>
  <resources>
   <include location="../images.qrc"/>
+  <include location="../icons.qrc"/>
  </resources>
  <connections/>
 </ui>

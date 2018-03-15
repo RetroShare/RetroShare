@@ -6,8 +6,10 @@
 namespace resource_api
 {
 
-TransfersHandler::TransfersHandler(StateTokenServer *sts, RsFiles *files, RsPeers *peers):
-    mStateTokenServer(sts), mFiles(files), mRsPeers(peers), mLastUpdateTS(0)
+TransfersHandler::TransfersHandler(StateTokenServer *sts, RsFiles *files, RsPeers *peers,
+                                   RsNotify& notify):
+    mStateTokenServer(sts), mFiles(files), mRsPeers(peers), mNotify(notify),
+   mMtx("TransfersHandler"), mLastUpdateTS(0)
 {
 	addResourceHandler("*", this, &TransfersHandler::handleWildcard);
 	addResourceHandler("downloads", this, &TransfersHandler::handleDownloads);
@@ -15,11 +17,23 @@ TransfersHandler::TransfersHandler(StateTokenServer *sts, RsFiles *files, RsPeer
 	addResourceHandler("control_download", this, &TransfersHandler::handleControlDownload);
 	mStateToken = mStateTokenServer->getNewToken();
 	mStateTokenServer->registerTickClient(this);
+	mNotify.registerNotifyClient(this);
 }
 
 TransfersHandler::~TransfersHandler()
 {
     mStateTokenServer->unregisterTickClient(this);
+	mNotify.unregisterNotifyClient(this);
+}
+
+void TransfersHandler::notifyListChange(int list, int /* type */)
+{
+	if(list == NOTIFY_LIST_TRANSFERLIST)
+	{
+		RS_STACK_MUTEX(mMtx); // ********** LOCKED **********
+		mStateTokenServer->discardToken(mStateToken);
+		mStateToken = mStateTokenServer->getNewToken();
+	}
 }
 
 const int UPDATE_PERIOD_SECONDS = 5;
@@ -77,7 +91,7 @@ void TransfersHandler::handleControlDownload(Request &req, Response &resp)
 		FileInfo finfo;
 		mFiles->FileDetails(hash, RS_FILE_HINTS_REMOTE, finfo);
 
-		for(std::list<TransferInfo>::const_iterator it(finfo.peers.begin());it!=finfo.peers.end();++it)
+		for(std::vector<TransferInfo>::const_iterator it(finfo.peers.begin());it!=finfo.peers.end();++it)
 			srcIds.push_back((*it).peerId);
 
         bool ok = req.mStream.isOK();
@@ -199,8 +213,7 @@ void TransfersHandler::handleUploads(Request & /* req */, Response &resp)
 		FileInfo fi;
 		if(mFiles->FileDetails(*lit, RS_FILE_HINTS_UPLOAD, fi))
 		{
-			std::list<TransferInfo>::iterator pit;
-			for(pit = fi.peers.begin(); pit != fi.peers.end(); ++pit)
+			for( std::vector<TransferInfo>::iterator pit = fi.peers.begin(); pit != fi.peers.end(); ++pit)
 			{
 				if (pit->peerId == ownId) //don't display transfer to ourselves
 					continue ;

@@ -122,10 +122,10 @@ SOURCES += openpgpsdk/opsstring.c
 
 ################################# Android #####################################
 
-android-g++ {
+android-* {
 
-## Add this here and not in retroshare.pri because static library are very
-## sensible to order in command line
+## Add this here because static library are very sensible to order in
+## command line
     LIBS += -L$$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/lib/ -lssl
     INCLUDEPATH += $$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/include
     DEPENDPATH += $$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/include
@@ -135,5 +135,4 @@ android-g++ {
     INCLUDEPATH += $$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/include
     DEPENDPATH += $$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/include
     PRE_TARGETDEPS += $$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/lib/libcrypto.a
-
 }

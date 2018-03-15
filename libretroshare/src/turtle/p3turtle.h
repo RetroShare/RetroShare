@@ -163,16 +163,24 @@ class RsSerialiser;
 static const int TURTLE_MAX_SEARCH_DEPTH = 6 ;
 static const int TURTLE_MAX_SEARCH_REQ_ACCEPTED_SERIAL_SIZE = 200 ;
 
-// This class is used to keep trace of requests (searches and tunnels).
+// This classes are used to keep trace of requests (searches and tunnels).
 //
-class TurtleRequestInfo
+class TurtleSearchRequestInfo
 {
 	public:
-		TurtlePeerId origin ;			// where the request came from.
-		uint32_t	time_stamp ;			// last time the tunnel was actually used. Used for cleaning old tunnels.
-		int depth ;							// depth of the request. Used to optimize tunnel length.
-		std::set<uint32_t> responses; // responses to this request. Useful to avoid spamming tunnel responses.
+		TurtlePeerId origin ;         // where the request came from.
+		uint32_t	time_stamp ;      // last time the tunnel was actually used. Used for cleaning old tunnels.
+		int depth ;                   // depth of the request. Used to optimize tunnel length.
+		uint32_t    result_count;     // responses to this request. Useful to avoid spamming tunnel responses.
 		std::string keywords;
+};
+class TurtleTunnelRequestInfo
+{
+	public:
+		TurtlePeerId origin ;         // where the request came from.
+		uint32_t	time_stamp ;      // last time the tunnel was actually used. Used for cleaning old tunnels.
+		int depth ;	                  // depth of the request. Used to optimize tunnel length.
+		std::set<uint32_t> responses; // responses to this request. Useful to avoid spamming tunnel responses.
 };
 
 class TurtleTunnel
@@ -281,8 +289,8 @@ class p3turtle: public p3Service, public RsTurtle, public p3Config
 		/// get info about tunnels
 		virtual void getInfo(std::vector<std::vector<std::string> >&,
 									std::vector<std::vector<std::string> >&,
-									std::vector<TurtleRequestDisplayInfo >&,
-									std::vector<TurtleRequestDisplayInfo >&) const ;
+									std::vector<TurtleSearchRequestDisplayInfo >&,
+									std::vector<TurtleTunnelRequestDisplayInfo >&) const ;
 		
 		virtual void getTrafficStatistics(TurtleTrafficStatisticsInfo& info) const ;
 
@@ -396,10 +404,10 @@ class p3turtle: public p3Service, public RsTurtle, public p3Config
 		mutable RsMutex mTurtleMtx;
 
 		/// keeps trace of who emmitted a given search request
-		std::map<TurtleSearchRequestId,TurtleRequestInfo> 	_search_requests_origins ; 
+		std::map<TurtleSearchRequestId,TurtleSearchRequestInfo> 	_search_requests_origins ;
 
 		/// keeps trace of who emmitted a tunnel request
-		std::map<TurtleTunnelRequestId,TurtleRequestInfo> 	_tunnel_requests_origins ; 
+		std::map<TurtleTunnelRequestId,TurtleTunnelRequestInfo> 	_tunnel_requests_origins ;
 
 		/// stores adequate tunnels for each file hash locally managed
 		std::map<TurtleFileHash,TurtleHashInfo>				_incoming_file_hashes ;		

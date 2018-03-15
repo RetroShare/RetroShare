@@ -25,12 +25,13 @@
 #include "GxsIdDetails.h"
 #include "RsGxsUpdateBroadcastBase.h"
 #include "gui/Identity/IdEditDialog.h"
+#include "util/misc.h"
+
+#include <retroshare/rspeers.h>
 
 #include <QSortFilterProxyModel>
 #include <QStandardItemModel>
 #include <algorithm>
-
-#include <retroshare/rspeers.h>
 
 #include <iostream>
 
@@ -247,7 +248,10 @@ uint32_t GxsIdChooser::countEnabledEntries() const
 void GxsIdChooser::loadPrivateIds()
 {
 	if (mFirstLoad) {
+		//whileBlocking doesn't work here.
+		bool prev = this->blockSignals(true);
 		clear();
+		this->blockSignals(prev);
 	}
 
 	std::list<RsGxsId> ids;

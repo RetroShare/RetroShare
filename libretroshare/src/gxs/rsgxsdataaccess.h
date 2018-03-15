@@ -209,7 +209,7 @@ public:
      * @param token request token to be redeemed
      * @param groupInfo
      */
-    bool getGroupSummary(const uint32_t &token, std::list<RsGxsGrpMetaData*> &groupInfo);
+    bool getGroupSummary(const uint32_t &token, std::list<const RsGxsGrpMetaData*>& groupInfo);
 
     /*!
      *

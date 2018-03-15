@@ -19,26 +19,26 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#include <QFileInfo>
-#include <QDir>
-#include <QUrl>
-#include <QMimeData>
-#include <QTimer>
-
-#include <retroshare-gui/RsAutoUpdatePage.h>
-#include <gui/common/RsCollection.h>
-#include <gui/common/RsUrlHandler.h>
-#include <gui/common/FilesDefs.h>
-#include <gui/common/GroupDefs.h>
-#include <gui/gxs/GxsIdDetails.h>
 #include "RemoteDirModel.h"
-#include <retroshare/rsfiles.h>
-#include <retroshare/rstypes.h>
-#include <retroshare/rspeers.h>
+
+#include "RsAutoUpdatePage.h"
+#include "gui/common/FilesDefs.h"
+#include "gui/common/GroupDefs.h"
+#include "gui/common/RsCollection.h"
+#include "gui/common/RsUrlHandler.h"
+#include "gui/gxs/GxsIdDetails.h"
+#include "retroshare/rsfiles.h"
+#include "retroshare/rspeers.h"
 #include "util/misc.h"
 
-#include <set>
+#include <QDir>
+#include <QFileInfo>
+#include <QMimeData>
+#include <QTimer>
+#include <QUrl>
+
 #include <algorithm>
+#include <set>
 #include <time.h>
 
 /*****
@@ -46,7 +46,7 @@
  ****/
 
 static const uint32_t FLAT_VIEW_MAX_REFS_PER_SECOND       = 2000 ;
-static const uint32_t FLAT_VIEW_MAX_REFS_TABLE_SIZE       = 10000 ; //
+static const size_t   FLAT_VIEW_MAX_REFS_TABLE_SIZE       = 10000 ; //
 static const uint32_t FLAT_VIEW_MIN_DELAY_BETWEEN_UPDATES = 120 ;	// dont rebuild ref list more than every 2 mins.
 
 RetroshareDirModel::RetroshareDirModel(bool mode, QObject *parent)
@@ -212,11 +212,11 @@ int FlatStyle_RDM::rowCount(const QModelIndex &parent) const
 }
 int TreeStyle_RDM::columnCount(const QModelIndex &/*parent*/) const
 {
-	return 5;
+	return COLUMN_COUNT;
 }
 int FlatStyle_RDM::columnCount(const QModelIndex &/*parent*/) const
 {
-	return 5;
+	return COLUMN_COUNT;
 }
 QString RetroshareDirModel::getFlagsString(FileStorageFlags flags)
 {
@@ -324,7 +324,7 @@ const QIcon& RetroshareDirModel::getFlagsIcon(FileStorageFlags flags)
 
 QVariant RetroshareDirModel::decorationRole(const DirDetails& details,int coln) const
 {
-    if(coln == 3)
+    if(coln == COLUMN_FRIEND_ACCESS)
     {
         if(details.type == DIR_TYPE_PERSON) return QVariant() ;
 
@@ -392,7 +392,7 @@ QVariant TreeStyle_RDM::displayRole(const DirDetails& details,int coln) const
 	{
 		switch(coln)
 		{
-		case 0: {
+		case COLUMN_NAME: {
 				//SharedDirStats stats ;
 				QString res ;
 
@@ -406,31 +406,41 @@ QVariant TreeStyle_RDM::displayRole(const DirDetails& details,int coln) const
 				}
 				return res ;
 			}
-		case 1: {
+		case COLUMN_FILENB: {
 				SharedDirStats stats ;
-				QString res ;
 
 				if(RemoteMode)
-				{
-					//res = QString::fromUtf8(rsPeers->getPeerName(details.id).c_str());
 					rsFiles->getSharedDirStatistics(details.id,stats) ;
-				}
 				else
-				{
-								//res = tr("My files");
-								rsFiles->getSharedDirStatistics(rsPeers->getOwnId(),stats) ;
-				}
+					rsFiles->getSharedDirStatistics(rsPeers->getOwnId(),stats) ;
 
 				if(stats.total_number_of_files > 0)
-					res += QString::number(stats.total_number_of_files) + " files, " + misc::friendlyUnit(stats.total_shared_size) ;
-
-				return res ;
+				{
+					if (stats.total_number_of_files > 1)
+						return QString::number(stats.total_number_of_files) + " " + tr("Files");
+					else
+						return QString::number(stats.total_number_of_files) + " " + tr("File");
+				}
+				return tr("Empty");
 			}
-		case 2: 	if(!isNewerThanEpoque(details.max_mtime))
-					return QString();
+		case COLUMN_SIZE: {
+				SharedDirStats stats ;
 
+				if(RemoteMode)
+					rsFiles->getSharedDirStatistics(details.id,stats) ;
 				else
-		        		return misc::timeRelativeToNow(details.max_mtime);
+					rsFiles->getSharedDirStatistics(rsPeers->getOwnId(),stats) ;
+
+				if(stats.total_shared_size > 0)
+					return misc::friendlyUnit(stats.total_shared_size) ;
+
+				return QString();
+			}
+		case COLUMN_AGE:
+				if(!isNewerThanEpoque(details.max_mtime))
+					return QString();
+				else
+					return misc::timeRelativeToNow(details.max_mtime);
 
 		default:
 				return QString() ;
@@ -440,16 +450,18 @@ QVariant TreeStyle_RDM::displayRole(const DirDetails& details,int coln) const
 	{
 		switch(coln)
 		{
-			case 0:
+			case COLUMN_NAME:
 				return QString::fromUtf8(details.name.c_str());
-			case 1:
+			case COLUMN_FILENB:
+				return  QVariant();
+			case COLUMN_SIZE:
 				return  misc::friendlyUnit(details.count);
-			case 2:
-                return  misc::timeRelativeToNow(details.max_mtime);
-			case 3:
-                return QVariant();
-			case 4:
-                return getGroupsString(details.flags,details.parent_groups) ;
+			case COLUMN_AGE:
+				return  misc::timeRelativeToNow(details.max_mtime);
+			case COLUMN_FRIEND_ACCESS:
+				return QVariant();
+			case COLUMN_WN_VISU_DIR:
+				return getGroupsString(details.flags,details.parent_groups) ;
 
 			default:
 				return tr("FILE");
@@ -459,21 +471,23 @@ QVariant TreeStyle_RDM::displayRole(const DirDetails& details,int coln) const
 	{
 		switch(coln)
 		{
-			case 0:
+			case COLUMN_NAME:
 				return QString::fromUtf8(details.name.c_str());
 				break;
-			case 1:
+			case COLUMN_FILENB:
 				if (details.count > 1)
 				{
 					return QString::number(details.count) + " " + tr("Files");
 				}
 				return QString::number(details.count) + " " + tr("File");
-			case 2:
+			case COLUMN_SIZE:
+				return QVariant();
+			case COLUMN_AGE:
 				return misc::timeRelativeToNow(details.max_mtime);
-			case 3:
-                return QVariant();
-			case 4: 
-                return getGroupsString(details.flags,details.parent_groups) ;
+			case COLUMN_FRIEND_ACCESS:
+				return QVariant();
+			case COLUMN_WN_VISU_DIR:
+				return getGroupsString(details.flags,details.parent_groups) ;
 
 			default:
 				return tr("DIR");
@@ -501,19 +515,27 @@ void FlatStyle_RDM::update()
 		postMods() ;
 	}
 }
+
+bool FlatStyle_RDM::isMaxRefsTableSize(size_t *maxSize/*=NULL*/)
+{
+	if (maxSize)
+		*maxSize = FLAT_VIEW_MAX_REFS_TABLE_SIZE;
+
+	return (_ref_entries.size() >= FLAT_VIEW_MAX_REFS_TABLE_SIZE);
+}
 QString FlatStyle_RDM::computeDirectoryPath(const DirDetails& details) const
 {
 	QString dir ;
-    DirDetails det ;
+	DirDetails det ;
 
-    if(!requestDirDetails(details.parent,RemoteMode,det))
-        return QString();
+	if(!requestDirDetails(details.parent,RemoteMode,det))
+		return QString();
 
 #ifdef SHOW_TOTAL_PATH
 	do
 	{
 #endif
-        dir = QString::fromUtf8(det.name.c_str())+"/"+dir ;
+		dir = QString::fromUtf8(det.name.c_str())+"/"+dir ;
 
 #ifdef SHOW_TOTAL_PATH
 		if(!requestDirDetails(det.parent,det,flags))
@@ -530,17 +552,19 @@ QVariant FlatStyle_RDM::displayRole(const DirDetails& details,int coln) const
 	if (details.type == DIR_TYPE_FILE) /* File */
 		switch(coln)
 		{
-			case 0: return QString::fromUtf8(details.name.c_str());
-			case 1: return misc::friendlyUnit(details.count);
-            case 2: return misc::timeRelativeToNow(details.max_mtime);
-			case 3: return QString::fromUtf8(rsPeers->getPeerName(details.id).c_str());
-			case 4: return computeDirectoryPath(details);
+			case COLUMN_NAME: return QString::fromUtf8(details.name.c_str());
+			case COLUMN_FILENB: return QString();
+			case COLUMN_SIZE: return misc::friendlyUnit(details.count);
+			case COLUMN_AGE: return misc::timeRelativeToNow(details.max_mtime);
+			case COLUMN_FRIEND_ACCESS: return QString::fromUtf8(rsPeers->getPeerName(details.id).c_str());
+			case COLUMN_WN_VISU_DIR: return computeDirectoryPath(details);
 			default:
 				return QVariant() ;
 		}
 
 	return QVariant();
 } /* end of DisplayRole */
+
 QVariant TreeStyle_RDM::sortRole(const QModelIndex& /*index*/,const DirDetails& details,int coln) const
 {
 	/*
@@ -553,11 +577,29 @@ QVariant TreeStyle_RDM::sortRole(const QModelIndex& /*index*/,const DirDetails& 
 	{
 		switch(coln)
 		{
-			case 0:
+			case COLUMN_NAME:
 				return (RemoteMode)?(QString::fromUtf8(rsPeers->getPeerName(details.id).c_str())):tr("My files");
-			case 1:
-				return QString();
-			case 2:
+			case COLUMN_FILENB: {
+				SharedDirStats stats ;
+
+				if(RemoteMode)
+					rsFiles->getSharedDirStatistics(details.id,stats) ;
+				else
+					rsFiles->getSharedDirStatistics(rsPeers->getOwnId(),stats) ;
+
+				return (qulonglong) stats.total_number_of_files;
+			}
+			case COLUMN_SIZE: {
+				SharedDirStats stats ;
+
+				if(RemoteMode)
+					rsFiles->getSharedDirStatistics(details.id,stats) ;
+				else
+					rsFiles->getSharedDirStatistics(rsPeers->getOwnId(),stats) ;
+
+				return (qulonglong) stats.total_shared_size;
+			}
+			case COLUMN_AGE:
 				return details.max_mtime;
 			default:
 				return QString();
@@ -567,15 +609,17 @@ QVariant TreeStyle_RDM::sortRole(const QModelIndex& /*index*/,const DirDetails& 
 	{
 		switch(coln)
 		{
-			case 0:
+			case COLUMN_NAME:
 				return QString::fromUtf8(details.name.c_str());
-			case 1:
+			case COLUMN_FILENB:
+				return (qulonglong) 0;
+			case COLUMN_SIZE:
 				return (qulonglong) details.count;
-			case 2:
-                return  details.max_mtime;
-			case 3:
+			case COLUMN_AGE:
+				return details.max_mtime;
+			case COLUMN_FRIEND_ACCESS:
 				return getFlagsString(details.flags);
-			case 4:
+			case COLUMN_WN_VISU_DIR:
 				{
 					QString ind("");
 					if (ageIndicator != IND_ALWAYS)
@@ -590,13 +634,15 @@ QVariant TreeStyle_RDM::sortRole(const QModelIndex& /*index*/,const DirDetails& 
 	{
 		switch(coln)
 		{
-			case 0:
+			case COLUMN_NAME:
 				return QString::fromUtf8(details.name.c_str());
-			case 1:
+			case COLUMN_FILENB:
 				return (qulonglong) details.count;
-			case 2:
+			case COLUMN_SIZE:
+				return (qulonglong) 0;
+			case COLUMN_AGE:
 				return details.max_mtime;
-			case 3:
+			case COLUMN_FRIEND_ACCESS:
 				return getFlagsString(details.flags);
 			default:
 				return tr("DIR");
@@ -604,6 +650,7 @@ QVariant TreeStyle_RDM::sortRole(const QModelIndex& /*index*/,const DirDetails& 
 	}
 	return QVariant();
 }
+
 QVariant FlatStyle_RDM::sortRole(const QModelIndex& /*index*/,const DirDetails& details,int coln) const
 {
 	/*
@@ -616,16 +663,16 @@ QVariant FlatStyle_RDM::sortRole(const QModelIndex& /*index*/,const DirDetails& 
 	{
 		switch(coln)
 		{
-			case 0: return QString::fromUtf8(details.name.c_str());
-			case 1: return (qulonglong) details.count;
-            case 2: return  details.max_mtime;
-			case 3: return QString::fromUtf8(rsPeers->getPeerName(details.id).c_str());
+			case COLUMN_NAME: return QString::fromUtf8(details.name.c_str());
+			case COLUMN_FILENB: return (qulonglong) 0;
+			case COLUMN_SIZE: return (qulonglong) details.count;
+			case COLUMN_AGE: return  details.max_mtime;
+			case COLUMN_FRIEND_ACCESS: return QString::fromUtf8(rsPeers->getPeerName(details.id).c_str());
+			case COLUMN_WN_VISU_DIR: {
+				RS_STACK_MUTEX(_ref_mutex) ;
 
-        case 4: {
-            RS_STACK_MUTEX(_ref_mutex) ;
-
-            return computeDirectoryPath(details);
-        }
+				return computeDirectoryPath(details);
+			}
 		}
 	}
 	return QVariant();
@@ -652,9 +699,9 @@ QVariant RetroshareDirModel::data(const QModelIndex &index, int role) const
 
 	if (role == Qt::TextAlignmentRole)
 	{
-		if(coln == 1)
+		if((coln == COLUMN_FILENB) || (coln == COLUMN_SIZE))
 			return int( Qt::AlignRight | Qt::AlignVCenter);
-        else
+		else
 			return QVariant();
 	}
 
@@ -747,7 +794,7 @@ QVariant TreeStyle_RDM::headerData(int section, Qt::Orientation orientation, int
 		int defw = QFontMetricsF(QWidget().font()).width(headerData(section,Qt::Horizontal,Qt::DisplayRole).toString()) ;
 		int defh = QFontMetricsF(QWidget().font()).height();
 
-		if (section < 2)
+		if (section < COLUMN_AGE)
 		{
 			defw = 200/16.0*defh;
 		}
@@ -761,36 +808,38 @@ QVariant TreeStyle_RDM::headerData(int section, Qt::Orientation orientation, int
 	{
 		switch(section)
 		{
-			case 0:
+			case COLUMN_NAME:
 				if (RemoteMode)
                     if(mUpdating)
 						return tr("Friends Directories [updating...]");
 					else
 						return tr("Friends Directories");
 				else
-                    if(mUpdating)
+					if(mUpdating)
 						return tr("My Directories [updating...]");
 					else
 						return tr("My Directories");
-			case 1:
+			case COLUMN_FILENB:
+				return tr("# Files");
+			case COLUMN_SIZE:
 				return tr("Size");
-			case 2:
+			case COLUMN_AGE:
 				return tr("Age");
-			case 3:
+			case COLUMN_FRIEND_ACCESS:
 				if (RemoteMode)
 					return tr("Friend");
 				else
-                    return tr("Access");
-			case 4:
+					return tr("Access");
+			case COLUMN_WN_VISU_DIR:
 				if (RemoteMode)
 					return tr("What's new");
 				else
-                    return tr("Visibility");
+					return tr("Visibility");
 		}
-		return QString("Column %1").arg(section);
+		return tr("Column %1").arg(section);
 	}
 	else
-		return QString("Row %1").arg(section);
+		return tr("Row %1").arg(section);
 }
 QVariant FlatStyle_RDM::headerData(int section, Qt::Orientation orientation, int role) const
 {
@@ -799,7 +848,7 @@ QVariant FlatStyle_RDM::headerData(int section, Qt::Orientation orientation, int
 		int defw = QFontMetricsF(QWidget().font()).width(headerData(section,Qt::Horizontal,Qt::DisplayRole).toString()) ;
 		int defh = QFontMetricsF(QWidget().font()).height();
 
-		if (section < 2)
+		if (section < COLUMN_AGE)
 		{
 			defw = defh*200/16.0;
 		}
@@ -813,28 +862,30 @@ QVariant FlatStyle_RDM::headerData(int section, Qt::Orientation orientation, int
 	{
 		switch(section)
 		{
-			case 0:
+			case COLUMN_NAME:
 				if (RemoteMode)
 				{
 					return tr("Friends Directories");
 				}
 				return tr("My Directories");
-			case 1:
+			case COLUMN_FILENB:
+				return tr("# Files");
+			case COLUMN_SIZE:
 				return tr("Size");
-			case 2:
+			case COLUMN_AGE:
 				return tr("Age");
-			case 3:
+			case COLUMN_FRIEND_ACCESS:
 				if(RemoteMode)
 					return tr("Friend");
 				else
 					return tr("Share Flags");
-			case 4:
+			case COLUMN_WN_VISU_DIR:
 				return tr("Directory");
 		}
-		return QString("Column %1").arg(section);
+		return tr("Column %1").arg(section);
 	}
 	else
-		return QString("Row %1").arg(section);
+		return tr("Row %1").arg(section);
 }
 
 QModelIndex TreeStyle_RDM::index(int row, int column, const QModelIndex & parent) const
@@ -939,7 +990,7 @@ QModelIndex TreeStyle_RDM::parent( const QModelIndex & index ) const
 
     std::cerr << "Creating index 3 row=" << details.prow << ", column=" << 0 << ", ref=" << (void*)details.parent << std::endl;
 #endif
-    return createIndex(details.prow, 0, details.parent);
+    return createIndex(details.prow, COLUMN_NAME, details.parent);
 }
 QModelIndex FlatStyle_RDM::parent( const QModelIndex & index ) const
 {
@@ -964,17 +1015,17 @@ Qt::ItemFlags RetroshareDirModel::flags( const QModelIndex & index ) const
 
 	void *ref = index.internalPointer();
 
-    DirDetails details ;
+	DirDetails details ;
 
-    if (! requestDirDetails(ref, RemoteMode,details))
-        return Qt::ItemIsSelectable; // Error.
+	if (! requestDirDetails(ref, RemoteMode,details))
+		return Qt::ItemIsSelectable; // Error.
 
-    switch(details.type)
+	switch(details.type)
 	{
-    // we grey out a person that has never been updated. It's easy to spot these, since the min age of the directory is approx equal to time(NULL), which exceeds 40 years.
-    case DIR_TYPE_PERSON:return isNewerThanEpoque(details.max_mtime)? (Qt::ItemIsEnabled):(Qt::NoItemFlags) ;
-	case DIR_TYPE_DIR:	 return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
-	case DIR_TYPE_FILE:	 return Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsEnabled;
+		// we grey out a person that has never been updated. It's easy to spot these, since the min age of the directory is approx equal to time(NULL), which exceeds 40 years.
+		case DIR_TYPE_PERSON: return isNewerThanEpoque(details.max_mtime)? (Qt::ItemIsEnabled):(Qt::NoItemFlags) ;
+		case DIR_TYPE_DIR:    return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
+		case DIR_TYPE_FILE:   return Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsEnabled;
 	}
 
 	return Qt::ItemIsSelectable;
@@ -1070,7 +1121,7 @@ void RetroshareDirModel::createCollectionFile(QWidget *parent, const QModelIndex
 	QString dir_name;
 	if(!RemoteMode)
 	{
-		if(dirVec.size())
+		if(!dirVec.empty())
 		{
 			const DirDetails& details = dirVec[0];
 			dir_name = QDir(QString::fromUtf8(details.name.c_str())).dirName();
@@ -1165,24 +1216,24 @@ void RetroshareDirModel::downloadDirectory(const DirDetails & dirDetails, int pr
 
 void RetroshareDirModel::getDirDetailsFromSelect (const QModelIndexList &list, std::vector <DirDetails>& dirVec)
 {
-    dirVec.clear();
+	dirVec.clear();
 
-    /* Fire off requests */
-    QModelIndexList::const_iterator it;
-    for(it = list.begin(); it != list.end(); ++it)
-    {
-        if(it->column()==1)
-        {
-            void *ref = it -> internalPointer();
+	/* Fire off requests */
+	QModelIndexList::const_iterator it;
+	for(it = list.begin(); it != list.end(); ++it)
+	{
+		if(it->column()==COLUMN_FILENB)
+		{
+			void *ref = it -> internalPointer();
 
-            DirDetails details ;
+			DirDetails details ;
 
-            if(!requestDirDetails(ref, RemoteMode,details))
-                continue;
+			if(!requestDirDetails(ref, RemoteMode,details))
+				continue;
 
-            dirVec.push_back(details);
-        }
-    }
+			dirVec.push_back(details);
+		}
+	}
 }
 
 /****************************************************************************
@@ -1208,7 +1259,7 @@ void RetroshareDirModel::getFileInfoFromIndexList(const QModelIndexList& list, s
 	std::set<std::string> already_in ;
 
 	for(QModelIndexList::const_iterator it(list.begin()); it != list.end(); ++it)
-		if(it->column()==0)
+		if(it->column()==COLUMN_NAME)
 		{
 			void *ref = it -> internalPointer();
 
@@ -1258,8 +1309,6 @@ void RetroshareDirModel::openSelected(const QModelIndexList &qmil)
 	return;
 	}
 
-	std::list<std::string> dirs_to_open;
-
 	std::list<DirDetails> files_info;
 	std::list<DirDetails>::iterator it;
 	getFileInfoFromIndexList(qmil, files_info);
@@ -1268,10 +1317,7 @@ void RetroshareDirModel::openSelected(const QModelIndexList &qmil)
 	{
 		if ((*it).type & DIR_TYPE_PERSON) continue;
 
-        //std::string path, name;
-        //rsFiles->ConvertSharedFilePath((*it).path, path);
-
-        QDir dir(QString::fromUtf8((*it).path.c_str()));
+		QDir dir(QString::fromUtf8((*it).path.c_str()));
 		QString dest;
 		if ((*it).type & DIR_TYPE_FILE) {
 			dest = dir.absoluteFilePath(QString::fromUtf8(it->name.c_str()));
@@ -1291,7 +1337,7 @@ void RetroshareDirModel::openSelected(const QModelIndexList &qmil)
 
 void RetroshareDirModel::getFilePath(const QModelIndex& index, std::string& fullpath)
 {
-    void *ref = index.sibling(index.row(),1).internalPointer();
+    void *ref = index.sibling(index.row(),COLUMN_FILENB).internalPointer();
 
     DirDetails details ;
 
@@ -1476,7 +1522,7 @@ void FlatStyle_RDM::updateRefs()
     {
         RS_STACK_MUTEX(_ref_mutex) ;
 
-        while(!_ref_stack.empty())
+        while( !_ref_stack.empty() && (_ref_entries.size() <= FLAT_VIEW_MAX_REFS_TABLE_SIZE) )
         {
             void *ref = _ref_stack.back() ;
 #ifdef RDM_DEBUG
@@ -1500,7 +1546,7 @@ void FlatStyle_RDM::updateRefs()
             // Limit the size of the table to display, otherwise it becomes impossible to Qt.
 
             if(_ref_entries.size() > FLAT_VIEW_MAX_REFS_TABLE_SIZE)
-                return ;
+                continue;
 
             if(++nb_treated_refs > FLAT_VIEW_MAX_REFS_PER_SECOND) 	// we've done enough, let's give back hand to
             {															// the user and setup a timer to finish the job later.

@@ -26,6 +26,7 @@
 #include "retroshare/rsiface.h"
 #include "retroshare/rsgxsforums.h"
 #include "util/rsstring.h"
+#include "util/rstime.h"
 #include "gxs/rsgenexchange.h"
 
 #include <unistd.h>
@@ -2240,7 +2241,7 @@ bool p3FeedReader::waitForToken(uint32_t token)
 			break;
 		}
 
-		usleep(500 * 1000); // sleep for 500 msec
+		rstime::rs_usleep(500 * 1000); // sleep for 500 msec
 	}
 
 	return false;

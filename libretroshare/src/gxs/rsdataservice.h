@@ -71,7 +71,7 @@ public:
      * @param cache whether to store retrieval in mem for faster later retrieval
      * @return error code
      */
-    int retrieveGxsGrpMetaData(std::map<RsGxsGroupId, RsGxsGrpMetaData*>& grp);
+    int retrieveGxsGrpMetaData(RsGxsGrpMetaTemporaryMap& grp);
 
     /*!
      * Retrieves meta data of all groups stored (most current versions only)
@@ -208,7 +208,7 @@ private:
      * extracts a grp meta item from a cursor at its
      * current position
      */
-    RsGxsGrpMetaData* locked_getGrpMeta(RetroCursor& c, int colOffset);
+    RsGxsGrpMetaData* locked_getGrpMeta(RetroCursor& c, int colOffset, bool use_cache);
 
     /*!
      * extracts a msg item from a cursor at its
@@ -346,8 +346,11 @@ private:
     // the entre list of grp metadata is requested (which happens quite often)
     
     void locked_clearGrpMetaCache(const RsGxsGroupId& gid);
+	void locked_updateGrpMetaCache(const RsGxsGrpMetaData& meta);
 
-    std::map<RsGxsGroupId,RsGxsGrpMetaData> mGrpMetaDataCache ;
+    std::map<RsGxsGroupId,RsGxsGrpMetaData*> mGrpMetaDataCache ;
+	std::list<std::pair<time_t,RsGxsGrpMetaData*> > mOldCachedItems ;
+
     bool mGrpMetaDataCache_ContainsAllDatabase ;
 };
 

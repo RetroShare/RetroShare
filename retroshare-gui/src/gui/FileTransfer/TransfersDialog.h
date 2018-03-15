@@ -44,6 +44,7 @@ class FileProgressInfo;
 class SearchDialog;
 class LocalSharedFilesDialog;
 class RemoteSharedFilesDialog;
+class RsDownloadListModel;
 
 class TransfersDialog : public RsAutoUpdatePage
 {
@@ -78,6 +79,7 @@ public:
 	 LocalSharedFilesDialog *localSharedFiles ;
 	 RemoteSharedFilesDialog *remoteSharedFiles ;
 
+    static QString getPeerName(const RsPeerId &peer_id, QString &iconName, QString &tooltip) ;
 public slots:
     void insertTransfers();
 
@@ -164,9 +166,8 @@ signals:
     void playFiles(QStringList files);
 
 private:
-    QString getPeerName(const RsPeerId &peer_id, QString &iconName, QString &tooltip) const ;
 
-    QStandardItemModel *DLListModel;
+    RsDownloadListModel *DLListModel;
     QSortFilterProxyModel *DLLFilterModel;
     QStandardItemModel *ULListModel;
     QItemSelectionModel *selection;
@@ -260,8 +261,8 @@ private:
 
 public slots:
     // these four functions add entries to the transfers dialog, and return the row id of the entry modified/added
-    int addDLItem(int row, const FileInfo &fileInfo);
-    int addPeerToDLItem(QStandardItem* dlItem, const RsPeerId &peer_ID, const QString &coreID, double dlspeed, uint32_t status, const FileProgressInfo &peerInfo);
+//    int addDLItem(int row, const FileInfo &fileInfo);
+//    int addPeerToDLItem(QStandardItem* dlItem, const RsPeerId &peer_ID, const QString &coreID, double dlspeed, uint32_t status, const FileProgressInfo &peerInfo);
     int addULItem(int row, const FileInfo &fileInfo);
     int addPeerToULItem(QStandardItem* ulItem, const RsPeerId &peer_ID, const QString &coreID, qlonglong completed, double ulspeed, const FileProgressInfo &peerInfo);
 

@@ -116,10 +116,10 @@ macx {
 			}
 		}
 	}
-	DEPENDPATH += . $$INC_DIRs
+	DEPENDPATH += . $$INC_DIR
 	INCLUDEPATH += . $$INC_DIR
 
-	LIBS = -lcurl -lxml2 -lxslt -lcrypto
+	LIBS += -lcurl -lxml2 -lxslt -lcrypto
 }
 
 openbsd-* {

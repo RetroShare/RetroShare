@@ -1,4 +1,6 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="de" version="2.0">
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.1" language="de">
 <context>
     <name>AudioInput</name>
     <message>
@@ -140,7 +142,7 @@
     <message>
         <location line="+7"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Use this field to simulate the maximum bandwidth available so as to preview what the encoded video will look like with the corresponding compression rate.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
@@ -150,7 +152,7 @@
     <message>
         <location line="+21"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Display encoded (and then decoded) frame, to check the codec&apos;s quality. If not selected, the image above only shows the frame that is grabbed from your camera.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
@@ -404,12 +406,17 @@
         <translation>Mikrofonhardware-Lautstärke auf optimalen Wert einstellen.</translation>
     </message>
     <message>
-        <location line="+6"/>
-        <source>&lt;p &gt;Open your sound control panel and go to the recording settings. Make sure the microphone is selected as active input with maximum recording volume. If there's an option to enable a &amp;quot;Microphone boost&amp;quot; make sure it's checked. &lt;/p&gt;
+        <source>&lt;p &gt;Open your sound control panel and go to the recording settings. Make sure the microphone is selected as active input with maximum recording volume. If there&apos;s an option to enable a &amp;quot;Microphone boost&amp;quot; make sure it&apos;s checked. &lt;/p&gt;
 &lt;p&gt;Speak loudly, as when you are annoyed or excited. Decrease the volume in the sound control panel until the bar below stays as high as possible in the green and orange but not the red zone while you speak. &lt;/p&gt;</source>
-        <translation>Öffne die Lautstärkeeinstellungen und gehe zu den Aufnahmeeinstellungen. Versichere dich, dass das Mikrofon als aktives Eingabegerät mit maximaler Aufnahmelautstärke ausgewählt ist. Falls es eine Option &quot;Mikrofon Boost&quot; gibt, sollte diese aktiviert sein.
+        <translation type="vanished">Öffne die Lautstärkeeinstellungen und gehe zu den Aufnahmeeinstellungen. Versichere dich, dass das Mikrofon als aktives Eingabegerät mit maximaler Aufnahmelautstärke ausgewählt ist. Falls es eine Option &quot;Mikrofon Boost&quot; gibt, sollte diese aktiviert sein.
 
 Sprich so laut, als wärst du verärgert oder aufgeregt. Verringere die Lautstärke in den Lautstärkeeinstellungen bis der Balken so weit wie möglich oben im blauen und grünen, aber nicht im roten Bereich ist, während du sprichst.</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>&lt;p&gt;Open your sound control panel and go to the recording settings. Make sure the microphone is selected as active input with maximum recording volume. If there&apos;s an option to enable a &amp;quot;Microphone boost&amp;quot; make sure it&apos;s checked. &lt;/p&gt;
+&lt;p&gt;Speak loudly, as when you are annoyed or excited. Decrease the volume in the sound control panel until the bar below stays as high as possible in the green and orange but not the red zone while you speak. &lt;/p&gt;</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+11"/>
@@ -490,19 +497,27 @@ Sprich so laut, als wärst du verärgert oder aufgeregt. Verringere die Lautstä
         <translation>&lt;h3&gt;RetroShare VOIP Plug-in&lt;/h3&gt;&lt;br/&gt; * Beitragende: Cyril Soler, Josselin Jacquard&lt;br/&gt;</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>&lt;br/&gt;The VOIP plugin adds VOIP to the private chat window of RetroShare. to use it, proceed as follows:&lt;UL&gt;</source>
-        <translation>&lt;br/&gt;Das VOIP Plug-in ermöglicht VOIP Telefonie im privaten Chat Fenster von RetroShare. Um es zu benutzen gehe folgendermaßen vor:&lt;ul&gt;</translation>
+        <translation type="vanished">&lt;br/&gt;Das VOIP Plug-in ermöglicht VOIP Telefonie im privaten Chat Fenster von RetroShare. Um es zu benutzen gehe folgendermaßen vor:&lt;ul&gt;</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>&lt;li&gt; setup microphone levels using the configuration panel&lt;/li&gt;</source>
         <translation>&lt;li&gt;Mikrofonlautstärke in den Optionen einstellen&lt;/li&gt;</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>&lt;li&gt; check your microphone by looking at the VU-metters&lt;/li&gt;</source>
-        <translation>&lt;li&gt;VU-Meter anschauen, um Mikrofon überprüfen&lt;/li&gt;</translation>
+        <translation type="vanished">&lt;li&gt;VU-Meter anschauen, um Mikrofon überprüfen&lt;/li&gt;</translation>
+    </message>
+    <message>
+        <location line="-1"/>
+        <source>&lt;br/&gt;The VOIP plugin adds VOIP to the private chat window of RetroShare. To use it, proceed as follows:&lt;UL&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>&lt;li&gt; check your microphone by looking at the VU-meters&lt;/li&gt;</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
@@ -596,12 +611,7 @@ Sprich so laut, als wärst du verärgert oder aufgeregt. Verringere die Lautstä
         <translation>Vollbildmodus</translation>
     </message>
     <message>
-        <location line="-412"/>
-        <source>%1 inviting you to start an audio conversation. Do you want Accept or Decline the invitation?</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location line="+2"/>
+        <location line="-410"/>
         <source>Accept Audio Call</source>
         <translation>Audioanruf annehmen</translation>
     </message>
@@ -616,12 +626,7 @@ Sprich so laut, als wärst du verärgert oder aufgeregt. Verringere die Lautstä
         <translation>Audioanruf abweisen</translation>
     </message>
     <message>
-        <location line="+33"/>
-        <source>%1 inviting you to start a video conversation. Do you want Accept or Decline the invitation?</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location line="+19"/>
+        <location line="+52"/>
         <source>Decline Video Call</source>
         <translation>Videoanruf ablehnen</translation>
     </message>
@@ -641,14 +646,9 @@ Sprich so laut, als wärst du verärgert oder aufgeregt. Verringere die Lautstä
         <translation>Deine Stummschaltung aufheben</translation>
     </message>
     <message>
-        <location line="+589"/>
-        <source>Waiting your friend respond your video call.</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location line="+14"/>
+        <location line="+603"/>
         <source>Your friend is calling you for video. Respond.</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="-781"/>
@@ -712,12 +712,22 @@ Sprich so laut, als wärst du verärgert oder aufgeregt. Verringere die Lautstä
         <translation>Videoanruf annehmen</translation>
     </message>
     <message>
-        <location line="-52"/>
+        <location line="-55"/>
+        <source>%1 is inviting you to start an audio conversation. Do you want to Accept or Decline the invitation?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
         <source>Activate audio</source>
         <translation>Audio aktivieren</translation>
     </message>
     <message>
-        <location line="+384"/>
+        <location line="+50"/>
+        <source>%1 is inviting you to start a video conversation. Do you want to Accept or Decline the invitation?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+334"/>
         <source>Show Chat Text</source>
         <translation>Chattext anzeigen</translation>
     </message>
@@ -753,13 +763,18 @@ Sprich so laut, als wärst du verärgert oder aufgeregt. Verringere die Lautstä
     </message>
     <message>
         <location line="+20"/>
-        <source>Waiting your friend respond your audio call.</source>
-        <translation type="unfinished"/>
+        <source>Waiting for your friend to respond to your audio call.</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="+58"/>
+        <source>Waiting for your friend to respond to your video call.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-44"/>
         <source>Your friend is calling you for audio. Respond.</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+17"/>
@@ -878,8 +893,12 @@ Sprich so laut, als wärst du verärgert oder aufgeregt. Verringere die Lautstä
     </message>
     <message>
         <location line="+24"/>
+        <source>Bandwidth Info received from this peer: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Bandwidth Info received from this peer:%1</source>
-        <translation>Bandbreiteninfos von diesem Nachbarn erhalten:%1</translation>
+        <translation type="vanished">Bandbreiteninfos von diesem Nachbarn erhalten:%1</translation>
     </message>
     <message>
         <location line="+24"/>

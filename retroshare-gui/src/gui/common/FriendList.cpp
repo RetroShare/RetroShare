@@ -342,7 +342,8 @@ void FriendList::peerTreeWidgetCustomPopupMenu()
 
 //         QMenu *lobbyMenu = NULL;
 
-         switch (type) {
+         switch (type)
+		 {
          case TYPE_GROUP:
              {
                  bool standard = c->data(COLUMN_DATA, ROLE_STANDARD).toBool();
@@ -448,10 +449,10 @@ void FriendList::peerTreeWidgetCustomPopupMenu()
                      contextMenu->addAction(QIcon(IMAGE_EXPORTFRIEND), tr("Recommend this node to..."), this, SLOT(recommendfriend()));
                  }
 
-                 contextMenu->addAction(QIcon(IMAGE_CONNECT), tr("Attempt to connect"), this, SLOT(connectfriend()));
+				 if(!rsPeers->isHiddenNode(rsPeers->getOwnId()) || rsPeers->isHiddenNode( RsPeerId(getRsId(c)) ))
+					 contextMenu->addAction(QIcon(IMAGE_CONNECT), tr("Attempt to connect"), this, SLOT(connectfriend()));
 
                  contextMenu->addAction(QIcon(IMAGE_COPYLINK), tr("Copy certificate link"), this, SLOT(copyFullCertificate()));
-
 
                  //this is a SSL key
                  contextMenu->addAction(QIcon(IMAGE_REMOVEFRIEND), tr("Remove Friend Node"), this, SLOT(removefriend()));
@@ -495,22 +496,21 @@ void FriendList::groupsChanged()
 
 static QIcon createAvatar(const QPixmap &avatar, const QPixmap &overlay)
 {
-    int avatarWidth = avatar.width();
-    int avatarHeight = avatar.height();
+	int avatarWidth = avatar.width();
+	int avatarHeight = avatar.height();
 
-    QPixmap pixmap(avatar);
+	QPixmap pixmap(avatar);
 
-    int overlayWidth = avatarWidth / 2.5;
-    int overlayHeight = avatarHeight / 2.5;
-    int overlayX = avatarWidth - overlayWidth;
-    int overlayY = avatarHeight - overlayHeight;
+	int overlaySize = (avatarWidth > avatarHeight) ? (avatarWidth/2.5) :  (avatarHeight/2.5);
+	int overlayX = avatarWidth - overlaySize;
+	int overlayY = avatarHeight - overlaySize;
 
-    QPainter painter(&pixmap);
-    painter.drawPixmap(overlayX, overlayY, overlayWidth, overlayHeight, overlay);
+	QPainter painter(&pixmap);
+	painter.drawPixmap(overlayX, overlayY, overlaySize, overlaySize, overlay);
 
-    QIcon icon;
-    icon.addPixmap(pixmap);
-    return icon;
+	QIcon icon;
+	icon.addPixmap(pixmap);
+	return icon;
 }
 
 static void getNameWidget(QTreeWidget *treeWidget, QTreeWidgetItem *item, ElidedLabel *&nameLabel, ElidedLabel *&textLabel)

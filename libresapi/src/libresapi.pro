@@ -8,7 +8,9 @@ TARGET = resapi
 TARGET_PRL = libresapi
 DESTDIR = lib
 
+DEPENDPATH += ../../libretroshare/src/
 INCLUDEPATH += ../../libretroshare/src
+
 
 retroshare_android_service {
     win32 {
@@ -39,9 +41,6 @@ retroshare_android_service {
                 QMAKE_RC += --include-dir=$$_PRO_FILE_PWD_/../../libretroshare/src
         }
     }
-
-    DEPENDPATH += . ../../libretroshare/src/
-    INCLUDEPATH += ../../libretroshare/src/
 }
 
 libresapihttpserver {

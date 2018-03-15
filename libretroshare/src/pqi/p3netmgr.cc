@@ -3,7 +3,8 @@
  *
  * 3P/PQI network interface for RetroShare.
  *
- * Copyright 2007-2011 by Robert Fernie.
+ * Copyright (C) 2007-2011  Robert Fernie
+ * Copyright (C) 2015-2018  Gioacchino Mazzurco <gio@eigenlab.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,6 +25,7 @@
  */
 
 #include <time.h>
+#include <vector>
 
 #include "pqi/p3netmgr.h"
 
@@ -37,8 +39,7 @@
 #include "util/extaddrfinder.h"
 #include "util/dnsresolver.h"
 
-//#include "util/rsprint.h"
-//#include "util/rsdebug.h"
+
 struct RsLog::logInfo p3netmgrzoneInfo = {RsLog::Default, "p3netmgr"};
 #define p3netmgrzone &p3netmgrzoneInfo
 
@@ -164,11 +165,6 @@ void p3NetMgrIMPL::setManagers(p3PeerMgr *peerMgr, p3LinkMgr *linkMgr)
 	mPeerMgr = peerMgr;
 	mLinkMgr = linkMgr;
 }
-
-//void p3NetMgrIMPL::setDhtMgr(p3DhtMgr *dhtMgr)
-//{
-//	mDhtMgr = dhtMgr;
-//}
 
 #ifdef RS_USE_DHT_STUNNER
 void p3NetMgrIMPL::setAddrAssist(pqiAddrAssist *dhtStun, pqiAddrAssist *proxyStun)
@@ -718,7 +714,7 @@ void p3NetMgrIMPL::netExtCheck()
 #endif
 				if(sockaddr_storage_isValidNet(tmpip))
 				{
-					if(rsBanList->isAddressAccepted(tmpip,RSBANLIST_CHECKING_FLAGS_BLACKLIST))
+					if( (rsBanList==NULL) || rsBanList->isAddressAccepted(tmpip,RSBANLIST_CHECKING_FLAGS_BLACKLIST))
 					{
 						// must be stable???
 						isStable = true;
@@ -761,7 +757,7 @@ void p3NetMgrIMPL::netExtCheck()
 				/* input network bits */
 				if (mDhtStunner->getExternalAddr(tmpaddr, isstable))
 				{
-					if(rsBanList->isAddressAccepted(tmpaddr,RSBANLIST_CHECKING_FLAGS_BLACKLIST))
+					if((rsBanList == NULL) || rsBanList->isAddressAccepted(tmpaddr,RSBANLIST_CHECKING_FLAGS_BLACKLIST))
 					{
 						// must be stable???
 						isStable = (isstable == 1);
@@ -1020,19 +1016,41 @@ bool p3NetMgrIMPL::checkNetAddress()
 	}
 	else
 	{
-		// TODO: Sat Oct 24 15:51:24 CEST 2015 The fact of having just one local address is a flawed assumption, this should be redesigned soon.
-		std::list<sockaddr_storage> addrs;
-		std::list<sockaddr_storage>::iterator it;
+		/* TODO: Sat Oct 24 15:51:24 CEST 2015 The fact of having just one local
+		 *  address is a flawed assumption, this should be redesigned as soon as
+		 *  possible. It will require complete reenginering of the network layer
+		 *  code. */
+
+		std::vector<sockaddr_storage> addrs;
 		if (getLocalAddresses(addrs))
-			for(it = addrs.begin(); (it != addrs.end() && !validAddr); ++it)
-				if(sockaddr_storage_isValidNet(*it) && !sockaddr_storage_isLoopbackNet(*it))
+		{
+			for (auto it = addrs.begin(); it!=addrs.end(); ++it)
+			{
+				sockaddr_storage& addr(*it);
+				if( sockaddr_storage_isValidNet(addr) &&
+				    !sockaddr_storage_isLoopbackNet(addr) &&
+				    !sockaddr_storage_isLinkLocalNet(addr))
 				{
-					prefAddr = *it;
+					prefAddr = addr;
 					validAddr = true;
-#if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
-					std::cout << "p3NetMgrIMPL::checkNetAddress() prefAddr: " << sockaddr_storage_iptostring(prefAddr) << std::endl;
-#endif
+					break;
 				}
+			}
+
+			/* If no satisfactory local address has been found yet relax and
+			 * accept also link local addresses */
+			if(!validAddr) for (auto it = addrs.begin(); it!=addrs.end(); ++it)
+			{
+				sockaddr_storage& addr(*it);
+				if( sockaddr_storage_isValidNet(addr) &&
+				    !sockaddr_storage_isLoopbackNet(addr) )
+				{
+					prefAddr = addr;
+					validAddr = true;
+					break;
+				}
+			}
+		}
 	}
 
 

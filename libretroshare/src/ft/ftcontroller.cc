@@ -40,6 +40,7 @@
 #endif
 #include "util/rsdiscspace.h"
 #include "util/rsmemory.h"
+#include "util/rstime.h"
 
 #include "ft/ftcontroller.h"
 
@@ -219,7 +220,7 @@ void ftController::data_tick()
 	/* check the queues */
 
 		//Waiting 1 sec before start
-		usleep(1*1000*1000); // 1 sec
+		rstime::rs_usleep(1*1000*1000); // 1 sec
 
 #ifdef CONTROL_DEBUG
 		//std::cerr << "ftController::run()";
@@ -301,7 +302,7 @@ void ftController::searchForDirectSources()
 			FileInfo info ;	// Info needs to be re-allocated each time, to start with a clear list of peers (it's not cleared down there)
 
 			if( mSearch->search(it->first, RS_FILE_HINTS_REMOTE | RS_FILE_HINTS_SPEC_ONLY, info) )
-				for( std::list<TransferInfo>::const_iterator pit = info.peers.begin(); pit != info.peers.end(); ++pit )
+				for( std::vector<TransferInfo>::const_iterator pit = info.peers.begin(); pit != info.peers.end(); ++pit )
 				{
 					bool bAllowDirectDL = false;
                     switch (mFilePermDirectDLPolicy) {
@@ -734,13 +735,39 @@ bool ftController::completeFile(const RsFileHash& hash)
 
 		fc->mState = ftFileControl::COMPLETED;
 
+		std::string dst_dir,src_dir,src_file,dst_file ;
+
+		RsDirUtil::splitDirFromFile(fc->mCurrentPath,src_dir,src_file) ;
+		RsDirUtil::splitDirFromFile(fc->mDestination,dst_dir,dst_file) ;
+
+		// We use this intermediate file in case the destination directory is not available, so as to not keep the partial file name.
+
+		std::string intermediate_file_name = src_dir+'/'+dst_file ;
+
 		// I don't know how the size can be zero, but believe me, this happens,
 		// and it causes an error on linux because then the file may not even exist.
 		//
-		if( fc->mSize > 0 && RsDirUtil::moveFile(fc->mCurrentPath,fc->mDestination) )
-			fc->mCurrentPath = fc->mDestination;
-		else
+		if( fc->mSize == 0)
 			fc->mState = ftFileControl::ERROR_COMPLETION;
+		else
+		{
+			std::cerr << "CompleteFile(): renaming " << fc->mCurrentPath << " into " << fc->mDestination << std::endl;
+			std::cerr << "CompleteFile(): 1 - renaming " << fc->mCurrentPath << " info " << intermediate_file_name << std::endl;
+
+			if(RsDirUtil::moveFile(fc->mCurrentPath,intermediate_file_name) )
+			{
+				fc->mCurrentPath = intermediate_file_name ;
+
+				std::cerr << "CompleteFile(): 2 - renaming/copying " << intermediate_file_name << " into " << fc->mDestination << std::endl;
+
+				if(RsDirUtil::moveFile(intermediate_file_name,fc->mDestination) )
+					fc->mCurrentPath = fc->mDestination;
+				else
+					fc->mState = ftFileControl::ERROR_COMPLETION;
+			}
+			else
+				fc->mState = ftFileControl::ERROR_COMPLETION;
+		}
 
 		/* for extralist additions */
 		path    = fc->mDestination;
@@ -1003,7 +1030,7 @@ bool 	ftController::FileRequest(const std::string& fname, const RsFileHash& hash
 	}
 
 	std::list<RsPeerId>::const_iterator it;
-	std::list<TransferInfo>::const_iterator pit;
+	std::vector<TransferInfo>::const_iterator pit;
 
 #ifdef CONTROL_DEBUG
 	std::cerr << "ftController::FileRequest(" << fname << ",";
@@ -1595,6 +1622,8 @@ bool 	ftController::FileDetails(const RsFileHash &hash, FileInfo &info)
 
 	bool isDownloading = false;
 	bool isSuspended = false;
+
+	info.peers.clear();
 
 	for(pit = peerIds.begin(); pit != peerIds.end(); ++pit)
 	{

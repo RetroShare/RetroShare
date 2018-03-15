@@ -24,19 +24,11 @@
 #include <QDir>
 #include <QThread>
 
-#ifdef __ANDROID__
-#	include "util/androiddebug.h"
-#endif
-
 #include "libresapilocalclient.h"
 #include "notificationsbridge.h"
 
 int main(int argc, char *argv[])
 {
-#ifdef __ANDROID__
-	AndroidStdIOCatcher dbg; (void) dbg;
-#endif
-
 	QCoreApplication app(argc, argv);
 
 	QString sockPath = QDir::homePath() + "/.retroshare";

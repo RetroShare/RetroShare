@@ -6,12 +6,16 @@ TEMPLATE = subdirs
 SUBDIRS += openpgpsdk
 openpgpsdk.file = openpgpsdk/src/openpgpsdk.pro
 
-SUBDIRS += libbitdht
-libbitdht.file = libbitdht/src/libbitdht.pro
+retrotor {
+	libretroshare.depends = openpgpsdk 
+} else {
+	SUBDIRS += libbitdht
+	libbitdht.file = libbitdht/src/libbitdht.pro
+	libretroshare.depends = openpgpsdk libbitdht
+}
 
 SUBDIRS += libretroshare
 libretroshare.file = libretroshare/src/libretroshare.pro
-libretroshare.depends = openpgpsdk libbitdht
 
 SUBDIRS += libresapi
 libresapi.file = libresapi/src/libresapi.pro
@@ -24,11 +28,14 @@ retroshare_gui {
     retroshare_gui.target = retroshare_gui
 }
 
+retrotor {
+} else {
 retroshare_nogui {
     SUBDIRS += retroshare_nogui
     retroshare_nogui.file = retroshare-nogui/src/retroshare-nogui.pro
     retroshare_nogui.depends = libretroshare libresapi
     retroshare_nogui.target = retroshare_nogui
+}
 }
 
 retroshare_android_service {

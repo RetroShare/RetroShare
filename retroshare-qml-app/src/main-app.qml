@@ -627,4 +627,62 @@ ApplicationWindow
 		}
 	}
 
+	property var netStatus: ({})
+	function refreshNetStatus(optCallback)
+	{
+		console.log("refreshNetStatus(optCallback)")
+		rsApi.request("/peers/get_network_options", "", function(par)
+		{
+			var json = JSON.parse(par.response)
+			mainWindow.netStatus = json.data
+			if(typeof(optCallback) === "function") optCallback();
+		})
+	}
+
+	function updateDhtMode(stopping)
+	{
+		console.log("updateDhtMode(stopping)", stopping)
+
+		switch(AppSettings.dhtMode)
+		{
+		case "On": mainWindow.netStatus.discovery_mode = 0; break;
+		case "Off": mainWindow.netStatus.discovery_mode = 1; break;
+		case "Interactive": mainWindow.netStatus.discovery_mode = stopping ? 1:0; break
+		}
+
+		console.log("updateDhtMode(stopping)", stopping, netStatus.discovery_mode)
+
+		rsApi.request("/peers/set_network_options", JSON.stringify(netStatus))
+	}
+
+	Component.onDestruction: if(coreReady) updateDhtMode(true)
+
+
+	Connections
+	{
+		target: AppSettings
+		onDhtModeChanged:
+		{
+			Qt.application.state
+			console.log("onDhtModeChanged", AppSettings.dhtMode)
+			if(coreReady) updateDhtMode(false)
+		}
+	}
+
+	Connections
+	{
+		target: stackView
+		onStateChanged: if(coreReady) refreshNetStatus(function() {updateDhtMode(false)})
+	}
+
+	Connections
+	{
+		target: Qt.application
+		onStateChanged:
+		{
+			console.log("Qt.application.state changed to", Qt.ApplicationSuspended)
+			if(coreReady && (Qt.application.state === Qt.ApplicationSuspended))
+				updateDhtMode(true)
+		}
+	}
 }

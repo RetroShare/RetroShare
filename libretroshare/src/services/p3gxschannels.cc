@@ -120,6 +120,92 @@ uint32_t p3GxsChannels::channelsAuthenPolicy()
 	return policy;
 }
 
+static const uint32_t GXS_CHANNELS_CONFIG_MAX_TIME_NOTIFY_STORAGE = 86400*30*2 ; // ignore notifications for 2 months
+static const uint8_t  GXS_CHANNELS_CONFIG_SUBTYPE_NOTIFY_RECORD   = 0x01 ;
+
+struct RsGxsForumNotifyRecordsItem: public RsItem
+{
+
+	RsGxsForumNotifyRecordsItem()
+	    : RsItem(RS_PKT_VERSION_SERVICE,RS_SERVICE_GXS_TYPE_CHANNELS_CONFIG,GXS_CHANNELS_CONFIG_SUBTYPE_NOTIFY_RECORD)
+	{}
+
+    virtual ~RsGxsForumNotifyRecordsItem() {}
+
+	void serial_process( RsGenericSerializer::SerializeJob j, RsGenericSerializer::SerializeContext& ctx )
+	{
+		RS_REGISTER_SERIAL_MEMBER(records);
+	}
+	void clear() {}
+
+	std::map<RsGxsGroupId,time_t> records;
+};
+
+class GxsChannelsConfigSerializer : public RsServiceSerializer
+{
+public:
+	GxsChannelsConfigSerializer() : RsServiceSerializer(RS_SERVICE_GXS_TYPE_CHANNELS_CONFIG) {}
+	virtual ~GxsChannelsConfigSerializer() {}
+
+	RsItem* create_item(uint16_t service_id, uint8_t item_sub_id) const
+	{
+		if(service_id != RS_SERVICE_GXS_TYPE_CHANNELS_CONFIG)
+			return NULL;
+
+		switch(item_sub_id)
+		{
+		case GXS_CHANNELS_CONFIG_SUBTYPE_NOTIFY_RECORD: return new RsGxsForumNotifyRecordsItem();
+		default:
+			return NULL;
+		}
+	}
+};
+
+bool p3GxsChannels::saveList(bool &cleanup, std::list<RsItem *>&saveList)
+{
+	cleanup = true ;
+
+	RsGxsForumNotifyRecordsItem *item = new RsGxsForumNotifyRecordsItem ;
+
+	item->records = mKnownChannels ;
+
+	saveList.push_back(item) ;
+	return true;
+}
+
+bool p3GxsChannels::loadList(std::list<RsItem *>& loadList)
+{
+	while(!loadList.empty())
+	{
+		RsItem *item = loadList.front();
+		loadList.pop_front();
+
+		time_t now = time(NULL);
+
+		RsGxsForumNotifyRecordsItem *fnr = dynamic_cast<RsGxsForumNotifyRecordsItem*>(item) ;
+
+		if(fnr != NULL)
+		{
+			mKnownChannels.clear();
+
+			for(auto it(fnr->records.begin());it!=fnr->records.end();++it)
+				if( it->second + GXS_CHANNELS_CONFIG_MAX_TIME_NOTIFY_STORAGE < now)
+					mKnownChannels.insert(*it) ;
+		}
+
+		delete item ;
+	}
+	return true;
+}
+
+RsSerialiser* p3GxsChannels::setupSerialiser()
+{
+	RsSerialiser* rss = new RsSerialiser;
+	rss->addSerialType(new GxsChannelsConfigSerializer());
+
+	return rss;
+}
+
 
 	/** Overloaded to cache new groups **/
 RsGenExchange::ServiceCreate_Return p3GxsChannels::service_CreateGroup(RsGxsGrpItem* grpItem, RsTlvSecurityKeySet& /* keySet */)
@@ -223,7 +309,7 @@ void p3GxsChannels::notifyChanges(std::vector<RsGxsNotify *> &changes)
                                 if(mKnownChannels.find(*git) == mKnownChannels.end())
                                 {
 									notify->AddFeedItem(RS_FEED_ITEM_CHANNEL_NEW, git->toStdString());
-                                    mKnownChannels.insert(*git) ;
+                                    mKnownChannels.insert(std::make_pair(*git,time(NULL))) ;
                                 }
                                 else
                                     std::cerr << "(II) Not notifying already known channel " << *git << std::endl;

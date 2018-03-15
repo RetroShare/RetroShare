@@ -57,7 +57,7 @@ RsControlModule::~RsControlModule()
 
 bool RsControlModule::processShouldExit()
 {
-    RsStackMutex stack(mExitFlagMtx);
+	RS_STACK_MUTEX(mExitFlagMtx); // ********** LOCKED **********
     return mProcessShouldExit;
 }
 
@@ -158,7 +158,7 @@ void RsControlModule::run()
 		std::cerr << "RsControlModule::run() reseting passwd." << std::endl;
 #endif
 		{
-			RsStackMutex stack(mDataMtx); // ********** LOCKED **********
+			RS_STACK_MUTEX(mDataMtx); // ********** LOCKED **********
 			mPassword = "";
 		}
 
@@ -182,7 +182,7 @@ void RsControlModule::run()
 			std::cerr << "RsControlModule::run() while(wait_for_account_select) mLoadPeerId=" << mLoadPeerId << std::endl;
 #endif
             usleep(500*1000);
-            RsStackMutex stack(mDataMtx); // ********** LOCKED **********
+			RS_STACK_MUTEX(mDataMtx); // ********** LOCKED **********
 
 			if(!mLoadPeerId.isNull())
 			{
@@ -238,7 +238,7 @@ void RsControlModule::run()
 #endif
 
 		{
-			RsStackMutex stack(mDataMtx); // ********** LOCKED **********
+			RS_STACK_MUTEX(mDataMtx); // ********** LOCKED **********
 			mLoadPeerId.clear();
 		}
     }
@@ -247,7 +247,7 @@ void RsControlModule::run()
 #endif
 
 	{
-		RsStackMutex stack(mDataMtx); // ********** LOCKED **********
+		RS_STACK_MUTEX(mDataMtx); // ********** LOCKED **********
 		mFixedPassword = mPassword;
 
 		std::cerr << "***Reseting mPasswd " << std::endl;
@@ -279,7 +279,7 @@ void RsControlModule::run()
 
 void RsControlModule::handleRunState(Request &, Response &resp)
 {
-    RsStackMutex stack(mDataMtx); // ********** LOCKED **********
+	RS_STACK_MUTEX(mDataMtx); // ********** LOCKED **********
     std::string state;
     switch(mRunState)
     {
@@ -311,7 +311,7 @@ void RsControlModule::handleRunState(Request &, Response &resp)
 
 void RsControlModule::handleIdentities(Request &, Response &resp)
 {
-    RsStackMutex stack(mDataMtx); // ********** LOCKED **********
+	RS_STACK_MUTEX(mDataMtx); // ********** LOCKED **********
     if(mRunState == WAITING_INIT || mRunState == FATAL_ERROR)
     {
         resp.setFail("Retroshare is not initialised. Operation not possible.");
@@ -337,7 +337,7 @@ void RsControlModule::handleIdentities(Request &, Response &resp)
 
 void RsControlModule::handleLocations(Request &, Response &resp)
 {
-    RsStackMutex stack(mDataMtx); // ********** LOCKED **********
+	RS_STACK_MUTEX(mDataMtx); // ********** LOCKED **********
     if(mRunState == WAITING_INIT || mRunState == FATAL_ERROR)
     {
         resp.setFail("Retroshare is not initialised. Operation not possible.");
@@ -370,7 +370,7 @@ void RsControlModule::handleLocations(Request &, Response &resp)
 
 void RsControlModule::handlePassword(Request &req, Response &resp)
 {
-    RsStackMutex stack(mDataMtx); // ********** LOCKED **********
+	RS_STACK_MUTEX(mDataMtx); // ********** LOCKED **********
     std::string passwd;
     req.mStream << makeKeyValueReference("password", passwd);
     if(passwd != "")// && mWantPassword)
@@ -398,7 +398,7 @@ void RsControlModule::handlePassword(Request &req, Response &resp)
 
 void RsControlModule::handleLogin(Request &req, Response &resp)
 {
-    RsStackMutex stack(mDataMtx); // ********** LOCKED **********
+	RS_STACK_MUTEX(mDataMtx); // ********** LOCKED **********
     if(mRunState != WAITING_ACCOUNT_SELECT)
     {
         resp.setFail("Operation not allowed in this runstate. Login is only allowed rigth after initialisation.");
@@ -411,7 +411,7 @@ void RsControlModule::handleLogin(Request &req, Response &resp)
 
 void RsControlModule::handleShutdown(Request &, Response &resp)
 {
-    RsStackMutex stack(mExitFlagMtx); // ********** LOCKED **********
+	RS_STACK_MUTEX(mExitFlagMtx); // ********** LOCKED **********
     mProcessShouldExit = true;
     resp.setOk();
 }
@@ -514,7 +514,7 @@ void RsControlModule::handleCreateLocation(Request &req, Response &resp)
     std::string err_string;
     // give the password to the password callback
 	{
-		RsStackMutex stack(mDataMtx); // ********** LOCKED **********
+		RS_STACK_MUTEX(mDataMtx); // ********** LOCKED **********
 		mPassword = pgp_password;
 		mFixedPassword = pgp_password;
 	}
@@ -522,7 +522,7 @@ void RsControlModule::handleCreateLocation(Request &req, Response &resp)
 
     // clear fixed password to restore normal password operation
 //    {
-//        RsStackMutex stack(mDataMtx); // ********** LOCKED **********
+//        RS_STACK_MUTEX(mDataMtx); // ********** LOCKED **********
 //        mFixedPassword = "";
 //    }
 
@@ -532,7 +532,7 @@ void RsControlModule::handleCreateLocation(Request &req, Response &resp)
         RsInit::LoadPassword(ssl_password);
         // trigger login in init thread
         {
-            RsStackMutex stack(mDataMtx); // ********** LOCKED **********
+			RS_STACK_MUTEX(mDataMtx); // ********** LOCKED **********
             mLoadPeerId = ssl_id;
         }
         resp.mDataStream << makeKeyValueReference("pgp_id", pgp_id)
@@ -561,7 +561,7 @@ bool RsControlModule::askForDeferredSelfSignature(const void *data, const uint32
 
 void RsControlModule::setRunState(RunState s, std::string errstr)
 {
-    RsStackMutex stack(mDataMtx); // ********** LOCKED **********
+	RS_STACK_MUTEX(mDataMtx); // ********** LOCKED **********
     mRunState = s;
     mLastErrorString = errstr;
     mStateTokenServer->replaceToken(mStateToken);

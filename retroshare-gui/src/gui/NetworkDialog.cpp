@@ -58,18 +58,22 @@
 #define IMAGE_MESSAGE         ":/images/mail_new.png"
 
 /* Images for Status icons */
-#define IMAGE_AUTHED         ":/images/accepted16.png"
+
+//following defined in model
+/*#define IMAGE_AUTHED         ":/images/accepted16.png"
 #define IMAGE_DENIED         ":/images/denied16.png"
-#define IMAGE_TRUSTED        ":/images/rs-2.png"
+#define IMAGE_TRUSTED        ":/images/rs-2.png" */
 
 // Defines for key list columns
-#define COLUMN_CHECK 0
+
+//following defined in model
+/*#define COLUMN_CHECK 0
 #define COLUMN_PEERNAME    1
 #define COLUMN_I_AUTH_PEER 2
 #define COLUMN_PEER_AUTH_ME 3
 #define COLUMN_PEERID      4
 #define COLUMN_LAST_USED   5
-#define COLUMN_COUNT 6
+#define COLUMN_COUNT 6 */
 
 //RsPeerId getNeighRsCertId(QTreeWidgetItem *i);
 
@@ -77,10 +81,10 @@
  * #define NET_DEBUG 1
  *****/
 
-static const unsigned int ROLE_SORT = Qt::UserRole + 1 ;
+//static const unsigned int ROLE_SORT = Qt::UserRole + 1 ;
 
 /** Constructor */
-NetworkDialog::NetworkDialog(QWidget *parent)
+NetworkDialog::NetworkDialog(QWidget */*parent*/)
 {
     /* Invoke the Qt Designer generated object setup routine */
     ui.setupUi(this);
@@ -91,6 +95,7 @@ NetworkDialog::NetworkDialog(QWidget *parent)
 
     //list data model
     float f = QFontMetricsF(font()).height()/14.0 ;
+
     PGPIdItemModel = new pgpid_item_model(neighs, f, this);
     PGPIdItemProxy = new pgpid_item_proxy(this);
     connect(ui.onlyTrustedKeys, SIGNAL(toggled(bool)), PGPIdItemProxy, SLOT(use_only_trusted_keys(bool)));
@@ -105,10 +110,9 @@ NetworkDialog::NetworkDialog(QWidget *parent)
     ui.connectTreeWidget->setUpdatesEnabled(true);
     ui.connectTreeWidget->setSortingEnabled(true);
     ui.connectTreeWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
+    ui.connectTreeWidget->setSelectionMode(QAbstractItemView::SingleSelection);
     connect(ui.connectTreeWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( connectTreeWidgetCostumPopupMenu( QPoint ) ) );
     connect(ui.connectTreeWidget, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(peerdetails()));
-
-
 
     /* Set header resize modes and initial section sizes */
 /*    QHeaderView * _header = ui.connectTreeWidget->header () ;
@@ -121,8 +125,6 @@ NetworkDialog::NetworkDialog(QWidget *parent)
 
 
     ui.onlyTrustedKeys->setMinimumWidth(20*f);
-
-
 
 /*    QMenu *menu = new QMenu();
     menu->addAction(ui.actionTabsright); 
@@ -157,13 +159,15 @@ void NetworkDialog::changeEvent(QEvent *e)
 void NetworkDialog::connectTreeWidgetCostumPopupMenu( QPoint /*point*/ )
 {
 
-    QModelIndexList l = ui.connectTreeWidget->selectionModel()->selection().indexes();
-    if(l.empty())
-        return;
+	QModelIndexList l = ui.connectTreeWidget->selectionModel()->selection().indexes();
+	if(l.empty())
+	{
+		return;
+	}
 
 	QMenu *contextMnu = new QMenu;
 
-    RsPgpId peer_id(ui.connectTreeWidget->model()->data(ui.connectTreeWidget->model()->index(l.begin()->row(), COLUMN_PEERID)).toString().toStdString()) ;
+	RsPgpId peer_id(ui.connectTreeWidget->model()->data(ui.connectTreeWidget->model()->index(l.begin()->row(), COLUMN_PEERID)).toString().toStdString()) ;
 
 	// That's what context menus are made for
 	RsPeerDetails detail;

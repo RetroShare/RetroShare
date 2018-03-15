@@ -1,27 +1,33 @@
-#include <QTreeWidget>
-#include <QTextBrowser>
-#include <QTimer>
-#include <QMenu>
-#include <QMessageBox>
-#include <time.h>
-#include <algorithm>
+
 #include "ChatLobbyWidget.h"
-#include "chat/CreateLobbyDialog.h"
-#include "chat/ChatTabWidget.h"
-#include "common/RSTreeWidgetItem.h"
+
 #include "notifyqt.h"
 #include "chat/ChatLobbyDialog.h"
 #include "chat/ChatLobbyUserNotify.h"
-#include "util/HandleRichText.h"
-#include "util/QtVersion.h"
-#include "gui/settings/rsharesettings.h"
+#include "chat/ChatTabWidget.h"
+#include "chat/CreateLobbyDialog.h"
+#include "common/RSTreeWidgetItem.h"
+#include "gui/RetroShareLink.h"
 #include "gui/gxs/GxsIdDetails.h"
 #include "gui/Identity/IdEditDialog.h"
+#include "gui/settings/rsharesettings.h"
+#include "util/HandleRichText.h"
+#include "util/QtVersion.h"
 
 #include "retroshare/rsmsgs.h"
 #include "retroshare/rspeers.h"
 #include "retroshare/rsnotify.h"
 #include "retroshare/rsidentity.h"
+
+#include <QGridLayout>
+#include <QMenu>
+#include <QMessageBox>
+#include <QTextBrowser>
+#include <QTimer>
+#include <QTreeWidget>
+
+#include <algorithm>
+#include <time.h>
 
 //#define CHAT_LOBBY_GUI_DEBUG 1
 
@@ -53,6 +59,7 @@
 #define IMAGE_TYPING		      ":images/typing.png" 
 #define IMAGE_MESSAGE	      ":images/chat.png" 
 #define IMAGE_AUTOSUBSCRIBE   ":images/accepted16.png"
+#define IMAGE_COPYRSLINK      ":/images/copyrslink.png"
 
 ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WindowFlags flags)
   : RsAutoUpdatePage(5000, parent, flags)
@@ -61,6 +68,8 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WindowFlags flags)
 
 	m_bProcessSettings = false;
 	myChatLobbyUserNotify = NULL;
+	myInviteYesButton = NULL;
+	myInviteIdChooser = NULL;
 
 	QObject::connect( NotifyQt::getInstance(), SIGNAL(lobbyListChanged()), SLOT(lobbyChanged()));
     QObject::connect( NotifyQt::getInstance(), SIGNAL(chatLobbyEvent(qulonglong,int,const RsGxsId&,const QString&)), this, SLOT(displayChatLobbyEvent(qulonglong,int,const RsGxsId&,const QString&)));
@@ -314,6 +323,8 @@ void ChatLobbyWidget::lobbyTreeWidgetCustomPopupMenu(QPoint)
             contextMnu.addAction(QIcon(IMAGE_AUTOSUBSCRIBE), tr("Remove Auto Subscribe"), this, SLOT(autoSubscribeItem()));
         else if(!own_identities.empty())
             contextMnu.addAction(QIcon(IMAGE_SUBSCRIBE), tr("Add Auto Subscribe"), this, SLOT(autoSubscribeItem()));
+
+        contextMnu.addAction(QIcon(IMAGE_COPYRSLINK), tr("Copy RetroShare Link"), this, SLOT(copyItemLink()));
     }
 
         contextMnu.addSeparator();//-------------------------------------------------------------------
@@ -736,7 +747,7 @@ void ChatLobbyWidget::subscribeChatLobbyAs()
         ChatDialog::chatFriend(ChatId(id),true) ;
 }
 
-void ChatLobbyWidget::showLobbyAnchor(ChatLobbyId id, QString anchor)
+bool ChatLobbyWidget::showLobbyAnchor(ChatLobbyId id, QString anchor)
 {
 	QTreeWidgetItem *item = getTreeWidgetItem(id) ;
 
@@ -751,13 +762,14 @@ void ChatLobbyWidget::showLobbyAnchor(ChatLobbyId id, QString anchor)
 				ChatLobbyDialog *cldCW=NULL ;
 				if (NULL != (cldCW = dynamic_cast<ChatLobbyDialog *>(ui.stackedWidget->currentWidget())))
 					cldCW->getChatWidget()->scrollToAnchor(anchor);
-
-				ui.lobbyTreeWidget->setCurrentItem(item);
 			}
 
+			ui.lobbyTreeWidget->setCurrentItem(item);
+			return true;
 		}
 	}
 
+	return false;
 }
 
 void ChatLobbyWidget::subscribeChatLobbyAtItem(QTreeWidgetItem *item)
@@ -881,6 +893,24 @@ void ChatLobbyWidget::subscribeItem()
 void ChatLobbyWidget::autoSubscribeItem()
 {
     autoSubscribeLobby(ui.lobbyTreeWidget->currentItem());
+}
+
+void ChatLobbyWidget::copyItemLink()
+{
+	QTreeWidgetItem *item = ui.lobbyTreeWidget->currentItem();
+	if (item == NULL || item->type() != TYPE_LOBBY) {
+		return;
+	}
+
+	ChatLobbyId id = item->data(COLUMN_DATA, ROLE_ID).toULongLong();
+	QString name = item->text(COLUMN_NAME);
+
+	RetroShareLink link = RetroShareLink::createChatRoom(ChatId(id),name);
+	if (link.valid()) {
+		QList<RetroShareLink> urls;
+		urls.push_back(link);
+		RSLinkClipboard::copyLinks(urls);
+	}
 }
 
 QTreeWidgetItem *ChatLobbyWidget::getTreeWidgetItem(ChatLobbyId id)
@@ -1078,29 +1108,56 @@ void ChatLobbyWidget::readChatLobbyInvites()
     RsGxsId default_id ;
     rsMsgs->getDefaultIdentityForChatLobby(default_id) ;
 
-    for(std::list<ChatLobbyInvite>::const_iterator it(invites.begin());it!=invites.end();++it)
-    {
+	std::list<ChatLobbyId> subscribed_lobbies ;
+	rsMsgs->getChatLobbyList(subscribed_lobbies) ;
+
+	for(std::list<ChatLobbyInvite>::const_iterator it(invites.begin());it!=invites.end();++it)
+	{
+		// first check if the lobby is already subscribed. If so, just ignore the request.
+
+		bool found = false ;
+		for(auto it2(subscribed_lobbies.begin());it2!=subscribed_lobbies.end() && !found;++it2)
+			found = found || (*it2 == (*it).lobby_id) ;
+
+		if(found)
+			continue ;
+
         QMessageBox mb(QObject::tr("Join chat room"),
                        tr("%1 invites you to chat room named %2").arg(QString::fromUtf8(rsPeers->getPeerName((*it).peer_id).c_str())).arg(RsHtml::plainText(it->lobby_name)),
                        QMessageBox::Question, QMessageBox::Yes,QMessageBox::No, 0);
 
 
-        QLabel *label = new QLabel(tr("Choose an identity for this chat room:"));
-        GxsIdChooser *idchooser = new GxsIdChooser ;
-        idchooser->loadIds(IDCHOOSER_ID_REQUIRED,default_id) ;
+		QLabel *label;
+		GxsIdChooser *idchooser = new GxsIdChooser;
 
+		if( (*it).lobby_flags & RS_CHAT_LOBBY_FLAGS_PGP_SIGNED )
+		{
+			idchooser->loadIds(IDCHOOSER_ID_REQUIRED | IDCHOOSER_NON_ANONYMOUS,default_id) ;
+			label = new QLabel(tr("Choose a non anonymous identity for this chat room:"));
+		}
+		else
+		{
+			idchooser->loadIds(IDCHOOSER_ID_REQUIRED,default_id) ;
+			label = new QLabel(tr("Choose an identity for this chat room:"));
+		}
+		myInviteYesButton = mb.button(QMessageBox::Yes);
+		myInviteIdChooser = idchooser;
+		connect(idchooser, SIGNAL(currentIndexChanged(int)), this, SLOT(idChooserCurrentIndexChanged(int)));
+		idChooserCurrentIndexChanged(0);
 
-        QGridLayout* layout = qobject_cast<QGridLayout*>(mb.layout());
-        if (layout) {
-            layout->addWidget(label, layout->rowCount(), 0, 1, layout->columnCount(), Qt::AlignHCenter ) ;
-            layout->addWidget(idchooser, layout->rowCount(), 0, 1, layout->columnCount(), Qt::AlignRight ) ;
-        } else {
-            //Not QGridLayout so add at end
-            mb.layout()->addWidget(label) ;
-            mb.layout()->addWidget(idchooser) ;
-        }
+		QGridLayout* layout = qobject_cast<QGridLayout*>(mb.layout());
+		if (layout) {
+			layout->addWidget(label, layout->rowCount(), 0, 1, layout->columnCount(), Qt::AlignHCenter ) ;
+			layout->addWidget(idchooser, layout->rowCount(), 0, 1, layout->columnCount(), Qt::AlignRight ) ;
+		} else {
+			//Not QGridLayout so add at end
+			mb.layout()->addWidget(label) ;
+			mb.layout()->addWidget(idchooser) ;
+		}
 
-        int res = mb.exec() ;
+		int res = mb.exec();
+		myInviteYesButton = NULL;
+		myInviteIdChooser = NULL;
 
         if (res == QMessageBox::No)
         {
@@ -1123,6 +1180,28 @@ void ChatLobbyWidget::readChatLobbyInvites()
             std::cerr << "Can't join chat room with id 0x" << std::hex << (*it).lobby_id << std::dec << std::endl;
 
     }
+
+	myInviteYesButton = NULL;
+	myInviteIdChooser = NULL;
+}
+
+void ChatLobbyWidget::idChooserCurrentIndexChanged(int /*index*/)
+{
+	if (myInviteYesButton && myInviteIdChooser)
+	{
+		RsGxsId chosen_id;
+		switch (myInviteIdChooser->getChosenId(chosen_id))
+		{
+			case GxsIdChooser::KnowId:
+			case GxsIdChooser::UnKnowId:
+				myInviteYesButton->setEnabled(true);
+			break;
+			case GxsIdChooser::NoId:
+			case GxsIdChooser::None:
+			default: ;
+				myInviteYesButton->setEnabled(false);
+		}
+	}
 }
 
 void ChatLobbyWidget::filterColumnChanged(int)

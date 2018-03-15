@@ -1,4 +1,289 @@
-retroshare (0.6.3-1.XXXXXX~YYYYYY) YYYYYY; urgency=low
+retroshare (ZZZZZZ-1.XXXXXX~YYYYYY) YYYYYY; urgency=low
+
+  919417a csoler Sat,  3 Mar 2018 19:04:54 +0100 make sure tor executable from config path can be reached
+  b587ac8 csoler Sat,  3 Mar 2018 16:06:49 +0100 Merge pull request #1192 from PhenomRetroShare/Add_WarningMaxFlatViewFile
+  9bcff07 csoler Sat,  3 Mar 2018 15:58:11 +0100 Merge pull request #1203 from PhenomRetroShare/Fix_SharedFileDialogShowColumn
+  ead2aea csoler Sat,  3 Mar 2018 15:56:51 +0100 Merge pull request #1204 from csoler/v0.6-FT
+  dcb3f79 csoler Sat,  3 Mar 2018 15:55:52 +0100 removed some debug info in RSLink
+  1a1dc64 csoler Sat,  3 Mar 2018 15:49:45 +0100 fixed transfers list bug causing ghost entries to appear
+  58d418d Phenom Sat,  3 Mar 2018 12:08:21 +0100 Fix SharedFilesDialog show old hidden column.
+  ab45a97 Phenom Sat,  3 Mar 2018 12:05:13 +0100 Revert "Fix SharedFilesDialog show old hidden column."
+  57f87a6 csoler Fri,  2 Mar 2018 22:58:50 +0100 Merge pull request #1201 from csoler/v0.6-SecurityFixes
+  9386bb9 csoler Fri,  2 Mar 2018 22:57:14 +0100 tried to fix FT list bug.
+  952ff03 csoler Fri,  2 Mar 2018 21:28:09 +0100 Merge pull request #1200 from csoler/v0.6-SecurityFixes
+  e88eebf csoler Fri,  2 Mar 2018 21:26:38 +0100 attempt to fix wrong number of rows in DL list
+  f2a737e csoler Fri,  2 Mar 2018 18:13:09 +0100 fixed font size compilation error
+  ca402c2 csoler Fri,  2 Mar 2018 18:05:11 +0100 fixed column sizing in FT dialog
+  efa5827 csoler Fri,  2 Mar 2018 18:01:56 +0100 fixed missing peer availability maps in FT dialog
+  e5edea3 csoler Thu,  1 Mar 2018 14:10:30 +0100 removed precise and zesty which are obsolete
+  3d7be85 csoler Thu,  1 Mar 2018 11:46:47 +0100 Merge pull request #1199 from csoler/v0.6-SecurityFixes
+  026951f csoler Thu,  1 Mar 2018 11:45:54 +0100 added consistency check in getGroupMeta so that ADMIN/PUBLISH flags always correspond to what the key set reflects
+  028a246 csoler Thu,  1 Mar 2018 09:44:59 +0100 Merge pull request #1197 from csoler/v0.6-SecurityFixes
+  ac64d2a csoler Thu,  1 Mar 2018 09:42:47 +0100 Merge pull request #1195 from PhenomRetroShare/Fix_NoTrIconInChatWidget
+  0651f4a csoler Thu,  1 Mar 2018 09:42:06 +0100 Merge pull request #1198 from G10h4ck/master
+  0c8b3ed Gioacc Wed, 28 Feb 2018 23:32:13 +0100 Set default Mac OS X version only if macx
+  5d58943 csoler Wed, 28 Feb 2018 23:18:50 +0100 forced notification of type RECEIVE when creating a new group so that the GxsIFaceHelper updates the group list
+  29ab0e9 csoler Wed, 28 Feb 2018 22:40:04 +0100 fixed bug that would erase private publish key when a group update is received
+  165b241 csoler Tue, 27 Feb 2018 23:19:27 +0100 made add of publish key a meta group change, to force reload the list of groups
+  3bc5b45 csoler Tue, 27 Feb 2018 22:42:48 +0100 added a FeedItem to warn when publish permissions are received for a channel
+  aad9397 csoler Mon, 26 Feb 2018 23:37:19 +0100 fixed memory leak in p3GxsTunnel
+  23c389c Phenom Mon, 26 Feb 2018 23:29:06 +0100 Remove non translatable text ChatWidget.ui
+  dd9f67a csoler Sun, 25 Feb 2018 17:52:49 +0100 fixed version number problem
+  3e700ab csoler Sun, 25 Feb 2018 16:12:46 +0100 Merge pull request #1194 from G10h4ck/fixAndroidCompilation
+  9f0421c csoler Sun, 25 Feb 2018 14:39:29 +0100 attempt to fix large size in ConnectFriendDialog.ui
+  f9896a0 csoler Sun, 25 Feb 2018 11:46:18 +0100 updated ppa_upload.sh to 0.6.4
+  5c029c5 csoler Sun, 25 Feb 2018 11:43:30 +0100 fixed typo in changelog
+  31ab87c csoler Fri, 23 Feb 2018 14:06:49 +0100 added rs plugins into rules for ubuntu packaging
+  681f543 csoler Sat, 24 Feb 2018 22:04:26 +0100 Merge pull request #1183 from csoler/v0.6.4
+  05613a2 csoler Sat, 24 Feb 2018 21:58:58 +0100 Merge pull request #1193 from csoler/v0.6-SecurityFixes
+  39e70ed csoler Sat, 24 Feb 2018 21:51:18 +0100 ignore unknown ptags in certificates instead of causing an error, for future backward compatibility
+  062e00d csoler Sat, 24 Feb 2018 18:05:26 +0100 Merge pull request #1189 from csoler/v0.6-SecurityFixes
+  13441ff csoler Fri, 23 Feb 2018 15:13:13 +0100 removed debug info in rsgenexchange.cc
+  49b321d csoler Fri, 23 Feb 2018 14:39:08 +0100 fixed the text in invitation system
+  d8e950c csoler Fri, 23 Feb 2018 14:28:22 +0100 removed debug output from rsdataservice
+  5a4d0f5 csoler Fri, 23 Feb 2018 14:26:23 +0100 made the invite system non automatic, because it was confusing and could generate unwanted emails
+  fa84d1c csoler Fri, 23 Feb 2018 14:01:43 +0100 Merge pull request #1185 from G10h4ck/disablePluginByDefault
+  ff7633f csoler Fri, 23 Feb 2018 14:00:39 +0100 Merge pull request #1184 from G10h4ck/linkLocalFallback
+  8d5cd8a Gioacc Thu, 22 Feb 2018 15:38:20 +0100 Increase size of list of ip shared via discovery2
+  9dd1aef Gioacc Fri, 23 Feb 2018 01:05:35 +0100 Discovery do not distribute addresses to hidden nodes
+  e7facc1 Gioacc Fri, 23 Feb 2018 01:05:04 +0100 Prevent discovery to share local addresses if hidden
+  4fa6bdc Gioacc Wed, 21 Feb 2018 17:38:31 +0100 Improve discovery
+  385f44b csoler Thu, 22 Feb 2018 23:03:48 +0100 Merge pull request #1188 from PhenomRetroShare/Fix_SharedFileDialogShowColumn
+  c141eae Phenom Thu, 22 Feb 2018 18:54:14 +0100 Fix SharedFilesDialog show old hidden column.
+  2044a2c Gioacc Wed, 21 Feb 2018 04:24:12 +0100 Use retrocompatible iterators
+  4dfeab2 csoler Tue, 20 Feb 2018 23:30:52 +0100 Merge pull request #1187 from csoler/master
+  73d11e1 Phenom Thu, 15 Feb 2018 19:04:55 +0100 Fix Gcc Warning in nxsmsgsync_test.cc
+  737a2b4 Phenom Thu, 15 Feb 2018 18:57:16 +0100 Fix Gcc Warning in nxstesthub.cc
+  cfcdec4 Phenom Thu, 15 Feb 2018 18:44:03 +0100 Fix Gcc Warning in support.h
+  aadb9ac Phenom Fri,  8 Dec 2017 19:47:00 +0100 Fix Gcc Warning in NetworkDialog.cpp
+  e3d8d86 csoler Tue, 20 Feb 2018 23:03:33 +0100 updated translation files
+  4d7997b csoler Tue, 20 Feb 2018 21:08:09 +0100 Merge pull request #1186 from csoler/v0.6-FT
+  a1b378e csoler Tue, 20 Feb 2018 21:07:02 +0100 fixed ghost rows in TransfersDialog
+  c897962 csoler Tue, 20 Feb 2018 20:26:33 +0100 merged
+  11d607e csoler Tue, 20 Feb 2018 20:19:10 +0100 Merge pull request #1179 from PhenomRetroShare/Add_ChangeAddIconForChannelForum
+  35b54bb csoler Tue, 20 Feb 2018 20:18:31 +0100 Merge pull request #1180 from PhenomRetroShare/Add_ClearGxsGroupFrameWhenNoSelection
+  fec2b2e csoler Tue, 20 Feb 2018 19:20:02 +0100 Merge pull request #1182 from PhenomRetroShare/Add_SplitFileNbSize
+  b2217fc Gioacc Tue, 20 Feb 2018 15:56:16 +0100 Build plugin only if requested
+  0c99975 Gioacc Mon, 19 Feb 2018 23:23:15 +0100 Use link local address only if necessary
+  5667763 csoler Mon, 19 Feb 2018 21:49:06 +0100 switched version to 0.6.4
+  798ad15 Phenom Mon, 19 Feb 2018 20:13:38 +0100 Split Number of Files and Size in RemoteDirModel.
+  afc43d0 G10h4c Mon, 19 Feb 2018 15:33:28 +0100 Merge pull request #1181 from Kcchouette/patch-1
+  8492a40 Kcchou Mon, 19 Feb 2018 15:17:59 +0100 Update markdown to be visible on github
+  71e1a46 Phenom Sun, 18 Feb 2018 23:12:59 +0100 Clear GxsGroupFrame When No Selection
+  8710761 Phenom Sun, 18 Feb 2018 19:15:01 +0100 Change Add Channel/Forum post by Add.png
+  51f5d19 csoler Sun, 18 Feb 2018 18:00:24 +0100 merged uptream/master
+  2bc0629 csoler Sun, 18 Feb 2018 17:59:00 +0100 Merge pull request #1178 from PhenomRetroShare/Fix_BugsInRsCollectionDialog
+  2511934 csoler Sun, 18 Feb 2018 17:58:06 +0100 Merge pull request #1177 from csoler/v0.6-FT
+  7a84492 csoler Sun, 18 Feb 2018 17:57:42 +0100 Merge pull request #1176 from csoler/v0.6-SecurityFixes
+  7cda064 csoler Sun, 18 Feb 2018 17:56:51 +0100 merged uptream/master
+  931fdd0 Phenom Sun, 18 Feb 2018 17:30:01 +0100 Fix bug in processSettings in RsCollectionDialog.cpp
+  d87061d Phenom Sun, 18 Feb 2018 09:18:44 +0100 Fix bug when adding new items when hashing in RsCollectionDialog
+  6d0945f Phenom Sun, 18 Feb 2018 08:53:31 +0100 Fix bug when removing root item in RsCollectionDialog
+  6fe1413 csoler Sat, 17 Feb 2018 23:37:25 +0100 added limiter in number of responses forwarded back by turtle search, which should avoid bursts of bandwidth for popular requests
+  8708dd9 csoler Sat, 17 Feb 2018 12:04:13 +0100 fixed bug due to wrong service ID in serializer
+  d57f933 csoler Fri, 16 Feb 2018 23:51:43 +0100 added load/save of known channels to avoid re-displaying it in the NewsFeed after then have been deleted.
+  252626f csoler Fri, 16 Feb 2018 23:24:01 +0100 added load/save of known forums to avoid re-displaying it in the NewsFeed after then have been deleted.
+  63ddccd csoler Fri, 16 Feb 2018 13:22:19 +0100 Merge pull request #1175 from PhenomRetroShare/Fix_NewChatInvite
+  83b6205 Phenom Fri, 16 Feb 2018 10:22:59 +0100 Fix New Chat Invite
+  5e34467 csoler Thu, 15 Feb 2018 00:06:13 +0100 Merge pull request #1174 from csoler/v0.6-SecurityFixes
+  47f9a49 csoler Thu, 15 Feb 2018 00:02:08 +0100 improved cost of reseting search in SharedFileDialog by saving hidden indexes list
+  9c60ff7 csoler Wed, 14 Feb 2018 22:10:11 +0100 Merge pull request #1172 from csoler/v0.6-SecurityFixes
+  72124bb csoler Wed, 14 Feb 2018 22:08:07 +0100 hide advanced mode option since it is not used anywhere in the software
+  ede51ab csoler Wed, 14 Feb 2018 22:02:20 +0100 Merge pull request #1171 from csoler/v0.6-SecurityFixes
+  cf33221 csoler Wed, 14 Feb 2018 22:00:46 +0100 removed dead code in previous commit
+  ddb2c45 csoler Wed, 14 Feb 2018 21:56:12 +0100 disable and hide signature checkbox when key is already signed in ConnectWizard
+  42b8ecc csoler Wed, 14 Feb 2018 21:48:56 +0100 prevent RS from making friends with your own location
+  558bb9f csoler Mon, 12 Feb 2018 23:17:29 +0100 fixed retro-tor build on master branch
+  3f9c72e csoler Mon, 12 Feb 2018 22:42:22 +0100 Merge pull request #1170 from csoler/v0.6-FT
+  d8b193c csoler Mon, 12 Feb 2018 22:40:15 +0100 fixed merge with master
+  01cc232 csoler Mon, 12 Feb 2018 22:39:11 +0100 fixed appearing false line in Transfers
+  8afa127 csoler Mon, 12 Feb 2018 20:30:01 +0100 fixed crash in RsCollection creation
+  0491e43 csoler Sun, 11 Feb 2018 21:28:43 +0100 Merge pull request #1169 from csoler/v0.6-FT
+  7a2d874 csoler Sun, 11 Feb 2018 20:49:45 +0100 Merge pull request #1153 from csoler/v0.6-TorOnly
+  a2eb145 csoler Sun, 11 Feb 2018 20:40:38 +0100 fixed option in .pri for retrotor configuration
+  5f106c4 csoler Sat, 10 Feb 2018 15:42:24 +0100 fixed compilation on ubuntu precise
+  4beadfe csoler Sat, 10 Feb 2018 14:28:15 +0100 updated changelog
+  fc3beca csoler Fri,  9 Feb 2018 23:02:27 +0100 fixed performance issue (patch from sss)
+  faf4517 csoler Thu,  8 Feb 2018 15:26:21 +0100 proper error handlign when Tor is not available
+  644fce8 csoler Thu,  8 Feb 2018 11:14:12 +0100 fixed download menu from Messages
+
+ -- Retroshare Dev Team <contact@retroshare.net>  Sun, 25 Feb 2018 12:00:00 +0100
+
+retroshare (0.6.3-1.20180210~4beadfe4) xenial; urgency=low
+
+  9352a7c csoler Thu,  8 Feb 2018 10:34:46 +0100 Merge pull request #1168 from PhenomRetroShare/Add_ConnFilterInFriendSel
+  bf8bd4b Phenom Wed,  7 Feb 2018 19:00:08 +0100 Add Only Connected in FriendSelectionWidget.
+  7bb8eb0 csoler Wed,  7 Feb 2018 16:06:54 +0100 Merge pull request #1166 from PhenomRetroShare/Add_ChatRoomRSLink
+  02b61b2 csoler Wed,  7 Feb 2018 15:58:12 +0100 Merge pull request #1164 from aral/patch-1
+  a496e6f Phenom Sun,  4 Feb 2018 17:51:26 +0100 Add Chat Room RSLink
+  ed88b34 Aral B Sun,  4 Feb 2018 10:37:45 +0100 Fix typo in Mac install guide
+  b662e66 Gioacc Fri,  2 Feb 2018 00:20:14 +0100 Qml app fix disappearing sidebar buttons
+  6c85075 csoler Thu,  1 Feb 2018 21:35:54 +0100 lobby->room in Identities dialog
+  36e20db Gioacc Thu,  1 Feb 2018 21:26:36 +0100 Fix some glitches in qml app menu
+  6e093c7 Gioacc Thu,  1 Feb 2018 14:59:08 +0100 Qml token manager removed unuseful debug message
+  2d00532 Gioacc Thu,  1 Feb 2018 14:42:46 +0100 Qml app fix sidebar buttons hiding behaviour
+  1c698bf Gioacc Thu,  1 Feb 2018 14:31:07 +0100 Qml App add option to control DHT behaviour
+  9a9fcca Gioacc Thu,  1 Feb 2018 14:22:33 +0100 Qml App token manager offer unregister token API
+  1e3d2c2 csoler Tue, 30 Jan 2018 20:55:01 +0100 Merge pull request #1160 from G10h4ck/android_service_cleaning
+  6f91b93 Gioacc Tue, 30 Jan 2018 20:07:51 +0100 Add some sanity check in libresapiclient
+  4d60850 Gioacc Tue, 30 Jan 2018 18:25:04 +0100 More cleanup of .pro files
+  0012586 Gioacc Tue, 30 Jan 2018 18:24:03 +0100 Add support for SQLCipher on Android
+  ebfe50f Gioacc Tue, 30 Jan 2018 18:11:31 +0100 Make .pro files compiler agnostic on Android
+  da2fc01 Gioacc Tue, 30 Jan 2018 18:04:24 +0100 Cleanup a bit libresapi.pro
+  180a5b1 Gioacc Tue, 30 Jan 2018 18:02:55 +0100 Remove unnecessary dependencies in android-notify-service
+  feae9f5 Gioacc Tue, 30 Jan 2018 00:36:19 +0100 Fix some compiler warnings
+  fc5ed14 Gioacc Mon, 29 Jan 2018 22:44:04 +0100 Android toolchain builder libraries update
+  fa71ed2 Gioacc Mon, 29 Jan 2018 13:26:43 +0100 Install bdboot.txt in Android
+  2d8493f Gioacc Mon, 29 Jan 2018 10:56:12 +0100 Add link on how help confused gdb to give stacktrace
+  efe78f5 csoler Sun, 28 Jan 2018 21:54:56 +0100 slight optimization to showEvent() and save/restore visible items in file lists
+  d598a01 Gioacc Sun, 28 Jan 2018 11:38:14 +0100 ApiLocalListener do some sanity check on listen
+  5a63ce8 Gioacc Sun, 28 Jan 2018 11:36:51 +0100 Android service avoid shouldexit timer using all CPU available
+  3e5ed6a Gioacc Fri, 26 Jan 2018 00:18:31 +0100 Update Androig gdb debug instructions
+  c39b3e5 Gioacc Thu, 25 Jan 2018 16:20:25 +0100 Better debug messages for Android app
+  ac9a843 Gioacc Thu, 25 Jan 2018 15:50:12 +0100 Gracefully handle signals in retroshare-android-service
+  8c21bfc Gioacc Thu, 25 Jan 2018 15:18:12 +0100 Avoid crash on stop in ApiServerLocal
+  c1d8d6a Gioacc Thu, 25 Jan 2018 15:14:09 +0100 Properly run Qt event loop
+  d80a806 csoler Thu, 25 Jan 2018 09:37:31 +0100 Merge pull request #1159 from csoler/v0.6-FileLists
+  11eef05 csoler Wed, 24 Jan 2018 22:02:49 +0100 fixed bug causing hidden/expanded items to be reset by show() event in SharedFilesDialog
+  1fbd9d1 csoler Wed, 24 Jan 2018 21:26:35 +0100 fixed hiding of top level items when searching
+  f139685 csoler Wed, 24 Jan 2018 21:14:26 +0100 added a fair limit to search in FL in order to avoid crazy costs
+  d93e259 csoler Wed, 24 Jan 2018 00:26:22 +0100 fixed expanding/collapsing of items on search
+  1ee353c csoler Tue, 23 Jan 2018 22:18:35 +0100 improved efficiency of search in tree visualization mode. Re-enabled the search for testing purpose.
+  725abad csoler Tue, 23 Jan 2018 22:18:02 +0100 fixed a bug in filterItems that caused searched files to generate an error in the console
+  9b286c4 Gioacc Tue, 23 Jan 2018 11:13:03 +0100 add to README that DHT is not working on android
+  000bbbd Gioacc Tue, 23 Jan 2018 10:33:00 +0100 Add link to Android debugging documentation
+  7afa19e csoler Sun, 21 Jan 2018 22:23:08 +0100 removed search from tree view in file lists, until I find some way to do it more efficiently
+  7448ff4 csoler Sun, 21 Jan 2018 19:07:37 +0100 re-enabled search in file lists tree view
+  d21a5e5 csoler Sat, 20 Jan 2018 19:25:52 +0100 Merge pull request #1157 from PhenomRetroShare/Fix_IconCacheInFilesDefs
+  f74ee5c Phenom Sat, 20 Jan 2018 17:21:37 +0100 Move File Icon Cache in FilesDefs
+  7652821 Phenom Sat, 20 Jan 2018 17:18:50 +0100 Revert "patch from sss to cache TransfersDialog QIcons"
+  4c626e0 csoler Mon, 15 Jan 2018 23:17:09 +0100 Merge pull request #1152 from csoler/v0.6-SecurityFixes
+  841fee6 csoler Mon, 15 Jan 2018 23:13:42 +0100 fixed possible crash due to accessing deleted memory in database cache access
+  7cac367 csoler Sun, 14 Jan 2018 22:39:50 +0100 removed warnign about bad service string when the service string is actually empty
+  388b2c2 csoler Fri, 12 Jan 2018 22:47:42 +0100 patch from sss to cache TransfersDialog QIcons
+  783e918 csoler Fri, 12 Jan 2018 22:19:52 +0100 Merge pull request #1151 from csoler/v0.6-SecurityFixes
+  bbd8afe csoler Thu, 11 Jan 2018 18:14:20 +0100 Merge pull request #1150 from chelovechishko/unfocus_chat_text_edit
+  173336e csoler Thu, 11 Jan 2018 18:12:22 +0100 Merge pull request #1148 from chelovechishko/qdarkstyle_fix
+  b4ff14c csoler Thu, 11 Jan 2018 18:06:48 +0100 Merge pull request #1144 from PhenomRetroShare/Fix_DisableYesButtonOnInvite
+  bb9dcbb Phenom Fri, 5 Jan 2018 14:45:29 +0100 Disable Yes button on chat room invitation if no Id selected.
+  add9c1e chelov Wed, 10 Jan 2018 20:53:43 +0900 chatwidget: do not set focus to edit when it is not necessary
+  4eea5a8 csoler Wed, 10 Jan 2018 00:10:08 +0100 removed consts in GrpMetaCache pointers, and made it possible to always re=use cache entries, possibly updating them
+  553ab93 csoler Tue,  9 Jan 2018 22:18:01 +0100 Merge pull request #1149 from csoler/v0.6-SecurityFixes
+  506190a csoler Tue,  9 Jan 2018 22:11:11 +0100 fixed bug causing failure of flag actions on groups
+  ed81b4c csoler Tue,  9 Jan 2018 21:49:15 +0100 removed delete causing read of deleted memory
+  51c7942 csoler Mon,  8 Jan 2018 19:08:10 +0100 Merge pull request #1146 from csoler/v0.6-SecurityFixes
+  e261d45 chelov Mon,  8 Jan 2018 16:16:10 +0900 gui: fix networkdialog colors once more in qdarkstyle.qss
+  f8f61cc chelov Mon,  8 Jan 2018 16:02:40 +0900 gui: fix colors for idtree of people in qdarkstyle.qss
+  884bbb4 chelov Mon,  8 Jan 2018 15:58:04 +0900 gui: make friendlist more readable in some places in qdarkstyle.qss
+  622316a chelov Mon,  8 Jan 2018 15:49:05 +0900 gui: improve readability of sharemanager for qdarkstyle.qss
+  5e57cb4 csoler Sun,  7 Jan 2018 23:02:22 +0100 fixed gxs unit tests
+  85b94d7 csoler Sun,  7 Jan 2018 22:36:49 +0100 fixed test compilation
+  89c538d csoler Sun,  7 Jan 2018 22:36:38 +0100 fixed double deletion problem causing crashes
+  b42b8e3 csoler Sun,  7 Jan 2018 21:41:41 +0100 moved memory ownership of RsGxsGrpMetaData down into RsGxsDataAccess. Avoids many copy-constructors of RsTlvSecurityKey. Will probably spare a lot of CPU on windows
+  c3e300e Gioacc Sat,  6 Jan 2018 22:53:26 +0100 Merge pull request #1140 from Emotyco/libresapi_small_corrections
+  67fc6a3 Konrad Sat,  6 Jan 2018 19:29:56 +0100 Fixed in Libresapi: Double declaration of StateToken in FileSharingHandler
+  575a416 Konrad Sat,  6 Jan 2018 19:09:44 +0100 Changed in Libresapi: Used Doxigen style comments
+  d53993c Konrad Sat,  6 Jan 2018 18:39:47 +0100 Changed in Libresapi: Pointer to RsNotify object into reference
+  57f41d9 csoler Fri,  5 Jan 2018 21:27:18 +0100 Merge pull request #1145 from PhenomRetroShare/Fix_ClearPersonDetailIfNoSelection
+  4026040 Konrad Fri,  5 Jan 2018 20:44:48 +0100 Libresapi: Extended ChatInfo class to contain own identity used in chat
+  4f902bb Phenom Fri,  5 Jan 2018 17:48:18 +0100 Clear Person Detail when no selection
+  0078b9c csoler Wed,  3 Jan 2018 20:33:25 +0100 Merge pull request #1143 from csoler/v0.6-SecurityFixes
+  98d1d08 csoler Wed,  3 Jan 2018 20:32:37 +0100 removed extra links from chat widget, since normal links can be used now to DL through encrypted tunnels
+  ee81eef csoler Wed,  3 Jan 2018 18:42:04 +0100 Merge pull request #1142 from csoler/v0.6-SecurityFixes
+  ab60f49 csoler Wed,  3 Jan 2018 18:37:43 +0100 prevent sending/receiving of IP addresses to/at hidden nodes
+  0a92710 csoler Wed,  3 Jan 2018 15:03:23 +0100 Merge pull request #1141 from csoler/v0.6-SecurityFixes
+  0f6006d csoler Wed,  3 Jan 2018 15:01:04 +0100 prevent subscribing to a signed chat room without a signed identity
+  eea0c64 csoler Wed,  3 Jan 2018 14:05:13 +0100 require signed identity to respond to a signed chat room invite. Avoids "god mode" bug.
+  96e7507 Konrad Mon,  1 Jan 2018 23:38:07 +0100 Added in Libresapi: Short comment to FileSharingHandler
+  9bb6adc Konrad Mon,  1 Jan 2018 23:27:46 +0100 Added in Libresapi: Missing mutex locking in TransfersHandler
+  6a61e0a Konrad Mon,  1 Jan 2018 23:20:26 +0100 Changed in Libresapi: Locking mutex using macro instead of RsStackMutex object creation
+  74a56f6 Konrad Fri, 29 Dec 2017 16:07:39 +0100 Changed in Libresapi: Closing distant connection (chat) requires now ChatId that is used in other functions, instead of DistantCharPeerId
+  4b25684 Konrad Fri, 29 Dec 2017 16:03:45 +0100 Added in Libresapi: Functions to get and set default identity for lobby
+  b24d772 Konrad Wed, 27 Dec 2017 22:38:04 +0100 Added in Libresapi: Getting node name in PeersHandler
+  2db25d4 Konrad Wed, 27 Dec 2017 22:37:14 +0100 Added in Libresapi: StateToken refreshing to TransferHandler
+  53118e5 Konrad Wed, 27 Dec 2017 22:35:51 +0100 Added in Libresapi: Missing bracket in ChatHandler
+  92df847 Konrad Wed, 27 Dec 2017 22:33:23 +0100 Added in Libresapi: StateTokens to FileSharingHandler
+  55385d7 Konrad Wed, 27 Dec 2017 22:31:17 +0100 Added in Libresapi: Marking particular message as read
+  49cacc4 csoler Sun, 24 Dec 2017 12:04:15 +0100 fixed compilation on ubuntu precise
+  122f6af csoler Sun, 24 Dec 2017 11:06:03 +0100 fixed compilation on ubuntu precise
+  72d64c7 csoler Sun, 24 Dec 2017 10:36:08 +0100 updated changelog
+
+ -- Retroshare Dev Team <contact@retroshare.net>  Sat, 10 Feb 2018 14:00:00 +0100
+
+retroshare (0.6.3-1.20171224.72d64c7d~artful) precise; urgency=low
+
+  c2d5579 csoler Thu, 21 Dec 2017 17:06:32 +0100 storage of chat room icons in local variables to avoid re-reading them from qrc everytime (patch from sss)
+  acd8355 Gioacc Wed, 20 Dec 2017 18:24:28 +0100 Add some documentation on how to debug retroshare on android
+  c0d8333 csoler Mon, 18 Dec 2017 16:10:52 +0100 Merge pull request #1136 from csoler/v0.6-FT
+  ed0e280 csoler Mon, 18 Dec 2017 16:01:27 +0100 Merge pull request #1135 from PhenomRetroShare/Fix_DontSetMacOsTargetIfNotMacOs
+  4950ffb Phenom Fri, 15 Dec 2017 10:01:30 +0100 Don't Set Target and SDK if not  MacOS
+  0895b3d csoler Sun, 17 Dec 2017 13:55:50 +0100 Merge pull request #1134 from PhenomRetroShare/Fix_TravisCI_MacOS_Compil
+  3007fec csoler Sat, 16 Dec 2017 17:46:44 +0100 fixed colors in keyring with new ModelIndex based view (patch from sss)
+  99e35b1 csoler Sat, 16 Dec 2017 15:04:16 +0100 rename file in partials into real name before moving it; check for destination directory before moving file
+  a3acd58 Phenom Fri,  8 Dec 2017 19:00:34 +0100 Fix TravisCI on MacOS compilation.
+  acbcba8 csoler Thu,  7 Dec 2017 17:20:27 +0100 attempt to fix icon sizes in identity dialog
+  d2c8ba1 csoler Mon,  4 Dec 2017 16:33:45 +0100 Merge pull request #1117 from chelovechishko/qdarkstyle_fix
+  22292fc csoler Mon,  4 Dec 2017 16:32:37 +0100 Merge pull request #1118 from RetroPooh/net_settings_antifreeze
+  621ed71 csoler Mon,  4 Dec 2017 16:31:48 +0100 Merge pull request #1120 from sehraf/pr_fixForumDownloadAll
+  0503f42 csoler Mon,  4 Dec 2017 16:30:29 +0100 Merge pull request #1119 from RetroPooh/chan-fix-cyr
+  49b4057 sehraf Sat,  2 Dec 2017 15:00:24 +0100 fix 'download all' button for forum. Now all file links are opened in one collection dialog instead of each link in one separate dialog.
+  98d2772 chelov Sat,  2 Dec 2017 17:10:15 +0900 gui: make forums_dialog slightly more readable sometimes
+  8ec69df RetroP Wed, 29 Nov 2017 19:23:52 +0300 fix cyrillic text sent wrong in channel post
+  a88c2ef RetroP Wed, 29 Nov 2017 17:17:49 +0300 fix freezes in network settings
+  b99a1a5 defnax Tue, 28 Nov 2017 19:36:39 +0100 fixed the emote file for unshown emotes on gui
+  d1cdba8 Chelov Mon, 27 Nov 2017 14:48:14 +0900 gui: fix probably mistake with names in qdarkstyle.qss
+  8c34a50 Chelov Mon, 27 Nov 2017 11:16:37 +0900 gui: fix default color of some text in friends list in qdarkstyle.qss
+  d566a2a Chelov Mon, 27 Nov 2017 10:54:19 +0900 gui: fix keyring background color in qdarkstyle.qss
+  c05dd30 Chelov Mon, 27 Nov 2017 10:40:24 +0900 gui: fix doubled semicolons in qdarkstyle.qss
+  63b3acb csoler Thu, 23 Nov 2017 21:27:03 +0100 Merge pull request #1113 from csoler/v0.6-SSL110Fix
+  1faa274 csoler Wed, 22 Nov 2017 23:46:57 +0100 simplified memory management in certificate signature verification code
+  669f2ba csoler Wed, 22 Nov 2017 22:56:40 +0100 fixed a few bugs in signature verification code accross versions
+  c8c90ab csoler Wed, 22 Nov 2017 20:31:49 +0100 Merge pull request #1115 from PhenomRetroShare/Add_CopyComment
+  f6d69e0 csoler Wed, 22 Nov 2017 00:02:11 +0100 ensured maximum backward compatibility for crypto changes that will occur in future v0.7
+  6d4c942 Gioacc Tue, 21 Nov 2017 13:28:24 +0100 Removed unnecessary executable flag on some files
+  49d2366 csoler Tue, 21 Nov 2017 09:29:52 +0100 fixed windows compilation
+  ea241f6 csoler Tue, 21 Nov 2017 09:27:21 +0100 restored plugins removed by previous commit
+  d905144 csoler Mon, 20 Nov 2017 23:18:53 +0100 Merge pull request #1114 from PhenomRetroShare/Fix_DisableReplyToSystemMessage
+  d1d66bb csoler Mon, 20 Nov 2017 23:17:16 +0100 Merge pull request #1079 from csoler/v0.6-Keyring
+  e2c1661 csoler Mon, 20 Nov 2017 22:44:34 +0100 fixed compilation with v0.7 defines
+  cd51afb csoler Mon, 20 Nov 2017 22:26:14 +0100 fixed small bug in signature and compilation
+  9367aa0 csoler Sun, 19 Nov 2017 20:15:36 +0100 changed #ifs into #ifdefs because it us more robust, and moved the definition of variables to retroshare.pri
+  ef1a613 csoler Sun, 19 Nov 2017 19:57:38 +0100 added proper debug output for signature verification
+  863e625 csoler Sun, 19 Nov 2017 19:34:54 +0100 centralized the defines into a single file
+  e72bd9f csoler Sun, 19 Nov 2017 18:38:46 +0100 fixed bug causing certificate rejection
+  b4fdd4e csoler Sun, 19 Nov 2017 18:21:56 +0100 added two additional non packward compatible changes for future version 0.7, and improvements of verifications of certificate signatures
+  46a6bdc Phenom Sat, 18 Nov 2017 19:48:38 +0100 Add Copy action for Gxs Comments.
+  71efb9f Phenom Sat, 18 Nov 2017 18:49:42 +0100 Disable ReplyTo if System Message.
+  7472f78 csoler Wed, 15 Nov 2017 23:24:43 +0100 added sha256 calculation functions, and non backward compatible SSL Id computation code to active later (0.7)
+  ce14219 csoler Tue, 14 Nov 2017 21:39:46 +0100 merged with upstream/master
+  9f8f0e9 csoler Tue, 14 Nov 2017 21:36:04 +0100 fixed column names in keyring
+  ba7cf49 csoler Tue, 14 Nov 2017 20:53:24 +0100 Merge pull request #1037 from RetroPooh/searchspy
+  556f93c csoler Tue, 14 Nov 2017 20:51:25 +0100 Merge pull request #1108 from RetroPooh/smallfixes2
+  2f6517a csoler Tue, 14 Nov 2017 20:50:57 +0100 Merge pull request #1112 from RetroPooh/coll_name_as_dir
+  fdced92 csoler Tue, 14 Nov 2017 20:41:48 +0100 Merge pull request #1111 from RetroPooh/searstr
+  1f207ba RetroP Tue, 14 Nov 2017 19:52:48 +0300 create collection dialog filename as dir name
+  919d650 RetroP Tue, 14 Nov 2017 16:09:05 +0300 in search strings change comma to space for better look
+  9aa6dd3 Pooh   Tue, 14 Nov 2017 14:34:22 +0300 Update rsturtleitem.h
+  8368a76 csoler Mon, 13 Nov 2017 23:38:25 +0100 Merge pull request #1110 from csoler/v0.6-FT
+  5fab053 csoler Mon, 13 Nov 2017 23:37:53 +0100 added toStdString() method to search strings so as to display what is searched
+  7304c48 csoler Mon, 13 Nov 2017 22:32:30 +0100 Merge pull request #1109 from csoler/v0.6-Links2
+  5d6225a RetroP Tue, 14 Nov 2017 00:14:16 +0300 sort by time, nicer look
+  1669cd4 csoler Mon, 13 Nov 2017 22:08:05 +0100 use "download..." menu with RsCollectionDialog with multiple files and directories
+  f369ac1 RetroP Mon, 13 Nov 2017 19:05:16 +0300 fix mail fields stretching with CC BCC
+  45c8e9e csoler Mon, 13 Nov 2017 11:01:48 +0100 Merge pull request #1107 from csoler/v0.6-Links2
+  5997c10 csoler Sun, 12 Nov 2017 22:46:29 +0100 fixed bug causing RsCollection to fail on remote files. Now using RsCollectionDialog when downloading directories from friend shared files
+  c0951b3 csoler Sun, 12 Nov 2017 21:33:21 +0100 Merge pull request #1040 from RetroPooh/searchmultinames2
+  240d3a6 csoler Sat, 11 Nov 2017 16:33:30 +0100 Merge pull request #1104 from RetroPooh/linkaddrtooltips
+  cb77243 csoler Sat, 11 Nov 2017 16:31:33 +0100 Merge pull request #1105 from RetroPooh/smallfixes1
+  9b66e7e RetroP Fri, 10 Nov 2017 18:32:18 +0300 fix non-latin peer name display in bw stats
+  792f7ff RetroP Fri, 10 Nov 2017 18:31:41 +0300 fix status led icons for distant chat
+  df244fd RetroP Fri, 10 Nov 2017 16:01:11 +0300 add tooltips with address to urls
+  7feb630 csoler Wed,  8 Nov 2017 20:11:26 +0100 Merge pull request #1102 from csoler/v0.6-Links2
+  6a8bc8b csoler Wed,  8 Nov 2017 18:11:46 +0100 use of RsCollectionDialog for processing single file links. Only "extra" links still require the older processing system because RsCollections cannot have sources for each entry
+
+ -- Retroshare Dev Team <contact@retroshare.net>  Thu, 24 Dec 2017 10:00:00 +0100
+
+retroshare (0.6.3-1.20171107.c67143d4~wily) wily; urgency=low
 
   68b35f3 Phenom Tue, 15 Aug 2017 19:45:26 +0200 Fix CppCheck in notifytxt.cc
   0b8d684 Phenom Tue, 15 Aug 2017 19:11:32 +0200 Fix CppCheck in framecatcher.cpp

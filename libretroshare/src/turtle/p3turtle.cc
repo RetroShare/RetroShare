@@ -23,7 +23,7 @@
  *
  */
 
-//#define P3TURTLE_DEBUG 
+//#define P3TURTLE_DEBUG
 
 #include <unistd.h>
 #include <stdexcept>
@@ -89,6 +89,7 @@ static const time_t TUNNEL_CLEANING_LAPS_TIME  	         =  10 ;		/// clean tunn
 static const time_t TIME_BETWEEN_TUNNEL_MANAGEMENT_CALLS =   2 ;                /// Tunnel management calls every 2 secs.
 static const uint32_t MAX_TUNNEL_REQS_PER_SECOND         =   1 ;		/// maximum number of tunnel requests issued per second. Was 0.5 before
 static const uint32_t MAX_ALLOWED_SR_IN_CACHE            = 120 ;		/// maximum number of search requests allowed in cache. That makes 2 per sec.
+static const uint32_t TURTLE_SEARCH_RESULT_MAX_HITS      =5000 ;		/// maximum number of search results forwarded back to the source.
 
 static const float depth_peer_probability[7] = { 1.0f,0.99f,0.9f,0.7f,0.6f,0.5,0.4f } ;
 
@@ -97,6 +98,8 @@ static const int MAX_TR_FORWARD_PER_SEC                 = 20 ;
 static const int MAX_TR_FORWARD_PER_SEC_UPPER_LIMIT     = 30 ;
 static const int MAX_TR_FORWARD_PER_SEC_LOWER_LIMIT     = 10 ;
 static const int DISTANCE_SQUEEZING_POWER               =  8 ;
+
+#define HEX_PRINT(a) std::hex << a << std::dec
 
 p3turtle::p3turtle(p3ServiceControl *sc,p3LinkMgr *lm)
 	:p3Service(), p3Config(), mServiceControl(sc), mLinkMgr(lm), mTurtleMtx("p3turtle")
@@ -468,7 +471,7 @@ void p3turtle::autoWash()
 			for(std::vector<TurtleTunnelId>::const_iterator it2(it->second.tunnels.begin());it2!=it->second.tunnels.end();++it2)
 			{
 #ifdef P3TURTLE_DEBUG
-				std::cerr << (void*)*it2 << "," ;
+				std::cerr << HEX_PRINT(*it2) << "," ;
 #endif
 				tunnels_to_remove.push_back(*it2) ;
 			}
@@ -493,13 +496,13 @@ void p3turtle::autoWash()
 	{
 		RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
 
-		for(std::map<TurtleSearchRequestId,TurtleRequestInfo>::iterator it(_search_requests_origins.begin());it!=_search_requests_origins.end();)
+		for(std::map<TurtleSearchRequestId,TurtleSearchRequestInfo>::iterator it(_search_requests_origins.begin());it!=_search_requests_origins.end();)
 			if(now > (time_t)(it->second.time_stamp + SEARCH_REQUESTS_LIFE_TIME))
 			{
 #ifdef P3TURTLE_DEBUG
-				std::cerr << "  removed search request " << (void *)it->first << ", timeout." << std::endl ;
+				std::cerr << "  removed search request " << HEX_PRINT(it->first) << ", timeout." << std::endl ;
 #endif
-				std::map<TurtleSearchRequestId,TurtleRequestInfo>::iterator tmp(it) ;
+				std::map<TurtleSearchRequestId,TurtleSearchRequestInfo>::iterator tmp(it) ;
 				++tmp ;
 				_search_requests_origins.erase(it) ;
 				it = tmp ;
@@ -513,13 +516,13 @@ void p3turtle::autoWash()
 	{
 		RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
 
-		for(std::map<TurtleTunnelRequestId,TurtleRequestInfo>::iterator it(_tunnel_requests_origins.begin());it!=_tunnel_requests_origins.end();)
+		for(std::map<TurtleTunnelRequestId,TurtleTunnelRequestInfo>::iterator it(_tunnel_requests_origins.begin());it!=_tunnel_requests_origins.end();)
 			if(now > (time_t)(it->second.time_stamp + TUNNEL_REQUESTS_LIFE_TIME))
 			{
 #ifdef P3TURTLE_DEBUG
-				std::cerr << "  removed tunnel request " << (void *)it->first << ", timeout." << std::endl ;
+				std::cerr << "  removed tunnel request " << HEX_PRINT(it->first) << ", timeout." << std::endl ;
 #endif
-				std::map<TurtleTunnelRequestId,TurtleRequestInfo>::iterator tmp(it) ;
+				std::map<TurtleTunnelRequestId,TurtleTunnelRequestInfo>::iterator tmp(it) ;
 				++tmp ;
 				_tunnel_requests_origins.erase(it) ;
 				it = tmp ;
@@ -538,7 +541,7 @@ void p3turtle::autoWash()
 			if(now > (time_t)(it->second.time_stamp + MAXIMUM_TUNNEL_IDLE_TIME))
 			{
 #ifdef P3TURTLE_DEBUG
-				std::cerr << "  removing tunnel " << (void *)it->first << ": timeout." << std::endl ;
+				std::cerr << "  removing tunnel " << HEX_PRINT(it->first) << ": timeout." << std::endl ;
 #endif
 				tunnels_to_close.push_back(it->first) ;
 			}
@@ -589,7 +592,7 @@ void p3turtle::locked_closeTunnel(TurtleTunnelId tid,std::vector<std::pair<RsTur
 		return ;
 	}
 #ifdef P3TURTLE_DEBUG
-	std::cerr << "p3turtle: Closing tunnel " << (void*)tid << std::endl ;
+	std::cerr << "p3turtle: Closing tunnel " << HEX_PRINT(tid) << std::endl ;
 #endif
 
 	if(it->second.local_src == _own_id)	// this is a starting tunnel. We thus remove
@@ -903,10 +906,11 @@ void p3turtle::handleSearchRequest(RsTurtleSearchRequestItem *item)
 	// This is a new request. Let's add it to the request map, and forward it to
 	// open peers.
 
-	TurtleRequestInfo& req( _search_requests_origins[item->request_id] ) ;
+	TurtleSearchRequestInfo& req( _search_requests_origins[item->request_id] ) ;
 	req.origin = item->PeerId() ;
 	req.time_stamp = time(NULL) ;
 	req.depth = item->depth ;
+	req.result_count = 0;
 	req.keywords = item->GetKeywords() ;
 
 	// If it's not for us, perform a local search. If something found, forward the search result back.
@@ -928,7 +932,7 @@ void p3turtle::handleSearchRequest(RsTurtleSearchRequestItem *item)
 		if(!result.empty())
 			std::cerr << "  " << result.size() << " matches found. Sending back to origin (" << item->PeerId() << ")." << std::endl ;
 #endif
-		while(!result.empty())
+		while(!result.empty() && req.result_count < TURTLE_SEARCH_RESULT_MAX_HITS)
 		{
 			// Let's chop search results items into several chunks of finite size to avoid exceeding streamer's capacity.
 			//
@@ -945,10 +949,12 @@ void p3turtle::handleSearchRequest(RsTurtleSearchRequestItem *item)
 			}
 			res_item->result.push_back(result.front()) ;
 
+			++req.result_count ;	// increase hit number for this particular search request.
+
             item_size += 8 /* size */ + result.front().hash.serial_size() + result.front().name.size() ;
 			result.pop_front() ;
 
-			if(item_size > RSTURTLE_MAX_SEARCH_RESPONSE_SIZE || result.empty())
+			if(item_size > RSTURTLE_MAX_SEARCH_RESPONSE_SIZE || result.empty() || req.result_count >= TURTLE_SEARCH_RESULT_MAX_HITS)
 			{
 #ifdef P3TURTLE_DEBUG
 				std::cerr << "  Sending back chunk of size " << item_size << ", for " << res_item->result.size() << " elements." << std::endl ;
@@ -958,6 +964,14 @@ void p3turtle::handleSearchRequest(RsTurtleSearchRequestItem *item)
 			}
 		}
 	}
+
+	// if enough has been sent back already, do not sarch further
+
+#ifdef P3TURTLE_DEBUG
+	std::cerr << "  result count = " << req.result_count << std::endl;
+#endif
+	if(req.result_count >= TURTLE_SEARCH_RESULT_MAX_HITS)
+		return ;
 
 	// If search depth not too large, also forward this search request to all other peers.
 	//
@@ -1019,7 +1033,7 @@ void p3turtle::handleSearchResult(RsTurtleSearchResultItem *item)
 	RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
 	// Find who actually sent the corresponding request.
 	//
-	std::map<TurtleRequestId,TurtleRequestInfo>::const_iterator it = _search_requests_origins.find(item->request_id) ;
+	std::map<TurtleRequestId,TurtleSearchRequestInfo>::iterator it = _search_requests_origins.find(item->request_id) ;
 #ifdef P3TURTLE_DEBUG
 	std::cerr << "Received search result:" << std::endl ;
 	item->print(std::cerr,0) ;
@@ -1036,12 +1050,35 @@ void p3turtle::handleSearchResult(RsTurtleSearchResultItem *item)
 	// Is this result's target actually ours ?
 
 	if(it->second.origin == _own_id)
+	{
+		it->second.result_count += item->result.size() ;
 		returnSearchResult(item) ;		// Yes, so send upward.
+	}
 	else
-	{											// Nope, so forward it back.
+	{									// Nope, so forward it back.
 #ifdef P3TURTLE_DEBUG
 		std::cerr << "  Forwarding result back to " << it->second.origin << std::endl;
 #endif
+		// We update the total count forwarded back, and chop it to TURTLE_SEARCH_RESULT_MAX_HITS.
+
+		uint32_t n = item->result.size(); // not so good!
+
+		if(it->second.result_count >= TURTLE_SEARCH_RESULT_MAX_HITS)
+		{
+			std::cerr << "(WW) exceeded turtle search result to forward. Req=" << std::hex << item->request_id << std::dec << ": dropping item with " << n << " elements." << std::endl;
+			return ;
+		}
+
+		if(it->second.result_count + n > TURTLE_SEARCH_RESULT_MAX_HITS)
+		{
+			for(uint32_t i=it->second.result_count + n; i>TURTLE_SEARCH_RESULT_MAX_HITS;--i)
+				item->result.pop_back() ;
+
+			it->second.result_count = TURTLE_SEARCH_RESULT_MAX_HITS ;
+		}
+		else
+			it->second.result_count += n ;
+
 		RsTurtleSearchResultItem *fwd_item = new RsTurtleSearchResultItem(*item) ;	// copy the item
 
 		// Normally here, we should setup the forward adress, so that the owner's
@@ -1082,7 +1119,7 @@ void p3turtle::routeGenericTunnelItem(RsTurtleGenericTunnelItem *item)
 		if(it == _local_tunnels.end())
 		{
 #ifdef P3TURTLE_DEBUG
-			std::cerr << "p3turtle: got file map with unknown tunnel id " << (void*)item->tunnelId() << std::endl ;
+			std::cerr << "p3turtle: got file map with unknown tunnel id " << HEX_PRINT(item->tunnelId()) << std::endl ;
 #endif
 			delete item;
 			return ;
@@ -1183,7 +1220,7 @@ bool p3turtle::getTunnelServiceInfo(TurtleTunnelId tunnel_id,RsPeerId& vpid,RsFi
 	if(it2 == _local_tunnels.end())
 	{
 #ifdef P3TURTLE_DEBUG
-		std::cerr << "p3turtle: unknown tunnel id " << (void*)tunnel_id << std::endl ;
+		std::cerr << "p3turtle: unknown tunnel id " << std::hex << tunnel_id << std::dec << std::endl ;
 #endif
 		return false;
 	}
@@ -1191,7 +1228,7 @@ bool p3turtle::getTunnelServiceInfo(TurtleTunnelId tunnel_id,RsPeerId& vpid,RsFi
 	TurtleTunnel& tunnel(it2->second) ;
 
 #ifdef P3TURTLE_DEBUG
-	assert(!tunnel.hash.empty()) ;
+	assert(!tunnel.hash.isNull()) ;
 
 	std::cerr << "  This is an endpoint for this file map." << std::endl ;
 	std::cerr << "  Forwarding data to the multiplexer." << std::endl ;
@@ -1293,7 +1330,7 @@ void p3turtle::sendTurtleData(const RsPeerId& virtual_peer_id,RsTurtleGenericTun
 	}
 
 #ifdef P3TURTLE_DEBUG
-	std::cerr << "p3turtle: sending service packet to virtual peer id " << virtual_peer_id << ", hash=0x" << tunnel.hash << ", tunnel = " << (void*)item->tunnel_id << ", next peer=" << tunnel.local_dst << std::endl ;
+	std::cerr << "p3turtle: sending service packet to virtual peer id " << virtual_peer_id << ", hash=0x" << tunnel.hash << ", tunnel = " << HEX_PRINT(item->tunnel_id) << ", next peer=" << tunnel.local_dst << std::endl ;
 #endif
 	sendItem(item) ;
 }
@@ -1313,7 +1350,7 @@ RsPeerId p3turtle::getTurtlePeerId(TurtleTunnelId tid) const
 
 #ifdef P3TURTLE_DEBUG
 	assert(it!=_local_tunnels.end()) ;
-	assert(it->second.vpid != "") ;
+	assert(!it->second.vpid.isNull()) ;
 #endif
 
 	return it->second.vpid ;
@@ -1418,7 +1455,7 @@ void p3turtle::handleTunnelRequest(RsTurtleOpenTunnelItem *item)
 	{
 		RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
 
-		std::map<TurtleTunnelRequestId,TurtleRequestInfo>::iterator it = _tunnel_requests_origins.find(item->request_id) ;
+		std::map<TurtleTunnelRequestId,TurtleTunnelRequestInfo>::iterator it = _tunnel_requests_origins.find(item->request_id) ;
 		
 		if(it != _tunnel_requests_origins.end())
 		{
@@ -1431,7 +1468,7 @@ void p3turtle::handleTunnelRequest(RsTurtleOpenTunnelItem *item)
 		// it to open peers, while the mutex is locked, so no-one can trigger the
 		// lock before the data is consistent.
 
-		TurtleRequestInfo& req( _tunnel_requests_origins[item->request_id] ) ;
+		TurtleTunnelRequestInfo& req( _tunnel_requests_origins[item->request_id] ) ;
 		req.origin = item->PeerId() ;
 		req.time_stamp = time(NULL) ;
 		req.depth = item->depth ;
@@ -1617,7 +1654,7 @@ void p3turtle::handleTunnelResult(RsTurtleTunnelOkItem *item)
 
 		// Find who actually sent the corresponding turtle tunnel request.
 		//
-		std::map<TurtleTunnelRequestId,TurtleRequestInfo>::iterator it = _tunnel_requests_origins.find(item->request_id) ;
+		std::map<TurtleTunnelRequestId,TurtleTunnelRequestInfo>::iterator it = _tunnel_requests_origins.find(item->request_id) ;
 #ifdef P3TURTLE_DEBUG
 		std::cerr << "Received tunnel result:" << std::endl ;
 		item->print(std::cerr,0) ;
@@ -1649,7 +1686,7 @@ void p3turtle::handleTunnelResult(RsTurtleTunnelOkItem *item)
 		if(found)
 		{
 #ifdef P3TURTLE_DEBUG
-			std::cerr << "Tunnel id " << (void*)item->tunnel_id << " is already there. Not storing." << std::endl ;
+			std::cerr << "Tunnel id " << HEX_PRINT(item->tunnel_id) << " is already there. Not storing." << std::endl ;
 #endif
 		}
 		else
@@ -1671,7 +1708,7 @@ void p3turtle::handleTunnelResult(RsTurtleTunnelOkItem *item)
 		if(it->second.origin == _own_id)
 		{
 #ifdef P3TURTLE_DEBUG
-			std::cerr << "  Tunnel starting point. Storing id=" << (void*)item->tunnel_id << " for hash (unknown) and tunnel request id " << it->second.origin << std::endl;
+			std::cerr << "  Tunnel starting point. Storing id=" << HEX_PRINT(item->tunnel_id) << " for hash (unknown) and tunnel request id " << it->second.origin << std::endl;
 #endif
 			// Tunnel is ending here. Add it to the list of tunnels for the given hash.
 
@@ -1915,7 +1952,7 @@ void p3turtle::returnSearchResult(RsTurtleSearchResultItem *item)
 	// just cout for now, but it should be notified to the gui
 
 #ifdef P3TURTLE_DEBUG
-	std::cerr << "  Returning result for search request " << (void*)item->request_id << " upwards." << std::endl ;
+	std::cerr << "  Returning result for search request " << HEX_PRINT(item->request_id) << " upwards." << std::endl ;
 #endif
 
 	RsServer::notify()->notifyTurtleSearchResult(item->request_id,item->result) ;
@@ -2045,8 +2082,8 @@ std::string p3turtle::getPeerNameForVirtualPeerId(const RsPeerId& virtual_peer_i
 
 void p3turtle::getInfo(	std::vector<std::vector<std::string> >& hashes_info,
 								std::vector<std::vector<std::string> >& tunnels_info,
-								std::vector<TurtleRequestDisplayInfo >& search_reqs_info,
-								std::vector<TurtleRequestDisplayInfo >& tunnel_reqs_info) const
+								std::vector<TurtleSearchRequestDisplayInfo >& search_reqs_info,
+								std::vector<TurtleTunnelRequestDisplayInfo >& tunnel_reqs_info) const
 {
 	RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
 
@@ -2094,24 +2131,25 @@ void p3turtle::getInfo(	std::vector<std::vector<std::string> >& hashes_info,
 
 	search_reqs_info.clear();
 
-	for(std::map<TurtleSearchRequestId,TurtleRequestInfo>::const_iterator it(_search_requests_origins.begin());it!=_search_requests_origins.end();++it)
+	for(std::map<TurtleSearchRequestId,TurtleSearchRequestInfo>::const_iterator it(_search_requests_origins.begin());it!=_search_requests_origins.end();++it)
 	{
-		TurtleRequestDisplayInfo info ;
+		TurtleSearchRequestDisplayInfo info ;
 
 		info.request_id 		= it->first ;
 		info.source_peer_id 	= it->second.origin ;
 		info.age 				= now - it->second.time_stamp ;
 		info.depth 				= it->second.depth ;
-		info.keywords 			= it->second.keywords ;
+		info.keywords           = it->second.keywords ;
+		info.hits               = it->second.result_count ;
 
 		search_reqs_info.push_back(info) ;
 	}
 
 	tunnel_reqs_info.clear();
 
-	for(std::map<TurtleSearchRequestId,TurtleRequestInfo>::const_iterator it(_tunnel_requests_origins.begin());it!=_tunnel_requests_origins.end();++it)
+	for(std::map<TurtleSearchRequestId,TurtleTunnelRequestInfo>::const_iterator it(_tunnel_requests_origins.begin());it!=_tunnel_requests_origins.end();++it)
 	{
-		TurtleRequestDisplayInfo info ;
+		TurtleTunnelRequestDisplayInfo info ;
 
 		info.request_id 		= it->first ;
 		info.source_peer_id 	= it->second.origin ;
@@ -2136,16 +2174,16 @@ void p3turtle::dumpState()
 	{
 		std::cerr << "    hash=0x" << it->first << ", tunnel ids =" ;
 		for(std::vector<TurtleTunnelId>::const_iterator it2(it->second.tunnels.begin());it2!=it->second.tunnels.end();++it2)
-			std::cerr << " " << (void*)*it2 ;
+			std::cerr << " " << HEX_PRINT(*it2) ;
 		//std::cerr << ", last_req=" << (void*)it->second.last_request << ", time_stamp = " << it->second.time_stamp << "(" << now-it->second.time_stamp << " secs ago)" << std::endl ;
 	}
-	std::cerr << "  Active outgoing file hashes: " << _outgoing_file_hashes.size() << std::endl ;
-    for(std::map<TurtleTunnelId,RsTurtleClientService*>::const_iterator it(_outgoing_file_hashes.begin());it!=_outgoing_file_hashes.end();++it)
+	std::cerr << "  Active outgoing file hashes: " << _outgoing_tunnel_client_services.size() << std::endl ;
+    for(std::map<TurtleTunnelId,RsTurtleClientService*>::const_iterator it(_outgoing_tunnel_client_services.begin());it!=_outgoing_tunnel_client_services.end();++it)
         std::cerr << "    TID=0x" << it->first << std::endl ;
 
 	std::cerr << "  Local tunnels:" << std::endl ;
 	for(std::map<TurtleTunnelId,TurtleTunnel>::const_iterator it(_local_tunnels.begin());it!=_local_tunnels.end();++it)
-		std::cerr << "    " << (void*)it->first << ": from="
+		std::cerr << "    " << HEX_PRINT(it->first) << ": from="
 					<< it->second.local_src << ", to=" << it->second.local_dst
 					<< ", hash=0x" << it->second.hash << ", ts=" << it->second.time_stamp << " (" << now-it->second.time_stamp << " secs ago)"
 					<< ", peer id =" << it->second.vpid << std::endl ;
@@ -2153,20 +2191,21 @@ void p3turtle::dumpState()
 	std::cerr << "  buffered request origins: " << std::endl ;
 	std::cerr << "    Search requests: " << _search_requests_origins.size() << std::endl ;
 
-	for(std::map<TurtleSearchRequestId,TurtleRequestInfo>::const_iterator it(_search_requests_origins.begin());it!=_search_requests_origins.end();++it)
-		std::cerr 	<< "      " << (void*)it->first << ": from=" << it->second.origin
+	for(std::map<TurtleSearchRequestId,TurtleSearchRequestInfo>::const_iterator it(_search_requests_origins.begin());it!=_search_requests_origins.end();++it)
+		std::cerr 	<< "      " << HEX_PRINT(it->first) << ": from=" << it->second.origin
 						<< ", ts=" << it->second.time_stamp << " (" << now-it->second.time_stamp
-						<< " secs ago)" << std::endl ;
+						<< " secs ago)"
+		                << it->second.result_count << " hits" << std::endl ;
 
 	std::cerr << "    Tunnel requests: " << _tunnel_requests_origins.size() << std::endl ;
-	for(std::map<TurtleTunnelRequestId,TurtleRequestInfo>::const_iterator it(_tunnel_requests_origins.begin());it!=_tunnel_requests_origins.end();++it)
-		std::cerr 	<< "      " << (void*)it->first << ": from=" << it->second.origin
+	for(std::map<TurtleTunnelRequestId,TurtleTunnelRequestInfo>::const_iterator it(_tunnel_requests_origins.begin());it!=_tunnel_requests_origins.end();++it)
+		std::cerr 	<< "      " << HEX_PRINT(it->first) << ": from=" << it->second.origin
 						<< ", ts=" << it->second.time_stamp << " (" << now-it->second.time_stamp
 						<< " secs ago)" << std::endl ;
 
 	std::cerr << "  Virtual peers:" << std::endl ;
 	for(std::map<TurtleVirtualPeerId,TurtleTunnelId>::const_iterator it(_virtual_peers.begin());it!=_virtual_peers.end();++it)
-		std::cerr << "    id=" << it->first << ", tunnel=" << (void*)(it->second) << std::endl ;
+		std::cerr << "    id=" << it->first << ", tunnel=" << HEX_PRINT(it->second) << std::endl ;
 	std::cerr << "  Online peers: " << std::endl ;
 //	for(std::list<pqipeer>::const_iterator it(_online_peers.begin());it!=_online_peers.end();++it)
 //		std::cerr << "    id=" << it->id << ", name=" << it->name << ", state=" << it->state << ", actions=" << it->actions << std::endl ;

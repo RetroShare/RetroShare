@@ -34,6 +34,7 @@
 #include "util/rsstring.h"
 #include "util/radix64.h"
 #include "util/rsdir.h"
+#include "util/rstime.h"
 #include "crypto/hashstream.h"
 #include "gxs/gxssecurity.h"
 #include "retroshare/rspeers.h"
@@ -1071,7 +1072,7 @@ bool p3IdService::signData(const uint8_t *data,uint32_t data_size,const RsGxsId&
 #ifdef DEBUG_IDS
             std::cerr << "  Cannot get key. Waiting for caching. try " << i << "/6" << std::endl;
 #endif
-            usleep(500 * 1000) ;	// sleep for 500 msec.
+            rstime::rs_usleep(500 * 1000) ;	// sleep for 500 msec.
         }
         else
             break ;
@@ -1110,7 +1111,7 @@ bool p3IdService::validateData(const uint8_t *data,uint32_t data_size,const RsTl
 #ifdef DEBUG_IDS
             std::cerr << "  Cannot get key. Waiting for caching. try " << i << "/6" << std::endl;
 #endif
-            if(force_load) usleep(500 * 1000) ;	// sleep for 500 msec.
+            if(force_load) rstime::rs_usleep(500 * 1000) ;	// sleep for 500 msec.
         }
         else
             break ;
@@ -1151,7 +1152,7 @@ bool p3IdService::encryptData( const uint8_t *decrypted_data,
 		if(getKey(encryption_key_id,encryption_key))
             break ;
         else
-            usleep(500*1000) ; // sleep half a sec.
+            rstime::rs_usleep(500*1000) ; // sleep half a sec.
 
     if(encryption_key.keyId.isNull())
     {
@@ -1222,7 +1223,7 @@ bool p3IdService::encryptData( const uint8_t* decrypted_data,
 		}
 
 		if(keyNotYetFoundIds.empty()) break;
-		else usleep(500*1000);
+		else rstime::rs_usleep(500*1000);
 	}
 
 	if(!keyNotYetFoundIds.empty())
@@ -1279,7 +1280,7 @@ bool p3IdService::decryptData( const uint8_t *encrypted_data,
 	int maxRounds = force_load ? 6 : 1;
 	for(int i=0; i<maxRounds ;++i)
 		if(getPrivateKey(key_id,encryption_key)) break;
-		else usleep(500*1000) ; // sleep half a sec.
+		else rstime::rs_usleep(500*1000) ; // sleep half a sec.
 
     if(encryption_key.keyId.isNull())
     {
@@ -1356,7 +1357,7 @@ bool p3IdService::decryptData( const uint8_t* encrypted_data,
 		}
 
 		if(keyNotYetFoundIds.empty()) break;
-		else usleep(500*1000);
+		else rstime::rs_usleep(500*1000);
 	}
 
 	if(!keyNotYetFoundIds.empty())
@@ -1658,9 +1659,8 @@ bool p3IdService::getGroupData(const uint32_t &token, std::vector<RsGxsIdGroup> 
                     group.mPgpKnown = false;
                     group.mPgpId.clear();
 
-                    std::cerr << "p3IdService::getGroupData() Failed to decode ServiceString \""
-                              << group.mMeta.mServiceString << "\"" ;
-                    std::cerr << std::endl;
+					if(!group.mMeta.mServiceString.empty())
+						std::cerr << "p3IdService::getGroupData() " << group.mMeta.mGroupId << " (" << group.mMeta.mGroupName << ") : Failed to decode, or no ServiceString \"" << group.mMeta.mServiceString << "\"" << std::endl;
                 }
 
                 group.mIsAContact =  (mContacts.find(RsGxsId(group.mMeta.mGroupId)) != mContacts.end());
@@ -2252,7 +2252,7 @@ void RsGxsIdCache::updateServiceString(std::string serviceString)
 #ifdef DEBUG_RECOGN
             std::cerr << "RsGxsIdCache::updateServiceString() updating recogntags";
             std::cerr << std::endl;
-#endif // DEBUG_RECOGN
+#endif
             if (ssdata.recogntags.publishTs == mPublishTs)
             {
                 std::list<RsRecognTag>::iterator it;
@@ -2264,7 +2264,7 @@ void RsGxsIdCache::updateServiceString(std::string serviceString)
 #ifdef DEBUG_RECOGN
                         std::cerr << "RsGxsIdCache::updateServiceString() Valid Tag: " << it->tag_class << ":" << it->tag_type;
                         std::cerr << std::endl;
-#endif // DEBUG_RECOGN
+#endif
                         details.mRecognTags.push_back(*it);
                     }
                     else
@@ -2272,7 +2272,7 @@ void RsGxsIdCache::updateServiceString(std::string serviceString)
 #ifdef DEBUG_RECOGN
                         std::cerr << "RsGxsIdCache::updateServiceString() Invalid Tag: " << it->tag_class << ":" << it->tag_type;
                         std::cerr << std::endl;
-#endif // DEBUG_RECOGN
+#endif
                     }
                 }
             }
@@ -2281,7 +2281,7 @@ void RsGxsIdCache::updateServiceString(std::string serviceString)
 #ifdef DEBUG_RECOGN
                 std::cerr << "RsGxsIdCache::updateServiceString() recogntags old publishTs";
                 std::cerr << std::endl;
-#endif // DEBUG_RECOGN
+#endif
             }
 
         }
@@ -2290,7 +2290,7 @@ void RsGxsIdCache::updateServiceString(std::string serviceString)
 #ifdef DEBUG_RECOGN
             std::cerr << "RsGxsIdCache::updateServiceString() recogntags unprocessed";
             std::cerr << std::endl;
-#endif // DEBUG_RECOGN
+#endif
         }
 
         // copy over Reputation scores.

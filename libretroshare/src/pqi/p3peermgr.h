@@ -171,6 +171,7 @@ virtual bool 	setVisState(const RsPeerId &id, uint16_t vs_disc, uint16_t vs_dht)
 
 virtual bool    setLocation(const RsPeerId &pid, const std::string &location) = 0;
 virtual bool    setHiddenDomainPort(const RsPeerId &id, const std::string &domain_addr, const uint16_t domain_port) = 0;
+virtual bool    isHiddenNode(const RsPeerId& id) = 0 ;
 
 virtual bool    updateCurrentAddress(const RsPeerId& id, const pqiIpAddress &addr) = 0;
 virtual bool    updateLastContact(const RsPeerId& id) = 0;
@@ -284,6 +285,7 @@ public:
 
     virtual bool    setLocation(const RsPeerId &pid, const std::string &location);
     virtual bool    setHiddenDomainPort(const RsPeerId &id, const std::string &domain_addr, const uint16_t domain_port);
+	virtual bool    isHiddenNode(const RsPeerId& id);
 
     virtual bool    updateCurrentAddress(const RsPeerId& id, const pqiIpAddress &addr);
     virtual bool    updateLastContact(const RsPeerId& id);

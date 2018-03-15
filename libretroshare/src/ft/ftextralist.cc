@@ -32,6 +32,7 @@
 #include "ft/ftextralist.h"
 #include "rsitems/rsconfigitems.h"
 #include "util/rsdir.h"
+#include "util/rstime.h"
 #include <stdio.h>
 #include <unistd.h>		/* for (u)sleep() */
 #include <time.h>
@@ -64,12 +65,8 @@ void ftExtraList::data_tick()
         /* Hash a file */
         hashAFile();
 
-#ifdef WIN32
-        Sleep(1);
-#else
         /* microsleep */
-        usleep(10);
-#endif
+        rstime::rs_usleep(10);
     }
     else
     {
@@ -513,16 +510,7 @@ bool    ftExtraList::loadList(std::list<RsItem *>& load)
 		delete (*it);
 
 		/* short sleep */
-#ifndef WINDOWS_SYS
-/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
-		usleep(1000); /* 1000 per second */
-
-#else
-/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
-		Sleep(1);
-#endif
-/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
-
+		rstime::rs_usleep(1000) ;
 	}
     load.clear() ;
 	return true;

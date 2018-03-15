@@ -166,7 +166,9 @@ template<class ItemClass,class ItemSerialiser> int test_RsItem()
 		rsfi.print(std::cerr,0) ;
 	}
 	if (outfi)
+	{
 		EXPECT_TRUE(*outfi == rsfi) ;
+	}
 
 
 	sersize2 = MAX_BUFSIZE;
@@ -232,7 +234,9 @@ template<class ItemClass,class ItemSerialiser> int test_RsItem(uint16_t servtype
         EXPECT_TRUE(outfi != NULL);
 
         if (outfi)
+        {
                 EXPECT_TRUE(*outfi == rsfi) ;
+        }
 
         sersize2 = MAX_BUFSIZE;
         bool done2 = srl.serialise(outfi, (void *) &(buffer[16*8]), &sersize2);

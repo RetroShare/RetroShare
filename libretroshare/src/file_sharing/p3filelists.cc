@@ -1155,6 +1155,8 @@ int p3FileDatabase::SearchKeywords(const std::list<std::string>& keywords, std::
     if(flags & RS_FILE_HINTS_LOCAL)
     {
         std::list<EntryIndex> firesults;
+        std::list<void *> pointers;
+
         {
             RS_STACK_MUTEX(mFLSMtx) ;
 
@@ -1164,16 +1166,16 @@ int p3FileDatabase::SearchKeywords(const std::list<std::string>& keywords, std::
             {
                 void *p=NULL;
                 convertEntryIndexToPointer<sizeof(void*)>(*it,0,p);
-                *it = (intptr_t)p ;
+				pointers.push_back(p) ;
             }
         }
 
-        filterResults(firesults,results,flags,client_peer_id) ;
+        filterResults(pointers,results,flags,client_peer_id) ;
     }
 
     if(flags & RS_FILE_HINTS_REMOTE)
     {
-        std::list<EntryIndex> firesults;
+		std::list<void*> pointers ;
 
         {
             RS_STACK_MUTEX(mFLSMtx) ;
@@ -1188,21 +1190,21 @@ int p3FileDatabase::SearchKeywords(const std::list<std::string>& keywords, std::
                     {
                         void *p=NULL;
                         convertEntryIndexToPointer<sizeof(void*)>(*it,i+1,p);
-                        firesults.push_back((intptr_t)p) ;
-                    }
+
+						pointers.push_back(p) ;
+					}
                 }
         }
 
-        for(std::list<EntryIndex>::const_iterator rit ( firesults.begin()); rit != firesults.end(); ++rit)
-        {
-            DirDetails dd;
+		for(auto it(pointers.begin());it!=pointers.end();++it)
+		{
+			DirDetails dd;
 
-            if(!RequestDirDetails ((void*)(intptr_t)*rit,dd,RS_FILE_HINTS_REMOTE))
-                continue ;
+			if(!RequestDirDetails (*it,dd,RS_FILE_HINTS_REMOTE))
+				continue ;
 
-            results.push_back(dd);
-        }
-
+			results.push_back(dd);
+		}
     }
 
     return !results.empty() ;
@@ -1213,6 +1215,7 @@ int p3FileDatabase::SearchBoolExp(RsRegularExpression::Expression *exp, std::lis
     if(flags & RS_FILE_HINTS_LOCAL)
     {
         std::list<EntryIndex> firesults;
+        std::list<void*> pointers;
         {
             RS_STACK_MUTEX(mFLSMtx) ;
 
@@ -1222,17 +1225,16 @@ int p3FileDatabase::SearchBoolExp(RsRegularExpression::Expression *exp, std::lis
             {
                 void *p=NULL;
                 convertEntryIndexToPointer<sizeof(void*)>(*it,0,p);
-                *it = (intptr_t)p ;
+                pointers.push_back(p);
             }
         }
 
-        filterResults(firesults,results,flags,client_peer_id) ;
+        filterResults(pointers,results,flags,client_peer_id) ;
     }
 
     if(flags & RS_FILE_HINTS_REMOTE)
     {
-        std::list<EntryIndex> firesults;
-
+		std::list<void*> pointers ;
         {
             RS_STACK_MUTEX(mFLSMtx) ;
 
@@ -1246,21 +1248,20 @@ int p3FileDatabase::SearchBoolExp(RsRegularExpression::Expression *exp, std::lis
                     {
                         void *p=NULL;
                         convertEntryIndexToPointer<sizeof(void*)>(*it,i+1,p);
-                        firesults.push_back((intptr_t)p) ;
-                    }
-
+						pointers.push_back(p) ;
+					}
                 }
         }
 
-        for(std::list<EntryIndex>::const_iterator rit ( firesults.begin()); rit != firesults.end(); ++rit)
-        {
-            DirDetails dd;
+		for(auto it(pointers.begin());it!=pointers.end();++it)
+		{
+			DirDetails dd;
 
-            if(!RequestDirDetails ((void*)(intptr_t)*rit,dd,RS_FILE_HINTS_REMOTE))
-                continue ;
+			if(!RequestDirDetails (*it,dd,RS_FILE_HINTS_REMOTE))
+				continue ;
 
-            results.push_back(dd);
-        }
+			results.push_back(dd);
+		}
     }
 
     return !results.empty() ;
@@ -1312,7 +1313,7 @@ bool p3FileDatabase::search(const RsFileHash &hash, FileSearchFlags hintflags, F
     return false;
 }
 
-int p3FileDatabase::filterResults(const std::list<EntryIndex>& firesults,std::list<DirDetails>& results,FileSearchFlags flags,const RsPeerId& peer_id) const
+int p3FileDatabase::filterResults(const std::list<void*>& firesults,std::list<DirDetails>& results,FileSearchFlags flags,const RsPeerId& peer_id) const
 {
     results.clear();
 
@@ -1320,17 +1321,17 @@ int p3FileDatabase::filterResults(const std::list<EntryIndex>& firesults,std::li
 
     /* translate/filter results */
 
-    for(std::list<EntryIndex>::const_iterator rit(firesults.begin()); rit != firesults.end(); ++rit)
+    for(std::list<void*>::const_iterator rit(firesults.begin()); rit != firesults.end(); ++rit)
     {
         DirDetails cdetails ;
 
-        if(!RequestDirDetails ((void*)(intptr_t)*rit,cdetails,RS_FILE_HINTS_LOCAL))
+        if(!RequestDirDetails (*rit,cdetails,RS_FILE_HINTS_LOCAL))
         {
-            P3FILELISTS_ERROR() << "(EE) Cannot get dir details for entry " << (void*)(intptr_t)*rit << std::endl;
+            P3FILELISTS_ERROR() << "(EE) Cannot get dir details for entry " << *rit << std::endl;
             continue ;
         }
 #ifdef DEBUG_P3FILELISTS
-        P3FILELISTS_DEBUG() << "Filtering candidate " << (void*)(intptr_t)(*rit) << ", flags=" << cdetails.flags << ", peer=" << peer_id ;
+        P3FILELISTS_DEBUG() << "Filtering candidate " << *rit << ", flags=" << cdetails.flags << ", peer=" << peer_id ;
 #endif
 
         if(!peer_id.isNull())

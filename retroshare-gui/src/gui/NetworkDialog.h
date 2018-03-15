@@ -33,6 +33,7 @@ class  QTreeWidgetItem;
 
 class RSTreeWidgetItemCompareRole ;
 
+
 class NetworkDialog : public RsAutoUpdatePage
 {
   Q_OBJECT
@@ -55,11 +56,11 @@ public:
   QColor backgroundColorHasSignedMe() const { return mBackgroundColorHasSignedMe; }
   QColor backgroundColorDenied() const { return mBackgroundColorDenied; }
 
-  void setBackgroundColorSelf(QColor color) { mBackgroundColorSelf = color; }
-  void setBackgroundColorOwnSign(QColor color) { mBackgroundColorOwnSign = color; }
-  void setBackgroundColorAcceptConnection(QColor color) { mBackgroundColorAcceptConnection = color; }
-  void setBackgroundColorHasSignedMe(QColor color) { mBackgroundColorHasSignedMe = color; }
-  void setBackgroundColorDenied(QColor color) { mBackgroundColorDenied = color; }
+  void setBackgroundColorSelf(QColor color) { PGPIdItemModel->setBackgroundColorSelf(color); mBackgroundColorSelf = color; }
+  void setBackgroundColorOwnSign(QColor color) { PGPIdItemModel->setBackgroundColorOwnSign(color); mBackgroundColorOwnSign = color; }
+  void setBackgroundColorAcceptConnection(QColor color) { PGPIdItemModel->setBackgroundColorAcceptConnection(color); mBackgroundColorAcceptConnection = color; }
+  void setBackgroundColorHasSignedMe(QColor color) { PGPIdItemModel->setBackgroundColorHasSignedMe(color); mBackgroundColorHasSignedMe = color; }
+  void setBackgroundColorDenied(QColor color) { PGPIdItemModel->setBackgroundColorDenied(color); mBackgroundColorDenied = color; }
 
 private:
 //  void  insertConnect();

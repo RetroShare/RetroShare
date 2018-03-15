@@ -33,6 +33,7 @@
 #include "util/rsdir.h"
 #include "util/rsstring.h"
 #include "util/rsrandom.h"
+#include "util/rstime.h"
 #include "util/rsmemory.h"
 #include "util/folderiterator.h"
 #include "retroshare/rstypes.h"
@@ -102,6 +103,23 @@ const char *RsDirUtil::scanf_string_for_uint(int bytes)
 
 	std::cerr << "RsDirUtil::scanf_string_for_uint(): no corresponding scan string for "<< bytes << " bytes. This will probably cause inconsistencies." << std::endl;
 	return strgs[0] ;
+}
+
+bool RsDirUtil::splitDirFromFile(const std::string& full_path,std::string& dir, std::string& file)
+{
+	int i = full_path.rfind('/', full_path.size()-1);
+
+	if(i == full_path.size()-1)	// '/' not found!
+	{
+		file = full_path ;
+		dir = "." ;
+		return true ;
+	}
+
+	dir.assign(full_path,0,i+1) ;
+	file.assign(full_path,i+1,full_path.size()) ;
+
+	return true ;
 }
 
 void RsDirUtil::removeTopDir(const std::string& dir, std::string& path)
@@ -245,6 +263,19 @@ bool RsDirUtil::fileExists(const std::string& filename)
 
 bool RsDirUtil::moveFile(const std::string& source,const std::string& dest)
 {
+	// Check that the destination directory exists. If not, create it.
+
+	std::string dest_dir ;
+	std::string dest_file ;
+
+	splitDirFromFile(dest,dest_dir,dest_file) ;
+
+	std::cerr << "Moving file " << source << " to " << dest << std::endl;
+	std::cerr << "Checking that directory " << dest_dir << " actually exists." << std::endl;
+
+	if(!checkCreateDirectory(dest_dir))
+		return false ;
+
     // First try a rename
 	//
 
@@ -458,7 +489,7 @@ bool	RsDirUtil::checkCreateDirectory(const std::string& dir)
 			std::cerr << "check_create_directory() Fatal Error et oui--";
 			std::cerr <<std::endl<< "\tcannot create:" <<dir<<std::endl;
 #endif
-			return 0;
+			return false;
 		}
 
 #ifdef RSDIR_DEBUG
@@ -466,7 +497,7 @@ bool	RsDirUtil::checkCreateDirectory(const std::string& dir)
 		std::cerr <<std::endl<< "\tcreated:" <<dir<<std::endl;
 #endif
 
-		return 1;
+		return true;
 	}
 
 #ifdef RSDIR_DEBUG
@@ -480,7 +511,7 @@ bool	RsDirUtil::checkCreateDirectory(const std::string& dir)
 	closedir(direc) ;
 #endif
 
-	return 1;
+	return true;
 }
 
 
@@ -681,7 +712,7 @@ bool RsDirUtil::renameFile(const std::string& from, const std::string& to)
 #endif
 			/* set errno? */
 			return false ;
-		usleep(100 * 1000);		// 100 msec
+		rstime::rs_usleep(100 * 1000);		// 100 msec
 
 		if (loops >= 30)
 			return false ;
@@ -887,7 +918,7 @@ RsStackFileLock::RsStackFileLock(const std::string& file_path)
 	while(RsDirUtil::createLockFile(file_path,_file_handle))
 	{
 		std::cerr << "Cannot acquire file lock " << file_path << ", waiting 1 sec." << std::endl;
-		usleep(1 * 1000 * 1000) ; // 1 sec
+		rstime::rs_usleep(1 * 1000 * 1000) ; // 1 sec
 	}
 #ifdef RSDIR_DEBUG 
 	std::cerr << "Acquired file handle " << _file_handle << ", lock file:" << file_path << std::endl;
@@ -1291,7 +1322,7 @@ bool RsDirUtil::renameWideFile(const std::wstring& from, const std::wstring& to)
 #endif
 			/* set errno? */
 			return false ;
-		usleep(100 * 1000); //100 msec
+		rstime::rs_usleep(100 * 1000); //100 msec
 
 		if (loops >= 30)
 			return false ;

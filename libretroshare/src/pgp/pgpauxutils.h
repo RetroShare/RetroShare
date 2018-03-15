@@ -35,6 +35,7 @@
 class PgpAuxUtils
 {
 	public:
+	virtual ~PgpAuxUtils(){}
 
 	virtual const RsPgpId &getPGPOwnId()  = 0;
 	virtual RsPgpId getPGPId(const RsPeerId& sslid) = 0;

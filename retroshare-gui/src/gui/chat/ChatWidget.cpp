@@ -172,7 +172,7 @@ ChatWidget::ChatWidget(QWidget *parent) :
 
 	connect(ui->textBrowser, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuTextBrowser(QPoint)));
 
-	connect(ui->chatTextEdit, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenu(QPoint)));
+	//connect(ui->chatTextEdit, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenu(QPoint)));
 	// reset text and color after removing all characters from the QTextEdit and after calling QTextEdit::clear
 	connect(ui->chatTextEdit, SIGNAL(currentCharFormatChanged(QTextCharFormat)), this, SLOT(chatCharFormatChanged()));
 	connect(ui->chatTextEdit, SIGNAL(textChanged()), this, SLOT(updateLenOfChatTextEdit()));
@@ -474,6 +474,7 @@ uint32_t ChatWidget::maxMessageSize()
 
 bool ChatWidget::eventFilter(QObject *obj, QEvent *event)
 {
+	//QEvent::Type type = event->type();
 	if (obj == ui->textBrowser || obj == ui->textBrowser->viewport()
 	    || obj == ui->leSearch || obj == ui->chatTextEdit) {
 		if (event->type() == QEvent::KeyPress) {
@@ -673,6 +674,17 @@ bool ChatWidget::eventFilter(QObject *obj, QEvent *event)
 				}
 			}
 		}
+		if (event->type() == QEvent::StyleChange)
+		{
+			QString colorName = currentColor.name();
+			qreal desiredContrast = Settings->valueFromGroup("Chat", "MinimumContrast", 4.5).toDouble();
+			QColor backgroundColor = ui->chatTextEdit->palette().base().color();
+			RsHtml::findBestColor(colorName, backgroundColor, desiredContrast);
+
+			currentColor = QColor(colorName);
+			ui->chatTextEdit->setTextColor(currentColor);
+			colorChanged();
+		}
 	} else if (obj == ui->leSearch) {
 		if (event->type() == QEvent::KeyPress) {
 
@@ -730,15 +742,6 @@ bool ChatWidget::eventFilter(QObject *obj, QEvent *event)
 
 			}
 
-		}
-	} else {
-		if (event->type() == QEvent::WindowActivate) {
-			if (isVisible() && (window() == NULL || window()->isActiveWindow())) {
-				newMessages = false;
-				emit infoChanged(this);
-				focusDialog();
-                ChatUserNotify::clearWaitingChat(chatId);
-			}
 		}
 	}
 	// pass the event on to the parent class
@@ -889,7 +892,17 @@ void ChatWidget::showEvent(QShowEvent */*event*/)
 {
 	newMessages = false;
 	emit infoChanged(this);
-	focusDialog();
+	// if user waded through the jungle of history just let him on
+	// own decide whether to continue the journey or start typing
+	QScrollBar *scrollbar = ui->textBrowser->verticalScrollBar();
+	bool is_scrollbar_at_end = scrollbar->value() == scrollbar->maximum();
+	bool is_chat_text_edit_empty = ui->chatTextEdit->toPlainText().isEmpty();
+	if (is_scrollbar_at_end || !is_chat_text_edit_empty) {
+		focusDialog();
+	} else {
+		// otherwise focus will be get even not chat itself
+		ui->textBrowser->setFocus();
+	}
     ChatUserNotify::clearWaitingChat(chatId);
 
 	if (firstShow) {
@@ -1589,10 +1602,9 @@ void ChatWidget::fileHashingFinished(QList<HashedFile> hashedFiles)
 
 		RetroShareLink link;
 
-		if(mDefaultExtraFileFlags & RS_FILE_REQ_ANONYMOUS_ROUTING)
-			link = RetroShareLink::createFile(hashedFile.filename, hashedFile.size, QString::fromStdString(hashedFile.hash.toStdString()));
-		else
-			link = RetroShareLink::createExtraFile(hashedFile.filename, hashedFile.size, QString::fromStdString(hashedFile.hash.toStdString()),QString::fromStdString(rsPeers->getOwnId().toStdString()));
+		// We dont use extra links anymore, since files in the extra list can always be accessed using anonymous+encrypted FT.
+
+		link = RetroShareLink::createFile(hashedFile.filename, hashedFile.size, QString::fromStdString(hashedFile.hash.toStdString()));
 
 		if (hashedFile.flag & HashedFile::Picture) {
 			message += QString("<img src=\"file:///%1\" width=\"100\" height=\"100\">").arg(hashedFile.filepath);

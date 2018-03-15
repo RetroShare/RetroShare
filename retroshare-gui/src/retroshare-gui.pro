@@ -1,9 +1,10 @@
 !include("../../retroshare.pri"): error("Could not include file ../../retroshare.pri")
 
 TEMPLATE = app
-QT     += network xml
+QT     += network xml 
 CONFIG += qt gui uic qrc resources idle bitdht
 CONFIG += link_prl
+CONFIG += console
 TARGET = retroshare
 DEFINES += TARGET=\\\"$${TARGET}\\\"
 
@@ -20,6 +21,13 @@ profiling {
 	QMAKE_LFLAGS *= -pg 
 }
 
+retrotor {
+	DEFINES *= RETROTOR
+
+	FORMS   += TorControl/TorControlWindow.ui
+	SOURCES += TorControl/TorControlWindow.cpp
+	HEADERS += TorControl/TorControlWindow.h
+}
 
 #QMAKE_CFLAGS += -fmudflap 
 #LIBS *= /usr/lib/gcc/x86_64-linux-gnu/4.4/libmudflap.a /usr/lib/gcc/x86_64-linux-gnu/4.4/libmudflapth.a
@@ -161,6 +169,8 @@ win32 {
 	CONFIG(debug, debug|release) {
 		# show console output
 		CONFIG += console
+	} else {
+		CONFIG -= console
 	}
 
 	# Switch on extra warnings
@@ -324,6 +334,47 @@ DEPENDPATH += $$PWD/../../libresapi/src
 INCLUDEPATH += $$PWD/../../libresapi/src
 PRE_TARGETDEPS *= $$OUT_PWD/../../libresapi/src/lib/libresapi.a
 LIBS += $$OUT_PWD/../../libresapi/src/lib/libresapi.a
+
+retrotor {
+HEADERS += 	TorControl/AddOnionCommand.h \
+				TorControl/AuthenticateCommand.h \
+				TorControl/GetConfCommand.h \
+				TorControl/HiddenService.h \
+				TorControl/ProtocolInfoCommand.h \
+				TorControl/SetConfCommand.h \
+				TorControl/TorControlCommand.h \
+				TorControl/TorControl.h \
+				TorControl/TorControlSocket.h \
+				TorControl/TorManager.h \
+				TorControl/TorProcess.h \
+				TorControl/TorProcess_p.h \
+				TorControl/TorSocket.h \
+				TorControl/Useful.h            \
+				TorControl/CryptoKey.h         \
+				TorControl/PendingOperation.h  \
+				TorControl/SecureRNG.h         \
+				TorControl/Settings.h          \
+				TorControl/StrUtil.h        \
+				TorControl/TorProcess_p.h        
+
+SOURCES += 	TorControl/AddOnionCommand.cpp \
+				TorControl/AuthenticateCommand.cpp \
+				TorControl/GetConfCommand.cpp \
+				TorControl/HiddenService.cpp \
+				TorControl/ProtocolInfoCommand.cpp \
+				TorControl/SetConfCommand.cpp \
+				TorControl/TorControlCommand.cpp \
+				TorControl/TorControl.cpp \
+				TorControl/TorControlSocket.cpp \
+				TorControl/TorManager.cpp \
+				TorControl/TorProcess.cpp \
+				TorControl/TorSocket.cpp \
+				TorControl/CryptoKey.cpp         \
+				TorControl/PendingOperation.cpp  \
+				TorControl/SecureRNG.cpp         \
+				TorControl/Settings.cpp          \
+				TorControl/StrUtil.cpp        
+}
 
 # Input
 HEADERS +=  rshare.h \
@@ -532,6 +583,7 @@ HEADERS +=  rshare.h \
             gui/statusbar/peerstatus.h \
             gui/statusbar/natstatus.h \
             gui/statusbar/dhtstatus.h \
+            gui/statusbar/torstatus.h \
             gui/statusbar/ratesstatus.h \
             gui/statusbar/hashingstatus.h \
             gui/statusbar/discstatus.h \
@@ -874,6 +926,7 @@ SOURCES +=  main.cpp \
             gui/statusbar/peerstatus.cpp \
             gui/statusbar/natstatus.cpp \
             gui/statusbar/dhtstatus.cpp \
+            gui/statusbar/torstatus.cpp \
             gui/statusbar/ratesstatus.cpp \
             gui/statusbar/hashingstatus.cpp \
             gui/statusbar/discstatus.cpp \

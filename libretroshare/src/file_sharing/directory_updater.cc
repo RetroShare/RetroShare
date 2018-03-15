@@ -23,6 +23,7 @@
  *
  */
 #include "util/folderiterator.h"
+#include "util/rstime.h"
 #include "rsserver/p3face.h"
 
 #include "directory_storage.h"
@@ -92,7 +93,7 @@ void LocalDirectoryUpdater::data_tick()
 
 	for(uint32_t i=0;i<10;++i)
 	{
-		usleep(1*1000*1000);
+		rstime::rs_usleep(1*1000*1000);
 
 		{
 		if(mForceUpdate)

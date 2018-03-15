@@ -98,7 +98,7 @@ void test_groupStoreAndRetrieve(){
         }
 
         RsGxsGrpMetaData *l_Meta = (*mit)->metaData,
-        *r_Meta = grpMetaR[grpId];
+        *r_Meta = const_cast<RsGxsGrpMetaData*>(grpMetaR[grpId]);
 
         // assign signSet and mGrpSize
         // to right as these values are not stored in db
