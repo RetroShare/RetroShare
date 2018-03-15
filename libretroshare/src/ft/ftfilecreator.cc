@@ -240,7 +240,7 @@ void ftFileCreator::removeInactiveChunks()
 #ifdef FILE_DEBUG
 	std::cerr << "ftFileCreator::removeInactiveChunks(): looking for old chunks." << std::endl ;
 #endif
-	std::vector<ftChunk::ChunkId> to_remove ;
+	std::vector<ftChunk::OffsetInFile> to_remove ;
 
 	chunkMap.removeInactiveChunks(to_remove) ;
 
@@ -421,7 +421,9 @@ int ftFileCreator::locked_notifyReceived(uint64_t offset, uint32_t chunk_size)
 
 		if(!found)
 		{
+#ifdef FILE_DEBUG
 			std::cerr << "ftFileCreator::locked_notifyReceived(): failed to find an active slice for " << offset << "+" << chunk_size << ", hash = " << hash << ": dropping data." << std::endl;
+#endif
 			return 0; /* ignoring */
 		}
 	}
@@ -531,7 +533,14 @@ bool ftFileCreator::getMissingChunk(const RsPeerId& peer_id,uint32_t size_hint,u
 	ftChunk chunk ;
 
 	if(!chunkMap.getDataChunk(peer_id,size_hint,chunk,source_chunk_map_needed))
+	{
+		// No chunks are available. We brutally re-ask an ongoing chunk to another peer.
+
+		if(chunkMap.reAskPendingChunk(peer_id,size_hint,offset,size))
+			return true ;
+
 		return false ;
+	}
 
 #ifdef FILE_DEBUG
 	std::cerr << "ffc::getMissingChunk() Retrieved new chunk: " << chunk << std::endl ;
