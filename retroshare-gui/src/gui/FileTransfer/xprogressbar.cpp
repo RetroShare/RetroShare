@@ -322,10 +322,15 @@ void xProgressBar::paint()
 	// paint text?
 	if (displayText && (rect.width() >= bounding.width()))
 	{
-		QColor color (255-textColor.red(), 255-textColor.green(), 255-textColor.blue(), 125);
-		painter->setPen(color);
-		painter->setBrush(QBrush(color));
-		painter->drawRect(bounding.adjusted(2,2,-4,-4));
+		QColor colorInt (255-textColor.red(), 255-textColor.green(), 255-textColor.blue(), 127);
+		QColor colorBor (255-textColor.red(), 255-textColor.green(), 255-textColor.blue(), 63);
+		QRadialGradient radialGrad(bounding.x()+(bounding.width()/2), bounding.y()+(bounding.height()/2),bounding.width()/2);
+		radialGrad.setColorAt(0.0, colorInt);
+		radialGrad.setColorAt(1.0, colorBor);
+		radialGrad.setSpread(QGradient::ReflectSpread);
+		painter->setPen(colorBor);
+		painter->setBrush(radialGrad);
+		painter->drawRoundedRect(bounding.adjusted(-2,2,2,-3),4.0,4.0);
 
 		painter->setPen(textColor);
 		painter->drawText(rect, Qt::AlignCenter, QLocale().toString(_pinfo.progress, 'f', 2) + "%");
