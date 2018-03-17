@@ -233,7 +233,9 @@ void xProgressBar::paint()
 
 	uint32_t ss = _pinfo.nb_chunks ;
 
-	if(ss > 1)	// for small files we use a more progressive display
+	QRect bounding = painter->boundingRect(rect, Qt::AlignCenter, QLocale().toString(_pinfo.progress, 'f', 2) + "%");
+
+	if((ss > 1) && (rect.width() > (1.5*bounding.width())))	// for small files we use a more progressive display
 	{
 		if(!_pinfo.cmap._map.empty())
 		{
@@ -303,7 +305,7 @@ void xProgressBar::paint()
 		overPaintSelectedChunks( _pinfo.chunks_in_progress , QColor(170, 20,9), QColor(223,121,123), width,ss) ;
 		overPaintSelectedChunks( _pinfo.chunks_in_checking , QColor(186,143,0), QColor(223,196, 61), width,ss) ;
 	}
-	else
+	else if ((rect.width() < bounding.width()) || !displayText)
 	{
 		// calculate progress value
 		int preWidth = static_cast<int>((rect.width() - 1 - hSpan)*(_pinfo.progress/100.0f));
@@ -318,11 +320,20 @@ void xProgressBar::paint()
 
 	
 	// paint text?
-	if (displayText)
+	if (displayText && (rect.width() >= bounding.width()))
 	{
-		QLocale locale;
+		QColor colorInt (255-textColor.red(), 255-textColor.green(), 255-textColor.blue(), 127);
+		QColor colorBor (255-textColor.red(), 255-textColor.green(), 255-textColor.blue(), 63);
+		QRadialGradient radialGrad(bounding.x()+(bounding.width()/2), bounding.y()+(bounding.height()/2),bounding.width()/2);
+		radialGrad.setColorAt(0.0, colorInt);
+		radialGrad.setColorAt(1.0, colorBor);
+		radialGrad.setSpread(QGradient::ReflectSpread);
+		painter->setPen(colorBor);
+		painter->setBrush(radialGrad);
+		painter->drawRoundedRect(bounding.adjusted(-2,2,2,-3),4.0,4.0);
+
 		painter->setPen(textColor);
-		painter->drawText(rect, Qt::AlignCenter, locale.toString(_pinfo.progress, 'f', 2) + "%");
+		painter->drawText(rect, Qt::AlignCenter, QLocale().toString(_pinfo.progress, 'f', 2) + "%");
 	}
 
 	backgroundColor.setRgb(255, 255, 255);
