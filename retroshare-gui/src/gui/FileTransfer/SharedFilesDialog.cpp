@@ -146,7 +146,7 @@ public:
 
 /** Constructor */
 SharedFilesDialog::SharedFilesDialog(RetroshareDirModel *_tree_model,RetroshareDirModel *_flat_model,QWidget *parent)
-: RsAutoUpdatePage(1000,parent),model(NULL)
+  : RsAutoUpdatePage(1000,parent), model(NULL)
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	ui.setupUi(this);
@@ -410,7 +410,7 @@ void SharedFilesDialog::changeCurrentViewModel(int viewTypeIndex)
 	ui.dirTreeView->header()->headerDataChanged(Qt::Horizontal, COLUMN_NAME, COLUMN_WN_VISU_DIR) ;
 
 //    recursRestoreExpandedItems(ui.dirTreeView->rootIndex(),expanded_indexes);
-    FilterItems();
+	FilterItems();
 }
 
 void LocalSharedFilesDialog::showProperColumns()
@@ -491,53 +491,63 @@ void RemoteSharedFilesDialog::spawnCustomPopupMenu( QPoint point )
 {
 	if (!rsPeers) return; /* not ready yet! */
 
+	QMenu *contextMenu = new QMenu(this);
+
 	QModelIndex idx = ui.dirTreeView->indexAt(point) ;
-	if (!idx.isValid()) return;
-
-	QModelIndex midx = proxyModel->mapToSource(idx) ;
-	if (!midx.isValid()) return;
-
-	currentFile = model->data(midx, RetroshareDirModel::FileNameRole).toString() ;
-	int type = model->getType(midx) ;
-	if (type != DIR_TYPE_DIR && type != DIR_TYPE_FILE) return;
-
-
-	QMenu contextMnu( this ) ;
-
-	collCreateAct->setEnabled(true);
-	collOpenAct->setEnabled(true);
-
-	QMenu collectionMenu(tr("Collection"), this);
-	collectionMenu.setIcon(QIcon(IMAGE_LIBRARY));
-	collectionMenu.addAction(collCreateAct);
-	collectionMenu.addAction(collOpenAct);
-
-	QModelIndexList list = ui.dirTreeView->selectionModel()->selectedRows() ;
-
-	if(type == DIR_TYPE_DIR || list.size() > 1)
+	if (idx.isValid())
 	{
-		QAction *downloadActI = new QAction(QIcon(IMAGE_DOWNLOAD), tr( "Download..." ), &contextMnu ) ;
-		connect( downloadActI , SIGNAL( triggered() ), this, SLOT( downloadRemoteSelectedInteractive() ) ) ;
-		contextMnu.addAction( downloadActI) ;
+
+		QModelIndex midx = proxyModel->mapToSource(idx) ;
+		if (midx.isValid())
+		{
+
+			currentFile = model->data(midx, RetroshareDirModel::FileNameRole).toString() ;
+			int type = model->getType(midx) ;
+			if ( (type == DIR_TYPE_DIR) || (type == DIR_TYPE_FILE) )
+			{
+				collCreateAct->setEnabled(true);
+				collOpenAct->setEnabled(true);
+
+				QModelIndexList list = ui.dirTreeView->selectionModel()->selectedRows() ;
+
+				if(type == DIR_TYPE_DIR || list.size() > 1)
+				{
+					QAction *downloadActI = new QAction(QIcon(IMAGE_DOWNLOAD), tr( "Download..." ), contextMenu ) ;
+					connect( downloadActI , SIGNAL( triggered() ), this, SLOT( downloadRemoteSelectedInteractive() ) ) ;
+					contextMenu->addAction( downloadActI) ;
+				}
+				else
+				{
+					QAction *downloadAct = new QAction(QIcon(IMAGE_DOWNLOAD), tr( "Download" ), contextMenu ) ;
+					connect( downloadAct , SIGNAL( triggered() ), this, SLOT( downloadRemoteSelected() ) ) ;
+					contextMenu->addAction( downloadAct) ;
+				}
+
+				contextMenu->addSeparator() ;//------------------------------------
+				contextMenu->addAction( copylinkAct) ;
+				contextMenu->addAction( sendlinkAct) ;
+				contextMenu->addSeparator() ;//------------------------------------
+				contextMenu->addAction(QIcon(IMAGE_MSG), tr("Recommend in a message to..."), this, SLOT(recommendFilesToMsg())) ;
+
+				contextMenu->addSeparator() ;//------------------------------------
+
+				QMenu collectionMenu(tr("Collection"), this);
+				collectionMenu.setIcon(QIcon(IMAGE_LIBRARY));
+				collectionMenu.addAction(collCreateAct);
+				collectionMenu.addAction(collOpenAct);
+				contextMenu->addMenu(&collectionMenu) ;
+
+			}
+
+		}
 	}
-	else
-	{
-		QAction *downloadAct = new QAction(QIcon(IMAGE_DOWNLOAD), tr( "Download" ), &contextMnu ) ;
-		connect( downloadAct , SIGNAL( triggered() ), this, SLOT( downloadRemoteSelected() ) ) ;
-		contextMnu.addAction( downloadAct) ;
-	}
 
-	contextMnu.addSeparator() ;//------------------------------------
-	contextMnu.addAction( copylinkAct) ;
-	contextMnu.addAction( sendlinkAct) ;
-	contextMnu.addSeparator() ;//------------------------------------
-	contextMnu.addAction(QIcon(IMAGE_MSG), tr("Recommend in a message to..."), this, SLOT(recommendFilesToMsg())) ;
+	contextMenu = model->getContextMenu(contextMenu);
 
+	if (!contextMenu->children().isEmpty())
+		contextMenu->exec(QCursor::pos()) ;
 
-	contextMnu.addSeparator() ;//------------------------------------
-	contextMnu.addMenu(&collectionMenu) ;
-
-	contextMnu.exec(QCursor::pos()) ;
+	delete contextMenu;
 }
 
 QModelIndexList SharedFilesDialog::getSelected()
@@ -908,7 +918,7 @@ void SharedFilesDialog::restoreExpandedPathsAndSelection(const std::set<std::str
         std::string path = ui.dirTreeView->model()->index(row,0).data(Qt::DisplayRole).toString().toStdString();
         recursRestoreExpandedItems(ui.dirTreeView->model()->index(row,0),path,expanded_indexes,hidden_indexes,selected_indexes);
     }
-    QItemSelection selection ;
+    //QItemSelection selection ;
 
     ui.dirTreeView->blockSignals(false) ;
 }
@@ -997,12 +1007,12 @@ void  SharedFilesDialog::postModDirectories(bool local)
 	flat_model->postMods();
 	ui.dirTreeView->update() ;
 
-    if (ui.filterPatternLineEdit->text().isEmpty() == false)
+	if (ui.filterPatternLineEdit->text().isEmpty() == false)
 		FilterItems();
 
-    ui.dirTreeView->setSortingEnabled(true);
+	ui.dirTreeView->setSortingEnabled(true);
 
-    restoreExpandedPathsAndSelection(expanded_indexes,hidden_indexes,selected_indexes) ;
+	restoreExpandedPathsAndSelection(expanded_indexes,hidden_indexes,selected_indexes) ;
 
 #ifdef DEBUG_SHARED_FILES_DIALOG
     std::cerr << "****** updated directories! Re-enabling sorting ******" << std::endl;
@@ -1320,10 +1330,10 @@ void SharedFilesDialog::clearFilter()
 /* clear Filter */
 void SharedFilesDialog::startFilter()
 {
-    ui.filterStartButton->hide();
-    lastFilterString = ui.filterPatternLineEdit->text();
+	ui.filterStartButton->hide();
+	lastFilterString = ui.filterPatternLineEdit->text();
 
-    FilterItems();
+	FilterItems();
 }
 
 void SharedFilesDialog::updateDirTreeView()
@@ -1603,4 +1613,3 @@ bool SharedFilesDialog::tree_FilterItem(const QModelIndex &index, const QString 
 
     return (visible || visibleChildCount);
 }
-
