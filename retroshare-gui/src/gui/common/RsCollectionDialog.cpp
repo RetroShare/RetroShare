@@ -639,8 +639,17 @@ void RsCollectionDialog::directoryLoaded(QString dirLoaded)
  */
 void RsCollectionDialog::updateSizes()
 {
-	ui._selectedFiles_TL->setText(QString::number(getRootItem()->data(COLUMN_FILEC,ROLE_SELFILEC).toULongLong())) ;
-	ui._totalSize_TL->setText(misc::friendlyUnit(getRootItem()->data(COLUMN_SIZE,ROLE_SELSIZE).toULongLong())) ;
+	uint64_t total_size = 0 ;
+	uint32_t total_count = 0 ;
+
+	for(uint32_t i=0;i<ui._fileEntriesTW->topLevelItemCount();++i)
+	{
+		total_size  += ui._fileEntriesTW->topLevelItem(i)->data(COLUMN_SIZE ,ROLE_SELSIZE ).toULongLong();
+		total_count += ui._fileEntriesTW->topLevelItem(i)->data(COLUMN_FILEC,ROLE_SELFILEC).toULongLong();
+	}
+
+	ui._selectedFiles_TL->setText(QString::number(total_count));
+	ui._totalSize_TL->setText(misc::friendlyUnit(total_size));
 }
 
 /**
