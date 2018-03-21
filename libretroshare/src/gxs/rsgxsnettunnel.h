@@ -77,7 +77,7 @@ struct RsGxsNetTunnelVirtualPeerInfo
 
 	uint8_t vpid_status ;
 	RsGxsNetTunnelVirtualPeerId net_service_virtual_peer ;
-	uint8_t side ;	// client/server
+	uint8_t side ;	                        // client/server
 	uint8_t encryption_master_key[16] ;		// key from which the encryption key is derived for each virtual peer (using H(master_key | random IV))
 	time_t  last_contact ;					// last time some data was sent/recvd
 };
@@ -150,21 +150,24 @@ private:
 	  std::map<RsGxsGroupId,RsGxsNetTunnelGroupInfo> mClientGroups ;	// groups on the client side
 	  std::map<RsGxsGroupId,RsGxsNetTunnelGroupInfo> mServerGroups ;	// groups on the server side
 
-	  std::map<RsGxsNetTunnelVirtualPeerId, std::pair<RsGxsGroupId,TurtleVirtualPeerId> > mVirtualPeers ;
+	  std::map<RsGxsNetTunnelVirtualPeerId, std::pair<RsGxsGroupId,TurtleVirtualPeerId> > mVirtualPeers ;	// current virtual peers, with the (group,turtle vpid) they are for
+	  std::map<RsFileHash, RsGxsGroupId>                                                  mHandledHashes ;  // hashes asked to turtle
 
 	  /*!
 	   * \brief Generates the hash to request tunnels for this group. This hash is only used by turtle, and is used to
 	   * 		hide the real group id.
 	   */
 
-	  RsFileHash calculateGroupHash(const RsGxsGroupId&) const ;
+	  RsFileHash calculateGroupHash(const RsGxsGroupId&group_id) const ;
 
 	  /*!
 	   * \brief makeVirtualPeerIdForGroup creates a virtual peer id that can be used and that will be constant accross time, whatever the
 	   * 		tunnel ID and turtle virtual peer id. This allows RsGxsNetService to keep sync-ing the data consistently.
 	   */
 
-	  RsGxsNetTunnelVirtualPeerInfo makeVirtualPeerIdForGroup(const RsGxsGroupId&) const ;
+	  RsGxsNetTunnelVirtualPeerInfo makeVirtualPeerIdForGroup(const RsGxsGroupId&group_id) const ;
+
+	  void generateEncryptionKey(const RsGxsGroupId& group_id,const TurtleVirtualPeerId& vpid) const ;
 
 	  uint8_t mRandomBias[16] ; // constant accross reboots. Allows to disguise the real SSL id while providing a consistent value accross time.
 

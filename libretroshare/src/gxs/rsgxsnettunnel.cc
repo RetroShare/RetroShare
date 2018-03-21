@@ -23,6 +23,7 @@
  *
  */
 
+#include "util/rsdir.h"
 #include "rsgxsnettunnel.h"
 
 #define DEBUG_RSGXSNETTUNNEL 1
@@ -30,6 +31,10 @@
 #define NOT_IMPLEMENTED() { std::cerr << __PRETTY_FUNCTION__ << ": not yet implemented." << std::endl; }
 
 RsGxsNetTunnelService::RsGxsNetTunnelService(): mGxsNetTunnelMtx("GxsNetTunnel") {}
+
+//===========================================================================================================================================//
+//                                                     Interface with rest of the software                                                   //
+//===========================================================================================================================================//
 
 bool RsGxsNetTunnelService::manage(const RsGxsGroupId& group_id)
 {
@@ -47,6 +52,8 @@ bool RsGxsNetTunnelService::manage(const RsGxsGroupId& group_id)
     info.hash = hash ;
     info.last_contact = now ;
     info.group_status = RsGxsNetTunnelGroupInfo::RS_GXS_NET_TUNNEL_GRP_STATUS_TUNNELS_REQUESTED;
+
+	mHandledHashes[hash] = group_id ;
 
 #ifdef DEBUG_GXS_TUNNEL
     std::cerr << "Starting distant chat to " << to_gxs_id << ", hash = " << hash << ", from " << from_gxs_id << std::endl;
@@ -75,6 +82,10 @@ bool RsGxsNetTunnelService::release(const RsGxsGroupId& group_id)
 	}
 
 	mClientGroups.erase(it) ;
+
+	RsFileHash hash = calculateGroupHash(group_id) ;
+
+	mHandledHashes.erase(hash) ;
 	return true ;
 }
 
@@ -93,7 +104,7 @@ bool RsGxsNetTunnelService::getVirtualPeers(const RsGxsGroupId&, std::list<RsPee
 	return false ;
 }
 
-RsGxsNetTunnelVirtualPeerInfo RsGxsNetTunnelService::makeVirtualPeerIdForGroup(const RsGxsGroupId&) const
+RsGxsNetTunnelVirtualPeerInfo RsGxsNetTunnelService::makeVirtualPeerIdForGroup(const RsGxsGroupId& group_id) const
 {
 	NOT_IMPLEMENTED();
 	return RsGxsNetTunnelVirtualPeerInfo();
@@ -116,25 +127,66 @@ void RsGxsNetTunnelService::connectToTurtleRouter(p3turtle *tr)
 bool RsGxsNetTunnelService::handleTunnelRequest(const RsFileHash &hash,const RsPeerId& peer_id)
 {
 	NOT_IMPLEMENTED();
-	return false ;
+
+	// at this point we need to talk to the client services
+	// There's 2 ways to do that:
+	//    1 - client services "register" and we ask them one by one.
+	//    2 - client service derives from RsGxsNetTunnelService and the client is interrogated using an overloaded virtual method
+
+	return true ;
 }
 void RsGxsNetTunnelService::receiveTurtleData(RsTurtleGenericTunnelItem *item,const RsFileHash& hash,const RsPeerId& virtual_peer_id,RsTurtleGenericTunnelItem::Direction direction)
 {
 	NOT_IMPLEMENTED();
 }
-void RsGxsNetTunnelService::addVirtualPeer(const TurtleFileHash&, const TurtleVirtualPeerId&,RsTurtleGenericTunnelItem::Direction dir)
+void RsGxsNetTunnelService::addVirtualPeer(const TurtleFileHash& hash, const TurtleVirtualPeerId& vpid,RsTurtleGenericTunnelItem::Direction dir)
 {
-	NOT_IMPLEMENTED();
-}
-void RsGxsNetTunnelService::removeVirtualPeer(const TurtleFileHash&, const TurtleVirtualPeerId&)
-{
-	NOT_IMPLEMENTED();
+	auto it = mHandledHashes.find(hash) ;
+
+	if(it == mHandledHashes.end())
+	{
+		std::cerr << "RsGxsNetTunnelService::addVirtualPeer(): error! hash " << hash << " is not handled. Cannot add vpid " << vpid << " in direction " << dir << std::endl;
+		return ;
+	}
+
+	const RsGxsGroupId group_id(it->second) ;
+
+	RsGxsNetTunnelGroupInfo& ginfo( mClientGroups[group_id] ) ;
+	ginfo.group_status = RsGxsNetTunnelGroupInfo::RS_GXS_NET_TUNNEL_GRP_STATUS_VPIDS_AVAILABLE ;
+
+	RsGxsNetTunnelVirtualPeerInfo& vpinfo( ginfo.virtual_peers[vpid] ) ;
+
+	vpinfo.vpid_status = RsGxsNetTunnelVirtualPeerInfo::RS_GXS_NET_TUNNEL_VP_STATUS_TUNNEL_OK ;
+	vpinfo.net_service_virtual_peer.clear();
+	vpinfo.side = dir ;
+	vpinfo.last_contact = time(NULL) ;
+
+	generateEncryptionKey(group_id,vpid,vpinfo.encryption_key );
 }
 
-RsFileHash RsGxsNetTunnelService::calculateGroupHash(const RsGxsGroupId&) const
+void RsGxsNetTunnelService::removeVirtualPeer(const TurtleFileHash& hash, const TurtleVirtualPeerId& vpid)
 {
-	NOT_IMPLEMENTED();
-	return RsFileHash() ;
+	auto it = mHandledHashes.find(hash) ;
+
+	if(it == mHandledHashes.end())
+	{
+		std::cerr << "RsGxsNetTunnelService::removeVirtualPeer(): error! hash " << hash << " is not handled. Cannot remove vpid " << vpid << std::endl;
+		return ;
+	}
+
+	const RsGxsGroupId group_id(it->second) ;
+
+	RsGxsNetTunnelGroupInfo& ginfo( mClientGroups[group_id] ) ;
+
+	ginfo.virtual_peers.erase(vpid);
+
+	if(ginfo.virtual_peers.empty())
+		ginfo.group_status = RsGxsNetTunnelGroupInfo::RS_GXS_NET_TUNNEL_GRP_STATUS_TUNNELS_REQUESTED ;
+}
+
+RsFileHash RsGxsNetTunnelService::calculateGroupHash(const RsGxsGroupId& group_id) const
+{
+	return RsDirUtil::sha1sum(group_id.toByteArray(),RsGxsGroupId::SIZE_IN_BYTES) ;
 }
 
 //===========================================================================================================================================//
