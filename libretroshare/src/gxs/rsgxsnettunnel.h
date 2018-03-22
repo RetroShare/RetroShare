@@ -75,11 +75,16 @@ struct RsGxsNetTunnelVirtualPeerInfo
 
 	RsGxsNetTunnelVirtualPeerInfo() : vpid_status(RS_GXS_NET_TUNNEL_VP_STATUS_UNKNOWN) { memset(encryption_master_key,0,16) ; }
 
-	uint8_t vpid_status ;
-	RsGxsNetTunnelVirtualPeerId net_service_virtual_peer ;
+	uint8_t vpid_status ;					// status of the peer
 	uint8_t side ;	                        // client/server
 	uint8_t encryption_master_key[16] ;		// key from which the encryption key is derived for each virtual peer (using H(master_key | random IV))
 	time_t  last_contact ;					// last time some data was sent/recvd
+
+	RsGxsNetTunnelVirtualPeerId net_service_virtual_peer ;  // anonymised peer that is used to communicate with client services
+	RsGxsGroupId                group_id ;		            // group id
+
+	std::list<RsItem*> incoming_items ;
+	std::list<RsItem*> outgoing_items ;
 };
 
 struct RsGxsNetTunnelGroupInfo
@@ -115,10 +120,24 @@ public:
 	   */
       bool release(const RsGxsGroupId&group_id) ;
 
+
 	  /*!
-	   * sends data to this virtual peer ID 
+	   * \brief sendItem
+	   *               send data to this virtual peer, and takes memory ownership (deletes the item)
+	   * \param item           item to send
+	   * \param virtual_peer   destination virtual peer
+	   * \return
+	   *               true if succeeded.
 	   */
-      bool sendData(const unsigned char *data,uint32_t size,const RsGxsNetTunnelVirtualPeerId& virtual_peer) ;		// send data to this virtual peer
+      bool sendItem(RsItem *& item, const RsGxsNetTunnelVirtualPeerId& virtual_peer) ;
+
+	  /*!
+	   * \brief receivedItem
+	   *                 returns the next received item from the given virtual peer.
+	   * \param virtual_peer
+	   * \return
+	   */
+      RsItem *receivedItem(const RsGxsNetTunnelVirtualPeerId& virtual_peer) ;
 
 	  /*!
 	   * \brief Get the list of active virtual peers for a given group. This implies that the tunnel is up and
@@ -147,11 +166,13 @@ protected:
 
 	  p3turtle 	*mTurtle ;
 private:
-	  std::map<RsGxsGroupId,RsGxsNetTunnelGroupInfo> mClientGroups ;	// groups on the client side
-	  std::map<RsGxsGroupId,RsGxsNetTunnelGroupInfo> mServerGroups ;	// groups on the server side
+	  static const uint32_t RS_GXS_TUNNEL_CONST_RANDOM_BIAS_SIZE = 16 ;
+	  static const uint32_t RS_GXS_TUNNEL_CONST_EKEY_SIZE        = 32 ;
 
-	  std::map<RsGxsNetTunnelVirtualPeerId, std::pair<RsGxsGroupId,TurtleVirtualPeerId> > mVirtualPeers ;	// current virtual peers, with the (group,turtle vpid) they are for
-	  std::map<RsFileHash, RsGxsGroupId>                                                  mHandledHashes ;  // hashes asked to turtle
+	  std::map<RsGxsGroupId,RsGxsNetTunnelGroupInfo> mGroups ;	// groups on the client and server side
+
+	  std::map<RsGxsNetTunnelVirtualPeerId, std::pair<RsGxsGroupId,TurtleVirtualPeerId> > mVirtualPeers ;	// current virtual peers,
+	  std::map<RsFileHash, RsGxsGroupId>                                   mHandledHashes ; // hashes asked to turtle
 
 	  /*!
 	   * \brief Generates the hash to request tunnels for this group. This hash is only used by turtle, and is used to
@@ -165,12 +186,12 @@ private:
 	   * 		tunnel ID and turtle virtual peer id. This allows RsGxsNetService to keep sync-ing the data consistently.
 	   */
 
-	  RsGxsNetTunnelVirtualPeerInfo makeVirtualPeerIdForGroup(const RsGxsGroupId&group_id) const ;
+	  RsGxsNetTunnelVirtualPeerId makeServerVirtualPeerIdForGroup(const RsGxsGroupId&group_id) const ;
 
-	  void generateEncryptionKey(const RsGxsGroupId& group_id,const TurtleVirtualPeerId& vpid) const ;
+	  void generateEncryptionKey(const RsGxsGroupId& group_id,const TurtleVirtualPeerId& vpid,unsigned char key[RS_GXS_TUNNEL_CONST_EKEY_SIZE]) const ;
 
-	  uint8_t mRandomBias[16] ; // constant accross reboots. Allows to disguise the real SSL id while providing a consistent value accross time.
+	  uint8_t mRandomBias[RS_GXS_TUNNEL_CONST_RANDOM_BIAS_SIZE] ; // constant accross reboots. Allows to disguise the real SSL id while providing a consistent value accross time.
 
-	  RsMutex mGxsNetTunnelMtx;
+	  mutable RsMutex mGxsNetTunnelMtx;
 };
 
