@@ -34,6 +34,7 @@
 #endif
 
 #include "rsserver/p3face.h"
+#include "crypto/chacha20.h"
 
 #include "pqi/authssl.h"
 #include "pqi/p3linkmgr.h"
@@ -62,6 +63,9 @@ static std::map<TurtleFileHash, std::vector<std::pair<time_t,TurtleTunnelRequest
 static std::map<TurtleTunnelRequestId, std::vector<time_t> > TS_request_bounces ;
 void TS_dumpState() ;
 #endif
+
+#define TURTLE_DEBUG() std::cerr << time(NULL) << " : TURTLE : " << __FUNCTION__ << " : "
+#define TURTLE_ERROR() std::cerr << "(EE) TURTLE ERROR : "
 
 // These number may be quite important. I setup them with sensible values, but
 // an in-depth test would be better to get an idea of what the ideal values
@@ -2080,32 +2084,31 @@ std::string p3turtle::getPeerNameForVirtualPeerId(const RsPeerId& virtual_peer_i
 	return name;
 }
 
-#ifdef TODO
-static const uint32_t ENCRYPTED_FT_INITIALIZATION_VECTOR_SIZE = 12 ;
-static const uint32_t ENCRYPTED_FT_AUTHENTICATION_TAG_SIZE    = 16 ;
-static const uint32_t ENCRYPTED_FT_HEADER_SIZE                =  4 ;
-static const uint32_t ENCRYPTED_FT_EDATA_SIZE                 =  4 ;
+static const uint32_t ENCRYPTED_TURTLE_INITIALIZATION_VECTOR_SIZE = 12 ;
+static const uint32_t ENCRYPTED_TURTLE_AUTHENTICATION_TAG_SIZE    = 16 ;
+static const uint32_t ENCRYPTED_TURTLE_HEADER_SIZE                =  4 ;
+static const uint32_t ENCRYPTED_TURTLE_EDATA_SIZE                 =  4 ;
 
-static const uint8_t  ENCRYPTED_FT_FORMAT_AEAD_CHACHA20_POLY1305 = 0x01 ;
-static const uint8_t  ENCRYPTED_FT_FORMAT_AEAD_CHACHA20_SHA256   = 0x02 ;
+static const uint8_t  ENCRYPTED_TURTLE_FORMAT_AEAD_CHACHA20_POLY1305 = 0x01 ;
+static const uint8_t  ENCRYPTED_TURTLE_FORMAT_AEAD_CHACHA20_SHA256   = 0x02 ;
 
-bool p3turtle::encryptItem(const RsItem *item,uint8_t *encryption_master_key,RsTurtleGenericDataItem *& encrypted_item)
+bool p3turtle::encryptData(const unsigned char *clear_data,uint32_t clear_data_size,uint8_t *encryption_master_key,RsTurtleGenericDataItem *& encrypted_item)
 {
-	uint8_t initialization_vector[ENCRYPTED_FT_INITIALIZATION_VECTOR_SIZE] ;
+	uint8_t initialization_vector[ENCRYPTED_TURTLE_INITIALIZATION_VECTOR_SIZE] ;
 
-	RSRandom::random_bytes(initialization_vector,ENCRYPTED_FT_INITIALIZATION_VECTOR_SIZE) ;
+	RSRandom::random_bytes(initialization_vector,ENCRYPTED_TURTLE_INITIALIZATION_VECTOR_SIZE) ;
 
 #ifdef SERVER_DEBUG
-	FTSERVER_DEBUG() << "ftServer::Encrypting ft item." << std::endl;
-	FTSERVER_DEBUG() << "  random nonce    : " << RsUtil::BinToHex(initialization_vector,ENCRYPTED_FT_INITIALIZATION_VECTOR_SIZE) << std::endl;
+	TURTLE_DEBUG() << "ftServer::Encrypting ft item." << std::endl;
+	TURTLE_DEBUG() << "  random nonce    : " << RsUtil::BinToHex(initialization_vector,ENCRYPTED_TURTLE_INITIALIZATION_VECTOR_SIZE) << std::endl;
 #endif
 
-    uint32_t item_serialized_size = RsGenericSerializer().size(clear_item) ;
-	uint32_t total_data_size = ENCRYPTED_FT_HEADER_SIZE + ENCRYPTED_FT_INITIALIZATION_VECTOR_SIZE + ENCRYPTED_FT_EDATA_SIZE + item_serialized_size + ENCRYPTED_FT_AUTHENTICATION_TAG_SIZE  ;
+    uint32_t item_serialized_size = clear_data_size;//RsGenericSerializer().size(clear_item) ;
+	uint32_t total_data_size = ENCRYPTED_TURTLE_HEADER_SIZE + ENCRYPTED_TURTLE_INITIALIZATION_VECTOR_SIZE + ENCRYPTED_TURTLE_EDATA_SIZE + item_serialized_size + ENCRYPTED_TURTLE_AUTHENTICATION_TAG_SIZE  ;
 
 #ifdef SERVER_DEBUG
-	FTSERVER_DEBUG() << "  clear part size : " << size(clear_item) << std::endl;
-	FTSERVER_DEBUG() << "  total item size : " << total_data_size << std::endl;
+	TURTLE_DEBUG() << "  clear part size : " << size(clear_item) << std::endl;
+	TURTLE_DEBUG() << "  total item size : " << total_data_size << std::endl;
 #endif
 
 	encrypted_item = new RsTurtleGenericDataItem ;
@@ -2121,87 +2124,85 @@ bool p3turtle::encryptItem(const RsItem *item,uint8_t *encryption_master_key,RsT
 
 	edata[0] = 0xae ;
 	edata[1] = 0xad ;
-	edata[2] = ENCRYPTED_FT_FORMAT_AEAD_CHACHA20_SHA256 ;	// means AEAD_chacha20_sha256
+	edata[2] = ENCRYPTED_TURTLE_FORMAT_AEAD_CHACHA20_SHA256 ;	// means AEAD_chacha20_sha256
 	edata[3] = 0x01 ;
 
-	offset += ENCRYPTED_FT_HEADER_SIZE;
+	offset += ENCRYPTED_TURTLE_HEADER_SIZE;
 	uint32_t aad_offset = offset ;
-	uint32_t aad_size = ENCRYPTED_FT_INITIALIZATION_VECTOR_SIZE + ENCRYPTED_FT_EDATA_SIZE ;
+	uint32_t aad_size = ENCRYPTED_TURTLE_INITIALIZATION_VECTOR_SIZE + ENCRYPTED_TURTLE_EDATA_SIZE ;
 
-	memcpy(&edata[offset], initialization_vector, ENCRYPTED_FT_INITIALIZATION_VECTOR_SIZE) ;
-	offset += ENCRYPTED_FT_INITIALIZATION_VECTOR_SIZE ;
+	memcpy(&edata[offset], initialization_vector, ENCRYPTED_TURTLE_INITIALIZATION_VECTOR_SIZE) ;
+	offset += ENCRYPTED_TURTLE_INITIALIZATION_VECTOR_SIZE ;
 
 	edata[offset+0] = (edata_size >>  0) & 0xff ;
 	edata[offset+1] = (edata_size >>  8) & 0xff ;
 	edata[offset+2] = (edata_size >> 16) & 0xff ;
 	edata[offset+3] = (edata_size >> 24) & 0xff ;
 
-	offset += ENCRYPTED_FT_EDATA_SIZE ;
+	offset += ENCRYPTED_TURTLE_EDATA_SIZE ;
 
-	uint32_t ser_size = (uint32_t)((int)total_data_size - (int)offset);
-
-    serialise(clear_item,&edata[offset], &ser_size);
+    memcpy(&edata[offset],clear_data,clear_data_size);
 
 #ifdef SERVER_DEBUG
-	FTSERVER_DEBUG() << "  clear item      : " << RsUtil::BinToHex(&edata[offset],std::min(50,(int)total_data_size-(int)offset)) << "(...)" << std::endl;
+	TURTLE_DEBUG() << "  clear item      : " << RsUtil::BinToHex(&edata[offset],std::min(50,(int)total_data_size-(int)offset)) << "(...)" << std::endl;
 #endif
 
 	uint32_t clear_item_offset = offset ;
 	offset += edata_size ;
 
 	uint32_t authentication_tag_offset = offset ;
-	assert(ENCRYPTED_FT_AUTHENTICATION_TAG_SIZE + offset == total_data_size) ;
+	assert(ENCRYPTED_TURTLE_AUTHENTICATION_TAG_SIZE + offset == total_data_size) ;
 
-	uint8_t encryption_key[32] ;
-	deriveEncryptionKey(hash,encryption_key) ;
+	//uint8_t encryption_key[32] ;
+	//deriveEncryptionKey(hash,encryption_key) ;
 
-	if(edata[2] == ENCRYPTED_FT_FORMAT_AEAD_CHACHA20_POLY1305)
-		librs::crypto::AEAD_chacha20_poly1305(encryption_key,initialization_vector,&edata[clear_item_offset],edata_size, &edata[aad_offset],aad_size, &edata[authentication_tag_offset],true) ;
-	else if(edata[2] == ENCRYPTED_FT_FORMAT_AEAD_CHACHA20_SHA256)
-		librs::crypto::AEAD_chacha20_sha256  (encryption_key,initialization_vector,&edata[clear_item_offset],edata_size, &edata[aad_offset],aad_size, &edata[authentication_tag_offset],true) ;
+	if(edata[2] == ENCRYPTED_TURTLE_FORMAT_AEAD_CHACHA20_POLY1305)
+		librs::crypto::AEAD_chacha20_poly1305(encryption_master_key,initialization_vector,&edata[clear_item_offset],edata_size, &edata[aad_offset],aad_size, &edata[authentication_tag_offset],true) ;
+	else if(edata[2] == ENCRYPTED_TURTLE_FORMAT_AEAD_CHACHA20_SHA256)
+		librs::crypto::AEAD_chacha20_sha256  (encryption_master_key,initialization_vector,&edata[clear_item_offset],edata_size, &edata[aad_offset],aad_size, &edata[authentication_tag_offset],true) ;
 	else
 		return false ;
 
 #ifdef SERVER_DEBUG
-	FTSERVER_DEBUG() << "  encryption key  : " << RsUtil::BinToHex(encryption_key,32) << std::endl;
-	FTSERVER_DEBUG() << "  authen. tag     : " << RsUtil::BinToHex(&edata[authentication_tag_offset],ENCRYPTED_FT_AUTHENTICATION_TAG_SIZE) << std::endl;
-	FTSERVER_DEBUG() << "  final item      : " << RsUtil::BinToHex(&edata[0],std::min(50u,total_data_size)) << "(...)" << std::endl;
+	TURTLE_DEBUG() << "  encryption key  : " << RsUtil::BinToHex(encryption_key,32) << std::endl;
+	TURTLE_DEBUG() << "  authen. tag     : " << RsUtil::BinToHex(&edata[authentication_tag_offset],ENCRYPTED_TURTLE_AUTHENTICATION_TAG_SIZE) << std::endl;
+	TURTLE_DEBUG() << "  final item      : " << RsUtil::BinToHex(&edata[0],std::min(50u,total_data_size)) << "(...)" << std::endl;
 #endif
 
 	return true ;
 }
 
 // Decrypts the given item using aead-chacha20-poly1305
-bool p3turtle::decryptItem(RsTurtleGenericDataItem *item, uint8_t* encryption_master_key, RsItem *& decrypted_item)
+bool p3turtle::decryptItem(const RsTurtleGenericDataItem* encrypted_item, uint8_t *encryption_master_key, unsigned char *& decrypted_data, uint32_t& decrypted_data_size)
 {
-	uint8_t encryption_key[32] ;
-	deriveEncryptionKey(hash,encryption_key) ;
+	//uint8_t encryption_key[32] ;
+	//deriveEncryptionKey(hash,encryption_key) ;
 
 	uint8_t *edata = (uint8_t*)encrypted_item->data_bytes ;
 	uint32_t offset = 0;
 
-	if(encrypted_item->data_size < ENCRYPTED_FT_HEADER_SIZE + ENCRYPTED_FT_INITIALIZATION_VECTOR_SIZE + ENCRYPTED_FT_EDATA_SIZE) return false ;
+	if(encrypted_item->data_size < ENCRYPTED_TURTLE_HEADER_SIZE + ENCRYPTED_TURTLE_INITIALIZATION_VECTOR_SIZE + ENCRYPTED_TURTLE_EDATA_SIZE) return false ;
 
 	if(edata[0] != 0xae) return false ;
 	if(edata[1] != 0xad) return false ;
-	if(edata[2] != ENCRYPTED_FT_FORMAT_AEAD_CHACHA20_POLY1305 && edata[2] != ENCRYPTED_FT_FORMAT_AEAD_CHACHA20_SHA256) return false ;
+	if(edata[2] != ENCRYPTED_TURTLE_FORMAT_AEAD_CHACHA20_POLY1305 && edata[2] != ENCRYPTED_TURTLE_FORMAT_AEAD_CHACHA20_SHA256) return false ;
 	if(edata[3] != 0x01) return false ;
 
-	offset += ENCRYPTED_FT_HEADER_SIZE ;
+	offset += ENCRYPTED_TURTLE_HEADER_SIZE ;
 	uint32_t aad_offset = offset ;
-	uint32_t aad_size = ENCRYPTED_FT_EDATA_SIZE + ENCRYPTED_FT_INITIALIZATION_VECTOR_SIZE ;
+	uint32_t aad_size = ENCRYPTED_TURTLE_EDATA_SIZE + ENCRYPTED_TURTLE_INITIALIZATION_VECTOR_SIZE ;
 
 	uint8_t *initialization_vector = &edata[offset] ;
 
 #ifdef SERVER_DEBUG
-	FTSERVER_DEBUG() << "ftServer::decrypting ft item." << std::endl;
-	FTSERVER_DEBUG() << "  item data       : " << RsUtil::BinToHex(edata,std::min(50u,encrypted_item->data_size)) << "(...)" << std::endl;
-	FTSERVER_DEBUG() << "  hash            : " << hash << std::endl;
-	FTSERVER_DEBUG() << "  encryption key  : " << RsUtil::BinToHex(encryption_key,32) << std::endl;
-	FTSERVER_DEBUG() << "  random nonce    : " << RsUtil::BinToHex(initialization_vector,ENCRYPTED_FT_INITIALIZATION_VECTOR_SIZE) << std::endl;
+	TURTLE_DEBUG() << "ftServer::decrypting ft item." << std::endl;
+	TURTLE_DEBUG() << "  item data       : " << RsUtil::BinToHex(edata,std::min(50u,encrypted_item->data_size)) << "(...)" << std::endl;
+	TURTLE_DEBUG() << "  hash            : " << hash << std::endl;
+	TURTLE_DEBUG() << "  encryption key  : " << RsUtil::BinToHex(encryption_key,32) << std::endl;
+	TURTLE_DEBUG() << "  random nonce    : " << RsUtil::BinToHex(initialization_vector,ENCRYPTED_TURTLE_INITIALIZATION_VECTOR_SIZE) << std::endl;
 #endif
 
-	offset += ENCRYPTED_FT_INITIALIZATION_VECTOR_SIZE ;
+	offset += ENCRYPTED_TURTLE_INITIALIZATION_VECTOR_SIZE ;
 
 	uint32_t edata_size = 0 ;
 	edata_size += ((uint32_t)edata[offset+0]) <<  0 ;
@@ -2209,48 +2210,52 @@ bool p3turtle::decryptItem(RsTurtleGenericDataItem *item, uint8_t* encryption_ma
 	edata_size += ((uint32_t)edata[offset+2]) << 16 ;
 	edata_size += ((uint32_t)edata[offset+3]) << 24 ;
 
-	if(edata_size + ENCRYPTED_FT_EDATA_SIZE + ENCRYPTED_FT_AUTHENTICATION_TAG_SIZE + ENCRYPTED_FT_INITIALIZATION_VECTOR_SIZE + ENCRYPTED_FT_HEADER_SIZE != encrypted_item->data_size)
+	if(edata_size + ENCRYPTED_TURTLE_EDATA_SIZE + ENCRYPTED_TURTLE_AUTHENTICATION_TAG_SIZE + ENCRYPTED_TURTLE_INITIALIZATION_VECTOR_SIZE + ENCRYPTED_TURTLE_HEADER_SIZE != encrypted_item->data_size)
 	{
-		FTSERVER_ERROR() << "  ERROR: encrypted data size is " << edata_size << ", should be " << encrypted_item->data_size - (ENCRYPTED_FT_EDATA_SIZE + ENCRYPTED_FT_AUTHENTICATION_TAG_SIZE + ENCRYPTED_FT_INITIALIZATION_VECTOR_SIZE + ENCRYPTED_FT_HEADER_SIZE ) << std::endl;
+		TURTLE_ERROR() << "  ERROR: encrypted data size is " << edata_size << ", should be " << encrypted_item->data_size - (ENCRYPTED_TURTLE_EDATA_SIZE + ENCRYPTED_TURTLE_AUTHENTICATION_TAG_SIZE + ENCRYPTED_TURTLE_INITIALIZATION_VECTOR_SIZE + ENCRYPTED_TURTLE_HEADER_SIZE ) << std::endl;
 		return false ;
 	}
 
-	offset += ENCRYPTED_FT_EDATA_SIZE ;
+	offset += ENCRYPTED_TURTLE_EDATA_SIZE ;
 	uint32_t clear_item_offset = offset ;
 
 	uint32_t authentication_tag_offset = offset + edata_size ;
 #ifdef SERVER_DEBUG
-	FTSERVER_DEBUG() << "  authen. tag     : " << RsUtil::BinToHex(&edata[authentication_tag_offset],ENCRYPTED_FT_AUTHENTICATION_TAG_SIZE) << std::endl;
+	TURTLE_DEBUG() << "  authen. tag     : " << RsUtil::BinToHex(&edata[authentication_tag_offset],ENCRYPTED_TURTLE_AUTHENTICATION_TAG_SIZE) << std::endl;
 #endif
 
 	bool result ;
 
-	if(edata[2] == ENCRYPTED_FT_FORMAT_AEAD_CHACHA20_POLY1305)
-		result = librs::crypto::AEAD_chacha20_poly1305(encryption_key,initialization_vector,&edata[clear_item_offset],edata_size, &edata[aad_offset],aad_size, &edata[authentication_tag_offset],false) ;
-	else if(edata[2] == ENCRYPTED_FT_FORMAT_AEAD_CHACHA20_SHA256)
-		result = librs::crypto::AEAD_chacha20_sha256  (encryption_key,initialization_vector,&edata[clear_item_offset],edata_size, &edata[aad_offset],aad_size, &edata[authentication_tag_offset],false) ;
+	if(edata[2] == ENCRYPTED_TURTLE_FORMAT_AEAD_CHACHA20_POLY1305)
+		result = librs::crypto::AEAD_chacha20_poly1305(encryption_master_key,initialization_vector,&edata[clear_item_offset],edata_size, &edata[aad_offset],aad_size, &edata[authentication_tag_offset],false) ;
+	else if(edata[2] == ENCRYPTED_TURTLE_FORMAT_AEAD_CHACHA20_SHA256)
+		result = librs::crypto::AEAD_chacha20_sha256  (encryption_master_key,initialization_vector,&edata[clear_item_offset],edata_size, &edata[aad_offset],aad_size, &edata[authentication_tag_offset],false) ;
 	else
 		return false ;
 
 #ifdef SERVER_DEBUG
-	FTSERVER_DEBUG() << "  authen. result  : " << result << std::endl;
-	FTSERVER_DEBUG() << "  decrypted daya  : " << RsUtil::BinToHex(&edata[clear_item_offset],std::min(50u,edata_size)) << "(...)" << std::endl;
+	TURTLE_DEBUG() << "  authen. result  : " << result << std::endl;
+	TURTLE_DEBUG() << "  decrypted daya  : " << RsUtil::BinToHex(&edata[clear_item_offset],std::min(50u,edata_size)) << "(...)" << std::endl;
 #endif
 
 	if(!result)
 	{
-		FTSERVER_ERROR() << "(EE) decryption/authentication went wrong." << std::endl;
+		TURTLE_ERROR() << "(EE) decryption/authentication went wrong." << std::endl;
 		return false ;
 	}
 
-	decrypted_item = dynamic_cast<RsTurtleGenericTunnelItem*>(deserialise(&edata[clear_item_offset],&edata_size)) ;
+	decrypted_data_size = edata_size ;
+	decrypted_data = (unsigned char*)rs_malloc(edata_size) ;
 
-	if(decrypted_item == NULL)
+	if(decrypted_data == NULL)
+	{
+		std::cerr << "Failed to allocate memory for decrypted data chunk of size " << edata_size << std::endl;
 		return false ;
+	}
+	memcpy(decrypted_data,&edata[clear_item_offset],edata_size) ;
 
 	return true ;
 }
-#endif
 
 void p3turtle::getInfo(	std::vector<std::vector<std::string> >& hashes_info,
 								std::vector<std::vector<std::string> >& tunnels_info,

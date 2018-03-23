@@ -332,12 +332,11 @@ class p3turtle: public p3Service, public RsTurtle, public p3Config
 		/// Send a data request into the correct tunnel for the given file hash
 		void sendTurtleData(const RsPeerId& virtual_peer_id, RsTurtleGenericTunnelItem *item) ;
 
-#ifdef TODO
 		/// Encrypts/decrypts an item, using a autenticated construction + chacha20, based on the given 32 bytes master key.
+		/// Input values are not touched (memory is not released). Memory ownership of outputs is left to the client.
 		///
-		static bool encryptItem(const RsItem *item, uint8_t* encryption_master_key, RsTurtleGenericDataItem *& encrypted_item) ;
-		static bool decryptItem(RsTurtleGenericDataItem *item,uint8_t *encryption_master_key,RsItem *& decrypted_item) ;
-#endif
+		static bool encryptData(const unsigned char *clear_data,uint32_t clear_data_size,uint8_t *encryption_master_key,RsTurtleGenericDataItem *& encrypted_item);
+		static bool decryptItem(const RsTurtleGenericDataItem *item, uint8_t* encryption_master_key, unsigned char *& decrypted_data,uint32_t& decrypted_data_size);
 
 	private:
 		//--------------------------- Admin/Helper functions -------------------------//

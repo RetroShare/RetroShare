@@ -1219,6 +1219,21 @@ static const uint8_t  ENCRYPTED_FT_FORMAT_AEAD_CHACHA20_SHA256   = 0x02 ;
 
 bool ftServer::encryptItem(RsTurtleGenericTunnelItem *clear_item,const RsFileHash& hash,RsTurtleGenericDataItem *& encrypted_item)
 {
+#ifndef USE_NEW_METHOD
+    uint32_t item_serialized_size = size(clear_item) ;
+
+	RsTemporaryMemory data(item_serialized_size) ;
+
+	if(data == NULL)
+		return false ;
+
+    serialise(clear_item, data, &item_serialized_size);
+
+	uint8_t encryption_key[32] ;
+	deriveEncryptionKey(hash,encryption_key) ;
+
+	return p3turtle::encryptData(data,item_serialized_size,encryption_key,encrypted_item) ;
+#else
 	uint8_t initialization_vector[ENCRYPTED_FT_INITIALIZATION_VECTOR_SIZE] ;
 
 	RSRandom::random_bytes(initialization_vector,ENCRYPTED_FT_INITIALIZATION_VECTOR_SIZE) ;
@@ -1297,12 +1312,34 @@ bool ftServer::encryptItem(RsTurtleGenericTunnelItem *clear_item,const RsFileHas
 #endif
 
 	return true ;
+#endif
 }
 
 // Decrypts the given item using aead-chacha20-poly1305
 
 bool ftServer::decryptItem(RsTurtleGenericDataItem *encrypted_item,const RsFileHash& hash,RsTurtleGenericTunnelItem *& decrypted_item)
 {
+#ifndef USE_NEW_METHOD
+	unsigned char *data = NULL ;
+	uint32_t data_size = 0 ;
+
+	uint8_t encryption_key[32] ;
+	deriveEncryptionKey(hash,encryption_key) ;
+
+	if(!p3turtle::decryptItem(encrypted_item,encryption_key,data,data_size))
+	{
+		FTSERVER_ERROR() << "Cannot decrypt data!" << std::endl;
+
+		if(data)
+			free(data) ;
+		return false ;
+	}
+	decrypted_item = dynamic_cast<RsTurtleGenericTunnelItem*>(deserialise(data,&data_size)) ;
+	free(data);
+
+	return (decrypted_item != NULL);
+
+#else
 	uint8_t encryption_key[32] ;
 	deriveEncryptionKey(hash,encryption_key) ;
 
@@ -1378,6 +1415,7 @@ bool ftServer::decryptItem(RsTurtleGenericDataItem *encrypted_item,const RsFileH
 		return false ;
 
 	return true ;
+#endif
 }
 
 bool ftServer::encryptHash(const RsFileHash& hash, RsFileHash& hash_of_hash)
