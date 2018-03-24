@@ -127,10 +127,10 @@ class Expression
 {
 public:
     virtual bool eval (const ExpFileEntry& file) = 0;
-    virtual ~Expression() {};
+    virtual ~Expression() {}
 
     virtual void linearize(LinearizedExpression& e) const = 0 ;
-	virtual std::string toStdString() const = 0 ;
+	virtual std::string toStdString(const std::string& = "") const = 0 ;
 };
 
 class CompoundExpression : public Expression 
@@ -159,7 +159,7 @@ public:
         delete Rexp;
     }
 
-	virtual std::string toStdString() const
+	virtual std::string toStdString(const std::string& ="") const
 	{
 		switch(Op)
 		{
@@ -185,7 +185,7 @@ public:
     StringExpression(enum StringOperator op, const std::list<std::string> &t, bool ic): Op(op),terms(t), IgnoreCase(ic){}
 
     virtual void linearize(LinearizedExpression& e) const ;
-	virtual std::string toStdString(const std::string& varstr) const;
+	virtual std::string toStdString(const std::string& varstr = "") const;
 protected:
     bool evalStr(const std::string &str);
 
@@ -201,7 +201,7 @@ public:
     RelExpression(enum RelOperator op, T lv, T hv): Op(op), LowerValue(lv), HigherValue(hv) {}
 
     virtual void linearize(LinearizedExpression& e) const ;
-	virtual std::string toStdString(const std::string& typestr) const;
+	virtual std::string toStdString(const std::string& typestr = "") const;
 protected:
     bool evalRel(T val);
 
@@ -279,7 +279,7 @@ public:
         StringExpression(op,t,ic) {}
     bool eval(const ExpFileEntry& file);
 
-	virtual std::string toStdString() const { return StringExpression::toStdString("NAME"); }
+	virtual std::string toStdString(const std::string& = "") const { return StringExpression::toStdString("NAME"); }
 
     virtual void linearize(LinearizedExpression& e) const
     {
@@ -294,7 +294,7 @@ public:
         StringExpression(op,t,ic) {}
     bool eval(const ExpFileEntry& file);
 
-	virtual std::string toStdString()const { return StringExpression::toStdString("PATH"); }
+	virtual std::string toStdString(const std::string& = "")const { return StringExpression::toStdString("PATH"); }
 
     virtual void linearize(LinearizedExpression& e) const
     {
@@ -309,7 +309,7 @@ public:
         StringExpression(op,t,ic) {}
     bool eval(const ExpFileEntry& file);
 
-	virtual std::string toStdString()const { return StringExpression::toStdString("EXTENSION"); }
+	virtual std::string toStdString(const std::string& = "")const { return StringExpression::toStdString("EXTENSION"); }
 
     virtual void linearize(LinearizedExpression& e) const
     {
@@ -324,7 +324,7 @@ public:
         StringExpression(op,t, true) {}
     bool eval(const ExpFileEntry& file);
 
-	virtual std::string toStdString() const { return StringExpression::toStdString("HASH"); }
+	virtual std::string toStdString(const std::string& = "") const { return StringExpression::toStdString("HASH"); }
 
     virtual void linearize(LinearizedExpression& e) const
     {
@@ -346,7 +346,7 @@ public:
         RelExpression<int>(op,lv,hv) {}
     bool eval(const ExpFileEntry& file);
 
-	virtual std::string toStdString() const { return RelExpression<int>::toStdString("DATE"); }
+	virtual std::string toStdString(const std::string& = "") const { return RelExpression<int>::toStdString("DATE"); }
 
     virtual void linearize(LinearizedExpression& e) const
     {
@@ -363,7 +363,7 @@ public:
         RelExpression<int>(op,lv,hv) {}
     bool eval(const ExpFileEntry& file);
 
-	virtual std::string toStdString() const { return RelExpression<int>::toStdString("SIZE"); }
+	virtual std::string toStdString(const std::string& = "") const { return RelExpression<int>::toStdString("SIZE"); }
 
     virtual void linearize(LinearizedExpression& e) const
     {
@@ -380,7 +380,7 @@ public:
         RelExpression<int>(op,lv,hv) {}
     bool eval(const ExpFileEntry& file);
 
-	virtual std::string toStdString() const { return RelExpression<int>::toStdString("SIZE"); }
+	virtual std::string toStdString(const std::string& = "") const { return RelExpression<int>::toStdString("SIZE"); }
 
     virtual void linearize(LinearizedExpression& e) const
     {
@@ -396,7 +396,7 @@ public:
     PopExpression(const LinearizedExpression& e) ;
     bool eval(const ExpFileEntry& file);
 
-	virtual std::string toStdString() const { return RelExpression<int>::toStdString("POPULARITY"); }
+	virtual std::string toStdString(const std::string& = "") const { return RelExpression<int>::toStdString("POPULARITY"); }
 
     virtual void linearize(LinearizedExpression& e) const
     {
