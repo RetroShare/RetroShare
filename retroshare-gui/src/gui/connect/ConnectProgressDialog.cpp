@@ -91,7 +91,7 @@ void ConnectProgressDialog::showProgress(const RsPeerId& peer_id)
     /* window will destroy itself! */
 }
 
-const uint32_t CONNECT_STATE_INIT		= 0;
+//const uint32_t CONNECT_STATE_INIT		= 0;
 const uint32_t CONNECT_STATE_PROGRESS		= 1;
 const uint32_t CONNECT_STATE_CONNECTED		= 2;
 const uint32_t CONNECT_STATE_DENIED		= 3;
@@ -106,7 +106,9 @@ const uint32_t CONNECT_DHT_DISABLED	= 4;
 
 
 const uint32_t CONNECT_LOOKUP_INIT		= 0;
+#ifdef RS_USE_BITDHT
 const uint32_t CONNECT_LOOKUP_SEARCH		= 1;
+#endif
 const uint32_t CONNECT_LOOKUP_OFFLINE		= 2;
 const uint32_t CONNECT_LOOKUP_UNREACHABLE	= 3;
 const uint32_t CONNECT_LOOKUP_ONLINE		= 4;
@@ -132,9 +134,11 @@ const int CONNECT_DHT_SLOW   = 120;
 const int CONNECT_DHT_PERIOD = 300;
 
 /* need to shorten this time (DHT work) */
+#ifdef RS_USE_BITDHT
 const int CONNECT_LOOKUP_TYPICAL = 200;
 const int CONNECT_LOOKUP_SLOW    = 300;
 const int CONNECT_LOOKUP_PERIOD  = 600;
+#endif
 
 /* Udp can take ages ... */
 const int CONNECT_UDP_TYPICAL = 150;
