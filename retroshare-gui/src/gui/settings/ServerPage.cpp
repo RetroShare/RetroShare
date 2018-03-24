@@ -63,18 +63,18 @@
 
 // Tabs numbers *after* non relevant tabs are removed. So do not use them to add/remove tabs!!
 #ifdef RETROTOR
-static const uint32_t TAB_HIDDEN_SERVICE_OUTGOING = 0;
+//static const uint32_t TAB_HIDDEN_SERVICE_OUTGOING = 0;
 static const uint32_t TAB_HIDDEN_SERVICE_INCOMING = 1;
 
-static const uint32_t TAB_NETWORK                 = 0;
+//static const uint32_t TAB_NETWORK                 = 0;
 static const uint32_t TAB_HIDDEN_SERVICE          = 1;
 static const uint32_t TAB_IP_FILTERS              = 99;	// This is a trick: these tabs do not exist, so enabling/disabling them has no effect
 static const uint32_t TAB_RELAYS                  = 99;
 #else
-const static uint32_t TAB_HIDDEN_SERVICE_OUTGOING = 0;
+//const static uint32_t TAB_HIDDEN_SERVICE_OUTGOING = 0;
 const static uint32_t TAB_HIDDEN_SERVICE_INCOMING = 2;
 
-const static uint32_t TAB_NETWORK                 = 0;
+//const static uint32_t TAB_NETWORK                 = 0;
 const static uint32_t TAB_IP_FILTERS              = 1;
 const static uint32_t TAB_HIDDEN_SERVICE          = 2;
 const static uint32_t TAB_RELAYS                  = 3;
