@@ -66,6 +66,8 @@
 
 typedef RsPeerId RsGxsNetTunnelVirtualPeerId ;
 
+class RsGxsNetTunnelItem ;
+
 struct RsGxsNetTunnelVirtualPeerInfo
 {
 	enum {   RS_GXS_NET_TUNNEL_VP_STATUS_UNKNOWN   = 0x00,		// unknown status.
@@ -77,7 +79,7 @@ struct RsGxsNetTunnelVirtualPeerInfo
 
 	uint8_t vpid_status ;					// status of the peer
 	uint8_t side ;	                        // client/server
-	uint8_t encryption_master_key[16] ;		// key from which the encryption key is derived for each virtual peer (using H(master_key | random IV))
+	uint8_t encryption_master_key[32] ;		// key from which the encryption key is derived for each virtual peer (using H(master_key | random IV))
 	time_t  last_contact ;					// last time some data was sent/recvd
 
 	RsGxsNetTunnelVirtualPeerId net_service_virtual_peer ;  // anonymised peer that is used to communicate with client services
@@ -103,7 +105,7 @@ struct RsGxsNetTunnelGroupInfo
 	std::map<TurtleVirtualPeerId, RsGxsNetTunnelVirtualPeerInfo> virtual_peers ;
 };
 
-class RsGxsNetTunnelService: public RsTurtleClientService
+class RsGxsNetTunnelService: public RsTurtleClientService, public RsTickingThread
 {
 public:
 	  RsGxsNetTunnelService() ;
@@ -156,6 +158,11 @@ public:
 	  //  - method to encrypt/decrypt data and send/receive to/from turtle.
 
 	  virtual void connectToTurtleRouter(p3turtle *tr) ;
+
+	  // Overloaded from RsTickingThread
+
+	  void data_tick() ;
+
 protected:
 	  // interaction with turtle router
 
@@ -166,6 +173,9 @@ protected:
 
 	  p3turtle 	*mTurtle ;
 private:
+	  void autowash() ;
+	  void handleIncoming(RsGxsNetTunnelItem *item) ;
+
 	  static const uint32_t RS_GXS_TUNNEL_CONST_RANDOM_BIAS_SIZE = 16 ;
 	  static const uint32_t RS_GXS_TUNNEL_CONST_EKEY_SIZE        = 32 ;
 

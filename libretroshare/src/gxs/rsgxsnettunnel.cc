@@ -25,13 +25,76 @@
 
 #include "util/rsdir.h"
 #include "retroshare/rspeers.h"
+#include "serialiser/rstypeserializer.h"
 #include "rsgxsnettunnel.h"
 
 #define DEBUG_RSGXSNETTUNNEL 1
 
-#define NOT_IMPLEMENTED() { std::cerr << __PRETTY_FUNCTION__ << ": not yet implemented." << std::endl; }
+#define GXS_NET_TUNNEL_NOT_IMPLEMENTED() { std::cerr << __PRETTY_FUNCTION__ << ": not yet implemented." << std::endl; }
+#define GXS_NET_TUNNEL_DEBUG()             std::cerr << time(NULL) << " : GXS_NET_TUNNEL : " << __FUNCTION__ << " : "
+#define GXS_NET_TUNNEL_ERROR()             std::cerr << "(EE) GXS_NET_TUNNEL ERROR : "
+
 
 RsGxsNetTunnelService::RsGxsNetTunnelService(): mGxsNetTunnelMtx("GxsNetTunnel") {}
+
+//===========================================================================================================================================//
+//                                                               Transport Items                                                             //
+//===========================================================================================================================================//
+
+const uint16_t RS_SERVICE_TYPE_GXS_NET_TUNNEL = 0x2233 ;
+
+const uint8_t  RS_PKT_SUBTYPE_GXS_NET_TUNNEL_VIRTUAL_PEER = 0x01 ;
+
+class RsGxsNetTunnelItem: public RsItem
+{
+public:
+	explicit RsGxsNetTunnelItem(uint8_t item_subtype) : RsItem(RS_PKT_VERSION_SERVICE,RS_SERVICE_TYPE_GXS_NET_TUNNEL,item_subtype)
+	{
+		// no priority. All items are encapsulated into generic Turtle items anyway.
+	}
+
+	virtual ~RsGxsNetTunnelItem() {}
+	virtual void clear() {}
+};
+
+class RsGxsNetTunnelVirtualPeerItem: public RsGxsNetTunnelItem
+{
+public:
+    RsGxsNetTunnelVirtualPeerItem() :RsGxsNetTunnelItem(RS_PKT_SUBTYPE_GXS_NET_TUNNEL_VIRTUAL_PEER) {}
+	explicit RsGxsNetTunnelVirtualPeerItem(uint8_t subtype) :RsGxsNetTunnelItem(subtype) {}
+
+    virtual ~RsGxsNetTunnelVirtualPeerItem() {}
+
+	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
+	{
+		RsTypeSerializer::serial_process(j,ctx,virtual_peer_id,"virtual_peer_id") ;
+	}
+
+	RsPeerId virtual_peer_id ;
+};
+
+class RsGxsNetTunnelSerializer: public RsServiceSerializer
+{
+public:
+	RsGxsNetTunnelSerializer() :RsServiceSerializer(RS_SERVICE_TYPE_GXS_NET_TUNNEL) {}
+
+	virtual RsItem *create_item(uint16_t service,uint8_t item_subtype) const
+	{
+		if(service != RS_SERVICE_TYPE_GXS_NET_TUNNEL)
+		{
+			GXS_NET_TUNNEL_ERROR() << "received item with wrong service ID " << std::hex << service << std::dec << std::endl;
+			return NULL ;
+		}
+
+		switch(item_subtype)
+		{
+		case RS_PKT_SUBTYPE_GXS_NET_TUNNEL_VIRTUAL_PEER: return new RsGxsNetTunnelVirtualPeerItem ;
+		default:
+			GXS_NET_TUNNEL_ERROR() << "type ID " << std::hex << item_subtype << std::dec << " is not handled!" << std::endl;
+			return NULL ;
+		}
+	}
+};
 
 //===========================================================================================================================================//
 //                                                     Interface with rest of the software                                                   //
@@ -57,8 +120,7 @@ bool RsGxsNetTunnelService::manage(const RsGxsGroupId& group_id)
 	mHandledHashes[hash] = group_id ;
 
 #ifdef DEBUG_GXS_TUNNEL
-    std::cerr << "Starting distant chat to " << to_gxs_id << ", hash = " << hash << ", from " << from_gxs_id << std::endl;
-    std::cerr << "Asking turtle router to monitor tunnels for hash " << hash << std::endl;
+    GXS_NET_TUNNEL_DEBUG() << "Asking turtle router to monitor tunnels for hash " << hash << std::endl;
 #endif
 
     // Now ask the turtle router to manage a tunnel for that hash.
@@ -78,7 +140,7 @@ bool RsGxsNetTunnelService::release(const RsGxsGroupId& group_id)
 
 	if(it == mGroups.end())
 	{
-		std::cerr << "RsGxsNetTunnelService::release(): Weird. Cannot release client group " << group_id << " that is not known." << std::endl;
+		GXS_NET_TUNNEL_ERROR() << "RsGxsNetTunnelService::release(): Weird. Cannot release client group " << group_id << " that is not known." << std::endl;
 		return false ;
 	}
 
@@ -110,7 +172,7 @@ bool RsGxsNetTunnelService::sendItem(RsItem *& item,const RsGxsNetTunnelVirtualP
 
 	if(it == mVirtualPeers.end())
 	{
-		std::cerr << "(EE) RsGxsNetTunnelService::sendData(): cannot find virtual peer " << virtual_peer << ". Data is dropped." << std::endl;
+		GXS_NET_TUNNEL_ERROR() << "cannot find virtual peer " << virtual_peer << ". Data is dropped." << std::endl;
 		return false ;
 	}
 
@@ -118,7 +180,7 @@ bool RsGxsNetTunnelService::sendItem(RsItem *& item,const RsGxsNetTunnelVirtualP
 
 	if(it2 == mGroups.end())
 	{
-		std::cerr << "(EE) RsGxsNetTunnelService::sendData(): cannot find virtual peer " << virtual_peer << ". Data is dropped." << std::endl;
+		GXS_NET_TUNNEL_ERROR() << "cannot find virtual peer " << virtual_peer << ". Data is dropped." << std::endl;
 		return false ;
 	}
 
@@ -126,13 +188,13 @@ bool RsGxsNetTunnelService::sendItem(RsItem *& item,const RsGxsNetTunnelVirtualP
 
 	if(it3 == it2->second.virtual_peers.end())
 	{
-		std::cerr << "(EE) RsGxsNetTunnelService::sendData(): cannot find turtle virtual peer " << it->second.second << ". Data is dropped." << std::endl;
+		std::cerr << "cannot find turtle virtual peer " << it->second.second << ". Data is dropped." << std::endl;
 		return false ;
 	}
 
 	if(it3->second.vpid_status != RsGxsNetTunnelVirtualPeerInfo::RS_GXS_NET_TUNNEL_VP_STATUS_ACTIVE)
 	{
-		std::cerr << "(EE) RsGxsNetTunnelService::sendData(): virtual peer " << it->second.second << " is not active. Data is dropped." << std::endl;
+		GXS_NET_TUNNEL_ERROR() << "virtual peer " << it->second.second << " is not active. Data is dropped." << std::endl;
 		return false ;
 	}
 
@@ -140,12 +202,14 @@ bool RsGxsNetTunnelService::sendItem(RsItem *& item,const RsGxsNetTunnelVirtualP
 
 	RsTurtleGenericDataItem *encrypted_turtle_item = NULL ;
 
-	NOT_IMPLEMENTED();
-	// if(!p3Turtle::encryptItem(item,it3->second.encryption_master_key,encrypted_turtle_item))
-	// {
-	// 	std::cerr << "(EE) RsGxsNetTunnelService::sendData(): cannot encrypt. Something's wrong. Data is dropped." << std::endl;
-	// 	return false ;
-	// }
+	uint32_t serialized_size = 0; // TODO
+	RsTemporaryMemory data(serialized_size) ;
+
+	if(!p3turtle::encryptData(data,serialized_size,it3->second.encryption_master_key,encrypted_turtle_item))
+	{
+		GXS_NET_TUNNEL_ERROR() << "cannot encrypt. Something's wrong. Data is dropped." << std::endl;
+		return false ;
+	}
 
 	mTurtle->sendTurtleData(it->second.second,encrypted_turtle_item) ;
 
@@ -155,7 +219,7 @@ bool RsGxsNetTunnelService::sendItem(RsItem *& item,const RsGxsNetTunnelVirtualP
 bool RsGxsNetTunnelService::getVirtualPeers(const RsGxsGroupId&, std::list<RsPeerId>& peers)
 {
 	// returns the virtual peers for this group
-	NOT_IMPLEMENTED();
+	GXS_NET_TUNNEL_NOT_IMPLEMENTED();
 	return false ;
 }
 
@@ -227,7 +291,7 @@ void RsGxsNetTunnelService::connectToTurtleRouter(p3turtle *tr)
 
 bool RsGxsNetTunnelService::handleTunnelRequest(const RsFileHash &hash,const RsPeerId& peer_id)
 {
-	NOT_IMPLEMENTED();
+	GXS_NET_TUNNEL_NOT_IMPLEMENTED();
 
 	// at this point we need to talk to the client services
 	// There's 2 ways to do that:
@@ -236,10 +300,70 @@ bool RsGxsNetTunnelService::handleTunnelRequest(const RsFileHash &hash,const RsP
 
 	return true ;
 }
+
 void RsGxsNetTunnelService::receiveTurtleData(RsTurtleGenericTunnelItem *item,const RsFileHash& hash,const RsPeerId& virtual_peer_id,RsTurtleGenericTunnelItem::Direction direction)
 {
-	NOT_IMPLEMENTED();
+	GXS_NET_TUNNEL_NOT_IMPLEMENTED();
+
+	if(item->PacketSubType() != RS_TURTLE_SUBTYPE_GENERIC_DATA)
+	{
+		GXS_NET_TUNNEL_ERROR() << "item with type " << std::hex << item->PacketSubType() << std::dec << " received by GxsNetTunnel, but is not handled!" << std::endl;
+		return;
+	}
+
+	// (cyril) this is a bit complicated. We should store pointers to the encryption keys in another structure and access it directly.
+
+	auto it = mHandledHashes.find(hash) ;
+
+	if(it == mHandledHashes.end())
+	{
+		GXS_NET_TUNNEL_ERROR() << "item received by GxsNetTunnel for hash " << hash << " but this hash is unknown!" << std::endl;
+		return;
+	}
+
+	RsGxsGroupId group_id = it->second;
+
+	auto it2 = mGroups.find(group_id) ;
+
+	if(it2 == mGroups.end())
+	{
+		GXS_NET_TUNNEL_ERROR() << "item received by GxsNetTunnel for hash " << hash << " and group " << group_id << " but this group id is unknown!" << std::endl;
+		return;
+	}
+
+	RsGxsNetTunnelGroupInfo& g_info(it2->second) ;
+
+	g_info.last_contact = time(NULL) ;
+
+	auto it3 = g_info.virtual_peers.find(virtual_peer_id) ;
+
+	if(it3 == g_info.virtual_peers.end())
+	{
+		GXS_NET_TUNNEL_ERROR() << "item received by GxsNetTunnel for hash " << hash << ", group " << group_id << " but the virtual peer id is missing!" << std::endl;
+		return;
+	}
+
+	RsGxsNetTunnelVirtualPeerInfo& vp_info(it3->second) ;
+
+	unsigned char *data = NULL ;
+	uint32_t data_size = 0 ;
+
+	if(!p3turtle::decryptItem(static_cast<RsTurtleGenericDataItem*>(item),vp_info.encryption_master_key,data,data_size))
+	{
+		GXS_NET_TUNNEL_ERROR() << "Cannot decrypt data!" << std::endl;
+
+		if(data)
+			free(data) ;
+
+		return ;
+	}
+
+	RsGxsNetTunnelItem *decrypted_item = dynamic_cast<RsGxsNetTunnelItem*>(RsGxsNetTunnelSerializer().deserialise(data,&data_size)) ;
+	free(data);
+
+	handleIncoming(decrypted_item);
 }
+
 void RsGxsNetTunnelService::addVirtualPeer(const TurtleFileHash& hash, const TurtleVirtualPeerId& vpid,RsTurtleGenericTunnelItem::Direction dir)
 {
 	auto it = mHandledHashes.find(hash) ;
@@ -258,11 +382,25 @@ void RsGxsNetTunnelService::addVirtualPeer(const TurtleFileHash& hash, const Tur
 	RsGxsNetTunnelVirtualPeerInfo& vpinfo( ginfo.virtual_peers[vpid] ) ;
 
 	vpinfo.vpid_status = RsGxsNetTunnelVirtualPeerInfo::RS_GXS_NET_TUNNEL_VP_STATUS_TUNNEL_OK ;
-	vpinfo.net_service_virtual_peer.clear();
 	vpinfo.side = dir ;
 	vpinfo.last_contact = time(NULL) ;
 
 	generateEncryptionKey(group_id,vpid,vpinfo.encryption_master_key );
+
+	// If we're a server, we need to send our own virtual peer id to the client
+
+	if(dir == RsTurtleGenericTunnelItem::DIRECTION_CLIENT)
+	{
+		vpinfo.net_service_virtual_peer = makeServerVirtualPeerIdForGroup(group_id);
+
+		RsGxsNetTunnelVirtualPeerItem *pitem = new RsGxsNetTunnelVirtualPeerItem ;
+
+		pitem->virtual_peer_id = vpinfo.net_service_virtual_peer ;
+
+		vpinfo.outgoing_items.push_back(pitem) ;
+	}
+	else
+		vpinfo.net_service_virtual_peer.clear();
 }
 
 void RsGxsNetTunnelService::removeVirtualPeer(const TurtleFileHash& hash, const TurtleVirtualPeerId& vpid)
@@ -308,6 +446,19 @@ void RsGxsNetTunnelService::generateEncryptionKey(const RsGxsGroupId& group_id,c
 //===========================================================================================================================================//
 //                                                               Service parts                                                               //
 //===========================================================================================================================================//
+
+void RsGxsNetTunnelService::data_tick()
+{
+	GXS_NET_TUNNEL_DEBUG() << std::endl;
+
+	// cleanup
+
+	autowash();
+}
+
+void RsGxsNetTunnelService::autowash()
+{
+}
 
 #ifdef TODO
 void RsGxsNetTunnelService::handleIncomingItem(const RsGxsTunnelId& tunnel_id,RsGxsTunnelItem *item)
