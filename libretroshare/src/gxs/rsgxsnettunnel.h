@@ -76,6 +76,7 @@ struct RsGxsNetTunnelVirtualPeerInfo
 	     };
 
 	RsGxsNetTunnelVirtualPeerInfo() : vpid_status(RS_GXS_NET_TUNNEL_VP_STATUS_UNKNOWN) { memset(encryption_master_key,0,16) ; }
+	~RsGxsNetTunnelVirtualPeerInfo() ;
 
 	uint8_t vpid_status ;					// status of the peer
 	uint8_t side ;	                        // client/server
@@ -85,7 +86,7 @@ struct RsGxsNetTunnelVirtualPeerInfo
 	RsGxsNetTunnelVirtualPeerId net_service_virtual_peer ;  // anonymised peer that is used to communicate with client services
 	RsGxsGroupId                group_id ;		            // group id
 
-	std::list<RsItem*> incoming_items ;
+	std::list<RsTlvBinaryData*> incoming_data ;
 	std::list<RsItem*> outgoing_items ;
 };
 
