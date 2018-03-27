@@ -4,6 +4,7 @@
  * RetroShare C++ Interface.
  *
  * Copyright 2004-2008 by Robert Fernie.
+ * Copyright (C) 2015-2018  Gioacchino Mazzurco <gio@eigenlab.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -332,26 +333,28 @@ bool p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
 		d.hiddenNodePort = 0;
 		d.hiddenType = RS_HIDDEN_TYPE_NONE;
 
-		if (sockaddr_storage_isnull(ps.localaddr))
+		if(!sockaddr_storage_isnull(ps.localaddr))
+		{
+			sockaddr_storage_ipv6_to_ipv4(ps.localaddr);
+			d.localAddr	= sockaddr_storage_iptostring(ps.localaddr);
+			d.localPort	= sockaddr_storage_port(ps.localaddr);
+		}
+		else
 		{
 			d.localAddr	= "INVALID_IP";
 			d.localPort	= 0;
 		}
-		else
-		{
-			d.localAddr	= sockaddr_storage_iptostring(ps.localaddr);
-			d.localPort	= sockaddr_storage_port(ps.localaddr);
-		}
 
-		if (sockaddr_storage_isnull(ps.serveraddr))
+		if(!sockaddr_storage_isnull(ps.serveraddr))
+		{
+			sockaddr_storage_ipv6_to_ipv4(ps.serveraddr);
+			d.extAddr = sockaddr_storage_iptostring(ps.serveraddr);
+			d.extPort = sockaddr_storage_port(ps.serveraddr);
+		}
+		else
 		{
 			d.extAddr = "INVALID_IP";
 			d.extPort = 0;
-		}
-		else
-		{
-			d.extAddr = sockaddr_storage_iptostring(ps.serveraddr);
-			d.extPort = sockaddr_storage_port(ps.serveraddr);
 		}
 
 		d.dyndns        = ps.dyndns;
@@ -360,16 +363,16 @@ bool p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
 		for(it = ps.ipAddrs.mLocal.mAddrs.begin(); 
 		    it != ps.ipAddrs.mLocal.mAddrs.end(); ++it)
 		{
+			sockaddr_storage_ipv6_to_ipv4(it->mAddr);
 			std::string toto;
-			toto += "L:";
 			toto += sockaddr_storage_tostring(it->mAddr);
 			rs_sprintf_append(toto, "    %ld sec", time(NULL) - it->mSeenTime);
 			d.ipAddressList.push_back(toto);
 		}
 		for(it = ps.ipAddrs.mExt.mAddrs.begin(); it != ps.ipAddrs.mExt.mAddrs.end(); ++it)
 		{
+			sockaddr_storage_ipv6_to_ipv4(it->mAddr);
 			std::string toto;
-			toto += "E:";
 			toto += sockaddr_storage_tostring(it->mAddr);
 			rs_sprintf_append(toto, "    %ld sec", time(NULL) - it->mSeenTime);
 			d.ipAddressList.push_back(toto);
@@ -416,6 +419,7 @@ bool p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
 
 	if (pcs.state & RS_PEER_S_CONNECTED)
 	{
+		sockaddr_storage_ipv6_to_ipv4(pcs.connectaddr);
 		d.connectAddr = sockaddr_storage_iptostring(pcs.connectaddr);
 		d.connectPort = sockaddr_storage_port(pcs.connectaddr);
 	}
@@ -900,68 +904,33 @@ bool 	p3Peers::setHiddenNode(const RsPeerId &id, const std::string &address, uin
 	return true;
 }
 
-bool 	p3Peers::setLocalAddress(const RsPeerId &id, const std::string &addr_str, uint16_t port)
+bool p3Peers::setLocalAddress(const RsPeerId &id,
+                              const std::string &addr_str, uint16_t port)
 {
 #ifdef P3PEERS_DEBUG
-        std::cerr << "p3Peers::setLocalAddress() " << id << std::endl;
+	std::cerr << __PRETTY_FUNCTION__ << " " << id << " " << addr_str << " "
+	          << port << std::endl;
 #endif
 
-        if(port < 1024)
-        {
-            std::cerr << "(EE) attempt to use a port that is reserved to the system: " << port << std::endl;
-            return false ;
-        }
-
-	struct sockaddr_storage addr;
-	struct sockaddr_in *addrv4p = (struct sockaddr_in *) &addr;
-	addrv4p->sin_family = AF_INET;
-	addrv4p->sin_port = htons(port);
-
-	int ret = 1;
-/********************************** WINDOWS/UNIX SPECIFIC PART *******************/
-#ifndef WINDOWS_SYS
-	if (ret && (0 != inet_aton(addr_str.c_str(), &(addrv4p->sin_addr))))
-#else
-	addrv4p->sin_addr.s_addr = inet_addr(addr_str.c_str());
-	if (ret)
-#endif
-/********************************** WINDOWS/UNIX SPECIFIC PART *******************/
-	{
-		return mPeerMgr->setLocalAddress(id, addr);
-	}
+	sockaddr_storage addr;
+	if (sockaddr_storage_inet_pton(addr, addr_str))
+		if (sockaddr_storage_setport(addr, port))
+			return mPeerMgr->setLocalAddress(id, addr);
 	return false;
 }
 
-bool 	p3Peers::setExtAddress(const RsPeerId &id, const std::string &addr_str, uint16_t port)
+bool p3Peers::setExtAddress(const RsPeerId &id,
+                            const std::string &addr_str, uint16_t port)
 {
 #ifdef P3PEERS_DEBUG
-        std::cerr << "p3Peers::setExtAddress() " << id << std::endl;
+	std::cerr << __PRETTY_FUNCTION__ << " " << id << " " << addr_str << " "
+	          << port << std::endl;
 #endif
-        if(port < 1024)
-        {
-            std::cerr << "(EE) attempt to use a port that is reserved to the system: " << port << std::endl;
-            return false ;
-        }
 
-
-	// NOTE THIS IS IPV4 FOR NOW.
-	struct sockaddr_storage addr;
-	struct sockaddr_in *addrv4p = (struct sockaddr_in *) &addr;
-	addrv4p->sin_family = AF_INET;
-	addrv4p->sin_port = htons(port);
-
-	int ret = 1;
-/********************************** WINDOWS/UNIX SPECIFIC PART *******************/
-#ifndef WINDOWS_SYS
-	if (ret && (0 != inet_aton(addr_str.c_str(), &(addrv4p->sin_addr))))
-#else
-	addrv4p->sin_addr.s_addr = inet_addr(addr_str.c_str());
-	if (ret)
-#endif
-/********************************** WINDOWS/UNIX SPECIFIC PART *******************/
-	{
-		return mPeerMgr->setExtAddress(id, addr);
-	}
+	sockaddr_storage addr;
+	if (sockaddr_storage_inet_pton(addr, addr_str))
+		if (sockaddr_storage_setport(addr, port))
+			return mPeerMgr->setExtAddress(id, addr);
 	return false;
 }
 
@@ -1085,22 +1054,22 @@ std::string p3Peers::getPGPKey(const RsPgpId& pgp_id,bool include_signatures)
 	unsigned char *mem_block = NULL;
 	size_t mem_block_size = 0;
 
-	if(!AuthGPG::getAuthGPG()->exportPublicKey(RsPgpId(pgp_id),mem_block,mem_block_size,false,include_signatures))
+	if( !AuthGPG::getAuthGPG()->exportPublicKey(
+	             RsPgpId(pgp_id), mem_block, mem_block_size,
+	             false, include_signatures ) )
 	{
-		std::cerr << "Cannot output certificate for id \"" << pgp_id << "\". Sorry." << std::endl;
+		std::cerr << "Cannot output certificate for id \"" << pgp_id
+		          << "\". Sorry." << std::endl;
 		return "" ;
 	}
 
-	RsPeerDetails Detail ;
+	RsPeerDetails Detail;
+	if(!getGPGDetails(pgp_id,Detail)) return "";
 
-	if(!getGPGDetails(pgp_id,Detail) )
-		return "" ;
+	RsCertificate cert( Detail,mem_block,mem_block_size );
+	delete[] mem_block ;
 
-	RsCertificate cert( Detail,mem_block,mem_block_size ) ;
-
-    delete[] mem_block ;
-
-	return cert.armouredPGPKey() ;
+	return cert.armouredPGPKey();
 }
 
 

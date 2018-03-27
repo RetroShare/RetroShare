@@ -88,14 +88,26 @@ std::string rs_inet_ntoa(struct in_addr in);
 /***************************/
 // sockaddr_storage fns.
 
-// Standard bind, on OSX anyway will not accept a longer socklen for IPv4.
-// so hidding details behind function.
-int universal_bind(int fd, const struct sockaddr *addr, socklen_t socklen);
+int rs_bind(int fd, const sockaddr_storage& addr);
 
 void sockaddr_storage_clear(struct sockaddr_storage &addr);
 
 // mods.
 bool sockaddr_storage_zeroip(struct sockaddr_storage &addr);
+
+/**
+ * @brief Use this function to copy sockaddr_storage.
+ *
+ * POSIX does not require that objects of type sockaddr_storage can be copied
+ * as aggregates thus it is unsafe to aggregate copy ( operator = )
+ * sockaddr_storage and unexpected behaviors may happens due to padding
+ * and alignment.
+ *
+ * @see https://sourceware.org/bugzilla/show_bug.cgi?id=20111
+ * @see https://gcc.gnu.org/bugzilla/show_bug.cgi?id=71120
+ */
+bool sockaddr_storage_copy(const sockaddr_storage& src, sockaddr_storage& dst);
+
 bool sockaddr_storage_copyip(struct sockaddr_storage &dst, const struct sockaddr_storage &src);
 uint16_t sockaddr_storage_port(const struct sockaddr_storage &addr);
 bool sockaddr_storage_setport(struct sockaddr_storage &addr, uint16_t port);
@@ -103,9 +115,14 @@ bool sockaddr_storage_setport(struct sockaddr_storage &addr, uint16_t port);
 bool sockaddr_storage_setipv4(struct sockaddr_storage &addr, const sockaddr_in *addr_ipv4);
 bool sockaddr_storage_setipv6(struct sockaddr_storage &addr, const sockaddr_in6 *addr_ipv6);
 
+bool sockaddr_storage_inet_pton( sockaddr_storage &addr,
+                                 const std::string& ipStr );
 bool sockaddr_storage_ipv4_aton(struct sockaddr_storage &addr, const char *name);
+
 bool sockaddr_storage_ipv4_setport(struct sockaddr_storage &addr, const uint16_t port);
 
+bool sockaddr_storage_ipv4_to_ipv6(sockaddr_storage &addr);
+bool sockaddr_storage_ipv6_to_ipv4(sockaddr_storage &addr);
 
 // comparisons.
 bool operator<(const struct sockaddr_storage &a, const struct sockaddr_storage &b);
@@ -131,8 +148,12 @@ bool sockaddr_storage_isValidNet(const struct sockaddr_storage &addr);
 bool sockaddr_storage_isLoopbackNet(const struct sockaddr_storage &addr);
 bool sockaddr_storage_isPrivateNet(const struct sockaddr_storage &addr);
 bool sockaddr_storage_isLinkLocalNet(const struct sockaddr_storage &addr);
+bool sockaddr_storage_ipv6_isLinkLocalNet(const sockaddr_storage &addr);
 bool sockaddr_storage_isExternalNet(const struct sockaddr_storage &addr);
 
-bool rs_inet_ntop(const sockaddr_storage &addr, std::string &dst);
+bool sockaddr_storage_inet_ntop(const sockaddr_storage &addr, std::string &dst);
+
+int rs_setsockopt( int sockfd, int level, int optname,
+                   const uint8_t *optval, uint32_t optlen );
 
 #endif /* RS_UNIVERSAL_NETWORK_HEADER */

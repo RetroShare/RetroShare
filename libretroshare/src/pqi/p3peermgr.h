@@ -119,17 +119,20 @@ class p3NetMgrIMPL;
 
 class p3PeerMgr
 {
-	public:
+public:
 
-        p3PeerMgr() { return; }
-virtual ~p3PeerMgr() { return; }
+	p3PeerMgr() {}
+	virtual ~p3PeerMgr() {}
 
-virtual bool 	addFriend(const RsPeerId &ssl_id, const RsPgpId &gpg_id, uint32_t netMode = RS_NET_MODE_UDP,
-					uint16_t vsDisc = RS_VS_DISC_FULL, uint16_t vsDht = RS_VS_DHT_FULL, 
-                    time_t lastContact = 0,ServicePermissionFlags = ServicePermissionFlags(RS_NODE_PERM_DEFAULT)) = 0;
-virtual bool	removeFriend(const RsPeerId &ssl_id, bool removePgpId) = 0;
+	virtual bool addFriend( const RsPeerId &ssl_id, const RsPgpId &gpg_id,
+	                        uint32_t netMode = RS_NET_MODE_UDP,
+	                        uint16_t vsDisc = RS_VS_DISC_FULL,
+	                        uint16_t vsDht = RS_VS_DHT_FULL,
+	                        time_t lastContact = 0,
+	                        ServicePermissionFlags = ServicePermissionFlags(RS_NODE_PERM_DEFAULT) ) = 0;
 
-virtual bool	isFriend(const RsPeerId& ssl_id) = 0;
+	virtual bool removeFriend(const RsPeerId &ssl_id, bool removePgpId) = 0;
+	virtual bool isFriend(const RsPeerId& ssl_id) = 0;
 
 virtual bool 	getAssociatedPeers(const RsPgpId &gpg_id, std::list<RsPeerId> &ids) = 0;
 virtual bool 	removeAllFriendLocations(const RsPgpId &gpgid) = 0;
@@ -146,7 +149,7 @@ virtual bool    getGroupInfoByName(const std::string& groupName, RsGroupInfo &gr
 virtual bool    getGroupInfoList(std::list<RsGroupInfo> &groupInfoList) = 0;
 virtual bool    assignPeersToGroup(const RsNodeGroupId &groupId, const std::list<RsPgpId> &peerIds, bool assign) = 0;
 
-    virtual bool resetOwnExternalAddressList() = 0 ;
+	virtual bool resetOwnExternalAddressList() = 0 ;
 
 	virtual ServicePermissionFlags servicePermissionFlags(const RsPgpId& gpg_id) =0;
 	virtual ServicePermissionFlags servicePermissionFlags(const RsPeerId& ssl_id) =0;
@@ -354,9 +357,9 @@ public:
     bool 	setOwnNetworkMode(uint32_t netMode);
     bool 	setOwnVisState(uint16_t vs_disc, uint16_t vs_dht);
 
-    int 	getConnectAddresses(const RsPeerId &id,
-                                struct sockaddr_storage &lAddr, struct sockaddr_storage &eAddr,
-                                pqiIpAddrSet &histAddrs, std::string &dyndns);
+	int getConnectAddresses( const RsPeerId &id, sockaddr_storage &lAddr,
+	                         sockaddr_storage &eAddr, pqiIpAddrSet &histAddrs,
+	                         std::string &dyndns );
 
 
 protected:
