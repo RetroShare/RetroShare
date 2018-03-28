@@ -240,7 +240,7 @@ public:
 	    mTransfersHandler(sts, ifaces.mFiles, ifaces.mPeers, *ifaces.mNotify),
         mChatHandler(sts, ifaces.mNotify, ifaces.mMsgs, ifaces.mPeers, ifaces.mIdentity, &mPeersHandler),
         mApiPluginHandler(sts, ifaces),
-	    mChannelsHandler(ifaces.mGxsChannels),
+	    mChannelsHandler(*ifaces.mGxsChannels),
 	    mStatsHandler()
 #ifdef LIBRESAPI_QT
 	    ,mSettingsHandler(sts)
