@@ -80,7 +80,7 @@ void ChannelsHandler::handleListChannels(Request& /*req*/, Response& resp)
 		     vit != grps.end(); ++vit )
 		{
 			RsGxsChannelGroup& grp = *vit;
-			KeyValueReference<RsGxsGroupId> id("id", grp.mMeta.mGroupId);
+			KeyValueReference<RsGxsGroupId> id("channel_id", grp.mMeta.mGroupId);
 			KeyValueReference<uint32_t> vis_msg("visible_msg_count", grp.mMeta.mVisibleMsgCount);
 			bool own = (grp.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN);
 			bool subscribed = IS_GROUP_SUBSCRIBED(grp.mMeta.mSubscribeFlags);
@@ -159,7 +159,7 @@ void ChannelsHandler::handleGetChannel(Request& req, Response& resp)
 			resp.mDataStream.getStreamToMember()
 			        << makeKeyValueReference("channel_id", pMeta.mGroupId)
 			        << makeKeyValueReference("name", pMeta.mMsgName)
-			        << makeKeyValueReference("id", pMeta.mMsgId)
+			        << makeKeyValueReference("post_id", pMeta.mMsgId)
 			        << makeKeyValueReference("parent_id", pMeta.mParentId)
 			        << makeKeyValueReference("author_id", pMeta.mAuthorId)
 			        << makeKeyValueReference("orig_msg_id", pMeta.mOrigMsgId)
@@ -176,7 +176,7 @@ void ChannelsHandler::handleGetChannel(Request& req, Response& resp)
 			resp.mDataStream.getStreamToMember()
 			        << makeKeyValueReference("channel_id", cMeta.mGroupId)
 			        << makeKeyValueReference("name", cMeta.mMsgName)
-			        << makeKeyValueReference("id", cMeta.mMsgId)
+			        << makeKeyValueReference("comment_id", cMeta.mMsgId)
 			        << makeKeyValueReference("parent_id", cMeta.mParentId)
 			        << makeKeyValueReference("author_id", cMeta.mAuthorId)
 			        << makeKeyValueReference("orig_msg_id", cMeta.mOrigMsgId)
