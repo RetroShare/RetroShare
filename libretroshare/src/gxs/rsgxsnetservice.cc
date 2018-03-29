@@ -565,6 +565,20 @@ void RsGxsNetService::syncWithPeers()
 
     std::set<RsPeerId> peers;
     mNetMgr->getOnlineList(mServiceInfo.mServiceType, peers);
+
+#ifdef TODO
+	if(mAllowDistSync)
+	{
+		// Grab all online virtual peers of distant tunnels for the current service.
+
+		std::list<RsGxsNetTunnelVirtualPeerId> vpids ;
+		mGxsNetTunnel->getVirtualPeers(mServType,vpids);
+
+		for(auto it(vpids.begin());it!=vpids.end();++it)
+			peers.push_back(RsPeerId(*it)) ;
+	}
+#endif
+
     if (peers.empty()) {
         // nothing to do
         return;

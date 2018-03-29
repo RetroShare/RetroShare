@@ -43,11 +43,9 @@ RsGxsNetTunnelService::RsGxsNetTunnelService(): mGxsNetTunnelMtx("GxsNetTunnel")
 
 RsGxsNetTunnelVirtualPeerInfo::~RsGxsNetTunnelVirtualPeerInfo()
 {
-	for(auto it(outgoing_items.begin());it!=outgoing_items.end();++it)
-		delete *it ;
-
-	for(auto it(incoming_data.begin());it!=incoming_data.end();++it)
-		delete *it ;
+	for(auto it(providing_set.begin());it!=providing_set.end();++it)
+		for(auto it2(it->second.incoming_data.begin());it2!=it->second.incoming_data.end();++it2)
+			delete *it2 ;
 }
 
 //===========================================================================================================================================//
@@ -131,8 +129,21 @@ public:
 	unsigned char *& mData;
 };
 
+RsGxsNetTunnelService::~RsGxsNetTunnelService()
+{
+	RS_STACK_MUTEX(mGxsNetTunnelMtx);
+
+	// This is needed because we need to clear these structure in a mutex protected environment
+	// Also this calls the destructor of the objects which calls the freeing of memory e.g. allocated in the incoming data list.
+
+	mGroups.clear();
+	mHandledHashes.clear();
+	mVirtualPeers.clear();
+}
+
 bool RsGxsNetTunnelService::sendData(unsigned char *& data,uint32_t data_len,const RsGxsNetTunnelVirtualPeerId& virtual_peer)
 {
+	RS_STACK_MUTEX(mGxsNetTunnelMtx);
 	// The item is serialized and encrypted using chacha20+SHA256, using the generic turtle encryption, and then sent to the turtle router.
 
 	DataAutoDelete iad(data) ;	// This ensures the item is deleted whatsoever when leaving
@@ -147,25 +158,9 @@ bool RsGxsNetTunnelService::sendData(unsigned char *& data,uint32_t data_len,con
 		return false ;
 	}
 
-	auto it2 = mGroups.find(it->second.first);
-
-	if(it2 == mGroups.end())
+	if(it->second.vpid_status != RsGxsNetTunnelVirtualPeerInfo::RS_GXS_NET_TUNNEL_VP_STATUS_ACTIVE)
 	{
-		GXS_NET_TUNNEL_ERROR() << "cannot find virtual peer " << virtual_peer << ". Data is dropped." << std::endl;
-		return false ;
-	}
-
-	auto it3 = it2->second.virtual_peers.find(it->second.second);
-
-	if(it3 == it2->second.virtual_peers.end())
-	{
-		std::cerr << "cannot find turtle virtual peer " << it->second.second << ". Data is dropped." << std::endl;
-		return false ;
-	}
-
-	if(it3->second.vpid_status != RsGxsNetTunnelVirtualPeerInfo::RS_GXS_NET_TUNNEL_VP_STATUS_ACTIVE)
-	{
-		GXS_NET_TUNNEL_ERROR() << "virtual peer " << it->second.second << " is not active. Data is dropped." << std::endl;
+		GXS_NET_TUNNEL_ERROR() << "virtual peer " << virtual_peer << " is not active. Data is dropped." << std::endl;
 		return false ;
 	}
 
@@ -173,18 +168,18 @@ bool RsGxsNetTunnelService::sendData(unsigned char *& data,uint32_t data_len,con
 
 	RsTurtleGenericDataItem *encrypted_turtle_item = NULL ;
 
-	if(!p3turtle::encryptData(data,data_len,it3->second.encryption_master_key,encrypted_turtle_item))
+	if(!p3turtle::encryptData(data,data_len,it->second.encryption_master_key,encrypted_turtle_item))
 	{
 		GXS_NET_TUNNEL_ERROR() << "cannot encrypt. Something's wrong. Data is dropped." << std::endl;
 		return false ;
 	}
 
-	mTurtle->sendTurtleData(it->second.second,encrypted_turtle_item) ;
+	mTurtle->sendTurtleData(it->second.turtle_virtual_peer_id,encrypted_turtle_item) ;
 
 	return true ;
 }
 
-bool RsGxsNetTunnelService::getVirtualPeers(const RsGxsGroupId& group_id, std::list<RsGxsNetTunnelVirtualPeerId>& peers)
+bool RsGxsNetTunnelService::getVirtualPeers(uint16_t service_id, std::list<RsGxsNetTunnelVirtualPeerId>& peers)
 {
 	// This function has two effects:
 	//  - return the virtual peers for this group
@@ -194,21 +189,12 @@ bool RsGxsNetTunnelService::getVirtualPeers(const RsGxsGroupId& group_id, std::l
 
 	// update the hash entry if needed
 
-	RsFileHash hash = calculateGroupHash(group_id);
-	mHandledHashes[hash] = group_id ;
-
-	// Create the group entry, if needed, with passive mode.
-
-	RsGxsNetTunnelGroupInfo& ginfo( mGroups[group_id] ) ;
-
-    ginfo.hash = hash ;
-
-	for(auto it2 = ginfo.virtual_peers.begin();it2 != ginfo.virtual_peers.end();++it2)
-		if(it2->second.vpid_status == RsGxsNetTunnelVirtualPeerInfo::RS_GXS_NET_TUNNEL_VP_STATUS_ACTIVE)
-			peers.push_back(it2->second.net_service_virtual_peer) ;
+	for(auto it(mVirtualPeers.begin());it!=mVirtualPeers.end();++it)
+		if(it->second.providing_set.find(service_id) != it->second.providing_set.end())
+			peers.push_back(it->first) ;
 
 #ifdef DEBUG_GXS_TUNNEL
-    GXS_NET_TUNNEL_DEBUG() << "returning " << peers.size() << " peers." << std::endl;
+    GXS_NET_TUNNEL_DEBUG() << " service " << std::hex << service_id << std::dec << " returning " << peers.size() << " peers." << std::endl;
 #endif
 
 	return true ;
@@ -243,19 +229,19 @@ bool RsGxsNetTunnelService::releasePeers(const RsGxsGroupId& group_id)
 	return true;
 }
 
-RsGxsNetTunnelVirtualPeerId RsGxsNetTunnelService::makeServerVirtualPeerIdForGroup(const RsGxsGroupId& group_id) const
+RsGxsNetTunnelVirtualPeerId RsGxsNetTunnelService::locked_makeVirtualPeerId() const
 {
 	assert(RsPeerId::SIZE_IN_BYTES <= Sha1CheckSum::SIZE_IN_BYTES) ;
 
-	// We compute sha1( SSL_id | group_id | mRandomBias ) and trunk it to 16 bytes in order to compute a RsPeerId
+	// We compute sha1( SSL_id | mRandomBias ) and trunk it to 16 bytes in order to compute a RsPeerId
 
 	RsPeerId ssl_id = rsPeers->getOwnId() ;
 
-	unsigned char mem[RsPeerId::SIZE_IN_BYTES + RsGxsGroupId::SIZE_IN_BYTES + RS_GXS_TUNNEL_CONST_RANDOM_BIAS_SIZE];
+	unsigned char mem[RsPeerId::SIZE_IN_BYTES /*+ RsGxsGroupId::SIZE_IN_BYTES */ + RS_GXS_TUNNEL_CONST_RANDOM_BIAS_SIZE];
 
 	memcpy(mem                                                    ,ssl_id.toByteArray()  ,RsPeerId::SIZE_IN_BYTES) ;
-	memcpy(mem+RsPeerId::SIZE_IN_BYTES                            ,group_id.toByteArray(),RsGxsGroupId::SIZE_IN_BYTES) ;
-	memcpy(mem+RsPeerId::SIZE_IN_BYTES+RsGxsGroupId::SIZE_IN_BYTES,mRandomBias           ,RS_GXS_TUNNEL_CONST_RANDOM_BIAS_SIZE) ;
+  //memcpy(mem+RsPeerId::SIZE_IN_BYTES                            ,group_id.toByteArray(),RsGxsGroupId::SIZE_IN_BYTES) ;
+	memcpy(mem+RsPeerId::SIZE_IN_BYTES /*+RsGxsGroupId::SIZE_IN_BYTES*/,mRandomBias           ,RS_GXS_TUNNEL_CONST_RANDOM_BIAS_SIZE) ;
 
 	return RsGxsNetTunnelVirtualPeerId(RsDirUtil::sha1sum(mem,RsPeerId::SIZE_IN_BYTES+RsGxsGroupId::SIZE_IN_BYTES+RS_GXS_TUNNEL_CONST_RANDOM_BIAS_SIZE).toByteArray());
 }
@@ -264,12 +250,18 @@ void RsGxsNetTunnelService::dump() const
 {
 	RS_STACK_MUTEX(mGxsNetTunnelMtx);
 
-	static std::string group_status_str[3] = {
+	static std::string group_status_str[4] = {
 	    std::string("[RS_GXS_NET_TUNNEL_GRP_STATUS_UNKNOWN          ]"),
+	    std::string("[RS_GXS_NET_TUNNEL_GRP_STATUS_IDLE             ]"),
 	    std::string("[RS_GXS_NET_TUNNEL_GRP_STATUS_TUNNELS_REQUESTED]"),
 	    std::string("[RS_GXS_NET_TUNNEL_GRP_STATUS_VPIDS_AVAILABLE  ]")
 	};
 
+	static std::string group_policy_str[3] = {
+	    	 std::string("[RS_GXS_NET_TUNNEL_POLICY_UNKNOWN]"),
+	    	 std::string("[RS_GXS_NET_TUNNEL_POLICY_PASSIVE]"),
+	    	 std::string("[RS_GXS_NET_TUNNEL_POLICY_ACTIVE ]"),
+	};
 	static std::string vpid_status_str[3] = {
 	    	 std::string("[RS_GXS_NET_TUNNEL_VP_STATUS_UNKNOWN   ]"),
 		     std::string("[RS_GXS_NET_TUNNEL_VP_STATUS_TUNNEL_OK ]"),
@@ -281,18 +273,23 @@ void RsGxsNetTunnelService::dump() const
 
 	for(auto it(mGroups.begin());it!=mGroups.end();++it)
 	{
-		std::cerr << "  " << it->first << " hash: " << it->second.hash << "  status: " << group_status_str[it->second.group_status] << "]  Last contact: " << time(NULL) - it->second.last_contact << " secs ago" << std::endl;
-
+		std::cerr << "  " << it->first << " hash: " << it->second.hash << "  policy: " << group_policy_str[it->second.group_policy] << " status: " << group_status_str[it->second.group_status] << "]  Last contact: " << time(NULL) - it->second.last_contact << " secs ago" << std::endl;
+		std::cerr << "  virtual peers:" << std::endl;
 		for(auto it2(it->second.virtual_peers.begin());it2!=it->second.virtual_peers.end();++it2)
-			std::cerr << "    turtle:" << it2->first << "  status: " <<  vpid_status_str[it2->second.vpid_status] << " s: "
-			          << (int)it2->second.side << " last seen " << time(NULL)-it2->second.last_contact
-			          << " ekey: " << RsUtil::BinToHex(it2->second.encryption_master_key,RS_GXS_TUNNEL_CONST_EKEY_SIZE)
-			          << " pending (" << it2->second.incoming_data.size() << "," << it2->second.outgoing_items.size() << ")" << std::endl;
+			std::cerr << "    " << *it2 << std::endl;
 	}
 
 	std::cerr << "Virtual peers: " << std::endl;
 	for(auto it(mVirtualPeers.begin());it!=mVirtualPeers.end();++it)
-		std::cerr << "  GXS Peer:" << it->first << "  group_id: " << it->second.first << " Turtle:" << it->second.second << std::endl;
+	{
+		std::cerr << "  GXS Peer:" << it->first << " Turtle:" << it->second.turtle_virtual_peer_id
+			      << "  status: " <<  vpid_status_str[it->second.vpid_status] << " s: "
+			      << (int)it->second.side << " last seen " << time(NULL)-it->second.last_contact
+			      << " ekey: " << RsUtil::BinToHex(it->second.encryption_master_key,RS_GXS_TUNNEL_CONST_EKEY_SIZE) ;
+
+		for(auto it2(it->second.providing_set.begin());it2!=it->second.providing_set.end();++it2)
+			std::cerr << "    service " << std::hex << it2->first << std::dec << "   " << it2->second.provided_groups.size() << " groups, " << it2->second.incoming_data.size() << " data" << std::endl;
+	}
 
 	std::cerr << "Hashes: " << std::endl;
 	for(auto it(mHandledHashes.begin());it!=mHandledHashes.end();++it)
@@ -311,15 +308,18 @@ void RsGxsNetTunnelService::connectToTurtleRouter(p3turtle *tr)
 
 bool RsGxsNetTunnelService::handleTunnelRequest(const RsFileHash &hash,const RsPeerId& peer_id)
 {
+	RS_STACK_MUTEX(mGxsNetTunnelMtx);
 	// We simply check for wether a managed group has a hash that corresponds to the given hash.
 
 	return mHandledHashes.find(hash) != mHandledHashes.end();
 }
 
-void RsGxsNetTunnelService::receiveTurtleData(RsTurtleGenericTunnelItem *item,const RsFileHash& hash,const RsPeerId& virtual_peer_id,RsTurtleGenericTunnelItem::Direction direction)
+void RsGxsNetTunnelService::receiveTurtleData(RsTurtleGenericTunnelItem *item,const RsFileHash& hash,const RsPeerId& turtle_virtual_peer_id,RsTurtleGenericTunnelItem::Direction direction)
 {
+	RS_STACK_MUTEX(mGxsNetTunnelMtx);
+
 #ifdef DEBUG_RSGXSNETTUNNEL
-	GXS_NET_TUNNEL_DEBUG() << " received turtle data for vpid " << virtual_peer_id << " for hash " << hash << " in direction " << (int)direction << std::endl;
+	GXS_NET_TUNNEL_DEBUG() << " received turtle data for vpid " << turtle_virtual_peer_id << " for hash " << hash << " in direction " << (int)direction << std::endl;
 #endif
 
 	if(item->PacketSubType() != RS_TURTLE_SUBTYPE_GENERIC_DATA)
@@ -327,45 +327,29 @@ void RsGxsNetTunnelService::receiveTurtleData(RsTurtleGenericTunnelItem *item,co
 		GXS_NET_TUNNEL_ERROR() << "item with type " << std::hex << item->PacketSubType() << std::dec << " received by GxsNetTunnel, but is not handled!" << std::endl;
 		return;
 	}
-
-	// (cyril) this is a bit complicated. We should store pointers to the encryption keys in another structure and access it directly.
+	// find the group id
 
 	auto it = mHandledHashes.find(hash) ;
 
 	if(it == mHandledHashes.end())
 	{
-		GXS_NET_TUNNEL_ERROR() << "item received by GxsNetTunnel for hash " << hash << " but this hash is unknown!" << std::endl;
+		GXS_NET_TUNNEL_ERROR() << "Cannot find hash " << hash << " to be handled by GxsNetTunnel" << std::endl;
 		return;
 	}
-
 	RsGxsGroupId group_id = it->second;
 
-	auto it2 = mGroups.find(group_id) ;
-
-	if(it2 == mGroups.end())
-	{
-		GXS_NET_TUNNEL_ERROR() << "item received by GxsNetTunnel for hash " << hash << " and group " << group_id << " but this group id is unknown!" << std::endl;
-		return;
-	}
-
-	RsGxsNetTunnelGroupInfo& g_info(it2->second) ;
-
-	g_info.last_contact = time(NULL) ;
-
-	auto it3 = g_info.virtual_peers.find(virtual_peer_id) ;
-
-	if(it3 == g_info.virtual_peers.end())
-	{
-		GXS_NET_TUNNEL_ERROR() << "item received by GxsNetTunnel for hash " << hash << ", group " << group_id << " but the virtual peer id is missing!" << std::endl;
-		return;
-	}
-
-	RsGxsNetTunnelVirtualPeerInfo& vp_info(it3->second) ;
+	// Now check if we got an item to advertise a virtual peer
 
 	unsigned char *data = NULL ;
 	uint32_t data_size = 0 ;
 
-	if(!p3turtle::decryptItem(static_cast<RsTurtleGenericDataItem*>(item),vp_info.encryption_master_key,data,data_size))
+	// generate the decryption key based on virtual peer id and group id
+
+	uint8_t encryption_master_key[RS_GXS_TUNNEL_CONST_EKEY_SIZE] ;
+
+	generateEncryptionKey(group_id,turtle_virtual_peer_id,encryption_master_key);
+
+	if(!p3turtle::decryptItem(static_cast<RsTurtleGenericDataItem*>(item),encryption_master_key,data,data_size))
 	{
 		GXS_NET_TUNNEL_ERROR() << "Cannot decrypt data!" << std::endl;
 
@@ -375,28 +359,45 @@ void RsGxsNetTunnelService::receiveTurtleData(RsTurtleGenericTunnelItem *item,co
 		return ;
 	}
 
-	// Now we might get 2 kinds of items: GxsNetTunnel items, to be handled here, and Gxs data items, to be handled by the client service
-
 	RsItem *decrypted_item = RsGxsNetTunnelSerializer().deserialise(data,&data_size);
-
 	RsGxsNetTunnelVirtualPeerItem *pid_item = dynamic_cast<RsGxsNetTunnelVirtualPeerItem*>(decrypted_item) ;
 
 	if(pid_item)
 	{
-		if(direction == RsTurtleGenericTunnelItem::DIRECTION_SERVER)
-		{
 #ifdef DEBUG_RSGXSNETTUNNEL
-			GXS_NET_TUNNEL_DEBUG() << "    item is a virtual peer id item with vpid = "<< pid_item->virtual_peer_id << ". Setting virtual peer." << std::endl;
+		GXS_NET_TUNNEL_DEBUG() << "    item is a virtual peer id item with vpid = "<< pid_item->virtual_peer_id << ". Setting virtual peer." << std::endl;
 #endif
-			vp_info.net_service_virtual_peer = pid_item->virtual_peer_id;
-			vp_info.vpid_status = RsGxsNetTunnelVirtualPeerInfo::RS_GXS_NET_TUNNEL_VP_STATUS_ACTIVE ;
-		}
-		else
-			GXS_NET_TUNNEL_ERROR() << "Cannot decrypt data!" << std::endl;
+#ifdef TODO
+		vp_info.net_service_virtual_peer = pid_item->virtual_peer_id;
+		vp_info.vpid_status = RsGxsNetTunnelVirtualPeerInfo::RS_GXS_NET_TUNNEL_VP_STATUS_ACTIVE ;
+#endif
 
 		free(data);
 		return ;
 	}
+
+#ifdef TODO
+	auto it = mTurtle2GxsPeer.find(turtle_virtual_peer_id) ;
+
+	if(it == mTurtle2GxsPeer.end())
+	{
+		GXS_NET_TUNNEL_ERROR() << "item received by GxsNetTunnel for vpid " << turtle_virtual_peer_id << " but this vpid is unknown!" << std::endl;
+		return;
+	}
+
+	RsGxsNetTunnelVirtualPeerId gxs_vpid = it->second ;
+
+	auto it2 = mVirtualPeers.find(gxs_vpid) ;
+
+	if(it2 == mVirtualPeers.end())
+	{
+		GXS_NET_TUNNEL_ERROR() << "item received by GxsNetTunnel for GXS vpid " << gxs_vpid " but the virtual peer id is missing!" << std::endl;
+		return;
+	}
+
+	RsGxsNetTunnelVirtualPeerInfo& vp_info(it2->second) ;
+
+
 	else
 	{
 #ifdef DEBUG_RSGXSNETTUNNEL
@@ -411,10 +412,13 @@ void RsGxsNetTunnelService::receiveTurtleData(RsTurtleGenericTunnelItem *item,co
 
 		vp_info.incoming_data.push_back(bind) ;
 	}
+#endif
 }
 
 void RsGxsNetTunnelService::addVirtualPeer(const TurtleFileHash& hash, const TurtleVirtualPeerId& vpid,RsTurtleGenericTunnelItem::Direction dir)
 {
+	RS_STACK_MUTEX(mGxsNetTunnelMtx);
+
 	auto it = mHandledHashes.find(hash) ;
 
 	if(it == mHandledHashes.end())
@@ -431,23 +435,19 @@ void RsGxsNetTunnelService::addVirtualPeer(const TurtleFileHash& hash, const Tur
 	RsGxsNetTunnelGroupInfo& ginfo( mGroups[group_id] ) ;
 	ginfo.group_status = RsGxsNetTunnelGroupInfo::RS_GXS_NET_TUNNEL_GRP_STATUS_VPIDS_AVAILABLE ;
 
-	RsGxsNetTunnelVirtualPeerInfo& vpinfo( ginfo.virtual_peers[vpid] ) ;
+	uint8_t encryption_master_key[RS_GXS_TUNNEL_CONST_EKEY_SIZE];
 
-	vpinfo.vpid_status = RsGxsNetTunnelVirtualPeerInfo::RS_GXS_NET_TUNNEL_VP_STATUS_TUNNEL_OK ;
-	vpinfo.side = dir ;
-	vpinfo.last_contact = time(NULL) ;
-
-	generateEncryptionKey(group_id,vpid,vpinfo.encryption_master_key );
+	generateEncryptionKey(group_id,vpid,encryption_master_key );
 
 	// We need to send our own virtual peer id to the other end of the tunnel
 
-	vpinfo.net_service_virtual_peer = makeServerVirtualPeerIdForGroup(group_id);
+	RsGxsNetTunnelVirtualPeerId net_service_virtual_peer = locked_makeVirtualPeerId();
 
 #ifdef DEBUG_RSGXSNETTUNNEL
-	GXS_NET_TUNNEL_DEBUG() << " sending back virtual peer name " << vpinfo.net_service_virtual_peer << " to end of tunnel" << std::endl;
+	GXS_NET_TUNNEL_DEBUG() << " sending back virtual peer name " << net_service_virtual_peer << " to end of tunnel" << std::endl;
 #endif
 	RsGxsNetTunnelVirtualPeerItem pitem ;
-	pitem.virtual_peer_id = vpinfo.net_service_virtual_peer ;
+	pitem.virtual_peer_id = net_service_virtual_peer ;
 
 	RsTemporaryMemory tmpmem( RsGxsNetTunnelSerializer().size(&pitem) ) ;
 	uint32_t len = tmpmem.size();
@@ -456,7 +456,7 @@ void RsGxsNetTunnelService::addVirtualPeer(const TurtleFileHash& hash, const Tur
 
 	RsTurtleGenericDataItem *encrypted_turtle_item = NULL ;
 
-	if(p3turtle::encryptData(tmpmem,len,vpinfo.encryption_master_key,encrypted_turtle_item))
+	if(p3turtle::encryptData(tmpmem,len,encryption_master_key,encrypted_turtle_item))
 		mTurtle->sendTurtleData(vpid,encrypted_turtle_item) ;
 	else
 		GXS_NET_TUNNEL_ERROR() << "cannot encrypt. Something's wrong. Data is dropped." << std::endl;
@@ -464,6 +464,8 @@ void RsGxsNetTunnelService::addVirtualPeer(const TurtleFileHash& hash, const Tur
 
 void RsGxsNetTunnelService::removeVirtualPeer(const TurtleFileHash& hash, const TurtleVirtualPeerId& vpid)
 {
+	RS_STACK_MUTEX(mGxsNetTunnelMtx);
+
 #ifdef DEBUG_RSGXSNETTUNNEL
 	GXS_NET_TUNNEL_DEBUG() << " removing virtual peer " << vpid << " for hash " << hash << std::endl;
 #endif
@@ -496,7 +498,7 @@ RsFileHash RsGxsNetTunnelService::calculateGroupHash(const RsGxsGroupId& group_i
 	return RsDirUtil::sha1sum(group_id.toByteArray(),RsGxsGroupId::SIZE_IN_BYTES) ;
 }
 
-void RsGxsNetTunnelService::generateEncryptionKey(const RsGxsGroupId& group_id,const TurtleVirtualPeerId& vpid,unsigned char key[RS_GXS_TUNNEL_CONST_EKEY_SIZE]) const
+void RsGxsNetTunnelService::generateEncryptionKey(const RsGxsGroupId& group_id,const TurtleVirtualPeerId& vpid,unsigned char key[RS_GXS_TUNNEL_CONST_EKEY_SIZE])
 {
 	// The key is generated as H(group_id | vpid)
 	// Because group_id is not known it shouldn't be possible to recover the key by observing the traffic.
@@ -519,12 +521,19 @@ void RsGxsNetTunnelService::data_tick()
 {
 	GXS_NET_TUNNEL_DEBUG() << std::endl;
 
+	time_t now = time(NULL);
+
 	// cleanup
 
-	autowash();
+	static time_t last_autowash = time(NULL);
+
+	if(last_autowash + 5 > now)
+	{
+		autowash();
+		last_autowash = now;
+	}
 
 	static time_t last_dump = time(NULL);
-	time_t now = time(NULL);
 
 	if(last_dump + 10 > now)
 	{
@@ -535,44 +544,24 @@ void RsGxsNetTunnelService::data_tick()
 
 void RsGxsNetTunnelService::autowash()
 {
+	RS_STACK_MUTEX(mGxsNetTunnelMtx);
+
+	for(auto it(mGroups.begin());it!=mGroups.end();++it)
+	{
+		// check if the group is in active or passive mode, in which case make sure that turtle manages tunnels or not.
+		// if active, then we check wether they are tunnels are not. If not, we ask turtle to monitor.
+
+		RsGxsNetTunnelGroupInfo& ginfo(it->second) ;
+
+		if(ginfo.group_policy == RsGxsNetTunnelGroupInfo::RS_GXS_NET_TUNNEL_GRP_POLICY_ACTIVE && ginfo.virtual_peers.empty())
+		{
+			mTurtle->monitorTunnels(ginfo.hash,this,false) ;
+			ginfo.group_status = RsGxsNetTunnelGroupInfo::RS_GXS_NET_TUNNEL_GRP_STATUS_TUNNELS_REQUESTED;
+		}
+
+		if(ginfo.group_policy == RsGxsNetTunnelGroupInfo::RS_GXS_NET_TUNNEL_GRP_POLICY_PASSIVE)
+			mTurtle->stopMonitoringTunnels(ginfo.hash);
+	}
 }
 
-//    info.group_status = RsGxsNetTunnelGroupInfo::RS_GXS_NET_TUNNEL_GRP_STATUS_TUNNELS_REQUESTED;
-//
-//    mTurtle->monitorTunnels(hash,this,false) ;
-//    info.group_status = RsGxsNetTunnelGroupInfo::RS_GXS_NET_TUNNEL_GRP_STATUS_TUNNELS_REQUESTED;
-
-
-// void RsGxsNetTunnelService::handleIncoming(const RsGxsTunnelId& tunnel_id,RsGxsTunnelItem *item)
-// {
-// #ifdef DEBUG_RSGXSNETTUNNEL
-// 	GXS_NET_TUNNEL_DEBUG() << " received turtle data for vpid " << virtual_peer_id << " for hash " << hash << " in direction " << dir << std::endl;
-// #endif
-//     if(item == NULL)
-// 	    return ;
-//
-//     // We have 3 things to do:
-//     //
-//     // 1 - if it's a data item, send an ACK
-//     // 2 - if it's an ack item, mark the item as properly received, and remove it from the queue
-//     // 3 - if it's a status item, act accordingly.
-//
-//     switch(item->PacketSubType())
-//     {
-//
-//     case RS_PKT_SUBTYPE_GXS_TUNNEL_DATA:		handleRecvTunnelDataItem(tunnel_id,dynamic_cast<RsGxsTunnelDataItem*>(item)) ;
-// 	    break ;
-//
-//     case RS_PKT_SUBTYPE_GXS_TUNNEL_DATA_ACK:	handleRecvTunnelDataAckItem(tunnel_id,dynamic_cast<RsGxsTunnelDataAckItem*>(item)) ;
-// 	    break ;
-//
-//     case RS_PKT_SUBTYPE_GXS_TUNNEL_STATUS:		handleRecvStatusItem(tunnel_id,dynamic_cast<RsGxsTunnelStatusItem*>(item)) ;
-// 	    break ;
-//
-//     default:
-// 	    std::cerr << "(EE) impossible situation. DH items should be handled at the service level" << std::endl;
-//     }
-//
-//     delete item ;
-// }
 

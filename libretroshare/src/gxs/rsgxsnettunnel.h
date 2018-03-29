@@ -82,10 +82,21 @@
 //        However, a call should be made to set a particular group policy to "ACTIVE" for group that do not have peers and need some.
 //
 //      * services also need to retrieve GXS data items that come out of tunnels. These will be available as (data,len) type, since they are not de-serialized.
+//
+//      * GxsNetService stores data information (such as update maps) per peerId, so it makes sense to use the same PeerId for all groups of a given service
+//        Therefore, virtual peers are stored separately from groups, because each one can sync multiple groups.
+//
+//      * virtual peers are also shared among services. This reduces the required amount of tunnels and tunnel requests to send.
 
 typedef RsPeerId RsGxsNetTunnelVirtualPeerId ;
 
 class RsGxsNetTunnelItem ;
+
+struct RsGxsNetTunnelVirtualPeerProvidingSet
+{
+	std::set<RsGxsGroupId>      provided_groups ;
+	std::list<RsTlvBinaryData*> incoming_data ;
+};
 
 struct RsGxsNetTunnelVirtualPeerInfo
 {
@@ -102,11 +113,10 @@ struct RsGxsNetTunnelVirtualPeerInfo
 	uint8_t encryption_master_key[32] ;		// key from which the encryption key is derived for each virtual peer (using H(master_key | random IV))
 	time_t  last_contact ;					// last time some data was sent/recvd
 
-	RsGxsNetTunnelVirtualPeerId net_service_virtual_peer ;  // anonymised peer that is used to communicate with client services
-	RsGxsGroupId                group_id ;		            // group id
+	TurtleVirtualPeerId 		turtle_virtual_peer_id ;  // turtle peer to use when sending data to this vpid.
+	RsGxsGroupId                group_id ;		          // group id
 
-	std::list<RsTlvBinaryData*> incoming_data ;
-	std::list<RsItem*> outgoing_items ;
+	std::map<uint16_t,RsGxsNetTunnelVirtualPeerProvidingSet> providing_set;	// partial list of groups provided by this virtual peer id, based on tunnel results, for each service
 };
 
 struct RsGxsNetTunnelGroupInfo
@@ -124,20 +134,22 @@ struct RsGxsNetTunnelGroupInfo
 		    RS_GXS_NET_TUNNEL_GRP_POLICY_ACTIVE             = 0x02,	// group explicitely request tunnels, if none available
     };
 
-	RsGxsNetTunnelGroupInfo() : group_policy(RS_GXS_NET_TUNNEL_GRP_POLICY_PASSIVE),group_status(RS_GXS_NET_TUNNEL_GRP_STATUS_IDLE),last_contact(0) {}
+	RsGxsNetTunnelGroupInfo() : group_policy(RS_GXS_NET_TUNNEL_GRP_POLICY_PASSIVE),group_status(RS_GXS_NET_TUNNEL_GRP_STATUS_IDLE),last_contact(0),service_id(0) {}
 
 	GroupPolicy    group_policy ;
 	GroupStatus    group_status ;
 	time_t         last_contact ;
 	TurtleFileHash hash ;
+	uint16_t       service_id ;
 
-	std::map<TurtleVirtualPeerId, RsGxsNetTunnelVirtualPeerInfo> virtual_peers ;
+	std::set<RsGxsNetTunnelVirtualPeerId> virtual_peers ; // list of which virtual peers provide this group. Can me more than 1.
 };
 
 class RsGxsNetTunnelService: public RsTurtleClientService, public RsTickingThread
 {
 public:
 	  RsGxsNetTunnelService() ;
+	  virtual ~RsGxsNetTunnelService() ;
 
 	  /*!
 	   * \brief Manage tunnels for this group
@@ -155,7 +167,7 @@ public:
 	   * \brief Get the list of active virtual peers for a given group. This implies that a tunnel is up and
 	   *        alive. This function also "registers" the group which allows to handle tunnel requests in the server side.
 	   */
-      bool getVirtualPeers(const RsGxsGroupId& group_id, std::list<RsGxsNetTunnelVirtualPeerId>& peers) ; 					// returns the virtual peers for this group
+      bool getVirtualPeers(uint16_t service_id, std::list<RsGxsNetTunnelVirtualPeerId>& peers) ; 					// returns the virtual peers for this group
 
 	  /*!
 	   * \brief sendData
@@ -204,13 +216,14 @@ private:
 	  void autowash() ;
 	  void handleIncoming(RsGxsNetTunnelItem *item) ;
 
-	  static const uint32_t RS_GXS_TUNNEL_CONST_RANDOM_BIAS_SIZE = 16 ;
+	  static const uint32_t RS_GXS_TUNNEL_CONST_RANDOM_BIAS_SIZE = 20 ;
 	  static const uint32_t RS_GXS_TUNNEL_CONST_EKEY_SIZE        = 32 ;
 
 	  std::map<RsGxsGroupId,RsGxsNetTunnelGroupInfo> mGroups ;	// groups on the client and server side
 
-	  std::map<RsGxsNetTunnelVirtualPeerId, std::pair<RsGxsGroupId,TurtleVirtualPeerId> > mVirtualPeers ;	// current virtual peers,
-	  std::map<RsFileHash, RsGxsGroupId>                                   mHandledHashes ; // hashes asked to turtle
+	  std::map<RsGxsNetTunnelVirtualPeerId, RsGxsNetTunnelVirtualPeerInfo> mVirtualPeers ;	// current virtual peers, which group they provide, and how to talk to them through turtle
+	  std::map<RsFileHash, RsGxsGroupId>                                   mHandledHashes ; // hashes asked to turtle. Used to answer tunnel requests
+	  std::map<TurtleVirtualPeerId, RsGxsNetTunnelVirtualPeerId>           mTurtle2GxsPeer ; // convertion table to find GXS peer id from turtle
 
 	  /*!
 	   * \brief Generates the hash to request tunnels for this group. This hash is only used by turtle, and is used to
@@ -224,9 +237,9 @@ private:
 	   * 		tunnel ID and turtle virtual peer id. This allows RsGxsNetService to keep sync-ing the data consistently.
 	   */
 
-	  RsGxsNetTunnelVirtualPeerId makeServerVirtualPeerIdForGroup(const RsGxsGroupId&group_id) const ;
+	  RsGxsNetTunnelVirtualPeerId locked_makeVirtualPeerId() const ;
 
-	  void generateEncryptionKey(const RsGxsGroupId& group_id,const TurtleVirtualPeerId& vpid,unsigned char key[RS_GXS_TUNNEL_CONST_EKEY_SIZE]) const ;
+	  static void generateEncryptionKey(const RsGxsGroupId& group_id,const TurtleVirtualPeerId& vpid,unsigned char key[RS_GXS_TUNNEL_CONST_EKEY_SIZE]) ;
 
 	  uint8_t mRandomBias[RS_GXS_TUNNEL_CONST_RANDOM_BIAS_SIZE] ; // constant accross reboots. Allows to disguise the real SSL id while providing a consistent value accross time.
 
