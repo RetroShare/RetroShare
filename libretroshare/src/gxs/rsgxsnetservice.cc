@@ -359,7 +359,7 @@ RsGxsNetService::RsGxsNetService(uint16_t servType, RsGeneralDataService *gds,
                                  RsNxsNetMgr *netMgr, RsNxsObserver *nxsObs,
                                  const RsServiceInfo serviceInfo,
                                  RsGixsReputation* reputations, RsGcxs* circles, RsGixs *gixs,
-                                 PgpAuxUtils *pgpUtils, bool grpAutoSync, bool msgAutoSync, uint32_t default_store_period, uint32_t default_sync_period)
+                                 PgpAuxUtils *pgpUtils, bool grpAutoSync, bool msgAutoSync, bool distSync, uint32_t default_store_period, uint32_t default_sync_period)
                                  : p3ThreadedService(), p3Config(), mTransactionN(0),
                                    mObserver(nxsObs), mDataStore(gds),
                                    mServType(servType), mTransactionTimeOut(TRANSAC_TIMEOUT),
@@ -368,7 +368,7 @@ RsGxsNetService::RsGxsNetService(uint16_t servType, RsGeneralDataService *gds,
                                    mLastCleanRejectedMessages(0), mSYNC_PERIOD(SYNC_PERIOD),
                                    mCircles(circles), mGixs(gixs),
                                    mReputations(reputations), mPgpUtils(pgpUtils),
-                                   mGrpAutoSync(grpAutoSync), mAllowMsgSync(msgAutoSync),
+                                   mGrpAutoSync(grpAutoSync), mAllowMsgSync(msgAutoSync),mAllowDistSync(distSync),
                                    mServiceInfo(serviceInfo), mDefaultMsgStorePeriod(default_store_period),
                                    mDefaultMsgSyncPeriod(default_sync_period)
 {

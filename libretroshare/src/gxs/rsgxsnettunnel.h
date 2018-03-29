@@ -34,6 +34,10 @@
  *
  *        It is the responsibility of RsGxsNetService to activate/desactivate tunnels for each particular group, depending on wether the group
  *        is already available at friends or not.
+ *
+ *        Tunnel management is done at the level of groups rather than services, because we would like to keep the possibility to not
+ *        request tunnels for some groups which do not need it, and only request tunnels for specific groups that cannot be provided
+ *        by direct connections.
  */
 
 //   Protocol:
@@ -61,8 +65,23 @@
 //              Client  <------------------- GXS Data ------------------>  Server         |
 //                                                                                        -
 //   Notes:
-//      * tunnels are only used one-way. If a distant peers wants to sync the same group, he'll have to open his own tunnel, with a different ID.
-//      * each group will produced multiple tunnels, but each tunnel with have exactly one virtual peer ID
+//      * tunnels are established symetrically. If a distant peers wants to sync the same group, they'll have to open a single tunnel, with a different ID.
+//        Groups therefore have two states:
+//          - managed : the group can be used to answer tunnel requests. If server tunnels are established, the group will be synced with these peers
+//          - tunneled: the group will actively request tunnels. If tunnels are established both ways, the same virtual peers will be used so the tunnels are "merged".
+//                        * In practice, that means one of the two tunnels will not be used and therefore die.
+//                        * If a tunneled group already has enough virtual peers, it will not request for tunnels itself.
+//
+//           Group policy      | Request tunnels   |    SyncWithPeers      |  Item receipt
+//         --------------------+-------------------+-----------------------+----------------
+//             Passive         |        no         |  If peers present     | If peers present
+//             Active          |  yes, if no peers |  If peers present     | If peers present
+//                             |                   |                       |
+//
+//      * when a service has the DistSync flag set, groups to sync are communicated passively to the GxsNetTunnel service when requesting distant peers.
+//        However, a call should be made to set a particular group policy to "ACTIVE" for group that do not have peers and need some.
+//
+//      * services also need to retrieve GXS data items that come out of tunnels. These will be available as (data,len) type, since they are not de-serialized.
 
 typedef RsPeerId RsGxsNetTunnelVirtualPeerId ;
 
@@ -75,7 +94,7 @@ struct RsGxsNetTunnelVirtualPeerInfo
 		     RS_GXS_NET_TUNNEL_VP_STATUS_ACTIVE    = 0x02		// virtual peer id is known. Data can transfer.
 	     };
 
-	RsGxsNetTunnelVirtualPeerInfo() : vpid_status(RS_GXS_NET_TUNNEL_VP_STATUS_UNKNOWN) { memset(encryption_master_key,0,16) ; }
+	RsGxsNetTunnelVirtualPeerInfo() : vpid_status(RS_GXS_NET_TUNNEL_VP_STATUS_UNKNOWN) { memset(encryption_master_key,0,32) ; }
 	~RsGxsNetTunnelVirtualPeerInfo() ;
 
 	uint8_t vpid_status ;					// status of the peer
@@ -92,14 +111,23 @@ struct RsGxsNetTunnelVirtualPeerInfo
 
 struct RsGxsNetTunnelGroupInfo
 {
-	enum {	RS_GXS_NET_TUNNEL_GRP_STATUS_UNKNOWN            = 0x00,	// unknown status
-		    RS_GXS_NET_TUNNEL_GRP_STATUS_TUNNELS_REQUESTED  = 0x01,	// waiting for turtle to send some virtual peers.
-		    RS_GXS_NET_TUNNEL_GRP_STATUS_VPIDS_AVAILABLE    = 0x02	// some virtual peers are available
+	enum GroupStatus {
+		    RS_GXS_NET_TUNNEL_GRP_STATUS_UNKNOWN            = 0x00,	// unknown status
+		    RS_GXS_NET_TUNNEL_GRP_STATUS_IDLE               = 0x01,	// no virtual peers requested, just waiting
+		    RS_GXS_NET_TUNNEL_GRP_STATUS_TUNNELS_REQUESTED  = 0x02,	// virtual peers requested, and waiting for turtle to answer
+		    RS_GXS_NET_TUNNEL_GRP_STATUS_VPIDS_AVAILABLE    = 0x03	// some virtual peers are available. Data can be read/written
 	};
 
-	RsGxsNetTunnelGroupInfo() : group_status(RS_GXS_NET_TUNNEL_GRP_STATUS_UNKNOWN),last_contact(0) {}
+	enum GroupPolicy {
+		    RS_GXS_NET_TUNNEL_GRP_POLICY_UNKNOWN            = 0x00,	// nothing has been set
+		    RS_GXS_NET_TUNNEL_GRP_POLICY_PASSIVE            = 0x01,	// group is available for server side tunnels, but does not explicitely request tunnels
+		    RS_GXS_NET_TUNNEL_GRP_POLICY_ACTIVE             = 0x02,	// group explicitely request tunnels, if none available
+    };
 
-	uint8_t        group_status ;
+	RsGxsNetTunnelGroupInfo() : group_policy(RS_GXS_NET_TUNNEL_GRP_POLICY_PASSIVE),group_status(RS_GXS_NET_TUNNEL_GRP_STATUS_IDLE),last_contact(0) {}
+
+	GroupPolicy    group_policy ;
+	GroupStatus    group_status ;
 	time_t         last_contact ;
 	TurtleFileHash hash ;
 
@@ -112,27 +140,32 @@ public:
 	  RsGxsNetTunnelService() ;
 
 	  /*!
-	   * \brief start managing tunnels for this group
-	   *	@param group_id group for which tunnels should be requested
+	   * \brief Manage tunnels for this group
+	   *	@param group_id group for which tunnels should be released
 	   */
-      bool manage(const RsGxsGroupId& group_id) ;
+      bool requestPeers(const RsGxsGroupId&group_id) ;
 
 	  /*!
 	   * \brief Stop managing tunnels for this group
 	   *	@param group_id group for which tunnels should be released
 	   */
-      bool release(const RsGxsGroupId&group_id) ;
-
+      bool releasePeers(const RsGxsGroupId&group_id) ;
 
 	  /*!
-	   * \brief sendItem
+	   * \brief Get the list of active virtual peers for a given group. This implies that a tunnel is up and
+	   *        alive. This function also "registers" the group which allows to handle tunnel requests in the server side.
+	   */
+      bool getVirtualPeers(const RsGxsGroupId& group_id, std::list<RsGxsNetTunnelVirtualPeerId>& peers) ; 					// returns the virtual peers for this group
+
+	  /*!
+	   * \brief sendData
 	   *               send data to this virtual peer, and takes memory ownership (deletes the item)
 	   * \param item           item to send
 	   * \param virtual_peer   destination virtual peer
 	   * \return
 	   *               true if succeeded.
 	   */
-      bool sendItem(RsItem *& item, const RsGxsNetTunnelVirtualPeerId& virtual_peer) ;
+      bool sendData(unsigned char *& data, uint32_t data_len, const RsGxsNetTunnelVirtualPeerId& virtual_peer) ;
 
 	  /*!
 	   * \brief receivedItem
@@ -141,12 +174,6 @@ public:
 	   * \return
 	   */
       RsItem *receivedItem(const RsGxsNetTunnelVirtualPeerId& virtual_peer) ;
-
-	  /*!
-	   * \brief Get the list of active virtual peers for a given group. This implies that the tunnel is up and
-	   * alive.
-	   */
-      bool getVirtualPeers(const RsGxsGroupId&, std::list<RsPeerId>& peers) ; 					// returns the virtual peers for this group
 
 	  /*!
 	   * \brief dumps all information about monitored groups.
