@@ -743,6 +743,13 @@ bool ChatWidget::eventFilter(QObject *obj, QEvent *event)
 			}
 
 		}
+	} else {
+			if (event->type() == QEvent::WindowActivate) {
+				if (isVisible() && (window() == NULL || window()->isActiveWindow())) {
+					newMessages = false;
+					emit infoChanged(this);
+				}
+			}
 	}
 	// pass the event on to the parent class
 	return QWidget::eventFilter(obj, event);
