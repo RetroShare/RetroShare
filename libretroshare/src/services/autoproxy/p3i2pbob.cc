@@ -890,7 +890,7 @@ bool p3I2pBob::connectI2P()
 	}
 
 	// create socket
-	mSocket = unix_socket(AF_INET, SOCK_STREAM, 0);
+	mSocket = unix_socket(PF_INET, SOCK_STREAM, 0);
 	if (mSocket < 0)
 	{
 		rslog(RsLog::Warning, &i2pBobLogInfo, "connectI2P_locked Failed to open socket! Socket Error: " + socket_errorType(errno));
@@ -898,7 +898,7 @@ bool p3I2pBob::connectI2P()
 	}
 
 	// connect
-	int err = unix_connect(mSocket, (struct sockaddr *)&mI2PProxyAddr, sizeof(mI2PProxyAddr));
+	int err = unix_connect(mSocket, mI2PProxyAddr);
 	if (err != 0) {
 		rslog(RsLog::Warning, &i2pBobLogInfo, "connectI2P_locked Failed to connect to BOB! Socket Error: " + socket_errorType(errno));
 		return false;

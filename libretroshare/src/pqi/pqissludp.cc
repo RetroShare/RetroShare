@@ -250,22 +250,38 @@ int pqissludp::Initiate_Connection()
 
 		
 		{
-			std::cerr << "CONVERTING ALL ADDRESSES TO IPV4: TODO make IPV6";
-			std::cerr << std::endl;
-			
 			struct sockaddr_in srcaddr;
 			struct sockaddr_in proxyaddr;
 			struct sockaddr_in remoteaddr;
-			
-			if ((mConnectSrcAddr.ss_family != AF_INET) ||
-					(mConnectProxyAddr.ss_family != AF_INET) ||
-					(remote_addr.ss_family != AF_INET))
+
+			bool nonIpV4 = false;
+			if(!sockaddr_storage_ipv6_to_ipv4(remote_addr))
 			{
-				std::cerr << "Error One Address is not IPv4. aborting";
-				std::cerr << std::endl;
-				abort();
+				nonIpV4 = true;
+				std::cerr << __PRETTY_FUNCTION__ << "Error: remote_addr is not "
+				          << "valid IPv4!" << std::endl;
+				sockaddr_storage_dump(remote_addr);
 			}
-			
+			if(!sockaddr_storage_ipv6_to_ipv4(mConnectSrcAddr))
+			{
+				nonIpV4 = true;
+				std::cerr << __PRETTY_FUNCTION__ << "Error: mConnectSrcAddr is "
+				          << "not valid IPv4!" << std::endl;
+				sockaddr_storage_dump(mConnectSrcAddr);
+			}
+			if(!sockaddr_storage_ipv6_to_ipv4(mConnectProxyAddr))
+			{
+				nonIpV4 = true;
+				std::cerr << __PRETTY_FUNCTION__ << "Error: mConnectProxyAddr "
+				          << "is not valid IPv4!" << std::endl;
+				sockaddr_storage_dump(mConnectProxyAddr);
+			}
+			if(!nonIpV4)
+			{
+				print_stacktrace();
+				return -EINVAL;
+			}
+
 			struct sockaddr_in *rap = (struct sockaddr_in *) &remote_addr;
 			struct sockaddr_in *pap = (struct sockaddr_in *) &mConnectProxyAddr;
 			struct sockaddr_in *sap = (struct sockaddr_in *) &mConnectSrcAddr;

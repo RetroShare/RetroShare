@@ -169,11 +169,14 @@ void RsTickingThread::fullstop()
 
 void RsThread::start(const std::string &threadName)
 {
-    if(isRunning())
-    {
-        std::cerr << "(EE) RsThread \"" << threadName << "\" is already running. Will not start twice!" << std::endl;
-        return ;
-    }
+	if(isRunning())
+	{
+		std::cerr << "(EE) RsThread \"" << threadName
+		          << "\" is already running. Will not start twice!"
+		          << std::endl;
+		print_stacktrace();
+		return;
+	}
     pthread_t tid;
     void  *data = (void *)this ;
 
