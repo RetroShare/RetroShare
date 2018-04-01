@@ -35,6 +35,7 @@
 #include "pqi/p3linkmgr.h"
 #include "rsitems/rsnxsitems.h"
 #include "rsitems/rsgxsupdateitems.h"
+#include "rsgxsnettunnel.h"
 #include "rsgxsnetutils.h"
 #include "pqi/p3cfgmgr.h"
 #include "rsgixs.h"
@@ -394,6 +395,7 @@ private:
     void locked_pushGrpRespFromList(std::list<RsNxsItem*>& respList, const RsPeerId& peer, const uint32_t& transN);
     void locked_pushMsgRespFromList(std::list<RsNxsItem*>& itemL, const RsPeerId& sslId, const RsGxsGroupId &grp_id, const uint32_t& transN);
     
+	void checkDistantSyncState();
     void syncWithPeers();
     void syncGrpStatistics();
     void addGroupItemToList(NxsTransaction*& tr,
@@ -582,6 +584,8 @@ private:
 
 	uint32_t mDefaultMsgStorePeriod ;
 	uint32_t mDefaultMsgSyncPeriod ;
+
+	RsGxsNetTunnelService *mGxsNetTunnel;
 };
 
 #endif // RSGXSNETSERVICE_H

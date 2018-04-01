@@ -269,6 +269,7 @@
  	NXS_NET_DEBUG_5		summary of transactions (useful to just know what comes in/out)
     NXS_NET_DEBUG_6		group sync statistics (e.g. number of posts at nighbour nodes, etc)
  	NXS_NET_DEBUG_7		encryption/decryption of transactions
+ 	NXS_NET_DEBUG_8		gxs distant sync
 
  ***/
 //#define NXS_NET_DEBUG_0 	1
@@ -279,6 +280,7 @@
 //#define NXS_NET_DEBUG_5 	1
 //#define NXS_NET_DEBUG_6 	1
 //#define NXS_NET_DEBUG_7 	1
+#define NXS_NET_DEBUG_8 	1
 
 //#define NXS_FRAG
 
@@ -312,11 +314,12 @@ static const uint32_t RS_NXS_ITEM_ENCRYPTION_STATUS_GXS_KEY_MISSING     = 0x05 ;
 // Debug system to allow to print only for some IDs (group, Peer, etc)
 
 #if defined(NXS_NET_DEBUG_0) || defined(NXS_NET_DEBUG_1) || defined(NXS_NET_DEBUG_2)  || defined(NXS_NET_DEBUG_3) \
- || defined(NXS_NET_DEBUG_4) || defined(NXS_NET_DEBUG_5) || defined(NXS_NET_DEBUG_6)  || defined(NXS_NET_DEBUG_7)
+ || defined(NXS_NET_DEBUG_4) || defined(NXS_NET_DEBUG_5) || defined(NXS_NET_DEBUG_6)  || defined(NXS_NET_DEBUG_7) \
+ || defined(NXS_NET_DEBUG_8)
 
 static const RsPeerId     peer_to_print     = RsPeerId(std::string(""))   ;
 static const RsGxsGroupId group_id_to_print = RsGxsGroupId(std::string("")) ;	// use this to allow to this group id only, or "" for all IDs
-static const uint32_t     service_to_print  = RS_SERVICE_TYPE_GXS_TRANS ;                       	// use this to allow to this service id only, or 0 for all services
+static const uint32_t     service_to_print  = RS_SERVICE_GXS_TYPE_CHANNELS ;                       	// use this to allow to this service id only, or 0 for all services
 										// warning. Numbers should be SERVICE IDS (see serialiser/rsserviceids.h. E.g. 0x0215 for forums)
 
 class nullstream: public std::ostream {};
@@ -448,6 +451,7 @@ int RsGxsNetService::tick()
     {
         syncWithPeers();
         syncGrpStatistics();
+		checkDistantSyncState();
 
     	mSyncTs = now;
     }
@@ -566,7 +570,6 @@ void RsGxsNetService::syncWithPeers()
     std::set<RsPeerId> peers;
     mNetMgr->getOnlineList(mServiceInfo.mServiceType, peers);
 
-#ifdef TODO
 	if(mAllowDistSync)
 	{
 		// Grab all online virtual peers of distant tunnels for the current service.
@@ -575,9 +578,8 @@ void RsGxsNetService::syncWithPeers()
 		mGxsNetTunnel->getVirtualPeers(mServType,vpids);
 
 		for(auto it(vpids.begin());it!=vpids.end();++it)
-			peers.push_back(RsPeerId(*it)) ;
+			peers.insert(RsPeerId(*it)) ;
 	}
-#endif
 
     if (peers.empty()) {
         // nothing to do
@@ -735,6 +737,62 @@ void RsGxsNetService::syncWithPeers()
 #endif
 }
 
+void RsGxsNetService::checkDistantSyncState()
+{
+	if(!mAllowDistSync)
+		return ;
+
+	RsGxsGrpMetaTemporaryMap grpMeta;
+    mDataStore->retrieveGxsGrpMetaData(grpMeta);
+
+    // Go through group statistics and groups without information are re-requested to random peers selected
+    // among the ones who provided the group info.
+
+#ifdef NXS_NET_DEBUG_8
+    GXSNETDEBUG___<< "Checking distant sync for all groups." << std::endl;
+#endif
+	// get the list of online peers
+
+    std::set<RsPeerId> online_peers;
+    mNetMgr->getOnlineList(mServiceInfo.mServiceType , online_peers);
+
+	uint16_t service_id = ((mServiceInfo.mServiceType >> 8)& 0xffff);
+
+    RS_STACK_MUTEX(mNxsMutex) ;
+
+    for(auto it(grpMeta.begin());it!=grpMeta.end();++it)
+		if(it->second->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED)	// we only consider subscribed groups here.
+	    {
+#warning (cyril) We might need to also remove peers for recently unsubscribed groups
+			const RsGxsGroupId& grpId(it->first);
+		    const RsGxsGrpConfig& rec = locked_getGrpConfig(grpId) ;
+
+#ifdef NXS_NET_DEBUG_6
+		    GXSNETDEBUG__G(it->first) << "    group " << grpId;
+#endif
+			bool at_least_one_friend_is_supplier = false ;
+
+			for(auto it2(rec.suppliers.ids.begin());it2!=rec.suppliers.ids.end() && !at_least_one_friend_is_supplier;++it2)
+				if(online_peers.find(*it2) != online_peers.end())	                // check that the peer is online
+					at_least_one_friend_is_supplier = true ;
+
+			if(at_least_one_friend_is_supplier)
+			{
+				mGxsNetTunnel->releasePeers(service_id,grpId);
+#ifdef NXS_NET_DEBUG_8
+				GXSNETDEBUG___<< "  Group " << grpId << ": suppliers among friends. Releasing peers." << std::endl;
+#endif
+			}
+			else
+			{
+				mGxsNetTunnel->requestPeers(service_id,grpId);
+#ifdef NXS_NET_DEBUG_8
+				GXSNETDEBUG___<< "  Group " << grpId << ": no suppliers among friends. Requesting peers." << std::endl;
+#endif
+			}
+		}
+}
+
 void RsGxsNetService::syncGrpStatistics()
 {
     RS_STACK_MUTEX(mNxsMutex) ;
@@ -763,44 +821,44 @@ void RsGxsNetService::syncGrpStatistics()
 #endif
 
 	    if(rec.statistics_update_TS + GROUP_STATS_UPDATE_DELAY < now && rec.suppliers.ids.size() > 0)
-	    {
+		{
 #ifdef NXS_NET_DEBUG_6
-		    GXSNETDEBUG__G(it->first) << " needs update. Randomly asking to some friends" << std::endl;
+			GXSNETDEBUG__G(it->first) << " needs update. Randomly asking to some friends" << std::endl;
 #endif
-            // randomly select GROUP_STATS_UPDATE_NB_PEERS friends among the suppliers of this group
+			// randomly select GROUP_STATS_UPDATE_NB_PEERS friends among the suppliers of this group
 
-		    uint32_t n = RSRandom::random_u32() % rec.suppliers.ids.size() ;
+			uint32_t n = RSRandom::random_u32() % rec.suppliers.ids.size() ;
 
-		    std::set<RsPeerId>::const_iterator rit = rec.suppliers.ids.begin();
-		    for(uint32_t i=0;i<n;++i)
-			    ++rit ;
+			std::set<RsPeerId>::const_iterator rit = rec.suppliers.ids.begin();
+			for(uint32_t i=0;i<n;++i)
+				++rit ;
 
-		    for(uint32_t i=0;i<std::min(rec.suppliers.ids.size(),(size_t)GROUP_STATS_UPDATE_NB_PEERS);++i)
-                    {
-                // we started at a random position in the set, wrap around if the end is reached
-                if(rit == rec.suppliers.ids.end())
-                    rit = rec.suppliers.ids.begin() ;
-
-			RsPeerId peer_id = *rit ;
-			++rit ;
-
-                	if(online_peers.find(peer_id) != online_peers.end())	// check that the peer is online
+			for(uint32_t i=0;i<std::min(rec.suppliers.ids.size(),(size_t)GROUP_STATS_UPDATE_NB_PEERS);++i)
 			{
+				// we started at a random position in the set, wrap around if the end is reached
+				if(rit == rec.suppliers.ids.end())
+					rit = rec.suppliers.ids.begin() ;
+
+				RsPeerId peer_id = *rit ;
+				++rit ;
+
+				if(online_peers.find(peer_id) != online_peers.end())	// check that the peer is online
+				{
 #ifdef NXS_NET_DEBUG_6
-				GXSNETDEBUG_PG(peer_id,it->first) << "  asking friend " << peer_id << " for an update of stats for group " << it->first << std::endl;
+					GXSNETDEBUG_PG(peer_id,it->first) << "  asking friend " << peer_id << " for an update of stats for group " << it->first << std::endl;
 #endif
 
-				RsNxsSyncGrpStatsItem *grs = new RsNxsSyncGrpStatsItem(mServType) ;
+					RsNxsSyncGrpStatsItem *grs = new RsNxsSyncGrpStatsItem(mServType) ;
 
-				grs->request_type = RsNxsSyncGrpStatsItem::GROUP_INFO_TYPE_REQUEST ;
+					grs->request_type = RsNxsSyncGrpStatsItem::GROUP_INFO_TYPE_REQUEST ;
 
-				grs->grpId = it->first ;
-				grs->PeerId(peer_id) ;
+					grs->grpId = it->first ;
+					grs->PeerId(peer_id) ;
 
-				sendItem(grs) ;
+					sendItem(grs) ;
+				}
 			}
-                    }
-	    }
+		}
 #ifdef NXS_NET_DEBUG_6
 	    else
 		    GXSNETDEBUG__G(it->first) << " up to date." << std::endl;

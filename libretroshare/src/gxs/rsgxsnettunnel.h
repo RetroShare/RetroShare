@@ -87,6 +87,13 @@
 //        Therefore, virtual peers are stored separately from groups, because each one can sync multiple groups.
 //
 //      * virtual peers are also shared among services. This reduces the required amount of tunnels and tunnel requests to send.
+//
+//
+//   How do we know that a group needs distant sync?
+//		* look into GrpConfigMap for suppliers. Suppliers is cleared at load.
+//		* last_update_TS in GrpConfigMap is randomised so it cannot be used
+//      * we need a way to know that there's no suppliers for good reasons (not that we just started)
+//      *
 
 typedef RsPeerId RsGxsNetTunnelVirtualPeerId ;
 
@@ -105,16 +112,15 @@ struct RsGxsNetTunnelVirtualPeerInfo
 		     RS_GXS_NET_TUNNEL_VP_STATUS_ACTIVE    = 0x02		// virtual peer id is known. Data can transfer.
 	     };
 
-	RsGxsNetTunnelVirtualPeerInfo() : vpid_status(RS_GXS_NET_TUNNEL_VP_STATUS_UNKNOWN) { memset(encryption_master_key,0,32) ; }
+	RsGxsNetTunnelVirtualPeerInfo() : vpid_status(RS_GXS_NET_TUNNEL_VP_STATUS_UNKNOWN), last_contact(0),side(0) { memset(encryption_master_key,0,32) ; }
 	~RsGxsNetTunnelVirtualPeerInfo() ;
 
 	uint8_t vpid_status ;					// status of the peer
-	uint8_t side ;	                        // client/server
-	uint8_t encryption_master_key[32] ;		// key from which the encryption key is derived for each virtual peer (using H(master_key | random IV))
 	time_t  last_contact ;					// last time some data was sent/recvd
+	uint8_t side ;	                        // client/server
+	uint8_t encryption_master_key[32];
 
 	TurtleVirtualPeerId 		turtle_virtual_peer_id ;  // turtle peer to use when sending data to this vpid.
-	RsGxsGroupId                group_id ;		          // group id
 
 	std::map<uint16_t,RsGxsNetTunnelVirtualPeerProvidingSet> providing_set;	// partial list of groups provided by this virtual peer id, based on tunnel results, for each service
 };
@@ -155,13 +161,13 @@ public:
 	   * \brief Manage tunnels for this group
 	   *	@param group_id group for which tunnels should be released
 	   */
-      bool requestPeers(const RsGxsGroupId&group_id) ;
+      bool requestPeers(uint16_t service_id, const RsGxsGroupId&group_id) ;
 
 	  /*!
 	   * \brief Stop managing tunnels for this group
 	   *	@param group_id group for which tunnels should be released
 	   */
-      bool releasePeers(const RsGxsGroupId&group_id) ;
+      bool releasePeers(uint16_t service_id,const RsGxsGroupId&group_id) ;
 
 	  /*!
 	   * \brief Get the list of active virtual peers for a given group. This implies that a tunnel is up and

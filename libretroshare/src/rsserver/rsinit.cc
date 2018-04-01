@@ -1386,10 +1386,10 @@ int RsServer::StartupRetroShare()
 
         // create GXS photo service
         RsGxsNetService* gxschannels_ns = new RsGxsNetService(
-                        RS_SERVICE_GXS_TYPE_CHANNELS, gxschannels_ds, nxsMgr,
-                        mGxsChannels, mGxsChannels->getServiceInfo(), 
-			mReputations, mGxsCircles,mGxsIdService,
-			pgpAuxUtils);
+		            RS_SERVICE_GXS_TYPE_CHANNELS, gxschannels_ds, nxsMgr,
+		            mGxsChannels, mGxsChannels->getServiceInfo(),
+		            mReputations, mGxsCircles,mGxsIdService,
+		            pgpAuxUtils,true,true,true);
 
     mGxsChannels->setNetworkExchangeService(gxschannels_ns) ;
 
