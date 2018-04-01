@@ -45,6 +45,7 @@ static std::list<RsPeerId> waitingIds;
 
 /****
  *#define PGRP_DEBUG 1
+ *#define PGRP_DEBUG_LOG 1
  ****/
 
 #define DEFAULT_DOWNLOAD_KB_RATE	(200.0)
@@ -420,7 +421,9 @@ int     pqipersongrp::addPeer(const RsPeerId& id)
 		sm -> pqi = pqip;
 	
 		// reset it to start it working.
+#ifdef PGRP_DEBUG_LOG
 		pqioutput(PQL_WARNING, pqipersongrpzone, "pqipersongrp::addPeer() => reset() called to initialise new person");
+#endif
 		pqip -> reset();
 		pqip -> listen();
 

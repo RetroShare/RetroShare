@@ -61,6 +61,7 @@ static struct RsLog::logInfo pqisslzoneInfo = {RsLog::Default, "pqisslzone"};
 
 #define PQISSL_DEBUG 		1
 #define PQISSL_LOG_DEBUG 	1
+#define PQISSL_LOG_DEBUG2 	1
 
 const int PQISSL_LOCAL_FLAG = 0x01;
 const int PQISSL_REMOTE_FLAG = 0x02;
@@ -269,7 +270,9 @@ int 	pqissl::reset_locked()
 #endif
 	}
 
+#ifdef PQISSL_LOG_DEBUG2
 	rslog(RSL_ALERT, pqisslzone, outLog);
+#endif
 
 	// notify people of problem!
 	// but only if we really shut something down.
@@ -678,7 +681,9 @@ int 	pqissl::Initiate_Connection()
 		std::string out;
 		rs_sprintf(out, "pqissl::Initiate_Connection() Connecting To: %s via: ", PeerId().toStdString().c_str());
 		out += sockaddr_storage_tostring(addr);
+#ifdef PQISSL_LOG_DEBUG2
 		rslog(RSL_WARNING, pqisslzone, out);
+#endif
 	}
 
 	if (sockaddr_storage_isnull(addr))
@@ -832,10 +837,14 @@ bool  	pqissl::CheckConnectionTimeout()
 		std::string out;
 		rs_sprintf(out, "pqissl::Basic_Connection_Complete() Connection Timed Out. Peer: %s Period: %lu", PeerId().toStdString().c_str(), mConnectTimeout);
 
+#ifdef PQISSL_LOG_DEBUG2
 		rslog(RSL_WARNING, pqisslzone, out);
+#endif
 		/* as sockfd is valid, this should close it all up */
 		
+#ifdef PQISSL_LOG_DEBUG2
 		rslog(RSL_ALERT, pqisslzone, "pqissl::Basic_Connection_Complete() -> calling reset()");
+#endif
 		reset_locked();
 		return true;
 	}
@@ -974,7 +983,9 @@ int 	pqissl::Basic_Connection_Complete()
 			{
 				std::string out;
 				rs_sprintf(out, "pqissl::Basic_Connection_Complete() TCP Connection Complete: cert: %s on osock: ", PeerId().toStdString().c_str(), sockfd);
+#ifdef PQISSL_LOG_DEBUG2
 				rslog(RSL_WARNING, pqisslzone, out);
+#endif
 			}
 			return 1;
 		}
