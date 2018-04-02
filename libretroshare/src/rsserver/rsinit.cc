@@ -1300,7 +1300,7 @@ int RsServer::StartupRetroShare()
                         RS_SERVICE_GXS_TYPE_GXSID, gxsid_ds, nxsMgr,
 			mGxsIdService, mGxsIdService->getServiceInfo(),
 			mReputations, mGxsCircles,mGxsIdService,
-			pgpAuxUtils,
+			pgpAuxUtils,NULL,
             false,false); // don't synchronise group automatic (need explicit group request)
                         // don't sync messages at all.
 
@@ -1319,9 +1319,7 @@ int RsServer::StartupRetroShare()
                         RS_SERVICE_GXS_TYPE_GXSCIRCLE, gxscircles_ds, nxsMgr,
                         mGxsCircles, mGxsCircles->getServiceInfo(), 
 			mReputations, mGxsCircles,mGxsIdService,
-			pgpAuxUtils,
-	            	true,	// synchronise group automatic 
-                    	true); 	// sync messages automatic, since they contain subscription requests.
+			pgpAuxUtils);
 
 		mGxsCircles->setNetworkExchangeService(gxscircles_ns) ;
     
@@ -1379,6 +1377,8 @@ int RsServer::StartupRetroShare()
 
         /**** Channel GXS service ****/
 
+		RsGxsNetTunnelService *mGxsNetTunnel = new RsGxsNetTunnelService ;
+
         RsGeneralDataService* gxschannels_ds = new RsDataService(currGxsDir + "/", "gxschannels_db",
                                                             RS_SERVICE_GXS_TYPE_CHANNELS, NULL, rsInitConfig->gxs_passwd);
 
@@ -1389,7 +1389,7 @@ int RsServer::StartupRetroShare()
 		            RS_SERVICE_GXS_TYPE_CHANNELS, gxschannels_ds, nxsMgr,
 		            mGxsChannels, mGxsChannels->getServiceInfo(),
 		            mReputations, mGxsCircles,mGxsIdService,
-		            pgpAuxUtils,true,true,true);
+		            pgpAuxUtils,mGxsNetTunnel,true,true,true);
 
     mGxsChannels->setNetworkExchangeService(gxschannels_ns) ;
 
@@ -1444,7 +1444,7 @@ int RsServer::StartupRetroShare()
 	RsGxsNetService* gxstrans_ns = new RsGxsNetService(
 	            RS_SERVICE_TYPE_GXS_TRANS, gxstrans_ds, nxsMgr, mGxsTrans,
 	            mGxsTrans->getServiceInfo(), mReputations, mGxsCircles,
-	            mGxsIdService, pgpAuxUtils,true,true,p3GxsTrans::GXS_STORAGE_PERIOD,p3GxsTrans::GXS_SYNC_PERIOD);
+	            mGxsIdService, pgpAuxUtils,NULL,true,true,false,p3GxsTrans::GXS_STORAGE_PERIOD,p3GxsTrans::GXS_SYNC_PERIOD);
 
 	mGxsTrans->setNetworkExchangeService(gxstrans_ns);
 	pqih->addService(gxstrans_ns, true);
@@ -1486,6 +1486,7 @@ int RsServer::StartupRetroShare()
 
 	// connect components to turtle router.
 
+	mGxsNetTunnel->connectToTurtleRouter(tr) ;
 	ftserver->connectToTurtleRouter(tr) ;
     ftserver->connectToFileDatabase(fdb) ;
     chatSrv->connectToGxsTunnelService(mGxsTunnels) ;
@@ -1824,6 +1825,8 @@ int RsServer::StartupRetroShare()
     //rsWire = mWire;
 
 	/*** start up GXS core runner ***/
+	startServiceThread(mGxsNetTunnel, "gxs net tunnel");
+
 	startServiceThread(mGxsIdService, "gxs id");
 	startServiceThread(mGxsCircles, "gxs circle");
 	startServiceThread(mPosted, "gxs posted");
