@@ -165,7 +165,6 @@ build_script:
 
 artifacts:
   - path: '**\*.exe'
-  - path: '**'
 #
 #  # pushing a single file
 #  - path: test.zip
