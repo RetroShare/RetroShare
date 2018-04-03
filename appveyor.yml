@@ -164,8 +164,8 @@ build_script:
 #---------------------------------#
 
 artifacts:
-  - path: '..\RetroShare'
   - path: '**\*.exe'
+  - path: '**'
 #
 #  # pushing a single file
 #  - path: test.zip
