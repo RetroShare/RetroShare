@@ -164,7 +164,9 @@ build_script:
 #---------------------------------#
 
 artifacts:
-  - path: retroshare-gui
+  - path: release/retroshare.exe
+
+  - path: .
 #
 #  # pushing a single file
 #  - path: test.zip
