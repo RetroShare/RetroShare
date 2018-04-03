@@ -153,7 +153,7 @@ after_build:
 # to run your custom scripts instead of automatic MSBuild
 build_script:
   - cd C:\projects\RetroShare
-  - qmake
+  - qmake "CONFIG+=static"
   - make
 
 # to disable automatic builds
