@@ -163,7 +163,8 @@ build_script:
 #      artifacts configuration    #
 #---------------------------------#
 
-#artifacts:
+artifacts:
+  - path: retroshare-gui
 #
 #  # pushing a single file
 #  - path: test.zip
