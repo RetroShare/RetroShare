@@ -164,9 +164,7 @@ build_script:
 #---------------------------------#
 
 artifacts:
-  - path: release/retroshare.exe
-
-  - path: .
+  - path: $(APPVEYOR_BUILD_FOLDER)
 #
 #  # pushing a single file
 #  - path: test.zip
