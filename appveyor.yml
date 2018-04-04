@@ -69,7 +69,8 @@ environment:
 
 
 # build cache to preserve files/folders between builds
-#cache:
+cache:
+  - C:\msys64\var\cache\pacman\pkg
 #  - c:\projects\libs
 #  - packages -> **\packages.config  # preserve "packages" directory in the root of build folder but will reset it if packages.config is modified
 #  - projectA\libs
