@@ -39,17 +39,6 @@
 RsGxsNetTunnelService::RsGxsNetTunnelService(): mGxsNetTunnelMtx("GxsNetTunnel") {}
 
 //===========================================================================================================================================//
-//                                                             Internal structures                                                           //
-//===========================================================================================================================================//
-
-RsGxsNetTunnelVirtualPeerInfo::~RsGxsNetTunnelVirtualPeerInfo()
-{
-	for(auto it(providing_set.begin());it!=providing_set.end();++it)
-		for(auto it2(it->second.incoming_data.begin());it2!=it->second.incoming_data.end();++it2)
-			delete *it2 ;
-}
-
-//===========================================================================================================================================//
 //                                                               Transport Items                                                             //
 //===========================================================================================================================================//
 
@@ -140,6 +129,40 @@ RsGxsNetTunnelService::~RsGxsNetTunnelService()
 	mGroups.clear();
 	mHandledHashes.clear();
 	mVirtualPeers.clear();
+	mIncomingData.clear();
+}
+
+bool RsGxsNetTunnelService::isDistantPeer(const RsGxsNetTunnelVirtualPeerId& virtual_peer)
+{
+	RS_STACK_MUTEX(mGxsNetTunnelMtx);
+
+	return mVirtualPeers.find(virtual_peer) != mVirtualPeers.end();
+}
+
+bool RsGxsNetTunnelService::receiveData(uint16_t service_id,unsigned char *& data,uint32_t& data_len,RsGxsNetTunnelVirtualPeerId& virtual_peer)
+{
+	RS_STACK_MUTEX(mGxsNetTunnelMtx);
+
+	std::list<std::pair<RsGxsNetTunnelVirtualPeerId,RsTlvBinaryData*> >& lst(mIncomingData[service_id]) ;
+
+	if(lst.empty())
+	{
+		data = NULL;
+		data_len = 0;
+		return false ;
+	}
+
+	data = (unsigned char*)lst.front().second->bin_data ;
+	data_len = lst.front().second->bin_len ;
+	virtual_peer = lst.front().first;
+
+	lst.front().second->bin_data = NULL ; // avoids deletion
+	lst.front().second->bin_len = 0 ; // avoids deletion
+
+	delete lst.front().second;
+	lst.pop_front();
+
+	return true;
 }
 
 bool RsGxsNetTunnelService::sendData(unsigned char *& data,uint32_t data_len,const RsGxsNetTunnelVirtualPeerId& virtual_peer)
@@ -297,12 +320,12 @@ void RsGxsNetTunnelService::dump() const
 	for(auto it(mVirtualPeers.begin());it!=mVirtualPeers.end();++it)
 	{
 		std::cerr << "  GXS Peer:" << it->first << " Turtle:" << it->second.turtle_virtual_peer_id
-			      << "  status: " <<  vpid_status_str[it->second.vpid_status] << " s: "
+			      << "  status: " <<  vpid_status_str[it->second.vpid_status] << " direction: "
 			      << (int)it->second.side << " last seen " << time(NULL)-it->second.last_contact
-			      << " ekey: " << RsUtil::BinToHex(it->second.encryption_master_key,RS_GXS_TUNNEL_CONST_EKEY_SIZE) << std::endl;
+			      << " ekey: " << RsUtil::BinToHex(it->second.encryption_master_key,RS_GXS_TUNNEL_CONST_EKEY_SIZE,10) << std::endl;
 
 		for(auto it2(it->second.providing_set.begin());it2!=it->second.providing_set.end();++it2)
-			std::cerr << "    service " << std::hex << it2->first << std::dec << "   " << it2->second.provided_groups.size() << " groups, " << it2->second.incoming_data.size() << " data" << std::endl;
+			std::cerr << "    service " << std::hex << it2->first << std::dec << "   " << it2->second.provided_groups.size() << " groups" << std::endl;
 	}
 
 	std::cerr << "Hashes: " << std::endl;
@@ -422,8 +445,6 @@ void RsGxsNetTunnelService::receiveTurtleData(RsTurtleGenericTunnelItem *item,co
 		return;
 	}
 
-	RsGxsNetTunnelVirtualPeerInfo& vp_info(it2->second) ;
-
 	uint16_t service_id = getRsItemService(getRsItemId(data)) ;
 
 #ifdef DEBUG_RSGXSNETTUNNEL
@@ -437,7 +458,7 @@ void RsGxsNetTunnelService::receiveTurtleData(RsTurtleGenericTunnelItem *item,co
 	bind->bin_len = data_size;
 	bind->bin_data = data;
 
-	vp_info.providing_set[service_id].incoming_data.push_back(bind) ;
+	mIncomingData[service_id].push_back(std::make_pair(gxs_vpid,bind)) ;
 }
 
 void RsGxsNetTunnelService::addVirtualPeer(const TurtleFileHash& hash, const TurtleVirtualPeerId& vpid,RsTurtleGenericTunnelItem::Direction dir)
@@ -459,6 +480,7 @@ void RsGxsNetTunnelService::addVirtualPeer(const TurtleFileHash& hash, const Tur
 
 	RsGxsNetTunnelGroupInfo& ginfo( mGroups[group_id] ) ;
 	ginfo.group_status = RsGxsNetTunnelGroupInfo::RS_GXS_NET_TUNNEL_GRP_STATUS_VPIDS_AVAILABLE ;
+	ginfo.virtual_peers.insert(vpid);
 
 	uint8_t encryption_master_key[RS_GXS_TUNNEL_CONST_EKEY_SIZE];
 

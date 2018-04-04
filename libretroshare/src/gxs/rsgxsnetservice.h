@@ -495,6 +495,9 @@ private:
     void cleanRejectedMessages();
     void processObserverNotifications();
 
+	void generic_sendItem(RsNxsItem *si);
+	RsItem *generic_recvItem();
+
 private:
 
 	static void locked_checkDelay(uint32_t& time_in_secs);

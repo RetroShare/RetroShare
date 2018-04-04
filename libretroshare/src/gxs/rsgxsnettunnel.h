@@ -113,7 +113,7 @@ struct RsGxsNetTunnelVirtualPeerInfo
 	     };
 
 	RsGxsNetTunnelVirtualPeerInfo() : vpid_status(RS_GXS_NET_TUNNEL_VP_STATUS_UNKNOWN), last_contact(0),side(0) { memset(encryption_master_key,0,32) ; }
-	~RsGxsNetTunnelVirtualPeerInfo() ;
+	virtual ~RsGxsNetTunnelVirtualPeerInfo(){}
 
 	uint8_t vpid_status ;					// status of the peer
 	time_t  last_contact ;					// last time some data was sent/recvd
@@ -186,12 +186,24 @@ public:
       bool sendData(unsigned char *& data, uint32_t data_len, const RsGxsNetTunnelVirtualPeerId& virtual_peer) ;
 
 	  /*!
-	   * \brief receivedItem
-	   *                 returns the next received item from the given virtual peer.
-	   * \param virtual_peer
+	   * \brief receiveData
+	   *                 returns the next piece of data received fro the given service, and the virtual GXS peer that sended it.
+	   * \param service_id        service that provide the data
+	   * \param data              memory check containing the data. Memory ownership belongs to the client.
+	   * \param data_len          length of memory chunk
+	   * \param virtual_peer      peer who sent the data
 	   * \return
+	   *                          true if something is returned. If not, data is set to NULL, data_len to 0.
 	   */
-      RsItem *receivedItem(const RsGxsNetTunnelVirtualPeerId& virtual_peer) ;
+      bool receiveData(uint16_t service_id,unsigned char *& data,uint32_t& data_len,RsGxsNetTunnelVirtualPeerId& virtual_peer) ;
+
+	  /*!
+	   * \brief isDistantPeer
+	   *                 returns wether the peer is in the list of available distant peers or not
+	   * \return    true if the peer is a distant GXS peer.
+	   */
+
+	  bool isDistantPeer(const RsGxsNetTunnelVirtualPeerId& virtual_peer) ;
 
 	  /*!
 	   * \brief dumps all information about monitored groups.
@@ -233,6 +245,8 @@ private:
 	  std::map<TurtleVirtualPeerId, RsGxsNetTunnelVirtualPeerId>           mTurtle2GxsPeer ; // convertion table to find GXS peer id from turtle
 
 	  std::list<std::pair<TurtleVirtualPeerId,RsTurtleGenericDataItem*> >  mPendingTurtleItems ; // items that need to be sent off-turtle Mutex.
+
+	  std::map<uint16_t,std::list<std::pair<RsGxsNetTunnelVirtualPeerId,RsTlvBinaryData *> > > mIncomingData; // list of incoming data items, per service.
 
 	  /*!
 	   * \brief Generates the hash to request tunnels for this group. This hash is only used by turtle, and is used to

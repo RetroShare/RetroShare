@@ -336,7 +336,6 @@ static std::string nice_time_stamp(time_t now,time_t TS)
     }
 }
 
-
 static std::ostream& gxsnetdebug(const RsPeerId& peer_id,const RsGxsGroupId& grp_id,uint32_t service_type)
 {
     static nullstream null ;
@@ -611,7 +610,7 @@ void RsGxsNetService::syncWithPeers()
 #ifdef NXS_NET_DEBUG_5
 	GXSNETDEBUG_P_(*sit) << "Service "<< std::hex << ((mServiceInfo.mServiceType >> 8)& 0xffff) << std::dec << "  sending global group TS of peer id: " << *sit << " ts=" << nice_time_stamp(time(NULL),updateTS) << " (secs ago) to himself" << std::endl;
 #endif
-        sendItem(grp);
+        generic_sendItem(grp);
     }
 
     if(!mAllowMsgSync)
@@ -727,7 +726,7 @@ void RsGxsNetService::syncWithPeers()
 #ifdef NXS_NET_DEBUG_7
 	    GXSNETDEBUG_PG(*sit,grpId) << "    Service " << std::hex << ((mServiceInfo.mServiceType >> 8)& 0xffff) << std::dec << "  sending message TS of peer id: " << *sit << " ts=" << nice_time_stamp(time(NULL),updateTS) << " (secs ago) for group " << grpId << " to himself - in clear " << std::endl;
 #endif
-	    sendItem(msg);
+	    generic_sendItem(msg);
 
 #ifdef NXS_NET_DEBUG_5
 		GXSNETDEBUG_PG(*sit,grpId) << "Service "<< std::hex << ((mServiceInfo.mServiceType >> 8)& 0xffff) << std::dec << "  sending global message TS of peer id: " << *sit << " ts=" << nice_time_stamp(time(NULL),updateTS) << " (secs ago) for group " << grpId << " to himself" << std::endl;
@@ -736,6 +735,28 @@ void RsGxsNetService::syncWithPeers()
     }
 
 #endif
+}
+
+void RsGxsNetService::generic_sendItem(RsNxsItem *si)
+{
+	// check if the item is to be sent to a distant peer or not
+
+	if(mAllowDistSync && mGxsNetTunnel->isDistantPeer( static_cast<RsGxsNetTunnelVirtualPeerId>(si->PeerId())))
+	{
+		RsNxsSerialiser ser(mServType);
+
+		uint32_t size = ser.size(si);
+		unsigned char *mem = (unsigned char *)rs_malloc(size) ;
+
+		if(!mem)
+			return ;
+
+		ser.serialise(si,mem,&size) ;
+
+		mGxsNetTunnel->sendData(mem,size,static_cast<RsGxsNetTunnelVirtualPeerId>(si->PeerId()));
+	}
+	else
+		sendItem(si) ;
 }
 
 void RsGxsNetService::checkDistantSyncState()
@@ -757,8 +778,6 @@ void RsGxsNetService::checkDistantSyncState()
     std::set<RsPeerId> online_peers;
     mNetMgr->getOnlineList(mServiceInfo.mServiceType , online_peers);
 
-	uint16_t service_id = ((mServiceInfo.mServiceType >> 8)& 0xffff);
-
     RS_STACK_MUTEX(mNxsMutex) ;
 
     for(auto it(grpMeta.begin());it!=grpMeta.end();++it)
@@ -779,14 +798,14 @@ void RsGxsNetService::checkDistantSyncState()
 
 			if(at_least_one_friend_is_supplier)
 			{
-				mGxsNetTunnel->releasePeers(service_id,grpId);
+				mGxsNetTunnel->releasePeers(mServType,grpId);
 #ifdef NXS_NET_DEBUG_8
 				GXSNETDEBUG___<< "  Group " << grpId << ": suppliers among friends. Releasing peers." << std::endl;
 #endif
 			}
 			else
 			{
-				mGxsNetTunnel->requestPeers(service_id,grpId);
+				mGxsNetTunnel->requestPeers(mServType,grpId);
 #ifdef NXS_NET_DEBUG_8
 				GXSNETDEBUG___<< "  Group " << grpId << ": no suppliers among friends. Requesting peers." << std::endl;
 #endif
@@ -856,7 +875,7 @@ void RsGxsNetService::syncGrpStatistics()
 					grs->grpId = it->first ;
 					grs->PeerId(peer_id) ;
 
-					sendItem(grs) ;
+					generic_sendItem(grs) ;
 				}
 			}
 		}
@@ -937,7 +956,7 @@ void RsGxsNetService::handleRecvSyncGrpStatistics(RsNxsSyncGrpStatsItem *grs)
 	    GXSNETDEBUG_PG(grs->PeerId(),grs->grpId) << "  sending back statistics item with " << vec.size() << " elements." << std::endl;
 #endif
 
-	    sendItem(grs_resp) ;
+	    generic_sendItem(grs_resp) ;
     }
     else if(grs->request_type == RsNxsSyncGrpStatsItem::GROUP_INFO_TYPE_RESPONSE)
 	{
@@ -1638,11 +1657,30 @@ RsSerialiser *RsGxsNetService::setupSerialiser()
     return rss;
 }
 
+RsItem *RsGxsNetService::generic_recvItem()
+{
+	{
+		RsItem *item ;
+
+		if(NULL != (item=recvItem()))
+			return item ;
+	}
+
+	unsigned char *data = NULL ;
+	uint32_t size = 0 ;
+	RsGxsNetTunnelVirtualPeerId virtual_peer_id ;
+
+	if(mGxsNetTunnel->receiveData(mServType,data,size,virtual_peer_id))
+		return dynamic_cast<RsNxsItem*>(RsNxsSerialiser(mServType).deserialise(data,&size)) ;
+
+	return NULL ;
+}
+
 void RsGxsNetService::recvNxsItemQueue()
 {
     RsItem *item ;
 
-    while(NULL != (item=recvItem()))
+    while(NULL != (item=generic_recvItem()))
     {
 #ifdef NXS_NET_DEBUG_1
         GXSNETDEBUG_P_(item->PeerId()) << "Received RsGxsNetService Item:" << (void*)item << " type=" << std::hex << item->PacketId() << std::dec << std::endl ;
@@ -2243,7 +2281,7 @@ void RsGxsNetService::processTransactions()
                     lit_end = tr->mItems.end();
 
                     for(; lit != lit_end; ++lit){
-                        sendItem(*lit);
+                        generic_sendItem(*lit);
                     }
 
                     tr->mItems.clear(); // clear so they don't get deleted in trans cleaning
@@ -2352,7 +2390,7 @@ void RsGxsNetService::processTransactions()
                     trans->transactFlag = RsNxsTransacItem::FLAG_END_SUCCESS;
                     trans->transactionNumber = transN;
                     trans->PeerId(tr->mTransaction->PeerId());
-                    sendItem(trans);
+                    generic_sendItem(trans);
 
                     // move to completed transactions
 
@@ -2395,7 +2433,7 @@ void RsGxsNetService::processTransactions()
                                     (tr->mTransaction->transactFlag & RsNxsTransacItem::FLAG_TYPE_MASK);
                     trans->transactionNumber = transN;
                     trans->PeerId(tr->mTransaction->PeerId());
-                    sendItem(trans);
+                    generic_sendItem(trans);
                     tr->mFlag = NxsTransaction::FLAG_STATE_RECEIVING;
 
                 }
@@ -2772,7 +2810,7 @@ void RsGxsNetService::locked_pushMsgTransactionFromList(std::list<RsNxsItem*>& r
     newTrans->mTransaction->PeerId(mOwnId);
 
     if (locked_addTransaction(newTrans))
-    	sendItem(transac);
+    	generic_sendItem(transac);
     else
     {
         delete newTrans;
@@ -3068,7 +3106,7 @@ void RsGxsNetService::locked_pushGrpTransactionFromList( std::list<RsNxsItem*>& 
 	newTrans->mTransaction->PeerId(mOwnId);
 
     if (locked_addTransaction(newTrans))
-	    sendItem(transac);
+	    generic_sendItem(transac);
     else
     {
 	    delete newTrans;
@@ -3272,8 +3310,8 @@ void RsGxsNetService::locked_genSendGrpsTransaction(NxsTransaction* tr)
 	ntr->PeerId(tr->mTransaction->PeerId());
 
 	if(locked_addTransaction(newTr))
-		sendItem(ntr);
-        else
+		generic_sendItem(ntr);
+	else
         {
             delete ntr ;
             delete newTr;
@@ -3567,7 +3605,7 @@ void RsGxsNetService::locked_genSendMsgsTransaction(NxsTransaction* tr)
     ntr->PeerId(tr->mTransaction->PeerId());
 
     if(locked_addTransaction(newTr))
-	    sendItem(ntr);
+		generic_sendItem(ntr);
     else
     {
 	    delete ntr ;
@@ -3886,7 +3924,7 @@ void RsGxsNetService::locked_pushGrpRespFromList(std::list<RsNxsItem*>& respList
                                     << peer << " with " << respList.size() << " groups " << std::endl;
 #endif
 	if(locked_addTransaction(tr))
-	    sendItem(trItem);
+	    generic_sendItem(trItem);
     else
     {
         delete tr ;
@@ -4411,7 +4449,7 @@ void RsGxsNetService::locked_pushMsgRespFromList(std::list<RsNxsItem*>& itemL, c
 #endif
 	// signal peer to prepare for transaction
 	if(locked_addTransaction(tr))
-		sendItem(trItem);
+		generic_sendItem(trItem);
 	else
 	{
 		delete tr ;
@@ -4798,7 +4836,7 @@ void RsGxsNetService::sharePublishKeysPending()
             publishKeyItem->private_key = publishKey ;
             publishKeyItem->PeerId(*it);
 
-            sendItem(publishKeyItem);
+            generic_sendItem(publishKeyItem);
 #ifdef NXS_NET_DEBUG_3
             GXSNETDEBUG_PG(*it,grpMeta->mGroupId) << "  sent key item to " << *it << std::endl;
 #endif
