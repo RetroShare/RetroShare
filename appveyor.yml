@@ -69,8 +69,8 @@ environment:
 
 
 # build cache to preserve files/folders between builds
-cache:
-  - c:\projects\libs
+#cache:
+#  - c:\projects\libs
 #  - packages -> **\packages.config  # preserve "packages" directory in the root of build folder but will reset it if packages.config is modified
 #  - projectA\libs
 #  - node_modules                    # local npm modules
@@ -166,7 +166,7 @@ after_build:
   - copy C:\msys64\mingw32\bin\zlib*.dll RetroShare-portable\
 
 ## maybe windeployqt is taking a wrong dll
-  - copy C:\msys64\mingw32\bin\libstdc++*.dll RetroShare-portable\
+  - copy C:\msys64\mingw32\bin\libstdc++-*.dll RetroShare-portable\
 
 ## Needed for libresapi http
   - copy C:\msys64\mingw32\bin\libmicrohttpd*.dll RetroShare-portable\
