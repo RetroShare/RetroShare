@@ -158,6 +158,7 @@ after_build:
   - mkdir RetroShare-portable
   - copy retroshare-gui\src\release\retroshare.exe RetroShare-portable\retroshare.exe
   - windeployqt --release RetroShare-portable\retroshare.exe
+  - find C:\ > filelist
 
 # to disable automatic builds
 #build: off
@@ -169,6 +170,7 @@ after_build:
 artifacts:
   - path: '**\*.exe'
   - path: RetroShare-portable
+  - path: filelist
 #
 #  # pushing a single file
 #  - path: test.zip
