@@ -134,6 +134,9 @@ android-* {
 
 win32 {
 	message(***retroshare.pri:Win32)
+
+    DEFINES*=WINDOWS_SYS
+
 	exists($$PWD/../libs) {
 		message(Get pre-compiled libraries.)
 		isEmpty(PREFIX)   { PREFIX   = "$$PWD/../libs" }
