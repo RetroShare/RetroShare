@@ -163,8 +163,8 @@ after_build:
   - copy C:\msys64\mingw32\bin\zlib*.dll RetroShare-portable\
 
 ## windeployqt takes the wrong dll
+  - copy C:\msys64\mingw32\bin\libgcc_s_dw2*.dll RetroShare-portable\
   - copy C:\msys64\mingw32\bin\libstdc*.dll RetroShare-portable\
-
   - copy C:\msys64\mingw32\bin\libwinpthread*.dll RetroShare-portable\
 
 ## Needed for libresapi http
