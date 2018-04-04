@@ -63,7 +63,7 @@ clone_depth: 1                       # clone entire repository history if not de
 environment:
   global:
     #Qt: https://www.appveyor.com/docs/installed-software#qt
-    QTDIR: C:\Qt\5.10.1\mingw53_32
+#    QTDIR: C:\Qt\5.10.1\mingw53_32
     MSYS2_ARCH: i686
     TARGET: i686_32-pc-msys
 
@@ -90,10 +90,9 @@ install:
   - set PATH=C:\msys64\usr\bin;%PATH%
   - set PATH=C:\msys64\mingw32\bin;%PATH%
   # Configuring Qt
-  - set PATH=%QTDIR%\bin;C:\Qt\Tools\mingw491_32\bin;%PATH%
+#  - set PATH=%QTDIR%\bin;C:\Qt\Tools\mingw491_32\bin;%PATH%
   # Install all default programms
   #- C:\msys64\usr\bin\bash -lc "pacman --noconfirm -Sy base-devel git mercurial cvs wget p7zip gcc perl ruby python2" #Already installed
-  - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -Sy openssl-devel"
   # Install toolchain
   #- C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-toolchain mingw-w64-x86_64-toolchain" #Already installed
   # Install other binutils
@@ -107,6 +106,8 @@ install:
   - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-ffmpeg mingw-w64-x86_64-ffmpeg"
   - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-libmicrohttpd mingw-w64-x86_64-libmicrohttpd"
   - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-libxslt mingw-w64-x86_64-libxslt"
+
+  - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-toolchain mingw-w64-i686-bzip2 mingw-w64-i686-gcc mingw-w64-i686-openssl mingw-w64-i686-make mingw-w64-i686-qt5"
 
   # Hack for new MSys2
   - copy C:\msys64\mingw32\i686-w64-mingw32\bin\ar.exe C:\msys64\mingw32\bin\i686-w64-mingw32-ar.exe
@@ -146,8 +147,8 @@ before_package:
 # to run your custom scripts instead of automatic MSBuild
 build_script:
   - cd C:\projects\RetroShare
-  - qmake
-  - make -j3
+  - C:\msys64\mingw32\bin\qmake.exe
+  - C:\msys64\mingw32\bin\mingw32-make.exe -j3
 
 # scripts to run after build
 after_build:
