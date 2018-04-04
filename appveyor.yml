@@ -176,6 +176,8 @@ after_build:
   - copy C:\msys64\mingw32\bin\libp11-kit*.dll RetroShare-portable\
   - copy C:\msys64\mingw32\bin\libtasn1*.dll RetroShare-portable\
   - copy C:\msys64\mingw32\bin\libunistring*.dll RetroShare-portable\
+  - copy C:\msys64\mingw32\bin\libiconv*.dll RetroShare-portable\
+  - copy C:\msys64\mingw32\bin\libffi*.dll RetroShare-portable\
 
 # to disable automatic builds
 #build: off
