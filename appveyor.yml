@@ -151,7 +151,7 @@ before_package:
 build_script:
   - cd C:\projects\RetroShare
   - qmake "CONFIG+=no_retroshare_nogui"
-  - make -j`nproc`
+  - make -j3
 
 # scripts to run after build
 after_build:
@@ -166,7 +166,7 @@ after_build:
   - copy C:\msys64\mingw32\bin\zlib*.dll RetroShare-portable\
 
 ## maybe windeployqt is taking a wrong dll
-  - copy C:\msys64\mingw32\bin\libstdc++-*.dll RetroShare-portable\
+  - copy C:\msys64\mingw32\bin\libstdc*.dll RetroShare-portable\
 
 ## Needed for libresapi http
   - copy C:\msys64\mingw32\bin\libmicrohttpd*.dll RetroShare-portable\
