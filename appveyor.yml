@@ -146,12 +146,13 @@ before_package:
 # to run your custom scripts instead of automatic MSBuild
 build_script:
   - cd C:\projects\RetroShare
-  - qmake "CONFIG+=no_retroshare_nogui"
+  - qmake
   - make -j3
 
 # scripts to run after build
 after_build:
   - mkdir RetroShare-portable
+  - copy retroshare-nogui\src\release\retroshare-nogui.exe RetroShare-portable\
   - copy retroshare-gui\src\release\retroshare.exe RetroShare-portable\
   - windeployqt --release RetroShare-portable\retroshare.exe
   - copy C:\msys64\mingw32\bin\libbz2*.dll RetroShare-portable\
@@ -161,8 +162,10 @@ after_build:
   - copy C:\msys64\mingw32\bin\ssleay32.dll RetroShare-portable\
   - copy C:\msys64\mingw32\bin\zlib*.dll RetroShare-portable\
 
-## maybe windeployqt is taking the wrong dll
+## windeployqt takes the wrong dll
   - copy C:\msys64\mingw32\bin\libstdc*.dll RetroShare-portable\
+
+  - copy C:\msys64\mingw32\bin\libwinpthread*.dll RetroShare-portable\
 
 ## Needed for libresapi http
   - copy C:\msys64\mingw32\bin\libmicrohttpd*.dll RetroShare-portable\
