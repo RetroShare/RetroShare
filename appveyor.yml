@@ -165,6 +165,7 @@ after_build:
   - copy C:\msys64\mingw32\bin\libsqlcipher*.dll RetroShare-portable\
   - copy C:\msys64\mingw32\bin\ssleay32.dll RetroShare-portable\
   - copy C:\msys64\mingw32\bin\zlib*.dll RetroShare-portable\
+  - copy C:\msys64\mingw32\bin\libgnutls*.dll RetroShare-portable\
 
 # to disable automatic builds
 #build: off
