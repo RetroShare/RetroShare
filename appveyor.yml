@@ -156,16 +156,26 @@ build_script:
 # scripts to run after build
 after_build:
   - mkdir RetroShare-portable
-  - copy retroshare-gui\src\release\retroshare.exe RetroShare-portable\retroshare.exe
+  - copy retroshare-gui\src\release\retroshare.exe RetroShare-portable\
   - windeployqt --release RetroShare-portable\retroshare.exe
   - copy C:\msys64\mingw32\bin\libbz2*.dll RetroShare-portable\
   - copy C:\msys64\mingw32\bin\libeay32.dll RetroShare-portable\
-  - copy C:\msys64\mingw32\bin\libmicrohttpd*.dll RetroShare-portable\
   - copy C:\msys64\mingw32\bin\libminiupnpc.dll RetroShare-portable\
   - copy C:\msys64\mingw32\bin\libsqlcipher*.dll RetroShare-portable\
   - copy C:\msys64\mingw32\bin\ssleay32.dll RetroShare-portable\
   - copy C:\msys64\mingw32\bin\zlib*.dll RetroShare-portable\
+
+## Needed for libresapi http
+  - copy C:\msys64\mingw32\bin\libmicrohttpd*.dll RetroShare-portable\
   - copy C:\msys64\mingw32\bin\libgnutls*.dll RetroShare-portable\
+  - copy C:\msys64\mingw32\bin\libgmp*.dll RetroShare-portable\
+  - copy C:\msys64\mingw32\bin\libhogweed*.dll RetroShare-portable\
+  - copy C:\msys64\mingw32\bin\libidn2*.dll RetroShare-portable\
+  - copy C:\msys64\mingw32\bin\libintl*.dll RetroShare-portable\
+  - copy C:\msys64\mingw32\bin\libnettle*.dll RetroShare-portable\
+  - copy C:\msys64\mingw32\bin\libp11-kit*.dll RetroShare-portable\
+  - copy C:\msys64\mingw32\bin\libtasn1*.dll RetroShare-portable\
+  - copy C:\msys64\mingw32\bin\libunistring*.dll RetroShare-portable\
 
 # to disable automatic builds
 #build: off
@@ -177,7 +187,6 @@ after_build:
 artifacts:
   - path: '**\*.exe'
   - path: RetroShare-portable
-  - path: filelist
 #
 #  # pushing a single file
 #  - path: test.zip
