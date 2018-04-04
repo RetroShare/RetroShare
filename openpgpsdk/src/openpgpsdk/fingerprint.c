@@ -33,8 +33,8 @@
 # include <alloca.h>
 #endif
 
-#ifdef WIN32
-#define alloca _alloca
+#if defined(WIN32) && !defined(alloca)
+#	define alloca _alloca
 #endif
 
 #include <openpgpsdk/final.h>

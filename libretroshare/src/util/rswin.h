@@ -33,9 +33,6 @@
 #include <windows.h>
 #include <string>
 
-// For win32 systems (tested on MingW+Ubuntu)
-#define stat64 _stati64
-
 // Should be in Iphlpapi.h, but mingw doesn't seem to have these
 // Values copied directly from:
 // http://msdn.microsoft.com/en-us/library/aa366845(v=vs.85).aspx
@@ -50,5 +47,9 @@
 #endif
 
 #endif // WINDOWS_SYS
+
+#if defined(WINDOWS_SYS) && !defined(stat64)
+#	define stat64 _stati64
+#endif
 
 #endif // RSWIN_H_
