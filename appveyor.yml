@@ -115,10 +115,6 @@ install:
   - copy C:\msys64\mingw64\x86_64-w64-mingw32\bin\ar.exe C:\msys64\mingw64\bin\x86_64-w64-mingw32-ar.exe
   - copy C:\msys64\mingw64\x86_64-w64-mingw32\bin\ranlib.exe C:\msys64\mingw64\bin\x86_64-w64-mingw32-ranlib.exe
   - copy C:\msys64\mingw64\bin\windres.exe C:\msys64\mingw64\bin\x86_64-w64-mingw32-windres.exe
-  # Build missing Libs
-  #- C:\msys64\mingw32.exe -lc "cd /c/projects/RetroShare/msys2_build_libs/ && make"
-  # Clone RetroShare
-  #- git clone -q --branch={branch} https://github.com/RetroShare/RetroShare.git C:\projects\RetroShare
 
 
 #---------------------------------#
@@ -165,7 +161,7 @@ after_build:
   - copy C:\msys64\mingw32\bin\ssleay32.dll RetroShare-portable\
   - copy C:\msys64\mingw32\bin\zlib*.dll RetroShare-portable\
 
-## maybe windeployqt is taking a wrong dll
+## maybe windeployqt is taking the wrong dll
   - copy C:\msys64\mingw32\bin\libstdc*.dll RetroShare-portable\
 
 ## Needed for libresapi http
