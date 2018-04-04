@@ -66,6 +66,7 @@ environment:
 #    QTDIR: C:\Qt\5.10.1\mingw53_32
     MSYS2_ARCH: i686
     TARGET: i686_32-pc-msys
+    MINGW_PREFIX: C:\msys64\mingw32
 
 
 # build cache to preserve files/folders between builds
