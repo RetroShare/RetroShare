@@ -151,7 +151,7 @@ before_package:
 build_script:
   - cd C:\projects\RetroShare
   - qmake "CONFIG+=no_retroshare_nogui"
-  - make
+  - make -j`nproc`
 
 # scripts to run after build
 after_build:
