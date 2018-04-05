@@ -150,7 +150,7 @@ android-* {
     LIBS *= -L$$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/lib/
 }
 
-win32 {
+win32-g++ {
 	message(***retroshare.pri:Win32)
 
     PREFIX_MSYS2 = $$(MINGW_PREFIX)
