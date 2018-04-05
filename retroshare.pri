@@ -174,7 +174,7 @@ defineReplace(linkDynamicLibs) {
 ## variables of directories where RetroShare components will be installed, on
 ## most platforms they are automatically calculated from PREFIX or in other ways
 
-linux {
+linux-* {
     isEmpty(PREFIX)        : PREFIX         = "/usr"
     isEmpty(RS_BIN_DIR)    : RS_BIN_DIR     = "$${PREFIX}/bin"
     isEmpty(RS_INCLUDE_DIR): RS_INCLUDE_DIR = "$${PREFIX}/include"
@@ -245,10 +245,10 @@ win32-g++ {
 
     DEFINES *= WINDOWS_SYS WIN32
 
-    DEFINES *= WINDOWS_SYS WIN32
+    message(***retroshare.pri:Win32 PREFIX $$PREFIX INCLUDEPATH $$INCLUDEPATH QMAKE_LIBDIR $$QMAKE_LIBDIR DEFINES $$DEFINES)
 }
 
-macx {
+macx-* {
 	rs_macos10.8 {
 		message(***retroshare.pri: Set Target and SDK to MacOS 10.8 )
 		QMAKE_MACOSX_DEPLOYMENT_TARGET=10.8
