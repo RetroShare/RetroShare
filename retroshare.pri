@@ -151,7 +151,8 @@ win32 {
 
         isEmpty(PREFIX_MSYS2)
         { error(Cannot find MSYS2 please set MINGW_PREFIX) }
-        else:message(Found MSYS2: $${PREFIX_MSYS2})
+        else
+        { message(Found MSYS2: $${PREFIX_MSYS2}) }
     }
 
     isEmpty(PREFIX) { PREFIX = system_path($${PREFIX_MSYS2}/usr) }
