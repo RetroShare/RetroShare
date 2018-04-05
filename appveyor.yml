@@ -91,6 +91,8 @@ install:
   # Configuring MSys2
   - set PATH=C:\msys64\usr\bin;%PATH%
   - set PATH=C:\msys64\mingw32\bin;%PATH%
+  - pacman --noconfirm -S mingw-w64-i686-qt5-static mingw-w64-i686-miniupnpc mingw-w64-i686-sqlcipher mingw-w64-i686-libmicrohttpd
+
   # Configuring Qt
 #  - set PATH=%QTDIR%\bin;C:\Qt\Tools\mingw491_32\bin;%PATH%
   # Install all default programms
@@ -98,18 +100,16 @@ install:
   # Install toolchain
   #- C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-openssl mingw-w64-i686-toolchain mingw-w64-x86_64-toolchain mingw-w64-i686-bzip2 mingw-w64-i686-gcc mingw-w64-i686-make" #Already installed
   # Install other binutils
-  - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-curl mingw-w64-x86_64-curl"
-  - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-miniupnpc mingw-w64-x86_64-miniupnpc"
-  - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-sqlite3 mingw-w64-x86_64-sqlite3"
-  - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-sqlcipher mingw-w64-x86_64-sqlcipher"
-  - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-speex mingw-w64-x86_64-speex"
-  - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-speexdsp mingw-w64-x86_64-speexdsp"
-  - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-opencv mingw-w64-x86_64-opencv"
-  - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-ffmpeg mingw-w64-x86_64-ffmpeg"
-  - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-libmicrohttpd mingw-w64-x86_64-libmicrohttpd"
-  - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-libxslt mingw-w64-x86_64-libxslt"
-
-  - pacman --noconfirm -S mingw-w64-i686-qt5-static
+#  - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-curl mingw-w64-x86_64-curl"
+#  - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-miniupnpc mingw-w64-x86_64-miniupnpc"
+#  - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-sqlite3 mingw-w64-x86_64-sqlite3"
+#  - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-sqlcipher mingw-w64-x86_64-sqlcipher"
+#  - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-speex mingw-w64-x86_64-speex"
+#  - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-speexdsp mingw-w64-x86_64-speexdsp"
+#  - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-opencv mingw-w64-x86_64-opencv"
+#  - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-ffmpeg mingw-w64-x86_64-ffmpeg"
+#  - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-libmicrohttpd mingw-w64-x86_64-libmicrohttpd"
+#  - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-libxslt mingw-w64-x86_64-libxslt"
 
   # Hack for new MSys2
   - copy C:\msys64\mingw32\i686-w64-mingw32\bin\ar.exe C:\msys64\mingw32\bin\i686-w64-mingw32-ar.exe
