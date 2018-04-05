@@ -936,8 +936,7 @@ android-* {
     DEFINES *= "ftello64=ftello"
     LIBS *= -lbz2 -lupnp -lixml -lthreadutil -lsqlite3
 
-## Static library are verysensible to order in command line, has to be in the
-## end of file for this reason
+## Static library are very susceptible to order in command line
 
     LIBS += -L$$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/lib/ -lsqlcipher
     PRE_TARGETDEPS += $$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/lib/libsqlcipher.a
@@ -950,3 +949,16 @@ android-* {
 
     HEADERS += util/androiddebug.h
 }
+
+############################# Windows + MSYS2 ##################################
+
+win32-g++ {
+
+## Static library are very susceptible to order in command line
+    static
+    {
+        LIBS += -L$$LIB_DIR/ -lminiupnpc
+        PRE_TARGETDEPS += $$LIB_DIR/libminiupnpc.a
+    }
+}
+
