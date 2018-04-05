@@ -135,7 +135,7 @@ android-* {
 win32 {
 	message(***retroshare.pri:Win32)
 
-    DEFINES*=WINDOWS_SYS
+    DEFINES *= WINDOWS_SYS WIN32
 
 	exists($$PWD/../libs) {
 		message(Get pre-compiled libraries.)

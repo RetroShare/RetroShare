@@ -72,8 +72,6 @@ win32-x-g++ {
 	LIBS += -lole32 -lwinmm
 
 	RC_FILE = gui/images/retroshare_win.rc
-
-	DEFINES *= WIN32
 }
 
 #################################### Windows #####################################
@@ -88,8 +86,8 @@ win32 {
     ## solve linker warnings because of the order of the libraries
     #QMAKE_LFLAGS += -Wl,--start-group
 
-	CONFIG(debug, debug|release) {
-	} else {
+    CONFIG(debug, debug|release) {}
+    else {
 		# Tell linker to use ASLR protection
 		QMAKE_LFLAGS += -Wl,-dynamicbase
 		# Tell linker to use DEP protection
@@ -107,7 +105,7 @@ win32 {
 
 	RC_FILE = resources/retroshare_win.rc
 
-	DEFINES *= WINDOWS_SYS _USE_32BIT_TIME_T
+    DEFINES *= _USE_32BIT_TIME_T
 
 	DEPENDPATH += . $$INC_DIR
 	INCLUDEPATH += . $$INC_DIR
