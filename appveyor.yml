@@ -92,6 +92,7 @@ install:
   - set PATH=C:\msys64\usr\bin;%PATH%
   - set PATH=C:\msys64\mingw32\bin;%PATH%
   - pacman --noconfirm -S mingw-w64-i686-qt5-static mingw-w64-i686-miniupnpc mingw-w64-i686-sqlcipher mingw-w64-i686-libmicrohttpd
+  - set PATH=C:\msys64\mingw32\qt5-static\bin\;%PATH%
 
   # Configuring Qt
 #  - set PATH=%QTDIR%\bin;C:\Qt\Tools\mingw491_32\bin;%PATH%
@@ -151,8 +152,8 @@ before_package:
 build_script:
   - cd C:\projects\RetroShare
 #  - C:\msys64\mingw32\qt5-static\bin\qmake.exe -spec win32-g++ "QMAKE_LFLAGS+=-Wl,--exclude-libs,ALL" "CONFIG+=release" "CONFIG-=debug" "CONFIG+=static" "CONFIG+=no_libresapihttpserver"
-  - C:\msys64\mingw32\qt5-static\bin\qmake.exe -spec win32-g++ "QMAKE_LFLAGS+=-Wl,--exclude-libs,ALL" "CONFIG+=release" "CONFIG-=debug" "CONFIG+=no_libresapihttpserver" "CONFIG+=no_retroshare_gui"
-  - C:\msys64\mingw32\bin\mingw32-make.exe -j3
+  - qmake -spec win32-g++ "QMAKE_LFLAGS+=-Wl,--exclude-libs,ALL" "CONFIG=release no_libresapihttpserver no_retroshare_gui"
+  - mingw32-make -j3
 
 # scripts to run after build
 after_build:
