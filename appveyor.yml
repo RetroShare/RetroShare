@@ -150,40 +150,41 @@ before_package:
 # to run your custom scripts instead of automatic MSBuild
 build_script:
   - cd C:\projects\RetroShare
-  - C:\msys64\mingw32\qt5-static\bin\qmake.exe -spec win32-g++ "QMAKE_LFLAGS+=-Wl,--exclude-libs,ALL" "CONFIG+=release" "CONFIG-=debug" "CONFIG+=static" "CONFIG+=no_libresapihttpserver"
+#  - C:\msys64\mingw32\qt5-static\bin\qmake.exe -spec win32-g++ "QMAKE_LFLAGS+=-Wl,--exclude-libs,ALL" "CONFIG+=release" "CONFIG-=debug" "CONFIG+=static" "CONFIG+=no_libresapihttpserver"
+  - C:\msys64\mingw32\qt5-static\bin\qmake.exe -spec win32-g++ "QMAKE_LFLAGS+=-Wl,--exclude-libs,ALL" "CONFIG+=release" "CONFIG-=debug" "CONFIG+=static" "CONFIG+=no_libresapihttpserver" "CONFIG+=no_retroshare_gui"
   - C:\msys64\mingw32\bin\mingw32-make.exe -j3
 
 # scripts to run after build
 after_build:
   - mkdir RetroShare-portable
   - copy retroshare-nogui\src\release\retroshare-nogui.exe RetroShare-portable\
-  - copy retroshare-gui\src\release\retroshare.exe RetroShare-portable\
-  - windeployqt --release RetroShare-portable\retroshare.exe
-  - copy C:\msys64\mingw32\bin\libbz2*.dll RetroShare-portable\
-  - copy C:\msys64\mingw32\bin\libeay32.dll RetroShare-portable\
-  - copy C:\msys64\mingw32\bin\libminiupnpc.dll RetroShare-portable\
-  - copy C:\msys64\mingw32\bin\libsqlcipher*.dll RetroShare-portable\
-  - copy C:\msys64\mingw32\bin\ssleay32.dll RetroShare-portable\
-  - copy C:\msys64\mingw32\bin\zlib*.dll RetroShare-portable\
+#  - copy retroshare-gui\src\release\retroshare.exe RetroShare-portable\
+#  - windeployqt --release RetroShare-portable\retroshare.exe
+#  - copy C:\msys64\mingw32\bin\libbz2*.dll RetroShare-portable\
+#  - copy C:\msys64\mingw32\bin\libeay32.dll RetroShare-portable\
+#  - copy C:\msys64\mingw32\bin\libminiupnpc.dll RetroShare-portable\
+#  - copy C:\msys64\mingw32\bin\libsqlcipher*.dll RetroShare-portable\
+#  - copy C:\msys64\mingw32\bin\ssleay32.dll RetroShare-portable\
+#  - copy C:\msys64\mingw32\bin\zlib*.dll RetroShare-portable\
 
 ## windeployqt takes the wrong dll
-  - copy C:\msys64\mingw32\bin\libgcc_s_dw2*.dll RetroShare-portable\
-  - copy C:\msys64\mingw32\bin\libstdc*.dll RetroShare-portable\
-  - copy C:\msys64\mingw32\bin\libwinpthread*.dll RetroShare-portable\
+ # - copy C:\msys64\mingw32\bin\libgcc_s_dw2*.dll RetroShare-portable\
+ # - copy C:\msys64\mingw32\bin\libstdc*.dll RetroShare-portable\
+ # - copy C:\msys64\mingw32\bin\libwinpthread*.dll RetroShare-portable\
 
 ## Needed for libresapi http
-  - copy C:\msys64\mingw32\bin\libmicrohttpd*.dll RetroShare-portable\
-  - copy C:\msys64\mingw32\bin\libgnutls*.dll RetroShare-portable\
-  - copy C:\msys64\mingw32\bin\libgmp*.dll RetroShare-portable\
-  - copy C:\msys64\mingw32\bin\libhogweed*.dll RetroShare-portable\
-  - copy C:\msys64\mingw32\bin\libidn2*.dll RetroShare-portable\
-  - copy C:\msys64\mingw32\bin\libintl*.dll RetroShare-portable\
-  - copy C:\msys64\mingw32\bin\libnettle*.dll RetroShare-portable\
-  - copy C:\msys64\mingw32\bin\libp11-kit*.dll RetroShare-portable\
-  - copy C:\msys64\mingw32\bin\libtasn1*.dll RetroShare-portable\
-  - copy C:\msys64\mingw32\bin\libunistring*.dll RetroShare-portable\
-  - copy C:\msys64\mingw32\bin\libiconv*.dll RetroShare-portable\
-  - copy C:\msys64\mingw32\bin\libffi*.dll RetroShare-portable\
+#  - copy C:\msys64\mingw32\bin\libmicrohttpd*.dll RetroShare-portable\
+#  - copy C:\msys64\mingw32\bin\libgnutls*.dll RetroShare-portable\
+#  - copy C:\msys64\mingw32\bin\libgmp*.dll RetroShare-portable\
+#  - copy C:\msys64\mingw32\bin\libhogweed*.dll RetroShare-portable\
+#  - copy C:\msys64\mingw32\bin\libidn2*.dll RetroShare-portable\
+#  - copy C:\msys64\mingw32\bin\libintl*.dll RetroShare-portable\
+#  - copy C:\msys64\mingw32\bin\libnettle*.dll RetroShare-portable\
+#  - copy C:\msys64\mingw32\bin\libp11-kit*.dll RetroShare-portable\
+#  - copy C:\msys64\mingw32\bin\libtasn1*.dll RetroShare-portable\
+#  - copy C:\msys64\mingw32\bin\libunistring*.dll RetroShare-portable\
+#  - copy C:\msys64\mingw32\bin\libiconv*.dll RetroShare-portable\
+#  - copy C:\msys64\mingw32\bin\libffi*.dll RetroShare-portable\
 
 # to disable automatic builds
 #build: off
