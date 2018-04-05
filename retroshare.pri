@@ -177,7 +177,7 @@ win32 {
     INCLUDEPATH += $$system_path($${PREFIX}/include)
     LIBPATH += $$system_path($${PREFIX}/lib)
 
-    message(***retroshare.pri:Win32 PREFIX $$PREFIX INCLUDEPATH $$INCLUDEPATH LIBPATH $$LIBPATH)
+    warning(***retroshare.pri:Win32 PREFIX $$PREFIX INCLUDEPATH $$INCLUDEPATH LIBPATH $$LIBPATH)
 
     DEFINES *= WINDOWS_SYS WIN32
 }
