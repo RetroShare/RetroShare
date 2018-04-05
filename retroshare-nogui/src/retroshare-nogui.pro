@@ -85,8 +85,8 @@ win32 {
 	UI_DIR  = temp/ui
 	MOC_DIR = temp/moc
 
-	# solve linker warnings because of the order of the libraries
-	QMAKE_LFLAGS += -Wl,--start-group
+    ## solve linker warnings because of the order of the libraries
+    #QMAKE_LFLAGS += -Wl,--start-group
 
 	CONFIG(debug, debug|release) {
 	} else {
@@ -96,11 +96,14 @@ win32 {
 		QMAKE_LFLAGS += -Wl,-nxcompat
 	}
 
-	for(lib, LIB_DIR):LIBS += -L"$$lib"
-	LIBS += -lssl -lcrypto -lpthread -lminiupnpc -lz
-	LIBS += -lcrypto -lws2_32 -lgdi32
-	LIBS += -luuid -lole32 -liphlpapi -lcrypt32
-	LIBS += -lole32 -lwinmm
+    static {}
+    else {
+        for(lib, LIB_DIR):LIBS += -L"$$lib"
+        LIBS += -lssl -lcrypto -lpthread -lminiupnpc -lz
+        LIBS += -lcrypto -lws2_32 -lgdi32
+        LIBS += -luuid -lole32 -liphlpapi -lcrypt32
+        LIBS += -lole32 -lwinmm
+    }
 
 	RC_FILE = resources/retroshare_win.rc
 
