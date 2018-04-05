@@ -101,19 +101,20 @@ rs_macos10.10:CONFIG -= rs_macos10.11
 rs_macos10.12:CONFIG -= rs_macos10.11
 
 
+## For each platform defining the following variables may be needed
+## PREFIX, LIB_DIR, RS_INCLUDE_DIR, RS_DATA_DIR, RS_PLUGIN_DIR
+
 linux-* {
 	isEmpty(PREFIX)   { PREFIX   = "/usr" }
 	isEmpty(BIN_DIR)  { BIN_DIR  = "$${PREFIX}/bin" }
-	isEmpty(INC_DIR)  { INC_DIR  = "$${PREFIX}/include/retroshare" }
+    isEmpty(INC_DIR)  { INC_DIR  = "$${PREFIX}/include" }
 	isEmpty(LIB_DIR)  { LIB_DIR  = "$${PREFIX}/lib" }
 	isEmpty(DATA_DIR) { DATA_DIR = "$${PREFIX}/share/retroshare" }
 	isEmpty(PLUGIN_DIR) { PLUGIN_DIR = "$${LIB_DIR}/retroshare/extensions6" }
 
     rs_autologin {
-        !macx {
-            DEFINES *= HAS_GNOME_KEYRING
-            PKGCONFIG *= gnome-keyring-1
-        }
+        DEFINES *= HAS_GNOME_KEYRING
+        PKGCONFIG *= gnome-keyring-1
     }
 }
 
@@ -135,36 +136,29 @@ android-* {
 win32 {
 	message(***retroshare.pri:Win32)
 
+    PREFIX_MSYS2 = $$(MINGW_PREFIX)
+    isEmpty(MINGW_PREFIX)
+    {
+        message(MINGW_PREFIX is not set, attempting MSYS2 autodiscovery.)
+
+        TEMPTATIVE_MSYS2=system_path(C:\msys32\mingw32)
+        exists(system_path($${TEMPTATIVE_MSYS2}/include))
+        { PREFIX_MSYS2=$${TEMPTATIVE_MSYS2} }
+
+        TEMPTATIVE_MSYS2=system_path(C:\msys64\mingw32)
+        exists(system_path($${TEMPTATIVE_MSYS2}/include))
+        { PREFIX_MSYS2=$${TEMPTATIVE_MSYS2} }
+
+        isEmpty(PREFIX_MSYS2)
+        { error(Cannot find MSYS2 please set MINGW_PREFIX) }
+        else:message(Found MSYS2: $${PREFIX_MSYS2})
+    }
+
+    isEmpty(PREFIX) { PREFIX = system_path($${PREFIX_MSYS2}/usr) }
+    INCLUDEPATH += system_path($${PREFIX}/include)
+    LIB_DIR = system_path($${PREFIX}/lib)
+
     DEFINES *= WINDOWS_SYS WIN32
-
-	exists($$PWD/../libs) {
-		message(Get pre-compiled libraries.)
-		isEmpty(PREFIX)   { PREFIX   = "$$PWD/../libs" }
-		isEmpty(BIN_DIR)  { BIN_DIR  = "$${PREFIX}/bin" }
-		isEmpty(INC_DIR)  { INC_DIR  = "$${PREFIX}/include" }
-		isEmpty(LIB_DIR)  { LIB_DIR  = "$${PREFIX}/lib" }
-	}
-
-	# Check for msys2
-	PREFIX_MSYS2 = $$(MINGW_PREFIX)
-	isEmpty(PREFIX_MSYS2) {
-		exists(C:/msys32/mingw32/include) {
-			message(MINGW_PREFIX is empty. Set it in your environment variables.)
-			message(Found it here:C:\msys32\mingw32)
-			PREFIX_MSYS2 = "C:\msys32\mingw32"
-		}
-		exists(C:/msys64/mingw32/include) {
-			message(MINGW_PREFIX is empty. Set it in your environment variables.)
-			message(Found it here:C:\msys64\mingw32)
-			PREFIX_MSYS2 = "C:\msys64\mingw32"
-		}
-	}
-	!isEmpty(PREFIX_MSYS2) {
-		message(msys2 is installed.)
-		BIN_DIR  += "$${PREFIX_MSYS2}/bin"
-		INC_DIR  += "$${PREFIX_MSYS2}/include"
-		LIB_DIR  += "$${PREFIX_MSYS2}/lib"
-	}
 }
 
 macx {
@@ -210,12 +204,6 @@ macx {
 	CONFIG += c++11
 }
 
-unfinished {
-	CONFIG += gxscircles
-	CONFIG += gxsthewire
-	CONFIG += gxsphotoshare
-	CONFIG += wikipoos
-}
 
 wikipoos:DEFINES *= RS_USE_WIKI
 rs_gxs:DEFINES *= RS_ENABLE_GXS
@@ -308,3 +296,7 @@ rs_v07_changes {
 	DEFINES += V07_NON_BACKWARD_COMPATIBLE_CHANGE_002
 	DEFINES += V07_NON_BACKWARD_COMPATIBLE_CHANGE_003
 }
+
+## Retrocompatibility assignations, get rid of this ASAP
+isEmpty(DATA_DIR) { DATA_DIR = "$${RS_DATA_DIR}" }
+isEmpty(PLUGIN_DIR) { PLUGIN_DIR = "$${RS_PLUGIN_DIR}" }
