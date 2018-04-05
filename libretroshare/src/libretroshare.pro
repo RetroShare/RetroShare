@@ -959,7 +959,7 @@ win32-g++ {
         # Order is very important!
         sLibs = miniupnpc sqlcipher ssl crypto
         for(mLib, sLibs){
-            attemptPath=$$findFileInPath(lib$${mLib}.a, QMAKE_LIBDIR)
+            attemptPath=$$findFileInPath(lib$${mLib}.a, $${QMAKE_LIBDIR})
             isEmpty(attemptPath):error(lib$${mLib}.a not found in [$${QMAKE_LIBDIR}])
 
             LIBS += -L$$dirname(attemptPath) -l$$mLib
