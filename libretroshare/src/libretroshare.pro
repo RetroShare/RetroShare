@@ -957,16 +957,16 @@ win32-g++ {
 ## Static library are very susceptible to order in command line
     static
     {
-        LIBS += -L$$LIB_DIR/ -lminiupnpc
+        LIBS += $$LIB_DIR/libminiupnpc.a
         PRE_TARGETDEPS += $$LIB_DIR/libminiupnpc.a
 
-        LIBS += -L$$LIB_DIR/ -lsqlcipher
+        LIBS += $$LIB_DIR/libsqlcipher.a
         PRE_TARGETDEPS += $$LIB_DIR/libsqlcipher.a
 
-        LIBS += -L$$LIB_DIR/ -lssl
+        LIBS += $$LIB_DIR/libssl.a
         PRE_TARGETDEPS += $$LIB_DIR/libssl.a
 
-        LIBS += -L$$LIB_DIR/ -lcrypto
+        LIBS += $$LIB_DIR/libcrypto.a
         PRE_TARGETDEPS += $$LIB_DIR/libcrypto.a
     }
 }
