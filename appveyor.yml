@@ -149,7 +149,7 @@ before_package:
 # to run your custom scripts instead of automatic MSBuild
 build_script:
   - cd C:\projects\RetroShare
-  - C:\msys64\mingw32\qt5-static\bin\qmake.exe -spec win32-g++ "CONFIG+=static" "CONFIG+=no_libresapihttpserver"
+  - C:\msys64\mingw32\qt5-static\bin\qmake.exe -spec win32-g++ "CONFIG+=release" "CONFIG-=debug" "CONFIG+=static" "CONFIG+=no_libresapihttpserver"
   - C:\msys64\mingw32\bin\mingw32-make.exe -j3
 
 # scripts to run after build
