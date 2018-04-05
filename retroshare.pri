@@ -151,8 +151,6 @@ android-* {
 }
 
 win32-g++ {
-	message(***retroshare.pri:Win32)
-
     PREFIX_MSYS2 = $$(MINGW_PREFIX)
     isEmpty(PREFIX_MSYS2) {
         message("MINGW_PREFIX is not set, attempting MSYS2 autodiscovery.")
