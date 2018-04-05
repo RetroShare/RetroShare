@@ -118,7 +118,7 @@ defineReplace(findFileInPath) {
 ## For each platform defining the following variables may be needed
 ## PREFIX, LIBPATH, INCLUDEPATH, RS_INCLUDE_DIR, RS_DATA_DIR, RS_PLUGIN_DIR
 
-linux-* {
+linux {
 	isEmpty(PREFIX)   { PREFIX   = "/usr" }
 	isEmpty(BIN_DIR)  { BIN_DIR  = "$${PREFIX}/bin" }
     isEmpty(INC_DIR)  { INC_DIR  = "$${PREFIX}/include" }
@@ -154,13 +154,13 @@ win32 {
     isEmpty(MINGW_PREFIX) {
         message(MINGW_PREFIX is not set, attempting MSYS2 autodiscovery.)
 
-        TEMPTATIVE_MSYS2=system_path(C:\msys32\mingw32)
-        exists(system_path($${TEMPTATIVE_MSYS2}/include)) {
+        TEMPTATIVE_MSYS2=$$system_path(C:\msys32\mingw32)
+        exists($$system_path($${TEMPTATIVE_MSYS2}/include)) {
             PREFIX_MSYS2=$${TEMPTATIVE_MSYS2}
         }
 
-        TEMPTATIVE_MSYS2=system_path(C:\msys64\mingw32)
-        exists(system_path($${TEMPTATIVE_MSYS2}/include)) {
+        TEMPTATIVE_MSYS2=$$system_path(C:\msys64\mingw32)
+        exists($$system_path($${TEMPTATIVE_MSYS2}/include)) {
             PREFIX_MSYS2=$${TEMPTATIVE_MSYS2}
         }
 
@@ -172,10 +172,10 @@ win32 {
     }
 
     isEmpty(PREFIX) {
-        PREFIX = system_path($${PREFIX_MSYS2}/usr)
+        PREFIX = $$system_path($${PREFIX_MSYS2}/usr)
     }
-    INCLUDEPATH += system_path($${PREFIX}/include)
-    LIBPATH += system_path($${PREFIX}/lib)
+    INCLUDEPATH += $$system_path($${PREFIX}/include)
+    LIBPATH += $$system_path($${PREFIX}/lib)
 
     DEFINES *= WINDOWS_SYS WIN32
 }
