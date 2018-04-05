@@ -100,20 +100,94 @@ rs_macos10.9:CONFIG -= rs_macos10.11
 rs_macos10.10:CONFIG -= rs_macos10.11
 rs_macos10.12:CONFIG -= rs_macos10.11
 
+## This function is useful to look for the location of a file in a list of paths
+## like the which command on linux, first paramether is the file name,
+## second parameter is the name of a variable containing the list of folders
+## where to look for. First match is returned.
+defineReplace(findFileInPath) {
+    fileName=$$1
+    pathList=$$2
 
-linux-* {
-	isEmpty(PREFIX)   { PREFIX   = "/usr" }
-	isEmpty(BIN_DIR)  { BIN_DIR  = "$${PREFIX}/bin" }
-	isEmpty(INC_DIR)  { INC_DIR  = "$${PREFIX}/include/retroshare" }
-	isEmpty(LIB_DIR)  { LIB_DIR  = "$${PREFIX}/lib" }
-	isEmpty(DATA_DIR) { DATA_DIR = "$${PREFIX}/share/retroshare" }
-	isEmpty(PLUGIN_DIR) { PLUGIN_DIR = "$${LIB_DIR}/retroshare/extensions6" }
+    for(mDir, $$pathList) {
+        attempt = $$clean_path($$mDir/$$fileName)
+        exists($$attempt) {
+            return($$system_path($$attempt))
+        }
+    }
+    return()
+}
+
+## This function return linker option to link statically the libraries contained
+## in the variable given as paramether.
+## Be carefull static library are very susceptible to order
+defineReplace(linkStaticLibs) {
+    libsVarName = $$1
+    retSlib =
+
+    for(mLib, $$libsVarName) {
+        attemptPath=$$findFileInPath(lib$${mLib}.a, QMAKE_LIBDIR)
+        isEmpty(attemptPath):error(lib$${mLib}.a not found in [$${QMAKE_LIBDIR}])
+
+        retSlib += -L$$dirname(attemptPath) -l$$mLib
+    }
+
+    return($$retSlib)
+}
+
+## This function return pretarget deps for the static the libraries contained in
+## the variable given as paramether.
+defineReplace(pretargetStaticLibs) {
+    libsVarName = $$1
+
+    retPreTarget =
+
+    for(mLib, $$libsVarName) {
+        attemptPath=$$findFileInPath(lib$${mLib}.a, QMAKE_LIBDIR)
+        isEmpty(attemptPath):error(lib$${mLib}.a not found in [$${QMAKE_LIBDIR}])
+
+        retPreTarget += $$attemptPath
+    }
+
+    return($$retPreTarget)
+}
+
+## This function return linker option to link dynamically the libraries
+## contained in the variable given as paramether.
+defineReplace(linkDynamicLibs) {
+    libsVarName = $$1
+    retDlib =
+
+    for(mLib, $$libsVarName) {
+        retDlib += -l$$mLib
+    }
+
+    return($$retDlib)
+}
+
+
+## For some platforms defining the following variables may be needed
+## PREFIX String variable containing the directory considered as prefix set with
+## = operator.
+## QMAKE_LIBDIR, INCLUDEPATH Lists variables where qmake will look for includes
+## and libraries. Add values using *= operator.
+## RS_BIN_DIR, RS_LIB_DIR, RS_INCLUDE_DIR, RS_DATA_DIR, RS_PLUGIN_DIR String
+## variables of directories where RetroShare components will be installed, on
+## most platforms they are automatically calculated from PREFIX or in other ways
+
+linux {
+    isEmpty(PREFIX)        : PREFIX         = "/usr"
+    isEmpty(RS_BIN_DIR)    : RS_BIN_DIR     = "$${PREFIX}/bin"
+    isEmpty(RS_INCLUDE_DIR): RS_INCLUDE_DIR = "$${PREFIX}/include"
+    isEmpty(RS_LIB_DIR)    : RS_LIB_DIR     = "$${PREFIX}/lib"
+    isEmpty(RS_DATA_DIR)   : RS_DATA_DIR    = "$${PREFIX}/share/retroshare"
+    isEmpty(RS_PLUGIN_DIR) : RS_PLUGIN_DIR  = "$${RS_LIB_DIR}/retroshare/extensions6"
+
+    INCLUDEPATH  *= "$$RS_INCLUDE_DIR"
+    QMAKE_LIBDIR *= "$$RS_LIB_DIR"
 
     rs_autologin {
-        !macx {
-            DEFINES *= HAS_GNOME_KEYRING
-            PKGCONFIG *= gnome-keyring-1
-        }
+        DEFINES *= HAS_GNOME_KEYRING
+        PKGCONFIG *= gnome-keyring-1
     }
 }
 
@@ -129,42 +203,49 @@ android-* {
     CONFIG -= libresapihttpserver upnp_miniupnpc
     QT *= androidextras
     INCLUDEPATH += $$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/include
-    LIBS *= -L$$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/lib/
+#    LIBS *= -L$$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/lib/
+    QMAKE_LIBDIR *= "$$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/lib/"
 }
 
-win32 {
-	message(***retroshare.pri:Win32)
+win32-g++ {
+    PREFIX_MSYS2 = $$(MINGW_PREFIX)
+    isEmpty(PREFIX_MSYS2) {
+        message("MINGW_PREFIX is not set, attempting MSYS2 autodiscovery.")
+
+        TEMPTATIVE_MSYS2=$$system_path(C:\\msys32\\mingw32)
+        exists($$clean_path($${TEMPTATIVE_MSYS2}/include)) {
+            PREFIX_MSYS2=$${TEMPTATIVE_MSYS2}
+        }
+
+        TEMPTATIVE_MSYS2=$$system_path(C:\\msys64\\mingw32)
+        exists($$clean_path($${TEMPTATIVE_MSYS2}/include)) {
+            PREFIX_MSYS2=$${TEMPTATIVE_MSYS2}
+        }
+
+        isEmpty(PREFIX_MSYS2) {
+            error(Cannot find MSYS2 please set MINGW_PREFIX)
+        } else {
+            message(Found MSYS2: $${PREFIX_MSYS2})
+        }
+    }
+
+    isEmpty(PREFIX) {
+        PREFIX = $$system_path($${PREFIX_MSYS2})
+    }
+
+    INCLUDEPATH *= $$system_path($${PREFIX}/include)
+    INCLUDEPATH *= $$system_path($${PREFIX_MSYS2}/include)
+
+    QMAKE_LIBDIR *= $$system_path($${PREFIX}/lib)
+    QMAKE_LIBDIR *= $$system_path($${PREFIX_MSYS2}/lib)
+
+    RS_BIN_DIR     = $$system_path($${PREFIX}/bin)
+    RS_INCLUDE_DIR = $$system_path($${PREFIX}/include)
+    RS_LIB_DIR     = $$system_path($${PREFIX}/lib)
 
     DEFINES *= WINDOWS_SYS WIN32
 
-	exists($$PWD/../libs) {
-		message(Get pre-compiled libraries.)
-		isEmpty(PREFIX)   { PREFIX   = "$$PWD/../libs" }
-		isEmpty(BIN_DIR)  { BIN_DIR  = "$${PREFIX}/bin" }
-		isEmpty(INC_DIR)  { INC_DIR  = "$${PREFIX}/include" }
-		isEmpty(LIB_DIR)  { LIB_DIR  = "$${PREFIX}/lib" }
-	}
-
-	# Check for msys2
-	PREFIX_MSYS2 = $$(MINGW_PREFIX)
-	isEmpty(PREFIX_MSYS2) {
-		exists(C:/msys32/mingw32/include) {
-			message(MINGW_PREFIX is empty. Set it in your environment variables.)
-			message(Found it here:C:\msys32\mingw32)
-			PREFIX_MSYS2 = "C:\msys32\mingw32"
-		}
-		exists(C:/msys64/mingw32/include) {
-			message(MINGW_PREFIX is empty. Set it in your environment variables.)
-			message(Found it here:C:\msys64\mingw32)
-			PREFIX_MSYS2 = "C:\msys64\mingw32"
-		}
-	}
-	!isEmpty(PREFIX_MSYS2) {
-		message(msys2 is installed.)
-		BIN_DIR  += "$${PREFIX_MSYS2}/bin"
-		INC_DIR  += "$${PREFIX_MSYS2}/include"
-		LIB_DIR  += "$${PREFIX_MSYS2}/lib"
-	}
+    DEFINES *= WINDOWS_SYS WIN32
 }
 
 macx {
@@ -210,12 +291,6 @@ macx {
 	CONFIG += c++11
 }
 
-unfinished {
-	CONFIG += gxscircles
-	CONFIG += gxsthewire
-	CONFIG += gxsphotoshare
-	CONFIG += wikipoos
-}
 
 wikipoos:DEFINES *= RS_USE_WIKI
 rs_gxs:DEFINES *= RS_ENABLE_GXS
@@ -308,3 +383,10 @@ rs_v07_changes {
 	DEFINES += V07_NON_BACKWARD_COMPATIBLE_CHANGE_002
 	DEFINES += V07_NON_BACKWARD_COMPATIBLE_CHANGE_003
 }
+
+## Retrocompatibility assignations, get rid of this ASAP
+isEmpty(BIN_DIR)   : BIN_DIR   = $${RS_BIN_DIR}
+isEmpty(INC_DIR)   : INC_DIR   = $${RS_INCLUDE_DIR}
+isEmpty(LIBDIR)    : LIBDIR    = $${QMAKE_LIBDIR}
+isEmpty(DATA_DIR)  : DATA_DIR  = $${RS_DATA_DIR}
+isEmpty(PLUGIN_DIR): PLUGIN_DIR= $${RS_PLUGIN_DIR}

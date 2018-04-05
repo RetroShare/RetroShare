@@ -18,23 +18,49 @@ debug {
         QMAKE_CXXFLAGS += -g
 }
 
+DEPENDPATH  *= $${PWD} $${RS_INCLUDE_DIR}
+INCLUDEPATH *= $${PWD} $${RS_INCLUDE_DIR}
+
+INCLUDEPATH  *= $$system_path($${PWD}/../../libbitdht/src)
+QMAKE_LIBDIR *= $$system_path($${OUT_PWD}/../../libbitdht/src/lib)
+
+INCLUDEPATH  *= $$system_path($${PWD}/../../openpgpsdk/src)
+QMAKE_LIBDIR *= $$system_path($${OUT_PWD}/../../openpgpsdk/src/lib)
+
+INCLUDEPATH  *= $$system_path($${PWD}/../../libretroshare/src)
+QMAKE_LIBDIR *= $$system_path($${OUT_PWD}/../../libretroshare/src/lib)
+
+mSqlLib = sqlcipher
+no_sqlcipher:mSqlLib = sqlite3
+
+
+sLibs = retroshare ops bitdht
+mLibs = ssl crypto pthread z bz2 $$mSqlLib
+dLibs =
+
 libresapihttpserver {
     DEFINES *= ENABLE_WEBUI
-    PRE_TARGETDEPS *= $$OUT_PWD/../../libresapi/src/lib/libresapi.a
-    LIBS += $$OUT_PWD/../../libresapi/src/lib/libresapi.a
+
+    sLibs = resapi $$sLibs
+
     DEPENDPATH += $$PWD/../../libresapi/src
-    INCLUDEPATH += $$PWD/../../libresapi/src
+    INCLUDEPATH  *= $$system_path($${PWD}/../../libresapi/src)
+    QMAKE_LIBDIR *= $$system_path($${OUT_PWD}/../../libresapi/src/lib)
+
     HEADERS += TerminalApiClient.h
     SOURCES += TerminalApiClient.cpp
 }
 
+static {
+    sLibs *= $$mLibs
+} else {
+    dLibs *= $$mLibs
+}
 
-DEPENDPATH += . $$PWD/../../libretroshare/src
-INCLUDEPATH += . $$PWD/../../libretroshare/src
+LIBS += $$linkStaticLibs(sLibs)
+PRE_TARGETDEPS += $$pretargetStaticLibs(sLibs)
 
-PRE_TARGETDEPS *= $$OUT_PWD/../../libretroshare/src/lib/libretroshare.a
-LIBS *= $$OUT_PWD/../../libretroshare/src/lib/libretroshare.a
-
+LIBS += $$linkDynamicLibs(dLibs)
 
 
 ################################# Linux ##########################################
@@ -76,12 +102,13 @@ win32-x-g++ {
 
 #################################### Windows #####################################
 
-win32 {
+win32-g++ {
 	CONFIG += console
 	OBJECTS_DIR = temp/obj
 	RCC_DIR = temp/qrc
 	UI_DIR  = temp/ui
 	MOC_DIR = temp/moc
+    DEFINES *= _USE_32BIT_TIME_T
 
     ## solve linker warnings because of the order of the libraries
     #QMAKE_LFLAGS += -Wl,--start-group
@@ -94,21 +121,18 @@ win32 {
 		QMAKE_LFLAGS += -Wl,-nxcompat
 	}
 
-    static {}
-    else {
-        for(lib, LIB_DIR):LIBS += -L"$$lib"
-        LIBS += -lssl -lcrypto -lpthread -lminiupnpc -lz
-        LIBS += -lcrypto -lws2_32 -lgdi32
-        LIBS += -luuid -lole32 -liphlpapi -lcrypt32
-        LIBS += -lole32 -lwinmm
+    upnpLib = miniupnpc
+    static {
+        LIBS *= $$linkStaticLibs(upnpLib)
+        PRE_TARGETDEPS += $$pretargetStaticLibs(upnpLib)
+    } else {
+        LIBS *= $$linkDynamicLibs(upnpLib)
     }
 
+    dLib = ws2_32 gdi32 uuid ole32 iphlpapi crypt32 winmm
+    LIBS *= $$linkDynamicLibs(dLib)
+
 	RC_FILE = resources/retroshare_win.rc
-
-    DEFINES *= _USE_32BIT_TIME_T
-
-	DEPENDPATH += . $$INC_DIR
-	INCLUDEPATH += . $$INC_DIR
 }
 
 ##################################### MacOS ######################################
