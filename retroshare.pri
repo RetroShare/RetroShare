@@ -106,8 +106,8 @@ defineReplace(findFileInPath) {
     fileName=$$1
     pathList=$$2
 
-    for(dir, $$eval(pathList)) {
-        attempt = system_path($$dir/$$fileName)
+    for(mDir, $$pathList) {
+        attempt = $$system_path($$mDir/$$fileName)
         exists($$attempt) {
             return($$attempt)
         }
@@ -122,7 +122,7 @@ linux-* {
 	isEmpty(PREFIX)   { PREFIX   = "/usr" }
 	isEmpty(BIN_DIR)  { BIN_DIR  = "$${PREFIX}/bin" }
     isEmpty(INC_DIR)  { INC_DIR  = "$${PREFIX}/include" }
-	isEmpty(LIB_DIR)  { LIB_DIR  = "$${PREFIX}/lib" }
+    isEmpty(LIBPATH)  { LIBPATH += "$${PREFIX}/lib" }
 	isEmpty(DATA_DIR) { DATA_DIR = "$${PREFIX}/share/retroshare" }
 	isEmpty(PLUGIN_DIR) { PLUGIN_DIR = "$${LIB_DIR}/retroshare/extensions6" }
 

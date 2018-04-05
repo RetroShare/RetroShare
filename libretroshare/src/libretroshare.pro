@@ -958,11 +958,10 @@ win32-g++ {
     static
     {
         # Order is very important!
-
         sLibs = miniupnpc sqlcipher ssl crypto
         for(mLib, sLibs){
             attemptPath=$$findFileInPath(lib$${mLib}.a, LIBPATH)
-            isEmpty(attemptPath):error( $$mLib not found!)
+            isEmpty(attemptPath):error(lib$${mLib}.a not found in [$${LIBPATH}])
 
             LIBS += -L$$dirname(attemptPath) -l$$mLib
             PRE_TARGETDEPS += $$attemptPath
