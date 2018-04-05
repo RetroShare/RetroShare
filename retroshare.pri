@@ -116,15 +116,18 @@ defineReplace(findFileInPath) {
 }
 
 ## For each platform defining the following variables may be needed
-## PREFIX, LIBPATH, INCLUDEPATH, RS_INCLUDE_DIR, RS_DATA_DIR, RS_PLUGIN_DIR
+## PREFIX, QMAKE_LIBDIR, INCLUDEPATH, RS_INCLUDE_DIR, RS_DATA_DIR, RS_PLUGIN_DIR
+## RS_BIN_DIR
 
 linux {
-	isEmpty(PREFIX)   { PREFIX   = "/usr" }
-	isEmpty(BIN_DIR)  { BIN_DIR  = "$${PREFIX}/bin" }
-    isEmpty(INC_DIR)  { INC_DIR  = "$${PREFIX}/include" }
-    isEmpty(LIBPATH)  { LIBPATH += "$${PREFIX}/lib" }
-	isEmpty(DATA_DIR) { DATA_DIR = "$${PREFIX}/share/retroshare" }
-	isEmpty(PLUGIN_DIR) { PLUGIN_DIR = "$${LIB_DIR}/retroshare/extensions6" }
+    isEmpty(PREFIX)        : PREFIX         = "/usr"
+    isEmpty(BIN_DIR)       : BIN_DIR        = "$${PREFIX}/bin"
+    isEmpty(RS_INCLUDE_DIR): RS_INCLUDE_DIR = "$${PREFIX}/include"
+    isEmpty(RS_DATA_DIR)   : RS_DATA_DIR    = "$${PREFIX}/share/retroshare"
+    isEmpty(RS_PLUGIN_DIR) : RS_PLUGIN_DIR  = "$${LIB_DIR}/retroshare/extensions6"
+
+    INCLUDEPATH *= "$$RS_INCLUDE_DIR"
+    QMAKE_LIBDIR *= "$${PREFIX}/lib"
 
     rs_autologin {
         DEFINES *= HAS_GNOME_KEYRING
@@ -154,12 +157,12 @@ win32 {
     isEmpty(PREFIX_MSYS2) {
         message("MINGW_PREFIX is not set, attempting MSYS2 autodiscovery.")
 
-        TEMPTATIVE_MSYS2=$$system_path(C:\msys32\mingw32)
+        TEMPTATIVE_MSYS2=$$system_path(C:\\msys32\\mingw32)
         exists($$system_path($${TEMPTATIVE_MSYS2}/include)) {
             PREFIX_MSYS2=$${TEMPTATIVE_MSYS2}
         }
 
-        TEMPTATIVE_MSYS2=$$system_path(C:\msys64\mingw32)
+        TEMPTATIVE_MSYS2=$$system_path(C:\\msys64\\mingw32)
         exists($$system_path($${TEMPTATIVE_MSYS2}/include)) {
             PREFIX_MSYS2=$${TEMPTATIVE_MSYS2}
         }
@@ -174,10 +177,14 @@ win32 {
     isEmpty(PREFIX) {
         PREFIX = $$system_path($${PREFIX_MSYS2}/usr)
     }
-    INCLUDEPATH += $$system_path($${PREFIX}/include)
-    LIBPATH += $$system_path($${PREFIX}/lib)
 
-    warning(***retroshare.pri:Win32 PREFIX $$PREFIX INCLUDEPATH $$INCLUDEPATH LIBPATH $$LIBPATH)
+    INCLUDEPATH *= $$system_path($${PREFIX}/include)
+    INCLUDEPATH *= $$system_path($${PREFIX_MSYS2}/usr/include)
+
+    QMAKE_LIBDIR *= $$system_path($${PREFIX}/lib)
+    QMAKE_LIBDIR *= $$system_path($${PREFIX_MSYS2}/usr/lib)
+
+    warning(***retroshare.pri:Win32 PREFIX $$PREFIX INCLUDEPATH $$INCLUDEPATH QMAKE_LIBDIR $$QMAKE_LIBDIR)
 
     DEFINES *= WINDOWS_SYS WIN32
 }
@@ -319,6 +326,8 @@ rs_v07_changes {
 }
 
 ## Retrocompatibility assignations, get rid of this ASAP
-isEmpty(LIBDIR) { LIBDIR=$${LIBPATH} }
-isEmpty(DATA_DIR) { DATA_DIR = "$${RS_DATA_DIR}" }
-isEmpty(PLUGIN_DIR) { PLUGIN_DIR = "$${RS_PLUGIN_DIR}" }
+isEmpty(BIN_DIR)   : BIN_DIR   = $${RS_BIN_DIR}
+isEmpty(INC_DIR)   : INC_DIR   = $${RS_INCLUDE_DIR}
+isEmpty(LIBDIR)    : LIBDIR    = $${QMAKE_LIBDIR}
+isEmpty(DATA_DIR)  : DATA_DIR  = $${RS_DATA_DIR}
+isEmpty(PLUGIN_DIR): PLUGIN_DIR= $${RS_PLUGIN_DIR}
