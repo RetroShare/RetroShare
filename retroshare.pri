@@ -119,7 +119,7 @@ defineReplace(findFileInPath) {
 ## PREFIX, QMAKE_LIBDIR, INCLUDEPATH, RS_INCLUDE_DIR, RS_DATA_DIR, RS_PLUGIN_DIR
 ## RS_BIN_DIR
 
-linux {
+linux-* {
     isEmpty(PREFIX)        : PREFIX         = "/usr"
     isEmpty(BIN_DIR)       : BIN_DIR        = "$${PREFIX}/bin"
     isEmpty(RS_INCLUDE_DIR): RS_INCLUDE_DIR = "$${PREFIX}/include"
@@ -184,12 +184,12 @@ win32-g++ {
     QMAKE_LIBDIR *= $$system_path($${PREFIX}/lib)
     QMAKE_LIBDIR *= $$system_path($${PREFIX_MSYS2}/usr/lib)
 
-    warning(***retroshare.pri:Win32 PREFIX $$PREFIX INCLUDEPATH $$INCLUDEPATH QMAKE_LIBDIR $$QMAKE_LIBDIR)
-
     DEFINES *= WINDOWS_SYS WIN32
+
+    message(***retroshare.pri:Win32 PREFIX $$PREFIX INCLUDEPATH $$INCLUDEPATH QMAKE_LIBDIR $$QMAKE_LIBDIR DEFINES $$DEFINES)
 }
 
-macx {
+macx-* {
 	rs_macos10.8 {
 		message(***retroshare.pri: Set Target and SDK to MacOS 10.8 )
 		QMAKE_MACOSX_DEPLOYMENT_TARGET=10.8
