@@ -18,6 +18,25 @@ debug {
         QMAKE_CXXFLAGS += -g
 }
 
+libresapihttpserver {
+    DEFINES *= ENABLE_WEBUI
+    PRE_TARGETDEPS *= $$OUT_PWD/../../libresapi/src/lib/libresapi.a
+    LIBS += $$OUT_PWD/../../libresapi/src/lib/libresapi.a
+    DEPENDPATH += $$PWD/../../libresapi/src
+    INCLUDEPATH += $$PWD/../../libresapi/src
+    HEADERS += TerminalApiClient.h
+    SOURCES += TerminalApiClient.cpp
+}
+
+
+DEPENDPATH += . $$PWD/../../libretroshare/src
+INCLUDEPATH += . $$PWD/../../libretroshare/src
+
+PRE_TARGETDEPS *= $$OUT_PWD/../../libretroshare/src/lib/libretroshare.a
+LIBS *= $$OUT_PWD/../../libretroshare/src/lib/libretroshare.a
+
+
+
 ################################# Linux ##########################################
 linux-* {
 	#CONFIG += version_detail_bash_script
@@ -156,11 +175,6 @@ haiku-* {
 
 ############################## Common stuff ######################################
 
-DEPENDPATH += . $$PWD/../../libretroshare/src
-INCLUDEPATH += . $$PWD/../../libretroshare/src
-
-PRE_TARGETDEPS *= $$OUT_PWD/../../libretroshare/src/lib/libretroshare.a
-LIBS *= $$OUT_PWD/../../libretroshare/src/lib/libretroshare.a
 
 # Input
 HEADERS +=  notifytxt.h
@@ -171,16 +185,4 @@ introserver {
 	HEADERS += introserver.h
 	SOURCES += introserver.cc
 	DEFINES *= RS_INTRO_SERVER
-}
-
-libresapihttpserver {
-	DEFINES *= ENABLE_WEBUI
-        PRE_TARGETDEPS *= $$OUT_PWD/../../libresapi/src/lib/libresapi.a
-	LIBS += $$OUT_PWD/../../libresapi/src/lib/libresapi.a
-        DEPENDPATH += $$PWD/../../libresapi/src
-	INCLUDEPATH += $$PWD/../../libresapi/src
-        HEADERS += \
-            TerminalApiClient.h
-        SOURCES +=  \
-            TerminalApiClient.cpp
 }
