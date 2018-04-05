@@ -62,7 +62,7 @@ clone_depth: 1                       # clone entire repository history if not de
 
 environment:
   global:
-    #Qt: https://www.appveyor.com/docs/installed-software#qt
+## Qt: https://www.appveyor.com/docs/installed-software#qt
 #    QTDIR: C:\Qt\5.10.1\mingw53_32
     MSYS2_ARCH: i686
     TARGET: i686_32-pc-msys
@@ -91,8 +91,9 @@ install:
   # Configuring MSys2
   - set PATH=C:\msys64\usr\bin;%PATH%
   - set PATH=C:\msys64\mingw32\bin;%PATH%
-  - pacman --noconfirm -S mingw-w64-i686-qt5-static mingw-w64-i686-miniupnpc mingw-w64-i686-sqlcipher mingw-w64-i686-libmicrohttpd
-  - set PATH=C:\msys64\mingw32\qt5-static\bin\;%PATH%
+  - pacman --noconfirm -S mingw-w64-i686-qt5 mingw-w64-i686-miniupnpc mingw-w64-i686-sqlcipher mingw-w64-i686-libmicrohttpd
+  #- pacman --noconfirm -S mingw-w64-i686-qt5-static mingw-w64-i686-miniupnpc mingw-w64-i686-sqlcipher mingw-w64-i686-libmicrohttpd
+  #- set PATH=C:\msys64\mingw32\qt5-static\bin\;%PATH%
 
   # Configuring Qt
 #  - set PATH=%QTDIR%\bin;C:\Qt\Tools\mingw491_32\bin;%PATH%
