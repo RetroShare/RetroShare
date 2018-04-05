@@ -100,9 +100,23 @@ rs_macos10.9:CONFIG -= rs_macos10.11
 rs_macos10.10:CONFIG -= rs_macos10.11
 rs_macos10.12:CONFIG -= rs_macos10.11
 
+## This function is useful to look for the location of a file in a list of paths
+## like the which command on linux
+defineReplace(findFileInPath) {
+    fileName=$$1
+    pathList=$$2
+
+    for(dir, $$eval(pathList)) {
+        attempt = system_path($$dir/$$fileName)
+        exists($$attempt) {
+            return($$attempt)
+        }
+    }
+    return()
+}
 
 ## For each platform defining the following variables may be needed
-## PREFIX, LIB_DIR, RS_INCLUDE_DIR, RS_DATA_DIR, RS_PLUGIN_DIR
+## PREFIX, LIBPATH, INCLUDEPATH, RS_INCLUDE_DIR, RS_DATA_DIR, RS_PLUGIN_DIR
 
 linux-* {
 	isEmpty(PREFIX)   { PREFIX   = "/usr" }
@@ -161,7 +175,7 @@ win32 {
         PREFIX = system_path($${PREFIX_MSYS2}/usr)
     }
     INCLUDEPATH += system_path($${PREFIX}/include)
-    LIB_DIR = system_path($${PREFIX}/lib)
+    LIBPATH += system_path($${PREFIX}/lib)
 
     DEFINES *= WINDOWS_SYS WIN32
 }
@@ -303,5 +317,6 @@ rs_v07_changes {
 }
 
 ## Retrocompatibility assignations, get rid of this ASAP
+isEmpty(LIBDIR) { LIBDIR=$${LIBPATH} }
 isEmpty(DATA_DIR) { DATA_DIR = "$${RS_DATA_DIR}" }
 isEmpty(PLUGIN_DIR) { PLUGIN_DIR = "$${RS_PLUGIN_DIR}" }

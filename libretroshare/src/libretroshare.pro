@@ -957,17 +957,16 @@ win32-g++ {
 ## Static library are very susceptible to order in command line
     static
     {
-        LIBS += -L$$LIB_DIR/ -lminiupnpc
-        PRE_TARGETDEPS += $$LIB_DIR/libminiupnpc.a
+        # Order is very important!
 
-        LIBS += -L$$LIB_DIR/ -lsqlcipher
-        PRE_TARGETDEPS += $$LIB_DIR/libsqlcipher.a
+        sLibs = miniupnpc sqlcipher ssl crypto
+        for(mLib, sLibs){
+            attemptPath=$$findFileInPath(lib$${mLib}.a, LIBPATH)
+            isEmpty(attemptPath):error( $$mLib not found!)
 
-        LIBS += -L$$LIB_DIR/ -lssl
-        PRE_TARGETDEPS += $$LIB_DIR/libssl.a
-
-        LIBS += -L$$LIB_DIR/ -lcrypto
-        PRE_TARGETDEPS += $$LIB_DIR/libcrypto.a
+            LIBS += -L$$dirname(attemptPath) -l$$mLib
+            PRE_TARGETDEPS += $$attemptPath
+        }
     }
 }
 
