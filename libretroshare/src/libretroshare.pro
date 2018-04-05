@@ -953,7 +953,6 @@ android-* {
 ############################# Windows + MSYS2 ##################################
 
 win32-g++ {
-
 ## Static library are very susceptible to order in command line
     static
     {
