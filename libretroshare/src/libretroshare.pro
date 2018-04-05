@@ -959,6 +959,15 @@ win32-g++ {
     {
         LIBS += -L$$LIB_DIR/ -lminiupnpc
         PRE_TARGETDEPS += $$LIB_DIR/libminiupnpc.a
+
+        LIBS += -L$$LIB_DIR/ -lsqlcipher
+        PRE_TARGETDEPS += $$LIB_DIR/libsqlcipher.a
+
+        LIBS += -L$$LIB_DIR/ -lssl
+        PRE_TARGETDEPS += $$LIB_DIR/libssl.a
+
+        LIBS += -L$$LIB_DIR/ -lcrypto
+        PRE_TARGETDEPS += $$LIB_DIR/libcrypto.a
     }
 }
 
