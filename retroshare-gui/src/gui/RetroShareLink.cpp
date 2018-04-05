@@ -1388,11 +1388,104 @@ static void processList(const QStringList &list, const QString &textSingular, co
 
 			case TYPE_FILE:
 			{
-				col.merge_in(link.name(),link.size(),RsFileHash(link.hash().toStdString())) ;
-				fileLinkFound = true;
+				FileInfo fi1;
+				if(links.size()==1 && rsFiles->alreadyHaveFile(RsFileHash(link.hash().toStdString()), fi1))
+				{
+					/* fallthrough */
+				}
+				else
+				{
+					col.merge_in(link.name(),link.size(),RsFileHash(link.hash().toStdString())) ;
+					fileLinkFound = true;
+					break;
+				}
+			}
+			//break;
+			case TYPE_EXTRAFILE:
+			{
+#ifdef DEBUG_RSLINK
+				std::cerr << " RetroShareLink::process FileRequest : fileName : " << link.name().toUtf8().constData() << ". fileHash : " << link.hash().toStdString() << ". fileSize : " << link.size() << std::endl;
+#endif
+
+				needNotifySuccess = true;
+				std::list<RsPeerId> srcIds;
+
+				// Add the link built-in source. This is needed for EXTRA files, where the source is specified in the link.
+
+				if(link.type() == TYPE_EXTRAFILE)
+				{
+#ifdef DEBUG_RSLINK
+					std::cerr << " RetroShareLink::process Adding built-in source " << link.SSLId().toStdString() << std::endl;
+#endif
+					srcIds.push_back(RsPeerId(link.SSLId().toStdString())) ;
+				}
+
+				// Get a list of available direct sources, in case the file is browsable only.
+				//
+				FileInfo finfo ;
+				rsFiles->FileDetails(RsFileHash(link.hash().toStdString()), RS_FILE_HINTS_REMOTE, finfo) ;
+
+				for(std::vector<TransferInfo>::const_iterator it(finfo.peers.begin());it!=finfo.peers.end();++it)
+				{
+#ifdef DEBUG_RSLINK
+					std::cerr << "  adding peerid " << (*it).peerId << std::endl ;
+#endif
+					srcIds.push_back((*it).peerId) ;
+				}
+
+				QString cleanname = link.name() ;
+				static const QString bad_chars_str = "/\\\"*:?<>|" ;
+
+				for(int i=0;i<cleanname.length();++i)
+					for(int j=0;j<bad_chars_str.length();++j)
+						if(cleanname[i] == bad_chars_str[j])
+						{
+							cleanname[i] = '_';
+							flag |= RSLINK_PROCESS_NOTIFY_BAD_CHARS ;
+						}
+
+				bool bFileOpened = false;
+				FileInfo fi;
+				if (rsFiles->alreadyHaveFile(RsFileHash(link.hash().toStdString()), fi)) {
+					/* make path for downloaded file */
+					std::string path;
+					path = fi.path;//Shared files has path with filename included
+
+					//Seems that all FileInfo get .path==filepath+filename
+					//if (fi.downloadStatus == FT_STATE_COMPLETE)
+					//	path = fi.path + "/" + fi.fname;
+
+					QFileInfo qinfo;
+					qinfo.setFile(QString::fromUtf8(path.c_str()));
+					if (qinfo.exists() && qinfo.isFile() && !dontOpenNextFile) {
+						QString question = "<html><body>";
+						question += QObject::tr("Warning: Retroshare is about to ask your system to open this file. ");
+						question += QObject::tr("Before you do so, please make sure that this file does not contain malicious executable code.");
+						question += "<br><br>" + cleanname + "</body></html>";
+
+						QMessageBox mb(QObject::tr("Confirmation"), question, QMessageBox::Warning, QMessageBox::Yes, QMessageBox::No, links.size()>1 ? QMessageBox::NoToAll : 0, 0);
+						int ret = mb.exec();
+						if(ret == QMessageBox::Yes) {
+							++countFileOpened;
+							bFileOpened = true;
+							/* open file with a suitable application */
+							if (!RsUrlHandler::openUrl(QUrl::fromLocalFile(qinfo.absoluteFilePath()))) {
+								std::cerr << "RetroShareLink::process(): can't open file " << path << std::endl;
+							}
+						} else if (ret == QMessageBox::NoToAll) {
+							dontOpenNextFile = true;
+						}
+					}
+				}
+
+				if (rsFiles->FileRequest(cleanname.toUtf8().constData(), RsFileHash(link.hash().toStdString()), link.size(), "", RS_FILE_REQ_ANONYMOUS_ROUTING, srcIds)) {
+					fileAdded.append(link.name());
+				} else {
+					if (!bFileOpened) fileExist.append(link.name());
+				}
 			}
 			break;
-
+			
 			case TYPE_PERSON:
 			{
 #ifdef DEBUG_RSLINK
@@ -1546,91 +1639,6 @@ static void processList(const QStringList &list, const QString &textSingular, co
 				needNotifySuccess = false;
 			}
 			break ;
-
-			case TYPE_EXTRAFILE:
-			{
-#ifdef DEBUG_RSLINK
-				std::cerr << " RetroShareLink::process FileRequest : fileName : " << link.name().toUtf8().constData() << ". fileHash : " << link.hash().toStdString() << ". fileSize : " << link.size() << std::endl;
-#endif
-
-				needNotifySuccess = true;
-				std::list<RsPeerId> srcIds;
-
-				// Add the link built-in source. This is needed for EXTRA files, where the source is specified in the link.
-
-				if(link.type() == TYPE_EXTRAFILE)
-				{
-#ifdef DEBUG_RSLINK
-					std::cerr << " RetroShareLink::process Adding built-in source " << link.SSLId().toStdString() << std::endl;
-#endif
-					srcIds.push_back(RsPeerId(link.SSLId().toStdString())) ;
-				}
-
-				// Get a list of available direct sources, in case the file is browsable only.
-				//
-				FileInfo finfo ;
-				rsFiles->FileDetails(RsFileHash(link.hash().toStdString()), RS_FILE_HINTS_REMOTE, finfo) ;
-
-				for(std::vector<TransferInfo>::const_iterator it(finfo.peers.begin());it!=finfo.peers.end();++it)
-				{
-#ifdef DEBUG_RSLINK
-					std::cerr << "  adding peerid " << (*it).peerId << std::endl ;
-#endif
-					srcIds.push_back((*it).peerId) ;
-				}
-
-				QString cleanname = link.name() ;
-				static const QString bad_chars_str = "/\\\"*:?<>|" ;
-
-				for(int i=0;i<cleanname.length();++i)
-					for(int j=0;j<bad_chars_str.length();++j)
-						if(cleanname[i] == bad_chars_str[j])
-						{
-							cleanname[i] = '_';
-							flag |= RSLINK_PROCESS_NOTIFY_BAD_CHARS ;
-						}
-
-				bool bFileOpened = false;
-				FileInfo fi;
-				if (rsFiles->alreadyHaveFile(RsFileHash(link.hash().toStdString()), fi)) {
-					/* make path for downloaded file */
-					std::string path;
-					path = fi.path;//Shared files has path with filename included
-
-					//Seems that all FileInfo get .path==filepath+filename
-					//if (fi.downloadStatus == FT_STATE_COMPLETE)
-					//	path = fi.path + "/" + fi.fname;
-
-					QFileInfo qinfo;
-					qinfo.setFile(QString::fromUtf8(path.c_str()));
-					if (qinfo.exists() && qinfo.isFile() && !dontOpenNextFile) {
-						QString question = "<html><body>";
-						question += QObject::tr("Warning: Retroshare is about to ask your system to open this file. ");
-						question += QObject::tr("Before you do so, please make sure that this file does not contain malicious executable code.");
-						question += "<br><br>" + cleanname + "</body></html>";
-
-						QMessageBox mb(QObject::tr("Confirmation"), question, QMessageBox::Warning, QMessageBox::Yes, QMessageBox::No, links.size()>1 ? QMessageBox::NoToAll : 0, 0);
-						int ret = mb.exec();
-						if(ret == QMessageBox::Yes) {
-							++countFileOpened;
-							bFileOpened = true;
-							/* open file with a suitable application */
-							if (!RsUrlHandler::openUrl(QUrl::fromLocalFile(qinfo.absoluteFilePath()))) {
-								std::cerr << "RetroShareLink::process(): can't open file " << path << std::endl;
-							}
-						} else if (ret == QMessageBox::NoToAll) {
-							dontOpenNextFile = true;
-						}
-					}
-				}
-
-				if (rsFiles->FileRequest(cleanname.toUtf8().constData(), RsFileHash(link.hash().toStdString()), link.size(), "", RS_FILE_REQ_ANONYMOUS_ROUTING, srcIds)) {
-					fileAdded.append(link.name());
-				} else {
-					if (!bFileOpened) fileExist.append(link.name());
-				}
-			}
-			break;
 
 			//TYPE_PRIVATE_CHAT
 
