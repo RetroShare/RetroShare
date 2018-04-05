@@ -151,7 +151,7 @@ before_package:
 build_script:
   - cd C:\projects\RetroShare
 #  - C:\msys64\mingw32\qt5-static\bin\qmake.exe -spec win32-g++ "QMAKE_LFLAGS+=-Wl,--exclude-libs,ALL" "CONFIG+=release" "CONFIG-=debug" "CONFIG+=static" "CONFIG+=no_libresapihttpserver"
-  - C:\msys64\mingw32\qt5-static\bin\qmake.exe -spec win32-g++ "QMAKE_LFLAGS+=-Wl,--exclude-libs,ALL" "CONFIG+=release" "CONFIG-=debug" "CONFIG+=static" "CONFIG+=no_libresapihttpserver" "CONFIG+=no_retroshare_gui"
+  - C:\msys64\mingw32\qt5-static\bin\qmake.exe -spec win32-g++ "QMAKE_LFLAGS+=-Wl,--exclude-libs,ALL" "CONFIG+=release" "CONFIG-=debug" "CONFIG+=no_libresapihttpserver" "CONFIG+=no_retroshare_gui"
   - C:\msys64\mingw32\bin\mingw32-make.exe -j3
 
 # scripts to run after build
