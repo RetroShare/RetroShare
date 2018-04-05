@@ -137,25 +137,29 @@ win32 {
 	message(***retroshare.pri:Win32)
 
     PREFIX_MSYS2 = $$(MINGW_PREFIX)
-    isEmpty(MINGW_PREFIX)
-    {
+    isEmpty(MINGW_PREFIX) {
         message(MINGW_PREFIX is not set, attempting MSYS2 autodiscovery.)
 
         TEMPTATIVE_MSYS2=system_path(C:\msys32\mingw32)
-        exists(system_path($${TEMPTATIVE_MSYS2}/include))
-        { PREFIX_MSYS2=$${TEMPTATIVE_MSYS2} }
+        exists(system_path($${TEMPTATIVE_MSYS2}/include)) {
+            PREFIX_MSYS2=$${TEMPTATIVE_MSYS2}
+        }
 
         TEMPTATIVE_MSYS2=system_path(C:\msys64\mingw32)
-        exists(system_path($${TEMPTATIVE_MSYS2}/include))
-        { PREFIX_MSYS2=$${TEMPTATIVE_MSYS2} }
+        exists(system_path($${TEMPTATIVE_MSYS2}/include)) {
+            PREFIX_MSYS2=$${TEMPTATIVE_MSYS2}
+        }
 
-        isEmpty(PREFIX_MSYS2)
-        { error(Cannot find MSYS2 please set MINGW_PREFIX) }
-        else
-        { message(Found MSYS2: $${PREFIX_MSYS2}) }
+        isEmpty(PREFIX_MSYS2) {
+            error(Cannot find MSYS2 please set MINGW_PREFIX)
+        } else {
+            message(Found MSYS2: $${PREFIX_MSYS2})
+        }
     }
 
-    isEmpty(PREFIX) { PREFIX = system_path($${PREFIX_MSYS2}/usr) }
+    isEmpty(PREFIX) {
+        PREFIX = system_path($${PREFIX_MSYS2}/usr)
+    }
     INCLUDEPATH += system_path($${PREFIX}/include)
     LIB_DIR = system_path($${PREFIX}/lib)
 
