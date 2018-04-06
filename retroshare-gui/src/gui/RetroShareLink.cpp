@@ -1389,7 +1389,8 @@ static void processList(const QStringList &list, const QString &textSingular, co
 			case TYPE_FILE:
 			{
 				FileInfo fi1;
-				if(links.size()==1 && rsFiles->alreadyHaveFile(RsFileHash(link.hash().toStdString()), fi1))
+				if(links.size()==1 && rsFiles->alreadyHaveFile(RsFileHash(link.hash().toStdString()), fi1)
+					&& !link.name().endsWith(RsCollection::ExtensionString))
 				{
 					/* fallthrough */
 				}
@@ -1475,14 +1476,14 @@ static void processList(const QStringList &list, const QString &textSingular, co
 						} else if (ret == QMessageBox::NoToAll) {
 							dontOpenNextFile = true;
 						}
+						needNotifySuccess = false;
 					}
 				}
 
 				if (rsFiles->FileRequest(cleanname.toUtf8().constData(), RsFileHash(link.hash().toStdString()), link.size(), "", RS_FILE_REQ_ANONYMOUS_ROUTING, srcIds)) {
 					fileAdded.append(link.name());
 				} else {
-					if (!bFileOpened) fileExist.append(link.name());
-				}
+					if (!bFileOpened && links.size()>1) fileExist.append(link.name());}
 			}
 			break;
 			
@@ -1780,6 +1781,8 @@ static void processList(const QStringList &list, const QString &textSingular, co
 
 	QString result;
 
+	
+	
 	if (flag & (RSLINK_PROCESS_NOTIFY_SUCCESS | RSLINK_PROCESS_NOTIFY_ERROR)) {
 		result += (links.count() == 1 ? QObject::tr("%1 of %2 RetroShare link processed.") : QObject::tr("%1 of %2 RetroShare links processed.")).arg(countProcessed).arg(links.count()) + "<br><br>";
 	}
