@@ -76,7 +76,7 @@ win32-x-g++ {
 
 #################################### Windows #####################################
 
-win32 {
+win32-g++ {
 	CONFIG += console
 	OBJECTS_DIR = temp/obj
 	RCC_DIR = temp/qrc
@@ -94,8 +94,8 @@ win32 {
 		QMAKE_LFLAGS += -Wl,-nxcompat
 	}
 
-    static {}
-    else {
+    static {
+    } else {
         for(lib, LIB_DIR):LIBS += -L"$$lib"
         LIBS += -lssl -lcrypto -lpthread -lminiupnpc -lz
         LIBS += -lcrypto -lws2_32 -lgdi32

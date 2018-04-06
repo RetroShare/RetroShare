@@ -234,7 +234,7 @@ version_detail_bash_script {
         PRE_TARGETDEPS = write_version_detail
         write_version_detail.commands = $$PWD/version_detail.sh
     }
-    win32 {
+    win32-* {
         QMAKE_EXTRA_TARGETS += write_version_detail
         PRE_TARGETDEPS = write_version_detail
         write_version_detail.commands = $$PWD/version_detail.bat
@@ -263,7 +263,7 @@ win32-x-g++ {
 }
 ################################# Windows ##########################################
 
-win32-* {
+win32-g++ {
 	QMAKE_CC = $${QMAKE_CXX}
 	OBJECTS_DIR = temp/obj
 	MOC_DIR = temp/moc
