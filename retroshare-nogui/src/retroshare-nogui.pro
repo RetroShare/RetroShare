@@ -30,7 +30,12 @@ QMAKE_LIBDIR *= $$system_path($${OUT_PWD}/../../openpgpsdk/src/lib)
 INCLUDEPATH  *= $$system_path($${PWD}/../../libretroshare/src)
 QMAKE_LIBDIR *= $$system_path($${OUT_PWD}/../../libretroshare/src/lib)
 
+mSqlLib = sqlcipher
+no_sqlcipher:mSqlLib = sqlite3
+
+
 sLibs = retroshare ops bitdht
+mLibs = ssl crypto pthread z bz2 $$mSqlLib
 dLibs =
 
 libresapihttpserver {
@@ -47,9 +52,9 @@ libresapihttpserver {
 }
 
 static {
-    sLibs *= ssl crypto pthread z bz2
+    sLibs *= $$mLibs
 } else {
-    dLibs *= ssl crypto pthread z bz2
+    dLibs *= $$mLibs
 }
 
 LIBS += $$linkStaticLibs(sLibs)
@@ -115,6 +120,14 @@ win32-g++ {
 		# Tell linker to use DEP protection
 		QMAKE_LFLAGS += -Wl,-nxcompat
 	}
+
+    upnpLib = miniupnpc
+    static {
+        LIBS *= $$linkStaticLibs(upnpLib)
+        PRE_TARGETDEPS += $$pretargetStaticLibs(upnpLib)
+    } else {
+        LIBS *= $$linkDynamicLibs(upnpLib)
+    }
 
     dLib = ws2_32 gdi32 uuid ole32 iphlpapi crypt32 winmm
     LIBS *= $$linkDynamicLibs(dLib)
