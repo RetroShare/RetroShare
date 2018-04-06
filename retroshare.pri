@@ -119,20 +119,25 @@ defineReplace(findFileInPath) {
     return()
 }
 
-## For each platform defining the following variables may be needed
-## PREFIX, QMAKE_LIBDIR, INCLUDEPATH, RS_INCLUDE_DIR, RS_DATA_DIR, RS_PLUGIN_DIR
-## RS_BIN_DIR, RS_LIB_DIR
+## For some platforms defining the following variables may be needed
+## PREFIX String variable containing the directory considered as prefix set with
+## = operator.
+## QMAKE_LIBDIR, INCLUDEPATH Lists variables where qmake will look for includes
+## and libraries. Add values using *= operator.
+## RS_BIN_DIR, RS_LIB_DIR, RS_INCLUDE_DIR, RS_DATA_DIR, RS_PLUGIN_DIR String
+## variables of directories where RetroShare components will be installed, on
+## most platforms they are automatically calculated from PREFIX or in other ways
 
 linux-* {
     isEmpty(PREFIX)        : PREFIX         = "/usr"
-    isEmpty(BIN_DIR)       : BIN_DIR        = "$${PREFIX}/bin"
+    isEmpty(RS_BIN_DIR)    : RS_BIN_DIR     = "$${PREFIX}/bin"
     isEmpty(RS_INCLUDE_DIR): RS_INCLUDE_DIR = "$${PREFIX}/include"
     isEmpty(RS_LIB_DIR)    : RS_LIB_DIR     = "$${PREFIX}/lib"
     isEmpty(RS_DATA_DIR)   : RS_DATA_DIR    = "$${PREFIX}/share/retroshare"
     isEmpty(RS_PLUGIN_DIR) : RS_PLUGIN_DIR  = "$${RS_LIB_DIR}/retroshare/extensions6"
 
-    INCLUDEPATH *= "$$RS_INCLUDE_DIR"
-    QMAKE_LIBDIR *= "$${PREFIX}/lib"
+    INCLUDEPATH  *= "$$RS_INCLUDE_DIR"
+    QMAKE_LIBDIR *= "$$RS_LIB_DIR"
 
     rs_autologin {
         DEFINES *= HAS_GNOME_KEYRING

@@ -263,7 +263,7 @@ win32-x-g++ {
 }
 ################################# Windows ##########################################
 
-win32 {
+win32-* {
 	QMAKE_CC = $${QMAKE_CXX}
 	OBJECTS_DIR = temp/obj
 	MOC_DIR = temp/moc
@@ -289,15 +289,33 @@ win32 {
 
 	CONFIG += upnp_miniupnpc
 
+    mSqlLib = sqlcipher
 	no_sqlcipher {
 		PKGCONFIG *= sqlite3
-		LIBS += -lsqlite3
-	} else {
-		LIBS += -lsqlcipher
-	}
+        mSqlLib = sqlite3
+    }
 
 	DEPENDPATH += . $$INC_DIR
 	INCLUDEPATH += . $$INC_DIR
+
+    ## Static library are very susceptible to order in command line
+    sLibs = miniupnpc $$mSqlLib ssl crypto z
+
+    static {
+        for(mLib, sLibs){
+            attemptPath=$$findFileInPath(lib$${mLib}.a, QMAKE_LIBDIR)
+            isEmpty(attemptPath):error(lib$${mLib}.a not found in [$${QMAKE_LIBDIR}])
+
+            LIBS += -L$$dirname(attemptPath) -l$$mLib
+            PRE_TARGETDEPS += $$attemptPath
+        }
+    } else {
+        for(mLib, sLibs) {
+            LIBS += -l$$mLib
+        }
+    }
+
+    LIBS += -lpthread -lws2_32 -lgdi32 -luuid -liphlpapi -lcrypt32 -lole32 -lwinmm
 }
 
 ################################# MacOSX ##########################################
@@ -948,23 +966,5 @@ android-* {
     PRE_TARGETDEPS += $$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/lib/libcrypto.a
 
     HEADERS += util/androiddebug.h
-}
-
-############################# Windows + MSYS2 ##################################
-
-win32-g++ {
-## Static library are very susceptible to order in command line
-    static
-    {
-        # Order is very important!
-        sLibs = miniupnpc sqlcipher ssl crypto
-        for(mLib, sLibs){
-            attemptPath=$$findFileInPath(lib$${mLib}.a, QMAKE_LIBDIR)
-            isEmpty(attemptPath):error(lib$${mLib}.a not found in [$${QMAKE_LIBDIR}])
-
-            LIBS += -L$$dirname(attemptPath) -l$$mLib
-            PRE_TARGETDEPS += $$attemptPath
-        }
-    }
 }
 
