@@ -300,22 +300,15 @@ win32-* {
 
     ## Static library are very susceptible to order in command line
     sLibs = miniupnpc $$mSqlLib ssl crypto z
+    dLibs = pthread ws2_32 gdi32 uuid iphlpapi crypt32 ole32 winmm
 
     static {
-        for(mLib, sLibs){
-            attemptPath=$$findFileInPath(lib$${mLib}.a, QMAKE_LIBDIR)
-            isEmpty(attemptPath):error(lib$${mLib}.a not found in [$${QMAKE_LIBDIR}])
-
-            LIBS += -L$$dirname(attemptPath) -l$$mLib
-            PRE_TARGETDEPS += $$attemptPath
-        }
+        linkStaticLibs(sLibs)
+        linkDynamicLibs(dLibs)
     } else {
-        for(mLib, sLibs) {
-            LIBS += -l$$mLib
-        }
+        linkDynamicLibs(sLibs)
+        linkDynamicLibs(dLibs)
     }
-
-    LIBS += -lpthread -lws2_32 -lgdi32 -luuid -liphlpapi -lcrypt32 -lole32 -lwinmm
 }
 
 ################################# MacOSX ##########################################
