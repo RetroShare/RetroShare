@@ -177,14 +177,14 @@ win32-g++ {
     }
 
     isEmpty(PREFIX) {
-        PREFIX = $$system_path($${PREFIX_MSYS2}/usr)
+        PREFIX = $$system_path($$clean_path($${PREFIX_MSYS2}/../usr))
     }
 
     INCLUDEPATH *= $$system_path($${PREFIX}/include)
-    INCLUDEPATH *= $$system_path($${PREFIX_MSYS2}/usr/include)
+    INCLUDEPATH *= $$system_path($${PREFIX_MSYS2}/include)
 
     QMAKE_LIBDIR *= $$system_path($${PREFIX}/lib)
-    QMAKE_LIBDIR *= $$system_path($${PREFIX_MSYS2}/usr/lib)
+    QMAKE_LIBDIR *= $$system_path($${PREFIX_MSYS2}/lib)
 
     DEFINES *= WINDOWS_SYS WIN32
 
