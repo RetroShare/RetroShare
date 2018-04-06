@@ -110,9 +110,7 @@ defineReplace(findFileInPath) {
 
     for(mDir, $$pathList) {
         attempt = $$clean_path($$mDir/$$fileName)
-        message(findFileInPath attempting $$attempt)
         exists($$attempt) {
-            message(findFileInPath found $$attempt)
             return($$system_path($$attempt))
         }
     }
