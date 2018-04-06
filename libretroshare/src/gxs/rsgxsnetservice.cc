@@ -272,8 +272,8 @@
  	NXS_NET_DEBUG_8		gxs distant sync
 
  ***/
-//#define NXS_NET_DEBUG_0 	1
-//#define NXS_NET_DEBUG_1 	1
+#define NXS_NET_DEBUG_0 	1
+#define NXS_NET_DEBUG_1 	1
 //#define NXS_NET_DEBUG_2 	1
 //#define NXS_NET_DEBUG_3 	1
 //#define NXS_NET_DEBUG_4 	1
@@ -318,7 +318,7 @@ static const uint32_t RS_NXS_ITEM_ENCRYPTION_STATUS_GXS_KEY_MISSING     = 0x05 ;
  || defined(NXS_NET_DEBUG_8)
 
 static const RsPeerId     peer_to_print     = RsPeerId(std::string(""))   ;
-static const RsGxsGroupId group_id_to_print = RsGxsGroupId(std::string("")) ;	// use this to allow to this group id only, or "" for all IDs
+static const RsGxsGroupId group_id_to_print = RsGxsGroupId(std::string("ff8d59ef38cad0429f34cc21749dda71")) ;	// use this to allow to this group id only, or "" for all IDs
 static const uint32_t     service_to_print  = RS_SERVICE_GXS_TYPE_CHANNELS ;                       	// use this to allow to this service id only, or 0 for all services
 										// warning. Numbers should be SERVICE IDS (see serialiser/rsserviceids.h. E.g. 0x0215 for forums)
 
@@ -427,8 +427,7 @@ int RsGxsNetService::tick()
 {
 	// always check for new items arriving
 	// from peers
-    if(receivedItems())
-        recvNxsItemQueue();
+	recvNxsItemQueue();
 
     bool should_notify = false;
 
@@ -751,6 +750,10 @@ void RsGxsNetService::generic_sendItem(RsNxsItem *si)
 		if(!mem)
 			return ;
 
+#ifdef NXS_NET_DEBUG_8
+        GXSNETDEBUG_P_(si->PeerId()) << "Sending RsGxsNetTunnelService Item:" << (void*)si << " of type: " << std::hex << si->PacketId() << std::dec
+		                               << " transaction " << si->transactionNumber << " to virtual peer " << si->PeerId() << std::endl ;
+#endif
 		ser.serialise(si,mem,&size) ;
 
 		mGxsNetTunnel->sendData(mem,size,static_cast<RsGxsNetTunnelVirtualPeerId>(si->PeerId()));
@@ -1670,13 +1673,20 @@ RsItem *RsGxsNetService::generic_recvItem()
 	uint32_t size = 0 ;
 	RsGxsNetTunnelVirtualPeerId virtual_peer_id ;
 
-	if(mAllowDistSync && mGxsNetTunnel->receiveData(mServType,data,size,virtual_peer_id))
+	while(mAllowDistSync && mGxsNetTunnel->receiveData(mServType,data,size,virtual_peer_id))
 	{
-		RsItem *item = dynamic_cast<RsNxsItem*>(RsNxsSerialiser(mServType).deserialise(data,&size)) ;
+		RsNxsItem *item = dynamic_cast<RsNxsItem*>(RsNxsSerialiser(mServType).deserialise(data,&size)) ;
 		item->PeerId(virtual_peer_id) ;
 
 		free(data) ;
 
+		if(!item)
+			continue ;
+
+#ifdef NXS_NET_DEBUG_8
+        GXSNETDEBUG_P_(item->PeerId()) << "Received RsGxsNetTunnelService Item:" << (void*)item << " of type: " << std::hex << item->PacketId() << std::dec
+		                               << " transaction " << item->transactionNumber << " from virtual peer " << item->PeerId() << std::endl ;
+#endif
 		return item ;
 	}
 
@@ -1992,7 +2002,7 @@ void RsGxsNetService::debugDump()
 
     GXSNETDEBUG___<< "RsGxsNetService::debugDump():" << std::endl;
 
-    RsGxsMetaDataTemporaryMap<RsGxsGrpMetaData> grpMetas;
+    RsGxsGrpMetaTemporaryMap grpMetas;
 
     if(!group_id_to_print.isNull())
         grpMetas[group_id_to_print] = NULL ;
@@ -2005,7 +2015,7 @@ void RsGxsNetService::debugDump()
 
     for(ServerMsgMap::const_iterator it(mServerMsgUpdateMap.begin());it!=mServerMsgUpdateMap.end();++it)
     {
-        RsGxsMetaDataTemporaryMap<RsGxsGrpMetaData>::const_iterator it2 = grpMetas.find(it->first) ;
+        RsGxsGrpMetaTemporaryMap::const_iterator it2 = grpMetas.find(it->first) ;
         RsGxsGrpMetaData *grpMeta = (it2 != grpMetas.end())? it2->second : NULL;
         std::string subscribe_string = (grpMeta==NULL)?"Unknown" :  ((grpMeta->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED)?" Subscribed":" NOT Subscribed") ;
 
