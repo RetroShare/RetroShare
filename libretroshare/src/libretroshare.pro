@@ -303,11 +303,12 @@ win32-* {
     dLibs = pthread ws2_32 gdi32 uuid iphlpapi crypt32 ole32 winmm
 
     static {
-        linkStaticLibs(sLibs)
-        linkDynamicLibs(dLibs)
+        LIBS += $$linkStaticLibs(sLibs)
+        PRE_TARGETDEPS += $$pretargetStaticLibs(sLibs)
+        LIBS += $$linkDynamicLibs(dLibs)
     } else {
-        linkDynamicLibs(sLibs)
-        linkDynamicLibs(dLibs)
+        LIBS += $$linkDynamicLibs(sLibs)
+        LIBS += $$linkDynamicLibs(dLibs)
     }
 }
 
