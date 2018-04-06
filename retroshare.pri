@@ -107,9 +107,11 @@ defineReplace(findFileInPath) {
     pathList=$$2
 
     for(mDir, $$pathList) {
-        attempt = $$system_path($$mDir/$$fileName)
-        exists($$attempt) {
-            return($$attempt)
+        attempt = "$$clean_path("$$mDir/$$fileName"
+        message(defineReplace attempting $$attempt)
+        exists($$clean_path($$attempt)) {
+            message(defineReplace found $$attempt)
+            return($$system_path($$attempt))
         }
     }
     return()
@@ -156,12 +158,12 @@ win32-g++ {
         message("MINGW_PREFIX is not set, attempting MSYS2 autodiscovery.")
 
         TEMPTATIVE_MSYS2=$$system_path(C:\\msys32\\mingw32)
-        exists($$system_path($${TEMPTATIVE_MSYS2}/include)) {
+        exists($$clean_path($${TEMPTATIVE_MSYS2}/include)) {
             PREFIX_MSYS2=$${TEMPTATIVE_MSYS2}
         }
 
         TEMPTATIVE_MSYS2=$$system_path(C:\\msys64\\mingw32)
-        exists($$system_path($${TEMPTATIVE_MSYS2}/include)) {
+        exists($$clean_path($${TEMPTATIVE_MSYS2}/include)) {
             PREFIX_MSYS2=$${TEMPTATIVE_MSYS2}
         }
 
