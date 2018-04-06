@@ -121,14 +121,15 @@ defineReplace(findFileInPath) {
 
 ## For each platform defining the following variables may be needed
 ## PREFIX, QMAKE_LIBDIR, INCLUDEPATH, RS_INCLUDE_DIR, RS_DATA_DIR, RS_PLUGIN_DIR
-## RS_BIN_DIR
+## RS_BIN_DIR, RS_LIB_DIR
 
 linux-* {
     isEmpty(PREFIX)        : PREFIX         = "/usr"
     isEmpty(BIN_DIR)       : BIN_DIR        = "$${PREFIX}/bin"
     isEmpty(RS_INCLUDE_DIR): RS_INCLUDE_DIR = "$${PREFIX}/include"
+    isEmpty(RS_LIB_DIR)    : RS_LIB_DIR     = "$${PREFIX}/lib"
     isEmpty(RS_DATA_DIR)   : RS_DATA_DIR    = "$${PREFIX}/share/retroshare"
-    isEmpty(RS_PLUGIN_DIR) : RS_PLUGIN_DIR  = "$${LIB_DIR}/retroshare/extensions6"
+    isEmpty(RS_PLUGIN_DIR) : RS_PLUGIN_DIR  = "$${RS_LIB_DIR}/retroshare/extensions6"
 
     INCLUDEPATH *= "$$RS_INCLUDE_DIR"
     QMAKE_LIBDIR *= "$${PREFIX}/lib"
@@ -177,7 +178,7 @@ win32-g++ {
     }
 
     isEmpty(PREFIX) {
-        PREFIX = $$system_path($$clean_path($${PREFIX_MSYS2}/../usr))
+        PREFIX = $$system_path($${PREFIX_MSYS2})
     }
 
     INCLUDEPATH *= $$system_path($${PREFIX}/include)
@@ -185,6 +186,10 @@ win32-g++ {
 
     QMAKE_LIBDIR *= $$system_path($${PREFIX}/lib)
     QMAKE_LIBDIR *= $$system_path($${PREFIX_MSYS2}/lib)
+
+    RS_BIN_DIR     = $$system_path($${PREFIX}/bin)
+    RS_INCLUDE_DIR = $$system_path($${PREFIX}/include)
+    RS_LIB_DIR     = $$system_path($${PREFIX}/lib)
 
     DEFINES *= WINDOWS_SYS WIN32
 
