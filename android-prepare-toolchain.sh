@@ -248,8 +248,8 @@ build_sqlite()
 	make -j${HOST_NUM_CPU}
 	make install
 	rm -f ${SYSROOT}/usr/lib/libsqlite3.so*
-	${CC} -shared -o libsqlite3.so -fPIC sqlite3.o -ldl
-	cp libsqlite3.so "${SYSROOT}/usr/lib"
+#	${CC} -shared -o libsqlite3.so -fPIC sqlite3.o -ldl
+#	cp libsqlite3.so "${SYSROOT}/usr/lib"
 	cd ..
 }
 

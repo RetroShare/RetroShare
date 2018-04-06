@@ -947,30 +947,10 @@ android-* {
     DEFINES *= "ftello64=ftello"
 
 ## Static library are very susceptible to order in command line
-    sLibs = bz2 upnp ixml threadutil sqlcipher ssl crypto
-    dLibs = sqlite3
-
-    message(***libretroshare.pro linking $$sLibs $$dLibs)
+    sLibs = bz2 upnp ixml threadutil sqlcipher ssl crypto sqlite3
 
     LIBS += $$linkStaticLibs(sLibs)
     PRE_TARGETDEPS += $$pretargetStaticLibs(sLibs)
-    LIBS += $$linkDynamicLibs(dLibs)
-
-    message(***libretroshare.pro LIBS -> $$LIBS)
-    message(***libretroshare.pro PRE_TARGETDEPS -> $$PRE_TARGETDEPS)
-
-#    LIBS *= -lbz2 -lupnp -lixml -lthreadutil -lsqlite3
-
-## Static library are very susceptible to order in command line
-
-#    LIBS += -L$$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/lib/ -lsqlcipher
-#    PRE_TARGETDEPS += $$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/lib/libsqlcipher.a
-
-#    LIBS += -L$$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/lib/ -lssl
-#    PRE_TARGETDEPS += $$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/lib/libssl.a
-
-#    LIBS += -L$$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/lib/ -lcrypto
-#    PRE_TARGETDEPS += $$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/lib/libcrypto.a
 
     HEADERS += util/androiddebug.h
 }
