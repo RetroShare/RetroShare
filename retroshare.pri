@@ -101,15 +101,17 @@ rs_macos10.10:CONFIG -= rs_macos10.11
 rs_macos10.12:CONFIG -= rs_macos10.11
 
 ## This function is useful to look for the location of a file in a list of paths
-## like the which command on linux
+## like the which command on linux, first paramether is the file name,
+## second parameter is the name of a variable containing the list of folters
+## where to look for. First match is returned.
 defineReplace(findFileInPath) {
     fileName=$$1
     pathList=$$2
 
     for(mDir, $$pathList) {
-        attempt = "$$mDir/$$fileName"
+        attempt = $$clean_path($$mDir/$$fileName)
         message(defineReplace attempting $$attempt)
-        exists($$clean_path($$attempt)) {
+        exists($$attempt) {
             message(defineReplace found $$attempt)
             return($$system_path($$attempt))
         }
