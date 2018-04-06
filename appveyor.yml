@@ -159,7 +159,7 @@ build_script:
 # scripts to run after build
 after_build:
   - mkdir RetroShare-portable
-  - copy retroshare-nogui\src\release\retroshare-nogui.exe RetroShare-portable\
+#  - copy retroshare-nogui\src\release\retroshare-nogui.exe RetroShare-portable\
 #  - copy retroshare-gui\src\release\retroshare.exe RetroShare-portable\
 #  - windeployqt --release RetroShare-portable\retroshare.exe
 #  - copy C:\msys64\mingw32\bin\libbz2*.dll RetroShare-portable\
@@ -197,6 +197,7 @@ after_build:
 
 artifacts:
   - path: RetroShare-portable
+  - path: '**\*.exe'
 #
 #  # pushing a single file
 #  - path: test.zip
