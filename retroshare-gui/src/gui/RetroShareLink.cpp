@@ -860,17 +860,17 @@ QString RetroShareLink::title() const
 		break;
 
 		case TYPE_FILE:
-		return QString("%1 (%2)").arg(hash()).arg(misc::friendlyUnit(size()));
+		return QString("Size: %2  hash: %1").arg(hash()).arg(misc::friendlyUnit(size()));
 
 		case TYPE_PERSON:
 		return PeerDefs::rsidFromId(RsPgpId(hash().toStdString()));
 
 		case TYPE_FORUM:
-			/* fallthrough */
+			return QString("Forum id: %1").arg(hash());
 		case TYPE_CHANNEL:
-			/* fallthrough */
+			return QString("Channel id: %1").arg(hash());
 		case TYPE_SEARCH:
-		break;
+			return QString("Search files");
 
 		case TYPE_MESSAGE:
 		return PeerDefs::rsidFromId(RsPeerId(hash().toStdString()));
