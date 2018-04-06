@@ -197,7 +197,7 @@ after_build:
 
 artifacts:
   - path: RetroShare-portable
-  - '**\*.exe'
+  - path: '**\*.exe'
 #
 #  # pushing a single file
 #  - path: test.zip
