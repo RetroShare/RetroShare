@@ -29,9 +29,10 @@ win32-* {
 
     mLibs = bz2 z ssl crypto
     static {
-        linkStaticLibs(mLibs)
+        LIBS += $$linkStaticLibs(mLibs)
+        PRE_TARGETDEPS += $$pretargetStaticLibs(mLibs)
     } else {
-        linkDynamicLibs(mLibs)
+        $$linkDynamicLibs(mLibs)
     }
 }
 

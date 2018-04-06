@@ -102,7 +102,7 @@ rs_macos10.12:CONFIG -= rs_macos10.11
 
 ## This function is useful to look for the location of a file in a list of paths
 ## like the which command on linux, first paramether is the file name,
-## second parameter is the name of a variable containing the list of folters
+## second parameter is the name of a variable containing the list of folders
 ## where to look for. First match is returned.
 defineReplace(findFileInPath) {
     fileName=$$1
@@ -110,33 +110,60 @@ defineReplace(findFileInPath) {
 
     for(mDir, $$pathList) {
         attempt = $$clean_path($$mDir/$$fileName)
-        message(defineReplace attempting $$attempt)
+        message(findFileInPath attempting $$attempt)
         exists($$attempt) {
-            message(defineReplace found $$attempt)
+            message(findFileInPath found $$attempt)
             return($$system_path($$attempt))
         }
     }
     return()
 }
 
-defineTest(linkStaticLibs) {
-    sLibs = $$1
+## This function return linker option to link statically the libraries contained
+## in the variable given as paramether.
+## Be carefull static library are very susceptible to order
+defineReplace(linkStaticLibs) {
+    libsVarName = $$1
+    retSlib =
 
-    for(mLib, sLibs) {
+    for(mLib, $$libsVarName) {
         attemptPath=$$findFileInPath(lib$${mLib}.a, QMAKE_LIBDIR)
         isEmpty(attemptPath):error(lib$${mLib}.a not found in [$${QMAKE_LIBDIR}])
 
-        LIBS += -L$$dirname(attemptPath) -l$$mLib
-        PRE_TARGETDEPS += $$attemptPath
+        retSlib += -L$$dirname(attemptPath) -l$$mLib
     }
+
+    return($$retSlib)
 }
 
-defineTest(linkDynamicLibs) {
-    sLibs = $$1
+## This function return pretarget deps for the static the libraries contained in
+## the variable given as paramether.
+defineReplace(pretargetStaticLibs) {
+    libsVarName = $$1
 
-    for(mLib, sLibs) {
-        LIBS += -l$$mLib
+    retPreTarget =
+
+    for(mLib, $$libsVarName) {
+        attemptPath=$$findFileInPath(lib$${mLib}.a, QMAKE_LIBDIR)
+        isEmpty(attemptPath):error(lib$${mLib}.a not found in [$${QMAKE_LIBDIR}])
+
+        retPreTarget += $$attemptPath
     }
+
+    return($$retPreTarget)
+}
+
+## This function return linker option to link dynamically the libraries
+## contained in the variable given as paramether.
+defineReplace(linkDynamicLibs) {
+    libsVarName = $$1
+    retDlib =
+
+    for(mLib, $$libsVarName) {
+        retDlib += -l$$mLib
+    }
+
+    return($$retDlib)
 }
 
 
@@ -178,7 +205,8 @@ android-* {
     CONFIG -= libresapihttpserver upnp_miniupnpc
     QT *= androidextras
     INCLUDEPATH += $$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/include
-    LIBS *= -L$$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/lib/
+#    LIBS *= -L$$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/lib/
+    QMAKE_LIBDIR *= "$$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/lib/"
 }
 
 win32-g++ {
