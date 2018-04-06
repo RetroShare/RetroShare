@@ -1781,8 +1781,6 @@ static void processList(const QStringList &list, const QString &textSingular, co
 
 	QString result;
 
-	
-	
 	if (flag & (RSLINK_PROCESS_NOTIFY_SUCCESS | RSLINK_PROCESS_NOTIFY_ERROR)) {
 		result += (links.count() == 1 ? QObject::tr("%1 of %2 RetroShare link processed.") : QObject::tr("%1 of %2 RetroShare links processed.")).arg(countProcessed).arg(links.count()) + "<br><br>";
 	}
