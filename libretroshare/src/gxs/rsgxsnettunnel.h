@@ -102,7 +102,6 @@ class RsGxsNetTunnelItem ;
 struct RsGxsNetTunnelVirtualPeerProvidingSet
 {
 	std::set<RsGxsGroupId>      provided_groups ;
-	std::list<RsTlvBinaryData*> incoming_data ;
 };
 
 struct RsGxsNetTunnelVirtualPeerInfo

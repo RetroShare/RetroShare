@@ -1670,8 +1670,15 @@ RsItem *RsGxsNetService::generic_recvItem()
 	uint32_t size = 0 ;
 	RsGxsNetTunnelVirtualPeerId virtual_peer_id ;
 
-	if(mGxsNetTunnel->receiveData(mServType,data,size,virtual_peer_id))
-		return dynamic_cast<RsNxsItem*>(RsNxsSerialiser(mServType).deserialise(data,&size)) ;
+	if(mAllowDistSync && mGxsNetTunnel->receiveData(mServType,data,size,virtual_peer_id))
+	{
+		RsItem *item = dynamic_cast<RsNxsItem*>(RsNxsSerialiser(mServType).deserialise(data,&size)) ;
+		item->PeerId(virtual_peer_id) ;
+
+		free(data) ;
+
+		return item ;
+	}
 
 	return NULL ;
 }
