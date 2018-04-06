@@ -119,6 +119,27 @@ defineReplace(findFileInPath) {
     return()
 }
 
+defineTest(linkStaticLibs) {
+    sLibs = $$1
+
+    for(mLib, sLibs) {
+        attemptPath=$$findFileInPath(lib$${mLib}.a, QMAKE_LIBDIR)
+        isEmpty(attemptPath):error(lib$${mLib}.a not found in [$${QMAKE_LIBDIR}])
+
+        LIBS += -L$$dirname(attemptPath) -l$$mLib
+        PRE_TARGETDEPS += $$attemptPath
+    }
+}
+
+defineTest(linkDynamicLibs) {
+    sLibs = $$1
+
+    for(mLib, sLibs) {
+        LIBS += -l$$mLib
+    }
+}
+
+
 ## For some platforms defining the following variables may be needed
 ## PREFIX String variable containing the directory considered as prefix set with
 ## = operator.
