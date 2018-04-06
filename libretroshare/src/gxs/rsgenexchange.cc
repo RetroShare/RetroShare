@@ -64,7 +64,7 @@ static const uint32_t INDEX_AUTHEN_ADMIN        = 0x00000040; // admin key
 
 #define GXS_MASK "GXS_MASK_HACK"
 
-//#define GEN_EXCH_DEBUG	1
+#define GEN_EXCH_DEBUG	1
 
 static const uint32_t MSG_CLEANUP_PERIOD     = 60*59; // 59 minutes
 static const uint32_t INTEGRITY_CHECK_PERIOD = 60*31; // 31 minutes
@@ -2860,8 +2860,10 @@ void RsGenExchange::processRecvdMessages()
 
         time_t now = time(NULL);
 
+	    if(mMsgPendingValidate.empty())
+			return ;
 #ifdef GEN_EXCH_DEBUG
-	    if(!mMsgPendingValidate.empty())
+		else
 		    std::cerr << "processing received messages" << std::endl;
 #endif
 		// 1 - First, make sure items metadata is deserialised, clean old failed items, and collect the groups Ids we have to check
@@ -2904,9 +2906,11 @@ void RsGenExchange::processRecvdMessages()
 		    }
 	    }
 
-		// 2 - Retrieve the metadata for the associated groups.
+		// 2 - Retrieve the metadata for the associated groups. The test is here to avoid the default behavior to
+		//     retrieve all groups when the list is empty
 
-	    mDataStore->retrieveGxsGrpMetaData(grpMetas);
+		if(!grpMetas.empty())
+			mDataStore->retrieveGxsGrpMetaData(grpMetas);
 
 	    GxsMsgReq msgIds;
 	    RsNxsMsgDataTemporaryList msgs_to_store;
@@ -2934,7 +2938,7 @@ void RsGenExchange::processRecvdMessages()
 			//      }
 
 #ifdef GEN_EXCH_DEBUG
-		    std::cerr << "    deserialised info: grp id=" << meta->mGroupId << ", msg id=" << meta->mMsgId ;
+		    std::cerr << "    deserialised info: grp id=" << msg->grpId << ", msg id=" << msg->msgId ;
 #endif
 			std::map<RsGxsGroupId, RsGxsGrpMetaData*>::iterator mit = grpMetas.find(msg->grpId);
 
@@ -2977,8 +2981,8 @@ void RsGenExchange::processRecvdMessages()
 				msg->metaData->recvTS = time(NULL);
 
 #ifdef GEN_EXCH_DEBUG
-				std::cerr << "    new status flags: " << meta->mMsgStatus << std::endl;
-				std::cerr << "    computed hash: " << meta->mHash << std::endl;
+				std::cerr << "    new status flags: " << msg->metaData->mMsgStatus << std::endl;
+				std::cerr << "    computed hash: " << msg->metaData->mHash << std::endl;
 				std::cerr << "Message received. Identity=" << msg->metaData->mAuthorId << ", from peer " << msg->PeerId() << std::endl;
 #endif
 
@@ -3062,9 +3066,6 @@ void RsGenExchange::processRecvdGroups()
 		GxsPendingItem<RsNxsGrp*, RsGxsGroupId>& gpsi = vit->second;
 		RsNxsGrp* grp = gpsi.mItem;
 
-#ifdef GEN_EXCH_DEBUG
-		std::cerr << "  processing validation for group " << meta->mGroupId << ", original attempt time: " << time(NULL) - gpsi.mFirstTryTS << " seconds ago" << std::endl;
-#endif
 		if(grp->metaData == NULL)
 		{
 			RsGxsGrpMetaData* meta = new RsGxsGrpMetaData();
@@ -3074,6 +3075,9 @@ void RsGenExchange::processRecvdGroups()
 			else
 				delete meta ;
 		}
+#ifdef GEN_EXCH_DEBUG
+		std::cerr << "  processing validation for group " << grp->metaData->mGroupId << ", original attempt time: " << time(NULL) - gpsi.mFirstTryTS << " seconds ago" << std::endl;
+#endif
 
 		// early deletion of group from the pending list if it's malformed, not accepted, or has been tried unsuccessfully for too long
 
@@ -3102,7 +3106,7 @@ void RsGenExchange::processRecvdGroups()
 			if(!grp->metaData->mAuthorId.isNull())
 			{
 #ifdef GEN_EXCH_DEBUG
-				std::cerr << "Group routage info: Identity=" << meta->mAuthorId << " from " << grp->PeerId() << std::endl;
+				std::cerr << "Group routage info: Identity=" << grp->metaData->mAuthorId << " from " << grp->PeerId() << std::endl;
 #endif
 				mRoutingClues[grp->metaData->mAuthorId].insert(grp->PeerId()) ;
 			}
@@ -3349,7 +3353,7 @@ void RsGenExchange::removeDeleteExistingMessages( std::list<RsNxsMsg*>& msgs, Gx
 		const RsGxsMessageId::std_vector& msgIds = msgIdReq[(*cit2)->metaData->mGroupId];
 
 #ifdef GEN_EXCH_DEBUG
-		std::cerr << "    grpid=" << cit2->second->mGroupId << ", msgid=" << cit2->second->mMsgId ;
+		std::cerr << "    grpid=" << (*cit2)->grpId << ", msgid=" << (*cit2)->msgId ;
 #endif
 
 		// Avoid storing messages that are already in the database, as well as messages that are too old (or generally do not pass the database storage test)
@@ -3369,7 +3373,7 @@ void RsGenExchange::removeDeleteExistingMessages( std::list<RsNxsMsg*>& msgs, Gx
 				}
 			}
 #ifdef GEN_EXCH_DEBUG
-			std::cerr << "    discarding " << cit2->second->mMsgId << std::endl;
+			std::cerr << "    discarding " << (*cit2)->msgId << std::endl;
 #endif
 
 			delete *cit2;
