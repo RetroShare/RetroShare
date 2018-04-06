@@ -107,7 +107,7 @@ defineReplace(findFileInPath) {
     pathList=$$2
 
     for(mDir, $$pathList) {
-        attempt = "$$clean_path("$$mDir/$$fileName"
+        attempt = "$$mDir/$$fileName"
         message(defineReplace attempting $$attempt)
         exists($$clean_path($$attempt)) {
             message(defineReplace found $$attempt)
