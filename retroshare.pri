@@ -249,7 +249,7 @@ libresapihttpserver:DEFINES *= ENABLE_WEBUI
 
 sqlcipher {
     DEFINES -= NO_SQLCIPHER
-    RS_SQL_LIB = "sqlcipher sqlite3"
+    RS_SQL_LIB = sqlcipher sqlite3
 }
 no_sqlcipher {
     DEFINES *= NO_SQLCIPHER
