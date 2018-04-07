@@ -59,7 +59,7 @@ NetworkView::NetworkView(QWidget *parent)
   connect( ui.edgeLengthSB, SIGNAL(valueChanged(int)), this, SLOT(setEdgeLength(int)));
   connect( ui.freezeCheckBox, SIGNAL(toggled(bool)), this, SLOT(setFreezeState(bool)));
   connect( ui.nameBox, SIGNAL(textChanged(QString)), this, SLOT(setNameSearch(QString)));
-  
+ 
   _should_update = true ;
   hideoffline = false;
 }
@@ -78,7 +78,6 @@ void NetworkView::setNameSearch(QString s)
 {
 	ui.graphicsView->setNameSearch(s);
 }
-
 void NetworkView::setMaxFriendLevel(int m)
 {
 	ui.graphicsView->snapshotNodesPositions() ;
@@ -100,7 +99,6 @@ void NetworkView::setMaxFriendLevel(int m)
 	}
 	updateDisplay() ;
 }
-
 void NetworkView::redraw()
 {
 	ui.graphicsView->clearNodesPositions() ;
@@ -182,9 +180,7 @@ void  NetworkView::updateDisplay()
 
 		RsPeerDetails detail ;
         if(!rsPeers->getGPGDetails(info.gpg_id, detail))
-		{
 			continue ;
-		}
 		
 		bool gpg_connected = false;
 		std::list<RsPeerId> sslContacts;
