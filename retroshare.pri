@@ -1,13 +1,14 @@
+################################################################################
+## Documented build options (CONFIG) goes here as all the rest depend on them ##
+## CONFIG must not be edited in other .pro files, aka if CONFIG need do be #####
+## modified depending on platform or from CONFIG itself it ust be done inside ##
+## this file (retroshare.pri) ##################################################
+################################################################################
+
 # To disable RetroShare-gui append the following
 # assignation to qmake command line "CONFIG+=no_retroshare_gui"
 CONFIG *= retroshare_gui
 no_retroshare_gui:CONFIG -= retroshare_gui
-
-# To build the RetroTor executable, just uncomment the following option.
-# RetroTor is a version of RS that automatically configures Tor for its own usage
-# using only hidden nodes. It will not start if Tor is not working.
-
-# CONFIG *= retrotor
 
 # To disable RetroShare-nogui append the following
 # assignation to qmake command line "CONFIG+=no_retroshare_nogui"
@@ -62,6 +63,14 @@ no_sqlcipher:CONFIG -= sqlcipher
 CONFIG *= no_rs_autologin
 rs_autologin:CONFIG -= no_rs_autologin
 
+# To build RetroShare Tor only version with automatic hidden node setup append
+#  the following assignation to qmake command line "CONFIG+=retrotor"
+CONFIG *= no_retrotor
+retrotor {
+    CONFIG -= no_retrotor
+    CONFIG *= rs_onlyhiddennode
+}
+
 # To have only hidden node generation append the following assignation
 # to qmake command line "CONFIG+=rs_onlyhiddennode"
 CONFIG *= no_rs_onlyhiddennode
@@ -99,6 +108,51 @@ rs_macos10.8:CONFIG -= rs_macos10.11
 rs_macos10.9:CONFIG -= rs_macos10.11
 rs_macos10.10:CONFIG -= rs_macos10.11
 rs_macos10.12:CONFIG -= rs_macos10.11
+
+###########################################################################################################################################################
+#
+#  V07_NON_BACKWARD_COMPATIBLE_CHANGE_001:
+#
+#     What: Computes the node id by performing a sha256 hash of the certificate's PGP signature, instead of simply picking up the last 20 bytes of it.
+#
+#     Why: There is no real risk in forging a certificate with the same ID as the authentication is performed over the PGP signature of the certificate
+#           which hashes the full SSL certificate (i.e. the full serialized CERT_INFO structure). However the possibility to
+#           create two certificates with the same IDs is a problem, as it can be used to cause disturbance in the software.
+#
+#     Backward compat: connexions impossible with non patched peers older than Nov 2017, probably because the SSL id that is computed is not the same on both side,
+#                    and in particular unpatched peers see a cerficate with ID different (because computed with the old method) than the ID that was
+#                    submitted when making friends.
+#
+#     Note: the advantage of basing the ID on the signature rather than the public key is not very clear, given that the signature is based on a hash
+#           of the public key (and the rest of the certificate info).
+#
+#  V07_NON_BACKWARD_COMPATIBLE_CHANGE_002:
+#
+#     What: Use RSA+SHA256 instead of RSA+SHA1 for PGP certificate signatures
+#
+#     Why:  Sha1 is likely to be prone to primary collisions anytime soon, so it is urgent to turn to a more secure solution.
+#
+#     Backward compat: unpatched peers after Nov 2017 are able to verify signatures since openpgp-sdk already handle it.
+#
+#  V07_NON_BACKWARD_COMPATIBLE_CHANGE_003:
+#
+#      What: Do not hash PGP certificate twice when signing
+#
+#  	 Why: hasing twice is not per se a security issue, but it makes it harder to change the settings for hashing.
+#
+#  	 Backward compat: patched peers cannot connect to non patched peers older than Nov 2017.
+###########################################################################################################################################################
+
+#CONFIG += rs_v07_changes
+rs_v07_changes {
+    DEFINES += V07_NON_BACKWARD_COMPATIBLE_CHANGE_001
+    DEFINES += V07_NON_BACKWARD_COMPATIBLE_CHANGE_002
+    DEFINES += V07_NON_BACKWARD_COMPATIBLE_CHANGE_003
+}
+
+################################################################################
+## RetroShare qmake functions goes here as all the rest may use them ###########
+################################################################################
 
 ## This function is useful to look for the location of a file in a list of paths
 ## like the which command on linux, first paramether is the file name,
@@ -165,14 +219,95 @@ defineReplace(linkDynamicLibs) {
 }
 
 
-## For some platforms defining the following variables may be needed
-## PREFIX String variable containing the directory considered as prefix set with
-## = operator.
+################################################################################
+## Statements and variables that depends on build options (CONFIG)goes here ####
+################################################################################
+##
+## Defining the following variables may be needed depending on platform and
+## build options (CONFIG)
+##
+## PREFIX String variable containing the directory considered as prefix set
+##  with = operator.
 ## QMAKE_LIBDIR, INCLUDEPATH Lists variables where qmake will look for includes
-## and libraries. Add values using *= operator.
+##   and libraries. Add values using *= operator.
 ## RS_BIN_DIR, RS_LIB_DIR, RS_INCLUDE_DIR, RS_DATA_DIR, RS_PLUGIN_DIR String
-## variables of directories where RetroShare components will be installed, on
-## most platforms they are automatically calculated from PREFIX or in other ways
+##   variables of directories where RetroShare components will be installed, on
+##   most platforms they are automatically calculated from PREFIX or in other
+##   ways.
+## RS_SQL_LIB String viariable containing the name of the SQL library to use
+##   (sqlcipher, "sqlcipher sqlite3") it is usually precalculated depending on
+##   CONFIG.
+## RS_UPNP_LIB String viariable containing the name of the UPNP library to use
+##   (miniupnpc, ""upnp ixml threadutil"") it usually depend on platform.
+
+
+wikipoos:DEFINES *= RS_USE_WIKI
+rs_gxs:DEFINES *= RS_ENABLE_GXS
+libresapilocalserver:DEFINES *= LIBRESAPI_LOCAL_SERVER
+qt_dependencies:DEFINES *= LIBRESAPI_QT
+libresapihttpserver:DEFINES *= ENABLE_WEBUI
+
+sqlcipher {
+    DEFINES -= NO_SQLCIPHER
+    RS_SQL_LIB = sqlcipher sqlite3
+}
+no_sqlcipher {
+    DEFINES *= NO_SQLCIPHER
+    RS_SQL_LIB = sqlite3
+}
+
+rs_autologin {
+    DEFINES *= RS_AUTOLOGIN
+    warning("You have enabled RetroShare auto-login, this is discouraged. The usage of auto-login on some linux distributions may allow someone having access to your session to steal the SSL keys of your node location and therefore compromise your security")
+}
+
+rs_onlyhiddennode {
+    DEFINES *= RS_ONLYHIDDENNODE
+    warning("QMAKE: You have enabled only hidden node.")
+}
+
+no_rs_deprecatedwarning {
+    QMAKE_CXXFLAGS += -Wno-deprecated
+    QMAKE_CXXFLAGS += -Wno-deprecated-declarations
+    DEFINES *= RS_NO_WARN_DEPRECATED
+    warning("QMAKE: You have disabled deprecated warnings.")
+}
+
+no_rs_cppwarning {
+    QMAKE_CXXFLAGS += -Wno-cpp
+    DEFINES *= RS_NO_WARN_CPP
+    warning("QMAKE: You have disabled C preprocessor warnings.")
+}
+
+rs_gxs_trans {
+    DEFINES *= RS_GXS_TRANS
+    greaterThan(QT_MAJOR_VERSION, 4) {
+        CONFIG += c++11
+    } else {
+        QMAKE_CXXFLAGS += -std=c++0x
+    }
+}
+
+rs_async_chat {
+    DEFINES *= RS_ASYNC_CHAT
+}
+
+rs_chatserver {
+    DEFINES *= RS_CHATSERVER
+}
+
+
+## Retrocompatibility assignations, get rid of this ASAP
+isEmpty(BIN_DIR)   : BIN_DIR   = $${RS_BIN_DIR}
+isEmpty(INC_DIR)   : INC_DIR   = $${RS_INCLUDE_DIR}
+isEmpty(LIBDIR)    : LIBDIR    = $${QMAKE_LIBDIR}
+isEmpty(DATA_DIR)  : DATA_DIR  = $${RS_DATA_DIR}
+isEmpty(PLUGIN_DIR): PLUGIN_DIR= $${RS_PLUGIN_DIR}
+
+
+################################################################################
+## Last goes platform specific statements common to all RetroShare subprojects #
+################################################################################
 
 linux-* {
     isEmpty(PREFIX)        : PREFIX         = "/usr"
@@ -199,11 +334,11 @@ android-* {
         CONFIG -= no_retroshare_android_notify_service
         CONFIG *= retroshare_android_notify_service
     }
-    CONFIG *= no_libresapihttpserver upnp_libupnp
-    CONFIG -= libresapihttpserver upnp_miniupnpc
+    RS_UPNP_LIB = upnp
+    CONFIG *= no_libresapihttpserver
+    CONFIG -= libresapihttpserver
     QT *= androidextras
     INCLUDEPATH += $$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/include
-#    LIBS *= -L$$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/lib/
     QMAKE_LIBDIR *= "$$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/lib/"
 }
 
@@ -243,7 +378,13 @@ win32-g++ {
     RS_INCLUDE_DIR = $$system_path($${PREFIX}/include)
     RS_LIB_DIR     = $$system_path($${PREFIX}/lib)
 
-    DEFINES *= WINDOWS_SYS WIN32
+    RS_UPNP_LIB = miniupnpc
+
+    DEFINES *= NOGDI WIN32 WIN32_LEAN_AND_MEAN WINDOWS_SYS _USE_32BIT_TIME_T
+
+    # This defines the platform to be WinXP or later and is needed for
+    #  getaddrinfo (_WIN32_WINNT_WINXP)
+    DEFINES *= WINVER=0x0501
 
     message(***retroshare.pri:Win32 PREFIX $$PREFIX INCLUDEPATH $$INCLUDEPATH QMAKE_LIBDIR $$QMAKE_LIBDIR DEFINES $$DEFINES)
 }
@@ -290,103 +431,3 @@ macx-* {
 	LIB_DIR += "/opt/local/lib"
 	CONFIG += c++11
 }
-
-
-wikipoos:DEFINES *= RS_USE_WIKI
-rs_gxs:DEFINES *= RS_ENABLE_GXS
-libresapilocalserver:DEFINES *= LIBRESAPI_LOCAL_SERVER
-qt_dependencies:DEFINES *= LIBRESAPI_QT
-libresapihttpserver:DEFINES *= ENABLE_WEBUI
-sqlcipher:DEFINES -= NO_SQLCIPHER
-no_sqlcipher:DEFINES *= NO_SQLCIPHER
-rs_autologin {
-    DEFINES *= RS_AUTOLOGIN
-    warning("You have enabled RetroShare auto-login, this is discouraged. The usage of auto-login on some linux distributions may allow someone having access to your session to steal the SSL keys of your node location and therefore compromise your security")
-}
-
-retrotor {
-    CONFIG *= rs_onlyhiddennode
-}
-
-rs_onlyhiddennode {
-    DEFINES *= RS_ONLYHIDDENNODE
-    warning("QMAKE: You have enabled only hidden node.")
-}
-
-no_rs_deprecatedwarning {
-    QMAKE_CXXFLAGS += -Wno-deprecated
-    QMAKE_CXXFLAGS += -Wno-deprecated-declarations
-    DEFINES *= RS_NO_WARN_DEPRECATED
-    warning("QMAKE: You have disabled deprecated warnings.")
-}
-
-no_rs_cppwarning {
-    QMAKE_CXXFLAGS += -Wno-cpp
-    DEFINES *= RS_NO_WARN_CPP
-    warning("QMAKE: You have disabled C preprocessor warnings.")
-}
-
-rs_gxs_trans {
-    DEFINES *= RS_GXS_TRANS
-    greaterThan(QT_MAJOR_VERSION, 4) {
-        CONFIG += c++11
-    } else {
-        QMAKE_CXXFLAGS += -std=c++0x
-    }
-}
-
-rs_async_chat {
-    DEFINES *= RS_ASYNC_CHAT
-}
-
-rs_chatserver {
-    DEFINES *= RS_CHATSERVER
-}
-
-###########################################################################################################################################################
-#
-#  V07_NON_BACKWARD_COMPATIBLE_CHANGE_001:
-#
-#     What: Computes the node id by performing a sha256 hash of the certificate's PGP signature, instead of simply picking up the last 20 bytes of it.
-#
-#     Why: There is no real risk in forging a certificate with the same ID as the authentication is performed over the PGP signature of the certificate
-#           which hashes the full SSL certificate (i.e. the full serialized CERT_INFO structure). However the possibility to
-#           create two certificates with the same IDs is a problem, as it can be used to cause disturbance in the software.
-#
-#     Backward compat: connexions impossible with non patched peers older than Nov 2017, probably because the SSL id that is computed is not the same on both side,
-#                    and in particular unpatched peers see a cerficate with ID different (because computed with the old method) than the ID that was
-#                    submitted when making friends.
-#
-#     Note: the advantage of basing the ID on the signature rather than the public key is not very clear, given that the signature is based on a hash
-#           of the public key (and the rest of the certificate info).
-#
-#  V07_NON_BACKWARD_COMPATIBLE_CHANGE_002:
-#
-#     What: Use RSA+SHA256 instead of RSA+SHA1 for PGP certificate signatures
-#
-#     Why:  Sha1 is likely to be prone to primary collisions anytime soon, so it is urgent to turn to a more secure solution.
-#
-#     Backward compat: unpatched peers after Nov 2017 are able to verify signatures since openpgp-sdk already handle it.
-#
-#  V07_NON_BACKWARD_COMPATIBLE_CHANGE_003:
-#
-#      What: Do not hash PGP certificate twice when signing
-#
-#  	 Why: hasing twice is not per se a security issue, but it makes it harder to change the settings for hashing.
-#
-#  	 Backward compat: patched peers cannot connect to non patched peers older than Nov 2017.
-###########################################################################################################################################################
-
-#CONFIG += rs_v07_changes
-rs_v07_changes {
-	DEFINES += V07_NON_BACKWARD_COMPATIBLE_CHANGE_001
-	DEFINES += V07_NON_BACKWARD_COMPATIBLE_CHANGE_002
-	DEFINES += V07_NON_BACKWARD_COMPATIBLE_CHANGE_003
-}
-
-## Retrocompatibility assignations, get rid of this ASAP
-isEmpty(BIN_DIR)   : BIN_DIR   = $${RS_BIN_DIR}
-isEmpty(INC_DIR)   : INC_DIR   = $${RS_INCLUDE_DIR}
-isEmpty(LIBDIR)    : LIBDIR    = $${QMAKE_LIBDIR}
-isEmpty(DATA_DIR)  : DATA_DIR  = $${RS_DATA_DIR}
-isEmpty(PLUGIN_DIR): PLUGIN_DIR= $${RS_PLUGIN_DIR}
