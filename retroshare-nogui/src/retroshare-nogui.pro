@@ -7,17 +7,6 @@ CONFIG += bitdht
 CONFIG -= qt xml gui
 CONFIG += link_prl
 
-#CONFIG += debug
-debug {
-        QMAKE_CFLAGS -= -O2
-        QMAKE_CFLAGS += -O0
-        QMAKE_CFLAGS += -g
-
-        QMAKE_CXXFLAGS -= -O2
-        QMAKE_CXXFLAGS += -O0
-        QMAKE_CXXFLAGS += -g
-}
-
 DEPENDPATH  *= $${PWD} $${RS_INCLUDE_DIR}
 INCLUDEPATH *= $${PWD} $${RS_INCLUDE_DIR}
 
@@ -30,13 +19,20 @@ QMAKE_LIBDIR *= $$system_path($${OUT_PWD}/../../openpgpsdk/src/lib)
 INCLUDEPATH  *= $$system_path($${PWD}/../../libretroshare/src)
 QMAKE_LIBDIR *= $$system_path($${OUT_PWD}/../../libretroshare/src/lib)
 
-mSqlLib = sqlcipher
-no_sqlcipher:mSqlLib = sqlite3
-
-
 sLibs = retroshare ops bitdht
-mLibs = ssl crypto pthread z bz2 $$mSqlLib
+mLibs = $$RS_SQL_LIB ssl crypto pthread z bz2 $$RS_UPNP_LIB
 dLibs =
+
+#CONFIG += debug
+debug {
+        QMAKE_CFLAGS -= -O2
+        QMAKE_CFLAGS += -O0
+        QMAKE_CFLAGS += -g
+
+        QMAKE_CXXFLAGS -= -O2
+        QMAKE_CXXFLAGS += -O0
+        QMAKE_CXXFLAGS += -g
+}
 
 libresapihttpserver {
     DEFINES *= ENABLE_WEBUI
@@ -108,7 +104,6 @@ win32-g++ {
 	RCC_DIR = temp/qrc
 	UI_DIR  = temp/ui
 	MOC_DIR = temp/moc
-    DEFINES *= _USE_32BIT_TIME_T
 
     ## solve linker warnings because of the order of the libraries
     #QMAKE_LFLAGS += -Wl,--start-group
@@ -120,14 +115,6 @@ win32-g++ {
 		# Tell linker to use DEP protection
 		QMAKE_LFLAGS += -Wl,-nxcompat
 	}
-
-    upnpLib = miniupnpc
-    static {
-        LIBS *= $$linkStaticLibs(upnpLib)
-        PRE_TARGETDEPS += $$pretargetStaticLibs(upnpLib)
-    } else {
-        LIBS *= $$linkDynamicLibs(upnpLib)
-    }
 
     dLib = ws2_32 gdi32 uuid ole32 iphlpapi crypt32 winmm
     LIBS *= $$linkDynamicLibs(dLib)

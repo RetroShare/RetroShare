@@ -8,12 +8,21 @@ CONFIG += console
 TARGET = retroshare
 DEFINES += TARGET=\\\"$${TARGET}\\\"
 
-# Plz never commit the .pro with these flags enabled.
-# Use this flag when developping new features only.
-#
-#CONFIG += unfinished
-#CONFIG += debug
-#DEFINES *= SIGFPE_DEBUG
+DEPENDPATH  *= $${PWD} $${RS_INCLUDE_DIR}
+INCLUDEPATH *= $${PWD} $${RS_INCLUDE_DIR}
+
+INCLUDEPATH  *= $$system_path($${PWD}/../../libbitdht/src)
+QMAKE_LIBDIR *= $$system_path($${OUT_PWD}/../../libbitdht/src/lib)
+
+INCLUDEPATH  *= $$system_path($${PWD}/../../openpgpsdk/src)
+QMAKE_LIBDIR *= $$system_path($${OUT_PWD}/../../openpgpsdk/src/lib)
+
+INCLUDEPATH  *= $$system_path($${PWD}/../../libretroshare/src)
+QMAKE_LIBDIR *= $$system_path($${OUT_PWD}/../../libretroshare/src/lib)
+
+sLibs = retroshare ops bitdht
+mLibs = $$RS_SQL_LIB ssl crypto pthread z bz2 $$RS_UPNP_LIB
+dLibs =
 
 profiling {
 	QMAKE_CXXFLAGS -= -fomit-frame-pointer
@@ -71,9 +80,16 @@ debug {
 DEPENDPATH *= retroshare-gui
 INCLUDEPATH *= retroshare-gui
 
-# treat warnings as error for better removing
-#QMAKE_CFLAGS += -Werror
-#QMAKE_CXXFLAGS += -Werror
+static {
+    sLibs *= $$mLibs
+} else {
+    dLibs *= $$mLibs
+}
+
+LIBS += $$linkStaticLibs(sLibs)
+PRE_TARGETDEPS += $$pretargetStaticLibs(sLibs)
+
+LIBS += $$linkDynamicLibs(dLibs)
 
 ################################# Linux ##########################################
 # Put lib dir in QMAKE_LFLAGS so it appears before -L/usr/lib
@@ -133,7 +149,7 @@ version_detail_bash_script {
 		PRE_TARGETDEPS = write_version_detail
 		write_version_detail.commands = $$PWD/version_detail.sh
 	}
-	win32 {
+    win32-* {
 		QMAKE_EXTRA_TARGETS += write_version_detail
 		PRE_TARGETDEPS = write_version_detail
 		write_version_detail.commands = $$PWD/version_detail.bat
@@ -165,7 +181,7 @@ win32-x-g++ {
 
 #################################### Windows #####################################
 
-win32 {
+win32-g++ {
 	CONFIG(debug, debug|release) {
 		# show console output
 		CONFIG += console
@@ -186,7 +202,7 @@ win32 {
 	}
 
 	# solve linker warnings because of the order of the libraries
-	QMAKE_LFLAGS += -Wl,--start-group
+    #QMAKE_LFLAGS += -Wl,--start-group
 
 	# Switch off optimization for release version
 	QMAKE_CXXFLAGS_RELEASE -= -O2
@@ -199,15 +215,10 @@ win32 {
 	#QMAKE_CFLAGS_DEBUG += -O2
 
 	OBJECTS_DIR = temp/obj
-	#LIBS += -L"D/Qt/2009.03/qt/plugins/imageformats"
-	#QTPLUGIN += qjpeg
 
-	for(lib, LIB_DIR):LIBS += -L"$$lib"
-	for(bin, BIN_DIR):LIBS += -L"$$bin"
+    dLib = ws2_32 gdi32 uuid ole32 iphlpapi crypt32 winmm
+    LIBS *= $$linkDynamicLibs(dLib)
 
-	LIBS += -lssl -lcrypto -lpthread -lminiupnpc -lz -lws2_32
-	LIBS += -luuid -lole32 -liphlpapi -lcrypt32 -lgdi32
-	LIBS += -lwinmm
 	RC_FILE = gui/images/retroshare_win.rc
 
 	# export symbols for the plugins
@@ -219,11 +230,6 @@ win32 {
 	} else {
 		QMAKE_PRE_LINK = $(CHK_DIR_EXISTS) lib || $(MKDIR) lib
 	}
-
-	DEFINES *= WINDOWS_SYS WIN32_LEAN_AND_MEAN _USE_32BIT_TIME_T
-
-	DEPENDPATH += . $$INC_DIR
-	INCLUDEPATH += . $$INC_DIR
 
 	greaterThan(QT_MAJOR_VERSION, 4) {
 		# Qt 5
