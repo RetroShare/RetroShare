@@ -589,7 +589,10 @@ int pqissl::Initiate_Connection()
 #endif
 
 	int err;
-	sockaddr_storage addr = remote_addr;
+	sockaddr_storage addr; sockaddr_storage_copy(remote_addr, addr);
+
+	std::cerr << __PRETTY_FUNCTION__ << " " << sockaddr_storage_tostring(addr)
+	          << std::endl;
 
 
 	if(waiting != WAITING_DELAY)
@@ -636,13 +639,6 @@ int pqissl::Initiate_Connection()
 		waiting = WAITING_FAIL_INTERFACE;
 		net_internal_close(osock);
 		return -1;
-	}
-
-	{ 
-		std::string out;
-		rs_sprintf(out, "pqissl::Initiate_Connection() Connecting To: %s via: ", PeerId().toStdString().c_str());
-		out += sockaddr_storage_tostring(addr);
-		rslog(RSL_WARNING, pqisslzone, out);
 	}
 
 	if (sockaddr_storage_isnull(addr))
@@ -721,6 +717,11 @@ int pqissl::Initiate_Connection()
 	//std::cerr << "Setting Connect Timeout " << mConnectTimeout << " Seconds into Future " << std::endl;
 
 	sockaddr_storage_ipv4_to_ipv6(addr);
+
+	std::cerr << __PRETTY_FUNCTION__ << " Connecting To: "
+	          << PeerId().toStdString() <<" via: "
+	          << sockaddr_storage_tostring(addr) << std::endl;
+
 	if (0 != (err = unix_connect(osock, addr)))
 	{
 		switch (errno)
