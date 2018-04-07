@@ -35,7 +35,7 @@
 #include <retroshare/rspeers.h>
 
 #if defined(Q_OS_WIN)
-#include <util/win32.h>
+#include "util/retroshareWin32.h"
 #endif
 
 /* Retroshare's Settings */

@@ -439,7 +439,6 @@ HEADERS +=  rshare.h \
             util/stringutil.h \
             util/RsNetUtil.h \
             util/DateTime.h \
-            util/win32.h \
             util/RetroStyleLabel.h \
             util/dllexport.h \
             util/NonCopyable.h \
@@ -619,7 +618,8 @@ HEADERS +=  rshare.h \
     util/imageutil.h \
     gui/NetworkDialog/pgpid_item_model.h \
     gui/NetworkDialog/pgpid_item_proxy.h \
-    gui/common/RsCollection.h
+    gui/common/RsCollection.h \
+    util/retroshareWin32.h
 #            gui/ForumsDialog.h \
 #            gui/forums/ForumDetails.h \
 #            gui/forums/EditForumDetails.h \
@@ -803,7 +803,6 @@ SOURCES +=  main.cpp \
             util/stringutil.cpp \
             util/RsNetUtil.cpp \
             util/DateTime.cpp \
-            util/win32.cpp \
             util/RetroStyleLabel.cpp \
             util/WidgetBackgroundImage.cpp \
             util/NonCopyable.cpp \
@@ -981,7 +980,8 @@ SOURCES +=  main.cpp \
     util/imageutil.cpp \
     gui/NetworkDialog/pgpid_item_model.cpp \
     gui/NetworkDialog/pgpid_item_proxy.cpp \
-    gui/common/RsCollection.cpp
+    gui/common/RsCollection.cpp \
+    util/retroshareWin32.cpp
 #            gui/ForumsDialog.cpp \
 #            gui/forums/ForumDetails.cpp \
 #            gui/forums/EditForumDetails.cpp \
