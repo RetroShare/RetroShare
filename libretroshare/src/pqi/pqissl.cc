@@ -585,15 +585,12 @@ int 	pqissl::Delay_Connection()
 int pqissl::Initiate_Connection()
 {
 #ifdef PQISSL_DEBUG
-	std::cout << __PRETTY_FUNCTION__ << std::endl;
+	std::cerr << __PRETTY_FUNCTION__ << " "
+	          << sockaddr_storage_tostring(remote_addr) << std::endl;
 #endif
 
 	int err;
 	sockaddr_storage addr; sockaddr_storage_copy(remote_addr, addr);
-
-	std::cerr << __PRETTY_FUNCTION__ << " " << sockaddr_storage_tostring(addr)
-	          << std::endl;
-
 
 	if(waiting != WAITING_DELAY)
 	{
