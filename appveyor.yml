@@ -165,13 +165,17 @@ after_build:
   - copy C:\msys64\mingw32\bin\libeay32.dll RetroShare-portable\
   - copy C:\msys64\mingw32\bin\libminiupnpc.dll RetroShare-portable\
   - copy C:\msys64\mingw32\bin\libsqlcipher*.dll RetroShare-portable\
+  - copy C:\msys64\mingw32\bin\libsqlite3*.dll RetroShare-portable\
   - copy C:\msys64\mingw32\bin\ssleay32.dll RetroShare-portable\
   - copy C:\msys64\mingw32\bin\zlib*.dll RetroShare-portable\
-
-## windeployqt takes the wrong dll
-#  - copy C:\msys64\mingw32\bin\libgcc_s_dw2*.dll RetroShare-portable\
-#  - copy C:\msys64\mingw32\bin\libstdc*.dll RetroShare-portable\
-#  - copy C:\msys64\mingw32\bin\libwinpthread*.dll RetroShare-portable\
+  - copy C:\msys64\mingw32\bin\libgcc_s_dw2*.dll RetroShare-portable\
+  - copy C:\msys64\mingw32\bin\libstdc*.dll RetroShare-portable\
+  - copy C:\msys64\mingw32\bin\libwinpthread*.dll RetroShare-portable\
+  - copy C:\msys64\mingw32\bin\libicuin58.dll RetroShare-portable\
+  - copy C:\msys64\mingw32\bin\libicuuc58.dll RetroShare-portable\
+  - copy C:\msys64\mingw32\bin\libpcre2*.dll RetroShare-portable\
+  - copy C:\msys64\mingw32\bin\libharfbuzz*.dll RetroShare-portable\
+  - copy C:\msys64\mingw32\bin\libpng*.dll RetroShare-portable\
 
 ## Needed for libresapi http
 #  - copy C:\msys64\mingw32\bin\libmicrohttpd*.dll RetroShare-portable\
