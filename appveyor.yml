@@ -165,13 +165,21 @@ after_build:
   - copy C:\msys64\mingw32\bin\libeay32.dll RetroShare-portable\
   - copy C:\msys64\mingw32\bin\libminiupnpc.dll RetroShare-portable\
   - copy C:\msys64\mingw32\bin\libsqlcipher*.dll RetroShare-portable\
+  - copy C:\msys64\mingw32\bin\libsqlite3*.dll RetroShare-portable\
   - copy C:\msys64\mingw32\bin\ssleay32.dll RetroShare-portable\
   - copy C:\msys64\mingw32\bin\zlib*.dll RetroShare-portable\
-
-## windeployqt takes the wrong dll
-#  - copy C:\msys64\mingw32\bin\libgcc_s_dw2*.dll RetroShare-portable\
-#  - copy C:\msys64\mingw32\bin\libstdc*.dll RetroShare-portable\
-#  - copy C:\msys64\mingw32\bin\libwinpthread*.dll RetroShare-portable\
+  - copy C:\msys64\mingw32\bin\libgcc_s_dw2*.dll RetroShare-portable\
+  - copy C:\msys64\mingw32\bin\libstdc*.dll RetroShare-portable\
+  - copy C:\msys64\mingw32\bin\libwinpthread*.dll RetroShare-portable\
+  - copy C:\msys64\mingw32\bin\libicu*.dll RetroShare-portable\
+  - copy C:\msys64\mingw32\bin\libpcre*.dll RetroShare-portable\
+  - copy C:\msys64\mingw32\bin\libharfbuzz*.dll RetroShare-portable\
+  - copy C:\msys64\mingw32\bin\libpng*.dll RetroShare-portable\
+  - copy C:\msys64\mingw32\bin\libfreetype*.dll RetroShare-portable\
+  - copy C:\msys64\mingw32\bin\libglib*.dll RetroShare-portable\
+  - copy C:\msys64\mingw32\bin\libgraphite2.dll RetroShare-portable\
+  - copy C:\msys64\mingw32\bin\libintl*.dll RetroShare-portable\
+  - copy C:\msys64\mingw32\bin\libiconv*.dll RetroShare-portable\
 
 ## Needed for libresapi http
 #  - copy C:\msys64\mingw32\bin\libmicrohttpd*.dll RetroShare-portable\
@@ -179,12 +187,10 @@ after_build:
 #  - copy C:\msys64\mingw32\bin\libgmp*.dll RetroShare-portable\
 #  - copy C:\msys64\mingw32\bin\libhogweed*.dll RetroShare-portable\
 #  - copy C:\msys64\mingw32\bin\libidn2*.dll RetroShare-portable\
-#  - copy C:\msys64\mingw32\bin\libintl*.dll RetroShare-portable\
 #  - copy C:\msys64\mingw32\bin\libnettle*.dll RetroShare-portable\
 #  - copy C:\msys64\mingw32\bin\libp11-kit*.dll RetroShare-portable\
 #  - copy C:\msys64\mingw32\bin\libtasn1*.dll RetroShare-portable\
 #  - copy C:\msys64\mingw32\bin\libunistring*.dll RetroShare-portable\
-#  - copy C:\msys64\mingw32\bin\libiconv*.dll RetroShare-portable\
 #  - copy C:\msys64\mingw32\bin\libffi*.dll RetroShare-portable\
 
 # to disable automatic builds
