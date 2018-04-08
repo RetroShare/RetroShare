@@ -167,11 +167,13 @@ after_build:
   - copy C:\msys64\mingw32\bin\libgcc_s_dw2*.dll RetroShare-portable\
   - copy C:\msys64\mingw32\bin\libstdc*.dll RetroShare-portable\
   - copy C:\msys64\mingw32\bin\libwinpthread*.dll RetroShare-portable\
-  - copy C:\msys64\mingw32\bin\libicuin58.dll RetroShare-portable\
-  - copy C:\msys64\mingw32\bin\libicuuc58.dll RetroShare-portable\
+  - copy C:\msys64\mingw32\bin\libicu*.dll RetroShare-portable\
   - copy C:\msys64\mingw32\bin\libpcre2*.dll RetroShare-portable\
   - copy C:\msys64\mingw32\bin\libharfbuzz*.dll RetroShare-portable\
   - copy C:\msys64\mingw32\bin\libpng*.dll RetroShare-portable\
+  - copy C:\msys64\mingw32\bin\libfreetype*.dll RetroShare-portable\
+  - copy C:\msys64\mingw32\bin\libglib*.dll RetroShare-portable\
+  - copy C:\msys64\mingw32\bin\libgraphite2.dll RetroShare-portable\
 
 ## Needed for libresapi http
 #  - copy C:\msys64\mingw32\bin\libmicrohttpd*.dll RetroShare-portable\
