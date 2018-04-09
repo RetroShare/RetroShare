@@ -231,6 +231,7 @@ after_build:
   - copy C:\msys64\mingw32\bin\libtiff*.dll RetroShare-portable\
   - copy C:\msys64\mingw32\bin\libwebp*.dll RetroShare-portable\
   - copy C:\msys64\mingw32\bin\libwebpdemux*.dll RetroShare-portable\
+  - copy C:\msys64\mingw32\bin\liblzma*.dll RetroShare-portable\
 
 ## Needed for libresapi http
 #  - copy C:\msys64\mingw32\bin\libmicrohttpd*.dll RetroShare-portable\
