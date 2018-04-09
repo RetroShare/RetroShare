@@ -148,7 +148,7 @@ before_package:
 # to run your custom scripts instead of automatic MSBuild
 build_script:
   - cd C:\projects\RetroShare
-  - qmake -Wall -spec win32-g++ "CONFIG=release no_libresapihttpserver"
+  - qmake -Wall -spec win32-g++ "CONFIG=debug no_libresapihttpserver"
   - mingw32-make -j3
 
 # scripts to run after build
@@ -156,7 +156,7 @@ after_build:
   - mkdir RetroShare-portable
   - copy retroshare-nogui\src\retroshare-nogui.exe RetroShare-portable\
   - copy retroshare-gui\src\retroshare.exe RetroShare-portable\
-  - windeployqt --release RetroShare-portable\retroshare.exe
+  - windeployqt RetroShare-portable\retroshare.exe
   - copy C:\msys64\mingw32\bin\libbz2*.dll RetroShare-portable\
   - copy C:\msys64\mingw32\bin\libeay32.dll RetroShare-portable\
   - copy C:\msys64\mingw32\bin\libminiupnpc.dll RetroShare-portable\
