@@ -226,6 +226,11 @@ after_build:
   - copy C:\msys64\mingw32\bin\libgraphite2.dll RetroShare-portable\
   - copy C:\msys64\mingw32\bin\libintl*.dll RetroShare-portable\
   - copy C:\msys64\mingw32\bin\libiconv*.dll RetroShare-portable\
+  - copy C:\msys64\mingw32\bin\libjasper*.dll RetroShare-portable\
+  - copy C:\msys64\mingw32\bin\libjpeg*.dll RetroShare-portable\
+  - copy C:\msys64\mingw32\bin\libtiff*.dll RetroShare-portable\
+  - copy C:\msys64\mingw32\bin\libwebp*.dll RetroShare-portable\
+  - copy C:\msys64\mingw32\bin\libwebpdemux*.dll RetroShare-portable\
 
 ## Needed for libresapi http
 #  - copy C:\msys64\mingw32\bin\libmicrohttpd*.dll RetroShare-portable\
