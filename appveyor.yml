@@ -156,7 +156,57 @@ after_build:
   - mkdir RetroShare-portable
   - copy retroshare-nogui\src\retroshare-nogui.exe RetroShare-portable\
   - copy retroshare-gui\src\retroshare.exe RetroShare-portable\
-  - windeployqt --debug RetroShare-portable\retroshare.exe
+
+## In Debug build winedeplyqt forget the non debug Qt libs
+  - copy C:\msys64\mingw32\bin\Qt5Svg.dll RetroShare-portable\
+  - copy C:\msys64\mingw32\bin\Qt5Core.dll RetroShare-portable\
+  - copy C:\msys64\mingw32\bin\Qt5Multimedia.dll RetroShare-portable\
+  - copy C:\msys64\mingw32\bin\Qt5Widgets.dll RetroShare-portable\
+  - copy C:\msys64\mingw32\bin\Qt5Xml.dll RetroShare-portable\
+  - copy C:\msys64\mingw32\bin\Qt5PrintSupport.dll RetroShare-portable\
+  - copy C:\msys64\mingw32\bin\Qt5Gui.dll RetroShare-portable\
+  - copy C:\msys64\mingw32\bin\Qt5Network.dll RetroShare-portable\
+
+  - mkdir RetroShare-portable\playlistformats\
+  - copy C:\msys64\mingw32\share\qt5\plugins\playlistformats\qtmultimedia_m3u.dll RetroShare-portable\playlistformats
+
+  - mkdir RetroShare-portable\printsupport\
+  - copy C:\msys64\mingw32\share\qt5\plugins\printsupport\windowsprintersupport.dll RetroShare-portable\printsupport\
+
+  - mkdir RetroShare-portable\iconengines\
+  - copy C:\msys64\mingw32\share\qt5\plugins\iconengines\qsvgicon.dll RetroShare-portable\iconengines\
+
+  - mkdir RetroShare-portable\bearer\
+  - copy C:\msys64\mingw32\share\qt5\plugins\bearer\qgenericbearer.dll RetroShare-portable\bearer\
+
+  - mkdir RetroShare-portable\mediaservice\
+  - copy C:\msys64\mingw32\share\qt5\plugins\mediaservice\qtmedia_audioengine.dll RetroShare-portable\mediaservice\
+  - copy C:\msys64\mingw32\share\qt5\plugins\mediaservice\dsengine.dll RetroShare-portable\mediaservice\
+
+  - mkdir RetroShare-portable\styles\
+  - copy C:\msys64\mingw32\share\qt5\plugins\styles\qwindowsvistastyle.dll RetroShare-portable\styles\
+
+  - mkdir RetroShare-portable\imageformats\
+  - copy C:\msys64\mingw32\share\qt5\plugins\imageformats\qwebp.dll RetroShare-portable\imageformats\
+  - copy C:\msys64\mingw32\share\qt5\plugins\imageformats\qicns.dll RetroShare-portable\imageformats\
+  - copy C:\msys64\mingw32\share\qt5\plugins\imageformats\qjpeg.dll RetroShare-portable\imageformats\
+  - copy C:\msys64\mingw32\share\qt5\plugins\imageformats\qtiff.dll RetroShare-portable\imageformats\
+  - copy C:\msys64\mingw32\share\qt5\plugins\imageformats\qtga.dll RetroShare-portable\imageformats\
+  - copy C:\msys64\mingw32\share\qt5\plugins\imageformats\qjp2.dll RetroShare-portable\imageformats\
+  - copy C:\msys64\mingw32\share\qt5\plugins\imageformats\qico.dll RetroShare-portable\imageformats\
+  - copy C:\msys64\mingw32\share\qt5\plugins\imageformats\qwbmp.dll RetroShare-portable\imageformats\
+  - copy C:\msys64\mingw32\share\qt5\plugins\imageformats\qicns.dll RetroShare-portable\imageformats\
+  - copy C:\msys64\mingw32\share\qt5\plugins\imageformats\qgif.dll RetroShare-portable\imageformats\
+  - copy C:\msys64\mingw32\share\qt5\plugins\imageformats\qsvg.dll RetroShare-portable\imageformats\
+
+  - mkdir RetroShare-portable\platforms\
+  - copy C:\msys64\mingw32\share\qt5\plugins\platforms\qwindows.dll RetroShare-portable\platforms\
+
+  - mkdir RetroShare-portable\audio\
+  - copy C:\msys64\mingw32\share\qt5\plugins\audio\qtaudio_windows.dll RetroShare-portable\audio\
+
+  - windeployqt RetroShare-portable\retroshare.exe
+
   - copy C:\msys64\mingw32\bin\libbz2*.dll RetroShare-portable\
   - copy C:\msys64\mingw32\bin\libeay32.dll RetroShare-portable\
   - copy C:\msys64\mingw32\bin\libminiupnpc.dll RetroShare-portable\
