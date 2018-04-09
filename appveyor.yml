@@ -156,8 +156,7 @@ after_build:
   - mkdir RetroShare-portable
   - copy retroshare-nogui\src\retroshare-nogui.exe RetroShare-portable\
   - copy retroshare-gui\src\retroshare.exe RetroShare-portable\
-  - copy C:\msys64\mingw32\bin\Qt5*.dll RetroShare-portable\
-  - windeployqt RetroShare-portable\retroshare.exe
+  - windeployqt --debug RetroShare-portable\retroshare.exe
   - copy C:\msys64\mingw32\bin\libbz2*.dll RetroShare-portable\
   - copy C:\msys64\mingw32\bin\libeay32.dll RetroShare-portable\
   - copy C:\msys64\mingw32\bin\libminiupnpc.dll RetroShare-portable\
