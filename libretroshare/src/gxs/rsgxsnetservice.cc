@@ -799,6 +799,9 @@ void RsGxsNetService::checkDistantSyncState()
 				if(online_peers.find(*it2) != online_peers.end())	                // check that the peer is online
 					at_least_one_friend_is_supplier = true ;
 
+			// That strategy is likely to create islands of friends connected to each other. There's no real way
+			// to decide what to do here, except maybe checking the last message TS remotely vs. locally.
+
 			if(at_least_one_friend_is_supplier)
 			{
 				mGxsNetTunnel->releasePeers(mServType,grpId);
