@@ -81,6 +81,8 @@
 
 #define MAX_SEARCH_RESULTS   3000
 
+#define DISABLE_SEARCH_WHILE_TYPING  1
+
 // Define to avoid using the search in treeview, because it is really slow for now.
 //
 //#define DONT_USE_SEARCH_IN_TREE_VIEW 1
@@ -1279,8 +1281,10 @@ void SharedFilesDialog::onFilterTextEdited()
 	ui.filterStartButton->setEnabled(true) ;
 	ui.filterPatternFrame->setToolTip(QString());
 
+#ifndef DISABLE_SEARCH_WHILE_TYPING
 	mFilterTimer->start( 500 ); // This will fire filterRegExpChanged after 500 ms.
 	// If the user types something before it fires, the timer restarts counting
+#endif
 }
 
 void SharedFilesDialog::filterRegExpChanged()
