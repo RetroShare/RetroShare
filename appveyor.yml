@@ -154,98 +154,97 @@ build_script:
 
 # scripts to run after build
 after_build:
-  - mkdir RetroShare-portable
   - mkdir %RS_DEPLOY%
   - copy retroshare-nogui\src\retroshare-nogui.exe %RS_DEPLOY%\
-  - copy retroshare-gui\src\retroshare.exe RetroShare-portable\
+  - copy retroshare-gui\src\retroshare.exe %RS_DEPLOY%\
 
 ## In Debug build winedeplyqt forget the non debug Qt libs
-  - copy C:\msys64\mingw32\bin\Qt5Svg.dll RetroShare-portable\
-  - copy C:\msys64\mingw32\bin\Qt5Core.dll RetroShare-portable\
-  - copy C:\msys64\mingw32\bin\Qt5Multimedia.dll RetroShare-portable\
-  - copy C:\msys64\mingw32\bin\Qt5Widgets.dll RetroShare-portable\
-  - copy C:\msys64\mingw32\bin\Qt5Xml.dll RetroShare-portable\
-  - copy C:\msys64\mingw32\bin\Qt5PrintSupport.dll RetroShare-portable\
-  - copy C:\msys64\mingw32\bin\Qt5Gui.dll RetroShare-portable\
-  - copy C:\msys64\mingw32\bin\Qt5Network.dll RetroShare-portable\
+  - copy C:\msys64\mingw32\bin\Qt5Svg.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\Qt5Core.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\Qt5Multimedia.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\Qt5Widgets.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\Qt5Xml.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\Qt5PrintSupport.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\Qt5Gui.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\Qt5Network.dll %RS_DEPLOY%\
 
-  - mkdir RetroShare-portable\playlistformats\
-  - copy C:\msys64\mingw32\share\qt5\plugins\playlistformats\qtmultimedia_m3u.dll RetroShare-portable\playlistformats
+  - mkdir %RS_DEPLOY%\playlistformats\
+  - copy C:\msys64\mingw32\share\qt5\plugins\playlistformats\qtmultimedia_m3u.dll %RS_DEPLOY%\playlistformats
 
-  - mkdir RetroShare-portable\printsupport\
-  - copy C:\msys64\mingw32\share\qt5\plugins\printsupport\windowsprintersupport.dll RetroShare-portable\printsupport\
+  - mkdir %RS_DEPLOY%\printsupport\
+  - copy C:\msys64\mingw32\share\qt5\plugins\printsupport\windowsprintersupport.dll %RS_DEPLOY%\printsupport\
 
-  - mkdir RetroShare-portable\iconengines\
-  - copy C:\msys64\mingw32\share\qt5\plugins\iconengines\qsvgicon.dll RetroShare-portable\iconengines\
+  - mkdir %RS_DEPLOY%\iconengines\
+  - copy C:\msys64\mingw32\share\qt5\plugins\iconengines\qsvgicon.dll %RS_DEPLOY%\iconengines\
 
-  - mkdir RetroShare-portable\bearer\
-  - copy C:\msys64\mingw32\share\qt5\plugins\bearer\qgenericbearer.dll RetroShare-portable\bearer\
+  - mkdir %RS_DEPLOY%\bearer\
+  - copy C:\msys64\mingw32\share\qt5\plugins\bearer\qgenericbearer.dll %RS_DEPLOY%\bearer\
 
-  - mkdir RetroShare-portable\mediaservice\
-  - copy C:\msys64\mingw32\share\qt5\plugins\mediaservice\qtmedia_audioengine.dll RetroShare-portable\mediaservice\
-  - copy C:\msys64\mingw32\share\qt5\plugins\mediaservice\dsengine.dll RetroShare-portable\mediaservice\
+  - mkdir %RS_DEPLOY%\mediaservice\
+  - copy C:\msys64\mingw32\share\qt5\plugins\mediaservice\qtmedia_audioengine.dll %RS_DEPLOY%\mediaservice\
+  - copy C:\msys64\mingw32\share\qt5\plugins\mediaservice\dsengine.dll %RS_DEPLOY%\mediaservice\
 
-  - mkdir RetroShare-portable\styles\
-  - copy C:\msys64\mingw32\share\qt5\plugins\styles\qwindowsvistastyle.dll RetroShare-portable\styles\
+  - mkdir %RS_DEPLOY%\styles\
+  - copy C:\msys64\mingw32\share\qt5\plugins\styles\qwindowsvistastyle.dll %RS_DEPLOY%\styles\
 
-  - mkdir RetroShare-portable\imageformats\
-  - copy C:\msys64\mingw32\share\qt5\plugins\imageformats\qwebp.dll RetroShare-portable\imageformats\
-  - copy C:\msys64\mingw32\share\qt5\plugins\imageformats\qicns.dll RetroShare-portable\imageformats\
-  - copy C:\msys64\mingw32\share\qt5\plugins\imageformats\qjpeg.dll RetroShare-portable\imageformats\
-  - copy C:\msys64\mingw32\share\qt5\plugins\imageformats\qtiff.dll RetroShare-portable\imageformats\
-  - copy C:\msys64\mingw32\share\qt5\plugins\imageformats\qtga.dll RetroShare-portable\imageformats\
-  - copy C:\msys64\mingw32\share\qt5\plugins\imageformats\qjp2.dll RetroShare-portable\imageformats\
-  - copy C:\msys64\mingw32\share\qt5\plugins\imageformats\qico.dll RetroShare-portable\imageformats\
-  - copy C:\msys64\mingw32\share\qt5\plugins\imageformats\qwbmp.dll RetroShare-portable\imageformats\
-  - copy C:\msys64\mingw32\share\qt5\plugins\imageformats\qicns.dll RetroShare-portable\imageformats\
-  - copy C:\msys64\mingw32\share\qt5\plugins\imageformats\qgif.dll RetroShare-portable\imageformats\
-  - copy C:\msys64\mingw32\share\qt5\plugins\imageformats\qsvg.dll RetroShare-portable\imageformats\
+  - mkdir %RS_DEPLOY%\imageformats\
+  - copy C:\msys64\mingw32\share\qt5\plugins\imageformats\qwebp.dll %RS_DEPLOY%\imageformats\
+  - copy C:\msys64\mingw32\share\qt5\plugins\imageformats\qicns.dll %RS_DEPLOY%\imageformats\
+  - copy C:\msys64\mingw32\share\qt5\plugins\imageformats\qjpeg.dll %RS_DEPLOY%\imageformats\
+  - copy C:\msys64\mingw32\share\qt5\plugins\imageformats\qtiff.dll %RS_DEPLOY%\imageformats\
+  - copy C:\msys64\mingw32\share\qt5\plugins\imageformats\qtga.dll %RS_DEPLOY%\imageformats\
+  - copy C:\msys64\mingw32\share\qt5\plugins\imageformats\qjp2.dll %RS_DEPLOY%\imageformats\
+  - copy C:\msys64\mingw32\share\qt5\plugins\imageformats\qico.dll %RS_DEPLOY%\imageformats\
+  - copy C:\msys64\mingw32\share\qt5\plugins\imageformats\qwbmp.dll %RS_DEPLOY%\imageformats\
+  - copy C:\msys64\mingw32\share\qt5\plugins\imageformats\qicns.dll %RS_DEPLOY%\imageformats\
+  - copy C:\msys64\mingw32\share\qt5\plugins\imageformats\qgif.dll %RS_DEPLOY%\imageformats\
+  - copy C:\msys64\mingw32\share\qt5\plugins\imageformats\qsvg.dll %RS_DEPLOY%\imageformats\
 
-  - mkdir RetroShare-portable\platforms\
-  - copy C:\msys64\mingw32\share\qt5\plugins\platforms\qwindows.dll RetroShare-portable\platforms\
+  - mkdir %RS_DEPLOY%\platforms\
+  - copy C:\msys64\mingw32\share\qt5\plugins\platforms\qwindows.dll %RS_DEPLOY%\platforms\
 
-  - mkdir RetroShare-portable\audio\
-  - copy C:\msys64\mingw32\share\qt5\plugins\audio\qtaudio_windows.dll RetroShare-portable\audio\
+  - mkdir %RS_DEPLOY%\audio\
+  - copy C:\msys64\mingw32\share\qt5\plugins\audio\qtaudio_windows.dll %RS_DEPLOY%\audio\
 
-  - windeployqt RetroShare-portable\retroshare.exe
+  - windeployqt %RS_DEPLOY%\retroshare.exe
 
-  - copy C:\msys64\mingw32\bin\libbz2*.dll RetroShare-portable\
-  - copy C:\msys64\mingw32\bin\libeay32.dll RetroShare-portable\
-  - copy C:\msys64\mingw32\bin\libminiupnpc.dll RetroShare-portable\
-  - copy C:\msys64\mingw32\bin\libsqlcipher*.dll RetroShare-portable\
-  - copy C:\msys64\mingw32\bin\libsqlite3*.dll RetroShare-portable\
-  - copy C:\msys64\mingw32\bin\ssleay32.dll RetroShare-portable\
-  - copy C:\msys64\mingw32\bin\zlib*.dll RetroShare-portable\
-  - copy C:\msys64\mingw32\bin\libgcc_s_dw2*.dll RetroShare-portable\
-  - copy C:\msys64\mingw32\bin\libstdc*.dll RetroShare-portable\
-  - copy C:\msys64\mingw32\bin\libwinpthread*.dll RetroShare-portable\
-  - copy C:\msys64\mingw32\bin\libicu*.dll RetroShare-portable\
-  - copy C:\msys64\mingw32\bin\libpcre*.dll RetroShare-portable\
-  - copy C:\msys64\mingw32\bin\libharfbuzz*.dll RetroShare-portable\
-  - copy C:\msys64\mingw32\bin\libpng*.dll RetroShare-portable\
-  - copy C:\msys64\mingw32\bin\libfreetype*.dll RetroShare-portable\
-  - copy C:\msys64\mingw32\bin\libglib*.dll RetroShare-portable\
-  - copy C:\msys64\mingw32\bin\libgraphite2.dll RetroShare-portable\
-  - copy C:\msys64\mingw32\bin\libintl*.dll RetroShare-portable\
-  - copy C:\msys64\mingw32\bin\libiconv*.dll RetroShare-portable\
-  - copy C:\msys64\mingw32\bin\libjasper*.dll RetroShare-portable\
-  - copy C:\msys64\mingw32\bin\libjpeg*.dll RetroShare-portable\
-  - copy C:\msys64\mingw32\bin\libtiff*.dll RetroShare-portable\
-  - copy C:\msys64\mingw32\bin\libwebp*.dll RetroShare-portable\
-  - copy C:\msys64\mingw32\bin\libwebpdemux*.dll RetroShare-portable\
-  - copy C:\msys64\mingw32\bin\liblzma*.dll RetroShare-portable\
+  - copy C:\msys64\mingw32\bin\libbz2*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\libeay32.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\libminiupnpc.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\libsqlcipher*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\libsqlite3*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\ssleay32.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\zlib*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\libgcc_s_dw2*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\libstdc*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\libwinpthread*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\libicu*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\libpcre*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\libharfbuzz*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\libpng*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\libfreetype*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\libglib*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\libgraphite2.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\libintl*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\libiconv*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\libjasper*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\libjpeg*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\libtiff*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\libwebp*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\libwebpdemux*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\liblzma*.dll %RS_DEPLOY%\
 
 ## Needed for libresapi http
-#  - copy C:\msys64\mingw32\bin\libmicrohttpd*.dll RetroShare-portable\
-#  - copy C:\msys64\mingw32\bin\libgnutls*.dll RetroShare-portable\
-#  - copy C:\msys64\mingw32\bin\libgmp*.dll RetroShare-portable\
-#  - copy C:\msys64\mingw32\bin\libhogweed*.dll RetroShare-portable\
-#  - copy C:\msys64\mingw32\bin\libidn2*.dll RetroShare-portable\
-#  - copy C:\msys64\mingw32\bin\libnettle*.dll RetroShare-portable\
-#  - copy C:\msys64\mingw32\bin\libp11-kit*.dll RetroShare-portable\
-#  - copy C:\msys64\mingw32\bin\libtasn1*.dll RetroShare-portable\
-#  - copy C:\msys64\mingw32\bin\libunistring*.dll RetroShare-portable\
-#  - copy C:\msys64\mingw32\bin\libffi*.dll RetroShare-portable\
+#  - copy C:\msys64\mingw32\bin\libmicrohttpd*.dll %RS_DEPLOY%\
+#  - copy C:\msys64\mingw32\bin\libgnutls*.dll %RS_DEPLOY%\
+#  - copy C:\msys64\mingw32\bin\libgmp*.dll %RS_DEPLOY%\
+#  - copy C:\msys64\mingw32\bin\libhogweed*.dll %RS_DEPLOY%\
+#  - copy C:\msys64\mingw32\bin\libidn2*.dll %RS_DEPLOY%\
+#  - copy C:\msys64\mingw32\bin\libnettle*.dll %RS_DEPLOY%\
+#  - copy C:\msys64\mingw32\bin\libp11-kit*.dll %RS_DEPLOY%\
+#  - copy C:\msys64\mingw32\bin\libtasn1*.dll %RS_DEPLOY%\
+#  - copy C:\msys64\mingw32\bin\libunistring*.dll %RS_DEPLOY%\
+#  - copy C:\msys64\mingw32\bin\libffi*.dll %RS_DEPLOY%\
 
 # to disable automatic builds
 #build: off
@@ -255,7 +254,6 @@ after_build:
 #---------------------------------#
 
 artifacts:
-  - path: RetroShare-portable
   - path: $(RS_DEPLOY)
   - path: '**\*.exe'
 #
