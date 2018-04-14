@@ -704,11 +704,11 @@ void RsGxsNetTunnelService::autowash()
 #ifdef DEBUG_RSGXSNETTUNNEL
 				std::cerr << " active, with client-side peers : ";
 #endif
-				should_monitor_tunnels = true ;
+				should_monitor_tunnels = false ;
 			}
 			else
 			{
-				should_monitor_tunnels = false ;
+				should_monitor_tunnels = true ;
 #ifdef DEBUG_RSGXSNETTUNNEL
 				std::cerr << " active, and no client-side peers available : " ;
 #endif
@@ -719,8 +719,9 @@ void RsGxsNetTunnelService::autowash()
 			std::cerr << " passive : ";
 #endif
 
-		// check if the group is in active or passive mode, in which case make sure that turtle manages tunnels or not.
-		// if active, then we check wether they are tunnels are not. If not, we ask turtle to monitor.
+		// We should also check whether the group is supplied using another tunnel. If so, no need to request tunnels.
+		// Otherwise the engine will keep requesting tunnels for all groups.
+#warning CODE MISSING HERE
 
 		if(should_monitor_tunnels)
 		{
