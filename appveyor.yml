@@ -155,8 +155,8 @@ build_script:
 # scripts to run after build
 after_build:
   - mkdir RetroShare-portable
-  - mkdir $(RS_DEPLOY)
-  - copy retroshare-nogui\src\retroshare-nogui.exe RetroShare-portable\
+  - mkdir %RS_DEPLOY%
+  - copy retroshare-nogui\src\retroshare-nogui.exe %RS_DEPLOY%\
   - copy retroshare-gui\src\retroshare.exe RetroShare-portable\
 
 ## In Debug build winedeplyqt forget the non debug Qt libs
