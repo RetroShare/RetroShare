@@ -41,11 +41,14 @@
 #include "PostedPage.h"
 #include "PluginsPage.h"
 #include "ServicePermissionsPage.h"
-#include "WebuiPage.h"
 #include "rsharesettings.h"
 #include "gui/notifyqt.h"
 #include "gui/common/FloatingHelpBrowser.h"
 #include "gui/common/RSElidedItemDelegate.h"
+
+#ifdef ENABLE_WEBUI
+#	include "WebuiPage.h"
+#endif
 
 #define IMAGE_GENERAL       ":/images/kcmsystem24.png"
 

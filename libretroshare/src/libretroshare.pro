@@ -234,7 +234,7 @@ version_detail_bash_script {
         PRE_TARGETDEPS = write_version_detail
         write_version_detail.commands = $$PWD/version_detail.sh
     }
-    win32 {
+    win32-* {
         QMAKE_EXTRA_TARGETS += write_version_detail
         PRE_TARGETDEPS = write_version_detail
         write_version_detail.commands = $$PWD/version_detail.bat
@@ -263,13 +263,11 @@ win32-x-g++ {
 }
 ################################# Windows ##########################################
 
-win32 {
+win32-g++ {
 	QMAKE_CC = $${QMAKE_CXX}
 	OBJECTS_DIR = temp/obj
 	MOC_DIR = temp/moc
-	DEFINES *= WINDOWS_SYS WIN32 STATICLIB MINGW WIN32_LEAN_AND_MEAN _USE_32BIT_TIME_T
-	# This defines the platform to be WinXP or later and is needed for getaddrinfo (_WIN32_WINNT_WINXP)
-	DEFINES *= WINVER=0x0501
+    DEFINES *= STATICLIB
 
 	# Switch on extra warnings
 	QMAKE_CFLAGS += -Wextra
@@ -289,15 +287,27 @@ win32 {
 
 	CONFIG += upnp_miniupnpc
 
+    mSqlLib = sqlcipher
 	no_sqlcipher {
 		PKGCONFIG *= sqlite3
-		LIBS += -lsqlite3
-	} else {
-		LIBS += -lsqlcipher
-	}
+        mSqlLib = sqlite3
+    }
 
 	DEPENDPATH += . $$INC_DIR
 	INCLUDEPATH += . $$INC_DIR
+
+    ## Static library are very susceptible to order in command line
+    sLibs = miniupnpc $$mSqlLib ssl crypto z
+    dLibs = pthread ws2_32 gdi32 uuid iphlpapi crypt32 ole32 winmm
+
+    static {
+        LIBS += $$linkStaticLibs(sLibs)
+        PRE_TARGETDEPS += $$pretargetStaticLibs(sLibs)
+        LIBS += $$linkDynamicLibs(dLibs)
+    } else {
+        LIBS += $$linkDynamicLibs(sLibs)
+        LIBS += $$linkDynamicLibs(dLibs)
+    }
 }
 
 ################################# MacOSX ##########################################
@@ -697,13 +707,16 @@ SOURCES +=	util/folderiterator.cc \
 			util/rsrecogn.cc \
 			util/rstime.cc
 
-
-upnp_miniupnpc {
-	HEADERS += upnp/upnputil.h upnp/upnphandler_miniupnp.h
-	SOURCES += upnp/upnputil.c upnp/upnphandler_miniupnp.cc
+## Added for retrocompatibility remove ASAP
+isEmpty(RS_UPNP_LIB) {
+    upnp_miniupnpc:RS_UPNP_LIB=miniupnpc
+    upnp_libupnp:RS_UPNP_LIB="upnp ixml threadutil"
 }
 
-upnp_libupnp {
+equals(RS_UPNP_LIB, miniupnpc) {
+	HEADERS += upnp/upnputil.h upnp/upnphandler_miniupnp.h
+	SOURCES += upnp/upnputil.c upnp/upnphandler_miniupnp.cc
+} else {
 	HEADERS += upnp/UPnPBase.h  upnp/upnphandler_linux.h
 	SOURCES += upnp/UPnPBase.cpp upnp/upnphandler_linux.cc
 	DEFINES *= RS_USE_LIBUPNP
@@ -934,19 +947,13 @@ android-* {
     DEFINES *= "fopen64=fopen"
     DEFINES *= "fseeko64=fseeko"
     DEFINES *= "ftello64=ftello"
-    LIBS *= -lbz2 -lupnp -lixml -lthreadutil -lsqlite3
 
-## Static library are verysensible to order in command line, has to be in the
-## end of file for this reason
+## Static library are very susceptible to order in command line
+    sLibs = bz2 $$RS_UPNP_LIB $$RS_SQL_LIB ssl crypto
 
-    LIBS += -L$$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/lib/ -lsqlcipher
-    PRE_TARGETDEPS += $$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/lib/libsqlcipher.a
-
-    LIBS += -L$$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/lib/ -lssl
-    PRE_TARGETDEPS += $$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/lib/libssl.a
-
-    LIBS += -L$$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/lib/ -lcrypto
-    PRE_TARGETDEPS += $$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/lib/libcrypto.a
+    LIBS += $$linkStaticLibs(sLibs)
+    PRE_TARGETDEPS += $$pretargetStaticLibs(sLibs)
 
     HEADERS += util/androiddebug.h
 }
+

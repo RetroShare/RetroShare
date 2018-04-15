@@ -1,3 +1,4 @@
+#pragma once
 /****************************************************************
  * This file is distributed under the following license:
  *
@@ -20,10 +21,6 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-
-#ifndef _WIN32_H
-#define _WIN32_H
-
 #include <QHash>
 #include <QString>
 
@@ -41,6 +38,3 @@ void win32_registry_set_key_value(QString keyLocation, QString keyName, QString 
 
 /** Removes the key from the registry if it exists */
 void win32_registry_remove_key(QString keyLocation, QString keyName);
-
-#endif
-

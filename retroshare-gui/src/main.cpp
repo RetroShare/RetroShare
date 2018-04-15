@@ -41,16 +41,19 @@
 #include "gui/FileTransfer/TransfersDialog.h"
 #include "gui/settings/RsharePeerSettings.h"
 #include "gui/settings/rsharesettings.h"
-#include "gui/settings/WebuiPage.h"
 #include "idle/idle.h"
 #include "lang/languagesupport.h"
 #include "util/RsGxsUpdateBroadcast.h"
 #include "util/rsdir.h"
 #include "util/rstime.h"
 
+#ifdef ENABLE_WEBUI
+#	include "gui/settings/WebuiPage.h"
+#endif
+
 #ifdef RETROTOR
-#include "TorControl/TorManager.h"
-#include "TorControl/TorControlWindow.h"
+#	include "TorControl/TorManager.h"
+#	include "TorControl/TorControlWindow.h"
 #endif
 
 #include "retroshare/rsidentity.h"

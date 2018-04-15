@@ -18,7 +18,11 @@ linux-* {
 	OBJECTS_DIR = temp/linux/obj
 }
 
-win32 {
+win32-g++ {
+
+    HEADERS += openpgpsdk/opsstring.h
+    SOURCES += openpgpsdk/opsstring.c
+
 	DEFINES *= WIN32_LEAN_AND_MEAN _USE_32BIT_TIME_T
 
 	# Switch off optimization for release version
@@ -27,9 +31,13 @@ win32 {
 	QMAKE_CFLAGS_RELEASE -= -O2
 	QMAKE_CFLAGS_RELEASE += -O0
 
-	# Switch on optimization for debug version
-	#QMAKE_CXXFLAGS_DEBUG += -O2
-	#QMAKE_CFLAGS_DEBUG += -O2
+    mLibs = bz2 z ssl crypto
+    static {
+        LIBS += $$linkStaticLibs(mLibs)
+        PRE_TARGETDEPS += $$pretargetStaticLibs(mLibs)
+    } else {
+        LIBS += $$linkDynamicLibs(mLibs)
+    }
 }
 
 
@@ -74,9 +82,6 @@ HEADERS += openpgpsdk/writer.h \
            openpgpsdk/parse_local.h \
            openpgpsdk/keyring_local.h \
            openpgpsdk/opsdir.h
-win32{
-HEADERS += openpgpsdk/opsstring.h
-}
 
 SOURCES += openpgpsdk/accumulate.c \
            openpgpsdk/compress.c \
@@ -116,9 +121,7 @@ SOURCES += openpgpsdk/accumulate.c \
            openpgpsdk/writer_skey_checksum.c \
            openpgpsdk/writer_stream_encrypt_se_ip.c \
            openpgpsdk/opsdir.c
-win32{
-SOURCES += openpgpsdk/opsstring.c
-}
+
 
 ################################# Android #####################################
 
