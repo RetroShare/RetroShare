@@ -1005,7 +1005,7 @@ void ServerPage::saveRates()
 
 void ServerPage::tabChanged(int page)
 {
-	if(page == 2)
+	if(page == TAB_HIDDEN_SERVICE)
 		updateOutProxyIndicator();
 }
 
