@@ -2,21 +2,19 @@
 
 TEMPLATE = app
 TARGET = retroshare-nogui
-CONFIG += bitdht
-#CONFIG += introserver
 CONFIG -= qt xml gui
-CONFIG += link_prl
 
-#CONFIG += debug
-debug {
-        QMAKE_CFLAGS -= -O2
-        QMAKE_CFLAGS += -O0
-        QMAKE_CFLAGS += -g
+DEPENDPATH  *= $${PWD} $${RS_INCLUDE_DIR}
+INCLUDEPATH *= $${PWD} $${RS_INCLUDE_DIR}
 
-        QMAKE_CXXFLAGS -= -O2
-        QMAKE_CXXFLAGS += -O0
-        QMAKE_CXXFLAGS += -g
+libresapihttpserver {
+    !include("../../libresapi/src/use_libresapi.pri"):error("Including")
+
+    HEADERS += TerminalApiClient.h
+    SOURCES += TerminalApiClient.cpp
 }
+
+!include("../../libretroshare/src/use_libretroshare.pri"):error("Including")
 
 ################################# Linux ##########################################
 linux-* {
@@ -53,42 +51,32 @@ win32-x-g++ {
 	LIBS += -lole32 -lwinmm
 
 	RC_FILE = gui/images/retroshare_win.rc
-
-	DEFINES *= WIN32
 }
 
 #################################### Windows #####################################
 
-win32 {
+win32-g++ {
 	CONFIG += console
 	OBJECTS_DIR = temp/obj
 	RCC_DIR = temp/qrc
 	UI_DIR  = temp/ui
 	MOC_DIR = temp/moc
 
-	# solve linker warnings because of the order of the libraries
-	QMAKE_LFLAGS += -Wl,--start-group
+    ## solve linker warnings because of the order of the libraries
+    #QMAKE_LFLAGS += -Wl,--start-group
 
-	CONFIG(debug, debug|release) {
-	} else {
+    CONFIG(debug, debug|release) {
+    } else {
 		# Tell linker to use ASLR protection
 		QMAKE_LFLAGS += -Wl,-dynamicbase
 		# Tell linker to use DEP protection
 		QMAKE_LFLAGS += -Wl,-nxcompat
 	}
 
-	for(lib, LIB_DIR):LIBS += -L"$$lib"
-	LIBS += -lssl -lcrypto -lpthread -lminiupnpc -lz
-	LIBS += -lcrypto -lws2_32 -lgdi32
-	LIBS += -luuid -lole32 -liphlpapi -lcrypt32
-	LIBS += -lole32 -lwinmm
+    dLib = ws2_32 gdi32 uuid ole32 iphlpapi crypt32 winmm
+    LIBS *= $$linkDynamicLibs(dLib)
 
 	RC_FILE = resources/retroshare_win.rc
-
-	DEFINES *= WINDOWS_SYS _USE_32BIT_TIME_T
-
-	DEPENDPATH += . $$INC_DIR
-	INCLUDEPATH += . $$INC_DIR
 }
 
 ##################################### MacOS ######################################
@@ -156,11 +144,6 @@ haiku-* {
 
 ############################## Common stuff ######################################
 
-DEPENDPATH += . $$PWD/../../libretroshare/src
-INCLUDEPATH += . $$PWD/../../libretroshare/src
-
-PRE_TARGETDEPS *= $$OUT_PWD/../../libretroshare/src/lib/libretroshare.a
-LIBS *= $$OUT_PWD/../../libretroshare/src/lib/libretroshare.a
 
 # Input
 HEADERS +=  notifytxt.h
@@ -168,19 +151,9 @@ SOURCES +=  notifytxt.cc \
             retroshare.cc
 
 introserver {
+## Introserver is broken (doesn't compile) should be either fixed or removed
+
 	HEADERS += introserver.h
 	SOURCES += introserver.cc
 	DEFINES *= RS_INTRO_SERVER
-}
-
-libresapihttpserver {
-	DEFINES *= ENABLE_WEBUI
-        PRE_TARGETDEPS *= $$OUT_PWD/../../libresapi/src/lib/libresapi.a
-	LIBS += $$OUT_PWD/../../libresapi/src/lib/libresapi.a
-        DEPENDPATH += $$PWD/../../libresapi/src
-	INCLUDEPATH += $$PWD/../../libresapi/src
-        HEADERS += \
-            TerminalApiClient.h
-        SOURCES +=  \
-            TerminalApiClient.cpp
 }

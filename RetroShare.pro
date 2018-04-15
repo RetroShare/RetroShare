@@ -1,13 +1,12 @@
 !include("retroshare.pri"): error("Could not include file retroshare.pri")
 
 TEMPLATE = subdirs
-#CONFIG += tests
 
 SUBDIRS += openpgpsdk
 openpgpsdk.file = openpgpsdk/src/openpgpsdk.pro
 
 retrotor {
-	libretroshare.depends = openpgpsdk 
+    libretroshare.depends = openpgpsdk
 } else {
 	SUBDIRS += libbitdht
 	libbitdht.file = libbitdht/src/libbitdht.pro

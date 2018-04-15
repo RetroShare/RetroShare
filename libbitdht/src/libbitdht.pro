@@ -6,22 +6,9 @@ CONFIG -= qt
 TARGET = bitdht
 DESTDIR = lib
 
+!include("use_libbitdht.pri"):error("Including")
+
 QMAKE_CXXFLAGS *= -Wall -DBE_DEBUG
-
-profiling {
-	QMAKE_CXXFLAGS -= -fomit-frame-pointer
-	QMAKE_CXXFLAGS *= -pg -g -fno-omit-frame-pointer
-}
-
-release {
-	# not much here yet.
-}
-
-#CONFIG += debug
-debug {
-        QMAKE_CXXFLAGS -= -O2 -fomit-frame-pointer
-        QMAKE_CXXFLAGS *= -g -fno-omit-frame-pointer
-}
 
 # treat warnings as error for better removing
 #QMAKE_CFLAGS += -Werror
