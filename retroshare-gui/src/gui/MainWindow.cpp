@@ -107,9 +107,12 @@
 #include "gui/common/RsCollection.h"
 #include "settings/rsettingswin.h"
 #include "settings/rsharesettings.h"
-#include "settings/WebuiPage.h"
 #include "common/StatusDefs.h"
 #include "gui/notifyqt.h"
+
+#ifdef ENABLE_WEBUI
+#	include "settings/WebuiPage.h"
+#endif
 
 #include <iomanip>
 #include <unistd.h>
