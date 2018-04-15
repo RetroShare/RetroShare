@@ -135,7 +135,7 @@ void PopupDistantChatDialog::updateDisplay()
 		break ;
 	case RS_DISTANT_CHAT_STATUS_TUNNEL_DN:
 		//std::cerr << "Tunnel asked. Waiting for reponse. " << std::endl;
-		_status_label->setIcon(QIcon(IMAGE_RED_LED));
+		_status_label->setIcon(QIcon(IMAGE_YEL_LED));
 		msg = QObject::tr( "Tunnel is pending... Messages will be delivered as"
 		                   " soon as possible" );
 		_status_label->setToolTip(msg);
