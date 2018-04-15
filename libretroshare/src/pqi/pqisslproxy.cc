@@ -42,6 +42,7 @@ static struct RsLog::logInfo pqisslproxyzoneInfo = {RsLog::Default, "pqisslproxy
 #define pqisslproxyzone &pqisslproxyzoneInfo
 
 // #define PROXY_DEBUG	1
+// #define PROXY_DEBUG_LOG	1
 
 #define PROXY_STATE_FAILED			0
 #define PROXY_STATE_INIT			1
@@ -593,8 +594,9 @@ bool pqisslproxy::connect_parameter(uint32_t type, const std::string &value)
 	        {
 	                std::string out;
 	                rs_sprintf(out, "pqisslproxy::connect_parameter() Peer: %s DOMAIN_ADDRESS: %s", PeerId().toStdString().c_str(), value.c_str());
+#ifdef PROXY_DEBUG_LOG
 	                rslog(RSL_WARNING, pqisslproxyzone, out);
-	
+#endif
 	                mDomainAddress = value;
 #ifdef PROXY_DEBUG
 	                std::cerr << out << std::endl;
@@ -615,8 +617,9 @@ bool pqisslproxy::connect_parameter(uint32_t type, uint32_t value)
 	        {
 	                std::string out;
 	                rs_sprintf(out, "pqisslproxy::connect_parameter() Peer: %s REMOTE_PORT: %lu", PeerId().toStdString().c_str(), value);
+#ifdef PROXY_DEBUG_LOG
 	                rslog(RSL_WARNING, pqisslproxyzone, out);
-	
+#endif
 	        	mRemotePort = value;
 #ifdef PROXY_DEBUG
 	                std::cerr << out << std::endl;

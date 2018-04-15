@@ -74,6 +74,7 @@ static struct RsLog::logInfo p3peermgrzoneInfo = {RsLog::Default, "p3peermgr"};
 
 /****
  * #define PEER_DEBUG 1
+ * #define PEER_DEBUG_LOG 1
  ***/
 
 #define MAX_AVAIL_PERIOD 230 //times a peer stay in available state when not connected
@@ -909,8 +910,9 @@ bool p3PeerMgrIMPL::addFriend(const RsPeerId& input_id, const RsPgpId& input_gpg
 	RsPeerId id = input_id ;
 	RsPgpId gpg_id = input_gpg_id ;
 
+#ifdef PEER_DEBUG_LOG
 	rslog(RSL_WARNING, p3peermgrzone, "p3PeerMgr::addFriend() id: " + id.toStdString());
-
+#endif
 	{
 		RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 

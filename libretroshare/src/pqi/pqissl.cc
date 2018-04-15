@@ -67,7 +67,7 @@ const int PQISSL_UDP_FLAG = 0x02;
 
 //#define PQISSL_DEBUG 		1
 //#define PQISSL_LOG_DEBUG 	1
-
+//#define PQISSL_LOG_DEBUG2 	1
 
 static const int PQISSL_MAX_READ_ZERO_COUNT = 20;
 static const time_t PQISSL_MAX_READ_ZERO_TIME = 15; // 15 seconds of no data => reset. (atm HeartBeat pkt sent 5 secs)
@@ -238,7 +238,9 @@ int pqissl::reset_locked()
 #endif
 	}
 
+#ifdef PQISSL_LOG_DEBUG2
 	rslog(RSL_ALERT, pqisslzone, outLog);
+#endif
 
 	// notify people of problem!
 	// but only if we really shut something down.
@@ -775,10 +777,14 @@ bool  	pqissl::CheckConnectionTimeout()
 		std::string out;
 		rs_sprintf(out, "pqissl::Basic_Connection_Complete() Connection Timed Out. Peer: %s Period: %lu", PeerId().toStdString().c_str(), mConnectTimeout);
 
+#ifdef PQISSL_LOG_DEBUG2
 		rslog(RSL_WARNING, pqisslzone, out);
+#endif
 		/* as sockfd is valid, this should close it all up */
 		
+#ifdef PQISSL_LOG_DEBUG2
 		rslog(RSL_ALERT, pqisslzone, "pqissl::Basic_Connection_Complete() -> calling reset()");
+#endif
 		reset_locked();
 		return true;
 	}
@@ -917,7 +923,9 @@ int 	pqissl::Basic_Connection_Complete()
 			{
 				std::string out;
 				rs_sprintf(out, "pqissl::Basic_Connection_Complete() TCP Connection Complete: cert: %s on osock: ", PeerId().toStdString().c_str(), sockfd);
+#ifdef PQISSL_LOG_DEBUG2
 				rslog(RSL_WARNING, pqisslzone, out);
+#endif
 			}
 			return 1;
 		}
