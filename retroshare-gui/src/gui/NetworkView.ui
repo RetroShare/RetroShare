@@ -38,12 +38,12 @@
        </property>
        <item>
         <property name="text">
-         <string>Show online friends only</string>
+         <string>Online friends only</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>Show all friends</string>
+         <string>All friends</string>
         </property>
        </item>
        <item>
