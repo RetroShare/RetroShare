@@ -197,7 +197,7 @@ SharedFilesDialog::SharedFilesDialog(RetroshareDirModel *_tree_model,RetroshareD
     connect(ui.filterClearButton, SIGNAL(clicked()), this, SLOT(clearFilter()));
 	connect(ui.filterStartButton, SIGNAL(clicked()), this, SLOT(startFilter()));
 	connect(ui.filterPatternLineEdit, SIGNAL(returnPressed()), this, SLOT(startFilter()));
-	connect(ui.filterPatternLineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(onFilterTextEdited()));
+//	connect(ui.filterPatternLineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(onFilterTextEdited()));
 	//Hidden by default, shown on onFilterTextEdited
 	ui.filterClearButton->hide();
 	ui.filterStartButton->hide();
