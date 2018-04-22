@@ -1524,7 +1524,9 @@ void RetroshareDirModel::filterItems(const std::list<std::string>& keywords,uint
 		std::cerr << std::endl;
 #endif
 	}
+#ifdef RDM_SEARCH_DEBUG
 	std::cerr << mFilteredPointers.size() << " pointers in filter set." << std::endl;
+#endif
 }
 
 

@@ -943,7 +943,7 @@ void SharedFilesDialog::restoreExpandedPathsAndSelection(const std::set<std::str
 
 void SharedFilesDialog::expandAll()
 {
-    if(ui.dirTreeView->model() == NULL)
+    if(ui.dirTreeView->model() == NULL || ui.dirTreeView->model() == flat_proxyModel)	// this method causes infinite loops on flat models
         return ;
 
     ui.dirTreeView->blockSignals(true) ;
@@ -956,7 +956,6 @@ void SharedFilesDialog::expandAll()
         std::string path = ui.dirTreeView->model()->index(row,0).data(Qt::DisplayRole).toString().toStdString();
         recursExpandAll(ui.dirTreeView->model()->index(row,0));
     }
-    //QItemSelection selection ;
 
     ui.dirTreeView->blockSignals(false) ;
 
@@ -972,14 +971,6 @@ void SharedFilesDialog::recursExpandAll(const QModelIndex& index)
 
 		if(ui.dirTreeView->model()->rowCount(idx) > 0)
 			recursExpandAll(idx) ;
-
-//		QModelIndex midx = proxyModel->mapToSource(idx) ;
-//
-//		if (!midx.isValid())
-//			continue ;
-//
-//		if (model->getType(midx) != DIR_TYPE_FILE)
-//			recursExpandAll(idx) ;
 	}
 }
 
@@ -1332,6 +1323,7 @@ void SharedFilesDialog::onFilterTextEdited()
 	ui.filterStartButton->setEnabled(true) ;
 	ui.filterPatternFrame->setToolTip(QString());
 
+	FilterItems();
 #ifndef DISABLE_SEARCH_WHILE_TYPING
 	mFilterTimer->start( 500 ); // This will fire filterRegExpChanged after 500 ms.
 	// If the user types something before it fires, the timer restarts counting
@@ -1519,11 +1511,15 @@ void SharedFilesDialog::FilterItems()
 
 	if(mLastFilterText == text)	// do not filter again if we already did. This is an optimization
 	{
+#ifdef DEBUG_SHARED_FILES_DIALOG
 		std::cerr << "Last text is equal to text. skipping" << std::endl;
+#endif
 		return ;
 	}
 
+#ifdef DEBUG_SHARED_FILES_DIALOG
 	std::cerr << "New last text. Performing the filter on string \"" << text.toStdString() << "\"" << std::endl;
+#endif
 	mLastFilterText = text ;
 
 	QCursorContextBlocker q(ui.dirTreeView) ;
@@ -1563,7 +1559,9 @@ void SharedFilesDialog::FilterItems()
 	else
 		ui.filterPatternFrame->setToolTip(tr("Found %1 results.").arg(found)) ;
 
+#ifdef DEBUG_SHARED_FILES_DIALOG
 	std::cerr << found << " results found by search." << std::endl;
+#endif
 }
 
 #ifdef DEPRECATED_CODE
