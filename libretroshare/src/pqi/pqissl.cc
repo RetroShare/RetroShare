@@ -716,10 +716,11 @@ int pqissl::Initiate_Connection()
 	//std::cerr << "Setting Connect Timeout " << mConnectTimeout << " Seconds into Future " << std::endl;
 
 	sockaddr_storage_ipv4_to_ipv6(addr);
-
+#ifdef PQISSL_DEBUG
 	std::cerr << __PRETTY_FUNCTION__ << " Connecting To: "
 	          << PeerId().toStdString() <<" via: "
 	          << sockaddr_storage_tostring(addr) << std::endl;
+#endif
 
 	if (0 != (err = unix_connect(osock, addr)))
 	{
@@ -730,11 +731,13 @@ int pqissl::Initiate_Connection()
 			sockfd = osock;
 			return 0;
 		default:
+#ifdef PQISSL_DEBUG
 			std::cerr << __PRETTY_FUNCTION__ << " Failure connect "
 			          << sockaddr_storage_tostring(addr)
 			          << " returns: "
 			          << err << " -> errno: " << errno << " "
 			          << socket_errorType(errno) << std::endl;
+#endif
 
 			net_internal_close(osock);
 			osock = -1;
