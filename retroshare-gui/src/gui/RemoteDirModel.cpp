@@ -44,8 +44,8 @@
 
 /*****
  * #define RDM_DEBUG
+ * #define RDM_SEARCH_DEBUG
  ****/
-#define RDM_SEARCH_DEBUG
 
 static const uint32_t FLAT_VIEW_MAX_REFS_PER_SECOND       = 2000 ;
 static const size_t   FLAT_VIEW_MAX_REFS_TABLE_SIZE       = 10000 ; //

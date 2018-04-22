@@ -1525,7 +1525,6 @@ void SharedFilesDialog::FilterItems()
 
 	std::cerr << "New last text. Performing the filter on string \"" << text.toStdString() << "\"" << std::endl;
 	mLastFilterText = text ;
-	model->update() ;
 
 	QCursorContextBlocker q(ui.dirTreeView) ;
 
@@ -1537,6 +1536,7 @@ void SharedFilesDialog::FilterItems()
 	if(text == "")
 	{
 		model->filterItems(std::list<std::string>(),found) ;
+		model->update() ;
 		return ;
 	}
 
@@ -1551,6 +1551,7 @@ void SharedFilesDialog::FilterItems()
 		keywords.push_back((*it).toStdString());
 
 	model->filterItems(keywords,found) ;
+	model->update() ;
 
 	if(found > 0)
 		expandAll();
