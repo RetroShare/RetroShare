@@ -182,7 +182,7 @@ private:
 class StringExpression: public Expression 
 {
 public:
-    StringExpression(enum StringOperator op, std::list<std::string> &t, bool ic): Op(op),terms(t), IgnoreCase(ic){}
+    StringExpression(enum StringOperator op, const std::list<std::string> &t, bool ic): Op(op),terms(t), IgnoreCase(ic){}
 
     virtual void linearize(LinearizedExpression& e) const ;
 	virtual std::string toStdString(const std::string& varstr) const;
@@ -275,7 +275,7 @@ Some implementations of StringExpressions.
 class NameExpression: public StringExpression 
 {
 public:
-    NameExpression(enum StringOperator op, std::list<std::string> &t, bool ic):
+    NameExpression(enum StringOperator op, const std::list<std::string> &t, bool ic):
         StringExpression(op,t,ic) {}
     bool eval(const ExpFileEntry& file);
 
@@ -290,7 +290,7 @@ public:
 
 class PathExpression: public StringExpression {
 public:
-    PathExpression(enum StringOperator op, std::list<std::string> &t, bool ic):
+    PathExpression(enum StringOperator op, const std::list<std::string> &t, bool ic):
         StringExpression(op,t,ic) {}
     bool eval(const ExpFileEntry& file);
 
@@ -305,7 +305,7 @@ public:
 
 class ExtExpression: public StringExpression {
 public:
-    ExtExpression(enum StringOperator op, std::list<std::string> &t, bool ic):
+    ExtExpression(enum StringOperator op, const std::list<std::string> &t, bool ic):
         StringExpression(op,t,ic) {}
     bool eval(const ExpFileEntry& file);
 
@@ -320,7 +320,7 @@ public:
 
 class HashExpression: public StringExpression {
 public:
-    HashExpression(enum StringOperator op, std::list<std::string> &t):
+    HashExpression(enum StringOperator op, const std::list<std::string> &t):
         StringExpression(op,t, true) {}
     bool eval(const ExpFileEntry& file);
 

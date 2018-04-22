@@ -39,6 +39,7 @@
 #define COLUMN_FRIEND_ACCESS 4
 #define COLUMN_WN_VISU_DIR   5
 #define COLUMN_COUNT         6
+#define RETROSHARE_DIR_MODEL_FILTER_STRING "filtered"
 
 class DirDetails;
 
@@ -60,7 +61,7 @@ class RetroshareDirModel : public QAbstractItemModel
 	Q_OBJECT
 
 	public:
-		enum Roles{ FileNameRole = Qt::UserRole+1, SortRole = Qt::UserRole+2 };
+		enum Roles{ FileNameRole = Qt::UserRole+1, SortRole = Qt::UserRole+2, FilterRole = Qt::UserRole+3 };
 
 		RetroshareDirModel(bool mode, QObject *parent = 0);
 		virtual ~RetroshareDirModel() {}
@@ -94,7 +95,8 @@ class RetroshareDirModel : public QAbstractItemModel
 
 		virtual QMenu* getContextMenu(QMenu* contextMenu) {return contextMenu;}
 
-	public:
+		void filterItems(const std::list<std::string>& keywords, uint32_t& found) ;
+
 		//Overloaded from QAbstractItemModel
 		virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
 		virtual QStringList mimeTypes () const;
@@ -118,6 +120,7 @@ class RetroshareDirModel : public QAbstractItemModel
 		virtual QVariant sortRole(const QModelIndex&,const DirDetails&,int) const =0;
 
 		QVariant decorationRole(const DirDetails&,int) const ;
+		QVariant filterRole(const DirDetails& details,int coln) const;
 
 		uint32_t ageIndicator;
 
@@ -172,6 +175,8 @@ class RetroshareDirModel : public QAbstractItemModel
         mutable time_t mLastReq;
 
         bool mUpdating ;
+
+		std::set<void*> mFilteredPointers ;
 };
 
 // This class shows the classical hierarchical directory view of shared files

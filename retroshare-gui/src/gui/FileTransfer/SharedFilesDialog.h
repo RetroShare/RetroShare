@@ -77,7 +77,7 @@ private slots:
   void indicatorChanged(int index);
 
   void onFilterTextEdited();
-  void filterRegExpChanged();
+  //void filterRegExpChanged();
   void clearFilter();
   void startFilter();
 
@@ -97,6 +97,8 @@ protected:
   void recursSaveExpandedItems(const QModelIndex& index, const std::string &path, std::set<std::string> &exp,std::set<std::string>& vis, std::set<std::string>& sel);
   void saveExpandedPathsAndSelection(std::set<std::string>& paths,std::set<std::string>& visible_indexes, std::set<std::string>& selected_indexes) ;
   void restoreExpandedPathsAndSelection(const std::set<std::string>& paths,const std::set<std::string>& visible_indexes, const std::set<std::string>& selected_indexes) ;
+  void recursExpandAll(const QModelIndex& index);
+  void expandAll();
 
 protected:
   //now context menu are created again every time theu are called ( in some
@@ -112,8 +114,6 @@ protected:
   void FilterItems();
   bool tree_FilterItem(const QModelIndex &index, const QString &text, int level);
   bool flat_FilterItem(const QModelIndex &index, const QString &text, int level);
-
-  void restoreInvisibleItems();
 
   QModelIndexList getSelected();
 
@@ -142,8 +142,6 @@ protected:
   QString lastFilterString;
   QString mLastFilterText ;
   RsProtectedTimer* mFilterTimer;
-
-  QList<QModelIndex> mHiddenIndexes;
 };
 
 class LocalSharedFilesDialog : public SharedFilesDialog

@@ -119,8 +119,10 @@ int pqissllistenbase::setuplisten()
 	                    reinterpret_cast<uint8_t*>(&no), sizeof(no));
 	if (err) std::cerr << __PRETTY_FUNCTION__
 	                   << ": Error setting IPv6 socket dual stack" << std::endl;
+#ifdef DEBUG_LISTENNER
 	else std::cerr << __PRETTY_FUNCTION__
 	               << ": Success setting IPv6 socket dual stack" << std::endl;
+#endif
 #endif // IPV6_V6ONLY
 
 /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
