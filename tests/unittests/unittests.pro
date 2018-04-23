@@ -1,6 +1,6 @@
 !include("../../retroshare.pri"): error("Could not include file ../../retroshare.pri")
 
-QT     += network xml script
+QT     += network xml
 CONFIG += bitdht
 
 CONFIG += gxs debug

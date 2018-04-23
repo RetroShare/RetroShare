@@ -17,7 +17,7 @@
 #include "ChannelsHandler.h"
 #include "StatsHandler.h"
 
-#ifdef LIBRESAPI_QT
+#ifdef LIBRESAPI_SETTINGS
     #include "SettingsHandler.h"
 #endif
 
@@ -242,7 +242,7 @@ public:
         mApiPluginHandler(sts, ifaces),
 	    mChannelsHandler(ifaces.mGxsChannels),
 	    mStatsHandler()
-#ifdef LIBRESAPI_QT
+#ifdef LIBRESAPI_SETTINGS
 	    ,mSettingsHandler(sts)
 #endif
     {
@@ -272,7 +272,7 @@ public:
                                   &ChannelsHandler::handleRequest);
 		router.addResourceHandler("stats", dynamic_cast<ResourceRouter*>(&mStatsHandler),
 		                          &StatsHandler::handleRequest);
-#ifdef LIBRESAPI_QT
+#ifdef LIBRESAPI_SETTINGS
 		router.addResourceHandler("settings", dynamic_cast<ResourceRouter*>(&mSettingsHandler),
 		                                  &SettingsHandler::handleRequest);
 #endif
@@ -290,7 +290,7 @@ public:
     ChannelsHandler mChannelsHandler;
 	StatsHandler mStatsHandler;
 
-#ifdef LIBRESAPI_QT
+#ifdef LIBRESAPI_SETTINGS
 	SettingsHandler mSettingsHandler;
 #endif
 };
