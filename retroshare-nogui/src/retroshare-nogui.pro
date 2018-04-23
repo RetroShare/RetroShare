@@ -5,7 +5,7 @@ TARGET = retroshare-nogui
 CONFIG -= qt xml gui
 
 DEPENDPATH  *= $${PWD} $${RS_INCLUDE_DIR}
-INCLUDEPATH *= $${PWD} $${RS_INCLUDE_DIR}
+INCLUDEPATH *= $${PWD}
 
 libresapihttpserver {
     !include("../../libresapi/src/use_libresapi.pri"):error("Including")
