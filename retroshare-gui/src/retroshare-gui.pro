@@ -8,7 +8,7 @@ TARGET = retroshare
 DEFINES += TARGET=\\\"$${TARGET}\\\"
 
 DEPENDPATH  *= $${PWD} $${RS_INCLUDE_DIR} retroshare-gui
-INCLUDEPATH *= $${PWD} $${RS_INCLUDE_DIR} retroshare-gui
+INCLUDEPATH *= $${PWD} retroshare-gui
 
 libresapihttpserver {
     !include("../../libresapi/src/use_libresapi.pri"):error("Including")
