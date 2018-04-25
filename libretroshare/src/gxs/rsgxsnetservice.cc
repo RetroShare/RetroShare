@@ -668,7 +668,6 @@ void RsGxsNetService::syncWithPeers()
             const RsGxsGroupId& grpId = mmit->first;
             RsGxsCircleId encrypt_to_this_circle_id ;
 
-#warning we should use this call in order to determine wether the peer can be sent group information about a specific group, otherwise we leak which group we are subscribed to
             if(!checkCanRecvMsgFromPeer(peerId, *meta,encrypt_to_this_circle_id))
                 continue;
 
@@ -741,7 +740,9 @@ void RsGxsNetService::generic_sendItem(RsNxsItem *si)
 {
 	// check if the item is to be sent to a distant peer or not
 
-	if(mAllowDistSync && isDistantPeer( static_cast<RsGxsNetTunnelVirtualPeerId>(si->PeerId())))
+	RsGxsGroupId tmp_grpId;
+
+	if(mAllowDistSync && isDistantPeer( static_cast<RsGxsNetTunnelVirtualPeerId>(si->PeerId()),tmp_grpId))
 	{
 		RsNxsSerialiser ser(mServType);
 
@@ -4091,6 +4092,17 @@ bool RsGxsNetService::canSendGrpId(const RsPeerId& sslId, const RsGxsGrpMetaData
 #ifdef NXS_NET_DEBUG_4
 	GXSNETDEBUG_PG(sslId,grpMeta.mGroupId) << "RsGxsNetService::canSendGrpId()"<< std::endl;
 #endif
+	// check if that peer is a virtual peer id, in which case we only send/recv data to/from it items for the group it's requested for
+
+	RsGxsGroupId peer_grp ;
+	if(isDistantPeer(RsGxsNetTunnelVirtualPeerId(sslId),peer_grp) && peer_grp != grpMeta.mGroupId)
+	{
+#ifdef NXS_NET_DEBUG_4
+        GXSNETDEBUG_PG(sslId,grpMeta.mGroupId) << "  Distant peer designed for group " << peer_grp << ": cannot request sync for different group." << std::endl;
+#endif
+		return false ;
+	}
+
 	// first do the simple checks
 	uint8_t circleType = grpMeta.mCircleType;
 
@@ -4144,6 +4156,17 @@ bool RsGxsNetService::checkCanRecvMsgFromPeer(const RsPeerId& sslId, const RsGxs
     GXSNETDEBUG_PG(sslId,grpMeta.mGroupId) << "RsGxsNetService::checkCanRecvMsgFromPeer()";
     GXSNETDEBUG_PG(sslId,grpMeta.mGroupId) << "  peer Id = " << sslId << ", grpId=" << grpMeta.mGroupId <<std::endl;
 #endif
+	// check if that peer is a virtual peer id, in which case we only send/recv data to/from it items for the group it's requested for
+
+	RsGxsGroupId peer_grp ;
+	if(isDistantPeer(RsGxsNetTunnelVirtualPeerId(sslId),peer_grp) && peer_grp != grpMeta.mGroupId)
+	{
+#ifdef NXS_NET_DEBUG_4
+        GXSNETDEBUG_PG(sslId,grpMeta.mGroupId) << "  Distant peer designed for group " << peer_grp << ": cannot request sync for different group." << std::endl;
+#endif
+		return false ;
+	}
+
     // first do the simple checks
     uint8_t circleType = grpMeta.mCircleType;
     should_encrypt_id.clear() ;
@@ -4487,6 +4510,16 @@ bool RsGxsNetService::canSendMsgIds(std::vector<RsGxsMsgMetaData*>& msgMetas, co
 #ifdef NXS_NET_DEBUG_4
     GXSNETDEBUG_PG(sslId,grpMeta.mGroupId) << "RsGxsNetService::canSendMsgIds() CIRCLE VETTING" << std::endl;
 #endif
+	// check if that peer is a virtual peer id, in which case we only send/recv data to/from it items for the group it's requested for
+
+	RsGxsGroupId peer_grp ;
+	if(isDistantPeer(RsGxsNetTunnelVirtualPeerId(sslId),peer_grp) && peer_grp != grpMeta.mGroupId)
+	{
+#ifdef NXS_NET_DEBUG_4
+        GXSNETDEBUG_PG(sslId,grpMeta.mGroupId) << "  Distant peer designed for group " << peer_grp << ": cannot request sync for different group." << std::endl;
+#endif
+		return false ;
+	}
 
     // first do the simple checks
     uint8_t circleType = grpMeta.mCircleType;

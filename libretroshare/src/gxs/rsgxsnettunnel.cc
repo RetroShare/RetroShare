@@ -140,11 +140,19 @@ RsGxsNetTunnelService::~RsGxsNetTunnelService()
 	mIncomingData.clear();
 }
 
-bool RsGxsNetTunnelService::isDistantPeer(const RsGxsNetTunnelVirtualPeerId& virtual_peer)
+bool RsGxsNetTunnelService::isDistantPeer(const RsGxsNetTunnelVirtualPeerId& virtual_peer, RsGxsGroupId& group_id)
 {
 	RS_STACK_MUTEX(mGxsNetTunnelMtx);
 
-	return mVirtualPeers.find(virtual_peer) != mVirtualPeers.end();
+	auto it = mVirtualPeers.find(virtual_peer) ;
+
+	if(it != mVirtualPeers.end())
+	{
+		group_id = it->second.group_id ;
+		return true ;
+	}
+	else
+		return false ;
 }
 
 bool RsGxsNetTunnelService::receiveTunnelData(unsigned char *& data,uint32_t& data_len,RsGxsNetTunnelVirtualPeerId& virtual_peer)

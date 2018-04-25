@@ -193,10 +193,11 @@ public:
 	  /*!
 	   * \brief isDistantPeer
 	   *                 returns wether the peer is in the list of available distant peers or not
+	   * \param group_id          returned by the service to indicate which group this peer id is designed for.
 	   * \return    true if the peer is a distant GXS peer.
 	   */
 
-	  bool isDistantPeer(const RsGxsNetTunnelVirtualPeerId& virtual_peer) ;
+	  bool isDistantPeer(const RsGxsNetTunnelVirtualPeerId& virtual_peer,RsGxsGroupId& group_id) ;
 
 	  /*!
 	   * \brief dumps all information about monitored groups.
