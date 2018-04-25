@@ -72,7 +72,7 @@ class RsGroupNetworkStatsRecord
  * Incoming transaction are in 3 different states
  *   1. START 2. RECEIVING 3. END
  */
-class RsGxsNetService : public RsNetworkExchangeService, public p3ThreadedService, public p3Config
+class RsGxsNetService : public RsNetworkExchangeService, public RsGxsNetTunnelService, public p3ThreadedService, public p3Config
 {
 public:
 
@@ -90,7 +90,7 @@ public:
       			  RsNxsObserver *nxsObs,  // used to be = NULL.
       			  const RsServiceInfo serviceInfo,
       			  RsGixsReputation* reputations = NULL, RsGcxs* circles = NULL, RsGixs *gixs=NULL,
-      			  PgpAuxUtils *pgpUtils = NULL, RsGxsNetTunnelService *mGxsNT = NULL,
+      			  PgpAuxUtils *pgpUtils = NULL,
       			  bool grpAutoSync = true, bool msgAutoSync = true,bool distSync=false,
 	                uint32_t default_store_period = RS_GXS_DEFAULT_MSG_STORE_PERIOD,
 	                uint32_t default_sync_period = RS_GXS_DEFAULT_MSG_REQ_PERIOD);
@@ -546,7 +546,6 @@ private:
     RsGixs *mGixs;
     RsGixsReputation* mReputations;
     PgpAuxUtils *mPgpUtils;
-	RsGxsNetTunnelService *mGxsNetTunnel;
 
     bool mGrpAutoSync;
     bool mAllowMsgSync;

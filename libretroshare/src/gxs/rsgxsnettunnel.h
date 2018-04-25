@@ -88,11 +88,12 @@
 //
 //      * virtual peers are also shared among services. This reduces the required amount of tunnels and tunnel requests to send.
 //
-//
 //   How do we know that a group needs distant sync?
 //		* look into GrpConfigMap for suppliers. Suppliers is cleared at load.
 //		* last_update_TS in GrpConfigMap is randomised so it cannot be used
 //      * we need a way to know that there's no suppliers for good reasons (not that we just started)
+//
+//   Security
 //      *
 
 typedef RsPeerId RsGxsNetTunnelVirtualPeerId ;
@@ -150,7 +151,7 @@ struct RsGxsNetTunnelGroupInfo
 	std::set<TurtleVirtualPeerId> virtual_peers ; // list of which virtual peers provide this group. Can me more than 1.
 };
 
-class RsGxsNetTunnelService: public RsTurtleClientService, public RsTickingThread
+class RsGxsNetTunnelService: public RsTurtleClientService
 {
 public:
 	  RsGxsNetTunnelService() ;
@@ -160,13 +161,13 @@ public:
 	   * \brief Manage tunnels for this group
 	   *	@param group_id group for which tunnels should be released
 	   */
-      bool requestPeers(uint16_t service_id, const RsGxsGroupId&group_id) ;
+      bool requestDistantPeers(uint16_t service_id, const RsGxsGroupId&group_id) ;
 
 	  /*!
 	   * \brief Stop managing tunnels for this group
 	   *	@param group_id group for which tunnels should be released
 	   */
-      bool releasePeers(uint16_t service_id,const RsGxsGroupId&group_id) ;
+      bool releaseDistantPeers(uint16_t service_id,const RsGxsGroupId&group_id) ;
 
 	  /*!
 	   * \brief Get the list of active virtual peers for a given group. This implies that a tunnel is up and
@@ -182,7 +183,7 @@ public:
 	   * \return
 	   *               true if succeeded.
 	   */
-      bool sendData(unsigned char *& data, uint32_t data_len, const RsGxsNetTunnelVirtualPeerId& virtual_peer) ;
+      bool sendTunnelData(unsigned char *& data, uint32_t data_len, const RsGxsNetTunnelVirtualPeerId& virtual_peer) ;
 
 	  /*!
 	   * \brief receiveData
@@ -194,7 +195,7 @@ public:
 	   * \return
 	   *                          true if something is returned. If not, data is set to NULL, data_len to 0.
 	   */
-      bool receiveData(uint16_t service_id,unsigned char *& data,uint32_t& data_len,RsGxsNetTunnelVirtualPeerId& virtual_peer) ;
+      bool receiveTunnelData(uint16_t service_id,unsigned char *& data,uint32_t& data_len,RsGxsNetTunnelVirtualPeerId& virtual_peer) ;
 
 	  /*!
 	   * \brief isDistantPeer

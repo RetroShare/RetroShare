@@ -38,7 +38,7 @@
 
 RsGxsNetTunnelService::RsGxsNetTunnelService(): mGxsNetTunnelMtx("GxsNetTunnel")
 {
-#warning this is for testing only. In the final version this needs to be initialized with some random content.
+#warning this is for testing only. In the final version this needs to be initialized with some random content, saved and re-used for a while (e.g. 1 month)
 	memset(mRandomBias,0,RS_GXS_TUNNEL_CONST_RANDOM_BIAS_SIZE) ;
 }
 
@@ -148,7 +148,7 @@ bool RsGxsNetTunnelService::isDistantPeer(const RsGxsNetTunnelVirtualPeerId& vir
 	return mVirtualPeers.find(virtual_peer) != mVirtualPeers.end();
 }
 
-bool RsGxsNetTunnelService::receiveData(uint16_t service_id,unsigned char *& data,uint32_t& data_len,RsGxsNetTunnelVirtualPeerId& virtual_peer)
+bool RsGxsNetTunnelService::receiveTunnelData(uint16_t service_id,unsigned char *& data,uint32_t& data_len,RsGxsNetTunnelVirtualPeerId& virtual_peer)
 {
 	RS_STACK_MUTEX(mGxsNetTunnelMtx);
 
@@ -174,7 +174,7 @@ bool RsGxsNetTunnelService::receiveData(uint16_t service_id,unsigned char *& dat
 	return true;
 }
 
-bool RsGxsNetTunnelService::sendData(unsigned char *& data,uint32_t data_len,const RsGxsNetTunnelVirtualPeerId& virtual_peer)
+bool RsGxsNetTunnelService::sendTunnelData(unsigned char *& data,uint32_t data_len,const RsGxsNetTunnelVirtualPeerId& virtual_peer)
 {
 	RS_STACK_MUTEX(mGxsNetTunnelMtx);
 	// The item is serialized and encrypted using chacha20+SHA256, using the generic turtle encryption, and then sent to the turtle router.
@@ -233,7 +233,7 @@ bool RsGxsNetTunnelService::getVirtualPeers(uint16_t service_id, std::list<RsGxs
 	return true ;
 }
 
-bool RsGxsNetTunnelService::requestPeers(uint16_t service_id,const RsGxsGroupId& group_id)
+bool RsGxsNetTunnelService::requestDistantPeers(uint16_t service_id,const RsGxsGroupId& group_id)
 {
 	RS_STACK_MUTEX(mGxsNetTunnelMtx);
 
@@ -255,7 +255,7 @@ bool RsGxsNetTunnelService::requestPeers(uint16_t service_id,const RsGxsGroupId&
 	return true;
 }
 
-bool RsGxsNetTunnelService::releasePeers(uint16_t service_id, const RsGxsGroupId& group_id)
+bool RsGxsNetTunnelService::releaseDistantPeers(uint16_t service_id, const RsGxsGroupId& group_id)
 {
 	RS_STACK_MUTEX(mGxsNetTunnelMtx);
 
@@ -605,8 +605,6 @@ void RsGxsNetTunnelService::data_tick()
 		mTurtle->sendTurtleData(it.first,it.second) ;
 		mPendingTurtleItems.pop_front();
 	}
-
-	rstime::rs_usleep(1*1000*1000); // 1 sec
 
 	time_t now = time(NULL);
 
