@@ -569,7 +569,7 @@ void RsGxsNetService::syncWithPeers()
     std::set<RsPeerId> peers;
     mNetMgr->getOnlineList(mServiceInfo.mServiceType, peers);
 
-	if(mAllowDistSync)
+	if(mAllowDistSync && mGxsNetTunnel != NULL)
 	{
 		// Grab all online virtual peers of distant tunnels for the current service.
 
@@ -740,7 +740,7 @@ void RsGxsNetService::generic_sendItem(RsNxsItem *si)
 {
 	// check if the item is to be sent to a distant peer or not
 
-	if(mAllowDistSync && mGxsNetTunnel->isDistantPeer( static_cast<RsGxsNetTunnelVirtualPeerId>(si->PeerId())))
+	if(mAllowDistSync && mGxsNetTunnel != NULL && mGxsNetTunnel->isDistantPeer( static_cast<RsGxsNetTunnelVirtualPeerId>(si->PeerId())))
 	{
 		RsNxsSerialiser ser(mServType);
 
@@ -764,7 +764,7 @@ void RsGxsNetService::generic_sendItem(RsNxsItem *si)
 
 void RsGxsNetService::checkDistantSyncState()
 {
-	if(!mAllowDistSync)
+	if(!mAllowDistSync || mGxsNetTunnel==NULL)
 		return ;
 
 	RsGxsGrpMetaTemporaryMap grpMeta;
@@ -1676,7 +1676,7 @@ RsItem *RsGxsNetService::generic_recvItem()
 	uint32_t size = 0 ;
 	RsGxsNetTunnelVirtualPeerId virtual_peer_id ;
 
-	while(mAllowDistSync && mGxsNetTunnel->receiveData(mServType,data,size,virtual_peer_id))
+	while(mAllowDistSync && mGxsNetTunnel != NULL && mGxsNetTunnel->receiveData(mServType,data,size,virtual_peer_id))
 	{
 		RsNxsItem *item = dynamic_cast<RsNxsItem*>(RsNxsSerialiser(mServType).deserialise(data,&size)) ;
 		item->PeerId(virtual_peer_id) ;

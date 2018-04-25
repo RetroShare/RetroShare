@@ -9,6 +9,8 @@ no_retroshare_gui:CONFIG -= retroshare_gui
 
 # CONFIG *= retrotor
 
+CONFIG *= gxsdistsync
+
 # To disable RetroShare-nogui append the following
 # assignation to qmake command line "CONFIG+=no_retroshare_nogui"
 CONFIG *= retroshare_nogui
@@ -214,6 +216,7 @@ unfinished {
 	CONFIG += wikipoos
 }
 
+gxsdistsync:DEFINES *= RS_USE_GXS_DISTANT_SYNC
 wikipoos:DEFINES *= RS_USE_WIKI
 rs_gxs:DEFINES *= RS_ENABLE_GXS
 libresapilocalserver:DEFINES *= LIBRESAPI_LOCAL_SERVER

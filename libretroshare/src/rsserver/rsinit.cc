@@ -1358,6 +1358,14 @@ int RsServer::StartupRetroShare()
     mWiki->setNetworkExchangeService(wiki_ns) ;
 #endif
 
+		/**** GXS Dist sync service ****/
+#ifdef RS_USE_GXS_DISTANT_SYNC
+		RsGxsNetTunnelService *mGxsNetTunnel = new RsGxsNetTunnelService ;
+#else
+		RsGxsNetTunnelService *mGxsNetTunnel = NULL;
+#endif
+
+
         /**** Forum GXS service ****/
 
         RsGeneralDataService* gxsforums_ds = new RsDataService(currGxsDir + "/", "gxsforums_db",
@@ -1371,13 +1379,11 @@ int RsServer::StartupRetroShare()
                         RS_SERVICE_GXS_TYPE_FORUMS, gxsforums_ds, nxsMgr,
                         mGxsForums, mGxsForums->getServiceInfo(),
 			mReputations, mGxsCircles,mGxsIdService,
-			pgpAuxUtils);
+			pgpAuxUtils); //,mGxsNetTunnel,true,true,true);
 
     mGxsForums->setNetworkExchangeService(gxsforums_ns) ;
 
         /**** Channel GXS service ****/
-
-		RsGxsNetTunnelService *mGxsNetTunnel = new RsGxsNetTunnelService ;
 
         RsGeneralDataService* gxschannels_ds = new RsDataService(currGxsDir + "/", "gxschannels_db",
                                                             RS_SERVICE_GXS_TYPE_CHANNELS, NULL, rsInitConfig->gxs_passwd);
