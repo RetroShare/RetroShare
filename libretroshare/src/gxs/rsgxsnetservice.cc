@@ -574,7 +574,7 @@ void RsGxsNetService::syncWithPeers()
 		// Grab all online virtual peers of distant tunnels for the current service.
 
 		std::list<RsGxsNetTunnelVirtualPeerId> vpids ;
-		getVirtualPeers(mServType,vpids);
+		getVirtualPeers(vpids);
 
 		for(auto it(vpids.begin());it!=vpids.end();++it)
 			peers.insert(RsPeerId(*it)) ;
@@ -805,14 +805,14 @@ void RsGxsNetService::checkDistantSyncState()
 
 			if(at_least_one_friend_is_supplier)
 			{
-				releaseDistantPeers(mServType,grpId);
+				releaseDistantPeers(grpId);
 #ifdef NXS_NET_DEBUG_8
 				GXSNETDEBUG___<< "  Group " << grpId << ": suppliers among friends. Releasing peers." << std::endl;
 #endif
 			}
 			else
 			{
-				requestDistantPeers(mServType,grpId);
+				requestDistantPeers(grpId);
 #ifdef NXS_NET_DEBUG_8
 				GXSNETDEBUG___<< "  Group " << grpId << ": no suppliers among friends. Requesting peers." << std::endl;
 #endif
@@ -1677,7 +1677,7 @@ RsItem *RsGxsNetService::generic_recvItem()
 	uint32_t size = 0 ;
 	RsGxsNetTunnelVirtualPeerId virtual_peer_id ;
 
-	while(mAllowDistSync && receiveTunnelData(mServType,data,size,virtual_peer_id))
+	while(mAllowDistSync && receiveTunnelData(data,size,virtual_peer_id))
 	{
 		RsNxsItem *item = dynamic_cast<RsNxsItem*>(RsNxsSerialiser(mServType).deserialise(data,&size)) ;
 		item->PeerId(virtual_peer_id) ;
