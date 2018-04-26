@@ -306,16 +306,14 @@ bool p3BanList::acceptedBanRanges_locked(const BanListPeer& blp)
     }
     return false ;
 }
-bool p3BanList::isAddressAccepted(const sockaddr_storage &addr, uint32_t checking_flags,uint32_t *check_result)
+bool p3BanList::isAddressAccepted(const sockaddr_storage &dAddr, uint32_t checking_flags,uint32_t *check_result)
 {
-    if(check_result != NULL)
-        *check_result = RSBANLIST_CHECK_RESULT_NOCHECK ;
+	sockaddr_storage addr; sockaddr_storage_copy(dAddr, addr);
 
-    if(sockaddr_storage_isLoopbackNet(addr))
-        return true ;
-
-    if(!mIPFilteringEnabled)
-        return true ;
+	if(!mIPFilteringEnabled) return true;
+	if(check_result != NULL) *check_result = RSBANLIST_CHECK_RESULT_NOCHECK;
+	if(!sockaddr_storage_ipv6_to_ipv4(addr)) return true;
+	if(sockaddr_storage_isLoopbackNet(addr)) return true;
 
 #ifdef DEBUG_BANLIST
     std::cerr << "isAddressAccepted(): tested addr=" << sockaddr_storage_iptostring(addr) << ", checking flags=" << checking_flags ;
@@ -453,9 +451,20 @@ void p3BanList::getBannedIps(std::list<BanListPeer> &lst)
             lst.push_back(it->second) ;
 }
 
-bool p3BanList::removeIpRange(const struct sockaddr_storage& addr,int masked_bytes,uint32_t list_type)
+bool p3BanList::removeIpRange( const struct sockaddr_storage& dAddr,
+                               int masked_bytes, uint32_t list_type )
 {
-    RS_STACK_MUTEX(mBanMtx) ;
+	sockaddr_storage addr; sockaddr_storage_copy(dAddr, addr);
+	if(!sockaddr_storage_ipv6_to_ipv4(addr))
+	{
+		std::cerr << __PRETTY_FUNCTION__ << " Cannot handle "
+		          << sockaddr_storage_tostring(dAddr)
+		          << " IPv6 not implemented yet!"
+		          << std::endl;
+		return false;
+	}
+
+	RS_STACK_MUTEX(mBanMtx);
 
     bool changed = false;
     std::map<sockaddr_storage,BanListPeer>::iterator it ;
@@ -485,9 +494,20 @@ bool p3BanList::removeIpRange(const struct sockaddr_storage& addr,int masked_byt
     return changed;
 }
 
-bool p3BanList::addIpRange(const sockaddr_storage &addr, int masked_bytes,uint32_t list_type,const std::string& comment)
+bool p3BanList::addIpRange( const sockaddr_storage &dAddr, int masked_bytes,
+                            uint32_t list_type, const std::string& comment )
 {
-    RS_STACK_MUTEX(mBanMtx) ;
+	sockaddr_storage addr; sockaddr_storage_copy(dAddr, addr);
+	if(!sockaddr_storage_ipv6_to_ipv4(addr))
+	{
+		std::cerr << __PRETTY_FUNCTION__ << " Cannot handle "
+		          << sockaddr_storage_tostring(dAddr)
+		          << " IPv6 not implemented yet!"
+		          << std::endl;
+		return false;
+	}
+
+	RS_STACK_MUTEX(mBanMtx);
 
     if(getBitRange(addr) > uint32_t(masked_bytes))
     {
@@ -668,20 +688,31 @@ bool p3BanList::recvBanItem(RsBanListItem *item)
 }
 
 /* overloaded from pqiNetAssistSharePeer */
-void p3BanList::updatePeer(const RsPeerId& /*id*/, const struct sockaddr_storage &addr, int /*type*/, int /*reason*/, int time_stamp)
+void p3BanList::updatePeer( const RsPeerId& /*id*/,
+                            const sockaddr_storage &dAddr,
+                            int /*type*/, int /*reason*/, int time_stamp )
 {
-    RsPeerId ownId = mServiceCtrl->getOwnId();
+	sockaddr_storage addr; sockaddr_storage_copy(dAddr, addr);
+	if(!sockaddr_storage_ipv6_to_ipv4(addr))
+	{
+		std::cerr << __PRETTY_FUNCTION__ << " Cannot handle "
+		          << sockaddr_storage_tostring(dAddr)
+		          << " IPv6 not implemented yet!"
+		          << std::endl;
+		return;
+	}
 
-    int int_reason = RSBANLIST_REASON_DHT;
+	RsPeerId ownId = mServiceCtrl->getOwnId();
 
-    addBanEntry(ownId, addr, RSBANLIST_ORIGIN_SELF, int_reason, time_stamp);
+	int int_reason = RSBANLIST_REASON_DHT;
 
-    /* process */
-    {
-        RsStackMutex stack(mBanMtx); /****** LOCKED MUTEX *******/
+	addBanEntry(ownId, addr, RSBANLIST_ORIGIN_SELF, int_reason, time_stamp);
 
-        condenseBanSources_locked();
-    }
+	/* process */
+	{
+		RS_STACK_MUTEX(mBanMtx);
+		condenseBanSources_locked();
+	}
 }
 
 RsSerialiser *p3BanList::setupSerialiser()
@@ -882,10 +913,21 @@ bool p3BanList::loadList(std::list<RsItem*>& load)
     return true ;
 }
 
-bool p3BanList::addBanEntry(const RsPeerId &peerId, const struct sockaddr_storage &addr,
-                            int level, uint32_t reason, time_t time_stamp)
+bool p3BanList::addBanEntry( const RsPeerId &peerId,
+                             const sockaddr_storage &dAddr,
+                             int level, uint32_t reason, time_t time_stamp )
 {
-	RsStackMutex stack(mBanMtx); /****** LOCKED MUTEX *******/
+	sockaddr_storage addr; sockaddr_storage_copy(dAddr, addr);
+	if(!sockaddr_storage_ipv6_to_ipv4(addr))
+	{
+		std::cerr << __PRETTY_FUNCTION__ << " Cannot handle "
+		          << sockaddr_storage_tostring(dAddr)
+		          << " IPv6 not implemented yet!"
+		          << std::endl;
+		return false;
+	}
+
+	RS_STACK_MUTEX(mBanMtx);
 
 	time_t now = time(NULL);
 	bool updated = false;
