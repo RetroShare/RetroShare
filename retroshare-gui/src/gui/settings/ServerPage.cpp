@@ -197,6 +197,8 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
     std::cerr << std::endl;
 #endif
 
+
+    connect(ui.discComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(saveAddresses()));
     connect(ui.netModeComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(saveAddresses()));
     connect(ui.localAddress,   SIGNAL(textChanged(QString)),this,SLOT(saveAddresses()));
     connect(ui.extAddress,     SIGNAL(textChanged(QString)),this,SLOT(saveAddresses()));
