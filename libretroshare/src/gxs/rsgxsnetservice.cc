@@ -1522,8 +1522,8 @@ class StoreHere
 {
 public:
 
-    StoreHere(RsGxsNetService::ClientGrpMap& cgm, RsGxsNetService::ClientMsgMap& cmm, RsGxsNetService::ServerMsgMap& smm,RsGxsNetService::GrpConfigMap& gcm, RsGxsServerGrpUpdate& sgm)
-            : mClientGrpMap(cgm), mClientMsgMap(cmm), mServerMsgMap(smm), mGrpConfigMap(gcm), mServerGrpUpdate(sgm)
+    StoreHere(RsGxsNetService::ClientGrpMap& cgm, RsGxsNetService::ClientMsgMap& cmm, RsGxsNetService::ServerMsgMap& smm,RsGxsNetService::GrpConfigMap& gcm, RsGxsServerGrpUpdate& sgm,Bias20Bytes& mrb)
+            : mClientGrpMap(cgm), mClientMsgMap(cmm), mServerMsgMap(smm), mGrpConfigMap(gcm), mServerGrpUpdate(sgm), mRandomBias(mrb)
     {}
 
 	template <typename ID_type,typename UpdateMap,class ItemClass> void check_store(ID_type id,UpdateMap& map,ItemClass& item)
@@ -1536,11 +1536,12 @@ public:
 
     void operator() (RsItem* item)
     {
-        RsGxsMsgUpdateItem* mui;
-        RsGxsGrpUpdateItem* gui;
-        RsGxsServerGrpUpdateItem* gsui;
-        RsGxsServerMsgUpdateItem* msui;
-        RsGxsGrpConfigItem* mgci;
+        RsGxsMsgUpdateItem        *mui;
+        RsGxsGrpUpdateItem        *gui;
+        RsGxsServerGrpUpdateItem  *gsui;
+        RsGxsServerMsgUpdateItem  *msui;
+        RsGxsGrpConfigItem        *mgci;
+        RsGxsTunnelRandomBiasItem *rbsi;
 
         if((mui = dynamic_cast<RsGxsMsgUpdateItem*>(item)) != NULL)
             check_store(mui->peerID,mClientMsgMap,*mui);
@@ -1552,6 +1553,8 @@ public:
             check_store(msui->grpId,mServerMsgMap, *msui);
         else if((gsui = dynamic_cast<RsGxsServerGrpUpdateItem*>(item)) != NULL)
             mServerGrpUpdate = *gsui;
+		else if((rbsi = dynamic_cast<RsGxsTunnelRandomBiasItem*>(item))!=NULL)
+			mRandomBias = rbsi->mRandomBias;
         else
             std::cerr << "Type not expected!" << std::endl;
 
@@ -1566,7 +1569,7 @@ private:
     RsGxsNetService::GrpConfigMap& mGrpConfigMap;
 
     RsGxsServerGrpUpdate& mServerGrpUpdate;
-
+	Bias20Bytes& mRandomBias ;
 };
 
 bool RsGxsNetService::loadList(std::list<RsItem *> &load)
@@ -1575,7 +1578,7 @@ bool RsGxsNetService::loadList(std::list<RsItem *> &load)
 
     // The delete is done in StoreHere, if necessary
 
-    std::for_each(load.begin(), load.end(), StoreHere(mClientGrpUpdateMap, mClientMsgUpdateMap, mServerMsgUpdateMap, mServerGrpConfigMap, mGrpServerUpdate));
+    std::for_each(load.begin(), load.end(), StoreHere(mClientGrpUpdateMap, mClientMsgUpdateMap, mServerMsgUpdateMap, mServerGrpConfigMap, mGrpServerUpdate,mRandomBias));
 
     // We reset group statistics here. This is the best place since we know at this point which are all unsubscribed groups.
 
@@ -1651,6 +1654,11 @@ bool RsGxsNetService::saveList(bool& cleanup, std::list<RsItem*>& save)
     RsGxsServerGrpUpdateItem *it = new RsGxsServerGrpUpdateItem(mGrpServerUpdate,mServType) ;
 
     save.push_back(it);
+
+	RsGxsTunnelRandomBiasItem *it2 = new RsGxsTunnelRandomBiasItem(mServType) ;
+	it2->mRandomBias = mRandomBias;
+
+	save.push_back(it2) ;
 
     cleanup = true;
     return true;

@@ -39,7 +39,7 @@
 RsGxsNetTunnelService::RsGxsNetTunnelService(): mGxsNetTunnelMtx("GxsNetTunnel")
 {
 #warning this is for testing only. In the final version this needs to be initialized with some random content, saved and re-used for a while (e.g. 1 month)
-	memset(mRandomBias,0,RS_GXS_TUNNEL_CONST_RANDOM_BIAS_SIZE) ;
+	mRandomBias.clear();
 }
 
 //===========================================================================================================================================//
@@ -289,12 +289,12 @@ RsGxsNetTunnelVirtualPeerId RsGxsNetTunnelService::locked_makeVirtualPeerId(cons
 
 	RsPeerId ssl_id = rsPeers->getOwnId() ;
 
-	unsigned char mem[RsGxsGroupId::SIZE_IN_BYTES + RS_GXS_TUNNEL_CONST_RANDOM_BIAS_SIZE];
+	unsigned char mem[RsGxsGroupId::SIZE_IN_BYTES + mRandomBias.SIZE_IN_BYTES];
 
 	memcpy(mem                            ,group_id.toByteArray(),RsGxsGroupId::SIZE_IN_BYTES) ;
-	memcpy(mem+RsGxsGroupId::SIZE_IN_BYTES,mRandomBias           ,RS_GXS_TUNNEL_CONST_RANDOM_BIAS_SIZE) ;
+	memcpy(mem+RsGxsGroupId::SIZE_IN_BYTES,mRandomBias.toByteArray(),mRandomBias.SIZE_IN_BYTES) ;
 
-	return RsGxsNetTunnelVirtualPeerId(RsDirUtil::sha1sum(mem,RsGxsGroupId::SIZE_IN_BYTES+RS_GXS_TUNNEL_CONST_RANDOM_BIAS_SIZE).toByteArray());
+	return RsGxsNetTunnelVirtualPeerId(RsDirUtil::sha1sum(mem,RsGxsGroupId::SIZE_IN_BYTES+mRandomBias.SIZE_IN_BYTES).toByteArray());
 }
 
 void RsGxsNetTunnelService::dump() const

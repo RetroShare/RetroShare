@@ -39,6 +39,7 @@
 
 #include "gxs/rsgxs.h"
 #include "gxs/rsgxsdata.h"
+#include "gxs/rsgxsnettunnel.h"
 #include "serialiser/rstlvidset.h"
 
 
@@ -48,6 +49,7 @@ const uint8_t RS_PKT_SUBTYPE_GXS_MSG_UPDATE             = 0x03;
 const uint8_t RS_PKT_SUBTYPE_GXS_SERVER_GRP_UPDATE      = 0x04;
 const uint8_t RS_PKT_SUBTYPE_GXS_SERVER_MSG_UPDATE      = 0x08;
 const uint8_t RS_PKT_SUBTYPE_GXS_GRP_CONFIG             = 0x09;
+const uint8_t RS_PKT_SUBTYPE_GXS_RANDOM_BIAS            = 0x0a;
 
 class RsGxsNetServiceItem: public RsItem
 {
@@ -186,6 +188,17 @@ public:
 	RsGxsGroupId grpId;
 };
 
+class RsGxsTunnelRandomBiasItem: public RsGxsNetServiceItem
+{
+public:
+	explicit RsGxsTunnelRandomBiasItem(uint16_t servType) : RsGxsNetServiceItem(servType, RS_PKT_SUBTYPE_GXS_RANDOM_BIAS) { clear();}
+    virtual ~RsGxsTunnelRandomBiasItem() {}
+
+	virtual void clear();
+	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
+
+	Bias20Bytes mRandomBias; // Cannot be a simple char[] because of serialization.
+};
 
 class RsGxsUpdateSerialiser : public RsServiceSerializer
 {

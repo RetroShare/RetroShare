@@ -23,6 +23,8 @@
  *
  */
 
+#pragma once
+
 #include <map>
 
 #include <turtle/p3turtle.h>
@@ -224,14 +226,16 @@ protected:
 	  void removeVirtualPeer(const TurtleFileHash&, const TurtleVirtualPeerId&) ;
 
 	  p3turtle 	*mTurtle ;
+
+	  static const uint32_t RS_GXS_TUNNEL_CONST_RANDOM_BIAS_SIZE = 20 ;
+	  static const uint32_t RS_GXS_TUNNEL_CONST_EKEY_SIZE        = 32 ;
+
+	  Bias20Bytes mRandomBias ; // constant accross reboots. Allows to disguise the real SSL id while providing a consistent value accross time.
 private:
 	  void autowash() ;
 	  void sendKeepAlivePackets() ;
 	  void handleIncoming(RsGxsNetTunnelItem *item) ;
 	  void flush_pending_items();
-
-	  static const uint32_t RS_GXS_TUNNEL_CONST_RANDOM_BIAS_SIZE = 20 ;
-	  static const uint32_t RS_GXS_TUNNEL_CONST_EKEY_SIZE        = 32 ;
 
 	  std::map<RsGxsGroupId,RsGxsNetTunnelGroupInfo> mGroups ;	// groups on the client and server side
 
@@ -259,8 +263,9 @@ private:
 
 	  static void generateEncryptionKey(const RsGxsGroupId& group_id,const TurtleVirtualPeerId& vpid,unsigned char key[RS_GXS_TUNNEL_CONST_EKEY_SIZE]) ;
 
-	  uint8_t mRandomBias[RS_GXS_TUNNEL_CONST_RANDOM_BIAS_SIZE] ; // constant accross reboots. Allows to disguise the real SSL id while providing a consistent value accross time.
-
 	  mutable RsMutex mGxsNetTunnelMtx;
+
+	  friend class RsGxsTunnelRandomBiasItem ;
+	  friend class StoreHere ;
 };
 
