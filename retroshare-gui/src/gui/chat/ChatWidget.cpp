@@ -1598,7 +1598,7 @@ void ChatWidget::fileHashingFinished(QList<HashedFile> hashedFiles)
 	QList<HashedFile>::iterator it;
 	for (it = hashedFiles.begin(); it != hashedFiles.end(); ++it) {
 		HashedFile& hashedFile = *it;
-		//QString ext = QFileInfo(hashedFile.filename).suffix();
+		QString ext = QFileInfo(hashedFile.filename).suffix().toUpper();
 
 		RetroShareLink link;
 
@@ -1610,9 +1610,23 @@ void ChatWidget::fileHashingFinished(QList<HashedFile> hashedFiles)
 			message += QString("<img src=\"file:///%1\" width=\"100\" height=\"100\">").arg(hashedFile.filepath);
 			message+="<br>";
 		} else {
-			QString image = FilesDefs::getImageFromFilename(hashedFile.filename, false);
-			if (!image.isEmpty()) {
-				message += QString("<img src=\"%1\">").arg(image);
+			bool preview = false;
+			if(hashedFiles.size()==1 && (ext == "JPG" || ext == "PNG" || ext == "JPEG" || ext == "GIF"))
+			{
+				QString encodedImage;
+				uint32_t maxMessageSize = this->maxMessageSize();
+				if (RsHtml::makeEmbeddedImage(hashedFile.filepath, encodedImage, 640*480, maxMessageSize - 200 - link.toHtmlSize().length()))
+				{	QTextDocumentFragment fragment = QTextDocumentFragment::fromHtml(encodedImage);
+					ui->chatTextEdit->textCursor().insertFragment(fragment);
+					preview=true;
+				}
+			}
+			if(!preview)
+			{
+				QString image = FilesDefs::getImageFromFilename(hashedFile.filename, false);
+				if (!image.isEmpty()) {
+					message += QString("<img src=\"%1\">").arg(image);
+				}
 			}
 		}
 		message += link.toHtmlSize();
