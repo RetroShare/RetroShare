@@ -107,10 +107,10 @@ struct RsGxsForumNotifyRecordsItem: public RsItem
 
     virtual ~RsGxsForumNotifyRecordsItem() {}
 
-	void serial_process( RsGenericSerializer::SerializeJob j, RsGenericSerializer::SerializeContext& ctx )
-	{
-		RS_REGISTER_SERIAL_MEMBER(records);
-	}
+	void serial_process( RsGenericSerializer::SerializeJob j,
+	                     RsGenericSerializer::SerializeContext& ctx )
+	{ RS_SERIAL_PROCESS(records); }
+
 	void clear() {}
 
 	std::map<RsGxsGroupId,time_t> records;
