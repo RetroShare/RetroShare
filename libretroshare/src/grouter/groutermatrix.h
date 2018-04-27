@@ -31,7 +31,7 @@
 #include "retroshare/rsgrouter.h"
 #include "groutertypes.h"
 
-class RsItem ;
+struct RsItem;
 
 // The routing matrix records the event clues received from each friend
 //

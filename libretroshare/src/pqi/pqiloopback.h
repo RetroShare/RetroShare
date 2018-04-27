@@ -31,7 +31,7 @@
 #include "pqi/pqi_base.h"        // for NetInterface (ptr only), PQInterface
 #include "retroshare/rstypes.h"  // for RsPeerId
 
-class RsItem;
+struct RsItem;
 
 class pqiloopback: public PQInterface
 {

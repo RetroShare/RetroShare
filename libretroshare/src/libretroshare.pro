@@ -529,7 +529,7 @@ SOURCES +=	ft/ftchunkmap.cc \
 			ft/ftfilesearch.cc \
 			ft/ftserver.cc \
 			ft/fttransfermodule.cc \
-			ft/ftturtlefiletransferitem.cc 
+            ft/ftturtlefiletransferitem.cc
 
 SOURCES += crypto/chacha20.cpp \
 			  crypto/hashstream.cc
@@ -622,6 +622,7 @@ SOURCES +=	serialiser/rsbaseserial.cc \
 			rsitems/rsgxsrecognitems.cc \
 			rsitems/rsgxsupdateitems.cc \
 			rsitems/rsserviceinfoitems.cc \
+
 
 SOURCES +=  services/autoproxy/rsautoproxymonitor.cc \
             services/autoproxy/p3i2pbob.cc \
@@ -764,7 +765,8 @@ SOURCES += gxstunnel/p3gxstunnel.cc \
 				gxstunnel/rsgxstunnelitems.cc 
 
 # new serialization code
-HEADERS += serialiser/rsserializer.h \
+HEADERS += serialiser/rsserializable.h \
+           serialiser/rsserializer.h \
            serialiser/rstypeserializer.h
 
 SOURCES += serialiser/rsserializer.cc \

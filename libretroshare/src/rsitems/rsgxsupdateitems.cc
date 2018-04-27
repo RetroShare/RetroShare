@@ -97,31 +97,6 @@ void RsGxsMsgUpdateItem::serial_process(RsGenericSerializer::SerializeJob j,RsGe
     RsTypeSerializer::serial_process(j,ctx,msgUpdateInfos,"msgUpdateInfos");
 }
 
-template<> bool RsTypeSerializer::serialize(uint8_t data[], uint32_t size, uint32_t &offset, const RsGxsMsgUpdateItem::MsgUpdateInfo& info)
-{
-    bool ok = true ;
-
-    ok = ok && setRawUInt32(data,size,&offset,info.time_stamp);
-    ok = ok && setRawUInt32(data,size,&offset,info.message_count);
-
-    return ok;
-}
-template<> bool RsTypeSerializer::deserialize(const uint8_t data[], uint32_t size, uint32_t &offset, RsGxsMsgUpdateItem::MsgUpdateInfo& info)
-{
-    bool ok = true ;
-
-    ok = ok && getRawUInt32(data,size,&offset,&info.time_stamp);
-    ok = ok && getRawUInt32(data,size,&offset,&info.message_count);
-
-    return ok;
-}
-template<> uint32_t RsTypeSerializer::serial_size(const RsGxsMsgUpdateItem::MsgUpdateInfo& /* info */) { return 8; }
-
-template<> void RsTypeSerializer::print_data(const std::string& name,const RsGxsMsgUpdateItem::MsgUpdateInfo& info)
-{
-    std::cerr << "[MsgUpdateInfo]: " << name << ": " << info.time_stamp << ", " << info.message_count << std::endl;
-}
-
 void RsGxsServerMsgUpdateItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process          (j,ctx,grpId,"grpId");
@@ -134,5 +109,3 @@ void RsGxsGrpConfigItem::serial_process(RsGenericSerializer::SerializeJob j,RsGe
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,msg_send_delay,"msg_send_delay") ;
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,msg_req_delay,"msg_req_delay") ;
 }
-
-

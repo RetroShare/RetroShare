@@ -4,7 +4,7 @@
 #include "retroshare/rsids.h"
 #include "pqi/p3linkmgr.h"
 
-class RsItem;
+struct RsItem;
 class PeerNode;
 class RsSerialType;
 class RsSerialiser;

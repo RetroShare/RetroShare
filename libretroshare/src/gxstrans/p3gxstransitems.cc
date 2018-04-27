@@ -1,6 +1,6 @@
 /*
  * GXS Mailing Service
- * Copyright (C) 2016-2017  Gioacchino Mazzurco <gio@eigenlab.org>
+ * Copyright (C) 2016-2018  Gioacchino Mazzurco <gio@eigenlab.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -38,30 +38,28 @@ OutgoingRecord::OutgoingRecord( RsGxsId rec, GxsTransSubServices cs,
 	memcpy(&mailData[0], data, size);
 }
 
-
-RS_REGISTER_ITEM_TYPE(RsGxsTransMailItem)         // for mailItem
-RS_REGISTER_ITEM_TYPE(RsNxsTransPresignedReceipt) // for presignedReceipt
-
-void OutgoingRecord_deprecated::serial_process(RsGenericSerializer::SerializeJob j, RsGenericSerializer::SerializeContext& ctx)
+void OutgoingRecord_deprecated::serial_process(
+        RsGenericSerializer::SerializeJob j,
+        RsGenericSerializer::SerializeContext& ctx )
 {
-	RS_REGISTER_SERIAL_MEMBER_TYPED(status, uint8_t);
-	RS_REGISTER_SERIAL_MEMBER(recipient);
-	RS_REGISTER_SERIAL_MEMBER(mailItem);
-	RS_REGISTER_SERIAL_MEMBER(mailData);
-	RS_REGISTER_SERIAL_MEMBER_TYPED(clientService, uint16_t);
-	RS_REGISTER_SERIAL_MEMBER(presignedReceipt);
+	RS_SERIAL_PROCESS(status);
+	RS_SERIAL_PROCESS(recipient);
+	RS_SERIAL_PROCESS(mailItem);
+	RS_SERIAL_PROCESS(mailData);
+	RS_SERIAL_PROCESS(clientService);
+	RS_SERIAL_PROCESS(presignedReceipt);
 }
 
 void OutgoingRecord::serial_process(RsGenericSerializer::SerializeJob j,
                                     RsGenericSerializer::SerializeContext& ctx)
 {
-	RS_REGISTER_SERIAL_MEMBER_TYPED(status, uint8_t);
-	RS_REGISTER_SERIAL_MEMBER(recipient);
-	RS_REGISTER_SERIAL_MEMBER(author);
-	RS_REGISTER_SERIAL_MEMBER(group_id);
-	RS_REGISTER_SERIAL_MEMBER(sent_ts);
-	RS_REGISTER_SERIAL_MEMBER(mailItem);
-	RS_REGISTER_SERIAL_MEMBER(mailData);
-	RS_REGISTER_SERIAL_MEMBER_TYPED(clientService, uint16_t);
-	RS_REGISTER_SERIAL_MEMBER(presignedReceipt);
+	RS_SERIAL_PROCESS(status);
+	RS_SERIAL_PROCESS(recipient);
+	RS_SERIAL_PROCESS(author);
+	RS_SERIAL_PROCESS(group_id);
+	RS_SERIAL_PROCESS(sent_ts);
+	RS_SERIAL_PROCESS(mailItem);
+	RS_SERIAL_PROCESS(mailData);
+	RS_SERIAL_PROCESS(clientService);
+	RS_SERIAL_PROCESS(presignedReceipt);
 }

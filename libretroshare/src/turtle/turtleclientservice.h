@@ -36,7 +36,7 @@
 #include <serialiser/rsserial.h>
 #include <turtle/rsturtleitem.h>
 
-class RsItem ;
+struct RsItem;
 class p3turtle ;
 
 class RsTurtleClientService

@@ -19,6 +19,11 @@ before_install:
   - if [ $TRAVIS_OS_NAME == osx ]; then brew install qt55 openssl miniupnpc libmicrohttpd sqlcipher; fi
   - if [ $TRAVIS_OS_NAME == osx ]; then brew link --force qt55 ; fi
 
+  - wget https://github.com/Tencent/rapidjson/archive/v1.1.0.tar.gz
+  - tar -xf v1.1.0.tar.gz
+  - if [ $TRAVIS_OS_NAME == osx ]; then cp -r rapidjson-1.1.0/include/rapidjson/ /usr/local/include/rapidjson ; fi
+  - if [ $TRAVIS_OS_NAME == linux ]; then sudo cp -r rapidjson-1.1.0/include/rapidjson/ /usr/include/rapidjson ; fi
+
 env:
   global:
    # The next declaration is the encrypted COVERITY_SCAN_TOKEN, created
