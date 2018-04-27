@@ -32,19 +32,19 @@ Compilation on Linux
        libqt4-dev libssl-dev libxss-dev libgnome-keyring-dev libbz2-dev \
        libqt4-opengl-dev libqtmultimediakit1 qtmobility-dev libsqlcipher-dev \
        libspeex-dev libspeexdsp-dev libxslt1-dev libcurl4-openssl-dev \
-       libopencv-dev tcl8.5 libmicrohttpd-dev
+       libopencv-dev tcl8.5 libmicrohttpd-dev rapidjson-dev
    ```
    * openSUSE
    ```bash
    sudo zypper install gcc-c++ libqt4-devel libgnome-keyring-devel \
        glib2-devel speex-devel libssh-devel protobuf-devel libcurl-devel \
        libxml2-devel libxslt-devel sqlcipher-devel libmicrohttpd-devel \
-       opencv-devel speexdsp-devel libupnp-devel libavcodec-devel
+       opencv-devel speexdsp-devel libupnp-devel libavcodec-devel rapidjson
    ```
    * Arch Linux
    ```bash
    pacman -S base-devel libgnome-keyring libmicrohttpd libupnp libxslt \
-       libxss opencv qt4 speex speexdsp sqlcipher
+       libxss opencv qt4 speex speexdsp sqlcipher rapidjson
    ```
 
 2. Checkout the source code
