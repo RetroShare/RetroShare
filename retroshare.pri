@@ -325,14 +325,6 @@ profiling {
     QMAKE_LFLAGS *= -pg
 }
 
-## Retrocompatibility assignations, get rid of this ASAP
-isEmpty(BIN_DIR)   : BIN_DIR   = $${RS_BIN_DIR}
-isEmpty(INC_DIR)   : INC_DIR   = $${RS_INCLUDE_DIR}
-isEmpty(LIBDIR)    : LIBDIR    = $${QMAKE_LIBDIR}
-isEmpty(DATA_DIR)  : DATA_DIR  = $${RS_DATA_DIR}
-isEmpty(PLUGIN_DIR): PLUGIN_DIR= $${RS_PLUGIN_DIR}
-
-
 ################################################################################
 ## Last goes platform specific statements common to all RetroShare subprojects #
 ################################################################################
@@ -463,3 +455,10 @@ macx-* {
 	CONFIG += c++11
     RS_UPNP_LIB = miniupnpc
 }
+
+## Retrocompatibility assignations, get rid of this ASAP
+isEmpty(BIN_DIR)   : BIN_DIR   = $${RS_BIN_DIR}
+isEmpty(INC_DIR)   : INC_DIR   = $${RS_INCLUDE_DIR}
+isEmpty(LIBDIR)    : LIBDIR    = $${QMAKE_LIBDIR}
+isEmpty(DATA_DIR)  : DATA_DIR  = $${RS_DATA_DIR}
+isEmpty(PLUGIN_DIR): PLUGIN_DIR= $${RS_PLUGIN_DIR}
