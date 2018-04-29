@@ -40,6 +40,10 @@ RsGxsNetTunnelService::RsGxsNetTunnelService(): mGxsNetTunnelMtx("GxsNetTunnel")
 {
 #warning this is for testing only. In the final version this needs to be initialized with some random content, saved and re-used for a while (e.g. 1 month)
 	mRandomBias.clear();
+
+	mLastKeepAlive = time(NULL) + (lrand48()%20);	// adds some variance in order to avoid doing all this tasks at once across services
+	mLastAutoWash = time(NULL) + (lrand48()%20);
+	mLastDump = time(NULL) + (lrand48()%20);
 }
 
 //===========================================================================================================================================//
@@ -554,6 +558,8 @@ void RsGxsNetTunnelService::removeVirtualPeer(const TurtleFileHash& hash, const 
 #ifdef DEBUG_RSGXSNETTUNNEL
 	GXS_NET_TUNNEL_DEBUG() << " removing virtual peer " << vpid << " for hash " << hash << std::endl;
 #endif
+	mTurtle2GxsPeer.erase(vpid);
+
 	auto it = mHandledHashes.find(hash) ;
 
 	if(it == mHandledHashes.end())
@@ -616,22 +622,22 @@ void RsGxsNetTunnelService::data_tick()
 
 	// cleanup
 
-	static time_t last_autowash = time(NULL);
-
-	if(last_autowash + 5 < now)
+	if(mLastAutoWash + 5 < now)
 	{
 		autowash();
-		last_autowash = now;
+		mLastAutoWash = now;
 	}
 
-	static time_t last_dump = time(NULL);
-
-	if(last_dump + 10 < now)
+	if(mLastKeepAlive + 20 < now)
 	{
-		last_dump = now;
-		dump();
-
+		mLastKeepAlive = now ;
 		sendKeepAlivePackets() ;
+	}
+
+	if(mLastDump + 10 < now)
+	{
+		mLastDump = now;
+		dump();
 	}
 }
 

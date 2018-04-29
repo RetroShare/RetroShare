@@ -274,5 +274,9 @@ private:
 
 	  friend class RsGxsTunnelRandomBiasItem ;
 	  friend class StoreHere ;
+
+	  time_t mLastKeepAlive ;
+	  time_t mLastAutoWash ;
+	  time_t mLastDump ;
 };
 
