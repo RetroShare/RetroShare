@@ -104,6 +104,8 @@ public:
 public:
 
 
+	virtual uint16_t serviceType() const { return mServType ; }
+
     /*!
      * Use this to set how far back synchronisation and storage of messages should take place
      * @param age the max age a sync/storage item can to be allowed in a synchronisation

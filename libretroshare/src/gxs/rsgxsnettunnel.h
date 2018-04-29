@@ -134,7 +134,8 @@ struct RsGxsNetTunnelGroupInfo
 	enum GroupPolicy {
 		    RS_GXS_NET_TUNNEL_GRP_POLICY_UNKNOWN            = 0x00,	// nothing has been set
 		    RS_GXS_NET_TUNNEL_GRP_POLICY_PASSIVE            = 0x01,	// group is available for server side tunnels, but does not explicitely request tunnels
-		    RS_GXS_NET_TUNNEL_GRP_POLICY_ACTIVE             = 0x02,	// group will explicitely request tunnels, if none available
+		    RS_GXS_NET_TUNNEL_GRP_POLICY_ACTIVE             = 0x02,	// group will only explicitely request tunnels if none available
+		    RS_GXS_NET_TUNNEL_GRP_POLICY_REQUESTING         = 0x03,	// group explicitely requests tunnels
     };
 
 	RsGxsNetTunnelGroupInfo() : group_policy(RS_GXS_NET_TUNNEL_GRP_POLICY_PASSIVE),group_status(RS_GXS_NET_TUNNEL_GRP_STATUS_IDLE),last_contact(0) {}
@@ -152,6 +153,12 @@ class RsGxsNetTunnelService: public RsTurtleClientService
 public:
 	  RsGxsNetTunnelService() ;
 	  virtual ~RsGxsNetTunnelService() ;
+
+	  /*!
+	   * \brief serviceType
+	   * \return returns the service that is currently using this as a subclass.
+	   */
+	  virtual uint16_t serviceType() const = 0 ;
 
 	  /*!
 	   * \brief Manage tunnels for this group
@@ -230,7 +237,7 @@ protected:
 	  static const uint32_t RS_GXS_TUNNEL_CONST_RANDOM_BIAS_SIZE = 20 ;
 	  static const uint32_t RS_GXS_TUNNEL_CONST_EKEY_SIZE        = 32 ;
 
-	  Bias20Bytes mRandomBias ; // constant accross reboots. Allows to disguise the real SSL id while providing a consistent value accross time.
+	  mutable Bias20Bytes mRandomBias ; // constant accross reboots. Allows to disguise the real SSL id while providing a consistent value accross time.
 private:
 	  void autowash() ;
 	  void sendKeepAlivePackets() ;
