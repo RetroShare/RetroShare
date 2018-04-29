@@ -12,6 +12,7 @@ TCL_VERSION=8.6.2
 SQLCIPHER_VERSION=2.2.1
 LIBMICROHTTPD_VERSION=0.9.59
 FFMPEG_VERSION=3.4
+RAPIDJSON_VERSION=1.1.0
 
 MAKEFILE_PATH=$(dir $(MAKEFILE_LIST))
 LIBS_PATH?=$(MAKEFILE_PATH)../../../../libs
@@ -19,7 +20,7 @@ LIBS_PATH?=$(MAKEFILE_PATH)../../../../libs
 DOWNLOAD_PATH?=download
 COPY_ANSWER?=
 
-all: dirs zlib bzip2 miniupnpc openssl speex speexdsp opencv libxml2 libxslt curl sqlcipher libmicrohttpd ffmpeg copylibs
+all: dirs zlib bzip2 miniupnpc openssl speex speexdsp opencv libxml2 libxslt curl sqlcipher libmicrohttpd ffmpeg rapidjson copylibs
 
 download: \
 	$(DOWNLOAD_PATH)/zlib-$(ZLIB_VERSION).tar.gz \
@@ -35,7 +36,8 @@ download: \
 	$(DOWNLOAD_PATH)/tcl$(TCL_VERSION)-src.tar.gz \
 	$(DOWNLOAD_PATH)/sqlcipher-$(SQLCIPHER_VERSION).tar.gz \
 	$(DOWNLOAD_PATH)/libmicrohttpd-$(LIBMICROHTTPD_VERSION).tar.gz \
-	$(DOWNLOAD_PATH)/ffmpeg-$(FFMPEG_VERSION).tar.gz
+	$(DOWNLOAD_PATH)/ffmpeg-$(FFMPEG_VERSION).tar.gz \
+	$(DOWNLOAD_PATH)/rapidjson-$(RAPIDJSON_VERSION).tar.gz
 
 clean:
 	rm -r -f libs
@@ -64,6 +66,7 @@ libs/zlib-$(ZLIB_VERSION): $(DOWNLOAD_PATH)/zlib-$(ZLIB_VERSION).tar.gz
 	cp zlib-$(ZLIB_VERSION)/zconf.h libs/zlib-$(ZLIB_VERSION).tmp/include/
 	mkdir -p libs/zlib-$(ZLIB_VERSION).tmp/lib
 	cp zlib-$(ZLIB_VERSION)/libz.a libs/zlib-$(ZLIB_VERSION).tmp/lib/
+	# cleanup
 	rm -r -f zlib-$(ZLIB_VERSION)
 	mv libs/zlib-$(ZLIB_VERSION).tmp libs/zlib-$(ZLIB_VERSION)
 
@@ -84,6 +87,7 @@ libs/bzip2-$(BZIP2_VERSION): $(DOWNLOAD_PATH)/bzip2-$(BZIP2_VERSION).tar.gz
 	cp bzip2-$(BZIP2_VERSION)/bzlib.h libs/bzip2-$(BZIP2_VERSION).tmp/include/
 	mkdir -p libs/bzip2-$(BZIP2_VERSION).tmp/lib
 	cp bzip2-$(BZIP2_VERSION)/libbz2.a libs/bzip2-$(BZIP2_VERSION).tmp/lib/
+	# cleanup
 	rm -r -f bzip2-$(BZIP2_VERSION)
 	mv libs/bzip2-$(BZIP2_VERSION).tmp libs/bzip2-$(BZIP2_VERSION)
 
@@ -105,6 +109,7 @@ libs/miniupnpc-$(MINIUPNPC_VERSION): $(DOWNLOAD_PATH)/miniupnpc-$(MINIUPNPC_VERS
 	cp miniupnpc-$(MINIUPNPC_VERSION)/miniupnpc.lib libs/miniupnpc-$(MINIUPNPC_VERSION).tmp/lib/
 	mkdir -p libs/miniupnpc-$(MINIUPNPC_VERSION).tmp/bin
 	cp miniupnpc-$(MINIUPNPC_VERSION)/miniupnpc.dll libs/miniupnpc-$(MINIUPNPC_VERSION).tmp/bin/
+	# cleanup
 	rm -r -f miniupnpc-$(MINIUPNPC_VERSION)
 	mv libs/miniupnpc-$(MINIUPNPC_VERSION).tmp libs/miniupnpc-$(MINIUPNPC_VERSION)
 
@@ -131,6 +136,7 @@ libs/openssl-$(OPENSSL_VERSION): $(DOWNLOAD_PATH)/openssl-$(OPENSSL_VERSION).tar
 	mkdir -p libs/openssl-$(OPENSSL_VERSION).tmp/lib
 	cp openssl-$(OPENSSL_VERSION)/libcrypto.dll.a libs/openssl-$(OPENSSL_VERSION).tmp/lib/
 	cp openssl-$(OPENSSL_VERSION)/libssl.dll.a libs/openssl-$(OPENSSL_VERSION).tmp/lib/
+	# cleanup
 	rm -r -f openssl-$(OPENSSL_VERSION)
 	mv libs/openssl-$(OPENSSL_VERSION).tmp libs/openssl-$(OPENSSL_VERSION)
 
@@ -152,6 +158,7 @@ libs/speex-$(SPEEX_VERSION): $(DOWNLOAD_PATH)/speex-$(SPEEX_VERSION).tar.gz
 	cp speex-$(SPEEX_VERSION)/include/speex/*.h libs/speex-$(SPEEX_VERSION).tmp/include/speex/
 	mkdir -p libs/speex-$(SPEEX_VERSION).tmp/lib
 	cp speex-$(SPEEX_VERSION)/libspeex/.libs/libspeex.a libs/speex-$(SPEEX_VERSION).tmp/lib
+	# cleanup
 	rm -r -f speex-$(SPEEX_VERSION)
 	mv libs/speex-$(SPEEX_VERSION).tmp libs/speex-$(SPEEX_VERSION)
 
@@ -172,6 +179,7 @@ libs/speexdsp-$(SPEEXDSP_VERSION): $(DOWNLOAD_PATH)/speexdsp-$(SPEEXDSP_VERSION)
 	cp speexdsp-$(SPEEXDSP_VERSION)/include/speex/*.h libs/speexdsp-$(SPEEXDSP_VERSION).tmp/include/speex/
 	mkdir -p libs/speexdsp-$(SPEEXDSP_VERSION).tmp/lib
 	cp speexdsp-$(SPEEXDSP_VERSION)/libspeexdsp/.libs/libspeexdsp.a libs/speexdsp-$(SPEEXDSP_VERSION).tmp/lib
+	# cleanup
 	rm -r -f speexdsp-$(SPEEXDSP_VERSION)
 	mv libs/speexdsp-$(SPEEXDSP_VERSION).tmp libs/speexdsp-$(SPEEXDSP_VERSION)
 
@@ -194,6 +202,7 @@ libs/opencv-$(OPENCV_VERSION): $(DOWNLOAD_PATH)/opencv-$(OPENCV_VERSION).tar.gz
 	cp -r opencv-$(OPENCV_VERSION)/build/install/include/* libs/opencv-$(OPENCV_VERSION).tmp/include/
 	mkdir -p libs/opencv-$(OPENCV_VERSION).tmp/lib/opencv
 	cp -r opencv-$(OPENCV_VERSION)/build/install/x86/mingw/staticlib/* libs/opencv-$(OPENCV_VERSION).tmp/lib/opencv/
+	# cleanup
 	rm -r -f opencv-$(OPENCV_VERSION)
 	mv libs/opencv-$(OPENCV_VERSION).tmp libs/opencv-$(OPENCV_VERSION)
 
@@ -215,6 +224,7 @@ libs/libxml2-$(LIBXML2_VERSION): $(DOWNLOAD_PATH)/libxml2-$(LIBXML2_VERSION).tar
 	cp libxml2-$(LIBXML2_VERSION)/include/libxml/*.h libs/libxml2-$(LIBXML2_VERSION).tmp/include/libxml/
 	mkdir -p libs/libxml2-$(LIBXML2_VERSION).tmp/lib
 	cp libxml2-$(LIBXML2_VERSION)/.libs/libxml2.a libs/libxml2-$(LIBXML2_VERSION).tmp/lib/
+	# cleanup
 	#rm -r -f libxml2-$(LIBXML2_VERSION) # see libxslt
 	mv libs/libxml2-$(LIBXML2_VERSION).tmp libs/libxml2-$(LIBXML2_VERSION)
 
@@ -237,6 +247,7 @@ libs/libxslt-$(LIBXSLT_VERSION): $(DOWNLOAD_PATH)/libxml2-$(LIBXML2_VERSION).tar
 	mkdir -p libs/libxslt-$(LIBXSLT_VERSION).tmp/lib
 	cp libxslt-$(LIBXSLT_VERSION)/libxslt/.libs/libxslt.a libs/libxslt-$(LIBXSLT_VERSION).tmp/lib/
 	cp libxslt-$(LIBXSLT_VERSION)/libexslt/.libs/libexslt.a libs/libxslt-$(LIBXSLT_VERSION).tmp/lib/
+	# cleanup
 	rm -r -f libxml2-$(LIBXML2_VERSION)
 	rm -r -f libxslt-$(LIBXSLT_VERSION)
 	mv libs/libxslt-$(LIBXSLT_VERSION).tmp libs/libxslt-$(LIBXSLT_VERSION)
@@ -259,6 +270,7 @@ libs/curl-$(CURL_VERSION): $(DOWNLOAD_PATH)/curl-$(CURL_VERSION).tar.gz
 	cp curl-$(CURL_VERSION)/include/curl/*.h libs/curl-$(CURL_VERSION).tmp/include/curl/
 	mkdir -p libs/curl-$(CURL_VERSION).tmp/lib
 	cp curl-$(CURL_VERSION)/lib/.libs/libcurl.a libs/curl-$(CURL_VERSION).tmp/lib/
+	# cleanup
 	rm -r -f curl-$(CURL_VERSION)
 	mv libs/curl-$(CURL_VERSION).tmp libs/curl-$(CURL_VERSION)
 
@@ -292,6 +304,7 @@ libs/sqlcipher-$(SQLCIPHER_VERSION): $(DOWNLOAD_PATH)/tcl$(TCL_VERSION)-src.tar.
 	cp sqlcipher-$(SQLCIPHER_VERSION)/install/lib/libsqlcipher.a libs/sqlcipher-$(SQLCIPHER_VERSION).tmp/lib/
 	mkdir -p libs/sqlcipher-$(SQLCIPHER_VERSION).tmp/bin
 	cp sqlcipher-$(SQLCIPHER_VERSION)/install/bin/sqlcipher.exe libs/sqlcipher-$(SQLCIPHER_VERSION).tmp/bin/
+	# cleanup
 	rm -r -f sqlcipher-$(SQLCIPHER_VERSION)
 	rm -r -f tcl$(TCL_VERSION)
 	mv libs/sqlcipher-$(SQLCIPHER_VERSION).tmp libs/sqlcipher-$(SQLCIPHER_VERSION)
@@ -308,7 +321,7 @@ libs/libmicrohttpd-$(LIBMICROHTTPD_VERSION): $(DOWNLOAD_PATH)/libmicrohttpd-$(LI
 	# build
 	cd libmicrohttpd-$(LIBMICROHTTPD_VERSION) && ./configure --disable-shared --enable-static --prefix="`pwd`/../libs/libmicrohttpd-$(LIBMICROHTTPD_VERSION).tmp"
 	cd libmicrohttpd-$(LIBMICROHTTPD_VERSION) && make install
-	# copy files
+	# cleanup
 	rm -r -f libmicrohttpd-$(LIBMICROHTTPD_VERSION)
 	mv libs/libmicrohttpd-$(LIBMICROHTTPD_VERSION).tmp libs/libmicrohttpd-$(LIBMICROHTTPD_VERSION)
 
@@ -324,9 +337,29 @@ libs/ffmpeg-$(FFMPEG_VERSION): $(DOWNLOAD_PATH)/ffmpeg-$(FFMPEG_VERSION).tar.gz
 	# build
 	cd ffmpeg-$(FFMPEG_VERSION) && ./configure --disable-shared --enable-static --disable-programs --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-ffserver --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --disable-yasm --disable-everything --enable-encoder=mpeg4 --enable-decoder=mpeg4 --prefix="`pwd`/../libs/ffmpeg-$(FFMPEG_VERSION).tmp"
 	cd ffmpeg-$(FFMPEG_VERSION) && make install
-	# copy files
+	# cleanup
 	rm -r -f ffmpeg-$(FFMPEG_VERSION)
 	mv libs/ffmpeg-$(FFMPEG_VERSION).tmp libs/ffmpeg-$(FFMPEG_VERSION)
+
+rapidjson: libs/rapidjson-$(RAPIDJSON_VERSION)
+
+$(DOWNLOAD_PATH)/rapidjson-$(RAPIDJSON_VERSION).tar.gz:
+	wget --no-check-certificate https://github.com/Tencent/rapidjson/archive/v$(RAPIDJSON_VERSION).tar.gz -O $(DOWNLOAD_PATH)/rapidjson-$(RAPIDJSON_VERSION).tar.gz
+
+libs/rapidjson-$(RAPIDJSON_VERSION): $(DOWNLOAD_PATH)/rapidjson-$(RAPIDJSON_VERSION).tar.gz
+	# prepare
+	rm -r -f libs/rapidjson-*
+	tar xvf $(DOWNLOAD_PATH)/rapidjson-$(RAPIDJSON_VERSION).tar.gz
+	# build
+	#mkdir -p rapidjson-$(RAPIDJSON_VERSION)/build
+	#cd rapidjson-$(RAPIDJSON_VERSION)/build && cmake .. -G"MSYS Makefiles"
+	#cd rapidjson-$(RAPIDJSON_VERSION)/build && make
+	# copy files
+	mkdir -p libs/rapidjson-$(RAPIDJSON_VERSION).tmp/include
+	cp -r rapidjson-$(RAPIDJSON_VERSION)/include/* libs/rapidjson-$(RAPIDJSON_VERSION).tmp/include/
+	# cleanup
+	rm -r -f rapidjson-$(RAPIDJSON_VERSION)
+	mv libs/rapidjson-$(RAPIDJSON_VERSION).tmp libs/rapidjson-$(RAPIDJSON_VERSION)
 
 copylibs:
 	if [ "$(COPY_ANSWER)" = "" ] ; then \
