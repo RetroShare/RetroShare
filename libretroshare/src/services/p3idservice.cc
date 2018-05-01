@@ -47,6 +47,7 @@
 #include <sstream>
 #include <stdio.h>
 
+#define DEBUG_IDS	1
 /****
  * #define DEBUG_IDS	1
  * #define DEBUG_RECOGN	1
@@ -277,7 +278,7 @@ void p3IdService::timeStampKey(const RsGxsId& gxs_id, const RsIdentityUsage& rea
         return ;
     }
 #ifdef DEBUG_IDS
-    std::cerr << "(II) time stamping key " << gxs_id << " for the following reason: " << reason << std::endl;
+    std::cerr << "(II) time stamping key " << gxs_id << " for the following reason: " << reason.mUsageCode << std::endl;
 #endif
 
     RS_STACK_MUTEX(mIdMtx) ;

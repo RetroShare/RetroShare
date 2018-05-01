@@ -273,14 +273,14 @@
 
  ***/
 #define NXS_NET_DEBUG_0 	1
-//#define NXS_NET_DEBUG_1 	1
+#define NXS_NET_DEBUG_1 	1
 //#define NXS_NET_DEBUG_2 	1
 //#define NXS_NET_DEBUG_3 	1
 //#define NXS_NET_DEBUG_4 	1
-//#define NXS_NET_DEBUG_5 	1
+#define NXS_NET_DEBUG_5 	1
 //#define NXS_NET_DEBUG_6 	1
 //#define NXS_NET_DEBUG_7 	1
-//#define NXS_NET_DEBUG_8 	1
+#define NXS_NET_DEBUG_8 	1
 
 //#define NXS_FRAG
 
@@ -318,7 +318,7 @@ static const uint32_t RS_NXS_ITEM_ENCRYPTION_STATUS_GXS_KEY_MISSING     = 0x05 ;
  || defined(NXS_NET_DEBUG_8)
 
 static const RsPeerId     peer_to_print     = RsPeerId(std::string(""))   ;
-static const RsGxsGroupId group_id_to_print = RsGxsGroupId(std::string("ff8d59ef38cad0429f34cc21749dda71")) ;	// use this to allow to this group id only, or "" for all IDs
+static const RsGxsGroupId group_id_to_print = RsGxsGroupId(std::string("")) ;	// use this to allow to this group id only, or "" for all IDs
 static const uint32_t     service_to_print  = RS_SERVICE_GXS_TYPE_CHANNELS ;                       	// use this to allow to this service id only, or 0 for all services
 										// warning. Numbers should be SERVICE IDS (see serialiser/rsserviceids.h. E.g. 0x0215 for forums)
 
@@ -3275,7 +3275,7 @@ void RsGxsNetService::locked_genSendGrpsTransaction(NxsTransaction* tr)
 {
 
 #ifdef NXS_NET_DEBUG_1
-	GXSNETDEBUG_P_(tr->mTransaction->PeerId()) << "locked_genSendGrpsTransaction() Generating Grp data send fron TransN: " << tr->mTransaction->transactionNumber << std::endl;
+	GXSNETDEBUG_P_(tr->mTransaction->PeerId()) << "locked_genSendGrpsTransaction() Generating Grp data send from TransN: " << tr->mTransaction->transactionNumber << std::endl;
 #endif
 
 	// go groups requested in transaction tr
@@ -3288,7 +3288,12 @@ void RsGxsNetService::locked_genSendGrpsTransaction(NxsTransaction* tr)
 	{
 		RsNxsSyncGrpItem* item = dynamic_cast<RsNxsSyncGrpItem*>(*lit);
 		if (item)
+		{
+#ifdef NXS_NET_DEBUG_1
+			GXSNETDEBUG_PG(tr->mTransaction->PeerId(),item->grpId) << "locked_genSendGrpsTransaction() retrieving data for group \"" << item->grpId << "\"" << std::endl;
+#endif
 			grps[item->grpId] = NULL;
+		}
 		else
 		{
 #ifdef NXS_NET_DEBUG_1
@@ -3300,7 +3305,12 @@ void RsGxsNetService::locked_genSendGrpsTransaction(NxsTransaction* tr)
 	if(!grps.empty())
 		mDataStore->retrieveNxsGrps(grps, false, false);
 	else
+	{
+#ifdef NXS_NET_DEBUG_1
+		GXSNETDEBUG_P_(tr->mTransaction->PeerId()) << "RsGxsNetService::locked_genSendGrpsTransaction(): no group to request! This is unexpected" << std::endl;
+#endif
 		return;
+	}
 
 	NxsTransaction* newTr = new NxsTransaction();
 	newTr->mFlag = NxsTransaction::FLAG_STATE_WAITING_CONFIRM;
@@ -3317,6 +3327,9 @@ void RsGxsNetService::locked_genSendGrpsTransaction(NxsTransaction* tr)
 		mit->second->transactionNumber = transN;
 		newTr->mItems.push_back(mit->second);
         	mit->second = NULL ; // avoids deletion
+#ifdef NXS_NET_DEBUG_1
+		GXSNETDEBUG_PG(tr->mTransaction->PeerId(),mit->first) << "RsGxsNetService::locked_genSendGrpsTransaction(): adding grp data of group \"" << mit->first << "\" to transaction" << std::endl;
+#endif
 	}
 
 	if(newTr->mItems.empty()){
@@ -4769,7 +4782,7 @@ void RsGxsNetService::processExplicitGroupRequests()
 		for(; git != groupIdList.end(); ++git)
 		{
 #ifdef NXS_NET_DEBUG_0
-            GXSNETDEBUG_PG(peerId,*git) << "   group request for grp ID " << *git << " to peer " << peerId << std::endl;
+            GXSNETDEBUG_P_(peerId) << "   group request for grp ID " << *git << " to peer " << peerId << std::endl;
 #endif
             RsNxsSyncGrpItem* item = new RsNxsSyncGrpItem(mServType);
 			item->grpId = *git;

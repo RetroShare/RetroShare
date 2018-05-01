@@ -176,7 +176,7 @@ public:
 	   * \brief Get the list of active virtual peers for a given group. This implies that a tunnel is up and
 	   *        alive. This function also "registers" the group which allows to handle tunnel requests in the server side.
 	   */
-      bool getVirtualPeers(std::list<RsGxsNetTunnelVirtualPeerId>& peers) ; 					// returns the virtual peers for this group
+      bool getVirtualPeers(std::list<RsGxsNetTunnelVirtualPeerId>& peers) ;	// returns the virtual peers for this service
 
 	  /*!
 	   * \brief sendData
