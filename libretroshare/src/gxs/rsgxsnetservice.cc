@@ -361,7 +361,7 @@ RsGxsNetService::RsGxsNetService(uint16_t servType, RsGeneralDataService *gds,
                                  RsNxsNetMgr *netMgr, RsNxsObserver *nxsObs,
                                  const RsServiceInfo serviceInfo,
                                  RsGixsReputation* reputations, RsGcxs* circles, RsGixs *gixs,
-                                 PgpAuxUtils *pgpUtils,
+                                 PgpAuxUtils *pgpUtils, RsGxsNetTunnelService *mGxsNT,
                                  bool grpAutoSync, bool msgAutoSync, bool distSync, uint32_t default_store_period, uint32_t default_sync_period)
                                  : p3ThreadedService(), p3Config(), mTransactionN(0),
                                    mObserver(nxsObs), mDataStore(gds),
@@ -370,7 +370,7 @@ RsGxsNetService::RsGxsNetService(uint16_t servType, RsGeneralDataService *gds,
                                    mSyncTs(0), mLastKeyPublishTs(0),
                                    mLastCleanRejectedMessages(0), mSYNC_PERIOD(SYNC_PERIOD),
                                    mCircles(circles), mGixs(gixs),
-                                   mReputations(reputations), mPgpUtils(pgpUtils),
+                                   mReputations(reputations), mPgpUtils(pgpUtils), mGxsNetTunnel(mGxsNT),
                                    mGrpAutoSync(grpAutoSync), mAllowMsgSync(msgAutoSync),mAllowDistSync(distSync),
                                    mServiceInfo(serviceInfo), mDefaultMsgStorePeriod(default_store_period),
                                    mDefaultMsgSyncPeriod(default_sync_period)
@@ -569,12 +569,12 @@ void RsGxsNetService::syncWithPeers()
     std::set<RsPeerId> peers;
     mNetMgr->getOnlineList(mServiceInfo.mServiceType, peers);
 
-	if(mAllowDistSync)
+	if(mAllowDistSync && mGxsNetTunnel != NULL)
 	{
 		// Grab all online virtual peers of distant tunnels for the current service.
 
 		std::list<RsGxsNetTunnelVirtualPeerId> vpids ;
-		getVirtualPeers(vpids);
+		mGxsNetTunnel->getVirtualPeers(vpids);
 
 		for(auto it(vpids.begin());it!=vpids.end();++it)
 			peers.insert(RsPeerId(*it)) ;
@@ -742,7 +742,7 @@ void RsGxsNetService::generic_sendItem(RsNxsItem *si)
 
 	RsGxsGroupId tmp_grpId;
 
-	if(mAllowDistSync && isDistantPeer( static_cast<RsGxsNetTunnelVirtualPeerId>(si->PeerId()),tmp_grpId))
+	if(mAllowDistSync && mGxsNetTunnel != NULL && mGxsNetTunnel->isDistantPeer( static_cast<RsGxsNetTunnelVirtualPeerId>(si->PeerId()),tmp_grpId))
 	{
 		RsNxsSerialiser ser(mServType);
 
@@ -758,7 +758,7 @@ void RsGxsNetService::generic_sendItem(RsNxsItem *si)
 #endif
 		ser.serialise(si,mem,&size) ;
 
-		sendTunnelData(mem,size,static_cast<RsGxsNetTunnelVirtualPeerId>(si->PeerId()));
+		mGxsNetTunnel->sendTunnelData(mServType,mem,size,static_cast<RsGxsNetTunnelVirtualPeerId>(si->PeerId()));
 	}
 	else
 		sendItem(si) ;
@@ -766,7 +766,7 @@ void RsGxsNetService::generic_sendItem(RsNxsItem *si)
 
 void RsGxsNetService::checkDistantSyncState()
 {
-	if(!mAllowDistSync)
+	if(!mAllowDistSync || mGxsNetTunnel==NULL)
 		return ;
 
 	RsGxsGrpMetaTemporaryMap grpMeta;
@@ -806,14 +806,14 @@ void RsGxsNetService::checkDistantSyncState()
 
 			if(at_least_one_friend_is_supplier)
 			{
-				releaseDistantPeers(grpId);
+				mGxsNetTunnel->releaseDistantPeers(mServType,grpId);
 #ifdef NXS_NET_DEBUG_8
 				GXSNETDEBUG___<< "  Group " << grpId << ": suppliers among friends. Releasing peers." << std::endl;
 #endif
 			}
 			else
 			{
-				requestDistantPeers(grpId);
+				mGxsNetTunnel->requestDistantPeers(mServType,grpId);
 #ifdef NXS_NET_DEBUG_8
 				GXSNETDEBUG___<< "  Group " << grpId << ": no suppliers among friends. Requesting peers." << std::endl;
 #endif
@@ -1522,8 +1522,8 @@ class StoreHere
 {
 public:
 
-    StoreHere(RsGxsNetService::ClientGrpMap& cgm, RsGxsNetService::ClientMsgMap& cmm, RsGxsNetService::ServerMsgMap& smm,RsGxsNetService::GrpConfigMap& gcm, RsGxsServerGrpUpdate& sgm,Bias20Bytes& mrb)
-            : mClientGrpMap(cgm), mClientMsgMap(cmm), mServerMsgMap(smm), mGrpConfigMap(gcm), mServerGrpUpdate(sgm), mRandomBias(mrb)
+    StoreHere(RsGxsNetService::ClientGrpMap& cgm, RsGxsNetService::ClientMsgMap& cmm, RsGxsNetService::ServerMsgMap& smm,RsGxsNetService::GrpConfigMap& gcm, RsGxsServerGrpUpdate& sgm)
+            : mClientGrpMap(cgm), mClientMsgMap(cmm), mServerMsgMap(smm), mGrpConfigMap(gcm), mServerGrpUpdate(sgm)
     {}
 
 	template <typename ID_type,typename UpdateMap,class ItemClass> void check_store(ID_type id,UpdateMap& map,ItemClass& item)
@@ -1541,7 +1541,6 @@ public:
         RsGxsServerGrpUpdateItem  *gsui;
         RsGxsServerMsgUpdateItem  *msui;
         RsGxsGrpConfigItem        *mgci;
-        RsGxsTunnelRandomBiasItem *rbsi;
 
         if((mui = dynamic_cast<RsGxsMsgUpdateItem*>(item)) != NULL)
             check_store(mui->peerID,mClientMsgMap,*mui);
@@ -1553,8 +1552,6 @@ public:
             check_store(msui->grpId,mServerMsgMap, *msui);
         else if((gsui = dynamic_cast<RsGxsServerGrpUpdateItem*>(item)) != NULL)
             mServerGrpUpdate = *gsui;
-		else if((rbsi = dynamic_cast<RsGxsTunnelRandomBiasItem*>(item))!=NULL)
-			mRandomBias = rbsi->mRandomBias;
         else
             std::cerr << "Type not expected!" << std::endl;
 
@@ -1569,7 +1566,6 @@ private:
     RsGxsNetService::GrpConfigMap& mGrpConfigMap;
 
     RsGxsServerGrpUpdate& mServerGrpUpdate;
-	Bias20Bytes& mRandomBias ;
 };
 
 bool RsGxsNetService::loadList(std::list<RsItem *> &load)
@@ -1578,11 +1574,10 @@ bool RsGxsNetService::loadList(std::list<RsItem *> &load)
 
     // The delete is done in StoreHere, if necessary
 
-    std::for_each(load.begin(), load.end(), StoreHere(mClientGrpUpdateMap, mClientMsgUpdateMap, mServerMsgUpdateMap, mServerGrpConfigMap, mGrpServerUpdate,mRandomBias));
+    std::for_each(load.begin(), load.end(), StoreHere(mClientGrpUpdateMap, mClientMsgUpdateMap, mServerMsgUpdateMap, mServerGrpConfigMap, mGrpServerUpdate));
+	time_t now = time(NULL);
 
     // We reset group statistics here. This is the best place since we know at this point which are all unsubscribed groups.
-
-    time_t now = time(NULL);
 
     for(GrpConfigMap::iterator it(mServerGrpConfigMap.begin());it!=mServerGrpConfigMap.end();++it)
 	{
@@ -1637,6 +1632,7 @@ struct get_second : public std::unary_function<typename UpdateMap::value_type, R
     typename UpdateMap::key_type ItemClass::*ID_member ;
 };
 
+
 bool RsGxsNetService::saveList(bool& cleanup, std::list<RsItem*>& save)
 {
 	RS_STACK_MUTEX(mNxsMutex) ;
@@ -1654,11 +1650,6 @@ bool RsGxsNetService::saveList(bool& cleanup, std::list<RsItem*>& save)
     RsGxsServerGrpUpdateItem *it = new RsGxsServerGrpUpdateItem(mGrpServerUpdate,mServType) ;
 
     save.push_back(it);
-
-	RsGxsTunnelRandomBiasItem *it2 = new RsGxsTunnelRandomBiasItem(mServType) ;
-	it2->mRandomBias = mRandomBias;
-
-	save.push_back(it2) ;
 
     cleanup = true;
     return true;
@@ -1686,7 +1677,7 @@ RsItem *RsGxsNetService::generic_recvItem()
 	uint32_t size = 0 ;
 	RsGxsNetTunnelVirtualPeerId virtual_peer_id ;
 
-	while(mAllowDistSync && receiveTunnelData(data,size,virtual_peer_id))
+	while(mAllowDistSync && mGxsNetTunnel!=NULL && mGxsNetTunnel->receiveTunnelData(mServType,data,size,virtual_peer_id))
 	{
 		RsNxsItem *item = dynamic_cast<RsNxsItem*>(RsNxsSerialiser(mServType).deserialise(data,&size)) ;
 		item->PeerId(virtual_peer_id) ;
@@ -2005,11 +1996,6 @@ void RsGxsNetService::data_tick()
         runVetting();
 
         processExplicitGroupRequests();
-
-		// also tick distant traffic
-
-		if(mAllowDistSync)
-			RsGxsNetTunnelService::data_tick();
 }
 
 void RsGxsNetService::debugDump()
@@ -4117,8 +4103,9 @@ bool RsGxsNetService::canSendGrpId(const RsPeerId& sslId, const RsGxsGrpMetaData
 	// check if that peer is a virtual peer id, in which case we only send/recv data to/from it items for the group it's requested for
 
 	RsGxsGroupId peer_grp ;
-	if(isDistantPeer(RsGxsNetTunnelVirtualPeerId(sslId),peer_grp) && peer_grp != grpMeta.mGroupId)
+	if(mAllowDistSync && mGxsNetTunnel != NULL && mGxsNetTunnel->isDistantPeer(RsGxsNetTunnelVirtualPeerId(sslId),peer_grp) && peer_grp != grpMeta.mGroupId)
 	{
+#warning (cyril) make sure that this is not a problem for cross-service sending of items
 #ifdef NXS_NET_DEBUG_4
         GXSNETDEBUG_PG(sslId,grpMeta.mGroupId) << "  Distant peer designed for group " << peer_grp << ": cannot request sync for different group." << std::endl;
 #endif
@@ -4181,7 +4168,7 @@ bool RsGxsNetService::checkCanRecvMsgFromPeer(const RsPeerId& sslId, const RsGxs
 	// check if that peer is a virtual peer id, in which case we only send/recv data to/from it items for the group it's requested for
 
 	RsGxsGroupId peer_grp ;
-	if(isDistantPeer(RsGxsNetTunnelVirtualPeerId(sslId),peer_grp) && peer_grp != grpMeta.mGroupId)
+	if(mGxsNetTunnel->isDistantPeer(RsGxsNetTunnelVirtualPeerId(sslId),peer_grp) && peer_grp != grpMeta.mGroupId)
 	{
 #ifdef NXS_NET_DEBUG_4
         GXSNETDEBUG_PG(sslId,grpMeta.mGroupId) << "  Distant peer designed for group " << peer_grp << ": cannot request sync for different group." << std::endl;
@@ -4535,7 +4522,7 @@ bool RsGxsNetService::canSendMsgIds(std::vector<RsGxsMsgMetaData*>& msgMetas, co
 	// check if that peer is a virtual peer id, in which case we only send/recv data to/from it items for the group it's requested for
 
 	RsGxsGroupId peer_grp ;
-	if(isDistantPeer(RsGxsNetTunnelVirtualPeerId(sslId),peer_grp) && peer_grp != grpMeta.mGroupId)
+	if(mGxsNetTunnel->isDistantPeer(RsGxsNetTunnelVirtualPeerId(sslId),peer_grp) && peer_grp != grpMeta.mGroupId)
 	{
 #ifdef NXS_NET_DEBUG_4
         GXSNETDEBUG_PG(sslId,grpMeta.mGroupId) << "  Distant peer designed for group " << peer_grp << ": cannot request sync for different group." << std::endl;

@@ -32,7 +32,7 @@
 #define DEBUG_RSGXSNETTUNNEL 1
 
 #define GXS_NET_TUNNEL_NOT_IMPLEMENTED() { std::cerr << __PRETTY_FUNCTION__ << ": not yet implemented." << std::endl; }
-#define GXS_NET_TUNNEL_DEBUG()             std::cerr << time(NULL) << " : GXS_NET_TUNNEL(" << std::hex << serviceType() << std::dec << ") : " << __FUNCTION__ << " : "
+#define GXS_NET_TUNNEL_DEBUG()             std::cerr << time(NULL) << " : GXS_NET_TUNNEL: " << __FUNCTION__ << " : "
 #define GXS_NET_TUNNEL_ERROR()             std::cerr << "(EE) GXS_NET_TUNNEL ERROR : "
 
 
@@ -54,6 +54,7 @@ const uint16_t RS_SERVICE_TYPE_GXS_NET_TUNNEL = 0x2233 ;
 
 const uint8_t  RS_PKT_SUBTYPE_GXS_NET_TUNNEL_VIRTUAL_PEER = 0x01 ;
 const uint8_t  RS_PKT_SUBTYPE_GXS_NET_TUNNEL_KEEP_ALIVE   = 0x02 ;
+const uint8_t  RS_PKT_SUBTYPE_GXS_NET_TUNNEL_RANDOM_BIAS  = 0x03 ;
 
 class RsGxsNetTunnelItem: public RsItem
 {
@@ -91,6 +92,21 @@ public:
 	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx) {}
 };
 
+class RsGxsNetTunnelRandomBiasItem: public RsGxsNetTunnelItem
+{
+public:
+	explicit RsGxsNetTunnelRandomBiasItem() : RsGxsNetTunnelItem(RS_PKT_SUBTYPE_GXS_NET_TUNNEL_RANDOM_BIAS) { clear();}
+    virtual ~RsGxsNetTunnelRandomBiasItem() {}
+
+	virtual void clear() { mRandomBias.clear() ; }
+	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
+	{
+		RsTypeSerializer::serial_process(j,ctx,mRandomBias,"random bias") ;
+	}
+
+	Bias20Bytes mRandomBias; // Cannot be a simple char[] because of serialization.
+};
+
 class RsGxsNetTunnelSerializer: public RsServiceSerializer
 {
 public:
@@ -108,6 +124,7 @@ public:
 		{
 		case RS_PKT_SUBTYPE_GXS_NET_TUNNEL_VIRTUAL_PEER: return new RsGxsNetTunnelVirtualPeerItem ;
 		case RS_PKT_SUBTYPE_GXS_NET_TUNNEL_KEEP_ALIVE  : return new RsGxsNetTunnelKeepAliveItem ;
+		case RS_PKT_SUBTYPE_GXS_NET_TUNNEL_RANDOM_BIAS : return new RsGxsNetTunnelRandomBiasItem ;
 		default:
 			GXS_NET_TUNNEL_ERROR() << "type ID " << std::hex << item_subtype << std::dec << " is not handled!" << std::endl;
 			return NULL ;
@@ -139,7 +156,8 @@ RsGxsNetTunnelService::~RsGxsNetTunnelService()
 	mVirtualPeers.clear();
 
 	for(auto it(mIncomingData.begin());it!=mIncomingData.end();++it)
-		delete (*it).second;
+		for(auto it2(it->second.begin());it2!=it->second.end();++it2)
+			delete it2->second;
 
 	mIncomingData.clear();
 }
@@ -159,11 +177,11 @@ bool RsGxsNetTunnelService::isDistantPeer(const RsGxsNetTunnelVirtualPeerId& vir
 		return false ;
 }
 
-bool RsGxsNetTunnelService::receiveTunnelData(unsigned char *& data,uint32_t& data_len,RsGxsNetTunnelVirtualPeerId& virtual_peer)
+bool RsGxsNetTunnelService::receiveTunnelData(uint16_t service_id, unsigned char *& data, uint32_t& data_len, RsGxsNetTunnelVirtualPeerId& virtual_peer)
 {
 	RS_STACK_MUTEX(mGxsNetTunnelMtx);
 
-	std::list<std::pair<RsGxsNetTunnelVirtualPeerId,RsTlvBinaryData*> >& lst(mIncomingData);
+	std::list<std::pair<RsGxsNetTunnelVirtualPeerId,RsTlvBinaryData*> >& lst(mIncomingData[service_id]);
 
 	if(lst.empty())
 	{
@@ -185,7 +203,7 @@ bool RsGxsNetTunnelService::receiveTunnelData(unsigned char *& data,uint32_t& da
 	return true;
 }
 
-bool RsGxsNetTunnelService::sendTunnelData(unsigned char *& data,uint32_t data_len,const RsGxsNetTunnelVirtualPeerId& virtual_peer)
+bool RsGxsNetTunnelService::sendTunnelData(uint16_t service_id,unsigned char *& data,uint32_t data_len,const RsGxsNetTunnelVirtualPeerId& virtual_peer)
 {
 	RS_STACK_MUTEX(mGxsNetTunnelMtx);
 	// The item is serialized and encrypted using chacha20+SHA256, using the generic turtle encryption, and then sent to the turtle router.
@@ -245,7 +263,7 @@ bool RsGxsNetTunnelService::getVirtualPeers(std::list<RsGxsNetTunnelVirtualPeerI
 	return true ;
 }
 
-bool RsGxsNetTunnelService::requestDistantPeers(const RsGxsGroupId& group_id)
+bool RsGxsNetTunnelService::requestDistantPeers(uint16_t service_id, const RsGxsGroupId& group_id)
 {
 	RS_STACK_MUTEX(mGxsNetTunnelMtx);
 
@@ -268,7 +286,7 @@ bool RsGxsNetTunnelService::requestDistantPeers(const RsGxsGroupId& group_id)
 	return true;
 }
 
-bool RsGxsNetTunnelService::releaseDistantPeers(const RsGxsGroupId& group_id)
+bool RsGxsNetTunnelService::releaseDistantPeers(uint16_t service_id,const RsGxsGroupId& group_id)
 {
 	RS_STACK_MUTEX(mGxsNetTunnelMtx);
 
@@ -289,24 +307,37 @@ bool RsGxsNetTunnelService::releaseDistantPeers(const RsGxsGroupId& group_id)
 	return true;
 }
 
-RsGxsNetTunnelVirtualPeerId RsGxsNetTunnelService::locked_makeVirtualPeerId(const RsGxsGroupId& group_id) const
+const Bias20Bytes& RsGxsNetTunnelService::locked_randomBias()
+{
+	if(mRandomBias.isNull())
+	{
+#ifdef DEBUG_RSGXSNETTUNNEL
+#warning /!\ this is for testing only! Remove this when done! Can not be done at initialization when rsPeer is not started.
+	RsPeerId ssl_id = rsPeers->getOwnId() ;
+	mRandomBias = Bias20Bytes(RsDirUtil::sha1sum(ssl_id.toByteArray(),ssl_id.SIZE_IN_BYTES)) ;
+#else
+		mRandomBias = Bias20Bytes::random();
+#endif
+		IndicateConfigChanged();
+	}
+
+	return mRandomBias ;
+}
+
+RsGxsNetTunnelVirtualPeerId RsGxsNetTunnelService::locked_makeVirtualPeerId(const RsGxsGroupId& group_id)
 {
 	assert(RsPeerId::SIZE_IN_BYTES <= Sha1CheckSum::SIZE_IN_BYTES) ;// so that we can build the virtual PeerId from a SHA1 sum.
 
 	// We compute sha1( SSL_id | mRandomBias ) and trunk it to 16 bytes in order to compute a RsPeerId
 
-#ifdef DEBUG_RSGXSNETTUNNEL
-	// /!\ this is for testing only! Remove this when done! Can not be done at initialization when rsPeer is not started.
-	RsPeerId ssl_id = rsPeers->getOwnId() ;
-	mRandomBias = Bias20Bytes(RsDirUtil::sha1sum(ssl_id.toByteArray(),ssl_id.SIZE_IN_BYTES)) ;
-#endif
+	Bias20Bytes rb(locked_randomBias());
 
-	unsigned char mem[group_id.SIZE_IN_BYTES + mRandomBias.SIZE_IN_BYTES];
+	unsigned char mem[group_id.SIZE_IN_BYTES + rb.SIZE_IN_BYTES];
 
 	memcpy(mem                       ,group_id.toByteArray(),group_id.SIZE_IN_BYTES) ;
-	memcpy(mem+group_id.SIZE_IN_BYTES,mRandomBias.toByteArray(),mRandomBias.SIZE_IN_BYTES) ;
+	memcpy(mem+group_id.SIZE_IN_BYTES,rb.toByteArray(),rb.SIZE_IN_BYTES) ;
 
-	return RsGxsNetTunnelVirtualPeerId(RsDirUtil::sha1sum(mem,group_id.SIZE_IN_BYTES+mRandomBias.SIZE_IN_BYTES).toByteArray());
+	return RsGxsNetTunnelVirtualPeerId(RsDirUtil::sha1sum(mem,group_id.SIZE_IN_BYTES+rb.SIZE_IN_BYTES).toByteArray());
 }
 
 void RsGxsNetTunnelService::dump() const
@@ -332,7 +363,7 @@ void RsGxsNetTunnelService::dump() const
 		     std::string("[ACTIVE   ]")
 	};
 
-	std::cerr << "GxsNetTunnelService dump (this=" << (void*)this << ". serv=" << std::hex << serviceType() << std::dec <<") : " << std::endl;
+	std::cerr << "GxsNetTunnelService dump (this=" << (void*)this << ": " << std::endl;
 	std::cerr << "  Managed GXS groups: " << std::endl;
 
 	for(auto it(mGroups.begin());it!=mGroups.end();++it)
@@ -364,7 +395,12 @@ void RsGxsNetTunnelService::dump() const
 
 	std::cerr << "  Incoming data: " << std::endl;
 	for(auto it(mIncomingData.begin());it!=mIncomingData.end();++it)
-			std::cerr << "     peer id " << it->first << " " << (void*)it->second << std::endl;
+	{
+		std::cerr << "    service " << std::hex << it->first << std::dec << std::endl;
+
+		for(auto it2(it->second.begin());it2!=it->second.end();++it2)
+			std::cerr << "     peer id " << it2->first << " " << (void*)it2->second << std::endl;
+	}
 }
 
 //===========================================================================================================================================//
@@ -639,6 +675,8 @@ void RsGxsNetTunnelService::data_tick()
 		mLastDump = now;
 		dump();
 	}
+
+	rstime::rs_usleep(1*1000*1000) ; // 1 sec
 }
 
 void RsGxsNetTunnelService::sendKeepAlivePackets()
@@ -759,4 +797,51 @@ void RsGxsNetTunnelService::autowash()
 	}
 }
 
+bool RsGxsNetTunnelService::saveList(bool& cleanup, std::list<RsItem*>& save)
+{
+	RsGxsNetTunnelRandomBiasItem *it2 = new RsGxsNetTunnelRandomBiasItem() ;
 
+	{
+		RS_STACK_MUTEX(mGxsNetTunnelMtx);
+		it2->mRandomBias = mRandomBias;
+	}
+
+	save.push_back(it2) ;
+	cleanup = true ;
+
+	return true;
+}
+
+bool RsGxsNetTunnelService::loadList(std::list<RsItem *> &load)
+{
+	RsGxsNetTunnelRandomBiasItem *rbsi ;
+
+	for(auto it(load.begin());it!=load.end();++it)
+	{
+		if((rbsi = dynamic_cast<RsGxsNetTunnelRandomBiasItem*>(*it))!=NULL)
+		{
+			RS_STACK_MUTEX(mGxsNetTunnelMtx);
+			mRandomBias = rbsi->mRandomBias;
+		}
+		else
+			GXS_NET_TUNNEL_ERROR() << " unknown item in config file: type=" << std::hex << (*it)->PacketId() << std::dec << std::endl;
+
+		delete *it;
+	}
+
+	return true;
+}
+
+RsSerialiser *RsGxsNetTunnelService::setupSerialiser()
+{
+	RS_STACK_MUTEX(mGxsNetTunnelMtx);
+	static RsSerialiser *ser = NULL ; // this is not so nice, but this method is only called from p3Config, so there's no really need of a data race
+
+	if(!ser)
+	{
+		ser = new RsSerialiser ;
+		ser->addSerialType(new RsGxsNetTunnelSerializer) ;
+	}
+
+	return ser ;
+}

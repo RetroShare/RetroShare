@@ -1358,6 +1358,14 @@ int RsServer::StartupRetroShare()
     mWiki->setNetworkExchangeService(wiki_ns) ;
 #endif
 
+        /**** GXS Dist sync service ****/
+
+#ifdef RS_USE_GXS_DISTANT_SYNC
+	RsGxsNetTunnelService *mGxsNetTunnel = new RsGxsNetTunnelService ;
+#else
+	RsGxsNetTunnelService *mGxsNetTunnel = NULL ;
+#endif
+
         /**** Forum GXS service ****/
 
         RsGeneralDataService* gxsforums_ds = new RsDataService(currGxsDir + "/", "gxsforums_db",
@@ -1371,7 +1379,7 @@ int RsServer::StartupRetroShare()
                         RS_SERVICE_GXS_TYPE_FORUMS, gxsforums_ds, nxsMgr,
                         mGxsForums, mGxsForums->getServiceInfo(),
 			mReputations, mGxsCircles,mGxsIdService,
-			pgpAuxUtils);
+		    pgpAuxUtils);//,mGxsNetTunnel,true,true,true);
 
     mGxsForums->setNetworkExchangeService(gxsforums_ns) ;
 
@@ -1387,7 +1395,7 @@ int RsServer::StartupRetroShare()
 		            RS_SERVICE_GXS_TYPE_CHANNELS, gxschannels_ds, nxsMgr,
 		            mGxsChannels, mGxsChannels->getServiceInfo(),
 		            mReputations, mGxsCircles,mGxsIdService,
-		            pgpAuxUtils,true,true,true);
+		    		pgpAuxUtils,mGxsNetTunnel,true,true,true);
 
     mGxsChannels->setNetworkExchangeService(gxschannels_ns) ;
 
@@ -1442,7 +1450,7 @@ int RsServer::StartupRetroShare()
 	RsGxsNetService* gxstrans_ns = new RsGxsNetService(
 	            RS_SERVICE_TYPE_GXS_TRANS, gxstrans_ds, nxsMgr, mGxsTrans,
 	            mGxsTrans->getServiceInfo(), mReputations, mGxsCircles,
-	            mGxsIdService, pgpAuxUtils,true,true,false,p3GxsTrans::GXS_STORAGE_PERIOD,p3GxsTrans::GXS_SYNC_PERIOD);
+	            mGxsIdService, pgpAuxUtils,NULL,true,true,false,p3GxsTrans::GXS_STORAGE_PERIOD,p3GxsTrans::GXS_SYNC_PERIOD);
 
 	mGxsTrans->setNetworkExchangeService(gxstrans_ns);
 	pqih->addService(gxstrans_ns, true);
@@ -1475,16 +1483,17 @@ int RsServer::StartupRetroShare()
     pqih -> addService(fdb,true);
     pqih -> addService(ftserver,true);
 
-        mGxsTunnels = new p3GxsTunnelService(mGxsIdService) ;
-        mGxsTunnels->connectToTurtleRouter(tr) ;
-        rsGxsTunnel = mGxsTunnels;
+	mGxsTunnels = new p3GxsTunnelService(mGxsIdService) ;
+	mGxsTunnels->connectToTurtleRouter(tr) ;
+	rsGxsTunnel = mGxsTunnels;
+
+	mGxsNetTunnel->connectToTurtleRouter(tr) ;
 
 	rsDisc  = mDisc;
 	rsMsgs  = new p3Msgs(msgSrv, chatSrv);
 
 	// connect components to turtle router.
 
-	gxschannels_ns->connectToTurtleRouter(tr) ;
 	ftserver->connectToTurtleRouter(tr) ;
     ftserver->connectToFileDatabase(fdb) ;
     chatSrv->connectToGxsTunnelService(mGxsTunnels) ;
@@ -1615,6 +1624,7 @@ int RsServer::StartupRetroShare()
 	//mConfigMgr->addConfiguration("ftserver.cfg", ftserver);
 	//
 	mConfigMgr->addConfiguration("gpg_prefs.cfg", AuthGPG::getAuthGPG());
+	mConfigMgr->addConfiguration("gxsnettunnel.cfg", mGxsNetTunnel);
 	mConfigMgr->loadConfiguration();
 
 	mConfigMgr->addConfiguration("peers.cfg", mPeerMgr);
@@ -1824,6 +1834,7 @@ int RsServer::StartupRetroShare()
 
 	/*** start up GXS core runner ***/
 
+	startServiceThread(mGxsNetTunnel, "gxs net tunnel");
 	startServiceThread(mGxsIdService, "gxs id");
 	startServiceThread(mGxsCircles, "gxs circle");
 	startServiceThread(mPosted, "gxs posted");

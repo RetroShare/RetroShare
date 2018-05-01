@@ -188,18 +188,6 @@ public:
 	RsGxsGroupId grpId;
 };
 
-class RsGxsTunnelRandomBiasItem: public RsGxsNetServiceItem
-{
-public:
-	explicit RsGxsTunnelRandomBiasItem(uint16_t servType) : RsGxsNetServiceItem(servType, RS_PKT_SUBTYPE_GXS_RANDOM_BIAS) { clear();}
-    virtual ~RsGxsTunnelRandomBiasItem() {}
-
-	virtual void clear();
-	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
-
-	Bias20Bytes mRandomBias; // Cannot be a simple char[] because of serialization.
-};
-
 class RsGxsUpdateSerialiser : public RsServiceSerializer
 {
 public:

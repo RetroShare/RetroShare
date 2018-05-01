@@ -44,7 +44,6 @@ RsItem* RsGxsUpdateSerialiser::create_item(uint16_t service,uint8_t item_subtype
 		case RS_PKT_SUBTYPE_GXS_SERVER_GRP_UPDATE: return new RsGxsServerGrpUpdateItem(SERVICE_TYPE);
 		case RS_PKT_SUBTYPE_GXS_SERVER_MSG_UPDATE: return new RsGxsServerMsgUpdateItem(SERVICE_TYPE);
 		case RS_PKT_SUBTYPE_GXS_GRP_CONFIG:        return new RsGxsGrpConfigItem(SERVICE_TYPE);
-		case RS_PKT_SUBTYPE_GXS_RANDOM_BIAS:       return new RsGxsTunnelRandomBiasItem(SERVICE_TYPE);
     default:
         return NULL ;
     }
@@ -75,11 +74,6 @@ void RsGxsServerMsgUpdateItem::clear()
 void RsGxsServerGrpUpdateItem::clear()
 {
     grpUpdateTS = 0;
-}
-
-void RsGxsTunnelRandomBiasItem::clear()
-{
-	mRandomBias.clear() ;
 }
 
 /**********************************************************************************************/
@@ -139,9 +133,5 @@ void RsGxsGrpConfigItem::serial_process(RsGenericSerializer::SerializeJob j,RsGe
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,msg_keep_delay,"msg_keep_delay") ;
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,msg_send_delay,"msg_send_delay") ;
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,msg_req_delay,"msg_req_delay") ;
-}
-void RsGxsTunnelRandomBiasItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
-{
-    RsTypeSerializer::serial_process(j,ctx,mRandomBias,"random bias") ;
 }
 
