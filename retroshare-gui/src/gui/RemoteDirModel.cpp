@@ -374,7 +374,7 @@ const QIcon& RetroshareDirModel::getFlagsIcon(FileStorageFlags flags)
     return *static_icons[n] ;
 }
 
-QVariant RetroshareDirModel::filterRole(const DirDetails& details,int coln) const
+QVariant RetroshareDirModel::filterRole(const DirDetails& details,int /*coln*/) const
 {
 	if(mFilteredPointers.empty() || mFilteredPointers.find(details.ref) != mFilteredPointers.end())
 		return QString(RETROSHARE_DIR_MODEL_FILTER_STRING);
