@@ -36,8 +36,8 @@
 #include <string>
 #include <typeinfo> // for typeid
 
-#include <rapidjson/document.h>
-#include <rapidjson/prettywriter.h>
+#include <rapid_json/document.h>
+#include <rapid_json/prettywriter.h>
 
 //static const uint32_t MAX_SERIALIZED_ARRAY_SIZE = 500 ;
 static const uint32_t MAX_SERIALIZED_CHUNK_SIZE = 10*1024*1024 ; // 10 MB.

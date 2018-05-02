@@ -154,7 +154,7 @@
 #include <string.h>
 #include <iostream>
 #include <string>
-#include <rapidjson/document.h>
+#include <rapid_json/document.h>
 
 #include "retroshare/rsflags.h"
 #include "serialiser/rsserial.h"

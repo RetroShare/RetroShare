@@ -35,7 +35,7 @@
 #include "serialiser/rsserializer.h"
 #include "serialiser/rsserializable.h"
 
-#include <rapidjson/document.h>
+#include <rapid_json/document.h>
 #include <typeinfo> // for typeid
 #include <type_traits>
 #include <errno.h>
