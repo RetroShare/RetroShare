@@ -110,7 +110,7 @@ struct RsGxsIdGroup : RsSerializable
 {
 	RsGxsIdGroup() :
 	    mLastUsageTS(0), mPgpKnown(false), mIsAContact(false) {}
-	~RsGxsIdGroup() {}
+	virtual ~RsGxsIdGroup() {}
 
 	RsGroupMetaData mMeta;
 
@@ -297,7 +297,8 @@ private:
 
 struct RsIdentityDetails : RsSerializable
 {
-    RsIdentityDetails() : mFlags(0), mLastUsageTS(0) {}
+	RsIdentityDetails() : mFlags(0), mLastUsageTS(0) {}
+	virtual ~RsIdentityDetails() {}
 
     RsGxsId mId;
 
