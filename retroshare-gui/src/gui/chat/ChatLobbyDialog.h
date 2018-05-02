@@ -27,6 +27,8 @@
 #include "gui/common/RSTreeWidgetItem.h"
 #include "ChatDialog.h"
 
+Q_DECLARE_METATYPE(RsGxsId)
+
 class GxsIdChooser ;
 class QToolButton;
 class QWidgetAction;
@@ -51,6 +53,7 @@ public:
 
 private slots:
 	void participantsTreeWidgetCustomPopupMenu( QPoint point );
+	void textBrowserAskContextMenu(QMenu* contextMnu, QString anchorForPosition, const QPoint point);
 	void inviteFriends() ;
 	void leaveLobby() ;
 	void filterChanged(const QString &text);
@@ -77,7 +80,7 @@ protected:
 
 protected slots:
     void changeNickname();
-	void changePartipationState();
+	void changeParticipationState();
     void distantChatParticipant();
     void participantsTreeWidgetDoubleClicked(QTreeWidgetItem *item, int column);
     void sendMessage();
@@ -85,6 +88,7 @@ protected slots:
 
 private:
 	void updateParticipantsList();
+	void initParticipantsContextMenu(QMenu* contextMnu, QList<RsGxsId> idList);
 	
 	void filterIds();
 
@@ -117,8 +121,8 @@ private:
     QAction *actionSortByActivity;
     QWidgetAction *checkableAction;
     QAction *sendMessageAct;
-    QAction *showinpeopleAct;
-	
+    QAction *showInPeopleAct;
+
     GxsIdChooser *ownIdChooser ;
     //icons cache
     QIcon bullet_red_128, bullet_grey_128, bullet_green_128, bullet_yellow_128;

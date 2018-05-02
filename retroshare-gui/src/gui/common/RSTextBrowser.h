@@ -24,6 +24,8 @@ public:
 	QPixmap getBlockedImage();
 	bool checkImage(QPoint pos, QString &imageStr);
 	bool checkImage(QPoint pos) {QString imageStr; return checkImage(pos, imageStr); }
+	QString anchorForPosition(const QPoint &pos) const;
+
 
 	void activateLinkClick(bool active);
 
