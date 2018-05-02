@@ -64,6 +64,7 @@ struct RsGroupMetaData : RsSerializable
 	RsGroupMetaData() : mGroupFlags(0), mSignFlags(0), mPublishTs(0),
 	    mCircleType(0x0001), mAuthenFlags(0), mSubscribeFlags(0), mPop(0),
 	    mVisibleMsgCount(0), mLastPost(0), mGroupStatus(0) {}
+	virtual ~RsGroupMetaData() {}
 
     void operator =(const RsGxsGrpMetaData& rGxsMeta);
 
