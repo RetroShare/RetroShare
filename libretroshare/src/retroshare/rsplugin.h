@@ -69,7 +69,7 @@ class ToasterNotify;
 class ChatWidget;
 class ChatWidgetHolder;
 // for gxs based plugins
-class RsIdentity;
+struct RsIdentity;
 class RsNxsNetMgr;
 class RsGxsIdExchange;
 class RsGcxs;
