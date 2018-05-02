@@ -25,7 +25,7 @@
 #include "ResourceRouter.h"
 #include "StateTokenServer.h"
 
-class RsIdentity;
+struct RsIdentity;
 
 namespace resource_api
 {
