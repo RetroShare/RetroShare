@@ -976,7 +976,7 @@ void ChatWidget::addChatMsg(bool incoming, const QString &name, const QDateTime 
 
 void ChatWidget::addChatMsg(bool incoming, const QString &name, const RsGxsId gxsId
                             , const QDateTime &sendTime, const QDateTime &recvTime
-                            , const QString &message, MsgType chatType)
+                            , const QString &message, MsgType chatType, bool spam)
 {
 #ifdef CHAT_DEBUG
 	std::cout << "ChatWidget::addChatMsg message : " << message.toStdString() << std::endl;
@@ -1033,7 +1033,19 @@ void ChatWidget::addChatMsg(bool incoming, const QString &name, const RsGxsId gx
 		formatFlag |= CHAT_FORMATMSG_SYSTEM;
 	}
 
-	QString formattedMessage = RsHtml().formatText(ui->textBrowser->document(), message, formatTextFlag, backgroundColor, desiredContrast, desiredMinimumFontSize);
+	QString formattedMessage;
+
+	if(spam)
+	{
+		QTextDocument doc;
+		doc.setHtml(message);
+		QString html = QString("<a title=\"%1\">%2</a>").arg(doc.toPlainText(), "* Message hidden by spam protection *");
+		
+		formattedMessage = RsHtml().formatText(ui->textBrowser->document(), html, formatTextFlag, backgroundColor, desiredContrast, desiredMinimumFontSize);
+	}
+	else
+		formattedMessage = RsHtml().formatText(ui->textBrowser->document(), message, formatTextFlag, backgroundColor, desiredContrast, desiredMinimumFontSize);
+	
 	QDateTime dtTimestamp=incoming ? sendTime : recvTime;
 	QString formatMsg = chatStyle.formatMessage(type, name, dtTimestamp, formattedMessage, formatFlag, backgroundColor);
 	QString timeStamp = dtTimestamp.toString(Qt::ISODate);

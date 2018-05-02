@@ -49,6 +49,9 @@ public:
 	ChatLobbyId id() const { return lobbyId ;}
 	void sortParcipants();
 
+	static std::map<RsGxsId,time_t> knownSince;
+	time_t joined;
+
 private slots:
 	void participantsTreeWidgetCustomPopupMenu( QPoint point );
 	void inviteFriends() ;

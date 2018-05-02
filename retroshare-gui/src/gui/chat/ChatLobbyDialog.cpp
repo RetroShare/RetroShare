@@ -62,6 +62,9 @@
 
 const static uint32_t timeToInactivity = 60 * 10;   // in seconds
 
+#define ANTISPAM_DELAY 10
+std::map<RsGxsId,time_t> ChatLobbyDialog::knownSince;
+
 /** Default constructor */
 ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::WindowFlags flags)
         : ChatDialog(parent, flags), lobbyId(lid),
@@ -198,6 +201,8 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::Wi
 	connect(unsubscribeButton, SIGNAL(clicked()), this , SLOT(leaveLobby()));
 
 	getChatWidget()->addTitleBarWidget(unsubscribeButton) ;
+
+	joined = time(NULL);
 }
 
 void ChatLobbyDialog::leaveLobby()
@@ -462,6 +467,8 @@ void ChatLobbyDialog::addChatMsg(const ChatMessage& msg)
     QString message = QString::fromUtf8(msg.msg.c_str());
     RsGxsId gxs_id = msg.lobby_peer_gxs_id ;
 	
+	time_t now = time(NULL) ;
+
     if(!isParticipantMuted(gxs_id))
     {
         // We could change addChatMsg to display the peers icon, passing a ChatId
@@ -473,8 +480,25 @@ void ChatLobbyDialog::addChatMsg(const ChatMessage& msg)
             name = QString::fromUtf8(details.mNickname.c_str()) ;
         else
             name = QString::fromUtf8(msg.peer_alternate_nickname.c_str()) + " (" + QString::fromStdString(gxs_id.toStdString()) + ")" ;
-
-        ui.chatWidget->addChatMsg(msg.incoming, name, gxs_id, sendTime, recvTime, message, ChatWidget::MSGTYPE_NORMAL);
+		
+		bool spam = false;
+		if(now > joined + 120) // MAX_DELAY_BETWEEN_LOBBY_KEEP_ALIVE to collect pings for all previous participants
+		{
+			RsGxsId own_id;
+			rsMsgs->getIdentityForChatLobby(lobbyId, own_id);
+			if (gxs_id!=own_id)
+			{
+				std::map<RsGxsId,time_t>::iterator it(knownSince.find(gxs_id));
+				if(it == knownSince.end())
+					spam = true;
+				else
+				{
+					if(it->second + ANTISPAM_DELAY > now)
+						spam = true;
+				}
+			}
+		}
+        ui.chatWidget->addChatMsg(msg.incoming, name, gxs_id, sendTime, recvTime, message, ChatWidget::MSGTYPE_NORMAL, spam);
         emit messageReceived(msg.incoming, id(), sendTime, name, message) ;
 
         // This is a trick to translate HTML into text.
@@ -487,10 +511,11 @@ void ChatLobbyDialog::addChatMsg(const ChatMessage& msg)
         else
             MainWindow::displayLobbySystrayMsg(tr("Room chat") + ": " + _lobby_name, notifyMsg);
     }
-
+	
+	if(knownSince.find(gxs_id) == knownSince.end())
+		knownSince[gxs_id] = time(NULL);
+	
 	// also update peer list.
-
-	time_t now = time(NULL);
 
    QList<QTreeWidgetItem*>  qlFoundParticipants=ui.participantsList->findItems(QString::fromStdString(gxs_id.toStdString()),Qt::MatchExactly,COLUMN_ID);
     if (qlFoundParticipants.count()!=0) qlFoundParticipants.at(0)->setText(COLUMN_ACTIVITY,QString::number(now));
@@ -542,6 +567,7 @@ void ChatLobbyDialog::updateParticipantsList()
                 widgetitem->setText(COLUMN_ID,QString::fromStdString(it2->first.toStdString()));
 
                 ui.participantsList->addTopLevelItem(widgetitem);
+
             }
             else
                 widgetitem = dynamic_cast<GxsIdRSTreeWidgetItem*>(qlFoundParticipants.at(0));
@@ -843,6 +869,9 @@ void ChatLobbyDialog::displayLobbyEvent(int event_type, const RsGxsId& gxs_id, c
         if (qlFoundParticipants.count()!=0)
         qlFoundParticipants.at(0)->setText(COLUMN_ACTIVITY,QString::number(time(NULL)));
     }
+	
+	if(knownSince.find(gxs_id) == knownSince.end())
+		knownSince[gxs_id] = time(NULL);
 
     updateParticipantsList() ;
 }

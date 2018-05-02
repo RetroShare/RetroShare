@@ -94,7 +94,7 @@ public:
 
 	void setWelcomeMessage(QString &text);
 	void addChatMsg(bool incoming, const QString &name, const QDateTime &sendTime, const QDateTime &recvTime, const QString &message, MsgType chatType);
-	void addChatMsg(bool incoming, const QString &name, const RsGxsId gxsId, const QDateTime &sendTime, const QDateTime &recvTime, const QString &message, MsgType chatType);
+	void addChatMsg(bool incoming, const QString &name, const RsGxsId gxsId, const QDateTime &sendTime, const QDateTime &recvTime, const QString &message, MsgType chatType, bool spam = false);
     void updateStatusString(const QString &statusMask, const QString &statusString, bool permanent = false);
 
 	void addToolsAction(QAction *action);
