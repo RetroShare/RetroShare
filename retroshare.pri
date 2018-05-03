@@ -258,7 +258,7 @@ RS_UPNP_LIB = upnp ixml threadutil
 
 sqlcipher {
     DEFINES -= NO_SQLCIPHER
-    RS_SQL_LIB = sqlcipher sqlite3
+    RS_SQL_LIB = sqlcipher 
 }
 no_sqlcipher {
     DEFINES *= NO_SQLCIPHER
