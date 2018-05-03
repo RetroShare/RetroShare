@@ -27,6 +27,10 @@ linux-* {
 	QMAKE_CXXFLAGS *= -D_FILE_OFFSET_BITS=64
 
 	LIBS *= -rdynamic
+
+	rs_autologin {
+		LIBS *= -lgnome-keyring
+	}
 }
 
 unix {
