@@ -766,7 +766,7 @@ void RsGxsNetService::generic_sendItem(RsNxsItem *si)
 
 void RsGxsNetService::checkDistantSyncState()
 {
-	if(!mAllowDistSync || mGxsNetTunnel==NULL)
+	if(!mAllowDistSync || mGxsNetTunnel==NULL || !mGrpAutoSync)
 		return ;
 
 	RsGxsGrpMetaTemporaryMap grpMeta;
@@ -834,6 +834,17 @@ void RsGxsNetService::syncGrpStatistics()
 
     std::set<RsPeerId> online_peers;
     mNetMgr->getOnlineList(mServiceInfo.mServiceType, online_peers);
+
+	if(mAllowDistSync && mGxsNetTunnel != NULL)
+	{
+		// Grab all online virtual peers of distant tunnels for the current service.
+
+		std::list<RsGxsNetTunnelVirtualPeerId> vpids ;
+		mGxsNetTunnel->getVirtualPeers(vpids);
+
+		for(auto it(vpids.begin());it!=vpids.end();++it)
+			online_peers.insert(RsPeerId(*it)) ;
+	}
 
     // Go through group statistics and groups without information are re-requested to random peers selected
     // among the ones who provided the group info.
@@ -4168,7 +4179,7 @@ bool RsGxsNetService::checkCanRecvMsgFromPeer(const RsPeerId& sslId, const RsGxs
 	// check if that peer is a virtual peer id, in which case we only send/recv data to/from it items for the group it's requested for
 
 	RsGxsGroupId peer_grp ;
-	if(mGxsNetTunnel->isDistantPeer(RsGxsNetTunnelVirtualPeerId(sslId),peer_grp) && peer_grp != grpMeta.mGroupId)
+	if(mAllowDistSync && mGxsNetTunnel != NULL && mGxsNetTunnel->isDistantPeer(RsGxsNetTunnelVirtualPeerId(sslId),peer_grp) && peer_grp != grpMeta.mGroupId)
 	{
 #ifdef NXS_NET_DEBUG_4
         GXSNETDEBUG_PG(sslId,grpMeta.mGroupId) << "  Distant peer designed for group " << peer_grp << ": cannot request sync for different group." << std::endl;
@@ -4522,7 +4533,7 @@ bool RsGxsNetService::canSendMsgIds(std::vector<RsGxsMsgMetaData*>& msgMetas, co
 	// check if that peer is a virtual peer id, in which case we only send/recv data to/from it items for the group it's requested for
 
 	RsGxsGroupId peer_grp ;
-	if(mGxsNetTunnel->isDistantPeer(RsGxsNetTunnelVirtualPeerId(sslId),peer_grp) && peer_grp != grpMeta.mGroupId)
+	if(mAllowDistSync && mGxsNetTunnel != NULL && mGxsNetTunnel->isDistantPeer(RsGxsNetTunnelVirtualPeerId(sslId),peer_grp) && peer_grp != grpMeta.mGroupId)
 	{
 #ifdef NXS_NET_DEBUG_4
         GXSNETDEBUG_PG(sslId,grpMeta.mGroupId) << "  Distant peer designed for group " << peer_grp << ": cannot request sync for different group." << std::endl;
@@ -5062,6 +5073,18 @@ bool RsGxsNetService::removeGroups(const std::list<RsGxsGroupId>& groups)
 
 	IndicateConfigChanged();
     return true ;
+}
+
+bool RsGxsNetService::isDistantPeer(const RsPeerId& pid)
+{
+    RS_STACK_MUTEX(mNxsMutex) ;
+
+	if(!mAllowDistSync || mGxsNetTunnel == NULL)
+		return false ;
+
+	RsGxsGroupId group_id ;
+
+	return mGxsNetTunnel->isDistantPeer(RsGxsNetTunnelVirtualPeerId(pid),group_id);
 }
 
 bool RsGxsNetService::stampMsgServerUpdateTS(const RsGxsGroupId& gid)

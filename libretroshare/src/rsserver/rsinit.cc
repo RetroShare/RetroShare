@@ -1279,6 +1279,14 @@ int RsServer::StartupRetroShare()
 
         RsNxsNetMgr* nxsMgr =  new RsNxsNetMgrImpl(serviceCtrl);
 
+        /**** GXS Dist sync service ****/
+
+#ifdef RS_USE_GXS_DISTANT_SYNC
+	RsGxsNetTunnelService *mGxsNetTunnel = new RsGxsNetTunnelService ;
+#else
+	RsGxsNetTunnelService *mGxsNetTunnel = NULL ;
+#endif
+
         /**** Identity service ****/
 
         RsGeneralDataService* gxsid_ds = new RsDataService(currGxsDir + "/", "gxsid_db",
@@ -1300,9 +1308,10 @@ int RsServer::StartupRetroShare()
                         RS_SERVICE_GXS_TYPE_GXSID, gxsid_ds, nxsMgr,
 			mGxsIdService, mGxsIdService->getServiceInfo(),
 			mReputations, mGxsCircles,mGxsIdService,
-			pgpAuxUtils,NULL,
-            false,false); // don't synchronise group automatic (need explicit group request)
+			pgpAuxUtils,mGxsNetTunnel,
+            false,false,true); // don't synchronise group automatic (need explicit group request)
                         // don't sync messages at all.
+						// allow distsync, so that we can grab GXS id requests for other services
 
         // Normally we wouldn't need this (we do in other service):
         //	mGxsIdService->setNetworkExchangeService(gxsid_ns) ;
@@ -1356,14 +1365,6 @@ int RsServer::StartupRetroShare()
 			pgpAuxUtils);
 
     mWiki->setNetworkExchangeService(wiki_ns) ;
-#endif
-
-        /**** GXS Dist sync service ****/
-
-#ifdef RS_USE_GXS_DISTANT_SYNC
-	RsGxsNetTunnelService *mGxsNetTunnel = new RsGxsNetTunnelService ;
-#else
-	RsGxsNetTunnelService *mGxsNetTunnel = NULL ;
 #endif
 
         /**** Forum GXS service ****/

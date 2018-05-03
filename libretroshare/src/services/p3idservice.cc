@@ -2700,7 +2700,7 @@ void p3IdService::requestIdsFromNet()
         bool request_can_proceed = false ;
 
         for(cit2 = peers.begin(); cit2 != peers.end(); ++cit2)
-            if(rsPeers->isOnline(*cit2)) 		// make sure that the peer in online, so that we know that the request has some chance to succeed.
+            if(rsPeers->isOnline(*cit2) || mNes->isDistantPeer(*cit2)) // make sure that the peer in online, so that we know that the request has some chance to succeed.
             {
                 requests[*cit2].push_back(cit->first);
                 request_can_proceed = true ;

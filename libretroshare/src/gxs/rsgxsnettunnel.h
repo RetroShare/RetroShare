@@ -120,6 +120,7 @@ struct RsGxsNetTunnelVirtualPeerInfo
 	TurtleVirtualPeerId	turtle_virtual_peer_id ;  // turtle peer to use when sending data to this vpid.
 
 	RsGxsGroupId group_id ;					// group that virtual peer is providing
+	uint16_t service_id ; 					// this is used for checkng consistency of the incoming data
 };
 
 struct RsGxsNetTunnelGroupInfo
@@ -144,6 +145,7 @@ struct RsGxsNetTunnelGroupInfo
 	GroupStatus    group_status ;
 	time_t         last_contact ;
 	TurtleFileHash hash ;
+	uint16_t       service_id ;
 
 	std::set<TurtleVirtualPeerId> virtual_peers ; // list of which virtual peers provide this group. Can me more than 1.
 };

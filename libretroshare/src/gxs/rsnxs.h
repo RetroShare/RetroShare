@@ -167,6 +167,14 @@ public:
     virtual bool stampMsgServerUpdateTS(const RsGxsGroupId& gid) =0;
 
     /*!
+     * \brief isDistantPeer
+     * \param pid		peer that is a virtual peer provided by GxsNetTunnel
+     * \return
+     * 					true if the peer exists (adn therefore is online)
+     */
+    virtual bool isDistantPeer(const RsPeerId& pid)=0;
+
+    /*!
      * \brief removeGroups
      * 			Removes time stamp information from the list of groups. This allows to re-sync them if suppliers are present.
      * \param groups		list of groups to remove from the update maps
