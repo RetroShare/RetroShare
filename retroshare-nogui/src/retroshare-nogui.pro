@@ -23,14 +23,11 @@ INCLUDEPATH += ../../rapidjson-1.1.0
 
 ################################# Linux ##########################################
 linux-* {
+        CONFIG += link_pkgconfig
 	#CONFIG += version_detail_bash_script
 	QMAKE_CXXFLAGS *= -D_FILE_OFFSET_BITS=64
 
 	LIBS *= -rdynamic
-
-	rs_autologin {
-		LIBS *= -lgnome-keyring
-	}
 }
 
 unix {
