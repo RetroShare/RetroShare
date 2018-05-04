@@ -340,11 +340,17 @@ linux-* {
     QMAKE_LIBDIR *= "$$RS_LIB_DIR"
 
     rs_autologin {
-        #DEFINES *= HAS_GNOME_KEYRING
-        #PKGCONFIG *= gnome-keyring-1
-
-        DEFINES *= HAS_LIBSECRET
-        PKGCONFIG *= libsecret-1
+        # try libsecret first since it is not limited to gnome keyring and libgnome-keyring is deprecated
+        LIBSECRET_AVAILABLE = $$system(pkg-config --exists libsecret-1 && echo yes)
+        isEmpty(LIBSECRET_AVAILABLE) {
+            message("using libgnome-keyring for auto login")
+            DEFINES *= HAS_GNOME_KEYRING
+            PKGCONFIG *= gnome-keyring-1
+        } else {
+            message("using libsecret for auto login")
+            DEFINES *= HAS_LIBSECRET
+            PKGCONFIG *= libsecret-1
+        }
     }
 }
 
