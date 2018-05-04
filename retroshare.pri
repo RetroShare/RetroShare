@@ -340,8 +340,11 @@ linux-* {
     QMAKE_LIBDIR *= "$$RS_LIB_DIR"
 
     rs_autologin {
-        DEFINES *= HAS_GNOME_KEYRING
-        PKGCONFIG *= gnome-keyring-1
+        #DEFINES *= HAS_GNOME_KEYRING
+        #PKGCONFIG *= gnome-keyring-1
+
+        DEFINES *= HAS_LIBSECRET
+        PKGCONFIG *= libsecret-1
     }
 }
 
