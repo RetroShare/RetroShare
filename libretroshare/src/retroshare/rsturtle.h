@@ -33,7 +33,9 @@
 #include <list>
 #include <vector>
 
+#include "serialiser/rstlvbinary.h"
 #include "retroshare/rstypes.h"
+#include "retroshare/rsgxsifacetypes.h"
 
 namespace RsRegularExpression { class LinearizedExpression ; }
 class RsTurtleClientService ;
@@ -51,6 +53,12 @@ struct TurtleFileInfo
 	RsFileHash hash ;
 	std::string name ;
 	uint64_t size ;
+};
+struct TurtleGxsInfo
+{
+	RsGxsGroupId group_id ;
+	std::string name ;
+	RsTlvBinaryData meta ;
 };
 struct TurtleTunnelRequestDisplayInfo
 {

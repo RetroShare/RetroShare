@@ -16,7 +16,7 @@
 #include "serialiser/rsserializer.h"
 
 const uint8_t RS_TURTLE_SUBTYPE_STRING_SEARCH_REQUEST	= 0x01 ;
-const uint8_t RS_TURTLE_SUBTYPE_SEARCH_RESULT  			= 0x02 ;
+const uint8_t RS_TURTLE_SUBTYPE_FT_SEARCH_RESULT		= 0x02 ;
 const uint8_t RS_TURTLE_SUBTYPE_OPEN_TUNNEL    			= 0x03 ;
 const uint8_t RS_TURTLE_SUBTYPE_TUNNEL_OK      			= 0x04 ;
 const uint8_t RS_TURTLE_SUBTYPE_FILE_REQUEST   			= 0x07 ;
@@ -27,6 +27,7 @@ const uint8_t RS_TURTLE_SUBTYPE_FILE_MAP                = 0x10 ;
 const uint8_t RS_TURTLE_SUBTYPE_FILE_MAP_REQUEST        = 0x11 ;
 const uint8_t RS_TURTLE_SUBTYPE_CHUNK_CRC               = 0x14 ;
 const uint8_t RS_TURTLE_SUBTYPE_CHUNK_CRC_REQUEST       = 0x15 ;
+const uint8_t RS_TURTLE_SUBTYPE_GXS_SEARCH_RESULT		= 0x16 ;
 
 // const uint8_t RS_TURTLE_SUBTYPE_FILE_CRC                = 0x12 ; // unused
 // const uint8_t RS_TURTLE_SUBTYPE_FILE_CRC_REQUEST        = 0x13 ;
@@ -49,7 +50,23 @@ class RsTurtleItem: public RsItem
 class RsTurtleSearchResultItem: public RsTurtleItem
 {
 	public:
-        RsTurtleSearchResultItem() : RsTurtleItem(RS_TURTLE_SUBTYPE_SEARCH_RESULT), request_id(0), depth(0) { setPriorityLevel(QOS_PRIORITY_RS_TURTLE_SEARCH_RESULT) ;}
+        RsTurtleSearchResultItem(uint8_t subtype) : RsTurtleItem(subtype), request_id(0), depth(0) { setPriorityLevel(QOS_PRIORITY_RS_TURTLE_SEARCH_RESULT) ;}
+
+		TurtleSearchRequestId request_id ;	// Randomly generated request id.
+
+		uint16_t depth ;					// The depth of a search result is obfuscated in this way:
+											// 	If the actual depth is 1, this field will be 1.
+											// 	If the actual depth is > 1, this field is a larger arbitrary integer.
+
+        virtual void clear() =0;
+		virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)=0;
+	protected:
+};
+
+class RsTurtleFTSearchResultItem: public RsTurtleSearchResultItem
+{
+	public:
+        RsTurtleFTSearchResultItem() : RsTurtleSearchResultItem(RS_TURTLE_SUBTYPE_FT_SEARCH_RESULT){}
 
 		TurtleSearchRequestId request_id ;	// Randomly generated request id.
 
@@ -61,7 +78,23 @@ class RsTurtleSearchResultItem: public RsTurtleItem
         void clear() { result.clear() ; }
 	protected:
 		void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
+};
 
+class RsTurtleGxsSearchResultItem: public RsTurtleSearchResultItem
+{
+	public:
+        RsTurtleGxsSearchResultItem() : RsTurtleSearchResultItem(RS_TURTLE_SUBTYPE_GXS_SEARCH_RESULT){}
+
+		TurtleSearchRequestId request_id ;	// Randomly generated request id.
+
+		uint16_t depth ;					// The depth of a search result is obfuscated in this way:
+											// 	If the actual depth is 1, this field will be 1.
+											// 	If the actual depth is > 1, this field is a larger arbitrary integer.
+		std::list<TurtleGxsInfo> result ;
+
+        void clear() { result.clear() ; }
+	protected:
+		void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 };
 
 class RsTurtleSearchRequestItem: public RsTurtleItem
