@@ -35,7 +35,7 @@
  *        to RsGxsNetService.
  *
  *        It is the responsibility of RsGxsNetService to activate/desactivate tunnels for each particular group, depending on wether the group
- *        is already available at friends or not.
+ *        is already available at regular friends or not.
  *
  *        Tunnel management is done at the level of groups rather than services, because we would like to keep the possibility to not
  *        request tunnels for some groups which do not need it, and only request tunnels for specific groups that cannot be provided
@@ -47,7 +47,6 @@
 //      * encrypt tunnel data using chacha20+HMAC-SHA256 using AEAD( GroupId, 96bits IV, tunnel ID ) (similar to what FT does)
 //      * when tunnel is established, exchange virtual peer names: vpid = H( GroupID | Random bias )
 //      * when vpid is known, notify the client (GXS net service) which can use the virtual peer to sync
-//
 //      * only use a single tunnel per virtual peer ID
 //                                                                                        -
 //              Client  ------------------ TR(H(GroupId)) -------------->  Server         |
@@ -67,7 +66,7 @@
 //              Client  <------------------- GXS Data ------------------>  Server         |
 //                                                                                        -
 //   Notes:
-//      * tunnels are established symetrically. If a distant peers wants to sync the same group, they'll have to open a single tunnel, with a different ID.
+//      * tunnels are established symmetrically. If a distant peers wants to sync the same group, they'll have to open a single tunnel, with a different ID.
 //        Groups therefore have two states:
 //          - managed : the group can be used to answer tunnel requests. If server tunnels are established, the group will be synced with these peers
 //          - tunneled: the group will actively request tunnels. If tunnels are established both ways, the same virtual peers will be used so the tunnels are "merged".
@@ -90,13 +89,18 @@
 //
 //      * virtual peers are also shared among services. This reduces the required amount of tunnels and tunnel requests to send.
 //
+//      * tunnels for a given service may also be used by the net service of p3IdService in order to explicitely request missing GxsIds.
+//        So GxsNetTunnel somehow allows different services to use the same tunnel. However we make sure that this traffic is limited to only p3IdService.
+//
 //   How do we know that a group needs distant sync?
 //		* look into GrpConfigMap for suppliers. Suppliers is cleared at load.
 //		* last_update_TS in GrpConfigMap is randomised so it cannot be used
 //      * we need a way to know that there's no suppliers for good reasons (not that we just started)
 //
 //   Security
-//      *
+//      * the question of sync-ing with distant anonymous peers is a bit tricky because these peers can try to generate fake requests or change which messages are available
+//        and there is no way to prevent it. We therefore rely on GXS data integrity system to prevent this to happen.
+//
 
 typedef RsPeerId RsGxsNetTunnelVirtualPeerId ;
 
@@ -128,8 +132,7 @@ struct RsGxsNetTunnelGroupInfo
 	enum GroupStatus {
 		    RS_GXS_NET_TUNNEL_GRP_STATUS_UNKNOWN            = 0x00,	// unknown status
 		    RS_GXS_NET_TUNNEL_GRP_STATUS_IDLE               = 0x01,	// no virtual peers requested, just waiting
-//		    RS_GXS_NET_TUNNEL_GRP_STATUS_TUNNELS_REQUESTED  = 0x02,	// virtual peers requested, and waiting for turtle to answer
-		    RS_GXS_NET_TUNNEL_GRP_STATUS_VPIDS_AVAILABLE    = 0x03	// some virtual peers are available. Data can be read/written
+		    RS_GXS_NET_TUNNEL_GRP_STATUS_VPIDS_AVAILABLE    = 0x02	// some virtual peers are available. Data can be read/written
 	};
 
 	enum GroupPolicy {
