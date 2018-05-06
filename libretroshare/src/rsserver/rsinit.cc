@@ -1019,7 +1019,7 @@ int RsServer::StartupRetroShare()
 			exit(1);
 		}
 
-		RestrictedUdpLayer *url = (RestrictedUdpLayer *) mDhtStack->getUdpLayer();
+		RestrictedUdpLayer *url = static_cast<RestrictedUdpLayer *>(mDhtStack->getUdpLayer());
 		url->addRestrictedPortRange(lport, uport);
 	}
 #else //LOCALNET_TESTING
@@ -1156,7 +1156,7 @@ int RsServer::StartupRetroShare()
 	/* portRestrictions already parsed */
 	if (doPortRestrictions)
 	{
-		RestrictedUdpLayer *url = (RestrictedUdpLayer *) mProxyStack->getUdpLayer();
+		RestrictedUdpLayer *url = static_cast<RestrictedUdpLayer *>(mProxyStack->getUdpLayer());
 		url->addRestrictedPortRange(lport, uport);
 	}
 #else
