@@ -55,7 +55,10 @@ public:
 class MsgLocMetaData {
 
 public:
-    MsgLocMetaData(const MsgLocMetaData& meta){ msgId = meta.msgId; val = meta.val;}
+	MsgLocMetaData(const MsgLocMetaData& meta)
+	  : msgId (meta.msgId)
+	  , val (meta.val)
+	{}
     MsgLocMetaData() {}
     MsgLocMetaData& operator =(const MsgLocMetaData& meta) { msgId = meta.msgId; val = meta.val; return *this;}
 
@@ -72,7 +75,10 @@ typedef std::map<RsGxsGroupId,RsGxsGrpMetaData*> RsGxsGrpMetaTemporaryMap;
 class GrpLocMetaData {
 
 public:
-    GrpLocMetaData(const GrpLocMetaData& meta){ grpId = meta.grpId; val = meta.val;}
+	GrpLocMetaData(const GrpLocMetaData& meta)
+	  : grpId (meta.grpId)
+	  , val (meta.val)
+	{}
     GrpLocMetaData(){}
     GrpLocMetaData& operator =(const GrpLocMetaData& meta) { grpId = meta.grpId; val = meta.val; return *this;}
 
