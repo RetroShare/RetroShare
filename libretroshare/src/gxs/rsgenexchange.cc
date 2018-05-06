@@ -716,7 +716,7 @@ int RsGenExchange::createMessage(RsNxsMsg* msg)
 	std::cerr << "RsGenExchange::createMessage() " << std::endl;
 #endif
 	RsGxsGrpMetaTemporaryMap  metaMap ;
-	metaMap.insert(std::make_pair(id, (RsGxsGrpMetaData*)(NULL)));
+	metaMap.insert(std::make_pair(id, static_cast<RsGxsGrpMetaData*>(NULL)));
 	mDataStore->retrieveGxsGrpMetaData(metaMap);
 
 	RsGxsMsgMetaData &meta = *(msg->metaData);
@@ -2082,7 +2082,7 @@ bool RsGenExchange::processGrpMask(const RsGxsGroupId& grpId, ContentValue &grpC
 
 	RsGxsGrpMetaTemporaryMap grpMetaMap;
     std::map<RsGxsGroupId, RsGxsGrpMetaData* >::iterator mit;
-    grpMetaMap.insert(std::make_pair(grpId, (RsGxsGrpMetaData*)(NULL)));
+    grpMetaMap.insert(std::make_pair(grpId, static_cast<RsGxsGrpMetaData*>(NULL)));
 
     mDataStore->retrieveGxsGrpMetaData(grpMetaMap);
 
@@ -2349,7 +2349,7 @@ void RsGenExchange::processGroupUpdatePublish()
 	{
 		GroupUpdatePublish& gup = *vit;
 		const RsGxsGroupId& groupId = gup.grpItem->meta.mGroupId;
-		grpMeta.insert(std::make_pair(groupId, (RsGxsGrpMetaData*)(NULL)));
+		grpMeta.insert(std::make_pair(groupId, static_cast<RsGxsGrpMetaData*>(NULL)));
 	}
 
 	if(grpMeta.empty())
