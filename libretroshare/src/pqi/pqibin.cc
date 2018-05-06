@@ -544,10 +544,9 @@ void printNetBinID(std::ostream &out, const RsPeerId& id, uint32_t t)
 const uint32_t DEFAULT_DUMMY_DELTA 	= 5;
 
 NetBinDummy::NetBinDummy(PQInterface *parent, const RsPeerId& id, uint32_t t)
-       :NetBinInterface(parent, id), type(t), dummyConnected(false), toConnect(false), connectDelta(DEFAULT_DUMMY_DELTA)
-{ 
-	return; 
-}
+  : NetBinInterface(parent, id), type(t), dummyConnected(false), toConnect(false)
+  , connectDelta(DEFAULT_DUMMY_DELTA), connectTS(0)
+{}
 
 	// Net Interface
 int NetBinDummy::connect(const struct sockaddr_storage &raddr)
