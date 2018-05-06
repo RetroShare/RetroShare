@@ -102,8 +102,8 @@ class PeerConnectStateBox
 	uint32_t connectCb_direct();
 	uint32_t connectCb_unreachable();
 
-	void errorMsg(std::ostream &out, std::string msg, uint32_t updateParam);
-	void stateMsg(std::ostream &out, std::string msg, uint32_t updateParam);
+	void errorMsg(std::ostream &out, const std::string &msg, uint32_t updateParam);
+	void stateMsg(std::ostream &out, const std::string &msg, uint32_t updateParam);
 
 
 	uint32_t mState;

@@ -220,7 +220,7 @@ std::string UpdateAsString(uint32_t update)
 	return str;
 }
 
-void PeerConnectStateBox::errorMsg(std::ostream &out, std::string msg, uint32_t updateParam)
+void PeerConnectStateBox::errorMsg(std::ostream &out, const std::string &msg, uint32_t updateParam)
 {
 	out << "PeerConnectStateBox::ERROR " << msg;
 	out << " NetState: " << NetStateAsString(mNetState);
@@ -231,7 +231,7 @@ void PeerConnectStateBox::errorMsg(std::ostream &out, std::string msg, uint32_t 
 }
 
 
-void PeerConnectStateBox::stateMsg(std::ostream &out, std::string msg, uint32_t updateParam)
+void PeerConnectStateBox::stateMsg(std::ostream &out, const std::string &msg, uint32_t updateParam)
 {
 	out << "PeerConnectStateBox::MSG " << msg;
 	out << " NetState: " << NetStateAsString(mNetState);
