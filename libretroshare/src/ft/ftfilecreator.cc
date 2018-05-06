@@ -551,7 +551,6 @@ bool ftFileCreator::getMissingChunk(const RsPeerId& peer_id,uint32_t size_hint,u
 	mChunks[chunk.offset] = chunk ;
 
 	offset = chunk.offset ;
-	// cppcheck-suppress unreadVariable
 	size = chunk.size ;
 
 	++chunks_for_this_peer ;	// increase number of chunks for this peer.
