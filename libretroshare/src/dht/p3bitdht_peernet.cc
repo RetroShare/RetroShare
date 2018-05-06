@@ -1145,17 +1145,16 @@ int p3BitDht::doActions()
 
 	time_t now = time(NULL);
 
-	while(mActions.size() > 0)
+	while(!mActions.empty())
 	{
 		PeerAction action;
 
 		{
-			RsStackMutex stack(dhtMtx); /********** LOCKED MUTEX ***************/	
-
-			if (mActions.size() < 1)
-			{
+			RsStackMutex stack(dhtMtx); /********** LOCKED MUTEX ***************/
+			//Should be empty while waiting mutex.
+			// cppcheck-suppress oppositeInnerCondition
+			if (mActions.empty())
 				break;
-			}
 
 			action = mActions.front();
 			mActions.pop_front();
@@ -1494,7 +1493,7 @@ int p3BitDht::doActions()
 						dpd->mPeerCbTS = now;
 					}
 					// Not an error if AUTH_DENIED - cos we don't know them! (so won't be in peerList).
-					else if (action.mAnswer | BITDHT_CONNECT_ERROR_AUTH_DENIED)
+					else if (action.mAnswer & BITDHT_CONNECT_ERROR_AUTH_DENIED)
 					{
 #ifdef DEBUG_PEERNET
 						std::cerr << "PeerAction Authorise Connection ";			

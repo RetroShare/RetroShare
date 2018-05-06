@@ -105,16 +105,23 @@ class DhtPeerDetails
 
 class PeerAction
 {
-        public:
+public:
+	PeerAction()
+	  : mType(0)
+	  , mMode(0)
+	  , mPoint(0)
+	  , mAnswer(0)
+	  , mDelayOrBandwidth(0)
+	{}
 
-        uint32_t mType;
-        bdId mSrcId;
-        bdId mProxyId;
-        bdId mDestId;
-        uint32_t mMode;
-        uint32_t mPoint;
-        uint32_t mAnswer;
-        uint32_t mDelayOrBandwidth;
+	uint32_t mType;
+	bdId mSrcId;
+	bdId mProxyId;
+	bdId mDestId;
+	uint32_t mMode;
+	uint32_t mPoint;
+	uint32_t mAnswer;
+	uint32_t mDelayOrBandwidth;
 };
 
 
