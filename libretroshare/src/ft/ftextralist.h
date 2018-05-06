@@ -78,8 +78,8 @@ class FileDetails
 		}
 
 		FileDetails(FileInfo &i, uint32_t /*p*/, TransferRequestFlags f)
+		  : info(i)
 		{
-			info = i;
     //		period = p;
 			info.transfer_info_flags = f;
 		}
