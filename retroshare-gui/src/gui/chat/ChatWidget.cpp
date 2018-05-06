@@ -389,7 +389,7 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
                     name = QString::fromUtf8(historyIt->peerName.c_str());
                 }
 
-                addChatMsg(historyIt->incoming, name, QDateTime::fromTime_t(historyIt->sendTime), QDateTime::fromTime_t(historyIt->recvTime), QString::fromUtf8(historyIt->message.c_str()), MSGTYPE_HISTORY);
+                addChatMsg(historyIt->incoming, name, RsGxsId(historyIt->peerName.c_str()), QDateTime::fromTime_t(historyIt->sendTime), QDateTime::fromTime_t(historyIt->recvTime), QString::fromUtf8(historyIt->message.c_str()), MSGTYPE_HISTORY);
             }
 		}
 	}
