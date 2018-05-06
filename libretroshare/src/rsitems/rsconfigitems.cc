@@ -195,11 +195,9 @@ void RsPeerStunItem::serial_process(RsGenericSerializer::SerializeJob j,RsGeneri
 
 
 RsNodeGroupItem::RsNodeGroupItem(const RsGroupInfo& g)
-    :RsItem(RS_PKT_VERSION1, RS_PKT_CLASS_CONFIG, RS_PKT_TYPE_PEER_CONFIG, RS_PKT_SUBTYPE_NODE_GROUP)
+  : RsItem(RS_PKT_VERSION1, RS_PKT_CLASS_CONFIG, RS_PKT_TYPE_PEER_CONFIG, RS_PKT_SUBTYPE_NODE_GROUP)
+  , id(g.id), name(g.name), flag(g.flag)
 {
-    id = g.id ;
-    name = g.name ;
-    flag = g.flag ;
     pgpList.ids = g.peerIds;
 }
 
