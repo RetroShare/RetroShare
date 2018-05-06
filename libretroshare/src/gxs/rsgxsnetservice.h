@@ -87,7 +87,7 @@ public:
     RsGxsNetService(uint16_t servType, RsGeneralDataService *gds,
       	          RsNxsNetMgr *netMgr,
       			  RsNxsObserver *nxsObs,  // used to be = NULL.
-      			  const RsServiceInfo serviceInfo,
+      			  const RsServiceInfo& serviceInfo,
       			  RsGixsReputation* reputations = NULL, RsGcxs* circles = NULL, RsGixs *gixs=NULL,
       			  PgpAuxUtils *pgpUtils = NULL,
       			  bool grpAutoSync = true, bool msgAutoSync = true,

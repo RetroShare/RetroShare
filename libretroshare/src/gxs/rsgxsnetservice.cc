@@ -312,7 +312,7 @@ const uint32_t RsGxsNetService::FRAGMENT_SIZE = 150000;
 
 RsGxsNetService::RsGxsNetService(uint16_t servType, RsGeneralDataService *gds,
                                  RsNxsNetMgr *netMgr, RsNxsObserver *nxsObs,
-                                 const RsServiceInfo serviceInfo,
+                                 const RsServiceInfo& serviceInfo,
                                  RsGixsReputation* reputations, RsGcxs* circles, RsGixs *gixs,
                                  PgpAuxUtils *pgpUtils, bool grpAutoSync, bool msgAutoSync, uint32_t default_store_period, uint32_t default_sync_period)
                                  : p3ThreadedService(), p3Config(), mTransactionN(0),
