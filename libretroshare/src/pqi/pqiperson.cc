@@ -38,10 +38,11 @@ static struct RsLog::logInfo pqipersonzoneInfo = {RsLog::Default, "pqiperson"};
  * #define PERSON_DEBUG 1
  ****/
 
-pqiperson::pqiperson(const RsPeerId& id, pqipersongrp *pg) :
-	PQInterface(id), mNotifyMtx("pqiperson-notify"), mPersonMtx("pqiperson"),
-	active(false), activepqi(NULL), inConnectAttempt(false),// waittimes(0),
-	pqipg(pg) {} // TODO: must check id!
+pqiperson::pqiperson(const RsPeerId& id, pqipersongrp *pg)
+  : PQInterface(id), mNotifyMtx("pqiperson-notify"), mPersonMtx("pqiperson")
+  , active(false), activepqi(NULL), inConnectAttempt(false)//, waittimes(0)
+  , lastHeartbeatReceived(0), pqipg(pg)
+{} // TODO: must check id!
 
 pqiperson::~pqiperson()
 {
@@ -108,7 +109,7 @@ bool pqiperson::RecvItem(RsItem *item)
 	std::cerr << "pqiperson::RecvItem()" << std::endl;
 #endif
 
-	return pqipg->recvItem((RsRawItem *) item);
+	return pqipg->recvItem(static_cast<RsRawItem *>(item));
 }
 
 
