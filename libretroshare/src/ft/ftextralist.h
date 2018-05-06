@@ -121,8 +121,8 @@ public:
 	                         uint64_t size, uint32_t period, TransferRequestFlags flags);
 
 	bool		removeExtraFile(const RsFileHash& hash, TransferRequestFlags flags);
-	bool 		moveExtraFile(std::string fname, const RsFileHash& hash, uint64_t size,
-	                          std::string destpath);
+	bool 		moveExtraFile(const std::string& fname, const RsFileHash& hash, uint64_t size
+	                    , const std::string& destpath);
 
 
 	/***

@@ -57,7 +57,7 @@ void ftExtraList::data_tick()
     {
         RsStackMutex stack(extMutex);
 
-        todo = (mToHash.size() > 0);
+        todo = (!mToHash.empty());
     }
 
     if (todo)
@@ -200,8 +200,8 @@ bool ftExtraList::removeExtraFile(const RsFileHash& hash, TransferRequestFlags f
 	return true;
 }
 
-bool ftExtraList::moveExtraFile(std::string fname, const RsFileHash &hash, uint64_t /*size*/,
-                                std::string destpath)
+bool ftExtraList::moveExtraFile(const std::string& fname, const RsFileHash &hash, uint64_t /*size*/
+                              , const std::string& destpath)
 {
 	RsStackMutex stack(extMutex);
 
