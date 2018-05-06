@@ -93,8 +93,10 @@ static const std::string kConfigKeyProxyServerPortI2P = "PROXY_SERVER_PORT_I2P";
 void  printConnectState(std::ostream &out, peerState &peer);
 
 peerState::peerState()
-	:netMode(RS_NET_MODE_UNKNOWN), vs_disc(RS_VS_DISC_FULL), vs_dht(RS_VS_DHT_FULL), lastcontact(0), 
-	 hiddenNode(false), hiddenPort(0), hiddenType(RS_HIDDEN_TYPE_NONE)
+  : netMode(RS_NET_MODE_UNKNOWN), vs_disc(RS_VS_DISC_FULL), vs_dht(RS_VS_DHT_FULL)
+  , lastcontact(0)
+  , hiddenNode(false), hiddenPort(0), hiddenType(RS_HIDDEN_TYPE_NONE)
+  , maxUpRate(0), maxDnRate(0)
 {
         sockaddr_storage_clear(localaddr);
         sockaddr_storage_clear(serveraddr);
