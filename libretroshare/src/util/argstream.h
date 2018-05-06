@@ -242,7 +242,7 @@ namespace
 	{
 		public:
 			inline argstream(int argc,char** argv);
-			inline argstream(const char* c);
+			inline explicit argstream(const char* c);
 			template<class T>
 				friend argstream& operator>>(argstream& s,const ValueHolder<T>& v);
 			friend inline argstream& operator>>(argstream& s,const OptionHolder& v);
@@ -431,19 +431,20 @@ namespace
 	// Implementation of argstream
 	//************************************************************
 	inline
-		argstream::argstream(int argc,char** argv)
-		: progName_(argv[0]),
-		minusActive_(true),
-		isOk_(true),
-		helpRequested_(false)
+	argstream::argstream(int argc,char** argv)
+	  : progName_(argv[0])
+	  , minusActive_(true)
+	  , isOk_(true)
+	  , helpRequested_(false)
 	{
 		parse(argc,argv);
 	}
 	inline
-		argstream::argstream(const char* c)
-		: progName_(""),
-		minusActive_(true),
-		isOk_(true)
+	argstream::argstream(const char* c)
+	  : progName_("")
+	  , minusActive_(true)
+	  , isOk_(true)
+	  , helpRequested_(false)
 	{
 		std::string s(c);
 		// Build argc, argv from s. We must add a dummy first element for
