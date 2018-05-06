@@ -647,7 +647,7 @@ bool p3BanList::processIncoming()
 			case RS_PKT_SUBTYPE_BANLIST_ITEM:
 			{
 				// Order is important!.	
-				updated = (recvBanItem((RsBanListItem *) item) || updated);
+				updated = (recvBanItem(static_cast<RsBanListItem *>(item)) || updated);
 			}
 				break;
 		}
