@@ -282,7 +282,7 @@ int p3MsgService::incomingMsgs()
 	RsMsgItem *mi;
 	int i = 0;
 
-	while((mi = (RsMsgItem *) recvItem()) != NULL)
+	while((mi = static_cast<RsMsgItem *>(recvItem())) != NULL)
 	{
 		handleIncomingItem(mi) ;
 		++i ;
