@@ -88,16 +88,13 @@ ftFileControl::ftFileControl()
 	return;
 }
 
-ftFileControl::ftFileControl(std::string fname,
-		std::string tmppath, std::string dest,
-        uint64_t size, const RsFileHash &hash, TransferRequestFlags flags,
-		ftFileCreator *fc, ftTransferModule *tm)
-	:mName(fname), mCurrentPath(tmppath), mDestination(dest),
-	 mTransfer(tm), mCreator(fc), mState(DOWNLOADING), mHash(hash),
-	 mSize(size), mFlags(flags), mCreateTime(0), mQueuePriority(0), mQueuePosition(0)
-{
-    return;
-}
+ftFileControl::ftFileControl(const std::string& fname, const std::string& tmppath, const std::string& dest
+                           , uint64_t size, const RsFileHash &hash, TransferRequestFlags flags
+                           , ftFileCreator *fc, ftTransferModule *tm)
+  : mName(fname), mCurrentPath(tmppath), mDestination(dest)
+  , mTransfer(tm), mCreator(fc), mState(DOWNLOADING), mHash(hash)
+  , mSize(size), mFlags(flags), mCreateTime(0), mQueuePriority(0), mQueuePosition(0)
+{}
 
 ftController::ftController(ftDataMultiplex *dm, p3ServiceControl *sc, uint32_t ftServiceId)
   : p3Config(),
@@ -1479,7 +1476,7 @@ bool 	ftController::setPartialsDirectory(std::string path)
 
         path = RsDirUtil::convertPathToUnix(path);
 
-        if (!path.find(mDownloadPath)) {
+        if (path.find(mDownloadPath) == std::string::npos) {
             return false;
         }
 
@@ -1488,7 +1485,7 @@ bool 	ftController::setPartialsDirectory(std::string path)
             std::list<SharedDirInfo> dirs;
             rsFiles->getSharedDirectories(dirs);
             for (it = dirs.begin(); it != dirs.end(); ++it) {
-                if (!path.find((*it).filename)) {
+                if (path.find((*it).filename) == std::string::npos) {
                     return false;
                 }
             }
