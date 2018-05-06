@@ -33,10 +33,8 @@
 /************************************* RsTlvBanListEntry ************************************/
 
 RsTlvBanListEntry::RsTlvBanListEntry()
-	:RsTlvItem(), level(0), reason(0), age(0)
-{
-	return;
-}
+  : RsTlvItem(), level(0), reason(0), age(0), masked_bytes(0)
+{}
 
 void RsTlvBanListEntry::TlvClear()
 {
