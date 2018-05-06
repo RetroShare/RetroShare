@@ -103,6 +103,7 @@ public:
       , last_sent_TS(0)
       , last_tunnel_request_TS(0)
       , sending_attempts(0)
+      , client_id(0)
       , routing_flags(0)
       , data_item(NULL)
       , receipt_item(NULL)
