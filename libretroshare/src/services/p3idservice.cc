@@ -2014,7 +2014,7 @@ std::string SSGxsIdReputation::save() const
 
 bool SSGxsIdCumulator::load(const std::string &input)
 {
-    return (4 == sscanf(input.c_str(), "%d %d %lf %lf", &count, &nullcount, &sum, &sumsq));
+    return (4 == sscanf(input.c_str(), "%ud %ud %lf %lf", &count, &nullcount, &sum, &sumsq));
 }
 
 std::string SSGxsIdCumulator::save() const
@@ -3882,7 +3882,7 @@ bool p3IdService::recogn_handlerequest(uint32_t token)
 bool p3IdService::recogn_process()
 {
 	/* each time this is called - process one Id from mGroupsToProcess */
-	RsGxsIdGroupItem *item;
+	RsGxsIdGroupItem *item = NULL;
 	bool isDone = false;
 	{
 		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
@@ -3913,7 +3913,8 @@ bool p3IdService::recogn_process()
 		return true;
 	}
 	
-
+	if (!item)
+		return false;
 
 	std::list<RsGxsRecognTagItem *> tagItems;
 	std::list<RsGxsRecognTagItem *>::iterator it;
@@ -3982,7 +3983,7 @@ bool p3IdService::recogn_checktag(const RsGxsId &id, const std::string &nickname
 		std::cerr << std::endl;
 		std::cerr << "p3IdService::recogn_checktag() item: ";
 		std::cerr << std::endl;
-		((RsGxsRecognTagItem *) item)->print(std::cerr);
+		(static_cast<RsGxsRecognTagItem *>(item))->print(std::cerr);
 #endif // DEBUG_RECOGN
 
 	// To check:
