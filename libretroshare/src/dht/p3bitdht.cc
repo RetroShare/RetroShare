@@ -217,7 +217,7 @@ void    p3BitDht::setupPeerSharer(pqiNetAssistPeerShare *sharer)
 	/* Tweak the DHT Parameters */
 void 	p3BitDht::modifyNodesPerBucket(uint16_t count)
 {
-	bdModDht *modFns = (bdModDht *) mDhtFns;
+	bdModDht *modFns = static_cast<bdModDht *>(mDhtFns);
 	modFns->setNodesPerBucket(count);
 }
 
