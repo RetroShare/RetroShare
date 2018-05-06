@@ -88,7 +88,9 @@ ftFileControl::ftFileControl()
 	return;
 }
 
-ftFileControl::ftFileControl(const std::string& fname, const std::string& tmppath, const std::string& dest
+ftFileControl::ftFileControl(const std::string& fname
+                           , const std::string& tmppath
+                           , const std::string& dest
                            , uint64_t size, const RsFileHash &hash, TransferRequestFlags flags
                            , ftFileCreator *fc, ftTransferModule *tm)
   : mName(fname), mCurrentPath(tmppath), mDestination(dest)
