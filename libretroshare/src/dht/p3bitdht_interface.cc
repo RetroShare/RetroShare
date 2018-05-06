@@ -63,7 +63,7 @@ int      p3BitDht::getDhtPeers(int lvl, std::list<RsDhtPeer> &peers)
 
 		peers.push_back(peer);
 	}
-	return (int_peers.entries.size() > 0);
+	return (!int_peers.entries.empty());
 }
 
 int      p3BitDht::getNetPeerList(std::list<RsPeerId> &peerIds)
@@ -363,10 +363,14 @@ RsDhtPeer::RsDhtPeer()
 }
 
 
-RsDhtNetPeer::RsDhtNetPeer() 
-{
-	return;
-}
+RsDhtNetPeer::RsDhtNetPeer()
+  : mPeerType(0)
+  , mDhtState(0)
+  , mPeerConnectState(0)
+  , mPeerConnectMode(0)
+  , mExclusiveProxyLock(false)
+  , mPeerReqState(0)
+{}
 
 
 RsDhtRelayEnd::RsDhtRelayEnd()
