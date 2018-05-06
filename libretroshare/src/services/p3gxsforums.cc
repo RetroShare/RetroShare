@@ -639,7 +639,7 @@ bool p3GxsForums::generateMessage(uint32_t &token, const RsGxsGroupId &grpId, co
 }
 
 
-bool p3GxsForums::generateGroup(uint32_t &token, std::string groupName)
+bool p3GxsForums::generateGroup(uint32_t &token, const std::string& groupName)
 {
 	/* generate a new forum */
 	RsGxsForumGroup forum;
