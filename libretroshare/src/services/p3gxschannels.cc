@@ -1660,7 +1660,7 @@ bool p3GxsChannels::generateVote(uint32_t &token, const RsGxsGroupId &grpId, con
 }
 
 
-bool p3GxsChannels::generateGroup(uint32_t &token, std::string groupName)
+bool p3GxsChannels::generateGroup(uint32_t &token, const std::string& groupName)
 {
 	/* generate a new channel */
 	RsGxsChannelGroup channel;

@@ -201,7 +201,7 @@ bool generateComment(uint32_t &token, const RsGxsGroupId &grpId,
 bool generateVote(uint32_t &token, const RsGxsGroupId &grpId, 
 		const RsGxsMessageId &parentId, const RsGxsMessageId &threadId);
 
-bool generateGroup(uint32_t &token, std::string groupName);
+bool generateGroup(uint32_t &token, const std::string& groupName);
 
 	class ChannelDummyRef
 	{
