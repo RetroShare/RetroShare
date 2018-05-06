@@ -98,13 +98,14 @@ static double getCurrentTS()
 }
 
 pqistreamer::pqistreamer(RsSerialiser *rss, const RsPeerId& id, BinInterface *bio_in, int bio_flags_in)
-	:PQInterface(id), mStreamerMtx("pqistreamer"),
-	mBio(bio_in), mBio_flags(bio_flags_in), mRsSerialiser(rss), 
-	mPkt_wpending(NULL), mPkt_wpending_size(0),
-	mTotalRead(0), mTotalSent(0),
-	mCurrRead(0), mCurrSent(0),
-	mAvgReadCount(0), mAvgSentCount(0),
-	mAvgDtOut(0), mAvgDtIn(0)
+  : PQInterface(id), mStreamerMtx("pqistreamer")
+  , mBio(bio_in), mBio_flags(bio_flags_in), mRsSerialiser(rss)
+  , mPkt_wpending(NULL), mPkt_wpending_size(0)
+  , mTotalRead(0), mTotalSent(0)
+  , mCurrRead(0), mCurrSent(0)
+  , mAvgReadCount(0), mAvgSentCount(0)
+  , mAvgDtOut(0), mAvgDtIn(0)
+  , mLastIncomingTs(0)
 {
 
     // 100 B/s (minimal)
