@@ -48,7 +48,7 @@ template<int n> class t_RsFlags32
 		friend std::ostream& operator<<(std::ostream& o,const t_RsFlags32<n>& f) 	// friendly print with 0 and I
 		{
 			for(int i=31;i>=0;--i) {
-				std::string res = f._bits&(1<<i)?"I":"0" ;
+				std::string res = (f._bits & (1u<<i)) ? "I" : "0" ;
 				std::string blank = " " ;
 				o << res ;
 				if(i%8==0) o << blank ;
