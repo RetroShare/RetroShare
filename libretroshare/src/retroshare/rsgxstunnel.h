@@ -73,6 +73,15 @@ public:
     {
     public:
 	    // Tunnel information
+		GxsTunnelInfo()
+		  : tunnel_status(0)
+		  , total_size_sent(0)
+		  , total_size_received(0)
+		  , is_client_side(false)
+		  , pending_data_packets(0)
+		  , total_data_packets_sent(0)
+		  , total_data_packets_received(0)
+		{}
 
 	    RsGxsTunnelId tunnel_id ;
 	    RsGxsId  destination_gxs_id ;        // GXS Id we're talking to
