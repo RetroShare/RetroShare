@@ -559,6 +559,7 @@ bool RsPluginManager::saveList(bool& cleanup, std::list<RsItem*>& list)
 
 RsPQIService::RsPQIService(uint16_t /*service_type*/, uint32_t /*tick_delay_in_seconds*/, RsPluginHandler* /*pgHandler*/)
 	: p3Service(),p3Config()
+	, _tick_delay_in_seconds(0)
 {
 }
 
