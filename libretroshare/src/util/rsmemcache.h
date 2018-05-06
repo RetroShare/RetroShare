@@ -84,7 +84,7 @@ private:
 	{
 	public:
 		cache_data(): ts(0) {}
-		cache_data(Key in_key, Value in_data, time_t in_ts)
+		cache_data(Key in_key, const Value &in_data, time_t in_ts)
 		        :key(in_key), data(in_data), ts(in_ts) {}
 		Key key;
 		Value data;
