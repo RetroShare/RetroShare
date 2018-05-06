@@ -174,7 +174,7 @@ bool 	updateFilterByPeer_locked(const RsPeerId &peerId);
 bool createDefaultPermissions_locked(uint32_t serviceId, const std::string& serviceName, bool defaultOn);
 bool peerHasPermissionForService_locked(const RsPeerId &peerId, uint32_t serviceId);
 
-	p3LinkMgr *mLinkMgr;
+	//p3LinkMgr *mLinkMgr; //Defined in pqiMonitor
 	const RsPeerId mOwnPeerId; // const from constructor
 
 	RsMutex mCtrlMtx; /* below is protected */

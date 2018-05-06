@@ -86,12 +86,13 @@ public:
 RsServiceControl *rsServiceControl = NULL;
 
 p3ServiceControl::p3ServiceControl(p3LinkMgr *linkMgr)
-  : RsServiceControl(), p3Config(),
-    mLinkMgr(linkMgr), mOwnPeerId(linkMgr->getOwnId()),
+  : RsServiceControl(), pqiMonitor(), p3Config(),
+    mOwnPeerId(linkMgr->getOwnId()),
     mCtrlMtx("p3ServiceControl"), mMonitorMtx("P3ServiceControl::Monitor"),
     mServiceServer(NULL)
 {
-    mSerialiser = new ServiceControlSerialiser ;
+	setLinkMgr(linkMgr);
+	mSerialiser = new ServiceControlSerialiser ;
 }
 
 RsSerialiser *p3ServiceControl::setupSerialiser()
