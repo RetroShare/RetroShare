@@ -1299,7 +1299,7 @@ void p3discovery2::setGPGOperation(AuthGPGOperation *operation)
 	AuthGPGOperationLoadOrSave *loadOrSave = dynamic_cast<AuthGPGOperationLoadOrSave*>(operation);
 	if (loadOrSave) 
 	{
-		RsDiscPgpCertItem *item = (RsDiscPgpCertItem *) loadOrSave->m_userdata;
+		RsDiscPgpCertItem *item = static_cast<RsDiscPgpCertItem *>(loadOrSave->m_userdata);
 		if (!item)
 		{
 			return;
