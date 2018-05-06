@@ -104,14 +104,20 @@ peerAddrInfo::peerAddrInfo()
 }
 
 peerConnectState::peerConnectState()
-	: connecttype(0),
-	 lastavailable(0),
-         lastattempt(0),
-         name(""),
-         state(0), actions(0),
-	 source(0), 
-	 inConnAttempt(0), 
-	 wasDeniedConnection(false), deniedTS(false), deniedInConnAttempt(false)
+  : dhtVisible(false)
+  , connecttype(0)
+  , actAsServer(false)
+  , lastavailable(0)
+  , lastattempt(0)
+  , name("")
+  , state(0)
+  , actions(0)
+  , linkType(0)
+  , source(0)
+  , inConnAttempt(false)
+  , wasDeniedConnection(false)
+  , deniedTS(0)
+  , deniedInConnAttempt(false)
 {
 }
 
@@ -132,7 +138,8 @@ std::string textPeerConnectState(peerConnectState &state)
 
 
 p3LinkMgrIMPL::p3LinkMgrIMPL(p3PeerMgrIMPL *peerMgr, p3NetMgrIMPL *netMgr)
-	:mPeerMgr(peerMgr), mNetMgr(netMgr), mLinkMtx("p3LinkMgr"),mStatusChanged(false)
+  : mPeerMgr(peerMgr), mNetMgr(netMgr), mLinkMtx("p3LinkMgr")
+  , mStatusChanged(false), mAllowTunnelConnection(false)
 {
 
 	{
@@ -806,6 +813,7 @@ bool p3LinkMgrIMPL::connectResult(const RsPeerId &id, bool success, bool isIncom
 
 		/* now we can tell if we think we were connected - proper point to log */
 
+#ifdef LINKMGR_DEBUG_LOG
 		{
 			std::string out = "p3LinkMgrIMPL::connectResult() id: " + id.toStdString();
 			if (success) 
@@ -827,10 +835,9 @@ bool p3LinkMgrIMPL::connectResult(const RsPeerId &id, bool success, bool isIncom
 					out += " FAILED ATTEMPT (Not Connected)";
 				}
 			}
-#ifdef LINKMGR_DEBUG_LOG
 			rslog(RSL_WARNING, p3connectzone, out);
-#endif
 		}
+#endif
 
 
 
@@ -2033,7 +2040,7 @@ bool  p3LinkMgrIMPL::locked_ConnectAttempt_Complete(peerConnectState *peer)
 	}
 
 	/* start a connection attempt */
-	if (peer->connAddrs.size() > 0) 
+	if (!peer->connAddrs.empty())
 	{
 #ifdef LINKMGR_DEBUG
 		std::string out = "p3LinkMgrIMPL::locked_ConnectAttempt_Complete() Started CONNECT ATTEMPT!\n" ;
