@@ -35,7 +35,7 @@ bool p3Notify::NotifySysMessage(uint32_t &sysid, uint32_t &type,
 					std::string &title, std::string &msg)
 {
 	RsStackMutex stack(noteMtx); /************* LOCK MUTEX ************/
-	if (pendingSysMsgs.size() > 0)
+	if (!pendingSysMsgs.empty())
 	{
 		p3NotifySysMsg smsg = pendingSysMsgs.front();
 		pendingSysMsgs.pop_front();
@@ -56,7 +56,7 @@ bool p3Notify::NotifyLogMessage(uint32_t &sysid, uint32_t &type,
 					std::string &title, std::string &msg)
 {
 	RsStackMutex stack(noteMtx); /************* LOCK MUTEX ************/
-	if (pendingLogMsgs.size() > 0)
+	if (!pendingLogMsgs.empty())
 	{
 		p3NotifyLogMsg smsg = pendingLogMsgs.front();
 		pendingLogMsgs.pop_front();
@@ -76,7 +76,7 @@ bool p3Notify::NotifyLogMessage(uint32_t &sysid, uint32_t &type,
 bool p3Notify::NotifyPopupMessage(uint32_t &ptype, std::string &name, std::string &title, std::string &msg)
 {
 	RsStackMutex stack(noteMtx); /************* LOCK MUTEX ************/
-	if (pendingPopupMsgs.size() > 0)
+	if (!pendingPopupMsgs.empty())
 	{
 		p3NotifyPopupMsg pmsg = pendingPopupMsgs.front();
 		pendingPopupMsgs.pop_front();
@@ -176,7 +176,7 @@ bool p3Notify::AddLogMessage(uint32_t sysid, uint32_t type, const std::string& t
 bool p3Notify::GetFeedItem(RsFeedItem &item)
 {
 	RsStackMutex stack(noteMtx); /************* LOCK MUTEX ************/
-	if (pendingNewsFeed.size() > 0)
+	if (!pendingNewsFeed.empty())
 	{
 		item = pendingNewsFeed.front();
 		pendingNewsFeed.pop_front();
