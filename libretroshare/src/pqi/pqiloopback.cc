@@ -64,7 +64,7 @@ int	pqiloopback::SendItem(RsItem *i)
 
 RsItem * 	pqiloopback::GetItem()
 {
-	if (objs.size() > 0)
+	if (!objs.empty())
 	{
 		RsItem *pqi = objs.front();
 		objs.pop_front();
