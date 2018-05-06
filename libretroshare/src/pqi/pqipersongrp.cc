@@ -448,7 +448,7 @@ int     pqipersongrp::removePeer(const RsPeerId& id)
 	if (it != mods.end())
 	{
 		SearchModule *mod = it->second;
-		pqiperson *p = (pqiperson *) mod -> pqi;
+		pqiperson *p = static_cast<pqiperson *>(mod -> pqi);
 		p -> stoplistening();
 		pqioutput(PQL_WARNING, pqipersongrpzone, "pqipersongrp::removePeer() => reset() called before deleting person");
 		p -> reset();
@@ -479,7 +479,7 @@ int pqipersongrp::tagHeartbeatRecvd(const RsPeerId& id)
         if (it != mods.end())
         {
                 SearchModule *mod = it->second;
-                pqiperson *p = (pqiperson *) mod -> pqi;
+		pqiperson *p = static_cast<pqiperson *>(mod -> pqi);
 		p->receiveHeartbeat();
 		return 1;
         }
@@ -520,7 +520,7 @@ int     pqipersongrp::connectPeer(const RsPeerId& id
 	}
 	/* get the connect attempt details from the p3connmgr... */
 	SearchModule *mod = it->second;
-	pqiperson *p = (pqiperson *) mod -> pqi;
+	pqiperson *p = static_cast<pqiperson *>(mod -> pqi);
 
 #ifdef WINDOWS_SYS
 	///////////////////////////////////////////////////////////
@@ -548,7 +548,7 @@ int     pqipersongrp::connectPeer(const RsPeerId& id
 #endif
 				return 0;
 			}
-			if (state.connAddrs.size() < 1) {
+			if (state.connAddrs.empty()) {
 #ifdef PGRP_DEBUG
 				std::cerr << " pqipersongrp::connectPeer() id: " << id << " No existing connect addresses";
 				std::cerr << std::endl;
