@@ -51,7 +51,8 @@ static struct RsLog::logInfo pqisslproxyzoneInfo = {RsLog::Default, "pqisslproxy
 #define PROXY_STATE_CONNECTION_COMPLETE		4
 
 pqisslproxy::pqisslproxy(pqissllistener *l, PQInterface *parent, p3LinkMgr *lm)
-        :pqissl(l, parent, lm)
+  : pqissl(l, parent, lm)
+  , mProxyState(0), mRemotePort(0)
 {
 	sockaddr_storage_clear(remote_addr);
 	return;
