@@ -151,7 +151,7 @@ class p3ConfigMgr
 		/**
 		 * @param bdir base directory: where config files will be saved
 		 */
-	explicit p3ConfigMgr(std::string bdir);
+	explicit p3ConfigMgr(const std::string& bdir);
 
         /**
          * checks and update all added configurations
@@ -174,7 +174,7 @@ class p3ConfigMgr
          * @param file The name for new configuration
          * @param conf to the configuration to use
          */
-        void	addConfiguration(std::string file, pqiConfig *conf);
+        void	addConfiguration(const std::string& file, pqiConfig *conf);
 
 		/** saves config, and disables further saving
 		 * used for exiting the system

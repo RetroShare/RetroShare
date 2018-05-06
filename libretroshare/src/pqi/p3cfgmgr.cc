@@ -43,9 +43,9 @@
 #define BACKEDUP_SAVE
 
 
-p3ConfigMgr::p3ConfigMgr(std::string dir)
-        :basedir(dir), cfgMtx("p3ConfigMgr"),
-	mConfigSaveActive(true)
+p3ConfigMgr::p3ConfigMgr(const std::string& bdir)
+  : basedir(bdir), cfgMtx("p3ConfigMgr")
+  , mConfigSaveActive(true)
 {
 }
 
@@ -152,7 +152,7 @@ void p3ConfigMgr::loadConfig()
 }
 
 
-void	p3ConfigMgr::addConfiguration(std::string file, pqiConfig *conf)
+void	p3ConfigMgr::addConfiguration(const std::string& file, pqiConfig *conf)
 {
 	RsStackMutex stack(cfgMtx); /***** LOCK STACK MUTEX ****/
 
@@ -508,7 +508,7 @@ bool p3GeneralConfig::saveList(bool &cleanup, std::list<RsItem *>& savelist)
 		}
 	}
 
-	if (item->tlvkvs.pairs.size() > 0)
+	if (!item->tlvkvs.pairs.empty())
 	{
 		savelist.push_back(item);
 	} else
