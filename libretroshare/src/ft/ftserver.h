@@ -81,7 +81,7 @@ public:
     virtual RsServiceInfo getServiceInfo();
 
     /* Assign important variables */
-    void	 setConfigDirectory(std::string path);
+    void	 setConfigDirectory(const std::string& path);
 
     /* add Config Items (Extra, Controller) */
     void addConfigComponents(p3ConfigMgr *mgr);

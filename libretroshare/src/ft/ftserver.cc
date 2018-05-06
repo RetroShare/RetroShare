@@ -65,11 +65,12 @@ static const time_t FILE_TRANSFER_MAX_DELAY_BEFORE_DROP_USAGE_RECORD = 10 ; // k
 
 /* Setup */
 ftServer::ftServer(p3PeerMgr *pm, p3ServiceControl *sc)
-    :       p3Service(),RsServiceSerializer(RS_SERVICE_TYPE_TURTLE), // should be FT, but this is for backward compatibility
-      mPeerMgr(pm), mServiceCtrl(sc),
-      mFileDatabase(NULL),
-      mFtController(NULL), mFtExtra(NULL),
-      mFtDataplex(NULL), mFtSearch(NULL), srvMutex("ftServer")
+  :       p3Service(),RsServiceSerializer(RS_SERVICE_TYPE_TURTLE) // should be FT, but this is for backward compatibility
+  , mPeerMgr(pm), mServiceCtrl(sc)
+  , mFileDatabase(NULL)
+  , mFtController(NULL), mFtExtra(NULL)
+  , mFtDataplex(NULL), mTurtleRouter(NULL)
+  , mFtSearch(NULL), srvMutex("ftServer")
 {
 	addSerialType(new RsFileTransferSerialiser()) ;
 }
@@ -91,7 +92,7 @@ RsServiceInfo ftServer::getServiceInfo()
 }
 
 
-void	ftServer::setConfigDirectory(std::string path)
+void	ftServer::setConfigDirectory(const std::string& path)
 {
 	mConfigPath = path;
 
