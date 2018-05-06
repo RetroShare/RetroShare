@@ -722,6 +722,7 @@ int p3BitDht::calculateNodeId(const RsPeerId& pid, bdNodeId *id)
 
 DhtPeerDetails::DhtPeerDetails()
 {
+	mPeerType = RSDHT_PEERTYPE_ANY;
 	mDhtState = RSDHT_PEERDHT_NOT_ACTIVE;
 
 	mDhtState = RSDHT_PEERDHT_SEARCHING;
