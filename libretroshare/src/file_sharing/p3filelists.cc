@@ -884,7 +884,7 @@ bool p3FileDatabase::findChildPointer( void *ref, int row, void *& result,
         P3FILELISTS_ERROR() << "(EE) remote request on local index or local request on remote index. This should not happen." << std::endl;
         return false ;
     }
-    DirectoryStorage *storage = (fi==0)? ((DirectoryStorage*)mLocalSharedDirs) : ((DirectoryStorage*)mRemoteDirectories[fi-1]);
+    DirectoryStorage *storage = (fi==0)? (static_cast<DirectoryStorage*>(mLocalSharedDirs)) : (static_cast<DirectoryStorage*>(mRemoteDirectories[fi-1]));
 
     // Case where the index is the top of a single person. Can be us, or a friend.
 
@@ -996,7 +996,7 @@ int p3FileDatabase::RequestDirDetails(void *ref, DirDetails& d, FileSearchFlags 
         P3FILELISTS_ERROR() << "(EE) remote request on local index or local request on remote index. This should not happen." << std::endl;
         return false ;
     }
-    DirectoryStorage *storage = (fi==0)? ((DirectoryStorage*)mLocalSharedDirs) : ((DirectoryStorage*)mRemoteDirectories[fi-1]);
+    DirectoryStorage *storage = (fi==0)? (static_cast<DirectoryStorage*>(mLocalSharedDirs)) : (static_cast<DirectoryStorage*>(mRemoteDirectories[fi-1]));
 
     // Case where the index is the top of a single person. Can be us, or a friend.
 
