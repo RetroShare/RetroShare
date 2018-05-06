@@ -55,12 +55,12 @@
 /******************* Startup / Tick    ******************************************/
 /********************************************************************************/
 
-p3PostBase::p3PostBase(RsGeneralDataService *gds, RsNetworkExchangeService *nes, RsGixs* gixs,
-	RsSerialType* serviceSerialiser, uint16_t serviceType)
-    : RsGenExchange(gds, nes, serviceSerialiser, serviceType, gixs, postBaseAuthenPolicy()), GxsTokenQueue(this), RsTickEvent(), mPostBaseMtx("PostBaseMtx")
+p3PostBase::p3PostBase(RsGeneralDataService *gds, RsNetworkExchangeService *nes
+                     , RsGixs* gixs, RsSerialType* serviceSerialiser, uint16_t serviceType)
+  : RsGenExchange(gds, nes, serviceSerialiser, serviceType, gixs, postBaseAuthenPolicy())
+  , GxsTokenQueue(this), RsTickEvent(), mPostBaseMtx("PostBaseMtx")
+  , mBgProcessing(false), mBgIncremental(false)
 {
-	mBgProcessing = false;
-
 	mCommentService = new p3GxsCommentService(this,  serviceType);
 	RsTickEvent::schedule_in(POSTBASE_BACKGROUND_PROCESSING, PROCESSING_START_PERIOD);
 }
