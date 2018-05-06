@@ -46,7 +46,7 @@ public:
 
 	RsPeerId    chatPeerId; // empty for global chat
 	bool        incoming;
-	//RsPeerId    peerId; //Defined in RsItem
+	RsPeerId    peerId;
 	std::string peerName;
 	uint32_t    sendTime;
 	uint32_t    recvTime;

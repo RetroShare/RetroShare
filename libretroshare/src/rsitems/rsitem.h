@@ -87,9 +87,9 @@ struct RsItem : RsMemoryManagement::SmallObject, RsSerializable
 		print_stacktrace();
 	}
 
-	RsPeerId peerId;// Not need to be protected as write without check in PeerId(const RsPeerId& id)
 protected:
 	uint32_t type;
+	RsPeerId peerId;
 	uint8_t _priority_level;
 };
 

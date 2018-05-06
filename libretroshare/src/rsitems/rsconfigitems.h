@@ -84,7 +84,7 @@ public:
 	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 
 	/* networking information */
-	//RsPeerId    peerId;                       /* Mandatory */ //Defined in RsItem
+	RsPeerId    peerId;                       /* Mandatory */
 	RsPgpId     pgpId;                        /* Mandatory */
 	std::string location;                     /* Mandatory */
 	uint32_t    netMode;                      /* Mandatory */
