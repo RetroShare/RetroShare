@@ -56,10 +56,8 @@ RsPhotoPhoto::RsPhotoPhoto()
 }
 
 RsPhotoAlbum::RsPhotoAlbum()
-        :mMode(0), mSetFlags(0), mModFlags(0)
-{
-        return;
-}
+  :mMode(0), mSetFlags(0), mModFlags(0)
+{}
 
 RsPhotoComment::RsPhotoComment()
     : mComment(""), mCommentFlag(0) {
@@ -67,10 +65,11 @@ RsPhotoComment::RsPhotoComment()
 }
 
 RsPhotoComment::RsPhotoComment(const RsGxsPhotoCommentItem &comment)
-    : mComment(""), mCommentFlag(0) {
-
-    *this = comment.comment;
-    (*this).mMeta = comment.meta;
+  : mComment(""), mCommentFlag(0)
+{
+	*this = comment.comment;
+	// cppcheck-suppress useInitializationList
+	(*this).mMeta = comment.meta;
 
 }
 std::ostream &operator<<(std::ostream &out, const RsPhotoPhoto &photo)

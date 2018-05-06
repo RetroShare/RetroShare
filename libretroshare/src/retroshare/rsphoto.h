@@ -111,13 +111,16 @@ class RsPhotoPhoto
 
 class RsPhotoAlbumShare
 {
-        public:
+public:
+	RsPhotoAlbumShare()
+	  : mShareType(0), mCommentMode(0), mResizeMode()
+	{}
 
-        uint32_t mShareType;
-        std::string mShareGroupId;
-        std::string mPublishKey;
-        uint32_t mCommentMode;
-        uint32_t mResizeMode;
+	uint32_t mShareType;
+	std::string mShareGroupId;
+	std::string mPublishKey;
+	uint32_t mCommentMode;
+	uint32_t mResizeMode;
 };
 
 class RsPhotoAlbum
