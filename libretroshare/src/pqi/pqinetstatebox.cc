@@ -170,7 +170,7 @@ void pqiNetStateBox::reset()
 {
 
 	mStatusOkay = false;
-	//time_t mStatusTS;
+	mStatusTS = 0;
 	
 	mNetworkMode = RSNET_NETWORK_UNKNOWN;
 	mNatTypeMode = RSNET_NATTYPE_UNKNOWN;
@@ -186,29 +186,33 @@ void pqiNetStateBox::reset()
 	sockaddr_storage_clear(mStunDhtAddr);
 	
 	mStunProxySet = false;
-	mStunProxySemiStable = false; 
 	mStunProxyTS = 0;
 	mStunProxyStable = false;
+	mStunProxySemiStable = false;
 	sockaddr_storage_clear(mStunProxyAddr);
 	
+	mDhtSet = false;
+	mDhtTS = 0;
+	mDhtOn = false;
+	mDhtActive = false;
+
 	mUPnPSet = false;
-	mUPnPActive = false;
 	sockaddr_storage_clear(mUPnPAddr);
+	mUPnPActive = false;
+	mUPnPTS = 0;
 
 	mNatPMPSet = false;
-	mNatPMPActive = false;
 	sockaddr_storage_clear(mNatPMPAddr);
+	mNatPMPActive = false;
+	mNatPMPTS = 0;
 
 	mWebIPSet = false;
-	mWebIPActive = false;
 	sockaddr_storage_clear(mWebIPAddr);
+	mWebIPActive = false;
+	mWebIPTS = 0;
 
 	mPortForwardSet = false;
-	mPortForwarded = false;
-	
-	mDhtSet = false;
-	mDhtActive = false;
-	mDhtOn = false;
+	mPortForwarded = 0;
 
 }
 
