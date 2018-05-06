@@ -84,14 +84,14 @@ pqiperson * pqisslpersongrp::locked_createPerson(const RsPeerId& id, pqilistener
 		// Use pqicI2PBOB for I2P
 		pqiconnect *pqicSOCKSProxy, *pqicI2PBOB;
 		{
-			pqisslproxy  *pqis = new pqisslproxy((pqissllistener *) listener, pqip, mLinkMgr);
+			pqisslproxy  *pqis = new pqisslproxy(static_cast<pqissllistener *>(listener), pqip, mLinkMgr);
 			RsSerialiser *rss  = new RsSerialiser();
 			rss->addSerialType(new RsRawSerialiser());
 			pqicSOCKSProxy = new pqiconnect(pqip, rss, pqis);
 		}
 		if (rsAutoProxyMonitor::instance()->isEnabled(autoProxyType::I2PBOB))
 		{
-			pqissli2pbob *pqis = new pqissli2pbob((pqissllistener *) listener, pqip, mLinkMgr);
+			pqissli2pbob *pqis = new pqissli2pbob(static_cast<pqissllistener *>(listener), pqip, mLinkMgr);
 			RsSerialiser *rss  = new RsSerialiser();
 			rss->addSerialType(new RsRawSerialiser());
 
@@ -148,7 +148,7 @@ pqiperson * pqisslpersongrp::locked_createPerson(const RsPeerId& id, pqilistener
         std::cerr << std::endl;
 #endif
 
-		pqissl *pqis   = new pqissl((pqissllistener *) listener, pqip, mLinkMgr);
+		pqissl *pqis   = new pqissl(static_cast<pqissllistener *>(listener), pqip, mLinkMgr);
 	
 		/* construct the serialiser ....
 		 * Needs:
