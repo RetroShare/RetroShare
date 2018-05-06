@@ -90,13 +90,18 @@ class RsGRouterNonCopyableObject
 class RsGRouterAbstractMsgItem: public RsGRouterItem
 {
 public:
-    explicit RsGRouterAbstractMsgItem(uint8_t pkt_subtype) : RsGRouterItem(pkt_subtype), flags(0) {}
-    virtual ~RsGRouterAbstractMsgItem() {}
+	explicit RsGRouterAbstractMsgItem(uint8_t pkt_subtype)
+	  : RsGRouterItem(pkt_subtype)
+	  , routing_id(0)
+	  , service_id(0)
+	  , flags(0)
+	{}
+	virtual ~RsGRouterAbstractMsgItem() {}
 
-    GRouterMsgPropagationId routing_id ;
-    GRouterKeyId destination_key ;
-    GRouterServiceId service_id ;
-    RsTlvKeySignature signature ;		// signs mid+destination_key+state
+	GRouterMsgPropagationId routing_id ;
+	GRouterKeyId destination_key ;
+	GRouterServiceId service_id ;
+	RsTlvKeySignature signature ;		// signs mid+destination_key+state
 	uint32_t flags ; 					// packet was delivered, not delivered, bounced, etc
 };
 
@@ -156,7 +161,14 @@ class RsGRouterTransactionItem: public RsGRouterItem
 class RsGRouterTransactionChunkItem: public RsGRouterTransactionItem, public RsGRouterNonCopyableObject
 {
 public:
-	RsGRouterTransactionChunkItem() : RsGRouterTransactionItem(RS_PKT_SUBTYPE_GROUTER_TRANSACTION_CHUNK), chunk_start(0), chunk_size(0), total_size(0), chunk_data(NULL) { setPriorityLevel(QOS_PRIORITY_RS_GROUTER) ; }
+	RsGRouterTransactionChunkItem()
+	  : RsGRouterTransactionItem(RS_PKT_SUBTYPE_GROUTER_TRANSACTION_CHUNK)
+	  , propagation_id(0)
+	  , chunk_start(0)
+	  , chunk_size(0)
+	  , total_size(0)
+	  , chunk_data(NULL)
+	{ setPriorityLevel(QOS_PRIORITY_RS_GROUTER) ; }
 
 	virtual ~RsGRouterTransactionChunkItem()  { free(chunk_data) ; }
 
@@ -185,7 +197,10 @@ public:
 class RsGRouterTransactionAcknItem: public RsGRouterTransactionItem
 {
 public:
-	RsGRouterTransactionAcknItem() : RsGRouterTransactionItem(RS_PKT_SUBTYPE_GROUTER_TRANSACTION_ACKN) { setPriorityLevel(QOS_PRIORITY_RS_GROUTER) ; }
+	RsGRouterTransactionAcknItem()
+	  : RsGRouterTransactionItem(RS_PKT_SUBTYPE_GROUTER_TRANSACTION_ACKN)
+	  , propagation_id(0)
+	{ setPriorityLevel(QOS_PRIORITY_RS_GROUTER) ; }
 	virtual ~RsGRouterTransactionAcknItem() {}
 
 	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
