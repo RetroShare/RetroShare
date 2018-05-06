@@ -328,12 +328,12 @@ bool	ftDataMultiplex::recvSingleChunkCRCRequest(const RsPeerId& peerId, const Rs
 bool 	ftDataMultiplex::workQueued()
 {
 	RsStackMutex stack(dataMtx); /******* LOCK MUTEX ******/
-	if (mRequestQueue.size() > 0)
+	if (!mRequestQueue.empty())
 	{
 		return true;
 	}
 
-	if (mSearchQueue.size() > 0)
+	if (!mSearchQueue.empty())
 	{
 		return true;
 	}
