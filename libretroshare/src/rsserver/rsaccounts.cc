@@ -1031,14 +1031,14 @@ bool     RsAccountsDetail::GenerateSSLCertificate(const RsPgpId& pgp_id, const s
 	 */
 
 	X509_REQ *req = GenerateX509Req(
-			key_name.c_str(),
-			passwd.c_str(),
+			key_name,
+			passwd,
             "-", //pgp_name.c_str(), // does not allow empty name, set to constant instead
 			"", //ui -> gen_email -> value(),
-			org.c_str(),
+			org,
             "", //loc.c_str(),
 			"", //ui -> gen_state -> value(),
-			country.c_str(),
+			country,
 			nbits, errString);
 
 	if (req == NULL)
