@@ -47,7 +47,7 @@
 class p3ServiceInfo: public p3Service, public pqiMonitor 
 {
 	public:
-		p3ServiceInfo(p3ServiceControl *serviceControl);
+		explicit p3ServiceInfo(p3ServiceControl *serviceControl);
 		virtual RsServiceInfo getServiceInfo();
 
 		virtual int   tick();
