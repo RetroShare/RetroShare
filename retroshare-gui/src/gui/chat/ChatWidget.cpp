@@ -66,8 +66,6 @@
 
 #define FMM 2.5//fontMetricsMultiplicator
 
-#define PERSONID "PersonId:"
-
 /*****
  * #define CHAT_DEBUG 1
  *****/
@@ -594,31 +592,15 @@ bool ChatWidget::eventFilter(QObject *obj, QEvent *event)
 
 		if (event->type() == QEvent::ToolTip)	{
 			QHelpEvent* helpEvent = static_cast<QHelpEvent*>(event);
-			QTextCursor cursor = ui->textBrowser->cursorForPosition(helpEvent->pos());
-			cursor.select(QTextCursor::WordUnderCursor);
-			QString toolTipText = "";
-			if (!cursor.selectedText().isEmpty()){
-				QRegExp rx("<a name=\"(.*)\"",Qt::CaseSensitive, QRegExp::RegExp2);
-				rx.setMinimal(true);
-				QString sel=cursor.selection().toHtml();
-				QStringList anchors;
-				int pos=0;
-				while ((pos = rx.indexIn(sel,pos)) != -1) {
-					anchors << rx.cap(1);
-					pos += rx.matchedLength();
+			QString toolTipText = ui->textBrowser->anchorForPosition(helpEvent->pos());
+			if (toolTipText.isEmpty() && !ui->textBrowser->getShowImages()){
+				QString imageStr;
+				if (ui->textBrowser->checkImage(helpEvent->pos(), imageStr)) {
+					toolTipText = imageStr;
 				}
-				if (!anchors.isEmpty()){
-					toolTipText = anchors.at(0);
-				}
-				if (toolTipText.isEmpty() && !ui->textBrowser->getShowImages()){
-					QString imageStr;
-					if (ui->textBrowser->checkImage(helpEvent->pos(), imageStr)) {
-						toolTipText = imageStr;
-					}
-				} else if (toolTipText.startsWith(PERSONID)){
-					toolTipText = toolTipText.replace(PERSONID, tr("Person id: ") );
-					toolTipText = toolTipText.append(tr("\nDouble click on it to add his name on text writer.") );
-				}
+			} else if (toolTipText.startsWith(PERSONID)){
+				toolTipText = toolTipText.replace(PERSONID, tr("Person id: ") );
+				toolTipText = toolTipText.append(tr("\nDouble click on it to add his name on text writer.") );
 			}
 			if (!toolTipText.isEmpty()){
 				QToolTip::showText(helpEvent->globalPos(), toolTipText);
@@ -710,32 +692,19 @@ bool ChatWidget::eventFilter(QObject *obj, QEvent *event)
 		if (event->type() == QEvent::MouseButtonDblClick)	{
 
 			QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
-			QTextCursor cursor = ui->textBrowser->cursorForPosition(mouseEvent->pos());
-			cursor.select(QTextCursor::WordUnderCursor);
-			if (!cursor.selectedText().isEmpty()){
-				QRegExp rx("<a name=\"(.*)\"",Qt::CaseSensitive, QRegExp::RegExp2);
-				rx.setMinimal(true);
-				QString sel=cursor.selection().toHtml();
-				QStringList anchors;
-				int pos=0;
-				while ((pos = rx.indexIn(sel,pos)) != -1) {
-					anchors << rx.cap(1);
-					pos += rx.matchedLength();
-				}
+			QString anchor = ui->textBrowser->anchorForPosition(mouseEvent->pos());
+			if (!anchor.isEmpty()){
+				if (anchor.startsWith(PERSONID)){
+					QString strId = anchor.replace(PERSONID,"");
+					if (strId.contains(" "))
+						strId.truncate(strId.indexOf(" "));
 
-				if (!anchors.isEmpty()){
-					if (anchors.at(0).startsWith(PERSONID)){
-						QString strId = QString(anchors.at(0)).replace(PERSONID,"");
-						if (strId.contains(" "))
-							strId.truncate(strId.indexOf(" "));
-
-						RsGxsId mId = RsGxsId(strId.toStdString());
-						if(!mId.isNull()) {
-							RsIdentityDetails details;
-							if (rsIdentity->getIdDetails(mId, details)){
-								QString text = QString("@").append(GxsIdDetails::getName(details)).append(" ");
-								ui->chatTextEdit->textCursor().insertText(text);
-							}
+					RsGxsId mId = RsGxsId(strId.toStdString());
+					if(!mId.isNull()) {
+						RsIdentityDetails details;
+						if (rsIdentity->getIdDetails(mId, details)){
+							QString text = QString("@").append(GxsIdDetails::getName(details)).append(" ");
+							ui->chatTextEdit->textCursor().insertText(text);
 						}
 					}
 				}
@@ -1137,6 +1106,9 @@ void ChatWidget::contextMenuTextBrowser(QPoint point)
 		ui->actionSave_image->setData(point);
 		contextMnu->addAction(ui->actionSave_image);
 	}
+
+	QString anchor = ui->textBrowser->anchorForPosition(point);
+	emit textBrowserAskContextMenu(contextMnu, anchor, point);
 
 	contextMnu->exec(ui->textBrowser->viewport()->mapToGlobal(point));
 	delete(contextMnu);

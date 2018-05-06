@@ -33,6 +33,7 @@
 #include "gui/ChatLobbyWidget.h"
 #include "gui/FriendsDialog.h"
 #include "gui/MainWindow.h"
+#include "gui/chat/ChatWidget.h"
 #include "gui/common/html.h"
 #include "gui/common/FriendSelectionDialog.h"
 #include "gui/common/RSTreeWidgetItem.h"
@@ -97,7 +98,7 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::Wi
     votePositiveAct = new QAction(QIcon(":/icons/png/thumbs-up.png"), tr("Give positive opinion"), this);
     distantChatAct = new QAction(QIcon(":/images/chat_24.png"), tr("Start private chat"), this);
     sendMessageAct = new QAction(QIcon(":/images/mail_new.png"), tr("Send Message"), this);
-    showinpeopleAct = new QAction(QIcon(), tr("Show author in people tab"), this);
+    showInPeopleAct = new QAction(QIcon(), tr("Show author in people tab"), this);
 	
     QActionGroup *sortgrp = new QActionGroup(this);
     actionSortByName = new QAction(QIcon(), tr("Sort by Name"), this);
@@ -111,17 +112,13 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::Wi
     actionSortByActivity->setActionGroup(sortgrp);
 
 
-    connect(muteAct, SIGNAL(triggered()), this, SLOT(changePartipationState()));
+    connect(muteAct, SIGNAL(triggered()), this, SLOT(changeParticipationState()));
     connect(distantChatAct, SIGNAL(triggered()), this, SLOT(distantChatParticipant()));
     connect(sendMessageAct, SIGNAL(triggered()), this, SLOT(sendMessage()));
     connect(votePositiveAct, SIGNAL(triggered()), this, SLOT(voteParticipant()));
     connect(voteNeutralAct, SIGNAL(triggered()), this, SLOT(voteParticipant()));
     connect(voteNegativeAct, SIGNAL(triggered()), this, SLOT(voteParticipant()));
-    connect(showinpeopleAct, SIGNAL(triggered()), this, SLOT(showInPeopleTab()));
-
-    votePositiveAct->setData(RsReputations::OPINION_POSITIVE);
-    voteNeutralAct->setData(RsReputations::OPINION_NEUTRAL);
-    voteNegativeAct->setData(RsReputations::OPINION_NEGATIVE);
+    connect(showInPeopleAct, SIGNAL(triggered()), this, SLOT(showInPeopleTab()));
 
     connect(actionSortByName, SIGNAL(triggered()), this, SLOT(sortParcipants()));
     connect(actionSortByActivity, SIGNAL(triggered()), this, SLOT(sortParcipants()));
@@ -172,7 +169,8 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::Wi
 
     ui.chatWidget->addToolsAction(checkableAction);
     //getChatWidget()->addChatBarWidget(ownIdChooser);
-    
+	connect(ui.chatWidget, SIGNAL(textBrowserAskContextMenu(QMenu*,QString,QPoint)), this, SLOT(textBrowserAskContextMenu(QMenu*,QString,QPoint)));
+
 
 
     connect(ownIdChooser,SIGNAL(currentIndexChanged(int)),this,SLOT(changeNickname())) ;
@@ -226,33 +224,76 @@ void ChatLobbyDialog::inviteFriends()
 void ChatLobbyDialog::participantsTreeWidgetCustomPopupMenu(QPoint)
 {
 	QList<QTreeWidgetItem*> selectedItems = ui.participantsList->selectedItems();
+	QList<RsGxsId> idList;
+	QList<QTreeWidgetItem*>::iterator item;
+	for (item = selectedItems.begin(); item != selectedItems.end(); ++item)
+	{
+		RsGxsId gxs_id ;
+		dynamic_cast<GxsIdRSTreeWidgetItem*>(*item)->getId(gxs_id) ;
+		idList.append(gxs_id);
+	}
 
 	QMenu contextMnu(this);
+	contextMnu.addAction(actionSortByActivity);
+	contextMnu.addAction(actionSortByName);
 
-    contextMnu.addAction(distantChatAct);
-	contextMnu.addAction(sendMessageAct);
-    contextMnu.addSeparator();
-    contextMnu.addAction(actionSortByActivity);
-    contextMnu.addAction(actionSortByName);
-    contextMnu.addSeparator();
-    contextMnu.addAction(muteAct);
-    contextMnu.addAction(votePositiveAct);
-    contextMnu.addAction(voteNeutralAct);
-    contextMnu.addAction(voteNegativeAct);
-	contextMnu.addAction(showinpeopleAct);
+	contextMnu.addSeparator();
+
+	initParticipantsContextMenu(&contextMnu, idList);
+
+	contextMnu.exec(QCursor::pos());
+}
+
+void ChatLobbyDialog::textBrowserAskContextMenu(QMenu* contextMnu, QString anchorForPosition, const QPoint /*point*/)
+{
+	if (anchorForPosition.startsWith(PERSONID)){
+		QString strId = anchorForPosition.replace(PERSONID,"");
+		if (strId.contains(" "))
+			strId.truncate(strId.indexOf(" "));
+
+		contextMnu->addSeparator();
+
+		QList<RsGxsId> idList;
+		idList.append(RsGxsId(strId.toStdString()));
+		initParticipantsContextMenu(contextMnu, idList);
+	}
+}
+
+void ChatLobbyDialog::initParticipantsContextMenu(QMenu *contextMnu, QList<RsGxsId> idList)
+{
+	if (!contextMnu)
+		return;
+
+	contextMnu->addAction(distantChatAct);
+	contextMnu->addAction(sendMessageAct);
+	contextMnu->addSeparator();
+	contextMnu->addAction(muteAct);
+	contextMnu->addAction(votePositiveAct);
+	contextMnu->addAction(voteNeutralAct);
+	contextMnu->addAction(voteNegativeAct);
+	contextMnu->addAction(showInPeopleAct);
 
 	distantChatAct->setEnabled(false);
-	sendMessageAct->setEnabled(selectedItems.count()==1);
+	sendMessageAct->setEnabled(true);
+	muteAct->setEnabled(false);
 	muteAct->setCheckable(true);
-    muteAct->setEnabled(false);
-    muteAct->setChecked(false);
-    votePositiveAct->setEnabled(false);
-    voteNeutralAct->setEnabled(false);
-    voteNegativeAct->setEnabled(false);
-	showinpeopleAct->setEnabled(selectedItems.count()==1);
-    if(selectedItems.count()==1)
-    {
-        RsGxsId gxsid(selectedItems.at(0)->text(COLUMN_ID).toStdString());
+	muteAct->setChecked(false);
+	votePositiveAct->setEnabled(false);
+	voteNeutralAct->setEnabled(false);
+	voteNegativeAct->setEnabled(false);
+	showInPeopleAct->setEnabled(idList.count()==1);
+
+	distantChatAct->setData(QVariant::fromValue(idList));
+	sendMessageAct->setData(QVariant::fromValue(idList));
+	muteAct->setData(QVariant::fromValue(idList));
+	votePositiveAct->setData(QVariant::fromValue(idList));
+	voteNeutralAct->setData(QVariant::fromValue(idList));
+	voteNegativeAct->setData(QVariant::fromValue(idList));
+	showInPeopleAct->setData(QVariant::fromValue(idList));
+
+	if(idList.count()==1)
+	{
+		RsGxsId gxsid = idList.at(0);
 
 		if(!gxsid.isNull() && !rsIdentity->isOwnId(gxsid))
 		{
@@ -263,49 +304,56 @@ void ChatLobbyDialog::participantsTreeWidgetCustomPopupMenu(QPoint)
 			muteAct->setEnabled(true);
 			muteAct->setChecked(isParticipantMuted(gxsid));
 		}
-    }
-	contextMnu.exec(QCursor::pos());
+	}
 }
 
 void ChatLobbyDialog::voteParticipant()
 {
-    QList<QTreeWidgetItem*> selectedItems = ui.participantsList->selectedItems();
-    if (selectedItems.isEmpty())
-	    return;
-    QList<QTreeWidgetItem*>::iterator item;
-
-    QAction *act = dynamic_cast<QAction*>(sender()) ;
-    if(!act)
-    {
-        std::cerr << "No sender! Some bug in the code." << std::endl;
-        return ;
-    }
-
-	RsReputations::Opinion op = RsReputations::Opinion(act->data().toUInt()) ;
-
-    for (item = selectedItems.begin(); item != selectedItems.end(); ++item)
+	QAction *act = dynamic_cast<QAction*>(sender()) ;
+	if(!act)
 	{
-		RsGxsId nickname;
-	    dynamic_cast<GxsIdRSTreeWidgetItem*>(*item)->getId(nickname) ;
+		std::cerr << "No sender! Some bug in the code." << std::endl;
+		return ;
+	}
 
-		rsReputations->setOwnOpinion(nickname, op);
-		std::cerr << "Giving opinion to GXS id " << nickname << " to " << op<< std::endl;
-		dynamic_cast<GxsIdRSTreeWidgetItem*>(*item)->forceUpdate();
-    }
+	QList<RsGxsId> idList = act->data().value<QList<RsGxsId>>();
+
+	RsReputations::Opinion op = RsReputations::OPINION_NEUTRAL ;
+	if (act == votePositiveAct)
+		op = RsReputations::OPINION_POSITIVE;
+	if (act == voteNegativeAct)
+		op = RsReputations::OPINION_NEGATIVE;
+
+	for (QList<RsGxsId>::iterator item = idList.begin(); item != idList.end(); ++item)
+	{
+		rsReputations->setOwnOpinion(*item, op);
+		std::cerr << "Giving opinion to GXS id " << *item << " to " << op << std::endl;
+	}
+
+	updateParticipantsList();
 }
 
 void ChatLobbyDialog::showInPeopleTab()
 {
-    QList<QTreeWidgetItem*> selectedItems = ui.participantsList->selectedItems();
-    if (selectedItems.count()!=1)
-        return;
-    RsGxsId nickname;
-    dynamic_cast<GxsIdRSTreeWidgetItem*>(*selectedItems.begin())->getId(nickname);
-    IdDialog *idDialog = dynamic_cast<IdDialog*>(MainWindow::getPage(MainWindow::People));
-    if (!idDialog)
-        return ;
-    MainWindow::showWindow(MainWindow::People);
-    idDialog->navigate(nickname);
+	QAction *act = dynamic_cast<QAction*>(sender()) ;
+	if(!act)
+	{
+		std::cerr << "No sender! Some bug in the code." << std::endl;
+		return ;
+	}
+
+	QList<RsGxsId> idList = act->data().value<QList<RsGxsId>>();
+	if (idList.count() != 1)
+		return;
+
+	RsGxsId nickname = idList.at(0);
+
+	IdDialog *idDialog = dynamic_cast<IdDialog*>(MainWindow::getPage(MainWindow::People));
+	if (!idDialog)
+		return ;
+	MainWindow::showWindow(MainWindow::People);
+
+	idDialog->navigate(nickname);
 }
 
 void ChatLobbyDialog::init(const ChatId &/*id*/, const QString &/*title*/)
@@ -586,34 +634,28 @@ void ChatLobbyDialog::updateParticipantsList()
 }
 
 /**
- * Called when a Participant in QTree get Clicked / Changed
+ * Called when a Participant get Clicked / Changed
  * 
  * Check if the Checkbox altered and Mute User
- * 
- * @todo auf rsid
- * 
- * @param QTreeWidgetItem Participant to check
  */
-void ChatLobbyDialog::changePartipationState()
+void ChatLobbyDialog::changeParticipationState()
 {
-    QList<QTreeWidgetItem*> selectedItems = ui.participantsList->selectedItems();
-
-	if (selectedItems.isEmpty()) {
-		return;
+	QAction *act = dynamic_cast<QAction*>(sender()) ;
+	if(!act)
+	{
+		std::cerr << "No sender! Some bug in the code." << std::endl;
+		return ;
 	}
 
-	QList<QTreeWidgetItem*>::iterator item;
-    for (item = selectedItems.begin(); item != selectedItems.end(); ++item) {
+	QList<RsGxsId> idList = act->data().value<QList<RsGxsId>>();
 
-        RsGxsId gxs_id ;
-        dynamic_cast<GxsIdRSTreeWidgetItem*>(*item)->getId(gxs_id) ;
-
-        std::cerr << "check Partipation status for '" << gxs_id << std::endl;
-
-		if (muteAct->isChecked()) {
-            muteParticipant(gxs_id);
+	for (QList<RsGxsId>::iterator item = idList.begin(); item != idList.end(); ++item)
+	{
+		std::cerr << "check Partipation status for '" << *item << std::endl;
+		if (act->isChecked()) {
+			muteParticipant(*item);
 		} else {
-            unMuteParticipant(gxs_id);
+			unMuteParticipant(*item);
 		}
 	}
 
@@ -650,75 +692,68 @@ void ChatLobbyDialog::participantsTreeWidgetDoubleClicked(QTreeWidgetItem *item,
 
 void ChatLobbyDialog::distantChatParticipant()
 {
-    std::cerr << " initiating distant chat" << std::endl;
+	QAction *act = dynamic_cast<QAction*>(sender()) ;
+	if(!act)
+	{
+		std::cerr << "No sender! Some bug in the code." << std::endl;
+		return ;
+	}
 
-    QList<QTreeWidgetItem*> selectedItems = ui.participantsList->selectedItems();
+	std::cerr << " initiating distant chat" << std::endl;
 
-    if (selectedItems.isEmpty())
-        return;
+	QList<RsGxsId> idList = act->data().value<QList<RsGxsId>>();
+	if (idList.count() != 1)
+		return;
 
-    if(selectedItems.size() != 1)
-        return ;
+	RsGxsId gxs_id = idList.at(0);
+	if (gxs_id.isNull())
+		return;
 
-    GxsIdRSTreeWidgetItem *item = dynamic_cast<GxsIdRSTreeWidgetItem*>(selectedItems.front());
+	RsGxsId own_id;
+	rsMsgs->getIdentityForChatLobby(lobbyId, own_id);
 
-    if(!item)
-        return ;
+	DistantChatPeerId tunnel_id;
+	uint32_t error_code ;
 
-    RsGxsId gxs_id ;
-    item->getId(gxs_id) ;
-    RsGxsId own_id;
-
-    rsMsgs->getIdentityForChatLobby(lobbyId, own_id);
-
-    uint32_t error_code ;
-    DistantChatPeerId tunnel_id;
-
-    if(! rsMsgs->initiateDistantChatConnexion(gxs_id,own_id,tunnel_id,error_code))
-    {
-        QString error_str ;
-        switch(error_code)
-        {
-        case RS_DISTANT_CHAT_ERROR_DECRYPTION_FAILED   : error_str = tr("Decryption failed.") ; break ;
-        case RS_DISTANT_CHAT_ERROR_SIGNATURE_MISMATCH  : error_str = tr("Signature mismatch") ; break ;
-        case RS_DISTANT_CHAT_ERROR_UNKNOWN_KEY         : error_str = tr("Unknown key") ; break ;
-        case RS_DISTANT_CHAT_ERROR_UNKNOWN_HASH        : error_str = tr("Unknown hash") ; break ;
-        default:
-            error_str = tr("Unknown error.") ;
-        }
-        QMessageBox::warning(NULL,tr("Cannot start distant chat"),tr("Distant chat cannot be initiated:")+" "+error_str
-                             +QString::number(error_code)) ;
-    }
+	if(! rsMsgs->initiateDistantChatConnexion(gxs_id,own_id,tunnel_id,error_code))
+	{
+		QString error_str ;
+		switch(error_code)
+		{
+			case RS_DISTANT_CHAT_ERROR_DECRYPTION_FAILED   : error_str = tr("Decryption failed.") ; break ;
+			case RS_DISTANT_CHAT_ERROR_SIGNATURE_MISMATCH  : error_str = tr("Signature mismatch") ; break ;
+			case RS_DISTANT_CHAT_ERROR_UNKNOWN_KEY         : error_str = tr("Unknown key") ; break ;
+			case RS_DISTANT_CHAT_ERROR_UNKNOWN_HASH        : error_str = tr("Unknown hash") ; break ;
+			default:
+				error_str = tr("Unknown error.") ;
+		}
+		QMessageBox::warning(NULL,tr("Cannot start distant chat"),tr("Distant chat cannot be initiated:")+" "+error_str
+		                     +QString::number(error_code)) ;
+	}
 }
 
 void ChatLobbyDialog::sendMessage()
 {
+	QAction *act = dynamic_cast<QAction*>(sender()) ;
+	if(!act)
+	{
+		std::cerr << "No sender! Some bug in the code." << std::endl;
+		return ;
+	}
 
-    QList<QTreeWidgetItem*> selectedItems = ui.participantsList->selectedItems();
+	QList<RsGxsId> idList = act->data().value<QList<RsGxsId>>();
 
-    if (selectedItems.isEmpty())
-        return;
+	MessageComposer *nMsgDialog = MessageComposer::newMsg();
+	if (nMsgDialog == NULL)
+		return;
 
-    QList<QTreeWidgetItem*>::iterator item;
-    for (item = selectedItems.begin(); item != selectedItems.end(); ++item) {
+	for (QList<RsGxsId>::iterator item = idList.begin(); item != idList.end(); ++item)
+		nMsgDialog->addRecipient(MessageComposer::TO,  *item);
 
-        RsGxsId gxs_id ;
-        dynamic_cast<GxsIdRSTreeWidgetItem*>(*item)->getId(gxs_id) ;
+	nMsgDialog->show();
+	nMsgDialog->activateWindow();
 
-
-        MessageComposer *nMsgDialog = MessageComposer::newMsg();
-        if (nMsgDialog == NULL) {
-          return;
-        }
-
-        nMsgDialog->addRecipient(MessageComposer::TO,  RsGxsId(gxs_id));
-        nMsgDialog->show();
-        nMsgDialog->activateWindow();
-
-        /* window will destroy itself! */
-    
-    }
-
+	/* window will destroy itself! */
 }
 
 

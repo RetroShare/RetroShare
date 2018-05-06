@@ -37,6 +37,9 @@
 #include <retroshare/rsmsgs.h>
 #include <retroshare/rsfiles.h>
 
+//For PersonId anchor.
+#define PERSONID "PersonId:"
+
 class QAction;
 class QTextEdit;
 class QPushButton;
@@ -137,6 +140,7 @@ signals:
 	void infoChanged(ChatWidget*);
 	void newMessage(ChatWidget*);
 	void statusChanged(int);
+	void textBrowserAskContextMenu(QMenu* contextMnu, QString anchorForPosition, const QPoint point);
 
 protected:
 	bool eventFilter(QObject *obj, QEvent *event);
