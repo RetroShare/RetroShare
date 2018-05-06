@@ -179,10 +179,8 @@ int 	pqissl::reset()
 
 int pqissl::reset_locked()
 {
-	std::string outLog;
 	bool neededReset = false;
 
-	
 	/* a reset shouldn't cause us to stop listening 
 	 * only reasons for stoplistening() are;
 	 *
@@ -192,20 +190,23 @@ int pqissl::reset_locked()
 	 *
 	 */
 
+#ifdef PQISSL_LOG_DEBUG2
+	std::string outLog;
 	outLog += "pqissl::reset():" + PeerId().toStdString();
 	rs_sprintf_append(outLog, " (A: %d", (int) active);
 	rs_sprintf_append(outLog, " FD: %d", sockfd);
 	rs_sprintf_append(outLog, " W: %d",  waiting);
 	rs_sprintf_append(outLog, " SSL: %p) ", ssl_connection);
-#ifdef PQISSL_LOG_DEBUG 
 	outLog += "\n";
 #endif
 
 
 	if (ssl_connection != NULL)
 	{
+#ifdef PQISSL_LOG_DEBUG2
 		//outLog << "pqissl::reset() Shutting down SSL Connection";
 		//outLog << std::endl;
+#endif
 		SSL_shutdown(ssl_connection);
 		SSL_free (ssl_connection);
 
@@ -214,7 +215,7 @@ int pqissl::reset_locked()
 
 	if (sockfd > 0)
 	{
-#ifdef PQISSL_LOG_DEBUG 
+#ifdef PQISSL_LOG_DEBUG2
 		outLog += "pqissl::reset() Shutting down (active) socket\n";
 #endif
 		net_internal_close(sockfd);
@@ -230,15 +231,12 @@ int pqissl::reset_locked()
 	total_len = 0 ;
 	mTimeoutTS = 0;
 
+#ifdef PQISSL_LOG_DEBUG2
 	if (neededReset)
 	{
-#ifdef PQISSL_LOG_DEBUG 
 		outLog += "pqissl::reset() Reset Required!\n";
 		outLog += "pqissl::reset() Will Attempt notifyEvent(FAILED)\n";
-#endif
 	}
-
-#ifdef PQISSL_LOG_DEBUG2
 	rslog(RSL_ALERT, pqisslzone, outLog);
 #endif
 
@@ -704,7 +702,10 @@ int pqissl::Initiate_Connection()
 	 * will support IPv6 only and not IPv4 */
 #ifdef IPV6_V6ONLY
 	int no = 0;
-	err = rs_setsockopt( osock, IPPROTO_IPV6, IPV6_V6ONLY,
+#ifdef PQISSL_DEBUG
+	err =
+#endif // PQISSL_DEBUG
+	rs_setsockopt( osock, IPPROTO_IPV6, IPV6_V6ONLY,
 	                     reinterpret_cast<uint8_t*>(&no), sizeof(no) );
 #ifdef PQISSL_DEBUG
 	if (err) std::cerr << __PRETTY_FUNCTION__
