@@ -44,12 +44,9 @@
 #define ROLE_PLAINTEXT Qt::UserRole + 1
 
 ImHistoryBrowserCreateItemsThread::ImHistoryBrowserCreateItemsThread(ImHistoryBrowser *parent, const ChatId& peerId)
-    : QThread(parent)
-{
-    m_chatId = peerId;
-    m_historyBrowser = parent;
-    stopped = false;
-}
+  : QThread(parent), m_historyBrowser(parent)
+  , m_chatId(peerId), stopped(false)
+{}
 
 ImHistoryBrowserCreateItemsThread::~ImHistoryBrowserCreateItemsThread()
 {
