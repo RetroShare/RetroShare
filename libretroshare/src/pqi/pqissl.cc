@@ -663,7 +663,6 @@ int pqissl::Initiate_Connection()
 
 	sockbufsize = 0;
 
-	//cppcheck-suppress redundantAssignment
 	err = getsockopt(osock, SOL_SOCKET, SO_SNDBUF, (char *)&sockbufsize, &size);
 #ifdef PQISSL_DEBUG
 	if (err == 0) {
@@ -675,7 +674,6 @@ int pqissl::Initiate_Connection()
 
 	sockbufsize = WINDOWS_TCP_BUFFER_SIZE;
 
-	//cppcheck-suppress redundantAssignment
 	err = setsockopt(osock, SOL_SOCKET, SO_RCVBUF, (char *)&sockbufsize, sizeof(sockbufsize));
 #ifdef PQISSL_DEBUG
 	if (err == 0) {
@@ -685,7 +683,6 @@ int pqissl::Initiate_Connection()
 	}
 #endif
 
-	//cppcheck-suppress redundantAssignment
 	err = setsockopt(osock, SOL_SOCKET, SO_SNDBUF, (char *)&sockbufsize, sizeof(sockbufsize));
 #ifdef PQISSL_DEBUG
 	if (err == 0) {
