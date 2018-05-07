@@ -43,17 +43,15 @@ RsWiki *rsWiki = NULL;
 #define DUMMYTICK_PERIOD	3
 
 p3Wiki::p3Wiki(RsGeneralDataService* gds, RsNetworkExchangeService* nes, RsGixs *gixs)
-	:RsGenExchange(gds, nes, new RsGxsWikiSerialiser(), RS_SERVICE_GXS_TYPE_WIKI, gixs, wikiAuthenPolicy()), 
-	 RsWiki(this)
+  : RsGenExchange(gds, nes, new RsGxsWikiSerialiser(), RS_SERVICE_GXS_TYPE_WIKI, gixs, wikiAuthenPolicy())
+  , RsWiki(this)
+  /*Setup of dummy Pages.*/
+  , mAboutActive(false), mAboutToken(0), mAboutLines(0)
+  , mImprovActive(false), mImprovToken(0), mImprovLines(0)
+  , mMarkdownActive(false), mMarkdownToken(0), mMarkdownLines(0)
 {
-	// Setup of dummy Pages.
-	mAboutActive = false;
-	mImprovActive = false;
-	mMarkdownActive = false;
-
 	// TestData disabled in Repo.
 	//RsTickEvent::schedule_in(WIKI_EVENT_DUMMYSTART, DUMMYSTART_PERIOD);
-
 }
 
 
