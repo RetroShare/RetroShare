@@ -45,15 +45,13 @@
 #define ZC_MAX_QUERY_TIME	30
 #define ZC_MAX_RESOLVE_TIME	30
 
-p3ZeroConf::p3ZeroConf(std::string gpgid, std::string sslid, pqiConnectCb *cb, p3NetMgr *nm, p3PeerMgr *pm)
-	:pqiNetAssistConnect(sslid, cb), mNetMgr(nm), mPeerMgr(pm), mZcMtx("p3ZeroConf")
+p3ZeroConf::p3ZeroConf(const std::string& gpgid, const std::string& sslid
+                     , pqiConnectCb *cb, p3NetMgr *nm, p3PeerMgr *pm)
+  : pqiNetAssistConnect(sslid, cb), mNetMgr(nm), mPeerMgr(pm), mZcMtx("p3ZeroConf")
+  , mOwnGpgId(gpgid), mOwnSslId(sslid)
+  , mRegistered(false), mTextOkay(false), mPortOkay(false)
+  , mLocalPort(0)//, mMinuteTS(0)
 {
-	mRegistered = false;
-	mTextOkay = false;
-	mPortOkay = false;
-
-	mOwnGpgId = gpgid;
-	mOwnSslId = sslid;
 
 #ifdef DEBUG_ZEROCONF
 	std::cerr << "p3ZeroConf::p3ZeroConf()" << std::endl;
@@ -453,7 +451,7 @@ int p3ZeroConf::checkResolveAction()
 	/* iterate through the Browse Results... look for unresolved one - and do it! */
 
 	/* check the new results Queue first */
-	if (mBrowseResults.size() > 0)
+	if (!mBrowseResults.empty())
 	{
 		std::cerr << "p3ZeroConf::checkResolveAction() Getting Item from BrowseResults";
 		std::cerr << std::endl;
@@ -517,7 +515,7 @@ int p3ZeroConf::checkQueryAction()
 	}
 
 	/* check the new results Queue first */
-	if (mResolveResults.size() > 0)
+	if (!mResolveResults.empty())
 	{
 		std::cerr << "p3ZeroConf::checkQueryAction() Getting Item from ResolveResults";
 		std::cerr << std::endl;
@@ -582,7 +580,7 @@ int p3ZeroConf::checkQueryResults()
 void p3ZeroConf_CallbackRegister( DNSServiceRef sdRef, DNSServiceFlags flags, DNSServiceErrorType errorCode, 
 				const char *name, const char *regtype, const char *domain, void *context )
 {
-	p3ZeroConf *zc = (p3ZeroConf *) context;
+	p3ZeroConf *zc = static_cast<p3ZeroConf *>(context);
 	zc->callbackRegister(sdRef, flags, errorCode, name, regtype, domain);
 }
 
@@ -704,7 +702,7 @@ void p3ZeroConf_CallbackBrowse( DNSServiceRef sdRef, DNSServiceFlags flags,
 				uint32_t interfaceIndex, DNSServiceErrorType errorCode, 
     				const char *serviceName, const char *regtype, const char *replyDomain, void *context )
 {
-	p3ZeroConf *zc = (p3ZeroConf *) context;
+	p3ZeroConf *zc = static_cast<p3ZeroConf *>(context);
 	zc->callbackBrowse(sdRef, flags, interfaceIndex, errorCode, serviceName, regtype, replyDomain);
 }
 
@@ -816,13 +814,13 @@ void p3ZeroConf_CallbackResolve( DNSServiceRef sdRef, DNSServiceFlags flags,
     				const char *fullname, const char *hosttarget, uint16_t port, 
 				uint16_t txtLen, const unsigned char *txtRecord, void *context )  
 {
-	p3ZeroConf *zc = (p3ZeroConf *) context;
+	p3ZeroConf *zc = static_cast<p3ZeroConf *>(context);
 	zc->callbackResolve(sdRef, flags, interfaceIndex, errorCode, fullname, hosttarget, port, txtLen, txtRecord);
 
 }
 
-void p3ZeroConf::locked_startResolve(uint32_t idx, std::string name, 
-				std::string regtype, std::string domain)
+void p3ZeroConf::locked_startResolve(uint32_t idx, const std::string& name
+                                   , const std::string& regtype, const std::string& domain)
 {
 	if (mResolveStatus == ZC_SERVICE_ACTIVE)
 	{
@@ -1051,12 +1049,13 @@ void p3ZeroConf_CallbackQueryIp( DNSServiceRef sdRef, DNSServiceFlags flags,
     				const char *fullname, uint16_t rrtype, uint16_t rrclass, 
     				uint16_t rdlen, const void *rdata, uint32_t ttl, void *context )  
 {
-	p3ZeroConf *zc = (p3ZeroConf *) context;
+	p3ZeroConf *zc = static_cast<p3ZeroConf *>(context);
 	zc->callbackQueryIp(sdRef, flags, interfaceIndex, errorCode, fullname, rrtype, rrclass, rdlen, rdata, ttl);
 
 }
 
-void p3ZeroConf::locked_startQueryIp(uint32_t idx, std::string hosttarget, std::string gpgId, std::string sslId)
+void p3ZeroConf::locked_startQueryIp(uint32_t idx, const std::string& hosttarget
+                                   , const std::string& gpgId, const std::string& sslId)
 {
 	if (mQueryStatus == ZC_SERVICE_ACTIVE)
 	{

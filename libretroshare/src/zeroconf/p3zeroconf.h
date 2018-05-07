@@ -114,6 +114,11 @@ class zcLocationResult
 class zcLocationDetails
 {
 	public:
+	zcLocationDetails()
+	  : mFoundTs(0), mStatus(0)
+	  , mPort(0) , mAddrTs(0)
+	{}
+
 	std::string mSslId;
 	time_t mFoundTs;
 	uint32_t mStatus;
@@ -146,7 +151,7 @@ class p3NetMgr;
 class p3ZeroConf: public pqiNetAssistConnect, public pqiNetListener
 {
 	public:
-	p3ZeroConf(std::string gpgid, std::string sslid, pqiConnectCb *cb, p3NetMgr *nm, p3PeerMgr *pm);
+	p3ZeroConf(const std::string& gpgid, const std::string& sslid, pqiConnectCb *cb, p3NetMgr *nm, p3PeerMgr *pm);
 virtual	~p3ZeroConf();
 
 	/*** OVERLOADED from pqiNetListener ***/
@@ -229,13 +234,13 @@ virtual bool    setAttachMode(bool on);
 	int locked_stopBrowse();
 
 
-	void locked_startResolve(uint32_t idx, std::string name, 
-			std::string regtype, std::string domain);
+	void locked_startResolve(uint32_t idx, const std::string& name,
+	                       , const std::string& regtype, const std::string& domain);
 	int locked_checkResolvedPeer(const zcResolveResult &rr);
 	int locked_stopResolve();
 
-	void locked_startQueryIp(uint32_t idx, std::string fullname, 
-					std::string gpgId, std::string sslId);
+	void locked_startQueryIp(uint32_t idx, const std::string& hosttarget,
+	                         const std::string& gpgId, const std::string& sslId);
 	int locked_completeQueryResult(zcQueryResult &qr);
 	int locked_stopQueryIp();
 
@@ -282,7 +287,7 @@ std::list<zcQueryResult> mQueryResults;
 
 
 
-	time_t mMinuteTS;
+	//time_t mMinuteTS;
 
 	std::map<std::string, zcPeerDetails> mPeerDetails;
 };
