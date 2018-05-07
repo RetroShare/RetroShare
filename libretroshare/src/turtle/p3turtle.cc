@@ -102,7 +102,12 @@ static const int DISTANCE_SQUEEZING_POWER               =  8 ;
 #define HEX_PRINT(a) std::hex << a << std::dec
 
 p3turtle::p3turtle(p3ServiceControl *sc,p3LinkMgr *lm)
-	:p3Service(), p3Config(), mServiceControl(sc), mLinkMgr(lm), mTurtleMtx("p3turtle")
+  : p3Service(), p3Config(), mServiceControl(sc), mLinkMgr(lm), mTurtleMtx("p3turtle")
+  , _last_clean_time(0), _last_tunnel_management_time(0)
+  , _last_tunnel_campaign_time(0), _last_tunnel_speed_estimate_time(0)
+  //, _force_digg_new_tunnels(false)
+  , _max_tr_up_rate(MAX_TR_FORWARD_PER_SEC)
+  , _turtle_routing_enabled(true), _turtle_routing_session_enabled(true)
 {
 	RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
 
@@ -113,21 +118,14 @@ p3turtle::p3turtle(p3ServiceControl *sc,p3LinkMgr *lm)
 		std::cerr << "OwnId is null, as returned by the p3ServiceControl object in turtle router. Can't go on!" << std::endl;
 		exit(-1) ;
 	}
-	_turtle_routing_enabled = true ;
-	_turtle_routing_session_enabled = true;
 
 	_random_bias = RSRandom::random_u32() ;
 	_serialiser = new RsTurtleSerialiser() ;
 
 	addSerialType(_serialiser);
 
-	_last_clean_time = 0 ;
-	_last_tunnel_management_time = 0 ;
-	_last_tunnel_campaign_time = 0 ;
-	_last_tunnel_speed_estimate_time = 0 ;
 
 	_traffic_info.reset() ;
-	_max_tr_up_rate = MAX_TR_FORWARD_PER_SEC ;
 	_service_type = getServiceInfo().mServiceType ;
 }
 
