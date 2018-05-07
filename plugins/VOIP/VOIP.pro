@@ -43,7 +43,7 @@ win32 {
 
 	OPENCV_VERSION = "341"
 	USE_PRECOMPILED_LIBS =
-	for(lib, LIB_DIR) {
+	for(lib, RS_LIB_DIR) {
 #message(Scanning $$lib)
 		exists( $$lib/opencv/libopencv_core$${OPENCV_VERSION}.a) {
 			isEmpty(USE_PRECOMPILED_LIBS) {

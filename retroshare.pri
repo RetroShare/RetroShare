@@ -375,6 +375,11 @@ android-* {
 }
 
 win32-g++ {
+    !isEmpty(EXTERNAL_LIB_DIR) {
+        message(Use pre-compiled libraries in $${EXTERNAL_LIB_DIR}.)
+        PREFIX = $$system_path($$EXTERNAL_LIB_DIR)
+    }
+
     PREFIX_MSYS2 = $$(MINGW_PREFIX)
     isEmpty(PREFIX_MSYS2) {
         message("MINGW_PREFIX is not set, attempting MSYS2 autodiscovery.")
@@ -389,22 +394,24 @@ win32-g++ {
             PREFIX_MSYS2=$${TEMPTATIVE_MSYS2}
         }
 
-        isEmpty(PREFIX_MSYS2) {
-            error(Cannot find MSYS2 please set MINGW_PREFIX)
-        } else {
+        !isEmpty(PREFIX_MSYS2) {
             message(Found MSYS2: $${PREFIX_MSYS2})
+
+            isEmpty(PREFIX) {
+                PREFIX = $$system_path($${PREFIX_MSYS2})
+            }
         }
     }
 
     isEmpty(PREFIX) {
-        PREFIX = $$system_path($${PREFIX_MSYS2})
+        error(PREFIX is not set. Set either EXTERNAL_LIB_DIR or PREFIX_MSYS2.)
     }
 
     INCLUDEPATH *= $$system_path($${PREFIX}/include)
-    INCLUDEPATH *= $$system_path($${PREFIX_MSYS2}/include)
+    !isEmpty(PREFIX_MSYS2) : INCLUDEPATH *= $$system_path($${PREFIX_MSYS2}/include)
 
     QMAKE_LIBDIR *= $$system_path($${PREFIX}/lib)
-    QMAKE_LIBDIR *= $$system_path($${PREFIX_MSYS2}/lib)
+    !isEmpty(PREFIX_MSYS2) : QMAKE_LIBDIR *= $$system_path($${PREFIX_MSYS2}/lib)
 
     RS_BIN_DIR     = $$system_path($${PREFIX}/bin)
     RS_INCLUDE_DIR = $$system_path($${PREFIX}/include)
