@@ -52,7 +52,8 @@ mingw-get.exe install msys-autoconf
 mingw-get.exe install msys-automake
 mingw-get.exe install msys-autogen
 mingw-get.exe install msys-mktemp
-mingw-get.exe install msys-wget
+rem Use own wget binary, because MSYS version of wget is to old
+rem mingw-get.exe install msys-wget
 popd
 
 %cecho% info "Unpack CMake"

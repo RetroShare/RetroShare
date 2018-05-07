@@ -1,5 +1,5 @@
 :: Usage:
-:: call build-libs.bat [auto-copy] [make tasks]
+:: call build-libs.bat [make tasks]
 
 @echo off
 
@@ -7,7 +7,6 @@ setlocal
 
 :: Parameter
 set MakeParam="DOWNLOAD_PATH=../download"
-if "%~1"=="auto-copy" set MakeParam=%MakeParam% "COPY_ANSWER=y"& shift /1
 
 set MakeTask=
 :param_loop
@@ -29,6 +28,9 @@ if not exist "%EnvMSYSSH%" %cecho% error "Please install MSYS first." & exit /B 
 :: Initialize environment
 call "%~dp0env.bat"
 if errorlevel 1 goto error_env
+
+:: Add tools path to PATH environment
+set PATH=%EnvToolsPath%;%PATH%
 
 call "%ToolsPath%\msys-path.bat" "%~dp0" MSYSCurPath
 call "%ToolsPath%\msys-path.bat" "%BuildLibsPath%" MSYSBuildLibsPath

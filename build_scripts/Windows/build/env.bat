@@ -9,7 +9,7 @@ if "%~1"=="standard" (
 		echo.
 		echo Usage: standard^|retrotor
 		echo.
-		exit /B 1
+		exit /B 2
 	)
 )
 
@@ -22,16 +22,22 @@ if not exist "%DeployPath%" mkdir "%DeployPath%"
 :: Check Qt environment
 set QtPath=
 call "%ToolsPath%\find-in-path.bat" QtPath qmake.exe
-if "%QtPath%"=="" echo Please run command in the Qt Command Prompt.& exit /B 1
+if "%QtPath%"=="" %cecho% error "Please run command in the Qt Command Prompt." & exit /B 1
 
 :: Check MinGW environment
 set MinGWPath=
 call "%ToolsPath%\find-in-path.bat" MinGWPath gcc.exe
-if "%MinGWPath%"=="" echo Please run command in the Qt Command Prompt.& exit /B 1
+if "%MinGWPath%"=="" %cecho% error "Please run command in the Qt Command Prompt." & exit /B 1
 
 :: Get Qt version
 call "%ToolsPath%\get-qt-version.bat" QtVersion
-if "%QtVersion%"=="" echo Cannot get Qt version.& exit /B 1
+if "%QtVersion%"=="" %cecho% error "Cannot get Qt version." & exit /B 1
+
+:: Get gcc versions
+call "%ToolsPath%\get-gcc-version.bat" GCCVersion
+if "%GCCVersion%"=="" %cecho% error "Cannot get gcc version." & exit /B 1
+
+set BuildLibsPath=%EnvRootPath%\build-libs\gcc-%GCCVersion%
 
 set RsBuildConfig=release
 set RsBuildPath=%BuildPath%\Qt-%QtVersion%%RsType%-%RsBuildConfig%

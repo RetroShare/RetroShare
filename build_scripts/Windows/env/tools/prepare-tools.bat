@@ -4,8 +4,8 @@ if "%EnvRootPath%"=="" exit /B 1
 
 set CEchoUrl=https://github.com/lordmulder/cecho/releases/download/2015-10-10/cecho.2015-10-10.zip
 set CEchoInstall=cecho.2015-10-10.zip
-set SevenZipUrl=http://7-zip.org/a/7z1602.msi
-set SevenZipInstall=7z1602.msi
+set SevenZipUrl=https://sourceforge.net/projects/sevenzip/files/7-Zip/18.05/7z1805.msi/download
+set SevenZipInstall=7z1805.msi
 ::set CurlUrl=https://bintray.com/artifact/download/vszakats/generic/curl-7.50.1-win32-mingw.7z
 ::set CurlInstall=curl-7.50.1-win32-mingw.7z
 set WgetUrl=https://eternallybored.org/misc/wget/1.19.4/32/wget.exe
@@ -20,13 +20,23 @@ set NSISUrl=http://prdownloads.sourceforge.net/nsis/nsis-3.0-setup.exe?download
 set NSISInstall=nsis-3.0-setup.exe
 set NSISInstallPath=%EnvToolsPath%\NSIS
 
+if not exist "%EnvToolsPath%\wget.exe" (
+	echo Download Wget installation
+
+	if not exist "%EnvDownloadPath%\%WgetInstall%" call "%ToolsPath%\winhttpjs.bat" %WgetUrl% -saveTo "%EnvDownloadPath%\%WgetInstall%"
+	if not exist "%EnvDownloadPath%\%WgetInstall%" %cecho% error "Cannot download Wget installation" & goto error
+
+	echo Copy Wget
+	copy "%EnvDownloadPath%\wget.exe" "%EnvToolsPath%"
+)
+
 if not exist "%EnvToolsPath%\7z.exe" (
 	call "%ToolsPath%\remove-dir.bat" "%EnvTempPath%"
 	mkdir "%EnvTempPath%"
 
 	echo Download 7z installation
 
-	if not exist "%EnvDownloadPath%\%SevenZipInstall%" call "%ToolsPath%\winhttpjs.bat" %SevenZipUrl% -saveTo "%EnvDownloadPath%\%SevenZipInstall%"
+	if not exist "%EnvDownloadPath%\%SevenZipInstall%" call "%ToolsPath%\download-file.bat" "%SevenZipUrl%" "%EnvDownloadPath%\%SevenZipInstall%"
 	if not exist "%EnvDownloadPath%\%SevenZipInstall%" echo Cannot download 7z installation& goto error
 
 	echo Unpack 7z
@@ -68,16 +78,6 @@ if not exist "%EnvToolsPath%\cecho.exe" (
 ::
 ::	call "%ToolsPath%\remove-dir.bat" "%EnvTempPath%"
 ::)
-
-if not exist "%EnvToolsPath%\wget.exe" (
-	%cecho% info "Download Wget installation"
-
-	if not exist "%EnvDownloadPath%\%WgetInstall%" call "%ToolsPath%\winhttpjs.bat" %WgetUrl% -saveTo "%EnvDownloadPath%\%WgetInstall%"
-	if not exist "%EnvDownloadPath%\%WgetInstall%" %cecho% error "Cannot download Wget installation" & goto error
-
-	%cecho% info "Copy Wget"
-	copy "%EnvDownloadPath%\wget.exe" "%EnvToolsPath%"
-)
 
 if not exist "%EnvToolsPath%\jom.exe" (
 	call "%ToolsPath%\remove-dir.bat" "%EnvTempPath%"

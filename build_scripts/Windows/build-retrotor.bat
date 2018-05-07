@@ -9,7 +9,7 @@ call "%EnvPath%\env.bat"
 if errorlevel 1 goto error_env
 
 %cecho% info "Build libraries"
-call "%~dp0build-libs\build-libs.bat" auto-copy
+call "%~dp0build-libs\build-libs.bat"
 if errorlevel 1 %cecho% error "Failed to build libraries." & exit /B %ERRORLEVEL%
 
 %cecho% info "Build %SourceName%"
