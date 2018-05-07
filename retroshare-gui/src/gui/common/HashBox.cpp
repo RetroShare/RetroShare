@@ -40,14 +40,13 @@ HashedFile::HashedFile()
 	flag = NoFlag;
 }
 
-HashBox::HashBox(QWidget *parent) :
-	QScrollArea(parent),
-	ui(new Ui::HashBox)
+HashBox::HashBox(QWidget *parent)
+  : QScrollArea(parent)
+  , mAutoHide(false)
+  , dropWidget(NULL)
+  , ui(new Ui::HashBox)
+  , mDefaultTransferFlags(0u)
 {
-	dropWidget = NULL;
-	mAutoHide = false;
-	mDefaultTransferFlags = TransferRequestFlags(0u) ;
-
 	ui->setupUi(this);
 }
 
