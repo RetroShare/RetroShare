@@ -34,7 +34,11 @@
 
 
 p3zcNatAssist::p3zcNatAssist()
-	:mZcMtx("p3zcNatAssist")
+  : mZcMtx("p3zcNatAssist")
+  , mEnabled(false), mMapped(false)
+  , mLocalPort(0), mLocalPortSet(false)
+  , mExternalPort(0), mExternalPortSet(false)
+  , mTTL(0)
 {
 
 #ifdef DEBUG_ZCNATASSIST
@@ -44,14 +48,6 @@ p3zcNatAssist::p3zcNatAssist()
 
 	mMappingStatus = ZC_SERVICE_STOPPED;
 	mMappingStatusTS = time(NULL);
-
-	mLocalPort = 0;
-	mLocalPortSet = false;
-
-	mExternalPort = 0;
-	mExternalPortSet = false;
-
-	mMapped = false;
 
 }
 
@@ -294,7 +290,7 @@ void p3zcNatAssist_CallbackMapping( DNSServiceRef sdRef, DNSServiceFlags flags,
 					uint16_t internalPort, uint16_t externalPort, 
     					uint32_t ttl, void *context )
 {
-	p3zcNatAssist *zc = (p3zcNatAssist *) context;
+	p3zcNatAssist *zc = static_cast<p3zcNatAssist *>(context);
 	zc->callbackMapping(sdRef, flags, interfaceIndex, errorCode, externalAddress, protocol, internalPort, externalPort, ttl);
 }
 
