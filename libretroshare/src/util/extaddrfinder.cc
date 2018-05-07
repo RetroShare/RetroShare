@@ -80,7 +80,7 @@ static void getPage(const std::string& server_name,std::string& page)
 
     	in_addr in ;
         
-	if(!rsGetHostByName(server_name.c_str(),in))  /* l'hôte n'existe pas */
+	if(!rsGetHostByName(server_name,in))  /* l'hôte n'existe pas */
 	{
 		std::cerr << "ExtAddrFinder: Unknown host " << server_name << std::endl;
 		unix_close(sockfd);
