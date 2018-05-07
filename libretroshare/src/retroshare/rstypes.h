@@ -239,15 +239,22 @@ class DirStub
 class DirDetails
 {
 public:
-    void *parent;
-    int prow; /* parent row */
+	DirDetails()
+	  : parent(NULL), prow(0)
+	  , ref(NULL), type(0)
+	  , count(0), mtime(0)
+	  , max_mtime(0)
+	{}
 
-    void *ref;
-    uint8_t type;
-    RsPeerId id;
-    std::string name;
-    RsFileHash hash;
-    std::string path;		// full path of the parent directory, when it is a file; full path of the dir otherwise.
+	void *parent;
+	int prow; /* parent row */
+
+	void *ref;
+	uint8_t type;
+	RsPeerId id;
+	std::string name;
+	RsFileHash hash;
+	std::string path;		// full path of the parent directory, when it is a file; full path of the dir otherwise.
 	uint64_t count;
 	uint32_t mtime;			// file/directory modification time, according to what the system reports
 	FileStorageFlags flags;
