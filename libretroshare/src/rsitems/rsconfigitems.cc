@@ -137,9 +137,9 @@ RsItem *RsPeerConfigSerialiser::create_item(uint8_t item_type,uint8_t item_subty
 
 void RsPeerNetItem::clear()
 {
-	peerId.clear();
-        pgpId.clear();
-        location.clear();
+	nodePeerId.clear();
+	pgpId.clear();
+	location.clear();
 	netMode = 0;
 	vs_disc = 0;
 	vs_dht = 0;
@@ -160,7 +160,7 @@ void RsPeerNetItem::clear()
 }
 void RsPeerNetItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
-	RsTypeSerializer::serial_process(j,ctx,peerId,"peerId") ;
+	RsTypeSerializer::serial_process(j,ctx,nodePeerId,"peerId") ;
 	RsTypeSerializer::serial_process(j,ctx,pgpId,"pgpId") ;
 	RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_LOCATION,location,"location") ;
 

@@ -29,7 +29,7 @@
 RsSerialType* init_item(RsPeerNetItem& rpn)
 {
 	randString(SHORT_STR, rpn.dyndns);
-	rpn.peerId.random();
+	rpn.nodePeerId.random();
 	rpn.pgpId.random();
 	randString(SHORT_STR, rpn.location);
 
@@ -165,7 +165,7 @@ bool operator==(const RsPeerNetItem& left, const RsPeerNetItem& right)
 	if(left.dyndns != right.dyndns) return false;
 	if(left.pgpId != right.pgpId) return false;
 	if(left.location != right.location) return false;
-	if(left.peerId != right.peerId) return false;
+	if(left.nodePeerId != right.nodePeerId) return false;
 	if(left.lastContact != right.lastContact) return false;
 	if(left.netMode != right.netMode) return false;
 	if(left.visState != right.visState) return false;
