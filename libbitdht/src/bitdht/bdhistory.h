@@ -16,7 +16,8 @@
 class MsgRegister
 {
         public:
-        MsgRegister() { return; }
+        MsgRegister()
+          : msgType(0), incoming(false) { return; }
         MsgRegister(const bdId *inId, uint32_t inMsgType, bool inIncoming, const bdNodeId *inAboutId)
           :id(*inId), msgType(inMsgType), incoming(inIncoming) 
 	{ 

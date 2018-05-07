@@ -57,8 +57,9 @@
 
 class bdNodeId
 {
-        public:
-        unsigned char data[BITDHT_KEY_LEN];
+public:
+	bdNodeId() { data[0] = 0;}
+	unsigned char data[BITDHT_KEY_LEN];
 };
 
 class bdMetric: public bdNodeId {};
