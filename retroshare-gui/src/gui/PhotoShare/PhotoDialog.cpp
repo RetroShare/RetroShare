@@ -87,7 +87,7 @@ void PhotoDialog::requestComments()
     opts.mMsgFlagMask = RsPhoto::FLAG_MSG_TYPE_MASK;
     opts.mMsgFlagFilter = RsPhoto::FLAG_MSG_TYPE_PHOTO_COMMENT;
 
-    opts.mReqType = GXS_REQUEST_TYPE_MSG_IDS;
+    //opts.mReqType = GXS_REQUEST_TYPE_MSG_IDS;
     opts.mReqType = GXS_REQUEST_TYPE_MSG_RELATED_DATA;
     opts.mOptions = RS_TOKREQOPT_MSG_PARENT | RS_TOKREQOPT_MSG_LATEST;
     RsGxsGrpMsgIdPair msgId;
