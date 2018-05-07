@@ -19,6 +19,12 @@ bool upnphandler::initUPnPState()
 	#ifdef UPNP_DEBUG
 	std::cerr << "upnphandler::initUPnPState" << std::endl;
 	#endif
+	if (cUPnPControlPoint)
+	{
+		//destroy the upnp object
+		cUPnPControlPoint->~CUPnPControlPoint();
+		cUPnPControlPoint=NULL ;
+	}
 	cUPnPControlPoint = new CUPnPControlPoint(2000);
 
 	bool IGWDetected = cUPnPControlPoint->GetIGWDeviceDetected();
