@@ -62,11 +62,11 @@ void *solveDNSEntries(void *p)
 
 		if(!next_call.empty())
 		{
-                    in_addr in ;
-                    
-                    bool succeed = rsGetHostByName(next_call.c_str(),in);
-                    
-		    {
+			in_addr in ;
+
+			bool succeed = rsGetHostByName(next_call,in);
+
+			{
 			    RsStackMutex mut(dnsr->_rdnsMtx) ;
 
 			    DNSResolver::AddrInfo &info = (*dnsr->_addr_map)[next_call];
