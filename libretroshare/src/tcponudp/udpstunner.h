@@ -82,8 +82,8 @@ class UdpStunner: public UdpSubReceiver
 	void SimSymmetricNat();
 #endif
 
-int	grabExclusiveMode(std::string holder);		/* returns seconds since last send/recv */
-int     releaseExclusiveMode(std::string holder, bool forceStun);
+int  grabExclusiveMode(const std::string& holder);		/* returns seconds since last send/recv */
+int  releaseExclusiveMode(const std::string& holder, bool forceStun);
 
 
 void 	setTargetStunPeriod(int32_t sec_per_stun);

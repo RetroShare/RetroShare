@@ -54,30 +54,19 @@ const double  TOU_SUCCESS_LPF_FACTOR = 0.90;
 #define EXCLUSIVE_MODE_TIMEOUT	300
 
 UdpStunner::UdpStunner(UdpPublisher *pub)
-	:UdpSubReceiver(pub), stunMtx("UdpSubReceiver"), eaddrKnown(false), eaddrStable(false),
-        	mStunLastRecvResp(0), mStunLastRecvAny(0), 
-		mStunLastSendStun(0), mStunLastSendAny(0)
-{
-#ifdef UDPSTUN_ALLOW_LOCALNET	
-	mAcceptLocalNet = false;
-	mSimExclusiveNat = false;
-	mSimSymmetricNat = false;
-	mSimUnstableExt = false;
-#endif
-
-
-
-	/* these parameters determine the rate we attempt stuns */
-	mPassiveStunMode = false;
-	mSuccessRate = 0.0; 
-	mTargetStunPeriod = TOU_STUN_DEFAULT_TARGET_RATE;
-
-	mExclusiveMode = false;
-	mExclusiveModeTS = 0;
-	mForceRestun = false;
-
-	return;
-}
+  : UdpSubReceiver(pub), stunMtx("UdpSubReceiver")
+  , eaddrKnown(false), eaddrStable(false), eaddrTime(0)
+  , mStunLastRecvResp(0), mStunLastRecvAny(0)
+  , mStunLastSendStun(0), mStunLastSendAny(0)
+  #ifdef UDPSTUN_ALLOW_LOCALNET
+  , mAcceptLocalNet(false), mSimUnstableExt(false)
+  , mSimExclusiveNat(false), mSimSymmetricNat(false)
+  #endif
+  /* these parameters determine the rate we attempt stuns */
+  , mPassiveStunMode(false), mTargetStunPeriod(TOU_STUN_DEFAULT_TARGET_RATE)
+  , mSuccessRate(0.0)
+  , mExclusiveMode(false), mExclusiveModeTS(0), mForceRestun(false)
+{}
 
 #ifdef UDPSTUN_ALLOW_LOCALNET	
 
@@ -112,9 +101,9 @@ void	UdpStunner::SimSymmetricNat()
 
 
 
-int	UdpStunner::grabExclusiveMode(std::string holder)  /* returns seconds since last send/recv */
+int	UdpStunner::grabExclusiveMode(const std::string& holder)  /* returns seconds since last send/recv */
 {
-        RsStackMutex stack(stunMtx);   /********** LOCK MUTEX *********/
+	RsStackMutex stack(stunMtx);   /********** LOCK MUTEX *********/
 	time_t now = time(NULL);
 
 
@@ -178,9 +167,9 @@ int	UdpStunner::grabExclusiveMode(std::string holder)  /* returns seconds since 
 	return commsage;
 }
 
-int	UdpStunner::releaseExclusiveMode(std::string holder, bool forceStun)
+int	UdpStunner::releaseExclusiveMode(const std::string& holder, bool forceStun)
 {
-        RsStackMutex stack(stunMtx);   /********** LOCK MUTEX *********/
+	RsStackMutex stack(stunMtx);   /********** LOCK MUTEX *********/
 
 	if (!mExclusiveMode)
 	{
@@ -849,7 +838,7 @@ bool    UdpStunner::attemptStun()
           RsStackMutex stack(stunMtx);   /********** LOCK MUTEX *********/
 
 	  size_t i;
-	  for(i = 0; ((i < mStunList.size()) && (mStunList.size() > 0) && (!found)); i++)
+	  for(i = 0; ((i < mStunList.size()) && (!mStunList.empty()) && (!found)); i++)
 	  {
 	  	/* extract entry */
 		peer = mStunList.front();
@@ -891,7 +880,7 @@ bool    UdpStunner::attemptStun()
 		}
 	  } // END OF WHILE LOOP.
 
-	  if (mStunList.size() < 1)
+	  if (mStunList.empty())
 	  {
 #ifdef DEBUG_UDP_STUNNER
 		std::cerr << "UdpStunner::attemptStun() No Peers in List. FAILED";
