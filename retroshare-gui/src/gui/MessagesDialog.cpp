@@ -1203,7 +1203,7 @@ void MessagesDialog::insertMessages()
 
             // set color
             QColor color;
-            if (tagInfo.tagIds.size()) {
+            if (!tagInfo.tagIds.empty()) {
                 Tag = Tags.types.find(tagInfo.tagIds.front());
                 if (Tag != Tags.types.end()) {
                     color = Tag->second.second;
