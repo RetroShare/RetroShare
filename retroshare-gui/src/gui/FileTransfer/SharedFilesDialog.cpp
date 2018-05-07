@@ -953,7 +953,7 @@ void SharedFilesDialog::expandAll()
 #endif
     for(int row = 0; row < ui.dirTreeView->model()->rowCount(); ++row)
     {
-        std::string path = ui.dirTreeView->model()->index(row,0).data(Qt::DisplayRole).toString().toStdString();
+        //std::string path = ui.dirTreeView->model()->index(row,0).data(Qt::DisplayRole).toString().toStdString();
         recursExpandAll(ui.dirTreeView->model()->index(row,0));
     }
 
@@ -1526,7 +1526,7 @@ void SharedFilesDialog::FilterItems()
 
 	QCoreApplication::processEvents() ;
 
-	std::list<DirDetails> result_list ;
+	//std::list<DirDetails> result_list ;
 	uint32_t found = 0 ;
 
 	if(text == "")
@@ -1539,7 +1539,7 @@ void SharedFilesDialog::FilterItems()
 	if(text.length() < 3)
 		return ;
 
-	FileSearchFlags flags = isRemote()?RS_FILE_HINTS_REMOTE:RS_FILE_HINTS_LOCAL;
+	//FileSearchFlags flags = isRemote()?RS_FILE_HINTS_REMOTE:RS_FILE_HINTS_LOCAL;
 	QStringList lst = text.split(" ",QString::SkipEmptyParts) ;
 	std::list<std::string> keywords ;
 
