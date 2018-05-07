@@ -245,7 +245,7 @@ bool p3rtt::recvItem(RsItem *item)
 int p3rtt::handlePing(RsItem *item)
 {
 	/* cast to right type */
-	RsRttPingItem *ping = (RsRttPingItem *) item;
+	RsRttPingItem *ping = static_cast<RsRttPingItem *>(item);
 
 	double ts = getCurrentTS();
 #ifdef DEBUG_RTT
@@ -277,7 +277,7 @@ int p3rtt::handlePing(RsItem *item)
 int p3rtt::handlePong(RsItem *item)
 {
 	/* cast to right type */
-	RsRttPongItem *pong = (RsRttPongItem *) item;
+	RsRttPongItem *pong = static_cast<RsRttPongItem *>(item);
 
 #ifdef DEBUG_RTT
 	std::cerr << "p3rtt::handlePong() from: " << pong->PeerId() << " - [" << pong->mSeqNo << "," << std::hex << pong->mPingTS << " -> " << pong->mPongTS << std::dec << "] "<< std::endl;
