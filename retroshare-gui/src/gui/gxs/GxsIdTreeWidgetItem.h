@@ -67,7 +67,7 @@ private:
 	bool mIdFound;
     	bool mBannedState ;
 	bool mRetryWhenFailed;
-    RsReputations::ReputationLevel mReputationLevel ;
+	//RsReputations::ReputationLevel mReputationLevel ;
 	uint32_t mIconTypeMask;
 	RsGxsImage mAvatar;
 };

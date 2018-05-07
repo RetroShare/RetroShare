@@ -30,7 +30,10 @@
 
 /** Constructor */
 GxsIdRSTreeWidgetItem::GxsIdRSTreeWidgetItem(const RSTreeWidgetItemCompareRole *compareRole, uint32_t icon_mask,QTreeWidget *parent)
-    : QObject(NULL), RSTreeWidgetItem(compareRole, parent), mColumn(0), mIconTypeMask(icon_mask)
+  : QObject(NULL), RSTreeWidgetItem(compareRole, parent)
+  , mColumn(0)
+  //, mReputationLevel(RsReputations::REPUTATION_NEUTRAL)
+  , mIconTypeMask(icon_mask)
 {
 	init();
 }
