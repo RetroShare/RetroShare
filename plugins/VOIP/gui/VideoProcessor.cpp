@@ -740,7 +740,6 @@ bool FFmpegVideo::decodeData(const RsVOIPDataChunk& chunk,QImage& image)
 	unsigned char *tmp = (unsigned char*)malloc(s + AV_INPUT_BUFFER_PADDING_SIZE) ;
 #else //MAC
 // /plugins/VOIP/gui/VideoProcessor.cpp:742: warning: Cppcheck(ConfigurationNotChecked): Skipping configuration 'FF_INPUT_BUFFER_PADDING_SIZE' since the value of 'FF_INPUT_BUFFER_PADDING_SIZE' is unknown. Use -D if you want to check it. You can use -U to skip it explicitly.
-// cppcheck-suppress ConfigurationNotChecked
 	unsigned char *tmp = (unsigned char*)memalign(16, s + AV_INPUT_BUFFER_PADDING_SIZE) ;
 #endif //MAC
 #endif //MINGW
@@ -753,7 +752,6 @@ bool FFmpegVideo::decodeData(const RsVOIPDataChunk& chunk,QImage& image)
 
 	/* set end of buffer to 0 (this ensures that no overreading happens for damaged mpeg streams) */
 // /plugins/VOIP/gui/VideoProcessor.cpp:753: warning: Cppcheck(ConfigurationNotChecked): Skipping configuration 'FF_INPUT_BUFFER_PADDING_SIZE' since the value of 'FF_INPUT_BUFFER_PADDING_SIZE' is unknown. Use -D if you want to check it. You can use -U to skip it explicitly.
-// cppcheck-suppress ConfigurationNotChecked
 	memset(&tmp[s], 0, AV_INPUT_BUFFER_PADDING_SIZE) ;
 
 	decoding_buffer.size = s ;

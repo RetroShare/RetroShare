@@ -812,7 +812,6 @@ static bool checkAccount(const std::string &accountdir, AccountDetails &account,
 #elif defined(ANDROID)
 	dataDirectory = defaultBaseDirectory()+"/usr/share/retroshare";
 #elif defined(DATA_DIR)
-	// cppcheck-suppress ConfigurationNotChecked
 	dataDirectory = DATA_DIR;
 	// For all other OS the data directory must be set in libretroshare.pro
 #else
