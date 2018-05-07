@@ -409,7 +409,7 @@ int 	tou_connect_via_relay(int sockfd,
 		return -1;
 	}
 #else
-	UdpRelayReceiver *urr = (UdpRelayReceiver *) (tous->udpsr);
+	UdpRelayReceiver *urr = static_cast<UdpRelayReceiver *>(tous->udpsr);
 #endif
 
 	/* create a TCP stream to connect with. */
@@ -615,7 +615,7 @@ int 	tou_close(int sockfd)
 #else
 		if (tous -> udptype == TOU_RECEIVER_TYPE_UDPRELAY)
 		{
-			UdpRelayReceiver *urr = (UdpRelayReceiver *) (tous->udpsr);
+			UdpRelayReceiver *urr = static_cast<UdpRelayReceiver *>(tous->udpsr);
 			urr->removeUdpPeer(tous->tcp);
 		}
 		else if (tous -> udptype == TOU_RECEIVER_TYPE_UDPPEER)
