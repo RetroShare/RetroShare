@@ -52,6 +52,7 @@ public:
 
     CryptoKey();
     CryptoKey(const CryptoKey &other) : d(other.d) { }
+    CryptoKey& operator =(const CryptoKey &other) {if (this != &other) { d = other.d;} return *this;}
     ~CryptoKey();
 
     bool loadFromData(const QByteArray &data, KeyType type, KeyFormat format = PEM);
