@@ -65,6 +65,10 @@ QFrame#frame{
 background: black;
 border:1px solid rgb(100,100,100);
 }
+SDIgnoreListFrame{
+background-color: qlineargradient(spread:reflect, x1:0, y1:0, x2:0, y2:1, stop:0 rgb(25, 25, 25), stop:0.05 rgb(0, 0, 0), stop:0.95 rgb(0, 0, 0), stop:1 rgb(25, 25, 25));
+border:1px solid rgb(100,100,100);
+}
 QComboBox, QFontComboBox{
 padding-left: 5px;
 padding-right: 5px;
@@ -111,7 +115,7 @@ padding-right: 16px;
 padding-top:+3;
 color: lightgray;
 }
-QMenu::item:selected, QComboBox QAbstractItemView::item:selected{
+QMenu::item:selected, QComboBox QAbstractItemView::item:selected, QPushButton:checked{
 color: lightgray;
 background-color: qlineargradient(spread:reflect, x1:0, y1:0, x2:0, y2:1, stop:0 rgb(0, 0, 0), stop:0.40 rgb(100, 100, 100), stop:0.60 rgb(100, 100, 100), stop:1 rgb(0, 0, 0));
 }

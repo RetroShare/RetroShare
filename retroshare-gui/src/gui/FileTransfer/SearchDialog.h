@@ -22,14 +22,32 @@
 #ifndef _SEARCHDIALOG_H
 #define _SEARCHDIALOG_H
 
-#include <retroshare/rstypes.h>
 #include "ui_SearchDialog.h"
+
 #include "mainpage.h"
+
+#include <retroshare/rstypes.h>
+
+#include <QPlainTextEdit>
 
 class AdvancedSearchDialog;
 class RSTreeWidgetItemCompareRole;
 
 namespace RsRegularExpression { class Expression; }
+
+//For QStyleSheet
+class SDIgnoreListFrame : public QFrame
+{
+	Q_OBJECT
+public:
+	/** Default Constructor */
+	SDIgnoreListFrame(QWidget *parent = 0)
+	  : QFrame(parent)
+	  {}
+	/** Default Destructor */
+	~SDIgnoreListFrame() {}
+
+};
 
 #define FRIEND_SEARCH 1
 #define ANONYMOUS_SEARCH 2
@@ -114,6 +132,10 @@ private slots:
 
 	void filterItems();
 
+	void ignore_PB_Clicked(bool checked = false);
+	void ignoreListCanceled();
+	void ignoreListValided();
+
 private:
 /** render the results to the tree widget display */
     void initSearchResult(const QString& txt,qulonglong searchId, int fileType, bool advanced) ;
@@ -148,6 +170,9 @@ private:
 
 	bool filterItem(QTreeWidgetItem *item, const QString &text, int filterColumn);
 
+	void updateIgnoreToolTip();
+	void showIgnoreList();
+
     bool m_bProcessSettings;
 
     int nextSearchId;
@@ -172,6 +197,11 @@ private:
 
 	 bool _queueIsAlreadyTakenCareOf ;
 	 std::vector<std::pair<qulonglong,FileDetail> > searchResultsQueue ;
+	QStringList mIgnoreList;
+	bool mIgnore_PB_LongPressed;
+	SDIgnoreListFrame *mIgnoreListFrame;
+	QPlainTextEdit *mIgnoreListTextEdit;
+
 };
 
 #endif
