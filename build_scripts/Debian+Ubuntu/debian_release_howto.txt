@@ -1,0 +1,13 @@
+Creation of a new Debian changelog:
+   
+   dch --create --package retroshare --newversion 0.6.4-1
+
+dget command to retrieve source package:
+
+   dget -u https://launchpad.net/~retroshare/+archive/ubuntu/stable/+files/retroshare_0.6.4-1.20180313.0e6d27ad~xenial.dsc
+
+   (-u means don't check PGP signature)
+
+
+When ready:
+   * updload the package in a place that can be used to dget the package on mentors.debian.net.
