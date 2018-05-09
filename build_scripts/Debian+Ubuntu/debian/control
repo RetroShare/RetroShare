@@ -2,14 +2,14 @@ Source: retroshare
 Section: devel
 Priority: standard
 Maintainer: Cyril Soler <csoler@users.sourceforge.net>
-Build-Depends: debhelper (>= 7),  libglib2.0-dev, libupnp-dev, qt4-dev-tools, libqt4-dev, libssl-dev, libxss-dev, libgnome-keyring-dev, libbz2-dev, libqt4-opengl-dev, libqtmultimediakit1, qtmobility-dev, libspeex-dev, libspeexdsp-dev, libxslt1-dev, cmake, libcurl4-openssl-dev, libopencv-dev, tcl8.5, libsqlcipher-dev, libmicrohttpd-dev, libavcodec-dev
-Standards-Version: 3.9.3
+Build-Depends: debhelper (>= 7),  libglib2.0-dev, libupnp-dev, libssl-dev, libxss-dev, libgnome-keyring-dev, libbz2-dev, libspeex-dev, libspeexdsp-dev, libxslt1-dev, cmake, libcurl4-openssl-dev, libopencv-dev, tcl8.6, libsqlcipher-dev (>= 3.4.1), libmicrohttpd-dev, libavcodec-dev, qtmultimedia5-dev, qttools5-dev, libqt5x11extras5-dev, qt5-default
+Standards-Version: 3.9.6
 Homepage: http://retroshare.sourceforge.net
 
 Package: retroshare-voip-plugin
 Architecture: any
 Conflicts: retroshare06-voip-plugin
-Depends: ${shlibs:Depends}, ${misc:Depends}, retroshare, libspeex1, libspeexdsp1, libqtmultimediakit1
+Depends: ${shlibs:Depends}, ${misc:Depends}, retroshare, libspeex1, libspeexdsp1, libqt5multimedia5
 Description: RetroShare VOIP plugin
  This package provides a plugin for RetroShare, a secured Friend-to-Friend communication 
  plateform. The plugin adds voice-over-IP functionality to the private chat window. Both
