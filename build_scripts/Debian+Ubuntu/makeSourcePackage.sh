@@ -4,7 +4,7 @@
 gitpath="https://github.com/RetroShare/RetroShare.git"
 branch="master"
 #branch="v0.6.3-official_release"
-#bubba3="Y"		# comment out to compile for bubba3
+#bubba3="Y"      # comment out to compile for bubba3
 ######################################################
 
 RS_MAJOR_VERSION=`fgrep RS_MAJOR_VERSION ../../libretroshare/src/retroshare/rsversion.h | cut -d\\  -f3- | sed -e s\/\ \/\/g | cut -c1`
@@ -44,8 +44,11 @@ while [ ${#} -gt 0 ]; do
             rev=${1}
             shift
             ;;
+#        "-debian") shift
+#            debian="true"
+#             ;;
         "-retrotor") shift
-	  		useretrotor="true"
+           useretrotor="true"
             ;;
         "-distribution") shift
             dist=${1}
@@ -68,16 +71,16 @@ while [ ${#} -gt 0 ]; do
 done
 
 if test "${useretrotor}" = "true"; then
-	if ! test "${dist}" = "trusty"; then
-		echo ERROR: retro-tor can only be packaged for trusty for now.
-		exit 1;
-	fi
-	#gitpath="https://github.com/csoler/RetroShare.git"
-	#branch="v0.6-TorOnly"
+   if ! test "${dist}" = "trusty"; then
+      echo ERROR: retro-tor can only be packaged for trusty for now.
+      exit 1;
+   fi
+   #gitpath="https://github.com/csoler/RetroShare.git"
+   #branch="v0.6-TorOnly"
 fi
 
 if test "${dist}" = "" ; then
-	dist="trusty xenial artful bionic"
+   dist="trusty xenial artful bionic"
 fi
 
 echo Attempting to get revision number...
@@ -96,7 +99,7 @@ echo "  Using distributions:"${dist}
 echo "  Using PGP key id   :"${gpgkey}
 
 if test ${useretrotor} = "true"; then
-	echo "  "Specific flags     : retrotor
+   echo "  "Specific flags     : retrotor
 fi
 
 echo Done.
@@ -115,15 +118,15 @@ cd ${workdir}/src
 git clone --depth 1 ${gitpath} --single-branch --branch $branch .
 
 #  if ! test "$hhsh" = "" ; then
-#  	echo Checking out revision $hhsh
-#  	git checkout $hhsh
+#     echo Checking out revision $hhsh
+#     git checkout $hhsh
 #  fi
 
 cd -
 
 if ! test -d ${workdir}/src/libretroshare/; then
-	echo Git clone failed. 
-	exit
+   echo Git clone failed. 
+   exit
 fi
 
 cp -r debian ${workdir}/debian
@@ -147,21 +150,26 @@ echo Cleaning...
 
 echo Calling debuild...
 for i in ${dist}; do
-    echo copying changelog for ${i}
-    sed -e s/XXXXXX/"${rev}"/g -e s/YYYYYY/"${i}"/g -e s/ZZZZZZ/"${version_number}"/g ../changelog > debian/changelog
 
-	 if test ${useretrotor} = "true"; then
-	 	cp ../rules.retrotor debian/rules
-	 	cp ../control.trusty_retrotor debian/control
-    elif test -f ../control."${i}" ; then
-		echo \/\!\\ Using specific control file for distribution "${i}"
-      cp ../control."${i}" debian/control
+    if ! test "${i}" = "debian"; then
+      echo copying changelog for ${i}
+      sed -e s/XXXXXX/"${rev}"/g -e s/YYYYYY/"${i}"/g -e s/ZZZZZZ/"${version_number}"/g ../changelog > debian/changelog
+
+      if test ${useretrotor} = "true"; then
+         cp ../rules.retrotor debian/rules
+         cp ../control.trusty_retrotor debian/control
+      elif test -f ../control."${i}" ; then
+        echo \/\!\\ Using specific control file for distribution "${i}"
+        cp ../control."${i}" debian/control
+      else
+        echo Using standard control file control."${i}" for distribution "${i}"
+        cp ../debian/control debian/control
+      fi
     else
-		echo Using standard control file control."${i}" for distribution "${i}"
-      cp ../debian/control debian/control
-	 fi
+      echo creating official debian release. Using built-in changelog and control files
+    fi
 
-    debuild -S -k${gpgkey}
+    debuild -S -k${gpgkey} --lintian-opts +pedantic -EviIL
 done
 cd -
 
