@@ -11,3 +11,6 @@ dget command to retrieve source package:
 
 When ready:
    * updload the package in a place that can be used to dget the package on mentors.debian.net.
+
+   dput mentors retroshare_0.6.4-1_source.changes
+
