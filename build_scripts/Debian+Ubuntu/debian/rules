@@ -7,7 +7,8 @@ configure-stamp:
 	touch $@
 
 
-build: build-stamp
+build: build-arch build-indep
+
 build-stamp: configure-stamp
 	dh_testdir
 	# Add here commands to compile the package.
@@ -20,9 +21,9 @@ build-stamp: configure-stamp
 	cd src && $(MAKE)
 	touch $@
 
-build_indep: build
+build-indep: build-stamp
 
-build_arch: build
+build-arch: build-stamp
 
 clean:
 	dh_testdir
@@ -31,11 +32,13 @@ clean:
 	# Add here commands to clean up after the build process.
 	[ ! -f src/Makefile ] || (cd src && $(MAKE) distclean)
 	dh_prep
+	dh_clean
 
 install: build
 	dh_testdir
 	dh_testroot
 	dh_prep
+	dh_clean
 	#dh_installdirs
 	cd src && $(MAKE) INSTALL_ROOT=$(CURDIR)/debian/tmp install
 
