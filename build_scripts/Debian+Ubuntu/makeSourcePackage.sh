@@ -2,7 +2,8 @@
 
 ###################### PARAMETERS ####################
 gitpath="https://github.com/RetroShare/RetroShare.git"
-branch="master"
+branch="v0.6.4-official_release"
+#branch="master"
 #branch="v0.6.3-official_release"
 #bubba3="Y"      # comment out to compile for bubba3
 ######################################################
@@ -133,6 +134,10 @@ cp -r debian ${workdir}/debian
 
 # VOIP tweak  
 cp ${workdir}/src/retroshare-gui/src/gui/chat/PopupChatDialog.ui ${workdir}/src/plugins/VOIP/gui/PopupChatDialog.ui
+
+# remove unised qml code, only needed on Android
+
+rm -rf ${workdir}/src/retroshare-qml-app/
 
 # Cloning sqlcipher
 # git clone https://github.com/sqlcipher/sqlcipher.git

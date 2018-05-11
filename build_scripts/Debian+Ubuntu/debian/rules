@@ -20,6 +20,8 @@ build-stamp: configure-stamp
 	cd src && $(MAKE)
 	touch $@
 
+build_indep: build
+
 clean:
 	dh_testdir
 	dh_testroot
