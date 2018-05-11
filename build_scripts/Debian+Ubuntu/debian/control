@@ -8,7 +8,7 @@ Homepage: http://retroshare.sourceforge.net
 
 Package: retroshare-voip-plugin
 Architecture: any
-Conflicts: retroshare06-voip-plugin
+Conflicts: 
 Depends: ${shlibs:Depends}, ${misc:Depends}, retroshare, libspeex1, libspeexdsp1, libqt5multimedia5
 Description: RetroShare VOIP plugin
  This package provides a plugin for RetroShare, a secured Friend-to-Friend communication
@@ -17,7 +17,7 @@ Description: RetroShare VOIP plugin
 
 Package: retroshare-feedreader-plugin
 Architecture: any
-Conflicts: retroshare06-feedreader-plugin
+Conflicts:
 Depends: ${shlibs:Depends}, ${misc:Depends}, retroshare
 Description: RetroShare FeedReader plugin
  Plugin for Retroshare, adding a RSS feed reader tab to retroshare.
@@ -25,14 +25,14 @@ Description: RetroShare FeedReader plugin
 Package: retroshare-nogui
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, gnome-keyring
-Conflicts: retroshare,retroshare06-nogui
+Conflicts: retroshare
 Description: headless version of Retroshare
  Headless version of the Retroshare platform.
 
 Package: retroshare
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, gnome-keyring
-Conflicts: retroshare-nogui,retroshare06
+Conflicts: retroshare-nogui
 Description: Secure communication with friends
  RetroShare is a Open Source, private and secure decentralised
  commmunication platform. It creates  mesh of computers linked with TLS connections,
