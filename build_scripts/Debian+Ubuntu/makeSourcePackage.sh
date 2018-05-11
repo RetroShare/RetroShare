@@ -2,9 +2,8 @@
 
 ###################### PARAMETERS ####################
 gitpath="https://github.com/RetroShare/RetroShare.git"
-branch="v0.6.4-official_release"
 #branch="master"
-#branch="v0.6.3-official_release"
+branch="v0.6.4-official_release"
 #bubba3="Y"      # comment out to compile for bubba3
 ######################################################
 
@@ -45,9 +44,6 @@ while [ ${#} -gt 0 ]; do
             rev=${1}
             shift
             ;;
-#        "-debian") shift
-#            debian="true"
-#             ;;
         "-retrotor") shift
            useretrotor="true"
             ;;
