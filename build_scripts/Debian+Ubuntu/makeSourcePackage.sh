@@ -138,6 +138,7 @@ cp ${workdir}/src/retroshare-gui/src/gui/chat/PopupChatDialog.ui ${workdir}/src/
 # remove unised qml code, only needed on Android
 
 rm -rf ${workdir}/src/retroshare-qml-app/
+rm -rf ${workdir}/src/build_scripts/
 
 # Cloning sqlcipher
 # git clone https://github.com/sqlcipher/sqlcipher.git

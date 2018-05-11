@@ -22,18 +22,20 @@ build-stamp: configure-stamp
 
 build_indep: build
 
+build_arch: build
+
 clean:
 	dh_testdir
 	dh_testroot
 	rm -f configure-stamp build-stamp
 	# Add here commands to clean up after the build process.
 	[ ! -f src/Makefile ] || (cd src && $(MAKE) distclean)
-	dh_clean
+	dh_prep
 
 install: build
 	dh_testdir
 	dh_testroot
-	dh_clean -k
+	dh_prep
 	#dh_installdirs
 	cd src && $(MAKE) INSTALL_ROOT=$(CURDIR)/debian/tmp install
 
