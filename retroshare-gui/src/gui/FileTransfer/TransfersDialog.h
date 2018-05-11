@@ -146,6 +146,7 @@ private slots:
     void collModif();
     void collView();
     void collOpen();
+    void collAutoOpen(const QString& fileHash);
 
     void setShowDLSizeColumn(bool show);
     void setShowDLCompleteColumn(bool show);

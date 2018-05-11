@@ -23,12 +23,14 @@
 
 #include "rshare.h"
 #include "gui/ShareManager.h"
+#include "gui/settings/rsharesettings.h"
 #include "util/misc.h"
 
 #include "retroshare/rsiface.h"
 #include "retroshare/rsfiles.h"
 #include "retroshare/rspeers.h"
 
+#include <QCheckBox>
 #include <QToolTip>
 
 #include <iostream>
@@ -48,6 +50,7 @@ TransferPage::TransferPage(QWidget * parent, Qt::WindowFlags flags)
 	QObject::connect(ui._filePermDirectDL_CB,SIGNAL(activated(int)),this,SLOT(updateFilePermDirectDL(int)));
 
 	QObject::connect(ui.incomingButton, SIGNAL(clicked( bool ) ), this , SLOT( setIncomingDirectory() ) );
+	QObject::connect(ui.autoDLColl_CB, SIGNAL(toggled(bool)), this, SLOT(updateAutoDLColl()));
 	QObject::connect(ui.partialButton, SIGNAL(clicked( bool ) ), this , SLOT( setPartialsDirectory() ) );
 	QObject::connect(ui.editShareButton, SIGNAL(clicked()), this, SLOT(editDirectories()));
 	QObject::connect(ui.autoCheckDirectories_CB, SIGNAL(clicked(bool)), this, SLOT(toggleAutoCheckDirectories(bool)));
@@ -129,6 +132,7 @@ void TransferPage::load()
     whileBlocking(ui.autoCheckDirectories_CB)->setChecked(rsFiles->watchEnabled()) ; ;
 
 	whileBlocking(ui.incomingDir)->setText(QString::fromUtf8(rsFiles->getDownloadDirectory().c_str()));
+	whileBlocking(ui.autoDLColl_CB)->setChecked(Settings->valueFromGroup("Transfer", "AutoDLColl", false).toBool());
 	whileBlocking(ui.partialsDir)->setText(QString::fromUtf8(rsFiles->getPartialsDirectory().c_str()));
 	whileBlocking(ui.followSymLinks_CB)->setChecked(rsFiles->followSymLinks());
 	whileBlocking(ui.ignoreDuplicates_CB)->setChecked(rsFiles->ignoreDuplicates());
@@ -244,6 +248,11 @@ void TransferPage::setIncomingDirectory()
 	ui.incomingDir->style()->unpolish(ui.incomingDir);
 	ui.incomingDir->style()->polish(  ui.incomingDir);
 	whileBlocking(ui.incomingDir)->setText(QString::fromUtf8(rsFiles->getDownloadDirectory().c_str()));
+}
+
+void TransferPage::updateAutoDLColl()
+{
+	Settings->setValueToGroup("Transfer", "AutoDLColl", ui.autoDLColl_CB->isChecked());
 }
 
 void TransferPage::setPartialsDirectory()
