@@ -13,6 +13,7 @@ DESTDIR = lib
 # in the meantime, they are part of the RS directory so that it is always possible to find them
 
 INCLUDEPATH += ../../rapidjson-1.1.0
+INCLUDEPATH += ../../libretroshare/src
 
 libresapilocalserver {
     CONFIG *= qt
