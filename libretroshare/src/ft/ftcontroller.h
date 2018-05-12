@@ -175,8 +175,8 @@ class ftController: public RsTickingThread, public pqiServiceMonitor, public p3C
         void FileDownloads(std::list<RsFileHash> &hashs);
 
 		/* Directory Handling */
-        bool 	setDownloadDirectory(std::string path);
-		bool 	setPartialsDirectory(std::string path);
+		bool setDownloadDirectory(std::string path);
+		bool setPartialsDirectory(std::string path);
 		std::string getDownloadDirectory();
 		std::string getPartialsDirectory();
         bool 	FileDetails(const RsFileHash &hash, FileInfo &info);

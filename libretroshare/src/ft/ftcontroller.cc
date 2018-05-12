@@ -1472,24 +1472,24 @@ bool 	ftController::setPartialsDirectory(std::string path)
 
 	/* check it is not a subdir of download / shared directories (BAD) - TODO */
 	{
-        RsStackMutex stack(ctrlMutex);
+		RsStackMutex stack(ctrlMutex);
 
-        path = RsDirUtil::convertPathToUnix(path);
+		path = RsDirUtil::convertPathToUnix(path);
 
-        if (path.find(mDownloadPath) == std::string::npos) {
-            return false;
-        }
+		if (path.find(mDownloadPath) != std::string::npos) {
+			return false;
+		}
 
-        if (rsFiles) {
-            std::list<SharedDirInfo>::iterator it;
-            std::list<SharedDirInfo> dirs;
-            rsFiles->getSharedDirectories(dirs);
-            for (it = dirs.begin(); it != dirs.end(); ++it) {
-                if (path.find((*it).filename) == std::string::npos) {
-                    return false;
-                }
-            }
-        }
+		if (rsFiles) {
+			std::list<SharedDirInfo>::iterator it;
+			std::list<SharedDirInfo> dirs;
+			rsFiles->getSharedDirectories(dirs);
+			for (it = dirs.begin(); it != dirs.end(); ++it) {
+				if (path.find((*it).filename) != std::string::npos) {
+					return false;
+				}
+			}
+		}
 	}
 
 	/* check if it exists */
