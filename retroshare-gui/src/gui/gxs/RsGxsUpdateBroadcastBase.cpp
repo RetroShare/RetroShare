@@ -67,6 +67,10 @@ void RsGxsUpdateBroadcastBase::updateBroadcastChanged()
 
 	/* Update only update when the widget is visible. */
 	if (mUpdateWhenInvisible || !widget || widget->isVisible()) {
+
+		if (!mGrpIds.empty() || !mGrpIdsMeta.empty() || !mMsgIds.empty() || !mMsgIdsMeta.empty())
+            mFillComplete = true ;
+
 		securedUpdateDisplay();
 	}
 }
