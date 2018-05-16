@@ -106,20 +106,13 @@ libresapihttpserver {
 	DEFINES *= WINDOWS_SYS
 	INCLUDEPATH += . $$INC_DIR
 
-	greaterThan(QT_MAJOR_VERSION, 4) {
-		# Qt 5
-		PRO_PATH=$$shell_path($$_PRO_FILE_PWD_)
-		MAKE_SRC=$$shell_path($$PRO_PATH/webui-src/make-src)
-	} else {
-		# Qt 4
-		PRO_PATH=$$replace(_PRO_FILE_PWD_, /, \\)
-		MAKE_SRC=$$PRO_PATH\\webui-src\\make-src
-	}
+    PRO_PATH=$$shell_path($$_PRO_FILE_PWD_)
+    MAKE_SRC=$$shell_path($$PRO_PATH/webui-src/make-src)
 
-        #create_webfiles.commands = $$MAKE_SRC\\build.bat $$PRO_PATH
-        #QMAKE_EXTRA_TARGETS += create_webfiles
-        #PRE_TARGETDEPS += create_webfiles
-        QMAKE_POST_LINK=$$MAKE_SRC\\build.bat $$PRO_PATH
+    #create_webfiles.commands = $$MAKE_SRC\\build.bat $$PRO_PATH
+    #QMAKE_EXTRA_TARGETS += create_webfiles
+    #PRE_TARGETDEPS += create_webfiles
+    QMAKE_POST_LINK=$$MAKE_SRC\\build.bat $$PRO_PATH
 
 	# create dummy files
 	system($$MAKE_SRC\\init.bat .)

@@ -160,6 +160,12 @@ rs_v07_changes {
 ## RetroShare qmake functions goes here as all the rest may use them ###########
 ################################################################################
 
+## Qt versions older the 5 are not supported anymore, check if the user is
+## attempting use them and fail accordingly with a proper error message
+lessThan(QT_MAJOR_VERSION, 5) {
+    error(Qt 5.0.0 or newer is needed to build RetroShare)
+}
+
 ## This function is useful to look for the location of a file in a list of paths
 ## like the which command on linux, first paramether is the file name,
 ## second parameter is the name of a variable containing the list of folders
@@ -226,7 +232,7 @@ defineReplace(linkDynamicLibs) {
 
 
 ################################################################################
-## Statements and variables that depends on build options (CONFIG)goes here ####
+## Statements and variables that depends on build options (CONFIG) goes here ###
 ################################################################################
 ##
 ## Defining the following variables may be needed depending on platform and
