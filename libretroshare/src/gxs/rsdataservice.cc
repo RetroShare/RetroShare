@@ -952,6 +952,8 @@ void RsDataService::locked_updateGrpMetaCache(const RsGxsGrpMetaData& meta)
 
 	if(it != mGrpMetaDataCache.end())
 		*(it->second) = meta ;
+    else
+        mGrpMetaDataCache[meta.mGroupId] = new RsGxsGrpMetaData(meta) ;
 }
 
 void RsDataService::locked_clearGrpMetaCache(const RsGxsGroupId& gid)

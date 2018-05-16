@@ -37,7 +37,7 @@ protected:
 	// This is overloaded in subclasses.
 	virtual void updateDisplay(bool complete) = 0;
 
-private slots:
+public slots:
 	void fillDisplay(bool complete);
 
 private:
