@@ -202,8 +202,8 @@ public:
          * Directory Handling
          ***/
     virtual void requestDirUpdate(void *ref) ;			// triggers the update of the given reference. Used when browsing.
-    virtual void	setDownloadDirectory(std::string path);
-    virtual void	setPartialsDirectory(std::string path);
+    virtual bool setDownloadDirectory(std::string path);
+    virtual bool setPartialsDirectory(std::string path);
     virtual std::string getDownloadDirectory();
     virtual std::string getPartialsDirectory();
 

@@ -278,8 +278,8 @@ class RsFiles
 		 ***/
         virtual void requestDirUpdate(void *ref) =0 ;			// triggers the update of the given reference. Used when browsing.
 
-		virtual void    setDownloadDirectory(std::string path) = 0;
-		virtual void    setPartialsDirectory(std::string path) = 0;
+		virtual bool setDownloadDirectory(std::string path) = 0;
+		virtual bool setPartialsDirectory(std::string path) = 0;
 		virtual std::string getDownloadDirectory() = 0;
 		virtual std::string getPartialsDirectory() = 0;
 
