@@ -1179,7 +1179,9 @@ void p3GxsChannels::setMessageProcessedStatus(uint32_t& token, const RsGxsGrpMsg
 	setMsgStatusFlags(token, msgId, status, mask);
 }
 
-void p3GxsChannels::setMessageReadStatus(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, bool read)
+void p3GxsChannels::setMessageReadStatus( uint32_t& token,
+                                          const RsGxsGrpMsgIdPair& msgId,
+                                          bool read )
 {
 #ifdef GXSCHANNELS_DEBUG
 	std::cerr << "p3GxsChannels::setMessageReadStatus()";
@@ -1189,10 +1191,8 @@ void p3GxsChannels::setMessageReadStatus(uint32_t& token, const RsGxsGrpMsgIdPai
 	/* Always remove status unprocessed */
 	uint32_t mask = GXS_SERV::GXS_MSG_STATUS_GUI_NEW | GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD;
 	uint32_t status = GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD;
-	if (read)
-	{
-		status = 0;
-	}
+	if (read) status = 0;
+
 	setMsgStatusFlags(token, msgId, status, mask);
 }
 
