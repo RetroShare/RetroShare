@@ -60,18 +60,20 @@ class RsBanListItem: public RsItem
 class RsBanListConfigItem: public RsItem
 {
 public:
-    RsBanListConfigItem()
-            :RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_BANLIST, RS_PKT_SUBTYPE_BANLIST_CONFIG_ITEM) {}
+	RsBanListConfigItem()
+	  : RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_BANLIST, RS_PKT_SUBTYPE_BANLIST_CONFIG_ITEM)
+	  , banListType(0), update_time(0)
+	{}
 
-    virtual ~RsBanListConfigItem(){}
-    virtual void clear() { banned_peers.TlvClear() ; }
+	virtual ~RsBanListConfigItem(){}
+	virtual void clear() { banned_peers.TlvClear() ; }
 
 	void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 
-    uint32_t		type ;
-    RsPeerId  		peerId ;
-    time_t			update_time ;
-    RsTlvBanList	banned_peers;
+	uint32_t      banListType ;
+	RsPeerId      banListPeerId ;
+	time_t        update_time ;
+	RsTlvBanList  banned_peers;
 };
 
 class RsBanListSerialiser: public RsServiceSerializer

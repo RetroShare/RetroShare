@@ -735,9 +735,9 @@ bool p3BanList::saveList(bool &cleanup, std::list<RsItem*>& itemlist)
     {
         RsBanListConfigItem *item = new RsBanListConfigItem ;
 
-        item->type         = RSBANLIST_TYPE_PEERLIST ;
-        item->peerId       = it->second.mPeerId ;
-        item->update_time  = it->second.mLastUpdate ;
+        item->banListType   = RSBANLIST_TYPE_PEERLIST ;
+        item->banListPeerId = it->second.mPeerId ;
+        item->update_time   = it->second.mLastUpdate ;
         item->banned_peers.TlvClear() ;
 
         for(std::map<sockaddr_storage,BanListPeer>::const_iterator it2 = it->second.mBanPeers.begin();it2!=it->second.mBanPeers.end();++it2)
@@ -754,8 +754,8 @@ bool p3BanList::saveList(bool &cleanup, std::list<RsItem*>& itemlist)
     // Add  whitelist
     RsBanListConfigItem *item = new RsBanListConfigItem ;
 
-    item->type         = RSBANLIST_TYPE_WHITELIST ;
-    item->peerId.clear() ;
+    item->banListType = RSBANLIST_TYPE_WHITELIST ;
+    item->banListPeerId.clear() ;
     item->update_time  = 0 ;
     item->banned_peers.TlvClear() ;
 
@@ -773,8 +773,8 @@ bool p3BanList::saveList(bool &cleanup, std::list<RsItem*>& itemlist)
 
     item = new RsBanListConfigItem ;
 
-    item->type         = RSBANLIST_TYPE_BLACKLIST ;
-    item->peerId.clear();
+    item->banListType = RSBANLIST_TYPE_BLACKLIST ;
+    item->banListPeerId.clear();
     item->update_time  = 0 ;
     item->banned_peers.TlvClear() ;
 
@@ -850,11 +850,11 @@ bool p3BanList::loadList(std::list<RsItem*>& load)
 
         if(citem != NULL)
         {
-            if(citem->type == RSBANLIST_TYPE_PEERLIST)
+            if(citem->banListType == RSBANLIST_TYPE_PEERLIST)
             {
-                BanList& bl(mBanSources[citem->peerId]) ;
+                BanList& bl(mBanSources[citem->banListPeerId]) ;
 
-                bl.mPeerId = citem->peerId ;
+                bl.mPeerId = citem->banListPeerId ;
                 bl.mLastUpdate = citem->update_time ;
 
                 bl.mBanPeers.clear() ;
@@ -870,7 +870,7 @@ bool p3BanList::loadList(std::list<RsItem*>& load)
                         std::cerr << "(WW) removed wrong address " << sockaddr_storage_iptostring(blp.addr) << std::endl;
                 }
             }
-            else if(citem->type == RSBANLIST_TYPE_BLACKLIST)
+            else if(citem->banListType == RSBANLIST_TYPE_BLACKLIST)
             {
                 mBanRanges.clear() ;
 
@@ -885,7 +885,7 @@ bool p3BanList::loadList(std::list<RsItem*>& load)
                         std::cerr << "(WW) removed wrong address " << sockaddr_storage_iptostring(blp.addr) << std::endl;
                 }
             }
-            else if(citem->type == RSBANLIST_TYPE_WHITELIST)
+            else if(citem->banListType == RSBANLIST_TYPE_WHITELIST)
             {
                 mWhiteListedRanges.clear() ;
 
@@ -903,7 +903,7 @@ bool p3BanList::loadList(std::list<RsItem*>& load)
                 }
             }
             else
-                std::cerr << "(EE) BanList item unknown type " << citem->type << ". This is a bug." << std::endl;
+                std::cerr << "(EE) BanList item unknown type " << citem->banListType << ". This is a bug." << std::endl;
         }
 
         delete *it ;

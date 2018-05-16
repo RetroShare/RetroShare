@@ -67,7 +67,7 @@ p3HistoryMgr::~p3HistoryMgr()
 
 /***** p3HistoryMgr *****/
 
-//void p3HistoryMgr::addMessage(bool incoming, const RsPeerId &chatPeerId, const RsPeerId &peerId, const RsChatMsgItem *chatItem)
+//void p3HistoryMgr::addMessage(bool incoming, const RsPeerId &chatPeerId, const RsPeerId &msgPeerId, const RsChatMsgItem *chatItem)
 void p3HistoryMgr::addMessage(const ChatMessage& cm)
 {
 	uint32_t addMsgId = 0;
@@ -84,48 +84,48 @@ void p3HistoryMgr::addMessage(const ChatMessage& cm)
 		RsStackMutex stack(mHistoryMtx); /********** STACK LOCKED MTX ******/
 
 
-        RsPeerId peerId; // id of sending peer
-        RsPeerId chatPeerId; // id of chat endpoint
-        std::string peerName; //name of sending peer
+		RsPeerId msgPeerId; // id of sending peer
+		RsPeerId chatPeerId; // id of chat endpoint
+		std::string peerName; //name of sending peer
 
-        bool enabled = false;
-        if (cm.chat_id.isBroadcast() && mPublicEnable == true) {
-            peerName = rsPeers->getPeerName(cm.broadcast_peer_id);
-            enabled = true;
+		bool enabled = false;
+		if (cm.chat_id.isBroadcast() && mPublicEnable == true) {
+			peerName = rsPeers->getPeerName(cm.broadcast_peer_id);
+			enabled = true;
 		}
-        if (cm.chat_id.isPeerId() && mPrivateEnable == true) {
-            peerId = cm.incoming ? cm.chat_id.toPeerId() : rsPeers->getOwnId();
-            peerName = rsPeers->getPeerName(peerId);
-            enabled = true;
-        }
-        if (cm.chat_id.isLobbyId() && mLobbyEnable == true) {
-            peerName = cm.lobby_peer_gxs_id.toStdString();
-            enabled = true;
-        }
+		if (cm.chat_id.isPeerId() && mPrivateEnable == true) {
+			msgPeerId = cm.incoming ? cm.chat_id.toPeerId() : rsPeers->getOwnId();
+			peerName = rsPeers->getPeerName(msgPeerId);
+			enabled = true;
+		}
+		if (cm.chat_id.isLobbyId() && mLobbyEnable == true) {
+			peerName = cm.lobby_peer_gxs_id.toStdString();
+			enabled = true;
+		}
 
-        if(cm.chat_id.isDistantChatId())
-	{
-		DistantChatPeerInfo dcpinfo;
-		if (rsMsgs->getDistantChatStatus(cm.chat_id.toDistantChatId(), dcpinfo))
-			peerName = cm.chat_id.toPeerId().toStdString();
-		enabled = true;
-	}
+		if(cm.chat_id.isDistantChatId())
+		{
+			DistantChatPeerInfo dcpinfo;
+			if (rsMsgs->getDistantChatStatus(cm.chat_id.toDistantChatId(), dcpinfo))
+				peerName = cm.chat_id.toPeerId().toStdString();
+			enabled = true;
+		}
 
-        if(enabled == false)
-            return;
+		if(enabled == false)
+			return;
 
-        if(!chatIdToVirtualPeerId(cm.chat_id, chatPeerId))
-            return;
+		if(!chatIdToVirtualPeerId(cm.chat_id, chatPeerId))
+			return;
 
 		RsHistoryMsgItem* item = new RsHistoryMsgItem;
 		item->chatPeerId = chatPeerId;
-        item->incoming = cm.incoming;
-		item->peerId = peerId;
-        item->peerName = peerName;
-        item->sendTime = cm.sendTime;
-        item->recvTime = cm.recvTime;
+		item->incoming = cm.incoming;
+		item->msgPeerId = msgPeerId;
+		item->peerName = peerName;
+		item->sendTime = cm.sendTime;
+		item->recvTime = cm.recvTime;
 
-        item->message = cm.msg ;
+		item->message = cm.msg ;
 		//librs::util::ConvertUtf16ToUtf8(chatItem->message, item->message);
 
 		std::map<RsPeerId, std::map<uint32_t, RsHistoryMsgItem*> >::iterator mit = mMessages.find(item->chatPeerId);
@@ -138,7 +138,7 @@ void p3HistoryMgr::addMessage(const ChatMessage& cm)
 			uint32_t limit;
 			if (chatPeerId.isNull()) 
 				limit = mPublicSaveCount;
-            else if (cm.chat_id.isLobbyId())
+			else if (cm.chat_id.isLobbyId())
 				limit = mLobbySaveCount;
 			else 
 				limit = mPrivateSaveCount;
@@ -424,7 +424,7 @@ static void convertMsg(const RsHistoryMsgItem* item, HistoryMsg &msg)
 	msg.msgId = item->msgId;
 	msg.chatPeerId = item->chatPeerId;
 	msg.incoming = item->incoming;
-	msg.peerId = item->peerId;
+	msg.peerId = item->msgPeerId;
 	msg.peerName = item->peerName;
 	msg.sendTime = item->sendTime;
 	msg.recvTime = item->recvTime;

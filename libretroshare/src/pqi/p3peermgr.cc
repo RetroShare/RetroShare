@@ -2014,7 +2014,7 @@ bool p3PeerMgrIMPL::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 	RsPeerNetItem *item = new RsPeerNetItem();
 	item->clear();
 
-	item->peerId = getOwnId();
+	item->nodePeerId = getOwnId();
 	item->pgpId = mOwnState.gpg_id;
 	item->location = mOwnState.location;
 
@@ -2065,7 +2065,7 @@ bool p3PeerMgrIMPL::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 		item = new RsPeerNetItem();
 		item->clear();
 
-		item->peerId = it->first;
+		item->nodePeerId = it->first;
 		item->pgpId = (it->second).gpg_id;
 		item->location = (it->second).location;
 		item->netMode = (it->second).netMode;
@@ -2265,7 +2265,7 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
 	    RsPeerNetItem *pitem = dynamic_cast<RsPeerNetItem *>(*it);
 	    if (pitem)
 	    {
-		    RsPeerId peer_id = pitem->peerId ;
+		    RsPeerId peer_id = pitem->nodePeerId ;
 		    RsPgpId peer_pgp_id = pitem->pgpId ;
 
 		    if (peer_id == ownId)
@@ -2292,7 +2292,7 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
 			    /* ************* */
 			    // permission flags is used as a mask for the existing perms, so we set it to 0xffff
 			    addFriend(peer_id, peer_pgp_id, pitem->netMode, pitem->vs_disc, pitem->vs_dht, pitem->lastContact, RS_NODE_PERM_ALL);
-			    setLocation(pitem->peerId, pitem->location);
+			    setLocation(pitem->nodePeerId, pitem->location);
 		    }
 
 		    if (pitem->netMode == RS_NET_MODE_HIDDEN)
