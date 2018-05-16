@@ -184,7 +184,7 @@ void    SearchForLocalNet();
         time_t mSearchTS;
         bool mSearchingDone;
 
-        bdDhtFunctions *mFns;
+	bdDhtFunctions *mDhtFns;
 
 	uint32_t mNetworkSize;
 	uint32_t mBdNetworkSize;
