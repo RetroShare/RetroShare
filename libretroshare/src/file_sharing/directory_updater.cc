@@ -73,10 +73,23 @@ void LocalDirectoryUpdater::data_tick()
     {
         if(now > mDelayBetweenDirectoryUpdates + mLastSweepTime)
         {
-            if(sweepSharedDirectories())
+            bool some_files_not_ready = false ;
+
+            if(sweepSharedDirectories(some_files_not_ready))
             {
-                mNeedsFullRecheck = false;
-                mLastSweepTime = now ;
+                if(some_files_not_ready)
+                {
+					mNeedsFullRecheck = true ;
+					mLastSweepTime = now - mDelayBetweenDirectoryUpdates + 60 ; // retry 20 secs from now
+
+					std::cerr << "(II) some files being modified. Will re-scan in 60 secs." << std::endl;
+                }
+				else
+                {
+					mNeedsFullRecheck = false ;
+					mLastSweepTime = now ;
+                }
+
                 mSharedDirectories->notifyTSChanged();
                 mForceUpdate = false ;
             }
@@ -111,7 +124,7 @@ void LocalDirectoryUpdater::forceUpdate()
 		mHashCache->togglePauseHashingProcess();
 }
 
-bool LocalDirectoryUpdater::sweepSharedDirectories()
+bool LocalDirectoryUpdater::sweepSharedDirectories(bool& some_files_not_ready)
 {
     if(mHashSalt.isNull())
     {
@@ -158,8 +171,8 @@ bool LocalDirectoryUpdater::sweepSharedDirectories()
 #endif
 		existing_dirs.insert(RsDirUtil::removeSymLinks(stored_dir_it.name()));
 
-        recursUpdateSharedDir(stored_dir_it.name(), *stored_dir_it,existing_dirs,1) ;		// here we need to use the list that was stored, instead of the shared dir list, because the two
-                                                                            // are not necessarily in the same order.
+        recursUpdateSharedDir(stored_dir_it.name(), *stored_dir_it,existing_dirs,1,some_files_not_ready) ;		// here we need to use the list that was stored, instead of the shared dir list, because the two
+                                                                            									// are not necessarily in the same order.
     }
 
     RsServer::notify()->notifyListChange(NOTIFY_LIST_DIRLIST_LOCAL, 0);
@@ -168,7 +181,7 @@ bool LocalDirectoryUpdater::sweepSharedDirectories()
     return true ;
 }
 
-void LocalDirectoryUpdater::recursUpdateSharedDir(const std::string& cumulated_path, DirectoryStorage::EntryIndex indx,std::set<std::string>& existing_directories,uint32_t current_depth)
+void LocalDirectoryUpdater::recursUpdateSharedDir(const std::string& cumulated_path, DirectoryStorage::EntryIndex indx,std::set<std::string>& existing_directories,uint32_t current_depth,bool& some_files_not_ready)
 {
 #ifdef DEBUG_LOCAL_DIR_UPDATER
     std::cerr << "[directory storage]   parsing directory " << cumulated_path << ", index=" << indx << std::endl;
@@ -187,6 +200,8 @@ void LocalDirectoryUpdater::recursUpdateSharedDir(const std::string& cumulated_p
         return;
     }
 
+    time_t now = time(NULL) ;
+
     if(mNeedsFullRecheck || dirIt.dir_modtime() > dir_local_mod_time)	// the > is because we may have changed the virtual name, and therefore the TS wont match.
 																		// we only want to detect when the directory has changed on the disk
     {
@@ -200,11 +215,23 @@ void LocalDirectoryUpdater::recursUpdateSharedDir(const std::string& cumulated_p
 		   {
 			   switch(dirIt.file_type())
 			   {
-			   case librs::util::FolderIterator::TYPE_FILE:	subfiles[dirIt.file_name()].modtime = dirIt.file_modtime() ;
-				   subfiles[dirIt.file_name()].size = dirIt.file_size();
+			   case librs::util::FolderIterator::TYPE_FILE:
+
+                   if(dirIt.file_modtime() + MIN_TIME_AFTER_LAST_MODIFICATION < now)
+				   {
+					   subfiles[dirIt.file_name()].modtime = dirIt.file_modtime() ;
+					   subfiles[dirIt.file_name()].size = dirIt.file_size();
 #ifdef DEBUG_LOCAL_DIR_UPDATER
-				   std::cerr << "  adding sub-file \"" << dirIt.file_name() << "\"" << std::endl;
+					   std::cerr << "  adding sub-file \"" << dirIt.file_name() << "\"" << std::endl;
 #endif
+				   }
+                   else
+                   {
+                       some_files_not_ready = true ;
+
+                       std::cerr << "(WW) file " << dirIt.file_fullpath() << " is probably being modified. Keeping it for later." << std::endl;
+                   }
+
 				   break;
 
 			   case librs::util::FolderIterator::TYPE_DIR:
@@ -276,7 +303,7 @@ void LocalDirectoryUpdater::recursUpdateSharedDir(const std::string& cumulated_p
 #ifdef DEBUG_LOCAL_DIR_UPDATER
 			std::cerr << "  recursing into " << stored_dir_it.name() << std::endl;
 #endif
-			recursUpdateSharedDir(cumulated_path + "/" + stored_dir_it.name(), *stored_dir_it,existing_directories,current_depth+1) ;
+			recursUpdateSharedDir(cumulated_path + "/" + stored_dir_it.name(), *stored_dir_it,existing_directories,current_depth+1,some_files_not_ready) ;
 		}
 }
 

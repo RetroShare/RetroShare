@@ -623,7 +623,7 @@ bool LocalDirectoryStorage::locked_getFileSharingPermissions(const EntryIndex& i
 
         if(it == mLocalDirs.end())
         {
-            std::cerr << "(EE) very weird bug: base directory \"" << base_dir << "\" not found in shared dir list." << std::endl;
+            std::cerr << "(II) base directory \"" << base_dir << "\" not found in shared dir list." << std::endl;
             return false ;
         }
 
