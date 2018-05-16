@@ -48,6 +48,10 @@ while [ ${#} -gt 0 ]; do
             gpgkey=${1}
             shift
             ;;
+		  "-nodl")
+		  		nodl=yes
+				shift
+				;;
 		  "-makeorig") 
 		  		makeorig=yes
 				shift
@@ -93,58 +97,63 @@ read tmp
 echo Extracting base archive...
 
 if ! test "${makeorig}" = "yes" ; then
-	if ! test -f retroshare_${version}.orig.tar.gz; then
+	if ! test -f retroshare_${version_number}.orig.tar.gz; then
 		echo Error: no orig file found. Please call with -makeorig option first
 		exit
 	fi
 fi
 
+if ! test "${nodl}" = "yes"; then
+	mkdir -p ${workdir}/src
+	echo Checking out latest snapshot...
+	cd ${workdir}/src
+	git clone --depth 1 ${gitpath} --single-branch --branch $branch .
+	
+	cd -
 
-mkdir -p ${workdir}/src
-echo Checking out latest snapshot...
-cd ${workdir}/src
-git clone --depth 1 ${gitpath} --single-branch --branch $branch .
+	if ! test -d ${workdir}/src/libretroshare/; then
+	   echo Git clone failed. 
+	   exit
+	fi
 
-cd -
+	cp -r debian ${workdir}/debian
 
-if ! test -d ${workdir}/src/libretroshare/; then
-   echo Git clone failed. 
-   exit
+	# VOIP tweak  
+	cp ${workdir}/src/retroshare-gui/src/gui/chat/PopupChatDialog.ui ${workdir}/src/plugins/VOIP/gui/PopupChatDialog.ui
+
+	# remove unised qml code, only needed on Android
+	rm -rf ${workdir}/src/retroshare-qml-app/
+	rm -rf ${workdir}/src/build_scripts/
+	rm     ${workdir}/debian/*~
+
+	cd ${workdir}
+	echo Setting version numbers...
+
+	# setup version numbers
+	sed -e "s%RS_REVISION_NUMBER.*%RS_REVISION_NUMBER   0x${hhsh}%"  src/libretroshare/src/retroshare/rsversion.in > src/libretroshare/src/retroshare/rsversion.h
+
+	# Various cleaning
+	echo Cleaning...
+
+	\rm -rf src/.git
+
+	if test "${makeorig}" = "yes" ; then
+		echo making orig archive
+		cd -
+		tar zcvf retroshare_${version_number}.orig.tar.gz ${workdir}
+		exit
+	fi
+
+	cd -
+else
+	tar zxvf retroshare_${version_number}.orig.tar.gz
 fi
-
-cp -r debian ${workdir}/debian
-
-# VOIP tweak  
-cp ${workdir}/src/retroshare-gui/src/gui/chat/PopupChatDialog.ui ${workdir}/src/plugins/VOIP/gui/PopupChatDialog.ui
-
-# remove unised qml code, only needed on Android
-
-rm -rf ${workdir}/src/retroshare-qml-app/
-rm -rf ${workdir}/src/build_scripts/
-rm     ${workdir}/debian/*~
 
 # Cloning sqlcipher
 # git clone https://github.com/sqlcipher/sqlcipher.git
 
-cd ${workdir}
-echo Setting version numbers...
-
-# setup version numbers
-sed -e "s%RS_REVISION_NUMBER.*%RS_REVISION_NUMBER   0x${hhsh}%"  src/libretroshare/src/retroshare/rsversion.in > src/libretroshare/src/retroshare/rsversion.h
-
-# Various cleaning
-echo Cleaning...
-
-\rm -rf src/.git
-
-if test "${makeorig}" = "yes" ; then
-	echo making orig archive
-	cd -
-	tar zcvf retroshare_${version_number}.orig.tar.gz ${workdir}
-	exit
-fi
-
 echo Calling debuild...
+cd ${workdir}
 debuild -S -k${gpgkey} --lintian-opts +pedantic -EviIL
 cd -
 

@@ -2,22 +2,22 @@
 
 export DH_VERBOSE = 1
 
-GPKG_EXPORT_BUILDFLAGS = 1
+DPKG_EXPORT_BUILDFLAGS = 1
+include /usr/share/dpkg/default.mk
+
 export DEB_BUILD_MAINT_PTIONS = hardening=+all
 export QT_SELECT = qt5
 
-include /usr/share/dpkg/default.mk
-
-MY_BUILD_DIR = _build
+MY_BUILDDIR = _build
 
 %:
-	dh $@ --buildsystem=qmake --builddirectory=$(MY_BUILD_DIR)
+	dh $@ --buildsystem=qmake --builddirectory=$(MY_BUILDDIR)
 
 # Override dh_auto_configure in order to call qmake on the parent dir.
 # We call mkdir here because of #800738.
 override_dh_auto_configure:
 	@mkdir -p $(MY_BUILDDIR)
-	dh_auto_configure -- ..
+	dh_auto_configure -- ../src
 
 # Upstream ships with a 'history' directory containing ancient code.
 # We are not interested in installing this.
@@ -25,57 +25,3 @@ override_dh_installchangelogs:
 	dh_installchangelogs --exclude=history
 
 
-#     configure: configure-stamp
-#     configure-stamp:
-#     	dh_testdir
-#     	cd src && qmake "CONFIG-=debug" "CONFIG+=release" "CONFIG+=rs_autologin" "CONFIG+=retroshare_plugins" PREFIX=/usr LIB_DIR=/usr/lib RetroShare.pro
-#     	touch $@
-#     
-#     
-#     build: build-arch build-indep
-#     
-#     build-stamp: configure-stamp
-#     	dh_testdir
-#     	cd src && $(MAKE)
-#     	touch $@
-#     
-#     build-indep: build-stamp
-#     
-#     build-arch: build-stamp
-#     
-#     clean:
-#     	dh_testdir
-#     	dh_testroot
-#     	rm -f configure-stamp build-stamp
-#     	# Add here commands to clean up after the build process.
-#     	[ ! -f src/Makefile ] || (cd src && $(MAKE) distclean)
-#     	dh_prep
-#     	dh_clean
-#     
-#     install: build
-#     	dh_testdir
-#     	dh_testroot
-#     	dh_prep
-#     	dh_clean
-#     	cd src && $(MAKE) INSTALL_ROOT=$(CURDIR)/debian/tmp install
-#     
-#     # Build architecture-independent files here.
-#     binary-indep: build install
-#     
-#     # Build architecture-dependent files here.
-#     binary-arch: build install
-#     	dh_testdir
-#     	dh_testroot
-#     	dh_install --list-missing
-#     	dh_link
-#     	dh_strip
-#     	dh_compress
-#     	dh_fixperms
-#     	dh_installdeb
-#     	dh_shlibdeps
-#     	dh_gencontrol
-#     	dh_md5sums
-#     	dh_builddeb
-#     
-#     binary: binary-indep binary-arch
-#     .PHONY: build clean binary-indep binary-arch binary install configure
