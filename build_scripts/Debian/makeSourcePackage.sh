@@ -125,6 +125,7 @@ if ! test "${nodl}" = "yes"; then
 	rm -rf ${workdir}/src/retroshare-qml-app/
 	rm -rf ${workdir}/src/build_scripts/
 	rm     ${workdir}/debian/*~
+	rm     ${workdir}/debian/.*.sw?
 
 	cd ${workdir}
 	echo Setting version numbers...
@@ -147,6 +148,10 @@ if ! test "${nodl}" = "yes"; then
 	cd -
 else
 	tar zxvf retroshare_${version_number}.orig.tar.gz
+
+	cp -r debian/* ${workdir}/debian/
+	rm     ${workdir}/debian/*~
+	rm     ${workdir}/debian/.*.sw?
 fi
 
 # Cloning sqlcipher

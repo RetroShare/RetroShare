@@ -5,7 +5,7 @@ export DH_VERBOSE = 1
 DPKG_EXPORT_BUILDFLAGS = 1
 include /usr/share/dpkg/default.mk
 
-export DEB_BUILD_MAINT_PTIONS = hardening=+all
+#export DEB_BUILD_MAINT_PTIONS = hardening=+all
 export QT_SELECT = qt5
 
 MY_BUILDDIR = _build
@@ -17,7 +17,7 @@ MY_BUILDDIR = _build
 # We call mkdir here because of #800738.
 override_dh_auto_configure:
 	@mkdir -p $(MY_BUILDDIR)
-	dh_auto_configure -- ../src
+	dh_auto_configure -- CONFIG="release retroshare_plugins rs_autologin" PREFIX=/usr LIB_DIR=/usr/lib ../src
 
 # Upstream ships with a 'history' directory containing ancient code.
 # We are not interested in installing this.
