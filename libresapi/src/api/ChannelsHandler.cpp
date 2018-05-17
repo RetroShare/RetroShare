@@ -22,6 +22,8 @@
 #include <util/radix64.h>
 #include <util/rstime.h>
 #include <algorithm>
+#include <time.h>
+
 #include "Operators.h"
 
 namespace resource_api
