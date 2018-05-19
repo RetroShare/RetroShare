@@ -46,4 +46,18 @@ Re-do debian/rules according to
    disable autologin
 
 Put the package on salsa:
-	salsa.debian.org
+   salsa.debian.org
+
+Debian binary changes file signature:
+   gpg --clearsign -u 0932399B retroshare_0.6.4-1_amd64.changes
+
+	Signature does only work when done with debsign:
+     debsign -k0932399B retroshare_0.6.4-1.dsc
+     debsign -k0932399B retroshare_0.6.4-1_source.changes
+     debsign -k0932399B retroshare_0.6.4-1_amd64.changes
+
+Uploading-to-mentors bug:
+	Apparently the system prevents you from uploading while a package is in the
+	queue. So the upload responds "403 forbidden" whene e.g. the previous
+	upload was cancelled by ^C.
+   
