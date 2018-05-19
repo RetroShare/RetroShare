@@ -124,8 +124,13 @@ if ! test "${nodl}" = "yes"; then
 	# remove unised qml code, only needed on Android
 	rm -rf ${workdir}/src/retroshare-qml-app/
 	rm -rf ${workdir}/src/build_scripts/
-	rm     ${workdir}/debian/*~
-	rm     ${workdir}/debian/.*.sw?
+	rm -f ${workdir}/debian/*~
+	rm -f ${workdir}/debian/.*.sw?
+	rm -f ${workdir}/src/retroshare-gui/src/gui/qss/chat/Bubble_Compact/private/images.sh
+	rm -f ${workdir}/src/retroshare-gui/src/gui/qss/chat/Bubble/src/images.sh
+	rm -f ${workdir}/src/retroshare-gui/src/gui/qss/chat/Bubble/public/images.sh
+	rm -f ${workdir}/src/retroshare-gui/src/gui/qss/chat/Bubble/"history"/images.sh
+	rm -f ${workdir}/src/retroshare-gui/src/gui/qss/chat/Bubble/private/images.sh
 
 	cd ${workdir}
 	echo Setting version numbers...
@@ -150,8 +155,15 @@ else
 	tar zxvf retroshare_${version_number}.orig.tar.gz
 
 	cp -r debian/* ${workdir}/debian/
-	rm     ${workdir}/debian/*~
-	rm     ${workdir}/debian/.*.sw?
+	rm -rf ${workdir}/src/retroshare-qml-app/
+	rm -rf ${workdir}/src/build_scripts/
+	rm -f ${workdir}/debian/*~
+	rm -f ${workdir}/debian/.*.sw?
+	rm -f ${workdir}/src/retroshare-gui/src/gui/qss/chat/Bubble_Compact/private/images.sh
+	rm -f ${workdir}/src/retroshare-gui/src/gui/qss/chat/Bubble/src/images.sh
+	rm -f ${workdir}/src/retroshare-gui/src/gui/qss/chat/Bubble/public/images.sh
+	rm -f ${workdir}/src/retroshare-gui/src/gui/qss/chat/Bubble/"history"/images.sh
+	rm -f ${workdir}/src/retroshare-gui/src/gui/qss/chat/Bubble/private/images.sh
 fi
 
 # Cloning sqlcipher

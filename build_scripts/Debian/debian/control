@@ -11,9 +11,10 @@ Architecture: any
 Conflicts: 
 Depends: ${shlibs:Depends}, ${misc:Depends}, retroshare, libspeex1, libspeexdsp1, libqt5multimedia5
 Description: RetroShare VOIP plugin
- This package provides a plugin for RetroShare, a secured Friend-to-Friend communication
- plateform. The plugin adds voice-over-IP functionality to the private chat window. Both
- friends chatting together need the plugin installed to be able to talk together.
+ This package provides a plugin for RetroShare, a secured Friend-to-Friend
+ communication plateform. The plugin adds voice-over-IP functionality to the
+ private chat window. Both friends chatting together need the plugin installed
+ to be able to talk together.
 
 Package: retroshare-feedreader-plugin
 Architecture: any
@@ -35,7 +36,8 @@ Depends: ${shlibs:Depends}, ${misc:Depends}, gnome-keyring
 Conflicts: retroshare-nogui
 Description: Secure communication with friends
  RetroShare is a Open Source, private and secure decentralised
- commmunication platform. It creates  mesh of computers linked with TLS connections,
- on top of which it provides file transfer, asynchronous email, forums, channels and chat.
+ commmunication platform. It creates  mesh of computers linked with TLS
+ connections, on top of which it provides file transfer, asynchronous email,
+ forums, channels and chat.
 
 
