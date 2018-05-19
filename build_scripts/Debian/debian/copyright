@@ -1,20 +1,19 @@
 This package was debianized by:
 
-    Cyril Soler <csoler@sourceforge.net> <csoler@sourceforge.net> on Sat, 06 Feb 2010 07:15:46 +0100
+    Cyril Soler <csoler@sourceforge.net> on Sat, 19 May 2018 20:15:46 +0100
 
 It was downloaded from:
 
-    <url://example.com>
+    <url://retroshare.net>
 
 Upstream Author(s):
 
-    <put author's name and email here>
-    <likewise for another author>
+    Cyril Soler   <csoler@sourceforge.net> 
+	 Robert Fernie <retroshare@lunamutt.com>
 
 Copyright:
 
-    <Copyright (C) YYYY Firstname Lastname>
-    <likewise for another author>
+    Copyright (C) 2018 Retroshare Team
 
 License:
 
@@ -36,9 +35,8 @@ Public License version 3 can be found in `/usr/share/common-licenses/GPL-3'.
 
 The Debian packaging is:
 
-    Copyright (C) 2010 Cyril Soler <csoler@sourceforge.net> <csoler@sourceforge.net>
+    Cyril Soler <csoler@sourceforge.net> on Sat, 19 May 2018 20:15:46 +0100
 
 and is licensed under the GPL version 3, see above.
 
-# Please also look if there are files or directories which have a
-# different copyright/license attached and list them here.
+
