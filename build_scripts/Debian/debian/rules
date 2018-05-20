@@ -3,6 +3,8 @@
 export DH_VERBOSE = 1
 
 DPKG_EXPORT_BUILDFLAGS = 1
+
+# skip *-dbgsym packages
 DEB_BUILD_OPTIONS=noddebs
 
 include /usr/share/dpkg/default.mk
@@ -20,6 +22,3 @@ MY_BUILDDIR = _build
 override_dh_auto_configure:
 	@mkdir -p $(MY_BUILDDIR)
 	dh_auto_configure -- CONFIG="unix release retroshare_plugins rs_autologin" PREFIX=/usr LIB_DIR=/usr/lib ../src
-
-
-
