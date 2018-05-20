@@ -51,13 +51,84 @@ Put the package on salsa:
 Debian binary changes file signature:
    gpg --clearsign -u 0932399B retroshare_0.6.4-1_amd64.changes
 
-	Signature does only work when done with debsign:
+   Signature does only work when done with debsign:
      debsign -k0932399B retroshare_0.6.4-1.dsc
      debsign -k0932399B retroshare_0.6.4-1_source.changes
      debsign -k0932399B retroshare_0.6.4-1_amd64.changes
 
 Uploading-to-mentors bug:
-	Apparently the system prevents you from uploading while a package is in the
-	queue. So the upload responds "403 forbidden" whene e.g. the previous
-	upload was cancelled by ^C.
+   Apparently the system prevents you from uploading while a package is in the
+   queue. So the upload responds "403 forbidden" whene e.g. the previous
+   upload was cancelled by ^C.
    
+
+Licensing issues:
+   Various licenses involved:
+
+         Code part                    |    Licenses              |     Authors                                  | Comment
+      --------------------------------+--------------------------+----------------------------------------------+-------------------------------------------------
+      libbitdht                       |    GPLv3                 |     drbob, csoler, Retroshare team           | 
+         bitdht/bencode.h             |       Public domain      |         Mike Frysinger <vapier@gmail.com>    |
+         bitdht/bdrandom.h            |    GPLv2                 |     csoler                                   |
+      --------------------------------+--------------------------+----------------------------------------------+-------------------------------------------------
+      libresapi                       |    GPLv3                 |     G10H4ck, [], electron128                 | Most files are unlicenced
+      libretroshare                   |    GPLv2,GPLv3           |     csoler,drbob,Mr-alice,Chris,Thunder      | Some files unversionned.
+         plugins/dlfcn_win32.cc       |       GPLv2.1            |     Ramiro Polla                             |
+         pqi/authgpg.h                |       GPLv2              |     Raghu Dev R.                             | .cc is authed by drbob
+         upnp/UPnPBase.h              |       GPLv2              |     Marcelo Roberto Jimenez, aMule Team      | other code in upnp/ not copyrighted
+         util/pugiconfig.h            |       MIT                |     Arseny Kapoulkyne                        | [unused file!]
+         util/rsstring.h              |       GPLv2              |     Thomas Kister                            |
+         util/rswin.h                 |       GPLv2              |     Thomas Kister                            |
+         util/rsversioninfo.h         |       [none]             |     Alexandrut                               |
+         util/stacktrace.h            |       GPLv2              |     Timo Bingmann, G10H4ck                   |
+      librssimulator                  |    [None]                |     No authors                               |
+      openpgpsdk                      |    Apache                |     Rachell Wilmer, Ben Laurie               |
+      pegmarkdown                     |    All right reserved    |     Daniel Jalkut - Code currently unused    |
+      plugins/feedreader              |    GPLv2                 |     Thunder                                  |
+      plugins/VOIP                    |                          |                                              |
+             AudioInputConfig.h+      |    All right reserved    |     Thorvald Natvig                          | Code can be modified/re-used. Mumble's code.
+             SpeezProcessor.h         |                          |     Peter Zotov                              |
+      retroshare-android-notify-*     |    GPLv3                 |     G10H4ck                                  |
+      retroshare-android-service      |    GPLv3                 |     G10H4ck                                  | 
+      retroshare-gui/src              |                          |     Thunder, csoler, drbob, crypton          |
+          control/*                   |    GPLv2                 |     Matt Edman, crypton, Justin Hiple        | [Unused code]
+          common/ElideLabel.h         |    BSD                   |     Qt Toolkit                               | 
+          common/FlowLayout.h         |    BSD                   |     Qt Toolkit                               | Is that really Qt code?? Qt examples can be used.
+          common/html.h               |    GPLv2                 |     Matt Edman, defnax, Justin Hiple         | 
+          common/rwindow.h            |    GPLv2                 |     Matt Edman, defnax, Justin Hiple         | 
+          common/vmessagebox.h        |    GPLv2                 |     Matt Edman, defnax, Justin Hiple         | 
+          common/PictureFlow          |    unclear               |     Ariya Hidayat (@kde.org)                 | [Unused code]
+          elastic/*                   |    LGPL                  |     Trolltech                                |
+          FileTransfer/FTIWidget      |    GPLv2                 |     defnax, lsn752                           |
+          FileTransfer/xprogressb     |    GPLv2                 |     Xesc                                     |
+          help/browser.h              |    GPLv2                 |     Matt Edman, defnax, Justin Hiple         | 
+          images/retroshare_win.rc.h  |    GPLv2                 |     crypton                                  | [Unused code]
+          msgs/textformat.h           |    GPLv3                 |     Merdhah Momeny, Golnaz Nilieh            | very simple .h. Can be re-implemented
+          settings/rsettings.h        |    GPLv2                 |     Matt Edman, defnax, Justin Hiple         | 
+          statistics/BandwidthGraphW.h|    GPLv2                 |     Matt Edman, defnax, Justin Hiple         | 
+          statistics/dhtgraph.h       |    GPLv2                 |     Matt Edman, defnax, Justin Hiple         | 
+          toaster/MessageToaster.h    |    GPLv3                 |     Xesc                                     |
+          toaster/DownloadToaster.h   |    GPLv3                 |     Xesc                                     |
+          About{Widget,Dialog}.h      |    GPLv2                 |     Unipro, Russia                           | Very small file.
+          linetypes.h                 |    GPLv2                 |     Merdhah Momeny, Golnaz Nilieh            | very simple .h. Can be re-implemented
+          mainpagestack.h             |    GPLv2                 |     Matt Edman, crypton, Justin Hiple        | 
+          land/langagesupport.h       |    GPLv2                 |     Matt Edman, crypton, Justin Hiple        | 
+          util/log.h                  |    GPLv2                 |     Matt Edman, crypton, Justin Hiple        | 
+          idle/idle.h                 |    GPLv2                 |     Justin Karneges                          | May be re-implemented
+          TorControl/*                |*   Public domaine        |     John Brooks                              | Code from Ricochet.im
+          util/HandleRichText.h       |    GPLv2                 |     Thomas Kister                            |
+          util/misc.h                 |    GPLv2                 |     defnax, Christophe Dumez                 |
+          util/printpreview.h         |    GPLv2                 |     Trolltech example                        |
+          util/retrosharewin32.h      |    GPLv2                 |     Matt Edman, crypton, Justin Hiple        | 
+          util/stringutil.h           |    GPLv2                 |     Matt Edman, crypton, Justin Hiple        | 
+          rshare.h                    |    GPLv2                 |     Matt Edman, crypton, Justin Hiple        | 
+      retroshare-nogui/*              |    GPLv2                 |     drbob                                    |
+
+
+   Plan: move to GPLv3 with OpenSSL exception
+
+   Many files unversionned.
+
+   Use a pointer to the top level licence file
+
+
