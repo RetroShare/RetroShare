@@ -15,7 +15,7 @@ export QT_SELECT = qt5
 MY_BUILDDIR = _build
 
 %:
-	dh $@ --parallel --buildsystem=qmake --builddirectory=$(MY_BUILDDIR)
+	dh $@ --buildsystem=qmake --builddirectory=$(MY_BUILDDIR)
 
 # Override dh_auto_configure in order to call qmake on the parent dir. We call mkdir here because of #800738.
 
