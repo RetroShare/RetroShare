@@ -137,3 +137,7 @@ Licensing issues:
    Use a pointer to the top level licence file
 
 
+Files after switch:
+
+   libresapi/api/json.h             MIT license              Copyright (c) 2013 Jeff Weinstein (jeff.weinstein at gmail)
+
