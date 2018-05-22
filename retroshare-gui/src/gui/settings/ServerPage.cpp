@@ -846,10 +846,15 @@ void ServerPage::updateStatus()
         return;
     }
 
-    /* load up configuration from rsPeers */
-    RsPeerDetails detail;
-    if (!rsPeers->getPeerDetails(rsPeers->getOwnId(), detail))
-        return;
+	/* load up configuration from rsPeers */
+	RsPeerDetails detail;
+	if (!rsPeers->getPeerDetails(rsPeers->getOwnId(), detail))
+	{
+		std::cerr << __PRETTY_FUNCTION__ << " getPeerDetails(...) failed!"
+		          << " This is unexpected report to developers please."
+		          << std::endl;
+		return;
+	}
 
     /* only update if can't edit */
     if (!ui.localPort->isEnabled())
