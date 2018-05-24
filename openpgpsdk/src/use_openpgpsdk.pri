@@ -15,10 +15,6 @@
 # You should have received a copy of the GNU Affero General Public License     #
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.       #
 ################################################################################
-DEPENDPATH *= $$system_path($$clean_path($$PWD/../../libresapi/src))
-INCLUDEPATH  *= $$system_path($$clean_path($${PWD}/../../libresapi/src))
-LIBS *= -L$$system_path($$clean_path($${OUT_PWD}/../../libresapi/src/lib/)) -lresapi
-
 DEPENDPATH *= $$system_path($$clean_path($${PWD}/../../openpgpsdk/src))
 INCLUDEPATH  *= $$system_path($$clean_path($${PWD}/../../openpgpsdk/src))
 LIBS *= -L$$system_path($$clean_path($${OUT_PWD}/../../openpgpsdk/src/lib/)) -lops
