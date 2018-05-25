@@ -23,6 +23,7 @@
 
 #include <QTimer>
 #include <QFileInfo>
+#include <QStyle>
 
 #include "rshare.h"
 #include "GxsForumMsgItem.h"

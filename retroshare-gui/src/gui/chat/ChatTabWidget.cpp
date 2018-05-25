@@ -20,6 +20,8 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
+#include <QTabBar>
+
 #include "ChatTabWidget.h"
 #include "ui_ChatTabWidget.h"
 #include "ChatDialog.h"
