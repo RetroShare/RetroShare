@@ -22,6 +22,7 @@
  */
 
 #include <QDateTime>
+#include <QStyle>
 
 #include "rshare.h"
 #include "PostedItem.h"
