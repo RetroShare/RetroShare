@@ -510,7 +510,7 @@ HEADERS +=  services/autoproxy/p3i2pbob.h \
 			services/p3discovery2.h \
 			services/p3heartbeat.h \
 			services/p3rtt.h \
-			services/p3serviceinfo.cc \
+			services/p3serviceinfo.h  \
 
 HEADERS +=	turtle/p3turtle.h \
 			turtle/rsturtleitem.h \
