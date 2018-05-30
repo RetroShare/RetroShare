@@ -27,7 +27,7 @@
 #include "openssl/dh.h"
 #include "openssl/err.h"
 
-#include "util/rsaes.h"
+#include "crypto/rsaes.h"
 #include "util/rsmemory.h"
 #include "util/rsprint.h"
 

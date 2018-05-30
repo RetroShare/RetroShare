@@ -26,7 +26,7 @@
 
 #include "util/rsdir.h"
 #include "util/radix64.h"
-#include "util/rsaes.h"
+#include "crypto/rsaes.h"
 #include "util/rsrandom.h"
 #include "util/rsstring.h"
 #include "retroshare/rsiface.h"
