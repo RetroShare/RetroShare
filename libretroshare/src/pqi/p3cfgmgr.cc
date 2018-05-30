@@ -25,7 +25,6 @@
 #include "pqi/authssl.h"
 #include "pqi/pqibin.h"
 #include "pqi/pqistore.h"
-#include "pqi/pqiarchive.h"
 #include <errno.h>
 #include <rsserver/p3face.h>
 #include <util/rsdiscspace.h>

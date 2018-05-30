@@ -24,7 +24,6 @@
 #include "retroshare/rsidentity.h"
 
 #include "pqi/pqibin.h"
-#include "pqi/pqiarchive.h"
 #include "pqi/p3linkmgr.h"
 #include "pqi/authgpg.h"
 #include "pqi/p3cfgmgr.h"
