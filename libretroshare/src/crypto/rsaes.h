@@ -1,9 +1,9 @@
 /*******************************************************************************
- * libretroshare/src/util: rswin.h                                             *
+ * libretroshare/src/util: rsaes.h                                             *
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright (c) 2010, Thomas Kister                                           *
+ * Copyright 2013-2013 Cyril Soler <csoler@users.sourceforge.net>              *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -19,36 +19,25 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
+#include <stdint.h>
 
-/**
- * This file provides helper functions for the windows environment
- */
+class RsAES
+{
+	public:
+		// Crypt/decrypt data using a 16 bytes key and a 8 bytes salt.
+		//
+		//		output_data allocation is left to the client. The size should be at least RsAES::get_buffer_size(input_data_length)
+		//
+		//	Return value:
+		//		true: encryption/decryption ok
+		//
+		//		false: encryption/decryption went bad. Check buffer size.
+		//
+		static bool   aes_crypt_8_16(const uint8_t *input_data,uint32_t input_data_length,uint8_t key[16],uint8_t salt[8],uint8_t *output_data,uint32_t& output_data_length) ;
+		static bool aes_decrypt_8_16(const uint8_t *input_data,uint32_t input_data_length,uint8_t key[16],uint8_t salt[8],uint8_t *output_data,uint32_t& output_data_length) ;
 
+		// computes the safe buffer size to store encrypted/decrypted data for the given input stream size
+		//
+		static uint32_t get_buffer_size(uint32_t size) ;
+};
 
-#ifndef RSWIN_H_
-#define RSWIN_H_
-
-#ifdef WINDOWS_SYS
-
-#include <windows.h>
-#include <string>
-
-// For win32 systems (tested on MingW+Ubuntu)
-#define stat64 _stati64
-
-// Should be in Iphlpapi.h, but mingw doesn't seem to have these
-// Values copied directly from:
-// http://msdn.microsoft.com/en-us/library/aa366845(v=vs.85).aspx
-// (Title: MIB_IPADDRROW structure)
-
-#ifndef MIB_IPADDR_DISCONNECTED
-#define MIB_IPADDR_DISCONNECTED 0x0008 // Address is on disconnected interface
-#endif
-
-#ifndef MIB_IPADDR_DELETED
-#define MIB_IPADDR_DELETED      0x0040 // Address is being deleted
-#endif
-
-#endif // WINDOWS_SYS
-
-#endif // RSWIN_H_

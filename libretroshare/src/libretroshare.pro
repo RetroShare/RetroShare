@@ -391,7 +391,8 @@ HEADERS +=	ft/ftchunkmap.h \
 			ft/ftturtlefiletransferitem.h 
 
 HEADERS += crypto/chacha20.h \
-				crypto/hashstream.h
+			crypto/rsaes.h \
+			crypto/hashstream.h
 
 HEADERS += directory_updater.h \
 				directory_list.h \
@@ -406,7 +407,6 @@ HEADERS +=	pqi/authssl.h \
 			pqi/authgpg.h \
 			pgp/pgphandler.h \
 			pgp/pgpkeyutil.h \
-			pgp/rsaes.h \
 			pgp/rscertificate.h \
 			pgp/pgpauxutils.h \
 			pqi/p3cfgmgr.h \
@@ -556,7 +556,8 @@ SOURCES +=	ft/ftchunkmap.cc \
             ft/ftturtlefiletransferitem.cc
 
 SOURCES += crypto/chacha20.cpp \
-			  crypto/hashstream.cc
+			crypto/rsaes.cc \
+			crypto/hashstream.cc
 
 SOURCES += chat/distantchat.cc \
 			  chat/p3chatservice.cc \
@@ -682,8 +683,6 @@ SOURCES +=	util/folderiterator.cc \
 			util/rsstring.cc \
 			util/rsthreads.cc \
 			util/rsversioninfo.cc \
-			util/rswin.cc \
-			util/rsaes.cc \
 			util/rsrandom.cc \
 			util/rstickevent.cc \
 			util/rsrecogn.cc \
