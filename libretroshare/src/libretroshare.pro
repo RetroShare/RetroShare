@@ -520,7 +520,6 @@ HEADERS +=	turtle/p3turtle.h \
 HEADERS +=	util/folderiterator.h \
 			util/rsdebug.h \
 			util/rsmemory.h \
-			util/rscompress.h \
 			util/smallobject.h \
 			util/rsdir.h \
 			util/rsdiscspace.h \
@@ -537,7 +536,6 @@ HEADERS +=	util/folderiterator.h \
 			util/rsversioninfo.h \
 			util/rswin.h \
 			util/rsrandom.h \
-			util/pugiconfig.h \  
 			util/rsmemcache.h \
 			util/rstickevent.h \
 			util/rsrecogn.h \
@@ -672,7 +670,6 @@ SOURCES +=	turtle/p3turtle.cc \
 SOURCES +=	util/folderiterator.cc \
 			util/rsdebug.cc \
 			util/rsexpr.cc \
-			util/rscompress.cc \
 			util/smallobject.cc \
 			util/rsdir.cc \
 			util/rsmemory.cc \

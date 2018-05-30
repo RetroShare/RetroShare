@@ -139,5 +139,7 @@ Licensing issues:
 
 Files after switch:
 
-   libresapi/api/json.h             MIT license              Copyright (c) 2013 Jeff Weinstein (jeff.weinstein at gmail)
+   libresapi/api/json.h                        MIT license              Copyright (c) 2013 Jeff Weinstein (jeff.weinstein at gmail)
+	libretroshare/src/tcponudp/bss_tou.cc       SSL Licence              Copyright (C) 1995-1998 Eric Young (eay@cryptsoft.com)
+	libretroshare/src/upnp/UPnPBase.{h,cpp}     GPL Licence              Copyright (c) 2004-2009 Marcelo Roberto Jimenez ( phoenix@amule.org )
 

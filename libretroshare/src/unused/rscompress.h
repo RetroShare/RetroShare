@@ -1,9 +1,9 @@
 /*******************************************************************************
- * libretroshare/src/util: rsdiscspace.h                                       *
+ * libretroshare/src/util: rscompress.h                                        *
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright 2010-2010 by Cyril Soler <csoler@users.sourceforge.net>           *
+ * Copyright 2013 Cyril Soler <csoler@users.sourceforge.net>                   *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -19,43 +19,12 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
-#pragma once
+#pragma once 
 
-#include <stdlib.h>
-#include <stdint.h>
-#include <util/rsthreads.h>
-#include <retroshare/rstypes.h>
-
-class RsDiscSpace
+class RsCompress
 {
 	public:
-		typedef uint32_t DiscLocation ;
-
-		// Returns false is the disc space is lower than the given size limit, true otherwise.
-		// When the size limit is reached, this class calls notify to warn the user (possibly 
-		// with a popup window).
-		//
-		static bool checkForDiscSpace(DiscLocation loc) ;
-
-		// Allow the user to specify his own size limit. Should not be too low, especially not 0 MB ;-)
-		// 10MB to 100MB are sensible values.
-		//
-		static void setFreeSpaceLimit(uint32_t mega_bytes) ;
-		static uint32_t freeSpaceLimit() ;
-
-		static void setPartialsPath(const std::string& path) ;
-		static void setDownloadPath(const std::string& path) ;
-	private:
-		static bool crossSystemDiskStats(const char *file, uint64_t& free_blocks, uint64_t& block_size) ;
-
-		static RsMutex _mtx ;
-
-		static time_t _last_check[RS_DIRECTORY_COUNT] ;
-		static uint32_t _size_limit_mb ;
-		static uint32_t _current_size[RS_DIRECTORY_COUNT] ;
-		static bool		_last_res[RS_DIRECTORY_COUNT] ;
-
-		static std::string _partials_path ;
-		static std::string _download_path ;
+		static bool compress_memory_chunk(const uint8_t *input_mem,const uint32_t input_size,uint8_t *& output_mem,uint32_t& output_size) ;
+		static bool uncompress_memory_chunk(const uint8_t *input_mem,const uint32_t input_size,uint8_t *& output_mem,uint32_t& output_size) ;
 };
 
