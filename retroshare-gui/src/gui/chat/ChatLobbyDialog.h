@@ -28,6 +28,7 @@
 #include "ChatDialog.h"
 
 Q_DECLARE_METATYPE(RsGxsId)
+Q_DECLARE_METATYPE(QList<RsGxsId>)
 
 class GxsIdChooser ;
 class QToolButton;
