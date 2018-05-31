@@ -106,6 +106,7 @@ class p3Notify: public RsNotify
 		void notifyCustomState                (const std::string& /* peer_id   */, const std::string&               /* status_string */) ;
 		void notifyHashingInfo                (uint32_t           /* type      */, const std::string&               /* fileinfo      */) ;
 		void notifyTurtleSearchResult         (uint32_t           /* search_id */, const std::list<TurtleFileInfo>& /* files         */) ;
+		void notifyTurtleSearchResult         (uint32_t           /* search_id */, const std::list<TurtleGxsInfo >& /* groups        */) ;
 		void notifyPeerHasNewAvatar           (std::string        /* peer_id   */) ;
 		void notifyOwnAvatarChanged           () ;
 		void notifyOwnStatusMessageChanged    () ;

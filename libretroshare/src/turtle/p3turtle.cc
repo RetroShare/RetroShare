@@ -71,7 +71,7 @@ void TS_dumpState() ;
 // an in-depth test would be better to get an idea of what the ideal values
 // could ever be.
 //
-// update of 14-03-11: 
+// update of 14-03-11:
 // 	- I raised the cache time for tunnel requests. This avoids inconsistencies such as:
 // 		* tunnel requests bouncing back while the original request is not in the cache anymore
 // 		* special case of this for own file transfer: an outgoing tunnel is built with no end.
@@ -155,13 +155,15 @@ void p3turtle::getItemNames(std::map<uint8_t,std::string>& names) const
 {
 	names.clear();
 
-	names[RS_TURTLE_SUBTYPE_STRING_SEARCH_REQUEST	] = "Search request";
-	names[RS_TURTLE_SUBTYPE_SEARCH_RESULT  			] = "Search result";
+	names[RS_TURTLE_SUBTYPE_STRING_SEARCH_REQUEST	] = "Filename substring search request";
+	names[RS_TURTLE_SUBTYPE_GXS_SEARCH_REQUEST	    ] = "GXS search request";
+	names[RS_TURTLE_SUBTYPE_FT_SEARCH_RESULT		] = "File search result";
+	names[RS_TURTLE_SUBTYPE_GXS_SEARCH_RESULT		] = "GXS search result";
 	names[RS_TURTLE_SUBTYPE_OPEN_TUNNEL    			] = "Tunnel request";
 	names[RS_TURTLE_SUBTYPE_TUNNEL_OK      			] = "Tunnel response";
 	names[RS_TURTLE_SUBTYPE_FILE_REQUEST   			] = "Data request";
 	names[RS_TURTLE_SUBTYPE_FILE_DATA      			] = "Data chunk";
-	names[RS_TURTLE_SUBTYPE_REGEXP_SEARCH_REQUEST   ] = "RegExp search";
+	names[RS_TURTLE_SUBTYPE_REGEXP_SEARCH_REQUEST   ] = "Filename RegExp search request";
 	names[RS_TURTLE_SUBTYPE_GENERIC_DATA     		] = "Generic data";
 	names[RS_TURTLE_SUBTYPE_FILE_MAP                ] = "Chunk map";
 	names[RS_TURTLE_SUBTYPE_FILE_MAP_REQUEST        ] = "Chunk map request";
@@ -169,7 +171,7 @@ void p3turtle::getItemNames(std::map<uint8_t,std::string>& names) const
 	names[RS_TURTLE_SUBTYPE_CHUNK_CRC_REQUEST       ] = "Chunk CRC request";
 }
 
-void p3turtle::setEnabled(bool b) 
+void p3turtle::setEnabled(bool b)
 {
 	RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
 	_turtle_routing_enabled = b;
@@ -188,7 +190,7 @@ bool p3turtle::enabled() const
 }
 
 
-void p3turtle::setSessionEnabled(bool b) 
+void p3turtle::setSessionEnabled(bool b)
 {
 	RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
 	_turtle_routing_session_enabled = b;
@@ -246,7 +248,7 @@ int p3turtle::tick()
 			RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
 			_last_tunnel_management_time = now ;
 
-			// Update traffic statistics. The constants are important: they allow a smooth variation of the 
+			// Update traffic statistics. The constants are important: they allow a smooth variation of the
 			// traffic speed, which is used to moderate tunnel requests statistics.
 			//
 			_traffic_info = _traffic_info*0.9 + _traffic_info_buffer* (0.1 / (float)TIME_BETWEEN_TUNNEL_MANAGEMENT_CALLS) ;
@@ -374,8 +376,8 @@ void p3turtle::manageTunnels()
 	//  - the hash hasn't been tunneled for more than REGULAR_TUNNEL_DIGGING_TIME seconds, even if downloading.
 	//
 	// Candidate hashes are sorted, by olderness. The older gets tunneled first. At most MAX_TUNNEL_REQS_PER_SECOND are
-	// treated at once, as this method is called every second. 
-	// Note: Because REGULAR_TUNNEL_DIGGING_TIME is larger than EMPTY_TUNNELS_DIGGING_TIME, files being downloaded get 
+	// treated at once, as this method is called every second.
+	// Note: Because REGULAR_TUNNEL_DIGGING_TIME is larger than EMPTY_TUNNELS_DIGGING_TIME, files being downloaded get
 	// re-tunneled in priority. As this happens less, they don't obliterate tunneling for files that have no tunnels yet.
 
 	std::vector<std::pair<TurtleFileHash,time_t> > hashes_to_digg ;
@@ -556,7 +558,7 @@ void p3turtle::autoWash()
 
 	// Now remove all the virtual peers ids at the client services. Off mutex!
 	//
-	
+
 	for(uint32_t i=0;i<services_vpids_to_remove.size();++i)
 	{
 #ifdef P3TURTLE_DEBUG
@@ -618,7 +620,7 @@ void p3turtle::locked_closeTunnel(TurtleTunnelId tid,std::vector<std::pair<RsTur
 		// Let's be cautious. Normally we should never be here without consistent information,
 		// but still, this happens, rarely.
 		//
-		if(_virtual_peers.find(vpid) != _virtual_peers.end())  
+		if(_virtual_peers.find(vpid) != _virtual_peers.end())
 			_virtual_peers.erase(_virtual_peers.find(vpid)) ;
 
 		std::map<TurtleFileHash,TurtleHashInfo>::iterator it(_incoming_file_hashes.find(hash)) ;
@@ -663,7 +665,7 @@ void p3turtle::locked_closeTunnel(TurtleTunnelId tid,std::vector<std::pair<RsTur
 
 			// Also remove the associated virtual peer
 			//
-			if(_virtual_peers.find(vpid) != _virtual_peers.end())  
+			if(_virtual_peers.find(vpid) != _virtual_peers.end())
 				_virtual_peers.erase(_virtual_peers.find(vpid)) ;
 		}
 	}
@@ -728,7 +730,7 @@ bool p3turtle::loadList(std::list<RsItem*>& load)
 		RsConfigKeyValueSet *vitem = dynamic_cast<RsConfigKeyValueSet*>(*it) ;
 
 		if(vitem != NULL)
-			for(std::list<RsTlvKeyValue>::const_iterator kit = vitem->tlvkvs.pairs.begin(); kit != vitem->tlvkvs.pairs.end(); ++kit) 
+			for(std::list<RsTlvKeyValue>::const_iterator kit = vitem->tlvkvs.pairs.begin(); kit != vitem->tlvkvs.pairs.end(); ++kit)
 			{
 				if(kit->key == "TURTLE_CONFIG_MAX_TR_RATE")
 				{
@@ -828,7 +830,7 @@ int p3turtle::handleIncoming()
 			RsTurtleGenericTunnelItem *gti = dynamic_cast<RsTurtleGenericTunnelItem *>(item) ;
 
 			if(gti != NULL)
-				routeGenericTunnelItem(gti) ;	/// Generic packets, that travel through established tunnels. 
+				routeGenericTunnelItem(gti) ;	/// Generic packets, that travel through established tunnels.
 			else			 							/// These packets should be destroyed by the client.
 			{
 				/// Special packets that require specific treatment, because tunnels do not exist for these packets.
@@ -840,7 +842,8 @@ int p3turtle::handleIncoming()
 					case RS_TURTLE_SUBTYPE_REGEXP_SEARCH_REQUEST: handleSearchRequest(dynamic_cast<RsTurtleSearchRequestItem *>(item)) ;
 																				 break ;
 
-					case RS_TURTLE_SUBTYPE_SEARCH_RESULT : handleSearchResult(dynamic_cast<RsTurtleSearchResultItem *>(item)) ;
+					case RS_TURTLE_SUBTYPE_GXS_SEARCH_RESULT :
+					case RS_TURTLE_SUBTYPE_FT_SEARCH_RESULT : handleSearchResult(dynamic_cast<RsTurtleSearchResultItem *>(item)) ;
 																		break ;
 
 					case RS_TURTLE_SUBTYPE_OPEN_TUNNEL   : handleTunnelRequest(dynamic_cast<RsTurtleOpenTunnelItem *>(item)) ;
@@ -867,7 +870,7 @@ int p3turtle::handleIncoming()
 void p3turtle::handleSearchRequest(RsTurtleSearchRequestItem *item)
 {
 	RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
-    
+
 	// take a look at the item and test against inconsistent values
 	// 	- If the item destimation is
 
@@ -875,7 +878,7 @@ void p3turtle::handleSearchRequest(RsTurtleSearchRequestItem *item)
 	std::cerr << "Received search request from peer " << item->PeerId() << ": " << std::endl ;
 	item->print(std::cerr,0) ;
 #endif
-    
+
     uint32_t item_size = RsTurtleSerialiser().size(item);
 
 	if(item_size > TURTLE_MAX_SEARCH_REQ_ACCEPTED_SERIAL_SIZE)
@@ -886,7 +889,7 @@ void p3turtle::handleSearchRequest(RsTurtleSearchRequestItem *item)
 		std::cerr << "  Caught a turtle search item with arbitrary large size from " << item->PeerId() << " of size " << item_size << " and depth " << item->depth << ". This is not allowed => dropping." << std::endl;
 		return ;
 	}
-    
+
 	if(_search_requests_origins.size() > MAX_ALLOWED_SR_IN_CACHE)
 	{
 #ifdef P3TURTLE_DEBUG
@@ -924,49 +927,12 @@ void p3turtle::handleSearchRequest(RsTurtleSearchRequestItem *item)
 #ifdef P3TURTLE_DEBUG
 		std::cerr << "  Request not from us. Performing local search" << std::endl ;
 #endif
+        std::list<RsTurtleSearchResultItem*> search_results ;
 
-		std::list<TurtleFileInfo> result ;
+        item->performLocalSearch(req,search_results) ;
 
-		item->performLocalSearch(result) ;
-
-		RsTurtleSearchResultItem *res_item = NULL ;
-		uint32_t item_size = 0 ;
-
-#ifdef P3TURTLE_DEBUG
-		if(!result.empty())
-			std::cerr << "  " << result.size() << " matches found. Sending back to origin (" << item->PeerId() << ")." << std::endl ;
-#endif
-		while(!result.empty() && req.result_count < TURTLE_SEARCH_RESULT_MAX_HITS)
-		{
-			// Let's chop search results items into several chunks of finite size to avoid exceeding streamer's capacity.
-			//
-			static const uint32_t RSTURTLE_MAX_SEARCH_RESPONSE_SIZE = 10000 ;
-
-			if(res_item == NULL)
-			{
-				res_item = new RsTurtleSearchResultItem ;
-				item_size = 0 ;
-
-				res_item->depth = 0 ;
-				res_item->request_id = item->request_id ;
-				res_item->PeerId(item->PeerId()) ;			// send back to the same guy
-			}
-			res_item->result.push_back(result.front()) ;
-
-			++req.result_count ;	// increase hit number for this particular search request.
-
-            item_size += 8 /* size */ + result.front().hash.serial_size() + result.front().name.size() ;
-			result.pop_front() ;
-
-			if(item_size > RSTURTLE_MAX_SEARCH_RESPONSE_SIZE || result.empty() || req.result_count >= TURTLE_SEARCH_RESULT_MAX_HITS)
-			{
-#ifdef P3TURTLE_DEBUG
-				std::cerr << "  Sending back chunk of size " << item_size << ", for " << res_item->result.size() << " elements." << std::endl ;
-#endif
-				sendItem(res_item) ;
-				res_item = NULL ;
-			}
-		}
+        for(auto it(search_results.begin());it!=search_results.end();++it)
+            sendItem(*it) ;
 	}
 
 	// if enough has been sent back already, do not sarch further
@@ -1011,14 +977,14 @@ void p3turtle::handleSearchRequest(RsTurtleSearchRequestItem *item)
 				// Copy current item and modify it.
 				RsTurtleSearchRequestItem *fwd_item = item->clone() ;
 
-				// increase search depth, except in some rare cases, to prevent correlation between 
+				// increase search depth, except in some rare cases, to prevent correlation between
 				// TR sniffing and friend names. The strategy is to not increase depth if the depth
 				// is 1:
 				// 	If B receives a TR of depth 1 from A, B cannot deduice that A is downloading the
 				// 	file, since A might have shifted the depth.
 				//
 				if(!random_dshift)
-					++(fwd_item->depth) ;		
+					++(fwd_item->depth) ;
 
 				fwd_item->PeerId(*it) ;
 
@@ -1055,7 +1021,7 @@ void p3turtle::handleSearchResult(RsTurtleSearchResultItem *item)
 
 	if(it->second.origin == _own_id)
 	{
-		it->second.result_count += item->result.size() ;
+		it->second.result_count += item->count() ;
 		returnSearchResult(item) ;		// Yes, so send upward.
 	}
 	else
@@ -1065,7 +1031,7 @@ void p3turtle::handleSearchResult(RsTurtleSearchResultItem *item)
 #endif
 		// We update the total count forwarded back, and chop it to TURTLE_SEARCH_RESULT_MAX_HITS.
 
-		uint32_t n = item->result.size(); // not so good!
+		uint32_t n = item->count(); // not so good!
 
 		if(it->second.result_count >= TURTLE_SEARCH_RESULT_MAX_HITS)
 		{
@@ -1076,14 +1042,14 @@ void p3turtle::handleSearchResult(RsTurtleSearchResultItem *item)
 		if(it->second.result_count + n > TURTLE_SEARCH_RESULT_MAX_HITS)
 		{
 			for(uint32_t i=it->second.result_count + n; i>TURTLE_SEARCH_RESULT_MAX_HITS;--i)
-				item->result.pop_back() ;
+				item->pop() ;
 
 			it->second.result_count = TURTLE_SEARCH_RESULT_MAX_HITS ;
 		}
 		else
 			it->second.result_count += n ;
 
-		RsTurtleSearchResultItem *fwd_item = new RsTurtleSearchResultItem(*item) ;	// copy the item
+		RsTurtleSearchResultItem *fwd_item = item->duplicate();
 
 		// Normally here, we should setup the forward adress, so that the owner's
 		// of the files found can be further reached by a tunnel.
@@ -1154,8 +1120,8 @@ void p3turtle::routeGenericTunnelItem(RsTurtleGenericTunnelItem *item)
 
 		// Let's figure out whether this packet is for us or not.
 
-		if(item->PeerId() == tunnel.local_dst && tunnel.local_src != _own_id) //direction == RsTurtleGenericTunnelItem::DIRECTION_CLIENT && 
-		{														 	
+		if(item->PeerId() == tunnel.local_dst && tunnel.local_src != _own_id) //direction == RsTurtleGenericTunnelItem::DIRECTION_CLIENT &&
+		{
 #ifdef P3TURTLE_DEBUG
 			std::cerr << "  Forwarding generic item to peer " << tunnel.local_src << std::endl ;
 #endif
@@ -1193,7 +1159,7 @@ void p3turtle::routeGenericTunnelItem(RsTurtleGenericTunnelItem *item)
 	// The packet was not forwarded, so it is for us. Let's treat it.
 	// This is done off-mutex, to avoid various deadlocks
 	//
-	
+
     handleRecvGenericTunnelItem(item) ;
 
 	delete item ;
@@ -1316,13 +1282,13 @@ void p3turtle::sendTurtleData(const RsPeerId& virtual_peer_id,RsTurtleGenericTun
 
 	if(tunnel.local_src == _own_id)
 	{
-		item->setTravelingDirection(RsTurtleGenericTunnelItem::DIRECTION_SERVER) ;	
+		item->setTravelingDirection(RsTurtleGenericTunnelItem::DIRECTION_SERVER) ;
 		item->PeerId(tunnel.local_dst) ;
 		_traffic_info_buffer.data_dn_Bps += ss ;
 	}
 	else if(tunnel.local_dst == _own_id)
 	{
-		item->setTravelingDirection(RsTurtleGenericTunnelItem::DIRECTION_CLIENT) ;	
+		item->setTravelingDirection(RsTurtleGenericTunnelItem::DIRECTION_CLIENT) ;
 		item->PeerId(tunnel.local_src) ;
 		_traffic_info_buffer.data_up_Bps += ss ;
 	}
@@ -1460,7 +1426,7 @@ void p3turtle::handleTunnelRequest(RsTurtleOpenTunnelItem *item)
 		RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
 
 		std::map<TurtleTunnelRequestId,TurtleTunnelRequestInfo>::iterator it = _tunnel_requests_origins.find(item->request_id) ;
-		
+
 		if(it != _tunnel_requests_origins.end())
 		{
 #ifdef P3TURTLE_DEBUG
@@ -1563,7 +1529,7 @@ void p3turtle::handleTunnelRequest(RsTurtleOpenTunnelItem *item)
 	// - the tunnel id will now be unique for a given route
 	// - allows a better balance of bandwidth for a given transfer
 	// - avoid the waste of items that get lost when re-routing a tunnel
-	
+
 #ifdef P3TURTLE_DEBUG
 	std::cerr << "Perturbating partial tunnel id. Original=" << std::hex << item->partial_tunnel_id ;
 #endif
@@ -1594,7 +1560,7 @@ void p3turtle::handleTunnelRequest(RsTurtleOpenTunnelItem *item)
 			forward_probability = 1.0f / nb_online_ids ;
 
 			// Setting forward_probability to 1/nb_online_ids forces at most one TR up per TR dn. But if we are overflooded by
-			// TR dn, we still need to control them to avoid flooding the pqiHandler outqueue. So we additionally moderate the 
+			// TR dn, we still need to control them to avoid flooding the pqiHandler outqueue. So we additionally moderate the
 			// forward probability so as to reduct the output rate accordingly.
 			//
 			if(_traffic_info.tr_dn_Bps / (float)TUNNEL_REQUEST_PACKET_SIZE > _max_tr_up_rate)
@@ -1620,7 +1586,7 @@ void p3turtle::handleTunnelRequest(RsTurtleOpenTunnelItem *item)
 				// Copy current item and modify it.
 				RsTurtleOpenTunnelItem *fwd_item = new RsTurtleOpenTunnelItem(*item) ;
 
-				// increase search depth, except in some rare cases, to prevent correlation between 
+				// increase search depth, except in some rare cases, to prevent correlation between
 				// TR sniffing and friend names. The strategy is to not increase depth if the depth
 				// is 1:
 				// 	If B receives a TR of depth 1 from A, B cannot deduice that A is downloading the
@@ -1777,7 +1743,61 @@ void p3turtle::handleTunnelResult(RsTurtleTunnelOkItem *item)
 // ------------------------------  IO with libretroshare  ----------------------------//
 // -----------------------------------------------------------------------------------//
 //
-void RsTurtleStringSearchRequestItem::performLocalSearch(std::list<TurtleFileInfo>& result) const
+void RsTurtleFileSearchRequestItem::performLocalSearch(TurtleSearchRequestInfo &req, std::list<RsTurtleSearchResultItem*>& result) const
+{
+#ifdef P3TURTLE_DEBUG
+	std::cerr << "Performing rsFiles->search()" << std::endl ;
+#endif
+	// now, search!
+    std::list<TurtleFileInfo> initialResults ;
+    search(initialResults) ;
+
+#ifdef P3TURTLE_DEBUG
+	std::cerr << initialResults.size() << " matches found." << std::endl ;
+#endif
+	result.clear() ;
+	RsTurtleFTSearchResultItem *res_item = NULL ;
+	uint32_t item_size = 0 ;
+
+	static const uint32_t RSTURTLE_MAX_SEARCH_RESPONSE_SIZE = 10000 ;
+
+	for(auto it(initialResults.begin());it!=initialResults.end();++it)
+	{
+		if(res_item == NULL)
+		{
+			res_item = new RsTurtleFTSearchResultItem ;
+			item_size = 0 ;
+
+			res_item->depth = 0 ;
+			res_item->request_id = request_id ;
+			res_item->PeerId(PeerId()) ;			// send back to the same guy
+
+            result.push_back(res_item) ;
+		}
+		res_item->result.push_back(*it);
+
+		// Let's chop search results items into several chunks of finite size to avoid exceeding streamer's capacity.
+		//
+		++req.result_count ;	// increase hit number for this particular search request.
+
+		item_size += 8 /* size */ + it->hash.serial_size() + it->name.size() ;
+
+		if(item_size > RSTURTLE_MAX_SEARCH_RESPONSE_SIZE || req.result_count >= TURTLE_SEARCH_RESULT_MAX_HITS)
+		{
+#ifdef P3TURTLE_DEBUG
+			std::cerr << "  Sending back chunk of size " << item_size << ", for " << res_item->result.size() << " elements." << std::endl ;
+#endif
+			res_item = NULL ;	// forces creation of a new item.
+		}
+	}
+}
+
+void RsTurtleGxsSearchRequestItem::performLocalSearch(TurtleSearchRequestInfo &req, std::list<RsTurtleSearchResultItem*>& result) const
+{
+    std::cerr << "(EE) Missing code to perform actual GXS search" << std::endl;
+}
+
+void RsTurtleStringSearchRequestItem::search(std::list<TurtleFileInfo>& result) const
 {
 	/* call to core */
 	std::list<DirDetails> initialResults;
@@ -1800,7 +1820,7 @@ void RsTurtleStringSearchRequestItem::performLocalSearch(std::list<TurtleFileInf
 	for(std::list<DirDetails>::const_iterator it(initialResults.begin());it!=initialResults.end();++it)
 	{
 		// retain only file type
-		if (it->type == DIR_TYPE_DIR) 
+		if (it->type == DIR_TYPE_DIR)
 		{
 #ifdef P3TURTLE_DEBUG
 			std::cerr << "  Skipping directory " << it->name << std::endl ;
@@ -1816,7 +1836,7 @@ void RsTurtleStringSearchRequestItem::performLocalSearch(std::list<TurtleFileInf
 		result.push_back(i) ;
 	}
 }
-void RsTurtleRegExpSearchRequestItem::performLocalSearch(std::list<TurtleFileInfo>& result) const
+void RsTurtleRegExpSearchRequestItem::search(std::list<TurtleFileInfo>& result) const
 {
 	/* call to core */
 	std::list<DirDetails> initialResults;
@@ -1839,7 +1859,7 @@ void RsTurtleRegExpSearchRequestItem::performLocalSearch(std::list<TurtleFileInf
 	for(std::list<DirDetails>::const_iterator it(initialResults.begin());it!=initialResults.end();++it)
 	{
 		// retain only file type
-		if (it->type == DIR_TYPE_DIR) 
+		if (it->type == DIR_TYPE_DIR)
 		{
 #ifdef P3TURTLE_DEBUG
 			std::cerr << "  Skipping directory " << it->name << std::endl ;
@@ -1953,13 +1973,25 @@ void p3turtle::monitorTunnels(const RsFileHash& hash,RsTurtleClientService *clie
 
 void p3turtle::returnSearchResult(RsTurtleSearchResultItem *item)
 {
-	// just cout for now, but it should be notified to the gui
-
 #ifdef P3TURTLE_DEBUG
 	std::cerr << "  Returning result for search request " << HEX_PRINT(item->request_id) << " upwards." << std::endl ;
 #endif
 
-	RsServer::notify()->notifyTurtleSearchResult(item->request_id,item->result) ;
+    RsTurtleFTSearchResultItem *ft_sr = dynamic_cast<RsTurtleFTSearchResultItem*>(item) ;
+
+    if(ft_sr != NULL)
+    {
+		RsServer::notify()->notifyTurtleSearchResult(ft_sr->request_id,ft_sr->result) ;
+        return ;
+    }
+
+    RsTurtleGxsSearchResultItem *gxs_sr = dynamic_cast<RsTurtleGxsSearchResultItem*>(item) ;
+
+    if(gxs_sr != NULL)
+    {
+		RsServer::notify()->notifyTurtleSearchResult(gxs_sr->request_id,gxs_sr->result) ;
+        return ;
+    }
 }
 
 /// Warning: this function should never be called while the turtle mutex is locked.
@@ -2072,7 +2104,7 @@ std::string p3turtle::getPeerNameForVirtualPeerId(const RsPeerId& virtual_peer_i
 	std::map<TurtleVirtualPeerId,TurtleTunnelId>::const_iterator it(_virtual_peers.find(virtual_peer_id)) ;
 	if(it != _virtual_peers.end())
 	{
-		std::map<TurtleTunnelId,TurtleTunnel>::iterator it2( _local_tunnels.find(it->second) ) ;	
+		std::map<TurtleTunnelId,TurtleTunnel>::iterator it2( _local_tunnels.find(it->second) ) ;
 		if(it2 != _local_tunnels.end())
 		{
 			if(it2->second.local_src == _own_id)
@@ -2103,7 +2135,7 @@ bool p3turtle::encryptData(const unsigned char *clear_data,uint32_t clear_data_s
 	TURTLE_DEBUG() << "  random nonce    : " << RsUtil::BinToHex(initialization_vector,ENCRYPTED_TURTLE_INITIALIZATION_VECTOR_SIZE) << std::endl;
 #endif
 
-    uint32_t item_serialized_size = clear_data_size;//RsGenericSerializer().size(clear_item) ;
+	uint32_t item_serialized_size = clear_data_size;//RsGenericSerializer().size(clear_item) ;
 	uint32_t total_data_size = ENCRYPTED_TURTLE_HEADER_SIZE + ENCRYPTED_TURTLE_INITIALIZATION_VECTOR_SIZE + ENCRYPTED_TURTLE_EDATA_SIZE + item_serialized_size + ENCRYPTED_TURTLE_AUTHENTICATION_TAG_SIZE  ;
 
 #ifdef SERVER_DEBUG
@@ -2124,7 +2156,7 @@ bool p3turtle::encryptData(const unsigned char *clear_data,uint32_t clear_data_s
 
 	edata[0] = 0xae ;
 	edata[1] = 0xad ;
-	edata[2] = ENCRYPTED_TURTLE_FORMAT_AEAD_CHACHA20_SHA256 ;	// means AEAD_chacha20_sha256
+	edata[2] = ENCRYPTED_TURTLE_FORMAT_AEAD_CHACHA20_SHA256 ;       // means AEAD_chacha20_sha256
 	edata[3] = 0x01 ;
 
 	offset += ENCRYPTED_TURTLE_HEADER_SIZE;
@@ -2141,7 +2173,7 @@ bool p3turtle::encryptData(const unsigned char *clear_data,uint32_t clear_data_s
 
 	offset += ENCRYPTED_TURTLE_EDATA_SIZE ;
 
-    memcpy(&edata[offset],clear_data,clear_data_size);
+	memcpy(&edata[offset],clear_data,clear_data_size);
 
 #ifdef SERVER_DEBUG
 	TURTLE_DEBUG() << "  clear item      : " << RsUtil::BinToHex(&edata[offset],std::min(50,(int)total_data_size-(int)offset)) << "(...)" << std::endl;
@@ -2291,12 +2323,12 @@ void p3turtle::getInfo(	std::vector<std::vector<std::string> >& hashes_info,
 		tunnel.push_back(printNumber(it->first,true)) ;
 
 		std::string name;
-		if(mLinkMgr->getPeerName(it->second.local_src,name)) 
+		if(mLinkMgr->getPeerName(it->second.local_src,name))
 			tunnel.push_back(name) ;
 		else
 			tunnel.push_back(it->second.local_src.toStdString()) ;
 
-		if(mLinkMgr->getPeerName(it->second.local_dst,name)) 
+		if(mLinkMgr->getPeerName(it->second.local_dst,name))
 			tunnel.push_back(name) ;
 		else
 			tunnel.push_back(it->second.local_dst.toStdString());

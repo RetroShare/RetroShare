@@ -57,8 +57,9 @@ struct TurtleFileInfo
 struct TurtleGxsInfo
 {
 	RsGxsGroupId group_id ;
+	uint16_t service_id ;
 	std::string name ;
-	RsTlvBinaryData meta ;
+	//RsTlvBinaryData meta ;// is that actually needed? Not sure. Better if it's not.
 };
 struct TurtleTunnelRequestDisplayInfo
 {
