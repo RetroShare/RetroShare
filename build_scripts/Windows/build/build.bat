@@ -52,7 +52,7 @@ title Build - %SourceName%%RsType%-%RsBuildConfig% [qmake]
 set RS_QMAKE_CONFIG=%RsBuildConfig% version_detail_bash_script rs_autologin retroshare_plugins
 if "%RsRetroTor%"=="1" set RS_QMAKE_CONFIG=%RS_QMAKE_CONFIG% retrotor
 
-qmake "%SourcePath%\RetroShare.pro" -r "CONFIG+=%RS_QMAKE_CONFIG%" "EXTERNAL_LIB_DIR=%BuildLibsPath%\libs"
+qmake "%SourcePath%\RetroShare.pro" -r -spec win32-g++ "CONFIG+=%RS_QMAKE_CONFIG%" "EXTERNAL_LIB_DIR=%BuildLibsPath%\libs"
 if errorlevel 1 goto error
 
 echo.
