@@ -2,8 +2,8 @@
 
 ###################### PARAMETERS ####################
 gitpath="https://github.com/RetroShare/RetroShare.git"
-#branch="master"
-branch="v0.6.4-official_release"
+branch="master"
+#branch="v0.6.4-official_release"
 #bubba3="Y"      # comment out to compile for bubba3
 ######################################################
 
@@ -33,7 +33,7 @@ gpgkey="0932399B"
 
 date=`git log --pretty=format:"%ai" | head -1 | cut -d\  -f1 | sed -e s/-//g`
 time=`git log --pretty=format:"%aD" | head -1 | cut -d\  -f5 | sed -e s/://g`
-hhsh=`git log --pretty=format:"%H" | head -1 | cut -c1-8`
+hhsh=`git log --pretty=format:"%H"  | head -1 | cut -c1-8`
 
 rev=${date}.${hhsh}
 useretrotor="false"
