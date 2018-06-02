@@ -158,7 +158,8 @@ void p3turtle::getItemNames(std::map<uint8_t,std::string>& names) const
 	names[RS_TURTLE_SUBTYPE_STRING_SEARCH_REQUEST	] = "Filename substring search request";
 	names[RS_TURTLE_SUBTYPE_GXS_SEARCH_REQUEST	    ] = "GXS search request";
 	names[RS_TURTLE_SUBTYPE_FT_SEARCH_RESULT		] = "File search result";
-	names[RS_TURTLE_SUBTYPE_GXS_SEARCH_RESULT		] = "GXS search result";
+	names[RS_TURTLE_SUBTYPE_GXS_GROUP_SUMMARY		] = "GXS group summary";
+	names[RS_TURTLE_SUBTYPE_GXS_GROUP_DATA   	 	] = "GXS group data";
 	names[RS_TURTLE_SUBTYPE_OPEN_TUNNEL    			] = "Tunnel request";
 	names[RS_TURTLE_SUBTYPE_TUNNEL_OK      			] = "Tunnel response";
 	names[RS_TURTLE_SUBTYPE_FILE_REQUEST   			] = "Data request";
@@ -842,7 +843,8 @@ int p3turtle::handleIncoming()
 					case RS_TURTLE_SUBTYPE_REGEXP_SEARCH_REQUEST: handleSearchRequest(dynamic_cast<RsTurtleSearchRequestItem *>(item)) ;
 																				 break ;
 
-					case RS_TURTLE_SUBTYPE_GXS_SEARCH_RESULT :
+					case RS_TURTLE_SUBTYPE_GXS_GROUP_DATA :
+					case RS_TURTLE_SUBTYPE_GXS_GROUP_SUMMARY :
 					case RS_TURTLE_SUBTYPE_FT_SEARCH_RESULT : handleSearchResult(dynamic_cast<RsTurtleSearchResultItem *>(item)) ;
 																		break ;
 
@@ -1794,8 +1796,14 @@ void RsTurtleFileSearchRequestItem::performLocalSearch(TurtleSearchRequestInfo &
 
 void RsTurtleGxsSearchRequestItem::performLocalSearch(TurtleSearchRequestInfo &req, std::list<RsTurtleSearchResultItem*>& result) const
 {
-    std::cerr << "(EE) Missing code to perform actual GXS search" << std::endl;
+    std::cerr << "(EE) p3turtle: Missing code to perform actual GXS search" << std::endl;
 }
+
+void RsTurtleGxsGroupRequestItem::performLocalSearch(TurtleSearchRequestInfo &req, std::list<RsTurtleSearchResultItem*>& result) const
+{
+    std::cerr << "(EE) p3turtle: Missing code to perform actual retrieval of GXS group" << std::endl;
+}
+
 
 void RsTurtleStringSearchRequestItem::search(std::list<TurtleFileInfo>& result) const
 {
@@ -1985,11 +1993,19 @@ void p3turtle::returnSearchResult(RsTurtleSearchResultItem *item)
         return ;
     }
 
-    RsTurtleGxsSearchResultItem *gxs_sr = dynamic_cast<RsTurtleGxsSearchResultItem*>(item) ;
+    RsTurtleGxsSearchResultGroupSummaryItem *gxs_sr_gs = dynamic_cast<RsTurtleGxsSearchResultGroupSummaryItem*>(item) ;
 
-    if(gxs_sr != NULL)
+    if(gxs_sr_gs != NULL)
     {
-		RsServer::notify()->notifyTurtleSearchResult(gxs_sr->request_id,gxs_sr->result) ;
+		RsServer::notify()->notifyTurtleSearchResult(gxs_sr_gs->request_id,gxs_sr_gs->result) ;
+        return ;
+    }
+    RsTurtleGxsSearchResultGroupDataItem *gxs_sr_gd = dynamic_cast<RsTurtleGxsSearchResultGroupDataItem*>(item) ;
+
+    if(gxs_sr_gd != NULL)
+    {
+#warning MISSING CODE HERE TO HANDLE ENCRYPTED INCOMING GROUP DATA.
+		//RsServer::notify()->notifyTurtleSearchResult(gxs_sr_gd->request_id,gxs_sr_gd->encrypted_nxs_group) ;
         return ;
     }
 }

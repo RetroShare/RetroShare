@@ -28,12 +28,15 @@ RsItem *RsTurtleSerialiser::create_item(uint16_t service,uint8_t item_subtype) c
 	{
 	case RS_TURTLE_SUBTYPE_STRING_SEARCH_REQUEST	:	return new RsTurtleStringSearchRequestItem();
 	case RS_TURTLE_SUBTYPE_REGEXP_SEARCH_REQUEST	:	return new RsTurtleRegExpSearchRequestItem();
-	case RS_TURTLE_SUBTYPE_GXS_SEARCH_REQUEST	    :	return new RsTurtleGxsSearchRequestItem();
 	case RS_TURTLE_SUBTYPE_FT_SEARCH_RESULT			:	return new RsTurtleFTSearchResultItem();
-	case RS_TURTLE_SUBTYPE_GXS_SEARCH_RESULT		:	return new RsTurtleGxsSearchResultItem();
 	case RS_TURTLE_SUBTYPE_OPEN_TUNNEL  			:	return new RsTurtleOpenTunnelItem();
 	case RS_TURTLE_SUBTYPE_TUNNEL_OK    			:	return new RsTurtleTunnelOkItem();
 	case RS_TURTLE_SUBTYPE_GENERIC_DATA 			:	return new RsTurtleGenericDataItem();
+
+	case RS_TURTLE_SUBTYPE_GXS_SEARCH_REQUEST	    :	return new RsTurtleGxsSearchRequestItem();
+	case RS_TURTLE_SUBTYPE_GXS_GROUP_REQUEST	    :	return new RsTurtleGxsGroupRequestItem();
+	case RS_TURTLE_SUBTYPE_GXS_GROUP_SUMMARY		:	return new RsTurtleGxsSearchResultGroupSummaryItem();
+	case RS_TURTLE_SUBTYPE_GXS_GROUP_DATA   	 	:	return new RsTurtleGxsSearchResultGroupDataItem();
 
 	default:
 		break ;
@@ -56,7 +59,6 @@ void RsTurtleStringSearchRequestItem::serial_process(RsGenericSerializer::Serial
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,request_id,"request_id") ;
     RsTypeSerializer::serial_process<uint16_t>(j,ctx,depth     ,"depth") ;
 }
-
 void RsTurtleRegExpSearchRequestItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,request_id,"request_id") ;
@@ -70,6 +72,14 @@ void RsTurtleGxsSearchRequestItem::serial_process(RsGenericSerializer::Serialize
     RsTypeSerializer::serial_process<uint16_t>(j,ctx,service_id,"service_id") ;
     RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_VALUE,match_string,"match_string") ;
 }
+void RsTurtleGxsGroupRequestItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
+{
+    RsTypeSerializer::serial_process<uint32_t>(j,ctx,request_id,"request_id") ;
+    RsTypeSerializer::serial_process<uint16_t>(j,ctx,depth,"depth") ;
+    RsTypeSerializer::serial_process<uint16_t>(j,ctx,service_id,"service_id") ;
+    RsTypeSerializer::serial_process(j,ctx,hashed_group_id,"hashed_group_id") ;
+}
+
 template<> uint32_t RsTypeSerializer::serial_size(const RsRegularExpression::LinearizedExpression& r)
 {
     uint32_t s = 0 ;
@@ -154,11 +164,17 @@ void RsTurtleFTSearchResultItem::serial_process(RsGenericSerializer::SerializeJo
     RsTypeSerializer::serial_process<uint16_t>(j,ctx,depth     ,"depth") ;
     RsTypeSerializer::serial_process          (j,ctx,result    ,"result") ;
 }
-void RsTurtleGxsSearchResultItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
+void RsTurtleGxsSearchResultGroupSummaryItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,request_id,"request_id") ;
     RsTypeSerializer::serial_process<uint16_t>(j,ctx,depth     ,"depth") ;
     RsTypeSerializer::serial_process          (j,ctx,result    ,"result") ;
+}
+void RsTurtleGxsSearchResultGroupDataItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
+{
+    RsTypeSerializer::serial_process<uint32_t> (j,ctx,request_id,"request_id") ;
+    RsTypeSerializer::serial_process<uint16_t> (j,ctx,depth     ,"depth") ;
+    RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,encrypted_nxs_group,"encrypted_nxs_group") ;
 }
 template<> uint32_t RsTypeSerializer::serial_size(const TurtleFileInfo& i)
 {

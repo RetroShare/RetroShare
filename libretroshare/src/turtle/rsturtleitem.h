@@ -24,11 +24,13 @@ const uint8_t RS_TURTLE_SUBTYPE_FILE_DATA      			= 0x08 ;
 const uint8_t RS_TURTLE_SUBTYPE_REGEXP_SEARCH_REQUEST   = 0x09 ;
 const uint8_t RS_TURTLE_SUBTYPE_GENERIC_DATA     		= 0x0a ;
 const uint8_t RS_TURTLE_SUBTYPE_GXS_SEARCH_REQUEST      = 0x0b ;
+const uint8_t RS_TURTLE_SUBTYPE_GXS_GROUP_REQUEST       = 0x0c ;
 const uint8_t RS_TURTLE_SUBTYPE_FILE_MAP                = 0x10 ;
 const uint8_t RS_TURTLE_SUBTYPE_FILE_MAP_REQUEST        = 0x11 ;
 const uint8_t RS_TURTLE_SUBTYPE_CHUNK_CRC               = 0x14 ;
 const uint8_t RS_TURTLE_SUBTYPE_CHUNK_CRC_REQUEST       = 0x15 ;
-const uint8_t RS_TURTLE_SUBTYPE_GXS_SEARCH_RESULT		= 0x16 ;
+const uint8_t RS_TURTLE_SUBTYPE_GXS_GROUP_SUMMARY		= 0x16 ;
+const uint8_t RS_TURTLE_SUBTYPE_GXS_GROUP_DATA   		= 0x17 ;
 
 // const uint8_t RS_TURTLE_SUBTYPE_FILE_CRC                = 0x12 ; // unused
 // const uint8_t RS_TURTLE_SUBTYPE_FILE_CRC_REQUEST        = 0x13 ;
@@ -65,12 +67,18 @@ class RsTurtleItem: public RsItem
 //         |               |                                    +---- RsTurtleReqExpSearchRequestItem
 //         |               |
 //         |               +---- RsTurtleGxsSearchRequestItem
+//         |               |
+//         |               +---- RsTurtleGxsGroupRequestItem
 //         |
 //         +---- RsTurtleSearchResultItem
 //                         |
 //                         +---- RsTurtleFTSearchResultItem
 //                         |
 //                         +---- RsTurtleGxsSearchResultItem
+//                                           |
+//                                           +---- RsTurtleGxsSearchResultGroupSummaryItem
+//                                           |
+//                                           +---- RsTurtleGxsSearchResultGroupDataItem
 //
 
 class RsTurtleSearchResultItem ;
@@ -149,16 +157,33 @@ class RsTurtleGxsSearchRequestItem: public RsTurtleSearchRequestItem
 		RsTurtleGxsSearchRequestItem() : RsTurtleSearchRequestItem(RS_TURTLE_SUBTYPE_GXS_SEARCH_REQUEST) {}
         virtual ~RsTurtleGxsSearchRequestItem() {}
 
-		virtual void performLocalSearch(TurtleSearchRequestInfo& req,std::list<RsTurtleSearchResultItem*>&) const ;	// abstracts the search method
-
 		std::string match_string ;	// string to match
         uint16_t service_id ;		// searvice to search
 
 		std::string GetKeywords() { return match_string; }
 
+		virtual void performLocalSearch(TurtleSearchRequestInfo& req,std::list<RsTurtleSearchResultItem*>&) const ;	// abstracts the search method
 		virtual RsTurtleSearchRequestItem *clone() const { return new RsTurtleGxsSearchRequestItem(*this) ; }
-
         void clear() { match_string.clear() ; }
+
+	protected:
+		void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
+};
+
+class RsTurtleGxsGroupRequestItem: public RsTurtleSearchRequestItem
+{
+	public:
+		RsTurtleGxsGroupRequestItem() : RsTurtleSearchRequestItem(RS_TURTLE_SUBTYPE_GXS_GROUP_REQUEST) {}
+        virtual ~RsTurtleGxsGroupRequestItem() {}
+
+        uint16_t service_id ;		// searvice to search
+		Sha1CheckSum hashed_group_id ;	// the group ID is hashed in order to keep it private.
+
+		virtual RsTurtleSearchRequestItem *clone() const { return new RsTurtleGxsGroupRequestItem(*this) ; }
+
+		virtual void performLocalSearch(TurtleSearchRequestInfo& req,std::list<RsTurtleSearchResultItem*>&) const ;	// abstracts the search method
+        void clear() { hashed_group_id.clear() ; }
+		std::string GetKeywords() { return hashed_group_id.toStdString(); }
 
 	protected:
 		void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
@@ -197,21 +222,36 @@ class RsTurtleFTSearchResultItem: public RsTurtleSearchResultItem
 		void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 };
 
-class RsTurtleGxsSearchResultItem: public RsTurtleSearchResultItem
+class RsTurtleGxsSearchResultGroupSummaryItem: public RsTurtleSearchResultItem
 {
 	public:
-        RsTurtleGxsSearchResultItem() : RsTurtleSearchResultItem(RS_TURTLE_SUBTYPE_GXS_SEARCH_RESULT){}
+        RsTurtleGxsSearchResultGroupSummaryItem() : RsTurtleSearchResultItem(RS_TURTLE_SUBTYPE_GXS_GROUP_SUMMARY){}
+        virtual ~RsTurtleGxsSearchResultGroupSummaryItem() {}
 
 		std::list<TurtleGxsInfo> result ;
 
         void clear() { result.clear() ; }
         uint32_t count() const { return result.size() ; }
         virtual void pop() { result.pop_back() ;}
-        virtual RsTurtleSearchResultItem *duplicate() const { return new RsTurtleGxsSearchResultItem(*this) ; }
+        virtual RsTurtleSearchResultItem *duplicate() const { return new RsTurtleGxsSearchResultGroupSummaryItem(*this) ; }
 	protected:
 		void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 };
+class RsTurtleGxsSearchResultGroupDataItem: public RsTurtleSearchResultItem
+{
+	public:
+        RsTurtleGxsSearchResultGroupDataItem() : RsTurtleSearchResultItem(RS_TURTLE_SUBTYPE_GXS_GROUP_DATA){}
+        virtual ~RsTurtleGxsSearchResultGroupDataItem() {}
 
+        RsTlvBinaryData encrypted_nxs_group;	// data is encrypted with group ID.
+
+        uint32_t count() const { return 1 ; }
+        virtual void pop() { clear(); }
+        void clear() { encrypted_nxs_group.TlvClear() ; }
+        virtual RsTurtleSearchResultItem *duplicate() const { return new RsTurtleGxsSearchResultGroupDataItem(*this) ; }
+	protected:
+		void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
+};
 
 /***********************************************************************************/
 /*                           Turtle Tunnel Item classes                            */
