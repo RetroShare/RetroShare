@@ -287,6 +287,15 @@ public:
 	 */
 	bool getGroupStatistic(const uint32_t& token, GxsGroupStatistic& stats);
 
+    /*!
+     * \brief turtleGroupRequest
+     * 			Issues a browadcast group request using the turtle router generic search system. The request is obviously asynchroneous and will be
+     * 			handled in RsGenExchange when received.
+     * \param group_id
+     */
+    void turtleGroupRequest(const RsGxsGroupId& group_id);
+    void turtleSearchRequest(const std::string& match_string);
+
 protected:
 
 	bool messagePublicationTest(const RsGxsMsgMetaData&) ;

@@ -792,7 +792,7 @@ void SearchDialog::advancedSearch(RsRegularExpression::Expression* expression)
     RsRegularExpression::LinearizedExpression e ;
 	expression->linearize(e) ;
 
-	TurtleRequestId req_id = rsTurtle->turtleSearch(e) ;
+	TurtleRequestId req_id = rsFiles->turtleSearch(e) ;
 
 	// This will act before turtle results come to the interface, thanks to the signals scheduling policy.
 	initSearchResult(QString::fromStdString(e.GetStrings()),req_id, ui.FileTypeComboBox->currentIndex(), true) ;
@@ -858,9 +858,9 @@ void SearchDialog::searchKeywords(const QString& keywords)
 	if(ui._anonF2Fsearch_CB->isChecked())
 	{
 		if(n==1)
-			req_id = rsTurtle->turtleSearch(words.front()) ;
+			req_id = rsFiles->turtleSearch(words.front()) ;
 		else
-			req_id = rsTurtle->turtleSearch(lin_exp) ;
+			req_id = rsFiles->turtleSearch(lin_exp) ;
 	}
 	else
 		req_id = RSRandom::random_u32() ; // generate a random 32 bits request id

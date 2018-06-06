@@ -23,7 +23,9 @@ class MessengerWindow;
 class ToasterItem;
 class ToasterNotify;
 class SignatureEventData ;
+
 struct TurtleFileInfo;
+struct TurtleGxsInfo;
 
 class NotifyQt: public QObject, public NotifyClient
 {

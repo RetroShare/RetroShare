@@ -96,6 +96,9 @@ virtual bool getPostData(const uint32_t &token, std::vector<RsGxsChannelPost> &p
 //virtual bool createComment(uint32_t &token, RsGxsComment &comment) = 0;
 //virtual bool createVote(uint32_t &token, RsGxsVote &vote) = 0;
 
+    virtual void turtleGroupRequest(const RsGxsGroupId& group_id)=0;
+    virtual void turtleSearchRequest(const std::string& match_string)=0;
+
         //////////////////////////////////////////////////////////////////////////////
 virtual void setMessageReadStatus(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, bool read) = 0;
 

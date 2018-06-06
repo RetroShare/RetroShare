@@ -81,6 +81,8 @@ public:
     virtual uint32_t getDefaultSyncAge() =0;
     virtual uint32_t getDefaultKeepAge() =0;
 
+    virtual void turtleGroupRequest(const RsGxsGroupId& group_id)=0;
+    virtual void turtleSearchRequest(const std::string& match_string)=0;
     /*!
      * Initiates a search through the network
      * This returns messages which contains the search terms set in RsGxsSearch

@@ -231,7 +231,8 @@ void p3Notify::notifyChatLobbyTimeShift     (int                time_shift)     
 void p3Notify::notifyCustomState            (const std::string& peer_id   , const std::string&               status_string )    { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyCustomState       (peer_id,status_string) ; }
 void p3Notify::notifyHashingInfo            (uint32_t           type      , const std::string&               fileinfo      )    { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyHashingInfo       (type,fileinfo) ; } 
 void p3Notify::notifyTurtleSearchResult     (uint32_t           search_id , const std::list<TurtleFileInfo>& files         )    { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyTurtleSearchResult(search_id,files) ; } 
-void p3Notify::notifyTurtleSearchResult     (uint32_t           search_id , const std::list<TurtleGxsInfo>&  groups        )    { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyTurtleSearchResult(search_id,groups) ; }
+#warning MISSING CODE HERE
+//void p3Notify::notifyTurtleSearchResult     (uint32_t           search_id , const std::list<TurtleGxsInfo>&  groups        )    { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyTurtleSearchResult(search_id,groups) ; }
 void p3Notify::notifyPeerHasNewAvatar       (std::string        peer_id   )                                                     { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyPeerHasNewAvatar(peer_id) ; }
 void p3Notify::notifyOwnAvatarChanged       ()                                                                                  { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyOwnAvatarChanged() ; } 
 void p3Notify::notifyOwnStatusMessageChanged()                                                                                  { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyOwnStatusMessageChanged() ; } 

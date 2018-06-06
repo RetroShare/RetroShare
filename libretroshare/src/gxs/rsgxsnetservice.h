@@ -122,6 +122,8 @@ public:
 	virtual void setDefaultKeepAge(uint32_t t) { mDefaultMsgStorePeriod = t ; }
 	virtual void setDefaultSyncAge(uint32_t t) { mDefaultMsgSyncPeriod = t ; }
 
+    virtual void turtleGroupRequest(const RsGxsGroupId& group_id);
+    virtual void turtleSearchRequest(const std::string& match_string);
     /*!
      * pauses synchronisation of subscribed groups and request for group id
      * from peers

@@ -54,13 +54,7 @@ struct TurtleFileInfo
 	std::string name ;
 	uint64_t size ;
 };
-struct TurtleGxsInfo
-{
-	RsGxsGroupId group_id ;
-	uint16_t service_id ;
-	std::string name ;
-	//RsTlvBinaryData meta ;// is that actually needed? Not sure. Better if it's not.
-};
+
 struct TurtleTunnelRequestDisplayInfo
 {
 	uint32_t request_id ;     // Id of the request
@@ -118,8 +112,7 @@ class RsTurtle
 		// the request id, which will be further used by the gui to store results
 		// as they come back.
 		//
-		virtual TurtleRequestId turtleSearch(const std::string& match_string) = 0 ;
-        virtual TurtleRequestId turtleSearch(const RsRegularExpression::LinearizedExpression& expr) = 0 ;
+        virtual TurtleRequestId turtleSearch(unsigned char *search_bin_data,uint32_t search_bin_data_len,RsTurtleClientService *client_service) =0;
 
 		// Initiates tunnel handling for the given file hash.  tunnels.  Launches
 		// an exception if an error occurs during the initialization process. The

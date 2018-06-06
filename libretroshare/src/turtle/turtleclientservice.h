@@ -42,6 +42,18 @@ class p3turtle ;
 class RsTurtleClientService
 {
 	public:
+    	/*!
+         * \brief serviceId
+         * 			Returns the ID of the client service. This is used to pass the ID to search requests, from the client services
+         * \return
+         * 			The service ID.
+         */
+
+    	virtual uint16_t serviceId() const
+		{
+			std::cerr << "!!!!!! Received request for service ID in turtle router client, but the client service is not handling it !!!!!!!" << std::endl ;
+            return 0 ;
+    	}
 
 		/*!
 		 * \brief handleTunnelRequest
@@ -52,7 +64,6 @@ class RsTurtleClientService
 		 */
 		virtual bool handleTunnelRequest(const RsFileHash& /*hash*/,const RsPeerId& /*peer_id*/) { return false ; }
 		
-
 	    /*!
 		 * \brief receiveTurtleData
 		 *           This method is called by the turtle router to send data that comes out of a turtle tunnel, and should
@@ -74,9 +85,41 @@ class RsTurtleClientService
 		 *           By default (if not overloaded), the method will just free the data, as any subclass should do as well.
 		 *           Note: p3turtle stays owner of the item, so the client should not delete it!
 		 */
-        virtual void receiveTurtleData(RsTurtleGenericTunnelItem */*item*/,const RsFileHash& /*hash*/,const RsPeerId& /*virtual_peer_id*/,RsTurtleGenericTunnelItem::Direction /*direction*/)
+        virtual void receiveTurtleData(const RsTurtleGenericTunnelItem * /* item */,const RsFileHash& /*hash*/,const RsPeerId& /*virtual_peer_id*/,RsTurtleGenericTunnelItem::Direction /*direction*/)
 		{ 
 			std::cerr << "!!!!!! Received Data from turtle router, but the client service is not handling it !!!!!!!!!!" << std::endl ; 
+		}
+
+    	/*!
+         * \brief receiveSearchRequest
+         * 			This method is called by the turtle router to notify the client of a search request in the form generic data. The returned
+         * 			result contains the serialised generic result returned by the client.
+         *
+         * 			The turtle router keeps the memory ownership over search_request_data
+         *
+         * \param search_request_data      generic serialized search data
+         * \param search_request_data_len  length of the serialized search data
+         * \param search_result_data       generic serialized search result data
+         * \param search_result_data_len   length of the serialized search result data
+         *
+         * \return true if the search is successful.
+         */
+    	virtual bool receiveSearchRequest(unsigned char */*search_request_data*/,uint32_t /*search_request_data_len*/,unsigned char *& /*search_result_data*/,uint32_t& /*search_result_data_len*/)
+		{
+			std::cerr << "!!!!!! Received search result from turtle router, but the client service who requested it is not handling it !!!!!!!!!!" << std::endl ;
+            return false;
+		}
+
+    	/*!
+         * \brief receiveSearchResult
+         * 			This method is called by the turtle router to notify the client of a search result. The result is serialized for the current class to read.
+         *
+         * \param search_result_data  result data. Memory ownership is owned by the turtle router. So do not delete!
+         * \param search_result_data  length of result data
+         */
+    	virtual void receiveSearchResult(unsigned char * /*search_result_data*/,uint32_t  /*search_result_data_len*/)
+		{
+			std::cerr << "!!!!!! Received search result from turtle router, but the client service who requested it is not handling it !!!!!!!!!!" << std::endl ;
 		}
 
 	    /*!

@@ -3384,3 +3384,11 @@ void RsGenExchange::removeDeleteExistingMessages( std::list<RsNxsMsg*>& msgs, Gx
 	}
 }
 
+void RsGenExchange::turtleGroupRequest(const RsGxsGroupId& group_id)
+{
+    mNetService->turtleGroupRequest(group_id) ;
+}
+void RsGenExchange::turtleSearchRequest(const std::string& match_string)
+{
+    mNetService->turtleSearchRequest(match_string) ;
+}

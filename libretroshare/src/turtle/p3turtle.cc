@@ -156,10 +156,9 @@ void p3turtle::getItemNames(std::map<uint8_t,std::string>& names) const
 	names.clear();
 
 	names[RS_TURTLE_SUBTYPE_STRING_SEARCH_REQUEST	] = "Filename substring search request";
-	names[RS_TURTLE_SUBTYPE_GXS_SEARCH_REQUEST	    ] = "GXS search request";
+	names[RS_TURTLE_SUBTYPE_GENERIC_SEARCH_REQUEST  ] = "Generic search request";
 	names[RS_TURTLE_SUBTYPE_FT_SEARCH_RESULT		] = "File search result";
-	names[RS_TURTLE_SUBTYPE_GXS_GROUP_SUMMARY		] = "GXS group summary";
-	names[RS_TURTLE_SUBTYPE_GXS_GROUP_DATA   	 	] = "GXS group data";
+	names[RS_TURTLE_SUBTYPE_GENERIC_SEARCH_RESULT   ] = "Generic search result";
 	names[RS_TURTLE_SUBTYPE_OPEN_TUNNEL    			] = "Tunnel request";
 	names[RS_TURTLE_SUBTYPE_TUNNEL_OK      			] = "Tunnel response";
 	names[RS_TURTLE_SUBTYPE_FILE_REQUEST   			] = "Data request";
@@ -840,11 +839,11 @@ int p3turtle::handleIncoming()
 				switch(item->PacketSubType())
 				{
 					case RS_TURTLE_SUBTYPE_STRING_SEARCH_REQUEST:
+					case RS_TURTLE_SUBTYPE_GENERIC_SEARCH_REQUEST:
 					case RS_TURTLE_SUBTYPE_REGEXP_SEARCH_REQUEST: handleSearchRequest(dynamic_cast<RsTurtleSearchRequestItem *>(item)) ;
 																				 break ;
 
-					case RS_TURTLE_SUBTYPE_GXS_GROUP_DATA :
-					case RS_TURTLE_SUBTYPE_GXS_GROUP_SUMMARY :
+					case RS_TURTLE_SUBTYPE_GENERIC_SEARCH_RESULT :
 					case RS_TURTLE_SUBTYPE_FT_SEARCH_RESULT : handleSearchResult(dynamic_cast<RsTurtleSearchResultItem *>(item)) ;
 																		break ;
 
@@ -1002,65 +1001,92 @@ void p3turtle::handleSearchRequest(RsTurtleSearchRequestItem *item)
 
 void p3turtle::handleSearchResult(RsTurtleSearchResultItem *item)
 {
-	RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
-	// Find who actually sent the corresponding request.
-	//
-	std::map<TurtleRequestId,TurtleSearchRequestInfo>::iterator it = _search_requests_origins.find(item->request_id) ;
-#ifdef P3TURTLE_DEBUG
-	std::cerr << "Received search result:" << std::endl ;
-	item->print(std::cerr,0) ;
-#endif
-	if(it == _search_requests_origins.end())
+    std::list<std::pair<RsTurtleSearchResultItem*,RsTurtleClientService*> > results_to_notify_off_mutex ;
+
 	{
-		// This is an error: how could we receive a search result corresponding to a search item we
-		// have forwarded but that it not in the list ??
+		RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
+		// Find who actually sent the corresponding request.
+		//
+		std::map<TurtleRequestId,TurtleSearchRequestInfo>::iterator it = _search_requests_origins.find(item->request_id) ;
 
-		std::cerr << __PRETTY_FUNCTION__ << ": search result has no peer direction!" << std::endl ;
-		return ;
-	}
-
-	// Is this result's target actually ours ?
-
-	if(it->second.origin == _own_id)
-	{
-		it->second.result_count += item->count() ;
-		returnSearchResult(item) ;		// Yes, so send upward.
-	}
-	else
-	{									// Nope, so forward it back.
 #ifdef P3TURTLE_DEBUG
-		std::cerr << "  Forwarding result back to " << it->second.origin << std::endl;
+		std::cerr << "Received search result:" << std::endl ;
+		item->print(std::cerr,0) ;
 #endif
-		// We update the total count forwarded back, and chop it to TURTLE_SEARCH_RESULT_MAX_HITS.
-
-		uint32_t n = item->count(); // not so good!
-
-		if(it->second.result_count >= TURTLE_SEARCH_RESULT_MAX_HITS)
+		if(it == _search_requests_origins.end())
 		{
-			std::cerr << "(WW) exceeded turtle search result to forward. Req=" << std::hex << item->request_id << std::dec << ": dropping item with " << n << " elements." << std::endl;
+			// This is an error: how could we receive a search result corresponding to a search item we
+			// have forwarded but that it not in the list ??
+
+			std::cerr << __PRETTY_FUNCTION__ << ": search result has no peer direction!" << std::endl ;
 			return ;
 		}
 
-		if(it->second.result_count + n > TURTLE_SEARCH_RESULT_MAX_HITS)
-		{
-			for(uint32_t i=it->second.result_count + n; i>TURTLE_SEARCH_RESULT_MAX_HITS;--i)
-				item->pop() ;
+		// Is this result's target actually ours ?
 
-			it->second.result_count = TURTLE_SEARCH_RESULT_MAX_HITS ;
+		if(it->second.origin == _own_id)
+		{
+			it->second.result_count += item->count() ;
+
+            results_to_notify_off_mutex.push_back(std::make_pair(item,it->second.client)) ;
 		}
 		else
-			it->second.result_count += n ;
+		{									// Nope, so forward it back.
+#ifdef P3TURTLE_DEBUG
+			std::cerr << "  Forwarding result back to " << it->second.origin << std::endl;
+#endif
+			// We update the total count forwarded back, and chop it to TURTLE_SEARCH_RESULT_MAX_HITS.
 
-		RsTurtleSearchResultItem *fwd_item = item->duplicate();
+			uint32_t n = item->count(); // not so good!
 
-		// Normally here, we should setup the forward adress, so that the owner's
-		// of the files found can be further reached by a tunnel.
+			if(it->second.result_count >= TURTLE_SEARCH_RESULT_MAX_HITS)
+			{
+				std::cerr << "(WW) exceeded turtle search result to forward. Req=" << std::hex << item->request_id << std::dec << ": dropping item with " << n << " elements." << std::endl;
+				return ;
+			}
 
-		fwd_item->PeerId(it->second.origin) ;
-		fwd_item->depth = 0 ; // obfuscate the depth for non immediate friends. Result will always be 0. This effectively removes the information.
+			if(it->second.result_count + n > TURTLE_SEARCH_RESULT_MAX_HITS)
+			{
+				for(uint32_t i=it->second.result_count + n; i>TURTLE_SEARCH_RESULT_MAX_HITS;--i)
+					item->pop() ;
 
-		sendItem(fwd_item) ;
+				it->second.result_count = TURTLE_SEARCH_RESULT_MAX_HITS ;
+			}
+			else
+				it->second.result_count += n ;
+
+			RsTurtleSearchResultItem *fwd_item = item->duplicate();
+
+			// Normally here, we should setup the forward adress, so that the owner's
+			// of the files found can be further reached by a tunnel.
+
+			fwd_item->PeerId(it->second.origin) ;
+			fwd_item->depth = 0 ; // obfuscate the depth for non immediate friends. Result will always be 0. This effectively removes the information.
+
+			sendItem(fwd_item) ;
+		}
 	}
+
+    // now we notify clients off-mutex.
+
+    for(auto it(results_to_notify_off_mutex.begin());it!=results_to_notify_off_mutex.end();++it)
+    {
+        // Hack to use the old search result handling in ftServer. Normally ftServer should use the new method with serialized result.
+
+#warning make sure memory is correctly deleted here
+        RsTurtleFTSearchResultItem *ftsr = dynamic_cast<RsTurtleFTSearchResultItem*>(it->first) ;
+
+        if(ftsr!=NULL)
+        {
+			RsServer::notify()->notifyTurtleSearchResult(ftsr->request_id,ftsr->result) ;
+            continue ;
+        }
+
+        RsTurtleGenericSearchResultItem *gnsr = dynamic_cast<RsTurtleGenericSearchResultItem*>(it->first) ;
+
+        if(gnsr!=NULL)
+			(*it).second->receiveSearchResult(gnsr->result_data,gnsr->result_data_len) ;
+    }
 }
 
 // -----------------------------------------------------------------------------------//
@@ -1794,16 +1820,10 @@ void RsTurtleFileSearchRequestItem::performLocalSearch(TurtleSearchRequestInfo &
 	}
 }
 
-void RsTurtleGxsSearchRequestItem::performLocalSearch(TurtleSearchRequestInfo &req, std::list<RsTurtleSearchResultItem*>& result) const
+void RsTurtleGenericSearchRequestItem::performLocalSearch(TurtleSearchRequestInfo &req, std::list<RsTurtleSearchResultItem*>& result) const
 {
     std::cerr << "(EE) p3turtle: Missing code to perform actual GXS search" << std::endl;
 }
-
-void RsTurtleGxsGroupRequestItem::performLocalSearch(TurtleSearchRequestInfo &req, std::list<RsTurtleSearchResultItem*>& result) const
-{
-    std::cerr << "(EE) p3turtle: Missing code to perform actual retrieval of GXS group" << std::endl;
-}
-
 
 void RsTurtleStringSearchRequestItem::search(std::list<TurtleFileInfo>& result) const
 {
@@ -1939,6 +1959,34 @@ TurtleRequestId p3turtle::turtleSearch(const RsRegularExpression::LinearizedExpr
 	return id ;
 }
 
+TurtleRequestId p3turtle::turtleSearch(unsigned char *search_bin_data,uint32_t search_bin_data_len,RsTurtleClientService *client_service)
+{
+	// generate a new search id.
+
+	TurtleRequestId id = generateRandomRequestId() ;
+
+	// Form a request packet that simulates a request from us.
+	//
+	RsTurtleGenericSearchRequestItem *item = new RsTurtleGenericSearchRequestItem ;
+
+#ifdef P3TURTLE_DEBUG
+	std::cerr << "performing search. OwnId = " << _own_id << std::endl ;
+#endif
+
+	item->PeerId(_own_id) ;
+    item->service_id = client_service->serviceId();
+	item->search_data = search_bin_data ;
+	item->search_data_len = search_bin_data_len ;
+	item->request_id = id ;
+	item->depth = 0 ;
+
+	// send it
+
+	handleSearchRequest(item) ;
+
+	return id ;
+}
+
 void p3turtle::monitorTunnels(const RsFileHash& hash,RsTurtleClientService *client_service,bool allow_multi_tunnels)
 {
 	{
@@ -1979,36 +2027,26 @@ void p3turtle::monitorTunnels(const RsFileHash& hash,RsTurtleClientService *clie
 	IndicateConfigChanged() ;	// initiates saving of handled hashes.
 }
 
-void p3turtle::returnSearchResult(RsTurtleSearchResultItem *item)
-{
 #ifdef P3TURTLE_DEBUG
 	std::cerr << "  Returning result for search request " << HEX_PRINT(item->request_id) << " upwards." << std::endl ;
 #endif
 
-    RsTurtleFTSearchResultItem *ft_sr = dynamic_cast<RsTurtleFTSearchResultItem*>(item) ;
 
-    if(ft_sr != NULL)
-    {
-		RsServer::notify()->notifyTurtleSearchResult(ft_sr->request_id,ft_sr->result) ;
-        return ;
-    }
-
-    RsTurtleGxsSearchResultGroupSummaryItem *gxs_sr_gs = dynamic_cast<RsTurtleGxsSearchResultGroupSummaryItem*>(item) ;
-
-    if(gxs_sr_gs != NULL)
-    {
-		RsServer::notify()->notifyTurtleSearchResult(gxs_sr_gs->request_id,gxs_sr_gs->result) ;
-        return ;
-    }
-    RsTurtleGxsSearchResultGroupDataItem *gxs_sr_gd = dynamic_cast<RsTurtleGxsSearchResultGroupDataItem*>(item) ;
-
-    if(gxs_sr_gd != NULL)
-    {
-#warning MISSING CODE HERE TO HANDLE ENCRYPTED INCOMING GROUP DATA.
-		//RsServer::notify()->notifyTurtleSearchResult(gxs_sr_gd->request_id,gxs_sr_gd->encrypted_nxs_group) ;
-        return ;
-    }
-}
+//    RsTurtleGxsSearchResultGroupSummaryItem *gxs_sr_gs = dynamic_cast<RsTurtleGxsSearchResultGroupSummaryItem*>(item) ;
+//
+//    if(gxs_sr_gs != NULL)
+//    {
+//		RsServer::notify()->notifyTurtleSearchResult(gxs_sr_gs->request_id,gxs_sr_gs->result) ;
+//        return ;
+//    }
+//    RsTurtleGxsSearchResultGroupDataItem *gxs_sr_gd = dynamic_cast<RsTurtleGxsSearchResultGroupDataItem*>(item) ;
+//
+//    if(gxs_sr_gd != NULL)
+//    {
+//#warning MISSING CODE HERE TO HANDLE ENCRYPTED INCOMING GROUP DATA.
+//		//RsServer::notify()->notifyTurtleSearchResult(gxs_sr_gd->request_id,gxs_sr_gd->encrypted_nxs_group) ;
+//        return ;
+//    }
 
 /// Warning: this function should never be called while the turtle mutex is locked.
 /// Otherwize this is a possible source of cross-lock with the File mutex.

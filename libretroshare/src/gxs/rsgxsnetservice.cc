@@ -5102,3 +5102,12 @@ bool RsGxsNetService::locked_stampMsgServerUpdateTS(const RsGxsGroupId& gid)
 
     return true;
 }
+
+void RsGxsNetService::turtleGroupRequest(const RsGxsGroupId& group_id)
+{
+    mGxsNetTunnel->turtleGroupRequest(group_id) ;
+}
+void RsGxsNetService::turtleSearchRequest(const std::string& match_string)
+{
+    mGxsNetTunnel->turtleSearchRequest(match_string) ;
+}

@@ -72,6 +72,9 @@ virtual void service_tick();
 	virtual bool saveList(bool &cleanup, std::list<RsItem *>&saveList); // @see p3Config::saveList(bool &cleanup, std::list<RsItem *>&)
 	virtual bool loadList(std::list<RsItem *>& loadList);               // @see p3Config::loadList(std::list<RsItem *>&)
 
+    virtual void turtleGroupRequest(const RsGxsGroupId& group_id);
+    virtual void turtleSearchRequest(const std::string& match_string);
+
 	// Overloaded to cache new groups.
 virtual RsGenExchange::ServiceCreate_Return service_CreateGroup(RsGxsGrpItem* grpItem, RsTlvSecurityKeySet& keySet);
 

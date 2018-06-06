@@ -212,12 +212,22 @@ public:
 	   */
 	  void dump() const;
 
-	  // other methods are still missing.
-	  //  - derived from p3Config, to load/save data
-	  //  - method to respond to tunnel requests, probably using RsGxsNetService
-	  //  - method to encrypt/decrypt data and send/receive to/from turtle.
-
+      /*!
+       * \brief connectToTurtleRouter
+       * 			Should be called after allocating a RsGxsNetTunnelService
+       * \param tr turtle router object
+       */
 	  virtual void connectToTurtleRouter(p3turtle *tr) ;
+
+      void turtleGroupRequest(const RsGxsGroupId& group_id) ;
+      void turtleSearchRequest(const std::string& match_string) ;
+
+      /*!
+       * \brief receiveSearchRequest
+       * 			See RsTurtleClientService::@
+       */
+	  virtual bool receiveSearchRequest(unsigned char *search_request_data,uint32_t search_request_data_len,unsigned char *& search_result_data,uint32_t& search_result_data_len);
+	  virtual void receiveSearchResult(unsigned char *search_result_data,uint32_t search_result_data_len) ;
 
 	  // Overloaded from RsTickingThread
 
@@ -233,7 +243,7 @@ protected:
 	  // interaction with turtle router
 
 	  virtual bool handleTunnelRequest(const RsFileHash &hash,const RsPeerId& peer_id) ;
-	  virtual void receiveTurtleData(RsTurtleGenericTunnelItem *item,const RsFileHash& hash,const RsPeerId& virtual_peer_id,RsTurtleGenericTunnelItem::Direction direction) ;
+	  virtual void receiveTurtleData(const RsTurtleGenericTunnelItem *item,const RsFileHash& hash,const RsPeerId& virtual_peer_id,RsTurtleGenericTunnelItem::Direction direction) ;
 	  void addVirtualPeer(const TurtleFileHash&, const TurtleVirtualPeerId&,RsTurtleGenericTunnelItem::Direction dir) ;
 	  void removeVirtualPeer(const TurtleFileHash&, const TurtleVirtualPeerId&) ;
 	  const Bias20Bytes& locked_randomBias() ;

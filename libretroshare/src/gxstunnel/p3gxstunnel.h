@@ -211,7 +211,7 @@ private:
     // Overloaded from RsTurtleClientService
 
     virtual bool handleTunnelRequest(const RsFileHash &hash,const RsPeerId& peer_id) ;
-    virtual void receiveTurtleData(RsTurtleGenericTunnelItem *item,const RsFileHash& hash,const RsPeerId& virtual_peer_id,RsTurtleGenericTunnelItem::Direction direction) ;
+    virtual void receiveTurtleData(const RsTurtleGenericTunnelItem *item,const RsFileHash& hash,const RsPeerId& virtual_peer_id,RsTurtleGenericTunnelItem::Direction direction) ;
     void addVirtualPeer(const TurtleFileHash&, const TurtleVirtualPeerId&,RsTurtleGenericTunnelItem::Direction dir) ;
     void removeVirtualPeer(const TurtleFileHash&, const TurtleVirtualPeerId&) ;
     

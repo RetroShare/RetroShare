@@ -389,7 +389,7 @@ bool RsGxsNetTunnelService::handleTunnelRequest(const RsFileHash &hash,const RsP
 	return mHandledHashes.find(hash) != mHandledHashes.end();
 }
 
-void RsGxsNetTunnelService::receiveTurtleData(RsTurtleGenericTunnelItem *item,const RsFileHash& hash,const RsPeerId& turtle_virtual_peer_id,RsTurtleGenericTunnelItem::Direction direction)
+void RsGxsNetTunnelService::receiveTurtleData(const RsTurtleGenericTunnelItem *item, const RsFileHash& hash, const RsPeerId& turtle_virtual_peer_id, RsTurtleGenericTunnelItem::Direction direction)
 {
 	RS_STACK_MUTEX(mGxsNetTunnelMtx);
 
@@ -424,7 +424,7 @@ void RsGxsNetTunnelService::receiveTurtleData(RsTurtleGenericTunnelItem *item,co
 
 	generateEncryptionKey(group_id,turtle_virtual_peer_id,encryption_master_key);
 
-	if(!p3turtle::decryptItem(static_cast<RsTurtleGenericDataItem*>(item),encryption_master_key,data,data_size))
+	if(!p3turtle::decryptItem(static_cast<const RsTurtleGenericDataItem*>(item),encryption_master_key,data,data_size))
 	{
 		GXS_NET_TUNNEL_ERROR() << "Cannot decrypt data!" << std::endl;
 
@@ -852,3 +852,23 @@ RsSerialiser *RsGxsNetTunnelService::setupSerialiser()
 
 	return ser ;
 }
+
+bool RsGxsNetTunnelService::receiveSearchRequest(unsigned char *search_request_data,uint32_t search_request_data_len,unsigned char *& search_result_data,uint32_t& search_result_data_len)
+{
+    std::cerr << __PRETTY_FUNCTION__ << ": received a request. Code needed to handle it" << std::endl;
+    return false ;
+}
+void RsGxsNetTunnelService::receiveSearchResult(unsigned char *search_result_data,uint32_t search_result_data_len)
+{
+    std::cerr << __PRETTY_FUNCTION__ << ": received a search result. Code needed to handle it" << std::endl;
+}
+
+void RsGxsNetTunnelService::turtleGroupRequest(const RsGxsGroupId& group_id)
+{
+    std::cerr << __PRETTY_FUNCTION__ << ": handling of turtle group request not implemented yet" << std::endl;
+}
+void RsGxsNetTunnelService::turtleSearchRequest(const std::string& match_string)
+{
+    std::cerr << __PRETTY_FUNCTION__ << ": handling of turtle search request not implemented yet" << std::endl;
+}
+

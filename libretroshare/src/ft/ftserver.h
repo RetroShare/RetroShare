@@ -96,7 +96,8 @@ public:
     // Implements RsTurtleClientService
     //
     virtual bool handleTunnelRequest(const RsFileHash& hash,const RsPeerId& peer_id) ;
-    virtual void receiveTurtleData(RsTurtleGenericTunnelItem *item,const RsFileHash& hash,const RsPeerId& virtual_peer_id,RsTurtleGenericTunnelItem::Direction direction) ;
+    virtual void receiveTurtleData(const RsTurtleGenericTunnelItem *item,const RsFileHash& hash,const RsPeerId& virtual_peer_id,RsTurtleGenericTunnelItem::Direction direction) ;
+	//virtual void receiveSearchResult(RsTurtleSearchResultItem *item);// TODO
     virtual RsItem *create_item(uint16_t service,uint8_t item_type) const ;
 	virtual RsServiceSerializer *serializer() { return this ; }
 
@@ -142,6 +143,9 @@ public:
 	virtual uint32_t getMaxUploadSlotsPerFriend() ;
 	virtual void setFilePermDirectDL(uint32_t perm) ;
 	virtual uint32_t filePermDirectDL() ;
+
+	virtual TurtleSearchRequestId turtleSearch(const std::string& string_to_match) ;
+	virtual TurtleSearchRequestId turtleSearch(const RsRegularExpression::LinearizedExpression& expr) ;
 
     /***
          * Control of Downloads Priority.
@@ -250,7 +254,7 @@ public:
     static void deriveEncryptionKey(const RsFileHash& hash, uint8_t *key);
 
     bool encryptItem(RsTurtleGenericTunnelItem *clear_item,const RsFileHash& hash,RsTurtleGenericDataItem *& encrypted_item);
-    bool decryptItem(RsTurtleGenericDataItem *encrypted_item, const RsFileHash& hash, RsTurtleGenericTunnelItem *&decrypted_item);
+    bool decryptItem(const RsTurtleGenericDataItem *encrypted_item, const RsFileHash& hash, RsTurtleGenericTunnelItem *&decrypted_item);
 
     /*************** Internal Transfer Fns *************************/
     virtual int tick();

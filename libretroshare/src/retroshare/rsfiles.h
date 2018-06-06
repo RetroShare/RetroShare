@@ -32,6 +32,7 @@
 #include <string>
 
 #include "rstypes.h"
+#include "rsturtle.h"
 
 class RsFiles;
 extern RsFiles  *rsFiles;
@@ -213,6 +214,8 @@ class RsFiles
 		virtual uint32_t getMaxUploadSlotsPerFriend()=0;
 		virtual void setFilePermDirectDL(uint32_t perm)=0;
 		virtual uint32_t filePermDirectDL()=0;
+		virtual TurtleRequestId turtleSearch(const std::string& string_to_match) =0;
+        virtual TurtleRequestId turtleSearch(const RsRegularExpression::LinearizedExpression& expr) =0;
 
 		/***
 		 * Control of Downloads Priority.
