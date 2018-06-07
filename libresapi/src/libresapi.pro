@@ -16,8 +16,6 @@ INCLUDEPATH += ../../rapidjson-1.1.0
 INCLUDEPATH += ../../libretroshare/src
 
 libresapilocalserver {
-    CONFIG *= qt
-    QT *= network
     SOURCES *= api/ApiServerLocal.cpp
     HEADERS *= api/ApiServerLocal.h
 }

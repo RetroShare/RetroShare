@@ -10,6 +10,11 @@ sLibs =
 mLibs =
 dLibs =
 
+libresapilocalserver {
+    CONFIG *= qt
+    QT *= network
+}
+
 libresapihttpserver {
     mLibs *= microhttpd
 }
