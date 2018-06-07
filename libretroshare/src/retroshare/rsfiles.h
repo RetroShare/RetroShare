@@ -168,10 +168,9 @@ public:
 
 class RsFiles
 {
-	public:
-
-		RsFiles() { return; }
-		virtual ~RsFiles() { return; }
+public:
+	RsFiles() {}
+	virtual ~RsFiles() {}
 
         /**
          * Provides file data for the gui: media streaming or rpc clients.
