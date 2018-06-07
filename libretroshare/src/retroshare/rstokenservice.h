@@ -61,14 +61,17 @@
 
 /* TODO CLEANUP: RS_TOKREQ_ANSTYPE_* values are meaningless and not used by
  * RsTokenService or its implementation, and may be arbitrarly defined by each
- * GXS client as they are of no usage, their use is deprecated */
+ * GXS client as they are of no usage, their use is deprecated, up until the
+ * definitive cleanup is done new code must use RS_DEPRECATED_TOKREQ_ANSTYPE for
+ * easier cleanup. */
 #ifndef RS_NO_WARN_DEPRECATED
 #	warning RS_TOKREQ_ANSTYPE_* macros are deprecated!
 #endif
-#define RS_TOKREQ_ANSTYPE_LIST      0x0001
-#define RS_TOKREQ_ANSTYPE_SUMMARY   0x0002
-#define RS_TOKREQ_ANSTYPE_DATA      0x0003
-#define RS_TOKREQ_ANSTYPE_ACK       0x0004
+#define RS_DEPRECATED_TOKREQ_ANSTYPE 0x0000
+#define RS_TOKREQ_ANSTYPE_LIST       0x0001
+#define RS_TOKREQ_ANSTYPE_SUMMARY    0x0002
+#define RS_TOKREQ_ANSTYPE_DATA       0x0003
+#define RS_TOKREQ_ANSTYPE_ACK        0x0004
 
 
 /*!
