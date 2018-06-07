@@ -30,7 +30,8 @@ struct ChannelsHandler : ResourceRouter
 
 private:
 	void handleListChannels(Request& req, Response& resp);
-	void handleGetChannel(Request& req, Response& resp);
+	void handleGetChannelInfo(Request& req, Response& resp);
+	void handleGetChannelContent(Request& req, Response& resp);
 	void handleToggleSubscription(Request& req, Response& resp);
 	void handleCreateChannel(Request& req, Response& resp);
 	void handleToggleAutoDownload(Request& req, Response& resp);
