@@ -1134,8 +1134,11 @@ bool p3NetMgrIMPL::checkNetAddress()
 		 * are the same (modify server)... this mismatch can
 		 * occur when the local port is changed....
 		 */
-		if (sockaddr_storage_sameip(mLocalAddr, mExtAddr))
+        if (sockaddr_storage_sameip(mLocalAddr, mExtAddr) && sockaddr_storage_port(mLocalAddr) != sockaddr_storage_port(mExtAddr))
 		{
+#ifdef NETMGR_DEBUG_RESET
+        std::cerr << "p3NetMgrIMPL::checkNetAddress() local and external ports are not the same. Setting external port to " <<       sockaddr_storage_port(mLocalAddr) << std::endl;
+#endif
 			sockaddr_storage_setport(mExtAddr, sockaddr_storage_port(mLocalAddr));
 			addrChanged = true;
 		}
