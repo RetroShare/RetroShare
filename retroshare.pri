@@ -115,6 +115,11 @@ rs_macos10.9:CONFIG -= rs_macos10.11
 rs_macos10.10:CONFIG -= rs_macos10.11
 rs_macos10.12:CONFIG -= rs_macos10.11
 
+# To disable deep search append the following assignation to qmake command line
+# "CONFIG+=no_rs_deep_search"
+CONFIG *= rs_deep_search
+no_rs_deep_search:CONFIG -= rs_deep_search
+
 ###########################################################################################################################################################
 #
 #  V07_NON_BACKWARD_COMPATIBLE_CHANGE_001:
@@ -311,6 +316,10 @@ rs_async_chat {
 
 rs_chatserver {
     DEFINES *= RS_CHATSERVER
+}
+
+rs_deep_search {
+    DEFINES *= RS_DEEP_SEARCH
 }
 
 debug {

@@ -31,6 +31,12 @@
 #include "pqi/pqihash.h"
 #include "gxs/rsgixs.h"
 
+#ifdef RS_DEEP_SEARCH
+#	include "deep_search/deep_search.h"
+#	include "services/p3gxschannels.h"
+#	include "rsitems/rsgxschannelitems.h"
+#endif
+
 static const uint32_t MAX_GXS_IDS_REQUESTS_NET   =  10 ; // max number of requests from cache/net (avoids killing the system!)
 
 //#define DEBUG_GXSUTIL 1
@@ -141,20 +147,28 @@ bool RsGxsMessageCleanUp::clean()
 	return mGrpMeta.empty();
 }
 
-RsGxsIntegrityCheck::RsGxsIntegrityCheck(RsGeneralDataService* const dataService, RsGenExchange *genex, RsGixs *gixs) :
-		mDs(dataService),mGenExchangeClient(genex), mDone(false), mIntegrityMutex("integrity"),mGixs(gixs)
-{ }
+RsGxsIntegrityCheck::RsGxsIntegrityCheck(
+        RsGeneralDataService* const dataService, RsGenExchange* genex,
+        RsGixs* gixs ) :
+    mDs(dataService), mGenExchangeClient(genex), mDone(false),
+    mIntegrityMutex("integrity"), mGixs(gixs) {}
 
 void RsGxsIntegrityCheck::run()
 {
 	check();
 
-    RsStackMutex stack(mIntegrityMutex);
-    mDone = true;
+	RS_STACK_MUTEX(mIntegrityMutex);
+	mDone = true;
 }
 
 bool RsGxsIntegrityCheck::check()
 {
+#ifdef RS_DEEP_SEARCH
+	bool isGxsChannels = dynamic_cast<p3GxsChannels*>(mGenExchangeClient);
+	std::cout << __PRETTY_FUNCTION__ << " isGxsChannels: " << isGxsChannels
+	          << std::endl;
+#endif
+
     // first take out all the groups
     std::map<RsGxsGroupId, RsNxsGrp*> grp;
     mDs->retrieveNxsGrps(grp, true, true);
@@ -166,67 +180,113 @@ bool RsGxsIntegrityCheck::check()
     std::set<RsGxsGroupId> subscribed_groups ;
 
     // compute hash and compare to stored value, if it fails then simply add it
-    // to list
-    std::map<RsGxsGroupId, RsNxsGrp*>::iterator git = grp.begin();
-    for(; git != grp.end(); ++git)
-    {
-	    RsNxsGrp* grp = git->second;
-	    RsFileHash currHash;
-	    pqihash pHash;
-	    pHash.addData(grp->grp.bin_data, grp->grp.bin_len);
-	    pHash.Complete(currHash);
+	// to list
+	for( std::map<RsGxsGroupId, RsNxsGrp*>::iterator git = grp.begin();
+	     git != grp.end(); ++git )
+	{
+		RsNxsGrp* grp = git->second;
+		RsFileHash currHash;
+		pqihash pHash;
+		pHash.addData(grp->grp.bin_data, grp->grp.bin_len);
+		pHash.Complete(currHash);
 
-	    if(currHash == grp->metaData->mHash)
-	    {
-		    // get all message ids of group
-		    if (mDs->retrieveMsgIds(grp->grpId, msgIds[grp->grpId]) == 1)
-		    {
-			    // store the group for retrieveNxsMsgs
-			    grps[grp->grpId];
+		if(currHash == grp->metaData->mHash)
+		{
+			// get all message ids of group
+			if (mDs->retrieveMsgIds(grp->grpId, msgIds[grp->grpId]) == 1)
+			{
+				// store the group for retrieveNxsMsgs
+				grps[grp->grpId];
 
-			    if(grp->metaData->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED)
-			    {
-				    subscribed_groups.insert(git->first) ;
+				if(grp->metaData->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED)
+				{
+					subscribed_groups.insert(git->first);
 
-				    if(!grp->metaData->mAuthorId.isNull())
-				    {
-#ifdef DEBUG_GXSUTIL
-					    GXSUTIL_DEBUG() << "TimeStamping group authors' key ID " << grp->metaData->mAuthorId << " in group ID " << grp->grpId << std::endl;
+#ifdef RS_DEEP_SEARCH
+					if(isGxsChannels)
+					{
+						RsGxsChannelGroup cg;
+						RsGxsGrpMetaData meta;
+
+						meta.deserialise(grp->meta.bin_data, grp->meta.bin_len);
+
+						/* TODO: Apparently a copy of the pointer to
+						 * grp.bin_data is stored into grp.bin_data thus
+						 * breaking the deserialization, skipping the pointer
+						 * (8 bytes on x86_64 debug build) fix the
+						 * deserilization, talk to Cyril how to properly fix
+						 * this.*/
+						RsGenericSerializer::SerializeContext ctx(
+						            static_cast<uint8_t*>(grp->grp.bin_data)+8,
+						            grp->grp.bin_len-8 );
+
+						RsGxsChannelGroupItem cgIt;
+						cgIt.serial_process( RsGenericSerializer::DESERIALIZE,
+						                     ctx );
+
+						if(ctx.mOk)
+						{
+							cgIt.toChannelGroup(cg, false);
+							cg.mMeta = meta;
+
+							DeepSearch::indexChannelGroup(cg);
+
+							std::cout << __PRETTY_FUNCTION__ << " ||Channel: "
+							          << meta.mGroupName << " ||Description: "
+							          << cg.mDescription << std::endl;
+						}
+						else
+							std::cout << __PRETTY_FUNCTION__ << " ||Group: "
+							          << meta.mGroupName
+							          << " ||doesn't seems a channel"
+							          << " ||ctx.mOk: " << ctx.mOk
+							          << " ||ctx.mData: " << (void*)ctx.mData
+							          << " ||ctx.mSize: " << ctx.mSize
+							          << " ||grp->grp.bin_data: " << grp->grp.bin_data
+							          << " ||grp->grp.bin_len: " << grp->grp.bin_len
+							          << std::endl;
+					}
 #endif
 
-					if(rsReputations!=NULL && rsReputations->overallReputationLevel(grp->metaData->mAuthorId) > RsReputations::REPUTATION_LOCALLY_NEGATIVE)
-						used_gxs_ids.insert(std::make_pair(grp->metaData->mAuthorId,RsIdentityUsage(mGenExchangeClient->serviceType(),RsIdentityUsage::GROUP_AUTHOR_KEEP_ALIVE,grp->grpId))) ;
-				    }
-			    }
-		    }
-		    else
-		    {
-			    msgIds.erase(msgIds.find(grp->grpId));
-			    //				grpsToDel.push_back(grp->grpId);
-		    }
-
-	    }
-	    else
-	    {
-		    grpsToDel.push_back(grp->grpId);
-	    }
-
-		if(!(grp->metaData->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED) && !(grp->metaData->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN) && !(grp->metaData->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_PUBLISH))
-        {
-            RsGroupNetworkStats stats ;
-            mGenExchangeClient->getGroupNetworkStats(grp->grpId,stats);
-
-            if(stats.mSuppliers == 0 && stats.mMaxVisibleCount == 0 && stats.mGrpAutoSync)
-            {
+					if(!grp->metaData->mAuthorId.isNull())
+					{
 #ifdef DEBUG_GXSUTIL
-                GXSUTIL_DEBUG() << "Scheduling group \"" << grp->metaData->mGroupName << "\" ID=" << grp->grpId << " in service " << std::hex << mGenExchangeClient->serviceType() << std::dec << " for deletion because it has no suppliers not any visible data at friends." << std::endl;
+						GXSUTIL_DEBUG() << "TimeStamping group authors' key ID " << grp->metaData->mAuthorId << " in group ID " << grp->grpId << std::endl;
+#endif
+						if( rsReputations && rsReputations->overallReputationLevel(grp->metaData->mAuthorId ) > RsReputations::REPUTATION_LOCALLY_NEGATIVE )
+							used_gxs_ids.insert(std::make_pair(grp->metaData->mAuthorId, RsIdentityUsage(mGenExchangeClient->serviceType(), RsIdentityUsage::GROUP_AUTHOR_KEEP_ALIVE,grp->grpId)));
+					}
+				}
+			}
+			else msgIds.erase(msgIds.find(grp->grpId));
+		}
+		else
+		{
+			grpsToDel.push_back(grp->grpId);
+#ifdef RS_DEEP_SEARCH
+			if(isGxsChannels) DeepSearch::removeChannelFromIndex(grp->grpId);
+#endif
+		}
+
+		if( !(grp->metaData->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED) &&
+		        !(grp->metaData->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN) &&
+		        !(grp->metaData->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_PUBLISH) )
+		{
+			RsGroupNetworkStats stats;
+			mGenExchangeClient->getGroupNetworkStats(grp->grpId,stats);
+
+			if( stats.mSuppliers == 0 && stats.mMaxVisibleCount == 0
+			        && stats.mGrpAutoSync )
+			{
+#ifdef DEBUG_GXSUTIL
+				GXSUTIL_DEBUG() << "Scheduling group \"" << grp->metaData->mGroupName << "\" ID=" << grp->grpId << " in service " << std::hex << mGenExchangeClient->serviceType() << std::dec << " for deletion because it has no suppliers not any visible data at friends." << std::endl;
 #endif
 				grpsToDel.push_back(grp->grpId);
-            }
-        }
+			}
+		}
 
-	    delete grp;
-    }
+		delete grp;
+	}
 
     mDs->removeGroups(grpsToDel);
 
@@ -298,6 +358,10 @@ bool RsGxsIntegrityCheck::check()
 		    delete msg;
 	    }
     }
+
+#ifdef RS_DEEP_SEARCH
+	// TODO:remove msgsToDel from deep search index too
+#endif
 
     mDs->removeMsgs(msgsToDel);
 
@@ -373,14 +437,13 @@ bool RsGxsIntegrityCheck::check()
 
 bool RsGxsIntegrityCheck::isDone()
 {
-	RsStackMutex stack(mIntegrityMutex);
+	RS_STACK_MUTEX(mIntegrityMutex);
 	return mDone;
 }
 
 void RsGxsIntegrityCheck::getDeletedIds(std::list<RsGxsGroupId>& grpIds, std::map<RsGxsGroupId, std::set<RsGxsMessageId> >& msgIds)
 {
-	RsStackMutex stack(mIntegrityMutex);
-
+	RS_STACK_MUTEX(mIntegrityMutex);
 	grpIds = mDeletedGrps;
 	msgIds = mDeletedMsgs;
 }

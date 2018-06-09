@@ -293,7 +293,8 @@ public:
 
     virtual void clear();
 
-	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
+	virtual void serial_process( RsGenericSerializer::SerializeJob j,
+	                             RsGenericSerializer::SerializeContext& ctx );
 
     RsGxsGroupId grpId; /// group Id, needed to complete version Id (ncvi)
     static int refcount;
