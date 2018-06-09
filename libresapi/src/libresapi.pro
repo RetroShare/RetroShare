@@ -21,9 +21,6 @@ libresapilocalserver {
 }
 
 libresapi_settings {
-    CONFIG *= qt
-    QT *= core
-
     SOURCES += api/SettingsHandler.cpp
     HEADERS += api/SettingsHandler.h
 }

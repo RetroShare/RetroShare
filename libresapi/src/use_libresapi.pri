@@ -15,6 +15,11 @@ libresapilocalserver {
     QT *= network
 }
 
+libresapi_settings {
+    CONFIG *= qt
+    QT *= core
+}
+
 libresapihttpserver {
     mLibs *= microhttpd
 }
