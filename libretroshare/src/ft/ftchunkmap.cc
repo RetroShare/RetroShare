@@ -257,7 +257,9 @@ void ChunkMap::setChunkCheckingResult(uint32_t chunk_number,bool check_succeeded
 	}
 }
 
-bool ChunkMap::reAskPendingChunk(const RsPeerId& peer_id,uint32_t size_hint,uint64_t& offset,uint32_t& size)
+bool ChunkMap::reAskPendingChunk( const RsPeerId& peer_id,
+                                  uint32_t /*size_hint*/,
+                                  uint64_t& offset, uint32_t& size)
 {
 	// make sure that we're at the end of the file. No need to be too greedy in the middle of it.
 
