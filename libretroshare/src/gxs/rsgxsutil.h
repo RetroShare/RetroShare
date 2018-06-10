@@ -201,7 +201,9 @@ public:
 	 * @param chunkSize
 	 * @param sleepPeriod
 	 */
-	RsGxsIntegrityCheck(RsGeneralDataService* const dataService, RsGenExchange *genex, RsGixs *gixs);
+	RsGxsIntegrityCheck( RsGeneralDataService* const dataService,
+	                     RsGenExchange *genex, RsSerialType& gxsSerialiser,
+	                     RsGixs *gixs);
 
 	bool check();
 	bool isDone();
@@ -213,13 +215,15 @@ public:
 private:
 
 	RsGeneralDataService* const mDs;
-    RsGenExchange *mGenExchangeClient;
+	RsGenExchange *mGenExchangeClient;
+	RsSerialType& mSerializer;
+
 	bool mDone;
 	RsMutex mIntegrityMutex;
 	std::list<RsGxsGroupId> mDeletedGrps;
 	std::map<RsGxsGroupId, std::set<RsGxsMessageId> > mDeletedMsgs;
-    
-    	RsGixs *mGixs ;
+
+	RsGixs* mGixs;
 };
 
 class GroupUpdate

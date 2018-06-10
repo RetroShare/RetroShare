@@ -206,7 +206,8 @@ void RsGenExchange::tick()
 
 			if(!mIntegrityCheck)
 			{
-				mIntegrityCheck = new RsGxsIntegrityCheck(mDataStore,this,mGixs);
+				mIntegrityCheck = new RsGxsIntegrityCheck( mDataStore, this,
+				                                           *mSerialiser, mGixs);
 				mIntegrityCheck->start("gxs integrity");
 				mChecking = true;
 			}

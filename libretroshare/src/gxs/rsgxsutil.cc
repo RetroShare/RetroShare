@@ -149,9 +149,9 @@ bool RsGxsMessageCleanUp::clean()
 
 RsGxsIntegrityCheck::RsGxsIntegrityCheck(
         RsGeneralDataService* const dataService, RsGenExchange* genex,
-        RsGixs* gixs ) :
-    mDs(dataService), mGenExchangeClient(genex), mDone(false),
-    mIntegrityMutex("integrity"), mGixs(gixs) {}
+        RsSerialType& serializer, RsGixs* gixs ) :
+    mDs(dataService), mGenExchangeClient(genex), mSerializer(serializer),
+    mDone(false), mIntegrityMutex("integrity"), mGixs(gixs) {}
 
 void RsGxsIntegrityCheck::run()
 {
@@ -205,28 +205,18 @@ bool RsGxsIntegrityCheck::check()
 #ifdef RS_DEEP_SEARCH
 					if(isGxsChannels)
 					{
-						RsGxsChannelGroup cg;
 						RsGxsGrpMetaData meta;
-
 						meta.deserialise(grp->meta.bin_data, grp->meta.bin_len);
 
-						/* TODO: Apparently a copy of the pointer to
-						 * grp.bin_data is stored into grp.bin_data thus
-						 * breaking the deserialization, skipping the pointer
-						 * (8 bytes on x86_64 debug build) fix the
-						 * deserilization, talk to Cyril how to properly fix
-						 * this.*/
-						RsGenericSerializer::SerializeContext ctx(
-						            static_cast<uint8_t*>(grp->grp.bin_data)+8,
-						            grp->grp.bin_len-8 );
+						uint32_t blz = grp->grp.bin_len;
+						RsItem* rIt = mSerializer.deserialise(grp->grp.bin_data,
+						                                      &blz);
 
-						RsGxsChannelGroupItem cgIt;
-						cgIt.serial_process( RsGenericSerializer::DESERIALIZE,
-						                     ctx );
-
-						if(ctx.mOk)
+						if( RsGxsChannelGroupItem* cgIt =
+						        dynamic_cast<RsGxsChannelGroupItem*>(rIt) )
 						{
-							cgIt.toChannelGroup(cg, false);
+							RsGxsChannelGroup cg;
+							cgIt->toChannelGroup(cg, false);
 							cg.mMeta = meta;
 
 							DeepSearch::indexChannelGroup(cg);
@@ -239,12 +229,14 @@ bool RsGxsIntegrityCheck::check()
 							std::cout << __PRETTY_FUNCTION__ << " ||Group: "
 							          << meta.mGroupName
 							          << " ||doesn't seems a channel"
-							          << " ||ctx.mOk: " << ctx.mOk
-							          << " ||ctx.mData: " << (void*)ctx.mData
-							          << " ||ctx.mSize: " << ctx.mSize
-							          << " ||grp->grp.bin_data: " << grp->grp.bin_data
-							          << " ||grp->grp.bin_len: " << grp->grp.bin_len
-							          << std::endl;
+							          << " ||grp->grp.bin_data: "
+							          <<     grp->grp.bin_data
+							          << " ||grp->grp.bin_len: "
+							          <<     grp->grp.bin_len
+							          << " ||rIt: " << rIt << " ||blz: " << blz
+							          << " ||cgIt: " << cgIt << std::endl;
+
+						delete rIt;
 					}
 #endif
 
