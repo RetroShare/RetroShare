@@ -122,8 +122,16 @@ public:
 	virtual void setDefaultKeepAge(uint32_t t) { mDefaultMsgStorePeriod = t ; }
 	virtual void setDefaultSyncAge(uint32_t t) { mDefaultMsgSyncPeriod = t ; }
 
+    /*!
+     * \brief Search methods.
+     * 			These four methods are used to request distant search and receive the results.
+     * \param group_id
+     */
     virtual void turtleGroupRequest(const RsGxsGroupId& group_id);
     virtual void turtleSearchRequest(const std::string& match_string);
+
+    virtual bool search(const std::string& substring,std::list<RsGxsGroupSummary>& group_infos) ;
+
     /*!
      * pauses synchronisation of subscribed groups and request for group id
      * from peers

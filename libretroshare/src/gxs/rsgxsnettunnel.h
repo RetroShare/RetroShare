@@ -105,6 +105,7 @@
 typedef RsPeerId RsGxsNetTunnelVirtualPeerId ;
 
 class RsGxsNetTunnelItem ;
+class RsNetworkExchangeService ;
 
 struct RsGxsNetTunnelVirtualPeerInfo
 {
@@ -158,6 +159,15 @@ class RsGxsNetTunnelService: public RsTurtleClientService, public RsTickingThrea
 public:
 	  RsGxsNetTunnelService() ;
 	  virtual ~RsGxsNetTunnelService() ;
+
+      /*!
+       * \brief registerSearchableService
+       * 			Adds the network exchange service as a possible search source. This is used to allow distant search on the corresponding
+       * 			GXS service.
+       * \return
+       * 		always returns true.
+       */
+      bool registerSearchableService(RsNetworkExchangeService *) ;
 
 	  /*!
 	   * \brief Manage tunnels for this group
@@ -219,15 +229,15 @@ public:
        */
 	  virtual void connectToTurtleRouter(p3turtle *tr) ;
 
-      void turtleGroupRequest(const RsGxsGroupId& group_id) ;
-      void turtleSearchRequest(const std::string& match_string) ;
+      TurtleRequestId turtleGroupRequest(const RsGxsGroupId& group_id, RsNetworkExchangeService *client_service) ;
+      TurtleRequestId turtleSearchRequest(const std::string& match_string,RsNetworkExchangeService *client_service) ;
 
       /*!
        * \brief receiveSearchRequest
        * 			See RsTurtleClientService::@
        */
 	  virtual bool receiveSearchRequest(unsigned char *search_request_data,uint32_t search_request_data_len,unsigned char *& search_result_data,uint32_t& search_result_data_len);
-	  virtual void receiveSearchResult(unsigned char *search_result_data,uint32_t search_result_data_len) ;
+	  virtual void receiveSearchResult(TurtleSearchRequestId request_id,unsigned char *search_result_data,uint32_t search_result_data_len);
 
 	  // Overloaded from RsTickingThread
 
@@ -269,6 +279,8 @@ private:
 	  std::list<std::pair<TurtleVirtualPeerId,RsTurtleGenericDataItem*> >  mPendingTurtleItems ; // items that need to be sent off-turtle Mutex.
 
 	  std::map<uint16_t, std::list<std::pair<RsGxsNetTunnelVirtualPeerId,RsTlvBinaryData *> > > mIncomingData; // list of incoming data items
+
+      std::map<uint16_t,RsNetworkExchangeService *> mSearchableServices ;
 
 	  /*!
 	   * \brief Generates the hash to request tunnels for this group. This hash is only used by turtle, and is used to

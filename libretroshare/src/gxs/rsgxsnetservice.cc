@@ -5105,9 +5105,15 @@ bool RsGxsNetService::locked_stampMsgServerUpdateTS(const RsGxsGroupId& gid)
 
 void RsGxsNetService::turtleGroupRequest(const RsGxsGroupId& group_id)
 {
-    mGxsNetTunnel->turtleGroupRequest(group_id) ;
+    mGxsNetTunnel->turtleGroupRequest(group_id,this) ;
 }
 void RsGxsNetService::turtleSearchRequest(const std::string& match_string)
 {
-    mGxsNetTunnel->turtleSearchRequest(match_string) ;
+    mGxsNetTunnel->turtleSearchRequest(match_string,this) ;
+}
+
+bool RsGxsNetService::search(const std::string& substring,std::list<RsGxsGroupSummary>& group_infos)
+{
+#warning MISSING CODE HERE!
+    return true ;
 }

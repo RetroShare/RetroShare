@@ -117,7 +117,7 @@ class RsTurtleClientService
          * \param search_result_data  result data. Memory ownership is owned by the turtle router. So do not delete!
          * \param search_result_data  length of result data
          */
-    	virtual void receiveSearchResult(unsigned char * /*search_result_data*/,uint32_t  /*search_result_data_len*/)
+    	virtual void receiveSearchResult(TurtleSearchRequestId /* request_id */,unsigned char * /*search_result_data*/,uint32_t  /*search_result_data_len*/)
 		{
 			std::cerr << "!!!!!! Received search result from turtle router, but the client service who requested it is not handling it !!!!!!!!!!" << std::endl ;
 		}

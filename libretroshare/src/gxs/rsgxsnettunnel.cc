@@ -27,6 +27,7 @@
 #include "util/rstime.h"
 #include "retroshare/rspeers.h"
 #include "serialiser/rstypeserializer.h"
+#include "gxs/rsnxs.h"
 #include "rsgxsnettunnel.h"
 
 #define DEBUG_RSGXSNETTUNNEL 1
@@ -52,9 +53,13 @@ RsGxsNetTunnelService::RsGxsNetTunnelService(): mGxsNetTunnelMtx("GxsNetTunnel")
 
 const uint16_t RS_SERVICE_TYPE_GXS_NET_TUNNEL = 0x2233 ;
 
-const uint8_t  RS_PKT_SUBTYPE_GXS_NET_TUNNEL_VIRTUAL_PEER = 0x01 ;
-const uint8_t  RS_PKT_SUBTYPE_GXS_NET_TUNNEL_KEEP_ALIVE   = 0x02 ;
-const uint8_t  RS_PKT_SUBTYPE_GXS_NET_TUNNEL_RANDOM_BIAS  = 0x03 ;
+const uint8_t  RS_PKT_SUBTYPE_GXS_NET_TUNNEL_VIRTUAL_PEER                = 0x01 ;
+const uint8_t  RS_PKT_SUBTYPE_GXS_NET_TUNNEL_KEEP_ALIVE                  = 0x02 ;
+const uint8_t  RS_PKT_SUBTYPE_GXS_NET_TUNNEL_RANDOM_BIAS                 = 0x03 ;
+const uint8_t  RS_PKT_SUBTYPE_GXS_NET_TUNNEL_TURTLE_SEARCH_SUBSTRING     = 0x04 ;
+const uint8_t  RS_PKT_SUBTYPE_GXS_NET_TUNNEL_TURTLE_SEARCH_GROUP_REQUEST = 0x05 ;
+const uint8_t  RS_PKT_SUBTYPE_GXS_NET_TUNNEL_TURTLE_SEARCH_GROUP_SUMMARY = 0x06 ;
+const uint8_t  RS_PKT_SUBTYPE_GXS_NET_TUNNEL_TURTLE_SEARCH_GROUP_DATA    = 0x07 ;
 
 class RsGxsNetTunnelItem: public RsItem
 {
@@ -107,6 +112,57 @@ public:
 	Bias20Bytes mRandomBias; // Cannot be a simple char[] because of serialization.
 };
 
+class RsGxsNetTunnelTurtleSearchSubstringItem: public RsGxsNetTunnelItem
+{
+public:
+    explicit RsGxsNetTunnelTurtleSearchSubstringItem(): RsGxsNetTunnelItem(RS_PKT_SUBTYPE_GXS_NET_TUNNEL_TURTLE_SEARCH_SUBSTRING) {}
+    virtual ~RsGxsNetTunnelTurtleSearchSubstringItem() {}
+
+    uint16_t service ;
+    std::string substring_match ;
+
+	virtual void clear() { substring_match.clear() ; }
+	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
+	{
+		RsTypeSerializer::serial_process<uint16_t>(j,ctx,service,"service") ;
+		RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_KEY,substring_match,"substring_match") ;
+	}
+};
+
+class RsGxsNetTunnelTurtleSearchGroupRequestItem: public RsGxsNetTunnelItem
+{
+public:
+    explicit RsGxsNetTunnelTurtleSearchGroupRequestItem(): RsGxsNetTunnelItem(RS_PKT_SUBTYPE_GXS_NET_TUNNEL_TURTLE_SEARCH_GROUP_REQUEST) {}
+    virtual ~RsGxsNetTunnelTurtleSearchGroupRequestItem() {}
+
+    uint16_t service ;
+    Sha1CheckSum hashed_group_id ;
+
+	virtual void clear() { hashed_group_id.clear() ; }
+	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
+	{
+		RsTypeSerializer::serial_process<uint16_t>(j,ctx,service,"service") ;
+		RsTypeSerializer::serial_process(j,ctx,hashed_group_id,"hashed_group_id") ;
+	}
+};
+
+class RsGxsNetTunnelTurtleSearchGroupSummaryItem: public RsGxsNetTunnelItem
+{
+public:
+    explicit RsGxsNetTunnelTurtleSearchGroupSummaryItem(): RsGxsNetTunnelItem(RS_PKT_SUBTYPE_GXS_NET_TUNNEL_TURTLE_SEARCH_GROUP_SUMMARY) {}
+    virtual ~RsGxsNetTunnelTurtleSearchGroupSummaryItem() {}
+
+    uint16_t service ;
+    std::list<RsGxsGroupSummary> group_infos;
+
+	virtual void clear() { group_infos.clear() ; }
+
+	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
+	{
+		RsTypeSerializer::serial_process<uint16_t>(j,ctx,service,"service") ;
+		RsTypeSerializer::serial_process(j,ctx,group_infos,"group_infos") ;
+	}
+};
 class RsGxsNetTunnelSerializer: public RsServiceSerializer
 {
 public:
@@ -132,9 +188,31 @@ public:
 	}
 };
 
+template<>
+void RsTypeSerializer::serial_process( RsGenericSerializer::SerializeJob j, RsGenericSerializer::SerializeContext& ctx, RsGxsGroupSummary& gs, const std::string& member_name )
+{
+    RsTypeSerializer::serial_process(j,ctx,gs.group_id,member_name+"-group_id") ;                                        // RsGxsGroupId group_id ;
+    RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_NAME   ,gs.group_name,member_name+"-group_name") ;               // std::string  group_name ;
+    RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_COMMENT,gs.group_description,member_name+"-group_description") ; // std::string  group_description ;
+    RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_VALUE  ,gs.search_context,member_name+"-group_name") ;           // std::string  search_context ;
+    RsTypeSerializer::serial_process(j,ctx,gs.author_id         ,member_name+"-author_id") ;                             // RsGxsId      author_id ;
+    RsTypeSerializer::serial_process(j,ctx,gs.publish_ts        ,member_name+"-publish_ts") ;                            // time_t       publish_ts ;
+    RsTypeSerializer::serial_process(j,ctx,gs.number_of_messages,member_name+"-number_of_messages") ;                    // uint32_t     number_of_messages ;
+    RsTypeSerializer::serial_process<time_t>(j,ctx,gs.last_message_ts,member_name+"-last_message_ts") ;                  // time_t       last_message_ts ;
+}
+
 //===========================================================================================================================================//
 //                                                     Interface with rest of the software                                                   //
 //===========================================================================================================================================//
+
+bool RsGxsNetTunnelService::registerSearchableService(RsNetworkExchangeService *gxs_service)
+{
+	RS_STACK_MUTEX(mGxsNetTunnelMtx);
+
+    mSearchableServices[gxs_service->serviceType()] = gxs_service ;
+
+    return true;
+}
 
 class DataAutoDelete
 {
@@ -853,22 +931,144 @@ RsSerialiser *RsGxsNetTunnelService::setupSerialiser()
 	return ser ;
 }
 
-bool RsGxsNetTunnelService::receiveSearchRequest(unsigned char *search_request_data,uint32_t search_request_data_len,unsigned char *& search_result_data,uint32_t& search_result_data_len)
+//===========================================================================================================================================//
+//                                                               Turtle Search system                                                        //
+//===========================================================================================================================================//
+
+TurtleRequestId RsGxsNetTunnelService::turtleGroupRequest(const RsGxsGroupId& group_id,RsNetworkExchangeService *client_service)
 {
-    std::cerr << __PRETTY_FUNCTION__ << ": received a request. Code needed to handle it" << std::endl;
-    return false ;
-}
-void RsGxsNetTunnelService::receiveSearchResult(unsigned char *search_result_data,uint32_t search_result_data_len)
-{
-    std::cerr << __PRETTY_FUNCTION__ << ": received a search result. Code needed to handle it" << std::endl;
+    Sha1CheckSum hashed_group_id = RsDirUtil::sha1sum(group_id.toByteArray(),group_id.SIZE_IN_BYTES) ;
+
+	GXS_NET_TUNNEL_DEBUG() << ": starting a turtle group request for grp \"" << group_id << "\" hashed to \"" << hashed_group_id << "\"" << std::endl;
+
+	RsGxsNetTunnelTurtleSearchGroupRequestItem   search_item ;
+	search_item.hashed_group_id = hashed_group_id ;
+	search_item.service = client_service->serviceType() ;
+
+    uint32_t size = RsGxsNetTunnelSerializer().size(&search_item) ;
+    unsigned char *mem = (unsigned char*)rs_malloc(size) ;
+
+    if(mem == NULL)
+        return 0 ;
+
+    RsGxsNetTunnelSerializer().serialise(&search_item,mem,&size);
+
+    return mTurtle->turtleSearch(mem,size,this) ;
 }
 
-void RsGxsNetTunnelService::turtleGroupRequest(const RsGxsGroupId& group_id)
+TurtleRequestId RsGxsNetTunnelService::turtleSearchRequest(const std::string& match_string,RsNetworkExchangeService *client_service)
 {
-    std::cerr << __PRETTY_FUNCTION__ << ": handling of turtle group request not implemented yet" << std::endl;
+    GXS_NET_TUNNEL_DEBUG() << ": starting a turtle search request for string\"" << match_string << "\"" << std::endl;
+
+	RsGxsNetTunnelTurtleSearchSubstringItem   search_item ;
+	search_item.substring_match = match_string ;
+	search_item.service = client_service->serviceType() ;
+
+    uint32_t size = RsGxsNetTunnelSerializer().size(&search_item) ;
+    unsigned char *mem = (unsigned char*)rs_malloc(size) ;
+
+    if(mem == NULL)
+        return 0 ;
+
+    RsGxsNetTunnelSerializer().serialise(&search_item,mem,&size);
+
+    return mTurtle->turtleSearch(mem,size,this) ;
 }
-void RsGxsNetTunnelService::turtleSearchRequest(const std::string& match_string)
+
+bool RsGxsNetTunnelService::receiveSearchRequest(unsigned char *search_request_data,uint32_t search_request_data_len,unsigned char *& search_result_data,uint32_t& search_result_data_size)
 {
-    std::cerr << __PRETTY_FUNCTION__ << ": handling of turtle search request not implemented yet" << std::endl;
+    GXS_NET_TUNNEL_DEBUG() << ": received a request." << std::endl;
+
+	RsItem *item = RsGxsNetTunnelSerializer().deserialise(search_request_data,&search_request_data_len) ;
+
+    RsGxsNetTunnelTurtleSearchSubstringItem *substring_sr = dynamic_cast<RsGxsNetTunnelTurtleSearchSubstringItem *>(item) ;
+
+    if(substring_sr != NULL)
+    {
+        auto it = mSearchableServices.find(substring_sr->service) ;
+
+        std::list<RsGxsGroupSummary> results ;
+
+        if(it != mSearchableServices.end() && it->second->search(substring_sr->substring_match,results))
+        {
+			RsGxsNetTunnelTurtleSearchGroupSummaryItem search_result_item ;
+
+            search_result_item.service = substring_sr->service ;
+            search_result_item.group_infos = results ;
+
+            search_result_data_size = RsGxsNetTunnelSerializer().size(&search_result_item) ;
+			search_result_data = (unsigned char*)rs_malloc(search_result_data_size) ;
+
+			if(search_result_data == NULL)
+				return false ;
+
+			RsGxsNetTunnelSerializer().serialise(&search_result_item,search_result_data,&search_result_data_size);
+
+			return true ;
+        }
+    }
+
+    RsGxsNetTunnelTurtleSearchGroupRequestItem *substring_gr = dynamic_cast<RsGxsNetTunnelTurtleSearchGroupRequestItem *>(item) ;
+
+    if(substring_gr != NULL)
+    {
+#ifdef TODO
+		auto it = mSearchableGxsServices.find(substring_sr->service) ;
+
+        RsNxsGrp *grp = NULL ;
+
+        if(it != mSearchableGxsServices.end() && it->second.search(substring_sr->group_id,grp))
+        {
+			RsGxsNetTunnelTurtleSearchGroupDataItem search_result_item ;
+
+            search_result_item.service = substring_sr->service ;
+            search_result_item.group_infos = results ;
+
+            search_result_data_size = RsGxsNetTunnelSerializer().size(&search_result_item) ;
+			search_result_data = (unsigned char*)rs_malloc(size) ;
+
+			if(search_result_data == NULL)
+				return false ;
+
+			RsGxsNetTunnelSerializer().serialise(&search_result_item,search_result_data,&search_result_data_size);
+
+			return true ;
+        }
+#endif
+    }
+
+    return false ;
 }
+
+void RsGxsNetTunnelService::receiveSearchResult(TurtleSearchRequestId request_id,unsigned char *search_result_data,uint32_t search_result_data_len)
+{
+    RsItem *item = RsGxsNetTunnelSerializer().deserialise(search_result_data,&search_result_data_len);
+
+    RsGxsNetTunnelTurtleSearchGroupSummaryItem *result_gs = dynamic_cast<RsGxsNetTunnelTurtleSearchGroupSummaryItem *>(item) ;
+
+    if(result_gs != NULL)
+    {
+
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

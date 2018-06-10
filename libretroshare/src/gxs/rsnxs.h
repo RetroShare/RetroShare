@@ -58,6 +58,26 @@
  *  2 transfers only between group
  *   - the also group matrix settings which is by default everyone can transfer to each other
  */
+
+/*!
+ * \brief The RsGxsGroupSymmary struct
+ * 			This structure is used to transport group summary information when a GXS service is searched. It contains the group information
+ * 			as well as a context string to tell where the information was found. It is more compact than a GroupMeta object, so as to make
+ * 			search responses as light as possible.
+ */
+struct RsGxsGroupSummary
+{
+    RsGxsGroupId group_id ;
+
+    std::string  group_name ;
+    std::string  group_description ;
+    std::string  search_context ;
+    RsGxsId      author_id ;
+    time_t       publish_ts ;
+    uint32_t     number_of_messages ;
+    time_t       last_message_ts ;
+};
+
 class RsNetworkExchangeService
 {
 public:
@@ -65,6 +85,7 @@ public:
 	RsNetworkExchangeService(){ return;}
     virtual ~RsNetworkExchangeService() {}
 
+    virtual uint16_t serviceType() const =0;
     /*!
      * Use this to set how far back synchronisation of messages should take place
      * @param age in seconds the max age a sync/store item can to be allowed in a synchronisation
@@ -83,6 +104,9 @@ public:
 
     virtual void turtleGroupRequest(const RsGxsGroupId& group_id)=0;
     virtual void turtleSearchRequest(const std::string& match_string)=0;
+
+    virtual bool search(const std::string& substring,std::list<RsGxsGroupSummary>& group_infos) =0;
+
     /*!
      * Initiates a search through the network
      * This returns messages which contains the search terms set in RsGxsSearch

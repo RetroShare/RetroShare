@@ -1085,7 +1085,7 @@ void p3turtle::handleSearchResult(RsTurtleSearchResultItem *item)
         RsTurtleGenericSearchResultItem *gnsr = dynamic_cast<RsTurtleGenericSearchResultItem*>(it->first) ;
 
         if(gnsr!=NULL)
-			(*it).second->receiveSearchResult(gnsr->result_data,gnsr->result_data_len) ;
+			(*it).second->receiveSearchResult(gnsr->request_id,gnsr->result_data,gnsr->result_data_len) ;
     }
 }
 

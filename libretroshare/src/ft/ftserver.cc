@@ -1462,7 +1462,7 @@ TurtleSearchRequestId ftServer::turtleSearch(const RsRegularExpression::Lineariz
     return mTurtleRouter->turtleSearch(expr) ;
 }
 
-#warning we should do this here, but for now it's done by turtle router.
+#warning we should do this here, but for now it is done by turtle router.
 //   // Dont delete the item. The client (p3turtle) is doing it after calling this.
 //   //
 //   void ftServer::receiveSearchResult(RsTurtleSearchResultItem *item)
