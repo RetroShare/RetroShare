@@ -4,6 +4,7 @@
  * RetroShare C++ Interface. Generic routines that are useful in GXS
  *
  * Copyright 2013-2013 by Christopher Evi-Parker
+ * Copyright (C) 2018  Gioacchino Mazzurco <gio@eigenlab.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -165,8 +166,6 @@ bool RsGxsIntegrityCheck::check()
 {
 #ifdef RS_DEEP_SEARCH
 	bool isGxsChannels = dynamic_cast<p3GxsChannels*>(mGenExchangeClient);
-	std::cout << __PRETTY_FUNCTION__ << " isGxsChannels: " << isGxsChannels
-	          << std::endl;
 #endif
 
     // first take out all the groups
@@ -220,21 +219,17 @@ bool RsGxsIntegrityCheck::check()
 							cg.mMeta = meta;
 
 							DeepSearch::indexChannelGroup(cg);
-
-							std::cout << __PRETTY_FUNCTION__ << " ||Channel: "
-							          << meta.mGroupName << " ||Description: "
-							          << cg.mDescription << std::endl;
 						}
 						else
-							std::cout << __PRETTY_FUNCTION__ << " ||Group: "
+						{
+							std::cerr << __PRETTY_FUNCTION__ << " Group: "
+							          << meta.mGroupId.toStdString() << " "
 							          << meta.mGroupName
-							          << " ||doesn't seems a channel"
-							          << " ||grp->grp.bin_data: "
-							          <<     grp->grp.bin_data
-							          << " ||grp->grp.bin_len: "
-							          <<     grp->grp.bin_len
-							          << " ||rIt: " << rIt << " ||blz: " << blz
-							          << " ||cgIt: " << cgIt << std::endl;
+							          << " doesn't seems a channel, please "
+							          << "report to developers"
+							          << std::endl;
+							print_stacktrace();
+						}
 
 						delete rIt;
 					}

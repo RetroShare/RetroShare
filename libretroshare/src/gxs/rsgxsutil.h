@@ -4,6 +4,7 @@
  * RetroShare C++ Interface. Generic routines that are useful in GXS
  *
  * Copyright 2013-2013 by Christopher Evi-Parker
+ * Copyright (C) 2018  Gioacchino Mazzurco <gio@eigenlab.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
