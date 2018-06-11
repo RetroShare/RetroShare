@@ -201,40 +201,6 @@ bool RsGxsIntegrityCheck::check()
 				{
 					subscribed_groups.insert(git->first);
 
-#ifdef RS_DEEP_SEARCH
-					if(isGxsChannels)
-					{
-						RsGxsGrpMetaData meta;
-						meta.deserialise(grp->meta.bin_data, grp->meta.bin_len);
-
-						uint32_t blz = grp->grp.bin_len;
-						RsItem* rIt = mSerializer.deserialise(grp->grp.bin_data,
-						                                      &blz);
-
-						if( RsGxsChannelGroupItem* cgIt =
-						        dynamic_cast<RsGxsChannelGroupItem*>(rIt) )
-						{
-							RsGxsChannelGroup cg;
-							cgIt->toChannelGroup(cg, false);
-							cg.mMeta = meta;
-
-							DeepSearch::indexChannelGroup(cg);
-						}
-						else
-						{
-							std::cerr << __PRETTY_FUNCTION__ << " Group: "
-							          << meta.mGroupId.toStdString() << " "
-							          << meta.mGroupName
-							          << " doesn't seems a channel, please "
-							          << "report to developers"
-							          << std::endl;
-							print_stacktrace();
-						}
-
-						delete rIt;
-					}
-#endif
-
 					if(!grp->metaData->mAuthorId.isNull())
 					{
 #ifdef DEBUG_GXSUTIL
@@ -246,6 +212,42 @@ bool RsGxsIntegrityCheck::check()
 				}
 			}
 			else msgIds.erase(msgIds.find(grp->grpId));
+
+#ifdef RS_DEEP_SEARCH
+			if( isGxsChannels
+			        && grp->metaData->mCircleType == GXS_CIRCLE_TYPE_PUBLIC
+			        && grp->metaData->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED )
+			{
+				RsGxsGrpMetaData meta;
+				meta.deserialise(grp->meta.bin_data, grp->meta.bin_len);
+
+				uint32_t blz = grp->grp.bin_len;
+				RsItem* rIt = mSerializer.deserialise(grp->grp.bin_data,
+				                                      &blz);
+
+				if( RsGxsChannelGroupItem* cgIt =
+				        dynamic_cast<RsGxsChannelGroupItem*>(rIt) )
+				{
+					RsGxsChannelGroup cg;
+					cgIt->toChannelGroup(cg, false);
+					cg.mMeta = meta;
+
+					DeepSearch::indexChannelGroup(cg);
+				}
+				else
+				{
+					std::cerr << __PRETTY_FUNCTION__ << " Group: "
+					          << meta.mGroupId.toStdString() << " "
+					          << meta.mGroupName
+					          << " doesn't seems a channel, please "
+					          << "report to developers"
+					          << std::endl;
+					print_stacktrace();
+				}
+
+				delete rIt;
+			}
+#endif
 		}
 		else
 		{
