@@ -34,8 +34,8 @@
 #include <retroshare/rsnotify.h>
 #include <retroshare/rspeers.h>
 
-#if defined(Q_OS_WIN)
-#include <util/retroshareWin32.h>
+#ifdef Q_OS_WIN
+#	include <util/retroshareWin32.h>
 #endif
 
 /* Retroshare's Settings */
