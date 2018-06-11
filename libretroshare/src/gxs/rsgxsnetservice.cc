@@ -5112,8 +5112,36 @@ void RsGxsNetService::turtleSearchRequest(const std::string& match_string)
     mGxsNetTunnel->turtleSearchRequest(match_string,this) ;
 }
 
+static bool termSearch(const std::string& src, const std::string& substring)
+{
+		/* always ignore case */
+	return src.end() != std::search( src.begin(), src.end(), substring.begin(), substring.end(), RsRegularExpression::CompareCharIC() );
+}
+
 bool RsGxsNetService::search(const std::string& substring,std::list<RsGxsGroupSummary>& group_infos)
 {
-#warning MISSING CODE HERE!
-    return true ;
+	RsGxsGrpMetaTemporaryMap grpMetaMap;
+    mDataStore->retrieveGxsGrpMetaData(grpMetaMap);
+
+    RsGroupNetworkStats stats ;
+
+    for(auto it(grpMetaMap.begin());it!=grpMetaMap.end();++it)
+		if(termSearch(it->second->mGroupName,substring))
+		{
+			getGroupNetworkStats(it->first,stats) ;
+
+            RsGxsGroupSummary s ;
+            s.group_id           = it->first ;
+    		s.group_name         = it->second->mGroupName ;
+    		s.group_description  = it->second->mGroupName ; // to be filled with something better when we use the real search
+    		s.search_context     = it->second->mGroupName ;
+    		s.author_id          = it->second->mAuthorId;
+    		s.publish_ts         = it->second->mPublishTs;
+    		s.number_of_messages = stats.mMaxVisibleCount ;
+    		s.last_message_ts    = stats.mLastGroupModificationTS ;
+
+            group_infos.push_back(s) ;
+		}
+
+    return !group_infos.empty();
 }

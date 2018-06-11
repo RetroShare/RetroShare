@@ -1048,7 +1048,12 @@ void RsGxsNetTunnelService::receiveSearchResult(TurtleSearchRequestId request_id
 
     if(result_gs != NULL)
     {
+        std::cerr << "Received group summary result for search request " << std::hex << request_id << " for service " << result_gs->service << std::dec << ": " << std::endl;
 
+        for(auto it(result_gs->group_infos.begin());it!=result_gs->group_infos.end();++it)
+            std::cerr << "   group " << (*it).group_id << ": " << (*it).group_name << ", " << (*it).number_of_messages << " messages, last is " << time(NULL)-(*it).last_message_ts << " secs ago." << std::endl;
+
+#warning MISSING CODE HERE - data should be passed up to UI in some way
     }
 }
 
