@@ -400,13 +400,11 @@ win32-g++ {
             PREFIX_MSYS2=$${TEMPTATIVE_MSYS2}
         }
 
-        !isEmpty(PREFIX_MSYS2) {
-            message(Found MSYS2: $${PREFIX_MSYS2})
+        !isEmpty(PREFIX_MSYS2):message(Found MSYS2: $${PREFIX_MSYS2})
+    }
 
-            isEmpty(PREFIX) {
-                PREFIX = $$system_path($${PREFIX_MSYS2})
-            }
-        }
+    isEmpty(PREFIX):!isEmpty(PREFIX_MSYS2) {
+        PREFIX = $$system_path($${PREFIX_MSYS2})
     }
 
     isEmpty(PREFIX) {
