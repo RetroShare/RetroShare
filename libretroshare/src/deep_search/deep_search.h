@@ -21,11 +21,10 @@
 #include <xapian.h>
 
 #include "retroshare/rsgxschannels.h"
+#include "retroshare/rsinit.h"
 
 struct DeepSearch
 {
-	//DeepSearch(const std::string& dbPath) : mDbPath(dbPath) {}
-
 	struct SearchResult
 	{
 		// TODO: Use RsUrl from extra_locators branch instead of plain string
@@ -43,7 +42,7 @@ struct DeepSearch
 		results.clear();
 
 		// Open the database we're going to search.
-		Xapian::Database db(mDbPath);
+		Xapian::Database db(dbPath());
 
 		// Set up a QueryParser with a stemmer and suitable prefixes.
 		Xapian::QueryParser queryparser;
@@ -79,7 +78,7 @@ struct DeepSearch
 
 	static void indexChannelGroup(const RsGxsChannelGroup& chan)
 	{
-		Xapian::WritableDatabase db(mDbPath, Xapian::DB_CREATE_OR_OPEN);
+		Xapian::WritableDatabase db(dbPath(), Xapian::DB_CREATE_OR_OPEN);
 
 		// Set up a TermGenerator that we'll use in indexing.
 		Xapian::TermGenerator termgenerator;
@@ -121,13 +120,13 @@ struct DeepSearch
 		std::string idTerm("Qretroshare://channel?id=");
 		idTerm += grpId.toStdString();
 
-		Xapian::WritableDatabase db(mDbPath, Xapian::DB_CREATE_OR_OPEN);
+		Xapian::WritableDatabase db(dbPath(), Xapian::DB_CREATE_OR_OPEN);
 		db.delete_document(idTerm);
 	}
 
 	static void indexChannelPost(const RsGxsChannelPost& post)
 	{
-		Xapian::WritableDatabase db(mDbPath, Xapian::DB_CREATE_OR_OPEN);
+		Xapian::WritableDatabase db(dbPath(), Xapian::DB_CREATE_OR_OPEN);
 
 		// Set up a TermGenerator that we'll use in indexing.
 		Xapian::TermGenerator termgenerator;
@@ -168,7 +167,11 @@ private:
 		BAD_VALUENO = Xapian::BAD_VALUENO
 	};
 
-	static std::string mDbPath;
+	static const std::string& dbPath()
+	{
+		static const std::string dbDir =
+		        RsAccounts::AccountDirectory() + "/deep_search_xapian_db";
+		return dbDir;
+	}
 };
 
-std::string DeepSearch::mDbPath = "/tmp/deep_search_xapian_db";
