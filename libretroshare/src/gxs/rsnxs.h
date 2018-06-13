@@ -36,6 +36,7 @@
 #include "services/p3service.h"
 #include "retroshare/rsreputations.h"
 #include "retroshare/rsidentity.h"
+#include "retroshare/rsturtle.h"
 #include "rsgds.h"
 
 /*!
@@ -102,8 +103,8 @@ public:
     virtual uint32_t getDefaultSyncAge() =0;
     virtual uint32_t getDefaultKeepAge() =0;
 
-    virtual void turtleGroupRequest(const RsGxsGroupId& group_id)=0;
-    virtual void turtleSearchRequest(const std::string& match_string)=0;
+    virtual TurtleRequestId turtleGroupRequest(const RsGxsGroupId& group_id)=0;
+    virtual TurtleRequestId turtleSearchRequest(const std::string& match_string)=0;
 
     virtual bool search(const std::string& substring,std::list<RsGxsGroupSummary>& group_infos) =0;
 

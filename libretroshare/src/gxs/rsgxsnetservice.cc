@@ -5103,13 +5103,13 @@ bool RsGxsNetService::locked_stampMsgServerUpdateTS(const RsGxsGroupId& gid)
     return true;
 }
 
-void RsGxsNetService::turtleGroupRequest(const RsGxsGroupId& group_id)
+TurtleRequestId RsGxsNetService::turtleGroupRequest(const RsGxsGroupId& group_id)
 {
-    mGxsNetTunnel->turtleGroupRequest(group_id,this) ;
+    return mGxsNetTunnel->turtleGroupRequest(group_id,this) ;
 }
-void RsGxsNetService::turtleSearchRequest(const std::string& match_string)
+TurtleRequestId RsGxsNetService::turtleSearchRequest(const std::string& match_string)
 {
-    mGxsNetTunnel->turtleSearchRequest(match_string,this) ;
+    return mGxsNetTunnel->turtleSearchRequest(match_string,this) ;
 }
 
 static bool termSearch(const std::string& src, const std::string& substring)

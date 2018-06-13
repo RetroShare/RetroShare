@@ -958,7 +958,7 @@ TurtleRequestId RsGxsNetTunnelService::turtleGroupRequest(const RsGxsGroupId& gr
 
 TurtleRequestId RsGxsNetTunnelService::turtleSearchRequest(const std::string& match_string,RsNetworkExchangeService *client_service)
 {
-    GXS_NET_TUNNEL_DEBUG() << ": starting a turtle search request for string\"" << match_string << "\"" << std::endl;
+    GXS_NET_TUNNEL_DEBUG() << ": starting a turtle search request for string \"" << match_string << "\"" << std::endl;
 
 	RsGxsNetTunnelTurtleSearchSubstringItem   search_item ;
 	search_item.substring_match = match_string ;

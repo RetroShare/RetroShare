@@ -1695,10 +1695,12 @@ void p3GxsChannels::handle_event(uint32_t event_type, const std::string &elabel)
 	}
 }
 
-void p3GxsChannels::turtleGroupRequest(const RsGxsGroupId& group_id)
+TurtleRequestId p3GxsChannels::turtleGroupRequest(const RsGxsGroupId& group_id)
 {
+    return netService()->turtleGroupRequest(group_id) ;
 }
-void p3GxsChannels::turtleSearchRequest(const std::string& match_string)
+TurtleRequestId p3GxsChannels::turtleSearchRequest(const std::string& match_string)
 {
+    return netService()->turtleSearchRequest(match_string) ;
 }
 

@@ -127,8 +127,8 @@ public:
      * 			These four methods are used to request distant search and receive the results.
      * \param group_id
      */
-    virtual void turtleGroupRequest(const RsGxsGroupId& group_id);
-    virtual void turtleSearchRequest(const std::string& match_string);
+    virtual TurtleRequestId turtleGroupRequest(const RsGxsGroupId& group_id);
+    virtual TurtleRequestId turtleSearchRequest(const std::string& match_string);
 
     virtual bool search(const std::string& substring,std::list<RsGxsGroupSummary>& group_infos) ;
 

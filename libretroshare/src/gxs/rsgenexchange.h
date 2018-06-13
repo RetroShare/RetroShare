@@ -764,6 +764,8 @@ protected:
      */
     int createMessage(RsNxsMsg* msg);
 
+    RsNetworkExchangeService *netService() const { return mNetService ; }
+
 private:
     /*!
      * convenience function to create sign
