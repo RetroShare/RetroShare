@@ -47,7 +47,6 @@
 #include <sstream>
 #include <stdio.h>
 
-#define DEBUG_IDS	1
 /****
  * #define DEBUG_IDS	1
  * #define DEBUG_RECOGN	1

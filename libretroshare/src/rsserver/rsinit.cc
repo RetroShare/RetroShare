@@ -1621,6 +1621,11 @@ int RsServer::StartupRetroShare()
 	serviceCtrl->registerServiceMonitor(mBwCtrl, mBwCtrl->getServiceInfo().mServiceType);
 
 	/**************************************************************************/
+    // Turtle search for GXS services
+
+    mGxsNetTunnel->registerSearchableService(gxschannels_ns) ;
+
+	/**************************************************************************/
 
 	//mConfigMgr->addConfiguration("ftserver.cfg", ftserver);
 	//

@@ -397,7 +397,9 @@ class p3turtle: public p3Service, public RsTurtle, public p3Config
 		//------ Functions connecting the turtle router to other components.----------//
 		
 		/// Performs a search calling local cache and search structure.
-		void performLocalSearch(const std::string& match_string,std::list<TurtleFileInfo>& result) ;
+		void locked_performLocalSearch        (RsTurtleSearchRequestItem        *item,TurtleSearchRequestInfo& req,std::list<RsTurtleSearchResultItem*>& result) ;
+		void locked_performLocalSearch_files  (RsTurtleFileSearchRequestItem    *item,TurtleSearchRequestInfo& req,std::list<RsTurtleSearchResultItem*>& result) ;
+		void locked_performLocalSearch_generic(RsTurtleGenericSearchRequestItem *item,TurtleSearchRequestInfo& req,std::list<RsTurtleSearchResultItem*>& result) ;
 
 		/// Returns true if the file with given hash is hosted locally, and accessible in anonymous mode the supplied peer.
 		virtual bool performLocalHashSearch(const TurtleFileHash& hash,const RsPeerId& client_peer_id,RsTurtleClientService *& service);
@@ -419,7 +421,7 @@ class p3turtle: public p3Service, public RsTurtle, public p3Config
 		std::map<TurtleTunnelRequestId,TurtleTunnelRequestInfo> 	_tunnel_requests_origins ;
 
 		/// stores adequate tunnels for each file hash locally managed
-		std::map<TurtleFileHash,TurtleHashInfo>				_incoming_file_hashes ;		
+		std::map<TurtleFileHash,TurtleHashInfo>			   	_incoming_file_hashes ;
 
 		/// stores file info for each file we provide.
         std::map<TurtleTunnelId,RsTurtleClientService *>	_outgoing_tunnel_client_services ;
@@ -434,7 +436,7 @@ class p3turtle: public p3Service, public RsTurtle, public p3Config
         std::set<TurtleFileHash>								_hashes_to_remove ;
 
 		/// List of client services that have regitered.
-		std::list<RsTurtleClientService*>						_registered_services ;
+		std::map<uint16_t,RsTurtleClientService*>						_registered_services ;
 
 		time_t _last_clean_time ;
 		time_t _last_tunnel_management_time ;

@@ -930,7 +930,7 @@ void p3turtle::handleSearchRequest(RsTurtleSearchRequestItem *item)
 #endif
         std::list<RsTurtleSearchResultItem*> search_results ;
 
-        item->performLocalSearch(req,search_results) ;
+        locked_performLocalSearch(item,req,search_results) ;
 
         for(auto it(search_results.begin());it!=search_results.end();++it)
             sendItem(*it) ;
@@ -997,6 +997,97 @@ void p3turtle::handleSearchRequest(RsTurtleSearchRequestItem *item)
 	else
 		std::cout << "  Dropping this item, as search depth is " << item->depth << std::endl ;
 #endif
+}
+
+// This function should be removed in the future, when file search will also use generic search items.
+
+void p3turtle::locked_performLocalSearch(RsTurtleSearchRequestItem *item,TurtleSearchRequestInfo& req,std::list<RsTurtleSearchResultItem*>& search_results)
+{
+    RsTurtleFileSearchRequestItem *ftsearch = dynamic_cast<RsTurtleFileSearchRequestItem*>(item) ;
+
+    if(ftsearch != NULL)
+    {
+        locked_performLocalSearch_files(ftsearch,req,search_results) ;
+        return ;
+    }
+
+    RsTurtleGenericSearchRequestItem *gnsearch = dynamic_cast<RsTurtleGenericSearchRequestItem*>(item) ;
+
+    if(gnsearch != NULL)
+    {
+        locked_performLocalSearch_generic(gnsearch,req,search_results) ;
+        return ;
+    }
+}
+
+void p3turtle::locked_performLocalSearch_generic(RsTurtleGenericSearchRequestItem *item,TurtleSearchRequestInfo& req,std::list<RsTurtleSearchResultItem*>& result)
+{
+    unsigned char *search_result_data = NULL ;
+    uint32_t search_result_data_len = 0 ;
+
+    auto it = _registered_services.find(item->service_id) ;
+
+    if(it == _registered_services.end())
+        return ;
+
+    if(it->second->receiveSearchRequest(item->search_data,item->search_data_len,search_result_data,search_result_data_len))
+    {
+		RsTurtleGenericSearchResultItem *result_item = new RsTurtleGenericSearchResultItem ;
+
+        result_item->result_data = search_result_data ;
+        result_item->result_data_len = search_result_data_len ;
+
+        result.push_back(result_item) ;
+    }
+}
+
+void p3turtle::locked_performLocalSearch_files(RsTurtleFileSearchRequestItem *item,TurtleSearchRequestInfo& req,std::list<RsTurtleSearchResultItem*>& result)
+{
+#ifdef P3TURTLE_DEBUG
+	std::cerr << "Performing rsFiles->search()" << std::endl ;
+#endif
+	// now, search!
+    std::list<TurtleFileInfo> initialResults ;
+    item->search(initialResults) ;
+
+#ifdef P3TURTLE_DEBUG
+	std::cerr << initialResults.size() << " matches found." << std::endl ;
+#endif
+	result.clear() ;
+	RsTurtleFTSearchResultItem *res_item = NULL ;
+	uint32_t item_size = 0 ;
+
+	static const uint32_t RSTURTLE_MAX_SEARCH_RESPONSE_SIZE = 10000 ;
+
+	for(auto it(initialResults.begin());it!=initialResults.end();++it)
+	{
+		if(res_item == NULL)
+		{
+			res_item = new RsTurtleFTSearchResultItem ;
+			item_size = 0 ;
+
+			res_item->depth = 0 ;
+			res_item->request_id = item->request_id ;
+			res_item->PeerId(item->PeerId()) ;			// send back to the same guy
+
+            result.push_back(res_item) ;
+		}
+		res_item->result.push_back(*it);
+
+		// Let's chop search results items into several chunks of finite size to avoid exceeding streamer's capacity.
+		//
+		++req.result_count ;	// increase hit number for this particular search request.
+
+		item_size += 8 /* size */ + it->hash.serial_size() + it->name.size() ;
+
+		if(item_size > RSTURTLE_MAX_SEARCH_RESPONSE_SIZE || req.result_count >= TURTLE_SEARCH_RESULT_MAX_HITS)
+		{
+#ifdef P3TURTLE_DEBUG
+			std::cerr << "  Sending back chunk of size " << item_size << ", for " << res_item->result.size() << " elements." << std::endl ;
+#endif
+			res_item = NULL ;	// forces creation of a new item.
+		}
+	}
 }
 
 void p3turtle::handleSearchResult(RsTurtleSearchResultItem *item)
@@ -1771,59 +1862,7 @@ void p3turtle::handleTunnelResult(RsTurtleTunnelOkItem *item)
 // ------------------------------  IO with libretroshare  ----------------------------//
 // -----------------------------------------------------------------------------------//
 //
-void RsTurtleFileSearchRequestItem::performLocalSearch(TurtleSearchRequestInfo &req, std::list<RsTurtleSearchResultItem*>& result) const
-{
-#ifdef P3TURTLE_DEBUG
-	std::cerr << "Performing rsFiles->search()" << std::endl ;
-#endif
-	// now, search!
-    std::list<TurtleFileInfo> initialResults ;
-    search(initialResults) ;
 
-#ifdef P3TURTLE_DEBUG
-	std::cerr << initialResults.size() << " matches found." << std::endl ;
-#endif
-	result.clear() ;
-	RsTurtleFTSearchResultItem *res_item = NULL ;
-	uint32_t item_size = 0 ;
-
-	static const uint32_t RSTURTLE_MAX_SEARCH_RESPONSE_SIZE = 10000 ;
-
-	for(auto it(initialResults.begin());it!=initialResults.end();++it)
-	{
-		if(res_item == NULL)
-		{
-			res_item = new RsTurtleFTSearchResultItem ;
-			item_size = 0 ;
-
-			res_item->depth = 0 ;
-			res_item->request_id = request_id ;
-			res_item->PeerId(PeerId()) ;			// send back to the same guy
-
-            result.push_back(res_item) ;
-		}
-		res_item->result.push_back(*it);
-
-		// Let's chop search results items into several chunks of finite size to avoid exceeding streamer's capacity.
-		//
-		++req.result_count ;	// increase hit number for this particular search request.
-
-		item_size += 8 /* size */ + it->hash.serial_size() + it->name.size() ;
-
-		if(item_size > RSTURTLE_MAX_SEARCH_RESPONSE_SIZE || req.result_count >= TURTLE_SEARCH_RESULT_MAX_HITS)
-		{
-#ifdef P3TURTLE_DEBUG
-			std::cerr << "  Sending back chunk of size " << item_size << ", for " << res_item->result.size() << " elements." << std::endl ;
-#endif
-			res_item = NULL ;	// forces creation of a new item.
-		}
-	}
-}
-
-void RsTurtleGenericSearchRequestItem::performLocalSearch(TurtleSearchRequestInfo &req, std::list<RsTurtleSearchResultItem*>& result) const
-{
-    std::cerr << "(EE) p3turtle: Missing code to perform actual GXS search" << std::endl;
-}
 
 void RsTurtleStringSearchRequestItem::search(std::list<TurtleFileInfo>& result) const
 {
@@ -1967,22 +2006,22 @@ TurtleRequestId p3turtle::turtleSearch(unsigned char *search_bin_data,uint32_t s
 
 	// Form a request packet that simulates a request from us.
 	//
-	RsTurtleGenericSearchRequestItem *item = new RsTurtleGenericSearchRequestItem ;
+	RsTurtleGenericSearchRequestItem item ;
 
 #ifdef P3TURTLE_DEBUG
 	std::cerr << "performing search. OwnId = " << _own_id << std::endl ;
 #endif
 
-	item->PeerId(_own_id) ;
-    item->service_id = client_service->serviceId();
-	item->search_data = search_bin_data ;
-	item->search_data_len = search_bin_data_len ;
-	item->request_id = id ;
-	item->depth = 0 ;
+	item.PeerId(_own_id) ;
+    item.service_id = client_service->serviceId();
+	item.search_data = search_bin_data ;
+	item.search_data_len = search_bin_data_len ;
+	item.request_id = id ;
+	item.depth = 0 ;
 
 	// send it
 
-	handleSearchRequest(item) ;
+	handleSearchRequest(&item) ;
 
 	return id ;
 }
@@ -2056,10 +2095,10 @@ bool p3turtle::performLocalHashSearch(const TurtleFileHash& hash,const RsPeerId&
 	if(_registered_services.empty())
 		std::cerr << "Turtle router has no services registered. Tunnel requests cannot be handled." << std::endl;
 
-	for(std::list<RsTurtleClientService*>::const_iterator it(_registered_services.begin());it!=_registered_services.end();++it)
-		if( (*it)->handleTunnelRequest(hash,peer_id))
+	for(auto it(_registered_services.begin());it!=_registered_services.end();++it)
+		if( (*it).second->handleTunnelRequest(hash,peer_id))
 		{
-			service = *it ;
+			service = it->second ;
 			return true ;
 		}
 
@@ -2069,14 +2108,9 @@ bool p3turtle::performLocalHashSearch(const TurtleFileHash& hash,const RsPeerId&
 
 void p3turtle::registerTunnelService(RsTurtleClientService *service)
 {
-#ifdef P3TURTLE_DEBUG
-	for(std::list<RsTurtleClientService*>::const_iterator it(_registered_services.begin());it!=_registered_services.end();++it)
-		if(service == *it)
-			throw std::runtime_error("p3turtle::registerTunnelService(): Cannot register the same service twice. Please fix the code!") ;
-#endif
-	std::cerr << "p3turtle: registered new tunnel service " << (void*)service << std::endl;
+	std::cerr << "p3turtle: registered new tunnel service with ID=" << std::hex << service->serviceId() << std::dec << " and pointer " << (void*)service << std::endl;
 
-	_registered_services.push_back(service) ;
+	_registered_services[service->serviceId()] = service ;
 	_serialiser->registerClientService(service) ;
 }
 

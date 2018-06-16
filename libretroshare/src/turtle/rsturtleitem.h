@@ -57,26 +57,18 @@ class RsTurtleItem: public RsItem
 //         +---- RsTurtleSearchRequestItem
 //         |               |
 //         |               +---- RsTurtleFileSearchRequestItem
-//         |               |                  |
-//         |               |                  +---- RsTurtleFileSearchRequestItem
-//         |               |                                    |
-//         |               |                                    +---- RsTurtleStringSearchRequestItem
-//         |               |                                    |
-//         |               |                                    +---- RsTurtleReqExpSearchRequestItem
+//         |               |                 |
+//         |               |                 +---- RsTurtleStringSearchRequestItem
+//         |               |                 |
+//         |               |                 +---- RsTurtleReqExpSearchRequestItem
 //         |               |
-//         |               +---- RsTurtleGxsSearchRequestItem
-//         |               |
-//         |               +---- RsTurtleGxsGroupRequestItem
+//         |               +---- RsTurtleGenericSearchRequestItem
 //         |
 //         +---- RsTurtleSearchResultItem
 //                         |
 //                         +---- RsTurtleFTSearchResultItem
 //                         |
-//                         +---- RsTurtleGxsSearchResultItem
-//                                           |
-//                                           +---- RsTurtleGxsSearchResultGroupSummaryItem
-//                                           |
-//                                           +---- RsTurtleGxsSearchResultGroupDataItem
+//                         +---- RsTurtleGenericSearchResultItem
 //
 
 class RsTurtleSearchResultItem ;
@@ -88,8 +80,6 @@ class RsTurtleSearchRequestItem: public RsTurtleItem
         virtual ~RsTurtleSearchRequestItem() {}
 
 		virtual RsTurtleSearchRequestItem *clone() const = 0 ;					// used for cloning in routing methods
-
-		virtual void performLocalSearch(TurtleSearchRequestInfo& req,std::list<RsTurtleSearchResultItem*>&) const = 0 ;	// abstracts the search method
 
 		virtual std::string GetKeywords() = 0;
 
@@ -103,9 +93,6 @@ class RsTurtleFileSearchRequestItem: public RsTurtleSearchRequestItem
         RsTurtleFileSearchRequestItem(uint32_t subtype) : RsTurtleSearchRequestItem(subtype) {}
         virtual ~RsTurtleFileSearchRequestItem() {}
 
-		virtual void performLocalSearch(TurtleSearchRequestInfo& req,std::list<RsTurtleSearchResultItem*>&) const ;	// abstracts the search method
-
-	protected:
 		virtual void search(std::list<TurtleFileInfo> &) const =0;
 };
 
@@ -115,8 +102,9 @@ class RsTurtleStringSearchRequestItem: public RsTurtleFileSearchRequestItem
 		RsTurtleStringSearchRequestItem() : RsTurtleFileSearchRequestItem(RS_TURTLE_SUBTYPE_STRING_SEARCH_REQUEST) {}
         virtual ~RsTurtleStringSearchRequestItem() {}
 
-		std::string match_string ;	// string to match
+		virtual void search(std::list<TurtleFileInfo> &) const ;
 
+		std::string match_string ;	// string to match
 		std::string GetKeywords() { return match_string; }
 
 		virtual RsTurtleSearchRequestItem *clone() const { return new RsTurtleStringSearchRequestItem(*this) ; }
@@ -124,7 +112,6 @@ class RsTurtleStringSearchRequestItem: public RsTurtleFileSearchRequestItem
         void clear() { match_string.clear() ; }
 
 	protected:
-		virtual void search(std::list<TurtleFileInfo> &) const ;
 		void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 };
 
@@ -144,10 +131,11 @@ class RsTurtleRegExpSearchRequestItem: public RsTurtleFileSearchRequestItem
 			return exs;
 		}
 
+		virtual void search(std::list<TurtleFileInfo> &) const ;
+
 		virtual RsTurtleSearchRequestItem *clone() const { return new RsTurtleRegExpSearchRequestItem(*this) ; }
 		void clear() { expr = RsRegularExpression::LinearizedExpression(); }
 	protected:
-		virtual void search(std::list<TurtleFileInfo> &) const ;
 		void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 };
 
@@ -166,7 +154,6 @@ class RsTurtleGenericSearchRequestItem: public RsTurtleSearchRequestItem
 		virtual RsTurtleSearchRequestItem *clone() const ;
 		void clear() { free(search_data); search_data=NULL; search_data_len=0; }
 
-		virtual void performLocalSearch(TurtleSearchRequestInfo &req, std::list<RsTurtleSearchResultItem*>& result) const;
 	protected:
 		void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 

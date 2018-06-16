@@ -30,7 +30,7 @@
 #include "gxs/rsnxs.h"
 #include "rsgxsnettunnel.h"
 
-#define DEBUG_RSGXSNETTUNNEL 1
+//#define DEBUG_RSGXSNETTUNNEL 1
 
 #define GXS_NET_TUNNEL_NOT_IMPLEMENTED() { std::cerr << __PRETTY_FUNCTION__ << ": not yet implemented." << std::endl; }
 #define GXS_NET_TUNNEL_DEBUG()             std::cerr << time(NULL) << " : GXS_NET_TUNNEL: " << __FUNCTION__ << " : "
@@ -181,8 +181,12 @@ public:
 		case RS_PKT_SUBTYPE_GXS_NET_TUNNEL_VIRTUAL_PEER: return new RsGxsNetTunnelVirtualPeerItem ;
 		case RS_PKT_SUBTYPE_GXS_NET_TUNNEL_KEEP_ALIVE  : return new RsGxsNetTunnelKeepAliveItem ;
 		case RS_PKT_SUBTYPE_GXS_NET_TUNNEL_RANDOM_BIAS : return new RsGxsNetTunnelRandomBiasItem ;
+		case RS_PKT_SUBTYPE_GXS_NET_TUNNEL_TURTLE_SEARCH_SUBSTRING     : return new RsGxsNetTunnelTurtleSearchSubstringItem;
+		case RS_PKT_SUBTYPE_GXS_NET_TUNNEL_TURTLE_SEARCH_GROUP_REQUEST : return new RsGxsNetTunnelTurtleSearchGroupRequestItem;
+		case RS_PKT_SUBTYPE_GXS_NET_TUNNEL_TURTLE_SEARCH_GROUP_SUMMARY : return new RsGxsNetTunnelTurtleSearchGroupSummaryItem;
+		//case RS_PKT_SUBTYPE_GXS_NET_TUNNEL_TURTLE_SEARCH_GROUP_DATA    : return new RsGxsNetTunnelTurtleSearchGroupDataItem;
 		default:
-			GXS_NET_TUNNEL_ERROR() << "type ID " << std::hex << item_subtype << std::dec << " is not handled!" << std::endl;
+			GXS_NET_TUNNEL_ERROR() << "type ID " << std::hex << (int)item_subtype << std::dec << " is not handled!" << std::endl;
 			return NULL ;
 		}
 	}
@@ -204,6 +208,11 @@ void RsTypeSerializer::serial_process( RsGenericSerializer::SerializeJob j, RsGe
 //===========================================================================================================================================//
 //                                                     Interface with rest of the software                                                   //
 //===========================================================================================================================================//
+
+uint16_t RsGxsNetTunnelService::serviceId() const
+{
+    return RS_SERVICE_TYPE_GXS_NET_TUNNEL;
+}
 
 bool RsGxsNetTunnelService::registerSearchableService(RsNetworkExchangeService *gxs_service)
 {
@@ -727,11 +736,13 @@ void RsGxsNetTunnelService::data_tick()
 		sendKeepAlivePackets() ;
 	}
 
+#ifdef DEBUG_RSGXSNETTUNNEL
 	if(mLastDump + 10 < now)
 	{
 		mLastDump = now;
 		dump();
 	}
+#endif
 
 	rstime::rs_usleep(1*1000*1000) ; // 1 sec
 }
@@ -972,12 +983,13 @@ TurtleRequestId RsGxsNetTunnelService::turtleSearchRequest(const std::string& ma
 
     RsGxsNetTunnelSerializer().serialise(&search_item,mem,&size);
 
+	RS_STACK_MUTEX(mGxsNetTunnelMtx);
     return mTurtle->turtleSearch(mem,size,this) ;
 }
 
 bool RsGxsNetTunnelService::receiveSearchRequest(unsigned char *search_request_data,uint32_t search_request_data_len,unsigned char *& search_result_data,uint32_t& search_result_data_size)
 {
-    GXS_NET_TUNNEL_DEBUG() << ": received a request." << std::endl;
+	GXS_NET_TUNNEL_DEBUG() << ": received a request." << std::endl;
 
 	RsItem *item = RsGxsNetTunnelSerializer().deserialise(search_request_data,&search_request_data_len) ;
 
@@ -985,13 +997,19 @@ bool RsGxsNetTunnelService::receiveSearchRequest(unsigned char *search_request_d
 
     if(substring_sr != NULL)
     {
-        auto it = mSearchableServices.find(substring_sr->service) ;
+		GXS_NET_TUNNEL_DEBUG() << "  : type is substring for service " << std::hex << (int)substring_sr->service << std::dec << std::endl;
 
         std::list<RsGxsGroupSummary> results ;
+
+		RS_STACK_MUTEX(mGxsNetTunnelMtx);
+
+        auto it = mSearchableServices.find(substring_sr->service) ;
 
         if(it != mSearchableServices.end() && it->second->search(substring_sr->substring_match,results))
         {
 			RsGxsNetTunnelTurtleSearchGroupSummaryItem search_result_item ;
+
+			GXS_NET_TUNNEL_DEBUG() << "  : " << results.size() << " result found. Sending back." << std::endl;
 
             search_result_item.service = substring_sr->service ;
             search_result_item.group_infos = results ;
@@ -1044,11 +1062,13 @@ void RsGxsNetTunnelService::receiveSearchResult(TurtleSearchRequestId request_id
 {
     RsItem *item = RsGxsNetTunnelSerializer().deserialise(search_result_data,&search_result_data_len);
 
+	GXS_NET_TUNNEL_DEBUG() << "  : received search result for search request " << std::hex << request_id << "" << std::endl;
+
     RsGxsNetTunnelTurtleSearchGroupSummaryItem *result_gs = dynamic_cast<RsGxsNetTunnelTurtleSearchGroupSummaryItem *>(item) ;
 
     if(result_gs != NULL)
     {
-        std::cerr << "Received group summary result for search request " << std::hex << request_id << " for service " << result_gs->service << std::dec << ": " << std::endl;
+		GXS_NET_TUNNEL_DEBUG() << "  : result is of type group summary result for service " << result_gs->service << std::dec << ": " << std::endl;
 
         for(auto it(result_gs->group_infos.begin());it!=result_gs->group_infos.end();++it)
             std::cerr << "   group " << (*it).group_id << ": " << (*it).group_name << ", " << (*it).number_of_messages << " messages, last is " << time(NULL)-(*it).last_message_ts << " secs ago." << std::endl;

@@ -272,12 +272,12 @@
  	NXS_NET_DEBUG_8		gxs distant sync
 
  ***/
-#define NXS_NET_DEBUG_0 	1
-#define NXS_NET_DEBUG_1 	1
+//#define NXS_NET_DEBUG_0 	1
+//#define NXS_NET_DEBUG_1 	1
 //#define NXS_NET_DEBUG_2 	1
 //#define NXS_NET_DEBUG_3 	1
 //#define NXS_NET_DEBUG_4 	1
-#define NXS_NET_DEBUG_5 	1
+//#define NXS_NET_DEBUG_5 	1
 //#define NXS_NET_DEBUG_6 	1
 //#define NXS_NET_DEBUG_7 	1
 #define NXS_NET_DEBUG_8 	1
@@ -5143,5 +5143,8 @@ bool RsGxsNetService::search(const std::string& substring,std::list<RsGxsGroupSu
             group_infos.push_back(s) ;
 		}
 
+#ifdef NXS_NET_DEBUG_8
+	GXSNETDEBUG___ << "  performing local substring search in response to distant request. Found " << group_infos.size() << " responses." << std::endl;
+#endif
     return !group_infos.empty();
 }

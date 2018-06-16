@@ -187,6 +187,14 @@ public:
 	   */
       bool getVirtualPeers(std::list<RsGxsNetTunnelVirtualPeerId>& peers) ;	// returns the virtual peers for this service
 
+      /*!
+       * \brief serviceId
+       * 			Overloads the method in RsTurtleClientService.
+       * \return
+       * 			The service id for RsGxsNetTunnel.
+       */
+      uint16_t serviceId() const ;
+
 	  /*!
 	   * \brief sendData
 	   *               send data to this virtual peer, and takes memory ownership (deletes the item)

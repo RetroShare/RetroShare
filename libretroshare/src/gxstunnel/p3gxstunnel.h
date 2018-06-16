@@ -127,6 +127,8 @@ public:
     explicit p3GxsTunnelService(RsGixs *pids) ;
     virtual void connectToTurtleRouter(p3turtle *) ;
 
+    uint16_t serviceId() const { return RS_SERVICE_TYPE_GXS_TUNNEL ; }
+
     // Creates the invite if the public key of the distant peer is available.
     // Om success, stores the invite in the map above, so that we can respond to tunnel requests.
     //

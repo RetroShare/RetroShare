@@ -95,6 +95,8 @@ public:
 
     // Implements RsTurtleClientService
     //
+
+    uint16_t serviceId() const { return RS_SERVICE_TYPE_FILE_TRANSFER ; }
     virtual bool handleTunnelRequest(const RsFileHash& hash,const RsPeerId& peer_id) ;
     virtual void receiveTurtleData(const RsTurtleGenericTunnelItem *item,const RsFileHash& hash,const RsPeerId& virtual_peer_id,RsTurtleGenericTunnelItem::Direction direction) ;
 	//virtual void receiveSearchResult(RsTurtleSearchResultItem *item);// TODO

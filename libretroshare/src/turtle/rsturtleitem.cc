@@ -75,9 +75,11 @@ RsTurtleSearchRequestItem *RsTurtleGenericSearchRequestItem::clone() const
 {
     RsTurtleGenericSearchRequestItem *sr = new RsTurtleGenericSearchRequestItem ;
 
+    memcpy(sr,this,sizeof(RsTurtleGenericSearchRequestItem)) ;
+
     sr->search_data = (unsigned char*)rs_malloc(search_data_len) ;
     memcpy(sr->search_data,search_data,search_data_len) ;
-    sr->search_data_len = search_data_len ;
+
     return sr ;
 }
 template<> uint32_t RsTypeSerializer::serial_size(const RsRegularExpression::LinearizedExpression& r)
