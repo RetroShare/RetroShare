@@ -53,7 +53,7 @@ if not exist "%EnvToolsPath%\cecho.exe" (
 
 	echo Download cecho installation
 
-	if not exist "%EnvDownloadPath%\%CEchoInstall%" call "%ToolsPath%\winhttpjs.bat" "%CEchoUrl%" -saveTo "%EnvDownloadPath%\%CEchoInstall%"
+	if not exist "%EnvDownloadPath%\%CEchoInstall%" call "%ToolsPath%\download-file.bat" "%CEchoUrl%" "%EnvDownloadPath%\%CEchoInstall%"
 	if not exist "%EnvDownloadPath%\%cCEhoInstall%" echo Cannot download cecho installation& goto error
 
 	echo Unpack cecho

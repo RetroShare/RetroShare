@@ -1,6 +1,8 @@
 ﻿; Script generated with the Venis Install Wizard & modified by defnax
 ; Reworked by Thunder
 
+!include ifexist.nsh
+
 # Needed defines
 ;!define BUILDADD ""
 ;!define RELEASEDIR ""
@@ -212,9 +214,9 @@ Section $(Section_Main) Section_Main
   File "${MINGWDIR}\bin\libwinpthread-1.dll"
 
   ; External binaries
-  File "${SOURCEDIR}\..\libs\bin\miniupnpc.dll"
-  File "${SOURCEDIR}\..\libs\bin\libeay32.dll"
-  File "${SOURCEDIR}\..\libs\bin\ssleay32.dll"
+  File "${EXTERNAL_LIB_DIR}\bin\miniupnpc.dll"
+  File "${EXTERNAL_LIB_DIR}\bin\libeay32.dll"
+  File "${EXTERNAL_LIB_DIR}\bin\ssleay32.dll"
 
   ; Other files
   File "${SOURCEDIR}\retroshare-gui\src\changelog.txt"
@@ -256,17 +258,33 @@ Section $(Section_Main) Section_Main
 SectionEnd
 
 # Plugins
-SectionGroup $(Section_Plugins) Section_Plugins
-Section $(Section_Plugin_FeedReader) Section_Plugin_FeedReader
-  SetOutPath "$DataDir\extensions6"
-  File "${RELEASEDIR}\plugins\FeedReader\release\FeedReader.dll"
-SectionEnd
+${!defineifexist} PLUGIN_FEEDREADER_EXISTS "${RELEASEDIR}\plugins\FeedReader\release\FeedReader.dll"
+${!defineifexist} PLUGIN_VOIP_EXISTS "${RELEASEDIR}\plugins\VOIP\release\VOIP.dll"
 
-Section $(Section_Plugin_VOIP) Section_Plugin_VOIP
-  SetOutPath "$DataDir\extensions6"
-  File "${RELEASEDIR}\plugins\VOIP\release\VOIP.dll"
-SectionEnd
-SectionGroupEnd
+!ifdef PLUGIN_FEEDREADER_EXISTS
+!define /ifndef PLUGIN_EXISTS
+!endif
+!ifdef PLUGIN_VOIP_EXISTS
+!define /ifndef PLUGIN_EXISTS
+!endif
+
+!ifdef PLUGIN_EXISTS
+  SectionGroup $(Section_Plugins) Section_Plugins
+  !ifdef PLUGIN_FEEDREADER_EXISTS
+    Section $(Section_Plugin_FeedReader) Section_Plugin_FeedReader
+      SetOutPath "$DataDir\extensions6"
+      File "${RELEASEDIR}\plugins\FeedReader\release\FeedReader.dll"
+    SectionEnd
+  !endif
+  
+  !ifdef PLUGIN_VOIP_EXISTS
+    Section $(Section_Plugin_VOIP) Section_Plugin_VOIP
+      SetOutPath "$DataDir\extensions6"
+      File "${RELEASEDIR}\plugins\VOIP\release\VOIP.dll"
+    SectionEnd
+  !endif
+  SectionGroupEnd
+!endif
 
 # Data (Styles)
 Section $(Section_Data) Section_Data

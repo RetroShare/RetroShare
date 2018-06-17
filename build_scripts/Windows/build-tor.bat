@@ -13,11 +13,11 @@ call "%~dp0build-libs\build-libs.bat"
 if errorlevel 1 %cecho% error "Failed to build libraries." & exit /B %ERRORLEVEL%
 
 %cecho% info "Build %SourceName%"
-call "%~dp0build\build.bat" retrotor
+call "%~dp0build\build.bat" release tor version autologin plugins
 if errorlevel 1 %cecho% error "Failed to build %SourceName%." & exit /B %ERRORLEVEL%
 
 %cecho% info "Pack %SourceName%"
-call "%~dp0build\pack.bat" retrotor
+call "%~dp0build\pack.bat" release tor
 if errorlevel 1 %cecho% error "Failed to pack %SourceName%." & exit /B %ERRORLEVEL%
 
 exit /B 0

@@ -1,16 +1,52 @@
-if "%~1"=="standard" (
-	set RsRetroTor=
-	set RsType=
-) else (
-	if "%~1"=="retrotor" (
-		set RsRetroTor=1
-		set RsType=-tor
-	) else (
-		echo.
-		echo Usage: standard^|retrotor
-		echo.
-		exit /B 2
+:: Process commandline parameter
+set ParamRelease=0
+set ParamDebug=0
+set ParamVersion=0
+set ParamAutologin=0
+set ParamPlugins=0
+set ParamTor=0
+
+:parameter_loop
+if "%~1" NEQ "" (
+	for /f "tokens=1,2 delims==" %%a in ("%~1") do (
+		if "%%~a"=="release" (
+			set ParamRelease=1
+		) else if "%%~a"=="debug" (
+			set ParamDebug=1
+		) else if "%%~a"=="version" (
+			set ParamVersion=1
+		) else if "%%~a"=="autologin" (
+			set ParamAutologin=1
+		) else if "%%~a"=="plugins" (
+			set ParamPlugins=1
+		) else if "%%~a"=="tor" (
+			set ParamTor=1
+		) else (
+			echo.
+			echo Unknown parameter %1
+			goto :usage
+		)
 	)
+	shift /1
+	goto parameter_loop
+)
+
+if "%ParamRelease%"=="1" (
+	if "%ParamDebug%"=="1" (
+		echo.
+		echo Release or Debug?
+		goto :usage
+	)
+
+	set RsBuildConfig=release
+) else if "%ParamDebug%"=="1" (
+	set RsBuildConfig=debug
+) else goto :usage
+
+if "%ParamTor%"=="1" (
+	set RsType=-tor
+) else (
+	set RsType=
 )
 
 set BuildPath=%EnvRootPath%\builds
@@ -39,8 +75,7 @@ if "%GCCVersion%"=="" %cecho% error "Cannot get gcc version." & exit /B 1
 
 set BuildLibsPath=%EnvRootPath%\build-libs\gcc-%GCCVersion%
 
-set RsBuildConfig=release
-set RsBuildPath=%BuildPath%\Qt-%QtVersion%%RsType%-%RsBuildConfig%
+set RsBuildPath=%BuildPath%\Qt-%QtVersion%-%RsBuildConfig%
 set RsDeployPath=%DeployPath%\Qt-%QtVersion%%RsType%-%RsBuildConfig%
 set RsPackPath=%DeployPath%
 set RsArchiveAdd=
@@ -51,3 +86,20 @@ if errorlevel 1 exit /B %ERRORLEVEL%
 :no_mod
 
 exit /B 0
+
+:usage
+echo.
+echo Usage: release^|debug [version autologin plugins]
+echo.
+echo Mandatory parameter
+echo release^|debug      Build release or debug version
+echo.
+echo Optional parameter (need clean when changed)
+echo version            Create version information from git
+echo autologin          Build with autologin
+echo plugins            Build plugins
+echo.
+echo Parameter for pack
+echo tor                Pack tor version
+echo.
+exit /B 2

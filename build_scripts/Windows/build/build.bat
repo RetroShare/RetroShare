@@ -22,6 +22,7 @@ set /P LibsGCCVersion=<"%BuildLibsPath%\libs\gcc-version"
 if "%LibsGCCVersion%" NEQ "%GCCVersion%" %cecho% error "Please use correct version of external libraries. (gcc %GCCVersion% ^<^> libs %LibsGCCVersion%)." & exit /B 1
 
 :: Check git executable
+if "%ParamVersion%"=="0" goto found_git
 set GitPath=
 call "%ToolsPath%\find-in-path.bat" GitPath git.exe
 if "%GitPath%" NEQ "" goto found_git
@@ -33,7 +34,7 @@ echo.
 echo === Version
 echo.
 
-title Build - %SourceName%%RsType%-%RsBuildConfig% [Version]
+title Build - %SourceName%-%RsBuildConfig% [Version]
 
 pushd "%SourcePath%\retroshare-gui\src\gui\images"
 :: Touch resource file
@@ -47,10 +48,12 @@ echo.
 echo === qmake
 echo.
 
-title Build - %SourceName%%RsType%-%RsBuildConfig% [qmake]
+title Build - %SourceName%-%RsBuildConfig% [qmake]
 
-set RS_QMAKE_CONFIG=%RsBuildConfig% version_detail_bash_script rs_autologin retroshare_plugins
-if "%RsRetroTor%"=="1" set RS_QMAKE_CONFIG=%RS_QMAKE_CONFIG% retrotor
+set RS_QMAKE_CONFIG=%RsBuildConfig%
+if "%ParamVersion%"=="1" set RS_QMAKE_CONFIG=%RS_QMAKE_CONFIG% version_detail_bash_script
+if "%ParamAutologin%"=="1" set RS_QMAKE_CONFIG=%RS_QMAKE_CONFIG% rs_autologin
+if "%ParamPlugins%"=="1" set RS_QMAKE_CONFIG=%RS_QMAKE_CONFIG% retroshare_plugins
 
 qmake "%SourcePath%\RetroShare.pro" -r -spec win32-g++ "CONFIG+=%RS_QMAKE_CONFIG%" "EXTERNAL_LIB_DIR=%BuildLibsPath%\libs"
 if errorlevel 1 goto error
@@ -59,7 +62,7 @@ echo.
 echo === make
 echo.
 
-title Build - %SourceName%%RsType%-%RsBuildConfig% [make]
+title Build - %SourceName%-%RsBuildConfig% [make]
 
 if exist "%EnvJomExe%" (
 	"%EnvJomExe%"
