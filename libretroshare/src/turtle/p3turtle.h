@@ -169,11 +169,11 @@ class TurtleSearchRequestInfo
 {
 	public:
 		TurtlePeerId origin ;         // where the request came from.
-		uint32_t	time_stamp ;      // last time the tunnel was actually used. Used for cleaning old tunnels.
-		int depth ;                   // depth of the request. Used to optimize tunnel length.
-		uint32_t    result_count;     // responses to this request. Useful to avoid spamming tunnel responses.
-		std::string keywords;
-        RsTurtleClientService *client;// client who issues the request. This is null if the request does not have a local origin.
+		uint32_t	 time_stamp ;     // last time the tunnel was actually used. Used for cleaning old tunnels.
+		int          depth ;          // depth of the request. Used to optimize tunnel length.
+		uint32_t     result_count;    // responses to this request. Useful to avoid spamming tunnel responses.
+		std::string  keywords;
+        uint16_t     service_id;      // ID of the client service who issues the request. This is null if the request does not have a local origin.
 };
 class TurtleTunnelRequestInfo
 {
@@ -397,9 +397,9 @@ class p3turtle: public p3Service, public RsTurtle, public p3Config
 		//------ Functions connecting the turtle router to other components.----------//
 		
 		/// Performs a search calling local cache and search structure.
-		void locked_performLocalSearch        (RsTurtleSearchRequestItem        *item,TurtleSearchRequestInfo& req,std::list<RsTurtleSearchResultItem*>& result) ;
-		void locked_performLocalSearch_files  (RsTurtleFileSearchRequestItem    *item,TurtleSearchRequestInfo& req,std::list<RsTurtleSearchResultItem*>& result) ;
-		void locked_performLocalSearch_generic(RsTurtleGenericSearchRequestItem *item,TurtleSearchRequestInfo& req,std::list<RsTurtleSearchResultItem*>& result) ;
+		void performLocalSearch        (RsTurtleSearchRequestItem        *item, uint32_t& req_result_count,std::list<RsTurtleSearchResultItem*>& result) ;
+		void performLocalSearch_files  (RsTurtleFileSearchRequestItem    *item, uint32_t& req_result_count,std::list<RsTurtleSearchResultItem*>& result) ;
+		void performLocalSearch_generic(RsTurtleGenericSearchRequestItem *item, uint32_t& req_result_count,std::list<RsTurtleSearchResultItem*>& result) ;
 
 		/// Returns true if the file with given hash is hosted locally, and accessible in anonymous mode the supplied peer.
 		virtual bool performLocalHashSearch(const TurtleFileHash& hash,const RsPeerId& client_peer_id,RsTurtleClientService *& service);

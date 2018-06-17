@@ -82,6 +82,7 @@ class RsTurtleSearchRequestItem: public RsTurtleItem
 		virtual RsTurtleSearchRequestItem *clone() const = 0 ;					// used for cloning in routing methods
 
 		virtual std::string GetKeywords() = 0;
+        virtual uint16_t serviceId() = 0 ;
 
 		uint32_t request_id ; 		// randomly generated request id.
 		uint16_t depth ;				// Used for limiting search depth.
@@ -93,6 +94,7 @@ class RsTurtleFileSearchRequestItem: public RsTurtleSearchRequestItem
         RsTurtleFileSearchRequestItem(uint32_t subtype) : RsTurtleSearchRequestItem(subtype) {}
         virtual ~RsTurtleFileSearchRequestItem() {}
 
+        virtual uint16_t serviceId() { return RS_SERVICE_TYPE_FILE_TRANSFER ; }
 		virtual void search(std::list<TurtleFileInfo> &) const =0;
 };
 
@@ -150,6 +152,7 @@ class RsTurtleGenericSearchRequestItem: public RsTurtleSearchRequestItem
         unsigned char *search_data ;
 
 		std::string GetKeywords() { return std::string("Generic search " + RsUtil::BinToHex(search_data,search_data_len,10)); }
+        virtual uint16_t serviceId() { return service_id ; }
 
 		virtual RsTurtleSearchRequestItem *clone() const ;
 		void clear() { free(search_data); search_data=NULL; search_data_len=0; }
