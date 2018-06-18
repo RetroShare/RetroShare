@@ -218,8 +218,7 @@ RsGenExchange::ServiceCreate_Return p3GxsChannels::service_CreateGroup(RsGxsGrpI
 void p3GxsChannels::notifyChanges(std::vector<RsGxsNotify *> &changes)
 {
 #ifdef GXSCHANNELS_DEBUG
-	std::cerr << "p3GxsChannels::notifyChanges()";
-	std::cerr << std::endl;
+	std::cerr << "p3GxsChannels::notifyChanges() : " << changes.size() << "changes to notify" << std::endl;
 #endif
 
 	p3Notify *notify = NULL;
