@@ -45,7 +45,7 @@ RsGxsUpdateBroadcast *RsGxsUpdateBroadcast::get(RsGxsIfaceHelper *ifaceImpl)
 
 void RsGxsUpdateBroadcast::onChangesReceived(const RsGxsChanges& changes)
 {
-#ifndef DEBUG_GXS_BROADCAST
+#ifdef DEBUG_GXS_BROADCAST
     std::cerr << "onChangesReceived()" << std::endl;
     
      {
