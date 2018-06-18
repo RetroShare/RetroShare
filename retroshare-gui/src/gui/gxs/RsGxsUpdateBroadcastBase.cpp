@@ -68,7 +68,13 @@ void RsGxsUpdateBroadcastBase::updateBroadcastChanged()
 	/* Update only update when the widget is visible. */
 	if (mUpdateWhenInvisible || !widget || widget->isVisible()) {
 
-		if (!mGrpIds.empty() || !mGrpIdsMeta.empty() || !mMsgIds.empty() || !mMsgIdsMeta.empty())
+        // (cyril) Re-load the entire group is new messages are here, or if group metadata has changed (e.g. visibility permissions, admin rights, etc).
+        // Do not re-load if Msg data has changed, which means basically the READ flag has changed, because this action is done in the UI in the
+        // first place so there's no need to re-update the UI once this is done.
+        //
+        // The question to whether we should re=load when mGrpIds is not empty is still open. It's not harmful anyway.
+
+		if (!mGrpIds.empty() || !mGrpIdsMeta.empty() /*|| !mMsgIds.empty()*/ || !mMsgIdsMeta.empty())
             mFillComplete = true ;
 
 		securedUpdateDisplay();

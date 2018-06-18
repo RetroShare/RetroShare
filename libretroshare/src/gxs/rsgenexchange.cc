@@ -2010,7 +2010,7 @@ void RsGenExchange::processMsgMetaChanges()
 
     if (!msgIds.empty()) {
         RS_STACK_MUTEX(mGenMtx);
-        RsGxsMsgChange* c = new RsGxsMsgChange(RsGxsNotify::TYPE_PROCESSED, true);
+        RsGxsMsgChange* c = new RsGxsMsgChange(RsGxsNotify::TYPE_PROCESSED, false);
         c->msgChangeMap = msgIds;
         mNotifications.push_back(c);
     }
