@@ -59,6 +59,8 @@
 #define ROLE_SUBSCRIBE_FLAGS Qt::UserRole + 8
 #define ROLE_COLOR           Qt::UserRole + 9
 #define ROLE_SAVED_ICON      Qt::UserRole + 10
+#define ROLE_SEARCH_STRING   Qt::UserRole + 11
+#define ROLE_REQUEST_ID      Qt::UserRole + 12
 
 #define FILTER_NAME_INDEX  0
 #define FILTER_DESC_INDEX  1
@@ -395,6 +397,32 @@ QTreeWidgetItem *GroupTreeWidget::addCategoryItem(const QString &name, const QIc
 	item->setExpanded(expand);
 
 	return item;
+}
+
+void GroupTreeWidget::removeSearchItem(QTreeWidgetItem *item)
+{
+    ui->treeWidget->takeTopLevelItem(ui->treeWidget->indexOfTopLevelItem(item)) ;
+}
+
+QTreeWidgetItem *GroupTreeWidget::addSearchItem(const QString& search_string, uint32_t id, const QIcon& icon)
+{
+    QTreeWidgetItem *item = addCategoryItem(search_string,icon,true);
+
+    item->setData(COLUMN_DATA,ROLE_SEARCH_STRING,search_string) ;
+    item->setData(COLUMN_DATA,ROLE_REQUEST_ID   ,id) ;
+
+    return item;
+}
+
+bool GroupTreeWidget::isSearchRequestItem(QPoint &point,uint32_t& search_req_id)
+{
+    QTreeWidgetItem *item = ui->treeWidget->itemAt(point);
+	if (item == NULL)
+		return false;
+
+	search_req_id = item->data(COLUMN_DATA, ROLE_REQUEST_ID).toUInt();
+
+    return search_req_id > 0;
 }
 
 QString GroupTreeWidget::itemId(QTreeWidgetItem *item)

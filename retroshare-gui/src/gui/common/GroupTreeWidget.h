@@ -82,6 +82,10 @@ public:
 
 	// Add a new category item
 	QTreeWidgetItem *addCategoryItem(const QString &name, const QIcon &icon, bool expand);
+    // Add a new search item
+	QTreeWidgetItem *addSearchItem(const QString& search_string, uint32_t id, const QIcon &icon) ;
+	void removeSearchItem(QTreeWidgetItem *item);
+
 	// Get id of item
 	QString itemId(QTreeWidgetItem *item);
 	QString itemIdAt(QPoint &point);
@@ -89,6 +93,8 @@ public:
 	void fillGroupItems(QTreeWidgetItem *categoryItem, const QList<GroupItemInfo> &itemList);
 	// Set the unread count of an item
 	void setUnreadCount(QTreeWidgetItem *item, int unreadCount);
+
+	bool isSearchRequestItem(QPoint &point,uint32_t& search_req_id);
 
 	QTreeWidgetItem *getItemFromId(const QString &id);
 	QTreeWidgetItem *activateId(const QString &id, bool focus);

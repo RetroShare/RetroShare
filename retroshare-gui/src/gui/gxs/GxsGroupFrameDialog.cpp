@@ -46,6 +46,7 @@
 #define IMAGE_EDIT           ":/images/edit_16.png"
 #define IMAGE_SHARE          ":/images/share-icon-16.png"
 #define IMAGE_TABNEW         ":/images/tab-new.png"
+#define IMAGE_DELETE         ":/images/delete.png"
 #define IMAGE_COMMENT        ""
 
 #define TOKEN_TYPE_GROUP_SUMMARY    1
@@ -252,16 +253,55 @@ void GxsGroupFrameDialog::todo()
 	QMessageBox::information(this, "Todo", text(TEXT_TODO));
 }
 
+void GxsGroupFrameDialog::removeCurrentSearch()
+{
+    QAction *action = dynamic_cast<QAction*>(sender()) ;
+
+    if(!action)
+        return ;
+
+    TurtleRequestId search_request_id = action->data().toUInt();
+
+    auto it = mSearchGroups.find(search_request_id) ;
+
+    if(it == mSearchGroups.end())
+        return ;
+
+    ui->groupTreeWidget->removeSearchItem(it->second) ;
+    mSearchGroups.erase(it);
+}
+
+void GxsGroupFrameDialog::removeAllSearches()
+{
+    for(auto it(mSearchGroups.begin());it!=mSearchGroups.end();++it)
+		ui->groupTreeWidget->removeSearchItem(it->second) ;
+
+    mSearchGroups.clear();
+}
 void GxsGroupFrameDialog::groupTreeCustomPopupMenu(QPoint point)
 {
+    // First separately handle the case of search top level items
+
+    TurtleRequestId search_request_id = 0 ;
+
+    if(ui->groupTreeWidget->isSearchRequestItem(point,search_request_id))
+    {
+		QMenu contextMnu(this);
+
+		contextMnu.addAction(QIcon(IMAGE_DELETE), tr("Remove this search"), this, SLOT(removeCurrentSearch()))->setData(search_request_id);
+		contextMnu.addAction(QIcon(IMAGE_DELETE), tr("Remove all searches"), this, SLOT(removeAllSearches()));
+		contextMnu.exec(QCursor::pos());
+        return ;
+    }
+
 	QString id = ui->groupTreeWidget->itemIdAt(point);
 	if (id.isEmpty()) return;
 
 	mGroupId = RsGxsGroupId(id.toStdString());
 	int subscribeFlags = ui->groupTreeWidget->subscribeFlags(QString::fromStdString(mGroupId.toStdString()));
 
-	bool isAdmin = IS_GROUP_ADMIN(subscribeFlags);
-	bool isPublisher = IS_GROUP_PUBLISHER(subscribeFlags);
+	bool isAdmin      = IS_GROUP_ADMIN(subscribeFlags);
+	bool isPublisher  = IS_GROUP_PUBLISHER(subscribeFlags);
 	bool isSubscribed = IS_GROUP_SUBSCRIBED(subscribeFlags);
 
 	QMenu contextMnu(this);
@@ -1088,11 +1128,14 @@ TurtleRequestId GxsGroupFrameDialog::distantSearch(const QString& search_string)
 
 void GxsGroupFrameDialog::searchNetwork(const QString& search_string)
 {
+    if(search_string.isNull())
+        return ;
+
     uint32_t request_id = distantSearch(search_string);
 
     if(request_id == 0)
         return ;
 
-	mSearchGroups[request_id] = ui->groupTreeWidget->addCategoryItem(tr("Search for")+ " \"" + search_string + "\"", QIcon(icon(ICON_SEARCH)), true);
+	mSearchGroups[request_id] = ui->groupTreeWidget->addSearchItem(tr("Search for")+ " \"" + search_string + "\"",(uint32_t)request_id,QIcon(icon(ICON_SEARCH)));
 }
 

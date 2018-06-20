@@ -130,7 +130,10 @@ private slots:
 	void sharePublishKey();
 
 	void loadComment(const RsGxsGroupId &grpId, const QVector<RsGxsMessageId>& msg_versions,const RsGxsMessageId &most_recent_msgId, const QString &title);
+
     void searchNetwork(const QString &search_string) ;
+	void removeAllSearches();
+	void removeCurrentSearch();
 
 private:
 	virtual QString text(TextType type) = 0;
