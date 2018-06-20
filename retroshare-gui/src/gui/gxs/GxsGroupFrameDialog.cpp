@@ -94,6 +94,7 @@ GxsGroupFrameDialog::GxsGroupFrameDialog(RsGxsIfaceHelper *ifaceImpl, QWidget *p
 	connect(ui->groupTreeWidget, SIGNAL(treeCustomContextMenuRequested(QPoint)), this, SLOT(groupTreeCustomPopupMenu(QPoint)));
     connect(ui->groupTreeWidget, SIGNAL(treeCurrentItemChanged(QString)), this, SLOT(changedGroup(QString)));
 	connect(ui->groupTreeWidget->treeWidget(), SIGNAL(signalMouseMiddleButtonClicked(QTreeWidgetItem*)), this, SLOT(groupTreeMiddleButtonClicked(QTreeWidgetItem*)));
+    connect(ui->groupTreeWidget, SIGNAL(distantSearchRequested(const QString&)), this, SLOT(searchNetwork(const QString&)));
 	connect(ui->messageTabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(messageTabCloseRequested(int)));
 	connect(ui->messageTabWidget, SIGNAL(currentChanged(int)), this, SLOT(messageTabChanged(int)));
 
@@ -1078,3 +1079,20 @@ void GxsGroupFrameDialog::loadRequest(const TokenQueue *queue, const TokenReques
 		}
 	}
 }
+
+TurtleRequestId GxsGroupFrameDialog::distantSearch(const QString& search_string)   // this should be overloaded in the child class
+{
+    std::cerr << "Searching for \"" << search_string.toStdString() << "\". Function is not implemented yet." << std::endl;
+    return 0;
+}
+
+void GxsGroupFrameDialog::searchNetwork(const QString& search_string)
+{
+    uint32_t request_id = distantSearch(search_string);
+
+    if(request_id == 0)
+        return ;
+
+	mSearchGroups[request_id] = ui->groupTreeWidget->addCategoryItem(tr("Search for")+ " \"" + search_string + "\"", QIcon(icon(ICON_SEARCH)), true);
+}
+

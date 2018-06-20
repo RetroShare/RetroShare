@@ -51,6 +51,7 @@ protected:
 	virtual QString getHelpString() const ;
 	virtual void groupInfoToGroupItemInfo(const RsGroupMetaData &groupInfo, GroupItemInfo &groupItemInfo, const RsUserdata *userdata);
 
+	virtual TurtleRequestId distantSearch(const QString& search_string) ;
 private slots:
 	void toggleAutoDownload();
         void setDefaultDirectory();

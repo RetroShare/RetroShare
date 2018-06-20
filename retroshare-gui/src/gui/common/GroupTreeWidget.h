@@ -110,6 +110,7 @@ signals:
 	void treeCustomContextMenuRequested(const QPoint &pos);
 	void treeCurrentItemChanged(const QString &id);
 	void treeItemActivated(const QString &id);
+    void distantSearchRequested(const QString&) ;
 
 protected:
 	void changeEvent(QEvent *e);
@@ -119,6 +120,7 @@ private slots:
 	void currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous);
 	void itemActivated(QTreeWidgetItem *item, int column);
 	void filterChanged();
+	void distantSearch();
 
 	void sort();
 

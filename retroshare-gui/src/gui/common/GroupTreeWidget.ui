@@ -124,6 +124,9 @@
      </column>
     </widget>
    </item>
+   <item>
+    <widget class="QLineEdit" name="distantSearchLineEdit"/>
+   </item>
   </layout>
  </widget>
  <customwidgets>

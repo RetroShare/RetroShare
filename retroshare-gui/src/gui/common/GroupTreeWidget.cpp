@@ -18,6 +18,8 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
+#include <iostream>
+
 #include "GroupTreeWidget.h"
 #include "ui_GroupTreeWidget.h"
 
@@ -118,6 +120,10 @@ GroupTreeWidget::GroupTreeWidget(QWidget *parent) :
 	ui->filterLineEdit->addFilter(QIcon(), tr("Title"), FILTER_NAME_INDEX , tr("Search Title"));
 	ui->filterLineEdit->addFilter(QIcon(), tr("Description"), FILTER_DESC_INDEX , tr("Search Description"));
 	ui->filterLineEdit->setCurrentFilter(FILTER_NAME_INDEX);
+
+    ui->distantSearchLineEdit->setPlaceholderText(tr("Search entire network...")) ;
+
+    connect(ui->distantSearchLineEdit,SIGNAL(returnPressed()),this,SLOT(distantSearch())) ;
 
 	/* Initialize display button */
 	initDisplayMenu(ui->displayButton);
@@ -747,6 +753,13 @@ void GroupTreeWidget::resort(QTreeWidgetItem *categoryItem)
 			ui->treeWidget->topLevelItem(child)->sortChildren(COLUMN_DATA, order);
 		}
 	}
+}
+
+void GroupTreeWidget::distantSearch()
+{
+    emit distantSearchRequested(ui->distantSearchLineEdit->text());
+
+    ui->distantSearchLineEdit->clear();
 }
 
 void GroupTreeWidget::sort()

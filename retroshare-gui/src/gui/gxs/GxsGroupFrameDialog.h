@@ -67,6 +67,7 @@ public:
 		ICON_SUBSCRIBED_GROUP,
 		ICON_POPULAR_GROUP,
 		ICON_OTHER_GROUP,
+		ICON_SEARCH,
 		ICON_DEFAULT
 	};
 
@@ -129,11 +130,13 @@ private slots:
 	void sharePublishKey();
 
 	void loadComment(const RsGxsGroupId &grpId, const QVector<RsGxsMessageId>& msg_versions,const RsGxsMessageId &most_recent_msgId, const QString &title);
+    void searchNetwork(const QString &search_string) ;
 
 private:
 	virtual QString text(TextType type) = 0;
 	virtual QString icon(IconType type) = 0;
 	virtual QString settingsGroupName() = 0;
+    virtual TurtleRequestId distantSearch(const QString& search_string) ;
 
 	virtual GxsGroupDialog *createNewGroupDialog(TokenQueue *tokenQueue) = 0;
 	virtual GxsGroupDialog *createGroupDialog(TokenQueue *tokenQueue, RsTokenService *tokenService, GxsGroupDialog::Mode mode, RsGxsGroupId groupId) = 0;
@@ -201,6 +204,8 @@ private:
 	Ui::GxsGroupFrameDialog *ui;
 
 	std::list<RsGroupMetaData> mCachedGroupMetas;
+
+    std::map<uint32_t,QTreeWidgetItem*> mSearchGroups ;
 };
 
 #endif
