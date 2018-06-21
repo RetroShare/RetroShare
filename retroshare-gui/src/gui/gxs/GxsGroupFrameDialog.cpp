@@ -93,7 +93,7 @@ GxsGroupFrameDialog::GxsGroupFrameDialog(RsGxsIfaceHelper *ifaceImpl, QWidget *p
 	mStateHelper->addWidget(TOKEN_TYPE_GROUP_SUMMARY, ui->loadingLabel, UISTATE_LOADING_VISIBLE);
 
 	connect(ui->groupTreeWidget, SIGNAL(treeCustomContextMenuRequested(QPoint)), this, SLOT(groupTreeCustomPopupMenu(QPoint)));
-    connect(ui->groupTreeWidget, SIGNAL(treeCurrentItemChanged(QString)), this, SLOT(changedGroup(QString)));
+    connect(ui->groupTreeWidget, SIGNAL(treeCurrentItemChanged(QString)), this, SLOT(changedCurrentGroup(QString)));
 	connect(ui->groupTreeWidget->treeWidget(), SIGNAL(signalMouseMiddleButtonClicked(QTreeWidgetItem*)), this, SLOT(groupTreeMiddleButtonClicked(QTreeWidgetItem*)));
     connect(ui->groupTreeWidget, SIGNAL(distantSearchRequested(const QString&)), this, SLOT(searchNetwork(const QString&)));
 	connect(ui->messageTabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(messageTabCloseRequested(int)));
@@ -630,7 +630,7 @@ bool GxsGroupFrameDialog::navigate(const RsGxsGroupId &groupId, const RsGxsMessa
 		return false;
 	}
 
-	changedGroup(groupIdString);
+	changedCurrentGroup(groupIdString);
 
 	/* search exisiting tab */
 	GxsMessageFrameWidget *msgWidget = messageWidget(mGroupId, false);
@@ -691,7 +691,7 @@ GxsCommentDialog *GxsGroupFrameDialog::commentWidget(const RsGxsMessageId& msgId
 	return NULL;
 }
 
-void GxsGroupFrameDialog::changedGroup(const QString &groupId)
+void GxsGroupFrameDialog::changedCurrentGroup(const QString &groupId)
 {
 	if (mInFill) {
 		return;

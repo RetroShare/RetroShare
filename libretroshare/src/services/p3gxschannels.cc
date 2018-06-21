@@ -237,7 +237,7 @@ void p3GxsChannels::notifyChanges(std::vector<RsGxsNotify *> &changes)
 		RsGxsMsgChange *msgChange = dynamic_cast<RsGxsMsgChange *>(*it);
 		if (msgChange)
 		{
-			if (msgChange->getType() == RsGxsNotify::TYPE_RECEIVE)
+			if (msgChange->getType() == RsGxsNotify::TYPE_RECEIVED_NEW)
 			{
 				/* message received */
 				if (notify)
@@ -296,10 +296,10 @@ void p3GxsChannels::notifyChanges(std::vector<RsGxsNotify *> &changes)
 					switch (grpChange->getType())
 					{
 						case RsGxsNotify::TYPE_PROCESSED:
-						case RsGxsNotify::TYPE_PUBLISH:
+						case RsGxsNotify::TYPE_PUBLISHED:
 							break;
 
-						case RsGxsNotify::TYPE_RECEIVE:
+						case RsGxsNotify::TYPE_RECEIVED_NEW:
 						{
 							/* group received */
 							std::list<RsGxsGroupId> &grpList = grpChange->mGrpIdList;
@@ -317,7 +317,7 @@ void p3GxsChannels::notifyChanges(std::vector<RsGxsNotify *> &changes)
 							break;
 						}
 
-						case RsGxsNotify::TYPE_PUBLISHKEY:
+						case RsGxsNotify::TYPE_RECEIVED_PUBLISHKEY:
 						{
 							/* group received */
 							std::list<RsGxsGroupId> &grpList = grpChange->mGrpIdList;

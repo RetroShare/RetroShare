@@ -1643,7 +1643,7 @@ void RsGenExchange::notifyReceivePublishKey(const RsGxsGroupId &grpId)
 {
 	RS_STACK_MUTEX(mGenMtx);
 
-	RsGxsGroupChange* gc = new RsGxsGroupChange(RsGxsNotify::TYPE_PUBLISHKEY, true);
+	RsGxsGroupChange* gc = new RsGxsGroupChange(RsGxsNotify::TYPE_RECEIVED_PUBLISHKEY, true);
 	gc->mGrpIdList.push_back(grpId);
 	mNotifications.push_back(gc);
 }
@@ -2314,7 +2314,7 @@ void RsGenExchange::publishMsgs()
 
 	if(!msgChangeMap.empty())
 	{
-		RsGxsMsgChange* ch = new RsGxsMsgChange(RsGxsNotify::TYPE_PUBLISH, false);
+		RsGxsMsgChange* ch = new RsGxsMsgChange(RsGxsNotify::TYPE_PUBLISHED, false);
 		ch->msgChangeMap = msgChangeMap;
 		mNotifications.push_back(ch);
 	}
@@ -2451,7 +2451,7 @@ void RsGenExchange::processGroupDelete()
 
 	if(!grpDeleted.empty())
 	{
-		RsGxsGroupChange* gc = new RsGxsGroupChange(RsGxsNotify::TYPE_PUBLISH, false);
+		RsGxsGroupChange* gc = new RsGxsGroupChange(RsGxsNotify::TYPE_PUBLISHED, false);
 		gc->mGrpIdList = grpDeleted;
 		mNotifications.push_back(gc);
 	}
@@ -2760,7 +2760,7 @@ void RsGenExchange::publishGrps()
 
 	    if(!grpChanged.empty())
 	    {
-		    RsGxsGroupChange* gc = new RsGxsGroupChange(RsGxsNotify::TYPE_RECEIVE, true);
+		    RsGxsGroupChange* gc = new RsGxsGroupChange(RsGxsNotify::TYPE_RECEIVED_NEW, true);
 		    gc->mGrpIdList = grpChanged;
 		    mNotifications.push_back(gc);
 #ifdef GEN_EXCH_DEBUG
@@ -3026,7 +3026,7 @@ void RsGenExchange::processRecvdMessages()
 #endif
 		    mDataStore->storeMessage(msgs_to_store);
 
-		    RsGxsMsgChange* c = new RsGxsMsgChange(RsGxsNotify::TYPE_RECEIVE, false);
+		    RsGxsMsgChange* c = new RsGxsMsgChange(RsGxsNotify::TYPE_RECEIVED_NEW, false);
 		    c->msgChangeMap = msgIds;
 		    mNotifications.push_back(c);
 	    }
@@ -3159,7 +3159,7 @@ void RsGenExchange::processRecvdGroups()
 
 	if(!grpIds.empty())
 	{
-		RsGxsGroupChange* c = new RsGxsGroupChange(RsGxsNotify::TYPE_RECEIVE, false);
+		RsGxsGroupChange* c = new RsGxsGroupChange(RsGxsNotify::TYPE_RECEIVED_NEW, false);
 		c->mGrpIdList = grpIds;
 		mNotifications.push_back(c);
 		mDataStore->storeGroup(grps_to_store);
@@ -3243,7 +3243,7 @@ void RsGenExchange::performUpdateValidation()
 	}
 	// notify the client
 
-	RsGxsGroupChange* c = new RsGxsGroupChange(RsGxsNotify::TYPE_RECEIVE, true);
+	RsGxsGroupChange* c = new RsGxsGroupChange(RsGxsNotify::TYPE_RECEIVED_NEW, true);
 
 	for(uint32_t i=0;i<mGroupUpdates.size();++i)
 		if(mGroupUpdates[i].newGrp != NULL)

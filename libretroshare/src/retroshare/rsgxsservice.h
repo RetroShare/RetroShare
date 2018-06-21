@@ -18,7 +18,7 @@ typedef std::map<RsGxsGrpMsgIdPair, std::vector<RsMsgMetaData> > GxsMsgRelatedMe
 struct RsGxsNotify
 {
 	enum NotifyType
-	{ TYPE_PUBLISH, TYPE_RECEIVE, TYPE_PROCESSED, TYPE_PUBLISHKEY };
+	{ TYPE_PUBLISHED, TYPE_RECEIVED_NEW, TYPE_PROCESSED, TYPE_RECEIVED_PUBLISHKEY };
 
 	virtual ~RsGxsNotify() {}
 	virtual NotifyType getType() = 0;

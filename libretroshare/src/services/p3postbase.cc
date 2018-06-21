@@ -123,7 +123,7 @@ void p3PostBase::notifyChanges(std::vector<RsGxsNotify *> &changes)
 				// It could be taken a step further and directly request these msgs for an update.
 				addGroupForProcessing(mit->first);
 
-				if (notify && msgChange->getType() == RsGxsNotify::TYPE_RECEIVE)
+				if (notify && msgChange->getType() == RsGxsNotify::TYPE_RECEIVED_NEW)
 				{
 					std::vector<RsGxsMessageId>::iterator mit1;
 					for (mit1 = mit->second.begin(); mit1 != mit->second.end(); ++mit1)
@@ -151,7 +151,7 @@ void p3PostBase::notifyChanges(std::vector<RsGxsNotify *> &changes)
 				std::cerr << std::endl;
 #endif
 
-				if (notify && groupChange->getType() == RsGxsNotify::TYPE_RECEIVE)
+				if (notify && groupChange->getType() == RsGxsNotify::TYPE_RECEIVED_NEW)
 				{
 					notify->AddFeedItem(RS_FEED_ITEM_POSTED_NEW, git->toStdString());
 				}
