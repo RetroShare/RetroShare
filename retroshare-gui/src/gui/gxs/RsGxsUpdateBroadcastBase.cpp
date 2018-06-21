@@ -73,6 +73,7 @@ void RsGxsUpdateBroadcastBase::updateBroadcastChanged()
         // first place so there's no need to re-update the UI once this is done.
         //
         // The question to whether we should re=load when mGrpIds is not empty is still open. It's not harmful anyway.
+        // This should probably be decided by the service itself.
 
 		if (!mGrpIds.empty() || !mGrpIdsMeta.empty() /*|| !mMsgIds.empty()*/ || !mMsgIdsMeta.empty())
             mFillComplete = true ;
