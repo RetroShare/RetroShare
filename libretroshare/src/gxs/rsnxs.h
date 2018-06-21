@@ -103,8 +103,43 @@ public:
     virtual uint32_t getDefaultSyncAge() =0;
     virtual uint32_t getDefaultKeepAge() =0;
 
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ///                                          DISTANT SEARCH FUNCTIONS                                           ///
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    /*!
+     * \brief turtleGroupRequest
+     * 			Requests a particular group meta data. The request protects the group ID.
+     * \param group_id
+     * \return
+     * 			returns the turtle request ID that might be associated to some results.
+     */
     virtual TurtleRequestId turtleGroupRequest(const RsGxsGroupId& group_id)=0;
+
+    /*!
+     * \brief turtleSearchRequest
+     * 			Uses distant search to match the substring to the group meta data.
+     * \param match_string
+     * \return
+     * 			returns the turtle request ID that might be associated to some results.
+     */
     virtual TurtleRequestId turtleSearchRequest(const std::string& match_string)=0;
+
+    /*!
+     * \brief receiveTurtleSearchResults
+     * 			Called by turtle (through RsGxsNetTunnel) when new results are received
+     * \param req			Turtle search request ID associated with this result
+     * \param group_infos	Group summary information for the groups returned by the search
+     */
+    virtual void receiveTurtleSearchResults(TurtleRequestId req,const std::list<RsGxsGroupSummary>& group_infos)=0;
+    /*!
+     * \brief getDistantSearchResults
+     * \param id
+     * \param group_infos
+     * \return
+     */
+    virtual bool getDistantSearchResults(const TurtleRequestId& id,std::list<RsGxsGroupSummary>& group_infos)=0 ;
+    virtual bool clearDistantSearchResults(const TurtleRequestId& id)=0;
 
     virtual bool search(const std::string& substring,std::list<RsGxsGroupSummary>& group_infos) =0;
 

@@ -498,8 +498,8 @@ void RsGxsNetService::processObserverNotifications()
 	    mNewPublishKeysToNotify.clear() ;
     }
 
-    if(!grps_copy.empty()) mObserver->notifyNewGroups  (grps_copy);
-    if(!msgs_copy.empty()) mObserver->notifyNewMessages(msgs_copy);
+    if(!grps_copy.empty()) mObserver->receiveNewGroups  (grps_copy);
+    if(!msgs_copy.empty()) mObserver->receiveNewMessages(msgs_copy);
 
     for(std::set<RsGxsGroupId>::const_iterator it(keys_copy.begin());it!=keys_copy.end();++it)
 		mObserver->notifyReceivePublishKey(*it);
@@ -5117,9 +5117,36 @@ static bool termSearch(const std::string& src, const std::string& substring)
 		/* always ignore case */
 	return src.end() != std::search( src.begin(), src.end(), substring.begin(), substring.end(), RsRegularExpression::CompareCharIC() );
 }
+void RsGxsNetService::receiveTurtleSearchResults(TurtleRequestId req, const std::list<RsGxsGroupSummary>& group_infos)
+{
+    RS_STACK_MUTEX(mNxsMutex) ;
+#warning We should use some central way to do that. This might be very costly if done often.
+
+    RsGxsGrpMetaTemporaryMap grpMeta;
+    std::map<RsGxsGroupId,RsGxsGroupSummary>& search_results_map(mDistantSearchResults[req]) ;
+
+    for(auto it(group_infos.begin());it!=group_infos.end();++it)
+        if(search_results_map.find((*it).group_id) == search_results_map.end())
+			grpMeta[(*it).group_id] = NULL;
+
+    mDataStore->retrieveGxsGrpMetaData(grpMeta);
+
+	std::list<RsGxsGroupSummary> filtered_results ;
+
+	// only keep groups that are not locally known, and groups that are not already in the mDistantSearchResults structure
+
+    for(auto it(group_infos.begin());it!=group_infos.end();++it)
+        if(grpMeta[(*it).group_id] == NULL)
+        {
+			filtered_results.push_back(*it) ;
+            search_results_map[(*it).group_id] = *it;
+			mObserver->receiveDistantSearchResults(req,(*it).group_id) ;
+        }
+}
 
 bool RsGxsNetService::search(const std::string& substring,std::list<RsGxsGroupSummary>& group_infos)
 {
+    RS_STACK_MUTEX(mNxsMutex) ;
 	RsGxsGrpMetaTemporaryMap grpMetaMap;
     mDataStore->retrieveGxsGrpMetaData(grpMetaMap);
 
@@ -5147,4 +5174,23 @@ bool RsGxsNetService::search(const std::string& substring,std::list<RsGxsGroupSu
 	GXSNETDEBUG___ << "  performing local substring search in response to distant request. Found " << group_infos.size() << " responses." << std::endl;
 #endif
     return !group_infos.empty();
+}
+
+bool RsGxsNetService::getDistantSearchResults(const TurtleRequestId& id,std::list<RsGxsGroupSummary>& group_infos)
+{
+    RS_STACK_MUTEX(mNxsMutex) ;
+	auto it = mDistantSearchResults.find(id) ;
+
+	if(it == mDistantSearchResults.end())
+		return false ;
+
+    for(auto it2(it->second.begin());it2!=it->second.end();++it2)
+		group_infos.push_back(it2->second);
+    return true;
+}
+bool RsGxsNetService::clearDistantSearchResults(const TurtleRequestId& id)
+{
+    RS_STACK_MUTEX(mNxsMutex) ;
+    mDistantSearchResults.erase(id);
+    return true ;
 }

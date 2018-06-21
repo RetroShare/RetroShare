@@ -1122,7 +1122,7 @@ void GxsGroupFrameDialog::loadRequest(const TokenQueue *queue, const TokenReques
 
 TurtleRequestId GxsGroupFrameDialog::distantSearch(const QString& search_string)   // this should be overloaded in the child class
 {
-    std::cerr << "Searching for \"" << search_string.toStdString() << "\". Function is not implemented yet." << std::endl;
+    std::cerr << "Searching for \"" << search_string.toStdString() << "\". Function is not overloaded, so nothing will happen." << std::endl;
     return 0;
 }
 

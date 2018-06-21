@@ -1066,15 +1066,26 @@ void RsGxsNetTunnelService::receiveSearchResult(TurtleSearchRequestId request_id
 
     RsGxsNetTunnelTurtleSearchGroupSummaryItem *result_gs = dynamic_cast<RsGxsNetTunnelTurtleSearchGroupSummaryItem *>(item) ;
 
-    if(result_gs != NULL)
+    if(result_gs == NULL)
     {
-		GXS_NET_TUNNEL_DEBUG() << "  : result is of type group summary result for service " << result_gs->service << std::dec << ": " << std::endl;
-
-        for(auto it(result_gs->group_infos.begin());it!=result_gs->group_infos.end();++it)
-            std::cerr << "   group " << (*it).group_id << ": " << (*it).group_name << ", " << (*it).number_of_messages << " messages, last is " << time(NULL)-(*it).last_message_ts << " secs ago." << std::endl;
-
-#warning MISSING CODE HERE - data should be passed up to UI in some way
+        GXS_NET_TUNNEL_ERROR() << ": deserialized item is not a GroupSummary Item. Smething's wrong here." << std::endl;
+        return ;
     }
+
+	GXS_NET_TUNNEL_DEBUG() << "  : result is of type group summary result for service " << result_gs->service << std::dec << ": " << std::endl;
+
+	for(auto it(result_gs->group_infos.begin());it!=result_gs->group_infos.end();++it)
+		std::cerr << "   group " << (*it).group_id << ": " << (*it).group_name << ", " << (*it).number_of_messages << " messages, last is " << time(NULL)-(*it).last_message_ts << " secs ago." << std::endl;
+
+    auto it = mSearchableServices.find(result_gs->service) ;
+
+    if(it == mSearchableServices.end())
+    {
+        GXS_NET_TUNNEL_ERROR() << ": deserialized item is for service " << std::hex << result_gs->service << std::dec << " that is in the searchable services list." << std::endl;
+        return ;
+    }
+
+    it->second->receiveTurtleSearchResults(request_id,result_gs->group_infos) ;
 }
 
 

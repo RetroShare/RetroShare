@@ -29,6 +29,7 @@
 #include <set>
 #include "rsitems/rsnxsitems.h"
 
+typedef uint32_t TurtleRequestId ;
 
 class RsNxsObserver
 {
@@ -42,12 +43,22 @@ public:
     /*!
      * @param messages messages are deleted after function returns
      */
-    virtual void notifyNewMessages(std::vector<RsNxsMsg*>& messages) = 0;
+    virtual void receiveNewMessages(std::vector<RsNxsMsg*>& messages) = 0;
 
     /*!
      * @param groups groups are deleted after function returns
      */
-    virtual void notifyNewGroups(std::vector<RsNxsGrp*>& groups) = 0;
+    virtual void receiveNewGroups(std::vector<RsNxsGrp*>& groups) = 0;
+
+    /*!
+     * \brief receiveDistantSearchResults
+     * 				Called when new distant search result arrive.
+     * \param grpId
+     */
+    virtual void receiveDistantSearchResults(TurtleRequestId& /*id*/,const RsGxsGroupId& /*grpId*/)
+    {
+        std::cerr << __PRETTY_FUNCTION__ << ": not overloaded but still called. Nothing will happen." << std::endl;
+    }
 
     /*!
      * @param grpId group id

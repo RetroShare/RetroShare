@@ -295,6 +295,7 @@ void p3GxsChannels::notifyChanges(std::vector<RsGxsNotify *> &changes)
 				{
 					switch (grpChange->getType())
 					{
+                    default:
 						case RsGxsNotify::TYPE_PROCESSED:
 						case RsGxsNotify::TYPE_PUBLISHED:
 							break;

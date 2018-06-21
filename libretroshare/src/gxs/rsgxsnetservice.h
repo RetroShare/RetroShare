@@ -131,6 +131,7 @@ public:
     virtual TurtleRequestId turtleSearchRequest(const std::string& match_string);
 
     virtual bool search(const std::string& substring,std::list<RsGxsGroupSummary>& group_infos) ;
+	virtual void receiveTurtleSearchResults(TurtleRequestId req,const std::list<RsGxsGroupSummary>& group_infos);
 
     /*!
      * pauses synchronisation of subscribed groups and request for group id
@@ -168,6 +169,16 @@ public:
      * that is the max nnumber of messages reported by a friend.
      */
     virtual bool getGroupNetworkStats(const RsGxsGroupId& id,RsGroupNetworkStats& stats) ;
+
+    /*!
+     * \brief getDistantSearchResults
+     * \param id             Id of the search request previously issued
+     * \param group_infos    Groups currently known for this search request.
+     * \return
+     * 			false if the id does not correspond to an ongoing distant search request.
+     */
+    virtual bool getDistantSearchResults(const TurtleRequestId& id,std::list<RsGxsGroupSummary>& group_infos) ;
+    virtual bool clearDistantSearchResults(const TurtleRequestId& id);
 
     /*!
      * Used to inform the net service that we changed subscription status. That helps
@@ -597,6 +608,9 @@ private:
     std::vector<RsNxsMsg*> mNewMessagesToNotify ;
     std::set<RsGxsGroupId> mNewStatsToNotify ;
     std::set<RsGxsGroupId> mNewPublishKeysToNotify ;
+
+    // Distant search result map
+    std::map<TurtleRequestId,std::map<RsGxsGroupId,RsGxsGroupSummary> > mDistantSearchResults ;
 
     void debugDump();
 

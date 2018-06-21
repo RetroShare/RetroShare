@@ -1571,7 +1571,7 @@ bool RsGenExchange::setAuthenPolicyFlag(const uint8_t &msgFlag, uint32_t& authen
     return true;
 }
 
-void RsGenExchange::notifyNewGroups(std::vector<RsNxsGrp *> &groups)
+void RsGenExchange::receiveNewGroups(std::vector<RsNxsGrp *> &groups)
 {
 	RS_STACK_MUTEX(mGenMtx) ;
 
@@ -1603,7 +1603,7 @@ void RsGenExchange::notifyNewGroups(std::vector<RsNxsGrp *> &groups)
 }
 
 
-void RsGenExchange::notifyNewMessages(std::vector<RsNxsMsg *>& messages)
+void RsGenExchange::receiveNewMessages(std::vector<RsNxsMsg *>& messages)
 {
 	RS_STACK_MUTEX(mGenMtx) ;
 
@@ -1639,6 +1639,13 @@ void RsGenExchange::notifyNewMessages(std::vector<RsNxsMsg *>& messages)
 	}
 }
 
+void RsGenExchange::receiveDistantSearchResults(TurtleRequestId id,const RsGxsGroupId &grpId)
+{
+	RS_STACK_MUTEX(mGenMtx);
+
+	RsGxsDistantSearchResultChange* gc = new RsGxsDistantSearchResultChange(id,grpId);
+	mNotifications.push_back(gc);
+}
 void RsGenExchange::notifyReceivePublishKey(const RsGxsGroupId &grpId)
 {
 	RS_STACK_MUTEX(mGenMtx);
@@ -1831,6 +1838,15 @@ uint32_t RsGenExchange::getSyncPeriod(const RsGxsGroupId& grpId)
         return mNetService->getSyncAge(grpId);
     else
         return RS_GXS_DEFAULT_MSG_REQ_PERIOD;
+}
+
+bool RsGenExchange::getDistantSearchResults(const TurtleRequestId& id,std::list<RsGxsGroupSummary>& group_infos)
+{
+	return (mNetService!=NULL) && mNetService->getDistantSearchResults(id,group_infos) ;
+}
+bool RsGenExchange::clearDistantSearchResults(const TurtleRequestId& id)
+{
+	return (mNetService!=NULL) && mNetService->clearDistantSearchResults(id) ;
 }
 
 bool     RsGenExchange::getGroupNetworkStats(const RsGxsGroupId& grpId,RsGroupNetworkStats& stats)

@@ -839,7 +839,7 @@ bool p3GxsTrans::dispatchDecryptedMail( const RsGxsId& authorId,
 #endif
 
 	std::vector<RsNxsMsg*> rcct; rcct.push_back(receipt);
-	RsGenExchange::notifyNewMessages(rcct);
+	RsGenExchange::receiveNewMessages(rcct);
 
 	GxsTransClient* recipientService = NULL;
 	{

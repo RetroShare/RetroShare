@@ -132,18 +132,24 @@ public:
     /*!
      * @param messages messages are deleted after function returns
      */
-    virtual void notifyNewMessages(std::vector<RsNxsMsg*>& messages);
+    virtual void receiveNewMessages(std::vector<RsNxsMsg*>& messages);
 
     /*!
      * @param groups groups are deleted after function returns
      */
-    virtual void notifyNewGroups(std::vector<RsNxsGrp*>& groups);
+    virtual void receiveNewGroups(std::vector<RsNxsGrp*>& groups);
 
     /*!
      * @param grpId group id
      */
     virtual void notifyReceivePublishKey(const RsGxsGroupId &grpId);
 
+    /*!
+     * \brief notifyReceiveDistantSearchResults
+     * 				Should be called when new search results arrive.
+     * \param grpId
+     */
+	virtual void receiveDistantSearchResults(TurtleRequestId id,const RsGxsGroupId &grpId);
     /*!
      * @param grpId group id
      */
@@ -681,6 +687,9 @@ public:
     virtual uint32_t getSyncPeriod(const RsGxsGroupId& grpId) ;
     virtual void     setSyncPeriod(const RsGxsGroupId& grpId,uint32_t age_in_secs) ;
 	virtual bool     getGroupNetworkStats(const RsGxsGroupId& grpId,RsGroupNetworkStats& stats);
+
+    virtual bool getDistantSearchResults(const TurtleRequestId& id,std::list<RsGxsGroupSummary>& group_infos) ;
+    virtual bool clearDistantSearchResults(const TurtleRequestId& id);
 
     uint16_t serviceType() const { return mServType ; }
     uint32_t serviceFullType() const { return ((uint32_t)mServType << 8) + (((uint32_t) RS_PKT_VERSION_SERVICE) << 24); }
