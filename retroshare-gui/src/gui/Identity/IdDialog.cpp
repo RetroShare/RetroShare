@@ -2125,7 +2125,7 @@ void IdDialog::updateDisplay(bool complete)
 	if (complete) {
 		/* Fill complete */
 		requestIdList();
-		requestIdDetails();
+		//requestIdDetails();
 		requestRepList();
 
 		return;
