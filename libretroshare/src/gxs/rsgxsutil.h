@@ -208,7 +208,7 @@ public:
 
 	void run();
 
-	void getDeletedIds(std::list<RsGxsGroupId>& grpIds, std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >& msgIds);
+	void getDeletedIds(std::list<RsGxsGroupId>& grpIds, std::map<RsGxsGroupId, std::set<RsGxsMessageId> > &msgIds);
 
 private:
 
@@ -217,7 +217,7 @@ private:
 	bool mDone;
 	RsMutex mIntegrityMutex;
 	std::list<RsGxsGroupId> mDeletedGrps;
-	std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > mDeletedMsgs;
+	std::map<RsGxsGroupId, std::set<RsGxsMessageId> > mDeletedMsgs;
     
     	RsGixs *mGixs ;
 };

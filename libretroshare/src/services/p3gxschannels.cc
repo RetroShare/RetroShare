@@ -241,16 +241,12 @@ void p3GxsChannels::notifyChanges(std::vector<RsGxsNotify *> &changes)
 				/* message received */
 				if (notify)
 				{
-					std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > &msgChangeMap = msgChange->msgChangeMap;
-					std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >::iterator mit;
-					for (mit = msgChangeMap.begin(); mit != msgChangeMap.end(); ++mit)
-					{
-						std::vector<RsGxsMessageId>::iterator mit1;
-						for (mit1 = mit->second.begin(); mit1 != mit->second.end(); ++mit1)
+					std::map<RsGxsGroupId, std::set<RsGxsMessageId> > &msgChangeMap = msgChange->msgChangeMap;
+					for (auto mit = msgChangeMap.begin(); mit != msgChangeMap.end(); ++mit)
+						for (auto mit1 = mit->second.begin(); mit1 != mit->second.end(); ++mit1)
 						{
 							notify->AddFeedItem(RS_FEED_ITEM_CHANNEL_MSG, mit->first.toStdString(), mit1->toStdString());
 						}
-					}
 				}
 			}
 
@@ -261,9 +257,8 @@ void p3GxsChannels::notifyChanges(std::vector<RsGxsNotify *> &changes)
 				std::cerr << std::endl;
 #endif
 
-				std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > &msgChangeMap = msgChange->msgChangeMap;
-				std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >::iterator mit;
-				for(mit = msgChangeMap.begin(); mit != msgChangeMap.end(); ++mit)
+				std::map<RsGxsGroupId, std::set<RsGxsMessageId> > &msgChangeMap = msgChange->msgChangeMap;
+				for(auto mit = msgChangeMap.begin(); mit != msgChangeMap.end(); ++mit)
 				{
 #ifdef GXSCHANNELS_DEBUG
 					std::cerr << "p3GxsChannels::notifyChanges() Msgs for Group: " << mit->first;
@@ -807,10 +802,7 @@ void p3GxsChannels::request_SpecificUnprocessedPosts(std::list<std::pair<RsGxsGr
 	GxsMsgReq msgIds;
 	std::list<std::pair<RsGxsGroupId, RsGxsMessageId> >::iterator it;
 	for(it = ids.begin(); it != ids.end(); ++it)
-	{
-		std::vector<RsGxsMessageId> &vect_msgIds = msgIds[it->first];
-		vect_msgIds.push_back(it->second);
-	}
+		msgIds[it->first].insert(it->second);
 
 	RsGenExchange::getTokenService()->requestMsgInfo(token, ansType, opts, msgIds);
 	GxsTokenQueue::queueRequest(token, GXSCHANNELS_UNPROCESSED_SPECIFIC);

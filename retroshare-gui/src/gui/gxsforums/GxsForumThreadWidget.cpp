@@ -404,25 +404,25 @@ void GxsForumThreadWidget::changeEvent(QEvent *e)
 	}
 }
 
-static void removeMessages(std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > &msgIds, QList<RsGxsMessageId> &removeMsgId)
+static void removeMessages(std::map<RsGxsGroupId, std::set<RsGxsMessageId> > &msgIds, QList<RsGxsMessageId> &removeMsgId)
 {
 	QList<RsGxsMessageId> removedMsgId;
 
-	std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >::iterator grpIt;
-	for (grpIt = msgIds.begin(); grpIt != msgIds.end(); ) {
-		std::vector<RsGxsMessageId> &msgs = grpIt->second;
+	for (auto grpIt = msgIds.begin(); grpIt != msgIds.end(); )
+    {
+		std::set<RsGxsMessageId> &msgs = grpIt->second;
 
 		QList<RsGxsMessageId>::const_iterator removeMsgIt;
 		for (removeMsgIt = removeMsgId.begin(); removeMsgIt != removeMsgId.end(); ++removeMsgIt) {
-			std::vector<RsGxsMessageId>::iterator msgIt = std::find(msgs.begin(), msgs.end(), *removeMsgIt);
-			if (msgIt != msgs.end()) {
+			if(msgs.find(*removeMsgIt) != msgs.end())
+            {
 				removedMsgId.push_back(*removeMsgIt);
-				msgs.erase(msgIt);
+				msgs.erase(*removeMsgIt);
 			}
 		}
 
 		if (msgs.empty()) {
-			std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >::iterator grpItErase = grpIt++;
+			std::map<RsGxsGroupId, std::set<RsGxsMessageId> >::iterator grpItErase = grpIt++;
 			msgIds.erase(grpItErase);
 		} else {
 			++grpIt;
@@ -452,18 +452,18 @@ void GxsForumThreadWidget::updateDisplay(bool complete)
 	}
 
 	bool updateGroup = false;
-	const std::list<RsGxsGroupId> &grpIdsMeta = getGrpIdsMeta();
-	if (std::find(grpIdsMeta.begin(), grpIdsMeta.end(), groupId()) != grpIdsMeta.end()) {
-		updateGroup = true;
-	}
+	const std::set<RsGxsGroupId> &grpIdsMeta = getGrpIdsMeta();
 
-	const std::list<RsGxsGroupId> &grpIds = getGrpIds();
-	if (std::find(grpIds.begin(), grpIds.end(), groupId()) != grpIds.end()) {
+    if(grpIdsMeta.find(groupId())!=grpIdsMeta.end())
+		updateGroup = true;
+
+	const std::set<RsGxsGroupId> &grpIds = getGrpIds();
+    if (grpIds.find(groupId())!=grpIds.end()){
 		updateGroup = true;
 		/* Update threads */
 		insertThreads();
 	} else {
-		std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > msgIds;
+		std::map<RsGxsGroupId, std::set<RsGxsMessageId> > msgIds;
 		getAllMsgIds(msgIds);
 
 		if (!mIgnoredMsgId.empty()) {
@@ -2111,8 +2111,8 @@ void GxsForumThreadWidget::flagperson()
 #endif
 
 	GxsMsgReq msgIds;
-	std::vector<RsGxsMessageId> &vect = msgIds[postId.first];
-	vect.push_back(postId.second);
+	std::set<RsGxsMessageId> &vect = msgIds[postId.first];
+	vect.insert(postId.second);
 
 	uint32_t token;
 	mTokenQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, token_type);
@@ -2413,8 +2413,8 @@ void GxsForumThreadWidget::requestMessageData(const RsGxsGrpMsgIdPair &msgId)
 #endif
 
 	GxsMsgReq msgIds;
-	std::vector<RsGxsMessageId> &vect = msgIds[msgId.first];
-	vect.push_back(msgId.second);
+	std::set<RsGxsMessageId> &vect = msgIds[msgId.first];
+	vect.insert(msgId.second);
 
 	uint32_t token;
 	mTokenQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, mTokenTypeMessageData);
@@ -2464,8 +2464,8 @@ void GxsForumThreadWidget::requestMsgData_ReplyWithPrivateMessage(const RsGxsGrp
 #endif
 
 	GxsMsgReq msgIds;
-	std::vector<RsGxsMessageId> &vect = msgIds[msgId.first];
-	vect.push_back(msgId.second);
+	std::set<RsGxsMessageId> &vect = msgIds[msgId.first];
+	vect.insert(msgId.second);
 
 	uint32_t token;
 	mTokenQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, mTokenTypeReplyMessage);
@@ -2482,8 +2482,8 @@ void GxsForumThreadWidget::requestMsgData_ShowAuthorInPeople(const RsGxsGrpMsgId
 #endif
 
 	GxsMsgReq msgIds;
-	std::vector<RsGxsMessageId> &vect = msgIds[msgId.first];
-	vect.push_back(msgId.second);
+	std::set<RsGxsMessageId> &vect = msgIds[msgId.first];
+	vect.insert(msgId.second);
 
 	uint32_t token;
 	mTokenQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, mTokenTypeShowAuthorInPeople);
@@ -2499,8 +2499,8 @@ void GxsForumThreadWidget::requestMsgData_EditForumMessage(const RsGxsGrpMsgIdPa
 #endif
 
 	GxsMsgReq msgIds;
-	std::vector<RsGxsMessageId> &vect = msgIds[msgId.first];
-	vect.push_back(msgId.second);
+	std::set<RsGxsMessageId> &vect = msgIds[msgId.first];
+	vect.insert(msgId.second);
 
 	uint32_t token;
 	mTokenQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, mTokenTypeEditForumMessage);
@@ -2516,8 +2516,8 @@ void GxsForumThreadWidget::requestMsgData_ReplyForumMessage(const RsGxsGrpMsgIdP
 #endif
 
 	GxsMsgReq msgIds;
-	std::vector<RsGxsMessageId> &vect = msgIds[msgId.first];
-	vect.push_back(msgId.second);
+	std::set<RsGxsMessageId> &vect = msgIds[msgId.first];
+	vect.insert(msgId.second);
 
 	uint32_t token;
 	mTokenQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, mTokenTypeReplyForumMessage);

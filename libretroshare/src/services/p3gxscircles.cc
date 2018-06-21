@@ -212,14 +212,14 @@ void p3GxsCircles::notifyChanges(std::vector<RsGxsNotify *> &changes)
 #ifdef DEBUG_CIRCLES
 			std::cerr << "  Found circle Message Change Notification" << std::endl;
 #endif
-			for(std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >::iterator mit = msgChange->msgChangeMap.begin(); mit != msgChange->msgChangeMap.end(); ++mit)
+			for(auto mit = msgChange->msgChangeMap.begin(); mit != msgChange->msgChangeMap.end(); ++mit)
 			{
 #ifdef DEBUG_CIRCLES
 				std::cerr << "    Msgs for Group: " << mit->first << std::endl;
 #endif
 				force_cache_reload(RsGxsCircleId(mit->first));
 				if (notify && (c->getType() == RsGxsNotify::TYPE_RECEIVE) )
-					for (std::vector<RsGxsMessageId>::const_iterator msgIdIt(mit->second.begin()), end(mit->second.end()); msgIdIt != end; ++msgIdIt)
+					for (auto msgIdIt(mit->second.begin()), end(mit->second.end()); msgIdIt != end; ++msgIdIt)
 					{
 						const RsGxsMessageId& msgId = *msgIdIt;
 						notify->AddFeedItem(RS_FEED_ITEM_CIRCLE_MEMB_REQ,RsGxsCircleId(mit->first).toStdString(),msgId.toStdString());
@@ -2120,7 +2120,7 @@ bool p3GxsCircles::processMembershipRequests(uint32_t token)
 #ifdef DEBUG_CIRCLES
                     std::cerr << " Older than last known (" << time(NULL)-info.last_subscription_TS << " seconds ago): deleting." << std::endl;
 #endif
-                    messages_to_delete[RsGxsGroupId(cid)].push_back(it->second[i]->meta.mMsgId) ;
+                    messages_to_delete[RsGxsGroupId(cid)].insert(it->second[i]->meta.mMsgId) ;
                 }
             }
             

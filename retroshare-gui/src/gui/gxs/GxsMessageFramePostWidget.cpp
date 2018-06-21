@@ -109,21 +109,22 @@ void GxsMessageFramePostWidget::updateDisplay(bool complete)
 	}
 
 	bool updateGroup = false;
-	const std::list<RsGxsGroupId> &grpIdsMeta = getGrpIdsMeta();
-	if (std::find(grpIdsMeta.begin(), grpIdsMeta.end(), groupId()) != grpIdsMeta.end()) {
-		updateGroup = true;
-	}
+	const std::set<RsGxsGroupId> &grpIdsMeta = getGrpIdsMeta();
 
-	const std::list<RsGxsGroupId> &grpIds = getGrpIds();
-	if (!groupId().isNull() && std::find(grpIds.begin(), grpIds.end(), groupId()) != grpIds.end()) {
+    if(grpIdsMeta.find(groupId())!=grpIdsMeta.end())
+		updateGroup = true;
+
+	const std::set<RsGxsGroupId> &grpIds = getGrpIds();
+	if (!groupId().isNull() && grpIds.find(groupId())!=grpIds.end())
+    {
 		updateGroup = true;
 		/* Do we need to fill all posts? */
 		requestAllPosts();
 	} else {
-		std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > msgs;
+		std::map<RsGxsGroupId, std::set<RsGxsMessageId> > msgs;
 		getAllMsgIds(msgs);
 		if (!msgs.empty()) {
-			std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >::const_iterator mit = msgs.find(groupId());
+			auto mit = msgs.find(groupId());
 			if (mit != msgs.end()) {
 				requestPosts(mit->second);
 			}
@@ -341,7 +342,7 @@ void GxsMessageFramePostWidget::loadAllPosts(const uint32_t &token)
 	emit groupChanged(this);
 }
 
-void GxsMessageFramePostWidget::requestPosts(const std::vector<RsGxsMessageId> &msgIds)
+void GxsMessageFramePostWidget::requestPosts(const std::set<RsGxsMessageId> &msgIds)
 {
 #ifdef ENABLE_DEBUG
 	std::cerr << "GxsMessageFramePostWidget::requestPosts()";

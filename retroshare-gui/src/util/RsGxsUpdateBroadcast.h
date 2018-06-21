@@ -19,7 +19,7 @@ public:
 
 signals:
 	void changed();
-	void msgsChanged(const std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >& msgIds, const std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >& msgIdsMeta);
+	void msgsChanged(const std::map<RsGxsGroupId, std::set<RsGxsMessageId> >& msgIds, const std::map<RsGxsGroupId, std::set<RsGxsMessageId> >& msgIdsMeta);
 	void grpsChanged(const std::list<RsGxsGroupId>& grpIds, const std::list<RsGxsGroupId>& grpIdsMeta);
 
 private slots:
