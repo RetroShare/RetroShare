@@ -72,7 +72,7 @@ protected:
 	void loadAllPosts(const uint32_t &token);
 	virtual void insertAllPosts(const uint32_t &token, GxsMessageFramePostThread *thread) = 0;
 
-	void requestPosts(const std::vector<RsGxsMessageId> &msgIds);
+	void requestPosts(const std::set<RsGxsMessageId> &msgIds);
 	void loadPosts(const uint32_t &token);
 	virtual void insertPosts(const uint32_t &token) = 0;
 

@@ -170,12 +170,11 @@ void GxsGroupFeedItem::fillDisplaySlot(bool complete)
 
 void GxsGroupFeedItem::fillDisplay(RsGxsUpdateBroadcastBase *updateBroadcastBase, bool /*complete*/)
 {
-	std::list<RsGxsGroupId> grpIds;
+	std::set<RsGxsGroupId> grpIds;
 	updateBroadcastBase->getAllGrpIds(grpIds);
 
-	if (std::find(grpIds.begin(), grpIds.end(), groupId()) != grpIds.end()) {
+	if (grpIds.find(groupId()) != grpIds.end())
 		requestGroup();
-	}
 }
 
 /***********************************************************/

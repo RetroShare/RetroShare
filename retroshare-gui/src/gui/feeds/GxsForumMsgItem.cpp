@@ -438,8 +438,8 @@ void GxsForumMsgItem::requestParentMessage(const RsGxsMessageId &msgId)
 	opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
 
 	GxsMsgReq msgIds;
-	std::vector<RsGxsMessageId> &vect_msgIds = msgIds[groupId()];
-	vect_msgIds.push_back(msgId);
+	std::set<RsGxsMessageId> &vect_msgIds = msgIds[groupId()];
+	vect_msgIds.insert(msgId);
 
 	uint32_t token;
 	mLoadQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, mTokenTypeParentMessage);

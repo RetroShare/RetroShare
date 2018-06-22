@@ -2125,19 +2125,19 @@ void IdDialog::updateDisplay(bool complete)
 	if (complete) {
 		/* Fill complete */
 		requestIdList();
-		requestIdDetails();
+		//requestIdDetails();
 		requestRepList();
 
 		return;
 	}
 	requestCircleGroupMeta();
 
-	std::list<RsGxsGroupId> grpIds;
+	std::set<RsGxsGroupId> grpIds;
 	getAllGrpIds(grpIds);
 	if (!getGrpIds().empty()) {
 		requestIdList();
 
-		if (!mId.isNull() && std::find(grpIds.begin(), grpIds.end(), mId) != grpIds.end()) {
+        if (!mId.isNull() && grpIds.find(mId)!=grpIds.end()) {
 			requestIdDetails();
 			requestRepList();
 		}
