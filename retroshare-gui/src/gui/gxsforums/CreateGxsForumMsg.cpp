@@ -185,8 +185,8 @@ void  CreateGxsForumMsg::newMsg()
 		opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
 
 		GxsMsgReq msgIds;
-		std::vector<RsGxsMessageId> &vect = msgIds[mForumId];
-		vect.push_back(mParentId);
+		std::set<RsGxsMessageId> &vect = msgIds[mForumId];
+		vect.insert(mParentId);
 
 		//std::cerr << "ForumsV2Dialog::newMsg() Requesting Parent Summary(" << mParentId << ")";
 		//std::cerr << std::endl;
@@ -205,8 +205,8 @@ void  CreateGxsForumMsg::newMsg()
 		opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
 
 		GxsMsgReq msgIds;
-		std::vector<RsGxsMessageId> &vect = msgIds[mForumId];
-		vect.push_back(mOrigMsgId);
+		std::set<RsGxsMessageId> &vect = msgIds[mForumId];
+		vect.insert(mOrigMsgId);
 
 		//std::cerr << "ForumsV2Dialog::newMsg() Requesting Parent Summary(" << mParentId << ")";
 		//std::cerr << std::endl;

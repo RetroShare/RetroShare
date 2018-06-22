@@ -1358,11 +1358,11 @@ int RsServer::StartupRetroShare()
 
         p3Wiki *mWiki = new p3Wiki(wiki_ds, NULL, mGxsIdService);
         // create GXS wiki service
-        RsGxsNetService* wiki_ns = new RsGxsNetService(
-                        RS_SERVICE_GXS_TYPE_WIKI, wiki_ds, nxsMgr, 
-			mWiki, mWiki->getServiceInfo(), 
-			mGxsIdService, mGxsCircles,
-			pgpAuxUtils);
+		RsGxsNetService* wiki_ns = new RsGxsNetService(
+		            RS_SERVICE_GXS_TYPE_WIKI, wiki_ds, nxsMgr,
+		            mWiki, mWiki->getServiceInfo(),
+		            mReputations, mGxsCircles, mGxsIdService,
+		            pgpAuxUtils);
 
     mWiki->setNetworkExchangeService(wiki_ns) ;
 #endif

@@ -22,14 +22,16 @@
 #include "TransferPage.h"
 
 #include "rshare.h"
+#include "gui/ShareManager.h"
+#include "util/misc.h"
+
+#include "retroshare/rsiface.h"
+#include "retroshare/rsfiles.h"
+#include "retroshare/rspeers.h"
+
+#include <QToolTip>
 
 #include <iostream>
-
-#include <util/misc.h>
-#include <gui/ShareManager.h>
-#include <retroshare/rsiface.h>
-#include <retroshare/rsfiles.h>
-#include <retroshare/rspeers.h>
 
 TransferPage::TransferPage(QWidget * parent, Qt::WindowFlags flags)
     : ConfigPage(parent, flags)
@@ -225,11 +227,23 @@ void TransferPage::setIncomingDirectory()
 		return;
 	}
 
-	ui.incomingDir->setText(qdir);
-	std::string dir = ui.incomingDir->text().toUtf8().constData();
-
-    if(!dir.empty())
-		rsFiles->setDownloadDirectory(dir);
+	std::string dir = qdir.toUtf8().constData();
+	if(!dir.empty())
+	{
+		if (!rsFiles->setDownloadDirectory(dir))
+		{
+			ui.incomingDir->setToolTip( tr("Invalid Input. Have you got the right to write on it?") );
+			ui.incomingDir->setProperty("WrongValue", true);
+		}
+		else
+		{
+			ui.incomingDir->setToolTip( "" );
+			ui.incomingDir->setProperty("WrongValue", false);
+		}
+	}
+	ui.incomingDir->style()->unpolish(ui.incomingDir);
+	ui.incomingDir->style()->polish(  ui.incomingDir);
+	whileBlocking(ui.incomingDir)->setText(QString::fromUtf8(rsFiles->getDownloadDirectory().c_str()));
 }
 
 void TransferPage::setPartialsDirectory()
@@ -239,11 +253,25 @@ void TransferPage::setPartialsDirectory()
 		return;
 	}
 
-	ui.partialsDir->setText(qdir);
-    std::string	dir = ui.partialsDir->text().toUtf8().constData();
+	std::string	dir = qdir.toUtf8().constData();
 	if (!dir.empty())
-		rsFiles->setPartialsDirectory(dir);
+	{
+		if (!rsFiles->setPartialsDirectory(dir))
+		{
+			ui.partialsDir->setToolTip( tr("Invalid Input. It can't be an already shared directory.") );
+			ui.partialsDir->setProperty("WrongValue", true);
+		}
+		else
+		{
+			ui.partialsDir->setToolTip( "" );
+			ui.partialsDir->setProperty("WrongValue", false);
+		}
+	}
+	ui.partialsDir->style()->unpolish(ui.partialsDir);
+	ui.partialsDir->style()->polish(  ui.partialsDir);
+	whileBlocking(ui.partialsDir)->setText(QString::fromUtf8(rsFiles->getPartialsDirectory().c_str()));
 }
+
 void TransferPage::toggleAutoCheckDirectories(bool b)
 {
 	ui.autoCheckDirectoriesDelay_SB->setEnabled(b);

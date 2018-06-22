@@ -127,3 +127,7 @@ void RsTurtleGxsSearchResultGroupDataItem::serial_process(RsGenericSerializer::S
     RsTypeSerializer::TlvMemBlock_proxy prox(encrypted_nxs_group_data,encrypted_nxs_group_data_len) ;
     RsTypeSerializer::serial_process(j,ctx,prox,"encrypted_nxs_data") ;
 }
+
+RS_TYPE_SERIALIZER_FROM_JSON_NOT_IMPLEMENTED_DEF(TurtleGxsInfo)
+RS_TYPE_SERIALIZER_TO_JSON_NOT_IMPLEMENTED_DEF(TurtleGxsInfo)
+

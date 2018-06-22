@@ -73,9 +73,9 @@ class ftFileControl
 		};
 
 		ftFileControl();
-		ftFileControl(std::string fname, std::string tmppath, std::string dest,
-                            uint64_t size, const RsFileHash& hash, TransferRequestFlags flags,
-							ftFileCreator *fc, ftTransferModule *tm);
+		ftFileControl( const std::string& fname, const std::string& tmppath, const std::string& dest
+		             , uint64_t size, const RsFileHash& hash, TransferRequestFlags flags
+		             , ftFileCreator *fc, ftTransferModule *tm);
 
 		std::string	   mName;
 		std::string	   mCurrentPath; /* current full path (including name) */
@@ -175,8 +175,8 @@ class ftController: public RsTickingThread, public pqiServiceMonitor, public p3C
         void FileDownloads(std::list<RsFileHash> &hashs);
 
 		/* Directory Handling */
-        bool 	setDownloadDirectory(std::string path);
-		bool 	setPartialsDirectory(std::string path);
+		bool setDownloadDirectory(std::string path);
+		bool setPartialsDirectory(std::string path);
 		std::string getDownloadDirectory();
 		std::string getPartialsDirectory();
         bool 	FileDetails(const RsFileHash &hash, FileInfo &info);

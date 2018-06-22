@@ -50,15 +50,16 @@ void RsGxsUpdateBroadcast::onChangesReceived(const RsGxsChanges& changes)
     
      {
         std::cerr << "Received changes for service " << (void*)changes.mService << ",  expecting service " << (void*)mIfaceImpl->getTokenService() << std::endl;
-        std::cerr << "    changes content: " << std::endl;
-        for(std::list<RsGxsGroupId>::const_iterator it(changes.mGrps.begin());it!=changes.mGrps.end();++it) std::cerr << "    grp id: " << *it << std::endl;
-        for(std::list<RsGxsGroupId>::const_iterator it(changes.mGrpsMeta.begin());it!=changes.mGrpsMeta.end();++it) std::cerr << "    grp meta: " << *it << std::endl;
+        for(std::list<RsGxsGroupId>::const_iterator it(changes.mGrps.begin());it!=changes.mGrps.end();++it)
+            std::cerr << "[GRP CHANGE]    grp id: " << *it << std::endl;
+        for(std::list<RsGxsGroupId>::const_iterator it(changes.mGrpsMeta.begin());it!=changes.mGrpsMeta.end();++it)
+            std::cerr << "[GRP CHANGE]    grp meta: " << *it << std::endl;
         for(std::map<RsGxsGroupId,std::vector<RsGxsMessageId> >::const_iterator it(changes.mMsgs.begin());it!=changes.mMsgs.end();++it) 
             for(uint32_t i=0;i<it->second.size();++i)
-                std::cerr << "    grp id: " << it->first << ". Msg ID " << it->second[i] << std::endl;
+                std::cerr << "[MSG CHANGE]    grp id: " << it->first << ". Msg ID " << it->second[i] << std::endl;
         for(std::map<RsGxsGroupId,std::vector<RsGxsMessageId> >::const_iterator it(changes.mMsgsMeta.begin());it!=changes.mMsgsMeta.end();++it) 
             for(uint32_t i=0;i<it->second.size();++i)
-                std::cerr << "    grp id: " << it->first << ". Msg Meta " << it->second[i] << std::endl;
+                std::cerr << "[MSG CHANGE]    grp id: " << it->first << ". Msg Meta " << it->second[i] << std::endl;
     }
 #endif
     if(changes.mService != mIfaceImpl->getTokenService())

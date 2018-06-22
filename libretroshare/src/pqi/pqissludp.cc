@@ -227,6 +227,15 @@ int pqissludp::Initiate_Connection()
 		return -1;
 	}
 
+	if(!sockaddr_storage_ipv6_to_ipv4(remote_addr))
+	{
+		std::cerr << __PRETTY_FUNCTION__ << "Error: remote_addr is not "
+		          << "valid IPv4!" << std::endl;
+		sockaddr_storage_dump(remote_addr);
+		print_stacktrace();
+		return -EINVAL;
+	}
+
 	mTimeoutTS = time(NULL) + mConnectTimeout;
 	//std::cerr << "Setting Connect Timeout " << mConnectTimeout << " Seconds into Future " << std::endl;
 	//std::cerr << " Connect Period is:" << mConnectPeriod <<  std::endl;
@@ -250,22 +259,28 @@ int pqissludp::Initiate_Connection()
 
 		
 		{
-			std::cerr << "CONVERTING ALL ADDRESSES TO IPV4: TODO make IPV6";
-			std::cerr << std::endl;
-			
 			struct sockaddr_in srcaddr;
 			struct sockaddr_in proxyaddr;
 			struct sockaddr_in remoteaddr;
-			
-			if ((mConnectSrcAddr.ss_family != AF_INET) ||
-					(mConnectProxyAddr.ss_family != AF_INET) ||
-					(remote_addr.ss_family != AF_INET))
+
+			if(!sockaddr_storage_ipv6_to_ipv4(mConnectSrcAddr))
 			{
-				std::cerr << "Error One Address is not IPv4. aborting";
-				std::cerr << std::endl;
-				abort();
+				std::cerr << __PRETTY_FUNCTION__ << "Error: mConnectSrcAddr is "
+				          << "not valid IPv4!" << std::endl;
+				sockaddr_storage_dump(mConnectSrcAddr);
+				print_stacktrace();
+				return -EINVAL;
 			}
-			
+			if(!sockaddr_storage_ipv6_to_ipv4(mConnectProxyAddr))
+			{
+				std::cerr << __PRETTY_FUNCTION__ << "Error: mConnectProxyAddr "
+				          << "is not valid IPv4!" << std::endl;
+				sockaddr_storage_dump(mConnectProxyAddr);
+				print_stacktrace();
+				return -EINVAL;
+
+			}
+
 			struct sockaddr_in *rap = (struct sockaddr_in *) &remote_addr;
 			struct sockaddr_in *pap = (struct sockaddr_in *) &mConnectProxyAddr;
 			struct sockaddr_in *sap = (struct sockaddr_in *) &mConnectSrcAddr;
@@ -285,7 +300,6 @@ int pqissludp::Initiate_Connection()
 			err = tou_connect_via_relay(sockfd, &srcaddr, &proxyaddr, &remoteaddr);
 			
 		}
-		
 
 /*** It seems that the UDP Layer sees x 1.2 the traffic of the SSL layer.
  * We need to compensate somewhere... we drop the maximum traffic to 75% of limit

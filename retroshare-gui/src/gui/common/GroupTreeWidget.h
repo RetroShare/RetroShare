@@ -77,8 +77,8 @@ public:
 	// Add a tool button to the tool area
 	void addToolButton(QToolButton *toolButton);
 
-	// Load and save settings (group must be startet from the caller)
-	void processSettings(RshareSettings *settings, bool load);
+	// Load and save settings (group must be started from the caller)
+	void processSettings(bool load);
 
 	// Add a new category item
 	QTreeWidgetItem *addCategoryItem(const QString &name, const QIcon &icon, bool expand);

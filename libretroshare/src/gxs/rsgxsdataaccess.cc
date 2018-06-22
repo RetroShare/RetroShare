@@ -225,7 +225,7 @@ bool RsGxsDataAccess::requestMsgInfo(uint32_t &token, uint32_t ansType,
                 MsgMetaReq* mmr = new MsgMetaReq();
 
                 for(; lit != grpIds.end(); ++lit)
-                    mmr->mMsgIds[*lit] = std::vector<RsGxsMessageId>();
+                    mmr->mMsgIds[*lit] = std::set<RsGxsMessageId>();
 
                 req = mmr;
         }else if(reqType & GXS_REQUEST_TYPE_MSG_DATA)
@@ -233,7 +233,7 @@ bool RsGxsDataAccess::requestMsgInfo(uint32_t &token, uint32_t ansType,
                 MsgDataReq* mdr = new MsgDataReq();
 
                 for(; lit != grpIds.end(); ++lit)
-                    mdr->mMsgIds[*lit] = std::vector<RsGxsMessageId>();
+                    mdr->mMsgIds[*lit] = std::set<RsGxsMessageId>();
 
                 req = mdr;
         }else if(reqType & GXS_REQUEST_TYPE_MSG_IDS)
@@ -241,7 +241,7 @@ bool RsGxsDataAccess::requestMsgInfo(uint32_t &token, uint32_t ansType,
                 MsgIdReq* mir = new MsgIdReq();
 
                 for(; lit != grpIds.end(); ++lit)
-                    mir->mMsgIds[*lit] = std::vector<RsGxsMessageId>();
+                    mir->mMsgIds[*lit] = std::set<RsGxsMessageId>();
 
                 req = mir;
         }
@@ -1191,7 +1191,7 @@ bool RsGxsDataAccess::getMsgList(const GxsMsgReq& msgIds, const RsTokReqOptions&
                     // Add the discovered Latest Msgs.
                     for(oit = origMsgTs.begin(); oit != origMsgTs.end(); ++oit)
                     {
-                            msgIdsOut[grpId].push_back(oit->second.first);
+                            msgIdsOut[grpId].insert(oit->second.first);
                     }
 
             }
@@ -1228,7 +1228,7 @@ bool RsGxsDataAccess::getMsgList(const GxsMsgReq& msgIds, const RsTokReqOptions&
 
                     if (add)
                     {
-                        msgIdsOut[grpId].push_back(msgMeta->mMsgId);
+                        msgIdsOut[grpId].insert(msgMeta->mMsgId);
                         metaFilter[grpId].insert(std::make_pair(msgMeta->mMsgId, msgMeta));
                     }
 
@@ -1373,7 +1373,7 @@ bool RsGxsDataAccess::getMsgRelatedInfo(MsgRelatedInfoReq *req)
         // get meta data for all in group
         GxsMsgMetaResult result;
         GxsMsgReq msgIds;
-        msgIds.insert(std::make_pair(grpMsgIdPair.first, std::vector<RsGxsMessageId>()));
+        msgIds.insert(std::make_pair(grpMsgIdPair.first, std::set<RsGxsMessageId>()));
         mDataStore->retrieveGxsMsgMetaData(msgIds, result);
         std::vector<RsGxsMsgMetaData*>& metaV = result[grpMsgIdPair.first];
         std::vector<RsGxsMsgMetaData*>::iterator vit_meta;
@@ -1382,7 +1382,7 @@ bool RsGxsDataAccess::getMsgRelatedInfo(MsgRelatedInfoReq *req)
         const RsGxsMessageId& msgId = grpMsgIdPair.second;
         const RsGxsGroupId& grpId = grpMsgIdPair.first;
 
-        std::vector<RsGxsMessageId> outMsgIds;
+        std::set<RsGxsMessageId> outMsgIds;
 
         RsGxsMsgMetaData* origMeta = NULL;
         for(vit_meta = metaV.begin(); vit_meta != metaV.end(); ++vit_meta)
@@ -1477,7 +1477,7 @@ bool RsGxsDataAccess::getMsgRelatedInfo(MsgRelatedInfoReq *req)
                 // Add the discovered Latest Msgs.
                 for(oit = origMsgTs.begin(); oit != origMsgTs.end(); ++oit)
                 {
-                    outMsgIds.push_back(oit->second.first);
+                    outMsgIds.insert(oit->second.first);
                 }
             }
             else
@@ -1502,7 +1502,7 @@ bool RsGxsDataAccess::getMsgRelatedInfo(MsgRelatedInfoReq *req)
                         }
                     }
                 }
-                outMsgIds.push_back(latestMsgId);
+                outMsgIds.insert(latestMsgId);
                 metaMap.insert(std::make_pair(latestMsgId, latestMeta));
             }
         }
@@ -1514,7 +1514,7 @@ bool RsGxsDataAccess::getMsgRelatedInfo(MsgRelatedInfoReq *req)
 
                 if (meta->mOrigMsgId == origMsgId)
                 {
-                    outMsgIds.push_back(meta->mMsgId);
+                    outMsgIds.insert(meta->mMsgId);
                     metaMap.insert(std::make_pair(meta->mMsgId, meta));
                 }
             }
@@ -1556,7 +1556,7 @@ bool RsGxsDataAccess::getGroupStatistic(GroupStatisticRequest *req)
 {
     // filter based on options
     GxsMsgIdResult metaReq;
-    metaReq[req->mGrpId] = std::vector<RsGxsMessageId>();
+    metaReq[req->mGrpId] = std::set<RsGxsMessageId>();
     GxsMsgMetaResult metaResult;
     mDataStore->retrieveGxsMsgMetaData(metaReq, metaResult);
 
@@ -1672,7 +1672,7 @@ bool RsGxsDataAccess::getMsgList(MsgIdReq* req)
         for(; vit != vit_end; ++vit)
         {
             RsGxsMsgMetaData* meta = *vit;
-            req->mMsgIdResult[grpId].push_back(meta->mMsgId);
+            req->mMsgIdResult[grpId].insert(meta->mMsgId);
             delete meta; // discard meta data mem
         }
     }
@@ -1718,8 +1718,8 @@ void RsGxsDataAccess::filterMsgList(GxsMsgIdResult& msgIds, const RsTokReqOption
 		if(cit == msgMetas.end())
 			continue;
 
-		std::vector<RsGxsMessageId>& msgs = mit->second;
-		std::vector<RsGxsMessageId>::iterator vit = msgs.begin();
+		std::set<RsGxsMessageId>& msgs = mit->second;
+		std::set<RsGxsMessageId>::iterator vit = msgs.begin();
 		const std::map<RsGxsMessageId, RsGxsMsgMetaData*>& meta = cit->second;
 		std::map<RsGxsMessageId, RsGxsMsgMetaData*>::const_iterator cit2;
 

@@ -47,27 +47,31 @@ class BanList
 	std::map<struct sockaddr_storage, BanListPeer> mBanPeers;
 };
 
-//!The RS BanList service.
- /**
-  *
-  * Exchange list of Banned IP addresses with peers.
-  */
-
+/**
+ * The RS BanList service.
+ * Exchange list of Banned IPv4 addresses with peers.
+ *
+ * @warning IPv4 only, IPv6 not supported yet!
+ */
 class p3BanList: public RsBanList, public p3Service, public pqiNetAssistPeerShare, public p3Config /*, public pqiMonitor */
 {
 public:
     p3BanList(p3ServiceControl *sc, p3NetMgr *nm);
     virtual RsServiceInfo getServiceInfo();
 
-    /***** overloaded from RsBanList *****/
+	/***** overloaded from RsBanList *****/
 
-    virtual bool isAddressAccepted(const struct sockaddr_storage& addr, uint32_t checking_flags,uint32_t *check_result=NULL) ;
+	virtual bool isAddressAccepted( const sockaddr_storage& addr,
+	                                uint32_t checking_flags,
+	                                uint32_t *check_result=NULL );
 
     virtual void getBannedIps(std::list<BanListPeer>& list) ;
     virtual void getWhiteListedIps(std::list<BanListPeer>& list) ;
 
-    virtual bool addIpRange(const struct sockaddr_storage& addr,int masked_bytes,uint32_t list_type,const std::string& comment) ;
-    virtual bool removeIpRange(const sockaddr_storage &addr, int masked_bytes, uint32_t list_type);
+	virtual bool addIpRange( const sockaddr_storage& addr, int masked_bytes,
+	                         uint32_t list_type, const std::string& comment );
+	virtual bool removeIpRange( const sockaddr_storage &addr, int masked_bytes,
+	                            uint32_t list_type );
 
     virtual void enableIPFiltering(bool b) ;
     virtual bool ipFilteringEnabled() ;
@@ -86,7 +90,8 @@ public:
 
     /***** overloaded from pqiNetAssistPeerShare *****/
 
-    virtual void    updatePeer(const RsPeerId& id, const struct sockaddr_storage &addr, int type, int reason, int time_stamp);
+	virtual void updatePeer( const RsPeerId& id, const sockaddr_storage &addr,
+	                         int type, int reason, int time_stamp );
 
     /***********************  p3config  ******************************/
     virtual RsSerialiser *setupSerialiser();
@@ -108,8 +113,10 @@ public:
     int     sendPackets();
     bool 	processIncoming();
 
-    bool recvBanItem(RsBanListItem *item);
-    bool addBanEntry(const RsPeerId &peerId, const struct sockaddr_storage &addr, int level, uint32_t reason, time_t time_stamp);
+	bool recvBanItem(RsBanListItem *item);
+	bool addBanEntry( const RsPeerId &peerId,
+	                  const sockaddr_storage &addr, int level, uint32_t reason,
+	                  time_t time_stamp );
     void sendBanLists();
     int  sendBanSet(const RsPeerId& peerid);
 

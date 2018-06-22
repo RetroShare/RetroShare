@@ -27,7 +27,7 @@
 
 #include <stddef.h>  // for NULL
 
-class RsItem;
+struct RsItem;
 
 /***
 #define LOOPBACK_DEBUG 1

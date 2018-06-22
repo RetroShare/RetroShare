@@ -93,19 +93,15 @@ void GxsFeedItem::fillDisplay(RsGxsUpdateBroadcastBase *updateBroadcastBase, boo
 {
 	GxsGroupFeedItem::fillDisplay(updateBroadcastBase, complete);
 
-	std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > msgs;
+	std::map<RsGxsGroupId, std::set<RsGxsMessageId> > msgs;
 	updateBroadcastBase->getAllMsgIds(msgs);
 
 	if (!msgs.empty())
 	{
-		std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >::const_iterator mit = msgs.find(groupId());
-		if (mit != msgs.end())
-		{
-			const std::vector<RsGxsMessageId> &msgIds = mit->second;
-			if (std::find(msgIds.begin(), msgIds.end(), messageId()) != msgIds.end()) {
+		std::map<RsGxsGroupId, std::set<RsGxsMessageId> >::const_iterator mit = msgs.find(groupId());
+
+		if (mit != msgs.end() && mit->second.find(messageId()) != mit->second.end())
 				requestMessage();
-			}
-		}
 	}
 }
 
@@ -129,8 +125,8 @@ void GxsFeedItem::requestMessage()
 	opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
 
 	GxsMsgReq msgIds;
-	std::vector<RsGxsMessageId> &vect_msgIds = msgIds[groupId()];
-	vect_msgIds.push_back(mMessageId);
+	std::set<RsGxsMessageId> &vect_msgIds = msgIds[groupId()];
+	vect_msgIds.insert(mMessageId);
 
 	uint32_t token;
 	mLoadQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, mTokenTypeMessage);

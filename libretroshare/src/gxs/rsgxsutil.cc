@@ -67,7 +67,7 @@ bool RsGxsMessageCleanUp::clean()
 		GxsMsgReq req;
 		GxsMsgMetaResult result;
 
-		req[grpId] = std::vector<RsGxsMessageId>();
+		req[grpId] = std::set<RsGxsMessageId>();
 		mDs->retrieveGxsMsgMetaData(req, result);
 
 		GxsMsgMetaResult::iterator mit = result.begin();
@@ -117,7 +117,7 @@ bool RsGxsMessageCleanUp::clean()
 
 				if( remove )
 				{
-					req[grpId].push_back(meta->mMsgId);
+					req[grpId].insert(meta->mMsgId);
                     
 #ifdef DEBUG_GXSUTIL
 					std::cerr << "    Scheduling for removal." << std::endl;
@@ -241,9 +241,9 @@ bool RsGxsIntegrityCheck::check()
     for (msgIdsIt = msgIds.begin(); msgIdsIt != msgIds.end(); ++msgIdsIt)
     {
 	    const RsGxsGroupId& grpId = msgIdsIt->first;
-	    std::vector<RsGxsMessageId> &msgIdV = msgIdsIt->second;
+	    std::set<RsGxsMessageId> &msgIdV = msgIdsIt->second;
 
-	    std::vector<RsGxsMessageId>::iterator msgIdIt;
+	    std::set<RsGxsMessageId>::iterator msgIdIt;
 	    for (msgIdIt = msgIdV.begin(); msgIdIt != msgIdV.end(); ++msgIdIt)
 	    {
 		    const RsGxsMessageId& msgId = *msgIdIt;
@@ -261,7 +261,7 @@ bool RsGxsIntegrityCheck::check()
 
 		    if (nxsMsgIt == nxsMsgV.end())
 		    {
-			    msgsToDel[grpId].push_back(msgId);
+			    msgsToDel[grpId].insert(msgId);
 		    }
 	    }
     }
@@ -284,7 +284,7 @@ bool RsGxsIntegrityCheck::check()
 		    if(msg->metaData == NULL || currHash != msg->metaData->mHash)
 		    {
 			    std::cerr << "(EE) deleting message data with wrong hash or null meta data. meta=" << (void*)msg->metaData << std::endl;
-			    msgsToDel[msg->grpId].push_back(msg->msgId);
+			    msgsToDel[msg->grpId].insert(msg->msgId);
 		    }
 		    else if(!msg->metaData->mAuthorId.isNull() && subscribed_groups.find(msg->metaData->mGroupId)!=subscribed_groups.end())
 		    {
@@ -377,7 +377,7 @@ bool RsGxsIntegrityCheck::isDone()
 	return mDone;
 }
 
-void RsGxsIntegrityCheck::getDeletedIds(std::list<RsGxsGroupId>& grpIds, std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >& msgIds)
+void RsGxsIntegrityCheck::getDeletedIds(std::list<RsGxsGroupId>& grpIds, std::map<RsGxsGroupId, std::set<RsGxsMessageId> >& msgIds)
 {
 	RsStackMutex stack(mIntegrityMutex);
 

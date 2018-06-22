@@ -34,16 +34,16 @@ static const uint32_t DELAY_BETWEEN_REMOTE_DIRECTORIES_SWEEP    =  60 ; // 60 se
 static const uint32_t DELAY_BEFORE_DELETE_NON_EMPTY_REMOTE_DIR  = 60*24*86400 ; // delete non empty remoe directories after 60 days of inactivity
 static const uint32_t DELAY_BEFORE_DELETE_EMPTY_REMOTE_DIR      =  5*24*86400 ; // delete empty remote directories after 5 days of inactivity
 
-static const std::string HASH_CACHE_DURATION_SS = "HASH_CACHE_DURATION" ;	 // key string to store hash remembering time
-static const std::string WATCH_FILE_DURATION_SS = "WATCH_FILES_DELAY" ;		 // key to store delay before re-checking for new files
-static const std::string WATCH_FILE_ENABLED_SS  = "WATCH_FILES_ENABLED"; 	 // key to store ON/OFF flags for file whatch
-static const std::string FOLLOW_SYMLINKS_SS     = "FOLLOW_SYMLINKS"; 	 	 // dereference symbolic links, or just ignore them.
-static const std::string IGNORE_DUPLICATES      = "IGNORE_DUPLICATES"; 	 	 // do not index files that are referenced multiple times because of links
-static const std::string WATCH_HASH_SALT_SS     = "WATCH_HASH_SALT"; 	 	 // Salt that is used to hash directory names
-static const std::string IGNORED_PREFIXES_SS    = "IGNORED_PREFIXES"; 	 	 // ignore file prefixes
-static const std::string IGNORED_SUFFIXES_SS    = "IGNORED_SUFFIXES"; 	 	 // ignore file suffixes
-static const std::string IGNORE_LIST_FLAGS_SS   = "IGNORED_FLAGS"; 	 	 	 // ignore file flags
-static const std::string MAX_SHARE_DEPTH        = "MAX_SHARE_DEPTH"; 	 	 // maximum depth of shared directories
+static const std::string HASH_CACHE_DURATION_SS    = "HASH_CACHE_DURATION" ;	 // key string to store hash remembering time
+static const std::string WATCH_FILE_DURATION_SS    = "WATCH_FILES_DELAY" ;		 // key to store delay before re-checking for new files
+static const std::string WATCH_FILE_ENABLED_SS     = "WATCH_FILES_ENABLED"; 	 // key to store ON/OFF flags for file whatch
+static const std::string FOLLOW_SYMLINKS_SS        = "FOLLOW_SYMLINKS"; 	 	 // dereference symbolic links, or just ignore them.
+static const std::string IGNORE_DUPLICATES         = "IGNORE_DUPLICATES"; 	 	 // do not index files that are referenced multiple times because of links
+static const std::string WATCH_HASH_SALT_SS        = "WATCH_HASH_SALT"; 	 	 // Salt that is used to hash directory names
+static const std::string IGNORED_PREFIXES_SS       = "IGNORED_PREFIXES"; 	 	 // ignore file prefixes
+static const std::string IGNORED_SUFFIXES_SS       = "IGNORED_SUFFIXES"; 	 	 // ignore file suffixes
+static const std::string IGNORE_LIST_FLAGS_SS      = "IGNORED_FLAGS"; 	 	 	 // ignore file flags
+static const std::string MAX_SHARE_DEPTH           = "MAX_SHARE_DEPTH"; 	 	 // maximum depth of shared directories
 
 static const std::string FILE_SHARING_DIR_NAME       = "file_sharing" ;			 // hard-coded directory name to store friend file lists, hash cache, etc.
 static const std::string HASH_CACHE_FILE_NAME        = "hash_cache.bin" ;		 // hard-coded directory name to store encrypted hash cache.
@@ -51,6 +51,7 @@ static const std::string LOCAL_SHARED_DIRS_FILE_NAME = "local_dir_hierarchy.bin"
 
 static const uint32_t MIN_INTERVAL_BETWEEN_HASH_CACHE_SAVE         = 20 ;    // never save hash cache more often than every 20 secs.
 static const uint32_t MIN_INTERVAL_BETWEEN_REMOTE_DIRECTORY_SAVE   = 23 ;    // never save remote directories more often than this
+static const uint32_t MIN_TIME_AFTER_LAST_MODIFICATION             = 20 ;    // never hash a file that is just being modified, otherwise we end up with a corrupted hash
 
 static const uint32_t MAX_DIR_SYNC_RESPONSE_DATA_SIZE              = 20000 ; // Maximum RsItem data size in bytes for serialised directory transmission
 static const uint32_t DEFAULT_HASH_STORAGE_DURATION_DAYS           = 30 ;    // remember deleted/inaccessible files for 30 days

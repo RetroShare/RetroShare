@@ -8,7 +8,7 @@
 #include "SetPacket.h"
 #include "SetFilter.h"
 
-class RsItem;
+struct RsItem;
 class PeerNode;
 class RsSerialType;
 class RsSerialiser;

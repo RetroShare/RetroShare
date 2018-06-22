@@ -88,16 +88,13 @@ ftFileControl::ftFileControl()
 	return;
 }
 
-ftFileControl::ftFileControl(std::string fname,
-		std::string tmppath, std::string dest,
-        uint64_t size, const RsFileHash &hash, TransferRequestFlags flags,
-		ftFileCreator *fc, ftTransferModule *tm)
-	:mName(fname), mCurrentPath(tmppath), mDestination(dest),
-	 mTransfer(tm), mCreator(fc), mState(DOWNLOADING), mHash(hash),
-	 mSize(size), mFlags(flags), mCreateTime(0), mQueuePriority(0), mQueuePosition(0)
-{
-    return;
-}
+ftFileControl::ftFileControl(const std::string& fname, const std::string& tmppath, const std::string& dest
+                           , uint64_t size, const RsFileHash &hash, TransferRequestFlags flags
+                           , ftFileCreator *fc, ftTransferModule *tm)
+  : mName(fname), mCurrentPath(tmppath), mDestination(dest)
+  , mTransfer(tm), mCreator(fc), mState(DOWNLOADING), mHash(hash)
+  , mSize(size), mFlags(flags), mCreateTime(0), mQueuePriority(0), mQueuePosition(0)
+{}
 
 ftController::ftController(ftDataMultiplex *dm, p3ServiceControl *sc, uint32_t ftServiceId)
   : p3Config(),
@@ -1475,24 +1472,24 @@ bool 	ftController::setPartialsDirectory(std::string path)
 
 	/* check it is not a subdir of download / shared directories (BAD) - TODO */
 	{
-        RsStackMutex stack(ctrlMutex);
+		RsStackMutex stack(ctrlMutex);
 
-        path = RsDirUtil::convertPathToUnix(path);
+		path = RsDirUtil::convertPathToUnix(path);
 
-        if (!path.find(mDownloadPath)) {
-            return false;
-        }
+		if (path.find(mDownloadPath) != std::string::npos) {
+			return false;
+		}
 
-        if (rsFiles) {
-            std::list<SharedDirInfo>::iterator it;
-            std::list<SharedDirInfo> dirs;
-            rsFiles->getSharedDirectories(dirs);
-            for (it = dirs.begin(); it != dirs.end(); ++it) {
-                if (!path.find((*it).filename)) {
-                    return false;
-                }
-            }
-        }
+		if (rsFiles) {
+			std::list<SharedDirInfo>::iterator it;
+			std::list<SharedDirInfo> dirs;
+			rsFiles->getSharedDirectories(dirs);
+			for (it = dirs.begin(); it != dirs.end(); ++it) {
+				if (path.find((*it).filename) != std::string::npos) {
+					return false;
+				}
+			}
+		}
 	}
 
 	/* check if it exists */

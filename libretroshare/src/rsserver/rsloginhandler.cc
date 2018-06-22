@@ -109,6 +109,19 @@ GnomeKeyringPasswordSchema my_schema = {
     NULL,
     NULL
 };
+#elif defined(HAS_LIBSECRET)
+#include <libsecret-1/libsecret/secret.h>
+const SecretSchema *libsecret_get_schema(void)
+{
+	static const SecretSchema the_schema = {
+	    "org.Retroshare.Password", SECRET_SCHEMA_NONE,
+	    {
+	        {  "RetroShare SSL Id", SECRET_SCHEMA_ATTRIBUTE_STRING },
+	        {  "NULL", (SecretSchemaAttributeType)0 },
+	    }
+	};
+	return &the_schema;
+}
 #endif
 
 
@@ -209,7 +222,7 @@ bool RsLoginHandler::tryAutoLogin(const RsPeerId& ssl_id,std::string& ssl_passwd
 #endif
 	if( gnome_keyring_find_password_sync(&my_schema, &passwd,"RetroShare SSL Id",ssl_id.toStdString().c_str(),NULL) == GNOME_KEYRING_RESULT_OK )
 	{
-		std::cerr << "Got SSL passwd ********************" /*<< passwd*/ << " from gnome keyring" << std::endl;
+		std::cout << "Got SSL passwd ********************" /*<< passwd*/ << " from gnome keyring" << std::endl;
 		ssl_passwd = std::string(passwd);
 		return true ;
 	}
@@ -220,7 +233,41 @@ bool RsLoginHandler::tryAutoLogin(const RsPeerId& ssl_id,std::string& ssl_passwd
 #endif
 		return false ;
 	}
+#elif defined(HAS_LIBSECRET)
+	// do synchronous lookup
 
+#ifdef DEBUG_RSLOGINHANDLER
+	std::cerr << "Using attribute: " << ssl_id << std::endl;
+#endif
+
+	GError *error = NULL;
+	gchar *password = secret_password_lookup_sync (libsecret_get_schema(), NULL, &error,
+	                                               "RetroShare SSL Id", ssl_id.toStdString().c_str(),
+	                                               NULL);
+
+	if (error != NULL) {
+		g_error_free (error);
+#ifdef DEBUG_RSLOGINHANDLER
+		std::cerr << "Could not get passwd using libsecret: error" << std::endl;
+#endif
+		return false;
+	} else if (password == NULL) {
+		/* password will be null, if no matching password found */
+#ifdef DEBUG_RSLOGINHANDLER
+		std::cerr << "Could not get passwd using libsecret: not found" << std::endl;
+#endif
+		return false;
+	} else {
+		std::cout << "Got SSL passwd ********************" /*<< passwd*/ << " using libsecret" << std::endl;
+		ssl_passwd = std::string(password);
+
+		secret_password_free (password);
+		return true;
+	}
+#ifdef DEBUG_RSLOGINHANDLER
+	std::cerr << "Could not get passwd from gnome keyring: unknown" << std::endl;
+#endif
+	return false;
 #else
 	/******************** OSX KeyChain stuff *****************************/
 #ifdef __APPLE__
@@ -281,7 +328,7 @@ bool RsLoginHandler::tryAutoLogin(const RsPeerId& ssl_id,std::string& ssl_passwd
 
 	/******************** OSX KeyChain stuff *****************************/
 #endif // APPLE
-#endif // HAS_GNOME_KEYRING
+#endif // HAS_GNOME_KEYRING / HAS_LIBSECRET
 #else /******* WINDOWS BELOW *****/
 
 	/* try to load from file */
@@ -405,9 +452,9 @@ bool RsLoginHandler::enableAutoLogin(const RsPeerId& ssl_id,const std::string& s
 #ifndef __HAIKU__
 #ifndef WINDOWS_SYS /* UNIX */
 #if defined(HAS_GNOME_KEYRING) || defined(__FreeBSD__) || defined(__OpenBSD__)
-	if(GNOME_KEYRING_RESULT_OK == gnome_keyring_store_password_sync(&my_schema, NULL, (gchar*)("RetroShare password for SSL Id "+ssl_id.toStdString()).c_str(),(gchar*)ssl_passwd.c_str(),"RetroShare SSL Id",ssl_id.toStdString().c_str(),NULL)) 
+	if(GNOME_KEYRING_RESULT_OK == gnome_keyring_store_password_sync(&my_schema, NULL, (gchar*)("RetroShare password for SSL Id "+ssl_id.toStdString()).c_str(),(gchar*)ssl_passwd.c_str(),"RetroShare SSL Id",ssl_id.toStdString().c_str(),NULL))
 	{
-		std::cerr << "Stored passwd " << "************************" << " into gnome keyring" << std::endl;
+		std::cout << "Stored passwd " << "************************" << " into gnome keyring" << std::endl;
 		return true ;
 	}
 	else
@@ -415,6 +462,24 @@ bool RsLoginHandler::enableAutoLogin(const RsPeerId& ssl_id,const std::string& s
 		std::cerr << "Could not store passwd into gnome keyring" << std::endl;
 		return false ;
 	}
+#elif defined(HAS_LIBSECRET)
+	// do synchronous store
+
+	GError *error = NULL;
+	secret_password_store_sync (libsecret_get_schema(), SECRET_COLLECTION_DEFAULT,
+	                            (gchar*)("RetroShare password for SSL Id " + ssl_id.toStdString()).c_str(),
+	                            (gchar*)ssl_passwd.c_str(),
+	                            NULL, &error,
+	                            "RetroShare SSL Id", ssl_id.toStdString().c_str(),
+	                            NULL);
+
+	if (error != NULL) {
+		g_error_free (error);
+		std::cerr << "Could not store passwd using libsecret" << std::endl;
+		return false;
+	}
+	std::cout << "Stored passwd " << "************************" << " using libsecret" << std::endl;
+	return true;
 #else
 #ifdef __APPLE__
 	/***************** OSX KEYCHAIN ****************/
@@ -484,7 +549,7 @@ bool RsLoginHandler::enableAutoLogin(const RsPeerId& ssl_id,const std::string& s
 	return true;
 #endif // TODO_CODE_ROTTEN
 #endif // __APPLE__
-#endif // HAS_GNOME_KEYRING.
+#endif // HAS_GNOME_KEYRING / HAS_LIBSECRET
 #else  /* windows */
 
 	/* store password encrypted in a file */
@@ -571,7 +636,7 @@ bool RsLoginHandler::clearAutoLogin(const RsPeerId& ssl_id)
 #ifdef HAS_GNOME_KEYRING
 	if(GNOME_KEYRING_RESULT_OK == gnome_keyring_delete_password_sync(&my_schema,"RetroShare SSL Id", ssl_id.toStdString().c_str(),NULL))
 	{
-		std::cerr << "Successfully Cleared gnome keyring passwd for SSLID " << ssl_id << std::endl;
+		std::cout << "Successfully Cleared gnome keyring passwd for SSLID " << ssl_id << std::endl;
 		return true ;
 	}
 	else
@@ -579,7 +644,26 @@ bool RsLoginHandler::clearAutoLogin(const RsPeerId& ssl_id)
 		std::cerr << "Could not clear gnome keyring passwd for SSLID " << ssl_id << std::endl;
 		return false ;
 	}
-#else 
+#elif defined(HAS_LIBSECRET)
+	// do synchronous clear
+
+	GError *error = NULL;
+	gboolean removed = secret_password_clear_sync (libsecret_get_schema(), NULL, &error,
+	                                               "RetroShare SSL Id", ssl_id.toStdString().c_str(),
+	                                               NULL);
+
+	if (error != NULL) {
+		g_error_free (error);
+		std::cerr << "Could not clearpasswd for SSLID " << ssl_id << " using libsecret: error" << std::endl;
+		return false ;
+	} else if (removed == FALSE) {
+		std::cerr << "Could not clearpasswd for SSLID " << ssl_id << " using libsecret: false" << std::endl;
+		return false ;
+	}
+
+	std::cout << "Successfully Cleared passwd for SSLID " << ssl_id << " using libsecret" << std::endl;
+	return true ;
+#else // HAS_GNOME_KEYRING / HAS_LIBSECRET
   #ifdef __APPLE__
 
 	std::cerr << "clearAutoLogin() OSX Version" << std::endl;

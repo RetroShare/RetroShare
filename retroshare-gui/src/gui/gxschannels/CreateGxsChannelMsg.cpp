@@ -604,7 +604,7 @@ void CreateGxsChannelMsg::newChannelMsg()
 			GxsMsgReq message_ids;
 
 			opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
-            message_ids[mChannelId].push_back(mOrigPostId);
+            message_ids[mChannelId].insert(mOrigPostId);
 			mChannelQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_SUMMARY, opts, message_ids, CREATEMSG_CHANNEL_POST_INFO);
         }
 	}

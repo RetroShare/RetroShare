@@ -248,8 +248,8 @@ build_sqlite()
 	make -j${HOST_NUM_CPU}
 	make install
 	rm -f ${SYSROOT}/usr/lib/libsqlite3.so*
-	${CC} -shared -o libsqlite3.so -fPIC sqlite3.o -ldl
-	cp libsqlite3.so "${SYSROOT}/usr/lib"
+#	${CC} -shared -o libsqlite3.so -fPIC sqlite3.o -ldl
+#	cp libsqlite3.so "${SYSROOT}/usr/lib"
 	cd ..
 }
 
@@ -313,6 +313,14 @@ build_libmicrohttpd()
 	cd ..
 }
 
+build_rapidjson()
+{
+	B_dir="rapidjson-1.1.0"
+	[ -f $B_dir.tar.gz ] || wget -O $B_dir.tar.gz https://github.com/Tencent/rapidjson/archive/v1.1.0.tar.gz
+	tar -xf $B_dir.tar.gz
+	cp -r rapidjson-1.1.0/include/rapidjson/ "${SYSROOT}/usr/include/rapidjson"
+}
+
 build_toolchain
 [ "${INSTALL_QT_ANDROID}X" == "trueX" ] && install_qt_android
 build_bzlib
@@ -320,5 +328,6 @@ build_openssl
 build_sqlite
 build_sqlcipher
 build_libupnp
+build_rapidjson
 
 echo NATIVE_LIBS_TOOLCHAIN_PATH=${NATIVE_LIBS_TOOLCHAIN_PATH}

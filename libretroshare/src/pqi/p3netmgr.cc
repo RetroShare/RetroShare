@@ -692,11 +692,11 @@ void p3NetMgrIMPL::netExtCheck()
 	bool netSetupDone = false;
 
 	{
-		RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
+		RS_STACK_MUTEX(mNetMtx);
 		bool isStable = false;
-		struct sockaddr_storage tmpip ;
+		sockaddr_storage tmpip;
 
-		std::map<sockaddr_storage,ZeroInt> address_votes ;
+		std::map<sockaddr_storage,ZeroInt> address_votes;
 
 		/* check for External Address */
 		/* in order of importance */
@@ -705,38 +705,30 @@ void p3NetMgrIMPL::netExtCheck()
 #if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
 			std::cerr << "p3NetMgrIMPL::netExtCheck() Ext Not Ok" << std::endl;
 #endif
-
 			/* net Assist */
-			if (netAssistExtAddress(tmpip))
+			if ( netAssistExtAddress(tmpip) &&
+			     sockaddr_storage_isValidNet(tmpip) &&
+			     sockaddr_storage_ipv6_to_ipv4(tmpip) )
 			{
-#if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
-				std::cerr << "p3NetMgrIMPL::netExtCheck() Ext supplied from netAssistExternalAddress()" << std::endl;
-#endif
-				if(sockaddr_storage_isValidNet(tmpip))
+				if( !rsBanList ||
+				        rsBanList->isAddressAccepted(
+				            tmpip, RSBANLIST_CHECKING_FLAGS_BLACKLIST ) )
 				{
-					if( (rsBanList==NULL) || rsBanList->isAddressAccepted(tmpip,RSBANLIST_CHECKING_FLAGS_BLACKLIST))
-					{
-						// must be stable???
-						isStable = true;
-						//mNetFlags.mExtAddr = tmpip;
-						mNetFlags.mExtAddrOk = true;
-						mNetFlags.mExtAddrStableOk = isStable;
-
-						address_votes[tmpip].n++ ;
-                        
-						std::cerr << "NetAssistAddress reported external address " << sockaddr_storage_iptostring(tmpip) << std::endl;
-					}
-					else
-						std::cerr << "(SS) netAssisExternalAddress returned banned own IP " << sockaddr_storage_iptostring(tmpip) << " (banned). Rejecting." << std::endl;
+					// must be stable???
+					isStable = true;
+					mNetFlags.mExtAddrOk = true;
+					mNetFlags.mExtAddrStableOk = isStable;
+					address_votes[tmpip].n++ ;
+					std::cerr << __PRETTY_FUNCTION__ << " NetAssistAddress "
+					          << " reported external address "
+					          << sockaddr_storage_iptostring(tmpip)
+					          << std::endl;
 				}
-#if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
 				else
-				{
-					std::cerr << "p3NetMgrIMPL::netExtCheck() Bad Address supplied from netAssistExternalAddress()" << std::endl;
-				}
-#endif
+					std::cerr << "(SS) netAssisExternalAddress returned banned "
+					          << "own IP " << sockaddr_storage_iptostring(tmpip)
+					          << " (banned). Rejecting." << std::endl;
 			}
-
 		}
 
 #ifdef ALLOW_DHT_STUNNER
@@ -780,7 +772,7 @@ void p3NetMgrIMPL::netExtCheck()
 		}
 #endif
 
-		/* otherwise ask ExtAddrFinder */
+		/* ask ExtAddrFinder */
 		{
 			/* ExtAddrFinder */
 			if (mUseExtAddrFinder)
@@ -789,7 +781,7 @@ void p3NetMgrIMPL::netExtCheck()
 				std::cerr << "p3NetMgrIMPL::netExtCheck() checking ExtAddrFinder" << std::endl;
 #endif
 				bool extFinderOk = mExtAddrFinder->hasValidIP(tmpip);
-				if (extFinderOk)
+				if (extFinderOk && sockaddr_storage_ipv6_to_ipv4(tmpip))
 				{
 #if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
 					std::cerr << "p3NetMgrIMPL::netExtCheck() Ext supplied by ExtAddrFinder" << std::endl;
@@ -803,38 +795,41 @@ void p3NetMgrIMPL::netExtCheck()
 					std::cerr << std::endl;
 #endif
 
-					//mNetFlags.mExtAddr = tmpip;
 					mNetFlags.mExtAddrOk = true;
 
 					address_votes[tmpip].n++ ;
 
-					/* XXX HACK TO FIX */
-#warning drbob: ALLOWING ExtAddrFinder -> ExtAddrStableOk = true (which it is not normally)
+					/* XXX HACK TO FIX drbob: ALLOWING
+					 * ExtAddrFinder -> ExtAddrStableOk = true
+					 * (which it is not normally) */
 					mNetFlags.mExtAddrStableOk = true;
-                    
-		    std::cerr << "ExtAddrFinder reported external address " << sockaddr_storage_iptostring(tmpip) << std::endl;
 
+					std::cerr << __PRETTY_FUNCTION__ << " ExtAddrFinder "
+					          << " reported external address "
+					          << sockaddr_storage_iptostring(tmpip)
+					          << std::endl;
 				}
 			}
 		}
-        
-        	/* also ask peer mgr. */
-		
+
+		/* also ask peer mgr. */
 		if (mPeerMgr)
 		{
 #if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
 			std::cerr << "p3NetMgrIMPL::netExtCheck() checking mPeerMgr" << std::endl;
 #endif
-            		uint8_t isstable ;	// unused
-                    	sockaddr_storage tmpaddr ;
+			uint8_t isstable; // unused
+			sockaddr_storage tmpaddr;
 
-			if (mPeerMgr->getExtAddressReportedByFriends(tmpaddr, isstable))
+			if ( mPeerMgr->getExtAddressReportedByFriends(tmpaddr, isstable) &&
+			     sockaddr_storage_ipv6_to_ipv4(tmpaddr) )
 			{
 #if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
 				std::cerr << "p3NetMgrIMPL::netExtCheck() Ext supplied by ExtAddrFinder" << std::endl;
 #endif
 				/* best guess at port */
-				sockaddr_storage_setport(tmpaddr, sockaddr_storage_port(mLocalAddr));
+				sockaddr_storage_setport( tmpaddr,
+				                          sockaddr_storage_port(mLocalAddr) );
 
 #if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
 				std::cerr << "p3NetMgrIMPL::netExtCheck() ";
@@ -842,20 +837,21 @@ void p3NetMgrIMPL::netExtCheck()
 				std::cerr << std::endl;
 #endif
 
-				//mNetFlags.mExtAddr = tmpaddr;
 				mNetFlags.mExtAddrOk = true;
 				mNetFlags.mExtAddrStableOk = isstable;
 
-				address_votes[tmpaddr].n++ ;
-                
-		    std::cerr << "PeerMgr reported external address " << sockaddr_storage_iptostring(tmpaddr) << std::endl;
+				address_votes[tmpaddr].n++;
+
+				std::cerr << __PRETTY_FUNCTION__ << " PeerMgr reported external"
+				          << " address "
+				          << sockaddr_storage_iptostring(tmpaddr) << std::endl;
 			}
 #if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
-	    else
-                std::cerr << "  No reliable address returned." << std::endl;
+			else
+				std::cerr << "  No reliable address returned." << std::endl;
 #endif
 		}
-        
+
 		/* any other sources ??? */
 
 		/* finalise address */
@@ -950,14 +946,6 @@ void p3NetMgrIMPL::netExtCheck()
 #endif
 			netAssistSetAddress(mNetFlags.mLocalAddr, mNetFlags.mExtAddr, mNetMode);
 		}
-#if 0
-		else
-		{
-			std::cerr << "p3NetMgrIMPL::netExtCheck() setting ERR netAssistSetAddress(0)" << std::endl;
-			/* mode = 0 for error */
-			netAssistSetAddress(mNetFlags.mLocalAddr, mNetFlags.mExtAddr, mNetMode);
-		}
-#endif
 
 		/* flag unreachables! */
 		if ((mNetFlags.mExtAddrOk) && (!mNetFlags.mExtAddrStableOk))
@@ -966,9 +954,6 @@ void p3NetMgrIMPL::netExtCheck()
 			std::cerr << "p3NetMgrIMPL::netExtCheck() Ext Unstable - Unreachable Check" << std::endl;
 #endif
 		}
-
-
-
 	}
 
 	if (netSetupDone)
@@ -988,9 +973,9 @@ void p3NetMgrIMPL::netExtCheck()
 		RsPeerId fakeId;
 		netAssistKnownPeer(fakeId, mExtAddr, NETASSIST_KNOWN_PEER_SELF | NETASSIST_KNOWN_PEER_ONLINE);
 
-		rslog(RSL_WARNING, p3netmgrzone, "p3NetMgr::netExtCheck() Network Setup Complete");
+		std::cerr << __PRETTY_FUNCTION__ << " Network Setup Complete"
+		          << std::endl;
 	}
-
 }
 
 /**********************************************************************************************
@@ -1002,8 +987,8 @@ bool p3NetMgrIMPL::checkNetAddress()
 	bool addrChanged = false;
 	bool validAddr = false;
 	
-	struct sockaddr_storage prefAddr;
-	struct sockaddr_storage oldAddr;
+	sockaddr_storage prefAddr;
+	sockaddr_storage oldAddr;
 
 	if (mNetMode & RS_NET_MODE_TRY_LOOPBACK)
 	{
@@ -1011,7 +996,7 @@ bool p3NetMgrIMPL::checkNetAddress()
         std::cerr << "p3NetMgrIMPL::checkNetAddress() LOOPBACK ... forcing to 127.0.0.1";
         std::cerr << std::endl;
 #endif
-	    sockaddr_storage_ipv4_aton(prefAddr, "127.0.0.1");
+		sockaddr_storage_ipv4_aton(prefAddr, "127.0.0.1");
 		validAddr = true;
 	}
 	else
@@ -1021,15 +1006,19 @@ bool p3NetMgrIMPL::checkNetAddress()
 		 *  possible. It will require complete reenginering of the network layer
 		 *  code. */
 
+		/* For retro-compatibility strictly accept only IPv4 addresses here,
+		 * IPv6 addresses are handled in a retro-compatible manner in
+		 * p3PeerMgrIMPL::UpdateOwnAddress */
 		std::vector<sockaddr_storage> addrs;
 		if (getLocalAddresses(addrs))
 		{
-			for (auto it = addrs.begin(); it!=addrs.end(); ++it)
+			for (auto it = addrs.begin(); it != addrs.end(); ++it)
 			{
 				sockaddr_storage& addr(*it);
 				if( sockaddr_storage_isValidNet(addr) &&
 				    !sockaddr_storage_isLoopbackNet(addr) &&
-				    !sockaddr_storage_isLinkLocalNet(addr))
+				    !sockaddr_storage_isLinkLocalNet(addr) &&
+				    sockaddr_storage_ipv6_to_ipv4(addr) )
 				{
 					prefAddr = addr;
 					validAddr = true;
@@ -1043,7 +1032,8 @@ bool p3NetMgrIMPL::checkNetAddress()
 			{
 				sockaddr_storage& addr(*it);
 				if( sockaddr_storage_isValidNet(addr) &&
-				    !sockaddr_storage_isLoopbackNet(addr) )
+				    !sockaddr_storage_isLoopbackNet(addr) &&
+				    sockaddr_storage_ipv6_to_ipv4(addr) )
 				{
 					prefAddr = addr;
 					validAddr = true;
@@ -1069,9 +1059,9 @@ bool p3NetMgrIMPL::checkNetAddress()
 	/* check addresses */
 	
 	{
-		RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
-		
-		oldAddr = mLocalAddr;
+		RS_STACK_MUTEX(mNetMtx);
+
+		sockaddr_storage_copy(mLocalAddr, oldAddr);
 		addrChanged = !sockaddr_storage_sameip(prefAddr, mLocalAddr);
 
 #ifdef NETMGR_DEBUG_TICK
@@ -1097,7 +1087,7 @@ bool p3NetMgrIMPL::checkNetAddress()
 		
 		// update address.
 		sockaddr_storage_copyip(mLocalAddr, prefAddr);
-		mNetFlags.mLocalAddr = mLocalAddr;
+		sockaddr_storage_copy(mLocalAddr, mNetFlags.mLocalAddr);
 
 		if(sockaddr_storage_isLoopbackNet(mLocalAddr))
 		{
@@ -1144,9 +1134,13 @@ bool p3NetMgrIMPL::checkNetAddress()
 		 * are the same (modify server)... this mismatch can
 		 * occur when the local port is changed....
 		 */
-		if (sockaddr_storage_sameip(mLocalAddr, mExtAddr))
+        if (sockaddr_storage_sameip(mLocalAddr, mExtAddr) && sockaddr_storage_port(mLocalAddr) != sockaddr_storage_port(mExtAddr))
 		{
+#ifdef NETMGR_DEBUG_RESET
+        std::cerr << "p3NetMgrIMPL::checkNetAddress() local and external ports are not the same. Setting external port to " <<       sockaddr_storage_port(mLocalAddr) << std::endl;
+#endif
 			sockaddr_storage_setport(mExtAddr, sockaddr_storage_port(mLocalAddr));
+			addrChanged = true;
 		}
 
 		// ensure that address family is set, otherwise windows Barfs.
@@ -1171,8 +1165,10 @@ bool p3NetMgrIMPL::checkNetAddress()
 		{
 			mPeerMgr->UpdateOwnAddress(mLocalAddr, mExtAddr);
 		}
-		
-		rslog(RSL_WARNING, p3netmgrzone, "p3NetMgr::checkNetAddress() local address changed, resetting network");
+
+	std::cerr << __PRETTY_FUNCTION__
+	          << " local address changed, resetting network" << std::endl;
+
 		netReset();
 	}
 

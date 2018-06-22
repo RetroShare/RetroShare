@@ -502,8 +502,8 @@ bool p3GxsCommentService::createGxsVote(uint32_t &token, RsGxsVote &vote)
 	opts.mReqType = GXS_REQUEST_TYPE_MSG_META;
 
 	GxsMsgReq msgIds;
-	std::vector<RsGxsMessageId> &vect_msgIds = msgIds[parentId.first];
-	vect_msgIds.push_back(parentId.second);
+	std::set<RsGxsMessageId> &vect_msgIds = msgIds[parentId.first];
+	vect_msgIds.insert(parentId.second);
 
 	uint32_t int_token;
 	mExchange->getTokenService()->requestMsgInfo(int_token, RS_TOKREQ_ANSTYPE_SUMMARY, opts, msgIds);

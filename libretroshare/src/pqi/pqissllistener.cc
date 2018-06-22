@@ -4,6 +4,7 @@
  * 3P/PQI network interface for RetroShare.
  *
  * Copyright 2004-2006 by Robert Fernie.
+ * Copyright (C) 2015-2018  Gioacchino Mazzurco <gio@eigenlab.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -59,8 +60,10 @@ static struct RsLog::logInfo pqissllistenzoneInfo = {RsLog::Default, "p3peermgr"
 
 
 pqissllistenbase::pqissllistenbase(const sockaddr_storage &addr, p3PeerMgr *pm)
-	: laddr(addr), mPeerMgr(pm), active(false)
+    : mPeerMgr(pm), active(false)
 {
+	sockaddr_storage_copy(addr, laddr);
+
 	if (!(AuthSSL::getAuthSSL()-> active()))
 	{
 		pqioutput(PQL_ALERT, pqissllistenzone,
@@ -103,17 +106,29 @@ int 	pqissllistenbase::status()
 	return 1;
 }
 
-int	pqissllistenbase::setuplisten()
+int pqissllistenbase::setuplisten()
 {
-        int err;
-	if (active)
-		return -1;
+	int err;
+	if (active) return -1;
 
-        lsock = socket(PF_INET, SOCK_STREAM, 0);
+	lsock = socket(PF_INET6, SOCK_STREAM, 0);
+
+#ifdef IPV6_V6ONLY
+	int no = 0;
+	err = rs_setsockopt(lsock, IPPROTO_IPV6, IPV6_V6ONLY,
+	                    reinterpret_cast<uint8_t*>(&no), sizeof(no));
+	if (err) std::cerr << __PRETTY_FUNCTION__
+	                   << ": Error setting IPv6 socket dual stack" << std::endl;
+#ifdef DEBUG_LISTENNER
+	else std::cerr << __PRETTY_FUNCTION__
+	               << ": Success setting IPv6 socket dual stack" << std::endl;
+#endif
+#endif // IPV6_V6ONLY
+
 /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 #ifndef WINDOWS_SYS // ie UNIX
-        if (lsock < 0)
-        {
+	if (lsock < 0)
+	{
 		pqioutput(PQL_ALERT, pqissllistenzone, 
 		 "pqissllistenbase::setuplisten() Cannot Open Socket!");
 
@@ -197,22 +212,20 @@ int	pqissllistenbase::setuplisten()
         	}
     	}
 
-#ifdef OPEN_UNIVERSAL_PORT
-	struct sockaddr_storage tmpaddr = laddr;
+	struct sockaddr_storage tmpaddr;
+	sockaddr_storage_copy(laddr, tmpaddr);
+	sockaddr_storage_ipv4_to_ipv6(tmpaddr);
 	if (!mPeerMgr->isHidden()) sockaddr_storage_zeroip(tmpaddr);
-	if (0 != (err = universal_bind(lsock, (struct sockaddr *) &tmpaddr, sizeof(tmpaddr))))
-#else
-	if (0 != (err = universal_bind(lsock, (struct sockaddr *) &laddr, sizeof(laddr))))
-#endif
+
+	if (0 != (err = rs_bind(lsock, tmpaddr)))
 	{
 		std::string out = "pqissllistenbase::setuplisten()  Cannot Bind to Local Address!\n";
 		showSocketError(out);
 		pqioutput(PQL_ALERT, pqissllistenzone, out);
-		std::cerr << out << std::endl;
-		std::cerr << "laddr: " << sockaddr_storage_tostring(laddr) << std::endl;
-#ifdef OPEN_UNIVERSAL_PORT
-		if (!mPeerMgr->isHidden()) std::cerr << "Zeroed tmpaddr: " << sockaddr_storage_tostring(tmpaddr) << std::endl;
-#endif
+		std::cerr << out << std::endl
+		          << "tmpaddr: " << sockaddr_storage_tostring(tmpaddr)
+		          << std::endl;
+		print_stacktrace();
 
 		return -1;
 	}

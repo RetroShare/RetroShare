@@ -3,7 +3,8 @@
  *
  * 3P/PQI network interface for RetroShare.
  *
- * Copyright 2007-2011 by Robert Fernie.
+ * Copyright (C) 2007-2011  Robert Fernie.
+ * Copyright (C) 2015-2018  Gioacchino Mazzurco <gio@eigenlab.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -56,6 +57,7 @@ static struct RsLog::logInfo p3connectzoneInfo = {RsLog::Default, "p3connect"};
 
 /****
  * #define LINKMGR_DEBUG 1
+ * #define LINKMGR_DEBUG_LOG	1
  * #define LINKMGR_DEBUG_CONNFAIL 1
  * #define LINKMGR_DEBUG_ACTIONS  1
  * #define LINKMGR_DEBUG_LINKTYPE	1
@@ -620,7 +622,9 @@ bool p3LinkMgrIMPL::connectAttempt(const RsPeerId &id, struct sockaddr_storage &
 
          }
 
+#ifdef LINKMGR_DEBUG_LOG
 	rslog(RSL_WARNING, p3connectzone, "p3LinkMgrIMPL::connectAttempt() called id: " + id.toStdString());
+#endif
 
         it->second.lastattempt = time(NULL); 
         it->second.inConnAttempt = true;
@@ -823,7 +827,9 @@ bool p3LinkMgrIMPL::connectResult(const RsPeerId &id, bool success, bool isIncom
 					out += " FAILED ATTEMPT (Not Connected)";
 				}
 			}
+#ifdef LINKMGR_DEBUG_LOG
 			rslog(RSL_WARNING, p3connectzone, out);
+#endif
 		}
 
 
@@ -1344,8 +1350,10 @@ void    p3LinkMgrIMPL::peerStatus(const RsPeerId& id, const pqiIpAddrSet &addrs,
 }
 
 /* This has become very unwieldy - as extra arguments are required for UDP connections */
-void    p3LinkMgrIMPL::peerConnectRequest(const RsPeerId& id, const struct sockaddr_storage &raddr, const struct sockaddr_storage &proxyaddr, const struct sockaddr_storage &srcaddr,
-						uint32_t source, uint32_t flags, uint32_t delay, uint32_t bandwidth)
+void p3LinkMgrIMPL::peerConnectRequest(
+        const RsPeerId& id, const sockaddr_storage &raddr,
+        const sockaddr_storage &proxyaddr, const sockaddr_storage &srcaddr,
+        uint32_t source, uint32_t flags, uint32_t delay, uint32_t bandwidth )
 {
 #ifdef LINKMGR_DEBUG
 	std::cerr << "p3LinkMgrIMPL::peerConnectRequest() id: " << id;
@@ -2057,8 +2065,9 @@ bool  p3LinkMgrIMPL::locked_ConnectAttempt_Complete(peerConnectState *peer)
 
 int p3LinkMgrIMPL::addFriend(const RsPeerId &id, bool isVisible)
 {
+#ifdef LINKMGR_DEBUG_LOG
 	rslog(RSL_WARNING, p3connectzone, "p3LinkMgr::addFriend() id: " + id.toStdString());
-
+#endif
 	{
 		RsStackMutex stack(mLinkMtx); /****** STACK LOCK MUTEX *******/
 	

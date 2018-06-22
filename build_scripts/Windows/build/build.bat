@@ -8,21 +8,18 @@ if errorlevel 1 goto error_env
 call "%EnvPath%\env.bat"
 if errorlevel 1 goto error_env
 
-:: Get gcc versions
-call "%ToolsPath%\get-gcc-version.bat" GCCVersion
-if "%GCCVersion%"=="" echo Cannot get gcc version.& exit /B 1
-
-:: Check external libraries
-if not exist "%RootPath%\libs" echo Please build external libraries first.& exit /B 1
-
-:: Check gcc version of external libraries
-if not exist "%RootPath%\libs\gcc-version" echo Cannot get gcc version of external libraries.& exit /B 1
-set /P LibsGCCVersion=<"%RootPath%\libs\gcc-version"
-if "%LibsGCCVersion%" NEQ "%GCCVersion%" echo Please use correct version of external libraries. (gcc %GCCVersion% ^<^> libs %LibsGCCVersion%).& exit /B 1
-
 :: Initialize environment
 call "%~dp0env.bat" %*
+if errorlevel 2 exit /B 2
 if errorlevel 1 goto error_env
+
+:: Check external libraries
+if not exist "%BuildLibsPath%\libs" %cecho% error "Please build external libraries first." & exit /B 1
+
+:: Check gcc version of external libraries
+if not exist "%BuildLibsPath%\libs\gcc-version" %cecho% error "Cannot get gcc version of external libraries." & exit /B 1
+set /P LibsGCCVersion=<"%BuildLibsPath%\libs\gcc-version"
+if "%LibsGCCVersion%" NEQ "%GCCVersion%" %cecho% error "Please use correct version of external libraries. (gcc %GCCVersion% ^<^> libs %LibsGCCVersion%)." & exit /B 1
 
 :: Check git executable
 set GitPath=
@@ -55,7 +52,7 @@ title Build - %SourceName%%RsType%-%RsBuildConfig% [qmake]
 set RS_QMAKE_CONFIG=%RsBuildConfig% version_detail_bash_script rs_autologin retroshare_plugins
 if "%RsRetroTor%"=="1" set RS_QMAKE_CONFIG=%RS_QMAKE_CONFIG% retrotor
 
-qmake "%SourcePath%\RetroShare.pro" -r "CONFIG+=%RS_QMAKE_CONFIG%"
+qmake "%SourcePath%\RetroShare.pro" -r -spec win32-g++ "CONFIG+=%RS_QMAKE_CONFIG%" "EXTERNAL_LIB_DIR=%BuildLibsPath%\libs"
 if errorlevel 1 goto error
 
 echo.

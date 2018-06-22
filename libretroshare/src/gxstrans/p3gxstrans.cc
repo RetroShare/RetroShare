@@ -455,7 +455,7 @@ void p3GxsTrans::GxsTransIntegrityCleanupThread::run()
 
         if(stored_msgs.end() != it2)
         {
-            msgsToDel[it2->second.first].push_back(it2->second.second);
+            msgsToDel[it2->second.first].insert(it2->second.second);
 
 #ifdef DEBUG_GXSTRANS
             std::cerr << "  scheduling msg " << std::hex << it2->second.first << "," << it2->second.second << " for deletion." << std::endl;

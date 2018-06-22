@@ -124,24 +124,27 @@ class RsGxsComment
 };
 
 
-class RsGxsCommentService
+struct RsGxsCommentService
 {
-	public:
+	RsGxsCommentService() {}
+	virtual ~RsGxsCommentService() {}
 
-	RsGxsCommentService() { return; }
-virtual ~RsGxsCommentService() { return; }
+	/** Get previously requested comment data with token */
+	virtual bool getCommentData( uint32_t token,
+	                             std::vector<RsGxsComment> &comments ) = 0;
+	virtual bool getRelatedComments( uint32_t token,
+	                                 std::vector<RsGxsComment> &comments ) = 0;
 
-virtual bool getCommentData(const uint32_t &token, std::vector<RsGxsComment> &comments) = 0;
-virtual bool getRelatedComments(const uint32_t &token, std::vector<RsGxsComment> &comments) = 0;
+	virtual bool createComment(uint32_t &token, RsGxsComment &comment) = 0;
+	virtual bool createVote(uint32_t &token, RsGxsVote &vote) = 0;
 
-//virtual bool getDetailedCommentData(const uint32_t &token, std::vector<RsGxsComment> &comments);
+	virtual bool acknowledgeComment(
+	        uint32_t token,
+	        std::pair<RsGxsGroupId, RsGxsMessageId>& msgId ) = 0;
 
-virtual bool createComment(uint32_t &token, RsGxsComment &comment) = 0;
-virtual bool createVote(uint32_t &token, RsGxsVote &vote) = 0;
-
-virtual bool acknowledgeComment(const uint32_t& token, std::pair<RsGxsGroupId, RsGxsMessageId>& msgId) = 0;
-virtual bool acknowledgeVote(const uint32_t& token, std::pair<RsGxsGroupId, RsGxsMessageId>& msgId) = 0;
-
+	virtual bool acknowledgeVote(
+	        uint32_t token,
+	        std::pair<RsGxsGroupId, RsGxsMessageId>& msgId ) = 0;
 };
 
 

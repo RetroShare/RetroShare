@@ -94,7 +94,10 @@ static void getPage(const std::string& server_name,std::string& page)
 #endif
     	std::cerr << "ExtAddrFinder: resolved hostname " << server_name << " to " << rs_inet_ntoa(in) << std::endl;
 
-	if(unix_connect(sockfd,(struct sockaddr *)&serveur, sizeof(serveur)) == -1)
+	sockaddr_storage server;
+	sockaddr_storage_setipv4(server, &serveur);
+	sockaddr_storage_setport(server, 80);
+	if(unix_connect(sockfd, server) == -1)
 	{
 		std::cerr << "ExtAddrFinder: Connection error to " << server_name << std::endl ;
 		unix_close(sockfd);

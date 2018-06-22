@@ -2,33 +2,25 @@
 
 TEMPLATE = lib
 CONFIG += staticlib
-CONFIG += create_prl
 CONFIG -= qt
 TARGET = retroshare
 TARGET_PRL = libretroshare
 DESTDIR = lib
 
-#CONFIG += dsdv
-
-retrotor {
-	DEFINES *= RETROTOR
-	CONFIG -= bitdht
-} else {
-	CONFIG += bitdht
-}
+!include("use_libretroshare.pri"):error("Including")
 
 # the dht stunner is used to obtain RS external ip addr. when it is natted
 # this system is unreliable and rs supports a newer and better one (asking connected peers)
 # CONFIG += useDhtStunner
 
-profiling {
-	QMAKE_CXXFLAGS -= -fomit-frame-pointer
-	QMAKE_CXXFLAGS *= -pg -g -fno-omit-frame-pointer
-}
-
 # treat warnings as error for better removing
 #QMAKE_CFLAGS += -Werror
 #QMAKE_CXXFLAGS += -Werror
+
+# when rapidjson is mainstream on all distribs, we will not need the sources anymore
+# in the meantime, they are part of the RS directory so that it is always possible to find them
+
+INCLUDEPATH += ../../rapidjson-1.1.0
 
 debug {
 #	DEFINES *= DEBUG
@@ -203,21 +195,11 @@ linux-* {
 
 	PKGCONFIG *= libssl libupnp
 	PKGCONFIG *= libcrypto zlib
-	LIBS *= -lpthread -ldl
-}
+    no_sqlcipher:PKGCONFIG *= sqlite3
+    LIBS *= -ldl
 
-linux-* {
 	DEFINES *= PLUGIN_DIR=\"\\\"$${PLUGIN_DIR}\\\"\"
 	DEFINES *= DATA_DIR=\"\\\"$${DATA_DIR}\\\"\"
-
-	## where to put the librarys interface
-	#include_rsiface.path = "$${INC_DIR}"
-	#include_rsiface.files = $$PUBLIC_HEADERS
-	#INSTALLS += include_rsiface
-
-	## where to put the shared library itself
-	#target.path = "$$LIB_DIR"
-	#INSTALLS *= target
 }
 
 linux-g++ {
@@ -234,7 +216,7 @@ version_detail_bash_script {
         PRE_TARGETDEPS = write_version_detail
         write_version_detail.commands = $$PWD/version_detail.sh
     }
-    win32 {
+    win32-* {
         QMAKE_EXTRA_TARGETS += write_version_detail
         PRE_TARGETDEPS = write_version_detail
         write_version_detail.commands = $$PWD/version_detail.bat
@@ -263,13 +245,11 @@ win32-x-g++ {
 }
 ################################# Windows ##########################################
 
-win32 {
+win32-g++ {
 	QMAKE_CC = $${QMAKE_CXX}
 	OBJECTS_DIR = temp/obj
 	MOC_DIR = temp/moc
-	DEFINES *= WINDOWS_SYS WIN32 STATICLIB MINGW WIN32_LEAN_AND_MEAN _USE_32BIT_TIME_T
-	# This defines the platform to be WinXP or later and is needed for getaddrinfo (_WIN32_WINNT_WINXP)
-	DEFINES *= WINVER=0x0501
+    DEFINES *= STATICLIB
 
 	# Switch on extra warnings
 	QMAKE_CFLAGS += -Wextra
@@ -287,17 +267,8 @@ win32 {
 
 	DEFINES += USE_CMD_ARGS
 
-	CONFIG += upnp_miniupnpc
-
-	no_sqlcipher {
-		PKGCONFIG *= sqlite3
-		LIBS += -lsqlite3
-	} else {
-		LIBS += -lsqlcipher
-	}
-
-	DEPENDPATH += . $$INC_DIR
-	INCLUDEPATH += . $$INC_DIR
+    wLibs = ws2_32 gdi32 uuid iphlpapi crypt32 ole32 winmm
+    LIBS += $$linkDynamicLibs(wLibs)
 }
 
 ################################# MacOSX ##########################################
@@ -306,21 +277,9 @@ mac {
 		QMAKE_CC = $${QMAKE_CXX}
 		OBJECTS_DIR = temp/obj
 		MOC_DIR = temp/moc
-		#DEFINES = WINDOWS_SYS WIN32 STATICLIB MINGW
-		#DEFINES *= MINIUPNPC_VERSION=13
-
-		CONFIG += upnp_miniupnpc
-                CONFIG += c++11
-
-		# zeroconf disabled at the end of libretroshare.pro (but need the code)
-		#CONFIG += zeroconf
-		#CONFIG += zcnatassist
 
 		# Beautiful Hack to fix 64bit file access.
 		QMAKE_CXXFLAGS *= -Dfseeko64=fseeko -Dftello64=ftello -Dfopen64=fopen -Dvstatfs64=vstatfs
-
-		#GPG_ERROR_DIR = ../../../../libgpg-error-1.7
-		#GPGME_DIR  = ../../../../gpgme-1.1.8
 
 		for(lib, LIB_DIR):LIBS += -L"$$lib"
 		for(bin, BIN_DIR):LIBS += -L"$$bin"
@@ -561,7 +520,7 @@ SOURCES +=	ft/ftchunkmap.cc \
 			ft/ftfilesearch.cc \
 			ft/ftserver.cc \
 			ft/fttransfermodule.cc \
-			ft/ftturtlefiletransferitem.cc 
+            ft/ftturtlefiletransferitem.cc
 
 SOURCES += crypto/chacha20.cpp \
 			  crypto/hashstream.cc
@@ -655,6 +614,7 @@ SOURCES +=	serialiser/rsbaseserial.cc \
 			rsitems/rsgxsupdateitems.cc \
 			rsitems/rsserviceinfoitems.cc \
 
+
 SOURCES +=  services/autoproxy/rsautoproxymonitor.cc \
             services/autoproxy/p3i2pbob.cc \
             services/p3msgservice.cc \
@@ -697,13 +657,16 @@ SOURCES +=	util/folderiterator.cc \
 			util/rsrecogn.cc \
 			util/rstime.cc
 
-
-upnp_miniupnpc {
-	HEADERS += upnp/upnputil.h upnp/upnphandler_miniupnp.h
-	SOURCES += upnp/upnputil.c upnp/upnphandler_miniupnp.cc
+## Added for retrocompatibility remove ASAP
+isEmpty(RS_UPNP_LIB) {
+    upnp_miniupnpc:RS_UPNP_LIB=miniupnpc
+    upnp_libupnp:RS_UPNP_LIB="upnp ixml threadutil"
 }
 
-upnp_libupnp {
+equals(RS_UPNP_LIB, miniupnpc) {
+	HEADERS += upnp/upnputil.h upnp/upnphandler_miniupnp.h
+	SOURCES += upnp/upnputil.c upnp/upnphandler_miniupnp.cc
+} else {
 	HEADERS += upnp/UPnPBase.h  upnp/upnphandler_linux.h
 	SOURCES += upnp/UPnPBase.cpp upnp/upnphandler_linux.cc
 	DEFINES *= RS_USE_LIBUPNP
@@ -795,7 +758,8 @@ SOURCES += gxstunnel/p3gxstunnel.cc \
 				gxstunnel/rsgxstunnelitems.cc 
 
 # new serialization code
-HEADERS += serialiser/rsserializer.h \
+HEADERS += serialiser/rsserializable.h \
+           serialiser/rsserializer.h \
            serialiser/rstypeserializer.h
 
 SOURCES += serialiser/rsserializer.cc \
@@ -936,19 +900,13 @@ android-* {
     DEFINES *= "fopen64=fopen"
     DEFINES *= "fseeko64=fseeko"
     DEFINES *= "ftello64=ftello"
-    LIBS *= -lbz2 -lupnp -lixml -lthreadutil -lsqlite3
 
-## Static library are verysensible to order in command line, has to be in the
-## end of file for this reason
+## Static library are very susceptible to order in command line
+    sLibs = bz2 $$RS_UPNP_LIB $$RS_SQL_LIB ssl crypto
 
-    LIBS += -L$$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/lib/ -lsqlcipher
-    PRE_TARGETDEPS += $$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/lib/libsqlcipher.a
-
-    LIBS += -L$$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/lib/ -lssl
-    PRE_TARGETDEPS += $$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/lib/libssl.a
-
-    LIBS += -L$$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/lib/ -lcrypto
-    PRE_TARGETDEPS += $$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/lib/libcrypto.a
+    LIBS += $$linkStaticLibs(sLibs)
+    PRE_TARGETDEPS += $$pretargetStaticLibs(sLibs)
 
     HEADERS += util/androiddebug.h
 }
+

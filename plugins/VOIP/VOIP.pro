@@ -16,6 +16,12 @@ MOBILITY = multimedia
 DEPENDPATH += $$PWD/../../retroshare-gui/src/temp/ui
 INCLUDEPATH += $$PWD/../../retroshare-gui/src/temp/ui
 
+# when rapidjson is mainstream on all distribs, we will not need the sources anymore
+# in the meantime, they are part of the RS directory so that it is always possible to find them
+
+INCLUDEPATH += ../../rapidjson-1.1.0
+
+
 #################################### Linux #####################################
 
 linux-* {
@@ -37,7 +43,7 @@ win32 {
 
 	OPENCV_VERSION = "341"
 	USE_PRECOMPILED_LIBS =
-	for(lib, LIB_DIR) {
+	for(lib, RS_LIB_DIR) {
 #message(Scanning $$lib)
 		exists( $$lib/opencv/libopencv_core$${OPENCV_VERSION}.a) {
 			isEmpty(USE_PRECOMPILED_LIBS) {

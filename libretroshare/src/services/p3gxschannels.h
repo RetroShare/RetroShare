@@ -111,15 +111,12 @@ virtual bool setChannelDownloadDirectory(const RsGxsGroupId &groupId, const std:
 virtual bool getChannelDownloadDirectory(const RsGxsGroupId &groupId, std::string& directory);
 
 	/* Comment service - Provide RsGxsCommentService - redirect to p3GxsCommentService */
-virtual bool getCommentData(const uint32_t &token, std::vector<RsGxsComment> &msgs)
-	{
-        	return mCommentService->getGxsCommentData(token, msgs);
-	}
+	virtual bool getCommentData(uint32_t token, std::vector<RsGxsComment> &msgs)
+	{ return mCommentService->getGxsCommentData(token, msgs); }
 
-virtual bool getRelatedComments(const uint32_t &token, std::vector<RsGxsComment> &msgs)
-	{
-		return mCommentService->getGxsRelatedComments(token, msgs);
-	}
+	virtual bool getRelatedComments( uint32_t token,
+	                                 std::vector<RsGxsComment> &msgs )
+	{ return mCommentService->getGxsRelatedComments(token, msgs); }
 
 virtual bool createComment(uint32_t &token, RsGxsComment &msg)
 	{
@@ -131,13 +128,13 @@ virtual bool createVote(uint32_t &token, RsGxsVote &msg)
 		return mCommentService->createGxsVote(token, msg);
 	}
 
-virtual bool acknowledgeComment(const uint32_t& token, std::pair<RsGxsGroupId, RsGxsMessageId>& msgId)
+virtual bool acknowledgeComment(uint32_t token, std::pair<RsGxsGroupId, RsGxsMessageId>& msgId)
 	{
 		return acknowledgeMsg(token, msgId);
 	}
 
 
-virtual bool acknowledgeVote(const uint32_t& token, std::pair<RsGxsGroupId, RsGxsMessageId>& msgId)
+virtual bool acknowledgeVote(uint32_t token, std::pair<RsGxsGroupId, RsGxsMessageId>& msgId)
 	{
 		if (mCommentService->acknowledgeVote(token, msgId))
 		{

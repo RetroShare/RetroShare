@@ -369,6 +369,9 @@ static void secure_queue_response(MHD_Connection *connection, unsigned int statu
     // tell Internet Explorer to not do content sniffing
     MHD_add_response_header(response, "X-Content-Type-Options", "nosniff");
 
+    // Prevent clickjacking attacks (also prevented by CSP, but not in all browsers, including FireFox)
+    MHD_add_response_header(response, "X-Frame-Options", "SAMEORIGIN");
+
     // Content security policy header, its a new technology and not implemented everywhere
 
     // get own host name as the browser sees it

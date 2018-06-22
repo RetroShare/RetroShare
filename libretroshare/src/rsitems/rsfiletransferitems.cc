@@ -92,48 +92,6 @@ void RsFileTransferSingleChunkCrcItem::serial_process(RsGenericSerializer::Seria
 }
 
 //===================================================================================================//
-//                                         CompressedChunkMap                                        //
-//===================================================================================================//
-
-template<> uint32_t RsTypeSerializer::serial_size(const CompressedChunkMap& s)
-{
-	return 4 + 4*s._map.size() ;
-}
-
-template<> bool RsTypeSerializer::serialize(uint8_t data[], uint32_t size, uint32_t &offset,const CompressedChunkMap& s)
-{
-    bool ok = true ;
-
-	ok &= setRawUInt32(data, size, &offset, s._map.size());
-
-	for(uint32_t i=0;i<s._map.size() && ok;++i)
-		ok &= setRawUInt32(data, size, &offset, s._map[i]);
-
-    return ok;
-}
-
-template<> bool RsTypeSerializer::deserialize(const uint8_t data[], uint32_t size,uint32_t& offset,CompressedChunkMap& s)
-{
-	uint32_t S =0;
-	bool ok = getRawUInt32(data, size, &offset, &S);
-
-	if(ok)
-	{
-		s._map.resize(S) ;
-
-		for(uint32_t i=0;i<S && ok;++i)
-			ok &= getRawUInt32(data, size, &offset, &(s._map[i]));
-	}
-
-    return ok;
-}
-
-template<> void RsTypeSerializer::print_data(const std::string& n, const CompressedChunkMap& s)
-{
-    std::cerr << "  [Compressed chunk map] " << n << " : length=" << s._map.size() << std::endl;
-}
-
-//===================================================================================================//
 //                                            Serializer                                             //
 //===================================================================================================//
 

@@ -2,28 +2,29 @@
 
 TEMPLATE = app
 QT     += network xml 
-CONFIG += qt gui uic qrc resources idle bitdht
-CONFIG += link_prl
+CONFIG += qt gui uic qrc resources idle
 CONFIG += console
 TARGET = retroshare
 DEFINES += TARGET=\\\"$${TARGET}\\\"
 
-# Plz never commit the .pro with these flags enabled.
-# Use this flag when developping new features only.
-#
-#CONFIG += unfinished
-#CONFIG += debug
-#DEFINES *= SIGFPE_DEBUG
+DEPENDPATH  *= $${PWD} $${RS_INCLUDE_DIR} retroshare-gui
+INCLUDEPATH *= $${PWD} retroshare-gui
 
-profiling {
-	QMAKE_CXXFLAGS -= -fomit-frame-pointer
-	QMAKE_CXXFLAGS *= -pg -g -fno-omit-frame-pointer
-	QMAKE_LFLAGS *= -pg 
+# when rapidjson is mainstream on all distribs, we will not need the sources anymore
+# in the meantime, they are part of the RS directory so that it is always possible to find them
+
+INCLUDEPATH += ../../rapidjson-1.1.0
+
+libresapihttpserver {
+    !include("../../libresapi/src/use_libresapi.pri"):error("Including")
+    HEADERS *= gui/settings/WebuiPage.h
+    SOURCES *= gui/settings/WebuiPage.cpp
+    FORMS *= gui/settings/WebuiPage.ui
 }
 
-retrotor {
-	DEFINES *= RETROTOR
+!include("../../libretroshare/src/use_libretroshare.pri"):error("Including")
 
+retrotor {
 	FORMS   += TorControl/TorControlWindow.ui
 	SOURCES += TorControl/TorControlWindow.cpp
 	HEADERS += TorControl/TorControlWindow.h
@@ -58,22 +59,6 @@ DEFINES += RS_RELEASE_VERSION
 RCC_DIR = temp/qrc
 UI_DIR  = temp/ui
 MOC_DIR = temp/moc
-
-#CONFIG += debug
-debug {
-	QMAKE_CFLAGS += -g
-	QMAKE_CXXFLAGS -= -O2
-	QMAKE_CXXFLAGS += -O0
-	QMAKE_CFLAGS -= -O2
-	QMAKE_CFLAGS += -O0
-}
-
-DEPENDPATH *= retroshare-gui
-INCLUDEPATH *= retroshare-gui
-
-# treat warnings as error for better removing
-#QMAKE_CFLAGS += -Werror
-#QMAKE_CXXFLAGS += -Werror
 
 ################################# Linux ##########################################
 # Put lib dir in QMAKE_LFLAGS so it appears before -L/usr/lib
@@ -133,7 +118,7 @@ version_detail_bash_script {
 		PRE_TARGETDEPS = write_version_detail
 		write_version_detail.commands = $$PWD/version_detail.sh
 	}
-	win32 {
+    win32-* {
 		QMAKE_EXTRA_TARGETS += write_version_detail
 		PRE_TARGETDEPS = write_version_detail
 		write_version_detail.commands = $$PWD/version_detail.bat
@@ -165,7 +150,7 @@ win32-x-g++ {
 
 #################################### Windows #####################################
 
-win32 {
+win32-g++ {
 	CONFIG(debug, debug|release) {
 		# show console output
 		CONFIG += console
@@ -185,8 +170,9 @@ win32 {
 		QMAKE_LFLAGS += -Wl,-nxcompat
 	}
 
-	# solve linker warnings because of the order of the libraries
-	QMAKE_LFLAGS += -Wl,--start-group
+    # Fix linking error (ld.exe: Error: export ordinal too large) due to too
+    # many exported symbols.
+    QMAKE_LFLAGS+=-Wl,--exclude-libs,ALL
 
 	# Switch off optimization for release version
 	QMAKE_CXXFLAGS_RELEASE -= -O2
@@ -199,15 +185,10 @@ win32 {
 	#QMAKE_CFLAGS_DEBUG += -O2
 
 	OBJECTS_DIR = temp/obj
-	#LIBS += -L"D/Qt/2009.03/qt/plugins/imageformats"
-	#QTPLUGIN += qjpeg
 
-	for(lib, LIB_DIR):LIBS += -L"$$lib"
-	for(bin, BIN_DIR):LIBS += -L"$$bin"
+    dLib = ws2_32 gdi32 uuid ole32 iphlpapi crypt32 winmm
+    LIBS *= $$linkDynamicLibs(dLib)
 
-	LIBS += -lssl -lcrypto -lpthread -lminiupnpc -lz -lws2_32
-	LIBS += -luuid -lole32 -liphlpapi -lcrypt32 -lgdi32
-	LIBS += -lwinmm
 	RC_FILE = gui/images/retroshare_win.rc
 
 	# export symbols for the plugins
@@ -219,11 +200,6 @@ win32 {
 	} else {
 		QMAKE_PRE_LINK = $(CHK_DIR_EXISTS) lib || $(MKDIR) lib
 	}
-
-	DEFINES *= WINDOWS_SYS WIN32_LEAN_AND_MEAN _USE_32BIT_TIME_T
-
-	DEPENDPATH += . $$INC_DIR
-	INCLUDEPATH += . $$INC_DIR
 
 	greaterThan(QT_MAJOR_VERSION, 4) {
 		# Qt 5
@@ -309,31 +285,10 @@ openbsd-* {
 	LIBS *= -rdynamic
 }
 
-
-
-############################## Common stuff ######################################
-
-# On Linux systems that alredy have libssl and libcrypto it is advisable
-# to rename the patched version of SSL to something like libsslxpgp.a and libcryptoxpg.a
-
-# ###########################################
-
-DEPENDPATH += . $$PWD/../../libretroshare/src/
-INCLUDEPATH += $$PWD/../../libretroshare/src/
-
-PRE_TARGETDEPS *= $$OUT_PWD/../../libretroshare/src/lib/libretroshare.a
-LIBS *= $$OUT_PWD/../../libretroshare/src/lib/libretroshare.a
-
 wikipoos {
 	PRE_TARGETDEPS *= $$OUT_PWD/../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
 	LIBS *= $$OUT_PWD/../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
 }
-
-# webinterface
-DEPENDPATH += $$PWD/../../libresapi/src
-INCLUDEPATH += $$PWD/../../libresapi/src
-PRE_TARGETDEPS *= $$OUT_PWD/../../libresapi/src/lib/libresapi.a
-LIBS += $$OUT_PWD/../../libresapi/src/lib/libresapi.a
 
 retrotor {
 HEADERS += 	TorControl/AddOnionCommand.h \
@@ -439,7 +394,6 @@ HEADERS +=  rshare.h \
             util/stringutil.h \
             util/RsNetUtil.h \
             util/DateTime.h \
-            util/win32.h \
             util/RetroStyleLabel.h \
             util/dllexport.h \
             util/NonCopyable.h \
@@ -619,7 +573,8 @@ HEADERS +=  rshare.h \
     util/imageutil.h \
     gui/NetworkDialog/pgpid_item_model.h \
     gui/NetworkDialog/pgpid_item_proxy.h \
-    gui/common/RsCollection.h
+    gui/common/RsCollection.h \
+    util/retroshareWin32.h
 #            gui/ForumsDialog.h \
 #            gui/forums/ForumDetails.h \
 #            gui/forums/EditForumDetails.h \
@@ -803,7 +758,6 @@ SOURCES +=  main.cpp \
             util/stringutil.cpp \
             util/RsNetUtil.cpp \
             util/DateTime.cpp \
-            util/win32.cpp \
             util/RetroStyleLabel.cpp \
             util/WidgetBackgroundImage.cpp \
             util/NonCopyable.cpp \
@@ -981,7 +935,8 @@ SOURCES +=  main.cpp \
     util/imageutil.cpp \
     gui/NetworkDialog/pgpid_item_model.cpp \
     gui/NetworkDialog/pgpid_item_proxy.cpp \
-    gui/common/RsCollection.cpp
+    gui/common/RsCollection.cpp \
+    util/retroshareWin32.cpp
 #            gui/ForumsDialog.cpp \
 #            gui/forums/ForumDetails.cpp \
 #            gui/forums/EditForumDetails.cpp \
@@ -1418,10 +1373,4 @@ gxsgui {
 #		gui/gxs/GxsMsgDialog.cpp \
 	
 	
-}
-
-libresapihttpserver {
-    HEADERS *= gui/settings/WebuiPage.h
-    SOURCES *= gui/settings/WebuiPage.cpp
-    FORMS *= gui/settings/WebuiPage.ui
 }

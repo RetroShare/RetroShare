@@ -4,6 +4,7 @@
  * 3P/PQI network interface for RetroShare.
  *
  * Copyright 2007-2011 by Robert Fernie.
+ * Copyright (C) 2015-2018  Gioacchino Mazzurco <gio@eigenlab.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,6 +24,9 @@
  *
  */
 
+#include <vector>    // for std::vector
+#include <algorithm> // for std::random_shuffle
+
 #include "rsserver/p3face.h"
 #include "util/rsnet.h"
 #include "pqi/authgpg.h"
@@ -32,6 +36,7 @@
 #include "pqi/p3linkmgr.h"
 #include "pqi/p3netmgr.h"
 #include "pqi/p3historymgr.h"
+#include "pqi/pqinetwork.h"        // for getLocalAddresses
 
 //#include "pqi/p3dhtmgr.h" // Only need it for constants.
 //#include "tcponudp/tou.h"
@@ -69,6 +74,7 @@ static struct RsLog::logInfo p3peermgrzoneInfo = {RsLog::Default, "p3peermgr"};
 
 /****
  * #define PEER_DEBUG 1
+ * #define PEER_DEBUG_LOG 1
  ***/
 
 #define MAX_AVAIL_PERIOD 230 //times a peer stay in available state when not connected
@@ -326,8 +332,8 @@ const RsPeerId& p3PeerMgrIMPL::getOwnId()
 
 bool p3PeerMgrIMPL::getOwnNetStatus(peerState &state)
 {
-        RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
-        state = mOwnState;
+	RS_STACK_MUTEX(mPeerMtx);
+	state = mOwnState;
 	return true;
 }
 
@@ -812,15 +818,12 @@ int p3PeerMgrIMPL::getFriendCount(bool ssl, bool online)
 
 bool p3PeerMgrIMPL::getFriendNetStatus(const RsPeerId &id, peerState &state)
 {
-	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+	RS_STACK_MUTEX(mPeerMtx);
 
 	/* check for existing */
 	std::map<RsPeerId, peerState>::iterator it;
 	it = mFriendList.find(id);
-	if (it == mFriendList.end())
-	{
-		return false;
-	}
+	if (it == mFriendList.end()) return false;
 
 	state = it->second;
 	return true;
@@ -829,27 +832,24 @@ bool p3PeerMgrIMPL::getFriendNetStatus(const RsPeerId &id, peerState &state)
 
 bool p3PeerMgrIMPL::getOthersNetStatus(const RsPeerId &id, peerState &state)
 {
-	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+	RS_STACK_MUTEX(mPeerMtx);
 
 	/* check for existing */
 	std::map<RsPeerId, peerState>::iterator it;
 	it = mOthersList.find(id);
-	if (it == mOthersList.end())
-	{
-		return false;
-	}
+	if (it == mOthersList.end()) return false;
 
 	state = it->second;
 	return true;
 }
 
-int p3PeerMgrIMPL::getConnectAddresses(const RsPeerId &id, 
-					struct sockaddr_storage &lAddr, struct sockaddr_storage &eAddr, 
-					pqiIpAddrSet &histAddrs, std::string &dyndns)
+int p3PeerMgrIMPL::getConnectAddresses(
+        const RsPeerId &id, sockaddr_storage &lAddr, sockaddr_storage &eAddr,
+                    pqiIpAddrSet &histAddrs, std::string &dyndns )
 {
 
-	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
-	
+	RS_STACK_MUTEX(mPeerMtx);
+
 	/* check for existing */
 	std::map<RsPeerId, peerState>::iterator it;
 	it = mFriendList.find(id);
@@ -860,7 +860,7 @@ int p3PeerMgrIMPL::getConnectAddresses(const RsPeerId &id,
 		std::cerr << std::endl;
 		return 0;
 	}
-	
+
 	lAddr = it->second.localaddr;
 	eAddr = it->second.serveraddr;
 	histAddrs = it->second.ipAddrs;
@@ -910,8 +910,9 @@ bool p3PeerMgrIMPL::addFriend(const RsPeerId& input_id, const RsPgpId& input_gpg
 	RsPeerId id = input_id ;
 	RsPgpId gpg_id = input_gpg_id ;
 
+#ifdef PEER_DEBUG_LOG
 	rslog(RSL_WARNING, p3peermgrzone, "p3PeerMgr::addFriend() id: " + id.toStdString());
-
+#endif
 	{
 		RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
@@ -1227,45 +1228,101 @@ void p3PeerMgrIMPL::printPeerLists(std::ostream &out)
  * as it doesn't call back to there.
  */
 
-bool 	p3PeerMgrIMPL::UpdateOwnAddress(const struct sockaddr_storage &localAddr, const struct sockaddr_storage &extAddr)
+bool p3PeerMgrIMPL::UpdateOwnAddress( const sockaddr_storage& pLocalAddr,
+                                      const sockaddr_storage& pExtAddr )
 {
-#ifdef PEER_DEBUG
-    std::cerr << "p3PeerMgrIMPL::UpdateOwnAddress(";
-    std::cerr << sockaddr_storage_tostring(localAddr);
-    std::cerr << ", ";
-    std::cerr << sockaddr_storage_tostring(extAddr);
-    std::cerr << ")" << std::endl;
-#endif
+	sockaddr_storage localAddr;
+	sockaddr_storage_copy(pLocalAddr, localAddr);
+	sockaddr_storage_ipv6_to_ipv4(localAddr);
 
-    if((rsBanList != NULL) && !rsBanList->isAddressAccepted(localAddr, RSBANLIST_CHECKING_FLAGS_BLACKLIST))
-    {
-        std::cerr << "(SS) Trying to set own IP to a banned IP " << sockaddr_storage_iptostring(localAddr) << ". This probably means that a friend in under traffic re-routing attack." << std::endl;
-        return false ;
-    }
+	sockaddr_storage extAddr;
+	sockaddr_storage_copy(pExtAddr, extAddr);
+	sockaddr_storage_ipv6_to_ipv4(extAddr);
 
-    {
-        RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+//#ifdef PEER_DEBUG
+	std::cerr << "p3PeerMgrIMPL::UpdateOwnAddress("
+	          << sockaddr_storage_tostring(localAddr) << ", "
+	          << sockaddr_storage_tostring(extAddr) << ")" << std::endl;
+//#endif
 
-        //update ip address list
-        pqiIpAddress ipAddressTimed;
-        ipAddressTimed.mAddr = localAddr;
-        ipAddressTimed.mSeenTime = time(NULL);
-        ipAddressTimed.mSrc = 0 ;
-        mOwnState.ipAddrs.updateLocalAddrs(ipAddressTimed);
+	if( rsBanList &&
+	         !rsBanList->isAddressAccepted(localAddr,
+	                                       RSBANLIST_CHECKING_FLAGS_BLACKLIST) )
+	{
+		std::cerr << "(SS) Trying to set own IP to a banned IP "
+		          << sockaddr_storage_iptostring(localAddr) << ". This probably"
+		          << "means that a friend in under traffic re-routing attack."
+		          << std::endl;
+		return false;
+	}
 
-        mOwnState.localaddr = localAddr;
-    }
+	{
+		RS_STACK_MUTEX(mPeerMtx);
+
+		//update ip address list
+		pqiIpAddress ipAddressTimed;
+		sockaddr_storage_copy(localAddr, ipAddressTimed.mAddr);
+		ipAddressTimed.mSeenTime = time(NULL);
+		ipAddressTimed.mSrc = 0;
+		mOwnState.ipAddrs.updateLocalAddrs(ipAddressTimed);
+
+		if(!mOwnState.hiddenNode)
+		{
+			/* Workaround to spread multiple local ip addresses when presents.
+			 * This is needed because RS wrongly assumes that there is just one
+			 * active local ip address at time. */
+			std::vector<sockaddr_storage> addrs;
+			if(getLocalAddresses(addrs))
+			{
+				/* To work around MAX_ADDRESS_LIST_SIZE addresses limitation,
+				 *  let's shuffle the list of local addresses in the hope that
+				 *  with enough time every local address is advertised to
+				 *  trusted nodes so they may try to connect to all of them
+				 *  including the most convenient if a local connection exists.
+				 */
+				std::random_shuffle(addrs.begin(), addrs.end());
+
+				for (auto it = addrs.begin(); it!=addrs.end(); ++it)
+				{
+					sockaddr_storage& addr(*it);
+					if( sockaddr_storage_isValidNet(addr) &&
+					    !sockaddr_storage_isLoopbackNet(addr) &&
+					    /* Avoid IPv6 link local addresses as we don't have
+						 * implemented the logic needed to handle sin6_scope_id.
+						 * To properly handle sin6_scope_id it would probably
+						 * require deep reenginering of the RetroShare
+						 * networking stack */
+					    !sockaddr_storage_ipv6_isLinkLocalNet(addr) )
+					{
+						sockaddr_storage_ipv6_to_ipv4(addr);
+						pqiIpAddress pqiIp;
+						sockaddr_storage_clear(pqiIp.mAddr);
+						pqiIp.mAddr.ss_family = addr.ss_family;
+						sockaddr_storage_copyip(pqiIp.mAddr, addr);
+						sockaddr_storage_setport(
+						            pqiIp.mAddr,
+						            sockaddr_storage_port(localAddr) );
+						pqiIp.mSeenTime = time(nullptr);
+						pqiIp.mSrc = 0;
+						mOwnState.ipAddrs.updateLocalAddrs(pqiIp);
+					}
+				}
+			}
+		}
+
+		sockaddr_storage_copy(localAddr, mOwnState.localaddr);
+	}
 
 
-    {
-        RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+	{
+		RS_STACK_MUTEX(mPeerMtx);
 
-        //update ip address list
-        pqiIpAddress ipAddressTimed;
-        ipAddressTimed.mAddr = extAddr;
-        ipAddressTimed.mSeenTime = time(NULL);
-        ipAddressTimed.mSrc = 0 ;
-        mOwnState.ipAddrs.updateExtAddrs(ipAddressTimed);
+		//update ip address list
+		pqiIpAddress ipAddressTimed;
+		sockaddr_storage_copy(extAddr, ipAddressTimed.mAddr);
+		ipAddressTimed.mSeenTime = time(NULL);
+		ipAddressTimed.mSrc = 0;
+		mOwnState.ipAddrs.updateExtAddrs(ipAddressTimed);
 
         /* Attempted Fix to MANUAL FORWARD Mode....
          * don't update the server address - if we are in this mode
@@ -1285,8 +1342,8 @@ bool 	p3PeerMgrIMPL::UpdateOwnAddress(const struct sockaddr_storage &localAddr, 
             std::cerr << std::endl;
         }
         else if (mOwnState.netMode & RS_NET_MODE_EXT)
-        {
-            sockaddr_storage_copyip(mOwnState.serveraddr,extAddr);
+		{
+			sockaddr_storage_copyip(mOwnState.serveraddr, extAddr);
 
             std::cerr << "p3PeerMgrIMPL::UpdateOwnAddress() Disabling Update of Server Port ";
             std::cerr << " as MANUAL FORWARD Mode";
@@ -1296,8 +1353,8 @@ bool 	p3PeerMgrIMPL::UpdateOwnAddress(const struct sockaddr_storage &localAddr, 
             std::cerr << std::endl;
         }
         else
-        {
-            mOwnState.serveraddr = extAddr;
+		{
+			sockaddr_storage_copy(extAddr, mOwnState.serveraddr);
         }
     }
 
@@ -1371,21 +1428,25 @@ bool    p3PeerMgrIMPL::setLocalAddress(const RsPeerId &id, const struct sockaddr
 	return changed;
 }
 
-bool    p3PeerMgrIMPL::setExtAddress(const RsPeerId &id, const struct sockaddr_storage &addr)
+bool p3PeerMgrIMPL::setExtAddress( const RsPeerId &id,
+                                   const sockaddr_storage &addr )
 {
-    bool changed = false;
-    uint32_t check_res = 0 ;
+	bool changed = false;
+	uint32_t check_res = 0;
 
-    if(rsBanList!=NULL && !rsBanList->isAddressAccepted(addr,RSBANLIST_CHECKING_FLAGS_BLACKLIST,&check_res))
-    {
-        std::cerr << "(SS) trying to set external contact address for peer " << id << " to a banned address " << sockaddr_storage_iptostring(addr )<< std::endl;
-        return false ;
-    }
+	if( rsBanList!=NULL && !rsBanList->isAddressAccepted(
+	            addr, RSBANLIST_CHECKING_FLAGS_BLACKLIST, &check_res) )
+	{
+		std::cerr << "(SS) trying to set external contact address for peer "
+		          << id << " to a banned address "
+		          << sockaddr_storage_iptostring(addr) << std::endl;
+		return false;
+	}
 
 	if (id == AuthSSL::getAuthSSL()->OwnId())
 	{
 		{
-			RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+			RS_STACK_MUTEX(mPeerMtx);
 			if (!sockaddr_storage_same(mOwnState.serveraddr, addr))
 			{
 				mOwnState.serveraddr = addr;
@@ -1398,7 +1459,7 @@ bool    p3PeerMgrIMPL::setExtAddress(const RsPeerId &id, const struct sockaddr_s
 		return changed;
 	}
 
-	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+	RS_STACK_MUTEX(mPeerMtx);
 	/* check if it is a friend */
 	std::map<RsPeerId, peerState>::iterator it;
 	if (mFriendList.end() == (it = mFriendList.find(id)))
@@ -1406,7 +1467,9 @@ bool    p3PeerMgrIMPL::setExtAddress(const RsPeerId &id, const struct sockaddr_s
 		if (mOthersList.end() == (it = mOthersList.find(id)))
 		{
 #ifdef PEER_DEBUG
-			std::cerr << "p3PeerMgrIMPL::setLocalAddress() cannot add addres info : peer id not found in friend list  id: " << id << std::endl;
+			std::cerr << "p3PeerMgrIMPL::setLocalAddress() cannot add addres "
+			          << "info : peer id not found in friend list  id: " << id
+			          << std::endl;
 #endif
 			return false;
 		}
@@ -1957,7 +2020,7 @@ bool p3PeerMgrIMPL::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 	RsPeerNetItem *item = new RsPeerNetItem();
 	item->clear();
 
-	item->peerId = getOwnId();
+	item->nodePeerId = getOwnId();
 	item->pgpId = mOwnState.gpg_id;
 	item->location = mOwnState.location;
 
@@ -2008,7 +2071,7 @@ bool p3PeerMgrIMPL::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 		item = new RsPeerNetItem();
 		item->clear();
 
-		item->peerId = it->first;
+		item->nodePeerId = it->first;
 		item->pgpId = (it->second).gpg_id;
 		item->location = (it->second).location;
 		item->netMode = (it->second).netMode;
@@ -2208,7 +2271,7 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
 	    RsPeerNetItem *pitem = dynamic_cast<RsPeerNetItem *>(*it);
 	    if (pitem)
 	    {
-		    RsPeerId peer_id = pitem->peerId ;
+		    RsPeerId peer_id = pitem->nodePeerId ;
 		    RsPgpId peer_pgp_id = pitem->pgpId ;
 
 		    if (peer_id == ownId)
@@ -2235,7 +2298,7 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
 			    /* ************* */
 			    // permission flags is used as a mask for the existing perms, so we set it to 0xffff
 			    addFriend(peer_id, peer_pgp_id, pitem->netMode, pitem->vs_disc, pitem->vs_dht, pitem->lastContact, RS_NODE_PERM_ALL);
-			    setLocation(pitem->peerId, pitem->location);
+			    setLocation(pitem->nodePeerId, pitem->location);
 		    }
 
 		    if (pitem->netMode == RS_NET_MODE_HIDDEN)

@@ -1,5 +1,125 @@
 retroshare (ZZZZZZ-1.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
+  f663600 csoler Fri,  1 Jun 2018 22:27:59 +0200 fixed makeSourcePackage.sh
+  9b16e33 csoler Fri, 11 May 2018 20:53:29 +0200 removed conflicts to retroshare06 in debian control file
+  57dde55 csoler Sat, 26 May 2018 11:23:33 +0200 Merge pull request #1269 from PhenomRetroShare/Add_NeverAskMeForExternalLinkActivated
+  33fe823 csoler Sat, 26 May 2018 11:22:47 +0200 Merge pull request #1271 from sehraf/pr_compile-fix-unused-services
+  65beb2c csoler Sat, 26 May 2018 11:09:41 +0200 Merge pull request #1275 from sehraf/pr_fix-IDdialog-chat-link
+  d8b3fc0 csoler Sat, 26 May 2018 11:08:46 +0200 Merge pull request #1274 from PhenomRetroShare/Fix_AppVeyorCompil
+  f53e5e8 sehraf Fri, 25 May 2018 23:59:02 +0200 Fix displayed chat link name in id dialog before (decimal):  Message in chat room 5327517029776505601 after (proper id): Message in chat room LFD6E08C33A98C658
+  428b331 sehraf Fri, 25 May 2018 23:12:35 +0200 fix for Qt 5.11
+  7c77e93 Phenom Fri, 25 May 2018 17:32:36 +0200 Fix AppVeyor Compilation
+  de65cb6 csoler Tue, 22 May 2018 23:59:26 +0200 Merge pull request #1272 from G10h4ck/net_little_fixes
+  1ad1fdc Gioacc Tue, 22 May 2018 19:17:37 +0200 p3NetMgrIMPL::checkNetAddress() notify if port change
+  0bf02e2 Gioacc Tue, 22 May 2018 19:14:25 +0200 pqissludp::Initiate_Connection() check remote_addr to be IPv4 before use
+  0c19a56 sehraf Mon, 21 May 2018 14:55:10 +0200 compile fix gxsphoto
+  92b21d7 sehraf Mon, 21 May 2018 14:26:46 +0200 compile fix wikipoos
+  8f107cc Phenom Sat, 19 May 2018 16:37:29 +0200 Add Never Ask Me For External Link Activated
+  186617f Gioacc Thu, 17 May 2018 16:43:14 +0200 Fix missing include
+  28981b6 csoler Wed, 16 May 2018 13:37:02 +0200 Merge pull request #1251 from PhenomRetroShare/Fix_Cppcheck(duplInheritedMember)InRsItem
+  d11f88c csoler Wed, 16 May 2018 13:33:25 +0200 Merge pull request #1252 from PhenomRetroShare/Fix_Cppcheck(duplInheritedMember)InbdNode
+  2145911 csoler Wed, 16 May 2018 13:30:56 +0200 Merge pull request #1262 from PhenomRetroShare/Fix_PartialDirCheck
+  e232000 csoler Wed, 16 May 2018 13:28:23 +0200 Merge pull request #1266 from csoler/v0.6-FT
+  3f88e3e csoler Wed, 16 May 2018 13:24:52 +0200 added check to avoid hashing files that are currently being modified
+  8451550 csoler Wed, 16 May 2018 11:40:39 +0200 added missing licence to file_tree.h
+  291c86e csoler Wed, 16 May 2018 11:17:22 +0200 Merge pull request #1265 from csoler/v0.6-GxsFix
+  4661329 csoler Wed, 16 May 2018 11:15:18 +0200 fixed bug causing new forums and identities to not show up immediately
+  9f37b63 G10h4c Wed, 16 May 2018 10:49:28 +0200 Merge pull request #1264 from G10h4ck/channel_json_api_v2
+  181d99e Gioacc Wed, 16 May 2018 10:38:47 +0200 Give proper error message if Qt version is too old
+  f12cd57 Phenom Sat, 12 May 2018 14:31:17 +0200 Fix Partial Dir Check
+  57cff61 csoler Fri, 11 May 2018 20:28:53 +0200 fixed merge
+  ecbd115 csoler Fri, 11 May 2018 20:24:24 +0200 added missing include path for libretroshare/src in libresapi
+  fe5ea9e csoler Fri, 11 May 2018 17:37:15 +0200 additional fixes to debian packaging files
+  2173aab csoler Fri, 11 May 2018 17:02:58 +0200 fixed rules file again
+  84a02cb csoler Fri, 11 May 2018 16:39:49 +0200 added missing targets in rules file
+  4b6304e csoler Fri, 11 May 2018 16:33:19 +0200 few fixes according to lintian complaints
+  c2492fe csoler Thu, 10 May 2018 23:10:16 +0200 fixed a few lintian errors in debian/control
+  9f5409b csoler Thu, 10 May 2018 22:04:11 +0200 fixed email to match mentors login
+  45fdbb4 csoler Thu, 10 May 2018 22:03:39 +0200 fixed email to match mentors login
+  b4ada80 csoler Wed,  9 May 2018 13:54:40 +0200 removed > 3.4.1 in debian/control, because pbuilder would not build
+  e81c82e csoler Wed,  9 May 2018 13:37:25 +0200 added notes file for debian release
+  4d287d6 csoler Wed,  9 May 2018 13:27:16 +0200 fixed weird mistake in grouter which causes an issue only in gcc > 8
+  889c277 csoler Wed,  9 May 2018 10:15:32 +0200 fixed packaging script for debian release
+  f406d9a csoler Wed,  9 May 2018 10:15:02 +0200 updated debian/control to be the control file for stretch. Updated copyright notice
+  186ff0f csoler Wed,  9 May 2018 10:12:34 +0200 created proper debian changelog using dch and updated project url
+  6d67936 csoler Tue,  8 May 2018 15:34:44 +0200 Merge pull request #1253 from PhenomRetroShare/Add_LastPostColInGroupTreeWidget
+  2ebacf3 Phenom Tue,  8 May 2018 12:08:08 +0200 Add Last Post Column in GroupTreeWidget.
+  4d748bd Phenom Mon,  7 May 2018 18:05:07 +0200 Fix CppCheck duplInheritedMember warning in bdNode
+  f39fd06 Phenom Mon,  7 May 2018 17:29:11 +0200 Fix CppCheck duplInheritedMember warning in RsItem
+  1352631 thunde Mon,  7 May 2018 06:42:52 +0200 Updated Windows build environment
+  38ac234 thunde Mon,  7 May 2018 07:30:29 +0200 Fixed Windows compile with pre-compiled libraries Added new variable EXTERNAL_LIB_DIR to specify path of external libraries
+  d9a75a9 thunde Sun, 29 Apr 2018 20:40:05 +0200 Added RapidJSON to Windows build environment
+  5b607ad csoler Sun,  6 May 2018 23:53:45 +0200 Merge pull request #1245 from PhenomRetroShare/AddContextMenuForGxsIdInTextChatBrowser
+  a6821f4 csoler Sun,  6 May 2018 23:02:18 +0200 Merge pull request #1249 from sehraf/pr_libsecret
+  c20436e csoler Sun,  6 May 2018 22:59:20 +0200 Merge pull request #1250 from PhenomRetroShare/Fix_CppCheckerWarningInFtController
+  d8dc2a8 csoler Sun,  6 May 2018 22:57:57 +0200 Merge pull request #1246 from PhenomRetroShare/Add_GxsIdInRestoredChatMsg
+  dca33da Phenom Sun,  6 May 2018 18:53:29 +0200 Fix CppCheck in ftcontroller.cc
+  c89e36a sehraf Fri,  4 May 2018 20:52:31 +0200 add auto selection of libsecret with fallback to libgnome-keyring
+  1129bcb sehraf Fri,  4 May 2018 20:47:41 +0200 Add support for libsecret
+  10badf5 sehraf Fri,  4 May 2018 20:43:40 +0200 fix retroshare-nogui.pro autologin
+  676c070 csoler Thu,  3 May 2018 15:55:21 +0200 extended the rapid_json trick to plugins
+  5f12b60 csoler Thu,  3 May 2018 15:22:39 +0200 added -lgnome-keyring to unix LIBS when rs_autologin is set
+  bfe8e40 csoler Thu,  3 May 2018 15:22:03 +0200 updated ubuntu changelog
+  98f0052 Phenom Thu,  3 May 2018 15:04:22 +0200 Add GxsId in Restored Chat Message.
+  ecba4c2 Phenom Wed,  2 May 2018 20:31:52 +0200 Add Context Menu for GxsId in lobby textBrowser.
+  91ed367 csoler Thu,  3 May 2018 13:45:44 +0200 added packaging for ubuntu bionic
+  56e8134 cyril soler  Thu, 3 May 2018 11:32:24 +0200 removed sqlite3 lib from ld when using sqlcipher.
+  1366f61 csoler Wed,  2 May 2018 23:51:46 +0200 Merge pull request #1241 from RetroPooh/chatimgattprev1
+  8e111c2 csoler Wed,  2 May 2018 22:46:27 +0200 added rapidjson-1.1.0 code hard-coded in the source directory to allow everyone to compile without the need to tweak too much. When v1.1.0 is mainstream (espcially on ubuntu) we can revert back to an external dependency
+  48c4b4c G10h4c Sat, 28 Apr 2018 09:34:14 +0200 Merge pull request #1242 from beardog108/master
+  ccede9d G10h4c Sat, 28 Apr 2018 09:33:14 +0200 Merge pull request #1243 from sehraf/pr_fix-make-install
+  10daf3b sehraf Sat, 28 Apr 2018 09:06:10 +0200 Fix 'make install'
+  82a00c2 KevinF Fri, 27 Apr 2018 15:34:43 -0500 added rapidjson to package installation command on Debian/OpenSUSE/Arch
+  be75e89 Gioacc Fri, 27 Apr 2018 20:55:38 +0200 Fix compialtion after merge
+  f3ae61b Gioacc Fri, 27 Apr 2018 18:17:09 +0200 Merge branch 'json_experiments'
+
+ -- Retroshare Dev Team <contact@retroshare.net>  Thu, 03 May 2018 12:00:00 +0100
+
+retroshare (0.6.4-1.20180503.676c0701~xenial) xenial; urgency=low
+
+  2dc69cb RetroP Fri, 27 Apr 2018 16:50:00 +0300 embed preview for images on file attach in chat
+  c199199 Gioacc Sun,  8 Apr 2018 12:37:41 +0200 pqissl silence extra debug message
+  8245d74 csoler Sat,  7 Apr 2018 14:33:58 +0200 Merge pull request #1230 from csoler/master
+  2782494 csoler Sat,  7 Apr 2018 14:29:23 +0200 removed debug info
+  e2b0e27 csoler Sat,  7 Apr 2018 00:56:07 +0200 fixed costly polling in RsGenExchange
+  cc091cc Gioacc Sat,  7 Apr 2018 12:48:01 +0200 Fixed hidden nodes listening failure
+  73c6dee csoler Tue, 27 Mar 2018 20:54:31 +0200 Merge pull request #1191 from G10h4ck/IPv6-v3
+  4be73b7 csoler Sat, 24 Mar 2018 10:18:37 +0100 Merge pull request #1216 from beardog108/security
+  599c3d4 Kevin  Fri, 23 Mar 2018 23:00:27 -0500 fixed clickjacking attack with x-frame-options
+  24d1f5d csoler Sat, 17 Mar 2018 18:40:32 +0100 Merge pull request #1190 from PhenomRetroShare/Add_ShowEmptySubMenuRemoteTree
+  09de680 csoler Sat, 17 Mar 2018 18:30:21 +0100 Merge pull request #1210 from PhenomRetroShare/Add_BackgroundInProgressBarText
+  1432104 csoler Sat, 17 Mar 2018 18:25:47 +0100 Merge pull request #1214 from csoler/v0.6-FT
+  e1482dd Phenom Sat, 17 Mar 2018 00:00:05 +0100 Add Rounded and Gradient Background to xprogressbar text.
+  7da73b3 Phenom Mon,  5 Mar 2018 20:31:39 +0100 Add differents views depends ProgressBar width
+  311b190 Phenom Sun,  4 Mar 2018 20:06:33 +0100 Add Background to xprogressbar text for more readability.
+  e1ad21c csoler Thu, 15 Mar 2018 13:11:19 +0100 fixed wrong file count in RsCollectionDialog when downloading files
+  b3653d1 csoler Thu, 15 Mar 2018 11:32:55 +0100 enabled aggressive re-request of pending slices at end of transfer, thus fixing the long delay to finish files with mixed fast/slow sources
+  6e8305a csoler Wed, 14 Mar 2018 20:56:30 +0100 Merge pull request #1211 from PhenomRetroShare/Fix_AvatarStatusOverlay
+  c7549a2 csoler Wed, 14 Mar 2018 20:49:42 +0100 Merge pull request #1208 from PhenomRetroShare/Fix_ChangeChatTextColorWhenChangeStyle
+  11cfa7b csoler Wed, 14 Mar 2018 20:34:52 +0100 Merge pull request #1209 from PhenomRetroShare/Add_DescriptionGxsGroupToolTip
+  3fc6314 csoler Wed, 14 Mar 2018 20:33:34 +0100 Merge pull request #1206 from PhenomRetroShare/Fix_AboutIcon
+  0e6d27a csoler Tue, 13 Mar 2018 20:25:38 +0100 fixed bug in FT causing transfer lines to only update when the mouse moves over the widget
+  91634ba thunde Thu,  8 Mar 2018 17:45:24 +0100 Added build of Retrotor to Windows build environment
+  e9b49e1 Gioacc Mon, 12 Mar 2018 17:06:01 +0100 Update Android quirks documentation
+  ce56a20 Gioacc Mon, 12 Mar 2018 16:22:42 +0100 Added sources verification in android toolchain
+  e7078b5 Gioacc Mon, 12 Mar 2018 14:27:59 +0100 Update Android documentation
+  514b31e Gioacc Sun, 11 Mar 2018 20:46:07 +0100 Add Qt installation in android preparation script
+  6f30aa2 Gioacc Sun, 11 Mar 2018 20:45:40 +0100 Merge branch 'master' of git://github.com/RetroShare/RetroShare
+  13b18e3 csoler Sat, 10 Mar 2018 16:05:52 +0100 added missing decoration icon on transfer sources
+  4dd2776 Gioacc Sat, 10 Mar 2018 13:15:53 +0100 Remove android JNI .class from source
+  2b300eb Gioacc Sat, 10 Mar 2018 00:44:24 +0100 Update version in Android Manifest
+  f5a3b26 Gioacc Fri,  9 Mar 2018 20:26:29 +0100 More omogeneous variable naming in android build tools
+  c92b860 thunde Sun,  4 Mar 2018 20:08:15 +0100 Windows build environment: - Updated external libraries - Added compile of plugins to build.bat - Added copy of Qt style DLL to pack.bat and Windows Installer - Removed "CONFIG=console" for release build
+  8b42873 Phenom Sun,  4 Mar 2018 22:45:11 +0100 Fix Friend Avatar status overlay no depends size scale.
+  6877589 Phenom Sun,  4 Mar 2018 18:19:18 +0100 Add description in GroupTreeWidget tooltip.
+  51cc94b Phenom Sun,  4 Mar 2018 17:31:40 +0100 Fix ChatWidget current text edit color when changing appearance style.
+  4e6f2ae Phenom Sun,  4 Mar 2018 14:31:16 +0100 Fix Icon for About page.
+  a89ab8f Phenom Sat, 24 Feb 2018 14:07:32 +0100 Add ShowEmpty sub menu in Tree Remote SharedFilesDialog.
+
+ -- Retroshare Dev Team <contact@retroshare.net>  Thu, 03 May 2018 12:00:00 +0100
+
+retroshare (0.6.4-1.20180313.0e6d27ad~xenial) xenial; urgency=low
+
   919417a csoler Sat,  3 Mar 2018 19:04:54 +0100 make sure tor executable from config path can be reached
   b587ac8 csoler Sat,  3 Mar 2018 16:06:49 +0100 Merge pull request #1192 from PhenomRetroShare/Add_WarningMaxFlatViewFile
   9bcff07 csoler Sat,  3 Mar 2018 15:58:11 +0100 Merge pull request #1203 from PhenomRetroShare/Fix_SharedFileDialogShowColumn

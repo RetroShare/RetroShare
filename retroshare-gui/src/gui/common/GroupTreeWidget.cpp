@@ -45,7 +45,8 @@
 #define COLUMN_NAME        0
 #define COLUMN_UNREAD      1
 #define COLUMN_POPULARITY  2
-#define COLUMN_COUNT       3
+#define COLUMN_LAST_POST   3
+#define COLUMN_COUNT       4
 #define COLUMN_DATA        COLUMN_NAME
 
 #define ROLE_ID              Qt::UserRole
@@ -104,9 +105,12 @@ GroupTreeWidget::GroupTreeWidget(QWidget *parent) :
 
 	/* Initialize tree widget */
 	ui->treeWidget->setColumnCount(COLUMN_COUNT);
+	ui->treeWidget->enableColumnCustomize(true);
+	ui->treeWidget->setColumnCustomizable(COLUMN_NAME, false);
 
 	int S = QFontMetricsF(font()).height() ;
 	int W = QFontMetricsF(font()).width("999") ;
+	int D = QFontMetricsF(font()).width("9999-99-99[]") ;
 
 	/* Set header resize modes and initial section sizes */
 	QHeaderView *header = ui->treeWidget->header ();
@@ -117,6 +121,15 @@ GroupTreeWidget::GroupTreeWidget(QWidget *parent) :
 	header->resizeSection(COLUMN_UNREAD, W+4) ;
 	QHeaderView_setSectionResizeModeColumn(header, COLUMN_POPULARITY, QHeaderView::Fixed);
 	header->resizeSection(COLUMN_POPULARITY, 2*S) ;
+	QHeaderView_setSectionResizeModeColumn(header, COLUMN_LAST_POST, QHeaderView::Fixed);
+	header->resizeSection(COLUMN_LAST_POST, D+4) ;
+	header->setSectionHidden(COLUMN_LAST_POST, true);
+
+	QTreeWidgetItem *headerItem = ui->treeWidget->headerItem();
+	headerItem->setText(COLUMN_NAME, tr("Name"));
+	headerItem->setText(COLUMN_UNREAD, tr("Unread"));
+	headerItem->setText(COLUMN_POPULARITY, tr("Popularity"));
+	headerItem->setText(COLUMN_LAST_POST, tr("Last Post"));
 
 	/* add filter actions */
 	ui->filterLineEdit->addFilter(QIcon(), tr("Title"), FILTER_NAME_INDEX , tr("Search Title"));
@@ -200,9 +213,10 @@ void GroupTreeWidget::addToolButton(QToolButton *toolButton)
 	ui->titleBarFrame->layout()->addWidget(toolButton);
 }
 
-void GroupTreeWidget::processSettings(RshareSettings *settings, bool load)
+// Load and save settings (group must be started from the caller)
+void GroupTreeWidget::processSettings(bool load)
 {
-	if (settings == NULL) {
+	if (Settings == NULL) {
 		return;
 	}
 
@@ -212,16 +226,18 @@ void GroupTreeWidget::processSettings(RshareSettings *settings, bool load)
 	const int SORTBY_POSTS = 4;
 	const int SORTBY_UNREAD = 5;
 
+	ui->treeWidget->processSettings(load);
+
 	if (load) {
-		// load settings
+		// load Settings
 
 		// state of order
-		bool ascSort = settings->value("GroupAscSort", true).toBool();
+		bool ascSort = Settings->value("GroupAscSort", true).toBool();
 		actionSortAscending->setChecked(ascSort);
 		actionSortDescending->setChecked(!ascSort);
 
 		// state of sort
-		int sortby = settings->value("GroupSortBy").toInt();
+		int sortby = Settings->value("GroupSortBy").toInt();
 		switch (sortby) {
 		case SORTBY_NAME:
 			if (actionSortByName) {
@@ -250,10 +266,10 @@ void GroupTreeWidget::processSettings(RshareSettings *settings, bool load)
 			break;
 		}
 	} else {
-		// save settings
+		// save Settings
 
 		// state of order
-		settings->setValue("GroupAscSort", !(actionSortDescending && actionSortDescending->isChecked())); //True by default
+		Settings->setValue("GroupAscSort", !(actionSortDescending && actionSortDescending->isChecked())); //True by default
 
 		// state of sort
 		int sortby = SORTBY_NAME;
@@ -268,7 +284,7 @@ void GroupTreeWidget::processSettings(RshareSettings *settings, bool load)
 		} else if (actionSortByUnread && actionSortByUnread->isChecked()) {
 			sortby = SORTBY_UNREAD;
 		}
-		settings->setValue("GroupSortBy", sortby);
+		Settings->setValue("GroupSortBy", sortby);
 	}
 }
 
@@ -487,6 +503,11 @@ void GroupTreeWidget::fillGroupItems(QTreeWidgetItem *categoryItem, const QList<
 		/* Set last post */
 		qlonglong lastPost = itemInfo.lastpost.toTime_t();
 		item->setData(COLUMN_DATA, ROLE_LASTPOST, -lastPost); // negative for correct sorting
+		if(itemInfo.lastpost == QDateTime::fromTime_t(0))
+			item->setText(COLUMN_LAST_POST, tr("Never"));
+		else
+			item->setText(COLUMN_LAST_POST, itemInfo.lastpost.toString(Qt::ISODate).replace("T"," "));
+
 
 		/* Set visible posts */
 		item->setData(COLUMN_DATA, ROLE_POSTS, -itemInfo.max_visible_posts);// negative for correct sorting

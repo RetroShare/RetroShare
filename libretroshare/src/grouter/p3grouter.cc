@@ -541,7 +541,7 @@ if(itm == NULL)
 
 void GRouterTunnelInfo::removeVirtualPeer(const TurtleVirtualPeerId& vpid)
 {
-    std::set<TurtleVirtualPeerId,RsGRouterTransactionChunkItem*>::iterator it = virtual_peers.find(vpid) ;
+    std::set<TurtleVirtualPeerId>::iterator it = virtual_peers.find(vpid) ;
 
     if(it == virtual_peers.end())
     {

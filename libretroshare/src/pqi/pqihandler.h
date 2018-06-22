@@ -38,7 +38,7 @@
 class PQInterface;
 class RSTrafficClue;
 class RsBwRates;
-class RsItem;
+struct RsItem;
 class RsRawItem;
 
 class SearchModule

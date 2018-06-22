@@ -24,12 +24,12 @@ public:
 
 	void fillComplete();
 	void setUpdateWhenInvisible(bool update);
-	const std::list<RsGxsGroupId> &getGrpIds();
-	const std::list<RsGxsGroupId> &getGrpIdsMeta();
-	void getAllGrpIds(std::list<RsGxsGroupId> &grpIds);
-	const std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > &getMsgIds();
-	const std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > &getMsgIdsMeta();
-	void getAllMsgIds(std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > &msgIds);
+	const std::set<RsGxsGroupId> &getGrpIds();
+	const std::set<RsGxsGroupId> &getGrpIdsMeta();
+	void getAllGrpIds(std::set<RsGxsGroupId> &grpIds);
+	const std::map<RsGxsGroupId, std::set<RsGxsMessageId> > &getMsgIds();
+	const std::map<RsGxsGroupId, std::set<RsGxsMessageId> > &getMsgIdsMeta();
+	void getAllMsgIds(std::map<RsGxsGroupId, std::set<RsGxsMessageId> > &msgIds);
 
 protected:
 	virtual void showEvent(QShowEvent *event);
@@ -37,7 +37,7 @@ protected:
 	// This is overloaded in subclasses.
 	virtual void updateDisplay(bool complete) = 0;
 
-private slots:
+public slots:
 	void fillDisplay(bool complete);
 
 private:
