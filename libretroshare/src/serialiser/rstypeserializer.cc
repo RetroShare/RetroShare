@@ -42,7 +42,8 @@
 //static const uint32_t MAX_SERIALIZED_ARRAY_SIZE = 500 ;
 static const uint32_t MAX_SERIALIZED_CHUNK_SIZE = 10*1024*1024 ; // 10 MB.
 
-#define SAFE_GET_JSON_V() \
+#ifdef RSSERIAL_DEBUG
+#	define SAFE_GET_JSON_V() \
 	const char* mName = memberName.c_str(); \
 	bool ret = jDoc.HasMember(mName); \
 	if(!ret) \
@@ -50,10 +51,16 @@ static const uint32_t MAX_SERIALIZED_CHUNK_SIZE = 10*1024*1024 ; // 10 MB.
 	    std::cerr << __PRETTY_FUNCTION__ << " \"" << memberName \
 	              << "\" not found in JSON:" << std::endl \
 	              << jDoc << std::endl << std::endl; \
-	    print_stacktrace(); \
 	    return false; \
 	} \
 	rapidjson::Value& v = jDoc[mName]
+#else // ifdef RSSERIAL_DEBUG
+#	define SAFE_GET_JSON_V() \
+	const char* mName = memberName.c_str(); \
+	bool ret = jDoc.HasMember(mName); \
+	if(!ret) return false; \
+	rapidjson::Value& v = jDoc[mName]
+#endif // ifdef RSSERIAL_DEBUG
 
 
 //============================================================================//

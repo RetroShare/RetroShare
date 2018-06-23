@@ -1,0 +1,79 @@
+/*
+ * RetroShare JSON API
+ * Copyright (C) 2018  Gioacchino Mazzurco <gio@eigenlab.org>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include <sstream>
+#include <memory>
+#include <restbed>
+#include "retroshare/$%headerFileName%$"
+
+namespace rb = restbed;
+
+void $%wrapperName%$(const std::shared_ptr<rb::Session> session)
+{
+	size_t reqSize = session->get_request()->get_header("Content-Length", 0);
+	session->fetch( reqSize, [](
+	                const std::shared_ptr<rb::Session> session,
+	                const rb::Bytes& body )
+	{
+		RsGenericSerializer::SerializeContext cReq(
+		            nullptr, 0,
+		            RsGenericSerializer::SERIALIZATION_FLAG_YIELDING );
+		RsJson& jReq(cReq.mJson);
+		jReq.Parse(reinterpret_cast<const char*>(body.data()), body.size());
+
+		RsGenericSerializer::SerializeContext cAns;
+		RsJson& jAns(cAns.mJson);
+
+		// if caller specified caller_data put it back in the answhere
+		const char kcd[] = "caller_data";
+		if(jReq.HasMember(kcd))
+		    jAns.AddMember(kcd, jReq[kcd], jAns.GetAllocator());
+
+$%paramsDeclaration%$
+
+		// deserialize input parameters from JSON
+		{
+			RsGenericSerializer::SerializeContext& ctx(cReq);
+			RsGenericSerializer::SerializeJob j(RsGenericSerializer::FROM_JSON);
+$%inputParamsDeserialization%$
+		}
+
+		// call retroshare C++ API
+		$%retvalType%$ retval = $%instanceName%$->$%methodName%$($%callParamsList%$);
+
+		// serialize out parameters and return value to JSON
+		{
+			RsGenericSerializer::SerializeContext& ctx(cAns);
+			RsGenericSerializer::SerializeJob j(RsGenericSerializer::TO_JSON);
+$%retvalSerialization%$
+$%outputParamsSerialization%$
+		}
+
+		// return them to the API caller
+		std::stringstream ss;
+		ss << jAns;
+		std::string&& ans(ss.str());
+		const std::multimap<std::string, std::string> headers
+		{
+			{ "Content-Type", "text/json" },
+			{ "Content-Length", std::to_string(ans.length()) }
+		};
+		session->close(rb::OK, ans, headers);
+	} );
+}
+

@@ -6,7 +6,8 @@
  *
  * RetroShare C++ Interface.
  *
- * Copyright 2012-2012 by Robert Fernie.
+ * Copyright (C) 2012 by Robert Fernie.
+ * Copyright (C) 2018  Gioacchino Mazzurco <gio@eigenlab.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -33,35 +34,47 @@
 #include "retroshare/rstokenservice.h"
 #include "retroshare/rsgxsifacehelper.h"
 #include "retroshare/rsgxscommon.h"
+#include "serialiser/rsserializable.h"
 
 
-
-/* The Main Interface Class - for information about your Peers */
 class RsGxsChannels;
-extern RsGxsChannels *rsGxsChannels;
 
+/**
+ * Pointer to global instance of RsGxsChannels service implementation
+ * @jsonapi{development}
+ */
+extern RsGxsChannels* rsGxsChannels;
 
 // These should be in rsgxscommon.h
-
-class RsGxsChannelGroup
+struct RsGxsChannelGroup : RsSerializable
 {
-	public:
 	RsGroupMetaData mMeta;
 	std::string mDescription;
 	RsGxsImage mImage;
 
 	bool mAutoDownload;
+
+	/// @see RsSerializable
+	virtual void serial_process( RsGenericSerializer::SerializeJob j,
+	                             RsGenericSerializer::SerializeContext& ctx )
+	{
+		RS_SERIAL_PROCESS(mMeta);
+		RS_SERIAL_PROCESS(mDescription);
+		//RS_SERIAL_PROCESS(mImage);
+		RS_SERIAL_PROCESS(mAutoDownload);
+	}
 };
 
-class RsGxsChannelPost
+std::ostream &operator<<(std::ostream& out, const RsGxsChannelGroup& group);
+
+
+struct RsGxsChannelPost : RsSerializable
 {
-public:
 	RsGxsChannelPost() : mCount(0), mSize(0) {}
 
-public:
 	RsMsgMetaData mMeta;
 
-    std::set<RsGxsMessageId> mOlderVersions ;
+	std::set<RsGxsMessageId> mOlderVersions;
 	std::string mMsg;  // UTF8 encoded.
 
 	std::list<RsGxsFile> mFiles;
@@ -69,18 +82,31 @@ public:
 	uint64_t mSize;    // auto calced.
 
 	RsGxsImage mThumbnail;
+
+	/// @see RsSerializable
+	virtual void serial_process( RsGenericSerializer::SerializeJob j,
+	                             RsGenericSerializer::SerializeContext& ctx )
+	{
+		RS_SERIAL_PROCESS(mMeta);
+		RS_SERIAL_PROCESS(mOlderVersions);
+
+		RS_SERIAL_PROCESS(mMsg);
+		RS_SERIAL_PROCESS(mFiles);
+		RS_SERIAL_PROCESS(mCount);
+		RS_SERIAL_PROCESS(mSize);
+		//RS_SERIAL_PROCESS(mThumbnail);
+	}
 };
 
+std::ostream &operator<<(std::ostream& out, const RsGxsChannelPost& post);
 
-std::ostream &operator<<(std::ostream &out, const RsGxsChannelGroup &group);
-std::ostream &operator<<(std::ostream &out, const RsGxsChannelPost &post);
 
 class RsGxsChannels: public RsGxsIfaceHelper, public RsGxsCommentService
 {
-	public:
+public:
 
 	explicit RsGxsChannels(RsGxsIface *gxs)
-	  :RsGxsIfaceHelper(gxs)  {}
+	  :RsGxsIfaceHelper(gxs) {}
 	virtual ~RsGxsChannels() {}
 
 	/* Specific Service Data */
@@ -103,7 +129,16 @@ virtual bool setChannelAutoDownload(const RsGxsGroupId &groupId, bool enabled) =
 virtual bool getChannelAutoDownload(const RsGxsGroupId &groupid, bool& enabled) = 0;
 
 virtual bool setChannelDownloadDirectory(const RsGxsGroupId &groupId, const std::string& directory)=0;
-virtual bool getChannelDownloadDirectory(const RsGxsGroupId &groupId, std::string& directory)=0;
+
+	/**
+	 * Get download directory for the given channel
+	 * @jsonapi{development}
+	 * @param[in] channelId id of the channel
+	 * @param[out] directory reference to string where to store the path
+	 * @return false on error, true otherwise
+	 */
+	virtual bool getChannelDownloadDirectory( const RsGxsGroupId& channelId,
+	                                          std::string& directory ) = 0;
 
 //virtual void setChannelAutoDownload(uint32_t& token, const RsGxsGroupId& groupId, bool autoDownload) = 0;
 
@@ -113,19 +148,59 @@ virtual bool getChannelDownloadDirectory(const RsGxsGroupId &groupId, std::strin
 //virtual bool groupRestoreKeys(const std::string &groupId);
     virtual bool groupShareKeys(const RsGxsGroupId &groupId, std::set<RsPeerId>& peers)=0;
 
-	// Overloaded subscribe fn.
-virtual bool subscribeToGroup(uint32_t &token, const RsGxsGroupId &groupId, bool subscribe) = 0;
+	/**
+	 * @brief Request subscription to a group.
+	 * The action is performed asyncronously, so it could fail in a subsequent
+	 * phase even after returning true.
+	 * @jsonapi{development}
+	 * @param[out] token Storage for RsTokenService token to track request
+	 * status.
+	 * @param[in] groupId Channel id
+	 * @param[in] subscribe
+	 * @return false on error, true otherwise
+	 */
+	virtual bool subscribeToGroup( uint32_t& token, const RsGxsGroupId &groupId,
+	                               bool subscribe ) = 0;
 
-virtual bool createGroup(uint32_t &token, RsGxsChannelGroup &group) = 0;
-virtual bool createPost(uint32_t &token, RsGxsChannelPost &post) = 0;
+	/**
+	 * @brief Request channel creation.
+	 * The action is performed asyncronously, so it could fail in a subsequent
+	 * phase even after returning true.
+	 * @jsonapi{development}
+	 * @param[out] token Storage for RsTokenService token to track request
+	 * status.
+	 * @param[in] group Channel data (name, description...)
+	 * @return false on error, true otherwise
+	 */
+	virtual bool createGroup(uint32_t& token, RsGxsChannelGroup& group) = 0;
 
-virtual bool updateGroup(uint32_t &token, RsGxsChannelGroup &group) = 0;
+	/**
+	 * @brief Request post creation.
+	 * The action is performed asyncronously, so it could fail in a subsequent
+	 * phase even after returning true.
+	 * @jsonapi{development}
+	 * @param[out] token Storage for RsTokenService token to track request
+	 * status.
+	 * @param[in] post
+	 * @return false on error, true otherwise
+	 */
+	virtual bool createPost(uint32_t& token, RsGxsChannelPost& post) = 0;
+
+	/**
+	 * @brief Request channel change.
+	 * The action is performed asyncronously, so it could fail in a subsequent
+	 * phase even after returning true.
+	 * @jsonapi{development}
+	 * @param[out] token Storage for RsTokenService token to track request
+	 * status.
+	 * @param[in] group Channel data (name, description...) with modifications
+	 * @return false on error, true otherwise
+	 */
+	virtual bool updateGroup(uint32_t& token, RsGxsChannelGroup& group) = 0;
 
         // File Interface
 virtual bool ExtraFileHash(const std::string &path, std::string filename) = 0;
 virtual bool ExtraFileRemove(const RsFileHash &hash) = 0;
-
-
 };
 
 

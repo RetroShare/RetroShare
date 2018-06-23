@@ -10,7 +10,13 @@ retrotor {
 } else {
 	SUBDIRS += libbitdht
 	libbitdht.file = libbitdht/src/libbitdht.pro
-	libretroshare.depends = openpgpsdk libbitdht
+    libretroshare.depends = openpgpsdk libbitdht
+}
+
+rs_jsonapi {
+    SUBDIRS += jsonapi-generator
+    jsonapi-generator.file = jsonapi-generator/src/jsonapi-generator.pro
+    libretroshare.depends += jsonapi-generator
 }
 
 SUBDIRS += libretroshare

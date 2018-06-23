@@ -849,6 +849,64 @@ rs_gxs_trans {
     SOURCES += gxstrans/p3gxstransitems.cc gxstrans/p3gxstrans.cc
 }
 
+rs_jsonapi {
+    JSONAPI_GENERATOR_SRC=$$system_path($$clean_path($${RS_SRC_PATH}/jsonapi-generator/src/))
+    JSONAPI_GENERATOR_OUT=$$system_path($$clean_path($${RS_BUILD_PATH}/jsonapi-generator/src/))
+    JSONAPI_GENERATOR_EXE=$$system_path($$clean_path($${JSONAPI_GENERATOR_OUT}/jsonapi-generator))
+    DOXIGEN_INPUT_DIRECTORY=$$system_path($$clean_path($${PWD}/retroshare/))
+    DOXIGEN_CONFIG_SRC=$$system_path($$clean_path($${RS_SRC_PATH}/jsonapi-generator/src/jsonapi-generator-doxygen.conf))
+    DOXIGEN_CONFIG_OUT=$$system_path($$clean_path($${JSONAPI_GENERATOR_OUT}/jsonapi-generator-doxygen.conf))
+    WRAPPERS_DEF_FILE=$$system_path($$clean_path($${JSONAPI_GENERATOR_OUT}/jsonapi-wrappers.cpp))
+    WRAPPERS_DECL_FILE=$$system_path($$clean_path($${JSONAPI_GENERATOR_OUT}/jsonapi-wrappers.h))
+    WRAPPERS_REG_FILE=$$system_path($$clean_path($${JSONAPI_GENERATOR_OUT}/jsonapi-register.inl))
+
+    restbed.target = $$system_path($$clean_path($${RESTBED_BUILD_PATH}/library/librestbed.a))
+    restbed.commands = \
+        cd $${RS_SRC_PATH}; git submodule update --init --recursive;\
+        mkdir -p $${RESTBED_BUILD_PATH}; cd $${RESTBED_BUILD_PATH};\
+        cmake -DBUILD_SSL=OFF -DCMAKE_INSTALL_PREFIX=. -B. -H$${RESTBED_SRC_PATH};\
+        make; make install
+    QMAKE_EXTRA_TARGETS += restbed
+    libretroshare.depends += restbed
+    PRE_TARGETDEPS *= $${restbed.target}
+
+    PRE_TARGETDEPS *= $${JSONAPI_GENERATOR_EXE}
+    INCLUDEPATH *= $${JSONAPI_GENERATOR_OUT}
+    GENERATED_HEADERS += $${WRAPPERS_DECL_FILE} $${WRAPPERS_REG_FILE}
+    GENERATED_SOURCES += $${WRAPPERS_DEF_FILE}
+
+    jsonwrappersdecl.target = $${WRAPPERS_DECL_FILE}
+    jsonwrappersdecl.commands = \
+        cp $${DOXIGEN_CONFIG_SRC} $${DOXIGEN_CONFIG_OUT}; \
+        echo OUTPUT_DIRECTORY=$${JSONAPI_GENERATOR_OUT} >> $${DOXIGEN_CONFIG_OUT};\
+        echo INPUT=$${DOXIGEN_INPUT_DIRECTORY} >> $${DOXIGEN_CONFIG_OUT}; \
+        doxygen $${DOXIGEN_CONFIG_OUT}; \
+        $${JSONAPI_GENERATOR_EXE} $${JSONAPI_GENERATOR_SRC} $${JSONAPI_GENERATOR_OUT};
+    QMAKE_EXTRA_TARGETS += jsonwrappersdecl
+    libretroshare.depends += jsonwrappersdecl
+    PRE_TARGETDEPS *= $${WRAPPERS_DECL_FILE}
+
+    jsonwrappersdef.target = $${WRAPPERS_DEF_FILE}
+    jsonwrappersdef.commands = touch $${WRAPPERS_DEF_FILE}
+    jsonwrappersdef.depends = jsonwrappersdecl
+    QMAKE_EXTRA_TARGETS += jsonwrappersdef
+    libretroshare.depends += jsonwrappersdef
+    PRE_TARGETDEPS *= $${WRAPPERS_DEF_FILE}
+
+    jsonwrappersreg.target = $${WRAPPERS_REG_FILE}
+    jsonwrappersreg.commands = touch $${WRAPPERS_REG_FILE}
+    jsonwrappersreg.depends = jsonwrappersdef
+    QMAKE_EXTRA_TARGETS += jsonwrappersreg
+    libretroshare.depends += jsonwrappersreg
+    PRE_TARGETDEPS *= $${WRAPPERS_REG_FILE}
+
+    # Force recalculation of libretroshare dependencies see https://stackoverflow.com/a/47884045
+    QMAKE_EXTRA_TARGETS += libretroshare
+
+    HEADERS += jsonapi/jsonapi.h
+    SOURCES += jsonapi/jsonapi.cpp
+}
+
 
 
 

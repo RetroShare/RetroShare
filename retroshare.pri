@@ -115,6 +115,12 @@ rs_macos10.9:CONFIG -= rs_macos10.11
 rs_macos10.10:CONFIG -= rs_macos10.11
 rs_macos10.12:CONFIG -= rs_macos10.11
 
+# To enable JSON API append the following assignation to qmake command line
+# "CONFIG+=rs_jsonapi"
+CONFIG *= no_rs_jsonapi
+rs_jsonapi:CONFIG -= no_rs_jsonapi
+
+
 ###########################################################################################################################################################
 #
 #  V07_NON_BACKWARD_COMPATIBLE_CHANGE_001:
@@ -157,7 +163,7 @@ rs_v07_changes {
 }
 
 ################################################################################
-## RetroShare qmake functions goes here as all the rest may use them ###########
+## RetroShare qmake functions goes here as all the rest may use them. ##########
 ################################################################################
 
 ## Qt versions older the 5 are not supported anymore, check if the user is
@@ -273,7 +279,12 @@ no_sqlcipher {
 
 rs_autologin {
     DEFINES *= RS_AUTOLOGIN
-    warning("You have enabled RetroShare auto-login, this is discouraged. The usage of auto-login on some linux distributions may allow someone having access to your session to steal the SSL keys of your node location and therefore compromise your security")
+    RS_AUTOLOGIN_WARNING_MSG = \
+        You have enabled RetroShare auto-login, this is discouraged. The usage \
+        of auto-login on some linux distributions may allow someone having \
+        access to your session to steal the SSL keys of your node location and \
+        therefore compromise your security
+    warning("$${RS_AUTOLOGIN_WARNING_MSG}")
 }
 
 rs_onlyhiddennode {
@@ -311,6 +322,10 @@ rs_async_chat {
 
 rs_chatserver {
     DEFINES *= RS_CHATSERVER
+}
+
+rs_jsonapi {
+    DEFINES *= RS_JSONAPI
 }
 
 debug {

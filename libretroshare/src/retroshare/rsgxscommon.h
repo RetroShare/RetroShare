@@ -31,28 +31,39 @@
 #include <list>
 
 #include "rsgxsifacetypes.h"
+#include "serialiser/rsserializable.h"
 
-class RsGxsFile
+struct RsGxsFile : RsSerializable
 {
-	public:
 	RsGxsFile();
 	std::string mName;
 	RsFileHash mHash;
 	uint64_t    mSize;
-	//std::string mPath;
+
+	/// @see RsSerializable
+	virtual void serial_process( RsGenericSerializer::SerializeJob j,
+	                             RsGenericSerializer::SerializeContext& ctx )
+	{
+		RS_SERIAL_PROCESS(mName);
+		RS_SERIAL_PROCESS(mHash);
+		RS_SERIAL_PROCESS(mSize);
+	}
 };
 
-class RsGxsImage
+struct RsGxsImage
 {
-	public:
-	RsGxsImage();	
+	RsGxsImage();
 	~RsGxsImage();
-	RsGxsImage(const RsGxsImage& a); // TEMP use copy constructor and duplicate memory.
-RsGxsImage &operator=(const RsGxsImage &a); // Need this as well?
 
-//NB: Must make sure that we always use methods - to be consistent about malloc/free for this data.
-static uint8_t *allocate(uint32_t size);
-static void release(void *data);
+	/// Use copy constructor and duplicate memory.
+	RsGxsImage(const RsGxsImage& a);
+
+	RsGxsImage &operator=(const RsGxsImage &a); // Need this as well?
+
+	/** NB: Must make sure that we always use methods - to be consistent about
+	 * malloc/free for this data. */
+	static uint8_t *allocate(uint32_t size);
+	static void release(void *data);
 
 	void take(uint8_t *data, uint32_t size); // Copies Pointer.
 	void copy(uint8_t *data, uint32_t size); // Allocates and Copies.
@@ -61,7 +72,6 @@ static void release(void *data);
 
 	uint8_t *mData;
 	uint32_t mSize;
-
 };
 
 

@@ -35,6 +35,7 @@ const SerializationFlags RsGenericSerializer::SERIALIZATION_FLAG_NONE        ( 0
 const SerializationFlags RsGenericSerializer::SERIALIZATION_FLAG_CONFIG      ( 0x0001 );
 const SerializationFlags RsGenericSerializer::SERIALIZATION_FLAG_SIGNATURE   ( 0x0002 );
 const SerializationFlags RsGenericSerializer::SERIALIZATION_FLAG_SKIP_HEADER ( 0x0004 );
+const SerializationFlags RsGenericSerializer::SERIALIZATION_FLAG_YIELDING    ( 0x0008 );
 
 RsItem *RsServiceSerializer::deserialise(void *data, uint32_t *size)
 {

@@ -124,7 +124,7 @@ struct RsGroupMetaData : RsSerializable
 
 
 
-struct RsMsgMetaData
+struct RsMsgMetaData : RsSerializable
 {
 	RsMsgMetaData() : mPublishTs(0), mMsgFlags(0), mMsgStatus(0), mChildTs(0) {}
 
@@ -154,6 +154,24 @@ struct RsMsgMetaData
 
     time_t      mChildTs;
     std::string mServiceString; // Service Specific Free-Form extra storage.
+
+	/// @see RsSerializable
+	virtual void serial_process( RsGenericSerializer::SerializeJob j,
+	                             RsGenericSerializer::SerializeContext& ctx )
+	{
+		RS_SERIAL_PROCESS(mGroupId);
+		RS_SERIAL_PROCESS(mMsgId);
+		RS_SERIAL_PROCESS(mThreadId);
+		RS_SERIAL_PROCESS(mParentId);
+		RS_SERIAL_PROCESS(mOrigMsgId);
+		RS_SERIAL_PROCESS(mAuthorId);
+		RS_SERIAL_PROCESS(mMsgName);
+		RS_SERIAL_PROCESS(mPublishTs);
+		RS_SERIAL_PROCESS(mMsgFlags);
+		RS_SERIAL_PROCESS(mMsgStatus);
+		RS_SERIAL_PROCESS(mChildTs);
+		RS_SERIAL_PROCESS(mServiceString);
+	}
 
     const std::ostream &print(std::ostream &out, std::string indent = "", std::string varName = "") const {
         out

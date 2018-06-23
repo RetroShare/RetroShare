@@ -225,7 +225,7 @@ struct RsGenericSerializer : RsSerialType
 		/** Allow shared allocator usage to avoid costly JSON deepcopy for
 		 *  nested RsSerializable */
 		SerializeContext(
-		        uint8_t *data, uint32_t size,
+		        uint8_t* data = nullptr, uint32_t size = 0,
 		        SerializationFlags flags = SERIALIZATION_FLAG_NONE,
 		        RsJson::AllocatorType* allocator = nullptr) :
 		    mData(data), mSize(size), mOffset(0), mOk(true), mFlags(flags),
@@ -259,6 +259,12 @@ struct RsGenericSerializer : RsSerialType
 	static const SerializationFlags SERIALIZATION_FLAG_CONFIG;         // 0x0001
 	static const SerializationFlags SERIALIZATION_FLAG_SIGNATURE;      // 0x0002
 	static const SerializationFlags SERIALIZATION_FLAG_SKIP_HEADER;    // 0x0004
+
+	/** Used for JSON deserialization in JSON API, it causes the deserialization
+	 * to continue even if some field is missing (or incorrect), this way the
+	 * API is more user friendly as some methods need just part of the structs
+	 * they take as parameters. */
+	static const SerializationFlags SERIALIZATION_FLAG_YIELDING;       // 0x0008
 
 	/**
 	 * The following functions overload RsSerialType.
