@@ -152,6 +152,7 @@ private:
 	void initUi();
 
 	void updateMessageSummaryList(RsGxsGroupId groupId);
+	void updateSearchResults();
 
 	void openGroupInNewTab(const RsGxsGroupId &groupId);
 	void groupSubscribe(bool subscribe);

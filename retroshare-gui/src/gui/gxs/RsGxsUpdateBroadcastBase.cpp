@@ -16,10 +16,17 @@ RsGxsUpdateBroadcastBase::RsGxsUpdateBroadcastBase(RsGxsIfaceHelper *ifaceImpl, 
 	connect(mUpdateBroadcast, SIGNAL(changed()), this, SLOT(updateBroadcastChanged()));
 	connect(mUpdateBroadcast, SIGNAL(grpsChanged(std::list<RsGxsGroupId>, std::list<RsGxsGroupId>)), this, SLOT(updateBroadcastGrpsChanged(std::list<RsGxsGroupId>,std::list<RsGxsGroupId>)));
 	connect(mUpdateBroadcast, SIGNAL(msgsChanged(std::map<RsGxsGroupId,std::set<RsGxsMessageId> >, std::map<RsGxsGroupId,std::set<RsGxsMessageId> >)), this, SLOT(updateBroadcastMsgsChanged(std::map<RsGxsGroupId,std::set<RsGxsMessageId> >,std::map<RsGxsGroupId,std::set<RsGxsMessageId> >)));
+	connect(mUpdateBroadcast, SIGNAL(distantSearchResultsChanged(const std::list<TurtleRequestId>&)), this, SLOT(updateBroadcastDistantSearchResultsChanged(const std::list<TurtleRequestId>&)));
 }
 
 RsGxsUpdateBroadcastBase::~RsGxsUpdateBroadcastBase()
 {
+}
+
+void RsGxsUpdateBroadcastBase::updateBroadcastDistantSearchResultsChanged(const std::list<TurtleRequestId>& ids)
+{
+    for(auto it(ids.begin());it!=ids.end();++it)
+        mTurtleResults.insert(*it);
 }
 
 void RsGxsUpdateBroadcastBase::fillComplete()
@@ -36,6 +43,9 @@ void RsGxsUpdateBroadcastBase::securedUpdateDisplay()
 		QTimer::singleShot(500, this, SLOT(securedUpdateDisplay()));
 		return;
 	}
+
+    // This is *bad* because if the connection is done asynchronously the client will call mGrpIds, mGrpIdsMeta, etc without the guarranty that the
+    // the structed havnt' been cleared in the mean time.
 
 	emit fillDisplay(mFillComplete);
 	mFillComplete = false;
@@ -75,7 +85,7 @@ void RsGxsUpdateBroadcastBase::updateBroadcastChanged()
         // The question to whether we should re=load when mGrpIds is not empty is still open. It's not harmful anyway.
         // This should probably be decided by the service itself.
 
-		if (!mGrpIds.empty() || !mGrpIdsMeta.empty() /*|| !mMsgIds.empty()*/ || !mMsgIdsMeta.empty())
+		if (!mGrpIds.empty() || !mGrpIdsMeta.empty() /*|| !mMsgIds.empty()*/ || !mMsgIdsMeta.empty() || !mTurtleResults.empty())
             mFillComplete = true ;
 
 		securedUpdateDisplay();

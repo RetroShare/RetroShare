@@ -1110,6 +1110,8 @@ void RsGenExchange::receiveChanges(std::vector<RsGxsNotify*>& changes)
         RsGxsNotify* n = *vit;
         RsGxsGroupChange* gc;
         RsGxsMsgChange* mc;
+        RsGxsDistantSearchResultChange *gt;
+
         if((mc = dynamic_cast<RsGxsMsgChange*>(n)) != NULL)
         {
             if (mc->metaChange())
@@ -1131,6 +1133,10 @@ void RsGenExchange::receiveChanges(std::vector<RsGxsNotify*>& changes)
             {
                 out.mGrps.splice(out.mGrps.end(), gc->mGrpIdList);
             }
+        }
+        else if((gt = dynamic_cast<RsGxsDistantSearchResultChange*>(n)) != NULL)
+        {
+            out.mDistantSearchReqs.push_back(gt->mRequestId);
         }
         else
             std::cerr << "(EE) Unknown changes type!!" << std::endl;
@@ -1641,6 +1647,8 @@ void RsGenExchange::receiveDistantSearchResults(TurtleRequestId id,const RsGxsGr
 
 	RsGxsDistantSearchResultChange* gc = new RsGxsDistantSearchResultChange(id,grpId);
 	mNotifications.push_back(gc);
+
+    std::cerr << "RsGenExchange::receiveDistantSearchResults(): received result for request " << std::hex << id << std::dec << std::endl;
 }
 void RsGenExchange::notifyReceivePublishKey(const RsGxsGroupId &grpId)
 {

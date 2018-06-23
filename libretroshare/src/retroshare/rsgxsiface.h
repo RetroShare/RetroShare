@@ -44,6 +44,7 @@ public:
     std::map<RsGxsGroupId, std::set<RsGxsMessageId> > mMsgsMeta;
     std::list<RsGxsGroupId> mGrps;
     std::list<RsGxsGroupId> mGrpsMeta;
+    std::list<TurtleRequestId> mDistantSearchReqs;
 };
 
 /*!

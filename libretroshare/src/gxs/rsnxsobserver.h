@@ -55,7 +55,7 @@ public:
      * 				Called when new distant search result arrive.
      * \param grpId
      */
-    virtual void receiveDistantSearchResults(TurtleRequestId& /*id*/,const RsGxsGroupId& /*grpId*/)
+    virtual void receiveDistantSearchResults(TurtleRequestId /*id*/,const RsGxsGroupId& /*grpId*/)
     {
         std::cerr << __PRETTY_FUNCTION__ << ": not overloaded but still called. Nothing will happen." << std::endl;
     }

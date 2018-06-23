@@ -5136,7 +5136,8 @@ void RsGxsNetService::receiveTurtleSearchResults(TurtleRequestId req, const std:
 	// only keep groups that are not locally known, and groups that are not already in the mDistantSearchResults structure
 
     for(auto it(group_infos.begin());it!=group_infos.end();++it)
-        if(grpMeta[(*it).group_id] == NULL)
+#warning Uncomment when done with testing!
+//        if(grpMeta[(*it).group_id] == NULL)
         {
 			filtered_results.push_back(*it) ;
             search_results_map[(*it).group_id] = *it;
@@ -5146,9 +5147,11 @@ void RsGxsNetService::receiveTurtleSearchResults(TurtleRequestId req, const std:
 
 bool RsGxsNetService::search(const std::string& substring,std::list<RsGxsGroupSummary>& group_infos)
 {
-    RS_STACK_MUTEX(mNxsMutex) ;
 	RsGxsGrpMetaTemporaryMap grpMetaMap;
-    mDataStore->retrieveGxsGrpMetaData(grpMetaMap);
+    {
+		RS_STACK_MUTEX(mNxsMutex) ;
+		mDataStore->retrieveGxsGrpMetaData(grpMetaMap);
+    }
 
     RsGroupNetworkStats stats ;
 

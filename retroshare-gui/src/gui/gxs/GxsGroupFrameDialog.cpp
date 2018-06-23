@@ -245,6 +245,16 @@ void GxsGroupFrameDialog::updateDisplay(bool complete)
 			updateMessageSummaryList(msgIt->first);
 		}
 	}
+
+    updateSearchResults() ;
+}
+
+void GxsGroupFrameDialog::updateSearchResults()
+{
+    const std::set<TurtleRequestId>& reqs = getSearchResults();
+
+    for(auto it(reqs.begin());it!=reqs.end();++it)
+		std::cerr << "updating search ID " << std::hex << *it << std::dec << std::endl;
 }
 
 void GxsGroupFrameDialog::todo()

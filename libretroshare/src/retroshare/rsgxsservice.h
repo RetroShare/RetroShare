@@ -46,7 +46,7 @@ public:
     RsGxsDistantSearchResultChange(TurtleRequestId id,const RsGxsGroupId& group_id) : mRequestId(id),mGroupId(group_id){}
 
     NotifyType getType() { return TYPE_RECEIVED_DISTANT_SEARCH_RESULTS ; }
-private:
+
     TurtleRequestId mRequestId ;
  	RsGxsGroupId mGroupId;
 };
