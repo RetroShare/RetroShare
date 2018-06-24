@@ -2414,7 +2414,7 @@ void RsGenExchange::processRoutingClues()
 
 void RsGenExchange::processGroupDelete()
 {
-					RS_STACK_MUTEX(mGenMtx) ;
+	RS_STACK_MUTEX(mGenMtx);
 
     // get keys for group delete publish
 	typedef std::pair<bool, RsGxsGroupId> GrpNote;
@@ -2435,8 +2435,9 @@ void RsGenExchange::processGroupDelete()
 	for(; mit != toNotify.end(); ++mit)
 	{
 		GrpNote& note = mit->second;
-		uint8_t status = note.first ? RsTokenService::COMPLETE
-		                            : RsTokenService::FAILED;
+		RsTokenService::GxsRequestStatus status =
+		        note.first ? RsTokenService::COMPLETE
+		                   : RsTokenService::FAILED;
 
 		mGrpNotify.insert(std::make_pair(mit->first, note.second));
 		mDataAccess->updatePublicRequestStatus(mit->first, status);
@@ -2744,8 +2745,9 @@ void RsGenExchange::publishGrps()
 	    for(; mit != toNotify.end(); ++mit)
 	    {
 		    GrpNote& note = mit->second;
-		    uint8_t status = note.first ? RsTokenService::COMPLETE
-		                                : RsTokenService::FAILED;
+			RsTokenService::GxsRequestStatus status =
+			        note.first ? RsTokenService::COMPLETE
+			                   : RsTokenService::FAILED;
 
 		    mGrpNotify.insert(std::make_pair(mit->first, note.second));
 		    mDataAccess->updatePublicRequestStatus(mit->first, status);
@@ -2781,7 +2783,8 @@ uint32_t RsGenExchange::generatePublicToken()
     return mDataAccess->generatePublicToken();
 }
 
-bool RsGenExchange::updatePublicRequestStatus(const uint32_t &token, const uint32_t &status)
+bool RsGenExchange::updatePublicRequestStatus(
+        uint32_t token, RsTokenService::GxsRequestStatus status )
 {
     return mDataAccess->updatePublicRequestStatus(token, status);
 }

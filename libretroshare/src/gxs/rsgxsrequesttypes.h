@@ -32,7 +32,9 @@
 
 struct GxsRequest
 {
-	GxsRequest() : token(0), reqTime(0), ansType(0), reqType(0), status(0) {}
+	GxsRequest() :
+	    token(0), reqTime(0), ansType(0), reqType(0),
+	    status(RsTokenService::FAILED) {}
 	virtual ~GxsRequest() {}
 
 	uint32_t token;
@@ -42,7 +44,7 @@ struct GxsRequest
 	uint32_t reqType;
 	RsTokReqOptions Options;
 
-	uint32_t status;
+	RsTokenService::GxsRequestStatus status;
 };
 
 class GroupMetaReq : public GxsRequest

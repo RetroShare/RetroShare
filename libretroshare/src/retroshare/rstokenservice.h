@@ -199,7 +199,7 @@ public:
      * @param token value of token to check status for
      * @return the current status of request
      */
-    virtual uint32_t requestStatus(const uint32_t token) = 0;
+	virtual GxsRequestStatus requestStatus(const uint32_t token) = 0;
 
     /*!
      * This request statistics on amount of data held
