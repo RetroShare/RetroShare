@@ -1656,8 +1656,8 @@ void p3GxsCircles::checkDummyIdData()
 
 	// check the token.
         uint32_t status =  rsIdentity->getTokenService()->requestStatus(mDummyIdToken);
-        if ( (RsTokenService::GXS_REQUEST_V2_STATUS_FAILED == status) ||
-                         (RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE == status) )
+        if ( (RsTokenService::FAILED == status) ||
+                         (RsTokenService::COMPLETE == status) )
 	{
 		std::vector<RsGxsIdGroup> ids;
 		if (!rsIdentity->getGroupData(mDummyIdToken, ids))

@@ -123,18 +123,19 @@ class RsTokenService
 
 public:
 
-	// TODO CLEANUP: This should be an enum
-        static const uint8_t GXS_REQUEST_V2_STATUS_FAILED;
-        static const uint8_t GXS_REQUEST_V2_STATUS_PENDING;
-        static const uint8_t GXS_REQUEST_V2_STATUS_PARTIAL;
-        static const uint8_t GXS_REQUEST_V2_STATUS_COMPLETE;
-        static const uint8_t GXS_REQUEST_V2_STATUS_DONE;			 // ONCE ALL DATA RETRIEVED.
-        static const uint8_t GXS_REQUEST_V2_STATUS_CANCELLED;
+	enum GxsRequestStatus : uint8_t
+	{
+		FAILED,
+		PENDING,
+		PARTIAL,
+		COMPLETE,
+		DONE,      /// Once all data has been retrived
+		CANCELLED
+	};
 
-public:
 
-    RsTokenService()  { return; }
-    virtual ~RsTokenService() { return; }
+	RsTokenService() {}
+	virtual ~RsTokenService() {}
 
     /* Data Requests */
 

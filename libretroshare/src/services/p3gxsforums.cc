@@ -489,12 +489,12 @@ void p3GxsForums::dummy_tick()
 		std::cerr << std::endl;
 
 		uint32_t status = RsGenExchange::getTokenService()->requestStatus(mGenToken);
-		if (status != RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
+		if (status != RsTokenService::COMPLETE)
 		{
 			std::cerr << "p3GxsForums::dummy_tick() Status: " << status;
 			std::cerr << std::endl;
 
-			if (status == RsTokenService::GXS_REQUEST_V2_STATUS_FAILED)
+			if (status == RsTokenService::FAILED)
 			{
 				std::cerr << "p3GxsForums::dummy_tick() generateDummyMsgs() FAILED";
 				std::cerr << std::endl;

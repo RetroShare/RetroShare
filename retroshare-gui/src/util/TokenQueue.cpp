@@ -164,8 +164,8 @@ bool TokenQueue::checkForRequest(uint32_t token)
 {
 	/* check token */
 	uint32_t status =  mService->requestStatus(token);
-	return ( (RsTokenService::GXS_REQUEST_V2_STATUS_FAILED == status) ||
-			 (RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE == status) );
+	return ( (RsTokenService::FAILED == status) ||
+			 (RsTokenService::COMPLETE == status) );
 }
 
 bool TokenQueue::activeRequestExist(const uint32_t& userType) const

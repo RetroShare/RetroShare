@@ -1315,14 +1315,14 @@ void p3GxsChannels::dummy_tick()
 #endif
 
 		uint32_t status = RsGenExchange::getTokenService()->requestStatus(mGenToken);
-		if (status != RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
+		if (status != RsTokenService::COMPLETE)
 		{
 #ifdef GXSCHANNELS_DEBUG
 			std::cerr << "p3GxsChannels::dummy_tick() Status: " << status;
 			std::cerr << std::endl;
 #endif
 
-			if (status == RsTokenService::GXS_REQUEST_V2_STATUS_FAILED)
+			if (status == RsTokenService::FAILED)
 			{
 #ifdef GXSCHANNELS_DEBUG
 				std::cerr << "p3GxsChannels::dummy_tick() generateDummyMsgs() FAILED";

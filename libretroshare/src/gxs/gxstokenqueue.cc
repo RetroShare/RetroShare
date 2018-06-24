@@ -59,7 +59,7 @@ void GxsTokenQueue::checkRequests()
 			uint32_t token = it->mToken;
 			uint32_t status = mGenExchange->getTokenService()->requestStatus(token);
 	
-			if (status == RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
+			if (status == RsTokenService::COMPLETE)
 			{
 				toload.push_back(*it);
 				it = mQueue.erase(it);
@@ -71,7 +71,7 @@ void GxsTokenQueue::checkRequests()
 #endif
 				++it;
 			}
-			else if (status == RsTokenService::GXS_REQUEST_V2_STATUS_FAILED)
+			else if (status == RsTokenService::FAILED)
 			{
 				// maybe we should do alternative callback?
 				std::cerr << "GxsTokenQueue::checkRequests() ERROR Request Failed: " << token;

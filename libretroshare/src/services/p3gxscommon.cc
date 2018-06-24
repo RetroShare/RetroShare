@@ -572,7 +572,7 @@ void p3GxsCommentService::load_PendingVoteParent(const uint32_t &token)
 				std::cerr << std::endl;
 
 				pit->second.mStatus = VoteHolder::VOTE_ERROR;
-				uint32_t status = RsTokenService::GXS_REQUEST_V2_STATUS_FAILED;
+				uint32_t status = RsTokenService::FAILED;
 				mExchange->updatePublicRequestStatus(pit->second.mReqToken, status);
 				continue;
 			}
