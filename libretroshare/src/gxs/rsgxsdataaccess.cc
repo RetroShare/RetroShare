@@ -33,7 +33,6 @@
         const uint8_t RsTokenService::GXS_REQUEST_V2_STATUS_FAILED = 0;
         const uint8_t RsTokenService::GXS_REQUEST_V2_STATUS_PENDING = 1;
         const uint8_t RsTokenService::GXS_REQUEST_V2_STATUS_PARTIAL = 2;
-        const uint8_t RsTokenService::GXS_REQUEST_V2_STATUS_FINISHED_INCOMPLETE = 3;
         const uint8_t RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE = 4;
         const uint8_t RsTokenService::GXS_REQUEST_V2_STATUS_DONE = 5;			 // ONCE ALL DATA RETRIEVED.
         const uint8_t RsTokenService::GXS_REQUEST_V2_STATUS_CANCELLED = 6;
