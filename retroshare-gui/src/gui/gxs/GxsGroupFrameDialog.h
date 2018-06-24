@@ -210,7 +210,8 @@ private:
 
 	std::list<RsGroupMetaData> mCachedGroupMetas;
 
-    std::map<uint32_t,QTreeWidgetItem*> mSearchGroups ;
+    std::map<uint32_t,QTreeWidgetItem*> mSearchGroupsItems ;
+    std::map<uint32_t,std::set<RsGxsGroupId> > mKnownGroups;
 };
 
 #endif

@@ -263,8 +263,40 @@ void GxsGroupFrameDialog::updateSearchResults()
 
         std::cerr << "retrieved " << std::endl;
 
-        for(auto it2(group_infos.begin());it2!=group_infos.end();++it2)
-            std::cerr << "  " << it2->first << " " << it2->second.group_id << " \"" << it2->second.group_name << "\"" << std::endl;
+        auto it2 = mSearchGroupsItems.find(*it);
+
+        std::set<RsGxsGroupId>& known_groups(mKnownGroups[*it]) ;
+
+        if(mSearchGroupsItems.end() == it2)
+        {
+            std::cerr << "GxsGroupFrameDialog::updateSearchResults(): received result notification for req " << std::hex << *it << std::dec << " but no item present!" << std::endl;
+            continue ;	// we could create the item just as well but since this situation is not supposed to happen, I prefer to make this a failure case.
+        }
+
+        QList<GroupItemInfo> group_items ;
+
+        for(auto it3(group_infos.begin());it3!=group_infos.end();++it3)
+            if(known_groups.end() == known_groups.find(it3->first))
+        	{
+				std::cerr << "  adding new group " << it3->first << " " << it3->second.group_id << " \"" << it3->second.group_name << "\"" << std::endl;
+
+                known_groups.insert(it3->first) ;
+
+                GroupItemInfo i ;
+                i.id             = QString(it3->second.group_id.toStdString().c_str()) ;
+                i.name           = QString::fromUtf8(it3->second.group_name.c_str()) ;
+                i.description    = QString::fromUtf8(it3->second.group_description.c_str()) ;
+                i.popularity     = 0; // could be set to the number of hits
+				i.lastpost       = QDateTime::fromTime_t(it3->second.last_message_ts);
+				i.subscribeFlags = 0; // irrelevant here
+				i.publishKey     = false ; // IS_GROUP_PUBLISHER(groupInfo.mSubscribeFlags) ;
+				i.adminKey       = false ; // IS_GROUP_ADMIN(groupInfo.mSubscribeFlags) ;
+				i.max_visible_posts = it3->second.number_of_messages ;
+
+                group_items.push_back(i);
+			}
+
+		ui->groupTreeWidget->fillGroupItems(it2->second, group_items);
     }
 }
 
@@ -282,21 +314,24 @@ void GxsGroupFrameDialog::removeCurrentSearch()
 
     TurtleRequestId search_request_id = action->data().toUInt();
 
-    auto it = mSearchGroups.find(search_request_id) ;
+    auto it = mSearchGroupsItems.find(search_request_id) ;
 
-    if(it == mSearchGroups.end())
+    if(it == mSearchGroupsItems.end())
         return ;
 
     ui->groupTreeWidget->removeSearchItem(it->second) ;
-    mSearchGroups.erase(it);
+    mSearchGroupsItems.erase(it);
+
+    mKnownGroups.erase(search_request_id);
 }
 
 void GxsGroupFrameDialog::removeAllSearches()
 {
-    for(auto it(mSearchGroups.begin());it!=mSearchGroups.end();++it)
+    for(auto it(mSearchGroupsItems.begin());it!=mSearchGroupsItems.end();++it)
 		ui->groupTreeWidget->removeSearchItem(it->second) ;
 
-    mSearchGroups.clear();
+    mSearchGroupsItems.clear();
+    mKnownGroups.clear();
 }
 void GxsGroupFrameDialog::groupTreeCustomPopupMenu(QPoint point)
 {
@@ -1158,6 +1193,6 @@ void GxsGroupFrameDialog::searchNetwork(const QString& search_string)
     if(request_id == 0)
         return ;
 
-	mSearchGroups[request_id] = ui->groupTreeWidget->addSearchItem(tr("Search for")+ " \"" + search_string + "\"",(uint32_t)request_id,QIcon(icon(ICON_SEARCH)));
+	mSearchGroupsItems[request_id] = ui->groupTreeWidget->addSearchItem(tr("Search for")+ " \"" + search_string + "\"",(uint32_t)request_id,QIcon(icon(ICON_SEARCH)));
 }
 
