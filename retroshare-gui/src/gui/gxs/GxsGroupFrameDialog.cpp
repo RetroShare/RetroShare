@@ -254,7 +254,18 @@ void GxsGroupFrameDialog::updateSearchResults()
     const std::set<TurtleRequestId>& reqs = getSearchResults();
 
     for(auto it(reqs.begin());it!=reqs.end();++it)
+    {
 		std::cerr << "updating search ID " << std::hex << *it << std::dec << std::endl;
+
+        std::map<RsGxsGroupId,RsGxsGroupSummary> group_infos;
+
+        getDistantSearchResults(*it,group_infos) ;
+
+        std::cerr << "retrieved " << std::endl;
+
+        for(auto it2(group_infos.begin());it2!=group_infos.end();++it2)
+            std::cerr << "  " << it2->first << " " << it2->second.group_id << " \"" << it2->second.group_name << "\"" << std::endl;
+    }
 }
 
 void GxsGroupFrameDialog::todo()

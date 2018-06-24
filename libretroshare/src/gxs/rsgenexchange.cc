@@ -1844,15 +1844,6 @@ uint32_t RsGenExchange::getSyncPeriod(const RsGxsGroupId& grpId)
         return RS_GXS_DEFAULT_MSG_REQ_PERIOD;
 }
 
-bool RsGenExchange::getDistantSearchResults(const TurtleRequestId& id,std::list<RsGxsGroupSummary>& group_infos)
-{
-	return (mNetService!=NULL) && mNetService->getDistantSearchResults(id,group_infos) ;
-}
-bool RsGenExchange::clearDistantSearchResults(const TurtleRequestId& id)
-{
-	return (mNetService!=NULL) && mNetService->clearDistantSearchResults(id) ;
-}
-
 bool     RsGenExchange::getGroupNetworkStats(const RsGxsGroupId& grpId,RsGroupNetworkStats& stats)
 {
 	return (!mNetService) || mNetService->getGroupNetworkStats(grpId,stats) ;

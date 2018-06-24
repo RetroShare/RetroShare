@@ -35,8 +35,6 @@
 #include "retroshare/rsgxscommon.h"
 #include "retroshare/rsturtle.h"
 
-
-
 /* The Main Interface Class - for information about your Peers */
 class RsGxsChannels;
 extern RsGxsChannels *rsGxsChannels;
@@ -99,6 +97,8 @@ virtual bool getPostData(const uint32_t &token, std::vector<RsGxsChannelPost> &p
 
     virtual TurtleRequestId turtleGroupRequest(const RsGxsGroupId& group_id)=0;
     virtual TurtleRequestId turtleSearchRequest(const std::string& match_string)=0;
+    virtual bool retrieveDistantSearchResults(TurtleRequestId req, std::map<RsGxsGroupId, RsGxsGroupSummary> &results) =0;
+    virtual bool clearDistantSearchResults(TurtleRequestId req)=0;
 
         //////////////////////////////////////////////////////////////////////////////
 virtual void setMessageReadStatus(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, bool read) = 0;

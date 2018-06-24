@@ -74,6 +74,8 @@ virtual void service_tick();
 
     virtual TurtleRequestId turtleGroupRequest(const RsGxsGroupId& group_id);
     virtual TurtleRequestId turtleSearchRequest(const std::string& match_string);
+    virtual bool retrieveDistantSearchResults(TurtleRequestId req, std::map<RsGxsGroupId, RsGxsGroupSummary> &results) ;
+    virtual bool clearDistantSearchResults(TurtleRequestId req);
 
 	// Overloaded to cache new groups.
 virtual RsGenExchange::ServiceCreate_Return service_CreateGroup(RsGxsGrpItem* grpItem, RsTlvSecurityKeySet& keySet);

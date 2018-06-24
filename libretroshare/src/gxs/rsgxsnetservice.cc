@@ -5117,6 +5117,25 @@ static bool termSearch(const std::string& src, const std::string& substring)
 		/* always ignore case */
 	return src.end() != std::search( src.begin(), src.end(), substring.begin(), substring.end(), RsRegularExpression::CompareCharIC() );
 }
+
+bool RsGxsNetService::retrieveDistantSearchResults(TurtleRequestId req,std::map<RsGxsGroupId,RsGxsGroupSummary>& group_infos)
+{
+    RS_STACK_MUTEX(mNxsMutex) ;
+
+    auto it = mDistantSearchResults.find(req) ;
+
+    if(it == mDistantSearchResults.end())
+        return false ;
+
+    group_infos = it->second;
+    return true ;
+}
+bool RsGxsNetService::clearDistantSearchResults(const TurtleRequestId& id)
+{
+    RS_STACK_MUTEX(mNxsMutex) ;
+    mDistantSearchResults.erase(id);
+    return true ;
+}
 void RsGxsNetService::receiveTurtleSearchResults(TurtleRequestId req, const std::list<RsGxsGroupSummary>& group_infos)
 {
     RS_STACK_MUTEX(mNxsMutex) ;
@@ -5179,21 +5198,4 @@ bool RsGxsNetService::search(const std::string& substring,std::list<RsGxsGroupSu
     return !group_infos.empty();
 }
 
-bool RsGxsNetService::getDistantSearchResults(const TurtleRequestId& id,std::list<RsGxsGroupSummary>& group_infos)
-{
-    RS_STACK_MUTEX(mNxsMutex) ;
-	auto it = mDistantSearchResults.find(id) ;
 
-	if(it == mDistantSearchResults.end())
-		return false ;
-
-    for(auto it2(it->second.begin());it2!=it->second.end();++it2)
-		group_infos.push_back(it2->second);
-    return true;
-}
-bool RsGxsNetService::clearDistantSearchResults(const TurtleRequestId& id)
-{
-    RS_STACK_MUTEX(mNxsMutex) ;
-    mDistantSearchResults.erase(id);
-    return true ;
-}

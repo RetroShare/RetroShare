@@ -121,9 +121,9 @@ public:
 
     virtual ~RsGenExchange();
 
-    // Convention that this is implemented here. 
+    // Convention that this is implemented here.
     // and passes to network service.
-    virtual RsServiceInfo getServiceInfo() = 0; 
+    virtual RsServiceInfo getServiceInfo() = 0;
 
     void setNetworkExchangeService(RsNetworkExchangeService *ns) ;
 
@@ -581,7 +581,7 @@ public:
      * @param msgs
      */
     void deleteMsgs(uint32_t& token, const GxsMsgReq& msgs);
-    
+
 protected:
     /*!
      * This represents the group before its signature is calculated
@@ -665,7 +665,7 @@ public:
      */
 
     void shareGroupPublishKey(const RsGxsGroupId& grpId,const std::set<RsPeerId>& peers) ;
-    
+
     /*!
      * Returns the local TS of the group as known by the network service.
      * This is useful to allow various network services to sync their update TS
@@ -687,9 +687,6 @@ public:
     virtual uint32_t getSyncPeriod(const RsGxsGroupId& grpId) ;
     virtual void     setSyncPeriod(const RsGxsGroupId& grpId,uint32_t age_in_secs) ;
 	virtual bool     getGroupNetworkStats(const RsGxsGroupId& grpId,RsGroupNetworkStats& stats);
-
-    virtual bool getDistantSearchResults(const TurtleRequestId& id,std::list<RsGxsGroupSummary>& group_infos) ;
-    virtual bool clearDistantSearchResults(const TurtleRequestId& id);
 
     uint16_t serviceType() const { return mServType ; }
     uint32_t serviceFullType() const { return ((uint32_t)mServType << 8) + (((uint32_t) RS_PKT_VERSION_SERVICE) << 24); }

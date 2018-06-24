@@ -60,25 +60,6 @@
  *   - the also group matrix settings which is by default everyone can transfer to each other
  */
 
-/*!
- * \brief The RsGxsGroupSymmary struct
- * 			This structure is used to transport group summary information when a GXS service is searched. It contains the group information
- * 			as well as a context string to tell where the information was found. It is more compact than a GroupMeta object, so as to make
- * 			search responses as light as possible.
- */
-struct RsGxsGroupSummary
-{
-    RsGxsGroupId group_id ;
-
-    std::string  group_name ;
-    std::string  group_description ;
-    std::string  search_context ;
-    RsGxsId      author_id ;
-    time_t       publish_ts ;
-    uint32_t     number_of_messages ;
-    time_t       last_message_ts ;
-};
-
 class RsNetworkExchangeService
 {
 public:
@@ -132,13 +113,22 @@ public:
      * \param group_infos	Group summary information for the groups returned by the search
      */
     virtual void receiveTurtleSearchResults(TurtleRequestId req,const std::list<RsGxsGroupSummary>& group_infos)=0;
+
+    /*!
+     * \brief retrieveTurtleSearchResults
+     * 			To be used to retrieve the search results that have been notified (or not)
+     * \param req			request that match the results to retrieve
+     * \param group_infos	results to retrieve.
+     * \return
+     * 			false when the request is unknown.
+     */
+	virtual bool retrieveDistantSearchResults(TurtleRequestId req, std::map<RsGxsGroupId, RsGxsGroupSummary> &group_infos)=0;
     /*!
      * \brief getDistantSearchResults
      * \param id
      * \param group_infos
      * \return
      */
-    virtual bool getDistantSearchResults(const TurtleRequestId& id,std::list<RsGxsGroupSummary>& group_infos)=0 ;
     virtual bool clearDistantSearchResults(const TurtleRequestId& id)=0;
 
     virtual bool search(const std::string& substring,std::list<RsGxsGroupSummary>& group_infos) =0;

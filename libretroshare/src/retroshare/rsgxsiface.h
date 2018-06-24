@@ -33,6 +33,26 @@
 #include "retroshare/rsgxsifacetypes.h"
 
 /*!
+ * \brief The RsGxsGroupSymmary struct
+ * 			This structure is used to transport group summary information when a GXS service is searched. It contains the group information
+ * 			as well as a context string to tell where the information was found. It is more compact than a GroupMeta object, so as to make
+ * 			search responses as light as possible.
+ */
+struct RsGxsGroupSummary
+{
+    RsGxsGroupId group_id ;
+
+    std::string  group_name ;
+    std::string  group_description ;
+    std::string  search_context ;
+    RsGxsId      author_id ;
+    time_t       publish_ts ;
+    uint32_t     number_of_messages ;
+    time_t       last_message_ts ;
+};
+
+
+/*!
  * Stores ids of changed gxs groups and messages. It is used to notify the GUI about changes.
  */
 class RsGxsChanges

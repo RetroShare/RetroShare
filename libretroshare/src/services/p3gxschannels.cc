@@ -1696,3 +1696,13 @@ TurtleRequestId p3GxsChannels::turtleSearchRequest(const std::string& match_stri
     return netService()->turtleSearchRequest(match_string) ;
 }
 
+bool p3GxsChannels::clearDistantSearchResults(TurtleRequestId req)
+{
+    return netService()->clearDistantSearchResults(req);
+}
+bool p3GxsChannels::retrieveDistantSearchResults(TurtleRequestId req,std::map<RsGxsGroupId,RsGxsGroupSummary>& results)
+{
+    return netService()->retrieveDistantSearchResults(req,results);
+}
+
+
