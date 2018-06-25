@@ -105,8 +105,7 @@ class RsGxsChannels: public RsGxsIfaceHelper, public RsGxsCommentService
 {
 public:
 
-	explicit RsGxsChannels(RsGxsIface *gxs)
-	  :RsGxsIfaceHelper(gxs) {}
+	explicit RsGxsChannels(RsGxsIface& gxs) : RsGxsIfaceHelper(gxs) {}
 	virtual ~RsGxsChannels() {}
 
 	/* Specific Service Data */

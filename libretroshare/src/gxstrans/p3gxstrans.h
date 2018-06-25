@@ -85,7 +85,7 @@ struct MsgSizeCount
  * @see GxsTransClient::receiveGxsTransMail(...),
  * @see GxsTransClient::notifyGxsTransSendStatus(...).
  */
-class p3GxsTrans : public RsGenExchange, public GxsTokenQueue, public p3Config, public RsGxsTrans
+struct p3GxsTrans : RsGenExchange, GxsTokenQueue, p3Config, RsGxsTrans
 {
 public:
 	p3GxsTrans( RsGeneralDataService* gds, RsNetworkExchangeService* nes,
@@ -94,17 +94,16 @@ public:
 	                   RS_SERVICE_TYPE_GXS_TRANS, &identities,
 	                   AuthenPolicy()),
 	    GxsTokenQueue(this),
-        RsGxsTrans(this),
-        mIdService(identities),
+	    RsGxsTrans(static_cast<RsGxsIface&>(*this)),
+	    // always check 30 secs after start)
+	    mLastMsgCleanup(time(NULL) - MAX_DELAY_BETWEEN_CLEANUPS + 30),
+	    mIdService(identities),
 	    mServClientsMutex("p3GxsTrans client services map mutex"),
 	    mOutgoingMutex("p3GxsTrans outgoing queue map mutex"),
 	    mIngoingMutex("p3GxsTrans ingoing queue map mutex"),
+	    mCleanupThread(nullptr),
 	    mPerUserStatsMutex("p3GxsTrans user stats mutex"),
-	    mDataMutex("p3GxsTrans data mutex")
-    {
-        mLastMsgCleanup = time(NULL) - MAX_DELAY_BETWEEN_CLEANUPS + 30;	// always check 30 secs after start
-        mCleanupThread = NULL ;
-    }
+	    mDataMutex("p3GxsTrans data mutex") {}
 
 	virtual ~p3GxsTrans();
 

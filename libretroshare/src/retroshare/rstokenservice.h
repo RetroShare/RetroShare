@@ -220,19 +220,14 @@ public:
 	 */
     virtual void requestGroupStatistic(uint32_t& token, const RsGxsGroupId& grpId) = 0;
 
-
-        /* Cancel Request */
-
-    /*!
-     * If this function returns false, it may be that the request has completed
-     * already. Useful for very expensive request. This is a blocking operation
-     * @param token the token of the request to cancel
-     * @return false if unusuccessful in cancelling request, true if successful
-     */
-    virtual bool cancelRequest(const uint32_t &token) = 0;
-
-
-
+	/*!
+	 * @brief Cancel Request
+	 * If this function returns false, it may be that the request has completed
+	 * already. Useful for very expensive request.
+	 * @param token the token of the request to cancel
+	 * @return false if unusuccessful in cancelling request, true if successful
+	 */
+	virtual bool cancelRequest(const uint32_t &token) = 0;
 };
 
 #endif // RSTOKENSERVICE_H

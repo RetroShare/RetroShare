@@ -55,7 +55,8 @@ p3GxsForums::p3GxsForums( RsGeneralDataService *gds,
                           RsNetworkExchangeService *nes, RsGixs* gixs ) :
     RsGenExchange( gds, nes, new RsGxsForumSerialiser(),
                    RS_SERVICE_GXS_TYPE_FORUMS, gixs, forumsAuthenPolicy()),
-    RsGxsForums(this), mGenToken(0), mGenActive(false), mGenCount(0)
+    RsGxsForums(static_cast<RsGxsIface&>(*this)), mGenToken(0),
+    mGenActive(false), mGenCount(0)
 {
 	// Test Data disabled in Repo.
 	//RsTickEvent::schedule_in(FORUM_TESTEVENT_DUMMYDATA, DUMMYDATA_PERIOD);

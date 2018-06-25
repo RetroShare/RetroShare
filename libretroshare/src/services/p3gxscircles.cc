@@ -111,16 +111,16 @@ RsGxsCircles *rsGxsCircles = NULL;
 /******************* Startup / Tick    ******************************************/
 /********************************************************************************/
 
-p3GxsCircles::p3GxsCircles(RsGeneralDataService *gds, RsNetworkExchangeService *nes, 
-	p3IdService *identities, PgpAuxUtils *pgpUtils)
-	: RsGxsCircleExchange(gds, nes, new RsGxsCircleSerialiser(), 
-			RS_SERVICE_GXS_TYPE_GXSCIRCLE, identities, circleAuthenPolicy()), 
-	RsGxsCircles(this), GxsTokenQueue(this), RsTickEvent(), 
-	mIdentities(identities), 
-	mPgpUtils(pgpUtils),
-	mCircleMtx("p3GxsCircles"),
-        mCircleCache(DEFAULT_MEM_CACHE_SIZE, "GxsCircleCache")
-
+p3GxsCircles::p3GxsCircles(
+        RsGeneralDataService *gds, RsNetworkExchangeService *nes,
+        p3IdService *identities, PgpAuxUtils *pgpUtils) :
+    RsGxsCircleExchange(
+        gds, nes, new RsGxsCircleSerialiser(), RS_SERVICE_GXS_TYPE_GXSCIRCLE,
+        identities, circleAuthenPolicy() ),
+    RsGxsCircles(static_cast<RsGxsIface&>(*this)), GxsTokenQueue(this),
+    RsTickEvent(), mIdentities(identities), mPgpUtils(pgpUtils),
+    mCircleMtx("p3GxsCircles"),
+    mCircleCache(DEFAULT_MEM_CACHE_SIZE, "GxsCircleCache" )
 {
 	// Kick off Cache Testing, + Others.
 	//RsTickEvent::schedule_in(CIRCLE_EVENT_CACHETEST, CACHETEST_PERIOD);

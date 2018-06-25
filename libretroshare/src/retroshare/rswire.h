@@ -108,7 +108,7 @@ class RsWire: public RsGxsIfaceHelper
 {
 	public:
 
-	explicit RsWire(RsGxsIface *gxs): RsGxsIfaceHelper(gxs) {}
+	explicit RsWire(RsGxsIface& gxs) : RsGxsIfaceHelper(gxs) {}
 	virtual ~RsWire() {}
 
 	/* Specific Service Data */

@@ -68,8 +68,12 @@ RsGxsChannels *rsGxsChannels = NULL;
 /******************* Startup / Tick    ******************************************/
 /********************************************************************************/
 
-p3GxsChannels::p3GxsChannels(RsGeneralDataService *gds, RsNetworkExchangeService *nes, RsGixs* gixs)
-    : RsGenExchange(gds, nes, new RsGxsChannelSerialiser(), RS_SERVICE_GXS_TYPE_CHANNELS, gixs, channelsAuthenPolicy()), RsGxsChannels(this), GxsTokenQueue(this)
+p3GxsChannels::p3GxsChannels(
+        RsGeneralDataService *gds, RsNetworkExchangeService *nes,
+        RsGixs* gixs ) :
+    RsGenExchange( gds, nes, new RsGxsChannelSerialiser(),
+                   RS_SERVICE_GXS_TYPE_CHANNELS, gixs, channelsAuthenPolicy() ),
+    RsGxsChannels(static_cast<RsGxsIface&>(*this)), GxsTokenQueue(this)
 {
 	// For Dummy Msgs.
 	mGenActive = false;

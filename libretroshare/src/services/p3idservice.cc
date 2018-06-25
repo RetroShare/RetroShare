@@ -156,12 +156,14 @@ RsIdentity *rsIdentity = NULL;
 /******************* Startup / Tick    ******************************************/
 /********************************************************************************/
 
-p3IdService::p3IdService(RsGeneralDataService *gds, RsNetworkExchangeService *nes, PgpAuxUtils *pgpUtils)
-	: RsGxsIdExchange(gds, nes, new RsGxsIdSerialiser(), RS_SERVICE_GXS_TYPE_GXSID, idAuthenPolicy()), 
-	RsIdentity(this), GxsTokenQueue(this), RsTickEvent(), 
-	mKeyCache(GXSID_MAX_CACHE_SIZE, "GxsIdKeyCache"), 
-	mIdMtx("p3IdService"), mNes(nes),
-	mPgpUtils(pgpUtils)
+p3IdService::p3IdService(
+        RsGeneralDataService *gds, RsNetworkExchangeService *nes,
+        PgpAuxUtils *pgpUtils ) :
+    RsGxsIdExchange( gds, nes, new RsGxsIdSerialiser(),
+                     RS_SERVICE_GXS_TYPE_GXSID, idAuthenPolicy() ),
+    RsIdentity(static_cast<RsGxsIface&>(*this)), GxsTokenQueue(this),
+    RsTickEvent(), mKeyCache(GXSID_MAX_CACHE_SIZE, "GxsIdKeyCache"),
+    mIdMtx("p3IdService"), mNes(nes), mPgpUtils(pgpUtils)
 {
 	mBgSchedule_Mode = 0;
     mBgSchedule_Active = false;

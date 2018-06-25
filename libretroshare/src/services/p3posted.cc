@@ -40,13 +40,12 @@ RsPosted *rsPosted = NULL;
 /******************* Startup / Tick    ******************************************/
 /********************************************************************************/
 
-p3Posted::p3Posted(RsGeneralDataService *gds, RsNetworkExchangeService *nes, RsGixs* gixs)
-    :p3PostBase(gds, nes, gixs, new RsGxsPostedSerialiser(), RS_SERVICE_GXS_TYPE_POSTED), 
-	RsPosted(this)
-{
-	return;
-}
-
+p3Posted::p3Posted(
+        RsGeneralDataService *gds, RsNetworkExchangeService *nes,
+        RsGixs* gixs ) :
+    p3PostBase( gds, nes, gixs, new RsGxsPostedSerialiser(),
+                RS_SERVICE_GXS_TYPE_POSTED ),
+    RsPosted(static_cast<RsGxsIface&>(*this)) {}
 
 const std::string GXS_POSTED_APP_NAME = "gxsposted";
 const uint16_t GXS_POSTED_APP_MAJOR_VERSION  =       1;

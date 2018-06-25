@@ -115,10 +115,10 @@ std::ostream &operator<<(std::ostream &out, const RsWikiComment &comment);
 
 class RsWiki: public RsGxsIfaceHelper
 {
-	public:
+public:
 
-	RsWiki(RsGxsIface *gxs): RsGxsIfaceHelper(gxs)  { return; }
-virtual ~RsWiki() { return; }
+	RsWiki(RsGxsIface& gxs): RsGxsIfaceHelper(gxs) {}
+	virtual ~RsWiki() {}
 
 	/* Specific Service Data */
 virtual bool getCollections(const uint32_t &token, std::vector<RsWikiCollection> &collections) = 0;

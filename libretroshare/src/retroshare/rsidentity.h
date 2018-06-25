@@ -343,7 +343,7 @@ struct RsIdentityDetails : RsSerializable
 
 struct RsIdentity : RsGxsIfaceHelper
 {
-    explicit RsIdentity(RsGxsIface *gxs): RsGxsIfaceHelper(gxs) {}
+	explicit RsIdentity(RsGxsIface& gxs): RsGxsIfaceHelper(gxs) {}
     virtual ~RsIdentity() {}
 
     /********************************************************************************************/

@@ -127,8 +127,8 @@ class RsGxsCircles: public RsGxsIfaceHelper
 {
 public:
 
-	RsGxsCircles(RsGxsIface *gxs) :RsGxsIfaceHelper(gxs)  { return; }
-	virtual ~RsGxsCircles() { return; }
+	RsGxsCircles(RsGxsIface& gxs) :RsGxsIfaceHelper(gxs) {}
+	virtual ~RsGxsCircles() {}
 
 	/* External Interface (Cached stuff) */
 	virtual bool getCircleDetails(const RsGxsCircleId &id, RsGxsCircleDetails &details) = 0;
