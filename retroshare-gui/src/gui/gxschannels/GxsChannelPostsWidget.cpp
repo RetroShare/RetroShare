@@ -596,6 +596,20 @@ void GxsChannelPostsWidget::clearPosts()
 	ui->fileWidget->clear();
 }
 
+void GxsChannelPostsWidget::blank()
+{
+	mStateHelper->setWidgetEnabled(ui->postButton, false);
+	mStateHelper->setWidgetEnabled(ui->subscribeToolButton, false);
+
+	clearPosts();
+
+    groupNameChanged(QString());
+
+	ui->infoWidget->hide();
+	ui->feedWidget->show();
+	ui->fileWidget->hide();
+}
+
 bool GxsChannelPostsWidget::navigatePostItem(const RsGxsMessageId &msgId)
 {
 	FeedItem *feedItem = ui->feedWidget->findGxsFeedItem(groupId(), msgId);

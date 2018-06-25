@@ -57,6 +57,7 @@ protected:
 	virtual void groupNameChanged(const QString &/*name*/) {}
 
 	virtual void clearPosts() = 0;
+	virtual void blank() = 0;
 	virtual bool navigatePostItem(const RsGxsMessageId& msgId) = 0;
 
 	/* Thread functions */
