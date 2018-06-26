@@ -130,6 +130,7 @@ public:
      * \return
      */
     virtual bool clearDistantSearchResults(const TurtleRequestId& id)=0;
+    virtual bool retrieveDistantGroupSummary(const RsGxsGroupId&,RsGxsGroupSummary&)=0;
 
     virtual bool search(const std::string& substring,std::list<RsGxsGroupSummary>& group_infos) =0;
 

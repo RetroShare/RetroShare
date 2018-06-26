@@ -5130,6 +5130,20 @@ bool RsGxsNetService::retrieveDistantSearchResults(TurtleRequestId req,std::map<
     group_infos = it->second;
     return true ;
 }
+bool RsGxsNetService::retrieveDistantGroupSummary(const RsGxsGroupId& group_id,RsGxsGroupSummary& gs)
+{
+    for(auto it(mDistantSearchResults.begin());it!=mDistantSearchResults.end();++it)
+    {
+        auto it2 = it->second.find(group_id) ;
+
+        if(it2 != it->second.end())
+        {
+            gs = it2->second;
+            return true ;
+        }
+    }
+    return false ;
+}
 bool RsGxsNetService::clearDistantSearchResults(const TurtleRequestId& id)
 {
     RS_STACK_MUTEX(mNxsMutex) ;
@@ -5139,7 +5153,6 @@ bool RsGxsNetService::clearDistantSearchResults(const TurtleRequestId& id)
 void RsGxsNetService::receiveTurtleSearchResults(TurtleRequestId req, const std::list<RsGxsGroupSummary>& group_infos)
 {
     RS_STACK_MUTEX(mNxsMutex) ;
-#warning We should use some central way to do that. This might be very costly if done often.
 
     RsGxsGrpMetaTemporaryMap grpMeta;
     std::map<RsGxsGroupId,RsGxsGroupSummary>& search_results_map(mDistantSearchResults[req]) ;
@@ -5159,7 +5172,22 @@ void RsGxsNetService::receiveTurtleSearchResults(TurtleRequestId req, const std:
 //        if(grpMeta[(*it).group_id] == NULL)
         {
 			filtered_results.push_back(*it) ;
-            search_results_map[(*it).group_id] = *it;
+
+            auto it2 = search_results_map.find((*it).group_id) ;
+
+            if(it2 != search_results_map.end())
+            {
+                // update existing data
+
+                it2->second.popularity++ ;
+                it2->second.number_of_messages = std::max(it2->second.number_of_messages,(*it).number_of_messages) ;
+            }
+            else
+            {
+				search_results_map[(*it).group_id] = *it;
+				search_results_map[(*it).group_id].popularity = 1; // number of results so far
+            }
+
 			mObserver->receiveDistantSearchResults(req,(*it).group_id) ;
         }
 }
@@ -5184,10 +5212,12 @@ bool RsGxsNetService::search(const std::string& substring,std::list<RsGxsGroupSu
     		s.group_name         = it->second->mGroupName ;
     		s.group_description  = it->second->mGroupName ; // to be filled with something better when we use the real search
     		s.search_context     = it->second->mGroupName ;
-    		s.author_id          = it->second->mAuthorId;
+            s.sign_flags         = it->second->mSignFlags;
     		s.publish_ts         = it->second->mPublishTs;
+    		s.author_id          = it->second->mAuthorId;
     		s.number_of_messages = stats.mMaxVisibleCount ;
     		s.last_message_ts    = stats.mLastGroupModificationTS ;
+            s.popularity         = it->second->mPop;
 
             group_infos.push_back(s) ;
 		}

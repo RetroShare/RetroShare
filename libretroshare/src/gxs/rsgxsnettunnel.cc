@@ -203,7 +203,10 @@ void RsTypeSerializer::serial_process( RsGenericSerializer::SerializeJob j, RsGe
     RsTypeSerializer::serial_process(j,ctx,gs.publish_ts        ,member_name+"-publish_ts") ;                            // time_t       publish_ts ;
     RsTypeSerializer::serial_process(j,ctx,gs.number_of_messages,member_name+"-number_of_messages") ;                    // uint32_t     number_of_messages ;
     RsTypeSerializer::serial_process<time_t>(j,ctx,gs.last_message_ts,member_name+"-last_message_ts") ;                  // time_t       last_message_ts ;
+    RsTypeSerializer::serial_process<uint32_t>(j,ctx,gs.sign_flags,member_name+"-sign_flags") ;                  		 // uint32_t     sign_flags ;
+    RsTypeSerializer::serial_process<uint32_t>(j,ctx,gs.popularity,member_name+"-popularity") ;                  		 // uint32_t     popularity ;
 }
+
 
 //===========================================================================================================================================//
 //                                                     Interface with rest of the software                                                   //

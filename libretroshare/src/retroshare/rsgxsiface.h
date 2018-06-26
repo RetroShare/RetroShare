@@ -40,6 +40,8 @@
  */
 struct RsGxsGroupSummary
 {
+    RsGxsGroupSummary() : publish_ts(0), number_of_messages(0),last_message_ts(0),sign_flags(0),popularity(0) {}
+
     RsGxsGroupId group_id ;
 
     std::string  group_name ;
@@ -49,6 +51,8 @@ struct RsGxsGroupSummary
     time_t       publish_ts ;
     uint32_t     number_of_messages ;
     time_t       last_message_ts ;
+    uint32_t     sign_flags ;
+    uint32_t     popularity ;
 };
 
 

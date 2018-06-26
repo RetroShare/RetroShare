@@ -134,6 +134,7 @@ public:
 	virtual void receiveTurtleSearchResults(TurtleRequestId req,const std::list<RsGxsGroupSummary>& group_infos);
 	virtual bool retrieveDistantSearchResults(TurtleRequestId req, std::map<RsGxsGroupId, RsGxsGroupSummary> &group_infos);
 	virtual bool clearDistantSearchResults(const TurtleRequestId& id);
+    virtual bool retrieveDistantGroupSummary(const RsGxsGroupId&,RsGxsGroupSummary&);
 
     /*!
      * pauses synchronisation of subscribed groups and request for group id

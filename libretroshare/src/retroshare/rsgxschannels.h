@@ -99,6 +99,7 @@ virtual bool getPostData(const uint32_t &token, std::vector<RsGxsChannelPost> &p
     virtual TurtleRequestId turtleSearchRequest(const std::string& match_string)=0;
     virtual bool retrieveDistantSearchResults(TurtleRequestId req, std::map<RsGxsGroupId, RsGxsGroupSummary> &results) =0;
     virtual bool clearDistantSearchResults(TurtleRequestId req)=0;
+    virtual bool retrieveDistantGroup(const RsGxsGroupId& group_id,RsGxsChannelGroup& distant_group)=0;
 
         //////////////////////////////////////////////////////////////////////////////
 virtual void setMessageReadStatus(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, bool read) = 0;
