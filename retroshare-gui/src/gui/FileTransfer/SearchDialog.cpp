@@ -38,7 +38,6 @@
 #include "gui/common/RSTreeWidgetItem.h"
 #include "util/QtVersion.h"
 
-#include "retroshare/rsgxschannels.h"
 #include <retroshare/rsfiles.h>
 #include <retroshare/rsturtle.h>
 #include <retroshare/rsexpr.h>
@@ -204,7 +203,6 @@ SearchDialog::SearchDialog(QWidget *parent)
     // load settings
     processSettings(true);
   
-  	ui._channels_CB->setMinimumWidth(20 * f);
   	ui._ownFiles_CB->setMinimumWidth(20*f);
   	ui._friendListsearch_SB->setMinimumWidth(20*f);
     ui._anonF2Fsearch_CB->setMinimumWidth(20*f);
@@ -866,13 +864,6 @@ void SearchDialog::searchKeywords(const QString& keywords)
 		else
 			req_id = rsFiles->turtleSearch(lin_exp) ;
 	}
-    else if(ui._channels_CB->isChecked())
-    {
-		if(n==1)
-			req_id = rsGxsChannels->turtleSearchRequest(words.front()) ;
-		else
-            QMessageBox::critical(this,"Cannot search multiple words yet.","Search for multiple words is not implemented yet.") ;
-    }
 	else
 		req_id = RSRandom::random_u32() ; // generate a random 32 bits request id
 

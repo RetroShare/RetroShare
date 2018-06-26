@@ -118,13 +118,6 @@
        </widget>
       </item>
       <item>
-       <widget class="QCheckBox" name="_channels_CB">
-        <property name="text">
-         <string>Channels</string>
-        </property>
-       </widget>
-      </item>
-      <item>
        <widget class="QCheckBox" name="_friendListsearch_SB">
         <property name="toolTip">
          <string>Search inside &quot;browsable&quot; files of your friends</string>
@@ -448,7 +441,7 @@
   <customwidget>
    <class>LineEditClear</class>
    <extends>QLineEdit</extends>
-   <header>gui/common/LineEditClear.h</header>
+   <header location="global">gui/common/LineEditClear.h</header>
   </customwidget>
   <customwidget>
    <class>SearchTreeWidget</class>
