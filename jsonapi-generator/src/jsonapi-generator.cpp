@@ -115,9 +115,12 @@ int main(int argc, char *argv[])
 				QString refid(member.attributes().namedItem("refid").nodeValue());
 				QString methodName(member.firstChildElement("name").toElement().text());
 				QString wrapperName(instanceName+methodName+"Wrapper");
+				QString defFilePath(doxPrefix + refid.split('_')[0] + ".xml");
+
+				qDebug() << "Looking for" << typeName << methodName << "into"
+				         << typeFilePath;
 
 				QDomDocument defDoc;
-				QString defFilePath(doxPrefix + refid.split('_')[0] + ".xml");
 				QFile defFile(defFilePath);
 				if ( !defFile.open(QIODevice::ReadOnly) ||
 				     !defDoc.setContent(&defFile, &parseError, &line, &column) )
@@ -128,7 +131,7 @@ int main(int argc, char *argv[])
 				}
 
 				QDomElement memberdef;
-				QDomNodeList memberdefs = typeDoc.elementsByTagName("memberdef");
+				QDomNodeList memberdefs = defDoc.elementsByTagName("memberdef");
 				for (int k = 0; k < memberdefs.size(); ++k)
 				{
 					QDomElement tmpMBD = memberdefs.item(k).toElement();
@@ -148,6 +151,8 @@ int main(int argc, char *argv[])
 				QString retvalType = memberdef.firstChildElement("type").text();
 				QMap<QString,MethodParam> paramsMap;
 				QStringList orderedParamNames;
+				uint hasInput = false;
+				uint hasOutput = false;
 
 				QDomNodeList params = memberdef.elementsByTagName("param");
 				for (int k = 0; k < params.size(); ++k)
@@ -171,9 +176,19 @@ int main(int argc, char *argv[])
 					QDomElement tmpPN = parameternames.item(k).toElement();
 					MethodParam& tmpParam = paramsMap[tmpPN.text()];
 					QString tmpD = tmpPN.attributes().namedItem("direction").nodeValue();
-					tmpParam.in = tmpD.contains("in");
-					tmpParam.out = tmpD.contains("out");
+					if(tmpD.contains("in"))
+					{
+						tmpParam.in = true;
+						hasInput = true;
+					}
+					if(tmpD.contains("out"))
+					{
+						tmpParam.out = true;
+						hasOutput = true;
+					}
 				}
+
+				if(retvalType != "void") hasOutput = true;
 
 				qDebug() << instanceName << apiPath << retvalType << typeName
 				         << methodName;
@@ -183,13 +198,25 @@ int main(int argc, char *argv[])
 					qDebug() << "\t" << mp.type << mp.name << mp.in << mp.out;
 				}
 
-				QString retvalSerialization;
-				if(retvalType != "void")
-					retvalSerialization = "\t\t\tRS_SERIAL_PROCESS(retval);";
+				QString inputParamsDeserialization;
+				if(hasInput)
+				{
+					inputParamsDeserialization +=
+					        "\t\t{\n"
+					        "\t\t\tRsGenericSerializer::SerializeContext& ctx(cReq);\n"
+					        "\t\t\tRsGenericSerializer::SerializeJob j(RsGenericSerializer::FROM_JSON);\n";
+				}
+
+				QString outputParamsSerialization;
+				if(hasOutput)
+				{
+					outputParamsSerialization +=
+					        "\t\t{\n"
+					        "\t\t\tRsGenericSerializer::SerializeContext& ctx(cAns);\n"
+					        "\t\t\tRsGenericSerializer::SerializeJob j(RsGenericSerializer::TO_JSON);\n";
+				}
 
 				QString paramsDeclaration;
-				QString inputParamsDeserialization;
-				QString outputParamsSerialization;
 				for (const QString& pn : orderedParamNames)
 				{
 					const MethodParam& mp(paramsMap[pn]);
@@ -202,13 +229,18 @@ int main(int argc, char *argv[])
 						        + mp.name + ");\n";
 				}
 
+				if(hasInput) inputParamsDeserialization += "\t\t}\n";
+				if(retvalType != "void")
+					outputParamsSerialization +=
+					        "\t\t\tRS_SERIAL_PROCESS(retval);\n";
+				if(hasOutput) outputParamsSerialization += "\t\t}\n";
+
 				QMap<QString,QString> substitutionsMap;
 				substitutionsMap.insert("instanceName", instanceName);
 				substitutionsMap.insert("methodName", methodName);
 				substitutionsMap.insert("paramsDeclaration", paramsDeclaration);
 				substitutionsMap.insert("inputParamsDeserialization", inputParamsDeserialization);
 				substitutionsMap.insert("outputParamsSerialization", outputParamsSerialization);
-				substitutionsMap.insert("retvalSerialization", retvalSerialization);
 				substitutionsMap.insert("retvalType", retvalType);
 				substitutionsMap.insert("callParamsList", orderedParamNames.join(", "));
 				substitutionsMap.insert("wrapperName", wrapperName);

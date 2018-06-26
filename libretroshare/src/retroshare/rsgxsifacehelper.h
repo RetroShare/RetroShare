@@ -27,6 +27,9 @@
  *
  */
 
+#include <chrono>
+#include <thread>
+
 #include "retroshare/rsgxsiface.h"
 #include "retroshare/rsreputations.h"
 #include "rsgxsflags.h"
@@ -259,7 +262,10 @@ struct RsGxsIfaceHelper
 	        const std::vector<RsGxsGrpMsgIdPair>& msgIds )
 	{ return mTokenService.requestMsgRelatedInfo(token, 0, opts, msgIds); }
 
-	/// @see RsTokenService::requestStatus
+	/**
+	 * @jsonapi{development}
+	 * @param[in] token
+	 */
 	RsTokenService::GxsRequestStatus requestStatus(uint32_t token)
 	{ return mTokenService.requestStatus(token); }
 
@@ -281,6 +287,28 @@ struct RsGxsIfaceHelper
 	 * not need to get token service pointer directly anymore.
 	 */
 	RS_DEPRECATED RsTokenService* getTokenService() { return &mTokenService; }
+
+protected:
+	/**
+	 * Block caller while request is being processed.
+	 * Useful for blocking API implementation.
+	 * @param[in] token token associated to the request caller is waiting for
+	 * @param[in] maxWait maximum waiting time in milliseconds
+	 */
+	RsTokenService::GxsRequestStatus waitToken(
+	        uint32_t token,
+	        std::chrono::milliseconds maxWait = std::chrono::milliseconds(500) )
+	{
+		auto timeout = std::chrono::steady_clock::now() + maxWait;
+		auto st = requestStatus(token);
+		while( !(st == RsTokenService::FAILED || st >= RsTokenService::COMPLETE)
+		       && std::chrono::steady_clock::now() < timeout )
+		{
+			std::this_thread::sleep_for(std::chrono::milliseconds(2));
+			st = requestStatus(token);
+		}
+		return st;
+	}
 
 private:
 	RsGxsIface& mGxs;

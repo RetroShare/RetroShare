@@ -335,6 +335,49 @@ bool RsTypeSerializer::from_JSON( const std::string& memberName,
 	return ret;
 }
 
+template<> /*static*/
+uint32_t RsTypeSerializer::serial_size(const double&)
+{
+	std::cerr << "Binary [de]serialization not implemented yet for double"
+	          << std::endl;
+	print_stacktrace();
+	return 0;
+}
+
+template<>  /*static*/
+bool RsTypeSerializer::serialize(uint8_t[], uint32_t, uint32_t&, const double&)
+{
+	std::cerr << "Binary [de]serialization not implemented yet for double"
+	          << std::endl;
+	print_stacktrace();
+	return false;
+}
+
+template<>  /*static*/
+bool RsTypeSerializer::deserialize(const uint8_t[], uint32_t, uint32_t&, double&)
+{
+	std::cerr << "Binary [de]serialization not implemented yet for double"
+	          << std::endl;
+	print_stacktrace();
+	return false;
+}
+
+template<>  /*static*/
+void RsTypeSerializer::print_data(const std::string& n, const double& V)
+{ std::cerr << "  [double     ] " << n << ": " << V << std::endl; }
+
+SIMPLE_TO_JSON_DEF(double)
+
+template<> /*static*/
+bool RsTypeSerializer::from_JSON( const std::string& memberName,
+                                  double& member, RsJson& jDoc )
+{
+	SAFE_GET_JSON_V();
+	ret = ret && v.IsDouble();
+	if(ret) member = v.GetDouble();
+	return ret;
+}
+
 
 //============================================================================//
 //                             std::string                                    //

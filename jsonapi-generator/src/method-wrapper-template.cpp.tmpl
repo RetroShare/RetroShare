@@ -47,22 +47,13 @@ void $%wrapperName%$(const std::shared_ptr<rb::Session> session)
 $%paramsDeclaration%$
 
 		// deserialize input parameters from JSON
-		{
-			RsGenericSerializer::SerializeContext& ctx(cReq);
-			RsGenericSerializer::SerializeJob j(RsGenericSerializer::FROM_JSON);
 $%inputParamsDeserialization%$
-		}
 
 		// call retroshare C++ API
 		$%retvalType%$ retval = $%instanceName%$->$%methodName%$($%callParamsList%$);
 
 		// serialize out parameters and return value to JSON
-		{
-			RsGenericSerializer::SerializeContext& ctx(cAns);
-			RsGenericSerializer::SerializeJob j(RsGenericSerializer::TO_JSON);
-$%retvalSerialization%$
 $%outputParamsSerialization%$
-		}
 
 		// return them to the API caller
 		std::stringstream ss;

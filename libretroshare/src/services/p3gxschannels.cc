@@ -399,10 +399,11 @@ bool p3GxsChannels::getGroupData(const uint32_t &token, std::vector<RsGxsChannel
 	return ok;
 }
 
-bool p3GxsChannels::groupShareKeys(const RsGxsGroupId &groupId, std::set<RsPeerId>& peers)
+bool p3GxsChannels::groupShareKeys(
+        const RsGxsGroupId &groupId, const std::set<RsPeerId>& peers )
 {
-    RsGenExchange::shareGroupPublishKey(groupId,peers) ;
-    return true ;
+	RsGenExchange::shareGroupPublishKey(groupId,peers);
+	return true;
 }
 
 
@@ -999,6 +1000,50 @@ void p3GxsChannels::handleResponse(uint32_t token, uint32_t req_type)
 	}
 }
 
+////////////////////////////////////////////////////////////////////////////////
+/// Blocking API implementation begin
+////////////////////////////////////////////////////////////////////////////////
+
+bool p3GxsChannels::getChannelsSummaries(
+        std::list<RsGroupMetaData>& channels )
+{
+	uint32_t token;
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_GROUP_META;
+	if( !requestGroupInfo(token, opts)
+	        || waitToken(token) != RsTokenService::COMPLETE ) return false;
+	return getGroupSummary(token, channels);
+}
+
+bool p3GxsChannels::getChannelsInfo(
+        const std::list<RsGxsGroupId>& chanIds,
+        std::vector<RsGxsChannelGroup>& channelsInfo )
+{
+	uint32_t token;
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
+	if( !requestGroupInfo(token, opts, chanIds)
+	        || waitToken(token) != RsTokenService::COMPLETE ) return false;
+	return getGroupData(token, channelsInfo);
+}
+
+bool p3GxsChannels::getChannelsContent(
+        const std::list<RsGxsGroupId>& chanIds,
+        std::vector<RsGxsChannelPost>& posts,
+        std::vector<RsGxsComment>& comments )
+{
+	uint32_t token;
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
+	if( !requestMsgInfo(token, opts, chanIds)
+	        || waitToken(token) != RsTokenService::COMPLETE ) return false;
+	return getPostData(token, posts, comments);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+/// Blocking API implementation end
+////////////////////////////////////////////////////////////////////////////////
+
 
 /********************************************************************************************/
 /********************************************************************************************/
@@ -1241,17 +1286,10 @@ bool p3GxsChannels::createPost(uint32_t &token, RsGxsChannelPost &msg)
 /********************************************************************************************/
 /********************************************************************************************/
 
-bool p3GxsChannels::ExtraFileHash(const std::string &path, std::string filename)
+bool p3GxsChannels::ExtraFileHash(const std::string& path)
 {
-	/* extract filename */
-	filename = RsDirUtil::getTopDir(path);
-
-
 	TransferRequestFlags flags = RS_FILE_REQ_ANONYMOUS_ROUTING;
-	if(!rsFiles->ExtraFileHash(path, GXSCHANNEL_STOREPERIOD, flags))
-		return false;
-
-	return true;
+	return rsFiles->ExtraFileHash(path, GXSCHANNEL_STOREPERIOD, flags);
 }
 
 

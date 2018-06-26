@@ -94,7 +94,8 @@ virtual bool getPostData(const uint32_t &token, std::vector<RsGxsChannelPost> &p
 //virtual bool setGroupSubscribeFlags(const std::string &groupId, uint32_t subscribeFlags, uint32_t subscribeMask);
 
 //virtual bool groupRestoreKeys(const std::string &groupId);
-    virtual bool groupShareKeys(const RsGxsGroupId &groupId, std::set<RsPeerId>& peers) ;
+	virtual bool groupShareKeys(
+	        const RsGxsGroupId &groupId, const std::set<RsPeerId>& peers);
 
 virtual bool createGroup(uint32_t &token, RsGxsChannelGroup &group);
 virtual bool createPost(uint32_t &token, RsGxsChannelPost &post);
@@ -149,15 +150,30 @@ virtual void setMessageProcessedStatus(uint32_t& token, const RsGxsGrpMsgIdPair&
 virtual void setMessageReadStatus(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, bool read);
 
 	// File Interface
-virtual bool ExtraFileHash(const std::string &path, std::string filename);
+	virtual bool ExtraFileHash(const std::string& path);
 virtual bool ExtraFileRemove(const RsFileHash &hash);
 
-	protected:
 
+	/// Implementation of @see RsGxsChannels::getChannelsSummaries
+	virtual bool getChannelsSummaries(std::list<RsGroupMetaData>& channels);
+
+	/// Implementation of @see RsGxsChannels::getChannelsInfo
+	virtual bool getChannelsInfo(
+	        const std::list<RsGxsGroupId>& chanIds,
+	        std::vector<RsGxsChannelGroup>& channelsInfo );
+
+	/// Implementation of @see RsGxsChannels::getChannelContent
+	virtual bool getChannelsContent(
+	        const std::list<RsGxsGroupId>& chanIds,
+	        std::vector<RsGxsChannelPost>& posts,
+	        std::vector<RsGxsComment>& comments );
+
+protected:
 	// Overloaded from GxsTokenQueue for Request callbacks.
-virtual void handleResponse(uint32_t token, uint32_t req_type);
+	virtual void handleResponse(uint32_t token, uint32_t req_type);
 
-	private:
+
+private:
 
 static uint32_t channelsAuthenPolicy();
 

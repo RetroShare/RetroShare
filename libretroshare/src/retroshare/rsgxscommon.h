@@ -94,17 +94,23 @@ namespace GXS_SERV {
 
 
 
-class RsGxsVote
+struct RsGxsVote : RsSerializable
 {
-	public:
 	RsGxsVote();
 	RsMsgMetaData mMeta;
 	uint32_t mVoteType;
+
+	/// @see RsSerializable
+	virtual void serial_process( RsGenericSerializer::SerializeJob j,
+	                             RsGenericSerializer::SerializeContext& ctx )
+	{
+		RS_SERIAL_PROCESS(mMeta);
+		RS_SERIAL_PROCESS(mVoteType);
+	}
 };
 
-class RsGxsComment
+struct RsGxsComment : RsSerializable
 {
-	public:
 	RsGxsComment();
 	RsMsgMetaData mMeta;
 	std::string mComment;
@@ -118,6 +124,19 @@ class RsGxsComment
 
 	// This is filled in if detailed Comment Data is called.
 	std::list<RsGxsVote> mVotes;
+
+	/// @see RsSerializable
+	virtual void serial_process( RsGenericSerializer::SerializeJob j,
+	                             RsGenericSerializer::SerializeContext& ctx )
+	{
+		RS_SERIAL_PROCESS(mMeta);
+		RS_SERIAL_PROCESS(mComment);
+		RS_SERIAL_PROCESS(mUpVotes);
+		RS_SERIAL_PROCESS(mDownVotes);
+		RS_SERIAL_PROCESS(mScore);
+		RS_SERIAL_PROCESS(mOwnVote);
+		RS_SERIAL_PROCESS(mVotes);
+	}
 
 	const std::ostream &print(std::ostream &out, std::string indent = "", std::string varName = "") const {
 		out << indent << varName << " of RsGxsComment Values ###################" << std::endl;

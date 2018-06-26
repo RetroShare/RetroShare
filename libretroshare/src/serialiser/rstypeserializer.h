@@ -41,7 +41,7 @@
 #include <errno.h>
 
 
-/** INTERNAL ONLY helper to avoid copy paste code for std::{vector,list,set}<T>
+/* INTERNAL ONLY helper to avoid copy paste code for std::{vector,list,set}<T>
  * Can't use a template function because T is needed for const_cast */
 #define RsTypeSerializer_PRIVATE_TO_JSON_ARRAY() do \
 { \
@@ -75,7 +75,7 @@
 	ctx.mJson.AddMember(arrKey, arr, allocator);\
 } while (false)
 
-/** INTERNAL ONLY helper to avoid copy paste code for std::{vector,list,set}<T>
+/* INTERNAL ONLY helper to avoid copy paste code for std::{vector,list,set}<T>
  * Can't use a template function because std::{vector,list,set}<T> has different
  * name for insert/push_back function
  */

@@ -853,7 +853,7 @@ rs_jsonapi {
     JSONAPI_GENERATOR_SRC=$$system_path($$clean_path($${RS_SRC_PATH}/jsonapi-generator/src/))
     JSONAPI_GENERATOR_OUT=$$system_path($$clean_path($${RS_BUILD_PATH}/jsonapi-generator/src/))
     JSONAPI_GENERATOR_EXE=$$system_path($$clean_path($${JSONAPI_GENERATOR_OUT}/jsonapi-generator))
-    DOXIGEN_INPUT_DIRECTORY=$$system_path($$clean_path($${PWD}/retroshare/))
+    DOXIGEN_INPUT_DIRECTORY=$$system_path($$clean_path($${PWD}))
     DOXIGEN_CONFIG_SRC=$$system_path($$clean_path($${RS_SRC_PATH}/jsonapi-generator/src/jsonapi-generator-doxygen.conf))
     DOXIGEN_CONFIG_OUT=$$system_path($$clean_path($${JSONAPI_GENERATOR_OUT}/jsonapi-generator-doxygen.conf))
     WRAPPERS_DEF_FILE=$$system_path($$clean_path($${JSONAPI_GENERATOR_OUT}/jsonapi-wrappers.cpp))
