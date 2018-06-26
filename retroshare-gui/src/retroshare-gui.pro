@@ -10,11 +10,6 @@ DEFINES += TARGET=\\\"$${TARGET}\\\"
 DEPENDPATH  *= $${PWD} $${RS_INCLUDE_DIR} retroshare-gui
 INCLUDEPATH *= $${PWD} retroshare-gui
 
-# when rapidjson is mainstream on all distribs, we will not need the sources anymore
-# in the meantime, they are part of the RS directory so that it is always possible to find them
-
-INCLUDEPATH += ../../rapidjson-1.1.0
-
 libresapihttpserver {
     !include("../../libresapi/src/use_libresapi.pri"):error("Including")
     HEADERS *= gui/settings/WebuiPage.h
