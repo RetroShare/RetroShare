@@ -188,7 +188,14 @@ int main(int argc, char *argv[])
 					}
 				}
 
-				if(retvalType != "void") hasOutput = true;
+				QString functionCall("\t\t");
+				if(retvalType != "void")
+				{
+					functionCall += retvalType + " retval = ";
+					hasOutput = true;
+				}
+				functionCall += instanceName + "->" + methodName + "(";
+				functionCall += orderedParamNames.join(", ") + ");\n";
 
 				qDebug() << instanceName << apiPath << retvalType << typeName
 				         << methodName;
@@ -236,15 +243,12 @@ int main(int argc, char *argv[])
 				if(hasOutput) outputParamsSerialization += "\t\t}\n";
 
 				QMap<QString,QString> substitutionsMap;
-				substitutionsMap.insert("instanceName", instanceName);
-				substitutionsMap.insert("methodName", methodName);
 				substitutionsMap.insert("paramsDeclaration", paramsDeclaration);
 				substitutionsMap.insert("inputParamsDeserialization", inputParamsDeserialization);
 				substitutionsMap.insert("outputParamsSerialization", outputParamsSerialization);
-				substitutionsMap.insert("retvalType", retvalType);
-				substitutionsMap.insert("callParamsList", orderedParamNames.join(", "));
 				substitutionsMap.insert("wrapperName", wrapperName);
 				substitutionsMap.insert("headerFileName", headerFileName);
+				substitutionsMap.insert("functionCall", functionCall);
 
 				QFile templFile(sourcePath + "/method-wrapper-template.cpp.tmpl");
 				templFile.open(QIODevice::ReadOnly);
