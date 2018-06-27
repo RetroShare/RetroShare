@@ -30,6 +30,8 @@
 #include "api/ApiServerLocal.h"
 #include "api/RsControlModule.h"
 
+#include "jsonapi/jsonapi.h"
+
 using namespace resource_api;
 
 int main(int argc, char *argv[])
@@ -59,6 +61,9 @@ int main(int argc, char *argv[])
 	qDebug() << "Listening on:" << sockPath;
 
 	ApiServerLocal apiServerLocal(&api, sockPath); (void) apiServerLocal;
+
+	JsonApiServer jas(9092);
+	jas.start("JsonApiServer");
 
 	// This ugly but RsControlModule has no other way to callback for stop
 	QTimer shouldExitTimer;

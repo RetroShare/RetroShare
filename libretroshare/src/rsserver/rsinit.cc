@@ -103,7 +103,9 @@ RsDht *rsDht = NULL ;
 
 //std::map<std::string,std::vector<std::string> > RsInit::unsupported_keys ;
 
-class RsInitConfig 
+RsLoginHelper* rsLoginHelper;
+
+class RsInitConfig
 {
 	public:
 
@@ -433,7 +435,8 @@ int RsInit::InitRetroShare(int argc, char **argv, bool /* strictCheck */)
 		AuthSSL::AuthSSLInit();
 		AuthSSL::getAuthSSL() -> InitAuth(NULL, NULL, NULL, "");
 
-		rsAccounts = new RsAccountsDetail();
+		rsLoginHelper = new RsLoginHelper;
+		rsAccounts = new RsAccountsDetail;
 
 		// first check config directories, and set bootstrap values.
 		if(!rsAccounts->setupBaseDirectory(opt_base_dir))
@@ -503,12 +506,21 @@ int RsInit::InitRetroShare(int argc, char **argv, bool /* strictCheck */)
  * 1 : Another instance already has the lock
  * 2 : Unexpected error
  */
-int RsInit::LockConfigDirectory(const std::string& accountDir, std::string& lockFilePath)
+RsInit::LoadCertificateStatus RsInit::LockConfigDirectory(
+        const std::string& accountDir, std::string& lockFilePath )
 {
 	const std::string lockFile = accountDir + "/" + "lock";
 	lockFilePath = lockFile;
 
-	return RsDirUtil::createLockFile(lockFile,rsInitConfig->lockHandle) ;
+	int rt = RsDirUtil::createLockFile(lockFile,rsInitConfig->lockHandle);
+
+	switch (rt)
+	{
+	case 0: return RsInit::OK;
+	case 1: return RsInit::ERR_ALREADY_RUNNING;
+	case 2: return RsInit::ERR_CANT_ACQUIRE_LOCK;
+	default: return RsInit::ERR_UNKOWN;
+	}
 }
 
 /*
@@ -540,54 +552,45 @@ bool     RsInit::LoadPassword(const std::string& inPwd)
 	return true;
 }
 
-
-/**
- * Locks the profile directory and tries to finalize the login procedure
- *
- * Return value:
- * 0 : success
- * 1 : another instance is already running
- * 2 : unexpected error while locking
- * 3 : unexpected error while loading certificates
- */
-int 	RsInit::LockAndLoadCertificates(bool autoLoginNT, std::string& lockFilePath)
+RsInit::LoadCertificateStatus RsInit::LockAndLoadCertificates(
+        bool autoLoginNT, std::string& lockFilePath )
 {
 	if (!rsAccounts->lockPreferredAccount())
 	{
-		return 3; // invalid PreferredAccount.
+		return RsInit::ERR_UNKOWN; // invalid PreferredAccount.
 	}
 
-	int retVal = 0;
+	LoadCertificateStatus retVal = RsInit::OK;
 
 	// Logic that used to be external to RsInit...
 	RsPeerId accountId;
 	if (!rsAccounts->getPreferredAccountId(accountId))
 	{
-		retVal = 3; // invalid PreferredAccount;
+		retVal = RsInit::ERR_UNKOWN; // invalid PreferredAccount;
 	}
 	
 	RsPgpId pgpId;
 	std::string pgpName, pgpEmail, location;
 
-	if (retVal == 0 && !rsAccounts->getAccountDetails(accountId, pgpId, pgpName, pgpEmail, location))
-		retVal = 3; // invalid PreferredAccount;
+	if (retVal == RsInit::OK &&
+	        !rsAccounts->getAccountDetails(
+	            accountId, pgpId, pgpName, pgpEmail, location ) )
+		retVal = RsInit::ERR_UNKOWN; // invalid PreferredAccount;
 		
-	if (retVal == 0 && !rsAccounts->SelectPGPAccount(pgpId))
-		retVal = 3; // PGP Error.
+	if (retVal == RsInit::OK && !rsAccounts->SelectPGPAccount(pgpId))
+		retVal = RsInit::ERR_UNKOWN; // PGP Error.
 	
-	if(retVal == 0)
-		retVal = LockConfigDirectory(rsAccounts->PathAccountDirectory(), lockFilePath);
+	if(retVal == RsInit::OK)
+		retVal = LockConfigDirectory(
+		            rsAccounts->PathAccountDirectory(), lockFilePath );
 
-	if(retVal == 0 && LoadCertificates(autoLoginNT) != 1)
+	if(retVal == RsInit::OK && LoadCertificates(autoLoginNT) != 1)
 	{
 		UnlockConfigDirectory();
-		retVal = 3;
+		retVal = RsInit::ERR_UNKOWN;
 	}
 
-	if(retVal != 0)
-	{
-		rsAccounts->unlockPreferredAccount();
-	}
+	if(retVal != RsInit::OK) rsAccounts->unlockPreferredAccount();
 
 	return retVal;
 }
@@ -1900,3 +1903,43 @@ int RsServer::StartupRetroShare()
 	return 1;
 }
 
+RsInit::LoadCertificateStatus RsLoginHelper::attemptLogin(
+        const RsPeerId& account, const std::string& password)
+{
+	if(!rsNotify->cachePgpPassphrase(password)) return RsInit::ERR_UNKOWN;
+	if(!rsNotify->setDisableAskPassword(true)) return RsInit::ERR_UNKOWN;
+	if(!RsAccounts::SelectAccount(account)) return RsInit::ERR_UNKOWN;
+	std::string ignore;
+	RsInit::LoadCertificateStatus ret =
+	        RsInit::LockAndLoadCertificates(false, ignore);
+	rsNotify->setDisableAskPassword(false);
+	if(ret != RsInit::OK) return ret;
+	if(RsControl::instance()->StartupRetroShare() == 1) return RsInit::OK;
+	return RsInit::ERR_UNKOWN;
+}
+
+void RsLoginHelper::getLocations(std::vector<RsLoginHelper::Location>& store)
+{
+	std::list<RsPeerId> locIds;
+	RsAccounts::GetAccountIds(locIds);
+	store.clear();
+
+	for(const RsPeerId& locId : locIds )
+	{
+		Location l; l.mLocationId = locId;
+		std::string discardPgpMail;
+		RsAccounts::GetAccountDetails( locId, l.mPgpId, l.mPpgName,
+		                               discardPgpMail, l.mLocationName );
+		store.push_back(l);
+	}
+}
+
+void RsLoginHelper::Location::serial_process(
+        RsGenericSerializer::SerializeJob j,
+        RsGenericSerializer::SerializeContext& ctx )
+{
+	RS_SERIAL_PROCESS(mLocationId);
+	RS_SERIAL_PROCESS(mPgpId);
+	RS_SERIAL_PROCESS(mLocationName);
+	RS_SERIAL_PROCESS(mPpgName);
+}
