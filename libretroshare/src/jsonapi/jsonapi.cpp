@@ -21,8 +21,16 @@
 // Generated at compile time
 #include "jsonapi-wrappers.h"
 
-JsonApiServer::JsonApiServer(uint16_t port) : mPort(port)
+JsonApiServer::JsonApiServer(
+        uint16_t port, const std::function<void(int)> shutdownCallback) :
+    mPort(port), mShutdownCallback(shutdownCallback)
 {
+	registerHandler("/jsonApiServer/shutdown",
+	                [this](const std::shared_ptr<restbed::Session>)
+	{
+		shutdown();
+	});
+
 // Generated at compile time
 #include "jsonapi-register.inl"
 }
@@ -32,14 +40,22 @@ void JsonApiServer::run()
 	std::shared_ptr<rb::Settings> settings(new rb::Settings);
 	settings->set_port(mPort);
 	settings->set_default_header("Connection", "close");
-	service.start(settings);
+	mService.start(settings);
 }
 
-void JsonApiServer::registerHandler(const std::string& path, const std::function<void (const std::shared_ptr<restbed::Session>)>& handler)
+void JsonApiServer::registerHandler(
+        const std::string& path,
+        const std::function<void (const std::shared_ptr<restbed::Session>)>& handler)
 {
 	std::shared_ptr<restbed::Resource> resource(new rb::Resource);
 	resource->set_path(path);
 	resource->set_method_handler("GET", handler);
 	resource->set_method_handler("POST", handler);
-	service.publish(resource);
+	mService.publish(resource);
+}
+
+void JsonApiServer::shutdown(int exitCode)
+{
+	mService.stop();
+	mShutdownCallback(exitCode);
 }

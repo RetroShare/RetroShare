@@ -229,6 +229,12 @@ struct RsLoginHelper
 	bool createLocation( RsLoginHelper::Location& location,
 	                     const std::string& password,
 	                     std::string& errorMessage );
+
+	/**
+	 * @brief Close RetroShare session
+	 * @jsonapi{development}
+	 */
+	void closeSession();
 };
 
 #endif

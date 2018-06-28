@@ -39,12 +39,15 @@ void createChannelHandler(const std::shared_ptr<rb::Session> session);
  */
 struct JsonApiServer : RsSingleJobThread
 {
-	JsonApiServer(uint16_t port);
+	JsonApiServer(
+	        uint16_t port,
+	        const std::function<void(int)> shutdownCallback = [](int){} );
 
 	/// @see RsSingleJobThread
 	virtual void run();
 
 	/**
+	 * @param[in] path Path itno which publish the API call
 	 * @param[in] handler function which will be called to handle the requested
 	 *   path, the function must be declared like:
 	 *   \code{.cpp}
@@ -55,8 +58,21 @@ struct JsonApiServer : RsSingleJobThread
 	        const std::string& path,
 	        const std::function<void(const std::shared_ptr<rb::Session>)>& handler );
 
+	/**
+	 * @brief Shutdown the JSON API server and call shutdownCallback
+	 * @jsonapi{development}
+	 * Beware that this method shout down only the JSON API server instance not
+	 * the whole RetroShare instance, this behaviour can be altered via
+	 * shutdownCallback paramether of @see JsonApiServer::JsonApiServer
+	 * This method is made available also via JSON API with path
+	 * /jsonApiServer/shutdown
+	 * @param exitCode just passed down to the shutdownCallback
+	 */
+	void shutdown(int exitCode = 0);
+
 private:
 	uint16_t mPort;
-	rb::Service service;
+	rb::Service mService;
+	const std::function<void(int)> mShutdownCallback;
 };
 

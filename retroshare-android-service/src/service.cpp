@@ -30,7 +30,21 @@
 #include "api/ApiServerLocal.h"
 #include "api/RsControlModule.h"
 
-#include "jsonapi/jsonapi.h"
+#ifdef RS_JSONAPI
+#	include "jsonapi/jsonapi.h"
+#	include "retroshare/rsiface.h"
+
+JsonApiServer jas(9092, [](int ec)
+{
+	RsControl::instance()->rsGlobalShutDown();
+	QCoreApplication::exit(ec);
+});
+
+void exitGracefully(int ec) { jas.shutdown(ec); }
+
+#else // ifdef RS_JSONAPI
+void exitGracefully(int ec) { QCoreApplication::exit(ec); }
+#endif // ifdef RS_JSONAPI
 
 using namespace resource_api;
 
@@ -42,11 +56,11 @@ int main(int argc, char *argv[])
 
 	QCoreApplication app(argc, argv);
 
-	signal(SIGINT, &QCoreApplication::exit);
-	signal(SIGTERM, &QCoreApplication::exit);
+	signal(SIGINT, exitGracefully);
+	signal(SIGTERM, exitGracefully);
 #ifdef SIGBREAK
-	signal(SIGBREAK, &QCoreApplication::exit);
-#endif // def SIGBREAK
+	signal(SIGBREAK, exitGracefully);
+#endif // ifdef SIGBREAK
 
 	ApiServer api;
 	RsControlModule ctrl_mod(argc, argv, api.getStateTokenServer(), &api, true);
@@ -55,23 +69,23 @@ int main(int argc, char *argv[])
 	            dynamic_cast<resource_api::ResourceRouter*>(&ctrl_mod),
 	            &resource_api::RsControlModule::handleRequest);
 
-
 	QString sockPath = QDir::homePath() + "/.retroshare";
 	sockPath.append("/libresapi.sock");
 	qDebug() << "Listening on:" << sockPath;
 
 	ApiServerLocal apiServerLocal(&api, sockPath); (void) apiServerLocal;
 
-	JsonApiServer jas(9092);
-	jas.start("JsonApiServer");
-
 	// This ugly but RsControlModule has no other way to callback for stop
 	QTimer shouldExitTimer;
 	shouldExitTimer.setTimerType(Qt::VeryCoarseTimer);
 	shouldExitTimer.setInterval(1000);
-	QObject::connect( &shouldExitTimer, &QTimer::timeout, [&](){
-		if(ctrl_mod.processShouldExit()) app.quit(); } );
+	QObject::connect( &shouldExitTimer, &QTimer::timeout, [&]()
+	{ if(ctrl_mod.processShouldExit()) exitGracefully(0); } );
 	shouldExitTimer.start();
+
+#ifdef RS_JSONAPI
+	jas.start();
+#endif
 
 	return app.exec();
 }
