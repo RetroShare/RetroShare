@@ -216,6 +216,19 @@ struct RsLoginHelper
 	 * @param[out] locations storage for the retrived locations
 	 */
 	void getLocations(std::vector<RsLoginHelper::Location>& locations);
+
+	/**
+	 * @brief Creates a new RetroShare location
+	 * @jsonapi{development}
+	 * @param[inout] location provide input information to generate the location
+	 *	and storage to output the data of the generated location
+	 * @param[in] password to protect and unlock the associated PGP key
+	 * @param[out] errorMessage
+	 * @return true if success, false otherwise
+	 */
+	bool createLocation( RsLoginHelper::Location& location,
+	                     const std::string& password,
+	                     std::string& errorMessage );
 };
 
 #endif

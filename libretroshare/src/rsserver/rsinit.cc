@@ -1934,6 +1934,41 @@ void RsLoginHelper::getLocations(std::vector<RsLoginHelper::Location>& store)
 	}
 }
 
+bool RsLoginHelper::createLocation(
+        RsLoginHelper::Location& l, const std::string& password,
+        std::string& errorMessage )
+{
+	if(l.mLocationName.empty())
+	{
+		errorMessage = "Location name is needed";
+		return false;
+	}
+
+	if(l.mPgpId.isNull() && l.mPpgName.empty())
+	{
+		errorMessage = "Either PGP name or PGP id is needed";
+		return false;
+	}
+
+	if(l.mPgpId.isNull() && !RsAccounts::GeneratePGPCertificate(
+	            l.mPpgName, "", password, l.mPgpId, 4096, errorMessage) )
+	{
+		errorMessage = "Failure creating PGP key: " + errorMessage;
+		return false;
+	}
+
+	if(!rsNotify->cachePgpPassphrase(password)) return false;
+	if(!rsNotify->setDisableAskPassword(true)) return false;
+
+	bool ret = RsAccounts::GenerateSSLCertificate(
+	            l.mPgpId, "", l.mLocationName, "", false,
+	            RSRandom::random_alphaNumericString(
+	                RsInit::getSslPwdLen() ), l.mLocationId, errorMessage );
+
+	rsNotify->setDisableAskPassword(false);
+	return ret;
+}
+
 void RsLoginHelper::Location::serial_process(
         RsGenericSerializer::SerializeJob j,
         RsGenericSerializer::SerializeContext& ctx )
