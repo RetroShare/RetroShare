@@ -32,9 +32,15 @@
 #include <string>
 
 #include "rstypes.h"
+#include "serialiser/rsserializable.h"
 
 class RsFiles;
-extern RsFiles  *rsFiles;
+
+/**
+ * Pointer to global instance of RsFiles service implementation
+ * @jsonapi{development}
+ */
+extern RsFiles* rsFiles;
 
 namespace RsRegularExpression { class Expression; }
 
@@ -108,7 +114,7 @@ const TransferRequestFlags RS_FILE_REQ_NO_SEARCH           ( 0x02000000 );	// di
 
 const uint32_t RS_FILE_EXTRA_DELETE	 = 0x0010;
 
-struct SharedDirInfo
+struct SharedDirInfo : RsSerializable
 {
 	static bool sameLists(const std::list<RsNodeGroupId>& l1,const std::list<RsNodeGroupId>& l2)
 	{
@@ -122,10 +128,22 @@ struct SharedDirInfo
 		return it1 == l1.end() && it2 == l2.end() ;
 	}
 
-	std::string filename ;
-	std::string virtualname ;
-    FileStorageFlags shareflags ;		// combnation of DIR_FLAGS_ANONYMOUS_DOWNLOAD | DIR_FLAGS_BROWSABLE | ...
-    std::list<RsNodeGroupId> parent_groups ;
+	std::string filename;
+	std::string virtualname;
+
+	/// combnation of DIR_FLAGS_ANONYMOUS_DOWNLOAD | DIR_FLAGS_BROWSABLE | ...
+	FileStorageFlags shareflags;
+	std::list<RsNodeGroupId> parent_groups;
+
+	/// @see RsSerializable::serial_process
+	virtual void serial_process(RsGenericSerializer::SerializeJob j,
+	                            RsGenericSerializer::SerializeContext& ctx)
+	{
+		RS_SERIAL_PROCESS(filename);
+		RS_SERIAL_PROCESS(virtualname);
+		RS_SERIAL_PROCESS(shareflags);
+		RS_SERIAL_PROCESS(parent_groups);
+	}
 };
 
 struct SharedDirStats
@@ -282,11 +300,46 @@ public:
 		virtual std::string getDownloadDirectory() = 0;
 		virtual std::string getPartialsDirectory() = 0;
 
-        virtual bool    getSharedDirectories(std::list<SharedDirInfo>& dirs) = 0;
-        virtual bool    setSharedDirectories(const std::list<SharedDirInfo>& dirs) = 0;
-        virtual bool    addSharedDirectory(const SharedDirInfo& dir) = 0;
-		virtual bool    updateShareFlags(const SharedDirInfo& dir) = 0;	// updates the flags. The directory should already exist !
-		virtual bool    removeSharedDirectory(std::string dir) = 0;
+	/**
+	 * @brief Get list of current shared directories
+	 * @jsonapi{development}
+	 * @param[out] dirs storage for the list of share directories
+	 * @return false if something failed, true otherwhise
+	 */
+	virtual bool getSharedDirectories(std::list<SharedDirInfo>& dirs) = 0;
+
+	/**
+	 * @brief Set shared directories
+	 * @jsonapi{development}
+	 * @param[in] dirs list of shared directories with share options
+	 * @return false if something failed, true otherwhise
+	 */
+	virtual bool setSharedDirectories(const std::list<SharedDirInfo>& dirs) = 0;
+
+	/**
+	 * @brief Add shared directoryaddSharedDirectory
+	 * @jsonapi{development}
+	 * @param[in] dir directory to share with sharing options
+	 * @return false if something failed, true otherwhise
+	 */
+	virtual bool addSharedDirectory(const SharedDirInfo& dir) = 0;
+
+	/**
+	 * @brief Updates shared directory sharing flags.
+	 * The directory should be already shared!
+	 * @jsonapi{development}
+	 * @param dir[in] Shared directory with updated sharing options
+	 * @return false if something failed, true otherwhise
+	 */
+	virtual bool updateShareFlags(const SharedDirInfo& dir) = 0;
+
+	/**
+	 * @brief Remove directory from shared list
+	 * @jsonapi{development}
+	 * @param dir[in] Path of the directory to remove from shared list
+	 * @return false if something failed, true otherwhise
+	 */
+	virtual bool removeSharedDirectory(std::string dir) = 0;
 
 		virtual bool getIgnoreLists(std::list<std::string>& ignored_prefixes, std::list<std::string>& ignored_suffixes,uint32_t& flags) =0;
 		virtual void setIgnoreLists(const std::list<std::string>& ignored_prefixes, const std::list<std::string>& ignored_suffixes,uint32_t flags) =0;
