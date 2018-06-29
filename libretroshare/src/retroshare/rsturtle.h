@@ -29,12 +29,18 @@
 #include "serialiser/rstlvbinary.h"
 #include "retroshare/rstypes.h"
 #include "retroshare/rsgxsifacetypes.h"
+#include "serialiser/rsserializable.h"
 
 namespace RsRegularExpression { class LinearizedExpression ; }
 class RsTurtleClientService ;
 
 class RsTurtle;
-extern RsTurtle   *rsTurtle ;
+
+/**
+ * Pointer to global instance of RsTurtle service implementation
+ * @jsonapi{development}
+ */
+extern RsTurtle* rsTurtle;
 
 typedef uint32_t TurtleRequestId ;
 typedef RsPeerId TurtleVirtualPeerId;
@@ -42,11 +48,20 @@ typedef RsPeerId TurtleVirtualPeerId;
 // This is the structure used to send back results of the turtle search 
 // to the notifyBase class, or send info to the GUI.
 
-struct TurtleFileInfo
+struct TurtleFileInfo //: RsSerializable
 {
-	RsFileHash hash ;
-	std::string name ;
-	uint64_t size ;
+	RsFileHash hash;
+	std::string name;
+	uint64_t size;
+/*
+	/// @see RsSerializable::serial_process
+	void serial_process( RsGenericSerializer::SerializeJob j,
+						 RsGenericSerializer::SerializeContext& ctx )
+	{
+		RS_SERIAL_PROCESS(hash);
+		RS_SERIAL_PROCESS(name);
+		RS_SERIAL_PROCESS(size);
+	}*/
 };
 
 struct TurtleTunnelRequestDisplayInfo
@@ -90,7 +105,7 @@ class TurtleTrafficStatisticsInfo
 //
 class RsTurtle
 {
-	public:
+public:
 		RsTurtle() {}
 		virtual ~RsTurtle() {}
 
@@ -106,7 +121,9 @@ class RsTurtle
 		// the request id, which will be further used by the gui to store results
 		// as they come back.
 		//
-        virtual TurtleRequestId turtleSearch(unsigned char *search_bin_data,uint32_t search_bin_data_len,RsTurtleClientService *client_service) =0;
+		virtual TurtleRequestId turtleSearch(
+		        unsigned char *search_bin_data, uint32_t search_bin_data_len,
+		        RsTurtleClientService* client_service ) = 0;
 
 		// Initiates tunnel handling for the given file hash.  tunnels.  Launches
 		// an exception if an error occurs during the initialization process. The
