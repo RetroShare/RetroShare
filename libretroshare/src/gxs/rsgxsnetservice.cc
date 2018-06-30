@@ -254,6 +254,7 @@
 #include "retroshare/rsgxscircles.h"
 #include "retroshare/rspeers.h"
 #include "pgp/pgpauxutils.h"
+#include "crypto/rscrypto.h"
 #include "util/rsdir.h"
 #include "util/rstime.h"
 #include "util/rsmemory.h"
@@ -5105,7 +5106,10 @@ bool RsGxsNetService::locked_stampMsgServerUpdateTS(const RsGxsGroupId& gid)
 
 TurtleRequestId RsGxsNetService::turtleGroupRequest(const RsGxsGroupId& group_id)
 {
-    return mGxsNetTunnel->turtleGroupRequest(group_id,this) ;
+	TurtleRequestId req = mGxsNetTunnel->turtleGroupRequest(group_id,this) ;
+    mSearchRequests[req] = group_id;
+
+    return req;
 }
 TurtleRequestId RsGxsNetService::turtleSearchRequest(const std::string& match_string)
 {
@@ -5192,6 +5196,58 @@ void RsGxsNetService::receiveTurtleSearchResults(TurtleRequestId req, const std:
         }
 }
 
+void RsGxsNetService::receiveTurtleSearchResults(TurtleRequestId req,const unsigned char *encrypted_group_data,uint32_t encrypted_group_data_len)
+{
+#ifdef NXS_NET_DEBUG_8
+	GXSNETDEBUG___ << " received encrypted group data for turtle search request " << std::hex << req << std::dec << ": " << RsUtil::BinToHex(encrypted_group_data,encrypted_group_data_len,50) << std::endl;
+#endif
+    auto it = mSearchRequests.find(req);
+
+    if(mSearchRequests.end() == it)
+    {
+        std::cerr << "(EE) received search results for unknown request " << std::hex << req << std::dec ;
+        return;
+    }
+    RsGxsGroupId grpId = it->second;
+
+    uint8_t encryption_master_key[32];
+    Sha256CheckSum s = RsDirUtil::sha256sum(grpId.toByteArray(),grpId.SIZE_IN_BYTES);
+    memcpy(encryption_master_key,s.toByteArray(),32);
+
+#ifdef NXS_NET_DEBUG_8
+	GXSNETDEBUG___ << " attempting data decryption with master key " << RsUtil::BinToHex(encryption_master_key,32) << std::endl;
+#endif
+    unsigned char *clear_group_data = NULL;
+    uint32_t clear_group_data_len ;
+
+    if(!librs::crypto::decryptAuthenticateData(encrypted_group_data,encrypted_group_data_len,encryption_master_key,clear_group_data,clear_group_data_len))
+    {
+        std::cerr << "(EE) Could not decrypt data. Something went wrong. Wrong key??" << std::endl;
+        return ;
+    }
+
+#ifdef NXS_NET_DEBUG_8
+	GXSNETDEBUG___ << " successfuly decrypted data : " << RsUtil::BinToHex(clear_group_data,clear_group_data_len,50) << std::endl;
+#endif
+    RsItem *item = RsNxsSerialiser(mServType).deserialise(clear_group_data,&clear_group_data_len) ;
+	free(clear_group_data);
+    clear_group_data = NULL ;
+
+    RsNxsGrp *nxs_grp = dynamic_cast<RsNxsGrp*>(item) ;
+
+    if(nxs_grp == NULL)
+    {
+        std::cerr << "(EE) decrypted item is not a RsNxsGrp. Weird!" << std::endl;
+        return ;
+    }
+    std::vector<RsNxsGrp*> new_grps(1,nxs_grp);
+
+#ifdef NXS_NET_DEBUG_8
+	GXSNETDEBUG___ << " passing the grp data to observer." << std::endl;
+#endif
+    mObserver->receiveNewGroups(new_grps);
+}
+
 bool RsGxsNetService::search(const std::string& substring,std::list<RsGxsGroupSummary>& group_infos)
 {
 	RsGxsGrpMetaTemporaryMap grpMetaMap;
@@ -5228,4 +5284,80 @@ bool RsGxsNetService::search(const std::string& substring,std::list<RsGxsGroupSu
     return !group_infos.empty();
 }
 
+bool RsGxsNetService::search(const Sha1CheckSum& hashed_group_id,unsigned char *& encrypted_group_data,uint32_t& encrypted_group_data_len)
+{
+    // First look into the grp hash cache
+
+#ifdef NXS_NET_DEBUG_8
+	GXSNETDEBUG___ << " Received group data request for hash " << hashed_group_id << std::endl;
+#endif
+    auto it = mGroupHashCache.find(hashed_group_id) ;
+    RsNxsGrp *grp_data = NULL ;
+
+    if(mGroupHashCache.end() != it)
+    {
+        grp_data = it->second;
+    }
+    else
+	{
+		// Now check if the last request was too close in time, in which case, we dont retrieve data.
+
+		if(mLastCacheReloadTS + 60 < time(NULL))
+		{
+			std::cerr << "(WW) Not found in cache, and last cache reload less than 60 secs ago. Returning false. " << std::endl;
+			return false ;
+		}
+
+#ifdef NXS_NET_DEBUG_8
+		GXSNETDEBUG___ << " reloading group cache information" << std::endl;
+#endif
+		RsNxsGrpDataTemporaryMap grpDataMap;
+		{
+			RS_STACK_MUTEX(mNxsMutex) ;
+			mDataStore->retrieveNxsGrps(grpDataMap, true, true);
+		}
+
+        for(auto it(grpDataMap.begin());it!=grpDataMap.end();++it)
+            if(it->second->metaData->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED )	// only cache subscribed groups
+            {
+                RsNxsGrp *grp = it->second ;
+                delete grp->metaData ; 		// clean private keys
+                grp->metaData = NULL ;
+
+                Sha1CheckSum hash(RsDirUtil::sha1sum(it->first.toByteArray(),it->first.SIZE_IN_BYTES));
+
+				mGroupHashCache[hash] = grp ;
+
+                if(hash == hashed_group_id)
+                    grp_data = grp ;
+            }
+	}
+
+    if(!grp_data)
+    {
+#ifdef NXS_NET_DEBUG_8
+		GXSNETDEBUG___ << " no group found for hash " << hashed_group_id << ": returning false." << std::endl;
+#endif
+        return false ;
+    }
+
+#ifdef NXS_NET_DEBUG_8
+	GXSNETDEBUG___ << " found corresponding group data group id in cache group_id=" << grp_data->grpId << std::endl;
+#endif
+    // Finally, serialize and encrypt the grp data
+
+    uint32_t size = RsNxsSerialiser(mServType).size(grp_data);
+	RsTemporaryMemory mem(size) ;
+
+    RsNxsSerialiser(mServType).serialise(grp_data,mem,&size) ;
+
+    uint8_t encryption_master_key[32];
+    Sha256CheckSum s = RsDirUtil::sha256sum(grp_data->grpId.toByteArray(),grp_data->grpId.SIZE_IN_BYTES);
+    memcpy(encryption_master_key,s.toByteArray(),32);
+
+#ifdef NXS_NET_DEBUG_8
+	GXSNETDEBUG___ << " sending data encrypted with master key " << RsUtil::BinToHex(encryption_master_key,32) << std::endl;
+#endif
+    return librs::crypto::encryptAuthenticateData(mem,size,encryption_master_key,encrypted_group_data,encrypted_group_data_len);
+}
 

@@ -133,6 +133,7 @@ public:
     virtual bool retrieveDistantGroupSummary(const RsGxsGroupId&,RsGxsGroupSummary&)=0;
 
     virtual bool search(const std::string& substring,std::list<RsGxsGroupSummary>& group_infos) =0;
+	virtual bool search(const Sha1CheckSum& hashed_group_id,unsigned char *& encrypted_group_data,uint32_t& encrypted_group_data_len)=0;
 
     /*!
      * Initiates a search through the network
@@ -152,6 +153,9 @@ public:
      */
     //virtual int searchGrps(RsGxsSearch* search, uint8_t hops = 1, bool retrieve = 0) = 0;
 
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ///                                           DATA ACCESS FUNCTIONS                                             ///
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /*!
      * pauses synchronisation of subscribed groups and request for group id

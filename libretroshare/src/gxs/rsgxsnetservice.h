@@ -131,7 +131,10 @@ public:
     virtual TurtleRequestId turtleSearchRequest(const std::string& match_string);
 
     virtual bool search(const std::string& substring,std::list<RsGxsGroupSummary>& group_infos) ;
+	virtual bool search(const Sha1CheckSum& hashed_group_id,unsigned char *& encrypted_group_data,uint32_t& encrypted_group_data_len);
 	virtual void receiveTurtleSearchResults(TurtleRequestId req,const std::list<RsGxsGroupSummary>& group_infos);
+	virtual void receiveTurtleSearchResults(TurtleRequestId req,const unsigned char *encrypted_group_data,uint32_t encrypted_group_data_len);
+
 	virtual bool retrieveDistantSearchResults(TurtleRequestId req, std::map<RsGxsGroupId, RsGxsGroupSummary> &group_infos);
 	virtual bool clearDistantSearchResults(const TurtleRequestId& id);
     virtual bool retrieveDistantGroupSummary(const RsGxsGroupId&,RsGxsGroupSummary&);
@@ -609,6 +612,10 @@ private:
 
 	uint32_t mDefaultMsgStorePeriod ;
 	uint32_t mDefaultMsgSyncPeriod ;
+
+    std::map<Sha1CheckSum, RsNxsGrp*> mGroupHashCache;
+    std::map<TurtleRequestId,RsGxsGroupId> mSearchRequests;
+    time_t mLastCacheReloadTS ;
 };
 
 #endif // RSGXSNETSERVICE_H
