@@ -974,6 +974,10 @@ void ConnectFriendWizard::accept()
 				std::cerr << "ConnectFriendWizard::accept() : setting DynDNS." << std::endl;
 				rsPeers->setDynDNS(peerDetails.id, peerDetails.dyndns);
 			}
+			for(auto&& ipr : peerDetails.ipAddressList)
+				rsPeers->addPeerLocator(
+				            peerDetails.id,
+				            RsUrl(ipr.substr(0, ipr.find(' '))) );
 		}
 
 	}

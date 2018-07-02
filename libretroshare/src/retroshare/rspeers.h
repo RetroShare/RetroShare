@@ -33,6 +33,7 @@
 #include <retroshare/rstypes.h>
 #include <retroshare/rsfiles.h>
 #include <retroshare/rsids.h>
+#include "util/rsurl.h"
 
 /* The Main Interface Class - for information about your Peers
  * A peer is another RS instance, means associated with an SSL certificate
@@ -370,6 +371,7 @@ public:
 	virtual bool setHiddenNode(const RsPeerId &id, const std::string &address, uint16_t port) = 0;
 	virtual bool isHiddenNode(const RsPeerId &id) = 0;
 
+	virtual bool addPeerLocator(const RsPeerId &ssl_id, const RsUrl& locator) = 0;
 	virtual	bool setLocalAddress(const RsPeerId &ssl_id, const std::string &addr, uint16_t port) = 0;
 	virtual	bool setExtAddress(  const RsPeerId &ssl_id, const std::string &addr, uint16_t port) = 0;
 	virtual	bool setDynDNS(const RsPeerId &id, const std::string &addr) = 0;
@@ -384,11 +386,30 @@ public:
 	virtual bool resetOwnExternalAddressList() = 0;
 	virtual bool getAllowServerIPDetermination() = 0 ;
 
+	/**
+	 * @brief Get RetroShare invite of the given peer
+	 * @param[in] sslId Id of the peer of which we want to generate an invite
+	 * @param[in] includeSignatures true to add key signatures to the invite
+	 * @param[in] includeExtraLocators false to avoid to add extra locators
+	 * @return invite string
+	 */
+	virtual std::string GetRetroshareInvite(
+	        const RsPeerId& sslId, bool includeSignatures = false,
+	        bool includeExtraLocators = true ) = 0;
+
+	/**
+	 * @brief Get RetroShare invite of our own peer
+	 * @param[in] includeSignatures true to add key signatures to the invite
+	 * @param[in] includeExtraLocators false to avoid to add extra locators
+	 * @return invite string
+	 */
+	virtual	std::string GetRetroshareInvite(
+	        bool includeSignatures = false,
+	        bool includeExtraLocators = true ) = 0;
+
 	/* Auth Stuff */
-	virtual	std::string GetRetroshareInvite(const RsPeerId& ssl_id,bool include_signatures) = 0;
 	virtual	std::string getPGPKey(const RsPgpId& pgp_id,bool include_signatures) = 0;
 	virtual bool GetPGPBase64StringAndCheckSum(const RsPgpId& gpg_id,std::string& gpg_base64_string,std::string& gpg_base64_checksum) = 0;
-	virtual	std::string GetRetroshareInvite(bool include_signatures) = 0;
 	virtual  bool hasExportMinimal() = 0;
 
 	// Add keys to the keyring

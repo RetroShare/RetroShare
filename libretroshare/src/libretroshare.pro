@@ -504,7 +504,8 @@ HEADERS +=	util/folderiterator.h \
 			util/rstime.h \
             util/stacktrace.h \
             util/rsdeprecate.h \
-            util/cxx11retrocompat.h
+            util/cxx11retrocompat.h \
+            util/rsurl.h
 
 SOURCES +=	ft/ftchunkmap.cc \
 			ft/ftcontroller.cc \
@@ -650,7 +651,8 @@ SOURCES +=	util/folderiterator.cc \
 			util/rsrandom.cc \
 			util/rstickevent.cc \
 			util/rsrecogn.cc \
-			util/rstime.cc
+            util/rstime.cc \
+            util/rsurl.cc
 
 ## Added for retrocompatibility remove ASAP
 isEmpty(RS_UPNP_LIB) {
