@@ -110,7 +110,7 @@ public:
      * @param msgId msgsids retrieved
      * @return error code
      */
-    int retrieveMsgIds(const RsGxsGroupId& grpId, RsGxsMessageId::std_vector& msgId);
+    int retrieveMsgIds(const RsGxsGroupId& grpId, RsGxsMessageId::std_set& msgId);
 
     /*!
      * @return the cache size set for this RsGeneralDataService in bytes

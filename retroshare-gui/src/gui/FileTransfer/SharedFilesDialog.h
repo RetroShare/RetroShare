@@ -22,10 +22,13 @@
 #ifndef _SHAREDFILESDIALOG_H
 #define _SHAREDFILESDIALOG_H
 
-#include <set>
+#include "ui_SharedFilesDialog.h"
+
 #include "RsAutoUpdatePage.h"
 #include "gui/RetroShareLink.h"
-#include "ui_SharedFilesDialog.h"
+#include "util/RsProtectedTimer.h"
+
+#include <set>
 
 class RetroshareDirModel;
 class QSortFilterProxyModel;
@@ -73,9 +76,12 @@ private slots:
 	
   void indicatorChanged(int index);
 
-  void filterRegExpChanged();
+  void onFilterTextEdited();
+  //void filterRegExpChanged();
   void clearFilter();
   void startFilter();
+
+  void updateDirTreeView();
 
   public slots:
   void changeCurrentViewModel(int viewTypeIndex);
@@ -91,6 +97,8 @@ protected:
   void recursSaveExpandedItems(const QModelIndex& index, const std::string &path, std::set<std::string> &exp,std::set<std::string>& vis, std::set<std::string>& sel);
   void saveExpandedPathsAndSelection(std::set<std::string>& paths,std::set<std::string>& visible_indexes, std::set<std::string>& selected_indexes) ;
   void restoreExpandedPathsAndSelection(const std::set<std::string>& paths,const std::set<std::string>& visible_indexes, const std::set<std::string>& selected_indexes) ;
+  void recursExpandAll(const QModelIndex& index);
+  void expandAll();
 
 protected:
   //now context menu are created again every time theu are called ( in some
@@ -106,8 +114,6 @@ protected:
   void FilterItems();
   bool tree_FilterItem(const QModelIndex &index, const QString &text, int level);
   bool flat_FilterItem(const QModelIndex &index, const QString &text, int level);
-
-  void restoreInvisibleItems();
 
   QModelIndexList getSelected();
 
@@ -135,8 +141,7 @@ protected:
 
   QString lastFilterString;
   QString mLastFilterText ;
-
-  QList<QModelIndex> mHiddenIndexes;
+  RsProtectedTimer* mFilterTimer;
 };
 
 class LocalSharedFilesDialog : public SharedFilesDialog
@@ -193,7 +198,7 @@ class RemoteSharedFilesDialog : public SharedFilesDialog
 	private slots:
 		void downloadRemoteSelected();
 		void downloadRemoteSelectedInteractive();
-        void expanded(const QModelIndex& indx);
+		void expanded(const QModelIndex& indx);
 };
 
 #endif

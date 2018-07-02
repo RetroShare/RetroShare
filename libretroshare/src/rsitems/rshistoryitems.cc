@@ -44,7 +44,7 @@ void RsHistoryMsgItem::serial_process(RsGenericSerializer::SerializeJob j,RsGene
     RsTypeSerializer::serial_process<uint16_t>(j,ctx,version,"version") ;
     RsTypeSerializer::serial_process          (j,ctx,chatPeerId,"chatPeerId") ;
     RsTypeSerializer::serial_process<bool>    (j,ctx,incoming,"incoming") ;
-    RsTypeSerializer::serial_process          (j,ctx,peerId,"peerId") ;
+    RsTypeSerializer::serial_process          (j,ctx,msgPeerId,"peerId") ;
     RsTypeSerializer::serial_process          (j,ctx,TLV_TYPE_STR_NAME,peerName,"peerName") ;
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,sendTime,"sendTime") ;
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,recvTime,"recvTime") ;

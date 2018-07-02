@@ -57,6 +57,7 @@ static struct RsLog::logInfo p3connectzoneInfo = {RsLog::Default, "p3connect"};
 
 /****
  * #define LINKMGR_DEBUG 1
+ * #define LINKMGR_DEBUG_LOG	1
  * #define LINKMGR_DEBUG_CONNFAIL 1
  * #define LINKMGR_DEBUG_ACTIONS  1
  * #define LINKMGR_DEBUG_LINKTYPE	1
@@ -621,7 +622,9 @@ bool p3LinkMgrIMPL::connectAttempt(const RsPeerId &id, struct sockaddr_storage &
 
          }
 
+#ifdef LINKMGR_DEBUG_LOG
 	rslog(RSL_WARNING, p3connectzone, "p3LinkMgrIMPL::connectAttempt() called id: " + id.toStdString());
+#endif
 
         it->second.lastattempt = time(NULL); 
         it->second.inConnAttempt = true;
@@ -824,7 +827,9 @@ bool p3LinkMgrIMPL::connectResult(const RsPeerId &id, bool success, bool isIncom
 					out += " FAILED ATTEMPT (Not Connected)";
 				}
 			}
+#ifdef LINKMGR_DEBUG_LOG
 			rslog(RSL_WARNING, p3connectzone, out);
+#endif
 		}
 
 
@@ -2060,8 +2065,9 @@ bool  p3LinkMgrIMPL::locked_ConnectAttempt_Complete(peerConnectState *peer)
 
 int p3LinkMgrIMPL::addFriend(const RsPeerId &id, bool isVisible)
 {
+#ifdef LINKMGR_DEBUG_LOG
 	rslog(RSL_WARNING, p3connectzone, "p3LinkMgr::addFriend() id: " + id.toStdString());
-
+#endif
 	{
 		RsStackMutex stack(mLinkMtx); /****** STACK LOCK MUTEX *******/
 	

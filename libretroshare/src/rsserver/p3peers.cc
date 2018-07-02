@@ -336,8 +336,8 @@ bool p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
 		if(!sockaddr_storage_isnull(ps.localaddr))
 		{
 			sockaddr_storage_ipv6_to_ipv4(ps.localaddr);
-			d.localAddr	= sockaddr_storage_iptostring(ps.localaddr);
-			d.localPort	= sockaddr_storage_port(ps.localaddr);
+			d.localAddr = sockaddr_storage_iptostring(ps.localaddr);
+			d.localPort = sockaddr_storage_port(ps.localaddr);
 		}
 		else
 		{

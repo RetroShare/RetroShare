@@ -102,6 +102,9 @@ template<> void     RsTypeSerializer::print_data(const std::string& name,BIGNUM 
     std::cerr << "[BIGNUM] : " << name << std::endl;
 }
 
+RS_TYPE_SERIALIZER_TO_JSON_NOT_IMPLEMENTED_DEF(BIGNUM*)
+RS_TYPE_SERIALIZER_FROM_JSON_NOT_IMPLEMENTED_DEF(BIGNUM*)
+
 void RsGxsTunnelStatusItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,status,"status") ;

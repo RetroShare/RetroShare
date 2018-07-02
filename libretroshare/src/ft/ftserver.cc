@@ -23,34 +23,39 @@
  *
  */
 
-#include <iostream>
-#include <time.h>
-#include "util/rsdebug.h"
-#include "util/rsdir.h"
-#include "util/rsprint.h"
 #include "crypto/chacha20.h"
-#include "retroshare/rstypes.h"
-#include "retroshare/rspeers.h"
 //const int ftserverzone = 29539;
 
 #include "file_sharing/p3filelists.h"
-#include "ft/ftturtlefiletransferitem.h"
-#include "ft/ftserver.h"
-#include "ft/ftextralist.h"
-#include "ft/ftfilesearch.h"
 #include "ft/ftcontroller.h"
-#include "ft/ftfileprovider.h"
 #include "ft/ftdatamultiplex.h"
 //#include "ft/ftdwlqueue.h"
-#include "turtle/p3turtle.h"
-#include "pqi/p3notify.h"
-#include "rsserver/p3face.h"
+#include "ft/ftextralist.h"
+#include "ft/ftfileprovider.h"
+#include "ft/ftfilesearch.h"
+#include "ft/ftserver.h"
+#include "ft/ftturtlefiletransferitem.h"
 
-#include "pqi/pqi.h"
 #include "pqi/p3linkmgr.h"
+#include "pqi/p3notify.h"
+#include "pqi/pqi.h"
+
+#include "retroshare/rstypes.h"
+#include "retroshare/rspeers.h"
 
 #include "rsitems/rsfiletransferitems.h"
 #include "rsitems/rsserviceids.h"
+
+#include "rsserver/p3face.h"
+#include "rsserver/rsaccounts.h"
+#include "turtle/p3turtle.h"
+
+#include "util/rsdebug.h"
+#include "util/rsdir.h"
+#include "util/rsprint.h"
+
+#include <iostream>
+#include <time.h>
 
 /***
  * #define SERVER_DEBUG       1
@@ -145,9 +150,19 @@ void ftServer::SetupFtServer()
 	/* make Controller */
 	mFtController = new ftController(mFtDataplex, mServiceCtrl, getServiceInfo().mServiceType);
 	mFtController -> setFtSearchNExtra(mFtSearch, mFtExtra);
-	std::string tmppath = ".";
-	mFtController->setPartialsDirectory(tmppath);
-	mFtController->setDownloadDirectory(tmppath);
+
+	std::string emergencySaveDir = rsAccounts->PathAccountDirectory();
+	std::string emergencyPartialsDir = rsAccounts->PathAccountDirectory();
+	if (emergencySaveDir != "")
+	{
+		emergencySaveDir += "/";
+		emergencyPartialsDir += "/";
+	}
+	emergencySaveDir += "Downloads";
+	emergencyPartialsDir += "Partials";
+
+	mFtController->setDownloadDirectory(emergencySaveDir);
+	mFtController->setPartialsDirectory(emergencyPartialsDir);
 
 	/* complete search setup */
 	mFtSearch->addSearchMode(mFtExtra, RS_FILE_HINTS_EXTRA);
@@ -412,9 +427,9 @@ void ftServer::requestDirUpdate(void *ref)
 }
 
 /* Directory Handling */
-void ftServer::setDownloadDirectory(std::string path)
+bool ftServer::setDownloadDirectory(std::string path)
 {
-	mFtController->setDownloadDirectory(path);
+	return mFtController->setDownloadDirectory(path);
 }
 
 std::string ftServer::getDownloadDirectory()
@@ -422,9 +437,9 @@ std::string ftServer::getDownloadDirectory()
 	return mFtController->getDownloadDirectory();
 }
 
-void ftServer::setPartialsDirectory(std::string path)
+bool ftServer::setPartialsDirectory(std::string path)
 {
-	mFtController->setPartialsDirectory(path);
+	return mFtController->setPartialsDirectory(path);
 }
 
 std::string ftServer::getPartialsDirectory()

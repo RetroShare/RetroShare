@@ -2,12 +2,12 @@
 #include "RsGxsUpdateBroadcastBase.h"
 
 RsGxsUpdateBroadcastWidget::RsGxsUpdateBroadcastWidget(RsGxsIfaceHelper *ifaceImpl, QWidget *parent, Qt::WindowFlags flags)
-	: QWidget(parent, flags)
+    : QWidget(parent, flags)
 {
-	mBase = new RsGxsUpdateBroadcastBase(ifaceImpl, this);
-	connect(mBase, SIGNAL(fillDisplay(bool)), this, SLOT(fillDisplay(bool)));
+    mBase = new RsGxsUpdateBroadcastBase(ifaceImpl, this);
+    connect(mBase, SIGNAL(fillDisplay(bool)), this, SLOT(fillDisplay(bool)));
 
-	mInterfaceHelper = ifaceImpl;
+    mInterfaceHelper = ifaceImpl;
 }
 
 RsGxsUpdateBroadcastWidget::~RsGxsUpdateBroadcastWidget()
@@ -16,52 +16,52 @@ RsGxsUpdateBroadcastWidget::~RsGxsUpdateBroadcastWidget()
 
 void RsGxsUpdateBroadcastWidget::fillComplete()
 {
-	mBase->fillComplete();
+    mBase->fillComplete();
 }
 
 void RsGxsUpdateBroadcastWidget::setUpdateWhenInvisible(bool update)
 {
-	mBase->setUpdateWhenInvisible(update);
+    mBase->setUpdateWhenInvisible(update);
 }
 
-const std::list<RsGxsGroupId> &RsGxsUpdateBroadcastWidget::getGrpIds()
+const std::set<RsGxsGroupId> &RsGxsUpdateBroadcastWidget::getGrpIds()
 {
-	return mBase->getGrpIds();
+    return mBase->getGrpIds();
 }
 
-const std::list<RsGxsGroupId> &RsGxsUpdateBroadcastWidget::getGrpIdsMeta()
+const std::set<RsGxsGroupId> &RsGxsUpdateBroadcastWidget::getGrpIdsMeta()
 {
-	return mBase->getGrpIdsMeta();
+    return mBase->getGrpIdsMeta();
 }
 
-void RsGxsUpdateBroadcastWidget::getAllGrpIds(std::list<RsGxsGroupId> &grpIds)
+void RsGxsUpdateBroadcastWidget::getAllGrpIds(std::set<RsGxsGroupId> &grpIds)
 {
-	mBase->getAllGrpIds(grpIds);
+    mBase->getAllGrpIds(grpIds);
 }
 
-const std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > &RsGxsUpdateBroadcastWidget::getMsgIds()
+const std::map<RsGxsGroupId, std::set<RsGxsMessageId> > &RsGxsUpdateBroadcastWidget::getMsgIds()
 {
-	return mBase->getMsgIds();
+    return mBase->getMsgIds();
 }
 
-const std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > &RsGxsUpdateBroadcastWidget::getMsgIdsMeta()
+const std::map<RsGxsGroupId, std::set<RsGxsMessageId> > &RsGxsUpdateBroadcastWidget::getMsgIdsMeta()
 {
-	return mBase->getMsgIdsMeta();
+    return mBase->getMsgIdsMeta();
 }
 
-void RsGxsUpdateBroadcastWidget::getAllMsgIds(std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > &msgIds)
+void RsGxsUpdateBroadcastWidget::getAllMsgIds(std::map<RsGxsGroupId, std::set<RsGxsMessageId> > &msgIds)
 {
-	mBase->getAllMsgIds(msgIds);
+    mBase->getAllMsgIds(msgIds);
 }
 
 void RsGxsUpdateBroadcastWidget::fillDisplay(bool complete)
 {
-	updateDisplay(complete);
-	update(); // Qt flush
+    updateDisplay(complete);
+    update(); // Qt flush
 }
 
 void RsGxsUpdateBroadcastWidget::showEvent(QShowEvent *event)
 {
-	mBase->showEvent(event);
-	QWidget::showEvent(event);
+    mBase->showEvent(event);
+    QWidget::showEvent(event);
 }

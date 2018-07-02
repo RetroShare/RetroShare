@@ -5,7 +5,7 @@
 #include <list>
 #include "retroshare/rsids.h"
 
-class RsItem;
+struct RsItem;
 
 class SetPacket
 {

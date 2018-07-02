@@ -33,7 +33,7 @@
 #endif
 
 #include <QDir>
-#include "win32.h"
+#include "retroshareWin32.h"
 
 
 /** Finds the location of the "special" Windows folder using the given CSIDL

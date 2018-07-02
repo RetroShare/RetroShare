@@ -107,9 +107,12 @@
 #include "gui/common/RsCollection.h"
 #include "settings/rsettingswin.h"
 #include "settings/rsharesettings.h"
-#include "settings/WebuiPage.h"
 #include "common/StatusDefs.h"
 #include "gui/notifyqt.h"
+
+#ifdef ENABLE_WEBUI
+#	include "settings/WebuiPage.h"
+#endif
 
 #include <iomanip>
 #include <unistd.h>
@@ -730,16 +733,16 @@ void MainWindow::updateStatus()
     if (ratesstatus)
         ratesstatus->getRatesStatus(downKb, upKb);
 
-	if(torstatus)
-		torstatus->getTorStatus();
+    if(torstatus)
+        torstatus->getTorStatus();
 
     if(!hiddenmode)
     {
-    if (natstatus)
-        natstatus->getNATStatus();
-        
-    if (dhtstatus)
-        dhtstatus->getDHTStatus();
+        if (natstatus)
+            natstatus->getNATStatus();
+
+        if (dhtstatus)
+            dhtstatus->getDHTStatus();
     }
 
     if (discstatus) {
@@ -1431,27 +1434,37 @@ void MainWindow::settingsChanged()
 void MainWindow::externalLinkActivated(const QUrl &url)
 {
 	static bool already_warned = false ;
+	bool never_ask_me = Settings->value("NeverAskMeForExternalLinkActivated",false).toBool();
 
-	if(!already_warned)
+	if(!already_warned && !never_ask_me)
 	{
 		QMessageBox mb(QObject::tr("Confirmation"), QObject::tr("Do you want this link to be handled by your system?")+"<br/><br/>"+ url.toString()+"<br/><br/>"+tr("Make sure this link has not been forged to drag you to a malicious website."), QMessageBox::Question, QMessageBox::Yes,QMessageBox::No, 0);
 
-		QCheckBox *checkbox = new QCheckBox(tr("Don't ask me again")) ;
+		QCheckBox *dontAsk_CB = new QCheckBox(tr("Don't ask me again"));
+		QCheckBox *neverAsk_CB = new QCheckBox(tr("Never ask me again"));
+		dontAsk_CB->setToolTip(tr("This will be saved only for this session."));
+		neverAsk_CB->setToolTip(tr("This will be saved permanently. You'll need to clean RetroShare.conf to revert."));
 		QGridLayout* layout = qobject_cast<QGridLayout*>(mb.layout());
 		if (layout)
 		{
-			layout->addWidget(checkbox,layout->rowCount(),0,1, layout->columnCount(), Qt::AlignLeft);
+			layout->addWidget(dontAsk_CB,layout->rowCount(),0,1, layout->columnCount(), Qt::AlignLeft);
+			layout->addWidget(neverAsk_CB,layout->rowCount(),0,1, layout->columnCount(), Qt::AlignLeft);
 		} else {
 			//Not QGridLayout so add at end
-			mb.layout()->addWidget(checkbox) ;
+			mb.layout()->addWidget(dontAsk_CB);
+			mb.layout()->addWidget(neverAsk_CB);
 		}
 
 		int res = mb.exec() ;
 
 		if (res == QMessageBox::No) 
 			return ;
-		else if(checkbox->isChecked())
+
+		if(dontAsk_CB->isChecked())
 			already_warned = true ;
+
+		if(neverAsk_CB->isChecked())
+			Settings->setValue("NeverAskMeForExternalLinkActivated",true);
 	}
 
 	QDesktopServices::openUrl(url) ;

@@ -28,6 +28,7 @@
 #include "rsitems/rsconfigitems.h"
 #include "retroshare/rspeers.h" // Needed for RsGroupInfo.
 
+#include "serialiser/rsserializable.h"
 #include "serialiser/rstypeserializer.h"
 /***
  * #define RSSERIAL_DEBUG 		1
@@ -89,7 +90,7 @@ void RsFileTransfer::serial_process(RsGenericSerializer::SerializeJob j,RsGeneri
 
     RsTypeSerializer::serial_process<uint32_t> (j,ctx,flags,"flags") ;
     RsTypeSerializer::serial_process<uint32_t> (j,ctx,chunk_strategy,"chunk_strategy") ;
-    RsTypeSerializer::serial_process           (j,ctx,compressed_chunk_map,"compressed_chunk_map") ;
+	RS_SERIAL_PROCESS(compressed_chunk_map);
 }
 
 void RsFileConfigItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
@@ -136,9 +137,9 @@ RsItem *RsPeerConfigSerialiser::create_item(uint8_t item_type,uint8_t item_subty
 
 void RsPeerNetItem::clear()
 {
-	peerId.clear();
-        pgpId.clear();
-        location.clear();
+	nodePeerId.clear();
+	pgpId.clear();
+	location.clear();
 	netMode = 0;
 	vs_disc = 0;
 	vs_dht = 0;
@@ -159,7 +160,7 @@ void RsPeerNetItem::clear()
 }
 void RsPeerNetItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
-	RsTypeSerializer::serial_process(j,ctx,peerId,"peerId") ;
+	RsTypeSerializer::serial_process(j,ctx,nodePeerId,"peerId") ;
 	RsTypeSerializer::serial_process(j,ctx,pgpId,"pgpId") ;
 	RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_LOCATION,location,"location") ;
 
@@ -192,31 +193,6 @@ void RsPeerStunItem::serial_process(RsGenericSerializer::SerializeJob j,RsGeneri
     RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,stunList,"stunList") ;
 }
 
-template<> uint32_t RsTypeSerializer::serial_size(const PeerBandwidthLimits& /*s*/)
-{
-    return 4+4 ;
-}
-
-template<> bool RsTypeSerializer::serialize(uint8_t data[], uint32_t size, uint32_t &offset,const PeerBandwidthLimits& s)
-{
-    bool ok = true ;
-	ok = ok && setRawUInt32(data,size,&offset,s.max_up_rate_kbs);
-	ok = ok && setRawUInt32(data,size,&offset,s.max_dl_rate_kbs);
-	return ok;
-}
-
-template<> bool RsTypeSerializer::deserialize(const uint8_t data[], uint32_t size,uint32_t& offset,PeerBandwidthLimits& s)
-{
-    bool ok = true ;
-	ok = ok && getRawUInt32(data,size,&offset,&s.max_up_rate_kbs);
-	ok = ok && getRawUInt32(data,size,&offset,&s.max_dl_rate_kbs);
-    return ok;
-}
-
-template<> void RsTypeSerializer::print_data(const std::string& /*n*/, const PeerBandwidthLimits& s)
-{
-    std::cerr << "  [Peer BW limit] " << s.max_up_rate_kbs << " / " << s.max_dl_rate_kbs << std::endl;
-}
 
 RsNodeGroupItem::RsNodeGroupItem(const RsGroupInfo& g)
     :RsItem(RS_PKT_VERSION1, RS_PKT_CLASS_CONFIG, RS_PKT_TYPE_PEER_CONFIG, RS_PKT_SUBTYPE_NODE_GROUP)

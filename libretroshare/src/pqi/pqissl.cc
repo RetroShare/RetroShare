@@ -67,7 +67,7 @@ const int PQISSL_UDP_FLAG = 0x02;
 
 //#define PQISSL_DEBUG 		1
 //#define PQISSL_LOG_DEBUG 	1
-
+//#define PQISSL_LOG_DEBUG2 	1
 
 static const int PQISSL_MAX_READ_ZERO_COUNT = 20;
 static const time_t PQISSL_MAX_READ_ZERO_TIME = 15; // 15 seconds of no data => reset. (atm HeartBeat pkt sent 5 secs)
@@ -238,7 +238,9 @@ int pqissl::reset_locked()
 #endif
 	}
 
+#ifdef PQISSL_LOG_DEBUG2
 	rslog(RSL_ALERT, pqisslzone, outLog);
+#endif
 
 	// notify people of problem!
 	// but only if we really shut something down.
@@ -585,12 +587,12 @@ int 	pqissl::Delay_Connection()
 int pqissl::Initiate_Connection()
 {
 #ifdef PQISSL_DEBUG
-	std::cout << __PRETTY_FUNCTION__ << std::endl;
+	std::cerr << __PRETTY_FUNCTION__ << " "
+	          << sockaddr_storage_tostring(remote_addr) << std::endl;
 #endif
 
 	int err;
-	sockaddr_storage addr = remote_addr;
-
+	sockaddr_storage addr; sockaddr_storage_copy(remote_addr, addr);
 
 	if(waiting != WAITING_DELAY)
 	{
@@ -636,13 +638,6 @@ int pqissl::Initiate_Connection()
 		waiting = WAITING_FAIL_INTERFACE;
 		net_internal_close(osock);
 		return -1;
-	}
-
-	{ 
-		std::string out;
-		rs_sprintf(out, "pqissl::Initiate_Connection() Connecting To: %s via: ", PeerId().toStdString().c_str());
-		out += sockaddr_storage_tostring(addr);
-		rslog(RSL_WARNING, pqisslzone, out);
 	}
 
 	if (sockaddr_storage_isnull(addr))
@@ -721,6 +716,12 @@ int pqissl::Initiate_Connection()
 	//std::cerr << "Setting Connect Timeout " << mConnectTimeout << " Seconds into Future " << std::endl;
 
 	sockaddr_storage_ipv4_to_ipv6(addr);
+#ifdef PQISSL_DEBUG
+	std::cerr << __PRETTY_FUNCTION__ << " Connecting To: "
+	          << PeerId().toStdString() <<" via: "
+	          << sockaddr_storage_tostring(addr) << std::endl;
+#endif
+
 	if (0 != (err = unix_connect(osock, addr)))
 	{
 		switch (errno)
@@ -730,11 +731,13 @@ int pqissl::Initiate_Connection()
 			sockfd = osock;
 			return 0;
 		default:
+#ifdef PQISSL_DEBUG
 			std::cerr << __PRETTY_FUNCTION__ << " Failure connect "
 			          << sockaddr_storage_tostring(addr)
 			          << " returns: "
 			          << err << " -> errno: " << errno << " "
 			          << socket_errorType(errno) << std::endl;
+#endif
 
 			net_internal_close(osock);
 			osock = -1;
@@ -777,10 +780,14 @@ bool  	pqissl::CheckConnectionTimeout()
 		std::string out;
 		rs_sprintf(out, "pqissl::Basic_Connection_Complete() Connection Timed Out. Peer: %s Period: %lu", PeerId().toStdString().c_str(), mConnectTimeout);
 
+#ifdef PQISSL_LOG_DEBUG2
 		rslog(RSL_WARNING, pqisslzone, out);
+#endif
 		/* as sockfd is valid, this should close it all up */
 		
+#ifdef PQISSL_LOG_DEBUG2
 		rslog(RSL_ALERT, pqisslzone, "pqissl::Basic_Connection_Complete() -> calling reset()");
+#endif
 		reset_locked();
 		return true;
 	}
@@ -919,7 +926,9 @@ int 	pqissl::Basic_Connection_Complete()
 			{
 				std::string out;
 				rs_sprintf(out, "pqissl::Basic_Connection_Complete() TCP Connection Complete: cert: %s on osock: ", PeerId().toStdString().c_str(), sockfd);
+#ifdef PQISSL_LOG_DEBUG2
 				rslog(RSL_WARNING, pqisslzone, out);
+#endif
 			}
 			return 1;
 		}

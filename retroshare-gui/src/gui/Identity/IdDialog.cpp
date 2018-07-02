@@ -1994,7 +1994,8 @@ QString IdDialog::createUsageString(const RsIdentityUsage& u) const
 	}
     case RsIdentityUsage::CHAT_LOBBY_MSG_VALIDATION:             // Chat lobby msgs are signed, so each time one comes, or a chat lobby event comes, a signature verificaiton happens.
     {
-		RetroShareLink l = RetroShareLink::createChatRoom(ChatId(ChatLobbyId(u.mAdditionalId)),QString::number(u.mAdditionalId));
+		ChatId id = ChatId(ChatLobbyId(u.mAdditionalId));
+		RetroShareLink l = RetroShareLink::createChatRoom(id, QString::fromStdString(id.toStdString()));
 		return tr("Message in chat room %1").arg(l.toHtml()) ;
     }
     case RsIdentityUsage::GLOBAL_ROUTER_SIGNATURE_CHECK:         // Global router message validation
@@ -2124,19 +2125,19 @@ void IdDialog::updateDisplay(bool complete)
 	if (complete) {
 		/* Fill complete */
 		requestIdList();
-		requestIdDetails();
+		//requestIdDetails();
 		requestRepList();
 
 		return;
 	}
 	requestCircleGroupMeta();
 
-	std::list<RsGxsGroupId> grpIds;
+	std::set<RsGxsGroupId> grpIds;
 	getAllGrpIds(grpIds);
 	if (!getGrpIds().empty()) {
 		requestIdList();
 
-		if (!mId.isNull() && std::find(grpIds.begin(), grpIds.end(), mId) != grpIds.end()) {
+        if (!mId.isNull() && grpIds.find(mId)!=grpIds.end()) {
 			requestIdDetails();
 			requestRepList();
 		}

@@ -518,7 +518,7 @@ void bdNode::checkPotentialPeer(bdId *id, bdId *src)
 #ifndef DISABLE_BAD_PEER_FILTER	
 				std::cerr << "bdNode::checkPotentialPeer(";
 				mFns->bdPrintId(std::cerr, id);
-				std::cerr << ") MASQARADING AS KNOWN PEER - FLAGGING AS BAD";
+				std::cerr << ") MASQUERADING AS KNOWN PEER - FLAGGING AS BAD";
 				std::cerr << std::endl;
 
 				// Stores in queue for later callback and desemination around the network.
@@ -603,7 +603,7 @@ void bdNode::addPeer(const bdId *id, uint32_t peerflags)
 				std::cerr << "bdNode::addPeer(";
 				mFns->bdPrintId(std::cerr, id);
 				std::cerr << ", " << std::hex << peerflags << std::dec;
-				std::cerr << ") MASQARADING AS KNOWN PEER - FLAGGING AS BAD";
+				std::cerr << ") MASQUERADING AS KNOWN PEER - FLAGGING AS BAD";
 				std::cerr << std::endl;
 				
 

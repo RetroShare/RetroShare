@@ -34,7 +34,7 @@
 #include <stdlib.h>
 #include <grouter/grouteritems.h>
 
-class RsItem ;
+struct RsItem;
 
 static const uint32_t GROUTER_CLIENT_SERVICE_DATA_STATUS_UNKNOWN  = 0x0000 ;	// unused.
 static const uint32_t GROUTER_CLIENT_SERVICE_DATA_STATUS_RECEIVED = 0x0001 ;	// sent when data has been received and a receipt is available.

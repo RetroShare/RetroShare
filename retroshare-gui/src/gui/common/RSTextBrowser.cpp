@@ -243,3 +243,30 @@ bool RSTextBrowser::checkImage(QPoint pos, QString &imageStr)
 	}
 	return false;
 }
+
+/**
+ * @brief RSTextBrowser::anchorForPosition Replace anchorAt that doesn't works as expected.
+ * @param pos Where to get anchor from text
+ * @return anchor If text at pos is inside anchor, else empty string.
+ */
+QString RSTextBrowser::anchorForPosition(const QPoint &pos) const
+{
+	QTextCursor cursor = cursorForPosition(pos);
+	cursor.select(QTextCursor::WordUnderCursor);
+	QString anchor = "";
+	if (!cursor.selectedText().isEmpty()){
+		QRegExp rx("<a name=\"(.*)\"",Qt::CaseSensitive, QRegExp::RegExp2);
+		rx.setMinimal(true);
+		QString sel = cursor.selection().toHtml();
+		QStringList anchors;
+		int pos=0;
+		while ((pos = rx.indexIn(sel,pos)) != -1) {
+			anchors << rx.cap(1);
+			pos += rx.matchedLength();
+		}
+		if (!anchors.isEmpty()){
+			anchor = anchors.at(0);
+		}
+	}
+	return anchor;
+}

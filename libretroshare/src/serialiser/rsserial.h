@@ -64,7 +64,7 @@ const uint8_t RS_PKT_CLASS_CONFIG    = 0x02;
 
 const uint8_t RS_PKT_SUBTYPE_DEFAULT = 0x01; /* if only one subtype */
 
-class RsItem ;
+struct RsItem;
 class RsSerialType ;
 
 

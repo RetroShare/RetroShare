@@ -46,7 +46,7 @@ class RsGxsMsgChange : public RsGxsNotify
 {
 public:
 	RsGxsMsgChange(NotifyType type, bool metaChange) : NOTIFY_TYPE(type), mMetaChange(metaChange) {}
-    std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > msgChangeMap;
+    std::map<RsGxsGroupId, std::set<RsGxsMessageId> > msgChangeMap;
 	NotifyType getType(){ return NOTIFY_TYPE;}
     bool metaChange() { return mMetaChange; }
 private:

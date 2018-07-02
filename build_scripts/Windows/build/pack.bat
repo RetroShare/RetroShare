@@ -10,21 +10,18 @@ if errorlevel 1 goto error_env
 call "%EnvPath%\env.bat"
 if errorlevel 1 goto error_env
 
-:: Get gcc versions
-call "%ToolsPath%\get-gcc-version.bat" GCCVersion
-if "%GCCVersion%"=="" echo Cannot get gcc version.& exit /B 1
+:: Initialize environment
+call "%~dp0env.bat" %*
+if errorlevel 2 exit /B 2
+if errorlevel 1 goto error_env
 
 :: Check external libraries
-if not exist "%RootPath%\libs" echo Please build external libraries first.& exit /B 1
+if not exist "%BuildLibsPath%\libs" %cecho% error "Please build external libraries first." & exit /B 1
 
 :: Check gcc version of external libraries
-if not exist "%RootPath%\libs\gcc-version" echo Cannot get gcc version of external libraries.& exit /B 1
-set /P LibsGCCVersion=<"%RootPath%\libs\gcc-version"
-if "%LibsGCCVersion%" NEQ "%GCCVersion%" echo Please use correct version of external libraries. (gcc %GCCVersion% ^<^> libs %LibsGCCVersion%).& exit /B 1
-
-:: Initialize environment
-call "%~dp0env.bat"
-if errorlevel 1 goto error_env
+if not exist "%BuildLibsPath%\libs\gcc-version" %cecho% error "Cannot get gcc version of external libraries." & exit /B 1
+set /P LibsGCCVersion=<"%BuildLibsPath%\libs\gcc-version"
+if "%LibsGCCVersion%" NEQ "%GCCVersion%" %cecho% error "Please use correct version of external libraries. (gcc %GCCVersion% ^<^> libs %LibsGCCVersion%)." & exit /B 1
 
 :: Remove deploy path
 if exist "%RsDeployPath%" rmdir /S /Q "%RsDeployPath%"
@@ -65,6 +62,17 @@ set RsDate=
 for /f "tokens=2 delims==" %%I in ('wmic os get localdatetime /format:list') do set RsDate=%%I
 set RsDate=%RsDate:~0,4%%RsDate:~4,2%%RsDate:~6,2%
 
+if "%RsRetroTor%"=="1" (
+	:: Check Retrotor
+	if not exist "%EnvDownloadPath%\tor\Tor\tor.exe" (
+		echo Tor binary not found. Please download Tor Expert Bundle from
+		echo https://www.torproject.org/download/download.html.en
+		echo and unpack to
+		echo %EnvDownloadPath%\tor
+		goto error
+	)
+)
+
 set QtMainVersion=%QtVersion:~0,1%
 
 rem Qt 4 = QtSvg4.dll
@@ -75,9 +83,9 @@ if "%QtMainVersion%"=="4" set QtMainVersion2=4
 if "%QtMainVersion%"=="5" set QtMainVersion1=5
 
 if "%RsBuildConfig%" NEQ "release" (
-	set Archive=%RsPackPath%\RetroShare-%RsVersion%-Windows-Portable-%RsDate%-%RsRevision%-Qt-%QtVersion%%RsArchiveAdd%-%RsBuildConfig%.7z
+	set Archive=%RsPackPath%\RetroShare-%RsVersion%-Windows-Portable-%RsDate%-%RsRevision%-Qt-%QtVersion%%RsType%%RsArchiveAdd%-%RsBuildConfig%.7z
 ) else (
-	set Archive=%RsPackPath%\RetroShare-%RsVersion%-Windows-Portable-%RsDate%-%RsRevision%-Qt-%QtVersion%%RsArchiveAdd%.7z
+	set Archive=%RsPackPath%\RetroShare-%RsVersion%-Windows-Portable-%RsDate%-%RsRevision%-Qt-%QtVersion%%RsType%%RsArchiveAdd%.7z
 )
 
 if exist "%Archive%" del /Q "%Archive%"
@@ -85,7 +93,7 @@ if exist "%Archive%" del /Q "%Archive%"
 :: Create deploy path
 mkdir "%RsDeployPath%"
 
-title Pack - %SourceName%-%RsBuildConfig% [copy files]
+title Pack - %SourceName%%RsType%-%RsBuildConfig% [copy files]
 
 set ExtensionsFile=%SourcePath%\libretroshare\src\rsserver\rsinit.cc
 set Extensions=
@@ -128,6 +136,12 @@ if "%QtMainVersion%"=="5" (
 	copy "%QtPath%\..\plugins\audio\qtaudio_windows.dll" "%RsDeployPath%\audio" %Quite%
 )
 
+if exist "%QtPath%\..\plugins\styles\qwindowsvistastyle.dll" (
+	echo Copy styles
+	mkdir "%RsDeployPath%\styles" %Quite%
+	copy "%QtPath%\..\plugins\styles\qwindowsvistastyle.dll" "%RsDeployPath%\styles" %Quite%
+)
+
 copy "%QtPath%\..\plugins\imageformats\*.dll" "%RsDeployPath%\imageformats" %Quite%
 del /Q "%RsDeployPath%\imageformats\*d?.dll" %Quite%
 
@@ -166,8 +180,13 @@ if exist "%SourcePath%\libresapi\src\webui" (
 	xcopy /S "%SourcePath%\libresapi\src\webui" "%RsDeployPath%\webui" %Quite%
 )
 
+if "%RsRetroTor%"=="1" (
+	echo copy tor
+	echo n | copy /-y "%EnvDownloadPath%\tor\Tor\*.*" "%RsDeployPath%" %Quite%
+)
+
 rem pack files
-title Pack - %SourceName%-%RsBuildConfig% [pack files]
+title Pack - %SourceName%%RsType%-%RsBuildConfig% [pack files]
 
 "%EnvSevenZipExe%" a -mx=9 -t7z "%Archive%" "%RsDeployPath%\*"
 

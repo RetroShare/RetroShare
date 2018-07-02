@@ -30,7 +30,7 @@
 
 typedef RsPeerId ChatLobbyVirtualPeerId ;
 
-class RsItem ;
+struct RsItem;
 class p3HistoryMgr ;
 class p3IdService ;
 class p3ServiceControl;

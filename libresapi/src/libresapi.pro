@@ -2,50 +2,26 @@
 
 TEMPLATE = lib
 CONFIG += staticlib
-CONFIG += create_prl
 CONFIG -= qt
 TARGET = resapi
 TARGET_PRL = libresapi
 DESTDIR = lib
 
-DEPENDPATH += ../../libretroshare/src/
+!include(use_libresapi.pri):error("Including")
+
 INCLUDEPATH += ../../libretroshare/src
 
+libresapilocalserver {
+    SOURCES *= api/ApiServerLocal.cpp
+    HEADERS *= api/ApiServerLocal.h
+}
 
-retroshare_android_service {
-    win32 {
-        OBJECTS_DIR = temp/obj
-
-        LIBS_DIR = $$PWD/../../libs/lib
-        LIBS += $$OUT_PWD/../../libretroshare/src/lib/libretroshare.a
-        LIBS += $$OUT_PWD/../../openpgpsdk/src/lib/libops.a
-
-        for(lib, LIB_DIR):LIBS += -L"$$lib"
-        for(bin, BIN_DIR):LIBS += -L"$$bin"
-
-
-        LIBS += -lssl -lcrypto -lpthread -lminiupnpc -lz -lws2_32
-        LIBS += -luuid -lole32 -liphlpapi -lcrypt32 -lgdi32
-        LIBS += -lwinmm
-
-        DEFINES *= WINDOWS_SYS WIN32_LEAN_AND_MEAN _USE_32BIT_TIME_T
-
-        DEPENDPATH += . $$INC_DIR
-        INCLUDEPATH += . $$INC_DIR
-
-        greaterThan(QT_MAJOR_VERSION, 4) {
-                # Qt 5
-                RC_INCLUDEPATH += $$_PRO_FILE_PWD_/../../libretroshare/src
-        } else {
-                # Qt 4
-                QMAKE_RC += --include-dir=$$_PRO_FILE_PWD_/../../libretroshare/src
-        }
-    }
+libresapi_settings {
+    SOURCES += api/SettingsHandler.cpp
+    HEADERS += api/SettingsHandler.h
 }
 
 libresapihttpserver {
-    CONFIG += libmicrohttpd
-
     unix {
 
         webui_files.path = "$${DATA_DIR}/webui"
@@ -121,20 +97,13 @@ libresapihttpserver {
 	DEFINES *= WINDOWS_SYS
 	INCLUDEPATH += . $$INC_DIR
 
-	greaterThan(QT_MAJOR_VERSION, 4) {
-		# Qt 5
-		PRO_PATH=$$shell_path($$_PRO_FILE_PWD_)
-		MAKE_SRC=$$shell_path($$PRO_PATH/webui-src/make-src)
-	} else {
-		# Qt 4
-		PRO_PATH=$$replace(_PRO_FILE_PWD_, /, \\)
-		MAKE_SRC=$$PRO_PATH\\webui-src\\make-src
-	}
+    PRO_PATH=$$shell_path($$_PRO_FILE_PWD_)
+    MAKE_SRC=$$shell_path($$PRO_PATH/webui-src/make-src)
 
-        #create_webfiles.commands = $$MAKE_SRC\\build.bat $$PRO_PATH
-        #QMAKE_EXTRA_TARGETS += create_webfiles
-        #PRE_TARGETDEPS += create_webfiles
-        QMAKE_POST_LINK=$$MAKE_SRC\\build.bat $$PRO_PATH
+    #create_webfiles.commands = $$MAKE_SRC\\build.bat $$PRO_PATH
+    #QMAKE_EXTRA_TARGETS += create_webfiles
+    #PRE_TARGETDEPS += create_webfiles
+    QMAKE_POST_LINK=$$MAKE_SRC\\build.bat $$PRO_PATH
 
 	# create dummy files
 	system($$MAKE_SRC\\init.bat .)
@@ -211,18 +180,3 @@ HEADERS += \
     api/ChannelsHandler.h \
     api/StatsHandler.h \
     api/FileSharingHandler.h
-
-libresapilocalserver {
-    CONFIG *= qt
-    QT *= network
-    SOURCES *= api/ApiServerLocal.cpp
-    HEADERS *= api/ApiServerLocal.h
-}
-
-qt_dependencies {
-    CONFIG *= qt
-    QT *= core
-
-    SOURCES += api/SettingsHandler.cpp
-    HEADERS += api/SettingsHandler.h
-}

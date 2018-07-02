@@ -197,6 +197,8 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
     std::cerr << std::endl;
 #endif
 
+
+    connect(ui.discComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(saveAddresses()));
     connect(ui.netModeComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(saveAddresses()));
     connect(ui.localAddress,   SIGNAL(textChanged(QString)),this,SLOT(saveAddresses()));
     connect(ui.extAddress,     SIGNAL(textChanged(QString)),this,SLOT(saveAddresses()));
@@ -844,10 +846,15 @@ void ServerPage::updateStatus()
         return;
     }
 
-    /* load up configuration from rsPeers */
-    RsPeerDetails detail;
-    if (!rsPeers->getPeerDetails(rsPeers->getOwnId(), detail))
-        return;
+	/* load up configuration from rsPeers */
+	RsPeerDetails detail;
+	if (!rsPeers->getPeerDetails(rsPeers->getOwnId(), detail))
+	{
+		std::cerr << __PRETTY_FUNCTION__ << " getPeerDetails(...) failed!"
+		          << " This is unexpected report to developers please."
+		          << std::endl;
+		return;
+	}
 
     /* only update if can't edit */
     if (!ui.localPort->isEnabled())
@@ -1005,7 +1012,7 @@ void ServerPage::saveRates()
 
 void ServerPage::tabChanged(int page)
 {
-	if(page == 2)
+	if(page == TAB_HIDDEN_SERVICE)
 		updateOutProxyIndicator();
 }
 

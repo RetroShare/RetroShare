@@ -60,8 +60,10 @@ static struct RsLog::logInfo pqissllistenzoneInfo = {RsLog::Default, "p3peermgr"
 
 
 pqissllistenbase::pqissllistenbase(const sockaddr_storage &addr, p3PeerMgr *pm)
-	: laddr(addr), mPeerMgr(pm), active(false)
+    : mPeerMgr(pm), active(false)
 {
+	sockaddr_storage_copy(addr, laddr);
+
 	if (!(AuthSSL::getAuthSSL()-> active()))
 	{
 		pqioutput(PQL_ALERT, pqissllistenzone,
@@ -117,8 +119,10 @@ int pqissllistenbase::setuplisten()
 	                    reinterpret_cast<uint8_t*>(&no), sizeof(no));
 	if (err) std::cerr << __PRETTY_FUNCTION__
 	                   << ": Error setting IPv6 socket dual stack" << std::endl;
+#ifdef DEBUG_LISTENNER
 	else std::cerr << __PRETTY_FUNCTION__
 	               << ": Success setting IPv6 socket dual stack" << std::endl;
+#endif
 #endif // IPV6_V6ONLY
 
 /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
@@ -208,26 +212,20 @@ int pqissllistenbase::setuplisten()
         	}
     	}
 
-#ifdef OPEN_UNIVERSAL_PORT
-	struct sockaddr_storage tmpaddr = laddr;
-	if (!mPeerMgr->isHidden())
-	{
-		tmpaddr.ss_family = PF_INET6;
-		sockaddr_storage_zeroip(tmpaddr);
-	}
+	struct sockaddr_storage tmpaddr;
+	sockaddr_storage_copy(laddr, tmpaddr);
+	sockaddr_storage_ipv4_to_ipv6(tmpaddr);
+	if (!mPeerMgr->isHidden()) sockaddr_storage_zeroip(tmpaddr);
+
 	if (0 != (err = rs_bind(lsock, tmpaddr)))
-#else
-	if (0 != (err = universal_bind(lsock, laddr)))
-#endif
 	{
 		std::string out = "pqissllistenbase::setuplisten()  Cannot Bind to Local Address!\n";
 		showSocketError(out);
 		pqioutput(PQL_ALERT, pqissllistenzone, out);
-		std::cerr << out << std::endl;
-		std::cerr << "laddr: " << sockaddr_storage_tostring(laddr) << std::endl;
-#ifdef OPEN_UNIVERSAL_PORT
-		if (!mPeerMgr->isHidden()) std::cerr << "Zeroed tmpaddr: " << sockaddr_storage_tostring(tmpaddr) << std::endl;
-#endif
+		std::cerr << out << std::endl
+		          << "tmpaddr: " << sockaddr_storage_tostring(tmpaddr)
+		          << std::endl;
+		print_stacktrace();
 
 		return -1;
 	}

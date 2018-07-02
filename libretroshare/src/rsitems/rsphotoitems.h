@@ -50,7 +50,7 @@ public:
         virtual ~RsGxsPhotoAlbumItem() { return;}
 
         void clear();
-	std::ostream &print(std::ostream &out, uint16_t indent = 0);
+//	std::ostream &print(std::ostream &out, uint16_t indent = 0);
 
 	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 

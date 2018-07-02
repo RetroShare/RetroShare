@@ -58,6 +58,15 @@ int inet_aton(const char *name, struct in_addr *addr);
 #endif
 /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 
+/**
+ * Workaround for binary compatibility between Windows XP (which miss
+ * IPV6_V6ONLY define), and newer Windows that has it.
+ * @see http://lua-users.org/lists/lua-l/2013-04/msg00191.html
+ */
+#ifndef IPV6_V6ONLY
+#	define IPV6_V6ONLY 27
+#endif
+
 /* 64 bit conversions */
 #ifndef ntohll
 uint64_t ntohll(uint64_t x);

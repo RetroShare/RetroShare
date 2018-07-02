@@ -194,7 +194,7 @@ void GxsGroupFrameDialog::processSettings(bool load)
 		Settings->setValue("Splitter", ui->splitter->saveState());
 	}
 
-	ui->groupTreeWidget->processSettings(Settings, load);
+	ui->groupTreeWidget->processSettings(load);
 
 	Settings->endGroup();
 }
@@ -236,11 +236,10 @@ void GxsGroupFrameDialog::updateDisplay(bool complete)
 		requestGroupSummary();
 	} else {
 		/* Update all groups of changed messages */
-		std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > msgIds;
+		std::map<RsGxsGroupId, std::set<RsGxsMessageId> > msgIds;
 		getAllMsgIds(msgIds);
 
-		std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >::iterator msgIt;
-		for (msgIt = msgIds.begin(); msgIt != msgIds.end(); ++msgIt) {
+		for (auto msgIt = msgIds.begin(); msgIt != msgIds.end(); ++msgIt) {
 			updateMessageSummaryList(msgIt->first);
 		}
 	}
@@ -253,94 +252,100 @@ void GxsGroupFrameDialog::todo()
 
 void GxsGroupFrameDialog::groupTreeCustomPopupMenu(QPoint point)
 {
-	QString id = ui->groupTreeWidget->itemIdAt(point);
-	if (id.isEmpty()) return;
-
-	mGroupId = RsGxsGroupId(id.toStdString());
-	int subscribeFlags = ui->groupTreeWidget->subscribeFlags(QString::fromStdString(mGroupId.toStdString()));
-
-	bool isAdmin = IS_GROUP_ADMIN(subscribeFlags);
-	bool isPublisher = IS_GROUP_PUBLISHER(subscribeFlags);
-	bool isSubscribed = IS_GROUP_SUBSCRIBED(subscribeFlags);
-
 	QMenu contextMnu(this);
 
-	QAction *action;
-	
-	if (mMessageWidget) {
-		action = contextMnu.addAction(QIcon(IMAGE_TABNEW), tr("Open in new tab"), this, SLOT(openInNewTab()));
-		if (mGroupId.isNull() || messageWidget(mGroupId, true)) {
-			action->setEnabled(false);
+	QString id = ui->groupTreeWidget->itemIdAt(point);
+	if (!id.isEmpty())
+	{
+
+		mGroupId = RsGxsGroupId(id.toStdString());
+		int subscribeFlags = ui->groupTreeWidget->subscribeFlags(QString::fromStdString(mGroupId.toStdString()));
+
+		bool isAdmin = IS_GROUP_ADMIN(subscribeFlags);
+		bool isPublisher = IS_GROUP_PUBLISHER(subscribeFlags);
+		bool isSubscribed = IS_GROUP_SUBSCRIBED(subscribeFlags);
+
+
+		QAction *action;
+
+		if (mMessageWidget) {
+			action = contextMnu.addAction(QIcon(IMAGE_TABNEW), tr("Open in new tab"), this, SLOT(openInNewTab()));
+			if (mGroupId.isNull() || messageWidget(mGroupId, true)) {
+				action->setEnabled(false);
+			}
+		}
+
+		if (isSubscribed) {
+			action = contextMnu.addAction(QIcon(IMAGE_UNSUBSCRIBE), tr("Unsubscribe"), this, SLOT(unsubscribeGroup()));
+			action->setEnabled (!mGroupId.isNull() && IS_GROUP_SUBSCRIBED(subscribeFlags));
+		} else {
+			action = contextMnu.addAction(QIcon(IMAGE_SUBSCRIBE), tr("Subscribe"), this, SLOT(subscribeGroup()));
+			action->setDisabled (mGroupId.isNull() || IS_GROUP_SUBSCRIBED(subscribeFlags));
+		}
+
+		contextMnu.addSeparator();
+
+		contextMnu.addAction(QIcon(icon(ICON_NEW)), text(TEXT_NEW), this, SLOT(newGroup()));
+
+		action = contextMnu.addAction(QIcon(IMAGE_INFO), tr("Show Details"), this, SLOT(showGroupDetails()));
+		action->setEnabled (!mGroupId.isNull());
+
+		action = contextMnu.addAction(QIcon(IMAGE_EDIT), tr("Edit Details"), this, SLOT(editGroupDetails()));
+		action->setEnabled (!mGroupId.isNull() && isAdmin);
+
+		uint32_t current_store_time = mInterface->getStoragePeriod(mGroupId)/86400 ;
+		uint32_t current_sync_time  = mInterface->getSyncPeriod(mGroupId)/86400 ;
+
+		std::cerr << "Got sync=" << current_sync_time << ". store=" << current_store_time << std::endl;
+		QAction *actnn = NULL;
+
+		QMenu *ctxMenu2 = contextMnu.addMenu(tr("Synchronise posts of last...")) ;
+		actnn = ctxMenu2->addAction(tr(" 5 days"     ),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant(  5)) ; if(current_sync_time ==  5) { actnn->setEnabled(false);actnn->setIcon(QIcon(":/images/start.png"));}
+		actnn = ctxMenu2->addAction(tr(" 2 weeks"    ),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant( 15)) ; if(current_sync_time == 15) { actnn->setEnabled(false);actnn->setIcon(QIcon(":/images/start.png"));}
+		actnn = ctxMenu2->addAction(tr(" 1 month"    ),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant( 30)) ; if(current_sync_time == 30) { actnn->setEnabled(false);actnn->setIcon(QIcon(":/images/start.png"));}
+		actnn = ctxMenu2->addAction(tr(" 3 months"   ),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant( 90)) ; if(current_sync_time == 90) { actnn->setEnabled(false);actnn->setIcon(QIcon(":/images/start.png"));}
+		actnn = ctxMenu2->addAction(tr(" 6 months"   ),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant(180)) ; if(current_sync_time ==180) { actnn->setEnabled(false);actnn->setIcon(QIcon(":/images/start.png"));}
+		actnn = ctxMenu2->addAction(tr(" 1 year  "   ),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant(372)) ; if(current_sync_time ==372) { actnn->setEnabled(false);actnn->setIcon(QIcon(":/images/start.png"));}
+		actnn = ctxMenu2->addAction(tr(" Indefinitly"),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant(  0)) ; if(current_sync_time ==  0) { actnn->setEnabled(false);actnn->setIcon(QIcon(":/images/start.png"));}
+
+		ctxMenu2 = contextMnu.addMenu(tr("Store posts for at most...")) ;
+		actnn = ctxMenu2->addAction(tr(" 5 days"     ),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant(  5)) ; if(current_store_time ==  5) { actnn->setEnabled(false);actnn->setIcon(QIcon(":/images/start.png"));}
+		actnn = ctxMenu2->addAction(tr(" 2 weeks"    ),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant( 15)) ; if(current_store_time == 15) { actnn->setEnabled(false);actnn->setIcon(QIcon(":/images/start.png"));}
+		actnn = ctxMenu2->addAction(tr(" 1 month"    ),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant( 30)) ; if(current_store_time == 30) { actnn->setEnabled(false);actnn->setIcon(QIcon(":/images/start.png"));}
+		actnn = ctxMenu2->addAction(tr(" 3 months"   ),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant( 90)) ; if(current_store_time == 90) { actnn->setEnabled(false);actnn->setIcon(QIcon(":/images/start.png"));}
+		actnn = ctxMenu2->addAction(tr(" 6 months"   ),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant(180)) ; if(current_store_time ==180) { actnn->setEnabled(false);actnn->setIcon(QIcon(":/images/start.png"));}
+		actnn = ctxMenu2->addAction(tr(" 1 year  "   ),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant(372)) ; if(current_store_time ==372) { actnn->setEnabled(false);actnn->setIcon(QIcon(":/images/start.png"));}
+		actnn = ctxMenu2->addAction(tr(" Indefinitly"),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant(  0)) ; if(current_store_time ==  0) { actnn->setEnabled(false);actnn->setIcon(QIcon(":/images/start.png"));}
+
+		if (shareKeyType()) {
+			action = contextMnu.addAction(QIcon(IMAGE_SHARE), tr("Share publish permissions"), this, SLOT(sharePublishKey()));
+			action->setEnabled(!mGroupId.isNull() && isPublisher);
+		}
+
+		if (getLinkType() != RetroShareLink::TYPE_UNKNOWN) {
+			action = contextMnu.addAction(QIcon(IMAGE_COPYLINK), tr("Copy RetroShare Link"), this, SLOT(copyGroupLink()));
+			action->setEnabled(!mGroupId.isNull());
+		}
+
+		contextMnu.addSeparator();
+
+		action = contextMnu.addAction(QIcon(":/images/message-mail-read.png"), tr("Mark all as read"), this, SLOT(markMsgAsRead()));
+		action->setEnabled (!mGroupId.isNull() && isSubscribed);
+
+		action = contextMnu.addAction(QIcon(":/images/message-mail.png"), tr("Mark all as unread"), this, SLOT(markMsgAsUnread()));
+		action->setEnabled (!mGroupId.isNull() && isSubscribed);
+
+		/* Add special actions */
+		QList<QAction*> actions;
+		groupTreeCustomActions(mGroupId, subscribeFlags, actions);
+		if (!actions.isEmpty()) {
+			contextMnu.addSeparator();
+			contextMnu.addActions(actions);
 		}
 	}
 
-	if (isSubscribed) {
-		action = contextMnu.addAction(QIcon(IMAGE_UNSUBSCRIBE), tr("Unsubscribe"), this, SLOT(unsubscribeGroup()));
-		action->setEnabled (!mGroupId.isNull() && IS_GROUP_SUBSCRIBED(subscribeFlags));
-	} else {
-		action = contextMnu.addAction(QIcon(IMAGE_SUBSCRIBE), tr("Subscribe"), this, SLOT(subscribeGroup()));
-		action->setDisabled (mGroupId.isNull() || IS_GROUP_SUBSCRIBED(subscribeFlags));
-	}
-
-	contextMnu.addSeparator();
-
-	contextMnu.addAction(QIcon(icon(ICON_NEW)), text(TEXT_NEW), this, SLOT(newGroup()));
-
-	action = contextMnu.addAction(QIcon(IMAGE_INFO), tr("Show Details"), this, SLOT(showGroupDetails()));
-	action->setEnabled (!mGroupId.isNull());
-
-	action = contextMnu.addAction(QIcon(IMAGE_EDIT), tr("Edit Details"), this, SLOT(editGroupDetails()));
-	action->setEnabled (!mGroupId.isNull() && isAdmin);
-
-    uint32_t current_store_time = mInterface->getStoragePeriod(mGroupId)/86400 ;
-    uint32_t current_sync_time  = mInterface->getSyncPeriod(mGroupId)/86400 ;
-
-    std::cerr << "Got sync=" << current_sync_time << ". store=" << current_store_time << std::endl;
-    QAction *actnn = NULL;
-
-	QMenu *ctxMenu2 = contextMnu.addMenu(tr("Synchronise posts of last...")) ;
-    actnn = ctxMenu2->addAction(tr(" 5 days"     ),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant(  5)) ; if(current_sync_time ==  5) { actnn->setEnabled(false);actnn->setIcon(QIcon(":/images/start.png"));}
-	actnn = ctxMenu2->addAction(tr(" 2 weeks"    ),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant( 15)) ; if(current_sync_time == 15) { actnn->setEnabled(false);actnn->setIcon(QIcon(":/images/start.png"));}
-	actnn = ctxMenu2->addAction(tr(" 1 month"    ),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant( 30)) ; if(current_sync_time == 30) { actnn->setEnabled(false);actnn->setIcon(QIcon(":/images/start.png"));}
-	actnn = ctxMenu2->addAction(tr(" 3 months"   ),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant( 90)) ; if(current_sync_time == 90) { actnn->setEnabled(false);actnn->setIcon(QIcon(":/images/start.png"));}
-	actnn = ctxMenu2->addAction(tr(" 6 months"   ),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant(180)) ; if(current_sync_time ==180) { actnn->setEnabled(false);actnn->setIcon(QIcon(":/images/start.png"));}
-	actnn = ctxMenu2->addAction(tr(" 1 year  "   ),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant(372)) ; if(current_sync_time ==372) { actnn->setEnabled(false);actnn->setIcon(QIcon(":/images/start.png"));}
-	actnn = ctxMenu2->addAction(tr(" Indefinitly"),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant(  0)) ; if(current_sync_time ==  0) { actnn->setEnabled(false);actnn->setIcon(QIcon(":/images/start.png"));}
-
-    ctxMenu2 = contextMnu.addMenu(tr("Store posts for at most...")) ;
-    actnn = ctxMenu2->addAction(tr(" 5 days"     ),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant(  5)) ; if(current_store_time ==  5) { actnn->setEnabled(false);actnn->setIcon(QIcon(":/images/start.png"));}
-    actnn = ctxMenu2->addAction(tr(" 2 weeks"    ),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant( 15)) ; if(current_store_time == 15) { actnn->setEnabled(false);actnn->setIcon(QIcon(":/images/start.png"));}
-    actnn = ctxMenu2->addAction(tr(" 1 month"    ),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant( 30)) ; if(current_store_time == 30) { actnn->setEnabled(false);actnn->setIcon(QIcon(":/images/start.png"));}
-    actnn = ctxMenu2->addAction(tr(" 3 months"   ),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant( 90)) ; if(current_store_time == 90) { actnn->setEnabled(false);actnn->setIcon(QIcon(":/images/start.png"));}
-    actnn = ctxMenu2->addAction(tr(" 6 months"   ),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant(180)) ; if(current_store_time ==180) { actnn->setEnabled(false);actnn->setIcon(QIcon(":/images/start.png"));}
-    actnn = ctxMenu2->addAction(tr(" 1 year  "   ),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant(372)) ; if(current_store_time ==372) { actnn->setEnabled(false);actnn->setIcon(QIcon(":/images/start.png"));}
-    actnn = ctxMenu2->addAction(tr(" Indefinitly"),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant(  0)) ; if(current_store_time ==  0) { actnn->setEnabled(false);actnn->setIcon(QIcon(":/images/start.png"));}
-
-	if (shareKeyType()) {
-        action = contextMnu.addAction(QIcon(IMAGE_SHARE), tr("Share publish permissions"), this, SLOT(sharePublishKey()));
-        action->setEnabled(!mGroupId.isNull() && isPublisher);
-	}
-
-	if (getLinkType() != RetroShareLink::TYPE_UNKNOWN) {
-		action = contextMnu.addAction(QIcon(IMAGE_COPYLINK), tr("Copy RetroShare Link"), this, SLOT(copyGroupLink()));
-		action->setEnabled(!mGroupId.isNull());
-	}
-
-	contextMnu.addSeparator();
-
-	action = contextMnu.addAction(QIcon(":/images/message-mail-read.png"), tr("Mark all as read"), this, SLOT(markMsgAsRead()));
-	action->setEnabled (!mGroupId.isNull() && isSubscribed);
-
-	action = contextMnu.addAction(QIcon(":/images/message-mail.png"), tr("Mark all as unread"), this, SLOT(markMsgAsUnread()));
-	action->setEnabled (!mGroupId.isNull() && isSubscribed);
-
-	/* Add special actions */
-	QList<QAction*> actions;
-	groupTreeCustomActions(mGroupId, subscribeFlags, actions);
-	if (!actions.isEmpty()) {
-		contextMnu.addSeparator();
-		contextMnu.addActions(actions);
-	}
+	//Add Standard Menu
+	ui->groupTreeWidget->treeWidget()->createStandardContextMenu(&contextMnu);
 
 	contextMnu.exec(QCursor::pos());
 }

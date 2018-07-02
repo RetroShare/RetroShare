@@ -715,7 +715,7 @@ void WikiEditDialog::loadBaseHistory(const uint32_t &token)
 	        std::cerr << " ParentId: " << page.mMeta.mParentId;
 	        std::cerr << std::endl;
 		
-		GxsIdRSTreeWidgetItem *modItem = new GxsIdRSTreeWidgetItem(mThreadCompareRole);
+		GxsIdRSTreeWidgetItem *modItem = new GxsIdRSTreeWidgetItem(mThreadCompareRole, GxsIdDetails::ICON_TYPE_AVATAR);
         modItem->setData(WET_DATA_COLUMN, WET_ROLE_ORIGPAGEID, QString::fromStdString(page.mMeta.mOrigMsgId.toStdString()));
         modItem->setData(WET_DATA_COLUMN, WET_ROLE_PAGEID, QString::fromStdString(page.mMeta.mMsgId.toStdString()));
 
@@ -830,7 +830,7 @@ void WikiEditDialog::loadEditTreeData(const uint32_t &token)
 		}
 
 		/* create an Entry */
-		GxsIdRSTreeWidgetItem *modItem = new GxsIdRSTreeWidgetItem(mThreadCompareRole);
+		GxsIdRSTreeWidgetItem *modItem = new GxsIdRSTreeWidgetItem(mThreadCompareRole, GxsIdDetails::ICON_TYPE_AVATAR);
         modItem->setData(WET_DATA_COLUMN, WET_ROLE_ORIGPAGEID, QString::fromStdString(snapshot.mMeta.mOrigMsgId.toStdString()));
         modItem->setData(WET_DATA_COLUMN, WET_ROLE_PAGEID, QString::fromStdString(snapshot.mMeta.mMsgId.toStdString()));
         modItem->setData(WET_DATA_COLUMN, WET_ROLE_PARENTID, QString::fromStdString(snapshot.mMeta.mParentId.toStdString()));

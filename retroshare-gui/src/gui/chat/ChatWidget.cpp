@@ -66,8 +66,6 @@
 
 #define FMM 2.5//fontMetricsMultiplicator
 
-#define PERSONID "PersonId:"
-
 /*****
  * #define CHAT_DEBUG 1
  *****/
@@ -389,7 +387,7 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
                     name = QString::fromUtf8(historyIt->peerName.c_str());
                 }
 
-                addChatMsg(historyIt->incoming, name, QDateTime::fromTime_t(historyIt->sendTime), QDateTime::fromTime_t(historyIt->recvTime), QString::fromUtf8(historyIt->message.c_str()), MSGTYPE_HISTORY);
+                addChatMsg(historyIt->incoming, name, RsGxsId(historyIt->peerName.c_str()), QDateTime::fromTime_t(historyIt->sendTime), QDateTime::fromTime_t(historyIt->recvTime), QString::fromUtf8(historyIt->message.c_str()), MSGTYPE_HISTORY);
             }
 		}
 	}
@@ -474,6 +472,7 @@ uint32_t ChatWidget::maxMessageSize()
 
 bool ChatWidget::eventFilter(QObject *obj, QEvent *event)
 {
+	//QEvent::Type type = event->type();
 	if (obj == ui->textBrowser || obj == ui->textBrowser->viewport()
 	    || obj == ui->leSearch || obj == ui->chatTextEdit) {
 		if (event->type() == QEvent::KeyPress) {
@@ -593,31 +592,15 @@ bool ChatWidget::eventFilter(QObject *obj, QEvent *event)
 
 		if (event->type() == QEvent::ToolTip)	{
 			QHelpEvent* helpEvent = static_cast<QHelpEvent*>(event);
-			QTextCursor cursor = ui->textBrowser->cursorForPosition(helpEvent->pos());
-			cursor.select(QTextCursor::WordUnderCursor);
-			QString toolTipText = "";
-			if (!cursor.selectedText().isEmpty()){
-				QRegExp rx("<a name=\"(.*)\"",Qt::CaseSensitive, QRegExp::RegExp2);
-				rx.setMinimal(true);
-				QString sel=cursor.selection().toHtml();
-				QStringList anchors;
-				int pos=0;
-				while ((pos = rx.indexIn(sel,pos)) != -1) {
-					anchors << rx.cap(1);
-					pos += rx.matchedLength();
+			QString toolTipText = ui->textBrowser->anchorForPosition(helpEvent->pos());
+			if (toolTipText.isEmpty() && !ui->textBrowser->getShowImages()){
+				QString imageStr;
+				if (ui->textBrowser->checkImage(helpEvent->pos(), imageStr)) {
+					toolTipText = imageStr;
 				}
-				if (!anchors.isEmpty()){
-					toolTipText = anchors.at(0);
-				}
-				if (toolTipText.isEmpty() && !ui->textBrowser->getShowImages()){
-					QString imageStr;
-					if (ui->textBrowser->checkImage(helpEvent->pos(), imageStr)) {
-						toolTipText = imageStr;
-					}
-				} else if (toolTipText.startsWith(PERSONID)){
-					toolTipText = toolTipText.replace(PERSONID, tr("Person id: ") );
-					toolTipText = toolTipText.append(tr("\nDouble click on it to add his name on text writer.") );
-				}
+			} else if (toolTipText.startsWith(PERSONID)){
+				toolTipText = toolTipText.replace(PERSONID, tr("Person id: ") );
+				toolTipText = toolTipText.append(tr("\nDouble click on it to add his name on text writer.") );
 			}
 			if (!toolTipText.isEmpty()){
 				QToolTip::showText(helpEvent->globalPos(), toolTipText);
@@ -673,6 +656,17 @@ bool ChatWidget::eventFilter(QObject *obj, QEvent *event)
 				}
 			}
 		}
+		if (event->type() == QEvent::StyleChange)
+		{
+			QString colorName = currentColor.name();
+			qreal desiredContrast = Settings->valueFromGroup("Chat", "MinimumContrast", 4.5).toDouble();
+			QColor backgroundColor = ui->chatTextEdit->palette().base().color();
+			RsHtml::findBestColor(colorName, backgroundColor, desiredContrast);
+
+			currentColor = QColor(colorName);
+			ui->chatTextEdit->setTextColor(currentColor);
+			colorChanged();
+		}
 	} else if (obj == ui->leSearch) {
 		if (event->type() == QEvent::KeyPress) {
 
@@ -698,32 +692,19 @@ bool ChatWidget::eventFilter(QObject *obj, QEvent *event)
 		if (event->type() == QEvent::MouseButtonDblClick)	{
 
 			QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
-			QTextCursor cursor = ui->textBrowser->cursorForPosition(mouseEvent->pos());
-			cursor.select(QTextCursor::WordUnderCursor);
-			if (!cursor.selectedText().isEmpty()){
-				QRegExp rx("<a name=\"(.*)\"",Qt::CaseSensitive, QRegExp::RegExp2);
-				rx.setMinimal(true);
-				QString sel=cursor.selection().toHtml();
-				QStringList anchors;
-				int pos=0;
-				while ((pos = rx.indexIn(sel,pos)) != -1) {
-					anchors << rx.cap(1);
-					pos += rx.matchedLength();
-				}
+			QString anchor = ui->textBrowser->anchorForPosition(mouseEvent->pos());
+			if (!anchor.isEmpty()){
+				if (anchor.startsWith(PERSONID)){
+					QString strId = anchor.replace(PERSONID,"");
+					if (strId.contains(" "))
+						strId.truncate(strId.indexOf(" "));
 
-				if (!anchors.isEmpty()){
-					if (anchors.at(0).startsWith(PERSONID)){
-						QString strId = QString(anchors.at(0)).replace(PERSONID,"");
-						if (strId.contains(" "))
-							strId.truncate(strId.indexOf(" "));
-
-						RsGxsId mId = RsGxsId(strId.toStdString());
-						if(!mId.isNull()) {
-							RsIdentityDetails details;
-							if (rsIdentity->getIdDetails(mId, details)){
-								QString text = QString("@").append(GxsIdDetails::getName(details)).append(" ");
-								ui->chatTextEdit->textCursor().insertText(text);
-							}
+					RsGxsId mId = RsGxsId(strId.toStdString());
+					if(!mId.isNull()) {
+						RsIdentityDetails details;
+						if (rsIdentity->getIdDetails(mId, details)){
+							QString text = QString("@").append(GxsIdDetails::getName(details)).append(" ");
+							ui->chatTextEdit->textCursor().insertText(text);
 						}
 					}
 				}
@@ -731,6 +712,13 @@ bool ChatWidget::eventFilter(QObject *obj, QEvent *event)
 			}
 
 		}
+	} else {
+			if (event->type() == QEvent::WindowActivate) {
+				if (isVisible() && (window() == NULL || window()->isActiveWindow())) {
+					newMessages = false;
+					emit infoChanged(this);
+				}
+			}
 	}
 	// pass the event on to the parent class
 	return QWidget::eventFilter(obj, event);
@@ -1118,6 +1106,9 @@ void ChatWidget::contextMenuTextBrowser(QPoint point)
 		ui->actionSave_image->setData(point);
 		contextMnu->addAction(ui->actionSave_image);
 	}
+
+	QString anchor = ui->textBrowser->anchorForPosition(point);
+	emit textBrowserAskContextMenu(contextMnu, anchor, point);
 
 	contextMnu->exec(ui->textBrowser->viewport()->mapToGlobal(point));
 	delete(contextMnu);
@@ -1586,7 +1577,7 @@ void ChatWidget::fileHashingFinished(QList<HashedFile> hashedFiles)
 	QList<HashedFile>::iterator it;
 	for (it = hashedFiles.begin(); it != hashedFiles.end(); ++it) {
 		HashedFile& hashedFile = *it;
-		//QString ext = QFileInfo(hashedFile.filename).suffix();
+		QString ext = QFileInfo(hashedFile.filename).suffix().toUpper();
 
 		RetroShareLink link;
 
@@ -1598,9 +1589,23 @@ void ChatWidget::fileHashingFinished(QList<HashedFile> hashedFiles)
 			message += QString("<img src=\"file:///%1\" width=\"100\" height=\"100\">").arg(hashedFile.filepath);
 			message+="<br>";
 		} else {
-			QString image = FilesDefs::getImageFromFilename(hashedFile.filename, false);
-			if (!image.isEmpty()) {
-				message += QString("<img src=\"%1\">").arg(image);
+			bool preview = false;
+			if(hashedFiles.size()==1 && (ext == "JPG" || ext == "PNG" || ext == "JPEG" || ext == "GIF"))
+			{
+				QString encodedImage;
+				uint32_t maxMessageSize = this->maxMessageSize();
+				if (RsHtml::makeEmbeddedImage(hashedFile.filepath, encodedImage, 640*480, maxMessageSize - 200 - link.toHtmlSize().length()))
+				{	QTextDocumentFragment fragment = QTextDocumentFragment::fromHtml(encodedImage);
+					ui->chatTextEdit->textCursor().insertFragment(fragment);
+					preview=true;
+				}
+			}
+			if(!preview)
+			{
+				QString image = FilesDefs::getImageFromFilename(hashedFile.filename, false);
+				if (!image.isEmpty()) {
+					message += QString("<img src=\"%1\">").arg(image);
+				}
 			}
 		}
 		message += link.toHtmlSize();
@@ -1779,7 +1784,7 @@ void ChatWidget::updatePeersCustomStateString(const QString& /*peer_id*/, const 
 
 void ChatWidget::updateStatusString(const QString &statusMask, const QString &statusString, bool permanent)
 {
-	ui->typingLabel->setText(QString(statusMask).arg(tr(statusString.toUtf8()))); // displays info for 5 secs.
+	ui->typingLabel->setText(QString(statusMask).arg(trUtf8(statusString.toUtf8()))); // displays info for 5 secs.
 	ui->typingPixmapLabel->setPixmap(QPixmap(":images/typing.png") );
 
 	if (statusString == "is typing...") {

@@ -40,8 +40,8 @@ class RsGxsChanges
 public:
     RsGxsChanges(): mService(0){}
     RsTokenService *mService;
-    std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > mMsgs;
-    std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > mMsgsMeta;
+    std::map<RsGxsGroupId, std::set<RsGxsMessageId> > mMsgs;
+    std::map<RsGxsGroupId, std::set<RsGxsMessageId> > mMsgsMeta;
     std::list<RsGxsGroupId> mGrps;
     std::list<RsGxsGroupId> mGrpsMeta;
 };

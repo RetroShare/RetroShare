@@ -72,7 +72,7 @@ bdNodeManager::bdNodeManager(bdNodeId *id, std::string dhtVersion, std::string b
     :bdNode(id, dhtVersion, bootfile, filterfile, fns, this)
 {
 	mMode = BITDHT_MGR_STATE_OFF;
-	mFns = fns;
+	mDhtFns = fns;
 	mModeTS = 0 ;
 	mStartTS = 0;
 	mSearchingDone = false;
@@ -87,7 +87,7 @@ bdNodeManager::bdNodeManager(bdNodeId *id, std::string dhtVersion, std::string b
 
 #ifdef DEBUG_MGR
 	std::cerr << "bdNodeManager::bdNodeManager() ID: ";
-	mFns->bdPrintNodeId(std::cerr, id);
+	mDhtFns->bdPrintNodeId(std::cerr, id);
 	std::cerr << std::endl;
 #endif
 
@@ -188,7 +188,7 @@ void bdNodeManager::addFindNode(bdNodeId *id, uint32_t qflags)
 {
 #ifdef DEBUG_MGR
 	std::cerr << "bdNodeManager::addFindNode() ";
-	mFns->bdPrintNodeId(std::cerr, id);
+	mDhtFns->bdPrintNodeId(std::cerr, id);
 	std::cerr << std::endl;
 #endif
 	/* check if exists already */
@@ -257,7 +257,7 @@ void bdNodeManager::removeFindNode(bdNodeId *id)
 {
 #ifdef DEBUG_MGR
 	std::cerr << "bdNodeManager::removeFindNode() ";
-	mFns->bdPrintNodeId(std::cerr, id);
+	mDhtFns->bdPrintNodeId(std::cerr, id);
 	std::cerr << std::endl;
 #endif
 	std::map<bdNodeId, bdQueryPeer>::iterator it;	
@@ -525,7 +525,7 @@ int bdNodeManager::QueryRandomLocalNet()
 		else
 		{
 			/* calculate mid point */
-			mFns->bdRandomMidId(&mOwnId, &(id.id), &targetNodeId);
+			mDhtFns->bdRandomMidId(&mOwnId, &(id.id), &targetNodeId);
 		}
 
 		/* do standard find_peer message */
@@ -534,13 +534,13 @@ int bdNodeManager::QueryRandomLocalNet()
 			
 #ifdef DEBUG_MGR
 		std::cerr << "bdNodeManager::QueryRandomLocalNet() Querying : ";
-		mFns->bdPrintId(std::cerr, &id);
+		mDhtFns->bdPrintId(std::cerr, &id);
 		std::cerr << " searching for : ";
-		mFns->bdPrintNodeId(std::cerr, &targetNodeId);
+		mDhtFns->bdPrintNodeId(std::cerr, &targetNodeId);
 
 		bdMetric dist;
-		mFns->bdDistance(&targetNodeId, &(mOwnId), &dist);
-		int bucket = mFns->bdBucketDistance(&dist);
+		mDhtFns->bdDistance(&targetNodeId, &(mOwnId), &dist);
+		int bucket = mDhtFns->bdBucketDistance(&dist);
 		std::cerr << " in Bucket: " << bucket;
 		std::cerr << std::endl;
 #endif
@@ -593,7 +593,7 @@ void bdNodeManager::SearchForLocalNet()
 		{
 #ifdef DEBUG_MGR
             std::cerr << "bdNodeManager::SearchForLocalNet() Existing Internal Search: ";
-			mFns->bdPrintNodeId(std::cerr, &(it->first));
+			mDhtFns->bdPrintNodeId(std::cerr, &(it->first));
             std::cerr << std::endl;
 #endif
 
@@ -630,7 +630,7 @@ void bdNodeManager::SearchForLocalNet()
 		{
 #ifdef DEBUG_MGR
 			std::cerr << "bdNodeManager::SearchForLocalNet() " << i << " Attempts to find OkNode: ";
-			mFns->bdPrintNodeId(std::cerr, &targetNodeId);
+			mDhtFns->bdPrintNodeId(std::cerr, &targetNodeId);
 			std::cerr << std::endl;
 #endif
 		}
@@ -638,7 +638,7 @@ void bdNodeManager::SearchForLocalNet()
 		{
 #ifdef DEBUG_MGR
 			std::cerr << "bdNodeManager::SearchForLocalNet() Failed to Find FilterOk this time: ";
-			mFns->bdPrintNodeId(std::cerr, &targetNodeId);
+			mDhtFns->bdPrintNodeId(std::cerr, &targetNodeId);
 			std::cerr << std::endl;
 #endif
 		}
@@ -649,7 +649,7 @@ void bdNodeManager::SearchForLocalNet()
 
 #ifdef DEBUG_MGR
 		std::cerr << "bdNodeManager::SearchForLocalNet() Adding New Internal Search: ";
-		mFns->bdPrintNodeId(std::cerr, &(targetNodeId));
+		mDhtFns->bdPrintNodeId(std::cerr, &(targetNodeId));
 		std::cerr << std::endl;
 #endif
 	}
@@ -709,7 +709,7 @@ int bdNodeManager::checkStatus()
 				{
 #ifdef DEBUG_MGR
 					std::cerr << "bdNodeManager::checkStatus() Query in Progress id: ";
-					mFns->bdPrintNodeId(std::cerr, &(it->first));
+					mDhtFns->bdPrintNodeId(std::cerr, &(it->first));
 					std::cerr << std::endl;
 #endif
 				}
@@ -719,7 +719,7 @@ int bdNodeManager::checkStatus()
 				{
 #ifdef DEBUG_MGR
 					std::cerr << "bdNodeManager::checkStatus() Query Failed: id: ";
-					mFns->bdPrintNodeId(std::cerr, &(it->first));
+					mDhtFns->bdPrintNodeId(std::cerr, &(it->first));
 					std::cerr << std::endl;
 #endif
 					// BAD.
@@ -733,7 +733,7 @@ int bdNodeManager::checkStatus()
 				{
 #ifdef DEBUG_MGR
 					std::cerr << "bdNodeManager::checkStatus() Found Closest: id: ";
-					mFns->bdPrintNodeId(std::cerr, &(it->first));
+					mDhtFns->bdPrintNodeId(std::cerr, &(it->first));
 					std::cerr << std::endl;
 #endif
 
@@ -747,7 +747,7 @@ int bdNodeManager::checkStatus()
 				{
 #ifdef DEBUG_MGR
 					std::cerr << "bdNodeManager::checkStatus() the Peer Online but Unreachable: id: ";
-					mFns->bdPrintNodeId(std::cerr, &(it->first));
+					mDhtFns->bdPrintNodeId(std::cerr, &(it->first));
 					std::cerr << std::endl;
 #endif
 
@@ -761,7 +761,7 @@ int bdNodeManager::checkStatus()
 				{
 #ifdef DEBUG_MGR
 					std::cerr << "bdNodeManager::checkStatus() Found Query: id: ";
-					mFns->bdPrintNodeId(std::cerr, &(it->first));
+					mDhtFns->bdPrintNodeId(std::cerr, &(it->first));
 					std::cerr << std::endl;
 #endif
 					//foundId = 
@@ -803,7 +803,7 @@ int bdNodeManager::checkStatus()
 			doCallback = false;
 #ifdef DEBUG_MGR
 			std::cerr << "bdNodeManager::checkStatus() Internal: no cb for id: ";
-			mFns->bdPrintNodeId(std::cerr, &(it->first));
+			mDhtFns->bdPrintNodeId(std::cerr, &(it->first));
 			std::cerr << std::endl;
 #endif
 		}
@@ -1024,7 +1024,7 @@ int bdNodeManager::getDhtPeerAddress(const bdNodeId *id, struct sockaddr_in &fro
 {
 #ifdef DEBUG_MGR
 	std::cerr << "bdNodeManager::getDhtPeerAddress() Id: ";
-	mFns->bdPrintNodeId(std::cerr, id);
+	mDhtFns->bdPrintNodeId(std::cerr, id);
 	std::cerr << " ... ? TODO" << std::endl;
 #else
 	(void) id;
@@ -1034,7 +1034,7 @@ int bdNodeManager::getDhtPeerAddress(const bdNodeId *id, struct sockaddr_in &fro
 	pit = mActivePeers.find(*id);
 
 	std::cerr << "bdNodeManager::getDhtPeerAddress() Id: ";
-	mFns->bdPrintNodeId(std::cerr, id);
+	mDhtFns->bdPrintNodeId(std::cerr, id);
 	std::cerr << std::endl;
 
 	if (pit != mActivePeers.end())
@@ -1061,7 +1061,7 @@ int bdNodeManager::getDhtValue(const bdNodeId *id, std::string key, std::string 
 {
 #ifdef DEBUG_MGR
 	std::cerr << "bdNodeManager::getDhtValue() Id: ";
-	mFns->bdPrintNodeId(std::cerr, id);
+	mDhtFns->bdPrintNodeId(std::cerr, id);
 	std::cerr << " key: " << key;
 	std::cerr << " ... ? TODO" << std::endl;
 #else
@@ -1144,7 +1144,7 @@ void bdNodeManager::doNodeCallback(const bdId *id, uint32_t peerflags)
 {
 #ifdef DEBUG_MGR
 	std::cerr << "bdNodeManager::doNodeCallback() ";
-	mFns->bdPrintId(std::cerr, id);
+	mDhtFns->bdPrintId(std::cerr, id);
 	std::cerr << "peerflags: " << peerflags;
 	std::cerr << std::endl;
 #endif
@@ -1163,7 +1163,7 @@ void bdNodeManager::doPeerCallback(const bdId *id, uint32_t status)
 
 #ifdef DEBUG_MGR
 	std::cerr << "bdNodeManager::doPeerCallback()";
-	mFns->bdPrintId(std::cerr, id);
+	mDhtFns->bdPrintId(std::cerr, id);
 	std::cerr << "status: " << status;
 	std::cerr << std::endl;
 #endif
