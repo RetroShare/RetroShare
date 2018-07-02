@@ -4,8 +4,9 @@
 RsGxsUpdateBroadcastWidget::RsGxsUpdateBroadcastWidget(RsGxsIfaceHelper *ifaceImpl, QWidget *parent, Qt::WindowFlags flags)
 	: QWidget(parent, flags)
 {
-	mBase = new RsGxsUpdateBroadcastBase(ifaceImpl, this);
-	connect(mBase, SIGNAL(fillDisplay(bool)), this, SLOT(fillDisplay(bool)));
+    mBase = new RsGxsUpdateBroadcastBase(ifaceImpl, this);
+    // The Queued connection is here to circumvent an apparent mutex problem in Qt
+    connect(mBase, SIGNAL(fillDisplay(bool)), this, SLOT(fillDisplay(bool)),Qt::QueuedConnection);
 
 	mInterfaceHelper = ifaceImpl;
 }
@@ -13,6 +14,7 @@ RsGxsUpdateBroadcastWidget::RsGxsUpdateBroadcastWidget(RsGxsIfaceHelper *ifaceIm
 RsGxsUpdateBroadcastWidget::~RsGxsUpdateBroadcastWidget()
 {
 }
+
 
 void RsGxsUpdateBroadcastWidget::fillComplete()
 {
