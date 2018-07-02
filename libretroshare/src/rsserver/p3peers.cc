@@ -1048,9 +1048,11 @@ bool p3Peers::setProxyServer(const uint32_t type, const std::string &addr_str, c
 
 //===========================================================================
 	/* Auth Stuff */
-std::string p3Peers::GetRetroshareInvite(bool include_signatures)
+std::string p3Peers::GetRetroshareInvite(
+        bool include_signatures, bool includeExtraLocators )
 {
-	return GetRetroshareInvite(getOwnId(),include_signatures);
+	return GetRetroshareInvite(
+	            getOwnId(), include_signatures, includeExtraLocators );
 }
 std::string p3Peers::getPGPKey(const RsPgpId& pgp_id,bool include_signatures)
 {
@@ -1101,37 +1103,42 @@ bool p3Peers::GetPGPBase64StringAndCheckSum(	const RsPgpId& gpg_id,
 	return true ;
 }
 
-std::string p3Peers::GetRetroshareInvite(const RsPeerId& ssl_id,bool include_signatures)
+std::string p3Peers::GetRetroshareInvite(
+        const RsPeerId& ssl_id, bool include_signatures,
+        bool includeExtraLocators )
 {
 #ifdef P3PEERS_DEBUG
-	std::cerr << "p3Peers::GetRetroshareInvite()" << std::endl;
+	std::cerr << __PRETTY_FUNCTION__ << std::endl;
 #endif
 
 	//add the sslid, location, ip local and external address after the signature
-	RsPeerDetails Detail;
-	std::string invite ;
+	RsPeerDetails detail;
+	std::string invite;
 
-	if (getPeerDetails(ssl_id, Detail)) 
+	if (getPeerDetails(ssl_id, detail))
 	{
-		unsigned char *mem_block = NULL;
+		if(!includeExtraLocators) detail.ipAddressList.clear();
+
+		unsigned char *mem_block = nullptr;
 		size_t mem_block_size = 0;
 
-		if(!AuthGPG::getAuthGPG()->exportPublicKey(RsPgpId(Detail.gpg_id),mem_block,mem_block_size,false,include_signatures))
+		if(!AuthGPG::getAuthGPG()->exportPublicKey(
+		            RsPgpId(detail.gpg_id), mem_block, mem_block_size, false,
+		            include_signatures ))
 		{
-			std::cerr << "Cannot output certificate for id \"" << Detail.gpg_id << "\". Sorry." << std::endl;
-			return "" ;
+			std::cerr << "Cannot output certificate for id \"" << detail.gpg_id
+			          << "\". Sorry." << std::endl;
+			return "";
 		}
 
-		RsCertificate cert( Detail,mem_block,mem_block_size ) ;
+		RsCertificate cert(detail, mem_block, mem_block_size);
+		delete[] mem_block;
 
-        delete[] mem_block ;
-
-		return cert.toStdString() ;
-
+		return cert.toStdString();
 	}
 
 #ifdef P3PEERS_DEBUG
-	std::cerr << "p3Peers::GetRetroshareInvite() returns : \n" << invite << std::endl;
+	std::cerr << __PRETTY_FUNCTION__ << " returns : \n" << invite << std::endl;
 #endif
 	return invite;
 }

@@ -115,11 +115,15 @@ public:
 
 	/* Auth Stuff */
 	// Get the invitation (GPG cert + local/ext address + SSL id for the given peer)
-	virtual	std::string GetRetroshareInvite(const RsPeerId& ssl_id,bool include_signatures);
-	virtual	std::string getPGPKey(const RsPgpId& pgp_id,bool include_signatures) ;
+	virtual	std::string GetRetroshareInvite(
+	        const RsPeerId& ssl_id, bool include_signatures = false,
+	        bool includeExtraLocators = true );
+	virtual	std::string getPGPKey(const RsPgpId& pgp_id,bool include_signatures);
 
 	// same but for own id
-	virtual	std::string GetRetroshareInvite(bool include_signatures);
+	virtual	std::string GetRetroshareInvite(
+	        bool include_signatures = false,
+	        bool includeExtraLocators = true );
 	virtual bool GetPGPBase64StringAndCheckSum(const RsPgpId& gpg_id,std::string& gpg_base64_string,std::string& gpg_base64_checksum);
 
 	virtual bool hasExportMinimal();

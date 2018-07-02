@@ -386,11 +386,30 @@ public:
 	virtual bool resetOwnExternalAddressList() = 0;
 	virtual bool getAllowServerIPDetermination() = 0 ;
 
+	/**
+	 * @brief Get RetroShare invite of the given peer
+	 * @param[in] sslId Id of the peer of which we want to generate an invite
+	 * @param[in] includeSignatures true to add key signatures to the invite
+	 * @param[in] includeExtraLocators false to avoid to add extra locators
+	 * @return invite string
+	 */
+	virtual std::string GetRetroshareInvite(
+	        const RsPeerId& sslId, bool includeSignatures = false,
+	        bool includeExtraLocators = true ) = 0;
+
+	/**
+	 * @brief Get RetroShare invite of our own peer
+	 * @param[in] includeSignatures true to add key signatures to the invite
+	 * @param[in] includeExtraLocators false to avoid to add extra locators
+	 * @return invite string
+	 */
+	virtual	std::string GetRetroshareInvite(
+	        bool includeSignatures = false,
+	        bool includeExtraLocators = true ) = 0;
+
 	/* Auth Stuff */
-	virtual	std::string GetRetroshareInvite(const RsPeerId& ssl_id,bool include_signatures) = 0;
 	virtual	std::string getPGPKey(const RsPgpId& pgp_id,bool include_signatures) = 0;
 	virtual bool GetPGPBase64StringAndCheckSum(const RsPgpId& gpg_id,std::string& gpg_base64_string,std::string& gpg_base64_checksum) = 0;
-	virtual	std::string GetRetroshareInvite(bool include_signatures) = 0;
 	virtual  bool hasExportMinimal() = 0;
 
 	// Add keys to the keyring
