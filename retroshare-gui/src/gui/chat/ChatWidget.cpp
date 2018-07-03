@@ -110,7 +110,7 @@ ChatWidget::ChatWidget(QWidget *parent) :
 	ui->searchButton->setIconSize(iconSize);
 	ui->sendButton->setFixedHeight(iconHeight);
 	ui->sendButton->setIconSize(iconSize);
-  
+
 	//Initialize search
 	iCharToStartSearch=Settings->getChatSearchCharToStartSearch();
 	bFindCaseSensitively=Settings->getChatSearchCaseSensitively();
@@ -177,7 +177,7 @@ ChatWidget::ChatWidget(QWidget *parent) :
 
 	ui->infoFrame->setVisible(false);
 	ui->statusMessageLabel->hide();
-	
+
 	setAcceptDrops(true);
 	ui->chatTextEdit->setAcceptDrops(false);
 	ui->hashBox->setDropWidget(this);
@@ -197,7 +197,7 @@ ChatWidget::ChatWidget(QWidget *parent) :
 	menu->addAction(ui->actionMessageHistory);
 	ui->pushtoolsButton->setMenu(menu);
 	menu->addMenu(fontmenu);
-	
+
 	ui->actionSendAsPlainText->setChecked(Settings->getChatSendAsPlainTextByDef());
 	ui->chatTextEdit->setOnlyPlainText(ui->actionSendAsPlainText->isChecked());
 	connect(ui->actionSendAsPlainText, SIGNAL(toggled(bool)), ui->chatTextEdit, SLOT(setOnlyPlainText(bool)) );
@@ -357,12 +357,12 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
         ui->titleBarFrame->setVisible(false);
     }
 
-	if (rsHistory->getEnable(hist_chat_type)) 
+	if (rsHistory->getEnable(hist_chat_type))
 	{
 		// get chat messages from history
 		std::list<HistoryMsg> historyMsgs;
 
-		if (messageCount > 0) 
+		if (messageCount > 0)
 		{
             rsHistory->getMessages(chatId, historyMsgs, messageCount);
 
@@ -376,7 +376,7 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
                     continue;
 
                 QString name;
-                if (chatId.isLobbyId() || chatId.isDistantChatId()) 
+                if (chatId.isLobbyId() || chatId.isDistantChatId())
                 {
                     RsIdentityDetails details;
                     if (rsIdentity->getIdDetails(RsGxsId(historyIt->peerName), details))
@@ -962,7 +962,7 @@ void ChatWidget::addChatMsg(bool incoming, const QString &name, const RsGxsId gx
 	unsigned int formatFlag = 0;
 
     bool addDate = false;
-    if (QDate::currentDate()>lastMsgDate) 
+    if (QDate::currentDate()>lastMsgDate)
 	 {
 		 addDate=true;
     }
@@ -1165,13 +1165,14 @@ void ChatWidget::resetStatusBar()
 
 void ChatWidget::updateStatusTyping()
 {
+	if(Settings->getChatDoNotSendIsTyping())
+		return;
 	if (time(NULL) - lastStatusSendTime > 5)	// limit 'peer is typing' packets to at most every 10 sec
 	{
 #ifdef ONLY_FOR_LINGUIST
 		tr("is typing...");
 #endif
-		if(!Settings->getChatDoNotSendIsTyping())
-			rsMsgs->sendStatusString(chatId, "is typing...");
+		rsMsgs->sendStatusString(chatId, "is typing...");
 		lastStatusSendTime = time(NULL) ;
 	}
 }
@@ -1677,7 +1678,7 @@ void ChatWidget::updateStatus(const QString &peer_id, int status)
         vpid = chatId.toPeerId();
 
 	/* set font size for status  */
-    if (peer_id.toStdString() == vpid.toStdString()) 
+    if (peer_id.toStdString() == vpid.toStdString())
     {
 	    // the peers status has changed
 
