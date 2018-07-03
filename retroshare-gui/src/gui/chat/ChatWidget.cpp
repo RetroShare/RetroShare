@@ -1096,6 +1096,10 @@ void ChatWidget::contextMenuTextBrowser(QPoint point)
 	contextMnu->addSeparator();
 	contextMnu->addAction(ui->actionClearChatHistory);
 	contextMnu->addAction(ui->actionQuote);
+	if (ui->textBrowser->textCursor().selection().toPlainText().length() == 0)
+		ui->actionQuote->setEnabled(false);
+	else
+		ui->actionQuote->setEnabled(true);
 	contextMnu->addAction(ui->actionDropPlacemark);
 
 	if(ui->textBrowser->checkImage(point))
