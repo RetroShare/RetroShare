@@ -80,7 +80,7 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::Wi
 
 	connect(ui.filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterChanged(QString)));
 
-            int S = QFontMetricsF(font()).height() ;
+		int S = QFontMetricsF(font()).height() ;
     ui.participantsList->setIconSize(QSize(1.4*S,1.4*S));
 
     ui.participantsList->setColumnCount(COLUMN_COUNT);
@@ -128,23 +128,27 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::Wi
 	QString headerText = headerItem->text(COLUMN_NAME );
 	ui.filterLineEdit->addFilter(QIcon(), headerText, COLUMN_NAME , QString("%1 %2").arg(tr("Search"), headerText));
 
+	// just empiric values
+	double scaler_factor = S > 25 ? 2.4 : 1.8;
+	QSize icon_size(scaler_factor * S, scaler_factor * S);
+
 	// Add a button to invite friends.
 	//
 	inviteFriendsButton = new QToolButton ;
-  inviteFriendsButton->setMinimumSize(QSize(2.4*S,2.4*S)) ;
-  inviteFriendsButton->setMaximumSize(QSize(2.4*S,2.4*S)) ;
+	inviteFriendsButton->setMinimumSize(icon_size);
+	inviteFriendsButton->setMaximumSize(icon_size);
 	inviteFriendsButton->setText(QString()) ;
 	inviteFriendsButton->setAutoRaise(true) ;
 	inviteFriendsButton->setToolTip(tr("Invite friends to this lobby"));
 
-        mParticipantCompareRole = new RSTreeWidgetItemCompareRole;
-        mParticipantCompareRole->setRole(COLUMN_ACTIVITY, ROLE_SORT);
+	mParticipantCompareRole = new RSTreeWidgetItemCompareRole;
+	mParticipantCompareRole->setRole(COLUMN_ACTIVITY, ROLE_SORT);
 
 	{
 	QIcon icon ;
 	icon.addPixmap(QPixmap(":/icons/png/invite.png")) ;
 	inviteFriendsButton->setIcon(icon) ;
-    inviteFriendsButton->setIconSize(QSize(2.4*S,2.4*S)) ;
+	inviteFriendsButton->setIconSize(icon_size);
 	}
 
 	connect(inviteFriendsButton, SIGNAL(clicked()), this , SLOT(inviteFriends()));
@@ -175,9 +179,9 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::Wi
 
     connect(ownIdChooser,SIGNAL(currentIndexChanged(int)),this,SLOT(changeNickname())) ;
 
-    unsubscribeButton = new QToolButton ;
-    unsubscribeButton->setMinimumSize(QSize(2.4*S,2.4*S)) ;
-    unsubscribeButton->setMaximumSize(QSize(2.4*S,2.4*S)) ;
+	unsubscribeButton = new QToolButton;
+	unsubscribeButton->setMinimumSize(icon_size);
+	unsubscribeButton->setMaximumSize(icon_size);
 	unsubscribeButton->setText(QString()) ;
 	unsubscribeButton->setAutoRaise(true) ;
 	unsubscribeButton->setToolTip(tr("Leave this chat room (Unsubscribe)"));
@@ -186,7 +190,7 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::Wi
 	QIcon icon ;
 	icon.addPixmap(QPixmap(":/icons/png/leave.png")) ;
 	unsubscribeButton->setIcon(icon) ;
-    unsubscribeButton->setIconSize(QSize(2.4*S,2.4*S)) ;
+	unsubscribeButton->setIconSize(icon_size);
 	}
 
 	/* Initialize splitter */

@@ -65,6 +65,8 @@
 #include <time.h>
 
 #define FMM 2.5//fontMetricsMultiplicator
+#define FMM_SMALLER 1.8
+#define FMM_THRESHOLD 25
 
 /*****
  * #define CHAT_DEBUG 1
@@ -75,9 +77,12 @@ ChatWidget::ChatWidget(QWidget *parent) :
 {
 	ui->setupUi(this);
 
-	int iconHeight = FMM*QFontMetricsF(font()).height() ;
-	QSize iconSize = QSize(iconHeight,iconHeight);
-	QSize buttonSize = QSize(iconSize + QSize((int)FMM,(int)FMM));
+	int iconHeight = QFontMetricsF(font()).height();
+	double fmm = iconHeight > FMM_THRESHOLD ? FMM : FMM_SMALLER;
+	iconHeight *= fmm;
+	QSize iconSize = QSize(iconHeight, iconHeight);
+	int butt_size(iconSize.height() + fmm);
+	QSize buttonSize = QSize(butt_size, butt_size);
 
 	newMessages = false;
 	typing = false;
@@ -259,9 +264,12 @@ void ChatWidget::addChatHorizontalWidget(QWidget *w)
 
 void ChatWidget::addChatBarWidget(QWidget *w)
 {
-	int iconHeight = FMM*QFontMetricsF(font()).height() ;
-	QSize iconSize = QSize(iconHeight,iconHeight);
-	QSize buttonSize = QSize(iconSize + QSize((int)FMM,(int)FMM));
+	int iconHeight = QFontMetricsF(font()).height();
+	double fmm = iconHeight > FMM_THRESHOLD ? FMM : FMM_SMALLER;
+	iconHeight *= fmm;
+	QSize iconSize = QSize(iconHeight, iconHeight);
+	int butt_size(iconSize.height() + fmm);
+	QSize buttonSize = QSize(butt_size, butt_size);
 	w->setFixedSize(buttonSize);
 	ui->pluginButtonFrame->layout()->addWidget(w) ;
 }
