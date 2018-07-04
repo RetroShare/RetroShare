@@ -304,6 +304,7 @@ static const uint32_t REJECTED_MESSAGE_RETRY_DELAY            =      24*3600; //
 static const uint32_t GROUP_STATS_UPDATE_DELAY                =          240; // update unsubscribed group statistics every 3 mins
 static const uint32_t GROUP_STATS_UPDATE_NB_PEERS             =            2; // number of peers to which the group stats are asked
 static const uint32_t MAX_ALLOWED_GXS_MESSAGE_SIZE            =       199000; // 200,000 bytes including signature and headers
+static const uint32_t MIN_DELAY_BETWEEN_GROUP_SEARCH          =           40; // dont search same group more than every 40 secs.
 
 static const uint32_t RS_NXS_ITEM_ENCRYPTION_STATUS_UNKNOWN             = 0x00 ;
 static const uint32_t RS_NXS_ITEM_ENCRYPTION_STATUS_NO_ERROR            = 0x01 ;
@@ -379,6 +380,8 @@ RsGxsNetService::RsGxsNetService(uint16_t servType, RsGeneralDataService *gds,
 	addSerialType(new RsNxsSerialiser(mServType));
 	mOwnId = mNetMgr->getOwnId();
     mUpdateCounter = 0;
+
+	mLastCacheReloadTS = 0;
 
 	// check the consistency
 
@@ -5106,7 +5109,25 @@ bool RsGxsNetService::locked_stampMsgServerUpdateTS(const RsGxsGroupId& gid)
 
 TurtleRequestId RsGxsNetService::turtleGroupRequest(const RsGxsGroupId& group_id)
 {
+    time_t now = time(NULL);
+    auto it = mSearchedGroups.find(group_id) ;
+
+    if(mSearchedGroups.end() != it && (it->second.ts + MIN_DELAY_BETWEEN_GROUP_SEARCH > now))
+    {
+        std::cerr << "(WW) Last turtle request was " << now - it->second.ts << " secs ago. Not searching again." << std::endl;
+        return it->second.request_id;
+    }
+
+#ifdef NXS_NET_DEBUG_8
+	GXSNETDEBUG__G(group_id) << "  requesting group id " << group_id << " using turtle" << std::endl;
+#endif
 	TurtleRequestId req = mGxsNetTunnel->turtleGroupRequest(group_id,this) ;
+
+    GroupRequestRecord& rec(mSearchedGroups[group_id]) ;
+
+	rec.request_id = req;
+	rec.ts         = now;
+
     mSearchRequests[req] = group_id;
 
     return req;
@@ -5302,7 +5323,7 @@ bool RsGxsNetService::search(const Sha1CheckSum& hashed_group_id,unsigned char *
 	{
 		// Now check if the last request was too close in time, in which case, we dont retrieve data.
 
-		if(mLastCacheReloadTS + 60 < time(NULL))
+		if(mLastCacheReloadTS + 60 > time(NULL))
 		{
 			std::cerr << "(WW) Not found in cache, and last cache reload less than 60 secs ago. Returning false. " << std::endl;
 			return false ;
@@ -5315,6 +5336,7 @@ bool RsGxsNetService::search(const Sha1CheckSum& hashed_group_id,unsigned char *
 		{
 			RS_STACK_MUTEX(mNxsMutex) ;
 			mDataStore->retrieveNxsGrps(grpDataMap, true, true);
+            mLastCacheReloadTS = time(NULL);
 		}
 
         for(auto it(grpDataMap.begin());it!=grpDataMap.end();++it)

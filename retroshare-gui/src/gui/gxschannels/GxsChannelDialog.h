@@ -53,6 +53,8 @@ protected:
     virtual bool getDistantSearchResults(TurtleRequestId id, std::map<RsGxsGroupId,RsGxsGroupSummary>& group_infos);
 
 	virtual TurtleRequestId distantSearch(const QString& search_string) ;
+    virtual void checkRequestGroup(const RsGxsGroupId& grpId) ;
+
 private slots:
 	void toggleAutoDownload();
         void setDefaultDirectory();

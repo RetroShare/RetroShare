@@ -95,6 +95,7 @@ protected:
 	virtual RetroShareLink::enumType getLinkType() = 0;
 	virtual GroupFrameSettings::Type groupFrameSettingsType() { return GroupFrameSettings::Nothing; }
 	virtual void groupInfoToGroupItemInfo(const RsGroupMetaData &groupInfo, GroupItemInfo &groupItemInfo, const RsUserdata *userdata);
+    virtual void checkRequestGroup(const RsGxsGroupId& grpId) {}
 
 private slots:
 	void todo();

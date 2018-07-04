@@ -59,6 +59,14 @@ class RsGroupNetworkStatsRecord
     time_t update_TS ;
 };
 
+struct GroupRequestRecord
+{
+    GroupRequestRecord(): ts(0), request_id(0) {}
+
+    time_t ts ;
+    TurtleRequestId request_id;
+};
+
 /*!
  * This class implements the RsNetWorkExchangeService
  * using transactions to handle synchrnisation of Nxs items between
@@ -615,6 +623,7 @@ private:
 
     std::map<Sha1CheckSum, RsNxsGrp*> mGroupHashCache;
     std::map<TurtleRequestId,RsGxsGroupId> mSearchRequests;
+    std::map<RsGxsGroupId,GroupRequestRecord> mSearchedGroups ;
     time_t mLastCacheReloadTS ;
 };
 

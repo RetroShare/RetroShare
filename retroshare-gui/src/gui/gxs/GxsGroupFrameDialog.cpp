@@ -767,6 +767,9 @@ void GxsGroupFrameDialog::changedCurrentGroup(const QString &groupId)
 		return;
 	}
 
+    // send a request for the group, if it has been distant-searched.
+    checkRequestGroup(mGroupId) ;
+
 	/* search exisiting tab */
 	GxsMessageFrameWidget *msgWidget = messageWidget(mGroupId, true);
 
