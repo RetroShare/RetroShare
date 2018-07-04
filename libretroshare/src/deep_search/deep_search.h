@@ -17,17 +17,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <ctime>
 #include <vector>
 #include <xapian.h>
 
 #include "retroshare/rsgxschannels.h"
 #include "retroshare/rsinit.h"
+#include "util/rsurl.h"
 
 struct DeepSearch
 {
 	struct SearchResult
 	{
-		// TODO: Use RsUrl from extra_locators branch instead of plain string
 		std::string mUrl;
 		std::string mSnippet;
 	};
@@ -90,6 +91,11 @@ struct DeepSearch
 
 		// Index each field with a suitable prefix.
 		termgenerator.index_text(chan.mMeta.mGroupName, 1, "G");
+
+		char date[] = "YYYYMMDD\0";
+		std::strftime(date, 9, "%Y%m%d", std::gmtime(&chan.mMeta.mPublishTs));
+		termgenerator.index_text(date, 1, "D");
+
 		termgenerator.index_text(chan.mDescription, 1, "XD");
 
 		// Index fields without prefixes for general search.
@@ -97,8 +103,14 @@ struct DeepSearch
 		termgenerator.increase_termpos();
 		termgenerator.index_text(chan.mDescription);
 
-		std::string rsLink("retroshare://channel?id=");
-		rsLink += chan.mMeta.mGroupId.toStdString();
+		RsUrl chanUrl; chanUrl
+		        .setScheme("retroshare").setPath("/channel")
+		        .setQueryKV("id", chan.mMeta.mGroupId.toStdString());
+		const std::string idTerm("Q" + chanUrl.toString());
+
+		chanUrl.setQueryKV("publishDate", date);
+		chanUrl.setQueryKV("name", chan.mMeta.mGroupName);
+		std::string rsLink(chanUrl.toString());
 
 		// store the RS link so we are able to retrive it on matching search
 		doc.add_value(URL_VALUENO, rsLink);
@@ -109,7 +121,6 @@ struct DeepSearch
 		// We use the identifier to ensure each object ends up in the
 		// database only once no matter how many times we run the
 		// indexer. "Q" prefix is a Xapian convention for unique id term.
-		const std::string idTerm("Q" + rsLink);
 		doc.add_boolean_term(idTerm);
 		db.replace_document(idTerm, doc);
 	}
@@ -117,8 +128,10 @@ struct DeepSearch
 	static void removeChannelFromIndex(RsGxsGroupId grpId)
 	{
 		// "Q" prefix is a Xapian convention for unique id term.
-		std::string idTerm("Qretroshare://channel?id=");
-		idTerm += grpId.toStdString();
+		RsUrl chanUrl; chanUrl
+		        .setScheme("retroshare").setPath("/channel")
+		        .setQueryKV("id", grpId.toStdString());
+		std::string idTerm("Q" + chanUrl.toString());
 
 		Xapian::WritableDatabase db(dbPath(), Xapian::DB_CREATE_OR_OPEN);
 		db.delete_document(idTerm);
@@ -138,22 +151,70 @@ struct DeepSearch
 
 		// Index each field with a suitable prefix.
 		termgenerator.index_text(post.mMeta.mMsgName, 1, "S");
-		termgenerator.index_text(post.mMsg, 1, "XD");
+
+		char date[] = "YYYYMMDD\0";
+		std::strftime(date, 9, "%Y%m%d", std::gmtime(&post.mMeta.mPublishTs));
+		termgenerator.index_text(date, 1, "D");
+
+		// Avoid indexing HTML
+		bool isPlainMsg = post.mMsg[0] != '<' || post.mMsg[post.mMsg.size() - 1] != '>';
+
+		if(isPlainMsg)
+			termgenerator.index_text(post.mMsg, 1, "XD");
 
 		// Index fields without prefixes for general search.
 		termgenerator.index_text(post.mMeta.mMsgName);
-		termgenerator.increase_termpos();
-		termgenerator.index_text(post.mMsg);
+		if(isPlainMsg)
+		{
+			termgenerator.increase_termpos();
+			termgenerator.index_text(post.mMsg);
+		}
+
+		for(const RsGxsFile& attachment : post.mFiles)
+		{
+			termgenerator.index_text(attachment.mName, 1, "F");
+
+			termgenerator.increase_termpos();
+			termgenerator.index_text(attachment.mName);
+		}
 
 		// We use the identifier to ensure each object ends up in the
 		// database only once no matter how many times we run the
 		// indexer.
-		std::string idTerm("Qretroshare://channel?id=");
-		idTerm += post.mMeta.mGroupId.toStdString();
-		idTerm += "&msgid=";
-		idTerm += post.mMeta.mMsgId.toStdString();
+		RsUrl postUrl; postUrl
+		        .setScheme("retroshare").setPath("/channel")
+		        .setQueryKV("id", post.mMeta.mGroupId.toStdString())
+		        .setQueryKV("msgid", post.mMeta.mMsgId.toStdString());
+		std::string idTerm("Q" + postUrl.toString());
+
+		postUrl.setQueryKV("publishDate", date);
+		postUrl.setQueryKV("name", post.mMeta.mMsgName);
+		std::string rsLink(postUrl.toString());
+
+		// store the RS link so we are able to retrive it on matching search
+		doc.add_value(URL_VALUENO, rsLink);
+
+		// Store some fields for display purposes.
+		if(isPlainMsg)
+			doc.set_data(post.mMeta.mMsgName + "\n" + post.mMsg);
+		else doc.set_data(post.mMeta.mMsgName);
+
 		doc.add_boolean_term(idTerm);
 		db.replace_document(idTerm, doc);
+	}
+
+	static void removeChannelPostFromIndex(
+	        RsGxsGroupId grpId, RsGxsMessageId msgId )
+	{
+		RsUrl postUrl; postUrl
+		        .setScheme("retroshare").setPath("/channel")
+		        .setQueryKV("id", grpId.toStdString())
+		        .setQueryKV("msgid", msgId.toStdString());
+		// "Q" prefix is a Xapian convention for unique id term.
+		std::string idTerm("Q" + postUrl.toString());
+
+		Xapian::WritableDatabase db(dbPath(), Xapian::DB_CREATE_OR_OPEN);
+		db.delete_document(idTerm);
 	}
 
 private:

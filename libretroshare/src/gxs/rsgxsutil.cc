@@ -166,6 +166,7 @@ bool RsGxsIntegrityCheck::check()
 {
 #ifdef RS_DEEP_SEARCH
 	bool isGxsChannels = dynamic_cast<p3GxsChannels*>(mGenExchangeClient);
+	std::set<RsGxsGroupId> indexedGroups;
 #endif
 
     // first take out all the groups
@@ -232,6 +233,7 @@ bool RsGxsIntegrityCheck::check()
 					cgIt->toChannelGroup(cg, false);
 					cg.mMeta = meta;
 
+					indexedGroups.insert(grp->grpId);
 					DeepSearch::indexChannelGroup(cg);
 				}
 				else
@@ -309,53 +311,99 @@ bool RsGxsIntegrityCheck::check()
 		    }
 
 		    if (nxsMsgIt == nxsMsgV.end())
-		    {
-			    msgsToDel[grpId].insert(msgId);
+			{
+				msgsToDel[grpId].insert(msgId);
+#ifdef RS_DEEP_SEARCH
+				if(isGxsChannels)
+					DeepSearch::removeChannelPostFromIndex(grpId, msgId);
+#endif
 		    }
 	    }
     }
 
-    GxsMsgResult::iterator mit = msgs.begin();
+	GxsMsgResult::iterator mit = msgs.begin();
+	for(; mit != msgs.end(); ++mit)
+	{
+		std::vector<RsNxsMsg*>& msgV = mit->second;
+		std::vector<RsNxsMsg*>::iterator vit = msgV.begin();
 
-    for(; mit != msgs.end(); ++mit)
-    {
-	    std::vector<RsNxsMsg*>& msgV = mit->second;
-	    std::vector<RsNxsMsg*>::iterator vit = msgV.begin();
+		for(; vit != msgV.end(); ++vit)
+		{
+			RsNxsMsg* msg = *vit;
+			RsFileHash currHash;
+			pqihash pHash;
+			pHash.addData(msg->msg.bin_data, msg->msg.bin_len);
+			pHash.Complete(currHash);
 
-	    for(; vit != msgV.end(); ++vit)
-	    {
-		    RsNxsMsg* msg = *vit;
-		    RsFileHash currHash;
-		    pqihash pHash;
-		    pHash.addData(msg->msg.bin_data, msg->msg.bin_len);
-		    pHash.Complete(currHash);
-
-		    if(msg->metaData == NULL || currHash != msg->metaData->mHash)
-		    {
-			    std::cerr << "(EE) deleting message data with wrong hash or null meta data. meta=" << (void*)msg->metaData << std::endl;
-			    msgsToDel[msg->grpId].insert(msg->msgId);
-		    }
-		    else if(!msg->metaData->mAuthorId.isNull() && subscribed_groups.find(msg->metaData->mGroupId)!=subscribed_groups.end())
-		    {
-#ifdef DEBUG_GXSUTIL
-			    GXSUTIL_DEBUG() << "TimeStamping message authors' key ID " << msg->metaData->mAuthorId << " in message " << msg->msgId << ", group ID " << msg->grpId<< std::endl;
+			if(msg->metaData == NULL || currHash != msg->metaData->mHash)
+			{
+				std::cerr << __PRETTY_FUNCTION__ <<" (EE) deleting message data"
+				          << " with wrong hash or null meta data. meta="
+				          << (void*)msg->metaData << std::endl;
+				msgsToDel[msg->grpId].insert(msg->msgId);
+#ifdef RS_DEEP_SEARCH
+				if(isGxsChannels)
+					DeepSearch::removeChannelPostFromIndex(msg->grpId, msg->msgId);
 #endif
-			    if(rsReputations!=NULL && rsReputations->overallReputationLevel(msg->metaData->mAuthorId) > RsReputations::REPUTATION_LOCALLY_NEGATIVE)
-				    used_gxs_ids.insert(std::make_pair(msg->metaData->mAuthorId,RsIdentityUsage(mGenExchangeClient->serviceType(),RsIdentityUsage::MESSAGE_AUTHOR_KEEP_ALIVE,msg->metaData->mGroupId,msg->metaData->mMsgId))) ;
-		    }
+			}
+			else if (subscribed_groups.count(msg->metaData->mGroupId))
+			{
+#ifdef RS_DEEP_SEARCH
+				if( isGxsChannels
+				        && indexedGroups.count(msg->metaData->mGroupId) )
+				{
+					RsGxsMsgMetaData meta;
+					meta.deserialise(msg->meta.bin_data, &msg->meta.bin_len);
+
+					uint32_t blz = msg->msg.bin_len;
+					RsItem* rIt = mSerializer.deserialise(msg->msg.bin_data,
+					                                      &blz);
+
+					if( RsGxsChannelPostItem* cgIt =
+					        dynamic_cast<RsGxsChannelPostItem*>(rIt) )
+					{
+						RsGxsChannelPost cg;
+						cgIt->toChannelPost(cg, false);
+						cg.mMeta = meta;
+
+						DeepSearch::indexChannelPost(cg);
+					}
+					else if(dynamic_cast<RsGxsCommentItem*>(rIt)) {}
+					else if(dynamic_cast<RsGxsVoteItem*>(rIt)) {}
+					else
+					{
+						std::cerr << __PRETTY_FUNCTION__ << " Message: "
+						          << meta.mMsgId.toStdString()
+						          << " in group: "
+						          << meta.mGroupId.toStdString() << " "
+						          << " doesn't seems a channel post, please "
+						          << "report to developers"
+						          << std::endl;
+						print_stacktrace();
+					}
+
+					delete rIt;
+				}
+#endif
+
+				if(!msg->metaData->mAuthorId.isNull())
+				{
+#ifdef DEBUG_GXSUTIL
+					GXSUTIL_DEBUG() << "TimeStamping message authors' key ID " << msg->metaData->mAuthorId << " in message " << msg->msgId << ", group ID " << msg->grpId<< std::endl;
+#endif
+					if(rsReputations!=NULL && rsReputations->overallReputationLevel(msg->metaData->mAuthorId) > RsReputations::REPUTATION_LOCALLY_NEGATIVE)
+						used_gxs_ids.insert(std::make_pair(msg->metaData->mAuthorId,RsIdentityUsage(mGenExchangeClient->serviceType(),RsIdentityUsage::MESSAGE_AUTHOR_KEEP_ALIVE,msg->metaData->mGroupId,msg->metaData->mMsgId))) ;
+				}
+			}
 
 		    delete msg;
 	    }
     }
 
-#ifdef RS_DEEP_SEARCH
-	// TODO:remove msgsToDel from deep search index too
-#endif
-
     mDs->removeMsgs(msgsToDel);
 
 	{
-		RsStackMutex stack(mIntegrityMutex);
+		RS_STACK_MUTEX(mIntegrityMutex);
 
 		std::vector<RsGxsGroupId>::iterator grpIt;
 		for(grpIt = grpsToDel.begin(); grpIt != grpsToDel.end(); ++grpIt)
