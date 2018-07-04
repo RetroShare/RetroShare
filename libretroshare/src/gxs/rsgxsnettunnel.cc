@@ -1064,7 +1064,7 @@ bool RsGxsNetTunnelService::receiveSearchRequest(unsigned char *search_request_d
         {
 			RsGxsNetTunnelTurtleSearchGroupDataItem search_result_item ;
 
-            search_result_item.service = substring_sr->service ;
+            search_result_item.service = substring_gr->service ;
             search_result_item.encrypted_group_data = encrypted_group_data ;
             search_result_item.encrypted_group_data_len = encrypted_group_data_len;
 
@@ -1091,26 +1091,52 @@ void RsGxsNetTunnelService::receiveSearchResult(TurtleSearchRequestId request_id
 
     RsGxsNetTunnelTurtleSearchGroupSummaryItem *result_gs = dynamic_cast<RsGxsNetTunnelTurtleSearchGroupSummaryItem *>(item) ;
 
-    if(result_gs == NULL)
+    if(result_gs != NULL)
+	{
+		GXS_NET_TUNNEL_DEBUG() << "  : result is of type group summary result for service " << result_gs->service << std::dec << ": " << std::endl;
+
+		for(auto it(result_gs->group_infos.begin());it!=result_gs->group_infos.end();++it)
+			std::cerr << "   group " << (*it).group_id << ": " << (*it).group_name << ", " << (*it).number_of_messages << " messages, last is " << time(NULL)-(*it).last_message_ts << " secs ago." << std::endl;
+
+		auto it = mSearchableServices.find(result_gs->service) ;
+
+		if(it == mSearchableServices.end())
+		{
+			GXS_NET_TUNNEL_ERROR() << ": deserialized item is for service " << std::hex << result_gs->service << std::dec << " that is not in the searchable services list." << std::endl;
+            delete item;
+			return ;
+		}
+
+		it->second->receiveTurtleSearchResults(request_id,result_gs->group_infos) ;
+
+		delete item;
+		return ;
+	}
+
+    RsGxsNetTunnelTurtleSearchGroupDataItem *result_gd = dynamic_cast<RsGxsNetTunnelTurtleSearchGroupDataItem *>(item) ;
+
+    if(result_gd != NULL)
     {
-        GXS_NET_TUNNEL_ERROR() << ": deserialized item is not a GroupSummary Item. Smething's wrong here." << std::endl;
-        return ;
+		GXS_NET_TUNNEL_DEBUG() << "  : result is of type group data for service " << result_gd->service << std::dec << ": " << std::endl;
+
+		auto it = mSearchableServices.find(result_gd->service) ;
+
+		if(it == mSearchableServices.end())
+		{
+			GXS_NET_TUNNEL_ERROR() << ": deserialized item is for service " << std::hex << result_gd->service << std::dec << " that is not in the searchable services list." << std::endl;
+            delete item;
+			return ;
+		}
+
+		it->second->receiveTurtleSearchResults(request_id,result_gd->encrypted_group_data,result_gd->encrypted_group_data_len) ;
+
+        result_gd->encrypted_group_data = NULL ; // prevents deletion
+		delete item;
+
+		return ;
     }
 
-	GXS_NET_TUNNEL_DEBUG() << "  : result is of type group summary result for service " << result_gs->service << std::dec << ": " << std::endl;
-
-	for(auto it(result_gs->group_infos.begin());it!=result_gs->group_infos.end();++it)
-		std::cerr << "   group " << (*it).group_id << ": " << (*it).group_name << ", " << (*it).number_of_messages << " messages, last is " << time(NULL)-(*it).last_message_ts << " secs ago." << std::endl;
-
-    auto it = mSearchableServices.find(result_gs->service) ;
-
-    if(it == mSearchableServices.end())
-    {
-        GXS_NET_TUNNEL_ERROR() << ": deserialized item is for service " << std::hex << result_gs->service << std::dec << " that is in the searchable services list." << std::endl;
-        return ;
-    }
-
-    it->second->receiveTurtleSearchResults(request_id,result_gs->group_infos) ;
+	GXS_NET_TUNNEL_ERROR() << ": deserialized item is of unknown type. Dropping!" << std::endl;
 }
 
 

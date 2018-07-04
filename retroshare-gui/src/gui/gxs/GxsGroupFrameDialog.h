@@ -95,7 +95,7 @@ protected:
 	virtual RetroShareLink::enumType getLinkType() = 0;
 	virtual GroupFrameSettings::Type groupFrameSettingsType() { return GroupFrameSettings::Nothing; }
 	virtual void groupInfoToGroupItemInfo(const RsGroupMetaData &groupInfo, GroupItemInfo &groupItemInfo, const RsUserdata *userdata);
-    virtual void checkRequestGroup(const RsGxsGroupId& grpId) {}
+    virtual void checkRequestGroup(const RsGxsGroupId& /* grpId */) {}	// overload this one in order to retrieve full group data when the group is browsed
 
 private slots:
 	void todo();
@@ -149,7 +149,7 @@ private:
 	virtual void groupTreeCustomActions(RsGxsGroupId /*grpId*/, int /*subscribeFlags*/, QList<QAction*> &/*actions*/) {}
 	virtual RsGxsCommentService *getCommentService() { return NULL; }
 	virtual QWidget *createCommentHeaderWidget(const RsGxsGroupId &/*grpId*/, const RsGxsMessageId &/*msgId*/) { return NULL; }
-    virtual bool getDistantSearchResults(TurtleRequestId id, std::map<RsGxsGroupId,RsGxsGroupSummary>& group_infos){ return false ;}
+    virtual bool getDistantSearchResults(TurtleRequestId /* id */, std::map<RsGxsGroupId,RsGxsGroupSummary>& /* group_infos */){ return false ;}
 
 	void initUi();
 

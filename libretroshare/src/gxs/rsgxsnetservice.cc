@@ -5349,6 +5349,7 @@ bool RsGxsNetService::search(const Sha1CheckSum& hashed_group_id,unsigned char *
                 Sha1CheckSum hash(RsDirUtil::sha1sum(it->first.toByteArray(),it->first.SIZE_IN_BYTES));
 
 				mGroupHashCache[hash] = grp ;
+                it->second = NULL ; // prevents deletion
 
                 if(hash == hashed_group_id)
                     grp_data = grp ;

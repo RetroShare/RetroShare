@@ -115,6 +115,14 @@ public:
     virtual void receiveTurtleSearchResults(TurtleRequestId req,const std::list<RsGxsGroupSummary>& group_infos)=0;
 
     /*!
+     * \brief receiveTurtleSearchResults
+     * 			Called by turtle (through RsGxsNetTunnel) when new data is received
+     * \param req			        Turtle search request ID associated with this result
+     * \param encrypted_group_data  Group data
+     */
+	virtual void receiveTurtleSearchResults(TurtleRequestId req,const unsigned char *encrypted_group_data,uint32_t encrypted_group_data_len)=0;
+
+    /*!
      * \brief retrieveTurtleSearchResults
      * 			To be used to retrieve the search results that have been notified (or not)
      * \param req			request that match the results to retrieve
