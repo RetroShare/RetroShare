@@ -1103,11 +1103,8 @@ void ChatWidget::contextMenuTextBrowser(QPoint point)
 
 	contextMnu->addSeparator();
 	contextMnu->addAction(ui->actionClearChatHistory);
-	contextMnu->addAction(ui->actionQuote);
-	if (ui->textBrowser->textCursor().selection().toPlainText().length() == 0)
-		ui->actionQuote->setEnabled(false);
-	else
-		ui->actionQuote->setEnabled(true);
+	if (ui->textBrowser->textCursor().selection().toPlainText().length())
+		contextMnu->addAction(ui->actionQuote);
 	contextMnu->addAction(ui->actionDropPlacemark);
 
 	if(ui->textBrowser->checkImage(point))
@@ -1829,13 +1826,10 @@ bool ChatWidget::setStyle()
 void ChatWidget::quote()
 {
 	QString text = ui->textBrowser->textCursor().selection().toPlainText();
-	if(text.length() > 0)
-	{
-		QStringList sl = text.split(QRegExp("[\r\n]"),QString::SkipEmptyParts);
-		text = sl.join("\n> ");
-		text.replace(QChar(-4)," ");//Char used when image on text.
-		emit ui->chatTextEdit->append(QString("> ") + text);
-	}
+	QStringList sl = text.split(QRegExp("[\r\n]"), QString::SkipEmptyParts);
+	text = sl.join("\n> ");
+	text.replace(QChar(-4), " "); // Char used when image on text.
+	emit ui->chatTextEdit->append(QString("> ") + text);
 }
 
 void ChatWidget::dropPlacemark()
