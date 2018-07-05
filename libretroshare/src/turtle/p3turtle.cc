@@ -83,17 +83,18 @@ void TS_dumpState() ;
 //    - The total number of TR per second emmited from self will be MAX_TUNNEL_REQS_PER_SECOND / TIME_BETWEEN_TUNNEL_MANAGEMENT_CALLS = 0.5
 //    - I updated forward probabilities to higher values, and min them to 1/nb_connected_friends to prevent blocking tunnels.
 //
-static const time_t TUNNEL_REQUESTS_LIFE_TIME 	         = 240 ;		/// life time for tunnel requests in the cache.
-static const time_t SEARCH_REQUESTS_LIFE_TIME 	         = 240 ;		/// life time for search requests in the cache
-static const time_t REGULAR_TUNNEL_DIGGING_TIME          = 300 ;		/// maximum interval between two tunnel digging campaigns.
-static const time_t MAXIMUM_TUNNEL_IDLE_TIME 	         =  60 ;		/// maximum life time of an unused tunnel.
-static const time_t EMPTY_TUNNELS_DIGGING_TIME 	         =  50 ;		/// look into tunnels regularly every 50 sec.
-static const time_t TUNNEL_SPEED_ESTIMATE_LAPSE	         =   5 ;		/// estimate tunnel speed every 5 seconds
-static const time_t TUNNEL_CLEANING_LAPS_TIME  	         =  10 ;		/// clean tunnels every 10 secs
-static const time_t TIME_BETWEEN_TUNNEL_MANAGEMENT_CALLS =   2 ;                /// Tunnel management calls every 2 secs.
-static const uint32_t MAX_TUNNEL_REQS_PER_SECOND         =   1 ;		/// maximum number of tunnel requests issued per second. Was 0.5 before
-static const uint32_t MAX_ALLOWED_SR_IN_CACHE            = 120 ;		/// maximum number of search requests allowed in cache. That makes 2 per sec.
-static const uint32_t TURTLE_SEARCH_RESULT_MAX_HITS      =5000 ;		/// maximum number of search results forwarded back to the source.
+static const time_t TUNNEL_REQUESTS_LIFE_TIME 	           = 240 ;		/// life time for tunnel requests in the cache.
+static const time_t SEARCH_REQUESTS_LIFE_TIME 	           = 240 ;		/// life time for search requests in the cache
+static const time_t REGULAR_TUNNEL_DIGGING_TIME            = 300 ;		/// maximum interval between two tunnel digging campaigns.
+static const time_t MAXIMUM_TUNNEL_IDLE_TIME 	           =  60 ;		/// maximum life time of an unused tunnel.
+static const time_t EMPTY_TUNNELS_DIGGING_TIME 	           =  50 ;		/// look into tunnels regularly every 50 sec.
+static const time_t TUNNEL_SPEED_ESTIMATE_LAPSE	           =   5 ;		/// estimate tunnel speed every 5 seconds
+static const time_t TUNNEL_CLEANING_LAPS_TIME  	           =  10 ;		/// clean tunnels every 10 secs
+static const time_t TIME_BETWEEN_TUNNEL_MANAGEMENT_CALLS   =   2 ;        /// Tunnel management calls every 2 secs.
+static const uint32_t MAX_TUNNEL_REQS_PER_SECOND           =   1 ;		/// maximum number of tunnel requests issued per second. Was 0.5 before
+static const uint32_t MAX_ALLOWED_SR_IN_CACHE              = 120 ;		/// maximum number of search requests allowed in cache. That makes 2 per sec.
+static const uint32_t TURTLE_SEARCH_RESULT_MAX_HITS_FILES  =5000 ;		/// maximum number of search results forwarded back to the source.
+static const uint32_t TURTLE_SEARCH_RESULT_MAX_HITS_DEFAULT= 100 ;		/// default maximum number of search results forwarded back source.
 
 static const float depth_peer_probability[7] = { 1.0f,0.99f,0.9f,0.7f,0.6f,0.5,0.4f } ;
 
@@ -916,6 +917,7 @@ void p3turtle::handleSearchRequest(RsTurtleSearchRequestItem *item)
     // Perform local search off-mutex,because this might call some services that are above turtle in the mutex chain.
 
     uint32_t search_result_count = 0;
+    uint32_t max_allowed_hits = TURTLE_SEARCH_RESULT_MAX_HITS_DEFAULT;
 
 	if(item->PeerId() != _own_id) // is the request not coming from us?
 	{
@@ -924,7 +926,7 @@ void p3turtle::handleSearchRequest(RsTurtleSearchRequestItem *item)
 #endif
         std::list<RsTurtleSearchResultItem*> search_results ;
 
-        performLocalSearch(item,search_result_count,search_results) ;
+        performLocalSearch(item,search_result_count,search_results,max_allowed_hits) ;
 
         for(auto it(search_results.begin());it!=search_results.end();++it)
         {
@@ -948,13 +950,14 @@ void p3turtle::handleSearchRequest(RsTurtleSearchRequestItem *item)
 	req.result_count = search_result_count;
 	req.keywords = item->GetKeywords() ;
 	req.service_id = item->serviceId() ;
+    req.max_allowed_hits = max_allowed_hits;
 
 	// if enough has been sent back already, do not sarch further
 
 #ifdef P3TURTLE_DEBUG
 	std::cerr << "  result count = " << req.result_count << std::endl;
 #endif
-	if(req.result_count >= TURTLE_SEARCH_RESULT_MAX_HITS)
+	if(req.result_count >= max_allowed_hits)
 		return ;
 
 	// If search depth not too large, also forward this search request to all other peers.
@@ -1014,13 +1017,13 @@ void p3turtle::handleSearchRequest(RsTurtleSearchRequestItem *item)
 
 // This function should be removed in the future, when file search will also use generic search items.
 
-void p3turtle::performLocalSearch(RsTurtleSearchRequestItem *item,uint32_t& req_result_count,std::list<RsTurtleSearchResultItem*>& search_results)
+void p3turtle::performLocalSearch(RsTurtleSearchRequestItem *item,uint32_t& req_result_count,std::list<RsTurtleSearchResultItem*>& search_results,uint32_t& max_allowed_hits)
 {
     RsTurtleFileSearchRequestItem *ftsearch = dynamic_cast<RsTurtleFileSearchRequestItem*>(item) ;
 
     if(ftsearch != NULL)
     {
-        performLocalSearch_files(ftsearch,req_result_count,search_results) ;
+        performLocalSearch_files(ftsearch,req_result_count,search_results,max_allowed_hits) ;
         return ;
     }
 
@@ -1028,12 +1031,12 @@ void p3turtle::performLocalSearch(RsTurtleSearchRequestItem *item,uint32_t& req_
 
     if(gnsearch != NULL)
     {
-        performLocalSearch_generic(gnsearch,req_result_count,search_results) ;
+        performLocalSearch_generic(gnsearch,req_result_count,search_results,max_allowed_hits) ;
         return ;
     }
 }
 
-void p3turtle::performLocalSearch_generic(RsTurtleGenericSearchRequestItem *item, uint32_t& req_result_count, std::list<RsTurtleSearchResultItem*>& result)
+void p3turtle::performLocalSearch_generic(RsTurtleGenericSearchRequestItem *item, uint32_t& req_result_count, std::list<RsTurtleSearchResultItem*>& result,uint32_t& max_allowed_hits)
 {
     unsigned char *search_result_data = NULL ;
     uint32_t search_result_data_len = 0 ;
@@ -1050,7 +1053,7 @@ void p3turtle::performLocalSearch_generic(RsTurtleGenericSearchRequestItem *item
 		client = it->second ;
 	}
 
-    if(client->receiveSearchRequest(item->search_data,item->search_data_len,search_result_data,search_result_data_len))
+    if(client->receiveSearchRequest(item->search_data,item->search_data_len,search_result_data,search_result_data_len,max_allowed_hits))
     {
 		RsTurtleGenericSearchResultItem *result_item = new RsTurtleGenericSearchResultItem ;
 
@@ -1061,7 +1064,7 @@ void p3turtle::performLocalSearch_generic(RsTurtleGenericSearchRequestItem *item
     }
 }
 
-void p3turtle::performLocalSearch_files(RsTurtleFileSearchRequestItem *item,uint32_t& req_result_count,std::list<RsTurtleSearchResultItem*>& result)
+void p3turtle::performLocalSearch_files(RsTurtleFileSearchRequestItem *item,uint32_t& req_result_count,std::list<RsTurtleSearchResultItem*>& result,uint32_t& max_allowed_hits)
 {
 #ifdef P3TURTLE_DEBUG
 	std::cerr << "Performing rsFiles->search()" << std::endl ;
@@ -1078,6 +1081,7 @@ void p3turtle::performLocalSearch_files(RsTurtleFileSearchRequestItem *item,uint
 	uint32_t item_size = 0 ;
 
 	static const uint32_t RSTURTLE_MAX_SEARCH_RESPONSE_SIZE = 10000 ;
+    max_allowed_hits = TURTLE_SEARCH_RESULT_MAX_HITS_FILES;
 
 	for(auto it(initialResults.begin());it!=initialResults.end();++it)
 	{
@@ -1096,7 +1100,7 @@ void p3turtle::performLocalSearch_files(RsTurtleFileSearchRequestItem *item,uint
 
 		item_size += 8 /* size */ + it->hash.serial_size() + it->name.size() ;
 
-		if(item_size > RSTURTLE_MAX_SEARCH_RESPONSE_SIZE || req_result_count >= TURTLE_SEARCH_RESULT_MAX_HITS)
+		if(item_size > RSTURTLE_MAX_SEARCH_RESPONSE_SIZE || req_result_count >= max_allowed_hits)
 		{
 #ifdef P3TURTLE_DEBUG
 			std::cerr << "  Sending back chunk of size " << item_size << ", for " << res_item->result.size() << " elements." << std::endl ;
@@ -1151,18 +1155,18 @@ void p3turtle::handleSearchResult(RsTurtleSearchResultItem *item)
 
 			uint32_t n = item->count(); // not so good!
 
-			if(it->second.result_count >= TURTLE_SEARCH_RESULT_MAX_HITS)
+			if(it->second.result_count >= it->second.max_allowed_hits)
 			{
 				std::cerr << "(WW) exceeded turtle search result to forward. Req=" << std::hex << item->request_id << std::dec << ": dropping item with " << n << " elements." << std::endl;
 				return ;
 			}
 
-			if(it->second.result_count + n > TURTLE_SEARCH_RESULT_MAX_HITS)
+			if(it->second.result_count + n > it->second.max_allowed_hits)
 			{
-				for(uint32_t i=it->second.result_count + n; i>TURTLE_SEARCH_RESULT_MAX_HITS;--i)
+				for(uint32_t i=it->second.result_count + n; i>it->second.max_allowed_hits;--i)
 					item->pop() ;
 
-				it->second.result_count = TURTLE_SEARCH_RESULT_MAX_HITS ;
+				it->second.result_count = it->second.max_allowed_hits ;
 			}
 			else
 				it->second.result_count += n ;

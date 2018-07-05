@@ -101,10 +101,15 @@ class RsTurtleClientService
          * \param search_request_data_len  length of the serialized search data
          * \param search_result_data       generic serialized search result data
          * \param search_result_data_len   length of the serialized search result data
+         * \param max_allowed_hits         max number of hits allowed to be sent back and forwarded
          *
          * \return true if the search is successful.
          */
-    	virtual bool receiveSearchRequest(unsigned char */*search_request_data*/,uint32_t /*search_request_data_len*/,unsigned char *& /*search_result_data*/,uint32_t& /*search_result_data_len*/)
+    	virtual bool receiveSearchRequest(unsigned char */*search_request_data*/,
+                                          uint32_t /*search_request_data_len*/,
+                                          unsigned char *& /*search_result_data*/,
+                                          uint32_t& /*search_result_data_len*/,
+                                          uint32_t& /* max_allows_hits */)
 		{
 			std::cerr << "!!!!!! Received search result from turtle router, but the client service who requested it is not handling it !!!!!!!!!!" << std::endl ;
             return false;

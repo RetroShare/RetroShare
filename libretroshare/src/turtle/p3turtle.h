@@ -174,6 +174,7 @@ class TurtleSearchRequestInfo
 		uint32_t     result_count;    // responses to this request. Useful to avoid spamming tunnel responses.
 		std::string  keywords;
         uint16_t     service_id;      // ID of the client service who issues the request. This is null if the request does not have a local origin.
+        uint32_t     max_allowed_hits;// Max number of hits allowed for this search. This actually depends on the type of search (files, GXS groups, GXS group data, etc)
 };
 class TurtleTunnelRequestInfo
 {
@@ -397,9 +398,9 @@ class p3turtle: public p3Service, public RsTurtle, public p3Config
 		//------ Functions connecting the turtle router to other components.----------//
 		
 		/// Performs a search calling local cache and search structure.
-		void performLocalSearch        (RsTurtleSearchRequestItem        *item, uint32_t& req_result_count,std::list<RsTurtleSearchResultItem*>& result) ;
-		void performLocalSearch_files  (RsTurtleFileSearchRequestItem    *item, uint32_t& req_result_count,std::list<RsTurtleSearchResultItem*>& result) ;
-		void performLocalSearch_generic(RsTurtleGenericSearchRequestItem *item, uint32_t& req_result_count,std::list<RsTurtleSearchResultItem*>& result) ;
+		void performLocalSearch        (RsTurtleSearchRequestItem        *item, uint32_t& req_result_count,std::list<RsTurtleSearchResultItem*>& result,uint32_t& max_allowed_hits) ;
+		void performLocalSearch_files  (RsTurtleFileSearchRequestItem    *item, uint32_t& req_result_count, std::list<RsTurtleSearchResultItem*>& result, uint32_t &max_allowed_hits) ;
+		void performLocalSearch_generic(RsTurtleGenericSearchRequestItem *item, uint32_t& req_result_count, std::list<RsTurtleSearchResultItem*>& result, uint32_t &max_allowed_hits) ;
 
 		/// Returns true if the file with given hash is hosted locally, and accessible in anonymous mode the supplied peer.
 		virtual bool performLocalHashSearch(const TurtleFileHash& hash,const RsPeerId& client_peer_id,RsTurtleClientService *& service);

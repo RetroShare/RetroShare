@@ -36,6 +36,8 @@
 #define GXS_NET_TUNNEL_DEBUG()             std::cerr << time(NULL) << " : GXS_NET_TUNNEL: " << __FUNCTION__ << " : "
 #define GXS_NET_TUNNEL_ERROR()             std::cerr << "(EE) GXS_NET_TUNNEL ERROR : "
 
+static const uint32_t RS_GXS_NET_TUNNEL_MAX_ALLOWED_HITS_GROUP_DATA    =   1;
+static const uint32_t RS_GXS_NET_TUNNEL_MAX_ALLOWED_HITS_GROUP_SEARCH  = 100;
 
 RsGxsNetTunnelService::RsGxsNetTunnelService(): mGxsNetTunnelMtx("GxsNetTunnel")
 {
@@ -1011,7 +1013,7 @@ TurtleRequestId RsGxsNetTunnelService::turtleSearchRequest(const std::string& ma
     return mTurtle->turtleSearch(mem,size,this) ;
 }
 
-bool RsGxsNetTunnelService::receiveSearchRequest(unsigned char *search_request_data,uint32_t search_request_data_len,unsigned char *& search_result_data,uint32_t& search_result_data_size)
+bool RsGxsNetTunnelService::receiveSearchRequest(unsigned char *search_request_data,uint32_t search_request_data_len,unsigned char *& search_result_data,uint32_t& search_result_data_size,uint32_t& max_allowed_hits)
 {
 	GXS_NET_TUNNEL_DEBUG() << ": received a request." << std::endl;
 
@@ -1022,6 +1024,8 @@ bool RsGxsNetTunnelService::receiveSearchRequest(unsigned char *search_request_d
     if(substring_sr != NULL)
     {
 		GXS_NET_TUNNEL_DEBUG() << "  : type is substring for service " << std::hex << (int)substring_sr->service << std::dec << std::endl;
+
+        max_allowed_hits = RS_GXS_NET_TUNNEL_MAX_ALLOWED_HITS_GROUP_SEARCH ;
 
         std::list<RsGxsGroupSummary> results ;
 
@@ -1056,6 +1060,8 @@ bool RsGxsNetTunnelService::receiveSearchRequest(unsigned char *search_request_d
     {
 		RS_STACK_MUTEX(mGxsNetTunnelMtx);
 		auto it = mSearchableServices.find(substring_gr->service) ;
+
+        max_allowed_hits = RS_GXS_NET_TUNNEL_MAX_ALLOWED_HITS_GROUP_DATA ;
 
         unsigned char *encrypted_group_data = NULL ;
         uint32_t encrypted_group_data_len = 0 ;

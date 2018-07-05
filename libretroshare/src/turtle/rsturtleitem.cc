@@ -50,6 +50,11 @@ RsItem *RsTurtleSerialiser::create_item(uint16_t service,uint8_t item_subtype) c
 	return NULL ;
 }
 
+std::string RsTurtleGenericSearchRequestItem::GetKeywords()
+{
+    return std::string("Generic search : " + RsUtil::BinToHex(search_data,search_data_len,10));
+}
+
 void RsTurtleStringSearchRequestItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process          (j,ctx,TLV_TYPE_STR_VALUE,match_string,"match_string") ;
@@ -67,6 +72,7 @@ void RsTurtleGenericSearchRequestItem::serial_process(RsGenericSerializer::Seria
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,request_id,"request_id") ;
     RsTypeSerializer::serial_process<uint16_t>(j,ctx,depth,"depth") ;
     RsTypeSerializer::serial_process<uint16_t>(j,ctx,service_id,"service_id") ;
+    RsTypeSerializer::serial_process<uint8_t >(j,ctx,request_type,"request_type") ;
 
     RsTypeSerializer::TlvMemBlock_proxy prox(search_data,search_data_len) ;
     RsTypeSerializer::serial_process(j,ctx,prox,"search_data") ;
