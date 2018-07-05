@@ -5196,8 +5196,7 @@ void RsGxsNetService::receiveTurtleSearchResults(TurtleRequestId req, const std:
 	// only keep groups that are not locally known, and groups that are not already in the mDistantSearchResults structure
 
     for(auto it(group_infos.begin());it!=group_infos.end();++it)
-#warning Uncomment when done with testing!
-//        if(grpMeta[(*it).group_id] == NULL)
+        if(grpMeta[(*it).group_id] == NULL)
         {
 			filtered_results.push_back(*it) ;
 
