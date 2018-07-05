@@ -184,6 +184,8 @@ RsTurtleSearchResultItem *RsTurtleGenericSearchResultItem::duplicate() const
     sr->result_data = (unsigned char*)rs_malloc(result_data_len) ;
     memcpy(sr->result_data,result_data,result_data_len) ;
     sr->result_data_len = result_data_len ;
+    sr->request_id = request_id ;
+    sr->depth = depth ;
     return sr ;
 }
 
