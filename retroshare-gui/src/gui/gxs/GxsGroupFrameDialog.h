@@ -82,7 +82,7 @@ public:
 
 	virtual QString getHelpString() const =0;
 
-	virtual void getGroupList(std::list<RsGroupMetaData>& groups) ;
+	virtual void getGroupList(std::map<RsGxsGroupId,RsGroupMetaData> &groups) ;
 
 protected:
 	virtual void showEvent(QShowEvent *event);
@@ -162,7 +162,7 @@ private:
 	void processSettings(bool load);
 
 	// New Request/Response Loading Functions.
-	void insertGroupsData(const std::list<RsGroupMetaData> &groupList, const RsUserdata *userdata);
+	void insertGroupsData(const std::map<RsGxsGroupId, RsGroupMetaData> &groupList, const RsUserdata *userdata);
 
 	void requestGroupSummary();
 	void loadGroupSummary(const uint32_t &token);
@@ -209,7 +209,7 @@ private:
 	/** Qt Designer generated object */
 	Ui::GxsGroupFrameDialog *ui;
 
-	std::list<RsGroupMetaData> mCachedGroupMetas;
+	std::map<RsGxsGroupId,RsGroupMetaData> mCachedGroupMetas;
 
     std::map<uint32_t,QTreeWidgetItem*> mSearchGroupsItems ;
     std::map<uint32_t,std::set<RsGxsGroupId> > mKnownGroups;

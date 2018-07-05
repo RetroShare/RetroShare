@@ -123,7 +123,7 @@ GxsGroupFrameDialog::~GxsGroupFrameDialog()
 	delete(ui);
 }
 
-void GxsGroupFrameDialog::getGroupList(std::list<RsGroupMetaData>& group_list)
+void GxsGroupFrameDialog::getGroupList(std::map<RsGxsGroupId, RsGroupMetaData> &group_list)
 {
 	group_list = mCachedGroupMetas ;
 
@@ -265,8 +265,6 @@ void GxsGroupFrameDialog::updateSearchResults()
 
         auto it2 = mSearchGroupsItems.find(*it);
 
-        std::set<RsGxsGroupId>& known_groups(mKnownGroups[*it]) ;
-
         if(mSearchGroupsItems.end() == it2)
         {
             std::cerr << "GxsGroupFrameDialog::updateSearchResults(): received result notification for req " << std::hex << *it << std::dec << " but no item present!" << std::endl;
@@ -276,24 +274,22 @@ void GxsGroupFrameDialog::updateSearchResults()
         QList<GroupItemInfo> group_items ;
 
         for(auto it3(group_infos.begin());it3!=group_infos.end();++it3)
-            if(known_groups.end() == known_groups.find(it3->first))
-        	{
+            if(mCachedGroupMetas.find(it3->first) == mCachedGroupMetas.end())
+			{
 				std::cerr << "  adding new group " << it3->first << " " << it3->second.group_id << " \"" << it3->second.group_name << "\"" << std::endl;
 
-                known_groups.insert(it3->first) ;
-
-                GroupItemInfo i ;
-                i.id             = QString(it3->second.group_id.toStdString().c_str()) ;
-                i.name           = QString::fromUtf8(it3->second.group_name.c_str()) ;
-                i.description    = QString::fromUtf8(it3->second.group_description.c_str()) ;
-                i.popularity     = 0; // could be set to the number of hits
+				GroupItemInfo i ;
+				i.id             = QString(it3->second.group_id.toStdString().c_str()) ;
+				i.name           = QString::fromUtf8(it3->second.group_name.c_str()) ;
+				i.description    = QString::fromUtf8(it3->second.group_description.c_str()) ;
+				i.popularity     = 0; // could be set to the number of hits
 				i.lastpost       = QDateTime::fromTime_t(it3->second.last_message_ts);
 				i.subscribeFlags = 0; // irrelevant here
 				i.publishKey     = false ; // IS_GROUP_PUBLISHER(groupInfo.mSubscribeFlags) ;
 				i.adminKey       = false ; // IS_GROUP_ADMIN(groupInfo.mSubscribeFlags) ;
 				i.max_visible_posts = it3->second.number_of_messages ;
 
-                group_items.push_back(i);
+				group_items.push_back(i);
 			}
 
 		ui->groupTreeWidget->fillGroupItems(it2->second, group_items);
@@ -768,7 +764,9 @@ void GxsGroupFrameDialog::changedCurrentGroup(const QString &groupId)
 	}
 
     // send a request for the group, if it has been distant-searched.
-    checkRequestGroup(mGroupId) ;
+
+    if(mCachedGroupMetas.find(mGroupId) == mCachedGroupMetas.end())
+		checkRequestGroup(mGroupId) ;
 
 	/* search exisiting tab */
 	GxsMessageFrameWidget *msgWidget = messageWidget(mGroupId, true);
@@ -894,7 +892,7 @@ void GxsGroupFrameDialog::groupInfoToGroupItemInfo(const RsGroupMetaData &groupI
 	}
 }
 
-void GxsGroupFrameDialog::insertGroupsData(const std::list<RsGroupMetaData> &groupList, const RsUserdata *userdata)
+void GxsGroupFrameDialog::insertGroupsData(const std::map<RsGxsGroupId,RsGroupMetaData> &groupList, const RsUserdata *userdata)
 {
 	if (!mInitialized) {
 		return;
@@ -902,20 +900,18 @@ void GxsGroupFrameDialog::insertGroupsData(const std::list<RsGroupMetaData> &gro
 
 	mInFill = true;
 
-	std::list<RsGroupMetaData>::const_iterator it;
-
 	QList<GroupItemInfo> adminList;
 	QList<GroupItemInfo> subList;
 	QList<GroupItemInfo> popList;
 	QList<GroupItemInfo> otherList;
 	std::multimap<uint32_t, GroupItemInfo> popMap;
 
-	for (it = groupList.begin(); it != groupList.end(); ++it) {
+	for (auto it = groupList.begin(); it != groupList.end(); ++it) {
 		/* sort it into Publish (Own), Subscribed, Popular and Other */
-		uint32_t flags = it->mSubscribeFlags;
+		uint32_t flags = it->second.mSubscribeFlags;
 
 		GroupItemInfo groupItemInfo;
-		groupInfoToGroupItemInfo(*it, groupItemInfo, userdata);
+		groupInfoToGroupItemInfo(it->second, groupItemInfo, userdata);
 
 		if (IS_GROUP_SUBSCRIBED(flags))
 		{
@@ -932,7 +928,7 @@ void GxsGroupFrameDialog::insertGroupsData(const std::list<RsGroupMetaData> &gro
 		else
 		{
 			//popMap.insert(std::make_pair(it->mPop, groupItemInfo)); /* rate the others by popularity */
-			popMap.insert(std::make_pair(it->mLastPost, groupItemInfo)); /* rate the others by time of last post */
+			popMap.insert(std::make_pair(it->second.mLastPost, groupItemInfo)); /* rate the others by time of last post */
 		}
 	}
 
@@ -1043,9 +1039,12 @@ void GxsGroupFrameDialog::loadGroupSummary(const uint32_t &token)
 	RsUserdata *userdata = NULL;
 	loadGroupSummaryToken(token, groupInfo, userdata);
 
-	mCachedGroupMetas = groupInfo ;
+	mCachedGroupMetas.clear();
+    for(auto it(groupInfo.begin());it!=groupInfo.end();++it)
+        mCachedGroupMetas[(*it).mGroupId] = *it;
 
-	insertGroupsData(groupInfo, userdata);
+	insertGroupsData(mCachedGroupMetas, userdata);
+    updateSearchResults();
 
 	mStateHelper->setLoading(TOKEN_TYPE_GROUP_SUMMARY, false);
 

@@ -5109,6 +5109,8 @@ bool RsGxsNetService::locked_stampMsgServerUpdateTS(const RsGxsGroupId& gid)
 
 TurtleRequestId RsGxsNetService::turtleGroupRequest(const RsGxsGroupId& group_id)
 {
+	RS_STACK_MUTEX(mNxsMutex) ;
+
     time_t now = time(NULL);
     auto it = mSearchedGroups.find(group_id) ;
 
@@ -5157,6 +5159,7 @@ bool RsGxsNetService::retrieveDistantSearchResults(TurtleRequestId req,std::map<
 }
 bool RsGxsNetService::retrieveDistantGroupSummary(const RsGxsGroupId& group_id,RsGxsGroupSummary& gs)
 {
+	RS_STACK_MUTEX(mNxsMutex) ;
     for(auto it(mDistantSearchResults.begin());it!=mDistantSearchResults.end();++it)
     {
         auto it2 = it->second.find(group_id) ;
