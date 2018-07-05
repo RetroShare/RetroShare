@@ -1119,12 +1119,7 @@ bool p3NetMgrIMPL::checkNetAddress()
 #ifdef NETMGR_DEBUG
 			std::cerr << "p3NetMgrIMPL::checkNetAddress() Correcting Port to DEFAULT" << std::endl;
 #endif
-			// Generate a default port from SSL id. The port will always be the
-			// same, but appear random from peer to peer.
-		 	// Random port avoids clashes, improves anonymity.
-			//
-		
-			int new_port = htons(PQI_MIN_PORT_RNG + (RSRandom::random_u32() % (PQI_MAX_PORT - PQI_MIN_PORT_RNG)));
+			uint16_t new_port = htons(PQI_MIN_PORT_RNG + (RSRandom::random_u32() % (PQI_MAX_PORT - PQI_MIN_PORT_RNG)));
 			sockaddr_storage_setport(mLocalAddr, new_port);
 
 			addrChanged = true;

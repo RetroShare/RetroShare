@@ -17,11 +17,6 @@ DESTDIR = lib
 #QMAKE_CFLAGS += -Werror
 #QMAKE_CXXFLAGS += -Werror
 
-# when rapidjson is mainstream on all distribs, we will not need the sources anymore
-# in the meantime, they are part of the RS directory so that it is always possible to find them
-
-INCLUDEPATH += ../../rapidjson-1.1.0
-
 debug {
 #	DEFINES *= DEBUG
 #	DEFINES *= OPENDHT_DEBUG DHT_DEBUG CONN_DEBUG DEBUG_UDP_SORTER P3DISC_DEBUG DEBUG_UDP_LAYER FT_DEBUG EXTADDRSEARCH_DEBUG
@@ -510,7 +505,8 @@ HEADERS +=	util/folderiterator.h \
 			util/rstime.h \
             util/stacktrace.h \
             util/rsdeprecate.h \
-            util/cxx11retrocompat.h
+            util/cxx11retrocompat.h \
+            util/rsurl.h
 
 SOURCES +=	ft/ftchunkmap.cc \
 			ft/ftcontroller.cc \
@@ -657,7 +653,8 @@ SOURCES +=	util/folderiterator.cc \
 			util/rsrandom.cc \
 			util/rstickevent.cc \
 			util/rsrecogn.cc \
-			util/rstime.cc
+            util/rstime.cc \
+            util/rsurl.cc
 
 ## Added for retrocompatibility remove ASAP
 isEmpty(RS_UPNP_LIB) {
