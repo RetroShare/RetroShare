@@ -430,6 +430,11 @@ QTreeWidgetItem *GroupTreeWidget::addSearchItem(const QString& search_string, ui
     return item;
 }
 
+void GroupTreeWidget::setDistSearchVisible(bool visible)
+{
+    ui->distantSearchLineEdit->setVisible(visible);
+}
+
 bool GroupTreeWidget::isSearchRequestResult(QPoint &point,QString& group_id,uint32_t& search_req_id)
 {
     QTreeWidgetItem *item = ui->treeWidget->itemAt(point);

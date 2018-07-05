@@ -47,7 +47,7 @@ public:
 
 /** Constructor */
 GxsChannelDialog::GxsChannelDialog(QWidget *parent)
-	: GxsGroupFrameDialog(rsGxsChannels, parent)
+	: GxsGroupFrameDialog(rsGxsChannels, parent,true)
 {
 }
 

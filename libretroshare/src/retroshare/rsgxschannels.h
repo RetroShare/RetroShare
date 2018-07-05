@@ -76,61 +76,49 @@ std::ostream &operator<<(std::ostream &out, const RsGxsChannelPost &post);
 
 class RsGxsChannels: public RsGxsIfaceHelper, public RsGxsCommentService
 {
-	public:
+public:
 
 	explicit RsGxsChannels(RsGxsIface *gxs)
-	  :RsGxsIfaceHelper(gxs)  {}
+	    :RsGxsIfaceHelper(gxs)  {}
 	virtual ~RsGxsChannels() {}
 
 	/* Specific Service Data */
-virtual bool getGroupData(const uint32_t &token, std::vector<RsGxsChannelGroup> &groups) = 0;
-virtual bool getPostData(const uint32_t &token, std::vector<RsGxsChannelPost> &posts, std::vector<RsGxsComment> &cmts) = 0;
-virtual bool getPostData(const uint32_t &token, std::vector<RsGxsChannelPost> &posts) = 0;
-//Not currently used
-//virtual bool getRelatedPosts(const uint32_t &token, std::vector<RsGxsChannelPost> &posts) = 0;
+	virtual bool getGroupData(const uint32_t &token, std::vector<RsGxsChannelGroup> &groups) = 0;
+	virtual bool getPostData(const uint32_t &token, std::vector<RsGxsChannelPost> &posts, std::vector<RsGxsComment> &cmts) = 0;
+	virtual bool getPostData(const uint32_t &token, std::vector<RsGxsChannelPost> &posts) = 0;
 
-	/* From RsGxsCommentService */
-//virtual bool getCommentData(const uint32_t &token, std::vector<RsGxsComment> &comments) = 0;
-//virtual bool getRelatedComments(const uint32_t &token, std::vector<RsGxsComment> &comments) = 0;
-//virtual bool createComment(uint32_t &token, RsGxsComment &comment) = 0;
-//virtual bool createVote(uint32_t &token, RsGxsVote &vote) = 0;
+    //////////////////////////////////////////////////////////////////////////////
+    ///                     Distant synchronisation methods                    ///
+    //////////////////////////////////////////////////////////////////////////////
+    ///
+	virtual TurtleRequestId turtleGroupRequest(const RsGxsGroupId& group_id)=0;
+	virtual TurtleRequestId turtleSearchRequest(const std::string& match_string)=0;
+	virtual bool retrieveDistantSearchResults(TurtleRequestId req, std::map<RsGxsGroupId, RsGxsGroupSummary> &results) =0;
+	virtual bool clearDistantSearchResults(TurtleRequestId req)=0;
+	virtual bool retrieveDistantGroup(const RsGxsGroupId& group_id,RsGxsChannelGroup& distant_group)=0;
 
-    virtual TurtleRequestId turtleGroupRequest(const RsGxsGroupId& group_id)=0;
-    virtual TurtleRequestId turtleSearchRequest(const std::string& match_string)=0;
-    virtual bool retrieveDistantSearchResults(TurtleRequestId req, std::map<RsGxsGroupId, RsGxsGroupSummary> &results) =0;
-    virtual bool clearDistantSearchResults(TurtleRequestId req)=0;
-    virtual bool retrieveDistantGroup(const RsGxsGroupId& group_id,RsGxsChannelGroup& distant_group)=0;
+	//////////////////////////////////////////////////////////////////////////////
+	virtual void setMessageReadStatus(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, bool read) = 0;
 
-        //////////////////////////////////////////////////////////////////////////////
-virtual void setMessageReadStatus(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, bool read) = 0;
+	virtual bool setChannelAutoDownload(const RsGxsGroupId &groupId, bool enabled) = 0;
+	virtual bool getChannelAutoDownload(const RsGxsGroupId &groupid, bool& enabled) = 0;
 
-virtual bool setChannelAutoDownload(const RsGxsGroupId &groupId, bool enabled) = 0;
-virtual bool getChannelAutoDownload(const RsGxsGroupId &groupid, bool& enabled) = 0;
+	virtual bool setChannelDownloadDirectory(const RsGxsGroupId &groupId, const std::string& directory)=0;
+	virtual bool getChannelDownloadDirectory(const RsGxsGroupId &groupId, std::string& directory)=0;
 
-virtual bool setChannelDownloadDirectory(const RsGxsGroupId &groupId, const std::string& directory)=0;
-virtual bool getChannelDownloadDirectory(const RsGxsGroupId &groupId, std::string& directory)=0;
-
-//virtual void setChannelAutoDownload(uint32_t& token, const RsGxsGroupId& groupId, bool autoDownload) = 0;
-
-//virtual bool setMessageStatus(const std::string &msgId, const uint32_t status, const uint32_t statusMask);
-//virtual bool setGroupSubscribeFlags(const std::string &groupId, uint32_t subscribeFlags, uint32_t subscribeMask);
-
-//virtual bool groupRestoreKeys(const std::string &groupId);
-    virtual bool groupShareKeys(const RsGxsGroupId &groupId, std::set<RsPeerId>& peers)=0;
+	virtual bool groupShareKeys(const RsGxsGroupId &groupId, std::set<RsPeerId>& peers)=0;
 
 	// Overloaded subscribe fn.
-virtual bool subscribeToGroup(uint32_t &token, const RsGxsGroupId &groupId, bool subscribe) = 0;
+	virtual bool subscribeToGroup(uint32_t &token, const RsGxsGroupId &groupId, bool subscribe) = 0;
 
-virtual bool createGroup(uint32_t &token, RsGxsChannelGroup &group) = 0;
-virtual bool createPost(uint32_t &token, RsGxsChannelPost &post) = 0;
+	virtual bool createGroup(uint32_t &token, RsGxsChannelGroup &group) = 0;
+	virtual bool createPost(uint32_t &token, RsGxsChannelPost &post) = 0;
 
-virtual bool updateGroup(uint32_t &token, RsGxsChannelGroup &group) = 0;
+	virtual bool updateGroup(uint32_t &token, RsGxsChannelGroup &group) = 0;
 
-        // File Interface
-virtual bool ExtraFileHash(const std::string &path, std::string filename) = 0;
-virtual bool ExtraFileRemove(const RsFileHash &hash) = 0;
-
-
+	// File Interface
+	virtual bool ExtraFileHash(const std::string &path, std::string filename) = 0;
+	virtual bool ExtraFileRemove(const RsFileHash &hash) = 0;
 };
 
 

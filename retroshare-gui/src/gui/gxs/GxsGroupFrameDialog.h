@@ -72,7 +72,7 @@ public:
 	};
 
 public:
-	GxsGroupFrameDialog(RsGxsIfaceHelper *ifaceImpl, QWidget *parent = 0);
+	GxsGroupFrameDialog(RsGxsIfaceHelper *ifaceImpl, QWidget *parent = 0,bool allow_dist_sync=false);
 	virtual ~GxsGroupFrameDialog();
 
 	bool navigate(const RsGxsGroupId &groupId, const RsGxsMessageId& msgId);
@@ -190,6 +190,7 @@ protected:
 private:
 	bool mInitialized;
 	bool mInFill;
+    bool mDistSyncAllowed;
 	QString mSettingsName;
 	RsGxsGroupId mGroupId;
 	RsGxsIfaceHelper *mInterface;

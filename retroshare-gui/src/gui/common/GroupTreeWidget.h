@@ -83,6 +83,7 @@ public:
 	// Add a new category item
 	QTreeWidgetItem *addCategoryItem(const QString &name, const QIcon &icon, bool expand);
     // Add a new search item
+    void setDistSearchVisible(bool) ; // shows/hides distant search UI parts.
 	QTreeWidgetItem *addSearchItem(const QString& search_string, uint32_t id, const QIcon &icon) ;
 	void removeSearchItem(QTreeWidgetItem *item);
 

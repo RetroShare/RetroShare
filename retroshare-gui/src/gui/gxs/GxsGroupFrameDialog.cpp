@@ -67,7 +67,7 @@
  */
 
 /** Constructor */
-GxsGroupFrameDialog::GxsGroupFrameDialog(RsGxsIfaceHelper *ifaceImpl, QWidget *parent)
+GxsGroupFrameDialog::GxsGroupFrameDialog(RsGxsIfaceHelper *ifaceImpl, QWidget *parent,bool allow_dist_sync)
 : RsGxsUpdateBroadcastPage(ifaceImpl, parent)
 {
 	/* Invoke the Qt Designer generated object setup routine */
@@ -75,6 +75,7 @@ GxsGroupFrameDialog::GxsGroupFrameDialog(RsGxsIfaceHelper *ifaceImpl, QWidget *p
 	ui->setupUi(this);
 
 	mInitialized = false;
+	mDistSyncAllowed = allow_dist_sync;
 	mInFill = false;
 	mCountChildMsgs = false;
 	mYourGroups = NULL;
@@ -96,11 +97,15 @@ GxsGroupFrameDialog::GxsGroupFrameDialog(RsGxsIfaceHelper *ifaceImpl, QWidget *p
 	connect(ui->groupTreeWidget, SIGNAL(treeCustomContextMenuRequested(QPoint)), this, SLOT(groupTreeCustomPopupMenu(QPoint)));
     connect(ui->groupTreeWidget, SIGNAL(treeCurrentItemChanged(QString)), this, SLOT(changedCurrentGroup(QString)));
 	connect(ui->groupTreeWidget->treeWidget(), SIGNAL(signalMouseMiddleButtonClicked(QTreeWidgetItem*)), this, SLOT(groupTreeMiddleButtonClicked(QTreeWidgetItem*)));
-    connect(ui->groupTreeWidget, SIGNAL(distantSearchRequested(const QString&)), this, SLOT(searchNetwork(const QString&)));
 	connect(ui->messageTabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(messageTabCloseRequested(int)));
 	connect(ui->messageTabWidget, SIGNAL(currentChanged(int)), this, SLOT(messageTabChanged(int)));
 
 	connect(ui->todoPushButton, SIGNAL(clicked()), this, SLOT(todo()));
+
+	ui->groupTreeWidget->setDistSearchVisible(allow_dist_sync) ;
+
+    if(allow_dist_sync)
+		connect(ui->groupTreeWidget, SIGNAL(distantSearchRequested(const QString&)), this, SLOT(searchNetwork(const QString&)));
 
 	/* Set initial size the splitter */
 	ui->splitter->setStretchFactor(0, 0);

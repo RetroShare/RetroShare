@@ -199,9 +199,9 @@ public:
 
 		switch(item_subtype)
 		{
-		case RS_PKT_SUBTYPE_GXS_NET_TUNNEL_VIRTUAL_PEER: return new RsGxsNetTunnelVirtualPeerItem ;
-		case RS_PKT_SUBTYPE_GXS_NET_TUNNEL_KEEP_ALIVE  : return new RsGxsNetTunnelKeepAliveItem ;
-		case RS_PKT_SUBTYPE_GXS_NET_TUNNEL_RANDOM_BIAS : return new RsGxsNetTunnelRandomBiasItem ;
+		case RS_PKT_SUBTYPE_GXS_NET_TUNNEL_VIRTUAL_PEER                : return new RsGxsNetTunnelVirtualPeerItem ;
+		case RS_PKT_SUBTYPE_GXS_NET_TUNNEL_KEEP_ALIVE                  : return new RsGxsNetTunnelKeepAliveItem ;
+		case RS_PKT_SUBTYPE_GXS_NET_TUNNEL_RANDOM_BIAS                 : return new RsGxsNetTunnelRandomBiasItem ;
 		case RS_PKT_SUBTYPE_GXS_NET_TUNNEL_TURTLE_SEARCH_SUBSTRING     : return new RsGxsNetTunnelTurtleSearchSubstringItem;
 		case RS_PKT_SUBTYPE_GXS_NET_TUNNEL_TURTLE_SEARCH_GROUP_REQUEST : return new RsGxsNetTunnelTurtleSearchGroupRequestItem;
 		case RS_PKT_SUBTYPE_GXS_NET_TUNNEL_TURTLE_SEARCH_GROUP_SUMMARY : return new RsGxsNetTunnelTurtleSearchGroupSummaryItem;
@@ -216,16 +216,16 @@ public:
 template<>
 void RsTypeSerializer::serial_process( RsGenericSerializer::SerializeJob j, RsGenericSerializer::SerializeContext& ctx, RsGxsGroupSummary& gs, const std::string& member_name )
 {
-    RsTypeSerializer::serial_process(j,ctx,gs.group_id,member_name+"-group_id") ;                                        // RsGxsGroupId group_id ;
-    RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_NAME   ,gs.group_name,member_name+"-group_name") ;               // std::string  group_name ;
-    RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_COMMENT,gs.group_description,member_name+"-group_description") ; // std::string  group_description ;
-    RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_VALUE  ,gs.search_context,member_name+"-group_name") ;           // std::string  search_context ;
-    RsTypeSerializer::serial_process(j,ctx,gs.author_id         ,member_name+"-author_id") ;                             // RsGxsId      author_id ;
-    RsTypeSerializer::serial_process(j,ctx,gs.publish_ts        ,member_name+"-publish_ts") ;                            // time_t       publish_ts ;
-    RsTypeSerializer::serial_process(j,ctx,gs.number_of_messages,member_name+"-number_of_messages") ;                    // uint32_t     number_of_messages ;
-    RsTypeSerializer::serial_process<time_t>(j,ctx,gs.last_message_ts,member_name+"-last_message_ts") ;                  // time_t       last_message_ts ;
-    RsTypeSerializer::serial_process<uint32_t>(j,ctx,gs.sign_flags,member_name+"-sign_flags") ;                  		 // uint32_t     sign_flags ;
-    RsTypeSerializer::serial_process<uint32_t>(j,ctx,gs.popularity,member_name+"-popularity") ;                  		 // uint32_t     popularity ;
+    RsTypeSerializer::serial_process          (j,ctx,gs.group_id          ,member_name+"-group_id") ;                                        // RsGxsGroupId group_id ;
+    RsTypeSerializer::serial_process          (j,ctx,TLV_TYPE_STR_NAME    ,gs.group_name,member_name+"-group_name") ;               // std::string  group_name ;
+    RsTypeSerializer::serial_process          (j,ctx,TLV_TYPE_STR_COMMENT ,gs.group_description,member_name+"-group_description") ; // std::string  group_description ;
+    RsTypeSerializer::serial_process          (j,ctx,TLV_TYPE_STR_VALUE   ,gs.search_context,member_name+"-group_name") ;           // std::string  search_context ;
+    RsTypeSerializer::serial_process          (j,ctx,gs.author_id         ,member_name+"-author_id") ;                              // RsGxsId      author_id ;
+    RsTypeSerializer::serial_process          (j,ctx,gs.publish_ts        ,member_name+"-publish_ts") ;                             // time_t       publish_ts ;
+    RsTypeSerializer::serial_process          (j,ctx,gs.number_of_messages,member_name+"-number_of_messages") ;                     // uint32_t     number_of_messages ;
+    RsTypeSerializer::serial_process<time_t>  (j,ctx,gs.last_message_ts   ,member_name+"-last_message_ts") ;                        // time_t       last_message_ts ;
+    RsTypeSerializer::serial_process<uint32_t>(j,ctx,gs.sign_flags        ,member_name+"-sign_flags") ;                  		    // uint32_t     sign_flags ;
+    RsTypeSerializer::serial_process<uint32_t>(j,ctx,gs.popularity        ,member_name+"-popularity") ;                  		    // uint32_t     popularity ;
 }
 
 
