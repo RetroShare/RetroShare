@@ -108,6 +108,7 @@ private slots:
 
 	void restoreGroupKeys();
 	void newGroup();
+    void distantRequestGroupData();
 
 	void changedCurrentGroup(const QString &groupId);
 	void groupTreeMiddleButtonClicked(QTreeWidgetItem *item);

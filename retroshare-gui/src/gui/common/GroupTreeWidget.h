@@ -95,6 +95,7 @@ public:
 	void setUnreadCount(QTreeWidgetItem *item, int unreadCount);
 
 	bool isSearchRequestItem(QPoint &point,uint32_t& search_req_id);
+	bool isSearchRequestResult(QPoint &point, QString &group_id, uint32_t& search_req_id);
 
 	QTreeWidgetItem *getItemFromId(const QString &id);
 	QTreeWidgetItem *activateId(const QString &id, bool focus);

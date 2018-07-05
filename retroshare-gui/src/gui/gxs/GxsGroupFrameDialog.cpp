@@ -47,6 +47,7 @@
 #define IMAGE_SHARE          ":/images/share-icon-16.png"
 #define IMAGE_TABNEW         ":/images/tab-new.png"
 #define IMAGE_DELETE         ":/images/delete.png"
+#define IMAGE_RETRIEVE       ":/images/edit_add24.png"
 #define IMAGE_COMMENT        ""
 
 #define TOKEN_TYPE_GROUP_SUMMARY    1
@@ -344,6 +345,19 @@ void GxsGroupFrameDialog::groupTreeCustomPopupMenu(QPoint point)
 		contextMnu.exec(QCursor::pos());
 		return ;
 	}
+
+    // Then check whether we have a searched item, or a normal group
+
+    QString group_id_s ;
+
+	if(ui->groupTreeWidget->isSearchRequestResult(point,group_id_s,search_request_id))
+    {
+		QMenu contextMnu(this);
+
+		contextMnu.addAction(QIcon(IMAGE_RETRIEVE), tr("Request data"), this, SLOT(distantRequestGroupData()))->setData(group_id_s);
+		contextMnu.exec(QCursor::pos());
+		return ;
+    }
 
 	QString id = ui->groupTreeWidget->itemIdAt(point);
 	if (id.isEmpty()) return;
@@ -762,11 +776,6 @@ void GxsGroupFrameDialog::changedCurrentGroup(const QString &groupId)
 	if (mGroupId.isNull()) {
 		return;
 	}
-
-    // send a request for the group, if it has been distant-searched.
-
-    if(mCachedGroupMetas.find(mGroupId) == mCachedGroupMetas.end())
-		checkRequestGroup(mGroupId) ;
 
 	/* search exisiting tab */
 	GxsMessageFrameWidget *msgWidget = messageWidget(mGroupId, true);
@@ -1196,5 +1205,23 @@ void GxsGroupFrameDialog::searchNetwork(const QString& search_string)
         return ;
 
 	mSearchGroupsItems[request_id] = ui->groupTreeWidget->addSearchItem(tr("Search for")+ " \"" + search_string + "\"",(uint32_t)request_id,QIcon(icon(ICON_SEARCH)));
+}
+
+void GxsGroupFrameDialog::distantRequestGroupData()
+{
+    QAction *action = dynamic_cast<QAction*>(sender()) ;
+
+    if(!action)
+        return ;
+
+    RsGxsGroupId group_id(action->data().toString().toStdString());
+
+    if(group_id.isNull())
+    {
+        std::cerr << "Cannot retrieve group! Group id is null!" << std::endl;
+    }
+
+	std::cerr << "Explicit request for group " << group_id << std::endl;
+    checkRequestGroup(group_id) ;
 }
 

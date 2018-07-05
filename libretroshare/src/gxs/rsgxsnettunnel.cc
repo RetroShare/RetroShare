@@ -94,7 +94,7 @@ public:
     RsGxsNetTunnelKeepAliveItem() :RsGxsNetTunnelItem(RS_PKT_SUBTYPE_GXS_NET_TUNNEL_KEEP_ALIVE) {}
 
     virtual ~RsGxsNetTunnelKeepAliveItem() {}
-	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx) {}
+	virtual void serial_process(RsGenericSerializer::SerializeJob /* j */,RsGenericSerializer::SerializeContext& /* ctx */) {}
 };
 
 class RsGxsNetTunnelRandomBiasItem: public RsGxsNetTunnelItem
@@ -314,7 +314,7 @@ bool RsGxsNetTunnelService::receiveTunnelData(uint16_t service_id, unsigned char
 	return true;
 }
 
-bool RsGxsNetTunnelService::sendTunnelData(uint16_t service_id,unsigned char *& data,uint32_t data_len,const RsGxsNetTunnelVirtualPeerId& virtual_peer)
+bool RsGxsNetTunnelService::sendTunnelData(uint16_t /* service_id */,unsigned char *& data,uint32_t data_len,const RsGxsNetTunnelVirtualPeerId& virtual_peer)
 {
 	RS_STACK_MUTEX(mGxsNetTunnelMtx);
 	// The item is serialized and encrypted using chacha20+SHA256, using the generic turtle encryption, and then sent to the turtle router.
@@ -398,7 +398,7 @@ bool RsGxsNetTunnelService::requestDistantPeers(uint16_t service_id, const RsGxs
 	return true;
 }
 
-bool RsGxsNetTunnelService::releaseDistantPeers(uint16_t service_id,const RsGxsGroupId& group_id)
+bool RsGxsNetTunnelService::releaseDistantPeers(uint16_t /* service_id */,const RsGxsGroupId& group_id)
 {
 	RS_STACK_MUTEX(mGxsNetTunnelMtx);
 
@@ -492,7 +492,7 @@ void RsGxsNetTunnelService::connectToTurtleRouter(p3turtle *tr)
 	mTurtle->registerTunnelService(this) ;
 }
 
-bool RsGxsNetTunnelService::handleTunnelRequest(const RsFileHash &hash,const RsPeerId& peer_id)
+bool RsGxsNetTunnelService::handleTunnelRequest(const RsFileHash &hash,const RsPeerId& /* peer_id */)
 {
 	RS_STACK_MUTEX(mGxsNetTunnelMtx);
 	// We simply check for wether a managed group has a hash that corresponds to the given hash.

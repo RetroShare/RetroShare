@@ -1125,7 +1125,7 @@ void p3turtle::handleSearchResult(RsTurtleSearchResultItem *item)
 			// This is an error: how could we receive a search result corresponding to a search item we
 			// have forwarded but that it not in the list ??
 
-			std::cerr << __PRETTY_FUNCTION__ << ": search result has no peer direction!" << std::endl ;
+			std::cerr << __PRETTY_FUNCTION__ << ": search result for request " << std::hex << item->request_id << std::dec << " has no peer direction!" << std::endl ;
 			return ;
 		}
 
