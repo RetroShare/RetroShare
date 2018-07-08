@@ -558,8 +558,8 @@ void p3IdService::notifyChanges(std::vector<RsGxsNotify *> &changes)
             std::cerr << std::endl;
 #endif
 
-            std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > &msgChangeMap = msgChange->msgChangeMap;
-            std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >::iterator mit;
+            std::map<RsGxsGroupId, std::set<RsGxsMessageId> > &msgChangeMap = msgChange->msgChangeMap;
+            std::map<RsGxsGroupId, std::set<RsGxsMessageId> >::iterator mit;
             for(mit = msgChangeMap.begin(); mit != msgChangeMap.end(); ++mit)
             {
 #ifdef DEBUG_IDS

@@ -288,8 +288,8 @@ bool RsTypeSerializer::from_JSON( const std::string& memberName,
                                   uint64_t& member, RsJson& jDoc )
 {
 	SAFE_GET_JSON_V();
-	ret = ret && v.IsUint();
-	if(ret) member = v.GetUint();
+	ret = ret && v.IsUint64();
+	if(ret) member = v.GetUint64();
 	return ret;
 }
 

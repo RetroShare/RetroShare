@@ -1213,7 +1213,7 @@ int RsDataService::retrieveNxsMsgs(const GxsMsgReq &reqIds, GxsMsgResult &msg, b
         const RsGxsGroupId& grpId = mit->first;
 
         // if vector empty then request all messages
-        const std::vector<RsGxsMessageId>& msgIdV = mit->second;
+        const std::set<RsGxsMessageId>& msgIdV = mit->second;
         std::vector<RsNxsMsg*> msgSet;
 
         if(msgIdV.empty()){
@@ -1231,7 +1231,7 @@ int RsDataService::retrieveNxsMsgs(const GxsMsgReq &reqIds, GxsMsgResult &msg, b
         }else{
 
             // request each grp
-            std::vector<RsGxsMessageId>::const_iterator sit = msgIdV.begin();
+            std::set<RsGxsMessageId>::const_iterator sit = msgIdV.begin();
 
             for(; sit!=msgIdV.end();++sit){
                 const RsGxsMessageId& msgId = *sit;
@@ -1301,7 +1301,7 @@ int RsDataService::retrieveGxsMsgMetaData(const GxsMsgReq& reqIds, GxsMsgMetaRes
         const RsGxsGroupId& grpId = mit->first;
 
         // if vector empty then request all messages
-        const std::vector<RsGxsMessageId>& msgIdV = mit->second;
+        const std::set<RsGxsMessageId>& msgIdV = mit->second;
         std::vector<RsGxsMsgMetaData*> metaSet;
 
         if(msgIdV.empty()){
@@ -1317,7 +1317,7 @@ int RsDataService::retrieveGxsMsgMetaData(const GxsMsgReq& reqIds, GxsMsgMetaRes
         }else{
 
             // request each grp
-            std::vector<RsGxsMessageId>::const_iterator sit = msgIdV.begin();
+            std::set<RsGxsMessageId>::const_iterator sit = msgIdV.begin();
 
             for(; sit!=msgIdV.end(); ++sit){
                 const RsGxsMessageId& msgId = *sit;
@@ -1557,7 +1557,7 @@ int RsDataService::removeMsgs(const GxsMsgReq& msgIds)
 
     for(; mit != msgIds.end(); ++mit)
     {
-        const std::vector<RsGxsMessageId>& msgIdV = mit->second;
+        const std::set<RsGxsMessageId>& msgIdV = mit->second;
         const RsGxsGroupId& grpId = mit->first;
 
         // delete messages
@@ -1618,7 +1618,7 @@ int RsDataService::retrieveGroupIds(std::vector<RsGxsGroupId> &grpIds)
     return 1;
 }
 
-int RsDataService::retrieveMsgIds(const RsGxsGroupId& grpId, RsGxsMessageId::std_vector& msgIds)
+int RsDataService::retrieveMsgIds(const RsGxsGroupId& grpId, RsGxsMessageId::std_set& msgIds)
 {
 #ifdef RS_DATA_SERVICE_DEBUG_TIME
     rstime::RsScopeTimer timer("");
@@ -1639,7 +1639,7 @@ int RsDataService::retrieveMsgIds(const RsGxsGroupId& grpId, RsGxsMessageId::std
             if(c->columnCount() != 1)
             std::cerr << "(EE) ********* not retrieving all columns!!" << std::endl;
 
-            msgIds.push_back(RsGxsMessageId(msgId));
+            msgIds.insert(RsGxsMessageId(msgId));
             valid = c->moveToNext();
 
 #ifdef RS_DATA_SERVICE_DEBUG_TIME
@@ -1670,8 +1670,8 @@ bool RsDataService::locked_removeMessageEntries(const GxsMsgReq& msgIds)
     for(; mit != msgIds.end(); ++mit)
     {
         const RsGxsGroupId& grpId = mit->first;
-        const std::vector<RsGxsMessageId>& msgsV = mit->second;
-        std::vector<RsGxsMessageId>::const_iterator vit = msgsV.begin();
+        const std::set<RsGxsMessageId>& msgsV = mit->second;
+        std::set<RsGxsMessageId>::const_iterator vit = msgsV.begin();
 
         for(; vit != msgsV.end(); ++vit)
         {

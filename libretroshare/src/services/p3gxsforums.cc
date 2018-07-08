@@ -201,15 +201,12 @@ void p3GxsForums::notifyChanges(std::vector<RsGxsNotify *> &changes)
 						RsGxsMsgChange *msgChange = dynamic_cast<RsGxsMsgChange*>(c);
 						if (msgChange)
 						{
-							std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > &msgChangeMap = msgChange->msgChangeMap;
-							std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >::iterator mit;
-							for (mit = msgChangeMap.begin(); mit != msgChangeMap.end(); ++mit)
+							std::map<RsGxsGroupId, std::set<RsGxsMessageId> > &msgChangeMap = msgChange->msgChangeMap;
+
+							for (auto mit = msgChangeMap.begin(); mit != msgChangeMap.end(); ++mit)
 							{
-								std::vector<RsGxsMessageId>::iterator mit1;
-								for (mit1 = mit->second.begin(); mit1 != mit->second.end(); ++mit1)
-								{
+								for (auto mit1 = mit->second.begin(); mit1 != mit->second.end(); ++mit1)
 									notify->AddFeedItem(RS_FEED_ITEM_FORUM_MSG, mit->first.toStdString(), mit1->toStdString());
-								}
 							}
 							break;
 						}

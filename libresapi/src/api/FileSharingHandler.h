@@ -60,6 +60,12 @@ private:
 
 	void handleDownload(Request& req, Response& resp);
 
+	void handleGetDownloadDirectory(Request& req, Response& resp);
+	void handleSetDownloadDirectory(Request& req, Response& resp);
+
+	void handleGetPartialsDirectory(Request& req, Response& resp);
+	void handleSetPartialsDirectory(Request& req, Response& resp);
+
 	/// Token indicating change in local shared files
 	StateToken mLocalDirStateToken;
 

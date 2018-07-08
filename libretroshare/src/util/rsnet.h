@@ -138,6 +138,7 @@ bool sockaddr_storage_sameip(const struct sockaddr_storage &addr, const struct s
 
 // string,
 std::string sockaddr_storage_tostring(const struct sockaddr_storage &addr);
+bool sockaddr_storage_fromString(const std::string& str, sockaddr_storage &addr);
 std::string sockaddr_storage_familytostring(const struct sockaddr_storage &addr);
 std::string sockaddr_storage_iptostring(const struct sockaddr_storage &addr);
 std::string sockaddr_storage_porttostring(const struct sockaddr_storage &addr);

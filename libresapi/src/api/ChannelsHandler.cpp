@@ -26,6 +26,8 @@
 #include <util/radix64.h>
 #include <util/rstime.h>
 #include <algorithm>
+#include <time.h>
+
 #include "Operators.h"
 
 namespace resource_api
@@ -53,7 +55,8 @@ ChannelsHandler::ChannelsHandler(RsGxsChannels& channels): mChannels(channels)
 {
 	addResourceHandler("list_channels", this,
 	                   &ChannelsHandler::handleListChannels);
-	addResourceHandler("get_channel", this, &ChannelsHandler::handleGetChannel);
+	addResourceHandler("get_channel_info", this, &ChannelsHandler::handleGetChannelInfo);
+	addResourceHandler("get_channel_content", this, &ChannelsHandler::handleGetChannelContent);
 	addResourceHandler("toggle_subscribe", this, &ChannelsHandler::handleToggleSubscription);
 	addResourceHandler("toggle_auto_download", this, &ChannelsHandler::handleToggleAutoDownload);
 	addResourceHandler("toggle_read", this, &ChannelsHandler::handleTogglePostRead);
@@ -64,12 +67,77 @@ ChannelsHandler::ChannelsHandler(RsGxsChannels& channels): mChannels(channels)
 void ChannelsHandler::handleListChannels(Request& /*req*/, Response& resp)
 {
 	RsTokReqOptions opts;
-	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
+	opts.mReqType = GXS_REQUEST_TYPE_GROUP_META;
 	uint32_t token;
 
 	RsTokenService& tChannels = *mChannels.getTokenService();
 
-	tChannels.requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts);
+	tChannels.requestGroupInfo(token, RS_DEPRECATED_TOKREQ_ANSTYPE, opts);
+
+	time_t start = time(NULL);
+	while((tChannels.requestStatus(token) != RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
+	      &&(tChannels.requestStatus(token) != RsTokenService::GXS_REQUEST_V2_STATUS_FAILED)
+	      &&((time(NULL) < (start+10)))) rstime::rs_usleep(500*1000);
+
+	std::list<RsGroupMetaData> grps;
+	if( tChannels.requestStatus(token) == RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE
+	        && mChannels.getGroupSummary(token, grps) )
+	{
+		for( RsGroupMetaData& grp : grps )
+		{
+			KeyValueReference<RsGxsGroupId> id("channel_id", grp.mGroupId);
+			KeyValueReference<uint32_t> vis_msg("visible_msg_count", grp.mVisibleMsgCount);
+			bool own = (grp.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN);
+			bool subscribed = IS_GROUP_SUBSCRIBED(grp.mSubscribeFlags);
+			std::string lastPostTsStr = std::to_string(grp.mLastPost);
+			std::string publishTsStr = std::to_string(grp.mPublishTs);
+			resp.mDataStream.getStreamToMember()
+			        << id
+			        << makeKeyValueReference("name", grp.mGroupName)
+			        << makeKeyValueReference("last_post_ts", lastPostTsStr)
+			        << makeKeyValueReference("popularity", grp.mPop)
+			        << makeKeyValueReference("publish_ts", publishTsStr)
+			        << vis_msg
+			        << makeKeyValueReference("group_status", grp.mGroupStatus)
+			        << makeKeyValueReference("author_id", grp.mAuthorId)
+			        << makeKeyValueReference("parent_grp_id", grp.mParentGrpId)
+			        << makeKeyValueReference("own", own)
+			        << makeKeyValueReference("subscribed", subscribed);
+		}
+
+		resp.setOk();
+	}
+	else resp.setFail("Cant get data from GXS!");
+}
+
+void ChannelsHandler::handleGetChannelInfo(Request& req, Response& resp)
+{
+	std::string chanIdStr;
+	req.mStream << makeKeyValueReference("channel_id", chanIdStr);
+	if(chanIdStr.empty())
+	{
+		resp.setFail("channel_id required!");
+		return;
+	}
+
+	RsGxsGroupId chanId(chanIdStr);
+	if(chanId.isNull())
+	{
+		resp.setFail("Invalid channel_id:" + chanIdStr);
+		return;
+	}
+
+	bool wantThumbnail = true;
+	req.mStream << makeKeyValueReference("want_thumbnail", wantThumbnail);
+
+	std::list<RsGxsGroupId> groupIds; groupIds.push_back(chanId);
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
+	uint32_t token;
+
+	RsTokenService& tChannels = *mChannels.getTokenService();
+	tChannels.requestGroupInfo( token, RS_DEPRECATED_TOKREQ_ANSTYPE,
+	                            opts, groupIds );
 
 	time_t start = time(NULL);
 	while((tChannels.requestStatus(token) != RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
@@ -80,33 +148,35 @@ void ChannelsHandler::handleListChannels(Request& /*req*/, Response& resp)
 	if( tChannels.requestStatus(token) == RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE
 	        && mChannels.getGroupData(token, grps) )
 	{
-		for( std::vector<RsGxsChannelGroup>::iterator vit = grps.begin();
-		     vit != grps.end(); ++vit )
+		for( RsGxsChannelGroup& grp : grps )
 		{
-			RsGxsChannelGroup& grp = *vit;
 			KeyValueReference<RsGxsGroupId> id("channel_id", grp.mMeta.mGroupId);
 			KeyValueReference<uint32_t> vis_msg("visible_msg_count", grp.mMeta.mVisibleMsgCount);
 			bool own = (grp.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN);
 			bool subscribed = IS_GROUP_SUBSCRIBED(grp.mMeta.mSubscribeFlags);
 			std::string lastPostTsStr = std::to_string(grp.mMeta.mLastPost);
 			std::string publishTsStr = std::to_string(grp.mMeta.mPublishTs);
-			std::string thumbnail_base64;
-			Radix64::encode(grp.mImage.mData, grp.mImage.mSize, thumbnail_base64);
-			resp.mDataStream.getStreamToMember()
-			        << id
-			        << makeKeyValueReference("name", grp.mMeta.mGroupName)
-			        << makeKeyValueReference("last_post_ts", lastPostTsStr)
-			        << makeKeyValueReference("popularity", grp.mMeta.mPop)
-			        << makeKeyValueReference("publish_ts", publishTsStr)
-			        << vis_msg
-			        << makeKeyValueReference("group_status", grp.mMeta.mGroupStatus)
-			        << makeKeyValueReference("author_id", grp.mMeta.mAuthorId)
-			        << makeKeyValueReference("parent_grp_id", grp.mMeta.mParentGrpId)
-			        << makeKeyValueReference("description", grp.mDescription)
-			        << makeKeyValueReference("own", own)
-			        << makeKeyValueReference("subscribed", subscribed)
-			        << makeKeyValueReference("thumbnail_base64_png", thumbnail_base64)
-			        << makeKeyValueReference("auto_download", grp.mAutoDownload);
+			StreamBase& rgrp(resp.mDataStream.getStreamToMember());
+			rgrp << id
+			     << makeKeyValueReference("name", grp.mMeta.mGroupName)
+			     << makeKeyValueReference("last_post_ts", lastPostTsStr)
+			     << makeKeyValueReference("popularity", grp.mMeta.mPop)
+			     << makeKeyValueReference("publish_ts", publishTsStr)
+			     << vis_msg
+			     << makeKeyValueReference("group_status", grp.mMeta.mGroupStatus)
+			     << makeKeyValueReference("author_id", grp.mMeta.mAuthorId)
+			     << makeKeyValueReference("parent_grp_id", grp.mMeta.mParentGrpId)
+			     << makeKeyValueReference("description", grp.mDescription)
+			     << makeKeyValueReference("own", own)
+			     << makeKeyValueReference("subscribed", subscribed)
+			     << makeKeyValueReference("auto_download", grp.mAutoDownload);
+
+			if(wantThumbnail)
+			{
+				std::string thumbnail_base64;
+				Radix64::encode(grp.mImage.mData, grp.mImage.mSize, thumbnail_base64);
+				rgrp << makeKeyValueReference("thumbnail_base64_png", thumbnail_base64);
+			}
 		}
 
 		resp.setOk();
@@ -114,7 +184,7 @@ void ChannelsHandler::handleListChannels(Request& /*req*/, Response& resp)
 	else resp.setFail("Cant get data from GXS!");
 }
 
-void ChannelsHandler::handleGetChannel(Request& req, Response& resp)
+void ChannelsHandler::handleGetChannelContent(Request& req, Response& resp)
 {
 	std::string chanIdStr;
 	req.mStream << makeKeyValueReference("channel_id", chanIdStr);
@@ -122,7 +192,6 @@ void ChannelsHandler::handleGetChannel(Request& req, Response& resp)
 	{
 		resp.setFail("channel_id required!");
 		return;
-
 	}
 
 	RsGxsGroupId chanId(chanIdStr);

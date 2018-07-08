@@ -159,6 +159,7 @@ virtual bool    assignPeersToGroup(const RsNodeGroupId &groupId, const std::list
 	 * 3) p3disc  - reasonable
 	 */
 
+	virtual bool addPeerLocator(const RsPeerId &ssl_id, const RsUrl& locator) = 0;
 virtual bool 	setLocalAddress(const RsPeerId &id, const struct sockaddr_storage &addr) = 0;
 virtual bool 	setExtAddress(const RsPeerId &id, const struct sockaddr_storage &addr) = 0;
 virtual bool    setDynDNS(const RsPeerId &id, const std::string &dyndns) = 0;
@@ -273,6 +274,7 @@ public:
      * 3) p3disc  - reasonable
      */
 
+	virtual bool addPeerLocator(const RsPeerId &ssl_id, const RsUrl& locator);
     virtual bool 	setLocalAddress(const RsPeerId &id, const struct sockaddr_storage &addr);
     virtual bool 	setExtAddress(const RsPeerId &id, const struct sockaddr_storage &addr);
     virtual bool    setDynDNS(const RsPeerId &id, const std::string &dyndns);

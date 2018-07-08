@@ -366,8 +366,8 @@ void NewsFeed::updateDisplay()
 						opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
 
 						GxsMsgReq msgIds;
-						std::vector<RsGxsMessageId> &vect_msgIds = msgIds[grpId];
-						vect_msgIds.push_back(msgId);
+						std::set<RsGxsMessageId> &vect_msgIds = msgIds[grpId];
+						vect_msgIds.insert(msgId);
 
 						uint32_t token;
 						mTokenQueueCircle->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, TOKEN_TYPE_MESSAGE);

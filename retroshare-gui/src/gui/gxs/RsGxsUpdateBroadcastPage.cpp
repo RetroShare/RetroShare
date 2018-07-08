@@ -22,32 +22,32 @@ void RsGxsUpdateBroadcastPage::setUpdateWhenInvisible(bool update)
 	mBase->setUpdateWhenInvisible(update);
 }
 
-const std::list<RsGxsGroupId> &RsGxsUpdateBroadcastPage::getGrpIdsMeta()
+const std::set<RsGxsGroupId> &RsGxsUpdateBroadcastPage::getGrpIdsMeta()
 {
 	return mBase->getGrpIdsMeta();
 }
 
-void RsGxsUpdateBroadcastPage::getAllGrpIds(std::list<RsGxsGroupId> &grpIds)
+void RsGxsUpdateBroadcastPage::getAllGrpIds(std::set<RsGxsGroupId> &grpIds)
 {
 	mBase->getAllGrpIds(grpIds);
 }
 
-const std::list<RsGxsGroupId> &RsGxsUpdateBroadcastPage::getGrpIds()
+const std::set<RsGxsGroupId> &RsGxsUpdateBroadcastPage::getGrpIds()
 {
 	return mBase->getGrpIds();
 }
 
-const std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > &RsGxsUpdateBroadcastPage::getMsgIdsMeta()
+const std::map<RsGxsGroupId, std::set<RsGxsMessageId> > &RsGxsUpdateBroadcastPage::getMsgIdsMeta()
 {
 	return mBase->getMsgIdsMeta();
 }
 
-void RsGxsUpdateBroadcastPage::getAllMsgIds(std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > &msgIds)
+void RsGxsUpdateBroadcastPage::getAllMsgIds(std::map<RsGxsGroupId, std::set<RsGxsMessageId> > &msgIds)
 {
 	mBase->getAllMsgIds(msgIds);
 }
 
-const std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > &RsGxsUpdateBroadcastPage::getMsgIds()
+const std::map<RsGxsGroupId, std::set<RsGxsMessageId> > &RsGxsUpdateBroadcastPage::getMsgIds()
 {
 	return mBase->getMsgIds();
 }

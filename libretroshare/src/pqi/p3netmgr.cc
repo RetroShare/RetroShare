@@ -983,8 +983,8 @@ bool p3NetMgrIMPL::checkNetAddress()
 	bool addrChanged = false;
 	bool validAddr = false;
 	
-	struct sockaddr_storage prefAddr;
-	struct sockaddr_storage oldAddr;
+	sockaddr_storage prefAddr;
+	sockaddr_storage oldAddr;
 
 	if (mNetMode & RS_NET_MODE_TRY_LOOPBACK)
 	{
@@ -992,7 +992,7 @@ bool p3NetMgrIMPL::checkNetAddress()
         std::cerr << "p3NetMgrIMPL::checkNetAddress() LOOPBACK ... forcing to 127.0.0.1";
         std::cerr << std::endl;
 #endif
-	    sockaddr_storage_ipv4_aton(prefAddr, "127.0.0.1");
+		sockaddr_storage_ipv4_aton(prefAddr, "127.0.0.1");
 		validAddr = true;
 	}
 	else
@@ -1008,7 +1008,7 @@ bool p3NetMgrIMPL::checkNetAddress()
 		std::vector<sockaddr_storage> addrs;
 		if (getLocalAddresses(addrs))
 		{
-			for (auto it = addrs.begin(); it!=addrs.end(); ++it)
+			for (auto it = addrs.begin(); it != addrs.end(); ++it)
 			{
 				sockaddr_storage& addr(*it);
 				if( sockaddr_storage_isValidNet(addr) &&
@@ -1056,8 +1056,8 @@ bool p3NetMgrIMPL::checkNetAddress()
 	
 	{
 		RS_STACK_MUTEX(mNetMtx);
-		
-		oldAddr = mLocalAddr;
+
+		sockaddr_storage_copy(mLocalAddr, oldAddr);
 		addrChanged = !sockaddr_storage_sameip(prefAddr, mLocalAddr);
 
 #ifdef NETMGR_DEBUG_TICK
@@ -1083,7 +1083,7 @@ bool p3NetMgrIMPL::checkNetAddress()
 		
 		// update address.
 		sockaddr_storage_copyip(mLocalAddr, prefAddr);
-		mNetFlags.mLocalAddr = mLocalAddr;
+		sockaddr_storage_copy(mLocalAddr, mNetFlags.mLocalAddr);
 
 		if(sockaddr_storage_isLoopbackNet(mLocalAddr))
 		{
@@ -1115,12 +1115,7 @@ bool p3NetMgrIMPL::checkNetAddress()
 #ifdef NETMGR_DEBUG
 			std::cerr << "p3NetMgrIMPL::checkNetAddress() Correcting Port to DEFAULT" << std::endl;
 #endif
-			// Generate a default port from SSL id. The port will always be the
-			// same, but appear random from peer to peer.
-		 	// Random port avoids clashes, improves anonymity.
-			//
-		
-			int new_port = htons(PQI_MIN_PORT_RNG + (RSRandom::random_u32() % (PQI_MAX_PORT - PQI_MIN_PORT_RNG)));
+			uint16_t new_port = htons(PQI_MIN_PORT_RNG + (RSRandom::random_u32() % (PQI_MAX_PORT - PQI_MIN_PORT_RNG)));
 			sockaddr_storage_setport(mLocalAddr, new_port);
 
 			addrChanged = true;
@@ -1130,9 +1125,13 @@ bool p3NetMgrIMPL::checkNetAddress()
 		 * are the same (modify server)... this mismatch can
 		 * occur when the local port is changed....
 		 */
-		if (sockaddr_storage_sameip(mLocalAddr, mExtAddr))
+        if (sockaddr_storage_sameip(mLocalAddr, mExtAddr) && sockaddr_storage_port(mLocalAddr) != sockaddr_storage_port(mExtAddr))
 		{
+#ifdef NETMGR_DEBUG_RESET
+        std::cerr << "p3NetMgrIMPL::checkNetAddress() local and external ports are not the same. Setting external port to " <<       sockaddr_storage_port(mLocalAddr) << std::endl;
+#endif
 			sockaddr_storage_setport(mExtAddr, sockaddr_storage_port(mLocalAddr));
+			addrChanged = true;
 		}
 
 		// ensure that address family is set, otherwise windows Barfs.

@@ -222,6 +222,13 @@ struct RsGenericSerializer : RsSerialType
 		/** Allow shared allocator usage to avoid costly JSON deepcopy for
 		 *  nested RsSerializable */
 		SerializeContext(
+		        uint8_t *data, uint32_t size,
+		        SerializationFlags flags = SERIALIZATION_FLAG_NONE,
+		        RsJson::AllocatorType* allocator = nullptr) :
+		    mData(data), mSize(size), mOffset(0), mOk(true), mFlags(flags),
+		    mJson(rapidjson::kObjectType, allocator) {}
+
+		RS_DEPRECATED SerializeContext(
 		        uint8_t *data, uint32_t size, SerializationFormat format,
 		        SerializationFlags flags,
 		        RsJson::AllocatorType* allocator = nullptr) :

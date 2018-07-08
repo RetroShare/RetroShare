@@ -730,6 +730,11 @@ void PeersHandler::handleWildcard(Request &req, Response &resp)
 						                           peerDetails.localPort );
 					if (!peerDetails.dyndns.empty())
 						mRsPeers->setDynDNS(peerDetails.id, peerDetails.dyndns);
+					for(auto&& ipr : peerDetails.ipAddressList)
+						mRsPeers->addPeerLocator(
+						            peerDetails.id,
+						            RsUrl(ipr.substr(0, ipr.find(' '))) );
+
 				}
 			}
 			while(false);

@@ -30,6 +30,11 @@ bitdht {
     !include("../../libbitdht/src/use_libbitdht.pri"):error("Including")
 }
 
+# when rapidjson is mainstream on all distribs, we will not need the sources
+# anymore in the meantime, they are part of the RS directory so that it is
+# always possible to find them
+INCLUDEPATH *= $$system_path($$clean_path($${PWD}/../../rapidjson-1.1.0))
+
 sLibs =
 mLibs = $$RS_SQL_LIB ssl crypto $$RS_THREAD_LIB $$RS_UPNP_LIB
 dLibs =

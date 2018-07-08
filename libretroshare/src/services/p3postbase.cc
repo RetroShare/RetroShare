@@ -106,9 +106,8 @@ void p3PostBase::notifyChanges(std::vector<RsGxsNotify *> &changes)
 			std::cerr << std::endl;
 #endif
 
-			std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > &msgChangeMap = msgChange->msgChangeMap;
-			std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >::iterator mit;
-			for(mit = msgChangeMap.begin(); mit != msgChangeMap.end(); ++mit)
+			std::map<RsGxsGroupId, std::set<RsGxsMessageId> > &msgChangeMap = msgChange->msgChangeMap;
+			for(auto mit = msgChangeMap.begin(); mit != msgChangeMap.end(); ++mit)
 			{
 #ifdef POSTBASE_DEBUG
 				std::cerr << "p3PostBase::notifyChanges() Msgs for Group: " << mit->first;
@@ -121,8 +120,7 @@ void p3PostBase::notifyChanges(std::vector<RsGxsNotify *> &changes)
 
 				if (notify && msgChange->getType() == RsGxsNotify::TYPE_RECEIVE)
 				{
-					std::vector<RsGxsMessageId>::iterator mit1;
-					for (mit1 = mit->second.begin(); mit1 != mit->second.end(); ++mit1)
+					for (auto mit1 = mit->second.begin(); mit1 != mit->second.end(); ++mit1)
 					{
 						notify->AddFeedItem(RS_FEED_ITEM_POSTED_MSG, mit->first.toStdString(), mit1->toStdString());
 					}
@@ -427,7 +425,7 @@ void p3PostBase::background_loadMsgs(const uint32_t &token, bool unprocessed)
 		mBgIncremental = unprocessed;
 	}
 
-	std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > postMap;
+	std::map<RsGxsGroupId, std::set<RsGxsMessageId> > postMap;
 
 	// generate vector of changes to push to the GUI.
 	std::vector<RsGxsNotify *> changes;
@@ -483,7 +481,7 @@ void p3PostBase::background_loadMsgs(const uint32_t &token, bool unprocessed)
 #endif
 
 				/* but we need to notify GUI about them */	
-				msgChanges->msgChangeMap[mit->first].push_back((*vit)->meta.mMsgId);
+				msgChanges->msgChangeMap[mit->first].insert((*vit)->meta.mMsgId);
 			}
 			else if (NULL != (commentItem = dynamic_cast<RsGxsCommentItem *>(*vit)))
 			{
@@ -542,7 +540,7 @@ void p3PostBase::background_loadMsgs(const uint32_t &token, bool unprocessed)
 				if (sit == mBgStatsMap.end())
 				{
 					// add to map of ones to update.		
-					postMap[groupId].push_back(threadId);	
+					postMap[groupId].insert(threadId);
 
 					mBgStatsMap[threadId] = PostStats(0,0,0);
 					sit = mBgStatsMap.find(threadId);
@@ -700,7 +698,7 @@ void p3PostBase::background_updateVoteCounts(const uint32_t &token)
 #endif
 
 				stats.increment(it->second);
-				msgChanges->msgChangeMap[mit->first].push_back(vit->mMsgId);
+				msgChanges->msgChangeMap[mit->first].insert(vit->mMsgId);
 			}
 			else
 			{

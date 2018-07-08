@@ -38,11 +38,6 @@ DESTDIR = lib
 #QMAKE_CFLAGS += -Werror
 #QMAKE_CXXFLAGS += -Werror
 
-# when rapidjson is mainstream on all distribs, we will not need the sources anymore
-# in the meantime, they are part of the RS directory so that it is always possible to find them
-
-INCLUDEPATH += ../../rapidjson-1.1.0
-
 debug {
 #	DEFINES *= DEBUG
 #	DEFINES *= OPENDHT_DEBUG DHT_DEBUG CONN_DEBUG DEBUG_UDP_SORTER P3DISC_DEBUG DEBUG_UDP_LAYER FT_DEBUG EXTADDRSEARCH_DEBUG
@@ -288,8 +283,6 @@ win32-g++ {
 
 	DEFINES += USE_CMD_ARGS
 
-	CONFIG += upnp_miniupnpc
-
     wLibs = ws2_32 gdi32 uuid iphlpapi crypt32 ole32 winmm
     LIBS += $$linkDynamicLibs(wLibs)
 }
@@ -300,21 +293,9 @@ mac {
 		QMAKE_CC = $${QMAKE_CXX}
 		OBJECTS_DIR = temp/obj
 		MOC_DIR = temp/moc
-		#DEFINES = WINDOWS_SYS WIN32 STATICLIB MINGW
-		#DEFINES *= MINIUPNPC_VERSION=13
-
-		CONFIG += upnp_miniupnpc
-                CONFIG += c++11
-
-		# zeroconf disabled at the end of libretroshare.pro (but need the code)
-		#CONFIG += zeroconf
-		#CONFIG += zcnatassist
 
 		# Beautiful Hack to fix 64bit file access.
 		QMAKE_CXXFLAGS *= -Dfseeko64=fseeko -Dftello64=ftello -Dfopen64=fopen -Dvstatfs64=vstatfs
-
-		#GPG_ERROR_DIR = ../../../../libgpg-error-1.7
-		#GPGME_DIR  = ../../../../gpgme-1.1.8
 
 		for(lib, LIB_DIR):LIBS += -L"$$lib"
 		for(bin, BIN_DIR):LIBS += -L"$$bin"
@@ -541,7 +522,8 @@ HEADERS +=	util/folderiterator.h \
 			util/rstime.h \
             util/stacktrace.h \
             util/rsdeprecate.h \
-            util/cxx11retrocompat.h
+            util/cxx11retrocompat.h \
+            util/rsurl.h
 
 SOURCES +=	ft/ftchunkmap.cc \
 			ft/ftcontroller.cc \
@@ -684,7 +666,8 @@ SOURCES +=	util/folderiterator.cc \
 			util/rsrandom.cc \
 			util/rstickevent.cc \
 			util/rsrecogn.cc \
-			util/rstime.cc
+            util/rstime.cc \
+            util/rsurl.cc
 
 ## Added for retrocompatibility remove ASAP
 isEmpty(RS_UPNP_LIB) {

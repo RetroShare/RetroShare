@@ -781,7 +781,7 @@ void RsGxsNetService::handleRecvSyncGrpStatistics(RsNxsSyncGrpStatsItem *grs)
 	    // now count available messages
 
 	    GxsMsgReq reqIds;
-	    reqIds[grs->grpId] = std::vector<RsGxsMessageId>();
+	    reqIds[grs->grpId] = std::set<RsGxsMessageId>();
 	    GxsMsgMetaResult result;
 
 #ifdef NXS_NET_DEBUG_6
@@ -2754,7 +2754,7 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
 #endif
 
     GxsMsgReq reqIds;
-    reqIds[grpId] = std::vector<RsGxsMessageId>();
+    reqIds[grpId] = std::set<RsGxsMessageId>();
     GxsMsgMetaResult result;
     mDataStore->retrieveGxsMsgMetaData(reqIds, result);
     std::vector<RsGxsMsgMetaData*> &msgMetaV = result[grpId];
@@ -3293,7 +3293,7 @@ void RsGxsNetService::locked_genSendMsgsTransaction(NxsTransaction* tr)
 	    RsNxsSyncMsgItem* item = dynamic_cast<RsNxsSyncMsgItem*>(*lit);
 	    if (item)
 	    {
-		    msgIds[item->grpId].push_back(item->msgId);
+		    msgIds[item->grpId].insert(item->msgId);
 
 		    if(grpId.isNull())
 			    grpId = item->grpId;
@@ -4124,7 +4124,7 @@ void RsGxsNetService::handleRecvSyncMessage(RsNxsSyncMsgReqItem *item,bool item_
     }
 
     GxsMsgReq req;
-    req[item->grpId] = std::vector<RsGxsMessageId>();
+    req[item->grpId] = std::set<RsGxsMessageId>();
 
     GxsMsgMetaResult metaResult;
     mDataStore->retrieveGxsMsgMetaData(req, metaResult);

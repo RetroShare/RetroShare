@@ -9,7 +9,7 @@ call "%EnvPath%\env.bat"
 if errorlevel 1 goto error_env
 
 :: Initialize environment
-call "%~dp0env.bat" %*
+call "%~dp0env.bat" standard
 if errorlevel 2 exit /B 2
 if errorlevel 1 goto error_env
 

@@ -236,11 +236,10 @@ void GxsGroupFrameDialog::updateDisplay(bool complete)
 		requestGroupSummary();
 	} else {
 		/* Update all groups of changed messages */
-		std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > msgIds;
+		std::map<RsGxsGroupId, std::set<RsGxsMessageId> > msgIds;
 		getAllMsgIds(msgIds);
 
-		std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >::iterator msgIt;
-		for (msgIt = msgIds.begin(); msgIt != msgIds.end(); ++msgIt) {
+		for (auto msgIt = msgIds.begin(); msgIt != msgIds.end(); ++msgIt) {
 			updateMessageSummaryList(msgIt->first);
 		}
 	}

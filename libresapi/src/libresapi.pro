@@ -26,23 +26,14 @@ DESTDIR = lib
 
 !include(use_libresapi.pri):error("Including")
 
-# when rapidjson is mainstream on all distribs, we will not need the sources anymore
-# in the meantime, they are part of the RS directory so that it is always possible to find them
-
-INCLUDEPATH += ../../rapidjson-1.1.0
 INCLUDEPATH += ../../libretroshare/src
 
 libresapilocalserver {
-    CONFIG *= qt
-    QT *= network
     SOURCES *= api/ApiServerLocal.cpp
     HEADERS *= api/ApiServerLocal.h
 }
 
 libresapi_settings {
-    CONFIG *= qt
-    QT *= core
-
     SOURCES += api/SettingsHandler.cpp
     HEADERS += api/SettingsHandler.h
 }

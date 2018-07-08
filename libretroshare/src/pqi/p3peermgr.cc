@@ -1235,11 +1235,11 @@ bool p3PeerMgrIMPL::UpdateOwnAddress( const sockaddr_storage& pLocalAddr,
 	sockaddr_storage_copy(pExtAddr, extAddr);
 	sockaddr_storage_ipv6_to_ipv4(extAddr);
 
-#ifdef PEER_DEBUG
+//#ifdef PEER_DEBUG
 	std::cerr << "p3PeerMgrIMPL::UpdateOwnAddress("
 	          << sockaddr_storage_tostring(localAddr) << ", "
 	          << sockaddr_storage_tostring(extAddr) << ")" << std::endl;
-#endif
+//#endif
 
 	if( rsBanList &&
 	         !rsBanList->isAddressAccepted(localAddr,
@@ -1361,16 +1361,63 @@ bool p3PeerMgrIMPL::UpdateOwnAddress( const sockaddr_storage& pLocalAddr,
 }
 
 
+bool p3PeerMgrIMPL::addPeerLocator(const RsPeerId &sslId, const RsUrl& locator)
+{
+	std::string host(locator.host());
+	pqiIpAddress ip;
+	if(!locator.hasPort() || host.empty() ||
+	   !sockaddr_storage_inet_pton(ip.mAddr, host) ||
+	   !sockaddr_storage_setport(ip.mAddr, locator.port())) return false;
+	ip.mSeenTime = time(NULL);
 
+	bool changed = false;
 
-bool    p3PeerMgrIMPL::setLocalAddress(const RsPeerId &id, const struct sockaddr_storage &addr)
+	if (sslId == AuthSSL::getAuthSSL()->OwnId())
+	{
+		RS_STACK_MUTEX(mPeerMtx);
+		changed = mOwnState.ipAddrs.updateLocalAddrs(ip);
+	}
+	else
+	{
+		RS_STACK_MUTEX(mPeerMtx);
+		auto it =  mFriendList.find(sslId);
+		if (it == mFriendList.end())
+		{
+			it = mOthersList.find(sslId);
+			if (it == mOthersList.end())
+			{
+#ifdef PEER_DEBUG
+				std::cerr << __PRETTY_FUNCTION__ << "cannot add address "
+				          << "info, peer id: " << sslId << " not found in list"
+				          << std::endl;
+#endif
+				return false;
+			}
+		}
+
+		changed = it->second.ipAddrs.updateLocalAddrs(ip);
+	}
+
+	if (changed)
+	{
+#ifdef PEER_DEBUG
+		std::cerr << __PRETTY_FUNCTION__ << " Added locator: "
+		          << locator.toString() << std::endl;
+#endif
+		IndicateConfigChanged();
+	}
+	return changed;
+}
+
+bool p3PeerMgrIMPL::setLocalAddress( const RsPeerId &id,
+                                     const sockaddr_storage &addr )
 {
 	bool changed = false;
 
 	if (id == AuthSSL::getAuthSSL()->OwnId())
 	{
 		{
-			RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+			RS_STACK_MUTEX(mPeerMtx);
 			if (!sockaddr_storage_same(mOwnState.localaddr, addr))
 			{
 				mOwnState.localaddr = addr;
@@ -1388,7 +1435,7 @@ bool    p3PeerMgrIMPL::setLocalAddress(const RsPeerId &id, const struct sockaddr
 		return changed;
 	}
 
-	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+	RS_STACK_MUTEX(mPeerMtx);
 	/* check if it is a friend */
 	std::map<RsPeerId, peerState>::iterator it;
 	if (mFriendList.end() == (it = mFriendList.find(id)))
@@ -1396,7 +1443,9 @@ bool    p3PeerMgrIMPL::setLocalAddress(const RsPeerId &id, const struct sockaddr
 		if (mOthersList.end() == (it = mOthersList.find(id)))
 		{
 #ifdef PEER_DEBUG
-	std::cerr << "p3PeerMgrIMPL::setLocalAddress() cannot add addres info : peer id not found in friend list  id: " << id << std::endl;
+			std::cerr << "p3PeerMgrIMPL::setLocalAddress() cannot add addres "
+			          << "info : peer id not found in friend list  id: "
+			          << id << std::endl;
 #endif
 			return false;
 		}
@@ -1417,28 +1466,29 @@ bool    p3PeerMgrIMPL::setLocalAddress(const RsPeerId &id, const struct sockaddr
 	it->second.updateIpAddressList(ipAddressTimed);
 #endif
 
-	if (changed) {
-		IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
-	}
-
+	if (changed) IndicateConfigChanged();
 	return changed;
 }
 
-bool    p3PeerMgrIMPL::setExtAddress(const RsPeerId &id, const struct sockaddr_storage &addr)
+bool p3PeerMgrIMPL::setExtAddress( const RsPeerId &id,
+                                   const sockaddr_storage &addr )
 {
-    bool changed = false;
-    uint32_t check_res = 0 ;
+	bool changed = false;
+	uint32_t check_res = 0;
 
-    if(rsBanList!=NULL && !rsBanList->isAddressAccepted(addr,RSBANLIST_CHECKING_FLAGS_BLACKLIST,&check_res))
-    {
-        std::cerr << "(SS) trying to set external contact address for peer " << id << " to a banned address " << sockaddr_storage_iptostring(addr )<< std::endl;
-        return false ;
-    }
+	if( rsBanList!=NULL && !rsBanList->isAddressAccepted(
+	            addr, RSBANLIST_CHECKING_FLAGS_BLACKLIST, &check_res) )
+	{
+		std::cerr << "(SS) trying to set external contact address for peer "
+		          << id << " to a banned address "
+		          << sockaddr_storage_iptostring(addr) << std::endl;
+		return false;
+	}
 
 	if (id == AuthSSL::getAuthSSL()->OwnId())
 	{
 		{
-			RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+			RS_STACK_MUTEX(mPeerMtx);
 			if (!sockaddr_storage_same(mOwnState.serveraddr, addr))
 			{
 				mOwnState.serveraddr = addr;
@@ -1451,7 +1501,7 @@ bool    p3PeerMgrIMPL::setExtAddress(const RsPeerId &id, const struct sockaddr_s
 		return changed;
 	}
 
-	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+	RS_STACK_MUTEX(mPeerMtx);
 	/* check if it is a friend */
 	std::map<RsPeerId, peerState>::iterator it;
 	if (mFriendList.end() == (it = mFriendList.find(id)))
@@ -1459,7 +1509,9 @@ bool    p3PeerMgrIMPL::setExtAddress(const RsPeerId &id, const struct sockaddr_s
 		if (mOthersList.end() == (it = mOthersList.find(id)))
 		{
 #ifdef PEER_DEBUG
-			std::cerr << "p3PeerMgrIMPL::setLocalAddress() cannot add addres info : peer id not found in friend list  id: " << id << std::endl;
+			std::cerr << "p3PeerMgrIMPL::setLocalAddress() cannot add addres "
+			          << "info : peer id not found in friend list  id: " << id
+			          << std::endl;
 #endif
 			return false;
 		}

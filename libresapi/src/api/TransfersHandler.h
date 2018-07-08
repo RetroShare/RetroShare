@@ -51,6 +51,9 @@ private:
     void handleControlDownload(Request& req, Response& resp);
     void handleDownloads(Request& req, Response& resp);
 	void handleUploads(Request& req, Response& resp);
+	void handleSetFileDestinationDirectory(Request& req, Response& resp);
+	void handleSetFileDestinationName(Request& req, Response& resp);
+	void handleSetFileChunkStrategy(Request& req, Response& resp);
 
     StateTokenServer* mStateTokenServer;
     RsFiles* mFiles;
