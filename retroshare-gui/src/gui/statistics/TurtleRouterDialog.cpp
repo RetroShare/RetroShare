@@ -489,7 +489,7 @@ static QString getSideString(uint8_t side)
 
 static QString getMasterKeyString(uint8_t *key)
 {
-    return QString::fromStdString(RsUtil::BinToHex(key,10));
+    return QString::fromStdString(RsUtil::BinToHex(key,32,10));
 }
 
 void GxsNetTunnelsDialog::updateDisplay()
