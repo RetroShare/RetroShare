@@ -106,7 +106,7 @@ void CreateLobbyDialog::checkTextFields()
                     break ;
     }
     
-    RsIdentityDetails(idd) ;
+    RsIdentityDetails idd;
     
     rsIdentity->getIdDetails(id,idd) ;
     
