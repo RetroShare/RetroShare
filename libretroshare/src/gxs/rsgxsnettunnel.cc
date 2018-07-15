@@ -39,6 +39,8 @@
 static const uint32_t RS_GXS_NET_TUNNEL_MAX_ALLOWED_HITS_GROUP_DATA    =   1;
 static const uint32_t RS_GXS_NET_TUNNEL_MAX_ALLOWED_HITS_GROUP_SEARCH  = 100;
 
+RsGxsDistSync *rsGxsDistSync = NULL;
+
 RsGxsNetTunnelService::RsGxsNetTunnelService(): mGxsNetTunnelMtx("GxsNetTunnel")
 {
 #warning this is for testing only. In the final version this needs to be initialized with some random content, saved and re-used for a while (e.g. 1 month)
@@ -1145,6 +1147,12 @@ void RsGxsNetTunnelService::receiveSearchResult(TurtleSearchRequestId request_id
 	GXS_NET_TUNNEL_ERROR() << ": deserialized item is of unknown type. Dropping!" << std::endl;
 }
 
+void RsGxsNetTunnelService::getStatistics( std::map<RsGxsGroupId,RsGxsNetTunnelGroupInfo>& groups,std::map<RsGxsNetTunnelVirtualPeerId, RsGxsNetTunnelVirtualPeerInfo>& virtual_peers,Bias20Bytes& bias      ) const
+{
+    groups = mGroups ;
+    virtual_peers = mVirtualPeers ;
+    bias = mRandomBias ;
+}
 
 
 

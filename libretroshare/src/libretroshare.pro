@@ -137,6 +137,7 @@ PUBLIC_HEADERS =	retroshare/rsdisc.h \
 					retroshare/rsconfig.h \
 					retroshare/rsversion.h \
 					retroshare/rsservicecontrol.h \
+					retroshare/rsgxsdistsync.h 
 
 HEADERS += plugins/pluginmanager.h \
 		plugins/dlfcn_win32.h \

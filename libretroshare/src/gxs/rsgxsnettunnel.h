@@ -27,7 +27,8 @@
 
 #include <map>
 
-#include <turtle/p3turtle.h>
+#include "turtle/p3turtle.h"
+#include "retroshare/rsgxsdistsync.h"
 
 /*!
  * \brief The RsGxsNetTunnelService class takes care of requesting tunnels to the turtle router, through which it is possible to sync
@@ -102,59 +103,10 @@
 //        and there is no way to prevent it. We therefore rely on GXS data integrity system to prevent this to happen.
 //
 
-typedef RsPeerId RsGxsNetTunnelVirtualPeerId ;
-
 class RsGxsNetTunnelItem ;
 class RsNetworkExchangeService ;
 
-struct RsGxsNetTunnelVirtualPeerInfo
-{
-	enum {   RS_GXS_NET_TUNNEL_VP_STATUS_UNKNOWN   = 0x00,		// unknown status.
-		     RS_GXS_NET_TUNNEL_VP_STATUS_TUNNEL_OK = 0x01,		// tunnel has been established and we're waiting for virtual peer id
-		     RS_GXS_NET_TUNNEL_VP_STATUS_ACTIVE    = 0x02		// virtual peer id is known. Data can transfer.
-	     };
-
-	RsGxsNetTunnelVirtualPeerInfo() : vpid_status(RS_GXS_NET_TUNNEL_VP_STATUS_UNKNOWN), last_contact(0),side(0) { memset(encryption_master_key,0,32) ; }
-	virtual ~RsGxsNetTunnelVirtualPeerInfo(){}
-
-	uint8_t vpid_status ;					// status of the peer
-	time_t  last_contact ;					// last time some data was sent/recvd
-	uint8_t side ;	                        // client/server
-	uint8_t encryption_master_key[32];
-
-	TurtleVirtualPeerId	turtle_virtual_peer_id ;  // turtle peer to use when sending data to this vpid.
-
-	RsGxsGroupId group_id ;					// group that virtual peer is providing
-	uint16_t service_id ; 					// this is used for checkng consistency of the incoming data
-};
-
-struct RsGxsNetTunnelGroupInfo
-{
-	enum GroupStatus {
-		    RS_GXS_NET_TUNNEL_GRP_STATUS_UNKNOWN            = 0x00,	// unknown status
-		    RS_GXS_NET_TUNNEL_GRP_STATUS_IDLE               = 0x01,	// no virtual peers requested, just waiting
-		    RS_GXS_NET_TUNNEL_GRP_STATUS_VPIDS_AVAILABLE    = 0x02	// some virtual peers are available. Data can be read/written
-	};
-
-	enum GroupPolicy {
-		    RS_GXS_NET_TUNNEL_GRP_POLICY_UNKNOWN            = 0x00,	// nothing has been set
-		    RS_GXS_NET_TUNNEL_GRP_POLICY_PASSIVE            = 0x01,	// group is available for server side tunnels, but does not explicitely request tunnels
-		    RS_GXS_NET_TUNNEL_GRP_POLICY_ACTIVE             = 0x02,	// group will only explicitely request tunnels if none available
-		    RS_GXS_NET_TUNNEL_GRP_POLICY_REQUESTING         = 0x03,	// group explicitely requests tunnels
-    };
-
-	RsGxsNetTunnelGroupInfo() : group_policy(RS_GXS_NET_TUNNEL_GRP_POLICY_PASSIVE),group_status(RS_GXS_NET_TUNNEL_GRP_STATUS_IDLE),last_contact(0) {}
-
-	GroupPolicy    group_policy ;
-	GroupStatus    group_status ;
-	time_t         last_contact ;
-	TurtleFileHash hash ;
-	uint16_t       service_id ;
-
-	std::set<TurtleVirtualPeerId> virtual_peers ; // list of which virtual peers provide this group. Can me more than 1.
-};
-
-class RsGxsNetTunnelService: public RsTurtleClientService, public RsTickingThread, public p3Config
+class RsGxsNetTunnelService: public RsTurtleClientService, public RsTickingThread, public p3Config, public RsGxsDistSync
 {
 public:
 	  RsGxsNetTunnelService() ;
@@ -256,6 +208,12 @@ public:
 	  RsSerialiser *setupSerialiser();
 	  bool saveList(bool& cleanup, std::list<RsItem*>& save);
 	  bool loadList(std::list<RsItem *> &load);
+
+      // Overloads RsGxsDistSync
+
+	  void getStatistics(std::map<RsGxsGroupId,RsGxsNetTunnelGroupInfo>& groups,             // groups on the client and server side
+	  		std::map<RsGxsNetTunnelVirtualPeerId, RsGxsNetTunnelVirtualPeerInfo>& virtual_peers,     // current virtual peers, which group they provide, and how to talk to them through turtle
+		    Bias20Bytes& bias) const;
 
 protected:
 	  // interaction with turtle router

@@ -62,6 +62,7 @@
 #include <fcntl.h>
 
 #include "gxstunnel/p3gxstunnel.h"
+#include "retroshare/rsgxsdistsync.h"
 #include "file_sharing/p3filelists.h"
 
 #define ENABLE_GROUTER
@@ -1283,6 +1284,7 @@ int RsServer::StartupRetroShare()
 
 #ifdef RS_USE_GXS_DISTANT_SYNC
 	RsGxsNetTunnelService *mGxsNetTunnel = new RsGxsNetTunnelService ;
+    rsGxsDistSync = mGxsNetTunnel ;
 #else
 	RsGxsNetTunnelService *mGxsNetTunnel = NULL ;
 #endif
