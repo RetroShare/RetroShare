@@ -61,11 +61,13 @@ const uint32_t ForumEditDefaultsFlags = ForumCreateDefaultsFlags;
 GxsForumGroupDialog::GxsForumGroupDialog(TokenQueue *tokenQueue, QWidget *parent)
     : GxsGroupDialog(tokenQueue, ForumCreateEnabledFlags, ForumCreateDefaultsFlags, parent)
 {
+    ui.pubKeyShare_cb->setEnabled(true) ;
 }
 
 GxsForumGroupDialog::GxsForumGroupDialog(TokenQueue *tokenExternalQueue, RsTokenService *tokenService, Mode mode, RsGxsGroupId groupId, QWidget *parent)
     : GxsGroupDialog(tokenExternalQueue, tokenService, mode, groupId, ForumEditEnabledFlags, ForumEditDefaultsFlags, parent)
 {
+    ui.pubKeyShare_cb->setEnabled(true) ;
 }
 
 void GxsForumGroupDialog::initUi()

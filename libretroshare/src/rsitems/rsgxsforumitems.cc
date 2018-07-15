@@ -52,7 +52,15 @@ void RsGxsForumGroupItem::clear()
 void RsGxsForumGroupItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_DESCR,mGroup.mDescription,"mGroup.Description");
+
+    // image is optional
+
+    if(j == RsGenericSerializer::DESERIALIZE && ctx.mOffset == ctx.mSize)
+        return ;
+
+    RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,mGroup.admin_list,"admin_list") ;
 }
+
 void RsGxsForumMsgItem::clear()
 {
 	mMsg.mMsg.clear();

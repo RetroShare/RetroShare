@@ -32,8 +32,7 @@
 
 #include "retroshare/rstokenservice.h"
 #include "retroshare/rsgxsifacehelper.h"
-
-
+#include "serialiser/rstlvidset.h"
 
 /* The Main Interface Class - for information about your Peers */
 class RsGxsForums;
@@ -44,6 +43,7 @@ class RsGxsForumGroup
 	public:
 	RsGroupMetaData mMeta;
 	std::string mDescription;
+    RsTlvGxsIdSet admin_list; // this is optional, and handled by the serialiser
 };
 
 class RsGxsForumMsg
