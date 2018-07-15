@@ -1,4 +1,5 @@
 #include <QObject>
+#include <util/rsprint.h>
 #include <retroshare/rsturtle.h>
 #include <retroshare/rspeers.h>
 #include <retroshare/rsgxstunnel.h>
@@ -481,9 +482,14 @@ static QString getVirtualPeerStatusString(uint8_t status)
 	return QString();
 }
 
+static QString getSideString(uint8_t side)
+{
+    return side?QObject::tr("Client"):QObject::tr("Server") ;
+}
+
 static QString getMasterKeyString(uint8_t *key)
 {
-    return QString();
+    return QString::fromStdString(RsUtil::BinToHex(key,10));
 }
 
 void GxsNetTunnelsDialog::updateDisplay()
@@ -491,10 +497,11 @@ void GxsNetTunnelsDialog::updateDisplay()
 	// Request info about ongoing tunnels
 
 	std::map<RsGxsGroupId,RsGxsNetTunnelGroupInfo> groups;                                 // groups on the client and server side
+    std::map<TurtleVirtualPeerId,RsGxsNetTunnelVirtualPeerId> turtle2gxsnettunnel;         // convertion table from turtle to net tunnel virtual peer id
 	std::map<RsGxsNetTunnelVirtualPeerId, RsGxsNetTunnelVirtualPeerInfo> virtual_peers;    // current virtual peers, which group they provide, and how to talk to them through turtle
 	Bias20Bytes bias;
 
-	rsGxsDistSync->getStatistics(groups,virtual_peers,bias) ;
+	rsGxsDistSync->getStatistics(groups,virtual_peers,turtle2gxsnettunnel,bias) ;
 
     // RsGxsNetTunnelGroupInfo:
     //
@@ -518,6 +525,29 @@ void GxsNetTunnelsDialog::updateDisplay()
 	//   RsFileHash         hash ;
 	//   uint16_t           service_id ;
 	//   std::set<RsPeerId> virtual_peers ;
+    //
+ 	// struct RsGxsNetTunnelVirtualPeerInfo:
+	//
+	// 	enum {   RS_GXS_NET_TUNNEL_VP_STATUS_UNKNOWN   = 0x00,		// unknown status.
+	// 		     RS_GXS_NET_TUNNEL_VP_STATUS_TUNNEL_OK = 0x01,		// tunnel has been established and we're waiting for virtual peer id
+	// 		     RS_GXS_NET_TUNNEL_VP_STATUS_ACTIVE    = 0x02		// virtual peer id is known. Data can transfer.
+	// 	     };
+	//
+	// 	RsGxsNetTunnelVirtualPeerInfo() : vpid_status(RS_GXS_NET_TUNNEL_VP_STATUS_UNKNOWN), last_contact(0),side(0) { memset(encryption_master_key,0,32) ; }
+	// 	virtual ~RsGxsNetTunnelVirtualPeerInfo(){}
+	//
+	// 	uint8_t vpid_status ;					// status of the peer
+	// 	time_t  last_contact ;					// last time some data was sent/recvd
+	// 	uint8_t side ;	                        // client/server
+	// 	uint8_t encryption_master_key[32];
+	//
+	// 	RsPeerId      turtle_virtual_peer_id ;  // turtle peer to use when sending data to this vpid.
+	//
+	// 	RsGxsGroupId group_id ;					// group that virtual peer is providing
+	// 	uint16_t service_id ; 					// this is used for checkng consistency of the incoming data
+
+	// update the pixmap
+	//
 
     // now draw the shit
 	QPixmap tmppixmap(maxWidth, maxHeight);
@@ -540,52 +570,44 @@ void GxsNetTunnelsDialog::updateDisplay()
 	painter.drawText(ox+2*cellx,oy+celly,tr("GXS Groups:")) ; oy += celly ;
 
 	for(auto it(groups.begin());it!=groups.end();++it)
-		painter.drawText(ox+4*cellx,oy+celly,tr("Service: %1 (%2) - Group ID: %3,\t policy: %4, \tstatus: %5, \tlast contact: %6, \t%7 virtual peers.")
+    {
+		painter.drawText(ox+4*cellx,oy+celly,tr("Service: %1 (%2) - Group ID: %3,\t policy: %4, \tstatus: %5, \tlast contact: %6")
                 .arg(QString::number(it->second.service_id))
                 .arg(getServiceNameString(it->second.service_id))
                 .arg(QString::fromStdString(it->first.toStdString()))
                 .arg(getGroupPolicyString(it->second.group_policy))
                 .arg(getGroupStatusString(it->second.group_status))
                 .arg(getLastContactString(it->second.last_contact))
-                .arg(QString::number(it->second.virtual_peers.size()))
 		                 ),oy+=celly ;
+
+
+        for(auto it2(it->second.virtual_peers.begin());it2!=it->second.virtual_peers.end();++it2)
+        {
+            auto it4 = turtle2gxsnettunnel.find(*it2) ;
+
+            if(it4 != turtle2gxsnettunnel.end())
+            {
+				auto it3 = virtual_peers.find(it4->second) ;
+
+				if(virtual_peers.end() != it3)
+					painter.drawText(ox+6*cellx,oy+celly,tr("Peer: %1:\tstatus: %2/%3, \tlast contact: %4, \tMaster key: %5.")
+					                 .arg(QString::fromStdString((*it2).toStdString()))
+					                 .arg(getVirtualPeerStatusString(it3->second.vpid_status))
+					                 .arg(getSideString(it3->second.side))
+					                 .arg(getLastContactString(it3->second.last_contact))
+					                 .arg(getMasterKeyString(it3->second.encryption_master_key))
+					                 ),oy+=celly ;
+            }
+            else
+				painter.drawText(ox+6*cellx,oy+celly,tr("Peer: %1: no information available")
+				                 .arg(QString::fromStdString((*it2).toStdString()))
+                                 ),oy+=celly;
+
+        }
+    }
 
 	oy += celly ;
 
- 	// struct RsGxsNetTunnelVirtualPeerInfo:
-	//
-	// 	enum {   RS_GXS_NET_TUNNEL_VP_STATUS_UNKNOWN   = 0x00,		// unknown status.
-	// 		     RS_GXS_NET_TUNNEL_VP_STATUS_TUNNEL_OK = 0x01,		// tunnel has been established and we're waiting for virtual peer id
-	// 		     RS_GXS_NET_TUNNEL_VP_STATUS_ACTIVE    = 0x02		// virtual peer id is known. Data can transfer.
-	// 	     };
-	//
-	// 	RsGxsNetTunnelVirtualPeerInfo() : vpid_status(RS_GXS_NET_TUNNEL_VP_STATUS_UNKNOWN), last_contact(0),side(0) { memset(encryption_master_key,0,32) ; }
-	// 	virtual ~RsGxsNetTunnelVirtualPeerInfo(){}
-	//
-	// 	uint8_t vpid_status ;					// status of the peer
-	// 	time_t  last_contact ;					// last time some data was sent/recvd
-	// 	uint8_t side ;	                        // client/server
-	// 	uint8_t encryption_master_key[32];
-	//
-	// 	RsPeerId      turtle_virtual_peer_id ;  // turtle peer to use when sending data to this vpid.
-	//
-	// 	RsGxsGroupId group_id ;					// group that virtual peer is providing
-	// 	uint16_t service_id ; 					// this is used for checkng consistency of the incoming data
-
-	painter.drawText(ox+2*cellx,oy+celly,tr("Virtual peers:")) ; oy += celly ;
-
-	for(auto it(virtual_peers.begin());it!=virtual_peers.end();++it)
-		painter.drawText(ox+4*cellx,oy+celly,tr("Peer: %1 - Group ID: %2 (service %3),\t status: %4, \tlast contact: %5, \tside %6 \tMaster key: %7.")
-                .arg(QString::fromStdString(it->first.toStdString()))
-                .arg(QString::fromStdString(it->second.group_id.toStdString()))
-                .arg(getServiceNameString(it->second.service_id))
-                .arg(getVirtualPeerStatusString(it->second.vpid_status))
-                .arg(getLastContactString(it->second.last_contact))
-                .arg(getMasterKeyString(it->second.encryption_master_key))
-		                 ),oy+=celly ;
-
-	// update the pixmap
-	//
 	pixmap = tmppixmap;
 	maxHeight = std::max(oy,10*celly);
 }

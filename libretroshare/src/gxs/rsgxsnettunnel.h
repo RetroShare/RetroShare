@@ -213,6 +213,7 @@ public:
 
 	  void getStatistics(std::map<RsGxsGroupId,RsGxsNetTunnelGroupInfo>& groups,             // groups on the client and server side
 	  		std::map<RsGxsNetTunnelVirtualPeerId, RsGxsNetTunnelVirtualPeerInfo>& virtual_peers,     // current virtual peers, which group they provide, and how to talk to them through turtle
+            std::map<TurtleVirtualPeerId,RsGxsNetTunnelVirtualPeerId>& turtle_vpid_to_net_tunnel_vpid,
 		    Bias20Bytes& bias) const;
 
 protected:

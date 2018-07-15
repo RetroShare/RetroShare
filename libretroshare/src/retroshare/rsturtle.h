@@ -44,6 +44,7 @@ class RsTurtle;
 extern RsTurtle   *rsTurtle ;
 
 typedef uint32_t TurtleRequestId ;
+typedef RsPeerId TurtleVirtualPeerId;
 
 // This is the structure used to send back results of the turtle search 
 // to the notifyBase class, or send info to the GUI.

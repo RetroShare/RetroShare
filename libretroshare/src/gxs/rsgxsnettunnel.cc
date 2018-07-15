@@ -1147,10 +1147,11 @@ void RsGxsNetTunnelService::receiveSearchResult(TurtleSearchRequestId request_id
 	GXS_NET_TUNNEL_ERROR() << ": deserialized item is of unknown type. Dropping!" << std::endl;
 }
 
-void RsGxsNetTunnelService::getStatistics( std::map<RsGxsGroupId,RsGxsNetTunnelGroupInfo>& groups,std::map<RsGxsNetTunnelVirtualPeerId, RsGxsNetTunnelVirtualPeerInfo>& virtual_peers,Bias20Bytes& bias      ) const
+void RsGxsNetTunnelService::getStatistics(std::map<RsGxsGroupId,RsGxsNetTunnelGroupInfo>& groups, std::map<RsGxsNetTunnelVirtualPeerId, RsGxsNetTunnelVirtualPeerInfo>& virtual_peers, std::map<TurtleVirtualPeerId, RsGxsNetTunnelVirtualPeerId> &turtle_vpid_to_net_tunnel_vpid, Bias20Bytes& bias      ) const
 {
     groups = mGroups ;
     virtual_peers = mVirtualPeers ;
+    turtle_vpid_to_net_tunnel_vpid = mTurtle2GxsPeer;
     bias = mRandomBias ;
 }
 
