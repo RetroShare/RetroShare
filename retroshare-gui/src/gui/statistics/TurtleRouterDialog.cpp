@@ -469,6 +469,23 @@ static QString getServiceNameString(uint16_t service_id)
     return QString::fromUtf8(ownServices.mServiceList[service_id].mServiceName.c_str()) ;
 }
 
+static QString getVirtualPeerStatusString(uint8_t status)
+{
+	switch(status)
+	{
+	default:
+	case RsGxsNetTunnelVirtualPeerInfo::RS_GXS_NET_TUNNEL_VP_STATUS_UNKNOWN   : return QObject::tr("Unknown") ;
+	case RsGxsNetTunnelVirtualPeerInfo::RS_GXS_NET_TUNNEL_VP_STATUS_TUNNEL_OK : return QObject::tr("Tunnel OK") ;
+	case RsGxsNetTunnelVirtualPeerInfo::RS_GXS_NET_TUNNEL_VP_STATUS_ACTIVE    : return QObject::tr("Tunnel active") ;
+	}
+	return QString();
+}
+
+static QString getMasterKeyString(uint8_t *key)
+{
+    return QString();
+}
+
 void GxsNetTunnelsDialog::updateDisplay()
 {
 	// Request info about ongoing tunnels
@@ -523,10 +540,6 @@ void GxsNetTunnelsDialog::updateDisplay()
 	painter.drawText(ox+2*cellx,oy+celly,tr("GXS Groups:")) ; oy += celly ;
 
 	for(auto it(groups.begin());it!=groups.end();++it)
-	{
-		// std::cerr << "Drawing into pixmap of size " << maxWidth << "x" << maxHeight << std::endl;
-		// draw...
-
 		painter.drawText(ox+4*cellx,oy+celly,tr("Service: %1 (%2) - Group ID: %3,\t policy: %4, \tstatus: %5, \tlast contact: %6, \t%7 virtual peers.")
                 .arg(QString::number(it->second.service_id))
                 .arg(getServiceNameString(it->second.service_id))
@@ -535,10 +548,41 @@ void GxsNetTunnelsDialog::updateDisplay()
                 .arg(getGroupStatusString(it->second.group_status))
                 .arg(getLastContactString(it->second.last_contact))
                 .arg(QString::number(it->second.virtual_peers.size()))
-		                 ) ; oy += celly ;
-	}
+		                 ),oy+=celly ;
+
+	oy += celly ;
+
+ 	// struct RsGxsNetTunnelVirtualPeerInfo:
+	//
+	// 	enum {   RS_GXS_NET_TUNNEL_VP_STATUS_UNKNOWN   = 0x00,		// unknown status.
+	// 		     RS_GXS_NET_TUNNEL_VP_STATUS_TUNNEL_OK = 0x01,		// tunnel has been established and we're waiting for virtual peer id
+	// 		     RS_GXS_NET_TUNNEL_VP_STATUS_ACTIVE    = 0x02		// virtual peer id is known. Data can transfer.
+	// 	     };
+	//
+	// 	RsGxsNetTunnelVirtualPeerInfo() : vpid_status(RS_GXS_NET_TUNNEL_VP_STATUS_UNKNOWN), last_contact(0),side(0) { memset(encryption_master_key,0,32) ; }
+	// 	virtual ~RsGxsNetTunnelVirtualPeerInfo(){}
+	//
+	// 	uint8_t vpid_status ;					// status of the peer
+	// 	time_t  last_contact ;					// last time some data was sent/recvd
+	// 	uint8_t side ;	                        // client/server
+	// 	uint8_t encryption_master_key[32];
+	//
+	// 	RsPeerId      turtle_virtual_peer_id ;  // turtle peer to use when sending data to this vpid.
+	//
+	// 	RsGxsGroupId group_id ;					// group that virtual peer is providing
+	// 	uint16_t service_id ; 					// this is used for checkng consistency of the incoming data
 
 	painter.drawText(ox+2*cellx,oy+celly,tr("Virtual peers:")) ; oy += celly ;
+
+	for(auto it(virtual_peers.begin());it!=virtual_peers.end();++it)
+		painter.drawText(ox+4*cellx,oy+celly,tr("Peer: %1 - Group ID: %2 (service %3),\t status: %4, \tlast contact: %5, \tside %6 \tMaster key: %7.")
+                .arg(QString::fromStdString(it->first.toStdString()))
+                .arg(QString::fromStdString(it->second.group_id.toStdString()))
+                .arg(getServiceNameString(it->second.service_id))
+                .arg(getVirtualPeerStatusString(it->second.vpid_status))
+                .arg(getLastContactString(it->second.last_contact))
+                .arg(getMasterKeyString(it->second.encryption_master_key))
+		                 ),oy+=celly ;
 
 	// update the pixmap
 	//
