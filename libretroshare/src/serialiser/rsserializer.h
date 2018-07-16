@@ -154,7 +154,11 @@
 #include <string.h>
 #include <iostream>
 #include <string>
+#ifdef HAS_RAPIDJSON
+#include <rapidjson/document.h>
+#else
 #include <rapid_json/document.h>
+#endif // HAS_RAPIDJSON
 
 #include "retroshare/rsflags.h"
 #include "serialiser/rsserial.h"
