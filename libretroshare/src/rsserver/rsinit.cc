@@ -1631,46 +1631,43 @@ int RsServer::StartupRetroShare()
 
 	//mConfigMgr->addConfiguration("ftserver.cfg", ftserver);
 	//
-	mConfigMgr->addConfiguration("gpg_prefs.cfg", AuthGPG::getAuthGPG());
+	mConfigMgr->addConfiguration("gpg_prefs.cfg"   , AuthGPG::getAuthGPG());
 	mConfigMgr->addConfiguration("gxsnettunnel.cfg", mGxsNetTunnel);
-	mConfigMgr->loadConfiguration();
-
-	mConfigMgr->addConfiguration("peers.cfg", mPeerMgr);
-	mConfigMgr->addConfiguration("general.cfg", mGeneralConfig);
-	mConfigMgr->addConfiguration("msgs.cfg", msgSrv);
-	mConfigMgr->addConfiguration("chat.cfg", chatSrv);
-	mConfigMgr->addConfiguration("p3History.cfg", mHistoryMgr);
-	mConfigMgr->addConfiguration("p3Status.cfg", mStatusSrv);
-	mConfigMgr->addConfiguration("turtle.cfg", tr);
+	mConfigMgr->addConfiguration("peers.cfg"       , mPeerMgr);
+	mConfigMgr->addConfiguration("general.cfg"     , mGeneralConfig);
+	mConfigMgr->addConfiguration("msgs.cfg"        , msgSrv);
+	mConfigMgr->addConfiguration("chat.cfg"        , chatSrv);
+	mConfigMgr->addConfiguration("p3History.cfg"   , mHistoryMgr);
+	mConfigMgr->addConfiguration("p3Status.cfg"    , mStatusSrv);
+	mConfigMgr->addConfiguration("turtle.cfg"      , tr);
 #ifndef RETROTOR
-	mConfigMgr->addConfiguration("banlist.cfg", mBanList);
+	mConfigMgr->addConfiguration("banlist.cfg"     , mBanList);
 #endif
 	mConfigMgr->addConfiguration("servicecontrol.cfg", serviceCtrl);
-	mConfigMgr->addConfiguration("reputations.cfg", mReputations);
+	mConfigMgr->addConfiguration("reputations.cfg" , mReputations);
 #ifdef ENABLE_GROUTER
-	mConfigMgr->addConfiguration("grouter.cfg", gr);
+	mConfigMgr->addConfiguration("grouter.cfg"     , gr);
 #endif
 
 #ifdef RS_USE_BITDHT
-	mConfigMgr->addConfiguration("bitdht.cfg", mBitDht);
+	mConfigMgr->addConfiguration("bitdht.cfg"      , mBitDht);
 #endif
 
 #ifdef RS_ENABLE_GXS
 
 #	ifdef RS_GXS_TRANS
 	mConfigMgr->addConfiguration("gxs_trans_ns.cfg", gxstrans_ns);
-	mConfigMgr->addConfiguration("gxs_trans.cfg", mGxsTrans);
+	mConfigMgr->addConfiguration("gxs_trans.cfg"   , mGxsTrans);
 #	endif // RS_GXS_TRANS
 
-	mConfigMgr->addConfiguration("p3identity.cfg", mGxsIdService);
-
-	mConfigMgr->addConfiguration("identity.cfg", gxsid_ns);
-	mConfigMgr->addConfiguration("gxsforums.cfg", gxsforums_ns);
+	mConfigMgr->addConfiguration("p3identity.cfg"  , mGxsIdService);
+	mConfigMgr->addConfiguration("identity.cfg"    , gxsid_ns);
+	mConfigMgr->addConfiguration("gxsforums.cfg"   , gxsforums_ns);
 	mConfigMgr->addConfiguration("gxsforums_srv.cfg", mGxsForums);
-	mConfigMgr->addConfiguration("gxschannels.cfg", gxschannels_ns);
+	mConfigMgr->addConfiguration("gxschannels.cfg" , gxschannels_ns);
 	mConfigMgr->addConfiguration("gxschannels_srv.cfg", mGxsChannels);
-	mConfigMgr->addConfiguration("gxscircles.cfg", gxscircles_ns);
-	mConfigMgr->addConfiguration("posted.cfg", posted_ns);
+	mConfigMgr->addConfiguration("gxscircles.cfg"  , gxscircles_ns);
+	mConfigMgr->addConfiguration("posted.cfg"      , posted_ns);
 #ifdef RS_USE_WIKI
 	mConfigMgr->addConfiguration("wiki.cfg", wiki_ns);
 #endif
