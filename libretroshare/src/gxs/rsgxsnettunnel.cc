@@ -30,7 +30,7 @@
 #include "gxs/rsnxs.h"
 #include "rsgxsnettunnel.h"
 
-//#define DEBUG_RSGXSNETTUNNEL 1
+#define DEBUG_RSGXSNETTUNNEL 1
 
 #define GXS_NET_TUNNEL_NOT_IMPLEMENTED() { std::cerr << __PRETTY_FUNCTION__ << ": not yet implemented." << std::endl; }
 #define GXS_NET_TUNNEL_DEBUG()             std::cerr << time(NULL) << " : GXS_NET_TUNNEL: " << __FUNCTION__ << " : "
@@ -43,7 +43,6 @@ RsGxsDistSync *rsGxsDistSync = NULL;
 
 RsGxsNetTunnelService::RsGxsNetTunnelService(): mGxsNetTunnelMtx("GxsNetTunnel")
 {
-#warning this is for testing only. In the final version this needs to be initialized with some random content, saved and re-used for a while (e.g. 1 month)
 	mRandomBias.clear();
 
 	mLastKeepAlive = time(NULL) + (lrand48()%20);	// adds some variance in order to avoid doing all this tasks at once across services
@@ -779,14 +778,10 @@ const Bias20Bytes& RsGxsNetTunnelService::locked_randomBias()
 {
 	if(mRandomBias.isNull())
 	{
-#ifdef DEBUG_RSGXSNETTUNNEL
-#warning /!\ this is for testing only! Remove this when done! Can not be done at initialization when rsPeer is not started.
-	RsPeerId ssl_id = rsPeers->getOwnId() ;
-	mRandomBias = Bias20Bytes(RsDirUtil::sha1sum(ssl_id.toByteArray(),ssl_id.SIZE_IN_BYTES)) ;
-#else
 		mRandomBias = Bias20Bytes::random();
-#endif
 		IndicateConfigChanged();
+
+        std::cerr << "Initialized RsGxsNetTunnel random bias to " << RsUtil::BinToHex(mRandomBias.toByteArray(),mRandomBias.SIZE_IN_BYTES) << std::endl;
 	}
 
 	return mRandomBias ;
@@ -796,7 +791,7 @@ RsGxsNetTunnelVirtualPeerId RsGxsNetTunnelService::locked_makeVirtualPeerId(cons
 {
 	assert(RsPeerId::SIZE_IN_BYTES <= Sha1CheckSum::SIZE_IN_BYTES) ;// so that we can build the virtual PeerId from a SHA1 sum.
 
-	// We compute sha1( SSL_id | mRandomBias ) and trunk it to 16 bytes in order to compute a RsPeerId
+	// We compute sha1( GroupId | mRandomBias ) and trunk it to 16 bytes in order to compute a RsPeerId
 
 	Bias20Bytes rb(locked_randomBias());
 
@@ -934,6 +929,7 @@ bool RsGxsNetTunnelService::saveList(bool& cleanup, std::list<RsItem*>& save)
 	{
 		RS_STACK_MUTEX(mGxsNetTunnelMtx);
 		it2->mRandomBias = mRandomBias;
+		std::cerr << "Saving RsGxsNetTunnel random bias to disc" << std::endl;
 	}
 
 	save.push_back(it2) ;
@@ -952,6 +948,8 @@ bool RsGxsNetTunnelService::loadList(std::list<RsItem *> &load)
 		{
 			RS_STACK_MUTEX(mGxsNetTunnelMtx);
 			mRandomBias = rbsi->mRandomBias;
+
+			std::cerr << "Loaded RsGxsNetTunnel random bias from disc: " << RsUtil::BinToHex(mRandomBias.toByteArray(),mRandomBias.SIZE_IN_BYTES) << std::endl;
 		}
 		else
 			GXS_NET_TUNNEL_ERROR() << " unknown item in config file: type=" << std::hex << (*it)->PacketId() << std::dec << std::endl;

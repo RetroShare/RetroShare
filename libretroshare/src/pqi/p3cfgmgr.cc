@@ -65,7 +65,7 @@ void	p3ConfigMgr::tick()
 
 #ifdef CONFIG_DEBUG
 			std::cerr << "p3ConfigMgr::tick() Config Changed - Element: ";
-			std::cerr << it->first;
+			std::cerr << *it;
 			std::cerr << std::endl;
 #endif
 
@@ -111,7 +111,7 @@ void p3ConfigMgr::saveConfig()
 		{
 #ifdef CONFIG_DEBUG
 			std::cerr << "p3ConfigMgr::globalSaveConfig() Saving Element: ";
-			std::cerr << it->first;
+			std::cerr << *it;
 			std::cerr << std::endl;
 #endif
 			ok &= (*it)->saveConfiguration();
@@ -137,7 +137,7 @@ void p3ConfigMgr::loadConfig()
 	{
 #ifdef CONFIG_DEBUG
 		std::cerr << "p3ConfigMgr::loadConfig() Element: ";
-		std::cerr << cit->first <<"Dummy Hash: " << dummyHash;
+		std::cerr << *cit <<" Dummy Hash: " << dummyHash;
 		std::cerr << std::endl;
 #endif
 

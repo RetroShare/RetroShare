@@ -487,9 +487,9 @@ static QString getSideString(uint8_t side)
     return side?QObject::tr("Client"):QObject::tr("Server") ;
 }
 
-static QString getMasterKeyString(uint8_t *key)
+static QString getMasterKeyString(const uint8_t *key,uint32_t size)
 {
-    return QString::fromStdString(RsUtil::BinToHex(key,32,10));
+    return QString::fromStdString(RsUtil::BinToHex(key,size,10));
 }
 
 void GxsNetTunnelsDialog::updateDisplay()
@@ -567,6 +567,7 @@ void GxsNetTunnelsDialog::updateDisplay()
 	int ox=5*fact,oy=5*fact ;
 
 	painter.setPen(QColor::fromRgb(0,0,0)) ;
+	painter.drawText(ox+2*cellx,oy+celly,tr("Random Bias: %1").arg(getMasterKeyString(bias.toByteArray(),20))) ; oy += celly ;
 	painter.drawText(ox+2*cellx,oy+celly,tr("GXS Groups:")) ; oy += celly ;
 
 	for(auto it(groups.begin());it!=groups.end();++it)
@@ -595,7 +596,7 @@ void GxsNetTunnelsDialog::updateDisplay()
 					                 .arg(getVirtualPeerStatusString(it3->second.vpid_status))
 					                 .arg(getSideString(it3->second.side))
 					                 .arg(getLastContactString(it3->second.last_contact))
-					                 .arg(getMasterKeyString(it3->second.encryption_master_key))
+					                 .arg(getMasterKeyString(it3->second.encryption_master_key,32))
 					                 ),oy+=celly ;
             }
             else
