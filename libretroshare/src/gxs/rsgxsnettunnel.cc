@@ -45,9 +45,9 @@ RsGxsNetTunnelService::RsGxsNetTunnelService(): mGxsNetTunnelMtx("GxsNetTunnel")
 {
 	mRandomBias.clear();
 
-	mLastKeepAlive = time(NULL) + (lrand48()%20);	// adds some variance in order to avoid doing all this tasks at once across services
-	mLastAutoWash = time(NULL) + (lrand48()%20);
-	mLastDump = time(NULL) + (lrand48()%20);
+	mLastKeepAlive = time(NULL) + (RSRandom::random_u32()%20);	// adds some variance in order to avoid doing all this tasks at once across services
+	mLastAutoWash = time(NULL) + (RSRandom::random_u32()%20);
+	mLastDump = time(NULL) + (RSRandom::random_u32()%20);
 }
 
 //===========================================================================================================================================//
