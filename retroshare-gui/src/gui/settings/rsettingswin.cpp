@@ -158,7 +158,7 @@ SettingsPage::initStackedWidget()
     addPage(new ForumPage()); // FORUMS
     addPage(new PostedPage()); // POSTED RENAME TO LINKS
     addPage(new NotifyPage()); // NOTIFY
-    addPage(new PluginsPage() ); // PLUGINS
+    addPage(new settings::PluginsPage() ); // PLUGINS
     addPage(new AppearancePage()); // APPEARENCE
     addPage(new SoundPage() ); // SOUND
     addPage(new ServicePermissionsPage() ); // PERMISSIONS

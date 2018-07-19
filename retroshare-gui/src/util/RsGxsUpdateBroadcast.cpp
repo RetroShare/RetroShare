@@ -79,5 +79,8 @@ void RsGxsUpdateBroadcast::onChangesReceived(const RsGxsChanges& changes)
         emit grpsChanged(changes.mGrps, changes.mGrpsMeta);
     }
 
+    if(!changes.mDistantSearchReqs.empty())
+        emit distantSearchResultsChanged(changes.mDistantSearchReqs) ;
+
     emit changed();
 }

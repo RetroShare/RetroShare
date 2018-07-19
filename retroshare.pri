@@ -28,6 +28,8 @@
 CONFIG *= retroshare_gui
 no_retroshare_gui:CONFIG -= retroshare_gui
 
+CONFIG *= gxsdistsync
+
 # To disable RetroShare-nogui append the following
 # assignation to qmake command line "CONFIG+=no_retroshare_nogui"
 CONFIG *= retroshare_nogui
@@ -272,6 +274,7 @@ defineReplace(linkDynamicLibs) {
 ## RS_THREAD_LIB String viariable containing the name of the multi threading
 ##   library to use (pthread, "") it usually depend on platform.
 
+gxsdistsync:DEFINES *= RS_USE_GXS_DISTANT_SYNC
 wikipoos:DEFINES *= RS_USE_WIKI
 rs_gxs:DEFINES *= RS_ENABLE_GXS
 libresapilocalserver:DEFINES *= LIBRESAPI_LOCAL_SERVER
@@ -493,6 +496,7 @@ macx-* {
 	CONFIG += c++11
     RS_UPNP_LIB = miniupnpc
 }
+
 
 ## Retrocompatibility assignations, get rid of this ASAP
 isEmpty(BIN_DIR)   : BIN_DIR   = $${RS_BIN_DIR}

@@ -26,7 +26,9 @@
 #include <list>
 #include <vector>
 
+#include "serialiser/rstlvbinary.h"
 #include "retroshare/rstypes.h"
+#include "retroshare/rsgxsifacetypes.h"
 
 namespace RsRegularExpression { class LinearizedExpression ; }
 class RsTurtleClientService ;
@@ -35,6 +37,7 @@ class RsTurtle;
 extern RsTurtle   *rsTurtle ;
 
 typedef uint32_t TurtleRequestId ;
+typedef RsPeerId TurtleVirtualPeerId;
 
 // This is the structure used to send back results of the turtle search 
 // to the notifyBase class, or send info to the GUI.
@@ -45,6 +48,7 @@ struct TurtleFileInfo
 	std::string name ;
 	uint64_t size ;
 };
+
 struct TurtleTunnelRequestDisplayInfo
 {
 	uint32_t request_id ;     // Id of the request
@@ -102,8 +106,7 @@ class RsTurtle
 		// the request id, which will be further used by the gui to store results
 		// as they come back.
 		//
-		virtual TurtleRequestId turtleSearch(const std::string& match_string) = 0 ;
-        virtual TurtleRequestId turtleSearch(const RsRegularExpression::LinearizedExpression& expr) = 0 ;
+        virtual TurtleRequestId turtleSearch(unsigned char *search_bin_data,uint32_t search_bin_data_len,RsTurtleClientService *client_service) =0;
 
 		// Initiates tunnel handling for the given file hash.  tunnels.  Launches
 		// an exception if an error occurs during the initialization process. The

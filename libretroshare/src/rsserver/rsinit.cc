@@ -59,6 +59,7 @@
 #include <fcntl.h>
 
 #include "gxstunnel/p3gxstunnel.h"
+#include "retroshare/rsgxsdistsync.h"
 #include "file_sharing/p3filelists.h"
 
 #define ENABLE_GROUTER
@@ -1276,6 +1277,15 @@ int RsServer::StartupRetroShare()
 
         RsNxsNetMgr* nxsMgr =  new RsNxsNetMgrImpl(serviceCtrl);
 
+        /**** GXS Dist sync service ****/
+
+#ifdef RS_USE_GXS_DISTANT_SYNC
+	RsGxsNetTunnelService *mGxsNetTunnel = new RsGxsNetTunnelService ;
+    rsGxsDistSync = mGxsNetTunnel ;
+#else
+	RsGxsNetTunnelService *mGxsNetTunnel = NULL ;
+#endif
+
         /**** Identity service ****/
 
         RsGeneralDataService* gxsid_ds = new RsDataService(currGxsDir + "/", "gxsid_db",
@@ -1297,9 +1307,10 @@ int RsServer::StartupRetroShare()
                         RS_SERVICE_GXS_TYPE_GXSID, gxsid_ds, nxsMgr,
 			mGxsIdService, mGxsIdService->getServiceInfo(),
 			mReputations, mGxsCircles,mGxsIdService,
-			pgpAuxUtils,
-            false,false); // don't synchronise group automatic (need explicit group request)
+			pgpAuxUtils,mGxsNetTunnel,
+            false,false,true); // don't synchronise group automatic (need explicit group request)
                         // don't sync messages at all.
+						// allow distsync, so that we can grab GXS id requests for other services
 
         // Normally we wouldn't need this (we do in other service):
         //	mGxsIdService->setNetworkExchangeService(gxsid_ns) ;
@@ -1316,9 +1327,7 @@ int RsServer::StartupRetroShare()
                         RS_SERVICE_GXS_TYPE_GXSCIRCLE, gxscircles_ds, nxsMgr,
                         mGxsCircles, mGxsCircles->getServiceInfo(), 
 			mReputations, mGxsCircles,mGxsIdService,
-			pgpAuxUtils,
-	            	true,	// synchronise group automatic 
-                    	true); 	// sync messages automatic, since they contain subscription requests.
+			pgpAuxUtils);
 
 		mGxsCircles->setNetworkExchangeService(gxscircles_ns) ;
     
@@ -1370,7 +1379,7 @@ int RsServer::StartupRetroShare()
                         RS_SERVICE_GXS_TYPE_FORUMS, gxsforums_ds, nxsMgr,
                         mGxsForums, mGxsForums->getServiceInfo(),
 			mReputations, mGxsCircles,mGxsIdService,
-			pgpAuxUtils);
+		    pgpAuxUtils);//,mGxsNetTunnel,true,true,true);
 
     mGxsForums->setNetworkExchangeService(gxsforums_ns) ;
 
@@ -1383,10 +1392,10 @@ int RsServer::StartupRetroShare()
 
         // create GXS photo service
         RsGxsNetService* gxschannels_ns = new RsGxsNetService(
-                        RS_SERVICE_GXS_TYPE_CHANNELS, gxschannels_ds, nxsMgr,
-                        mGxsChannels, mGxsChannels->getServiceInfo(), 
-			mReputations, mGxsCircles,mGxsIdService,
-			pgpAuxUtils);
+		            RS_SERVICE_GXS_TYPE_CHANNELS, gxschannels_ds, nxsMgr,
+		            mGxsChannels, mGxsChannels->getServiceInfo(),
+		            mReputations, mGxsCircles,mGxsIdService,
+		    		pgpAuxUtils,mGxsNetTunnel,true,true,true);
 
     mGxsChannels->setNetworkExchangeService(gxschannels_ns) ;
 
@@ -1441,7 +1450,7 @@ int RsServer::StartupRetroShare()
 	RsGxsNetService* gxstrans_ns = new RsGxsNetService(
 	            RS_SERVICE_TYPE_GXS_TRANS, gxstrans_ds, nxsMgr, mGxsTrans,
 	            mGxsTrans->getServiceInfo(), mReputations, mGxsCircles,
-	            mGxsIdService, pgpAuxUtils,true,true,p3GxsTrans::GXS_STORAGE_PERIOD,p3GxsTrans::GXS_SYNC_PERIOD);
+	            mGxsIdService, pgpAuxUtils,NULL,true,true,false,p3GxsTrans::GXS_STORAGE_PERIOD,p3GxsTrans::GXS_SYNC_PERIOD);
 
 	mGxsTrans->setNetworkExchangeService(gxstrans_ns);
 	pqih->addService(gxstrans_ns, true);
@@ -1474,9 +1483,11 @@ int RsServer::StartupRetroShare()
     pqih -> addService(fdb,true);
     pqih -> addService(ftserver,true);
 
-        mGxsTunnels = new p3GxsTunnelService(mGxsIdService) ;
-        mGxsTunnels->connectToTurtleRouter(tr) ;
-        rsGxsTunnel = mGxsTunnels;
+	mGxsTunnels = new p3GxsTunnelService(mGxsIdService) ;
+	mGxsTunnels->connectToTurtleRouter(tr) ;
+	rsGxsTunnel = mGxsTunnels;
+
+	mGxsNetTunnel->connectToTurtleRouter(tr) ;
 
 	rsDisc  = mDisc;
 	rsMsgs  = new p3Msgs(msgSrv, chatSrv);
@@ -1609,48 +1620,51 @@ int RsServer::StartupRetroShare()
 	serviceCtrl->registerServiceMonitor(mBwCtrl, mBwCtrl->getServiceInfo().mServiceType);
 
 	/**************************************************************************/
+    // Turtle search for GXS services
+
+    mGxsNetTunnel->registerSearchableService(gxschannels_ns) ;
+
+	/**************************************************************************/
 
 	//mConfigMgr->addConfiguration("ftserver.cfg", ftserver);
 	//
-	mConfigMgr->addConfiguration("gpg_prefs.cfg", AuthGPG::getAuthGPG());
-	mConfigMgr->loadConfiguration();
-
-	mConfigMgr->addConfiguration("peers.cfg", mPeerMgr);
-	mConfigMgr->addConfiguration("general.cfg", mGeneralConfig);
-	mConfigMgr->addConfiguration("msgs.cfg", msgSrv);
-	mConfigMgr->addConfiguration("chat.cfg", chatSrv);
-	mConfigMgr->addConfiguration("p3History.cfg", mHistoryMgr);
-	mConfigMgr->addConfiguration("p3Status.cfg", mStatusSrv);
-	mConfigMgr->addConfiguration("turtle.cfg", tr);
+	mConfigMgr->addConfiguration("gpg_prefs.cfg"   , AuthGPG::getAuthGPG());
+	mConfigMgr->addConfiguration("gxsnettunnel.cfg", mGxsNetTunnel);
+	mConfigMgr->addConfiguration("peers.cfg"       , mPeerMgr);
+	mConfigMgr->addConfiguration("general.cfg"     , mGeneralConfig);
+	mConfigMgr->addConfiguration("msgs.cfg"        , msgSrv);
+	mConfigMgr->addConfiguration("chat.cfg"        , chatSrv);
+	mConfigMgr->addConfiguration("p3History.cfg"   , mHistoryMgr);
+	mConfigMgr->addConfiguration("p3Status.cfg"    , mStatusSrv);
+	mConfigMgr->addConfiguration("turtle.cfg"      , tr);
 #ifndef RETROTOR
-	mConfigMgr->addConfiguration("banlist.cfg", mBanList);
+	mConfigMgr->addConfiguration("banlist.cfg"     , mBanList);
 #endif
 	mConfigMgr->addConfiguration("servicecontrol.cfg", serviceCtrl);
-	mConfigMgr->addConfiguration("reputations.cfg", mReputations);
+	mConfigMgr->addConfiguration("reputations.cfg" , mReputations);
 #ifdef ENABLE_GROUTER
-	mConfigMgr->addConfiguration("grouter.cfg", gr);
+	mConfigMgr->addConfiguration("grouter.cfg"     , gr);
 #endif
 
 #ifdef RS_USE_BITDHT
-	mConfigMgr->addConfiguration("bitdht.cfg", mBitDht);
+	mConfigMgr->addConfiguration("bitdht.cfg"      , mBitDht);
 #endif
 
 #ifdef RS_ENABLE_GXS
 
 #	ifdef RS_GXS_TRANS
 	mConfigMgr->addConfiguration("gxs_trans_ns.cfg", gxstrans_ns);
-	mConfigMgr->addConfiguration("gxs_trans.cfg", mGxsTrans);
+	mConfigMgr->addConfiguration("gxs_trans.cfg"   , mGxsTrans);
 #	endif // RS_GXS_TRANS
 
-	mConfigMgr->addConfiguration("p3identity.cfg", mGxsIdService);
-
-	mConfigMgr->addConfiguration("identity.cfg", gxsid_ns);
-	mConfigMgr->addConfiguration("gxsforums.cfg", gxsforums_ns);
+	mConfigMgr->addConfiguration("p3identity.cfg"  , mGxsIdService);
+	mConfigMgr->addConfiguration("identity.cfg"    , gxsid_ns);
+	mConfigMgr->addConfiguration("gxsforums.cfg"   , gxsforums_ns);
 	mConfigMgr->addConfiguration("gxsforums_srv.cfg", mGxsForums);
-	mConfigMgr->addConfiguration("gxschannels.cfg", gxschannels_ns);
+	mConfigMgr->addConfiguration("gxschannels.cfg" , gxschannels_ns);
 	mConfigMgr->addConfiguration("gxschannels_srv.cfg", mGxsChannels);
-	mConfigMgr->addConfiguration("gxscircles.cfg", gxscircles_ns);
-	mConfigMgr->addConfiguration("posted.cfg", posted_ns);
+	mConfigMgr->addConfiguration("gxscircles.cfg"  , gxscircles_ns);
+	mConfigMgr->addConfiguration("posted.cfg"      , posted_ns);
 #ifdef RS_USE_WIKI
 	mConfigMgr->addConfiguration("wiki.cfg", wiki_ns);
 #endif
@@ -1821,6 +1835,8 @@ int RsServer::StartupRetroShare()
     //rsWire = mWire;
 
 	/*** start up GXS core runner ***/
+
+	startServiceThread(mGxsNetTunnel, "gxs net tunnel");
 	startServiceThread(mGxsIdService, "gxs id");
 	startServiceThread(mGxsCircles, "gxs circle");
 	startServiceThread(mPosted, "gxs posted");

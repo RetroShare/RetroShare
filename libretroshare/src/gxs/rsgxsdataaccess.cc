@@ -1804,6 +1804,23 @@ bool RsGxsDataAccess::updateGroupData(RsNxsGrp* grp) {
 	return mDataStore->updateGroup(grpM);
 }
 
+bool RsGxsDataAccess::getGroupData(const RsGxsGroupId& grpId, RsNxsGrp *& grp_data)
+{
+	RsStackMutex stack(mDataMutex);
+
+    std::map<RsGxsGroupId, RsNxsGrp*> grps ;
+
+    grps[grpId] = NULL ;
+
+    if(mDataStore->retrieveNxsGrps(grps, false, true))	// the false here is very important: it removes the private key parts.
+    {
+        grp_data = grps.begin()->second;
+        return true;
+    }
+    else
+        return false ;
+}
+
 bool RsGxsDataAccess::addMsgData(RsNxsMsg* msg) {
 
 	RsStackMutex stack(mDataMutex);

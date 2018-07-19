@@ -8,6 +8,8 @@
 class RsGxsIfaceHelper;
 class RsGxsChanges;
 
+typedef uint32_t TurtleRequestId ;
+
 class RsGxsUpdateBroadcast : public QObject
 {
 	Q_OBJECT
@@ -21,6 +23,7 @@ signals:
 	void changed();
 	void msgsChanged(const std::map<RsGxsGroupId, std::set<RsGxsMessageId> >& msgIds, const std::map<RsGxsGroupId, std::set<RsGxsMessageId> >& msgIdsMeta);
 	void grpsChanged(const std::list<RsGxsGroupId>& grpIds, const std::list<RsGxsGroupId>& grpIdsMeta);
+	void distantSearchResultsChanged(const std::list<TurtleRequestId>& reqs);
 
 private slots:
     void onChangesReceived(const RsGxsChanges& changes);

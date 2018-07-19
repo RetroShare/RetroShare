@@ -1231,6 +1231,21 @@ static const uint8_t  ENCRYPTED_FT_FORMAT_AEAD_CHACHA20_SHA256   = 0x02 ;
 
 bool ftServer::encryptItem(RsTurtleGenericTunnelItem *clear_item,const RsFileHash& hash,RsTurtleGenericDataItem *& encrypted_item)
 {
+#ifndef USE_NEW_METHOD
+    uint32_t item_serialized_size = size(clear_item) ;
+
+	RsTemporaryMemory data(item_serialized_size) ;
+
+	if(data == NULL)
+		return false ;
+
+    serialise(clear_item, data, &item_serialized_size);
+
+	uint8_t encryption_key[32] ;
+	deriveEncryptionKey(hash,encryption_key) ;
+
+	return p3turtle::encryptData(data,item_serialized_size,encryption_key,encrypted_item) ;
+#else
 	uint8_t initialization_vector[ENCRYPTED_FT_INITIALIZATION_VECTOR_SIZE] ;
 
 	RSRandom::random_bytes(initialization_vector,ENCRYPTED_FT_INITIALIZATION_VECTOR_SIZE) ;
@@ -1309,12 +1324,34 @@ bool ftServer::encryptItem(RsTurtleGenericTunnelItem *clear_item,const RsFileHas
 #endif
 
 	return true ;
+#endif
 }
 
 // Decrypts the given item using aead-chacha20-poly1305
 
-bool ftServer::decryptItem(RsTurtleGenericDataItem *encrypted_item,const RsFileHash& hash,RsTurtleGenericTunnelItem *& decrypted_item)
+bool ftServer::decryptItem(const RsTurtleGenericDataItem *encrypted_item,const RsFileHash& hash,RsTurtleGenericTunnelItem *& decrypted_item)
 {
+#ifndef USE_NEW_METHOD
+	unsigned char *data = NULL ;
+	uint32_t data_size = 0 ;
+
+	uint8_t encryption_key[32] ;
+	deriveEncryptionKey(hash,encryption_key) ;
+
+	if(!p3turtle::decryptItem(encrypted_item,encryption_key,data,data_size))
+	{
+		FTSERVER_ERROR() << "Cannot decrypt data!" << std::endl;
+
+		if(data)
+			free(data) ;
+		return false ;
+	}
+	decrypted_item = dynamic_cast<RsTurtleGenericTunnelItem*>(deserialise(data,&data_size)) ;
+	free(data);
+
+	return (decrypted_item != NULL);
+
+#else
 	uint8_t encryption_key[32] ;
 	deriveEncryptionKey(hash,encryption_key) ;
 
@@ -1390,6 +1427,7 @@ bool ftServer::decryptItem(RsTurtleGenericDataItem *encrypted_item,const RsFileH
 		return false ;
 
 	return true ;
+#endif
 }
 
 bool ftServer::encryptHash(const RsFileHash& hash, RsFileHash& hash_of_hash)
@@ -1427,9 +1465,34 @@ bool ftServer::findRealHash(const RsFileHash& hash, RsFileHash& real_hash)
 		return false ;
 }
 
+TurtleSearchRequestId ftServer::turtleSearch(const std::string& string_to_match)
+{
+    return mTurtleRouter->turtleSearch(string_to_match) ;
+}
+TurtleSearchRequestId ftServer::turtleSearch(const RsRegularExpression::LinearizedExpression& expr)
+{
+    return mTurtleRouter->turtleSearch(expr) ;
+}
+
+#warning we should do this here, but for now it is done by turtle router.
+//   // Dont delete the item. The client (p3turtle) is doing it after calling this.
+//   //
+//   void ftServer::receiveSearchResult(RsTurtleSearchResultItem *item)
+//   {
+//       RsTurtleFTSearchResultItem *ft_sr = dynamic_cast<RsTurtleFTSearchResultItem*>(item) ;
+//
+//       if(ft_sr == NULL)
+//       {
+//   		FTSERVER_ERROR() << "(EE) ftServer::receiveSearchResult(): item cannot be cast to a RsTurtleFTSearchResultItem" << std::endl;
+//           return ;
+//       }
+//
+//   	RsServer::notify()->notifyTurtleSearchResult(ft_sr->request_id,ft_sr->result) ;
+//   }
+
 // Dont delete the item. The client (p3turtle) is doing it after calling this.
 //
-void ftServer::receiveTurtleData(RsTurtleGenericTunnelItem *i,
+void ftServer::receiveTurtleData(const RsTurtleGenericTunnelItem *i,
                                  const RsFileHash& hash,
                                  const RsPeerId& virtual_peer_id,
                                  RsTurtleGenericTunnelItem::Direction direction)
@@ -1449,7 +1512,7 @@ void ftServer::receiveTurtleData(RsTurtleGenericTunnelItem *i,
 		}
 
 		RsTurtleGenericTunnelItem *decrypted_item ;
-		if(!decryptItem(dynamic_cast<RsTurtleGenericDataItem *>(i),real_hash,decrypted_item))
+		if(!decryptItem(dynamic_cast<const RsTurtleGenericDataItem *>(i),real_hash,decrypted_item))
 		{
 			FTSERVER_ERROR() << "(EE) decryption error." << std::endl;
 			return ;
@@ -1465,7 +1528,7 @@ void ftServer::receiveTurtleData(RsTurtleGenericTunnelItem *i,
 	{
 	case RS_TURTLE_SUBTYPE_FILE_REQUEST:
 	{
-		RsTurtleFileRequestItem *item = dynamic_cast<RsTurtleFileRequestItem *>(i) ;
+		const RsTurtleFileRequestItem *item = dynamic_cast<const RsTurtleFileRequestItem *>(i) ;
 		if (item)
 		{
 #ifdef SERVER_DEBUG
@@ -1478,7 +1541,7 @@ void ftServer::receiveTurtleData(RsTurtleGenericTunnelItem *i,
 
 	case RS_TURTLE_SUBTYPE_FILE_DATA :
 	{
-		RsTurtleFileDataItem *item = dynamic_cast<RsTurtleFileDataItem *>(i) ;
+		const RsTurtleFileDataItem *item = dynamic_cast<const RsTurtleFileDataItem *>(i) ;
 		if (item)
 		{
 #ifdef SERVER_DEBUG
@@ -1486,7 +1549,7 @@ void ftServer::receiveTurtleData(RsTurtleGenericTunnelItem *i,
 #endif
 			getMultiplexer()->recvData(virtual_peer_id,hash,0,item->chunk_offset,item->chunk_size,item->chunk_data) ;
 
-			item->chunk_data = NULL ;	// this prevents deletion in the destructor of RsFileDataItem, because data will be deleted
+			const_cast<RsTurtleFileDataItem*>(item)->chunk_data = NULL ;	// this prevents deletion in the destructor of RsFileDataItem, because data will be deleted
 			// down _ft_server->getMultiplexer()->recvData()...in ftTransferModule::recvFileData
 		}
 	}
@@ -1494,7 +1557,7 @@ void ftServer::receiveTurtleData(RsTurtleGenericTunnelItem *i,
 
 	case RS_TURTLE_SUBTYPE_FILE_MAP :
 	{
-		RsTurtleFileMapItem *item = dynamic_cast<RsTurtleFileMapItem *>(i) ;
+		const RsTurtleFileMapItem *item = dynamic_cast<const RsTurtleFileMapItem *>(i) ;
 		if (item)
 		{
 #ifdef SERVER_DEBUG
@@ -1517,7 +1580,7 @@ void ftServer::receiveTurtleData(RsTurtleGenericTunnelItem *i,
 
 	case RS_TURTLE_SUBTYPE_CHUNK_CRC :
 	{
-		RsTurtleChunkCrcItem *item = dynamic_cast<RsTurtleChunkCrcItem *>(i) ;
+		const RsTurtleChunkCrcItem *item = dynamic_cast<const RsTurtleChunkCrcItem *>(i) ;
 		if (item)
 		{
 #ifdef SERVER_DEBUG
@@ -1530,7 +1593,7 @@ void ftServer::receiveTurtleData(RsTurtleGenericTunnelItem *i,
 
 	case RS_TURTLE_SUBTYPE_CHUNK_CRC_REQUEST:
 	{
-		RsTurtleChunkCrcRequestItem *item = dynamic_cast<RsTurtleChunkCrcRequestItem *>(i) ;
+		const RsTurtleChunkCrcRequestItem *item = dynamic_cast<const RsTurtleChunkCrcRequestItem *>(i) ;
 		if (item)
 		{
 #ifdef SERVER_DEBUG

@@ -1140,14 +1140,14 @@ void LocalSharedFilesDialog::spawnCustomPopupMenu( QPoint point )
 	{
 		shareChannelMenu.setIcon(QIcon(IMAGE_CHANNEL));
 
-		std::list<RsGroupMetaData> grp_metas ;
+		std::map<RsGxsGroupId,RsGroupMetaData> grp_metas ;
 		channelDialog->getGroupList(grp_metas) ;
 
 		std::vector<std::pair<std::string,RsGxsGroupId> > grplist ; // I dont use a std::map because two or more channels may have the same name.
 
 		for(auto it(grp_metas.begin());it!=grp_metas.end();++it)
-			if(IS_GROUP_PUBLISHER((*it).mSubscribeFlags) && IS_GROUP_SUBSCRIBED((*it).mSubscribeFlags))
-				grplist.push_back(std::make_pair((*it).mGroupName, (*it).mGroupId));
+			if(IS_GROUP_PUBLISHER((*it).second.mSubscribeFlags) && IS_GROUP_SUBSCRIBED((*it).second.mSubscribeFlags))
+				grplist.push_back(std::make_pair((*it).second.mGroupName, (*it).second.mGroupId));
 
 		std::sort(grplist.begin(),grplist.end(),ChannelCompare()) ;
 
@@ -1164,14 +1164,14 @@ void LocalSharedFilesDialog::spawnCustomPopupMenu( QPoint point )
 	{
 		shareForumMenu.setIcon(QIcon(IMAGE_FORUMS));
 
-		std::list<RsGroupMetaData> grp_metas ;
+		std::map<RsGxsGroupId,RsGroupMetaData> grp_metas ;
 		forumsDialog->getGroupList(grp_metas) ;
 
 		std::vector<std::pair<std::string,RsGxsGroupId> > grplist ; // I dont use a std::map because two or more channels may have the same name.
 
 		for(auto it(grp_metas.begin());it!=grp_metas.end();++it)
-			if(IS_GROUP_SUBSCRIBED((*it).mSubscribeFlags))
-				grplist.push_back(std::make_pair((*it).mGroupName, (*it).mGroupId));
+			if(IS_GROUP_SUBSCRIBED((*it).second.mSubscribeFlags))
+				grplist.push_back(std::make_pair((*it).second.mGroupName, (*it).second.mGroupId));
 
 		std::sort(grplist.begin(),grplist.end(),ChannelCompare()) ;
 

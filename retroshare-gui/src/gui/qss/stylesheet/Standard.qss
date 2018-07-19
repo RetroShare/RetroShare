@@ -186,7 +186,7 @@ ChatLobbyDialog QListWidget#participantsList {
 	background: white;
 }
 
-CreateLobbyDialog QFrame#lobbyFrame {
+CreateLobbyDialog QFrame#roomFrame {
 	border: 2px solid #CCCCCC;
 	border-radius:6px;
 	background: white;

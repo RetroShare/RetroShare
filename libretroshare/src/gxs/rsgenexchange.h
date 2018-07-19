@@ -117,9 +117,9 @@ public:
 
     virtual ~RsGenExchange();
 
-    // Convention that this is implemented here. 
+    // Convention that this is implemented here.
     // and passes to network service.
-    virtual RsServiceInfo getServiceInfo() = 0; 
+    virtual RsServiceInfo getServiceInfo() = 0;
 
     void setNetworkExchangeService(RsNetworkExchangeService *ns) ;
 
@@ -128,18 +128,24 @@ public:
     /*!
      * @param messages messages are deleted after function returns
      */
-    virtual void notifyNewMessages(std::vector<RsNxsMsg*>& messages);
+    virtual void receiveNewMessages(std::vector<RsNxsMsg*>& messages);
 
     /*!
      * @param groups groups are deleted after function returns
      */
-    virtual void notifyNewGroups(std::vector<RsNxsGrp*>& groups);
+    virtual void receiveNewGroups(std::vector<RsNxsGrp*>& groups);
 
     /*!
      * @param grpId group id
      */
     virtual void notifyReceivePublishKey(const RsGxsGroupId &grpId);
 
+    /*!
+     * \brief notifyReceiveDistantSearchResults
+     * 				Should be called when new search results arrive.
+     * \param grpId
+     */
+	virtual void receiveDistantSearchResults(TurtleRequestId id,const RsGxsGroupId &grpId);
     /*!
      * @param grpId group id
      */
@@ -282,6 +288,15 @@ public:
 	 * @return true if token is false otherwise
 	 */
 	bool getGroupStatistic(const uint32_t& token, GxsGroupStatistic& stats);
+
+    /*!
+     * \brief turtleGroupRequest
+     * 			Issues a browadcast group request using the turtle router generic search system. The request is obviously asynchroneous and will be
+     * 			handled in RsGenExchange when received.
+     * \param group_id
+     */
+    void turtleGroupRequest(const RsGxsGroupId& group_id);
+    void turtleSearchRequest(const std::string& match_string);
 
 protected:
 
@@ -562,7 +577,7 @@ public:
      * @param msgs
      */
     void deleteMsgs(uint32_t& token, const GxsMsgReq& msgs);
-    
+
 protected:
     /*!
      * This represents the group before its signature is calculated
@@ -646,7 +661,7 @@ public:
      */
 
     void shareGroupPublishKey(const RsGxsGroupId& grpId,const std::set<RsPeerId>& peers) ;
-    
+
     /*!
      * Returns the local TS of the group as known by the network service.
      * This is useful to allow various network services to sync their update TS
@@ -750,6 +765,8 @@ protected:
      * 		   CREATE_FAIL_TRY_LATER for Id sign key not avail (but requested)
      */
     int createMessage(RsNxsMsg* msg);
+
+    RsNetworkExchangeService *netService() const { return mNetService ; }
 
 private:
     /*!

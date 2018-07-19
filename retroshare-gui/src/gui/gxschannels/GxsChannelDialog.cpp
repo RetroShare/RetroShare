@@ -47,7 +47,7 @@ public:
 
 /** Constructor */
 GxsChannelDialog::GxsChannelDialog(QWidget *parent)
-	: GxsGroupFrameDialog(rsGxsChannels, parent)
+	: GxsGroupFrameDialog(rsGxsChannels, parent,true)
 {
 }
 
@@ -137,6 +137,8 @@ QString GxsChannelDialog::icon(IconType type)
 		return ":/images/folder_green.png";
 	case ICON_OTHER_GROUP:
 		return ":/images/folder_yellow.png";
+    case ICON_SEARCH:
+        return ":/images/find.png";
 	case ICON_DEFAULT:
 		return ":/images/channels.png";
 	}
@@ -333,4 +335,25 @@ void GxsChannelDialog::groupInfoToGroupItemInfo(const RsGroupMetaData &groupInfo
 	if (iconIt != channelData->mIcon.end()) {
 		groupItemInfo.icon = iconIt.value();
 	}
+}
+
+TurtleRequestId GxsChannelDialog::distantSearch(const QString& search_string)
+{
+    return rsGxsChannels->turtleSearchRequest(search_string.toStdString()) ;
+}
+
+bool GxsChannelDialog::getDistantSearchResults(TurtleRequestId id, std::map<RsGxsGroupId,RsGxsGroupSummary>& group_infos)
+{
+    return rsGxsChannels->retrieveDistantSearchResults(id,group_infos);
+}
+
+void GxsChannelDialog::checkRequestGroup(const RsGxsGroupId& grpId)
+{
+    RsGxsChannelGroup distant_group;
+
+	if( rsGxsChannels->retrieveDistantGroup(grpId,distant_group)) // normally we should also check that the group meta is not already here.
+    {
+        std::cerr << "GxsChannelDialog::checkRequestGroup() sending turtle request for group data for group " << grpId << std::endl;
+        rsGxsChannels->turtleGroupRequest(grpId);
+    }
 }

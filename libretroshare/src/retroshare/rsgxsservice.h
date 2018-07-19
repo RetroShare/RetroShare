@@ -27,6 +27,7 @@
 #include "retroshare/rstokenservice.h"
 
 struct RsMsgMetaData ;
+typedef uint32_t TurtleRequestId;
 
 typedef std::map<RsGxsGroupId, std::vector<RsMsgMetaData> > GxsMsgMetaMap;
 typedef std::map<RsGxsGrpMsgIdPair, std::vector<RsMsgMetaData> > GxsMsgRelatedMetaMap;
@@ -39,7 +40,7 @@ typedef std::map<RsGxsGrpMsgIdPair, std::vector<RsMsgMetaData> > GxsMsgRelatedMe
 struct RsGxsNotify
 {
 	enum NotifyType
-	{ TYPE_PUBLISH, TYPE_RECEIVE, TYPE_PROCESSED, TYPE_PUBLISHKEY };
+	{ TYPE_PUBLISHED, TYPE_RECEIVED_NEW, TYPE_PROCESSED, TYPE_RECEIVED_PUBLISHKEY, TYPE_RECEIVED_DISTANT_SEARCH_RESULTS };
 
 	virtual ~RsGxsNotify() {}
 	virtual NotifyType getType() = 0;
@@ -58,6 +59,17 @@ public:
 private:
     const NotifyType NOTIFY_TYPE;
     bool mMetaChange;
+};
+
+class RsGxsDistantSearchResultChange: public RsGxsNotify
+{
+public:
+    RsGxsDistantSearchResultChange(TurtleRequestId id,const RsGxsGroupId& group_id) : mRequestId(id),mGroupId(group_id){}
+
+    NotifyType getType() { return TYPE_RECEIVED_DISTANT_SEARCH_RESULTS ; }
+
+    TurtleRequestId mRequestId ;
+ 	RsGxsGroupId mGroupId;
 };
 
 /*!

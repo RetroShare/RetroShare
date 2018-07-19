@@ -299,6 +299,28 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 
 }
 
+void GxsForumThreadWidget::blank()
+{
+	ui->progressBar->hide();
+	ui->progressText->hide();
+	ui->postText->clear() ;
+	ui->by_label->setId(RsGxsId()) ;
+	ui->time_label->clear();
+	ui->lineRight->hide();
+	ui->lineLeft->hide();
+	ui->by_text_label->hide();
+	ui->by_label->hide();
+	ui->postText->setImageBlockWidget(ui->imageBlockWidget) ;
+	ui->postText->resetImagesStatus(Settings->getForumLoadEmbeddedImages());
+    ui->threadTreeWidget->clear();
+	ui->forumName->setText("");
+
+    mStateHelper->setWidgetEnabled(ui->newthreadButton, false);
+	mStateHelper->setWidgetEnabled(ui->previousButton, false);
+	mStateHelper->setWidgetEnabled(ui->nextButton, false);
+	ui->versions_CB->hide();
+}
+
 GxsForumThreadWidget::~GxsForumThreadWidget()
 {
 	if (mFillThread) {

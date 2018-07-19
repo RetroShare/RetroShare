@@ -680,7 +680,7 @@ void p3GxsTunnelService::removeVirtualPeer(const TurtleFileHash& hash,const Turt
     }
 }
 
-void p3GxsTunnelService::receiveTurtleData(RsTurtleGenericTunnelItem *gitem,const RsFileHash& hash, const RsPeerId& virtual_peer_id,RsTurtleGenericTunnelItem::Direction direction)
+void p3GxsTunnelService::receiveTurtleData(const RsTurtleGenericTunnelItem *gitem, const RsFileHash& hash, const RsPeerId& virtual_peer_id, RsTurtleGenericTunnelItem::Direction direction)
 {
 #ifdef DEBUG_GXS_TUNNEL
     std::cerr << "GxsTunnelService::receiveTurtleData(): Received turtle data. " << std::endl;
@@ -692,7 +692,7 @@ void p3GxsTunnelService::receiveTurtleData(RsTurtleGenericTunnelItem *gitem,cons
     (void) direction;
 #endif
 
-    RsTurtleGenericDataItem *item = dynamic_cast<RsTurtleGenericDataItem*>(gitem) ;
+    const RsTurtleGenericDataItem *item = dynamic_cast<const RsTurtleGenericDataItem*>(gitem) ;
 
     if(item == NULL)
     {

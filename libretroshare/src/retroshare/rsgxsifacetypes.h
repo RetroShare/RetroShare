@@ -64,18 +64,18 @@ struct RsGroupMetaData : RsSerializable
 
     RsGxsGroupId mGroupId;
     std::string mGroupName;
-	uint32_t    mGroupFlags;  // Combination of FLAG_PRIVACY_PRIVATE | FLAG_PRIVACY_RESTRICTED | FLAG_PRIVACY_PUBLIC
-    uint32_t    mSignFlags;   // Combination of RSGXS_GROUP_SIGN_PUBLISH_MASK & RSGXS_GROUP_SIGN_AUTHOR_MASK.
+	uint32_t    mGroupFlags;  // Combination of FLAG_PRIVACY_PRIVATE | FLAG_PRIVACY_RESTRICTED | FLAG_PRIVACY_PUBLIC: diffusion
+    uint32_t    mSignFlags;   // Combination of RSGXS_GROUP_SIGN_PUBLISH_MASK & RSGXS_GROUP_SIGN_AUTHOR_MASK, i.e. what signatures are required for parent and child msgs
 
     time_t      mPublishTs; // Mandatory.
-    RsGxsId    mAuthorId;   // Optional.
+    RsGxsId    mAuthorId;   // Author of the group. Left to "000....0" if anonymous
 
     // for circles
-    RsGxsCircleId mCircleId;
-    uint32_t mCircleType;
+    RsGxsCircleId mCircleId;	// Id of the circle to which the group is restricted
+    uint32_t mCircleType;		// combination of CIRCLE_TYPE_{ PUBLIC,EXTERNAL,YOUR_FRIENDS_ONLY,LOCAL,EXT_SELF,YOUR_EYES_ONLY }
 
     // other stuff.
-    uint32_t mAuthenFlags;
+    uint32_t mAuthenFlags;		// Actually not used yet.
     RsGxsGroupId mParentGrpId;
 
     // BELOW HERE IS LOCAL DATA, THAT IS NOT FROM MSG.

@@ -860,17 +860,17 @@ QString RetroShareLink::title() const
 		break;
 
 		case TYPE_FILE:
-		return QString("%1 (%2)").arg(hash()).arg(misc::friendlyUnit(size()));
+		return QString("Size: %2  hash: %1").arg(hash()).arg(misc::friendlyUnit(size()));
 
 		case TYPE_PERSON:
 		return PeerDefs::rsidFromId(RsPgpId(hash().toStdString()));
 
 		case TYPE_FORUM:
-			/* fallthrough */
+			return QString("Forum id: %1").arg(hash());
 		case TYPE_CHANNEL:
-			/* fallthrough */
+			return QString("Channel id: %1").arg(hash());
 		case TYPE_SEARCH:
-		break;
+			return QString("Search files");
 
 		case TYPE_MESSAGE:
 		return PeerDefs::rsidFromId(RsPeerId(hash().toStdString()));
@@ -1386,13 +1386,6 @@ static void processList(const QStringList &list, const QString &textSingular, co
 				++countUnknown;
 			break;
 
-			case TYPE_FILE:
-			{
-				col.merge_in(link.name(),link.size(),RsFileHash(link.hash().toStdString())) ;
-				fileLinkFound = true;
-			}
-			break;
-
 			case TYPE_PERSON:
 			{
 #ifdef DEBUG_RSLINK
@@ -1547,6 +1540,22 @@ static void processList(const QStringList &list, const QString &textSingular, co
 			}
 			break ;
 
+			case TYPE_FILE:
+			{
+				FileInfo fi1;
+				if(links.size()==1 && rsFiles->alreadyHaveFile(RsFileHash(link.hash().toStdString()), fi1)
+					&& !link.name().endsWith(RsCollection::ExtensionString))
+				{
+					/* fallthrough */
+				}
+				else
+				{
+					col.merge_in(link.name(),link.size(),RsFileHash(link.hash().toStdString())) ;
+					fileLinkFound = true;
+					break;
+				}
+			}
+			//break;
 			case TYPE_EXTRAFILE:
 			{
 #ifdef DEBUG_RSLINK
@@ -1621,14 +1630,14 @@ static void processList(const QStringList &list, const QString &textSingular, co
 						} else if (ret == QMessageBox::NoToAll) {
 							dontOpenNextFile = true;
 						}
+						needNotifySuccess = false;
 					}
 				}
 
 				if (rsFiles->FileRequest(cleanname.toUtf8().constData(), RsFileHash(link.hash().toStdString()), link.size(), "", RS_FILE_REQ_ANONYMOUS_ROUTING, srcIds)) {
 					fileAdded.append(link.name());
 				} else {
-					if (!bFileOpened) fileExist.append(link.name());
-				}
+					if (!bFileOpened && links.size()>1) fileExist.append(link.name());}
 			}
 			break;
 

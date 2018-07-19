@@ -152,6 +152,14 @@ public:
      */
     bool addMsgData(RsNxsMsg* msg);
 
+    /*!
+     * This retrieves a group from the gxs data base, this is a blocking call \n
+     * @param grp the group to add, memory ownership passed to the callee
+     * @return false if group cound not be retrieved
+     */
+    bool getGroupData(const RsGxsGroupId& grpId,RsNxsGrp *& grp_data);
+
+
 public:
 
 

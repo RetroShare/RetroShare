@@ -223,6 +223,8 @@ class NotifyClient
 		virtual void notifyCustomState                (const std::string& /* peer_id   */, const std::string&               /* status_string */) {}
 		virtual void notifyHashingInfo                (uint32_t           /* type      */, const std::string&               /* fileinfo      */) {}
 		virtual void notifyTurtleSearchResult         (uint32_t           /* search_id */, const std::list<TurtleFileInfo>& /* files         */) {}
+#warning MISSING CODE HERE
+		// virtual void notifyTurtleSearchResult         (uint32_t           /* search_id */, const std::list<TurtleGxsInfo >& /* groups        */) {}
 		virtual void notifyPeerHasNewAvatar           (std::string        /* peer_id   */) {}
 		virtual void notifyOwnAvatarChanged           () {}
 		virtual void notifyOwnStatusMessageChanged    () {}

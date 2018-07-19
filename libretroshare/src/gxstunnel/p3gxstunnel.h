@@ -91,7 +91,7 @@
 //		 by a mix between our own GXS id and the GXS id we're talking to. That is what the TunnelVirtualPeer is.
 //
 //      
-//	RequestTunnel(source_own_id,destination_id)                                                                              -
+//	RequestTunnel(source_own_id,destination_id)                                                                                  -
 //                            |                                                                                                  |
 //                            +---------------------------> p3Turtle::monitorTunnels(  hash(destination_id)   )                  |
 //                                                                            |                                                  |
@@ -122,6 +122,8 @@ class p3GxsTunnelService: public RsGxsTunnelService, public RsTurtleClientServic
 public:
     explicit p3GxsTunnelService(RsGixs *pids) ;
     virtual void connectToTurtleRouter(p3turtle *) ;
+
+    uint16_t serviceId() const { return RS_SERVICE_TYPE_GXS_TUNNEL ; }
 
     // Creates the invite if the public key of the distant peer is available.
     // Om success, stores the invite in the map above, so that we can respond to tunnel requests.
@@ -207,7 +209,7 @@ private:
     // Overloaded from RsTurtleClientService
 
     virtual bool handleTunnelRequest(const RsFileHash &hash,const RsPeerId& peer_id) ;
-    virtual void receiveTurtleData(RsTurtleGenericTunnelItem *item,const RsFileHash& hash,const RsPeerId& virtual_peer_id,RsTurtleGenericTunnelItem::Direction direction) ;
+    virtual void receiveTurtleData(const RsTurtleGenericTunnelItem *item,const RsFileHash& hash,const RsPeerId& virtual_peer_id,RsTurtleGenericTunnelItem::Direction direction) ;
     void addVirtualPeer(const TurtleFileHash&, const TurtleVirtualPeerId&,RsTurtleGenericTunnelItem::Direction dir) ;
     void removeVirtualPeer(const TurtleFileHash&, const TurtleVirtualPeerId&) ;
     

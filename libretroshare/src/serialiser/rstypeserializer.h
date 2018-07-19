@@ -32,7 +32,11 @@
 #include "serialiser/rsserializer.h"
 #include "serialiser/rsserializable.h"
 
+#ifdef HAS_RAPIDJSON
+#include <rapidjson/document.h>
+#else
 #include <rapid_json/document.h>
+#endif // HAS_RAPIDJSON
 #include <typeinfo> // for typeid
 #include <type_traits>
 #include <errno.h>

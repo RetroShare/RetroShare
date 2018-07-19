@@ -211,9 +211,9 @@ void FileSearchHandler::handleCreateSearch(Request &req, Response &resp)
         // i have no idea what the reasons for two different search modes are
         // rs-gui does it, so do we
         if(words.size() == 1)
-            search_id = mTurtle->turtleSearch(words.front());
+            search_id = rsFiles->turtleSearch(words.front());
         else
-            search_id = mTurtle->turtleSearch(lin_exp);
+            search_id = rsFiles->turtleSearch(lin_exp);
     }
 
     std::list<FileDetail> results;

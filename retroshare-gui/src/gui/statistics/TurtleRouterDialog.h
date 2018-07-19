@@ -37,29 +37,55 @@ class TurtleRouterDialog: public RsAutoUpdatePage, public Ui::TurtleRouterDialog
 
 } ;
 
-class GxsTunnelsDialog: public RsAutoUpdatePage
+class TunnelStatisticsDialog: public RsAutoUpdatePage
 {
     Q_OBJECT
 
 public:
-    GxsTunnelsDialog(QWidget *parent = NULL) ;
-    ~GxsTunnelsDialog();
+    TunnelStatisticsDialog(QWidget *parent = NULL) ;
+    ~TunnelStatisticsDialog();
 
     // Cache for peer names.
     static QString getPeerName(const RsPeerId &peer_id) ;
+	static QString getPeerName(const RsGxsId& gxs_id);
 
 protected:
     virtual void paintEvent(QPaintEvent *);
     virtual void resizeEvent(QResizeEvent *event);
+
+	int maxWidth ;
+    int maxHeight ;
+
+    QPixmap pixmap;
+
 private:
     void processSettings(bool bLoad);
     bool m_bProcessSettings;
     static QString speedString(float f);
 
+    virtual void updateDisplay() =0;
+} ;
+
+class GxsAuthenticatedTunnelsDialog: public TunnelStatisticsDialog
+{
+    Q_OBJECT
+
+public:
+    GxsAuthenticatedTunnelsDialog(QWidget *parent = NULL) ;
+    ~GxsAuthenticatedTunnelsDialog() {}
+
+private:
     virtual void updateDisplay() ;
-    
-    int maxWidth ;
-    int maxHeight ;
-    
-    QPixmap pixmap;
+} ;
+
+class GxsNetTunnelsDialog: public TunnelStatisticsDialog
+{
+    Q_OBJECT
+
+public:
+    GxsNetTunnelsDialog(QWidget *parent = NULL) ;
+    ~GxsNetTunnelsDialog() {}
+
+private:
+    virtual void updateDisplay() ;
 } ;
