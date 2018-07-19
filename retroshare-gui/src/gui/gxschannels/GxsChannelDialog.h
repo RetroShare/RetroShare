@@ -50,6 +50,10 @@ protected:
 	virtual GroupFrameSettings::Type groupFrameSettingsType() { return GroupFrameSettings::Channel; }
 	virtual QString getHelpString() const ;
 	virtual void groupInfoToGroupItemInfo(const RsGroupMetaData &groupInfo, GroupItemInfo &groupItemInfo, const RsUserdata *userdata);
+    virtual bool getDistantSearchResults(TurtleRequestId id, std::map<RsGxsGroupId,RsGxsGroupSummary>& group_infos);
+
+	virtual TurtleRequestId distantSearch(const QString& search_string) ;
+    virtual void checkRequestGroup(const RsGxsGroupId& grpId) ;
 
 private slots:
 	void toggleAutoDownload();

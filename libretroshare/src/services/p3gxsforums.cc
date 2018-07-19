@@ -196,11 +196,12 @@ void p3GxsForums::notifyChanges(std::vector<RsGxsNotify *> &changes)
 
 				switch (c->getType())
 				{
+                default:
 					case RsGxsNotify::TYPE_PROCESSED:
-					case RsGxsNotify::TYPE_PUBLISH:
+					case RsGxsNotify::TYPE_PUBLISHED:
 						break;
 
-					case RsGxsNotify::TYPE_RECEIVE:
+					case RsGxsNotify::TYPE_RECEIVED_NEW:
 					{
 						RsGxsMsgChange *msgChange = dynamic_cast<RsGxsMsgChange*>(c);
 						if (msgChange)
@@ -239,7 +240,7 @@ void p3GxsForums::notifyChanges(std::vector<RsGxsNotify *> &changes)
 						break;
 					}
 
-					case RsGxsNotify::TYPE_PUBLISHKEY:
+					case RsGxsNotify::TYPE_RECEIVED_PUBLISHKEY:
 					{
 						RsGxsGroupChange *grpChange = dynamic_cast<RsGxsGroupChange *>(*it);
 						if (grpChange)

@@ -82,6 +82,11 @@ public:
 
 	// Add a new category item
 	QTreeWidgetItem *addCategoryItem(const QString &name, const QIcon &icon, bool expand);
+    // Add a new search item
+    void setDistSearchVisible(bool) ; // shows/hides distant search UI parts.
+	QTreeWidgetItem *addSearchItem(const QString& search_string, uint32_t id, const QIcon &icon) ;
+	void removeSearchItem(QTreeWidgetItem *item);
+
 	// Get id of item
 	QString itemId(QTreeWidgetItem *item);
 	QString itemIdAt(QPoint &point);
@@ -89,6 +94,9 @@ public:
 	void fillGroupItems(QTreeWidgetItem *categoryItem, const QList<GroupItemInfo> &itemList);
 	// Set the unread count of an item
 	void setUnreadCount(QTreeWidgetItem *item, int unreadCount);
+
+	bool isSearchRequestItem(QPoint &point,uint32_t& search_req_id);
+	bool isSearchRequestResult(QPoint &point, QString &group_id, uint32_t& search_req_id);
 
 	QTreeWidgetItem *getItemFromId(const QString &id);
 	QTreeWidgetItem *activateId(const QString &id, bool focus);
@@ -110,6 +118,7 @@ signals:
 	void treeCustomContextMenuRequested(const QPoint &pos);
 	void treeCurrentItemChanged(const QString &id);
 	void treeItemActivated(const QString &id);
+    void distantSearchRequested(const QString&) ;
 
 protected:
 	void changeEvent(QEvent *e);
@@ -119,6 +128,7 @@ private slots:
 	void currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous);
 	void itemActivated(QTreeWidgetItem *item, int column);
 	void filterChanged();
+	void distantSearch();
 
 	void sort();
 

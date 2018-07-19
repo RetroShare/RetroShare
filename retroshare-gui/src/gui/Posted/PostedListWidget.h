@@ -63,6 +63,7 @@ protected:
 	virtual void insertAllPosts(const uint32_t &token, GxsMessageFramePostThread *thread);
 	virtual void insertPosts(const uint32_t &token);
 	virtual void clearPosts();
+	virtual void blank();
 	virtual bool navigatePostItem(const RsGxsMessageId& msgId);
 
 	/* GxsMessageFrameWidget */

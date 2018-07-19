@@ -30,6 +30,7 @@
 
 #include "gxs/rsgxs.h"
 #include "gxs/rsgxsdata.h"
+#include "gxs/rsgxsnettunnel.h"
 #include "serialiser/rstlvidset.h"
 #include "serialiser/rstypeserializer.h"
 #include "serialiser/rsserializable.h"
@@ -41,6 +42,7 @@ const uint8_t RS_PKT_SUBTYPE_GXS_MSG_UPDATE             = 0x03;
 const uint8_t RS_PKT_SUBTYPE_GXS_SERVER_GRP_UPDATE      = 0x04;
 const uint8_t RS_PKT_SUBTYPE_GXS_SERVER_MSG_UPDATE      = 0x08;
 const uint8_t RS_PKT_SUBTYPE_GXS_GRP_CONFIG             = 0x09;
+const uint8_t RS_PKT_SUBTYPE_GXS_RANDOM_BIAS            = 0x0a;
 
 class RsGxsNetServiceItem: public RsItem
 {
@@ -187,7 +189,6 @@ public:
 
 	RsGxsGroupId grpId;
 };
-
 
 class RsGxsUpdateSerialiser : public RsServiceSerializer
 {

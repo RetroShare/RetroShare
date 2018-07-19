@@ -218,7 +218,8 @@ void p3GxsCircles::notifyChanges(std::vector<RsGxsNotify *> &changes)
 				std::cerr << "    Msgs for Group: " << mit->first << std::endl;
 #endif
 				force_cache_reload(RsGxsCircleId(mit->first));
-				if (notify && (c->getType() == RsGxsNotify::TYPE_RECEIVE) )
+
+				if (notify && (c->getType() == RsGxsNotify::TYPE_RECEIVED_NEW) )
 					for (auto msgIdIt(mit->second.begin()), end(mit->second.end()); msgIdIt != end; ++msgIdIt)
 					{
 						const RsGxsMessageId& msgId = *msgIdIt;
@@ -261,7 +262,7 @@ void p3GxsCircles::notifyChanges(std::vector<RsGxsNotify *> &changes)
 				std::cerr << "  forcing cache loading for circle " << *git << " in order to trigger subscribe update." << std::endl;
 #endif
 				force_cache_reload(RsGxsCircleId(*git)) ;
-				if (notify && (c->getType() == RsGxsNotify::TYPE_RECEIVE) )
+				if (notify && (c->getType() == RsGxsNotify::TYPE_RECEIVED_NEW) )
 					notify->AddFeedItem(RS_FEED_ITEM_CIRCLE_INVIT_REC,RsGxsCircleId(*git).toStdString(),"");
 			}
 

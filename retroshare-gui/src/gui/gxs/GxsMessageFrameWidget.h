@@ -43,6 +43,7 @@ public:
 	virtual void groupIdChanged() = 0;
 	virtual QString groupName(bool withUnreadCount) = 0;
 	virtual QIcon groupIcon() = 0;
+    virtual void blank() =0;
 	virtual bool navigate(const RsGxsMessageId& msgId) = 0;
 	virtual bool isLoading();
 	virtual bool isWaiting();

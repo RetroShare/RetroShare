@@ -482,7 +482,7 @@ void p3GRouter::handleLowLevelTransactionAckItem(RsGRouterTransactionAcknItem *t
 #endif
 }
 
-void p3GRouter::receiveTurtleData(RsTurtleGenericTunnelItem *gitem, const RsFileHash &/*hash*/, const RsPeerId &virtual_peer_id, RsTurtleGenericTunnelItem::Direction /*direction*/)
+void p3GRouter::receiveTurtleData(const RsTurtleGenericTunnelItem *gitem, const RsFileHash &/*hash*/, const RsPeerId &virtual_peer_id, RsTurtleGenericTunnelItem::Direction /*direction*/)
 {
 #ifdef GROUTER_DEBUG
     std::cerr << "p3GRouter::receiveTurtleData() " << std::endl;
@@ -496,7 +496,7 @@ void p3GRouter::receiveTurtleData(RsTurtleGenericTunnelItem *gitem, const RsFile
     //  - possibly packs multi-item blocks back together
     // 	- converts it into a grouter generic item (by deserialising it)
 
-    RsTurtleGenericDataItem *item = dynamic_cast<RsTurtleGenericDataItem*>(gitem) ;
+    const RsTurtleGenericDataItem *item = dynamic_cast<const RsTurtleGenericDataItem*>(gitem) ;
 
     if(item == NULL)
     {
@@ -510,7 +510,8 @@ void p3GRouter::receiveTurtleData(RsTurtleGenericTunnelItem *gitem, const RsFile
 
     // Items come out of the pipe in order. We need to recover all chunks before we de-serialise the content and have it handled by handleIncoming()
 
-    RsItem *itm = RsGRouterSerialiser().deserialise(item->data_bytes,&item->data_size) ;
+    uint32_t size = item->data_size ;
+    RsItem *itm = RsGRouterSerialiser().deserialise(item->data_bytes,&size);
 
 if(itm == NULL)
 {

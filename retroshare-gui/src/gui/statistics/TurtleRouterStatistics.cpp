@@ -195,11 +195,13 @@ TurtleRouterStatistics::TurtleRouterStatistics(QWidget *parent)
 	_tunnel_statistics_F->setFrameStyle(QFrame::NoFrame);
 	_tunnel_statistics_F->setFocusPolicy(Qt::NoFocus);
 	
-	routertabWidget->addTab(new TurtleRouterDialog(),QString(tr("Anonymous tunnels")));
-	routertabWidget->addTab(new GxsTunnelsDialog(),QString(tr("Authenticated tunnels")));
+	routertabWidget->addTab(new TurtleRouterDialog(),           QString(tr("File transfer tunnels")));
+	routertabWidget->addTab(new GxsAuthenticatedTunnelsDialog(),QString(tr("Authenticated tunnels")));
+	routertabWidget->addTab(new GxsNetTunnelsDialog(),          QString(tr("GXS sync tunnels")     ));
 
-        float fontHeight = QFontMetricsF(font()).height();
-        float fact = fontHeight/14.0;
+	float fontHeight = QFontMetricsF(font()).height();
+	float fact = fontHeight/14.0;
+
     frmGraph->setMinimumHeight(200*fact);
 	
 	// load settings

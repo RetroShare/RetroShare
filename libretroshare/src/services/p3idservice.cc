@@ -278,7 +278,7 @@ void p3IdService::timeStampKey(const RsGxsId& gxs_id, const RsIdentityUsage& rea
         return ;
     }
 #ifdef DEBUG_IDS
-    std::cerr << "(II) time stamping key " << gxs_id << " for the following reason: " << reason << std::endl;
+    std::cerr << "(II) time stamping key " << gxs_id << " for the following reason: " << reason.mUsageCode << std::endl;
 #endif
 
     RS_STACK_MUTEX(mIdMtx) ;
@@ -2700,7 +2700,7 @@ void p3IdService::requestIdsFromNet()
         bool request_can_proceed = false ;
 
         for(cit2 = peers.begin(); cit2 != peers.end(); ++cit2)
-            if(rsPeers->isOnline(*cit2)) 		// make sure that the peer in online, so that we know that the request has some chance to succeed.
+            if(rsPeers->isOnline(*cit2) || mNes->isDistantPeer(*cit2)) // make sure that the peer in online, so that we know that the request has some chance to succeed.
             {
                 requests[*cit2].push_back(cit->first);
                 request_can_proceed = true ;

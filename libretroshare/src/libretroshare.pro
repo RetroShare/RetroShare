@@ -137,6 +137,7 @@ PUBLIC_HEADERS =	retroshare/rsdisc.h \
 					retroshare/rsconfig.h \
 					retroshare/rsversion.h \
 					retroshare/rsservicecontrol.h \
+					retroshare/rsgxsdistsync.h 
 
 HEADERS += plugins/pluginmanager.h \
 		plugins/dlfcn_win32.h \
@@ -351,7 +352,8 @@ HEADERS +=	ft/ftchunkmap.h \
 			ft/ftturtlefiletransferitem.h 
 
 HEADERS += crypto/chacha20.h \
-				crypto/hashstream.h
+				crypto/hashstream.h \
+				crypto/rscrypto.h
 
 HEADERS += directory_updater.h \
 				directory_list.h \
@@ -519,7 +521,8 @@ SOURCES +=	ft/ftchunkmap.cc \
             ft/ftturtlefiletransferitem.cc
 
 SOURCES += crypto/chacha20.cpp \
-			  crypto/hashstream.cc
+			  crypto/hashstream.cc \
+			  crypto/rscrypto.cpp
 
 SOURCES += chat/distantchat.cc \
 			  chat/p3chatservice.cc \
@@ -707,6 +710,7 @@ HEADERS += rsitems/rsnxsitems.h \
 	gxs/rsgxs.h \
 	gxs/rsdataservice.h \
 	gxs/rsgxsnetservice.h \
+	gxs/rsgxsnettunnel.h \
 	retroshare/rsgxsflags.h \
 	retroshare/rsgxsifacetypes.h \
 	gxs/rsgenexchange.h \
@@ -732,6 +736,7 @@ SOURCES += rsitems/rsnxsitems.cc \
 	gxs/rsdataservice.cc \
 	gxs/rsgenexchange.cc \
 	gxs/rsgxsnetservice.cc \
+	gxs/rsgxsnettunnel.cc \
 	gxs/rsgxsdata.cc \
 	rsitems/rsgxsitems.cc \
 	gxs/rsgxsdataaccess.cc \
