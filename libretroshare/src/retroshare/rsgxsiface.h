@@ -31,6 +31,7 @@
 #include "retroshare/rsgxsservice.h"
 #include "gxs/rsgxsdata.h"
 #include "retroshare/rsgxsifacetypes.h"
+#include "util/rsdeprecate.h"
 
 /*!
  * \brief The RsGxsGroupSymmary struct
@@ -44,8 +45,8 @@ struct RsGxsGroupSummary
 
     RsGxsGroupId group_id ;
 
-    std::string  group_name ;
-    std::string  group_description ;
+	std::string  group_name ;
+	RS_DEPRECATED std::string group_description;
     std::string  search_context ;
     RsGxsId      author_id ;
     time_t       publish_ts ;

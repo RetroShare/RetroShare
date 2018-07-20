@@ -260,6 +260,10 @@
 #include "util/rsmemory.h"
 #include "util/stacktrace.h"
 
+#ifdef RS_DEEP_SEARCH
+#	include "deep_search/deep_search.h"
+#endif
+
 /***
  * Use the following defines to debug:
  	NXS_NET_DEBUG_0		shows group update high level information
@@ -5271,16 +5275,52 @@ void RsGxsNetService::receiveTurtleSearchResults(TurtleRequestId req,const unsig
     mObserver->receiveNewGroups(new_grps);
 }
 
-bool RsGxsNetService::search(const std::string& substring,std::list<RsGxsGroupSummary>& group_infos)
+bool RsGxsNetService::search( const std::string& substring,
+                              std::list<RsGxsGroupSummary>& group_infos )
 {
+	group_infos.clear();
+
 	RsGxsGrpMetaTemporaryMap grpMetaMap;
-    {
+	{
 		RS_STACK_MUTEX(mNxsMutex) ;
 		mDataStore->retrieveGxsGrpMetaData(grpMetaMap);
-    }
+	}
 
+#ifdef RS_DEEP_SEARCH
+	std::vector<DeepSearch::SearchResult> results;
+	DeepSearch::search(substring, results, 0);
+
+	for(auto dsr : results)
+	{
+		RsUrl rUrl(dsr.mUrl);
+		auto rit = rUrl.query().find("id");
+		if(rit != rUrl.query().end())
+		{
+			RsGroupNetworkStats stats;
+			RsGxsGroupId grpId(rit->second);
+			RsGxsGrpMetaTemporaryMap::iterator mIt;
+			if( !grpId.isNull() &&
+			        (mIt = grpMetaMap.find(grpId)) != grpMetaMap.end() &&
+			        getGroupNetworkStats(grpId, stats) )
+			{
+				RsGxsGrpMetaData& gMeta(*mIt->second);
+				RsGxsGroupSummary s;
+				s.group_id           = grpId;
+				s.group_name         = gMeta.mGroupName;
+				s.search_context     = dsr.mSnippet;
+				s.sign_flags         = gMeta.mSignFlags;
+				s.publish_ts         = gMeta.mSignFlags;
+				s.author_id          = gMeta.mAuthorId;
+				s.number_of_messages = stats.mMaxVisibleCount;
+				s.last_message_ts    = stats.mLastGroupModificationTS;
+				s.popularity         = gMeta.mPop;
+
+				group_infos.push_back(s);
+			}
+		}
+	}
+#else // RS_DEEP_SEARCH
     RsGroupNetworkStats stats ;
-
     for(auto it(grpMetaMap.begin());it!=grpMetaMap.end();++it)
 		if(termSearch(it->second->mGroupName,substring))
 		{
@@ -5289,7 +5329,7 @@ bool RsGxsNetService::search(const std::string& substring,std::list<RsGxsGroupSu
             RsGxsGroupSummary s ;
             s.group_id           = it->first ;
     		s.group_name         = it->second->mGroupName ;
-    		s.group_description  = it->second->mGroupName ; // to be filled with something better when we use the real search
+			// to be filled with something better when we use the real search
     		s.search_context     = it->second->mGroupName ;
             s.sign_flags         = it->second->mSignFlags;
     		s.publish_ts         = it->second->mPublishTs;
@@ -5298,8 +5338,9 @@ bool RsGxsNetService::search(const std::string& substring,std::list<RsGxsGroupSu
     		s.last_message_ts    = stats.mLastGroupModificationTS ;
             s.popularity         = it->second->mPop;
 
-            group_infos.push_back(s) ;
+			group_infos.push_back(s);
 		}
+#endif // RS_DEEP_SEARCH
 
 #ifdef NXS_NET_DEBUG_8
 	GXSNETDEBUG___ << "  performing local substring search in response to distant request. Found " << group_infos.size() << " responses." << std::endl;
