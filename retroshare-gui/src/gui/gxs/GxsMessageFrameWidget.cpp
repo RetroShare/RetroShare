@@ -72,21 +72,26 @@ bool GxsMessageFrameWidget::isWaiting()
 
 void GxsMessageFrameWidget::setGroupId(const RsGxsGroupId &groupId)
 {
-	if (mGroupId == groupId) {
-		if (!groupId.isNull()) {
-			return;
+	if (mGroupId == groupId  && !groupId.isNull())
+		return;
+
+    if(!groupId.isNull())
+	{
+		mAcknowledgeReadStatusToken = 0;
+		if (mStateHelper->isLoading(mTokenTypeAcknowledgeReadStatus)) {
+			mStateHelper->setLoading(mTokenTypeAcknowledgeReadStatus, false);
+
+			emit waitingChanged(this);
 		}
+
+		mGroupId = groupId;
+		groupIdChanged();
 	}
-
-	mAcknowledgeReadStatusToken = 0;
-	if (mStateHelper->isLoading(mTokenTypeAcknowledgeReadStatus)) {
-		mStateHelper->setLoading(mTokenTypeAcknowledgeReadStatus, false);
-
-		emit waitingChanged(this);
-	}
-
-	mGroupId = groupId;
-	groupIdChanged();
+    else
+    {
+        mGroupId.clear();
+        blank();	// clear the displayed data, because no group is selected.
+    }
 }
 
 void GxsMessageFrameWidget::setAllMessagesRead(bool read)

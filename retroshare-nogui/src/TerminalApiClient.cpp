@@ -103,6 +103,15 @@ static std::string readStringFromKeyboard(bool passwd_mode)
 
 	while((c=getchar()) != '\n')
 	{
+		// handle backspace
+		if (c == 127) {
+			if(s.length()!=0) {
+				std::cout << "\b \b";
+				s.resize(s.length()-1);
+			}
+			continue;
+		}
+
 		if(passwd_mode)
 			putchar('*') ;
 		else

@@ -64,7 +64,7 @@ static const uint32_t INDEX_AUTHEN_ADMIN        = 0x00000040; // admin key
 
 #define GXS_MASK "GXS_MASK_HACK"
 
-//#define GEN_EXCH_DEBUG	1
+#define GEN_EXCH_DEBUG	1
 
 static const uint32_t MSG_CLEANUP_PERIOD     = 60*59; // 59 minutes
 static const uint32_t INTEGRITY_CHECK_PERIOD = 60*2; // 31 minutes // TODO: Restore this line before merging deep_search
@@ -1111,6 +1111,8 @@ void RsGenExchange::receiveChanges(std::vector<RsGxsNotify*>& changes)
         RsGxsNotify* n = *vit;
         RsGxsGroupChange* gc;
         RsGxsMsgChange* mc;
+        RsGxsDistantSearchResultChange *gt;
+
         if((mc = dynamic_cast<RsGxsMsgChange*>(n)) != NULL)
         {
             if (mc->metaChange())
@@ -1132,6 +1134,10 @@ void RsGenExchange::receiveChanges(std::vector<RsGxsNotify*>& changes)
             {
                 out.mGrps.splice(out.mGrps.end(), gc->mGrpIdList);
             }
+        }
+        else if((gt = dynamic_cast<RsGxsDistantSearchResultChange*>(n)) != NULL)
+        {
+            out.mDistantSearchReqs.push_back(gt->mRequestId);
         }
         else
             std::cerr << "(EE) Unknown changes type!!" << std::endl;
@@ -1568,7 +1574,7 @@ bool RsGenExchange::setAuthenPolicyFlag(const uint8_t &msgFlag, uint32_t& authen
     return true;
 }
 
-void RsGenExchange::notifyNewGroups(std::vector<RsNxsGrp *> &groups)
+void RsGenExchange::receiveNewGroups(std::vector<RsNxsGrp *> &groups)
 {
 	RS_STACK_MUTEX(mGenMtx) ;
 
@@ -1600,7 +1606,7 @@ void RsGenExchange::notifyNewGroups(std::vector<RsNxsGrp *> &groups)
 }
 
 
-void RsGenExchange::notifyNewMessages(std::vector<RsNxsMsg *>& messages)
+void RsGenExchange::receiveNewMessages(std::vector<RsNxsMsg *>& messages)
 {
 	RS_STACK_MUTEX(mGenMtx) ;
 
@@ -1635,11 +1641,22 @@ void RsGenExchange::notifyNewMessages(std::vector<RsNxsMsg *>& messages)
 		}
 	}
 }
+
+void RsGenExchange::receiveDistantSearchResults(TurtleRequestId id,const RsGxsGroupId &grpId)
+{
+	RS_STACK_MUTEX(mGenMtx);
+
+	RsGxsDistantSearchResultChange* gc = new RsGxsDistantSearchResultChange(id,grpId);
+	mNotifications.push_back(gc);
+
+    std::cerr << "RsGenExchange::receiveDistantSearchResults(): received result for request " << std::hex << id << std::dec << std::endl;
+}
+
 void RsGenExchange::notifyReceivePublishKey(const RsGxsGroupId &grpId)
 {
 	RS_STACK_MUTEX(mGenMtx);
 
-	RsGxsGroupChange* gc = new RsGxsGroupChange(RsGxsNotify::TYPE_PUBLISHKEY, true);
+	RsGxsGroupChange* gc = new RsGxsGroupChange(RsGxsNotify::TYPE_RECEIVED_PUBLISHKEY, true);
 	gc->mGrpIdList.push_back(grpId);
 	mNotifications.push_back(gc);
 }
@@ -2310,7 +2327,7 @@ void RsGenExchange::publishMsgs()
 
 	if(!msgChangeMap.empty())
 	{
-		RsGxsMsgChange* ch = new RsGxsMsgChange(RsGxsNotify::TYPE_PUBLISH, false);
+		RsGxsMsgChange* ch = new RsGxsMsgChange(RsGxsNotify::TYPE_PUBLISHED, false);
 		ch->msgChangeMap = msgChangeMap;
 		mNotifications.push_back(ch);
 	}
@@ -2447,7 +2464,7 @@ void RsGenExchange::processGroupDelete()
 
 	if(!grpDeleted.empty())
 	{
-		RsGxsGroupChange* gc = new RsGxsGroupChange(RsGxsNotify::TYPE_PUBLISH, false);
+		RsGxsGroupChange* gc = new RsGxsGroupChange(RsGxsNotify::TYPE_PUBLISHED, false);
 		gc->mGrpIdList = grpDeleted;
 		mNotifications.push_back(gc);
 	}
@@ -2756,7 +2773,7 @@ void RsGenExchange::publishGrps()
 
 	    if(!grpChanged.empty())
 	    {
-		    RsGxsGroupChange* gc = new RsGxsGroupChange(RsGxsNotify::TYPE_RECEIVE, true);
+		    RsGxsGroupChange* gc = new RsGxsGroupChange(RsGxsNotify::TYPE_RECEIVED_NEW, true);
 		    gc->mGrpIdList = grpChanged;
 		    mNotifications.push_back(gc);
 #ifdef GEN_EXCH_DEBUG
@@ -3022,7 +3039,7 @@ void RsGenExchange::processRecvdMessages()
 #endif
 		    mDataStore->storeMessage(msgs_to_store);
 
-		    RsGxsMsgChange* c = new RsGxsMsgChange(RsGxsNotify::TYPE_RECEIVE, false);
+		    RsGxsMsgChange* c = new RsGxsMsgChange(RsGxsNotify::TYPE_RECEIVED_NEW, false);
 		    c->msgChangeMap = msgIds;
 		    mNotifications.push_back(c);
 	    }
@@ -3155,7 +3172,7 @@ void RsGenExchange::processRecvdGroups()
 
 	if(!grpIds.empty())
 	{
-		RsGxsGroupChange* c = new RsGxsGroupChange(RsGxsNotify::TYPE_RECEIVE, false);
+		RsGxsGroupChange* c = new RsGxsGroupChange(RsGxsNotify::TYPE_RECEIVED_NEW, false);
 		c->mGrpIdList = grpIds;
 		mNotifications.push_back(c);
 		mDataStore->storeGroup(grps_to_store);
@@ -3239,7 +3256,7 @@ void RsGenExchange::performUpdateValidation()
 	}
 	// notify the client
 
-	RsGxsGroupChange* c = new RsGxsGroupChange(RsGxsNotify::TYPE_RECEIVE, true);
+	RsGxsGroupChange* c = new RsGxsGroupChange(RsGxsNotify::TYPE_RECEIVED_NEW, true);
 
 	for(uint32_t i=0;i<mGroupUpdates.size();++i)
 		if(mGroupUpdates[i].newGrp != NULL)
@@ -3335,11 +3352,11 @@ void RsGenExchange::removeDeleteExistingMessages( std::list<RsNxsMsg*>& msgs, Gx
 		mDataStore->retrieveMsgIds(*it, msgIdReq[*it]);
 
 #ifdef GEN_EXCH_DEBUG
-		const std::vector<RsGxsMessageId>& vec(msgIdReq[*it]) ;
+		const std::set<RsGxsMessageId>& vec(msgIdReq[*it]) ;
 		std::cerr << "  retrieved " << vec.size() << " message ids for group " << *it << std::endl;
 
-		for(uint32_t i=0;i<vec.size();++i)
-			std::cerr << "    " << vec[i] << std::endl;
+		for(auto it2(vec.begin());it2!=vec.end();++it2)
+			std::cerr << "    " << *it2   << std::endl;
 #endif
 	}
 
@@ -3381,3 +3398,11 @@ void RsGenExchange::removeDeleteExistingMessages( std::list<RsNxsMsg*>& msgs, Gx
 	}
 }
 
+void RsGenExchange::turtleGroupRequest(const RsGxsGroupId& group_id)
+{
+    mNetService->turtleGroupRequest(group_id) ;
+}
+void RsGenExchange::turtleSearchRequest(const std::string& match_string)
+{
+    mNetService->turtleSearchRequest(match_string) ;
+}

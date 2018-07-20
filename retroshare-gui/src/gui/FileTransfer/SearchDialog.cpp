@@ -165,8 +165,10 @@ SearchDialog::SearchDialog(QWidget *parent)
     QHeaderView_setSectionResizeModeColumn(_smheader, SS_KEYWORDS_COL, QHeaderView::Interactive);
     QHeaderView_setSectionResizeModeColumn(_smheader, SS_RESULTS_COL, QHeaderView::Interactive);
 
-    _smheader->resizeSection ( SS_KEYWORDS_COL, 160 );
-    _smheader->resizeSection ( SS_RESULTS_COL, 50 );
+    float f = QFontMetricsF(font()).height()/14.0 ;
+
+    _smheader->resizeSection ( SS_KEYWORDS_COL, 160*f );
+    _smheader->resizeSection ( SS_RESULTS_COL, 50*f );
 
     ui.searchResultWidget->setColumnCount(SR_COL_COUNT);
     _smheader = ui.searchResultWidget->header () ;
@@ -174,12 +176,12 @@ SearchDialog::SearchDialog(QWidget *parent)
     QHeaderView_setSectionResizeModeColumn(_smheader, SR_SIZE_COL, QHeaderView::Interactive);
     QHeaderView_setSectionResizeModeColumn(_smheader, SR_SOURCES_COL, QHeaderView::Interactive);
 
-    _smheader->resizeSection ( SR_NAME_COL, 240 );
-    _smheader->resizeSection ( SR_SIZE_COL, 75 );
-    _smheader->resizeSection ( SR_SOURCES_COL, 75 );
-    _smheader->resizeSection ( SR_TYPE_COL, 75 );
-    _smheader->resizeSection ( SR_AGE_COL, 90 );
-    _smheader->resizeSection ( SR_HASH_COL, 240 );
+    _smheader->resizeSection ( SR_NAME_COL, 240*f );
+    _smheader->resizeSection ( SR_SIZE_COL, 75*f );
+    _smheader->resizeSection ( SR_SOURCES_COL, 75*f );
+    _smheader->resizeSection ( SR_TYPE_COL, 75*f );
+    _smheader->resizeSection ( SR_AGE_COL, 90*f );
+    _smheader->resizeSection ( SR_HASH_COL, 240*f );
 
     // set header text aligment
     QTreeWidgetItem * headerItem = ui.searchResultWidget->headerItem();
@@ -201,10 +203,10 @@ SearchDialog::SearchDialog(QWidget *parent)
     // load settings
     processSettings(true);
   
-  	ui._ownFiles_CB->setMinimumWidth(20);
-  	ui._friendListsearch_SB->setMinimumWidth(20);
-    ui._anonF2Fsearch_CB->setMinimumWidth(20);
-    ui.label->setMinimumWidth(20);
+  	ui._ownFiles_CB->setMinimumWidth(20*f);
+  	ui._friendListsearch_SB->setMinimumWidth(20*f);
+    ui._anonF2Fsearch_CB->setMinimumWidth(20*f);
+    ui.label->setMinimumWidth(20*f);
 
     // workaround for Qt bug, be solved in next Qt release 4.7.0
     // https://bugreports.qt-project.org/browse/QTBUG-8270
@@ -792,7 +794,7 @@ void SearchDialog::advancedSearch(RsRegularExpression::Expression* expression)
     RsRegularExpression::LinearizedExpression e ;
 	expression->linearize(e) ;
 
-	TurtleRequestId req_id = rsTurtle->turtleSearch(e) ;
+	TurtleRequestId req_id = rsFiles->turtleSearch(e) ;
 
 	// This will act before turtle results come to the interface, thanks to the signals scheduling policy.
 	initSearchResult(QString::fromStdString(e.GetStrings()),req_id, ui.FileTypeComboBox->currentIndex(), true) ;
@@ -858,9 +860,9 @@ void SearchDialog::searchKeywords(const QString& keywords)
 	if(ui._anonF2Fsearch_CB->isChecked())
 	{
 		if(n==1)
-			req_id = rsTurtle->turtleSearch(words.front()) ;
+			req_id = rsFiles->turtleSearch(words.front()) ;
 		else
-			req_id = rsTurtle->turtleSearch(lin_exp) ;
+			req_id = rsFiles->turtleSearch(lin_exp) ;
 	}
 	else
 		req_id = RSRandom::random_u32() ; // generate a random 32 bits request id

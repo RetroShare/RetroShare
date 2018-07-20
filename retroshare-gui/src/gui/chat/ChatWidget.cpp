@@ -65,6 +65,8 @@
 #include <time.h>
 
 #define FMM 2.5//fontMetricsMultiplicator
+#define FMM_SMALLER 1.8
+#define FMM_THRESHOLD 25
 
 /*****
  * #define CHAT_DEBUG 1
@@ -75,9 +77,12 @@ ChatWidget::ChatWidget(QWidget *parent) :
 {
 	ui->setupUi(this);
 
-	int iconHeight = FMM*QFontMetricsF(font()).height() ;
-	QSize iconSize = QSize(iconHeight,iconHeight);
-	QSize buttonSize = QSize(iconSize + QSize((int)FMM,(int)FMM));
+	int iconHeight = QFontMetricsF(font()).height();
+	double fmm = iconHeight > FMM_THRESHOLD ? FMM : FMM_SMALLER;
+	iconHeight *= fmm;
+	QSize iconSize = QSize(iconHeight, iconHeight);
+	int butt_size(iconSize.height() + fmm);
+	QSize buttonSize = QSize(butt_size, butt_size);
 
 	newMessages = false;
 	typing = false;
@@ -110,7 +115,7 @@ ChatWidget::ChatWidget(QWidget *parent) :
 	ui->searchButton->setIconSize(iconSize);
 	ui->sendButton->setFixedHeight(iconHeight);
 	ui->sendButton->setIconSize(iconSize);
-  
+
 	//Initialize search
 	iCharToStartSearch=Settings->getChatSearchCharToStartSearch();
 	bFindCaseSensitively=Settings->getChatSearchCaseSensitively();
@@ -177,7 +182,7 @@ ChatWidget::ChatWidget(QWidget *parent) :
 
 	ui->infoFrame->setVisible(false);
 	ui->statusMessageLabel->hide();
-	
+
 	setAcceptDrops(true);
 	ui->chatTextEdit->setAcceptDrops(false);
 	ui->hashBox->setDropWidget(this);
@@ -197,7 +202,7 @@ ChatWidget::ChatWidget(QWidget *parent) :
 	menu->addAction(ui->actionMessageHistory);
 	ui->pushtoolsButton->setMenu(menu);
 	menu->addMenu(fontmenu);
-	
+
 	ui->actionSendAsPlainText->setChecked(Settings->getChatSendAsPlainTextByDef());
 	ui->chatTextEdit->setOnlyPlainText(ui->actionSendAsPlainText->isChecked());
 	connect(ui->actionSendAsPlainText, SIGNAL(toggled(bool)), ui->chatTextEdit, SLOT(setOnlyPlainText(bool)) );
@@ -259,9 +264,12 @@ void ChatWidget::addChatHorizontalWidget(QWidget *w)
 
 void ChatWidget::addChatBarWidget(QWidget *w)
 {
-	int iconHeight = FMM*QFontMetricsF(font()).height() ;
-	QSize iconSize = QSize(iconHeight,iconHeight);
-	QSize buttonSize = QSize(iconSize + QSize((int)FMM,(int)FMM));
+	int iconHeight = QFontMetricsF(font()).height();
+	double fmm = iconHeight > FMM_THRESHOLD ? FMM : FMM_SMALLER;
+	iconHeight *= fmm;
+	QSize iconSize = QSize(iconHeight, iconHeight);
+	int butt_size(iconSize.height() + fmm);
+	QSize buttonSize = QSize(butt_size, butt_size);
 	w->setFixedSize(buttonSize);
 	ui->pluginButtonFrame->layout()->addWidget(w) ;
 }
@@ -357,12 +365,12 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
         ui->titleBarFrame->setVisible(false);
     }
 
-	if (rsHistory->getEnable(hist_chat_type)) 
+	if (rsHistory->getEnable(hist_chat_type))
 	{
 		// get chat messages from history
 		std::list<HistoryMsg> historyMsgs;
 
-		if (messageCount > 0) 
+		if (messageCount > 0)
 		{
             rsHistory->getMessages(chatId, historyMsgs, messageCount);
 
@@ -376,7 +384,7 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
                     continue;
 
                 QString name;
-                if (chatId.isLobbyId() || chatId.isDistantChatId()) 
+                if (chatId.isLobbyId() || chatId.isDistantChatId())
                 {
                     RsIdentityDetails details;
                     if (rsIdentity->getIdDetails(RsGxsId(historyIt->peerName), details))
@@ -962,7 +970,7 @@ void ChatWidget::addChatMsg(bool incoming, const QString &name, const RsGxsId gx
 	unsigned int formatFlag = 0;
 
     bool addDate = false;
-    if (QDate::currentDate()>lastMsgDate) 
+    if (QDate::currentDate()>lastMsgDate)
 	 {
 		 addDate=true;
     }
@@ -1095,7 +1103,8 @@ void ChatWidget::contextMenuTextBrowser(QPoint point)
 
 	contextMnu->addSeparator();
 	contextMnu->addAction(ui->actionClearChatHistory);
-	contextMnu->addAction(ui->actionQuote);
+	if (ui->textBrowser->textCursor().selection().toPlainText().length())
+		contextMnu->addAction(ui->actionQuote);
 	contextMnu->addAction(ui->actionDropPlacemark);
 
 	if(ui->textBrowser->checkImage(point))
@@ -1161,13 +1170,14 @@ void ChatWidget::resetStatusBar()
 
 void ChatWidget::updateStatusTyping()
 {
+	if(Settings->getChatDoNotSendIsTyping())
+		return;
 	if (time(NULL) - lastStatusSendTime > 5)	// limit 'peer is typing' packets to at most every 10 sec
 	{
 #ifdef ONLY_FOR_LINGUIST
 		tr("is typing...");
 #endif
-		if(!Settings->getChatDoNotSendIsTyping())
-			rsMsgs->sendStatusString(chatId, "is typing...");
+		rsMsgs->sendStatusString(chatId, "is typing...");
 		lastStatusSendTime = time(NULL) ;
 	}
 }
@@ -1673,7 +1683,7 @@ void ChatWidget::updateStatus(const QString &peer_id, int status)
         vpid = chatId.toPeerId();
 
 	/* set font size for status  */
-    if (peer_id.toStdString() == vpid.toStdString()) 
+    if (peer_id.toStdString() == vpid.toStdString())
     {
 	    // the peers status has changed
 
@@ -1816,13 +1826,10 @@ bool ChatWidget::setStyle()
 void ChatWidget::quote()
 {
 	QString text = ui->textBrowser->textCursor().selection().toPlainText();
-	if(text.length() > 0)
-	{
-		QStringList sl = text.split(QRegExp("[\r\n]"),QString::SkipEmptyParts);
-		text = sl.join("\n> ");
-		text.replace(QChar(-4)," ");//Char used when image on text.
-		emit ui->chatTextEdit->append(QString("> ") + text);
-	}
+	QStringList sl = text.split(QRegExp("[\r\n]"), QString::SkipEmptyParts);
+	text = sl.join("\n> ");
+	text.replace(QChar(-4), " "); // Char used when image on text.
+	emit ui->chatTextEdit->append(QString("> ") + text);
 }
 
 void ChatWidget::dropPlacemark()

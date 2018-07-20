@@ -433,7 +433,7 @@ void MainWindow::initStackedPage()
 
 #ifndef RS_RELEASE_VERSION
 #ifdef PLUGINMGR
-  addPage(pluginsPage = new PluginsPage(ui->stackPages), grp, NULL);
+  addPage(pluginsPage = new gui::PluginsPage(ui->stackPages), grp, NULL);
 #endif
 #endif
 
@@ -643,10 +643,10 @@ const QList<UserNotify*> &MainWindow::getUserNotifyList()
 
 /*static*/ void MainWindow::displayLobbySystrayMsg(const QString& title,const QString& msg)
 {
-    if (_instance == NULL) 
+    if (_instance == NULL)
         return;
 
-    if(Settings->getDisplayTrayChatLobby()) 
+    if(Settings->getDisplayTrayChatLobby())
 		 _instance->displaySystrayMsg(title,msg) ;
 }
 
@@ -1011,7 +1011,7 @@ void SetForegroundWindowInternal(HWND hWnd)
        return NULL;
    }
 
-   switch (page) 
+   switch (page)
 	{
 		case Network:
 			return _instance->friendsDialog->networkDialog;
@@ -1457,7 +1457,7 @@ void MainWindow::externalLinkActivated(const QUrl &url)
 
 		int res = mb.exec() ;
 
-		if (res == QMessageBox::No) 
+		if (res == QMessageBox::No)
 			return ;
 
 		if(dontAsk_CB->isChecked())

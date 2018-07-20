@@ -596,6 +596,20 @@ void GxsChannelPostsWidget::clearPosts()
 	ui->fileWidget->clear();
 }
 
+void GxsChannelPostsWidget::blank()
+{
+	mStateHelper->setWidgetEnabled(ui->postButton, false);
+	mStateHelper->setWidgetEnabled(ui->subscribeToolButton, false);
+
+	clearPosts();
+
+    groupNameChanged(QString());
+
+	ui->infoWidget->hide();
+	ui->feedWidget->show();
+	ui->fileWidget->hide();
+}
+
 bool GxsChannelPostsWidget::navigatePostItem(const RsGxsMessageId &msgId)
 {
 	FeedItem *feedItem = ui->feedWidget->findGxsFeedItem(groupId(), msgId);
@@ -643,12 +657,22 @@ bool GxsChannelPostsWidget::insertGroupData(const uint32_t &token, RsGroupMetaDa
 	std::vector<RsGxsChannelGroup> groups;
 	rsGxsChannels->getGroupData(token, groups);
 
-	if (groups.size() == 1)
+	if(groups.size() == 1)
 	{
 		insertChannelDetails(groups[0]);
 		metaData = groups[0].mMeta;
 		return true;
 	}
+    else
+    {
+        RsGxsChannelGroup distant_group;
+        if(rsGxsChannels->retrieveDistantGroup(groupId(),distant_group))
+        {
+			insertChannelDetails(distant_group);
+			metaData = distant_group.mMeta;
+            return true ;
+        }
+    }
 
 	return false;
 }

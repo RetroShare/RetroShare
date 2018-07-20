@@ -7,6 +7,8 @@ class QShowEvent;
 class RsGxsIfaceHelper;
 class RsGxsUpdateBroadcast;
 
+typedef uint32_t TurtleRequestId ;
+
 class RsGxsUpdateBroadcastBase : public QObject
 {
 	friend class RsGxsUpdateBroadcastPage;
@@ -25,6 +27,7 @@ public:
 	const std::map<RsGxsGroupId, std::set<RsGxsMessageId> > &getMsgIds() { return mMsgIds; }
 	const std::map<RsGxsGroupId, std::set<RsGxsMessageId> > &getMsgIdsMeta() { return mMsgIdsMeta; }
 	void getAllMsgIds(std::map<RsGxsGroupId, std::set<RsGxsMessageId> > &msgIds);
+    const std::set<TurtleRequestId>& getSearchResults() { return mTurtleResults ; }
 
 protected:
 	void fillComplete();
@@ -39,6 +42,7 @@ private slots:
 	void updateBroadcastChanged();
 	void updateBroadcastGrpsChanged(const std::list<RsGxsGroupId>& grpIds, const std::list<RsGxsGroupId> &grpIdsMeta);
 	void updateBroadcastMsgsChanged(const std::map<RsGxsGroupId, std::set<RsGxsMessageId> >& msgIds, const std::map<RsGxsGroupId, std::set<RsGxsMessageId> >& msgIdsMeta);
+	void updateBroadcastDistantSearchResultsChanged(const std::list<TurtleRequestId>& ids);
 	void securedUpdateDisplay();
 
 private:
@@ -49,4 +53,5 @@ private:
 	std::set<RsGxsGroupId> mGrpIdsMeta;
 	std::map<RsGxsGroupId, std::set<RsGxsMessageId> > mMsgIds;
 	std::map<RsGxsGroupId, std::set<RsGxsMessageId> > mMsgIdsMeta;
+    std::set<TurtleRequestId> mTurtleResults;
 };
