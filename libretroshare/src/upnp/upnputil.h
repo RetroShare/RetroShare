@@ -1,15 +1,27 @@
+/**************************************************************************************
+ * MiniUPnPc                                                                          *
+ * Copyright (c) 2005-2016, Thomas BERNARD                                            *
+ * All rights reserved.                                                               *
+ *                                                                                    *
+ * Redistribution and use in source and binary forms, with or without                 *
+ * modification, are permitted provided that the following conditions are met:        *
+ *                                                                                    *
+ *     * Redistributions of source code must retain the above copyright notice,       *
+ *       this list of conditions and the following disclaimer.                        *
+ *     * Redistributions in binary form must reproduce the above copyright notice,    *
+ *       this list of conditions and the following disclaimer in the documentation    *
+ *       and/or other materials provided with the distribution.                       *
+ *     * The name of the author may not be used to endorse or promote products        *
+ * 	  derived from this software without specific prior written permission.           *
+ * This software is subject to the conditions detailed in the                         *
+ * LICENCE file provided in this distribution.                                        *
+ *                                                                                    *
+ **************************************************************************************/
 //this file uses miniupnp
 
 #ifndef MINIUPNP_UTIL_H_
 #define MINIUPNP_UTIL_H_
 
-/* $Id: upnpc.c,v 1.50 2007/04/26 19:00:10 nanard Exp $ */
-/* Project : miniupnp
- * Author : Thomas Bernard
- * Copyright (c) 2005 Thomas Bernard
- * This software is subject to the conditions detailed in the
- * LICENCE file provided in this distribution.
- * */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
