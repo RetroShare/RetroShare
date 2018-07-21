@@ -20,6 +20,8 @@
  *                                                                             *
  *******************************************************************************/
 
+#include "advancedsearchdialog.h"
+
 AdvancedSearchDialog::AdvancedSearchDialog(QWidget * parent) : QDialog (parent) 
 {
     setupUi(this);
