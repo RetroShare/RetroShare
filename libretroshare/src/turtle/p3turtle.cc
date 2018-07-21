@@ -1611,8 +1611,6 @@ void p3turtle::handleTunnelRequest(RsTurtleOpenTunnelItem *item)
 	}
 
 	{
-		RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
-
 		if(found)
 		{
 #ifdef P3TURTLE_DEBUG
@@ -1621,37 +1619,44 @@ void p3turtle::handleTunnelRequest(RsTurtleOpenTunnelItem *item)
 			// Send back tunnel ok to the same guy
 			//
 			RsTurtleTunnelOkItem *res_item = new RsTurtleTunnelOkItem ;
+            TurtleVirtualPeerId vpid ;
 
 			res_item->request_id = item->request_id ;
-			res_item->tunnel_id = item->partial_tunnel_id ^ generatePersonalFilePrint(item->file_hash,_random_bias,false) ;
-			res_item->PeerId(item->PeerId()) ;
+			{
+				RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
+				res_item->tunnel_id = item->partial_tunnel_id ^ generatePersonalFilePrint(item->file_hash,_random_bias,false) ;
 
-			TurtleTunnelId t_id = res_item->tunnel_id ;	// save it because sendItem deletes the item
+				res_item->PeerId(item->PeerId()) ;
 
-			sendItem(res_item) ;
+				TurtleTunnelId t_id = res_item->tunnel_id ;	// save it because sendItem deletes the item
 
-			// Note in the tunnels list that we have an ending tunnel here.
-			TurtleTunnel tt ;
-			tt.local_src = item->PeerId() ;
-			tt.hash = item->file_hash ;
-			tt.local_dst = _own_id ;	// this means us
-			tt.time_stamp = time(NULL) ;
-			tt.transfered_bytes = 0 ;
-			tt.speed_Bps = 0.0f ;
+				sendItem(res_item) ;
 
-			_local_tunnels[t_id] = tt ;
+				// Note in the tunnels list that we have an ending tunnel here.
+				TurtleTunnel tt ;
+				tt.local_src = item->PeerId() ;
+				tt.hash = item->file_hash ;
+				tt.local_dst = _own_id ;	// this means us
+				tt.time_stamp = time(NULL) ;
+				tt.transfered_bytes = 0 ;
+				tt.speed_Bps = 0.0f ;
 
-			// We add a virtual peer for that tunnel+hash combination.
-			//
-			locked_addDistantPeer(item->file_hash,t_id) ;
+				_local_tunnels[t_id] = tt ;
 
-			// Store some info string about the tunnel.
-			//
-            _outgoing_tunnel_client_services[t_id] = service ;
+				// We add a virtual peer for that tunnel+hash combination.
+				//
+				locked_addDistantPeer(item->file_hash,t_id) ;
+
+				// Store some info string about the tunnel.
+				//
+				_outgoing_tunnel_client_services[t_id] = service ;
+
+                vpid = _local_tunnels[t_id].vpid;
+			}
 
 			// Notify the client service that there's a new virtual peer id available as a client.
 			//
-			service->addVirtualPeer(item->file_hash,_local_tunnels[t_id].vpid,RsTurtleGenericTunnelItem::DIRECTION_CLIENT) ;
+			service->addVirtualPeer(item->file_hash,vpid,RsTurtleGenericTunnelItem::DIRECTION_CLIENT) ;
 
 			// We return straight, because when something is found, there's no need to digg a tunnel further.
 			//
