@@ -25,6 +25,13 @@
 #include "retroshare/rsinit.h"
 #include "util/rsurl.h"
 
+#ifndef XAPIAN_AT_LEAST
+#define XAPIAN_AT_LEAST(A,B,C) (XAPIAN_MAJOR_VERSION > (A) || \
+	(XAPIAN_MAJOR_VERSION == (A) && \
+	(XAPIAN_MINOR_VERSION > (B) || \
+	(XAPIAN_MINOR_VERSION == (B) && XAPIAN_REVISION >= (C)))))
+#endif // ndef XAPIAN_AT_LEAST
+
 struct DeepSearch
 {
 	struct SearchResult
@@ -66,10 +73,11 @@ struct DeepSearch
 		for ( Xapian::MSetIterator m = mset.begin(); m != mset.end(); ++m )
 		{
 			const Xapian::Document& doc = m.get_document();
-
 			SearchResult s;
 			s.mUrl = doc.get_value(URL_VALUENO);
+#if XAPIAN_AT_LEAST(1,3,5)
 			s.mSnippet = mset.snippet(doc.get_data());
+#endif // XAPIAN_AT_LEAST(1,3,5)
 			results.push_back(s);
 		}
 
