@@ -243,7 +243,6 @@
 #include <math.h>
 #include <sstream>
 #include <typeinfo>
-#include <iomanip>
 
 #include "rsgxsnetservice.h"
 #include "gxssecurity.h"
@@ -260,6 +259,13 @@
 
 #ifdef RS_DEEP_SEARCH
 #	include "deep_search/deep_search.h"
+#endif
+
+#include "util/cxx11retrocompat.h"
+#if defined(GCC_VERSION) && GCC_VERSION > 50100
+#	include <iomanip>
+#else
+#	include <cstdio>
 #endif
 
 /***
@@ -5303,9 +5309,15 @@ bool RsGxsNetService::search( const std::string& substring,
 					s.mSignFlags = std::stoul(rit->second);
 				if((rit = uQ.find("publishDate")) != uQ.end())
 				{
+					std::tm tm; memset(&tm, 0, sizeof(tm));
+#if defined(GCC_VERSION) && GCC_VERSION > 50100
 					std::istringstream ss(rit->second);
-					std::tm tm;
 					ss >> std::get_time(&tm, "%Y%m%d");
+#else // defined(GCC_VERSION) && GCC_VERSION > 50100
+					sscanf( rit->second.c_str(),
+					        "%4d%2d%2d", &tm.tm_year, &tm.tm_mon, &tm.tm_mday );
+#endif // defined(GCC_VERSION) && GCC_VERSION > 50100
+
 					s.mPublishTs = mktime(&tm);
 				}
 				if((rit = uQ.find("authorId")) != uQ.end())
