@@ -41,7 +41,7 @@
 #include <iostream>
 #include <stdlib.h>
 
-#include <gui/common/html.h>
+#include <gui/common/rshtml.h>
 #include <gui/common/vmessagebox.h>
 #include <gui/gxs/GxsIdDetails.h>
 #include <gui/settings/rsharesettings.h>

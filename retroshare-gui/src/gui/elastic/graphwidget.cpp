@@ -41,7 +41,7 @@
 
 #include "graphwidget.h"
 #include "edge.h"
-#include "node.h"
+#include "elnode.h"
 #include "fft.h"
 
 #include <iostream>

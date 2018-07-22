@@ -28,7 +28,7 @@
 #include <iostream>
 #include <algorithm>
 
-#include "gui/elastic/node.h"
+#include "gui/elastic/elnode.h"
 
 /********
 * #define DEBUG_NETWORKVIEW

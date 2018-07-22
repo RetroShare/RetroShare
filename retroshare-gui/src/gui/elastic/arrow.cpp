@@ -37,7 +37,7 @@
 #include <QPainter>
 
 #include "arrow.h"
-#include "node.h"
+#include "elnode.h"
 
 #include <math.h>
 

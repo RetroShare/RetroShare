@@ -21,12 +21,12 @@
  ****************************************************************/
 
 /*
-** \file html.cpp
-** \version $Id: html.cpp 2362 2008-02-29 04:30:11Z edmanm $
+** \file rshtml.cpp
+** \version $Id: rshtml.cpp 2362 2008-02-29 04:30:11Z edmanm $
 ** \brief HTML formatting functions
 */
 
-#include "html.h"
+#include "rshtml.h"
 
 
 /** Wraps a string in "<p>" tags, converts "\n" to "<br>" and converts "\n\n"
