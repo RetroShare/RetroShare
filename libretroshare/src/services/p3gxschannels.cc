@@ -1703,21 +1703,18 @@ bool p3GxsChannels::retrieveDistantSearchResults(TurtleRequestId req,std::map<Rs
 
 bool p3GxsChannels::retrieveDistantGroup(const RsGxsGroupId& group_id,RsGxsChannelGroup& distant_group)
 {
-    RsGxsGroupSummary gs ;
+	RsGxsGroupSummary gs;
 
     if(netService()->retrieveDistantGroupSummary(group_id,gs))
     {
         // This is a placeholder information by the time we receive the full group meta data.
-
-		distant_group.mDescription           = gs.group_description;
-
-		distant_group.mMeta.mGroupId         = gs.group_id ;
-		distant_group.mMeta.mGroupName       = gs.group_name;
+		distant_group.mMeta.mGroupId         = gs.mGroupId ;
+		distant_group.mMeta.mGroupName       = gs.mGroupName;
 		distant_group.mMeta.mGroupFlags      = GXS_SERV::FLAG_PRIVACY_PUBLIC ;
-		distant_group.mMeta.mSignFlags       = gs.sign_flags;
+		distant_group.mMeta.mSignFlags       = gs.mSignFlags;
 
-		distant_group.mMeta.mPublishTs       = gs.publish_ts;
-    	distant_group.mMeta.mAuthorId        = gs.author_id;
+		distant_group.mMeta.mPublishTs       = gs.mPublishTs;
+		distant_group.mMeta.mAuthorId        = gs.mAuthorId;
 
     	distant_group.mMeta.mCircleType      = GXS_CIRCLE_TYPE_PUBLIC ;// guessed, otherwise the group would not be search-able.
 
@@ -1726,9 +1723,9 @@ bool p3GxsChannels::retrieveDistantGroup(const RsGxsGroupId& group_id,RsGxsChann
 
     	distant_group.mMeta.mSubscribeFlags  = GXS_SERV::GROUP_SUBSCRIBE_NOT_SUBSCRIBED ;
 
-		distant_group.mMeta.mPop             = gs.popularity; 			// Popularity = number of friend subscribers
-    	distant_group.mMeta.mVisibleMsgCount = gs.number_of_messages; 	// Max messages reported by friends
-    	distant_group.mMeta.mLastPost        = gs.last_message_ts; 		// Timestamp for last message. Not used yet.
+		distant_group.mMeta.mPop             = gs.mPopularity; 			// Popularity = number of friend subscribers
+		distant_group.mMeta.mVisibleMsgCount = gs.mNumberOfMessages; 	// Max messages reported by friends
+		distant_group.mMeta.mLastPost        = gs.mLastMessageTs; 		// Timestamp for last message. Not used yet.
 
 		return true ;
     }

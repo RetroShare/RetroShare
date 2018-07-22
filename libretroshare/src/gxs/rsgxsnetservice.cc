@@ -243,6 +243,7 @@
 #include <math.h>
 #include <sstream>
 #include <typeinfo>
+#include <iomanip>
 
 #include "rsgxsnetservice.h"
 #include "gxssecurity.h"
@@ -5187,8 +5188,8 @@ void RsGxsNetService::receiveTurtleSearchResults(TurtleRequestId req, const std:
     std::map<RsGxsGroupId,RsGxsGroupSummary>& search_results_map(mDistantSearchResults[req]) ;
 
     for(auto it(group_infos.begin());it!=group_infos.end();++it)
-        if(search_results_map.find((*it).group_id) == search_results_map.end())
-			grpMeta[(*it).group_id] = NULL;
+		if(search_results_map.find((*it).mGroupId) == search_results_map.end())
+			grpMeta[(*it).mGroupId] = NULL;
 
     mDataStore->retrieveGxsGrpMetaData(grpMeta);
 
@@ -5197,26 +5198,26 @@ void RsGxsNetService::receiveTurtleSearchResults(TurtleRequestId req, const std:
 	// only keep groups that are not locally known, and groups that are not already in the mDistantSearchResults structure
 
     for(auto it(group_infos.begin());it!=group_infos.end();++it)
-        if(grpMeta[(*it).group_id] == NULL)
+		if(grpMeta[(*it).mGroupId] == NULL)
         {
 			filtered_results.push_back(*it) ;
 
-            auto it2 = search_results_map.find((*it).group_id) ;
+			auto it2 = search_results_map.find((*it).mGroupId) ;
 
             if(it2 != search_results_map.end())
             {
                 // update existing data
 
-                it2->second.popularity++ ;
-                it2->second.number_of_messages = std::max(it2->second.number_of_messages,(*it).number_of_messages) ;
+				it2->second.mPopularity++ ;
+				it2->second.mNumberOfMessages = std::max(it2->second.mNumberOfMessages,(*it).mNumberOfMessages) ;
             }
             else
             {
-				search_results_map[(*it).group_id] = *it;
-				search_results_map[(*it).group_id].popularity = 1; // number of results so far
+				search_results_map[(*it).mGroupId] = *it;
+				search_results_map[(*it).mGroupId].mPopularity = 1; // number of results so far
             }
 
-			mObserver->receiveDistantSearchResults(req,(*it).group_id) ;
+			mObserver->receiveDistantSearchResults(req,(*it).mGroupId) ;
         }
 }
 
@@ -5277,12 +5278,6 @@ bool RsGxsNetService::search( const std::string& substring,
 {
 	group_infos.clear();
 
-	RsGxsGrpMetaTemporaryMap grpMetaMap;
-	{
-		RS_STACK_MUTEX(mNxsMutex) ;
-		mDataStore->retrieveGxsGrpMetaData(grpMetaMap);
-	}
-
 #ifdef RS_DEEP_SEARCH
 	std::vector<DeepSearch::SearchResult> results;
 	DeepSearch::search(substring, results, 0);
@@ -5290,33 +5285,48 @@ bool RsGxsNetService::search( const std::string& substring,
 	for(auto dsr : results)
 	{
 		RsUrl rUrl(dsr.mUrl);
-		auto rit = rUrl.query().find("id");
+		const auto& uQ(rUrl.query());
+		auto rit = uQ.find("id");
 		if(rit != rUrl.query().end())
 		{
 			RsGroupNetworkStats stats;
 			RsGxsGroupId grpId(rit->second);
-			RsGxsGrpMetaTemporaryMap::iterator mIt;
-			if( !grpId.isNull() &&
-			        (mIt = grpMetaMap.find(grpId)) != grpMetaMap.end() &&
-			        getGroupNetworkStats(grpId, stats) )
+			if( !grpId.isNull() && getGroupNetworkStats(grpId, stats) )
 			{
-				RsGxsGrpMetaData& gMeta(*mIt->second);
 				RsGxsGroupSummary s;
-				s.group_id           = grpId;
-				s.group_name         = gMeta.mGroupName;
-				s.search_context     = dsr.mSnippet;
-				s.sign_flags         = gMeta.mSignFlags;
-				s.publish_ts         = gMeta.mSignFlags;
-				s.author_id          = gMeta.mAuthorId;
-				s.number_of_messages = stats.mMaxVisibleCount;
-				s.last_message_ts    = stats.mLastGroupModificationTS;
-				s.popularity         = gMeta.mPop;
+
+				s.mGroupId = grpId;
+
+				if((rit = uQ.find("name")) != uQ.end())
+					s.mGroupName = rit->second;
+				if((rit = uQ.find("signFlags")) != uQ.end())
+					s.mSignFlags = std::stoul(rit->second);
+				if((rit = uQ.find("publishDate")) != uQ.end())
+				{
+					std::istringstream ss(rit->second);
+					std::tm tm;
+					ss >> std::get_time(&tm, "%Y%m%d");
+					s.mPublishTs = mktime(&tm);
+				}
+				if((rit = uQ.find("authorId")) != uQ.end())
+					s.mAuthorId  = RsGxsId(rit->second);
+
+				s.mSearchContext = dsr.mSnippet;
+
+				s.mNumberOfMessages = stats.mMaxVisibleCount;
+				s.mLastMessageTs    = stats.mLastGroupModificationTS;
+				s.mPopularity       = stats.mSuppliers;
 
 				group_infos.push_back(s);
 			}
 		}
 	}
 #else // RS_DEEP_SEARCH
+	RsGxsGrpMetaTemporaryMap grpMetaMap;
+	{
+		RS_STACK_MUTEX(mNxsMutex) ;
+		mDataStore->retrieveGxsGrpMetaData(grpMetaMap);
+	}
     RsGroupNetworkStats stats ;
     for(auto it(grpMetaMap.begin());it!=grpMetaMap.end();++it)
 		if(termSearch(it->second->mGroupName,substring))

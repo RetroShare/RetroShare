@@ -216,22 +216,6 @@ public:
 	}
 };
 
-template<>
-void RsTypeSerializer::serial_process( RsGenericSerializer::SerializeJob j, RsGenericSerializer::SerializeContext& ctx, RsGxsGroupSummary& gs, const std::string& member_name )
-{
-    RsTypeSerializer::serial_process          (j,ctx,gs.group_id          ,member_name+"-group_id") ;                                        // RsGxsGroupId group_id ;
-    RsTypeSerializer::serial_process          (j,ctx,TLV_TYPE_STR_NAME    ,gs.group_name,member_name+"-group_name") ;               // std::string  group_name ;
-    RsTypeSerializer::serial_process          (j,ctx,TLV_TYPE_STR_COMMENT ,gs.group_description,member_name+"-group_description") ; // std::string  group_description ;
-    RsTypeSerializer::serial_process          (j,ctx,TLV_TYPE_STR_VALUE   ,gs.search_context,member_name+"-group_name") ;           // std::string  search_context ;
-    RsTypeSerializer::serial_process          (j,ctx,gs.author_id         ,member_name+"-author_id") ;                              // RsGxsId      author_id ;
-    RsTypeSerializer::serial_process          (j,ctx,gs.publish_ts        ,member_name+"-publish_ts") ;                             // time_t       publish_ts ;
-    RsTypeSerializer::serial_process          (j,ctx,gs.number_of_messages,member_name+"-number_of_messages") ;                     // uint32_t     number_of_messages ;
-    RsTypeSerializer::serial_process<time_t>  (j,ctx,gs.last_message_ts   ,member_name+"-last_message_ts") ;                        // time_t       last_message_ts ;
-    RsTypeSerializer::serial_process<uint32_t>(j,ctx,gs.sign_flags        ,member_name+"-sign_flags") ;                  		    // uint32_t     sign_flags ;
-    RsTypeSerializer::serial_process<uint32_t>(j,ctx,gs.popularity        ,member_name+"-popularity") ;                  		    // uint32_t     popularity ;
-}
-
-
 //===========================================================================================================================================//
 //                                                     Interface with rest of the software                                                   //
 //===========================================================================================================================================//
@@ -1102,7 +1086,7 @@ void RsGxsNetTunnelService::receiveSearchResult(TurtleSearchRequestId request_id
 		GXS_NET_TUNNEL_DEBUG() << "  : result is of type group summary result for service " << result_gs->service << std::dec << ": " << std::endl;
 
 		for(auto it(result_gs->group_infos.begin());it!=result_gs->group_infos.end();++it)
-			std::cerr << "   group " << (*it).group_id << ": " << (*it).group_name << ", " << (*it).number_of_messages << " messages, last is " << time(NULL)-(*it).last_message_ts << " secs ago." << std::endl;
+			std::cerr << "   group " << (*it).mGroupId << ": " << (*it).mGroupName << ", " << (*it).mNumberOfMessages << " messages, last is " << time(NULL)-(*it).mLastMessageTs << " secs ago." << std::endl;
 
 		auto it = mSearchableServices.find(result_gs->service) ;
 

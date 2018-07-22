@@ -118,6 +118,11 @@ struct DeepSearch
 
 		chanUrl.setQueryKV("publishDate", date);
 		chanUrl.setQueryKV("name", chan.mMeta.mGroupName);
+		if(!chan.mMeta.mAuthorId.isNull())
+			chanUrl.setQueryKV("authorId", chan.mMeta.mAuthorId.toStdString());
+		if(chan.mMeta.mSignFlags)
+			chanUrl.setQueryKV( "signFlags",
+			                    std::to_string(chan.mMeta.mSignFlags) );
 		std::string rsLink(chanUrl.toString());
 
 		// store the RS link so we are able to retrive it on matching search
