@@ -5339,23 +5339,23 @@ bool RsGxsNetService::search( const std::string& substring,
 		RS_STACK_MUTEX(mNxsMutex) ;
 		mDataStore->retrieveGxsGrpMetaData(grpMetaMap);
 	}
-    RsGroupNetworkStats stats ;
-    for(auto it(grpMetaMap.begin());it!=grpMetaMap.end();++it)
+
+	RsGroupNetworkStats stats;
+	for(auto it(grpMetaMap.begin());it!=grpMetaMap.end();++it)
 		if(termSearch(it->second->mGroupName,substring))
 		{
-			getGroupNetworkStats(it->first,stats) ;
+			getGroupNetworkStats(it->first,stats);
 
-            RsGxsGroupSummary s ;
-            s.group_id           = it->first ;
-    		s.group_name         = it->second->mGroupName ;
-			// to be filled with something better when we use the real search
-    		s.search_context     = it->second->mGroupName ;
-            s.sign_flags         = it->second->mSignFlags;
-    		s.publish_ts         = it->second->mPublishTs;
-    		s.author_id          = it->second->mAuthorId;
-    		s.number_of_messages = stats.mMaxVisibleCount ;
-    		s.last_message_ts    = stats.mLastGroupModificationTS ;
-            s.popularity         = it->second->mPop;
+			RsGxsGroupSummary s;
+			s.mGroupId           = it->first;
+			s.mGroupName         = it->second->mGroupName;
+			s.mSearchContext     = it->second->mGroupName;
+			s.mSignFlags         = it->second->mSignFlags;
+			s.mPublishTs         = it->second->mPublishTs;
+			s.mAuthorId          = it->second->mAuthorId;
+			s.mNumberOfMessages  = stats.mMaxVisibleCount;
+			s.mLastMessageTs     = stats.mLastGroupModificationTS;
+			s.mPopularity        = it->second->mPop;
 
 			group_infos.push_back(s);
 		}
