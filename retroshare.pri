@@ -30,10 +30,18 @@ no_retroshare_gui:CONFIG -= retroshare_gui
 
 CONFIG *= gxsdistsync
 
+# disabled by the time we fix compilation
+CONFIG *= no_cmark
+
 # To disable RetroShare-nogui append the following
 # assignation to qmake command line "CONFIG+=no_retroshare_nogui"
 CONFIG *= retroshare_nogui
 no_retroshare_nogui:CONFIG -= retroshare_nogui
+
+# To disable cmark append the following 
+# assignation to qmake command line "CONFIG+=no_cmark"
+CONFIG *= cmark
+no_cmark:CONFIG -= cmark
 
 # To enable RetroShare plugins append the following
 # assignation to qmake command line "CONFIG+=retroshare_plugins"
