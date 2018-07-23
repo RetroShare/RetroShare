@@ -4,6 +4,7 @@
  * libretroshare: retroshare core library                                      *
  *                                                                             *
  * Copyright 2013-2013 by Christopher Evi-Parker                               *
+ * Copyright (C) 2018  Gioacchino Mazzurco <gio@eigenlab.org>                  *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -198,7 +199,9 @@ public:
 	 * @param chunkSize
 	 * @param sleepPeriod
 	 */
-	RsGxsIntegrityCheck(RsGeneralDataService* const dataService, RsGenExchange *genex, RsGixs *gixs);
+	RsGxsIntegrityCheck( RsGeneralDataService* const dataService,
+	                     RsGenExchange *genex, RsSerialType& gxsSerialiser,
+	                     RsGixs *gixs);
 
 	bool check();
 	bool isDone();
@@ -210,13 +213,15 @@ public:
 private:
 
 	RsGeneralDataService* const mDs;
-    RsGenExchange *mGenExchangeClient;
+	RsGenExchange *mGenExchangeClient;
+	RsSerialType& mSerializer;
+
 	bool mDone;
 	RsMutex mIntegrityMutex;
 	std::list<RsGxsGroupId> mDeletedGrps;
 	std::map<RsGxsGroupId, std::set<RsGxsMessageId> > mDeletedMsgs;
-    
-    	RsGixs *mGixs ;
+
+	RsGixs* mGixs;
 };
 
 class GroupUpdate

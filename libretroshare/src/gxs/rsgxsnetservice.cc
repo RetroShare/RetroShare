@@ -257,6 +257,10 @@
 #include "util/rsmemory.h"
 #include "util/stacktrace.h"
 
+#ifdef RS_DEEP_SEARCH
+#	include "deep_search/deep_search.h"
+#endif
+
 /***
  * Use the following defines to debug:
  	NXS_NET_DEBUG_0		shows group update high level information
@@ -5183,8 +5187,8 @@ void RsGxsNetService::receiveTurtleSearchResults(TurtleRequestId req, const std:
     std::map<RsGxsGroupId,RsGxsGroupSummary>& search_results_map(mDistantSearchResults[req]) ;
 
     for(auto it(group_infos.begin());it!=group_infos.end();++it)
-        if(search_results_map.find((*it).group_id) == search_results_map.end())
-			grpMeta[(*it).group_id] = NULL;
+		if(search_results_map.find((*it).mGroupId) == search_results_map.end())
+			grpMeta[(*it).mGroupId] = NULL;
 
     mDataStore->retrieveGxsGrpMetaData(grpMeta);
 
@@ -5193,26 +5197,26 @@ void RsGxsNetService::receiveTurtleSearchResults(TurtleRequestId req, const std:
 	// only keep groups that are not locally known, and groups that are not already in the mDistantSearchResults structure
 
     for(auto it(group_infos.begin());it!=group_infos.end();++it)
-        if(grpMeta[(*it).group_id] == NULL)
+		if(grpMeta[(*it).mGroupId] == NULL)
         {
 			filtered_results.push_back(*it) ;
 
-            auto it2 = search_results_map.find((*it).group_id) ;
+			auto it2 = search_results_map.find((*it).mGroupId) ;
 
             if(it2 != search_results_map.end())
             {
                 // update existing data
 
-                it2->second.popularity++ ;
-                it2->second.number_of_messages = std::max(it2->second.number_of_messages,(*it).number_of_messages) ;
+				it2->second.mPopularity++ ;
+				it2->second.mNumberOfMessages = std::max(it2->second.mNumberOfMessages,(*it).mNumberOfMessages) ;
             }
             else
             {
-				search_results_map[(*it).group_id] = *it;
-				search_results_map[(*it).group_id].popularity = 1; // number of results so far
+				search_results_map[(*it).mGroupId] = *it;
+				search_results_map[(*it).mGroupId].mPopularity = 1; // number of results so far
             }
 
-			mObserver->receiveDistantSearchResults(req,(*it).group_id) ;
+			mObserver->receiveDistantSearchResults(req,(*it).mGroupId) ;
         }
 }
 
@@ -5268,35 +5272,76 @@ void RsGxsNetService::receiveTurtleSearchResults(TurtleRequestId req,const unsig
     mObserver->receiveNewGroups(new_grps);
 }
 
-bool RsGxsNetService::search(const std::string& substring,std::list<RsGxsGroupSummary>& group_infos)
+bool RsGxsNetService::search( const std::string& substring,
+                              std::list<RsGxsGroupSummary>& group_infos )
 {
+	group_infos.clear();
+
+#ifdef RS_DEEP_SEARCH
+	std::vector<DeepSearch::SearchResult> results;
+	DeepSearch::search(substring, results, 0);
+
+	for(auto dsr : results)
+	{
+		RsUrl rUrl(dsr.mUrl);
+		const auto& uQ(rUrl.query());
+		auto rit = uQ.find("id");
+		if(rit != rUrl.query().end())
+		{
+			RsGroupNetworkStats stats;
+			RsGxsGroupId grpId(rit->second);
+			if( !grpId.isNull() && getGroupNetworkStats(grpId, stats) )
+			{
+				RsGxsGroupSummary s;
+
+				s.mGroupId = grpId;
+
+				if((rit = uQ.find("name")) != uQ.end())
+					s.mGroupName = rit->second;
+				if((rit = uQ.find("signFlags")) != uQ.end())
+					s.mSignFlags = std::stoul(rit->second);
+				if((rit = uQ.find("publishTs")) != uQ.end())
+					s.mPublishTs = static_cast<time_t>(std::stoll(rit->second));
+				if((rit = uQ.find("authorId")) != uQ.end())
+					s.mAuthorId  = RsGxsId(rit->second);
+
+				s.mSearchContext = dsr.mSnippet;
+
+				s.mNumberOfMessages = stats.mMaxVisibleCount;
+				s.mLastMessageTs    = stats.mLastGroupModificationTS;
+				s.mPopularity       = stats.mSuppliers;
+
+				group_infos.push_back(s);
+			}
+		}
+	}
+#else // RS_DEEP_SEARCH
 	RsGxsGrpMetaTemporaryMap grpMetaMap;
-    {
+	{
 		RS_STACK_MUTEX(mNxsMutex) ;
 		mDataStore->retrieveGxsGrpMetaData(grpMetaMap);
-    }
+	}
 
-    RsGroupNetworkStats stats ;
-
-    for(auto it(grpMetaMap.begin());it!=grpMetaMap.end();++it)
+	RsGroupNetworkStats stats;
+	for(auto it(grpMetaMap.begin());it!=grpMetaMap.end();++it)
 		if(termSearch(it->second->mGroupName,substring))
 		{
-			getGroupNetworkStats(it->first,stats) ;
+			getGroupNetworkStats(it->first,stats);
 
-            RsGxsGroupSummary s ;
-            s.group_id           = it->first ;
-    		s.group_name         = it->second->mGroupName ;
-    		s.group_description  = it->second->mGroupName ; // to be filled with something better when we use the real search
-    		s.search_context     = it->second->mGroupName ;
-            s.sign_flags         = it->second->mSignFlags;
-    		s.publish_ts         = it->second->mPublishTs;
-    		s.author_id          = it->second->mAuthorId;
-    		s.number_of_messages = stats.mMaxVisibleCount ;
-    		s.last_message_ts    = stats.mLastGroupModificationTS ;
-            s.popularity         = it->second->mPop;
+			RsGxsGroupSummary s;
+			s.mGroupId           = it->first;
+			s.mGroupName         = it->second->mGroupName;
+			s.mSearchContext     = it->second->mGroupName;
+			s.mSignFlags         = it->second->mSignFlags;
+			s.mPublishTs         = it->second->mPublishTs;
+			s.mAuthorId          = it->second->mAuthorId;
+			s.mNumberOfMessages  = stats.mMaxVisibleCount;
+			s.mLastMessageTs     = stats.mLastGroupModificationTS;
+			s.mPopularity        = it->second->mPop;
 
-            group_infos.push_back(s) ;
+			group_infos.push_back(s);
 		}
+#endif // RS_DEEP_SEARCH
 
 #ifdef NXS_NET_DEBUG_8
 	GXSNETDEBUG___ << "  performing local substring search in response to distant request. Found " << group_infos.size() << " responses." << std::endl;

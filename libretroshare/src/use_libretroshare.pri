@@ -51,6 +51,10 @@ linux-* {
     mLibs += dl
 }
 
+rs_deep_search {
+    mLibs += xapian
+}
+
 static {
     sLibs *= $$mLibs
 } else {

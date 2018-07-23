@@ -31,28 +31,45 @@
 #include "retroshare/rsgxsservice.h"
 #include "gxs/rsgxsdata.h"
 #include "retroshare/rsgxsifacetypes.h"
+#include "util/rsdeprecate.h"
 
 /*!
- * \brief The RsGxsGroupSymmary struct
- * 			This structure is used to transport group summary information when a GXS service is searched. It contains the group information
- * 			as well as a context string to tell where the information was found. It is more compact than a GroupMeta object, so as to make
- * 			search responses as light as possible.
+ * This structure is used to transport group summary information when a GXS
+ * service is searched. It contains the group information as well as a context
+ * string to tell where the information was found. It is more compact than a
+ * GroupMeta object, so as to make search responses as light as possible.
  */
-struct RsGxsGroupSummary
+struct RsGxsGroupSummary : RsSerializable
 {
-    RsGxsGroupSummary() : publish_ts(0), number_of_messages(0),last_message_ts(0),sign_flags(0),popularity(0) {}
+	RsGxsGroupSummary() :
+	    mPublishTs(0), mNumberOfMessages(0),mLastMessageTs(0),
+	    mSignFlags(0),mPopularity(0) {}
 
-    RsGxsGroupId group_id ;
+	RsGxsGroupId mGroupId;
+	std::string  mGroupName;
+	RsGxsId      mAuthorId;
+	time_t       mPublishTs;
+	uint32_t     mNumberOfMessages;
+	time_t       mLastMessageTs;
+	uint32_t     mSignFlags;
+	uint32_t     mPopularity;
 
-    std::string  group_name ;
-    std::string  group_description ;
-    std::string  search_context ;
-    RsGxsId      author_id ;
-    time_t       publish_ts ;
-    uint32_t     number_of_messages ;
-    time_t       last_message_ts ;
-    uint32_t     sign_flags ;
-    uint32_t     popularity ;
+	std::string  mSearchContext;
+
+	/// @see RsSerializable::serial_process
+	void serial_process( RsGenericSerializer::SerializeJob j,
+	                     RsGenericSerializer::SerializeContext& ctx )
+	{
+		RS_SERIAL_PROCESS(mGroupId);
+		RS_SERIAL_PROCESS(mGroupName);
+		RS_SERIAL_PROCESS(mAuthorId);
+		RS_SERIAL_PROCESS(mPublishTs);
+		RS_SERIAL_PROCESS(mNumberOfMessages);
+		RS_SERIAL_PROCESS(mLastMessageTs);
+		RS_SERIAL_PROCESS(mSignFlags);
+		RS_SERIAL_PROCESS(mPopularity);
+		RS_SERIAL_PROCESS(mSearchContext);
+	}
 };
 
 

@@ -867,7 +867,9 @@ rs_gxs_trans {
     SOURCES += gxstrans/p3gxstransitems.cc gxstrans/p3gxstrans.cc
 }
 
-
+rs_deep_search {
+    HEADERS += deep_search/deep_search.h
+}
 
 
 ###########################################################################################################

@@ -59,7 +59,7 @@ static const uint32_t INDEX_AUTHEN_ADMIN        = 0x00000040; // admin key
 
 #define GXS_MASK "GXS_MASK_HACK"
 
-#define GEN_EXCH_DEBUG	1
+//#define GEN_EXCH_DEBUG	1
 
 static const uint32_t MSG_CLEANUP_PERIOD     = 60*59; // 59 minutes
 static const uint32_t INTEGRITY_CHECK_PERIOD = 60*31; // 31 minutes
@@ -201,7 +201,8 @@ void RsGenExchange::tick()
 
 			if(!mIntegrityCheck)
 			{
-				mIntegrityCheck = new RsGxsIntegrityCheck(mDataStore,this,mGixs);
+				mIntegrityCheck = new RsGxsIntegrityCheck( mDataStore, this,
+				                                           *mSerialiser, mGixs);
 				mIntegrityCheck->start("gxs integrity");
 				mChecking = true;
 			}
@@ -1645,6 +1646,7 @@ void RsGenExchange::receiveDistantSearchResults(TurtleRequestId id,const RsGxsGr
 
     std::cerr << "RsGenExchange::receiveDistantSearchResults(): received result for request " << std::hex << id << std::dec << std::endl;
 }
+
 void RsGenExchange::notifyReceivePublishKey(const RsGxsGroupId &grpId)
 {
 	RS_STACK_MUTEX(mGenMtx);

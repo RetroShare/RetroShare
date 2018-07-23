@@ -279,21 +279,22 @@ void GxsGroupFrameDialog::updateSearchResults()
 
         QList<GroupItemInfo> group_items ;
 
-        for(auto it3(group_infos.begin());it3!=group_infos.end();++it3)
-            if(mCachedGroupMetas.find(it3->first) == mCachedGroupMetas.end())
+		for(auto it3(group_infos.begin());it3!=group_infos.end();++it3)
+			if(mCachedGroupMetas.find(it3->first) == mCachedGroupMetas.end())
 			{
-				std::cerr << "  adding new group " << it3->first << " " << it3->second.group_id << " \"" << it3->second.group_name << "\"" << std::endl;
+				std::cerr << "  adding new group " << it3->first << " "
+				          << it3->second.mGroupId << " \""
+				          << it3->second.mGroupName << "\"" << std::endl;
 
-				GroupItemInfo i ;
-				i.id             = QString(it3->second.group_id.toStdString().c_str()) ;
-				i.name           = QString::fromUtf8(it3->second.group_name.c_str()) ;
-				i.description    = QString::fromUtf8(it3->second.group_description.c_str()) ;
+				GroupItemInfo i;
+				i.id             = QString(it3->second.mGroupId.toStdString().c_str());
+				i.name           = QString::fromUtf8(it3->second.mGroupName.c_str());
 				i.popularity     = 0; // could be set to the number of hits
-				i.lastpost       = QDateTime::fromTime_t(it3->second.last_message_ts);
+				i.lastpost       = QDateTime::fromTime_t(it3->second.mLastMessageTs);
 				i.subscribeFlags = 0; // irrelevant here
-				i.publishKey     = false ; // IS_GROUP_PUBLISHER(groupInfo.mSubscribeFlags) ;
-				i.adminKey       = false ; // IS_GROUP_ADMIN(groupInfo.mSubscribeFlags) ;
-				i.max_visible_posts = it3->second.number_of_messages ;
+				i.publishKey     = false ; // IS_GROUP_PUBLISHER(groupInfo.mSubscribeFlags);
+				i.adminKey       = false ; // IS_GROUP_ADMIN(groupInfo.mSubscribeFlags);
+				i.max_visible_posts = it3->second.mNumberOfMessages;
 
 				group_items.push_back(i);
 			}
