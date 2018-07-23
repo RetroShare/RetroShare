@@ -162,7 +162,7 @@ void RsGxsIntegrityCheck::run()
 bool RsGxsIntegrityCheck::check()
 {
 #ifdef RS_DEEP_SEARCH
-	bool isGxsChannels = dynamic_cast<p3GxsChannels*>(mGenExchangeClient);
+	bool isGxsChannels = mGenExchangeClient->serviceType() == RS_SERVICE_GXS_TYPE_CHANNELS;
 	std::set<RsGxsGroupId> indexedGroups;
 #endif
 

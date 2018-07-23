@@ -99,11 +99,7 @@ struct DeepSearch
 
 		// Index each field with a suitable prefix.
 		termgenerator.index_text(chan.mMeta.mGroupName, 1, "G");
-
-		char date[] = "YYYYMMDD\0";
-		std::strftime(date, 9, "%Y%m%d", std::gmtime(&chan.mMeta.mPublishTs));
-		termgenerator.index_text(date, 1, "D");
-
+		termgenerator.index_text(timetToXapianDate(chan.mMeta.mPublishTs), 1, "D");
 		termgenerator.index_text(chan.mDescription, 1, "XD");
 
 		// Index fields without prefixes for general search.
@@ -116,7 +112,7 @@ struct DeepSearch
 		        .setQueryKV("id", chan.mMeta.mGroupId.toStdString());
 		const std::string idTerm("Q" + chanUrl.toString());
 
-		chanUrl.setQueryKV("publishDate", date);
+		chanUrl.setQueryKV("publishTs", std::to_string(chan.mMeta.mPublishTs));
 		chanUrl.setQueryKV("name", chan.mMeta.mGroupName);
 		if(!chan.mMeta.mAuthorId.isNull())
 			chanUrl.setQueryKV("authorId", chan.mMeta.mAuthorId.toStdString());
@@ -164,10 +160,7 @@ struct DeepSearch
 
 		// Index each field with a suitable prefix.
 		termgenerator.index_text(post.mMeta.mMsgName, 1, "S");
-
-		char date[] = "YYYYMMDD\0";
-		std::strftime(date, 9, "%Y%m%d", std::gmtime(&post.mMeta.mPublishTs));
-		termgenerator.index_text(date, 1, "D");
+		termgenerator.index_text(timetToXapianDate(post.mMeta.mPublishTs), 1, "D");
 
 		// Avoid indexing HTML
 		bool isPlainMsg = post.mMsg[0] != '<' || post.mMsg[post.mMsg.size() - 1] != '>';
@@ -200,8 +193,9 @@ struct DeepSearch
 		        .setQueryKV("msgid", post.mMeta.mMsgId.toStdString());
 		std::string idTerm("Q" + postUrl.toString());
 
-		postUrl.setQueryKV("publishDate", date);
+		postUrl.setQueryKV("publishTs", std::to_string(post.mMeta.mPublishTs));
 		postUrl.setQueryKV("name", post.mMeta.mMsgName);
+		postUrl.setQueryKV("authorId", post.mMeta.mAuthorId.toStdString());
 		std::string rsLink(postUrl.toString());
 
 		// store the RS link so we are able to retrive it on matching search
@@ -246,6 +240,13 @@ private:
 		static const std::string dbDir =
 		        RsAccounts::AccountDirectory() + "/deep_search_xapian_db";
 		return dbDir;
+	}
+
+	static std::string timetToXapianDate(const time_t& time)
+	{
+		char date[] = "YYYYMMDD\0";
+		std::strftime(date, 9, "%Y%m%d", std::gmtime(&time));
+		return date;
 	}
 };
 

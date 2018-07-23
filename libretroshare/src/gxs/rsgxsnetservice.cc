@@ -261,13 +261,6 @@
 #	include "deep_search/deep_search.h"
 #endif
 
-#include "util/cxx11retrocompat.h"
-#if defined(GCC_VERSION) && GCC_VERSION > 50100
-#	include <iomanip>
-#else
-#	include <cstdio>
-#endif
-
 /***
  * Use the following defines to debug:
  	NXS_NET_DEBUG_0		shows group update high level information
@@ -5307,19 +5300,8 @@ bool RsGxsNetService::search( const std::string& substring,
 					s.mGroupName = rit->second;
 				if((rit = uQ.find("signFlags")) != uQ.end())
 					s.mSignFlags = std::stoul(rit->second);
-				if((rit = uQ.find("publishDate")) != uQ.end())
-				{
-					std::tm tm; memset(&tm, 0, sizeof(tm));
-#if defined(GCC_VERSION) && GCC_VERSION > 50100
-					std::istringstream ss(rit->second);
-					ss >> std::get_time(&tm, "%Y%m%d");
-#else // defined(GCC_VERSION) && GCC_VERSION > 50100
-					sscanf( rit->second.c_str(),
-					        "%4d%2d%2d", &tm.tm_year, &tm.tm_mon, &tm.tm_mday );
-#endif // defined(GCC_VERSION) && GCC_VERSION > 50100
-
-					s.mPublishTs = mktime(&tm);
-				}
+				if((rit = uQ.find("publishTs")) != uQ.end())
+					s.mPublishTs = static_cast<time_t>(std::stoll(rit->second));
 				if((rit = uQ.find("authorId")) != uQ.end())
 					s.mAuthorId  = RsGxsId(rit->second);
 
