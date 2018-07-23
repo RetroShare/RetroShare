@@ -41,7 +41,7 @@
 #include <iostream>
 #include <stdlib.h>
 
-#include <gui/common/html.h>
+#include <gui/common/rshtml.h>
 #include <gui/common/vmessagebox.h>
 #include <gui/gxs/GxsIdDetails.h>
 #include <gui/settings/rsharesettings.h>
@@ -360,7 +360,7 @@ QString Rshare::retroshareVersion(bool withRevision)
 {
 	QString version = QString("%1.%2.%3%4").arg(RS_MAJOR_VERSION).arg(RS_MINOR_VERSION).arg(RS_BUILD_NUMBER).arg(RS_BUILD_NUMBER_ADD);
 	if (withRevision) {
-		version += QString(" %1 %2").arg(tr("Revision")).arg(QString::number(RS_REVISION_NUMBER,16));
+		version += QString(" %1 %2").arg(tr("Revision")).arg(RS_REVISION_NUMBER,8,16,QChar('0'));
 	}
 
 	return version;

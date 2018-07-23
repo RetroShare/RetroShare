@@ -1,4 +1,22 @@
 ################################################################################
+# retroshare.pri                                                               #
+# Copyright (C) 2018, Retroshare team <retroshare.team@gmailcom>               #
+#                                                                              #
+# This program is free software: you can redistribute it and/or modify         #
+# it under the terms of the GNU Lesser General Public License as               #
+# published by the Free Software Foundation, either version 3 of the           #
+# License, or (at your option) any later version.                              #
+#                                                                              #
+# This program is distributed in the hope that it will be useful,              #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of               #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the                #
+# GNU Lesser General Public License for more details.                          #
+#                                                                              #
+# You should have received a copy of the GNU Lesser General Public License     #
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.       #
+################################################################################
+
+################################################################################
 ## Documented build options (CONFIG) goes here as all the rest depend on them ##
 ## CONFIG must not be edited in other .pro files, aka if CONFIG need do be #####
 ## programatically modified depending on platform or from CONFIG itself it #####
@@ -9,6 +27,8 @@
 # assignation to qmake command line "CONFIG+=no_retroshare_gui"
 CONFIG *= retroshare_gui
 no_retroshare_gui:CONFIG -= retroshare_gui
+
+CONFIG *= gxsdistsync
 
 # To disable RetroShare-nogui append the following
 # assignation to qmake command line "CONFIG+=no_retroshare_nogui"
@@ -120,6 +140,10 @@ rs_macos10.12:CONFIG -= rs_macos10.11
 CONFIG *= no_rs_jsonapi
 rs_jsonapi:CONFIG -= no_rs_jsonapi
 
+# To disable deep search append the following assignation to qmake command line
+# "CONFIG+=no_rs_deep_search"
+CONFIG *= rs_deep_search
+no_rs_deep_search:CONFIG -= rs_deep_search
 
 ###########################################################################################################################################################
 #
@@ -260,6 +284,7 @@ defineReplace(linkDynamicLibs) {
 ## RS_THREAD_LIB String viariable containing the name of the multi threading
 ##   library to use (pthread, "") it usually depend on platform.
 
+gxsdistsync:DEFINES *= RS_USE_GXS_DISTANT_SYNC
 wikipoos:DEFINES *= RS_USE_WIKI
 rs_gxs:DEFINES *= RS_ENABLE_GXS
 libresapilocalserver:DEFINES *= LIBRESAPI_LOCAL_SERVER
@@ -326,6 +351,10 @@ rs_chatserver {
 
 rs_jsonapi {
     DEFINES *= RS_JSONAPI
+}
+
+rs_deep_search {
+    DEFINES *= RS_DEEP_SEARCH
 }
 
 debug {
@@ -490,6 +519,7 @@ macx-* {
 	CONFIG += c++11
     RS_UPNP_LIB = miniupnpc
 }
+
 
 ## Retrocompatibility assignations, get rid of this ASAP
 isEmpty(BIN_DIR)   : BIN_DIR   = $${RS_BIN_DIR}

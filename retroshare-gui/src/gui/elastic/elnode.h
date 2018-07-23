@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef NODE_H
-#define NODE_H
+#ifndef ELNODE_H
+#define ELNODE_H
 
 #include <QApplication>
 #if QT_VERSION >= 0x040600

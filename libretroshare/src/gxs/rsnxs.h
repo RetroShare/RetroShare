@@ -36,6 +36,7 @@
 #include "services/p3service.h"
 #include "retroshare/rsreputations.h"
 #include "retroshare/rsidentity.h"
+#include "retroshare/rsturtle.h"
 #include "rsgds.h"
 
 /*!
@@ -58,6 +59,7 @@
  *  2 transfers only between group
  *   - the also group matrix settings which is by default everyone can transfer to each other
  */
+
 class RsNetworkExchangeService
 {
 public:
@@ -65,6 +67,7 @@ public:
 	RsNetworkExchangeService(){ return;}
     virtual ~RsNetworkExchangeService() {}
 
+    virtual uint16_t serviceType() const =0;
     /*!
      * Use this to set how far back synchronisation of messages should take place
      * @param age in seconds the max age a sync/store item can to be allowed in a synchronisation
@@ -80,6 +83,65 @@ public:
 
     virtual uint32_t getDefaultSyncAge() =0;
     virtual uint32_t getDefaultKeepAge() =0;
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ///                                          DISTANT SEARCH FUNCTIONS                                           ///
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    /*!
+     * \brief turtleGroupRequest
+     * 			Requests a particular group meta data. The request protects the group ID.
+     * \param group_id
+     * \return
+     * 			returns the turtle request ID that might be associated to some results.
+     */
+    virtual TurtleRequestId turtleGroupRequest(const RsGxsGroupId& group_id)=0;
+
+    /*!
+     * \brief turtleSearchRequest
+     * 			Uses distant search to match the substring to the group meta data.
+     * \param match_string
+     * \return
+     * 			returns the turtle request ID that might be associated to some results.
+     */
+    virtual TurtleRequestId turtleSearchRequest(const std::string& match_string)=0;
+
+    /*!
+     * \brief receiveTurtleSearchResults
+     * 			Called by turtle (through RsGxsNetTunnel) when new results are received
+     * \param req			Turtle search request ID associated with this result
+     * \param group_infos	Group summary information for the groups returned by the search
+     */
+    virtual void receiveTurtleSearchResults(TurtleRequestId req,const std::list<RsGxsGroupSummary>& group_infos)=0;
+
+    /*!
+     * \brief receiveTurtleSearchResults
+     * 			Called by turtle (through RsGxsNetTunnel) when new data is received
+     * \param req			        Turtle search request ID associated with this result
+     * \param encrypted_group_data  Group data
+     */
+	virtual void receiveTurtleSearchResults(TurtleRequestId req,const unsigned char *encrypted_group_data,uint32_t encrypted_group_data_len)=0;
+
+    /*!
+     * \brief retrieveTurtleSearchResults
+     * 			To be used to retrieve the search results that have been notified (or not)
+     * \param req			request that match the results to retrieve
+     * \param group_infos	results to retrieve.
+     * \return
+     * 			false when the request is unknown.
+     */
+	virtual bool retrieveDistantSearchResults(TurtleRequestId req, std::map<RsGxsGroupId, RsGxsGroupSummary> &group_infos)=0;
+    /*!
+     * \brief getDistantSearchResults
+     * \param id
+     * \param group_infos
+     * \return
+     */
+    virtual bool clearDistantSearchResults(const TurtleRequestId& id)=0;
+    virtual bool retrieveDistantGroupSummary(const RsGxsGroupId&,RsGxsGroupSummary&)=0;
+
+    virtual bool search(const std::string& substring,std::list<RsGxsGroupSummary>& group_infos) =0;
+	virtual bool search(const Sha1CheckSum& hashed_group_id,unsigned char *& encrypted_group_data,uint32_t& encrypted_group_data_len)=0;
 
     /*!
      * Initiates a search through the network
@@ -99,6 +161,9 @@ public:
      */
     //virtual int searchGrps(RsGxsSearch* search, uint8_t hops = 1, bool retrieve = 0) = 0;
 
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ///                                           DATA ACCESS FUNCTIONS                                             ///
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /*!
      * pauses synchronisation of subscribed groups and request for group id
@@ -165,6 +230,14 @@ public:
      * \return
      */
     virtual bool stampMsgServerUpdateTS(const RsGxsGroupId& gid) =0;
+
+    /*!
+     * \brief isDistantPeer
+     * \param pid		peer that is a virtual peer provided by GxsNetTunnel
+     * \return
+     * 					true if the peer exists (adn therefore is online)
+     */
+    virtual bool isDistantPeer(const RsPeerId& pid)=0;
 
     /*!
      * \brief removeGroups

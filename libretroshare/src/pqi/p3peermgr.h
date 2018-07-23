@@ -1,28 +1,24 @@
-/*
- * libretroshare/src/pqi: p3peermgr.h
- *
- * 3P/PQI network interface for RetroShare.
- *
- * Copyright 2007-2011 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
+/*******************************************************************************
+ * libretroshare/src/pqi: p3peermgr.h                                          *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2007-2011 by Robert Fernie <retroshare@lunamutt.com>              *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #ifndef MRK_PQI_PEER_MANAGER_HEADER
 #define MRK_PQI_PEER_MANAGER_HEADER
 
@@ -163,6 +159,7 @@ virtual bool    assignPeersToGroup(const RsNodeGroupId &groupId, const std::list
 	 * 3) p3disc  - reasonable
 	 */
 
+	virtual bool addPeerLocator(const RsPeerId &ssl_id, const RsUrl& locator) = 0;
 virtual bool 	setLocalAddress(const RsPeerId &id, const struct sockaddr_storage &addr) = 0;
 virtual bool 	setExtAddress(const RsPeerId &id, const struct sockaddr_storage &addr) = 0;
 virtual bool    setDynDNS(const RsPeerId &id, const std::string &dyndns) = 0;
@@ -277,6 +274,7 @@ public:
      * 3) p3disc  - reasonable
      */
 
+	virtual bool addPeerLocator(const RsPeerId &ssl_id, const RsUrl& locator);
     virtual bool 	setLocalAddress(const RsPeerId &id, const struct sockaddr_storage &addr);
     virtual bool 	setExtAddress(const RsPeerId &id, const struct sockaddr_storage &addr);
     virtual bool    setDynDNS(const RsPeerId &id, const std::string &dyndns);

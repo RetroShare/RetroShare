@@ -1,3 +1,6 @@
 [submodule "supportlibs/restbed"]
 	path = supportlibs/restbed
 	url = https://github.com/Corvusoft/restbed.git
+[submodule "cmark"]
+	path = supportlibs/cmark
+	url = https://github.com/commonmark/cmark.git

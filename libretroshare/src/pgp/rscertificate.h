@@ -1,7 +1,51 @@
+/*******************************************************************************
+ * libretroshare/src/pgp: rscertificate.h                                      *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2016 Cyril Soler <csoler@users.sourceforge.net>                   *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #pragma once
 
+#pragma once
+/*
+ * RetroShare
+ *
+ * Copyright (C) 2012-2014  Cyril Soler <csoler@users.sourceforge.net>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include "retroshare/rstypes.h"
+#include "util/rsurl.h"
+
+#include <set>
 #include <string>
-#include <retroshare/rstypes.h>
 
 class RsPeerDetails ;
 
@@ -42,6 +86,7 @@ class RsCertificate
 		size_t pgp_key_size() const { return binary_pgp_key_size ; }
 
 		static bool cleanCertificate(const std::string& input, std::string& output, RsCertificate::Format& format, int& error_code, bool check_content) ;
+		const std::set<RsUrl>& locators() const { return mLocators; }
 
 	private:
 		static bool cleanCertificate(const std::string& input,std::string& output,int&) ;					// new radix format
@@ -69,6 +114,7 @@ class RsCertificate
 		std::string pgp_version ;
 		std::string dns_name ;
 		std::string hidden_node_address;
+		std::set<RsUrl> mLocators;
 
 		bool only_pgp ; // does the cert contain only pgp info?
 		bool hidden_node; // IP or hidden Node Address.

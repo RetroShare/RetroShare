@@ -15,7 +15,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
@@ -39,6 +39,8 @@ class QScriptEngine;
 
 class PluginManager;
 
+namespace gui {
+
 
 //! A demo widget for showing plugin engine in action :)
 
@@ -46,7 +48,7 @@ class PluginManager;
 //! loaded plugin widgets. All specific actions moved to
 //! PluginManagerWidget class. It contains a PluginManager instance, but it's
 //! supposed that in future a pluginManager will become a global variable
-class PluginsPage : public MainPage 
+class PluginsPage : public MainPage
 {
     Q_OBJECT
 
@@ -70,10 +72,10 @@ protected:
     QVBoxLayout* pluginPageLayout;
     QGroupBox* pluginPanel;
     QVBoxLayout* pluginPanelLayout;
-  
+
     //! Plugin widgets will be loaded into this tabs
     QTabWidget* pluginTabs ;
-    
+
     QVBoxLayout* pmLay;
     QFrame* pmFrame;
     QSpacerItem* pmSpacer;
@@ -81,6 +83,8 @@ protected:
     //! This should be global, every page should have access to it
     PluginManager* pluginManager;
 };
+
+} // namespace gui
 
 #endif
 

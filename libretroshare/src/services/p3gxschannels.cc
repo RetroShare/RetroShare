@@ -1,28 +1,24 @@
-/*
- * libretroshare/src/services p3gxschannels.cc
- *
- * GxsChannels interface for RetroShare.
- *
- * Copyright 2012-2012 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2.1 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
+/*******************************************************************************
+ * libretroshare/src/services: p3gxschannels.cc                                *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2012-2012 Robert Fernie <retroshare@lunamutt.com>                 *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #include "services/p3gxschannels.h"
 #include "rsitems/rsgxschannelitems.h"
 #include "util/radix64.h"
@@ -240,7 +236,7 @@ void p3GxsChannels::notifyChanges(std::vector<RsGxsNotify *> &changes)
 		RsGxsMsgChange *msgChange = dynamic_cast<RsGxsMsgChange *>(*it);
 		if (msgChange)
 		{
-			if (msgChange->getType() == RsGxsNotify::TYPE_RECEIVE)
+			if (msgChange->getType() == RsGxsNotify::TYPE_RECEIVED_NEW)
 			{
 				/* message received */
 				if (notify)
@@ -293,11 +289,12 @@ void p3GxsChannels::notifyChanges(std::vector<RsGxsNotify *> &changes)
 				{
 					switch (grpChange->getType())
 					{
+                    default:
 						case RsGxsNotify::TYPE_PROCESSED:
-						case RsGxsNotify::TYPE_PUBLISH:
+						case RsGxsNotify::TYPE_PUBLISHED:
 							break;
 
-						case RsGxsNotify::TYPE_RECEIVE:
+						case RsGxsNotify::TYPE_RECEIVED_NEW:
 						{
 							/* group received */
 							std::list<RsGxsGroupId> &grpList = grpChange->mGrpIdList;
@@ -315,7 +312,7 @@ void p3GxsChannels::notifyChanges(std::vector<RsGxsNotify *> &changes)
 							break;
 						}
 
-						case RsGxsNotify::TYPE_PUBLISHKEY:
+						case RsGxsNotify::TYPE_RECEIVED_PUBLISHKEY:
 						{
 							/* group received */
 							std::list<RsGxsGroupId> &grpList = grpChange->mGrpIdList;
@@ -1727,4 +1724,55 @@ void p3GxsChannels::handle_event(uint32_t event_type, const std::string &elabel)
 			break;
 	}
 }
+
+TurtleRequestId p3GxsChannels::turtleGroupRequest(const RsGxsGroupId& group_id)
+{
+    return netService()->turtleGroupRequest(group_id) ;
+}
+TurtleRequestId p3GxsChannels::turtleSearchRequest(const std::string& match_string)
+{
+    return netService()->turtleSearchRequest(match_string) ;
+}
+
+bool p3GxsChannels::clearDistantSearchResults(TurtleRequestId req)
+{
+    return netService()->clearDistantSearchResults(req);
+}
+bool p3GxsChannels::retrieveDistantSearchResults(TurtleRequestId req,std::map<RsGxsGroupId,RsGxsGroupSummary>& results)
+{
+    return netService()->retrieveDistantSearchResults(req,results);
+}
+
+bool p3GxsChannels::retrieveDistantGroup(const RsGxsGroupId& group_id,RsGxsChannelGroup& distant_group)
+{
+	RsGxsGroupSummary gs;
+
+    if(netService()->retrieveDistantGroupSummary(group_id,gs))
+    {
+        // This is a placeholder information by the time we receive the full group meta data.
+		distant_group.mMeta.mGroupId         = gs.mGroupId ;
+		distant_group.mMeta.mGroupName       = gs.mGroupName;
+		distant_group.mMeta.mGroupFlags      = GXS_SERV::FLAG_PRIVACY_PUBLIC ;
+		distant_group.mMeta.mSignFlags       = gs.mSignFlags;
+
+		distant_group.mMeta.mPublishTs       = gs.mPublishTs;
+		distant_group.mMeta.mAuthorId        = gs.mAuthorId;
+
+    	distant_group.mMeta.mCircleType      = GXS_CIRCLE_TYPE_PUBLIC ;// guessed, otherwise the group would not be search-able.
+
+		// other stuff.
+		distant_group.mMeta.mAuthenFlags     = 0;	// wild guess...
+
+    	distant_group.mMeta.mSubscribeFlags  = GXS_SERV::GROUP_SUBSCRIBE_NOT_SUBSCRIBED ;
+
+		distant_group.mMeta.mPop             = gs.mPopularity; 			// Popularity = number of friend subscribers
+		distant_group.mMeta.mVisibleMsgCount = gs.mNumberOfMessages; 	// Max messages reported by friends
+		distant_group.mMeta.mLastPost        = gs.mLastMessageTs; 		// Timestamp for last message. Not used yet.
+
+		return true ;
+    }
+    else
+        return false ;
+}
+
 

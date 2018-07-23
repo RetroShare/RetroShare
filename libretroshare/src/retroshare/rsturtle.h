@@ -1,31 +1,24 @@
-#ifndef RETROSHARE_TURTLE_GUI_INTERFACE_H
-#define RETROSHARE_TURTLE_GUI_INTERFACE_H
-
-/*
- * libretroshare/src/rsiface: rsturtle.h
- *
- * RetroShare C++ Interface.
- *
- * Copyright 2009 by Cyril Soler.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "csoler@users.sourceforge.net"
- *
- */
-
+/*******************************************************************************
+ * libretroshare/src/retroshare: rsturtle.h                                    *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2009-2018 by Cyril Soler <csoler@users.sourceforge.net>           *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #pragma once
 
 #include <inttypes.h>
@@ -33,7 +26,9 @@
 #include <list>
 #include <vector>
 
+#include "serialiser/rstlvbinary.h"
 #include "retroshare/rstypes.h"
+#include "retroshare/rsgxsifacetypes.h"
 
 namespace RsRegularExpression { class LinearizedExpression ; }
 class RsTurtleClientService ;
@@ -42,6 +37,7 @@ class RsTurtle;
 extern RsTurtle   *rsTurtle ;
 
 typedef uint32_t TurtleRequestId ;
+typedef RsPeerId TurtleVirtualPeerId;
 
 // This is the structure used to send back results of the turtle search 
 // to the notifyBase class, or send info to the GUI.
@@ -52,6 +48,7 @@ struct TurtleFileInfo
 	std::string name ;
 	uint64_t size ;
 };
+
 struct TurtleTunnelRequestDisplayInfo
 {
 	uint32_t request_id ;     // Id of the request
@@ -109,8 +106,7 @@ class RsTurtle
 		// the request id, which will be further used by the gui to store results
 		// as they come back.
 		//
-		virtual TurtleRequestId turtleSearch(const std::string& match_string) = 0 ;
-        virtual TurtleRequestId turtleSearch(const RsRegularExpression::LinearizedExpression& expr) = 0 ;
+        virtual TurtleRequestId turtleSearch(unsigned char *search_bin_data,uint32_t search_bin_data_len,RsTurtleClientService *client_service) =0;
 
 		// Initiates tunnel handling for the given file hash.  tunnels.  Launches
 		// an exception if an error occurs during the initialization process. The
@@ -155,5 +151,3 @@ class RsTurtle
 		virtual void setMaxTRForwardRate(int max_tr_up_rate) = 0 ;
 		virtual int getMaxTRForwardRate() const = 0 ;
 };
-
-#endif

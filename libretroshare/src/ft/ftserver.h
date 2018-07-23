@@ -1,27 +1,24 @@
-/*
- * libretroshare/src/ft: ftserver.h
- *
- * File Transfer for RetroShare.
- *
- * Copyright 2008 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
+/*******************************************************************************
+ * libretroshare/src/ft: ftserver.h                                            *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2008 by Robert Fernie <retroshare@lunamutt.com>                   *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #ifndef FT_SERVER_HEADER
 #define FT_SERVER_HEADER
@@ -95,8 +92,11 @@ public:
 
     // Implements RsTurtleClientService
     //
+
+    uint16_t serviceId() const { return RS_SERVICE_TYPE_FILE_TRANSFER ; }
     virtual bool handleTunnelRequest(const RsFileHash& hash,const RsPeerId& peer_id) ;
-    virtual void receiveTurtleData(RsTurtleGenericTunnelItem *item,const RsFileHash& hash,const RsPeerId& virtual_peer_id,RsTurtleGenericTunnelItem::Direction direction) ;
+    virtual void receiveTurtleData(const RsTurtleGenericTunnelItem *item,const RsFileHash& hash,const RsPeerId& virtual_peer_id,RsTurtleGenericTunnelItem::Direction direction) ;
+	//virtual void receiveSearchResult(RsTurtleSearchResultItem *item);// TODO
     virtual RsItem *create_item(uint16_t service,uint8_t item_type) const ;
 	virtual RsServiceSerializer *serializer() { return this ; }
 
@@ -142,6 +142,9 @@ public:
 	virtual uint32_t getMaxUploadSlotsPerFriend() ;
 	virtual void setFilePermDirectDL(uint32_t perm) ;
 	virtual uint32_t filePermDirectDL() ;
+
+	virtual TurtleSearchRequestId turtleSearch(const std::string& string_to_match) ;
+	virtual TurtleSearchRequestId turtleSearch(const RsRegularExpression::LinearizedExpression& expr) ;
 
     /***
          * Control of Downloads Priority.
@@ -250,7 +253,7 @@ public:
     static void deriveEncryptionKey(const RsFileHash& hash, uint8_t *key);
 
     bool encryptItem(RsTurtleGenericTunnelItem *clear_item,const RsFileHash& hash,RsTurtleGenericDataItem *& encrypted_item);
-    bool decryptItem(RsTurtleGenericDataItem *encrypted_item, const RsFileHash& hash, RsTurtleGenericTunnelItem *&decrypted_item);
+    bool decryptItem(const RsTurtleGenericDataItem *encrypted_item, const RsFileHash& hash, RsTurtleGenericTunnelItem *&decrypted_item);
 
     /*************** Internal Transfer Fns *************************/
     virtual int tick();

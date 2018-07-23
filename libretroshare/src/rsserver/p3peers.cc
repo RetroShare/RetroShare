@@ -1,29 +1,25 @@
-/*
- * libretroshare/src/rsserver: p3peers.cc
- *
- * RetroShare C++ Interface.
- *
- * Copyright 2004-2008 by Robert Fernie.
- * Copyright (C) 2015-2018  Gioacchino Mazzurco <gio@eigenlab.org>
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
+/*******************************************************************************
+ * libretroshare/src/rsserver: p3peers.cc                                      *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2004-2008 by Robert Fernie <retroshare@lunamutt.com>              *
+ * Copyright (C) 2015-2018  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #include "util/radix64.h"
 #include "pgp/pgpkeyutil.h"
 
@@ -904,6 +900,9 @@ bool 	p3Peers::setHiddenNode(const RsPeerId &id, const std::string &address, uin
 	return true;
 }
 
+bool p3Peers::addPeerLocator(const RsPeerId &ssl_id, const RsUrl& locator)
+{ return mPeerMgr->addPeerLocator(ssl_id, locator); }
+
 bool p3Peers::setLocalAddress(const RsPeerId &id,
                               const std::string &addr_str, uint16_t port)
 {
@@ -1045,9 +1044,11 @@ bool p3Peers::setProxyServer(const uint32_t type, const std::string &addr_str, c
 
 //===========================================================================
 	/* Auth Stuff */
-std::string p3Peers::GetRetroshareInvite(bool include_signatures)
+std::string p3Peers::GetRetroshareInvite(
+        bool include_signatures, bool includeExtraLocators )
 {
-	return GetRetroshareInvite(getOwnId(),include_signatures);
+	return GetRetroshareInvite(
+	            getOwnId(), include_signatures, includeExtraLocators );
 }
 std::string p3Peers::getPGPKey(const RsPgpId& pgp_id,bool include_signatures)
 {
@@ -1098,37 +1099,42 @@ bool p3Peers::GetPGPBase64StringAndCheckSum(	const RsPgpId& gpg_id,
 	return true ;
 }
 
-std::string p3Peers::GetRetroshareInvite(const RsPeerId& ssl_id,bool include_signatures)
+std::string p3Peers::GetRetroshareInvite(
+        const RsPeerId& ssl_id, bool include_signatures,
+        bool includeExtraLocators )
 {
 #ifdef P3PEERS_DEBUG
-	std::cerr << "p3Peers::GetRetroshareInvite()" << std::endl;
+	std::cerr << __PRETTY_FUNCTION__ << std::endl;
 #endif
 
 	//add the sslid, location, ip local and external address after the signature
-	RsPeerDetails Detail;
-	std::string invite ;
+	RsPeerDetails detail;
+	std::string invite;
 
-	if (getPeerDetails(ssl_id, Detail)) 
+	if (getPeerDetails(ssl_id, detail))
 	{
-		unsigned char *mem_block = NULL;
+		if(!includeExtraLocators) detail.ipAddressList.clear();
+
+		unsigned char *mem_block = nullptr;
 		size_t mem_block_size = 0;
 
-		if(!AuthGPG::getAuthGPG()->exportPublicKey(RsPgpId(Detail.gpg_id),mem_block,mem_block_size,false,include_signatures))
+		if(!AuthGPG::getAuthGPG()->exportPublicKey(
+		            RsPgpId(detail.gpg_id), mem_block, mem_block_size, false,
+		            include_signatures ))
 		{
-			std::cerr << "Cannot output certificate for id \"" << Detail.gpg_id << "\". Sorry." << std::endl;
-			return "" ;
+			std::cerr << "Cannot output certificate for id \"" << detail.gpg_id
+			          << "\". Sorry." << std::endl;
+			return "";
 		}
 
-		RsCertificate cert( Detail,mem_block,mem_block_size ) ;
+		RsCertificate cert(detail, mem_block, mem_block_size);
+		delete[] mem_block;
 
-        delete[] mem_block ;
-
-		return cert.toStdString() ;
-
+		return cert.toStdString();
 	}
 
 #ifdef P3PEERS_DEBUG
-	std::cerr << "p3Peers::GetRetroshareInvite() returns : \n" << invite << std::endl;
+	std::cerr << __PRETTY_FUNCTION__ << " returns : \n" << invite << std::endl;
 #endif
 	return invite;
 }
@@ -1148,11 +1154,12 @@ bool 	p3Peers::loadCertificateFromString(const std::string& cert, RsPeerId& ssl_
 	return res ;
 }
 
-bool 	p3Peers::loadDetailsFromStringCert(const std::string &certstr, RsPeerDetails &pd,uint32_t& error_code)
+bool p3Peers::loadDetailsFromStringCert( const std::string &certstr,
+                                         RsPeerDetails &pd,
+                                         uint32_t& error_code )
 {
 #ifdef P3PEERS_DEBUG
-	std::cerr << "p3Peers::LoadCertificateFromString() ";
-	std::cerr << std::endl;
+	std::cerr << "p3Peers::LoadCertificateFromString() " << std::endl;
 #endif
 	//parse the text to get ip address
 	try 
@@ -1192,9 +1199,11 @@ bool 	p3Peers::loadDetailsFromStringCert(const std::string &certstr, RsPeerDetai
 			pd.localPort = cert.loc_port_us();
 			pd.extAddr = cert.ext_ip_string();
 			pd.extPort = cert.ext_port_us();
-			pd.dyndns = cert.dns_string() ;
+			pd.dyndns = cert.dns_string();
+			for(const RsUrl& locator : cert.locators())
+				pd.ipAddressList.push_back(locator.toString());
 		}
-	} 
+	}
 	catch(uint32_t e) 
 	{
 		std::cerr << "ConnectFriendWizard : Parse ip address error :" << e << std::endl;

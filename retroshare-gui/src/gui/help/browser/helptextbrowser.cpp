@@ -30,7 +30,7 @@
 #include <QFile>
 #include <QDesktopServices>
 #include "gui/common/vmessagebox.h"
-#include "gui/common/html.h"
+#include "gui/common/rshtml.h"
 #include <rshare.h>
 
 #include "helptextbrowser.h"

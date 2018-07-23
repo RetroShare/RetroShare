@@ -31,6 +31,47 @@
 #include "retroshare/rsgxsservice.h"
 #include "gxs/rsgxsdata.h"
 #include "retroshare/rsgxsifacetypes.h"
+#include "util/rsdeprecate.h"
+
+/*!
+ * This structure is used to transport group summary information when a GXS
+ * service is searched. It contains the group information as well as a context
+ * string to tell where the information was found. It is more compact than a
+ * GroupMeta object, so as to make search responses as light as possible.
+ */
+struct RsGxsGroupSummary : RsSerializable
+{
+	RsGxsGroupSummary() :
+	    mPublishTs(0), mNumberOfMessages(0),mLastMessageTs(0),
+	    mSignFlags(0),mPopularity(0) {}
+
+	RsGxsGroupId mGroupId;
+	std::string  mGroupName;
+	RsGxsId      mAuthorId;
+	time_t       mPublishTs;
+	uint32_t     mNumberOfMessages;
+	time_t       mLastMessageTs;
+	uint32_t     mSignFlags;
+	uint32_t     mPopularity;
+
+	std::string  mSearchContext;
+
+	/// @see RsSerializable::serial_process
+	void serial_process( RsGenericSerializer::SerializeJob j,
+	                     RsGenericSerializer::SerializeContext& ctx )
+	{
+		RS_SERIAL_PROCESS(mGroupId);
+		RS_SERIAL_PROCESS(mGroupName);
+		RS_SERIAL_PROCESS(mAuthorId);
+		RS_SERIAL_PROCESS(mPublishTs);
+		RS_SERIAL_PROCESS(mNumberOfMessages);
+		RS_SERIAL_PROCESS(mLastMessageTs);
+		RS_SERIAL_PROCESS(mSignFlags);
+		RS_SERIAL_PROCESS(mPopularity);
+		RS_SERIAL_PROCESS(mSearchContext);
+	}
+};
+
 
 /*!
  * Stores ids of changed gxs groups and messages. It is used to notify the GUI about changes.
@@ -43,6 +84,7 @@ struct RsGxsChanges
     std::map<RsGxsGroupId, std::set<RsGxsMessageId> > mMsgsMeta;
     std::list<RsGxsGroupId> mGrps;
     std::list<RsGxsGroupId> mGrpsMeta;
+    std::list<TurtleRequestId> mDistantSearchReqs;
 };
 
 /*!

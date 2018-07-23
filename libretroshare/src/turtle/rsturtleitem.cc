@@ -1,3 +1,24 @@
+/*******************************************************************************
+ * libretroshare/src/turtle: rsturtleitem.cc                                   *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2009-2018 by Cyril Soler <csoler@users.sourceforge.net>           *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #ifndef WINDOWS_SYS
 #include <stdexcept>
 #endif
@@ -28,10 +49,12 @@ RsItem *RsTurtleSerialiser::create_item(uint16_t service,uint8_t item_subtype) c
 	{
 	case RS_TURTLE_SUBTYPE_STRING_SEARCH_REQUEST	:	return new RsTurtleStringSearchRequestItem();
 	case RS_TURTLE_SUBTYPE_REGEXP_SEARCH_REQUEST	:	return new RsTurtleRegExpSearchRequestItem();
-	case RS_TURTLE_SUBTYPE_SEARCH_RESULT			:	return new RsTurtleSearchResultItem();
+	case RS_TURTLE_SUBTYPE_FT_SEARCH_RESULT			:	return new RsTurtleFTSearchResultItem();
 	case RS_TURTLE_SUBTYPE_OPEN_TUNNEL  			:	return new RsTurtleOpenTunnelItem();
 	case RS_TURTLE_SUBTYPE_TUNNEL_OK    			:	return new RsTurtleTunnelOkItem();
 	case RS_TURTLE_SUBTYPE_GENERIC_DATA 			:	return new RsTurtleGenericDataItem();
+	case RS_TURTLE_SUBTYPE_GENERIC_SEARCH_REQUEST	:	return new RsTurtleGenericSearchRequestItem();
+	case RS_TURTLE_SUBTYPE_GENERIC_SEARCH_RESULT	:	return new RsTurtleGenericSearchResultItem();
 
 	default:
 		break ;
@@ -48,20 +71,44 @@ RsItem *RsTurtleSerialiser::create_item(uint16_t service,uint8_t item_subtype) c
 	return NULL ;
 }
 
+std::string RsTurtleGenericSearchRequestItem::GetKeywords()
+{
+    return std::string("Generic search : " + RsUtil::BinToHex(search_data,search_data_len,10));
+}
+
 void RsTurtleStringSearchRequestItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process          (j,ctx,TLV_TYPE_STR_VALUE,match_string,"match_string") ;
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,request_id,"request_id") ;
     RsTypeSerializer::serial_process<uint16_t>(j,ctx,depth     ,"depth") ;
 }
-
 void RsTurtleRegExpSearchRequestItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,request_id,"request_id") ;
     RsTypeSerializer::serial_process<uint16_t>(j,ctx,depth,"depth") ;
     RsTypeSerializer::serial_process(j,ctx,expr,"expr") ;
 }
+void RsTurtleGenericSearchRequestItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
+{
+    RsTypeSerializer::serial_process<uint32_t>(j,ctx,request_id,"request_id") ;
+    RsTypeSerializer::serial_process<uint16_t>(j,ctx,depth,"depth") ;
+    RsTypeSerializer::serial_process<uint16_t>(j,ctx,service_id,"service_id") ;
+    RsTypeSerializer::serial_process<uint8_t >(j,ctx,request_type,"request_type") ;
 
+    RsTypeSerializer::TlvMemBlock_proxy prox(search_data,search_data_len) ;
+    RsTypeSerializer::serial_process(j,ctx,prox,"search_data") ;
+}
+RsTurtleSearchRequestItem *RsTurtleGenericSearchRequestItem::clone() const
+{
+    RsTurtleGenericSearchRequestItem *sr = new RsTurtleGenericSearchRequestItem ;
+
+    memcpy(sr,this,sizeof(RsTurtleGenericSearchRequestItem)) ;
+
+    sr->search_data = (unsigned char*)rs_malloc(search_data_len) ;
+    memcpy(sr->search_data,search_data,search_data_len) ;
+
+    return sr ;
+}
 template<> uint32_t RsTypeSerializer::serial_size(const RsRegularExpression::LinearizedExpression& r)
 {
     uint32_t s = 0 ;
@@ -143,11 +190,30 @@ template<> void RsTypeSerializer::print_data(const std::string& n, const RsRegul
 RS_TYPE_SERIALIZER_TO_JSON_NOT_IMPLEMENTED_DEF(RsRegularExpression::LinearizedExpression)
 RS_TYPE_SERIALIZER_FROM_JSON_NOT_IMPLEMENTED_DEF(RsRegularExpression::LinearizedExpression)
 
-void RsTurtleSearchResultItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
+void RsTurtleFTSearchResultItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,request_id,"request_id") ;
     RsTypeSerializer::serial_process<uint16_t>(j,ctx,depth     ,"depth") ;
     RsTypeSerializer::serial_process          (j,ctx,result    ,"result") ;
+}
+void RsTurtleGenericSearchResultItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
+{
+    RsTypeSerializer::serial_process<uint32_t>(j,ctx,request_id,"request_id") ;
+    RsTypeSerializer::serial_process<uint16_t>(j,ctx,depth     ,"depth") ;
+
+    RsTypeSerializer::TlvMemBlock_proxy prox(result_data,result_data_len) ;
+    RsTypeSerializer::serial_process(j,ctx,prox,"search_data") ;
+}
+RsTurtleSearchResultItem *RsTurtleGenericSearchResultItem::duplicate() const
+{
+    RsTurtleGenericSearchResultItem *sr = new RsTurtleGenericSearchResultItem ;
+
+    sr->result_data = (unsigned char*)rs_malloc(result_data_len) ;
+    memcpy(sr->result_data,result_data,result_data_len) ;
+    sr->result_data_len = result_data_len ;
+    sr->request_id = request_id ;
+    sr->depth = depth ;
+    return sr ;
 }
 
 template<> uint32_t RsTypeSerializer::serial_size(const TurtleFileInfo& i)

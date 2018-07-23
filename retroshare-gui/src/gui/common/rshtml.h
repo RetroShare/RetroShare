@@ -21,8 +21,8 @@
  ****************************************************************/
 
 /*
-** \file html.h
-** \version $Id: html.h 2362 2008-02-29 04:30:11Z edmanm $
+** \file rshtml.h
+** \version $Id: rshtml.h 2362 2008-02-29 04:30:11Z edmanm $
 ** \brief HTML formatting functions
 */
 

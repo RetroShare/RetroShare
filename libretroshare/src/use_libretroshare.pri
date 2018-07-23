@@ -1,3 +1,20 @@
+################################################################################
+# uselibretroshare.pri                                                         #
+# Copyright (C) 2018, Retroshare team <retroshare.team@gmailcom>               #
+#                                                                              #
+# This program is free software: you can redistribute it and/or modify         #
+# it under the terms of the GNU Lesser General Public License as               #
+# published by the Free Software Foundation, either version 3 of the           #
+# License, or (at your option) any later version.                              #
+#                                                                              #
+# This program is distributed in the hope that it will be useful,              #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of               #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the                #
+# GNU Lesser General Public License for more details.                          #
+#                                                                              #
+# You should have received a copy of the GNU Lesser General Public License     #
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.       #
+################################################################################
 DEPENDPATH *= $$system_path($$clean_path($${PWD}/../../libretroshare/src/))
 INCLUDEPATH  *= $$system_path($$clean_path($${PWD}/../../libretroshare/src))
 LIBS *= -L$$system_path($$clean_path($${OUT_PWD}/../../libretroshare/src/lib/)) -lretroshare
@@ -16,7 +33,15 @@ bitdht {
 # when rapidjson is mainstream on all distribs, we will not need the sources
 # anymore in the meantime, they are part of the RS directory so that it is
 # always possible to find them
-INCLUDEPATH *= $$system_path($$clean_path($${PWD}/../../rapidjson-1.1.0))
+RAPIDJSON_AVAILABLE = $$system(pkg-config --atleast-version 1.1 RapidJSON && echo yes)
+isEmpty(RAPIDJSON_AVAILABLE) {
+    message("using built-in rapidjson")
+    INCLUDEPATH *= $$system_path($$clean_path($${PWD}/../../rapidjson-1.1.0))
+} else {
+    message("using systems rapidjson")
+    DEFINES *= HAS_RAPIDJSON
+}
+
 
 sLibs =
 mLibs = $$RS_SQL_LIB ssl crypto $$RS_THREAD_LIB $$RS_UPNP_LIB
@@ -36,6 +61,10 @@ rs_jsonapi {
 
 linux-* {
     mLibs += dl
+}
+
+rs_deep_search {
+    mLibs += xapian
 }
 
 static {

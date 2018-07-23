@@ -18,6 +18,8 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
+#include <iostream>
+
 #include "GroupTreeWidget.h"
 #include "ui_GroupTreeWidget.h"
 
@@ -58,6 +60,8 @@
 #define ROLE_SUBSCRIBE_FLAGS Qt::UserRole + 8
 #define ROLE_COLOR           Qt::UserRole + 9
 #define ROLE_SAVED_ICON      Qt::UserRole + 10
+#define ROLE_SEARCH_STRING   Qt::UserRole + 11
+#define ROLE_REQUEST_ID      Qt::UserRole + 12
 
 #define FILTER_NAME_INDEX  0
 #define FILTER_DESC_INDEX  1
@@ -131,6 +135,10 @@ GroupTreeWidget::GroupTreeWidget(QWidget *parent) :
 	ui->filterLineEdit->addFilter(QIcon(), tr("Title"), FILTER_NAME_INDEX , tr("Search Title"));
 	ui->filterLineEdit->addFilter(QIcon(), tr("Description"), FILTER_DESC_INDEX , tr("Search Description"));
 	ui->filterLineEdit->setCurrentFilter(FILTER_NAME_INDEX);
+
+    ui->distantSearchLineEdit->setPlaceholderText(tr("Search entire network...")) ;
+
+    connect(ui->distantSearchLineEdit,SIGNAL(returnPressed()),this,SLOT(distantSearch())) ;
 
 	/* Initialize display button */
 	initDisplayMenu(ui->displayButton);
@@ -405,6 +413,54 @@ QTreeWidgetItem *GroupTreeWidget::addCategoryItem(const QString &name, const QIc
 	item->setExpanded(expand);
 
 	return item;
+}
+
+void GroupTreeWidget::removeSearchItem(QTreeWidgetItem *item)
+{
+    ui->treeWidget->takeTopLevelItem(ui->treeWidget->indexOfTopLevelItem(item)) ;
+}
+
+QTreeWidgetItem *GroupTreeWidget::addSearchItem(const QString& search_string, uint32_t id, const QIcon& icon)
+{
+    QTreeWidgetItem *item = addCategoryItem(search_string,icon,true);
+
+    item->setData(COLUMN_DATA,ROLE_SEARCH_STRING,search_string) ;
+    item->setData(COLUMN_DATA,ROLE_REQUEST_ID   ,id) ;
+
+    return item;
+}
+
+void GroupTreeWidget::setDistSearchVisible(bool visible)
+{
+    ui->distantSearchLineEdit->setVisible(visible);
+}
+
+bool GroupTreeWidget::isSearchRequestResult(QPoint &point,QString& group_id,uint32_t& search_req_id)
+{
+    QTreeWidgetItem *item = ui->treeWidget->itemAt(point);
+	if (item == NULL)
+		return false;
+
+    QTreeWidgetItem *parent = item->parent();
+
+    if(parent == NULL)
+        return false ;
+
+	search_req_id = parent->data(COLUMN_DATA, ROLE_REQUEST_ID).toUInt();
+    group_id = itemId(item) ;
+
+    return search_req_id > 0;
+}
+
+bool GroupTreeWidget::isSearchRequestItem(QPoint &point,uint32_t& search_req_id)
+{
+    QTreeWidgetItem *item = ui->treeWidget->itemAt(point);
+	if (item == NULL)
+		return false;
+
+	search_req_id = item->data(COLUMN_DATA, ROLE_REQUEST_ID).toUInt();
+
+    return search_req_id > 0;
 }
 
 QString GroupTreeWidget::itemId(QTreeWidgetItem *item)
@@ -768,6 +824,13 @@ void GroupTreeWidget::resort(QTreeWidgetItem *categoryItem)
 			ui->treeWidget->topLevelItem(child)->sortChildren(COLUMN_DATA, order);
 		}
 	}
+}
+
+void GroupTreeWidget::distantSearch()
+{
+    emit distantSearchRequested(ui->distantSearchLineEdit->text());
+
+    ui->distantSearchLineEdit->clear();
 }
 
 void GroupTreeWidget::sort()

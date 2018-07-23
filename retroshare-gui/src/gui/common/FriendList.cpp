@@ -2066,6 +2066,10 @@ bool FriendList::importFriendlist(QString &fileName, bool &errorPeers, bool &err
                                 rsPeers->setDynDNS(rsPeerDetails.id, rsPeerDetails.dyndns);
                             if (!rsPeerDetails.location.empty())
                                 rsPeers->setLocation(rsPeerDetails.id, rsPeerDetails.location);
+							for(auto&& ipr : rsPeerDetails.ipAddressList)
+								rsPeers->addPeerLocator(
+								            rsPeerDetails.id,
+								            RsUrl(ipr.substr(0, ipr.find(' '))) );
                         }
                     } else if (!rsPeerDetails.gpg_id.isNull()) {
                         // only pgp id is avaiable

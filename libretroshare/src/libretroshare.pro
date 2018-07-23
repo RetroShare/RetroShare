@@ -1,3 +1,24 @@
+################################################################################
+# libretroshare.pro                                                            #
+# Copyright (C) 2018, Retroshare team <retroshare.team@gmailcom>               #
+#                                                                              #
+# This program is free software: you can redistribute it and/or modify         #
+# it under the terms of the GNU Lesser General Public License as               #
+# published by the Free Software Foundation, either version 3 of the           #
+# License, or (at your option) any later version.                              #
+#                                                                              #
+# This program is distributed in the hope that it will be useful,              #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of               #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the                #
+# GNU Lesser General Public License for more details.                          #
+#                                                                              #
+# You should have received a copy of the GNU Lesser General Public License     #
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.       #
+################################################################################
+!include("../../retroshare.pri"): error("Could not include file ../../retroshare.pri")
+
+TEMPLATE = lib
+CONFIG += staticlib
 !include("../../retroshare.pri"): error("Could not include file ../../retroshare.pri")
 
 TEMPLATE = lib
@@ -137,6 +158,7 @@ PUBLIC_HEADERS =	retroshare/rsdisc.h \
 					retroshare/rsconfig.h \
 					retroshare/rsversion.h \
 					retroshare/rsservicecontrol.h \
+					retroshare/rsgxsdistsync.h 
 
 HEADERS += plugins/pluginmanager.h \
 		plugins/dlfcn_win32.h \
@@ -351,7 +373,9 @@ HEADERS +=	ft/ftchunkmap.h \
 			ft/ftturtlefiletransferitem.h 
 
 HEADERS += crypto/chacha20.h \
-				crypto/hashstream.h
+			  crypto/rsaes.h \
+				crypto/hashstream.h \
+				crypto/rscrypto.h
 
 HEADERS += directory_updater.h \
 				directory_list.h \
@@ -366,7 +390,6 @@ HEADERS +=	pqi/authssl.h \
 			pqi/authgpg.h \
 			pgp/pgphandler.h \
 			pgp/pgpkeyutil.h \
-			pgp/rsaes.h \
 			pgp/rscertificate.h \
 			pgp/pgpauxutils.h \
 			pqi/p3cfgmgr.h \
@@ -378,7 +401,6 @@ HEADERS +=	pqi/authssl.h \
 			pqi/pqiqos.h \
 			pqi/pqi.h \
 			pqi/pqi_base.h \
-			pqi/pqiarchive.h \
 			pqi/pqiassist.h \
 			pqi/pqibin.h \
 			pqi/pqihandler.h \
@@ -470,7 +492,7 @@ HEADERS +=  services/autoproxy/p3i2pbob.h \
 			services/p3discovery2.h \
 			services/p3heartbeat.h \
 			services/p3rtt.h \
-			services/p3serviceinfo.cc \
+			services/p3serviceinfo.h  \
 
 HEADERS +=	turtle/p3turtle.h \
 			turtle/rsturtleitem.h \
@@ -480,7 +502,6 @@ HEADERS +=	turtle/p3turtle.h \
 HEADERS +=	util/folderiterator.h \
 			util/rsdebug.h \
 			util/rsmemory.h \
-			util/rscompress.h \
 			util/smallobject.h \
 			util/rsdir.h \
 			util/rsdiscspace.h \
@@ -497,14 +518,14 @@ HEADERS +=	util/folderiterator.h \
 			util/rsversioninfo.h \
 			util/rswin.h \
 			util/rsrandom.h \
-			util/pugiconfig.h \  
 			util/rsmemcache.h \
 			util/rstickevent.h \
 			util/rsrecogn.h \
 			util/rstime.h \
             util/stacktrace.h \
             util/rsdeprecate.h \
-            util/cxx11retrocompat.h
+            util/cxx11retrocompat.h \
+            util/rsurl.h
 
 SOURCES +=	ft/ftchunkmap.cc \
 			ft/ftcontroller.cc \
@@ -518,7 +539,10 @@ SOURCES +=	ft/ftchunkmap.cc \
             ft/ftturtlefiletransferitem.cc
 
 SOURCES += crypto/chacha20.cpp \
-			  crypto/hashstream.cc
+			crypto/rsaes.cc \
+			crypto/hashstream.cc\
+			  crypto/hashstream.cc \
+			  crypto/rscrypto.cpp
 
 SOURCES += chat/distantchat.cc \
 			  chat/p3chatservice.cc \
@@ -537,7 +561,6 @@ SOURCES +=	pqi/authgpg.cc \
 			pqi/p3netmgr.cc \
 			pqi/p3notify.cc \
 			pqi/pqiqos.cc \
-			pqi/pqiarchive.cc \
 			pqi/pqibin.cc \
 			pqi/pqihandler.cc \
 			pqi/p3historymgr.cc \
@@ -632,7 +655,6 @@ SOURCES +=	turtle/p3turtle.cc \
 SOURCES +=	util/folderiterator.cc \
 			util/rsdebug.cc \
 			util/rsexpr.cc \
-			util/rscompress.cc \
 			util/smallobject.cc \
 			util/rsdir.cc \
 			util/rsmemory.cc \
@@ -645,12 +667,11 @@ SOURCES +=	util/folderiterator.cc \
 			util/rsstring.cc \
 			util/rsthreads.cc \
 			util/rsversioninfo.cc \
-			util/rswin.cc \
-			util/rsaes.cc \
 			util/rsrandom.cc \
 			util/rstickevent.cc \
 			util/rsrecogn.cc \
-			util/rstime.cc
+            util/rstime.cc \
+            util/rsurl.cc
 
 ## Added for retrocompatibility remove ASAP
 isEmpty(RS_UPNP_LIB) {
@@ -705,6 +726,7 @@ HEADERS += rsitems/rsnxsitems.h \
 	gxs/rsgxs.h \
 	gxs/rsdataservice.h \
 	gxs/rsgxsnetservice.h \
+	gxs/rsgxsnettunnel.h \
 	retroshare/rsgxsflags.h \
 	retroshare/rsgxsifacetypes.h \
 	gxs/rsgenexchange.h \
@@ -730,6 +752,7 @@ SOURCES += rsitems/rsnxsitems.cc \
 	gxs/rsdataservice.cc \
 	gxs/rsgenexchange.cc \
 	gxs/rsgxsnetservice.cc \
+	gxs/rsgxsnettunnel.cc \
 	gxs/rsgxsdata.cc \
 	rsitems/rsgxsitems.cc \
 	gxs/rsgxsdataaccess.cc \
@@ -902,8 +925,9 @@ rs_jsonapi {
     SOURCES += jsonapi/jsonapi.cpp
 }
 
-
-
+rs_deep_search {
+    HEADERS += deep_search/deep_search.h
+}
 
 ###########################################################################################################
 # OLD CONFIG OPTIONS.

@@ -1,30 +1,26 @@
+/*******************************************************************************
+ * libretroshare/src/retroshare: rspeers.h                                     *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2004-2008 by Robert Fernie <retroshare@lunamutt.com>              *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #ifndef RETROSHARE_PEER_GUI_INTERFACE_H
 #define RETROSHARE_PEER_GUI_INTERFACE_H
-
-/*
- * libretroshare/src/rsiface: rspeer.h
- *
- * RetroShare C++ Interface.
- *
- * Copyright 2004-2008 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
 
 #include <inttypes.h>
 #include <string>
@@ -33,6 +29,7 @@
 #include <retroshare/rstypes.h>
 #include <retroshare/rsfiles.h>
 #include <retroshare/rsids.h>
+#include "util/rsurl.h"
 
 /* The Main Interface Class - for information about your Peers
  * A peer is another RS instance, means associated with an SSL certificate
@@ -370,6 +367,7 @@ public:
 	virtual bool setHiddenNode(const RsPeerId &id, const std::string &address, uint16_t port) = 0;
 	virtual bool isHiddenNode(const RsPeerId &id) = 0;
 
+	virtual bool addPeerLocator(const RsPeerId &ssl_id, const RsUrl& locator) = 0;
 	virtual	bool setLocalAddress(const RsPeerId &ssl_id, const std::string &addr, uint16_t port) = 0;
 	virtual	bool setExtAddress(  const RsPeerId &ssl_id, const std::string &addr, uint16_t port) = 0;
 	virtual	bool setDynDNS(const RsPeerId &id, const std::string &addr) = 0;
@@ -384,11 +382,30 @@ public:
 	virtual bool resetOwnExternalAddressList() = 0;
 	virtual bool getAllowServerIPDetermination() = 0 ;
 
+	/**
+	 * @brief Get RetroShare invite of the given peer
+	 * @param[in] sslId Id of the peer of which we want to generate an invite
+	 * @param[in] includeSignatures true to add key signatures to the invite
+	 * @param[in] includeExtraLocators false to avoid to add extra locators
+	 * @return invite string
+	 */
+	virtual std::string GetRetroshareInvite(
+	        const RsPeerId& sslId, bool includeSignatures = false,
+	        bool includeExtraLocators = true ) = 0;
+
+	/**
+	 * @brief Get RetroShare invite of our own peer
+	 * @param[in] includeSignatures true to add key signatures to the invite
+	 * @param[in] includeExtraLocators false to avoid to add extra locators
+	 * @return invite string
+	 */
+	virtual	std::string GetRetroshareInvite(
+	        bool includeSignatures = false,
+	        bool includeExtraLocators = true ) = 0;
+
 	/* Auth Stuff */
-	virtual	std::string GetRetroshareInvite(const RsPeerId& ssl_id,bool include_signatures) = 0;
 	virtual	std::string getPGPKey(const RsPgpId& pgp_id,bool include_signatures) = 0;
 	virtual bool GetPGPBase64StringAndCheckSum(const RsPgpId& gpg_id,std::string& gpg_base64_string,std::string& gpg_base64_checksum) = 0;
-	virtual	std::string GetRetroshareInvite(bool include_signatures) = 0;
 	virtual  bool hasExportMinimal() = 0;
 
 	// Add keys to the keyring

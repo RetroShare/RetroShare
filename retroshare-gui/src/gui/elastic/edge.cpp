@@ -42,7 +42,7 @@
 #include <QPainter>
 
 #include "edge.h"
-#include "node.h"
+#include "elnode.h"
 
 #include <math.h>
 

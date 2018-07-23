@@ -1,31 +1,26 @@
-#ifndef RETROSHARE_GXS_CHANNEL_GUI_INTERFACE_H
-#define RETROSHARE_GXS_CHANNEL_GUI_INTERFACE_H
-
-/*
- * libretroshare/src/retroshare: rsgxschannel.h
- *
- * RetroShare C++ Interface.
- *
- * Copyright (C) 2012 by Robert Fernie.
- * Copyright (C) 2018  Gioacchino Mazzurco <gio@eigenlab.org>
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2.1 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
+#pragma once
+/*******************************************************************************
+ * libretroshare/src/retroshare: rsgxschannels.h                               *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2012-2012 by Robert Fernie <retroshare@lunamutt.com>              *
+ * Copyright (C) 2018  Gioacchino Mazzurco <gio@eigenlab.org>                  *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include <inttypes.h>
 #include <string>
@@ -35,7 +30,7 @@
 #include "retroshare/rsgxsifacehelper.h"
 #include "retroshare/rsgxscommon.h"
 #include "serialiser/rsserializable.h"
-
+#include "retroshare/rsturtle.h"
 
 class RsGxsChannels;
 
@@ -145,10 +140,10 @@ public:
 	 * TODO: change the orrible const uint32_t &token to uint32_t token
 	 * TODO: create a new typedef for token so code is easier to read
 	 */
+
 	virtual bool getGroupData(const uint32_t &token, std::vector<RsGxsChannelGroup> &groups) = 0;
 	virtual bool getPostData(const uint32_t &token, std::vector<RsGxsChannelPost> &posts, std::vector<RsGxsComment> &cmts) = 0;
 	virtual bool getPostData(const uint32_t &token, std::vector<RsGxsChannelPost> &posts) = 0;
-
 
 	virtual void setMessageReadStatus(
 	        uint32_t& token, const RsGxsGrpMsgIdPair& msgId, bool read) = 0;
@@ -270,6 +265,16 @@ public:
 	 * @return false on error, true otherwise
 	 */
 	virtual bool ExtraFileRemove(const RsFileHash& hash) = 0;
-};
 
-#endif
+	//////////////////////////////////////////////////////////////////////////////
+    ///                     Distant synchronisation methods                    ///
+    //////////////////////////////////////////////////////////////////////////////
+    ///
+	virtual TurtleRequestId turtleGroupRequest(const RsGxsGroupId& group_id)=0;
+	virtual TurtleRequestId turtleSearchRequest(const std::string& match_string)=0;
+	virtual bool retrieveDistantSearchResults(TurtleRequestId req, std::map<RsGxsGroupId, RsGxsGroupSummary> &results) =0;
+	virtual bool clearDistantSearchResults(TurtleRequestId req)=0;
+	virtual bool retrieveDistantGroup(const RsGxsGroupId& group_id,RsGxsChannelGroup& distant_group)=0;
+
+	//////////////////////////////////////////////////////////////////////////////
+};
