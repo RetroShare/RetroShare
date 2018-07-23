@@ -38,8 +38,6 @@
 #include "util/imageutil.h"
 #include "util/rstime.h"
 
-// #define USE_CMARK
-
 #ifdef USE_CMARK
 //Include for CMark
 // This needs to be fixed: use system library if available, etc.
