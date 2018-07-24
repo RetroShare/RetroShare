@@ -19,7 +19,12 @@
 #include <string>
 #include <memory>
 #include <restbed>
-#include <rapid_json/document.h>
+
+#ifdef HAS_RAPIDJSON
+ #include <rapidjson/document.h>
+#else
+ #include <rapid_json/document.h>
+#endif // HAS_RAPIDJSON
 
 #include "retroshare/rsgxschannels.h"
 #include "serialiser/rstypeserializer.h"

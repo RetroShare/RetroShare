@@ -2,7 +2,7 @@
 
 TEMPLATE = app
 QT     += network xml 
-CONFIG += qt gui uic qrc resources idle cmark
+CONFIG += qt gui uic qrc resources idle 
 CONFIG += console
 TARGET = retroshare
 DEFINES += TARGET=\\\"$${TARGET}\\\"
@@ -1371,6 +1371,7 @@ gxsgui {
 }
 
 cmark {
+  DEFINES *= USE_CMARK
 
   HEADERS += \
     ../../supportlibs/cmark/src/buffer.h								 \

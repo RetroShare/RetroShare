@@ -38,9 +38,12 @@
 #include "util/imageutil.h"
 #include "util/rstime.h"
 
+#ifdef USE_CMARK
 //Include for CMark
+// This needs to be fixed: use system library if available, etc.
 #include <gui/../../../supportlibs/cmark/src/cmark.h>
 #include <gui/../../../supportlibs/cmark/src/node.h>
+#endif
 
 #include <iostream>
 
@@ -586,6 +589,7 @@ QString RsHtml::formatText(QTextDocument *textDocument, const QString &text, ulo
 	// Save Space and Tab because doc loose it.
 	formattedText=saveSpace(formattedText);
 
+#ifdef USE_CMARK
 	if (flag & RSHTML_FORMATTEXT_USE_CMARK) {
 		// Transform html to plain text
 		QTextBrowser textBrowser;
@@ -608,6 +612,7 @@ QString RsHtml::formatText(QTextDocument *textDocument, const QString &text, ulo
 		textBrowser.setHtml(formattedText);
 		formattedText=textBrowser.toHtml();
 	}
+#endif
 
 	QString errorMsg; int errorLine; int errorColumn;
 
