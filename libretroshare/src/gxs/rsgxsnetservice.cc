@@ -5279,7 +5279,7 @@ bool RsGxsNetService::search( const std::string& substring,
 
 #ifdef RS_DEEP_SEARCH
 	std::vector<DeepSearch::SearchResult> results;
-	DeepSearch::search(substring, results, 0);
+	DeepSearch::search(substring, results);
 
 	for(auto dsr : results)
 	{
