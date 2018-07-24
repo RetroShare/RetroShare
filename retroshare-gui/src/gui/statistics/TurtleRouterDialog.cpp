@@ -10,6 +10,7 @@
 #include <QPainter>
 #include <QStylePainter>
 #include <algorithm> // for sort
+#include <time.h>
 
 #include "gui/settings/rsharesettings.h"
 
