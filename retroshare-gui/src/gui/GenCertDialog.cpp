@@ -620,7 +620,7 @@ void GenCertDialog::genPerson()
 	std::string err;
 	this->hide();//To show dialog asking password PGP Key.
 	std::cout << "RsAccounts::GenerateSSLCertificate" << std::endl;
-	bool okGen = RsAccounts::GenerateSSLCertificate(PGPId, "", genLoc, "", isHiddenLoc, sslPasswd, sslId, err);
+	bool okGen = RsAccounts::createNewAccount(PGPId, "", genLoc, "", isHiddenLoc, sslPasswd, sslId, err);
 
 	if (okGen)
 	{

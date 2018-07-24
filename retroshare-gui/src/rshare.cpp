@@ -748,7 +748,7 @@ void Rshare::loadStyleSheet(const QString &sheetName)
                 /* external stylesheet */
                 file.setFileName(QString("%1/qss/%2%3.qss").arg(QString::fromUtf8(RsAccounts::ConfigDirectory().c_str()), name, sheetName));
                 if (!file.exists()) {
-                    file.setFileName(QString("%1/qss/%2%3.qss").arg(QString::fromUtf8(RsAccounts::DataDirectory().c_str()), name, sheetName));
+                    file.setFileName(QString("%1/qss/%2%3.qss").arg(QString::fromUtf8(RsAccounts::systemDataDirectory().c_str()), name, sheetName));
                 }
             }
             if (file.open(QFile::ReadOnly)) {
@@ -787,7 +787,7 @@ void Rshare::getAvailableStyleSheets(QMap<QString, QString> &styleSheets)
 			styleSheets.insert(name, name);
 		}
 	}
-	fileInfoList = QDir(QString::fromUtf8(RsAccounts::DataDirectory().c_str()) + "/qss/").entryInfoList(QStringList("*.qss"));
+	fileInfoList = QDir(QString::fromUtf8(RsAccounts::systemDataDirectory().c_str()) + "/qss/").entryInfoList(QStringList("*.qss"));
 	foreach (fileInfo, fileInfoList) {
 		if (fileInfo.isFile()) {
 			QString name = fileInfo.baseName();

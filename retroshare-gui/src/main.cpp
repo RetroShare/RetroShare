@@ -349,48 +349,57 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 
 	SoundManager::create();
 
-#ifdef RETROTOR
-	// Now that we know the Tor service running, and we know the SSL id, we can make sure it provides a viable hidden service
+    bool is_hidden_node = false;
+    bool is_auto_tor = false ;
+    bool is_first_time = false ;
 
-	QString tor_hidden_service_dir = QString::fromStdString(RsAccounts::AccountDirectory()) + QString("/hidden_service/") ;
+    RsAccounts::getCurrentAccountOptions(is_hidden_node,is_auto_tor,is_first_time);
 
-	Tor::TorManager *torManager = Tor::TorManager::instance();
-	torManager->setDataDirectory(Rshare::dataDirectory() + QString("/tor/"));
-	torManager->setHiddenServiceDirectory(tor_hidden_service_dir);	// re-set it, because now it's changed to the specific location that is run
-
-	RsDirUtil::checkCreateDirectory(std::string(tor_hidden_service_dir.toUtf8())) ;
-
-	torManager->setupHiddenService();
-
-	if(! torManager->start() || torManager->hasError())
+#ifdef UNFINISHED
+    if(RsAccounts::AccountType() == RS_ACCOUNT_TYPE_HIDDEN_TOR_AUTO)
 	{
-		QMessageBox::critical(NULL,QObject::tr("Cannot start Tor Manager!"),QObject::tr("Tor cannot be started on your system: \n\n")+torManager->errorMessage()) ;
-		return 1 ;
-	}
+		// Now that we know the Tor service running, and we know the SSL id, we can make sure it provides a viable hidden service
 
-	{
-		TorControlDialog tcd(torManager) ;
-		QString error_msg ;
-		tcd.show();
+		QString tor_hidden_service_dir = QString::fromStdString(RsAccounts::AccountDirectory()) + QString("/hidden_service/") ;
 
-		while(tcd.checkForTor(error_msg) != TorControlDialog::TOR_STATUS_OK || tcd.checkForHiddenService() != TorControlDialog::HIDDEN_SERVICE_STATUS_OK)	// runs until some status is reached: either tor works, or it fails.
+		Tor::TorManager *torManager = Tor::TorManager::instance();
+		torManager->setDataDirectory(Rshare::dataDirectory() + QString("/tor/"));
+		torManager->setHiddenServiceDirectory(tor_hidden_service_dir);	// re-set it, because now it's changed to the specific location that is run
+
+		RsDirUtil::checkCreateDirectory(std::string(tor_hidden_service_dir.toUtf8())) ;
+
+		torManager->setupHiddenService();
+
+		if(! torManager->start() || torManager->hasError())
 		{
-			QCoreApplication::processEvents();
-			rstime::rs_usleep(0.2*1000*1000) ;
-
-			if(!error_msg.isNull())
-			{
-				QMessageBox::critical(NULL,QObject::tr("Cannot start Tor"),QObject::tr("Sorry but Tor cannot be started on your system!\n\nThe error reported is:\"")+error_msg+"\"") ;
-				return 1;
-			}
+			QMessageBox::critical(NULL,QObject::tr("Cannot start Tor Manager!"),QObject::tr("Tor cannot be started on your system: \n\n")+torManager->errorMessage()) ;
+			return 1 ;
 		}
 
-		tcd.hide();
-
-		if(tcd.checkForHiddenService() != TorControlDialog::HIDDEN_SERVICE_STATUS_OK)
 		{
-			QMessageBox::critical(NULL,QObject::tr("Cannot start a hidden tor service!"),QObject::tr("It was not possible to start a hidden service.")) ;
-			return 1 ;
+			TorControlDialog tcd(torManager) ;
+			QString error_msg ;
+			tcd.show();
+
+			while(tcd.checkForTor(error_msg) != TorControlDialog::TOR_STATUS_OK || tcd.checkForHiddenService() != TorControlDialog::HIDDEN_SERVICE_STATUS_OK)	// runs until some status is reached: either tor works, or it fails.
+			{
+				QCoreApplication::processEvents();
+				rstime::rs_usleep(0.2*1000*1000) ;
+
+				if(!error_msg.isNull())
+				{
+					QMessageBox::critical(NULL,QObject::tr("Cannot start Tor"),QObject::tr("Sorry but Tor cannot be started on your system!\n\nThe error reported is:\"")+error_msg+"\"") ;
+					return 1;
+				}
+			}
+
+			tcd.hide();
+
+			if(tcd.checkForHiddenService() != TorControlDialog::HIDDEN_SERVICE_STATUS_OK)
+			{
+				QMessageBox::critical(NULL,QObject::tr("Cannot start a hidden tor service!"),QObject::tr("It was not possible to start a hidden service.")) ;
+				return 1 ;
+			}
 		}
 	}
 #endif

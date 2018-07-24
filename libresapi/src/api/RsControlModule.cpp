@@ -539,7 +539,7 @@ void RsControlModule::handleCreateLocation(Request &req, Response &resp)
 		mPassword = pgp_password;
 		mFixedPassword = pgp_password;
 	}
-    bool ssl_ok = RsAccounts::GenerateSSLCertificate(pgp_id, "", ssl_name, "", hidden_port!=0, ssl_password, ssl_id, err_string);
+    bool ssl_ok = RsAccounts::createNewAccount(pgp_id, "", ssl_name, "", hidden_port!=0, ssl_password, ssl_id, err_string);
 
     // clear fixed password to restore normal password operation
 //    {

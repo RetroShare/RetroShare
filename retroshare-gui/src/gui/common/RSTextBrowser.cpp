@@ -107,7 +107,7 @@ QVariant RSTextBrowser::loadResource(int type, const QUrl &name)
 		if(fi.exists() && fi.isFile()) {
 			QString cpath = fi.canonicalFilePath();
 			if (cpath.startsWith(QDir(QString::fromUtf8(RsAccounts::ConfigDirectory().c_str())).canonicalPath(),Qt::CaseInsensitive)
-					|| cpath.startsWith(QDir(QString::fromUtf8(RsAccounts::DataDirectory().c_str())).canonicalPath(),Qt::CaseInsensitive))
+					|| cpath.startsWith(QDir(QString::fromUtf8(RsAccounts::systemDataDirectory().c_str())).canonicalPath(),Qt::CaseInsensitive))
 				return QTextBrowser::loadResource(type, name);
 		}}
 

@@ -216,7 +216,7 @@ QTranslator* VOIPPlugin::qt_translator(QApplication */*app*/, const QString& lan
 
 void VOIPPlugin::qt_sound_events(SoundEvents &events) const
 {
-	QDir baseDir = QDir(QString::fromUtf8(RsAccounts::DataDirectory().c_str()) + "/sounds");
+	QDir baseDir = QDir(QString::fromUtf8(RsAccounts::systemDataDirectory().c_str()) + "/sounds");
 
 	events.addEvent(QApplication::translate("VOIP", "VOIP")
 	                , QApplication::translate("VOIP", "Incoming audio call")

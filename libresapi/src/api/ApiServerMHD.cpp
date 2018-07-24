@@ -94,7 +94,7 @@ namespace resource_api{
 
 std::string getDefaultDocroot()
 {
-    return RsAccounts::DataDirectory(false) + "/webui";
+    return RsAccounts::systemDataDirectory(false) + "/webui";
 }
 
 const char* API_ENTRY_PATH = "/api/v2";
