@@ -41,6 +41,8 @@ struct DeepSearch
 	};
 
 	/**
+	 * @param[in] maxResults maximum number of acceptable search results, 0 for
+	 * no limits
 	 * @return search results count
 	 */
 	static uint32_t search( const std::string& queryStr,
@@ -49,8 +51,24 @@ struct DeepSearch
 	{
 		results.clear();
 
+		Xapian::Database db;
+
 		// Open the database we're going to search.
-		Xapian::Database db(dbPath());
+		try { db = Xapian::Database(dbPath()); }
+		catch(Xapian::DatabaseOpeningError e)
+		{
+			std::cerr << __PRETTY_FUNCTION__ << " " << e.get_msg()
+			          << ", probably nothing has been indexed yet."<< std::endl;
+			return 0;
+		}
+		catch(Xapian::DatabaseError e)
+		{
+			std::cerr << __PRETTY_FUNCTION__ << " " << e.get_msg()
+			          << " this is fishy, maybe " << dbPath()
+			          << " has been corrupted (deleting it may help in that "
+			          << "case without loosing data)" << std::endl;
+			return 0;
+		}
 
 		// Set up a QueryParser with a stemmer and suitable prefixes.
 		Xapian::QueryParser queryparser;
@@ -68,7 +86,8 @@ struct DeepSearch
 		Xapian::Enquire enquire(db);
 		enquire.set_query(query);
 
-		Xapian::MSet mset = enquire.get_mset(0, maxResults);
+		Xapian::MSet mset = enquire.get_mset(
+		            0, maxResults ? maxResults : db.get_doccount() );
 
 		for ( Xapian::MSetIterator m = mset.begin(); m != mset.end(); ++m )
 		{
