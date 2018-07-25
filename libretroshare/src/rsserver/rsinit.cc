@@ -1574,10 +1574,6 @@ int RsServer::StartupRetroShare()
 	else
 		rsBanList = NULL ;
 
-#ifdef RS_USE_BITDHT
-	mBitDht->setupPeerSharer(mBanList);
-#endif
-
 	p3BandwidthControl *mBwCtrl = new p3BandwidthControl(pqih);
 	pqih -> addService(mBwCtrl, true); 
 
@@ -1593,6 +1589,8 @@ int RsServer::StartupRetroShare()
     if(!RsAccounts::isHiddenNode())
 	{
 #ifdef RS_USE_BITDHT
+		mBitDht->setupPeerSharer(mBanList);
+
 		mNetMgr->addNetAssistConnect(1, mBitDht);
 		mNetMgr->addNetListener(mDhtStack);
 		mNetMgr->addNetListener(mProxyStack);
@@ -1649,7 +1647,7 @@ int RsServer::StartupRetroShare()
 	mConfigMgr->addConfiguration("p3Status.cfg"    , mStatusSrv);
 	mConfigMgr->addConfiguration("turtle.cfg"      , tr);
 
-    if(!RsAccounts::isHiddenNode())
+    if(mBanList != NULL)
 		mConfigMgr->addConfiguration("banlist.cfg"     , mBanList);
 
 	mConfigMgr->addConfiguration("servicecontrol.cfg", serviceCtrl);
@@ -1659,7 +1657,8 @@ int RsServer::StartupRetroShare()
 #endif
 
 #ifdef RS_USE_BITDHT
-	mConfigMgr->addConfiguration("bitdht.cfg"      , mBitDht);
+    if(mBitDht != NULL)
+		mConfigMgr->addConfiguration("bitdht.cfg"      , mBitDht);
 #endif
 
 #ifdef RS_ENABLE_GXS
@@ -1886,7 +1885,8 @@ int RsServer::StartupRetroShare()
 
 	//mDhtMgr->start();
 #ifdef RS_USE_BITDHT
-	mBitDht->start();
+    if(mBitDht != NULL)
+		mBitDht->start();
 #endif
 
 	/**************************************************************************/

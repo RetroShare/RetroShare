@@ -64,11 +64,12 @@
 
 // Tabs numbers *after* non relevant tabs are removed. So do not use them to add/remove tabs!!
 const static uint32_t TAB_HIDDEN_SERVICE_OUTGOING = 0;
-const static uint32_t TAB_HIDDEN_SERVICE_INCOMING = 2;
+const static uint32_t TAB_HIDDEN_SERVICE_INCOMING = 1;
+const static uint32_t TAB_HIDDEN_SERVICE_I2P_BOB  = 2;
 
 const static uint32_t TAB_NETWORK                 = 0;
-const static uint32_t TAB_IP_FILTERS              = 1;
-const static uint32_t TAB_HIDDEN_SERVICE          = 2;
+const static uint32_t TAB_HIDDEN_SERVICE          = 1;
+const static uint32_t TAB_IP_FILTERS              = 2;
 const static uint32_t TAB_RELAYS                  = 3;
 
 //#define SERVER_DEBUG 1
@@ -85,10 +86,11 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
   {
   	// Here we use absolute numbers instead of consts defined above, because the consts correspond to the tab number *after* this tab removal.
 
-	ui.tabWidget->removeTab(3) ;	// remove relays. Not useful in Tor mode.
-	ui.tabWidget->removeTab(1) ;	// remove IP filters. Not useful in Tor mode.
+	ui.tabWidget->removeTab(TAB_RELAYS) ;		// remove relays. Not useful in Tor mode.
+	ui.tabWidget->removeTab(TAB_IP_FILTERS) ;	// remove IP filters. Not useful in Tor mode.
 
-	ui.hiddenServiceTab->removeTab(1) ; // remove the Automatic I2P/BOB tab
+	ui.hiddenServiceTab->removeTab(TAB_HIDDEN_SERVICE_I2P_BOB) ; // remove the Automatic I2P/BOB tab
+
 	ui.hiddenpage_proxyAddress_i2p->hide() ;
 	ui.hiddenpage_proxyLabel_i2p->hide() ;
 	ui.hiddenpage_proxyPort_i2p->hide() ;
@@ -130,7 +132,6 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
     for(std::list<std::string>::const_iterator it(ip_servers.begin());it!=ip_servers.end();++it)
         ui.IPServersLV->addItem(QString::fromStdString(*it)) ;
 
-    ui.hiddenServiceTab->setTabEnabled(TAB_HIDDEN_SERVICE_INCOMING, false);
     ui.gbBob->setEnabled(false);
     ui.swBobAdvanced->setCurrentIndex(0);
 
@@ -333,8 +334,8 @@ void ServerPage::load()
     if (mIsHiddenNode)
     {
         mHiddenType = detail.hiddenType;
-        ui.tabWidget->setTabEnabled(TAB_IP_FILTERS,false) ; // ip filter
-		ui.tabWidget->setTabEnabled(TAB_RELAYS,false) ; // relay
+        //ui.tabWidget->setTabEnabled(TAB_IP_FILTERS,false) ; // ip filter
+		//ui.tabWidget->setTabEnabled(TAB_RELAYS,false) ; // relay
         loadHiddenNode();
         return;
     }
