@@ -195,10 +195,10 @@ GenCertDialog::GenCertDialog(bool onlyGenerateIdentity, QWidget *parent)
 	ui.nodeType_CB->setCurrentIndex(1);
 	ui.nodeType_CB->setEnabled(false);
 #endif
-#ifdef RETROTOR
-	ui.adv_checkbox->setChecked(false);
-	ui.adv_checkbox->setVisible(true);
-#endif
+//#ifdef RETROTOR
+//	ui.adv_checkbox->setChecked(false);
+//	ui.adv_checkbox->setVisible(true);
+//#endif
 
 	initKeyList();
     setupState();
@@ -258,12 +258,7 @@ void GenCertDialog::mouseMoveEvent(QMouseEvent *e)
 void GenCertDialog::setupState()
 {
 	bool adv_state = ui.adv_checkbox->isChecked();
-
-#ifdef RETROTOR
-	bool retrotor = true ;
-#else
 	bool retrotor = false ;
-#endif
 
     if(!adv_state)
     {

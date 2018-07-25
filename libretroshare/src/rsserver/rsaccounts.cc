@@ -67,11 +67,8 @@ RsAccountsDetail::RsAccountsDetail() : mAccountsLocked(false), mPreferredId("")
 bool RsAccountsDetail::loadAccounts()
 {
 	int failing_accounts ;
-#ifdef RETROTOR
-	getAvailableAccounts(mAccounts,failing_accounts,mUnsupportedKeys,true);
-#else
+#warning we might need some switch here for hidden nodes only
 	getAvailableAccounts(mAccounts,failing_accounts,mUnsupportedKeys,false);
-#endif
 
 	loadPreferredAccount();
 	checkPreferredId();
@@ -612,7 +609,7 @@ bool RsAccountsDetail::getAvailableAccounts(std::map<RsPeerId, AccountDetails> &
 			valid_prefix = true;
 			hidden_location = true;
 
-            auto_tor = RsDirUtil::checkDirectory(PathDataDirectory()+"/hidden_service");
+            auto_tor = RsDirUtil::checkDirectory(mBaseDirectory+"/"+*it+"/hidden_service");
 		}
 		else
 		{
@@ -1370,6 +1367,34 @@ bool    RsAccounts::GetPreferredAccountId(RsPeerId &id)
 bool RsAccounts::getCurrentAccountOptions(bool& is_hidden,bool& is_tor_auto,bool& is_first_time)
 {
     return rsAccounts->getCurrentAccountOptions(is_hidden,is_tor_auto,is_first_time);
+}
+bool RsAccounts::isHiddenNode()
+{
+    bool hidden = false ;
+    bool is_tor_only = false ;
+    bool is_first_time = false ;
+
+    if(!getCurrentAccountOptions(hidden,is_tor_only,is_first_time))
+    {
+        std::cerr << "(EE) Critical problem: RsAccounts::getCurrentAccountOptions() called but no account chosen!" << std::endl;
+        throw std::runtime_error("inconsistent configuration") ;
+    }
+
+    return hidden ;
+}
+bool RsAccounts::isTorAuto()
+{
+    bool hidden = false ;
+    bool is_tor_only = false ;
+    bool is_first_time = false ;
+
+    if(!getCurrentAccountOptions(hidden,is_tor_only,is_first_time))
+    {
+        std::cerr << "(EE) Critical problem: RsAccounts::getCurrentAccountOptions() called but no account chosen!" << std::endl;
+        throw std::runtime_error("inconsistent configuration") ;
+    }
+
+    return is_tor_only ;
 }
 
 bool    RsAccounts::GetAccountIds(std::list<RsPeerId> &ids)

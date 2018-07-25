@@ -181,6 +181,8 @@ public:
     static bool getCurrentAccountOptions(bool& is_hidden,bool& is_tor_auto,bool& is_first_time) ;
 
 	static bool checkCreateAccountDirectory();		// Generate the hierarchy of directories below ~/.retroshare/[SSL dir]/
+    static bool isHiddenNode() ;                    // true if the running node is a hidden node. Used to choose which services to start.
+    static bool isTorAuto() ;                       // true if the running node is a hidden node using automated Tor management
 
 	static std::string AccountDirectory();			// linux: ~/.retroshare/[SSL dir]/
 	static std::string AccountKeysDirectory();		// linux: ~/.retroshare/[SSL dir]/keys/

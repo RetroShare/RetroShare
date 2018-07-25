@@ -657,7 +657,7 @@ int RsInit::LoadCertificates(bool autoLoginNT)
 bool RsInit::RsClearAutoLogin()
 {
 	RsPeerId preferredId;
-	if (!rsAccounts->getPreferredAccountId(preferredId))
+	if (!RsAccounts::getSelectedAccountId(preferredId))
 	{
 		std::cerr << "RsInit::RsClearAutoLogin() No Account Selected" << std::endl;
 		return 0;
@@ -817,11 +817,8 @@ RsGRouter *rsGRouter = NULL ;
 #include "pqi/p3linkmgr.h"
 #include "pqi/p3netmgr.h"
 	
-#ifndef RETROTOR
 #include "tcponudp/tou.h"
 #include "tcponudp/rsudpstack.h"
-#endif
-
 	
 #ifdef RS_USE_BITDHT
 #include "dht/p3bitdht.h"
@@ -868,6 +865,17 @@ RsControl *RsControl::instance()
 
 int RsServer::StartupRetroShare()
 {
+	RsPeerId ownId = AuthSSL::getAuthSSL()->OwnId();
+
+    std::cerr << "========================================================================" << std::endl;
+    std::cerr << "==                 RsInit:: starting up Retroshare core               ==" << std::endl;
+    std::cerr << "==                                                                    ==" << std::endl;
+    std::cerr << "== Account/SSL ID        : " << ownId << "           ==" << std::endl;
+    std::cerr << "== Node type             : " << (RsAccounts::isHiddenNode()?"Hidden":"Normal") << "                                     ==" << std::endl;
+    if(RsAccounts::isHiddenNode())
+	std::cerr << "== Tor/I2P configuration : " << (RsAccounts::isTorAuto()?"Tor Auto":"Manual  ") << "                                   ==" << std::endl;
+    std::cerr << "========================================================================" << std::endl;
+
 	/**************************************************************************/
 	/* STARTUP procedure */
 	/**************************************************************************/
@@ -882,8 +890,6 @@ int RsServer::StartupRetroShare()
 		std::cerr << std::endl;
 		return false ;
 	}
-
-	RsPeerId ownId = AuthSSL::getAuthSSL()->OwnId();
 
 	/**************************************************************************/
 	/* Any Initial Configuration (Commandline Options)  */
@@ -981,36 +987,40 @@ int RsServer::StartupRetroShare()
 	sockaddr_clear(&tmpladdr);
 	tmpladdr.sin_port = htons(rsInitConfig->port);
 
+	rsUdpStack *mDhtStack = NULL ;
 
+    if(!RsAccounts::isHiddenNode())
+	{
 #ifdef LOCALNET_TESTING
 
-	rsUdpStack *mDhtStack = new rsUdpStack(UDP_TEST_RESTRICTED_LAYER, tmpladdr);
+		mDhtStack = new rsUdpStack(UDP_TEST_RESTRICTED_LAYER, tmpladdr);
 
-	/* parse portRestrictions */
-	unsigned int lport, uport;
+		/* parse portRestrictions */
+		unsigned int lport, uport;
 
-	if (doPortRestrictions)
-	{
-		if (2 == sscanf(portRestrictions.c_str(), "%u-%u", &lport, &uport))
+		if (doPortRestrictions)
 		{
-			std::cerr << "Adding Port Restriction (" << lport << "-" << uport << ")";
-			std::cerr << std::endl;
-		}
-		else
-		{
-			std::cerr << "Failed to parse Port Restrictions ... exiting";
-			std::cerr << std::endl;
-			exit(1);
-		}
+			if (2 == sscanf(portRestrictions.c_str(), "%u-%u", &lport, &uport))
+			{
+				std::cerr << "Adding Port Restriction (" << lport << "-" << uport << ")";
+				std::cerr << std::endl;
+			}
+			else
+			{
+				std::cerr << "Failed to parse Port Restrictions ... exiting";
+				std::cerr << std::endl;
+				exit(1);
+			}
 
-		RestrictedUdpLayer *url = (RestrictedUdpLayer *) mDhtStack->getUdpLayer();
-		url->addRestrictedPortRange(lport, uport);
-	}
+			RestrictedUdpLayer *url = (RestrictedUdpLayer *) mDhtStack->getUdpLayer();
+			url->addRestrictedPortRange(lport, uport);
+		}
 #else //LOCALNET_TESTING
 #ifdef RS_USE_BITDHT
-	rsUdpStack *mDhtStack = new rsUdpStack(tmpladdr);
+		mDhtStack = new rsUdpStack(tmpladdr);
 #endif
 #endif //LOCALNET_TESTING
+	}
 
 #ifdef RS_USE_BITDHT
 
@@ -1090,96 +1100,105 @@ int RsServer::StartupRetroShare()
 	/* construct the rest of the stack, important to build them in the correct order! */
 	/* MOST OF THIS IS COMMENTED OUT UNTIL THE REST OF libretroshare IS READY FOR IT! */
 
-	UdpSubReceiver *udpReceivers[RSUDP_NUM_TOU_RECVERS];
-	int udpTypes[RSUDP_NUM_TOU_RECVERS];
+	p3BitDht *mBitDht = NULL ;
+	rsDht = NULL ;
+	rsFixedUdpStack *mProxyStack = NULL ;
 
-#ifdef RS_USE_DHT_STUNNER
-	// FIRST DHT STUNNER.
-	UdpStunner *mDhtStunner = new UdpStunner(mDhtStack);
-	mDhtStunner->setTargetStunPeriod(300); /* slow (5mins) */
-	mDhtStack->addReceiver(mDhtStunner);
-
-#ifdef LOCALNET_TESTING
-	mDhtStunner->SetAcceptLocalNet();
-#endif
-#endif // RS_USE_DHT_STUNNER
-
-
-	// NEXT BITDHT.
-	p3BitDht *mBitDht = new p3BitDht(ownId, mLinkMgr, mNetMgr, mDhtStack, bootstrapfile, filteredipfile);
-
-	/* install external Pointer for Interface */
-	rsDht = mBitDht;
-
-	// NEXT THE RELAY (NEED to keep a reference for installing RELAYS)
-	UdpRelayReceiver *mRelay = new UdpRelayReceiver(mDhtStack); 
-	udpReceivers[RSUDP_TOU_RECVER_RELAY_IDX] = mRelay; /* RELAY Connections (DHT Port) */
-	udpTypes[RSUDP_TOU_RECVER_RELAY_IDX] = TOU_RECEIVER_TYPE_UDPRELAY;
-	mDhtStack->addReceiver(udpReceivers[RSUDP_TOU_RECVER_RELAY_IDX]);
-
-	// LAST ON THIS STACK IS STANDARD DIRECT TOU
-	udpReceivers[RSUDP_TOU_RECVER_DIRECT_IDX] = new UdpPeerReceiver(mDhtStack);  /* standard DIRECT Connections (DHT Port) */
-	udpTypes[RSUDP_TOU_RECVER_DIRECT_IDX] = TOU_RECEIVER_TYPE_UDPPEER;
-	mDhtStack->addReceiver(udpReceivers[RSUDP_TOU_RECVER_DIRECT_IDX]);
-
-	// NOW WE BUILD THE SECOND STACK.
-	// Create the Second UdpStack... Port should be random (but openable!).
-	// We do this by binding to xx.xx.xx.xx:0 which which gives us a random port.
-
-	struct sockaddr_in sndladdr;
-	sockaddr_clear(&sndladdr);
-
-#ifdef LOCALNET_TESTING
-
-	// 	// HACK Proxy Port near Dht Port - For Relay Testing.
-	// 	uint16_t rndport = rsInitConfig->port + 3;
-	// 	sndladdr.sin_port = htons(rndport);
-
-	rsFixedUdpStack *mProxyStack = new rsFixedUdpStack(UDP_TEST_RESTRICTED_LAYER, sndladdr);
-
-	/* portRestrictions already parsed */
-	if (doPortRestrictions)
+    if(!RsAccounts::isHiddenNode())
 	{
-		RestrictedUdpLayer *url = (RestrictedUdpLayer *) mProxyStack->getUdpLayer();
-		url->addRestrictedPortRange(lport, uport);
-	}
-#else
-	rsFixedUdpStack *mProxyStack = new rsFixedUdpStack(sndladdr);
-#endif
+		UdpSubReceiver *udpReceivers[RSUDP_NUM_TOU_RECVERS];
+		int udpTypes[RSUDP_NUM_TOU_RECVERS];
 
 #ifdef RS_USE_DHT_STUNNER
-	// FIRSTLY THE PROXY STUNNER.
-	UdpStunner *mProxyStunner = new UdpStunner(mProxyStack);
-	mProxyStunner->setTargetStunPeriod(300); /* slow (5mins) */
-	mProxyStack->addReceiver(mProxyStunner);
+		// FIRST DHT STUNNER.
+		UdpStunner *mDhtStunner = new UdpStunner(mDhtStack);
+		mDhtStunner->setTargetStunPeriod(300); /* slow (5mins) */
+		mDhtStack->addReceiver(mDhtStunner);
 
 #ifdef LOCALNET_TESTING
-	mProxyStunner->SetAcceptLocalNet();
+		mDhtStunner->SetAcceptLocalNet();
 #endif
 #endif // RS_USE_DHT_STUNNER
 
 
-	// FINALLY THE PROXY UDP CONNECTIONS
-	udpReceivers[RSUDP_TOU_RECVER_PROXY_IDX] = new UdpPeerReceiver(mProxyStack); /* PROXY Connections (Alt UDP Port) */	
-	udpTypes[RSUDP_TOU_RECVER_PROXY_IDX] = TOU_RECEIVER_TYPE_UDPPEER;	
-	mProxyStack->addReceiver(udpReceivers[RSUDP_TOU_RECVER_PROXY_IDX]);
+		// NEXT BITDHT.
 
-	// REAL INITIALISATION - WITH THREE MODES
-	tou_init((void **) udpReceivers, udpTypes, RSUDP_NUM_TOU_RECVERS);
+
+		mBitDht = new p3BitDht(ownId, mLinkMgr, mNetMgr, mDhtStack, bootstrapfile, filteredipfile);
+
+		// NEXT THE RELAY (NEED to keep a reference for installing RELAYS)
+		UdpRelayReceiver *mRelay = new UdpRelayReceiver(mDhtStack);
+		udpReceivers[RSUDP_TOU_RECVER_RELAY_IDX] = mRelay; /* RELAY Connections (DHT Port) */
+		udpTypes[RSUDP_TOU_RECVER_RELAY_IDX] = TOU_RECEIVER_TYPE_UDPRELAY;
+		mDhtStack->addReceiver(udpReceivers[RSUDP_TOU_RECVER_RELAY_IDX]);
+
+		// LAST ON THIS STACK IS STANDARD DIRECT TOU
+		udpReceivers[RSUDP_TOU_RECVER_DIRECT_IDX] = new UdpPeerReceiver(mDhtStack);  /* standard DIRECT Connections (DHT Port) */
+		udpTypes[RSUDP_TOU_RECVER_DIRECT_IDX] = TOU_RECEIVER_TYPE_UDPPEER;
+		mDhtStack->addReceiver(udpReceivers[RSUDP_TOU_RECVER_DIRECT_IDX]);
+
+		/* install external Pointer for Interface */
+		rsDht = mBitDht;
+
+		// NOW WE BUILD THE SECOND STACK.
+		// Create the Second UdpStack... Port should be random (but openable!).
+		// We do this by binding to xx.xx.xx.xx:0 which which gives us a random port.
+
+		struct sockaddr_in sndladdr;
+		sockaddr_clear(&sndladdr);
+
+#ifdef LOCALNET_TESTING
+
+		// 	// HACK Proxy Port near Dht Port - For Relay Testing.
+		// 	uint16_t rndport = rsInitConfig->port + 3;
+		// 	sndladdr.sin_port = htons(rndport);
+
+		mProxyStack = new rsFixedUdpStack(UDP_TEST_RESTRICTED_LAYER, sndladdr);
+
+		/* portRestrictions already parsed */
+		if (doPortRestrictions)
+		{
+			RestrictedUdpLayer *url = (RestrictedUdpLayer *) mProxyStack->getUdpLayer();
+			url->addRestrictedPortRange(lport, uport);
+		}
+#else
+		mProxyStack = new rsFixedUdpStack(sndladdr);
+#endif
 
 #ifdef RS_USE_DHT_STUNNER
-	mBitDht->setupConnectBits(mDhtStunner, mProxyStunner, mRelay);
+		// FIRSTLY THE PROXY STUNNER.
+		UdpStunner *mProxyStunner = new UdpStunner(mProxyStack);
+		mProxyStunner->setTargetStunPeriod(300); /* slow (5mins) */
+		mProxyStack->addReceiver(mProxyStunner);
+
+#ifdef LOCALNET_TESTING
+		mProxyStunner->SetAcceptLocalNet();
+#endif
+#endif // RS_USE_DHT_STUNNER
+
+
+		// FINALLY THE PROXY UDP CONNECTIONS
+		udpReceivers[RSUDP_TOU_RECVER_PROXY_IDX] = new UdpPeerReceiver(mProxyStack); /* PROXY Connections (Alt UDP Port) */
+		udpTypes[RSUDP_TOU_RECVER_PROXY_IDX] = TOU_RECEIVER_TYPE_UDPPEER;
+		mProxyStack->addReceiver(udpReceivers[RSUDP_TOU_RECVER_PROXY_IDX]);
+
+		// REAL INITIALISATION - WITH THREE MODES
+		tou_init((void **) udpReceivers, udpTypes, RSUDP_NUM_TOU_RECVERS);
+
+#ifdef RS_USE_DHT_STUNNER
+		mBitDht->setupConnectBits(mDhtStunner, mProxyStunner, mRelay);
 #else // RS_USE_DHT_STUNNER
-	mBitDht->setupConnectBits(mRelay);
+		mBitDht->setupConnectBits(mRelay);
 #endif // RS_USE_DHT_STUNNER
 
 #ifdef RS_USE_DHT_STUNNER
-	mNetMgr->setAddrAssist(new stunAddrAssist(mDhtStunner), new stunAddrAssist(mProxyStunner));
+		mNetMgr->setAddrAssist(new stunAddrAssist(mDhtStunner), new stunAddrAssist(mProxyStunner));
 #endif // RS_USE_DHT_STUNNER
-// #else //RS_USE_BITDHT
-// 	/* install NULL Pointer for rsDht Interface */
-// 	rsDht = NULL;
+		// #else //RS_USE_BITDHT
+		// 	/* install NULL Pointer for rsDht Interface */
+		// 	rsDht = NULL;
 #endif //RS_USE_BITDHT
+	}
 
 
 	/**************************** BITDHT ***********************************/
@@ -1210,7 +1229,7 @@ int RsServer::StartupRetroShare()
 	std::vector<std::string> plugins_directories ;
 
 #ifdef __APPLE__
-	plugins_directories.push_back(rsAccounts->PathDataDirectory()) ;
+	plugins_directories.push_back(RsAccounts::systemPathDataDirectory()) ;
 #endif
 #if !defined(WINDOWS_SYS) && defined(PLUGIN_DIR)
 	plugins_directories.push_back(std::string(PLUGIN_DIR)) ;
@@ -1543,13 +1562,17 @@ int RsServer::StartupRetroShare()
 #endif
 
 	// new services to test.
-#ifndef RETROTOR
-    p3BanList *mBanList = new p3BanList(serviceCtrl, mNetMgr);
-    rsBanList = mBanList ;
-	pqih -> addService(mBanList, true);
-#else
-    rsBanList = NULL ;
-#endif
+
+	p3BanList *mBanList = NULL;
+
+	if(!RsAccounts::isHiddenNode())
+	{
+		mBanList = new p3BanList(serviceCtrl, mNetMgr);
+		rsBanList = mBanList ;
+		pqih -> addService(mBanList, true);
+	}
+	else
+		rsBanList = NULL ;
 
 #ifdef RS_USE_BITDHT
 	mBitDht->setupPeerSharer(mBanList);
@@ -1567,30 +1590,32 @@ int RsServer::StartupRetroShare()
 
 	/**************************************************************************/
 
+    if(!RsAccounts::isHiddenNode())
+	{
 #ifdef RS_USE_BITDHT
-	mNetMgr->addNetAssistConnect(1, mBitDht);
-	mNetMgr->addNetListener(mDhtStack); 
-	mNetMgr->addNetListener(mProxyStack); 
-
+		mNetMgr->addNetAssistConnect(1, mBitDht);
+		mNetMgr->addNetListener(mDhtStack);
+		mNetMgr->addNetListener(mProxyStack);
 #endif
 
 #ifdef RS_ENABLE_ZEROCONF
-	p3ZeroConf *mZeroConf = new p3ZeroConf(
-			AuthGPG::getAuthGPG()->getGPGOwnId(), ownId, 
-			mLinkMgr, mNetMgr, mPeerMgr);
-	mNetMgr->addNetAssistConnect(2, mZeroConf);
-	mNetMgr->addNetListener(mZeroConf); 
+		p3ZeroConf *mZeroConf = new p3ZeroConf(
+		            AuthGPG::getAuthGPG()->getGPGOwnId(), ownId,
+		            mLinkMgr, mNetMgr, mPeerMgr);
+		mNetMgr->addNetAssistConnect(2, mZeroConf);
+		mNetMgr->addNetListener(mZeroConf);
 #endif
 
 #ifdef RS_ENABLE_ZCNATASSIST
-	// Apple's UPnP & NAT-PMP assistance.
-	p3zcNatAssist *mZcNatAssist = new p3zcNatAssist();
-	mNetMgr->addNetAssistFirewall(1, mZcNatAssist);
+		// Apple's UPnP & NAT-PMP assistance.
+		p3zcNatAssist *mZcNatAssist = new p3zcNatAssist();
+		mNetMgr->addNetAssistFirewall(1, mZcNatAssist);
 #else
-	// Original UPnP Interface.
-	pqiNetAssistFirewall *mUpnpMgr = new upnphandler();
-	mNetMgr->addNetAssistFirewall(1, mUpnpMgr);
+		// Original UPnP Interface.
+		pqiNetAssistFirewall *mUpnpMgr = new upnphandler();
+		mNetMgr->addNetAssistFirewall(1, mUpnpMgr);
 #endif
+	}
 
 	/**************************************************************************/
 	/* need to Monitor too! */
@@ -1623,9 +1648,10 @@ int RsServer::StartupRetroShare()
 	mConfigMgr->addConfiguration("p3History.cfg"   , mHistoryMgr);
 	mConfigMgr->addConfiguration("p3Status.cfg"    , mStatusSrv);
 	mConfigMgr->addConfiguration("turtle.cfg"      , tr);
-#ifndef RETROTOR
-	mConfigMgr->addConfiguration("banlist.cfg"     , mBanList);
-#endif
+
+    if(!RsAccounts::isHiddenNode())
+		mConfigMgr->addConfiguration("banlist.cfg"     , mBanList);
+
 	mConfigMgr->addConfiguration("servicecontrol.cfg", serviceCtrl);
 	mConfigMgr->addConfiguration("reputations.cfg" , mReputations);
 #ifdef ENABLE_GROUTER
@@ -1895,6 +1921,10 @@ int RsServer::StartupRetroShare()
 
 	/* Startup this thread! */
 	start("rs main") ;
+
+    std::cerr << "========================================================================" << std::endl;
+    std::cerr << "==                 RsInit:: Retroshare core started                   ==" << std::endl;
+    std::cerr << "========================================================================" << std::endl;
 
 	return 1;
 }

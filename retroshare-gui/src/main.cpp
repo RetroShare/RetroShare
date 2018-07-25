@@ -51,10 +51,8 @@
 #	include "gui/settings/WebuiPage.h"
 #endif
 
-#ifdef RETROTOR
-#	include "TorControl/TorManager.h"
-#	include "TorControl/TorControlWindow.h"
-#endif
+#include "TorControl/TorManager.h"
+#include "TorControl/TorControlWindow.h"
 
 #include "retroshare/rsidentity.h"
 #include "retroshare/rspeers.h"
@@ -355,8 +353,7 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 
     RsAccounts::getCurrentAccountOptions(is_hidden_node,is_auto_tor,is_first_time);
 
-#ifdef UNFINISHED
-    if(RsAccounts::AccountType() == RS_ACCOUNT_TYPE_HIDDEN_TOR_AUTO)
+    if(is_auto_tor)
 	{
 		// Now that we know the Tor service running, and we know the SSL id, we can make sure it provides a viable hidden service
 
@@ -402,7 +399,6 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 			}
 		}
 	}
-#endif
 
 	QSplashScreen splashScreen(QPixmap(":/images/logo/logo_splash.png")/* , Qt::WindowStaysOnTopHint*/);
 
@@ -418,33 +414,35 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 		return 1;
 	}
 
-#ifdef RETROTOR
-	// Tor works with viable hidden service. Let's use it!
+    if(is_auto_tor)
+	{
+		// Tor works with viable hidden service. Let's use it!
 
-	QString service_id ;
-	QString onion_address ;
-	uint16_t service_port ;
-	uint16_t service_target_port ;
-	uint16_t proxy_server_port ;
-	QHostAddress service_target_address ;
-	QHostAddress proxy_server_address ;
+		QString service_id ;
+		QString onion_address ;
+		uint16_t service_port ;
+		uint16_t service_target_port ;
+		uint16_t proxy_server_port ;
+		QHostAddress service_target_address ;
+		QHostAddress proxy_server_address ;
 
-	torManager->getHiddenServiceInfo(service_id,onion_address,service_port,service_target_address,service_target_port);
-	torManager->getProxyServerInfo(proxy_server_address,proxy_server_port) ;
+		Tor::TorManager *torManager = Tor::TorManager::instance();
+		torManager->getHiddenServiceInfo(service_id,onion_address,service_port,service_target_address,service_target_port);
+		torManager->getProxyServerInfo(proxy_server_address,proxy_server_port) ;
 
-	std::cerr << "Got hidden service info: " << std::endl;
-	std::cerr << "  onion address  : " << onion_address.toStdString() << std::endl;
-	std::cerr << "  service_id     : " << service_id.toStdString() << std::endl;
-	std::cerr << "  service port   : " << service_port << std::endl;
-	std::cerr << "  target port    : " << service_target_port << std::endl;
-	std::cerr << "  target address : " << service_target_address.toString().toStdString() << std::endl;
+		std::cerr << "Got hidden service info: " << std::endl;
+		std::cerr << "  onion address  : " << onion_address.toStdString() << std::endl;
+		std::cerr << "  service_id     : " << service_id.toStdString() << std::endl;
+		std::cerr << "  service port   : " << service_port << std::endl;
+		std::cerr << "  target port    : " << service_target_port << std::endl;
+		std::cerr << "  target address : " << service_target_address.toString().toStdString() << std::endl;
 
-	std::cerr << "Setting proxy server to " << service_target_address.toString().toStdString() << ":" << service_target_port << std::endl;
+		std::cerr << "Setting proxy server to " << service_target_address.toString().toStdString() << ":" << service_target_port << std::endl;
 
-	rsPeers->setLocalAddress(rsPeers->getOwnId(), service_target_address.toString().toStdString(), service_target_port);
-	rsPeers->setHiddenNode(rsPeers->getOwnId(), onion_address.toStdString(), service_port);
-	rsPeers->setProxyServer(RS_HIDDEN_TYPE_TOR, proxy_server_address.toString().toStdString(),proxy_server_port) ;
-#endif
+		rsPeers->setLocalAddress(rsPeers->getOwnId(), service_target_address.toString().toStdString(), service_target_port);
+		rsPeers->setHiddenNode(rsPeers->getOwnId(), onion_address.toStdString(), service_port);
+		rsPeers->setProxyServer(RS_HIDDEN_TYPE_TOR, proxy_server_address.toString().toStdString(),proxy_server_port) ;
+	}
 
 	Rshare::initPlugins();
 

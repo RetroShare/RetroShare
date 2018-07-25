@@ -29,11 +29,12 @@
 
 #include <iostream>
 
-#include <retroshare/rsbanlist.h>
-#include <retroshare/rsconfig.h>
-#include <retroshare/rsdht.h>
-#include <retroshare/rspeers.h>
-#include <retroshare/rsturtle.h>
+#include "retroshare/rsbanlist.h"
+#include "retroshare/rsconfig.h"
+#include "retroshare/rsdht.h"
+#include "retroshare/rspeers.h"
+#include "retroshare/rsturtle.h"
+#include "retroshare/rsinit.h"
 
 #include <QCheckBox>
 #include <QMovie>
@@ -62,15 +63,6 @@
 ///
 
 // Tabs numbers *after* non relevant tabs are removed. So do not use them to add/remove tabs!!
-#ifdef RETROTOR
-static const uint32_t TAB_HIDDEN_SERVICE_OUTGOING = 0;
-static const uint32_t TAB_HIDDEN_SERVICE_INCOMING = 1;
-
-static const uint32_t TAB_NETWORK                 = 0;
-static const uint32_t TAB_HIDDEN_SERVICE          = 1;
-static const uint32_t TAB_IP_FILTERS              = 99;	// This is a trick: these tabs do not exist, so enabling/disabling them has no effect
-static const uint32_t TAB_RELAYS                  = 99;
-#else
 const static uint32_t TAB_HIDDEN_SERVICE_OUTGOING = 0;
 const static uint32_t TAB_HIDDEN_SERVICE_INCOMING = 2;
 
@@ -78,7 +70,6 @@ const static uint32_t TAB_NETWORK                 = 0;
 const static uint32_t TAB_IP_FILTERS              = 1;
 const static uint32_t TAB_HIDDEN_SERVICE          = 2;
 const static uint32_t TAB_RELAYS                  = 3;
-#endif
 
 //#define SERVER_DEBUG 1
 
@@ -90,7 +81,8 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
 
   manager = NULL ;
 
-#ifdef RETROTOR
+  if(RsAccounts::isTorAuto())
+  {
   	// Here we use absolute numbers instead of consts defined above, because the consts correspond to the tab number *after* this tab removal.
 
 	ui.tabWidget->removeTab(3) ;	// remove relays. Not useful in Tor mode.
@@ -109,7 +101,8 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
 
 	ui.hiddenpage_outHeader->setText(tr("Tor has been automatically configured by Retroshare. You shouldn't need to change anything here.")) ;
 	ui.hiddenpage_inHeader->setText(tr("Tor has been automatically configured by Retroshare. You shouldn't need to change anything here.")) ;
-#endif
+  }
+
     ui.filteredIpsTable->setHorizontalHeaderItem(COLUMN_RANGE,new QTableWidgetItem(tr("IP Range"))) ;
     ui.filteredIpsTable->setHorizontalHeaderItem(COLUMN_STATUS,new QTableWidgetItem(tr("Status"))) ;
     ui.filteredIpsTable->setHorizontalHeaderItem(COLUMN_ORIGIN,new QTableWidgetItem(tr("Origin"))) ;
