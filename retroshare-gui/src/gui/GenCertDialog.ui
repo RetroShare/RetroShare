@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>569</width>
-    <height>426</height>
+    <width>978</width>
+    <height>826</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -50,10 +50,7 @@
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QVBoxLayout" name="profileframeVLayout">
-      <property name="leftMargin">
-       <number>9</number>
-      </property>
+     <layout class="QVBoxLayout" name="verticalLayout">
       <item>
        <widget class="QLabel" name="RSLabel">
         <property name="text">
@@ -71,7 +68,32 @@
        </widget>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="toolBarHLayout">
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QComboBox" name="nodeType_CB">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <item>
+           <property name="text">
+            <string>Standard node</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Hidden node (over Tor)</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Hidden node (Tor/I2P - Manually configured)</string>
+           </property>
+          </item>
+         </widget>
+        </item>
         <item>
          <spacer name="toolBarHSpacer">
           <property name="orientation">
@@ -109,6 +131,19 @@
          </widget>
         </item>
        </layout>
+      </item>
+      <item>
+       <widget class="QLabel" name="nodeTypeExplanation_TE">
+        <property name="text">
+         <string>TextLabel</string>
+        </property>
+        <property name="textFormat">
+         <enum>Qt::RichText</enum>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
       </item>
       <item>
        <widget class="QGroupBox" name="profile_groupBox">
@@ -231,26 +266,6 @@
              <property name="text">
               <string/>
              </property>
-            </widget>
-           </item>
-           <item row="15" column="2">
-            <widget class="QComboBox" name="nodeType_CB">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <item>
-              <property name="text">
-               <string>Standard node</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>TOR/I2P Hidden node</string>
-              </property>
-             </item>
             </widget>
            </item>
            <item row="5" column="2">
@@ -666,28 +681,6 @@
              </property>
              <property name="pixmap">
               <pixmap resource="icons.qrc">:/icons/svg/hidden.svg</pixmap>
-             </property>
-             <property name="scaledContents">
-              <bool>true</bool>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item row="15" column="1">
-            <widget class="QLabel" name="label_nodeType">
-             <property name="maximumSize">
-              <size>
-               <width>24</width>
-               <height>24</height>
-              </size>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-             <property name="pixmap">
-              <pixmap resource="icons.qrc">:/icons/svg/netgraph.svg</pixmap>
              </property>
              <property name="scaledContents">
               <bool>true</bool>

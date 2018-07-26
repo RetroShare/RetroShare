@@ -258,26 +258,34 @@ void GenCertDialog::mouseMoveEvent(QMouseEvent *e)
 void GenCertDialog::setupState()
 {
 	bool adv_state = ui.adv_checkbox->isChecked();
-	bool retrotor = false ;
 
     if(!adv_state)
     {
         ui.reuse_existing_node_CB->setChecked(false) ;
-        ui.nodeType_CB->setCurrentIndex(retrotor?1:0) ;
         ui.keylength_comboBox->setCurrentIndex(0) ;
     }
-	bool hidden_state = ui.nodeType_CB->currentIndex()==1;
+	bool hidden_state = ui.nodeType_CB->currentIndex()==1 || ui.nodeType_CB->currentIndex()==2;
     bool generate_new = !ui.reuse_existing_node_CB->isChecked();
+    bool tor_auto = ui.nodeType_CB->currentIndex()==1;
 
 	genNewGPGKey = generate_new;
+
+    switch(ui.nodeType_CB->currentIndex())
+    {
+    case 0: ui.nodeTypeExplanation_TE->setText(tr("<b>Your IP is visible to trusted nodes only. You can optionally connect to hidden nodes if running Tor on your machine.</b>"));
+        break;
+    case 1: ui.nodeTypeExplanation_TE->setText(tr("<b>Your IP is hidden. All traffic happens over the Tor network. Best choice if you cannot trust friend nodes with your own IP.</b>"));
+        break;
+    case 2: ui.nodeTypeExplanation_TE->setText(tr("<b>Hidden node for advanced users only, that allows to use other proxy solutions such as I2P.</b>"));
+        break;
+    }
 
 	//ui.no_node_label->setVisible(false);
 
 	setWindowTitle(generate_new?tr("Create new profile and new Retroshare node"):tr("Create new Retroshare node"));
 	//ui.headerFrame->setHeaderText(generate_new?tr("Create a new profile and node"):tr("Create a new node"));
 
-    ui.label_nodeType->setVisible(adv_state && !retrotor) ;
-    ui.nodeType_CB->setVisible(adv_state && !retrotor) ;
+    ui.nodeType_CB->setVisible(true);
     ui.reuse_existing_node_CB->setEnabled(adv_state) ;
     ui.importIdentity_PB->setVisible(adv_state && !generate_new) ;
     ui.exportIdentity_PB->setVisible(adv_state && !generate_new) ;
@@ -313,13 +321,13 @@ void GenCertDialog::setupState()
 	ui.entropy_bar->setVisible(true);
 	ui.genButton->setVisible(true);
 
-	ui.hiddenaddr_input->setVisible(hidden_state && !retrotor);
-	ui.hiddenaddr_label->setVisible(hidden_state && !retrotor);
+	ui.hiddenaddr_input->setVisible(hidden_state && !tor_auto);
+	ui.hiddenaddr_label->setVisible(hidden_state && !tor_auto);
 
-	ui.hiddenport_label->setVisible(hidden_state && !retrotor);
-	ui.hiddenport_spinBox->setVisible(hidden_state && !retrotor);
+	ui.hiddenport_label->setVisible(hidden_state && !tor_auto);
+	ui.hiddenport_spinBox->setVisible(hidden_state && !tor_auto);
 
-	ui.cbUseBob->setVisible(hidden_state && !retrotor);
+	ui.cbUseBob->setVisible(hidden_state && !tor_auto);
 
 	if(!mAllFieldsOk)
 	{
