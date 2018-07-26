@@ -136,7 +136,7 @@ GenCertDialog::GenCertDialog(bool onlyGenerateIdentity, QWidget *parent)
 	//ui.headerFrame->setHeaderText(tr("Create a new profile"));
 
 	connect(ui.reuse_existing_node_CB, SIGNAL(triggered()), this, SLOT(switchReuseExistingNode()));
-	connect(ui.adv_checkbox, SIGNAL(triggered()), this, SLOT(setupState()));
+	connect(ui.adv_checkbox, SIGNAL(toggled(bool)), this, SLOT(setupState()));
 	connect(ui.nodeType_CB, SIGNAL(currentIndexChanged(int)), this, SLOT(setupState()));
 
 	connect(ui.genButton, SIGNAL(clicked()), this, SLOT(genPerson()));
@@ -181,10 +181,10 @@ GenCertDialog::GenCertDialog(bool onlyGenerateIdentity, QWidget *parent)
 	 * mark last one as default.
 	 */
 	 
-	QMenu *menu = new QMenu(tr("Advanced options"));
-	menu->addAction(ui.adv_checkbox);
-	menu->addAction(ui.reuse_existing_node_CB);
-    ui.optionsButton->setMenu(menu);
+	//QMenu *menu = new QMenu(tr("Advanced options"));
+	//menu->addAction(ui.adv_checkbox);
+	//menu->addAction(ui.reuse_existing_node_CB);
+ //   ui.optionsButton->setMenu(menu);
 
     mAllFieldsOk = false ;
     mEntropyOk = false ;
@@ -263,7 +263,14 @@ void GenCertDialog::setupState()
     {
         ui.reuse_existing_node_CB->setChecked(false) ;
         ui.keylength_comboBox->setCurrentIndex(0) ;
+//        ui.nodeType_CB->setCurrentIndex(0);
     }
+	ui.reuse_existing_node_CB->setVisible(adv_state) ;
+
+//    ui.nodeType_CB->setVisible(adv_state) ;
+//    ui.nodeType_LB->setVisible(adv_state) ;
+//    ui.nodeTypeExplanation_TE->setVisible(adv_state) ;
+
 	bool hidden_state = ui.nodeType_CB->currentIndex()==1 || ui.nodeType_CB->currentIndex()==2;
     bool generate_new = !ui.reuse_existing_node_CB->isChecked();
     bool tor_auto = ui.nodeType_CB->currentIndex()==1;
@@ -272,11 +279,11 @@ void GenCertDialog::setupState()
 
     switch(ui.nodeType_CB->currentIndex())
     {
-    case 0: ui.nodeTypeExplanation_TE->setText(tr("<b>Your IP is visible to trusted nodes only. You can optionally connect to hidden nodes if running Tor on your machine.</b>"));
+    case 0: ui.nodeTypeExplanation_TE->setText(tr("<b>Your IP is visible to trusted nodes only. You can also connect to hidden nodes if running Tor on your machine. Best choice for sharing with trusted friends.</b>"));
         break;
     case 1: ui.nodeTypeExplanation_TE->setText(tr("<b>Your IP is hidden. All traffic happens over the Tor network. Best choice if you cannot trust friend nodes with your own IP.</b>"));
         break;
-    case 2: ui.nodeTypeExplanation_TE->setText(tr("<b>Hidden node for advanced users only, that allows to use other proxy solutions such as I2P.</b>"));
+    case 2: ui.nodeTypeExplanation_TE->setText(tr("<b>Hidden node for advanced users only. Allows to use other proxy solutions such as I2P.</b>"));
         break;
     }
 
@@ -285,7 +292,6 @@ void GenCertDialog::setupState()
 	setWindowTitle(generate_new?tr("Create new profile and new Retroshare node"):tr("Create new Retroshare node"));
 	//ui.headerFrame->setHeaderText(generate_new?tr("Create a new profile and node"):tr("Create a new node"));
 
-    ui.nodeType_CB->setVisible(true);
     ui.reuse_existing_node_CB->setEnabled(adv_state) ;
     ui.importIdentity_PB->setVisible(adv_state && !generate_new) ;
     ui.exportIdentity_PB->setVisible(adv_state && !generate_new) ;
