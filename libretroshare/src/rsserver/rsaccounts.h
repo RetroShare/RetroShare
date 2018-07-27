@@ -87,7 +87,7 @@ class RsAccountsDetail
 
         // Generate a new account based on a given PGP key returns its SSL id and sets it to be the preferred account.
 
-		bool GenerateSSLCertificate(const RsPgpId& gpg_id,  const std::string& org, const std::string& loc,  const std::string& country, const bool ishiddenloc,  const std::string& passwd, RsPeerId &sslId,  std::string &errString);
+		bool GenerateSSLCertificate(const RsPgpId& gpg_id,  const std::string& org, const std::string& loc,  const std::string& country, bool ishiddenloc,  bool is_auto_tor,const std::string& passwd, RsPeerId &sslId,  std::string &errString);
 
 		// PGP Accounts.
 

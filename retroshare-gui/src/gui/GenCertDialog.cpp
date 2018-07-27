@@ -34,6 +34,7 @@
 
 #include <rshare.h>
 #include "gui/settings/rsharesettings.h"
+#include "TorControl/TorManager.h"
 #include "util/misc.h"
 
 #include <retroshare/rsidentity.h>
@@ -479,7 +480,6 @@ void GenCertDialog::genPerson()
 	/* Check the data from the GUI. */
 	std::string genLoc  = ui.node_input->text().toUtf8().constData();
 	RsPgpId PGPId;
-	bool isHiddenLoc = false;
 
 	if(ui.nickname_input->isVisible())
 	{
@@ -512,18 +512,26 @@ void GenCertDialog::genPerson()
 		}
 	}
 
-	if (ui.nodeType_CB->currentIndex()==1)
+	bool isHiddenLoc = (ui.nodeType_CB->currentIndex()>0);
+    bool isAutoTor = (ui.nodeType_CB->currentIndex()==1);
+
+    if(isAutoTor && !Tor::TorManager::isTorAvailable())
+    {
+        QMessageBox::critical(this,tr("Tor is not available"),tr("No Tor executable has been found on your system. You need to install Tor before creating a hidden identity.")) ;
+        return ;
+    }
+
+    if(isHiddenLoc)
 	{
 		std::string hl = ui.hiddenaddr_input->text().toStdString();
 		uint16_t port  = ui.hiddenport_spinBox->value();
+
 		bool useBob    = ui.cbUseBob->isChecked();
 
 		if (useBob && hl.empty())
 			hl = "127.0.0.1";
 
 		RsInit::SetHiddenLocation(hl, port, useBob);	/* parses it */
-
-		isHiddenLoc = true;
 	}
 
 
@@ -629,7 +637,7 @@ void GenCertDialog::genPerson()
 	std::string err;
 	this->hide();//To show dialog asking password PGP Key.
 	std::cout << "RsAccounts::GenerateSSLCertificate" << std::endl;
-	bool okGen = RsAccounts::createNewAccount(PGPId, "", genLoc, "", isHiddenLoc, sslPasswd, sslId, err);
+	bool okGen = RsAccounts::createNewAccount(PGPId, "", genLoc, "", isHiddenLoc, isAutoTor, sslPasswd, sslId, err);
 
 	if (okGen)
 	{

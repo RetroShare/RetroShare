@@ -170,7 +170,7 @@ public:
 
 	static bool	GetAccountDetails(const RsPeerId &id, RsPgpId &gpgId, std::string &gpgName, std::string &gpgEmail, std::string &location);
 
-	static bool	createNewAccount(const RsPgpId& pgp_id, const std::string& org, const std::string& loc, const std::string& country, const bool ishiddenloc, const std::string& passwd, RsPeerId &sslId, std::string &errString);
+	static bool	createNewAccount(const RsPgpId& pgp_id, const std::string& org, const std::string& loc, const std::string& country, bool ishiddenloc,bool is_auto_tor, const std::string& passwd, RsPeerId &sslId, std::string &errString);
 
     static void storeSelectedAccount() ;
 

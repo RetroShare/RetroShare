@@ -988,7 +988,7 @@ bool RsAccountsDetail::copyGnuPGKeyrings()
 
 
                 /* Create SSL Certificates */
-bool     RsAccountsDetail::GenerateSSLCertificate(const RsPgpId& pgp_id, const std::string& org, const std::string& loc, const std::string& country, const bool ishiddenloc, const std::string& passwd, RsPeerId &sslId, std::string &errString)
+bool     RsAccountsDetail::GenerateSSLCertificate(const RsPgpId& pgp_id, const std::string& org, const std::string& loc, const std::string& country, bool ishiddenloc,bool isautotor, const std::string& passwd, RsPeerId &sslId, std::string &errString)
 {
 	/* select the PGP Identity first */
 	if (!SelectPGPAccount(pgp_id))
@@ -1141,6 +1141,7 @@ bool     RsAccountsDetail::GenerateSSLCertificate(const RsPgpId& pgp_id, const s
 
 	newAccount.mLocation = loc;
 	newAccount.mIsHiddenLoc = ishiddenloc;
+	newAccount.mIsAutoTor = isautotor;
 
 	newAccount.mFirstRun = true;
 
@@ -1409,9 +1410,9 @@ bool    RsAccounts::GetAccountDetails(const RsPeerId &id,
 	return rsAccounts->getCurrentAccountDetails(id, pgpId, pgpName, pgpEmail, location);
 }
 
-bool    RsAccounts::createNewAccount(const RsPgpId& pgp_id, const std::string& org, const std::string& loc, const std::string& country, const bool ishiddenloc, const std::string& passwd, RsPeerId &sslId, std::string &errString)
+bool    RsAccounts::createNewAccount(const RsPgpId& pgp_id, const std::string& org, const std::string& loc, const std::string& country, bool ishiddenloc, bool isautotor, const std::string& passwd, RsPeerId &sslId, std::string &errString)
 {
-	return rsAccounts->GenerateSSLCertificate(pgp_id, org, loc, country, ishiddenloc, passwd, sslId, errString);
+	return rsAccounts->GenerateSSLCertificate(pgp_id, org, loc, country, ishiddenloc, isautotor, passwd, sslId, errString);
 }
 
 /*********************************************************************************

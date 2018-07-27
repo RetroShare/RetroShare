@@ -360,7 +360,7 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 		QString tor_hidden_service_dir = QString::fromStdString(RsAccounts::AccountDirectory()) + QString("/hidden_service/") ;
 
 		Tor::TorManager *torManager = Tor::TorManager::instance();
-		torManager->setDataDirectory(Rshare::dataDirectory() + QString("/tor/"));
+		torManager->setTorDataDirectory(Rshare::dataDirectory() + QString("/tor/"));
 		torManager->setHiddenServiceDirectory(tor_hidden_service_dir);	// re-set it, because now it's changed to the specific location that is run
 
 		RsDirUtil::checkCreateDirectory(std::string(tor_hidden_service_dir.toUtf8())) ;
