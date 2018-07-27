@@ -1229,7 +1229,7 @@ int RsServer::StartupRetroShare()
 	std::vector<std::string> plugins_directories ;
 
 #ifdef __APPLE__
-	plugins_directories.push_back(RsAccounts::systemPathDataDirectory()) ;
+	plugins_directories.push_back(RsAccounts::systemDataDirectory()) ;
 #endif
 #if !defined(WINDOWS_SYS) && defined(PLUGIN_DIR)
 	plugins_directories.push_back(std::string(PLUGIN_DIR)) ;
