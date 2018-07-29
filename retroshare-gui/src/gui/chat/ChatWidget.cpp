@@ -1487,7 +1487,11 @@ void ChatWidget::chooseFont()
 {
 	bool ok;
 	//Use NULL as parent as with this QFontDialog don't take care of title nether options.
+#ifdef NATIVEDIALOGS
+	QFont font = QFontDialog::getFont(&ok, currentFont, NULL, tr("Choose your font.")                                 );
+#else
 	QFont font = QFontDialog::getFont(&ok, currentFont, NULL, tr("Choose your font."),QFontDialog::DontUseNativeDialog);
+#endif
 	if (ok) {
 		currentFont = font;
 		setFont();

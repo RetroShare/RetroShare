@@ -415,7 +415,11 @@ ChatPage::load()
 void ChatPage::on_pushButtonChangeChatFont_clicked()
 {
 	bool ok;
+#ifdef NATIVEDIALOGS
+	QFont font = QFontDialog::getFont(&ok, fontTempChat, this, tr("Choose your default font for Chat.")                                 );
+#else
 	QFont font = QFontDialog::getFont(&ok, fontTempChat, this, tr("Choose your default font for Chat."),QFontDialog::DontUseNativeDialog);
+#endif
 	if (ok) {
 		fontTempChat = font;
 		// using fontTempChat.rawname() does not always work!

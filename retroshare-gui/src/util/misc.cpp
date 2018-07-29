@@ -315,7 +315,11 @@ bool misc::getOpenFileName(QWidget *parent, RshareSettings::enumLastDir type
 {
     QString lastDir = Settings->getLastDir(type);
 
+#ifdef NATIVEDIALOGS
+    file = QFileDialog::getOpenFileName(parent, caption, lastDir, filter, NULL, QFileDialog::DontResolveSymlinks |                                    options);
+#else
     file = QFileDialog::getOpenFileName(parent, caption, lastDir, filter, NULL, QFileDialog::DontResolveSymlinks | QFileDialog::DontUseNativeDialog | options);
+#endif
 
     if (file.isEmpty())
         return false;
@@ -338,7 +342,11 @@ bool misc::getOpenFileNames(QWidget *parent, RshareSettings::enumLastDir type
 {
     QString lastDir = Settings->getLastDir(type);
 
+#ifdef NATIVEDIALOGS
+    files = QFileDialog::getOpenFileNames(parent, caption, lastDir, filter, NULL, QFileDialog::DontResolveSymlinks |                                    options);
+#else
     files = QFileDialog::getOpenFileNames(parent, caption, lastDir, filter, NULL, QFileDialog::DontResolveSymlinks | QFileDialog::DontUseNativeDialog | options);
+#endif
 
     if (files.isEmpty())
         return false;
@@ -364,7 +372,11 @@ bool misc::getSaveFileName(QWidget *parent, RshareSettings::enumLastDir type
 {
     QString lastDir = Settings->getLastDir(type) + "/" + file;
 
+#ifdef NATIVEDIALOGS
+    file = QFileDialog::getSaveFileName(parent, caption, lastDir, filter, selectedFilter,                                    options);
+#else
     file = QFileDialog::getSaveFileName(parent, caption, lastDir, filter, selectedFilter, QFileDialog::DontUseNativeDialog | options);
+#endif
 
     if (file.isEmpty())
         return false;
