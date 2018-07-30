@@ -154,8 +154,9 @@ HEADERS = VOIPPlugin.h                 \
           gui/VOIPGUIHandler.h         \
           gui/VOIPNotify.h             \
           gui/VOIPToasterItem.h        \
-          gui/VOIPToasterNotify.h     \
-          interface/rsVOIP.h
+          gui/VOIPToasterNotify.h      \
+          interface/rsVOIP.h           \
+          util/backwardcompatibility.h
 
 FORMS   = gui/AudioInputConfig.ui      \
           gui/AudioStats.ui            \
