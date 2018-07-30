@@ -196,7 +196,6 @@ void* doExtAddrSearch(void *p)
 			af->mFoundTS = time(NULL) ;
 			af->mSearching = false ;
 		}
-		pthread_exit(NULL);
 		return NULL ;
 	}
 
@@ -213,7 +212,6 @@ void* doExtAddrSearch(void *p)
 			af->mFoundTS = time(NULL) ;
 			af->mSearching = false ;
 		}
-		pthread_exit(NULL);
 		return NULL ;
 	}
 
@@ -224,7 +222,6 @@ void* doExtAddrSearch(void *p)
 		af->mSearching = false ;
 	}
 
-	pthread_exit(NULL);
 	return NULL ;
 }
 
