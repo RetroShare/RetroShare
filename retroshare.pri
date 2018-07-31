@@ -340,6 +340,12 @@ rs_chatserver {
 
 rs_deep_search {
     DEFINES *= RS_DEEP_SEARCH
+
+	linux {
+	 exists("/usr/include/xapian-1.3") {
+	 	INCLUDEPATH += /usr/include/xapian-1.3
+	 }
+	}
 }
 
 debug {
