@@ -27,6 +27,7 @@
 #include "hash_cache.h"
 #include "filelist_io.h"
 #include "file_sharing_defaults.h"
+#include "retroshare/rsinit.h"
 
 //#define HASHSTORAGE_DEBUG 1
 
@@ -478,7 +479,7 @@ bool HashStorage::try_load_import_old_hash_cache()
 {
     // compute file name
 
-    std::string base_dir = rsAccounts->PathAccountDirectory();
+    std::string base_dir = RsAccounts::AccountDirectory();
     std::string old_cache_filename = base_dir + "/" + "file_cache.bin" ;
 
     // check for unencrypted

@@ -84,12 +84,13 @@
 #include "statusbar/ToasterDisable.h"
 #include "statusbar/SysTrayStatus.h"
 #include "statusbar/torstatus.h"
-#include <retroshare/rsstatus.h>
 
-#include <retroshare/rsiface.h>
-#include <retroshare/rspeers.h>
-#include <retroshare/rsfiles.h>
-#include <retroshare/rsnotify.h>
+#include "retroshare/rsstatus.h"
+#include "retroshare/rsiface.h"
+#include "retroshare/rspeers.h"
+#include "retroshare/rsfiles.h"
+#include "retroshare/rsnotify.h"
+#include "retroshare/rsinit.h"
 
 #include "gui/gxschannels/GxsChannelDialog.h"
 #include "gui/gxsforums/GxsForumsDialog.h"
@@ -250,14 +251,15 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
 
 	if(hiddenmode)
 	{
-#ifdef RETROTOR
-		torstatus = new TorStatus();
-		torstatus->setVisible(Settings->valueFromGroup("StatusBar", "ShowTor", QVariant(true)).toBool());
-		statusBar()->addWidget(torstatus);
-		torstatus->getTorStatus();
-#else
-		torstatus = NULL ;
-#endif
+        if(RsAccounts::isHiddenNode())
+		{
+			torstatus = new TorStatus();
+			torstatus->setVisible(Settings->valueFromGroup("StatusBar", "ShowTor", QVariant(true)).toBool());
+			statusBar()->addWidget(torstatus);
+			torstatus->getTorStatus();
+		}
+        else
+			torstatus = NULL ;
 
 		natstatus = NULL ;
 		dhtstatus = NULL ;

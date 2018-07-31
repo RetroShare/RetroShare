@@ -121,51 +121,80 @@ class RsInit
 
 
 
-/* Seperate Class for dealing with Accounts */
+/* Seperate static Class for dealing with Accounts */
 
-namespace RsAccounts
+class RsAccountsDetail ;
+
+class RsAccounts
 {
-    /**
-	 * @brief ConfigDirectory (normally ~/.retroshare) you can call this method
-	 * even before initialisation (you can't with some other methods)
-	 * @see RsAccountsDetail::PathBaseDirectory()
-	 */
-    std::string ConfigDirectory();
+public:
+    // Should be called once before everything else.
+
+	static bool init(const std::string &opt_base_dir, int& error_code);
 
 	/**
-     * @brief DataDirectory
-	 * you can call this method even before initialisation (you can't with some other methods)
-     * @param check if set to true and directory does not exist, return empty string
-     * @return path where global platform independent files are stored, like bdboot.txt or webinterface files
-     */
-    std::string DataDirectory(bool check = true);
+		 * @brief ConfigDirectory (normally ~/.retroshare) you can call this method
+		 * even before initialisation (you can't with some other methods)
+		 *
+		 * 		On linux: ~/.retroshare/
+		 *
+		 * @see RsAccountsDetail::PathBaseDirectory()
+		 */
+	static std::string ConfigDirectory();
 
-	std::string PGPDirectory();
-	std::string AccountDirectory();
+	/**
+		 * @brief DataDirectory
+		 * you can call this method even before initialisation (you can't with some other methods)
+		 * @param check if set to true and directory does not exist, return empty string
+		 * @return path where global platform independent files are stored, like bdboot.txt or webinterface files
+		 */
+	static std::string systemDataDirectory(bool check = true);
+	static std::string PGPDirectory();
 
 	// PGP Accounts.
-	int     GetPGPLogins(std::list<RsPgpId> &pgpIds);
-	int     GetPGPLoginDetails(const RsPgpId& id, std::string &name, std::string &email);
-	bool    GeneratePGPCertificate(const std::string&, const std::string& email, const std::string& passwd, RsPgpId &pgpId, const int keynumbits, std::string &errString);
+	static int     GetPGPLogins(std::list<RsPgpId> &pgpIds);
+	static int     GetPGPLoginDetails(const RsPgpId& id, std::string &name, std::string &email);
+	static bool    GeneratePGPCertificate(const std::string&, const std::string& email, const std::string& passwd, RsPgpId &pgpId, const int keynumbits, std::string &errString);
 
 	// PGP Support Functions.
-	bool    ExportIdentity(const std::string& fname,const RsPgpId& pgp_id) ;
-	bool    ImportIdentity(const std::string& fname,RsPgpId& imported_pgp_id,std::string& import_error) ;
-    bool    ImportIdentityFromString(const std::string& data,RsPgpId& imported_pgp_id,std::string& import_error) ;
-        void    GetUnsupportedKeys(std::map<std::string,std::vector<std::string> > &unsupported_keys);
-	bool    CopyGnuPGKeyrings() ;
+	static bool    ExportIdentity(const std::string& fname,const RsPgpId& pgp_id) ;
+	static bool    ImportIdentity(const std::string& fname,RsPgpId& imported_pgp_id,std::string& import_error) ;
+	static bool    ImportIdentityFromString(const std::string& data,RsPgpId& imported_pgp_id,std::string& import_error) ;
+	static void    GetUnsupportedKeys(std::map<std::string,std::vector<std::string> > &unsupported_keys);
+	static bool    CopyGnuPGKeyrings() ;
 
 	// Rs Accounts
-        bool    SelectAccount(const RsPeerId& id);
+	static bool SelectAccount(const RsPeerId& id);
+	static bool	GetPreferredAccountId(RsPeerId &id);
+	static bool GetAccountIds(std::list<RsPeerId> &ids);
 
-	bool	GetPreferredAccountId(RsPeerId &id);
-	bool    GetAccountIds(std::list<RsPeerId> &ids);
-	bool	GetAccountDetails(const RsPeerId &id,
-                        RsPgpId &gpgId, std::string &gpgName,
-                        std::string &gpgEmail, std::string &location);
+	static bool	GetAccountDetails(const RsPeerId &id, RsPgpId &gpgId, std::string &gpgName, std::string &gpgEmail, std::string &location);
 
-	bool	GenerateSSLCertificate(const RsPgpId& pgp_id, const std::string& org, const std::string& loc, const std::string& country, const bool ishiddenloc, const std::string& passwd, RsPeerId &sslId, std::string &errString);
+	static bool	createNewAccount(const RsPgpId& pgp_id, const std::string& org, const std::string& loc, const std::string& country, bool ishiddenloc,bool is_auto_tor, const std::string& passwd, RsPeerId &sslId, std::string &errString);
 
+    static void storeSelectedAccount() ;
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //                                 All methods bellow can only be called ones SelectAccount() as been called.                                       //
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    static bool getCurrentAccountOptions(bool& is_hidden,bool& is_tor_auto,bool& is_first_time) ;
+
+	static bool checkCreateAccountDirectory();		// Generate the hierarchy of directories below ~/.retroshare/[SSL dir]/
+    static bool isHiddenNode() ;                    // true if the running node is a hidden node. Used to choose which services to start.
+    static bool isTorAuto() ;                       // true if the running node is a hidden node using automated Tor management
+
+	static std::string AccountDirectory();			// linux: ~/.retroshare/[SSL dir]/
+	static std::string AccountKeysDirectory();		// linux: ~/.retroshare/[SSL dir]/keys/
+	static std::string AccountPathCertFile();		// linux: ~/.retroshare/[SSL dir]/keys/user_cert.pem
+	static std::string AccountPathKeyFile();		// linux: ~/.retroshare/[SSL dir]/keys/user_pk.pem
+	static std::string AccountLocationName();
+
+    static bool lockPreferredAccount() ;	// are these methods any useful??
+    static void unlockPreferredAccount() ;
+
+private:
+    static RsAccountsDetail *rsAccounts ;
 };
 
 

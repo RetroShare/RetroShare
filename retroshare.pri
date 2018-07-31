@@ -91,15 +91,6 @@ no_sqlcipher:CONFIG -= sqlcipher
 CONFIG *= no_rs_autologin
 rs_autologin:CONFIG -= no_rs_autologin
 
-# To build RetroShare Tor only version with automatic hidden node setup append
-#  the following assignation to qmake command line "CONFIG+=retrotor"
-CONFIG *= no_retrotor
-retrotor {
-    CONFIG -= no_retrotor
-    CONFIG *= rs_onlyhiddennode
-    DEFINES *= RETROTOR
-}
-
 # To have only hidden node generation append the following assignation
 # to qmake command line "CONFIG+=rs_onlyhiddennode"
 CONFIG *= no_rs_onlyhiddennode
@@ -144,7 +135,7 @@ rs_macos10.10:CONFIG -= rs_macos10.11
 rs_macos10.12:CONFIG -= rs_macos10.11
 
 # To disable deep search append the following assignation to qmake command line
-# "CONFIG+=no_rs_deep_search"
+CONFIG+=no_rs_deep_search
 CONFIG *= rs_deep_search
 no_rs_deep_search:CONFIG -= rs_deep_search
 

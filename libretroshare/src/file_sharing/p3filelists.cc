@@ -29,7 +29,7 @@
 
 #include "retroshare/rsids.h"
 #include "retroshare/rspeers.h"
-#include "rsserver/rsaccounts.h"
+#include "retroshare/rsinit.h"
 
 #include "rsserver/p3face.h"
 
@@ -48,7 +48,7 @@ p3FileDatabase::p3FileDatabase(p3ServiceControl *mpeers)
 {
     // make sure the base directory exists
 
-    std::string base_dir = rsAccounts->PathAccountDirectory();
+    std::string base_dir = RsAccounts::AccountDirectory();
 
     if(base_dir.empty())
         throw std::runtime_error("Cannot create base directory to store/access file sharing files.") ;

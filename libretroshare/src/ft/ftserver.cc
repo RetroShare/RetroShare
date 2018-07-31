@@ -39,12 +39,12 @@
 
 #include "retroshare/rstypes.h"
 #include "retroshare/rspeers.h"
+#include "retroshare/rsinit.h"
 
 #include "rsitems/rsfiletransferitems.h"
 #include "rsitems/rsserviceids.h"
 
 #include "rsserver/p3face.h"
-#include "rsserver/rsaccounts.h"
 #include "turtle/p3turtle.h"
 
 #include "util/rsdebug.h"
@@ -148,8 +148,9 @@ void ftServer::SetupFtServer()
 	mFtController = new ftController(mFtDataplex, mServiceCtrl, getServiceInfo().mServiceType);
 	mFtController -> setFtSearchNExtra(mFtSearch, mFtExtra);
 
-	std::string emergencySaveDir = rsAccounts->PathAccountDirectory();
-	std::string emergencyPartialsDir = rsAccounts->PathAccountDirectory();
+	std::string emergencySaveDir = RsAccounts::AccountDirectory();
+	std::string emergencyPartialsDir = RsAccounts::AccountDirectory();
+
 	if (emergencySaveDir != "")
 	{
 		emergencySaveDir += "/";

@@ -118,12 +118,17 @@ TorProcess *TorManager::process()
     return d->process;
 }
 
-QString TorManager::dataDirectory() const
+bool TorManager::isTorAvailable()
+{
+    return !instance()->d->torExecutablePath().isNull();
+}
+
+QString TorManager::torDataDirectory() const
 {
     return d->dataDir;
 }
 
-void TorManager::setDataDirectory(const QString &path)
+void TorManager::setTorDataDirectory(const QString &path)
 {
     d->dataDir = QDir::fromNativeSeparators(path);
 

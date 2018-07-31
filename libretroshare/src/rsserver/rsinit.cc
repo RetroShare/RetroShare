@@ -431,26 +431,10 @@ int RsInit::InitRetroShare(int argc, char **argv, bool /* strictCheck */)
 		AuthSSL::AuthSSLInit();
 		AuthSSL::getAuthSSL() -> InitAuth(NULL, NULL, NULL, "");
 
-		rsAccounts = new RsAccountsDetail();
+        int error_code ;
 
-		// first check config directories, and set bootstrap values.
-		if(!rsAccounts->setupBaseDirectory(opt_base_dir))
-			return RS_INIT_BASE_DIR_ERROR ;
-
-		// Setup PGP stuff.
-		std::string pgp_dir = rsAccounts->PathPGPDirectory();
-
-		if(!RsDirUtil::checkCreateDirectory(pgp_dir))
-			throw std::runtime_error("Cannot create pgp directory " + pgp_dir) ;
-
-		AuthGPG::init(	pgp_dir + "/retroshare_public_keyring.gpg",
-		                pgp_dir + "/retroshare_secret_keyring.gpg",
-		                pgp_dir + "/retroshare_trustdb.gpg",
-		                pgp_dir + "/lock");
-
-		// load Accounts.
-		if (!rsAccounts->loadAccounts())
-			return RS_INIT_NO_KEYRING ;
+		if(!RsAccounts::init(opt_base_dir,error_code))
+            return error_code ;
 
 		// choose alternative account.
 		if(prefUserString != "")
@@ -464,7 +448,7 @@ int RsInit::InitRetroShare(int argc, char **argv, bool /* strictCheck */)
 				return RS_INIT_AUTH_FAILED ;
 			}
 
-			if(rsAccounts->selectId(ssl_id))
+			if(RsAccounts::SelectAccount(ssl_id))
 			{
 				std::cerr << "Auto-selectng account ID " << ssl_id << std::endl;
 				return RS_INIT_HAVE_ACCOUNT;
@@ -474,7 +458,7 @@ int RsInit::InitRetroShare(int argc, char **argv, bool /* strictCheck */)
 #ifdef RS_AUTOLOGIN
 	/* check that we have selected someone */
 	RsPeerId preferredId;
-	bool existingUser = rsAccounts->getPreferredAccountId(preferredId);
+	bool existingUser = RsAccounts::GetPreferredAccountId(preferredId);
 
 	if (existingUser)
 	{
@@ -550,44 +534,43 @@ bool     RsInit::LoadPassword(const std::string& inPwd)
  */
 int 	RsInit::LockAndLoadCertificates(bool autoLoginNT, std::string& lockFilePath)
 {
-	if (!rsAccounts->lockPreferredAccount())
+    try
 	{
-		return 3; // invalid PreferredAccount.
+		if (!RsAccounts::lockPreferredAccount())
+			throw 3; // invalid PreferredAccount.
+
+		// Logic that used to be external to RsInit...
+		RsPeerId accountId;
+		if (!RsAccounts::GetPreferredAccountId(accountId))
+			throw 3; // invalid PreferredAccount;
+
+		RsPgpId pgpId;
+		std::string pgpName, pgpEmail, location;
+
+		if(!RsAccounts::GetAccountDetails(accountId, pgpId, pgpName, pgpEmail, location))
+			throw 3; // invalid PreferredAccount;
+
+		if(0 == AuthGPG::getAuthGPG() -> GPGInit(pgpId))
+			throw 3; // PGP Error.
+
+        int retVal = LockConfigDirectory(RsAccounts::AccountDirectory(), lockFilePath);
+
+		if(retVal > 0)
+            throw retVal ;
+
+		if(LoadCertificates(autoLoginNT) != 1)
+        {
+			UnlockConfigDirectory();
+            throw 3;
+        }
+
+		return 0;
 	}
-
-	int retVal = 0;
-
-	// Logic that used to be external to RsInit...
-	RsPeerId accountId;
-	if (!rsAccounts->getPreferredAccountId(accountId))
-	{
-		retVal = 3; // invalid PreferredAccount;
-	}
-	
-	RsPgpId pgpId;
-	std::string pgpName, pgpEmail, location;
-
-	if (retVal == 0 && !rsAccounts->getAccountDetails(accountId, pgpId, pgpName, pgpEmail, location))
-		retVal = 3; // invalid PreferredAccount;
-		
-	if (retVal == 0 && !rsAccounts->SelectPGPAccount(pgpId))
-		retVal = 3; // PGP Error.
-	
-	if(retVal == 0)
-		retVal = LockConfigDirectory(rsAccounts->PathAccountDirectory(), lockFilePath);
-
-	if(retVal == 0 && LoadCertificates(autoLoginNT) != 1)
-	{
-		UnlockConfigDirectory();
-		retVal = 3;
-	}
-
-	if(retVal != 0)
-	{
-		rsAccounts->unlockPreferredAccount();
-	}
-
-	return retVal;
+    catch(int retVal)
+    {
+		RsAccounts::unlockPreferredAccount();
+        return retVal ;
+    }
 }
 
 
@@ -603,20 +586,20 @@ int 	RsInit::LockAndLoadCertificates(bool autoLoginNT, std::string& lockFilePath
 int RsInit::LoadCertificates(bool autoLoginNT)
 {
 	RsPeerId preferredId;
-	if (!rsAccounts->getPreferredAccountId(preferredId))
+	if (!RsAccounts::GetPreferredAccountId(preferredId))
 	{
 		std::cerr << "No Account Selected" << std::endl;
 		return 0;
 	}
 		
 	
-	if (rsAccounts->PathCertFile() == "")
+	if (RsAccounts::AccountPathCertFile() == "")
 	{
 	  std::cerr << "RetroShare needs a certificate" << std::endl;
 	  return 0;
 	}
 
-	if (rsAccounts->PathKeyFile() == "")
+	if (RsAccounts::AccountPathKeyFile() == "")
 	{
 	  std::cerr << "RetroShare needs a key" << std::endl;
 	  return 0;
@@ -638,9 +621,10 @@ int RsInit::LoadCertificates(bool autoLoginNT)
 		}
 	}
 
-	std::cerr << "rsAccounts->PathKeyFile() : " << rsAccounts->PathKeyFile() << std::endl;
+	std::cerr << "rsAccounts->PathKeyFile() : " << RsAccounts::AccountPathKeyFile() << std::endl;
 
-    if(0 == AuthSSL::getAuthSSL() -> InitAuth(rsAccounts->PathCertFile().c_str(), rsAccounts->PathKeyFile().c_str(), rsInitConfig->passwd.c_str(), rsAccounts->LocationName()))
+    if(0 == AuthSSL::getAuthSSL() -> InitAuth(RsAccounts::AccountPathCertFile().c_str(), RsAccounts::AccountPathKeyFile().c_str(), rsInitConfig->passwd.c_str(),
+                                              RsAccounts::AccountLocationName()))
 	{
 		std::cerr << "SSL Auth Failed!";
 		return 0 ;
@@ -665,7 +649,7 @@ int RsInit::LoadCertificates(bool autoLoginNT)
 	rsInitConfig->gxs_passwd = rsInitConfig->passwd;
 	rsInitConfig->passwd = "";
 	
-	rsAccounts->storePreferredAccount();
+	RsAccounts::storeSelectedAccount();
 	return 1;
 }
 
@@ -673,7 +657,7 @@ int RsInit::LoadCertificates(bool autoLoginNT)
 bool RsInit::RsClearAutoLogin()
 {
 	RsPeerId preferredId;
-	if (!rsAccounts->getPreferredAccountId(preferredId))
+	if (!RsAccounts::getSelectedAccountId(preferredId))
 	{
 		std::cerr << "RsInit::RsClearAutoLogin() No Account Selected" << std::endl;
 		return 0;
@@ -833,11 +817,8 @@ RsGRouter *rsGRouter = NULL ;
 #include "pqi/p3linkmgr.h"
 #include "pqi/p3netmgr.h"
 	
-#ifndef RETROTOR
 #include "tcponudp/tou.h"
 #include "tcponudp/rsudpstack.h"
-#endif
-
 	
 #ifdef RS_USE_BITDHT
 #include "dht/p3bitdht.h"
@@ -884,6 +865,17 @@ RsControl *RsControl::instance()
 
 int RsServer::StartupRetroShare()
 {
+	RsPeerId ownId = AuthSSL::getAuthSSL()->OwnId();
+
+    std::cerr << "========================================================================" << std::endl;
+    std::cerr << "==                 RsInit:: starting up Retroshare core               ==" << std::endl;
+    std::cerr << "==                                                                    ==" << std::endl;
+    std::cerr << "== Account/SSL ID        : " << ownId << "           ==" << std::endl;
+    std::cerr << "== Node type             : " << (RsAccounts::isHiddenNode()?"Hidden":"Normal") << "                                     ==" << std::endl;
+    if(RsAccounts::isHiddenNode())
+	std::cerr << "== Tor/I2P configuration : " << (RsAccounts::isTorAuto()?"Tor Auto":"Manual  ") << "                                   ==" << std::endl;
+    std::cerr << "========================================================================" << std::endl;
+
 	/**************************************************************************/
 	/* STARTUP procedure */
 	/**************************************************************************/
@@ -899,8 +891,6 @@ int RsServer::StartupRetroShare()
 		return false ;
 	}
 
-	RsPeerId ownId = AuthSSL::getAuthSSL()->OwnId();
-
 	/**************************************************************************/
 	/* Any Initial Configuration (Commandline Options)  */
 	/**************************************************************************/
@@ -909,7 +899,7 @@ int RsServer::StartupRetroShare()
 	std::cerr << "set the debugging to crashMode." << std::endl;
 	if ((!rsInitConfig->haveLogFile) && (!rsInitConfig->outStderr))
 	{
-		std::string crashfile = rsAccounts->PathAccountDirectory();
+		std::string crashfile = RsAccounts::AccountDirectory();
 		crashfile +=  "/" + configLogFileName;
 		setDebugCrashMode(crashfile.c_str());
 	}
@@ -921,7 +911,7 @@ int RsServer::StartupRetroShare()
 	}
 
 	/* check account directory */
-	if (!rsAccounts->checkAccountDirectory())
+	if (!RsAccounts::checkCreateAccountDirectory())
 	{
 		std::cerr << "RsServer::StartupRetroShare() - Fatal Error....." << std::endl;
 		std::cerr << "checkAccount failed!" << std::endl;
@@ -933,8 +923,8 @@ int RsServer::StartupRetroShare()
 	// Load up Certificates, and Old Configuration (if present)
 	std::cerr << "Load up Certificates, and Old Configuration (if present)." << std::endl;
 
-	std::string emergencySaveDir = rsAccounts->PathAccountDirectory();
-	std::string emergencyPartialsDir = rsAccounts->PathAccountDirectory();
+	std::string emergencySaveDir = RsAccounts::AccountDirectory();
+	std::string emergencyPartialsDir = RsAccounts::AccountDirectory();
 	if (emergencySaveDir != "")
 	{
 		emergencySaveDir += "/";
@@ -948,13 +938,15 @@ int RsServer::StartupRetroShare()
 	/**************************************************************************/
 	std::cerr << "Load Configuration" << std::endl;
 
-	mConfigMgr = new p3ConfigMgr(rsAccounts->PathAccountDirectory());
+	mConfigMgr = new p3ConfigMgr(RsAccounts::AccountDirectory());
 	mGeneralConfig = new p3GeneralConfig();
 
 	// Get configuration options from rsAccounts.
 	bool isHiddenNode   = false;
 	bool isFirstTimeRun = false;
-	rsAccounts->getAccountOptions(isHiddenNode, isFirstTimeRun);
+	bool isTorAuto = false;
+
+	RsAccounts::getCurrentAccountOptions(isHiddenNode,isTorAuto, isFirstTimeRun);
 
 	/**************************************************************************/
 	/* setup classes / structures */
@@ -995,36 +987,40 @@ int RsServer::StartupRetroShare()
 	sockaddr_clear(&tmpladdr);
 	tmpladdr.sin_port = htons(rsInitConfig->port);
 
+	rsUdpStack *mDhtStack = NULL ;
 
+    if(!RsAccounts::isHiddenNode())
+	{
 #ifdef LOCALNET_TESTING
 
-	rsUdpStack *mDhtStack = new rsUdpStack(UDP_TEST_RESTRICTED_LAYER, tmpladdr);
+		mDhtStack = new rsUdpStack(UDP_TEST_RESTRICTED_LAYER, tmpladdr);
 
-	/* parse portRestrictions */
-	unsigned int lport, uport;
+		/* parse portRestrictions */
+		unsigned int lport, uport;
 
-	if (doPortRestrictions)
-	{
-		if (2 == sscanf(portRestrictions.c_str(), "%u-%u", &lport, &uport))
+		if (doPortRestrictions)
 		{
-			std::cerr << "Adding Port Restriction (" << lport << "-" << uport << ")";
-			std::cerr << std::endl;
-		}
-		else
-		{
-			std::cerr << "Failed to parse Port Restrictions ... exiting";
-			std::cerr << std::endl;
-			exit(1);
-		}
+			if (2 == sscanf(portRestrictions.c_str(), "%u-%u", &lport, &uport))
+			{
+				std::cerr << "Adding Port Restriction (" << lport << "-" << uport << ")";
+				std::cerr << std::endl;
+			}
+			else
+			{
+				std::cerr << "Failed to parse Port Restrictions ... exiting";
+				std::cerr << std::endl;
+				exit(1);
+			}
 
-		RestrictedUdpLayer *url = (RestrictedUdpLayer *) mDhtStack->getUdpLayer();
-		url->addRestrictedPortRange(lport, uport);
-	}
+			RestrictedUdpLayer *url = (RestrictedUdpLayer *) mDhtStack->getUdpLayer();
+			url->addRestrictedPortRange(lport, uport);
+		}
 #else //LOCALNET_TESTING
 #ifdef RS_USE_BITDHT
-	rsUdpStack *mDhtStack = new rsUdpStack(tmpladdr);
+		mDhtStack = new rsUdpStack(tmpladdr);
 #endif
 #endif //LOCALNET_TESTING
+	}
 
 #ifdef RS_USE_BITDHT
 
@@ -1032,12 +1028,12 @@ int RsServer::StartupRetroShare()
 #define BITDHT_FILTERED_IP_FILENAME  	"bdfilter.txt"
 
 
-	std::string bootstrapfile = rsAccounts->PathAccountDirectory();
+	std::string bootstrapfile = RsAccounts::AccountDirectory();
 	if (bootstrapfile != "")
 		bootstrapfile += "/";
 	bootstrapfile += BITDHT_BOOTSTRAP_FILENAME;
 
-    std::string filteredipfile = rsAccounts->PathAccountDirectory();
+    std::string filteredipfile = RsAccounts::AccountDirectory();
     if (filteredipfile != "")
         filteredipfile += "/";
     filteredipfile += BITDHT_FILTERED_IP_FILENAME;
@@ -1077,7 +1073,7 @@ int RsServer::StartupRetroShare()
 			bdbootRF.close();
 		}
 #else
-		std::string installfile = rsAccounts->PathDataDirectory();
+		std::string installfile = RsAccounts::systemDataDirectory();
 		installfile += "/";
 		installfile += BITDHT_BOOTSTRAP_FILENAME;
 
@@ -1104,96 +1100,105 @@ int RsServer::StartupRetroShare()
 	/* construct the rest of the stack, important to build them in the correct order! */
 	/* MOST OF THIS IS COMMENTED OUT UNTIL THE REST OF libretroshare IS READY FOR IT! */
 
-	UdpSubReceiver *udpReceivers[RSUDP_NUM_TOU_RECVERS];
-	int udpTypes[RSUDP_NUM_TOU_RECVERS];
+	p3BitDht *mBitDht = NULL ;
+	rsDht = NULL ;
+	rsFixedUdpStack *mProxyStack = NULL ;
 
-#ifdef RS_USE_DHT_STUNNER
-	// FIRST DHT STUNNER.
-	UdpStunner *mDhtStunner = new UdpStunner(mDhtStack);
-	mDhtStunner->setTargetStunPeriod(300); /* slow (5mins) */
-	mDhtStack->addReceiver(mDhtStunner);
-
-#ifdef LOCALNET_TESTING
-	mDhtStunner->SetAcceptLocalNet();
-#endif
-#endif // RS_USE_DHT_STUNNER
-
-
-	// NEXT BITDHT.
-	p3BitDht *mBitDht = new p3BitDht(ownId, mLinkMgr, mNetMgr, mDhtStack, bootstrapfile, filteredipfile);
-
-	/* install external Pointer for Interface */
-	rsDht = mBitDht;
-
-	// NEXT THE RELAY (NEED to keep a reference for installing RELAYS)
-	UdpRelayReceiver *mRelay = new UdpRelayReceiver(mDhtStack); 
-	udpReceivers[RSUDP_TOU_RECVER_RELAY_IDX] = mRelay; /* RELAY Connections (DHT Port) */
-	udpTypes[RSUDP_TOU_RECVER_RELAY_IDX] = TOU_RECEIVER_TYPE_UDPRELAY;
-	mDhtStack->addReceiver(udpReceivers[RSUDP_TOU_RECVER_RELAY_IDX]);
-
-	// LAST ON THIS STACK IS STANDARD DIRECT TOU
-	udpReceivers[RSUDP_TOU_RECVER_DIRECT_IDX] = new UdpPeerReceiver(mDhtStack);  /* standard DIRECT Connections (DHT Port) */
-	udpTypes[RSUDP_TOU_RECVER_DIRECT_IDX] = TOU_RECEIVER_TYPE_UDPPEER;
-	mDhtStack->addReceiver(udpReceivers[RSUDP_TOU_RECVER_DIRECT_IDX]);
-
-	// NOW WE BUILD THE SECOND STACK.
-	// Create the Second UdpStack... Port should be random (but openable!).
-	// We do this by binding to xx.xx.xx.xx:0 which which gives us a random port.
-
-	struct sockaddr_in sndladdr;
-	sockaddr_clear(&sndladdr);
-
-#ifdef LOCALNET_TESTING
-
-	// 	// HACK Proxy Port near Dht Port - For Relay Testing.
-	// 	uint16_t rndport = rsInitConfig->port + 3;
-	// 	sndladdr.sin_port = htons(rndport);
-
-	rsFixedUdpStack *mProxyStack = new rsFixedUdpStack(UDP_TEST_RESTRICTED_LAYER, sndladdr);
-
-	/* portRestrictions already parsed */
-	if (doPortRestrictions)
+    if(!RsAccounts::isHiddenNode())
 	{
-		RestrictedUdpLayer *url = (RestrictedUdpLayer *) mProxyStack->getUdpLayer();
-		url->addRestrictedPortRange(lport, uport);
-	}
-#else
-	rsFixedUdpStack *mProxyStack = new rsFixedUdpStack(sndladdr);
-#endif
+		UdpSubReceiver *udpReceivers[RSUDP_NUM_TOU_RECVERS];
+		int udpTypes[RSUDP_NUM_TOU_RECVERS];
 
 #ifdef RS_USE_DHT_STUNNER
-	// FIRSTLY THE PROXY STUNNER.
-	UdpStunner *mProxyStunner = new UdpStunner(mProxyStack);
-	mProxyStunner->setTargetStunPeriod(300); /* slow (5mins) */
-	mProxyStack->addReceiver(mProxyStunner);
+		// FIRST DHT STUNNER.
+		UdpStunner *mDhtStunner = new UdpStunner(mDhtStack);
+		mDhtStunner->setTargetStunPeriod(300); /* slow (5mins) */
+		mDhtStack->addReceiver(mDhtStunner);
 
 #ifdef LOCALNET_TESTING
-	mProxyStunner->SetAcceptLocalNet();
+		mDhtStunner->SetAcceptLocalNet();
 #endif
 #endif // RS_USE_DHT_STUNNER
 
 
-	// FINALLY THE PROXY UDP CONNECTIONS
-	udpReceivers[RSUDP_TOU_RECVER_PROXY_IDX] = new UdpPeerReceiver(mProxyStack); /* PROXY Connections (Alt UDP Port) */	
-	udpTypes[RSUDP_TOU_RECVER_PROXY_IDX] = TOU_RECEIVER_TYPE_UDPPEER;	
-	mProxyStack->addReceiver(udpReceivers[RSUDP_TOU_RECVER_PROXY_IDX]);
+		// NEXT BITDHT.
 
-	// REAL INITIALISATION - WITH THREE MODES
-	tou_init((void **) udpReceivers, udpTypes, RSUDP_NUM_TOU_RECVERS);
+
+		mBitDht = new p3BitDht(ownId, mLinkMgr, mNetMgr, mDhtStack, bootstrapfile, filteredipfile);
+
+		// NEXT THE RELAY (NEED to keep a reference for installing RELAYS)
+		UdpRelayReceiver *mRelay = new UdpRelayReceiver(mDhtStack);
+		udpReceivers[RSUDP_TOU_RECVER_RELAY_IDX] = mRelay; /* RELAY Connections (DHT Port) */
+		udpTypes[RSUDP_TOU_RECVER_RELAY_IDX] = TOU_RECEIVER_TYPE_UDPRELAY;
+		mDhtStack->addReceiver(udpReceivers[RSUDP_TOU_RECVER_RELAY_IDX]);
+
+		// LAST ON THIS STACK IS STANDARD DIRECT TOU
+		udpReceivers[RSUDP_TOU_RECVER_DIRECT_IDX] = new UdpPeerReceiver(mDhtStack);  /* standard DIRECT Connections (DHT Port) */
+		udpTypes[RSUDP_TOU_RECVER_DIRECT_IDX] = TOU_RECEIVER_TYPE_UDPPEER;
+		mDhtStack->addReceiver(udpReceivers[RSUDP_TOU_RECVER_DIRECT_IDX]);
+
+		/* install external Pointer for Interface */
+		rsDht = mBitDht;
+
+		// NOW WE BUILD THE SECOND STACK.
+		// Create the Second UdpStack... Port should be random (but openable!).
+		// We do this by binding to xx.xx.xx.xx:0 which which gives us a random port.
+
+		struct sockaddr_in sndladdr;
+		sockaddr_clear(&sndladdr);
+
+#ifdef LOCALNET_TESTING
+
+		// 	// HACK Proxy Port near Dht Port - For Relay Testing.
+		// 	uint16_t rndport = rsInitConfig->port + 3;
+		// 	sndladdr.sin_port = htons(rndport);
+
+		mProxyStack = new rsFixedUdpStack(UDP_TEST_RESTRICTED_LAYER, sndladdr);
+
+		/* portRestrictions already parsed */
+		if (doPortRestrictions)
+		{
+			RestrictedUdpLayer *url = (RestrictedUdpLayer *) mProxyStack->getUdpLayer();
+			url->addRestrictedPortRange(lport, uport);
+		}
+#else
+		mProxyStack = new rsFixedUdpStack(sndladdr);
+#endif
 
 #ifdef RS_USE_DHT_STUNNER
-	mBitDht->setupConnectBits(mDhtStunner, mProxyStunner, mRelay);
+		// FIRSTLY THE PROXY STUNNER.
+		UdpStunner *mProxyStunner = new UdpStunner(mProxyStack);
+		mProxyStunner->setTargetStunPeriod(300); /* slow (5mins) */
+		mProxyStack->addReceiver(mProxyStunner);
+
+#ifdef LOCALNET_TESTING
+		mProxyStunner->SetAcceptLocalNet();
+#endif
+#endif // RS_USE_DHT_STUNNER
+
+
+		// FINALLY THE PROXY UDP CONNECTIONS
+		udpReceivers[RSUDP_TOU_RECVER_PROXY_IDX] = new UdpPeerReceiver(mProxyStack); /* PROXY Connections (Alt UDP Port) */
+		udpTypes[RSUDP_TOU_RECVER_PROXY_IDX] = TOU_RECEIVER_TYPE_UDPPEER;
+		mProxyStack->addReceiver(udpReceivers[RSUDP_TOU_RECVER_PROXY_IDX]);
+
+		// REAL INITIALISATION - WITH THREE MODES
+		tou_init((void **) udpReceivers, udpTypes, RSUDP_NUM_TOU_RECVERS);
+
+#ifdef RS_USE_DHT_STUNNER
+		mBitDht->setupConnectBits(mDhtStunner, mProxyStunner, mRelay);
 #else // RS_USE_DHT_STUNNER
-	mBitDht->setupConnectBits(mRelay);
+		mBitDht->setupConnectBits(mRelay);
 #endif // RS_USE_DHT_STUNNER
 
 #ifdef RS_USE_DHT_STUNNER
-	mNetMgr->setAddrAssist(new stunAddrAssist(mDhtStunner), new stunAddrAssist(mProxyStunner));
+		mNetMgr->setAddrAssist(new stunAddrAssist(mDhtStunner), new stunAddrAssist(mProxyStunner));
 #endif // RS_USE_DHT_STUNNER
-// #else //RS_USE_BITDHT
-// 	/* install NULL Pointer for rsDht Interface */
-// 	rsDht = NULL;
+		// #else //RS_USE_BITDHT
+		// 	/* install NULL Pointer for rsDht Interface */
+		// 	rsDht = NULL;
 #endif //RS_USE_BITDHT
+	}
 
 
 	/**************************** BITDHT ***********************************/
@@ -1208,7 +1213,7 @@ int RsServer::StartupRetroShare()
 
 	/****** New Ft Server **** !!! */
     ftServer *ftserver = new ftServer(mPeerMgr, serviceCtrl);
-    ftserver->setConfigDirectory(rsAccounts->PathAccountDirectory());
+    ftserver->setConfigDirectory(RsAccounts::AccountDirectory());
 
 	ftserver->SetupFtServer() ;
 
@@ -1224,12 +1229,12 @@ int RsServer::StartupRetroShare()
 	std::vector<std::string> plugins_directories ;
 
 #ifdef __APPLE__
-	plugins_directories.push_back(rsAccounts->PathDataDirectory()) ;
+	plugins_directories.push_back(RsAccounts::systemDataDirectory()) ;
 #endif
 #if !defined(WINDOWS_SYS) && defined(PLUGIN_DIR)
 	plugins_directories.push_back(std::string(PLUGIN_DIR)) ;
 #endif
-	std::string extensions_dir = rsAccounts->PathBaseDirectory() + "/extensions6/" ;
+	std::string extensions_dir = RsAccounts::ConfigDirectory() + "/extensions6/" ;
 	plugins_directories.push_back(extensions_dir) ;
 
 	if(!RsDirUtil::checkCreateDirectory(extensions_dir))
@@ -1272,7 +1277,7 @@ int RsServer::StartupRetroShare()
 
 #ifdef RS_ENABLE_GXS
 
-	std::string currGxsDir = rsAccounts->PathAccountDirectory() + "/gxs";
+	std::string currGxsDir = RsAccounts::AccountDirectory() + "/gxs";
         RsDirUtil::checkCreateDirectory(currGxsDir);
 
         RsNxsNetMgr* nxsMgr =  new RsNxsNetMgrImpl(serviceCtrl);
@@ -1557,17 +1562,17 @@ int RsServer::StartupRetroShare()
 #endif
 
 	// new services to test.
-#ifndef RETROTOR
-    p3BanList *mBanList = new p3BanList(serviceCtrl, mNetMgr);
-    rsBanList = mBanList ;
-	pqih -> addService(mBanList, true);
-#else
-    rsBanList = NULL ;
-#endif
 
-#ifdef RS_USE_BITDHT
-	mBitDht->setupPeerSharer(mBanList);
-#endif
+	p3BanList *mBanList = NULL;
+
+	if(!RsAccounts::isHiddenNode())
+	{
+		mBanList = new p3BanList(serviceCtrl, mNetMgr);
+		rsBanList = mBanList ;
+		pqih -> addService(mBanList, true);
+	}
+	else
+		rsBanList = NULL ;
 
 	p3BandwidthControl *mBwCtrl = new p3BandwidthControl(pqih);
 	pqih -> addService(mBwCtrl, true); 
@@ -1581,30 +1586,34 @@ int RsServer::StartupRetroShare()
 
 	/**************************************************************************/
 
+    if(!RsAccounts::isHiddenNode())
+	{
 #ifdef RS_USE_BITDHT
-	mNetMgr->addNetAssistConnect(1, mBitDht);
-	mNetMgr->addNetListener(mDhtStack); 
-	mNetMgr->addNetListener(mProxyStack); 
+		mBitDht->setupPeerSharer(mBanList);
 
+		mNetMgr->addNetAssistConnect(1, mBitDht);
+		mNetMgr->addNetListener(mDhtStack);
+		mNetMgr->addNetListener(mProxyStack);
 #endif
 
 #ifdef RS_ENABLE_ZEROCONF
-	p3ZeroConf *mZeroConf = new p3ZeroConf(
-			AuthGPG::getAuthGPG()->getGPGOwnId(), ownId, 
-			mLinkMgr, mNetMgr, mPeerMgr);
-	mNetMgr->addNetAssistConnect(2, mZeroConf);
-	mNetMgr->addNetListener(mZeroConf); 
+		p3ZeroConf *mZeroConf = new p3ZeroConf(
+		            AuthGPG::getAuthGPG()->getGPGOwnId(), ownId,
+		            mLinkMgr, mNetMgr, mPeerMgr);
+		mNetMgr->addNetAssistConnect(2, mZeroConf);
+		mNetMgr->addNetListener(mZeroConf);
 #endif
 
 #ifdef RS_ENABLE_ZCNATASSIST
-	// Apple's UPnP & NAT-PMP assistance.
-	p3zcNatAssist *mZcNatAssist = new p3zcNatAssist();
-	mNetMgr->addNetAssistFirewall(1, mZcNatAssist);
+		// Apple's UPnP & NAT-PMP assistance.
+		p3zcNatAssist *mZcNatAssist = new p3zcNatAssist();
+		mNetMgr->addNetAssistFirewall(1, mZcNatAssist);
 #else
-	// Original UPnP Interface.
-	pqiNetAssistFirewall *mUpnpMgr = new upnphandler();
-	mNetMgr->addNetAssistFirewall(1, mUpnpMgr);
+		// Original UPnP Interface.
+		pqiNetAssistFirewall *mUpnpMgr = new upnphandler();
+		mNetMgr->addNetAssistFirewall(1, mUpnpMgr);
 #endif
+	}
 
 	/**************************************************************************/
 	/* need to Monitor too! */
@@ -1637,9 +1646,10 @@ int RsServer::StartupRetroShare()
 	mConfigMgr->addConfiguration("p3History.cfg"   , mHistoryMgr);
 	mConfigMgr->addConfiguration("p3Status.cfg"    , mStatusSrv);
 	mConfigMgr->addConfiguration("turtle.cfg"      , tr);
-#ifndef RETROTOR
-	mConfigMgr->addConfiguration("banlist.cfg"     , mBanList);
-#endif
+
+    if(mBanList != NULL)
+		mConfigMgr->addConfiguration("banlist.cfg"     , mBanList);
+
 	mConfigMgr->addConfiguration("servicecontrol.cfg", serviceCtrl);
 	mConfigMgr->addConfiguration("reputations.cfg" , mReputations);
 #ifdef ENABLE_GROUTER
@@ -1647,7 +1657,8 @@ int RsServer::StartupRetroShare()
 #endif
 
 #ifdef RS_USE_BITDHT
-	mConfigMgr->addConfiguration("bitdht.cfg"      , mBitDht);
+    if(mBitDht != NULL)
+		mConfigMgr->addConfiguration("bitdht.cfg"      , mBitDht);
 #endif
 
 #ifdef RS_ENABLE_GXS
@@ -1874,7 +1885,8 @@ int RsServer::StartupRetroShare()
 
 	//mDhtMgr->start();
 #ifdef RS_USE_BITDHT
-	mBitDht->start();
+    if(mBitDht != NULL)
+		mBitDht->start();
 #endif
 
 	/**************************************************************************/
@@ -1909,6 +1921,10 @@ int RsServer::StartupRetroShare()
 
 	/* Startup this thread! */
 	start("rs main") ;
+
+    std::cerr << "========================================================================" << std::endl;
+    std::cerr << "==                 RsInit:: Retroshare core started                   ==" << std::endl;
+    std::cerr << "========================================================================" << std::endl;
 
 	return 1;
 }

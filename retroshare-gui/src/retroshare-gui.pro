@@ -19,11 +19,9 @@ libresapihttpserver {
 
 !include("../../libretroshare/src/use_libretroshare.pri"):error("Including")
 
-retrotor {
-	FORMS   += TorControl/TorControlWindow.ui
-	SOURCES += TorControl/TorControlWindow.cpp
-	HEADERS += TorControl/TorControlWindow.h
-}
+FORMS   += TorControl/TorControlWindow.ui
+SOURCES += TorControl/TorControlWindow.cpp
+HEADERS += TorControl/TorControlWindow.h
 
 #QMAKE_CFLAGS += -fmudflap 
 #LIBS *= /usr/lib/gcc/x86_64-linux-gnu/4.4/libmudflap.a /usr/lib/gcc/x86_64-linux-gnu/4.4/libmudflapth.a
@@ -285,7 +283,8 @@ wikipoos {
 	LIBS *= $$OUT_PWD/../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
 }
 
-retrotor {
+# Tor controller
+
 HEADERS += 	TorControl/AddOnionCommand.h \
 				TorControl/AuthenticateCommand.h \
 				TorControl/GetConfCommand.h \
@@ -324,7 +323,6 @@ SOURCES += 	TorControl/AddOnionCommand.cpp \
 				TorControl/SecureRNG.cpp         \
 				TorControl/Settings.cpp          \
 				TorControl/StrUtil.cpp        
-}
 
 # Input
 HEADERS +=  rshare.h \
