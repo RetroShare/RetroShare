@@ -191,7 +191,9 @@ ChatWidget::ChatWidget(QWidget *parent)
 	fontmenu->addAction(ui->actionResetFont);
 	fontmenu->addAction(ui->actionNoEmbed);
 	fontmenu->addAction(ui->actionSendAsPlainText);
+	#ifdef USE_CMARK
 	fontmenu->addAction(ui->actionSend_as_CommonMark);
+	#endif
 
 	QMenu *menu = new QMenu();
 	menu->addAction(ui->actionClearChatHistory);
@@ -205,9 +207,11 @@ ChatWidget::ChatWidget(QWidget *parent)
 	ui->chatTextEdit->setOnlyPlainText(ui->actionSendAsPlainText->isChecked());
 	connect(ui->actionSendAsPlainText, SIGNAL(toggled(bool)), ui->chatTextEdit, SLOT(setOnlyPlainText(bool)) );
 
+#ifdef USE_CMARK
 	connect(ui->actionSend_as_CommonMark, SIGNAL(toggled(bool)), this, SLOT(setUseCMark(bool)) );
-	ui->cmPreview->setVisible(false);
 	connect(ui->chatTextEdit, SIGNAL(textChanged()), this, SLOT(updateCMPreview()) );
+#endif
+	ui->cmPreview->setVisible(false);
 
 	ui->textBrowser->resetImagesStatus(Settings->getChatLoadEmbeddedImages());
 	ui->textBrowser->installEventFilter(this);
@@ -983,10 +987,12 @@ void ChatWidget::addChatMsg(bool incoming, const QString &name, const RsGxsId gx
 			formatTextFlag |= RSHTML_FORMATTEXT_EMBED_SMILEYS;
 	}
 
+#ifdef USE_CMARK
 	//Use CommonMark
 	if (message.contains("CMark=\"true\"")) {
 		formatTextFlag |= RSHTML_FORMATTEXT_USE_CMARK;
 	}
+#endif
 
 	// Always fix colors
 	formatTextFlag |= RSHTML_FORMATTEXT_FIX_COLORS;
