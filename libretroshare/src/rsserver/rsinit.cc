@@ -657,7 +657,7 @@ int RsInit::LoadCertificates(bool autoLoginNT)
 bool RsInit::RsClearAutoLogin()
 {
 	RsPeerId preferredId;
-	if (!RsAccounts::getSelectedAccountId(preferredId))
+	if (!RsAccounts::GetPreferredAccountId(preferredId))
 	{
 		std::cerr << "RsInit::RsClearAutoLogin() No Account Selected" << std::endl;
 		return 0;
