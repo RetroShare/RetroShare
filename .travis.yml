@@ -41,7 +41,7 @@ addons:
 
 before_script:
   - if [ $TRAVIS_OS_NAME == linux ]; then qmake QMAKE_CC=$CC QMAKE_CXX=$CXX; fi
-  - if [ $TRAVIS_OS_NAME == osx ]; then qmake QMAKE_CC=$CC QMAKE_CXX=$CXX CONFIG+=rs_macos10.12 INCLUDEPATH+=/usr/local/opt/openssl/include/ QMAKE_LIBDIR+=/usr/local/opt/openssl/lib/; fi
+  - if [ $TRAVIS_OS_NAME == osx ]; then qmake QMAKE_CC=$CC QMAKE_CXX=$CXX CONFIG+=rs_macos10.13 INCLUDEPATH+=/usr/local/opt/openssl/include/ QMAKE_LIBDIR+=/usr/local/opt/openssl/lib/; fi
 
 script:
   - if [ $TRAVIS_OS_NAME == linux ] && [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then make -j2; fi

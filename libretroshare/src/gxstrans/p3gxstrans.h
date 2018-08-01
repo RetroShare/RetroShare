@@ -22,6 +22,7 @@
 #pragma once
 
 #include <stdint.h>
+#include <math.h>
 #include <unordered_map>
 #include <map>
 
