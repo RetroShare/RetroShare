@@ -133,6 +133,7 @@ rs_macos10.8:CONFIG -= rs_macos10.11
 rs_macos10.9:CONFIG -= rs_macos10.11
 rs_macos10.10:CONFIG -= rs_macos10.11
 rs_macos10.12:CONFIG -= rs_macos10.11
+rs_macos10.13:CONFIG -= rs_macos10.11
 
 # To disable deep search append the following assignation to qmake command line
 CONFIG+=no_rs_deep_search
@@ -496,6 +497,14 @@ macx-* {
 		message(***retroshare.pri: Set Target and SDK to MacOS 10.12 )
 		QMAKE_MACOSX_DEPLOYMENT_TARGET=10.12
 		QMAKE_MAC_SDK = macosx10.12
+		QMAKE_CXXFLAGS += -Wno-nullability-completeness
+		QMAKE_CFLAGS += -Wno-nullability-completeness
+	}
+
+	rs_macos10.13 {
+		message(***retroshare.pri: Set Target and SDK to MacOS 10.13 )
+		QMAKE_MACOSX_DEPLOYMENT_TARGET=10.13
+		QMAKE_MAC_SDK = macosx10.13
 		QMAKE_CXXFLAGS += -Wno-nullability-completeness
 		QMAKE_CFLAGS += -Wno-nullability-completeness
 	}
