@@ -1369,13 +1369,18 @@ RsServiceInfo::RsServiceInfo(
 		const uint16_t min_version_major,
 		const uint16_t min_version_minor)
  :mServiceName(service_name),
-  mServiceType((((uint32_t) RS_PKT_VERSION_SERVICE) << 24) + (((uint32_t) service_type) << 8)),
+  mServiceType(RsServiceInfoUIn16ToFullServiceId(service_type)),
   mVersionMajor(version_major),
   mVersionMinor(version_minor),
   mMinVersionMajor(min_version_major),
   mMinVersionMinor(min_version_minor)
 {
-	return;
+  return;
+}
+
+unsigned int RsServiceInfo::RsServiceInfoUIn16ToFullServiceId(uint16_t serviceType)
+{
+  return (((uint32_t) RS_PKT_VERSION_SERVICE) << 24) + (((uint32_t) serviceType) << 8);
 }
 
 
