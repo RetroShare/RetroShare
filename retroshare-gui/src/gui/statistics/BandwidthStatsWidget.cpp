@@ -117,7 +117,7 @@ void BandwidthStatsWidget::updateComboBoxes()
     {
 	    if(*it != ui.service_CB->itemData(indx).toInt())
 	    {
-	    QString sname = QString::fromUtf8(service_info_map.mServiceList[ ((*it)<<8) + 0x02000000].mServiceName.c_str()) ;
+	    QString sname = QString::fromUtf8(service_info_map.mServiceList[RsServiceInfo::RsServiceInfoUIn16ToFullServiceId(*it)].mServiceName.c_str()) ;
 
 		    if(ui.service_CB->count() <= indx)
 			    ui.service_CB->addItem(sname + " (0x"+QString::number(*it,16)+")",QVariant(*it)) ;
