@@ -181,7 +181,7 @@ public:
     StringExpression(enum StringOperator op, const std::list<std::string> &t, bool ic): Op(op),terms(t), IgnoreCase(ic){}
 
     virtual void linearize(LinearizedExpression& e) const ;
-	virtual std::string toStdString(const std::string& varstr) const;
+	virtual std::string toStdStringWithParam(const std::string& varstr) const;
 protected:
     bool evalStr(const std::string &str);
 
@@ -197,7 +197,7 @@ public:
     RelExpression(enum RelOperator op, T lv, T hv): Op(op), LowerValue(lv), HigherValue(hv) {}
 
     virtual void linearize(LinearizedExpression& e) const ;
-	virtual std::string toStdString(const std::string& typestr) const;
+	virtual std::string toStdStringWithParam(const std::string& typestr) const;
 protected:
     bool evalRel(T val);
 
@@ -229,7 +229,7 @@ bool RelExpression<T>::evalRel(T val) {
 }
 
 template <class T>
-std::string RelExpression<T>::toStdString(const std::string& typestr) const
+std::string RelExpression<T>::toStdStringWithParam(const std::string& typestr) const
 {
 	std::string LowerValueStr = RsUtil::NumberToString(LowerValue) ;
 
@@ -275,7 +275,7 @@ public:
         StringExpression(op,t,ic) {}
     bool eval(const ExpFileEntry& file);
 
-	virtual std::string toStdString() const { return StringExpression::toStdString("NAME"); }
+	virtual std::string toStdString() const { return StringExpression::toStdStringWithParam("NAME"); }
 
     virtual void linearize(LinearizedExpression& e) const
     {
@@ -290,7 +290,7 @@ public:
         StringExpression(op,t,ic) {}
     bool eval(const ExpFileEntry& file);
 
-	virtual std::string toStdString()const { return StringExpression::toStdString("PATH"); }
+	virtual std::string toStdString()const { return StringExpression::toStdStringWithParam("PATH"); }
 
     virtual void linearize(LinearizedExpression& e) const
     {
@@ -305,7 +305,7 @@ public:
         StringExpression(op,t,ic) {}
     bool eval(const ExpFileEntry& file);
 
-	virtual std::string toStdString()const { return StringExpression::toStdString("EXTENSION"); }
+	virtual std::string toStdString()const { return StringExpression::toStdStringWithParam("EXTENSION"); }
 
     virtual void linearize(LinearizedExpression& e) const
     {
@@ -320,7 +320,7 @@ public:
         StringExpression(op,t, true) {}
     bool eval(const ExpFileEntry& file);
 
-	virtual std::string toStdString() const { return StringExpression::toStdString("HASH"); }
+	virtual std::string toStdString() const { return StringExpression::toStdStringWithParam("HASH"); }
 
     virtual void linearize(LinearizedExpression& e) const
     {
@@ -342,7 +342,7 @@ public:
         RelExpression<int>(op,lv,hv) {}
     bool eval(const ExpFileEntry& file);
 
-	virtual std::string toStdString() const { return RelExpression<int>::toStdString("DATE"); }
+	virtual std::string toStdString() const { return RelExpression<int>::toStdStringWithParam("DATE"); }
 
     virtual void linearize(LinearizedExpression& e) const
     {
@@ -359,7 +359,7 @@ public:
         RelExpression<int>(op,lv,hv) {}
     bool eval(const ExpFileEntry& file);
 
-	virtual std::string toStdString() const { return RelExpression<int>::toStdString("SIZE"); }
+	virtual std::string toStdString() const { return RelExpression<int>::toStdStringWithParam("SIZE"); }
 
     virtual void linearize(LinearizedExpression& e) const
     {
@@ -376,7 +376,7 @@ public:
         RelExpression<int>(op,lv,hv) {}
     bool eval(const ExpFileEntry& file);
 
-	virtual std::string toStdString() const { return RelExpression<int>::toStdString("SIZE"); }
+	virtual std::string toStdString() const { return RelExpression<int>::toStdStringWithParam("SIZE"); }
 
     virtual void linearize(LinearizedExpression& e) const
     {
@@ -392,7 +392,7 @@ public:
     PopExpression(const LinearizedExpression& e) ;
     bool eval(const ExpFileEntry& file);
 
-	virtual std::string toStdString() const { return RelExpression<int>::toStdString("POPULARITY"); }
+	virtual std::string toStdString() const { return RelExpression<int>::toStdStringWithParam("POPULARITY"); }
 
     virtual void linearize(LinearizedExpression& e) const
     {
