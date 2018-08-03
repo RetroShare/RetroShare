@@ -593,7 +593,7 @@ void GxsNetTunnelsDialog::updateDisplay()
 
 				if(virtual_peers.end() != it3)
 					painter.drawText(ox+6*cellx,oy+celly,tr("Peer: %1:\tstatus: %2/%3, \tlast contact: %4, \tMaster key: %5.")
-					                 .arg(QString::fromStdString((*it2).toStdString()))
+							 .arg(QString::fromStdString((*it2).toStdString()).mid(0, 8)) // virtual peer IDs are only 4 bytes long
 					                 .arg(getVirtualPeerStatusString(it3->second.vpid_status))
 					                 .arg(getSideString(it3->second.side))
 					                 .arg(getLastContactString(it3->second.last_contact))
@@ -602,7 +602,7 @@ void GxsNetTunnelsDialog::updateDisplay()
             }
             else
 				painter.drawText(ox+6*cellx,oy+celly,tr("Peer: %1: no information available")
-				                 .arg(QString::fromStdString((*it2).toStdString()))
+						 .arg(QString::fromStdString((*it2).toStdString()).mid(0, 8)) // virtual peer IDs are only 4 bytes long
                                  ),oy+=celly;
 
         }
