@@ -110,7 +110,7 @@ libresapihttpserver {
         QMAKE_EXTRA_COMPILERS += create_webfiles_html create_webfiles_js create_webfiles_css
     }
 
-    win32-x {
+    appveyor {
 	DEFINES *= WINDOWS_SYS
 	INCLUDEPATH += . $$INC_DIR
 
