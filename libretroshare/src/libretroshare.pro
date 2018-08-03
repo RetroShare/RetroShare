@@ -18,11 +18,8 @@
 !include("../../retroshare.pri"): error("Could not include file ../../retroshare.pri")
 
 TEMPLATE = lib
-CONFIG += staticlib
-!include("../../retroshare.pri"): error("Could not include file ../../retroshare.pri")
-
-TEMPLATE = lib
-CONFIG += staticlib
+staticlibretroshare:CONFIG += staticlib
+sharedlibretroshare:CONFIG += shared
 CONFIG -= qt
 TARGET = retroshare
 TARGET_PRL = libretroshare
@@ -258,7 +255,6 @@ win32-g++ {
 	QMAKE_CC = $${QMAKE_CXX}
 	OBJECTS_DIR = temp/obj
 	MOC_DIR = temp/moc
-    DEFINES *= STATICLIB
 
 	# Switch on extra warnings
 	QMAKE_CFLAGS += -Wextra
@@ -532,7 +528,6 @@ SOURCES +=	ft/ftchunkmap.cc \
 SOURCES += crypto/chacha20.cpp \
 			crypto/rsaes.cc \
 			crypto/hashstream.cc\
-			  crypto/hashstream.cc \
 			  crypto/rscrypto.cpp
 
 SOURCES += chat/distantchat.cc \

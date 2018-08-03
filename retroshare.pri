@@ -38,6 +38,12 @@ CONFIG *= no_cmark
 CONFIG *= retroshare_nogui
 no_retroshare_nogui:CONFIG -= retroshare_nogui
 
+# Choose if libretroshare is going to be static a shared lib
+# "CONFIG+=staticlibretroshare" or "CONFIG+=sharedlibretroshare"
+win32-g++:CONFIG *= sharedlibretroshare
+!staticlibretroshare:!sharedlibretroshare:CONFIG += staticlibretroshare
+staticlibretroshare:CONFIG -= sharedlibretroshare
+
 # To disable cmark append the following 
 # assignation to qmake command line "CONFIG+=no_cmark"
 CONFIG *= cmark
