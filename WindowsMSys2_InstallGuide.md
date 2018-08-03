@@ -66,9 +66,6 @@ cores you have for a faster build, for instance if you have 4 cores:
 
 	mingw32-make -j4
 
-Note: as of 2018-08-03 the build might fail once in libres during the HTML generation.
-If you get it, just run mingw32-make again and it will pass.
-
 Make sure your current Retroshare is not running. Then just run:
 
 	retroshare-gui/src/debug/retroshare.exe
