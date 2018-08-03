@@ -59,7 +59,7 @@ We will use it to checkout Retroshare and build it:
 Go to the RetroShare directory and configure to your liking, for example:
 	
 	cd RetroShare
-	qmake -r -Wall -spec win32-g++ "CONFIG+=debug" "DEFINES+=RS_AUTOLOGIN"
+	qmake -r -Wall -spec win32-g++ "CONFIG+=debug" "CONFIG+=rs_autologin"
 
 Now we're ready to build Retroshare. Use the '-j' option with the number of
 cores you have for a faster build, for instance if you have 4 cores:
