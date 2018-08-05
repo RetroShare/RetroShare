@@ -82,7 +82,7 @@ win32 {
 		message(Use system opencv libraries.)
 		LIBS += -lopencv_core -lopencv_highgui -lopencv_imgproc
 	}
-	LIBS += -lzlib -lole32 -loleaut32 -luuid -lvfw32 -llibjpeg -llibtiff -llibpng -llibjasper -lIlmImf
+		LIBS += -lz -lole32 -loleaut32 -luuid -lvfw32 -llibjpeg -llibtiff -llibpng -llibjasper -lIlmImf
 	LIBS += -lavifil32 -lavicap32 -lavcodec -lavutil -lswresample
 }
 
