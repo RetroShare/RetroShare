@@ -251,53 +251,22 @@ bool RSTextBrowser::checkImage(QPoint pos, QString &imageStr)
  */
 QString RSTextBrowser::anchorForPosition(const QPoint &pos) const
 {
-	// Many calls when time label shows up
 	QTextCursor cursor = cursorForPosition(pos);
 	cursor.select(QTextCursor::WordUnderCursor);
-	QString word = cursor.selectedText();
 	QString anchor = "";
-	if (word.isEmpty())
-		return anchor;
-
-	// For finding positions
-	QTextCursor cursor_line = cursorForPosition(pos);
-	cursor_line.select(QTextCursor::LineUnderCursor);
-	QString line = cursor_line.selectedText();
-	// End of nickname (more or less, of course, because some can has colon in
-	// name)
-	int end_of_name = line.indexOf(": ") + 1;
-	// Start of nickname (after time)
-	int space_index = line.indexOf(' ') + 1;
-	int word_index = line.indexOf(word) + 1;
-	int once = 1;
-	cursor_line.movePosition(QTextCursor::StartOfLine, QTextCursor::MoveAnchor, once);
-	bool after_name = cursor_line.position() + end_of_name < cursor.position();
-	bool cursor_after_time = space_index < word_index;
-	bool cursor_within_name = word_index <= end_of_name;
-	if (!after_name && cursor_after_time && cursor_within_name) {
-		cursor.movePosition(QTextCursor::StartOfLine, QTextCursor::MoveAnchor, once);
-		cursor.movePosition(QTextCursor::NextCharacter, QTextCursor::MoveAnchor,
-			space_index);
-		cursor.movePosition(QTextCursor::NextCharacter, QTextCursor::KeepAnchor,
-			end_of_name - space_index);
-		if (cursor.selectedText().isEmpty()) {
-			return anchor;
+	if (!cursor.selectedText().isEmpty()){
+		QRegExp rx("<a name=\"(.*)\"",Qt::CaseSensitive, QRegExp::RegExp2);
+		rx.setMinimal(true);
+		QString sel = cursor.selection().toHtml();
+		QStringList anchors;
+		int pos=0;
+		while ((pos = rx.indexIn(sel,pos)) != -1) {
+			anchors << rx.cap(1);
+			pos += rx.matchedLength();
 		}
-	} else {
-		return anchor;
-	}
-
-	QRegExp rx("<a name=\"(.*)\"",Qt::CaseSensitive, QRegExp::RegExp2);
-	rx.setMinimal(true);
-	QString sel = cursor.selection().toHtml();
-	QStringList anchors;
-	int position = 0;
-	while ((position = rx.indexIn(sel, position)) != -1) {
-		anchors << rx.cap(1);
-		position += rx.matchedLength();
-	}
-	if (!anchors.isEmpty()) {
-		anchor = anchors.at(0);
+		if (!anchors.isEmpty()){
+			anchor = anchors.at(0);
+		}
 	}
 	return anchor;
 }
