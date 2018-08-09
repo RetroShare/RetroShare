@@ -43,7 +43,7 @@ class RsGxsForumGroup
 	public:
 	RsGroupMetaData mMeta;
 	std::string mDescription;
-    RsTlvGxsIdSet admin_list; // this is optional, and handled by the serialiser
+    RsTlvGxsIdSet mAdminList; // this is optional, and handled by the serialiser
 };
 
 class RsGxsForumMsg

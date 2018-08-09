@@ -58,7 +58,7 @@ void RsGxsForumGroupItem::serial_process(RsGenericSerializer::SerializeJob j,RsG
     if(j == RsGenericSerializer::DESERIALIZE && ctx.mOffset == ctx.mSize)
         return ;
 
-    RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,mGroup.admin_list,"admin_list") ;
+    RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,mGroup.mAdminList,"admin_list") ;
 }
 
 void RsGxsForumMsgItem::clear()
