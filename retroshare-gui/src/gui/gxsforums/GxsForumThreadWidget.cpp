@@ -601,7 +601,7 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
 			rsIdentity->getOwnIds(own_ids) ;
 
 			for(auto it(own_ids.begin());it!=own_ids.end();++it)
-				if(mForumGroup.mAdminList.ids.find(author_id) != mForumGroup.mAdminList.ids.end())
+				if(mForumGroup.mAdminList.ids.find(*it) != mForumGroup.mAdminList.ids.end())
 				{
 					contextMnu.addAction(editAct);
 					break ;
@@ -1011,7 +1011,7 @@ static QString getDurationString(uint32_t days)
     }
             
     tw->mForumDescription += QString("<b>%1: \t</b>%2<br/>").arg(tr("Distribution"), distrib_string);
-    tw->mForumDescription += QString("<b>%1: \t</b>%2<br/>").arg(tr("Author"), author);
+    tw->mForumDescription += QString("<b>%1: \t</b>%2<br/>").arg(tr("Contact"), author);
        
        if(!anti_spam_features1.isNull())
     		tw->mForumDescription += QString("<b>%1: \t</b>%2<br/>").arg(tr("Anti-spam")).arg(anti_spam_features1);
@@ -2230,9 +2230,30 @@ void GxsForumThreadWidget::editForumMessageData(const RsGxsForumMsg& msg)
 		return;
 	}
 
+	// Go through the list of own ids and see if one of them is a moderator
+	// TODO: offer to select which moderator ID to use if multiple IDs fit the conditions of the forum
+
+    RsGxsId moderator_id ;
+
+	std::list<RsGxsId> own_ids ;
+	rsIdentity->getOwnIds(own_ids) ;
+
+	for(auto it(own_ids.begin());it!=own_ids.end();++it)
+		if(mForumGroup.mAdminList.ids.find(*it) != mForumGroup.mAdminList.ids.end())
+        {
+            moderator_id = *it;
+            break;
+        }
+
+    // Check that author is in own ids, if not use the moderator id that was collected among own ids.
+    bool is_own = false ;
+    for(auto it(own_ids.begin());it!=own_ids.end() && !is_own;++it)
+        if(*it == msg.mMeta.mAuthorId)
+            is_own = true ;
+
 	if (!msg.mMeta.mAuthorId.isNull())
 	{
-		CreateGxsForumMsg *cfm = new CreateGxsForumMsg(groupId(), msg.mMeta.mParentId, msg.mMeta.mMsgId, msg.mMeta.mAuthorId);
+		CreateGxsForumMsg *cfm = new CreateGxsForumMsg(groupId(), msg.mMeta.mParentId, msg.mMeta.mMsgId, is_own?(msg.mMeta.mAuthorId):moderator_id);
 
 		cfm->insertPastedText(QString::fromUtf8(msg.mMsg.c_str())) ;
 		cfm->show();
