@@ -592,6 +592,21 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
 		RsGxsId author_id;
 		if(gxsIdItem && gxsIdItem->getId(author_id) && rsIdentity->isOwnId(author_id))
 			contextMnu.addAction(editAct);
+		else
+		{
+			// Go through the list of own ids and see if one of them is a moderator
+			// TODO: offer to select which moderator ID to use if multiple IDs fit the conditions of the forum
+
+			std::list<RsGxsId> own_ids ;
+			rsIdentity->getOwnIds(own_ids) ;
+
+			for(auto it(own_ids.begin());it!=own_ids.end();++it)
+				if(mForumGroup.mAdminList.ids.find(author_id) != mForumGroup.mAdminList.ids.end())
+				{
+					contextMnu.addAction(editAct);
+					break ;
+				}
+		}
 	}
 
 	contextMnu.addAction(replyAct);
@@ -946,6 +961,10 @@ static QString getDurationString(uint32_t days)
     else if(IS_GROUP_PGP_AUTHED(tw->mSignFlags)) anti_spam_features1 = tr("Anonymous posts forwarded if reputation is positive");
             
     tw->mForumDescription = QString("<b>%1: \t</b>%2<br/>").arg(tr("Forum name"), QString::fromUtf8( group.mMeta.mGroupName.c_str()));
+    tw->mForumDescription += QString("<b>%1: </b>%2<br/>").arg(tr("Description"),
+                                                                         group.mDescription.empty()?
+                                                                             tr("[None]<br/>")
+                                                                           :(QString::fromUtf8(group.mDescription.c_str())+"<br/>"));
     tw->mForumDescription += QString("<b>%1: \t</b>%2<br/>").arg(tr("Subscribers")).arg(group.mMeta.mPop);
     tw->mForumDescription += QString("<b>%1: \t</b>%2<br/>").arg(tr("Posts (at neighbor nodes)")).arg(group.mMeta.mVisibleMsgCount);
 	if(group.mMeta.mLastPost==0)
@@ -997,16 +1016,26 @@ static QString getDurationString(uint32_t days)
        if(!anti_spam_features1.isNull())
     		tw->mForumDescription += QString("<b>%1: \t</b>%2<br/>").arg(tr("Anti-spam")).arg(anti_spam_features1);
        
-    tw->mForumDescription += QString("<b>%1: </b><br/><br/>%2").arg(tr("Description"), QString::fromUtf8(group.mDescription.c_str()));
-
     tw->ui->subscribeToolButton->setSubscribed(IS_GROUP_SUBSCRIBED(tw->mSubscribeFlags));
     tw->mStateHelper->setWidgetEnabled(tw->ui->newthreadButton, (IS_GROUP_SUBSCRIBED(tw->mSubscribeFlags)));
 
-    if (tw->mThreadId.isNull() && !tw->mStateHelper->isLoading(tw->mTokenTypeMessageData))
+    if(!group.mAdminList.ids.empty())
     {
-        //ui->threadTitle->setText(tr("Forum Description"));
-        tw->ui->postText->setText(tw->mForumDescription);
+        QString admin_list_str ;
+
+        for(auto it(group.mAdminList.ids.begin());it!=group.mAdminList.ids.end();++it)
+        {
+            RsIdentityDetails det ;
+
+            rsIdentity->getIdDetails(*it,det);
+            admin_list_str += (admin_list_str.isNull()?"":", ") + QString::fromUtf8(det.mNickname.c_str()) ;
+        }
+
+		tw->mForumDescription += QString("<b>%1: </b>%2").arg(tr("Moderators"), admin_list_str);
     }
+
+    if (tw->mThreadId.isNull() && !tw->mStateHelper->isLoading(tw->mTokenTypeMessageData))
+        tw->ui->postText->setText(tw->mForumDescription);
 }
 
 void GxsForumThreadWidget::fillThreadFinished()

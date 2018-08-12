@@ -1539,7 +1539,7 @@ void SharedFilesDialog::FilterItems()
 	if(text.length() < 3)
 		return ;
 
-	FileSearchFlags flags = isRemote()?RS_FILE_HINTS_REMOTE:RS_FILE_HINTS_LOCAL;
+	//FileSearchFlags flags = isRemote()?RS_FILE_HINTS_REMOTE:RS_FILE_HINTS_LOCAL;
 	QStringList lst = text.split(" ",QString::SkipEmptyParts) ;
 	std::list<std::string> keywords ;
 

@@ -94,56 +94,100 @@ static bool decreasing_time_comp(const QPair<time_t,RsGxsMessageId>& e1,const QP
 void GxsForumsFillThread::run()
 {
 	RsTokenService *service = rsGxsForums->getTokenService();
+	uint32_t msg_token;
+	uint32_t grp_token;
 
 	emit status(tr("Waiting"));
 
-	/* get all messages of the forum */
-	RsTokReqOptions opts;
-	opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
+	{
+		/* get all messages of the forum */
+		RsTokReqOptions opts;
+		opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
 
-	std::list<RsGxsGroupId> grpIds;
-	grpIds.push_back(mForumId);
+		std::list<RsGxsGroupId> grpIds;
+		grpIds.push_back(mForumId);
 
 #ifdef DEBUG_FORUMS
-	std::cerr << "GxsForumsFillThread::run() forum id " << mForumId << std::endl;
+		std::cerr << "GxsForumsFillThread::run() forum id " << mForumId << std::endl;
 #endif
 
-	uint32_t token;
-	service->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, grpIds);
+		service->requestMsgInfo(msg_token, RS_TOKREQ_ANSTYPE_DATA, opts, grpIds);
 
-	/* wait for the answer */
-	uint32_t requestStatus = RsTokenService::GXS_REQUEST_V2_STATUS_PENDING;
-	while (!wasStopped()) {
-		requestStatus = service->requestStatus(token);
-		if (requestStatus == RsTokenService::GXS_REQUEST_V2_STATUS_FAILED ||
-			requestStatus == RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE) {
-			break;
+		/* wait for the answer */
+		uint32_t requestStatus = RsTokenService::GXS_REQUEST_V2_STATUS_PENDING;
+		while (!wasStopped()) {
+			requestStatus = service->requestStatus(msg_token);
+			if (requestStatus == RsTokenService::GXS_REQUEST_V2_STATUS_FAILED ||
+			        requestStatus == RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE) {
+				break;
+			}
+			msleep(200);
 		}
-		msleep(100);
+
+		if (requestStatus == RsTokenService::GXS_REQUEST_V2_STATUS_FAILED)
+			return;
 	}
 
-	if (wasStopped()) {
+    // also get the forum meta data.
+	{
+		RsTokReqOptions opts;
+		opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
+
+		std::list<RsGxsGroupId> grpIds;
+		grpIds.push_back(mForumId);
+
+#ifdef DEBUG_FORUMS
+		std::cerr << "GxsForumsFillThread::run() forum id " << mForumId << std::endl;
+#endif
+
+		service->requestGroupInfo(grp_token, RS_TOKREQ_ANSTYPE_DATA, opts, grpIds);
+
+		/* wait for the answer */
+		uint32_t requestStatus = RsTokenService::GXS_REQUEST_V2_STATUS_PENDING;
+		while (!wasStopped()) {
+			requestStatus = service->requestStatus(grp_token);
+			if (requestStatus == RsTokenService::GXS_REQUEST_V2_STATUS_FAILED ||
+			        requestStatus == RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE) {
+				break;
+			}
+			msleep(200);
+		}
+
+		if (requestStatus == RsTokenService::GXS_REQUEST_V2_STATUS_FAILED)
+			return;
+	}
+
+	if (wasStopped())
+    {
 #ifdef DEBUG_FORUMS
 		std::cerr << "GxsForumsFillThread::run() thread stopped, cancel request" << std::endl;
 #endif
 
 		/* cancel request */
-		service->cancelRequest(token);
+		service->cancelRequest(msg_token);
+		service->cancelRequest(grp_token);
 		return;
 	}
-
-	if (requestStatus == RsTokenService::GXS_REQUEST_V2_STATUS_FAILED) {
-//#TODO
-		return;
-	}
-
-//#TODO
-//	if (failed) {
-//		mService->cancelRequest(token);
-//		return;
-//	}
 
 	emit status(tr("Retrieving"));
+
+    std::vector<RsGxsForumGroup> forum_groups;
+
+	if (!rsGxsForums->getGroupData(grp_token, forum_groups) || forum_groups.size() != 1)
+        return;
+
+    RsGxsForumGroup forum_group = *forum_groups.begin();
+
+//#ifdef DEBUG_FORUMS
+    std::cerr << "Retrieved group data: " << std::endl;
+    std::cerr << "  Group ID: " << forum_group.mMeta.mGroupId << std::endl;
+    std::cerr << "  Admin lst: " << forum_group.mAdminList.ids.size() << " elements." << std::endl;
+    for(auto it(forum_group.mAdminList.ids.begin());it!=forum_group.mAdminList.ids.end();++it)
+        std::cerr << "    " << *it << std::endl;
+    std::cerr << "  Pinned Post: " << forum_group.mPinnedPosts.ids.size() << " messages." << std::endl;
+    for(auto it(forum_group.mPinnedPosts.ids.begin());it!=forum_group.mPinnedPosts.ids.end();++it)
+        std::cerr << "    " << *it << std::endl;
+//#endif
 
 	/* get messages */
 	std::map<RsGxsMessageId,RsGxsForumMsg> msgs;
@@ -152,9 +196,8 @@ void GxsForumsFillThread::run()
 
 		std::vector<RsGxsForumMsg> msgs_array;
 
-		if (!rsGxsForums->getMsgData(token, msgs_array)) {
+		if (!rsGxsForums->getMsgData(msg_token, msgs_array))
 			return;
-		}
 
 		// now put everything into a map in order to make search log(n)
 
@@ -209,10 +252,10 @@ void GxsForumsFillThread::run()
 			if(msgIt2 == msgs.end())
 				continue ;
 
-			// Make sure that the author is the same than the original message. This should always happen, but nothing can prevent someone to
-			// craft a new version of a message with his own signature.
+			// Make sure that the author is the same than the original message, or is a moderator. This should always happen when messages are constructed using
+            // the UI but nothing can prevent a nasty user to craft a new version of a message with his own signature.
 
-			if(msgIt2->second.mMeta.mAuthorId != msgIt->second.mMeta.mAuthorId)
+			if(msgIt2->second.mMeta.mAuthorId != msgIt->second.mMeta.mAuthorId && forum_group.mAdminList.ids.find(msgIt->second.mMeta.mAuthorId)==forum_group.mAdminList.ids.end())
 				continue ;
 
 			// always add the post a self version
