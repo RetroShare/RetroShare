@@ -890,9 +890,13 @@ void PeersHandler::handleGetNetworkOptions(Request& /*req*/, Response& resp)
 
 	int dlrate = 0;
 	int ulrate = 0;
-	rsConfig->GetMaxDataRates(dlrate, ulrate);
+	int dlratewi = 0;
+	int ulratewi = 0;
+	rsConfig->GetMaxDataRates(dlrate, ulrate, dlratewi, ulratewi);
 	resp.mDataStream << makeKeyValue("download_limit", dlrate);
 	resp.mDataStream << makeKeyValue("upload_limit", ulrate);
+	resp.mDataStream << makeKeyValue("download_limit_when_idle", dlratewi);
+	resp.mDataStream << makeKeyValue("upload_limit_when_idle", ulratewi);
 
 	bool checkIP = mRsPeers->getAllowServerIPDetermination();
 	resp.mDataStream << makeKeyValue("check_ip", checkIP);
@@ -1008,9 +1012,13 @@ void PeersHandler::handleSetNetworkOptions(Request& req, Response& resp)
 
 	int dlrate = 0;
 	int ulrate = 0;
+	int dlratewi = 0;
+	int ulratewi = 0;
 	req.mStream << makeKeyValueReference("download_limit", dlrate);
 	req.mStream << makeKeyValueReference("upload_limit", ulrate);
-	rsConfig->SetMaxDataRates(dlrate, ulrate);
+	req.mStream << makeKeyValueReference("download_limit_when_idle", dlratewi);
+	req.mStream << makeKeyValueReference("upload_limit_when_idle", ulratewi);
+	rsConfig->SetMaxDataRates(dlrate, ulrate, dlratewi, ulratewi);
 
 	bool checkIP;
 	req.mStream << makeKeyValueReference("check_ip", checkIP);
