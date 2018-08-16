@@ -132,6 +132,10 @@ class p3FileDatabase: public p3Service, public p3Config, public ftSearch //, pub
 		void setMaxShareDepth(int i) ;
 		int  maxShareDepth() const ;
 
+		bool banFile(const RsFileHash& real_file_hash, const std::string& filename, uint64_t file_size) ;
+		bool unbanFile(const RsFileHash& real_file_hash);
+		bool getPrimaryBannedFilesList(std::map<RsFileHash,BannedFileEntry>& banned_files) ;
+
         // computes/gathers statistics about shared directories
 
 		int getSharedDirStatistics(const RsPeerId& pid,SharedDirStats& stats);
@@ -244,5 +248,11 @@ class p3FileDatabase: public p3Service, public p3Config, public ftSearch //, pub
         std::string mFileSharingDir ;
         time_t mLastCleanupTime;
         time_t mLastDataRecvTS ;
+
+        // file filtering. Not explicitly related to shared files, but
+        //
+
+		std::map<RsFileHash,BannedFileEntry> mPrimaryBanList ;	// primary list (user controlled) of files banned from FT search and forwarding. map<real hash, BannedFileEntry>
+		std::set<RsFileHash> mBannedFileList ;	// list of banned hashes. This include original hashs and H(H(f)) when coming from friends.
 };
 

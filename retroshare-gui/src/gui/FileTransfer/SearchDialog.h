@@ -75,6 +75,7 @@ private slots:
     void searchSummaryWidgetCustomPopupMenu( QPoint point );
 
     void download();
+    void ban();
 
     void collCreate();
     void collModif();

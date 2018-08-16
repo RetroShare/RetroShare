@@ -34,12 +34,16 @@ void RsFileListsSyncRequestItem::serial_process(RsGenericSerializer::SerializeJo
 }
 void RsFileListsSyncResponseItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
-    RsTypeSerializer::serial_process           (j,ctx,entry_hash,"entry_hash") ;
-    RsTypeSerializer::serial_process           (j,ctx,checksum,"checksum") ;
-    RsTypeSerializer::serial_process<uint32_t> (j,ctx,flags     ,"flags") ;
+    RsTypeSerializer::serial_process           (j,ctx,entry_hash,               "entry_hash") ;
+    RsTypeSerializer::serial_process           (j,ctx,checksum,                 "checksum") ;
+    RsTypeSerializer::serial_process<uint32_t> (j,ctx,flags,                    "flags") ;
     RsTypeSerializer::serial_process<uint32_t> (j,ctx,last_known_recurs_modf_TS,"last_known_recurs_modf_TS") ;
-    RsTypeSerializer::serial_process<uint64_t> (j,ctx,request_id,"request_id") ;
-    RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,directory_content_data,"directory_content_data") ;
+    RsTypeSerializer::serial_process<uint64_t> (j,ctx,request_id,               "request_id") ;
+    RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,directory_content_data,   "directory_content_data") ;
+}
+void RsFileListsBannedHashesItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
+{
+    RsTypeSerializer::serial_process(j,ctx,encrypted_hashes,"encrypted_hashes") ;
 }
 
 RsItem *RsFileListsSerialiser::create_item(uint16_t service,uint8_t type) const
@@ -49,8 +53,9 @@ RsItem *RsFileListsSerialiser::create_item(uint16_t service,uint8_t type) const
 
     switch(type)
     {
-    case RS_PKT_SUBTYPE_FILELISTS_SYNC_REQ_ITEM: return new RsFileListsSyncRequestItem();
-    case RS_PKT_SUBTYPE_FILELISTS_SYNC_RSP_ITEM: return new RsFileListsSyncResponseItem();
+    case RS_PKT_SUBTYPE_FILELISTS_SYNC_REQ_ITEM:      return new RsFileListsSyncRequestItem();
+    case RS_PKT_SUBTYPE_FILELISTS_SYNC_RSP_ITEM:      return new RsFileListsSyncResponseItem();
+    case RS_PKT_SUBTYPE_FILELISTS_BANNED_HASHES_ITEM: return new RsFileListsBannedHashesItem();
     default:
         return NULL ;
     }

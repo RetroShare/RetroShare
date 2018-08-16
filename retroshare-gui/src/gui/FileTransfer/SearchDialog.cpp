@@ -54,6 +54,7 @@
 #define IMAGE_COLLVIEW             ":/images/library_view.png"
 #define IMAGE_COLLOPEN             ":/images/library.png"
 #define IMAGE_COPYLINK             ":/images/copyrslink.png"
+#define IMAGE_BANFILE              ":/icons/biohazard_red.png"
 
 /* Key for UI Preferences */
 #define UI_PREF_ADVANCED_SEARCH  "UIOptions/AdvancedSearch"
@@ -327,6 +328,7 @@ void SearchDialog::searchResultWidgetCustomPopupMenu( QPoint /*point*/ )
 	QMenu contextMnu(this) ;
 
 	contextMnu.addAction(QIcon(IMAGE_START), tr("Download"), this, SLOT(download())) ;
+	contextMnu.addAction(QIcon(IMAGE_BANFILE), tr("Mark as bad"), this, SLOT(ban())) ;
 	contextMnu.addSeparator();//--------------------------------------
 
 	contextMnu.addAction(QIcon(IMAGE_COPYLINK), tr("Copy RetroShare Link"), this, SLOT(copyResultLink())) ;
@@ -406,22 +408,44 @@ void SearchDialog::download()
 				std::cout << "isuing file request from search dialog: -"
 				          << (item->text(SR_NAME_COL)).toStdString()
 				          << "-" << hash << "-" << (item->text(SR_SIZE_COL)).toULongLong() << "-ids=" ;
-				for(std::list<RsPeerId>::const_iterator it(srcIds.begin()); it!=srcIds.end(); ++it) {
+				for(std::list<RsPeerId>::const_iterator it(srcIds.begin()); it!=srcIds.end(); ++it)
 					std::cout << *it << "-" << std::endl;
-				}//for(std::list<RsPeerId>::const_iterator
-				//QColor foreground = QColor(0, 128, 0); // green
+
 				QColor foreground = textColorDownloading();
 				QBrush brush(foreground);
 				for (int i = 0; i < item->columnCount(); ++i)
-				{
 					item->setForeground(i, brush);
-				}
-			}//if(!rsFiles -> FileRequest(
-		}//if (item->text(SR_HASH_COL).isEmpty())
-	}//for (int i = 0
-	if (attemptDownloadLocal) {
+			}
+		}
+	}
+	if (attemptDownloadLocal)
 		QMessageBox::information(this, tr("Download Notice"), tr("Skipping Local Files")) ;
-	}//if (attemptDownloadLocal)
+}
+
+void SearchDialog::ban()
+{
+	/* should also be able to handle multi-selection  */
+
+	QList<QTreeWidgetItem*> itemsForDownload = ui.searchResultWidget->selectedItems() ;
+	int numdls = itemsForDownload.size() ;
+	QTreeWidgetItem * item ;
+
+	for (int i = 0; i < numdls; ++i)
+    {
+		item = itemsForDownload.at(i) ;
+		 //  call the download
+		// *
+		if(!item->text(SR_HASH_COL).isEmpty())
+		{
+			std::cerr << "SearchDialog::download() Calling File Ban" << std::endl ;
+
+			RsFileHash hash( item->text(SR_HASH_COL).toStdString()) ;
+
+			rsFiles -> banFile( hash, (item->text(SR_NAME_COL)).toUtf8().constData() , (item->text(SR_SIZE_COL)).toULongLong());
+
+            ui.searchResultWidget->takeItem(item) ;
+		}
+	}
 }
 
 void SearchDialog::collCreate()

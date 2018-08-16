@@ -1855,6 +1855,47 @@ bool p3FileDatabase::locked_generateAndSendSyncRequest(RemoteDirectoryStorage *r
 }
 
 
+// Unwanted content filtering system
+
+bool p3FileDatabase::banFile(const RsFileHash& real_file_hash, const std::string& filename, uint64_t file_size)
+{
+	{
+		RS_STACK_MUTEX(mFLSMtx) ;
+		BannedFileEntry& entry(mPrimaryBanList[real_file_hash]) ;	// primary list (user controlled) of files banned from FT search and forwarding. map<real hash, BannedFileEntry>
+
+		entry.filename = filename ;
+		entry.size = file_size ;
+		entry.ban_time_stamp = time(NULL);
+
+        RsFileHash hash_of_hash ;
+        ftServer::encryptHash(real_file_hash,hash_of_hash) ;
+
+        mBannedFileList.insert(real_file_hash) ;
+        mBannedFileList.insert(hash_of_hash) ;
+	}
+
+    IndicateConfigChanged();
+	return true;
+}
+bool p3FileDatabase::unbanFile(const RsFileHash& real_file_hash)
+{
+    {
+		RS_STACK_MUTEX(mFLSMtx) ;
+		mPrimaryBanList.erase(real_file_hash) ;
+    }
+
+    IndicateConfigChanged();
+    return true;
+}
+bool p3FileDatabase::getPrimaryBannedFilesList(std::map<RsFileHash,BannedFileEntry>& banned_files)
+{
+	RS_STACK_MUTEX(mFLSMtx) ;
+	banned_files = mPrimaryBanList;
+
+    return true ;
+}
+
+
 
 
 

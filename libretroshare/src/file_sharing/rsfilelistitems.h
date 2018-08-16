@@ -34,11 +34,10 @@
 
 #include "serialiser/rsserializer.h"
 
-// These items have "flag type" numbers, but this is not used.
-
-const uint8_t RS_PKT_SUBTYPE_FILELISTS_SYNC_REQ_ITEM    = 0x01;
-const uint8_t RS_PKT_SUBTYPE_FILELISTS_SYNC_RSP_ITEM    = 0x02;
-const uint8_t RS_PKT_SUBTYPE_FILELISTS_CONFIG_ITEM      = 0x03;
+const uint8_t RS_PKT_SUBTYPE_FILELISTS_SYNC_REQ_ITEM      = 0x01;
+const uint8_t RS_PKT_SUBTYPE_FILELISTS_SYNC_RSP_ITEM      = 0x02;
+const uint8_t RS_PKT_SUBTYPE_FILELISTS_CONFIG_ITEM        = 0x03;
+const uint8_t RS_PKT_SUBTYPE_FILELISTS_BANNED_HASHES_ITEM = 0x04;
 
 /*!
  * Base class for filelist sync items
@@ -101,6 +100,17 @@ public:
     uint64_t   request_id;                // use to determine if changes that have occured since last hash
 
     RsTlvBinaryData directory_content_data ;	// encoded binary data. This allows to vary the encoding format, in a way that is transparent to the serialiser.
+};
+
+class RsFileListsBannedHashesItem: public RsFileListsItem
+{
+public:
+	RsFileListsBannedHashesItem() : RsFileListsItem(RS_PKT_SUBTYPE_FILELISTS_BANNED_HASHES_ITEM){}
+
+    virtual void clear();
+	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
+
+    std::set<RsFileHash> encrypted_hashes ;// hash of hash for each banned file.
 };
 
 class RsFileListsSerialiser : public RsServiceSerializer

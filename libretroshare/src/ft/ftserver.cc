@@ -1825,10 +1825,24 @@ int ftServer::handleIncoming()
 bool    ftServer::addConfiguration(p3ConfigMgr *cfgmgr)
 {
 	/* add all the subbits to config mgr */
-	cfgmgr->addConfiguration("ft_database.cfg", mFileDatabase);
-	cfgmgr->addConfiguration("ft_extra.cfg", mFtExtra);
+	cfgmgr->addConfiguration("ft_database.cfg" , mFileDatabase);
+	cfgmgr->addConfiguration("ft_extra.cfg"    , mFtExtra     );
 	cfgmgr->addConfiguration("ft_transfers.cfg", mFtController);
 
 	return true;
 }
 
+// Offensive content file filtering
+
+int ftServer::banFile(const RsFileHash& real_file_hash, const std::string& filename, uint64_t file_size)
+{
+    return mFileDatabase->banFile(real_file_hash,filename,file_size) ;
+}
+int ftServer::unbanFile(const RsFileHash& real_file_hash)
+{
+    return mFileDatabase->unbanFile(real_file_hash) ;
+}
+bool ftServer::getPrimaryBannedFilesList(std::map<RsFileHash,BannedFileEntry>& banned_files)
+{
+    return mFileDatabase->getPrimaryBannedFilesList(banned_files) ;
+}
