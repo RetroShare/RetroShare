@@ -150,6 +150,7 @@ bool GxsForumGroupDialog::service_loadGroup(uint32_t token, Mode /*mode*/, RsGro
 
 	groupMetaData = groups[0].mMeta;
 	description = QString::fromUtf8(groups[0].mDescription.c_str());
+    setSelectedModerators(groups[0].mAdminList.ids);
 
 	return true;
 }
