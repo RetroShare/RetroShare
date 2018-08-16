@@ -38,8 +38,11 @@ private slots:
 
 	/** management of the adv search dialog object when switching search modes */
 	//void hideEvent(QHideEvent * event);
+	void bannedFilesContextMenu();
 
 private:
+	void fillFilesList();
+
 	/** Qt Designer generated object */
 	Ui::BannedFilesDialog ui;
 };
