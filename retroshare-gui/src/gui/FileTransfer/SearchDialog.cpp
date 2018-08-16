@@ -26,6 +26,7 @@
 
 #include "rshare.h"
 #include "SearchDialog.h"
+#include "gui/FileTransfer/BannedFilesDialog.h"
 #include "gui/RSHumanReadableDelegate.h"
 #include "gui/RetroShareLink.h"
 #include "retroshare-gui/RsAutoUpdatePage.h"
@@ -118,6 +119,7 @@ SearchDialog::SearchDialog(QWidget *parent)
     connect( ui.searchResultWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( searchResultWidgetCustomPopupMenu( QPoint ) ) );
 
     connect( ui.searchSummaryWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( searchSummaryWidgetCustomPopupMenu( QPoint ) ) );
+    connect( ui.showBannedFiles_TB, SIGNAL( clicked() ), this, SLOT( openBannedFiles() ) );
 
     connect( ui.lineEdit, SIGNAL( returnPressed ( void ) ), this, SLOT( searchKeywords( void ) ) );
     connect( ui.lineEdit, SIGNAL( textChanged ( const QString& ) ), this, SLOT( checkText( const QString& ) ) );
@@ -443,9 +445,15 @@ void SearchDialog::ban()
 
 			rsFiles -> banFile( hash, (item->text(SR_NAME_COL)).toUtf8().constData() , (item->text(SR_SIZE_COL)).toULongLong());
 
-            ui.searchResultWidget->takeItem(item) ;
+            ui.searchResultWidget->takeTopLevelItem(ui.searchResultWidget->indexOfTopLevelItem(item)) ;
 		}
 	}
+}
+
+void SearchDialog::openBannedFiles()
+{
+    BannedFilesDialog d ;
+    d.exec();
 }
 
 void SearchDialog::collCreate()

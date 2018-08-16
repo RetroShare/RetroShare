@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>BannedFilesDialog</class>
+ <widget class="QDialog" name="BannedFilesDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>923</width>
+    <height>810</height>
+   </rect>
+  </property>
+  <layout class="QHBoxLayout" name="horizontalLayout">
+   <item>
+    <widget class="QTableWidget" name="bannedFiles_TW">
+     <attribute name="horizontalHeaderStretchLastSection">
+      <bool>true</bool>
+     </attribute>
+     <column>
+      <property name="text">
+       <string>Filename</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Hash</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Size</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Banned since...</string>
+      </property>
+     </column>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources>
+  <include location="../images.qrc"/>
+  <include location="../icons.qrc"/>
+ </resources>
+ <connections/>
+</ui>

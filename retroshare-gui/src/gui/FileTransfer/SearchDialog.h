@@ -87,6 +87,7 @@ private slots:
     void recommendtofriends();
     void checkText(const QString&);
 
+    void openBannedFiles();
     void copyResultLink();
     void copySearchLink();
     void openFolderSearch();
