@@ -776,10 +776,12 @@ SOURCES += gxstunnel/p3gxstunnel.cc \
 # new serialization code
 HEADERS += serialiser/rsserializable.h \
            serialiser/rsserializer.h \
-           serialiser/rstypeserializer.h
+           serialiser/rstypeserializer.h \
+           util/rsjson.h
 
 SOURCES += serialiser/rsserializer.cc \
-           serialiser/rstypeserializer.cc 
+           serialiser/rstypeserializer.cc \
+           util/rsjson.cc
 
 # Identity Service
 HEADERS += retroshare/rsidentity.h \
@@ -874,9 +876,8 @@ rs_jsonapi {
     DOXIGEN_INPUT_DIRECTORY=$$system_path($$clean_path($${PWD}))
     DOXIGEN_CONFIG_SRC=$$system_path($$clean_path($${RS_SRC_PATH}/jsonapi-generator/src/jsonapi-generator-doxygen.conf))
     DOXIGEN_CONFIG_OUT=$$system_path($$clean_path($${JSONAPI_GENERATOR_OUT}/jsonapi-generator-doxygen.conf))
-    WRAPPERS_DEF_FILE=$$system_path($$clean_path($${JSONAPI_GENERATOR_OUT}/jsonapi-wrappers.cpp))
-    WRAPPERS_DECL_FILE=$$system_path($$clean_path($${JSONAPI_GENERATOR_OUT}/jsonapi-wrappers.h))
-    WRAPPERS_REG_FILE=$$system_path($$clean_path($${JSONAPI_GENERATOR_OUT}/jsonapi-register.inl))
+    WRAPPERS_INCL_FILE=$$system_path($$clean_path($${JSONAPI_GENERATOR_OUT}/jsonapi-includes.inl))
+    WRAPPERS_REG_FILE=$$system_path($$clean_path($${JSONAPI_GENERATOR_OUT}/jsonapi-wrappers.inl))
 
     restbed.target = $$system_path($$clean_path($${RESTBED_BUILD_PATH}/library/librestbed.a))
     restbed.commands = \
@@ -890,30 +891,22 @@ rs_jsonapi {
 
     PRE_TARGETDEPS *= $${JSONAPI_GENERATOR_EXE}
     INCLUDEPATH *= $${JSONAPI_GENERATOR_OUT}
-    GENERATED_HEADERS += $${WRAPPERS_DECL_FILE} $${WRAPPERS_REG_FILE}
-    GENERATED_SOURCES += $${WRAPPERS_DEF_FILE}
+    GENERATED_HEADERS += $${WRAPPERS_INCL_FILE}
 
-    jsonwrappersdecl.target = $${WRAPPERS_DECL_FILE}
-    jsonwrappersdecl.commands = \
+    jsonwrappersincl.target = $${WRAPPERS_INCL_FILE}
+    jsonwrappersincl.commands = \
         cp $${DOXIGEN_CONFIG_SRC} $${DOXIGEN_CONFIG_OUT}; \
         echo OUTPUT_DIRECTORY=$${JSONAPI_GENERATOR_OUT} >> $${DOXIGEN_CONFIG_OUT};\
         echo INPUT=$${DOXIGEN_INPUT_DIRECTORY} >> $${DOXIGEN_CONFIG_OUT}; \
         doxygen $${DOXIGEN_CONFIG_OUT}; \
         $${JSONAPI_GENERATOR_EXE} $${JSONAPI_GENERATOR_SRC} $${JSONAPI_GENERATOR_OUT};
-    QMAKE_EXTRA_TARGETS += jsonwrappersdecl
-    libretroshare.depends += jsonwrappersdecl
-    PRE_TARGETDEPS *= $${WRAPPERS_DECL_FILE}
-
-    jsonwrappersdef.target = $${WRAPPERS_DEF_FILE}
-    jsonwrappersdef.commands = touch $${WRAPPERS_DEF_FILE}
-    jsonwrappersdef.depends = jsonwrappersdecl
-    QMAKE_EXTRA_TARGETS += jsonwrappersdef
-    libretroshare.depends += jsonwrappersdef
-    PRE_TARGETDEPS *= $${WRAPPERS_DEF_FILE}
+    QMAKE_EXTRA_TARGETS += jsonwrappersincl
+    libretroshare.depends += jsonwrappersincl
+    PRE_TARGETDEPS *= $${WRAPPERS_INCL_FILE}
 
     jsonwrappersreg.target = $${WRAPPERS_REG_FILE}
     jsonwrappersreg.commands = touch $${WRAPPERS_REG_FILE}
-    jsonwrappersreg.depends = jsonwrappersdef
+    jsonwrappersreg.depends = jsonwrappersincl
     QMAKE_EXTRA_TARGETS += jsonwrappersreg
     libretroshare.depends += jsonwrappersreg
     PRE_TARGETDEPS *= $${WRAPPERS_REG_FILE}

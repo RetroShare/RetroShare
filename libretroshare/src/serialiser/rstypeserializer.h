@@ -31,12 +31,8 @@
 
 #include "serialiser/rsserializer.h"
 #include "serialiser/rsserializable.h"
+#include "util/rsjson.h"
 
-#ifdef HAS_RAPIDJSON
-#include <rapidjson/document.h>
-#else
-#include <rapid_json/document.h>
-#endif // HAS_RAPIDJSON
 #include <typeinfo> // for typeid
 #include <type_traits>
 #include <errno.h>
@@ -116,7 +112,6 @@
 \
 } while(false)
 
-std::ostream &operator<<(std::ostream &out, const RsJson &jDoc);
 
 struct RsTypeSerializer
 {

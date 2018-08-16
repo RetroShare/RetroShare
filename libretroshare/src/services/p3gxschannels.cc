@@ -69,7 +69,8 @@ p3GxsChannels::p3GxsChannels(
         RsGixs* gixs ) :
     RsGenExchange( gds, nes, new RsGxsChannelSerialiser(),
                    RS_SERVICE_GXS_TYPE_CHANNELS, gixs, channelsAuthenPolicy() ),
-    RsGxsChannels(static_cast<RsGxsIface&>(*this)), GxsTokenQueue(this)
+    RsGxsChannels(static_cast<RsGxsIface&>(*this)), GxsTokenQueue(this),
+    mSearchCallbacksMapMutex("GXS channels search")
 {
 	// For Dummy Msgs.
 	mGenActive = false;
@@ -351,8 +352,6 @@ static  time_t last_dummy_tick = 0;
 	GxsTokenQueue::checkRequests();
 
 	mCommentService->comment_tick();
-
-	return;
 }
 
 bool p3GxsChannels::getGroupData(const uint32_t &token, std::vector<RsGxsChannelGroup> &groups)
@@ -1560,6 +1559,8 @@ void p3GxsChannels::dummy_tick()
 		}
 
 	}
+
+	cleanTimedOutSearches();
 }
 
 
@@ -1775,4 +1776,60 @@ bool p3GxsChannels::retrieveDistantGroup(const RsGxsGroupId& group_id,RsGxsChann
         return false ;
 }
 
+bool p3GxsChannels::turtleSearchRequest(
+        const std::string& matchString,
+        const std::function<void (const RsGxsGroupSummary&)>& multiCallback,
+        std::time_t maxWait )
+{
+	if(matchString.empty())
+	{
+		std::cerr << __PRETTY_FUNCTION__ << " match string can't be empty!"
+		          << std::endl;
+		return false;
+	}
 
+	TurtleRequestId sId = turtleSearchRequest(matchString);
+
+	RS_STACK_MUTEX(mSearchCallbacksMapMutex);
+	mSearchCallbacksMap.emplace(
+	            sId,
+	            std::make_pair(
+	                multiCallback,
+	                std::chrono::system_clock::now() +
+	                    std::chrono::seconds(maxWait) ) );
+
+	return true;
+}
+
+void p3GxsChannels::receiveDistantSearchResults(
+        TurtleRequestId id, const RsGxsGroupId& grpId )
+{
+	std::cerr << __PRETTY_FUNCTION__ << "(" << id << ", " << grpId << ")"
+	          << std::endl;
+
+	RsGenExchange::receiveDistantSearchResults(id, grpId);
+	RsGxsGroupSummary gs;
+	gs.mGroupId = grpId;
+	netService()->retrieveDistantGroupSummary(grpId, gs);
+
+	{
+		RS_STACK_MUTEX(mSearchCallbacksMapMutex);
+		auto cbpt = mSearchCallbacksMap.find(id);
+		if(cbpt != mSearchCallbacksMap.end())
+			cbpt->second.first(gs);
+	} // end RS_STACK_MUTEX(mSearchCallbacksMapMutex);
+}
+
+void p3GxsChannels::cleanTimedOutSearches()
+{
+	RS_STACK_MUTEX(mSearchCallbacksMapMutex);
+	auto now = std::chrono::system_clock::now();
+	for( auto cbpt = mSearchCallbacksMap.begin();
+	     cbpt != mSearchCallbacksMap.end(); )
+		if(cbpt->second.second <= now)
+		{
+			clearDistantSearchResults(cbpt->first);
+			cbpt = mSearchCallbacksMap.erase(cbpt);
+		}
+		else ++cbpt;
+}

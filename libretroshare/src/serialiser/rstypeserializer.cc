@@ -660,16 +660,3 @@ bool RsTypeSerializer::from_JSON( const std::string& /*memberName*/,
                                   RsTypeSerializer::TlvMemBlock_proxy&,
                                   RsJson& /*jDoc*/)
 { return true; }
-
-
-//============================================================================//
-//                      RsJson std:ostream support                            //
-//============================================================================//
-
-std::ostream &operator<<(std::ostream &out, const RsJson &jDoc)
-{
-	rapidjson::StringBuffer buffer; buffer.Clear();
-	rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(buffer);
-	jDoc.Accept(writer);
-	return out << buffer.GetString();
-}

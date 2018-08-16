@@ -25,6 +25,7 @@
 #include <inttypes.h>
 #include <string>
 #include <list>
+#include <functional>
 
 #include "retroshare/rstokenservice.h"
 #include "retroshare/rsgxsifacehelper.h"
@@ -265,6 +266,20 @@ public:
 	 * @return false on error, true otherwise
 	 */
 	virtual bool ExtraFileRemove(const RsFileHash& hash) = 0;
+
+	/**
+	 * @brief Request remote channels search
+	 * @jsonapi{development}
+	 * @param[in] matchString string to look for in the search
+	 * @param multiCallback function that will be called each time a search
+	 * result is received
+	 * @param[in] maxWait maximum wait time in seconds for search results
+	 * @return false on error, true otherwise
+	 */
+	virtual bool turtleSearchRequest(
+	        const std::string& matchString,
+	        const std::function<void (const RsGxsGroupSummary& result)>& multiCallback,
+	        std::time_t maxWait = 300 ) = 0;
 
 	//////////////////////////////////////////////////////////////////////////////
     ///                     Distant synchronisation methods                    ///

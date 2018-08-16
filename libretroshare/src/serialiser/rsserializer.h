@@ -151,15 +151,11 @@
 #include <string.h>
 #include <iostream>
 #include <string>
-#ifdef HAS_RAPIDJSON
-#include <rapidjson/document.h>
-#else
-#include <rapid_json/document.h>
-#endif // HAS_RAPIDJSON
 
 #include "retroshare/rsflags.h"
 #include "serialiser/rsserial.h"
 #include "util/rsdeprecate.h"
+#include "util/rsjson.h"
 
 struct RsItem;
 
@@ -197,8 +193,6 @@ class RsRawSerialiser: public RsSerialType
 		virtual	bool        serialise  (RsItem *item, void *data, uint32_t *size);
 		virtual	RsItem *    deserialise(void *data, uint32_t *size);
 };
-
-typedef rapidjson::Document RsJson;
 
 /// Top class for all services and config serializers.
 struct RsGenericSerializer : RsSerialType

@@ -18,16 +18,19 @@
 
 #include "jsonapi.h"
 
-#include <rapid_json/document.h>
-#include <rapid_json/writer.h>
-#include <rapid_json/stringbuffer.h>
+#include <sstream>
+#include <memory>
+#include <restbed>
+
+#include "util/rsjson.h"
+#include "retroshare/rsgxschannels.h"
 
 // Generated at compile time
-#include "jsonapi-wrappers.h"
+#include "jsonapi-includes.inl"
 
 JsonApiServer::JsonApiServer(
         uint16_t port, const std::function<void(int)> shutdownCallback) :
-    mPort(port), mShutdownCallback(shutdownCallback), notifyClientWrapper(*this)
+    mPort(port), mShutdownCallback(shutdownCallback)
 {
 	registerHandler("/jsonApiServer/shutdown",
 	                [this](const std::shared_ptr<rb::Session>)
@@ -35,32 +38,16 @@ JsonApiServer::JsonApiServer(
 		shutdown();
 	});
 
-	registerHandler("/jsonApiServer/notifications",
-	        [this](const std::shared_ptr<rb::Session> session)
-	{
-		const auto headers = std::multimap<std::string, std::string>
-		{
-			{ "Connection", "keep-alive" },
-			{ "Cache-Control", "no-cache" },
-			{ "Content-Type", "text/event-stream" },
-		};
-
-		session->yield(rb::OK, headers,
-		               [this](const std::shared_ptr<rb::Session> session)
-		{
-			notifySessions.push_back(session);
-		} );
-	} );
-
 // Generated at compile time
-#include "jsonapi-register.inl"
+#include "jsonapi-wrappers.inl"
 }
 
 void JsonApiServer::run()
 {
 	std::shared_ptr<rb::Settings> settings(new rb::Settings);
 	settings->set_port(mPort);
-	settings->set_default_header("Connection", "close");
+//	settings->set_default_header("Connection", "close");
+	settings->set_default_header("Cache-Control", "no-cache");
 	mService.start(settings);
 }
 
@@ -79,48 +66,4 @@ void JsonApiServer::shutdown(int exitCode)
 {
 	mService.stop();
 	mShutdownCallback(exitCode);
-}
-
-void JsonApiServer::cleanClosedNotifySessions()
-{
-	notifySessions.erase(
-	            std::remove_if(
-	                notifySessions.begin(), notifySessions.end(),
-	                [](const std::shared_ptr<rb::Session> &s)
-	{ return s->is_closed(); } ), notifySessions.end());
-}
-
-JsonApiServer::NotifyClientWrapper::NotifyClientWrapper(JsonApiServer& parent) :
-    NotifyClient(), mJsonApiServer(parent)
-{
-	rsNotify->registerNotifyClient(static_cast<NotifyClient*>(this));
-}
-
-void JsonApiServer::NotifyClientWrapper::notifyTurtleSearchResult(
-        uint32_t searchId, const std::list<TurtleFileInfo>& files )
-{
-	mJsonApiServer.cleanClosedNotifySessions();
-
-	RsGenericSerializer::SerializeContext cAns;
-	RsJson& jAns(cAns.mJson);
-
-	// serialize parameters and method name to JSON
-	{
-		std::string methodName("NotifyClient/notifyTurtleSearchResult");
-		std::list<TurtleFileInfo> filesCopy(files);
-		RsGenericSerializer::SerializeContext& ctx(cAns);
-		RsGenericSerializer::SerializeJob j(RsGenericSerializer::TO_JSON);
-		RS_SERIAL_PROCESS(methodName);
-		RS_SERIAL_PROCESS(searchId);
-//		RS_SERIAL_PROCESS(filesCopy);
-	}
-
-	rapidjson::StringBuffer buffer;
-	rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
-	jAns.Accept(writer);
-	std::string message(buffer.GetString(), buffer.GetSize());
-	message.insert(0, "data: "); message.append("\n\n");
-
-	for(auto session : mJsonApiServer.notifySessions)
-		session->yield(message);
 }

@@ -32,6 +32,7 @@
 #include "gxs/rsgxsdata.h"
 #include "retroshare/rsgxsifacetypes.h"
 #include "util/rsdeprecate.h"
+#include "serialiser/rsserializable.h"
 
 /*!
  * This structure is used to transport group summary information when a GXS

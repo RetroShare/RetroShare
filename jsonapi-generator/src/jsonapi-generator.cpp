@@ -25,12 +25,15 @@
 
 struct MethodParam
 {
-	MethodParam() : in(false), out(false) {}
+	MethodParam() :
+	    in(false), out(false), isMultiCallback(false), isSingleCallback(false){}
 
 	QString type;
 	QString name;
 	bool in;
 	bool out;
+	bool isMultiCallback;
+	bool isSingleCallback;
 };
 
 int main(int argc, char *argv[])
@@ -42,24 +45,18 @@ int main(int argc, char *argv[])
 	QString outputPath(argv[2]);
 	QString doxPrefix(outputPath+"/xml/");
 
-	QString wrappersDefFilePath(outputPath + "/jsonapi-wrappers.cpp");
+	QString wrappersDefFilePath(outputPath + "/jsonapi-wrappers.inl");
 	QFile wrappersDefFile(wrappersDefFilePath);
 	wrappersDefFile.remove();
 	if(!wrappersDefFile.open(QIODevice::WriteOnly|QIODevice::Append|QIODevice::Text))
 		qFatal(QString("Can't open: " + wrappersDefFilePath).toLatin1().data());
 
-	QString wrappersDeclFilePath(outputPath + "/jsonapi-wrappers.h");
-	QFile wrappersDeclFile(wrappersDeclFilePath);
-	wrappersDeclFile.remove();
-	if(!wrappersDeclFile.open(QIODevice::WriteOnly|QIODevice::Append|QIODevice::Text))
-		qFatal(QString("Can't open: " + wrappersDeclFilePath).toLatin1().data());
-
-	QString wrappersRegisterFilePath(outputPath + "/jsonapi-register.inl");
-	QFile wrappersRegisterFile(wrappersRegisterFilePath);
-	wrappersRegisterFile.remove();
-	if(!wrappersRegisterFile.open(QIODevice::WriteOnly|QIODevice::Append|QIODevice::Text))
-		qFatal(QString("Can't open: " + wrappersRegisterFilePath).toLatin1().data());
-
+	QString cppApiIncludesFilePath(outputPath + "/jsonapi-includes.inl");
+	QFile cppApiIncludesFile(cppApiIncludesFilePath);
+	cppApiIncludesFile.remove();
+	if(!cppApiIncludesFile.open(QIODevice::WriteOnly|QIODevice::Append|QIODevice::Text))
+		qFatal(QString("Can't open: " + cppApiIncludesFilePath).toLatin1().data());
+	QSet<QString> cppApiIncludesSet;
 
 	QDirIterator it(doxPrefix, QStringList() << "*8h.xml", QDir::Files);
 	while(it.hasNext())
@@ -151,21 +148,45 @@ int main(int argc, char *argv[])
 				QString retvalType = memberdef.firstChildElement("type").text();
 				QMap<QString,MethodParam> paramsMap;
 				QStringList orderedParamNames;
-				uint hasInput = false;
-				uint hasOutput = false;
+				bool hasInput = false;
+				bool hasOutput = false;
+				bool hasSingleCallback = false;
+				bool hasMultiCallback = false;
+				QString callbackName;
+				QString callbackParams;
 
 				QDomNodeList params = memberdef.elementsByTagName("param");
 				for (int k = 0; k < params.size(); ++k)
 				{
 					QDomElement tmpPE = params.item(k).toElement();
 					MethodParam tmpParam;
-					tmpParam.name = tmpPE.firstChildElement("declname").text();
-					QDomElement tmpType = tmpPE.firstChildElement("type");
+					QString& pName(tmpParam.name);
 					QString& pType(tmpParam.type);
+					pName = tmpPE.firstChildElement("declname").text();
+					QDomElement tmpType = tmpPE.firstChildElement("type");
 					pType = tmpType.text();
 					if(pType.startsWith("const ")) pType.remove(0,6);
-					pType.replace(QString("&"), QString());
-					pType.replace(QString(" "), QString());
+					if(pType.startsWith("std::function"))
+					{
+						if(pType.endsWith('&')) pType.chop(1);
+						if(pName.startsWith("multiCallback"))
+						{
+							tmpParam.isMultiCallback = true;
+							hasMultiCallback = true;
+						}
+						else if(pName.startsWith("callback"))
+						{
+							tmpParam.isSingleCallback = true;
+							hasSingleCallback = true;
+						}
+						callbackName = pName;
+						callbackParams = pType;
+					}
+					else
+					{
+						pType.replace(QString("&"), QString());
+						pType.replace(QString(" "), QString());
+					}
 					paramsMap.insert(tmpParam.name, tmpParam);
 					orderedParamNames.push_back(tmpParam.name);
 				}
@@ -242,6 +263,58 @@ int main(int argc, char *argv[])
 					        "\t\t\tRS_SERIAL_PROCESS(retval);\n";
 				if(hasOutput) outputParamsSerialization += "\t\t}\n";
 
+				QString captureVars;
+
+				QString sessionEarlyClose;
+				if(hasSingleCallback)
+					sessionEarlyClose = "session->close();";
+
+				QString sessionDelayedClose;
+				if(hasMultiCallback)
+				{
+					sessionDelayedClose = "mService.schedule( [session](){session->close();}, std::chrono::seconds(maxWait+120) );";
+					captureVars = "this";
+				}
+
+				QString callbackParamsSerialization;
+
+				if(hasSingleCallback || hasMultiCallback ||
+				        ((callbackParams.indexOf('(')+2) < callbackParams.indexOf(')')))
+				{
+					QString& cbs(callbackParamsSerialization);
+
+					callbackParams = callbackParams.split('(')[1];
+					callbackParams = callbackParams.split(')')[0];
+
+					cbs += "RsGenericSerializer::SerializeContext ctx;\n";
+
+					for (QString cbPar : callbackParams.split(','))
+					{
+						bool isConst(cbPar.startsWith("const "));
+						QChar pSep(' ');
+						bool isRef(cbPar.contains('&'));
+						if(isRef) pSep = '&';
+						int sepIndex = cbPar.lastIndexOf(pSep)+1;
+						QString cpt(cbPar.mid(0, sepIndex));
+						cpt.remove(0,6);
+						QString cpn(cbPar.mid(sepIndex));
+
+						cbs += "\t\t\tRsTypeSerializer::serial_process(";
+						cbs += "RsGenericSerializer::TO_JSON, ctx, ";
+						if(isConst)
+						{
+							cbs += "const_cast<";
+							cbs += cpt;
+							cbs += ">(";
+						}
+						cbs += cpn;
+						if(isConst) cbs += ")";
+						cbs += ", \"";
+						cbs += cpn;
+						cbs += "\" );\n";
+					}
+				}
+
 				QMap<QString,QString> substitutionsMap;
 				substitutionsMap.insert("paramsDeclaration", paramsDeclaration);
 				substitutionsMap.insert("inputParamsDeserialization", inputParamsDeserialization);
@@ -249,8 +322,20 @@ int main(int argc, char *argv[])
 				substitutionsMap.insert("wrapperName", wrapperName);
 				substitutionsMap.insert("headerFileName", headerFileName);
 				substitutionsMap.insert("functionCall", functionCall);
+				substitutionsMap.insert("apiPath", apiPath);
+				substitutionsMap.insert("sessionEarlyClose", sessionEarlyClose);
+				substitutionsMap.insert("sessionDelayedClose", sessionDelayedClose);
+				substitutionsMap.insert("captureVars", captureVars);
+				substitutionsMap.insert("callbackName", callbackName);
+				substitutionsMap.insert("callbackParams", callbackParams);
+				substitutionsMap.insert("callbackParamsSerialization", callbackParamsSerialization);
 
-				QFile templFile(sourcePath + "/method-wrapper-template.cpp.tmpl");
+				QString templFilePath(sourcePath);
+				if(hasMultiCallback || hasSingleCallback)
+					templFilePath.append("/async-method-wrapper-template.cpp.tmpl");
+				else templFilePath.append("/method-wrapper-template.cpp.tmpl");
+
+				QFile templFile(templFilePath);
 				templFile.open(QIODevice::ReadOnly);
 				QString wrapperDef(templFile.readAll());
 
@@ -261,15 +346,13 @@ int main(int argc, char *argv[])
 
 				wrappersDefFile.write(wrapperDef.toLocal8Bit());
 
-				QString wrapperDecl("void " + instanceName + methodName + "Wrapper(const std::shared_ptr<rb::Session> session);\n");
-				wrappersDeclFile.write(wrapperDecl.toLocal8Bit());
-
-
-				QString wrapperReg("registerHandler(\""+apiPath+"\", "+wrapperName+");\n");
-				wrappersRegisterFile.write(wrapperReg.toLocal8Bit());
+				cppApiIncludesSet.insert("#include \"retroshare/" + headerFileName + "\"\n");
 			}
 		}
 	}
+
+	for(const QString& incl : cppApiIncludesSet)
+		cppApiIncludesFile.write(incl.toLocal8Bit());
 
 	return 0;
 }

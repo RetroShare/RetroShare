@@ -21,7 +21,6 @@
 #include <restbed>
 
 #include "util/rsthreads.h"
-#include "retroshare/rsnotify.h"
 
 namespace rb = restbed;
 
@@ -70,20 +69,5 @@ private:
 	uint16_t mPort;
 	rb::Service mService;
 	const std::function<void(int)> mShutdownCallback;
-
-	std::list<std::shared_ptr<rb::Session> > notifySessions;
-	void cleanClosedNotifySessions();
-
-	struct NotifyClientWrapper : NotifyClient
-	{
-		NotifyClientWrapper(JsonApiServer& parent);
-
-		void notifyTurtleSearchResult(
-		        uint32_t searchId, const std::list<TurtleFileInfo>& files);
-
-	private:
-		JsonApiServer& mJsonApiServer;
-	};
-	NotifyClientWrapper notifyClientWrapper;
 };
 
