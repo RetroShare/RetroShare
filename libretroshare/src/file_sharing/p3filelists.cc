@@ -1922,6 +1922,77 @@ void p3FileDatabase::setTrustFriendNodesForBannedFiles(bool b)
 	mTrustFriendNodesForBannedFiles = b;
 }
 
+void p3FileDatabase::checkSendBannedFilesInfo()
+{
+	RS_STACK_MUTEX(mFLSMtx) ;
 
+    // 1 - compare records to list of online friends, send own info of not already
+
+    std::list<RsPeerId> online_friends ;
+	rsPeers->getOnlineList(online_friends);
+
+    std::set<RsPeerId> peers ;
+    for(auto it(online_friends.begin());it!=online_friends.end();++it)			// convert to std::set for efficient search
+        peers.insert(*it) ;
+
+    for(auto it(mPeerBannedFiles.begin());it!=mPeerBannedFiles.end();)
+    {
+        if(peers.find(it->first) == peers.end())	// friend not online, remove his record
+        {
+            it = mPeerBannedFiles.erase(it) ;
+            continue;
+        }
+
+        if(it->second.mLastSent == 0)							// has ban info already been sent? If not do it.
+        {
+            locked_sendBanInfo(it->first);
+            it->second.mLastSent = time(NULL);
+        }
+
+        peers.erase(it->first);								// friend has been handled -> remove from list
+        ++it;
+    }
+
+    // 2 - add a new record for friends not already in the record map
+
+    for(auto it(peers.begin());it!=peers.end();++it)
+    {
+        locked_sendBanInfo(*it);
+        mPeerBannedFiles[*it].mLastSent = time(NULL);
+    }
+
+    // 3 - update list of banned hashes if it has changed somehow
+
+    if(mBannedFilesChanged)
+    {
+        mBannedFileList.clear();
+
+        // Add all H(H(f)) from friends
+
+		for(auto it(mPeerBannedFiles.begin());it!=mPeerBannedFiles.end();++it)
+            for(auto it2(it->second.mBannedHashOfHash.begin());it2!=it->second.mBannedHashOfHash.end();++it2)
+                mBannedFileList.insert(*it2);
+
+        // Add H(f) and H(H(f)) from our primary list
+
+        for(auto it(mPrimaryBanList.begin());it!=mPrimaryBanList.end();++it)
+        {
+            mBannedFileList.insert(it->first) ;
+
+			RsFileHash hash_of_hash ;
+			ftServer::encryptHash(it->first,hash_of_hash) ;
+
+            mBannedFileList.insert(hash_of_hash) ;
+		}
+
+        mBannedFilesChanged = false ;
+    }
+}
+
+
+void p3FileDatabase::locked_sendBanInfo(const RsPeerId& peer)
+{
+#warning TODO: add code to send ban info to friends
+}
 
 

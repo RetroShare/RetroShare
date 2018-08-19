@@ -65,6 +65,13 @@ class RsFileListsSyncResponseItem ;
 
 class HashStorage ;
 
+struct PeerBannedFilesEntry
+{
+    std::set<RsFileHash> mBannedHashOfHash;
+    uint32_t mRecordNumber ;			// used for when a friend sends multiple packets in separate items.
+    time_t mLastSent;
+};
+
 class p3FileDatabase: public p3Service, public p3Config, public ftSearch //, public RsSharedFileService
 {
 	public:
@@ -174,6 +181,8 @@ class p3FileDatabase: public p3Service, public p3Config, public ftSearch //, pub
         void tickRecv();
         void tickSend();
 
+        void checkSendBannedFilesInfo();
+
     private:
         p3ServiceControl *mServCtrl ;
         RsPeerId mOwnId ;
@@ -255,7 +264,11 @@ class p3FileDatabase: public p3Service, public p3Config, public ftSearch //, pub
         //
 
 		std::map<RsFileHash,BannedFileEntry> mPrimaryBanList ;	// primary list (user controlled) of files banned from FT search and forwarding. map<real hash, BannedFileEntry>
+        std::map<RsPeerId,PeerBannedFilesEntry> mPeerBannedFiles ;   // records of which files other peers ban, stored as H(H(f))
 		std::set<RsFileHash> mBannedFileList ;	// list of banned hashes. This include original hashs and H(H(f)) when coming from friends.
         bool mTrustFriendNodesForBannedFiles ;
+        bool mBannedFilesChanged;
+
+        void locked_sendBanInfo(const RsPeerId& pid);
 };
 
