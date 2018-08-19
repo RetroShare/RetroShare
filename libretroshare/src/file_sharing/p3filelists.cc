@@ -72,6 +72,7 @@ p3FileDatabase::p3FileDatabase(p3ServiceControl *mpeers)
     mLastRemoteDirSweepTS = 0 ;
     mLastCleanupTime = 0 ;
     mLastDataRecvTS = 0 ;
+    mTrustFriendNodesForBannedFiles = TRUST_FRIEND_NODES_FOR_BANNED_FILES_DEFAULT;
 
     // This is for the transmission of data
 
@@ -369,6 +370,14 @@ cleanup = true;
     {
         RsTlvKeyValue kv;
 
+        kv.key = TRUST_FRIEND_NODES_FOR_BANNED_FILES_SS;
+        kv.value = trustFriendNodesForBannedFiles()?"YES":"NO" ;
+
+        rskv->tlvkvs.pairs.push_back(kv);
+    }
+    {
+        RsTlvKeyValue kv;
+
         kv.key = WATCH_HASH_SALT_SS;
         kv.value = mLocalDirWatcher->hashSalt().toStdString();
 
@@ -461,6 +470,10 @@ bool p3FileDatabase::loadList(std::list<RsItem *>& load)
             else if(kit->key == WATCH_FILE_ENABLED_SS)
             {
                 setWatchEnabled(kit->value == "YES") ;
+            }
+            else if(kit->key == TRUST_FRIEND_NODES_FOR_BANNED_FILES_SS)
+            {
+                setTrustFriendNodesForBannedFiles(kit->value == "YES") ;
             }
             else if(kit->key == WATCH_HASH_SALT_SS)
             {
@@ -1895,6 +1908,19 @@ bool p3FileDatabase::getPrimaryBannedFilesList(std::map<RsFileHash,BannedFileEnt
     return true ;
 }
 
+bool p3FileDatabase::trustFriendNodesForBannedFiles() const
+{
+	RS_STACK_MUTEX(mFLSMtx) ;
+	return mTrustFriendNodesForBannedFiles;
+}
+void p3FileDatabase::setTrustFriendNodesForBannedFiles(bool b)
+{
+	if(b != mTrustFriendNodesForBannedFiles)
+		IndicateConfigChanged();
+
+	RS_STACK_MUTEX(mFLSMtx) ;
+	mTrustFriendNodesForBannedFiles = b;
+}
 
 
 

@@ -135,6 +135,8 @@ class p3FileDatabase: public p3Service, public p3Config, public ftSearch //, pub
 		bool banFile(const RsFileHash& real_file_hash, const std::string& filename, uint64_t file_size) ;
 		bool unbanFile(const RsFileHash& real_file_hash);
 		bool getPrimaryBannedFilesList(std::map<RsFileHash,BannedFileEntry>& banned_files) ;
+        bool trustFriendNodesForBannedFiles() const ;
+        void setTrustFriendNodesForBannedFiles(bool b) ;
 
         // computes/gathers statistics about shared directories
 
@@ -254,5 +256,6 @@ class p3FileDatabase: public p3Service, public p3Config, public ftSearch //, pub
 
 		std::map<RsFileHash,BannedFileEntry> mPrimaryBanList ;	// primary list (user controlled) of files banned from FT search and forwarding. map<real hash, BannedFileEntry>
 		std::set<RsFileHash> mBannedFileList ;	// list of banned hashes. This include original hashs and H(H(f)) when coming from friends.
+        bool mTrustFriendNodesForBannedFiles ;
 };
 

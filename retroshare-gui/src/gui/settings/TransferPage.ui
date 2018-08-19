@@ -448,6 +448,13 @@
        </layout>
       </item>
       <item>
+       <widget class="QCheckBox" name="checkBox">
+        <property name="text">
+         <string>Trust friend nodes with banned files</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QTextEdit" name="textEdit">
         <property name="readOnly">
          <bool>true</bool>
