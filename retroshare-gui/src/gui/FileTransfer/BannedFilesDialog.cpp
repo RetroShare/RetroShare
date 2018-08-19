@@ -19,6 +19,7 @@
  *******************************************************************************/
 
 #include <QMenu>
+#include <QDateTime>
 
 #include "retroshare/rsfiles.h"
 
@@ -43,14 +44,21 @@ BannedFilesDialog::~BannedFilesDialog() {}
 
 void BannedFilesDialog::unbanFile()
 {
-#warning Code missing here
+    int row = ui.bannedFiles_TW->currentRow();
+
+    QTableWidgetItem *item = ui.bannedFiles_TW->item(row, COLUMN_FILE_HASH);
+
+    RsFileHash hash(item->data(Qt::UserRole).toString().toStdString()) ;
+    rsFiles->unbanFile(hash) ;
+
+    fillFilesList();
 }
 
-void BannedFilesDialog::bannedFilesContextMenu()
+void BannedFilesDialog::bannedFilesContextMenu(QPoint)
 {
 	QMenu menu(this);
 
-	QAction *action = menu.addAction(QIcon(":/images/FeedAdd.png"), tr("Remove"), this, SLOT(unbanFile()));
+	menu.addAction(QIcon(":/images/FeedAdd.png"), tr("Remove"), this, SLOT(unbanFile()));
 
 	menu.exec(QCursor::pos());
 }
@@ -62,16 +70,17 @@ void BannedFilesDialog::fillFilesList()
     rsFiles->getPrimaryBannedFilesList(banned_files);
     int row=0;
 
+    ui.bannedFiles_TW->setRowCount(banned_files.size()) ;
+
     for(auto it(banned_files.begin());it!=banned_files.end();++it)
     {
 		ui.bannedFiles_TW->setItem(row, COLUMN_FILE_NAME, new QTableWidgetItem(QIcon(),QString::fromUtf8(it->second.filename.c_str()),0));
 		ui.bannedFiles_TW->setItem(row, COLUMN_FILE_HASH, new QTableWidgetItem(QIcon(),QString::fromStdString(it->first.toStdString()),0));
 		ui.bannedFiles_TW->setItem(row, COLUMN_FILE_SIZE, new QTableWidgetItem(QIcon(),QString::number(it->second.size),0));
-		ui.bannedFiles_TW->setItem(row, COLUMN_FILE_TIME, new QTableWidgetItem(QIcon(),QString::number(it->second.ban_time_stamp),0));
+		ui.bannedFiles_TW->setItem(row, COLUMN_FILE_TIME, new QTableWidgetItem(QIcon(),QDateTime::fromTime_t(it->second.ban_time_stamp).toString(),0));
+
+		ui.bannedFiles_TW->item(row, COLUMN_FILE_HASH)->setData(Qt::UserRole, QString::fromStdString(it->first.toStdString()));
 
 		row++;
-
-		// ui.recipientWidget->item(row, COLUMN_RECIPIENT_DATA)->setData(ROLE_RECIPIENT_ID, QString::fromStdString(id));
-		// ui.recipientWidget->item(row, COLUMN_RECIPIENT_DATA)->setData(ROLE_RECIPIENT_TYPE, dest_type);
     }
 }

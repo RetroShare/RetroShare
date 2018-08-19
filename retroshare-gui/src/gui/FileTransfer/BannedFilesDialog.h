@@ -38,7 +38,7 @@ private slots:
 
 	/** management of the adv search dialog object when switching search modes */
 	//void hideEvent(QHideEvent * event);
-	void bannedFilesContextMenu();
+	void bannedFilesContextMenu(QPoint);
 
 private:
 	void fillFilesList();
