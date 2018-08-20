@@ -43,6 +43,7 @@ void RsFileListsSyncResponseItem::serial_process(RsGenericSerializer::SerializeJ
 }
 void RsFileListsBannedHashesItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
+    RsTypeSerializer::serial_process(j,ctx,session_id      ,"session_id") ;
     RsTypeSerializer::serial_process(j,ctx,encrypted_hashes,"encrypted_hashes") ;
 }
 

@@ -62,13 +62,14 @@ class LocalDirectoryStorage ;
 
 class RsFileListsSyncRequestItem ;
 class RsFileListsSyncResponseItem ;
+class RsFileListsBannedHashesItem ;
 
 class HashStorage ;
 
 struct PeerBannedFilesEntry
 {
     std::set<RsFileHash> mBannedHashOfHash;
-    uint32_t mRecordNumber ;			// used for when a friend sends multiple packets in separate items.
+    uint32_t mSessionId ;			// used for when a friend sends multiple packets in separate items.
     time_t mLastSent;
 };
 
@@ -260,7 +261,7 @@ class p3FileDatabase: public p3Service, public p3Config, public ftSearch //, pub
         time_t mLastCleanupTime;
         time_t mLastDataRecvTS ;
 
-        // file filtering. Not explicitly related to shared files, but
+        // file filtering. Not explicitly related to shared files, but has its place here
         //
 
 		std::map<RsFileHash,BannedFileEntry> mPrimaryBanList ;	// primary list (user controlled) of files banned from FT search and forwarding. map<real hash, BannedFileEntry>
@@ -270,5 +271,6 @@ class p3FileDatabase: public p3Service, public p3Config, public ftSearch //, pub
         bool mBannedFilesChanged;
 
         void locked_sendBanInfo(const RsPeerId& pid);
+        void handleBannedFilesInfo(RsFileListsBannedHashesItem *item);
 };
 

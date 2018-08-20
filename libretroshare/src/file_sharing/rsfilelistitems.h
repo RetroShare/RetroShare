@@ -110,6 +110,7 @@ public:
     virtual void clear() { encrypted_hashes.clear(); }
 	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 
+    uint32_t session_id ;                  // used to allow to send in multiple parts.
     std::set<RsFileHash> encrypted_hashes ;// hash of hash for each banned file.
 };
 

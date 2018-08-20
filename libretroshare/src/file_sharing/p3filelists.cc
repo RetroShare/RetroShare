@@ -1415,8 +1415,8 @@ void p3FileDatabase::tickRecv()
    {
       switch(item->PacketSubType())
       {
-      case RS_PKT_SUBTYPE_FILELISTS_SYNC_REQ_ITEM: handleDirSyncRequest( dynamic_cast<RsFileListsSyncRequestItem*>(item) ) ;
-         break ;
+      case RS_PKT_SUBTYPE_FILELISTS_SYNC_REQ_ITEM:       handleDirSyncRequest( dynamic_cast<RsFileListsSyncRequestItem*>(item) ) ;     break ;
+      case RS_PKT_SUBTYPE_FILELISTS_BANNED_HASHES_ITEM : handleBannedFilesInfo( dynamic_cast<RsFileListsBannedHashesItem*>(item) ) ;   break ;
       case RS_PKT_SUBTYPE_FILELISTS_SYNC_RSP_ITEM:
 	  {
           RsFileListsSyncResponseItem *sitem = dynamic_cast<RsFileListsSyncResponseItem*>(item);
@@ -1969,9 +1969,10 @@ void p3FileDatabase::checkSendBannedFilesInfo()
 
         // Add all H(H(f)) from friends
 
-		for(auto it(mPeerBannedFiles.begin());it!=mPeerBannedFiles.end();++it)
-            for(auto it2(it->second.mBannedHashOfHash.begin());it2!=it->second.mBannedHashOfHash.end();++it2)
-                mBannedFileList.insert(*it2);
+        if(mTrustFriendNodesForBannedFiles)
+			for(auto it(mPeerBannedFiles.begin());it!=mPeerBannedFiles.end();++it)
+				for(auto it2(it->second.mBannedHashOfHash.begin());it2!=it->second.mBannedHashOfHash.end();++it2)
+					mBannedFileList.insert(*it2);
 
         // Add H(f) and H(H(f)) from our primary list
 
@@ -1989,10 +1990,47 @@ void p3FileDatabase::checkSendBannedFilesInfo()
     }
 }
 
-
 void p3FileDatabase::locked_sendBanInfo(const RsPeerId& peer)
 {
-#warning TODO: add code to send ban info to friends
+    RsFileListsBannedHashesItem *item = NULL;
+	uint32_t session_id = RSRandom::random_u32();
+
+	for(auto it(mPrimaryBanList.begin());it!=mPrimaryBanList.end();++it)
+	{
+		RsFileHash hash_of_hash ;
+
+		ftServer::encryptHash(it->first,hash_of_hash) ;
+
+        if(!item)
+        {
+			RsFileListsBannedHashesItem *item = new RsFileListsBannedHashesItem ;
+
+			item->PeerId(peer);
+			item->session_id = session_id ;
+        }
+
+		item->encrypted_hashes.insert(hash_of_hash) ;
+
+        if(item->encrypted_hashes.size() >= 200)
+        {
+ 			sendItem(item);
+            item = NULL ;
+        }
+	}
+
+    if(item)
+		sendItem(item);
 }
 
 
+void p3FileDatabase::handleBannedFilesInfo(RsFileListsBannedHashesItem *item)
+{
+	RS_STACK_MUTEX(mFLSMtx) ;
+
+    // 1 - localize the friend in the banned file map
+
+    // 2 - replace/update the list, depending on the session_id
+
+    // 3 - tell the updater that the banned file list has changed
+#warning missing code here!
+}
