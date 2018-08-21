@@ -305,6 +305,15 @@ cleanup = true;
 		}
 	}
 
+    {
+        RS_STACK_MUTEX(mFLSMtx) ;
+
+        RsFileListsBannedHashesConfigItem *item = new RsFileListsBannedHashesConfigItem ;
+
+        item->primary_banned_files_list = mPrimaryBanList;
+        sList.push_back(item) ;
+    }
+
     RsConfigKeyValueSet *rskv = new RsConfigKeyValueSet();
 
     /* basic control parameters */
@@ -544,6 +553,14 @@ bool p3FileDatabase::loadList(std::list<RsItem *>& load)
                 info.parent_groups.push_back(*itt) ;
 
             dirList.push_back(info) ;
+        }
+
+        RsFileListsBannedHashesConfigItem *fb = dynamic_cast<RsFileListsBannedHashesConfigItem*>(*it) ;
+
+        if(fb)
+        {
+            mPrimaryBanList = fb->primary_banned_files_list ;
+            mBannedFilesChanged = true;
         }
 
         delete *it ;
@@ -1868,7 +1885,9 @@ bool p3FileDatabase::locked_generateAndSendSyncRequest(RemoteDirectoryStorage *r
 }
 
 
-// Unwanted content filtering system
+//=========================================================================================================================//
+//                                          Unwanted content filtering system                                              //
+//=========================================================================================================================//
 
 bool p3FileDatabase::banFile(const RsFileHash& real_file_hash, const std::string& filename, uint64_t file_size)
 {
@@ -1943,13 +1962,13 @@ void p3FileDatabase::checkSendBannedFilesInfo()
             continue;
         }
 
-        if(it->second.mLastSent == 0)							// has ban info already been sent? If not do it.
+        if(it->second.mLastSent == 0)				// has ban info already been sent? If not do it.
         {
             locked_sendBanInfo(it->first);
             it->second.mLastSent = time(NULL);
         }
 
-        peers.erase(it->first);								// friend has been handled -> remove from list
+        peers.erase(it->first);						// friend has been handled -> remove from list
         ++it;
     }
 
@@ -2022,15 +2041,26 @@ void p3FileDatabase::locked_sendBanInfo(const RsPeerId& peer)
 		sendItem(item);
 }
 
-
 void p3FileDatabase::handleBannedFilesInfo(RsFileListsBannedHashesItem *item)
 {
 	RS_STACK_MUTEX(mFLSMtx) ;
 
     // 1 - localize the friend in the banned file map
 
+    PeerBannedFilesEntry& pbfe(mPeerBannedFiles[item->PeerId()]) ;
+
+    if(pbfe.mSessionId != item->session_id)
+        pbfe.mBannedHashOfHash.clear();
+
+    pbfe.mSessionId = item->session_id ;
+
     // 2 - replace/update the list, depending on the session_id
 
+    for(auto it(item->encrypted_hashes.begin());it!=item->encrypted_hashes.end();++it)
+        pbfe.mBannedHashOfHash.insert(*it);
+
     // 3 - tell the updater that the banned file list has changed
-#warning missing code here!
+
+    mBannedFilesChanged = true ;
 }
+

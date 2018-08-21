@@ -261,7 +261,7 @@ class p3FileDatabase: public p3Service, public p3Config, public ftSearch //, pub
         time_t mLastCleanupTime;
         time_t mLastDataRecvTS ;
 
-        // file filtering. Not explicitly related to shared files, but has its place here
+        // File filtering. Not explicitly related to shared files, but has its place here
         //
 
 		std::map<RsFileHash,BannedFileEntry> mPrimaryBanList ;	// primary list (user controlled) of files banned from FT search and forwarding. map<real hash, BannedFileEntry>

@@ -33,11 +33,13 @@
 #include "gxs/rsgxsdata.h"
 
 #include "serialiser/rsserializer.h"
+#include "retroshare/rsfiles.h"
 
-const uint8_t RS_PKT_SUBTYPE_FILELISTS_SYNC_REQ_ITEM      = 0x01;
-const uint8_t RS_PKT_SUBTYPE_FILELISTS_SYNC_RSP_ITEM      = 0x02;
-const uint8_t RS_PKT_SUBTYPE_FILELISTS_CONFIG_ITEM        = 0x03;
-const uint8_t RS_PKT_SUBTYPE_FILELISTS_BANNED_HASHES_ITEM = 0x04;
+const uint8_t RS_PKT_SUBTYPE_FILELISTS_SYNC_REQ_ITEM             = 0x01;
+const uint8_t RS_PKT_SUBTYPE_FILELISTS_SYNC_RSP_ITEM             = 0x02;
+const uint8_t RS_PKT_SUBTYPE_FILELISTS_CONFIG_ITEM               = 0x03;
+const uint8_t RS_PKT_SUBTYPE_FILELISTS_BANNED_HASHES_ITEM        = 0x04;
+const uint8_t RS_PKT_SUBTYPE_FILELISTS_BANNED_HASHES_CONFIG_ITEM = 0x05;
 
 /*!
  * Base class for filelist sync items
@@ -112,6 +114,17 @@ public:
 
     uint32_t session_id ;                  // used to allow to send in multiple parts.
     std::set<RsFileHash> encrypted_hashes ;// hash of hash for each banned file.
+};
+
+class RsFileListsBannedHashesConfigItem: public RsFileListsItem
+{
+public:
+	RsFileListsBannedHashesConfigItem() : RsFileListsItem(RS_PKT_SUBTYPE_FILELISTS_BANNED_HASHES_CONFIG_ITEM){}
+
+    virtual void clear() { primary_banned_files_list.clear(); }
+	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
+
+    std::map<RsFileHash,BannedFileEntry> primary_banned_files_list ;
 };
 
 class RsFileListsSerialiser : public RsServiceSerializer

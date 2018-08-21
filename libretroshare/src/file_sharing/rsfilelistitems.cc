@@ -46,7 +46,16 @@ void RsFileListsBannedHashesItem::serial_process(RsGenericSerializer::SerializeJ
     RsTypeSerializer::serial_process(j,ctx,session_id      ,"session_id") ;
     RsTypeSerializer::serial_process(j,ctx,encrypted_hashes,"encrypted_hashes") ;
 }
-
+void RsFileListsBannedHashesConfigItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
+{
+    RsTypeSerializer::serial_process(j,ctx,primary_banned_files_list,"primary_banned_files_list") ;
+}
+template<> void RsTypeSerializer::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx,BannedFileEntry& entry,const std::string& /*name*/)
+{
+	RsTypeSerializer::serial_process          (j,ctx,TLV_TYPE_STR_NAME,entry.filename      ,"entry.file_name") ;
+	RsTypeSerializer::serial_process<uint64_t>(j,ctx,                  entry.size          ,"entry.size") ;
+	RsTypeSerializer::serial_process<time_t>  (j,ctx,                  entry.ban_time_stamp,"entry.ban_time_stamp") ;
+}
 RsItem *RsFileListsSerialiser::create_item(uint16_t service,uint8_t type) const
 {
     if(service != RS_SERVICE_TYPE_FILE_DATABASE)
@@ -54,9 +63,10 @@ RsItem *RsFileListsSerialiser::create_item(uint16_t service,uint8_t type) const
 
     switch(type)
     {
-    case RS_PKT_SUBTYPE_FILELISTS_SYNC_REQ_ITEM:      return new RsFileListsSyncRequestItem();
-    case RS_PKT_SUBTYPE_FILELISTS_SYNC_RSP_ITEM:      return new RsFileListsSyncResponseItem();
-    case RS_PKT_SUBTYPE_FILELISTS_BANNED_HASHES_ITEM: return new RsFileListsBannedHashesItem();
+    case RS_PKT_SUBTYPE_FILELISTS_SYNC_REQ_ITEM:             return new RsFileListsSyncRequestItem();
+    case RS_PKT_SUBTYPE_FILELISTS_SYNC_RSP_ITEM:             return new RsFileListsSyncResponseItem();
+    case RS_PKT_SUBTYPE_FILELISTS_BANNED_HASHES_ITEM:        return new RsFileListsBannedHashesItem();
+    case RS_PKT_SUBTYPE_FILELISTS_BANNED_HASHES_CONFIG_ITEM: return new RsFileListsBannedHashesConfigItem();
     default:
         return NULL ;
     }
