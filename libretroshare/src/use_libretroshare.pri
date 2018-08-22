@@ -65,6 +65,7 @@ linux-* {
 
 rs_deep_search {
     mLibs += xapian
+    win32-g++:mLibs += rpcrt4
 }
 
 static {

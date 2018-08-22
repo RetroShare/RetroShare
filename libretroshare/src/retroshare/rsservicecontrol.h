@@ -53,6 +53,8 @@ class RsServiceInfo
 	// minimum version can communicate with.
 	uint16_t    mMinVersionMajor;
 	uint16_t    mMinVersionMinor;
+
+	static unsigned int RsServiceInfoUIn16ToFullServiceId(uint16_t serviceType);
 };
 
 

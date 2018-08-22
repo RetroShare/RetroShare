@@ -10,6 +10,7 @@
 #include <QPainter>
 #include <QStylePainter>
 #include <algorithm> // for sort
+#include <time.h>
 
 #include "gui/settings/rsharesettings.h"
 
@@ -467,7 +468,7 @@ static QString getServiceNameString(uint16_t service_id)
     if(ownServices.mServiceList.find(service_id) == ownServices.mServiceList.end())
 		rsServiceControl->getOwnServices(ownServices);
 
-    return QString::fromUtf8(ownServices.mServiceList[service_id].mServiceName.c_str()) ;
+    return QString::fromUtf8(ownServices.mServiceList[RsServiceInfo::RsServiceInfoUIn16ToFullServiceId(service_id)].mServiceName.c_str()) ;
 }
 
 static QString getVirtualPeerStatusString(uint8_t status)
@@ -573,7 +574,7 @@ void GxsNetTunnelsDialog::updateDisplay()
 	for(auto it(groups.begin());it!=groups.end();++it)
     {
 		painter.drawText(ox+4*cellx,oy+celly,tr("Service: %1 (%2) - Group ID: %3,\t policy: %4, \tstatus: %5, \tlast contact: %6")
-                .arg(QString::number(it->second.service_id))
+		.arg("0x" + QString::number(it->second.service_id, 16))
                 .arg(getServiceNameString(it->second.service_id))
                 .arg(QString::fromStdString(it->first.toStdString()))
                 .arg(getGroupPolicyString(it->second.group_policy))

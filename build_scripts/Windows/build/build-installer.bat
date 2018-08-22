@@ -9,7 +9,7 @@ call "%EnvPath%\env.bat"
 if errorlevel 1 goto error_env
 
 :: Initialize environment
-call "%~dp0env.bat" standard
+call "%~dp0env.bat" release
 if errorlevel 2 exit /B 2
 if errorlevel 1 goto error_env
 
@@ -29,6 +29,7 @@ set NSIS_PARAM=%NSIS_PARAM% /DQTDIR="%QtPath%\.."
 set NSIS_PARAM=%NSIS_PARAM% /DMINGWDIR="%MinGWPath%\.."
 set NSIS_PARAM=%NSIS_PARAM% /DOUTDIR="%RsPackPath%"
 set NSIS_PARAM=%NSIS_PARAM% /DINSTALLERADD="%RsArchiveAdd%"
+set NSIS_PARAM=%NSIS_PARAM% /DEXTERNAL_LIB_DIR="%BuildLibsPath%\libs"
 
 :: Scan version from source
 set RsRevision=

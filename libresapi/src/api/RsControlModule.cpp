@@ -467,6 +467,8 @@ void RsControlModule::handleCreateLocation(Request &req, Response &resp)
     req.mStream << makeKeyValueReference("hidden_adress", hidden_address)
                 << makeKeyValueReference("hidden_port", hidden_port_str);
     uint16_t hidden_port = 0;
+    bool auto_tor = false ;		// to be set by API, so disabled until then.
+
     if(hidden_address.empty() != hidden_port_str.empty())
     {
         resp.setFail("you must both specify string hidden_adress and string hidden_port to create a hidden node.");
@@ -539,7 +541,7 @@ void RsControlModule::handleCreateLocation(Request &req, Response &resp)
 		mPassword = pgp_password;
 		mFixedPassword = pgp_password;
 	}
-    bool ssl_ok = RsAccounts::GenerateSSLCertificate(pgp_id, "", ssl_name, "", hidden_port!=0, ssl_password, ssl_id, err_string);
+    bool ssl_ok = RsAccounts::createNewAccount(pgp_id, "", ssl_name, "", hidden_port!=0, auto_tor!=0, ssl_password, ssl_id, err_string);
 
     // clear fixed password to restore normal password operation
 //    {

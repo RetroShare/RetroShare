@@ -91,15 +91,6 @@ no_sqlcipher:CONFIG -= sqlcipher
 CONFIG *= no_rs_autologin
 rs_autologin:CONFIG -= no_rs_autologin
 
-# To build RetroShare Tor only version with automatic hidden node setup append
-#  the following assignation to qmake command line "CONFIG+=retrotor"
-CONFIG *= no_retrotor
-retrotor {
-    CONFIG -= no_retrotor
-    CONFIG *= rs_onlyhiddennode
-    DEFINES *= RETROTOR
-}
-
 # To have only hidden node generation append the following assignation
 # to qmake command line "CONFIG+=rs_onlyhiddennode"
 CONFIG *= no_rs_onlyhiddennode
@@ -149,7 +140,7 @@ CONFIG *= no_rs_jsonapi
 rs_jsonapi:CONFIG -= no_rs_jsonapi
 
 # To disable deep search append the following assignation to qmake command line
-# "CONFIG+=no_rs_deep_search"
+CONFIG+=no_rs_deep_search
 CONFIG *= rs_deep_search
 no_rs_deep_search:CONFIG -= rs_deep_search
 
@@ -363,6 +354,12 @@ rs_jsonapi {
 
 rs_deep_search {
     DEFINES *= RS_DEEP_SEARCH
+
+	linux {
+	 exists("/usr/include/xapian-1.3") {
+	 	INCLUDEPATH += /usr/include/xapian-1.3
+	 }
+	}
 }
 
 debug {

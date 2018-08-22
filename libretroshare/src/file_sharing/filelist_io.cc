@@ -194,10 +194,10 @@ bool FileListIO::loadEncryptedDataFromFile(const std::string& fname,unsigned cha
 {
    uint64_t file_size ;
 
-    if(!RsDirUtil::checkFile( fname,file_size,false ) )
+    if(!RsDirUtil::checkFile( fname,file_size,true ) )
     {
 #ifdef FIM_DEBUG
-        std::cerr << "Encrypted file " << fname << " not available." << std::endl;
+        std::cerr << "Encrypted file " << fname << " not available or empty." << std::endl;
 #endif
         return false;
     }

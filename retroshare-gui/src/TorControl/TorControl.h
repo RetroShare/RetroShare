@@ -67,17 +67,17 @@ public:
     enum Status
     {
         Error = -1,
-        NotConnected,
-        Connecting,
-        Authenticating,
-        Connected
+        NotConnected   = 0x00,
+        Connecting     = 0x01,
+        Authenticating = 0x02,
+        Connected      = 0x03
     };
 
     enum TorStatus
     {
-        TorUnknown,
-        TorOffline,
-        TorReady
+        TorUnknown = 0x00,
+        TorOffline = 0x01,
+        TorReady   = 0x02
     };
 
 
