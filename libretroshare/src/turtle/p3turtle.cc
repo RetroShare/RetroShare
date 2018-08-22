@@ -1112,7 +1112,7 @@ void p3turtle::handleSearchResult(RsTurtleSearchResultItem *item)
     std::list<std::pair<RsTurtleSearchResultItem*,RsTurtleClientService*> > results_to_notify_off_mutex ;
 
 	{
-		RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
+		RS_STACK_MUTEX(mTurtleMtx);
 		// Find who actually sent the corresponding request.
 		//
 		std::map<TurtleRequestId,TurtleSearchRequestInfo>::iterator it = _search_requests_origins.find(item->request_id) ;
@@ -1178,7 +1178,7 @@ void p3turtle::handleSearchResult(RsTurtleSearchResultItem *item)
 
 			sendItem(fwd_item) ;
 		}
-	}
+	} // mTurtleMtx end
 
     // now we notify clients off-mutex.
 

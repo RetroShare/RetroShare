@@ -21,9 +21,11 @@
 #include <sstream>
 #include <memory>
 #include <restbed>
+#include <vector>
 
 #include "util/rsjson.h"
-#include "retroshare/rsgxschannels.h"
+#include "retroshare/rsfiles.h"
+#include "util/radix64.h"
 
 // Generated at compile time
 #include "jsonapi-includes.inl"
@@ -36,6 +38,80 @@ JsonApiServer::JsonApiServer(
 	                [this](const std::shared_ptr<rb::Session>)
 	{
 		shutdown();
+	});
+
+	registerHandler("/rsFiles/getFileData",
+	                [](const std::shared_ptr<rb::Session> session)
+	{
+		size_t reqSize = session->get_request()->get_header("Content-Length", 0);
+		session->fetch( reqSize, [](
+		                const std::shared_ptr<rb::Session> session,
+		                const rb::Bytes& body )
+		{
+			RsGenericSerializer::SerializeContext cReq(
+			            nullptr, 0,
+			            RsGenericSerializer::SERIALIZATION_FLAG_YIELDING );
+			RsJson& jReq(cReq.mJson);
+			jReq.Parse(reinterpret_cast<const char*>(body.data()), body.size());
+
+			RsGenericSerializer::SerializeContext cAns;
+			RsJson& jAns(cAns.mJson);
+
+			// if caller specified caller_data put it back in the answhere
+			const char kcd[] = "caller_data";
+			if(jReq.HasMember(kcd))
+				jAns.AddMember(kcd, jReq[kcd], jAns.GetAllocator());
+
+			RsFileHash hash;
+			uint64_t offset;
+			uint32_t requested_size;
+			bool retval = false;
+			std::string errorMessage;
+			std::string base64data;
+
+			// deserialize input parameters from JSON
+			{
+				RsGenericSerializer::SerializeContext& ctx(cReq);
+				RsGenericSerializer::SerializeJob j(RsGenericSerializer::FROM_JSON);
+				RS_SERIAL_PROCESS(hash);
+				RS_SERIAL_PROCESS(offset);
+				RS_SERIAL_PROCESS(requested_size);
+			}
+
+			if(requested_size > 10485760)
+				errorMessage = "requested_size is too big! Better less then 1M";
+			else
+			{
+				std::vector<uint8_t> buffer(requested_size);
+
+				// call retroshare C++ API
+				retval = rsFiles->getFileData(
+				            hash, offset, requested_size, buffer.data());
+
+				Radix64::encode(buffer.data(), requested_size, base64data);
+			}
+
+			// serialize out parameters and return value to JSON
+			{
+				RsGenericSerializer::SerializeContext& ctx(cAns);
+				RsGenericSerializer::SerializeJob j(RsGenericSerializer::TO_JSON);
+				RS_SERIAL_PROCESS(retval);
+				RS_SERIAL_PROCESS(requested_size);
+				RS_SERIAL_PROCESS(base64data);
+				if(!errorMessage.empty()) RS_SERIAL_PROCESS(errorMessage);
+			}
+
+			// return them to the API caller
+			std::stringstream ss;
+			ss << jAns;
+			std::string&& ans(ss.str());
+			const std::multimap<std::string, std::string> headers
+			{
+				{ "Content-Type", "text/json" },
+				{ "Content-Length", std::to_string(ans.length()) }
+			};
+			session->close(rb::OK, ans, headers);
+		} );
 	});
 
 // Generated at compile time

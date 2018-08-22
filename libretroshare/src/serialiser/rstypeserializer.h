@@ -363,6 +363,86 @@ struct RsTypeSerializer
 		}
 	}
 
+	/// std::pair<T,U>
+	template<typename T, typename U>
+	static void serial_process( RsGenericSerializer::SerializeJob j,
+	                            RsGenericSerializer::SerializeContext& ctx,
+	                            std::pair<T,U>& p,
+	                            const std::string& memberName )
+	{
+		switch(j)
+		{
+		case RsGenericSerializer::SIZE_ESTIMATE: // fallthrough
+		case RsGenericSerializer::DESERIALIZE: // fallthrough
+		case RsGenericSerializer::SERIALIZE: // fallthrough
+		case RsGenericSerializer::PRINT:
+			serial_process(j, ctx, p.first, "pair::first");
+			serial_process(j, ctx, p.second, "pair::second");
+			break;
+		case RsGenericSerializer::TO_JSON:
+		{
+			RsJson& jDoc(ctx.mJson);
+			RsJson::AllocatorType& allocator = jDoc.GetAllocator();
+
+			// Reuse allocator to avoid deep copy later
+			RsGenericSerializer::SerializeContext lCtx(
+			            nullptr, 0, ctx.mFlags, &allocator );
+
+			serial_process(j, ctx, p.first, "first");
+			serial_process(j, ctx, p.second, "second");
+
+			rapidjson::Value key;
+			key.SetString(memberName.c_str(), memberName.length(), allocator);
+
+			/* Because the passed allocator is reused it doesn't go out of scope
+			 * and there is no need of deep copy and we can take advantage of
+			 * the much faster rapidjson move semantic */
+			jDoc.AddMember(key, lCtx.mJson, allocator);
+
+			ctx.mOk = ctx.mOk && lCtx.mOk;
+			break;
+		}
+		case RsGenericSerializer::FROM_JSON:
+		{
+			RsJson& jDoc(ctx.mJson);
+			const char* mName = memberName.c_str();
+			bool hasMember = jDoc.HasMember(mName);
+			bool yielding = ctx.mFlags &
+			        RsGenericSerializer::SERIALIZATION_FLAG_YIELDING;
+
+			if(!hasMember)
+			{
+				if(!yielding)
+				{
+					std::cerr << __PRETTY_FUNCTION__ << " \"" << memberName
+					          << "\" not found in JSON:" << std::endl
+					          << jDoc << std::endl << std::endl;
+					print_stacktrace();
+				}
+				ctx.mOk = false;
+				break;
+			}
+
+			rapidjson::Value& v = jDoc[mName];
+
+			RsGenericSerializer::SerializeContext lCtx(nullptr, 0, ctx.mFlags);
+			lCtx.mJson.SetObject() = v; // Beware of move semantic!!
+
+			serial_process(j, ctx, p.first, "first");
+			serial_process(j, ctx, p.second, "second");
+			ctx.mOk &= lCtx.mOk;
+
+			break;
+		}
+		default:
+			std::cerr << __PRETTY_FUNCTION__ << " Unknown serial job: "
+			          << static_cast<std::underlying_type<decltype(j)>::type>(j)
+			          << std::endl;
+			exit(EINVAL);
+			break;
+		}
+	}
+
 	/// std::vector<T>
 	template<typename T>
 	static void serial_process( RsGenericSerializer::SerializeJob j,

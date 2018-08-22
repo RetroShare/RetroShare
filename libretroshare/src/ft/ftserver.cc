@@ -425,7 +425,7 @@ void ftServer::requestDirUpdate(void *ref)
 }
 
 /* Directory Handling */
-bool ftServer::setDownloadDirectory(std::string path)
+bool ftServer::setDownloadDirectory(const std::string& path)
 {
 	return mFtController->setDownloadDirectory(path);
 }
@@ -435,7 +435,7 @@ std::string ftServer::getDownloadDirectory()
 	return mFtController->getDownloadDirectory();
 }
 
-bool ftServer::setPartialsDirectory(std::string path)
+bool ftServer::setPartialsDirectory(const std::string& path)
 {
 	return mFtController->setPartialsDirectory(path);
 }

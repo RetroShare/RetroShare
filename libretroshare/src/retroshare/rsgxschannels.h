@@ -146,6 +146,13 @@ public:
 	virtual bool getPostData(const uint32_t &token, std::vector<RsGxsChannelPost> &posts, std::vector<RsGxsComment> &cmts) = 0;
 	virtual bool getPostData(const uint32_t &token, std::vector<RsGxsChannelPost> &posts) = 0;
 
+	/**
+	 * @brief toggle message read status
+	 * @jsonapi{development}
+	 * @param[out] token GXS token queue token
+	 * @param[in] msgId
+	 * @param[in] read
+	 */
 	virtual void setMessageReadStatus(
 	        uint32_t& token, const RsGxsGrpMsgIdPair& msgId, bool read) = 0;
 
