@@ -142,6 +142,7 @@ class p3FileDatabase: public p3Service, public p3Config, public ftSearch //, pub
 
 		bool banFile(const RsFileHash& real_file_hash, const std::string& filename, uint64_t file_size) ;
 		bool unbanFile(const RsFileHash& real_file_hash);
+        bool isFileBanned(const RsFileHash& hash) ;
 		bool getPrimaryBannedFilesList(std::map<RsFileHash,BannedFileEntry>& banned_files) ;
         bool trustFriendNodesForBannedFiles() const ;
         void setTrustFriendNodesForBannedFiles(bool b) ;

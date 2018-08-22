@@ -1846,3 +1846,8 @@ bool ftServer::getPrimaryBannedFilesList(std::map<RsFileHash,BannedFileEntry>& b
 {
     return mFileDatabase->getPrimaryBannedFilesList(banned_files) ;
 }
+
+bool ftServer::isHashBanned(const RsFileHash& hash)
+{
+    return mFileDatabase->isFileBanned(hash);
+}

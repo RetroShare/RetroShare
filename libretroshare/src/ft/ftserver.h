@@ -195,6 +195,7 @@ public:
     virtual int banFile(const RsFileHash& real_file_hash, const std::string& filename, uint64_t file_size) ;
     virtual int unbanFile(const RsFileHash& real_file_hash);
     virtual bool getPrimaryBannedFilesList(std::map<RsFileHash,BannedFileEntry>& banned_files) ;
+	virtual bool isHashBanned(const RsFileHash& hash);
 
     /***
          * Utility Functions

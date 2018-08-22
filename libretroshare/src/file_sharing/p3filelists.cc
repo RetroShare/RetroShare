@@ -1919,6 +1919,17 @@ bool p3FileDatabase::unbanFile(const RsFileHash& real_file_hash)
     IndicateConfigChanged();
     return true;
 }
+
+bool p3FileDatabase::isFileBanned(const RsFileHash& hash)
+{
+	RS_STACK_MUTEX(mFLSMtx) ;
+
+    RsFileHash hash_of_hash ;
+    ftServer::encryptHash(hash,hash_of_hash) ;
+
+    return mBannedFileList.find(hash) != mBannedFileList.end() || mBannedFileList.find(hash_of_hash) != mBannedFileList.end() ;
+}
+
 bool p3FileDatabase::getPrimaryBannedFilesList(std::map<RsFileHash,BannedFileEntry>& banned_files)
 {
 	RS_STACK_MUTEX(mFLSMtx) ;
