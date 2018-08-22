@@ -252,12 +252,15 @@ struct RsLoginHelper
 	 * @param[inout] location provide input information to generate the location
 	 *	and storage to output the data of the generated location
 	 * @param[in] password to protect and unlock the associated PGP key
+	 * @param[in] makeHidden pass true to create an hidden location
+	 * @param[in] makeAutoTor pass true to create an automatically configured
+	 *	Tor hidden location
 	 * @param[out] errorMessage
 	 * @return true if success, false otherwise
 	 */
 	bool createLocation( RsLoginHelper::Location& location,
-	                     const std::string& password,
-	                     std::string& errorMessage );
+	                     const std::string& password, bool makeHidden,
+	                     bool makeAutoTor, std::string& errorMessage );
 
 	/**
 	 * @brief Close RetroShare session

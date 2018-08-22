@@ -1967,7 +1967,7 @@ void RsLoginHelper::getLocations(std::vector<RsLoginHelper::Location>& store)
 
 bool RsLoginHelper::createLocation(
         RsLoginHelper::Location& l, const std::string& password,
-        std::string& errorMessage )
+        bool makeHidden, bool makeAutoTor, std::string& errorMessage )
 {
 	if(l.mLocationName.empty())
 	{
@@ -1992,7 +1992,7 @@ bool RsLoginHelper::createLocation(
 	if(!rsNotify->setDisableAskPassword(true)) return false;
 
 	bool ret = RsAccounts::createNewAccount(
-	            l.mPgpId, "", l.mLocationName, "", false, false,
+	            l.mPgpId, "", l.mLocationName, "", makeHidden, makeAutoTor,
 	            RSRandom::random_alphaNumericString(RsInit::getSslPwdLen()),
 	            l.mLocationId, errorMessage );
 
