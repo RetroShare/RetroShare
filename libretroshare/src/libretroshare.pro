@@ -881,7 +881,7 @@ rs_jsonapi {
 
     restbed.target = $$system_path($$clean_path($${RESTBED_BUILD_PATH}/library/librestbed.a))
     restbed.commands = \
-        cd $${RS_SRC_PATH}; git submodule update --init --recursive;\
+        cd $${RS_SRC_PATH}; git submodule update --init --recursive --recommend-shallow;\
         mkdir -p $${RESTBED_BUILD_PATH}; cd $${RESTBED_BUILD_PATH};\
         cmake -DBUILD_SSL=OFF -DCMAKE_INSTALL_PREFIX=. -B. -H$${RESTBED_SRC_PATH};\
         make; make install
