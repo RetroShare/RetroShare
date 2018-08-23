@@ -881,7 +881,12 @@ rs_jsonapi {
 
     restbed.target = $$system_path($$clean_path($${RESTBED_BUILD_PATH}/library/librestbed.a))
     restbed.commands = \
-        cd $${RS_SRC_PATH}; git submodule update --init --recursive --recommend-shallow;\
+        cd $${RS_SRC_PATH};\
+        git submodule update --init --recommend-shallow supportlibs/restbed;\
+        cd $${RESTBED_SRC_PATH};\
+        git submodule update --init --recommend-shallow dependency/asio;\
+        git submodule update --init --recommend-shallow dependency/catch;\
+        git submodule update --init --recommend-shallow dependency/kashmir;\
         mkdir -p $${RESTBED_BUILD_PATH}; cd $${RESTBED_BUILD_PATH};\
         cmake -DBUILD_SSL=OFF -DCMAKE_INSTALL_PREFIX=. -B. -H$${RESTBED_SRC_PATH};\
         make; make install
