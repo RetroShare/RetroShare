@@ -25,7 +25,7 @@
 #include "serialiser/rsbaseserial.h"
 #include "serialiser/rstlvkeys.h"
 #include "serialiser/rsserializable.h"
-
+#include "util/radix64.h"
 #include "util/rsprint.h"
 
 #include <iomanip>
@@ -646,9 +646,12 @@ bool RsTypeSerializer::to_JSON(
 	rapidjson::Value key;
 	key.SetString(memberName.c_str(), memberName.length(), allocator);
 
+	std::string encodedValue;
+	Radix64::encode( reinterpret_cast<uint8_t*>(member.first),
+	                 member.second, encodedValue );
+
 	rapidjson::Value value;
-	const char* tName = typeid(member).name();
-	value.SetString(tName, allocator);
+	value.SetString(encodedValue.data(), allocator);
 
 	jDoc.AddMember(key, value, allocator);
 
@@ -656,7 +659,27 @@ bool RsTypeSerializer::to_JSON(
 }
 
 template<> /*static*/
-bool RsTypeSerializer::from_JSON( const std::string& /*memberName*/,
-                                  RsTypeSerializer::TlvMemBlock_proxy&,
-                                  RsJson& /*jDoc*/)
-{ return true; }
+bool RsTypeSerializer::from_JSON( const std::string& memberName,
+                                  RsTypeSerializer::TlvMemBlock_proxy& member,
+                                  RsJson& jDoc)
+{
+	SAFE_GET_JSON_V();
+	ret = ret && v.IsString();
+	if(ret)
+	{
+		std::string encodedValue = v.GetString();
+		std::vector<uint8_t> decodedValue = Radix64::decode(encodedValue);
+		member.second = decodedValue.size();
+
+		if(member.second == 0)
+		{
+			member.first = nullptr;
+			return ret;
+		}
+
+		member.first = rs_malloc(member.second);
+		ret = ret && member.first &&
+		        memcpy(member.first, decodedValue.data(), member.second);
+	}
+	return ret;
+}

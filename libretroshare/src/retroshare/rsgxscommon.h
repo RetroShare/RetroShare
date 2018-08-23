@@ -50,7 +50,7 @@ struct RsGxsFile : RsSerializable
 	}
 };
 
-struct RsGxsImage
+struct RsGxsImage  : RsSerializable
 {
 	RsGxsImage();
 	~RsGxsImage();
@@ -70,8 +70,16 @@ struct RsGxsImage
 	void clear(); 				// Frees.
 	void shallowClear(); 			// Clears Pointer.
 
-	uint8_t *mData;
 	uint32_t mSize;
+	uint8_t* mData;
+
+	/// @see RsSerializable
+	virtual void serial_process( RsGenericSerializer::SerializeJob j,
+	                             RsGenericSerializer::SerializeContext& ctx )
+	{
+		RsTypeSerializer::TlvMemBlock_proxy b(mData, mSize);
+		RsTypeSerializer::serial_process(j, ctx, b, "mData");
+	}
 };
 
 

@@ -213,11 +213,14 @@ public:
 	virtual bool getFileData( const RsFileHash& hash, uint64_t offset,
 	                          uint32_t& requested_size, uint8_t* data ) = 0;
 
-		/***
-		 *  Control of Downloads.
-		 ***/
-
-		virtual bool alreadyHaveFile(const RsFileHash& hash, FileInfo &info) = 0;
+	/**
+	 * @brief Check if we already have a file
+	 * @jsonapi{development}
+	 * @param[in] hash file identifier
+	 * @param[out] info storage for the possibly found file information
+	 * @return true if the file is already present, false otherwise
+	 */
+	virtual bool alreadyHaveFile(const RsFileHash& hash, FileInfo &info) = 0;
 
 	/**
 	 * @brief Initiate downloading of a file

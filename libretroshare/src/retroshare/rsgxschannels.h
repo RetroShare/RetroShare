@@ -56,7 +56,7 @@ struct RsGxsChannelGroup : RsSerializable
 	{
 		RS_SERIAL_PROCESS(mMeta);
 		RS_SERIAL_PROCESS(mDescription);
-		//RS_SERIAL_PROCESS(mImage);
+		RS_SERIAL_PROCESS(mImage);
 		RS_SERIAL_PROCESS(mAutoDownload);
 	}
 };
@@ -90,7 +90,7 @@ struct RsGxsChannelPost : RsSerializable
 		RS_SERIAL_PROCESS(mFiles);
 		RS_SERIAL_PROCESS(mCount);
 		RS_SERIAL_PROCESS(mSize);
-		//RS_SERIAL_PROCESS(mThumbnail);
+		RS_SERIAL_PROCESS(mThumbnail);
 	}
 };
 
