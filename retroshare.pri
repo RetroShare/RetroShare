@@ -502,7 +502,7 @@ macx-* {
 	}
 
     rs_macos10.13 {
-        message(***retroshare.pri: Set Target and SDK to MacOS 10.12 )
+        message(***retroshare.pri: Set Target and SDK to MacOS 10.13 )
         QMAKE_MACOSX_DEPLOYMENT_TARGET=10.13
         QMAKE_MAC_SDK = macosx10.13
     }
