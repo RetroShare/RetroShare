@@ -1988,13 +1988,18 @@ bool RsLoginHelper::createLocation(
 		return false;
 	}
 
+	std::string sslPassword =
+	        RSRandom::random_alphaNumericString(RsInit::getSslPwdLen());
+
 	if(!rsNotify->cachePgpPassphrase(password)) return false;
 	if(!rsNotify->setDisableAskPassword(true)) return false;
 
 	bool ret = RsAccounts::createNewAccount(
 	            l.mPgpId, "", l.mLocationName, "", makeHidden, makeAutoTor,
-	            RSRandom::random_alphaNumericString(RsInit::getSslPwdLen()),
-	            l.mLocationId, errorMessage );
+	            sslPassword, l.mLocationId, errorMessage );
+
+	ret = ret && RsInit::LoadPassword(sslPassword);
+	ret = ret && RsInit::OK == attemptLogin(l.mLocationId, password);
 
 	rsNotify->setDisableAskPassword(false);
 	return ret;
