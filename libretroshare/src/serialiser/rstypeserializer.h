@@ -94,21 +94,25 @@
     {\
 	    for (auto&& arrEl : jDoc[arrKey].GetArray())\
         {\
+	        Value arrKeyT;\
+	        arrKeyT.SetString(memberName.c_str(), memberName.length());\
+\
 	        RsGenericSerializer::SerializeContext elCtx(\
 	                    nullptr, 0, ctx.mFlags, &allocator );\
-	        elCtx.mJson.AddMember(arrKey, arrEl, allocator);\
+	        elCtx.mJson.AddMember(arrKeyT, arrEl, allocator);\
 \
 	        T el;\
 	        serial_process(j, elCtx, el, memberName); \
 	        ok = ok && elCtx.mOk;\
-\
 	        ctx.mOk &= ok;\
 	        if(ok) v.INSERT_FUN(el);\
 	        else break;\
 	    }\
 	}\
-\
-	ctx.mOk = false;\
+	else\
+	{\
+		ctx.mOk = false;\
+	}\
 \
 } while(false)
 
@@ -351,8 +355,10 @@ struct RsTypeSerializer
 					else break;
 				}
 			}
-
-			ctx.mOk = false;
+			else
+			{
+				ctx.mOk = false;
+			}
 			break;
 		}
 		default:
@@ -479,10 +485,12 @@ struct RsTypeSerializer
 		case RsGenericSerializer::PRINT:
 		{
 			if(v.empty())
-				std::cerr << "  Empty array"<< std::endl;
-			else
-				std::cerr << "  Array of " << v.size() << " elements:"
+				std::cerr << "  Empty vector \"" << memberName << "\""
 				          << std::endl;
+			else
+				std::cerr << "  Vector of " << v.size() << " elements: \""
+				          << memberName << "\"" << std::endl;
+
 			for(uint32_t i=0;i<v.size();++i)
 			{
 				std::cerr << "  " ;
@@ -541,9 +549,12 @@ struct RsTypeSerializer
 		}
 		case RsGenericSerializer::PRINT:
 		{
-			if(v.empty()) std::cerr << "  Empty set"<< std::endl;
-			else std::cerr << "  Set of " << v.size() << " elements:"
-			               << std::endl;
+			if(v.empty())
+				std::cerr << "  Empty set \"" << memberName << "\""
+				          << std::endl;
+			else
+				std::cerr << "  Set of " << v.size() << " elements: \""
+				          << memberName << "\"" << std::endl;
 			break;
 		}
 		case RsGenericSerializer::TO_JSON:
@@ -594,9 +605,12 @@ struct RsTypeSerializer
 		}
 		case RsGenericSerializer::PRINT:
 		{
-			if(v.empty()) std::cerr << "  Empty list"<< std::endl;
-			else std::cerr << "  List of " << v.size() << " elements:"
-			               << std::endl;
+			if(v.empty())
+				std::cerr << "  Empty list \"" << memberName << "\""
+				          << std::endl;
+			else
+				std::cerr << "  List of " << v.size() << " elements: \""
+				          << memberName << "\"" << std::endl;
 			break;
 		}
 		case RsGenericSerializer::TO_JSON:
