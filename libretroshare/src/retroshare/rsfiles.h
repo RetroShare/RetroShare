@@ -24,6 +24,8 @@
 #include <list>
 #include <iostream>
 #include <string>
+#include <functional>
+#include <chrono>
 
 #include "rstypes.h"
 #include "serialiser/rsserializable.h"
@@ -315,8 +317,24 @@ public:
 		virtual uint32_t getMaxUploadSlotsPerFriend()=0;
 		virtual void setFilePermDirectDL(uint32_t perm)=0;
 		virtual uint32_t filePermDirectDL()=0;
-		virtual TurtleRequestId turtleSearch(const std::string& string_to_match) =0;
-        virtual TurtleRequestId turtleSearch(const RsRegularExpression::LinearizedExpression& expr) =0;
+
+	/**
+	 * @brief Request remote files search
+	 * @jsonapi{development}
+	 * @param[in] matchString string to look for in the search
+	 * @param multiCallback function that will be called each time a search
+	 * result is received
+	 * @param[in] maxWait maximum wait time in seconds for search results
+	 * @return false on error, true otherwise
+	 */
+	virtual bool turtleSearchRequest(
+	        const std::string& matchString,
+	        const std::function<void (const std::list<TurtleFileInfo>& results)>& multiCallback,
+	        std::time_t maxWait = 300 ) = 0;
+
+	virtual TurtleRequestId turtleSearch(const std::string& string_to_match) = 0;
+	virtual TurtleRequestId turtleSearch(
+	        const RsRegularExpression::LinearizedExpression& expr) = 0;
 
 		/***
 		 * Control of Downloads Priority.

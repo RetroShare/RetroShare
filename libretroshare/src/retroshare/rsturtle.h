@@ -38,30 +38,33 @@ class RsTurtle;
 
 /**
  * Pointer to global instance of RsTurtle service implementation
- * @jsonapi{development}
  */
 extern RsTurtle* rsTurtle;
 
 typedef uint32_t TurtleRequestId ;
 typedef RsPeerId TurtleVirtualPeerId;
 
-// This is the structure used to send back results of the turtle search 
-// to the notifyBase class, or send info to the GUI.
-
-struct TurtleFileInfo //: RsSerializable
+/**
+ * This is the structure used to send back results of the turtle search,
+ * to other peers, to the notifyBase class, to the search caller or to the GUI.
+ */
+struct TurtleFileInfo : RsSerializable
 {
-	RsFileHash hash;
-	std::string name;
-	uint64_t size;
-/*
+	uint64_t size;    /// File size
+	RsFileHash hash;  /// File hash
+	std::string name; /// File name
+
 	/// @see RsSerializable::serial_process
 	void serial_process( RsGenericSerializer::SerializeJob j,
 						 RsGenericSerializer::SerializeContext& ctx )
 	{
-		RS_SERIAL_PROCESS(hash);
-		RS_SERIAL_PROCESS(name);
 		RS_SERIAL_PROCESS(size);
-	}*/
+		RS_SERIAL_PROCESS(hash);
+
+		// Use String TLV serial process for retrocompatibility
+		RsTypeSerializer::serial_process(
+		            j, ctx, TLV_TYPE_STR_NAME, name, "name" );
+	}
 };
 
 struct TurtleTunnelRequestDisplayInfo
