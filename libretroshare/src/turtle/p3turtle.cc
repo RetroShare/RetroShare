@@ -1191,7 +1191,16 @@ void p3turtle::handleSearchResult(RsTurtleSearchResultItem *item)
 
         if(ftsr!=NULL)
         {
-			RsServer::notify()->notifyTurtleSearchResult(ftsr->request_id,ftsr->result) ;
+            ftServer *client = dynamic_cast<ftServer*>((*it).second) ;
+
+            if(!client)
+            {
+                std::cerr << "(EE) received turtle FT search result but the service is not a ftServer!!" << std::endl;
+                continue;
+            }
+			//RsServer::notify()->notifyTurtleSearchResult(ftsr->request_id,ftsr->result) ;
+
+            client->receiveSearchResult(ftsr);
             continue ;
         }
 
