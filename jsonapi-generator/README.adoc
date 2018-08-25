@@ -112,17 +112,77 @@ struct RsGxsChannelGroup : RsSerializable
 	{
 		RS_SERIAL_PROCESS(mMeta);
 		RS_SERIAL_PROCESS(mDescription);
-		//RS_SERIAL_PROCESS(mImage);
+		RS_SERIAL_PROCESS(mImage);
 		RS_SERIAL_PROCESS(mAutoDownload);
 	}
 };
 --------------------------------------------------------------------------------
 
 You can do the same recursively for any member of your +struct+ that is not yet
-supported by +RsTypeSerializer+ like I should have done for +RsGxsImage mImage;+
-but didn't have done yet because the day is so beatiful and i want to spend some
-time outside :D.
+supported by +RsTypeSerializer+.
 
+Some Retroshare {Cxx} API functions are asyncronous, historically RetroShare
+didn't follow a policy on how to expose asyncronous API so differents services
+and some times even differents method of the same service follow differents
+asyncronous patterns, thus making automatic generation of JSON API wrappers for
+those methods impractical. Instead of dealing with all those differents patterns
+I have chosed to support only one new pattern taking advantage of modern {Cxx}11
+and restbed features. On the {Cxx}11 side lambdas and +std::function+s are used,
+on the restbed side Server Side Events are used to send asyncronous results.
+
+Lets see an example so it will be much esier to understand.
+
+.RsGxsChannels::turtleSearchRequest asyncronous API
+[source,cpp]
+--------------------------------------------------------------------------------
+	/**
+	 * @brief Request remote channels search
+	 * @jsonapi{development}
+	 * @param[in] matchString string to look for in the search
+	 * @param multiCallback function that will be called each time a search
+	 * result is received
+	 * @param[in] maxWait maximum wait time in seconds for search results
+	 * @return false on error, true otherwise
+	 */
+	virtual bool turtleSearchRequest(
+	        const std::string& matchString,
+	        const std::function<void (const RsGxsGroupSummary& result)>& multiCallback,
+	        std::time_t maxWait = 300 ) = 0;
+--------------------------------------------------------------------------------
+
++RsGxsChannels::turtleSearchRequest(...)+ is an asyncronous method because it
+send a channel search request on turtle network and then everytime a result is
+received from the network +multiCallback+ is called and the result is passed as
+parameter. To be supported by the automatic JSON API wrappers generator an
+asyncronous method need a parameter of type +std::function<void (...)>+ called
++callback+ if the callback will be called only once or +multiCallback+ if the
+callback is expected to be called more then once like in this case.
+A second mandatory parameter is +maxWait+ of type +std::time_t+ it indicates the
+maximum amount of time in seconds for which the caller is willing to wait for
+results, in case the timeout is reached the callback will not be called anymore.
+
+[IMPORTANT]
+================================================================================
++callback+ and +multiCallback+ parameters documentation must *not* specify
++[in]+, +[out]+, +[inout]+, in Doxygen documentation as this would fool the
+automatic wrapper generator, and ultimately break the compilation.
+================================================================================
+
+.RsFiles::turtleSearchRequest asyncronous JSON API usage example
+[source,bash]
+--------------------------------------------------------------------------------
+$ cat turtle_search.json
+{
+    "matchString":"linux"
+}
+$ curl --data @turtle_search.json http://127.0.0.1:9092/rsFiles/turtleSearchRequest
+data: {"retval":true}
+
+data: {"results":[{"size":157631,"hash":"69709b4d01025584a8def5cd78ebbd1a3cf3fd05","name":"kill_bill_linux_1024x768.jpg"},{"size":192560,"hash":"000000000000000000009a93e5be8486c496f46c","name":"coffee_box_linux2.jpg"},{"size":455087,"hash":"9a93e5be8486c496f46c00000000000000000000","name":"Linux.png"},{"size":182004,"hash":"e8845280912ebf3779e400000000000000000000","name":"Linux_2_6.png"}]}
+
+data: {"results":[{"size":668,"hash":"e8845280912ebf3779e400000000000000000000","name":"linux.png"},{"size":70,"hash":"e8845280912ebf3779e400000000000000000000","name":"kali-linux-2016.2-amd64.txt.sha1sum"},{"size":3076767744,"hash":"e8845280912ebf3779e400000000000000000000","name":"kali-linux-2016.2-amd64.iso"},{"size":2780872,"hash":"e8845280912ebf3779e400000000000000000000","name":"openwrt-ar71xx-generic-vmlinux.bin"},{"size":917504,"hash":"e8845280912ebf3779e400000000000000000000","name":"openwrt-ar71xx-generic-vmlinux.lzma"},{"size":2278404096,"hash":"e8845280912ebf3779e400000000000000000000","name":"gentoo-linux-livedvd-amd64-multilib-20160704.iso"},{"size":151770333,"hash":"e8845280912ebf3779e400000000000000000000","name":"flashtool-0.9.23.0-linux.tar.7z"},{"size":2847372,"hash":"e8845280912ebf3779e400000000000000000000","name":"openwrt-ar71xx-generic-vmlinux.elf"},{"size":1310720,"hash":"e8845280912ebf3779e400000000000000000000","name":"openwrt-ar71xx-generic-vmlinux.gz"},{"size":987809,"hash":"e8845280912ebf3779e400000000000000000000","name":"openwrt-ar71xx-generic-vmlinux-lzma.elf"}]}
+
+--------------------------------------------------------------------------------
 
 == A bit of history
 
