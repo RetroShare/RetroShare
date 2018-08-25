@@ -1820,6 +1820,13 @@ int ftServer::handleIncoming()
  **********************************
  *********************************/
 
+void ftServer::receiveSearchResult(RsTurtleFTSearchResultItem *item)
+{
+    // @Gio: add your thing here
+
+	RsServer::notify()->notifyTurtleSearchResult(item->request_id,item->result) ;
+}
+
 /***************************** CONFIG ****************************/
 
 bool    ftServer::addConfiguration(p3ConfigMgr *cfgmgr)
