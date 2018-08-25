@@ -169,23 +169,23 @@ template<> void RsTypeSerializer::print_data(const std::string& n, const bool & 
 }
 template<> void RsTypeSerializer::print_data(const std::string& n, const int32_t& V)
 {
-	std::cerr << "  [int32_t   ] " << n << ": " << V << std::endl;
+	std::cerr << "  [int32_t   ] " << n << ": " << std::to_string(V) << std::endl;
 }
 template<> void RsTypeSerializer::print_data(const std::string& n, const uint8_t & V)
 {
-    std::cerr << "  [uint8_t    ] " << n << ": " << V << std::endl;
+	std::cerr << "  [uint8_t    ] " << n << ": " << std::to_string(V) << std::endl;
 }
 template<> void RsTypeSerializer::print_data(const std::string& n, const uint16_t& V)
 {
-    std::cerr << "  [uint16_t   ] " << n << ": " << V << std::endl;
+	std::cerr << "  [uint16_t   ] " << n << ": " << std::to_string(V) << std::endl;
 }
 template<> void RsTypeSerializer::print_data(const std::string& n, const uint32_t& V)
 {
-    std::cerr << "  [uint32_t   ] " << n << ": " << V << std::endl;
+	std::cerr << "  [uint32_t   ] " << n << ": " << std::to_string(V) << std::endl;
 }
 template<> void RsTypeSerializer::print_data(const std::string& n, const uint64_t& V)
 {
-    std::cerr << "  [uint64_t   ] " << n << ": " << V << std::endl;
+	std::cerr << "  [uint64_t   ] " << n << ": " << std::to_string(V) << std::endl;
 }
 template<> void RsTypeSerializer::print_data(const std::string& n, const time_t& V)
 {
