@@ -142,11 +142,12 @@ void rslog(const RsLog::logLvl lvl, RsLog::logInfo *info, const std::string &msg
 	if(info->lvl == RsLog::None)
 		return;
 
-	RsStackMutex stack(logMtx); /******** LOCKED ****************/
-
 	bool process = info->lvl == RsLog::Default ? (lvl <= defaultLevel) : lvl <= info->lvl;
-	if(process)
+	if(!process)
+		return;
+
 	{
+		RsStackMutex stack(logMtx); /******** LOCKED ****************/
 		time_t t = time(NULL);
 
 		if (debugMode == RS_DEBUG_LOGCRASH)
@@ -179,6 +180,9 @@ void rslog(const RsLog::logLvl lvl, RsLog::logInfo *info, const std::string &msg
 		fprintf(ofd, "(%s Z: %s, lvl: %u): %s \n",
 				timestr2.c_str(), info->name.c_str(), (unsigned int)info->lvl, msg.c_str());
 		fflush(ofd);
+
+		fprintf(stdout, "(%s Z: %s, lvl: %u): %s \n",
+		        timestr2.c_str(), info->name.c_str(), (unsigned int)info->lvl, msg.c_str());
 		lineCount++;
 	}
 }
