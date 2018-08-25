@@ -185,15 +185,19 @@ int p3FileDatabase::tick()
 
     if(last_print_time + 20 < now)
     {
-        RS_STACK_MUTEX(mFLSMtx) ;
+		{
+			RS_STACK_MUTEX(mFLSMtx) ;
 
 #ifdef DEBUG_FILE_HIERARCHY
-        mLocalSharedDirs->print();
+			mLocalSharedDirs->print();
 #endif
-        last_print_time = now ;
+			last_print_time = now ;
+		}
 
 #warning mr-alice 2016-08-19: "This should be removed, but it's necessary atm for updating the GUI"
         RsServer::notify()->notifyListChange(NOTIFY_LIST_DIRLIST_LOCAL, 0);
+
+        checkSendBannedFilesInfo();
     }
 
     if(mUpdateFlags)
@@ -1939,13 +1943,17 @@ bool p3FileDatabase::isFileBanned(const RsFileHash& hash)
 {
 	RS_STACK_MUTEX(mFLSMtx) ;
 
+    if(mBannedFileList.empty())	// quick exit
+        return false ;
+
     RsFileHash hash_of_hash ;
     ftServer::encryptHash(hash,hash_of_hash) ;
 
     bool res = mBannedFileList.find(hash) != mBannedFileList.end() || mBannedFileList.find(hash_of_hash) != mBannedFileList.end() ;
 
 #ifdef DEBUG_CONTENT_FILTERING
-    P3FILELISTS_DEBUG() << " is file banned(" << hash << "): " << (res?"YES":"NO") << std::endl;
+    if(res)
+		P3FILELISTS_DEBUG() << " is file banned(" << hash << "): " << (res?"YES":"NO") << std::endl;
 #endif
     return res ;
 }
@@ -2014,7 +2022,7 @@ void p3FileDatabase::checkSendBannedFilesInfo()
             it->second.mLastSent = now;
         }
 
-        peers.erase(it->first);						// friend has been handled -> remove from list
+        peers.erase(it->first);	 // friend has been handled -> remove from list
         ++it;
     }
 
@@ -2084,7 +2092,7 @@ void p3FileDatabase::locked_sendBanInfo(const RsPeerId& peer)
 
         if(!item)
         {
-			RsFileListsBannedHashesItem *item = new RsFileListsBannedHashesItem ;
+			item = new RsFileListsBannedHashesItem ;
 
 			item->PeerId(peer);
 			item->session_id = session_id ;
