@@ -110,7 +110,8 @@ QString WebuiPage::helpText() const
 	apiServerLocal = new resource_api::ApiServerLocal(apiServer, resource_api::ApiServerLocal::serverPath());
 #endif
 #ifdef RS_JSONAPI
-	jsonApiServer = new JsonApiServer(9092);
+	// Use same port of libresapi + 2
+	jsonApiServer = new JsonApiServer(Settings->getWebinterfacePort() + 2);
 	jsonApiServer->start("WebuiPage::jsonApiServer");
 #endif
     return ok;
