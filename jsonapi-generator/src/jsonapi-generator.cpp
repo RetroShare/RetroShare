@@ -30,6 +30,7 @@ struct MethodParam
 
 	QString type;
 	QString name;
+	QString defval;
 	bool in;
 	bool out;
 	bool isMultiCallback;
@@ -163,6 +164,8 @@ int main(int argc, char *argv[])
 					QString& pName(tmpParam.name);
 					QString& pType(tmpParam.type);
 					pName = tmpPE.firstChildElement("declname").text();
+					QDomElement tmpDefval = tmpPE.firstChildElement("defval");
+					if(!tmpDefval.isNull()) tmpParam.defval = tmpDefval.text();
 					QDomElement tmpType = tmpPE.firstChildElement("type");
 					pType = tmpType.text();
 					if(pType.startsWith("const ")) pType.remove(0,6);
@@ -248,7 +251,10 @@ int main(int argc, char *argv[])
 				for (const QString& pn : orderedParamNames)
 				{
 					const MethodParam& mp(paramsMap[pn]);
-					paramsDeclaration += "\t\t" + mp.type + " " + mp.name + ";\n";
+					paramsDeclaration += "\t\t" + mp.type + " " + mp.name;
+					if(!mp.defval.isEmpty())
+						paramsDeclaration += "(" + mp.defval + ")";
+					paramsDeclaration += ";\n";
 					if(mp.in)
 						inputParamsDeserialization += "\t\t\tRS_SERIAL_PROCESS("
 						        + mp.name + ");\n";
