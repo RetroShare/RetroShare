@@ -566,7 +566,7 @@ bool p3FileDatabase::loadList(std::list<RsItem *>& load)
         if(fb)
         {
             mPrimaryBanList = fb->primary_banned_files_list ;
-            mBannedFilesChanged = true;
+            mBannedFileListNeedsUpdate = true;
             mLastPrimaryBanListChangeTimeStamp = time(NULL);
         }
 
@@ -1918,6 +1918,7 @@ bool p3FileDatabase::banFile(const RsFileHash& real_file_hash, const std::string
 			mBannedFileList.insert(hash_of_hash) ;
 
 			mLastPrimaryBanListChangeTimeStamp = time(NULL);
+            mBannedFileListNeedsUpdate = true ;
 		}
 	}
 
@@ -1933,6 +1934,7 @@ bool p3FileDatabase::unbanFile(const RsFileHash& real_file_hash)
 		RS_STACK_MUTEX(mFLSMtx) ;
 		mPrimaryBanList.erase(real_file_hash) ;
 		mLastPrimaryBanListChangeTimeStamp = time(NULL);
+        mBannedFileListNeedsUpdate = true ;
     }
 
     IndicateConfigChanged();
@@ -1977,7 +1979,7 @@ void p3FileDatabase::setTrustFriendNodesForBannedFiles(bool b)
 	if(b != mTrustFriendNodesForBannedFiles)
     {
 		IndicateConfigChanged();
-        mBannedFilesChanged = true;
+        mBannedFileListNeedsUpdate = true;
     }
 
 	RS_STACK_MUTEX(mFLSMtx) ;
@@ -1991,7 +1993,7 @@ void p3FileDatabase::checkSendBannedFilesInfo()
     // 1 - compare records to list of online friends, send own info of not already
 
 #ifdef DEBUG_CONTENT_FILTERING
-    P3FILELISTS_DEBUG() << "  Checking banned file list: " << std::endl;
+    P3FILELISTS_DEBUG() << "  Checking banned files information: " << std::endl;
 #endif
 
     time_t now = time(NULL);
@@ -2039,12 +2041,12 @@ void p3FileDatabase::checkSendBannedFilesInfo()
 
     // 3 - update list of banned hashes if it has changed somehow
 
-    if(mBannedFilesChanged)
+    if(mBannedFileListNeedsUpdate)
     {
         mBannedFileList.clear();
 
 #ifdef DEBUG_CONTENT_FILTERING
-		P3FILELISTS_DEBUG() << "    Creating banned file list: " << std::endl;
+		P3FILELISTS_DEBUG() << "  Creating local banned file list: " << std::endl;
 #endif
         // Add all H(H(f)) from friends
 
@@ -2075,14 +2077,21 @@ void p3FileDatabase::checkSendBannedFilesInfo()
 #endif
 		}
 
-        mBannedFilesChanged = false ;
+        mBannedFileListNeedsUpdate = false ;
     }
+
+#ifdef DEBUG_CONTENT_FILTERING
+	P3FILELISTS_DEBUG() << " Final list of locally banned hashes contains: " << mBannedFileList.size() << " elements." << std::endl;
+#endif
 }
 
 void p3FileDatabase::locked_sendBanInfo(const RsPeerId& peer)
 {
-    RsFileListsBannedHashesItem *item = NULL;
+    RsFileListsBannedHashesItem *item = new RsFileListsBannedHashesItem ;
 	uint32_t session_id = RSRandom::random_u32();
+
+    item->session_id = session_id ;
+	item->PeerId(peer);
 
 	for(auto it(mPrimaryBanList.begin());it!=mPrimaryBanList.end();++it)
 	{
@@ -2139,6 +2148,6 @@ void p3FileDatabase::handleBannedFilesInfo(RsFileListsBannedHashesItem *item)
 
     // 3 - tell the updater that the banned file list has changed
 
-    mBannedFilesChanged = true ;
+    mBannedFileListNeedsUpdate = true ;
 }
 
