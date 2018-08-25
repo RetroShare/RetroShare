@@ -270,6 +270,7 @@ class p3FileDatabase: public p3Service, public p3Config, public ftSearch //, pub
 		std::set<RsFileHash> mBannedFileList ;	// list of banned hashes. This include original hashs and H(H(f)) when coming from friends.
         bool mTrustFriendNodesForBannedFiles ;
         bool mBannedFilesChanged;
+        time_t mLastPrimaryBanListChangeTimeStamp;
 
         void locked_sendBanInfo(const RsPeerId& pid);
         void handleBannedFilesInfo(RsFileListsBannedHashesItem *item);

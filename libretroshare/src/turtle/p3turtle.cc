@@ -1550,9 +1550,7 @@ void p3turtle::handleTunnelRequest(RsTurtleOpenTunnelItem *item)
 
  	if(rsFiles->isHashBanned(item->file_hash))
     {
-#ifdef P3TURTLE_DEBUG
         std::cerr << "(II) Rejecting tunnel request to ban hash " << item->file_hash << std::endl;
-#endif
         return ;
     }
 

@@ -164,6 +164,8 @@ public:
 
 struct BannedFileEntry
 {
+    BannedFileEntry() : size(0),filename(""),ban_time_stamp(0) {}
+
     uint64_t size ;
     std::string filename ;
     time_t ban_time_stamp;

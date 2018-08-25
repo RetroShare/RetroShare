@@ -37,6 +37,7 @@
 #define P3FILELISTS_ERROR() std::cerr << "***ERROR***" << " : FILE_LISTS : " << __FUNCTION__ << " : "
 
 //#define DEBUG_P3FILELISTS 1
+#define DEBUG_CONTENT_FILTERING 1
 
 static const uint32_t P3FILELISTS_UPDATE_FLAG_NOTHING_CHANGED     = 0x0000 ;
 static const uint32_t P3FILELISTS_UPDATE_FLAG_REMOTE_MAP_CHANGED  = 0x0001 ;
@@ -73,6 +74,7 @@ p3FileDatabase::p3FileDatabase(p3ServiceControl *mpeers)
     mLastCleanupTime = 0 ;
     mLastDataRecvTS = 0 ;
     mTrustFriendNodesForBannedFiles = TRUST_FRIEND_NODES_FOR_BANNED_FILES_DEFAULT;
+	mLastPrimaryBanListChangeTimeStamp = 0;
 
     // This is for the transmission of data
 
@@ -561,6 +563,7 @@ bool p3FileDatabase::loadList(std::list<RsItem *>& load)
         {
             mPrimaryBanList = fb->primary_banned_files_list ;
             mBannedFilesChanged = true;
+            mLastPrimaryBanListChangeTimeStamp = time(NULL);
         }
 
         delete *it ;
@@ -1891,19 +1894,27 @@ bool p3FileDatabase::locked_generateAndSendSyncRequest(RemoteDirectoryStorage *r
 
 bool p3FileDatabase::banFile(const RsFileHash& real_file_hash, const std::string& filename, uint64_t file_size)
 {
+#ifdef DEBUG_CONTENT_FILTERING
+    P3FILELISTS_DEBUG() << "  setting file \"" << filename << "\" size=" << file_size << " hash=" << real_file_hash << " as banned." << std::endl;
+#endif
 	{
 		RS_STACK_MUTEX(mFLSMtx) ;
 		BannedFileEntry& entry(mPrimaryBanList[real_file_hash]) ;	// primary list (user controlled) of files banned from FT search and forwarding. map<real hash, BannedFileEntry>
 
-		entry.filename = filename ;
-		entry.size = file_size ;
-		entry.ban_time_stamp = time(NULL);
+        if(entry.ban_time_stamp == 0)
+		{
+			entry.filename = filename ;
+			entry.size = file_size ;
+			entry.ban_time_stamp = time(NULL);
 
-        RsFileHash hash_of_hash ;
-        ftServer::encryptHash(real_file_hash,hash_of_hash) ;
+			RsFileHash hash_of_hash ;
+			ftServer::encryptHash(real_file_hash,hash_of_hash) ;
 
-        mBannedFileList.insert(real_file_hash) ;
-        mBannedFileList.insert(hash_of_hash) ;
+			mBannedFileList.insert(real_file_hash) ;
+			mBannedFileList.insert(hash_of_hash) ;
+
+			mLastPrimaryBanListChangeTimeStamp = time(NULL);
+		}
 	}
 
     IndicateConfigChanged();
@@ -1911,9 +1922,13 @@ bool p3FileDatabase::banFile(const RsFileHash& real_file_hash, const std::string
 }
 bool p3FileDatabase::unbanFile(const RsFileHash& real_file_hash)
 {
+#ifdef DEBUG_CONTENT_FILTERING
+    P3FILELISTS_DEBUG() << " unbanning file with hash " << real_file_hash << std::endl;
+#endif
     {
 		RS_STACK_MUTEX(mFLSMtx) ;
 		mPrimaryBanList.erase(real_file_hash) ;
+		mLastPrimaryBanListChangeTimeStamp = time(NULL);
     }
 
     IndicateConfigChanged();
@@ -1927,7 +1942,12 @@ bool p3FileDatabase::isFileBanned(const RsFileHash& hash)
     RsFileHash hash_of_hash ;
     ftServer::encryptHash(hash,hash_of_hash) ;
 
-    return mBannedFileList.find(hash) != mBannedFileList.end() || mBannedFileList.find(hash_of_hash) != mBannedFileList.end() ;
+    bool res = mBannedFileList.find(hash) != mBannedFileList.end() || mBannedFileList.find(hash_of_hash) != mBannedFileList.end() ;
+
+#ifdef DEBUG_CONTENT_FILTERING
+    P3FILELISTS_DEBUG() << " is file banned(" << hash << "): " << (res?"YES":"NO") << std::endl;
+#endif
+    return res ;
 }
 
 bool p3FileDatabase::getPrimaryBannedFilesList(std::map<RsFileHash,BannedFileEntry>& banned_files)
@@ -1943,10 +1963,14 @@ bool p3FileDatabase::trustFriendNodesForBannedFiles() const
 	RS_STACK_MUTEX(mFLSMtx) ;
 	return mTrustFriendNodesForBannedFiles;
 }
+
 void p3FileDatabase::setTrustFriendNodesForBannedFiles(bool b)
 {
 	if(b != mTrustFriendNodesForBannedFiles)
+    {
 		IndicateConfigChanged();
+        mBannedFilesChanged = true;
+    }
 
 	RS_STACK_MUTEX(mFLSMtx) ;
 	mTrustFriendNodesForBannedFiles = b;
@@ -1958,6 +1982,11 @@ void p3FileDatabase::checkSendBannedFilesInfo()
 
     // 1 - compare records to list of online friends, send own info of not already
 
+#ifdef DEBUG_CONTENT_FILTERING
+    P3FILELISTS_DEBUG() << "  Checking banned file list: " << std::endl;
+#endif
+
+    time_t now = time(NULL);
     std::list<RsPeerId> online_friends ;
 	rsPeers->getOnlineList(online_friends);
 
@@ -1970,13 +1999,19 @@ void p3FileDatabase::checkSendBannedFilesInfo()
         if(peers.find(it->first) == peers.end())	// friend not online, remove his record
         {
             it = mPeerBannedFiles.erase(it) ;
+#ifdef DEBUG_CONTENT_FILTERING
+			P3FILELISTS_DEBUG() << "    Peer " << it->first << " is offline: removign record." << std::endl;
+#endif
             continue;
         }
 
-        if(it->second.mLastSent == 0)				// has ban info already been sent? If not do it.
+        if(it->second.mLastSent < mLastPrimaryBanListChangeTimeStamp)				// has ban info already been sent? If not do it.
         {
+#ifdef DEBUG_CONTENT_FILTERING
+			P3FILELISTS_DEBUG() << "    Peer " << it->first << " is online and hasn't been sent since last change: sending..." << std::endl;
+#endif
             locked_sendBanInfo(it->first);
-            it->second.mLastSent = time(NULL);
+            it->second.mLastSent = now;
         }
 
         peers.erase(it->first);						// friend has been handled -> remove from list
@@ -1988,7 +2023,10 @@ void p3FileDatabase::checkSendBannedFilesInfo()
     for(auto it(peers.begin());it!=peers.end();++it)
     {
         locked_sendBanInfo(*it);
-        mPeerBannedFiles[*it].mLastSent = time(NULL);
+        mPeerBannedFiles[*it].mLastSent = now;
+#ifdef DEBUG_CONTENT_FILTERING
+		P3FILELISTS_DEBUG() << "    Peer " << *it << " is online and hasn't been sent info at all: sending..." << std::endl;
+#endif
     }
 
     // 3 - update list of banned hashes if it has changed somehow
@@ -1997,12 +2035,21 @@ void p3FileDatabase::checkSendBannedFilesInfo()
     {
         mBannedFileList.clear();
 
+#ifdef DEBUG_CONTENT_FILTERING
+		P3FILELISTS_DEBUG() << "    Creating banned file list: " << std::endl;
+#endif
         // Add all H(H(f)) from friends
 
         if(mTrustFriendNodesForBannedFiles)
 			for(auto it(mPeerBannedFiles.begin());it!=mPeerBannedFiles.end();++it)
 				for(auto it2(it->second.mBannedHashOfHash.begin());it2!=it->second.mBannedHashOfHash.end();++it2)
+                {
 					mBannedFileList.insert(*it2);
+
+#ifdef DEBUG_CONTENT_FILTERING
+					P3FILELISTS_DEBUG() << "      from " << it->first << ": H(H(f)) = " << *it2 << std::endl;
+#endif
+                }
 
         // Add H(f) and H(H(f)) from our primary list
 
@@ -2014,6 +2061,10 @@ void p3FileDatabase::checkSendBannedFilesInfo()
 			ftServer::encryptHash(it->first,hash_of_hash) ;
 
             mBannedFileList.insert(hash_of_hash) ;
+
+#ifdef DEBUG_CONTENT_FILTERING
+			P3FILELISTS_DEBUG() << "      primary: H(f) = " << it->first << ": H(H(f)) = " << hash_of_hash << std::endl;
+#endif
 		}
 
         mBannedFilesChanged = false ;
@@ -2056,6 +2107,9 @@ void p3FileDatabase::handleBannedFilesInfo(RsFileListsBannedHashesItem *item)
 {
 	RS_STACK_MUTEX(mFLSMtx) ;
 
+#ifdef DEBUG_CONTENT_FILTERING
+	P3FILELISTS_DEBUG() << " received banned files info from peer " << item->PeerId() << ", session id = " << std::hex << item->session_id << std::dec << ": " << item->encrypted_hashes.size() << " files:" << std::endl;
+#endif
     // 1 - localize the friend in the banned file map
 
     PeerBannedFilesEntry& pbfe(mPeerBannedFiles[item->PeerId()]) ;
@@ -2068,7 +2122,12 @@ void p3FileDatabase::handleBannedFilesInfo(RsFileListsBannedHashesItem *item)
     // 2 - replace/update the list, depending on the session_id
 
     for(auto it(item->encrypted_hashes.begin());it!=item->encrypted_hashes.end();++it)
+    {
         pbfe.mBannedHashOfHash.insert(*it);
+#ifdef DEBUG_CONTENT_FILTERING
+		P3FILELISTS_DEBUG() << "   added H(H(f)) = " << *it << std::endl;
+#endif
+    }
 
     // 3 - tell the updater that the banned file list has changed
 
