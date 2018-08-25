@@ -293,16 +293,25 @@ public:
 	std::string cipher_version;
 };
 
-class RsGroupInfo
+class RsGroupInfo : RsSerializable
 {
 public:
-	RsGroupInfo();
+    RsGroupInfo();
 
-    RsNodeGroupId id;
-	std::string name;
-	uint32_t flag;
+    RsNodeGroupId   id;
+    std::string     name;
+    uint32_t        flag;
 
-	std::set<RsPgpId> peerIds;
+    std::set<RsPgpId> peerIds;
+
+    // RsSerializable interface
+public:
+    void serial_process(RsGenericSerializer::SerializeJob j, RsGenericSerializer::SerializeContext &ctx) {
+        RS_SERIAL_PROCESS(id);
+        RS_SERIAL_PROCESS(name);
+        RS_SERIAL_PROCESS(flag);
+        RS_SERIAL_PROCESS(peerIds);
+    }
 };
 
 std::ostream &operator<<(std::ostream &out, const RsPeerDetails &detail);
