@@ -292,7 +292,7 @@ int main(int argc, char *argv[])
 					callbackParams = callbackParams.split('(')[1];
 					callbackParams = callbackParams.split(')')[0];
 
-					cbs += "RsGenericSerializer::SerializeContext ctx;\n";
+					cbs += "\t\t\tRsGenericSerializer::SerializeContext ctx;\n";
 
 					for (QString cbPar : callbackParams.split(','))
 					{

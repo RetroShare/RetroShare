@@ -247,15 +247,16 @@ struct RsLoginHelper
 	void getLocations(std::vector<RsLoginHelper::Location>& locations);
 
 	/**
-	 * @brief Creates a new RetroShare location
+	 * @brief Creates a new RetroShare location, and log in once is created
 	 * @jsonapi{development}
 	 * @param[inout] location provide input information to generate the location
 	 *	and storage to output the data of the generated location
 	 * @param[in] password to protect and unlock the associated PGP key
-	 * @param[in] makeHidden pass true to create an hidden location
+	 * @param[in] makeHidden pass true to create an hidden location. UNTESTED!
 	 * @param[in] makeAutoTor pass true to create an automatically configured
-	 *	Tor hidden location
-	 * @param[out] errorMessage
+	 *	Tor hidden location. UNTESTED!
+	 * @param[out] errorMessage if some error occurred human readable error
+	 *	message
 	 * @return true if success, false otherwise
 	 */
 	bool createLocation( RsLoginHelper::Location& location,
