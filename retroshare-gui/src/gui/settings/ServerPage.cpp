@@ -191,7 +191,6 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
     std::cerr << std::endl;
 #endif
 
-
     connect(ui.discComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(saveAddresses()));
     connect(ui.netModeComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(saveAddresses()));
     connect(ui.localAddress,   SIGNAL(textChanged(QString)),this,SLOT(saveAddresses()));
@@ -231,6 +230,10 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
 
 	QObject::connect(ui.enableCheckBox,SIGNAL(toggled(bool)),this,SLOT(updateRelayMode()));
 	QObject::connect(ui.serverCheckBox,SIGNAL(toggled(bool)),this,SLOT(updateRelayMode()));
+
+	// when the network menu is opened and the hidden service tab is already selected updateOutProxyIndicator() won't be called and thus resulting in wrong proxy indicators.
+	if (ui.tabWidget->currentIndex() == TAB_HIDDEN_SERVICE)
+		updateOutProxyIndicator();
 }
 
 void ServerPage::saveAndTestInProxy()
