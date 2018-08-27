@@ -191,12 +191,9 @@ class RsTurtleGenericSearchRequestItem: public RsTurtleSearchRequestItem
 class RsTurtleSearchResultItem: public RsTurtleItem
 {
 	public:
-        RsTurtleSearchResultItem(uint8_t subtype) : RsTurtleItem(subtype), request_id(0), depth(0) { setPriorityLevel(QOS_PRIORITY_RS_TURTLE_SEARCH_RESULT) ;}
+        RsTurtleSearchResultItem(uint8_t subtype) : RsTurtleItem(subtype), request_id(0) { setPriorityLevel(QOS_PRIORITY_RS_TURTLE_SEARCH_RESULT) ;}
 
 		TurtleSearchRequestId request_id ;	// Randomly generated request id.
-		uint16_t depth ;					// The depth of a search result is obfuscated in this way:
-											// 	If the actual depth is 1, this field will be 1.
-											// 	If the actual depth is > 1, this field is a larger arbitrary integer.
 
         virtual uint32_t count() const =0;
         virtual void pop() =0;

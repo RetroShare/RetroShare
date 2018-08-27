@@ -193,13 +193,20 @@ RS_TYPE_SERIALIZER_FROM_JSON_NOT_IMPLEMENTED_DEF(RsRegularExpression::Linearized
 void RsTurtleFTSearchResultItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,request_id,"request_id") ;
-    RsTypeSerializer::serial_process<uint16_t>(j,ctx,depth     ,"depth") ;
+
+	// This depth was previously a member of SearchResult parent class that was set to be always 0. It's removed, but we have to stay backward compatible.
+	uint16_t depth_retrocompat_unused_placeholder = 0 ;
+    RsTypeSerializer::serial_process<uint16_t>(j,ctx,depth_retrocompat_unused_placeholder,"depth") ;
+
     RsTypeSerializer::serial_process          (j,ctx,result    ,"result") ;
 }
 void RsTurtleGenericSearchResultItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,request_id,"request_id") ;
-    RsTypeSerializer::serial_process<uint16_t>(j,ctx,depth     ,"depth") ;
+
+	// This depth was previously a member of SearchResult parent class that was set to be always 0. It's removed, but we have to stay backward compatible.
+	uint16_t depth_retrocompat_unused_placeholder = 0 ;
+    RsTypeSerializer::serial_process<uint16_t>(j,ctx,depth_retrocompat_unused_placeholder,"depth") ;
 
     RsTypeSerializer::TlvMemBlock_proxy prox(result_data,result_data_len) ;
     RsTypeSerializer::serial_process(j,ctx,prox,"search_data") ;
@@ -212,7 +219,6 @@ RsTurtleSearchResultItem *RsTurtleGenericSearchResultItem::duplicate() const
     memcpy(sr->result_data,result_data,result_data_len) ;
     sr->result_data_len = result_data_len ;
     sr->request_id = request_id ;
-    sr->depth = depth ;
     return sr ;
 }
 
