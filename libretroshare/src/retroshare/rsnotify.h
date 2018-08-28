@@ -181,7 +181,7 @@ class RsFeedItem
 // This mechanism can be used in plugins, new services, etc.
 //	
 
-struct NotifyClient;
+class NotifyClient;
 
 class RsNotify 
 {
@@ -206,8 +206,9 @@ class RsNotify
 		virtual bool setDisableAskPassword (const bool /*bValue*/) { return false ; }
 };
 
-struct NotifyClient
+class NotifyClient
 {
+public:
 	NotifyClient() {}
 	virtual ~NotifyClient() {}
 
