@@ -159,8 +159,6 @@
 
 struct RsItem;
 
-#define SERIALIZE_ERROR() std::cerr << __PRETTY_FUNCTION__ << " : " 
-
 // This is the base class for serializers.
 
 class RsSerialType
@@ -222,9 +220,7 @@ struct RsGenericSerializer : RsSerialType
 		SerializeContext(
 		        uint8_t* data = nullptr, uint32_t size = 0,
 		        SerializationFlags flags = SERIALIZATION_FLAG_NONE,
-		        RsJson::AllocatorType* allocator = nullptr) :
-		    mData(data), mSize(size), mOffset(0), mOk(true), mFlags(flags),
-		    mJson(rapidjson::kObjectType, allocator) {}
+		        RsJson::AllocatorType* allocator = nullptr);
 
 		RS_DEPRECATED SerializeContext(
 		        uint8_t *data, uint32_t size, SerializationFormat format,
