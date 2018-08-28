@@ -10,6 +10,32 @@ Look for methods marked with +@jsonapi+ doxygen custom command into
 pointer name like +rsGxsChannels+ for +RsGxsChannels+, and the method name like
 +createGroup+ and pass the input paramethers as a JSON object.
 
+.Service instance pointer in rsgxschannels.h
+[source,cpp]
+--------------------------------------------------------------------------------
+/**
+ * Pointer to global instance of RsGxsChannels service implementation
+ * @jsonapi{development}
+ */
+extern RsGxsChannels* rsGxsChannels;
+--------------------------------------------------------------------------------
+
+.Method declaration in rsgxschannels.h
+[source,cpp]
+--------------------------------------------------------------------------------
+	/**
+	 * @brief Request channel creation.
+	 * The action is performed asyncronously, so it could fail in a subsequent
+	 * phase even after returning true.
+	 * @jsonapi{development}
+	 * @param[out] token Storage for RsTokenService token to track request
+	 * status.
+	 * @param[in] group Channel data (name, description...)
+	 * @return false on error, true otherwise
+	 */
+	virtual bool createGroup(uint32_t& token, RsGxsChannelGroup& group) = 0;
+--------------------------------------------------------------------------------
+
 .paramethers.json
 [source,json]
 --------------------------------------------------------------------------------
