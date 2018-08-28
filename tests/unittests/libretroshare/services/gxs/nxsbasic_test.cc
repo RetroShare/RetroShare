@@ -118,14 +118,14 @@ TEST(libretroshare_services, DISABLED_GXS_nxs_basic2)
 	uint32_t token2;
 
 	ASSERT_TRUE(testService->submitTestGroup(token1, grp1));
-	while(tokenService->requestStatus(token1) != RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
+	while(tokenService->requestStatus(token1) != RsTokenService::COMPLETE)
 	{
 		tester.tick();
 		sleep(1);
 	}
 
 	ASSERT_TRUE(testService->submitTestGroup(token2, grp2));
-	while(tokenService->requestStatus(token2) != RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
+	while(tokenService->requestStatus(token2) != RsTokenService::COMPLETE)
 	{
 		tester.tick();
 		sleep(1);

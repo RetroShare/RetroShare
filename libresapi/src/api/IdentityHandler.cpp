@@ -223,15 +223,15 @@ void IdentityHandler::handleWildcard(Request & /*req*/, Response &resp)
 
 	time_t timeout = time(NULL)+10;
 	uint8_t rStatus = mRsIdentity->getTokenService()->requestStatus(token);
-	while( rStatus != RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE &&
-	       rStatus != RsTokenService::GXS_REQUEST_V2_STATUS_FAILED &&
+	while( rStatus != RsTokenService::COMPLETE &&
+	       rStatus != RsTokenService::FAILED &&
 	       time(NULL) < timeout )
 	{
 		usleep(50*1000);
 		rStatus = mRsIdentity->getTokenService()->requestStatus(token);
 	}
 
-	if(rStatus == RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
+	if(rStatus == RsTokenService::COMPLETE)
 	{
 		std::vector<RsGxsIdGroup> grps;
 		ok &= mRsIdentity->getGroupData(token, grps);
@@ -280,15 +280,15 @@ void IdentityHandler::handleNotOwnIdsRequest(Request & /*req*/, Response &resp)
 
 	time_t timeout = time(NULL)+10;
 	uint8_t rStatus = mRsIdentity->getTokenService()->requestStatus(token);
-	while( rStatus != RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE &&
-	       rStatus != RsTokenService::GXS_REQUEST_V2_STATUS_FAILED &&
+	while( rStatus != RsTokenService::COMPLETE &&
+	       rStatus != RsTokenService::FAILED &&
 	       time(NULL) < timeout )
 	{
 		usleep(50*1000);
 		rStatus = mRsIdentity->getTokenService()->requestStatus(token);
 	}
 
-	if(rStatus == RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
+	if(rStatus == RsTokenService::COMPLETE)
 	{
 		std::vector<RsGxsIdGroup> grps;
 		ok &= mRsIdentity->getGroupData(token, grps);
@@ -330,8 +330,8 @@ void IdentityHandler::handleOwnIdsRequest(Request & /*req*/, Response &resp)
 	mRsIdentity->getTokenService()->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts);
 
 	time_t start = time(NULL);
-	while((mRsIdentity->getTokenService()->requestStatus(token) != RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
-	      &&(mRsIdentity->getTokenService()->requestStatus(token) != RsTokenService::GXS_REQUEST_V2_STATUS_FAILED)
+	while((mRsIdentity->getTokenService()->requestStatus(token) != RsTokenService::COMPLETE)
+	      &&(mRsIdentity->getTokenService()->requestStatus(token) != RsTokenService::FAILED)
 	      &&((time(NULL) < (start+10)))
 	      )
 	{
@@ -342,7 +342,7 @@ void IdentityHandler::handleOwnIdsRequest(Request & /*req*/, Response &resp)
 #endif
 	}
 
-	if(mRsIdentity->getTokenService()->requestStatus(token) == RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
+	if(mRsIdentity->getTokenService()->requestStatus(token) == RsTokenService::COMPLETE)
 	{
 		std::vector<RsGxsIdGroup> grps;
 		ok &= mRsIdentity->getGroupData(token, grps);
@@ -413,8 +413,8 @@ void IdentityHandler::handleGetIdentityDetails(Request& req, Response& resp)
 	mRsIdentity->getTokenService()->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, groupIds);
 
 	time_t start = time(NULL);
-	while((mRsIdentity->getTokenService()->requestStatus(token) != RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
-	      &&(mRsIdentity->getTokenService()->requestStatus(token) != RsTokenService::GXS_REQUEST_V2_STATUS_FAILED)
+	while((mRsIdentity->getTokenService()->requestStatus(token) != RsTokenService::COMPLETE)
+	      &&(mRsIdentity->getTokenService()->requestStatus(token) != RsTokenService::FAILED)
 	      &&((time(NULL) < (start+10)))
 	      )
 	{
@@ -548,8 +548,8 @@ void IdentityHandler::handleSetAvatar(Request& req, Response& resp)
 	mRsIdentity->getTokenService()->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, groupIds);
 
 	time_t start = time(NULL);
-	while((mRsIdentity->getTokenService()->requestStatus(token) != RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
-	      &&(mRsIdentity->getTokenService()->requestStatus(token) != RsTokenService::GXS_REQUEST_V2_STATUS_FAILED)
+	while((mRsIdentity->getTokenService()->requestStatus(token) != RsTokenService::COMPLETE)
+	      &&(mRsIdentity->getTokenService()->requestStatus(token) != RsTokenService::FAILED)
 	      &&((time(NULL) < (start+10)))
 	      )
 	{

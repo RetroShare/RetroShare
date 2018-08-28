@@ -222,55 +222,6 @@ RsTurtleSearchResultItem *RsTurtleGenericSearchResultItem::duplicate() const
     return sr ;
 }
 
-template<> uint32_t RsTypeSerializer::serial_size(const TurtleFileInfo& i)
-{
-    uint32_t s = 0 ;
-
-    s += 8 ; // size
-    s += i.hash.SIZE_IN_BYTES ;
-    s += GetTlvStringSize(i.name) ;
-
-    return s;
-}
-
-template<> bool RsTypeSerializer::deserialize(const uint8_t data[],uint32_t size,uint32_t& offset,TurtleFileInfo& i)
-{
-    uint32_t saved_offset = offset ;
-    bool ok = true ;
-
-	ok &= getRawUInt64(data, size, &offset, &i.size); 					 // file size
-	ok &= i.hash.deserialise(data, size, offset);                        // file hash
-	ok &= GetTlvString(data, size, &offset, TLV_TYPE_STR_NAME, i.name);  // file name
-
-    if(!ok)
-        offset = saved_offset ;
-
-    return ok;
-}
-
-template<> bool RsTypeSerializer::serialize(uint8_t data[],uint32_t size,uint32_t& offset,const TurtleFileInfo& i)
-{
-	uint32_t saved_offset = offset ;
-    bool ok = true ;
-
-	ok &= setRawUInt64(data, size, &offset, i.size); 					 // file size
-	ok &= i.hash.serialise(data, size, offset);					         // file hash
-	ok &= SetTlvString(data, size, &offset, TLV_TYPE_STR_NAME, i.name);  // file name
-
-	if(!ok)
-		offset = saved_offset ;
-
-	return ok;
-}
-
-template<> void RsTypeSerializer::print_data(const std::string& n, const TurtleFileInfo& i)
-{
-    std::cerr << "  [FileInfo  ] " << n << " size=" << i.size << " hash=" << i.hash << ", name=" << i.name << std::endl;
-}
-
-RS_TYPE_SERIALIZER_TO_JSON_NOT_IMPLEMENTED_DEF(TurtleFileInfo)
-RS_TYPE_SERIALIZER_FROM_JSON_NOT_IMPLEMENTED_DEF(TurtleFileInfo)
-
 void RsTurtleOpenTunnelItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process          (j,ctx,file_hash        ,"file_hash") ;

@@ -65,15 +65,25 @@ const uint32_t RS_CONFIG_DIRECTORY   = 0x0002 ;
 const uint32_t RS_PGP_DIRECTORY      = 0x0003 ;
 const uint32_t RS_DIRECTORY_COUNT    = 0x0004 ;
 
-class TransferInfo
+struct TransferInfo : RsSerializable
 {
-	public:
-		/**** Need Some of these Fields ****/
-        RsPeerId peerId;
-		std::string name; /* if has alternative name? */
-		double tfRate; /* kbytes */
-		int  status; /* FT_STATE_... */
-		uint64_t transfered ; // used when no chunkmap data is available
+	/**** Need Some of these Fields ****/
+	RsPeerId peerId;
+	std::string name; /* if has alternative name? */
+	double tfRate; /* kbytes */
+	int status; /* FT_STATE_... */
+	uint64_t transfered ; // used when no chunkmap data is available
+
+	/// @see RsSerializable
+	void serial_process(RsGenericSerializer::SerializeJob j,
+	                    RsGenericSerializer::SerializeContext& ctx)
+	{
+		RS_SERIAL_PROCESS(peerId);
+		RS_SERIAL_PROCESS(name);
+		RS_SERIAL_PROCESS(tfRate);
+		RS_SERIAL_PROCESS(status);
+		RS_SERIAL_PROCESS(transfered);
+	}
 };
 
 enum QueueMove { 	QUEUE_TOP 	 = 0x00, 
@@ -82,9 +92,11 @@ enum QueueMove { 	QUEUE_TOP 	 = 0x00,
 						QUEUE_BOTTOM = 0x03
 };
 
-enum DwlSpeed 		{ 	SPEED_LOW 		= 0x00, 
-							SPEED_NORMAL 	= 0x01, 
-							SPEED_HIGH		= 0x02
+enum DwlSpeed : uint8_t
+{
+	SPEED_LOW    = 0x00,
+	SPEED_NORMAL = 0x01,
+	SPEED_HIGH   = 0x02
 };
 
 
@@ -171,54 +183,76 @@ const FileStorageFlags DIR_FLAGS_PERMISSIONS_MASK     	( DIR_FLAGS_ANONYMOUS_DOW
 const FileStorageFlags DIR_FLAGS_LOCAL                  	( 0x1000 );
 const FileStorageFlags DIR_FLAGS_REMOTE                 	( 0x2000 );
 
-class FileInfo
+struct FileInfo : RsSerializable
 {
-	/* old BaseInfo Entries */
-	public:
+	FileInfo():
+	    mId(0), searchId(0), size(0), avail(0), rank(0), age(0),
+	    queue_position(0), transfered(0), tfRate(0), downloadStatus(0),
+	    priority(SPEED_NORMAL), lastTS(0) {}
 
-        FileInfo() : mId(0), searchId(0), size(0), avail(0), rank(0), age(0), queue_position(0),
-        transfered(0), tfRate(0), downloadStatus(0), priority(SPEED_NORMAL), lastTS(0){}
-//		RsCertId id; /* key for matching everything */
+	/// Combination of the four RS_DIR_FLAGS_*. Updated when the file is a local stored file.
+	FileStorageFlags storage_permission_flags;
 
-		FileStorageFlags  storage_permission_flags; 	// Combination of the four RS_DIR_FLAGS_*. Updated when the file is a local stored file.
-		TransferRequestFlags   transfer_info_flags ;		// various flags from RS_FILE_HINTS_*
+	/// various flags from RS_FILE_HINTS_*
+	TransferRequestFlags transfer_info_flags;
 
-		/* allow this to be tweaked by the GUI Model */
-		mutable unsigned int mId; /* (GUI) Model Id -> unique number */
+	/** allow this to be tweaked by the GUI Model
+	 * (GUI) Model Id -> unique number
+	 */
+	mutable unsigned int mId;
 
-		/* Old FileInfo Entries */
-	public:
 
-		static const int kRsFiStatusNone = 0;
-		static const int kRsFiStatusStall = 1;
-		static const int kRsFiStatusProgress = 2;
-		static const int kRsFiStatusDone = 2;
+	/// 0 if none
+	int searchId;
 
-		/* FileInfo(); */
+	std::string path;
+	std::string fname;
+	RsFileHash hash;
+	std::string ext;
 
-		int searchId;      /* 0 if none */
-		std::string path;
-		std::string fname;
-        RsFileHash hash;
-		std::string ext;
+	uint64_t size;
+	uint64_t avail; /// how much we have
 
-		uint64_t size;
-		uint64_t avail; /* how much we have */
+	double rank;
+	int age;
+	uint32_t queue_position;
 
-		double rank;
-		int age;
-		uint32_t queue_position ;
+	/* Transfer Stuff */
+	uint64_t transfered;
+	double tfRate; /// in kbytes
+	uint32_t downloadStatus; /// FT_STATE_DOWNLOADING & co. See rstypes.h
+	std::vector<TransferInfo> peers;
 
-		/* Transfer Stuff */
-		uint64_t transfered;
-		double   tfRate; /* in kbytes */
-		uint32_t  downloadStatus; 	// FT_STATE_DOWNLOADING & co. See rstypes.h
-		std::vector<TransferInfo> peers;
+	DwlSpeed priority;
+	time_t lastTS;
 
-		DwlSpeed priority ;
-		time_t lastTS;
-		
-        std::list<RsNodeGroupId> parent_groups ;
+	std::list<RsNodeGroupId> parent_groups;
+
+	/// @see RsSerializable
+	void serial_process(RsGenericSerializer::SerializeJob j,
+	                    RsGenericSerializer::SerializeContext& ctx)
+	{
+		RS_SERIAL_PROCESS(storage_permission_flags);
+		RS_SERIAL_PROCESS(transfer_info_flags);
+		RS_SERIAL_PROCESS(mId);
+		RS_SERIAL_PROCESS(searchId);
+		RS_SERIAL_PROCESS(path);
+		RS_SERIAL_PROCESS(fname);
+		RS_SERIAL_PROCESS(hash);
+		RS_SERIAL_PROCESS(ext);
+		RS_SERIAL_PROCESS(size);
+		RS_SERIAL_PROCESS(avail);
+		RS_SERIAL_PROCESS(rank);
+		RS_SERIAL_PROCESS(age);
+		RS_SERIAL_PROCESS(queue_position);
+		RS_SERIAL_PROCESS(transfered);
+		RS_SERIAL_PROCESS(tfRate);
+		RS_SERIAL_PROCESS(downloadStatus);
+		RS_SERIAL_PROCESS(peers);
+		RS_SERIAL_PROCESS(priority);
+		RS_SERIAL_PROCESS(lastTS);
+		RS_SERIAL_PROCESS(parent_groups);
+	}
 };
 
 std::ostream &operator<<(std::ostream &out, const FileInfo& info);
@@ -268,36 +302,58 @@ class FileDetail
 
 class CompressedChunkMap ;
 
-class FileChunksInfo
+struct FileChunksInfo : RsSerializable
 {
-	public:
-		enum ChunkState { CHUNK_CHECKING=3, CHUNK_DONE=2, CHUNK_ACTIVE=1, CHUNK_OUTSTANDING=0 } ;
-		enum ChunkStrategy { CHUNK_STRATEGY_STREAMING, CHUNK_STRATEGY_RANDOM, CHUNK_STRATEGY_PROGRESSIVE } ;
+	enum ChunkState : uint8_t
+	{
+		CHUNK_OUTSTANDING = 0,
+		CHUNK_ACTIVE = 1,
+		CHUNK_DONE = 2,
+		CHUNK_CHECKING = 3
+	};
 
-		struct SliceInfo
-		{
-			uint32_t start ;
-			uint32_t size ;
-			RsPeerId peer_id ;
-		};
+	enum ChunkStrategy : uint8_t
+	{
+		CHUNK_STRATEGY_STREAMING,
+		CHUNK_STRATEGY_RANDOM,
+		CHUNK_STRATEGY_PROGRESSIVE
+	};
 
-		uint64_t file_size ;					// real size of the file
-		uint32_t chunk_size ;				// size of chunks
-		uint32_t strategy ;
+	struct SliceInfo
+	{
+		uint32_t start;
+		uint32_t size;
+		RsPeerId peer_id;
+	};
 
-		// dl state of chunks. Only the last chunk may have size < chunk_size
-		std::vector<ChunkState> chunks ;	
+	uint64_t file_size; /// real size of the file
+	uint32_t chunk_size; /// size of chunks
+	ChunkStrategy strategy;
 
-		// For each source peer, gives the compressed bit map of have/don't have sate
-		std::map<RsPeerId, CompressedChunkMap> compressed_peer_availability_maps ;
+	/// dl state of chunks. Only the last chunk may have size < chunk_size
+	std::vector<ChunkState> chunks;
 
-		// For each chunk (by chunk number), gives the completion of the chunk.
-		//                     
-		std::vector<std::pair<uint32_t,uint32_t> > active_chunks ;
+	/// For each source peer, gives the compressed bit map of have/don't have sate
+	std::map<RsPeerId, CompressedChunkMap> compressed_peer_availability_maps;
 
-		// The list of pending requests, chunk per chunk (by chunk id)
-		//
-		std::map<uint32_t, std::vector<SliceInfo> > pending_slices ;
+	/// For each chunk (by chunk number), gives the completion of the chunk.
+	std::vector<std::pair<uint32_t,uint32_t> > active_chunks;
+
+	/// The list of pending requests, chunk per chunk (by chunk id)
+	std::map<uint32_t, std::vector<SliceInfo> > pending_slices;
+
+	/// @see RsSerializable
+	void serial_process(RsGenericSerializer::SerializeJob j,
+	                    RsGenericSerializer::SerializeContext& ctx)
+	{
+		RS_SERIAL_PROCESS(file_size);
+		RS_SERIAL_PROCESS(chunk_size);
+		RS_SERIAL_PROCESS(strategy);
+		RS_SERIAL_PROCESS(chunks);
+		RS_SERIAL_PROCESS(compressed_peer_availability_maps);
+		RS_SERIAL_PROCESS(active_chunks);
+		//RS_SERIAL_PROCESS(pending_slices);
+	}
 };
 
 class CompressedChunkMap : public RsSerializable

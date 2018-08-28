@@ -534,7 +534,7 @@ void p3Wiki::dummyTick()
 
 		uint32_t status = RsGenExchange::getTokenService()->requestStatus(mAboutToken);
 
-		if (status == RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
+		if (status == RsTokenService::COMPLETE)
 		{
 			std::cerr << "p3Wiki::dummyTick() AboutActive, Lines: " << mAboutLines;
 			std::cerr << std::endl;
@@ -601,7 +601,7 @@ void p3Wiki::dummyTick()
 
 		uint32_t status = RsGenExchange::getTokenService()->requestStatus(mImprovToken);
 
-		if (status == RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
+		if (status == RsTokenService::COMPLETE)
 		{
 			std::cerr << "p3Wiki::dummyTick() ImprovActive, Lines: " << mImprovLines;
 			std::cerr << std::endl;
@@ -669,7 +669,7 @@ void p3Wiki::dummyTick()
 
 		uint32_t status = RsGenExchange::getTokenService()->requestStatus(mMarkdownToken);
 
-		if (status == RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
+		if (status == RsTokenService::COMPLETE)
 		{
 			std::cerr << "p3Wiki::dummyTick() MarkdownActive, Lines: " << mMarkdownLines;
 			std::cerr << std::endl;

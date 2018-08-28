@@ -242,7 +242,7 @@ bool GxsPeerNode::createIdentity(const std::string &name,
 		return false;
 	}
 
-	while(tokenService->requestStatus(token) != RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
+	while(tokenService->requestStatus(token) != RsTokenService::COMPLETE)
 	{
 		tick();
 		sleep(1);
@@ -316,7 +316,7 @@ bool GxsPeerNode::createCircle(const std::string &name,
 	uint32_t token;
 	mGxsCircles->createGroup(token, grp1) ;
 
-	while(tokenService->requestStatus(token) != RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
+	while(tokenService->requestStatus(token) != RsTokenService::COMPLETE)
 	{
 		tick();
 		sleep(1);
@@ -371,7 +371,7 @@ bool GxsPeerNode::createGroup(const std::string &name,
 		return false;
 	}
 
-	while(tokenService->requestStatus(token) != RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
+	while(tokenService->requestStatus(token) != RsTokenService::COMPLETE)
 	{
 		tick();
 		sleep(1);
@@ -402,7 +402,7 @@ bool GxsPeerNode::createMsg(const std::string &msgstr,
 		return false;
 	}
 
-	while(tokenService->requestStatus(token) != RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
+	while(tokenService->requestStatus(token) != RsTokenService::COMPLETE)
 	{
 		tick();
 		sleep(1);
@@ -430,7 +430,7 @@ bool GxsPeerNode::subscribeToGroup(const RsGxsGroupId &groupId, bool subscribe)
 		return false;
 	}
 
-	while(tokenService->requestStatus(token) != RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
+	while(tokenService->requestStatus(token) != RsTokenService::COMPLETE)
 	{
 		tick();
 		sleep(1);
@@ -453,7 +453,7 @@ bool GxsPeerNode::getGroups(std::vector<RsTestGroup> &groups)
 
         uint32_t token;
 	tokenService->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts);
-	while(tokenService->requestStatus(token) != RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
+	while(tokenService->requestStatus(token) != RsTokenService::COMPLETE)
 	{
 		tick();
 		sleep(1);
@@ -475,7 +475,7 @@ bool GxsPeerNode::getGroupList(std::list<RsGxsGroupId> &groups)
 
         uint32_t token;
 	tokenService->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_LIST, opts);
-	while(tokenService->requestStatus(token) != RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
+	while(tokenService->requestStatus(token) != RsTokenService::COMPLETE)
 	{
 		tick();
 		sleep(1);
@@ -500,7 +500,7 @@ bool GxsPeerNode::getMsgList(const RsGxsGroupId &id, std::list<RsGxsMessageId> &
 	grpIds.push_back(id);
 
 	tokenService->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_LIST, opts, grpIds);
-	while(tokenService->requestStatus(token) != RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
+	while(tokenService->requestStatus(token) != RsTokenService::COMPLETE)
 	{
 		tick();
 		sleep(1);
@@ -533,7 +533,7 @@ bool GxsPeerNode::getIdentities(std::vector<RsGxsIdGroup> &groups)
 
         uint32_t token;
 	tokenService->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts);
-	while(tokenService->requestStatus(token) != RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
+	while(tokenService->requestStatus(token) != RsTokenService::COMPLETE)
 	{
 		tick();
 		sleep(1);
@@ -553,7 +553,7 @@ bool GxsPeerNode::getIdentitiesList(std::list<RsGxsGroupId> &groups)
 
         uint32_t token;
 	tokenService->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_LIST, opts);
-	while(tokenService->requestStatus(token) != RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
+	while(tokenService->requestStatus(token) != RsTokenService::COMPLETE)
 	{
 		tick();
 		sleep(1);
@@ -575,7 +575,7 @@ bool GxsPeerNode::getCircles(std::vector<RsGxsCircleGroup> &groups)
 
         uint32_t token;
 	tokenService->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts);
-	while(tokenService->requestStatus(token) != RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
+	while(tokenService->requestStatus(token) != RsTokenService::COMPLETE)
 	{
 		tick();
 		sleep(1);
@@ -595,7 +595,7 @@ bool GxsPeerNode::getCirclesList(std::list<RsGxsGroupId> &groups)
 
         uint32_t token;
 	tokenService->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_LIST, opts);
-	while(tokenService->requestStatus(token) != RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
+	while(tokenService->requestStatus(token) != RsTokenService::COMPLETE)
 	{
 		tick();
 		sleep(1);

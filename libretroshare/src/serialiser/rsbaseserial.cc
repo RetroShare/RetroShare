@@ -244,9 +244,10 @@ bool getRawString(const void *data, uint32_t size, uint32_t *offset, std::string
 	}
 
 	/* check there is space for string */
-    	if(len > size || size-len < *offset) // better than if(size < *offset + len) because it avoids integer overflow
+	if(len > size || size-len < *offset) // better than if(size < *offset + len) because it avoids integer overflow
 	{
-                std::cerr << "getRawString() not enough size" << std::endl;
+		std::cerr << "getRawString() not enough size" << std::endl;
+		print_stacktrace();
 		return false;
 	}
 	uint8_t *buf = &(((uint8_t *) data)[*offset]);

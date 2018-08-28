@@ -48,6 +48,11 @@
 #include "TerminalApiClient.h"
 #endif
 
+#ifdef RS_JSONAPI
+#	include <csignal>
+#	include "jsonapi/jsonapi.h"
+#endif // RS_JSONAPI
+
 /* Basic instructions for running libretroshare as background thread.
  * ******************************************************************* *
  * This allows your program to communicate with authenticated peers. 
@@ -60,6 +65,32 @@
 
 int main(int argc, char **argv)
 {
+#ifdef RS_JSONAPI
+	JsonApiServer* jsonApiServer = nullptr;
+	uint16_t jsonApiPort = 0;
+
+	{
+		argstream jsonApiArgs(argc, argv);
+		jsonApiArgs >> parameter(
+		            "jsonApiPort", jsonApiPort, "jsonApiPort",
+		            "Enable JSON API on the specified port", false );
+		jsonApiArgs >> help('h', "help", "Display this Help");
+
+		if (jsonApiArgs.helpRequested())
+			std::cerr << jsonApiArgs.usage() << std::endl;
+	}
+
+	if(jsonApiPort)
+	{
+		jsonApiServer = new JsonApiServer( jsonApiPort, [](int /*ec*/)
+		{
+			std::raise(SIGTERM);
+		} );
+
+		jsonApiServer->start("JSON API Server");
+	}
+#endif // RS_JSONAPI
+
 #ifdef ENABLE_WEBUI
 
     std::string docroot = resource_api::getDefaultDocroot();

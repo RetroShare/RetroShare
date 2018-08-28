@@ -107,16 +107,16 @@ RsGxsCircles *rsGxsCircles = NULL;
 /******************* Startup / Tick    ******************************************/
 /********************************************************************************/
 
-p3GxsCircles::p3GxsCircles(RsGeneralDataService *gds, RsNetworkExchangeService *nes, 
-	p3IdService *identities, PgpAuxUtils *pgpUtils)
-	: RsGxsCircleExchange(gds, nes, new RsGxsCircleSerialiser(), 
-			RS_SERVICE_GXS_TYPE_GXSCIRCLE, identities, circleAuthenPolicy()), 
-	RsGxsCircles(this), GxsTokenQueue(this), RsTickEvent(), 
-	mIdentities(identities), 
-	mPgpUtils(pgpUtils),
-	mCircleMtx("p3GxsCircles"),
-        mCircleCache(DEFAULT_MEM_CACHE_SIZE, "GxsCircleCache")
-
+p3GxsCircles::p3GxsCircles(
+        RsGeneralDataService *gds, RsNetworkExchangeService *nes,
+        p3IdService *identities, PgpAuxUtils *pgpUtils) :
+    RsGxsCircleExchange(
+        gds, nes, new RsGxsCircleSerialiser(), RS_SERVICE_GXS_TYPE_GXSCIRCLE,
+        identities, circleAuthenPolicy() ),
+    RsGxsCircles(static_cast<RsGxsIface&>(*this)), GxsTokenQueue(this),
+    RsTickEvent(), mIdentities(identities), mPgpUtils(pgpUtils),
+    mCircleMtx("p3GxsCircles"),
+    mCircleCache(DEFAULT_MEM_CACHE_SIZE, "GxsCircleCache" )
 {
 	// Kick off Cache Testing, + Others.
 	//RsTickEvent::schedule_in(CIRCLE_EVENT_CACHETEST, CACHETEST_PERIOD);
@@ -1653,8 +1653,8 @@ void p3GxsCircles::checkDummyIdData()
 
 	// check the token.
         uint32_t status =  rsIdentity->getTokenService()->requestStatus(mDummyIdToken);
-        if ( (RsTokenService::GXS_REQUEST_V2_STATUS_FAILED == status) ||
-                         (RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE == status) )
+        if ( (RsTokenService::FAILED == status) ||
+                         (RsTokenService::COMPLETE == status) )
 	{
 		std::vector<RsGxsIdGroup> ids;
 		if (!rsIdentity->getGroupData(mDummyIdToken, ids))

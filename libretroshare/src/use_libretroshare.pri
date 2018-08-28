@@ -47,6 +47,18 @@ sLibs =
 mLibs = $$RS_SQL_LIB ssl crypto $$RS_THREAD_LIB $$RS_UPNP_LIB
 dLibs =
 
+rs_jsonapi {
+    RS_SRC_PATH=$$system_path($$clean_path($${PWD}/../../))
+    RS_BUILD_PATH=$$system_path($$clean_path($${OUT_PWD}/../../))
+    RESTBED_SRC_PATH=$$system_path($$clean_path($${RS_SRC_PATH}/supportlibs/restbed))
+    RESTBED_BUILD_PATH=$$system_path($$clean_path($${RS_BUILD_PATH}/supportlibs/restbed))
+
+    INCLUDEPATH *= $$system_path($$clean_path($${RESTBED_BUILD_PATH}/include/))
+    QMAKE_LIBDIR *= $$system_path($$clean_path($${RESTBED_BUILD_PATH}/library/))
+    # Using sLibs would fail as librestbed.a is generated at compile-time
+    LIBS *= -L$$system_path($$clean_path($${RESTBED_BUILD_PATH}/library/)) -lrestbed
+}
+
 linux-* {
     mLibs += dl
 }

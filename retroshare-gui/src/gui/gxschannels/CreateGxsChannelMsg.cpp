@@ -31,6 +31,7 @@
 #include "gui/RetroShareLink.h"
 #include "util/HandleRichText.h"
 #include "util/misc.h"
+#include "util/rsdir.h"
 
 #include <retroshare/rsfiles.h>
 
@@ -449,11 +450,10 @@ void CreateGxsChannelMsg::addAttachment(const std::string &path)
 	}
 
 	FileInfo fInfo;
-	std::string filename;
+	std::string filename = RsDirUtil::getTopDir(path);
 	uint64_t size = 0;
     RsFileHash hash ;
-
-	rsGxsChannels->ExtraFileHash(path, filename);
+	rsGxsChannels->ExtraFileHash(path);
 
     // Only path and filename are valid.
     // Destroyed when fileFrame (this subfileitem) is destroyed

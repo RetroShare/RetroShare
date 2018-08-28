@@ -32,6 +32,7 @@
 #include "gxs/rsgxsdata.h"
 #include "retroshare/rsgxsifacetypes.h"
 #include "util/rsdeprecate.h"
+#include "serialiser/rsserializable.h"
 
 /*!
  * This structure is used to transport group summary information when a GXS
@@ -76,9 +77,8 @@ struct RsGxsGroupSummary : RsSerializable
 /*!
  * Stores ids of changed gxs groups and messages. It is used to notify the GUI about changes.
  */
-class RsGxsChanges
+struct RsGxsChanges
 {
-public:
     RsGxsChanges(): mService(0){}
     RsTokenService *mService;
     std::map<RsGxsGroupId, std::set<RsGxsMessageId> > mMsgs;
@@ -91,13 +91,9 @@ public:
 /*!
  * All implementations must offer thread safety
  */
-class RsGxsIface
+struct RsGxsIface
 {
-public:
-
-	virtual ~RsGxsIface(){};
-
-public:
+	virtual ~RsGxsIface() {}
 
     /*!
      * Gxs services should call this for automatic handling of

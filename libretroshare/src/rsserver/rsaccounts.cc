@@ -1410,7 +1410,10 @@ bool    RsAccounts::GetAccountDetails(const RsPeerId &id,
 	return rsAccounts->getCurrentAccountDetails(id, pgpId, pgpName, pgpEmail, location);
 }
 
-bool    RsAccounts::createNewAccount(const RsPgpId& pgp_id, const std::string& org, const std::string& loc, const std::string& country, bool ishiddenloc, bool isautotor, const std::string& passwd, RsPeerId &sslId, std::string &errString)
+bool RsAccounts::createNewAccount(
+        const RsPgpId& pgp_id, const std::string& org, const std::string& loc,
+        const std::string& country, bool ishiddenloc, bool isautotor,
+        const std::string& passwd, RsPeerId &sslId, std::string &errString )
 {
 	return rsAccounts->GenerateSSLCertificate(pgp_id, org, loc, country, ishiddenloc, isautotor, passwd, sslId, errString);
 }

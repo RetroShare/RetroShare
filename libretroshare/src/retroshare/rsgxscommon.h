@@ -31,37 +31,55 @@
 #include <list>
 
 #include "rsgxsifacetypes.h"
+#include "serialiser/rsserializable.h"
 
-class RsGxsFile
+struct RsGxsFile : RsSerializable
 {
-	public:
 	RsGxsFile();
 	std::string mName;
 	RsFileHash mHash;
 	uint64_t    mSize;
-	//std::string mPath;
+
+	/// @see RsSerializable
+	virtual void serial_process( RsGenericSerializer::SerializeJob j,
+	                             RsGenericSerializer::SerializeContext& ctx )
+	{
+		RS_SERIAL_PROCESS(mName);
+		RS_SERIAL_PROCESS(mHash);
+		RS_SERIAL_PROCESS(mSize);
+	}
 };
 
-class RsGxsImage
+struct RsGxsImage  : RsSerializable
 {
-	public:
-	RsGxsImage();	
+	RsGxsImage();
 	~RsGxsImage();
-	RsGxsImage(const RsGxsImage& a); // TEMP use copy constructor and duplicate memory.
-RsGxsImage &operator=(const RsGxsImage &a); // Need this as well?
 
-//NB: Must make sure that we always use methods - to be consistent about malloc/free for this data.
-static uint8_t *allocate(uint32_t size);
-static void release(void *data);
+	/// Use copy constructor and duplicate memory.
+	RsGxsImage(const RsGxsImage& a);
+
+	RsGxsImage &operator=(const RsGxsImage &a); // Need this as well?
+
+	/** NB: Must make sure that we always use methods - to be consistent about
+	 * malloc/free for this data. */
+	static uint8_t *allocate(uint32_t size);
+	static void release(void *data);
 
 	void take(uint8_t *data, uint32_t size); // Copies Pointer.
 	void copy(uint8_t *data, uint32_t size); // Allocates and Copies.
 	void clear(); 				// Frees.
 	void shallowClear(); 			// Clears Pointer.
 
-	uint8_t *mData;
 	uint32_t mSize;
+	uint8_t* mData;
 
+	/// @see RsSerializable
+	virtual void serial_process( RsGenericSerializer::SerializeJob j,
+	                             RsGenericSerializer::SerializeContext& ctx )
+	{
+		RsTypeSerializer::TlvMemBlock_proxy b(mData, mSize);
+		RsTypeSerializer::serial_process(j, ctx, b, "mData");
+	}
 };
 
 
@@ -84,17 +102,23 @@ namespace GXS_SERV {
 
 
 
-class RsGxsVote
+struct RsGxsVote : RsSerializable
 {
-	public:
 	RsGxsVote();
 	RsMsgMetaData mMeta;
 	uint32_t mVoteType;
+
+	/// @see RsSerializable
+	virtual void serial_process( RsGenericSerializer::SerializeJob j,
+	                             RsGenericSerializer::SerializeContext& ctx )
+	{
+		RS_SERIAL_PROCESS(mMeta);
+		RS_SERIAL_PROCESS(mVoteType);
+	}
 };
 
-class RsGxsComment
+struct RsGxsComment : RsSerializable
 {
-	public:
 	RsGxsComment();
 	RsMsgMetaData mMeta;
 	std::string mComment;
@@ -108,6 +132,19 @@ class RsGxsComment
 
 	// This is filled in if detailed Comment Data is called.
 	std::list<RsGxsVote> mVotes;
+
+	/// @see RsSerializable
+	virtual void serial_process( RsGenericSerializer::SerializeJob j,
+	                             RsGenericSerializer::SerializeContext& ctx )
+	{
+		RS_SERIAL_PROCESS(mMeta);
+		RS_SERIAL_PROCESS(mComment);
+		RS_SERIAL_PROCESS(mUpVotes);
+		RS_SERIAL_PROCESS(mDownVotes);
+		RS_SERIAL_PROCESS(mScore);
+		RS_SERIAL_PROCESS(mOwnVote);
+		RS_SERIAL_PROCESS(mVotes);
+	}
 
 	const std::ostream &print(std::ostream &out, std::string indent = "", std::string varName = "") const {
 		out << indent << varName << " of RsGxsComment Values ###################" << std::endl;

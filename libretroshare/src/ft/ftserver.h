@@ -39,6 +39,8 @@
 #include <map>
 #include <list>
 #include <iostream>
+#include <functional>
+#include <chrono>
 
 #include "ft/ftdata.h"
 #include "turtle/turtleclientservice.h"
@@ -143,6 +145,12 @@ public:
 	virtual void setFilePermDirectDL(uint32_t perm) ;
 	virtual uint32_t filePermDirectDL() ;
 
+	/// @see RsFiles
+	virtual bool turtleSearchRequest(
+	        const std::string& matchString,
+	        const std::function<void (const std::list<TurtleFileInfo>& results)>& multiCallback,
+	        std::time_t maxWait = 300 );
+
 	virtual TurtleSearchRequestId turtleSearch(const std::string& string_to_match) ;
 	virtual TurtleSearchRequestId turtleSearch(const RsRegularExpression::LinearizedExpression& expr) ;
 
@@ -205,8 +213,8 @@ public:
          * Directory Handling
          ***/
     virtual void requestDirUpdate(void *ref) ;			// triggers the update of the given reference. Used when browsing.
-    virtual bool setDownloadDirectory(std::string path);
-    virtual bool setPartialsDirectory(std::string path);
+	virtual bool setDownloadDirectory(const std::string& path);
+	virtual bool setPartialsDirectory(const std::string& path);
     virtual std::string getDownloadDirectory();
     virtual std::string getPartialsDirectory();
 
@@ -313,6 +321,18 @@ private:
     std::map<RsFileHash,RsFileHash> mEncryptedHashes ; // This map is such that sha1(it->second) = it->first
     std::map<RsPeerId,RsFileHash> mEncryptedPeerIds ;  // This map holds the hash to be used with each peer id
     std::map<RsPeerId,std::map<RsFileHash,time_t> > mUploadLimitMap ;
+
+	/** Store search callbacks with timeout*/
+	std::map<
+	    TurtleRequestId,
+	    std::pair<
+	        std::function<void (const std::list<TurtleFileInfo>& results)>,
+	        std::chrono::system_clock::time_point >
+	 > mSearchCallbacksMap;
+	RsMutex mSearchCallbacksMapMutex;
+
+	/// Cleanup mSearchCallbacksMap
+	void cleanTimedOutSearches();
 };
 
 

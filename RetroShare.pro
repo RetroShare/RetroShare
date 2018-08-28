@@ -23,6 +23,12 @@ TEMPLATE = subdirs
 SUBDIRS += openpgpsdk
 openpgpsdk.file = openpgpsdk/src/openpgpsdk.pro
 
+rs_jsonapi {
+    SUBDIRS += jsonapi-generator
+    jsonapi-generator.file = jsonapi-generator/src/jsonapi-generator.pro
+    libretroshare.depends += jsonapi-generator
+}
+
 SUBDIRS += libbitdht
 libbitdht.file = libbitdht/src/libbitdht.pro
 libretroshare.depends = openpgpsdk libbitdht

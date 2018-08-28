@@ -95,7 +95,11 @@ std::string pgp_pwd_callback(void * /*hook*/, const char *uid_title, const char 
 	return password ;
 }
 
-void AuthGPG::init(const std::string& path_to_public_keyring,const std::string& path_to_secret_keyring,const std::string& path_to_trustdb,const std::string& pgp_lock_file)
+void AuthGPG::init(
+        const std::string& path_to_public_keyring,
+        const std::string& path_to_secret_keyring,
+        const std::string& path_to_trustdb,
+        const std::string& pgp_lock_file)
 {
 	if(_instance != NULL)
 	{
@@ -103,8 +107,11 @@ void AuthGPG::init(const std::string& path_to_public_keyring,const std::string& 
 		std::cerr << "AuthGPG::init() called twice!" << std::endl ;
 	}
 
-	PGPHandler::setPassphraseCallback(pgp_pwd_callback) ;
-	_instance = new AuthGPG(path_to_public_keyring,path_to_secret_keyring,path_to_trustdb,pgp_lock_file) ;
+//	if(cb) PGPHandler::setPassphraseCallback(cb);else
+	PGPHandler::setPassphraseCallback(pgp_pwd_callback);
+	_instance = new AuthGPG( path_to_public_keyring,
+	                         path_to_secret_keyring,
+	                         path_to_trustdb, pgp_lock_file );
 }
 
 void AuthGPG::exit()
