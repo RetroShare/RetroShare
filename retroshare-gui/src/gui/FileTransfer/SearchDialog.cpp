@@ -977,9 +977,7 @@ void SearchDialog::processResultQueue()
 	while(!searchResultsQueue.empty() && nb_treated_elements++ < 250)
 	{
 		qulonglong search_id = searchResultsQueue.back().first ;
-		FileDetail file = searchResultsQueue.back().second ;
-
-		searchResultsQueue.pop_back() ;
+		FileDetail& file = searchResultsQueue.back().second ;
 
 #ifdef DEBUG
 		std::cout << "Updating file detail:" << std::endl ;
@@ -989,6 +987,8 @@ void SearchDialog::processResultQueue()
 #endif
 
 		insertFile(search_id,file);
+
+		searchResultsQueue.pop_back() ;
 	}
 	ui.searchResultWidget->setSortingEnabled(true);
 	if(!searchResultsQueue.empty())
@@ -1323,6 +1323,7 @@ void SearchDialog::insertFile(qulonglong searchId, const FileDetail& file, int s
 		modifiedResult =QString::number(friendSource) + "/" + QString::number(anonymousSource);
 		float fltRes = friendSource + (float)anonymousSource/1000;
 		item->setText(SR_SOURCES_COL,modifiedResult);
+		item->setToolTip(SR_SOURCES_COL, tr("Obtained via ")+QString::fromStdString(rsPeers->getPeerName(file.id)) );
 		item->setData(SR_SOURCES_COL, ROLE_SORT, fltRes);
 		item->setTextAlignment( SR_SOURCES_COL, Qt::AlignRight );
 		item->setText(SR_SEARCH_ID_COL, sid_hexa);
