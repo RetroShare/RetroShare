@@ -5181,43 +5181,51 @@ bool RsGxsNetService::clearDistantSearchResults(const TurtleRequestId& id)
 }
 void RsGxsNetService::receiveTurtleSearchResults(TurtleRequestId req, const std::list<RsGxsGroupSummary>& group_infos)
 {
-    RS_STACK_MUTEX(mNxsMutex) ;
+	std::set<RsGxsGroupId> groupsToNotifyResults;
 
-    RsGxsGrpMetaTemporaryMap grpMeta;
-    std::map<RsGxsGroupId,RsGxsGroupSummary>& search_results_map(mDistantSearchResults[req]) ;
+	{
+		RS_STACK_MUTEX(mNxsMutex);
 
-    for(auto it(group_infos.begin());it!=group_infos.end();++it)
-		if(search_results_map.find((*it).mGroupId) == search_results_map.end())
-			grpMeta[(*it).mGroupId] = NULL;
+		RsGxsGrpMetaTemporaryMap grpMeta;
+		std::map<RsGxsGroupId,RsGxsGroupSummary>&
+		        search_results_map(mDistantSearchResults[req]);
 
-    mDataStore->retrieveGxsGrpMetaData(grpMeta);
+		for(auto it(group_infos.begin());it!=group_infos.end();++it)
+			if(search_results_map.find((*it).mGroupId) == search_results_map.end())
+				grpMeta[(*it).mGroupId] = NULL;
 
-	std::list<RsGxsGroupSummary> filtered_results ;
+		mDataStore->retrieveGxsGrpMetaData(grpMeta);
 
-	// only keep groups that are not locally known, and groups that are not already in the mDistantSearchResults structure
+		// only keep groups that are not locally known, and groups that are not already in the mDistantSearchResults structure
 
-    for(auto it(group_infos.begin());it!=group_infos.end();++it)
-		if(grpMeta[(*it).mGroupId] == NULL)
-        {
-			filtered_results.push_back(*it) ;
+		for(auto it(group_infos.begin());it!=group_infos.end();++it)
+			if(grpMeta[(*it).mGroupId] == NULL)
+			{
+				const RsGxsGroupId& grpId((*it).mGroupId);
 
-			auto it2 = search_results_map.find((*it).mGroupId) ;
+				groupsToNotifyResults.insert(grpId);
 
-            if(it2 != search_results_map.end())
-            {
-                // update existing data
+				auto it2 = search_results_map.find(grpId);
 
-				it2->second.mPopularity++ ;
-				it2->second.mNumberOfMessages = std::max(it2->second.mNumberOfMessages,(*it).mNumberOfMessages) ;
-            }
-            else
-            {
-				search_results_map[(*it).mGroupId] = *it;
-				search_results_map[(*it).mGroupId].mPopularity = 1; // number of results so far
-            }
+				if(it2 != search_results_map.end())
+				{
+					// update existing data
 
-			mObserver->receiveDistantSearchResults(req,(*it).mGroupId) ;
-        }
+					it2->second.mPopularity++;
+					it2->second.mNumberOfMessages = std::max(
+					            it2->second.mNumberOfMessages,
+					            (*it).mNumberOfMessages );
+				}
+				else
+				{
+					search_results_map[grpId] = *it;
+					search_results_map[grpId].mPopularity = 1; // number of results so far
+				}
+			}
+	} // end RS_STACK_MUTEX(mNxsMutex);
+
+	for(const RsGxsGroupId& grpId : groupsToNotifyResults)
+		mObserver->receiveDistantSearchResults(req, grpId);
 }
 
 void RsGxsNetService::receiveTurtleSearchResults(TurtleRequestId req,const unsigned char *encrypted_group_data,uint32_t encrypted_group_data_len)

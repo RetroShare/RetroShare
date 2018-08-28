@@ -552,24 +552,22 @@ void p3GxsCommentService::load_PendingVoteParent(const uint32_t &token)
 			pit = mPendingVotes.find(parentId);
 			if (pit == mPendingVotes.end())
 			{
-                		std::cerr << "p3GxsCommentService::load_PendingVoteParent() ERROR Finding Pending Vote";
-				std::cerr << std::endl;
+				std::cerr << __PRETTY_FUNCTION__
+				          << " ERROR Finding Pending Vote" << std::endl;
 				continue;
 			}
 
 			RsGxsVote vote = pit->second.mVote;
 			if (meta.mMsgStatus & GXS_SERV::GXS_MSG_STATUS_VOTE_MASK)
 			{
-                		std::cerr << "p3GxsCommentService::load_PendingVoteParent() ERROR Already Voted";
-				std::cerr << std::endl;
-                		std::cerr << "mGroupId: " << meta.mGroupId;
-				std::cerr << std::endl;
-                		std::cerr << "mMsgId: " << meta.mMsgId;
-				std::cerr << std::endl;
+				std::cerr << __PRETTY_FUNCTION__ << " ERROR Already Voted"
+				          << std::endl
+				          << "mGroupId: " << meta.mGroupId << std::endl
+				          << "mMsgId: " << meta.mMsgId << std::endl;
 
 				pit->second.mStatus = VoteHolder::VOTE_ERROR;
-				uint32_t status = RsTokenService::GXS_REQUEST_V2_STATUS_FAILED;
-				mExchange->updatePublicRequestStatus(pit->second.mReqToken, status);
+				mExchange->updatePublicRequestStatus(
+				            pit->second.mReqToken, RsTokenService::FAILED );
 				continue;
 			}
 
@@ -613,8 +611,8 @@ void p3GxsCommentService::completeInternalVote(uint32_t &token)
 	{
 		if (it->second.mVoteToken == token)
 		{
-
-			uint32_t status = mExchange->getTokenService()->requestStatus(token);
+			RsTokenService::GxsRequestStatus status =
+			        mExchange->getTokenService()->requestStatus(token);
 			mExchange->updatePublicRequestStatus(it->second.mReqToken, status);
 
 #ifdef DEBUG_GXSCOMMON

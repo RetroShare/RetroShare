@@ -2229,11 +2229,11 @@ bool p3FeedReader::waitForToken(uint32_t token)
 
 	while (!mStopped) {
 		uint32_t status = service->requestStatus(token);
-		if (status == RsTokenService::GXS_REQUEST_V2_STATUS_FAILED) {
+		if (status == RsTokenService::FAILED) {
 			break;
 		}
 
-		if (status == RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE) {
+		if (status == RsTokenService::COMPLETE) {
 			return true;
 		}
 

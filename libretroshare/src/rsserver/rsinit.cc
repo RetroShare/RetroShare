@@ -101,7 +101,9 @@ RsDht *rsDht = NULL ;
 
 //std::map<std::string,std::vector<std::string> > RsInit::unsupported_keys ;
 
-class RsInitConfig 
+RsLoginHelper* rsLoginHelper;
+
+class RsInitConfig
 {
 	public:
 
@@ -431,7 +433,9 @@ int RsInit::InitRetroShare(int argc, char **argv, bool /* strictCheck */)
 		AuthSSL::AuthSSLInit();
 		AuthSSL::getAuthSSL() -> InitAuth(NULL, NULL, NULL, "");
 
-        int error_code ;
+		rsLoginHelper = new RsLoginHelper;
+
+		int error_code ;
 
 		if(!RsAccounts::init(opt_base_dir,error_code))
             return error_code ;
@@ -485,12 +489,21 @@ int RsInit::InitRetroShare(int argc, char **argv, bool /* strictCheck */)
  * 1 : Another instance already has the lock
  * 2 : Unexpected error
  */
-int RsInit::LockConfigDirectory(const std::string& accountDir, std::string& lockFilePath)
+RsInit::LoadCertificateStatus RsInit::LockConfigDirectory(
+        const std::string& accountDir, std::string& lockFilePath )
 {
 	const std::string lockFile = accountDir + "/" + "lock";
 	lockFilePath = lockFile;
 
-	return RsDirUtil::createLockFile(lockFile,rsInitConfig->lockHandle) ;
+	int rt = RsDirUtil::createLockFile(lockFile,rsInitConfig->lockHandle);
+
+	switch (rt)
+	{
+	case 0: return RsInit::OK;
+	case 1: return RsInit::ERR_ALREADY_RUNNING;
+	case 2: return RsInit::ERR_CANT_ACQUIRE_LOCK;
+	default: return RsInit::ERR_UNKOWN;
+	}
 }
 
 /*
@@ -522,38 +535,30 @@ bool     RsInit::LoadPassword(const std::string& inPwd)
 	return true;
 }
 
-
-/**
- * Locks the profile directory and tries to finalize the login procedure
- *
- * Return value:
- * 0 : success
- * 1 : another instance is already running
- * 2 : unexpected error while locking
- * 3 : unexpected error while loading certificates
- */
-int 	RsInit::LockAndLoadCertificates(bool autoLoginNT, std::string& lockFilePath)
+RsInit::LoadCertificateStatus RsInit::LockAndLoadCertificates(
+        bool autoLoginNT, std::string& lockFilePath )
 {
     try
 	{
 		if (!RsAccounts::lockPreferredAccount())
-			throw 3; // invalid PreferredAccount.
+			throw RsInit::ERR_UNKOWN; // invalid PreferredAccount.
 
 		// Logic that used to be external to RsInit...
 		RsPeerId accountId;
 		if (!RsAccounts::GetPreferredAccountId(accountId))
-			throw 3; // invalid PreferredAccount;
+			throw RsInit::ERR_UNKOWN; // invalid PreferredAccount;
 
 		RsPgpId pgpId;
 		std::string pgpName, pgpEmail, location;
 
 		if(!RsAccounts::GetAccountDetails(accountId, pgpId, pgpName, pgpEmail, location))
-			throw 3; // invalid PreferredAccount;
+			throw RsInit::ERR_UNKOWN; // invalid PreferredAccount;
 
 		if(0 == AuthGPG::getAuthGPG() -> GPGInit(pgpId))
-			throw 3; // PGP Error.
+			throw RsInit::ERR_UNKOWN; // PGP Error.
 
-        int retVal = LockConfigDirectory(RsAccounts::AccountDirectory(), lockFilePath);
+		LoadCertificateStatus retVal =
+		        LockConfigDirectory(RsAccounts::AccountDirectory(), lockFilePath);
 
 		if(retVal > 0)
             throw retVal ;
@@ -561,12 +566,12 @@ int 	RsInit::LockAndLoadCertificates(bool autoLoginNT, std::string& lockFilePath
 		if(LoadCertificates(autoLoginNT) != 1)
         {
 			UnlockConfigDirectory();
-            throw 3;
+			throw RsInit::ERR_UNKOWN;
         }
 
-		return 0;
+		return RsInit::OK;
 	}
-    catch(int retVal)
+	catch(LoadCertificateStatus retVal)
     {
 		RsAccounts::unlockPreferredAccount();
         return retVal ;
@@ -1929,3 +1934,89 @@ int RsServer::StartupRetroShare()
 	return 1;
 }
 
+RsInit::LoadCertificateStatus RsLoginHelper::attemptLogin(
+        const RsPeerId& account, const std::string& password)
+{
+	if(!rsNotify->cachePgpPassphrase(password)) return RsInit::ERR_UNKOWN;
+	if(!rsNotify->setDisableAskPassword(true)) return RsInit::ERR_UNKOWN;
+	if(!RsAccounts::SelectAccount(account)) return RsInit::ERR_UNKOWN;
+	std::string _ignore_lockFilePath;
+	RsInit::LoadCertificateStatus ret =
+	        RsInit::LockAndLoadCertificates(false, _ignore_lockFilePath);
+	if(!rsNotify->setDisableAskPassword(false)) return RsInit::ERR_UNKOWN;
+	if(!rsNotify->clearPgpPassphrase()) return RsInit::ERR_UNKOWN;
+	if(ret != RsInit::OK) return ret;
+	if(RsControl::instance()->StartupRetroShare() == 1) return RsInit::OK;
+	return RsInit::ERR_UNKOWN;
+}
+
+void RsLoginHelper::getLocations(std::vector<RsLoginHelper::Location>& store)
+{
+	std::list<RsPeerId> locIds;
+	RsAccounts::GetAccountIds(locIds);
+	store.clear();
+
+	for(const RsPeerId& locId : locIds )
+	{
+		Location l; l.mLocationId = locId;
+		std::string discardPgpMail;
+		RsAccounts::GetAccountDetails( locId, l.mPgpId, l.mPpgName,
+		                               discardPgpMail, l.mLocationName );
+		store.push_back(l);
+	}
+}
+
+bool RsLoginHelper::createLocation(
+        RsLoginHelper::Location& l, const std::string& password,
+        bool makeHidden, bool makeAutoTor, std::string& errorMessage )
+{
+	if(l.mLocationName.empty())
+	{
+		errorMessage = "Location name is needed";
+		return false;
+	}
+
+	if(l.mPgpId.isNull() && l.mPpgName.empty())
+	{
+		errorMessage = "Either PGP name or PGP id is needed";
+		return false;
+	}
+
+	if(l.mPgpId.isNull() && !RsAccounts::GeneratePGPCertificate(
+	            l.mPpgName, "", password, l.mPgpId, 4096, errorMessage) )
+	{
+		errorMessage = "Failure creating PGP key: " + errorMessage;
+		return false;
+	}
+
+	std::string sslPassword =
+	        RSRandom::random_alphaNumericString(RsInit::getSslPwdLen());
+
+	if(!rsNotify->cachePgpPassphrase(password)) return false;
+	if(!rsNotify->setDisableAskPassword(true)) return false;
+
+	bool ret = RsAccounts::createNewAccount(
+	            l.mPgpId, "", l.mLocationName, "", makeHidden, makeAutoTor,
+	            sslPassword, l.mLocationId, errorMessage );
+
+	ret = ret && RsInit::LoadPassword(sslPassword);
+	ret = ret && RsInit::OK == attemptLogin(l.mLocationId, password);
+
+	rsNotify->setDisableAskPassword(false);
+	return ret;
+}
+
+void RsLoginHelper::closeSession()
+{
+	RsControl::instance()->rsGlobalShutDown();
+}
+
+void RsLoginHelper::Location::serial_process(
+        RsGenericSerializer::SerializeJob j,
+        RsGenericSerializer::SerializeContext& ctx )
+{
+	RS_SERIAL_PROCESS(mLocationId);
+	RS_SERIAL_PROCESS(mPgpId);
+	RS_SERIAL_PROCESS(mLocationName);
+	RS_SERIAL_PROCESS(mPpgName);
+}

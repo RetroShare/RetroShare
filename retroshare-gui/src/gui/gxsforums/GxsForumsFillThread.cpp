@@ -112,11 +112,11 @@ void GxsForumsFillThread::run()
 	service->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, grpIds);
 
 	/* wait for the answer */
-	uint32_t requestStatus = RsTokenService::GXS_REQUEST_V2_STATUS_PENDING;
+	uint32_t requestStatus = RsTokenService::PENDING;
 	while (!wasStopped()) {
 		requestStatus = service->requestStatus(token);
-		if (requestStatus == RsTokenService::GXS_REQUEST_V2_STATUS_FAILED ||
-			requestStatus == RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE) {
+		if (requestStatus == RsTokenService::FAILED ||
+			requestStatus == RsTokenService::COMPLETE) {
 			break;
 		}
 		msleep(100);
@@ -132,7 +132,7 @@ void GxsForumsFillThread::run()
 		return;
 	}
 
-	if (requestStatus == RsTokenService::GXS_REQUEST_V2_STATUS_FAILED) {
+	if (requestStatus == RsTokenService::FAILED) {
 //#TODO
 		return;
 	}

@@ -152,12 +152,14 @@ RsIdentity *rsIdentity = NULL;
 /******************* Startup / Tick    ******************************************/
 /********************************************************************************/
 
-p3IdService::p3IdService(RsGeneralDataService *gds, RsNetworkExchangeService *nes, PgpAuxUtils *pgpUtils)
-	: RsGxsIdExchange(gds, nes, new RsGxsIdSerialiser(), RS_SERVICE_GXS_TYPE_GXSID, idAuthenPolicy()), 
-	RsIdentity(this), GxsTokenQueue(this), RsTickEvent(), 
-	mKeyCache(GXSID_MAX_CACHE_SIZE, "GxsIdKeyCache"), 
-	mIdMtx("p3IdService"), mNes(nes),
-	mPgpUtils(pgpUtils)
+p3IdService::p3IdService(
+        RsGeneralDataService *gds, RsNetworkExchangeService *nes,
+        PgpAuxUtils *pgpUtils ) :
+    RsGxsIdExchange( gds, nes, new RsGxsIdSerialiser(),
+                     RS_SERVICE_GXS_TYPE_GXSID, idAuthenPolicy() ),
+    RsIdentity(static_cast<RsGxsIface&>(*this)), GxsTokenQueue(this),
+    RsTickEvent(), mKeyCache(GXSID_MAX_CACHE_SIZE, "GxsIdKeyCache"),
+    mIdMtx("p3IdService"), mNes(nes), mPgpUtils(pgpUtils)
 {
 	mBgSchedule_Mode = 0;
     mBgSchedule_Active = false;
@@ -1532,7 +1534,7 @@ bool p3IdService::opinion_handlerequest(uint32_t token)
         std::cerr << "p3IdService::opinion_handlerequest() ERROR getGroupMeta()";
         std::cerr << std::endl;
 
-        updatePublicRequestStatus(req.mToken, RsTokenService::GXS_REQUEST_V2_STATUS_FAILED);
+        updatePublicRequestStatus(req.mToken, RsTokenService::FAILED);
         return false;
     }
 
@@ -1542,7 +1544,7 @@ bool p3IdService::opinion_handlerequest(uint32_t token)
         std::cerr << std::endl;
 
         // error.
-        updatePublicRequestStatus(req.mToken, RsTokenService::GXS_REQUEST_V2_STATUS_FAILED);
+        updatePublicRequestStatus(req.mToken, RsTokenService::FAILED);
         return false;
     }
     RsGroupMetaData &meta = *(groups.begin());
@@ -1553,7 +1555,7 @@ bool p3IdService::opinion_handlerequest(uint32_t token)
         std::cerr << std::endl;
 
         // error.
-        updatePublicRequestStatus(req.mToken, RsTokenService::GXS_REQUEST_V2_STATUS_FAILED);
+        updatePublicRequestStatus(req.mToken, RsTokenService::FAILED);
         return false;
     }
 
@@ -1588,7 +1590,7 @@ bool p3IdService::opinion_handlerequest(uint32_t token)
     setGroupServiceString(dummyToken, meta.mGroupId, serviceString);
     cache_update_if_cached(RsGxsId(meta.mGroupId), serviceString);
 
-    updatePublicRequestStatus(req.mToken, RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE);
+    updatePublicRequestStatus(req.mToken, RsTokenService::COMPLETE);
     return true;
 }
 

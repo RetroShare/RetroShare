@@ -43,80 +43,89 @@
 #include <vector>
 #include <retroshare/rstypes.h>
 
+struct RsLoginHelper;
+
+/**
+ * Pointer to global instance of RsLoginHelper
+ * @jsonapi{development}
+ */
+extern RsLoginHelper* rsLoginHelper;
+
 /*!
  * Initialisation Class (not publicly disclosed to RsIFace)
  */
 class RsInit
 {
-	public:
-		/* reorganised RsInit system */
+public:
+	enum LoadCertificateStatus : uint8_t
+	{
+		OK,                     /// Everything go as expected, no error occurred
+		ERR_ALREADY_RUNNING,    /// Another istance is running already
+		ERR_CANT_ACQUIRE_LOCK,  /// Another istance is already running?
+		ERR_UNKOWN              /// Unkown error, maybe password is wrong?
+	};
 
-		/*!
-		 * PreLogin
-		 * Call before init retroshare, initialises rsinitconfig's public attributes
-		 */
-		static void	InitRsConfig() ;
+	/* reorganised RsInit system */
 
-		/*!
-		 * Should be called to load up ssl cert and private key, and intialises gpg
-		 * this must be called before accessing rsserver (e.g. ::startupretroshare)
-		 * @param argc passed from executable
-		 * @param argv commandline arguments passed to executable
-		 * @param strictCheck set to true if you want rs to continue executing if invalid argument passed and vice versa
-		 * @return RS_INIT_...
-		 */
-		static int 	InitRetroShare(int argc, char **argv, bool strictCheck=true);
+	/*!
+	 * PreLogin
+	 * Call before init retroshare, initialises rsinitconfig's public attributes
+	 */
+	static void	InitRsConfig();
 
-		static bool isPortable();
-		static bool isWindowsXP();
-		static bool collectEntropy(uint32_t bytes) ;
+	/*!
+	 * Should be called to load up ssl cert and private key, and intialises gpg
+	 * this must be called before accessing rsserver (e.g. ::startupretroshare)
+	 * @param argc passed from executable
+	 * @param argv commandline arguments passed to executable
+	 * @param strictCheck set to true if you want rs to continue executing if
+	 *	invalid argument passed and vice versa
+	 * @return RS_INIT_...
+	 */
+	static int InitRetroShare(int argc, char **argv, bool strictCheck=true);
 
-		/*!
-		 * Setup Hidden Location;
-		 */
-		static void SetHiddenLocation(const std::string& hiddenaddress, uint16_t port, bool useBob);
+	static bool isPortable();
+	static bool isWindowsXP();
+	static bool collectEntropy(uint32_t bytes) ;
 
-		static bool	LoadPassword(const std::string& passwd) ;
+	/*
+	 * Setup Hidden Location;
+	 */
+	static void SetHiddenLocation(const std::string& hiddenaddress, uint16_t port, bool useBob);
 
-		/*!
+	static bool LoadPassword(const std::string& passwd) ;
 
+	/*
+	 * Final Certificate load. This can be called if:
+	 * a) InitRetroshare() returns RS_INIT_HAVE_ACCOUNT -> autoLoad/password Set.
+	 * b) or LoadPassword()
+	 *
+	 * This uses the preferredId from RsAccounts.
+	 * This wrapper also locks the profile before finalising the login
+	 */
+	static LoadCertificateStatus LockAndLoadCertificates(
+	        bool autoLoginNT, std::string& lockFilePath );
 
-		 * Final Certificate load. This can be called if:
-		 * a) InitRetroshare() returns RS_INIT_HAVE_ACCOUNT -> autoLoad/password Set.
-		 * b) or LoadPassword()
-		 *
-		 * This uses the preferredId from RsAccounts.
-		 * This wrapper also locks the profile before finalising the login
-		 */
-		static int 	LockAndLoadCertificates(bool autoLoginNT, std::string& lockFilePath);
+	// Post Login Options
+	static bool getStartMinimised();
 
-		/*!
-		 * Post Login Options
-		 */
+	static int getSslPwdLen();
+	static bool getAutoLogin();
+	static void setAutoLogin(bool autoLogin);
+	static bool RsClearAutoLogin() ;
 
-		static bool getStartMinimised();
+private:
+	/** @brief Lock profile directory
+	 * param[in] accountDir account directory to lock
+	 * param[out] lockFilePath path of the created lock-file
+	 */
+	static LoadCertificateStatus LockConfigDirectory(
+	        const std::string& accountDir, std::string& lockFilePath);
 
-		static int getSslPwdLen();
-		static bool getAutoLogin();
-		static void setAutoLogin(bool autoLogin);
-		static bool RsClearAutoLogin() ;
+	/// @brief Unlock profile directory
+	static void UnlockConfigDirectory();
 
-	private:
-
-#if 0
-		/* Auto Login */
-		static bool RsStoreAutoLogin() ;
-		static bool RsTryAutoLogin() ;
-#endif
-
-// THESE CAN BE REMOVED FROM THE CLASS TOO.
-		/* Lock/unlock profile directory */
-                static int	LockConfigDirectory(const std::string& accountDir, std::string& lockFilePath);
-		static void	UnlockConfigDirectory();
-
-		/* The true LoadCertificates() method */
-		static int 	LoadCertificates(bool autoLoginNT) ;
-
+	static int LoadCertificates(bool autoLoginNT);
 };
 
 
@@ -170,7 +179,11 @@ public:
 
 	static bool	GetAccountDetails(const RsPeerId &id, RsPgpId &gpgId, std::string &gpgName, std::string &gpgEmail, std::string &location);
 
-	static bool	createNewAccount(const RsPgpId& pgp_id, const std::string& org, const std::string& loc, const std::string& country, bool ishiddenloc,bool is_auto_tor, const std::string& passwd, RsPeerId &sslId, std::string &errString);
+	static bool createNewAccount(
+	        const RsPgpId& pgp_id, const std::string& org,
+	        const std::string& loc, const std::string& country,
+	        bool ishiddenloc, bool is_auto_tor, const std::string& passwd,
+	        RsPeerId &sslId, std::string &errString );
 
     static void storeSelectedAccount() ;
 
@@ -198,6 +211,63 @@ private:
 };
 
 
+/**
+ * This helper class have been implemented because there was not reasonable way
+ * to login in the API that could be exposed via JSON API
+ */
+struct RsLoginHelper
+{
+	/**
+	 * @brief Normal way to attempt login
+	 * @jsonapi{development}
+	 * @param[in] account Id of the account to which attempt login
+	 * @param[in] password Password for the given account
+	 * @return RsInit::OK if login attempt success, error code otherwhise
+	 */
+	RsInit::LoadCertificateStatus attemptLogin(
+	        const RsPeerId& account, const std::string& password );
 
+	struct Location : RsSerializable
+	{
+		RsPeerId mLocationId;
+		RsPgpId mPgpId;
+		std::string mLocationName;
+		std::string mPpgName;
+
+		/// @see RsSerializable::serial_process
+		void serial_process( RsGenericSerializer::SerializeJob j,
+		                     RsGenericSerializer::SerializeContext& ctx );
+	};
+
+	/**
+	 * @brief Get locations and associated information
+	 * @jsonapi{development}
+	 * @param[out] locations storage for the retrived locations
+	 */
+	void getLocations(std::vector<RsLoginHelper::Location>& locations);
+
+	/**
+	 * @brief Creates a new RetroShare location, and log in once is created
+	 * @jsonapi{development}
+	 * @param[inout] location provide input information to generate the location
+	 *	and storage to output the data of the generated location
+	 * @param[in] password to protect and unlock the associated PGP key
+	 * @param[in] makeHidden pass true to create an hidden location. UNTESTED!
+	 * @param[in] makeAutoTor pass true to create an automatically configured
+	 *	Tor hidden location. UNTESTED!
+	 * @param[out] errorMessage if some error occurred human readable error
+	 *	message
+	 * @return true if success, false otherwise
+	 */
+	bool createLocation( RsLoginHelper::Location& location,
+	                     const std::string& password, bool makeHidden,
+	                     bool makeAutoTor, std::string& errorMessage );
+
+	/**
+	 * @brief Close RetroShare session
+	 * @jsonapi{development}
+	 */
+	void closeSession();
+};
 
 #endif

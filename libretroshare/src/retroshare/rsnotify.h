@@ -181,7 +181,7 @@ class RsFeedItem
 // This mechanism can be used in plugins, new services, etc.
 //	
 
-class NotifyClient ;
+class NotifyClient;
 
 class RsNotify 
 {
@@ -208,42 +208,41 @@ class RsNotify
 
 class NotifyClient
 {
-	public:
-		NotifyClient() {}
-		virtual ~NotifyClient() {}
+public:
+	NotifyClient() {}
+	virtual ~NotifyClient() {}
 
-		virtual void notifyListPreChange              (int /* list */, int /* type */) {}
-		virtual void notifyListChange                 (int /* list */, int /* type */) {}
-		virtual void notifyErrorMsg                   (int /* list */, int /* sev  */, std::string /* msg */) {}
-		virtual void notifyChatMessage                (const ChatMessage& /* msg      */) {}
-		virtual void notifyChatStatus                 (const ChatId&      /* chat_id  */, const std::string& /* status_string */) {}
-		virtual void notifyChatCleared                (const ChatId&      /* chat_id  */) {}
-		virtual void notifyChatLobbyEvent             (uint64_t           /* lobby id */, uint32_t           /* event type    */ ,const RsGxsId& /* nickname */,const std::string& /* any string */) {}
-		virtual void notifyChatLobbyTimeShift         (int                /* time_shift*/) {}
-		virtual void notifyCustomState                (const std::string& /* peer_id   */, const std::string&               /* status_string */) {}
-		virtual void notifyHashingInfo                (uint32_t           /* type      */, const std::string&               /* fileinfo      */) {}
-		virtual void notifyTurtleSearchResult         (uint32_t           /* search_id */, const std::list<TurtleFileInfo>& /* files         */) {}
+	virtual void notifyListPreChange              (int /* list */, int /* type */) {}
+	virtual void notifyListChange                 (int /* list */, int /* type */) {}
+	virtual void notifyErrorMsg                   (int /* list */, int /* sev  */, std::string /* msg */) {}
+	virtual void notifyChatMessage                (const ChatMessage& /* msg      */) {}
+	virtual void notifyChatStatus                 (const ChatId&      /* chat_id  */, const std::string& /* status_string */) {}
+	virtual void notifyChatCleared                (const ChatId&      /* chat_id  */) {}
+	virtual void notifyChatLobbyEvent             (uint64_t           /* lobby id */, uint32_t           /* event type    */ ,const RsGxsId& /* nickname */,const std::string& /* any string */) {}
+	virtual void notifyChatLobbyTimeShift         (int                /* time_shift*/) {}
+	virtual void notifyCustomState                (const std::string& /* peer_id   */, const std::string&               /* status_string */) {}
+	virtual void notifyHashingInfo                (uint32_t           /* type      */, const std::string&               /* fileinfo      */) {}
+	virtual void notifyTurtleSearchResult         (uint32_t           /* search_id */, const std::list<TurtleFileInfo>& /* files         */) {}
 #warning MISSING CODE HERE
-		// virtual void notifyTurtleSearchResult         (uint32_t           /* search_id */, const std::list<TurtleGxsInfo >& /* groups        */) {}
-		virtual void notifyPeerHasNewAvatar           (std::string        /* peer_id   */) {}
-		virtual void notifyOwnAvatarChanged           () {}
-		virtual void notifyOwnStatusMessageChanged    () {}
-		virtual void notifyDiskFull                   (uint32_t           /* location  */, uint32_t                         /* size limit in MB */) {}
-		virtual void notifyPeerStatusChanged          (const std::string& /* peer_id   */, uint32_t                         /* status           */) {}
-        virtual void notifyGxsChange                  (const RsGxsChanges& /* changes  */) {}
-		virtual void notifyConnectionWithoutCert      () {}
+	// virtual void notifyTurtleSearchResult         (uint32_t           /* search_id */, const std::list<TurtleGxsInfo >& /* groups        */) {}
+	virtual void notifyPeerHasNewAvatar           (std::string        /* peer_id   */) {}
+	virtual void notifyOwnAvatarChanged           () {}
+	virtual void notifyOwnStatusMessageChanged    () {}
+	virtual void notifyDiskFull                   (uint32_t           /* location  */, uint32_t                         /* size limit in MB */) {}
+	virtual void notifyPeerStatusChanged          (const std::string& /* peer_id   */, uint32_t                         /* status           */) {}
+	virtual void notifyGxsChange                  (const RsGxsChanges& /* changes  */) {}
+	virtual void notifyConnectionWithoutCert      () {}
 
-		/* one or more peers has changed the states */
-		virtual void notifyPeerStatusChangedSummary   () {}
-		virtual void notifyDiscInfoChanged            () {}
+	/* one or more peers has changed the states */
+	virtual void notifyPeerStatusChangedSummary   () {}
+	virtual void notifyDiscInfoChanged            () {}
 
-		virtual bool askForDeferredSelfSignature      (const void *       /* data      */, const uint32_t     /* len   */, unsigned char * /* sign */, unsigned int * /* signlen */,int& signature_result , std::string /*reason = ""*/) { signature_result = false ;return true; }
-		virtual void notifyDownloadComplete           (const std::string& /* fileHash  */) {}
-		virtual void notifyDownloadCompleteCount      (uint32_t           /* count     */) {}
-		virtual void notifyHistoryChanged             (uint32_t           /* msgId     */, int /* type */) {}
+	virtual bool askForDeferredSelfSignature      (const void *       /* data      */, const uint32_t     /* len   */, unsigned char * /* sign */, unsigned int * /* signlen */,int& signature_result , std::string /*reason = ""*/) { signature_result = false ;return true; }
+	virtual void notifyDownloadComplete           (const std::string& /* fileHash  */) {}
+	virtual void notifyDownloadCompleteCount      (uint32_t           /* count     */) {}
+	virtual void notifyHistoryChanged             (uint32_t           /* msgId     */, int /* type */) {}
 
-		virtual bool askForPassword                   (const std::string& /* title     */, const std::string& /* key_details     */, bool               /* prev_is_bad */, std::string& /* password */,bool& /* cancelled */ ) { return false ;}
-		virtual bool askForPluginConfirmation         (const std::string& /* plugin_filename */, const std::string& /* plugin_file_hash */,bool /* first_time */) { return false ;}
-
+	virtual bool askForPassword                   (const std::string& /* title     */, const std::string& /* key_details     */, bool               /* prev_is_bad */, std::string& /* password */,bool& /* cancelled */ ) { return false ;}
+	virtual bool askForPluginConfirmation         (const std::string& /* plugin_filename */, const std::string& /* plugin_file_hash */,bool /* first_time */) { return false ;}
 };
 #endif

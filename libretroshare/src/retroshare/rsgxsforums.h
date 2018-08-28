@@ -59,8 +59,7 @@ class RsGxsForums: public RsGxsIfaceHelper
 {
 public:
 
-	explicit RsGxsForums(RsGxsIface *gxs)
-	  :RsGxsIfaceHelper(gxs)  {}
+	explicit RsGxsForums(RsGxsIface& gxs) : RsGxsIfaceHelper(gxs) {}
 	virtual ~RsGxsForums() {}
 
 	/* Specific Service Data */

@@ -31,18 +31,14 @@
 
 #include "serialiser/rsserializer.h"
 #include "serialiser/rsserializable.h"
+#include "util/rsjson.h"
 
-#ifdef HAS_RAPIDJSON
-#include <rapidjson/document.h>
-#else
-#include <rapid_json/document.h>
-#endif // HAS_RAPIDJSON
 #include <typeinfo> // for typeid
 #include <type_traits>
 #include <errno.h>
 
 
-/** INTERNAL ONLY helper to avoid copy paste code for std::{vector,list,set}<T>
+/* INTERNAL ONLY helper to avoid copy paste code for std::{vector,list,set}<T>
  * Can't use a template function because T is needed for const_cast */
 #define RsTypeSerializer_PRIVATE_TO_JSON_ARRAY() do \
 { \
@@ -58,9 +54,7 @@
     { \
 	    /* Use same allocator to avoid deep copy */\
 	    RsGenericSerializer::SerializeContext elCtx(\
-	                nullptr, 0, RsGenericSerializer::FORMAT_BINARY,\
-	                RsGenericSerializer::SERIALIZATION_FLAG_NONE,\
-	                &allocator );\
+	                nullptr, 0, ctx.mFlags, &allocator );\
 \
 	    /* If el is const the default serial_process template is matched */ \
 	    /* also when specialization is necessary so the compilation break */ \
@@ -78,7 +72,7 @@
 	ctx.mJson.AddMember(arrKey, arr, allocator);\
 } while (false)
 
-/** INTERNAL ONLY helper to avoid copy paste code for std::{vector,list,set}<T>
+/* INTERNAL ONLY helper to avoid copy paste code for std::{vector,list,set}<T>
  * Can't use a template function because std::{vector,list,set}<T> has different
  * name for insert/push_back function
  */
@@ -86,7 +80,7 @@
 {\
 	using namespace rapidjson;\
 \
-	bool& ok(ctx.mOk);\
+	bool ok = ctx.mOk || ctx.mFlags & RsGenericSerializer::SERIALIZATION_FLAG_YIELDING;\
 	Document& jDoc(ctx.mJson);\
 	Document::AllocatorType& allocator = jDoc.GetAllocator();\
 \
@@ -100,23 +94,28 @@
     {\
 	    for (auto&& arrEl : jDoc[arrKey].GetArray())\
         {\
+	        Value arrKeyT;\
+	        arrKeyT.SetString(memberName.c_str(), memberName.length());\
+\
 	        RsGenericSerializer::SerializeContext elCtx(\
-	                    nullptr, 0, RsGenericSerializer::FORMAT_BINARY,\
-	                    RsGenericSerializer::SERIALIZATION_FLAG_NONE,\
-	                    &allocator );\
-	        elCtx.mJson.AddMember(arrKey, arrEl, allocator);\
+	                    nullptr, 0, ctx.mFlags, &allocator );\
+	        elCtx.mJson.AddMember(arrKeyT, arrEl, allocator);\
 \
 	        T el;\
 	        serial_process(j, elCtx, el, memberName); \
 	        ok = ok && elCtx.mOk;\
-\
+	        ctx.mOk &= ok;\
 	        if(ok) v.INSERT_FUN(el);\
 	        else break;\
 	    }\
 	}\
+	else\
+	{\
+		ctx.mOk = false;\
+	}\
+\
 } while(false)
 
-std::ostream &operator<<(std::ostream &out, const RsJson &jDoc);
 
 struct RsTypeSerializer
 {
@@ -134,8 +133,8 @@ struct RsTypeSerializer
 	template<typename T>
 	typename std::enable_if<std::is_same<RsTlvItem,T>::value || !(std::is_base_of<RsSerializable,T>::value || std::is_enum<T>::value || std::is_base_of<RsTlvItem,T>::value)>::type
 	static /*void*/ serial_process( RsGenericSerializer::SerializeJob j,
-	                            RsGenericSerializer::SerializeContext& ctx,
-	                            T& member, const std::string& member_name)
+	                                RsGenericSerializer::SerializeContext& ctx,
+	                                T& member, const std::string& member_name )
 	{
 		switch(j)
 		{
@@ -157,7 +156,8 @@ struct RsTypeSerializer
 			ctx.mOk = ctx.mOk && to_JSON(member_name, member, ctx.mJson);
 			break;
 		case RsGenericSerializer::FROM_JSON:
-			ctx.mOk = ctx.mOk && from_JSON(member_name, member, ctx.mJson);
+			ctx.mOk &= (ctx.mOk || ctx.mFlags & RsGenericSerializer::SERIALIZATION_FLAG_YIELDING)
+			        && from_JSON(member_name, member, ctx.mJson);
 			break;
 		default:
 			std::cerr << __PRETTY_FUNCTION__ << " Unknown serial job: "
@@ -195,8 +195,9 @@ struct RsTypeSerializer
 			        to_JSON(member_name, type_id, member, ctx.mJson);
 			break;
 		case RsGenericSerializer::FROM_JSON:
-			ctx.mOk = ctx.mOk &&
-			        from_JSON(member_name, type_id, member, ctx.mJson);
+			ctx.mOk &=
+			        (ctx.mOk || ctx.mFlags & RsGenericSerializer::SERIALIZATION_FLAG_YIELDING)
+			        && from_JSON(member_name, type_id, member, ctx.mJson);
 			break;
 		default:
 			std::cerr << __PRETTY_FUNCTION__ << " Unknown serial job: "
@@ -288,15 +289,11 @@ struct RsTypeSerializer
 			{
 				// Use same allocator to avoid deep copy
 				RsGenericSerializer::SerializeContext kCtx(
-				            nullptr, 0, RsGenericSerializer::FORMAT_BINARY,
-				            RsGenericSerializer::SERIALIZATION_FLAG_NONE,
-				            &allocator );
+				            nullptr, 0, ctx.mFlags, &allocator );
 				serial_process<T>(j, kCtx, const_cast<T&>(kv.first), "key");
 
 				RsGenericSerializer::SerializeContext vCtx(
-				            nullptr, 0, RsGenericSerializer::FORMAT_BINARY,
-				            RsGenericSerializer::SERIALIZATION_FLAG_NONE,
-				            &allocator );
+				            nullptr, 0, ctx.mFlags, &allocator );
 				serial_process<U>(j, vCtx, const_cast<U&>(kv.second), "value");
 
 				if(kCtx.mOk && vCtx.mOk)
@@ -317,7 +314,7 @@ struct RsTypeSerializer
 		{
 			using namespace rapidjson;
 
-			bool& ok(ctx.mOk);
+			bool ok = ctx.mOk || ctx.mFlags & RsGenericSerializer::SERIALIZATION_FLAG_YIELDING;
 			Document& jDoc(ctx.mJson);
 			Document::AllocatorType& allocator = jDoc.GetAllocator();
 
@@ -337,9 +334,7 @@ struct RsTypeSerializer
 					if (!ok) break;
 
 					RsGenericSerializer::SerializeContext kCtx(
-					            nullptr, 0, RsGenericSerializer::FORMAT_BINARY,
-					            RsGenericSerializer::SERIALIZATION_FLAG_NONE,
-					            &allocator );
+					            nullptr, 0, ctx.mFlags, &allocator );
 					if(ok)
 						kCtx.mJson.AddMember("key", kvEl["key"], allocator);
 
@@ -347,9 +342,7 @@ struct RsTypeSerializer
 					ok = ok && (serial_process(j, kCtx, key, "key"), kCtx.mOk);
 
 					RsGenericSerializer::SerializeContext vCtx(
-					            nullptr, 0, RsGenericSerializer::FORMAT_BINARY,
-					            RsGenericSerializer::SERIALIZATION_FLAG_NONE,
-					            &allocator );
+					            nullptr, 0, ctx.mFlags, &allocator );
 					if(ok)
 						vCtx.mJson.AddMember("value", kvEl["value"], allocator);
 
@@ -357,14 +350,102 @@ struct RsTypeSerializer
 					ok = ok && ( serial_process(j, vCtx, value, "value"),
 					             vCtx.mOk );
 
+					ctx.mOk &= ok;
 					if(ok) v.insert(std::pair<T,U>(key,value));
 					else break;
 				}
 			}
+			else
+			{
+				ctx.mOk = false;
+			}
+			break;
+		}
+		default:
+			std::cerr << __PRETTY_FUNCTION__ << " Unknown serial job: "
+			          << static_cast<std::underlying_type<decltype(j)>::type>(j)
+			          << std::endl;
+			exit(EINVAL);
+		}
+	}
+
+	/// std::pair<T,U>
+	template<typename T, typename U>
+	static void serial_process( RsGenericSerializer::SerializeJob j,
+	                            RsGenericSerializer::SerializeContext& ctx,
+	                            std::pair<T,U>& p,
+	                            const std::string& memberName )
+	{
+		switch(j)
+		{
+		case RsGenericSerializer::SIZE_ESTIMATE: // fallthrough
+		case RsGenericSerializer::DESERIALIZE: // fallthrough
+		case RsGenericSerializer::SERIALIZE: // fallthrough
+		case RsGenericSerializer::PRINT:
+			serial_process(j, ctx, p.first, "pair::first");
+			serial_process(j, ctx, p.second, "pair::second");
+			break;
+		case RsGenericSerializer::TO_JSON:
+		{
+			RsJson& jDoc(ctx.mJson);
+			RsJson::AllocatorType& allocator = jDoc.GetAllocator();
+
+			// Reuse allocator to avoid deep copy later
+			RsGenericSerializer::SerializeContext lCtx(
+			            nullptr, 0, ctx.mFlags, &allocator );
+
+			serial_process(j, ctx, p.first, "first");
+			serial_process(j, ctx, p.second, "second");
+
+			rapidjson::Value key;
+			key.SetString(memberName.c_str(), memberName.length(), allocator);
+
+			/* Because the passed allocator is reused it doesn't go out of scope
+			 * and there is no need of deep copy and we can take advantage of
+			 * the much faster rapidjson move semantic */
+			jDoc.AddMember(key, lCtx.mJson, allocator);
+
+			ctx.mOk = ctx.mOk && lCtx.mOk;
+			break;
+		}
+		case RsGenericSerializer::FROM_JSON:
+		{
+			RsJson& jDoc(ctx.mJson);
+			const char* mName = memberName.c_str();
+			bool hasMember = jDoc.HasMember(mName);
+			bool yielding = ctx.mFlags &
+			        RsGenericSerializer::SERIALIZATION_FLAG_YIELDING;
+
+			if(!hasMember)
+			{
+				if(!yielding)
+				{
+					std::cerr << __PRETTY_FUNCTION__ << " \"" << memberName
+					          << "\" not found in JSON:" << std::endl
+					          << jDoc << std::endl << std::endl;
+					print_stacktrace();
+				}
+				ctx.mOk = false;
+				break;
+			}
+
+			rapidjson::Value& v = jDoc[mName];
+
+			RsGenericSerializer::SerializeContext lCtx(nullptr, 0, ctx.mFlags);
+			lCtx.mJson.SetObject() = v; // Beware of move semantic!!
+
+			serial_process(j, ctx, p.first, "first");
+			serial_process(j, ctx, p.second, "second");
+			ctx.mOk &= lCtx.mOk;
 
 			break;
 		}
-		default: break;
+		default:
+			std::cerr << __PRETTY_FUNCTION__ << " Unknown serial job: "
+			          << static_cast<std::underlying_type<decltype(j)>::type>(j)
+			          << std::endl;
+			exit(EINVAL);
+			break;
 		}
 	}
 
@@ -404,10 +485,12 @@ struct RsTypeSerializer
 		case RsGenericSerializer::PRINT:
 		{
 			if(v.empty())
-				std::cerr << "  Empty array"<< std::endl;
-			else
-				std::cerr << "  Array of " << v.size() << " elements:"
+				std::cerr << "  Empty vector \"" << memberName << "\""
 				          << std::endl;
+			else
+				std::cerr << "  Vector of " << v.size() << " elements: \""
+				          << memberName << "\"" << std::endl;
+
 			for(uint32_t i=0;i<v.size();++i)
 			{
 				std::cerr << "  " ;
@@ -466,9 +549,12 @@ struct RsTypeSerializer
 		}
 		case RsGenericSerializer::PRINT:
 		{
-			if(v.empty()) std::cerr << "  Empty set"<< std::endl;
-			else std::cerr << "  Set of " << v.size() << " elements:"
-			               << std::endl;
+			if(v.empty())
+				std::cerr << "  Empty set \"" << memberName << "\""
+				          << std::endl;
+			else
+				std::cerr << "  Set of " << v.size() << " elements: \""
+				          << memberName << "\"" << std::endl;
 			break;
 		}
 		case RsGenericSerializer::TO_JSON:
@@ -519,9 +605,12 @@ struct RsTypeSerializer
 		}
 		case RsGenericSerializer::PRINT:
 		{
-			if(v.empty()) std::cerr << "  Empty list"<< std::endl;
-			else std::cerr << "  List of " << v.size() << " elements:"
-			               << std::endl;
+			if(v.empty())
+				std::cerr << "  Empty list \"" << memberName << "\""
+				          << std::endl;
+			else
+				std::cerr << "  List of " << v.size() << " elements: \""
+				          << memberName << "\"" << std::endl;
 			break;
 		}
 		case RsGenericSerializer::TO_JSON:
@@ -567,7 +656,9 @@ struct RsTypeSerializer
 		case RsGenericSerializer::FROM_JSON:
 		{
 			uint32_t f;
-			ctx.mOk = from_JSON(memberName, f, ctx.mJson);
+			ctx.mOk &=
+			        (ctx.mOk || ctx.mFlags & RsGenericSerializer::SERIALIZATION_FLAG_YIELDING)
+			        && from_JSON(memberName, f, ctx.mJson);
 			v = t_RsFlags32<N>(f);
 			break;
 		}
@@ -624,9 +715,7 @@ struct RsTypeSerializer
 
 			// Reuse allocator to avoid deep copy later
 			RsGenericSerializer::SerializeContext lCtx(
-			            nullptr, 0, RsGenericSerializer::FORMAT_BINARY,
-			            RsGenericSerializer::SERIALIZATION_FLAG_NONE,
-			            &allocator );
+			            nullptr, 0, ctx.mFlags, &allocator );
 
 			member.serial_process(j, lCtx);
 
@@ -643,28 +732,32 @@ struct RsTypeSerializer
 		}
 		case RsGenericSerializer::FROM_JSON:
 		{
-			rapidjson::Document& jDoc(ctx.mJson);
+			RsJson& jDoc(ctx.mJson);
 			const char* mName = memberName.c_str();
-			ctx.mOk = ctx.mOk && jDoc.HasMember(mName);
+			bool hasMember = jDoc.HasMember(mName);
+			bool yielding = ctx.mFlags &
+			        RsGenericSerializer::SERIALIZATION_FLAG_YIELDING;
 
-			if(!ctx.mOk)
+			if(!hasMember)
 			{
-				std::cerr << __PRETTY_FUNCTION__ << " \"" << memberName
-				          << "\" not found in JSON:" << std::endl
-				          << jDoc << std::endl << std::endl;
-				print_stacktrace();
+				if(!yielding)
+				{
+					std::cerr << __PRETTY_FUNCTION__ << " \"" << memberName
+					          << "\" not found in JSON:" << std::endl
+					          << jDoc << std::endl << std::endl;
+					print_stacktrace();
+				}
+				ctx.mOk = false;
 				break;
 			}
 
 			rapidjson::Value& v = jDoc[mName];
 
-			RsGenericSerializer::SerializeContext lCtx(
-			            nullptr, 0, RsGenericSerializer::FORMAT_BINARY,
-			            RsGenericSerializer::SERIALIZATION_FLAG_NONE );
+			RsGenericSerializer::SerializeContext lCtx(nullptr, 0, ctx.mFlags);
 			lCtx.mJson.SetObject() = v; // Beware of move semantic!!
 
 			member.serial_process(j, lCtx);
-			ctx.mOk = ctx.mOk && lCtx.mOk;
+			ctx.mOk &= lCtx.mOk;
 
 			break;
 		}

@@ -479,7 +479,8 @@ public:
      * @param status
      * @return false if token could not be found, true if token disposed of
      */
-    bool updatePublicRequestStatus(const uint32_t &token, const uint32_t &status);
+	bool updatePublicRequestStatus(
+	        uint32_t token, RsTokenService::GxsRequestStatus status);
 
     /*!
      * This gets rid of a publicly issued token

@@ -74,7 +74,7 @@ class RsPosted : public RsGxsIfaceHelper, public RsGxsCommentService
 	//static const uint32_t FLAG_MSGTYPE_POST;
 	//static const uint32_t FLAG_MSGTYPE_MASK;
 
-	explicit RsPosted(RsGxsIface* gxs) : RsGxsIfaceHelper(gxs) {}
+	explicit RsPosted(RsGxsIface& gxs) : RsGxsIfaceHelper(gxs) {}
 	virtual ~RsPosted() {}
 
 	    /* Specific Service Data */

@@ -928,7 +928,6 @@ void p3turtle::handleSearchRequest(RsTurtleSearchRequestItem *item)
         for(auto it(search_results.begin());it!=search_results.end();++it)
         {
             (*it)->request_id = item->request_id ;
-            (*it)->depth = 0 ;
             (*it)->PeerId(item->PeerId()) ;
 
             sendItem(*it) ;
@@ -1133,7 +1132,7 @@ void p3turtle::handleSearchResult(RsTurtleSearchResultItem *item)
     std::list<std::pair<RsTurtleSearchResultItem*,RsTurtleClientService*> > results_to_notify_off_mutex ;
 
 	{
-		RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
+		RS_STACK_MUTEX(mTurtleMtx);
 		// Find who actually sent the corresponding request.
 		//
 		std::map<TurtleRequestId,TurtleSearchRequestInfo>::iterator it = _search_requests_origins.find(item->request_id) ;
@@ -1195,11 +1194,10 @@ void p3turtle::handleSearchResult(RsTurtleSearchResultItem *item)
 			// of the files found can be further reached by a tunnel.
 
 			fwd_item->PeerId(it->second.origin) ;
-			fwd_item->depth = 0 ; // obfuscate the depth for non immediate friends. Result will always be 0. This effectively removes the information.
 
 			sendItem(fwd_item) ;
 		}
-	}
+	} // mTurtleMtx end
 
     // now we notify clients off-mutex.
 
@@ -1212,7 +1210,16 @@ void p3turtle::handleSearchResult(RsTurtleSearchResultItem *item)
 
         if(ftsr!=NULL)
         {
-			RsServer::notify()->notifyTurtleSearchResult(ftsr->request_id,ftsr->result) ;
+            ftServer *client = dynamic_cast<ftServer*>((*it).second) ;
+
+            if(!client)
+            {
+                std::cerr << "(EE) received turtle FT search result but the service is not a ftServer!!" << std::endl;
+                continue;
+            }
+			//RsServer::notify()->notifyTurtleSearchResult(ftsr->request_id,ftsr->result) ;
+
+            client->receiveSearchResult(ftsr);
             continue ;
         }
 

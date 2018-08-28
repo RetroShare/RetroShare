@@ -29,24 +29,42 @@
 #include "serialiser/rstlvbinary.h"
 #include "retroshare/rstypes.h"
 #include "retroshare/rsgxsifacetypes.h"
+#include "serialiser/rsserializable.h"
 
 namespace RsRegularExpression { class LinearizedExpression ; }
 class RsTurtleClientService ;
 
 class RsTurtle;
-extern RsTurtle   *rsTurtle ;
+
+/**
+ * Pointer to global instance of RsTurtle service implementation
+ */
+extern RsTurtle* rsTurtle;
 
 typedef uint32_t TurtleRequestId ;
 typedef RsPeerId TurtleVirtualPeerId;
 
-// This is the structure used to send back results of the turtle search 
-// to the notifyBase class, or send info to the GUI.
-
-struct TurtleFileInfo
+/**
+ * This is the structure used to send back results of the turtle search,
+ * to other peers, to the notifyBase class, to the search caller or to the GUI.
+ */
+struct TurtleFileInfo : RsSerializable
 {
-	RsFileHash hash ;
-	std::string name ;
-	uint64_t size ;
+	uint64_t size;    /// File size
+	RsFileHash hash;  /// File hash
+	std::string name; /// File name
+
+	/// @see RsSerializable::serial_process
+	void serial_process( RsGenericSerializer::SerializeJob j,
+						 RsGenericSerializer::SerializeContext& ctx )
+	{
+		RS_SERIAL_PROCESS(size);
+		RS_SERIAL_PROCESS(hash);
+
+		// Use String TLV serial process for retrocompatibility
+		RsTypeSerializer::serial_process(
+		            j, ctx, TLV_TYPE_STR_NAME, name, "name" );
+	}
 };
 
 struct TurtleTunnelRequestDisplayInfo
@@ -90,7 +108,7 @@ class TurtleTrafficStatisticsInfo
 //
 class RsTurtle
 {
-	public:
+public:
 		RsTurtle() {}
 		virtual ~RsTurtle() {}
 
@@ -106,7 +124,9 @@ class RsTurtle
 		// the request id, which will be further used by the gui to store results
 		// as they come back.
 		//
-        virtual TurtleRequestId turtleSearch(unsigned char *search_bin_data,uint32_t search_bin_data_len,RsTurtleClientService *client_service) =0;
+		virtual TurtleRequestId turtleSearch(
+		        unsigned char *search_bin_data, uint32_t search_bin_data_len,
+		        RsTurtleClientService* client_service ) = 0;
 
 		// Initiates tunnel handling for the given file hash.  tunnels.  Launches
 		// an exception if an error occurs during the initialization process. The

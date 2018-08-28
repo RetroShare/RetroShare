@@ -26,11 +26,13 @@
 #include "util/rsprint.h"
 #include "serialiser/rsserializer.h"
 #include "serialiser/rstypeserializer.h"
+#include "util/stacktrace.h"
 
 const SerializationFlags RsGenericSerializer::SERIALIZATION_FLAG_NONE        ( 0x0000 );
 const SerializationFlags RsGenericSerializer::SERIALIZATION_FLAG_CONFIG      ( 0x0001 );
 const SerializationFlags RsGenericSerializer::SERIALIZATION_FLAG_SIGNATURE   ( 0x0002 );
 const SerializationFlags RsGenericSerializer::SERIALIZATION_FLAG_SKIP_HEADER ( 0x0004 );
+const SerializationFlags RsGenericSerializer::SERIALIZATION_FLAG_YIELDING    ( 0x0008 );
 
 RsItem *RsServiceSerializer::deserialise(void *data, uint32_t *size)
 {
@@ -240,3 +242,31 @@ RsItem *RsRawSerialiser::deserialise(void *data, uint32_t *pktsize)
 	return item;
 }
 
+
+RsGenericSerializer::SerializeContext::SerializeContext(
+        uint8_t* data, uint32_t size, SerializationFlags flags,
+        RsJson::AllocatorType* allocator ) :
+    mData(data), mSize(size), mOffset(0), mOk(true), mFlags(flags),
+    mJson(rapidjson::kObjectType, allocator)
+{
+	if(data)
+	{
+		if(size == 0)
+		{
+			std::cerr << __PRETTY_FUNCTION__ << " data passed without "
+			          << "size! This make no sense report to developers!"
+			          << std::endl;
+			print_stacktrace();
+		}
+
+		if(flags & SERIALIZATION_FLAG_YIELDING)
+		{
+			std::cerr << __PRETTY_FUNCTION__ << " Attempt to create a "
+			          << "binary serialization context with "
+			          << "SERIALIZATION_FLAG_YIELDING! "
+			          << "This make no sense report to developers!"
+			          << std::endl;
+			print_stacktrace();
+		}
+	}
+}

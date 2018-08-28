@@ -71,7 +71,8 @@ ftServer::ftServer(p3PeerMgr *pm, p3ServiceControl *sc)
       mPeerMgr(pm), mServiceCtrl(sc),
       mFileDatabase(NULL),
       mFtController(NULL), mFtExtra(NULL),
-      mFtDataplex(NULL), mFtSearch(NULL), srvMutex("ftServer")
+      mFtDataplex(NULL), mFtSearch(NULL), srvMutex("ftServer"),
+      mSearchCallbacksMapMutex("ftServer callbacks map")
 {
 	addSerialType(new RsFileTransferSerialiser()) ;
 }
@@ -425,7 +426,7 @@ void ftServer::requestDirUpdate(void *ref)
 }
 
 /* Directory Handling */
-bool ftServer::setDownloadDirectory(std::string path)
+bool ftServer::setDownloadDirectory(const std::string& path)
 {
 	return mFtController->setDownloadDirectory(path);
 }
@@ -435,7 +436,7 @@ std::string ftServer::getDownloadDirectory()
 	return mFtController->getDownloadDirectory();
 }
 
-bool ftServer::setPartialsDirectory(std::string path)
+bool ftServer::setPartialsDirectory(const std::string& path)
 {
 	return mFtController->setPartialsDirectory(path);
 }
@@ -1630,6 +1631,7 @@ int	ftServer::tick()
 		mFtDataplex->deleteUnusedServers() ;
 		mFtDataplex->handlePendingCrcRequests() ;
 		mFtDataplex->dispatchReceivedChunkCheckSum() ;
+		cleanTimedOutSearches();
 	}
 
 	return moreToTick;
@@ -1820,6 +1822,24 @@ int ftServer::handleIncoming()
  **********************************
  *********************************/
 
+void ftServer::receiveSearchResult(RsTurtleFTSearchResultItem *item)
+{
+	bool hasCallback = false;
+
+	{
+		RS_STACK_MUTEX(mSearchCallbacksMapMutex);
+		auto cbpt = mSearchCallbacksMap.find(item->request_id);
+		if(cbpt != mSearchCallbacksMap.end())
+		{
+			hasCallback = true;
+			cbpt->second.first(item->result);
+		}
+	} // end RS_STACK_MUTEX(mSearchCallbacksMapMutex);
+
+	if(!hasCallback)
+		RsServer::notify()->notifyTurtleSearchResult(item->PeerId(),item->request_id, item->result );
+}
+
 /***************************** CONFIG ****************************/
 
 bool    ftServer::addConfiguration(p3ConfigMgr *cfgmgr)
@@ -1830,6 +1850,42 @@ bool    ftServer::addConfiguration(p3ConfigMgr *cfgmgr)
 	cfgmgr->addConfiguration("ft_transfers.cfg", mFtController);
 
 	return true;
+}
+
+bool ftServer::turtleSearchRequest(
+        const std::string& matchString,
+        const std::function<void (const std::list<TurtleFileInfo>& results)>& multiCallback,
+        std::time_t maxWait )
+{
+	if(matchString.empty())
+	{
+		std::cerr << __PRETTY_FUNCTION__ << " match string can't be empty!"
+		          << std::endl;
+		return false;
+	}
+
+	TurtleRequestId sId = turtleSearch(matchString);
+
+	RS_STACK_MUTEX(mSearchCallbacksMapMutex);
+	mSearchCallbacksMap.emplace(
+	            sId,
+	            std::make_pair(
+	                multiCallback,
+	                std::chrono::system_clock::now() +
+	                    std::chrono::seconds(maxWait) ) );
+
+	return true;
+}
+
+void ftServer::cleanTimedOutSearches()
+{
+	RS_STACK_MUTEX(mSearchCallbacksMapMutex);
+	auto now = std::chrono::system_clock::now();
+	for( auto cbpt = mSearchCallbacksMap.begin();
+	     cbpt != mSearchCallbacksMap.end(); )
+		if(cbpt->second.second <= now)
+			cbpt = mSearchCallbacksMap.erase(cbpt);
+		else ++cbpt;
 }
 
 // Offensive content file filtering
@@ -1851,3 +1907,5 @@ bool ftServer::isHashBanned(const RsFileHash& hash)
 {
     return mFileDatabase->isFileBanned(hash);
 }
+
+

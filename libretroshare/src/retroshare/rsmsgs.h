@@ -92,7 +92,7 @@ const ChatLobbyFlags RS_CHAT_LOBBY_FLAGS_PGP_SIGNED    ( 0x00000010 ) ; // requi
 
 typedef uint64_t	ChatLobbyId ;
 typedef uint64_t	ChatLobbyMsgId ;
-typedef std::string 	ChatLobbyNickName ;
+typedef std::string ChatLobbyNickName ;
 
 typedef uint64_t     MessageId ;
 
@@ -279,7 +279,7 @@ struct DistantChatPeerInfo
 
 // Identifier for an chat endpoint like
 // neighbour peer, distant peer, chatlobby, broadcast
-class ChatId
+class ChatId : RsSerializable
 {
 public:
     ChatId();
@@ -310,17 +310,28 @@ public:
     // this defines from which peer the status string came from
     RsPeerId broadcast_status_peer_id;
 private:
-    enum Type { TYPE_NOT_SET,
-                TYPE_PRIVATE,            // private chat with directly connected friend, peer_id is valid
-                TYPE_PRIVATE_DISTANT,    // private chat with distant peer, gxs_id is valid
-                TYPE_LOBBY,              // chat lobby id, lobby_id is valid
-                TYPE_BROADCAST           // message to/from all connected peers
-              };
+	enum Type : uint8_t
+	{	TYPE_NOT_SET,
+		TYPE_PRIVATE,            // private chat with directly connected friend, peer_id is valid
+		TYPE_PRIVATE_DISTANT,    // private chat with distant peer, gxs_id is valid
+		TYPE_LOBBY,              // chat lobby id, lobby_id is valid
+		TYPE_BROADCAST           // message to/from all connected peers
+	};
 
     Type type;
     RsPeerId peer_id;
     DistantChatPeerId distant_chat_id;
     ChatLobbyId lobby_id;
+
+	// RsSerializable interface
+public:
+	void serial_process(RsGenericSerializer::SerializeJob j, RsGenericSerializer::SerializeContext &ctx) {
+		RS_SERIAL_PROCESS(broadcast_status_peer_id);
+		RS_SERIAL_PROCESS(type);
+		RS_SERIAL_PROCESS(peer_id);
+		RS_SERIAL_PROCESS(distant_chat_id);
+		RS_SERIAL_PROCESS(lobby_id);
+	}
 };
 
 class ChatMessage
@@ -340,49 +351,90 @@ public:
     //bool system_message;
 };
 
-class ChatLobbyInvite
+class ChatLobbyInvite : RsSerializable
 {
-	public:
-		ChatLobbyId lobby_id ;
-		RsPeerId peer_id ;
-		std::string lobby_name ;
-		std::string lobby_topic ;
-        ChatLobbyFlags lobby_flags ;
+public:
+	ChatLobbyId lobby_id ;
+	RsPeerId peer_id ;
+	std::string lobby_name ;
+	std::string lobby_topic ;
+	ChatLobbyFlags lobby_flags ;
+
+	// RsSerializable interface
+public:
+	void serial_process(RsGenericSerializer::SerializeJob j, RsGenericSerializer::SerializeContext &ctx) {
+		RS_SERIAL_PROCESS(lobby_id);
+		RS_SERIAL_PROCESS(peer_id);
+		RS_SERIAL_PROCESS(lobby_name);
+		RS_SERIAL_PROCESS(lobby_topic);
+		RS_SERIAL_PROCESS(lobby_flags);
+	}
 };
 
-class VisibleChatLobbyRecord
+class VisibleChatLobbyRecord : RsSerializable
 {
 public:
     VisibleChatLobbyRecord(): lobby_id(0), total_number_of_peers(0), last_report_time(0){}
 
-    ChatLobbyId lobby_id ;									// unique id of the lobby
-    std::string lobby_name ;								// name to use for this lobby
-    std::string lobby_topic ;								// topic to use for this lobby
-    std::set<RsPeerId> participating_friends ;	// list of direct friend who participate.
+	ChatLobbyId lobby_id ;						// unique id of the lobby
+	std::string lobby_name ;					// name to use for this lobby
+	std::string lobby_topic ;					// topic to use for this lobby
+	std::set<RsPeerId> participating_friends ;	// list of direct friend who participate.
 
-    uint32_t total_number_of_peers ;						// total number of particpating peers. Might not be
-    time_t last_report_time ; 								// last time the lobby was reported.
-    ChatLobbyFlags lobby_flags ;									// see RS_CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC / RS_CHAT_LOBBY_PRIVACY_LEVEL_PRIVATE
+	uint32_t total_number_of_peers ;			// total number of particpating peers. Might not be
+	time_t last_report_time ; 					// last time the lobby was reported.
+	ChatLobbyFlags lobby_flags ;				// see RS_CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC / RS_CHAT_LOBBY_PRIVACY_LEVEL_PRIVATE
+
+	// RsSerializable interface
+public:
+	void serial_process(RsGenericSerializer::SerializeJob j, RsGenericSerializer::SerializeContext &ctx) {
+		RS_SERIAL_PROCESS(lobby_id);
+		RS_SERIAL_PROCESS(lobby_name);
+		RS_SERIAL_PROCESS(lobby_topic);
+		RS_SERIAL_PROCESS(participating_friends);
+
+		RS_SERIAL_PROCESS(total_number_of_peers);
+		RS_SERIAL_PROCESS(last_report_time);
+		RS_SERIAL_PROCESS(lobby_flags);
+	}
 };
 
 
-class ChatLobbyInfo
+class ChatLobbyInfo : RsSerializable
 {
-	public:
-        ChatLobbyId lobby_id ;						// unique id of the lobby
-        std::string lobby_name ;					// name to use for this lobby
-        std::string lobby_topic ;					// topic to use for this lobby
-        std::set<RsPeerId> participating_friends ;			// list of direct friend who participate. Used to broadcast sent messages.
-        RsGxsId gxs_id ;						// ID to sign messages
+public:
+	ChatLobbyId lobby_id ;						// unique id of the lobby
+	std::string lobby_name ;					// name to use for this lobby
+	std::string lobby_topic ;					// topic to use for this lobby
+	std::set<RsPeerId> participating_friends ;	// list of direct friend who participate. Used to broadcast sent messages.
+	RsGxsId gxs_id ;							// ID to sign messages
 
-        ChatLobbyFlags lobby_flags ;					// see RS_CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC / RS_CHAT_LOBBY_PRIVACY_LEVEL_PRIVATE
-        std::map<RsGxsId,time_t> gxs_ids ;				// list of non direct friend who participate. Used to display only.
-        time_t last_activity ;						// last recorded activity. Useful for removing dead lobbies.
+	ChatLobbyFlags lobby_flags ;				// see RS_CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC / RS_CHAT_LOBBY_PRIVACY_LEVEL_PRIVATE
+	std::map<RsGxsId, time_t> gxs_ids ;			// list of non direct friend who participate. Used to display only.
+	time_t last_activity ;						// last recorded activity. Useful for removing dead lobbies.
+
+	// RsSerializable interface
+public:
+	void serial_process(RsGenericSerializer::SerializeJob j, RsGenericSerializer::SerializeContext &ctx) {
+		RS_SERIAL_PROCESS(lobby_id);
+		RS_SERIAL_PROCESS(lobby_name);
+		RS_SERIAL_PROCESS(lobby_topic);
+		RS_SERIAL_PROCESS(participating_friends);
+		RS_SERIAL_PROCESS(gxs_id);
+
+		RS_SERIAL_PROCESS(lobby_flags);
+		RS_SERIAL_PROCESS(gxs_ids);
+		RS_SERIAL_PROCESS(last_activity);
+	}
 };
 
 std::ostream &operator<<(std::ostream &out, const Rs::Msgs::MessageInfo &info);
 
 class RsMsgs;
+/**
+ * @brief Pointer to retroshare's message service
+ * @jsonapi{development}
+ */
 extern RsMsgs   *rsMsgs;
 
 class RsMsgs 
@@ -438,15 +490,59 @@ virtual bool resetMessageStandardTagTypes(Rs::Msgs::MsgTagType& tags) = 0;
 // sendChat for broadcast, private, lobby and private distant chat
 // note: for lobby chat, you first have to subscribe to a lobby
 //       for private distant chat, it is reqired to have an active distant chat session
-virtual bool sendChat(ChatId id, std::string msg) = 0;
-virtual uint32_t getMaxMessageSecuritySize(int type)  = 0;
 
-virtual void sendStatusString(const ChatId& id,const std::string& status_string) = 0;
-virtual void clearChatLobby(const ChatId& id) = 0;
+	/**
+	 * @brief sendChat send a chat message to a given id
+	 * @jsonapi{development}
+	 * @param[in] id id to send the message
+	 * @param[in] msg message to send
+	 * @return true on success
+	 */
+	virtual bool sendChat(ChatId id, std::string msg) = 0;
 
-virtual void setCustomStateString(const std::string&  status_string) = 0 ;
-virtual std::string getCustomStateString() = 0 ;
-virtual std::string getCustomStateString(const RsPeerId& peer_id) = 0 ;
+	/**
+	 * @brief getMaxMessageSecuritySize get the maximum size of a chta message
+	 * @jsonapi{development}
+	 * @param[in] type chat type
+	 * @return maximum size or zero for infinite
+	 */
+	virtual uint32_t getMaxMessageSecuritySize(int type) = 0;
+
+	/**
+	 * @brief sendStatusString send a status string
+	 * @jsonapi{development}
+	 * @param[in] id chat id to send the status string to
+	 * @param[in] status_string status string
+	 */
+	virtual void sendStatusString(const ChatId &id, const std::string &status_string) = 0;
+
+	/**
+	 * @brief clearChatLobby clear a chat lobby
+	 * @jsonapi{development}
+	 * @param[in] id chat lobby id to clear
+	 */
+	virtual void clearChatLobby(const ChatId &id) = 0;
+
+	/**
+	 * @brief setCustomStateString set your custom status message
+	 * @jsonapi{development}
+	 * @param[in] status_string status message
+	 */
+	virtual void setCustomStateString(const std::string &status_string) = 0;
+
+	/**
+	 * @brief getCustomStateString get your custom status message
+	 * @return status message
+	 */
+	virtual std::string getCustomStateString() = 0;
+
+	/**
+	 * @brief getCustomStateString get the custom status message from a peer
+	 * @jsonapi{development}
+	 * @param[in] peer_id peer id to the peer you want to get the status message from
+	 * @return status message
+	 */
+	virtual std::string getCustomStateString(const RsPeerId &peer_id) = 0;
 
 // get avatar data for peer pid
 virtual void getAvatarData(const RsPeerId& pid,unsigned char *& data,int& size) = 0 ;
@@ -454,29 +550,139 @@ virtual void getAvatarData(const RsPeerId& pid,unsigned char *& data,int& size) 
 virtual void setOwnAvatarData(const unsigned char *data,int size) = 0 ;
 virtual void getOwnAvatarData(unsigned char *& data,int& size) = 0 ;
 
-/****************************************/
-/*            Chat lobbies              */
-/****************************************/
+	/****************************************/
+	/*            Chat lobbies              */
+	/****************************************/
+	/**
+	 * @brief joinVisibleChatLobby join a lobby that is visible
+	 * @jsonapi{development}
+	 * @param[in] lobby_id lobby to join to
+	 * @param[in] own_id chat id to use
+	 * @return true on success
+	 */
+	virtual bool joinVisibleChatLobby(const ChatLobbyId &lobby_id, const RsGxsId &own_id) = 0 ;
 
-virtual bool joinVisibleChatLobby(const ChatLobbyId& lobby_id,const RsGxsId& own_id) = 0 ;
-/// get ids of subscribed lobbies
-virtual void getChatLobbyList(std::list<ChatLobbyId>& cl_list) = 0;
-/// get lobby info of a subscribed chat lobby. Returns true if lobby id is valid.
-virtual bool getChatLobbyInfo(const ChatLobbyId& id,ChatLobbyInfo& info) = 0 ;
-/// get info about all lobbies, subscribed and unsubscribed
-virtual void getListOfNearbyChatLobbies(std::vector<VisibleChatLobbyRecord>& public_lobbies) = 0 ;
-virtual void invitePeerToLobby(const ChatLobbyId& lobby_id,const RsPeerId& peer_id) = 0;
-virtual bool acceptLobbyInvite(const ChatLobbyId& id,const RsGxsId& identity) = 0 ;
-virtual void denyLobbyInvite(const ChatLobbyId& id) = 0 ;
-virtual void getPendingChatLobbyInvites(std::list<ChatLobbyInvite>& invites) = 0;
-virtual void unsubscribeChatLobby(const ChatLobbyId& lobby_id) = 0;
-virtual bool setIdentityForChatLobby(const ChatLobbyId& lobby_id,const RsGxsId& nick) = 0;
-virtual bool getIdentityForChatLobby(const ChatLobbyId& lobby_id,RsGxsId& nick) = 0 ;
-virtual bool setDefaultIdentityForChatLobby(const RsGxsId& nick) = 0;
-virtual void getDefaultIdentityForChatLobby(RsGxsId& id) = 0 ;
-virtual void setLobbyAutoSubscribe(const ChatLobbyId& lobby_id, const bool autoSubscribe) = 0 ;
-virtual bool getLobbyAutoSubscribe(const ChatLobbyId& lobby_id) = 0 ;
-virtual ChatLobbyId createChatLobby(const std::string& lobby_name,const RsGxsId& lobby_identity,const std::string& lobby_topic,const std::set<RsPeerId>& invited_friends,ChatLobbyFlags lobby_privacy_type) = 0 ;
+	/**
+	 * @brief getChatLobbyList get ids of subscribed lobbies
+	 * @jsonapi{development}
+	 * @param[out] cl_list lobby list
+	 */
+	virtual void getChatLobbyList(std::list<ChatLobbyId> &cl_list) = 0;
+
+	/**
+	 * @brief getChatLobbyInfo get lobby info of a subscribed chat lobby. Returns true if lobby id is valid.
+	 * @jsonapi{development}
+	 * @param[in] id id to get infos from
+	 * @param[out] info lobby infos
+	 * @return true on success
+	 */
+	virtual bool getChatLobbyInfo(const ChatLobbyId &id, ChatLobbyInfo &info) = 0 ;
+
+	/**
+	 * @brief getListOfNearbyChatLobbies get info about all lobbies, subscribed and unsubscribed
+	 * @jsonapi{development}
+	 * @param[out] public_lobbies list of all visible lobbies
+	 */
+	virtual void getListOfNearbyChatLobbies(std::vector<VisibleChatLobbyRecord> &public_lobbies) = 0 ;
+
+	/**
+	 * @brief invitePeerToLobby invite a peer to join a lobby
+	 * @jsonapi{development}
+	 * @param[in] lobby_id lobby it to invite into
+	 * @param[in] peer_id peer to invite
+	 */
+	virtual void invitePeerToLobby(const ChatLobbyId &lobby_id, const RsPeerId &peer_id) = 0;
+
+	/**
+	 * @brief acceptLobbyInvite accept a chat invite
+	 * @jsonapi{development}
+	 * @param[in] id chat lobby id you were invited into and you want to join
+	 * @param[in] identity chat identity to use
+	 * @return true on success
+	 */
+	virtual bool acceptLobbyInvite(const ChatLobbyId &id, const RsGxsId &identity) = 0 ;
+
+	/**
+	 * @brief denyLobbyInvite deny a chat lobby invite
+	 * @jsonapi{development}
+	 * @param[in] id chat lobby id you were invited into
+	 */
+	virtual void denyLobbyInvite(const ChatLobbyId &id) = 0 ;
+
+	/**
+	 * @brief getPendingChatLobbyInvites get a list of all pending chat lobby invites
+	 * @jsonapi{development}
+	 * @param[out] invites list of all pending chat lobby invites
+	 */
+	virtual void getPendingChatLobbyInvites(std::list<ChatLobbyInvite> &invites) = 0;
+
+	/**
+	 * @brief unsubscribeChatLobby leave a chat lobby
+	 * @jsonapi{development}
+	 * @param[in] lobby_id lobby to leave
+	 */
+	virtual void unsubscribeChatLobby(const ChatLobbyId &lobby_id) = 0;
+
+	/**
+	 * @brief setIdentityForChatLobby set the chat identit
+	 * @jsonapi{development}
+	 * @param[in] lobby_id lobby to change the chat idnetity for
+	 * @param[in] nick new chat identity
+	 * @return true on success
+	 */
+	virtual bool setIdentityForChatLobby(const ChatLobbyId &lobby_id, const RsGxsId &nick) = 0;
+
+	/**
+	 * @brief getIdentityForChatLobby
+	 * @jsonapi{development}
+	 * @param[in] lobby_id	lobby to get the chat id from
+	 * @param[out] nick	chat identity
+	 * @return true on success
+	 */
+	virtual bool getIdentityForChatLobby(const ChatLobbyId &lobby_id, RsGxsId &nick) = 0 ;
+
+	/**
+	 * @brief setDefaultIdentityForChatLobby set the default identity used for chat lobbies
+	 * @jsonapi{development}
+	 * @param[in] nick chat identitiy to use
+	 * @return true on success
+	 */
+	virtual bool setDefaultIdentityForChatLobby(const RsGxsId &nick) = 0;
+
+	/**
+	 * @brief getDefaultIdentityForChatLobby get the default identity used for chat lobbies
+	 * @jsonapi{development}
+	 * @param[out] id chat identitiy to use
+	 */
+	virtual void getDefaultIdentityForChatLobby(RsGxsId &id) = 0 ;
+
+	/**
+	 * @brief setLobbyAutoSubscribe enable or disable auto subscribe for a chat lobby
+	 * @jsonapi{development}
+	 * @param[in] lobby_id lobby to auto (un)subscribe
+	 * @param[in] autoSubscribe set value for auto subscribe
+	 */
+	virtual void setLobbyAutoSubscribe(const ChatLobbyId &lobby_id, const bool autoSubscribe) = 0 ;
+
+	/**
+	 * @brief getLobbyAutoSubscribe get current value of auto subscribe
+	 * @jsonapi{development}
+	 * @param[in] lobby_id lobby to get value from
+	 * @return wether lobby has auto subscribe enabled or disabled
+	 */
+	virtual bool getLobbyAutoSubscribe(const ChatLobbyId &lobby_id) = 0 ;
+
+	/**
+	 * @brief createChatLobby create a new chat lobby
+	 * @jsonapi{development}
+	 * @param[in] lobby_name lobby name
+	 * @param[in] lobby_identity chat id to use for new lobby
+	 * @param[in] lobby_topic lobby toppic
+	 * @param[in] invited_friends list of friends to invite
+	 * @param[in] lobby_privacy_type flag for new chat lobby
+	 * @return chat id of new lobby
+	 */
+	virtual ChatLobbyId createChatLobby(const std::string &lobby_name, const RsGxsId &lobby_identity, const std::string &lobby_topic, const std::set<RsPeerId> &invited_friends, ChatLobbyFlags lobby_privacy_type) = 0 ;
 
 /****************************************/
 /*            Distant chat              */
