@@ -1940,10 +1940,11 @@ RsInit::LoadCertificateStatus RsLoginHelper::attemptLogin(
 	if(!rsNotify->cachePgpPassphrase(password)) return RsInit::ERR_UNKOWN;
 	if(!rsNotify->setDisableAskPassword(true)) return RsInit::ERR_UNKOWN;
 	if(!RsAccounts::SelectAccount(account)) return RsInit::ERR_UNKOWN;
-	std::string ignore;
+	std::string _ignore_lockFilePath;
 	RsInit::LoadCertificateStatus ret =
-	        RsInit::LockAndLoadCertificates(false, ignore);
-	rsNotify->setDisableAskPassword(false);
+	        RsInit::LockAndLoadCertificates(false, _ignore_lockFilePath);
+	if(!rsNotify->setDisableAskPassword(false)) return RsInit::ERR_UNKOWN;
+	if(!rsNotify->clearPgpPassphrase()) return RsInit::ERR_UNKOWN;
 	if(ret != RsInit::OK) return ret;
 	if(RsControl::instance()->StartupRetroShare() == 1) return RsInit::OK;
 	return RsInit::ERR_UNKOWN;
