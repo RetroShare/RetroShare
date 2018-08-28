@@ -62,6 +62,7 @@ int main(int argc, char *argv[])
 	signal(SIGBREAK, exitGracefully);
 #endif // ifdef SIGBREAK
 
+#ifdef LIBRESAPI_LOCAL_SERVER
 	ApiServer api;
 	RsControlModule ctrl_mod(argc, argv, api.getStateTokenServer(), &api, true);
 	api.addResourceHandler(
@@ -82,6 +83,9 @@ int main(int argc, char *argv[])
 	QObject::connect( &shouldExitTimer, &QTimer::timeout, [&]()
 	{ if(ctrl_mod.processShouldExit()) exitGracefully(0); } );
 	shouldExitTimer.start();
+#else
+#	error retroshare-android-service need CONFIG+=libresapilocalserver to build
+#endif
 
 #ifdef RS_JSONAPI
 	jas.start();
