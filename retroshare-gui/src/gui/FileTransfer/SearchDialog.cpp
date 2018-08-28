@@ -445,6 +445,9 @@ void SearchDialog::ban()
 
 			rsFiles -> banFile( hash, (item->text(SR_NAME_COL)).toUtf8().constData() , (item->text(SR_SIZE_COL)).toULongLong());
 
+            while(item->parent() != NULL)
+                item = item->parent();
+
             ui.searchResultWidget->takeTopLevelItem(ui.searchResultWidget->indexOfTopLevelItem(item)) ;
 		}
 	}
