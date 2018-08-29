@@ -181,6 +181,15 @@ public:
 	uint64_t mTotalSize ;
 };
 
+struct BannedFileEntry
+{
+    BannedFileEntry() : size(0),filename(""),ban_time_stamp(0) {}
+
+    uint64_t size ;
+    std::string filename ;
+    time_t ban_time_stamp;
+};
+
 class RsFiles
 {
 public:
@@ -420,6 +429,11 @@ public:
         virtual int SearchBoolExp(RsRegularExpression::Expression * exp, std::list<DirDetails> &results,FileSearchFlags flags) = 0;
         virtual int SearchBoolExp(RsRegularExpression::Expression * exp, std::list<DirDetails> &results,FileSearchFlags flags,const RsPeerId& peer_id) = 0;
 		virtual int getSharedDirStatistics(const RsPeerId& pid, SharedDirStats& stats) =0;
+
+		virtual int banFile(const RsFileHash& real_file_hash, const std::string& filename, uint64_t file_size) =0;
+		virtual int unbanFile(const RsFileHash& real_file_hash)=0;
+    	virtual bool getPrimaryBannedFilesList(std::map<RsFileHash,BannedFileEntry>& banned_files) =0;
+    	virtual bool isHashBanned(const RsFileHash& hash) =0;
 
 		/***
 		 * Utility Functions.

@@ -200,6 +200,11 @@ public:
     virtual int SearchBoolExp(RsRegularExpression::Expression * exp, std::list<DirDetails> &results,FileSearchFlags flags,const RsPeerId& peer_id);
 	virtual int getSharedDirStatistics(const RsPeerId& pid, SharedDirStats& stats) ;
 
+    virtual int banFile(const RsFileHash& real_file_hash, const std::string& filename, uint64_t file_size) ;
+    virtual int unbanFile(const RsFileHash& real_file_hash);
+    virtual bool getPrimaryBannedFilesList(std::map<RsFileHash,BannedFileEntry>& banned_files) ;
+	virtual bool isHashBanned(const RsFileHash& hash);
+
     /***
          * Utility Functions
          ***/
@@ -244,6 +249,8 @@ public:
 
 	virtual bool ignoreDuplicates() ;
 	virtual void setIgnoreDuplicates(bool ignore) ;
+
+    static bool encryptHash(const RsFileHash& hash, RsFileHash& hash_of_hash);
 
     /***************************************************************/
     /*************** Data Transfer Interface ***********************/
@@ -290,7 +297,6 @@ protected:
     // fnds out what is the real hash of encrypted hash hash
     bool findRealHash(const RsFileHash& hash, RsFileHash& real_hash);
     bool findEncryptedHash(const RsPeerId& virtual_peer_id, RsFileHash& encrypted_hash);
-    bool encryptHash(const RsFileHash& hash, RsFileHash& hash_of_hash);
 
 	bool checkUploadLimit(const RsPeerId& pid,const RsFileHash& hash);
 private:

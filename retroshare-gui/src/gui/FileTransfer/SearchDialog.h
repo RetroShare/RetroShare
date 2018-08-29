@@ -75,6 +75,7 @@ private slots:
     void searchSummaryWidgetCustomPopupMenu( QPoint point );
 
     void download();
+    void ban();
 
     void collCreate();
     void collModif();
@@ -86,6 +87,7 @@ private slots:
     void recommendtofriends();
     void checkText(const QString&);
 
+    void openBannedFiles();
     void copyResultLink();
     void copySearchLink();
     void openFolderSearch();

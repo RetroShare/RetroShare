@@ -55,7 +55,8 @@ public:
 						 /* Fixed numbers for load and save the last page */
 			 				SearchTab              = 0,  /** Network page. */
 							LocalSharedFilesTab    = 1,  /** Network new graph. */
-							RemoteSharedFilesTab   = 2   /** Old group chat page. */
+							RemoteSharedFilesTab   = 2,  /** Old group chat page. */
+							DownloadTab            = 3
 		 };
 
 
@@ -107,9 +108,6 @@ private slots:
     void collapseAllDL();
     void expandAllUL();
     void collapseAllUL();
-
-//    void rootdecorated();
-//    void rootisnotdecorated();
 
     void pauseFileTransfer();
     void resumeFileTransfer();

@@ -62,8 +62,16 @@ class LocalDirectoryStorage ;
 
 class RsFileListsSyncRequestItem ;
 class RsFileListsSyncResponseItem ;
+class RsFileListsBannedHashesItem ;
 
 class HashStorage ;
+
+struct PeerBannedFilesEntry
+{
+    std::set<RsFileHash> mBannedHashOfHash;
+    uint32_t mSessionId ;			// used for when a friend sends multiple packets in separate items.
+    time_t mLastSent;
+};
 
 class p3FileDatabase: public p3Service, public p3Config, public ftSearch //, public RsSharedFileService
 {
@@ -132,6 +140,13 @@ class p3FileDatabase: public p3Service, public p3Config, public ftSearch //, pub
 		void setMaxShareDepth(int i) ;
 		int  maxShareDepth() const ;
 
+		bool banFile(const RsFileHash& real_file_hash, const std::string& filename, uint64_t file_size) ;
+		bool unbanFile(const RsFileHash& real_file_hash);
+        bool isFileBanned(const RsFileHash& hash) ;
+		bool getPrimaryBannedFilesList(std::map<RsFileHash,BannedFileEntry>& banned_files) ;
+        bool trustFriendNodesForBannedFiles() const ;
+        void setTrustFriendNodesForBannedFiles(bool b) ;
+
         // computes/gathers statistics about shared directories
 
 		int getSharedDirStatistics(const RsPeerId& pid,SharedDirStats& stats);
@@ -167,6 +182,8 @@ class p3FileDatabase: public p3Service, public p3Config, public ftSearch //, pub
         void cleanup();
         void tickRecv();
         void tickSend();
+
+        void checkSendBannedFilesInfo();
 
     private:
         p3ServiceControl *mServCtrl ;
@@ -244,5 +261,18 @@ class p3FileDatabase: public p3Service, public p3Config, public ftSearch //, pub
         std::string mFileSharingDir ;
         time_t mLastCleanupTime;
         time_t mLastDataRecvTS ;
+
+        // File filtering. Not explicitly related to shared files, but has its place here
+        //
+
+		std::map<RsFileHash,BannedFileEntry> mPrimaryBanList ;	// primary list (user controlled) of files banned from FT search and forwarding. map<real hash, BannedFileEntry>
+        std::map<RsPeerId,PeerBannedFilesEntry> mPeerBannedFiles ;   // records of which files other peers ban, stored as H(H(f))
+		std::set<RsFileHash> mBannedFileList ;	// list of banned hashes. This include original hashs and H(H(f)) when coming from friends.
+        bool mTrustFriendNodesForBannedFiles ;
+        bool mBannedFileListNeedsUpdate;
+        time_t mLastPrimaryBanListChangeTimeStamp;
+
+        void locked_sendBanInfo(const RsPeerId& pid);
+        void handleBannedFilesInfo(RsFileListsBannedHashesItem *item);
 };
 

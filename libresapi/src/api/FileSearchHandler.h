@@ -37,7 +37,7 @@ public:
     virtual ~FileSearchHandler();
 
     // from NotifyClient
-    virtual void notifyTurtleSearchResult(uint32_t search_id, const std::list<TurtleFileInfo>& files);
+    virtual void notifyTurtleSearchResult(const RsPeerId &pid, uint32_t search_id, const std::list<TurtleFileInfo>& files);
 private:
     void handleWildcard(Request& req, Response& resp);
 	void handleCreateSearch(Request& req, Response& resp);

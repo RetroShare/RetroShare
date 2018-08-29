@@ -30,7 +30,7 @@
 #include "gxs/rsnxs.h"
 #include "rsgxsnettunnel.h"
 
-#define DEBUG_RSGXSNETTUNNEL 1
+// #define DEBUG_RSGXSNETTUNNEL 1
 
 #define GXS_NET_TUNNEL_NOT_IMPLEMENTED() { std::cerr << __PRETTY_FUNCTION__ << ": not yet implemented." << std::endl; }
 #define GXS_NET_TUNNEL_DEBUG()             std::cerr << time(NULL) << " : GXS_NET_TUNNEL: " << __FUNCTION__ << " : "
