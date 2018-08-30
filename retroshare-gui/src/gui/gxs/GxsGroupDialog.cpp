@@ -376,6 +376,8 @@ void GxsGroupDialog::setupVisibility()
 
 	ui.pubKeyShare_cb->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_SHAREKEYS);
 	ui.addAdmins_cb->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_ADDADMINS);
+	ui.label_8->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_ADDADMINS);
+	ui.moderatorsLabel->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_ADDADMINS);
 
 	ui.personalGroupBox->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_PERSONALSIGN);
 
@@ -867,6 +869,21 @@ void GxsGroupDialog::getSelectedModerators(std::set<RsGxsId>& ids)
 void GxsGroupDialog::setSelectedModerators(const std::set<RsGxsId>& ids)
 {
 	ui.adminsList->setSelectedIds<RsGxsId,FriendSelectionWidget::IDTYPE_GXS>(ids, false);
+
+	QString moderatorsListString ;
+    RsIdentityDetails det;
+
+    for(auto it(ids.begin());it!=ids.end();++it)
+    {
+		rsIdentity->getIdDetails(*it,det);
+
+        if(!moderatorsListString.isNull())
+            moderatorsListString += ", " ;
+
+        moderatorsListString += det.mNickname.empty()?("[Unknown]"):QString::fromStdString(det.mNickname) ;
+    }
+
+	ui.moderatorsLabel->setText(moderatorsListString);
 }
 
 /***********************************************************************************
