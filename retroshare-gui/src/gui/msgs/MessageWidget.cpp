@@ -28,6 +28,7 @@
 #include <QFile>
 #include <QTextStream>
 #include <QTextCodec>
+#include <QDesktopServices>
 
 #include "gui/notifyqt.h"
 #include "gui/RetroShareLink.h"
@@ -756,18 +757,19 @@ void MessageWidget::anchorClicked(const QUrl &url)
 {
 	RetroShareLink link(url);
 
-	if (link.valid() == false) {
-		return;
+	if(link.valid())
+	{
+		if (link.type() == RetroShareLink::TYPE_CERTIFICATE && currMsgFlags & RS_MSG_USER_REQUEST) {
+			std::cerr << "(WW) Calling some disabled code in MessageWidget::anchorClicked(). Please contact the developpers." << std::endl;
+			//	link.setSubType(RSLINK_SUBTYPE_CERTIFICATE_USER_REQUEST);
+		}
+
+		QList<RetroShareLink> links;
+		links.append(link);
+		RetroShareLink::process(links);
 	}
-
-    if (link.type() == RetroShareLink::TYPE_CERTIFICATE && currMsgFlags & RS_MSG_USER_REQUEST) {
-        std::cerr << "(WW) Calling some disabled code in MessageWidget::anchorClicked(). Please contact the developpers." << std::endl;
-    //	link.setSubType(RSLINK_SUBTYPE_CERTIFICATE_USER_REQUEST);
-    }
-
-	QList<RetroShareLink> links;
-	links.append(link);
-	RetroShareLink::process(links);
+    else
+		QDesktopServices::openUrl(url) ;
 }
 
 void MessageWidget::loadImagesAlways()

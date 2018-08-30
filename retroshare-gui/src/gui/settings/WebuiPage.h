@@ -3,6 +3,10 @@
 #include <retroshare-gui/configpage.h>
 #include "ui_WebuiPage.h"
 
+#ifdef RS_JSONAPI
+#	include "jsonapi/jsonapi.h"
+#endif
+
 namespace resource_api{
     class ApiServer;
     class ApiServerMHD;
@@ -55,4 +59,7 @@ private:
   static resource_api::ApiServerLocal* apiServerLocal;
  #endif
   static resource_api::RsControlModule* controlModule;
+#ifdef RS_JSONAPI
+  static JsonApiServer* jsonApiServer;
+#endif
 };

@@ -58,18 +58,18 @@ class TorManager : public QObject
     Q_PROPERTY(Tor::TorControl* control READ control CONSTANT)
     Q_PROPERTY(bool hasError READ hasError NOTIFY errorChanged)
     Q_PROPERTY(QString errorMessage READ errorMessage NOTIFY errorChanged)
-    Q_PROPERTY(QString dataDirectory READ dataDirectory WRITE setDataDirectory)
+    Q_PROPERTY(QString torDataDirectory READ torDataDirectory WRITE setTorDataDirectory)
 
 public:
-
-    explicit TorManager(QObject *parent = 0);
+    static bool isTorAvailable() ;
     static TorManager *instance();
 
     TorProcess *process();
     TorControl *control();
 
-    QString dataDirectory() const;
-    void setDataDirectory(const QString &path);
+
+    QString torDataDirectory() const;
+    void setTorDataDirectory(const QString &path);
 
     QString hiddenServiceDirectory() const;
     void setHiddenServiceDirectory(const QString &path);
@@ -100,6 +100,7 @@ signals:
     void errorChanged();
 
 private:
+    explicit TorManager(QObject *parent = 0);
     TorManagerPrivate *d;
 };
 

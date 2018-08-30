@@ -1,29 +1,25 @@
-/*
- * libretroshare/src/services p3idservice.cc
- *
- * Id interface for RetroShare.
- *
- * Copyright (C) 2012  Robert Fernie
- * Copyright (C) 2018  Gioacchino Mazzurco <gio@eigenlab.org>
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2.1 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
+/*******************************************************************************
+ * libretroshare/src/services: p3idservice.cc                                  *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2012-2012 Robert Fernie <retroshare@lunamutt.com>                 *
+ * Copyright (C) 2018  Gioacchino Mazzurco <gio@eigenlab.org>                  *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #include <unistd.h>
 
 #include "services/p3idservice.h"
@@ -156,12 +152,14 @@ RsIdentity *rsIdentity = NULL;
 /******************* Startup / Tick    ******************************************/
 /********************************************************************************/
 
-p3IdService::p3IdService(RsGeneralDataService *gds, RsNetworkExchangeService *nes, PgpAuxUtils *pgpUtils)
-	: RsGxsIdExchange(gds, nes, new RsGxsIdSerialiser(), RS_SERVICE_GXS_TYPE_GXSID, idAuthenPolicy()), 
-	RsIdentity(this), GxsTokenQueue(this), RsTickEvent(), 
-	mKeyCache(GXSID_MAX_CACHE_SIZE, "GxsIdKeyCache"), 
-	mIdMtx("p3IdService"), mNes(nes),
-	mPgpUtils(pgpUtils)
+p3IdService::p3IdService(
+        RsGeneralDataService *gds, RsNetworkExchangeService *nes,
+        PgpAuxUtils *pgpUtils ) :
+    RsGxsIdExchange( gds, nes, new RsGxsIdSerialiser(),
+                     RS_SERVICE_GXS_TYPE_GXSID, idAuthenPolicy() ),
+    RsIdentity(static_cast<RsGxsIface&>(*this)), GxsTokenQueue(this),
+    RsTickEvent(), mKeyCache(GXSID_MAX_CACHE_SIZE, "GxsIdKeyCache"),
+    mIdMtx("p3IdService"), mNes(nes), mPgpUtils(pgpUtils)
 {
 	mBgSchedule_Mode = 0;
     mBgSchedule_Active = false;
@@ -278,7 +276,7 @@ void p3IdService::timeStampKey(const RsGxsId& gxs_id, const RsIdentityUsage& rea
         return ;
     }
 #ifdef DEBUG_IDS
-    std::cerr << "(II) time stamping key " << gxs_id << " for the following reason: " << reason << std::endl;
+    std::cerr << "(II) time stamping key " << gxs_id << " for the following reason: " << reason.mUsageCode << std::endl;
 #endif
 
     RS_STACK_MUTEX(mIdMtx) ;
@@ -1536,7 +1534,7 @@ bool p3IdService::opinion_handlerequest(uint32_t token)
         std::cerr << "p3IdService::opinion_handlerequest() ERROR getGroupMeta()";
         std::cerr << std::endl;
 
-        updatePublicRequestStatus(req.mToken, RsTokenService::GXS_REQUEST_V2_STATUS_FAILED);
+        updatePublicRequestStatus(req.mToken, RsTokenService::FAILED);
         return false;
     }
 
@@ -1546,7 +1544,7 @@ bool p3IdService::opinion_handlerequest(uint32_t token)
         std::cerr << std::endl;
 
         // error.
-        updatePublicRequestStatus(req.mToken, RsTokenService::GXS_REQUEST_V2_STATUS_FAILED);
+        updatePublicRequestStatus(req.mToken, RsTokenService::FAILED);
         return false;
     }
     RsGroupMetaData &meta = *(groups.begin());
@@ -1557,7 +1555,7 @@ bool p3IdService::opinion_handlerequest(uint32_t token)
         std::cerr << std::endl;
 
         // error.
-        updatePublicRequestStatus(req.mToken, RsTokenService::GXS_REQUEST_V2_STATUS_FAILED);
+        updatePublicRequestStatus(req.mToken, RsTokenService::FAILED);
         return false;
     }
 
@@ -1592,7 +1590,7 @@ bool p3IdService::opinion_handlerequest(uint32_t token)
     setGroupServiceString(dummyToken, meta.mGroupId, serviceString);
     cache_update_if_cached(RsGxsId(meta.mGroupId), serviceString);
 
-    updatePublicRequestStatus(req.mToken, RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE);
+    updatePublicRequestStatus(req.mToken, RsTokenService::COMPLETE);
     return true;
 }
 
@@ -2700,7 +2698,7 @@ void p3IdService::requestIdsFromNet()
         bool request_can_proceed = false ;
 
         for(cit2 = peers.begin(); cit2 != peers.end(); ++cit2)
-            if(rsPeers->isOnline(*cit2)) 		// make sure that the peer in online, so that we know that the request has some chance to succeed.
+            if(rsPeers->isOnline(*cit2) || mNes->isDistantPeer(*cit2)) // make sure that the peer in online, so that we know that the request has some chance to succeed.
             {
                 requests[*cit2].push_back(cit->first);
                 request_can_proceed = true ;

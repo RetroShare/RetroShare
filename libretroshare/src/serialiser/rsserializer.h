@@ -1,28 +1,25 @@
-/*
- * libretroshare/src/serialiser: rsserializer.h
- *
- * RetroShare Serialiser.
- *
- * Copyright (C) 2016  Cyril Soler
- * Copyright (C) 2018  Gioacchino Mazzurco <gio@eigenlab.org>
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "csoler@users.sourceforge.net".
- *
- */
+/*******************************************************************************
+ * libretroshare/src/serialiser: rsserializer.h                                *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright (C) 2016  Cyril Soler <csoler@users.sourceforge.net>              *
+ * Copyright (C) 2018  Gioacchino Mazzurco <gio@eigenlab.org>                  *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #pragma once
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -154,15 +151,13 @@
 #include <string.h>
 #include <iostream>
 #include <string>
-#include <rapid_json/document.h>
 
 #include "retroshare/rsflags.h"
 #include "serialiser/rsserial.h"
 #include "util/rsdeprecate.h"
+#include "util/rsjson.h"
 
 struct RsItem;
-
-#define SERIALIZE_ERROR() std::cerr << __PRETTY_FUNCTION__ << " : " 
 
 // This is the base class for serializers.
 
@@ -197,8 +192,6 @@ class RsRawSerialiser: public RsSerialType
 		virtual	RsItem *    deserialise(void *data, uint32_t *size);
 };
 
-typedef rapidjson::Document RsJson;
-
 /// Top class for all services and config serializers.
 struct RsGenericSerializer : RsSerialType
 {
@@ -225,11 +218,9 @@ struct RsGenericSerializer : RsSerialType
 		/** Allow shared allocator usage to avoid costly JSON deepcopy for
 		 *  nested RsSerializable */
 		SerializeContext(
-		        uint8_t *data, uint32_t size,
+		        uint8_t* data = nullptr, uint32_t size = 0,
 		        SerializationFlags flags = SERIALIZATION_FLAG_NONE,
-		        RsJson::AllocatorType* allocator = nullptr) :
-		    mData(data), mSize(size), mOffset(0), mOk(true), mFlags(flags),
-		    mJson(rapidjson::kObjectType, allocator) {}
+		        RsJson::AllocatorType* allocator = nullptr);
 
 		RS_DEPRECATED SerializeContext(
 		        uint8_t *data, uint32_t size, SerializationFormat format,
@@ -259,6 +250,12 @@ struct RsGenericSerializer : RsSerialType
 	static const SerializationFlags SERIALIZATION_FLAG_CONFIG;         // 0x0001
 	static const SerializationFlags SERIALIZATION_FLAG_SIGNATURE;      // 0x0002
 	static const SerializationFlags SERIALIZATION_FLAG_SKIP_HEADER;    // 0x0004
+
+	/** Used for JSON deserialization in JSON API, it causes the deserialization
+	 * to continue even if some field is missing (or incorrect), this way the
+	 * API is more user friendly as some methods need just part of the structs
+	 * they take as parameters. */
+	static const SerializationFlags SERIALIZATION_FLAG_YIELDING;       // 0x0008
 
 	/**
 	 * The following functions overload RsSerialType.

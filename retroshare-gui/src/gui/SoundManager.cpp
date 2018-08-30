@@ -76,7 +76,7 @@ SoundManager::SoundManager() : QObject()
 
 void SoundManager::soundEvents(SoundEvents &events)
 {
-	QDir baseDir = QDir(QString::fromUtf8(RsAccounts::DataDirectory().c_str()) + "/sounds");
+	QDir baseDir = QDir(QString::fromUtf8(RsAccounts::systemDataDirectory().c_str()) + "/sounds");
 
 	events.mDefaultPath = baseDir.absolutePath();
 

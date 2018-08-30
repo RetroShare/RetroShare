@@ -1,30 +1,26 @@
+/*******************************************************************************
+ * libretroshare/src/gxs: rsgxsrequesttypes.h                                  *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2012-2012 by Christopher Evi-Parker                               *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #ifndef RSGXSREQUESTTYPES_H_
 #define RSGXSREQUESTTYPES_H_
-
-/*
- * libretroshare/src/gxs: rgxsrequesttypes.h
- *
- * Type introspect request types for data access request implementation
- *
- * Copyright 2012-2012 by Christopher Evi-Parker
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
 
 #include "retroshare/rstokenservice.h"
 #include "gxs/rsgds.h"
@@ -32,7 +28,9 @@
 
 struct GxsRequest
 {
-	GxsRequest() : token(0), reqTime(0), ansType(0), reqType(0), status(0) {}
+	GxsRequest() :
+	    token(0), reqTime(0), ansType(0), reqType(0),
+	    status(RsTokenService::FAILED) {}
 	virtual ~GxsRequest() {}
 
 	uint32_t token;
@@ -42,7 +40,7 @@ struct GxsRequest
 	uint32_t reqType;
 	RsTokReqOptions Options;
 
-	uint32_t status;
+	RsTokenService::GxsRequestStatus status;
 };
 
 class GroupMetaReq : public GxsRequest

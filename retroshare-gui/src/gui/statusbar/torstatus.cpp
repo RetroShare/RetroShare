@@ -26,12 +26,11 @@
 #include <QPixmap>
 
 #include "retroshare/rsconfig.h"
+#include "retroshare/rsinit.h"
 #include "util/misc.h"
 
-#ifdef RETROTOR
 #include "TorControl/TorManager.h"
 #include "TorControl/TorControl.h"
-#endif
 
 #include <iomanip>
 
@@ -86,53 +85,56 @@ void TorStatus::getTorStatus()
 
 	int S = QFontMetricsF(torstatusLabel->font()).height();
 
-#ifdef RETROTOR
-	// get Tor status
-	int tor_control_status = Tor::TorManager::instance()->control()->status();
-	int torstatus = Tor::TorManager::instance()->control()->torStatus();
-
-	QString tor_control_status_str,torstatus_str ;
-	bool tor_control_ok ;
-
-	switch(tor_control_status)
+    if(RsAccounts::isTorAuto())
 	{
-	default:
-	case Tor::TorControl::Error :			tor_control_ok = false ; tor_control_status_str = "Error" ; break ;
-	case Tor::TorControl::NotConnected:		tor_control_ok = false ; tor_control_status_str = "Not connected" ; break ;
-	case Tor::TorControl::Connecting:		tor_control_ok = false ; tor_control_status_str = "Connecting" ; break ;
-	case Tor::TorControl::Authenticating:	tor_control_ok = false ; tor_control_status_str = "Authenticating" ; break ;
-	case Tor::TorControl::Connected:		tor_control_ok = true  ; tor_control_status_str = "Connected" ; break ;
-	}
+		// get Tor status
+		int tor_control_status = Tor::TorManager::instance()->control()->status();
+		int torstatus = Tor::TorManager::instance()->control()->torStatus();
 
-	switch(torstatus)
-	{
-	default:
-	case Tor::TorControl::TorUnknown: 	torstatus_str = "Unknown" ; break ;
-	case Tor::TorControl::TorOffline: 	torstatus_str = "Tor offline" ; break ;
-	case Tor::TorControl::TorReady: 	torstatus_str = "Tor ready" ; break ;
-	}
+		QString tor_control_status_str,torstatus_str ;
+		bool tor_control_ok ;
+
+		switch(tor_control_status)
+		{
+		default:
+		case Tor::TorControl::Error :			tor_control_ok = false ; tor_control_status_str = "Error" ; break ;
+		case Tor::TorControl::NotConnected:		tor_control_ok = false ; tor_control_status_str = "Not connected" ; break ;
+		case Tor::TorControl::Connecting:		tor_control_ok = false ; tor_control_status_str = "Connecting" ; break ;
+		case Tor::TorControl::Authenticating:	tor_control_ok = false ; tor_control_status_str = "Authenticating" ; break ;
+		case Tor::TorControl::Connected:		tor_control_ok = true  ; tor_control_status_str = "Connected" ; break ;
+		}
+
+		switch(torstatus)
+		{
+		default:
+		case Tor::TorControl::TorUnknown: 	torstatus_str = "Unknown" ; break ;
+		case Tor::TorControl::TorOffline: 	torstatus_str = "Tor offline" ; break ;
+		case Tor::TorControl::TorReady: 	torstatus_str = "Tor ready" ; break ;
+		}
 
 #define MIN_RS_NET_SIZE		10
 
-	if(torstatus == Tor::TorControl::TorOffline || !online || !tor_control_ok)
+		if(torstatus == Tor::TorControl::TorOffline || !online || !tor_control_ok)
+		{
+			// RED - some issue.
+			torstatusLabel->setPixmap(QPixmap(":/icons/tor-stopping.png").scaledToHeight(1.5*S,Qt::SmoothTransformation));
+			torstatusLabel->setToolTip( text + tr("Tor is currently offline"));
+		}
+		else if(torstatus == Tor::TorControl::TorReady && online && tor_control_ok)
+		{
+			torstatusLabel->setPixmap(QPixmap(":/icons/tor-on.png").scaledToHeight(1.5*S,Qt::SmoothTransformation));
+			torstatusLabel->setToolTip( text + tr("Tor is OK"));
+		}
+		else // torstatus == Tor::TorControl::TorUnknown
+		{
+			// GRAY.
+			torstatusLabel->setPixmap(QPixmap(":/icons/no-tor.png").scaledToHeight(1.5*S,Qt::SmoothTransformation));
+			torstatusLabel->setToolTip( text + tr("No tor configuration"));
+		}
+	}
+	else
 	{
-		// RED - some issue.
-		torstatusLabel->setPixmap(QPixmap(":/icons/tor-stopping.png").scaledToHeight(1.5*S,Qt::SmoothTransformation));
+		torstatusLabel->setPixmap(QPixmap(":/icons/tor-stopping.png").scaledToHeight(S,Qt::SmoothTransformation));
 		torstatusLabel->setToolTip( text + tr("Tor is currently offline"));
 	}
-	else if(torstatus == Tor::TorControl::TorReady && online && tor_control_ok)
-	{
-		torstatusLabel->setPixmap(QPixmap(":/icons/tor-on.png").scaledToHeight(1.5*S,Qt::SmoothTransformation));
-		torstatusLabel->setToolTip( text + tr("Tor is OK"));
-	}
-	else // torstatus == Tor::TorControl::TorUnknown
-	{
-		// GRAY.
-		torstatusLabel->setPixmap(QPixmap(":/icons/no-tor.png").scaledToHeight(1.5*S,Qt::SmoothTransformation));
-		torstatusLabel->setToolTip( text + tr("No tor configuration"));
-	}
-#else
-	torstatusLabel->setPixmap(QPixmap(":/icons/tor-stopping.png").scaledToHeight(S,Qt::SmoothTransformation));
-	torstatusLabel->setToolTip( text + tr("Tor is currently offline"));
-#endif
 }

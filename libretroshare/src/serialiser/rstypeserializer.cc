@@ -1,34 +1,31 @@
-/*
- * libretroshare/src/serialiser: rstypeserializer.cc
- *
- * RetroShare Serialiser.
- *
- * Copyright (C) 2017  Cyril Soler
- * Copyright (C) 2018  Gioacchino Mazzurco <gio@eigenlab.org>
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "csoler@users.sourceforge.net".
- *
- */
+/*******************************************************************************
+ * libretroshare/src/serialiser: rstypeserializer.cc                           *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright (C) 2017  Cyril Soler <csoler@users.sourceforge.net>              *
+ * Copyright (C) 2018  Gioacchino Mazzurco <gio@eigenlab.org>                  *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #include "serialiser/rsserializer.h"
 #include "serialiser/rstypeserializer.h"
 #include "serialiser/rsbaseserial.h"
 #include "serialiser/rstlvkeys.h"
 #include "serialiser/rsserializable.h"
-
+#include "util/radix64.h"
 #include "util/rsprint.h"
 
 #include <iomanip>
@@ -36,13 +33,17 @@
 #include <string>
 #include <typeinfo> // for typeid
 
-#include <rapid_json/document.h>
+#ifdef HAS_RAPIDJSON
+#include <rapidjson/prettywriter.h>
+#else
 #include <rapid_json/prettywriter.h>
+#endif // HAS_RAPIDJSON
 
 //static const uint32_t MAX_SERIALIZED_ARRAY_SIZE = 500 ;
 static const uint32_t MAX_SERIALIZED_CHUNK_SIZE = 10*1024*1024 ; // 10 MB.
 
-#define SAFE_GET_JSON_V() \
+#ifdef RSSERIAL_DEBUG
+#	define SAFE_GET_JSON_V() \
 	const char* mName = memberName.c_str(); \
 	bool ret = jDoc.HasMember(mName); \
 	if(!ret) \
@@ -50,10 +51,16 @@ static const uint32_t MAX_SERIALIZED_CHUNK_SIZE = 10*1024*1024 ; // 10 MB.
 	    std::cerr << __PRETTY_FUNCTION__ << " \"" << memberName \
 	              << "\" not found in JSON:" << std::endl \
 	              << jDoc << std::endl << std::endl; \
-	    print_stacktrace(); \
 	    return false; \
 	} \
 	rapidjson::Value& v = jDoc[mName]
+#else // ifdef RSSERIAL_DEBUG
+#	define SAFE_GET_JSON_V() \
+	const char* mName = memberName.c_str(); \
+	bool ret = jDoc.HasMember(mName); \
+	if(!ret) return false; \
+	rapidjson::Value& v = jDoc[mName]
+#endif // ifdef RSSERIAL_DEBUG
 
 
 //============================================================================//
@@ -162,23 +169,23 @@ template<> void RsTypeSerializer::print_data(const std::string& n, const bool & 
 }
 template<> void RsTypeSerializer::print_data(const std::string& n, const int32_t& V)
 {
-	std::cerr << "  [int32_t   ] " << n << ": " << V << std::endl;
+	std::cerr << "  [int32_t   ] " << n << ": " << std::to_string(V) << std::endl;
 }
 template<> void RsTypeSerializer::print_data(const std::string& n, const uint8_t & V)
 {
-    std::cerr << "  [uint8_t    ] " << n << ": " << V << std::endl;
+	std::cerr << "  [uint8_t    ] " << n << ": " << std::to_string(V) << std::endl;
 }
 template<> void RsTypeSerializer::print_data(const std::string& n, const uint16_t& V)
 {
-    std::cerr << "  [uint16_t   ] " << n << ": " << V << std::endl;
+	std::cerr << "  [uint16_t   ] " << n << ": " << std::to_string(V) << std::endl;
 }
 template<> void RsTypeSerializer::print_data(const std::string& n, const uint32_t& V)
 {
-    std::cerr << "  [uint32_t   ] " << n << ": " << V << std::endl;
+	std::cerr << "  [uint32_t   ] " << n << ": " << std::to_string(V) << std::endl;
 }
 template<> void RsTypeSerializer::print_data(const std::string& n, const uint64_t& V)
 {
-    std::cerr << "  [uint64_t   ] " << n << ": " << V << std::endl;
+	std::cerr << "  [uint64_t   ] " << n << ": " << std::to_string(V) << std::endl;
 }
 template<> void RsTypeSerializer::print_data(const std::string& n, const time_t& V)
 {
@@ -325,6 +332,49 @@ bool RsTypeSerializer::from_JSON( const std::string& memberName,
 	SAFE_GET_JSON_V();
 	ret = ret && v.IsFloat();
 	if(ret) member = v.GetFloat();
+	return ret;
+}
+
+template<> /*static*/
+uint32_t RsTypeSerializer::serial_size(const double&)
+{
+	std::cerr << "Binary [de]serialization not implemented yet for double"
+	          << std::endl;
+	print_stacktrace();
+	return 0;
+}
+
+template<>  /*static*/
+bool RsTypeSerializer::serialize(uint8_t[], uint32_t, uint32_t&, const double&)
+{
+	std::cerr << "Binary [de]serialization not implemented yet for double"
+	          << std::endl;
+	print_stacktrace();
+	return false;
+}
+
+template<>  /*static*/
+bool RsTypeSerializer::deserialize(const uint8_t[], uint32_t, uint32_t&, double&)
+{
+	std::cerr << "Binary [de]serialization not implemented yet for double"
+	          << std::endl;
+	print_stacktrace();
+	return false;
+}
+
+template<>  /*static*/
+void RsTypeSerializer::print_data(const std::string& n, const double& V)
+{ std::cerr << "  [double     ] " << n << ": " << V << std::endl; }
+
+SIMPLE_TO_JSON_DEF(double)
+
+template<> /*static*/
+bool RsTypeSerializer::from_JSON( const std::string& memberName,
+                                  double& member, RsJson& jDoc )
+{
+	SAFE_GET_JSON_V();
+	ret = ret && v.IsDouble();
+	if(ret) member = v.GetDouble();
 	return ret;
 }
 
@@ -596,9 +646,12 @@ bool RsTypeSerializer::to_JSON(
 	rapidjson::Value key;
 	key.SetString(memberName.c_str(), memberName.length(), allocator);
 
+	std::string encodedValue;
+	Radix64::encode( reinterpret_cast<uint8_t*>(member.first),
+	                 member.second, encodedValue );
+
 	rapidjson::Value value;
-	const char* tName = typeid(member).name();
-	value.SetString(tName, allocator);
+	value.SetString(encodedValue.data(), allocator);
 
 	jDoc.AddMember(key, value, allocator);
 
@@ -606,20 +659,27 @@ bool RsTypeSerializer::to_JSON(
 }
 
 template<> /*static*/
-bool RsTypeSerializer::from_JSON( const std::string& /*memberName*/,
-                                  RsTypeSerializer::TlvMemBlock_proxy&,
-                                  RsJson& /*jDoc*/)
-{ return true; }
-
-
-//============================================================================//
-//                      RsJson std:ostream support                            //
-//============================================================================//
-
-std::ostream &operator<<(std::ostream &out, const RsJson &jDoc)
+bool RsTypeSerializer::from_JSON( const std::string& memberName,
+                                  RsTypeSerializer::TlvMemBlock_proxy& member,
+                                  RsJson& jDoc)
 {
-	rapidjson::StringBuffer buffer; buffer.Clear();
-	rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(buffer);
-	jDoc.Accept(writer);
-	return out << buffer.GetString();
+	SAFE_GET_JSON_V();
+	ret = ret && v.IsString();
+	if(ret)
+	{
+		std::string encodedValue = v.GetString();
+		std::vector<uint8_t> decodedValue = Radix64::decode(encodedValue);
+		member.second = decodedValue.size();
+
+		if(member.second == 0)
+		{
+			member.first = nullptr;
+			return ret;
+		}
+
+		member.first = rs_malloc(member.second);
+		ret = ret && member.first &&
+		        memcpy(member.first, decodedValue.data(), member.second);
+	}
+	return ret;
 }

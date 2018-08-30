@@ -1,28 +1,24 @@
-/*
- * libretroshare/src/services: p3gxschannels.h
- *
- * GxsChannel interface for RetroShare.
- *
- * Copyright 2012-2012 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
+/*******************************************************************************
+ * libretroshare/src/services: p3gxschannels.h                                 *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2012-2012 Robert Fernie <retroshare@lunamutt.com>                 *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #ifndef P3_GXSCHANNELS_SERVICE_HEADER
 #define P3_GXSCHANNELS_SERVICE_HEADER
 
@@ -58,19 +54,25 @@ class p3GxsChannels: public RsGenExchange, public RsGxsChannels,
 	public GxsTokenQueue, public p3Config,
 	public RsTickEvent	/* only needed for testing - remove after */
 {
-	public:
+public:
+	p3GxsChannels( RsGeneralDataService* gds, RsNetworkExchangeService* nes,
+	               RsGixs* gixs );
+	virtual RsServiceInfo getServiceInfo();
 
-	p3GxsChannels(RsGeneralDataService* gds, RsNetworkExchangeService* nes, RsGixs* gixs);
-virtual RsServiceInfo getServiceInfo();
+	virtual void service_tick();
 
-virtual void service_tick();
-
-	protected:
+protected:
 
 
 	virtual RsSerialiser* setupSerialiser();                            // @see p3Config::setupSerialiser()
 	virtual bool saveList(bool &cleanup, std::list<RsItem *>&saveList); // @see p3Config::saveList(bool &cleanup, std::list<RsItem *>&)
 	virtual bool loadList(std::list<RsItem *>& loadList);               // @see p3Config::loadList(std::list<RsItem *>&)
+
+    virtual TurtleRequestId turtleGroupRequest(const RsGxsGroupId& group_id);
+    virtual TurtleRequestId turtleSearchRequest(const std::string& match_string);
+    virtual bool retrieveDistantSearchResults(TurtleRequestId req, std::map<RsGxsGroupId, RsGxsGroupSummary> &results) ;
+    virtual bool clearDistantSearchResults(TurtleRequestId req);
+    virtual bool retrieveDistantGroup(const RsGxsGroupId& group_id,RsGxsChannelGroup& distant_group);
 
 	// Overloaded to cache new groups.
 virtual RsGenExchange::ServiceCreate_Return service_CreateGroup(RsGxsGrpItem* grpItem, RsTlvSecurityKeySet& keySet);
@@ -80,7 +82,7 @@ virtual void notifyChanges(std::vector<RsGxsNotify*>& changes);
         // Overloaded from RsTickEvent.
 virtual void handle_event(uint32_t event_type, const std::string &elabel);
 
-	public:
+public:
 
 virtual bool getGroupData(const uint32_t &token, std::vector<RsGxsChannelGroup> &groups);
 virtual bool getPostData(const uint32_t &token, std::vector<RsGxsChannelPost> &posts, std::vector<RsGxsComment> &cmts);
@@ -94,7 +96,8 @@ virtual bool getPostData(const uint32_t &token, std::vector<RsGxsChannelPost> &p
 //virtual bool setGroupSubscribeFlags(const std::string &groupId, uint32_t subscribeFlags, uint32_t subscribeMask);
 
 //virtual bool groupRestoreKeys(const std::string &groupId);
-    virtual bool groupShareKeys(const RsGxsGroupId &groupId, std::set<RsPeerId>& peers) ;
+	virtual bool groupShareKeys(
+	        const RsGxsGroupId &groupId, const std::set<RsPeerId>& peers);
 
 virtual bool createGroup(uint32_t &token, RsGxsChannelGroup &group);
 virtual bool createPost(uint32_t &token, RsGxsChannelPost &post);
@@ -106,6 +109,18 @@ virtual bool setChannelAutoDownload(const RsGxsGroupId &groupId, bool enabled);
 virtual	bool getChannelAutoDownload(const RsGxsGroupId &groupid, bool& enabled);
 virtual bool setChannelDownloadDirectory(const RsGxsGroupId &groupId, const std::string& directory);
 virtual bool getChannelDownloadDirectory(const RsGxsGroupId &groupId, std::string& directory);
+
+	/// @see RsGxsChannels::turtleSearchRequest
+	virtual bool turtleSearchRequest(const std::string& matchString,
+	        const std::function<void (const RsGxsGroupSummary&)>& multiCallback,
+	        std::time_t maxWait = 300 );
+
+	/**
+	 * Receive results from turtle search @see RsGenExchange @see RsNxsObserver
+	 * @see p3turtle::handleSearchResult
+	 */
+	void receiveDistantSearchResults( TurtleRequestId id,
+	                                  const RsGxsGroupId& grpId );
 
 	/* Comment service - Provide RsGxsCommentService - redirect to p3GxsCommentService */
 	virtual bool getCommentData(uint32_t token, std::vector<RsGxsComment> &msgs)
@@ -149,15 +164,30 @@ virtual void setMessageProcessedStatus(uint32_t& token, const RsGxsGrpMsgIdPair&
 virtual void setMessageReadStatus(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, bool read);
 
 	// File Interface
-virtual bool ExtraFileHash(const std::string &path, std::string filename);
+	virtual bool ExtraFileHash(const std::string& path);
 virtual bool ExtraFileRemove(const RsFileHash &hash);
 
-	protected:
 
+	/// Implementation of @see RsGxsChannels::getChannelsSummaries
+	virtual bool getChannelsSummaries(std::list<RsGroupMetaData>& channels);
+
+	/// Implementation of @see RsGxsChannels::getChannelsInfo
+	virtual bool getChannelsInfo(
+	        const std::list<RsGxsGroupId>& chanIds,
+	        std::vector<RsGxsChannelGroup>& channelsInfo );
+
+	/// Implementation of @see RsGxsChannels::getChannelContent
+	virtual bool getChannelsContent(
+	        const std::list<RsGxsGroupId>& chanIds,
+	        std::vector<RsGxsChannelPost>& posts,
+	        std::vector<RsGxsComment>& comments );
+
+protected:
 	// Overloaded from GxsTokenQueue for Request callbacks.
-virtual void handleResponse(uint32_t token, uint32_t req_type);
+	virtual void handleResponse(uint32_t token, uint32_t req_type);
 
-	private:
+
+private:
 
 static uint32_t channelsAuthenPolicy();
 
@@ -218,8 +248,20 @@ bool generateGroup(uint32_t &token, std::string groupName);
 	std::vector<ChannelDummyRef> mGenRefs;
 	RsGxsMessageId mGenThreadId;
 
-	p3GxsCommentService *mCommentService;	
+	p3GxsCommentService *mCommentService;
     std::map<RsGxsGroupId,time_t> mKnownChannels;
+
+	/** Store search callbacks with timeout*/
+	std::map<
+	    TurtleRequestId,
+	    std::pair<
+	        std::function<void (const RsGxsGroupSummary&)>,
+	        std::chrono::system_clock::time_point >
+	 > mSearchCallbacksMap;
+	RsMutex mSearchCallbacksMapMutex;
+
+	/// Cleanup mSearchCallbacksMap
+	void cleanTimedOutSearches();
 };
 
 #endif 

@@ -23,7 +23,9 @@ class MessengerWindow;
 class ToasterItem;
 class ToasterNotify;
 class SignatureEventData ;
+
 struct TurtleFileInfo;
+struct TurtleGxsInfo;
 
 class NotifyQt: public QObject, public NotifyClient
 {
@@ -46,7 +48,8 @@ class NotifyQt: public QObject, public NotifyClient
 		virtual void notifyChatCleared(const ChatId &chat_id);
 		virtual void notifyCustomState(const std::string& peer_id, const std::string& status_string);
 		virtual void notifyHashingInfo(uint32_t type, const std::string& fileinfo);
-		virtual void notifyTurtleSearchResult(uint32_t search_id,const std::list<TurtleFileInfo>& found_files);
+		virtual void notifyTurtleSearchResult(const RsPeerId &pid, uint32_t search_id, const std::list<TurtleFileInfo>& found_files);
+		virtual void notifyTurtleSearchResult(uint32_t search_id,const std::list<TurtleGxsInfo>& found_groups);
 		virtual void notifyPeerHasNewAvatar(std::string peer_id) ;
 		virtual void notifyOwnAvatarChanged() ;
         virtual void notifyChatLobbyEvent(uint64_t /* lobby id */, uint32_t /* event type */, const RsGxsId & /*nickname*/, const std::string& /* any string */) ;

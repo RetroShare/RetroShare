@@ -1,30 +1,26 @@
+/*******************************************************************************
+ * libretroshare/src/retroshare: rstokenservice.h                              *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2012-2012 by Robert Fernie, Chris Evi-Parker                      *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #ifndef RSTOKENSERVICE_H
 #define RSTOKENSERVICE_H
-
-/*
- * libretroshare/src/retroshare: rstokenservice.h
- *
- * RetroShare C++ Interface.
- *
- * Copyright 2012-2012 by Robert Fernie, Christopher Evi-Parker
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
 
 #include <inttypes.h>
 #include <string>
@@ -123,19 +119,19 @@ class RsTokenService
 
 public:
 
-	// TODO CLEANUP: This should be an enum
-        static const uint8_t GXS_REQUEST_V2_STATUS_FAILED;
-        static const uint8_t GXS_REQUEST_V2_STATUS_PENDING;
-        static const uint8_t GXS_REQUEST_V2_STATUS_PARTIAL;
-        static const uint8_t GXS_REQUEST_V2_STATUS_FINISHED_INCOMPLETE;
-        static const uint8_t GXS_REQUEST_V2_STATUS_COMPLETE;
-        static const uint8_t GXS_REQUEST_V2_STATUS_DONE;			 // ONCE ALL DATA RETRIEVED.
-        static const uint8_t GXS_REQUEST_V2_STATUS_CANCELLED;
+	enum GxsRequestStatus : uint8_t
+	{
+		FAILED,
+		PENDING,
+		PARTIAL,
+		COMPLETE,
+		DONE,      /// Once all data has been retrived
+		CANCELLED
+	};
 
-public:
 
-    RsTokenService()  { return; }
-    virtual ~RsTokenService() { return; }
+	RsTokenService() {}
+	virtual ~RsTokenService() {}
 
     /* Data Requests */
 
@@ -199,7 +195,7 @@ public:
      * @param token value of token to check status for
      * @return the current status of request
      */
-    virtual uint32_t requestStatus(const uint32_t token) = 0;
+	virtual GxsRequestStatus requestStatus(const uint32_t token) = 0;
 
     /*!
      * This request statistics on amount of data held
@@ -220,19 +216,14 @@ public:
 	 */
     virtual void requestGroupStatistic(uint32_t& token, const RsGxsGroupId& grpId) = 0;
 
-
-        /* Cancel Request */
-
-    /*!
-     * If this function returns false, it may be that the request has completed
-     * already. Useful for very expensive request. This is a blocking operation
-     * @param token the token of the request to cancel
-     * @return false if unusuccessful in cancelling request, true if successful
-     */
-    virtual bool cancelRequest(const uint32_t &token) = 0;
-
-
-
+	/*!
+	 * @brief Cancel Request
+	 * If this function returns false, it may be that the request has completed
+	 * already. Useful for very expensive request.
+	 * @param token the token of the request to cancel
+	 * @return false if unusuccessful in cancelling request, true if successful
+	 */
+	virtual bool cancelRequest(const uint32_t &token) = 0;
 };
 
 #endif // RSTOKENSERVICE_H

@@ -1,3 +1,24 @@
+################################################################################
+# libretroshare.pro                                                            #
+# Copyright (C) 2018, Retroshare team <retroshare.team@gmailcom>               #
+#                                                                              #
+# This program is free software: you can redistribute it and/or modify         #
+# it under the terms of the GNU Lesser General Public License as               #
+# published by the Free Software Foundation, either version 3 of the           #
+# License, or (at your option) any later version.                              #
+#                                                                              #
+# This program is distributed in the hope that it will be useful,              #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of               #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the                #
+# GNU Lesser General Public License for more details.                          #
+#                                                                              #
+# You should have received a copy of the GNU Lesser General Public License     #
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.       #
+################################################################################
+!include("../../retroshare.pri"): error("Could not include file ../../retroshare.pri")
+
+TEMPLATE = lib
+CONFIG += staticlib
 !include("../../retroshare.pri"): error("Could not include file ../../retroshare.pri")
 
 TEMPLATE = lib
@@ -137,6 +158,7 @@ PUBLIC_HEADERS =	retroshare/rsdisc.h \
 					retroshare/rsconfig.h \
 					retroshare/rsversion.h \
 					retroshare/rsservicecontrol.h \
+					retroshare/rsgxsdistsync.h 
 
 HEADERS += plugins/pluginmanager.h \
 		plugins/dlfcn_win32.h \
@@ -351,7 +373,9 @@ HEADERS +=	ft/ftchunkmap.h \
 			ft/ftturtlefiletransferitem.h 
 
 HEADERS += crypto/chacha20.h \
-				crypto/hashstream.h
+			  crypto/rsaes.h \
+				crypto/hashstream.h \
+				crypto/rscrypto.h
 
 HEADERS += directory_updater.h \
 				directory_list.h \
@@ -366,7 +390,6 @@ HEADERS +=	pqi/authssl.h \
 			pqi/authgpg.h \
 			pgp/pgphandler.h \
 			pgp/pgpkeyutil.h \
-			pgp/rsaes.h \
 			pgp/rscertificate.h \
 			pgp/pgpauxutils.h \
 			pqi/p3cfgmgr.h \
@@ -378,7 +401,6 @@ HEADERS +=	pqi/authssl.h \
 			pqi/pqiqos.h \
 			pqi/pqi.h \
 			pqi/pqi_base.h \
-			pqi/pqiarchive.h \
 			pqi/pqiassist.h \
 			pqi/pqibin.h \
 			pqi/pqihandler.h \
@@ -470,7 +492,7 @@ HEADERS +=  services/autoproxy/p3i2pbob.h \
 			services/p3discovery2.h \
 			services/p3heartbeat.h \
 			services/p3rtt.h \
-			services/p3serviceinfo.cc \
+			services/p3serviceinfo.h  \
 
 HEADERS +=	turtle/p3turtle.h \
 			turtle/rsturtleitem.h \
@@ -480,7 +502,6 @@ HEADERS +=	turtle/p3turtle.h \
 HEADERS +=	util/folderiterator.h \
 			util/rsdebug.h \
 			util/rsmemory.h \
-			util/rscompress.h \
 			util/smallobject.h \
 			util/rsdir.h \
 			util/rsdiscspace.h \
@@ -497,7 +518,6 @@ HEADERS +=	util/folderiterator.h \
 			util/rsversioninfo.h \
 			util/rswin.h \
 			util/rsrandom.h \
-			util/pugiconfig.h \  
 			util/rsmemcache.h \
 			util/rstickevent.h \
 			util/rsrecogn.h \
@@ -519,7 +539,10 @@ SOURCES +=	ft/ftchunkmap.cc \
             ft/ftturtlefiletransferitem.cc
 
 SOURCES += crypto/chacha20.cpp \
-			  crypto/hashstream.cc
+			crypto/rsaes.cc \
+			crypto/hashstream.cc\
+			  crypto/hashstream.cc \
+			  crypto/rscrypto.cpp
 
 SOURCES += chat/distantchat.cc \
 			  chat/p3chatservice.cc \
@@ -538,7 +561,6 @@ SOURCES +=	pqi/authgpg.cc \
 			pqi/p3netmgr.cc \
 			pqi/p3notify.cc \
 			pqi/pqiqos.cc \
-			pqi/pqiarchive.cc \
 			pqi/pqibin.cc \
 			pqi/pqihandler.cc \
 			pqi/p3historymgr.cc \
@@ -633,7 +655,6 @@ SOURCES +=	turtle/p3turtle.cc \
 SOURCES +=	util/folderiterator.cc \
 			util/rsdebug.cc \
 			util/rsexpr.cc \
-			util/rscompress.cc \
 			util/smallobject.cc \
 			util/rsdir.cc \
 			util/rsmemory.cc \
@@ -646,8 +667,6 @@ SOURCES +=	util/folderiterator.cc \
 			util/rsstring.cc \
 			util/rsthreads.cc \
 			util/rsversioninfo.cc \
-			util/rswin.cc \
-			util/rsaes.cc \
 			util/rsrandom.cc \
 			util/rstickevent.cc \
 			util/rsrecogn.cc \
@@ -707,6 +726,7 @@ HEADERS += rsitems/rsnxsitems.h \
 	gxs/rsgxs.h \
 	gxs/rsdataservice.h \
 	gxs/rsgxsnetservice.h \
+	gxs/rsgxsnettunnel.h \
 	retroshare/rsgxsflags.h \
 	retroshare/rsgxsifacetypes.h \
 	gxs/rsgenexchange.h \
@@ -732,6 +752,7 @@ SOURCES += rsitems/rsnxsitems.cc \
 	gxs/rsdataservice.cc \
 	gxs/rsgenexchange.cc \
 	gxs/rsgxsnetservice.cc \
+	gxs/rsgxsnettunnel.cc \
 	gxs/rsgxsdata.cc \
 	rsitems/rsgxsitems.cc \
 	gxs/rsgxsdataaccess.cc \
@@ -755,10 +776,12 @@ SOURCES += gxstunnel/p3gxstunnel.cc \
 # new serialization code
 HEADERS += serialiser/rsserializable.h \
            serialiser/rsserializer.h \
-           serialiser/rstypeserializer.h
+           serialiser/rstypeserializer.h \
+           util/rsjson.h
 
 SOURCES += serialiser/rsserializer.cc \
-           serialiser/rstypeserializer.cc 
+           serialiser/rstypeserializer.cc \
+           util/rsjson.cc
 
 # Identity Service
 HEADERS += retroshare/rsidentity.h \
@@ -846,8 +869,63 @@ rs_gxs_trans {
     SOURCES += gxstrans/p3gxstransitems.cc gxstrans/p3gxstrans.cc
 }
 
+rs_jsonapi {
+    JSONAPI_GENERATOR_SRC=$$system_path($$clean_path($${RS_SRC_PATH}/jsonapi-generator/src/))
+    JSONAPI_GENERATOR_OUT=$$system_path($$clean_path($${RS_BUILD_PATH}/jsonapi-generator/src/))
+    JSONAPI_GENERATOR_EXE=$$system_path($$clean_path($${JSONAPI_GENERATOR_OUT}/jsonapi-generator))
+    DOXIGEN_INPUT_DIRECTORY=$$system_path($$clean_path($${PWD}))
+    DOXIGEN_CONFIG_SRC=$$system_path($$clean_path($${RS_SRC_PATH}/jsonapi-generator/src/jsonapi-generator-doxygen.conf))
+    DOXIGEN_CONFIG_OUT=$$system_path($$clean_path($${JSONAPI_GENERATOR_OUT}/jsonapi-generator-doxygen.conf))
+    WRAPPERS_INCL_FILE=$$system_path($$clean_path($${JSONAPI_GENERATOR_OUT}/jsonapi-includes.inl))
+    WRAPPERS_REG_FILE=$$system_path($$clean_path($${JSONAPI_GENERATOR_OUT}/jsonapi-wrappers.inl))
 
+    restbed.target = $$system_path($$clean_path($${RESTBED_BUILD_PATH}/library/librestbed.a))
+    restbed.commands = \
+        cd $${RS_SRC_PATH};\
+        git submodule update --init --recommend-shallow supportlibs/restbed;\
+        cd $${RESTBED_SRC_PATH};\
+        git submodule update --init --recommend-shallow dependency/asio;\
+        git submodule update --init --recommend-shallow dependency/catch;\
+        git submodule update --init --recommend-shallow dependency/kashmir;\
+        mkdir -p $${RESTBED_BUILD_PATH}; cd $${RESTBED_BUILD_PATH};\
+        cmake -DBUILD_SSL=OFF -DCMAKE_INSTALL_PREFIX=. -B. -H$${RESTBED_SRC_PATH};\
+        make; make install
+    QMAKE_EXTRA_TARGETS += restbed
+    libretroshare.depends += restbed
+    PRE_TARGETDEPS *= $${restbed.target}
 
+    PRE_TARGETDEPS *= $${JSONAPI_GENERATOR_EXE}
+    INCLUDEPATH *= $${JSONAPI_GENERATOR_OUT}
+    GENERATED_HEADERS += $${WRAPPERS_INCL_FILE}
+
+    jsonwrappersincl.target = $${WRAPPERS_INCL_FILE}
+    jsonwrappersincl.commands = \
+        cp $${DOXIGEN_CONFIG_SRC} $${DOXIGEN_CONFIG_OUT}; \
+        echo OUTPUT_DIRECTORY=$${JSONAPI_GENERATOR_OUT} >> $${DOXIGEN_CONFIG_OUT};\
+        echo INPUT=$${DOXIGEN_INPUT_DIRECTORY} >> $${DOXIGEN_CONFIG_OUT}; \
+        doxygen $${DOXIGEN_CONFIG_OUT}; \
+        $${JSONAPI_GENERATOR_EXE} $${JSONAPI_GENERATOR_SRC} $${JSONAPI_GENERATOR_OUT};
+    QMAKE_EXTRA_TARGETS += jsonwrappersincl
+    libretroshare.depends += jsonwrappersincl
+    PRE_TARGETDEPS *= $${WRAPPERS_INCL_FILE}
+
+    jsonwrappersreg.target = $${WRAPPERS_REG_FILE}
+    jsonwrappersreg.commands = touch $${WRAPPERS_REG_FILE}
+    jsonwrappersreg.depends = jsonwrappersincl
+    QMAKE_EXTRA_TARGETS += jsonwrappersreg
+    libretroshare.depends += jsonwrappersreg
+    PRE_TARGETDEPS *= $${WRAPPERS_REG_FILE}
+
+    # Force recalculation of libretroshare dependencies see https://stackoverflow.com/a/47884045
+    QMAKE_EXTRA_TARGETS += libretroshare
+
+    HEADERS += jsonapi/jsonapi.h
+    SOURCES += jsonapi/jsonapi.cpp
+}
+
+rs_deep_search {
+    HEADERS += deep_search/deep_search.h
+}
 
 ###########################################################################################################
 # OLD CONFIG OPTIONS.

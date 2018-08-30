@@ -62,8 +62,8 @@ set RsDate=
 for /f "tokens=2 delims==" %%I in ('wmic os get localdatetime /format:list') do set RsDate=%%I
 set RsDate=%RsDate:~0,4%%RsDate:~4,2%%RsDate:~6,2%
 
-if "%RsRetroTor%"=="1" (
-	:: Check Retrotor
+if "%ParamTor%"=="1" (
+	:: Check for tor executable
 	if not exist "%EnvDownloadPath%\tor\Tor\tor.exe" (
 		echo Tor binary not found. Please download Tor Expert Bundle from
 		echo https://www.torproject.org/download/download.html.en
@@ -121,7 +121,7 @@ for /D %%D in ("%RsBuildPath%\plugins\*") do (
 )
 
 echo copy external binaries
-copy "%RootPath%\libs\bin\*.dll" "%RsDeployPath%" %Quite%
+copy "%BuildLibsPath%\libs\bin\*.dll" "%RsDeployPath%" %Quite%
 
 echo copy dependencies
 call :copy_dependencies "%RsDeployPath%\retroshare.exe" "%RsDeployPath%"
@@ -180,7 +180,7 @@ if exist "%SourcePath%\libresapi\src\webui" (
 	xcopy /S "%SourcePath%\libresapi\src\webui" "%RsDeployPath%\webui" %Quite%
 )
 
-if "%RsRetroTor%"=="1" (
+if "%ParamTor%"=="1" (
 	echo copy tor
 	echo n | copy /-y "%EnvDownloadPath%\tor\Tor\*.*" "%RsDeployPath%" %Quite%
 )
@@ -217,13 +217,19 @@ if exist "%~1\%RsBuildConfig%\%~n1.dll" (
 goto :EOF
 
 :copy_dependencies
+set CopyDependenciesCopiedSomething=0
 for /F "usebackq" %%A in (`%ToolsPath%\depends.bat list %1`) do (
-	if exist "%QtPath%\%%A" (
-		copy "%QtPath%\%%A" %2 %Quite%
-	) else (
-		if exist "%MinGWPath%\%%A" (
-			copy "%MinGWPath%\%%A" %2 %Quite%
+	if not exist "%~2\%%A" (
+		if exist "%QtPath%\%%A" (
+			set CopyDependenciesCopiedSomething=1
+			copy "%QtPath%\%%A" %2 %Quite%
+		) else (
+			if exist "%MinGWPath%\%%A" (
+				set CopyDependenciesCopiedSomething=1
+				copy "%MinGWPath%\%%A" %2 %Quite%
+			)
 		)
 	)
 )
+if "%CopyDependenciesCopiedSomething%"=="1" goto copy_dependencies
 goto :EOF

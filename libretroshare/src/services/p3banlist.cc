@@ -1,28 +1,24 @@
-/*
- * libretroshare/src/services p3banlist.cc
- *
- * Ban List Service  for RetroShare.
- *
- * Copyright 2011-2011 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
+/*******************************************************************************
+ * libretroshare/src/services: p3banlist.cc                                    *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2011 by Robert Fernie <retroshare@lunamutt.com>                   *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #include "pqi/p3servicecontrol.h"
 #include "pqi/p3netmgr.h"
 #include "pqi/p3cfgmgr.h"
@@ -55,7 +51,7 @@
 #define RSBANLIST_DELAY_BETWEEN_TALK_TO_DHT 		240	// every 4 mins.
 
 /************ IMPLEMENTATION NOTES *********************************
- * 
+ *
  * Get Bad Peers passed to us (from DHT mainly).
  * we distribute and track the network list of bad peers.
  *
@@ -113,12 +109,16 @@ void p3BanList::setAutoRangeLimit(int n)
     IndicateConfigChanged();
 }
 
+namespace services {
+
 class ZeroedInt
 {
     public:
         ZeroedInt() { n = 0 ; }
     uint32_t n ;
 };
+
+}
 
 BanListPeer::BanListPeer()
 {
@@ -220,14 +220,14 @@ void p3BanList::autoFigureOutBanRanges()
     std::cerr << "Automatically figuring out IP ranges from banned IPs." << std::endl;
 #endif
 
-    std::map<sockaddr_storage,ZeroedInt> range_map ;
+    std::map<sockaddr_storage, services::ZeroedInt> range_map ;
 
     for(std::map<sockaddr_storage,BanListPeer>::iterator it(mBanSet.begin());it!=mBanSet.end();++it)
         ++range_map[makeBitsRange(it->first,1)].n ;
 
     time_t now = time(NULL) ;
 
-    for(std::map<sockaddr_storage,ZeroedInt>::const_iterator it=range_map.begin();it!=range_map.end();++it)
+    for(std::map<sockaddr_storage, services::ZeroedInt>::const_iterator it=range_map.begin();it!=range_map.end();++it)
     {
 #ifdef DEBUG_BANLIST
         std::cerr << "Ban range: " << sockaddr_storage_iptostring(it->first) << " : " << it->second.n << std::endl;
@@ -646,7 +646,7 @@ bool p3BanList::processIncoming()
 				break;
 			case RS_PKT_SUBTYPE_BANLIST_ITEM:
 			{
-				// Order is important!.	
+				// Order is important!.
 				updated = (recvBanItem((RsBanListItem *) item) || updated);
 			}
 				break;
@@ -669,8 +669,8 @@ bool p3BanList::processIncoming()
 	}
 
 	return true ;
-} 
-	
+}
+
 
 bool p3BanList::recvBanItem(RsBanListItem *item)
 {
@@ -681,7 +681,7 @@ bool p3BanList::recvBanItem(RsBanListItem *item)
 
 	for(it = item->peerList.mList.begin(); it != item->peerList.mList.end(); ++it)
 	{
-		// Order is important!.	
+		// Order is important!.
         updated = (addBanEntry(item->PeerId(), it->addr.addr, it->level,  it->reason, now - it->age) || updated);
 	}
 	return updated;
@@ -961,7 +961,7 @@ bool p3BanList::addBanEntry( const RsPeerId &peerId,
 		it = mBanSources.find(peerId);
 		updated = true;
 	}
-	
+
 	// index is FAMILY + IP - the rest should be Zeros..
 	struct sockaddr_storage bannedaddr;
 	sockaddr_storage_clear(bannedaddr);
@@ -980,7 +980,7 @@ bool p3BanList::addBanEntry( const RsPeerId &peerId,
         blp.level = level;
         blp.mTs = time_stamp ;
         blp.masked_bytes = 0 ;
-		
+
 		it->second.mBanPeers[bannedaddr] = blp;
 		it->second.mLastUpdate = now;
 		updated = true;
@@ -1036,7 +1036,7 @@ int p3BanList::condenseBanSources_locked()
 
     time_t now = time(NULL);
 	RsPeerId ownId = mServiceCtrl->getOwnId();
-	
+
 #ifdef DEBUG_BANLIST
 	std::cerr << "p3BanList::condenseBanSources_locked()";
 	std::cerr << std::endl;
@@ -1062,7 +1062,7 @@ int p3BanList::condenseBanSources_locked()
 		std::cerr << " Condensing Info from peer: " << it->first;
 		std::cerr << std::endl;
 #endif
-		
+
 		std::map<struct sockaddr_storage, BanListPeer>::const_iterator lit;
         for(lit = it->second.mBanPeers.begin(); lit != it->second.mBanPeers.end(); ++lit)
     {
@@ -1135,7 +1135,7 @@ int p3BanList::condenseBanSources_locked()
     }
 	}
 
-	
+
 #ifdef DEBUG_BANLIST
 	std::cerr << "p3BanList::condenseBanSources_locked() Printing New Set:";
 	std::cerr << std::endl;
@@ -1280,7 +1280,7 @@ int p3BanList::printBanSet_locked(std::ostream &out)
 int p3BanList::printBanSources_locked(std::ostream &out)
 {
 	time_t now = time(NULL);
-	
+
 	std::map<RsPeerId, BanList>::const_iterator it;
 	for(it = mBanSources.begin(); it != mBanSources.end(); ++it)
 	{

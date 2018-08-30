@@ -58,6 +58,7 @@ public:
 
 	// Callback for all Loads.
 	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req);
+    virtual void blank();
 
 protected:
 	bool eventFilter(QObject *obj, QEvent *ev);

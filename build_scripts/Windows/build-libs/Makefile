@@ -13,12 +13,13 @@ SQLCIPHER_VERSION=2.2.1
 LIBMICROHTTPD_VERSION=0.9.59
 FFMPEG_VERSION=3.4
 RAPIDJSON_VERSION=1.1.0
+XAPIAN_VERSION=1.4.7
 
 DOWNLOAD_PATH?=download
 BUILD_PATH=build
 LIBS_PATH?=libs
 
-all: dirs zlib bzip2 miniupnpc openssl speex speexdsp opencv libxml2 libxslt curl sqlcipher libmicrohttpd ffmpeg rapidjson copylibs
+all: dirs zlib bzip2 miniupnpc openssl speex speexdsp opencv libxml2 libxslt curl sqlcipher libmicrohttpd ffmpeg rapidjson xapian copylibs
 
 download: \
 	$(DOWNLOAD_PATH)/zlib-$(ZLIB_VERSION).tar.gz \
@@ -35,7 +36,8 @@ download: \
 	$(DOWNLOAD_PATH)/sqlcipher-$(SQLCIPHER_VERSION).tar.gz \
 	$(DOWNLOAD_PATH)/libmicrohttpd-$(LIBMICROHTTPD_VERSION).tar.gz \
 	$(DOWNLOAD_PATH)/ffmpeg-$(FFMPEG_VERSION).tar.gz \
-	$(DOWNLOAD_PATH)/rapidjson-$(RAPIDJSON_VERSION).tar.gz
+	$(DOWNLOAD_PATH)/rapidjson-$(RAPIDJSON_VERSION).tar.gz \
+	$(DOWNLOAD_PATH)/xapian-core-$(XAPIAN_VERSION).tar.xz
 
 clean:
 	rm -r -f $(BUILD_PATH)
@@ -359,6 +361,30 @@ $(BUILD_PATH)/rapidjson-$(RAPIDJSON_VERSION): $(DOWNLOAD_PATH)/rapidjson-$(RAPID
 	# cleanup
 	rm -r -f rapidjson-$(RAPIDJSON_VERSION)
 	mv $(BUILD_PATH)/rapidjson-$(RAPIDJSON_VERSION).tmp $(BUILD_PATH)/rapidjson-$(RAPIDJSON_VERSION)
+
+xapian: $(BUILD_PATH)/xapian-core-$(XAPIAN_VERSION)
+
+$(DOWNLOAD_PATH)/xapian-core-$(XAPIAN_VERSION).tar.xz:
+	wget --no-check-certificate https://oligarchy.co.uk/xapian/$(XAPIAN_VERSION)/xapian-core-$(XAPIAN_VERSION).tar.xz -O $(DOWNLOAD_PATH)/xapian-core-$(XAPIAN_VERSION).tar.xz
+
+$(BUILD_PATH)/xapian-core-$(XAPIAN_VERSION): $(DOWNLOAD_PATH)/xapian-core-$(XAPIAN_VERSION).tar.xz
+	# prepare
+	rm -r -f $(BUILD_PATH)/xapian-core-*
+	tar xvf $(DOWNLOAD_PATH)/xapian-core-$(XAPIAN_VERSION).tar.xz
+	# build
+	#cd xapian-core-$(XAPIAN_VERSION) && ./configure --disable-shared --enable-static --prefix="`pwd`/../$(BUILD_PATH)/xapian-core-$(XAPIAN_VERSION).tmp"
+	#cd xapian-core-$(XAPIAN_VERSION) && make install
+	cd xapian-core-$(XAPIAN_VERSION) && ./configure --disable-shared --enable-static
+	cd xapian-core-$(XAPIAN_VERSION) && make
+	# copy files
+	mkdir -p $(BUILD_PATH)/xapian-core-$(XAPIAN_VERSION).tmp/include
+	cp -r xapian-core-$(XAPIAN_VERSION)/include/* $(BUILD_PATH)/xapian-core-$(XAPIAN_VERSION).tmp/include/
+	rm $(BUILD_PATH)/xapian-core-$(XAPIAN_VERSION).tmp/include/Makefile*
+	mkdir -p $(BUILD_PATH)/xapian-core-$(XAPIAN_VERSION).tmp/lib
+	cp -r xapian-core-$(XAPIAN_VERSION)/.libs/libxapian.a $(BUILD_PATH)/xapian-core-$(XAPIAN_VERSION).tmp/lib/
+	# cleanup
+	rm -r -f xapian-core-$(XAPIAN_VERSION)
+	mv $(BUILD_PATH)/xapian-core-$(XAPIAN_VERSION).tmp $(BUILD_PATH)/xapian-core-$(XAPIAN_VERSION)
 
 copylibs:
 	rm -r -f $(LIBS_PATH) ; \

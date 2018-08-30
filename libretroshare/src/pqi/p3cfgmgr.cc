@@ -1,35 +1,30 @@
-/*
- * libretroshare/src/pqi: p3cfgmgr.cc
- *
- * 3P/PQI network interface for RetroShare.
- *
- * Copyright 2007-2008 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
+/*******************************************************************************
+ * libretroshare/src/pqi: p3cfgmgr.cc                                          *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2007-2008 by Robert Fernie, Retroshare Team.                      *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #include "util/rsdir.h"
 //#include "retroshare/rspeers.h"
 #include "pqi/p3cfgmgr.h"
 #include "pqi/authssl.h"
 #include "pqi/pqibin.h"
 #include "pqi/pqistore.h"
-#include "pqi/pqiarchive.h"
 #include <errno.h>
 #include <rsserver/p3face.h>
 #include <util/rsdiscspace.h>
@@ -65,7 +60,7 @@ void	p3ConfigMgr::tick()
 
 #ifdef CONFIG_DEBUG
 			std::cerr << "p3ConfigMgr::tick() Config Changed - Element: ";
-			std::cerr << it->first;
+			std::cerr << *it;
 			std::cerr << std::endl;
 #endif
 
@@ -111,7 +106,7 @@ void p3ConfigMgr::saveConfig()
 		{
 #ifdef CONFIG_DEBUG
 			std::cerr << "p3ConfigMgr::globalSaveConfig() Saving Element: ";
-			std::cerr << it->first;
+			std::cerr << *it;
 			std::cerr << std::endl;
 #endif
 			ok &= (*it)->saveConfiguration();
@@ -137,7 +132,7 @@ void p3ConfigMgr::loadConfig()
 	{
 #ifdef CONFIG_DEBUG
 		std::cerr << "p3ConfigMgr::loadConfig() Element: ";
-		std::cerr << cit->first <<"Dummy Hash: " << dummyHash;
+		std::cerr << *cit <<" Dummy Hash: " << dummyHash;
 		std::cerr << std::endl;
 #endif
 

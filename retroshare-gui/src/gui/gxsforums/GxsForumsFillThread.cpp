@@ -114,17 +114,17 @@ void GxsForumsFillThread::run()
 		service->requestMsgInfo(msg_token, RS_TOKREQ_ANSTYPE_DATA, opts, grpIds);
 
 		/* wait for the answer */
-		uint32_t requestStatus = RsTokenService::GXS_REQUEST_V2_STATUS_PENDING;
+		uint32_t requestStatus = RsTokenService::PENDING;
 		while (!wasStopped()) {
 			requestStatus = service->requestStatus(msg_token);
-			if (requestStatus == RsTokenService::GXS_REQUEST_V2_STATUS_FAILED ||
-			        requestStatus == RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE) {
+			if (requestStatus == RsTokenService::FAILED ||
+			        requestStatus == RsTokenService::COMPLETE) {
 				break;
 			}
 			msleep(200);
 		}
 
-		if (requestStatus == RsTokenService::GXS_REQUEST_V2_STATUS_FAILED)
+		if (requestStatus == RsTokenService::FAILED)
 			return;
 	}
 
@@ -143,17 +143,17 @@ void GxsForumsFillThread::run()
 		service->requestGroupInfo(grp_token, RS_TOKREQ_ANSTYPE_DATA, opts, grpIds);
 
 		/* wait for the answer */
-		uint32_t requestStatus = RsTokenService::GXS_REQUEST_V2_STATUS_PENDING;
+		uint32_t requestStatus = RsTokenService::PENDING;
 		while (!wasStopped()) {
 			requestStatus = service->requestStatus(grp_token);
-			if (requestStatus == RsTokenService::GXS_REQUEST_V2_STATUS_FAILED ||
-			        requestStatus == RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE) {
+			if (requestStatus == RsTokenService::FAILED ||
+			        requestStatus == RsTokenService::COMPLETE) {
 				break;
 			}
 			msleep(200);
 		}
 
-		if (requestStatus == RsTokenService::GXS_REQUEST_V2_STATUS_FAILED)
+		if (requestStatus == RsTokenService::FAILED)
 			return;
 	}
 
@@ -221,11 +221,11 @@ void GxsForumsFillThread::run()
     // and tries to establish parenthood relationships between them, given that we only know the
     // immediate parent of a message and now its children. Some messages have a missing parent and for them
     // a fake top level parent is generated.
-    
+
     // In order to be efficient, we first create a structure that lists the children of every mesage ID in the list.
     // Then the hierarchy of message is build by attaching the kids to every message until all of them have been processed.
     // The messages with missing parents will be the last ones remaining in the list.
-    
+
 	std::list<std::pair< RsGxsMessageId, QTreeWidgetItem* > > threadStack;
     std::map<RsGxsMessageId,std::list<RsGxsMessageId> > kids_array ;
     std::set<RsGxsMessageId> missing_parents;
@@ -333,7 +333,7 @@ void GxsForumsFillThread::run()
 
     // The next step is to find the top level thread messages. These are defined as the messages without
     // any parent message ID.
-    
+
     // this trick is needed because while we remove messages, the parents a given msg may already have been removed
     // and wrongly understand as a missing parent.
 
@@ -434,7 +434,7 @@ void GxsForumsFillThread::run()
         {
             // We iterate through the top level thread items, and look for which message has the current item as parent.
             // When found, the item is put in the thread list itself, as a potential new parent.
-            
+
             std::map<RsGxsMessageId,RsGxsForumMsg>::iterator mit = msgs.find(*it2) ;
 
             if(mit == msgs.end())

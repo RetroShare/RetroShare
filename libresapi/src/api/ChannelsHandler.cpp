@@ -1,20 +1,24 @@
-/*
- * RetroShare JSON API
- * Copyright (C) 2018  Gioacchino Mazzurco <gio@eigenlab.org>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+/*******************************************************************************
+ * libresapi/api/ChannelsHandler.cpp                                           *
+ *                                                                             *
+ * LibResAPI: API for local socket server                                      *
+ *                                                                             *
+ * Copyright 2018 by Gioacchino Mazzurco <gio@eigenlab.org>                    *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include "ChannelsHandler.h"
 
@@ -71,12 +75,12 @@ void ChannelsHandler::handleListChannels(Request& /*req*/, Response& resp)
 	tChannels.requestGroupInfo(token, RS_DEPRECATED_TOKREQ_ANSTYPE, opts);
 
 	time_t start = time(NULL);
-	while((tChannels.requestStatus(token) != RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
-	      &&(tChannels.requestStatus(token) != RsTokenService::GXS_REQUEST_V2_STATUS_FAILED)
+	while((tChannels.requestStatus(token) != RsTokenService::COMPLETE)
+	      &&(tChannels.requestStatus(token) != RsTokenService::FAILED)
 	      &&((time(NULL) < (start+10)))) rstime::rs_usleep(500*1000);
 
 	std::list<RsGroupMetaData> grps;
-	if( tChannels.requestStatus(token) == RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE
+	if( tChannels.requestStatus(token) == RsTokenService::COMPLETE
 	        && mChannels.getGroupSummary(token, grps) )
 	{
 		for( RsGroupMetaData& grp : grps )
@@ -136,12 +140,12 @@ void ChannelsHandler::handleGetChannelInfo(Request& req, Response& resp)
 	                            opts, groupIds );
 
 	time_t start = time(NULL);
-	while((tChannels.requestStatus(token) != RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
-	      &&(tChannels.requestStatus(token) != RsTokenService::GXS_REQUEST_V2_STATUS_FAILED)
+	while((tChannels.requestStatus(token) != RsTokenService::COMPLETE)
+	      &&(tChannels.requestStatus(token) != RsTokenService::FAILED)
 	      &&((time(NULL) < (start+10)))) rstime::rs_usleep(500*1000);
 
 	std::vector<RsGxsChannelGroup> grps;
-	if( tChannels.requestStatus(token) == RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE
+	if( tChannels.requestStatus(token) == RsTokenService::COMPLETE
 	        && mChannels.getGroupData(token, grps) )
 	{
 		for( RsGxsChannelGroup& grp : grps )
@@ -210,14 +214,14 @@ void ChannelsHandler::handleGetChannelContent(Request& req, Response& resp)
 	}
 
 	time_t start = time(NULL);
-	while((mChannels.getTokenService()->requestStatus(token) != RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
-	      &&(mChannels.getTokenService()->requestStatus(token) != RsTokenService::GXS_REQUEST_V2_STATUS_FAILED)
+	while((mChannels.getTokenService()->requestStatus(token) != RsTokenService::COMPLETE)
+	      &&(mChannels.getTokenService()->requestStatus(token) != RsTokenService::FAILED)
 	      &&((time(NULL) < (start+10)))) rstime::rs_usleep(500*1000);
 
 	std::vector<RsGxsChannelPost> posts;
 	std::vector<RsGxsComment> comments;
 	if( mChannels.getTokenService()->requestStatus(token) ==
-	        RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE &&
+	        RsTokenService::COMPLETE &&
 	        mChannels.getPostData(token, posts, comments) )
 	{
 		for( std::vector<RsGxsChannelPost>::iterator vit = posts.begin();
@@ -286,11 +290,11 @@ void ChannelsHandler::handleToggleSubscription(Request& req, Response& resp)
 		RsTokenService& tChannels = *mChannels.getTokenService();
 
 		time_t start = time(NULL);
-		while((tChannels.requestStatus(token) != RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
-		      &&(tChannels.requestStatus(token) != RsTokenService::GXS_REQUEST_V2_STATUS_FAILED)
+		while((tChannels.requestStatus(token) != RsTokenService::COMPLETE)
+		      &&(tChannels.requestStatus(token) != RsTokenService::FAILED)
 		      &&((time(NULL) < (start+10)))) rstime::rs_usleep(500*1000);
 
-		if(tChannels.requestStatus(token) == RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
+		if(tChannels.requestStatus(token) == RsTokenService::COMPLETE)
 			resp.setOk();
 		else resp.setFail("Unknown GXS error!");
 	}
@@ -353,11 +357,11 @@ void ChannelsHandler::handleCreateChannel(Request& req, Response& resp)
 		RsTokenService& tChannels = *mChannels.getTokenService();
 
 		time_t start = time(NULL);
-		while((tChannels.requestStatus(token) != RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
-		      &&(tChannels.requestStatus(token) != RsTokenService::GXS_REQUEST_V2_STATUS_FAILED)
+		while((tChannels.requestStatus(token) != RsTokenService::COMPLETE)
+		      &&(tChannels.requestStatus(token) != RsTokenService::FAILED)
 		      &&((time(NULL) < (start+10)))) rstime::rs_usleep(500*1000);
 
-		if(tChannels.requestStatus(token) == RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
+		if(tChannels.requestStatus(token) == RsTokenService::COMPLETE)
 			resp.setOk();
 		else resp.setFail("Unknown GXS error!");
 	}
@@ -436,11 +440,11 @@ void ChannelsHandler::handleTogglePostRead(Request& req, Response& resp)
 	RsTokenService& tChannels = *mChannels.getTokenService();
 
 	time_t start = time(NULL);
-	while((tChannels.requestStatus(token) != RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
-	      &&(tChannels.requestStatus(token) != RsTokenService::GXS_REQUEST_V2_STATUS_FAILED)
+	while((tChannels.requestStatus(token) != RsTokenService::COMPLETE)
+	      &&(tChannels.requestStatus(token) != RsTokenService::FAILED)
 	      &&((time(NULL) < (start+10)))) rstime::rs_usleep(500*1000);
 
-	if(tChannels.requestStatus(token) == RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
+	if(tChannels.requestStatus(token) == RsTokenService::COMPLETE)
 		resp.setOk();
 	else resp.setFail("Unknown GXS error!");
 }
@@ -522,11 +526,11 @@ void ChannelsHandler::handleCreatePost(Request &req, Response &resp)
 		RsTokenService& tChannels = *mChannels.getTokenService();
 
 		time_t start = time(NULL);
-		while((tChannels.requestStatus(token) != RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
-		      &&(tChannels.requestStatus(token) != RsTokenService::GXS_REQUEST_V2_STATUS_FAILED)
+		while((tChannels.requestStatus(token) != RsTokenService::COMPLETE)
+		      &&(tChannels.requestStatus(token) != RsTokenService::FAILED)
 		      &&((time(NULL) < (start+10)))) rstime::rs_usleep(500*1000);
 
-		if(tChannels.requestStatus(token) == RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
+		if(tChannels.requestStatus(token) == RsTokenService::COMPLETE)
 			resp.setOk();
 		else resp.setFail("Unknown GXS error!");
 	}

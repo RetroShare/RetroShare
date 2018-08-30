@@ -1,30 +1,25 @@
-/*
- * rsgxsifacetypes.h
- *
- * Copyright (C) 2013  crispy
- * Copyright (C) 2018  Gioacchino Mazzurco <gio@eigenlab.org>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-/*
- * rsgxsifacetypes.h
- *
- *  Created on: 28 Feb 2013
- *      Author: crispy
- */
-
+/*******************************************************************************
+ * libretroshare/src/retroshare: rsgxsifacetypes.h                             *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright (C) 2013  crispy                                                  *
+ * Copyright (C) 2018  Gioacchino Mazzurco <gio@eigenlab.org>                  *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #ifndef RSGXSIFACETYPES_H_
 #define RSGXSIFACETYPES_H_
 
@@ -69,18 +64,18 @@ struct RsGroupMetaData : RsSerializable
 
     RsGxsGroupId mGroupId;
     std::string mGroupName;
-	uint32_t    mGroupFlags;  // Combination of FLAG_PRIVACY_PRIVATE | FLAG_PRIVACY_RESTRICTED | FLAG_PRIVACY_PUBLIC
-    uint32_t    mSignFlags;   // Combination of RSGXS_GROUP_SIGN_PUBLISH_MASK & RSGXS_GROUP_SIGN_AUTHOR_MASK.
+	uint32_t    mGroupFlags;  // Combination of FLAG_PRIVACY_PRIVATE | FLAG_PRIVACY_RESTRICTED | FLAG_PRIVACY_PUBLIC: diffusion
+    uint32_t    mSignFlags;   // Combination of RSGXS_GROUP_SIGN_PUBLISH_MASK & RSGXS_GROUP_SIGN_AUTHOR_MASK, i.e. what signatures are required for parent and child msgs
 
     time_t      mPublishTs; // Mandatory.
-    RsGxsId    mAuthorId;   // Optional.
+    RsGxsId    mAuthorId;   // Author of the group. Left to "000....0" if anonymous
 
     // for circles
-    RsGxsCircleId mCircleId;
-    uint32_t mCircleType;
+    RsGxsCircleId mCircleId;	// Id of the circle to which the group is restricted
+    uint32_t mCircleType;		// combination of CIRCLE_TYPE_{ PUBLIC,EXTERNAL,YOUR_FRIENDS_ONLY,LOCAL,EXT_SELF,YOUR_EYES_ONLY }
 
     // other stuff.
-    uint32_t mAuthenFlags;
+    uint32_t mAuthenFlags;		// Actually not used yet.
     RsGxsGroupId mParentGrpId;
 
     // BELOW HERE IS LOCAL DATA, THAT IS NOT FROM MSG.
@@ -124,7 +119,7 @@ struct RsGroupMetaData : RsSerializable
 
 
 
-struct RsMsgMetaData
+struct RsMsgMetaData : RsSerializable
 {
 	RsMsgMetaData() : mPublishTs(0), mMsgFlags(0), mMsgStatus(0), mChildTs(0) {}
 
@@ -154,6 +149,24 @@ struct RsMsgMetaData
 
     time_t      mChildTs;
     std::string mServiceString; // Service Specific Free-Form extra storage.
+
+	/// @see RsSerializable
+	virtual void serial_process( RsGenericSerializer::SerializeJob j,
+	                             RsGenericSerializer::SerializeContext& ctx )
+	{
+		RS_SERIAL_PROCESS(mGroupId);
+		RS_SERIAL_PROCESS(mMsgId);
+		RS_SERIAL_PROCESS(mThreadId);
+		RS_SERIAL_PROCESS(mParentId);
+		RS_SERIAL_PROCESS(mOrigMsgId);
+		RS_SERIAL_PROCESS(mAuthorId);
+		RS_SERIAL_PROCESS(mMsgName);
+		RS_SERIAL_PROCESS(mPublishTs);
+		RS_SERIAL_PROCESS(mMsgFlags);
+		RS_SERIAL_PROCESS(mMsgStatus);
+		RS_SERIAL_PROCESS(mChildTs);
+		RS_SERIAL_PROCESS(mServiceString);
+	}
 
     const std::ostream &print(std::ostream &out, std::string indent = "", std::string varName = "") const {
         out

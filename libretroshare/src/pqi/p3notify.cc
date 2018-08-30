@@ -1,29 +1,24 @@
-/*
- * libretroshare/src/rsserver: p3notify.cc
- *
- * RetroShare C++ Interface.
- *
- * Copyright 2007-2008 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
-
+/*******************************************************************************
+ * libretroshare/src/pqi: p3notify.cc                                          *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright (C) 2007-2008  Robert Fernie                                      *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #include "pqi/p3notify.h"
 #include <stdint.h>
 #include <algorithm>
@@ -230,8 +225,10 @@ void p3Notify::notifyChatCleared   (const ChatId&  chat_id)                     
 void p3Notify::notifyChatLobbyTimeShift     (int                time_shift)                                                     { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyChatLobbyTimeShift(time_shift) ; }
 void p3Notify::notifyCustomState            (const std::string& peer_id   , const std::string&               status_string )    { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyCustomState       (peer_id,status_string) ; }
 void p3Notify::notifyHashingInfo            (uint32_t           type      , const std::string&               fileinfo      )    { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyHashingInfo       (type,fileinfo) ; } 
-void p3Notify::notifyTurtleSearchResult     (uint32_t           search_id , const std::list<TurtleFileInfo>& files         )    { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyTurtleSearchResult(search_id,files) ; } 
-void p3Notify::notifyPeerHasNewAvatar       (std::string        peer_id   )                                                     { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyPeerHasNewAvatar(peer_id) ; } 
+void p3Notify::notifyTurtleSearchResult     (const RsPeerId& pid          , uint32_t search_id , const std::list<TurtleFileInfo>& files         )    { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyTurtleSearchResult(pid,search_id,files) ; }
+#warning MISSING CODE HERE
+//void p3Notify::notifyTurtleSearchResult     (uint32_t           search_id , const std::list<TurtleGxsInfo>&  groups        )    { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyTurtleSearchResult(search_id,groups) ; }
+void p3Notify::notifyPeerHasNewAvatar       (std::string        peer_id   )                                                     { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyPeerHasNewAvatar(peer_id) ; }
 void p3Notify::notifyOwnAvatarChanged       ()                                                                                  { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyOwnAvatarChanged() ; } 
 void p3Notify::notifyOwnStatusMessageChanged()                                                                                  { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyOwnStatusMessageChanged() ; } 
 void p3Notify::notifyDiskFull               (uint32_t           location  , uint32_t                         size_limit_in_MB ) { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyDiskFull          (location,size_limit_in_MB) ; }

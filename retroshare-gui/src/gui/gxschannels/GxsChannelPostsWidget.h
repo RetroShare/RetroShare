@@ -73,6 +73,7 @@ protected:
 	virtual bool useThread() { return mUseThread; }
 	virtual void fillThreadCreatePost(const QVariant &post, bool related, int current, int count);
 	virtual bool navigatePostItem(const RsGxsMessageId& msgId);
+    virtual void blank() ;
 
 	/* GxsMessageFrameWidget */
 	virtual void setAllMessagesReadDo(bool read, uint32_t &token);

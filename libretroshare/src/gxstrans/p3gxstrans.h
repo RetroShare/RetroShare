@@ -1,21 +1,25 @@
+/*******************************************************************************
+ * libretroshare/src/gxstrans: p3gxstrans.h                                    *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright (C) 2016-2017  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #pragma once
-/*
- * GXS Mailing Service
- * Copyright (C) 2016-2017  Gioacchino Mazzurco <gio@eigenlab.org>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
 
 #include <stdint.h>
 #include <unordered_map>
@@ -85,7 +89,7 @@ struct MsgSizeCount
  * @see GxsTransClient::receiveGxsTransMail(...),
  * @see GxsTransClient::notifyGxsTransSendStatus(...).
  */
-class p3GxsTrans : public RsGenExchange, public GxsTokenQueue, public p3Config, public RsGxsTrans
+struct p3GxsTrans : RsGenExchange, GxsTokenQueue, p3Config, RsGxsTrans
 {
 public:
 	p3GxsTrans( RsGeneralDataService* gds, RsNetworkExchangeService* nes,
@@ -94,17 +98,16 @@ public:
 	                   RS_SERVICE_TYPE_GXS_TRANS, &identities,
 	                   AuthenPolicy()),
 	    GxsTokenQueue(this),
-        RsGxsTrans(this),
-        mIdService(identities),
+	    RsGxsTrans(static_cast<RsGxsIface&>(*this)),
+	    // always check 30 secs after start)
+	    mLastMsgCleanup(time(NULL) - MAX_DELAY_BETWEEN_CLEANUPS + 30),
+	    mIdService(identities),
 	    mServClientsMutex("p3GxsTrans client services map mutex"),
 	    mOutgoingMutex("p3GxsTrans outgoing queue map mutex"),
 	    mIngoingMutex("p3GxsTrans ingoing queue map mutex"),
+	    mCleanupThread(nullptr),
 	    mPerUserStatsMutex("p3GxsTrans user stats mutex"),
-	    mDataMutex("p3GxsTrans data mutex")
-    {
-        mLastMsgCleanup = time(NULL) - MAX_DELAY_BETWEEN_CLEANUPS + 30;	// always check 30 secs after start
-        mCleanupThread = NULL ;
-    }
+	    mDataMutex("p3GxsTrans data mutex") {}
 
 	virtual ~p3GxsTrans();
 

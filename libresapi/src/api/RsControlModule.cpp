@@ -1,3 +1,24 @@
+/*******************************************************************************
+ * libresapi/api/RsControlModule.cpp                                           *
+ *                                                                             *
+ * LibResAPI: API for local socket server                                      *
+ *                                                                             *
+ * Copyright 2018 by Retroshare Team <retroshare.team@gmail.com>               *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #include "RsControlModule.h"
 
 #include <sstream>
@@ -446,6 +467,8 @@ void RsControlModule::handleCreateLocation(Request &req, Response &resp)
     req.mStream << makeKeyValueReference("hidden_adress", hidden_address)
                 << makeKeyValueReference("hidden_port", hidden_port_str);
     uint16_t hidden_port = 0;
+    bool auto_tor = false ;		// to be set by API, so disabled until then.
+
     if(hidden_address.empty() != hidden_port_str.empty())
     {
         resp.setFail("you must both specify string hidden_adress and string hidden_port to create a hidden node.");
@@ -518,7 +541,7 @@ void RsControlModule::handleCreateLocation(Request &req, Response &resp)
 		mPassword = pgp_password;
 		mFixedPassword = pgp_password;
 	}
-    bool ssl_ok = RsAccounts::GenerateSSLCertificate(pgp_id, "", ssl_name, "", hidden_port!=0, ssl_password, ssl_id, err_string);
+    bool ssl_ok = RsAccounts::createNewAccount(pgp_id, "", ssl_name, "", hidden_port!=0, auto_tor!=0, ssl_password, ssl_id, err_string);
 
     // clear fixed password to restore normal password operation
 //    {

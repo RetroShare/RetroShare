@@ -24,6 +24,8 @@
 #include <retroshare-gui/configpage.h>
 #include "ui_PluginsPage.h"
 
+namespace settings {
+
 class PluginsPage : public ConfigPage
 {
 	Q_OBJECT
@@ -52,3 +54,4 @@ class PluginsPage : public ConfigPage
 			Ui::PluginsPage ui;
 };
 
+} // namespace settings

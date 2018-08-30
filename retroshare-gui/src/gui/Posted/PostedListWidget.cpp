@@ -454,6 +454,10 @@ void PostedListWidget::applyRanking()
 	ui->scrollAreaWidgetContents->update();
 }
 
+void PostedListWidget::blank()
+{
+    clearPosts();
+}
 void PostedListWidget::clearPosts()
 {
 	/* clear all messages */

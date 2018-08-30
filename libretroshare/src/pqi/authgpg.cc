@@ -1,29 +1,24 @@
-/*
- * libretroshare/src    AuthGPG.cc
- *
- * GnuPG/GPGme interface for RetroShare.
- *
- * Copyright 2008-2009 by Robert Fernie, Retroshare Team.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the termsf the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- *
- */
-
+/*******************************************************************************
+ * libretroshare/src/pqi: authgpg.cc                                           *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2008-2009 by Robert Fernie, Retroshare Team.                      *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #include "authgpg.h"
 #include "retroshare/rsiface.h"		// For rsicontrol.
 #include "retroshare/rspeers.h"		// For RsPeerDetails.
@@ -100,7 +95,11 @@ std::string pgp_pwd_callback(void * /*hook*/, const char *uid_title, const char 
 	return password ;
 }
 
-void AuthGPG::init(const std::string& path_to_public_keyring,const std::string& path_to_secret_keyring,const std::string& path_to_trustdb,const std::string& pgp_lock_file)
+void AuthGPG::init(
+        const std::string& path_to_public_keyring,
+        const std::string& path_to_secret_keyring,
+        const std::string& path_to_trustdb,
+        const std::string& pgp_lock_file)
 {
 	if(_instance != NULL)
 	{
@@ -108,8 +107,11 @@ void AuthGPG::init(const std::string& path_to_public_keyring,const std::string& 
 		std::cerr << "AuthGPG::init() called twice!" << std::endl ;
 	}
 
-	PGPHandler::setPassphraseCallback(pgp_pwd_callback) ;
-	_instance = new AuthGPG(path_to_public_keyring,path_to_secret_keyring,path_to_trustdb,pgp_lock_file) ;
+//	if(cb) PGPHandler::setPassphraseCallback(cb);else
+	PGPHandler::setPassphraseCallback(pgp_pwd_callback);
+	_instance = new AuthGPG( path_to_public_keyring,
+	                         path_to_secret_keyring,
+	                         path_to_trustdb, pgp_lock_file );
 }
 
 void AuthGPG::exit()

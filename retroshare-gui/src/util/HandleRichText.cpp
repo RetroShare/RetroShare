@@ -38,6 +38,13 @@
 #include "util/imageutil.h"
 #include "util/rstime.h"
 
+#ifdef USE_CMARK
+//Include for CMark
+// This needs to be fixed: use system library if available, etc.
+#include <gui/../../../supportlibs/cmark/src/cmark.h>
+#include <gui/../../../supportlibs/cmark/src/node.h>
+#endif
+
 #include <iostream>
 
 /**
@@ -582,6 +589,31 @@ QString RsHtml::formatText(QTextDocument *textDocument, const QString &text, ulo
 	// Save Space and Tab because doc loose it.
 	formattedText=saveSpace(formattedText);
 
+#ifdef USE_CMARK
+	if (flag & RSHTML_FORMATTEXT_USE_CMARK) {
+		// Transform html to plain text
+		QTextBrowser textBrowser;
+		textBrowser.setHtml(text);
+		formattedText = textBrowser.toPlainText();
+		// Parse CommonMark
+		int options = CMARK_OPT_DEFAULT;
+		cmark_parser *parser = cmark_parser_new(options);
+		cmark_parser_feed(parser, formattedText.toStdString().c_str(),formattedText.length());
+		cmark_node *document = cmark_parser_finish(parser);
+		cmark_parser_free(parser);
+		char *result;
+		result = cmark_render_html(document, options);
+		// Get result as html
+		formattedText = QString::fromUtf8(result);
+		//Clean
+		cmark_node_mem(document)->free(result);
+		cmark_node_free(document);
+		//Get document formed HTML
+		textBrowser.setHtml(formattedText);
+		formattedText=textBrowser.toHtml();
+	}
+#endif
+
 	QString errorMsg; int errorLine; int errorColumn;
 
   QDomDocument doc;
@@ -980,6 +1012,12 @@ static void styleCreate(QDomDocument& doc
 			noEmbedAttr = doc.createAttribute("NoEmbed");
 			noEmbedAttr.setValue("true");
 			styleElem.attributes().setNamedItem(noEmbedAttr);
+		}
+		if (flag & RSHTML_FORMATTEXT_USE_CMARK) {
+			QDomAttr cMarkAttr;
+			cMarkAttr = doc.createAttribute("CMark");
+			cMarkAttr.setValue("true");
+			styleElem.attributes().setNamedItem(cMarkAttr);
 		}
 	}
 

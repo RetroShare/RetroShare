@@ -3,7 +3,7 @@
 #include <pqi/authgpg.h>
 #include "rsloginhandler.h"
 #include "util/rsdir.h"
-#include "rsaccounts.h"
+#include "retroshare/rsinit.h"
 
 //#define DEBUG_RSLOGINHANDLER 1
 
@@ -91,7 +91,7 @@ bool RsLoginHandler::getSSLPasswdFromGPGFile(const RsPeerId& ssl_id,std::string&
 
 std::string RsLoginHandler::getSSLPasswdFileName(const RsPeerId& /*ssl_id*/)
 {
-	return rsAccounts->PathAccountKeysDirectory() + "/" + "ssl_passphrase.pgp";
+	return RsAccounts::AccountKeysDirectory() + "/" + "ssl_passphrase.pgp";
 }
 
 #ifdef RS_AUTOLOGIN
@@ -755,7 +755,7 @@ bool RsLoginHandler::clearAutoLogin(const RsPeerId& ssl_id)
 
 std::string RsLoginHandler::getAutologinFileName(const RsPeerId& /*ssl_id*/)
 {
-	return rsAccounts->PathAccountKeysDirectory() + "/" + "help.dta" ;
+	return RsAccounts::AccountKeysDirectory() + "/" + "help.dta" ;
 }
 
 #endif // RS_AUTOLOGIN

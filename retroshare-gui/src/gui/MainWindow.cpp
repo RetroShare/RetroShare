@@ -84,12 +84,13 @@
 #include "statusbar/ToasterDisable.h"
 #include "statusbar/SysTrayStatus.h"
 #include "statusbar/torstatus.h"
-#include <retroshare/rsstatus.h>
 
-#include <retroshare/rsiface.h>
-#include <retroshare/rspeers.h>
-#include <retroshare/rsfiles.h>
-#include <retroshare/rsnotify.h>
+#include "retroshare/rsstatus.h"
+#include "retroshare/rsiface.h"
+#include "retroshare/rspeers.h"
+#include "retroshare/rsfiles.h"
+#include "retroshare/rsnotify.h"
+#include "retroshare/rsinit.h"
 
 #include "gui/gxschannels/GxsChannelDialog.h"
 #include "gui/gxsforums/GxsForumsDialog.h"
@@ -250,14 +251,15 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
 
 	if(hiddenmode)
 	{
-#ifdef RETROTOR
-		torstatus = new TorStatus();
-		torstatus->setVisible(Settings->valueFromGroup("StatusBar", "ShowTor", QVariant(true)).toBool());
-		statusBar()->addWidget(torstatus);
-		torstatus->getTorStatus();
-#else
-		torstatus = NULL ;
-#endif
+        if(RsAccounts::isHiddenNode())
+		{
+			torstatus = new TorStatus();
+			torstatus->setVisible(Settings->valueFromGroup("StatusBar", "ShowTor", QVariant(true)).toBool());
+			statusBar()->addWidget(torstatus);
+			torstatus->getTorStatus();
+		}
+        else
+			torstatus = NULL ;
 
 		natstatus = NULL ;
 		dhtstatus = NULL ;
@@ -433,7 +435,7 @@ void MainWindow::initStackedPage()
 
 #ifndef RS_RELEASE_VERSION
 #ifdef PLUGINMGR
-  addPage(pluginsPage = new PluginsPage(ui->stackPages), grp, NULL);
+  addPage(pluginsPage = new gui::PluginsPage(ui->stackPages), grp, NULL);
 #endif
 #endif
 
@@ -643,10 +645,10 @@ const QList<UserNotify*> &MainWindow::getUserNotifyList()
 
 /*static*/ void MainWindow::displayLobbySystrayMsg(const QString& title,const QString& msg)
 {
-    if (_instance == NULL) 
+    if (_instance == NULL)
         return;
 
-    if(Settings->getDisplayTrayChatLobby()) 
+    if(Settings->getDisplayTrayChatLobby())
 		 _instance->displaySystrayMsg(title,msg) ;
 }
 
@@ -1011,7 +1013,7 @@ void SetForegroundWindowInternal(HWND hWnd)
        return NULL;
    }
 
-   switch (page) 
+   switch (page)
 	{
 		case Network:
 			return _instance->friendsDialog->networkDialog;
@@ -1457,7 +1459,7 @@ void MainWindow::externalLinkActivated(const QUrl &url)
 
 		int res = mb.exec() ;
 
-		if (res == QMessageBox::No) 
+		if (res == QMessageBox::No)
 			return ;
 
 		if(dontAsk_CB->isChecked())

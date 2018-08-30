@@ -13,6 +13,7 @@
 
 class RsGxsIfaceHelper;
 class RsGxsUpdateBroadcastBase;
+typedef uint32_t TurtleRequestId;
 
 class RsGxsUpdateBroadcastWidget : public QWidget
 {
@@ -30,6 +31,7 @@ public:
 	const std::map<RsGxsGroupId, std::set<RsGxsMessageId> > &getMsgIds();
 	const std::map<RsGxsGroupId, std::set<RsGxsMessageId> > &getMsgIdsMeta();
 	void getAllMsgIds(std::map<RsGxsGroupId, std::set<RsGxsMessageId> > &msgIds);
+    const std::set<TurtleRequestId>& getSearchResults() ;
 
 	RsGxsIfaceHelper *interfaceHelper() { return mInterfaceHelper; }
 

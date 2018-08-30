@@ -1,28 +1,24 @@
-/*
- * libretroshare/src/services p3gxscircles.cc
- *
- * Circles Interface for RetroShare.
- *
- * Copyright 2012-2012 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2.1 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
+/*******************************************************************************
+ * libretroshare/src/services: p3gxscircles.cc                                 *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2012-2012 Robert Fernie <retroshare@lunamutt.com>                 *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #include "rsitems/rsgxscircleitems.h"
 
 #include "services/p3gxscircles.h"
@@ -111,16 +107,16 @@ RsGxsCircles *rsGxsCircles = NULL;
 /******************* Startup / Tick    ******************************************/
 /********************************************************************************/
 
-p3GxsCircles::p3GxsCircles(RsGeneralDataService *gds, RsNetworkExchangeService *nes, 
-	p3IdService *identities, PgpAuxUtils *pgpUtils)
-	: RsGxsCircleExchange(gds, nes, new RsGxsCircleSerialiser(), 
-			RS_SERVICE_GXS_TYPE_GXSCIRCLE, identities, circleAuthenPolicy()), 
-	RsGxsCircles(this), GxsTokenQueue(this), RsTickEvent(), 
-	mIdentities(identities), 
-	mPgpUtils(pgpUtils),
-	mCircleMtx("p3GxsCircles"),
-        mCircleCache(DEFAULT_MEM_CACHE_SIZE, "GxsCircleCache")
-
+p3GxsCircles::p3GxsCircles(
+        RsGeneralDataService *gds, RsNetworkExchangeService *nes,
+        p3IdService *identities, PgpAuxUtils *pgpUtils) :
+    RsGxsCircleExchange(
+        gds, nes, new RsGxsCircleSerialiser(), RS_SERVICE_GXS_TYPE_GXSCIRCLE,
+        identities, circleAuthenPolicy() ),
+    RsGxsCircles(static_cast<RsGxsIface&>(*this)), GxsTokenQueue(this),
+    RsTickEvent(), mIdentities(identities), mPgpUtils(pgpUtils),
+    mCircleMtx("p3GxsCircles"),
+    mCircleCache(DEFAULT_MEM_CACHE_SIZE, "GxsCircleCache" )
 {
 	// Kick off Cache Testing, + Others.
 	//RsTickEvent::schedule_in(CIRCLE_EVENT_CACHETEST, CACHETEST_PERIOD);
@@ -218,7 +214,8 @@ void p3GxsCircles::notifyChanges(std::vector<RsGxsNotify *> &changes)
 				std::cerr << "    Msgs for Group: " << mit->first << std::endl;
 #endif
 				force_cache_reload(RsGxsCircleId(mit->first));
-				if (notify && (c->getType() == RsGxsNotify::TYPE_RECEIVE) )
+
+				if (notify && (c->getType() == RsGxsNotify::TYPE_RECEIVED_NEW) )
 					for (auto msgIdIt(mit->second.begin()), end(mit->second.end()); msgIdIt != end; ++msgIdIt)
 					{
 						const RsGxsMessageId& msgId = *msgIdIt;
@@ -261,7 +258,7 @@ void p3GxsCircles::notifyChanges(std::vector<RsGxsNotify *> &changes)
 				std::cerr << "  forcing cache loading for circle " << *git << " in order to trigger subscribe update." << std::endl;
 #endif
 				force_cache_reload(RsGxsCircleId(*git)) ;
-				if (notify && (c->getType() == RsGxsNotify::TYPE_RECEIVE) )
+				if (notify && (c->getType() == RsGxsNotify::TYPE_RECEIVED_NEW) )
 					notify->AddFeedItem(RS_FEED_ITEM_CIRCLE_INVIT_REC,RsGxsCircleId(*git).toStdString(),"");
 			}
 
@@ -1656,8 +1653,8 @@ void p3GxsCircles::checkDummyIdData()
 
 	// check the token.
         uint32_t status =  rsIdentity->getTokenService()->requestStatus(mDummyIdToken);
-        if ( (RsTokenService::GXS_REQUEST_V2_STATUS_FAILED == status) ||
-                         (RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE == status) )
+        if ( (RsTokenService::FAILED == status) ||
+                         (RsTokenService::COMPLETE == status) )
 	{
 		std::vector<RsGxsIdGroup> ids;
 		if (!rsIdentity->getGroupData(mDummyIdToken, ids))

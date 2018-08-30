@@ -7,7 +7,9 @@ call "%~dp0..\env.bat"
 if errorlevel 1 goto error_env
 call "%EnvPath%\env.bat"
 if errorlevel 1 goto error_env
+
 call "%~dp0env.bat" %*
+if errorlevel 2 exit /B 2
 if errorlevel 1 goto error_env
 
 if not exist "%RsBuildPath%" exit /B 0

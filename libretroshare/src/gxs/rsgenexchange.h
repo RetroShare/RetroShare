@@ -1,30 +1,26 @@
+/*******************************************************************************
+ * libretroshare/src/gxs: rsgenexchange.h                                      *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2012-2012 by Robert Fernie, Evi-Parker Christopher                *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #ifndef RSGENEXCHANGE_H
 #define RSGENEXCHANGE_H
-
-/*
- * libretroshare/src/gxs: rsgenexchange.h
- *
- * RetroShare C++ Interface.
- *
- * Copyright 2012-2012 by Christopher Evi-Parker, Robert Fernie
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
 
 #include <queue>
 #include <ctime>
@@ -121,9 +117,9 @@ public:
 
     virtual ~RsGenExchange();
 
-    // Convention that this is implemented here. 
+    // Convention that this is implemented here.
     // and passes to network service.
-    virtual RsServiceInfo getServiceInfo() = 0; 
+    virtual RsServiceInfo getServiceInfo() = 0;
 
     void setNetworkExchangeService(RsNetworkExchangeService *ns) ;
 
@@ -132,18 +128,24 @@ public:
     /*!
      * @param messages messages are deleted after function returns
      */
-    virtual void notifyNewMessages(std::vector<RsNxsMsg*>& messages);
+    virtual void receiveNewMessages(std::vector<RsNxsMsg*>& messages);
 
     /*!
      * @param groups groups are deleted after function returns
      */
-    virtual void notifyNewGroups(std::vector<RsNxsGrp*>& groups);
+    virtual void receiveNewGroups(std::vector<RsNxsGrp*>& groups);
 
     /*!
      * @param grpId group id
      */
     virtual void notifyReceivePublishKey(const RsGxsGroupId &grpId);
 
+    /*!
+     * \brief notifyReceiveDistantSearchResults
+     * 				Should be called when new search results arrive.
+     * \param grpId
+     */
+	virtual void receiveDistantSearchResults(TurtleRequestId id,const RsGxsGroupId &grpId);
     /*!
      * @param grpId group id
      */
@@ -286,6 +288,15 @@ public:
 	 * @return true if token is false otherwise
 	 */
 	bool getGroupStatistic(const uint32_t& token, GxsGroupStatistic& stats);
+
+    /*!
+     * \brief turtleGroupRequest
+     * 			Issues a browadcast group request using the turtle router generic search system. The request is obviously asynchroneous and will be
+     * 			handled in RsGenExchange when received.
+     * \param group_id
+     */
+    void turtleGroupRequest(const RsGxsGroupId& group_id);
+    void turtleSearchRequest(const std::string& match_string);
 
 protected:
 
@@ -468,7 +479,8 @@ public:
      * @param status
      * @return false if token could not be found, true if token disposed of
      */
-    bool updatePublicRequestStatus(const uint32_t &token, const uint32_t &status);
+	bool updatePublicRequestStatus(
+	        uint32_t token, RsTokenService::GxsRequestStatus status);
 
     /*!
      * This gets rid of a publicly issued token
@@ -566,7 +578,7 @@ public:
      * @param msgs
      */
     void deleteMsgs(uint32_t& token, const GxsMsgReq& msgs);
-    
+
 protected:
     /*!
      * This represents the group before its signature is calculated
@@ -650,7 +662,7 @@ public:
      */
 
     void shareGroupPublishKey(const RsGxsGroupId& grpId,const std::set<RsPeerId>& peers) ;
-    
+
     /*!
      * Returns the local TS of the group as known by the network service.
      * This is useful to allow various network services to sync their update TS
@@ -754,6 +766,8 @@ protected:
      * 		   CREATE_FAIL_TRY_LATER for Id sign key not avail (but requested)
      */
     int createMessage(RsNxsMsg* msg);
+
+    RsNetworkExchangeService *netService() const { return mNetService ; }
 
 private:
     /*!

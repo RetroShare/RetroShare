@@ -1,29 +1,24 @@
-
-/*
- * libretroshare/src/gxs: rsgenexchange.cc
- *
- * RetroShare Gxs exchange interface.
- *
- * Copyright 2012-2012 by Christopher Evi-Parker, Robert Fernie
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
+/*******************************************************************************
+ * libretroshare/src/gxs: rsgenexchange.cc                                     *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2012-2012 by Robert Fernie, Evi-Parker Christopher                *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #include <unistd.h>
 
 #include "pqi/pqihash.h"
@@ -206,7 +201,8 @@ void RsGenExchange::tick()
 
 			if(!mIntegrityCheck)
 			{
-				mIntegrityCheck = new RsGxsIntegrityCheck(mDataStore,this,mGixs);
+				mIntegrityCheck = new RsGxsIntegrityCheck( mDataStore, this,
+				                                           *mSerialiser, mGixs);
 				mIntegrityCheck->start("gxs integrity");
 				mChecking = true;
 			}
@@ -1110,6 +1106,8 @@ void RsGenExchange::receiveChanges(std::vector<RsGxsNotify*>& changes)
         RsGxsNotify* n = *vit;
         RsGxsGroupChange* gc;
         RsGxsMsgChange* mc;
+        RsGxsDistantSearchResultChange *gt;
+
         if((mc = dynamic_cast<RsGxsMsgChange*>(n)) != NULL)
         {
             if (mc->metaChange())
@@ -1131,6 +1129,10 @@ void RsGenExchange::receiveChanges(std::vector<RsGxsNotify*>& changes)
             {
                 out.mGrps.splice(out.mGrps.end(), gc->mGrpIdList);
             }
+        }
+        else if((gt = dynamic_cast<RsGxsDistantSearchResultChange*>(n)) != NULL)
+        {
+            out.mDistantSearchReqs.push_back(gt->mRequestId);
         }
         else
             std::cerr << "(EE) Unknown changes type!!" << std::endl;
@@ -1567,7 +1569,7 @@ bool RsGenExchange::setAuthenPolicyFlag(const uint8_t &msgFlag, uint32_t& authen
     return true;
 }
 
-void RsGenExchange::notifyNewGroups(std::vector<RsNxsGrp *> &groups)
+void RsGenExchange::receiveNewGroups(std::vector<RsNxsGrp *> &groups)
 {
 	RS_STACK_MUTEX(mGenMtx) ;
 
@@ -1599,7 +1601,7 @@ void RsGenExchange::notifyNewGroups(std::vector<RsNxsGrp *> &groups)
 }
 
 
-void RsGenExchange::notifyNewMessages(std::vector<RsNxsMsg *>& messages)
+void RsGenExchange::receiveNewMessages(std::vector<RsNxsMsg *>& messages)
 {
 	RS_STACK_MUTEX(mGenMtx) ;
 
@@ -1635,11 +1637,21 @@ void RsGenExchange::notifyNewMessages(std::vector<RsNxsMsg *>& messages)
 	}
 }
 
+void RsGenExchange::receiveDistantSearchResults(TurtleRequestId id,const RsGxsGroupId &grpId)
+{
+	RS_STACK_MUTEX(mGenMtx);
+
+	RsGxsDistantSearchResultChange* gc = new RsGxsDistantSearchResultChange(id,grpId);
+	mNotifications.push_back(gc);
+
+    std::cerr << "RsGenExchange::receiveDistantSearchResults(): received result for request " << std::hex << id << std::dec << std::endl;
+}
+
 void RsGenExchange::notifyReceivePublishKey(const RsGxsGroupId &grpId)
 {
 	RS_STACK_MUTEX(mGenMtx);
 
-	RsGxsGroupChange* gc = new RsGxsGroupChange(RsGxsNotify::TYPE_PUBLISHKEY, true);
+	RsGxsGroupChange* gc = new RsGxsGroupChange(RsGxsNotify::TYPE_RECEIVED_PUBLISHKEY, true);
 	gc->mGrpIdList.push_back(grpId);
 	mNotifications.push_back(gc);
 }
@@ -1987,7 +1999,7 @@ void RsGenExchange::processMsgMetaChanges()
 
         if(ok)
         {
-            mDataAccess->updatePublicRequestStatus(token, RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE);
+            mDataAccess->updatePublicRequestStatus(token, RsTokenService::COMPLETE);
             if (changed)
             {
                 msgIds[m.msgId.first].insert(m.msgId.second);
@@ -1995,7 +2007,7 @@ void RsGenExchange::processMsgMetaChanges()
         }
         else
         {
-            mDataAccess->updatePublicRequestStatus(token, RsTokenService::GXS_REQUEST_V2_STATUS_FAILED);
+            mDataAccess->updatePublicRequestStatus(token, RsTokenService::FAILED);
         }
 
         {
@@ -2041,11 +2053,11 @@ void RsGenExchange::processGrpMetaChanges()
 
         if(ok)
         {
-            mDataAccess->updatePublicRequestStatus(token, RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE);
+            mDataAccess->updatePublicRequestStatus(token, RsTokenService::COMPLETE);
             grpChanged.push_back(g.grpId);
         }else
         {
-            mDataAccess->updatePublicRequestStatus(token, RsTokenService::GXS_REQUEST_V2_STATUS_FAILED);
+            mDataAccess->updatePublicRequestStatus(token, RsTokenService::FAILED);
         }
 
         {
@@ -2278,7 +2290,7 @@ void RsGenExchange::publishMsgs()
 
 				// add to published to allow acknowledgement
 				mMsgNotify.insert(std::make_pair(mit->first, std::make_pair(grpId, msgId)));
-				mDataAccess->updatePublicRequestStatus(mit->first, RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE);
+				mDataAccess->updatePublicRequestStatus(mit->first, RsTokenService::COMPLETE);
 
 			}
 			else
@@ -2288,7 +2300,7 @@ void RsGenExchange::publishMsgs()
 
 				if(!tryLater)
 					mDataAccess->updatePublicRequestStatus(mit->first,
-							RsTokenService::GXS_REQUEST_V2_STATUS_FAILED);
+							RsTokenService::FAILED);
 
 				std::cerr << "RsGenExchange::publishMsgs() failed to publish msg " << std::endl;
 			}
@@ -2310,7 +2322,7 @@ void RsGenExchange::publishMsgs()
 
 	if(!msgChangeMap.empty())
 	{
-		RsGxsMsgChange* ch = new RsGxsMsgChange(RsGxsNotify::TYPE_PUBLISH, false);
+		RsGxsMsgChange* ch = new RsGxsMsgChange(RsGxsNotify::TYPE_PUBLISHED, false);
 		ch->msgChangeMap = msgChangeMap;
 		mNotifications.push_back(ch);
 	}
@@ -2365,7 +2377,7 @@ void RsGenExchange::processGroupUpdatePublish()
 		if(mit == grpMeta.end() || mit->second == NULL)
 		{
 			std::cerr << "Error! could not find meta of old group to update!" << std::endl;
-			mDataAccess->updatePublicRequestStatus(gup.mToken, RsTokenService::GXS_REQUEST_V2_STATUS_FAILED);
+			mDataAccess->updatePublicRequestStatus(gup.mToken, RsTokenService::FAILED);
 			delete gup.grpItem;
 			continue;
 		}
@@ -2393,7 +2405,7 @@ void RsGenExchange::processGroupUpdatePublish()
             		std::cerr << "(EE) publish group fails because RS cannot find the private publish and author keys" << std::endl;
                     
 			delete gup.grpItem;
-			mDataAccess->updatePublicRequestStatus(gup.mToken, RsTokenService::GXS_REQUEST_V2_STATUS_FAILED);
+			mDataAccess->updatePublicRequestStatus(gup.mToken, RsTokenService::FAILED);
 		}
 	}
 
@@ -2414,7 +2426,7 @@ void RsGenExchange::processRoutingClues()
 
 void RsGenExchange::processGroupDelete()
 {
-					RS_STACK_MUTEX(mGenMtx) ;
+	RS_STACK_MUTEX(mGenMtx);
 
     // get keys for group delete publish
 	typedef std::pair<bool, RsGxsGroupId> GrpNote;
@@ -2435,8 +2447,9 @@ void RsGenExchange::processGroupDelete()
 	for(; mit != toNotify.end(); ++mit)
 	{
 		GrpNote& note = mit->second;
-		uint8_t status = note.first ? RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE
-		                            : RsTokenService::GXS_REQUEST_V2_STATUS_FAILED;
+		RsTokenService::GxsRequestStatus status =
+		        note.first ? RsTokenService::COMPLETE
+		                   : RsTokenService::FAILED;
 
 		mGrpNotify.insert(std::make_pair(mit->first, note.second));
 		mDataAccess->updatePublicRequestStatus(mit->first, status);
@@ -2447,7 +2460,7 @@ void RsGenExchange::processGroupDelete()
 
 	if(!grpDeleted.empty())
 	{
-		RsGxsGroupChange* gc = new RsGxsGroupChange(RsGxsNotify::TYPE_PUBLISH, false);
+		RsGxsGroupChange* gc = new RsGxsGroupChange(RsGxsNotify::TYPE_PUBLISHED, false);
 		gc->mGrpIdList = grpDeleted;
 		mNotifications.push_back(gc);
 	}
@@ -2744,8 +2757,9 @@ void RsGenExchange::publishGrps()
 	    for(; mit != toNotify.end(); ++mit)
 	    {
 		    GrpNote& note = mit->second;
-		    uint8_t status = note.first ? RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE
-		                                : RsTokenService::GXS_REQUEST_V2_STATUS_FAILED;
+			RsTokenService::GxsRequestStatus status =
+			        note.first ? RsTokenService::COMPLETE
+			                   : RsTokenService::FAILED;
 
 		    mGrpNotify.insert(std::make_pair(mit->first, note.second));
 		    mDataAccess->updatePublicRequestStatus(mit->first, status);
@@ -2756,7 +2770,7 @@ void RsGenExchange::publishGrps()
 
 	    if(!grpChanged.empty())
 	    {
-		    RsGxsGroupChange* gc = new RsGxsGroupChange(RsGxsNotify::TYPE_RECEIVE, true);
+		    RsGxsGroupChange* gc = new RsGxsGroupChange(RsGxsNotify::TYPE_RECEIVED_NEW, true);
 		    gc->mGrpIdList = grpChanged;
 		    mNotifications.push_back(gc);
 #ifdef GEN_EXCH_DEBUG
@@ -2781,7 +2795,8 @@ uint32_t RsGenExchange::generatePublicToken()
     return mDataAccess->generatePublicToken();
 }
 
-bool RsGenExchange::updatePublicRequestStatus(const uint32_t &token, const uint32_t &status)
+bool RsGenExchange::updatePublicRequestStatus(
+        uint32_t token, RsTokenService::GxsRequestStatus status )
 {
     return mDataAccess->updatePublicRequestStatus(token, status);
 }
@@ -3022,7 +3037,7 @@ void RsGenExchange::processRecvdMessages()
 #endif
 		    mDataStore->storeMessage(msgs_to_store);
 
-		    RsGxsMsgChange* c = new RsGxsMsgChange(RsGxsNotify::TYPE_RECEIVE, false);
+		    RsGxsMsgChange* c = new RsGxsMsgChange(RsGxsNotify::TYPE_RECEIVED_NEW, false);
 		    c->msgChangeMap = msgIds;
 		    mNotifications.push_back(c);
 	    }
@@ -3155,7 +3170,7 @@ void RsGenExchange::processRecvdGroups()
 
 	if(!grpIds.empty())
 	{
-		RsGxsGroupChange* c = new RsGxsGroupChange(RsGxsNotify::TYPE_RECEIVE, false);
+		RsGxsGroupChange* c = new RsGxsGroupChange(RsGxsNotify::TYPE_RECEIVED_NEW, false);
 		c->mGrpIdList = grpIds;
 		mNotifications.push_back(c);
 		mDataStore->storeGroup(grps_to_store);
@@ -3239,7 +3254,7 @@ void RsGenExchange::performUpdateValidation()
 	}
 	// notify the client
 
-	RsGxsGroupChange* c = new RsGxsGroupChange(RsGxsNotify::TYPE_RECEIVE, true);
+	RsGxsGroupChange* c = new RsGxsGroupChange(RsGxsNotify::TYPE_RECEIVED_NEW, true);
 
 	for(uint32_t i=0;i<mGroupUpdates.size();++i)
 		if(mGroupUpdates[i].newGrp != NULL)
@@ -3335,11 +3350,11 @@ void RsGenExchange::removeDeleteExistingMessages( std::list<RsNxsMsg*>& msgs, Gx
 		mDataStore->retrieveMsgIds(*it, msgIdReq[*it]);
 
 #ifdef GEN_EXCH_DEBUG
-		const std::vector<RsGxsMessageId>& vec(msgIdReq[*it]) ;
+		const std::set<RsGxsMessageId>& vec(msgIdReq[*it]) ;
 		std::cerr << "  retrieved " << vec.size() << " message ids for group " << *it << std::endl;
 
-		for(uint32_t i=0;i<vec.size();++i)
-			std::cerr << "    " << vec[i] << std::endl;
+		for(auto it2(vec.begin());it2!=vec.end();++it2)
+			std::cerr << "    " << *it2   << std::endl;
 #endif
 	}
 
@@ -3381,3 +3396,11 @@ void RsGenExchange::removeDeleteExistingMessages( std::list<RsNxsMsg*>& msgs, Gx
 	}
 }
 
+void RsGenExchange::turtleGroupRequest(const RsGxsGroupId& group_id)
+{
+    mNetService->turtleGroupRequest(group_id) ;
+}
+void RsGenExchange::turtleSearchRequest(const std::string& match_string)
+{
+    mNetService->turtleSearchRequest(match_string) ;
+}
