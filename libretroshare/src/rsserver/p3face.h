@@ -82,6 +82,9 @@ class RsServer: public RsControl, public RsTickingThread
 		/****************************************/
 		/* p3face.cc: main loop / util fns / locking. */
 
+	/// @see RsControl::isReady()
+	virtual bool isReady() { return coreReady; }
+
 		RsServer() ;
 		virtual ~RsServer();
 
@@ -122,11 +125,11 @@ class RsServer: public RsControl, public RsTickingThread
 
 		/************* Rs shut down function: in upnp 'port lease time' bug *****************/
 
-		/**
-		 * This function is responsible for ensuring Retroshare exits in a legal state:
-		 * i.e. releases all held resources and saves current configuration
-		 */
-		virtual void 	rsGlobalShutDown( );
+	/**
+	 * This function is responsible for ensuring Retroshare exits in a legal state:
+	 * i.e. releases all held resources and saves current configuration
+	 */
+	virtual void rsGlobalShutDown();
 
 		/****************************************/
 
@@ -198,6 +201,11 @@ class RsServer: public RsControl, public RsTickingThread
     static const double minTimeDelta; // 25;
     static const double maxTimeDelta;
     static const double kickLimit;
+
+	/** Keep track of the core being fully ready, true only after
+	 *  StartupRetroShare() finish and before rsGlobalShutDown() begin
+	 */
+	bool coreReady;
 };
 
 /* Helper function to convert windows paths

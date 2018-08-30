@@ -79,8 +79,8 @@ const double RsServer::maxTimeDelta = 0.2;
 const double RsServer::kickLimit = 0.15;
 
 
-RsServer::RsServer()
-	: coreMutex("RsServer")
+RsServer::RsServer() :
+    coreMutex("RsServer"), coreReady(false)
 {
 	// This is needed asap.
 	//

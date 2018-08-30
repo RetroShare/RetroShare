@@ -83,6 +83,7 @@ void RsServer::startServiceThread(RsTickingThread *t, const std::string &threadN
 
 void RsServer::rsGlobalShutDown()
 {
+	coreReady = false;
 	// TODO: cache should also clean up old files
 
 	ConfigFinalSave(); // save configuration before exit

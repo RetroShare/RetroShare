@@ -101,7 +101,9 @@ RsDht *rsDht = NULL ;
 
 //std::map<std::string,std::vector<std::string> > RsInit::unsupported_keys ;
 
-RsLoginHelper* rsLoginHelper;
+RsLoginHelper* rsLoginHelper = nullptr;
+
+RsAccounts* rsAccounts = nullptr;
 
 class RsInitConfig
 {
@@ -1931,6 +1933,7 @@ int RsServer::StartupRetroShare()
     std::cerr << "==                 RsInit:: Retroshare core started                   ==" << std::endl;
     std::cerr << "========================================================================" << std::endl;
 
+	coreReady = true;
 	return 1;
 }
 
@@ -2006,6 +2009,11 @@ bool RsLoginHelper::createLocation(
 	return ret;
 }
 
+bool RsLoginHelper::isLoggedIn()
+{
+	return RsControl::instance()->isReady();
+}
+
 void RsLoginHelper::closeSession()
 {
 	RsControl::instance()->rsGlobalShutDown();
@@ -2019,4 +2027,9 @@ void RsLoginHelper::Location::serial_process(
 	RS_SERIAL_PROCESS(mPgpId);
 	RS_SERIAL_PROCESS(mLocationName);
 	RS_SERIAL_PROCESS(mPpgName);
+}
+
+bool RsAccounts::getCurrentAccountId(RsPeerId& id)
+{
+	return rsAccountsDetails->getCurrentAccountId(id);
 }
