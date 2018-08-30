@@ -489,9 +489,14 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
 	}
 
 	QMenu contextMnu(this);
+	QList<QTreeWidgetItem*> selectedItems = ui->threadTreeWidget->selectedItems();
 
 	QAction *editAct = new QAction(QIcon(IMAGE_MESSAGEEDIT), tr("Edit"), &contextMnu);
 	connect(editAct, SIGNAL(triggered()), this, SLOT(editforummessage()));
+
+	bool is_pinned = mForumGroup.mPinnedPosts.ids.find(mThreadId) != mForumGroup.mPinnedPosts.ids.end();
+	QAction *pinUpPostAct = new QAction(QIcon(IMAGE_MESSAGE), (is_pinned?tr("Un-pin this post"):tr("Pin this post up")), &contextMnu);
+	connect(pinUpPostAct , SIGNAL(triggered()), this, SLOT(togglePinUpPost()));
 
 	QAction *replyAct = new QAction(QIcon(IMAGE_MESSAGEREPLY), tr("Reply"), &contextMnu);
 	connect(replyAct, SIGNAL(triggered()), this, SLOT(replytoforummessage()));
@@ -582,8 +587,6 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
         replyauthorAct->setDisabled (true);
 	}
 
-	QList<QTreeWidgetItem*> selectedItems = ui->threadTreeWidget->selectedItems();
-
 	if(selectedItems.size() == 1)
 	{
 		QTreeWidgetItem *item = *selectedItems.begin();
@@ -607,6 +610,9 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
 					break ;
 				}
 		}
+
+		if(IS_GROUP_ADMIN(mSubscribeFlags))
+			contextMnu.addAction(pinUpPostAct);
 	}
 
 	contextMnu.addAction(replyAct);
@@ -653,6 +659,7 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
 			contextMnu.addAction(showinpeopleAct);
 			contextMnu.addAction(replyauthorAct);
 		}
+
 	}
 
 	contextMnu.exec(QCursor::pos());
@@ -2085,6 +2092,26 @@ void GxsForumThreadWidget::createmessage()
 	cfm->show();
 
 	/* window will destroy itself! */
+}
+
+void GxsForumThreadWidget::togglePinUpPost()
+{
+	if (groupId().isNull() || mThreadId.isNull())
+		return;
+
+	QTreeWidgetItem *item = ui->threadTreeWidget->currentItem();
+
+	QString thread_title = (item != NULL)?item->text(COLUMN_THREAD_TITLE):QString() ;
+
+    std::cerr << "Toggling Pin-up state of post " << mThreadId.toStdString() << ": \"" << thread_title.toStdString() << "\"" << std::endl;
+
+    if(mForumGroup.mPinnedPosts.ids.find(mThreadId) == mForumGroup.mPinnedPosts.ids.end())
+		mForumGroup.mPinnedPosts.ids.insert(mThreadId) ;
+    else
+		mForumGroup.mPinnedPosts.ids.erase(mThreadId) ;
+
+	uint32_t token;
+	rsGxsForums->updateGroup(token,mForumGroup);
 }
 
 void GxsForumThreadWidget::createthread()

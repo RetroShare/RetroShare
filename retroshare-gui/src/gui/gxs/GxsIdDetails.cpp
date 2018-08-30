@@ -870,7 +870,7 @@ QString GxsIdDetails::getFailedText(const RsGxsId &id)
 
 QString GxsIdDetails::getEmptyIdText()
 {
-	return QApplication::translate("GxsIdDetails", "No Signature");
+	return QApplication::translate("GxsIdDetails", "[None]");
 }
 
 QString GxsIdDetails::getNameForType(GxsIdDetailsType type, const RsIdentityDetails &details)
