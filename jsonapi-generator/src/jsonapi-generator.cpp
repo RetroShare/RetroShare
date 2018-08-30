@@ -78,12 +78,12 @@ int main(int argc, char *argv[])
 		QString headerFileName(hfi.fileName());
 		headerFileName.replace(QString("_8h.xml"), QString(".h"));
 
-		QDomNodeList sectiondefs = hDoc.elementsByTagName("sectiondef");
+		QDomNodeList sectiondefs = hDoc.elementsByTagName("memberdef");
 		for(int j = 0; j < sectiondefs.size(); ++j)
 		{
 			QDomElement sectDef = sectiondefs.item(j).toElement();
 
-			if( sectDef.attributes().namedItem("kind").nodeValue() != "var"
+			if( sectDef.attributes().namedItem("kind").nodeValue() != "variable"
 			        || sectDef.elementsByTagName("jsonapi").isEmpty() )
 				continue;
 
