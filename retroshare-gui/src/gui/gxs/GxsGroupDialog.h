@@ -233,6 +233,7 @@ protected:
      * 			Returns the set of ids that hve been selected as moderators.
      */
 	void getSelectedModerators(std::set<RsGxsId>& ids);
+	void setSelectedModerators(const std::set<RsGxsId>& ids);
 
 private slots:
 	/* actions to take.... */

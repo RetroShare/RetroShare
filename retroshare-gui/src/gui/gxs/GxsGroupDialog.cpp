@@ -864,6 +864,11 @@ void GxsGroupDialog::getSelectedModerators(std::set<RsGxsId>& ids)
 	ui.adminsList->selectedIds<RsGxsId,FriendSelectionWidget::IDTYPE_GXS>(ids, true);
 }
 
+void GxsGroupDialog::setSelectedModerators(const std::set<RsGxsId>& ids)
+{
+	ui.adminsList->setSelectedIds<RsGxsId,FriendSelectionWidget::IDTYPE_GXS>(ids, false);
+}
+
 /***********************************************************************************
   Share Lists.
  ***********************************************************************************/
