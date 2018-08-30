@@ -32,6 +32,7 @@
 
 #include "retroshare/rspeers.h"
 #include "util/rsurl.h"
+#include "util/rsdeprecate.h"
 
 class p3LinkMgr;
 class p3PeerMgr;
@@ -56,6 +57,11 @@ public:
 
 	virtual bool getOnlineList(std::list<RsPeerId> &ids);
 	virtual bool getFriendList(std::list<RsPeerId> &ids);
+	virtual bool getPeersCount(
+	        uint32_t& peersCount, uint32_t& onlinePeersCount,
+	        bool countLocations );
+
+	RS_DEPRECATED
 	virtual bool getPeerCount (unsigned int *friendCount, unsigned int *onlineCount, bool ssl);
 
 	virtual bool isOnline(const RsPeerId &id);
@@ -120,6 +126,11 @@ public:
 	        bool include_signatures = false,
 	        bool includeExtraLocators = true );
 	virtual bool GetPGPBase64StringAndCheckSum(const RsPgpId& gpg_id,std::string& gpg_base64_string,std::string& gpg_base64_checksum);
+
+	/// @see RsPeers::acceptInvite
+	virtual bool acceptInvite(
+	        const std::string& invite,
+	        ServicePermissionFlags flags = RS_NODE_PERM_DEFAULT );
 
 	virtual bool hasExportMinimal();
 

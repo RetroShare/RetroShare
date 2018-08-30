@@ -34,6 +34,7 @@
 #include "pqi/authgpg.h"
 #include "retroshare/rsinit.h"
 #include "retroshare/rsfiles.h"
+#include "util/rsurl.h"
 
 #include "pgp/rscertificate.h"
 
@@ -199,6 +200,15 @@ bool	p3Peers::getFriendList(std::list<RsPeerId> &ids)
 //        AuthSSL::getAuthSSL()->getAllList(ids);
 //	return true;
 //}
+
+bool p3Peers::getPeersCount(
+        uint32_t& peersCount, uint32_t& onlinePeersCount,
+        bool countLocations )
+{
+	peersCount = mPeerMgr->getFriendCount(countLocations, false);
+	onlinePeersCount = mPeerMgr->getFriendCount(countLocations, true);
+	return true;
+}
 
 bool p3Peers::getPeerCount (unsigned int *friendCount, unsigned int *onlineCount, bool ssl)
 {
@@ -1097,6 +1107,72 @@ bool p3Peers::GetPGPBase64StringAndCheckSum(	const RsPgpId& gpg_id,
 	delete[] mem_block ;
 
 	return true ;
+}
+
+bool p3Peers::acceptInvite( const std::string& invite,
+                            ServicePermissionFlags flags )
+{
+	if(invite.empty()) return false;
+
+	const std::string* radixPtr(&invite);
+
+	RsUrl url(invite);
+	std::map<std::string, std::string> query(url.query());
+
+	if(query.find("radix") != query.end())
+		radixPtr = &query["radix"];
+
+	const std::string& radix(*radixPtr);
+	if(radix.empty()) return false;
+
+	RsPgpId pgpId;
+	RsPeerId sslId;
+	std::string errorString;
+
+	if(!loadCertificateFromString(radix, sslId, pgpId, errorString))
+		return false;
+
+	RsPeerDetails peerDetails;
+	uint32_t errorCode;
+
+	if(!loadDetailsFromStringCert(radix, peerDetails, errorCode))
+		return false;
+
+	if(peerDetails.gpg_id.isNull())
+		return false;
+
+	addFriend(peerDetails.id, peerDetails.gpg_id, flags);
+
+	if (!peerDetails.location.empty())
+		setLocation(peerDetails.id, peerDetails.location);
+
+	// Update new address even the peer already existed.
+	if (peerDetails.isHiddenNode)
+	{
+		setHiddenNode( peerDetails.id,
+		               peerDetails.hiddenNodeAddress,
+		               peerDetails.hiddenNodePort );
+	}
+	else
+	{
+		//let's check if there is ip adresses in the certificate.
+		if (!peerDetails.extAddr.empty() && peerDetails.extPort)
+			setExtAddress( peerDetails.id,
+			               peerDetails.extAddr,
+			               peerDetails.extPort );
+		if (!peerDetails.localAddr.empty() && peerDetails.localPort)
+			setLocalAddress( peerDetails.id,
+			                 peerDetails.localAddr,
+			                 peerDetails.localPort );
+		if (!peerDetails.dyndns.empty())
+			setDynDNS(peerDetails.id, peerDetails.dyndns);
+		for(auto&& ipr : peerDetails.ipAddressList)
+			addPeerLocator(
+			            peerDetails.id,
+			            RsUrl(ipr.substr(0, ipr.find(' '))) );
+	}
+
+	return true;
 }
 
 std::string p3Peers::GetRetroshareInvite(
