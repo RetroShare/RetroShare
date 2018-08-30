@@ -783,6 +783,7 @@ void GxsForumThreadWidget::calculateIconsAndFonts(QTreeWidgetItem *item, bool &h
 	bool isNew = IS_MSG_NEW(status);
 	bool unread = IS_MSG_UNREAD(status);
 	bool missing = item->data(COLUMN_THREAD_DATA, ROLE_THREAD_MISSING).toBool();
+    RsGxsMessageId msgId(item->data(COLUMN_THREAD_MSGID,Qt::DisplayRole).toString().toStdString());
 
 	// set icon
 	if (missing) {
@@ -811,6 +812,8 @@ void GxsForumThreadWidget::calculateIconsAndFonts(QTreeWidgetItem *item, bool &h
 		calculateIconsAndFonts(item->child(index), myReadChilddren, myUnreadChilddren);
 	}
 
+    bool is_pinned = mForumGroup.mPinnedPosts.ids.find(msgId) != mForumGroup.mPinnedPosts.ids.end();
+
 	// set font
 	for (int i = 0; i < COLUMN_THREAD_COUNT; ++i) {
 		QFont qf = item->font(i);
@@ -832,6 +835,15 @@ void GxsForumThreadWidget::calculateIconsAndFonts(QTreeWidgetItem *item, bool &h
 			/* Missing message */
 			item->setForeground(i, textColorMissing());
 		}
+		if(is_pinned)
+        {
+			qf.setBold(true);
+			item->setForeground(i, textColorUnread());
+			item->setData(i,Qt::BackgroundRole, QBrush(QColor(255,200,180))) ;
+		}
+        else
+			item->setData(i,Qt::BackgroundRole, QBrush());
+
 		item->setFont(i, qf);
 	}
 
@@ -1186,6 +1198,7 @@ QTreeWidgetItem *GxsForumThreadWidget::convertMsgToThreadWidget(const RsGxsForum
 	// Early check for a message that should be hidden because its author
 	// is flagged with a bad reputation
 
+    bool is_pinned = mForumGroup.mPinnedPosts.ids.find(msg.mMeta.mMsgId) != mForumGroup.mPinnedPosts.ids.end();
 
     uint32_t idflags =0;
 	RsReputations::ReputationLevel reputation_level = rsReputations->overallReputationLevel(msg.mMeta.mAuthorId,&idflags) ;
@@ -1198,6 +1211,8 @@ QTreeWidgetItem *GxsForumThreadWidget::convertMsgToThreadWidget(const RsGxsForum
 
 	if(redacted)
 		item->setText(COLUMN_THREAD_TITLE, tr("[ ... Redacted message ... ]"));
+	else if(is_pinned)
+		item->setText(COLUMN_THREAD_TITLE, tr("[PINNED] ") + QString::fromUtf8(msg.mMeta.mMsgName.c_str()));
 	else
 		item->setText(COLUMN_THREAD_TITLE, QString::fromUtf8(msg.mMeta.mMsgName.c_str()));
 
@@ -1234,7 +1249,8 @@ QTreeWidgetItem *GxsForumThreadWidget::convertMsgToThreadWidget(const RsGxsForum
 	qtime.setTime_t(msg.mMeta.mPublishTs);
 
 	QString itemText = DateTime::formatDateTime(qtime);
-	QString itemSort = QString::number(msg.mMeta.mPublishTs);//Don't need to format it as for sort.
+    // This is an attempt to put pinned posts on the top. We should rather use a QSortFilterProxyModel here.
+	QString itemSort = is_pinned?QString::number(0):QString::number(msg.mMeta.mPublishTs);//Don't need to format it as for sort.
 
 	if (useChildTS)
 	{
@@ -2112,6 +2128,8 @@ void GxsForumThreadWidget::togglePinUpPost()
 
 	uint32_t token;
 	rsGxsForums->updateGroup(token,mForumGroup);
+
+    updateDisplay(true) ;
 }
 
 void GxsForumThreadWidget::createthread()
