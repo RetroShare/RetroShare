@@ -88,6 +88,7 @@
 #define COLUMN_THREAD_CONTENT      6
 #define COLUMN_THREAD_COUNT        7
 #define COLUMN_THREAD_MSGID        8
+#define COLUMN_THREAD_NB_COLUMNS   9
 
 #define COLUMN_THREAD_DATA     0 // column for storing the userdata like parentid
 
@@ -1272,7 +1273,7 @@ QTreeWidgetItem *GxsForumThreadWidget::convertMsgToThreadWidget(const RsGxsForum
 
 	QString itemText = DateTime::formatDateTime(qtime);
     // This is an attempt to put pinned posts on the top. We should rather use a QSortFilterProxyModel here.
-	QString itemSort = is_pinned?QString::number(0):QString::number(msg.mMeta.mPublishTs);//Don't need to format it as for sort.
+	QString itemSort = QString::number(msg.mMeta.mPublishTs);//Don't need to format it as for sort.
 
 	if (useChildTS)
 	{
@@ -1296,6 +1297,10 @@ QTreeWidgetItem *GxsForumThreadWidget::convertMsgToThreadWidget(const RsGxsForum
 
 	item->setText(COLUMN_THREAD_DATE, itemText);
 	item->setData(COLUMN_THREAD_DATE, ROLE_THREAD_SORT, itemSort);
+
+    if(is_pinned)														// make sure all pinned poses are grouped together
+        for(int i=0;i<COLUMN_THREAD_NB_COLUMNS;++i)
+			item->setData(i,ROLE_THREAD_SORT, QString("_"));
 
 	// Set later with GxsIdRSTreeWidgetItem::setId
 	item->setData(COLUMN_THREAD_DATA, ROLE_THREAD_AUTHOR, QString::fromStdString(msg.mMeta.mAuthorId.toStdString()));
