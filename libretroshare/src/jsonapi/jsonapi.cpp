@@ -62,8 +62,9 @@ JsonApiServer::JsonApiServer(
     mPort(port), mShutdownCallback(shutdownCallback)
 {
 	registerHandler("/jsonApiServer/shutdown",
-	                [this](const std::shared_ptr<rb::Session>)
+	                [this](const std::shared_ptr<rb::Session> session)
 	{
+		session->close(rb::OK);
 		shutdown();
 	});
 
