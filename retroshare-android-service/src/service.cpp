@@ -17,36 +17,34 @@
  */
 
 #include <QCoreApplication>
-#include <QDebug>
-#include <QDir>
-#include <QTimer>
 #include <csignal>
 
 #ifdef __ANDROID__
 #	include "util/androiddebug.h"
 #endif
 
-#include "api/ApiServer.h"
-#include "api/ApiServerLocal.h"
-#include "api/RsControlModule.h"
+#ifdef LIBRESAPI_LOCAL_SERVER
+#	include <QDir>
+#	include <QTimer>
+#	include <QDebug>
+
+#	include "api/ApiServer.h"
+#	include "api/ApiServerLocal.h"
+#	include "api/RsControlModule.h"
+#else // ifdef LIBRESAPI_LOCAL_SERVER
+#	include <QObject>
+
+#	include "retroshare/rsinit.h"
+#	include "retroshare/rsiface.h"
+#endif // ifdef LIBRESAPI_LOCAL_SERVER
 
 #ifdef RS_JSONAPI
+#	include <cstdint>
 #	include "jsonapi/jsonapi.h"
-#	include "retroshare/rsiface.h"
-
-JsonApiServer jas(9092, [](int ec)
-{
-	RsControl::instance()->rsGlobalShutDown();
-	QCoreApplication::exit(ec);
-});
-
-void exitGracefully(int ec) { jas.shutdown(ec); }
-
-#else // ifdef RS_JSONAPI
-void exitGracefully(int ec) { QCoreApplication::exit(ec); }
-#endif // ifdef RS_JSONAPI
-
-using namespace resource_api;
+#	include <QCommandLineParser>
+#	include <QString>
+#	include <iostream>
+#endif // def RS_JSONAPI
 
 int main(int argc, char *argv[])
 {
@@ -56,13 +54,15 @@ int main(int argc, char *argv[])
 
 	QCoreApplication app(argc, argv);
 
-	signal(SIGINT, exitGracefully);
-	signal(SIGTERM, exitGracefully);
+	signal(SIGINT,   QCoreApplication::exit);
+	signal(SIGTERM,  QCoreApplication::exit);
 #ifdef SIGBREAK
-	signal(SIGBREAK, exitGracefully);
+	signal(SIGBREAK, QCoreApplication::exit);
 #endif // ifdef SIGBREAK
 
 #ifdef LIBRESAPI_LOCAL_SERVER
+	using namespace resource_api;
+
 	ApiServer api;
 	RsControlModule ctrl_mod(argc, argv, api.getStateTokenServer(), &api, true);
 	api.addResourceHandler(
@@ -81,15 +81,46 @@ int main(int argc, char *argv[])
 	shouldExitTimer.setTimerType(Qt::VeryCoarseTimer);
 	shouldExitTimer.setInterval(1000);
 	QObject::connect( &shouldExitTimer, &QTimer::timeout, [&]()
-	{ if(ctrl_mod.processShouldExit()) exitGracefully(0); } );
+	{ if(ctrl_mod.processShouldExit()) QCoreApplication::exit(0); } );
 	shouldExitTimer.start();
-#else
-#	error retroshare-android-service need CONFIG+=libresapilocalserver to build
-#endif
+#else // ifdef LIBRESAPI_LOCAL_SERVER
+	RsInit::InitRsConfig();
+	RsInit::InitRetroShare(argc, argv, true);
+	RsControl::earlyInitNotificationSystem();
+	QObject::connect(
+	            &app, &QCoreApplication::aboutToQuit,
+	            [](){
+		if(RsControl::instance()->isReady())
+			RsControl::instance()->rsGlobalShutDown(); } );
+#endif // ifdef LIBRESAPI_LOCAL_SERVER
 
 #ifdef RS_JSONAPI
+	uint16_t jsonApiPort = 9092;
+
+	{
+		QCommandLineOption jsonApiPortOpt(
+		            "jsonApiPort", "JSON API listening port.", "port", "9092");
+		QCommandLineParser cmdParser;
+		cmdParser.addHelpOption();
+		cmdParser.addOption(jsonApiPortOpt);
+		cmdParser.parse(app.arguments());
+		QString jsonApiPortStr = cmdParser.value(jsonApiPortOpt);
+		bool portOk;
+		jsonApiPort = jsonApiPortStr.toUShort(&portOk);
+		if(!portOk)
+		{
+			std::cerr << "ERROR: jsonApiPort option value must be a valid TCP "
+			          << "port!" << std::endl;
+			cmdParser.showHelp();
+			QCoreApplication::exit(EINVAL);
+		}
+	}
+
+	JsonApiServer jas(jsonApiPort, [](int ec) { QCoreApplication::exit(ec); });
 	jas.start();
-#endif
+	std::cerr << "JSON API listening on port " << jsonApiPort << std::endl;
+
+#endif // ifdef RS_JSONAPI
 
 	return app.exec();
 }
