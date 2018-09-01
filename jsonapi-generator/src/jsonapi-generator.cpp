@@ -112,7 +112,6 @@ int main(int argc, char *argv[])
 				QDomNode member = members.item(i);
 				QString refid(member.attributes().namedItem("refid").nodeValue());
 				QString methodName(member.firstChildElement("name").toElement().text());
-				QString wrapperName(instanceName+methodName+"Wrapper");
 				QString defFilePath(doxPrefix + refid.split('_')[0] + ".xml");
 
 				qDebug() << "Looking for" << typeName << methodName << "into"
@@ -325,7 +324,7 @@ int main(int argc, char *argv[])
 				substitutionsMap.insert("paramsDeclaration", paramsDeclaration);
 				substitutionsMap.insert("inputParamsDeserialization", inputParamsDeserialization);
 				substitutionsMap.insert("outputParamsSerialization", outputParamsSerialization);
-				substitutionsMap.insert("wrapperName", wrapperName);
+				substitutionsMap.insert("instanceName", instanceName);
 				substitutionsMap.insert("headerFileName", headerFileName);
 				substitutionsMap.insert("functionCall", functionCall);
 				substitutionsMap.insert("apiPath", apiPath);

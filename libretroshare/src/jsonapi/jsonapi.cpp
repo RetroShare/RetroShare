@@ -30,6 +30,33 @@
 // Generated at compile time
 #include "jsonapi-includes.inl"
 
+static bool checkRsServicePtrReady(
+        void* serviceInstance, const std::string& serviceName,
+        RsGenericSerializer::SerializeContext& ctx,
+        const std::shared_ptr<restbed::Session> session)
+{
+	if(serviceInstance) return true;
+
+	std::string jsonApiError;
+	jsonApiError += "Service: ";
+	jsonApiError += serviceName;
+	jsonApiError += " not initialized! Are you sure you logged in already?";
+
+	RsGenericSerializer::SerializeJob j(RsGenericSerializer::TO_JSON);
+	RS_SERIAL_PROCESS(jsonApiError);
+
+	std::stringstream ss;
+	ss << ctx.mJson;
+	std::string&& ans(ss.str());
+	const std::multimap<std::string, std::string> headers
+	{
+		{ "Content-Type", "text/json" },
+		{ "Content-Length", std::to_string(ans.length()) }
+	};
+	session->close(rb::CONFLICT, ans, headers);
+	return false;
+}
+
 JsonApiServer::JsonApiServer(
         uint16_t port, const std::function<void(int)> shutdownCallback) :
     mPort(port), mShutdownCallback(shutdownCallback)
@@ -61,6 +88,9 @@ JsonApiServer::JsonApiServer(
 			const char kcd[] = "caller_data";
 			if(jReq.HasMember(kcd))
 				jAns.AddMember(kcd, jReq[kcd], jAns.GetAllocator());
+
+			if(!checkRsServicePtrReady(rsFiles, "rsFiles", cAns, session))
+				return;
 
 			RsFileHash hash;
 			uint64_t offset;

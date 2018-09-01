@@ -45,6 +45,10 @@ registerHandler("$%apiPath%$",
 		if(jReq.HasMember(kcd))
 			jAns.AddMember(kcd, jReq[kcd], jAns.GetAllocator());
 
+		if( !checkRsServicePtrReady(
+		            $%instanceName%$, "$%instanceName%$", cAns, session ) )
+			return;
+
 $%paramsDeclaration%$
 
 $%inputParamsDeserialization%$
