@@ -138,7 +138,7 @@ struct RsMsgMetaData : RsSerializable
     std::string mMsgName;
     time_t      mPublishTs;
 
-    /// the first 16 bits for service, last 16 for GXS
+    /// the lower 16 bits for service, upper 16 bits for GXS
     uint32_t    mMsgFlags;
 
     // BELOW HERE IS LOCAL DATA, THAT IS NOT FROM MSG.

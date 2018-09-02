@@ -2325,7 +2325,7 @@ void GxsForumThreadWidget::editForumMessageData(const RsGxsForumMsg& msg)
 
 	if (!msg.mMeta.mAuthorId.isNull())
 	{
-		CreateGxsForumMsg *cfm = new CreateGxsForumMsg(groupId(), msg.mMeta.mParentId, msg.mMeta.mMsgId, is_own?(msg.mMeta.mAuthorId):moderator_id);
+		CreateGxsForumMsg *cfm = new CreateGxsForumMsg(groupId(), msg.mMeta.mParentId, msg.mMeta.mMsgId, is_own?(msg.mMeta.mAuthorId):moderator_id,!is_own);
 
 		cfm->insertPastedText(QString::fromUtf8(msg.mMsg.c_str())) ;
 		cfm->show();

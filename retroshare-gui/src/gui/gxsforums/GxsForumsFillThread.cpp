@@ -255,8 +255,14 @@ void GxsForumsFillThread::run()
 			// Make sure that the author is the same than the original message, or is a moderator. This should always happen when messages are constructed using
             // the UI but nothing can prevent a nasty user to craft a new version of a message with his own signature.
 
-			if(msgIt2->second.mMeta.mAuthorId != msgIt->second.mMeta.mAuthorId && forum_group.mAdminList.ids.find(msgIt->second.mMeta.mAuthorId)==forum_group.mAdminList.ids.end())
-				continue ;
+			if(msgIt2->second.mMeta.mAuthorId != msgIt->second.mMeta.mAuthorId)
+			{
+				if( !IS_FORUM_MSG_MODERATION(msgIt->second.mMeta.mMsgFlags) )			// if authors are different the moderation flag needs to be set on the editing msg
+					continue ;
+
+				if( forum_group.mAdminList.ids.find(msgIt->second.mMeta.mAuthorId)==forum_group.mAdminList.ids.end())	// if author is not a moderator, continue
+					continue ;
+			}
 
 			// always add the post a self version
 
