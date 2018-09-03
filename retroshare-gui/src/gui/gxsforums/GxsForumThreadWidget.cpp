@@ -1227,8 +1227,6 @@ public:
 		bool date_left  =       data(COLUMN_THREAD_DATE,ROLE_THREAD_SORT).toUInt(); // this is used by the sorting model to put all posts on top
 		bool date_right = other.data(COLUMN_THREAD_DATE,ROLE_THREAD_SORT).toUInt(); // this is used by the sorting model to put all posts on top
 
-        std::cerr << "left: " << date_left << " right: " << date_right << ": order = " << m_header->sortIndicatorOrder() << std::endl;
-
         if(date_left ^ date_right)
             return (m_header->sortIndicatorOrder()==Qt::AscendingOrder)?date_right:date_left ;
 
