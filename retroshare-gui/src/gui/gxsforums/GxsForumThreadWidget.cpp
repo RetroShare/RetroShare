@@ -1224,11 +1224,11 @@ public:
 
     bool operator<(const QTreeWidgetItem& other) const
     {
-		bool date_left  =       data(COLUMN_THREAD_DATE,ROLE_THREAD_SORT).toUInt(); // this is used by the sorting model to put all posts on top
-		bool date_right = other.data(COLUMN_THREAD_DATE,ROLE_THREAD_SORT).toUInt(); // this is used by the sorting model to put all posts on top
+		bool date_left  =       data(COLUMN_THREAD_DATE,ROLE_THREAD_SORT).toUInt(); // this is used by the sorting model to put all pinned posts on top
+		bool date_right = other.data(COLUMN_THREAD_DATE,ROLE_THREAD_SORT).toUInt();
 
         if(date_left ^ date_right)
-            return (m_header->sortIndicatorOrder()==Qt::AscendingOrder)?date_right:date_left ;
+            return (m_header->sortIndicatorOrder()==Qt::AscendingOrder)?date_right:date_left ;	// always put pinned posts on top
 
 		return GxsIdRSTreeWidgetItem::operator<(other);
     }
@@ -1249,6 +1249,8 @@ QTreeWidgetItem *GxsForumThreadWidget::convertMsgToThreadWidget(const RsGxsForum
 	bool redacted = false;
 
 	redacted = (reputation_level == RsReputations::REPUTATION_LOCALLY_NEGATIVE);
+
+    // We use a specific item model for forums in order to handle the post pinning.
 
 	GxsIdRSTreeWidgetItem *item = new ForumThreadItem(ui->threadTreeWidget->header(),mThreadCompareRole,GxsIdDetails::ICON_TYPE_AVATAR );
 	item->moveToThread(ui->threadTreeWidget->thread());
