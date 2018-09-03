@@ -1216,6 +1216,29 @@ void GxsForumThreadWidget::fillThreadStatus(QString text)
 	ui->progressText->setText(text);
 }
 
+class ForumThreadItem: public GxsIdRSTreeWidgetItem
+{
+public:
+    ForumThreadItem(QHeaderView *header,const RSTreeWidgetItemCompareRole *compareRole, uint32_t icon_mask,QTreeWidget *parent = NULL)
+    	: GxsIdRSTreeWidgetItem(compareRole,icon_mask,parent), m_header(header) {}
+
+    bool operator<(const QTreeWidgetItem& other) const
+    {
+		bool date_left  =       data(COLUMN_THREAD_DATE,ROLE_THREAD_SORT).toUInt(); // this is used by the sorting model to put all posts on top
+		bool date_right = other.data(COLUMN_THREAD_DATE,ROLE_THREAD_SORT).toUInt(); // this is used by the sorting model to put all posts on top
+
+        std::cerr << "left: " << date_left << " right: " << date_right << ": order = " << m_header->sortIndicatorOrder() << std::endl;
+
+        if(date_left ^ date_right)
+            return (m_header->sortIndicatorOrder()==Qt::AscendingOrder)?date_right:date_left ;
+
+		return GxsIdRSTreeWidgetItem::operator<(other);
+    }
+
+private:
+    QHeaderView *m_header ;
+};
+
 QTreeWidgetItem *GxsForumThreadWidget::convertMsgToThreadWidget(const RsGxsForumMsg &msg, bool useChildTS, uint32_t filterColumn, QTreeWidgetItem *parent)
 {
 	// Early check for a message that should be hidden because its author
@@ -1229,7 +1252,7 @@ QTreeWidgetItem *GxsForumThreadWidget::convertMsgToThreadWidget(const RsGxsForum
 
 	redacted = (reputation_level == RsReputations::REPUTATION_LOCALLY_NEGATIVE);
 
-	GxsIdRSTreeWidgetItem *item = new GxsIdRSTreeWidgetItem(mThreadCompareRole,GxsIdDetails::ICON_TYPE_AVATAR );
+	GxsIdRSTreeWidgetItem *item = new ForumThreadItem(ui->threadTreeWidget->header(),mThreadCompareRole,GxsIdDetails::ICON_TYPE_AVATAR );
 	item->moveToThread(ui->threadTreeWidget->thread());
 
 	if(redacted)
@@ -1298,9 +1321,8 @@ QTreeWidgetItem *GxsForumThreadWidget::convertMsgToThreadWidget(const RsGxsForum
 	item->setText(COLUMN_THREAD_DATE, itemText);
 	item->setData(COLUMN_THREAD_DATE, ROLE_THREAD_SORT, itemSort);
 
-    if(is_pinned)														// make sure all pinned poses are grouped together
-        for(int i=0;i<COLUMN_THREAD_NB_COLUMNS;++i)
-			item->setData(i,ROLE_THREAD_SORT, QString("_"));
+    if(is_pinned)
+		item->setData(COLUMN_THREAD_DATE,ROLE_THREAD_SORT, QVariant(0)); // this is used by the sorting model to put all posts on top
 
 	// Set later with GxsIdRSTreeWidgetItem::setId
 	item->setData(COLUMN_THREAD_DATA, ROLE_THREAD_AUTHOR, QString::fromStdString(msg.mMeta.mAuthorId.toStdString()));
