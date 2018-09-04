@@ -1,5 +1,237 @@
 retroshare (ZZZZZZ-1.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
+  910aea7 csoler  Wed, 29 Aug 2018 22:10:58 +0200 Merge pull request #1325 from csoler/v0.6-ContentFiltering
+  65304a3 csoler  Tue, 28 Aug 2018 23:57:16 +0200 added last relay (a.k.a which direct friend) of search results in sources column
+  c9b30f5 csoler  Tue, 28 Aug 2018 23:42:24 +0200 fixed merged with upstream/master
+  b09eb57 csoler  Tue, 28 Aug 2018 23:16:35 +0200 fixed small bug in deletion of banned file
+  2be556c G10h4ck Tue, 28 Aug 2018 19:55:36 +0200 Merge pull request #1318 from zapek/msys2_build_fix
+  c294971 csoler  Tue, 28 Aug 2018 19:11:08 +0200 Merge pull request #1289 from G10h4ck/jsonapi
+  dd55dde Gioacch Tue, 28 Aug 2018 15:20:41 +0200 Add more consistency checks to serialization code
+  3094146 Gioacch Tue, 28 Aug 2018 14:35:29 +0200 RsLoginHelper::attemptLogin clear cached passphrase after usage
+  4bc6919 Gioacch Tue, 28 Aug 2018 14:19:41 +0200 Friendly android-service build error if wrong compile options
+  75e882b Gioacch Tue, 28 Aug 2018 14:12:09 +0200 Make NotifyClient class again
+  40c2a8e Gioacch Tue, 28 Aug 2018 14:05:02 +0200 Improve JSON API documentation following Cyril suggestion
+  5f18d26 csoler  Mon, 27 Aug 2018 23:36:07 +0200 removed unused member depth from search results to avoid confusion while ensureing backward compatibility is kept
+  fd25f83 csoler  Mon, 27 Aug 2018 10:56:29 +0200 Merge pull request #1329 from sehraf/pr_small-fixes
+  1dfe644 Gioacch Sun, 26 Aug 2018 11:39:26 +0200 Improve documentation
+  4530691 Gioacch Sat, 25 Aug 2018 23:31:16 +0200 Update Appveyod build badge
+  8fd903a Gioacch Sat, 25 Aug 2018 22:25:36 +0200 Improve JSON API documentation
+  e878ba9 Gioacch Sat, 25 Aug 2018 22:24:49 +0200 Add support for default parameters value in jsonapi-generator
+  2fab33d csoler  Sat, 25 Aug 2018 20:52:06 +0200 fixed a few bugs in ban file list management
+  b5eabf7 csoler  Sat, 25 Aug 2018 20:18:54 +0200 improved banned files UI and fixed deadlock
+  85c3332 Gioacch Sat, 25 Aug 2018 19:13:34 +0200 Add JSON API support to retroshare-nogui
+  c14d898 csoler  Sat, 25 Aug 2018 18:44:29 +0200 added some debug info to file control system and fixes a problem with sending TS
+  f5d306c Gioacch Sat, 25 Aug 2018 18:39:32 +0200 Made JSON API port configurable from retroshare-gui
+  b2bbd66 G10h4ck Sat, 25 Aug 2018 18:35:52 +0200 Merge pull request #1328 from csoler/v0.6-FT
+  41f7235 G10h4ck Sat, 25 Aug 2018 18:05:56 +0200 Merge pull request #2 from sehraf/pr_improve_json
+  c50405c Gioacch Sat, 25 Aug 2018 17:58:04 +0200 Expose /rsFiles/turtleSearchRequest via JSON API
+  9557a52 sehraf  Sat, 25 Aug 2018 17:54:34 +0200 remove unnecessary locking, print log entries also to stdout
+  fe22465 sehraf  Sat, 25 Aug 2018 17:53:30 +0200 fix proxy indicators not being updated
+  c754435 sehraf  Sat, 25 Aug 2018 17:10:01 +0200 fix deserialisation and improve PRINT job
+  a8b2532 Gioacch Sat, 25 Aug 2018 17:04:42 +0200 Fix warning #pragma once used in main file
+  588295e sehraf  Sat, 25 Aug 2018 16:52:46 +0200 make RsGroupInfo serializable
+  4d03b90 sehraf  Sat, 25 Aug 2018 16:51:49 +0200 convert values properly to string
+  31f0a42 Gioacch Sat, 25 Aug 2018 16:14:42 +0200 Merge branch 'csoler/v0.6-FT' into jsonapi
+  b98246e Gioacch Sat, 25 Aug 2018 00:19:26 +0200 Fix location creation via JSON API
+  8eebe53 csoler  Fri, 24 Aug 2018 16:12:05 +0200 moved UI notification for turtle FT search results into ftServer, in order to allow easier libresAPI calls
+  afb9299 Gioacch Fri, 24 Aug 2018 00:31:25 +0200 Enable JSON conversion for RsGxsImage via MemBlockProxy
+  afeb408 Gioacch Thu, 23 Aug 2018 22:38:21 +0200 Expose more RsFiles via JSON API
+  4d30d4f Gioacch Thu, 23 Aug 2018 15:47:01 +0200 Avoid cloning huge unused restbed openssl dependency
+  18feb23 Gioacch Thu, 23 Aug 2018 14:20:24 +0200 Suggest shallow submodules for jsonapi dependencies
+  3b72f91 Gioacch Thu, 23 Aug 2018 01:39:26 +0200 Improve API
+  3055897 csoler  Wed, 22 Aug 2018 21:57:56 +0200 added filter in p3turtle against banned hashes in tunnel requests and search results
+  ab6a5c0 Gioacch Wed, 22 Aug 2018 17:22:27 +0200 RsLoginHelper::createLocation expose capability of creating hidden locations
+  8f7bacb Gioacch Wed, 22 Aug 2018 17:00:22 +0200 Remove #pragma once in .cc file
+  396fe49 Gioacch Wed, 22 Aug 2018 16:59:42 +0200 Merge branch 'master' into jsonapi
+  3654646 csoler  Tue, 21 Aug 2018 11:20:02 +0200 added load/save of banned files and handling of banned files information from friends
+  0b176a0 csoler  Mon, 20 Aug 2018 23:30:05 +0200 added sending of banned file info
+  e5e5660 csoler  Sun, 19 Aug 2018 21:11:17 +0200 added logic to compute ban list from friend nodes and own opinions
+  af75566 csoler  Sun, 19 Aug 2018 15:52:35 +0200 added option whether to trust friend nodes for banned files
+  a2804a7 csoler  Sun, 19 Aug 2018 15:09:43 +0200 added context menu and removal feature for banned files
+  fe8c2c4 Gioacc  Thu, 16 Aug 2018 23:51:35 +0200 Merge branch 'jsonapi' of github.com:G10h4ck/RetroShare into jsonapi
+  4b6f751 Gioacch Thu, 16 Aug 2018 23:34:29 +0200 Implement JSON API generation for async API calls
+  a7ee854 csoler  Thu, 16 Aug 2018 23:18:29 +0200 added fill routine for banned files list
+  e17c4d0 csoler  Thu, 16 Aug 2018 22:22:47 +0200 added a dialog to edit banned files
+  50e03a5 csoler  Thu, 16 Aug 2018 18:49:36 +0200 basic infrastructure for banning unwanted file content
+  b7f5d42 Gioacch Thu, 16 Aug 2018 14:26:41 +0200 RsGxsNetService::receiveTurtleSearchResults fix deadlock
+  7bdc61e thunder Thu, 14 Jun 2018 14:22:23 +0200 Added Windows build environment with MSYS2
+  1eed404 thunder Sun, 17 Jun 2018 17:51:58 +0200 Optimized Windows build environment
+  93ab975 csoler  Mon,  6 Aug 2018 22:59:37 +0200 reverted commit 5925aa06fed41e770630811dd4d5d021882b7ae7 by request from Phenom
+  51bcb81 G10h4ck Fri,  3 Aug 2018 22:09:02 +0200 Merge pull request #1316 from zapek/master
+  0b821a4 zapek   Fri,  3 Aug 2018 21:29:00 +0200 changed to use CONFIG+=rs_autologin for the windows build instructions instead of setting defines
+  146f920 zapek   Fri,  3 Aug 2018 21:21:53 +0200 changed win32-x to appveyor
+  2848359 zapek   Fri,  3 Aug 2018 20:09:32 +0200 fixed webui files generation under MSYS2
+  8088550 zapek   Fri,  3 Aug 2018 19:33:09 +0200 removed the note about the build possibly failing while generating the webui files because I have a fix that I will commit next
+  4a961a8 csoler  Fri,  3 Aug 2018 18:32:59 +0200 Merge pull request #1310 from PhenomRetroShare/Fix_DisableCMarkButton
+  fabd181 csoler  Fri,  3 Aug 2018 17:40:16 +0200 Merge pull request #1315 from PhenomRetroShare/Fix_AppVeyorCompil
+  ce39f4d zapek   Fri,  3 Aug 2018 15:15:17 +0200 added a working procedure to compile on Windows using MSYS2
+  cc51298 csoler  Thu,  2 Aug 2018 14:13:14 +0200 fixed warning about badly overloaded function in rsexpr.h
+  f21d35b Phenom  Thu,  2 Aug 2018 00:39:45 +0200 Fix AppVeyor Compilation
+  985be35 csoler  Wed,  1 Aug 2018 23:04:20 +0200 fixed compilation with RS_AUTO_LOGIN
+  77d5dfe csoler  Wed,  1 Aug 2018 20:48:55 +0200 Merge pull request #1311 from sehraf/pr_improve_service_id
+  97194fd sehraf  Wed,  1 Aug 2018 20:30:28 +0200 Add wrapper function to convert uint16_t service IDs to internal unsigned int. Use it when looking up service names.
+  50867d2 csoler  Wed,  1 Aug 2018 20:31:48 +0200 fixed clicking on external url in MessageWidget
+  5f66a45 Phenom  Wed,  1 Aug 2018 18:40:40 +0200 Disable CMark Button on ChatWidget if not defined.
+  0d4eafd csoler  Tue, 31 Jul 2018 18:08:24 +0200 fixed compilation on ubuntu with xapian
+  c948517 csoler  Tue, 31 Jul 2018 14:18:24 +0200 Merge pull request #1306 from csoler/v0.6-TorOnly
+  ecd4521 csoler  Tue, 31 Jul 2018 14:13:01 +0200 disallow empty file when loading shared file list in order to avoid malloc of size 0
+  1297d2e csoler  Mon, 30 Jul 2018 10:47:36 +0200 fixed double calls to pthread_exit() (one being implicit after return from main thread method) -- patch from sss
+  d7c7e35 csoler  Fri, 27 Jul 2018 15:15:04 +0200 fixed compilation on MacOS
+  cc1a05d csoler  Fri, 27 Jul 2018 12:33:06 +0200 fixed certificate creation in TorAuto mode
+  22bc40e csoler  Thu, 26 Jul 2018 19:25:30 +0200 udated GenCertDialog with new layout
+  74ec558 csoler  Thu, 26 Jul 2018 09:39:26 +0200 reworked GenCertDialog with node type on top level
+  62b9a74 csoler  Wed, 25 Jul 2018 15:31:18 +0200 fixed running with TorControl in new mode
+  d1a375c csoler  Wed, 25 Jul 2018 11:37:40 +0200 removed RETROTOR #ifdef and started using RsAccounts::isTorAuto() instead. Unfinished yet.
+  56422a9 G10h4ck Wed, 25 Jul 2018 00:35:32 +0200 Merge pull request #1 from sehraf/jsonapi
+  d2a62b0 Gioacch Wed, 25 Jul 2018 00:27:39 +0200 Fix deep search returning 0 results
+  b4dd89d Gioacch Wed, 25 Jul 2018 00:27:39 +0200 Fix deep search returning 0 results
+  0f75890 csoler  Tue, 24 Jul 2018 23:47:32 +0200 started cleaning the mess with rsAccounts: only exposed useful functionality of rsAccount beyond a static class and removed all references to rsAccounts in the code
+  7af5075 sehraf  Tue, 24 Jul 2018 20:59:04 +0200 fix jsonapi.h
+  f6ca7b2 csoler  Mon, 23 Jul 2018 17:20:57 +0200 disabled compilation of cmark until it gets fixed
+  a21c272 csoler  Mon, 23 Jul 2018 17:20:13 +0200 disabled compilation of cmark until it gets fixed
+  e6acb52 sehraf  Thu, 28 Jun 2018 20:32:53 +0200 add simple chat support
+  7128a04 thunder Mon, 23 Jul 2018 21:54:07 +0200 Added Xapian to Windows build environment
+  b85359d thunder Tue, 24 Jul 2018 14:24:50 +0200 Added missing include to TurtleRouterDialog.cpp
+  e2bb3ae csoler  Mon, 23 Jul 2018 17:20:57 +0200 disabled compilation of cmark until it gets fixed
+  3272ee0 csoler  Mon, 23 Jul 2018 17:20:13 +0200 disabled compilation of cmark until it gets fixed
+  1bc5180 Gioacch Fri, 29 Jun 2018 16:03:09 +0200 Experiment of notification via NotifyClient + JSON API
+  130007b Gioacch Mon, 23 Jul 2018 13:44:01 +0200 Merge branch 'master' into jsonapi
+  fbc4e42 G10h4ck Mon, 23 Jul 2018 11:48:55 +0200 Merge pull request #1292 from G10h4ck/deep_search
+  e8c9ba5 Gioacch Mon, 23 Jul 2018 11:18:32 +0200 Improve code quality after Cyril review
+  08cf225 csoler  Mon, 23 Jul 2018 09:44:29 +0200 Merge pull request #1301 from PhenomRetroShare/Fix_RemoveSearchLineInFriendSelectionWidget
+  6f8c2f6 Gioacch Sun, 22 Jul 2018 23:39:06 +0200 Fix compilation if deep_search is disabled
+  99f3527 G10h4ck Sun, 22 Jul 2018 23:03:37 +0200 Merge pull request #999 from PhenomRetroShare/Add_CMark
+  51c2521 Gioacch Sun, 22 Jul 2018 22:47:30 +0200 Fix compiling with old GCC
+  d9aa372 Gioacch Sun, 22 Jul 2018 21:45:43 +0200 Revert "DROP before merge. Reduce INTEGRITY_CHECK_PERIOD"
+  f97dc8a Gioacch Sun, 22 Jul 2018 21:33:40 +0200 Properly plug deep search in GXS search
+  d03ee1c Phenom  Sat, 19 Aug 2017 19:18:58 +0200 Add CommonMark in ChatLobbyDialog
+  82c9084 csoler  Sun, 22 Jul 2018 00:22:51 +0200 Merge pull request #1303 from csoler/v0.6-GXS-DistSync3-TurtleSearch
+  2ab12a2 csoler  Sun, 22 Jul 2018 00:21:45 +0200 fixed deadlock due to turtle calling addVirtualPeer for client services inside a mutex protected zone (breaks mutex order service > turtle)
+  6982ae6 Gioacch Sat, 21 Jul 2018 13:20:50 +0200 Improve retrocompatibility with older xapian
+  ff166b2 Gioacch Sat, 21 Jul 2018 12:57:05 +0200 Merge branch 'master' into deep_search
+  8149ef9 Gioacch Sat, 21 Jul 2018 01:17:28 +0200 Install xapian dependency in Continuos Integration
+  e72ef24 csoler  Fri, 20 Jul 2018 19:16:58 +0200 Merge pull request #1298 from csoler/v0.6-DebianPackaging
+  3fc9ff3 Gioacch Fri, 20 Jul 2018 15:29:37 +0200 WIP Plug deep search into GXS search
+  a31b06a Gioacch Fri, 20 Jul 2018 13:15:11 +0200 Merge branch 'master' into deep_search
+  d4fce07 csoler  Thu, 19 Jul 2018 23:46:31 +0200 changed lrand48 to RSRandom for cross-plateform compatibility, in rsgxsnettunnel.cc
+  2bab688 csoler  Thu, 19 Jul 2018 23:22:24 +0200 fixed merge with upstream/master
+  b8062f2 csoler  Thu, 19 Jul 2018 22:59:43 +0200 Merge pull request #1294 from csoler/v0.6-GXS-DistSync3-TurtleSearch
+  dac885e csoler  Wed, 18 Jul 2018 21:22:38 +0200 made randomBias initilized with true random bytes at start
+  9b0a4b9 csoler  Wed, 18 Jul 2018 21:20:51 +0200 removed extra call to loadConfiguration()
+  61087d2 G10h4ck Wed, 18 Jul 2018 19:04:47 +0200 Merge pull request #1302 from sehraf/pr_use_system_rapidjson
+  b9436fb csoler  Tue, 17 Jul 2018 10:08:39 +0200 fixed leading zeroes problem in title bar
+  55e99ef sehraf  Mon, 16 Jul 2018 23:22:04 +0200 add auto detection of installed rapidjson
+  a52c94d csoler  Sun, 15 Jul 2018 19:15:05 +0200 improved display of encryption master key
+  1de3149 csoler  Sun, 15 Jul 2018 19:09:12 +0200 fixed up display of GXS net tunnel info
+  01d4825 csoler  Sun, 15 Jul 2018 18:31:22 +0200 Merge pull request #1300 from PhenomRetroShare/Fix_ChangeLobbyToRoomInCreateLobbyDialog
+  aaea97d Phenom  Sun, 15 Jul 2018 16:53:52 +0200 Remove unneeded Search: text in FriendSelectionWidget.ui
+  8208416 Phenom  Sun, 15 Jul 2018 16:37:33 +0200 Change Lobby text to Room in CreateLobbyDialog.
+  cca986a csoler  Sun, 15 Jul 2018 15:07:24 +0200 added more info to tunnel display
+  34e924f csoler  Sun, 15 Jul 2018 14:40:50 +0200 added visualisation for GXS net tunnels (unfinished)
+  fd45d44 csoler  Sun, 15 Jul 2018 11:14:58 +0200 added interface to get statistics about GxsNetTunnel
+  80f4907 csoler  Tue, 10 Jul 2018 11:20:43 +0200 Merge pull request #1227 from RetroPooh/openlocal
+  4b6fd5d G10h4ck Mon,  9 Jul 2018 10:55:07 +0200 Merge pull request #1296 from chelovechishko/namespaces
+  6848a58 csoler  Sun,  8 Jul 2018 21:17:48 +0200 merged upstream/master
+  0bc7774 csoler  Sun,  8 Jul 2018 16:59:52 +0200 Merge pull request #1278 from sehraf/pr_improve-nogui-password-entry
+  93aa544 csoler  Sun,  8 Jul 2018 16:58:56 +0200 Merge pull request #1293 from chelovechishko/chalod
+  b3dddea chelove chish ko Fri, 6 Jul 2018 23:55:12 +0900 add missing namespaces
+  0c45217 csoler  Thu,  5 Jul 2018 17:41:30 +0200 merged upstream/master
+  98f8e4d csoler  Thu,  5 Jul 2018 17:40:06 +0200 added per-item type limit for turtle search results
+  4a64ea5 csoler  Thu,  5 Jul 2018 14:00:04 +0200 added optional use of dist sync in GroupFrameDialog
+  0cc87c9 csoler  Thu,  5 Jul 2018 12:20:22 +0200 fixed bug causing search data result to not be forwarded correctly (missing request id)
+  0e37de3 csoler  Thu,  5 Jul 2018 11:43:55 +0200 made retrieval of group data manual instead of automatic
+  59c51a2 csoler  Thu,  5 Jul 2018 10:16:48 +0200 removed debug switch to allow display of existing distant group search results
+  47e760a csoler  Thu,  5 Jul 2018 10:11:12 +0200 added a few missing mutexes in prevent searches to be shown when already known
+  2067b10 csoler  Wed,  4 Jul 2018 23:54:26 +0200 fixed missing code in passing turtle group data result to client service
+  8ad4547 csoler  Wed,  4 Jul 2018 21:42:09 +0200 added group data request when search items are selected
+  74075fd chelove Wed,  4 Jul 2018 23:18:21 +0900 gui: do not show the quote section of context menu in chat if
+  b3fb7ab chelove Wed,  4 Jul 2018 22:46:01 +0900 gui: reduce size of icons in chat for font.height lesser than 26
+  d3e5b76 Gioacch Wed,  4 Jul 2018 12:08:50 +0200 DeepSearch index channels posts too
+  77c3eae chelove Wed,  4 Jul 2018 00:34:45 +0900 gui: check for show "is typing" before time call
+  b950e12 chelove Wed,  4 Jul 2018 00:19:36 +0900 gui: disable quote option if no text is selected in chat
+  5925aa0 chelove Mon,  2 Jul 2018 21:22:22 +0900 gui: anchor not only first word of nickname, if any
+  32014ea Gioacch Tue, 12 Jun 2018 14:12:08 +0200 Use proper path for DeepSearch xapian DB
+  5a41b3c Gioacch Mon, 11 Jun 2018 13:03:01 +0200 Index only public channels
+  0f63283 Gioacch Sun, 10 Jun 2018 19:04:11 +0200 Add search capability to DeepSearch
+  c15ae86 Gioacch Sun, 10 Jun 2018 11:00:38 +0200 deep_search: use service serializer not serial_process
+  c0e92dd Gioacch Sat,  9 Jun 2018 18:06:14 +0200 WIP Index GXS channels with xapian
+  ce61174 Gioacch Sat,  9 Jun 2018 18:02:52 +0200 DROP before merge. Reduce INTEGRITY_CHECK_PERIOD
+  39c88ea G10h4ck Mon,  2 Jul 2018 17:16:21 +0200 Merge pull request #1291 from G10h4ck/extra_locators_merge
+  4eb060e chelove Mon,  2 Jul 2018 17:41:26 +0900 gui: do not attempt to create context menu if idlist is empty
+  418c42b Gioacch Mon,  2 Jul 2018 13:50:02 +0200 Extra locators in cert invite made optional
+  1dd7077 Gioacch Mon,  2 Jul 2018 12:22:23 +0200 Merge branch 'master' into extra_locators_merge
+  1b2b311 csoler  Mon,  2 Jul 2018 10:21:38 +0200 fixed previous commit caused by an apparent bug in qtcreator when updating code
+  e6db04e csoler  Mon,  2 Jul 2018 09:45:17 +0200 cancelled previous commit, because it sort of breaks the update of forum lists.
+  abc5b84 csoler  Mon,  2 Jul 2018 09:36:21 +0200 added queuedConnection type in fillDisplay() between RsGxsBroadcastWidget and RsGxsBroadCastBase.
+  80a43fe csoler  Sat, 30 Jun 2018 21:52:25 +0200 added secure retrieval of distant groups
+  1c63cec Gioacch Fri, 29 Jun 2018 16:02:07 +0200 Expose some RsFiles method trought JSON API
+  102558a Gioacch Fri, 29 Jun 2018 00:13:07 +0200 Merge fixes to serialization from master branch
+  5ffd7a2 csoler  Thu, 28 Jun 2018 21:05:34 +0200 Merge pull request #1290 from sehraf/pr_fix_json_uint64
+  f7625e3 sehraf  Thu, 28 Jun 2018 20:25:10 +0200 fix json uint64
+  d511b66 Gioacch Thu, 28 Jun 2018 15:04:06 +0200 Extend JSON API to shutdown retroshare gracefully
+  0ff80ba Gioacch Thu, 28 Jun 2018 12:06:43 +0200 Extend JSON API with reasonable way to create location
+  db06c32 csoler  Thu, 28 Jun 2018 10:01:57 +0200 turned turtle encryption routine into a generic authenticated encryption method in librs::crypto
+  4637fba Gioacch Wed, 27 Jun 2018 08:52:03 +0200 Add login JSON API
+  a6edf47 csoler  Tue, 26 Jun 2018 22:25:06 +0200 removed debug/experimental channel search from files tab
+  00dfa0f csoler  Tue, 26 Jun 2018 22:20:02 +0200 added fallback for GXS GroupMessage UI to look into cached distant group data
+  d14a455 Gioacch Tue, 26 Jun 2018 22:01:17 +0200 jsonapi-generator fix support for void methods
+  cb11ad9 Gioacch Tue, 26 Jun 2018 15:19:25 +0200 Merge branch 'master' into jsonapi
+  502459a Gioacch Tue, 26 Jun 2018 15:12:16 +0200 Cleanup rapidjson inclusion
+  15f3912 Gioacch Tue, 26 Jun 2018 13:20:24 +0200 Complete GxsChannels JSON API with blocking methods
+  a5d1a15 csoler  Mon, 25 Jun 2018 23:08:10 +0200 remove channel/posted/forum info when no group is selected
+  d731b66 Gioacch Mon, 25 Jun 2018 10:44:39 +0200 Expose tokenservice methods trough GxsIfaceHelper
+  2f4b9b3 Gioacch Sun, 24 Jun 2018 23:24:52 +0200 Convert to RsTokenService::GxsRequestStatus
+  08b436e csoler  Sun, 24 Jun 2018 23:15:22 +0200 added display of searched groups
+  b4d2ce8 Gioacch Sun, 24 Jun 2018 18:56:48 +0200 RsTokenService use enum for request status
+  ec95b6d Gioacch Sun, 24 Jun 2018 18:03:26 +0200 Remove unused misleading GXS request status
+  e351d72 csoler  Sun, 24 Jun 2018 16:55:38 +0200 added retrieval of search results in UI
+  7ad337c Gioacch Sat, 23 Jun 2018 17:13:38 +0200 Implement automatic JSON API generation
+  6ccc765 csoler  Sat, 23 Jun 2018 22:25:36 +0200 added code to notify GxsBroadcast system with new distant search results
+  5b96668 csoler  Fri, 22 Jun 2018 23:38:31 +0200 fixed merge with upstream
+  2f159ef csoler  Fri, 22 Jun 2018 22:06:59 +0200 Merge pull request #1288 from csoler/v0.6-GxsFix
+  a7f1adc csoler  Thu, 21 Jun 2018 18:55:29 +0200 added comment
+  cadc697 csoler  Thu, 21 Jun 2018 17:27:15 +0200 removed reload of currently selected identity during full reload of Id list in People as it caused some blinking
+  84699db csoler  Thu, 21 Jun 2018 15:46:59 +0200 changed std::vector into std::set in notification system, hence removing lots of std::find(std::vector::begin(),std::vector::end(),T), causing quadratic costs in multiple places.
+  3981bc8 csoler  Thu, 21 Jun 2018 13:48:57 +0200 extended notification system to add distant search result notification
+  5cb48c2 csoler  Thu, 21 Jun 2018 09:26:03 +0200 renamed a few constants of GXS notify system into more consistent values
+  c79ceba csoler  Wed, 20 Jun 2018 23:26:37 +0200 added remove buttons for ongoing search entries
+  91fd38d csoler  Wed, 20 Jun 2018 22:30:44 +0200 started GUI part for distant network search of groups
+  9090205 G10h4c  Tue, 19 Jun 2018 11:53:07 +0200 Merge pull request #1284 from G10h4ck/improve_build
+  5aadb4c csoler  Mon, 18 Jun 2018 22:46:37 +0200 Merge pull request #1285 from csoler/v0.6-GxsFix
+  6139632 csoler  Mon, 18 Jun 2018 22:37:31 +0200 changed back RsGxsUpdateBroadCast.cpp to dos line ending
+  2e7398a csoler  Mon, 18 Jun 2018 22:35:22 +0200 removed debug info
+  79e676e csoler  Mon, 18 Jun 2018 22:27:05 +0200 fixed re-load of GXS groups (forums/channels) when the read flag is changed
+  c67084b csoler  Sun, 17 Jun 2018 21:23:16 +0200 fixed mutex problem in turtle-GXS search
+  84194b6 csoler  Sat, 16 Jun 2018 22:39:35 +0200 sereral fixes to GXS distant search
+  7a135c5 csoler  Wed, 13 Jun 2018 22:46:27 +0200 added quick and dirty turtle search for channels in Files search tab
+  be1e127 csoler  Mon, 11 Jun 2018 22:00:03 +0200 added test search functions in rsgxsnetservice
+  3c678f2 Gioacch Mon, 11 Jun 2018 16:05:25 +0200 Fix windows build if MINGW_PREFIX is defined
+  8a901e6 Gioacch Mon, 11 Jun 2018 14:29:07 +0200 Improve appveyor CI
+  1f76108 Gioacch Mon, 11 Jun 2018 14:21:28 +0200 Remove some cruft from build files
+  6fb459c csoler  Sun, 10 Jun 2018 22:34:17 +0200 added logic for GXS search in RsGxsNetTunnel and Gxs client net service
+  6805875 Gioacch Sun, 10 Jun 2018 15:10:13 +0200 Finally get rid of the annoying MASQUARADING typo
+  6010104 Gioacch Sat,  9 Jun 2018 18:10:22 +0200 Merge commit '9886840b79d617a32764ad52ef4747f5fd999250'
+  9886840 Gioacch Sat,  9 Jun 2018 17:59:11 +0200 Provide proper constructor for SerializeContext
+  1825b26 Gioacch Sat,  9 Jun 2018 17:21:59 +0200 ChunkMap::reAskPendingChunk fix unused parameter warning
+  5d237c8 Gioacch Sat,  9 Jun 2018 17:08:13 +0200 Improve libresapi qmake files
+  5953e7b thunder Thu, 31 May 2018 19:19:41 +0200 Windows build environment - Added "-spec win32-g++" to build.bat - Added "--no-check-certificate" to download-file.bat - Fixed build installer
+  4eda277 thunder Thu, 31 May 2018 17:59:55 +0200 Added missing declare of metatype
+  8edb1f7 csoler  Fri,  8 Jun 2018 14:32:25 +0200 fixed problem causing infinite loop of net reset in p3NetMgr
+  f3b0f7a G10h4ck Thu,  7 Jun 2018 17:53:42 +0200 Merge pull request #1280 from G10h4ck/channels_apiv2_improvements
+  e5c7248 G10h4ck Thu,  7 Jun 2018 17:53:26 +0200 Merge pull request #1281 from G10h4ck/filesharing_apiv2_improvements
+  508951d Gioacch Thu,  7 Jun 2018 15:00:11 +0200 Improve channels JSON API v2
+  e81b81d Gioacch Thu,  7 Jun 2018 14:59:00 +0200 libresapi improve qmake optional builds
+  3eff851 Gioacch Thu,  7 Jun 2018 14:57:31 +0200 Improve deprecation of RS_TOKREQ_ANSTYPE_*
+  d7b366d Gioacch Thu,  7 Jun 2018 14:54:58 +0200 RS-gui Solve unused parameter warning
+  7caf06b csoler  Wed,  6 Jun 2018 23:15:29 +0200 added structures for generic turtle search and access functions in Gxs objects
+  9a64f80 sehraf  Sun,  3 Jun 2018 17:11:11 +0200 handle backspace when entering password
+  b5c1b82 csoler  Sat,  2 Jun 2018 18:12:27 +0200 added classes for both group data and group summary results in turtle search
+  6bb1d3c csoler  Fri,  1 Jun 2018 22:35:06 +0200 updated ubuntu changelog
+
+ -- Retroshare Dev Team <contact@retroshare.net>  Thu, 04 Sep 2018 22:00:00 +0100
+
+retroshare (0.6.4-1.20180601.6bb1d3c5~bionic) bionic; urgency=low
+
   f663600 csoler Fri,  1 Jun 2018 22:27:59 +0200 fixed makeSourcePackage.sh
   9b16e33 csoler Fri, 11 May 2018 20:53:29 +0200 removed conflicts to retroshare06 in debian control file
   57dde55 csoler Sat, 26 May 2018 11:23:33 +0200 Merge pull request #1269 from PhenomRetroShare/Add_NeverAskMeForExternalLinkActivated
