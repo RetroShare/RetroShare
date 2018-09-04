@@ -615,23 +615,28 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
 		QTreeWidgetItem *item = *selectedItems.begin();
 		GxsIdRSTreeWidgetItem *gxsIdItem = dynamic_cast<GxsIdRSTreeWidgetItem*>(item);
 
-		RsGxsId author_id;
-		if(gxsIdItem && gxsIdItem->getId(author_id) && rsIdentity->isOwnId(author_id))
-			contextMnu.addAction(editAct);
-		else
+		bool is_pinned = mForumGroup.mPinnedPosts.ids.find( RsGxsMessageId(item->data(COLUMN_THREAD_MSGID,Qt::DisplayRole).toString().toStdString()) ) != mForumGroup.mPinnedPosts.ids.end();
+
+        if(!is_pinned)
 		{
-			// Go through the list of own ids and see if one of them is a moderator
-			// TODO: offer to select which moderator ID to use if multiple IDs fit the conditions of the forum
+			RsGxsId author_id;
+			if(gxsIdItem && gxsIdItem->getId(author_id) && rsIdentity->isOwnId(author_id))
+				contextMnu.addAction(editAct);
+			else
+			{
+				// Go through the list of own ids and see if one of them is a moderator
+				// TODO: offer to select which moderator ID to use if multiple IDs fit the conditions of the forum
 
-			std::list<RsGxsId> own_ids ;
-			rsIdentity->getOwnIds(own_ids) ;
+				std::list<RsGxsId> own_ids ;
+				rsIdentity->getOwnIds(own_ids) ;
 
-			for(auto it(own_ids.begin());it!=own_ids.end();++it)
-				if(mForumGroup.mAdminList.ids.find(*it) != mForumGroup.mAdminList.ids.end())
-				{
-					contextMnu.addAction(editAct);
-					break ;
-				}
+				for(auto it(own_ids.begin());it!=own_ids.end();++it)
+					if(mForumGroup.mAdminList.ids.find(*it) != mForumGroup.mAdminList.ids.end())
+					{
+						contextMnu.addAction(editAct);
+						break ;
+					}
+			}
 		}
 
 		if(IS_GROUP_ADMIN(mSubscribeFlags))
