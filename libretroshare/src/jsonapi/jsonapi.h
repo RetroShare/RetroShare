@@ -35,7 +35,8 @@ namespace rb = restbed;
 struct JsonApiServer : RsSingleJobThread
 {
 	JsonApiServer(
-	        uint16_t port,
+	        uint16_t port = 9092,
+	        const std::string& bindAddress = "127.0.0.1",
 	        const std::function<void(int)> shutdownCallback = [](int){} );
 
 	/// @see RsSingleJobThread
@@ -66,7 +67,8 @@ struct JsonApiServer : RsSingleJobThread
 	void shutdown(int exitCode = 0);
 
 private:
-	uint16_t mPort;
+	const uint16_t mPort;
+	const std::string mBindAddress;
 	rb::Service mService;
 	const std::function<void(int)> mShutdownCallback;
 };

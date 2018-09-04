@@ -39,8 +39,10 @@
 #endif // ifdef LIBRESAPI_LOCAL_SERVER
 
 #ifdef RS_JSONAPI
-#	include <cstdint>
 #	include "jsonapi/jsonapi.h"
+#	include "util/rsnet.h"
+
+#	include <cstdint>
 #	include <QCommandLineParser>
 #	include <QString>
 #	include <iostream>
@@ -96,29 +98,65 @@ int main(int argc, char *argv[])
 
 #ifdef RS_JSONAPI
 	uint16_t jsonApiPort = 9092;
+	std::string jsonApiBindAddress = "127.0.0.1";
 
 	{
 		QCommandLineOption jsonApiPortOpt(
 		            "jsonApiPort", "JSON API listening port.", "port", "9092");
+		QCommandLineOption jsonApiBindAddressOpt(
+		            "jsonApiBindAddress", "JSON API Bind Address.",
+		            "IP Address", "127.0.0.1");
+
 		QCommandLineParser cmdParser;
 		cmdParser.addHelpOption();
 		cmdParser.addOption(jsonApiPortOpt);
+		cmdParser.addOption(jsonApiBindAddressOpt);
+
 		cmdParser.parse(app.arguments());
-		QString jsonApiPortStr = cmdParser.value(jsonApiPortOpt);
-		bool portOk;
-		jsonApiPort = jsonApiPortStr.toUShort(&portOk);
-		if(!portOk)
+
+		if(cmdParser.isSet(jsonApiPortOpt))
 		{
-			std::cerr << "ERROR: jsonApiPort option value must be a valid TCP "
-			          << "port!" << std::endl;
-			cmdParser.showHelp();
-			QCoreApplication::exit(EINVAL);
+			QString jsonApiPortStr = cmdParser.value(jsonApiPortOpt);
+			bool portOk;
+			jsonApiPort = jsonApiPortStr.toUShort(&portOk);
+			if(!portOk)
+			{
+				std::cerr << "ERROR: jsonApiPort option value must be a valid "
+				          << "TCP port!" << std::endl;
+				cmdParser.showHelp();
+				QCoreApplication::exit(EINVAL);
+			}
+		}
+
+		if(cmdParser.isSet(jsonApiBindAddressOpt))
+		{
+			sockaddr_storage tmp;
+			jsonApiBindAddress =
+			        cmdParser.value(jsonApiBindAddressOpt).toStdString();
+			if(!sockaddr_storage_inet_pton(tmp, jsonApiBindAddress))
+			{
+				std::cerr << "ERROR: jsonApiBindAddress option value must "
+				          << "be a valid IP address!" << std::endl;
+				cmdParser.showHelp();
+				QCoreApplication::exit(EINVAL);
+			}
 		}
 	}
 
-	JsonApiServer jas(jsonApiPort, [](int ec) { QCoreApplication::exit(ec); });
+	JsonApiServer jas( jsonApiPort, jsonApiBindAddress,
+	                   [](int ec) { QCoreApplication::exit(ec); } );
 	jas.start();
-	std::cerr << "JSON API listening on port " << jsonApiPort << std::endl;
+
+	{
+		sockaddr_storage tmp;
+		sockaddr_storage_inet_pton(tmp, jsonApiBindAddress);
+		sockaddr_storage_setport(tmp, jsonApiPort);
+		sockaddr_storage_ipv6_to_ipv4(tmp);
+
+		std::cerr << "JSON API listening on "
+		          << sockaddr_storage_tostring(tmp)
+		          << std::endl;
+	}
 
 #endif // ifdef RS_JSONAPI
 

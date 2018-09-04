@@ -58,8 +58,9 @@ static bool checkRsServicePtrReady(
 }
 
 JsonApiServer::JsonApiServer(
-        uint16_t port, const std::function<void(int)> shutdownCallback) :
-    mPort(port), mShutdownCallback(shutdownCallback)
+        uint16_t port, const std::string& bindAddress,
+        const std::function<void(int)> shutdownCallback ) :
+    mPort(port), mBindAddress(bindAddress), mShutdownCallback(shutdownCallback)
 {
 	registerHandler("/jsonApiServer/shutdown",
 	                [this](const std::shared_ptr<rb::Session> session)
@@ -153,7 +154,7 @@ void JsonApiServer::run()
 {
 	std::shared_ptr<rb::Settings> settings(new rb::Settings);
 	settings->set_port(mPort);
-//	settings->set_default_header("Connection", "close");
+	settings->set_bind_address(mBindAddress);
 	settings->set_default_header("Cache-Control", "no-cache");
 	mService.start(settings);
 }
