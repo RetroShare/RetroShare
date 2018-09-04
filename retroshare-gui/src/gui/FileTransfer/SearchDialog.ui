@@ -170,6 +170,23 @@
         </property>
        </widget>
       </item>
+      <item>
+       <widget class="QToolButton" name="showBannedFiles_TB">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="../icons.qrc">
+          <normaloff>:/icons/biohazard_red.png</normaloff>:/icons/biohazard_red.png</iconset>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>
@@ -450,6 +467,7 @@
   </customwidget>
  </customwidgets>
  <resources>
+  <include location="../icons.qrc"/>
   <include location="../images.qrc"/>
  </resources>
  <connections/>

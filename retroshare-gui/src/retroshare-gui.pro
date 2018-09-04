@@ -365,6 +365,7 @@ HEADERS +=  rshare.h \
             gui/FileTransfer/DLListDelegate.h \
             gui/FileTransfer/ULListDelegate.h \
             gui/FileTransfer/TransfersDialog.h \
+            gui/FileTransfer/BannedFilesDialog.h \
             gui/statistics/TurtleRouterDialog.h \
             gui/statistics/TurtleRouterStatistics.h \
             gui/statistics/dhtgraph.h \
@@ -597,6 +598,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/FileTransfer/DetailsDialog.ui \
             gui/FileTransfer/SearchDialog.ui \
             gui/FileTransfer/SharedFilesDialog.ui \
+            gui/FileTransfer/BannedFilesDialog.ui \
             gui/MainWindow.ui \
             gui/NetworkView.ui \
             gui/MessengerWindow.ui \
@@ -743,6 +745,7 @@ SOURCES +=  main.cpp \
             gui/FileTransfer/xprogressbar.cpp \
             gui/FileTransfer/DetailsDialog.cpp \
             gui/FileTransfer/TransferUserNotify.cpp \
+            gui/FileTransfer/BannedFilesDialog.cpp \
             gui/MainPage.cpp \
             gui/HelpDialog.cpp \
             gui/LogoBar.cpp \

@@ -110,7 +110,7 @@ libresapihttpserver {
         QMAKE_EXTRA_COMPILERS += create_webfiles_html create_webfiles_js create_webfiles_css
     }
 
-    win32 {
+    appveyor {
 	DEFINES *= WINDOWS_SYS
 	INCLUDEPATH += . $$INC_DIR
 
@@ -124,6 +124,19 @@ libresapihttpserver {
 
 	# create dummy files
 	system($$MAKE_SRC\\init.bat .)
+    }
+
+    win32 {
+	DEFINES *= WINDOWS_SYS
+	INCLUDEPATH += . $$INC_DIR
+
+    PRO_PATH=$$shell_path($$_PRO_FILE_PWD_)
+    MAKE_SRC=$$shell_path($$PRO_PATH/webui-src/make-src)
+
+    QMAKE_POST_LINK=$$MAKE_SRC/build.sh $$PRO_PATH
+
+	# create dummy files
+	system($$MAKE_SRC/init.sh .)
     }
 
 	linux {

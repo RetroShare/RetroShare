@@ -219,7 +219,7 @@ void NotifyTxt::displayTransfers()
 
 /******************* Turtle Search Interface **********/
 
-void NotifyTxt::notifyTurtleSearchResult(uint32_t search_id,const std::list<TurtleFileInfo>& found_files)
+void NotifyTxt::notifyTurtleSearchResult(const RsPeerId &pid, uint32_t search_id, const std::list<TurtleFileInfo>& found_files)
 {
 //	std::cerr << "NotifyTxt::notifyTurtleSearchResult() " << found_files.size();
 //	std::cerr << " new results for Id: " << search_id;

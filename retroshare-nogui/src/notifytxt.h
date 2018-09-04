@@ -44,7 +44,7 @@ class NotifyTxt: public NotifyClient
 		virtual bool askForPassword(const std::string& title, const std::string& question, bool prev_is_bad, std::string& password,bool& cancel);
 		virtual bool askForPluginConfirmation(const std::string& plugin_file, const std::string& plugin_hash,bool first_time);
 
-		virtual void notifyTurtleSearchResult(uint32_t search_id,const std::list<TurtleFileInfo>& found_files);
+		virtual void notifyTurtleSearchResult(const RsPeerId& pid,uint32_t search_id,const std::list<TurtleFileInfo>& found_files);
 
 		/* interface for handling SearchResults */
 		void getSearchIds(std::list<uint32_t> &searchIds);

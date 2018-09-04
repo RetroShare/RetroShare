@@ -1108,6 +1108,27 @@ void p3turtle::performLocalSearch_files(RsTurtleFileSearchRequestItem *item,uint
 
 void p3turtle::handleSearchResult(RsTurtleSearchResultItem *item)
 {
+    // Filter out banned hashes from the result.
+
+	RsTurtleFTSearchResultItem *ftsr_tmp = dynamic_cast<RsTurtleFTSearchResultItem*>(item) ;
+
+    if(ftsr_tmp != NULL)
+    {
+        for(auto it(ftsr_tmp->result.begin());it!=ftsr_tmp->result.end();)
+            if( rsFiles->isHashBanned((*it).hash) )
+            {
+                std::cerr << "(II) filtering out banned hash " << (*it).hash << " from turtle result " << std::hex << item->request_id << std::dec << std::endl;
+                it = ftsr_tmp->result.erase(it);
+            }
+			else
+                ++it;
+
+        if(ftsr_tmp->result.empty())
+            return ;
+    }
+
+    // Then handle the result
+
     std::list<std::pair<RsTurtleSearchResultItem*,RsTurtleClientService*> > results_to_notify_off_mutex ;
 
 	{
@@ -1531,6 +1552,14 @@ void p3turtle::handleTunnelRequest(RsTurtleOpenTunnelItem *item)
  std::cerr << "Received tunnel request from peer " << item->PeerId() << ": " << std::endl ;
  item->print(std::cerr,0) ;
 #endif
+
+ 	// check first if the hash is in the ban list. If so, drop the request.
+
+ 	if(rsFiles->isHashBanned(item->file_hash))
+    {
+        std::cerr << "(II) Rejecting tunnel request to ban hash " << item->file_hash << std::endl;
+        return ;
+    }
 
 #ifdef TUNNEL_STATISTICS
 	if(TS_request_bounces.find(item->request_id) != TS_request_bounces.end())
