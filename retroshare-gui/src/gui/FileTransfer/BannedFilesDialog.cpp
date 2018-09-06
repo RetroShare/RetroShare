@@ -48,6 +48,9 @@ void BannedFilesDialog::unbanFile()
 
     QTableWidgetItem *item = ui.bannedFiles_TW->item(row, COLUMN_FILE_HASH);
 
+	if(!item)
+	   return ;
+
     RsFileHash hash(item->data(Qt::UserRole).toString().toStdString()) ;
     rsFiles->unbanFile(hash) ;
 
