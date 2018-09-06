@@ -247,8 +247,6 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 	ttheader->resizeSection (COLUMN_THREAD_DISTRIBUTION, 24*f);
 	ttheader->resizeSection (COLUMN_THREAD_AUTHOR, 150*f);
 
-	ui->threadTreeWidget->sortItems(COLUMN_THREAD_DATE, Qt::DescendingOrder);
-
 	/* Set text of column "Read" to empty - without this the column has a number as header text */
 	QTreeWidgetItem *headerItem = ui->threadTreeWidget->headerItem();
 	headerItem->setText(COLUMN_THREAD_READ, "") ;
@@ -298,6 +296,7 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 	                                        forum visible to all other friends.</p><p>Afterwards you can unsubscribe from the context menu of the forum list at left.</p>"));
 	                                        ui->threadTreeWidget->enableColumnCustomize(true);
 
+	ui->threadTreeWidget->sortItems(COLUMN_THREAD_DATE, Qt::DescendingOrder);
 }
 
 void GxsForumThreadWidget::blank()
@@ -639,7 +638,7 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
 			}
 		}
 
-		if(IS_GROUP_ADMIN(mSubscribeFlags))
+		if(IS_GROUP_ADMIN(mSubscribeFlags) && (*selectedItems.begin())->parent() == NULL)
 			contextMnu.addAction(pinUpPostAct);
 	}
 
@@ -1324,10 +1323,11 @@ QTreeWidgetItem *GxsForumThreadWidget::convertMsgToThreadWidget(const RsGxsForum
 	}
 
 	item->setText(COLUMN_THREAD_DATE, itemText);
-	item->setData(COLUMN_THREAD_DATE, ROLE_THREAD_SORT, itemSort);
 
     if(is_pinned)
 		item->setData(COLUMN_THREAD_DATE,ROLE_THREAD_SORT, QVariant(0)); // this is used by the sorting model to put all posts on top
+    else
+		item->setData(COLUMN_THREAD_DATE,ROLE_THREAD_SORT, itemSort);
 
 	// Set later with GxsIdRSTreeWidgetItem::setId
 	item->setData(COLUMN_THREAD_DATA, ROLE_THREAD_AUTHOR, QString::fromStdString(msg.mMeta.mAuthorId.toStdString()));
@@ -2171,6 +2171,14 @@ void GxsForumThreadWidget::togglePinUpPost()
 
 	QTreeWidgetItem *item = ui->threadTreeWidget->currentItem();
 
+    // normally this method is only called on top level items. We still check it just in case...
+
+    if(item->parent() != NULL)
+    {
+        std::cerr << "(EE) togglePinUpPost() called on non top level post. This is inconsistent." << std::endl;
+        return ;
+	}
+
 	QString thread_title = (item != NULL)?item->text(COLUMN_THREAD_TITLE):QString() ;
 
     std::cerr << "Toggling Pin-up state of post " << mThreadId.toStdString() << ": \"" << thread_title.toStdString() << "\"" << std::endl;
@@ -2183,6 +2191,7 @@ void GxsForumThreadWidget::togglePinUpPost()
 	uint32_t token;
 	rsGxsForums->updateGroup(token,mForumGroup);
 
+    ui->threadTreeWidget->takeTopLevelItem(ui->threadTreeWidget->indexOfTopLevelItem(item));	// forces the re-creation of all posts widgets. A bit extreme. We should rather only delete item above
     updateDisplay(true) ;
 }
 
