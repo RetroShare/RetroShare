@@ -127,7 +127,7 @@ public:
 	                          const RsGxsId& encryption_key_id,
 	                          uint32_t& encryption_error, bool force_load) = 0 ;
 
-    virtual bool getOwnIds(std::list<RsGxsId>& ids) = 0;
+	virtual bool getOwnIds(std::list<RsGxsId> &ownIds, bool signed_only = false)=0;
     virtual bool isOwnId(const RsGxsId& key_id) = 0 ;
 
     virtual void timeStampKey(const RsGxsId& key_id,const RsIdentityUsage& reason) = 0 ;

@@ -684,7 +684,7 @@ bool p3IdService::isOwnId(const RsGxsId& id)
 
     return std::find(mOwnIds.begin(),mOwnIds.end(),id) != mOwnIds.end() ;
 }
-bool p3IdService::getOwnIds(std::list<RsGxsId> &ownIds)
+bool p3IdService::getOwnIds(std::list<RsGxsId> &ownIds,bool signed_only)
 {
     RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
 
@@ -694,7 +694,8 @@ bool p3IdService::getOwnIds(std::list<RsGxsId> &ownIds)
         return false ;
     }
 
-    ownIds = mOwnIds;
+	ownIds = signed_only ? mOwnSignedIds : mOwnIds;
+
     return true ;
 }
 
@@ -2824,6 +2825,9 @@ bool p3IdService::cache_load_ownids(uint32_t token)
 				if (item->meta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)
 				{
                     mOwnIds.push_back(RsGxsId(item->meta.mGroupId));
+
+					if(item->meta.mGroupFlags & RSGXSID_GROUPFLAG_REALID)
+						mOwnSignedIds.push_back(RsGxsId(item->meta.mGroupId));
 
                     // This prevents automatic deletion to get rid of them.
                     // In other words, own ids are always used.

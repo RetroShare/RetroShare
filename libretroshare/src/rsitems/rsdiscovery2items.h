@@ -36,6 +36,7 @@ const uint8_t RS_PKT_SUBTYPE_DISC_PGP_CERT           = 0x02;
 const uint8_t RS_PKT_SUBTYPE_DISC_CONTACT_deprecated = 0x03;
 const uint8_t RS_PKT_SUBTYPE_DISC_SERVICES           = 0x04;
 const uint8_t RS_PKT_SUBTYPE_DISC_CONTACT            = 0x05;
+const uint8_t RS_PKT_SUBTYPE_DISC_IDENTITY_LIST      = 0x06;
 
 class RsDiscItem: public RsItem
 {
@@ -138,6 +139,23 @@ public:
 	RsTlvIpAddrSet extAddrList;
 };
 
+class RsDiscIdentityListItem: public RsDiscItem
+{
+public:
+
+	RsDiscIdentityListItem()
+	    :RsDiscItem(RS_PKT_SUBTYPE_DISC_IDENTITY_LIST)
+	{
+		setPriorityLevel(QOS_PRIORITY_RS_DISC_CONTACT);
+	}
+
+    virtual ~RsDiscIdentityListItem() {}
+
+    virtual void clear() { ownIdentityList.clear() ; }
+	virtual void serial_process(RsGenericSerializer::SerializeJob /* j */,RsGenericSerializer::SerializeContext& /* ctx */);
+
+    std::list<RsGxsId> ownIdentityList ;
+};
 #if 0
 class RsDiscServicesItem: public RsDiscItem
 {

@@ -49,12 +49,13 @@ RsItem *RsDiscSerialiser::create_item(uint16_t service,uint8_t item_subtype) con
     switch(item_subtype)
     {
 	case RS_PKT_SUBTYPE_DISC_PGP_LIST           : return new RsDiscPgpListItem() ; //= 0x01;
-	case RS_PKT_SUBTYPE_DISC_PGP_CERT           : return new RsDiscPgpCertItem() ; //= 0x02;
-	case RS_PKT_SUBTYPE_DISC_CONTACT_deprecated : return NULL ;                    //= 0x03;
+	case RS_PKT_SUBTYPE_DISC_PGP_CERT           : return new RsDiscPgpCertItem() ;      //= 0x02;
+	case RS_PKT_SUBTYPE_DISC_CONTACT_deprecated : return NULL ;                         //= 0x03;
 #if 0
-	case RS_PKT_SUBTYPE_DISC_SERVICES           : return new RsDiscServicesItem(); //= 0x04;
+	case RS_PKT_SUBTYPE_DISC_SERVICES           : return new RsDiscServicesItem();      //= 0x04;
 #endif
-	case RS_PKT_SUBTYPE_DISC_CONTACT            : return new RsDiscContactItem();  //= 0x05;
+	case RS_PKT_SUBTYPE_DISC_CONTACT            : return new RsDiscContactItem();       //= 0x05;
+	case RS_PKT_SUBTYPE_DISC_IDENTITY_LIST      : return new RsDiscIdentityListItem();  //= 0x06;
     default:
     return NULL ;
     }
@@ -150,139 +151,8 @@ void RsDiscContactItem::serial_process(RsGenericSerializer::SerializeJob j,RsGen
    }
 }
 
-/*************************************************************************/
-#if 0
-
-RsDiscServicesItem::~RsDiscServicesItem()
+void RsDiscIdentityListItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
-	return;
+	RsTypeSerializer::serial_process(j,ctx,ownIdentityList,"identityList");
 }
 
-void 	RsDiscServicesItem::clear()
-{
-	version.clear();
-	mServiceIdMap.TlvClear();
-}
-
-std::ostream &RsDiscServicesItem::print(std::ostream &out, uint16_t indent)
-{
-	printRsItemBase(out, "RsDiscServicesItem", indent);
-	uint16_t int_Indent = indent + 2;
-
-	printIndent(out, int_Indent);
-	out << "version: " << version << std::endl;
-	mServiceIdMap.print(out, int_Indent);
-
-	printRsItemEnd(out, "RsDiscServicesItem", indent);
-	return out;
-}
-
-
-uint32_t    RsDiscSerialiser::sizeServices(RsDiscServicesItem *item)
-{
-	uint32_t s = 8; /* header */
-	s += GetTlvStringSize(item->version); /* version */
-	s += item->mServiceIdMap.TlvSize();
-	return s;
-}
-
-/* serialise the data to the buffer */
-bool     RsDiscSerialiser::serialiseServices(RsDiscServicesItem *item, void *data, uint32_t *pktsize)
-{
-	uint32_t tlvsize = sizeServices(item);
-	uint32_t offset = 0;
-
-	if (*pktsize < tlvsize)
-		return false; /* not enough space */
-
-	*pktsize = tlvsize;
-
-	bool ok = true;
-
-	ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
-
-#ifdef RSSERIAL_DEBUG
-	std::cerr << "RsDiscSerialiser::serialiseServices() Header: " << ok << std::endl;
-	std::cerr << "RsDiscSerialiser::serialiseServices() Size: " << tlvsize << std::endl;
-#endif
-
-	/* skip the header */
-	offset += 8;
-
-	/* add mandatory parts first */
-	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_VERSION, item->version);
-	ok &= item->mServiceIdMap.SetTlv(data, tlvsize, &offset);
-
-	if (offset != tlvsize) {
-		ok = false;
-#ifdef RSSERIAL_ERROR_DEBUG
-		std::cerr << "RsDiscSerialiser::serialiseServices() Size Error! " << std::endl;
-#endif
-	}
-
-	return ok;
-}
-
-RsDiscServicesItem *RsDiscSerialiser::deserialiseServices(void *data, uint32_t *pktsize) {
-	/* get the type and size */
-	uint32_t rstype = getRsItemId(data);
-	uint32_t rssize = getRsItemSize(data);
-
-	uint32_t offset = 0;
-
-
-	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
-		(RS_SERVICE_TYPE_DISC != getRsItemService(rstype)) ||
-		(RS_PKT_SUBTYPE_DISC_PGP_LIST != getRsItemSubType(rstype)))
-	{
-#ifdef RSSERIAL_ERROR_DEBUG
-		std::cerr << "RsDiscSerialiser::deserialiseServices() Wrong Type" << std::endl;
-#endif
-		return NULL; /* wrong type */
-	}
-
-	if (*pktsize < rssize)    /* check size */
-	{
-#ifdef RSSERIAL_ERROR_DEBUG
-		std::cerr << "RsDiscSerialiser::deserialiseServices() Not Enough Space" << std::endl;
-#endif
-		return NULL; /* not enough data */
-	}
-
-	/* set the packet length */
-	*pktsize = rssize;
-
-	bool ok = true;
-
-	/* ready to load */
-	RsDiscServicesItem *item = new RsDiscServicesItem();
-	item->clear();
-
-	/* skip the header */
-	offset += 8;
-
-	/* get mandatory parts first */
-	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_VERSION, item->version);
-	ok &= item->mServiceIdMap.GetTlv(data, rssize, &offset);
-
-	if (offset != rssize) {
-#ifdef RSSERIAL_ERROR_DEBUG
-		std::cerr << "RsDiscSerialiser::deserialiseServices() offset != rssize" << std::endl;
-#endif
-		/* error */
-		delete item;
-		return NULL;
-	}
-
-	if (!ok) {
-#ifdef RSSERIAL_ERROR_DEBUG
-		std::cerr << "RsDiscSerialiser::deserialiseServices() ok = false" << std::endl;
-#endif
-		delete item;
-		return NULL;
-	}
-
-	return item;
-}
-
-#endif

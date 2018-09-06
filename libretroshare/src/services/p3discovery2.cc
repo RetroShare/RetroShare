@@ -34,6 +34,7 @@ RsDisc *rsDisc = NULL;
 /****
  * #define P3DISC_DEBUG	1
  ****/
+#define P3DISC_DEBUG	1
 
 static bool populateContactInfo( const peerState &detail,
                                  RsDiscContactItem *pkt,
@@ -94,9 +95,8 @@ void DiscPgpInfo::mergeFriendList(const std::set<PGPID> &friends)
 }
 
 
-p3discovery2::p3discovery2(p3PeerMgr *peerMgr, p3LinkMgr *linkMgr, p3NetMgr *netMgr, p3ServiceControl *sc)
-:p3Service(), mPeerMgr(peerMgr), mLinkMgr(linkMgr), mNetMgr(netMgr), mServiceCtrl(sc),
-	mDiscMtx("p3discovery2")
+p3discovery2::p3discovery2(p3PeerMgr *peerMgr, p3LinkMgr *linkMgr, p3NetMgr *netMgr, p3ServiceControl *sc, RsGixs *gixs)
+:p3Service(), mPeerMgr(peerMgr), mLinkMgr(linkMgr), mNetMgr(netMgr), mServiceCtrl(sc), mGixs(gixs),mDiscMtx("p3discovery2")
 {
 	RsStackMutex stack(mDiscMtx); /********** STACK LOCKED MTX ******/
 
@@ -273,6 +273,7 @@ int p3discovery2::handleIncoming()
 		RsDiscPgpListItem *pgplist = NULL;
 		RsDiscPgpCertItem *pgpcert = NULL;
 		RsDiscContactItem *contact = NULL;
+		RsDiscIdentityListItem *gxsidlst = NULL;
 		nhandled++;
 
 #ifdef P3DISC_DEBUG
@@ -287,14 +288,14 @@ int p3discovery2::handleIncoming()
 				recvOwnContactInfo(item->PeerId(), contact);
             else
                 processContactInfo(item->PeerId(), contact);
-
-			continue;
 		}
-
-		if (NULL != (pgpcert = dynamic_cast<RsDiscPgpCertItem *> (item)))	
-		{
+        else  if (NULL != (gxsidlst = dynamic_cast<RsDiscIdentityListItem *> (item)))
+        {
+            recvIdentityList(item->PeerId(),gxsidlst->ownIdentityList) ;
+            delete item;
+        }
+        else  if (NULL != (pgpcert = dynamic_cast<RsDiscPgpCertItem *> (item)))
 			recvPGPCertificate(item->PeerId(), pgpcert);
-		}
 		else if (NULL != (pgplist = dynamic_cast<RsDiscPgpListItem *> (item)))	
 		{
 			/* two types */
@@ -355,6 +356,7 @@ void p3discovery2::sendOwnContactInfo(const SSLID &sslid)
 		 *   difficult for average user, that moreover whould have no way to
 		 *   revert an hardcoded policy. */
 		//populateContactInfo(detail, pkt, true);
+
 		pkt->version = RsUtil::retroshareVersion();
 		pkt->PeerId(sslid);
 
@@ -364,6 +366,13 @@ void p3discovery2::sendOwnContactInfo(const SSLID &sslid)
 		std::cerr  << std::endl;
 #endif
 		sendItem(pkt);
+
+        RsDiscIdentityListItem *pkt2 = new RsDiscIdentityListItem();
+
+        rsIdentity->getOwnIds(pkt2->ownIdentityList,true);
+        pkt2->PeerId(sslid) ;
+
+		sendItem(pkt2);
 	}
 }
 
@@ -438,6 +447,17 @@ void p3discovery2::recvOwnContactInfo(const SSLID &fromId, const RsDiscContactIt
 
 	// cleanup.
 	delete item;
+}
+
+void p3discovery2::recvIdentityList(const RsPeerId& pid,const std::list<RsGxsId>& ids)
+{
+    std::list<RsPeerId> peers;
+    peers.push_back(pid);
+
+    RsIdentityUsage use_info(RS_SERVICE_TYPE_DISC,RsIdentityUsage::IDENTITY_DATA_UPDATE);
+
+	for(auto it(ids.begin());it!=ids.end();++it)
+		mGixs->requestKey(*it,peers,use_info) ;
 }
 
 void p3discovery2::updatePeerAddresses(const RsDiscContactItem *item)
@@ -1331,4 +1351,3 @@ void p3discovery2::setGPGOperation(AuthGPGOperation *operation)
 	/* ignore other operations */
 }
 
-						  
