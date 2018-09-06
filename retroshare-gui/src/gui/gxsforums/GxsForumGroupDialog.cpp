@@ -113,9 +113,13 @@ bool GxsForumGroupDialog::service_CreateGroup(uint32_t &token, const RsGroupMeta
 
 bool GxsForumGroupDialog::service_EditGroup(uint32_t &token, RsGroupMetaData &editedMeta)
 {
-	RsGxsForumGroup grp;
+	RsGxsForumGroup grp(mGroupData);	// start again from cached information. That allows to keep the pinned posts for instance.
+
+    // now replace data by locally edited/changed information
+
 	grp.mMeta = editedMeta;
 	grp.mDescription = getDescription().toUtf8().constData();
+
 	getSelectedModerators(grp.mAdminList.ids);
 
 	std::cerr << "GxsForumGroupDialog::service_EditGroup() submitting changes";
@@ -131,6 +135,7 @@ bool GxsForumGroupDialog::service_loadGroup(uint32_t token, Mode /*mode*/, RsGro
 	std::cerr << std::endl;
 
 	std::vector<RsGxsForumGroup> groups;
+
 	if (!rsGxsForums->getGroupData(token, groups))
 	{
 		std::cerr << "GxsForumGroupDialog::service_loadGroup() Error getting GroupData";
@@ -148,9 +153,16 @@ bool GxsForumGroupDialog::service_loadGroup(uint32_t token, Mode /*mode*/, RsGro
 	std::cerr << "GxsForumsGroupDialog::service_loadGroup() Unfinished Loading";
 	std::cerr << std::endl;
 
+    // Information handled by GxsGroupDialog. description should rather be handled here in the service part!
+
 	groupMetaData = groups[0].mMeta;
 	description = QString::fromUtf8(groups[0].mDescription.c_str());
+
+    // Local information. Description should be handled here.
+
     setSelectedModerators(groups[0].mAdminList.ids);
+
+    mGroupData = groups[0]; // keeps the private information
 
 	return true;
 }
