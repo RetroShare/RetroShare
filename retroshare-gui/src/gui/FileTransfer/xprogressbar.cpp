@@ -235,8 +235,10 @@ void xProgressBar::paint()
 
 	QRect bounding = painter->boundingRect(rect, Qt::AlignCenter, QLocale().toString(_pinfo.progress, 'f', 2) + "%");
 
+#ifdef TO_BE_REMOVED
 	if((ss > 1) && (rect.width() > (1.5*bounding.width())))	// for small files we use a more progressive display
 	{
+#endif
 		if(!_pinfo.cmap._map.empty())
 		{
 			if (ss > width)
@@ -304,6 +306,7 @@ void xProgressBar::paint()
 
 		overPaintSelectedChunks( _pinfo.chunks_in_progress , QColor(170, 20,9), QColor(223,121,123), width,ss) ;
 		overPaintSelectedChunks( _pinfo.chunks_in_checking , QColor(186,143,0), QColor(223,196, 61), width,ss) ;
+#ifdef TO_BE_REMOVED
 	}
 	else if ((rect.width() < bounding.width()) || !displayText)
 	{
@@ -316,6 +319,7 @@ void xProgressBar::paint()
 		painter->setBrush(linearGrad);
 		painter->drawRect(rect.x() + hSpan, rect.y() + vSpan, rect.width() - progressWidth - hSpan, rect.height() - 1 - vSpan * 2);
 	}
+#endif
 	painter->setOpacity(1.0f) ;
 
 	
