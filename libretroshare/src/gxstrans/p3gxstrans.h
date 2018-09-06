@@ -89,7 +89,7 @@ struct MsgSizeCount
  * @see GxsTransClient::receiveGxsTransMail(...),
  * @see GxsTransClient::notifyGxsTransSendStatus(...).
  */
-struct p3GxsTrans : RsGenExchange, GxsTokenQueue, p3Config, RsGxsTrans
+class p3GxsTrans : public RsGenExchange, public GxsTokenQueue, public p3Config, public RsGxsTrans
 {
 public:
 	p3GxsTrans( RsGeneralDataService* gds, RsNetworkExchangeService* nes,
