@@ -41,6 +41,7 @@
 #ifdef RS_JSONAPI
 #	include "jsonapi/jsonapi.h"
 #	include "util/rsnet.h"
+#	include "util/rsurl.h"
 
 #	include <cstdint>
 #	include <QCommandLineParser>
@@ -152,9 +153,11 @@ int main(int argc, char *argv[])
 		sockaddr_storage_inet_pton(tmp, jsonApiBindAddress);
 		sockaddr_storage_setport(tmp, jsonApiPort);
 		sockaddr_storage_ipv6_to_ipv4(tmp);
+		RsUrl tmpUrl(sockaddr_storage_tostring(tmp));
+		tmpUrl.setScheme("http");
 
 		std::cerr << "JSON API listening on "
-		          << sockaddr_storage_tostring(tmp)
+		          << tmpUrl.toString()
 		          << std::endl;
 	}
 
