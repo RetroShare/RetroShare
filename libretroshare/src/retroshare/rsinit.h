@@ -52,14 +52,6 @@ struct RsLoginHelper;
 extern RsLoginHelper* rsLoginHelper;
 
 
-class RsAccounts;
-
-/**
- * Pointer to global instance of RsAccounts needed to expose JSON API
- * @jsonapi{development}
- */
-extern RsAccounts* rsAccounts;
-
 /*!
  * Initialisation Class (not publicly disclosed to RsIFace)
  */
@@ -163,7 +155,7 @@ public:
 	 * @param[out] id storage for current account id
 	 * @return false if account hasn't been selected yet, true otherwise
 	 */
-	bool getCurrentAccountId(RsPeerId &id);
+	static bool getCurrentAccountId(RsPeerId &id);
 
 	/**
 	 * @brief DataDirectory
@@ -223,6 +215,14 @@ public:
 private:
 	static RsAccountsDetail* rsAccountsDetails;
 };
+
+/**
+ * Pointer to global instance of RsAccounts needed to expose JSON API, as all
+ * the members of this class are static you should call them directly without
+ * using this pointer in the other parts of the code
+ * @jsonapi{development}
+ */
+extern RsAccounts* rsAccounts;
 
 
 /**

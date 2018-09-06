@@ -2029,7 +2029,7 @@ void RsLoginHelper::Location::serial_process(
 	RS_SERIAL_PROCESS(mPpgName);
 }
 
-bool RsAccounts::getCurrentAccountId(RsPeerId& id)
+/*static*/ bool RsAccounts::getCurrentAccountId(RsPeerId& id)
 {
 	return rsAccountsDetails->getCurrentAccountId(id);
 }
