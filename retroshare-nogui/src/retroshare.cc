@@ -68,12 +68,16 @@ int main(int argc, char **argv)
 #ifdef RS_JSONAPI
 	JsonApiServer* jsonApiServer = nullptr;
 	uint16_t jsonApiPort = 0;
+	std::string jsonApiBindAddress = "127.0.0.1";
 
 	{
 		argstream jsonApiArgs(argc, argv);
 		jsonApiArgs >> parameter(
 		            "jsonApiPort", jsonApiPort, "jsonApiPort",
 		            "Enable JSON API on the specified port", false );
+		jsonApiArgs >> parameter(
+		            "jsonApiBindAddress", jsonApiBindAddress,
+		            "jsonApiBindAddress", "JSON API Bind Address.", false);
 		jsonApiArgs >> help('h', "help", "Display this Help");
 
 		if (jsonApiArgs.helpRequested())
@@ -82,10 +86,9 @@ int main(int argc, char **argv)
 
 	if(jsonApiPort)
 	{
-		jsonApiServer = new JsonApiServer( jsonApiPort, [](int /*ec*/)
-		{
-			std::raise(SIGTERM);
-		} );
+		jsonApiServer = new JsonApiServer(
+		            jsonApiPort, jsonApiBindAddress,
+		            [](int /*ec*/) { std::raise(SIGTERM); } );
 
 		jsonApiServer->start("JSON API Server");
 	}
@@ -95,7 +98,7 @@ int main(int argc, char **argv)
 
     std::string docroot = resource_api::getDefaultDocroot();
     uint16_t httpPort = 0;
-    std::string listenAddress;
+	std::string listenAddress;
     bool allowAllIps = false;
 
     argstream args(argc, argv);

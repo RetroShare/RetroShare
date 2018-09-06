@@ -36,7 +36,11 @@ registerHandler("$%apiPath%$",
 		// if caller specified caller_data put it back in the answhere
 		const char kcd[] = "caller_data";
 		if(jReq.HasMember(kcd))
-		    jAns.AddMember(kcd, jReq[kcd], jAns.GetAllocator());
+			jAns.AddMember(kcd, jReq[kcd], jAns.GetAllocator());
+
+		if( !checkRsServicePtrReady(
+		            $%instanceName%$, "$%instanceName%$", cAns, session ) )
+			return;
 
 $%paramsDeclaration%$
 

@@ -30,13 +30,42 @@
 // Generated at compile time
 #include "jsonapi-includes.inl"
 
+static bool checkRsServicePtrReady(
+        void* serviceInstance, const std::string& serviceName,
+        RsGenericSerializer::SerializeContext& ctx,
+        const std::shared_ptr<restbed::Session> session)
+{
+	if(serviceInstance) return true;
+
+	std::string jsonApiError;
+	jsonApiError += "Service: ";
+	jsonApiError += serviceName;
+	jsonApiError += " not initialized! Are you sure you logged in already?";
+
+	RsGenericSerializer::SerializeJob j(RsGenericSerializer::TO_JSON);
+	RS_SERIAL_PROCESS(jsonApiError);
+
+	std::stringstream ss;
+	ss << ctx.mJson;
+	std::string&& ans(ss.str());
+	const std::multimap<std::string, std::string> headers
+	{
+		{ "Content-Type", "text/json" },
+		{ "Content-Length", std::to_string(ans.length()) }
+	};
+	session->close(rb::CONFLICT, ans, headers);
+	return false;
+}
+
 JsonApiServer::JsonApiServer(
-        uint16_t port, const std::function<void(int)> shutdownCallback) :
-    mPort(port), mShutdownCallback(shutdownCallback)
+        uint16_t port, const std::string& bindAddress,
+        const std::function<void(int)> shutdownCallback ) :
+    mPort(port), mBindAddress(bindAddress), mShutdownCallback(shutdownCallback)
 {
 	registerHandler("/jsonApiServer/shutdown",
-	                [this](const std::shared_ptr<rb::Session>)
+	                [this](const std::shared_ptr<rb::Session> session)
 	{
+		session->close(rb::OK);
 		shutdown();
 	});
 
@@ -61,6 +90,9 @@ JsonApiServer::JsonApiServer(
 			const char kcd[] = "caller_data";
 			if(jReq.HasMember(kcd))
 				jAns.AddMember(kcd, jReq[kcd], jAns.GetAllocator());
+
+			if(!checkRsServicePtrReady(rsFiles, "rsFiles", cAns, session))
+				return;
 
 			RsFileHash hash;
 			uint64_t offset;
@@ -122,7 +154,7 @@ void JsonApiServer::run()
 {
 	std::shared_ptr<rb::Settings> settings(new rb::Settings);
 	settings->set_port(mPort);
-//	settings->set_default_header("Connection", "close");
+	settings->set_bind_address(mBindAddress);
 	settings->set_default_header("Cache-Control", "no-cache");
 	mService.start(settings);
 }

@@ -19,25 +19,25 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
-#ifndef RETROSHARE_PEER_GUI_INTERFACE_H
-#define RETROSHARE_PEER_GUI_INTERFACE_H
+#pragma once
 
 #include <inttypes.h>
 #include <string>
 #include <list>
 
-#include <retroshare/rstypes.h>
-#include <retroshare/rsfiles.h>
-#include <retroshare/rsids.h>
+#include "retroshare/rstypes.h"
+#include "retroshare/rsfiles.h"
+#include "retroshare/rsids.h"
 #include "util/rsurl.h"
+#include "util/rsdeprecate.h"
 
-/* The Main Interface Class - for information about your Peers
- * A peer is another RS instance, means associated with an SSL certificate
- * A same GPG person can have multiple peer running with different SSL certs signed by the same GPG key
- * Thus a peer have SSL cert details, and also the parent GPG details
- */
 class RsPeers;
-extern RsPeers *rsPeers;
+
+/**
+ * Pointer to global instance of RsPeers service implementation
+ * @jsonapi{development}
+ */
+extern RsPeers* rsPeers;
 
 /* TODO: 2015/12/31 As for type safetyness all those constant must be declared as enum!
  * C++ now supports typed enum so there is no ambiguity in serialization size
@@ -203,11 +203,8 @@ std::string RsPeerNetModeString(uint32_t netModel);
 std::string RsPeerLastConnectString(uint32_t lastConnect);
 
 
-/* Details class */
-class RsPeerDetails
+struct RsPeerDetails : RsSerializable
 {
-	public:
-
 	RsPeerDetails();
 
 	/* Auth details */
@@ -279,13 +276,61 @@ class RsPeerDetails
 
 	/* linkType */
 	uint32_t linkType;
+
+	/// @see RsSerializable
+	virtual void serial_process( RsGenericSerializer::SerializeJob j,
+	                             RsGenericSerializer::SerializeContext& ctx )
+	{
+		RS_SERIAL_PROCESS(isOnlyGPGdetail);
+		RS_SERIAL_PROCESS(id);
+		RS_SERIAL_PROCESS(gpg_id);
+		RS_SERIAL_PROCESS(name);
+		RS_SERIAL_PROCESS(email);
+		RS_SERIAL_PROCESS(location);
+		RS_SERIAL_PROCESS(org);
+		RS_SERIAL_PROCESS(issuer);
+		RS_SERIAL_PROCESS(fpr);
+		RS_SERIAL_PROCESS(authcode);
+		RS_SERIAL_PROCESS(gpgSigners);
+		RS_SERIAL_PROCESS(trustLvl);
+		RS_SERIAL_PROCESS(validLvl);
+		RS_SERIAL_PROCESS(ownsign);
+		RS_SERIAL_PROCESS(hasSignedMe);
+		RS_SERIAL_PROCESS(accept_connection);
+		RS_SERIAL_PROCESS(service_perm_flags);
+		RS_SERIAL_PROCESS(state);
+		RS_SERIAL_PROCESS(actAsServer);
+		RS_SERIAL_PROCESS(connectAddr);
+		RS_SERIAL_PROCESS(connectPort);
+		RS_SERIAL_PROCESS(isHiddenNode);
+		RS_SERIAL_PROCESS(hiddenNodeAddress);
+		RS_SERIAL_PROCESS(hiddenNodePort);
+		RS_SERIAL_PROCESS(hiddenType);
+		RS_SERIAL_PROCESS(localAddr);
+		RS_SERIAL_PROCESS(localPort);
+		RS_SERIAL_PROCESS(extAddr);
+		RS_SERIAL_PROCESS(extPort);
+		RS_SERIAL_PROCESS(dyndns);
+		RS_SERIAL_PROCESS(ipAddressList);
+		RS_SERIAL_PROCESS(netMode);
+		RS_SERIAL_PROCESS(vs_disc);
+		RS_SERIAL_PROCESS(vs_dht);
+		RS_SERIAL_PROCESS(lastConnect);
+		RS_SERIAL_PROCESS(lastUsed);
+		RS_SERIAL_PROCESS(connectState);
+		RS_SERIAL_PROCESS(connectStateString);
+		RS_SERIAL_PROCESS(connectPeriod);
+		RS_SERIAL_PROCESS(foundDHT);
+		RS_SERIAL_PROCESS(wasDeniedConnection);
+		RS_SERIAL_PROCESS(deniedTS);
+		RS_SERIAL_PROCESS(linkType);
+	}
 };
 
 // This class is used to get info about crytographic algorithms used with a
 // particular peer.
-class RsPeerCryptoParams
+struct RsPeerCryptoParams
 {
-public:
 	int connexion_state;
 	std::string cipher_name;
 	int cipher_bits_1;
@@ -293,9 +338,8 @@ public:
 	std::string cipher_version;
 };
 
-class RsGroupInfo : RsSerializable
+struct RsGroupInfo : RsSerializable
 {
-public:
     RsGroupInfo();
 
     RsNodeGroupId   id;
@@ -304,54 +348,113 @@ public:
 
     std::set<RsPgpId> peerIds;
 
-    // RsSerializable interface
-public:
-    void serial_process(RsGenericSerializer::SerializeJob j, RsGenericSerializer::SerializeContext &ctx) {
-        RS_SERIAL_PROCESS(id);
-        RS_SERIAL_PROCESS(name);
-        RS_SERIAL_PROCESS(flag);
-        RS_SERIAL_PROCESS(peerIds);
-    }
+	/// @see RsSerializable
+	void serial_process(
+	        RsGenericSerializer::SerializeJob j,
+	        RsGenericSerializer::SerializeContext &ctx)
+	{
+		RS_SERIAL_PROCESS(id);
+		RS_SERIAL_PROCESS(name);
+		RS_SERIAL_PROCESS(flag);
+		RS_SERIAL_PROCESS(peerIds);
+	}
 };
 
 std::ostream &operator<<(std::ostream &out, const RsPeerDetails &detail);
 
-/* TODO: 2015/12/31 this class seems foundamental for RetroShare code
- * understanding must document it as soon as possible
+/** The Main Interface Class - for information about your Peers
+ * A peer is another RS instance, means associated with an SSL certificate
+ * A same GPG person can have multiple peer running with different SSL certs
+ * signed by the same GPG key
+ * Thus a peer have SSL cert details, and also the parent GPG details
  */
-class RsPeers 
+class RsPeers
 {
 public:
 
 	RsPeers() {}
 	virtual ~RsPeers() {}
 
-	// TODO: 2015/12/31 is this dead code?
-	/* Updates ... */
-	// not implemented
-	//virtual bool FriendsChanged() 					= 0;
-	//virtual bool OthersChanged() 					= 0;
-
-	/* Peer Details (Net & Auth) */
+	/**
+	 * @brief Get own SSL peer id
+	 * @return own peer id
+	 */
 	virtual const RsPeerId& getOwnId() = 0;
 
 	virtual bool haveSecretKey(const RsPgpId& gpg_id) = 0 ;
 
-	virtual bool getOnlineList(std::list<RsPeerId> &ssl_ids) = 0;
-	virtual bool getFriendList(std::list<RsPeerId> &ssl_ids) = 0;
-	virtual bool getPeerCount (unsigned int *pnFriendCount, unsigned int *pnnOnlineCount, bool ssl) = 0;
+	/**
+	 * @brief Get trusted peers list
+	 * @jsonapi{development}
+	 * @param[out] sslIds storage for the trusted peers
+	 * @return false if error occurred, true otherwise
+	 */
+	virtual bool getFriendList(std::list<RsPeerId>& sslIds) = 0;
 
-	virtual bool isOnline(const RsPeerId &ssl_id) = 0;
-	virtual bool isFriend(const RsPeerId &ssl_id) = 0;
+	/**
+	 * @brief Get connected peers list
+	 * @jsonapi{development}
+	 * @param[out] sslIds storage for the peers
+	 * @return false if error occurred, true otherwise
+	 */
+	virtual bool getOnlineList(std::list<RsPeerId> &sslIds) = 0;
+
+	/**
+	 * @brief Get peers count
+	 * @jsonapi{development}
+	 * @param[out] peersCount storage for trusted peers count
+	 * @param[out] onlinePeersCount storage for online peers count
+	 * @param[in] countLocations true to count multiple locations of same owner
+	 * @return false if error occurred, true otherwise
+	 */
+	virtual bool getPeersCount(
+	        uint32_t& peersCount, uint32_t& onlinePeersCount,
+	        bool countLocations = true ) = 0;
+
+	RS_DEPRECATED
+	virtual bool getPeerCount(unsigned int *pnFriendCount, unsigned int *pnnOnlineCount, bool ssl) = 0;
+
+	/**
+	 * @brief Check if there is an established connection to the given peer
+	 * @jsonapi{development}
+	 * @param[in] sslId id of the peer to check
+	 * @return true if the connection is establisced, false otherwise
+	 */
+	virtual bool isOnline(const RsPeerId &sslId) = 0;
+
+	/**
+	 * @brief Check if given peer is a trusted node
+	 * @jsonapi{development}
+	 * @param[in] sslId id of the peer to check
+	 * @return true if the node is trusted, false otherwise
+	 */
+	virtual bool isFriend(const RsPeerId &sslId) = 0;
+
 	virtual bool isGPGAccepted(const RsPgpId &gpg_id_is_friend) = 0;
 	virtual std::string getPeerName(const RsPeerId &ssl_id) = 0;
 	virtual std::string getGPGName(const RsPgpId& gpg_id) = 0;
-	virtual bool getPeerDetails(const RsPeerId& ssl_id, RsPeerDetails &d) = 0;
+
+	/**
+	 * @brief Get details details of the given peer
+	 * @jsonapi{development}
+	 * @param[in] sslId id of the peer
+	 * @param[out] det storage for the details of the peer
+	 * @return false if error occurred, true otherwise
+	 */
+	virtual bool getPeerDetails(const RsPeerId& sslId, RsPeerDetails& det) = 0;
+
 	virtual bool getGPGDetails(const RsPgpId& gpg_id, RsPeerDetails &d) = 0;
 
 	/* Using PGP Ids */
 	virtual const RsPgpId& getGPGOwnId() = 0;
-	virtual RsPgpId getGPGId(const RsPeerId& sslid)	= 0; //return the gpg id of the given ssl id
+
+	/**
+	 * @brief Get PGP id for the given peer
+	 * @jsonapi{development}
+	 * @param[in] sslId SSL id of the peer
+	 * @return PGP id of the peer
+	 */
+	virtual RsPgpId getGPGId(const RsPeerId& sslId) = 0;
 	virtual bool isKeySupported(const RsPgpId& gpg_ids) = 0;
 	virtual bool getGPGAcceptedList(std::list<RsPgpId> &gpg_ids) = 0;
 	virtual bool getGPGSignedList(std::list<RsPgpId> &gpg_ids) = 0;//friends that we accpet to connect with but we don't want to sign their gpg key
@@ -360,16 +463,49 @@ public:
 	virtual bool getAssociatedSSLIds(const RsPgpId& gpg_id, std::list<RsPeerId>& ids) = 0;
 	virtual bool gpgSignData(const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen, std::string reason = "") = 0;
 
-	/* Add/Remove Friends */
-	virtual	bool addFriend(const RsPeerId &ssl_id, const RsPgpId &gpg_id,ServicePermissionFlags flags = RS_NODE_PERM_DEFAULT) = 0;
-	virtual	bool removeFriend(const RsPgpId& pgp_id) = 0;
+	/**
+	 * @brief Add trusted node
+	 * @jsonapi{development}
+	 * @param[in] sslId SSL id of the node to add
+	 * @param[in] gpgId PGP id of the node to add
+	 * @param[in] flags service permissions flag
+	 * @return false if error occurred, true otherwise
+	 */
+	virtual bool addFriend( const RsPeerId &sslId, const RsPgpId& gpgId,
+	                        ServicePermissionFlags flags = RS_NODE_PERM_DEFAULT ) = 0;
+
+	/**
+	 * @brief Revoke connection trust from to node
+	 * @jsonapi{development}
+	 * @param[in] pgpId PGP id of the node
+	 * @return false if error occurred, true otherwise
+	 */
+	virtual bool removeFriend(const RsPgpId& pgpId) = 0;
+
+	/**
+	 * @brief Remove location of a trusted node, useful to prune old unused
+	 *	locations of a trusted peer without revoking trust
+	 * @jsonapi{development}
+	 * @param[in] sslId SSL id of the location to remove
+	 * @return false if error occurred, true otherwise
+	 */
 	virtual bool removeFriendLocation(const RsPeerId& sslId) = 0;
 
 	/* keyring management */
-	virtual bool removeKeysFromPGPKeyring(const std::set<RsPgpId>& pgp_ids,std::string& backup_file,uint32_t& error_code) = 0;
+	virtual bool removeKeysFromPGPKeyring(
+	        const std::set<RsPgpId>& pgpIds, std::string& backupFile,
+	        uint32_t& errorCode ) = 0;
 
 	/* Network Stuff */
-	virtual	bool connectAttempt(const RsPeerId& ssl_id) = 0;
+
+	/**
+	 * @brief Trigger connection attempt to given node
+	 * @jsonapi{development}
+	 * @param[in] sslId SSL id of the node to connect
+	 * @return false if error occurred, true otherwise
+	 */
+	virtual bool connectAttempt(const RsPeerId& sslId) = 0;
+
 	virtual bool setLocation(const RsPeerId &ssl_id, const std::string &location) = 0; // location is shown in the gui to differentiate ssl certs
 
 	virtual bool setHiddenNode(const RsPeerId &id, const std::string &hidden_node_address) = 0;
@@ -393,6 +529,7 @@ public:
 
 	/**
 	 * @brief Get RetroShare invite of the given peer
+	 * @jsonapi{development}
 	 * @param[in] sslId Id of the peer of which we want to generate an invite
 	 * @param[in] includeSignatures true to add key signatures to the invite
 	 * @param[in] includeExtraLocators false to avoid to add extra locators
@@ -403,12 +540,23 @@ public:
 	        bool includeExtraLocators = true ) = 0;
 
 	/**
+	 * @brief Add trusted node from invite
+	 * @jsonapi{development}
+	 * @param[in] invite invite string being it in cert or URL format
+	 * @param[in] flags service permissions flag
+	 * @return false if error occurred, true otherwise
+	 */
+	virtual bool acceptInvite(
+	        const std::string& invite,
+	        ServicePermissionFlags flags = RS_NODE_PERM_DEFAULT ) = 0;
+
+	/**
 	 * @brief Get RetroShare invite of our own peer
 	 * @param[in] includeSignatures true to add key signatures to the invite
 	 * @param[in] includeExtraLocators false to avoid to add extra locators
 	 * @return invite string
 	 */
-	virtual	std::string GetRetroshareInvite(
+	virtual std::string GetRetroshareInvite(
 	        bool includeSignatures = false,
 	        bool includeExtraLocators = true ) = 0;
 
@@ -417,11 +565,31 @@ public:
 	virtual bool GetPGPBase64StringAndCheckSum(const RsPgpId& gpg_id,std::string& gpg_base64_string,std::string& gpg_base64_checksum) = 0;
 	virtual  bool hasExportMinimal() = 0;
 
-	// Add keys to the keyring
-	virtual	bool loadCertificateFromString(const std::string& cert, RsPeerId& ssl_id,RsPgpId& pgp_id, std::string& error_string) = 0;
+	/**
+	 * @brief Import certificate into the keyring
+	 * @jsonapi{development}
+	 * @param[in] cert string representation of the certificate
+	 * @param[out] sslId storage for the SSL id of the certificate
+	 * @param[out] pgpId storage for the PGP id of the certificate
+	 * @param[out] errorString storage for the possible error string
+	 * @return false if error occurred, true otherwise
+	 */
+	virtual bool loadCertificateFromString(
+	        const std::string& cert, RsPeerId& sslId, RsPgpId& pgpId,
+	        std::string& errorString) = 0;
 
-	// Gets the GPG details, but does not add the key to the keyring.
-	virtual	bool loadDetailsFromStringCert(const std::string& certGPG, RsPeerDetails &pd,uint32_t& error_code) = 0;
+	/**
+	 * @brief Examine certificate and get details without importing into
+	 *	the keyring
+	 * @jsonapi{development}
+	 * @param[in] cert string representation of the certificate
+	 * @param[out] certDetails storage for the certificate details
+	 * @param[out] errorCode storage for possible error number
+	 * @return false if error occurred, true otherwise
+	 */
+	virtual bool loadDetailsFromStringCert(
+	        const std::string& cert, RsPeerDetails& certDetails,
+	        uint32_t& errorCode ) = 0;
 
 	// Certificate utils
 	virtual	bool cleanCertificate(const std::string &certstr, std::string &cleanCert,int& error_code) = 0;
@@ -468,4 +636,5 @@ public:
     	virtual bool getPeerMaximumRates(const RsPgpId& pid,uint32_t& maxUploadRate,uint32_t& maxDownloadRate) =0;
 };
 
-#endif
+
+

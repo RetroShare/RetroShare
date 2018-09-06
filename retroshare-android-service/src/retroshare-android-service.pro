@@ -11,7 +11,9 @@ android-*:CONFIG += dll
 android-*:TEMPLATE = lib
 !android-*:TEMPLATE = app
 
-!include("../../libresapi/src/use_libresapi.pri"):error("Including")
+libresapilocalserver {
+    !include("../../libresapi/src/use_libresapi.pri"):error("Including")
+}
 
 !include("../../libretroshare/src/use_libretroshare.pri"):error("Including")
 

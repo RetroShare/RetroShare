@@ -51,6 +51,7 @@ struct RsLoginHelper;
  */
 extern RsLoginHelper* rsLoginHelper;
 
+
 /*!
  * Initialisation Class (not publicly disclosed to RsIFace)
  */
@@ -132,31 +133,36 @@ private:
 
 /* Seperate static Class for dealing with Accounts */
 
-class RsAccountsDetail ;
+class RsAccountsDetail;
 
 class RsAccounts
 {
 public:
-    // Should be called once before everything else.
-
+	/// Should be called once before everything else.
 	static bool init(const std::string &opt_base_dir, int& error_code);
 
 	/**
-		 * @brief ConfigDirectory (normally ~/.retroshare) you can call this method
-		 * even before initialisation (you can't with some other methods)
-		 *
-		 * 		On linux: ~/.retroshare/
-		 *
-		 * @see RsAccountsDetail::PathBaseDirectory()
-		 */
+	 * @brief ConfigDirectory (usually ~/.retroshare) you can call this method
+	 * even before initialisation (you can't with some other methods)
+	 * @see RsAccountsDetail::PathBaseDirectory()
+	 */
 	static std::string ConfigDirectory();
 
 	/**
-		 * @brief DataDirectory
-		 * you can call this method even before initialisation (you can't with some other methods)
-		 * @param check if set to true and directory does not exist, return empty string
-		 * @return path where global platform independent files are stored, like bdboot.txt or webinterface files
-		 */
+	 * @brief Get current account id. Beware that an account may be selected
+	 *	without actually logging in.
+	 * @jsonapi{development}
+	 * @param[out] id storage for current account id
+	 * @return false if account hasn't been selected yet, true otherwise
+	 */
+	static bool getCurrentAccountId(RsPeerId &id);
+
+	/**
+	 * @brief DataDirectory
+	 * you can call this method even before initialisation (you can't with some other methods)
+	 * @param check if set to true and directory does not exist, return empty string
+	 * @return path where global platform independent files are stored, like bdboot.txt or webinterface files
+	 */
 	static std::string systemDataDirectory(bool check = true);
 	static std::string PGPDirectory();
 
@@ -207,8 +213,16 @@ public:
     static void unlockPreferredAccount() ;
 
 private:
-    static RsAccountsDetail *rsAccounts ;
+	static RsAccountsDetail* rsAccountsDetails;
 };
+
+/**
+ * Pointer to global instance of RsAccounts needed to expose JSON API, as all
+ * the members of this class are static you should call them directly without
+ * using this pointer in the other parts of the code
+ * @jsonapi{development}
+ */
+extern RsAccounts* rsAccounts;
 
 
 /**
@@ -262,6 +276,14 @@ struct RsLoginHelper
 	bool createLocation( RsLoginHelper::Location& location,
 	                     const std::string& password, bool makeHidden,
 	                     bool makeAutoTor, std::string& errorMessage );
+
+	/**
+	 * @brief Check if RetroShare is already logged in, this usually return true
+	 *	after a successfull attemptLogin() and before closeSession()
+	 * @jsonapi{development}
+	 * @return true if already logged in, false otherwise
+	 */
+	bool isLoggedIn();
 
 	/**
 	 * @brief Close RetroShare session

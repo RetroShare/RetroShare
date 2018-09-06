@@ -17,36 +17,37 @@
  */
 
 #include <QCoreApplication>
-#include <QDebug>
-#include <QDir>
-#include <QTimer>
 #include <csignal>
 
 #ifdef __ANDROID__
 #	include "util/androiddebug.h"
 #endif
 
-#include "api/ApiServer.h"
-#include "api/ApiServerLocal.h"
-#include "api/RsControlModule.h"
+#ifdef LIBRESAPI_LOCAL_SERVER
+#	include <QDir>
+#	include <QTimer>
+#	include <QDebug>
+
+#	include "api/ApiServer.h"
+#	include "api/ApiServerLocal.h"
+#	include "api/RsControlModule.h"
+#else // ifdef LIBRESAPI_LOCAL_SERVER
+#	include <QObject>
+
+#	include "retroshare/rsinit.h"
+#	include "retroshare/rsiface.h"
+#endif // ifdef LIBRESAPI_LOCAL_SERVER
 
 #ifdef RS_JSONAPI
 #	include "jsonapi/jsonapi.h"
-#	include "retroshare/rsiface.h"
+#	include "util/rsnet.h"
+#	include "util/rsurl.h"
 
-JsonApiServer jas(9092, [](int ec)
-{
-	RsControl::instance()->rsGlobalShutDown();
-	QCoreApplication::exit(ec);
-});
-
-void exitGracefully(int ec) { jas.shutdown(ec); }
-
-#else // ifdef RS_JSONAPI
-void exitGracefully(int ec) { QCoreApplication::exit(ec); }
-#endif // ifdef RS_JSONAPI
-
-using namespace resource_api;
+#	include <cstdint>
+#	include <QCommandLineParser>
+#	include <QString>
+#	include <iostream>
+#endif // def RS_JSONAPI
 
 int main(int argc, char *argv[])
 {
@@ -56,13 +57,15 @@ int main(int argc, char *argv[])
 
 	QCoreApplication app(argc, argv);
 
-	signal(SIGINT, exitGracefully);
-	signal(SIGTERM, exitGracefully);
+	signal(SIGINT,   QCoreApplication::exit);
+	signal(SIGTERM,  QCoreApplication::exit);
 #ifdef SIGBREAK
-	signal(SIGBREAK, exitGracefully);
+	signal(SIGBREAK, QCoreApplication::exit);
 #endif // ifdef SIGBREAK
 
 #ifdef LIBRESAPI_LOCAL_SERVER
+	using namespace resource_api;
+
 	ApiServer api;
 	RsControlModule ctrl_mod(argc, argv, api.getStateTokenServer(), &api, true);
 	api.addResourceHandler(
@@ -81,15 +84,84 @@ int main(int argc, char *argv[])
 	shouldExitTimer.setTimerType(Qt::VeryCoarseTimer);
 	shouldExitTimer.setInterval(1000);
 	QObject::connect( &shouldExitTimer, &QTimer::timeout, [&]()
-	{ if(ctrl_mod.processShouldExit()) exitGracefully(0); } );
+	{ if(ctrl_mod.processShouldExit()) QCoreApplication::exit(0); } );
 	shouldExitTimer.start();
-#else
-#	error retroshare-android-service need CONFIG+=libresapilocalserver to build
-#endif
+#else // ifdef LIBRESAPI_LOCAL_SERVER
+	RsInit::InitRsConfig();
+	RsInit::InitRetroShare(argc, argv, true);
+	RsControl::earlyInitNotificationSystem();
+	QObject::connect(
+	            &app, &QCoreApplication::aboutToQuit,
+	            [](){
+		if(RsControl::instance()->isReady())
+			RsControl::instance()->rsGlobalShutDown(); } );
+#endif // ifdef LIBRESAPI_LOCAL_SERVER
 
 #ifdef RS_JSONAPI
+	uint16_t jsonApiPort = 9092;
+	std::string jsonApiBindAddress = "127.0.0.1";
+
+	{
+		QCommandLineOption jsonApiPortOpt(
+		            "jsonApiPort", "JSON API listening port.", "port", "9092");
+		QCommandLineOption jsonApiBindAddressOpt(
+		            "jsonApiBindAddress", "JSON API Bind Address.",
+		            "IP Address", "127.0.0.1");
+
+		QCommandLineParser cmdParser;
+		cmdParser.addHelpOption();
+		cmdParser.addOption(jsonApiPortOpt);
+		cmdParser.addOption(jsonApiBindAddressOpt);
+
+		cmdParser.parse(app.arguments());
+
+		if(cmdParser.isSet(jsonApiPortOpt))
+		{
+			QString jsonApiPortStr = cmdParser.value(jsonApiPortOpt);
+			bool portOk;
+			jsonApiPort = jsonApiPortStr.toUShort(&portOk);
+			if(!portOk)
+			{
+				std::cerr << "ERROR: jsonApiPort option value must be a valid "
+				          << "TCP port!" << std::endl;
+				cmdParser.showHelp();
+				QCoreApplication::exit(EINVAL);
+			}
+		}
+
+		if(cmdParser.isSet(jsonApiBindAddressOpt))
+		{
+			sockaddr_storage tmp;
+			jsonApiBindAddress =
+			        cmdParser.value(jsonApiBindAddressOpt).toStdString();
+			if(!sockaddr_storage_inet_pton(tmp, jsonApiBindAddress))
+			{
+				std::cerr << "ERROR: jsonApiBindAddress option value must "
+				          << "be a valid IP address!" << std::endl;
+				cmdParser.showHelp();
+				QCoreApplication::exit(EINVAL);
+			}
+		}
+	}
+
+	JsonApiServer jas( jsonApiPort, jsonApiBindAddress,
+	                   [](int ec) { QCoreApplication::exit(ec); } );
 	jas.start();
-#endif
+
+	{
+		sockaddr_storage tmp;
+		sockaddr_storage_inet_pton(tmp, jsonApiBindAddress);
+		sockaddr_storage_setport(tmp, jsonApiPort);
+		sockaddr_storage_ipv6_to_ipv4(tmp);
+		RsUrl tmpUrl(sockaddr_storage_tostring(tmp));
+		tmpUrl.setScheme("http");
+
+		std::cerr << "JSON API listening on "
+		          << tmpUrl.toString()
+		          << std::endl;
+	}
+
+#endif // ifdef RS_JSONAPI
 
 	return app.exec();
 }

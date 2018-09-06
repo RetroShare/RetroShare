@@ -53,8 +53,13 @@ public:
 	static RsControl *instance();
 	static void earlyInitNotificationSystem() { instance(); }
 
-		/* Real Startup Fn */
-		virtual int StartupRetroShare() = 0;
+	/* Real Startup Fn */
+	virtual int StartupRetroShare() = 0;
+
+	/** Check if core is fully ready, true only after
+	 *  StartupRetroShare() finish and before rsGlobalShutDown() begin
+	 */
+	virtual bool isReady() = 0;
 
 		/****************************************/
 		/* Config */
