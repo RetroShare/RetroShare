@@ -1174,7 +1174,16 @@ bool p3discovery2::getDiscFriends(const RsPeerId& id, std::list<RsPeerId> &proxy
 		}
 	}
 	return true;
-		
+
+}
+
+bool p3discovery2::getWaitingDiscCount(size_t &sendCount, size_t &recvCount)
+{
+	RsStackMutex stack(mDiscMtx); /********** STACK LOCKED MTX ******/
+	sendCount = mPendingDiscPgpCertOutList.size();
+	recvCount = mPendingDiscPgpCertInList.size();
+
+	return true;
 }
 						  
 						  
@@ -1245,14 +1254,15 @@ bool p3discovery2::getWaitingDiscCount(unsigned int *sendCount, unsigned int *re
 		return false;
 	}
 
-	RsStackMutex stack(mDiscMtx); /********** STACK LOCKED MTX ******/
+	size_t send, recv;
+	getWaitingDiscCount(send, recv);
 
 	if (sendCount) {
-		*sendCount = mPendingDiscPgpCertOutList.size();
+		*sendCount = send;
 	}
 
 	if (recvCount) {
-		*recvCount = mPendingDiscPgpCertInList.size();
+		*recvCount = recv;
 	}
 	return true;
 }
