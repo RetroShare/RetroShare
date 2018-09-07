@@ -30,6 +30,11 @@
 
 /* The New Config Interface Class */
 class RsServerConfig;
+
+/**
+ * Pointer to global instance of RsServerConfig service implementation
+ * @jsonapi{development}
+ */
 extern RsServerConfig *rsConfig;
 
 #define RSNET_NETWORK_UNKNOWN		1
@@ -129,9 +134,8 @@ int 		promptAtBoot; /* popup the password prompt */
 };
 
 
-class RsConfigDataRates
+struct RsConfigDataRates : RsSerializable
 {
-	public:
 	RsConfigDataRates()
 	{
 		mRateIn = 0;
@@ -151,25 +155,43 @@ class RsConfigDataRates
 	}
 
 	/* all in kB/s */
-	float   mRateIn;
-	float   mRateMaxIn;
-	float   mAllocIn;
+	float mRateIn;
+	float mRateMaxIn;
+	float mAllocIn;
 
-	time_t	mAllocTs;
+	time_t mAllocTs;
 
-	float   mRateOut;
-	float   mRateMaxOut;
-	float   mAllowedOut;
+	float mRateOut;
+	float mRateMaxOut;
+	float mAllowedOut;
 
-	time_t	mAllowedTs;
+	time_t mAllowedTs;
 
-	int 	mQueueIn;
+	int	mQueueIn;
 	int	mQueueOut;
+
+	// RsSerializable interface
+public:
+	void serial_process(RsGenericSerializer::SerializeJob j, RsGenericSerializer::SerializeContext &ctx) {
+		RS_SERIAL_PROCESS(mRateIn);
+		RS_SERIAL_PROCESS(mRateMaxIn);
+		RS_SERIAL_PROCESS(mAllocIn);
+
+		RS_SERIAL_PROCESS(mAllocTs);
+
+		RS_SERIAL_PROCESS(mRateOut);
+		RS_SERIAL_PROCESS(mRateMaxOut);
+		RS_SERIAL_PROCESS(mAllowedOut);
+
+		RS_SERIAL_PROCESS(mAllowedTs);
+
+		RS_SERIAL_PROCESS(mQueueIn);
+		RS_SERIAL_PROCESS(mQueueOut);
+	}
 };
 
-class RSTrafficClue
+struct RSTrafficClue : RsSerializable
 {
-public:
     time_t     TS ;
     uint32_t   size ;
     uint8_t    priority ;
@@ -180,11 +202,22 @@ public:
 
     RSTrafficClue() { TS=0;size=0;service_id=0;service_sub_id=0; count=0; }
     RSTrafficClue& operator+=(const RSTrafficClue& tc) { size += tc.size; count += tc.count ; return *this ;}
+
+	// RsSerializable interface
+public:
+	void serial_process(RsGenericSerializer::SerializeJob j, RsGenericSerializer::SerializeContext &ctx) {
+		RS_SERIAL_PROCESS(TS);
+		RS_SERIAL_PROCESS(size);
+		RS_SERIAL_PROCESS(priority);
+		RS_SERIAL_PROCESS(service_id);
+		RS_SERIAL_PROCESS(service_sub_id);
+		RS_SERIAL_PROCESS(peer_id);
+		RS_SERIAL_PROCESS(count);
+	}
 };
 
-class RsConfigNetStatus
+struct RsConfigNetStatus : RsSerializable
 {
-	public:
 	RsConfigNetStatus()
 	{
 		localPort = extPort = 0 ;
@@ -195,33 +228,63 @@ class RsConfigNetStatus
         netDhtNetSize = netDhtRsNetSize = 0;
 	}
 
-	RsPeerId		ownId;
-	std::string		ownName;
+	RsPeerId	ownId;
+	std::string	ownName;
 
-	std::string		localAddr;
+	std::string	localAddr;
 	int			localPort;
-	std::string		extAddr;
+	std::string	extAddr;
 	int			extPort;
-	std::string		extDynDns;
+	std::string	extDynDns;
 
-	bool			firewalled;
-	bool			forwardPort;
+	bool		firewalled;
+	bool		forwardPort;
 
 	/* older data types */
-	bool			DHTActive;
-	bool			uPnPActive;
+	bool		DHTActive;
+	bool		uPnPActive;
 
 	int			uPnPState;
 
 	/* Flags for Network Status */
-	bool 			netLocalOk;     /* That we've talked to someone! */
-	bool			netUpnpOk; /* upnp is enabled and active */
-	bool			netDhtOk;  /* response from dht */
-	bool			netStunOk;  /* recvd stun / udp packets */
-	bool			netExtAddressOk;  /* from Dht/Stun or External IP Finder */
+	bool 		netLocalOk;		/* That we've talked to someone! */
+	bool		netUpnpOk;		/* upnp is enabled and active */
+	bool		netDhtOk;		/* response from dht */
+	bool		netStunOk;		/* recvd stun / udp packets */
+	bool		netExtAddressOk;/* from Dht/Stun or External IP Finder */
 
-	uint32_t		netDhtNetSize;  /* response from dht */
-	uint32_t		netDhtRsNetSize;  /* response from dht */
+	uint32_t	netDhtNetSize;	/* response from dht */
+	uint32_t	netDhtRsNetSize;/* response from dht */
+
+	// RsSerializable interface
+public:
+	void serial_process(RsGenericSerializer::SerializeJob j, RsGenericSerializer::SerializeContext &ctx) {
+		RS_SERIAL_PROCESS(ownId);
+		RS_SERIAL_PROCESS(ownName);
+
+		RS_SERIAL_PROCESS(localAddr);
+		RS_SERIAL_PROCESS(localPort);
+		RS_SERIAL_PROCESS(extAddr);
+		RS_SERIAL_PROCESS(extPort);
+		RS_SERIAL_PROCESS(extDynDns);
+
+		RS_SERIAL_PROCESS(firewalled);
+		RS_SERIAL_PROCESS(forwardPort);
+
+		RS_SERIAL_PROCESS(DHTActive);
+		RS_SERIAL_PROCESS(uPnPActive);
+
+		RS_SERIAL_PROCESS(uPnPState);
+
+		RS_SERIAL_PROCESS(netLocalOk);
+		RS_SERIAL_PROCESS(netUpnpOk);
+		RS_SERIAL_PROCESS(netDhtOk);
+		RS_SERIAL_PROCESS(netStunOk);
+		RS_SERIAL_PROCESS(netExtAddressOk);
+
+		RS_SERIAL_PROCESS(netDhtNetSize);
+		RS_SERIAL_PROCESS(netDhtRsNetSize);
+	}
 };
 
 
@@ -243,13 +306,40 @@ public:
 
     /* From RsIface::RsConfig */
     // Implemented Only this one!
+	/**
+	 * @brief getConfigNetStatus return the net status
+	 * @jsonapi{development}
+	 * @param[out] status network status
+	 * @return returns 1 on succes and 0 otherwise
+	 */
     virtual int 	getConfigNetStatus(RsConfigNetStatus &status) = 0;
 
     // NOT IMPLEMENTED YET!
     //virtual int 	getConfigStartup(RsConfigStartup &params) = 0;
 
+	/**
+	 * @brief getTotalBandwidthRates returns the current bandwidths rates
+	 * @jsonapi{development}
+	 * @param[out] rates
+	 * @return returns 1 on succes and 0 otherwise
+	 */
     virtual int getTotalBandwidthRates(RsConfigDataRates &rates) = 0;
+
+	/**
+	 * @brief getAllBandwidthRates get the bandwidth rates for all peers
+	 * @jsonapi{development}
+	 * @param[out] ratemap map with peers->rates
+	 * @return returns 1 on succes and 0 otherwise
+	 */
     virtual int getAllBandwidthRates(std::map<RsPeerId, RsConfigDataRates> &ratemap) = 0;
+
+	/**
+	 * @brief getTrafficInfo returns a list of all tracked traffic clues
+	 * @jsonapi{development}
+	 * @param[out] out_lst outgoing traffic clues
+	 * @param[out] in_lst incomming traffic clues
+	 * @return returns 1 on succes and 0 otherwise
+	 */
     virtual int getTrafficInfo(std::list<RSTrafficClue>& out_lst,std::list<RSTrafficClue>& in_lst) = 0 ;
 
     /* From RsInit */
@@ -283,14 +373,54 @@ public:
 
 
     /* Operating Mode */
+	/**
+	 * @brief getOperatingMode get current operating mode
+	 * @jsonapi{development}
+	 * @return return the current operating mode
+	 */
     virtual uint32_t getOperatingMode() = 0;
+
+	/**
+	 * @brief setOperatingMode set the current oprating mode
+	 * @jsonapi{development}
+	 * @param[in] opMode new opearting mode
+	 * @return
+	 */
     virtual bool     setOperatingMode(uint32_t opMode) = 0;
+
+	/**
+	 * @brief setOperatingMode set the current operating mode from string
+	 * @param[in] opModeStr new operating mode as string
+	 * @return
+	 */
     virtual bool     setOperatingMode(const std::string &opModeStr) = 0;
 
     /* Data Rate Control - to be moved here */
+	/**
+	 * @brief SetMaxDataRates set maximum upload and download rates
+	 * @jsonapi{development}
+	 * @param[in] downKb download rate in kB
+	 * @param[in] upKb upload rate in kB
+	 * @return returns 1 on succes and 0 otherwise
+	 */
     virtual int SetMaxDataRates( int downKb, int upKb ) = 0;
+
+	/**
+	 * @brief GetMaxDataRates get maximum upload and download rates
+	 * @jsonapi{development}
+	 * @param[out] inKb download rate in kB
+	 * @param[out] outKb upload rate in kB
+	 * @return returns 1 on succes and 0 otherwise
+	 */
     virtual int GetMaxDataRates( int &inKb, int &outKb ) = 0;
     
+	/**
+	 * @brief GetCurrentDataRates get current upload and download rates
+	 * @jsonapi{development}
+	 * @param[out] inKb download rate in kB
+	 * @param[out] outKb upload rate in kB
+	 * @return returns 1 on succes and 0 otherwise
+	 */
     virtual int GetCurrentDataRates( float &inKb, float &outKb ) = 0;
 };
 
