@@ -30,6 +30,11 @@
 
 /* The Main Interface Class - for information about your Peers */
 class RsDisc;
+
+/**
+ * Pointer to global instance of RsDisc service implementation
+ * @jsonapi{development}
+ */
 extern RsDisc   *rsDisc;
 
 class RsDisc
@@ -37,13 +42,43 @@ class RsDisc
 	public:
 
 	RsDisc()  { return; }
-virtual ~RsDisc() { return; }
+	virtual ~RsDisc() { return; }
 
-virtual bool	getDiscFriends(const RsPeerId &id, std::list<RsPeerId>& friends) = 0;
-virtual bool	getDiscPgpFriends(const RsPgpId &pgpid, std::list<RsPgpId>& gpg_friends) = 0;
-virtual bool 	getPeerVersion(const RsPeerId &id, std::string &versions) = 0;
-virtual bool 	getWaitingDiscCount(unsigned int *sendCount, unsigned int *recvCount) = 0;
+	/**
+	 * @brief getDiscFriends get a list with all friends (ssl id) to a given friend (ssl id)
+	 * @jsonapi{development}
+	 * @param[in] id peer to get the friends of
+	 * @param[out] friends list of friends (ssl id)
+	 * @return true on success false otherwise
+	 */
+	virtual bool	getDiscFriends(const RsPeerId &id, std::list<RsPeerId>& friends) = 0;
 
+	/**
+	 * @brief getDiscPgpFriends get a list with all friends (pgp id) to a given friend (pgp id)
+	 * @jsonapi{development}
+	 * @param[in] pgpid peer to get the friends of
+	 * @param[out] gpg_friends list of friends (gpg id)
+	 * @return true on success false otherwise
+	 */
+	virtual bool	getDiscPgpFriends(const RsPgpId &pgpid, std::list<RsPgpId>& gpg_friends) = 0;
+
+	/**
+	 * @brief getPeerVersion get the version string of a peer.
+	 * @jsonapi{development}
+	 * @param[in] id peer to get the version string of
+	 * @param[out] versions version string sent by the peer
+	 * @return true on success false otherwise
+	 */
+	virtual bool 	getPeerVersion(const RsPeerId &id, std::string &versions) = 0;
+
+	/**
+	 * @brief getWaitingDiscCount get the number of queued discovery packets.
+	 * @param[out] sendCount number of queued outgoing packets
+	 * @param[out] recvCount number of queued incoming packets
+	 * @return true on success false otherwise
+	 */
+	RS_DEPRECATED
+	virtual bool 	getWaitingDiscCount(unsigned int *sendCount, unsigned int *recvCount) = 0;
 };
 
 #endif
