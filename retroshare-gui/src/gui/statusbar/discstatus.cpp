@@ -66,10 +66,10 @@ void DiscStatus::update()
 		return;
 	}
 
-	unsigned int sendCount = 0;
-	unsigned int recvCount = 0;
+	size_t sendCount = 0;
+	size_t recvCount = 0;
 
-	rsDisc->getWaitingDiscCount(&sendCount, &recvCount);
+	rsDisc->getWaitingDiscCount(sendCount, recvCount);
 
 	sendLabel->setText(QString::number(sendCount));
 	recvLabel->setText(QString::number(recvCount));
