@@ -147,7 +147,7 @@ public:
 	 * @param[in] service_id service to look up
 	 * @return name of service
 	 */
-	virtual std::string getServiceName(uint32_t service_id) = 0;
+	virtual std::string getServiceName(uint32_t serviceId) = 0;
 
 	/**
 	 * @brief getServiceItemNames return a map of service item names.
@@ -156,7 +156,7 @@ public:
 	 * @param[out] names names of items
 	 * @return true on success false otherwise
 	 */
-	virtual bool getServiceItemNames(uint32_t service_id,std::map<uint8_t,std::string>& names) = 0;
+	virtual bool getServiceItemNames(uint32_t serviceId, std::map<uint8_t,std::string>& names) = 0;
 
 	/**
 	 * @brief getServicesAllowed return a mpa with allowed service information.
