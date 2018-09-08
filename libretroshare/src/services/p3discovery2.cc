@@ -1247,28 +1247,6 @@ bool p3discovery2::setPeerVersion(const SSLID &peerId, const std::string &versio
 }
 						  
 
-bool p3discovery2::getWaitingDiscCount(unsigned int *sendCount, unsigned int *recvCount)
-{
-	if (sendCount == NULL && recvCount == NULL) {
-		/* Nothing to do */
-		return false;
-	}
-
-	size_t send, recv;
-	getWaitingDiscCount(send, recv);
-
-	if (sendCount) {
-		*sendCount = send;
-	}
-
-	if (recvCount) {
-		*recvCount = recv;
-	}
-	return true;
-}
-
-
-
 /*************************************************************************************/
 /*			AuthGPGService						     */
 /*************************************************************************************/

@@ -91,8 +91,6 @@ virtual RsServiceInfo getServiceInfo();
 	bool getDiscPgpFriends(const RsPgpId &pgpid, std::list<RsPgpId> &gpg_friends);
 	bool getPeerVersion(const RsPeerId &id, std::string &version);
 	bool getWaitingDiscCount(size_t &sendCount, size_t &recvCount);
-	bool getWaitingDiscCount(unsigned int *sendCount, unsigned int *recvCount);
-
         /************* from AuthGPService ****************/
 virtual AuthGPGOperation *getGPGOperation();
 virtual void setGPGOperation(AuthGPGOperation *operation);

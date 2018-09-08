@@ -79,15 +79,6 @@ class RsDisc
 	 * @return true on success false otherwise
 	 */
 	virtual bool 	getWaitingDiscCount(size_t &sendCount, size_t &recvCount) = 0;
-
-	/**
-	 * @brief getWaitingDiscCount get the number of queued discovery packets.
-	 * @param[out] sendCount number of queued outgoing packets
-	 * @param[out] recvCount number of queued incoming packets
-	 * @return true on success false otherwise
-	 */
-	RS_DEPRECATED
-	virtual bool 	getWaitingDiscCount(unsigned int *sendCount, unsigned int *recvCount) = 0;
 };
 
 #endif
