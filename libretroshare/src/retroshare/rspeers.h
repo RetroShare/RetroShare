@@ -600,14 +600,76 @@ public:
 	virtual	bool trustGPGCertificate(const RsPgpId &gpg_id, uint32_t trustlvl) = 0;
 
 	/* Group Stuff */
+	/**
+	 * @brief addGroup create a new group
+	 * @jsonapi{development}
+	 * @param[in] groupInfo
+	 * @return
+	 */
     virtual bool addGroup(RsGroupInfo& groupInfo) = 0;
+
+	/**
+	 * @brief editGroup edit an existing group
+	 * @jsonapi{development}
+	 * @param[in] groupId
+	 * @param[in] groupInfo
+	 * @return
+	 */
     virtual bool editGroup(const RsNodeGroupId& groupId, RsGroupInfo& groupInfo) = 0;
+
+	/**
+	 * @brief removeGroup remove a group
+	 * @jsonapi{development}
+	 * @param[in] groupId
+	 * @return
+	 */
     virtual bool removeGroup(const RsNodeGroupId& groupId) = 0;
+
+	/**
+	 * @brief getGroupInfo get group information to one group
+	 * @jsonapi{development}
+	 * @param[in] groupId
+	 * @param[out] groupInfo
+	 * @return
+	 */
     virtual bool getGroupInfo(const RsNodeGroupId& groupId, RsGroupInfo& groupInfo) = 0;
-    virtual bool getGroupInfoByName(const std::string& groupId, RsGroupInfo& groupInfo) = 0;
+
+	/**
+	 * @brief getGroupInfoByName get group information by group name
+	 * @jsonapi{development}
+	 * @param[in] groupName
+	 * @param[out] groupInfo
+	 * @return
+	 */
+	virtual bool getGroupInfoByName(const std::string& groupName, RsGroupInfo& groupInfo) = 0;
+
+	/**
+	 * @brief getGroupInfoList get list of all groups
+	 * @jsonapi{development}
+	 * @param[out] groupInfoList
+	 * @return
+	 */
     virtual bool getGroupInfoList(std::list<RsGroupInfo>& groupInfoList) = 0;
+
 	// groupId == "" && assign == false -> remove from all groups
+	/**
+	 * @brief assignPeerToGroup add a peer to a group
+	 * @jsonapi{development}
+	 * @param[in] groupId
+	 * @param[in] peerId
+	 * @param[in] assign true to assign a peer, false to remove a peer
+	 * @return
+	 */
     virtual bool assignPeerToGroup(const RsNodeGroupId& groupId, const RsPgpId& peerId, bool assign) = 0;
+
+	/**
+	 * @brief assignPeersToGroup add a list of peers to a group
+	 * @jsonapi{development}
+	 * @param[in] groupId
+	 * @param[in] peerIds
+	 * @param[in] assign true to assign a peer, false to remove a peer
+	 * @return
+	 */
     virtual bool assignPeersToGroup(const RsNodeGroupId& groupId, const std::list<RsPgpId>& peerIds, bool assign) = 0;
 
 	/* Group sharing permission */

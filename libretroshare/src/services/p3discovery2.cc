@@ -1174,7 +1174,16 @@ bool p3discovery2::getDiscFriends(const RsPeerId& id, std::list<RsPeerId> &proxy
 		}
 	}
 	return true;
-		
+
+}
+
+bool p3discovery2::getWaitingDiscCount(size_t &sendCount, size_t &recvCount)
+{
+	RS_STACK_MUTEX(mDiscMtx);
+	sendCount = mPendingDiscPgpCertOutList.size();
+	recvCount = mPendingDiscPgpCertInList.size();
+
+	return true;
 }
 						  
 						  
@@ -1237,27 +1246,6 @@ bool p3discovery2::setPeerVersion(const SSLID &peerId, const std::string &versio
 	return true;
 }
 						  
-
-bool p3discovery2::getWaitingDiscCount(unsigned int *sendCount, unsigned int *recvCount)
-{
-	if (sendCount == NULL && recvCount == NULL) {
-		/* Nothing to do */
-		return false;
-	}
-
-	RsStackMutex stack(mDiscMtx); /********** STACK LOCKED MTX ******/
-
-	if (sendCount) {
-		*sendCount = mPendingDiscPgpCertOutList.size();
-	}
-
-	if (recvCount) {
-		*recvCount = mPendingDiscPgpCertInList.size();
-	}
-	return true;
-}
-
-
 
 /*************************************************************************************/
 /*			AuthGPGService						     */

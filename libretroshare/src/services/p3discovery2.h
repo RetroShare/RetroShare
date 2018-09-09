@@ -87,11 +87,10 @@ virtual RsServiceInfo getServiceInfo();
 	int	tick();
 	
 	/* external interface */
-virtual bool    getDiscFriends(const RsPeerId &id, std::list<RsPeerId> &friends);
-virtual bool    getDiscPgpFriends(const RsPgpId &pgpid, std::list<RsPgpId> &gpg_friends);
-virtual bool    getPeerVersion(const RsPeerId &id, std::string &version);
-virtual bool    getWaitingDiscCount(unsigned int *sendCount, unsigned int *recvCount);
-
+	bool getDiscFriends(const RsPeerId &id, std::list<RsPeerId> &friends);
+	bool getDiscPgpFriends(const RsPgpId &pgpid, std::list<RsPgpId> &gpg_friends);
+	bool getPeerVersion(const RsPeerId &id, std::string &version);
+	bool getWaitingDiscCount(size_t &sendCount, size_t &recvCount);
         /************* from AuthGPService ****************/
 virtual AuthGPGOperation *getGPGOperation();
 virtual void setGPGOperation(AuthGPGOperation *operation);
