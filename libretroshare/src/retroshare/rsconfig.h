@@ -136,23 +136,13 @@ int 		promptAtBoot; /* popup the password prompt */
 
 struct RsConfigDataRates : RsSerializable
 {
-	RsConfigDataRates()
-	{
-		mRateIn = 0;
-		mRateMaxIn = 0;
-		mAllocIn = 0;
-
-		mAllocTs = 0;
-
-		mRateOut = 0;
-		mRateMaxOut = 0;
-		mAllowedOut = 0;
-
-		mAllowedTs = 0;
-
-		mQueueIn = 0;
-		mQueueOut = 0;
-	}
+	RsConfigDataRates() :
+	    mRateIn(0), mRateMaxIn(0), mAllocIn(0),
+	    mAllocTs(0),
+	    mRateOut(0), mRateMaxOut(0), mAllowedOut(0),
+	    mAllowedTs(0),
+	    mQueueIn(0), mQueueOut(0)
+	{}
 
 	/* all in kB/s */
 	float mRateIn;
@@ -171,7 +161,6 @@ struct RsConfigDataRates : RsSerializable
 	int	mQueueOut;
 
 	// RsSerializable interface
-public:
 	void serial_process(RsGenericSerializer::SerializeJob j, RsGenericSerializer::SerializeContext &ctx) {
 		RS_SERIAL_PROCESS(mRateIn);
 		RS_SERIAL_PROCESS(mRateMaxIn);
@@ -204,7 +193,6 @@ struct RSTrafficClue : RsSerializable
     RSTrafficClue& operator+=(const RSTrafficClue& tc) { size += tc.size; count += tc.count ; return *this ;}
 
 	// RsSerializable interface
-public:
 	void serial_process(RsGenericSerializer::SerializeJob j, RsGenericSerializer::SerializeContext &ctx) {
 		RS_SERIAL_PROCESS(TS);
 		RS_SERIAL_PROCESS(size);
@@ -257,7 +245,6 @@ struct RsConfigNetStatus : RsSerializable
 	uint32_t	netDhtRsNetSize;/* response from dht */
 
 	// RsSerializable interface
-public:
 	void serial_process(RsGenericSerializer::SerializeJob j, RsGenericSerializer::SerializeContext &ctx) {
 		RS_SERIAL_PROCESS(ownId);
 		RS_SERIAL_PROCESS(ownName);

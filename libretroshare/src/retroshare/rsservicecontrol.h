@@ -61,7 +61,6 @@ struct RsServiceInfo : RsSerializable
 	uint16_t    mMinVersionMinor;
 
 	// RsSerializable interface
-public:
 	void serial_process(RsGenericSerializer::SerializeJob j, RsGenericSerializer::SerializeContext &ctx) {
 		RS_SERIAL_PROCESS(mServiceName);
 		RS_SERIAL_PROCESS(mServiceType);
@@ -83,7 +82,6 @@ struct RsPeerServiceInfo : RsSerializable
 	std::map<uint32_t, RsServiceInfo> mServiceList;
 
 	// RsSerializable interface
-public:
 	void serial_process(RsGenericSerializer::SerializeJob j, RsGenericSerializer::SerializeContext &ctx) {
 		RS_SERIAL_PROCESS(mPeerId);
 		RS_SERIAL_PROCESS(mServiceList);
@@ -114,7 +112,6 @@ struct RsServicePermissions : RsSerializable
     std::set<RsPeerId> mPeersDenied;
 
 	// RsSerializable interface
-public:
 	void serial_process(RsGenericSerializer::SerializeJob j, RsGenericSerializer::SerializeContext &ctx) {
 		RS_SERIAL_PROCESS(mServiceId);
 		RS_SERIAL_PROCESS(mServiceName);
@@ -130,8 +127,8 @@ class RsServiceControl
 {
 public:
 
-	RsServiceControl()  { return; }
-	virtual ~RsServiceControl() { return; }
+	RsServiceControl() {}
+	virtual ~RsServiceControl(){}
 
 	/**
 	 * @brief getOwnServices return a map off all services.

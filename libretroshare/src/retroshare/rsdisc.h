@@ -41,8 +41,8 @@ class RsDisc
 {
 	public:
 
-	RsDisc()  { return; }
-	virtual ~RsDisc() { return; }
+	RsDisc() {}
+	virtual ~RsDisc() {}
 
 	/**
 	 * @brief getDiscFriends get a list with all friends (ssl id) to a given friend (ssl id)

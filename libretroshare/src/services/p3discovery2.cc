@@ -1179,7 +1179,7 @@ bool p3discovery2::getDiscFriends(const RsPeerId& id, std::list<RsPeerId> &proxy
 
 bool p3discovery2::getWaitingDiscCount(size_t &sendCount, size_t &recvCount)
 {
-	RsStackMutex stack(mDiscMtx); /********** STACK LOCKED MTX ******/
+	RS_STACK_MUTEX(mDiscMtx);
 	sendCount = mPendingDiscPgpCertOutList.size();
 	recvCount = mPendingDiscPgpCertInList.size();
 
