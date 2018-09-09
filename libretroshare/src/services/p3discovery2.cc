@@ -262,10 +262,6 @@ int p3discovery2::handleIncoming()
 {
 	RsItem *item = NULL;
 
-#ifdef P3DISC_DEBUG
-	std::cerr << "p3discovery2::handleIncoming()" << std::endl;
-#endif
-
 	int nhandled = 0;
 	// While messages read
 	while(NULL != (item = recvItem()))
@@ -324,10 +320,6 @@ int p3discovery2::handleIncoming()
 		}
 	}
 
-#ifdef P3DISC_DEBUG
-	std::cerr << "p3discovery2::handleIncoming() finished." << std::endl;
-#endif
-
 	return nhandled;
 }
 
@@ -372,6 +364,11 @@ void p3discovery2::sendOwnContactInfo(const SSLID &sslid)
         rsIdentity->getOwnIds(pkt2->ownIdentityList,true);
         pkt2->PeerId(sslid) ;
 
+#ifdef P3DISC_DEBUG
+		std::cerr << "p3discovery2::sendOwnContactInfo() sending own signed identity list:" << std::endl;
+        for(auto it(pkt2->ownIdentityList.begin());it!=pkt2->ownIdentityList.end();++it)
+            std::cerr << "  identity: " << (*it).toStdString() << std::endl;
+#endif
 		sendItem(pkt2);
 	}
 }
@@ -454,10 +451,19 @@ void p3discovery2::recvIdentityList(const RsPeerId& pid,const std::list<RsGxsId>
     std::list<RsPeerId> peers;
     peers.push_back(pid);
 
+#ifdef P3DISC_DEBUG
+    std::cerr << "p3discovery2::recvIdentityList(): from peer " << pid << ": " << ids.size() << " identities" << std::endl;
+#endif
+
     RsIdentityUsage use_info(RS_SERVICE_TYPE_DISC,RsIdentityUsage::IDENTITY_DATA_UPDATE);
 
 	for(auto it(ids.begin());it!=ids.end();++it)
+    {
+#ifdef P3DISC_DEBUG
+        std::cerr << "  identity: " << (*it).toStdString() << std::endl;
+#endif
 		mGixs->requestKey(*it,peers,use_info) ;
+    }
 }
 
 void p3discovery2::updatePeerAddresses(const RsDiscContactItem *item)
