@@ -1220,6 +1220,8 @@ void GxsForumThreadWidget::fillThreadStatus(QString text)
 	ui->progressText->setText(text);
 }
 
+// #define DEBUG_PINNED_POST_SORTING 1
+
 class ForumThreadItem: public GxsIdRSTreeWidgetItem
 {
 public:
@@ -1228,12 +1230,26 @@ public:
 
     bool operator<(const QTreeWidgetItem& other) const
     {
-		bool date_left  =       data(COLUMN_THREAD_DATE,ROLE_THREAD_SORT).toUInt(); // this is used by the sorting model to put all pinned posts on top
-		bool date_right = other.data(COLUMN_THREAD_DATE,ROLE_THREAD_SORT).toUInt();
+		bool  left_is_not_pinned  =       data(COLUMN_THREAD_DATE,ROLE_THREAD_SORT).toUInt() ||       data(COLUMN_THREAD_DATE,ROLE_THREAD_SORT).toString().contains('|'); // this is used by the sorting model to put all pinned posts on top
+		bool right_is_not_pinned  = other.data(COLUMN_THREAD_DATE,ROLE_THREAD_SORT).toUInt() || other.data(COLUMN_THREAD_DATE,ROLE_THREAD_SORT).toString().contains('|');
+#ifdef DEBUG_PINNED_POST_SORTING
+        std::cerr << "Comparing item date \"" << data(COLUMN_THREAD_DATE,Qt::DisplayRole).toString().toStdString() << "\" ("
+                  << data(COLUMN_THREAD_DATE,ROLE_THREAD_SORT).toUInt() << ", \"" << data(COLUMN_THREAD_DATE,ROLE_THREAD_SORT).toString().toStdString() << "\" --> " << left_is_not_pinned << ") to \""
+                     << other.data(COLUMN_THREAD_DATE,Qt::DisplayRole).toString().toStdString() << "\" ("
+                  << other.data(COLUMN_THREAD_DATE,ROLE_THREAD_SORT).toUInt() << ", \"" << other.data(COLUMN_THREAD_DATE,ROLE_THREAD_SORT).toString().toStdString() << "\" --> " << right_is_not_pinned << ") ";
+#endif
 
-        if(date_left ^ date_right)
-            return (m_header->sortIndicatorOrder()==Qt::AscendingOrder)?date_right:date_left ;	// always put pinned posts on top
+        if(left_is_not_pinned ^ right_is_not_pinned)
+        {
+#ifdef DEBUG_PINNED_POST_SORTING
+            std::cerr << "Local: " << ((m_header->sortIndicatorOrder()==Qt::AscendingOrder)?right_is_not_pinned:left_is_not_pinned) << std::endl;
+#endif
+            return (m_header->sortIndicatorOrder()==Qt::AscendingOrder)?right_is_not_pinned:left_is_not_pinned ;	// always put pinned posts on top
+		}
 
+#ifdef DEBUG_PINNED_POST_SORTING
+		std::cerr << "Remote: " << GxsIdRSTreeWidgetItem::operator<(other) << std::endl;
+#endif
 		return GxsIdRSTreeWidgetItem::operator<(other);
     }
 
@@ -1302,21 +1318,27 @@ QTreeWidgetItem *GxsForumThreadWidget::convertMsgToThreadWidget(const RsGxsForum
     // This is an attempt to put pinned posts on the top. We should rather use a QSortFilterProxyModel here.
 	QString itemSort = QString::number(msg.mMeta.mPublishTs);//Don't need to format it as for sort.
 
+#define SHOW_COMBINED_DATES 1
+
 	if (useChildTS)
 	{
 		for(QTreeWidgetItem *grandParent = parent; grandParent!=NULL; grandParent = grandParent->parent())
 		{
 			//Update Parent Child TimeStamp
-			QString oldTSText = grandParent->text(COLUMN_THREAD_DATE);
 			QString oldTSSort = grandParent->data(COLUMN_THREAD_DATE, ROLE_THREAD_SORT).toString();
 
-			QString oldCTSText = oldTSText.split("|").at(0);
-			QString oldPTSText = oldTSText.contains("|") ? oldTSText.split(" | ").at(1) : oldCTSText;//If first time parent get only its mPublishTs
 			QString oldCTSSort = oldTSSort.split("|").at(0);
 			QString oldPTSSort = oldTSSort.contains("|") ? oldTSSort.split(" | ").at(1) : oldCTSSort;
+#ifdef SHOW_COMBINED_DATES
+			QString oldTSText = grandParent->text(COLUMN_THREAD_DATE);
+			QString oldCTSText = oldTSText.split("|").at(0);
+			QString oldPTSText = oldTSText.contains("|") ? oldTSText.split(" | ").at(1) : oldCTSText;//If first time parent get only its mPublishTs
+ #endif
 			if (oldCTSSort.toDouble() < itemSort.toDouble())
 			{
+#ifdef SHOW_COMBINED_DATES
 				grandParent->setText(COLUMN_THREAD_DATE, DateTime::formatDateTime(qtime) + " | " + oldPTSText);
+#endif
 				grandParent->setData(COLUMN_THREAD_DATE, ROLE_THREAD_SORT, itemSort + " | " + oldPTSSort);
 			}
 		}
