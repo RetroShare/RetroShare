@@ -34,6 +34,7 @@ RsDisc *rsDisc = NULL;
 /****
  * #define P3DISC_DEBUG	1
  ****/
+#define P3DISC_DEBUG	1
 
 static bool populateContactInfo( const peerState &detail,
                                  RsDiscContactItem *pkt,
@@ -94,9 +95,8 @@ void DiscPgpInfo::mergeFriendList(const std::set<PGPID> &friends)
 }
 
 
-p3discovery2::p3discovery2(p3PeerMgr *peerMgr, p3LinkMgr *linkMgr, p3NetMgr *netMgr, p3ServiceControl *sc)
-:p3Service(), mPeerMgr(peerMgr), mLinkMgr(linkMgr), mNetMgr(netMgr), mServiceCtrl(sc),
-	mDiscMtx("p3discovery2")
+p3discovery2::p3discovery2(p3PeerMgr *peerMgr, p3LinkMgr *linkMgr, p3NetMgr *netMgr, p3ServiceControl *sc, RsGixs *gixs)
+:p3Service(), mPeerMgr(peerMgr), mLinkMgr(linkMgr), mNetMgr(netMgr), mServiceCtrl(sc), mGixs(gixs),mDiscMtx("p3discovery2")
 {
 	RsStackMutex stack(mDiscMtx); /********** STACK LOCKED MTX ******/
 
@@ -262,17 +262,14 @@ int p3discovery2::handleIncoming()
 {
 	RsItem *item = NULL;
 
-#ifdef P3DISC_DEBUG
-	std::cerr << "p3discovery2::handleIncoming()" << std::endl;
-#endif
-
 	int nhandled = 0;
 	// While messages read
-	while(NULL != (item = recvItem()))
+	while(nullptr != (item = recvItem()))
 	{
-		RsDiscPgpListItem *pgplist = NULL;
-		RsDiscPgpCertItem *pgpcert = NULL;
-		RsDiscContactItem *contact = NULL;
+		RsDiscPgpListItem *pgplist = nullptr;
+		RsDiscPgpCertItem *pgpcert = nullptr;
+		RsDiscContactItem *contact = nullptr;
+		RsDiscIdentityListItem *gxsidlst = nullptr;
 		nhandled++;
 
 #ifdef P3DISC_DEBUG
@@ -281,21 +278,21 @@ int p3discovery2::handleIncoming()
 		std::cerr  << std::endl;
 #endif
 
-		if (NULL != (contact = dynamic_cast<RsDiscContactItem *> (item))) 
+		if (nullptr != (contact = dynamic_cast<RsDiscContactItem *> (item)))
 		{
 			if (item->PeerId() == contact->sslId) /* self describing */
 				recvOwnContactInfo(item->PeerId(), contact);
             else
                 processContactInfo(item->PeerId(), contact);
-
-			continue;
 		}
-
-		if (NULL != (pgpcert = dynamic_cast<RsDiscPgpCertItem *> (item)))	
-		{
+        else  if (nullptr != (gxsidlst = dynamic_cast<RsDiscIdentityListItem *> (item)))
+        {
+            recvIdentityList(item->PeerId(),gxsidlst->ownIdentityList) ;
+            delete item;
+        }
+        else  if (nullptr != (pgpcert = dynamic_cast<RsDiscPgpCertItem *> (item)))
 			recvPGPCertificate(item->PeerId(), pgpcert);
-		}
-		else if (NULL != (pgplist = dynamic_cast<RsDiscPgpListItem *> (item)))	
+		else if (nullptr != (pgplist = dynamic_cast<RsDiscPgpListItem *> (item)))
 		{
 			/* two types */
 			if (pgplist->mode == DISC_PGP_LIST_MODE_FRIENDS)
@@ -322,10 +319,6 @@ int p3discovery2::handleIncoming()
 			delete item;
 		}
 	}
-
-#ifdef P3DISC_DEBUG
-	std::cerr << "p3discovery2::handleIncoming() finished." << std::endl;
-#endif
 
 	return nhandled;
 }
@@ -355,6 +348,7 @@ void p3discovery2::sendOwnContactInfo(const SSLID &sslid)
 		 *   difficult for average user, that moreover whould have no way to
 		 *   revert an hardcoded policy. */
 		//populateContactInfo(detail, pkt, true);
+
 		pkt->version = RsUtil::retroshareVersion();
 		pkt->PeerId(sslid);
 
@@ -364,6 +358,18 @@ void p3discovery2::sendOwnContactInfo(const SSLID &sslid)
 		std::cerr  << std::endl;
 #endif
 		sendItem(pkt);
+
+        RsDiscIdentityListItem *pkt2 = new RsDiscIdentityListItem();
+
+        rsIdentity->getOwnIds(pkt2->ownIdentityList,true);
+        pkt2->PeerId(sslid) ;
+
+#ifdef P3DISC_DEBUG
+		std::cerr << "p3discovery2::sendOwnContactInfo() sending own signed identity list:" << std::endl;
+        for(auto it(pkt2->ownIdentityList.begin());it!=pkt2->ownIdentityList.end();++it)
+            std::cerr << "  identity: " << (*it).toStdString() << std::endl;
+#endif
+		sendItem(pkt2);
 	}
 }
 
@@ -438,6 +444,26 @@ void p3discovery2::recvOwnContactInfo(const SSLID &fromId, const RsDiscContactIt
 
 	// cleanup.
 	delete item;
+}
+
+void p3discovery2::recvIdentityList(const RsPeerId& pid,const std::list<RsGxsId>& ids)
+{
+    std::list<RsPeerId> peers;
+    peers.push_back(pid);
+
+#ifdef P3DISC_DEBUG
+    std::cerr << "p3discovery2::recvIdentityList(): from peer " << pid << ": " << ids.size() << " identities" << std::endl;
+#endif
+
+    RsIdentityUsage use_info(RS_SERVICE_TYPE_DISC,RsIdentityUsage::IDENTITY_DATA_UPDATE);
+
+	for(auto it(ids.begin());it!=ids.end();++it)
+    {
+#ifdef P3DISC_DEBUG
+        std::cerr << "  identity: " << (*it).toStdString() << std::endl;
+#endif
+		mGixs->requestKey(*it,peers,use_info) ;
+    }
 }
 
 void p3discovery2::updatePeerAddresses(const RsDiscContactItem *item)
@@ -1319,4 +1345,3 @@ void p3discovery2::setGPGOperation(AuthGPGOperation *operation)
 	/* ignore other operations */
 }
 
-						  
