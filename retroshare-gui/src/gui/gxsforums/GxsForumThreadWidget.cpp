@@ -100,6 +100,7 @@
 #define ROLE_THREAD_READCHILDREN    Qt::UserRole + 4
 #define ROLE_THREAD_UNREADCHILDREN  Qt::UserRole + 5
 #define ROLE_THREAD_SORT            Qt::UserRole + 6
+#define ROLE_THREAD_PINNED          Qt::UserRole + 7
 
 #define ROLE_THREAD_COUNT           4
 
@@ -1220,7 +1221,7 @@ void GxsForumThreadWidget::fillThreadStatus(QString text)
 	ui->progressText->setText(text);
 }
 
-// #define DEBUG_PINNED_POST_SORTING 1
+//#define DEBUG_PINNED_POST_SORTING 1
 
 class ForumThreadItem: public GxsIdRSTreeWidgetItem
 {
@@ -1230,8 +1231,8 @@ public:
 
     bool operator<(const QTreeWidgetItem& other) const
     {
-		bool  left_is_not_pinned  =       data(COLUMN_THREAD_DATE,ROLE_THREAD_SORT).toUInt() ||       data(COLUMN_THREAD_DATE,ROLE_THREAD_SORT).toString().contains('|'); // this is used by the sorting model to put all pinned posts on top
-		bool right_is_not_pinned  = other.data(COLUMN_THREAD_DATE,ROLE_THREAD_SORT).toUInt() || other.data(COLUMN_THREAD_DATE,ROLE_THREAD_SORT).toString().contains('|');
+		bool  left_is_not_pinned  = !      data(COLUMN_THREAD_DATE,ROLE_THREAD_PINNED).toBool();
+		bool right_is_not_pinned  = !other.data(COLUMN_THREAD_DATE,ROLE_THREAD_PINNED).toBool();
 #ifdef DEBUG_PINNED_POST_SORTING
         std::cerr << "Comparing item date \"" << data(COLUMN_THREAD_DATE,Qt::DisplayRole).toString().toStdString() << "\" ("
                   << data(COLUMN_THREAD_DATE,ROLE_THREAD_SORT).toUInt() << ", \"" << data(COLUMN_THREAD_DATE,ROLE_THREAD_SORT).toString().toStdString() << "\" --> " << left_is_not_pinned << ") to \""
@@ -1318,7 +1319,7 @@ QTreeWidgetItem *GxsForumThreadWidget::convertMsgToThreadWidget(const RsGxsForum
     // This is an attempt to put pinned posts on the top. We should rather use a QSortFilterProxyModel here.
 	QString itemSort = QString::number(msg.mMeta.mPublishTs);//Don't need to format it as for sort.
 
-#define SHOW_COMBINED_DATES 1
+//#define SHOW_COMBINED_DATES 1
 
 	if (useChildTS)
 	{
@@ -1345,11 +1346,12 @@ QTreeWidgetItem *GxsForumThreadWidget::convertMsgToThreadWidget(const RsGxsForum
 	}
 
 	item->setText(COLUMN_THREAD_DATE, itemText);
+	item->setData(COLUMN_THREAD_DATE,ROLE_THREAD_SORT, itemSort);
 
     if(is_pinned)
-		item->setData(COLUMN_THREAD_DATE,ROLE_THREAD_SORT, QVariant(0)); // this is used by the sorting model to put all posts on top
+		item->setData(COLUMN_THREAD_DATE,ROLE_THREAD_PINNED, QVariant(true)); // this is used by the sorting model to put all posts on top
     else
-		item->setData(COLUMN_THREAD_DATE,ROLE_THREAD_SORT, itemSort);
+		item->setData(COLUMN_THREAD_DATE,ROLE_THREAD_PINNED, QVariant(false));
 
 	// Set later with GxsIdRSTreeWidgetItem::setId
 	item->setData(COLUMN_THREAD_DATA, ROLE_THREAD_AUTHOR, QString::fromStdString(msg.mMeta.mAuthorId.toStdString()));
