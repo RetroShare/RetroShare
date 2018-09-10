@@ -264,12 +264,12 @@ int p3discovery2::handleIncoming()
 
 	int nhandled = 0;
 	// While messages read
-	while(NULL != (item = recvItem()))
+	while(nullptr != (item = recvItem()))
 	{
-		RsDiscPgpListItem *pgplist = NULL;
-		RsDiscPgpCertItem *pgpcert = NULL;
-		RsDiscContactItem *contact = NULL;
-		RsDiscIdentityListItem *gxsidlst = NULL;
+		RsDiscPgpListItem *pgplist = nullptr;
+		RsDiscPgpCertItem *pgpcert = nullptr;
+		RsDiscContactItem *contact = nullptr;
+		RsDiscIdentityListItem *gxsidlst = nullptr;
 		nhandled++;
 
 #ifdef P3DISC_DEBUG
@@ -278,21 +278,21 @@ int p3discovery2::handleIncoming()
 		std::cerr  << std::endl;
 #endif
 
-		if (NULL != (contact = dynamic_cast<RsDiscContactItem *> (item))) 
+		if (nullptr != (contact = dynamic_cast<RsDiscContactItem *> (item)))
 		{
 			if (item->PeerId() == contact->sslId) /* self describing */
 				recvOwnContactInfo(item->PeerId(), contact);
             else
                 processContactInfo(item->PeerId(), contact);
 		}
-        else  if (NULL != (gxsidlst = dynamic_cast<RsDiscIdentityListItem *> (item)))
+        else  if (nullptr != (gxsidlst = dynamic_cast<RsDiscIdentityListItem *> (item)))
         {
             recvIdentityList(item->PeerId(),gxsidlst->ownIdentityList) ;
             delete item;
         }
-        else  if (NULL != (pgpcert = dynamic_cast<RsDiscPgpCertItem *> (item)))
+        else  if (nullptr != (pgpcert = dynamic_cast<RsDiscPgpCertItem *> (item)))
 			recvPGPCertificate(item->PeerId(), pgpcert);
-		else if (NULL != (pgplist = dynamic_cast<RsDiscPgpListItem *> (item)))	
+		else if (nullptr != (pgplist = dynamic_cast<RsDiscPgpListItem *> (item)))
 		{
 			/* two types */
 			if (pgplist->mode == DISC_PGP_LIST_MODE_FRIENDS)

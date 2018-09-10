@@ -152,7 +152,7 @@ public:
     virtual ~RsDiscIdentityListItem() {}
 
     virtual void clear() { ownIdentityList.clear() ; }
-	virtual void serial_process(RsGenericSerializer::SerializeJob /* j */,RsGenericSerializer::SerializeContext& /* ctx */);
+	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 
     std::list<RsGxsId> ownIdentityList ;
 };

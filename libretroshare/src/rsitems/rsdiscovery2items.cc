@@ -153,6 +153,6 @@ void RsDiscContactItem::serial_process(RsGenericSerializer::SerializeJob j,RsGen
 
 void RsDiscIdentityListItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
-	RsTypeSerializer::serial_process(j,ctx,ownIdentityList,"identityList");
+    RS_SERIAL_PROCESS(ownIdentityList);
 }
 
