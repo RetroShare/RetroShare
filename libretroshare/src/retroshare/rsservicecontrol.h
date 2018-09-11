@@ -149,7 +149,7 @@ public:
 	/**
 	 * @brief getServiceItemNames return a map of service item names.
 	 * @jsonapi{development}
-	 * @param[in] service_id service to look up
+	 * @param[in] serviceId service to look up
 	 * @param[out] names names of items
 	 * @return true on success false otherwise
 	 */
