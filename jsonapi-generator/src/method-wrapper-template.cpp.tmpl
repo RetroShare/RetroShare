@@ -24,19 +24,7 @@ registerHandler("$%apiPath%$",
 	                const std::shared_ptr<rb::Session> session,
 	                const rb::Bytes& body )
 	{
-		RsGenericSerializer::SerializeContext cReq(
-		            nullptr, 0,
-		            RsGenericSerializer::SERIALIZATION_FLAG_YIELDING );
-		RsJson& jReq(cReq.mJson);
-		jReq.Parse(reinterpret_cast<const char*>(body.data()), body.size());
-
-		RsGenericSerializer::SerializeContext cAns;
-		RsJson& jAns(cAns.mJson);
-
-		// if caller specified caller_data put it back in the answhere
-		const char kcd[] = "caller_data";
-		if(jReq.HasMember(kcd))
-			jAns.AddMember(kcd, jReq[kcd], jAns.GetAllocator());
+		INITIALIZE_API_CALL_JSON_CONTEXT;
 
 		if( !checkRsServicePtrReady(
 		            $%instanceName%$, "$%instanceName%$", cAns, session ) )
@@ -54,15 +42,7 @@ $%functionCall%$
 $%outputParamsSerialization%$
 
 		// return them to the API caller
-		std::stringstream ss;
-		ss << jAns;
-		std::string&& ans(ss.str());
-		const std::multimap<std::string, std::string> headers
-		{
-			{ "Content-Type", "text/json" },
-			{ "Content-Length", std::to_string(ans.length()) }
-		};
-		session->close(rb::OK, ans, headers);
+		DEFAULT_API_CALL_JSON_RETURN(rb::OK);
 	} );
 });
 
