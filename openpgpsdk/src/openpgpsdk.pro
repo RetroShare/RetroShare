@@ -23,7 +23,7 @@ win32-g++ {
     HEADERS += openpgpsdk/opsstring.h
     SOURCES += openpgpsdk/opsstring.c
 
-	DEFINES *= WIN32_LEAN_AND_MEAN _USE_32BIT_TIME_T
+	DEFINES *= WIN32_LEAN_AND_MEAN 
 
 	# Switch off optimization for release version
 	QMAKE_CXXFLAGS_RELEASE -= -O2
