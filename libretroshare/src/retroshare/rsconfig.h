@@ -150,7 +150,6 @@ struct RsConfigDataRates : RsSerializable
 	float mAllocIn;
 
 	rstime_t mAllocTs;
-
 	float mRateOut;
 	float mRateMaxOut;
 	float mAllowedOut;
