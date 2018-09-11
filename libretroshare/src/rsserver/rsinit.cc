@@ -2014,11 +2014,6 @@ bool RsLoginHelper::isLoggedIn()
 	return RsControl::instance()->isReady();
 }
 
-void RsLoginHelper::closeSession()
-{
-	RsControl::instance()->rsGlobalShutDown();
-}
-
 void RsLoginHelper::Location::serial_process(
         RsGenericSerializer::SerializeJob j,
         RsGenericSerializer::SerializeContext& ctx )
