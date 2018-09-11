@@ -61,7 +61,7 @@ extern "C" {
 	// It will be tested by RS to load the plugin automatically, since it is safe to load plugins
 	// with same revision numbers, assuming that the revision numbers are up-to-date.
 	//
-	uint32_t RETROSHARE_PLUGIN_revision = RS_REVISION_NUMBER ;
+	uint32_t RETROSHARE_PLUGIN_revision = 0;
 
 	// This symbol contains the svn revision number grabbed from the executable. 
 	// It will be tested by RS to load the plugin automatically, since it is safe to load plugins
@@ -74,8 +74,8 @@ void VOIPPlugin::getPluginVersion(int& major, int& minor, int& build, int& svn_r
 {
 	major = RS_MAJOR_VERSION ;
 	minor = RS_MINOR_VERSION ;
-	build = RS_BUILD_NUMBER ;
-	svn_rev = RS_REVISION_NUMBER ;
+	build = RS_MINI_VERSION ;
+	svn_rev = 0;
 }
 
 VOIPPlugin::VOIPPlugin()

@@ -144,6 +144,23 @@ CONFIG+=no_rs_deep_search
 CONFIG *= rs_deep_search
 no_rs_deep_search:CONFIG -= rs_deep_search
 
+# Specify RetroShare major version appending the following assignation to qmake
+# command line 'RS_MAJOR_VERSION=0'
+#RS_MAJOR_VERSION=0
+
+# Specify RetroShare major version appending the following assignation to qmake
+# command line 'RS_MINOR_VERSION=6'
+#RS_MINOR_VERSION=6
+
+# Specify RetroShare major version appending the following assignation to qmake
+# command line 'RS_MINI_VERSION=4'
+#RS_MINI_VERSION=4
+
+# Specify RetroShare major version appending the following assignation to qmake
+# command line 'RS_EXTRA_VERSION=""'
+#RS_EXTRA_VERSION=git
+
+
 ###########################################################################################################################################################
 #
 #  V07_NON_BACKWARD_COMPATIBLE_CHANGE_001:
@@ -259,7 +276,6 @@ defineReplace(linkDynamicLibs) {
     return($$retDlib)
 }
 
-
 ################################################################################
 ## Statements and variables that depends on build options (CONFIG) goes here ###
 ################################################################################
@@ -282,6 +298,42 @@ defineReplace(linkDynamicLibs) {
 ##   (miniupnpc, "upnp ixml threadutil") it usually depend on platform.
 ## RS_THREAD_LIB String viariable containing the name of the multi threading
 ##   library to use (pthread, "") it usually depend on platform.
+
+defined(RS_MAJOR_VERSION,var):\
+defined(RS_MINOR_VERSION,var):\
+defined(RS_MINI_VERSION,var):\
+defined(RS_EXTRA_VERSION,var) {
+    message("RetroShare version $${RS_MAJOR_VERSION}.$${RS_MINOR_VERSION}.$${RS_MINI_VERSION}$${RS_EXTRA_VERSION} defined in command line")
+    DEFINES += RS_MAJOR_VERSION=$${RS_MAJOR_VERSION}
+    DEFINES += RS_MINOR_VERSION=$${RS_MINOR_VERSION}
+    DEFINES += RS_MINI_VERSION=$${RS_MINI_VERSION}
+    DEFINES += RS_EXTRA_VERSION=\\\"$${RS_EXTRA_VERSION}\\\"
+} else {
+    RS_GIT_DESCRIBE = $$system(git describe)
+    isEmpty(RS_GIT_DESCRIBE) {
+        warning("Determining RetroShare version via git failed plese specify it trough qmake command line arguments!")
+    } else {
+        RS_GIT_DESCRIBE_SPLIT = $$split(RS_GIT_DESCRIBE,v)
+        RS_GIT_DESCRIBE_SPLIT = $$take_first(RS_GIT_DESCRIBE_SPLIT)
+        RS_GIT_DESCRIBE_SPLIT = $$split(RS_GIT_DESCRIBE_SPLIT,.)
+
+        RS_MAJOR_VERSION = $$take_first(RS_GIT_DESCRIBE_SPLIT)
+        RS_MINOR_VERSION = $$take_first(RS_GIT_DESCRIBE_SPLIT)
+
+        RS_GIT_DESCRIBE_SPLIT = $$take_first(RS_GIT_DESCRIBE_SPLIT)
+        RS_GIT_DESCRIBE_SPLIT = $$split(RS_GIT_DESCRIBE_SPLIT,-)
+
+        RS_MINI_VERSION = $$take_first(RS_GIT_DESCRIBE_SPLIT)
+        RS_EXTRA_VERSION = $$join(RS_GIT_DESCRIBE_SPLIT,-,-)
+
+        message("RetroShare version $${RS_MAJOR_VERSION}.$${RS_MINOR_VERSION}.$${RS_MINI_VERSION}$${RS_EXTRA_VERSION} determined via git")
+
+        DEFINES += RS_MAJOR_VERSION=$${RS_MAJOR_VERSION}
+        DEFINES += RS_MINOR_VERSION=$${RS_MINOR_VERSION}
+        DEFINES += RS_MINI_VERSION=$${RS_MINI_VERSION}
+        DEFINES += RS_EXTRA_VERSION=\\\"$${RS_EXTRA_VERSION}\\\"
+    }
+}
 
 gxsdistsync:DEFINES *= RS_USE_GXS_DISTANT_SYNC
 wikipoos:DEFINES *= RS_USE_WIKI
