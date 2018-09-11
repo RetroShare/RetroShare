@@ -111,7 +111,7 @@ public:
     RsTlvKeySignatureSet signSet;
     std::string mMsgName;
     time_t      mPublishTs;
-    uint32_t    mMsgFlags; // Whats this for?
+    uint32_t    mMsgFlags; // used by some services (e.g. by forums to store message moderation flags)
 
     // BELOW HERE IS LOCAL DATA, THAT IS NOT FROM MSG.
     // normally READ / UNREAD flags. LOCAL Data.

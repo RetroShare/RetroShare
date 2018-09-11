@@ -50,8 +50,9 @@
 //#define ENABLE_GENERATE
 
 /** Constructor */
-CreateGxsForumMsg::CreateGxsForumMsg(const RsGxsGroupId &fId, const RsGxsMessageId &pId,const RsGxsMessageId& mOId,const RsGxsId& posterId)
-: QDialog(NULL, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint), mForumId(fId), mParentId(pId), mOrigMsgId(mOId),mPosterId(posterId)
+CreateGxsForumMsg::CreateGxsForumMsg(const RsGxsGroupId &fId, const RsGxsMessageId &pId, const RsGxsMessageId& mOId, const RsGxsId& posterId, bool isModerating)
+    : QDialog(NULL, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint),
+      mForumId(fId), mParentId(pId), mOrigMsgId(mOId),mPosterId(posterId),mIsModerating(isModerating)
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	ui.setupUi(this);
@@ -355,7 +356,9 @@ void  CreateGxsForumMsg::createMsg()
 	msg.mMeta.mGroupId = mForumId;
 	msg.mMeta.mParentId = mParentId;
 	msg.mMeta.mOrigMsgId = mOrigMsgId;
+	msg.mMeta.mMsgFlags = mIsModerating?RS_GXS_FORUM_MSG_FLAGS_MODERATED : 0;
 	msg.mMeta.mMsgId.clear() ;
+
 	if (mParentMsgLoaded) {
 		msg.mMeta.mThreadId = mParentMsg.mMeta.mThreadId;
 	}//if (mParentMsgLoaded)

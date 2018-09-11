@@ -28,8 +28,15 @@
 
 #include "retroshare/rstokenservice.h"
 #include "retroshare/rsgxsifacehelper.h"
+#include "serialiser/rstlvidset.h"
 
+// Forum Service message flags, to be used in RsMsgMetaData::mMsgFlags
+// Gxs imposes to use the first two bytes (lower bytes) of mMsgFlags for private forum flags, the upper bytes being used for internal GXS stuff.
 
+static const uint32_t RS_GXS_FORUM_MSG_FLAGS_MASK      = 0x0000000f ;
+static const uint32_t RS_GXS_FORUM_MSG_FLAGS_MODERATED = 0x00000001 ;
+
+#define IS_FORUM_MSG_MODERATION(flags)  (flags & RS_GXS_FORUM_MSG_FLAGS_MODERATED)
 
 /* The Main Interface Class - for information about your Peers */
 class RsGxsForums;
@@ -40,6 +47,11 @@ class RsGxsForumGroup
 	public:
 	RsGroupMetaData mMeta;
 	std::string mDescription;
+
+    // What's below is optional, and handled by the serialiser
+
+    RsTlvGxsIdSet mAdminList;
+    RsTlvGxsMsgIdSet mPinnedPosts;
 };
 
 class RsGxsForumMsg

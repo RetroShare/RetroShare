@@ -48,7 +48,16 @@ void RsGxsForumGroupItem::clear()
 void RsGxsForumGroupItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_DESCR,mGroup.mDescription,"mGroup.Description");
+
+    // This is for backward compatibility: normally all members are serialized, but in the previous version, these members are missing.
+
+    if(j == RsGenericSerializer::DESERIALIZE && ctx.mOffset == ctx.mSize)
+        return ;
+
+    RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,mGroup.mAdminList  ,"admin_list"  ) ;
+    RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,mGroup.mPinnedPosts,"pinned_posts") ;
 }
+
 void RsGxsForumMsgItem::clear()
 {
 	mMsg.mMsg.clear();

@@ -108,6 +108,7 @@ private slots:
 
 	void subscribeGroup(bool subscribe);
 	void createthread();
+	void togglePinUpPost();
 	void createmessage();
 
 	void previousMessage();
