@@ -36,7 +36,13 @@
 	            nullptr, 0, \
 	            RsGenericSerializer::SERIALIZATION_FLAG_YIELDING ); \
 	RsJson& jReq(cReq.mJson); \
-	jReq.Parse(reinterpret_cast<const char*>(body.data()), body.size()); \
+	if(session->get_request()->get_method() == "GET") \
+    { \
+	    const std::string jrqp(session->get_request()->get_query_parameter("jsonData")); \
+	    jReq.Parse(jrqp.c_str(), jrqp.size()); \
+	} \
+	else \
+	    jReq.Parse(reinterpret_cast<const char*>(body.data()), body.size()); \
 \
 	RsGenericSerializer::SerializeContext cAns; \
 	RsJson& jAns(cAns.mJson); \
@@ -87,8 +93,15 @@ JsonApiServer::JsonApiServer(
 	registerHandler("/jsonApiServer/shutdown",
 	                [this](const std::shared_ptr<rb::Session> session)
 	{
-		session->close(rb::OK);
-		shutdown();
+		size_t reqSize = session->get_request()->get_header("Content-Length", 0);
+		session->fetch( reqSize, [this](
+		                const std::shared_ptr<rb::Session> session,
+		                const rb::Bytes& body )
+		{
+			INITIALIZE_API_CALL_JSON_CONTEXT;
+			DEFAULT_API_CALL_JSON_RETURN(rb::OK);
+			shutdown();
+		} );
 	});
 
 	registerHandler("/jsonApiServer/version",

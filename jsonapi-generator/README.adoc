@@ -55,8 +55,7 @@ extern RsGxsChannels* rsGxsChannels;
 .Calling the JSON API with curl on the terminal
 [source,bash]
 --------------------------------------------------------------------------------
-curl -H "Content-Type: application/json" --data @paramethers.json \
-	http://127.0.0.1:9092/rsGxsChannels/createGroup
+curl --data @paramethers.json http://127.0.0.1:9092/rsGxsChannels/createGroup
 --------------------------------------------------------------------------------
 
 .JSON API call result
@@ -69,6 +68,28 @@ curl -H "Content-Type: application/json" --data @paramethers.json \
 }
 --------------------------------------------------------------------------------
 
+Even if it is less efficient because of URL encoding HTTP +GET+ method is
+supported too, so in cases where the client cannot use +POST+ she can still use
++GET+ taking care of encoding the JSON data. With +curl+ this can be done at
+least in two different ways.
+
+.Calling the JSON API with GET method with curl on the terminal
+[source,bash]
+--------------------------------------------------------------------------------
+curl --get --data-urlencode jsonData@paramethers.json \
+	http://127.0.0.1:9092/rsGxsChannels/createGroup
+--------------------------------------------------------------------------------
+
+Letting +curl+ do the encoding is much more elegant but it is semantically
+equivalent to the following.
+
+.Calling the JSON API with GET method and pre-encoded data with curl on the terminal
+--------------------------------------------------------------------------------
+curl http://127.0.0.1:9092/rsGxsChannels/createGroup?jsonData=%7B%0A%20%20%20%20%22group%22%3A%7B%0A%20%20%20%20%20%20%20%20%22mMeta%22%3A%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%22mGroupName%22%3A%22JSON%20test%20group%22%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%22mGroupFlags%22%3A4%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%22mSignFlags%22%3A520%0A%20%20%20%20%20%20%20%20%7D%2C%0A%20%20%20%20%20%20%20%20%22mDescription%22%3A%22JSON%20test%20group%20description%22%0A%20%20%20%20%7D%2C%0A%20%20%20%20%22caller_data%22%3A%22Here%20can%20go%20any%20kind%20of%20JSON%20data%20%28even%20objects%29%20that%20the%20caller%20want%20to%20get%20back%20together%20with%20the%20response%22%0A%7D
+--------------------------------------------------------------------------------
+
+Note that using +GET+ method +?jsonData=+ and then the JSON data URL encoded are
+added after the path in the HTTP request.
 
 == Offer new RetroShare services through JSON API
 
