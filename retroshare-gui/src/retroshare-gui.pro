@@ -216,6 +216,9 @@ macx {
 	mac_webui.files = $$files($$PWD/../../libresapi/src/webui)
 	mac_webui.path = Contents/Resources
 	QMAKE_BUNDLE_DATA += mac_webui
+        mac_dht.files= $$files($$PWD/../../libbitdht/src/bitdht/*.txt)
+        mac_dht.path = Contents/Resources
+        QMAKE_BUNDLE_DATA +=mac_dht
 
 	CONFIG += version_detail_bash_script
         LIBS += -lssl -lcrypto -lz 
