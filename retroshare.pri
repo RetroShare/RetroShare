@@ -118,8 +118,10 @@ CONFIG *= rs_gxs_trans
 
 # To enable GXS based async chat append the following assignation to qmake
 # command line "CONFIG+=rs_async_chat"
-CONFIG *= no_rs_async_chat
+#CONFIG *= no_rs_async_chat
+CONFIG+=rs_async_chat
 rs_async_chat:CONFIG -= no_rs_async_chat
+
 
 # To disable bitdht append the following assignation to qmake command line
 # "CONFIG+=no_bitdht"
@@ -515,13 +517,34 @@ macx-* {
 	}
 
 	message(***retroshare.pri:MacOSX)
-	BIN_DIR += "/usr/bin"
-	INC_DIR += "/usr/include"
-	INC_DIR += "/usr/local/include"
-	INC_DIR += "/opt/local/include"
-	LIB_DIR += "/usr/local/lib"
-	LIB_DIR += "/opt/local/lib"
+
+        #BIN_DIR += "/usr/bin"
+        #INC_DIR += "/usr/include"
+        #INC_DIR += "/usr/local/include"
+        #INC_DIR += "/opt/local/include"
+        #LIB_DIR += "/usr/local/lib"
+        #LIB_DIR += "/opt/local/lib"
+
+        BIN_DIR += "/usr/bin"
+        BIN_DIR += "/usr/local/bin"
+        BIN_DIR += "/opt/local/bin"
+        BIN_DIR += "/Applications/Xcode.app/Contents/Developer/usr/bin"
+        BIN_DIR += "/Users/ductai/Qt/5.9/clang_64/bin"
+        INC_DIR += "/usr/include"
+        INC_DIR += "/usr/local/include"
+        INC_DIR += "/opt/local/include"
+        INC_DIR += "/usr/local/opt/openssl/include"
+        INC_DIR += "/usr/local/Cellar/miniupnpc/2.1/include"
+        INC_DIR += "/usr/local/Cellar/libmicrohttpd/0.9.59/include"
+        INC_DIR += "/usr/local/Cellar/sqlcipher/3.4.2/include"
+        LIB_DIR += "/usr/local/opt/openssl/lib/"
+        LIB_DIR += "/usr/local/Cellar/libmicrohttpd/0.9.59/lib"
+        LIB_DIR += "/usr/local/Cellar/sqlcipher/3.4.2/lib"
+        LIB_DIR += "/usr/local/Cellar/miniupnpc/2.1/lib"
+        #LIB_DIR += "/usr/local/lib"
+        #LIB_DIR += "/opt/local/lib"
 	CONFIG += c++11
+
     RS_UPNP_LIB = miniupnpc
 }
 

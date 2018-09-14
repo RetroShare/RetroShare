@@ -2,7 +2,7 @@
 
 TEMPLATE = lib
 CONFIG += staticlib
-
+INCLUDEPATH += /usr/local/include
 DEFINES *= OPENSSL_NO_IDEA 
 
 QMAKE_CXXFLAGS *= -Wall -Werror -W

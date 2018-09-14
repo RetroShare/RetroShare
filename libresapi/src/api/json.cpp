@@ -19,7 +19,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
-#define nullptr 0
+//#define nullptr 0
 
 #include "json.h"
 #include <stdlib.h>
