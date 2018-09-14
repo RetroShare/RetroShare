@@ -51,6 +51,8 @@
 #ifdef RS_JSONAPI
 #	include <csignal>
 #	include "jsonapi/jsonapi.h"
+#	include "util/rsnet.h"
+#	include "util/rsurl.h"
 #endif // RS_JSONAPI
 
 /* Basic instructions for running libretroshare as background thread.
@@ -91,6 +93,16 @@ int main(int argc, char **argv)
 		            [](int /*ec*/) { std::raise(SIGTERM); } );
 
 		jsonApiServer->start("JSON API Server");
+
+		sockaddr_storage tmp;
+		sockaddr_storage_inet_pton(tmp, jsonApiBindAddress);
+		sockaddr_storage_setport(tmp, jsonApiPort);
+		sockaddr_storage_ipv6_to_ipv4(tmp);
+		RsUrl tmpUrl(sockaddr_storage_tostring(tmp));
+		tmpUrl.setScheme("http");
+
+		std::cerr << "JSON API listening on " << tmpUrl.toString()
+		          << std::endl;
 	}
 #endif // RS_JSONAPI
 
