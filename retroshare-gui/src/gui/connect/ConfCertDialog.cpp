@@ -170,7 +170,7 @@ void ConfCertDialog::load()
 			  ct += QString::fromStdString(cdet.cipher_version) + ": ";
 			 ct += QString::fromStdString(cdet.cipher_name);
 
-			 if(cdet.cipher_version != "TLSv1.2")
+			 if(cdet.cipher_version != "TLSv1.2" && cdet.cipher_version != "TLSv1.3")
 				ct += QString::number(cdet.cipher_bits_1);
 
 			 ui.crypto_info->setText(ct) ;

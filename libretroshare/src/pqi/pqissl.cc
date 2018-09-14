@@ -313,7 +313,12 @@ void pqissl::getCryptoParams(RsPeerCryptoParams& params)
 		params.cipher_bits_2 = al2 ;
 
 		char *desc = SSL_CIPHER_description(SSL_get_current_cipher(ssl_connection), NULL, 0);
-		params.cipher_version = std::string(desc).find("TLSv1.2") != std::string::npos ? std::string("TLSv1.2") : std::string("TLSv1");
+		params.cipher_version =
+		        std::string(desc).find("TLSv1.3") != std::string::npos ?
+		            std::string("TLSv1.3") :
+		            std::string(desc).find("TLSv1.2") != std::string::npos ?
+		                std::string("TLSv1.2") :
+		                std::string("TLSv1");
 		OPENSSL_free(desc);
 	}
 	else
