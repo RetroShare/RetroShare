@@ -58,7 +58,7 @@ clone_folder: C:\projects\RetroShare
 #shallow_clone: true                 # default is "false"
 
 # set clone depth
-clone_depth: 1                       # clone entire repository history if not defined
+clone_depth: 2000                    # clone entire repository history if not defined
 
 environment:
   global:

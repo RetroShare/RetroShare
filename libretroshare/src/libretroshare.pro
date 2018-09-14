@@ -515,7 +515,6 @@ HEADERS +=	util/folderiterator.h \
 			util/rsstring.h \
 			util/rsstd.h \
 			util/rsthreads.h \
-			util/rsversioninfo.h \
 			util/rswin.h \
 			util/rsrandom.h \
 			util/rsmemcache.h \
@@ -666,7 +665,6 @@ SOURCES +=	util/folderiterator.cc \
 			util/rsprint.cc \
 			util/rsstring.cc \
 			util/rsthreads.cc \
-			util/rsversioninfo.cc \
 			util/rsrandom.cc \
 			util/rstickevent.cc \
 			util/rsrecogn.cc \

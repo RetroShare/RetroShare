@@ -141,7 +141,7 @@ public:
 	/**
 	 * @brief getServiceName lookup the name of a service.
 	 * @jsonapi{development}
-	 * @param[in] service_id service to look up
+	 * @param[in] serviceId service to look up
 	 * @return name of service
 	 */
 	virtual std::string getServiceName(uint32_t serviceId) = 0;
@@ -149,7 +149,7 @@ public:
 	/**
 	 * @brief getServiceItemNames return a map of service item names.
 	 * @jsonapi{development}
-	 * @param[in] service_id service to look up
+	 * @param[in] serviceId service to look up
 	 * @param[out] names names of items
 	 * @return true on success false otherwise
 	 */

@@ -22,7 +22,7 @@
  *******************************************************************************/
 #include "services/p3discovery2.h"
 #include "pqi/p3peermgr.h"
-#include "util/rsversioninfo.h"
+#include "retroshare/rsversion.h"
 
 #include "retroshare/rsiface.h"
 #include "rsserver/p3face.h"
@@ -349,7 +349,7 @@ void p3discovery2::sendOwnContactInfo(const SSLID &sslid)
 		 *   revert an hardcoded policy. */
 		//populateContactInfo(detail, pkt, true);
 
-		pkt->version = RsUtil::retroshareVersion();
+		pkt->version = RS_HUMAN_READABLE_VERSION;
 		pkt->PeerId(sslid);
 
 #ifdef P3DISC_DEBUG
@@ -408,7 +408,7 @@ void p3discovery2::recvOwnContactInfo(const SSLID &fromId, const RsDiscContactIt
 	sendPGPList(fromId);
 
 	// Update mDiscStatus.
-	RsStackMutex stack(mDiscMtx); /********** STACK LOCKED MTX ******/
+	RS_STACK_MUTEX(mDiscMtx);
 
 	PGPID pgpId = getPGPId(fromId);
 	std::map<PGPID, DiscPgpInfo>::iterator it = mFriendList.find(pgpId);

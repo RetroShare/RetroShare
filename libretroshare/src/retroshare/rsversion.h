@@ -19,14 +19,63 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
-#define RS_MAJOR_VERSION     0
-#define RS_MINOR_VERSION     6
-#define RS_BUILD_NUMBER      4
-#define RS_BUILD_NUMBER_ADD  "" // <-- do we need this?
-// The revision number should be the 4 first bytes of the git revision hash, which is obtained using:
-//    git log --pretty="%H" | head -1 | cut -c1-8
-//
-// Do not forget the 0x, since the RS_REVISION_NUMBER should be an integer.
-//
-#define RS_REVISION_STRING   "01234567"
-#define RS_REVISION_NUMBER   0x01234567
+#pragma once
+
+
+/**
+ * @def RS_MINI_VERSION
+ * First number of RetroShare versioning scheme
+ * Customize it trough qmake command line @see retroshare.pri
+ */
+#ifndef RS_MAJOR_VERSION
+#	define RS_MAJOR_VERSION 0
+#endif
+
+/**
+ * @def RS_MINI_VERSION
+ * Second number of RetroShare versioning scheme
+ * Customize it trough qmake command line @see retroshare.pri
+ */
+#ifndef RS_MINOR_VERSION
+#	define RS_MINOR_VERSION 0
+#endif
+
+/**
+ * @def RS_MINI_VERSION
+ * Third number of RetroShare versioning scheme
+ * Customize it trough qmake command line @see retroshare.pri
+ */
+#ifndef RS_MINI_VERSION
+#	define RS_MINI_VERSION  0
+#endif
+
+/**
+ * @def RS_EXTRA_VERSION
+ * An extra string to append to the version to make it more descriptive.
+ * Customize it trough qmake command line @see retroshare.pri
+ */
+#ifndef RS_EXTRA_VERSION
+#	define RS_EXTRA_VERSION "unknown"
+#endif
+
+
+/**
+ * Use this macro to check in your code if version of RetroShare is at least the
+ * specified.
+ */
+#define RS_VERSION_AT_LEAST(A,B,C) (RS_MAJOR_VERSION > (A) || \
+	(RS_MAJOR_VERSION == (A) && \
+	(RS_MINOR_VERSION > (B) || \
+	(RS_MINOR_VERSION == (B) && RS_MINI_VERSION >= (C)))))
+
+
+#define __RS_PRIVATE_STRINGIFY2(X) #X
+#define __RS_PRIVATE_STRINGIFY(X) __RS_PRIVATE_STRINGIFY2(X)
+
+/**
+ * Human readable string describing RetroShare version
+ */
+constexpr auto RS_HUMAN_READABLE_VERSION =
+        __RS_PRIVATE_STRINGIFY(RS_MAJOR_VERSION) "." \
+        __RS_PRIVATE_STRINGIFY(RS_MINOR_VERSION) "." \
+        __RS_PRIVATE_STRINGIFY(RS_MINI_VERSION) RS_EXTRA_VERSION;
