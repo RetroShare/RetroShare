@@ -518,6 +518,7 @@ macx-* {
 
 	message(***retroshare.pri:MacOSX)
 
+        ## 11 Sep 2018 - meiyousixin - use config in one MacOS comp
         #BIN_DIR += "/usr/bin"
         #INC_DIR += "/usr/include"
         #INC_DIR += "/usr/local/include"

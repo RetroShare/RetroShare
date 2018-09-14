@@ -19,6 +19,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
+// Sep 11 2018 - meiyousixin - fix bug error: no matching constructor for initialization
 //#define nullptr 0
 
 #include "json.h"
