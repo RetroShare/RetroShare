@@ -2011,7 +2011,6 @@ bool FriendList::importFriendlist(QString &fileName, bool &errorPeers, bool &err
     errorPeers = false;
     errorGroups = false;
 
-    uint32_t error_code;
     std::string error_string;
     RsPeerDetails rsPeerDetails;
     RsPeerId rsPeerID;
