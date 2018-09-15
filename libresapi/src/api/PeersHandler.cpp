@@ -1195,14 +1195,7 @@ void PeersHandler::handleGetNodeOptions(Request& req, Response& resp)
 	std::string encryption;
 	RsPeerCryptoParams cdet;
 	if(RsControl::instance()->getPeerCryptoDetails(detail.id, cdet) && cdet.connexion_state != 0)
-	{
-		encryption = cdet.cipher_version;
-		encryption += ": ";
-		encryption += cdet.cipher_name;
-
-		if(cdet.cipher_version != "TLSv1.2")
-			encryption += cdet.cipher_bits_1;
-	}
+		encryption = cdet.cipher_name;
 	else
 		encryption = "Not connected";
 
