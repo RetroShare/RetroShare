@@ -19,11 +19,6 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
-#if __APPLE__
-    #if __cplusplus < 201103L
-        #define nullptr NULL
-    #endif
-#endif
 
 #include "json.h"
 #include <stdlib.h>
@@ -37,6 +32,7 @@
 #include <cctype>
 #include <stack>
 #include <cerrno>
+#include <util/cxx11retrocompat.h>
 
 #ifndef WIN32
 #define _stricmp strcasecmp
