@@ -228,16 +228,8 @@ linux-g++-64 {
 }
 
 version_detail_bash_script {
-    linux-* {
-        QMAKE_EXTRA_TARGETS += write_version_detail
-        PRE_TARGETDEPS = write_version_detail
-        write_version_detail.commands = $$PWD/version_detail.sh
-    }
-    win32-* {
-        QMAKE_EXTRA_TARGETS += write_version_detail
-        PRE_TARGETDEPS = write_version_detail
-        write_version_detail.commands = $$PWD/version_detail.bat
-    }
+	warning("Version detail script is deprecated.")
+	warning("Remove references to version_detail_bash_script from all of your build scripts!")
 }
 
 #################### Cross compilation for windows under Linux ####################
