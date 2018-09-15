@@ -333,8 +333,6 @@ struct RsPeerCryptoParams
 {
 	int connexion_state;
 	std::string cipher_name;
-	int cipher_bits_1;
-	int cipher_bits_2;
 };
 
 struct RsGroupInfo : RsSerializable

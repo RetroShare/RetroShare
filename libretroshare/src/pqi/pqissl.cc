@@ -305,12 +305,6 @@ void pqissl::getCryptoParams(RsPeerCryptoParams& params)
 	{
 		params.connexion_state = 1 ;
 
-		int alg ;
-		int al2 = SSL_get_cipher_bits(ssl_connection,&alg);
-
-		params.cipher_bits_1 = alg ;
-		params.cipher_bits_2 = al2 ;
-
 		char *desc = SSL_CIPHER_description(SSL_get_current_cipher(ssl_connection), NULL, 0);
 		params.cipher_name = std::string(desc);
 		OPENSSL_free(desc);
@@ -319,8 +313,6 @@ void pqissl::getCryptoParams(RsPeerCryptoParams& params)
 	{
 		params.connexion_state = 0 ;
 		params.cipher_name.clear() ;
-		params.cipher_bits_1 = 0 ;
-		params.cipher_bits_2 = 0 ;
 	}
 }
 

@@ -604,8 +604,6 @@ bool pqiperson::getCryptoParams(RsPeerCryptoParams & params)
 	{
 		params.connexion_state = 0;
 		params.cipher_name.clear();
-		params.cipher_bits_1 = 0;
-		params.cipher_bits_2 = 0;
 
 		return false ;
 	}
@@ -624,8 +622,6 @@ bool pqiconnect::getCryptoParams(RsPeerCryptoParams & params)
 	{
 		params.connexion_state = 0 ;
 		params.cipher_name.clear() ;
-		params.cipher_bits_1 = 0 ;
-		params.cipher_bits_2 = 0 ;
 		return false ;
 	}
 }
