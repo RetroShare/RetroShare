@@ -117,6 +117,7 @@ JsonApiServer::JsonApiServer(
 			uint32_t major = RS_MAJOR_VERSION;
 			uint32_t minor = RS_MINOR_VERSION;
 			uint32_t mini = RS_MINI_VERSION;
+			std::string extra = RS_EXTRA_VERSION;
 			std::string human = RS_HUMAN_READABLE_VERSION;
 
 			RsGenericSerializer::SerializeContext& ctx(cAns);
@@ -124,6 +125,7 @@ JsonApiServer::JsonApiServer(
 			RS_SERIAL_PROCESS(major);
 			RS_SERIAL_PROCESS(minor);
 			RS_SERIAL_PROCESS(mini);
+			RS_SERIAL_PROCESS(extra);
 			RS_SERIAL_PROCESS(human);
 
 			DEFAULT_API_CALL_JSON_RETURN(rb::OK);
