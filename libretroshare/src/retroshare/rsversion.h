@@ -37,7 +37,7 @@
  * Customize it trough qmake command line @see retroshare.pri
  */
 #ifndef RS_MINOR_VERSION
-#	define RS_MINOR_VERSION 0
+#	define RS_MINOR_VERSION 6
 #endif
 
 /**
@@ -46,7 +46,7 @@
  * Customize it trough qmake command line @see retroshare.pri
  */
 #ifndef RS_MINI_VERSION
-#	define RS_MINI_VERSION  0
+#	define RS_MINI_VERSION  5
 #endif
 
 /**
@@ -55,7 +55,7 @@
  * Customize it trough qmake command line @see retroshare.pri
  */
 #ifndef RS_EXTRA_VERSION
-#	define RS_EXTRA_VERSION "unknown"
+#	define RS_EXTRA_VERSION "alpha"
 #endif
 
 
