@@ -303,35 +303,42 @@ defined(RS_MAJOR_VERSION,var):\
 defined(RS_MINOR_VERSION,var):\
 defined(RS_MINI_VERSION,var):\
 defined(RS_EXTRA_VERSION,var) {
-    message("RetroShare version $${RS_MAJOR_VERSION}.$${RS_MINOR_VERSION}.$${RS_MINI_VERSION}$${RS_EXTRA_VERSION} defined in command line")
+    message("RetroShare version\
+$${RS_MAJOR_VERSION}.$${RS_MINOR_VERSION}.$${RS_MINI_VERSION}$${RS_EXTRA_VERSION}\
+defined in command line")
     DEFINES += RS_MAJOR_VERSION=$${RS_MAJOR_VERSION}
     DEFINES += RS_MINOR_VERSION=$${RS_MINOR_VERSION}
     DEFINES += RS_MINI_VERSION=$${RS_MINI_VERSION}
     DEFINES += RS_EXTRA_VERSION=\\\"$${RS_EXTRA_VERSION}\\\"
 } else {
     RS_GIT_DESCRIBE = $$system(git describe)
-    isEmpty(RS_GIT_DESCRIBE) {
-        warning("Determining RetroShare version via git failed plese specify it trough qmake command line arguments!")
-    } else {
-        RS_GIT_DESCRIBE_SPLIT = $$split(RS_GIT_DESCRIBE,v)
-        RS_GIT_DESCRIBE_SPLIT = $$take_first(RS_GIT_DESCRIBE_SPLIT)
-        RS_GIT_DESCRIBE_SPLIT = $$split(RS_GIT_DESCRIBE_SPLIT,.)
+    contains(RS_GIT_DESCRIBE, ^v\d+\.\d+\.\d+.*) {
+        RS_GIT_DESCRIBE_SPLIT = $$split(RS_GIT_DESCRIBE, v)
+        RS_GIT_DESCRIBE_SPLIT = $$split(RS_GIT_DESCRIBE_SPLIT, .)
 
-        RS_MAJOR_VERSION = $$take_first(RS_GIT_DESCRIBE_SPLIT)
-        RS_MINOR_VERSION = $$take_first(RS_GIT_DESCRIBE_SPLIT)
+        RS_MAJOR_VERSION = $$member(RS_GIT_DESCRIBE_SPLIT, 0)
+        RS_MINOR_VERSION = $$member(RS_GIT_DESCRIBE_SPLIT, 1)
 
-        RS_GIT_DESCRIBE_SPLIT = $$take_first(RS_GIT_DESCRIBE_SPLIT)
-        RS_GIT_DESCRIBE_SPLIT = $$split(RS_GIT_DESCRIBE_SPLIT,-)
+        RS_GIT_DESCRIBE_SPLIT = $$member(RS_GIT_DESCRIBE_SPLIT, 2)
+        RS_GIT_DESCRIBE_SPLIT = $$split(RS_GIT_DESCRIBE_SPLIT, -)
 
-        RS_MINI_VERSION = $$take_first(RS_GIT_DESCRIBE_SPLIT)
+        RS_MINI_VERSION = $$member(RS_GIT_DESCRIBE_SPLIT, 0)
+
+        RS_GIT_DESCRIBE_SPLIT = $$member(RS_GIT_DESCRIBE_SPLIT, 1, -1)
+
         RS_EXTRA_VERSION = $$join(RS_GIT_DESCRIBE_SPLIT,-,-)
 
-        message("RetroShare version $${RS_MAJOR_VERSION}.$${RS_MINOR_VERSION}.$${RS_MINI_VERSION}$${RS_EXTRA_VERSION} determined via git")
+        message("RetroShare version\
+$${RS_MAJOR_VERSION}.$${RS_MINOR_VERSION}.$${RS_MINI_VERSION}$${RS_EXTRA_VERSION}\
+determined via git")
 
         DEFINES += RS_MAJOR_VERSION=$${RS_MAJOR_VERSION}
         DEFINES += RS_MINOR_VERSION=$${RS_MINOR_VERSION}
         DEFINES += RS_MINI_VERSION=$${RS_MINI_VERSION}
         DEFINES += RS_EXTRA_VERSION=\\\"$${RS_EXTRA_VERSION}\\\"
+    } else {
+        warning("Determining RetroShare version via git failed plese specify it\
+trough qmake command line arguments!")
     }
 }
 
