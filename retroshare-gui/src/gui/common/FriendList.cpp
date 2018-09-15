@@ -2011,7 +2011,6 @@ bool FriendList::importFriendlist(QString &fileName, bool &errorPeers, bool &err
     errorPeers = false;
     errorGroups = false;
 
-    uint32_t error_code;
     std::string error_string;
     RsPeerDetails rsPeerDetails;
     RsPeerId rsPeerID;
@@ -2044,48 +2043,10 @@ bool FriendList::importFriendlist(QString &fileName, bool &errorPeers, bool &err
 
             // load everything needed from the pubkey string
             std::string pubkey = sslIDElem.attribute("certificate").toStdString();
-            if(rsPeers->loadDetailsFromStringCert(pubkey, rsPeerDetails, error_code)) {
-                if(rsPeers->loadCertificateFromString(pubkey, rsPeerID, rsPgpID, error_string)) {
-                    ServicePermissionFlags service_perm_flags(sslIDElem.attribute("service_perm_flags").toInt());
-
-                    // everything is loaded - start setting things
-                    if (!rsPeerDetails.id.isNull() && !rsPeerDetails.gpg_id.isNull()) {
-                        // pgp and ssl ID are available
-                        rsPeers->addFriend(rsPeerDetails.id, rsPeerDetails.gpg_id, service_perm_flags);
-                        if(rsPeerDetails.isHiddenNode) {
-                            // for hidden notes
-                            if (!rsPeerDetails.hiddenNodeAddress.empty() && rsPeerDetails.hiddenNodePort)
-                                rsPeers->setHiddenNode(rsPeerDetails.id, rsPeerDetails.hiddenNodeAddress, rsPeerDetails.hiddenNodePort);
-                        } else {
-                            // for normal nodes
-                            if (!rsPeerDetails.extAddr.empty() && rsPeerDetails.extPort)
-                                rsPeers->setExtAddress(rsPeerDetails.id, rsPeerDetails.extAddr, rsPeerDetails.extPort);
-                            if (!rsPeerDetails.localAddr.empty() && rsPeerDetails.localPort)
-                                rsPeers->setLocalAddress(rsPeerDetails.id, rsPeerDetails.localAddr, rsPeerDetails.localPort);
-                            if (!rsPeerDetails.dyndns.empty())
-                                rsPeers->setDynDNS(rsPeerDetails.id, rsPeerDetails.dyndns);
-                            if (!rsPeerDetails.location.empty())
-                                rsPeers->setLocation(rsPeerDetails.id, rsPeerDetails.location);
-							for(auto&& ipr : rsPeerDetails.ipAddressList)
-								rsPeers->addPeerLocator(
-								            rsPeerDetails.id,
-								            RsUrl(ipr.substr(0, ipr.find(' '))) );
-                        }
-                    } else if (!rsPeerDetails.gpg_id.isNull()) {
-                        // only pgp id is avaiable
-                        RsPeerId pid;
-                        rsPeers->addFriend(pid, rsPeerDetails.gpg_id, service_perm_flags);
-                    } else {
-                        errorPeers = true;
-                        std::cerr << "FriendList::importFriendlist(): error while processing SSL id: " << sslIDElem.attribute("sslID", "invalid").toStdString() << std::endl;
-                    }
-                } else {
-                    errorPeers = true;
-                    std::cerr << "FriendList::importFriendlist(): failed to get peer detaisl from public key (SSL id: " << sslIDElem.attribute("sslID", "invalid").toStdString() << " - error: " << error_string << ")" << std::endl;
-                }
-            } else {
+			ServicePermissionFlags service_perm_flags(sslIDElem.attribute("service_perm_flags").toInt());
+			if (!rsPeers->acceptInvite(pubkey, service_perm_flags)) {
                 errorPeers = true;
-                std::cerr << "FriendList::importFriendlist(): failed to get peer detaisl from public key (SSL id: " << sslIDElem.attribute("sslID", "invalid").toStdString() << " - error: " << error_code << ")" << std::endl;
+				std::cerr << "FriendList::importFriendlist(): failed to get peer detaisl from public key (SSL id: " << sslIDElem.attribute("sslID", "invalid").toStdString() << ")" << std::endl;
             }
             sslIDElem = sslIDElem.nextSiblingElement("sslID");
         }
