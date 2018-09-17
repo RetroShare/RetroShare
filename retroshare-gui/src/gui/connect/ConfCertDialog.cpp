@@ -270,34 +270,9 @@ void ConfCertDialog::loadInvitePage()
 //	ui.userCertificateText_2->setFont(font);
 //	ui.userCertificateText_2->setText(QString::fromUtf8(pgp_key.c_str()));
 
-        std::string invite = rsPeers->GetRetroshareInvite(detail.id,ui._shouldAddSignatures_CB->isChecked()) ; // this needs to be a SSL id
+	std::string invite = rsPeers->GetRetroshareInvite(detail.id,ui._shouldAddSignatures_CB->isChecked()) ; // this needs to be a SSL id
 
-    QString infotext ;
-
-    //infotext += tr("<p>Use this certificate to make new friends. Send it by email, or give it hand to hand.</p>") ;
-    infotext += tr("<p>This certificate contains:") ;
-    infotext += "<UL>" ;
-    infotext += "<li> a <b>Profile key</b>";
-    infotext += " (" + QString::fromUtf8(detail.name.c_str())  + "@" + detail.gpg_id.toStdString().c_str()+") " ;
-    if(ui._shouldAddSignatures_CB->isChecked())
-        infotext += tr("with")+" "+QString::number(detail.gpgSigners.size()-1)+" "+tr("external signatures</li>") ;
-    else
-        infotext += "</li>" ;
-
-    infotext += tr("<li>a <b>node ID</b> and <b>name</b>") +" (" + detail.id.toStdString().c_str() + ", " + QString::fromUtf8(detail.location.c_str()) +")" ;
-    infotext += "</li>" ;
-
-    infotext += "<li>" ;
-    if(detail.isHiddenNode)
-        infotext += tr("an <b>onion address</b> and <b>port</b>") +" (" + detail.hiddenNodeAddress.c_str() + ":" + QString::number(detail.hiddenNodePort)+ ")";
-    else
-        infotext += tr("an <b>IP address</b> and <b>port</b>") +" (" + detail.connectAddr.c_str() + ":" + QString::number(detail.connectPort)+ ")";
-    infotext += "</li>" ;
-
-    infotext += QString("</p>") ;
-
-    if(rsPeers->getOwnId() == detail.id)
-        infotext += tr("<p>You can use this certificate to make new friends. Send it by email, or give it hand to hand.</p>") ;
+    QString infotext = getCertificateDescription(detail,ui._shouldAddSignatures_CB->isChecked(),true);	// true, because default parameter in GetRetroshareInvite is true
 
     ui.userCertificateText->setToolTip(infotext) ;
 
@@ -309,6 +284,45 @@ void ConfCertDialog::loadInvitePage()
         font.setStyle(QFont::StyleNormal);
         ui.userCertificateText->setFont(font);
         ui.userCertificateText->setText(QString::fromUtf8(invite.c_str()));
+}
+
+QString ConfCertDialog::getCertificateDescription(const RsPeerDetails& detail,bool signatures_included,bool include_additional_locators)
+{
+    //infotext += tr("<p>Use this certificate to make new friends. Send it by email, or give it hand to hand.</p>") ;
+    QString infotext = QObject::tr("<p>This certificate contains:") ;
+    infotext += "<UL>" ;
+    infotext += "<li> a <b>Profile key</b>";
+    infotext += " (" + QString::fromUtf8(detail.name.c_str())  + "@" + detail.gpg_id.toStdString().c_str()+") " ;
+
+    if(signatures_included)
+        infotext += tr("with")+" "+QString::number(detail.gpgSigners.size()-1)+" "+tr("external signatures</li>") ;
+    else
+        infotext += "</li>" ;
+
+    infotext += tr("<li>a <b>node ID</b> and <b>name</b>") +" (" + detail.id.toStdString().c_str() + ", " + QString::fromUtf8(detail.location.c_str()) +")" ;
+    infotext += "</li>" ;
+
+    infotext += "<li>" ;
+    if(detail.isHiddenNode)
+        infotext += tr("an <b>onion address</b> and <b>port</b>") +" (" + detail.hiddenNodeAddress.c_str() + ":" + QString::number(detail.hiddenNodePort)+ ")";
+    else if(!detail.connectAddr.empty())
+        infotext += tr("an <b>IP address</b> and <b>port</b>") +" (" + detail.connectAddr.c_str() + ":" + QString::number(detail.connectPort)+ ")";
+    infotext += "</li>" ;
+
+    if(include_additional_locators)
+        for(auto it(detail.ipAddressList.begin());it!=detail.ipAddressList.end();++it)
+        {
+    		infotext += "<li>" ;
+            infotext += tr("Extra <b>IP</b>: ") + QString::fromStdString(*it) ;
+	        infotext += "</li>" ;
+        }
+
+    infotext += QString("</p>") ;
+
+    if(rsPeers->getOwnId() == detail.id)
+        infotext += tr("<p>You can use this certificate to make new friends. Send it by email, or give it hand to hand.</p>") ;
+
+    return infotext;
 }
 
 

@@ -27,6 +27,7 @@
 
 #include "ui_ConfCertDialog.h"
 #include <retroshare/rstypes.h>
+#include <retroshare/rspeers.h>
 
 class ConfCertDialog : public QDialog
 {
@@ -59,6 +60,7 @@ public:
         /* window will destroy itself! */
     }
     static void loadAll();
+	static QString getCertificateDescription(const RsPeerDetails& det,bool signatures_included,bool extra_locators_included);
 
 signals:
     void configChanged();

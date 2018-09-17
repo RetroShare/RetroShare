@@ -25,6 +25,7 @@
 #include "gui/notifyqt.h"
 #include "gui/msgs/MessageComposer.h"
 #include "gui/connect/ConnectFriendWizard.h"
+#include "gui/connect/ConfCertDialog.h"
 #include <gui/QuickStartWizard.h>
 #include "gui/connect/FriendRecommendDialog.h"
 
@@ -106,9 +107,23 @@ HomePage::~HomePage()
 
 void HomePage::updateOwnCert()
 {
-	std::string invite = rsPeers->GetRetroshareInvite(false);
+    bool include_extra_locators = false;
+
+    RsPeerDetails detail;
+
+    if (!rsPeers->getPeerDetails(rsPeers->getOwnId(), detail))
+    {
+        std::cerr << "(EE) Cannot retrieve information about own certificate. That is a real problem!!" << std::endl;
+        return ;
+    }
+
+	std::string invite = rsPeers->GetRetroshareInvite(detail.id,false,include_extra_locators);
 
 	ui->userCertEdit->setPlainText(QString::fromUtf8(invite.c_str()));
+
+    QString description = ConfCertDialog::getCertificateDescription(detail,false,include_extra_locators);
+
+	ui->userCertEdit->setToolTip(description);
 }
 
 static void sendMail(QString sAddress, QString sSubject, QString sBody)
