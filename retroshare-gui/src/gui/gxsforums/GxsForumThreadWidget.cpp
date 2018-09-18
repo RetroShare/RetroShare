@@ -88,6 +88,7 @@
 #define COLUMN_THREAD_CONTENT      6
 #define COLUMN_THREAD_COUNT        7
 #define COLUMN_THREAD_MSGID        8
+#define COLUMN_THREAD_NB_COLUMNS   9
 
 #define COLUMN_THREAD_DATA     0 // column for storing the userdata like parentid
 
@@ -99,6 +100,7 @@
 #define ROLE_THREAD_READCHILDREN    Qt::UserRole + 4
 #define ROLE_THREAD_UNREADCHILDREN  Qt::UserRole + 5
 #define ROLE_THREAD_SORT            Qt::UserRole + 6
+#define ROLE_THREAD_PINNED          Qt::UserRole + 7
 
 #define ROLE_THREAD_COUNT           4
 
@@ -246,8 +248,6 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 	ttheader->resizeSection (COLUMN_THREAD_DISTRIBUTION, 24*f);
 	ttheader->resizeSection (COLUMN_THREAD_AUTHOR, 150*f);
 
-	ui->threadTreeWidget->sortItems(COLUMN_THREAD_DATE, Qt::DescendingOrder);
-
 	/* Set text of column "Read" to empty - without this the column has a number as header text */
 	QTreeWidgetItem *headerItem = ui->threadTreeWidget->headerItem();
 	headerItem->setText(COLUMN_THREAD_READ, "") ;
@@ -297,6 +297,7 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 	                                        forum visible to all other friends.</p><p>Afterwards you can unsubscribe from the context menu of the forum list at left.</p>"));
 	                                        ui->threadTreeWidget->enableColumnCustomize(true);
 
+	ui->threadTreeWidget->sortItems(COLUMN_THREAD_DATE, Qt::DescendingOrder);
 }
 
 void GxsForumThreadWidget::blank()
@@ -511,9 +512,14 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
 	}
 
 	QMenu contextMnu(this);
+	QList<QTreeWidgetItem*> selectedItems = ui->threadTreeWidget->selectedItems();
 
 	QAction *editAct = new QAction(QIcon(IMAGE_MESSAGEEDIT), tr("Edit"), &contextMnu);
 	connect(editAct, SIGNAL(triggered()), this, SLOT(editforummessage()));
+
+	bool is_pinned = mForumGroup.mPinnedPosts.ids.find(mThreadId) != mForumGroup.mPinnedPosts.ids.end();
+	QAction *pinUpPostAct = new QAction(QIcon(IMAGE_MESSAGE), (is_pinned?tr("Un-pin this post"):tr("Pin this post up")), &contextMnu);
+	connect(pinUpPostAct , SIGNAL(triggered()), this, SLOT(togglePinUpPost()));
 
 	QAction *replyAct = new QAction(QIcon(IMAGE_MESSAGEREPLY), tr("Reply"), &contextMnu);
 	connect(replyAct, SIGNAL(triggered()), this, SLOT(replytoforummessage()));
@@ -604,16 +610,37 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
         replyauthorAct->setDisabled (true);
 	}
 
-	QList<QTreeWidgetItem*> selectedItems = ui->threadTreeWidget->selectedItems();
-
 	if(selectedItems.size() == 1)
 	{
 		QTreeWidgetItem *item = *selectedItems.begin();
 		GxsIdRSTreeWidgetItem *gxsIdItem = dynamic_cast<GxsIdRSTreeWidgetItem*>(item);
 
-		RsGxsId author_id;
-		if(gxsIdItem && gxsIdItem->getId(author_id) && rsIdentity->isOwnId(author_id))
-			contextMnu.addAction(editAct);
+		bool is_pinned = mForumGroup.mPinnedPosts.ids.find( RsGxsMessageId(item->data(COLUMN_THREAD_MSGID,Qt::DisplayRole).toString().toStdString()) ) != mForumGroup.mPinnedPosts.ids.end();
+
+        if(!is_pinned)
+		{
+			RsGxsId author_id;
+			if(gxsIdItem && gxsIdItem->getId(author_id) && rsIdentity->isOwnId(author_id))
+				contextMnu.addAction(editAct);
+			else
+			{
+				// Go through the list of own ids and see if one of them is a moderator
+				// TODO: offer to select which moderator ID to use if multiple IDs fit the conditions of the forum
+
+				std::list<RsGxsId> own_ids ;
+				rsIdentity->getOwnIds(own_ids) ;
+
+				for(auto it(own_ids.begin());it!=own_ids.end();++it)
+					if(mForumGroup.mAdminList.ids.find(*it) != mForumGroup.mAdminList.ids.end())
+					{
+						contextMnu.addAction(editAct);
+						break ;
+					}
+			}
+		}
+
+		if(IS_GROUP_ADMIN(mSubscribeFlags) && (*selectedItems.begin())->parent() == NULL)
+			contextMnu.addAction(pinUpPostAct);
 	}
 
 	contextMnu.addAction(replyAct);
@@ -660,6 +687,7 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
 			contextMnu.addAction(showinpeopleAct);
 			contextMnu.addAction(replyauthorAct);
 		}
+
 	}
 
 	contextMnu.exec(QCursor::pos());
@@ -783,6 +811,7 @@ void GxsForumThreadWidget::calculateIconsAndFonts(QTreeWidgetItem *item, bool &h
 	bool isNew = IS_MSG_NEW(status);
 	bool unread = IS_MSG_UNREAD(status);
 	bool missing = item->data(COLUMN_THREAD_DATA, ROLE_THREAD_MISSING).toBool();
+    RsGxsMessageId msgId(item->data(COLUMN_THREAD_MSGID,Qt::DisplayRole).toString().toStdString());
 
 	// set icon
 	if (missing) {
@@ -811,6 +840,8 @@ void GxsForumThreadWidget::calculateIconsAndFonts(QTreeWidgetItem *item, bool &h
 		calculateIconsAndFonts(item->child(index), myReadChilddren, myUnreadChilddren);
 	}
 
+    bool is_pinned = mForumGroup.mPinnedPosts.ids.find(msgId) != mForumGroup.mPinnedPosts.ids.end();
+
 	// set font
 	for (int i = 0; i < COLUMN_THREAD_COUNT; ++i) {
 		QFont qf = item->font(i);
@@ -832,6 +863,15 @@ void GxsForumThreadWidget::calculateIconsAndFonts(QTreeWidgetItem *item, bool &h
 			/* Missing message */
 			item->setForeground(i, textColorMissing());
 		}
+		if(is_pinned)
+        {
+			qf.setBold(true);
+			item->setForeground(i, textColorUnread());
+			item->setData(i,Qt::BackgroundRole, QBrush(QColor(255,200,180))) ;
+		}
+        else
+			item->setData(i,Qt::BackgroundRole, QBrush());
+
 		item->setFont(i, qf);
 	}
 
@@ -968,6 +1008,10 @@ static QString getDurationString(uint32_t days)
     else if(IS_GROUP_PGP_AUTHED(tw->mSignFlags)) anti_spam_features1 = tr("Anonymous posts forwarded if reputation is positive");
             
     tw->mForumDescription = QString("<b>%1: \t</b>%2<br/>").arg(tr("Forum name"), QString::fromUtf8( group.mMeta.mGroupName.c_str()));
+    tw->mForumDescription += QString("<b>%1: </b>%2<br/>").arg(tr("Description"),
+                                                                         group.mDescription.empty()?
+                                                                             tr("[None]<br/>")
+                                                                           :(QString::fromUtf8(group.mDescription.c_str())+"<br/>"));
     tw->mForumDescription += QString("<b>%1: \t</b>%2<br/>").arg(tr("Subscribers")).arg(group.mMeta.mPop);
     tw->mForumDescription += QString("<b>%1: \t</b>%2<br/>").arg(tr("Posts (at neighbor nodes)")).arg(group.mMeta.mVisibleMsgCount);
 	if(group.mMeta.mLastPost==0)
@@ -1014,21 +1058,31 @@ static QString getDurationString(uint32_t days)
     }
             
     tw->mForumDescription += QString("<b>%1: \t</b>%2<br/>").arg(tr("Distribution"), distrib_string);
-    tw->mForumDescription += QString("<b>%1: \t</b>%2<br/>").arg(tr("Author"), author);
+    tw->mForumDescription += QString("<b>%1: \t</b>%2<br/>").arg(tr("Contact"), author);
        
        if(!anti_spam_features1.isNull())
     		tw->mForumDescription += QString("<b>%1: \t</b>%2<br/>").arg(tr("Anti-spam")).arg(anti_spam_features1);
        
-    tw->mForumDescription += QString("<b>%1: </b><br/><br/>%2").arg(tr("Description"), QString::fromUtf8(group.mDescription.c_str()));
-
     tw->ui->subscribeToolButton->setSubscribed(IS_GROUP_SUBSCRIBED(tw->mSubscribeFlags));
     tw->mStateHelper->setWidgetEnabled(tw->ui->newthreadButton, (IS_GROUP_SUBSCRIBED(tw->mSubscribeFlags)));
 
-    if (tw->mThreadId.isNull() && !tw->mStateHelper->isLoading(tw->mTokenTypeMessageData))
+    if(!group.mAdminList.ids.empty())
     {
-        //ui->threadTitle->setText(tr("Forum Description"));
-        tw->ui->postText->setText(tw->mForumDescription);
+        QString admin_list_str ;
+
+        for(auto it(group.mAdminList.ids.begin());it!=group.mAdminList.ids.end();++it)
+        {
+            RsIdentityDetails det ;
+
+            rsIdentity->getIdDetails(*it,det);
+            admin_list_str += (admin_list_str.isNull()?"":", ") + QString::fromUtf8(det.mNickname.c_str()) ;
+        }
+
+		tw->mForumDescription += QString("<b>%1: </b>%2").arg(tr("Moderators"), admin_list_str);
     }
+
+    if (tw->mThreadId.isNull() && !tw->mStateHelper->isLoading(tw->mTokenTypeMessageData))
+        tw->ui->postText->setText(tw->mForumDescription);
 }
 
 void GxsForumThreadWidget::fillThreadFinished()
@@ -1167,11 +1221,49 @@ void GxsForumThreadWidget::fillThreadStatus(QString text)
 	ui->progressText->setText(text);
 }
 
+//#define DEBUG_PINNED_POST_SORTING 1
+
+class ForumThreadItem: public GxsIdRSTreeWidgetItem
+{
+public:
+    ForumThreadItem(QHeaderView *header,const RSTreeWidgetItemCompareRole *compareRole, uint32_t icon_mask,QTreeWidget *parent = NULL)
+    	: GxsIdRSTreeWidgetItem(compareRole,icon_mask,parent), m_header(header) {}
+
+    bool operator<(const QTreeWidgetItem& other) const
+    {
+		bool  left_is_not_pinned  = !      data(COLUMN_THREAD_DATE,ROLE_THREAD_PINNED).toBool();
+		bool right_is_not_pinned  = !other.data(COLUMN_THREAD_DATE,ROLE_THREAD_PINNED).toBool();
+#ifdef DEBUG_PINNED_POST_SORTING
+        std::cerr << "Comparing item date \"" << data(COLUMN_THREAD_DATE,Qt::DisplayRole).toString().toStdString() << "\" ("
+                  << data(COLUMN_THREAD_DATE,ROLE_THREAD_SORT).toUInt() << ", \"" << data(COLUMN_THREAD_DATE,ROLE_THREAD_SORT).toString().toStdString() << "\" --> " << left_is_not_pinned << ") to \""
+                     << other.data(COLUMN_THREAD_DATE,Qt::DisplayRole).toString().toStdString() << "\" ("
+                  << other.data(COLUMN_THREAD_DATE,ROLE_THREAD_SORT).toUInt() << ", \"" << other.data(COLUMN_THREAD_DATE,ROLE_THREAD_SORT).toString().toStdString() << "\" --> " << right_is_not_pinned << ") ";
+#endif
+
+        if(left_is_not_pinned ^ right_is_not_pinned)
+        {
+#ifdef DEBUG_PINNED_POST_SORTING
+            std::cerr << "Local: " << ((m_header->sortIndicatorOrder()==Qt::AscendingOrder)?right_is_not_pinned:left_is_not_pinned) << std::endl;
+#endif
+            return (m_header->sortIndicatorOrder()==Qt::AscendingOrder)?right_is_not_pinned:left_is_not_pinned ;	// always put pinned posts on top
+		}
+
+#ifdef DEBUG_PINNED_POST_SORTING
+		std::cerr << "Remote: " << GxsIdRSTreeWidgetItem::operator<(other) << std::endl;
+#endif
+		return GxsIdRSTreeWidgetItem::operator<(other);
+    }
+
+private:
+    QHeaderView *m_header ;
+};
+
 QTreeWidgetItem *GxsForumThreadWidget::convertMsgToThreadWidget(const RsGxsForumMsg &msg, bool useChildTS, uint32_t filterColumn, QTreeWidgetItem *parent)
 {
 	// Early check for a message that should be hidden because its author
 	// is flagged with a bad reputation
 
+    bool is_pinned = mForumGroup.mPinnedPosts.ids.find(msg.mMeta.mMsgId) != mForumGroup.mPinnedPosts.ids.end();
 
     uint32_t idflags =0;
 	RsReputations::ReputationLevel reputation_level = rsReputations->overallReputationLevel(msg.mMeta.mAuthorId,&idflags) ;
@@ -1179,11 +1271,15 @@ QTreeWidgetItem *GxsForumThreadWidget::convertMsgToThreadWidget(const RsGxsForum
 
 	redacted = (reputation_level == RsReputations::REPUTATION_LOCALLY_NEGATIVE);
 
-	GxsIdRSTreeWidgetItem *item = new GxsIdRSTreeWidgetItem(mThreadCompareRole,GxsIdDetails::ICON_TYPE_AVATAR );
+    // We use a specific item model for forums in order to handle the post pinning.
+
+	GxsIdRSTreeWidgetItem *item = new ForumThreadItem(ui->threadTreeWidget->header(),mThreadCompareRole,GxsIdDetails::ICON_TYPE_AVATAR );
 	item->moveToThread(ui->threadTreeWidget->thread());
 
 	if(redacted)
 		item->setText(COLUMN_THREAD_TITLE, tr("[ ... Redacted message ... ]"));
+	else if(is_pinned)
+		item->setText(COLUMN_THREAD_TITLE, tr("[PINNED] ") + QString::fromUtf8(msg.mMeta.mMsgName.c_str()));
 	else
 		item->setText(COLUMN_THREAD_TITLE, QString::fromUtf8(msg.mMeta.mMsgName.c_str()));
 
@@ -1220,30 +1316,42 @@ QTreeWidgetItem *GxsForumThreadWidget::convertMsgToThreadWidget(const RsGxsForum
 	qtime.setTime_t(msg.mMeta.mPublishTs);
 
 	QString itemText = DateTime::formatDateTime(qtime);
+    // This is an attempt to put pinned posts on the top. We should rather use a QSortFilterProxyModel here.
 	QString itemSort = QString::number(msg.mMeta.mPublishTs);//Don't need to format it as for sort.
+
+//#define SHOW_COMBINED_DATES 1
 
 	if (useChildTS)
 	{
 		for(QTreeWidgetItem *grandParent = parent; grandParent!=NULL; grandParent = grandParent->parent())
 		{
 			//Update Parent Child TimeStamp
-			QString oldTSText = grandParent->text(COLUMN_THREAD_DATE);
 			QString oldTSSort = grandParent->data(COLUMN_THREAD_DATE, ROLE_THREAD_SORT).toString();
 
-			QString oldCTSText = oldTSText.split("|").at(0);
-			QString oldPTSText = oldTSText.contains("|") ? oldTSText.split(" | ").at(1) : oldCTSText;//If first time parent get only its mPublishTs
 			QString oldCTSSort = oldTSSort.split("|").at(0);
 			QString oldPTSSort = oldTSSort.contains("|") ? oldTSSort.split(" | ").at(1) : oldCTSSort;
+#ifdef SHOW_COMBINED_DATES
+			QString oldTSText = grandParent->text(COLUMN_THREAD_DATE);
+			QString oldCTSText = oldTSText.split("|").at(0);
+			QString oldPTSText = oldTSText.contains("|") ? oldTSText.split(" | ").at(1) : oldCTSText;//If first time parent get only its mPublishTs
+ #endif
 			if (oldCTSSort.toDouble() < itemSort.toDouble())
 			{
+#ifdef SHOW_COMBINED_DATES
 				grandParent->setText(COLUMN_THREAD_DATE, DateTime::formatDateTime(qtime) + " | " + oldPTSText);
+#endif
 				grandParent->setData(COLUMN_THREAD_DATE, ROLE_THREAD_SORT, itemSort + " | " + oldPTSSort);
 			}
 		}
 	}
 
 	item->setText(COLUMN_THREAD_DATE, itemText);
-	item->setData(COLUMN_THREAD_DATE, ROLE_THREAD_SORT, itemSort);
+	item->setData(COLUMN_THREAD_DATE,ROLE_THREAD_SORT, itemSort);
+
+    if(is_pinned)
+		item->setData(COLUMN_THREAD_DATE,ROLE_THREAD_PINNED, QVariant(true)); // this is used by the sorting model to put all posts on top
+    else
+		item->setData(COLUMN_THREAD_DATE,ROLE_THREAD_PINNED, QVariant(false));
 
 	// Set later with GxsIdRSTreeWidgetItem::setId
 	item->setData(COLUMN_THREAD_DATA, ROLE_THREAD_AUTHOR, QString::fromStdString(msg.mMeta.mAuthorId.toStdString()));
@@ -2080,6 +2188,37 @@ void GxsForumThreadWidget::createmessage()
 	/* window will destroy itself! */
 }
 
+void GxsForumThreadWidget::togglePinUpPost()
+{
+	if (groupId().isNull() || mThreadId.isNull())
+		return;
+
+	QTreeWidgetItem *item = ui->threadTreeWidget->currentItem();
+
+    // normally this method is only called on top level items. We still check it just in case...
+
+    if(item->parent() != NULL)
+    {
+        std::cerr << "(EE) togglePinUpPost() called on non top level post. This is inconsistent." << std::endl;
+        return ;
+	}
+
+	QString thread_title = (item != NULL)?item->text(COLUMN_THREAD_TITLE):QString() ;
+
+    std::cerr << "Toggling Pin-up state of post " << mThreadId.toStdString() << ": \"" << thread_title.toStdString() << "\"" << std::endl;
+
+    if(mForumGroup.mPinnedPosts.ids.find(mThreadId) == mForumGroup.mPinnedPosts.ids.end())
+		mForumGroup.mPinnedPosts.ids.insert(mThreadId) ;
+    else
+		mForumGroup.mPinnedPosts.ids.erase(mThreadId) ;
+
+	uint32_t token;
+	rsGxsForums->updateGroup(token,mForumGroup);
+
+    ui->threadTreeWidget->takeTopLevelItem(ui->threadTreeWidget->indexOfTopLevelItem(item));	// forces the re-creation of all posts widgets. A bit extreme. We should rather only delete item above
+    updateDisplay(true) ;
+}
+
 void GxsForumThreadWidget::createthread()
 {
 	if (groupId().isNull ()) {
@@ -2223,9 +2362,30 @@ void GxsForumThreadWidget::editForumMessageData(const RsGxsForumMsg& msg)
 		return;
 	}
 
+	// Go through the list of own ids and see if one of them is a moderator
+	// TODO: offer to select which moderator ID to use if multiple IDs fit the conditions of the forum
+
+    RsGxsId moderator_id ;
+
+	std::list<RsGxsId> own_ids ;
+	rsIdentity->getOwnIds(own_ids) ;
+
+	for(auto it(own_ids.begin());it!=own_ids.end();++it)
+		if(mForumGroup.mAdminList.ids.find(*it) != mForumGroup.mAdminList.ids.end())
+        {
+            moderator_id = *it;
+            break;
+        }
+
+    // Check that author is in own ids, if not use the moderator id that was collected among own ids.
+    bool is_own = false ;
+    for(auto it(own_ids.begin());it!=own_ids.end() && !is_own;++it)
+        if(*it == msg.mMeta.mAuthorId)
+            is_own = true ;
+
 	if (!msg.mMeta.mAuthorId.isNull())
 	{
-		CreateGxsForumMsg *cfm = new CreateGxsForumMsg(groupId(), msg.mMeta.mParentId, msg.mMeta.mMsgId, msg.mMeta.mAuthorId);
+		CreateGxsForumMsg *cfm = new CreateGxsForumMsg(groupId(), msg.mMeta.mParentId, msg.mMeta.mMsgId, is_own?(msg.mMeta.mAuthorId):moderator_id,!is_own);
 
 		cfm->insertPastedText(QString::fromUtf8(msg.mMsg.c_str())) ;
 		cfm->show();

@@ -356,15 +356,7 @@ void Rshare::slotConnectionEstablished()
 	}
 }
 
-QString Rshare::retroshareVersion(bool withRevision)
-{
-	QString version = QString("%1.%2.%3%4").arg(RS_MAJOR_VERSION).arg(RS_MINOR_VERSION).arg(RS_BUILD_NUMBER).arg(RS_BUILD_NUMBER_ADD);
-	if (withRevision) {
-		version += QString(" %1 %2").arg(tr("Revision")).arg(RS_REVISION_NUMBER,8,16,QChar('0'));
-	}
-
-	return version;
-}
+QString Rshare::retroshareVersion(bool) { return RS_HUMAN_READABLE_VERSION; }
 
 /** Enters the main event loop and waits until exit() is called. The signal
  * running() will be emitted when the event loop has started. */

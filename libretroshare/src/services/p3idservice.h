@@ -285,7 +285,7 @@ public:
 
 	/**************** RsGixs Implementation ***************/
 
-	virtual bool getOwnIds(std::list<RsGxsId> &ownIds);
+	virtual bool getOwnIds(std::list<RsGxsId> &ownIds, bool signed_only = false);
 
 	//virtual bool getPublicKey(const RsGxsId &id, RsTlvSecurityKey &key) ;
 	//virtual void networkRequestPublicKey(const RsGxsId& key_id,const std::list<RsPeerId>& peer_ids) ;
@@ -423,6 +423,7 @@ private:
 	bool cache_load_ownids(uint32_t token);
 
 	std::list<RsGxsId> mOwnIds;
+	std::list<RsGxsId> mOwnSignedIds;
 
 	/************************************************************************
  * Test fns for Caching.

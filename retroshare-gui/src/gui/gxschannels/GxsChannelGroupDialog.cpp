@@ -34,7 +34,7 @@ const uint32_t ChannelCreateEnabledFlags = (
 			GXS_GROUP_FLAGS_DESCRIPTION   |
 			GXS_GROUP_FLAGS_DISTRIBUTION  |
 			// GXS_GROUP_FLAGS_PUBLISHSIGN   |
-			GXS_GROUP_FLAGS_SHAREKEYS     |
+			// GXS_GROUP_FLAGS_SHAREKEYS     |	// disabled because the UI doesn't handle it, so no need to show the disabled button. The user can do it in a second step from the channel menu.
 			// GXS_GROUP_FLAGS_PERSONALSIGN  |
 			GXS_GROUP_FLAGS_COMMENTS      |
 			0);
@@ -75,19 +75,19 @@ void GxsChannelGroupDialog::initUi()
 	{
 	case MODE_CREATE:
 		setUiText(UITYPE_SERVICE_HEADER, tr("Create New Channel"));
-		setUiText(UITYPE_BUTTONBOX_OK, tr("Create"));
+		setUiText(UITYPE_BUTTONBOX_OK,   tr("Create"));
 		break;
 	case MODE_SHOW:
 		setUiText(UITYPE_SERVICE_HEADER, tr("Channel"));
 		break;
 	case MODE_EDIT:
 		setUiText(UITYPE_SERVICE_HEADER, tr("Edit Channel"));
-		setUiText(UITYPE_BUTTONBOX_OK, tr("Update Channel"));
+		setUiText(UITYPE_BUTTONBOX_OK,   tr("Update Channel"));
 		break;
 	}
 	
 	setUiText(UITYPE_KEY_SHARE_CHECKBOX, tr("Add Channel Admins"));
-	setUiText(UITYPE_CONTACTS_DOCK, tr("Select Channel Admins"));
+	setUiText(UITYPE_CONTACTS_DOCK,      tr("Select Channel Admins"));
 }
 
 QPixmap GxsChannelGroupDialog::serviceImage()
