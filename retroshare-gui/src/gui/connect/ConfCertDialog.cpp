@@ -302,20 +302,19 @@ QString ConfCertDialog::getCertificateDescription(const RsPeerDetails& detail,bo
     infotext += tr("<li>a <b>node ID</b> and <b>name</b>") +" (" + detail.id.toStdString().c_str() + ", " + QString::fromUtf8(detail.location.c_str()) +")" ;
     infotext += "</li>" ;
 
-    infotext += "<li>" ;
     if(detail.isHiddenNode)
-        infotext += tr("an <b>onion address</b> and <b>port</b>") +" (" + detail.hiddenNodeAddress.c_str() + ":" + QString::number(detail.hiddenNodePort)+ ")";
-    else if(!detail.connectAddr.empty())
-        infotext += tr("an <b>IP address</b> and <b>port</b>") +" (" + detail.connectAddr.c_str() + ":" + QString::number(detail.connectPort)+ ")";
-    infotext += "</li>" ;
-
-    if(include_additional_locators)
-        for(auto it(detail.ipAddressList.begin());it!=detail.ipAddressList.end();++it)
-        {
-    		infotext += "<li>" ;
-            infotext += tr("Extra <b>IP</b>: ") + QString::fromStdString(*it) ;
-	        infotext += "</li>" ;
-        }
+        infotext += tr("<li> <b>onion address</b> and <b>port</b>") +" (" + detail.hiddenNodeAddress.c_str() + ":" + QString::number(detail.hiddenNodePort)+ ")</li>";
+    else if(!include_additional_locators)
+    {
+        if(!detail.localAddr.empty()) infotext += tr("<li><b>IP address</b> and <b>port</b>: ") + detail.localAddr.c_str() + ":" + QString::number(detail.localPort)+ "</li>";
+        if(!detail.extAddr.empty()) infotext += tr("<li><b>IP address</b> and <b>port</b>: ") + detail.extAddr.c_str() + ":" + QString::number(detail.extPort)+ "</li>";
+    }
+    else for(auto it(detail.ipAddressList.begin());it!=detail.ipAddressList.end();++it)
+	{
+		infotext += "<li>" ;
+		infotext += tr("<b>IP address</b> and <b>port</b>: ") + QString::fromStdString(*it) ;
+		infotext += "</li>" ;
+	}
 
     infotext += QString("</p>") ;
 
