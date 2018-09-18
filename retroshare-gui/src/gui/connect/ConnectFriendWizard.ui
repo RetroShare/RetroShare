@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>760</width>
-    <height>538</height>
+    <width>1157</width>
+    <height>873</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -1618,8 +1618,8 @@ resources.</string>
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../images.qrc"/>
   <include location="../icons.qrc"/>
+  <include location="../images.qrc"/>
  </resources>
  <connections/>
 </ui>

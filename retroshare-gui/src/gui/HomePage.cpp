@@ -22,6 +22,8 @@
 #include "HomePage.h"
 #include "ui_HomePage.h"
 
+#include "retroshare/rsinit.h"
+
 #include "gui/notifyqt.h"
 #include "gui/msgs/MessageComposer.h"
 #include "gui/connect/ConnectFriendWizard.h"
@@ -55,35 +57,31 @@ HomePage::HomePage(QWidget *parent) :
 	connect(ui->addButton, SIGNAL(clicked()), this, SLOT(addFriend()));
 	connect(ui->LoadCertFileButton, SIGNAL(clicked()), this, SLOT(loadCert()));
 	
-    QAction *CopyAction = new QAction(QIcon(),tr("Copy your Cert to Clipboard"), this);
-    connect(CopyAction, SIGNAL(triggered()), this, SLOT(copyCert()));
-	
-    QAction *SaveAction = new QAction(QIcon(),tr("Save your Cert into a File"), this);
-    connect(SaveAction, SIGNAL(triggered()), this, SLOT(saveCert()));
-    
-    QAction *SendAction = new QAction(QIcon(),tr("Send via Email"), this);
-    connect(SendAction, SIGNAL(triggered()), this, SLOT(runEmailClient()));
-
     QAction *WebMailAction = new QAction(QIcon(),tr("Invite via WebMail"), this);
     connect(WebMailAction, SIGNAL(triggered()), this, SLOT(webMail()));
 	
     QAction *RecAction = new QAction(QIcon(),tr("Recommend friends to each others"), this);
     connect(RecAction, SIGNAL(triggered()), this, SLOT(recommendFriends()));
 
+    QAction *SendAction = new QAction(QIcon(),tr("Send via Email"), this);
+    connect(SendAction, SIGNAL(triggered()), this, SLOT(runEmailClient()));
+
 		QMenu *menu = new QMenu();
-    menu->addAction(CopyAction);
-    menu->addAction(SaveAction);
     menu->addAction(SendAction);
 	menu->addAction(WebMailAction);
     menu->addAction(RecAction);
 
     ui->shareButton->setMenu(menu);
 
+    QObject::connect(ui->userCertEdit,SIGNAL(customContextMenuRequested(QPoint)),this,SLOT(certContextMenu(QPoint)));
+
     connect(ui->runStartWizard_PB,SIGNAL(clicked()), this,SLOT(runStartWizard())) ;
 	connect(ui->openwebhelp,SIGNAL(clicked()), this,SLOT(openWebHelp())) ;
 
 	ui->runStartWizard_PB->hide(); // until future rework
 	ui->LoadCertFileButton->hide(); // duplicates functionality => not good.
+
+    mIncludeAllIPs = false;
 
     int S = QFontMetricsF(font()).height();
  QString help_str = tr(
@@ -100,6 +98,37 @@ HomePage::HomePage(QWidget *parent) :
              registerHelpButton(ui->helpButton,help_str,"HomePage") ;
 }
 
+void HomePage::certContextMenu(QPoint point)
+{
+    QMenu menu(this) ;
+
+	QAction *CopyAction = new QAction(QIcon(),tr("Copy your Cert to Clipboard"), this);
+    connect(CopyAction, SIGNAL(triggered()), this, SLOT(copyCert()));
+
+    QAction *SaveAction = new QAction(QIcon(),tr("Save your Cert into a File"), this);
+    connect(SaveAction, SIGNAL(triggered()), this, SLOT(saveCert()));
+
+    menu.addAction(CopyAction);
+    menu.addAction(SaveAction);
+
+    if(!RsAccounts::isHiddenNode())
+	{
+		QAction *includeIPsAct = new QAction(QIcon(), mIncludeAllIPs? tr("Include only current IP"):tr("Include all your known IPs"),this);
+		connect(includeIPsAct, SIGNAL(triggered()), this, SLOT(toggleIncludeAllIPs()));
+		includeIPsAct->setCheckable(true);
+
+		menu.addAction(includeIPsAct);
+	}
+
+    menu.exec(QCursor::pos());
+}
+
+void HomePage::toggleIncludeAllIPs()
+{
+    mIncludeAllIPs = !mIncludeAllIPs;
+    updateOwnCert();
+}
+
 HomePage::~HomePage()
 {
 	delete ui;
@@ -107,7 +136,7 @@ HomePage::~HomePage()
 
 void HomePage::updateOwnCert()
 {
-    bool include_extra_locators = false;
+    bool include_extra_locators = mIncludeAllIPs;
 
     RsPeerDetails detail;
 
