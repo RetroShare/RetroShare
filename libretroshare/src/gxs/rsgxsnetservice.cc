@@ -704,8 +704,10 @@ void RsGxsNetService::syncWithPeers()
             msg->PeerId(peerId);
             msg->updateTS = updateTS;
 
-            int req_delay  = (int)locked_getGrpConfig(grpId).msg_req_delay ;
-            int keep_delay = (int)locked_getGrpConfig(grpId).msg_keep_delay ;
+            const RsGxsGrpConfig& conf = locked_getGrpConfig(grpId) ;
+
+            int req_delay  = (int)conf.msg_req_delay ;
+            int keep_delay = (int)conf.msg_keep_delay ;
 
             // If we store for less than we request, we request less, otherwise the posts will be deleted after being obtained.
 
@@ -713,9 +715,14 @@ void RsGxsNetService::syncWithPeers()
                 req_delay = keep_delay ;
 
             // The last post will be set to TS 0 if the req delay is 0, which means "Indefinitly"
+            // Otherwise, the request delay is calculated w.r.t. to the time of last post, which allows newcomers to always get some data.
 
             if(req_delay > 0)
-				msg->createdSinceTS = std::max(0,(int)time(NULL) - req_delay);
+            {
+                time_t last_post_time = (conf.last_group_post_TS>0)?conf.last_group_post_TS:time(NULL);
+
+				msg->createdSinceTS = std::max(0,(int)last_post_time - req_delay);
+            }
 			else
 				msg->createdSinceTS = 0 ;
 
@@ -997,7 +1004,7 @@ void RsGxsNetService::handleRecvSyncGrpStatistics(RsNxsSyncGrpStatsItem *grs)
 	   rec.suppliers.ids.insert(grs->PeerId()) ;
 	   rec.max_visible_count = std::max(rec.max_visible_count,grs->number_of_posts) ;
 	   rec.statistics_update_TS = time(NULL) ;
-	   rec.last_group_post_TS = std::max(rec.last_group_post_TS,grs->last_post_TS);		// friends may not agree on last modification TS, so we keep the most recent one.
+	   rec.last_group_post_TS = std::max(rec.last_group_post_TS,(time_t)grs->last_post_TS);		// friends may not agree on last modification TS, so we keep the most recent one.
 
 	   if (old_count != rec.max_visible_count || old_suppliers_count != rec.suppliers.ids.size())
 		  mNewStatsToNotify.insert(grs->grpId) ;
@@ -2511,7 +2518,7 @@ bool RsGxsNetService::getGroupNetworkStats(const RsGxsGroupId& gid,RsGroupNetwor
     stats.mMaxVisibleCount = it->second.max_visible_count ;
     stats.mAllowMsgSync = mAllowMsgSync ;
     stats.mGrpAutoSync = mGrpAutoSync ;
-    stats.mLastGroupMessageTS = it->second.last_group_modification_TS ;
+    stats.mLastGroupMessageTS = it->second.last_group_post_TS ;
 
     return true ;
 }
@@ -2530,12 +2537,10 @@ void RsGxsNetService::processCompletedTransactions()
 
 		bool outgoing = tr->mTransaction->PeerId() == mOwnId;
 
-		if(outgoing){
+		if(outgoing)
 			locked_processCompletedOutgoingTrans(tr);
-		}else{
+		else
 			locked_processCompletedIncomingTrans(tr);
-		}
-
 
 		delete tr;
 		mComplTransactions.pop_front();
@@ -4383,6 +4388,7 @@ void RsGxsNetService::handleRecvSyncMessage(RsNxsSyncMsgReqItem *item,bool item_
     time_t now = time(NULL) ;
 
     uint32_t max_send_delay = locked_getGrpConfig(item->grpId).msg_req_delay;	// we should use "sync" but there's only one variable used in the GUI: the req one.
+    uint32_t last_post_TS = locked_getGrpConfig(item->grpId).last_group_post_TS;	// we should use "sync" but there's only one variable used in the GUI: the req one.
 
     if(canSendMsgIds(msgMetas, *grpMeta, peer, should_encrypt_to_this_circle_id))
     {
@@ -4414,7 +4420,9 @@ void RsGxsNetService::handleRecvSyncMessage(RsNxsSyncMsgReqItem *item,bool item_
 			}
 			// Check publish TS
 
-			if(item->createdSinceTS > (*vit)->mPublishTs || ((max_send_delay > 0) && (*vit)->mPublishTs + max_send_delay < now))
+            time_t reference_time = (last_post_TS>0)?last_post_TS:time(NULL);	// time interval of sync is calculated w.r.t. to time of last post
+
+			if(item->createdSinceTS > (*vit)->mPublishTs || ((max_send_delay > 0) && (*vit)->mPublishTs + max_send_delay < reference_time))
 			{
 #ifdef NXS_NET_DEBUG_0
 				GXSNETDEBUG_PG(item->PeerId(),item->grpId) << "  not sending item ID " << (*vit)->mMsgId << ", because it is too old (publishTS = " << (time(NULL)-(*vit)->mPublishTs)/86400 << " days ago" << std::endl;
