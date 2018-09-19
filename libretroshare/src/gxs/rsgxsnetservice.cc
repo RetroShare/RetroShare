@@ -997,7 +997,7 @@ void RsGxsNetService::handleRecvSyncGrpStatistics(RsNxsSyncGrpStatsItem *grs)
 	   rec.suppliers.ids.insert(grs->PeerId()) ;
 	   rec.max_visible_count = std::max(rec.max_visible_count,grs->number_of_posts) ;
 	   rec.statistics_update_TS = time(NULL) ;
-	   rec.last_group_modification_TS = grs->last_post_TS;
+	   rec.last_group_post_TS = std::max(rec.last_group_post_TS,grs->last_post_TS);		// friends may not agree on last modification TS, so we keep the most recent one.
 
 	   if (old_count != rec.max_visible_count || old_suppliers_count != rec.suppliers.ids.size())
 		  mNewStatsToNotify.insert(grs->grpId) ;
@@ -2511,7 +2511,7 @@ bool RsGxsNetService::getGroupNetworkStats(const RsGxsGroupId& gid,RsGroupNetwor
     stats.mMaxVisibleCount = it->second.max_visible_count ;
     stats.mAllowMsgSync = mAllowMsgSync ;
     stats.mGrpAutoSync = mGrpAutoSync ;
-    stats.mLastGroupModificationTS = it->second.last_group_modification_TS ;
+    stats.mLastGroupMessageTS = it->second.last_group_modification_TS ;
 
     return true ;
 }
@@ -4731,7 +4731,7 @@ RsGxsGrpConfig& RsGxsNetService::locked_getGrpConfig(const RsGxsGroupId& grp_id)
 
 		conf.max_visible_count = 0 ;
 		conf.statistics_update_TS = 0 ;
-		conf.last_group_modification_TS = 0 ;
+		conf.last_group_post_TS = 0 ;
 
 		return conf ;
 	}
@@ -5344,7 +5344,7 @@ bool RsGxsNetService::search( const std::string& substring,
 			s.mPublishTs         = it->second->mPublishTs;
 			s.mAuthorId          = it->second->mAuthorId;
 			s.mNumberOfMessages  = stats.mMaxVisibleCount;
-			s.mLastMessageTs     = stats.mLastGroupModificationTS;
+			s.mLastMessageTs     = stats.mLastGroupMessageTS;
 			s.mPopularity        = it->second->mPop;
 
 			group_infos.push_back(s);

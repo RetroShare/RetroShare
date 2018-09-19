@@ -82,13 +82,13 @@ struct RsGroupNetworkStats
 {
 	RsGroupNetworkStats() :
 	    mSuppliers(0), mMaxVisibleCount(0), mGrpAutoSync(false),
-	    mAllowMsgSync(false), mLastGroupModificationTS(0) {}
+	    mAllowMsgSync(false), mLastGroupMessageTS(0) {}
 
 	uint32_t mSuppliers;
 	uint32_t mMaxVisibleCount;
 	bool     mGrpAutoSync;
 	bool     mAllowMsgSync;
-	time_t   mLastGroupModificationTS;
+	time_t   mLastGroupMessageTS;
 };
 
 typedef std::map<RsGxsGroupId,      std::vector<RsNxsMsg*> > NxsMsgDataResult;

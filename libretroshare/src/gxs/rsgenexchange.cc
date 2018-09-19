@@ -1210,7 +1210,7 @@ bool RsGenExchange::getGroupMeta(const uint32_t &token, std::list<RsGroupMetaDat
 			m.mVisibleMsgCount = sts.mMaxVisibleCount ;
 
 			if((!(IS_GROUP_SUBSCRIBED(gMeta.mSubscribeFlags))) || gMeta.mLastPost == 0)
-				m.mLastPost = sts.mLastGroupModificationTS ;
+				m.mLastPost = sts.mLastGroupMessageTS ;
 		}
 		else
 		{
@@ -1391,7 +1391,7 @@ bool RsGenExchange::getGroupData(const uint32_t &token, std::vector<RsGxsGrpItem
 						// uninitialised, so we will it too.
 
 						if((!(IS_GROUP_SUBSCRIBED(gItem->meta.mSubscribeFlags))) || gItem->meta.mLastPost == 0)
-							gItem->meta.mLastPost = sts.mLastGroupModificationTS ;
+							gItem->meta.mLastPost = sts.mLastGroupMessageTS ;
 					}
 					else
 					{
