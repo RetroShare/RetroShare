@@ -94,6 +94,10 @@ RsDht *rsDht = NULL ;
 #	include "gxstrans/p3gxstrans.h"
 #endif
 
+#ifdef RS_JSONAPI
+#	include "jsonapi/jsonapi.h"
+#endif
+
 // #define GPG_DEBUG
 // #define AUTHSSL_DEBUG
 // #define FIM_DEBUG
@@ -105,15 +109,15 @@ RsLoginHelper* rsLoginHelper = nullptr;
 
 RsAccounts* rsAccounts = nullptr;
 
-class RsInitConfig
+struct RsInitConfig
 {
-	public:
+	RsInitConfig() : jsonApiPort(0), jsonApiBindAddress("127.0.0.1") {}
 
-		RsFileHash main_executable_hash;
+	RsFileHash main_executable_hash;
 
 #ifdef WINDOWS_SYS
-		bool portable;
-		bool isWindowsXP;
+	bool portable;
+	bool isWindowsXP;
 #endif
 		rs_lock_handle_t lockHandle;
 
@@ -146,31 +150,25 @@ class RsInitConfig
 		int  debugLevel;
 		std::string logfname;
 
-		bool load_trustedpeer;
-		std::string load_trustedpeer_file;
-
 		bool udpListenerOnly;
 		std::string opModeStr;
+
+		uint16_t jsonApiPort;
+		std::string jsonApiBindAddress;
 };
 
-static RsInitConfig *rsInitConfig = NULL;
-
-//const int p3facestartupzone = 47238;
-
-// initial configuration bootstrapping...
-//static const std::string configInitFile = "default_cert.txt";
-//static const std::string configConfFile = "config.rs";
-//static const std::string configCertDir = "friends";
-//static const std::string configKeyDir = "keys";
-//static const std::string configCaFile = "cacerts.pem";
-//static const std::string configHelpName = "retro.htm";
+static RsInitConfig* rsInitConfig = nullptr;
 
 static const std::string configLogFileName = "retro.log";
 static const int SSLPWD_LEN = 64;
 
 void RsInit::InitRsConfig()
 {
-	rsInitConfig = new RsInitConfig ;
+	rsInitConfig = new RsInitConfig;
+
+
+	/* TODO almost all of this should be moved to RsInitConfig::RsInitConfig
+	 * initializers */
 
 	/* Directories */
 #ifdef WINDOWS_SYS
@@ -181,14 +179,13 @@ void RsInit::InitRsConfig()
 	rsInitConfig->hiddenNodeSet = false;
 
 
+	// This doesn't seems a configuration...
 #ifndef WINDOWS_SYS
 	rsInitConfig->lockHandle = -1;
 #else
 	rsInitConfig->lockHandle = NULL;
 #endif
 
-
-	rsInitConfig->load_trustedpeer = false;
 	rsInitConfig->port = 0 ;
 	rsInitConfig->forceLocalAddr = false;
 	rsInitConfig->haveLogFile    = false;
@@ -203,9 +200,6 @@ void RsInit::InitRsConfig()
 	rsInitConfig->debugLevel	= PQL_WARNING;
 	rsInitConfig->udpListenerOnly = false;
 	rsInitConfig->opModeStr = std::string("");
-
-	/* setup the homePath (default save location) */
-	//	rsInitConfig->homePath = getHomePath();
 
 #ifdef WINDOWS_SYS
 	// test for portable version
@@ -243,31 +237,7 @@ void RsInit::InitRsConfig()
 	}
 #endif
 
-	/* Setup the Debugging */
-	// setup debugging for desired zones.
-	setOutputLevel(RsLog::Warning); // default to Warnings.
-
-	// For Testing purposes.
-	// We can adjust everything under Linux.
-	//setZoneLevel(PQL_DEBUG_BASIC, 38422); // pqipacket.
-	//setZoneLevel(PQL_DEBUG_BASIC, 96184); // pqinetwork;
-	//setZoneLevel(PQL_DEBUG_BASIC, 82371); // pqiperson.
-	//setZoneLevel(PQL_DEBUG_BASIC, 34283); // pqihandler.
-	//setZoneLevel(PQL_DEBUG_BASIC, 44863); // discItems.
-	//setZoneLevel(PQL_DEBUG_BASIC, 1728); // pqi/p3proxy
-	//setZoneLevel(PQL_DEBUG_BASIC, 1211); // sslroot.
-	//setZoneLevel(PQL_DEBUG_BASIC, 37714); // pqissl.
-	//setZoneLevel(PQL_DEBUG_BASIC, 8221); // pqistreamer.
-	//setZoneLevel(PQL_DEBUG_BASIC,  9326); // pqiarchive
-	//setZoneLevel(PQL_DEBUG_BASIC, 3334); // p3channel.
-	//setZoneLevel(PQL_DEBUG_BASIC, 354); // pqipersongrp.
-	//setZoneLevel(PQL_DEBUG_BASIC, 6846); // pqiudpproxy
-	//setZoneLevel(PQL_DEBUG_BASIC, 3144); // pqissludp;
-	//setZoneLevel(PQL_DEBUG_BASIC, 86539); // pqifiler.
-	//setZoneLevel(PQL_DEBUG_BASIC, 91393); // Funky_Browser.
-	//setZoneLevel(PQL_DEBUG_BASIC, 25915); // fltkserver
-	//setZoneLevel(PQL_DEBUG_BASIC, 47659); // fldxsrvr
-	//setZoneLevel(PQL_DEBUG_BASIC, 49787); // pqissllistener
+	setOutputLevel(RsLog::Warning);
 }
 
 /********
@@ -294,69 +264,60 @@ bool doPortRestrictions = false;
 int RsInit::InitRetroShare(int argc, char **argv, bool /* strictCheck */)
 {
 #ifdef DEBUG_RSINIT
-		for(int i=0; i<argc; i++)
-			printf("%d: %s\n", i, argv[i]);
+	for(int i=0; i<argc; i++) printf("%d: %s\n", i, argv[i]);
 #endif
 
-		/* for static PThreads under windows... we need to init the library... */
 #ifdef PTW32_STATIC_LIB
-		pthread_win32_process_attach_np();
+	// for static PThreads under windows... we need to init the library...
+	pthread_win32_process_attach_np();
 #endif
-		/******************************** WINDOWS/UNIX SPECIFIC PART ******************/
 
-		std::string prefUserString = "";
-		std::string opt_base_dir;
-
-		/* getopt info: every availiable option is listed here. if it is followed by a ':' it
-			needs an argument. If it is followed by a '::' the argument is optional.
-		 */
-		//rsInitConfig->logfname = "" ;
-		//rsInitConfig->inet = "" ;
+	std::string prefUserString = "";
+	std::string opt_base_dir;
 
 #ifdef __APPLE__
-		/* HACK to avoid stupid OSX Finder behaviour
+	// TODO: is this still needed with argstream?
+	/* HACK to avoid stupid OSX Finder behaviour
 	 * remove the commandline arguments - if we detect we are launched from Finder,
 	 * and we have the unparsable "-psn_0_12332" option.
 	 * this is okay, as you cannot pass commandline arguments via Finder anyway
 	 */
-		if ((argc >= 2) && (0 == strncmp(argv[1], "-psn", 4)))
-		{
-			argc = 1;
-		}
+	if ((argc >= 2) && (0 == strncmp(argv[1], "-psn", 4))) argc = 1;
 #endif
 
 
-		argstream as(argc,argv) ;
+	argstream as(argc,argv);
+	as      >> option('m',"minimized"        ,rsInitConfig->startMinimised ,"Start minimized."                         )
+	        >> option('s',"stderr"           ,rsInitConfig->outStderr      ,"output to stderr instead of log file."    )
+	        >> option('u',"udp"              ,rsInitConfig->udpListenerOnly,"Only listen to UDP."                      )
+	        >> option('e',"external-port"    ,rsInitConfig->forceExtPort   ,"Use a forwarded external port."           )
+	        >> parameter('l',"log-file"      ,rsInitConfig->logfname       ,"logfile"   ,"Set Log filename."                                           ,false)
+	        >> parameter('d',"debug-level"   ,rsInitConfig->debugLevel     ,"level"     ,"Set debug level."                                            ,false)
+	        >> parameter('i',"ip-address"    ,rsInitConfig->inet           ,"nnn.nnn.nnn.nnn", "Force IP address to use (if cannot be detected)."      ,false)
+	        >> parameter('o',"opmode"        ,rsInitConfig->opModeStr      ,"opmode"    ,"Set Operating mode (Full, NoTurtle, Gaming, Minimal)."       ,false)
+	        >> parameter('p',"port"          ,rsInitConfig->port           ,"port", "Set listenning port to use."                                      ,false)
+	        >> parameter('c',"base-dir"      ,opt_base_dir                 ,"directory", "Set base directory."                                         ,false)
+	        >> parameter('U',"user-id"       ,prefUserString               ,"ID", "[ocation Id] Sets Account to Use, Useful when Autologin is enabled.",false);
 
+#ifdef RS_JSONAPI
+	as      >> parameter(
+	            "jsonApiPort", rsInitConfig->jsonApiPort, "jsonApiPort",
+	            "Enable JSON API on the specified port", false )
+	        >> parameter(
+	               "jsonApiBindAddress", rsInitConfig->jsonApiBindAddress,
+	               "jsonApiBindAddress", "JSON API Bind Address.", false);
+#endif // ifdef RS_JSONAPI
 
-		as
-#ifdef RS_AUTOLOGIN
-		        >> option('a',"auto-login"       ,rsInitConfig->autoLogin      ,"AutoLogin (Windows Only) + StartMinimised")
-#endif
-		        >> option('m',"minimized"        ,rsInitConfig->startMinimised ,"Start minimized."                         )
-		        >> option('s',"stderr"           ,rsInitConfig->outStderr      ,"output to stderr instead of log file."    )
-		        >> option('u',"udp"              ,rsInitConfig->udpListenerOnly,"Only listen to UDP."                      )
-		        >> option('e',"external-port"    ,rsInitConfig->forceExtPort   ,"Use a forwarded external port."           )
-
-		        >> parameter('l',"log-file"      ,rsInitConfig->logfname       ,"logfile"   ,"Set Log filename."                                           ,false)
-		        >> parameter('d',"debug-level"   ,rsInitConfig->debugLevel     ,"level"     ,"Set debug level."                                            ,false)
-#ifdef TO_REMOVE
-		        // This was removed because it is not used anymore.
-		        >> parameter('w',"password"      ,rsInitConfig->passwd         ,"password"  ,"Set Login Password."                                         ,false)
-#endif
-		        >> parameter('i',"ip-address"    ,rsInitConfig->inet           ,"nnn.nnn.nnn.nnn", "Force IP address to use (if cannot be detected)."      ,false)
-		        >> parameter('o',"opmode"        ,rsInitConfig->opModeStr      ,"opmode"    ,"Set Operating mode (Full, NoTurtle, Gaming, Minimal)."       ,false)
-		        >> parameter('p',"port"          ,rsInitConfig->port           ,"port", "Set listenning port to use."                                      ,false)
-		        >> parameter('c',"base-dir"      ,opt_base_dir                 ,"directory", "Set base directory."                                         ,false)
-		        >> parameter('U',"user-id"       ,prefUserString               ,"ID", "[ocation Id] Sets Account to Use, Useful when Autologin is enabled.",false)
-		           // by rshare    'r' "link"                                         "Link" "Open RsLink with protocol retroshare://"
-		           // by rshare    'f' "rsfile"                                       "RsFile" "Open RsFile like RsCollection"
 #ifdef LOCALNET_TESTING
-		        >> parameter('R',"restrict-port" ,portRestrictions             ,"port1-port2","Apply port restriction"                   ,false)
-#endif
-		        >> help('h',"help","Display this Help") ;
+	as      >> parameter('R',"restrict-port" ,portRestrictions             ,"port1-port2","Apply port restriction"                   ,false);
+#endif // ifdef LOCALNET_TESTING
 
-		as.defaultErrorHandling(true,true) ;
+#ifdef RS_AUTOLOGIN
+	as      >> option('a',"auto-login"       ,rsInitConfig->autoLogin      ,"AutoLogin (Windows Only) + StartMinimised");
+#endif // ifdef RS_AUTOLOGIN
+
+	as >> help('h',"help","Display this Help");
+	as.defaultErrorHandling(true,true);
 
 		if(rsInitConfig->autoLogin)         rsInitConfig->startMinimised = true ;
 		if(rsInitConfig->outStderr)         rsInitConfig->haveLogFile    = false ;
@@ -476,6 +437,16 @@ int RsInit::InitRetroShare(int argc, char **argv, bool /* strictCheck */)
 		}
 	}
 #endif
+
+#ifdef RS_JSONAPI
+	if(rsInitConfig->jsonApiPort)
+	{
+		jsonApiServer = new JsonApiServer(
+		            rsInitConfig->jsonApiPort,
+		            rsInitConfig->jsonApiBindAddress );
+		jsonApiServer->start("JSON API Server");
+	}
+#endif // ifdef RS_JSONAPI
 
 	return RS_INIT_OK;
 }
@@ -1277,6 +1248,14 @@ int RsServer::StartupRetroShare()
 	//
 	mPluginsManager->loadPlugins(programatically_inserted_plugins) ;
 
+#ifdef RS_JSONAPI
+	{
+		mConfigMgr->addConfiguration("jsonApi.cfg", jsonApiServer);
+		RsFileHash dummyHash;
+		jsonApiServer->loadConfiguration(dummyHash);
+	}
+#endif
+
     	/**** Reputation system ****/
 
     	p3GxsReputation *mReputations = new p3GxsReputation(mLinkMgr) ;
@@ -1940,6 +1919,7 @@ int RsServer::StartupRetroShare()
 RsInit::LoadCertificateStatus RsLoginHelper::attemptLogin(
         const RsPeerId& account, const std::string& password)
 {
+	if(isLoggedIn()) return RsInit::ERR_ALREADY_RUNNING;
 	if(!rsNotify->cachePgpPassphrase(password)) return RsInit::ERR_UNKOWN;
 	if(!rsNotify->setDisableAskPassword(true)) return RsInit::ERR_UNKOWN;
 	if(!RsAccounts::SelectAccount(account)) return RsInit::ERR_UNKOWN;
@@ -1973,6 +1953,8 @@ bool RsLoginHelper::createLocation(
         RsLoginHelper::Location& l, const std::string& password,
         bool makeHidden, bool makeAutoTor, std::string& errorMessage )
 {
+	if(isLoggedIn()) return (errorMessage="Already Running", false);
+
 	if(l.mLocationName.empty())
 	{
 		errorMessage = "Location name is needed";

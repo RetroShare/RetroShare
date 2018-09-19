@@ -22,6 +22,8 @@
 #include <QDirIterator>
 #include <QFileInfo>
 #include <iterator>
+#include <functional>
+#include <QVariant>
 
 struct MethodParam
 {
@@ -40,7 +42,10 @@ struct MethodParam
 int main(int argc, char *argv[])
 {
 	if(argc != 3)
-		qFatal("Usage: jsonapi-generator SOURCE_PATH OUTPUT_PATH");
+	{
+		qDebug() << "Usage: jsonapi-generator SOURCE_PATH OUTPUT_PATH";
+		return EINVAL;
+	}
 
 	QString sourcePath(argv[1]);
 	QString outputPath(argv[2]);
@@ -59,6 +64,20 @@ int main(int argc, char *argv[])
 		qFatal(QString("Can't open: " + cppApiIncludesFilePath).toLatin1().data());
 	QSet<QString> cppApiIncludesSet;
 
+	auto fatalError = [&](
+	        std::initializer_list<QVariant> errors, int ernum = EINVAL )
+	{
+		QString errorMsg;
+		for(const QVariant& error: errors)
+			errorMsg += error.toString() + " ";
+		errorMsg.chop(1);
+		QByteArray cppError(QString("#error "+errorMsg+"\n").toLocal8Bit());
+		wrappersDefFile.write(cppError);
+		cppApiIncludesFile.write(cppError);
+		qDebug() << errorMsg;
+		return ernum;
+	};
+
 	QDirIterator it(doxPrefix, QStringList() << "*8h.xml", QDir::Files);
 	while(it.hasNext())
 	{
@@ -74,9 +93,10 @@ int main(int argc, char *argv[])
 			continue;
 		}
 
-		QFileInfo hfi(hFile);
-		QString headerFileName(hfi.fileName());
-		headerFileName.replace(QString("_8h.xml"), QString(".h"));
+		QFileInfo headerFileInfo(hDoc.elementsByTagName("location").at(0)
+		                         .attributes().namedItem("file").nodeValue());
+		QString headerRelPath = headerFileInfo.dir().dirName() + "/" +
+		        headerFileInfo.fileName();
 
 		QDomNodeList sectiondefs = hDoc.elementsByTagName("memberdef");
 		for(int j = 0; j < sectiondefs.size(); ++j)
@@ -112,6 +132,7 @@ int main(int argc, char *argv[])
 				QDomNode member = members.item(i);
 				QString refid(member.attributes().namedItem("refid").nodeValue());
 				QString methodName(member.firstChildElement("name").toElement().text());
+				bool requiresAuth = true;
 				QString defFilePath(doxPrefix + refid.split('_')[0] + ".xml");
 
 				qDebug() << "Looking for" << typeName << methodName << "into"
@@ -134,10 +155,21 @@ int main(int argc, char *argv[])
 					QDomElement tmpMBD = memberdefs.item(k).toElement();
 					QString tmpId = tmpMBD.attributes().namedItem("id").nodeValue();
 					QString tmpKind = tmpMBD.attributes().namedItem("kind").nodeValue();
-					bool hasJsonApi = !tmpMBD.elementsByTagName("jsonapi").isEmpty();
-					if( tmpId == refid && tmpKind == "function" && hasJsonApi )
+					QDomNodeList tmpJsonApiTagList(tmpMBD.elementsByTagName("jsonapi"));
+
+					if( tmpJsonApiTagList.count() && tmpId == refid &&
+					        tmpKind == "function")
 					{
-						memberdef = tmpMBD;
+						QDomElement tmpJsonApiTag = tmpJsonApiTagList.item(0).toElement();
+						QString tmpAccessValue;
+						if(tmpJsonApiTag.hasAttribute("access"))
+							tmpAccessValue = tmpJsonApiTag.attributeNode("access").nodeValue();
+
+						requiresAuth = "unauthenticated" != tmpAccessValue;
+
+						if("manualwrapper" != tmpAccessValue)
+							memberdef = tmpMBD;
+
 						break;
 					}
 				}
@@ -189,6 +221,7 @@ int main(int argc, char *argv[])
 						pType.replace(QString("&"), QString());
 						pType.replace(QString(" "), QString());
 					}
+
 					paramsMap.insert(tmpParam.name, tmpParam);
 					orderedParamNames.push_back(tmpParam.name);
 				}
@@ -210,6 +243,16 @@ int main(int argc, char *argv[])
 						hasOutput = true;
 					}
 				}
+
+				// Params sanity check
+				for( const MethodParam& pm : paramsMap)
+					if( !(pm.isMultiCallback || pm.isSingleCallback
+					      || pm.in || pm.out) )
+						return fatalError(
+						{ "Parameter:", pm.name, "of:", apiPath,
+						  "declared in:", headerRelPath,
+						  "miss doxygen parameter direction attribute!",
+						  defFile.fileName() });
 
 				QString functionCall("\t\t");
 				if(retvalType != "void")
@@ -325,7 +368,6 @@ int main(int argc, char *argv[])
 				substitutionsMap.insert("inputParamsDeserialization", inputParamsDeserialization);
 				substitutionsMap.insert("outputParamsSerialization", outputParamsSerialization);
 				substitutionsMap.insert("instanceName", instanceName);
-				substitutionsMap.insert("headerFileName", headerFileName);
 				substitutionsMap.insert("functionCall", functionCall);
 				substitutionsMap.insert("apiPath", apiPath);
 				substitutionsMap.insert("sessionEarlyClose", sessionEarlyClose);
@@ -334,6 +376,7 @@ int main(int argc, char *argv[])
 				substitutionsMap.insert("callbackName", callbackName);
 				substitutionsMap.insert("callbackParams", callbackParams);
 				substitutionsMap.insert("callbackParamsSerialization", callbackParamsSerialization);
+				substitutionsMap.insert("requiresAuth", requiresAuth ? "true" : "false");
 
 				QString templFilePath(sourcePath);
 				if(hasMultiCallback || hasSingleCallback)
@@ -351,7 +394,7 @@ int main(int argc, char *argv[])
 
 				wrappersDefFile.write(wrapperDef.toLocal8Bit());
 
-				cppApiIncludesSet.insert("#include \"retroshare/" + headerFileName + "\"\n");
+				cppApiIncludesSet.insert("#include \"" + headerRelPath + "\"\n");
 			}
 		}
 	}

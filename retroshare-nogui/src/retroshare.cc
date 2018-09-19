@@ -24,15 +24,15 @@
  *
  */
 
-#include <retroshare/rsiface.h>   /* definition of iface */
-#include <retroshare/rsinit.h>   /* definition of iface */
-
+#include "retroshare/rsiface.h"
+#include "retroshare/rsinit.h"
 #include "notifytxt.h"
-
-#include <unistd.h>
 #include "util/argstream.h"
 #include "util/rstime.h"
+
+#include <unistd.h>
 #include <iostream>
+
 #ifdef WINDOWS_SYS
 #include <winsock2.h>
 #endif
@@ -43,17 +43,11 @@
 
 #ifdef ENABLE_WEBUI
 #include <stdarg.h>
+#include <csignal>
 #include "api/ApiServerMHD.h"
 #include "api/RsControlModule.h"
 #include "TerminalApiClient.h"
 #endif
-
-#ifdef RS_JSONAPI
-#	include <csignal>
-#	include "jsonapi/jsonapi.h"
-#	include "util/rsnet.h"
-#	include "util/rsurl.h"
-#endif // RS_JSONAPI
 
 /* Basic instructions for running libretroshare as background thread.
  * ******************************************************************* *
@@ -67,45 +61,6 @@
 
 int main(int argc, char **argv)
 {
-#ifdef RS_JSONAPI
-	JsonApiServer* jsonApiServer = nullptr;
-	uint16_t jsonApiPort = 0;
-	std::string jsonApiBindAddress = "127.0.0.1";
-
-	{
-		argstream jsonApiArgs(argc, argv);
-		jsonApiArgs >> parameter(
-		            "jsonApiPort", jsonApiPort, "jsonApiPort",
-		            "Enable JSON API on the specified port", false );
-		jsonApiArgs >> parameter(
-		            "jsonApiBindAddress", jsonApiBindAddress,
-		            "jsonApiBindAddress", "JSON API Bind Address.", false);
-		jsonApiArgs >> help('h', "help", "Display this Help");
-
-		if (jsonApiArgs.helpRequested())
-			std::cerr << jsonApiArgs.usage() << std::endl;
-	}
-
-	if(jsonApiPort)
-	{
-		jsonApiServer = new JsonApiServer(
-		            jsonApiPort, jsonApiBindAddress,
-		            [](int /*ec*/) { std::raise(SIGTERM); } );
-
-		jsonApiServer->start("JSON API Server");
-
-		sockaddr_storage tmp;
-		sockaddr_storage_inet_pton(tmp, jsonApiBindAddress);
-		sockaddr_storage_setport(tmp, jsonApiPort);
-		sockaddr_storage_ipv6_to_ipv4(tmp);
-		RsUrl tmpUrl(sockaddr_storage_tostring(tmp));
-		tmpUrl.setScheme("http");
-
-		std::cerr << "JSON API listening on " << tmpUrl.toString()
-		          << std::endl;
-	}
-#endif // RS_JSONAPI
-
 #ifdef ENABLE_WEBUI
 
     std::string docroot = resource_api::getDefaultDocroot();
@@ -146,11 +101,14 @@ int main(int argc, char **argv)
         httpd->start();
     }
 
-    resource_api::TerminalApiClient tac(&api);
+	RsControl::earlyInitNotificationSystem();
+	rsControl->setShutdownCallback([](int){std::raise(SIGTERM);});
+
+	resource_api::TerminalApiClient tac(&api);
 	tac.start();
 	bool already = false ;
 
-    while(ctrl_mod.processShouldExit() == false)
+	while(!ctrl_mod.processShouldExit())
     {
         rstime::rs_usleep(1000*1000);
 
@@ -169,28 +127,6 @@ int main(int argc, char **argv)
 
     return 0;
 #endif
-
-	/* Retroshare startup is configured using an RsInit object.
-	 * This is an opaque class, which the user cannot directly tweak
-	 * If you want to peek at whats happening underneath look in
-	 * libretroshare/src/rsserver/p3face-startup.cc
-	 *
-	 * You create it with InitRsConfig(), and delete with CleanupRsConfig()
-	 * InitRetroshare(argv, argc, config) parses the command line options, 
-	 * and initialises the config paths.
-	 *
-	 * *** There are several functions that I should add to modify 
-	 * **** the config the moment these can only be set via the commandline 
-	 *   - RsConfigDirectory(...) is probably the most useful.
-	 *   - RsConfigNetAddr(...) for setting port, etc.
-	 *   - RsConfigOutput(...) for logging and debugging.
-	 *
-	 * Next you need to worry about loading your certificate, or making
-	 * a new one:
-	 *
-	 *   RsGenerateCertificate(...) To create a new key, certificate 
-	 *   LoadPassword(...) set password for existing certificate.
-	 **/
 
 	bool strictCheck = true;
 	RsInit::InitRsConfig();
@@ -220,10 +156,13 @@ int main(int argc, char **argv)
 	 * if you want to receive notifications of events */
 
 	// This is needed to allocate rsNotify, so that it can be used to ask for PGP passphrase
-	//
-	RsControl::earlyInitNotificationSystem() ;
+	RsControl::earlyInitNotificationSystem();
 
-	NotifyTxt *notify = new NotifyTxt() ;
+	// an atomic might be safer but is probably unneded for this simple usage
+	bool keepRunning = true;
+	rsControl->setShutdownCallback([&](int){keepRunning = false;});
+
+	NotifyTxt *notify = new NotifyTxt();
 	rsNotify->registerNotifyClient(notify);
 
 	/* PreferredId => Key + Certificate are loaded into libretroshare */
@@ -244,35 +183,19 @@ int main(int argc, char **argv)
 	}
 
 	/* Start-up libretroshare server threads */
-	RsControl::instance() -> StartupRetroShare();
+	RsControl::instance()->StartupRetroShare();
 
 #ifdef RS_INTRO_SERVER
 	RsIntroServer rsIS;
 #endif
-	
-	/* pass control to the GUI */
-	while(1)
-	{
-		//std::cerr << "GUI Tick()" << std::endl;
 
+	while(keepRunning)
+	{
 #ifdef RS_INTRO_SERVER
 		rsIS.tick();
 #endif
-
-		int rt = 0;
-		// If we have a MenuTerminal ...
-		// only want to sleep if there is no input. (rt == 0).
-		if (rt == 0)
-		{
-#ifndef WINDOWS_SYS
-			sleep(1);
-#else
-			Sleep(1000);
-#endif
-		}
-
-		rstime::rs_usleep(1000);
-
+		rstime::rs_usleep(10*1000);
 	}
-	return 1;
-}	
+
+	return 0;
+}

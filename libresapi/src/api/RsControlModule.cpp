@@ -432,9 +432,8 @@ void RsControlModule::handleLogin(Request &req, Response &resp)
 
 void RsControlModule::handleShutdown(Request &, Response &resp)
 {
-	RS_STACK_MUTEX(mExitFlagMtx); // ********** LOCKED **********
-    mProcessShouldExit = true;
-    resp.setOk();
+	requestShutdown();
+	resp.setOk();
 }
 
 void RsControlModule::handleImportPgp(Request &req, Response &resp)
@@ -580,6 +579,12 @@ bool RsControlModule::askForDeferredSelfSignature(const void *data, const uint32
 		signature_result = SELF_SIGNATURE_RESULT_FAILED;
 		return false;
 	}
+}
+
+bool RsControlModule::requestShutdown()
+{
+	RS_STACK_MUTEX(mExitFlagMtx);
+	mProcessShouldExit = true;
 }
 
 void RsControlModule::setRunState(RunState s, std::string errstr)

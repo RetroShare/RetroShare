@@ -158,6 +158,9 @@ public:
 		virtual bool   importProfile(const std::string& filename,RsPgpId& gpg_id,std::string& import_error) ;
         virtual bool   importProfileFromString(const std::string& data,RsPgpId& gpg_id,std::string& import_error) ;
 		virtual bool   exportProfile(const std::string& filename,const RsPgpId& gpg_id) ;
+		virtual bool exportIdentityToString(
+		        std::string& data, const RsPgpId& pgpId, bool includeSignatures,
+		        std::string& errorMsg );
 
         virtual bool   removeKeysFromPGPKeyring(const std::set<RsPgpId> &pgp_ids,std::string& backup_file,uint32_t& error_code) ;
 

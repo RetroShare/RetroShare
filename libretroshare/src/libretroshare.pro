@@ -909,7 +909,7 @@ rs_jsonapi {
     # Force recalculation of libretroshare dependencies see https://stackoverflow.com/a/47884045
     QMAKE_EXTRA_TARGETS += libretroshare
 
-    HEADERS += jsonapi/jsonapi.h
+    HEADERS += jsonapi/jsonapi.h jsonapi/jsonapiitems.h
     SOURCES += jsonapi/jsonapi.cpp
 }
 

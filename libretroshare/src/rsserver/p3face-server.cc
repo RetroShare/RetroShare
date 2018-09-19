@@ -55,6 +55,9 @@ int rsserverzone = 101;
 #include <sys/timeb.h>
 #endif
 
+
+/*extern*/ RsControl* rsControl = nullptr;
+
 static double getCurrentTS()
 {
 

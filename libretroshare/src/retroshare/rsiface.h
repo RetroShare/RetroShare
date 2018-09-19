@@ -19,24 +19,22 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
-#ifndef RETROSHARE_GUI_INTERFACE_H
-#define RETROSHARE_GUI_INTERFACE_H
+#pragma once
 
 #include "retroshare/rsnotify.h"
 #include "rstypes.h"
 
 #include <map>
+#include <functional>
 
-class NotifyBase;
 class RsServer;
 class RsInit;
 class RsPeerCryptoParams;
-struct TurtleFileInfo ;
+class RsControl;
 
-/* RsInit -> Configuration Parameters for RetroShare Startup
- */
+/// RsInit -> Configuration Parameters for RetroShare Startup
+RsInit* InitRsConfig();
 
-RsInit *InitRsConfig();
 /* extract various options for GUI */
 const char   *RsConfigDirectory(RsInit *config);
 bool    RsConfigStartMinimised(RsInit *config);
@@ -46,35 +44,50 @@ void    CleanupRsConfig(RsInit *);
 // Called First... (handles comandline options) 
 int InitRetroShare(int argc, char **argv, RsInit *config);
 
-class RsControl /* The Main Interface Class - for controlling the server */
+/**
+ * Pointer to global instance of RsControl needed to expose JSON API
+ * @jsonapi{development}
+ */
+extern RsControl* rsControl;
+
+/** The Main Interface Class - for controlling the server */
+class RsControl
 {
 public:
 	/// TODO: This should return a reference instead of a pointer!
-	static RsControl *instance();
-	static void earlyInitNotificationSystem() { instance(); }
+	static RsControl* instance();
+	static void earlyInitNotificationSystem() { rsControl = instance(); }
 
 	/* Real Startup Fn */
 	virtual int StartupRetroShare() = 0;
 
-	/** Check if core is fully ready, true only after
-	 *  StartupRetroShare() finish and before rsGlobalShutDown() begin
+	/**
+	 * @brief Check if core is fully ready, true only after StartupRetroShare()
+	 *	finish and before rsGlobalShutDown() begin
+	 * @jsonapi{development}
 	 */
 	virtual bool isReady() = 0;
 
-		/****************************************/
-		/* Config */
+	virtual void ConfigFinalSave() = 0;
 
-		virtual void    ConfigFinalSave( ) 			   = 0;
-		virtual void 	rsGlobalShutDown( )			   = 0;
+	/**
+	 * @brief Turn off RetroShare
+	 * @jsonapi{development,manualwrapper}
+	 */
+	virtual void rsGlobalShutDown() = 0;
 
-		/****************************************/
+	virtual bool getPeerCryptoDetails(
+	        const RsPeerId& ssl_id,RsPeerCryptoParams& params ) = 0;
+	virtual void getLibraries(std::list<RsLibraryInfo> &libraries) = 0;
 
-		virtual bool getPeerCryptoDetails(const RsPeerId& ssl_id,RsPeerCryptoParams& params) = 0;
-		virtual void getLibraries(std::list<RsLibraryInfo> &libraries) = 0;
+	/**
+	 * @brief Set shutdown callback, useful if main runlop is controlled by
+	 *	another entity such as QCoreApplication
+	 * @param callback function to call when shutdown is almost complete
+	 */
+	virtual void setShutdownCallback(const std::function<void(int)>& callback) = 0;
 
-	protected:
-		RsControl() {}	// should not be used, hence it's private.
+protected:
+	RsControl() {}	// should not be used, hence it's private.
 };
 
-
-#endif

@@ -33,7 +33,7 @@
 #include "retroshare/rsinit.h"
 #include "plugins/pluginmanager.h"
 #include "util/rsdebug.h"
-//const int p3facemsgzone = 11453;
+#include "jsonapi/jsonapi.h"
 
 #include <sys/time.h>
 #include <time.h>
@@ -92,6 +92,10 @@ void RsServer::rsGlobalShutDown()
 
 	mNetMgr->shutdown(); /* Handles UPnP */
 
+#ifdef RS_JSONAPI
+	if(jsonApiServer) jsonApiServer->shutdown();
+#endif
+
 	rsAutoProxyMonitor::instance()->stopAllRSShutdown();
 
     fullstop() ;
@@ -117,4 +121,6 @@ void RsServer::rsGlobalShutDown()
 // #endif
 
 	AuthGPG::exit();
+
+	mShutdownCallback(0);
 }

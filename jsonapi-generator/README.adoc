@@ -55,7 +55,7 @@ extern RsGxsChannels* rsGxsChannels;
 .Calling the JSON API with curl on the terminal
 [source,bash]
 --------------------------------------------------------------------------------
-curl --data @paramethers.json http://127.0.0.1:9092/rsGxsChannels/createGroup
+curl -u $API_USER --data @paramethers.json http://127.0.0.1:9092/rsGxsChannels/createGroup
 --------------------------------------------------------------------------------
 
 .JSON API call result
@@ -76,7 +76,7 @@ least in two different ways.
 .Calling the JSON API with GET method with curl on the terminal
 [source,bash]
 --------------------------------------------------------------------------------
-curl --get --data-urlencode jsonData@paramethers.json \
+curl -u $API_USER --get --data-urlencode jsonData@paramethers.json \
 	http://127.0.0.1:9092/rsGxsChannels/createGroup
 --------------------------------------------------------------------------------
 
@@ -85,11 +85,52 @@ equivalent to the following.
 
 .Calling the JSON API with GET method and pre-encoded data with curl on the terminal
 --------------------------------------------------------------------------------
-curl http://127.0.0.1:9092/rsGxsChannels/createGroup?jsonData=%7B%0A%20%20%20%20%22group%22%3A%7B%0A%20%20%20%20%20%20%20%20%22mMeta%22%3A%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%22mGroupName%22%3A%22JSON%20test%20group%22%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%22mGroupFlags%22%3A4%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%22mSignFlags%22%3A520%0A%20%20%20%20%20%20%20%20%7D%2C%0A%20%20%20%20%20%20%20%20%22mDescription%22%3A%22JSON%20test%20group%20description%22%0A%20%20%20%20%7D%2C%0A%20%20%20%20%22caller_data%22%3A%22Here%20can%20go%20any%20kind%20of%20JSON%20data%20%28even%20objects%29%20that%20the%20caller%20want%20to%20get%20back%20together%20with%20the%20response%22%0A%7D
+curl -u $API_USER http://127.0.0.1:9092/rsGxsChannels/createGroup?jsonData=%7B%0A%20%20%20%20%22group%22%3A%7B%0A%20%20%20%20%20%20%20%20%22mMeta%22%3A%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%22mGroupName%22%3A%22JSON%20test%20group%22%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%22mGroupFlags%22%3A4%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%22mSignFlags%22%3A520%0A%20%20%20%20%20%20%20%20%7D%2C%0A%20%20%20%20%20%20%20%20%22mDescription%22%3A%22JSON%20test%20group%20description%22%0A%20%20%20%20%7D%2C%0A%20%20%20%20%22caller_data%22%3A%22Here%20can%20go%20any%20kind%20of%20JSON%20data%20%28even%20objects%29%20that%20the%20caller%20want%20to%20get%20back%20together%20with%20the%20response%22%0A%7D
 --------------------------------------------------------------------------------
 
 Note that using +GET+ method +?jsonData=+ and then the JSON data URL encoded are
 added after the path in the HTTP request.
+
+
+== JSON API authentication
+
+Most of JSON API methods require authentication as they give access to
+RetroShare user data, and we don't want any application running on the system
+eventually by other users be able to access private data indiscriminately.
+JSON API support HTTP Basic as authentication scheme, this is enough as JSON API
+server is intented for usage on the same system (127.0.0.1) not over an
+untrusted network.
+If you need to use JSON API over an untrusted network consider using a reverse
+proxy with HTTPS such as NGINX in front of JSON API server.
+If RetroShare login has been effectuated through the JSON API you can use your
+location SSLID as username and your PGP password as credential for the JSON API,
+but we suggests you use specific meaningful and human readable credentials for
+each JSON API client so the human user can have better control over which client
+can access the JSON API.
+
+.NewToken.json
+[source,json]
+--------------------------------------------------------------------------------
+{
+	"token": "myNewUser:myNewPassword"
+}
+--------------------------------------------------------------------------------
+
+.An authenticated client can authorize new tokens like this
+--------------------------------------------------------------------------------
+curl -u $API_USER --data @NewToken.json http://127.0.0.1:9092/jsonApiServer/authorizeToken
+--------------------------------------------------------------------------------
+
+.An unauthenticated JSON API client can request access with
+--------------------------------------------------------------------------------
+curl --data @NewToken.json http://127.0.0.1:9092/jsonApiServer/requestNewTokenAutorization
+--------------------------------------------------------------------------------
+
+When an unauthenticated client request his token to be authorized, JSON API
+server will try to ask confirmation to the human user if possible through
++mNewAccessRequestCallback+, if it is not possible or the user didn't authorized
+the token +false+ is returned.
+
 
 == Offer new RetroShare services through JSON API
 
@@ -230,6 +271,17 @@ data: {"results":[{"size":157631,"hash":"69709b4d01025584a8def5cd78ebbd1a3cf3fd0
 data: {"results":[{"size":668,"hash":"e8845280912ebf3779e400000000000000000000","name":"linux.png"},{"size":70,"hash":"e8845280912ebf3779e400000000000000000000","name":"kali-linux-2016.2-amd64.txt.sha1sum"},{"size":3076767744,"hash":"e8845280912ebf3779e400000000000000000000","name":"kali-linux-2016.2-amd64.iso"},{"size":2780872,"hash":"e8845280912ebf3779e400000000000000000000","name":"openwrt-ar71xx-generic-vmlinux.bin"},{"size":917504,"hash":"e8845280912ebf3779e400000000000000000000","name":"openwrt-ar71xx-generic-vmlinux.lzma"},{"size":2278404096,"hash":"e8845280912ebf3779e400000000000000000000","name":"gentoo-linux-livedvd-amd64-multilib-20160704.iso"},{"size":151770333,"hash":"e8845280912ebf3779e400000000000000000000","name":"flashtool-0.9.23.0-linux.tar.7z"},{"size":2847372,"hash":"e8845280912ebf3779e400000000000000000000","name":"openwrt-ar71xx-generic-vmlinux.elf"},{"size":1310720,"hash":"e8845280912ebf3779e400000000000000000000","name":"openwrt-ar71xx-generic-vmlinux.gz"},{"size":987809,"hash":"e8845280912ebf3779e400000000000000000000","name":"openwrt-ar71xx-generic-vmlinux-lzma.elf"}]}
 
 --------------------------------------------------------------------------------
+
+By default JSON API methods requires client authentication and their wrappers
+are automatically generated by +json-api-generator+.
+In some cases methods need do be accessible without authentication such as
++rsLoginHelper/getLocations+ so in the doxygen documentaion they have the custom
+command +@jsonapi{RS_VERSION,unauthenticated}+.
+Other methods such as +/rsControl/rsGlobalShutDown+ need special care so they
+are marked with the custom doxygen command +@jsonapi{RS_VERSION,manualwrapper}+
+and their wrappers are not automatically generated but written manually into
++JsonApiServer::JsonApiServer(...)+.
+
 
 == A bit of history
 

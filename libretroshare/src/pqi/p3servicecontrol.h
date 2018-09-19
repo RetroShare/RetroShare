@@ -95,8 +95,8 @@ virtual bool getServicePermissions(uint32_t serviceId, RsServicePermissions &per
 virtual bool updateServicePermissions(uint32_t serviceId, const RsServicePermissions &permissions);
 
 	// Get List of Peers using this Service.
-virtual void getPeersConnected(const uint32_t serviceId, std::set<RsPeerId> &peerSet);
-virtual bool isPeerConnected(const uint32_t serviceId, const RsPeerId &peerId);
+virtual void getPeersConnected(uint32_t serviceId, std::set<RsPeerId> &peerSet);
+virtual bool isPeerConnected(uint32_t serviceId, const RsPeerId &peerId);
 
     // Gets the list of items used by that service
 virtual bool getServiceItemNames(uint32_t serviceId,std::map<uint8_t,std::string>& names) ;

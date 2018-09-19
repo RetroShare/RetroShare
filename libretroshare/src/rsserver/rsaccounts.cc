@@ -930,6 +930,14 @@ bool RsAccountsDetail::importIdentityFromString(const std::string &data, RsPgpId
     return AuthGPG::getAuthGPG()->importProfileFromString(data, imported_pgp_id, import_error);
 }
 
+bool RsAccountsDetail::exportIdentityToString(
+        std::string& data, const RsPgpId& pgpId, bool includeSignatures,
+        std::string& errorMsg )
+{
+	return AuthGPG::getAuthGPG()->exportIdentityToString(
+	            data, pgpId, includeSignatures, errorMsg );
+}
+
 bool RsAccountsDetail::copyGnuPGKeyrings()
 {
 	std::string pgp_dir = PathPGPDirectory() ;
@@ -1342,6 +1350,14 @@ bool    RsAccounts::ImportIdentity(const std::string& fname,RsPgpId& imported_pg
 bool    RsAccounts::ImportIdentityFromString(const std::string& data,RsPgpId& imported_pgp_id,std::string& import_error)
 {
     return rsAccountsDetails->importIdentityFromString(data,imported_pgp_id,import_error);
+}
+
+/*static*/ bool RsAccounts::exportIdentityToString(
+        std::string& data, const RsPgpId& pgpId, std::string& errorMsg,
+        bool includeSignatures )
+{
+	return rsAccountsDetails->exportIdentityToString(
+	            data, pgpId, includeSignatures, errorMsg);
 }
 
 void    RsAccounts::GetUnsupportedKeys(std::map<std::string,std::vector<std::string> > &unsupported_keys)

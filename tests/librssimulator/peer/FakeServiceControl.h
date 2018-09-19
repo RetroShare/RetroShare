@@ -15,7 +15,7 @@ class FakeServiceControl: public p3ServiceControl
         {
         }
 
-        virtual void getPeersConnected(const uint32_t serviceId, std::set<RsPeerId> &peerSet)
+	virtual void getPeersConnected(uint32_t serviceId, std::set<RsPeerId> &peerSet)
         {
 	    (void) serviceId;
             std::list<RsPeerId> ids ;

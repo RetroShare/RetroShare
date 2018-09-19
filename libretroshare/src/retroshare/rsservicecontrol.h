@@ -36,7 +36,7 @@ class RsServiceControl;
  * Pointer to global instance of RsServiceControl service implementation
  * @jsonapi{development}
  */
-extern RsServiceControl *rsServiceControl;
+extern RsServiceControl* rsServiceControl;
 
 struct RsServiceInfo : RsSerializable
 {
@@ -131,9 +131,9 @@ public:
 	virtual ~RsServiceControl(){}
 
 	/**
-	 * @brief getOwnServices return a map off all services.
+	 * @brief get a map off all services.
 	 * @jsonapi{development}
-	 * @param[out] info
+	 * @param[out] info storage for service information
 	 * @return always true
 	 */
 	virtual bool getOwnServices(RsPeerServiceInfo &info) = 0;
@@ -197,7 +197,8 @@ public:
 	 * @param[in] serviceId service to look up.
 	 * @param[out] peerSet set of peers using this service.
 	 */
-	virtual void getPeersConnected(const uint32_t serviceId, std::set<RsPeerId> &peerSet) = 0;
+	virtual void getPeersConnected( uint32_t serviceId,
+	                                std::set<RsPeerId>& peerSet ) = 0;
 };
 
 #endif
