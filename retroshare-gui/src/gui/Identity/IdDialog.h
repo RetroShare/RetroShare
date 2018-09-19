@@ -139,6 +139,7 @@ private:
 	void showIdEdit(uint32_t token);
 
 	void clearPerson();
+	void showFriendList();
 
 private:
 	TokenQueue *mIdQueue;

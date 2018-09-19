@@ -37,6 +37,8 @@
 #include "gui/chat/ChatDialog.h"
 #include "gui/Circles/CreateCircleDialog.h"
 #include "gui/common/UIStateHelper.h"
+//meiyousixin - add RS tree item for adding
+#include "gui/common/RSTreeWidgetItem.h"
 #include "gui/gxs/GxsIdDetails.h"
 #include "gui/gxs/RsGxsUpdateBroadcastBase.h"
 #include "gui/msgs/MessageComposer.h"
@@ -50,8 +52,11 @@
 #include "retroshare/rspeers.h"
 #include "retroshare/rsservicecontrol.h"
 
+#include "retroshare/rspeers.h"
+
 #include <iostream>
 #include <algorithm>
+
 
 /******
  * #define ID_DEBUG 1
@@ -1669,8 +1674,8 @@ void IdDialog::insertIdList(uint32_t token)
 		RsGxsIdGroup data = vit->second ;
 
 	    item = NULL;
-
-	    ui->idTreeWidget->insertTopLevelItem(0, ownItem);
+	    //meiyousixin - remove our own items - no need at this time.
+	    //ui->idTreeWidget->insertTopLevelItem(0, ownItem);
 	    ui->idTreeWidget->insertTopLevelItem(0, allItem);
 	    ui->idTreeWidget->insertTopLevelItem(0, contactsItem );  
 
@@ -1686,12 +1691,17 @@ void IdDialog::insertIdList(uint32_t token)
 			if(data.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)
 				ownItem->addChild(item);
 			else if(data.mIsAContact)
-				contactsItem->addChild(item);
+				{ // contactsItem->addChild(item);
+				}
 			else
 				allItem->addChild(item);
 		}
+
 	}
 	
+	// meiyousixin - try to add PeerIds into the contact items
+	showFriendList();
+
 	/* count items */
 	int itemCount = contactsItem->childCount() + allItem->childCount() + ownItem->childCount();
 	ui->label_count->setText( "(" + QString::number( itemCount ) + ")" );
@@ -1699,6 +1709,90 @@ void IdDialog::insertIdList(uint32_t token)
 	navigate(RsGxsId(oldCurrentId));
 	filterIds();
 	updateSelection();
+}
+
+void IdDialog::showFriendList()
+{
+
+  contactsItem->setExpanded(Settings->value("ExpandContacts", QVariant(true)).toBool());
+  std::list<RsPgpId> gpgFriends;
+  rsPeers->getGPGAcceptedList(gpgFriends);
+  std::list<RsPgpId>::iterator gpgIt;
+
+
+  for (gpgIt = gpgFriends.begin(); gpgIt != gpgFriends.end(); ++gpgIt)
+  {
+      RsPgpId gpgId = *gpgIt;
+
+      /* make a widget per friend */
+      QTreeWidgetItem *gpgItem = NULL;
+      QTreeWidgetItem *gpgItemLoop = NULL;
+
+      RsPeerDetails detail;
+      if (rsPeers->getGPGDetails(gpgId, detail))
+      {
+          // don't accept anymore connection, remove from the view
+
+	  std::cerr << "Friend info: RsPeerId: " << detail.id << " gpg_id: " << detail.gpg_id << " name: " << detail.name << " email: " << detail.email << " location: " << detail.location << " org: " << detail.org  ; std::cerr << std::endl;
+	  std::cerr << "Friend info: issuer: " << detail.issuer << " fpr: " << detail.fpr << " authcode: " << detail.authcode ; std::cerr << std::endl;
+	  std::cerr << "Friend info: ownsign: " << detail.ownsign << "hasSignedMe: " << detail.hasSignedMe << " accept_connection: " << detail.accept_connection ;std::cerr << std::endl;
+	  std::cerr << "Friend info: service_perm_flags: " << detail.service_perm_flags << " state: " << detail.state << " actAsServer: " << detail.actAsServer ;std::cerr << std::endl;
+	  std::cerr << "Friend info: connectAddr: " << detail.connectAddr << " connectPort: " << detail.connectPort << " isHiddenNode: " << detail.isHiddenNode ;std::cerr << std::endl;
+	  std::cerr << "Friend info: hiddenNodeAddress: " << detail.hiddenNodeAddress << "hiddenNodePort: " << detail.hiddenNodePort << " hiddenType: " << detail.hiddenType ;std::cerr << std::endl;
+
+	  std::cerr << "Standard Node info: localAddr: " << detail.localAddr << " localPort: " << detail.localPort << " extAddr: " << detail.extAddr << " extPort: " << detail.extPort << "dyndns: " << detail.dyndns ; std::cerr << std::endl;
+	  std::cerr << "Friend info: netMode: " << detail.netMode << " vs_disc: " << detail.vs_disc << " vs_dht: " << detail.vs_dht ;std::cerr << std::endl;
+	  std::cerr << "Friend info: lastConnect: " << detail.lastConnect << " lastUsed: " << detail.lastUsed << " connectState: " << detail.connectState << " connectStateString:" << detail.connectStateString << " connectPeriod:" << detail.connectPeriod << " foundDHT: " << detail.foundDHT ;std::cerr << std::endl;
+	   std::cerr << "Friend info: wasDeniedConnection: " << detail.wasDeniedConnection << " deniedTS: " << detail.deniedTS << " linkType: " << detail.linkType ;std::cerr << std::endl;
+
+	  // create gpg item and add it to tree
+
+	  QTreeWidgetItem *item = new TreeWidgetItem();
+
+
+          item->setText(RSID_COL_NICKNAME, QString::fromUtf8(detail.name.c_str()).left(RSID_MAXIMUM_NICKNAME_SIZE));
+          item->setText(RSID_COL_KEYID, QString::fromStdString(detail.id.toStdString()));
+
+
+          item->setForeground(RSID_COL_NICKNAME,QBrush(Qt::black));
+          item->setForeground(RSID_COL_KEYID,QBrush(Qt::black));
+          item->setForeground(RSID_COL_IDTYPE,QBrush(Qt::black));
+          item->setForeground(RSID_COL_VOTES,QBrush(Qt::black));
+
+
+//          item->setData(RSID_COL_KEYID, Qt::UserRole,QVariant(item_flags)) ;
+//          item->setTextAlignment(RSID_COL_VOTES, Qt::AlignRight | Qt::AlignVCenter);
+//          item->setData(RSID_COL_VOTES,Qt::DecorationRole, idd.mReputation.mOverallReputationLevel);
+//          item->setData(RSID_COL_VOTES,SortRole, idd.mReputation.mOverallReputationLevel);
+
+          contactsItem->addChild(item);
+        }
+
+//          gpgItem = new RSTreeWidgetItem(mCompareRole, TYPE_GPG); //set type to 0 for custom popup menu
+
+//          /* Add gpg item to the list. Add here, because for setHidden the item must be added */
+
+//          //peerTreeWidget->addTopLevelItem(gpgItem);
+
+
+//          gpgItem->setChildIndicatorPolicy(QTreeWidgetItem::DontShowIndicatorWhenChildless);
+//          gpgItem->setTextAlignment(COLUMN_NAME, Qt::AlignLeft | Qt::AlignVCenter);
+
+//          /* not displayed, used to find back the item */
+//          QString strID = QString::fromStdString(detail.gpg_id.toStdString());
+//          gpgItem->setData(COLUMN_DATA, ROLE_ID, strID);
+//          gpgItem->setText(COLUMN_ID, strID);
+//          gpgItem->setData(COLUMN_ID, ROLE_SORT_NAME, strID);
+//          gpgItem->setData(COLUMN_ID, ROLE_FILTER, strID);
+
+          /* Sort data */
+//          for (int i = 0; i < columnCount; ++i)
+//          {
+//              gpgItem->setData(i, ROLE_SORT_GROUP, 2);
+//              gpgItem->setData(i, ROLE_SORT_STANDARD_GROUP, 1);
+//          }
+
+    }
 }
 
 void IdDialog::requestIdDetails()

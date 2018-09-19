@@ -103,9 +103,9 @@
 #define PEER_STATE_INACTIVE     5
 #define PEER_STATE_OFFLINE      6
 
-/******
- * #define FRIENDS_DEBUG 1
- *****/
+/******/
+  #define FRIENDS_DEBUG 1
+ /*****/
 
 Q_DECLARE_METATYPE(ElidedLabel*)
 
@@ -1468,8 +1468,8 @@ QTreeWidgetItem *FriendList::getCurrentPeer() const
 
     /* Display the columns of this item. */
     QString out = "CurrentPeerItem: \n";
-
-    for(int i = 1; i < COLUMN_COUNT; ++i)
+    int columnCount = ui->peerTreeWidget->columnCount();
+    for(int i = 1; i < columnCount; ++i)
     {
         QString txt = item -> text(i);
         out += QString("\t%1:%2\n").arg(i).arg(txt);
