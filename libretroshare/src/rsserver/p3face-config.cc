@@ -33,7 +33,10 @@
 #include "retroshare/rsinit.h"
 #include "plugins/pluginmanager.h"
 #include "util/rsdebug.h"
-#include "jsonapi/jsonapi.h"
+
+#ifdef RS_JSONAPI
+#	include "jsonapi/jsonapi.h"
+#endif // ifdef RS_JSONAPI
 
 #include <sys/time.h>
 #include <time.h>
