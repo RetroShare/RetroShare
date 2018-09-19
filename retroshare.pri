@@ -119,7 +119,7 @@ CONFIG *= rs_gxs_trans
 
 # To enable GXS based async chat append the following assignation to qmake
 # command line "CONFIG+=rs_async_chat"
-CONFIG *= no_rs_async_chat
+CONFIG *= rs_async_chat
 rs_async_chat:CONFIG -= no_rs_async_chat
 
 # To disable bitdht append the following assignation to qmake command line
