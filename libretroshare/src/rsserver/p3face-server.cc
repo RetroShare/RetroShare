@@ -83,7 +83,8 @@ const double RsServer::kickLimit = 0.15;
 
 
 RsServer::RsServer() :
-    coreMutex("RsServer"), coreReady(false)
+    coreMutex("RsServer"), mShutdownCallback([](int){}),
+    coreReady(false)
 {
 	// This is needed asap.
 	//
