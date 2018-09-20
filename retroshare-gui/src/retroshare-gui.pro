@@ -170,7 +170,7 @@ win32-g++ {
 
 	OBJECTS_DIR = temp/obj
 
-    dLib = ws2_32 wsock32 gdi32 uuid ole32 iphlpapi crypt32 winmm
+    dLib = ws2_32 gdi32 uuid ole32 iphlpapi crypt32 winmm
     LIBS *= $$linkDynamicLibs(dLib)
 
 	RC_FILE = gui/images/retroshare_win.rc

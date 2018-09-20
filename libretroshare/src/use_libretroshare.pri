@@ -57,6 +57,9 @@ rs_jsonapi {
     QMAKE_LIBDIR *= $$clean_path($${RESTBED_BUILD_PATH}/library/)
     # Using sLibs would fail as librestbed.a is generated at compile-time
     LIBS *= -L$$clean_path($${RESTBED_BUILD_PATH}/library/) -lrestbed
+    win32-g++ {
+	LIBS += -lwsock32
+    }
 }
 
 linux-* {
