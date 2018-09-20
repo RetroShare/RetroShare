@@ -1,0 +1,11 @@
+/*
+  Tooltip Markup
+  <div class="tooltip fade bottom in" style="top: 39px; left: 586.90625px; display: block;">
+    <div class="tooltip-arrow" style=""></div>
+    <div class="tooltip-inner">first tooltip</div>
+  </div>
+*/
+.tooltip .tooltip-inner {
+    word-wrap: break-word;
+    background-color: black;
+}

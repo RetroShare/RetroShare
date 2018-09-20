@@ -1,0 +1,96 @@
+
+
+.new-group .multi-select .row {
+    margin: 0px;
+    margin-bottom: 10px;
+}
+
+#n2n-view .modal-body{
+    padding: 0;
+}
+#n2n-view .modal-body table tr th, #n2n-view .modal-body table tr td{
+    text-align: center!important;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    max-width: 100px;
+}
+#n2n-view .modal-body table tr td input{
+    max-width: 140px;
+}
+
+#n2n-view .modal-content{
+    width: 520px;
+}
+.row-decrypt .name
+{
+float: left;
+width: 100%;
+overflow: hidden;
+}
+.chat-controls .connection-controls
+{
+    display: block !important;
+}
+
+@media only screen and (max-width: 992px) {
+#main-menu .menu-items{
+    display: none;
+}
+}
+
+
+/* TABLET: 992px - 1200px */
+@media only screen and (min-width: 992px) and (max-width: 1199px){
+
+}
+
+/*Phone: 768px - 992px */
+@media only screen and (min-width: 768px) and (max-width: 991px){
+
+}
+
+/* Phone: 480px - 768px */
+@media only screen and (min-width: 480px) and (max-width: 767px){
+
+}
+
+@media only screen and (max-width: 479px) {
+
+}
+.slimScrollBar
+{
+    width: 9px !important;
+}
+.hsplitter{
+    left: 0px;
+    width: 100%;
+    position: absolute;
+    cursor: row-resize;
+    z-index: 9;
+    height: 10px;
+    box-sizing: border-box;
+    text-align: center;
+    bottom: 145px;
+}
+
+.hsplitter i{
+    color: #82D1F2;
+    font-size: 9px;
+    top: -6px;
+    position: relative;
+    margin-top: -10px;
+}
+.hsplitter:hover{
+    background: #D9F4FF;
+    opacity: 0.8;
+    filter: alpha(opacity=80);
+}
+
+.ekko-lightbox .modal-body
+{
+    background: url("../img/loading2.gif") no-repeat scroll center center transparent;
+    min-height: 200px;
+    text-align: center;
+}
+.volume_control .fa-times{font-size: 18px !important; margin-top: 5px; float: right; margin-right: 5px;}

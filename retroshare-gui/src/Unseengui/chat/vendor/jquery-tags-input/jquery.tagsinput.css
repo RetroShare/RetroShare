@@ -1,0 +1,80 @@
+div.tagsinput
+{
+  background: #FFF;
+  border: 1px solid #CCC;
+  /*height: 100px;*/
+  overflow-y: auto;
+  padding: 5px 5px 0;
+  /*width: 300px;*/
+  margin-bottom: 10px;
+  -webkit-font-smoothing:auto;
+}
+div.tagsinput span.tag
+{
+  background: #eee;
+  border: 1px solid #ddd;
+  color: #333;
+  display: block;
+  float: left;
+  font-size: 12px;
+  line-height: 12px;
+  margin-bottom: 4px;
+  margin-right: 4px;
+  -moz-border-radius: 2px;
+  -webkit-border-radius: 2px;
+  border-radius: 2px;
+  padding: 3px 14px 3px 8px;
+  text-decoration: none;
+  position: relative;
+  box-shadow: 0 0 4px rgba(0,0,0,.1);
+}
+div.tagsinput span.tag a
+{
+  background: url(close.png) no-repeat center;
+  text-indent: -9999px;
+  overflow: hidden;
+  display: block;
+  position: absolute;
+  right: 0;
+  height:100%;
+  width:20px;
+  top:0;
+  opacity: .6;
+}
+div.tagsinput span.tag a:hover {
+  opacity: 1;
+}
+
+div.tagsinput input
+{
+  -moz-border-radius: 2px;
+  -webkit-border-radius: 2px;
+  border-radius: 2px;
+  background: transparent;
+  border: none;
+  color: #333;
+  font-size: 12px;
+  margin: 0px;
+  margin-bottom: 5px;
+  margin-right: 5px;
+  outline: 0px;
+  padding: 3px;
+  line-height: 12px;
+  width: 80px;
+}
+div.tagsinput div
+{
+  display: block;
+  float: left;
+}
+.tags_clear
+{
+  clear: both;
+  height: 0px;
+  width: 100%;
+}
+.not_valid
+{
+  background: #FBD8DB !important;
+  color: #90111A !important;
+}

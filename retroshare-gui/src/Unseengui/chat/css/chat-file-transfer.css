@@ -1,0 +1,277 @@
+.clearfix {
+  *zoom: 1;
+}
+.clearfix:before,
+.clearfix:after {
+  display: table;
+  content: "";
+  line-height: 0;
+}
+.clearfix:after {
+  clear: both;
+}
+.hide-text {
+  font: 0/0 a;
+  color: transparent;
+  text-shadow: none;
+  background-color: transparent;
+  border: 0;
+}
+.input-block-level {
+  display: block;
+  width: 100%;
+  min-height: 30px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+.chat-list .file {
+  *zoom: 1;
+  -webkit-transition: background .25s linear, border-color .25s linear;
+  -moz-transition: background .25s linear, border-color .25s linear;
+  -o-transition: background .25s linear, border-color .25s linear;
+  transition: background .25s linear, border-color .25s linear;
+  background: #fff;
+  padding: 10px 10px 1px;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  border: solid 1px #ddd;
+  position: relative;
+  min-height: 50px;
+  margin: 12px 70px 12px 0px;
+  -webkit-box-shadow: 0 0 6px rgba(0, 0, 0, 0.05);
+  -moz-box-shadow: 0 0 6px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.05);
+  line-height: 1em;
+  min-height: 64px;
+
+}
+.chat-list .file .preview{
+    float: left;
+    padding-right: 10px;
+}
+.chat-list .file .preview img{
+    max-height: 50px;
+}
+.chat-list .file:before,
+.chat-list .file:after {
+  display: table;
+  content: "";
+  line-height: 0;
+}
+.chat-list .file:after {
+  clear: both;
+}
+.chat-list .file .file-info {
+
+}
+.chat-list .file .file-info a.btn-decrypt-file{
+    min-width: 130px;
+}
+.chat-list .file .file-info .infoText{
+    margin-right: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 3px 0 3px 0;
+}
+.chat-list .file .progress-bar {
+  margin: 0 0;
+  width: 100%;
+  -webkit-border-top-right-radius: 4px;
+  -moz-border-radius-topright: 4px;
+  border-top-right-radius: 4px;
+  -webkit-border-top-left-radius: 4px;
+  -moz-border-radius-topleft: 4px;
+  border-top-left-radius: 4px;
+  -webkit-border-bottom-right-radius: 0;
+  -moz-border-radius-bottomright: 0;
+  border-bottom-right-radius: 0;
+  -webkit-border-bottom-left-radius: 0;
+  -moz-border-radius-bottomleft: 0;
+  border-bottom-left-radius: 0;
+  border: none;
+  border-bottom: solid 1px #ddd; 
+}
+.chat-list .file .file-meta,
+.chat-list .file .file-description {
+  overflow: hidden;
+  font-size: 11px;
+  color: #666;
+  font-style: italic;
+  z-index: 999;
+}
+.chat-list .file .describe-link {
+    font-size: 11px;
+    font-style: italic;
+  z-index: 999;
+}
+.chat-list .file .file-meta {
+}
+.chat-list .file .file-description {
+}
+.chat-list .file .input-desc-file {
+}
+.chat-list .file .input-desc-file .btn {
+    margin: 0 10px 10px;
+    position: inherit;
+}
+.chat-list .file .desc-file {
+    width:250px;
+}
+.chat-list .file p {
+  margin: 0 0 2px;
+}
+.chat-list .file .btn {
+  position: absolute;
+  right: 12px;
+  top: 22px;
+  overflow: hidden;
+  max-width: 30%;
+}
+.chat-list .file .btn span{
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.chat-list .file .icon-unlock {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    line-height: 18px;
+    vertical-align: text-top;
+    background-repeat: no-repeat;
+    background: url(../img/download_lock.png)!important;
+}
+#n2n-wapper .notice{
+    position: absolute;
+    z-index: 1000;
+    font-size: 14px;
+    float: left;
+    width: 100%;
+    padding: 5px 22px 13px 17px;
+    text-align: center;
+}
+#n2n-wapper .n2n-d2d-area {
+    background-color: #ccc;
+    text-align: center;
+    font-size: 72px;
+    opacity: 0.2;
+    font-style: italic;
+    padding: 30px;
+    width: 100%;
+    float: left;
+    margin-bottom: 10px;
+}
+
+i.encrypt-loading {
+  background: url(../img/lock-loading.gif) center no-repeat;
+  width: 24px;
+  height: 24px;
+  display:inherit;
+}
+
+i.decrypt-loading {
+  background: url(../img/unlock-loading.gif) center no-repeat;
+  width: 24px;
+  height: 24px;
+  display:inherit;
+}
+
+i.encrypt-loaded {
+  background: url(../img/green-check.png) center no-repeat;
+  width: 35px;
+  height: 24px;
+  display:inline-block;
+}
+
+
+.chat-list .file .decrypting {
+    position: absolute;
+    right: 172px;
+    top: 12px;
+}
+.progress-bar {
+  background: #fff;
+  height: 8px;
+  border-radius: 4px;
+  border: solid 1px #ccc;
+  width: 200px;
+  position: relative;
+  overflow: hidden;
+  -webkit-transition: background .25s linear, border-color .25s linear;
+  -moz-transition: background .25s linear, border-color .25s linear;
+  -o-transition: background .25s linear, border-color .25s linear;
+  transition: background .25s linear, border-color .25s linear;
+}
+.progress-bar .progress-value {    
+  -webkit-transition: right .25s ease, background .25 linear;
+  -moz-transition: right .25s ease, background .25 linear;
+  -o-transition: right .25s ease, background .25 linear;
+  transition: right .25s ease, background .25 linear;
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0; 
+  width:0%;
+  background: #4f6;
+}
+.progress-blue
+{
+    height: 10px;
+}
+.progress-blue .progress-value{    
+  background: #28caff !important;
+  margin-top: 5px;
+}
+.progress-blue .progress-value .file-meta
+{    
+ margin-top:-5px;
+ font-weight: bold;
+ white-space: nowrap;
+  overflow: auto;
+    padding-right: 0;    
+    width: auto;
+}
+
+.show-encrypted .chat-list .file {
+  background: #333;
+  border: solid 1px #363636;
+}
+.show-encrypted .chat-list .file .progress-bar {
+  border-bottom: solid 1px #363636;
+}
+.show-encrypted .progress-bar {
+  background: #000;
+  border: solid 1px #222;
+}
+.show-encrypted .progress-bar .progress-value {
+  background: #3e5;
+}
+
+.file .file-info a {color:white!important;}
+
+.jquery-hiden-sendfile {
+    position: absolute;
+    top: -9999px;
+}
+
+div.encrypt-downloading {
+    height: 14px;
+    background-color: blue;
+    overflow: hidden;
+    width: 100px;
+    position: absolute;
+    margin-top: 10px;
+}
+
+div.encrypt-downloading i{
+    position: absolute;
+    left: 0;
+    right: -32px;
+    height: 14px;
+    background-color: blue;
+    background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAQCAYAAAB3AH1ZAAAAQ0lEQVR42uXNoQ0AIBTEUPZf4o96nKsiCEQFTZ7uupXkqE3lwfw9T+LOy52XNIc0hzSHNYc0hzSHNIc0hzSHNIc0xwb6PzfnUz+PRwAAAABJRU5ErkJggg==");
+    -webkit-animation: stripe-anim .5s infinite linear;
+    -moz-animation: stripe-anim .5s infinite linear;
+}

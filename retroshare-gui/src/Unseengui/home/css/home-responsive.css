@@ -1,0 +1,43 @@
+/* Custom CSS */
+@media only screen   and (max-width: 480px){
+    p.intro {
+        margin: 5px 0px;
+    }
+    .nav>li>a {
+         padding: 8px 7px;
+     }
+}
+/* TABLET: 992px - 1200px */
+@media only screen and (min-width: 992px) and (max-width: 1199px){
+    #content{padding: 30px 0px 0px 10px;}
+    img.unseen-monitor {width: 250px;margin-top: 30px;}
+    .container { width: 100%  }
+}
+
+/*Phone: 768px - 992px */
+@media only screen and (min-width: 768px) and (max-width: 991px){
+    #sidebar {margin-top: 30px;}
+    input#usernamePart { width: 85%;}
+}
+
+/* Phone: 480px - 768px */
+@media only screen and (min-width: 480px) and (max-width: 767px){
+    #sidebar {margin-top: 30px;} #header .container{padding:0px;}
+    img.unseen-monitor {width: 100%;display: none;}
+    #content {padding: 30px 20px;margin: -30px -15px 0px;}
+    .copyright {text-align: center;} #logo{margin-left:15px;}
+    input#usernamePart { width: 60%;} #main-menu.in{margin-top: 24px;}
+    nav.footer-nav, p.version {float: none;width: 100%;text-align: center;}
+    ul.footer-menu{display: inline-block;padding: 0px;}
+}
+
+@media only screen and (max-width: 479px) {
+    #beta, .languages{display: none !important;}
+    #sidebar {margin-top: 30px;} #header .container{padding:0px;}
+    img.unseen-monitor {width: 100%;display: none;}
+    #content {padding: 20px 8px;margin: -30px -15px 0px;}
+    .copyright {text-align: center;} #logo{margin-left:15px;}
+    input#usernamePart { width: 100%;} #main-menu.in{margin-top: 24px;}
+    nav.footer-nav, p.version {float: none;width: 100%;text-align: center;}
+    ul.footer-menu{display: inline-block;padding: 0px;}
+}

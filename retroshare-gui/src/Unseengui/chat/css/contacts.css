@@ -1,0 +1,45 @@
+/* Contact List Styles */
+
+#request .pane-content{overflow: auto;}
+#request .pane-content{top:34px; }
+.unseen-recent-list{top:0px; bottom:135px;}
+.unseen-recent-list ul li .status-bubble{margin-top: 10px;}
+ul.contact-list-ul li img.img-circle, ul.search-list-ul li img.img-circle,ul.group-list-ul li img.img-circle, ul.recent-list-ul  li img {width: 32px;height: 32px;float: left;margin-right:5px;}
+ul.contact-list-ul li,ul.search-list-ul li,ul.group-list-ul li,ul.recent-list-ul li {padding: 5px 10px;list-style: none;display: inline-block;width: 100%;position: relative;height: 45px;margin-bottom: -5px; border:solid 1px transparent; }
+ul.contact-list-ul li:hover,ul.contact-list-ul li:focus, ul.contact-list-ul li.active,ul.group-list-ul li:hover,ul.group-list-ul li li:focus, ul.group-list-ul li li.active,
+ul.recent-list-ul li:hover,ul.search-list-ul li:hover,ul.recent-list-ul li:focus, ul.recent-list-ul li.active
+{background: rgba(0,0,0,0.3);border-top: 1px solid #1C1c1c;border-bottom: 1px solid #1C1c1c;}
+ul.contact-list-ul li .actions,ul.search-list-ul li .actions,ul.group-list-ul li .group , ul.recent-list-ul li .actions{ max-width: 80px; }
+ul.contact-list-ul li .actions,ul.search-list-ul li .actions,ul.group-list-ul li .actions, ul.recent-list-ul  .actions {float: right;width: 22px;padding-top: 3px;}
+ul.contact-list-ul li .contact,ul.search-list-ul li .contact , ul.group-list-ul li .group ,ul.search-list-ul li .group , ul.recent-list-ul li .contact ,ul.recent-list-ul li .group  {float: left;width: 180px;}
+ul.contact-list-ul li .actions a.dropdown-toggle,ul.search-list-ul li .actions a.dropdown-toggle,ul.group-list-ul li .actions a.dropdown-toggle,ul.recent-list-ul li .actions a.dropdown-toggle
+{padding: 0px;width: 22px;height: 22px;border-radius: 50%;background: #31373F;color: #fff;border: 1px solid #1e2834;}
+ul.contact-list-ul li .actions a.dropdown-toggle:hover,ul.search-list-ul li .actions a.dropdown-toggle:hover,ul.group-list-ul li .actions a.dropdown-toggle:hover,ul.recent-list-ul li .actions a.dropdown-toggle:hover {background: #485566;}
+
+ul.group-list-ul li span.name {left: 70px;}
+.contact span.status-text {position: absolute;top: 26px;bottom: 0;right: 33px;left: 62px;padding-bottom: 4px;height: 20px;overflow: hidden;font-size: 10px;font-style: italic;white-space: nowrap;text-overflow: ellipsis;}
+span.unread-count, .folded ul#user-menu li .badge {position: absolute;left: 30px;top: 0px;color: #6d582e;height: 22px;text-align: center;line-height:18px;width: 22px;border: 2px solid #fff;font-size: 10px;font-weight: bold;margin-top: 17px;background: #fcd11b; /* Old browsers */  background: -moz-linear-gradient(top,  #fcd11b 0%, #fdb612 50%, #ff9b15 100%); /* FF3.6+ */  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#fcd11b), color-stop(50%,#fdb612), color-stop(100%,#ff9b15)); /* Chrome,Safari4+ */  background: -webkit-linear-gradient(top,  #fcd11b 0%,#fdb612 50%,#ff9b15 100%); /* Chrome10+,Safari5.1+ */  background: -o-linear-gradient(top,  #fcd11b 0%,#fdb612 50%,#ff9b15 100%); /* Opera 11.10+ */  background: -ms-linear-gradient(top,  #fcd11b 0%,#fdb612 50%,#ff9b15 100%); /* IE10+ */  background: linear-gradient(to bottom,  #fcd11b 0%,#fdb612 50%,#ff9b15 100%); /* W3C */  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcd11b', endColorstr='#ff9b15',GradientType=0 ); /* IE6-9 */;border-radius: 50%;}
+ul.contact-dropdown-menu,ul.group-dropdown-menu {position: relative;left: -193px;top: 10px;height: 36px;margin-bottom: 10px;width: 220px;border-radius: 0px;background-color: #475464;padding: 0px;box-shadow: none;z-index: 99;}
+ul.contact-dropdown-menu li,ul.group-dropdown-menu li {width: 36px;height: 35px;float: left;padding: 0px;border-left: 1px solid #2F363F;}
+ul.contact-dropdown-menu li a,ul.group-dropdown-menu li a{width: 36px;height: 33px;line-height: 35px;text-align: center;padding: 0px;color: #fff;border-right: 2px solid #676F79;}
+
+.search-list-ul > li .actions > ul.dropdown-menu  a.delete-link, .contact-list-ul > li .actions > ul.dropdown-menu  a.delete-link,ul.group-list-ul > li > .actions > ul.dropdown-menu a.delete-link,
+ul.recent-list-ul > li > .actions > ul.dropdown-menu a.delete-link {color: red;}
+.contact-list-ul li .tooltip.bottom .tooltip-arrow{border-bottom-color: #30b7f1;}
+.contact-list-ul li .tooltip-inner {background-color: #30b7f1;}
+.contact-list-ul li .tooltip.in {opacity: 1;}
+
+.nav-chat-list-item ul li span.name  {
+    position: absolute;
+    bottom: 0;
+    right: 33px;
+    left: 62px;
+    top: 11px;
+    height: 20px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+#unseen-user-menu button.btn-add-contact{
+    width: 85%;
+}

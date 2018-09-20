@@ -1,0 +1,183 @@
+.clearfix {
+    *zoom: 1;
+}
+
+.clearfix:before,
+.clearfix:after {
+    display: table;
+    content: "";
+    line-height: 0;
+}
+
+.clearfix:after {
+    clear: both;
+}
+
+.hide-text {
+    font: 0/0 a;
+    color: transparent;
+    text-shadow: none;
+    background-color: transparent;
+    border: 0;
+}
+
+.input-block-level {
+    display: block;
+    width: 100%;
+    min-height: 30px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+
+
+.detailed-requests-list {
+    width: 100%;
+    height: auto;
+    overflow: auto;
+    padding-top: 10px;
+}
+.detailed-requests-list h3,.pending-requests-list h3{
+    font-size: 20px;
+}
+.detailed-request {
+    float: left;
+}
+
+.contact-requests {
+    position: relative;
+    padding-top: 9px;
+    right: 0px;
+    margin-left: 0px;
+    width: 100%;
+    height: auto;
+    overflow: auto;
+}
+
+.contact-requests h3 {
+    text-align: center;
+}
+
+.pending-requests-wrap {
+    float: left;
+    width: 100%;
+}
+
+.pending-requests-ul {
+    float: left;
+    width: 100%;
+}
+
+.contact-requests h4 {
+    font-size: 12px;
+    position: absolute;
+    margin: 0;
+    top: 0;
+    width: 100%;
+    text-align: center;
+    font-weight: 400;
+    color: #aaa;
+}
+
+.contact-requests h4 span {
+    display: inline-block;
+    padding: 0 5px;
+    background: #fff;
+}
+
+.contact-requests ul {
+    border-bottom: solid 1px #eee;
+    border-top: solid 1px #eee;
+    padding: 16px 0 12px 0;
+    line-height: 1em;
+    height: auto;
+    max-height: 400px;
+}
+
+.contact-requests ul img {
+    width: 32px;
+    display: none;
+}
+
+.contact-requests ul li {
+    position: relative;
+    padding: 0 12px;
+    margin-top: 10px;
+    display: block;
+    font-weight: 400;
+    line-height: 15px;
+}
+
+.contact-requests ul li:first-child {
+    margin-top: 0;
+}
+
+.contact-requests ul li span {
+    display: block;
+}
+
+.contact-requests ul li span.request-type {
+    color: #F5E4E4;
+    font-size: 11px;
+    font-style: italic;
+}
+
+.contact-requests ul li div.actions {
+    position: absolute;
+    right: 12px;
+    top: 2px;
+}
+
+.contact-requests ul li div.actions > i {
+    margin-top: 4px;
+}
+
+.contact-requests ul li a.btn {
+    padding: 1px 1px 1px 4px;
+    height: 20px;
+    line-height: 20px;
+}
+
+.contact-requests ul li a.dropdown-toggle i {
+    color: white;
+}
+
+.contact-requests ul li a.btn-success {
+    right: 40px;
+}
+
+.contact-requests ul li .dropdown-menu {
+    right: 34px;
+    left: auto;
+    top: -9px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+}
+
+.contact-requests ul li .dropdown-menu li {
+    padding: 0;
+}
+
+.contact-requests ul li .dropdown-menu:before {
+    content: '';
+    display: inline-block;
+    border-top: 7px solid transparent;
+    border-bottom: 7px solid transparent;
+    border-left: 7px solid #ccc;
+    border-left-color: rgba(0, 0, 0, 0.2);
+    position: absolute;
+    top: 11px;
+    right: -8px;
+}
+
+.contact-requests ul li .dropdown-menu:after {
+    content: '';
+    display: inline-block;
+    border-top: 6px solid transparent;
+    border-bottom: 6px solid transparent;
+    border-left: 6px solid #ffffff;
+    position: absolute;
+    top: 12px;
+    right: -6px;
+}

@@ -1,0 +1,285 @@
+.modal.new-contact {
+  /*margin-left: -250px;*/
+  font-size: 12px;
+  line-height: 1.4em;
+  -webkit-font-smoothing: auto;
+  color: #444;
+}
+.modal.new-contact .modal-dialog
+{
+    width: 400px;
+}
+.modal.new-contact .modal-body  {
+    padding: 0;
+}
+.modal.new-contact .modal-header
+{
+    background: none repeat scroll 0% 0% rgb(52, 176, 251);
+    border-bottom: solid 1px gray;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+}
+.modal.new-contact .modal-title
+{
+    font-size: 24px;
+    font-weight: bold;
+    color: #000;
+    padding-top: 5px;
+}
+.modal.new-contact .fa-plus-circle
+{
+    color: #fff;
+    margin-right: 5px;
+}
+.modal.new-contact .find-column,
+.modal.new-contact .invite-column {
+  padding-top: 10px;
+  float: left;
+  width: 100%;
+}
+.modal.new-contact .find-column > .wrap,
+.modal.new-contact .invite-column > .wrap {
+  margin: 0 14px;
+}
+.modal.new-contact .mail-icon {
+  position: relative;
+  top: 5px;
+}
+.modal.new-contact .mail-icon.gmail {
+  background: url(../img/gmail-h24.png) no-repeat center;
+  height: 18px;
+  width: 28px;
+}
+.modal.new-contact .mail-icon.yahoo {
+  background: url(../img/yahoo-icon.png) no-repeat center;
+  height: 18px;
+  top: 4px;
+  width: 28px;
+}
+.modal.new-contact .mail-icon.hotmail {
+  background: url(../img/hotmail-icon.png) no-repeat center;
+  height: 18px;
+  top: 4px;
+  width: 28px;
+}
+.modal.new-contact .dropdown-menu li a {
+  line-height: 27px;
+}
+.modal.new-contact .contact-result-list {
+  overflow: auto;
+  height: 240px;
+  border: 2px solid #C4E6FF;
+}
+.modal.new-contact .contact-result-list ul {
+  margin: 0 0 10px;
+  list-style: none;
+  border-top: solid 1px #ddd;
+}
+.modal.new-contact .contact-result-list li {
+  position: relative;
+}
+
+.modal.new-contact .contact-result-list img {
+  width: 24px;
+  margin-right: 5px;
+}
+.modal.new-contact .contact-result-list a.add {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  margin-top: -11px;
+  height: 18px;
+  width: 16px;
+  padding: 0 0 0 3px;
+  line-height: 18px;
+}
+.modal.new-contact .contact-result-list .title {
+  padding: 5px 10px;
+}
+.modal.new-contact .contact-result-list h5 {
+  margin: 0;
+}
+.modal.new-contact .contact-result-list input[type=checkbox] {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  margin-top: -6px;
+}
+.modal.new-contact .has-header .contact-result-list {
+  height: 200px;
+}
+.modal.new-contact .has-header .contact-result-list ul {
+  border-top: none;
+}
+
+.modal.new-contact .search-container .tab-content {
+  padding: 10px;
+}
+.modal.new-contact .search-container .nav-tabs {
+  color: #ffffff;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+  background: #33aaff;
+  background-color: #1fa1ff;
+  background-image: -moz-linear-gradient(top, #33aaff, #0095ff);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#33aaff), to(#0095ff));
+  background-image: -webkit-linear-gradient(top, #33aaff, #0095ff);
+  background-image: -o-linear-gradient(top, #33aaff, #0095ff);
+  background-image: linear-gradient(to bottom, #33aaff, #0095ff);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff33aaff', endColorstr='#ff0095ff', GradientType=0);
+  border-color: #0095ff #0095ff #0068b3;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+  border-bottom: solid 1px #33aaff;
+  -webkit-box-shadow: inset 0 1px 0 rgba(255,255,255,.2);
+  -moz-box-shadow: inset 0 1px 0 rgba(255,255,255,.2);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.2);
+}
+.modal.new-contact .search-container .nav-tabs .dropdown-menu {
+  margin: 0 0 0 -1px;
+}
+.modal.new-contact .search-container .nav-tabs > .active > a,
+.modal.new-contact .search-container .nav-tabs > li > a,
+.modal.new-contact .search-container .nav-tabs > .active > a:hover,
+.modal.new-contact .search-container .nav-tabs > li > a:hover,
+.modal.new-contact .search-container .nav-tabs > .active > a:focus,
+.modal.new-contact .search-container .nav-tabs > li > a:focus {
+  padding: 8px;
+  border-right: solid 1px #0086e5;
+  border-color: #0086e5;
+  border-left: none;
+  border-top: none;
+  border-bottom: none;
+  top: 0;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+  margin: 0;
+  color: #fff;
+  background: transparent;
+}
+.modal.new-contact .search-container .nav-tabs > .active:first-child > a,
+.modal.new-contact .search-container .nav-tabs > li:first-child > a {
+  border-left: none;
+}
+.modal.new-contact .search-container .nav-tabs > .active:first-child > a:hover,
+.modal.new-contact .search-container .nav-tabs > li:first-child > a:hover,
+.modal.new-contact .search-container .nav-tabs > .active:first-child > a:focus,
+.modal.new-contact .search-container .nav-tabs > li:first-child > a:focus {
+  border-left: none;
+}
+.modal.new-contact .search-container .nav-tabs > .active > a,
+.modal.new-contact .search-container .nav-tabs > .active > a:hover,
+.modal.new-contact .search-container .nav-tabs > .active > a:focus {
+  -webkit-box-shadow: inset 0 1px 0 rgba(255,255,255,.2), 0 1px 2px rgba(0,0,0,.05);
+  -moz-box-shadow: inset 0 1px 0 rgba(255,255,255,.2), 0 1px 2px rgba(0,0,0,.05);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.2), 0 1px 2px rgba(0,0,0,.05);
+  background: #0077cc;
+}
+.modal.new-contact .search-container .nav-tabs > li > a:hover,
+.modal.new-contact .search-container .nav-tabs > li > a:focus {
+  -webkit-box-shadow: inset 0 1px 0 rgba(255,255,255,.2), 0 1px 2px rgba(0,0,0,.05);
+  -moz-box-shadow: inset 0 1px 0 rgba(255,255,255,.2), 0 1px 2px rgba(0,0,0,.05);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.2), 0 1px 2px rgba(0,0,0,.05);
+  background: #0077cc;
+}
+.modal.new-contact .search-container .nav-tabs .nav-tabs .open .dropdown-toggle,
+.modal.new-contact .search-container .nav-tabs .nav-pills .open .dropdown-toggle,
+.modal.new-contact .search-container .nav-tabs .nav > li.dropdown.open.active > a:hover,
+.modal.new-contact .search-container .nav-tabs .nav > li.dropdown.open.active > a:focus {
+  border-right: solid 1px #0086e5;
+}
+.modal.new-contact .invite-column.inactive {
+  position: relative;
+}
+.modal.new-contact .invite-column.inactive .blocker {
+  position: absolute;
+  z-index: 9999;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: #fff;
+  opacity: .7;
+}
+.modal.new-contact .input-prepend input {
+  width: 246px;
+}
+.modal.new-contact .input-prepend label {
+  margin: 0;
+  width: 100px;
+  border-right: 0;
+}
+.modal.new-contact div.tagsinput {
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+}
+.modal.new-contact input[type=text] {
+  border: solid 1px #ccc;
+  background: #fff;
+}
+.modal.new-contact textarea {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 100px;
+}
+.modal.new-contact .social {
+  margin-right: 8px;
+  position: relative;
+}
+.modal.new-contact .social:hover {
+  top: -1px;
+}
+.modal.new-contact .facebook {
+  font: 0/0 a;
+  color: transparent;
+  text-shadow: none;
+  background-color: transparent;
+  border: 0;
+  background: url(../img/facebook-32.png) center no-repeat;
+  display: inline-block;
+  height: 32px;
+  width: 32px;
+}
+.modal.new-contact .twitter {
+  font: 0/0 a;
+  color: transparent;
+  text-shadow: none;
+  border: 0;
+  background: transparent url(../img/twitter-32.png) center no-repeat;
+  display: inline-block;
+  height: 32px;
+  width: 32px;
+}
+.modal.new-contact .modal-footer p {
+  line-height: 32px;
+  -webkit-font-smoothing: auto;
+  margin: 0;
+  font-weight: 600;
+}
+.modal.new-contact .contact-no-result{
+    text-align: center;
+    padding-top: 20px;
+    font-size: 16px;
+}
+
+
+#sendInviteMessageValidations{
+    color:red;
+}
+
+
+.contact-info-image-wapper{
+    width: 140px;height: 140px; background-repeat:no-repeat;background-position: center;background-size:contain;
+}
+ul#contact-unsene-result-list li {list-style: none;padding: 5px 0px;}
+ul#contact-unsene-result-list li a.contact{
+    padding-left: 10px;
+}
+
+#signup-premium-modal .modal-content{
+    min-width: 500px;
+    min-height: 400px;
+}

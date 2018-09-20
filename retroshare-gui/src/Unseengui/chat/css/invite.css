@@ -1,0 +1,101 @@
+.invite-pane{
+	display:none;
+}
+
+.unseen-invite{
+	width:900px;
+}
+
+.unseen-invite .table{
+	display:none;
+}
+
+th.profile-image {
+  width: 35px;
+}
+
+img.profile-image {
+  width: 32px;
+  height: 32px;
+  margin-right: 2px;
+}
+
+.unseen-invite .table th, .unseen-invite .table td {
+	vertical-align: middle;
+}
+
+.unseen-invite h2 {
+  color: #777777;	
+  font-size: 30px;
+  line-height: 1.2em;
+  margin: 30px 0;
+  text-align: center;
+}
+
+.unseen-invite h3 {
+  color: #333333;	
+  line-height: 1.2em;
+  font-family: 'Ubuntu', sans-serif;
+  font-weight: 700;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.unseen-invite h4 {
+	margin-bottom: 10px;
+}
+
+.unseen-invite .invite-column.inactive {
+  position: relative;
+}
+.unseen-invite .invite-column.inactive .blocker {
+  position: absolute;
+  z-index: 9999;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: #fff;
+  opacity: .7;
+}
+.unseen-invite .input-prepend input {
+  width: 266px;
+}
+.unseen-invite .input-prepend label {
+  margin: 0;
+  width: 100px;
+  border-right: 0;
+}
+.unseen-invite div.tagsinput {
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  max-height: 200px;
+  min-height: 24px;
+}
+.unseen-invite input[type=text] {
+  border: solid 1px #ccc;
+  background: #fff;
+}
+.unseen-invite textarea {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 150px;
+}
+
+.unseen-invite a:hover {
+  background: #eee;
+  text-decoration: none;
+}
+
+.unseen-invite .address-source {
+  line-height: 30px;
+  margin: 30px 0;
+}
+
+.unseen-invite #email_tags_tag{
+	width:160px;
+}
+

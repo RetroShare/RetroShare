@@ -1,0 +1,83 @@
+.notifications {
+  position: fixed;
+  /*top: 170px;*/
+  bottom: 50px;
+  right: 0px;
+  z-index: 10000;
+}
+.notifications .notification {
+  width: 256px;
+  -webkit-perspective: 2000px;
+  -moz-perspective: 2000px;
+  -o-perspective: 2000px;
+  perspective: 2000px;
+  position: relative;
+}
+.notifications .notification .wrap {
+  *zoom: 1;
+  padding: 8px;
+  margin-top: 12px;
+  background: rgba(255, 255, 255, 0.9);
+  border-right: solid 6px #333;
+  -webkit-border-top-left-radius: 4px;
+  -moz-border-radius-topleft: 4px;
+  border-top-left-radius: 4px;
+  -webkit-border-bottom-left-radius: 4px;
+  -moz-border-radius-bottomleft: 4px;
+  border-bottom-left-radius: 4px;
+  -webkit-box-shadow: 0 0 6px rgba(0, 0, 0, 0.35);
+  -moz-box-shadow: 0 0 6px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.35);
+  -webkit-backface-visibility: hidden;
+  -moz-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -webkit-transform-origin: right center;
+  -o-transform-origin: right center;
+  -moz-transform-origin: right center;
+  transform-origin: right center;
+  opacity: 1;
+  -webkit-transition: all 0.3s ease;
+  -moz-transition: all 0.3s ease;
+  -o-transition: all 0.3s ease;
+  transition: all 0.3s ease;
+}
+.notifications .notification .wrap:before,
+.notifications .notification .wrap:after {
+  display: table;
+  content: "";
+  line-height: 0;
+}
+.notifications .notification .wrap:after {
+  clear: both;
+}
+.notifications .notification p {
+    margin: 0;
+    min-height: 24px;
+    padding-top: 5px;
+    line-height: 1.4em;
+    font-size: 12px;
+    padding-left: 60px;
+    font-weight: 700;
+    position: relative;
+}
+.notifications .notification p img {
+  position: absolute;
+  left: 0;
+  top: -4px;
+  width: 32px;
+  height: 32px;
+  display: inline-block;
+  margin-right: 8px;
+}
+.notifications .notification p .status-bubble {
+  position: absolute;
+  left: 44px;
+  top: -1px
+}
+.notifications .notification.offscreen .wrap {
+  -webkit-transform: translate3d(100px, 0, -2000px);
+  -moz-transform: translate3d(100px, 0, -2000px);
+  -o-transform: translate3d(100px, 0, -2000px);
+  transform: translate3d(100px, 0, -2000px);
+  opacity: 0;
+}
