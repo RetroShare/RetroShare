@@ -4,5 +4,7 @@
         <file>home/img/mountain.jpg</file>
         <file>home/img/avatar_new.png</file>
         <file>home/img/Unseen.png</file>
+        <file>app/images/loading_3.gif</file>
+        <file>app/images/icon.png</file>
     </qresource>
 </RCC>

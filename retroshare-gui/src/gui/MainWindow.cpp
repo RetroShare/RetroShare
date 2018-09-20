@@ -122,7 +122,7 @@
 #define IMAGE_PREFERENCES       ":/icons/png/options.png"
 #define IMAGE_ABOUT             ":/icons/png/info.png"
 #define IMAGE_ADDFRIEND         ":/icons/png/invite.png"
-#define IMAGE_RETROSHARE        ":/icons/logo_128.png"
+#define IMAGE_RETROSHARE        ":/app/images/icon.png"             //Duy replace :/icons/logo_128.png
 #define IMAGE_NOONLINE          ":/icons/logo_0_connected_128.png"
 #define IMAGE_ONEONLINE         ":/icons/logo_1_connected_128.png"
 #define IMAGE_TWOONLINE         ":/icons/logo_2_connected_128.png"
@@ -201,7 +201,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     QDesktopServices::setUrlHandler("https", this, "externalLinkActivated");
 
     // Setting icons
-    this->setWindowIcon(QIcon(QString::fromUtf8(":/icons/logo_128.png")));
+    this->setWindowIcon(QIcon(QString::fromUtf8(":/app/images/icon.png"))); //Duy Replace :/icons/logo_128.png
 
     /* Create all the dialogs of which we only want one instance */
     _bandwidthGraph = NULL ;

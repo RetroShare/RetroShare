@@ -252,7 +252,7 @@ Rshare::Rshare(QStringList args, int &argc, char **argv, const QString &dir)
 #ifndef __APPLE__
 
   /* set default window icon */
-  setWindowIcon(QIcon(":/icons/logo_128.png"));
+  setWindowIcon(QIcon(":/app/images/icon.png")); //Duy replace :/icons/logo_128.png
 
 #endif
 
