@@ -1,2 +1,8 @@
-<!DOCTYPE RCC>
-<RCC version="1.0"/>
+<RCC>
+    <qresource prefix="/">
+        <file>home/img/unseen-logo-home.png</file>
+        <file>home/img/mountain.jpg</file>
+        <file>home/img/avatar_new.png</file>
+        <file>home/img/Unseen.png</file>
+    </qresource>
+</RCC>

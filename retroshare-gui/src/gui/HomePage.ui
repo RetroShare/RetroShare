@@ -150,7 +150,7 @@ private and secure decentralized communication platform.
       <string/>
      </property>
      <property name="pixmap">
-      <pixmap resource="images.qrc">:/images/logo/logo_web_nobackground.png</pixmap>
+      <pixmap resource="../Unseengui/unseengui.qrc">:/home/img/unseen-logo-home.png</pixmap>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
@@ -325,6 +325,7 @@ private and secure decentralized communication platform.
  <resources>
   <include location="icons.qrc"/>
   <include location="images.qrc"/>
+  <include location="../Unseengui/unseengui.qrc"/>
  </resources>
  <connections/>
 </ui>
