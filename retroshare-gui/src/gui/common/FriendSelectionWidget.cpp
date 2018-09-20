@@ -689,7 +689,8 @@ void FriendSelectionWidget::requestGXSIdList()
 	mIdQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, IDDIALOG_IDLIST);
 }
 
-template<> void FriendSelectionWidget::setSelectedIds<RsGxsId,FriendSelectionWidget::IDTYPE_GXS>(const std::set<RsGxsId>& ids, bool add)
+// This call is inlined so that there's no linking conflict with MinGW on Windows
+template<> inline void FriendSelectionWidget::setSelectedIds<RsGxsId,FriendSelectionWidget::IDTYPE_GXS>(const std::set<RsGxsId>& ids, bool add)
 {
     mPreSelectedGxsIds = ids ;
     requestGXSIdList();
