@@ -50,6 +50,10 @@
 #	include "WebuiPage.h"
 #endif
 
+#ifdef RS_JSONAPI
+#	include "JsonApiPage.h"
+#endif
+
 #define IMAGE_GENERAL       ":/images/kcmsystem24.png"
 
 #define ITEM_SPACING 2
@@ -165,8 +169,12 @@ SettingsPage::initStackedWidget()
 #ifdef ENABLE_WEBUI
     addPage(new WebuiPage() );
 #endif // ENABLE_WEBUI
-	 // add widgets from plugins
 
+#ifdef RS_JSONAPI
+	addPage(new JsonApiPage());
+#endif
+
+	 // add widgets from plugins
 	for(int i=0;i<rsPlugins->nbPlugins();++i)
 	{
 		RsPlugin *pl = rsPlugins->plugin(i) ;

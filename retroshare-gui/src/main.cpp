@@ -51,6 +51,10 @@
 #	include "gui/settings/WebuiPage.h"
 #endif
 
+#ifdef RS_JSONAPI
+#	include "gui/settings/JsonApiPage.h"
+#endif // RS_JSONAPI
+
 #include "TorControl/TorManager.h"
 #include "TorControl/TorControlWindow.h"
 
@@ -536,6 +540,10 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
     WebuiPage::checkStartWebui();
 #endif // ENABLE_WEBUI
 
+#ifdef RS_JSONAPI
+	JsonApiPage::checkStartJsonApi();
+#endif // RS_JSONAPI
+
 	// This is done using a timer, because the passphrase request from notify is asynchrouneous and therefore clearing the
 	// passphrase here makes it request for a passphrase when creating the default chat identity.
 
@@ -544,6 +552,10 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 	/* dive into the endless loop */
 	int ti = rshare.exec();
 	delete w ;
+
+#ifdef RS_JSONAPI
+	JsonApiPage::checkShutdownJsonApi();
+#endif // RS_JSONAPI
 
 #ifdef ENABLE_WEBUI
 	WebuiPage::checkShutdownWebui();
