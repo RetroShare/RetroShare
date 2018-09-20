@@ -1249,6 +1249,7 @@ int RsServer::StartupRetroShare()
 	mPluginsManager->loadPlugins(programatically_inserted_plugins) ;
 
 #ifdef RS_JSONAPI
+	if(jsonApiServer) // JsonApiServer may be disabled at runtime
 	{
 		mConfigMgr->addConfiguration("jsonApi.cfg", jsonApiServer);
 		RsFileHash dummyHash;
