@@ -273,7 +273,7 @@
          <item row="3" column="1">
           <widget class="QCheckBox" name="autologin_checkbox">
            <property name="autoFillBackground">
-            <bool>false</bool>
+            <bool>true</bool>
            </property>
            <property name="text">
             <string>Remember Password</string>
@@ -349,8 +349,8 @@ The current identities/locations will not be affected.</string>
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="icons.qrc"/>
   <include location="../Unseengui/unseengui.qrc"/>
+  <include location="icons.qrc"/>
  </resources>
  <connections/>
 </ui>

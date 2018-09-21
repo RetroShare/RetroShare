@@ -763,7 +763,7 @@ HomePage QPlainTextEdit#userCertEdit {
 HomePage QFrame#addframe{
 	border: 2px solid #0099cc;
 	border-radius: 6px;
-	background: white;
+        background: white;
 }
 
 ConnectFriendWizard QFrame#friendFrame {
@@ -795,6 +795,6 @@ StartDialog QFrame#loginframe{
 }
 
 GenCertDialog QFrame#profileframe{
-  border-image: url(:/home/img/mountain.jpg) 0 0 0 0 stretch stretch;
+  border-image: url(:/home/img/snow-mountain.jpg) 0 0 0 0 stretch stretch;
   border-width: 0px;
 }

@@ -297,7 +297,7 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     int S = QFontMetricsF(font()).height();
  QString help_str = tr(
  " <h1><img width=\"%1\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Messages</h1>                         \
- <p>Retroshare has its own internal email system. You can send/receive emails to/from connected friend nodes.</p> \
+ <p>P2PUnseen has its own internal email system. You can send/receive emails to/from connected friend nodes.</p> \
  <p>It is also possible to send messages to other people's Identities using the global routing system. These messages \
     are always encrypted and signed, and are relayed by intermediate nodes until they reach their final destination. </p>\
     <p>Distant messages stay into your Outbox until an acknowledgement of receipt has been received.</p>\

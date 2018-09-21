@@ -192,7 +192,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
             hiddenmode = true;
     }
 
-    setWindowTitle(tr("RetroShare %1 a secure decentralized communication platform").arg(Rshare::retroshareVersion(true)) + " - " + nameAndLocation);
+    setWindowTitle(tr("Unseen.is %1 a secure decentralized communication platform").arg(Rshare::retroshareVersion(true)) + " - " + nameAndLocation); //Duy
     connect(rApp, SIGNAL(newArgsReceived(QStringList)), this, SLOT(receiveNewArgs(QStringList)));
 
     /* add url handler for RetroShare links */
@@ -610,7 +610,7 @@ void MainWindow::createTrayIcon()
 
     // Create the tray icon
     trayIcon = new QSystemTrayIcon(this);
-    trayIcon->setToolTip(tr("RetroShare"));
+    trayIcon->setToolTip(tr("Unseen.is")); //Duy
     trayIcon->setContextMenu(trayMenu);
     trayIcon->setIcon(QIcon(IMAGE_NOONLINE));
 
@@ -718,7 +718,7 @@ void MainWindow::updateTrayCombine()
 
 void MainWindow::toggleStatusToolTip(bool toggle){
     if(!toggle)return;
-    QString tray = "RetroShare\n";
+    QString tray = "Unseen.is\n";   //Duy
     tray += "\n" + nameAndLocation;
     trayIcon->setToolTip(tray);
 }
@@ -753,7 +753,7 @@ void MainWindow::updateStatus()
 
     if(!Settings->valueFromGroup("StatusBar", "DisableSysTrayToolTip", QVariant(false)).toBool()) {
 
-    QString tray = "RetroShare\n" + tr("Down: %1 (kB/s)").arg(downKb, 0, 'f', 2) + " | " + tr("Up: %1 (kB/s)").arg(upKb, 0, 'f', 2) + "\n";
+    QString tray = "Unseen.is\n" + tr("Down: %1 (kB/s)").arg(downKb, 0, 'f', 2) + " | " + tr("Up: %1 (kB/s)").arg(upKb, 0, 'f', 2) + "\n"; //Duy
 
     if (onlineCount == 1) {
         tray += tr("%1 friend connected").arg(onlineCount);
@@ -1119,7 +1119,7 @@ void MainWindow::doQuit()
 	{
 	  QString queryWrn;
 	  queryWrn.clear();
-	  queryWrn.append(tr("Do you really want to exit RetroShare ?"));
+      queryWrn.append(tr("Do you really want to exit Unseen.is ?"));    //Duy
 
 		if ((QMessageBox::question(this, tr("Really quit ?"),queryWrn,QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes))== QMessageBox::Yes)
 		{

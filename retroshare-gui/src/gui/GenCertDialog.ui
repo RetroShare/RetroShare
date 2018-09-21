@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>978</width>
-    <height>658</height>
+    <height>595</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -77,6 +77,9 @@
             <bold>true</bold>
            </font>
           </property>
+          <property name="autoFillBackground">
+           <bool>false</bool>
+          </property>
           <property name="text">
            <string>Node type:</string>
           </property>
@@ -122,6 +125,9 @@
         </item>
         <item>
          <widget class="QCheckBox" name="adv_checkbox">
+          <property name="autoFillBackground">
+           <bool>false</bool>
+          </property>
           <property name="text">
            <string>advanced options</string>
           </property>
@@ -137,6 +143,9 @@
       </item>
       <item>
        <widget class="QLabel" name="nodeTypeExplanation_TE">
+        <property name="autoFillBackground">
+         <bool>false</bool>
+        </property>
         <property name="text">
          <string>TextLabel</string>
         </property>
@@ -168,6 +177,12 @@
          </property>
          <item row="1" column="0">
           <layout class="QGridLayout" name="profilGLayout">
+           <property name="leftMargin">
+            <number>40</number>
+           </property>
+           <property name="rightMargin">
+            <number>40</number>
+           </property>
            <item row="14" column="2">
             <widget class="QComboBox" name="keylength_comboBox">
              <property name="sizePolicy">
@@ -704,6 +719,9 @@
          </item>
          <item row="0" column="0">
           <widget class="QLabel" name="info_label">
+           <property name="autoFillBackground">
+            <bool>false</bool>
+           </property>
            <property name="text">
             <string>TextLabel</string>
            </property>

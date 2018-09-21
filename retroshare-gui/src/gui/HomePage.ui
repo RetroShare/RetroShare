@@ -286,7 +286,7 @@ private and secure decentralized communication platform.
          </font>
         </property>
         <property name="text">
-         <string>Do you need help with RetroShare?</string>
+         <string>Do you need help with P2PUnseen?</string>
         </property>
        </widget>
       </item>
@@ -323,9 +323,9 @@ private and secure decentralized communication platform.
   <zorder>helpframe</zorder>
  </widget>
  <resources>
+  <include location="../Unseengui/unseengui.qrc"/>
   <include location="icons.qrc"/>
   <include location="images.qrc"/>
-  <include location="../Unseengui/unseengui.qrc"/>
  </resources>
  <connections/>
 </ui>

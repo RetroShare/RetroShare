@@ -354,9 +354,9 @@ IdDialog::IdDialog(QWidget *parent) :
 			" <h1><img width=\"32\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Identities</h1>    \
 			<p>In this tab you can create/edit <b>pseudo-anonymous identities</b>, and <b>circles</b>.</p>                \
 			<p><b>Identities</b> are used to securely identify your data: sign messages in chat lobbies, forum and channel posts,\
-				receive feedback using the Retroshare built-in email system, post comments \
+                receive feedback using the P2PUnseen built-in email system, post comments \
 				after channel posts, chat using secured tunnels, etc.</p> \
-			<p>Identities can optionally be <b>signed</b> by your Retroshare node's certificate.   \
+            <p>Identities can optionally be <b>signed</b> by your P2PUnseen node's certificate.   \
 			Signed identities are easier to trust but are easily linked to your node's IP address.</p>  \
 			<p><b>Anonymous identities</b> allow you to anonymously interact with other users. They cannot be   \
 			spoofed, but noone can prove who really owns a given identity.</p> \

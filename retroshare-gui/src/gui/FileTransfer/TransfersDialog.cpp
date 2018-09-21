@@ -1056,7 +1056,7 @@ TransfersDialog::TransfersDialog(QWidget *parent)
     int S = QFontMetricsF(font()).height();
   QString help_str = tr(
     " <h1><img width=\"%1\" src=\":/icons/help_64.png\">&nbsp;&nbsp;File Transfer</h1>                                                         \
-    <p>Retroshare brings two ways of transferring files: direct transfers from your friends, and                                     \
+    <p>P2PUnseen brings two ways of transferring files: direct transfers from your friends, and                                     \
     distant anonymous tunnelled transfers. In addition, file transfer is multi-source and allows swarming                                      \
     (you can be a source while downloading)</p>                                     \
     <p>You can share files using the <img src=\":/images/directoryadd_24x24_shadow.png\" width=%2 /> icon from the left side bar. \
