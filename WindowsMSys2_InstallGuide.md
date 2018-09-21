@@ -32,7 +32,7 @@ Run MSYS2 MSYS again and finish updating with:
 
 Install the default programs needed to build:
 
-	pacman -S base-devel git wget p7zip gcc perl ruby python2
+	pacman -S base-devel git wget p7zip gcc perl ruby python2 doxygen cmake
 
 Install the 32-bit toolchain:
 

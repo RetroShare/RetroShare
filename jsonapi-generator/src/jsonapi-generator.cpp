@@ -16,11 +16,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QCoreApplication>
-#include <QDebug>
-#include <QtXml>
-#include <QDirIterator>
-#include <QFileInfo>
+#include <QtCore/QCoreApplication>
+#include <QtCore/QDebug>
+#include <QtXml/QtXml>
+#include <QtCore/QDirIterator>
+#include <QtCore/QFileInfo>
 #include <iterator>
 
 struct MethodParam

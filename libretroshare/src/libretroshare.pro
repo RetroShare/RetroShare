@@ -860,16 +860,25 @@ rs_gxs_trans {
 }
 
 rs_jsonapi {
-    JSONAPI_GENERATOR_SRC=$$system_path($$clean_path($${RS_SRC_PATH}/jsonapi-generator/src/))
-    JSONAPI_GENERATOR_OUT=$$system_path($$clean_path($${RS_BUILD_PATH}/jsonapi-generator/src/))
-    JSONAPI_GENERATOR_EXE=$$system_path($$clean_path($${JSONAPI_GENERATOR_OUT}/jsonapi-generator))
-    DOXIGEN_INPUT_DIRECTORY=$$system_path($$clean_path($${PWD}))
-    DOXIGEN_CONFIG_SRC=$$system_path($$clean_path($${RS_SRC_PATH}/jsonapi-generator/src/jsonapi-generator-doxygen.conf))
-    DOXIGEN_CONFIG_OUT=$$system_path($$clean_path($${JSONAPI_GENERATOR_OUT}/jsonapi-generator-doxygen.conf))
-    WRAPPERS_INCL_FILE=$$system_path($$clean_path($${JSONAPI_GENERATOR_OUT}/jsonapi-includes.inl))
-    WRAPPERS_REG_FILE=$$system_path($$clean_path($${JSONAPI_GENERATOR_OUT}/jsonapi-wrappers.inl))
+    JSONAPI_GENERATOR_SRC=$$clean_path($${RS_SRC_PATH}/jsonapi-generator/src/)
+    JSONAPI_GENERATOR_OUT=$$clean_path($${RS_BUILD_PATH}/jsonapi-generator/src/)
+    win32 {
+        CONFIG(release, debug|release) {
+            JSONAPI_GENERATOR_EXE=$$clean_path($${JSONAPI_GENERATOR_OUT}/release/jsonapi-generator.exe)
+        }
+	CONFIG(debug, debug|release) {
+            JSONAPI_GENERATOR_EXE=$$clean_path($${JSONAPI_GENERATOR_OUT}/debug/jsonapi-generator.exe)
+        }
+    } else {
+        JSONAPI_GENERATOR_EXE=$$clean_path($${JSONAPI_GENERATOR_OUT}/jsonapi-generator)
+    }
+    DOXIGEN_INPUT_DIRECTORY=$$clean_path($${PWD})
+    DOXIGEN_CONFIG_SRC=$$clean_path($${RS_SRC_PATH}/jsonapi-generator/src/jsonapi-generator-doxygen.conf)
+    DOXIGEN_CONFIG_OUT=$$clean_path($${JSONAPI_GENERATOR_OUT}/jsonapi-generator-doxygen-final.conf)
+    WRAPPERS_INCL_FILE=$$clean_path($${JSONAPI_GENERATOR_OUT}/jsonapi-includes.inl)
+    WRAPPERS_REG_FILE=$$clean_path($${JSONAPI_GENERATOR_OUT}/jsonapi-wrappers.inl)
 
-    restbed.target = $$system_path($$clean_path($${RESTBED_BUILD_PATH}/library/librestbed.a))
+    restbed.target = $$clean_path($${RESTBED_BUILD_PATH}/library/librestbed.a)
     restbed.commands = \
         cd $${RS_SRC_PATH};\
         git submodule update --init --recommend-shallow supportlibs/restbed;\
@@ -878,7 +887,7 @@ rs_jsonapi {
         git submodule update --init --recommend-shallow dependency/catch;\
         git submodule update --init --recommend-shallow dependency/kashmir;\
         mkdir -p $${RESTBED_BUILD_PATH}; cd $${RESTBED_BUILD_PATH};\
-        cmake -DBUILD_SSL=OFF -DCMAKE_INSTALL_PREFIX=. -B. -H$${RESTBED_SRC_PATH};\
+        cmake -DBUILD_SSL=OFF -DCMAKE_INSTALL_PREFIX=. -B. -H$$shell_path($${RESTBED_SRC_PATH});\
         make; make install
     QMAKE_EXTRA_TARGETS += restbed
     libretroshare.depends += restbed
@@ -891,8 +900,8 @@ rs_jsonapi {
     jsonwrappersincl.target = $${WRAPPERS_INCL_FILE}
     jsonwrappersincl.commands = \
         cp $${DOXIGEN_CONFIG_SRC} $${DOXIGEN_CONFIG_OUT}; \
-        echo OUTPUT_DIRECTORY=$${JSONAPI_GENERATOR_OUT} >> $${DOXIGEN_CONFIG_OUT};\
-        echo INPUT=$${DOXIGEN_INPUT_DIRECTORY} >> $${DOXIGEN_CONFIG_OUT}; \
+        echo OUTPUT_DIRECTORY=$$shell_path($${JSONAPI_GENERATOR_OUT}) >> $${DOXIGEN_CONFIG_OUT};\
+        echo INPUT=$$shell_path($${DOXIGEN_INPUT_DIRECTORY}) >> $${DOXIGEN_CONFIG_OUT}; \
         doxygen $${DOXIGEN_CONFIG_OUT}; \
         $${JSONAPI_GENERATOR_EXE} $${JSONAPI_GENERATOR_SRC} $${JSONAPI_GENERATOR_OUT};
     QMAKE_EXTRA_TARGETS += jsonwrappersincl
