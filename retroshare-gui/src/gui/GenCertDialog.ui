@@ -14,8 +14,8 @@
    <string>Create new Profile</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="images.qrc">
-    <normaloff>:/images/logo/logo_48.png</normaloff>:/images/logo/logo_48.png</iconset>
+   <iconset resource="../Unseengui/unseengui.qrc">
+    <normaloff>:/app/images/icon.png</normaloff>:/app/images/icon.png</iconset>
   </property>
   <layout class="QVBoxLayout" name="GenCertDialogVLayout">
    <property name="spacing">
@@ -746,9 +746,8 @@
   <tabstop>importIdentity_PB</tabstop>
  </tabstops>
  <resources>
-  <include location="icons.qrc"/>
-  <include location="images.qrc"/>
   <include location="../Unseengui/unseengui.qrc"/>
+  <include location="icons.qrc"/>
  </resources>
  <connections/>
 </ui>
