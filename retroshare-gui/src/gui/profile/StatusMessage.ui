@@ -126,7 +126,7 @@ p, li { white-space: pre-wrap; }
     <string/>
    </property>
    <property name="pixmap">
-    <pixmap resource="../images.qrc">:/images/user/personal64.png</pixmap>
+    <pixmap resource="../../Unseengui/unseengui.qrc">:/chat/img/personal_un_64.png</pixmap>
    </property>
   </widget>
   <widget class="QFrame" name="frame_2">
@@ -173,7 +173,7 @@ border: 1px solid #CCCCCC;}
   <zorder>label</zorder>
  </widget>
  <resources>
-  <include location="../images.qrc"/>
+  <include location="../../Unseengui/unseengui.qrc"/>
   <include location="../images.qrc"/>
  </resources>
  <connections/>

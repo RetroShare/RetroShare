@@ -70,8 +70,8 @@
   </widget>
   <action name="actionAvatar">
    <property name="icon">
-    <iconset resource="../images.qrc">
-     <normaloff>:/images/no_avatar_70.png</normaloff>:/images/no_avatar_70.png</iconset>
+    <iconset resource="../../Unseengui/unseengui.qrc">
+     <normaloff>:/chat/img/no_avatar_un_70.png</normaloff>:/chat/img/no_avatar_un_70.png</iconset>
    </property>
    <property name="text">
     <string>Avatar</string>
@@ -141,6 +141,7 @@
   </customwidget>
  </customwidgets>
  <resources>
+  <include location="../../Unseengui/unseengui.qrc"/>
   <include location="../images.qrc"/>
  </resources>
  <connections/>

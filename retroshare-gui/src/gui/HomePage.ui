@@ -112,7 +112,7 @@
         </font>
        </property>
        <property name="text">
-        <string>The text below is your own Retroshare certificate. Send it to your friends</string>
+        <string>The text below is your own P2PUnseen certificate. Send it to your friends</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -323,8 +323,8 @@ private and secure decentralized communication platform.
   <zorder>helpframe</zorder>
  </widget>
  <resources>
-  <include location="../Unseengui/unseengui.qrc"/>
   <include location="icons.qrc"/>
+  <include location="../Unseengui/unseengui.qrc"/>
   <include location="images.qrc"/>
  </resources>
  <connections/>

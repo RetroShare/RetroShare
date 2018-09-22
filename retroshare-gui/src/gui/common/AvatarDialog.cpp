@@ -36,7 +36,7 @@ AvatarDialog::AvatarDialog(QWidget *parent) :
 	/* Invoke Qt Designer generated QObject setup routine */
 	ui->setupUi(this);
 
-	ui->headerFrame->setHeaderImage(QPixmap(":/images/no_avatar_70.png"));
+    ui->headerFrame->setHeaderImage(QPixmap(":/chat/img/no_avatar_un_70.png"));
 	ui->headerFrame->setHeaderText(tr("Set your Avatar picture"));
 
 	connect(ui->avatarButton, SIGNAL(clicked(bool)), this, SLOT(changeAvatar()));

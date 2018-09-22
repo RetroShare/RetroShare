@@ -40,7 +40,7 @@ AvatarWidget::AvatarWidget(QWidget *parent) : QLabel(parent), ui(new Ui::AvatarW
 	ui->setupUi(this);
 
 	mFlag.isOwnId = false;
-	defaultAvatar = ":/images/no_avatar_background.png";
+    defaultAvatar = ":/chat/img/no_avatar_background_un_96.png";
 	mPeerState = RS_STATUS_OFFLINE ;
 
 	setFrameType(NO_FRAME);
