@@ -934,7 +934,7 @@ bool Rshare::loadCertificate(const RsPeerId &accountId, bool autoLogin)
 		case 0:	break;
 		case 1:	QMessageBox::warning(	0,
 										QObject::tr("Multiple instances"),
-										QObject::tr("Another RetroShare using the same profile is "
+                                        QObject::tr("Another P2PUnseen using the same profile is "
 										"already running on your system. Please close "
 										"that instance first\n Lock file:\n") +
 										QString::fromUtf8(lockFile.c_str()));

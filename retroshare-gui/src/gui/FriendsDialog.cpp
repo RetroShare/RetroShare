@@ -72,7 +72,7 @@ FriendsDialog::FriendsDialog(QWidget *parent)
     if (instance == NULL) {
         instance = this;
     }
-    QString msg = tr("Retroshare broadcast chat: messages are sent to all connected friends.");
+    QString msg = tr("P2PUnseen broadcast chat: messages are sent to all connected friends.");
     // "<font color='grey'>" + DateTime::formatTime(QTime::currentTime()) + "</font> -
     msg = QString("<font color='blue'><i>" + msg + "</i></font>");
     ui.chatWidget->setWelcomeMessage(msg);

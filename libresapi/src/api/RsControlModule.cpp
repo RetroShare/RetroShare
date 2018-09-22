@@ -238,12 +238,12 @@ void RsControlModule::run()
             login_ok = true;
             break;
         case 1:
-            error_string = "Another RetroShare using the same profile is "
+            error_string = "Another P2PUnseen using the same profile is "
                            "already running on your system. Please close "
                            "that instance first\n Lock file:\n" + lockFile;
             break;
         case 2:
-            error_string = "An unexpected error occurred when Retroshare "
+            error_string = "An unexpected error occurred when P2PUnseen "
                            "tried to acquire the single instance lock\n Lock file:\n"
                            + lockFile;
             break;

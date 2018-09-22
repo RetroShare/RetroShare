@@ -146,6 +146,9 @@ private and secure decentralized communication platform.
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(39, 183, 237);</string>
+     </property>
      <property name="text">
       <string/>
      </property>
