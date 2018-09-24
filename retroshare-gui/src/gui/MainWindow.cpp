@@ -122,7 +122,7 @@
 #define IMAGE_PREFERENCES       ":/icons/png/options.png"
 #define IMAGE_ABOUT             ":/icons/png/info.png"
 #define IMAGE_ADDFRIEND         ":/icons/png/invite.png"
-#define IMAGE_RETROSHARE        ":/app/images/icon.png"             //Duy replace :/icons/logo_128.png
+#define IMAGE_RETROSHARE        ":/app/images/icon.png"             //D replace :/icons/logo_128.png
 #define IMAGE_NOONLINE          ":/icons/logo_0_connected_128.png"
 #define IMAGE_ONEONLINE         ":/icons/logo_1_connected_128.png"
 #define IMAGE_TWOONLINE         ":/icons/logo_2_connected_128.png"
@@ -201,7 +201,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     QDesktopServices::setUrlHandler("https", this, "externalLinkActivated");
 
     // Setting icons
-    this->setWindowIcon(QIcon(QString::fromUtf8(":/app/images/icon.png"))); //Duy Replace :/icons/logo_128.png
+    this->setWindowIcon(QIcon(QString::fromUtf8(":/app/images/icon.png"))); //D Replace :/icons/logo_128.png
 
     /* Create all the dialogs of which we only want one instance */
     _bandwidthGraph = NULL ;
@@ -610,7 +610,7 @@ void MainWindow::createTrayIcon()
 
     // Create the tray icon
     trayIcon = new QSystemTrayIcon(this);
-    trayIcon->setToolTip(tr("Unseen.is")); //Duy
+    trayIcon->setToolTip(tr("Unseen.is")); //D
     trayIcon->setContextMenu(trayMenu);
     trayIcon->setIcon(QIcon(IMAGE_NOONLINE));
 
@@ -718,7 +718,7 @@ void MainWindow::updateTrayCombine()
 
 void MainWindow::toggleStatusToolTip(bool toggle){
     if(!toggle)return;
-    QString tray = "Unseen.is\n";   //Duy
+    QString tray = "Unseen.is\n";   //D
     tray += "\n" + nameAndLocation;
     trayIcon->setToolTip(tray);
 }
@@ -753,7 +753,7 @@ void MainWindow::updateStatus()
 
     if(!Settings->valueFromGroup("StatusBar", "DisableSysTrayToolTip", QVariant(false)).toBool()) {
 
-    QString tray = "Unseen.is\n" + tr("Down: %1 (kB/s)").arg(downKb, 0, 'f', 2) + " | " + tr("Up: %1 (kB/s)").arg(upKb, 0, 'f', 2) + "\n"; //Duy
+    QString tray = "Unseen.is\n" + tr("Down: %1 (kB/s)").arg(downKb, 0, 'f', 2) + " | " + tr("Up: %1 (kB/s)").arg(upKb, 0, 'f', 2) + "\n"; //D
 
     if (onlineCount == 1) {
         tray += tr("%1 friend connected").arg(onlineCount);
@@ -1119,7 +1119,7 @@ void MainWindow::doQuit()
 	{
 	  QString queryWrn;
 	  queryWrn.clear();
-      queryWrn.append(tr("Do you really want to exit Unseen.is ?"));    //Duy
+      queryWrn.append(tr("Do you really want to exit Unseen.is ?"));    //D
 
 		if ((QMessageBox::question(this, tr("Really quit ?"),queryWrn,QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes))== QMessageBox::Yes)
 		{
@@ -1414,7 +1414,9 @@ void MainWindow::statusChangedComboBox(int index)
 /*new setting*/
 void MainWindow::settingsChanged()
 {
-	ui->toolBarPage->setVisible(Settings->getPageButtonLoc());
+    ui->toolBarPage->setStyleSheet(" QToolBar {background: rgb(30, 30, 30) }"); // d: Set color of toolbar
+    ui->toolBarAction->setStyleSheet(" QToolBar {background: rgb(30, 30, 30) }"); // d: Set color of toolbar
+    ui->toolBarPage->setVisible(Settings->getPageButtonLoc());
 	ui->toolBarAction->setVisible(Settings->getActionButtonLoc());
 	ui->listWidget->setVisible(!Settings->getPageButtonLoc() || !Settings->getActionButtonLoc());
 	for(int i = 0; i < ui->listWidget->count(); ++i) {

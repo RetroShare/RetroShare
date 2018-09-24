@@ -205,5 +205,5 @@ void HomePage::runStartWizard()
 
 void HomePage::openWebHelp()
 {
-    QDesktopServices::openUrl(QUrl(QString("https://unseen.zendesk.com"))); //Duy
+    QDesktopServices::openUrl(QUrl(QString("https://unseen.zendesk.com"))); //D
 }

@@ -936,7 +936,7 @@ void RshareSettings::loadWidgetInformation(QMainWindow *widget, QToolBar *toolBa
 	beginGroup(widget->objectName());
 
     widget->addToolBar((Qt::ToolBarArea) value("toolBarArea", Qt::LeftToolBarArea).toInt(),
-                       toolBar);    //Duy: TopToolBarArea -> LeftToolBarArea
+                       toolBar);    //D: TopToolBarArea -> LeftToolBarArea
 
 	endGroup();
 	endGroup();

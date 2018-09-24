@@ -321,7 +321,7 @@ bool NotifyQt::askForPluginConfirmation(const std::string& plugin_file_name, con
 	text += "</UL>" ;
 
 	dialog.setText(text) ;
-    dialog.setWindowIcon(QIcon(":/app/images/icon.png")); //Duy replace :/icons/logo_128.png
+    dialog.setWindowIcon(QIcon(":/app/images/icon.png")); //D replace :/icons/logo_128.png
 	dialog.setStandardButtons(QMessageBox::Yes | QMessageBox::No) ;
 
 	int ret = dialog.exec();
