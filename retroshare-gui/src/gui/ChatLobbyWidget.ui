@@ -95,7 +95,7 @@
          <enum>Qt::NoFocus</enum>
         </property>
         <property name="icon">
-         <iconset resource="icons.qrc">
+         <iconset resource="images.qrc">
           <normaloff>:/icons/help_64.png</normaloff>:/icons/help_64.png</iconset>
         </property>
         <property name="checkable">
@@ -226,7 +226,7 @@
         <item row="0" column="0">
          <widget class="QGroupBox" name="lobbyinfo_groupBox">
           <property name="title">
-           <string>Selected lobby info</string>
+           <string>Selected Chat Room info</string>
           </property>
           <layout class="QVBoxLayout" name="lobbyinfo_groupBoxVLayout">
            <item>
@@ -440,6 +440,7 @@
   </customwidget>
  </customwidgets>
  <resources>
+  <include location="images.qrc"/>
   <include location="icons.qrc"/>
  </resources>
  <connections/>
