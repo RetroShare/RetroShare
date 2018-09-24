@@ -81,7 +81,7 @@ protected:
 	void closeEvent(QCloseEvent *event);
 	virtual bool canClose() { return true; }
 
-    virtual QString getPeerName(const ChatId &sslid) const ;	// can be overloaded for chat dialogs that have specific peers
+    virtual QString getPeerName(const ChatId &sslid,QString& additional_info) const ;	// can be overloaded for chat dialogs that have specific peers
     virtual QString getOwnName() const;
 
     virtual void init(const ChatId &id, const QString &title);

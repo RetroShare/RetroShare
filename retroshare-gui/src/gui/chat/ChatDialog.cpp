@@ -311,10 +311,13 @@ bool ChatDialog::hasNewMessages()
 
 	return false;
 }
-QString ChatDialog::getPeerName(const ChatId& id) const
+QString ChatDialog::getPeerName(const ChatId& id, QString& additional_info) const
 {
     if(id.isPeerId())
+	{
+		additional_info = QString("Peer ID: ")+QString::fromStdString(id.toPeerId().toStdString());
         return QString::fromUtf8(rsPeers->getPeerName(id.toPeerId()).c_str()) ;
+	}
     else
         return "ChatDialog::getPeerName(): invalid id type passed (RsPeerId is required). This is a bug.";
 }

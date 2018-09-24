@@ -1702,22 +1702,34 @@ void ChatWidget::updateStatus(const QString &peer_id, int status)
     {
 	    // the peers status has changed
 
+		QString tooltip_info ;
 	    QString peerName ;
+
 	    if(chatId.isDistantChatId())
 	    {
 		    DistantChatPeerInfo dcpinfo ;
 		    RsIdentityDetails details  ;
 
 		    if(rsMsgs->getDistantChatStatus(chatId.toDistantChatId(),dcpinfo))
+			{
 			    if(rsIdentity->getIdDetails(dcpinfo.to_id,details))
 				    peerName = QString::fromUtf8( details.mNickname.c_str() ) ;
 			    else
 				    peerName = QString::fromStdString(dcpinfo.to_id.toStdString()) ;
+
+				tooltip_info = QString("Identity Id: ")+QString::fromStdString(dcpinfo.to_id.toStdString());
+			}
 		    else
+			{
 			    peerName = QString::fromStdString(chatId.toDistantChatId().toStdString()) ;
+				tooltip_info = QString("Identity Id: unknown (bug?)");
+			}
 	    }
 	    else
+		{
 		    peerName = QString::fromUtf8(rsPeers->getPeerName(chatId.toPeerId()).c_str());
+			tooltip_info = QString("Peer Id: ") + QString::fromStdString(chatId.toPeerId().toStdString());
+		}
 
 	    // is scrollbar at the end?
 	    QScrollBar *scrollbar = ui->textBrowser->verticalScrollBar();
@@ -1750,6 +1762,7 @@ void ChatWidget::updateStatus(const QString &peer_id, int status)
 	    }
 
 	    ui->titleLabel->setText(peerName);
+	    ui->titleLabel->setToolTip(tooltip_info);
 	    ui->statusLabel->setText(QString("(%1)").arg(StatusDefs::name(status)));
 
 	    peerStatus = status;
