@@ -48,6 +48,7 @@ public:
     virtual QString helpText() const { return ""; } //MainPage
 
 private slots:
+	void certContextMenu(QPoint);
 	void updateOwnCert();
 	void runEmailClient();
 	void copyCert();
@@ -58,10 +59,12 @@ private slots:
 	void runStartWizard() ;
 	void openWebHelp() ;
 	void recommendFriends();
+    void toggleIncludeAllIPs();
 
 private:
 	Ui::HomePage *ui;
 	
+    bool mIncludeAllIPs;
 
 };
 
