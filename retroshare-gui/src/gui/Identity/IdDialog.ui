@@ -117,7 +117,7 @@
          <enum>Qt::NoFocus</enum>
         </property>
         <property name="icon">
-         <iconset resource="../icons.qrc">
+         <iconset resource="../images.qrc">
           <normaloff>:/icons/help_64.png</normaloff>:/icons/help_64.png</iconset>
         </property>
         <property name="checkable">
@@ -283,8 +283,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>1372</width>
-             <height>1000</height>
+             <width>1091</width>
+             <height>1088</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="scrollAreaWidgetContentsVLayout">
@@ -295,6 +295,9 @@
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">background-color: rgb(43, 164, 220);</string>
               </property>
               <property name="frameShape">
                <enum>QFrame::StyledPanel</enum>
@@ -333,61 +336,88 @@
                    <property name="palette">
                     <palette>
                      <active>
+                      <colorrole role="Button">
+                       <brush brushstyle="SolidPattern">
+                        <color alpha="255">
+                         <red>43</red>
+                         <green>164</green>
+                         <blue>220</blue>
+                        </color>
+                       </brush>
+                      </colorrole>
                       <colorrole role="Base">
                        <brush brushstyle="SolidPattern">
                         <color alpha="255">
-                         <red>255</red>
-                         <green>255</green>
-                         <blue>255</blue>
+                         <red>43</red>
+                         <green>164</green>
+                         <blue>220</blue>
                         </color>
                        </brush>
                       </colorrole>
                       <colorrole role="Window">
                        <brush brushstyle="SolidPattern">
                         <color alpha="255">
-                         <red>255</red>
-                         <green>255</green>
-                         <blue>178</blue>
+                         <red>43</red>
+                         <green>164</green>
+                         <blue>220</blue>
                         </color>
                        </brush>
                       </colorrole>
                      </active>
                      <inactive>
+                      <colorrole role="Button">
+                       <brush brushstyle="SolidPattern">
+                        <color alpha="255">
+                         <red>43</red>
+                         <green>164</green>
+                         <blue>220</blue>
+                        </color>
+                       </brush>
+                      </colorrole>
                       <colorrole role="Base">
                        <brush brushstyle="SolidPattern">
                         <color alpha="255">
-                         <red>255</red>
-                         <green>255</green>
-                         <blue>255</blue>
+                         <red>43</red>
+                         <green>164</green>
+                         <blue>220</blue>
                         </color>
                        </brush>
                       </colorrole>
                       <colorrole role="Window">
                        <brush brushstyle="SolidPattern">
                         <color alpha="255">
-                         <red>255</red>
-                         <green>255</green>
-                         <blue>178</blue>
+                         <red>43</red>
+                         <green>164</green>
+                         <blue>220</blue>
                         </color>
                        </brush>
                       </colorrole>
                      </inactive>
                      <disabled>
+                      <colorrole role="Button">
+                       <brush brushstyle="SolidPattern">
+                        <color alpha="255">
+                         <red>43</red>
+                         <green>164</green>
+                         <blue>220</blue>
+                        </color>
+                       </brush>
+                      </colorrole>
                       <colorrole role="Base">
                        <brush brushstyle="SolidPattern">
                         <color alpha="255">
-                         <red>255</red>
-                         <green>255</green>
-                         <blue>178</blue>
+                         <red>43</red>
+                         <green>164</green>
+                         <blue>220</blue>
                         </color>
                        </brush>
                       </colorrole>
                       <colorrole role="Window">
                        <brush brushstyle="SolidPattern">
                         <color alpha="255">
-                         <red>255</red>
-                         <green>255</green>
-                         <blue>178</blue>
+                         <red>43</red>
+                         <green>164</green>
+                         <blue>220</blue>
                         </color>
                        </brush>
                       </colorrole>
@@ -395,7 +425,7 @@
                     </palette>
                    </property>
                    <property name="autoFillBackground">
-                    <bool>true</bool>
+                    <bool>false</bool>
                    </property>
                    <property name="styleSheet">
                     <string notr="true"/>
@@ -931,6 +961,9 @@ p, li { white-space: pre-wrap; }
        <layout class="QVBoxLayout" name="circleTabVLayout">
         <item>
          <widget class="QFrame" name="headerFrameCircle">
+          <property name="styleSheet">
+           <string notr="true">background-color: rgb(43, 164, 220);</string>
+          </property>
           <property name="frameShape">
            <enum>QFrame::StyledPanel</enum>
           </property>
@@ -1048,6 +1081,16 @@ p, li { white-space: pre-wrap; }
  </widget>
  <customwidgets>
   <customwidget>
+   <class>StyledLabel</class>
+   <extends>QLabel</extends>
+   <header>gui/common/StyledLabel.h</header>
+  </customwidget>
+  <customwidget>
+   <class>StyledElidedLabel</class>
+   <extends>QLabel</extends>
+   <header>gui/common/StyledElidedLabel.h</header>
+  </customwidget>
+  <customwidget>
    <class>LineEditClear</class>
    <extends>QLineEdit</extends>
    <header>gui/common/LineEditClear.h</header>
@@ -1056,16 +1099,6 @@ p, li { white-space: pre-wrap; }
    <class>RSTreeWidget</class>
    <extends>QTreeWidget</extends>
    <header>gui/common/RSTreeWidget.h</header>
-  </customwidget>
-  <customwidget>
-   <class>StyledElidedLabel</class>
-   <extends>QLabel</extends>
-   <header>gui/common/StyledElidedLabel.h</header>
-  </customwidget>
-  <customwidget>
-   <class>StyledLabel</class>
-   <extends>QLabel</extends>
-   <header>gui/common/StyledLabel.h</header>
   </customwidget>
   <customwidget>
    <class>RSTextBrowser</class>
@@ -1077,8 +1110,8 @@ p, li { white-space: pre-wrap; }
   <tabstop>idTreeWidget</tabstop>
  </tabstops>
  <resources>
-  <include location="../icons.qrc"/>
   <include location="../images.qrc"/>
+  <include location="../icons.qrc"/>
  </resources>
  <connections/>
 </ui>
