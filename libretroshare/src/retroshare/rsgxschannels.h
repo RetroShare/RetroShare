@@ -200,8 +200,8 @@ public:
 	 * @brief Share channel publishing key
 	 * This can be used to authorize other peers to post on the channel
 	 * @jsonapi{development}
-	 * param[in] groupId Channel id
-	 * param[in] peers peers to which share the key
+	 * @param[in] groupId Channel id
+	 * @param[in] peers peers to which share the key
 	 * @return false on error, true otherwise
 	 */
 	virtual bool groupShareKeys(

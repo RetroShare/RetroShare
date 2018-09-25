@@ -99,6 +99,9 @@ class PGPHandler
 		bool importGPGKeyPair(const std::string& filename,RsPgpId& imported_id,std::string& import_error) ;
 		bool importGPGKeyPairFromString(const std::string& data,RsPgpId& imported_id,std::string& import_error) ;
 		bool exportGPGKeyPair(const std::string& filename,const RsPgpId& exported_id) const ;
+		bool exportGPGKeyPairToString(
+		        std::string& data, const RsPgpId& exportedKeyId,
+		        bool includeSignatures, std::string& errorMsg ) const;
 
 		bool availableGPGCertificatesWithPrivateKeys(std::list<RsPgpId>& ids);
 		bool GeneratePGPCertificate(const std::string& name, const std::string& email, const std::string& passwd, RsPgpId& pgpId, const int keynumbits, std::string& errString) ;

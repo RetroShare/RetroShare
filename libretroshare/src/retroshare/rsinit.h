@@ -72,7 +72,7 @@ public:
 	 * PreLogin
 	 * Call before init retroshare, initialises rsinitconfig's public attributes
 	 */
-	static void	InitRsConfig();
+	static void InitRsConfig();
 
 	/*!
 	 * Should be called to load up ssl cert and private key, and intialises gpg
@@ -166,15 +166,45 @@ public:
 	static std::string systemDataDirectory(bool check = true);
 	static std::string PGPDirectory();
 
-	// PGP Accounts.
-	static int     GetPGPLogins(std::list<RsPgpId> &pgpIds);
+	/**
+	 * @brief Get available PGP identities id list
+	 * @jsonapi{development,unauthenticated}
+	 * @param[out] pgpIds storage for PGP id list
+	 * @return true on success, false otherwise
+	 */
+	static int GetPGPLogins(std::list<RsPgpId> &pgpIds);
 	static int     GetPGPLoginDetails(const RsPgpId& id, std::string &name, std::string &email);
 	static bool    GeneratePGPCertificate(const std::string&, const std::string& email, const std::string& passwd, RsPgpId &pgpId, const int keynumbits, std::string &errString);
 
 	// PGP Support Functions.
 	static bool    ExportIdentity(const std::string& fname,const RsPgpId& pgp_id) ;
 	static bool    ImportIdentity(const std::string& fname,RsPgpId& imported_pgp_id,std::string& import_error) ;
-	static bool    ImportIdentityFromString(const std::string& data,RsPgpId& imported_pgp_id,std::string& import_error) ;
+
+	/**
+	 * @brief Import full encrypted PGP identity from string
+	 * @jsonapi{development,unauthenticated}
+	 * @param[in] data certificate string
+	 * @param[out] pgpId storage for the PGP fingerprint of the imported key
+	 * @param[out] errorMsg storage for eventual human readable error message
+	 * @return true on success, false otherwise
+	 */
+	static bool ImportIdentityFromString(
+	        const std::string& data, RsPgpId& pgpId,
+	        std::string& errorMsg );
+
+	/**
+	 * @brief Export full encrypted PGP identity to string
+	 * @jsonapi{development}
+	 * @param[out] data storage for certificate string
+	 * @param[in] pgpId PGP id to export
+	 * @param[in] includeSignatures true to include signatures
+	 * @param[out] errorMsg storage for eventual human readable error message
+	 * @return true on success, false otherwise
+	 */
+	static bool exportIdentityToString(
+	        std::string& data, const RsPgpId& pgpId, std::string& errorMsg,
+	        bool includeSignatures = true );
+
 	static void    GetUnsupportedKeys(std::map<std::string,std::vector<std::string> > &unsupported_keys);
 	static bool    CopyGnuPGKeyrings() ;
 
@@ -233,7 +263,7 @@ struct RsLoginHelper
 {
 	/**
 	 * @brief Normal way to attempt login
-	 * @jsonapi{development}
+	 * @jsonapi{development,manualwrapper}
 	 * @param[in] account Id of the account to which attempt login
 	 * @param[in] password Password for the given account
 	 * @return RsInit::OK if login attempt success, error code otherwhise
@@ -255,14 +285,14 @@ struct RsLoginHelper
 
 	/**
 	 * @brief Get locations and associated information
-	 * @jsonapi{development}
+	 * @jsonapi{development,unauthenticated}
 	 * @param[out] locations storage for the retrived locations
 	 */
 	void getLocations(std::vector<RsLoginHelper::Location>& locations);
 
 	/**
 	 * @brief Creates a new RetroShare location, and log in once is created
-	 * @jsonapi{development}
+	 * @jsonapi{development,unauthenticated}
 	 * @param[inout] location provide input information to generate the location
 	 *	and storage to output the data of the generated location
 	 * @param[in] password to protect and unlock the associated PGP key
@@ -280,7 +310,7 @@ struct RsLoginHelper
 	/**
 	 * @brief Check if RetroShare is already logged in, this usually return true
 	 *	after a successfull attemptLogin() and before closeSession()
-	 * @jsonapi{development}
+	 * @jsonapi{development,unauthenticated}
 	 * @return true if already logged in, false otherwise
 	 */
 	bool isLoggedIn();

@@ -23,11 +23,6 @@ resource_api::ApiServerLocal* WebuiPage::apiServerLocal = 0;
 #endif
 resource_api::RsControlModule* WebuiPage::controlModule = 0;
 
-#ifdef RS_JSONAPI
-#	include <csignal>
-
-JsonApiServer* WebuiPage::jsonApiServer = nullptr;
-#endif // ifdef RS_JSONAPI
 
 WebuiPage::WebuiPage(QWidget */*parent*/, Qt::WindowFlags /*flags*/)
 {
@@ -113,15 +108,6 @@ QString WebuiPage::helpText() const
 	apiServerLocal = new resource_api::ApiServerLocal(apiServer, resource_api::ApiServerLocal::serverPath());
 #endif
 
-#ifdef RS_JSONAPI
-	// Use same port of libresapi + 2
-	jsonApiServer = new JsonApiServer(
-	            Settings->getWebinterfacePort() + 2,
-	            Settings->getWebinterfaceAllowAllIps() ? "::" : "127.0.0.1",
-	            [](int /*ec*/) { std::raise(SIGTERM); } );
-	jsonApiServer->start("WebuiPage::jsonApiServer");
-#endif // ifdef RS_JSONAPI
-
     return ok;
 }
 
@@ -142,10 +128,6 @@ QString WebuiPage::helpText() const
         delete controlModule;
         controlModule = 0;
     }
-#ifdef RS_JSONAPI
-	delete jsonApiServer;
-	jsonApiServer = nullptr;
-#endif
 }
 
 /*static*/ void WebuiPage::showWebui()

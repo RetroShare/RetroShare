@@ -1171,3 +1171,45 @@ void RshareSettings::setPageAlreadyDisplayed(const QString& page_name,bool b)
 {
 	return setValueToGroup("PageAlreadyDisplayed",page_name,b);
 }
+
+#ifdef RS_JSONAPI
+bool RshareSettings::getJsonApiEnabled()
+{
+	return valueFromGroup("JsonApi", "enabled", false).toBool();
+}
+
+void RshareSettings::setJsonApiEnabled(bool enabled)
+{
+	setValueToGroup("JsonApi", "enabled", enabled);
+}
+
+uint16_t RshareSettings::getJsonApiPort()
+{
+	return valueFromGroup("JsonApi", "port", 9092).toUInt();
+}
+
+void RshareSettings::setJsonApiPort(uint16_t port)
+{
+	setValueToGroup("JsonApi", "port", port);
+}
+
+QString RshareSettings::getJsonApiListenAddress()
+{
+	return valueFromGroup("JsonApi", "listenAddress", "127.0.0.1").toString();
+}
+
+void RshareSettings::setJsonApiListenAddress(const QString& listenAddress)
+{
+	setValueToGroup("JsonApi", "listenAddress", listenAddress);
+}
+
+QStringList RshareSettings::getJsonApiAuthTokens()
+{
+	return valueFromGroup("JsonApi", "authTokens", QStringList()).toStringList();
+}
+
+void RshareSettings::setJsonApiAuthTokens(const QStringList& authTokens)
+{
+	setValueToGroup("JsonApi", "authTokens", authTokens);
+}
+#endif // RS_JSONAPI

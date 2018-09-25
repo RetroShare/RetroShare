@@ -327,6 +327,14 @@ bool AuthGPG::exportProfile(const std::string& fname,const RsPgpId& exported_id)
 	return PGPHandler::exportGPGKeyPair(fname,exported_id) ;
 }
 
+bool AuthGPG::exportIdentityToString(
+        std::string& data, const RsPgpId& pgpId, bool includeSignatures,
+        std::string& errorMsg )
+{
+	return PGPHandler::exportGPGKeyPairToString(
+	            data, pgpId, includeSignatures, errorMsg);
+}
+
 bool AuthGPG::importProfile(const std::string& fname,RsPgpId& imported_id,std::string& import_error)
 {
 	return PGPHandler::importGPGKeyPair(fname,imported_id,import_error) ;
@@ -336,7 +344,6 @@ bool AuthGPG::importProfileFromString(const std::string &data, RsPgpId &gpg_id, 
 {
     return PGPHandler::importGPGKeyPairFromString(data, gpg_id, import_error);
 }
-
 
 bool   AuthGPG::active()
 {

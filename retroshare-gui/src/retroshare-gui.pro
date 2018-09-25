@@ -17,6 +17,12 @@ libresapihttpserver {
     FORMS *= gui/settings/WebuiPage.ui
 }
 
+rs_jsonapi {
+    HEADERS *= gui/settings/JsonApiPage.h
+    SOURCES *= gui/settings/JsonApiPage.cc
+    FORMS *= gui/settings/JsonApiPage.ui
+}
+
 !include("../../libretroshare/src/use_libretroshare.pri"):error("Including")
 
 FORMS   += TorControl/TorControlWindow.ui

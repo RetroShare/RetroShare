@@ -99,6 +99,9 @@ class RsAccountsDetail
 		// PGP Support Functions.
 		bool    exportIdentity(const std::string& fname,const RsPgpId& pgp_id) ;
 		bool    importIdentity(const std::string& fname,RsPgpId& imported_pgp_id,std::string& import_error) ;
+	bool exportIdentityToString(
+	        std::string& data, const RsPgpId& pgpId, bool includeSignatures,
+	        std::string& errorMsg );
         bool    importIdentityFromString(const std::string& data,RsPgpId& imported_pgp_id,std::string& import_error) ;
 		void    getUnsupportedKeys(std::map<std::string,std::vector<std::string> > &unsupported_keys);
 		bool    copyGnuPGKeyrings() ;

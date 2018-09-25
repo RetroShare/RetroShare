@@ -19,8 +19,9 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
-#ifndef MRK_P3RS_INTERFACE_H
-#define MRK_P3RS_INTERFACE_H
+#pragma once
+
+#include <functional>
 
 //#include "server/filedexserver.h"
 #include "ft/ftserver.h"
@@ -74,19 +75,19 @@ class RsPluginManager;
 
 class RsServer: public RsControl, public RsTickingThread
 {
-	public:
-		/****************************************/
-		/* p3face-startup.cc: init... */
-		virtual int StartupRetroShare();
+public:
+	RsServer();
+	virtual ~RsServer();
 
-		/****************************************/
-		/* p3face.cc: main loop / util fns / locking. */
+	virtual int StartupRetroShare();
 
 	/// @see RsControl::isReady()
 	virtual bool isReady() { return coreReady; }
 
-		RsServer() ;
-		virtual ~RsServer();
+	/// @see RsControl::setShutdownCallback
+	void setShutdownCallback(const std::function<void(int)>& callback)
+	{ mShutdownCallback = callback; }
+
 
 		/* Thread Fn: Run the Core */
         virtual void data_tick();
@@ -202,6 +203,9 @@ class RsServer: public RsControl, public RsTickingThread
     static const double maxTimeDelta;
     static const double kickLimit;
 
+	/// @see RsControl::setShutdownCallback
+	std::function<void(int)> mShutdownCallback;
+
 	/** Keep track of the core being fully ready, true only after
 	 *  StartupRetroShare() finish and before rsGlobalShutDown() begin
 	 */
@@ -213,5 +217,3 @@ class RsServer: public RsControl, public RsTickingThread
  */
 
 std::string make_path_unix(std::string winpath);
-
-#endif

@@ -90,78 +90,13 @@ int main(int argc, char *argv[])
 	RsInit::InitRsConfig();
 	RsInit::InitRetroShare(argc, argv, true);
 	RsControl::earlyInitNotificationSystem();
+	rsControl->setShutdownCallback(QCoreApplication::exit);
 	QObject::connect(
 	            &app, &QCoreApplication::aboutToQuit,
 	            [](){
 		if(RsControl::instance()->isReady())
 			RsControl::instance()->rsGlobalShutDown(); } );
 #endif // ifdef LIBRESAPI_LOCAL_SERVER
-
-#ifdef RS_JSONAPI
-	uint16_t jsonApiPort = 9092;
-	std::string jsonApiBindAddress = "127.0.0.1";
-
-	{
-		QCommandLineOption jsonApiPortOpt(
-		            "jsonApiPort", "JSON API listening port.", "port", "9092");
-		QCommandLineOption jsonApiBindAddressOpt(
-		            "jsonApiBindAddress", "JSON API Bind Address.",
-		            "IP Address", "127.0.0.1");
-
-		QCommandLineParser cmdParser;
-		cmdParser.addHelpOption();
-		cmdParser.addOption(jsonApiPortOpt);
-		cmdParser.addOption(jsonApiBindAddressOpt);
-
-		cmdParser.parse(app.arguments());
-
-		if(cmdParser.isSet(jsonApiPortOpt))
-		{
-			QString jsonApiPortStr = cmdParser.value(jsonApiPortOpt);
-			bool portOk;
-			jsonApiPort = jsonApiPortStr.toUShort(&portOk);
-			if(!portOk)
-			{
-				std::cerr << "ERROR: jsonApiPort option value must be a valid "
-				          << "TCP port!" << std::endl;
-				cmdParser.showHelp();
-				QCoreApplication::exit(EINVAL);
-			}
-		}
-
-		if(cmdParser.isSet(jsonApiBindAddressOpt))
-		{
-			sockaddr_storage tmp;
-			jsonApiBindAddress =
-			        cmdParser.value(jsonApiBindAddressOpt).toStdString();
-			if(!sockaddr_storage_inet_pton(tmp, jsonApiBindAddress))
-			{
-				std::cerr << "ERROR: jsonApiBindAddress option value must "
-				          << "be a valid IP address!" << std::endl;
-				cmdParser.showHelp();
-				QCoreApplication::exit(EINVAL);
-			}
-		}
-	}
-
-	JsonApiServer jas( jsonApiPort, jsonApiBindAddress,
-	                   [](int ec) { QCoreApplication::exit(ec); } );
-	jas.start();
-
-	{
-		sockaddr_storage tmp;
-		sockaddr_storage_inet_pton(tmp, jsonApiBindAddress);
-		sockaddr_storage_setport(tmp, jsonApiPort);
-		sockaddr_storage_ipv6_to_ipv4(tmp);
-		RsUrl tmpUrl(sockaddr_storage_tostring(tmp));
-		tmpUrl.setScheme("http");
-
-		std::cerr << "JSON API listening on "
-		          << tmpUrl.toString()
-		          << std::endl;
-	}
-
-#endif // ifdef RS_JSONAPI
 
 	return app.exec();
 }
