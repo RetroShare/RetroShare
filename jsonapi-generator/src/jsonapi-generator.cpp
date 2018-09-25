@@ -24,6 +24,7 @@
 #include <iterator>
 #include <functional>
 #include <QVariant>
+#include <cerrno>
 
 struct MethodParam
 {
