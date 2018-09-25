@@ -40,6 +40,26 @@
 
 /*extern*/ JsonApiServer* jsonApiServer = nullptr;
 
+/*static*/ const std::multimap<std::string, std::string>
+JsonApiServer::corsHeaders =
+{
+    { "Access-Control-Allow-Origin", "*" },
+    { "Access-Control-Allow-Methods", "GET, POST, OPTIONS"},
+    { "Access-Control-Allow-Headers", "DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range" },
+    { "Access-Control-Expose-Headers", "Content-Length,Content-Range" }
+};
+
+/*static*/ const std::multimap<std::string, std::string>
+JsonApiServer::corsOptionsHeaders =
+{
+    { "Access-Control-Allow-Origin", "*" },
+    { "Access-Control-Allow-Methods", "GET, POST, OPTIONS"},
+    { "Access-Control-Allow-Headers", "DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range" },
+    { "Access-Control-Max-Age", "1728000" }, // 20 days
+    { "Content-Type", "text/plain; charset=utf-8" },
+    { "Content-Length", "0" }
+};
+
 #define INITIALIZE_API_CALL_JSON_CONTEXT \
 	RsGenericSerializer::SerializeContext cReq( \
 	            nullptr, 0, \
@@ -65,15 +85,13 @@
 	std::stringstream ss; \
 	ss << jAns; \
 	std::string&& ans(ss.str()); \
-	const std::multimap<std::string, std::string> headers \
-    { \
-        { "Content-Type", "text/json" }, \
-        { "Content-Length", std::to_string(ans.length()) } \
-	}; \
+	auto headers = corsHeaders; \
+	headers.insert({ "Content-Type", "text/json" }); \
+	headers.insert({ "Content-Length", std::to_string(ans.length()) }); \
 	session->close(RET_CODE, ans, headers)
 
 
-static bool checkRsServicePtrReady(
+/*static*/ bool JsonApiServer::checkRsServicePtrReady(
         void* serviceInstance, const std::string& serviceName,
         RsGenericSerializer::SerializeContext& ctx,
         const std::shared_ptr<restbed::Session> session)
@@ -244,6 +262,7 @@ void JsonApiServer::registerHandler(
 	resource->set_path(path);
 	resource->set_method_handler("GET", handler);
 	resource->set_method_handler("POST", handler);
+	resource->set_method_handler("OPTIONS", handleCorsOptions);
 
 	if(requiresAutentication)
 		resource->set_authentication_handler(
@@ -406,4 +425,8 @@ bool JsonApiServer::loadList(std::list<RsItem*>& loadList)
 }
 
 void JsonApiServer::saveDone() { configMutex.unlock(); }
+
+void JsonApiServer::handleCorsOptions(
+        const std::shared_ptr<restbed::Session> session )
+{ session->close(rb::NO_CONTENT, corsOptionsHeaders); }
 
