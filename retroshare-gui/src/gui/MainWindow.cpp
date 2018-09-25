@@ -1414,8 +1414,8 @@ void MainWindow::statusChangedComboBox(int index)
 /*new setting*/
 void MainWindow::settingsChanged()
 {
-    ui->toolBarPage->setStyleSheet(" QToolBar {background: rgb(30, 30, 30) }"); // d: Set color of toolbar
-    ui->toolBarAction->setStyleSheet(" QToolBar {background: rgb(30, 30, 30) }"); // d: Set color of toolbar
+    ui->toolBarPage->setStyleSheet(" QToolBar {background: rgb(43, 164, 220) }"); // d: Set color of toolbar
+    ui->toolBarAction->setStyleSheet(" QToolBar {background: rgb(43, 164, 220) }"); // d: Set color of toolbar
     ui->toolBarPage->setVisible(Settings->getPageButtonLoc());
 	ui->toolBarAction->setVisible(Settings->getActionButtonLoc());
 	ui->listWidget->setVisible(!Settings->getPageButtonLoc() || !Settings->getActionButtonLoc());
