@@ -23,6 +23,7 @@
 #include <memory>
 #include <restbed>
 #include <vector>
+#include <openssl/crypto.h>
 
 #include "util/rsjson.h"
 #include "retroshare/rsfiles.h"
@@ -294,7 +295,25 @@ bool JsonApiServer::requestNewTokenAutorization(const std::string& token)
 bool JsonApiServer::isAuthTokenValid(const std::string& token)
 {
 	RS_STACK_MUTEX(configMutex);
-	return mAuthTokenStorage.mAuthorizedTokens.count(token);
+
+	// attempt avoiding +else CRYPTO_memcmp+ being optimized away
+	int noOptimiz = 1;
+
+	/* Do not use mAuthTokenStorage.mAuthorizedTokens.count(token), because
+	 * std::string comparison is usually not constant time on content to be
+	 * faster, so an attacker may use timings to guess authorized tokens */
+	for(const std::string& vTok : mAuthTokenStorage.mAuthorizedTokens)
+	{
+		if( token.size() == vTok.size() &&
+		        ( noOptimiz = CRYPTO_memcmp( token.data(), vTok.data(),
+		                                     vTok.size() ) ) == 0 )
+			return true;
+		// Make token size guessing harder
+		else noOptimiz = CRYPTO_memcmp(token.data(), token.data(), token.size());
+	}
+
+	// attempt avoiding +else CRYPTO_memcmp+ being optimized away
+	return static_cast<uint32_t>(noOptimiz) + 1 == 0;
 }
 
 std::set<std::string> JsonApiServer::getAuthorizedTokens()
