@@ -47,7 +47,7 @@ FriendRequestToaster::FriendRequestToaster(const RsPgpId &gpgId, const QString &
 	/* set informations */
 	ui.avatarWidget->setFrameType(AvatarWidget::NORMAL_FRAME);
 	if (knownPeer) {
-		ui.textLabel->setText( peerName + " " + tr("wants to be friend with you on RetroShare"));
+        ui.textLabel->setText( peerName + " " + tr("wants to be friend with you on P2PUnseen"));
 		ui.avatarWidget->setDefaultAvatar(":/images/avatar_request.png");
 	} else {
 		ui.textLabel->setText( sslName + " " + tr("Unknown (Incoming) Connect Attempt"));
