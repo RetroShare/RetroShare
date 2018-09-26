@@ -1098,7 +1098,7 @@ void MessagesDialog::insertMessages()
                 if (msgbox == RS_MSG_INBOX || msgbox == RS_MSG_OUTBOX) 
                 {
                     if ((it->msgflags & RS_MSG_SYSTEM) && it->srcId == ownId) {
-                        text = "RetroShare";
+                        text = "P2PUnseen";
                     } 
                     else 
                     {

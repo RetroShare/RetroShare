@@ -148,7 +148,7 @@ AddFileAssociationDialog::loadSystemDefaultCommand()
         }
     }
 
-    QMessageBox::warning(this, tr("RetroShare"),
+    QMessageBox::warning(this, tr("P2PUnseen"),
                                tr("Sorry, can't determine system "
                                   "default command for this file\n"),
                                      QMessageBox::Ok);

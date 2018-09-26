@@ -41,7 +41,7 @@ QuickStartWizard::QuickStartWizard(QWidget *parent) :
     ui.setupUi(this);
 
     ui.headerFrame->setHeaderImage(QPixmap(":/images/rs_wizard.png"));
-    ui.headerFrame->setHeaderText("RetroShare");
+    ui.headerFrame->setHeaderText("P2PUnseen");
 
 	  ui.pagesWizard->setCurrentIndex(0);
 	  

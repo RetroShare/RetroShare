@@ -271,7 +271,7 @@ public:
     {
         if(rsFiles == 0)
         {
-            sendMessage(connection, MHD_HTTP_INTERNAL_SERVER_ERROR, "Error: rsFiles is null. Retroshare is probably not yet started.");
+            sendMessage(connection, MHD_HTTP_INTERNAL_SERVER_ERROR, "Error: rsFiles is null. P2PUnseen is probably not yet started.");
             return MHD_YES;
         }		
 		std::string urls(url);

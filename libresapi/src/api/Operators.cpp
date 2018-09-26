@@ -104,7 +104,7 @@ StreamBase& operator <<(StreamBase& left, ValueReference<T_ID>& ref)
         if(id.isNull)
         {
             left.setError();
-            left.addErrorMsg("operator for retroshare id value: id is null\n");
+            left.addErrorMsg("operator for P2PUnseen id value: id is null\n");
         }
         ref.value = id;
     }

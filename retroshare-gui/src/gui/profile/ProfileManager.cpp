@@ -132,7 +132,7 @@ void ProfileManager::exportIdentity()
     if (gpgId.isNull())
 		return;
 
-	QString fname = QFileDialog::getSaveFileName(this, tr("Export Identity"), "", tr("RetroShare Identity files (*.asc)"));
+    QString fname = QFileDialog::getSaveFileName(this, tr("Export Identity"), "", tr("P2PUnseen Identity files (*.asc)"));
 
 	if (fname.isNull())
 		return;
@@ -149,7 +149,7 @@ void ProfileManager::importIdentity()
 {
     QString fname ;
 
-    if(!misc::getOpenFileName(this,RshareSettings::LASTDIR_CERT,tr("Import Identity"), tr("RetroShare Identity files (*.asc)"),fname))
+    if(!misc::getOpenFileName(this,RshareSettings::LASTDIR_CERT,tr("Import Identity"), tr("P2PUnseen Identity files (*.asc)"),fname))
             return ;
 
 	if(fname.isNull())

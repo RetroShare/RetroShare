@@ -959,9 +959,9 @@ TransfersDialog::TransfersDialog(QWidget *parent)
     connect( clearCompletedAct , SIGNAL( triggered() ), this, SLOT( clearcompleted() ) );
 
 
-    copyLinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Copy RetroShare Link" ), this );
+    copyLinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Copy P2PUnseen Link" ), this );
     connect( copyLinkAct , SIGNAL( triggered() ), this, SLOT( dlCopyLink() ) );
-    pasteLinkAct = new QAction(QIcon(IMAGE_PASTELINK), tr( "Paste RetroShare Link" ), this );
+    pasteLinkAct = new QAction(QIcon(IMAGE_PASTELINK), tr( "Paste P2PUnseen Link" ), this );
     connect( pasteLinkAct , SIGNAL( triggered() ), this, SLOT( pasteLink() ) );
 	queueDownAct = new QAction(QIcon(":/images/go-down.png"), tr("Down"), this);
 	connect(queueDownAct, SIGNAL(triggered()), this, SLOT(priorityQueueDown()));
@@ -1047,7 +1047,7 @@ TransfersDialog::TransfersDialog(QWidget *parent)
     /** Setup the actions for the upload context menu */
     ulOpenFolderAct = new QAction(QIcon(IMAGE_OPENFOLDER), tr("Open Folder"), this);
     connect(ulOpenFolderAct, SIGNAL(triggered()), this, SLOT(ulOpenFolder()));
-    ulCopyLinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Copy RetroShare Link" ), this );
+    ulCopyLinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Copy P2PUnseen Link" ), this );
     connect( ulCopyLinkAct , SIGNAL( triggered() ), this, SLOT( ulCopyLink() ) );
 
     // load settings
@@ -2039,7 +2039,7 @@ void TransfersDialog::cancel()
 			queryWrn2.clear();
 			queryWrn2.append(tr("Are you sure that you want to cancel and delete these files?"));
 
-			if ((QMessageBox::question(this, tr("RetroShare"),queryWrn2,QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes)) == QMessageBox::No) {
+            if ((QMessageBox::question(this, tr("P2PUnseen"),queryWrn2,QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes)) == QMessageBox::No) {
 				break;
 			}
 		}

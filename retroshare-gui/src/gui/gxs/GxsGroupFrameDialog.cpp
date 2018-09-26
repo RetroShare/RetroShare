@@ -433,7 +433,7 @@ void GxsGroupFrameDialog::groupTreeCustomPopupMenu(QPoint point)
 	}
 
 	if (getLinkType() != RetroShareLink::TYPE_UNKNOWN) {
-		action = contextMnu.addAction(QIcon(IMAGE_COPYLINK), tr("Copy RetroShare Link"), this, SLOT(copyGroupLink()));
+        action = contextMnu.addAction(QIcon(IMAGE_COPYLINK), tr("Copy P2PUnseen Link"), this, SLOT(copyGroupLink()));
 		action->setEnabled(!mGroupId.isNull());
 	}
 
@@ -525,7 +525,7 @@ void GxsGroupFrameDialog::setSyncPostsDelay()
 
 void GxsGroupFrameDialog::restoreGroupKeys(void)
 {
-	QMessageBox::warning(this, "RetroShare", "ToDo");
+    QMessageBox::warning(this, "P2PUnseen", "ToDo");
 
 #ifdef TOGXS
 	mInterface->groupRestoreKeys(mGroupId);

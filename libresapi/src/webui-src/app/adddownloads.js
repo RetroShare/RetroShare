@@ -70,7 +70,7 @@ var me = {
                     });
                 }
             } else {
-                me.toConfirm.push({ text: "Error: no Retroshare-file link"})
+                me.toConfirm.push({ text: "Error: no P2PUnseen-file link"})
             }
             me.index++;
         }
@@ -183,7 +183,7 @@ function cancelBtn(){
 function step1(){
     m.initControl = "txtInput";
     return [
-        m("h3","step 1 / 5: paste retroshare-links:"),
+        m("h3","step 1 / 5: paste P2PUnseen-links:"),
         m("textarea[id=txtInput]", {
             style: {
                 height:"100%",

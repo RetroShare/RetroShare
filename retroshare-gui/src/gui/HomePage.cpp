@@ -146,19 +146,19 @@ void HomePage::recommendFriends()
 
 void HomePage::runEmailClient()
 {
-	sendMail("", tr("RetroShare Invite"), ui->userCertEdit->toPlainText());
+    sendMail("", tr("P2PUnseen Invite"), ui->userCertEdit->toPlainText());
 }
 
 void HomePage::copyCert()
 {
 	QClipboard *clipboard = QApplication::clipboard();
 	clipboard->setText(ui->userCertEdit->toPlainText());
-	QMessageBox::information(this, "RetroShare", tr("Your Cert is copied to Clipboard, paste and send it to your friend via email or some other way"));
+    QMessageBox::information(this, "P2PUnseen", tr("Your Cert is copied to Clipboard, paste and send it to your friend via email or some other way"));
 }
 
 void HomePage::saveCert()
 {
-	QString fileName = QFileDialog::getSaveFileName(this, tr("Save as..."), "", tr("RetroShare Certificate (*.rsc );;All Files (*)"));
+    QString fileName = QFileDialog::getSaveFileName(this, tr("Save as..."), "", tr("P2PUnseen Certificate (*.rsc );;All Files (*)"));
 	if (fileName.isEmpty())
 		return;
 

@@ -481,7 +481,7 @@ void IdentityHandler::handleGetIdentityDetails(Request& req, Response& resp)
 	if(isOwnId)
 	{
 		if (data.mPgpKnown && !data.mPgpId.isNull())
-			type = "Identity owned by you, linked to your Retroshare node";
+            type = "Identity owned by you, linked to your P2PUnseen node";
 		else
 			type = "Anonymous identity, owned by you";
 	}
@@ -490,12 +490,12 @@ void IdentityHandler::handleGetIdentityDetails(Request& req, Response& resp)
 		if (data.mPgpKnown)
 		{
 			if (rsPeers->isGPGAccepted(data.mPgpId))
-				type = "Linked to a friend Retroshare node";
+                type = "Linked to a friend P2PUnseen node";
 			else
-				type = "Linked to a known Retroshare node";
+                type = "Linked to a known P2PUnseen node";
 		}
 		else
-			type = "Linked to unknown Retroshare node";
+            type = "Linked to unknown P2PUnseen node";
 	}
 	else
 		type = "Anonymous identity";

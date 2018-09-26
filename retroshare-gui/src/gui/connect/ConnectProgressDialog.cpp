@@ -685,7 +685,7 @@ void ConnectProgressDialog::sayInProgress()
 	message += "\n\n";
 	message += tr("You can close this dialog at any time");
 	message += "\n";
-	message += tr("Retroshare will continue connecting in the background");
+    message += tr("P2PUnseen will continue connecting in the background");
 
 	setStatusMessage(MESSAGE_STATUS_INPROGRESS, title, message);
 }
@@ -698,7 +698,7 @@ void ConnectProgressDialog::sayConnectTimeout()
 	message += "\n";
 	message += tr("But no error has been detected");
 	message += "\n\n";
-	message += tr("Try again shortly, Retroshare will continue connecting in the background");
+    message += tr("Try again shortly, P2PUnseen will continue connecting in the background");
 	message += "\n\n";
 	message += tr("If you continue to get this message, please contact developers");
 
@@ -711,7 +711,7 @@ void ConnectProgressDialog::sayLookupTimeout()
 	QString title = tr("DHT Lookup Timeout");
 	QString message = tr("DHT Lookup has taken too long");
 	message += "\n\n";
-	message += tr("Try again shortly, Retroshare will continue connecting in the background");
+    message += tr("Try again shortly, P2PUnseen will continue connecting in the background");
 	message += "\n\n";
 	message += tr("If you continue to get this message, please contact developers");
 
@@ -723,7 +723,7 @@ void ConnectProgressDialog::sayUdpTimeout()
 	QString title = tr("UDP Connection Timeout");
 	QString message = tr("UDP Connection has taken too long");
 	message += "\n\n";
-	message += tr("Try again shortly, Retroshare will continue connecting in the background");
+    message += tr("Try again shortly, P2PUnseen will continue connecting in the background");
 	message += "\n\n";
 	message += tr("If you continue to get this message, please contact developers");
 
@@ -740,7 +740,7 @@ void ConnectProgressDialog::sayUdpFailed()
 	message += "\n\n";
 	message += tr("Improve connectivity by opening a Port in your Firewall.");
 	message += "\n\n";
-	message += tr("Retroshare will continue connecting in the background");
+    message += tr("P2PUnseen will continue connecting in the background");
 	message += "\n";
 	message += tr("If you continue to get this message, please contact developers");
 
@@ -774,13 +774,13 @@ void ConnectProgressDialog::sayDHTFailed()
 void ConnectProgressDialog::sayDHTOffline()
 {
 	QString title = tr("DHT is Disabled");
-	QString message = tr("The DHT is OFF, so Retroshare cannot find your Friends.");
+    QString message = tr("The DHT is OFF, so P2PUnseen cannot find your Friends.");
 	message += "\n\n";
-	message += tr("Retroshare has tried All Known Addresses, with no success");
+    message += tr("P2PUnseen has tried All Known Addresses, with no success");
 	message += "\n";
 	message += tr("The DHT is needed if your friends have Dynamic IP Addresses.");
 	message += "\n";
-	message += tr("Only Advanced Retroshare users should switch off the DHT.");
+    message += tr("Only Advanced P2PUnseen users should switch off the DHT.");
 	message += "\n\n";
 	message += tr("Go to Settings->Server and change config to \"Public: DHT and Discovery\"");
 
@@ -796,7 +796,7 @@ void ConnectProgressDialog::sayDenied()
 	message += "\n\n";
 	message += tr("Please contact them to add your Certificate");
 	message += "\n\n";
-	message += tr("Your Retroshare Node is configured Okay");
+    message += tr("Your P2PUnseen Node is configured Okay");
 
 	setStatusMessage(MESSAGE_STATUS_PEER_ERROR, title, message);
 }
@@ -813,7 +813,7 @@ void ConnectProgressDialog::sayUdpDenied()
 	message += "\n";
 	message += tr("They need a Certificate + Node for UDP connections to succeed");
 	message += "\n\n";
-	message += tr("Your Retroshare Node is configured Okay");
+    message += tr("Your P2PUnseen Node is configured Okay");
 
 	setStatusMessage(MESSAGE_STATUS_PEER_ERROR, title, message);
 }
@@ -826,7 +826,7 @@ void ConnectProgressDialog::sayPeerOffline()
 	message += "\n\n";
 	message += tr("They are either offline or their DHT is Off");
 	message += "\n\n";
-	message += tr("Your Retroshare Node is configured Okay");
+    message += tr("Your P2PUnseen Node is configured Okay");
 
 	setStatusMessage(MESSAGE_STATUS_PEER_ERROR, title, message);
 }
@@ -835,13 +835,13 @@ void ConnectProgressDialog::sayPeerOffline()
 void ConnectProgressDialog::sayPeerNoDhtConfig()
 {
 	QString title = tr("Peer DHT is Disabled");
-	QString message = tr("Your Friend has configured Retroshare with DHT Disabled.");
+    QString message = tr("Your Friend has configured P2PUnseen with DHT Disabled.");
 	message += "\n\n";
 	message += tr("You have previously connected to this Friend");
 	message += "\n";
-	message += tr("Retroshare has determined that they have DHT switched off");
+    message += tr("P2PUnseen has determined that they have DHT switched off");
 	message += "\n";
-	message += tr("Without the DHT it is hard for Retroshare to locate your friend");
+    message += tr("Without the DHT it is hard for P2PUnseen to locate your friend");
 	message += "\n\n";
 	message += tr("Try importing a fresh Certificate to get up-to-date connection information");
 	message += "\n\n";
@@ -856,7 +856,7 @@ void ConnectProgressDialog::sayInvalidPeer()
 	QString title = tr("Incomplete Friend Details");
 	QString message = tr("You have imported an incomplete Certificate");
 	message += "\n\n";
-	message += tr("Retroshare cannot connect without this information");
+    message += tr("P2PUnseen cannot connect without this information");
 	message += "\n\n";
 	message += tr("Please retry importing the full Certificate");
 

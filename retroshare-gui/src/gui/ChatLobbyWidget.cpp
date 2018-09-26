@@ -324,7 +324,7 @@ void ChatLobbyWidget::lobbyTreeWidgetCustomPopupMenu(QPoint)
         else if(!own_identities.empty())
             contextMnu.addAction(QIcon(IMAGE_SUBSCRIBE), tr("Add Auto Subscribe"), this, SLOT(autoSubscribeItem()));
 
-        contextMnu.addAction(QIcon(IMAGE_COPYRSLINK), tr("Copy RetroShare Link"), this, SLOT(copyItemLink()));
+        contextMnu.addAction(QIcon(IMAGE_COPYRSLINK), tr("Copy P2PUnseen Link"), this, SLOT(copyItemLink()));
     }
 
         contextMnu.addSeparator();//-------------------------------------------------------------------

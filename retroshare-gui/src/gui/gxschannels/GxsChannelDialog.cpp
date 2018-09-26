@@ -64,7 +64,7 @@ QString GxsChannelDialog::getHelpString() const
     <p>Only the channel's creator can post on that channel. Other peers                       \
     in the network can only read from it, unless the channel is private. You can however share \
      the posting rights or the reading rights with friend P2PUnseen nodes.</p>\
-	 <p>Channels can be made anonymous, or attached to a Retroshare identity so that readers can contact you if needed.\
+     <p>Channels can be made anonymous, or attached to a P2PUnseen identity so that readers can contact you if needed.\
 	 Enable \"Allow Comments\" if you want to let users comment on your posts.</p>\
     <p>Channel posts are kept for %1 days, and sync-ed over the last %2 days, unless you change this.</p>\
                 ").arg(QString::number(rsGxsChannels->getDefaultStoragePeriod()/86400)).arg(QString::number(rsGxsChannels->getDefaultSyncPeriod()/86400));

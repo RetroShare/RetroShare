@@ -66,7 +66,7 @@ GeneralPage::GeneralPage(QWidget * parent, Qt::WindowFlags flags) :
         ui.registerRetroShareProtocol->setEnabled(false);
 #ifdef Q_OS_WIN
         ui.adminLabel->setEnabled(false);
-        ui.adminLabel->setToolTip(tr("You don't have sufficient rights. Run RetroShare as Admin to change this setting."));
+        ui.adminLabel->setToolTip(tr("You don't have sufficient rights. Run P2PUnseen as Admin to change this setting."));
 #else
         ui.desktopFileMissingLabel->setVisible(true);
 #endif
@@ -77,7 +77,7 @@ GeneralPage::GeneralPage(QWidget * parent, Qt::WindowFlags flags) :
 	ui.autoLogin->setToolTip(tr("For security reasons the usage of auto-login is discouraged, you can enable it but you are on your own!"));
 #else // RS_AUTOLOGIN
 	ui.autoLogin->setEnabled(false);
-	ui.autoLogin->setToolTip(tr("Your RetroShare build has auto-login disabled."));
+    ui.autoLogin->setToolTip(tr("Your P2PUnseen build has auto-login disabled."));
 #endif // RS_AUTOLOGIN
 
     /* Connect signals */
@@ -139,9 +139,9 @@ void GeneralPage::updateRegisterRSProtocol()
 		QString error ="";
 		if (Settings->setRetroShareProtocol(ui.registerRetroShareProtocol->isChecked(), error) == false) {
 			if (ui.registerRetroShareProtocol->isChecked()) {
-				QMessageBox::critical(this, tr("Error"), tr("Could not add retroshare:// as protocol.").append("\n").append(error));
+                QMessageBox::critical(this, tr("Error"), tr("Could not add P2PUnseen:// as protocol.").append("\n").append(error));
 			} else {
-				QMessageBox::critical(this, tr("Error"), tr("Could not remove retroshare:// protocol.").append("\n").append(error));
+                QMessageBox::critical(this, tr("Error"), tr("Could not remove P2PUnseen:// protocol.").append("\n").append(error));
 			}
 		}
 	}

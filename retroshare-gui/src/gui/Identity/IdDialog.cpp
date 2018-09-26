@@ -1841,21 +1841,21 @@ void IdDialog::insertIdDetails(uint32_t token)
 
     if(isOwnId)
         if (isLinkedToOwnPgpId)
-            ui->lineEdit_Type->setText(tr("Identity owned by you, linked to your Retroshare node")) ;
+            ui->lineEdit_Type->setText(tr("Identity owned by you, linked to your P2PUnseen node")) ;
         else
             if (data.mMeta.mGroupFlags & (GXS_SERV::FLAG_PRIVACY_PRIVATE | RSGXSID_GROUPFLAG_REALID))
-                ui->lineEdit_Type->setText(tr("Identity owned by you, linked to your Retroshare node but not yet validated")) ;
+                ui->lineEdit_Type->setText(tr("Identity owned by you, linked to your P2PUnseen node but not yet validated")) ;
             else
                 ui->lineEdit_Type->setText(tr("Anonymous identity, owned by you")) ;
     else if (data.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID_kept_for_compatibility)
     {
         if (data.mPgpKnown)
             if (rsPeers->isGPGAccepted(data.mPgpId))
-                ui->lineEdit_Type->setText(tr("Linked to a friend Retroshare node")) ;
+                ui->lineEdit_Type->setText(tr("Linked to a friend P2PUnseen node")) ;
             else
-                ui->lineEdit_Type->setText(tr("Linked to a known Retroshare node")) ;
+                ui->lineEdit_Type->setText(tr("Linked to a known P2PUnseen node")) ;
         else
-            ui->lineEdit_Type->setText(tr("Linked to unknown Retroshare node")) ;
+            ui->lineEdit_Type->setText(tr("Linked to unknown P2PUnseen node")) ;
     }
     else
     {
@@ -2596,7 +2596,7 @@ void IdDialog::sendMsg()
 
 QString IdDialog::inviteMessage()
 {
-    return tr("Hi,<br>I want to be friends with you on RetroShare.<br>");
+    return tr("Hi,<br>I want to be friends with you on P2PUnseen.<br>");
 }
 
 void IdDialog::sendInvite()

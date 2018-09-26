@@ -222,11 +222,11 @@ SharedFilesDialog::SharedFilesDialog(RetroshareDirModel *_tree_model,RetroshareD
 	ui.dirTreeView->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
   /* Hide platform specific features */
-  copylinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Copy retroshare Links to Clipboard" ), this );
+  copylinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Copy P2PUnseen Links to Clipboard" ), this );
   connect( copylinkAct , SIGNAL( triggered() ), this, SLOT( copyLink() ) );
-  copylinkhtmlAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Copy retroshare Links to Clipboard (HTML)" ), this );
+  copylinkhtmlAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Copy P2PUnseen Links to Clipboard (HTML)" ), this );
   connect( copylinkhtmlAct , SIGNAL( triggered() ), this, SLOT( copyLinkhtml() ) );
-  sendlinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Send retroshare Links" ), this );
+  sendlinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Send P2PUnseen Links" ), this );
   connect( sendlinkAct , SIGNAL( triggered() ), this, SLOT( sendLinkTo( ) ) );
 
 	collCreateAct= new QAction(QIcon(IMAGE_COLLCREATE), tr("Create Collection..."), this) ;
@@ -693,7 +693,7 @@ void SharedFilesDialog::sendLinkTo()
     * just need to set peers
     */
     std::cerr << "SharedFilesDialog::sendLinkTo()" << std::endl;
-    nMsgDialog->setTitleText(tr("RetroShare Link"));
+    nMsgDialog->setTitleText(tr("P2PUnseen Link"));
     nMsgDialog->setMsgText(RSLinkClipboard::toHtml(), true);
 
     nMsgDialog->show();
