@@ -124,7 +124,8 @@ void bdThread::join() /* waits for the the mTid thread to stop */
 #if defined(_WIN32) || defined(__MINGW32__)
 	/* Its a struct in Windows compile and the member .p ist checked in the pthreads library */
 #else
-	if(mTid > 0)
+	//if(mTid > 0) // atai - fix bug of ordered comparison between pointer and zero
+	if(mTid != (void*) NULL)
 #endif
 		pthread_join(mTid, NULL);
 

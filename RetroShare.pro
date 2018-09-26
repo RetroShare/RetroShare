@@ -17,7 +17,9 @@
 ################################################################################
 
 !include("retroshare.pri"): error("Could not include file retroshare.pri")
-
+#atai add this one
+CONFIG += qt gui uic qrc resources uitools debug
+CONFIG+=rs_async_chat
 TEMPLATE = subdirs
 
 SUBDIRS += openpgpsdk

@@ -2,7 +2,8 @@
 
 TEMPLATE = lib
 CONFIG += staticlib
-
+## Sep 11 2018 - meiyousixin - fix bug: can not find openssl/bn.h
+INCLUDEPATH += /usr/local/include
 DEFINES *= OPENSSL_NO_IDEA 
 
 QMAKE_CXXFLAGS *= -Wall -Werror -W
