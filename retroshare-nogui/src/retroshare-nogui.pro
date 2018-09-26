@@ -12,9 +12,10 @@ libresapihttpserver {
 
     HEADERS += TerminalApiClient.h
     SOURCES += TerminalApiClient.cpp
+} else {
+    !include("../../libretroshare/src/use_libretroshare.pri"):error("Including")
 }
 
-!include("../../libretroshare/src/use_libretroshare.pri"):error("Including")
 
 
 ################################# Linux ##########################################

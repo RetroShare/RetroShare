@@ -15,6 +15,8 @@ libresapihttpserver {
     HEADERS *= gui/settings/WebuiPage.h
     SOURCES *= gui/settings/WebuiPage.cpp
     FORMS *= gui/settings/WebuiPage.ui
+} else {
+    !include("../../libretroshare/src/use_libretroshare.pri"):error("Including")
 }
 
 rs_jsonapi {
@@ -23,7 +25,6 @@ rs_jsonapi {
     FORMS *= gui/settings/JsonApiPage.ui
 }
 
-!include("../../libretroshare/src/use_libretroshare.pri"):error("Including")
 
 FORMS   += TorControl/TorControlWindow.ui
 SOURCES += TorControl/TorControlWindow.cpp
