@@ -100,7 +100,14 @@
     </item>
    </layout>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QStatusBar" name="statusbar">
+   <property name="autoFillBackground">
+    <bool>false</bool>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgb(20, 140, 195);</string>
+   </property>
+  </widget>
   <widget class="QToolBar" name="toolBarPage">
    <property name="contextMenuPolicy">
     <enum>Qt::CustomContextMenu</enum>
@@ -108,11 +115,14 @@
    <property name="toolButtonStyle">
     <enum>Qt::ToolButtonTextUnderIcon</enum>
    </property>
+   <property name="floatable">
+    <bool>true</bool>
+   </property>
    <attribute name="toolBarArea">
     <enum>LeftToolBarArea</enum>
    </attribute>
    <attribute name="toolBarBreak">
-    <bool>true</bool>
+    <bool>false</bool>
    </attribute>
   </widget>
   <widget class="QToolBar" name="toolBarAction">

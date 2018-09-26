@@ -14,8 +14,8 @@
    <string>RetroShare Share Manager</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="images.qrc">
-    <normaloff>:/images/logo/logo_16.png</normaloff>:/images/logo/logo_16.png</iconset>
+   <iconset resource="../Unseengui/unseengui.qrc">
+    <normaloff>:/app/images/unseen16.png</normaloff>:/app/images/unseen16.png</iconset>
   </property>
   <layout class="QGridLayout" name="gridLayout_3">
    <property name="leftMargin">
@@ -275,19 +275,19 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>StyledLabel</class>
-   <extends>QLabel</extends>
-   <header>gui/common/StyledLabel.h</header>
-  </customwidget>
-  <customwidget>
    <class>HeaderFrame</class>
    <extends>QFrame</extends>
    <header>gui/common/HeaderFrame.h</header>
    <container>1</container>
   </customwidget>
+  <customwidget>
+   <class>StyledLabel</class>
+   <extends>QLabel</extends>
+   <header>gui/common/StyledLabel.h</header>
+  </customwidget>
  </customwidgets>
  <resources>
-  <include location="images.qrc"/>
+  <include location="../Unseengui/unseengui.qrc"/>
  </resources>
  <connections/>
 </ui>

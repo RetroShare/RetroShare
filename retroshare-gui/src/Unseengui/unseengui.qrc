@@ -17,5 +17,11 @@
         <file>chat/img/friends_off_un_128.png</file>
         <file>chat/img/friends_on_un_128.png</file>
         <file>chat/img/unsene_favicon_16.png</file>
+        <file>app/images/unseen128.png</file>
+        <file>app/images/unseen16.png</file>
+        <file>app/images/unseen20.png</file>
+        <file>app/images/unseen32.png</file>
+        <file>app/images/unseen48.png</file>
+        <file>app/images/unseen64.png</file>
     </qresource>
 </RCC>

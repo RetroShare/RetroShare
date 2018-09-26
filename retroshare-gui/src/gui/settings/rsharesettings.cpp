@@ -215,7 +215,7 @@ Qt::ToolButtonStyle RshareSettings::getToolButtonStyle()
 		return Qt::ToolButtonTextBesideIcon;
 	case SETTING_VALUE_TOOLBUTTONSTYLE_TEXTUNDERICON:
 	default:
-		return Qt::ToolButtonTextUnderIcon;
+        return Qt::ToolButtonTextUnderIcon;
 	}
 }
 /** Sets the tool button's style.*/

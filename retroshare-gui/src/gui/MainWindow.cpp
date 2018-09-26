@@ -1426,7 +1426,7 @@ void MainWindow::settingsChanged()
 			ui->listWidget->item(i)->setHidden(Settings->getActionButtonLoc());
 		}
 	}
-	int toolSize = Settings->getToolButtonSize();
+    int toolSize = Settings->getToolButtonSize();
 	ui->toolBarPage->setToolButtonStyle(Settings->getToolButtonStyle());
 	ui->toolBarPage->setIconSize(QSize(toolSize,toolSize));
 	ui->toolBarAction->setToolButtonStyle(Settings->getToolButtonStyle());

@@ -88,7 +88,7 @@
            </size>
           </property>
           <property name="pixmap">
-           <pixmap>:/images/logo/logo_16.png</pixmap>
+           <pixmap resource="../../../retroshare-gui/src/Unseengui/unseengui.qrc">:/app/images/unseen16.png</pixmap>
           </property>
           <property name="scaledContents">
            <bool>true</bool>
@@ -98,7 +98,7 @@
         <item>
          <widget class="QLabel" name="toasterLabel">
           <property name="text">
-           <string notr="true">RetroShare</string>
+           <string notr="true">P2PUnseen</string>
           </property>
          </widget>
         </item>
@@ -130,7 +130,7 @@
            </size>
           </property>
           <property name="icon">
-           <iconset>
+           <iconset resource="../../../retroshare-gui/src/gui/images.qrc">
             <normaloff>:/images/closenormal.png</normaloff>:/images/closenormal.png</iconset>
           </property>
           <property name="flat">
@@ -273,19 +273,20 @@ background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 0.67,
  </widget>
  <customwidgets>
   <customwidget>
-   <class>StyledLabel</class>
-   <extends>QLabel</extends>
-   <header>gui/common/StyledLabel.h</header>
-  </customwidget>
-  <customwidget>
    <class>AvatarWidget</class>
    <extends>QLabel</extends>
    <header>gui/common/AvatarWidget.h</header>
    <container>1</container>
   </customwidget>
+  <customwidget>
+   <class>StyledLabel</class>
+   <extends>QLabel</extends>
+   <header>gui/common/StyledLabel.h</header>
+  </customwidget>
  </customwidgets>
  <resources>
-  <include location="VOIP_images.qrc"/>
+  <include location="../../../retroshare-gui/src/Unseengui/unseengui.qrc"/>
+  <include location="../../../retroshare-gui/src/gui/images.qrc"/>
  </resources>
  <connections/>
 </ui>

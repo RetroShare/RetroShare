@@ -29,8 +29,8 @@
    <string>Quick Start Wizard</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="images.qrc">
-    <normaloff>:/images/logo/logo_16.png</normaloff>:/images/logo/logo_16.png</iconset>
+   <iconset resource="../Unseengui/unseengui.qrc">
+    <normaloff>:/app/images/unseen16.png</normaloff>:/app/images/unseen16.png</iconset>
   </property>
   <property name="modal">
    <bool>true</bool>
@@ -57,7 +57,7 @@
    <item row="1" column="0">
     <widget class="QStackedWidget" name="pagesWizard">
      <property name="currentIndex">
-      <number>1</number>
+      <number>4</number>
      </property>
      <widget class="QWidget" name="pageWelcome">
       <layout class="QGridLayout" name="gridLayout_2">
@@ -254,7 +254,7 @@ p, li { white-space: pre-wrap; }
              </sizepolicy>
             </property>
             <property name="text">
-             <string>For best performance, RetroShare needs to know a little about your connection to the internet.</string>
+             <string>For best performance, P2PUnseen needs to know a little about your connection to the internet.</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
@@ -907,11 +907,11 @@ p, li { white-space: pre-wrap; }
              <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Just one more step! You're almost done configuring RetroShare to work with your computer.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;These settings configure how and when RetroShare starts .&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:8pt;&quot;&gt;Just one more step! You're almost done configuring P2PUnseen to work with your computer.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'MS Shell Dlg 2'; font-size:8pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:8pt;&quot;&gt;These settings configure how and when P2PUnseen starts .&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'MS Shell Dlg 2'; font-size:8pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
@@ -940,7 +940,7 @@ p, li { white-space: pre-wrap; }
             <item row="0" column="0">
              <widget class="QCheckBox" name="checkBoxRunRetroshareAtSystemStartup">
               <property name="text">
-               <string>Start RetroShare when my System Starts.</string>
+               <string>Start P2PUnseen when my System Starts.</string>
               </property>
              </widget>
             </item>
@@ -1074,7 +1074,7 @@ p, li { white-space: pre-wrap; }
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="images.qrc"/>
+  <include location="../Unseengui/unseengui.qrc"/>
  </resources>
  <connections/>
 </ui>

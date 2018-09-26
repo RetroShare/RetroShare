@@ -32,8 +32,8 @@
    <string>Status message</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../images.qrc">
-    <normaloff>:/images/logo/logo_16.png</normaloff>:/images/logo/logo_16.png</iconset>
+   <iconset resource="../../Unseengui/unseengui.qrc">
+    <normaloff>:/app/images/unseen16.png</normaloff>:/app/images/unseen16.png</iconset>
   </property>
   <widget class="QFrame" name="frame">
    <property name="geometry">
@@ -174,7 +174,6 @@ border: 1px solid #CCCCCC;}
  </widget>
  <resources>
   <include location="../../Unseengui/unseengui.qrc"/>
-  <include location="../images.qrc"/>
  </resources>
  <connections/>
 </ui>

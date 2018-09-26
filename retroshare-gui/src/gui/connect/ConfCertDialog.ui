@@ -14,8 +14,8 @@
    <string>Retroshare node details</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../images.qrc">
-    <normaloff>:/images/logo/logo_16.png</normaloff>:/images/logo/logo_16.png</iconset>
+   <iconset resource="../../Unseengui/unseengui.qrc">
+    <normaloff>:/app/images/unseen16.png</normaloff>:/app/images/unseen16.png</iconset>
   </property>
   <layout class="QGridLayout" name="gridLayout_5">
    <property name="leftMargin">
@@ -433,6 +433,7 @@
   </customwidget>
  </customwidgets>
  <resources>
+  <include location="../../Unseengui/unseengui.qrc"/>
   <include location="../images.qrc"/>
  </resources>
  <connections/>

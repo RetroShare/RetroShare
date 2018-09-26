@@ -17,8 +17,8 @@
    <string>New Channel Post</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../images.qrc">
-    <normaloff>:/images/logo/logo_16.png</normaloff>:/images/logo/logo_16.png</iconset>
+   <iconset resource="../../Unseengui/unseengui.qrc">
+    <normaloff>:/app/images/unseen16.png</normaloff>:/app/images/unseen16.png</iconset>
   </property>
   <layout class="QGridLayout" name="CreateGxsChannelMsgGLayout">
    <property name="leftMargin">
@@ -302,8 +302,8 @@ p, li { white-space: pre-wrap; }
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>767</width>
-               <height>42</height>
+               <width>817</width>
+               <height>24</height>
               </rect>
              </property>
              <property name="sizePolicy">
@@ -403,6 +403,7 @@ p, li { white-space: pre-wrap; }
   </customwidget>
  </customwidgets>
  <resources>
+  <include location="../../Unseengui/unseengui.qrc"/>
   <include location="../images.qrc"/>
  </resources>
  <connections/>

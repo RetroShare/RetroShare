@@ -14,8 +14,8 @@
    <string>Connect Friend Wizard</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../images.qrc">
-    <normaloff>:/images/logo/logo_16.png</normaloff>:/images/logo/logo_16.png</iconset>
+   <iconset resource="../../Unseengui/unseengui.qrc">
+    <normaloff>:/app/images/unseen16.png</normaloff>:/app/images/unseen16.png</iconset>
   </property>
   <widget class="ConnectFriendPage" name="IntroPage">
    <property name="title">
@@ -1584,6 +1584,12 @@ resources.</string>
  </widget>
  <customwidgets>
   <customwidget>
+   <class>AvatarWidget</class>
+   <extends>QLabel</extends>
+   <header>gui/common/AvatarWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
    <class>StyledLabel</class>
    <extends>QLabel</extends>
    <header>gui/common/StyledLabel.h</header>
@@ -1592,12 +1598,6 @@ resources.</string>
    <class>FriendSelectionWidget</class>
    <extends>QWidget</extends>
    <header>gui/common/FriendSelectionWidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>AvatarWidget</class>
-   <extends>QLabel</extends>
-   <header>gui/common/AvatarWidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
@@ -1618,8 +1618,9 @@ resources.</string>
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../images.qrc"/>
   <include location="../icons.qrc"/>
+  <include location="../../Unseengui/unseengui.qrc"/>
+  <include location="../images.qrc"/>
  </resources>
  <connections/>
 </ui>
