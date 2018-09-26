@@ -283,25 +283,24 @@ wikipoos {
 # Tor controller
 
 HEADERS += 	TorControl/AddOnionCommand.h \
-				TorControl/AuthenticateCommand.h \
-				TorControl/GetConfCommand.h \
-				TorControl/HiddenService.h \
-				TorControl/ProtocolInfoCommand.h \
-				TorControl/SetConfCommand.h \
-				TorControl/TorControlCommand.h \
-				TorControl/TorControl.h \
-				TorControl/TorControlSocket.h \
-				TorControl/TorManager.h \
-				TorControl/TorProcess.h \
-				TorControl/TorProcess_p.h \
-				TorControl/TorSocket.h \
-				TorControl/Useful.h            \
-				TorControl/CryptoKey.h         \
-				TorControl/PendingOperation.h  \
-				TorControl/SecureRNG.h         \
-				TorControl/Settings.h          \
-				TorControl/StrUtil.h        \
-				TorControl/TorProcess_p.h        
+           	TorControl/AuthenticateCommand.h \
+           	TorControl/CryptoKey.h \
+           	TorControl/GetConfCommand.h \
+           	TorControl/HiddenService.h \
+           	TorControl/PendingOperation.h  \
+           	TorControl/ProtocolInfoCommand.h \
+           	TorControl/SecureRNG.h \
+           	TorControl/SetConfCommand.h \
+           	TorControl/Settings.h \
+           	TorControl/StrUtil.h \
+           	TorControl/TorControl.h \
+           	TorControl/TorControlCommand.h \
+           	TorControl/TorControlSocket.h \
+           	TorControl/TorManager.h \
+           	TorControl/TorProcess.h \
+           	TorControl/TorProcess_p.h \
+           	TorControl/TorSocket.h \
+           	TorControl/Useful.h
 
 SOURCES += 	TorControl/AddOnionCommand.cpp \
 				TorControl/AuthenticateCommand.cpp \
