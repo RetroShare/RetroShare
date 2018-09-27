@@ -122,6 +122,8 @@ public:
 	                          std::string destpath);
 
 
+    uint32_t    size() const { return mFiles.size() ; }
+
 	/***
 		 * Hash file, and add to the files,
 		 * file is removed after period.
