@@ -383,20 +383,25 @@ void MainWindow::initStackedPage()
   /* Create the Main pages and actions */
   QActionGroup *grp = new QActionGroup(this);
 
-  addPage(homePage = new HomePage(ui->stackPages), grp, NULL);
+
 
 //#ifdef RS_USE_CIRCLES
 //  CirclesDialog *circlesDialog = NULL;
 //  addPage(circlesDialog = new CirclesDialog(ui->stackPages), grp, &notify);
 //#endif
-  addPage(friendsDialog = new FriendsDialog(ui->stackPages), grp, &notify);
-  addPage(idDialog = new IdDialog(ui->stackPages), grp, &notify);
+
+  //19 Sep 2018 - meiyousixin - change the order: Chat -> Contact -> Mail -> ... -> Network -> Profile
   addPage(chatLobbyDialog = new ChatLobbyWidget(ui->stackPages), grp, &notify);
+  addPage(idDialog = new IdDialog(ui->stackPages), grp, &notify);
+
   addPage(messagesDialog = new MessagesDialog(ui->stackPages), grp, &notify);
   addPage(transfersDialog = new TransfersDialog(ui->stackPages), grp, &notify);
   addPage(gxschannelDialog = new GxsChannelDialog(ui->stackPages), grp, &notify);
   addPage(gxsforumDialog = new GxsForumsDialog(ui->stackPages), grp, &notify);
   addPage(postedDialog = new PostedDialog(ui->stackPages), grp, &notify);
+
+  addPage(friendsDialog = new FriendsDialog(ui->stackPages), grp, &notify);
+  addPage(homePage = new HomePage(ui->stackPages), grp, NULL);
 
   #ifdef RS_USE_NEW_PEOPLE_DIALOG
   PeopleDialog *peopleDialog = NULL;
@@ -1044,6 +1049,10 @@ void SetForegroundWindowInternal(HWND hWnd)
    return NULL;
 }
 
+ChatLobbyWidget* MainWindow::getChatLobbyDialog()
+{
+    return _instance->chatLobbyDialog;
+}
 /***** TOOL BAR FUNCTIONS *****/
 
 /** Add a Friend ShortCut */

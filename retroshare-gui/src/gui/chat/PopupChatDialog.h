@@ -33,12 +33,13 @@ class PopupChatDialog : public ChatDialog
 	Q_OBJECT
 
 	friend class ChatDialog;
-
+public:
+	ChatId	chatId() const {return cId;}
 protected slots:
-    void showAvatarFrame(bool show);
+	void showAvatarFrame(bool show);
 private slots:
 	void clearOfflineMessages();
-    void chatStatusChanged(const ChatId &chat_id, const QString &statusString);
+	void chatStatusChanged(const ChatId &chat_id, const QString &statusString);
 
 protected:
 	/** Default constructor */
@@ -57,14 +58,18 @@ protected:
 	void processSettings(bool load);
 
 protected:
-    virtual void addChatMsg(const ChatMessage& msg);
-    //virtual void onChatChanged(int list, int type);
+        virtual void addChatMsg(const ChatMessage& msg);
+        //virtual void onChatChanged(int list, int type);
 
 protected:
 	bool manualDelete;
 
 	/** Qt Designer generated object */
 	Ui::PopupChatDialog ui;
+//meiyousixin - add this one to identify the chat id
+private:
+
+	ChatId cId;
 };
 
 #endif

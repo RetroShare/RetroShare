@@ -57,7 +57,7 @@ public:
 	~IdDialog();
 
 	virtual QIcon iconPixmap() const { return QIcon(IMAGE_IDDIALOG) ; } //MainPage
-	virtual QString pageName() const { return tr("People") ; } //MainPage
+	virtual QString pageName() const { return tr("Contacts") ; } //19 Sep 2018 - meiyousixin - change "people" to "contacts"
 	virtual QString helpText() const { return ""; } //MainPage
 
 	void loadRequest(const TokenQueue *queue, const TokenRequest &req);
@@ -73,7 +73,7 @@ protected:
 	void requestCircleGroupMeta();
 	//void requestCircleGroupData(const RsGxsCircleId& circle_id);
 	bool getItemCircleId(QTreeWidgetItem *item,RsGxsCircleId& id) ;
-
+	std::string getRsId(QTreeWidgetItem *item);
 private slots:
 	void createExternalCircle();
 	void showEditExistingCircle();
@@ -94,7 +94,7 @@ private slots:
 	void chatIdentity();
 	void sendMsg();
 	void copyRetroshareLink();
-  void on_closeInfoFrameButton_clicked();
+	void on_closeInfoFrameButton_clicked();
 
 	void updateSelection();
 
@@ -118,6 +118,8 @@ private slots:
 	static QString inviteMessage();
 	void sendInvite();
 
+	void openAddContactPage();
+	void openChatWindow(QTreeWidgetItem *item, int col);
 private:
 	void processSettings(bool load);
 	QString createUsageString(const RsIdentityUsage& u) const;

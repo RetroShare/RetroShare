@@ -182,12 +182,12 @@ void PopupChatWindow::addDialog(ChatDialog *dialog)
 		ui.horizontalLayout->addWidget(dialog);
 		dialog->addToParent(this);
 		ui.horizontalLayout->setContentsMargins(0, 0, 0, 0);
-        chatId = dialog->getChatId();
+		chatId = dialog->getChatId();
 		chatDialog = dialog;
 		calculateStyle(dialog);
 
 		/* signal toggled is called */
-        ui.actionSetOnTop->setChecked(PeerSettings->getPrivateChatOnTop(chatId));
+		ui.actionSetOnTop->setChecked(PeerSettings->getPrivateChatOnTop(chatId));
 
 		QObject::connect(dialog, SIGNAL(dialogClose(ChatDialog*)), this, SLOT(dialogClose(ChatDialog*)));
 	}

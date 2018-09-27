@@ -44,7 +44,7 @@ public:
 	~HomePage();
 	
 	  virtual QIcon iconPixmap() const { return QPixmap(":/icons/svg/profile.svg") ; } //MainPage
-    virtual QString pageName() const { return tr("Home") ; } //MainPage
+    virtual QString pageName() const { return tr("Profile") ; } //meiyousixin - change homepage to profile
     virtual QString helpText() const { return ""; } //MainPage
 
 private slots:

@@ -5,7 +5,7 @@
 #include "RsAutoUpdatePage.h"
 #include "chat/ChatLobbyUserNotify.h"
 #include "gui/gxs/GxsIdChooser.h"
-
+#include "chat/PopupChatDialog.h"
 
 #include <retroshare/rsmsgs.h>
 
@@ -16,6 +16,7 @@
 
 #define CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC  1
 #define CHAT_LOBBY_PRIVACY_LEVEL_PRIVATE 2
+#define CHAT_LOBBY_ONE2ONE_LEVEL	 3
 
 class RSTreeWidgetItemCompareRole;
 class ChatTabWidget ;
@@ -27,6 +28,13 @@ struct ChatLobbyInfoStruct
 	QIcon default_icon ;
 	ChatLobbyDialog *dialog ;
 	time_t last_typing_event ;
+};
+
+struct ChatOne2OneInfoStruct
+{
+	QIcon default_icon ;
+	PopupChatDialog *dialog;
+	time_t last_typing_event;
 };
 
 class ChatLobbyWidget : public RsAutoUpdatePage
@@ -54,6 +62,12 @@ public:
 
 	uint unreadCount();
 
+	void openOne2OneChat(std::string rsId, std::string nickname);
+	void addOne2OneChatPage(PopupChatDialog *d);
+	void setCurrentOne2OneChatPage(PopupChatDialog *d);
+	void updateContactItem(QTreeWidget *treeWidget, QTreeWidgetItem *item, const std::string &nickname, const std::string &rsId);
+	void fromGpgIdToChatId(const RsPgpId &gpgId,  ChatId &chatId);
+
 signals:
 	void unreadCountChanged(uint unreadCount);
 
@@ -65,14 +79,14 @@ protected slots:
 	void unsubscribeItem();
 	void itemDoubleClicked(QTreeWidgetItem *item, int column);
 	void updateCurrentLobby() ;
-    void displayChatLobbyEvent(qulonglong lobby_id, int event_type, const RsGxsId& gxs_id, const QString& str);
+	void displayChatLobbyEvent(qulonglong lobby_id, int event_type, const RsGxsId& gxs_id, const QString& str);
 	void readChatLobbyInvites();
 	void showLobby(QTreeWidgetItem *lobby_item) ;
 	void showBlankPage(ChatLobbyId id) ;
-    void unsubscribeChatLobby(ChatLobbyId id) ;
-    void createIdentityAndSubscribe();
-    void subscribeChatLobbyAs() ;
-    void updateTypingStatus(ChatLobbyId id) ;
+	void unsubscribeChatLobby(ChatLobbyId id) ;
+	void createIdentityAndSubscribe();
+	void subscribeChatLobbyAs() ;
+	void updateTypingStatus(ChatLobbyId id) ;
 	void resetLobbyTreeIcons() ;
 	void updateMessageChanged(bool incoming, ChatLobbyId, QDateTime time, QString senderName, QString msg);
 	void updatePeerEntering(ChatLobbyId);
@@ -84,38 +98,41 @@ private slots:
 	void filterColumnChanged(int);
 	void filterItems(const QString &text);
 	
-    void setShowUserCountColumn(bool show);
-    void setShowTopicColumn(bool show);
-    void setShowSubscribeColumn(bool show);
+	void setShowUserCountColumn(bool show);
+	void setShowTopicColumn(bool show);
+	void setShowSubscribeColumn(bool show);
 
 	void updateNotify(ChatLobbyId id, unsigned int count) ;
 	void idChooserCurrentIndexChanged(int index);
 
 private:
 	void autoSubscribeLobby(QTreeWidgetItem *item);
-    void subscribeChatLobby(ChatLobbyId id) ;
-    void subscribeChatLobbyAtItem(QTreeWidgetItem *item) ;
+	void subscribeChatLobby(ChatLobbyId id) ;
+	void subscribeChatLobbyAtItem(QTreeWidgetItem *item) ;
 
 	bool filterItem(QTreeWidgetItem *item, const QString &text, int filterColumn);
 
 	RSTreeWidgetItemCompareRole *compareRole;
 	QTreeWidgetItem *privateLobbyItem;
 	QTreeWidgetItem *publicLobbyItem;
-    QTreeWidgetItem *privateSubLobbyItem;
-    QTreeWidgetItem *publicSubLobbyItem;
+	QTreeWidgetItem *privateSubLobbyItem;
+	QTreeWidgetItem *publicSubLobbyItem;
+	QTreeWidgetItem *chatContactItem; //21 Sep 2018 - meiyousixin - add this 'contact' tree for one2one chat
 	QTreeWidgetItem *getTreeWidgetItem(ChatLobbyId);
+	QTreeWidgetItem *getTreeWidgetItemForChatId(ChatId);
 
 	ChatTabWidget *tabWidget ;
 
 	std::map<ChatLobbyId,ChatLobbyInfoStruct> _lobby_infos ;
+	std::map<std::string,ChatOne2OneInfoStruct> _chatOne2One_infos ; // 22 Sep 2018 - meiyousixin - add this for containing all one2one chat widget
 
 	std::map<QTreeWidgetItem*,time_t> _icon_changed_map ;
 
-    bool m_bProcessSettings;
-    void processSettings(bool bLoad);
+        bool m_bProcessSettings;
+        void processSettings(bool bLoad);
 
-    /** Defines the actions for the header context menu */
-    QAction* showUserCountAct;
+        /** Defines the actions for the header context menu */
+        QAction* showUserCountAct;
 	QAction* showTopicAct;
 	QAction* showSubscribeAct;
 	int getNumColVisible();
@@ -127,5 +144,8 @@ private:
 
 	/* UI - from Designer */
 	Ui::ChatLobbyWidget ui;
+
+	void showContactChat(QTreeWidgetItem *item);
+
 };
 

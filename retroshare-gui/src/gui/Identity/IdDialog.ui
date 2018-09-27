@@ -99,6 +99,13 @@
        </widget>
       </item>
       <item>
+       <widget class="QPushButton" name="addContactButton">
+        <property name="text">
+         <string>Add contact</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <spacer name="titleBarSpacer">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -117,7 +124,7 @@
          <enum>Qt::NoFocus</enum>
         </property>
         <property name="icon">
-         <iconset resource="../icons.qrc">
+         <iconset resource="../images.qrc">
           <normaloff>:/icons/help_64.png</normaloff>:/icons/help_64.png</iconset>
         </property>
         <property name="checkable">
@@ -283,8 +290,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>1372</width>
-             <height>1000</height>
+             <width>1059</width>
+             <height>1062</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="scrollAreaWidgetContentsVLayout">
@@ -1077,8 +1084,8 @@ p, li { white-space: pre-wrap; }
   <tabstop>idTreeWidget</tabstop>
  </tabstops>
  <resources>
-  <include location="../icons.qrc"/>
   <include location="../images.qrc"/>
+  <include location="../icons.qrc"/>
  </resources>
  <connections/>
 </ui>

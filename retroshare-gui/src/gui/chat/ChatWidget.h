@@ -77,13 +77,13 @@ public:
 	explicit ChatWidget(QWidget *parent = 0);
 	~ChatWidget();
 
-    void init(const ChatId &chat_id, const QString &title);
-    ChatId getChatId();
-    ChatType chatType();
+        void init(const ChatId &chat_id, const QString &title);
+        ChatId getChatId();
+        ChatType chatType();
 
-    // allow/disallow sendng of messages
-    void blockSending(QString msg);
-    void unblockSending();
+        // allow/disallow sendng of messages
+        void blockSending(QString msg);
+        void unblockSending();
 
 	bool hasNewMessages() { return newMessages; }
 	bool isTyping() { return typing; }
@@ -98,7 +98,7 @@ public:
 	void setWelcomeMessage(QString &text);
 	void addChatMsg(bool incoming, const QString &name, const QDateTime &sendTime, const QDateTime &recvTime, const QString &message, MsgType chatType);
 	void addChatMsg(bool incoming, const QString &name, const RsGxsId gxsId, const QDateTime &sendTime, const QDateTime &recvTime, const QString &message, MsgType chatType);
-    void updateStatusString(const QString &statusMask, const QString &statusString, bool permanent = false);
+      void updateStatusString(const QString &statusMask, const QString &statusString, bool permanent = false);
 
 	void addToolsAction(QAction *action);
 

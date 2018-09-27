@@ -65,7 +65,7 @@ void ChatDialog::closeEvent(QCloseEvent *event)
 
 void ChatDialog::init(const ChatId &id, const QString &title)
 {
-    mChatId = id;
+	mChatId = id;
 	ChatWidget *cw = getChatWidget();
 	if (cw) {
         cw->init(id, title);
@@ -242,7 +242,7 @@ void ChatDialog::init(const ChatId &id, const QString &title)
 
 	if (sslIds.size() == 1) {
 		// chat with the one ssl id (online or offline)
-        chatFriend(ChatId(sslIds.front()), forceFocus);
+		chatFriend(ChatId(sslIds.front()), forceFocus);
 		return;
 	}
 
@@ -256,7 +256,7 @@ void ChatDialog::init(const ChatId &id, const QString &title)
 
 	if (onlineIds.size() == 1) {
 		// chat with the online ssl id
-        chatFriend(ChatId(onlineIds.front()), forceFocus);
+		chatFriend(ChatId(onlineIds.front()), forceFocus);
 		return;
 	}
 
@@ -368,7 +368,7 @@ void ChatDialog::focusDialog()
 	ChatWidget *cw = getChatWidget();
 	if (cw) {
 		cw->focusDialog();
-	}
+	  }
 }
 
 bool ChatDialog::setStyle()
