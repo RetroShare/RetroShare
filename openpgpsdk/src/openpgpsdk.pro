@@ -2,8 +2,7 @@
 
 TEMPLATE = lib
 CONFIG += staticlib
-## Sep 11 2018 - meiyousixin - fix bug: can not find openssl/bn.h
-INCLUDEPATH += /usr/local/include
+
 DEFINES *= OPENSSL_NO_IDEA 
 
 QMAKE_CXXFLAGS *= -Wall -Werror -W
@@ -46,6 +45,8 @@ macx {
 	for(lib, LIB_DIR):LIBS += -L"$$lib"
 	for(bin, BIN_DIR):LIBS += -L"$$bin"
 	DEFINES += OPENSSL_NO_CAMELLIA
+	## Sep 11 2018 - meiyousixin - fix bug: can not find openssl/bn.h
+	INCLUDEPATH += /usr/local/include
 }
 
 # Input
