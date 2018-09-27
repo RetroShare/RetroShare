@@ -1078,6 +1078,8 @@ int p3FileDatabase::RequestDirDetails(void *ref, DirDetails& d, FileSearchFlags 
             stub.ref  = p;
             d.children.push_back(stub);
 			}
+
+            if(mExtraFiles->size() > 0)
             {
             convertEntryIndexToPointer<sizeof(void*)>(0,1,p);	// local shared files from extra list
             DirStub stub;
