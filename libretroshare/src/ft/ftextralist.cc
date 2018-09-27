@@ -113,8 +113,7 @@ void ftExtraList::hashAFile()
 	/* hash it! */
 	std::string name, hash;
 	//uint64_t size;
-	if (RsDirUtil::hashFile(details.info.path, details.info.fname, 
-				details.info.hash, details.info.size))
+	if (RsDirUtil::hashFile(details.info.path, details.info.fname,  details.info.hash, details.info.size))
 	{
 		RS_STACK_MUTEX(extMutex);
 
