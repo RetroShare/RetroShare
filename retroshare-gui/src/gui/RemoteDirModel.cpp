@@ -457,13 +457,12 @@ QVariant TreeStyle_RDM::displayRole(const DirDetails& details,int coln) const
 				QString res ;
 
 				if(RemoteMode)
-				{
 					res = QString::fromUtf8(rsPeers->getPeerName(details.id).c_str());
-				}
-				else
-				{
-								res = tr("My files");
-				}
+				else if(details.id == rsPeers->getOwnId())
+					res = tr("My files");
+                else
+					res = tr("Temporary shared files");
+
 				return res ;
 			}
 		case COLUMN_FILENB: {
