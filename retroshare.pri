@@ -590,7 +590,6 @@ macx-* {
         BIN_DIR += "/usr/local/bin"
         BIN_DIR += "/opt/local/bin"
         BIN_DIR += "/Applications/Xcode.app/Contents/Developer/usr/bin"
-        BIN_DIR += "/Users/ductai/Qt/5.9/clang_64/bin"
         INC_DIR += "/usr/include"
         INC_DIR += "/usr/local/include"
         INC_DIR += "/opt/local/include"
