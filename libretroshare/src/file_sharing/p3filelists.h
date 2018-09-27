@@ -109,6 +109,9 @@ class p3FileDatabase: public p3Service, public p3Config, public ftSearch //, pub
         virtual int  SearchKeywords(const std::list<std::string>& keywords, std::list<DirDetails>& results,FileSearchFlags flags,const RsPeerId& peer_id) ;
         virtual int  SearchBoolExp(RsRegularExpression::Expression *exp, std::list<DirDetails>& results,FileSearchFlags flags,const RsPeerId& peer_id) const ;
 
+        // Extra file list
+        virtual void removeExtraFile(const RsFileHash& hash);
+
 		// Interface for browsing dir hierarchy
 		//
 
@@ -121,7 +124,7 @@ class p3FileDatabase: public p3Service, public p3Config, public ftSearch //, pub
 
         void requestDirUpdate(void *ref) ;	// triggers an update. Used when browsing.
         int RequestDirDetails(void *, DirDetails&, FileSearchFlags) const ;
-        uint32_t getType(void *) const ;
+        uint32_t getType(void *, FileSearchFlags flags) const ;
 
         // proxy method used by the web UI. Dont't delete!
         int RequestDirDetails(const RsPeerId& uid, const std::string& path, DirDetails &details)const;

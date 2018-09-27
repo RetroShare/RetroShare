@@ -677,9 +677,10 @@ bool  ftServer::ExtraFileAdd(std::string fname, const RsFileHash& hash, uint64_t
 	return mFtExtra->addExtraFile(fname, hash, size, period, flags);
 }
 
-bool ftServer::ExtraFileRemove(const RsFileHash& hash, TransferRequestFlags flags)
+bool ftServer::ExtraFileRemove(const RsFileHash& hash)
 {
-	return mFtExtra->removeExtraFile(hash, flags);
+	mFileDatabase->removeExtraFile(hash);
+    return true;
 }
 
 bool ftServer::ExtraFileHash(std::string localpath, uint32_t period, TransferRequestFlags flags)
@@ -714,9 +715,9 @@ int ftServer::RequestDirDetails(void *ref, DirDetails &details, FileSearchFlags 
 {
 	return mFileDatabase->RequestDirDetails(ref,details,flags) ;
 }
-uint32_t ftServer::getType(void *ref, FileSearchFlags /* flags */)
+uint32_t ftServer::getType(void *ref, FileSearchFlags flags)
 {
-	return mFileDatabase->getType(ref) ;
+	return mFileDatabase->getType(ref,flags) ;
 }
 /***************************************************************/
 /******************** Search Interface *************************/
