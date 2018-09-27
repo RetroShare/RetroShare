@@ -1018,7 +1018,7 @@ void p3FileDatabase::getExtraFilesDirDetails(void *ref,DirectoryStorage::EntryIn
         FileInfo& f(mExtraFilesCache[(int)e-1]) ;
 
 		d.hash      = f.hash;
-		d.count     = 0;
+		d.count     = f.size;
 		d.max_mtime = time(NULL);
 		d.mtime     = time(NULL);
 		d.name      = f.path;		// so that the UI shows the complete path, since the parent directory is not really a directory.
