@@ -174,8 +174,11 @@ void ftServer::SetupFtServer()
 void ftServer::connectToFileDatabase(p3FileDatabase *fdb)
 {
 	mFileDatabase = fdb ;
+
 	mFtSearch->addSearchMode(fdb, RS_FILE_HINTS_LOCAL);	// due to a bug in addSearchModule, modules can only be added one by one. Using | between flags wont work.
 	mFtSearch->addSearchMode(fdb, RS_FILE_HINTS_REMOTE);
+
+    mFileDatabase->setExtraList(mFtExtra);
 }
 void ftServer::connectToTurtleRouter(p3turtle *fts)
 {

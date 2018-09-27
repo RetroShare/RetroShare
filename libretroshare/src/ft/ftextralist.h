@@ -137,6 +137,12 @@ public:
 		 **/
 	virtual bool    search(const RsFileHash &hash, FileSearchFlags hintflags, FileInfo &info) const;
 
+    /*!
+     * \brief getExtraFileList
+     * 				Retrieves the list for display purposes
+     */
+    void getExtraFileList(std::vector<FileInfo>& files) const ;
+
 	/***
 		 * Thread Main Loop
 		 **/
@@ -146,6 +152,7 @@ public:
 		 * Configuration - store extra files.
 		 *
 		 **/
+
 protected:
 	virtual RsSerialiser *setupSerialiser();
 	virtual bool saveList(bool &cleanup, std::list<RsItem*>&);
