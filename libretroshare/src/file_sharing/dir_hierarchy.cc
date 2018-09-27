@@ -865,7 +865,7 @@ void InternalFileHierarchyStorage::print() const
     for(uint32_t i=0;i<mNodes.size();++i)
         if(mNodes[i] == NULL)
         {
-            std::cerr << "  Node " << i << ": empty " << std::endl;
+            //std::cerr << "  Node " << i << ": empty " << std::endl;
             ++nempty ;
         }
         else if(mNodes[i]->type() == FileStorageNode::TYPE_DIR)
@@ -1182,6 +1182,11 @@ bool InternalFileHierarchyStorage::load(const std::string& fname)
             free(node_section_data) ;
         }
         free(buffer) ;
+
+        std::string err_str ;
+
+        if(!check(err_str))
+            std::cerr << "(EE) Error while loading file hierarchy " << fname << std::endl;
 
         return true ;
     }

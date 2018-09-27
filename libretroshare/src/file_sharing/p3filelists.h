@@ -45,6 +45,7 @@
 #pragma once
 
 #include "ft/ftsearch.h"
+#include "ft/ftextralist.h"
 #include "retroshare/rsfiles.h"
 #include "services/p3service.h"
 
@@ -87,9 +88,10 @@ class p3FileDatabase: public p3Service, public p3Config, public ftSearch //, pub
             // [...] more to add here
         };
 
-        explicit p3FileDatabase(p3ServiceControl *mpeers) ;
+        explicit p3FileDatabase(p3ServiceControl *mpeers);
         ~p3FileDatabase();
 
+        void setExtraList(ftExtraList *f) { mExtraFiles = f ; }
         /*!
         * \brief forceSyncWithPeers
         *
@@ -169,6 +171,7 @@ class p3FileDatabase: public p3Service, public p3Config, public ftSearch //, pub
 		bool hashingProcessPaused();
 
     protected:
+		void getExtraFilesDirDetails(void *ref,DirectoryStorage::EntryIndex e,DirDetails& d) const;
 
         int filterResults(const std::list<void*>& firesults,std::list<DirDetails>& results,FileSearchFlags flags,const RsPeerId& peer_id) const;
         std::string makeRemoteFileName(const RsPeerId& pid) const;
@@ -219,8 +222,8 @@ class p3FileDatabase: public p3Service, public p3Config, public ftSearch //, pub
 
         std::vector<RemoteDirectoryStorage *> mRemoteDirectories ;
         LocalDirectoryStorage *mLocalSharedDirs ;
-
         LocalDirectoryUpdater *mLocalDirWatcher ;
+		ftExtraList *mExtraFiles;
 
         // utility functions to make/get a pointer out of an (EntryIndex,PeerId) pair. This is further documented in the .cc
 
@@ -268,6 +271,8 @@ class p3FileDatabase: public p3Service, public p3Config, public ftSearch //, pub
 		std::map<RsFileHash,BannedFileEntry> mPrimaryBanList ;	// primary list (user controlled) of files banned from FT search and forwarding. map<real hash, BannedFileEntry>
         std::map<RsPeerId,PeerBannedFilesEntry> mPeerBannedFiles ;   // records of which files other peers ban, stored as H(H(f))
 		std::set<RsFileHash> mBannedFileList ;	// list of banned hashes. This include original hashs and H(H(f)) when coming from friends.
+        mutable std::vector<FileInfo> mExtraFilesCache;	// cache for extra files, to avoid requesting them too often.
+        mutable time_t mLastExtraFilesCacheUpdate ;
         bool mTrustFriendNodesForBannedFiles ;
         bool mBannedFileListNeedsUpdate;
         time_t mLastPrimaryBanListChangeTimeStamp;

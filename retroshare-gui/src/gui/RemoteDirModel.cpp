@@ -1158,9 +1158,9 @@ void FlatStyle_RDM::postMods()
 
 bool RetroshareDirModel::requestDirDetails(void *ref, bool remote,DirDetails& d) const
 {
-#ifdef RDM_DEBUG
+//#ifdef RDM_DEBUG
 	std::cerr << "RequestDirDetails:: ref = " << ref << ", remote=" << remote << std::endl;
-#endif
+//#endif
 
     // We look in cache and re-use the last result if the reference and remote are the same.
 
