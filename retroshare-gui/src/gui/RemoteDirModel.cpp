@@ -162,7 +162,7 @@ bool TreeStyle_RDM::hasChildren(const QModelIndex &parent) const
 		return false;
 	}
 
-    if (details.type == DIR_TYPE_FILE)
+    if (details.type == DIR_TYPE_FILE || details.type == DIR_TYPE_EXTRA_FILE)
 	{
 #ifdef RDM_DEBUG
 		std::cerr << "lookup FILE -> false";
@@ -220,7 +220,7 @@ int TreeStyle_RDM::rowCount(const QModelIndex &parent) const
 #endif
 		return 0;
 	}
-	if (details.type == DIR_TYPE_FILE)
+	if (details.type == DIR_TYPE_FILE || details.type == DIR_TYPE_EXTRA_FILE)
 	{
 #ifdef RDM_DEBUG
 		std::cerr << "lookup FILE: 0";
@@ -425,7 +425,7 @@ QVariant RetroshareDirModel::decorationRole(const DirDetails& details,int coln) 
 		else
 			return QIcon(categoryIcon);
 	}
-	else if (details.type == DIR_TYPE_FILE) /* File */
+	else if (details.type == DIR_TYPE_FILE || details.type == DIR_TYPE_EXTRA_FILE) /* File */
 	{
 		// extensions predefined
         if(details.hash.isNull())
@@ -506,7 +506,7 @@ QVariant TreeStyle_RDM::displayRole(const DirDetails& details,int coln) const
 				return QString() ;
 		}
 	}
-	else if (details.type == DIR_TYPE_FILE) /* File */
+	else if (details.type == DIR_TYPE_FILE || details.type == DIR_TYPE_EXTRA_FILE) /* File */
 	{
 		switch(coln)
 		{
@@ -598,7 +598,7 @@ QString FlatStyle_RDM::computeDirectoryPath(const DirDetails& details) const
 
 QVariant FlatStyle_RDM::displayRole(const DirDetails& details,int coln) const
 {
-	if (details.type == DIR_TYPE_FILE) /* File */
+	if (details.type == DIR_TYPE_FILE || details.type == DIR_TYPE_EXTRA_FILE) /* File */
 		switch(coln)
 		{
 			case COLUMN_NAME: return QString::fromUtf8(details.name.c_str());
@@ -654,7 +654,7 @@ QVariant TreeStyle_RDM::sortRole(const QModelIndex& /*index*/,const DirDetails& 
 				return QString();
 		}
 	}
-	else if (details.type == DIR_TYPE_FILE) /* File */
+	else if (details.type == DIR_TYPE_FILE || details.type == DIR_TYPE_EXTRA_FILE) /* File */
 	{
 		switch(coln)
 		{
@@ -707,7 +707,7 @@ QVariant FlatStyle_RDM::sortRole(const QModelIndex& /*index*/,const DirDetails& 
 	 * Dir   :  name,  (0) count, (0) path, (0) ts
 	 */
 
-	if (details.type == DIR_TYPE_FILE) /* File */
+	if (details.type == DIR_TYPE_FILE || details.type == DIR_TYPE_EXTRA_FILE) /* File */
 	{
 		switch(coln)
 		{
@@ -769,7 +769,7 @@ QVariant RetroshareDirModel::data(const QModelIndex &index, int role) const
 
 	if (role == Qt::TextColorRole)
 	{
-        if(details.type == DIR_TYPE_FILE && details.hash.isNull())
+        if((details.type == DIR_TYPE_FILE  || details.type == DIR_TYPE_EXTRA_FILE) && details.hash.isNull())
             return QVariant(QColor(Qt::green)) ;
         else if(ageIndicator != IND_ALWAYS && details.max_mtime + ageIndicator < time(NULL))
 			return QVariant(QColor(Qt::gray)) ;
@@ -1083,6 +1083,7 @@ Qt::ItemFlags RetroshareDirModel::flags( const QModelIndex & index ) const
 		case DIR_TYPE_PERSON: return isNewerThanEpoque(details.max_mtime)? (Qt::ItemIsEnabled):(Qt::NoItemFlags) ;
 		case DIR_TYPE_DIR:    return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
 		case DIR_TYPE_FILE:   return Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsEnabled;
+		case DIR_TYPE_EXTRA_FILE:  return Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsEnabled;
 	}
 
 	return Qt::ItemIsSelectable;
@@ -1158,9 +1159,9 @@ void FlatStyle_RDM::postMods()
 
 bool RetroshareDirModel::requestDirDetails(void *ref, bool remote,DirDetails& d) const
 {
-//#ifdef RDM_DEBUG
+#ifdef RDM_DEBUG
 	std::cerr << "RequestDirDetails:: ref = " << ref << ", remote=" << remote << std::endl;
-//#endif
+#endif
 
     // We look in cache and re-use the last result if the reference and remote are the same.
 
@@ -1400,7 +1401,7 @@ void RetroshareDirModel::openSelected(const QModelIndexList &qmil)
 
 		QDir dir(QString::fromUtf8((*it).path.c_str()));
 		QString dest;
-		if ((*it).type & DIR_TYPE_FILE) {
+		if ((*it).type & DIR_TYPE_FILE || (*it).type & DIR_TYPE_EXTRA_FILE) {
 			dest = dir.absoluteFilePath(QString::fromUtf8(it->name.c_str()));
 		} else if ((*it).type & DIR_TYPE_DIR) {
 			dest = dir.absolutePath();
@@ -1509,7 +1510,7 @@ void RetroshareDirModel::filterItems(const std::list<std::string>& keywords,uint
 		mFilteredPointers.insert(p) ;
 		++found ;
 
-		while(det.type == DIR_TYPE_FILE || det.type == DIR_TYPE_DIR)
+		while(det.type == DIR_TYPE_FILE || det.type == DIR_TYPE_EXTRA_FILE || det.type == DIR_TYPE_DIR)
 		{
 			p = det.parent ;
 			rsFiles->RequestDirDetails( p, det, flags);
@@ -1555,7 +1556,7 @@ QMimeData * RetroshareDirModel::mimeData ( const QModelIndexList & indexes ) con
 		std::cerr << "Path: " << details.path << std::endl;
 #endif
 
-        if (details.type != DIR_TYPE_FILE)
+        if (details.type != DIR_TYPE_FILE && details.type != DIR_TYPE_EXTRA_FILE)
 		{
 #ifdef RDM_DEBUG
 			std::cerr << "RetroshareDirModel::mimeData() Not File" << std::endl;

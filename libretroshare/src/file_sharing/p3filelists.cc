@@ -37,8 +37,8 @@
 #define P3FILELISTS_ERROR() std::cerr << "***ERROR***" << " : FILE_LISTS : " << __FUNCTION__ << " : "
 
 //#define DEBUG_P3FILELISTS 1
-#define DEBUG_CONTENT_FILTERING 1
-#define DEBUG_FILE_HIERARCHY 1
+//#define DEBUG_CONTENT_FILTERING 1
+//#define DEBUG_FILE_HIERARCHY 1
 
 static const uint32_t P3FILELISTS_UPDATE_FLAG_NOTHING_CHANGED     = 0x0000 ;
 static const uint32_t P3FILELISTS_UPDATE_FLAG_REMOTE_MAP_CHANGED  = 0x0001 ;
@@ -960,6 +960,14 @@ int p3FileDatabase::getSharedDirStatistics(const RsPeerId& pid,SharedDirStats& s
     }
 }
 
+void p3FileDatabase::removeExtraFile(const RsFileHash& hash)
+{
+    RS_STACK_MUTEX(mFLSMtx) ;
+
+    mExtraFiles->removeExtraFile(hash);
+    mLastExtraFilesCacheUpdate = 0 ; // forced cache reload
+}
+
 void p3FileDatabase::getExtraFilesDirDetails(void *ref,DirectoryStorage::EntryIndex e,DirDetails& d) const
 {
     // update the cache of extra files if last requested too long ago
@@ -1001,7 +1009,7 @@ void p3FileDatabase::getExtraFilesDirDetails(void *ref,DirectoryStorage::EntryIn
 	else	// extra file. Just query the corresponding data from ftExtra
 	{
 		d.prow = 1;//fi-1 ;
-		d.type = DIR_TYPE_FILE;
+		d.type = DIR_TYPE_EXTRA_FILE;
 
         FileInfo& f(mExtraFilesCache[(int)e-1]) ;
 
@@ -1068,7 +1076,7 @@ int p3FileDatabase::RequestDirDetails(void *ref, DirDetails& d, FileSearchFlags 
             {
             convertEntryIndexToPointer<sizeof(void*)>(0,1,p);	// local shared files from extra list
             DirStub stub;
-            stub.type = DIR_TYPE_PERSON;
+            stub.type = DIR_TYPE_PERSON;						// not totally exact, but used as a trick.
             stub.name = "Temporary shared files";
             stub.ref  = p;
 
@@ -1179,7 +1187,7 @@ int p3FileDatabase::RequestDirDetails(const RsPeerId &/*uid*/, const std::string
 //    NOT_IMPLEMENTED();
 //    return 0;
 //}
-uint32_t p3FileDatabase::getType(void *ref) const
+uint32_t p3FileDatabase::getType(void *ref,FileSearchFlags flags) const
 {
     RS_STACK_MUTEX(mFLSMtx) ;
 
@@ -1194,12 +1202,25 @@ uint32_t p3FileDatabase::getType(void *ref) const
     if(e == 0)
         return DIR_TYPE_PERSON ;
 
-    if(fi == 0 && mLocalSharedDirs != NULL)
-        return mLocalSharedDirs->getEntryType(e) ;
-    else if(fi-1 < mRemoteDirectories.size() && mRemoteDirectories[fi-1]!=NULL)
-        return mRemoteDirectories[fi-1]->getEntryType(e) ;
-    else
+    if(flags & RS_FILE_HINTS_LOCAL)
+    {
+		if(fi == 0 && mLocalSharedDirs != NULL)
+			return mLocalSharedDirs->getEntryType(e) ;
+
+        if(fi == 1)
+            return DIR_TYPE_EXTRA_FILE;
+
+        P3FILELISTS_ERROR() << " Cannot determine type of entry " << ref  << std::endl;
         return DIR_TYPE_ROOT ;// some failure case. Should not happen
+    }
+    else
+    {
+		if(fi-1 < mRemoteDirectories.size() && mRemoteDirectories[fi-1]!=NULL)
+			return mRemoteDirectories[fi-1]->getEntryType(e) ;
+
+        P3FILELISTS_ERROR() << " Cannot determine type of entry " << ref  << std::endl;
+        return DIR_TYPE_ROOT ;// some failure case. Should not happen
+    }
 }
 
 void p3FileDatabase::forceDirectoryCheck()              // Force re-sweep the directories and see what's changed

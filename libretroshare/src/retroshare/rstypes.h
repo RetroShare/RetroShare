@@ -160,7 +160,7 @@ struct PeerBandwidthLimits : RsSerializable
 #define DIR_TYPE_PERSON  	0x02
 #define DIR_TYPE_DIR  		0x04
 #define DIR_TYPE_FILE 		0x08
-#define DIR_TYPE_EXTRA		0x10
+#define DIR_TYPE_EXTRA_FILE 0x10
 
 /* flags for Directry request -
  * two types;

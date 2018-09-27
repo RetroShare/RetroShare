@@ -166,11 +166,9 @@ bool	ftExtraList::addExtraFile(std::string path, const RsFileHash& hash,
 	return true;
 }
 
-bool ftExtraList::removeExtraFile(const RsFileHash& hash, TransferRequestFlags flags)
+bool ftExtraList::removeExtraFile(const RsFileHash& hash)
 {
 	/* remove unused parameter warnings */
-	(void) flags;
-
 #ifdef  DEBUG_ELIST
 	std::cerr << "ftExtraList::removeExtraFile()";
 	std::cerr << " hash: " << hash;
