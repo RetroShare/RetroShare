@@ -20,6 +20,9 @@
  *                                                                             *
  *******************************************************************************/
 
+// Sep 11 2018 - meiyousixin - fix bug error: no matching constructor for initialization
+//#define nullptr 0
+
 #include "json.h"
 #include <stdlib.h>
 #include <string>

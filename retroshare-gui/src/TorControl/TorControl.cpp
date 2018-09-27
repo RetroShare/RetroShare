@@ -51,6 +51,7 @@
 #include <QSaveFile>
 #include <QRegularExpression>
 #include <QDebug>
+#include <iostream>
 
 Tor::TorControl *torControl = 0;
 

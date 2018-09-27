@@ -28,7 +28,7 @@
 #include <retroshare/rstypes.h>
 #include <retroshare/rsgxsifacetypes.h>
 
-#define AVATAR_DEFAULT_IMAGE ":/images/no_avatar_background.png"
+#define AVATAR_DEFAULT_IMAGE ":/chat/img/no_avatar_background_un_96.png"
 
 class QPixmap;
 

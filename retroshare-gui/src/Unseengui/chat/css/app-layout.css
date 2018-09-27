@@ -1,0 +1,428 @@
+body {
+    min-width: 800px;
+    min-height: 500px;
+    height: 100%;
+    overflow: hidden;
+    position: fixed!important;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    right: 0;
+}
+
+.app-window {
+    position: absolute;
+    top: 72px;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+#header .container-fluid{
+    padding-right: 10px;
+    padding-left: 5px;
+}
+.main-panel {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.main-panel > .wrap {
+    position: absolute;
+    top: 5px;
+    right: 15px;
+    bottom: 15px;
+    left: 5px;
+
+}
+
+.side-panel {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    min-width: 160px;
+}
+
+
+
+
+.app-tab-content > .tab-pane {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 11;
+    min-width:600px;
+}
+
+.app-tab-content > .tab-pane > .pane-content {
+    position: absolute;
+    top: 0;
+    right: 0px;
+    bottom: 0;
+    left: 0;
+    overflow: hidden;
+}
+
+.side-panel .app-tab-content > .tab-pane.has-header > .pane-content {
+    top: 125px;
+}
+
+#request > .pane-content {
+    top: 45px;
+}
+
+
+.app-tab-content > .tab-pane > header {
+    padding: 8px;
+    height: 30px;
+    border: solid 1px #ddd;
+}
+
+.app-tab-content > .tab-pane > header p {
+    line-height: 20px;
+}
+
+.app-tab-content > .tab-pane > .actions {
+    height: 33px;
+    padding: 3px 4px 3px;
+    background: #eee;
+    border-bottom: solid 1px #ddd;
+    line-height: 33px;
+}
+.app-tab-content > .tab-pane .status-bubble
+{
+    width: 16px;
+    height: 16px;
+    margin-right: 10px;
+    position: relative;
+    top: 4px;
+}
+
+.pane-content.has-header > .pane-content {
+    top: 48px;
+}
+
+.pane-content.has-sub-header > .pane-content {
+    top: 40px;
+}
+
+.pane-content.has-header.has-sub-header > .pane-content {
+    top: 88px;
+}
+
+.pane-content > header {
+    padding: 8px;
+    height: 30px;
+    border: solid 1px #ddd;
+    position: relative;
+    z-index: 100;
+}
+
+.pane-content > header p {
+    line-height: 30px;
+}
+
+
+.pane-content .chat-area .joinGroupCallBtn {
+    position: fixed;
+    z-index: 100;
+    right: 74px;
+    top: 164px;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+.pane-content .chat-area .joinGroupCallBtn img{
+    display: block;
+}
+.pane-content .chat-area .toggleMemberBtn {
+
+    position: fixed;
+    z-index: 100;
+    right: 36px;
+    top: 164px;
+}
+
+.app-nav-tabs {
+    -webkit-font-smoothing: auto;
+}
+
+
+.side-panel .app-nav-tabs a .count {
+    background: #fff;
+    color: #444;
+    border-radius: 100%;
+    display: inline-block;
+    min-width: 15px;
+    height: 15px;
+    line-height: 15px;
+    position: relative;
+    top: -1px;
+    margin-right: -3px;
+    font-weight: normal;
+    font-size: 10px;
+    text-align: center;
+}
+
+.main-panel .app-nav-tabs a .count {
+    background: #EAAD33;
+    color: #000;
+    border: solid 1px #fff;
+    border-radius: 100%;
+    display: inline-block;
+    min-width: 19px;
+    height: 19px;
+    line-height: 19px;
+    position: absolute;
+    top: 5px;
+    right: 15px;
+    margin-right: -14px;
+    font-weight: lighter;
+    font-size: 11px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.main-panel .app-nav-tabs .active a .count {
+    top: 10px;
+}
+
+.app-tab-content > .tab-pane {
+    -webkit-box-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+    -moz-box-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    background: #fff;
+}
+
+.app-tab-content > .tab-pane > .pane-content {
+    background: #fff;
+    -webkit-border-bottom-right-radius: 4px;
+    -moz-border-radius-bottomright: 4px;
+    border-bottom-right-radius: 4px;
+    -webkit-border-bottom-left-radius: 4px;
+    -moz-border-radius-bottomleft: 4px;
+    border-bottom-left-radius: 4px;
+}
+
+.app-tab-content > .tab-pane > header {
+    -webkit-font-smoothing: auto;
+    -webkit-border-top-right-radius: 4px;
+    -moz-border-radius-topright: 4px;
+    border-top-right-radius: 4px;
+}
+
+.app-tab-content > .tab-pane > header {
+    background: #666;
+    border: 1px solid #777;
+}
+
+.app-tab-content > .tab-pane > header .btn-group.open .btn.dropdown-toggle {
+    -webkit-border-bottom-right-radius: 0;
+    -moz-border-radius-bottomright: 0;
+    border-bottom-right-radius: 0;
+    -webkit-border-bottom-left-radius: 0;
+    -moz-border-radius-bottomleft: 0;
+    border-bottom-left-radius: 0;
+}
+
+.app-tab-content > .tab-pane > header .dropdown-menu {
+    -webkit-border-top-left-radius: 0;
+    -moz-border-radius-topleft: 0;
+    border-top-left-radius: 0;
+}
+
+.app-tab-content > .tab-pane > header .btn-group li a {
+    text-shadow: none;
+}
+
+.contacts .app-tab-content .has-header {
+    height: 0px;
+}
+
+/* css for tab chat */
+.main-panel .app-nav-tabs .activechat.enable a {
+    color: rgb(71, 88, 86);
+}
+
+.main-panel .app-nav-tabs .activechat a:hover {
+    color: black !important;
+}
+
+.main-panel .app-nav-tabs a.chatTabLink {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    float: left;
+}
+
+.main-panel .app-nav-tabs li.activeChat {
+    position: relative;
+}
+.main-panel .app-nav-tabs li.highlight{
+    background: #30B7F1 !important;
+}
+.main-panel .app-nav-tabs li.activeChat a {
+    cursor: pointer;
+    padding-right: 18px;
+    padding-left: 10px;
+}
+
+.main-panel .app-nav-tabs li.active a {
+    cursor: auto !important;
+
+}
+
+
+.app-tab-content .tab-pane2.active{
+    display: block;
+}
+.app-tab-content .tab-pane2 {
+    display: none;
+}
+
+/* Main Chat Styles */
+.main-chat-panel {
+    position: fixed;top: 70px;
+    left: 385px;right: 0px;bottom: 0px;
+    transition: 0.5s;  -webkit-transition: 0.5s;  -o-transition: 0.5s;
+}
+
+/* Aside Collapsed Styles */
+.folded aside.fixed {width: 75px;}
+
+.folded #unseen-tab-content{left: 75px;z-index: 99;}
+.folded aside .user-info, .folded aside .unseen-menu-name, .folded aside #unseen-copyright{display:none;}
+.folded #user-manager{padding: 25px 10px;}
+.folded #user-manager .bottom-status{
+    display: block;
+    margin-top: 51px;
+    padding-left: 20px;
+}
+.folded ul#user-menu li i{margin: 0px;font-size: 20px;}
+.folded ul#user-menu li .badge{left: 40px;top: 17px;margin: 0px;width: 25px;height: 25px;line-height: 23px;padding: 0px;font-size: 10px;}
+.folded img.collapse-btn{margin: 0px 0px 35px;}
+.folded #user-menu li a{
+    padding-left: 17px;
+}
+.folded .main-chat-panel {left: 300px;}
+.folded div.user-status-text{
+    display: none;
+}
+.folded .search-container{display: none;}
+.folded ul#user-menu li a{overflow:visible;}
+ul#unseen-main-chat-ul {height: 41px;background: #e9e9e9;}
+
+/* Mailbox  Styles */
+.mailbox .side-panel .wrap{
+    display: none;
+}
+.mailbox .main-chat-panel{
+    display: none;
+}
+.main-mailbox-panel {
+    position: fixed;top: 70px;left: 385px;right: 0px;bottom: 0px;
+-webkit-transition: none;
+    -moz-transition: none;
+    -ms-transition: none;
+    -o-transition: none;
+    transition: none;
+}
+.mailbox .main-mailbox-panel {
+    left: 160px;
+
+
+}
+.mailbox .folded .main-mailbox-panel {
+    left: 75px!important;
+}
+
+.app-tab-content > .tab-pane {border: 1px solid #ddd;border-top: none;position: absolute;top: 40px;left: 0px;right: 0px;bottom: 0px;/* background: #fff; */border-radius: 0px 0px 3px 3px;overflow: hidden;}
+#reconectWapper {
+    opacity: 0.9;
+    filter: alpha(opacity=90);
+    z-index: 10000;
+    width: 100%;
+    height: 20px;
+    position: absolute;
+    top: 0px;
+    background: white url(../img/loading_home.gif) 49% 50% no-repeat;
+    display: none;
+    padding-left: 123px;
+    background-size: 20px 20px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.minimizeContactListButton{
+    height: 30px;
+    top: 7px;
+    float: right;
+    position: relative;
+    right: 1px;
+}
+.minimizeContactListButton i{
+    font-size: 20px;
+    float: right;
+    padding-right: 6px;
+}
+.minimizeContactListButton i:hover{
+    color: #2ba4dc;
+    cursor: pointer;
+}
+
+.minimize  #unseen-tab-content{
+    bottom: 1px;
+    height: 35px;
+    width: 120px;
+    z-index: 50;
+}
+.minimize .main-chat-panel{
+    left:160px;
+}
+.minimize .folded .main-chat-panel{
+    left: 75px;
+}
+
+.minimize .chat-area .input-area .options{
+    padding-left: 119px;
+}
+
+.folded #unseen-search-content{
+    left: 75px;
+}
+
+.folded #unseen-user-menu button.btn-add-contact{
+    width: 75%;
+}
+.folded #unseen-user-menu button.btn-add-contact .contact-label{
+    display: none;
+}
+.minimize #account-settings .slimScrollDiv, .minimize #profile .slimScrollDiv, .minimize #advance .slimScrollDiv{
+    padding-bottom: 35px;
+}
+.modal-header{
+    padding: 5px 10px 10px 5px;
+    min-height: 25px;
+}
+.modal-header .title
+{
+    text-align: center;
+}
+#group-info .modal-header
+{
+    border: none;
+}
+.modal-body .fa{ margin-right: 10px;}
+
+#contact-info .start-chat, #group-info .start-chat
+{
+    background: #30B7F1;
+    color: #fff;
+}
+

@@ -94,7 +94,7 @@ void ProfileWidget::copyCert()
 {
     std::string cert = rsPeers->GetRetroshareInvite(false);
     if (cert.empty()) {
-        QMessageBox::information(this, tr("RetroShare"),
+        QMessageBox::information(this, tr("P2PUnseen"),
                          tr("Sorry, create certificate failed"),
                          QMessageBox::Ok, QMessageBox::Ok);
         return;
@@ -104,7 +104,7 @@ void ProfileWidget::copyCert()
     clipboard->setText(QString::fromStdString(cert));
                                 
     QMessageBox::information(this,
-                             tr("RetroShare"),
+                             tr("P2PUnseen"),
                              tr("Your Cert is copied to Clipboard, paste and send it to your "
                                 "friend via email or some other way"));                               
 }

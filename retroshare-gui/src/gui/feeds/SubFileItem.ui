@@ -164,7 +164,7 @@
            <enum>Qt::NoFocus</enum>
           </property>
           <property name="toolTip">
-           <string>Copy RetroShare Link</string>
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Copy P2PUnseen Link&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
           <property name="icon">
            <iconset resource="../images.qrc">

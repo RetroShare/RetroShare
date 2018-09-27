@@ -1,0 +1,162 @@
+/* Font settings normal */
+
+.message-content h1,.message-content h2,.message-content h3,.message-content h4,.message-content h5{
+    font-size: 13px;
+}
+.nicEdit-cover h1,.nicEdit-cover h2,.nicEdit-cover h3,.nicEdit-cover h4,.nicEdit-cover h5{
+    font-size: 13px;
+}
+
+.chat-list > ul {font-size: 13px;}
+.chat-list > ul .message-area .message-content blockquote{
+    font-size: 13px;
+}
+.chat-list-wrap .chat-list .btn{
+    font-size:13px;
+}
+.chat-list > ul .chatting-user h5{
+    font-size:14px;
+    font-weight: bold;
+}
+.chat-list > ul .chat-history{
+    font-size:14px;
+}
+.chat-list > ul li .meta {font-size: 11px;}
+.main-chat-panel-wrap ul li a.chatTabLink {font-size: 13px;}
+.nicEdit-main   blockquote{font-size:14px;}
+.editor_area  .nicEdit-main{font-size:14px;}
+.pane-content .panel-header a.chat-right-btn i,ul#contact-unsene-result-list li a,.actions a.btn.btn-tiny:hover i,.chat-area .input-area .options i
+{
+    font-size: 14px;
+}
+.nav-chat-list-item ul li span.name{
+    top: 11px;
+    font-size: 13px;
+}
+#unseen-tab-content .tab-pane2 .contact-title,#unseen-tab-content .tab-pane2 .group-title,#unseen-search-content .tab-pane2 .contact-title{
+    text-transform: uppercase;
+}
+#unseen-aside-panel span.unseen-menu-name {
+    font-size:15px;
+}
+
+
+/* Font settings small */
+.message-content h1,.message-content h2,.message-content h3,.message-content h4,.message-content h5{
+    font-size: 12px;
+}
+.nicEdit-cover h1,.nicEdit-cover h2,.nicEdit-cover h3,.nicEdit-cover h4,.nicEdit-cover h5{
+    font-size: 12px;
+}
+
+.setting-font-small .chat-list  ul {font-size: 11px;}
+.setting-font-small  .chat-list   ul .message-area .message-content blockquote{
+    font-size: 11px;
+}
+.setting-font-small .chat-list-wrap .chat-list .btn{
+    font-size:12px;
+}
+.setting-font-small  .chat-list  ul .chatting-user h5{
+    font-size:12px;
+}
+.setting-font-small .chat-list  ul .chat-history{
+    font-size:12px;
+}
+.setting-font-small .chat-list   ul li .meta {font-size: 9px;}
+
+.setting-font-small .editor_area  .nicEdit-main{font-size:12px;}
+.setting-font-small .nicEdit-main  blockquote{font-size:12px;}
+.setting-font-small .main-chat-panel-wrap  ul li a.chatTabLink {font-size: 12px;}
+.setting-font-small .pane-content .panel-header a.chat-right-btn i,ul#contact-unsene-result-list li a,.actions a.btn.btn-tiny:hover i,.chat-area .input-area .options i
+{
+    font-size: 13px;
+}
+.setting-font-small .nav-chat-list-item ul li span.name{
+    font-size: 12px;
+
+}
+.setting-font-small #unseen-aside-panel span.unseen-menu-name {
+    font-size:14px;
+}
+
+/* Font settings large */
+.message-content h1,.message-content h2,.message-content h3,.message-content h4,.message-content h5{
+    font-size: 14px;
+}
+.nicEdit-cover h1,.nicEdit-cover h2,.nicEdit-cover h3,.nicEdit-cover h4,.nicEdit-cover h5{
+    font-size: 14px;
+}
+
+.setting-font-large .chat-list   ul {font-size: 15px;}
+.setting-font-large  .chat-list   ul .message-area .message-content blockquote{
+    font-size: 15px;
+}
+.setting-font-large .chat-list-wrap .chat-list .btn{
+    font-size:14px;
+}
+.setting-font-large  .chat-list   ul .chatting-user h5{
+    font-size:16px;
+}
+.setting-font-large .chat-list   ul .chat-history{
+    font-size:16px;
+}
+.setting-font-large .chat-list   ul li .meta {font-size: 12px;}
+
+.setting-font-large .editor_area .nicEdit-main{font-size:16px;}
+.setting-font-large .nicEdit-main  blockquote{font-size:15px;}
+.setting-font-large .main-chat-panel-wrap  ul li a.chatTabLink {font-size: 14px;}
+.setting-font-large .pane-content .panel-header a.chat-right-btn i,ul#contact-unsene-result-list li a,.actions a.btn.btn-tiny:hover i,.chat-area .input-area .options i
+{
+    font-size: 15px;
+}
+.setting-font-large .nav-chat-list-item ul li span.name{
+    font-size: 14px;
+    top: 9px;
+}
+.setting-font-large #unseen-aside-panel span.unseen-menu-name {
+    font-size:16px;
+}
+/* Font settings extra large */
+.message-content h1,.message-content h2,.message-content h3,.message-content h4,.message-content h5{
+    font-size: 16px;
+}
+.nicEdit-cover h1,.nicEdit-cover h2,.nicEdit-cover h3,.nicEdit-cover h4,.nicEdit-cover h5{
+    font-size: 16px;
+}
+
+.setting-font-extra-large .chat-list   ul {font-size: 16px;}
+.setting-font-extra-large  .chat-list  ul .message-area .message-content blockquote{
+    font-size: 16px;
+}
+.setting-font-extra-large .chat-list-wrap .chat-list .btn{
+    font-size:15px;
+}
+.setting-font-extra-large  .chat-list   ul .chatting-user h5{
+    font-size:17px;
+}
+.setting-font-extra-large .chat-list   ul .chat-history{
+    font-size:18px;
+}
+.setting-font-extra-large .chat-list   ul li .meta {font-size: 14px;}
+
+.setting-font-extra-large .editor_area .nicEdit-main{font-size:18px;}
+.setting-font-extra-large .nicEdit-main  blockquote{font-size:17px;}
+.setting-font-extra-large .main-chat-panel-wrap  ul li a.chatTabLink {font-size: 15px;}
+.setting-font-extra-large .pane-content .panel-header a.chat-right-btn i,ul#contact-unsene-result-list li a,.actions a.btn.btn-tiny:hover i,.chat-area .input-area .options i
+{
+    font-size: 16px;
+}
+.setting-font-extra-large .nav-chat-list-item ul li span.name{
+    font-size: 15px;
+    top: 9px;
+}
+
+.setting-font-extra-large #unseen-aside-panel span.unseen-menu-name {
+    font-size:17px;
+}
+
+.owner-symbol {
+    color: 	#FFD700;
+}
+/* End of Font settings  */
+

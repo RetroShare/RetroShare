@@ -1,0 +1,162 @@
+body#message {
+  min-height: 100%;
+  position: relative;
+}
+body#message {
+  font-family: sans-serif;
+  line-height: 22px;
+  font-size: 14px;
+  font-weight: 300;
+  color: #333;
+  -webkit-font-smoothing: antialiased;
+  background: #eeeedf url(../img/noise-2.png);
+}
+#message a {
+  color: #82BFD1;
+}
+#message a:hover,
+#message a:active {
+  color: #5dacc3;
+}
+#message input[type=text] {
+  background: #f1f1f1;
+  border-color: #ffffff;
+}
+#message input[type=text]:focus {
+  border-color: #ffffff;
+}
+#message h1,
+#message h2,
+#message h3 {
+  font-weight: 300;
+}
+#message h1 {
+  color: #fff;
+  font-size: 32px;
+}
+#message .container-fluid {
+  padding: 0;
+}
+#message nav.main {
+  background: #333;
+  *zoom: 1;
+  border-bottom: solid 1px #e5e5e5;
+  margin-bottom: 24px;
+  color: #fff;
+}
+#message nav.main:before,
+#message nav.main:after {
+  display: table;
+  content: "";
+  line-height: 0;
+}
+#message nav.main:after {
+  clear: both;
+}
+#message nav.main ul.menu-items {
+  *zoom: 1;
+  list-style: none;
+  float: right;
+  margin: 0 24px 0 0;
+}
+#message nav.main ul.menu-items:before,
+#message nav.main ul.menu-items:after {
+  display: table;
+  content: "";
+  line-height: 0;
+}
+#message nav.main ul.menu-items:after {
+  clear: both;
+}
+#message nav.main ul.menu-items > li {
+  float: left;
+  padding: 16px 0;
+  margin-left: 10px;
+}
+#message nav.main ul.menu-items > li > a,
+#message nav.main ul.menu-items > li .btn-group > a {
+  font-size: 13px;
+  font-weight: 400;
+  color: inherit;
+  position: relative;
+  display: block;
+  line-height: 32px;
+  padding: 4px 16px;
+}
+#message nav.main ul.menu-items > li > a i,
+#message nav.main ul.menu-items > li .btn-group > a i {
+  display: none;
+}
+#message nav.main ul.menu-items > li > a:hover,
+#message nav.main ul.menu-items > li .btn-group > a:hover {
+  text-decoration: none;
+  background: #262626;
+}
+#message nav.main ul.menu-items > li .btn-group.open > a {
+  background: #262626;
+}
+#message nav.main ul.menu-items > li .btn-group > a {
+  background: #444;
+  border: none;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  color: #fff;
+  line-height: auto;
+  text-shadow: none;
+}
+#message nav.main ul.menu-items > li .btn-group > a.status-changer {
+  padding: 4px 20px 4px 4px;
+}
+#message nav.main ul.menu-items .btn-group .dropdown-menu .status-bubble {
+  margin-right: 4px;
+}
+#message nav.main ul.menu-items .btn-group img {
+  height: 32px;
+  width: 32px;
+}
+#message nav.main ul.menu-items .btn-group a.btn > * {
+  display: inline-block;
+  margin-right: 4px;
+}
+#message nav.main ul.menu-items .btn-group a.btn .name {
+  position: relative;
+  top: 1px;
+}
+#message nav.main ul.menu-items .btn-group a.btn .status-bubble {
+  position: relative;
+  top: 1px;
+  left: 6px;
+}
+#message nav.main .btn.glyph {
+  font-weight: normal;
+  padding-left: 14px;
+  padding-right: 14px;
+}
+
+#message .inbox-list li.load-more > a:hover,
+#message .inbox-list li.load-more > a:focus {
+    text-decoration: none;
+    background: #eee;
+    left: 0;
+}
+
+#message .inbox-list li.load-more > a {
+    background: none repeat scroll 0 0 transparent;
+    color: #4094ad;
+    font-size: 12px;
+    display: block;
+    left: 0;
+    padding: 7px 24px 7px 0px;
+    position: relative;
+    transition: background 0.2s linear 0s, left 0.2s linear 0s;
+}
+
+ #sent-secret-message-list .icon-remove {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+}

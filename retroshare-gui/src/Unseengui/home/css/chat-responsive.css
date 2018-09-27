@@ -1,0 +1,18 @@
+/* TABLET: 992px - 1200px */
+@media only screen and (min-width: 992px) and (max-width: 1199px){
+    
+}
+
+/*Phone: 768px - 992px */
+@media only screen and (min-width: 768px) and (max-width: 991px){
+    
+}
+
+/* Phone: 480px - 768px */
+@media only screen and (min-width: 480px) and (max-width: 767px){
+    
+}
+
+@media only screen and (max-width: 479px) {
+   
+}

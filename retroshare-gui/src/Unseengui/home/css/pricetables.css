@@ -1,0 +1,825 @@
+
+/* ==================== PRICING TABLE  ==================== */
+/* --- base --- */
+.fa-check{color: #5cb85c; font-size: 25px;}
+.fa.x{ color: #B94A61; font-size: 25px;}
+.feature-hide { display: none; }
+@media screen and (max-width: 991px) {
+
+  span.feature-hide { display: inline; padding: 0 0 0 10px; }
+}
+
+div.p_table{
+    -webkit-box-sizing: content-box;
+    -moz-box-sizing: content-box;
+     box-sizing: content-box;
+}
+
+div.p_table ul li{
+    -webkit-box-sizing: content-box;
+    -moz-box-sizing: content-box;
+     box-sizing: content-box;
+}
+
+div.p_table 
+{
+	width: 100%;
+	height: 100%;
+	font-size: 13px;
+    font-family: 'open_sansregular', sans-serif;
+	font-weight: normal;
+	color: #222222;
+	line-height: normal !important;
+}
+
+/* --- hyperlinks --- */
+div.p_table a
+	{
+	color: #444444;
+	text-decoration: none;
+	}
+	
+/* --- lists --- */
+div.p_table ul
+	{
+	margin: 0px;
+	padding: 0px !important;
+	list-style-type: none !important;
+	}
+	
+div.p_table li
+	{
+	margin: 0px;
+	padding: 0px !important;
+	list-style-type: none !important;
+	}
+
+/* --- div aligns --- */
+div.p_table .align_center
+	{
+	text-align: center;
+	}
+	
+/* --- div rounded corners --- */
+/* --- border radius 3px --- */	
+div.p_table .radius3
+	{
+	border-radius: 3px;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	}
+	
+/* --- border radius 5px top left --- */	
+div.p_table .radius5_topleft
+	{
+	border-radius: 5px 0px 0px 0px;
+	-webkit-border-top-left-radius: 5px;
+	-moz-border-radius-topleft: 5px;
+	}
+	
+/* --- border radius 5px top right --- */	
+div.p_table .radius5_topright
+	{
+	border-radius: 0px 5px 0px 0px;
+	-webkit-border-top-right-radius: 5px;
+	-moz-border-radius-topright: 5px;
+	}
+	
+/* ==================== HEADINGS  ==================== */
+/* ------ common styles ------  */
+div.p_table h1,
+div.p_table h2,
+div.p_table h3
+	{
+	margin: 0px;
+	padding: 0px !important;
+	font-weight: normal !important;
+	border: 0 !important;
+	line-height: normal !important;
+	}
+	
+div.p_table h1
+	{
+    font-family: 'open_sansregular', sans-serif;
+	font-size: 48px;
+	}
+	
+div.p_table h1 span
+	{
+    font-family: 'open_sansregular', sans-serif;
+	font-size: 59px;
+	}
+
+div.p_table h2
+	{
+    font-family: 'open_sansregular', sans-serif;
+	font-size: 30px;
+	}
+	
+div.p_table h3
+	{
+	font-size: 13px;
+	}	
+	
+/* ==================== COLUMNS  ==================== */
+/* ------ common styles ------  */
+/* --- header row 1 ---  */
+div.p_table div.caption_column li.header_row_1 ,
+div.p_table div.column_1 li.header_row_1,
+div.p_table div.column_2 li.header_row_1,
+div.p_table div.column_3 li.header_row_1,
+div.p_table div.column_4 li.header_row_1
+	{
+	height: 46px;
+	width: 100%;
+	padding: 4px 0px 0px 0px !important;
+	}
+	
+/* --- header row 2 ---  */
+div.p_table div.caption_column li.header_row_2,
+div.p_table div.column_1 li.header_row_2,
+div.p_table div.column_2 li.header_row_2,
+div.p_table div.column_3 li.header_row_2,
+div.p_table div.column_4 li.header_row_2
+	{
+	/* height: 100px; */
+	width: 100%;
+	padding: 3px 0px 7px 0px !important;
+	}
+	
+/* --- caption correction --- */
+div.p_table div.caption_column li.header_row_2
+	{	
+	height: 72px;
+	width: 100%;
+	padding: 32px 0px 6px 10px !important;
+	}
+	
+/* ==================== CAPTION COLUMN  ==================== */
+div.p_table div.caption_column
+	{
+	width: 320px;
+    /*border-left: 2px solid #404040;*/
+	height: 100%;
+	float: left;
+	}
+
+/* =================== COLUMN STYLE 1  ==================== */
+div.p_table div.column_1
+	{
+    /* width: 250px; */
+	height: 100%;
+	/* float: left; */
+	position: relative;
+	}
+	
+/* ==================== COLUMN STYLE 2  ==================== */
+div.p_table div.column_2
+	{
+    /* width: 250px; */
+	height: 100%;
+	float: left;
+	position: relative;
+	}	
+	
+/* ==================== COLUMN STYLE 3  ==================== */
+div.p_table div.column_3
+	{
+    width: 250px;
+    /*border-right: 2px solid #404040;*/
+	height: 100%;
+	float: left;
+	position: relative;
+	}
+	
+/* ==================== COLUMN STYLE 4  ==================== */
+div.p_table div.column_4
+	{
+    width: 250px;
+	height: 100%;
+	float: left;
+	position: relative;
+	}
+	
+/* ========== COLUMN HOVERS ========== */
+/*div.p_table div.column_1,
+div.p_table div.column_2,
+div.p_table div.column_3,
+div.p_table div.column_4
+	{
+	*//* transitions *//*
+	-webkit-transition: box-shadow 0.25s ease;
+	-moz-transition: box-shadow 0.25s ease;
+	-o-transition: box-shadow 0.25s ease;
+	-ms-transition: box-shadow 0.25s ease;
+	transition: box-shadow 0.25s ease;	
+	}
+
+div.p_table div.column_1:hover,
+div.p_table div.column_2:hover,
+div.p_table div.column_3:hover,
+div.p_table div.column_4:hover
+	{
+	position: relative;
+	z-index: 100;
+	left: -5px;
+	top: -15px;
+	*//* shadow *//*
+	box-shadow: 5px 0px 30px rgba(0,0,0,0.5);
+	-webkit-box-shadow: 5px 0px 30px rgba(0,0,0,0.5);
+	-moz-box-shadow: 5px 0px 30px rgba(0,0,0,0.5);
+	*//* --- border radius --- *//*
+	*//* --- white triange bug fix --- *//*
+	border-radius: 5px 5px 0px 0px;
+	-webkit-border-top-left-radius: 5px;
+	-webkit-border-top-right-radius: 5px;
+	-moz-border-radius-topleft: 5px;
+	-moz-border-radius-topright: 5px;
+	}
+	
+div.p_table div.column_1:hover li.row_style_1,
+div.p_table div.column_2:hover li.row_style_1,
+div.p_table div.column_3:hover li.row_style_1,
+div.p_table div.column_4:hover li.row_style_1,
+div.p_table div.column_1:hover li.row_style_2,
+div.p_table div.column_2:hover li.row_style_2,
+div.p_table div.column_3:hover li.row_style_2,
+div.p_table div.column_4:hover li.row_style_2,
+div.p_table div.column_1:hover li.row_style_3,
+div.p_table div.column_2:hover li.row_style_3,
+div.p_table div.column_3:hover li.row_style_3,
+div.p_table div.column_4:hover li.row_style_3,
+div.p_table div.column_1:hover li.row_style_4,
+div.p_table div.column_2:hover li.row_style_4,
+div.p_table div.column_3:hover li.row_style_4,
+div.p_table div.column_4:hover li.row_style_4
+	{
+	min-height: 26px;
+	padding-top: 10px !important;
+	padding-left: 5px !important;
+	padding-right: 5px !important;
+	}
+	
+div.p_table div.column_1:hover li.header_row_1,
+div.p_table div.column_2:hover li.header_row_1,
+div.p_table div.column_3:hover li.header_row_1,
+div.p_table div.column_4:hover li.header_row_1
+	{
+	padding-left: 5px !important;
+	padding-right: 5px !important;
+	border-radius: 5px 5px 0px 0px;
+	-webkit-border-top-left-radius: 5px;
+	-webkit-border-top-right-radius: 5px;
+	-moz-border-radius-topleft: 5px;
+	-moz-border-radius-topright: 5px;
+	}	
+
+div.p_table div.column_1:hover li.header_row_2,
+div.p_table div.column_2:hover li.header_row_2,
+div.p_table div.column_3:hover li.header_row_2,
+div.p_table div.column_4:hover li.header_row_2
+	{
+	padding-left: 5px !important;
+	padding-right: 5px !important;
+	}
+	
+div.p_table div.column_1:hover li.footer_row,
+div.p_table div.column_2:hover li.footer_row,
+div.p_table div.column_3:hover li.footer_row,
+div.p_table div.column_4:hover li.footer_row
+	{
+	padding-left: 5px !important;
+	padding-right: 5px !important;
+	}	
+	*/
+/*==================== DATA ROWS  ====================*/
+/* ------ common styles ------  */
+div.p_table li.row_style_1,
+div.p_table li.row_style_2,
+div.p_table li.row_style_3,
+div.p_table li.row_style_4
+	{
+	width: 100%;
+	height: 100%;
+	min-height: 26px;
+	padding-top: 9px !important;
+	float: left;
+	font-weight: bold;
+	}
+
+div.p_table li.row_style_1 span,
+div.p_table li.row_style_2 span,
+div.p_table li.row_style_3 span,
+div.p_table li.row_style_4 span
+	{
+	padding-left: 10px !important;
+	padding-right: 10px !important;
+	}
+	
+/* --- white ---  */
+div.p_table li.row_style_1
+	{
+	background-color: #ffffff;
+	}
+	
+/* --- light gray ---  */
+div.p_table li.row_style_2
+	{
+	background-color: #f6f6f6;
+	}
+	
+/* --- mid gray ---  */
+div.p_table li.row_style_3
+	{
+	background-color: #ebebeb;
+	}
+	
+/* --- dark gray ---  */
+div.p_table li.row_style_4
+	{
+	background-color: #e3e3e3;
+	}
+	
+/*========== FOOTER  ==========*/
+/* ------ common styles ------  */
+div.p_table li.footer_row
+	{
+	width: 100%;
+	height: 40px;
+	padding-top: 14px !important;
+	padding-bottom: 6px !important;
+	float: left;
+	border-top: 1px solid #d3d3d3;
+	border-bottom: 2px solid #404040;
+	background-color: #e2e2e2; /* background color for non-css3 browsers */
+	/* gradient */
+	background-image: linear-gradient(top, #f6f6f6, #d0d0d0); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f6f6f6', endColorstr='#d0d0d0'); /* IE5.5 - 7 */
+	-ms-filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f6f6f6', endColorstr='#d0d0d0'); /* IE8 */
+	background: -ms-linear-gradient(top, #f6f6f6, #d0d0d0); /* IE9 */
+	background: -moz-linear-gradient(top, #f6f6f6, #d0d0d0); /* Firefox */
+	background: -o-linear-gradient(top, #f6f6f6, #d0d0d0); /* Opera 11  */
+	background: -webkit-linear-gradient(top, #f6f6f6, #d0d0d0); /* Chrome 11  */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0, #f6f6f6), color-stop(1, #d0d0d0)); /* Chrome 10, Safari */
+	}
+
+/* --- button --- */
+div.p_table a.sign_up
+	{
+	width: 120px;
+	height: 24px;
+	/*padding: 6px 0px 0px 0px !important;*/
+	padding:15px !important;
+    line-height: 0;
+	display: block;
+	text-align: center;
+	margin-left: auto;
+	margin-right: auto;
+	text-shadow: 0px 1px 0px #ffffff; /* text shadow for firefox 3.6+ */ 
+	border: 1px solid #b5b5b5;
+	background-color: #d8d8d8; /* background color for non-css3 browsers */
+	outline: none;
+	/* gradient */
+	background-image: linear-gradient(top, #ffffff, #efefef 1px, #d8d8d8); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#efefef', endColorstr='#d8d8d8'); /* IE5.5 - 7 */
+	-ms-filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#efefef', endColorstr='#d8d8d8'); /* IE8 */
+	background: -ms-linear-gradient(top, #ffffff, #efefef 1px, #d8d8d8); /* IE9 */
+	background: -moz-linear-gradient(top, #ffffff, #efefef 1px, #d8d8d8); /* Firefox */
+	background: -o-linear-gradient(top, #ffffff, #efefef 1px, #d8d8d8); /* Opera 11  */
+	background: -webkit-linear-gradient(top, #ffffff, #efefef 1px, #d8d8d8); /* Chrome 11  */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0, #ffffff), color-stop(0.05, #efefef), color-stop(1, #d8d8d8)); /* Chrome 10, Safari */
+	/* shadow */
+	box-shadow: 0px 1px 0px rgba(255,255,255,0.5);
+	-webkit-box-shadow: 0px 1px 0px rgba(255,255,255,0.5);
+	-moz-box-shadow: 0px 1px 0px rgba(255,255,255,0.5);
+	/* font */
+	font-weight: bold;
+	}
+
+a.sign_up_orange{
+	color: #000;
+    width: 180px;
+    margin: auto;
+    /* display: block; */
+    height: 45px;
+    padding-top: 9px;
+    padding-left: 10px;
+}
+
+/* --- button hover --- */
+div.p_table a.sign_up:hover
+	{
+	height: 24px;
+	padding: 6px 0px 0px 0px !important;
+	text-shadow: 0px 1px 0px #ffffff; /* text shadow for firefox 3.6+ */ 
+	border: 1px solid #b5b5b5;
+	background-color: #c9c9c9; /* background color for non-css3 browsers */
+	outline: none;
+	/* gradient */
+	background-image: linear-gradient(top, #d2d2d2, #dedede 1px, #c9c9c9); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#dedede', endColorstr='#c9c9c9'); /* IE5.5 - 7 */
+	-ms-filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#dedede', endColorstr='#c9c9c9'); /* IE8 */
+	background: -ms-linear-gradient(top, #d2d2d2, #dedede 1px, #c9c9c9); /* IE9 */
+	background: -moz-linear-gradient(top, #d2d2d2, #dedede 1px, #c9c9c9); /* Firefox */ 
+	background: -o-linear-gradient(top, #d2d2d2, #dedede 1px, #c9c9c9); /* Opera 11  */
+	background: -webkit-linear-gradient(top, #d2d2d2, #dedede 1px, #c9c9c9); /* Chrome 11  */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0, #d2d2d2), color-stop(0.05, #dedede), color-stop(1, #c9c9c9)); /* Chrome 10, Safari */
+	/* shadow */
+	box-shadow: 0px 1px 0px rgba(255,255,255,0.5);
+	-webkit-box-shadow: 0px 1px 0px rgba(255,255,255,0.5);
+	-moz-box-shadow: 0px 1px 0px rgba(255,255,255,0.5);
+	}
+	
+/* ==================== COLUMN RIBBONS  ==================== */
+/* --- base --- */
+div.column_ribbon
+	{
+	width: 42px;
+	height: 42px;
+	position: absolute;
+	right: 0;
+	}
+	
+/* --- hover--- */	
+div.p_table div.column_1:hover div.column_ribbon,
+div.p_table div.column_2:hover div.column_ribbon,
+div.p_table div.column_3:hover div.column_ribbon,
+div.p_table div.column_4:hover div.column_ribbon
+	{
+	right: -10px;
+	}
+	
+/* ------ ribbon styles ------  */
+/* --- style1--- */	
+div.ribbon_style1_best { background: url(../images/ribbon_style1_best.png); }
+div.ribbon_style1_buy { background: url(../images/ribbon_style1_buy.png); }
+div.ribbon_style1_free { background: url(../images/ribbon_style1_free.png); }
+div.ribbon_style1_free_caps { background: url(../images/ribbon_style1_free_caps.png); }
+div.ribbon_style1_fresh { background: url(../images/ribbon_style1_fresh.png); }
+div.ribbon_style1_gift_caps { background: url(../images/ribbon_style1_gift_caps.png); }
+div.ribbon_style1_heart { background: url(../images/ribbon_style1_heart.png); }
+div.ribbon_style1_hot { background: url(../images/ribbon_style1_hot.png); }
+div.ribbon_style1_hot_caps { background: url(../images/ribbon_style1_hot_caps.png); }
+div.ribbon_style1_new { background: url(../images/ribbon_style1_new.png); }
+div.ribbon_style1_new_caps { background: url(../images/ribbon_style1_new_caps.png); }
+div.ribbon_style1_no1 { background: url(../images/ribbon_style1_no1.png); }
+div.ribbon_style1_off5 { background: url(../images/ribbon_style1_off5.png); }
+div.ribbon_style1_off10 { background: url(../images/ribbon_style1_off10.png); }
+div.ribbon_style1_off15 { background: url(../images/ribbon_style1_off15.png); }
+div.ribbon_style1_off20 { background: url(../images/ribbon_style1_off20.png); }
+div.ribbon_style1_off25 { background: url(../images/ribbon_style1_off25.png); }
+div.ribbon_style1_off30 { background: url(../images/ribbon_style1_off30.png); }
+div.ribbon_style1_off35 { background: url(../images/ribbon_style1_off35.png); }
+div.ribbon_style1_off40 { background: url(../images/ribbon_style1_off40.png); }
+div.ribbon_style1_off50 { background: url(../images/ribbon_style1_off50.png); }
+div.ribbon_style1_off75 { background: url(../images/ribbon_style1_off75.png); }
+div.ribbon_style1_pack { background: url(../images/ribbon_style1_pack.png); }
+div.ribbon_style1_pro { background: url(../images/ribbon_style1_pro.png); }
+div.ribbon_style1_sale { background: url(../images/ribbon_style1_sale.png); }
+div.ribbon_style1_save { background: url(../images/ribbon_style1_save.png); }
+div.ribbon_style1_save_caps { background: url(../images/ribbon_style1_save_caps.png); }
+div.ribbon_style1_top { background: url(../images/ribbon_style1_top.png); }
+div.ribbon_style1_top_caps { background: url(../images/ribbon_style1_top_caps.png); }
+div.ribbon_style1_trial { background: url(../images/ribbon_style1_trial.png); }
+
+/* --- style2--- */
+div.ribbon_style2_best { background: url(../images/ribbon_style2_best.png); }
+div.ribbon_style2_buy { background: url(../images/ribbon_style2_buy.png); }
+div.ribbon_style2_free { background: url(../images/ribbon_style2_free.png); }
+div.ribbon_style2_free_caps { background: url(../images/ribbon_style2_free_caps.png); }
+div.ribbon_style2_fresh { background: url(../images/ribbon_style2_fresh.png); }
+div.ribbon_style2_gift_caps { background: url(../images/ribbon_style2_gift_caps.png); }
+div.ribbon_style2_heart { background: url(../images/ribbon_style2_heart.png); }
+div.ribbon_style2_hot { background: url(../images/ribbon_style2_hot.png); }
+div.ribbon_style2_hot_caps { background: url(../images/ribbon_style2_hot_caps.png); }
+div.ribbon_style2_new { background: url(../images/ribbon_style2_new.png); }
+div.ribbon_style2_new_caps { background: url(../images/ribbon_style2_new_caps.png); }
+div.ribbon_style2_no1 { background: url(../images/ribbon_style2_no1.png); }
+div.ribbon_style2_off5 { background: url(../images/ribbon_style2_off5.png); }
+div.ribbon_style2_off10 { background: url(../images/ribbon_style2_off10.png); }
+div.ribbon_style2_off15 { background: url(../images/ribbon_style2_off15.png); }
+div.ribbon_style2_off20 { background: url(../images/ribbon_style2_off20.png); }
+div.ribbon_style2_off25 { background: url(../images/ribbon_style2_off25.png); }
+div.ribbon_style2_off30 { background: url(../images/ribbon_style2_off30.png); }
+div.ribbon_style2_off35 { background: url(../images/ribbon_style2_off35.png); }
+div.ribbon_style2_off40 { background: url(../images/ribbon_style2_off40.png); }
+div.ribbon_style2_off50 { background: url(../images/ribbon_style2_off50.png); }
+div.ribbon_style2_off75 { background: url(../images/ribbon_style2_off75.png); }
+div.ribbon_style2_pack { background: url(../images/ribbon_style2_pack.png); }
+div.ribbon_style2_pro { background: url(../images/ribbon_style2_pro.png); }
+div.ribbon_style2_sale { background: url(../images/ribbon_style2_sale.png); }
+div.ribbon_style2_save { background: url(../images/ribbon_style2_save.png); }
+div.ribbon_style2_save_caps { background: url(../images/ribbon_style2_save_caps.png); }
+div.ribbon_style2_top { background: url(../images/ribbon_style2_top.png); }
+div.ribbon_style2_top_caps { background: url(../images/ribbon_style2_top_caps.png); }
+div.ribbon_style2_trial { background: url(../images/ribbon_style2_trial.png); }
+
+/* ==================== TOOLTIP  ==================== */
+/* --- base --- */
+div.p_table a.tooltip
+	{
+	position: relative;
+	text-decoration: underline;	
+	}
+	
+div.p_table a.tooltip:hover
+	{
+	color: #999999;
+	text-decoration: none !important;
+	}
+	
+div.p_table a.tooltip:hover:after, div.p_table a.tooltip:hover:before
+	{
+    display: block;
+	}
+
+/* --- tooltip container --- */
+div.p_table a.tooltip:before
+	{
+	content: attr(rel);
+	display: block;
+	width: 140px;
+    position: absolute;
+	z-index: 1000;
+    bottom: 150%;
+    left: -10px;
+    padding: 5px 10px 8px 10px;
+	text-align: left;
+    color: #ffffff;
+    display: none;
+	/* background */
+	background: #404040; /* CSS2 */
+	background: -moz-linear-gradient(top, #4e4e4e 0%, #404040 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#4e4e4e), color-stop(100%,#404040)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top, #4e4e4e 0%,#404040 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top, #4e4e4e 0%,#404040 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top, #4e4e4e 0%,#404040 100%); /* IE10+ */
+	background: linear-gradient(top, #4e4e4e 0%,#404040 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#4e4e4e', endColorstr='#404040',GradientType=0 ); /* IE6-9 */
+	/* border-radius */
+	-webkit-border-radius: 2px;
+	-moz-border-radius: 2px;
+	border-radius: 2px;
+	/* box-shadow */
+	-webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+	-moz-box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+	box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+	/* text-shadow */
+	text-shadow: 0px 1px 0px #292929;
+	}
+	
+/* --- tooltip arrow --- */
+div.p_table a.tooltip:after
+	{
+	content: "";
+	display: block;
+    width: 0;
+    height: 0;
+    position: absolute;
+	z-index: 1000;
+	bottom: 18px;
+	left: -2px;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+	border-top: 6px solid #404040;
+    display: none;
+	background: transparent;	
+	}
+
+/* ============ Style 5 ============= */
+/* ========== HEADINGS  ========== */
+div.p_table h1.col1,
+div.p_table h1.col2,
+div.p_table h1.col3,
+div.p_table h1.col4
+{
+    color: #ffffff;
+}
+
+div.p_table h2.dualprice{
+    font-size: 35px;
+    color: #ffffff;
+    text-align: center;
+}
+div.p_table h2.dualprice span{
+    font-size: 13px;
+}
+
+span.small_white{
+    color: #ffffff;
+    font-size: 20px;
+    text-align: center;
+}
+
+div.p_table h1 span
+{
+    color: #ffffff;
+}
+
+div.p_table h2.col1,
+div.p_table h2.col2,
+div.p_table h2.col3,
+div.p_table h2.col4
+{
+    color: #ffffff;
+}
+
+div.p_table h2.caption
+{
+    color: #faab00;
+}
+
+div.p_table h2.caption span
+{
+    color: #3591ca;
+}
+
+div.p_table h3.col1,
+div.p_table h3.col2,
+div.p_table h3.col3,
+div.p_table h3.col4
+{
+    color: #ffffff;
+}
+
+/* ========== CAPTION COLUMN  ========== */
+/* --- header row 1 ---  */
+div.p_table div.caption_column li.header_row_1
+{
+    border-top: 0;
+    border-bottom: 1px solid #ffffff;
+    background-color: #ffffff;
+}
+
+/* --- header row 2 ---  */
+div.p_table div.caption_column li.header_row_2
+{
+    border-top: 1px solid #ffffff;
+    border-bottom: 1px solid #ffffff;
+    background-color: #ffffff;
+}
+
+/* ========== COLUMN STYLE 1  ========== */
+/* --- header row 1 ---  */
+div.p_table div.column_1 li.header_row_1
+{
+    border-top: 0;
+    border-bottom: 1px solid #52b5d5;
+    background-color: #52b5d5;
+}
+
+/* --- header row 2 ---  */
+div.p_table div.column_1 li.header_row_2
+{
+    border: 2px solid #22B6F4;
+    background-color: #22B6F4;
+    border-radius: 20px 20px 0 0;
+}
+
+/* ========== COLUMN STYLE 2  ========== */
+/* --- header row 1 ---  */
+div.p_table div.column_2 li.header_row_1
+{
+    border-top: 0;
+    border-bottom: 1px solid #3591ca;
+    background-color: #3591ca;
+}
+
+/* --- header row 2 ---  */
+div.p_table div.column_2 li.header_row_2
+{
+    border-top: 1px solid #44a3d5;
+    border-bottom: 1px solid #44a3d5;
+    background-color: #44a3d5;
+}
+
+
+/* ========== COLUMN STYLE 3  ========== */
+/* --- header row 1 ---  */
+div.p_table div.column_3 li.header_row_1
+{
+    border-top: 0;
+    border-bottom: 1px solid #e9aa00;
+    background-color: #e9aa00;
+}
+
+/* --- header row 2 ---  */
+div.p_table div.column_3 li.header_row_2
+{
+    border-top: 1px solid #f6ba18;
+    border-bottom: 1px solid #f6ba18;
+    background-color: #f6ba18;
+}
+/* ========== COLUMN STYLE 4  ========== */
+/* --- header row 1 ---  */
+div.p_table div.column_4 li.header_row_1
+{
+    border-top: 0;
+    border-bottom: 1px solid #1a3e7b;
+    background-color: #1a3e7b;
+}
+
+/* --- header row 2 ---  */
+div.p_table div.column_4 li.header_row_2
+{
+    border-top: 1px solid #234e8e;
+    border-bottom: 1px solid #234e8e;
+    background-color: #234e8e;
+}
+
+h1.get-started-today{
+	font-weight: bold;	
+}
+
+h2.choose-right-plan{
+	color: #22B6F4;
+	font-weight: bold;
+	margin-top: -5px;
+}
+
+h3.premium-has-benefits{
+	margin-top: 5px;
+	font-weight: bold;
+	font-size: 18px;
+}
+
+h3.select-a-plan{
+	margin: 30px 0 ;
+	font-weight: bold;
+	text-decoration: underline;	
+}
+
+div.row-need-a-little-extra .caption{
+	margin: 20px 0 5px 0;
+	font-weight: bolder;
+	text-decoration: underline;	
+}
+
+div.row-need-a-little-extra div.p_table ul li.row_style_2 {
+	padding-top: 2px !important;
+	min-height: none;
+}
+
+div.p_table li.row-private-and-secure{
+	padding-bottom: 9px !important;
+}
+
+div.p_table li.row_style_last {
+    border-radius: 0 0 20px 20px;
+}
+
+div.take-care-security {
+	margin: 50px 0;
+}
+
+div.p_table_premium li.row_style_1,
+div.p_table_premium li.row_style_2,
+div.p_table_premium li.row_style_3,
+div.p_table_premium li.row_style_4
+{
+	border-left: 2px solid #e3e3e3;
+	border-right: 2px solid #e3e3e3;
+}
+
+.row_style_last .row {
+    margin-left: 0px;
+    margin-right: 0px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.row_style_last .row img{
+	height: 34px;
+}
+
+.row_style_last .row p{
+	min-height: 45px;
+}
+
+div.p_table li.row_style_last div.col-padlock{
+	padding-right: 0px !important;
+}
+
+.take-care-security div.p_table h2{
+	color: #222222;
+	font-size: 28px;
+}
+
+img.img-iceland{
+	height: 40px;
+    margin-right: 20px;
+    margin-top: 9px;
+}
+
+.row-only-available{
+	margin-top: 5px;
+	font-size: 13px;
+}
+
+.page-header {
+    margin-bottom: 0;
+}
+
+.section-divider {
+    padding-bottom: 50px;
+}

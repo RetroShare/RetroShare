@@ -386,7 +386,7 @@ void CreateCircleDialog::createCircle()
 
     if(name.isEmpty()) {
 	    /* error message */
-	    QMessageBox::warning(this, tr("RetroShare"),tr("Please set a name for your Circle"), QMessageBox::Ok, QMessageBox::Ok);
+        QMessageBox::warning(this, tr("P2PUnseen"),tr("Please set a name for your Circle"), QMessageBox::Ok, QMessageBox::Ok);
 
 	    return; //Don't add  a empty Subject!!
     }//if(name.isEmpty())
@@ -469,7 +469,7 @@ void CreateCircleDialog::createCircle()
     //		std::cerr << std::endl;
     //
     //		// cannot edit these yet.
-    //		QMessageBox::warning(this, tr("RetroShare"),tr("Cannot Edit Existing Circles Yet"), QMessageBox::Ok, QMessageBox::Ok);
+    //		QMessageBox::warning(this, tr("P2PUnseen"),tr("Cannot Edit Existing Circles Yet"), QMessageBox::Ok, QMessageBox::Ok);
     //		return; 
     //	}
 
@@ -522,13 +522,13 @@ void CreateCircleDialog::createCircle()
 			    std::cerr << std::endl;
 #endif
 
-			    QMessageBox::warning(this, tr("RetroShare"),tr("No Restriction Circle Selected"), QMessageBox::Ok, QMessageBox::Ok);
+                QMessageBox::warning(this, tr("P2PUnseen"),tr("No Restriction Circle Selected"), QMessageBox::Ok, QMessageBox::Ok);
 			    return; 
 		    }//else (ui.circleComboBox->getChosenCircle(chosenId))
 	    } 
 	    else 
 	    {
-		    QMessageBox::warning(this, tr("RetroShare"),tr("No Circle Limitations Selected"), QMessageBox::Ok, QMessageBox::Ok);
+            QMessageBox::warning(this, tr("P2PUnseen"),tr("No Circle Limitations Selected"), QMessageBox::Ok, QMessageBox::Ok);
 		    return; 
 	    }
     } 

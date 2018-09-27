@@ -1,0 +1,354 @@
+.modal.import-contact {
+
+  /*margin-left: -400px;*/
+  font-size: 12px;
+  line-height: 1.4em;
+  -webkit-font-smoothing: auto;
+  color: #444;
+}
+.modal.import-contact .modal-dialog
+{
+    width: 800px;
+}
+.modal.import-contact .find-column,
+.modal.import-contact .invite-column {
+  float: left;
+}
+.modal.import-contact .import-column > .wrap,
+.modal.import-contact .invite-column > .wrap {
+  margin: 0;
+}
+.modal.import-contact .find-column:first-child > .wrap{
+  margin-right: 0;
+}
+.modal.import-contact .mail-icon {
+  position: relative;
+  top: 5px;
+}
+.modal.import-contact .mail-icon.gmail {
+  background: url(../img/gmail-h24.png) no-repeat center;
+  height: 18px;
+  width: 28px;
+}
+.modal.import-contact .mail-icon.yahoo {
+  background: url(../img/yahoo-icon.png) no-repeat center;
+  height: 18px;
+  top: 4px;
+  width: 28px;
+}
+.modal.import-contact .mail-icon.hotmail {
+  background: url(../img/hotmail-icon.png) no-repeat center;
+  height: 18px;
+  top: 4px;
+  width: 28px;
+}
+.modal.import-contact .dropdown-menu li a {
+  line-height: 27px;
+}
+.modal.import-contact .contact-result-list {
+  overflow: auto;
+  height: 240px;
+  border: solid 1px #ddd;
+}
+.modal.import-contact .contact-result-list ul {
+  margin: 0 0 10px;
+  list-style: none;
+  border-top: solid 1px #ddd;
+}
+.modal.import-contact .contact-result-list li {
+  position: relative;
+}
+.modal.import-contact .contact-result-list .contact {
+  line-height: 24px;
+  display: block;
+  padding: 5px;
+  text-decoration: none;
+  color: #333;
+  background: #eee;
+  border-bottom: solid 1px #ddd;
+  font-size: 12px;
+  margin: 0;
+}
+.modal.import-contact .contact-result-list .contact:hover {
+  background: #ddd;
+}
+.modal.import-contact .contact-result-list img {
+  width: 24px;
+  margin-right: 5px;
+}
+.modal.import-contact .contact-result-list a.add {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  margin-top: -11px;
+  height: 18px;
+  width: 16px;
+  padding: 0 0 0 3px;
+  line-height: 18px;
+}
+.modal.import-contact .contact-result-list .title {
+  padding: 5px 10px;
+}
+.modal.import-contact .contact-result-list h5 {
+  margin: 0;
+}
+.modal.import-contact .contact-result-list input[type=checkbox] {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  margin-top: -6px;
+}
+.modal.import-contact .has-header .contact-result-list {
+  height: 200px;
+}
+.modal.import-contact .has-header .contact-result-list ul {
+  border-top: none;
+}
+.modal.import-contact .search-container {
+  border: solid 1px #2D98E5;
+  /*height: 300px;*/
+  margin: 12px;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+}
+.modal.import-contact .invite-column .search-container {
+  /*height: 380px;*/
+}
+.modal.import-contact .invite-column select {
+  margin-right: 10px;
+  width: 45%;
+}
+.modal.import-contact .search-container .tab-content {
+  padding: 10px;
+}
+.modal.import-contact .search-container .tab-content .input-append input {
+  width: 250px;
+}
+.modal.import-contact .search-container .tab-content .input-append .btn {
+  height: 30px;
+  width: 100px;
+}
+.modal.import-contact .search-container .nav-tabs {
+  color: #ffffff;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+  background: #33aaff;
+  background-color: #1fa1ff;
+  background-image: -moz-linear-gradient(top, #33aaff, #0095ff);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#33aaff), to(#0095ff));
+  background-image: -webkit-linear-gradient(top, #33aaff, #0095ff);
+  background-image: -o-linear-gradient(top, #33aaff, #0095ff);
+  background-image: linear-gradient(to bottom, #33aaff, #0095ff);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff33aaff', endColorstr='#ff0095ff', GradientType=0);
+  border-color: #0095ff #0095ff #0068b3;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+  border-bottom: solid 1px #33aaff;
+  -webkit-box-shadow: inset 0 1px 0 rgba(255,255,255,.2);
+  -moz-box-shadow: inset 0 1px 0 rgba(255,255,255,.2);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.2);
+}
+.modal.import-contact .search-container .nav-tabs .dropdown-menu {
+  margin: 0 0 0 -1px;
+}
+.modal.import-contact .search-container .nav-tabs > .active > a,
+.modal.import-contact .search-container .nav-tabs > li > a,
+.modal.import-contact .search-container .nav-tabs > .active > a:hover,
+.modal.import-contact .search-container .nav-tabs > li > a:hover,
+.modal.import-contact .search-container .nav-tabs > .active > a:focus,
+.modal.import-contact .search-container .nav-tabs > li > a:focus {
+  padding: 8px;
+  border-right: solid 1px #0086e5;
+  border-color: #0086e5;
+  border-left: none;
+  border-top: none;
+  border-bottom: none;
+  top: 0;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+  margin: 0;
+  color: #fff;
+  background: transparent;
+}
+.modal.import-contact .search-container .nav-tabs > .active:first-child > a,
+.modal.import-contact .search-container .nav-tabs > li:first-child > a {
+  border-left: none;
+}
+.modal.import-contact .search-container .nav-tabs > .active:first-child > a:hover,
+.modal.import-contact .search-container .nav-tabs > li:first-child > a:hover,
+.modal.import-contact .search-container .nav-tabs > .active:first-child > a:focus,
+.modal.import-contact .search-container .nav-tabs > li:first-child > a:focus {
+  border-left: none;
+}
+.modal.import-contact .search-container .nav-tabs > .active > a,
+.modal.import-contact .search-container .nav-tabs > .active > a:hover,
+.modal.import-contact .search-container .nav-tabs > .active > a:focus {
+  -webkit-box-shadow: inset 0 1px 0 rgba(255,255,255,.2), 0 1px 2px rgba(0,0,0,.05);
+  -moz-box-shadow: inset 0 1px 0 rgba(255,255,255,.2), 0 1px 2px rgba(0,0,0,.05);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.2), 0 1px 2px rgba(0,0,0,.05);
+  background: #0077cc;
+}
+.modal.import-contact .search-container .nav-tabs > li > a:hover,
+.modal.import-contact .search-container .nav-tabs > li > a:focus {
+  -webkit-box-shadow: inset 0 1px 0 rgba(255,255,255,.2), 0 1px 2px rgba(0,0,0,.05);
+  -moz-box-shadow: inset 0 1px 0 rgba(255,255,255,.2), 0 1px 2px rgba(0,0,0,.05);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.2), 0 1px 2px rgba(0,0,0,.05);
+  background: #0077cc;
+}
+.modal.import-contact .search-container .nav-tabs .nav-tabs .open .dropdown-toggle,
+.modal.import-contact .search-container .nav-tabs .nav-pills .open .dropdown-toggle,
+.modal.import-contact .search-container .nav-tabs .nav > li.dropdown.open.active > a:hover,
+.modal.import-contact .search-container .nav-tabs .nav > li.dropdown.open.active > a:focus {
+  border-right: solid 1px #0086e5;
+}
+.modal.import-contact .invite-column.inactive {
+  position: relative;
+}
+.modal.import-contact .invite-column.inactive .blocker {
+  position: absolute;
+  z-index: 9999;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: #fff;
+  opacity: .7;
+}
+.modal.import-contact .input-prepend input {
+  width: 246px;
+}
+.modal.import-contact .input-prepend label {
+  margin: 0;
+  width: 100px;
+  border-right: 0;
+  font-weight: 500;
+}
+.modal.import-contact label {
+  font-weight: 600;
+    padding-top: 5px;
+}
+.modal.import-contact .invite-column .input-prepend label {
+  width: 85px;
+}
+.modal.import-contact div.tagsinput {
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+}
+.modal.import-contact input[type=text] {
+  border: solid 1px #ccc;
+  background: #fff;
+}
+.modal.import-contact textarea {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 100px;
+}
+.modal.import-contact textarea#invite_emails_input {
+  min-height: 70px;
+}
+.modal.import-contact .social {
+  margin-right: 8px;
+  position: relative;
+}
+.modal.import-contact .social:hover {
+  top: -1px;
+}
+.modal.import-contact .facebook {
+  font: 0/0 a;
+  color: transparent;
+  text-shadow: none;
+  background-color: transparent;
+  border: 0;
+  background: url(../img/facebook-32.png) center no-repeat;
+  display: inline-block;
+  height: 32px;
+  width: 32px;
+}
+.modal.import-contact .twitter {
+  font: 0/0 a;
+  color: transparent;
+  text-shadow: none;
+  background-color: transparent;
+  border: 0;
+  background: url(../img/twitter-32.png) center no-repeat;
+  display: inline-block;
+  height: 32px;
+  width: 32px;
+}
+.modal.import-contact .modal-footer p {
+  line-height: 32px;
+  -webkit-font-smoothing: auto;
+  margin: 0;
+  font-weight: 600;
+}
+
+
+/*henry added*/
+
+#sendInviteMessageValidations{
+    color:red;
+}
+
+.contact-info-image-wapper{
+    width: 140px;height: 140px; background-repeat:no-repeat;background-position: center;background-size:contain;
+}
+
+#modal-invite .modal-footer .alert{
+	width: 72%;
+	text-align: left;
+	margin: -5px 0 0 15px;
+	font-size:14px;
+	padding: 8px;
+}
+.modal.import-contact {
+    top: 5%;
+}
+
+#welcome-new-user.modal .modal-body {
+    padding: 15px;
+    background: url(../img/content-bg.jpg) no-repeat;
+    color: white;
+}
+#welcome-new-user.modal .text-info {
+    color: yellow;
+}
+#welcome-new-user.modal .modal-body .text-warning{
+    color:aqua;
+}
+#welcome-new-user.modal #compose{
+   text-align: center;
+}
+#modal-invite label{
+	cursor: default;
+}
+
+#modal-invite a {
+  text-decoration: none;
+}
+
+#modal-invite a:hover {
+  background: #0077CC;
+  text-decoration: none;
+}
+
+#modal-invite a.cs_import:hover {
+  background: #FFF;
+  text-decoration: none;
+}
+
+#modal-invite .cloudsponge-import {
+  font-weight: bold;
+  line-height: 20px;
+  margin:  0 3px 3px 0;
+}
+
+#modal-invite .unseen-recipients{
+    padding-top: 5px;
+}
+#modal-invite .modal-body .row{
+    margin-bottom: 5px;
+}

@@ -1,0 +1,57 @@
+.get-started{
+    text-align: center;
+    margin-top: 20px;
+    font-size: 20px;
+    font-weight: bold;
+    color: black;
+}
+
+.content_body label{
+    width:180px;
+    float: left;
+    
+}
+
+.content_body textarea{
+    height: 80px;
+    width: 370px;
+
+}
+
+.glass-panel{
+    z-index: 9999;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    top: 0;
+    left: 0;
+    opacity: 0.8;
+    background-color: gray;
+}
+
+#modal-open-external-link label{
+    padding: 10px!important;
+    font-size: 16px!important;
+    margin-left: 20px!important;
+}
+ul#unseen-main-chat-ul li ul.dropdown-menu {
+    padding: 0;
+}
+
+.contactSubscribe textarea{
+    width: 100%;
+}
+#modal-open-external-link .control-group label{
+    font-weight: normal;
+}
+#modal-open-external-link .control-group p{
+    max-width: 100%;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+}
+
+#store-key-local .modal-content{
+    min-width: 400px;
+}

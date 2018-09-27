@@ -1,0 +1,189 @@
+.profile-photos {
+  background: #171717;
+  width: 100px;
+  height: 60px;
+  position: relative;
+}
+.profile-photos .pic {
+  width: 100%;
+  height: 100%;
+  background-position: center center;
+  background-size: cover;
+}
+.profile-photos img {
+  max-width: none;
+  width: 100%;
+}
+.profile-photos.tri .pic {
+  margin: 0;
+}
+.profile-photos.tri .pic-1 {
+  width: 66.66666666666666%;
+}
+.profile-photos.tri .pic-2,
+.profile-photos.tri .pic-3 {
+  position: absolute;
+  top: 0;
+  left: 66.66666666666666%;
+  width: 33.33333333333333%;
+  height: 50%;
+}
+.profile-photos.tri .pic-3 {
+  top: 50%;
+}
+.profile-photos.dual .pic {
+  height: 100%;
+  width: 50%;
+  margin: 0;
+  text-align: center;
+  overflow: hidden;
+  float: left;
+}
+.status-bubble {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background: #888;
+  border-radius: 100%;
+  margin-top: 10px;
+}
+.status-bubble.available {
+  background: #00c009;
+}
+.status-bubble.square{
+    border-radius: 0%!important;
+}
+.status-bubble.away {
+  background: #fed047;
+}
+.status-bubble.unavailable {
+  background: #ff4747;
+}
+.status-bubble.invisible-status {
+  background: none;
+  height: 6px;
+  width: 6px;
+  border: solid 1px #bbb;
+}
+.status-bubble.unknown-symbol {
+  display: inline-block;
+  background-image: url(../img/unknown-user.png);
+  background-position: 0 0;
+  background-repeat: no-repeat;
+  width: 11px;
+  height: 11px;
+}
+[class^="icn-"],
+[class*=" icn-"] {
+  display: inline-block;
+  background-image: url("../img/unsene-icons.png");
+  background-position: 0 0;
+  background-repeat: no-repeat;
+}
+.icon-add-user {
+  background-position: 0 -168px;
+}
+.icon-secure-email {
+  background-position: -336px -96px; 
+}
+.icon-import {
+    background-position: -48px -48px;
+}
+.icon-add-group {
+  background-position: 0 -168px;
+}
+.icon-chat {
+  background-position: -240px -120px;
+}
+.icon-phone {
+  background-position: -48px -169px;
+}
+.icon-rename {
+  background-position: -96px -72px;
+}
+.icon-info {
+  background-position: -120px -96px;
+}
+.icon-simple-check {
+  background-position: -264px -169px;
+}
+.icon-delete {
+  background-position: -312px 0;
+}
+.icon-call {
+  background-position: -72px -169px;
+}
+.icon-video-chat {
+  background-position: -96px -169px;
+}
+.icon-block {
+  background-position: -216px -96px;
+}
+.icon-unblock{
+  background-position: -192px -96px;
+}
+.icon-smile {
+    background: url(../img/icons-list2.png)  0px -142px no-repeat;
+    width: 16px;padding-top: 2px;
+}
+.icon-italic {
+    background: url(../img/icons-list2.png) 0px -187px  no-repeat;
+
+    opacity:0.7;
+   filter:alpha(opacity=70); /* For IE8 and earlier */
+} 
+.icon-bold {
+    background: url(../img/icons-list2.png) 0px -163px no-repeat;
+
+  opacity:0.7;
+  filter:alpha(opacity=70); /* For IE8 and earlier */
+} 
+.icon-underline {
+    background: url(../img/icons-list2.png) 0px -211px no-repeat;
+
+    opacity:0.7;
+  filter:alpha(opacity=70); /* For IE8 and earlier */
+} 
+.icon-enable{
+  opacity:1!important;
+  filter:alpha(opacity=100)!important; /* For IE8 and earlier */
+  background-color: #FFD58C;
+}
+.icn-sending,
+.icn-sent {
+  background: url(../img/sending.gif) center no-repeat;
+  display: inline-block;
+  height: 14px;
+  width: 38px;
+  vertical-align: text-top;
+}
+.icn-sent {
+  background: url(../img/sent.gif) center no-repeat;
+}
+.input-area a.scroll-locker{
+    height: 25px;
+    overflow: hidden;cursor: pointer;
+}
+.icon-scroll-locked {
+    height: 25px;
+    width: 25px;
+    display: block;
+  background: url(../img/icon-scroll-locked.png) center no-repeat;
+}
+.icon-scroll-unlocked {
+    height: 25px;
+    width: 25px;
+    display: block;
+  background: url(../img/icon-scroll-free-arrow.png) center no-repeat;
+}
+.span6, .span12 {    float: left;    padding: 0 25px;    width: 50%;}
+
+.scroll-locker i.icon-scroll-locked {
+
+}
+.scroll-locker.locked i.icon-scroll-unlocked {
+    display: none;
+}
+button i.fa-times-circle{
+    font-size:20px;
+}

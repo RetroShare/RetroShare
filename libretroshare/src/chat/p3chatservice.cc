@@ -43,9 +43,9 @@
 #include "chat/p3chatservice.h"
 #include "rsitems/rsconfigitems.h"
 
-/****
- * #define CHAT_DEBUG 1
- ****/
+/****/
+  #define CHAT_DEBUG 1
+ /****/
 
 static const uint32_t MAX_MESSAGE_SECURITY_SIZE         = 6000 ; // Max message size to forward other friends
 static const uint32_t MAX_AVATAR_JPEG_SIZE              = 32767; // Maximum size in bytes for an avatar. Too large packets 

@@ -37,6 +37,15 @@
 #include "gui/chat/ChatDialog.h"
 #include "gui/Circles/CreateCircleDialog.h"
 #include "gui/common/UIStateHelper.h"
+//meiyousixin - add RS tree item for adding
+#include "gui/common/RSTreeWidgetItem.h"
+
+//08 sep 2018 - atai - using ConnectFriendWizard for add contact in IdDialog
+#include "gui/connect/ConnectFriendWizard.h"
+#include <gui/QuickStartWizard.h>
+#include "gui/MainWindow.h"
+#include "gui/ChatLobbyWidget.h"
+
 #include "gui/gxs/GxsIdDetails.h"
 #include "gui/gxs/RsGxsUpdateBroadcastBase.h"
 #include "gui/msgs/MessageComposer.h"
@@ -50,8 +59,11 @@
 #include "retroshare/rspeers.h"
 #include "retroshare/rsservicecontrol.h"
 
+#include "retroshare/rspeers.h"
+
 #include <iostream>
 #include <algorithm>
+
 
 /******
  * #define ID_DEBUG 1
@@ -113,6 +125,9 @@
 
 // comment this out in order to remove the sorting of circles into "belong to" and "other visible circles"
 #define CIRCLE_MEMBERSHIP_CATEGORIES 1
+
+//meiyousixin - define the same as friendlist to get the id from data
+#define COLUMN_DATA     0 // column for storing the userdata id
 
 static const uint32_t SortRole = Qt::UserRole+1 ;
 
@@ -223,7 +238,11 @@ IdDialog::IdDialog(QWidget *parent) :
 	connect(ui->editIdentity, SIGNAL(triggered()), this, SLOT(editIdentity()));
 	connect(ui->chatIdentity, SIGNAL(triggered()), this, SLOT(chatIdentity()));
 
-	connect(ui->idTreeWidget, SIGNAL(itemSelectionChanged()), this, SLOT(updateSelection()));
+	 connect(ui->idTreeWidget, SIGNAL(itemSelectionChanged()), this, SLOT(updateSelection()));
+	//19 sep 2018 - meiyousixin - when user double-click on item, need to open chat window
+	connect(ui->idTreeWidget, SIGNAL(itemDoubleClicked(QTreeWidgetItem *, int)), this, SLOT(openChatWindow(QTreeWidgetItem *, int)));
+	//connect(ui->idTreeWidget, SIGNAL(itemClicked(QTreeWidgetItem *, int)), this, SLOT(openChatWindow(QTreeWidgetItem *, int)));
+
 	connect(ui->idTreeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(IdListCustomPopupMenu(QPoint)));
 
 	connect(ui->filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterChanged(QString)));
@@ -231,6 +250,8 @@ IdDialog::IdDialog(QWidget *parent) :
 	
 	connect(ui->inviteButton, SIGNAL(clicked()), this, SLOT(sendInvite()));
 
+	//08 sep 2018 - atai - add Addcontact Button
+	connect(ui->addContactButton, SIGNAL(clicked()), this, SLOT(openAddContactPage()));
 
 	ui->avlabel_Circles->setPixmap(QPixmap(":/icons/png/circles.png"));
 
@@ -314,12 +335,12 @@ IdDialog::IdDialog(QWidget *parent) :
 	QString headerText = headerItem->text(RSID_COL_NICKNAME);
 	ui->filterLineEdit->addFilter(QIcon(), headerText, RSID_COL_NICKNAME, QString("%1 %2").arg(tr("Search"), headerText));
 
-    headerItem->setData(RSID_COL_VOTES,Qt::UserRole,tr("Reputation"));
+	headerItem->setData(RSID_COL_VOTES,Qt::UserRole,tr("Reputation"));
 
 	/* Set initial section sizes */
-  QHeaderView * circlesheader = ui->treeWidget_membership->header () ;
-  circlesheader->resizeSection (CIRCLEGROUP_CIRCLE_COL_GROUPNAME, QFontMetricsF(ui->idTreeWidget->font()).width("Circle name")*1.5) ;
-  ui->treeWidget_membership->setColumnWidth(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, 270);
+	QHeaderView * circlesheader = ui->treeWidget_membership->header () ;
+	circlesheader->resizeSection (CIRCLEGROUP_CIRCLE_COL_GROUPNAME, QFontMetricsF(ui->idTreeWidget->font()).width("Circle name")*1.5) ;
+	ui->treeWidget_membership->setColumnWidth(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, 270);
 
 	ui->filterLineEdit->addFilter(QIcon(), tr("ID"), RSID_COL_KEYID, tr("Search ID"));
 
@@ -339,7 +360,7 @@ IdDialog::IdDialog(QWidget *parent) :
 	ui->idTreeWidget->setColumnWidth(RSID_COL_IDTYPE, 18 * fontWidth);
 	ui->idTreeWidget->setColumnWidth(RSID_COL_VOTES, 2 * fontWidth);
 	
-    ui->idTreeWidget->setItemDelegateForColumn(RSID_COL_VOTES,new ReputationItemDelegate(RsReputations::ReputationLevel(0xff))) ;
+	ui->idTreeWidget->setItemDelegateForColumn(RSID_COL_VOTES,new ReputationItemDelegate(RsReputations::ReputationLevel(0xff))) ;
 
 	/* Set header resize modes and initial section sizes */
 	QHeaderView * idheader = ui->idTreeWidget->header();
@@ -354,9 +375,9 @@ IdDialog::IdDialog(QWidget *parent) :
 			" <h1><img width=\"32\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Identities</h1>    \
 			<p>In this tab you can create/edit <b>pseudo-anonymous identities</b>, and <b>circles</b>.</p>                \
 			<p><b>Identities</b> are used to securely identify your data: sign messages in chat lobbies, forum and channel posts,\
-				receive feedback using the Retroshare built-in email system, post comments \
+                receive feedback using the P2PUnseen built-in email system, post comments \
 				after channel posts, chat using secured tunnels, etc.</p> \
-			<p>Identities can optionally be <b>signed</b> by your Retroshare node's certificate.   \
+            <p>Identities can optionally be <b>signed</b> by your P2PUnseen node's certificate.   \
 			Signed identities are easier to trust but are easily linked to your node's IP address.</p>  \
 			<p><b>Anonymous identities</b> allow you to anonymously interact with other users. They cannot be   \
 			spoofed, but noone can prove who really owns a given identity.</p> \
@@ -1402,6 +1423,8 @@ void IdDialog::updateSelection()
 		id = RsGxsGroupId(item->text(RSID_COL_KEYID).toStdString());
 	}
 
+	//std::cerr << "Pls open chat window with RSID_COL_KEYID of contact: " << item->text(RSID_COL_KEYID).toStdString();
+
 	if (id != mId) {
 		mId = id;
 		requestIdDetails();
@@ -1669,8 +1692,8 @@ void IdDialog::insertIdList(uint32_t token)
 		RsGxsIdGroup data = vit->second ;
 
 	    item = NULL;
-
-	    ui->idTreeWidget->insertTopLevelItem(0, ownItem);
+	    //meiyousixin - remove our own items - no need at this time.
+	    //ui->idTreeWidget->insertTopLevelItem(0, ownItem);
 	    ui->idTreeWidget->insertTopLevelItem(0, allItem);
 	    ui->idTreeWidget->insertTopLevelItem(0, contactsItem );  
 
@@ -1686,12 +1709,18 @@ void IdDialog::insertIdList(uint32_t token)
 			if(data.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)
 				ownItem->addChild(item);
 			else if(data.mIsAContact)
-				contactsItem->addChild(item);
+				{
+				    // contactsItem->addChild(item);
+				}
 			else
 				allItem->addChild(item);
 		}
+
 	}
 	
+	// meiyousixin - try to add PeerIds into the contact items
+	showFriendList();
+
 	/* count items */
 	int itemCount = contactsItem->childCount() + allItem->childCount() + ownItem->childCount();
 	ui->label_count->setText( "(" + QString::number( itemCount ) + ")" );
@@ -1699,6 +1728,102 @@ void IdDialog::insertIdList(uint32_t token)
 	navigate(RsGxsId(oldCurrentId));
 	filterIds();
 	updateSelection();
+}
+
+void IdDialog::showFriendList()
+{
+
+  contactsItem->setExpanded(Settings->value("ExpandContacts", QVariant(true)).toBool());
+  std::list<RsPgpId> gpgFriends;
+  rsPeers->getGPGAcceptedList(gpgFriends);
+  std::list<RsPgpId>::iterator gpgIt;
+
+
+  for (gpgIt = gpgFriends.begin(); gpgIt != gpgFriends.end(); ++gpgIt)
+  {
+      RsPgpId gpgId = *gpgIt;
+
+      /* make a widget per friend */
+//      QTreeWidgetItem *gpgItem = NULL;
+//      QTreeWidgetItem *gpgItemLoop = NULL;
+
+      RsPeerDetails detail;
+      if (rsPeers->getGPGDetails(gpgId, detail))
+      {
+          // don't accept anymore connection, remove from the view
+           std::cerr << "Friend info: gpgId: " << gpgId; std::cerr << std::endl;
+	  std::cerr << "Friend info: RsPeerId: " << detail.id << " gpg_id: " << detail.gpg_id << " name: " << detail.name << " email: " << detail.email << " location: " << detail.location << " org: " << detail.org  ; std::cerr << std::endl;
+	  std::cerr << "Friend info: issuer: " << detail.issuer << " fpr: " << detail.fpr << " authcode: " << detail.authcode ; std::cerr << std::endl;
+	  std::cerr << "Friend info: ownsign: " << detail.ownsign << "hasSignedMe: " << detail.hasSignedMe << " accept_connection: " << detail.accept_connection ;std::cerr << std::endl;
+	  std::cerr << "Friend info: service_perm_flags: " << detail.service_perm_flags << " state: " << detail.state << " actAsServer: " << detail.actAsServer ;std::cerr << std::endl;
+	  std::cerr << "Friend info: connectAddr: " << detail.connectAddr << " connectPort: " << detail.connectPort << " isHiddenNode: " << detail.isHiddenNode ;std::cerr << std::endl;
+	  std::cerr << "Friend info: hiddenNodeAddress: " << detail.hiddenNodeAddress << "hiddenNodePort: " << detail.hiddenNodePort << " hiddenType: " << detail.hiddenType ;std::cerr << std::endl;
+
+	  std::cerr << "Standard Node info: localAddr: " << detail.localAddr << " localPort: " << detail.localPort << " extAddr: " << detail.extAddr << " extPort: " << detail.extPort << "dyndns: " << detail.dyndns ; std::cerr << std::endl;
+	  std::cerr << "Friend info: netMode: " << detail.netMode << " vs_disc: " << detail.vs_disc << " vs_dht: " << detail.vs_dht ;std::cerr << std::endl;
+	  std::cerr << "Friend info: lastConnect: " << detail.lastConnect << " lastUsed: " << detail.lastUsed << " connectState: " << detail.connectState << " connectStateString:" << detail.connectStateString << " connectPeriod:" << detail.connectPeriod << " foundDHT: " << detail.foundDHT ;std::cerr << std::endl;
+	  std::cerr << "Friend info: wasDeniedConnection: " << detail.wasDeniedConnection << " deniedTS: " << detail.deniedTS << " linkType: " << detail.linkType ;std::cerr << std::endl;
+
+	  // create gpg item and add it to tree
+
+	  QTreeWidgetItem *item = new TreeWidgetItem();
+
+
+          item->setText(RSID_COL_NICKNAME, QString::fromUtf8(detail.name.c_str()).left(RSID_MAXIMUM_NICKNAME_SIZE));
+          item->setText(RSID_COL_KEYID, QString::fromStdString(detail.gpg_id.toStdString()));
+
+          QString strID = QString::fromStdString(detail.gpg_id.toStdString());
+          // RsPgpId pgpId = RsPgpId(strID);
+
+          item->setData(COLUMN_DATA, RSID_COL_KEYID, strID);
+          //item->setData(COLUMN_DATA, RSID_COL_KEYID, detail.gpg_id);
+
+          item->setForeground(RSID_COL_NICKNAME,QBrush(Qt::black));
+          item->setForeground(RSID_COL_KEYID,QBrush(Qt::black));
+          item->setForeground(RSID_COL_IDTYPE,QBrush(Qt::black));
+          item->setForeground(RSID_COL_VOTES,QBrush(Qt::black));
+
+          QPixmap pixmap ;
+
+          //if(data.mImage.mSize == 0 || !pixmap.loadFromData(data.mImage.mData, data.mImage.mSize, "PNG"))
+           pixmap = QPixmap::fromImage(GxsIdDetails::makeDefaultIcon(RsGxsId(detail.id))) ;
+
+          item->setIcon(RSID_COL_NICKNAME, QIcon(pixmap));
+
+
+//          item->setData(RSID_COL_KEYID, Qt::UserRole,QVariant(item_flags)) ;
+//          item->setTextAlignment(RSID_COL_VOTES, Qt::AlignRight | Qt::AlignVCenter);
+//          item->setData(RSID_COL_VOTES,Qt::DecorationRole, idd.mReputation.mOverallReputationLevel);
+//          item->setData(RSID_COL_VOTES,SortRole, idd.mReputation.mOverallReputationLevel);
+
+          contactsItem->addChild(item);
+        }
+
+//          gpgItem = new RSTreeWidgetItem(mCompareRole, TYPE_GPG); //set type to 0 for custom popup menu
+
+//          /* Add gpg item to the list. Add here, because for setHidden the item must be added */
+
+//          //peerTreeWidget->addTopLevelItem(gpgItem);
+
+
+//          gpgItem->setChildIndicatorPolicy(QTreeWidgetItem::DontShowIndicatorWhenChildless);
+//          gpgItem->setTextAlignment(COLUMN_NAME, Qt::AlignLeft | Qt::AlignVCenter);
+
+//          /* not displayed, used to find back the item */
+//          QString strID = QString::fromStdString(detail.gpg_id.toStdString());
+//          gpgItem->setData(COLUMN_DATA, ROLE_ID, strID);
+//          gpgItem->setText(COLUMN_ID, strID);
+//          gpgItem->setData(COLUMN_ID, ROLE_SORT_NAME, strID);
+//          gpgItem->setData(COLUMN_ID, ROLE_FILTER, strID);
+
+          /* Sort data */
+//          for (int i = 0; i < columnCount; ++i)
+//          {
+//              gpgItem->setData(i, ROLE_SORT_GROUP, 2);
+//              gpgItem->setData(i, ROLE_SORT_STANDARD_GROUP, 1);
+//          }
+
+    }
 }
 
 void IdDialog::requestIdDetails()
@@ -1841,21 +1966,21 @@ void IdDialog::insertIdDetails(uint32_t token)
 
     if(isOwnId)
         if (isLinkedToOwnPgpId)
-            ui->lineEdit_Type->setText(tr("Identity owned by you, linked to your Retroshare node")) ;
+            ui->lineEdit_Type->setText(tr("Identity owned by you, linked to your P2PUnseen node")) ;
         else
             if (data.mMeta.mGroupFlags & (GXS_SERV::FLAG_PRIVACY_PRIVATE | RSGXSID_GROUPFLAG_REALID))
-                ui->lineEdit_Type->setText(tr("Identity owned by you, linked to your Retroshare node but not yet validated")) ;
+                ui->lineEdit_Type->setText(tr("Identity owned by you, linked to your P2PUnseen node but not yet validated")) ;
             else
                 ui->lineEdit_Type->setText(tr("Anonymous identity, owned by you")) ;
     else if (data.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID_kept_for_compatibility)
     {
         if (data.mPgpKnown)
             if (rsPeers->isGPGAccepted(data.mPgpId))
-                ui->lineEdit_Type->setText(tr("Linked to a friend Retroshare node")) ;
+                ui->lineEdit_Type->setText(tr("Linked to a friend P2PUnseen node")) ;
             else
-                ui->lineEdit_Type->setText(tr("Linked to a known Retroshare node")) ;
+                ui->lineEdit_Type->setText(tr("Linked to a known P2PUnseen node")) ;
         else
-            ui->lineEdit_Type->setText(tr("Linked to unknown Retroshare node")) ;
+            ui->lineEdit_Type->setText(tr("Linked to unknown P2PUnseen node")) ;
     }
     else
     {
@@ -2596,7 +2721,7 @@ void IdDialog::sendMsg()
 
 QString IdDialog::inviteMessage()
 {
-    return tr("Hi,<br>I want to be friends with you on RetroShare.<br>");
+    return tr("Hi,<br>I want to be friends with you on P2PUnseen.<br>");
 }
 
 void IdDialog::sendInvite()
@@ -2698,4 +2823,34 @@ QList<QTreeWidgetItem *> selected_items = ui->idTreeWidget->selectedItems();
 void IdDialog::on_closeInfoFrameButton_clicked()
 {
 	ui->inviteFrame->setVisible(false);
+}
+
+//08 sep 2018 - atai - add contact in IdDialog using ConnectFriendWizard like in homepage
+void IdDialog::openAddContactPage()
+{
+      //QMessageBox::warning(this, tr("Retroshare"), tr("You want to add contact ? Yes you need to get his/her certificate!"), QMessageBox::Ok );
+
+      ConnectFriendWizard connwiz (this);
+
+      connwiz.setStartId(ConnectFriendWizard::Page_Text);
+      connwiz.exec ();
+}
+
+void IdDialog::openChatWindow(QTreeWidgetItem *item, int col)
+{
+    std::cerr << "Pls open chat window with RSID_COL_KEYID of contact: " << item->text(RSID_COL_KEYID).toStdString() << " with nickname :" << item->text(RSID_COL_NICKNAME).toStdString();
+
+    MainWindow *mw = MainWindow::getInstance();
+    mw->activatePage(mw->ChatLobby);
+
+    std::string strRsId = item->text(RSID_COL_KEYID).toStdString();
+    std::string nickname = item->text(RSID_COL_NICKNAME).toStdString();
+    mw->chatLobbyDialog->openOne2OneChat(strRsId, nickname);
+
+
+}
+
+std::string IdDialog::getRsId(QTreeWidgetItem *item)
+{
+    return item->data(COLUMN_DATA, RSID_COL_KEYID).toString().toStdString();
 }

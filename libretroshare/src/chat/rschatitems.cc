@@ -29,7 +29,7 @@
 
 #include "chat/rschatitems.h"
 
-//#define CHAT_DEBUG 1
+#define CHAT_DEBUG 1
 
 //static const uint32_t RS_CHAT_SERIALIZER_FLAGS_NO_SIGNATURE = 0x0001;
 

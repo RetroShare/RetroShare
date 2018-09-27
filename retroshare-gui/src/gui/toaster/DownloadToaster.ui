@@ -26,7 +26,16 @@
    <property name="spacing">
     <number>0</number>
    </property>
-   <property name="margin">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
     <number>0</number>
    </property>
    <item>
@@ -38,7 +47,16 @@
       <enum>QFrame::Raised</enum>
      </property>
      <layout class="QGridLayout">
-      <property name="margin">
+      <property name="leftMargin">
+       <number>2</number>
+      </property>
+      <property name="topMargin">
+       <number>2</number>
+      </property>
+      <property name="rightMargin">
+       <number>2</number>
+      </property>
+      <property name="bottomMargin">
        <number>2</number>
       </property>
       <property name="spacing">
@@ -73,7 +91,7 @@
            <enum>Qt::LeftToRight</enum>
           </property>
           <property name="pixmap">
-           <pixmap resource="../images.qrc">:/images/logo/logo_16.png</pixmap>
+           <pixmap resource="../../Unseengui/unseengui.qrc">:/chat/img/unsene_favicon_16.png</pixmap>
           </property>
           <property name="scaledContents">
            <bool>true</bool>
@@ -180,7 +198,7 @@
   <tabstop>toasterButton</tabstop>
  </tabstops>
  <resources>
-  <include location="../images.qrc"/>
+  <include location="../../Unseengui/unseengui.qrc"/>
   <include location="../images.qrc"/>
  </resources>
  <connections/>

@@ -100,7 +100,7 @@ void MsgItem::updateItemStatic()
     QString srcName;
 
     if ((mi.msgflags & RS_MSG_SYSTEM) && mi.rspeerid_srcId == rsPeers->getOwnId())
-		srcName = "RetroShare";
+        srcName = "P2PUnseen";
     else
     {
         if(mi.msgflags & RS_MSG_DISTANT)

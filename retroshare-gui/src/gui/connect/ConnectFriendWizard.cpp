@@ -123,7 +123,7 @@ ConnectFriendWizard::ConnectFriendWizard(QWidget *parent) :
     connect(ui->emailButton, SIGNAL(clicked()), this, SLOT(runEmailClient2()));
 	connect(ui->toggleadvancedButton, SIGNAL(clicked()), this, SLOT(toggleAdvanced()));
     
-    subject = tr("RetroShare Invitation");
+    subject = tr("P2PUnseen Invitation");
     body = GetStartedDialog::GetInviteText();
 	
     body += "\n" + GetStartedDialog::GetCutBelowText();
@@ -430,7 +430,7 @@ void ConnectFriendWizard::initializePage(int id)
 		ui->EmailPage->registerField("addressEdit*", ui->addressEdit);
 		ui->EmailPage->registerField("subjectEdit*", ui->subjectEdit);
 
-		ui->subjectEdit->setText(tr("RetroShare Invitation"));
+        ui->subjectEdit->setText(tr("P2PUnseen Invitation"));
 		ui->inviteTextEdit->setPlainText(GetStartedDialog::GetInviteText());
 		
 		QString body = ui->inviteTextEdit->toPlainText();
@@ -814,7 +814,7 @@ bool ConnectFriendWizard::validateCurrentPage()
             ui->frec_recommendList->selectedIds<RsPeerId,FriendSelectionWidget::IDTYPE_SSL>(recommendIds, false);
 
 			if (recommendIds.empty()) {
-				QMessageBox::warning(this, "RetroShare", tr("Please select at least one friend for recommendation."), QMessageBox::Ok, QMessageBox::Ok);
+                QMessageBox::warning(this, "P2PUnseen", tr("Please select at least one friend for recommendation."), QMessageBox::Ok, QMessageBox::Ok);
 				return false;
 			}
 
@@ -822,7 +822,7 @@ bool ConnectFriendWizard::validateCurrentPage()
             ui->frec_toList->selectedIds<RsPeerId,FriendSelectionWidget::IDTYPE_SSL>(toIds, false);
 
 			if (toIds.empty()) {
-				QMessageBox::warning(this, "RetroShare", tr("Please select at least one friend as recipient."), QMessageBox::Ok, QMessageBox::Ok);
+                QMessageBox::warning(this, "P2PUnseen", tr("Please select at least one friend as recipient."), QMessageBox::Ok, QMessageBox::Ok);
 				return false;
 			}
 
@@ -1038,7 +1038,7 @@ void ConnectFriendWizard::toggleSignatureState(bool doUpdate)
 
 void ConnectFriendWizard::runEmailClient()
 {
-	sendMail("", tr("RetroShare Invite"), ui->userCertEdit->toPlainText());
+    sendMail("", tr("P2PUnseen Invite"), ui->userCertEdit->toPlainText());
 }
 
 void ConnectFriendWizard::friendCertChanged()
@@ -1089,7 +1089,7 @@ void ConnectFriendWizard::cleanFriendCert()
 				case CERTIFICATE_PARSING_ERROR_MISSING_CHECKSUM          :
 
 				default:
-					errorMsg = tr("Not a valid Retroshare certificate!") ;
+                    errorMsg = tr("Not a valid P2PUnseen certificate!") ;
 					ui->friendCertCleanLabel->setStyleSheet("QLabel#friendCertCleanLabel {border: 2px solid red; border-radius: 6px;}");
 				}
 			}
@@ -1113,7 +1113,7 @@ void ConnectFriendWizard::copyCert()
 {
 	QClipboard *clipboard = QApplication::clipboard();
 	clipboard->setText(ui->userCertEdit->toPlainText());
-	QMessageBox::information(this, "RetroShare", tr("Your Cert is copied to Clipboard, paste and send it to your friend via email or some other way"));
+    QMessageBox::information(this, "P2PUnseen", tr("Your Cert is copied to Clipboard, paste and send it to your friend via email or some other way"));
 }
 
 void ConnectFriendWizard::pasteCert()
@@ -1125,7 +1125,7 @@ void ConnectFriendWizard::pasteCert()
 void ConnectFriendWizard::openCert()
 {
 	QString fileName ;
-	if(!misc::getOpenFileName(this, RshareSettings::LASTDIR_CERT, tr("Select Certificate"), tr("RetroShare Certificate (*.rsc );;All Files (*)"),fileName))
+    if(!misc::getOpenFileName(this, RshareSettings::LASTDIR_CERT, tr("Select Certificate"), tr("P2PUnseen Certificate (*.rsc );;All Files (*)"),fileName))
 		return ;
 
 	if (!fileName.isNull()) {
@@ -1140,7 +1140,7 @@ void ConnectFriendWizard::openCert()
 
 void ConnectFriendWizard::saveCert()
 {
-	QString fileName = QFileDialog::getSaveFileName(this, tr("Save as..."), "", tr("RetroShare Certificate (*.rsc );;All Files (*)"));
+    QString fileName = QFileDialog::getSaveFileName(this, tr("Save as..."), "", tr("P2PUnseen Certificate (*.rsc );;All Files (*)"));
 	if (fileName.isEmpty())
 		return;
 
@@ -1160,7 +1160,7 @@ void ConnectFriendWizard::saveCert()
 void ConnectFriendWizard::loadFriendCert()
 {
     QString fileName ;
-    if(!misc::getOpenFileName(this, RshareSettings::LASTDIR_CERT, tr("Select Certificate"), tr("RetroShare Certificate (*.rsc );;All Files (*)"),fileName))
+    if(!misc::getOpenFileName(this, RshareSettings::LASTDIR_CERT, tr("Select Certificate"), tr("P2PUnseen Certificate (*.rsc );;All Files (*)"),fileName))
             return ;
 
 	if (!fileName.isNull()) {
@@ -1176,11 +1176,11 @@ void ConnectFriendWizard::generateCertificateCalled()
 
 	std::string cert = rsPeers->GetRetroshareInvite(false);
 	if (cert.empty()) {
-		QMessageBox::information(this, "RetroShare", tr("Sorry, create certificate failed"), QMessageBox::Ok, QMessageBox::Ok);
+        QMessageBox::information(this, "P2PUnseen", tr("Sorry, create certificate failed"), QMessageBox::Ok, QMessageBox::Ok);
 		return;
 	}
 
-	QString qdir = QFileDialog::getSaveFileName(this, tr("Please choose a filename"), QDir::homePath(), tr("RetroShare Certificate (*.rsc );;All Files (*)"));
+    QString qdir = QFileDialog::getSaveFileName(this, tr("Please choose a filename"), QDir::homePath(), tr("P2PUnseen Certificate (*.rsc );;All Files (*)"));
 
 	//Todo: move save to file to p3Peers::SaveCertificateToFile
 
@@ -1188,13 +1188,13 @@ void ConnectFriendWizard::generateCertificateCalled()
 		QFile CertFile(qdir);
 		if (CertFile.open(QIODevice::WriteOnly/* | QIODevice::Text*/)) {
 			if (CertFile.write(QByteArray(cert.c_str())) > 0) {
-				QMessageBox::information(this, "RetroShare", tr("Certificate file successfully created"), QMessageBox::Ok, QMessageBox::Ok);
+                QMessageBox::information(this, "P2PUnseen", tr("Certificate file successfully created"), QMessageBox::Ok, QMessageBox::Ok);
 			} else {
-				QMessageBox::information(this, "RetroShare", tr("Sorry, certificate file creation failed"), QMessageBox::Ok, QMessageBox::Ok);
+                QMessageBox::information(this, "P2PUnseen", tr("Sorry, certificate file creation failed"), QMessageBox::Ok, QMessageBox::Ok);
 			}
 			CertFile.close();
 		} else {
-			QMessageBox::information(this, "RetroShare", tr("Sorry, certificate file creation failed"), QMessageBox::Ok, QMessageBox::Ok);
+            QMessageBox::information(this, "P2PUnseen", tr("Sorry, certificate file creation failed"), QMessageBox::Ok, QMessageBox::Ok);
 		}
 	}
 }

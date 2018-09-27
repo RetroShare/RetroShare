@@ -103,9 +103,9 @@
 #define PEER_STATE_INACTIVE     5
 #define PEER_STATE_OFFLINE      6
 
-/******
- * #define FRIENDS_DEBUG 1
- *****/
+/******/
+  #define FRIENDS_DEBUG 1
+ /*****/
 
 Q_DECLARE_METATYPE(ElidedLabel*)
 
@@ -1468,8 +1468,8 @@ QTreeWidgetItem *FriendList::getCurrentPeer() const
 
     /* Display the columns of this item. */
     QString out = "CurrentPeerItem: \n";
-
-    for(int i = 1; i < COLUMN_COUNT; ++i)
+    int columnCount = ui->peerTreeWidget->columnCount();
+    for(int i = 1; i < columnCount; ++i)
     {
         QString txt = item -> text(i);
         out += QString("\t%1:%2\n").arg(i).arg(txt);
@@ -1532,7 +1532,7 @@ void FriendList::removefriend()
         switch (c->type()) {
         case TYPE_GPG:
             if(!RsPgpId(getRsId(c)).isNull()) {
-                if ((QMessageBox::question(this, "RetroShare", tr("Do you want to remove this Friend?"), QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes)) == QMessageBox::Yes)
+                if ((QMessageBox::question(this, "P2PUnseen", tr("Do you want to remove this Friend?"), QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes)) == QMessageBox::Yes)
                 {
                     rsPeers->removeFriend(RsPgpId(getRsId(c)));
                 }
@@ -1540,7 +1540,7 @@ void FriendList::removefriend()
             break;
         case TYPE_SSL:
             if (!RsPeerId(getRsId(c)).isNull()) {
-                if ((QMessageBox::question(this, "RetroShare", tr("Do you want to remove this node?"), QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes)) == QMessageBox::Yes)
+                if ((QMessageBox::question(this, "P2PUnseen", tr("Do you want to remove this node?"), QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes)) == QMessageBox::Yes)
                 {
                     rsPeers->removeFriendLocation(RsPeerId(getRsId(c)));
                 }

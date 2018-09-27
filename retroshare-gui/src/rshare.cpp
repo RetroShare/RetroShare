@@ -98,7 +98,7 @@ bool Rshare::useConfigDir;
 QString Rshare::configDir;
 QLocalServer* Rshare::localServer;
 
-/** Catches debugging messages from Qt and sends them to RetroShare's logs. If Qt
+/** Catches debugging messages from Qt and sends them to P2PUnseen's logs. If Qt
  * emits a QtFatalMsg, we will write the message to the log and then abort().
  */
 #if QT_VERSION >= QT_VERSION_CHECK (5, 0, 0)
@@ -252,7 +252,7 @@ Rshare::Rshare(QStringList args, int &argc, char **argv, const QString &dir)
 #ifndef __APPLE__
 
   /* set default window icon */
-  setWindowIcon(QIcon(":/icons/logo_128.png"));
+  setWindowIcon(QIcon(":/app/images/icon.png")); //D replace :/icons/logo_128.png
 
 #endif
 
@@ -419,33 +419,33 @@ Rshare::showUsageMessageBox()
   //out << trow(tcol("-"ARG_HELP) + 
   //            tcol(tr("Displays this usage message and exits.")));
   out << trow(tcol("-" ARG_RESET) +
-              tcol(tr("Resets ALL stored RetroShare settings.")));
+              tcol(tr("Resets ALL stored P2PUnseen settings.")));
   out << trow(tcol("-" ARG_DATADIR" &lt;dir&gt;") +
-              tcol(tr("Sets the directory RetroShare uses for data files.")));
+              tcol(tr("Sets the directory P2PUnseen uses for data files.")));
   out << trow(tcol("-" ARG_LOGFILE" &lt;" + tr("filename") + "&gt;") +
-              tcol(tr("Sets the name and location of RetroShare's logfile.")));
+              tcol(tr("Sets the name and location of P2PUnseen's logfile.")));
   out << trow(tcol("-" ARG_LOGLEVEL" &lt;" + tr("level") + "&gt;") +
-              tcol(tr("Sets the verbosity of RetroShare's logging.") +
+              tcol(tr("Sets the verbosity of P2PUnseen's logging.") +
                    "<br>[" + Log::logLevels().join("|") +"]"));
   out << trow(tcol("-" ARG_GUISTYLE" &lt;" + tr("style") +"&gt;") +
-              tcol(tr("Sets RetroShare's interface style.") +
+              tcol(tr("Sets P2PUnseen's interface style.") +
                    "<br>[" + QStyleFactory::keys().join("|") + "]"));
   out << trow(tcol("-" ARG_GUISTYLESHEET" &lt;" + tr("stylesheet") + "&gt;") +
-              tcol(tr("Sets RetroShare's interface stylesheets.")));
+              tcol(tr("Sets P2PUnseen's interface stylesheets.")));
   out << trow(tcol("-" ARG_LANGUAGE" &lt;" + tr("language") + "&gt;") +
-              tcol(tr("Sets RetroShare's language.") +
+              tcol(tr("Sets P2PUnseen's language.") +
                    "<br>[" + LanguageSupport::languageCodes().join("|") + "]"));
   out << trow(tcol("--" ARG_OPMODE_L" &lt;" + tr("opmode") + "&gt;") +
-              tcol(tr("Sets RetroShare's operating mode.") +
+              tcol(tr("Sets P2PUnseen's operating mode.") +
                    "<br>[full|noturtle|gaming|minimal]"));
   out << trow(tcol("-" ARG_RSLINK_L" &lt;" + tr("RsLinkURL") + "&gt;") +
-              tcol(tr("Open RsLink with protocol retroshare://")));
+              tcol(tr("Open RsLink with protocol P2PUnseen://")));
   out << trow(tcol("-" ARG_RSFILE_L" &lt;" + tr("filename") + "&gt;") +
               tcol(tr("Open RsFile with or without arg.")));
   out << "</table>";
 
   VMessageBox::information(0, 
-    tr("RetroShare GUI Usage Information"), usage, VMessageBox::Ok);
+    tr("P2PUnseen GUI Usage Information"), usage, VMessageBox::Ok);
 }
 
 /** Returns true if the specified argument expects a value. */
@@ -934,14 +934,14 @@ bool Rshare::loadCertificate(const RsPeerId &accountId, bool autoLogin)
 		case 0:	break;
 		case 1:	QMessageBox::warning(	0,
 										QObject::tr("Multiple instances"),
-										QObject::tr("Another RetroShare using the same profile is "
+                                        QObject::tr("Another P2PUnseen using the same profile is "
 										"already running on your system. Please close "
 										"that instance first\n Lock file:\n") +
 										QString::fromUtf8(lockFile.c_str()));
 				return false;
 		case 2:	QMessageBox::critical(	0,
 										QObject::tr("Multiple instances"),
-										QObject::tr("An unexpected error occurred when Retroshare "
+                                        QObject::tr("An unexpected error occurred when P2PUnseen "
 										"tried to acquire the single instance lock\n Lock file:\n") +
 										QString::fromUtf8(lockFile.c_str()));
                 return false;

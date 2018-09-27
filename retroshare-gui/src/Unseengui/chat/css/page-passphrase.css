@@ -1,0 +1,283 @@
+.clearfix {
+  *zoom: 1;
+}
+.clearfix:before,
+.clearfix:after {
+  display: table;
+  content: "";
+  line-height: 0;
+}
+.clearfix:after {
+  clear: both;
+}
+.hide-text {
+  font: 0/0 a;
+  color: transparent;
+  text-shadow: none;
+  background-color: transparent;
+  border: 0;
+}
+.input-block-level {
+  display: block;
+  width: 100%;
+  min-height: 30px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+.enter-passphrase {
+    margin-top: 70px;
+    margin-bottom: 90px;
+}
+.enter-passphrase input[type=password] {
+  width: 50%;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  height: 30px;
+}
+.enter-passphrase .instruction {
+  font-size: 14px;
+  -webkit-font-smoothing: auto;
+  font-style: italic;
+  text-align: center;
+  color: #444;
+}
+.enter-passphrase .passphrase-input,
+.enter-passphrase .passphrase-help {
+  -webkit-transition: opacity 0.2s linear;
+  -moz-transition: opacity 0.2s linear;
+  -o-transition: opacity 0.2s linear;
+  transition: opacity 0.2s linear;
+}
+.enter-passphrase .passphrase-input {
+    margin-bottom: 64px;
+    text-align: center;
+}
+.enter-passphrase .passphrase-input .input-append {
+  display: block;
+  position: relative;
+}
+.enter-passphrase .passphrase-input .input-append .btn {
+  position: absolute;
+  right: 0;
+  width: 100px;
+}
+.enter-passphrase .passphrase-help {
+  margin-bottom: 64px;
+  -webkit-font-smoothing: auto;
+}
+.enter-passphrase .passphrase-help .options {
+  text-align: center;
+  color: #999;
+}
+.enter-passphrase .passphrase-help .options a {
+  color: #6488B6;
+  text-decoration: underline;
+}
+.enter-passphrase .passphrase-help .options a:hover {
+  text-decoration: none;
+}
+.enter-passphrase .accordion-group {
+  border: none;
+  margin: 10px;
+}
+.enter-passphrase .accordion-inner {
+  -webkit-border-radius: 8px;
+  -moz-border-radius: 8px;
+  border-radius: 8px;
+  max-width: 400px;
+  margin: 0 auto;
+  -webkit-box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.2);
+  -moz-box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.2);
+  box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.2);
+  background: #D0D0C2;
+  text-align: center;
+}
+.enter-passphrase .accordion-inner .btn {
+  display: block;
+}
+.enter-passphrase .accordion-inner .note {
+  font-size: 12px;
+  line-height: 14px;
+  color: #666;
+  font-style: italic;
+}
+.passphrase-title {
+  position: relative;
+  padding: 54px 0;
+  margin: 20px 0 40px;
+}
+.passphrase-title h3 {
+  text-align: center;
+  text-transform: uppercase;
+  font-size: 16px;
+  text-shadow: 0 0 4px #ffffff;
+  line-height: 16px;
+  font-weight: 600;
+  margin: 0;
+  -webkit-transition: opacity 0.2s linear;
+  -moz-transition: opacity 0.2s linear;
+  -o-transition: opacity 0.2s linear;
+  transition: opacity 0.2s linear;
+}
+.passphrase-title .un-lock {
+  position: absolute;
+  left: 50%;
+  top: 11px;
+  z-index: -1;
+  height: 0;
+  width: 0;
+}
+.passphrase-title .un-lock .un-left,
+.passphrase-title .un-lock .un-right {
+  font: 0/0 a;
+  color: transparent;
+  text-shadow: none;
+  background-color: transparent;
+  border: 0;
+  height: 100px;
+  width: 83px;
+  background: url(../img/un-left.png) no-repeat center;
+  position: absolute;
+  -webkit-transition: top 0.4s ease-in;
+  -moz-transition: top 0.4s ease-in;
+  -o-transition: top 0.4s ease-in;
+  transition: top 0.4s ease-in;
+}
+.passphrase-title .un-lock .un-left {
+  right: -12px;
+  top: 12px;
+}
+.passphrase-title .un-lock .un-right {
+  background-image: url(../img/un-right.png);
+  left: -12px;
+  top: -12px;
+}
+.success .passphrase-input,
+.success .passphrase-help {
+  opacity: 0;
+}
+.success .passphrase-title h3 {
+  opacity: 0;
+}
+.success .passphrase-title .un-lock .un-left {
+  top: 0;
+}
+.success .passphrase-title .un-lock .un-right {
+  top: 0;
+}
+
+#createPassphrase {
+  width: 100%;
+  height: 100%;  
+  margin: 0 0;
+  padding: 0 0;  
+  overflow: auto;  
+}
+
+.create-passphrase {
+  max-width: 800px;
+  margin: 0 auto;
+  height: auto;  
+  padding: 0;   
+}
+
+.create-passphrase input[type=text],
+.create-passphrase input[type=password] {
+  background: #fff;
+  border: 1px solid #CCC;
+}
+.create-passphrase label {
+  font-weight: 600;
+}
+.create-passphrase .required {
+  color: #f55;
+  font-weight: 700;
+}
+.create-passphrase .passphrase-input input {
+  width: 100%;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  height: 30px;
+}
+.passphrase-explanation {
+  font-size: 13px;
+}
+.passphrase-explanation .warning {
+  text-transform: uppercase;
+  font-weight: 600;
+  font-style: italic;
+}
+.passphrase-example {
+  -webkit-border-radius: 8px;
+  -moz-border-radius: 8px;
+  border-radius: 8px;
+  max-width: 400px;
+  margin-top: 24px;
+  -webkit-box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.2);
+  -moz-box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.2);
+  box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.2);
+  background: #D0D0C2;
+  padding: 2px 20px;
+  font-size: 12px;
+  line-height: 1.4em;
+}
+.passphrase-hint-group,
+.create-passphrase-group,
+.passphrase-explanation-group,
+.submit-group {
+  margin-bottom: 40px;
+}
+.submit-group {
+  font-size: 12px;
+  line-height: 1.3em;
+  text-align: center;
+}
+.submit-group .btn {
+  width: 400px;
+  display: block;
+  margin: 0 auto 10px;
+  max-width: 100%;
+}
+.submit-group p {
+  max-width: 400px;
+  margin: 0 auto 10px;
+}
+.keypair_content{
+    width: 715px;
+    float: none;
+    margin-right: 5px;
+    height: 55px;
+    min-height: 55px;
+}
+#passphrase-file{
+    width: 825px;
+}
+
+#inputKeyFile
+{
+    height: 100%;
+    margin: 0;
+    overflow: auto;
+    padding: 0;
+    width: 100%;    
+}
+
+#hint, #hint-passFile {
+    width: 50%;
+    border: solid 1px green;
+    border-radius: 5px;
+    vertical-align: middle;
+    text-align: left;
+    margin-left: auto;
+    margin-right: auto;
+}
+#hint span{
+font-weight: bold;font-size: 22px;line-height: 24px;vertical-align: middle;
+}
+#hintText
+{
+    font-weight: normal;
+}

@@ -1,0 +1,659 @@
+@font-face {
+    font-family: 'Open Sans';
+    font-style: normal;
+    font-weight: 400;
+    src: local('Open Sans'), local('OpenSans'), url(http://themes.googleusercontent.com/static/fonts/opensans/v6/cJZKeOuBrn4kERxqtaUH3T8E0i7KZn-EPnyo3HZu7kw.woff) format('woff');
+}
+html,body,div, ul, li
+{
+    background: transparent;
+    border: 0;
+    margin: 0;
+    padding: 0;
+    vertical-align: baseline;
+    font-family: "Droid Sans"!important;
+    font-size:14px;
+
+}
+ul.tab-box { 
+    border-bottom	: 1px solid #DDD;
+    padding:0px;
+    margin:0px;
+    background-color:#EDF0F5;
+}
+ul.tab-box li{
+    list-style:none;
+    cursor:pointer; 
+    border:1px #DBDBDB solid;
+    border-bottom:0px; 
+    padding: 5px 5px;
+    margin-right:0px;
+    margin-left:0px; 
+    width:120px;
+}
+.tab-box a {
+    border:1px solid #DDD;
+    color:#666666;
+    padding: 5px 15px;
+    text-decoration:none;
+    background-color: #eee;
+}
+.tab-box .activeLink { 
+    background-color: #fff; 
+    border-right: 0;  
+}
+.leftcontent{
+    float:left;
+    height:400px;
+    width:130px;
+}
+.tabcontent {float:left; border: 1px solid #ddd; border-left:0px; min-height:400px; clear:right; width:700px;  padding: 10px;}
+.hide { display: none;} 
+.small { color: #999; margin-top: 100px; border: 1px solid #EEE; padding: 5px; font-size: 9px; font-family:Verdana, Arial, Helvetica, sans-serif; 
+} 
+.box{
+    margin: 5px;
+    border: 1px solid #60729b;
+    padding: 5px;
+    width: 500px;
+    height: 200px;
+    overflow:auto;
+    background-color: #e6ebf8;
+} 
+#fEmp .paginationWrapper{
+    padding: 5px 0 5px 0;
+}
+#friendsWrapr .paginationWrapper{
+    padding: 10px 0 5px 0;
+}  
+#friendsWrapr #pageTitle,
+#fEmp #pageTitle,
+#leaderboard #pageTitle{
+    float:left;
+    margin-bottom:10px !important;
+}
+#friendSearchMod {
+    border:0;
+    background-color:#EEEFF3;
+    -moz-border-radius:0;
+    -webkit-border-radius:0;
+    padding: 10px 0 15px 90px;
+    border-bottom:1px solid #E6E6E6;    
+    clear:both;
+    position:relative;
+    margin:-10px -15px 15px -15px;
+    z-index:10;
+}
+#friendSearchMod h1 {
+    color:#666;
+    font-size:18px;
+    font-family:georgia;
+    font-style:italic;
+    padding: 6px 0 0 0;
+    margin:0 0 10px 0;
+    border:0 !important;
+}
+#friendSearchMod #ftaInput {
+    -moz-border-radius: 5px 5px 5px 5px;
+    -webkit-border-radius: 5px 5px 5px 5px;
+    border-color: #B3B3AE #EDEDE9 #EDEDE9 #B3B3AE;
+    border-style: solid;
+    border-width: 1px;
+    padding: 7px 7px 7px;
+    height:16px;
+    font-size:16px;
+    margin:0 10px 0 0;
+    width:390px;
+}
+
+#friendSearchMod .button {
+    position:relative;
+    top:-2px;
+    width:120px;
+    font-size:14px;
+}
+#friendSearchMod .taWrap{
+    background:#fff;
+    line-height:0;
+    border:1px solid #666;
+}
+#friendSearchMod .taWrap li{
+    margin:0 !important;
+    padding:2px !important;
+    cursor:pointer;
+    width:300px;
+}
+#friendSearchMod .taWrap li:hover {
+    color: #fff;
+    background: #069;
+    text-decoration: none;
+}
+
+#friendSearchMod .taWrap li.selected {
+    color: #fff;
+    background: #069;
+    text-decoration: none;
+}
+#friendBrowseNav{
+    border-top:1px solid #e6e6e6;
+}
+#friendsTabUI{
+    float:right;
+    margin:5px 0 0 0;
+}
+#friendsTabUI a.current{
+    color:#000;
+    font-weight:bold;
+}
+
+#topSec .topBox .button{  
+    float:right;
+    margin:5px 70px 0 0;
+    font-size:22px;
+}
+
+.sortOptions{
+    padding:0;
+}
+
+.sortOptions a {
+    width: 14px;
+    margin-right: 4px;
+}
+
+#friendsWrapr .sortOptions a {margin-right: 1px;}
+#friendBrowseInvite{
+    font-size:15px;
+    font-weight:bold;
+    margin:0 !important;
+    clear:both;
+}
+.friendsTable{
+    margin:0 0 10px 0;
+    min-height:200px;
+    width:400px;
+    border-top:1px solid #e6e6e6;
+}
+
+.friendsTable .img50{
+    margin:0 0 0 10px;
+}
+.friendsTable h2{
+    font-size:13px;
+    font-weight:bold;
+    margin:0 0 5px 0;
+}
+
+.friendsTable .fCoInfo{
+    width:260px;
+    margin:0 20px 0 0;
+    overflow:hidden;
+}
+.friendsTable .fCoInfo p{
+    color:#666;
+    font-size:11px;
+    margin:0;
+}
+.friendsTable .fCoInfo span{
+    color:#666;
+    font-size:10px;
+}
+.friendsTable .fCoKnowsWrap{
+    width:350px;
+    overflow:hidden;
+}
+.friendsTable h3{
+    font-size:14px;
+    font-weight:normal;
+    margin:0 0 10px 0;
+    font-style:italic;
+}
+.friendsTable ul.inlineList.fofCo li{
+    margin:0 15px 0 0;
+    font-size:11px;
+}
+.friendsTable ul.inlineList.fofCo li img{
+    width:35px;
+}
+.friendsTable .seeAllLink{
+    font-size:11px;
+}
+.friendsTable .button{
+    font-size:14px;
+    position:auto;
+    margin:0 3px 0 0;
+    padding-right:10px;
+}
+.invite {
+    width:96px;
+    text-align:center;
+}
+.invite img{
+    position:relative;
+    top:-1px;
+    margin-bottom:-2px;
+}
+.invite.invited {
+    cursor:default;
+}
+.invite.invited:hover {
+    cursor:default;
+    background-color: #A6DD2D;
+    text-shadow: 0 0 2px #006600;
+}
+.invite span { 
+    padding:3px 0 1px 20px;
+    position:relative;
+    top:1px;
+}
+.btnEn{
+    background:none !important;
+    color: #6079AB !important;
+    position:relative !important;
+    top:1px !important;
+    border:0 !important;
+    margin-right:40px !important;
+}
+.btnEn:hover{
+    color: #004477 !important;
+}
+.btnEn img{
+    position:relative;
+    top:-1px;
+    margin-bottom:-4px;
+}
+.friendsTable tr td{
+    border-bottom:1px solid #E6E6E6;
+}
+
+#friendsWrapr .optionsToggle {
+    margin:0;
+    padding:5px 0 0 0;
+}
+
+#friendSortLabel {color:#999;font-size:11px;}/m
+
+
+#leaderboard EM{font-size:16px;font-family:"Georgia"}
+#leaderboard #sort{padding:10px 15px 0px 15px ;text-transform:uppercase;height:45px;background-color:#F9F9F6;}
+#leaderboard #sort A{color:#999;padding:10px 20px;display:block;float:left;margin-right:2px;background:#E1E3E8;}
+#leaderboard #sort A.current{background:#90A7B4;color:#FFF;}
+#leaderboard #sort A:hover {text-decoration:none;color:#FFF;}
+
+#leaderboard #leaderboardTable {width:100%;padding-bottom:30px;margin-top:0px;padding-top:0px;}
+#leaderboard #topStripe {width:100%;margin-top:10px;}
+#leaderboard .stripe {height:1px;}
+#leaderboard #break {height:26px;background: url("/resource/1/images/bg/bg-dashes.png") repeat-x scroll 0 center transparent;}
+#leaderboard #hint {
+    background-color:#FFF8D7;
+    padding:10px 20px;
+    font-size:12px;
+}
+#leaderboard #hint .button{
+    margin:0 0 0 20px;
+}
+#leaderboard #hint .button img{
+    margin:0 5px 0 0;
+    vertical-align:middle;
+    position:relative;
+    top:-2px;
+}
+#leaderboard TD.oddRow{background-color:#F9FAF5}
+#leaderboard TD.you,#leaderboard TD.oddRow.you {background-color:#FFFDEE;}
+#leaderboard .rankTD{
+    padding:20px 0 0 20px;
+    font-size:28px;
+    width:30px;
+}
+#leaderboard .imageTD{
+    text-align:center;
+    padding:10px 0 5px 0;
+    width:60px;
+}
+
+#leaderboard .levelTD{text-align:center;padding:10px 0 0 0; width:80px;}
+#leaderboard .levelTD img{width:50px;}
+#leaderboard .textTD{font-size:16px;text-align:left;padding:25px 15px 0px 0px;}
+#leaderboard #leaderboardFriendToggle{float:right;padding:7px 0 0 0;font-size:11px;text-transform:none !important;} 
+#empSearchMod {
+    border:0;
+    background-color:#EEEFF3;
+    -moz-border-radius:0;
+    -webkit-border-radius:0;
+    padding: 10px 0 15px 85px;
+    border-bottom:1px solid #E6E6E6;    
+    clear:both;
+    position:relative;
+    margin:-10px -15px 15px -15px;
+    z-index:10;
+}
+#empSearchMod h1 {
+    color:#666;
+    font-size:18px;
+    font-family:georgia;
+    font-style:italic;
+    padding: 6px 0 0 0;
+    margin:0 0 10px 0;
+    border:0 !important;
+}
+#empSearchMod .typeAheadFloatWrap{
+    float:left;
+}
+#empSearchMod .typeAheadWrapr{
+    position:relative;
+}
+#empSearchMod #entityName_searchBox {
+    -moz-border-radius: 5px 5px 5px 5px;
+    -webkit-border-radius: 5px 5px 5px 5px;
+    border-color: #B3B3AE #EDEDE9 #EDEDE9 #B3B3AE;
+    border-style: solid;
+    border-width: 1px;
+    padding: 7px 0 5px 7px;
+    height:16px;
+    font-size:16px;
+    margin:0 15px 0 0;
+    width:390px;
+    color:#666;
+}
+#empSearchMod .taWrap {
+    border-left:1px solid #ccc;
+    border-right:1px solid #ccc;
+    top: 29px;
+    left: 0;
+    margin:0;
+}
+#empSearchMod .button {
+    float:left;
+    width:145px;
+    text-align:center;
+    font-size:14px;
+}
+
+#fEmp table{
+    border-top:1px solid #E6E6E6;
+}
+#fEmp table tr td{
+    padding:10px 0;
+    border-bottom:1px solid #E6E6E6;
+}
+#fEmp .feEmpThumb{
+    margin:0 15px;
+    padding:2px;
+    border:1px solid #E6E6E6;
+    background:#fff;
+}
+#fEmp .feEmpBdWrap{
+    width:590px;
+    overflow:hidden;
+}
+#fEmp ul li{
+    width:165px;
+    margin:0 20px 0 0;
+}
+#fEmp h2{
+    font-size:18px;
+    font-weight:normal;
+    margin:0 0 10px 0;
+}
+#fEmp .contactsCount{
+    font-size:12px;
+    font-family:georgia;
+    font-style:italic;
+    display:block;
+    float:right;
+    margin:0 10px 0 0;
+}
+#fEmp .img30{
+    padding:2px;
+    border:1px solid #E6E6E6;
+    background:#fff;
+    float:left;
+    margin:0 7px 0 0;
+}
+#fEmp .feEmpBdWrap p{
+    font-size:12px;
+    float:left;
+    width:120px;
+    line-height:1.2em;
+    margin:0;
+}
+#fEmp .feFriendPos{
+    font-size:11px;
+    color:#666;
+}
+#fEmp .feEmpBdWrap p img.tier{
+    margin:3px 0 0 0;
+} 
+
+#manualInviteArea {
+    background: #F9F9F9;
+    border-top: 1px solid #E6E6E6;
+    border-bottom: 1px solid #E6E6E6;
+    padding: 20px;
+}
+
+#manualInviteArea h2 {
+    font-size: 14px;
+    text-align: left;
+    margin-bottom: 15px;
+}
+
+#manualInviteArea h2 span  {
+    display: block;
+    font-weight: bold;
+}
+
+#manualInviteArea input[type=text] {
+    width: 400px;
+    border: 1px solid #999;
+    font-size: 14px;
+    padding: 9px 10px 10px;
+    -webkit-border-radius: 7px;
+    -moz-border-radius: 7px;
+    font-style: normal;
+}
+
+#manualInviteArea input[type=text].init {
+    color: #ccc;  
+    font-style: italic;
+}
+
+#manualInviteArea .button {
+    padding: 10px 20px;
+}
+
+#manualInviteArea h3 {
+    color: #999;
+    font-size: 11px;
+    margin-top: 15px;
+}
+
+#manualInviteArea .errors {
+    color: red;
+}
+
+.grayBox {
+    background: #E6E6E6;
+    padding: 4px;
+}
+
+.img50 {
+    width: 50px;
+    height: 50px;
+}
+#friends_paging{
+    padding:5px;
+}
+#friends_paging a,#friends_paging a:visited{
+    text-decoration:none;  padding:3px; color:green;
+}
+
+.button.invite {
+    padding-right: 0;
+    font-size: 12px;
+}
+
+.button.classyButton {
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    background: url(http://cf.b4in.net/img/bg-button-fb.png) repeat-x scroll 0 -95px #5B74A8;
+    border-color: #29447E #29447E #1A356E;
+    border-style: solid;
+    border-width: 1px;
+    color: #DFE5EC;
+    cursor: pointer;
+    display: inline-block;
+    font-family: Helvetica,Arial;
+    line-height: 1;
+    overflow: visible;
+    padding: 7px 10px 6px;
+    text-decoration: none;
+    text-shadow: none;
+}
+div.clearer{
+    clear:both;
+}
+
+.button {
+    font-family: "FranklinGothicMediumCondRegul", "Arial Narrow", "Arial";
+    display: inline-block;
+    background-image: url(http://cf.b4in.net/img/bg-button.png);
+    background-color: #069;
+    background-repeat: repeat-x;
+    background-position: left bottom;
+    padding: 5px 10px 6px;
+    color: white;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 5px;
+    text-decoration: none;
+    line-height: 1;
+    text-shadow: 0 0 2px #069;
+    cursor: pointer;
+    border: 0;
+    font-size: 13px;
+    overflow: visible;
+}
+.button a{color:white}
+fieldset, img {
+    border: 0;
+}
+table tr.shade, li.shade {
+    background: #F9F9F9;
+}
+.fCoInfo a {
+    color: #6079AB;
+    text-decoration: none;
+}
+div.facebook_msgselect{
+    float:right; padding:2px; width:140px;-moz-border-radius: 4px;
+    -webkit-border-radius: 4px; background:#DFE0E0;  font:Arial, Helvetica, sans-serif;  border:1px #B1B1B1 solid
+}
+div.msgselect{
+    width:66px;padding-left:2px;float:left;
+    cursor:pointer;
+}
+div.msgactive{
+    background:#ECF0F5; font-weight:bold;border:1px #B1B1B1 solid;-moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+}
+.xlargeXsmall.colWrap .col.firstCol {
+    width: 470px;
+}
+
+.xlargeXsmall.colWrap .col {
+    width: 170px;
+} 
+.xlargeXsmall .col.firstCol {
+    width: 485px;
+}
+
+.xlargeXsmall .col {
+    width: 210px;
+} 
+.col.firstCol {
+    float: left;
+} 
+.col {
+    position: relative;
+    float: right;
+    overflow: hidden;
+}
+#upHdr #profilePhotoWrap {
+    float: left;
+}
+#upHdr #profileIntro {
+    width: 395px;
+    float: left;
+    overflow: hidden;
+}
+.webFont {
+    font-family: "FranklinGothicMediumCondRegul","Arial Narrow","Arial";
+    margin:3px;
+}
+.upSec {
+    padding: 15px 0 15px 0;
+    margin: 0 0 20px 0;
+    border-bottom: 1px solid #E6E6E6;
+    width: 100%;
+    clear:both; 
+}
+.upHistoryTable {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+#upHdr #profilePhoto {
+    padding: 3px;
+    border: 1px solid #E5E5E5;
+    margin: 0 15px 0 0;
+}
+
+.img50 {
+    width: 50px;
+    height: 50px;
+}
+.upHistoryTable .resYearSpan {
+    display: block;
+    float: right;
+    text-align: right;
+    font-style: italic;
+    color: #666;
+    width: 110px;
+    margin: 0;
+}
+.upHistoryTable .position {
+    font-style: italic;
+    color: #666;
+    margin: 0 0 8px 0;
+    clear: both;
+}
+.upHistoryTable .employer {
+    display: block;
+    float: left;
+    font-size: 14px;
+    font-weight: bold;
+    width: 280px;
+    margin: 0 10px 8px 0;
+}
+.employer a{
+    text-decoration: underline;
+    color: #047;
+}
+.upHistoryTable .degree {
+    clear: both;
+    margin: 0 0 3px 0;
+    width: 425px;
+    padding: 0;
+}
+.upButtonWrap{
+    padding:5px;
+}
+.button.classyButton:hover {
+    background-position: 0 -143px;
+    color: white;
+}
+a.ui-corner-all { height:55px;}
+.ui-corner-all img{float:left;padding:3px;} 
+input.ui-autocomplete-input{ width:300px; height:25px; font-size:14px; }
+.ui-autocomplete .ui-menu-item{ background:#CCCCCC; color:blue; width:300px; height:56px; cursor:pointer;}
+ul.ui-autocomplete{ padding:0px;}

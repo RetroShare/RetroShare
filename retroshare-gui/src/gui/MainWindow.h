@@ -186,7 +186,8 @@ public:
     SysTrayStatus *sysTrayStatusInstance();
 
     static bool hiddenmode;
-	
+
+    ChatLobbyWidget *getChatLobbyDialog();
 public slots:
     void receiveNewArgs(QStringList args);
     void displayErrorMessage(int,int,const QString&) ;

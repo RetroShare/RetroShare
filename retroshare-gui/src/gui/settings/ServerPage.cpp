@@ -101,8 +101,8 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
 	ui.l_hiddenpage_configuration->hide() ;
 	ui.hiddenpageInHelpPlainTextEdit->hide() ;
 
-	ui.hiddenpage_outHeader->setText(tr("Tor has been automatically configured by Retroshare. You shouldn't need to change anything here.")) ;
-	ui.hiddenpage_inHeader->setText(tr("Tor has been automatically configured by Retroshare. You shouldn't need to change anything here.")) ;
+    ui.hiddenpage_outHeader->setText(tr("Tor has been automatically configured by P2PUnseen. You shouldn't need to change anything here.")) ;
+    ui.hiddenpage_inHeader->setText(tr("Tor has been automatically configured by P2PUnseen. You shouldn't need to change anything here.")) ;
   }
 
     ui.filteredIpsTable->setHorizontalHeaderItem(COLUMN_RANGE,new QTableWidgetItem(tr("IP Range"))) ;
@@ -1648,7 +1648,7 @@ void ServerPage::updateStatusBob()
     rsAutoProxyMonitor::taskSync(autoProxyType::I2PBOB, autoProxyTask::status, &bs);
 
     QString bobSimpleText = QString();
-    bobSimpleText.append(tr("RetroShare uses BOB to set up a %1 tunnel at %2:%3 (named %4)\n\n"
+    bobSimpleText.append(tr("P2PUnseen uses BOB to set up a %1 tunnel at %2:%3 (named %4)\n\n"
                             "When changing options (e.g. port) use the buttons at the bottom to restart BOB.\n\n").
                          arg(mBobSettings.keys.empty() ? tr("client") : tr("server"),
                              ui.hiddenpage_proxyAddress_i2p_2->text(),

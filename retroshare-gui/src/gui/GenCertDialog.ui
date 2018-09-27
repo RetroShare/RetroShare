@@ -7,15 +7,15 @@
     <x>0</x>
     <y>0</y>
     <width>978</width>
-    <height>826</height>
+    <height>595</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Create new Profile</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="images.qrc">
-    <normaloff>:/images/logo/logo_48.png</normaloff>:/images/logo/logo_48.png</iconset>
+   <iconset resource="../Unseengui/unseengui.qrc">
+    <normaloff>:/app/images/icon.png</normaloff>:/app/images/icon.png</iconset>
   </property>
   <layout class="QVBoxLayout" name="GenCertDialogVLayout">
    <property name="spacing">
@@ -57,7 +57,7 @@
          <string/>
         </property>
         <property name="pixmap">
-         <pixmap resource="images.qrc">:/images/logo/logo_web_nobackground.png</pixmap>
+         <pixmap resource="../Unseengui/unseengui.qrc">:/home/img/unseen-logo-home.png</pixmap>
         </property>
         <property name="scaledContents">
          <bool>false</bool>
@@ -76,6 +76,9 @@
             <weight>75</weight>
             <bold>true</bold>
            </font>
+          </property>
+          <property name="autoFillBackground">
+           <bool>false</bool>
           </property>
           <property name="text">
            <string>Node type:</string>
@@ -122,6 +125,9 @@
         </item>
         <item>
          <widget class="QCheckBox" name="adv_checkbox">
+          <property name="autoFillBackground">
+           <bool>false</bool>
+          </property>
           <property name="text">
            <string>advanced options</string>
           </property>
@@ -137,6 +143,9 @@
       </item>
       <item>
        <widget class="QLabel" name="nodeTypeExplanation_TE">
+        <property name="autoFillBackground">
+         <bool>false</bool>
+        </property>
         <property name="text">
          <string>TextLabel</string>
         </property>
@@ -168,6 +177,15 @@
          </property>
          <item row="1" column="0">
           <layout class="QGridLayout" name="profilGLayout">
+           <property name="leftMargin">
+            <number>40</number>
+           </property>
+           <property name="rightMargin">
+            <number>40</number>
+           </property>
+           <property name="horizontalSpacing">
+            <number>1</number>
+           </property>
            <item row="14" column="2">
             <widget class="QComboBox" name="keylength_comboBox">
              <property name="sizePolicy">
@@ -286,7 +304,7 @@
               </size>
              </property>
              <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Your node name designates the Retroshare instance that&lt;/p&gt;&lt;p&gt;will run on this computer.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Your node name designates the P2PUnseen instance that&lt;/p&gt;&lt;p&gt;will run on this computer.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="maxLength">
               <number>64</number>
@@ -323,7 +341,7 @@
                 </size>
                </property>
                <property name="toolTip">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The profile name identifies you over the network.&lt;/p&gt;&lt;p&gt;It is used by your friends to accept connections from you.&lt;/p&gt;&lt;p&gt;You can create multiple Retroshare nodes with the&lt;/p&gt;&lt;p&gt;same profile on different computers.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The profile name identifies you over the network.&lt;/p&gt;&lt;p&gt;It is used by your friends to accept connections from you.&lt;/p&gt;&lt;p&gt;You can create multiple P2PUnseen nodes with the&lt;/p&gt;&lt;p&gt;same profile on different computers.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
                <property name="text">
                 <string/>
@@ -342,7 +360,7 @@
                 </sizepolicy>
                </property>
                <property name="toolTip">
-                <string>Your profile is associated with a PGP key pair. RetroShare currently ignores DSA keys.</string>
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Your profile is associated with a PGP key pair. P2PUnseen currently ignores DSA keys.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
                <property name="styleSheet">
                 <string notr="true"/>
@@ -493,7 +511,7 @@
               </sizepolicy>
              </property>
              <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Identities are used when you write in chat rooms, forums and channel comments. &lt;/p&gt;&lt;p&gt;They also receive/send email over the Retroshare network. You can create&lt;/p&gt;&lt;p&gt;a signed identity now, or do it later on when you get to need it.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Identities are used when you write in chat rooms, forums and channel comments. &lt;/p&gt;&lt;p&gt;They also receive/send email over the P2PUnseen network. You can create&lt;/p&gt;&lt;p&gt;a signed identity now, or do it later on when you get to need it.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
             </widget>
            </item>
@@ -704,6 +722,9 @@
          </item>
          <item row="0" column="0">
           <widget class="QLabel" name="info_label">
+           <property name="autoFillBackground">
+            <bool>false</bool>
+           </property>
            <property name="text">
             <string>TextLabel</string>
            </property>
@@ -746,8 +767,8 @@
   <tabstop>importIdentity_PB</tabstop>
  </tabstops>
  <resources>
+  <include location="../Unseengui/unseengui.qrc"/>
   <include location="icons.qrc"/>
-  <include location="images.qrc"/>
  </resources>
  <connections/>
 </ui>

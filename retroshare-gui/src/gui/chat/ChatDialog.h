@@ -34,13 +34,14 @@ class ChatDialog : public QWidget
 	Q_OBJECT
 
 public:
-    static ChatDialog *getExistingChat(ChatId id);
-    static ChatDialog *getChat(ChatId id, uint chatflags = 0);
-	static void cleanupChat();
-    static void chatFriend(const ChatId &peerId, bool forceFocus = true);
-	static void chatFriend(const RsPgpId &gpgId, bool forceFocus = true);
-    static void closeChat(const ChatId &chat_id);
-    static void chatMessageReceived(ChatMessage msg);
+        static ChatDialog *getExistingChat(ChatId id);
+        static ChatDialog *getChat(ChatId id, uint chatflags = 0);
+        static void cleanupChat();
+        static void chatFriend(const ChatId &peerId, bool forceFocus = true);
+        //void ChatDialog::chatFriend(const RsPgpId &gpgId, std::string rsId, const bool forceFocus)
+        static void chatFriend(const RsPgpId &gpgId, bool forceFocus = true);
+        static void closeChat(const ChatId &chat_id);
+        static void chatMessageReceived(ChatMessage msg);
 
 	virtual void showDialog(uint /*chatflags*/) {}
 
@@ -63,7 +64,7 @@ public:
 
 	void focusDialog();
 
-    ChatId getChatId(){ return mChatId; }
+	ChatId getChatId(){ return mChatId; }
 
 signals:
 	void infoChanged(ChatDialog *dialog);
@@ -81,13 +82,14 @@ protected:
 	void closeEvent(QCloseEvent *event);
 	virtual bool canClose() { return true; }
 
-    virtual QString getPeerName(const ChatId &sslid) const ;	// can be overloaded for chat dialogs that have specific peers
-    virtual QString getOwnName() const;
+        virtual QString getPeerName(const ChatId &sslid) const ;	// can be overloaded for chat dialogs that have specific peers
+        virtual QString getOwnName() const;
 
-    virtual void init(const ChatId &id, const QString &title);
-    virtual void addChatMsg(const ChatMessage& msg) = 0;
+        virtual void init(const ChatId &id, const QString &title);
+        virtual void addChatMsg(const ChatMessage& msg) = 0;
 
-    ChatId mChatId;
+        ChatId mChatId;
+
 };
 
 class ChatFriendMethod: public QObject

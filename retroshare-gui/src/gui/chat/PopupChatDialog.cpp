@@ -33,6 +33,9 @@
 
 #include <algorithm>
 
+#include "gui/MainWindow.h"
+#include "gui/ChatLobbyWidget.h"
+
 #define appDir QApplication::applicationDirPath()
 
 #define WINDOW(This) dynamic_cast<PopupChatWindow*>(This->window())
@@ -48,18 +51,20 @@ PopupChatDialog::PopupChatDialog(QWidget *parent, Qt::WindowFlags flags)
 
 	connect(ui.avatarFrameButton, SIGNAL(toggled(bool)), this, SLOT(showAvatarFrame(bool)));
 	connect(ui.actionClearOfflineMessages, SIGNAL(triggered()), this, SLOT(clearOfflineMessages()));
-    connect(NotifyQt::getInstance(), SIGNAL(chatStatusChanged(ChatId,QString)), this, SLOT(chatStatusChanged(ChatId,QString)));
+	connect(NotifyQt::getInstance(), SIGNAL(chatStatusChanged(ChatId,QString)), this, SLOT(chatStatusChanged(ChatId,QString)));
 }
 
 void PopupChatDialog::init(const ChatId &chat_id, const QString &title)
 {
-    ChatDialog::init(chat_id, title);
+        ChatDialog::init(chat_id, title);
+        //22 Sep 2018 - meiyousixin - set one more cId
+        cId = chat_id;
 
-	/* Hide or show the avatar frames */
-    showAvatarFrame(PeerSettings->getShowAvatarFrame(chat_id));
+        /* Hide or show the avatar frames */
+        showAvatarFrame(PeerSettings->getShowAvatarFrame(chat_id));
 
-    ui.avatarWidget->setId(chat_id);
-    ui.avatarWidget->setFrameType(AvatarWidget::STATUS_FRAME);
+        ui.avatarWidget->setId(chat_id);
+        ui.avatarWidget->setFrameType(AvatarWidget::STATUS_FRAME);
 
 	ui.ownAvatarWidget->setFrameType(AvatarWidget::STATUS_FRAME);
 	ui.ownAvatarWidget->setOwnId();
@@ -71,6 +76,11 @@ void PopupChatDialog::init(const ChatId &chat_id, const QString &title)
 	if (window) {
 		window->addDialog(this);
 	}
+
+        ChatLobbyWidget *chatLobbyPage = dynamic_cast<ChatLobbyWidget*>(MainWindow::getPage(MainWindow::ChatLobby));
+        if (chatLobbyPage) {
+            chatLobbyPage->addOne2OneChatPage(this) ;
+        }
 
 	// load settings
 	processSettings(true);
@@ -108,9 +118,14 @@ void PopupChatDialog::processSettings(bool load)
 
 void PopupChatDialog::showDialog(uint chatflags)
 {
-	PopupChatWindow *window = WINDOW(this);
-	if (window) {
-		window->showDialog(this, chatflags);
+//	PopupChatWindow *window = WINDOW(this);
+//	if (window) {
+//		window->showDialog(this, chatflags);
+//	}
+	if (chatflags & RS_CHAT_FOCUS)
+	{
+		MainWindow::showWindow(MainWindow::ChatLobby);
+		dynamic_cast<ChatLobbyWidget*>(MainWindow::getPage(MainWindow::ChatLobby))->setCurrentOne2OneChatPage(this) ;
 	}
 }
 
@@ -126,13 +141,14 @@ void PopupChatDialog::chatStatusChanged(const ChatId &chat_id, const QString& st
 void PopupChatDialog::addChatMsg(const ChatMessage &msg)
 {
 	ChatWidget *cw = getChatWidget();
-	if (cw) {
-        QDateTime sendTime = QDateTime::fromTime_t(msg.sendTime);
-        QDateTime recvTime = QDateTime::fromTime_t(msg.recvTime);
-        QString message = QString::fromUtf8(msg.msg.c_str());
-        QString name = msg.incoming? getPeerName(msg.chat_id): getOwnName();
+	if (cw)
+	{
+	    QDateTime sendTime = QDateTime::fromTime_t(msg.sendTime);
+	    QDateTime recvTime = QDateTime::fromTime_t(msg.recvTime);
+	    QString message = QString::fromUtf8(msg.msg.c_str());
+	    QString name = msg.incoming? getPeerName(msg.chat_id): getOwnName();
 
-        cw->addChatMsg(msg.incoming, name, sendTime, recvTime, message, ChatWidget::MSGTYPE_NORMAL);
+	    cw->addChatMsg(msg.incoming, name, sendTime, recvTime, message, ChatWidget::MSGTYPE_NORMAL);
 	}
 }
 

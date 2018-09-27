@@ -238,12 +238,12 @@ void RsControlModule::run()
             login_ok = true;
             break;
         case 1:
-            error_string = "Another RetroShare using the same profile is "
+            error_string = "Another P2PUnseen using the same profile is "
                            "already running on your system. Please close "
                            "that instance first\n Lock file:\n" + lockFile;
             break;
         case 2:
-            error_string = "An unexpected error occurred when Retroshare "
+            error_string = "An unexpected error occurred when P2PUnseen "
                            "tried to acquire the single instance lock\n Lock file:\n"
                            + lockFile;
             break;
@@ -277,7 +277,7 @@ void RsControlModule::run()
 
     setRunState(WAITING_STARTUP);
 
-    std::cerr << "RsControlModule: login ok, starting Retroshare worker threads..." << std::endl;
+    std::cerr << "RsControlModule: login ok, starting P2PUnseen worker threads..." << std::endl;
     RsControl::instance() -> StartupRetroShare();
 
     std::cerr << "RsControlModule: loading main resource api modules..." << std::endl;
@@ -285,7 +285,7 @@ void RsControlModule::run()
     getPluginInterfaces(ifaces);
     mApiServer->loadMainModules(ifaces);
 
-    std::cerr << "RsControlModule: Retroshare is up and running. Enjoy!" << std::endl;
+    std::cerr << "RsControlModule: P2PUnseen is up and running. Enjoy!" << std::endl;
     setRunState(RUNNING_OK);
 
     while(!processShouldExit())
@@ -293,9 +293,9 @@ void RsControlModule::run()
         usleep(5*1000);
     }
 
-    std::cerr << "RsControlModule: stopping Retroshare..." << std::endl;
+    std::cerr << "RsControlModule: stopping P2PUnseen..." << std::endl;
     RsControl::instance() -> rsGlobalShutDown();
-    std::cerr << "RsControlModule: Retroshare stopped. Bye!" << std::endl;
+    std::cerr << "RsControlModule: P2PUnseen stopped. Bye!" << std::endl;
 }
 
 void RsControlModule::handleRunState(Request &, Response &resp)
@@ -335,7 +335,7 @@ void RsControlModule::handleIdentities(Request &, Response &resp)
 	RS_STACK_MUTEX(mDataMtx); // ********** LOCKED **********
     if(mRunState == WAITING_INIT || mRunState == FATAL_ERROR)
     {
-        resp.setFail("Retroshare is not initialised. Operation not possible.");
+        resp.setFail("P2PUnseen is not initialised. Operation not possible.");
         return;
     }
 
@@ -361,7 +361,7 @@ void RsControlModule::handleLocations(Request &, Response &resp)
 	RS_STACK_MUTEX(mDataMtx); // ********** LOCKED **********
     if(mRunState == WAITING_INIT || mRunState == FATAL_ERROR)
     {
-        resp.setFail("Retroshare is not initialised. Operation not possible.");
+        resp.setFail("P2PUnseen is not initialised. Operation not possible.");
         return;
     }
 

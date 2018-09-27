@@ -243,22 +243,22 @@ void GetStartedDialog::inviteFriends()
 
 	QString text = QString("%1\n%2\n\n%3\n").arg(GetInviteText()).arg(GetCutBelowText()).arg(QString::fromUtf8(cert.c_str()));
 
-	sendMail("", tr("RetroShare Invitation"), text);
+    sendMail("", tr("P2PUnseen Invitation"), text);
 }
 
 QString GetStartedDialog::GetInviteText()
 {
-	QString text = tr("Your friend has installed RetroShare, and would like you to try it out.") + "\n";
+    QString text = tr("Your friend has installed P2PUnseen, and would like you to try it out.") + "\n";
 	text += "\n";
-	text += tr("You can get RetroShare here: %1").arg(URL_DOWNLOAD) + "\n";
+    text += tr("You can get P2PUnseen here: %1").arg(URL_DOWNLOAD) + "\n";
 	text += "\n";
-	text += tr("RetroShare is a private Friend-2-Friend sharing network.") + "\n";
+    text += tr("P2PUnseen is a private Friend-2-Friend sharing network.") + "\n";
 	text += tr("It has many features, including built-in chat, messaging,") + "\n";
 	text += tr("forums and channels, all of which are as secure as the file-sharing.") + "\n";
 	text += "\n";
 	text += "\n";
 	text += tr("Here is your friends ID Certificate.") + "\n";
-	text += tr("Cut and paste the text below into your RetroShare client") + "\n";
+    text += tr("Cut and paste the text below into your P2PUnseen client") + "\n";
 	text += tr("and send them your ID Certificate to get securely connected.") + "\n";
 
 	return text;
@@ -272,7 +272,7 @@ QString GetStartedDialog::GetCutBelowText()
 void GetStartedDialog::emailSubscribe()
 {
 	// when translation is needed, replace QString by tr
-	QString text = QString("Please let me know when RetroShare has a new release, or exciting news") + "\n";
+    QString text = QString("Please let me know when P2PUnseen has a new release, or exciting news") + "\n";
 	text += "\n";
 	text += QString("Furthermore, I'd like to say ...") + "\n";
 	text += "\n";
@@ -284,7 +284,7 @@ void GetStartedDialog::emailSubscribe()
 void GetStartedDialog::emailUnsubscribe()
 {
 	// when translation is needed, replace QString by tr
-	QString text = QString("I am no longer interested in RetroShare News.") + "\n";
+    QString text = QString("I am no longer interested in P2PUnseen News.") + "\n";
 	text += QString("Please remove me from the Mailing List") + "\n";
 
 	sendMail(EMAIL_SUBSCRIBE, "Unsubscribe", text);
@@ -293,18 +293,18 @@ void GetStartedDialog::emailUnsubscribe()
 void GetStartedDialog::emailFeedback()
 {
 	// when translation is needed, replace QString by tr
-	QString text = QString("Dear RetroShare Developers") + "\n";
+    QString text = QString("Dear P2PUnseen Developers") + "\n";
 	text += "\n";
-	text += QString("I've tried out RetroShare and would like provide feedback:") + "\n";
+    text += QString("I've tried out P2PUnseen and would like provide feedback:") + "\n";
 	text += "\n";
-	text += QString("To make RetroShare more user friendly, please [ what do you think? ] ") + "\n";
-	text += QString("The best feature of RetroShare is [ what do you think? ] ") + "\n";
+    text += QString("To make P2PUnseen more user friendly, please [ what do you think? ] ") + "\n";
+    text += QString("The best feature of P2PUnseen is [ what do you think? ] ") + "\n";
 	text += QString("and the biggest missing feature is [ what do you think? ] ") + "\n";
 	text += "\n";
 	text += QString("Furthermore, I'd like to say ... ") + "\n";
 	text += "\n";
 
-	sendMail("feedback@retroshare.org", tr("RetroShare Feedback"), text);
+    sendMail("feedback@retroshare.org", tr("P2PUnseen Feedback"), text);
 }
 
 void GetStartedDialog::emailSupport()
@@ -428,14 +428,14 @@ void GetStartedDialog::emailSupport()
 	sysVersion = "Linux";
   #endif
 #endif
-    text += QString("My RetroShare Configuration is: (%1, %2, 0x60%3)").arg(Rshare::retroshareVersion(true)).arg(sysVersion).arg(userLevel) + "\n";
+    text += QString("My P2PUnseen Configuration is: (%1, %2, 0x60%3)").arg(Rshare::retroshareVersion(true)).arg(sysVersion).arg(userLevel) + "\n";
     text += "\n";
 
-	text += QString("I am having trouble with RetroShare.");
+    text += QString("I am having trouble with P2PUnseen.");
 	text += QString(" Can you help me with....") + "\n";
 	text += "\n";
 
-	sendMail("support@retroshare.org", tr("RetroShare Support"), text);
+    sendMail("support@retroshare.org", tr("P2PUnseen Support"), text);
 }
 
 void GetStartedDialog::OpenFAQ()

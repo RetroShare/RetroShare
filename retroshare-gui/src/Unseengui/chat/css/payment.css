@@ -1,0 +1,92 @@
+
+.unseen-payment input[type=text] {
+  border: solid 1px #ccc;
+  background: #fff;
+}
+
+.unseen-payment h3,
+.unseen-payment h4 {
+	color: #003366;
+	font-weight: normal;
+}
+
+.unseen-payment .form-horizontal .control-label {
+    text-align: left;
+    padding-left: 30px;
+}
+
+.payment-pane{
+	padding-left:200px;
+}
+
+.payment-pane .payment-methods{
+	padding-left:50px;
+	margin-bottom:20px;
+}
+
+.payment-pane .payment-methods .payment-method-bitcoin{
+	padding-left: 20px;
+    padding-right: 20px;
+}
+
+.payment-pane .payment-methods div{
+	margin-left:1px;
+	display: inline-block;
+}
+
+.payment-pane .payment-methods img {
+    vertical-align: bottom;
+}
+
+.form-horizontal .controls {
+    margin-left: 230px;
+}
+
+.form-horizontal .control-label {
+    width: 210px;
+}
+
+.unseen-payment input[disabled] {
+    background-color: #DDDDDD;
+}
+
+.payment-pane h3 span.text-success
+{
+	font-size:14px;
+	padding-left:90px;
+	font-weight: bold;
+}
+
+.payment-pane .alert-info {
+    font-weight: bold;
+}
+
+.home .unseen-payment .container {
+    width: 100%;
+}
+
+.unseen-payment .copyright-info{
+	width: 65%;
+}
+
+.unseen-payment input.wrong {
+   background: #f2dede;
+}
+
+.unseen-payment input.valid {
+   background: #dff0d8;
+}
+
+.unseen-payment .radio-inline, .unseen-payment .checkbox-inline {
+    cursor: pointer;
+    display: inline-block;
+    font-weight: normal;
+    margin-bottom: 0;
+    padding-right: 20px;
+    padding-top: 5px;
+    vertical-align: middle;
+}
+
+.unseen-payment .row {
+	margin-bottom: 20px;
+}

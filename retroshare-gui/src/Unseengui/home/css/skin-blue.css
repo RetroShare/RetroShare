@@ -1,0 +1,50 @@
+
+.btn-default {
+	background-color:#4ba2dc;
+}
+.footerdivide {
+	background:#ccc;
+}
+.buttoncolor {
+	background:#4ba2dc;
+}
+.grid figcaption {
+	color:#4ba2dc;
+}
+.grid figcaption a {	
+	background:#4ba2dc;
+}
+.colortext {
+	color:#4ba2dc;
+}
+.colorbg {
+	background:#4ba2dc;
+}
+ #Section-1 {
+     background: url(../img/mountain.jpg) no-repeat center 20px fixed;;
+     -webkit-background-size: cover;
+     -moz-background-size: cover;
+     -o-background-size: cover;
+     background-size: cover;
+
+ }
+
+#Section-2 {
+    /*background:#fc5242;*/
+    background: #f5f5f5;
+    color: #2b2b2b;
+    /*padding-top: 15px;*/
+}
+
+ #Section-3{
+     background:#f5f5f5;
+     color: #2b2b2b;
+ }
+
+ #Section-5 {
+	background:#4ba2dc;
+}
+ /*footer {*/
+	/*background:#ccc;*/
+     /*color: #000000;*/
+/*}*/

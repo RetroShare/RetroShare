@@ -33,6 +33,7 @@ Q_DECLARE_METATYPE(QList<RsGxsId>)
 class GxsIdChooser ;
 class QToolButton;
 class QWidgetAction;
+class ChatId;
 
 class ChatLobbyDialog: public ChatDialog
 {
@@ -50,6 +51,7 @@ public:
     void setIdentity(const RsGxsId& gxs_id);
     bool isParticipantMuted(const RsGxsId &participant);
 	ChatLobbyId id() const { return lobbyId ;}
+	ChatId	chatId() const {return cId;}
 	void sortParcipants();
 
 private slots:
@@ -99,6 +101,8 @@ private:
     bool isNicknameInLobby(const RsGxsId& id);
 	
 	ChatLobbyId lobbyId;
+	//meiyousixin - add this one to identify the chat id
+	ChatId cId;
 	QString _lobby_name ;
 	time_t lastUpdateListTime;
 

@@ -68,9 +68,9 @@
 #define FMM_SMALLER 1.8
 #define FMM_THRESHOLD 25
 
-/*****
- * #define CHAT_DEBUG 1
- *****/
+/*****/
+  #define CHAT_DEBUG 1
+/******/
 
 ChatWidget::ChatWidget(QWidget *parent)
   : QWidget(parent)
@@ -1559,7 +1559,7 @@ void ChatWidget::clearChatHistory()
 
 void ChatWidget::deleteChatHistory()
 {
-	if ((QMessageBox::question(this, "RetroShare", tr("Do you really want to physically delete the history?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes)) == QMessageBox::Yes) {
+    if ((QMessageBox::question(this, "P2PUnseen", tr("Do you really want to physically delete the history?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes)) == QMessageBox::Yes) {
 		clearChatHistory();
         rsHistory->clear(chatId);
 	}

@@ -18,13 +18,13 @@
     <string>Introduction</string>
    </property>
    <property name="subTitle">
-    <string>Welcome to the RetroShare Audio Wizard</string>
+    <string>Welcome to the P2PUnseen Audio Wizard</string>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
      <widget class="QLabel" name="label">
       <property name="text">
-       <string>This is the audio tuning wizard for RetroShare. This will help you correctly set the input levels of your sound card, and also set the correct parameters for sound processing in Retroshare. </string>
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the audio tuning wizard for P2PUnseen. This will help you correctly set the input levels of your sound card, and also set the correct parameters for sound processing in P2PUnseen. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
       <property name="wordWrap">
        <bool>true</bool>
@@ -144,17 +144,20 @@
    </layout>
   </widget>
   <widget class="QWizardPage" name="qwpTrigger">
+   <property name="contextMenuPolicy">
+    <enum>Qt::DefaultContextMenu</enum>
+   </property>
    <property name="title">
     <string>Voice Activity Detection</string>
    </property>
    <property name="subTitle">
-    <string>Letting RetroShare figure out when you're talking and when you're silent.</string>
+    <string>Letting P2PUnseen figure out when you're talking and when you're silent.</string>
    </property>
    <layout class="QGridLayout" name="gridLayout_4">
     <item row="0" column="0" colspan="2">
      <widget class="QLabel" name="qliVADText">
       <property name="text">
-       <string>This will help Retroshare figure out when you are talking. The first step is selecting which data value to use.</string>
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This will help P2PUnseen figure out when you are talking. The first step is selecting which data value to use.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
       <property name="wordWrap">
        <bool>true</bool>
@@ -202,7 +205,16 @@
     <item row="4" column="0" colspan="2">
      <widget class="QWidget" name="qwVAD" native="true">
       <layout class="QVBoxLayout" name="verticalLayout_6">
-       <property name="margin">
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
         <number>0</number>
        </property>
        <item>
@@ -283,13 +295,13 @@
     <string>Finished</string>
    </property>
    <property name="subTitle">
-    <string>Enjoy using RetroShare</string>
+    <string>Enjoy using P2PUnseen</string>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_4">
     <item>
      <widget class="QLabel" name="qlDone">
       <property name="text">
-       <string>Congratulations. You should now be ready to enjoy a richer sound experience with Retroshare.</string>
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Congratulations. You should now be ready to enjoy a richer sound experience with P2PUnseen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
       <property name="wordWrap">
        <bool>true</bool>

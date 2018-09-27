@@ -122,7 +122,7 @@
 #define IMAGE_PREFERENCES       ":/icons/png/options.png"
 #define IMAGE_ABOUT             ":/icons/png/info.png"
 #define IMAGE_ADDFRIEND         ":/icons/png/invite.png"
-#define IMAGE_RETROSHARE        ":/icons/logo_128.png"
+#define IMAGE_RETROSHARE        ":/app/images/icon.png"             //D replace :/icons/logo_128.png
 #define IMAGE_NOONLINE          ":/icons/logo_0_connected_128.png"
 #define IMAGE_ONEONLINE         ":/icons/logo_1_connected_128.png"
 #define IMAGE_TWOONLINE         ":/icons/logo_2_connected_128.png"
@@ -192,16 +192,16 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
             hiddenmode = true;
     }
 
-    setWindowTitle(tr("RetroShare %1 a secure decentralized communication platform").arg(Rshare::retroshareVersion(true)) + " - " + nameAndLocation);
+    setWindowTitle(tr("Unseen.is %1 a secure decentralized communication platform").arg(Rshare::retroshareVersion(true)) + " - " + nameAndLocation); //Duy
     connect(rApp, SIGNAL(newArgsReceived(QStringList)), this, SLOT(receiveNewArgs(QStringList)));
 
-    /* add url handler for RetroShare links */
+    /* add url handler for P2PUnseen links */
     QDesktopServices::setUrlHandler(RSLINK_SCHEME, this, "retroshareLinkActivated");
     QDesktopServices::setUrlHandler("http", this, "externalLinkActivated");
     QDesktopServices::setUrlHandler("https", this, "externalLinkActivated");
 
     // Setting icons
-    this->setWindowIcon(QIcon(QString::fromUtf8(":/icons/logo_128.png")));
+    this->setWindowIcon(QIcon(QString::fromUtf8(":/app/images/icon.png"))); //D Replace :/icons/logo_128.png
 
     /* Create all the dialogs of which we only want one instance */
     _bandwidthGraph = NULL ;
@@ -383,20 +383,25 @@ void MainWindow::initStackedPage()
   /* Create the Main pages and actions */
   QActionGroup *grp = new QActionGroup(this);
 
-  addPage(homePage = new HomePage(ui->stackPages), grp, NULL);
+
 
 //#ifdef RS_USE_CIRCLES
 //  CirclesDialog *circlesDialog = NULL;
 //  addPage(circlesDialog = new CirclesDialog(ui->stackPages), grp, &notify);
 //#endif
-  addPage(friendsDialog = new FriendsDialog(ui->stackPages), grp, &notify);
-  addPage(idDialog = new IdDialog(ui->stackPages), grp, &notify);
+
+  //19 Sep 2018 - meiyousixin - change the order: Chat -> Contact -> Mail -> ... -> Network -> Profile
   addPage(chatLobbyDialog = new ChatLobbyWidget(ui->stackPages), grp, &notify);
+  addPage(idDialog = new IdDialog(ui->stackPages), grp, &notify);
+
   addPage(messagesDialog = new MessagesDialog(ui->stackPages), grp, &notify);
   addPage(transfersDialog = new TransfersDialog(ui->stackPages), grp, &notify);
   addPage(gxschannelDialog = new GxsChannelDialog(ui->stackPages), grp, &notify);
   addPage(gxsforumDialog = new GxsForumsDialog(ui->stackPages), grp, &notify);
   addPage(postedDialog = new PostedDialog(ui->stackPages), grp, &notify);
+
+  addPage(friendsDialog = new FriendsDialog(ui->stackPages), grp, &notify);
+  addPage(homePage = new HomePage(ui->stackPages), grp, NULL);
 
   #ifdef RS_USE_NEW_PEOPLE_DIALOG
   PeopleDialog *peopleDialog = NULL;
@@ -564,7 +569,7 @@ void MainWindow::displayDiskSpaceWarning(int loc,int size_limit_mb)
 												return ;
 	}
 	QMessageBox::critical(NULL,tr("Low disk space warning"),
-				tr("The disk space in your")+" "+locString +" "+tr("directory is running low (current limit is")+" "+QString::number(size_limit_mb)+tr("MB). \n\n RetroShare will now safely suspend any disk access to this directory. \n\n Please make some free space and click Ok.")) ;
+                tr("The disk space in your")+" "+locString +" "+tr("directory is running low (current limit is")+" "+QString::number(size_limit_mb)+tr("MB). \n\n P2PUnseen will now safely suspend any disk access to this directory. \n\n Please make some free space and click Ok.")) ;
 }
 
 /** Creates a tray icon with a context menu and adds it to the system
@@ -610,7 +615,7 @@ void MainWindow::createTrayIcon()
 
     // Create the tray icon
     trayIcon = new QSystemTrayIcon(this);
-    trayIcon->setToolTip(tr("RetroShare"));
+    trayIcon->setToolTip(tr("Unseen.is")); //D
     trayIcon->setContextMenu(trayMenu);
     trayIcon->setIcon(QIcon(IMAGE_NOONLINE));
 
@@ -718,7 +723,7 @@ void MainWindow::updateTrayCombine()
 
 void MainWindow::toggleStatusToolTip(bool toggle){
     if(!toggle)return;
-    QString tray = "RetroShare\n";
+    QString tray = "Unseen.is\n";   //D
     tray += "\n" + nameAndLocation;
     trayIcon->setToolTip(tray);
 }
@@ -753,7 +758,7 @@ void MainWindow::updateStatus()
 
     if(!Settings->valueFromGroup("StatusBar", "DisableSysTrayToolTip", QVariant(false)).toBool()) {
 
-    QString tray = "RetroShare\n" + tr("Down: %1 (kB/s)").arg(downKb, 0, 'f', 2) + " | " + tr("Up: %1 (kB/s)").arg(upKb, 0, 'f', 2) + "\n";
+    QString tray = "Unseen.is\n" + tr("Down: %1 (kB/s)").arg(downKb, 0, 'f', 2) + " | " + tr("Up: %1 (kB/s)").arg(upKb, 0, 'f', 2) + "\n"; //D
 
     if (onlineCount == 1) {
         tray += tr("%1 friend connected").arg(onlineCount);
@@ -1044,6 +1049,10 @@ void SetForegroundWindowInternal(HWND hWnd)
    return NULL;
 }
 
+ChatLobbyWidget* MainWindow::getChatLobbyDialog()
+{
+    return _instance->chatLobbyDialog;
+}
 /***** TOOL BAR FUNCTIONS *****/
 
 /** Add a Friend ShortCut */
@@ -1119,7 +1128,7 @@ void MainWindow::doQuit()
 	{
 	  QString queryWrn;
 	  queryWrn.clear();
-	  queryWrn.append(tr("Do you really want to exit RetroShare ?"));
+      queryWrn.append(tr("Do you really want to exit Unseen.is ?"));    //D
 
 		if ((QMessageBox::question(this, tr("Really quit ?"),queryWrn,QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes))== QMessageBox::Yes)
 		{
@@ -1414,7 +1423,9 @@ void MainWindow::statusChangedComboBox(int index)
 /*new setting*/
 void MainWindow::settingsChanged()
 {
-	ui->toolBarPage->setVisible(Settings->getPageButtonLoc());
+    ui->toolBarPage->setStyleSheet(" QToolBar {background: rgb(43, 164, 220) }"); // d: Set color of toolbar
+    ui->toolBarAction->setStyleSheet(" QToolBar {background: rgb(43, 164, 220) }"); // d: Set color of toolbar
+    ui->toolBarPage->setVisible(Settings->getPageButtonLoc());
 	ui->toolBarAction->setVisible(Settings->getActionButtonLoc());
 	ui->listWidget->setVisible(!Settings->getPageButtonLoc() || !Settings->getActionButtonLoc());
 	for(int i = 0; i < ui->listWidget->count(); ++i) {
@@ -1424,7 +1435,7 @@ void MainWindow::settingsChanged()
 			ui->listWidget->item(i)->setHidden(Settings->getActionButtonLoc());
 		}
 	}
-	int toolSize = Settings->getToolButtonSize();
+    int toolSize = Settings->getToolButtonSize();
 	ui->toolBarPage->setToolButtonStyle(Settings->getToolButtonStyle());
 	ui->toolBarPage->setIconSize(QSize(toolSize,toolSize));
 	ui->toolBarAction->setToolButtonStyle(Settings->getToolButtonStyle());
@@ -1476,14 +1487,14 @@ void MainWindow::retroshareLinkActivated(const QUrl &url)
     RetroShareLink link(url);
 
     if (link.valid() == false) {
-        // QUrl can't handle the old RetroShare link format properly
+        // QUrl can't handle the old P2PUnseen link format properly
         if (url.host().isEmpty()) {
-            QMessageBox mb("RetroShare", tr("It seems to be an old RetroShare link. Please use copy instead."), QMessageBox::Critical, QMessageBox::Ok, 0, 0);
+            QMessageBox mb("P2PUnseen", tr("It seems to be an old P2PUnseen link. Please use copy instead."), QMessageBox::Critical, QMessageBox::Ok, 0, 0);
             mb.exec();
             return;
         }
 
-        QMessageBox mb("RetroShare", tr("The file link is malformed."), QMessageBox::Critical, QMessageBox::Ok, 0, 0);
+        QMessageBox mb("P2PUnseen", tr("The file link is malformed."), QMessageBox::Critical, QMessageBox::Ok, 0, 0);
         mb.exec();
         return;
     }
