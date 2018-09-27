@@ -991,12 +991,12 @@ void p3FileDatabase::getExtraFilesDirDetails(void *ref,DirectoryStorage::EntryIn
 		d.parent = NULL ;
 
 		d.prow = 0;//fi-1 ;
-		d.type = DIR_TYPE_DIR;
+		d.type = DIR_TYPE_PERSON;
 		d.hash.clear() ;
 		d.count   = mExtraFilesCache.size();
 		d.max_mtime = time(NULL);
 		d.mtime     = time(NULL);
-		d.name    = "Temporary shared files";
+		d.name = "Extra List";
 		d.path    = "/";
 		d.ref     = ref ;
 
@@ -1021,13 +1021,14 @@ void p3FileDatabase::getExtraFilesDirDetails(void *ref,DirectoryStorage::EntryIn
 		d.count     = 0;
 		d.max_mtime = time(NULL);
 		d.mtime     = time(NULL);
-		d.name      = f.fname;
-		d.path      = "/";
+		d.name      = f.path;		// so that the UI shows the complete path, since the parent directory is not really a directory.
+		d.path      = f.path;
 		d.ref       = ref ;
 
 		convertEntryIndexToPointer<sizeof(void*)>(0,1,d.parent) ;
 	}
 
+    d.flags = DIR_FLAGS_ANONYMOUS_DOWNLOAD ;
 	d.id = RsPeerId();
 }
 
@@ -1081,7 +1082,7 @@ int p3FileDatabase::RequestDirDetails(void *ref, DirDetails& d, FileSearchFlags 
             convertEntryIndexToPointer<sizeof(void*)>(0,1,p);	// local shared files from extra list
             DirStub stub;
             stub.type = DIR_TYPE_PERSON;						// not totally exact, but used as a trick.
-            stub.name = "Temporary shared files";
+            stub.name = "Extra List";
             stub.ref  = p;
 
             d.children.push_back(stub);
