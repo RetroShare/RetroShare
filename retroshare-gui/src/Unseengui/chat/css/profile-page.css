@@ -1,0 +1,163 @@
+.profile-form, .profile-account-settings {
+    margin-left: 14px;
+    margin-right: 14px;
+    padding-bottom: 10px;
+}
+.profile-form hr {
+    clear: both;
+}
+.profile-form .profile-image {
+    width: 100%;
+    margin: 0 auto;
+    font-size: 12px;
+    color: inherit;
+    position: relative;
+    line-height: 1em;
+    text-align: center;
+}
+.profile-form .profile-image i {
+    position: absolute;
+    top: 108px;
+    left: 6px;
+}
+
+
+.profile-form .row-fluid textarea{
+    width: 75%;
+}
+.profile-form button#updateStatus{
+    float: none;
+    margin: 0px 0 0 2px;
+}
+.profile-form button.button-row {
+    clear: none;
+    float: left;
+    margin-top: 12px;
+    margin-right: 10px;
+}
+
+fieldset.statusText textarea{
+    width: 75%;
+    height: 20px;
+    float: left;
+    min-height: 20px;
+    margin-right: 20px;
+}
+
+.profile-form .row-fluid .span3 {
+    width: 160px;
+}
+.profile-page{
+    padding: 20px; padding-top:10px;
+}
+
+.profile-page label{
+    display: inline;
+    padding-left:10px;
+    padding-bottom: 10px;
+}
+.profile-page .preferenceTable{
+    margin-top:10px;
+    margin-bottom:10px;
+} 
+#profile-image-upload-progressbar-image{
+    height:15px;}
+
+
+.profile-form .row-fluid .span3 {
+    width: 160px;
+}
+
+#store-key-local .modal-body form{
+    padding:20px;
+}
+
+.profile-form p.caption{
+    padding-top: 10px;
+}
+
+
+.profile-account-settings input.strong {
+    background-color: #dff0d8;
+}
+.profile-account-settings input.short {
+    background-color: #FF0000;
+}
+.profile-account-settings input.good {
+    background-color: #2D98F3;
+}
+.profile-account-settings input.weak {
+    background-color: #E66C2C;
+}
+.profile-account-settings input.short {
+    background-color: red;
+}
+#image-editor-modal .modal-dialog{
+    width: 460px;
+}
+#image-editor-modal .modal-dialog .modal-body{
+    padding:0;
+}
+#image-editor-modal .image-editor{
+    margin: 20px;
+    height: 170px;
+}
+.image-editor .cropit-image-preview {
+    background-color: #f8f8f8;
+    background-size: cover;
+    border-radius: 3px;
+    margin-top: 7px;
+    cursor: move;
+    margin-right: 20px;
+    width: 160px;
+    height: 160px;
+}
+.image-editor .cropit-image-preview-container{
+    width: 160px;
+    height: 160px;
+    float:left;
+    margin-right: 10px;
+}
+.image-editor .cropit-image-background {
+    opacity: .2;
+    cursor: auto;
+}
+.image-editor .cropit-image-zoom-input{
+    width:240px;
+}
+.image-editor .image-size-label {
+    margin-top: 0.6rem;
+}
+.profile-form .radio, .profile-account-settings .radio, .advance-form .radio{
+    font-weight: normal;
+}
+
+#account-settings .form-password  label{
+    width: 200px;
+    padding-left: 20px;
+}
+#account-settings .form-password  input.password{
+    width: 300px;
+    height: 28px;
+    display: inline;
+}
+/* Account Setting Tabs */
+.unseen-account-avatar {text-align: center;width: 30%;}
+.unseen-account-info {width: 70%;padding: 0px 15px;}
+.profile-image img#info_avatar_img {width: 170px;height: auto;max-width: 100%;}
+.profile-form .form-horizontal label {width: 100%;float: left;}
+.profile-form .form-horizontal .control-input {float: left;width: 100%;} .profile-form label{
+                                                                             margin-bottom: 5px!important;
+                                                                             font-weight: normal;
+                                                                         }
+.profile-form label.radio, .profile-form label.checkbox {margin-left: 20px;}
+.profile-account-settings button ,.profile-form button {margin: 0px 15px; margin-bottom: 10px;}
+
+.account-mamagement-form{
+    padding:20px;
+}
+.profile-account-settings .otherEmailNotification{
+    width: 160px;
+    float: left;
+    height: 30px;
+}

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1237</width>
-    <height>1145</height>
+    <height>1189</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -172,12 +172,22 @@
                  <string>Will be used to send feedback</string>
                 </property>
                 <property name="text">
-                 <string>Owner:</string>
+                 <string>Contact:</string>
                 </property>
                </widget>
               </item>
               <item>
                <widget class="GxsIdChooser" name="idChooser"/>
+              </item>
+              <item>
+               <widget class="QCheckBox" name="addAdmins_cb">
+                <property name="toolTip">
+                 <string/>
+                </property>
+                <property name="text">
+                 <string>Add moderators</string>
+                </property>
+               </widget>
               </item>
               <item>
                <widget class="QCheckBox" name="pubKeyShare_cb">
@@ -194,102 +204,6 @@
            </layout>
           </item>
          </layout>
-        </widget>
-       </item>
-       <item row="0" column="1">
-        <widget class="QDockWidget" name="contactsdockWidget">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>300</width>
-           <height>524287</height>
-          </size>
-         </property>
-         <property name="sizeIncrement">
-          <size>
-           <width>220</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="baseSize">
-          <size>
-           <width>0</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="toolTip">
-          <string>check peers you would like to share private publish key with</string>
-         </property>
-         <property name="floating">
-          <bool>false</bool>
-         </property>
-         <property name="features">
-          <set>QDockWidget::NoDockWidgetFeatures</set>
-         </property>
-         <property name="windowTitle">
-          <string>Share Key With</string>
-         </property>
-         <widget class="QWidget" name="dockWidgetContents">
-          <layout class="QGridLayout" name="_2">
-           <property name="leftMargin">
-            <number>0</number>
-           </property>
-           <property name="topMargin">
-            <number>0</number>
-           </property>
-           <property name="rightMargin">
-            <number>0</number>
-           </property>
-           <property name="bottomMargin">
-            <number>0</number>
-           </property>
-           <property name="spacing">
-            <number>0</number>
-           </property>
-           <item row="0" column="0">
-            <widget class="FriendSelectionWidget" name="keyShareList" native="true">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-               <horstretch>0</horstretch>
-               <verstretch>4</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="minimumSize">
-              <size>
-               <width>20</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>300</width>
-               <height>16777215</height>
-              </size>
-             </property>
-             <property name="sizeIncrement">
-              <size>
-               <width>220</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="baseSize">
-              <size>
-               <width>200</width>
-               <height>0</height>
-              </size>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
         </widget>
        </item>
        <item row="1" column="0">
@@ -341,7 +255,7 @@
                </sizepolicy>
               </property>
               <property name="toolTip">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Messages will spread among Retroshare nodes that host one of the identities listed as member of the circle and who also subscribe the media. Only these nodes will be able to see that this forum/channel/posted media exists. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Messages will spread among P2PUnseen nodes that host one of the identities listed as member of the circle and who also subscribe the media. Only these nodes will be able to see that this forum/channel/posted media exists. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
               <property name="text">
                <string>Restricted to Circle</string>
@@ -435,7 +349,7 @@
          </layout>
         </widget>
        </item>
-       <item row="2" column="0">
+       <item row="4" column="0">
         <widget class="QGroupBox" name="groupBox">
          <property name="title">
           <string>Description</string>
@@ -447,7 +361,7 @@
          </layout>
         </widget>
        </item>
-       <item row="3" column="0">
+       <item row="5" column="0">
         <widget class="QGroupBox" name="publishGroupBox">
          <property name="title">
           <string>Publish Signatures</string>
@@ -512,7 +426,7 @@
          </layout>
         </widget>
        </item>
-       <item row="4" column="0">
+       <item row="6" column="0">
         <widget class="QGroupBox" name="personalGroupBox">
          <property name="title">
           <string>Personal Signatures</string>
@@ -555,7 +469,7 @@
          </layout>
         </widget>
        </item>
-       <item row="5" column="0">
+       <item row="7" column="0">
         <widget class="QGroupBox" name="commentGroupBox">
          <property name="title">
           <string>Comments</string>
@@ -606,7 +520,7 @@
          </layout>
         </widget>
        </item>
-       <item row="6" column="0">
+       <item row="8" column="0">
         <widget class="QGroupBox" name="spamProtection_GB">
          <property name="title">
           <string>Spam-protection</string>
@@ -622,7 +536,7 @@
           <item>
            <widget class="QComboBox" name="antiSpam_perms_CB">
             <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This combo box allows you to choose how posts are handled depending on the node the poster belongs to.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;All allowed&lt;/span&gt;: all posts are treated equally.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Defavor posts from unsigned IDs&lt;/span&gt;: anonymous IDs will require a reputation of 0.4 to be received/forwarded.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Defavor posts from unsigned IDs and IDs from unknown nodes&lt;/span&gt;: anonymous IDs and IDs signed by unknown Retroshare nodes will require a reputation of 0.4 to be received/forwarded.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This combo box allows you to choose how posts are handled depending on the node the poster belongs to.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;All allowed&lt;/span&gt;: all posts are treated equally.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Defavor posts from unsigned IDs&lt;/span&gt;: anonymous IDs will require a reputation of 0.4 to be received/forwarded.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Defavor posts from unsigned IDs and IDs from unknown nodes&lt;/span&gt;: anonymous IDs and IDs signed by unknown P2PUnseen nodes will require a reputation of 0.4 to be received/forwarded.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <item>
              <property name="text">
@@ -657,7 +571,7 @@
          </layout>
         </widget>
        </item>
-       <item row="7" column="0" colspan="2">
+       <item row="9" column="0" colspan="2">
         <widget class="QFrame" name="extraFrame">
          <property name="frameShape">
           <enum>QFrame::StyledPanel</enum>
@@ -666,6 +580,12 @@
           <enum>QFrame::Raised</enum>
          </property>
         </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="FriendSelectionWidget" name="adminsList" native="true"/>
+       </item>
+       <item row="3" column="0">
+        <widget class="FriendSelectionWidget" name="shareKeyList" native="true"/>
        </item>
       </layout>
      </widget>
@@ -676,149 +596,167 @@
          <property name="title">
           <string>Info</string>
          </property>
-         <layout class="QGridLayout" name="gridLayout_2">
-          <item row="0" column="0">
-           <widget class="QLabel" name="label_3">
-            <property name="text">
-             <string>Name</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QLineEdit" name="nameline">
-            <property name="readOnly">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="label_10">
-            <property name="text">
-             <string>Popularity</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QLineEdit" name="popline">
-            <property name="readOnly">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="label_6">
-            <property name="text">
-             <string>Posts</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QLineEdit" name="postsline">
-            <property name="text">
-             <string/>
-            </property>
-            <property name="readOnly">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="0">
-           <widget class="QLabel" name="label_11">
-            <property name="text">
-             <string>Last Post</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="1">
-           <widget class="QLineEdit" name="lastpostline">
-            <property name="readOnly">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="0">
-           <widget class="QLabel" name="label_7">
-            <property name="text">
-             <string>Author</string>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="1">
-           <widget class="GxsIdLabel" name="authorLabel">
-            <property name="text">
-             <string>GxsIdLabel</string>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="0">
-           <widget class="QLabel" name="label_4">
-            <property name="text">
-             <string>ID</string>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="1">
-           <widget class="QLineEdit" name="IDline">
-            <property name="readOnly">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="0" rowspan="2">
-           <widget class="QLabel" name="commentsLabel">
-            <property name="text">
-             <string>Comments:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="1">
-           <widget class="QLabel" name="commentsValueLabel">
-            <property name="text">
-             <string>TextLabel</string>
-            </property>
-           </widget>
-          </item>
-          <item row="7" column="1" rowspan="2">
-           <layout class="QHBoxLayout" name="horizontalLayout_10">
-            <item>
-             <widget class="QLabel" name="distributionValueLabel">
+         <layout class="QVBoxLayout" name="verticalLayout">
+          <item>
+           <layout class="QGridLayout" name="gridLayout_2">
+            <item row="9" column="0">
+             <widget class="QLabel" name="label_8">
+              <property name="text">
+               <string>Moderators:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="7" column="2">
+             <layout class="QHBoxLayout" name="horizontalLayout_10">
+              <item>
+               <widget class="QLabel" name="distributionValueLabel">
+                <property name="text">
+                 <string>TextLabel</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="GxsCircleChooser" name="distributionCircleComboBox">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item row="2" column="2">
+             <widget class="QLineEdit" name="postsline">
+              <property name="text">
+               <string/>
+              </property>
+              <property name="readOnly">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="2">
+             <widget class="QLineEdit" name="popline">
+              <property name="readOnly">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QLabel" name="label_6">
+              <property name="text">
+               <string>Posts</string>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="2">
+             <widget class="GxsIdLabel" name="authorLabel">
+              <property name="text">
+               <string>GxsIdLabel</string>
+              </property>
+             </widget>
+            </item>
+            <item row="5" column="0">
+             <widget class="QLabel" name="label_4">
+              <property name="text">
+               <string>ID</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="2">
+             <widget class="QLineEdit" name="lastpostline">
+              <property name="readOnly">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="0">
+             <widget class="QLabel" name="label_7">
+              <property name="text">
+               <string>Author</string>
+              </property>
+             </widget>
+            </item>
+            <item row="8" column="2">
+             <widget class="QLabel" name="antiSpamValueLabel">
               <property name="text">
                <string>TextLabel</string>
               </property>
              </widget>
             </item>
-            <item>
-             <widget class="GxsCircleChooser" name="distributionCircleComboBox">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
+            <item row="5" column="2">
+             <widget class="QLineEdit" name="IDline">
+              <property name="readOnly">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="6" column="0">
+             <widget class="QLabel" name="commentsLabel">
+              <property name="text">
+               <string>Comments:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="6" column="2">
+             <widget class="QLabel" name="commentsValueLabel">
+              <property name="text">
+               <string>TextLabel</string>
+              </property>
+             </widget>
+            </item>
+            <item row="7" column="0">
+             <widget class="QLabel" name="distributionLabel">
+              <property name="text">
+               <string>Distribution:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="8" column="0">
+             <widget class="QLabel" name="antiSpamLabel">
+              <property name="text">
+               <string>Anti Spam:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="0">
+             <widget class="QLabel" name="label_11">
+              <property name="text">
+               <string>Last Post</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="0">
+             <widget class="QLabel" name="label_3">
+              <property name="text">
+               <string>Name</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="label_10">
+              <property name="text">
+               <string>Popularity</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="2">
+             <widget class="QLineEdit" name="nameline">
+              <property name="readOnly">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="9" column="2">
+             <widget class="QLabel" name="moderatorsLabel">
+              <property name="text">
+               <string>TextLabel</string>
               </property>
              </widget>
             </item>
            </layout>
-          </item>
-          <item row="8" column="0">
-           <widget class="QLabel" name="distributionLabel">
-            <property name="text">
-             <string>Distribution:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="9" column="0">
-           <widget class="QLabel" name="antiSpamLabel">
-            <property name="text">
-             <string>Anti Spam:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="9" column="1">
-           <widget class="QLabel" name="antiSpamValueLabel">
-            <property name="text">
-             <string>TextLabel</string>
-            </property>
-           </widget>
           </item>
          </layout>
         </widget>
@@ -879,6 +817,18 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>HeaderFrame</class>
+   <extends>QFrame</extends>
+   <header>gui/common/HeaderFrame.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>FriendSelectionWidget</class>
+   <extends>QWidget</extends>
+   <header>gui/common/FriendSelectionWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
    <class>GxsIdLabel</class>
    <extends>QLabel</extends>
    <header>gui/gxs/GxsIdLabel.h</header>
@@ -894,18 +844,6 @@
    <header>gui/gxs/GxsCircleChooser.h</header>
   </customwidget>
   <customwidget>
-   <class>HeaderFrame</class>
-   <extends>QFrame</extends>
-   <header>gui/common/HeaderFrame.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>FriendSelectionWidget</class>
-   <extends>QWidget</extends>
-   <header>gui/common/FriendSelectionWidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>MimeTextEdit</class>
    <extends>QTextEdit</extends>
    <header location="global">gui/common/MimeTextEdit.h</header>
@@ -917,8 +855,8 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../icons.qrc"/>
   <include location="../images.qrc"/>
+  <include location="../icons.qrc"/>
  </resources>
  <connections/>
 </ui>

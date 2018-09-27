@@ -356,7 +356,7 @@ struct RsIdentity : RsGxsIfaceHelper
     virtual bool  getIdDetails(const RsGxsId &id, RsIdentityDetails &details) = 0;
 
     // Fills up list of all own ids. Returns false if ids are not yet loaded.
-    virtual bool  getOwnIds(std::list<RsGxsId> &ownIds) = 0;
+    virtual bool  getOwnIds(std::list<RsGxsId> &ownIds,bool only_signed_ids = false) = 0;
     virtual bool  isOwnId(const RsGxsId& id) = 0;
 
     //

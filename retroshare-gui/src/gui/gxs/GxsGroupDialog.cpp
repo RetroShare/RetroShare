@@ -101,6 +101,7 @@ void GxsGroupDialog::init()
 	connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(submitGroup()));
 	connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(cancelDialog()));
 	connect(ui.pubKeyShare_cb, SIGNAL(clicked()), this, SLOT(setShareList()));
+	connect(ui.addAdmins_cb, SIGNAL(clicked()), this, SLOT(setAdminsList()));
 
 	connect(ui.groupLogo, SIGNAL(clicked() ), this , SLOT(addGroupLogo()));
 	connect(ui.addLogoButton, SIGNAL(clicked() ), this , SLOT(addGroupLogo()));
@@ -115,14 +116,25 @@ void GxsGroupDialog::init()
 
 	if (!ui.pubKeyShare_cb->isChecked())
 	{
-		ui.contactsdockWidget->hide();
-		this->resize(this->size().width() - ui.contactsdockWidget->size().width(), this->size().height());
+		ui.shareKeyList->hide();
+		//this->resize(this->size().width() - ui.contactsdockWidget->size().width(), this->size().height());
+	}
+	if (!ui.addAdmins_cb->isChecked())
+	{
+		ui.adminsList->hide();
+		//this->resize(this->size().width() - ui.contactsdockWidget->size().width(), this->size().height());
 	}
 
 	/* initialize key share list */
-	ui.keyShareList->setHeaderText(tr("Contacts:"));
-	ui.keyShareList->setModus(FriendSelectionWidget::MODUS_CHECK);
-	ui.keyShareList->start();
+	ui.shareKeyList->setHeaderText(tr("Contacts:"));
+	ui.shareKeyList->setModus(FriendSelectionWidget::MODUS_CHECK);
+	ui.shareKeyList->start();
+
+	/* initialize key share list */
+	ui.adminsList->setHeaderText(tr("Moderators:"));
+	ui.adminsList->setModus(FriendSelectionWidget::MODUS_CHECK);
+	ui.adminsList->setShowType(FriendSelectionWidget::SHOW_GXS);
+	ui.adminsList->start();
 
 	/* Setup Reasonable Defaults */
 
@@ -165,10 +177,28 @@ void GxsGroupDialog::setUiText(UiType uiType, const QString &text)
 		ui.pubKeyShare_cb->setText(text);
 		break;
 	case UITYPE_CONTACTS_DOCK:
-		ui.contactsdockWidget->setWindowTitle(text);
+	case UITYPE_ADD_ADMINS_CHECKBOX:
+		//ui.contactsdockWidget->setWindowTitle(text);
 		break;
 	case UITYPE_BUTTONBOX_OK:
 		ui.buttonBox->button(QDialogButtonBox::Ok)->setText(text);
+		break;
+	}
+}
+
+void GxsGroupDialog::setUiToolTip(UiType uiType, const QString &text)
+{
+	switch (uiType)
+	{
+	case UITYPE_KEY_SHARE_CHECKBOX:
+		ui.pubKeyShare_cb->setToolTip(text);
+		break;
+	case UITYPE_ADD_ADMINS_CHECKBOX:
+		ui.addAdmins_cb->setToolTip(text);
+		break;
+	case UITYPE_BUTTONBOX_OK:
+		ui.buttonBox->button(QDialogButtonBox::Ok)->setToolTip(text);
+    default:
 		break;
 	}
 }
@@ -345,6 +375,9 @@ void GxsGroupDialog::setupVisibility()
 	ui.publishGroupBox->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_PUBLISHSIGN);
 
 	ui.pubKeyShare_cb->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_SHAREKEYS);
+	ui.addAdmins_cb->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_ADDADMINS);
+	ui.label_8->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_ADDADMINS);
+	ui.moderatorsLabel->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_ADDADMINS);
 
 	ui.personalGroupBox->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_PERSONALSIGN);
 
@@ -535,7 +568,7 @@ void GxsGroupDialog::editGroup()
 	if(!prepareGroupMetaData(newMeta))
 	{
 		/* error message */
-		QMessageBox::warning(this, "RetroShare", tr("Failed to Prepare Group MetaData - please Review"), QMessageBox::Ok, QMessageBox::Ok);
+        QMessageBox::warning(this, "P2PUnseen", tr("Failed to Prepare Group MetaData - please Review"), QMessageBox::Ok, QMessageBox::Ok);
 		return; //Don't add  a empty name!!
 	}
 
@@ -608,7 +641,7 @@ void GxsGroupDialog::createGroup()
 	if(name.isEmpty())
 	{
 		/* error message */
-		QMessageBox::warning(this, "RetroShare", tr("Please add a Name"), QMessageBox::Ok, QMessageBox::Ok);
+        QMessageBox::warning(this, "P2PUnseen", tr("Please add a Name"), QMessageBox::Ok, QMessageBox::Ok);
 		return; //Don't add  a empty name!!
 	}
 
@@ -617,7 +650,7 @@ void GxsGroupDialog::createGroup()
 	if (!prepareGroupMetaData(meta))
 	{
 		/* error message */
-		QMessageBox::warning(this, "RetroShare", tr("Failed to Prepare Group MetaData - please Review"), QMessageBox::Ok, QMessageBox::Ok);
+        QMessageBox::warning(this, "P2PUnseen", tr("Failed to Prepare Group MetaData - please Review"), QMessageBox::Ok, QMessageBox::Ok);
 		return; //Don't add with invalid circle.
 	}
 
@@ -828,6 +861,31 @@ QString GxsGroupDialog::getDescription()
 	return ui.groupDesc->toPlainText();
 }
 
+void GxsGroupDialog::getSelectedModerators(std::set<RsGxsId>& ids)
+{
+	ui.adminsList->selectedIds<RsGxsId,FriendSelectionWidget::IDTYPE_GXS>(ids, true);
+}
+
+void GxsGroupDialog::setSelectedModerators(const std::set<RsGxsId>& ids)
+{
+	ui.adminsList->setSelectedIds<RsGxsId,FriendSelectionWidget::IDTYPE_GXS>(ids, false);
+
+	QString moderatorsListString ;
+    RsIdentityDetails det;
+
+    for(auto it(ids.begin());it!=ids.end();++it)
+    {
+		rsIdentity->getIdDetails(*it,det);
+
+        if(!moderatorsListString.isNull())
+            moderatorsListString += ", " ;
+
+        moderatorsListString += det.mNickname.empty()?("[Unknown]"):QString::fromStdString(det.mNickname) ;
+    }
+
+	ui.moderatorsLabel->setText(moderatorsListString);
+}
+
 /***********************************************************************************
   Share Lists.
  ***********************************************************************************/
@@ -835,6 +893,20 @@ QString GxsGroupDialog::getDescription()
 void GxsGroupDialog::sendShareList(std::string /*groupId*/)
 {
 	close();
+}
+
+void GxsGroupDialog::setAdminsList()
+{
+	if (ui.addAdmins_cb->isChecked())
+    {
+		//this->resize(this->size().width() + ui.contactsdockWidget->size().width(), this->size().height());
+		ui.adminsList->show();
+	}
+    else
+    {  // hide share widget
+		ui.adminsList->hide();
+		//this->resize(this->size().width() - ui.contactsdockWidget->size().width(), this->size().height());
+	}
 }
 
 void GxsGroupDialog::setShareList()

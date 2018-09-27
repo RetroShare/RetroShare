@@ -1,0 +1,197 @@
+.inbox {
+  margin: 24px 32px;
+}
+.inbox h1 {
+  float: left;
+}
+.inbox-list {
+  clear: both;
+  padding-bottom: 24px;
+}
+.inbox-list header {
+  *zoom: 1;
+  text-align: right;
+  margin-bottom: 12px;
+}
+.inbox-list header:before,
+.inbox-list header:after {
+  display: table;
+  content: "";
+  line-height: 0;
+}
+.inbox-list header:after {
+  clear: both;
+}
+.inbox-list header .search {
+  margin-top: 16px;
+}
+.inbox-list p.members {
+  font-style: italic;
+  font-size: 12px;
+  margin: 0 0 4px;
+}
+.inbox-list p.members a {
+  color: inherit;
+}
+.inbox-list .single-thread-actions {
+  position: absolute;
+  background: #e1e1e1;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 20px;
+}
+.inbox-list .single-thread-actions input {
+  display: block;
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  margin: 0;
+  text-align: center;
+}
+.inbox-list li {
+  margin-bottom: 12px;
+}
+.inbox-list .latest-thread {
+  *zoom: 1;
+}
+.inbox-list .latest-thread:before,
+.inbox-list .latest-thread:after {
+  display: table;
+  content: "";
+  line-height: 0;
+}
+.inbox-list .latest-thread:after {
+  clear: both;
+}
+.inbox-list .latest-thread > a {
+  background: #eee;
+  display: block;
+/*  margin-left: 138px;*/
+  min-height: 92px;
+  position: relative;
+  left: 0;
+  color: inherit;
+  -webkit-transition: background linear .2s, left linear .2s;
+  -moz-transition: background linear .2s, left linear .2s;
+  -o-transition: background linear .2s, left linear .2s;
+  transition: background linear .2s, left linear .2s;
+}
+.inbox-list .latest-thread > a:hover,
+.inbox-list .latest-thread > a:focus {
+  text-decoration: none;
+  background: #e1e1e1;
+}
+.inbox-list .latest-thread > a.unread h4 i {
+  color: #82BFD1;
+}
+.inbox-list .latest-thread > a .excerpt {
+  padding: 14px 20px 14px 40px;
+  line-height: 1.4em;
+}
+.inbox-list .latest-thread > a h4 {
+  font-size: 16px;
+  margin: 0 0 8px;
+  line-height: 1em;
+}
+.inbox-list .latest-thread > a h4 i {
+  top: 0;
+  font-size: 20px;
+  margin-left: 5px;
+}
+.inbox-list .latest-thread > a h4 .date {
+/*  float: right;*/
+  font-size: 12px;
+  position: absolute;
+  max-width: 80px;
+  display: block;
+  right: 16px;
+  top: 32px;
+  text-align: right;
+}
+.inbox-list .latest-thread > a p {
+  margin: 0;
+}
+.inbox-list .latest-thread > .profile-photos {
+  float: left;
+}
+.inbox-list .old-threads {
+  margin-left: 138px;
+  clear: both;
+  padding-top: 1px;
+}
+.inbox-list .old-threads li {
+  margin-bottom: 1px;
+}
+.inbox-list .old-threads li > a {
+  background: #eee;
+  display: block;
+  padding: 7px 24px 7px 34px;
+  color: inherit;
+  position: relative;
+  left: 0;
+  -webkit-transition: background linear .2s, left linear .2s;
+  -moz-transition: background linear .2s, left linear .2s;
+  -o-transition: background linear .2s, left linear .2s;
+  transition: background linear .2s, left linear .2s;
+}
+.inbox-list .old-threads li > a:hover,
+.inbox-list .old-threads li > a:focus {
+  text-decoration: none;
+  background: #e1e1e1;
+}
+.inbox-list .old-threads li > a h5 {
+  margin: 0;
+}
+.inbox-list .old-threads li > a h5 span {
+  float: right;
+  font-size: 11px;
+}
+.inbox-list .old-threads li > a p {
+  margin: 0;
+  font-size: 12px;
+}
+.inbox-list .old-threads li.load-more > a {
+  background: none;
+  color: #4094ad;
+  font-size: 12px;
+}
+.inbox-list .old-threads li.load-more > a:hover,
+.inbox-list .old-threads li.load-more > a:focus {
+  text-decoration: none;
+  background: #eee;
+  left: 0;
+}
+.inbox-list .group-threads li {
+  margin-bottom: 1px;
+}
+.inbox-list .group-threads li > a {
+  color: inherit;
+  display: block;
+}
+.inbox-list .group-threads li h4 {
+  font-weight: 700;
+}
+.inbox-list li.load-more > a:hover,
+.inbox-list li.load-more > a:focus {
+    text-decoration: none;
+    background: #eee;
+    left: 0;
+}
+
+.inbox-list li.load-more > a {
+    background: none repeat scroll 0 0 transparent;
+    color: #4094ad;
+    font-size: 12px;
+    display: block;
+    left: 0;
+    padding: 7px 24px 7px 0px;
+    position: relative;
+    transition: background 0.2s linear 0s, left 0.2s linear 0s;
+}
+
+#sent-secret-message-list .icon-remove {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+}

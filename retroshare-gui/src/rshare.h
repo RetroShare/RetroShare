@@ -61,7 +61,7 @@ public:
   ~Rshare();
 
   /** Return the version info */
-  static QString retroshareVersion(bool withRevision);
+  static QString retroshareVersion(bool=true);
 
   /** Return the map of command-line arguments and values. */
   static QMap<QString, QString> arguments() { return _args; }

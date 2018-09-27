@@ -26,9 +26,43 @@
 #include "util/rsjson.h"
 #include "retroshare/rsfiles.h"
 #include "util/radix64.h"
+#include "retroshare/rsversion.h"
 
 // Generated at compile time
 #include "jsonapi-includes.inl"
+
+#define INITIALIZE_API_CALL_JSON_CONTEXT \
+	RsGenericSerializer::SerializeContext cReq( \
+	            nullptr, 0, \
+	            RsGenericSerializer::SERIALIZATION_FLAG_YIELDING ); \
+	RsJson& jReq(cReq.mJson); \
+	if(session->get_request()->get_method() == "GET") \
+    { \
+	    const std::string jrqp(session->get_request()->get_query_parameter("jsonData")); \
+	    jReq.Parse(jrqp.c_str(), jrqp.size()); \
+	} \
+	else \
+	    jReq.Parse(reinterpret_cast<const char*>(body.data()), body.size()); \
+\
+	RsGenericSerializer::SerializeContext cAns; \
+	RsJson& jAns(cAns.mJson); \
+\
+	/* if caller specified caller_data put it back in the answhere */ \
+	const char kcd[] = "caller_data"; \
+	if(jReq.HasMember(kcd)) \
+	    jAns.AddMember(kcd, jReq[kcd], jAns.GetAllocator())
+
+#define DEFAULT_API_CALL_JSON_RETURN(RET_CODE) \
+	std::stringstream ss; \
+	ss << jAns; \
+	std::string&& ans(ss.str()); \
+	const std::multimap<std::string, std::string> headers \
+    { \
+        { "Content-Type", "text/json" }, \
+        { "Content-Length", std::to_string(ans.length()) } \
+	}; \
+	session->close(RET_CODE, ans, headers)
+
 
 static bool checkRsServicePtrReady(
         void* serviceInstance, const std::string& serviceName,
@@ -45,17 +79,11 @@ static bool checkRsServicePtrReady(
 	RsGenericSerializer::SerializeJob j(RsGenericSerializer::TO_JSON);
 	RS_SERIAL_PROCESS(jsonApiError);
 
-	std::stringstream ss;
-	ss << ctx.mJson;
-	std::string&& ans(ss.str());
-	const std::multimap<std::string, std::string> headers
-	{
-		{ "Content-Type", "text/json" },
-		{ "Content-Length", std::to_string(ans.length()) }
-	};
-	session->close(rb::CONFLICT, ans, headers);
+	RsJson& jAns(ctx.mJson);
+	DEFAULT_API_CALL_JSON_RETURN(rb::CONFLICT);
 	return false;
 }
+
 
 JsonApiServer::JsonApiServer(
         uint16_t port, const std::string& bindAddress,
@@ -65,8 +93,43 @@ JsonApiServer::JsonApiServer(
 	registerHandler("/jsonApiServer/shutdown",
 	                [this](const std::shared_ptr<rb::Session> session)
 	{
-		session->close(rb::OK);
-		shutdown();
+		size_t reqSize = session->get_request()->get_header("Content-Length", 0);
+		session->fetch( reqSize, [this](
+		                const std::shared_ptr<rb::Session> session,
+		                const rb::Bytes& body )
+		{
+			INITIALIZE_API_CALL_JSON_CONTEXT;
+			DEFAULT_API_CALL_JSON_RETURN(rb::OK);
+			shutdown();
+		} );
+	});
+
+	registerHandler("/jsonApiServer/version",
+	                [](const std::shared_ptr<rb::Session> session)
+	{
+		size_t reqSize = session->get_request()->get_header("Content-Length", 0);
+		session->fetch( reqSize, [](
+		                const std::shared_ptr<rb::Session> session,
+		                const rb::Bytes& body )
+		{
+			INITIALIZE_API_CALL_JSON_CONTEXT;
+
+			uint32_t major = RS_MAJOR_VERSION;
+			uint32_t minor = RS_MINOR_VERSION;
+			uint32_t mini = RS_MINI_VERSION;
+			std::string extra = RS_EXTRA_VERSION;
+			std::string human = RS_HUMAN_READABLE_VERSION;
+
+			RsGenericSerializer::SerializeContext& ctx(cAns);
+			RsGenericSerializer::SerializeJob j(RsGenericSerializer::TO_JSON);
+			RS_SERIAL_PROCESS(major);
+			RS_SERIAL_PROCESS(minor);
+			RS_SERIAL_PROCESS(mini);
+			RS_SERIAL_PROCESS(extra);
+			RS_SERIAL_PROCESS(human);
+
+			DEFAULT_API_CALL_JSON_RETURN(rb::OK);
+		} );
 	});
 
 	registerHandler("/rsFiles/getFileData",
@@ -77,19 +140,7 @@ JsonApiServer::JsonApiServer(
 		                const std::shared_ptr<rb::Session> session,
 		                const rb::Bytes& body )
 		{
-			RsGenericSerializer::SerializeContext cReq(
-			            nullptr, 0,
-			            RsGenericSerializer::SERIALIZATION_FLAG_YIELDING );
-			RsJson& jReq(cReq.mJson);
-			jReq.Parse(reinterpret_cast<const char*>(body.data()), body.size());
-
-			RsGenericSerializer::SerializeContext cAns;
-			RsJson& jAns(cAns.mJson);
-
-			// if caller specified caller_data put it back in the answhere
-			const char kcd[] = "caller_data";
-			if(jReq.HasMember(kcd))
-				jAns.AddMember(kcd, jReq[kcd], jAns.GetAllocator());
+			INITIALIZE_API_CALL_JSON_CONTEXT;
 
 			if(!checkRsServicePtrReady(rsFiles, "rsFiles", cAns, session))
 				return;
@@ -133,16 +184,7 @@ JsonApiServer::JsonApiServer(
 				if(!errorMessage.empty()) RS_SERIAL_PROCESS(errorMessage);
 			}
 
-			// return them to the API caller
-			std::stringstream ss;
-			ss << jAns;
-			std::string&& ans(ss.str());
-			const std::multimap<std::string, std::string> headers
-			{
-				{ "Content-Type", "text/json" },
-				{ "Content-Length", std::to_string(ans.length()) }
-			};
-			session->close(rb::OK, ans, headers);
+			DEFAULT_API_CALL_JSON_RETURN(rb::OK);
 		} );
 	});
 

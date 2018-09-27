@@ -174,6 +174,8 @@ private:
 	std::vector<RsGxsGroupId> gxsIds ;
 	TokenQueue *mIdQueue ;
 	QList<QAction*> mContextMenuActions;
+
+    std::set<RsGxsId> mPreSelectedGxsIds; // because loading of GxsIds is asynchroneous we keep selected Ids from the client in a list here and use it to initialize after loading them.
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(FriendSelectionWidget::ShowTypes)

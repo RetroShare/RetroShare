@@ -1,0 +1,79 @@
+.loginPage {
+    width: 766px;
+    height: 574px;
+    background: url('../img/loginpage/unseen-back.png');
+    border-radius:7px;
+    font-family: 'Roboto', Helvetica, Arial, sans-serif;
+}
+
+.loginPage .landing_header {
+    float: left;
+    margin-top: 215px;
+    margin-left: 150px;
+}
+
+.loginPage .login-item {
+    line-height: 52px;
+    text-align: left;
+}
+
+.loginPage .login-item label {
+    color: #fff;
+    font-size: 20pt;
+    font-weight: bold;
+    width: 120px;
+    float: left;
+    padding-top: 10px;
+}
+
+.loginPage .login-item a {
+    color: #fff;
+    font-size: 15pt;
+}
+
+.loginPage  .login-item .textbox, .login-item .password {
+    width: 330px!important;
+    height: 30px;
+    border-radius: 9px;
+    outline: none;
+    outline-width: 0px;
+    border: solid 1px #b7b7b7;
+    font-size: 16px;
+    margin-left: 20px;
+}
+
+.loginPage .forgot-link {
+    margin-left: 120px;
+}
+
+.loginPage  .btnOK {
+    margin-left: 130px;
+}
+
+.loginPage .signup-link a {
+    color: #fff;
+    font-size: 13pt;
+    text-decoration: none;
+}
+
+.loginPage .signup-link a:hover {
+    text-decoration: underline;
+}
+
+.loginPage .signup-link {
+    width: 100%;
+    float: left;
+    clear: both;
+    margin-left: auto;
+    margin-right: auto;
+    position: absolute;
+    left: 180px;
+    top: 420px;
+}
+#formQuestions input
+{
+    width: 90%;
+}
+#formQuestions input.wrong {
+    background: none repeat scroll 0 0 #F2DEDE;
+}

@@ -1,0 +1,129 @@
+.admin-pane{
+	display:none;
+}
+
+/* .unseen-admin .table{
+	display:none;
+}
+ */
+th.profile-image {
+  width: 35px;
+}
+
+img.profile-image {
+  width: 32px;
+  height: 32px;
+  margin-right: 2px;
+  min-width: 32px;
+}
+
+.unseen-admin .table th, .unseen-admin .table td {
+	vertical-align: middle;
+}
+
+.unseen-admin h2 {
+  color: #777777;	
+  font-size: 30px;
+  line-height: 1.2em;
+  margin: 30px 0;
+  text-align: center;
+}
+
+.unseen-admin h3 {
+  color: #333333;	
+  line-height: 1.2em;
+  font-family: 'Ubuntu', sans-serif;
+  font-weight: 700;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.new-coupon form,
+.new-premium-term form {
+    padding: 0 32px;
+}
+
+.new-coupon .input-append, 
+.new-coupon .input-prepend,
+.new-premium-term .input-append, 
+.new-premium-term .input-prepend {
+    margin: 2px 0;
+}
+
+.new-coupon input,
+.new-premium-term input{
+    margin-bottom: 0;
+}
+
+.new-coupon .control-group,
+.new-premium-term .control-group {
+    margin-bottom: 20px;
+}
+
+.unseen-admin .form-horizontal .control-label {
+    text-align: left;
+    padding-left: 30px;
+    width: 180px;
+}
+
+.unseen-admin .form-horizontal .controls {
+    margin-left: 210px;
+}
+
+.unseen-admin .radio-inline {
+    cursor: pointer;
+    display: inline-block;
+    font-weight: normal;
+    margin-bottom: 0;
+    padding-right: 20px;
+    padding-top: 5px;
+    vertical-align: middle;
+}
+
+.unseen-admin .label {
+	margin: 5px;
+	padding: 5px;
+}
+
+.unseen-admin .alert-danger, .unseen-admin .alert-error {
+    margin-top: 10px;
+}
+
+.modal-body .alert {
+	margin-bottom: 0;	
+}
+
+.new-coupon {
+    display:none;
+}
+
+.dropdown-menu-right{
+	right: 0;
+	left: auto;
+}
+
+.premium-term-edit-section {
+	background-color: #eee;
+	padding: 20px 0;
+	margin: 20px 0;
+}
+
+.premium-term-form-title {
+	text-align: center;
+	font-weight: bold;
+}
+
+.btn-create-premium-term {
+	margin-left:10px;
+}
+
+.control-group.required label:after {
+	content: "*";
+	margin-left: 5px;
+	color: #000;
+}
+
+.reference-number {
+	width: 180px;
+	word-break: break-all;
+}

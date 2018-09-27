@@ -129,7 +129,7 @@ void ConfCertDialog::load()
     if(!rsPeers->getPeerDetails(peerId, detail))
     {
         QMessageBox::information(this,
-                                 tr("RetroShare"),
+                                 tr("P2PUnseen"),
                                  tr("Error : cannot get peer details."));
         close();
         return;
@@ -165,16 +165,7 @@ void ConfCertDialog::load()
 
 		 RsPeerCryptoParams cdet ;
 		 if(RsControl::instance()->getPeerCryptoDetails(detail.id,cdet) && cdet.connexion_state!=0)
-		 {
-			 QString ct ;
-			  ct += QString::fromStdString(cdet.cipher_version) + ": ";
-			 ct += QString::fromStdString(cdet.cipher_name);
-
-			 if(cdet.cipher_version != "TLSv1.2")
-				ct += QString::number(cdet.cipher_bits_1);
-
-			 ui.crypto_info->setText(ct) ;
-		 }
+			 ui.crypto_info->setText(QString::fromStdString(cdet.cipher_name));
 		 else
 			 ui.crypto_info->setText(tr("Not connected")) ;
 
@@ -260,7 +251,7 @@ void ConfCertDialog::loadInvitePage()
     if (!rsPeers->getPeerDetails(peerId, detail))
     {
         QMessageBox::information(this,
-                                 tr("RetroShare"),
+                                 tr("P2PUnseen"),
                                  tr("Error : cannot get peer details."));
         close();
         return;
@@ -329,7 +320,7 @@ void ConfCertDialog::applyDialog()
     {
 	    if (!rsPeers->getGPGDetails(pgpId, detail)) {
 		    QMessageBox::information(this,
-		                             tr("RetroShare"),
+                                     tr("P2PUnseen"),
 		                             tr("Error : cannot get peer details."));
 		    close();
 		    return;

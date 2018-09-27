@@ -1,0 +1,121 @@
+body {
+    background-color: #F5F5F5;
+    position: fixed;
+    width: 100%;
+}
+
+/* Style apply to index.html ******************************/
+#appIndex #main-content {
+    width: 100%;
+    height: 100%;
+    padding: 4px;
+}
+
+#appIndex header#header {
+    height: 90px;
+}
+
+#appIndex #signup-form input {
+    max-width: 250px;
+    float: left;
+    margin-right: 20px;
+}
+
+#appIndex #sidebar {
+    margin-top: 20px;
+    margin-left: 60px;
+    margin-right: 60px;
+    min-width: 590px;
+}
+
+#appIndex #sidebar .tab-content {
+    padding: 20px 20px 5px;
+}
+
+#appIndex .form-group {
+    margin-bottom: 12px;
+    min-height: 35px;
+    clear: both;
+}
+
+#appIndex .more-links {
+    margin: 10px -20px 0px;
+    padding: 10px 20px 0px;
+    border-top: 1px solid #ddd;
+}
+
+#appIndex .ui-widget-content {
+    background: none;
+    background-color: #FEFEFE;
+}
+
+#appIndex .signupPopoverWrapper.popover {
+    display: none !important;
+}
+
+#appIndex #divTOSCheckbox {
+    width: 300px;
+}
+
+/* Updating */
+.loaderBackground{width:100%;height:100%;min-height:500px;position:fixed;top:0;left:0;background:url('../images/mountain.jpg') no-repeat fixed center 0 / cover #FFFFFF;background-size:cover!important; opacity: 0.4 !important; z-index: 999;}
+#topLoader {
+    position: fixed;
+    top: 140px;
+    left: 285px;
+    z-index: 9999;
+}
+
+
+#appIndex .alert {margin-bottom: 10px;}
+button.btn-login, #meeting-type .btn-primary {height: 40px;background: #30B7F1;color: #FFF !important;font-size: 16px;margin-right: 20px;padding: 5px 20px;border: 1px solid #008BC7; border-radius: 4px;}
+
+.isbackground{width:100%;height:100%;min-height:500px;position:fixed;top:0;left:0;background:url('../images/mountain.jpg') no-repeat fixed center 0 / cover #FFFFFF;background-size:cover!important; opacity: 0.92 !important; z-index: 9999;}
+.loadingmask{width:100%;height:100%;min-height:500px;position:fixed;top:0;left:0;background:url('../images/loading_3.gif') no-repeat scroll center center; background-size:130px 130px; background-color: #FFF; opacity: 0.6; z-index: 99999;}
+
+/* Style apply to chat.html ******************************/
+#appChat #reconectWapper {
+    background: white url(../images/loading.gif) 49% 50% no-repeat;
+    opacity: 0.6;
+}
+
+#appChat #recent_loading_screen img {
+    content: url(../images/loading.gif);
+    width: 25px;
+    opacity: 0.6;
+}
+
+#appChat .chat-list .file .progress-bar {
+    padding: 8px;
+}
+
+/* Common Style ******************************************/
+.ui-dialog .ui-dialog-titlebar .ui-dialog-titlebar-close {
+    background-image: url(../images/ui-icons_ffffff_256x240.png);
+    background-position: -96px -128px;
+    border: none;
+    width: 17px;
+    height: 17px;
+    background-color: transparent;
+}
+
+.ui-dialog .ui-dialog-titlebar {
+    background-image: url(../images/ui-bg_gloss-wave_25_333333_500x100.png);
+    color: #f9ce5a;
+    border: none;
+}
+
+.ui-dialog  {
+    font: 1em "Open Sans", Arial, sans-serif;
+    z-index: 999999;
+}
+
+.ui-dialog .ui-dialog-content p {
+    padding-top: 10px;
+}
+
+.ui-dialog .ui-dialog-buttonpane button {
+    padding: .4em 1em;
+}
+
+

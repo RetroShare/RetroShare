@@ -32,8 +32,8 @@
    <string>Status message</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../images.qrc">
-    <normaloff>:/images/logo/logo_16.png</normaloff>:/images/logo/logo_16.png</iconset>
+   <iconset resource="../../Unseengui/unseengui.qrc">
+    <normaloff>:/app/images/unseen16.png</normaloff>:/app/images/unseen16.png</iconset>
   </property>
   <widget class="QFrame" name="frame">
    <property name="geometry">
@@ -126,7 +126,7 @@ p, li { white-space: pre-wrap; }
     <string/>
    </property>
    <property name="pixmap">
-    <pixmap resource="../images.qrc">:/images/user/personal64.png</pixmap>
+    <pixmap resource="../../Unseengui/unseengui.qrc">:/chat/img/personal_un_64.png</pixmap>
    </property>
   </widget>
   <widget class="QFrame" name="frame_2">
@@ -173,8 +173,7 @@ border: 1px solid #CCCCCC;}
   <zorder>label</zorder>
  </widget>
  <resources>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
+  <include location="../../Unseengui/unseengui.qrc"/>
  </resources>
  <connections/>
 </ui>

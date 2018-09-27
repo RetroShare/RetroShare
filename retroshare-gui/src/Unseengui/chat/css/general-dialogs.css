@@ -1,0 +1,149 @@
+.fixed-dialog {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  -webkit-perspective: 2000px;
+  -moz-perspective: 2000px;
+  -o-perspective: 2000px;
+  perspective: 2000px;
+  display: none;
+}
+.fixed-dialog .logo {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url(../img/unsene-small.png) no-repeat center;
+}
+.fixed-dialog .dialog-container {
+  position: relative;
+  z-index: 9999;
+  margin: 0 auto;
+  top: 300px;
+  height: auto;
+  padding: 10px 30px;
+  width: 340px;
+  background: rgba(0, 0, 0, 0.85);
+  border: solid 8px rgba(0, 0, 0, 0.2);
+  -webkit-box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+  -moz-box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+  -webkit-border-radius: 12px;
+  -moz-border-radius: 12px;
+  border-radius: 12px;
+  color: #fff;
+  -webkit-backface-visibility: hidden;
+  -moz-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -webkit-transform-origin: center center;
+  -o-transform-origin: center center;
+  -moz-transform-origin: center center;
+  transform-origin: center center;
+  -webkit-transform: translate3d(0, 0px, 200px);
+  -moz-transform: translate3d(0, 0px, 200px);
+  -o-transform: translate3d(0, 0px, 200px);
+  transform: translate3d(0, 0px, 200px);
+  -webkit-transition: all 0.3s ease;
+  -moz-transition: all 0.3s ease;
+  -o-transition: all 0.3s ease;
+  transition: all 0.3s ease;
+}
+.fixed-dialog .dialog-container .logo {
+  position: absolute;
+  width: 32px;
+  height: 22px;
+  top: 20px;
+  left: 20px;
+  background: url(../img/unsene-small.png) no-repeat center;
+}
+.fixed-dialog .dialog-container .body {
+  font-size: 12px;
+  line-height: 1.4em;
+  font-weight: 400;
+  margin-left: 44px;
+  margin-top: 6px;
+}
+.fixed-dialog .dialog-container h4 {
+  font-size: 14px;
+  text-transform: uppercase;
+  font-weight: 400;
+  margin: 0 0 .5em;
+  color: #F9CF45;
+}
+.fixed-dialog .dialog-container p {
+  color: #fff;
+  font-weight: 300;
+}
+.fixed-dialog.processing ,.fixed-dialog.logging{
+  background: none;
+}
+.fixed-dialog.processing .dialog-container,.fixed-dialog.logging .dialog-container {
+  top: 300px;
+  height: 100px;
+  width: 100px;
+  padding: 0;
+  border: solid 1px rgba(0, 0, 0, 0.4);
+  -webkit-border-radius: 50px;
+  -moz-border-radius: 50px;
+  border-radius: 50px;
+  background: rgba(0, 0, 0, 0.8);
+  height: 90px;
+  width: 90px;
+  background-image: url(../img/load-white.gif);
+  background-position: center;
+  background-repeat: no-repeat;
+  -webkit-box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+  -moz-box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+}
+.fixed-dialog.processing .dialog-container .logo ,.fixed-dialog.logging .dialog-container .logo {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: auto;
+  width: auto;
+  background: url(../img/unsene-small.png) no-repeat center;
+}
+.fixed-dialog.in .dialog-container {
+  -webkit-transform: translate3d(0, 0, 0);
+  -moz-transform: translate3d(0, 0, 0);
+  -o-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
+}
+.fixed-dialog .load-image-group {
+  height: 90px;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  border-radius: 50%;
+  width: 90px;
+  position: relative;
+  opacity: .6;
+}
+.fixed-dialog.error .dialog-icon {
+  background: url(../img/no-dice.png) center no-repeat;
+  position: absolute;
+  width: 25px;
+  height: 25px;
+  top: 20px;
+  left: 20px;
+}
+.fixed-dialog.error h4 {
+  color: #D5433A;
+}
+.fixed-dialog.success .dialog-icon {
+  background: url(../img/green-check.png) center no-repeat;
+  position: absolute;
+  width: 34px;
+  height: 25px;
+  top: 20px;
+  left: 20px;
+}
+.fixed-dialog.success h4 {
+  color: #63D829;
+}

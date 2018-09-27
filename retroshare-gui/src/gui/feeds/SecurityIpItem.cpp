@@ -152,7 +152,7 @@ void SecurityIpItem::updateItem()
 		case RS_FEED_ITEM_SEC_IP_WRONG_EXTERNAL_IP_REPORTED:
 			ui->titleLabel->setText(tr("Wrong external ip address reported"));
 			ui->ipAddr->setText(QString::fromStdString(mIpAddr));
-            ui->ipAddr->setToolTip(tr("<p>This is the external IP your Retroshare node thinks it is using.</p>")) ;
+            ui->ipAddr->setToolTip(tr("<p>This is the external IP your P2PUnseen node thinks it is using.</p>")) ;
             ui->ipAddrReported->setText(QString::fromStdString(mIpAddrReported));
             ui->ipAddrReported->setToolTip(tr("<p>This is the IP your friend claims it is connected to. If you just changed IPs, this is a false warning. If not, that means your connection to this friend is forwarded by an intermediate peer, which would be suspicious.</p>")) ;
             break;

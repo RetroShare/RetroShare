@@ -290,7 +290,7 @@ void GenCertDialog::setupState()
 
 	//ui.no_node_label->setVisible(false);
 
-	setWindowTitle(generate_new?tr("Create new profile and new Retroshare node"):tr("Create new Retroshare node"));
+    setWindowTitle(generate_new?tr("Create new profile and new Unseen node"):tr("Create new Unseen node"));
 	//ui.headerFrame->setHeaderText(generate_new?tr("Create a new profile and node"):tr("Create a new node"));
 
     ui.reuse_existing_node_CB->setEnabled(adv_state) ;
@@ -300,7 +300,7 @@ void GenCertDialog::setupState()
     ui.genPGPuser->setVisible(adv_state && haveGPGKeys && !generate_new) ;
 
 	//ui.genprofileinfo_label->setVisible(false);
-	//ui.no_gpg_key_label->setText(tr("Welcome to Retroshare. Before you can proceed you need to create a profile and associate a node with it. To do so please fill out this form.\nAlternatively you can import a (previously exported) profile. Just uncheck \"Create a new profile\""));
+    //ui.no_gpg_key_label->setText(tr("Welcome to Unseen. Before you can proceed you need to create a profile and associate a node with it. To do so please fill out this form.\nAlternatively you can import a (previously exported) profile. Just uncheck \"Create a new profile\""));
 	//no_gpg_key_label->setVisible(false);
 
 	ui.name_label->setVisible(true);
@@ -367,7 +367,7 @@ void GenCertDialog::setupState()
 
 void GenCertDialog::exportIdentity()
 {
-	QString fname = QFileDialog::getSaveFileName(this,tr("Export profile"), "",tr("RetroShare profile files (*.asc)")) ;
+    QString fname = QFileDialog::getSaveFileName(this,tr("Export profile"), "",tr("P2PUnseen profile files (*.asc)")) ;
 
 	if(fname.isNull()) return ;
 	if(fname.right(4).toUpper() != ".ASC") fname += ".asc";
@@ -448,7 +448,7 @@ void GenCertDialog::useBobChecked(bool checked)
 bool GenCertDialog::importIdentity()
 {
 	QString fname ;
-	if(!misc::getOpenFileName(this,RshareSettings::LASTDIR_CERT,tr("Import profile"), tr("RetroShare profile files (*.asc);;All files (*)"),fname))
+    if(!misc::getOpenFileName(this,RshareSettings::LASTDIR_CERT,tr("Import profile"), tr("Unseen profile files (*.asc);;All files (*)"),fname))
 		return false;
 
 	if(fname.isNull())

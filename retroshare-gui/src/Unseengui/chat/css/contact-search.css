@@ -1,0 +1,141 @@
+i.icn-loading {
+  background: url(../img/loading.gif) center no-repeat;
+}
+.search-input-container input[type=text] {
+  width: 100%;
+}
+.unseen-search-contact .search-input-container > a {
+    position: absolute;
+    right: 14px;
+    top: 75px;
+    padding: 3px;
+    cursor: pointer;
+    display: block;
+    height: 21px;
+    width: 21px;
+    text-align: center;
+}
+.unseen-search-group .search-input-container > a {
+    position: absolute;
+    right: 14px;
+    top: 74px;
+    padding: 3px;
+    cursor: pointer;
+    display: block;
+    height: 21px;
+    width: 21px;
+    text-align: center;
+}
+
+.unseen-recent-list .search-input-container > a {
+    position: absolute;
+    right: 14px;
+    top: 45px;
+    padding: 3px;
+    cursor: pointer;
+    display: block;
+    height: 21px;
+    width: 21px;
+    text-align: center;
+}
+.search-input-container > a:hover {
+    color:#ffffff;
+}
+.unseen-recent-list  .search-input-container{
+    margin: 8px;
+}
+
+.search-input-container > a i {
+  position: relative;
+  left: 1px;
+}
+.search .instruction {
+  font-size: 11px;
+  line-height: 14px;
+  border-bottom: solid 1px #f2f2f2;
+  padding: 0px 12px 6px 12px;
+  margin-bottom: 12px;
+}
+.search .instruction p {
+  margin: 0;
+}
+.search p {
+  margin: 0 12px;
+  font-size: 11px;
+  font-weight: 400;
+  color: #777;
+}
+.search p.result-count {
+  line-height: 11px;
+  position: relative;
+  top: -2px;
+}
+.search ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.search ul li {
+  position: relative;
+}
+.search ul li:hover {
+  background: #eee;
+}
+.search ul li > a {
+  padding: 6px 12px 6px 12px;
+  display: block;
+  color: #444;
+  line-height: 16px;
+  font-size: 14px;
+  position: relative;
+}
+.search ul li > a img {
+  position: absolute;
+  left: 12px;
+  top: 6px;
+  width: 32px;
+  height: 32px;
+}
+.search ul li > a span {
+  display: block;
+  margin-left: 40px;
+}
+.search ul li > a .name {
+  margin-top: 2px;
+  font-weight: normal;
+}
+.search ul li > a .city,
+.search ul li > a .username {
+  color: #999;
+  -webkit-font-smoothing: auto;
+  font-size: 11px;
+  font-style: italic;
+}
+.search ul li > a .city {
+  margin-top: 4px;
+  margin-left: 0;
+}
+.search ul li > a .icon-globe {
+  margin-top: -1px;
+  opacity: .7;
+  margin-right: 0;
+}
+.search ul li > a:hover {
+  text-decoration: none;
+}
+.search ul li .actions {
+  position: absolute;
+  top: 9px;
+  right: 12px;
+}
+.search ul li .btn {
+  font-weight: 400;
+  padding: 1px 1px 1px 4px;
+  height: 20px;
+  line-height: 20px;
+  color: #fff;
+}
+.search ul img {
+  width: 32px;
+  margin-right: 6px;
+}

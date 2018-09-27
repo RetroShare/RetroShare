@@ -52,7 +52,7 @@ QString GxsForumsDialog::getHelpString() const
 {
 	QString hlp_str = tr(
 			"<h1><img width=\"32\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Forums</h1>               \
-			<p>Retroshare Forums look like internet forums, but they work in a decentralized way</p>    \
+            <p>P2PUnseen Forums look like internet forums, but they work in a decentralized way</p>    \
 			<p>You see forums your friends are subscribed to, and you forward subscribed forums to      \
 			your friends. This automatically promotes interesting forums in the network.</p>            \
             <p>Forum messages are kept for %1 days and sync-ed over the last %2 days, unless you configure it otherwise.</p>\

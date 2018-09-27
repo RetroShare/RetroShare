@@ -763,7 +763,7 @@ HomePage QPlainTextEdit#userCertEdit {
 HomePage QFrame#addframe{
 	border: 2px solid #0099cc;
 	border-radius: 6px;
-	background: white;
+        background: white;
 }
 
 ConnectFriendWizard QFrame#friendFrame {
@@ -775,7 +775,7 @@ ConnectFriendWizard QFrame#friendFrame {
 HomePage QFrame#helpframe{
 	border: 2px solid #009933;
 	border-radius: 6px;
-	background: white;
+        background: white;
 }
 
 StartDialog QPushButton#loadButton { 
@@ -790,11 +790,11 @@ StartDialog QPushButton#loadButton:hover {
 }
 
 StartDialog QFrame#loginframe{
- border-image: url(:/images/logo/background_lessblue.png) 0 0 0 0 stretch stretch;
+ border-image: url(:/home/img/mountain.jpg) 0 0 0 0 stretch stretch;
  border-width: 0px;
 }
 
 GenCertDialog QFrame#profileframe{
-  border-image: url(:/images/logo/background.png) 0 0 0 0 stretch stretch;
+  border-image: url(:/home/img/snow-mountain.jpg) 0 0 0 0 stretch stretch;
   border-width: 0px;
 }

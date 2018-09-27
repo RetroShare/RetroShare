@@ -61,7 +61,7 @@ extern "C" {
 	// It will be tested by RS to load the plugin automatically, since it is safe to load plugins
 	// with same revision numbers, assuming that the revision numbers are up-to-date.
 	//
-	uint32_t RETROSHARE_PLUGIN_revision = RS_REVISION_NUMBER ;
+	uint32_t RETROSHARE_PLUGIN_revision = 0;
 
 	// This symbol contains the svn revision number grabbed from the executable. 
 	// It will be tested by RS to load the plugin automatically, since it is safe to load plugins
@@ -74,8 +74,8 @@ void VOIPPlugin::getPluginVersion(int& major, int& minor, int& build, int& svn_r
 {
 	major = RS_MAJOR_VERSION ;
 	minor = RS_MINOR_VERSION ;
-	build = RS_BUILD_NUMBER ;
-	svn_rev = RS_REVISION_NUMBER ;
+	build = RS_MINI_VERSION ;
+	svn_rev = 0;
 }
 
 VOIPPlugin::VOIPPlugin()
@@ -125,8 +125,8 @@ QDialog *VOIPPlugin::qt_about_page() const
 		about_dialog = new QMessageBox() ;
 
 		QString text ;
-		text += QObject::tr("<h3>RetroShare VOIP plugin</h3><br/>   * Contributors: Cyril Soler, Josselin Jacquard<br/>") ;
-		text += QObject::tr("<br/>The VOIP plugin adds VOIP to the private chat window of RetroShare. To use it, proceed as follows:<UL>") ;
+        text += QObject::tr("<h3>P2PUnseen VOIP plugin</h3><br/>   * Contributors: Cyril Soler, Josselin Jacquard<br/>") ;
+        text += QObject::tr("<br/>The VOIP plugin adds VOIP to the private chat window of P2PUnseen. To use it, proceed as follows:<UL>") ;
 		text += QObject::tr("<li> setup microphone levels using the configuration panel</li>") ;
 		text += QObject::tr("<li> check your microphone by looking at the VU-meters</li>") ;
 		text += QObject::tr("<li> in the private chat, enable sound input/output by clicking on the two VOIP icons</li></ul>") ;
@@ -178,7 +178,7 @@ QIcon *VOIPPlugin::qt_icon() const
 
 std::string VOIPPlugin::getShortPluginDescription() const
 {
-	return QApplication::translate("VOIP", "This plugin provides voice communication between friends in RetroShare.").toUtf8().constData();
+    return QApplication::translate("VOIP", "This plugin provides voice communication between friends in P2PUnseen.").toUtf8().constData();
 }
 
 std::string VOIPPlugin::getPluginName() const

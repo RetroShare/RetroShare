@@ -1559,7 +1559,7 @@ void ChatWidget::clearChatHistory()
 
 void ChatWidget::deleteChatHistory()
 {
-	if ((QMessageBox::question(this, "RetroShare", tr("Do you really want to physically delete the history?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes)) == QMessageBox::Yes) {
+    if ((QMessageBox::question(this, "P2PUnseen", tr("Do you really want to physically delete the history?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes)) == QMessageBox::Yes) {
 		clearChatHistory();
         rsHistory->clear(chatId);
 	}

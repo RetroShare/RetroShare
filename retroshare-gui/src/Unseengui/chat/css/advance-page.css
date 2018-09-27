@@ -1,0 +1,44 @@
+.advance-form {
+    margin: 14px;
+}
+.advance-form hr {
+    clear: both;
+}
+.advance-form .row-fluid input[type=text],
+.advance-form .row-fluid input[type=password] {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    width: 100%;
+    height: 30px;
+    margin-left: 20px;
+}
+
+.advance-form .row-fluid textarea{
+    width: 75%;
+}
+.advance-form button#updateStatus{
+    float: none;
+    margin: 0px 0 0 2px;
+}
+.advance-form button {
+    clear: both;
+    float: left;
+    margin: 12px 0;
+}
+.advance-form button.button-row {
+    clear: none;
+    float: left;
+    margin-top: 12px;
+    margin-right: 10px;
+}
+
+.advance-form .row-fluid .span3 {
+    width: 160px;
+}
+
+ .advance-form  label.enterpassphrase{
+    padding-left:20px;
+    font-weight: bold;
+}
+

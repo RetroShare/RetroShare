@@ -1,0 +1,27 @@
+<RCC>
+    <qresource prefix="/">
+        <file>home/img/unseen-logo-home.png</file>
+        <file>home/img/mountain.jpg</file>
+        <file>home/img/avatar_new.png</file>
+        <file>home/img/Unseen.png</file>
+        <file>app/images/loading_3.gif</file>
+        <file>app/images/icon.png</file>
+        <file>home/img/snow-mountain.jpg</file>
+        <file>chat/img/no_avatar_un_70.png</file>
+        <file>chat/img/no_avatar_background_un_96.png</file>
+        <file>chat/img/personal_un_24.png</file>
+        <file>chat/img/personal_un_32.png</file>
+        <file>chat/img/personal_un_64.png</file>
+        <file>chat/img/personal_un_128.png</file>
+        <file>chat/img/personal_un_250.png</file>
+        <file>chat/img/friends_off_un_128.png</file>
+        <file>chat/img/friends_on_un_128.png</file>
+        <file>chat/img/unsene_favicon_16.png</file>
+        <file>app/images/unseen128.png</file>
+        <file>app/images/unseen16.png</file>
+        <file>app/images/unseen20.png</file>
+        <file>app/images/unseen32.png</file>
+        <file>app/images/unseen48.png</file>
+        <file>app/images/unseen64.png</file>
+    </qresource>
+</RCC>

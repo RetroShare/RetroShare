@@ -1,0 +1,62 @@
+.modal.modal-profile a {
+    color: #08A0DB;
+}
+.modal.modal-profile h2 {
+    margin-top: 0;
+    margin-bottom: 5px;
+    line-height: 1em;
+    padding-left: 10px;
+}
+.modal.modal-profile .username {
+    margin-top: 0;
+    margin-bottom: 12px;
+}
+.modal.modal-profile .profile-image {
+    width: 100px;
+    height: 100px;
+    margin: 15px 12px 0 10px;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+.modal.modal-profile .personal-information {
+    font-size: 12px;
+}
+.modal.modal-profile .personal-information ul {
+    margin-bottom: 0;
+}
+.modal.modal-profile .personal-information ul li {
+    line-height: 16px;
+    margin-bottom: 2px;
+}
+.modal.modal-profile .personal-information ul li i {
+    margin-top: 0;
+}
+.modal.modal-profile .modal-body {
+    position: relative;
+}
+.modal.modal-profile .modal-body > .wrap {
+    padding: 16px;
+    min-height: 128px;
+}
+.modal.modal-profile .modal-footer {
+    font-size: 12px;
+    line-height: 14px;
+}
+.modal.modal-profile .modal-footer p {
+    margin-bottom: 0;
+    -webkit-font-smoothing: auto;
+    text-align: left;
+}
+.modal.modal-profile .referral-codes span {
+    display: inline-block;
+    min-width: 22px;
+}
+
+.modal.modal-profile .modal-content{
+    min-width: 500px;
+}
+
+.modal-profile .modal-header {
+    border-bottom:none;
+}

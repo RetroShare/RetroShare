@@ -105,17 +105,8 @@ linux-g++-64 {
 }
 
 version_detail_bash_script {
-	linux-* {
-		DEFINES += ADD_LIBRETROSHARE_VERSION_INFO
-		QMAKE_EXTRA_TARGETS += write_version_detail
-		PRE_TARGETDEPS = write_version_detail
-		write_version_detail.commands = $$PWD/version_detail.sh
-	}
-    win32-* {
-		QMAKE_EXTRA_TARGETS += write_version_detail
-		PRE_TARGETDEPS = write_version_detail
-		write_version_detail.commands = $$PWD/version_detail.bat
-	}
+	warning("Version detail script is deprecated.")
+	warning("Remove references to version_detail_bash_script from all of your build scripts!")
 }
 
 #################### Cross compilation for windows under Linux ###################
@@ -216,6 +207,9 @@ macx {
 	mac_webui.files = $$files($$PWD/../../libresapi/src/webui)
 	mac_webui.path = Contents/Resources
 	QMAKE_BUNDLE_DATA += mac_webui
+        mac_dht.files= $$files($$PWD/../../libbitdht/src/bitdht/*.txt)
+        mac_dht.path = Contents/Resources
+        QMAKE_BUNDLE_DATA +=mac_dht
 
 	CONFIG += version_detail_bash_script
         LIBS += -lssl -lcrypto -lz 
@@ -950,7 +944,8 @@ SOURCES +=  main.cpp \
 #            gui/feeds/ChanNewItem.cpp \
 #            gui/feeds/ChanMsgItem.cpp \
 
-RESOURCES += gui/images.qrc gui/icons.qrc lang/lang.qrc gui/help/content/content.qrc gui/emojione.qrc
+RESOURCES += gui/images.qrc gui/icons.qrc lang/lang.qrc gui/help/content/content.qrc gui/emojione.qrc \
+    Unseengui/unseengui.qrc
 
 TRANSLATIONS +=  \
             lang/retroshare_ca_ES.ts \

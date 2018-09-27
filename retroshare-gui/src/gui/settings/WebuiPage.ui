@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>497</width>
+    <width>543</width>
     <height>404</height>
    </rect>
   </property>
@@ -17,7 +17,7 @@
    <item>
     <widget class="QCheckBox" name="enableWebUI_CB">
      <property name="text">
-      <string>Enable Retroshare WEB Interface</string>
+      <string>Enable P2PUnseen WEB Interface</string>
      </property>
     </widget>
    </item>
@@ -67,7 +67,7 @@
    <item>
     <widget class="QLabel" name="noteLabel">
      <property name="text">
-      <string>Note: these settings do not affect retroshare-nogui. Retroshare-nogui has a command line switch to activate the web interface.</string>
+      <string>Note: these settings do not affect P2PUnseen-nogui. P2PUnseen-nogui has a command line switch to activate the web interface.</string>
      </property>
      <property name="wordWrap">
       <bool>true</bool>

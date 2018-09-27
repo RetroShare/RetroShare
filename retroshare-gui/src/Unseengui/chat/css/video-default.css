@@ -1,0 +1,379 @@
+/* Audio Call Styles */
+.chat-overlay {position: fixed;top: 50px;left: 400px;min-width: 390px;padding: 10px;height: auto;z-index: 9999;border: 1px solid #000;background: rgba(0, 0, 0, 0.9);color: rgb(255, 255, 255);-webkit-box-shadow: 0px 0px 30px rgba(0, 0, 0, 1);  -moz-box-shadow: 0px 0px 30px rgba(0, 0, 0, 1);  box-shadow: 0px 0px 30px rgba(0, 0, 0, 1);z-index: 99999;}
+.chat-overlay .header {-webkit-font-smoothing: auto;cursor: move;overflow: hidden;border-top-right-radius: 8px;border-top-left-radius: 8px;line-height: 14px;font-size: 12px;color: rgb(255, 255, 255);margin-bottom: 10px;}
+.chat-overlay .header .title {font: normal 18px arial;}
+.chat-overlay .header .window-options {position: absolute;right: 10px;top: 10px;}
+.chat-overlay .header .window-options a {font-size: 18px;color: #fff;cursor: pointer;margin-left: 8px;}
+.chat-overlay .chat-content {text-align: center;line-height: 12px;}
+.chat-overlay .chat-controls {line-height: 10px;}
+.audioContactAvatar img.audioRemoteCalleeProfile {width: 85px;height: 85px;margin-bottom: 10px;}
+.chat-content .audioContactName , .avIncomingCallerName {color: yellow; padding: 5px 0px;}
+.chat-controls .connection-controls button {width: 100%;}
+.chat-overlay a {color: #fff;} .chat-overlay a:hover {color: #30b7f1;}
+.audio-status a.btn-micro {background: #fff;border: 1px solid #ccc;color: #000;width: 30px;height: 30px;padding: 4px;border-radius: 50%;margin: 10px 0px;}
+.video-call-status .audio-status a.btn-micro {position: absolute;bottom: 0px;right: 20px;}
+.self-pip video {
+    max-height: 100px;
+    width: 100px;
+    position: absolute;
+    left: 12px;
+    bottom: 45px;
+}
+.one-to-one-video-active{
+    width: 430px;
+}
+.video-call-status {position: relative;bottom: 0px;left: 0px;right: 0px;width: 100%;height: 80px;margin-top: -80px;padding: 30px 0px 10px;/* IE9 SVG, needs conditional override of 'filter' to 'none' */  background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzAwMDAwMCIgc3RvcC1vcGFjaXR5PSIwIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMwMDAwMDAiIHN0b3Atb3BhY2l0eT0iMC43MiIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);  background: -moz-linear-gradient(top,  rgba(0,0,0,0) 0%, rgba(0,0,0,0.72) 100%); /* FF3.6+ */  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(0,0,0,0)), color-stop(100%,rgba(0,0,0,0.72))); /* Chrome,Safari4+ */  background: -webkit-linear-gradient(top,  rgba(0,0,0,0) 0%,rgba(0,0,0,0.72) 100%); /* Chrome10+,Safari5.1+ */  background: -o-linear-gradient(top,  rgba(0,0,0,0) 0%,rgba(0,0,0,0.72) 100%); /* Opera 11.10+ */  background: -ms-linear-gradient(top,  rgba(0,0,0,0) 0%,rgba(0,0,0,0.72) 100%); /* IE10+ */  background: linear-gradient(to bottom,  rgba(0,0,0,0) 0%,rgba(0,0,0,0.72) 100%); /* W3C */  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00000000', endColorstr='#b8000000',GradientType=0 ); /* IE6-8 */;}
+.chat-overlay.group-video-chat {width: 678px;}
+.group-video-chat .chat-content {float: left;width: 100%;max-height: 580px;}
+.group-video-chat ul.pip {float: left;padding: 15px;list-style: none;}
+.group-video-chat .header .title {width: 60%;float: left;}
+.group-video-chat .header .memberls {
+    font: normal 16px arial;
+    margin-top: 5px;
+    margin-right: 60px;
+    float: right;
+}
+.group-video-chat .contact-list {float: left; width: 100%;   height:100%;}
+.group-video-chat .contact-list ul li {width: 46%;float: left;list-style: none;margin: 2%;text-align: center;}
+.group-video-chat .contact-list ul li img {width: 100px;height: 90px;}
+.chat-overlay.group-video-chat.maximize{
+    width:auto;
+}
+.chat-overlay.group-video-chat.maximize .contact-list{
+    float: right;
+    padding-left: 10px;
+    width: 130px;
+}
+.chat-overlay.group-video-chat .slimScrollDiv{
+    height:280px;
+}
+.chat-overlay.group-video-chat .slimScroll-100{
+    height:280px;
+}
+.chat-overlay.group-video-chat.maximize .contact-list ul li{
+    float:none;
+    width: 100%;
+}
+
+.chat-overlay.minimize {
+    top: 0px !important;
+    left: 12px !important;
+    width: auto;
+    font-size: 0;
+    cursor: pointer;
+    line-height: 0;
+    -webkit-border-bottom-right-radius: 0;
+    -moz-border-radius-bottomright: 0;
+    border-bottom-right-radius: 0;
+    -webkit-border-bottom-left-radius: 0;
+    -moz-border-radius-bottomleft: 0;
+    border-bottom-left-radius: 0;
+}
+.chat-overlay.minimize .title {
+    width: 100%;
+}
+.chat-overlay.minimize .header {
+    cursor: pointer;
+    display: inline-block;
+    vertical-align: bottom;
+    padding: 13px 8px;
+    border-right: solid 1px #333;
+    -webkit-font-smoothing: antialiased;
+    font-weight: 600;
+    -webkit-border-top-right-radius: 0;
+    -moz-border-radius-topright: 0;
+    border-top-right-radius: 0;
+}
+.chat-overlay.minimize .header .window-options {
+    display: none;
+}
+.chat-overlay.minimize .header .status-message {
+    display: none;
+}
+.chat-overlay.minimize.active .header {
+    color: #19ff29;
+}
+.chat-overlay.minimize.hold .header {
+    color: #ffb108;
+}
+.chat-overlay.minimize .chat-content , .chat-overlay.minimize .memberls{
+    display: none;
+}
+.chat-overlay.minimize .control-bar {
+    font-size: 14px;
+    display: inline-block;
+    vertical-align: bottom;
+}
+.chat-overlay.minimize .control-bar .chat-title {
+    max-width: 250px;
+}
+.chat-overlay.minimize .open > .dropdown-menu {
+    top: auto;
+    bottom: 115%;
+}
+
+.chat-overlay .incoming-detail {
+    padding: 24px 24px 40px;
+    color: #fff;
+    text-align: center;
+    -webkit-font-smoothing: auto;
+}
+.chat-overlay .incoming-detail img {
+    width: 96px;
+    display: block;
+    margin: 0 auto 8px;
+}
+.chat-overlay .incoming-detail .members ul {
+    margin: 0 0 24px;
+    padding: 0;
+}
+.chat-overlay .incoming-detail .members li {
+    list-style: none;
+    padding: 4px;
+    font-size: 12px;
+    background: #111;
+    text-align: left;
+    margin-bottom: 1px;
+}
+.chat-overlay .incoming-detail .members li img {
+    width: 24px;
+    display: inline;
+    margin: 0;
+    margin-right: 8px;
+}
+.chat-overlay .incoming-detail .members li span {
+    position: relative;
+    top: 1px;
+}
+.chat-overlay .incoming-detail .type {
+    font-weight: 600;
+    background-color: #000;
+    border-top: solid 1px #333;
+    border-bottom: solid 1px #333;
+    width: 100%;
+    padding: 8px 24px;
+    color: #F9CF45;
+}
+.chat-overlay .incoming-detail .type p {
+    margin: 0;
+}
+.chat-overlay .incoming-detail .incoming-options {
+    position: absolute;
+    bottom: -1px;
+    left: -1px;
+    right: -1px;
+    height: 40px;
+}
+.chat-overlay .incoming-detail .incoming-options .left,
+.chat-overlay .incoming-detail .incoming-options .right {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 50%;
+    bottom: 0;
+}
+.chat-overlay .incoming-detail .incoming-options .left a,
+.chat-overlay .incoming-detail .incoming-options .right a {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    line-height: 38px;
+    padding: 0;
+    -webkit-border-top-right-radius: 0;
+    -moz-border-radius-topright: 0;
+    border-top-right-radius: 0;
+    -webkit-border-top-left-radius: 0;
+    -moz-border-radius-topleft: 0;
+    border-top-left-radius: 0;
+    -webkit-border-bottom-right-radius: 6px;
+    -moz-border-radius-bottomright: 6px;
+    border-bottom-right-radius: 6px;
+    -webkit-border-bottom-left-radius: 6px;
+    -moz-border-radius-bottomleft: 6px;
+    border-bottom-left-radius: 6px;
+}
+.chat-overlay .incoming-detail .incoming-options .left a {
+    -webkit-border-bottom-right-radius: 0;
+    -moz-border-radius-bottomright: 0;
+    border-bottom-right-radius: 0;
+}
+.chat-overlay .incoming-detail .incoming-options .right {
+    left: 50%;
+    right: 0;
+}
+.chat-overlay .incoming-detail .incoming-options .right a {
+    -webkit-border-bottom-left-radius: 0;
+    -moz-border-radius-bottomleft: 0;
+    border-bottom-left-radius: 0;
+}
+.chat-overlay.incoming {
+    width: 300px;
+}
+.chat-overlay.incoming .header .window-options {
+    display: none;
+}
+.chat-overlay.incoming .chat-content {
+    border: none;
+    -webkit-border-bottom-right-radius: 8px;
+    -moz-border-radius-bottomright: 8px;
+    border-bottom-right-radius: 8px;
+    -webkit-border-bottom-left-radius: 8px;
+    -moz-border-radius-bottomleft: 8px;
+    border-bottom-left-radius: 8px;
+}
+.chat-overlay.incoming .control-bar {
+    display: none;
+}
+.group-video-active .contact-list li p.talking, .group-audio-active .contact-list li p.talking{
+    color:yellow!important;
+    font-weight: bold!important;
+}
+.group-audio-active .contact-list .member_name{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-top: 5px;
+    margin-bottom: 0px;
+}
+.contact-list li p.talking .fa:before {
+    content: "\f027";
+}
+.group-video-active .video-call-status .avGroupCallDuration{
+    margin-top: 20px;
+}
+.chat-overlay.minimize .slimScrollDiv{
+    display: none;
+}
+#us_server,#group_call_centralized,#call_centralized {
+    float: right;
+    margin-right: 0px;
+    text-align: center;
+}
+
+#us_server img  {
+    background: url(../img/icons-list2.png) 0px -53px no-repeat;
+    display: inline-block;
+    font-size: 0!important;
+    line-height: 0!important;
+    height: 53px;
+
+}
+img.centralized, img.p2p{
+    cursor: pointer;
+}
+.panelSelectFg img {
+    cursor: pointer;
+    height: 130px;
+}
+.panelSelectFg p {
+    margin-bottom: 0px;
+}
+
+
+.panelSelectFg label {
+    font-weight: bold;
+    font-size: 14px;
+    text-transform:uppercase;
+    color: #336699;
+    padding-top: 10px;
+}
+.group_country img {
+    cursor: pointer;
+    height: 60px;
+}
+
+.group_country label {
+    font-weight: bold;
+    font-size: 14px;
+}
+
+#is_server,#group_call_p2p,#call_p2p {
+    float: left;
+    padding:  0px;
+    text-align: center;
+}
+
+#is_server img  {
+    background: url(../img/icons-list2.png) 0px 0px no-repeat;
+    display: inline-block;
+    font-size: 0!important;
+    line-height: 0!important;
+    height: 53px;
+
+}
+.chat-overlay .title img
+{
+    width: 20px;
+}
+
+.chat-overlay .audioIncomingCallerName{
+    color: #1CDB1C;
+    margin-bottom: 10px;
+    margin-top: 10px;
+}
+#remoteVideo {
+    width: 100%;
+    height: 100%;
+}
+#remoteGroupVideo {
+    width: 100%;
+    height: 100%
+}
+.group-audio-active{
+    max-height:475px;
+    width: 345px;
+}
+.group-audio-active .contact-list {float: left; width: 100%;   height:100%;}
+.group-audio-active .contact-list ul li {width: 46%;float: left;list-style: none;margin: 2%;text-align: center;}
+.group-audio-active .contact-list ul li img {width: 100px;height: 90px;}
+
+
+.chat-overlay.group-audio-active .slimScrollDiv{
+    height:440px;
+
+}
+.chat-overlay.group-audio-active .slimScroll-100{
+
+     height: 440px;
+}
+
+.group-audio-active .chat-content{
+    margin-bottom: 10px;
+}
+.group-audio-active .callName{
+    padding-top: 10px;
+    font-size: 14px;
+}
+.group-audio-active .callName a.toggle-mic{
+    line-height: 10px;
+    padding-top: 0px;
+}
+.modal-content .panelSelectFg{
+    width: 100%;
+    height: 160px;
+}
+.select_country .modal-body h3{
+    font-size: 16px;
+    padding-left: 10px;
+    font-weight: bold;
+}
+.chat-overlay.group-audio-active.minimize .header{
+    border-right: none;
+}
+a.icon-maximize{
+    display: none;
+}
+
+.select_connection_type .modal-body h4{
+    color: #0099cc;
+    text-align: center;
+    font-size: 22px;
+}
+.select_connection_type .call_type:hover,.select_connection_type .groupcall_type:hover{
+   background:gray;
+}
+.select_join_call,.select_join_group_call{
+     z-index: 200000;
+}

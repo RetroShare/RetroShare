@@ -64,7 +64,7 @@
         <enum>Qt::NoFocus</enum>
        </property>
        <property name="toolTip">
-        <string>Share your RetroShare Key</string>
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Share your &lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:12pt;&quot;&gt;P2PUnseen&lt;/span&gt; Key&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <property name="icon">
         <iconset resource="icons.qrc">
@@ -90,7 +90,7 @@
         <string>...</string>
        </property>
        <property name="icon">
-        <iconset resource="icons.qrc">
+        <iconset resource="images.qrc">
          <normaloff>:/icons/help_64.png</normaloff>:/icons/help_64.png</iconset>
        </property>
        <property name="checkable">
@@ -112,7 +112,7 @@
         </font>
        </property>
        <property name="text">
-        <string>The text below is your own Retroshare certificate. Send it to your friends</string>
+        <string>The text below is your own P2PUnseen certificate. Send it to your friends</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -146,11 +146,14 @@ private and secure decentralized communication platform.
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(39, 183, 237);</string>
+     </property>
      <property name="text">
       <string/>
      </property>
      <property name="pixmap">
-      <pixmap resource="images.qrc">:/images/logo/logo_web_nobackground.png</pixmap>
+      <pixmap resource="../Unseengui/unseengui.qrc">:/home/img/unseen-logo-home.png</pixmap>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
@@ -286,7 +289,7 @@ private and secure decentralized communication platform.
          </font>
         </property>
         <property name="text">
-         <string>Do you need help with RetroShare?</string>
+         <string>Do you need help with P2PUnseen?</string>
         </property>
        </widget>
       </item>
@@ -323,8 +326,9 @@ private and secure decentralized communication platform.
   <zorder>helpframe</zorder>
  </widget>
  <resources>
-  <include location="icons.qrc"/>
+  <include location="../Unseengui/unseengui.qrc"/>
   <include location="images.qrc"/>
+  <include location="icons.qrc"/>
  </resources>
  <connections/>
 </ui>

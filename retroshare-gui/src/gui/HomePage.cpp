@@ -86,15 +86,15 @@ HomePage::HomePage(QWidget *parent) :
 
     int S = QFontMetricsF(font()).height();
  QString help_str = tr(
- " <h1><img width=\"%1\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Welcome to Retroshare!</h1>\
+ " <h1><img width=\"%1\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Welcome to P2PUnseen!</h1>\
    <p>You need to <b>make friends</b>! After you create a network of friends or join an existing network,\
 	  you'll be able to exchange files, chat, talk in forums, etc. </p>\
 	<div align=center>\
 	<IMG align=\"center\" width=\"%2\" src=\":/images/network_map.png\"/> \
     </div>\
    <p>To do so, copy your certificate on this page and send it to friends, and add your friends' certificate.</p> \
-   <p>Another option is to search the internet for \"Retroshare chat servers\" (independently administrated). These servers allow you to exchange \
-	certificates with a dedicated Retroshare node, through which\
+   <p>Another option is to search the internet for \"P2PUnseen chat servers\" (independently administrated). These servers allow you to exchange \
+    certificates with a dedicated P2PUnseen node, through which\
 	  you will be able to anonymously meet other people.</p> ").arg(QString::number(2*S)).arg(width()*0.5);
              registerHelpButton(ui->helpButton,help_str,"HomePage") ;
 }
@@ -146,19 +146,19 @@ void HomePage::recommendFriends()
 
 void HomePage::runEmailClient()
 {
-	sendMail("", tr("RetroShare Invite"), ui->userCertEdit->toPlainText());
+    sendMail("", tr("P2PUnseen Invite"), ui->userCertEdit->toPlainText());
 }
 
 void HomePage::copyCert()
 {
 	QClipboard *clipboard = QApplication::clipboard();
 	clipboard->setText(ui->userCertEdit->toPlainText());
-	QMessageBox::information(this, "RetroShare", tr("Your Cert is copied to Clipboard, paste and send it to your friend via email or some other way"));
+    QMessageBox::information(this, "P2PUnseen", tr("Your Cert is copied to Clipboard, paste and send it to your friend via email or some other way"));
 }
 
 void HomePage::saveCert()
 {
-	QString fileName = QFileDialog::getSaveFileName(this, tr("Save as..."), "", tr("RetroShare Certificate (*.rsc );;All Files (*)"));
+    QString fileName = QFileDialog::getSaveFileName(this, tr("Save as..."), "", tr("P2PUnseen Certificate (*.rsc );;All Files (*)"));
 	if (fileName.isEmpty())
 		return;
 
@@ -205,5 +205,5 @@ void HomePage::runStartWizard()
 
 void HomePage::openWebHelp()
 {
-    QDesktopServices::openUrl(QUrl(QString("https://retroshare.readthedocs.io")));
+    QDesktopServices::openUrl(QUrl(QString("https://unseen.zendesk.com"))); //D
 }

@@ -1,0 +1,53 @@
+
+.modal.new-group form {
+  padding-top: 24px;
+}
+.modal.new-group input {
+  border: solid 1px #ddd;
+}
+.modal.new-group .name-group {
+  margin: 10px 10px 10px;
+}
+.modal.new-group .close {
+  margin-top: 1px;
+}
+.modal.new-group .btn-add-contact {
+  margin-right: 255px;
+}
+.modal.new-group .contacts-filter {
+  margin-right: 15px;
+}
+#new-group label.groupName{
+    padding-left: 0px;
+    padding-top: 6px;
+}
+
+form.signup input.wrong {
+    background: #f2dede;
+}
+form.signup input.valid {
+    background: #dff0d8;
+}
+.alert-error {
+    background-color: #f2dede;
+    border-color: #eed3d7;
+    color: #b94a48;
+}
+.alert, .alert h4 {
+    color: #c09853;
+}
+.alert {
+    padding: 8px 35px 8px 14px;
+    margin-bottom: 20px;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+    background-color: #fcf8e3;
+    border: 1px solid #fbeed5;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+
+#new-group .modal-footer button{
+height: 45px;
+width: 270px;
+}

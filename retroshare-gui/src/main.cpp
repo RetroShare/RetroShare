@@ -120,10 +120,10 @@ static void displayWarningAboutDSAKeys()
 	txt += "</UL>" ;
 
 	msgBox.setText(txt) ;
-	msgBox.setInformativeText(QObject::tr("DSA keys are not yet supported by this version of RetroShare. All these nodes will be unusable. We're very sorry for that."));
+    msgBox.setInformativeText(QObject::tr("DSA keys are not yet supported by this version of P2PUnseen. All these nodes will be unusable. We're very sorry for that."));
 	msgBox.setStandardButtons(QMessageBox::Ok);
 	msgBox.setDefaultButton(QMessageBox::Ok);
-    msgBox.setWindowIcon(QIcon(":/icons/logo_128.png"));
+    msgBox.setWindowIcon(QIcon(":/app/images/icon.png")); //D replace :/icons/logo_128.png
 
 	msgBox.exec();
 }
@@ -226,11 +226,11 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 		LanguageSupport::translate(LanguageSupport::defaultLanguageCode());
 
 		QMessageBox msgBox;
-		msgBox.setText(QObject::tr("This version of RetroShare is using OpenPGP-SDK. As a side effect, it's not using the system shared PGP keyring, but has it's own keyring shared by all RetroShare instances. <br><br>You do not appear to have such a keyring, although PGP keys are mentioned by existing RetroShare accounts, probably because you just changed to this new version of the software."));
-		msgBox.setInformativeText(QObject::tr("Choose between:<br><ul><li><b>Ok</b> to copy the existing keyring from gnupg (safest bet), or </li><li><b>Close without saving</b> to start fresh with an empty keyring (you will be asked to create a new PGP key to work with RetroShare, or import a previously saved pgp keypair). </li><li><b>Cancel</b> to quit and forge a keyring by yourself (needs some PGP skills)</li></ul>"));
+        msgBox.setText(QObject::tr("This version of P2PUnseen is using OpenPGP-SDK. As a side effect, it's not using the system shared PGP keyring, but has it's own keyring shared by all P2PUnseen instances. <br><br>You do not appear to have such a keyring, although PGP keys are mentioned by existing P2PUnseen accounts, probably because you just changed to this new version of the software."));
+        msgBox.setInformativeText(QObject::tr("Choose between:<br><ul><li><b>Ok</b> to copy the existing keyring from gnupg (safest bet), or </li><li><b>Close without saving</b> to start fresh with an empty keyring (you will be asked to create a new PGP key to work with P2PUnseen, or import a previously saved pgp keypair). </li><li><b>Cancel</b> to quit and forge a keyring by yourself (needs some PGP skills)</li></ul>"));
 		msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Discard | QMessageBox::Cancel);
 		msgBox.setDefaultButton(QMessageBox::Ok);
-        msgBox.setWindowIcon(QIcon(":/icons/logo_128.png"));
+        msgBox.setWindowIcon(QIcon(":/app/images/icon.png")); //D replace :/icons/logo_128.png
 
 		int ret = msgBox.exec();
 
@@ -258,8 +258,8 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 
 		displayWarningAboutDSAKeys();
 
-		QMessageBox mb(QMessageBox::Critical, QObject::tr("RetroShare"), "", QMessageBox::Ok);
-        mb.setWindowIcon(QIcon(":/icons/logo_128.png"));
+        QMessageBox mb(QMessageBox::Critical, QObject::tr("P2PUnseen"), "", QMessageBox::Ok);
+        mb.setWindowIcon(QIcon(":/app/images/icon.png")); //D replace :/icons/logo_128.png
 
 		switch (initResult) 
 		{
@@ -337,7 +337,7 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 	default:
 		/* Unexpected return code */
 		std::cerr << "RsInit::InitRetroShare unexpected return code " << initResult << std::endl;
-		QMessageBox::warning(0, QObject::tr("RetroShare"), QObject::tr("An unexpected error occured. Please report 'RsInit::InitRetroShare unexpected return code %1'.").arg(initResult));
+        QMessageBox::warning(0, QObject::tr("P2PUnseen"), QObject::tr("An unexpected error occured. Please report 'RsInit::InitRetroShare unexpected return code %1'.").arg(initResult));
 		return 1;
 	}
 
@@ -400,7 +400,7 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 		}
 	}
 
-	QSplashScreen splashScreen(QPixmap(":/images/logo/logo_splash.png")/* , Qt::WindowStaysOnTopHint*/);
+    QSplashScreen splashScreen(QPixmap(":/app/images/loading_3.gif")/* , Qt::WindowStaysOnTopHint*/); // Replace logo_splash.png of RS -> loading_3.gif
 
 	splashScreen.show();
 	splashScreen.showMessage(rshare.translate("SplashScreen", "Load configuration"), Qt::AlignHCenter | Qt::AlignBottom);

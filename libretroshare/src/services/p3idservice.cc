@@ -684,7 +684,7 @@ bool p3IdService::isOwnId(const RsGxsId& id)
 
     return std::find(mOwnIds.begin(),mOwnIds.end(),id) != mOwnIds.end() ;
 }
-bool p3IdService::getOwnIds(std::list<RsGxsId> &ownIds)
+bool p3IdService::getOwnIds(std::list<RsGxsId> &ownIds,bool signed_only)
 {
     RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
 
@@ -694,7 +694,8 @@ bool p3IdService::getOwnIds(std::list<RsGxsId> &ownIds)
         return false ;
     }
 
-    ownIds = mOwnIds;
+	ownIds = signed_only ? mOwnSignedIds : mOwnIds;
+
     return true ;
 }
 
@@ -2825,6 +2826,18 @@ bool p3IdService::cache_load_ownids(uint32_t token)
 				{
                     mOwnIds.push_back(RsGxsId(item->meta.mGroupId));
 
+					SSGxsIdGroup ssdata;
+
+                    std::cerr << "Adding own ID " << item->meta.mGroupId << " mGroupFlags=" << std::hex << item->meta.mGroupFlags << std::dec;
+
+					if (ssdata.load(item->meta.mServiceString) && ssdata.pgp.validatedSignature) // (cyril) note: we cannot use if(item->meta.mGroupFlags & RSGXSID_GROUPFLAG_REALID)
+                    {																			 // or we need to cmbine it with the deprecated value that overlaps with GXS_SERV::FLAG_PRIVACY_PRIVATE
+                    	std::cerr << " signed = YES" << std::endl;								 // see comments line 799 in ::createIdentity();
+						mOwnSignedIds.push_back(RsGxsId(item->meta.mGroupId));
+                    }
+                    else
+                    	std::cerr << " signed = NO" << std::endl;
+
                     // This prevents automatic deletion to get rid of them.
                     // In other words, own ids are always used.
 
@@ -2833,6 +2846,8 @@ bool p3IdService::cache_load_ownids(uint32_t token)
 				delete item ;
             }
             mOwnIdsLoaded = true ;
+
+            std::cerr << mOwnIds.size() << " own Ids loaded, " << mOwnSignedIds.size() << " of which are signed" << std::endl;
 		}
 
 		// No need to cache these items...

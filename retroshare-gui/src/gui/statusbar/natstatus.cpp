@@ -116,7 +116,7 @@ void NATStatus::getNATStatus()
 		case RSNET_NETSTATE_GOOD:
 		{
             iconLabel->setPixmap(QPixmap(":/icons/bullet_green_128.png").scaledToHeight(S,Qt::SmoothTransformation)) ;
-			iconLabel->setToolTip( text + tr("RetroShare Server")) ;
+            iconLabel->setToolTip( text + tr("P2PUnseen Server")) ;
 		}
 		break ;
 

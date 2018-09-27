@@ -32,7 +32,7 @@ const uint32_t PostedCreateEnabledFlags = (
                           GXS_GROUP_FLAGS_DESCRIPTION   |
                           GXS_GROUP_FLAGS_DISTRIBUTION  |
                           // GXS_GROUP_FLAGS_PUBLISHSIGN   |
-                          GXS_GROUP_FLAGS_SHAREKEYS     |
+                          // GXS_GROUP_FLAGS_SHAREKEYS     |	// disabled because the UI doesn't handle it yet.
                           // GXS_GROUP_FLAGS_PERSONALSIGN  |
                           // GXS_GROUP_FLAGS_COMMENTS      |
                           0);
@@ -84,7 +84,7 @@ void PostedGroupDialog::initUi()
 		break;
 	}
 
-	setUiText(UITYPE_KEY_SHARE_CHECKBOX, tr("Add Topic Admins"));
+	setUiText(UITYPE_ADD_ADMINS_CHECKBOX, tr("Add Topic Admins"));
 	setUiText(UITYPE_CONTACTS_DOCK, tr("Select Topic Admins"));
 }
 

@@ -50,8 +50,9 @@
 //#define ENABLE_GENERATE
 
 /** Constructor */
-CreateGxsForumMsg::CreateGxsForumMsg(const RsGxsGroupId &fId, const RsGxsMessageId &pId,const RsGxsMessageId& mOId,const RsGxsId& posterId)
-: QDialog(NULL, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint), mForumId(fId), mParentId(pId), mOrigMsgId(mOId),mPosterId(posterId)
+CreateGxsForumMsg::CreateGxsForumMsg(const RsGxsGroupId &fId, const RsGxsMessageId &pId, const RsGxsMessageId& mOId, const RsGxsId& posterId, bool isModerating)
+    : QDialog(NULL, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint),
+      mForumId(fId), mParentId(pId), mOrigMsgId(mOId),mPosterId(posterId),mIsModerating(isModerating)
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	ui.setupUi(this);
@@ -346,7 +347,7 @@ void  CreateGxsForumMsg::createMsg()
 
 	if(name.isEmpty() | desc.isEmpty()) {
 		/* error message */
-		QMessageBox::warning(this, tr("RetroShare"),tr("Please set a Forum Subject and Forum Message"), QMessageBox::Ok, QMessageBox::Ok);
+        QMessageBox::warning(this, tr("P2PUnseen"),tr("Please set a Forum Subject and Forum Message"), QMessageBox::Ok, QMessageBox::Ok);
 
 		return; //Don't add  a empty Subject!!
 	}//if(name.isEmpty())
@@ -355,7 +356,9 @@ void  CreateGxsForumMsg::createMsg()
 	msg.mMeta.mGroupId = mForumId;
 	msg.mMeta.mParentId = mParentId;
 	msg.mMeta.mOrigMsgId = mOrigMsgId;
+	msg.mMeta.mMsgFlags = mIsModerating?RS_GXS_FORUM_MSG_FLAGS_MODERATED : 0;
 	msg.mMeta.mMsgId.clear() ;
+
 	if (mParentMsgLoaded) {
 		msg.mMeta.mThreadId = mParentMsg.mMeta.mThreadId;
 	}//if (mParentMsgLoaded)
@@ -398,14 +401,14 @@ void  CreateGxsForumMsg::createMsg()
 		default:
 			std::cerr << "CreateGxsForumMsg::createMsg() ERROR GETTING AuthorId!";
 			std::cerr << std::endl;
-			QMessageBox::warning(this, tr("RetroShare"),tr("Congrats, you found a bug!")+" "+QString(__FILE__)+":"+QString(__LINE__), QMessageBox::Ok, QMessageBox::Ok);
+            QMessageBox::warning(this, tr("P2PUnseen"),tr("Congrats, you found a bug!")+" "+QString(__FILE__)+":"+QString(__LINE__), QMessageBox::Ok, QMessageBox::Ok);
 
 			return;
 		}//switch (ui.idChooser->getChosenId(authorId))
 	} else {
 		//std::cerr << "CreateGxsForumMsg::createMsg() No Signature (for now :)";
 		//std::cerr << std::endl;
-		QMessageBox::warning(this, tr("RetroShare"),tr("Please choose Signing Id, it is required"), QMessageBox::Ok, QMessageBox::Ok);
+        QMessageBox::warning(this, tr("P2PUnseen"),tr("Please choose Signing Id, it is required"), QMessageBox::Ok, QMessageBox::Ok);
 		return;
 	}//if (ui.signBox->isChecked())
 

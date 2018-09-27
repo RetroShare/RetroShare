@@ -321,7 +321,7 @@ void ChatHandler::tick()
     {
         Lobby l;
         l.name = "BroadCast";
-        l.topic = "Retroshare broadcast chat: messages are sent to all connected friends.";
+        l.topic = "P2PUnseen broadcast chat: messages are sent to all connected friends.";
         l.subscribed = true;
         l.auto_subscribe = false;
         l.is_private = false;

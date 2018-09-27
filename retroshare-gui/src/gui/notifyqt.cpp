@@ -314,14 +314,14 @@ bool NotifyQt::askForPluginConfirmation(const std::string& plugin_file_name, con
 	dialog.setWindowTitle(tr("Unregistered plugin/executable"));
 
 	QString text ;
-	text += tr( "RetroShare has detected an unregistered plugin. This happens in two cases:<UL><LI>Your RetroShare executable has changed.</LI><LI>The plugin has changed</LI></UL>Click on Yes to authorize this plugin, or No to deny it. You can change your mind later in Options -> Plugins, then restart." ) ;
+    text += tr( "P2PUnseen has detected an unregistered plugin. This happens in two cases:<UL><LI>Your P2PUnseen executable has changed.</LI><LI>The plugin has changed</LI></UL>Click on Yes to authorize this plugin, or No to deny it. You can change your mind later in Options -> Plugins, then restart." ) ;
 	text += "<UL>" ;
 	text += "<LI>Hash:\t" + QString::fromStdString(plugin_file_hash) + "</LI>" ;
 	text += "<LI>File:\t" + QString::fromStdString(plugin_file_name) + "</LI>";
 	text += "</UL>" ;
 
 	dialog.setText(text) ;
-    dialog.setWindowIcon(QIcon(":/icons/logo_128.png"));
+    dialog.setWindowIcon(QIcon(":/app/images/icon.png")); //D replace :/icons/logo_128.png
 	dialog.setStandardButtons(QMessageBox::Yes | QMessageBox::No) ;
 
 	int ret = dialog.exec();

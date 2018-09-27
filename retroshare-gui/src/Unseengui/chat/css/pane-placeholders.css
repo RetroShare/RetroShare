@@ -1,0 +1,30 @@
+.pane-placeholder {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #fff;
+  z-index: 1000;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  padding: 100px 20px;
+}
+.pane-placeholder img {
+  display: block;
+  margin: 0 auto;
+}
+.pane-placeholder h5 {
+  text-align: center;
+}
+.pane-placeholder img.ui-help {
+  border: solid 1px #ccc;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  border-radius: 6px;
+  opacity: .5;
+}
+.pane-placeholder img.ui-help:hover {
+  opacity: 1;
+}

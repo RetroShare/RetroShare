@@ -119,9 +119,9 @@ void CreateGxsChannelMsg::contextMenu(QPoint /*point*/)
 
 	QAction *action ;
 	if(n_file > 1)
-		action = contextMnu.addAction(QIcon(":/images/pasterslink.png"), tr("Paste RetroShare Links"), this, SLOT(pasteLink()));
+        action = contextMnu.addAction(QIcon(":/images/pasterslink.png"), tr("Paste P2PUnseen Links"), this, SLOT(pasteLink()));
 	else
-		action = contextMnu.addAction(QIcon(":/images/pasterslink.png"), tr("Paste RetroShare Link"), this, SLOT(pasteLink()));
+        action = contextMnu.addAction(QIcon(":/images/pasterslink.png"), tr("Paste P2PUnseen Link"), this, SLOT(pasteLink()));
 
 	action->setDisabled(n_file < 1) ;
 	contextMnu.exec(QCursor::pos());
@@ -443,7 +443,7 @@ void CreateGxsChannelMsg::addAttachment(const std::string &path)
 	for(it= mAttachments.begin(); it != mAttachments.end(); ++it){
 
 		if((*it)->FilePath() == path){
-			QMessageBox::warning(this, tr("RetroShare"), tr("File already Added and Hashed"), QMessageBox::Ok, QMessageBox::Ok);
+            QMessageBox::warning(this, tr("P2PUnseen"), tr("File already Added and Hashed"), QMessageBox::Ok, QMessageBox::Ok);
 
 			return;
 		}
@@ -667,7 +667,7 @@ void CreateGxsChannelMsg::sendMessage(const std::string &subject, const std::str
 {
 	if(subject.empty())
 	{	/* error message */
-		QMessageBox::warning(this, tr("RetroShare"), tr("Please add a Subject"), QMessageBox::Ok, QMessageBox::Ok);
+        QMessageBox::warning(this, tr("P2PUnseen"), tr("Please add a Subject"), QMessageBox::Ok, QMessageBox::Ok);
 
 		return; //Don't add  an empty Subject!!
 	}

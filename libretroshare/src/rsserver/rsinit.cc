@@ -1475,7 +1475,7 @@ int RsServer::StartupRetroShare()
 
 	/* create Services */
 	p3ServiceInfo *serviceInfo = new p3ServiceInfo(serviceCtrl);
-	mDisc = new p3discovery2(mPeerMgr, mLinkMgr, mNetMgr, serviceCtrl);
+	mDisc = new p3discovery2(mPeerMgr, mLinkMgr, mNetMgr, serviceCtrl,mGxsIdService);
 	mHeart = new p3heartbeat(serviceCtrl, pqih);
 	msgSrv = new p3MsgService( serviceCtrl, mGxsIdService, *mGxsTrans );
 	chatSrv = new p3ChatService( serviceCtrl,mGxsIdService, mLinkMgr,
@@ -2012,11 +2012,6 @@ bool RsLoginHelper::createLocation(
 bool RsLoginHelper::isLoggedIn()
 {
 	return RsControl::instance()->isReady();
-}
-
-void RsLoginHelper::closeSession()
-{
-	RsControl::instance()->rsGlobalShutDown();
 }
 
 void RsLoginHelper::Location::serial_process(
