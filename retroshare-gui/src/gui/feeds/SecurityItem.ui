@@ -7,11 +7,20 @@
     <x>0</x>
     <y>0</y>
     <width>763</width>
-    <height>241</height>
+    <height>287</height>
    </rect>
   </property>
   <layout class="QGridLayout">
-   <property name="margin">
+   <property name="leftMargin">
+    <number>1</number>
+   </property>
+   <property name="topMargin">
+    <number>1</number>
+   </property>
+   <property name="rightMargin">
+    <number>1</number>
+   </property>
+   <property name="bottomMargin">
     <number>1</number>
    </property>
    <item row="0" column="0">
@@ -102,10 +111,19 @@
       <item row="0" column="0">
        <widget class="QFrame" name="headFrame">
         <layout class="QGridLayout">
-         <property name="verticalSpacing">
+         <property name="leftMargin">
           <number>0</number>
          </property>
-         <property name="margin">
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <property name="verticalSpacing">
           <number>0</number>
          </property>
          <item row="0" column="0" rowspan="2">
@@ -177,7 +195,7 @@
               </sizepolicy>
              </property>
              <property name="text">
-              <string>wants to be friend with you on RetroShare</string>
+              <string>wants to be friend with you on P2PUnseen</string>
              </property>
              <property name="alignment">
               <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>

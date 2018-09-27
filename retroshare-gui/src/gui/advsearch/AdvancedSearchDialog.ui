@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>RetroShare: Advanced Search</string>
+   <string>P2PUnseen: Advanced Search</string>
   </property>
   <property name="windowIcon">
    <iconset resource="../../Unseengui/unseengui.qrc">

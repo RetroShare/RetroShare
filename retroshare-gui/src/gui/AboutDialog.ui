@@ -17,7 +17,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>About RetroShare</string>
+   <string>About P2PUnseen</string>
   </property>
   <property name="modal">
    <bool>true</bool>
@@ -48,8 +48,6 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
- <resources>
-  <include location="images.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

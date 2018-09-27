@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>RetroShare</string>
+   <string>P2PUnseen</string>
   </property>
   <property name="iconSize">
    <size>
@@ -166,7 +166,7 @@
   <customwidget>
    <class>MainPageStack</class>
    <extends>QWidget</extends>
-   <header>gui/mainpagestack.h</header>
+   <header location="global">gui/mainpagestack.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

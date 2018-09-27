@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>RetroShare Bandwidth Usage</string>
+   <string>P2PUnseen Bandwidth Usage</string>
   </property>
   <property name="windowIcon">
    <iconset resource="../../Unseengui/unseengui.qrc">

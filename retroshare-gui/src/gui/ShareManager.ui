@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>RetroShare Share Manager</string>
+   <string>P2PUnseen Share Manager</string>
   </property>
   <property name="windowIcon">
    <iconset resource="../Unseengui/unseengui.qrc">
@@ -159,7 +159,7 @@
        </widget>
       </item>
       <item row="2" column="1">
-       <spacer>
+       <spacer name="spacer">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
@@ -275,15 +275,15 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>StyledLabel</class>
+   <extends>QLabel</extends>
+   <header>gui/common/StyledLabel.h</header>
+  </customwidget>
+  <customwidget>
    <class>HeaderFrame</class>
    <extends>QFrame</extends>
    <header>gui/common/HeaderFrame.h</header>
    <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>StyledLabel</class>
-   <extends>QLabel</extends>
-   <header>gui/common/StyledLabel.h</header>
   </customwidget>
  </customwidgets>
  <resources>

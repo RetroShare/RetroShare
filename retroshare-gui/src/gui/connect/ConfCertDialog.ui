@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Retroshare node details</string>
+   <string>P2PUnseen node details</string>
   </property>
   <property name="windowIcon">
    <iconset resource="../../Unseengui/unseengui.qrc">
@@ -149,7 +149,7 @@
                <item row="6" column="0">
                 <widget class="QLabel" name="label_version">
                  <property name="text">
-                  <string>Retroshare version :</string>
+                  <string>P2PUnseen version :</string>
                  </property>
                 </widget>
                </item>
@@ -374,7 +374,7 @@
         </widget>
         <widget class="QWidget" name="tab_4">
          <attribute name="title">
-          <string>Retroshare Certificate</string>
+          <string>P2PUnseen Certificate</string>
          </attribute>
          <layout class="QVBoxLayout" name="verticalLayout">
           <item>
@@ -415,12 +415,6 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>HeaderFrame</class>
-   <extends>QFrame</extends>
-   <header>gui/common/HeaderFrame.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>RSTextBrowser</class>
    <extends>QTextBrowser</extends>
    <header>gui/common/RSTextBrowser.h</header>
@@ -429,6 +423,12 @@
    <class>AvatarWidget</class>
    <extends>QLabel</extends>
    <header>gui/common/AvatarWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>HeaderFrame</class>
+   <extends>QFrame</extends>
+   <header>gui/common/HeaderFrame.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
