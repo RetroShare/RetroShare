@@ -470,8 +470,10 @@ QVariant TreeStyle_RDM::displayRole(const DirDetails& details,int coln) const
 
 				if(RemoteMode)
 					rsFiles->getSharedDirStatistics(details.id,stats) ;
-				else
+				else if(details.id == rsPeers->getOwnId())
 					rsFiles->getSharedDirStatistics(rsPeers->getOwnId(),stats) ;
+                else
+                    stats.total_number_of_files = details.count;
 
 				if(stats.total_number_of_files > 0)
 				{
@@ -487,8 +489,10 @@ QVariant TreeStyle_RDM::displayRole(const DirDetails& details,int coln) const
 
 				if(RemoteMode)
 					rsFiles->getSharedDirStatistics(details.id,stats) ;
-				else
+				else if(details.id == rsPeers->getOwnId())
 					rsFiles->getSharedDirStatistics(rsPeers->getOwnId(),stats) ;
+                else
+                    return QString();
 
 				if(stats.total_shared_size > 0)
 					return misc::friendlyUnit(stats.total_shared_size) ;
@@ -497,6 +501,8 @@ QVariant TreeStyle_RDM::displayRole(const DirDetails& details,int coln) const
 			}
 		case COLUMN_AGE:
 				if(!isNewerThanEpoque(details.max_mtime))
+					return QString();
+				else if(details.id != rsPeers->getOwnId())
 					return QString();
 				else
 					return misc::timeRelativeToNow(details.max_mtime);
@@ -516,7 +522,7 @@ QVariant TreeStyle_RDM::displayRole(const DirDetails& details,int coln) const
 			case COLUMN_SIZE:
 				return  misc::friendlyUnit(details.count);
 			case COLUMN_AGE:
-				return  misc::timeRelativeToNow(details.max_mtime);
+				return  (details.type == DIR_TYPE_FILE)?(misc::timeRelativeToNow(details.max_mtime)):QString();
 			case COLUMN_FRIEND_ACCESS:
 				return QVariant();
 			case COLUMN_WN_VISU_DIR:
@@ -795,7 +801,7 @@ QVariant RetroshareDirModel::data(const QModelIndex &index, int role) const
         return decorationRole(details,coln) ;
 
     if(role == Qt::ToolTipRole)
-        if(!isNewerThanEpoque(details.max_mtime))
+        if(!isNewerThanEpoque(details.max_mtime) && details.type == DIR_TYPE_PERSON)
             return tr("This node hasn't sent any directory information yet.") ;
 
     /*****************
