@@ -124,7 +124,7 @@
          <enum>Qt::NoFocus</enum>
         </property>
         <property name="icon">
-         <iconset resource="../images.qrc">
+         <iconset resource="../icons.qrc">
           <normaloff>:/icons/help_64.png</normaloff>:/icons/help_64.png</iconset>
         </property>
         <property name="checkable">
@@ -291,7 +291,7 @@
              <x>0</x>
              <y>0</y>
              <width>1091</width>
-             <height>1088</height>
+             <height>1087</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="scrollAreaWidgetContentsVLayout">
@@ -304,7 +304,7 @@
                </sizepolicy>
               </property>
               <property name="styleSheet">
-               <string notr="true">background-color: rgb(43, 164, 220);</string>
+               <string notr="true"/>
               </property>
               <property name="frameShape">
                <enum>QFrame::StyledPanel</enum>
@@ -969,7 +969,7 @@ p, li { white-space: pre-wrap; }
         <item>
          <widget class="QFrame" name="headerFrameCircle">
           <property name="styleSheet">
-           <string notr="true">background-color: rgb(43, 164, 220);</string>
+           <string notr="true"/>
           </property>
           <property name="frameShape">
            <enum>QFrame::StyledPanel</enum>
@@ -1088,6 +1088,16 @@ p, li { white-space: pre-wrap; }
  </widget>
  <customwidgets>
   <customwidget>
+   <class>LineEditClear</class>
+   <extends>QLineEdit</extends>
+   <header location="global">gui/common/LineEditClear.h</header>
+  </customwidget>
+  <customwidget>
+   <class>RSTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>gui/common/RSTreeWidget.h</header>
+  </customwidget>
+  <customwidget>
    <class>StyledLabel</class>
    <extends>QLabel</extends>
    <header>gui/common/StyledLabel.h</header>
@@ -1096,16 +1106,6 @@ p, li { white-space: pre-wrap; }
    <class>StyledElidedLabel</class>
    <extends>QLabel</extends>
    <header>gui/common/StyledElidedLabel.h</header>
-  </customwidget>
-  <customwidget>
-   <class>LineEditClear</class>
-   <extends>QLineEdit</extends>
-   <header>gui/common/LineEditClear.h</header>
-  </customwidget>
-  <customwidget>
-   <class>RSTreeWidget</class>
-   <extends>QTreeWidget</extends>
-   <header>gui/common/RSTreeWidget.h</header>
   </customwidget>
   <customwidget>
    <class>RSTextBrowser</class>
@@ -1117,8 +1117,8 @@ p, li { white-space: pre-wrap; }
   <tabstop>idTreeWidget</tabstop>
  </tabstops>
  <resources>
-  <include location="../images.qrc"/>
   <include location="../icons.qrc"/>
+  <include location="../images.qrc"/>
  </resources>
  <connections/>
 </ui>

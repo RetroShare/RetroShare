@@ -104,8 +104,8 @@
    <property name="autoFillBackground">
     <bool>false</bool>
    </property>
-   <property name="styleSheet">
-    <string notr="true">background-color: rgb(20, 140, 195);</string>
+   <property name="inputMethodHints">
+    <set>Qt::ImhNone</set>
    </property>
   </widget>
   <widget class="QToolBar" name="toolBarPage">
@@ -128,6 +128,9 @@
   <widget class="QToolBar" name="toolBarAction">
    <property name="contextMenuPolicy">
     <enum>Qt::CustomContextMenu</enum>
+   </property>
+   <property name="autoFillBackground">
+    <bool>false</bool>
    </property>
    <property name="toolButtonStyle">
     <enum>Qt::ToolButtonTextUnderIcon</enum>

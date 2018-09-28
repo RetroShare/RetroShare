@@ -766,7 +766,7 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 
 				QPixmap pixmap ;
 
-				if(idd.mAvatar.mSize == 0 || !pixmap.loadFromData(idd.mAvatar.mData, idd.mAvatar.mSize, "PNG"))
+                if(idd.mAvatar.mSize == 0 || !pixmap.loadFromData(idd.mAvatar.mData, idd.mAvatar.mSize, "PNG"))
 					pixmap = QPixmap::fromImage(GxsIdDetails::makeDefaultIcon(it->first)) ;
 
 				if(has_id)
@@ -1910,7 +1910,7 @@ void IdDialog::insertIdDetails(uint32_t token)
     QPixmap pixmap ;
 
     if(data.mImage.mSize == 0 || !pixmap.loadFromData(data.mImage.mData, data.mImage.mSize, "PNG"))
-        pixmap = QPixmap::fromImage(GxsIdDetails::makeDefaultIcon(RsGxsId(data.mMeta.mGroupId))) ;
+        pixmap = QPixmap(":/chat/img/personal_un_128.png"); //QPixmap::fromImage(GxsIdDetails::makeDefaultIcon(RsGxsId(data.mMeta.mGroupId))) ;
 
 #ifdef ID_DEBUG
 	std::cerr << "Setting header frame image : " << pixmap.width() << " x " << pixmap.height() << std::endl;
@@ -1921,9 +1921,9 @@ void IdDialog::insertIdDetails(uint32_t token)
 	QFontMetricsF f(ui->avLabel_Person->font()) ;
     ui->avLabel_Person->setPixmap(pixmap.scaled(f.height()*4,f.height()*4,Qt::KeepAspectRatio,Qt::SmoothTransformation));
 
-	QFontMetricsF g(ui->inviteButton->font()) ;
+    QFontMetricsF g(ui->inviteButton->font()) ;
     ui->avatarLabel->setPixmap(pixmap.scaled(ui->inviteButton->width(),ui->inviteButton->width(),Qt::IgnoreAspectRatio,Qt::SmoothTransformation));
-	ui->avatarLabel->setScaledContents(true);
+    ui->avatarLabel->setScaledContents(true);
 
 	if (data.mPgpKnown)
 	{
