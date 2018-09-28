@@ -124,7 +124,7 @@
          <enum>Qt::NoFocus</enum>
         </property>
         <property name="icon">
-         <iconset resource="../images.qrc">
+         <iconset resource="../icons.qrc">
           <normaloff>:/icons/help_64.png</normaloff>:/icons/help_64.png</iconset>
         </property>
         <property name="checkable">
@@ -1115,6 +1115,11 @@ p, li { white-space: pre-wrap; }
    <extends>QLabel</extends>
    <header>gui/common/StyledElidedLabel.h</header>
   </customwidget>
+  <customwidget>
+   <class>RSTextBrowser</class>
+   <extends>QTextBrowser</extends>
+   <header>gui/common/RSTextBrowser.h</header>
+  </customwidget>
  </customwidgets>
  <tabstops>
   <tabstop>idTreeWidget</tabstop>
@@ -1123,6 +1128,7 @@ p, li { white-space: pre-wrap; }
   <include location="../../Unseengui/unseengui.qrc"/>
   <include location="../images.qrc"/>
   <include location="../icons.qrc"/>
+  <include location="../images.qrc"/>
  </resources>
  <connections/>
 </ui>
