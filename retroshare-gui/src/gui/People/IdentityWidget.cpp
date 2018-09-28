@@ -90,8 +90,8 @@ void IdentityWidget::updateData(const RsGxsIdGroup &gxs_group_info)
 		if(_group_info.mImage.mSize > 0 && image.loadFromData(_group_info.mImage.mData, _group_info.mImage.mSize, "PNG"))
 			image = image;
 		else
-			 image = GxsIdDetails::makeDefaultIcon(RsGxsId(_group_info.mMeta.mGroupId));
-			
+             image = GxsIdDetails::makeDefaultIcon(RsGxsId(_group_info.mMeta.mGroupId));
+
 			if (_avatar != image) {
 				_avatar = image;
 				_scene->clear();
