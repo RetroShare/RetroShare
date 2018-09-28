@@ -507,8 +507,8 @@ p, li { white-space: pre-wrap; }
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../icons.qrc"/>
   <include location="../../Unseengui/unseengui.qrc"/>
+  <include location="../icons.qrc"/>
  </resources>
  <connections/>
 </ui>

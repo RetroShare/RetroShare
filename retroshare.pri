@@ -580,6 +580,9 @@ macx-* {
 
         ## 11 Sep 2018 - meiyousixin - use config in one MacOS comp
         BIN_DIR += "/usr/bin"
+        BIN_DIR += "/usr/local/bin"
+        BIN_DIR += "/opt/local/bin"
+        BIN_DIR += "/Applications/Xcode.app/Contents/Developer/usr/bin"
         INC_DIR += "/usr/include"
         INC_DIR += "/usr/local/include"
         LIB_DIR += "/usr/local/lib"
