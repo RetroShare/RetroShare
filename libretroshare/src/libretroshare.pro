@@ -862,16 +862,19 @@ rs_gxs_trans {
 rs_jsonapi {
     JSONAPI_GENERATOR_SRC=$$clean_path($${RS_SRC_PATH}/jsonapi-generator/src/)
     JSONAPI_GENERATOR_OUT=$$clean_path($${RS_BUILD_PATH}/jsonapi-generator/src/)
-    win32 {
-        CONFIG(release, debug|release) {
-            JSONAPI_GENERATOR_EXE=$$clean_path($${JSONAPI_GENERATOR_OUT}/release/jsonapi-generator.exe)
+    isEmpty(JSONAPI_GENERATOR_EXE) {
+        win32 {
+            CONFIG(release, debug|release) {
+                JSONAPI_GENERATOR_EXE=$$clean_path($${JSONAPI_GENERATOR_OUT}/release/jsonapi-generator.exe)
+            }
+        CONFIG(debug, debug|release) {
+                JSONAPI_GENERATOR_EXE=$$clean_path($${JSONAPI_GENERATOR_OUT}/debug/jsonapi-generator.exe)
+            }
+        } else {
+            JSONAPI_GENERATOR_EXE=$$clean_path($${JSONAPI_GENERATOR_OUT}/jsonapi-generator)
         }
-	CONFIG(debug, debug|release) {
-            JSONAPI_GENERATOR_EXE=$$clean_path($${JSONAPI_GENERATOR_OUT}/debug/jsonapi-generator.exe)
-        }
-    } else {
-        JSONAPI_GENERATOR_EXE=$$clean_path($${JSONAPI_GENERATOR_OUT}/jsonapi-generator)
     }
+
     DOXIGEN_INPUT_DIRECTORY=$$clean_path($${PWD})
     DOXIGEN_CONFIG_SRC=$$clean_path($${RS_SRC_PATH}/jsonapi-generator/src/jsonapi-generator-doxygen.conf)
     DOXIGEN_CONFIG_OUT=$$clean_path($${JSONAPI_GENERATOR_OUT}/jsonapi-generator-doxygen-final.conf)
@@ -899,6 +902,7 @@ rs_jsonapi {
 
     jsonwrappersincl.target = $${WRAPPERS_INCL_FILE}
     jsonwrappersincl.commands = \
+        mkdir -p $${JSONAPI_GENERATOR_OUT}; \
         cp $${DOXIGEN_CONFIG_SRC} $${DOXIGEN_CONFIG_OUT}; \
         echo OUTPUT_DIRECTORY=$$shell_path($${JSONAPI_GENERATOR_OUT}) >> $${DOXIGEN_CONFIG_OUT};\
         echo INPUT=$$shell_path($${DOXIGEN_INPUT_DIRECTORY}) >> $${DOXIGEN_CONFIG_OUT}; \

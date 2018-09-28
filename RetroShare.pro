@@ -23,7 +23,7 @@ TEMPLATE = subdirs
 SUBDIRS += openpgpsdk
 openpgpsdk.file = openpgpsdk/src/openpgpsdk.pro
 
-rs_jsonapi {
+rs_jsonapi:isEmpty(JSONAPI_GENERATOR_EXE) {
     SUBDIRS += jsonapi-generator
     jsonapi-generator.file = jsonapi-generator/src/jsonapi-generator.pro
     libretroshare.depends += jsonapi-generator
@@ -36,9 +36,11 @@ libretroshare.depends = openpgpsdk libbitdht
 SUBDIRS += libretroshare
 libretroshare.file = libretroshare/src/libretroshare.pro
 
-SUBDIRS += libresapi
-libresapi.file = libresapi/src/libresapi.pro
-libresapi.depends = libretroshare
+libresapi {
+    SUBDIRS += libresapi
+    libresapi.file = libresapi/src/libresapi.pro
+    libresapi.depends = libretroshare
+}
 
 retroshare_gui {
     SUBDIRS += retroshare_gui
@@ -77,6 +79,13 @@ retroshare_qml_app {
     android-g++ {
         retroshare_qml_app.depends += retroshare_android_notify_service
     }
+}
+
+retroshare_service {
+    SUBDIRS += retroshare_service
+    retroshare_service.file = retroshare-service/src/retroshare-service.pro
+    retroshare_service.depends = libretroshare
+    retroshare_service.target = retroshare_service
 }
 
 retroshare_plugins {
