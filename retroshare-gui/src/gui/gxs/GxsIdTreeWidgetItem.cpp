@@ -164,7 +164,6 @@ QVariant GxsIdRSTreeWidgetItem::data(int column, int role) const
 		    else if(rsReputations->overallReputationLevel(mId) == RsReputations::REPUTATION_LOCALLY_NEGATIVE)
 			    pix = QImage(BANNED_IMAGE) ;
             else if (mAvatar.mSize == 0 || !pix.loadFromData(mAvatar.mData, mAvatar.mSize, "PNG"))
-		    else if (mAvatar.mSize == 0 || !pix.loadFromData(mAvatar.mData, mAvatar.mSize, "PNG")) 
                 pix = GxsIdDetails::makeDefaultIcon(mId);
 
 		    int S = QFontMetricsF(font(column)).height();

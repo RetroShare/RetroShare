@@ -455,7 +455,8 @@ static bool findTagIcon(int tag_class, int /*tag_type*/, QIcon &icon)
  */
     QImage GxsIdDetails::makeDefaultIcon(const RsGxsId& id)
 {
-    return  QImage(":/app/images/unseen128.png");//update Default Icon //  drawIdentIcon(QString::fromStdString(id.toStdString()),64*3, true);
+    return  QImage(":/app/images/unseen128.png");//  drawIdentIcon(QString::fromStdString(id.toStdString()),64*3, true);
+
 }
 
 /**
@@ -844,7 +845,6 @@ QImage GxsIdDetails::drawIdentIcon( QString hash, quint16 width, bool rotate)
     //Change***********************************************************************
 
     //Unseen Change***********************************************************************
-
 
 //static bool CreateIdIcon(const RsGxsId &id, QIcon &idIcon)
 //{
