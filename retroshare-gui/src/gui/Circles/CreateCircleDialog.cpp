@@ -271,8 +271,8 @@ void CreateCircleDialog::addMember(const RsGxsIdGroup &idGroup)
 
 	QPixmap pixmap ;
 
-	if(idGroup.mImage.mSize == 0 || !pixmap.loadFromData(idGroup.mImage.mData, idGroup.mImage.mSize, "PNG"))
-		pixmap = QPixmap::fromImage(GxsIdDetails::makeDefaultIcon(RsGxsId(idGroup.mMeta.mGroupId)));
+    if(idGroup.mImage.mSize == 0 || !pixmap.loadFromData(idGroup.mImage.mData, idGroup.mImage.mSize, "PNG"))
+         pixmap = QPixmap::fromImage(GxsIdDetails::makeDefaultIcon(RsGxsId(idGroup.mMeta.mGroupId)));
 
 	if (idGroup.mPgpKnown){
 		RsPeerDetails details;
