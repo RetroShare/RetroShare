@@ -996,7 +996,7 @@ void p3FileDatabase::getExtraFilesDirDetails(void *ref,DirectoryStorage::EntryIn
 		d.count   = mExtraFilesCache.size();
 		d.max_mtime = time(NULL);
 		d.mtime     = time(NULL);
-		d.name = "Extra List";
+		d.name = "[Extra List]";
 		d.path    = "/";
 		d.ref     = ref ;
 
@@ -1005,7 +1005,7 @@ void p3FileDatabase::getExtraFilesDirDetails(void *ref,DirectoryStorage::EntryIn
 			DirStub stub;
 			stub.type = DIR_TYPE_FILE;
 			stub.name = mExtraFilesCache[i].fname;
-			convertEntryIndexToPointer<sizeof(void*)>(i,1,stub.ref);	// local shared files from extra list
+			convertEntryIndexToPointer<sizeof(void*)>(i+1,1,stub.ref);	// local shared files from extra list
 
 			d.children.push_back(stub);
 		}
@@ -1084,7 +1084,7 @@ int p3FileDatabase::RequestDirDetails(void *ref, DirDetails& d, FileSearchFlags 
             convertEntryIndexToPointer<sizeof(void*)>(0,1,p);	// local shared files from extra list
             DirStub stub;
             stub.type = DIR_TYPE_PERSON;						// not totally exact, but used as a trick.
-            stub.name = "Extra List";
+            stub.name = "[Extra List]";
             stub.ref  = p;
 
             d.children.push_back(stub);
