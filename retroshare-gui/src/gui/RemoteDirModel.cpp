@@ -1663,7 +1663,7 @@ void FlatStyle_RDM::updateRefs()
 
             if (requestDirDetails(ref, RemoteMode,details))
             {
-                if(details.type == DIR_TYPE_FILE)		// only push files, not directories nor persons.
+                if(details.type == DIR_TYPE_FILE || details.type == DIR_TYPE_EXTRA_FILE)		// only push files, not directories nor persons.
                     _ref_entries.push_back(ref) ;
 #ifdef RDM_DEBUG
                 std::cerr << "FlatStyle_RDM::postMods(): adding ref " << ref << std::endl;
@@ -1688,6 +1688,9 @@ void FlatStyle_RDM::updateRefs()
         }
         std::cerr << "reference tab contains " << std::dec << _ref_entries.size() << " files" << std::endl;
     }
+
+    if(_ref_stack.empty())
+        _needs_update = false ;
 
     RetroshareDirModel::postMods() ;
 }
