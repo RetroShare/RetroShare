@@ -486,7 +486,7 @@ void RsControlModule::handleCreateLocation(Request &req, Response &resp)
             resp.setFail("hidden_port out of range. It must fit into uint16!");
             return;
         }
-        hidden_port = p;
+        hidden_port = static_cast<uint16_t>(p);
     }
 
     RsPgpId pgp_id;
@@ -527,7 +527,7 @@ void RsControlModule::handleCreateLocation(Request &req, Response &resp)
 		RsInit::SetHiddenLocation(hidden_address, hidden_port, false);
 	}
 
-    std::string ssl_password = RSRandom::random_alphaNumericString(RsInit::getSslPwdLen()) ;
+    std::string ssl_password = RSRandom::random_alphaNumericString(static_cast<uint32_t>(RsInit::getSslPwdLen())) ;
 
     /* GenerateSSLCertificate - selects the PGP Account */
     //RsInit::SelectGPGAccount(PGPId);
@@ -581,7 +581,7 @@ bool RsControlModule::askForDeferredSelfSignature(const void *data, const uint32
 	}
 }
 
-bool RsControlModule::requestShutdown()
+void RsControlModule::requestShutdown()
 {
 	RS_STACK_MUTEX(mExitFlagMtx);
 	mProcessShouldExit = true;
