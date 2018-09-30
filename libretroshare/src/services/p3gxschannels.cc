@@ -1291,9 +1291,9 @@ bool p3GxsChannels::ExtraFileHash(const std::string& path)
 
 bool p3GxsChannels::ExtraFileRemove(const RsFileHash &hash)
 {
-	TransferRequestFlags tflags = RS_FILE_REQ_ANONYMOUS_ROUTING | RS_FILE_REQ_EXTRA;
+	//TransferRequestFlags tflags = RS_FILE_REQ_ANONYMOUS_ROUTING | RS_FILE_REQ_EXTRA;
 	RsFileHash fh = RsFileHash(hash);
-	return rsFiles->ExtraFileRemove(fh, tflags);
+	return rsFiles->ExtraFileRemove(fh);
 }
 
 

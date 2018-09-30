@@ -180,7 +180,7 @@ public:
          * Extra List Access
          ***/
     virtual bool ExtraFileAdd(std::string fname, const RsFileHash& hash, uint64_t size, uint32_t period, TransferRequestFlags flags);
-    virtual bool ExtraFileRemove(const RsFileHash& hash, TransferRequestFlags flags);
+    virtual bool ExtraFileRemove(const RsFileHash& hash);
     virtual bool ExtraFileHash(std::string localpath, uint32_t period, TransferRequestFlags flags);
     virtual bool ExtraFileStatus(std::string localpath, FileInfo &info);
     virtual bool ExtraFileMove(std::string fname, const RsFileHash& hash, uint64_t size, std::string destpath);

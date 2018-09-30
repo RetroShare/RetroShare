@@ -96,7 +96,7 @@ void ftExtraList::hashAFile()
 	FileDetails details;
 
 	{
-		RsStackMutex stack(extMutex);
+		RS_STACK_MUTEX(extMutex);
 
 		if (mToHash.empty())
 			return;
@@ -113,10 +113,9 @@ void ftExtraList::hashAFile()
 	/* hash it! */
 	std::string name, hash;
 	//uint64_t size;
-	if (RsDirUtil::hashFile(details.info.path, details.info.fname, 
-				details.info.hash, details.info.size))
+	if (RsDirUtil::hashFile(details.info.path, details.info.fname,  details.info.hash, details.info.size))
 	{
-		RsStackMutex stack(extMutex);
+		RS_STACK_MUTEX(extMutex);
 
 		/* stick it in the available queue */
 		mFiles[details.info.hash] = details;
@@ -146,7 +145,7 @@ bool	ftExtraList::addExtraFile(std::string path, const RsFileHash& hash,
 	std::cerr << std::endl;
 #endif
 
-	RsStackMutex stack(extMutex);
+	RS_STACK_MUTEX(extMutex);
 
 	FileDetails details;
 
@@ -166,11 +165,9 @@ bool	ftExtraList::addExtraFile(std::string path, const RsFileHash& hash,
 	return true;
 }
 
-bool ftExtraList::removeExtraFile(const RsFileHash& hash, TransferRequestFlags flags)
+bool ftExtraList::removeExtraFile(const RsFileHash& hash)
 {
 	/* remove unused parameter warnings */
-	(void) flags;
-
 #ifdef  DEBUG_ELIST
 	std::cerr << "ftExtraList::removeExtraFile()";
 	std::cerr << " hash: " << hash;
@@ -179,7 +176,7 @@ bool ftExtraList::removeExtraFile(const RsFileHash& hash, TransferRequestFlags f
 	std::cerr << std::endl;
 #endif
 
-	RsStackMutex stack(extMutex);
+	RS_STACK_MUTEX(extMutex);
 
     mHashOfHash.erase(makeEncryptedHash(hash)) ;
 
@@ -230,7 +227,7 @@ bool	ftExtraList::cleanupOldFiles()
 	std::cerr << std::endl;
 #endif
 
-	RsStackMutex stack(extMutex);
+	RS_STACK_MUTEX(extMutex);
 
 	time_t now = time(NULL);
 
@@ -286,7 +283,7 @@ bool 	ftExtraList::hashExtraFile(std::string path, uint32_t period, TransferRequ
 #endif
 
 	/* add into queue */
-	RsStackMutex stack(extMutex);
+	RS_STACK_MUTEX(extMutex);
 
 	FileDetails details(path, period, flags);
 	details.info.age = time(NULL) + period;
@@ -305,7 +302,7 @@ bool	ftExtraList::hashExtraFileDone(std::string path, FileInfo &info)
     RsFileHash hash;
 	{
 		/* Find in the path->hash map */
-		RsStackMutex stack(extMutex);
+		RS_STACK_MUTEX(extMutex);
 
         std::map<std::string, RsFileHash>::iterator it;
 		if (mHashedList.end() == (it = mHashedList.find(path)))
@@ -420,7 +417,7 @@ bool ftExtraList::saveList(bool &cleanup, std::list<RsItem *>& sList)
 	std::cerr << std::endl;
 #endif
 
-	RsStackMutex stack(extMutex);
+	RS_STACK_MUTEX(extMutex);
 
 
     std::map<RsFileHash, FileDetails>::const_iterator it;
@@ -489,8 +486,8 @@ bool    ftExtraList::loadList(std::list<RsItem *>& load)
 		/* add into system */
 		FileDetails file;
 
-		RsStackMutex stack(extMutex);
-	
+		RS_STACK_MUTEX(extMutex);
+
 		FileDetails details;
 	
 		details.info.path = fi->file.path;
@@ -513,3 +510,12 @@ bool    ftExtraList::loadList(std::list<RsItem *>& load)
 	return true;
 }
 
+void ftExtraList::getExtraFileList(std::vector<FileInfo>& files) const
+{
+	RS_STACK_MUTEX(extMutex);
+
+    files.clear();
+
+    for(auto it(mFiles.begin());it!=mFiles.end();++it)
+        files.push_back(it->second.info);
+}

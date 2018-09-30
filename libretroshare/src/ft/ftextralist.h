@@ -117,10 +117,12 @@ public:
 	bool		addExtraFile(std::string path, const RsFileHash &hash,
 	                         uint64_t size, uint32_t period, TransferRequestFlags flags);
 
-	bool		removeExtraFile(const RsFileHash& hash, TransferRequestFlags flags);
+	bool		removeExtraFile(const RsFileHash& hash);
 	bool 		moveExtraFile(std::string fname, const RsFileHash& hash, uint64_t size,
 	                          std::string destpath);
 
+
+    uint32_t    size() const { return mFiles.size() ; }
 
 	/***
 		 * Hash file, and add to the files,
@@ -137,6 +139,12 @@ public:
 		 **/
 	virtual bool    search(const RsFileHash &hash, FileSearchFlags hintflags, FileInfo &info) const;
 
+    /*!
+     * \brief getExtraFileList
+     * 				Retrieves the list for display purposes
+     */
+    void getExtraFileList(std::vector<FileInfo>& files) const ;
+
 	/***
 		 * Thread Main Loop
 		 **/
@@ -146,6 +154,7 @@ public:
 		 * Configuration - store extra files.
 		 *
 		 **/
+
 protected:
 	virtual RsSerialiser *setupSerialiser();
 	virtual bool saveList(bool &cleanup, std::list<RsItem*>&);
