@@ -1,33 +1,12 @@
 :: Usage:
-:: call get-rs-version.bat Define Variable
+:: call get-rs-version.bat
 
-setlocal
-
-set Define=%~1
-set Variable=%~2
-if "%Variable%"=="" (
-	echo.
-	echo Parameter error.
-	exit /B 1
+for /F "tokens=1-5 delims=v.-" %%A in ('git describe') do (
+	set RsMajorVersion=%%A
+	set RsMinorVersion=%%B
+	set RsBuildNumber=%%C
+	set RsBuildNumberAdd=%%D
+	set RsRevision=%%E
 )
 
-set Result=
-set VersionFile="%~dp0..\..\..\libretroshare\src\retroshare\rsversion.h"
-
-if not exist "%VersionFile%" (
-	echo.
-	echo Version file doesn't exist.
-	echo %VersionFile%
-	exit /B1
-)
-
-for /F "usebackq tokens=1,2,3" %%A in (%VersionFile%) do (
-	if "%%A"=="#define" (
-		if "%%B"=="%Define%" (
-			set Result=%%~C
-		)
-	)
-)
-
-endlocal & set %Variable%=%Result%
 exit /B 0
