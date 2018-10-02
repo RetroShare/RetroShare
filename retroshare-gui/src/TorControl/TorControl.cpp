@@ -55,7 +55,15 @@
 
 Tor::TorControl *torControl = 0;
 
-class nullstream: public std::ostream {};
+//class nullstream: public std::ostream {};
+class nullstream : public std::ostream {
+    class NullBuffer : public std::streambuf {
+        public:
+            int overflow( int c ) { return c; }
+        } m_nb;
+    public:
+        nullstream() : std::ostream( &m_nb ) {}
+};
 
 static std::ostream& torctrldebug()
 {

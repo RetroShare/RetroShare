@@ -325,7 +325,15 @@ static const RsGxsGroupId group_id_to_print = RsGxsGroupId(std::string("")) ;	//
 static const uint32_t     service_to_print  = RS_SERVICE_GXS_TYPE_CHANNELS ;                       	// use this to allow to this service id only, or 0 for all services
 										// warning. Numbers should be SERVICE IDS (see serialiser/rsserviceids.h. E.g. 0x0215 for forums)
 
-class nullstream: public std::ostream {};
+//class nullstream: public std::ostream {};
+class nullstream : public std::ostream {
+    class NullBuffer : public std::streambuf {
+        public:
+            int overflow( int c ) { return c; }
+        } m_nb;
+    public:
+        nullstream() : std::ostream( &m_nb ) {}
+};
 
 static std::string nice_time_stamp(time_t now,time_t TS)
 {
