@@ -1423,8 +1423,11 @@ void MainWindow::statusChangedComboBox(int index)
 /*new setting*/
 void MainWindow::settingsChanged()
 {
-    ui->toolBarPage->setStyleSheet(" QToolBar {background: rgb(43, 164, 220) }"); // d: Set color of toolbar
-    ui->toolBarAction->setStyleSheet(" QToolBar {background: rgb(43, 164, 220) }"); // d: Set color of toolbar
+    ui->toolBarPage->setStyleSheet("QToolBar {background: rgb(43, 164, 220)}""QToolButton {background-color: rgb(20, 141, 196); color: rgb(255, 255, 255)}"); // d: Set color of toolbar
+    ui->toolBarAction->setStyleSheet("QToolBar {background: rgb(43, 164, 220)}""QToolButton {background-color: rgb(20, 141, 196); color: rgb(255, 255, 255)}"); // d: Set color of toolbar
+
+
+
     ui->toolBarPage->setVisible(Settings->getPageButtonLoc());
 	ui->toolBarAction->setVisible(Settings->getActionButtonLoc());
 	ui->listWidget->setVisible(!Settings->getPageButtonLoc() || !Settings->getActionButtonLoc());
@@ -1436,12 +1439,14 @@ void MainWindow::settingsChanged()
 		}
 	}
     int toolSize = Settings->getToolButtonSize();
-	ui->toolBarPage->setToolButtonStyle(Settings->getToolButtonStyle());
-	ui->toolBarPage->setIconSize(QSize(toolSize,toolSize));
+    ui->toolBarPage->setToolButtonStyle(Settings->getToolButtonStyle());
+    //ui->toolBarPage->setIconSize(QSize(toolSize,toolSize));
+    ui->toolBarPage->setIconSize(QSize(128,toolSize));
 	ui->toolBarAction->setToolButtonStyle(Settings->getToolButtonStyle());
-	ui->toolBarAction->setIconSize(QSize(toolSize,toolSize));
+    //ui->toolBarAction->setIconSize(QSize(toolSize,toolSize));
+    ui->toolBarAction->setIconSize(QSize(128,toolSize));
 	int itemSize = Settings->getListItemIconSize();
-	ui->listWidget->setIconSize(QSize(itemSize,itemSize));
+    ui->listWidget->setIconSize(QSize(itemSize,itemSize));
 }
 
 void MainWindow::externalLinkActivated(const QUrl &url)
