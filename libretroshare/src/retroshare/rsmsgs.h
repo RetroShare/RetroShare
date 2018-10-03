@@ -165,9 +165,8 @@ class MessageInfo_v2
 		int count; /* file count     */
 };
 
-class MessageInfo
+struct MessageInfo : RsSerializable
 {
-public:
     MessageInfo(): msgflags(0), size(0), count(0), ts(0) {}
     std::string msgId;
 
@@ -199,13 +198,42 @@ public:
     int count; /* file count     */
 
     int ts;
+
+	// RsSerializable interface
+	void serial_process(RsGenericSerializer::SerializeJob j, RsGenericSerializer::SerializeContext &ctx) {
+		RS_SERIAL_PROCESS(msgId);
+
+		RS_SERIAL_PROCESS(rspeerid_srcId);
+		RS_SERIAL_PROCESS(rsgxsid_srcId);
+
+		RS_SERIAL_PROCESS(msgflags);
+
+		RS_SERIAL_PROCESS(rspeerid_msgto);
+		RS_SERIAL_PROCESS(rspeerid_msgcc);
+		RS_SERIAL_PROCESS(rspeerid_msgbcc);
+
+		RS_SERIAL_PROCESS(rsgxsid_msgto);
+		RS_SERIAL_PROCESS(rsgxsid_msgcc);
+		RS_SERIAL_PROCESS(rsgxsid_msgcc);
+
+		RS_SERIAL_PROCESS(title);
+		RS_SERIAL_PROCESS(msg);
+
+		RS_SERIAL_PROCESS(attach_title);
+		RS_SERIAL_PROCESS(attach_comment);
+		RS_SERIAL_PROCESS(files);
+
+		RS_SERIAL_PROCESS(size);
+		RS_SERIAL_PROCESS(count);
+
+		RS_SERIAL_PROCESS(ts);
+	}
 };
 
 
-class MsgInfoSummary 
+struct MsgInfoSummary : RsSerializable
 {
-	public:
-    MsgInfoSummary(): msgflags(0), count(0), ts(0) {}
+	MsgInfoSummary() : msgflags(0), count(0), ts(0) {}
 
 	std::string msgId;
 	RsPeerId srcId;
@@ -216,6 +244,18 @@ class MsgInfoSummary
 	int count; /* file count     */
 	time_t ts;
 
+
+	// RsSerializable interface
+	void serial_process(RsGenericSerializer::SerializeJob j, RsGenericSerializer::SerializeContext &ctx) {
+		RS_SERIAL_PROCESS(msgId);
+		RS_SERIAL_PROCESS(srcId);
+
+		RS_SERIAL_PROCESS(msgflags);
+
+		RS_SERIAL_PROCESS(title);
+		RS_SERIAL_PROCESS(count);
+		RS_SERIAL_PROCESS(ts);
+	}
 };
 
 class MsgTagInfo
@@ -444,52 +484,66 @@ public:
 	RsMsgs() {}
 	virtual ~RsMsgs() {}
 
-/****************************************/
-/*             Message Items            */
-/****************************************/
+	/****************************************/
+	/*             Message Items            */
+	/****************************************/
 
-virtual bool getMessageSummaries(std::list<Rs::Msgs::MsgInfoSummary> &msgList) = 0;
-virtual bool getMessage(const std::string &mId, Rs::Msgs::MessageInfo &msg)  = 0;
-virtual void getMessageCount(unsigned int *pnInbox, unsigned int *pnInboxNew, unsigned int *pnOutbox, unsigned int *pnDraftbox, unsigned int *pnSentbox, unsigned int *pnTrashbox) = 0;
+	/**
+	 * @brief getMessageSummaries
+	 * @jsonapi{de22velopment}
+	 * @param[out] msgList
+	 * @return always true
+	 */
+	virtual bool getMessageSummaries(std::list<Rs::Msgs::MsgInfoSummary> &msgList) = 0;
 
-virtual bool MessageSend(Rs::Msgs::MessageInfo &info) = 0;
-virtual bool SystemMessage(const std::string &title, const std::string &message, uint32_t systemFlag) = 0;
-virtual bool MessageToDraft(Rs::Msgs::MessageInfo &info, const std::string &msgParentId) = 0;
-virtual bool MessageToTrash(const std::string &mid, bool bTrash)   = 0;
-virtual bool getMsgParentId(const std::string &msgId, std::string &msgParentId) = 0;
+	/**
+	 * @brief getMessage
+	 * @jsonapi{dev22elopment}
+	 * @param[in] mId message ID to lookup
+	 * @param[out] msg
+	 * @return true on success
+	 */
+	virtual bool getMessage(const std::string &mId, Rs::Msgs::MessageInfo &msg)  = 0;
+	virtual void getMessageCount(unsigned int *pnInbox, unsigned int *pnInboxNew, unsigned int *pnOutbox, unsigned int *pnDraftbox, unsigned int *pnSentbox, unsigned int *pnTrashbox) = 0;
 
-virtual bool MessageDelete(const std::string &mid)                 = 0;
-virtual bool MessageRead(const std::string &mid, bool unreadByUser) = 0;
-virtual bool MessageReplied(const std::string &mid, bool replied) = 0;
-virtual bool MessageForwarded(const std::string &mid, bool forwarded) = 0;
-virtual bool MessageStar(const std::string &mid, bool mark) = 0;
-virtual bool MessageLoadEmbeddedImages(const std::string &mid, bool load) = 0;
+	virtual bool MessageSend(Rs::Msgs::MessageInfo &info) = 0;
+	virtual bool SystemMessage(const std::string &title, const std::string &message, uint32_t systemFlag) = 0;
+	virtual bool MessageToDraft(Rs::Msgs::MessageInfo &info, const std::string &msgParentId) = 0;
+	virtual bool MessageToTrash(const std::string &mid, bool bTrash)   = 0;
+	virtual bool getMsgParentId(const std::string &msgId, std::string &msgParentId) = 0;
 
-/* message tagging */
+	virtual bool MessageDelete(const std::string &mid)                 = 0;
+	virtual bool MessageRead(const std::string &mid, bool unreadByUser) = 0;
+	virtual bool MessageReplied(const std::string &mid, bool replied) = 0;
+	virtual bool MessageForwarded(const std::string &mid, bool forwarded) = 0;
+	virtual bool MessageStar(const std::string &mid, bool mark) = 0;
+	virtual bool MessageLoadEmbeddedImages(const std::string &mid, bool load) = 0;
 
-virtual bool getMessageTagTypes(Rs::Msgs::MsgTagType& tags) = 0;
-/* set == false && tagId == 0 --> remove all */
-virtual bool setMessageTagType(uint32_t tagId, std::string& text, uint32_t rgb_color) = 0;
-virtual bool removeMessageTagType(uint32_t tagId) = 0;
+	/* message tagging */
 
-virtual bool getMessageTag(const std::string &msgId, Rs::Msgs::MsgTagInfo& info) = 0;
-virtual bool setMessageTag(const std::string &msgId, uint32_t tagId, bool set) = 0;
+	virtual bool getMessageTagTypes(Rs::Msgs::MsgTagType& tags) = 0;
+	/* set == false && tagId == 0 --> remove all */
+	virtual bool setMessageTagType(uint32_t tagId, std::string& text, uint32_t rgb_color) = 0;
+	virtual bool removeMessageTagType(uint32_t tagId) = 0;
 
-virtual bool resetMessageStandardTagTypes(Rs::Msgs::MsgTagType& tags) = 0;
+	virtual bool getMessageTag(const std::string &msgId, Rs::Msgs::MsgTagInfo& info) = 0;
+	virtual bool setMessageTag(const std::string &msgId, uint32_t tagId, bool set) = 0;
 
-/****************************************/
-/*        Private distant messages      */
-/****************************************/
+	virtual bool resetMessageStandardTagTypes(Rs::Msgs::MsgTagType& tags) = 0;
+
+	/****************************************/
+	/*        Private distant messages      */
+	/****************************************/
 
     virtual uint32_t getDistantMessagingPermissionFlags()=0 ;
     virtual void setDistantMessagingPermissionFlags(uint32_t flags)=0 ;
     
-/****************************************/
-/*                 Chat                 */
-/****************************************/
-// sendChat for broadcast, private, lobby and private distant chat
-// note: for lobby chat, you first have to subscribe to a lobby
-//       for private distant chat, it is reqired to have an active distant chat session
+	/****************************************/
+	/*                 Chat                 */
+	/****************************************/
+	// sendChat for broadcast, private, lobby and private distant chat
+	// note: for lobby chat, you first have to subscribe to a lobby
+	//       for private distant chat, it is reqired to have an active distant chat session
 
 	/**
 	 * @brief sendChat send a chat message to a given id
