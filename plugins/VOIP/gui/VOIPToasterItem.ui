@@ -273,20 +273,20 @@ background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 0.67,
  </widget>
  <customwidgets>
   <customwidget>
+   <class>StyledLabel</class>
+   <extends>QLabel</extends>
+   <header>gui/common/StyledLabel.h</header>
+  </customwidget>
+  <customwidget>
    <class>AvatarWidget</class>
    <extends>QLabel</extends>
    <header>gui/common/AvatarWidget.h</header>
    <container>1</container>
   </customwidget>
-  <customwidget>
-   <class>StyledLabel</class>
-   <extends>QLabel</extends>
-   <header>gui/common/StyledLabel.h</header>
-  </customwidget>
  </customwidgets>
  <resources>
-  <include location="../../../retroshare-gui/src/Unseengui/unseengui.qrc"/>
   <include location="../../../retroshare-gui/src/gui/images.qrc"/>
+  <include location="../../../retroshare-gui/src/Unseengui/unseengui.qrc"/>
  </resources>
  <connections/>
 </ui>
