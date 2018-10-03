@@ -156,6 +156,7 @@ void AppearancePage::updateCmboToolButtonStyle()
 		case 3:
 		default:
 			Settings->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+
 	}
     NotifyQt::getInstance()->notifySettingsChanged();
 }
