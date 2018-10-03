@@ -1172,6 +1172,17 @@ MessageComposer *MessageComposer::replyMsg(const std::string &msgId, bool all)
     if(!msgInfo.rspeerid_srcId.isNull()) msgComposer->addRecipient(MessageComposer::TO, msgInfo.rspeerid_srcId);
     if(!msgInfo.rsgxsid_srcId.isNull()) msgComposer->addRecipient(MessageComposer::TO, msgInfo.rsgxsid_srcId);
 
+    // make sure the current ID is among the ones the msg was actually sent to.
+    for(auto it(msgInfo.rsgxsid_msgto.begin());it!=msgInfo.rsgxsid_msgto.end();++it)
+        if(rsIdentity->isOwnId(*it))
+        {
+            msgComposer->ui.respond_to_CB->setDefaultId(*it) ;
+            break ;
+        }
+    // Note: another solution is to do
+    //		msgComposer->ui.respond_to_CB->setIdConstraintSet(msgInfo.rsgxsid_msgto);	// always choose one of the destinations to originate the response!
+    // but that prevent any use of IDs tht are not in the destination set to be chosen to author the msg.
+
     if (all)
     {
         RsPeerId ownId = rsPeers->getOwnId();
