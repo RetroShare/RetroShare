@@ -51,8 +51,9 @@ QIcon MessageUserNotify::getMainIcon(bool hasNew)
 
 unsigned int MessageUserNotify::getNewCount()
 {
-	unsigned int newInboxCount = 0;
-	rsMail->getMessageCount(NULL, &newInboxCount, NULL, NULL, NULL, NULL);
+	uint32_t newInboxCount = 0;
+	uint32_t a, b, c, d, e; // dummies
+	rsMail->getMessageCount(a, newInboxCount, b, c, d, e);
 
 	return newInboxCount;
 }

@@ -857,16 +857,16 @@ bool p3MsgService::getMessage(const std::string &mId, MessageInfo &msg)
 	return true;
 }
 
-void p3MsgService::getMessageCount(unsigned int *pnInbox, unsigned int *pnInboxNew, unsigned int *pnOutbox, unsigned int *pnDraftbox, unsigned int *pnSentbox, unsigned int *pnTrashbox)
+void p3MsgService::getMessageCount(uint32_t &nInbox, uint32_t &nInboxNew, uint32_t &nOutbox, uint32_t &nDraftbox, uint32_t &nSentbox, uint32_t &nTrashbox)
 {
     RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
 
-    if (pnInbox) *pnInbox = 0;
-    if (pnInboxNew) *pnInboxNew = 0;
-    if (pnOutbox) *pnOutbox = 0;
-    if (pnDraftbox) *pnDraftbox = 0;
-    if (pnSentbox) *pnSentbox = 0;
-    if (pnTrashbox) *pnTrashbox = 0;
+	nInbox = 0;
+	nInboxNew = 0;
+	nOutbox = 0;
+	nDraftbox = 0;
+	nSentbox = 0;
+	nTrashbox = 0;
 
     std::map<uint32_t, RsMsgItem *>::iterator mit;
     std::map<uint32_t, RsMsgItem *> *apMsg [2] = { &imsg, &msgOutgoing };
@@ -877,24 +877,23 @@ void p3MsgService::getMessageCount(unsigned int *pnInbox, unsigned int *pnInboxN
             initRsMIS(mit->second, mis);
 
             if (mis.msgflags & RS_MSG_TRASH) {
-                if (pnTrashbox) ++(*pnTrashbox);
+				++nTrashbox;
                 continue;
             }
             switch (mis.msgflags & RS_MSG_BOXMASK) {
             case RS_MSG_INBOX:
-                    if (pnInbox) ++(*pnInbox);
-                    if ((mis.msgflags & RS_MSG_NEW) == RS_MSG_NEW) {
-                        if (pnInboxNew) ++(*pnInboxNew);
-                    }
+				    ++nInbox;
+				    if ((mis.msgflags & RS_MSG_NEW) == RS_MSG_NEW)
+						++nInboxNew;
                     break;
             case RS_MSG_OUTBOX:
-                    if (pnOutbox) ++(*pnOutbox);
+				    ++nOutbox;
                     break;
             case RS_MSG_DRAFTBOX:
-                    if (pnDraftbox) ++(*pnDraftbox);
+				   ++nDraftbox;
                     break;
             case RS_MSG_SENTBOX:
-                    if (pnSentbox) ++(*pnSentbox);
+				    ++nSentbox;
                     break;
             }
         }

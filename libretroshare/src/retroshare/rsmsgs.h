@@ -490,7 +490,7 @@ public:
 
 	/**
 	 * @brief getMessageSummaries
-	 * @jsonapi{de22velopment}
+	 * @jsonapi{development}
 	 * @param[out] msgList
 	 * @return always true
 	 */
@@ -498,13 +498,23 @@ public:
 
 	/**
 	 * @brief getMessage
-	 * @jsonapi{dev22elopment}
+	 * @jsonapi{development}
 	 * @param[in] mId message ID to lookup
 	 * @param[out] msg
 	 * @return true on success
 	 */
 	virtual bool getMessage(const std::string &mId, Rs::Msgs::MessageInfo &msg)  = 0;
-	virtual void getMessageCount(unsigned int *pnInbox, unsigned int *pnInboxNew, unsigned int *pnOutbox, unsigned int *pnDraftbox, unsigned int *pnSentbox, unsigned int *pnTrashbox) = 0;
+	/**
+	 * @brief getMessageCount
+	 * @jsonapi{development}
+	 * @param[out] nInbox
+	 * @param[out] nInboxNew
+	 * @param[out] nOutbox
+	 * @param[out] nDraftbox
+	 * @param[out] nSentbox
+	 * @param[out] nTrashbox
+	 */
+	virtual void getMessageCount(uint32_t &nInbox, uint32_t &nInboxNew, uint32_t &nOutbox, uint32_t &nDraftbox, uint32_t &nSentbox, uint32_t &nTrashbox) = 0;
 
 	virtual bool MessageSend(Rs::Msgs::MessageInfo &info) = 0;
 	virtual bool SystemMessage(const std::string &title, const std::string &message, uint32_t systemFlag) = 0;
