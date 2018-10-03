@@ -113,7 +113,11 @@
     <enum>Qt::CustomContextMenu</enum>
    </property>
    <property name="movable">
+<<<<<<< HEAD
     <bool>false</bool>
+=======
+    <bool>true</bool>
+>>>>>>> Set toolbar
    </property>
    <property name="allowedAreas">
     <set>Qt::LeftToolBarArea</set>
@@ -139,7 +143,7 @@
     <bool>false</bool>
    </property>
    <property name="movable">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="allowedAreas">
     <set>Qt::LeftToolBarArea</set>
