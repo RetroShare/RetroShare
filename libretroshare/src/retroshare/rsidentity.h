@@ -377,6 +377,7 @@ struct RsIdentity : RsGxsIfaceHelper
 
     virtual bool setAsRegularContact(const RsGxsId& id,bool is_a_contact) = 0 ;
     virtual bool isARegularContact(const RsGxsId& id) = 0 ;
+	virtual uint32_t nbRegularContacts() =0;
 
 	virtual bool serialiseIdentityToMemory( const RsGxsId& id,
 	                                        std::string& radix_string ) = 0;
