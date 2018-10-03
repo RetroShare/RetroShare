@@ -33,7 +33,7 @@
 
 class ChatId;
 class ChatMessage;
-class RsGxsChanges;
+struct RsGxsChanges;
 
 class RsNotify;
 extern RsNotify   *rsNotify;

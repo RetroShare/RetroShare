@@ -38,7 +38,7 @@
 
 #define MAX_GPG_SIGNATURE_SIZE  4096
 
-class RsPeerDetails;
+struct RsPeerDetails;
 
 /*!
  * gpgcert is the identifier for a person.

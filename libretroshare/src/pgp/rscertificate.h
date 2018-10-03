@@ -47,7 +47,7 @@
 #include <set>
 #include <string>
 
-class RsPeerDetails ;
+struct RsPeerDetails;
 
 class RsCertificate
 {

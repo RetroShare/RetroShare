@@ -30,7 +30,7 @@
 #include <list>
 
 class pqiperson;
-class RsPeerCryptoParams ;
+struct RsPeerCryptoParams;
 
 static const int CONNECT_RECEIVED     = 1; 
 static const int CONNECT_SUCCESS      = 2;

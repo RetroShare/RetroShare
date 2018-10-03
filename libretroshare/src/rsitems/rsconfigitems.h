@@ -37,7 +37,7 @@
 
 #include "serialiser/rsserializer.h"
 
-class RsGroupInfo;
+struct RsGroupInfo;
 
 const uint8_t RS_PKT_TYPE_GENERAL_CONFIG = 0x01;
 const uint8_t RS_PKT_TYPE_PEER_CONFIG    = 0x02;

@@ -129,7 +129,7 @@ class peerConnectState
 
 class p3tunnel; 
 class RsPeerGroupItem_deprecated;
-class RsGroupInfo;
+struct RsGroupInfo;
 
 class p3PeerMgr;
 class p3NetMgr;
