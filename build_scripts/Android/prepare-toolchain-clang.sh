@@ -329,6 +329,6 @@ build_sqlite
 build_sqlcipher
 build_libupnp
 build_rapidjson
-build_restbed
+#build_restbed # qmake build it already
 
 echo NATIVE_LIBS_TOOLCHAIN_PATH=${NATIVE_LIBS_TOOLCHAIN_PATH}
