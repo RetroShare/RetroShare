@@ -777,10 +777,14 @@ template<> bool p3FileDatabase::convertPointerToEntryIndex<4>(const void *p, Ent
 {
     // trust me, I can do this ;-)
 
-#pragma GCC diagnostic ignored "-Wstrict-aliasing"
+#if defined(__GNUC__) && !defined(__clang__)
+#	pragma GCC diagnostic ignored "-Wstrict-aliasing"
+#endif // defined(__GNUC__) && !defined(__clang__)
     e   = EntryIndex(  *reinterpret_cast<uint32_t*>(&p) & ENTRY_INDEX_BIT_MASK_32BITS ) ;
     friend_index = (*reinterpret_cast<uint32_t*>(&p)) >> NB_ENTRY_INDEX_BITS_32BITS ;
-#pragma GCC diagnostic pop
+#if defined(__GNUC__) && !defined(__clang__)
+#	pragma GCC diagnostic pop
+#endif // defined(__GNUC__) && !defined(__clang__)
 
     if(friend_index == 0)
     {
@@ -817,10 +821,14 @@ template<> bool p3FileDatabase::convertPointerToEntryIndex<8>(const void *p, Ent
 {
     // trust me, I can do this ;-)
 
+#if defined(__GNUC__) && !defined(__clang__)
 #pragma GCC diagnostic ignored "-Wstrict-aliasing"
+#endif // defined(__GNUC__) && !defined(__clang__)
     e   = EntryIndex(  *reinterpret_cast<uint64_t*>(&p) & ENTRY_INDEX_BIT_MASK_64BITS ) ;
     friend_index = (*reinterpret_cast<uint64_t*>(&p)) >> NB_ENTRY_INDEX_BITS_64BITS ;
+#if defined(__GNUC__) && !defined(__clang__)
 #pragma GCC diagnostic pop
+#endif // defined(__GNUC__) && !defined(__clang__)
 
     if(friend_index == 0)
     {
