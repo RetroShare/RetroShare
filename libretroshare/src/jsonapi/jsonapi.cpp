@@ -140,10 +140,10 @@ JsonApiServer::JsonApiServer(uint16_t port, const std::string& bindAddress,
 	}, false);
 
 	registerHandler("/rsControl/rsGlobalShutDown",
-	                [this](const std::shared_ptr<rb::Session> session)
+	                [](const std::shared_ptr<rb::Session> session)
 	{
 		size_t reqSize = session->get_request()->get_header("Content-Length", 0);
-		session->fetch( reqSize, [this](
+		session->fetch( reqSize, [](
 		                const std::shared_ptr<rb::Session> session,
 		                const rb::Bytes& body )
 		{

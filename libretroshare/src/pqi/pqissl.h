@@ -76,7 +76,7 @@ class cert;
 
 class pqissllistener;
 class p3LinkMgr;
-class RsPeerCryptoParams ;
+struct RsPeerCryptoParams;
 
 class pqissl: public NetBinInterface
 {
