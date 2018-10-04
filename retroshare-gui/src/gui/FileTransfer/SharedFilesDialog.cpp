@@ -1146,10 +1146,12 @@ void LocalSharedFilesDialog::spawnCustomPopupMenu( QPoint point )
 		return ;
 	}
 
+	QMenu shareChannelMenu(tr("Share on channel...")) ; // added here because the shareChannelMenu QMenu object is deleted afterwards
+	QMenu shareForumMenu(tr("Share on forum...")) ; // added here because the shareChannelMenu QMenu object is deleted afterwards
+
     if(type != DIR_TYPE_EXTRA_FILE)
 	{
 		GxsChannelDialog *channelDialog = dynamic_cast<GxsChannelDialog*>(MainWindow::getPage(MainWindow::Channels));
-		QMenu shareChannelMenu(tr("Share on channel...")) ; // added here because the shareChannelMenu QMenu object is deleted afterwards
 
 		if(channelDialog != NULL)
 		{
@@ -1173,7 +1175,6 @@ void LocalSharedFilesDialog::spawnCustomPopupMenu( QPoint point )
 		}
 
 		GxsForumsDialog *forumsDialog = dynamic_cast<GxsForumsDialog*>(MainWindow::getPage(MainWindow::Forums));
-		QMenu shareForumMenu(tr("Share on forum...")) ; // added here because the shareChannelMenu QMenu object is deleted afterwards
 
 		if(forumsDialog != NULL)
 		{
