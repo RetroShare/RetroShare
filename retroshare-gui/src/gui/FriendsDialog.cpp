@@ -94,6 +94,9 @@ FriendsDialog::FriendsDialog(QWidget *parent)
     ui.tabWidget->addTab(networkView = new NetworkView(),QIcon(IMAGE_NETWORK2), tr("Network graph"));
     ui.tabWidget->addTab(networkDialog = new NetworkDialog(),QIcon(IMAGE_PEERS), tr("Keyring"));
 
+    //08 sep 2018 - meiyousixin - add Addcontact Button
+    //connect(ui->, SIGNAL(clicked()), this, SLOT(openAddContactPage()));
+
     //ui.tabWidget->addTab(new ProfileWidget(), tr("Profile"));
     //newsFeed = new NewsFeed();
     //int newsFeedTabIndex = ui.tabWidget->insertTab(0, newsFeed, tr("News Feed"));
@@ -344,4 +347,11 @@ void FriendsDialog::statusmessage()
 	MainWindow::showWindow(MainWindow::Friends);
 	friendsDialog->ui.tabWidget->setCurrentWidget(friendsDialog->ui.groupChatTab);
     friendsDialog->ui.chatWidget->focusDialog();
+}
+
+void FriendsDialog::on_addContactButton_clicked()
+{
+        ConnectFriendWizard connwiz (this);
+        connwiz.setStartId(ConnectFriendWizard::Page_Text);
+        connwiz.exec ();
 }

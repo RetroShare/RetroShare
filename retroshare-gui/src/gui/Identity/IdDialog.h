@@ -57,7 +57,7 @@ public:
 	~IdDialog();
 
 	virtual QIcon iconPixmap() const { return QIcon(IMAGE_IDDIALOG) ; } //MainPage
-	virtual QString pageName() const { return tr("Contacts") ; } //19 Sep 2018 - meiyousixin - change "people" to "contacts"
+	virtual QString pageName() const { return tr("Contacts by Identities") ; } //19 Sep 2018 - meiyousixin - change "people" to "contacts"
 	virtual QString helpText() const { return ""; } //MainPage
 
 	void loadRequest(const TokenQueue *queue, const TokenRequest &req);
@@ -120,6 +120,7 @@ private slots:
 
 	void openAddContactPage();
 	void openChatWindow(QTreeWidgetItem *item, int col);
+	void peerStatusChanged(const QString &peerId, int status);
 private:
 	void processSettings(bool load);
 	QString createUsageString(const RsIdentityUsage& u) const;

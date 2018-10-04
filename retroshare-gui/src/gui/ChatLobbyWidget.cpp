@@ -16,6 +16,7 @@
 
 //meiyousixin - add more PopupChatDialog into ChatLobbyWidget
 #include "chat/PopupChatDialog.h"
+#include "pgp/pgpauxutils.h"
 
 #include "retroshare/rsmsgs.h"
 #include "retroshare/rspeers.h"
@@ -446,24 +447,34 @@ void ChatLobbyWidget::addOne2OneChatPage(PopupChatDialog *d)
 	{
 		QTreeWidgetItem *item =  new RSTreeWidgetItem(compareRole, TYPE_ONE2ONE);
 
-		// get nickname from ChatId
-		std::string nickname = rsPeers->getPeerName(d->chatId().toPeerId());
+		// This get nickname from ChatId - this will get "meiyousixin (My computer)"
+		//std::string nickname = rsPeers->getPeerName(d->chatId().toPeerId());
 
-		      updateContactItem(ui.lobbyTreeWidget, item, nickname, d->chatId().toPeerId().toStdString() );
+		RsPgpId pgpId = rsPeers->getGPGId(d->chatId().toPeerId());
+		std::string nickname = rsPeers->getGPGName(pgpId);
 
-                      //add new contact item and select it
-                      chatContactItem->addChild(item);
-                      chatContactItem->treeWidget()->setItemSelected(item, true);
+		// this will get the same as getPGPName(pgpId)
+//		RsPeerDetails detail;
+//		if (rsPeers->getGPGDetails(pgpId, detail))
+//		  {
+//		    nickname = detail.name;
+//		  }
 
-                      //remove all selected items
-                      QTreeWidgetItemIterator it(chatContactItem->treeWidget());
-                      while (*it) {
-                        if ((*it)!= item && (*it)->isSelected()) (*it)->setSelected(false) ;
-                        ++it;
-                      }
-                      ui.stackedWidget->addWidget(d) ;
-                      _chatOne2One_infos[d->chatId().toPeerId().toStdString()].dialog = d ;
-                      _chatOne2One_infos[d->chatId().toPeerId().toStdString()].last_typing_event = QDateTime::currentSecsSinceEpoch();
+		updateContactItem(ui.lobbyTreeWidget, item, nickname, d->chatId().toPeerId().toStdString() );
+
+		//add new contact item and select it
+		chatContactItem->addChild(item);
+		chatContactItem->treeWidget()->setItemSelected(item, true);
+
+		//remove all selected items
+		QTreeWidgetItemIterator it(chatContactItem->treeWidget());
+		while (*it) {
+		    if ((*it)!= item && (*it)->isSelected()) (*it)->setSelected(false) ;
+		    ++it;
+		  }
+		ui.stackedWidget->addWidget(d) ;
+		_chatOne2One_infos[d->chatId().toPeerId().toStdString()].dialog = d ;
+		_chatOne2One_infos[d->chatId().toPeerId().toStdString()].last_typing_event = QDateTime::currentSecsSinceEpoch();
         }
 
 
