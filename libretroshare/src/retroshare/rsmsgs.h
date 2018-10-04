@@ -503,11 +503,11 @@ public:
 	/**
 	 * @brief getMessage
 	 * @jsonapi{development}
-	 * @param[in] mId message ID to lookup
+	 * @param[in] msgId message ID to lookup
 	 * @param[out] msg
 	 * @return true on success
 	 */
-	virtual bool getMessage(const std::string &mId, Rs::Msgs::MessageInfo &msg)  = 0;
+	virtual bool getMessage(const std::string &msgId, Rs::Msgs::MessageInfo &msg)  = 0;
 	/**
 	 * @brief getMessageCount
 	 * @jsonapi{development}
@@ -550,11 +550,11 @@ public:
 	/**
 	 * @brief MessageToTrash
 	 * @jsonapi{development}
-	 * @param[in] mid
+	 * @param[in] msgId
 	 * @param[in] bTrash
 	 * @return true on success
 	 */
-	virtual bool MessageToTrash(const std::string &mid, bool bTrash)   = 0;
+	virtual bool MessageToTrash(const std::string &msgId, bool bTrash)   = 0;
 
 	/**
 	 * @brief getMsgParentId
@@ -568,55 +568,55 @@ public:
 	/**
 	 * @brief MessageDelete
 	 * @jsonapi{development}
-	 * @param[in] mid
+	 * @param[in] msgId
 	 * @return true on success
 	 */
-	virtual bool MessageDelete(const std::string &mid)                 = 0;
+	virtual bool MessageDelete(const std::string &msgId)                 = 0;
 
 	/**
 	 * @brief MessageRead
 	 * @jsonapi{development}
-	 * @param[in] mid
+	 * @param[in] msgId
 	 * @param[in] unreadByUser
 	 * @return true on success
 	 */
-	virtual bool MessageRead(const std::string &mid, bool unreadByUser) = 0;
+	virtual bool MessageRead(const std::string &msgId, bool unreadByUser) = 0;
 
 	/**
 	 * @brief MessageReplied
 	 * @jsonapi{development}
-	 * @param[in] mid
+	 * @param[in] msgId
 	 * @param[in] replied
 	 * @return true on success
 	 */
-	virtual bool MessageReplied(const std::string &mid, bool replied) = 0;
+	virtual bool MessageReplied(const std::string &msgId, bool replied) = 0;
 
 	/**
 	 * @brief MessageForwarded
 	 * @jsonapi{development}
-	 * @param[in] mid
+	 * @param[in] msgId
 	 * @param[in] forwarded
 	 * @return true on success
 	 */
-	virtual bool MessageForwarded(const std::string &mid, bool forwarded) = 0;
+	virtual bool MessageForwarded(const std::string &msgId, bool forwarded) = 0;
 
 	/**
 	 * @brief MessageStar
 	 * @jsonapi{development}
-	 * @param[in] mid
+	 * @param[in] msgId
 	 * @param[in] mark
 	 * @return true on success
 	 */
-	virtual bool MessageStar(const std::string &mid, bool mark) = 0;
+	virtual bool MessageStar(const std::string &msgId, bool mark) = 0;
 
 	/**
 	 * @brief MessageLoadEmbeddedImages
 	 * @jsonapi{development}
-	 * @param[in] mid
+	 * @param[in] msgId
 	 * @param[in] load
 	 * @return true on success
 	 */
-	virtual bool MessageLoadEmbeddedImages(const std::string &mid, bool load) = 0;
+	virtual bool MessageLoadEmbeddedImages(const std::string &msgId, bool load) = 0;
 
 	/* message tagging */
 	/**
