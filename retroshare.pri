@@ -583,7 +583,7 @@ macx-* {
         INC_DIR += "/usr/include"
         INC_DIR += "/usr/local/include"
         LIB_DIR += "/usr/local/lib"
-	//local real Mac OSX Device Setting.
+	##local real Mac OSX Device Setting.
         #BIN_DIR += "/Applications/Xcode.app/Contents/Developer/usr/bin"
 	#INC_DIR += "/usr/local/Cellar/miniupnpc/2.1/include"
         #INC_DIR += "/usr/local/Cellar/libmicrohttpd/0.9.59/include"
