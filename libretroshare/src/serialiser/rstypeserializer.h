@@ -655,7 +655,7 @@ struct RsTypeSerializer
 			break;
 		case RsGenericSerializer::FROM_JSON:
 		{
-			uint32_t f;
+			uint32_t f = 0;
 			ctx.mOk &=
 			        (ctx.mOk || ctx.mFlags & RsGenericSerializer::SERIALIZATION_FLAG_YIELDING)
 			        && from_JSON(memberName, f, ctx.mJson);
