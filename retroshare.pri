@@ -88,8 +88,8 @@ no_sqlcipher:CONFIG -= sqlcipher
 # To enable autologin (this is higly discouraged as it may compromise your node
 # security in multiple ways) append the following assignation to qmake command
 # line "CONFIG+=rs_autologin"
-#CONFIG *= no_rs_autologin
-CONFIG +=rs_autologin
+CONFIG *= no_rs_autologin
+#CONFIG +=rs_autologin
 rs_autologin:CONFIG -= no_rs_autologin
 
 # To have only hidden node generation append the following assignation
@@ -119,8 +119,8 @@ CONFIG *= rs_gxs_trans
 
 # To enable GXS based async chat append the following assignation to qmake
 # command line "CONFIG+=rs_async_chat"
-#CONFIG *= no_rs_async_chat
-CONFIG *= rs_async_chat
+CONFIG *= no_rs_async_chat
+#CONFIG *= rs_async_chat
 rs_async_chat:CONFIG -= no_rs_async_chat
 
 
