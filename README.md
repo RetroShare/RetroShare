@@ -1,4 +1,4 @@
-RetroShare
+UnseenP2P is subset of RetroShare
 ==============================
 RetroShare is a decentralized, private and secure commmunication and sharing platform. RetroShare provides filesharing, chat, messages, forums and channels. 
 
