@@ -290,11 +290,11 @@ struct RsTypeSerializer
 				// Use same allocator to avoid deep copy
 				RsGenericSerializer::SerializeContext kCtx(
 				            nullptr, 0, ctx.mFlags, &allocator );
-				serial_process<T>(j, kCtx, const_cast<T&>(kv.first), "key");
+				serial_process(j, kCtx, const_cast<T&>(kv.first), "key");
 
 				RsGenericSerializer::SerializeContext vCtx(
 				            nullptr, 0, ctx.mFlags, &allocator );
-				serial_process<U>(j, vCtx, const_cast<U&>(kv.second), "value");
+				serial_process(j, vCtx, const_cast<U&>(kv.second), "value");
 
 				if(kCtx.mOk && vCtx.mOk)
 				{
