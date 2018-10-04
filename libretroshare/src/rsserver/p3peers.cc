@@ -1054,12 +1054,7 @@ bool p3Peers::setProxyServer(const uint32_t type, const std::string &addr_str, c
 
 //===========================================================================
 	/* Auth Stuff */
-std::string p3Peers::GetRetroshareInvite(
-        bool include_signatures, bool includeExtraLocators )
-{
-	return GetRetroshareInvite(
-	            getOwnId(), include_signatures, includeExtraLocators );
-}
+
 std::string p3Peers::getPGPKey(const RsPgpId& pgp_id,bool include_signatures)
 {
 	unsigned char *mem_block = NULL;
@@ -1176,12 +1171,13 @@ bool p3Peers::acceptInvite( const std::string& invite,
 }
 
 std::string p3Peers::GetRetroshareInvite(
-        const RsPeerId& ssl_id, bool include_signatures,
+        const RsPeerId& sslId, bool include_signatures,
         bool includeExtraLocators )
 {
 #ifdef P3PEERS_DEBUG
 	std::cerr << __PRETTY_FUNCTION__ << std::endl;
 #endif
+	const RsPeerId& ssl_id(sslId.isNull() ? getOwnId() : sslId);
 
 	//add the sslid, location, ip local and external address after the signature
 	RsPeerDetails detail;
