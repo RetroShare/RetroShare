@@ -32,9 +32,9 @@
 // Data Requests.
 #define IDDETAILSDIALOG_IDDETAILS  1
 #define IDDETAILSDIALOG_REPLIST    2
-/******
- * #define ID_DEBUG 1
- *****/
+/******/
+  #define ID_DEBUG 1
+ /*****/
 
 /** Default constructor */
 IdDetailsDialog::IdDetailsDialog(const RsGxsGroupId& id, QWidget *parent) :
@@ -193,7 +193,7 @@ void IdDetailsDialog::insertIdDetails(uint32_t token)
     }
 
 #ifdef ID_DEBUG
-	std::cerr << "Setting header frame image : " << pix.width() << " x " << pix.height() << std::endl;
+	std::cerr << "Setting header frame image : " << pixmap.width() << " x " << pixmap.height() << std::endl;
 #endif
 
 	if (data.mPgpKnown)
@@ -346,7 +346,7 @@ void IdDetailsDialog::modifyReputation()
     	rsReputations->setOwnOpinion(id,op) ;
 
 #ifdef ID_DEBUG
-	std::cerr << "IdDialog::modifyReputation() ID: " << id << " Mod: " << mod;
+	std::cerr << "IdDialog::modifyReputation() ID: " << id << " Mod: " << op;
 	std::cerr << std::endl;
 #endif
 
@@ -364,10 +364,10 @@ void IdDetailsDialog::modifyReputation()
 	}
 #endif
 
-#ifdef ID_DEBUG
-	std::cerr << "IdDialog::modifyReputation() queuingRequest(), token: " << token;
-	std::cerr << std::endl;
-#endif
+//#ifdef ID_DEBUG
+//	std::cerr << "IdDialog::modifyReputation() queuingRequest(), token: " << token;
+//	std::cerr << std::endl;
+//#endif
 
 	// trigger refresh when finished.
 	// basic / anstype are not needed.

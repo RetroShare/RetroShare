@@ -862,21 +862,23 @@ void FriendList::insertPeers()
             QPixmap bestAvatar;
 
             rsPeers->getAssociatedSSLIds(detail.gpg_id, sslContacts);
-            for (std::list<RsPeerId>::iterator sslIt = sslContacts.begin(); sslIt != sslContacts.end(); ++sslIt) {
+            for (std::list<RsPeerId>::iterator sslIt = sslContacts.begin(); sslIt != sslContacts.end(); ++sslIt)
+              {
                 QTreeWidgetItem *sslItem = NULL;
                 RsPeerId sslId = *sslIt;
 
+                // meiyousixin - remove all thing related to child of the contact by GPG Id
                 // find the corresponding sslItem child item of the gpg item
-                bool newChild = true;
-                childCount = gpgItem->childCount();
-                for (int childIndex = 0; childIndex < childCount; ++childIndex) {
-                    // we assume, that only ssl items are child of the gpg item, so we don't need to test the type
-                    if (getRsId(gpgItem->child(childIndex)) == sslId.toStdString()) {
-                        sslItem = gpgItem->child(childIndex);
-                        newChild = false;
-                        break;
-                    }
-                }
+//                bool newChild = true;
+//                childCount = gpgItem->childCount();
+//                for (int childIndex = 0; childIndex < childCount; ++childIndex) {
+//                    // we assume, that only ssl items are child of the gpg item, so we don't need to test the type
+//                    if (getRsId(gpgItem->child(childIndex)) == sslId.toStdString()) {
+//                        sslItem = gpgItem->child(childIndex);
+//                        newChild = false;
+//                        break;
+//                    }
+//                }
 
                 RsPeerDetails sslDetail;
                 if (!rsPeers->getPeerDetails(sslId, sslDetail) || !rsPeers->isFriend(sslId)) {
@@ -891,29 +893,29 @@ void FriendList::insertPeers()
                     continue;
                 }
 
-                if (newChild) {
-                    sslItem = new RSTreeWidgetItem(mCompareRole, TYPE_SSL); //set type to 1 for custom popup menu
+//                if (newChild) {
+//                    sslItem = new RSTreeWidgetItem(mCompareRole, TYPE_SSL); //set type to 1 for custom popup menu
 
-#ifdef FRIENDS_DEBUG
-                    std::cerr << "FriendList::insertPeers() inserting sslItem." << std::endl;
-#endif
+//#ifdef FRIENDS_DEBUG
+//                    std::cerr << "FriendList::insertPeers() inserting sslItem." << std::endl;
+//#endif
 
-                    /* Add ssl child to the list. Add here, because for setHidden the item must be added */
-                    gpgItem->addChild(sslItem);
+//                    /* Add ssl child to the list. Add here, because for setHidden the item must be added */
+//                    gpgItem->addChild(sslItem);
 
-                    /* Sort data */
-                    for (int i = 0; i < columnCount; ++i) {
-                        sslItem->setData(i, ROLE_SORT_GROUP, 2);
-                        sslItem->setData(i, ROLE_SORT_STANDARD_GROUP, 1);
-                    }
-                }
+//                    /* Sort data */
+//                    for (int i = 0; i < columnCount; ++i) {
+//                        sslItem->setData(i, ROLE_SORT_GROUP, 2);
+//                        sslItem->setData(i, ROLE_SORT_STANDARD_GROUP, 1);
+//                    }
+//                }
 
                 /* not displayed, used to find back the item */
-                QString strID = QString::fromStdString(sslDetail.id.toStdString());
-                sslItem->setData(COLUMN_DATA, ROLE_ID, strID);
-                sslItem->setText(COLUMN_ID, strID);
-                sslItem->setData(COLUMN_ID, ROLE_SORT_NAME, strID);
-                sslItem->setData(COLUMN_ID, ROLE_FILTER, strID);
+//                QString strID = QString::fromStdString(sslDetail.id.toStdString());
+//                sslItem->setData(COLUMN_DATA, ROLE_ID, strID);
+//                sslItem->setText(COLUMN_ID, strID);
+//                sslItem->setData(COLUMN_ID, ROLE_SORT_NAME, strID);
+//                sslItem->setData(COLUMN_ID, ROLE_FILTER, strID);
 
                 /* Custom state string */
                 QString customStateString;
@@ -926,16 +928,16 @@ void FriendList::insertPeers()
 
                 /* last contact */
                 QDateTime sslLastContact = QDateTime::fromTime_t(sslDetail.lastConnect);
-                sslItem->setData(COLUMN_LAST_CONTACT, Qt::DisplayRole, QVariant(sslLastContact));
-                sslItem->setData(COLUMN_LAST_CONTACT, ROLE_SORT_NAME, QVariant(sslLastContact));
+//                sslItem->setData(COLUMN_LAST_CONTACT, Qt::DisplayRole, QVariant(sslLastContact));
+//                sslItem->setData(COLUMN_LAST_CONTACT, ROLE_SORT_NAME, QVariant(sslLastContact));
                 if (sslLastContact > bestLastContact) {
                     bestLastContact = sslLastContact;
                 }
 
                 /* IP */
                 QString sslIP = (sslDetail.state & RS_PEER_STATE_CONNECTED) ? StatusDefs::connectStateIpString(sslDetail) : QString("---");
-                sslItem->setText(COLUMN_IP, sslIP);
-                sslItem->setData(COLUMN_IP, ROLE_SORT_NAME, sslIP);
+//                sslItem->setText(COLUMN_IP, sslIP);
+//                sslItem->setData(COLUMN_IP, ROLE_SORT_NAME, sslIP);
 
                 /* change color and icon */
                 QPixmap sslOverlayIcon;
@@ -996,7 +998,7 @@ void FriendList::insertPeers()
                         }
                     }
 
-                    sslItem->setHidden(false);
+                    //sslItem->setHidden(false);
                     gpg_connected = true;
 
                     sslOverlayIcon = QPixmap(StatusDefs::imageStatus(bestRSState));
@@ -1011,7 +1013,7 @@ void FriendList::insertPeers()
                         sslColor = mTextColorStatus[rsState];
                     }
                 } else if (sslDetail.state & RS_PEER_STATE_ONLINE) {
-                    sslItem->setHidden(mHideUnconnected);
+                    //sslItem->setHidden(mHideUnconnected);
                     gpg_online = true;
                     peerState = PEER_STATE_AVAILABLE;
 
@@ -1027,7 +1029,7 @@ void FriendList::insertPeers()
                     sslColor = mTextColorStatus[RS_STATUS_ONLINE];
                 } else {
                     peerState = PEER_STATE_OFFLINE;
-                    sslItem->setHidden(mHideUnconnected);
+                    //sslItem->setHidden(mHideUnconnected);
                     if (sslDetail.connectState) {
                         sslOverlayIcon = QPixmap(":/images/connect_creating.png");
                     } else {
@@ -1056,55 +1058,55 @@ void FriendList::insertPeers()
                         }
                     }
 
-                    sslItem->setToolTip(COLUMN_NAME, "");
+                    //sslItem->setToolTip(COLUMN_NAME, "");
                 } else {
                     if (!customStateString.isEmpty()) {
                         sslText = customStateString;
                     }
 
                     /* Show the state as tooltip */
-                    sslItem->setToolTip(COLUMN_NAME, connectStateString);
+                    //sslItem->setToolTip(COLUMN_NAME, connectStateString);
                 }
 
                 /* Create or get ssl label */
-                ElidedLabel *sslNameLabel = NULL;
-                ElidedLabel *sslTextLabel = NULL;
+//                ElidedLabel *sslNameLabel = NULL;
+//                ElidedLabel *sslTextLabel = NULL;
 
-                getNameWidget(ui->peerTreeWidget, sslItem, sslNameLabel, sslTextLabel);
+//                getNameWidget(ui->peerTreeWidget, sslItem, sslNameLabel, sslTextLabel);
 
-                if (sslNameLabel) {
-                    sslNameLabel->setText(sslName);
-                    sslNameLabel->setFont(sslFont);
+//                if (sslNameLabel) {
+//                    sslNameLabel->setText(sslName);
+//                    sslNameLabel->setFont(sslFont);
 
-                    QPalette palette = sslNameLabel->palette();
-                    palette.setColor(sslNameLabel->foregroundRole(), sslColor);
+//                    QPalette palette = sslNameLabel->palette();
+//                    palette.setColor(sslNameLabel->foregroundRole(), sslColor);
 
-                    sslNameLabel->setPalette(palette);
-                }
-                if (sslTextLabel) {
-                    sslTextLabel->setText(sslText);
-                    sslTextLabel->setVisible(!sslText.isEmpty());
-                }
+//                    sslNameLabel->setPalette(palette);
+//                }
+//                if (sslTextLabel) {
+//                    sslTextLabel->setText(sslText);
+//                    sslTextLabel->setVisible(!sslText.isEmpty());
+//                }
 
                 // Filter
-                sslItem->setData(COLUMN_NAME, ROLE_FILTER, sslName);
+                //sslItem->setData(COLUMN_NAME, ROLE_FILTER, sslName);
 
-                if (std::find(privateChatIds.begin(), privateChatIds.end(), sslDetail.id) != privateChatIds.end()) {
-                    // private chat is available
-                    sslOverlayIcon = QPixmap(":/images/chat.png");
-                    gpg_hasPrivateChat = true;
-                }
-                sslItem->setIcon(COLUMN_NAME, createAvatar(sslAvatar, sslOverlayIcon));
+//                if (std::find(privateChatIds.begin(), privateChatIds.end(), sslDetail.id) != privateChatIds.end()) {
+//                    // private chat is available
+//                    sslOverlayIcon = QPixmap(":/images/chat.png");
+//                    gpg_hasPrivateChat = true;
+//                }
+                //sslItem->setIcon(COLUMN_NAME, createAvatar(sslAvatar, sslOverlayIcon));
 
                 /* Sort data */
-                sslItem->setData(COLUMN_NAME, ROLE_SORT_NAME, sslName);
+                //sslItem->setData(COLUMN_NAME, ROLE_SORT_NAME, sslName);
 
-                for (int i = 0; i < columnCount; ++i) {
-                    sslItem->setData(i, ROLE_SORT_STATE, peerState);
+//                for (int i = 0; i < columnCount; ++i) {
+//                    sslItem->setData(i, ROLE_SORT_STATE, peerState);
 
-                    sslItem->setTextColor(i, sslColor);
-                    sslItem->setFont(i, sslFont);
-                }
+//                    sslItem->setTextColor(i, sslColor);
+//                    sslItem->setFont(i, sslFont);
+//                }
             }
 
             QString gpgName = QString::fromUtf8(detail.name.c_str());
