@@ -38,12 +38,12 @@ bool GxsForumUserNotify::hasSetting(QString *name, QString *group)
 
 QIcon GxsForumUserNotify::getIcon()
 {
-    return QIcon(":/icons/png/forums.png");
+    return QIcon(":/home/img/face_icon/bull-horn-announcer_128.png");
 }
 
 QIcon GxsForumUserNotify::getMainIcon(bool hasNew)
 {
-    return hasNew ? QIcon(":/icons/png/forums-notify.png") : QIcon(":/icons/png/forums.png");
+    return hasNew ? QIcon(":/home/img/face_icon/bull-horn-announcer_v_128.png") : QIcon(":/home/img/face_icon/bull-horn-announcer_128.png");
 }
 
 void GxsForumUserNotify::iconClicked()
