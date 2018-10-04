@@ -262,7 +262,7 @@ public:
 	/// \param rect
 	///Set the geometry of the layout relative to its parent and excluding the window frame.
 	///It's for redraw item list when it was resized.
-	void setGeometry(const QRect &rect);
+    void setGeometry(const QRect &rect);
 	///
 	/// \brief sizeHint
 	/// \return QSize

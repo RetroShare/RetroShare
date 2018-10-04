@@ -113,15 +113,7 @@
     <enum>Qt::CustomContextMenu</enum>
    </property>
    <property name="movable">
-<<<<<<< HEAD
-<<<<<<< HEAD
     <bool>false</bool>
-=======
-    <bool>true</bool>
->>>>>>> Set toolbar
-=======
-    <bool>false</bool>
->>>>>>> Update interface
    </property>
    <property name="allowedAreas">
     <set>Qt::LeftToolBarArea</set>
@@ -145,6 +137,12 @@
    </property>
    <property name="autoFillBackground">
     <bool>false</bool>
+   </property>
+   <property name="movable">
+    <bool>false</bool>
+   </property>
+   <property name="allowedAreas">
+    <set>Qt::LeftToolBarArea</set>
    </property>
    <property name="toolButtonStyle">
     <enum>Qt::ToolButtonTextUnderIcon</enum>

@@ -43,7 +43,7 @@ public:
 	explicit HomePage(QWidget *parent);
 	~HomePage();
 	
-	  virtual QIcon iconPixmap() const { return QPixmap(":/icons/svg/profile.svg") ; } //MainPage
+      virtual QIcon iconPixmap() const { return QPixmap(":/home/img/face_icon/user-shape_128.png") ; } //MainPage //d: replace icon
     virtual QString pageName() const { return tr("Profile") ; } //meiyousixin - change homepage to profile
     virtual QString helpText() const { return ""; } //MainPage
 

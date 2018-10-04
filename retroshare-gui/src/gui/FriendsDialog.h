@@ -26,7 +26,7 @@
 
 #include "ui_FriendsDialog.h"
 
-#define IMAGE_NETWORK         	":/icons/png/network.png"
+#define IMAGE_NETWORK         	":/home/img/face_icon/group-profile-users_128.png"  // replace icon
 
 class QAction;
 class NetworkDialog;
