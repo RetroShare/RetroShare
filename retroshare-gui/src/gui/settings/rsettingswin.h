@@ -29,7 +29,7 @@
 
 class FloatingHelpBrowser;
 
-#define IMAGE_PREFERENCES       ":/icons/png/options.png"
+#define IMAGE_PREFERENCES       ":/home/img/face_icon/cog-wheel-silhouette_128.png"
 
 class SettingsPage: public MainPage
 {

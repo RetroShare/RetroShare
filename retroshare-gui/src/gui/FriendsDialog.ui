@@ -95,7 +95,7 @@
          <enum>Qt::NoFocus</enum>
         </property>
         <property name="icon">
-         <iconset resource="icons.qrc">
+         <iconset resource="images.qrc">
           <normaloff>:/icons/help_64.png</normaloff>:/icons/help_64.png</iconset>
         </property>
         <property name="checkable">
@@ -231,8 +231,8 @@
       </property>
       <widget class="QWidget" name="groupChatTab">
        <attribute name="icon">
-        <iconset resource="icons.qrc">
-         <normaloff>:/icons/png/chat-lobbies.png</normaloff>:/icons/png/chat-lobbies.png</iconset>
+        <iconset resource="../Unseengui/unseengui.qrc">
+         <normaloff>:/home/img/face_icon/un_chat_icon_x_128.png</normaloff>:/home/img/face_icon/un_chat_icon_x_128.png</iconset>
        </attribute>
        <attribute name="title">
         <string>Broadcast</string>
@@ -389,8 +389,9 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="icons.qrc"/>
   <include location="images.qrc"/>
+  <include location="../Unseengui/unseengui.qrc"/>
+  <include location="icons.qrc"/>
  </resources>
  <connections/>
 </ui>

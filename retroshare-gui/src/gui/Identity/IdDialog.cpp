@@ -416,7 +416,7 @@ void IdDialog::clearPerson()
 {
 	QFontMetricsF f(ui->avLabel_Person->font()) ;
 
-	ui->avLabel_Person->setPixmap(QPixmap(":/icons/png/people.png").scaled(f.height()*4,f.height()*4,Qt::IgnoreAspectRatio,Qt::SmoothTransformation));
+    ui->avLabel_Person->setPixmap(QPixmap(":/chat/img/confbtn.png").scaled(f.height()*4,f.height()*4,Qt::IgnoreAspectRatio,Qt::SmoothTransformation));
 	ui->headerTextLabel_Person->setText(tr("People"));
 
 	ui->inviteFrame->hide();

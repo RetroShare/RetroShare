@@ -23,5 +23,36 @@
         <file>app/images/unseen32.png</file>
         <file>app/images/unseen48.png</file>
         <file>app/images/unseen64.png</file>
+        <file>chat/img/confbtn.png</file>
+        <file>chat/img/p2p.png</file>
+        <file>home/img/face_icon/un_chat_icon_16.png</file>
+        <file>home/img/face_icon/un_chat_icon_24.png</file>
+        <file>home/img/face_icon/un_chat_icon_32.png</file>
+        <file>home/img/face_icon/un_chat_icon_64.png</file>
+        <file>home/img/face_icon/un_chat_icon_128.png</file>
+        <file>home/img/face_icon/un_chat_icon_x_16.png</file>
+        <file>home/img/face_icon/un_chat_icon_x_24.png</file>
+        <file>home/img/face_icon/un_chat_icon_x_32.png</file>
+        <file>home/img/face_icon/un_chat_icon_x_64.png</file>
+        <file>home/img/face_icon/un_chat_icon_x_128.png</file>
+        <file>home/img/face_icon/un_chat_icon_v_128.png</file>
+        <file>home/img/face_icon/contact_128.png</file>
+        <file>home/img/face_icon/group-profile-users_128.png</file>
+        <file>home/img/face_icon/envelope_128.png</file>
+        <file>home/img/face_icon/envelope_v_128.png</file>
+        <file>home/img/face_icon/envelope_x_128.png</file>
+        <file>home/img/face_icon/file._128png</file>
+        <file>home/img/face_icon/file_v_128.png</file>
+        <file>home/img/face_icon/file_x_128.png</file>
+        <file>home/img/face_icon/power-button-off.png</file>
+        <file>home/img/face_icon/cog-wheel-silhouette_128.png</file>
+        <file>home/img/face_icon/bull-horn-announcer_128.png</file>
+        <file>home/img/face_icon/bull-horn-announcer_v_128.png</file>
+        <file>home/img/face_icon/bull-horn-announcer_x_128.png</file>
+        <file>home/img/face_icon/group-profile-users_v_128.png</file>
+        <file>home/img/face_icon/user-shape_128.png</file>
+        <file>home/img/face_icon/user-shape_v_128.png</file>
+        <file>home/img/face_icon/user-shape_x_128.png</file>
+        <file>home/img/face_icon/group-profile-users_x_128.png</file>
     </qresource>
 </RCC>
