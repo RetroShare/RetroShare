@@ -302,7 +302,7 @@ int main(int argc, char *argv[])
 					const MethodParam& mp(paramsMap[pn]);
 					paramsDeclaration += "\t\t" + mp.type + " " + mp.name;
 					if(!mp.defval.isEmpty())
-						paramsDeclaration += "(" + mp.defval + ")";
+						paramsDeclaration += " = " + mp.defval;
 					paramsDeclaration += ";\n";
 					if(mp.in)
 						inputParamsDeserialization += "\t\t\tRS_SERIAL_PROCESS("
