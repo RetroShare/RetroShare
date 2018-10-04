@@ -150,9 +150,8 @@ CONFIG *= no_rs_jsonapi
 rs_jsonapi:CONFIG -= no_rs_jsonapi
 
 # To disable deep search append the following assignation to qmake command line
-CONFIG+=no_rs_deep_search
-CONFIG *= rs_deep_search
-no_rs_deep_search:CONFIG -= rs_deep_search
+CONFIG *= no_rs_deep_search
+rs_deep_search:CONFIG -= no_rs_deep_search
 
 # Specify host precompiled jsonapi-generator path, appending the following
 # assignation to qmake command line
