@@ -34,17 +34,22 @@
 #include "rsserver/p3face.h"
 #include "retroshare/rsnotify.h"
 
-#include <stdio.h>
+#include <cstdio>
 
 // For Dummy Msgs.
 #include "util/rsrandom.h"
 #include "util/rsstring.h"
 
+#ifdef RS_DEEP_SEARCH
+#	include "deep_search/deep_search.h"
+#endif //  RS_DEEP_SEARCH
+
+
 /****
  * #define GXSCHANNEL_DEBUG 1
  ****/
 
-RsGxsChannels *rsGxsChannels = NULL;
+/*extern*/ RsGxsChannels *rsGxsChannels = nullptr;
 
 
 #define GXSCHANNEL_STOREPERIOD	(3600 * 24 * 30)
@@ -1035,6 +1040,35 @@ bool p3GxsChannels::getChannelsContent(
 	        || waitToken(token) != RsTokenService::COMPLETE ) return false;
 	return getPostData(token, posts, comments);
 }
+
+bool p3GxsChannels::createChannel(RsGxsChannelGroup& channel)
+{
+	uint32_t token;
+	if( !createGroup(token, channel)
+	        || waitToken(token) != RsTokenService::COMPLETE ) return false;
+
+// TODO: Need  a way to get the channel id back!
+//#ifdef RS_DEEP_SEARCH
+//	DeepSearch::indexChannelGroup(channel);
+//#endif //  RS_DEEP_SEARCH
+
+	return true;
+}
+
+bool p3GxsChannels::createPost(RsGxsChannelPost& post)
+{
+	uint32_t token;
+	if( !createPost(token, post)
+	        || waitToken(token) != RsTokenService::COMPLETE ) return false;
+
+// TODO: Need  a way to get the post id back!
+//#ifdef RS_DEEP_SEARCH
+//	DeepSearch::indexChannelPost(post);
+//#endif //  RS_DEEP_SEARCH
+
+	return true;
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 /// Blocking API implementation end

@@ -137,6 +137,23 @@ public:
 	        std::vector<RsGxsChannelPost>& posts,
 	        std::vector<RsGxsComment>& comments ) = 0;
 
+	/**
+	 * @brief Create channel. Blocking API.
+	 * @jsonapi{development}
+	 * @param[inout] channel Channel data (name, description...)
+	 * @return false on error, true otherwise
+	 */
+	virtual bool createChannel(RsGxsChannelGroup& channel) = 0;
+
+	/**
+	 * @brief Create channel post. Blocking API.
+	 * @jsonapi{development}
+	 * @param[inout] post
+	 * @return false on error, true otherwise
+	 */
+	virtual bool createPost(RsGxsChannelPost& post) = 0;
+
+
 	/* Specific Service Data
 	 * TODO: change the orrible const uint32_t &token to uint32_t token
 	 * TODO: create a new typedef for token so code is easier to read
@@ -225,7 +242,6 @@ public:
 	 * @brief Request channel creation.
 	 * The action is performed asyncronously, so it could fail in a subsequent
 	 * phase even after returning true.
-	 * @jsonapi{development}
 	 * @param[out] token Storage for RsTokenService token to track request
 	 * status.
 	 * @param[in] group Channel data (name, description...)
@@ -237,7 +253,6 @@ public:
 	 * @brief Request post creation.
 	 * The action is performed asyncronously, so it could fail in a subsequent
 	 * phase even after returning true.
-	 * @jsonapi{development}
 	 * @param[out] token Storage for RsTokenService token to track request
 	 * status.
 	 * @param[in] post

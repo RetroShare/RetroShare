@@ -182,6 +182,12 @@ virtual bool ExtraFileRemove(const RsFileHash &hash);
 	        std::vector<RsGxsChannelPost>& posts,
 	        std::vector<RsGxsComment>& comments );
 
+	/// Implementation of @see RsGxsChannels::createChannel
+	virtual bool createChannel(RsGxsChannelGroup& channel);
+
+	/// Implementation of @see RsGxsChannels::createPost
+	virtual bool createPost(RsGxsChannelPost& post);
+
 protected:
 	// Overloaded from GxsTokenQueue for Request callbacks.
 	virtual void handleResponse(uint32_t token, uint32_t req_type);
