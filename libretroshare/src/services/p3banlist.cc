@@ -37,9 +37,8 @@
 
 /****
  * #define DEBUG_BANLIST		1
+ * #define DEBUG_BANLIST_CONDENSE		1
  ****/
-//#define DEBUG_BANLIST		1
-//#define DEBUG_BANLIST_CONDENSE		1
 
 
 /* DEFINE INTERFACE POINTER! */
@@ -184,7 +183,6 @@ static sockaddr_storage makeBitsRange(const sockaddr_storage& addr,int masked_by
     sockaddr_in *ad = (sockaddr_in*)(&s) ;
 
     ad->sin_addr.s_addr &= 0xFFFFFFFF;
-
     if(masked_bytes == 1)
         ad->sin_addr.s_addr |= 0xff000000 ;
     else if(masked_bytes == 2)
