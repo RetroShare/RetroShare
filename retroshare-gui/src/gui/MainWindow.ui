@@ -113,7 +113,7 @@
     <enum>Qt::CustomContextMenu</enum>
    </property>
    <property name="movable">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="allowedAreas">
     <set>Qt::LeftToolBarArea</set>
@@ -122,7 +122,7 @@
     <enum>Qt::ToolButtonTextUnderIcon</enum>
    </property>
    <property name="floatable">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <attribute name="toolBarArea">
     <enum>LeftToolBarArea</enum>
@@ -139,7 +139,7 @@
     <bool>false</bool>
    </property>
    <property name="movable">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="allowedAreas">
     <set>Qt::LeftToolBarArea</set>
@@ -148,7 +148,7 @@
     <enum>Qt::ToolButtonTextUnderIcon</enum>
    </property>
    <property name="floatable">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <attribute name="toolBarArea">
     <enum>LeftToolBarArea</enum>

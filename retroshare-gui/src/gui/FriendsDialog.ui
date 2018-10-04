@@ -62,7 +62,7 @@
          <string/>
         </property>
         <property name="pixmap">
-         <pixmap resource="icons.qrc">:/icons/png/network.png</pixmap>
+         <pixmap resource="../Unseengui/unseengui.qrc">:/home/img/face_icon/group-profile-users_x_128.png</pixmap>
         </property>
         <property name="scaledContents">
          <bool>true</bool>
@@ -396,9 +396,8 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="images.qrc"/>
   <include location="../Unseengui/unseengui.qrc"/>
-  <include location="icons.qrc"/>
+  <include location="images.qrc"/>
  </resources>
  <connections/>
 </ui>
