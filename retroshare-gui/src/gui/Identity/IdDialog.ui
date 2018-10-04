@@ -1091,11 +1091,6 @@ p, li { white-space: pre-wrap; }
  </widget>
  <customwidgets>
   <customwidget>
-   <class>StyledLabel</class>
-   <extends>QLabel</extends>
-   <header>gui/common/StyledLabel.h</header>
-  </customwidget>
-  <customwidget>
    <class>LineEditClear</class>
    <extends>QLineEdit</extends>
    <header location="global">gui/common/LineEditClear.h</header>
@@ -1111,14 +1106,14 @@ p, li { white-space: pre-wrap; }
    <header>gui/common/RSTreeWidget.h</header>
   </customwidget>
   <customwidget>
+   <class>StyledLabel</class>
+   <extends>QLabel</extends>
+   <header>gui/common/StyledLabel.h</header>
+  </customwidget>
+  <customwidget>
    <class>StyledElidedLabel</class>
    <extends>QLabel</extends>
    <header>gui/common/StyledElidedLabel.h</header>
-  </customwidget>
-  <customwidget>
-   <class>RSTextBrowser</class>
-   <extends>QTextBrowser</extends>
-   <header>gui/common/RSTextBrowser.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>
