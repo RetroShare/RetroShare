@@ -626,13 +626,51 @@ public:
 	 * @return always true
 	 */
 	virtual bool getMessageTagTypes(Rs::Msgs::MsgTagType& tags) = 0;
-	/* set == false && tagId == 0 --> remove all */
+
+	/**
+	 * @brief setMessageTagType
+	 * @jsonapi{development}
+	 * @param[in] tagId
+	 * @param[in] text
+	 * @param[in] rgb_color
+	 * @return true on success
+	 */
 	virtual bool setMessageTagType(uint32_t tagId, std::string& text, uint32_t rgb_color) = 0;
+
+	/**
+	 * @brief removeMessageTagType
+	 * @jsonapi{development}
+	 * @param[in] tagId
+	 * @return true on success
+	 */
 	virtual bool removeMessageTagType(uint32_t tagId) = 0;
 
+	/**
+	 * @brief getMessageTag
+	 * @jsonapi{development}
+	 * @param[in] msgId
+	 * @param[out] info
+	 * @return true on success
+	 */
 	virtual bool getMessageTag(const std::string &msgId, Rs::Msgs::MsgTagInfo& info) = 0;
+
+	/**
+	 * @brief setMessageTag
+	 * set == false && tagId == 0 --> remove all
+	 * @jsonapi{development}
+	 * @param[in] msgId
+	 * @param[in] tagId
+	 * @param[in] set
+	 * @return true on success
+	 */
 	virtual bool setMessageTag(const std::string &msgId, uint32_t tagId, bool set) = 0;
 
+	/**
+	 * @brief resetMessageStandardTagTypes
+	 * @jsonapi{development}
+	 * @param[out] tags
+	 * @return always true
+	 */
 	virtual bool resetMessageStandardTagTypes(Rs::Msgs::MsgTagType& tags) = 0;
 
 	/****************************************/
