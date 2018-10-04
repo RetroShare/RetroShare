@@ -38,7 +38,7 @@
 /****
  * #define DEBUG_BANLIST		1
  ****/
-// #define DEBUG_BANLIST		1
+//#define DEBUG_BANLIST		1
 //#define DEBUG_BANLIST_CONDENSE		1
 
 
@@ -183,6 +183,8 @@ static sockaddr_storage makeBitsRange(const sockaddr_storage& addr,int masked_by
 
     sockaddr_in *ad = (sockaddr_in*)(&s) ;
 
+    ad->sin_addr.s_addr &= 0xFFFFFFFF;
+
     if(masked_bytes == 1)
         ad->sin_addr.s_addr |= 0xff000000 ;
     else if(masked_bytes == 2)
@@ -316,7 +318,7 @@ bool p3BanList::isAddressAccepted(const sockaddr_storage &dAddr, uint32_t checki
 	if(sockaddr_storage_isLoopbackNet(addr)) return true;
 
 #ifdef DEBUG_BANLIST
-    std::cerr << "isAddressAccepted(): tested addr=" << sockaddr_storage_iptostring(addr) << ", checking flags=" << checking_flags ;
+    std::cerr << "isAddressAccepted(): tested addr=" << sockaddr_storage_iptostring(addr) << ", checking flags=" << checking_flags << std::endl ;
 #endif
 
     // we should normally work this including entire ranges of IPs. For now, just check the exact IPs.
@@ -330,6 +332,13 @@ bool p3BanList::isAddressAccepted(const sockaddr_storage &dAddr, uint32_t checki
     white_list_found = white_list_found || (mWhiteListedRanges.find(addr_16) != mWhiteListedRanges.end()) ;
     white_list_found = white_list_found || (mWhiteListedRanges.find(addr_24) != mWhiteListedRanges.end()) ;
     white_list_found = white_list_found || (mWhiteListedRanges.find(addr_32) != mWhiteListedRanges.end()) ;
+
+#ifdef DEBUG_BANLIST
+    std::cerr << "isAddressAccepted().makeBitsRange(): tested addr_32=" << sockaddr_storage_iptostring(addr_32) << std::endl ;
+    std::cerr << "isAddressAccepted().makeBitsRange(): tested addr_24=" << sockaddr_storage_iptostring(addr_24) << std::endl ;
+    std::cerr << "isAddressAccepted().makeBitsRange(): tested addr_16=" << sockaddr_storage_iptostring(addr_16) << std::endl ;
+    std::cerr << "isAddressAccepted().white_list_found():=" << white_list_found << std::endl ;
+#endif
 
     if(white_list_found)
     {
