@@ -258,23 +258,27 @@ struct MsgInfoSummary : RsSerializable
 	}
 };
 
-class MsgTagInfo
+struct MsgTagInfo : RsSerializable
 {
-public:
-	MsgTagInfo() {}
-
 	std::string msgId;
 	std::list<uint32_t> tagIds;
+
+	// RsSerializable interface
+	void serial_process(RsGenericSerializer::SerializeJob j, RsGenericSerializer::SerializeContext &ctx) {
+		RS_SERIAL_PROCESS(msgId);
+		RS_SERIAL_PROCESS(tagIds);
+	}
 };
 
-class MsgTagType
+struct MsgTagType : RsSerializable
 {
-public:
-	MsgTagType() {}
-
 	/* map containing tagId -> pair (text, rgb color) */
 	std::map<uint32_t, std::pair<std::string, uint32_t> > types;
 
+	// RsSerializable interface
+	void serial_process(RsGenericSerializer::SerializeJob j, RsGenericSerializer::SerializeContext &ctx) {
+		RS_SERIAL_PROCESS(types);
+	}
 };
 
 } //namespace Rs
@@ -516,21 +520,111 @@ public:
 	 */
 	virtual void getMessageCount(uint32_t &nInbox, uint32_t &nInboxNew, uint32_t &nOutbox, uint32_t &nDraftbox, uint32_t &nSentbox, uint32_t &nTrashbox) = 0;
 
+	/**
+	 * @brief MessageSend
+	 * @jsonapi{development}
+	 * @param[in] info
+	 * @return always true
+	 */
 	virtual bool MessageSend(Rs::Msgs::MessageInfo &info) = 0;
+
+	/**
+	 * @brief SystemMessage
+	 * @jsonapi{development}
+	 * @param[in] title
+	 * @param[in] message
+	 * @param[in] systemFlag
+	 * @return true on success
+	 */
 	virtual bool SystemMessage(const std::string &title, const std::string &message, uint32_t systemFlag) = 0;
+
+	/**
+	 * @brief MessageToDraft
+	 * @jsonapi{development}
+	 * @param[in] info
+	 * @param[in] msgParentId
+	 * @return true on success
+	 */
 	virtual bool MessageToDraft(Rs::Msgs::MessageInfo &info, const std::string &msgParentId) = 0;
+
+	/**
+	 * @brief MessageToTrash
+	 * @jsonapi{development}
+	 * @param[in] mid
+	 * @param[in] bTrash
+	 * @return true on success
+	 */
 	virtual bool MessageToTrash(const std::string &mid, bool bTrash)   = 0;
+
+	/**
+	 * @brief getMsgParentId
+	 * @jsonapi{development}
+	 * @param[in] msgId
+	 * @param[out] msgParentId
+	 * @return true on success
+	 */
 	virtual bool getMsgParentId(const std::string &msgId, std::string &msgParentId) = 0;
 
+	/**
+	 * @brief MessageDelete
+	 * @jsonapi{development}
+	 * @param[in] mid
+	 * @return true on success
+	 */
 	virtual bool MessageDelete(const std::string &mid)                 = 0;
+
+	/**
+	 * @brief MessageRead
+	 * @jsonapi{development}
+	 * @param[in] mid
+	 * @param[in] unreadByUser
+	 * @return true on success
+	 */
 	virtual bool MessageRead(const std::string &mid, bool unreadByUser) = 0;
+
+	/**
+	 * @brief MessageReplied
+	 * @jsonapi{development}
+	 * @param[in] mid
+	 * @param[in] replied
+	 * @return true on success
+	 */
 	virtual bool MessageReplied(const std::string &mid, bool replied) = 0;
+
+	/**
+	 * @brief MessageForwarded
+	 * @jsonapi{development}
+	 * @param[in] mid
+	 * @param[in] forwarded
+	 * @return true on success
+	 */
 	virtual bool MessageForwarded(const std::string &mid, bool forwarded) = 0;
+
+	/**
+	 * @brief MessageStar
+	 * @jsonapi{development}
+	 * @param[in] mid
+	 * @param[in] mark
+	 * @return true on success
+	 */
 	virtual bool MessageStar(const std::string &mid, bool mark) = 0;
+
+	/**
+	 * @brief MessageLoadEmbeddedImages
+	 * @jsonapi{development}
+	 * @param[in] mid
+	 * @param[in] load
+	 * @return true on success
+	 */
 	virtual bool MessageLoadEmbeddedImages(const std::string &mid, bool load) = 0;
 
 	/* message tagging */
-
+	/**
+	 * @brief getMessageTagTypes
+	 * @jsonapi{development}
+	 * @param[out] tags
+	 * @return always true
+	 */
 	virtual bool getMessageTagTypes(Rs::Msgs::MsgTagType& tags) = 0;
 	/* set == false && tagId == 0 --> remove all */
 	virtual bool setMessageTagType(uint32_t tagId, std::string& text, uint32_t rgb_color) = 0;

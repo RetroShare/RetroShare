@@ -394,8 +394,8 @@ struct RsTypeSerializer
 			RsGenericSerializer::SerializeContext lCtx(
 			            nullptr, 0, ctx.mFlags, &allocator );
 
-			serial_process(j, ctx, p.first, "first");
-			serial_process(j, ctx, p.second, "second");
+			serial_process(j, lCtx, p.first, "first");
+			serial_process(j, lCtx, p.second, "second");
 
 			rapidjson::Value key;
 			key.SetString(memberName.c_str(), memberName.length(), allocator);
@@ -434,8 +434,8 @@ struct RsTypeSerializer
 			RsGenericSerializer::SerializeContext lCtx(nullptr, 0, ctx.mFlags);
 			lCtx.mJson.SetObject() = v; // Beware of move semantic!!
 
-			serial_process(j, ctx, p.first, "first");
-			serial_process(j, ctx, p.second, "second");
+			serial_process(j, lCtx, p.first, "first");
+			serial_process(j, lCtx, p.second, "second");
 			ctx.mOk &= lCtx.mOk;
 
 			break;
