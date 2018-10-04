@@ -94,42 +94,11 @@ FriendsDialog::FriendsDialog(QWidget *parent)
     ui.tabWidget->addTab(networkView = new NetworkView(),QIcon(IMAGE_NETWORK2), tr("Network graph"));
     ui.tabWidget->addTab(networkDialog = new NetworkDialog(),QIcon(IMAGE_PEERS), tr("Keyring"));
 
-    //08 sep 2018 - meiyousixin - add Addcontact Button
-    //connect(ui->, SIGNAL(clicked()), this, SLOT(openAddContactPage()));
-
-    //ui.tabWidget->addTab(new ProfileWidget(), tr("Profile"));
-    //newsFeed = new NewsFeed();
-    //int newsFeedTabIndex = ui.tabWidget->insertTab(0, newsFeed, tr("News Feed"));
-    //ui.tabWidget->setCurrentIndex(newsFeedTabIndex);
-
     ui.tabWidget->hideCloseButton(0);
     ui.tabWidget->hideCloseButton(1);
     ui.tabWidget->hideCloseButton(2);
     ui.tabWidget->hideCloseButton(3);
     ui.tabWidget->hideCloseButton(4);
-
-    /* get the current text and text color of the tab bar */
-    //newsFeedTabColor = ui.tabWidget->tabBar()->tabTextColor(newsFeedTabIndex);
-    //newsFeedText = ui.tabWidget->tabBar()->tabText(newsFeedTabIndex);
-
-    //connect(newsFeed, SIGNAL(newsFeedChanged(int)), this, SLOT(newsFeedChanged(int)));
-
-//    menu = new QMenu();
-//    menu->addAction(ui.actionAdd_Friend);
-//    menu->addAction(ui.actionAdd_Group);
-//    menu->addAction(ui.actionCreate_new_Chat_lobby);
-//
-//    menu->addSeparator();
-//    menu->addAction(ui.actionSet_your_Avatar);
-//    menu->addAction(ui.actionSet_your_Personal_Message);
-//
-//    ui.menutoolButton->setMenu(menu);
-
-    /*QToolButton *addFriendButton = new QToolButton(this);
-    addFriendButton->setIcon(QIcon(":/images/user/add_user24.png"));
-    addFriendButton->setToolTip(tr("Add friend node"));
-    connect(addFriendButton, SIGNAL(clicked()), this, SLOT(addFriend()));
-    ui.friendList->addToolButton(addFriendButton);*/
 
     /* Set initial size the splitter */
     ui.splitter->setStretchFactor(0, 0);

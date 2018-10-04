@@ -16,7 +16,6 @@
 
 //meiyousixin - add more PopupChatDialog into ChatLobbyWidget
 #include "chat/PopupChatDialog.h"
-#include "pgp/pgpauxutils.h"
 
 #include "retroshare/rsmsgs.h"
 #include "retroshare/rspeers.h"
@@ -447,19 +446,8 @@ void ChatLobbyWidget::addOne2OneChatPage(PopupChatDialog *d)
 	{
 		QTreeWidgetItem *item =  new RSTreeWidgetItem(compareRole, TYPE_ONE2ONE);
 
-		// This get nickname from ChatId - this will get "meiyousixin (My computer)"
-		//std::string nickname = rsPeers->getPeerName(d->chatId().toPeerId());
-
 		RsPgpId pgpId = rsPeers->getGPGId(d->chatId().toPeerId());
 		std::string nickname = rsPeers->getGPGName(pgpId);
-
-		// this will get the same as getPGPName(pgpId)
-//		RsPeerDetails detail;
-//		if (rsPeers->getGPGDetails(pgpId, detail))
-//		  {
-//		    nickname = detail.name;
-//		  }
-
 		updateContactItem(ui.lobbyTreeWidget, item, nickname, d->chatId().toPeerId().toStdString() );
 
 		//add new contact item and select it

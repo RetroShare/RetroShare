@@ -23,8 +23,6 @@ class ChatTabWidget ;
 class ChatLobbyDialog ;
 class QTextBrowser ;
 
-class PgpAuxUtils;
-
 struct ChatLobbyInfoStruct
 {
 	QIcon default_icon ;
