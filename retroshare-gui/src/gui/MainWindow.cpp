@@ -392,26 +392,30 @@ void MainWindow::initStackedPage()
 
   //19 Sep 2018 - meiyousixin - change the order: Chat -> Contact -> Mail -> ... -> Network -> Profile
   addPage(chatLobbyDialog = new ChatLobbyWidget(ui->stackPages), grp, &notify);
-  addPage(idDialog = new IdDialog(ui->stackPages), grp, &notify);
+  addPage(friendsDialog = new FriendsDialog(ui->stackPages), grp, &notify);
 
   addPage(messagesDialog = new MessagesDialog(ui->stackPages), grp, &notify);
   addPage(transfersDialog = new TransfersDialog(ui->stackPages), grp, &notify);
-  addPage(gxschannelDialog = new GxsChannelDialog(ui->stackPages), grp, &notify);
+  //meiyousixin - remove channels and links
+  //addPage(gxschannelDialog = new GxsChannelDialog(ui->stackPages), grp, &notify);
   addPage(gxsforumDialog = new GxsForumsDialog(ui->stackPages), grp, &notify);
-  addPage(postedDialog = new PostedDialog(ui->stackPages), grp, &notify);
+  //addPage(postedDialog = new PostedDialog(ui->stackPages), grp, &notify);
 
-  addPage(friendsDialog = new FriendsDialog(ui->stackPages), grp, &notify);
-  addPage(homePage = new HomePage(ui->stackPages), grp, NULL);
+  //meiyousixin - remove Identities dialogs for simplicity!!!
+  //addPage(idDialog = new IdDialog(ui->stackPages), grp, &notify);
 
   #ifdef RS_USE_NEW_PEOPLE_DIALOG
   PeopleDialog *peopleDialog = NULL;
   addPage(peopleDialog = new PeopleDialog(ui->stackPages), grp, &notify);
   #endif
-  addPage(newsFeed = new NewsFeed(ui->stackPages), grp, &notify);
+  //meiyousixin - remove Logs tab for simplicity!!!
+  //addPage(newsFeed = new NewsFeed(ui->stackPages), grp, &notify);
 #ifdef RS_USE_WIKI
   WikiDialog *wikiDialog = NULL;
   addPage(wikiDialog = new WikiDialog(ui->stackPages), grp, &notify);
 #endif
+
+  addPage(homePage = new HomePage(ui->stackPages), grp, NULL);
 
  std::cerr << "Looking for interfaces in existing plugins:" << std::endl;
  for(int i = 0;i<rsPlugins->nbPlugins();++i)

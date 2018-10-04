@@ -604,7 +604,8 @@ macx-* {
         #LIB_DIR += "/usr/local/lib"
         #LIB_DIR += "/opt/local/lib"
 	CONFIG += c++11
-
+        ## Sep 11 2018 - meiyousixin - fix bug: can not find openssl/bn.h
+        INCLUDEPATH += /usr/local/include
     RS_UPNP_LIB = miniupnpc
 }
 
