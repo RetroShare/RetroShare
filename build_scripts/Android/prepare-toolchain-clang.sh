@@ -40,6 +40,13 @@ define_default_value QT_ANDROID_INSTALLER_SHA256 a214084e2295c9a9f8727e8a0131c37
 
 define_default_value RESTBED_SOURCE_VERSION "4.6"
 
+define_default_value XAPIAN_SOURCE_VERSION "1.4.7"
+define_default_value XAPIAN_SOURCE_SHA256 13f08a0b649c7afa804fa0e85678d693fd6069dd394c9b9e7d41973d74a3b5d3
+
+define_default_value RAPIDJSON_SOURCE_VERSION "1.1.0"
+define_default_value RAPIDJSON_SOURCE_SHA256 bf7ced29704a1e696fbccf2a2b4ea068e7774fa37f6d7dd4039d0787f8bed98e
+
+
 ## $1 filename, $2 sha256 hash
 function check_sha256()
 {
@@ -299,7 +306,8 @@ build_libupnp()
 ## look for libthreadutils.so.6 at runtime that cannot be packaged on android
 ## as it supports only libname.so format for libraries, thus resulting in a
 ## crash at startup.
-	./configure --enable-static --disable-shared --disable-samples --prefix="${PREFIX}" --host=${ANDROID_NDK_ARCH}-linux
+	./configure --enable-static --disable-shared --disable-samples \
+		--prefix="${PREFIX}" --host=${ANDROID_NDK_ARCH}-linux
 	make -j${HOST_NUM_CPU}
 	make install
 	cd ..
@@ -307,10 +315,12 @@ build_libupnp()
 
 build_rapidjson()
 {
-	B_dir="rapidjson-1.1.0"
-	[ -f $B_dir.tar.gz ] || wget -O $B_dir.tar.gz https://github.com/Tencent/rapidjson/archive/v1.1.0.tar.gz
-	tar -xf $B_dir.tar.gz
-	cp -r rapidjson-1.1.0/include/rapidjson/ "${PREFIX}/include/rapidjson"
+	B_dir="rapidjson-${RAPIDJSON_SOURCE_VERSION}"
+	D_file="${B_dir}.tar.gz"
+	verified_download $D_file $RAPIDJSON_SOURCE_SHA256 \
+		https://github.com/Tencent/rapidjson/archive/v${RAPIDJSON_SOURCE_VERSION}.tar.gz
+	tar -xf $D_file
+	cp -r "${B_dir}/include/rapidjson/" "${PREFIX}/include/rapidjson"
 }
 
 build_restbed()
@@ -332,6 +342,27 @@ build_restbed()
 	cd ..
 }
 
+build_xapian()
+{
+	B_dir="xapian-core-${XAPIAN_SOURCE_VERSION}"
+	D_file="$B_dir.tar.xz"
+	verified_download $D_file $XAPIAN_SOURCE_SHA256 \
+		https://oligarchy.co.uk/xapian/${XAPIAN_SOURCE_VERSION}/$D_file
+	rm -rf $B_dir
+	tar -xf $D_file
+	cd $B_dir
+	B_endiannes_detection_failure_workaround="ac_cv_c_bigendian=no"
+	B_large_file=""
+	[ "${ANDROID_PLATFORM_VER}" -lt "24" ] && B_large_file="--disable-largefile"
+	./configure ${B_endiannes_detection_failure_workaround} ${B_large_file} \
+		--disable-backend-inmemory --disable-backend-remote \
+		--disable--backend-chert --enable-backend-glass \
+		--host=${ANDROID_NDK_ARCH}-linux --enable-static --disable-shared \
+		--prefix="${PREFIX}" --with-sysroot="${SYSROOT}"
+	make -j${HOST_NUM_CPU}
+	make install
+}
+
 build_toolchain
 [ "${INSTALL_QT_ANDROID}X" != "trueX" ] || install_qt_android
 build_bzlib
@@ -341,6 +372,7 @@ build_sqlcipher
 build_libupnp
 build_rapidjson
 build_restbed
+build_xapian
 delete_copied_includes
 
 echo NATIVE_LIBS_TOOLCHAIN_PATH=${NATIVE_LIBS_TOOLCHAIN_PATH}

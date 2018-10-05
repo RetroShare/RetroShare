@@ -970,6 +970,9 @@ test_bitdht {
 ################################# Android #####################################
 
 android-* {
+## TODO: This probably disable largefile support and maybe is not necessary with
+## __ANDROID_API__ >= 24 hence should be made conditional or moved to a
+## compatibility header
     DEFINES *= "fopen64=fopen"
     DEFINES *= "fseeko64=fseeko"
     DEFINES *= "ftello64=ftello"
