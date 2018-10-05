@@ -33,6 +33,9 @@ CONFIG *= gxsdistsync
 # disabled by the time we fix compilation
 CONFIG *= no_cmark
 
+#disable compiler warning logs
+CONFIG += warn_off
+
 # To disable RetroShare-nogui append the following
 # assignation to qmake command line "CONFIG+=no_retroshare_nogui"
 CONFIG *= retroshare_nogui
@@ -575,32 +578,34 @@ macx-* {
 		QMAKE_CXXFLAGS += -Wno-nullability-completeness
 		QMAKE_CFLAGS += -Wno-nullability-completeness
 	}
-
+	rs_macos10.13 {
+                message(***retroshare.pri: Set Target and SDK to MacOS 10.13 )
+                QMAKE_MACOSX_DEPLOYMENT_TARGET=10.13
+                QMAKE_MAC_SDK = macosx10.13
+                QMAKE_CXXFLAGS += -Wno-nullability-completeness
+                QMAKE_CFLAGS += -Wno-nullability-completeness
+        }
 	message(***retroshare.pri:MacOSX)
 
         ## 11 Sep 2018 - meiyousixin - use config in one MacOS comp
-        BIN_DIR += "/usr/bin"
-        BIN_DIR += "/usr/local/bin"
-        BIN_DIR += "/opt/local/bin"
+
+        #BIN_DIR += "/usr/bin"
+        #INC_DIR += "/usr/include"
+        #INC_DIR += "/usr/local/include"
+        #LIB_DIR += "/usr/local/lib"
+	##local real Mac OSX Device Setting.
         BIN_DIR += "/Applications/Xcode.app/Contents/Developer/usr/bin"
-        INC_DIR += "/usr/include"
-        INC_DIR += "/usr/local/include"
-        INC_DIR += "/opt/local/include"
-        INC_DIR += "/usr/local/opt/openssl/include"
-        INC_DIR += "/usr/local/Cellar/miniupnpc/2.1/include"
+	INC_DIR += "/usr/local/Cellar/miniupnpc/2.1/include"
         INC_DIR += "/usr/local/Cellar/libmicrohttpd/0.9.59/include"
         INC_DIR += "/usr/local/Cellar/sqlcipher/3.4.2/include"
         LIB_DIR += "/usr/local/opt/openssl/lib/"
         LIB_DIR += "/usr/local/Cellar/libmicrohttpd/0.9.59/lib"
         LIB_DIR += "/usr/local/Cellar/sqlcipher/3.4.2/lib"
         LIB_DIR += "/usr/local/Cellar/miniupnpc/2.1/lib"
-        #LIB_DIR += "/usr/local/lib"
-        #LIB_DIR += "/opt/local/lib"
-	CONFIG += c++11
+        CONFIG += c++11
+        RS_UPNP_LIB = miniupnpc
         ## Sep 11 2018 - meiyousixin - fix bug: can not find openssl/bn.h
         INCLUDEPATH += /usr/local/include
-
-        RS_UPNP_LIB = miniupnpc
 }
 
 
