@@ -49,7 +49,7 @@ before_script:
 
 script:
   - if [ $TRAVIS_OS_NAME == linux ] && [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then make -j2; fi
-  - if [ $TRAVIS_OS_NAME == osx ] && [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then make -j2; fi
+  - if [ $TRAVIS_OS_NAME == osx ] && [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then /Applications/Xcode.app/Contents/Developer/usr/bin/make -j2; fi
 
 
 #after_success:
