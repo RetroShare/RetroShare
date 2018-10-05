@@ -117,9 +117,8 @@ void CreateLobbyDialog::checkTextFields()
 void CreateLobbyDialog::createLobby()
 {
     std::set<RsPeerId> shareList;
-    //ui->keyShareList->selectedIds<RsPeerId,FriendSelectionWidget::IDTYPE_SSL>(shareList, false);
-    ui->keyShareList->setSelectedIds<RsPeerId,FriendSelectionWidget::IDTYPE_SSL>(shareList, false);
-
+    ui->keyShareList->selectedIds<RsPeerId,FriendSelectionWidget::IDTYPE_SSL>(shareList, false);
+    
     //	if (shareList.empty()) {
     //		QMessageBox::warning(this, "P2PUnseen", tr("Please select at least one friend"), QMessageBox::Ok, QMessageBox::Ok);
     //		return;
