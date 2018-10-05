@@ -340,7 +340,6 @@ bool p3Config::saveConfiguration()
 
 bool p3Config::saveConfig()
 {
-
 	bool cleanup = true;
 	std::list<RsItem *> toSave;
 	saveList(cleanup, toSave);
@@ -355,6 +354,7 @@ bool p3Config::saveConfig()
 	std::string cfgFname = Filename();
 	std::string signFname = Filename() + ".sgn";
 
+    std::cerr << "(II) Saving configuration file " << cfgFname << std::endl;
 
 	uint32_t bioflags = BIN_FLAGS_HASH_DATA | BIN_FLAGS_WRITEABLE;
 	uint32_t stream_flags = BIN_FLAGS_WRITEABLE;
