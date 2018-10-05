@@ -15,7 +15,7 @@ HeaderFrame > QFrame#frame {
 }
 
 HeaderFrame > QFrame#frame > QLabel#headerLabel {
-	color: rgb(255, 255, 255);
+        color: rgb(255, 255, 255);
 }
 
 /* GenCertDialog */

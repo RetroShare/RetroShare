@@ -72,6 +72,7 @@ SettingsPage::SettingsPage(QWidget *parent)
     RSElidedItemDelegate *itemDelegate = new RSElidedItemDelegate(this);
     itemDelegate->setSpacing(QSize(0, ITEM_SPACING));
     ui.listWidget->setItemDelegate(itemDelegate);
+    ui.listWidget->setStyleSheet("QListWidget {background: rgb(47, 60, 76); color: rgb(255, 255, 255)}");   //d: style of sheet sitting
 
     initStackedWidget();
 
@@ -146,7 +147,6 @@ SettingsPage::initStackedWidget()
 {
     ui.stackedWidget->setCurrentIndex(-1);
     ui.stackedWidget->removeWidget(ui.stackedWidget->widget(0));
-
     addPage(new GeneralPage()); // GENERAL
     addPage(new CryptoPage()); // NODE
     addPage(new ServerPage()); // NETWORK
@@ -154,9 +154,9 @@ SettingsPage::initStackedWidget()
     addPage(new ChatPage()); // CHAT
     addPage(new MessagePage()); //MESSGE RENAME TO MAIL
     addPage(new TransferPage()); //FILE TRANSFER
-    addPage(new ChannelPage()); // CHANNELS
+  //  addPage(new ChannelPage()); // CHANNELS               //d: remove this
     addPage(new ForumPage()); // FORUMS
-    addPage(new PostedPage()); // POSTED RENAME TO LINKS
+  //  addPage(new PostedPage()); // POSTED RENAME TO LINKS  //d: remove this
     addPage(new NotifyPage()); // NOTIFY
     addPage(new settings::PluginsPage() ); // PLUGINS
     addPage(new AppearancePage()); // APPEARENCE
@@ -170,7 +170,7 @@ SettingsPage::initStackedWidget()
 	for(int i=0;i<rsPlugins->nbPlugins();++i)
 	{
 		RsPlugin *pl = rsPlugins->plugin(i) ;
-		if(pl != NULL)
+        if(pl != NULL)
 		{
 			ConfigPage* cp = pl->qt_config_page();
 			if(cp != NULL)
@@ -187,10 +187,9 @@ SettingsPage::initStackedWidget()
 void SettingsPage::addPage(ConfigPage *page)
 {
 	ui.stackedWidget->addWidget(page) ;
-
 	QListWidgetItem *item = new QListWidgetItem(QIcon(page->iconPixmap()),page->pageName(),ui.listWidget) ;
 	QFontMetrics fontMetrics = ui.listWidget->fontMetrics();
-	int w = ITEM_SPACING*8;
+    int w = ITEM_SPACING*32;
 	w += ui.listWidget->iconSize().width();
 	w += fontMetrics.width(item->text());
 	if (w > ui.listWidget->maximumWidth())
@@ -215,6 +214,8 @@ SettingsPage::setNewPage(int page)
 
 	ui.stackedWidget->setCurrentIndex(page);
 	ui.listWidget->setCurrentRow(page);
+    ui.listWidget->setStyleSheet("QListWidget {background: rgb(47, 60, 76); color: rgb(255, 255, 255)}"); //d: tyle of sheet sitting
+    ui.listWidget->setSpacing(0); //d
 
 	mHelpBrowser->setHelpText(pagew->helpText());
 }
