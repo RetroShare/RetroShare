@@ -33,6 +33,9 @@ CONFIG *= gxsdistsync
 # disabled by the time we fix compilation
 CONFIG *= no_cmark
 
+#disable compiler warning logs
+CONFIG += warn_off
+
 # To disable RetroShare-nogui append the following
 # assignation to qmake command line "CONFIG+=no_retroshare_nogui"
 CONFIG *= retroshare_nogui
