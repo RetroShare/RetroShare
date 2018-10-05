@@ -578,7 +578,13 @@ macx-* {
 		QMAKE_CXXFLAGS += -Wno-nullability-completeness
 		QMAKE_CFLAGS += -Wno-nullability-completeness
 	}
-
+	rs_macos10.13 {
+                message(***retroshare.pri: Set Target and SDK to MacOS 10.13 )
+                QMAKE_MACOSX_DEPLOYMENT_TARGET=10.13
+                QMAKE_MAC_SDK = macosx10.13
+                QMAKE_CXXFLAGS += -Wno-nullability-completeness
+                QMAKE_CFLAGS += -Wno-nullability-completeness
+        }
 	message(***retroshare.pri:MacOSX)
 
         ## 11 Sep 2018 - meiyousixin - use config in one MacOS comp
