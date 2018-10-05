@@ -39,8 +39,8 @@ addons:
     project:
       name: "RetroShare/RetroShare"
       description: "RetroShare Build submitted via Travis CI"
-    build_command_prepend: "qmake CONFIG+=no_sqlcipher; /Applications/Xcode-9.3.app/Contents/Developer/usr/bin/make clean"
-    build_command: "/Applications/Xcode-9.3.app/Contents/Developer/usr/bin/make -j4"
+    build_command_prepend: "qmake CONFIG+=no_sqlcipher; make clean"
+    build_command: " make -j4"
     branch_pattern: coverity_scan
 
 before_script:
