@@ -7,8 +7,8 @@ Build Status
 
 | Platform  | Build Status |
 | :------------- | :------------- |
-| GNU/Linux, MacOS, (via travis-ci)  | [![Build Status](https://travis-ci.org/RetroShare/RetroShare.svg?branch=master)](https://travis-ci.org/RetroShare/RetroShare)  |
-| Windows, `MSys2` (via appveyor)  | [![Build status](https://ci.appveyor.com/api/projects/status/github/RetroShare/RetroShare?svg=true)](https://ci.appveyor.com/project/G10h4ck/retroshare-u4lmn)  |
+| GNU/Linux, MacOS, (via travis-ci)  | [![Build Status](https://travis-ci.org/unsenep2pdev/RetroShare.svg?branch=master)](https://travis-ci.org/unsenep2pdev/RetroShare) |
+| Windows, `MSys2` (via appveyor)  | [![Build status](https://ci.appveyor.com/api/projects/status/rw8jvbpl9m6iumxc?svg=true)](https://ci.appveyor.com/project/unsenep2pdev/retroshare) |
 
 Compilation on Windows
 ----------------------------
