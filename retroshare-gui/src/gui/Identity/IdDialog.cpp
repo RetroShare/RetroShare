@@ -69,9 +69,9 @@
 #include <algorithm>
 
 
-/******/
-  #define ID_DEBUG 1
- /*****/
+/******
+*  #define ID_DEBUG 1
+******/
 
 // Data Requests.
 #define IDDIALOG_IDLIST           1

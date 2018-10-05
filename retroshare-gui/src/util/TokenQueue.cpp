@@ -27,9 +27,9 @@
 
 #include <QTimer>
 
-/******/
-  #define ID_DEBUG 1
- /*****/
+/******
+*  #define ID_DEBUG 1
+******/
 
 /** Constructor */
 TokenQueue::TokenQueue(RsTokenService *service, TokenResponse *resp)
