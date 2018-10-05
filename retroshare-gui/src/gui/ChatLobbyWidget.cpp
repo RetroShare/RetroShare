@@ -462,7 +462,7 @@ void ChatLobbyWidget::addOne2OneChatPage(PopupChatDialog *d)
 		  }
 		ui.stackedWidget->addWidget(d) ;
 		_chatOne2One_infos[d->chatId().toPeerId().toStdString()].dialog = d ;
-#if QT_VERSION < QT_VERSION_CHECK(4, 7, 0)
+#if QT_VERSION < QT_VERSION_CHECK(5, 8, 0)
 		_chatOne2One_infos[d->chatId().toPeerId().toStdString()].last_typing_event = QDateTime::currentDateTime().toTime_t()
 #else
 		_chatOne2One_infos[d->chatId().toPeerId().toStdString()].last_typing_event = QDateTime::currentSecsSinceEpoch();
