@@ -21,6 +21,10 @@
 #include <QObject>
 #include <QStringList>
 
+#ifdef __ANDROID__
+#	include <QAndroidService>
+#endif // def __ANDROID__
+
 #include "retroshare/rsinit.h"
 #include "retroshare/rsiface.h"
 
@@ -36,9 +40,10 @@ int main(int argc, char* argv[])
 {
 #ifdef __ANDROID__
 	AndroidStdIOCatcher dbg; (void) dbg;
-#endif
-
+	QAndroidService app(argc, argv);
+#else // def __ANDROID__
 	QCoreApplication app(argc, argv);
+#endif // def __ANDROID__
 
 	signal(SIGINT,   QCoreApplication::exit);
 	signal(SIGTERM,  QCoreApplication::exit);

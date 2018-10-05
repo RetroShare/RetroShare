@@ -10,6 +10,8 @@ QT -= gui
 SOURCES += retroshare-service.cc
 
 android-* {
+    QT += androidextras
+
     ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
 
     DISTFILES += android/AndroidManifest.xml \
@@ -22,6 +24,7 @@ android-* {
         android/gradle/wrapper/gradle-wrapper.properties \
         android/gradlew.bat
 }
+
 
 appimage {
     icon_files.path = "$${PREFIX}/share/icons/hicolor/scalable/"

@@ -50,14 +50,17 @@ dLibs =
 rs_jsonapi {
     RS_SRC_PATH=$$clean_path($${PWD}/../../)
     RS_BUILD_PATH=$$clean_path($${OUT_PWD}/../../)
-    RESTBED_SRC_PATH=$$clean_path($${RS_SRC_PATH}/supportlibs/restbed)
-    RESTBED_BUILD_PATH=$$clean_path($${RS_BUILD_PATH}/supportlibs/restbed)
 
-    INCLUDEPATH *= $$clean_path($${RESTBED_BUILD_PATH}/include/)
-    QMAKE_LIBDIR *= $$clean_path($${RESTBED_BUILD_PATH}/library/)
-    # Using sLibs would fail as librestbed.a is generated at compile-time
-    LIBS *= -L$$clean_path($${RESTBED_BUILD_PATH}/library/) -lrestbed
-    win32-g++:LIBS += -lwsock32
+    no_cross_compiling {
+        RESTBED_SRC_PATH=$$clean_path($${RS_SRC_PATH}/supportlibs/restbed)
+        RESTBED_BUILD_PATH=$$clean_path($${RS_BUILD_PATH}/supportlibs/restbed)
+        INCLUDEPATH *= $$clean_path($${RESTBED_BUILD_PATH}/include/)
+        QMAKE_LIBDIR *= $$clean_path($${RESTBED_BUILD_PATH}/library/)
+        # Using sLibs would fail as librestbed.a is generated at compile-time
+        LIBS *= -L$$clean_path($${RESTBED_BUILD_PATH}/library/) -lrestbed
+    } else:sLibs *= restbed
+
+    win32-g++:dLibs *= wsock32
 }
 
 linux-* {
@@ -79,3 +82,11 @@ LIBS += $$linkStaticLibs(sLibs)
 PRE_TARGETDEPS += $$pretargetStaticLibs(sLibs)
 
 LIBS += $$linkDynamicLibs(dLibs)
+
+android-* {
+## ifaddrs is missing on Android to add them don't use the one from
+## https://github.com/morristech/android-ifaddrs
+## because it crash, use QNetworkInterface from Qt instead
+    CONFIG *= qt
+    QT *= network
+}

@@ -14,7 +14,7 @@ function define_default_value()
 ## You are supposed to provide the following variables according to your system setup
 define_default_value ANDROID_NDK_PATH "/opt/android-ndk/"
 define_default_value ANDROID_NDK_ARCH "arm"
-define_default_value ANDROID_PLATFORM_VER "21"
+define_default_value ANDROID_PLATFORM_VER "16"
 define_default_value NATIVE_LIBS_TOOLCHAIN_PATH "${HOME}/Builds/android-toolchains/retroshare-android-${ANDROID_PLATFORM_VER}-${ANDROID_NDK_ARCH}/"
 define_default_value HOST_NUM_CPU $(nproc)
 
@@ -35,7 +35,7 @@ define_default_value LIBUPNP_SOURCE_VERSION "1.6.25"
 define_default_value LIBUPNP_SOURCE_SHA256 c5a300b86775435c076d58a79cc0d5a977d76027d2a7d721590729b7f369fa43
 
 define_default_value INSTALL_QT_ANDROID "false"
-define_default_value QT_VERSION "5.9.6"
+define_default_value QT_VERSION "5.12.0"
 define_default_value QT_ANDROID_INSTALLER_SHA256 a214084e2295c9a9f8727e8a0131c37255bf724bfc69e80f7012ba3abeb1f763
 
 define_default_value RESTBED_SOURCE_VERSION "4.6"
@@ -95,6 +95,15 @@ build_toolchain()
 	${ANDROID_NDK_PATH}/build/tools/make_standalone_toolchain.py --verbose \
 		--arch ${ANDROID_NDK_ARCH} --install-dir ${NATIVE_LIBS_TOOLCHAIN_PATH} \
 		--api ${ANDROID_PLATFORM_VER}
+	find "${PREFIX}/include/" -not -type d > "${NATIVE_LIBS_TOOLCHAIN_PATH}/deletefiles"
+}
+
+## This avoid <cmath> include errors due to -isystem and -I ordering issue
+delete_copied_includes()
+{
+	cat "${NATIVE_LIBS_TOOLCHAIN_PATH}/deletefiles" | while read delFile ; do
+		rm "$delFile"
+	done
 }
 
 ## More information available at https://gitlab.com/relan/provisioners/merge_requests/1 and http://stackoverflow.com/a/34032216
@@ -230,7 +239,8 @@ build_openssl()
 #	sed -i '/LIBCOMPATVERSIONS=";$(SHLIB_VERSION_HISTORY)" \\/d' Makefile
 	make -j${HOST_NUM_CPU}
 	make install
-#	cp *.so "${SYSROOT}/usr/lib"
+	rm -f ${PREFIX}/lib/libssl.so*
+	rm -f ${PREFIX}/lib/libcrypto.so*
 	cd ..
 }
 
@@ -315,9 +325,10 @@ build_restbed()
 	cd ..
 
 	rm -rf restbed-build; mkdir restbed-build ; cd restbed-build
-	cmake -DBUILD_SSL=OFF -DCMAKE_INSTALL_PREFIX=${PREFIX} -B. -H../restbed
+	cmake -DBUILD_SSL=OFF -DCMAKE_INSTALL_PREFIX="${PREFIX}" -B. -H../restbed
 	make -j${HOST_NUM_CPU}
 	make install
+	cp "${PREFIX}/library/librestbed.a" "${PREFIX}/lib/"
 	cd ..
 }
 
@@ -329,6 +340,7 @@ build_sqlite
 build_sqlcipher
 build_libupnp
 build_rapidjson
-#build_restbed # qmake build it already
+build_restbed
+delete_copied_includes
 
 echo NATIVE_LIBS_TOOLCHAIN_PATH=${NATIVE_LIBS_TOOLCHAIN_PATH}
