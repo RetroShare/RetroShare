@@ -300,7 +300,8 @@ bool p3Config::loadAttempt(const std::string& cfgFname,const std::string& signFn
 	setHash(bio->gethash());
 
     // In order to check the signature that is stored on disk, we compute the hash of the current data (which should match the hash of the data on disc because we just read it),
-    // and validate the signature from the disk on this data.
+    // and validate the signature from the disk on this data. The config file data is therefore hashed twice. Not a security issue, but
+    // this is a bit inelegant.
 
 	std::string signatureRead;
 	RsFileHash strHash(Hash());
