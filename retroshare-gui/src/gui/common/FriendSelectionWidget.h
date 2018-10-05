@@ -87,14 +87,6 @@ public:
 	int selectedItemCount();
     std::string selectedId(IdType &idType);
 
-    template<class ID_CLASS,FriendSelectionWidget::IdType TYPE> void selectedIds(std::set<ID_CLASS>& ids, bool onlyDirectSelected)
-    {
-        std::set<std::string> tmpids ;
-        selectedIds(TYPE, tmpids, onlyDirectSelected);
-        ids.clear() ;
-        for(std::set<std::string>::const_iterator it(tmpids.begin());it!=tmpids.end();++it)
-            ids.insert(ID_CLASS(*it)) ;
-    }
     template<class ID_CLASS,FriendSelectionWidget::IdType TYPE> void setSelectedIds(const std::set<ID_CLASS>& ids, bool add)
     {
         std::set<std::string> tmpids ;
