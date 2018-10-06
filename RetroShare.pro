@@ -60,9 +60,9 @@ retroshare_nogui {
     retroshare_nogui.target = retroshare_nogui
 
     libresapi {
-        retroshare_gui.depends = libresapi
+        retroshare_nogui.depends = libresapi
     } else {
-        retroshare_gui.depends = libretroshare
+        retroshare_nogui.depends = libretroshare
     }
 }
 
