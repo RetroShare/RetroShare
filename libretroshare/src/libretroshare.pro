@@ -19,10 +19,6 @@
 
 TEMPLATE = lib
 CONFIG += staticlib
-!include("../../retroshare.pri"): error("Could not include file ../../retroshare.pri")
-
-TEMPLATE = lib
-CONFIG += staticlib
 CONFIG -= qt
 TARGET = retroshare
 TARGET_PRL = libretroshare
@@ -37,6 +33,8 @@ DESTDIR = lib
 # treat warnings as error for better removing
 #QMAKE_CFLAGS += -Werror
 #QMAKE_CXXFLAGS += -Werror
+QMAKE_CFLAGS_WARN_ON -= -Wall
+QMAKE_CXXFLAGS_WARN_ON -= -Wall
 
 debug {
 #	DEFINES *= DEBUG
