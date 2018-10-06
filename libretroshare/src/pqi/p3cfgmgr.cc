@@ -299,27 +299,38 @@ bool p3Config::loadAttempt(const std::string& cfgFname,const std::string& signFn
 	/* set hash */
 	setHash(bio->gethash());
 
+    // In order to check the signature that is stored on disk, we compute the hash of the current data (which should match the hash of the data on disc because we just read it),
+    // and validate the signature from the disk on this data. The config file data is therefore hashed twice. Not a security issue, but
+    // this is a bit inelegant.
+
 	std::string signatureRead;
 	RsFileHash strHash(Hash());
-	AuthSSL::getAuthSSL()->SignData(strHash.toByteArray(), RsFileHash::SIZE_IN_BYTES, signatureRead);
 
-	BinMemInterface *signbio = new BinMemInterface(signatureRead.size(), BIN_FLAGS_READABLE);
+	BinFileInterface bfi(signFname.c_str(), BIN_FLAGS_READABLE);
 
-	if(!signbio->readfromfile(signFname.c_str()))
-	{
-		delete signbio;
+    if(bfi.getFileSize() == 0)
+        return false ;
+
+    RsTemporaryMemory mem(bfi.getFileSize()) ;
+
+    if(!bfi.readdata(mem,mem.size()))
 		return false;
+
+    // signature is stored as ascii so we need to convert it back to binary
+
+    RsTemporaryMemory mem2(bfi.getFileSize()/2) ;
+
+    if(!RsUtil::HexToBin(std::string((char*)(unsigned char*)mem,mem.size()),mem2,mem2.size()))
+    {
+        std::cerr << "Input string is not a Hex string!!"<< std::endl;
+        return false ;
 	}
 
-	std::string signatureStored((char *) signbio->memptr(), signbio->memsize());
+	bool signature_checks = AuthSSL::getAuthSSL()->VerifyOwnSignBin(strHash.toByteArray(), RsFileHash::SIZE_IN_BYTES,mem2,mem2.size());
 
-	delete signbio;
+    std::cerr << "(II) checked signature of config file " << cfgFname << ": " << (signature_checks?"OK":"Wrong!") << std::endl;
 
-	if(signatureRead != signatureStored)
-		return false;
-
-    std::cerr << "(II) Loaded configuration file " << cfgFname << std::endl;
-	return true;
+    return signature_checks;
 }
 
 bool p3Config::saveConfiguration()

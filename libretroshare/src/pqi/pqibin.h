@@ -69,7 +69,6 @@ virtual bool    bandwidthLimited() { return false; }
 virtual RsFileHash gethash();
 virtual uint64_t bytecount();
 
-protected:
 	virtual uint64_t getFileSize();
 
 private:

@@ -104,6 +104,33 @@ std::string RsUtil::HashId(const std::string &id, bool reverse)
 	return hash;
 }
 
+static int toHalfByte(char u,bool& ok)
+{
+    if(u >= 'a' && u <= 'f') return u-'a' + 0xa;
+    if(u >= 'A' && u <= 'F') return u-'A' + 0xa;
+    if(u >= '0' && u <= '9') return u-'0' + 0x0;
+
+    ok = false ;
+
+    return 0;
+}
+
+bool RsUtil::HexToBin(const std::string& input,unsigned char *data, const uint32_t len)
+{
+	if(input.size() & 1)
+		return false ;
+
+	if(len != input.size()/2)
+		return false ;
+
+	bool ok = true ;
+
+	for(uint32_t i=0;(i<len) && ok;++i)
+		data[i] = (toHalfByte(input[2*i],ok) << 4) + (toHalfByte(input[2*i+1],ok));
+
+	return ok;
+}
+
 //static double getCurrentTS()
 //{
 //#ifndef WINDOWS_SYS
