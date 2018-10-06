@@ -28,6 +28,11 @@ namespace librs
 {
 	namespace crypto
 	{
+		// Forward declare the class
+		class HashStream;
+		// Forward declare the template operator
+		template<class T> HashStream& operator<<(HashStream& u, const T&);
+
 		class HashStream
 		{
 		public:
