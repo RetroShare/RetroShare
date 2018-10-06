@@ -51,7 +51,7 @@ rs_jsonapi {
     RS_SRC_PATH=$$clean_path($${PWD}/../../)
     RS_BUILD_PATH=$$clean_path($${OUT_PWD}/../../)
 
-    no_cross_compiling {
+    no_rs_cross_compiling {
         RESTBED_SRC_PATH=$$clean_path($${RS_SRC_PATH}/supportlibs/restbed)
         RESTBED_BUILD_PATH=$$clean_path($${RS_BUILD_PATH}/supportlibs/restbed)
         INCLUDEPATH *= $$clean_path($${RESTBED_BUILD_PATH}/include/)

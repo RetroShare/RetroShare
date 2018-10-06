@@ -322,6 +322,8 @@ equals(QMAKE_HOST_SPEC, $$QMAKE_TARGET_SPEC) {
 } else {
     CONFIG *= rs_cross_compiling
     CONFIG -= no_rs_cross_compiling
+    message(Cross-compiling detected QMAKE_HOST_SPEC: $$QMAKE_HOST_SPEC \
+QMAKE_TARGET_SPEC: $$QMAKE_TARGET_SPEC)
 }
 
 defined(RS_MAJOR_VERSION,var):\
