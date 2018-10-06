@@ -532,7 +532,7 @@ struct RsTypeSerializer
 			for(uint32_t i=0; i<n; ++i)
 			{
 				T tmp;
-				serial_process<T>(j,ctx,tmp,memberName);
+				serial_process(j,ctx,tmp,memberName);
 				v.insert(tmp);
 			}
 			break;
@@ -590,7 +590,7 @@ struct RsTypeSerializer
 			for(uint32_t i=0;i<n;++i)
 			{
 				T tmp;
-				serial_process<T>(j,ctx,tmp,memberName);
+				serial_process(j,ctx,tmp,memberName);
 				v.push_back(tmp);
 			}
 			break;
