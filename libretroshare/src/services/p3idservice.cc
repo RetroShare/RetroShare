@@ -60,11 +60,11 @@
 
 // unused keys are deleted according to some heuristic that should favor known keys, signed keys etc. 
 
-static const time_t MAX_KEEP_KEYS_BANNED_DEFAULT =     2 * 86400 ; // get rid of banned ids after 1 days. That gives a chance to un-ban someone before he gets definitely kicked out
+static const rstime_t MAX_KEEP_KEYS_BANNED_DEFAULT =     2 * 86400 ; // get rid of banned ids after 1 days. That gives a chance to un-ban someone before he gets definitely kicked out
 
-static const time_t MAX_KEEP_KEYS_DEFAULT      =     5 * 86400 ; // default for unsigned identities: 5 days
-static const time_t MAX_KEEP_KEYS_SIGNED       =     8 * 86400 ; // signed identities by unknown key
-static const time_t MAX_KEEP_KEYS_SIGNED_KNOWN =    30 * 86400 ; // signed identities by known node keys
+static const rstime_t MAX_KEEP_KEYS_DEFAULT      =     5 * 86400 ; // default for unsigned identities: 5 days
+static const rstime_t MAX_KEEP_KEYS_SIGNED       =     8 * 86400 ; // signed identities by unknown key
+static const rstime_t MAX_KEEP_KEYS_SIGNED_KNOWN =    30 * 86400 ; // signed identities by known node keys
 
 static const uint32_t MAX_DELAY_BEFORE_CLEANING=    1800 ; // clean old keys every 30 mins
 
@@ -251,7 +251,7 @@ bool p3IdService::setAsRegularContact(const RsGxsId& id,bool b)
 
 void p3IdService::slowIndicateConfigChanged()
 {
-    time_t now = time(NULL) ;
+    rstime_t now = time(NULL) ;
 
     if(mLastConfigUpdate + DELAY_BETWEEN_CONFIG_UPDATES < now)
     {
@@ -259,7 +259,7 @@ void p3IdService::slowIndicateConfigChanged()
     mLastConfigUpdate = now ;
     }
 }
-time_t p3IdService::locked_getLastUsageTS(const RsGxsId& gxs_id)
+rstime_t p3IdService::locked_getLastUsageTS(const RsGxsId& gxs_id)
 {
     std::map<RsGxsId,keyTSInfo>::const_iterator it = mKeysTS.find(gxs_id) ;
 
@@ -281,7 +281,7 @@ void p3IdService::timeStampKey(const RsGxsId& gxs_id, const RsIdentityUsage& rea
 
     RS_STACK_MUTEX(mIdMtx) ;
 
-    time_t now = time(NULL) ;
+    rstime_t now = time(NULL) ;
 
     keyTSInfo& info(mKeysTS[gxs_id]) ;
 
@@ -292,10 +292,10 @@ void p3IdService::timeStampKey(const RsGxsId& gxs_id, const RsIdentityUsage& rea
     {
         // This is very costly, but normally the outerloop should never be rolled more than once.
 
-        std::map<RsIdentityUsage,time_t>::iterator best_it ;
-        time_t best_time = now+1;
+        std::map<RsIdentityUsage,rstime_t>::iterator best_it ;
+        rstime_t best_time = now+1;
 
-        for(std::map<RsIdentityUsage,time_t>::iterator it(info.usage_map.begin());it!=info.usage_map.end();++it)
+        for(std::map<RsIdentityUsage,rstime_t>::iterator it(info.usage_map.begin());it!=info.usage_map.end();++it)
             if(it->second < best_time)
             {
                 best_time = it->second ;
@@ -317,7 +317,7 @@ bool p3IdService::loadList(std::list<RsItem*>& items)
     {
         if( (lii = dynamic_cast<RsGxsIdLocalInfoItem*>(*it)) != NULL)
         {
-            for(std::map<RsGxsId,time_t>::const_iterator it2 = lii->mTimeStamps.begin();it2!=lii->mTimeStamps.end();++it2)
+            for(std::map<RsGxsId,rstime_t>::const_iterator it2 = lii->mTimeStamps.begin();it2!=lii->mTimeStamps.end();++it2)
                 mKeysTS[it2->first].TS = it2->second;
 
             mContacts = lii->mContacts ;
@@ -399,7 +399,7 @@ public:
 
     bool processEntry(RsGxsIdCache& entry)
     {
-        time_t now = time(NULL);
+        rstime_t now = time(NULL);
         const RsGxsId& gxs_id = entry.details.mId ;
 
         bool is_id_banned = rsReputations->isIdentityBanned(gxs_id) ;
@@ -424,8 +424,8 @@ public:
 
         bool no_ts = (it == mLastUsageTS.end()) ;
 
-        time_t last_usage_ts = no_ts?0:(it->second.TS);
-        time_t max_keep_time = 0;
+        rstime_t last_usage_ts = no_ts?0:(it->second.TS);
+        rstime_t max_keep_time = 0;
         bool should_check = true ;
 
         if(no_ts)
@@ -517,7 +517,7 @@ void	p3IdService::service_tick()
     RsTickEvent::tick_events();
     GxsTokenQueue::checkRequests(); // GxsTokenQueue handles all requests.
 
-    time_t now = time(NULL) ;
+    rstime_t now = time(NULL) ;
 
     if(mLastKeyCleaningTime + MAX_DELAY_BEFORE_CLEANING < now)
     {
@@ -624,7 +624,7 @@ bool p3IdService:: getNickname(const RsGxsId &id, std::string &nickname)
 }
 #endif
 
-time_t p3IdService::getLastUsageTS(const RsGxsId &id)
+rstime_t p3IdService::getLastUsageTS(const RsGxsId &id)
 {
     RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
     return locked_getLastUsageTS(id) ;
@@ -2400,7 +2400,7 @@ bool p3IdService::cache_process_recogntaginfo(const RsGxsIdGroupItem *item, std:
 
     recogn_extract_taginfo(item, tagItems);
 
-    //time_t now = time(NULL);
+    //rstime_t now = time(NULL);
     for(it = tagItems.begin(); it != tagItems.end(); ++it)
     {
         RsRecognTag info((*it)->tag_class, (*it)->tag_type, false);
@@ -3409,8 +3409,8 @@ bool p3IdService::pgphash_handlerequest(uint32_t token)
 				 */
 
 #define SECS_PER_DAY (3600 * 24)
-				time_t age = time(NULL) - ssdata.pgp.lastCheckTs;
-				time_t wait_period = ssdata.pgp.checkAttempts * SECS_PER_DAY;
+				rstime_t age = time(NULL) - ssdata.pgp.lastCheckTs;
+				rstime_t wait_period = ssdata.pgp.checkAttempts * SECS_PER_DAY;
 				if (wait_period > 30 * SECS_PER_DAY)
 				{
 					wait_period = 30 * SECS_PER_DAY;
@@ -3997,7 +3997,7 @@ bool p3IdService::recogn_checktag(const RsGxsId &id, const std::string &nickname
 	// ------ 
 	// signature is valid.  (only if doSignCheck == true)
 	
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 	isPending = false;
 	
 	// check date range.
@@ -4104,7 +4104,7 @@ void p3IdService::generateDummyData()
 
 	generateDummy_OwnIds();
 
-	time_t age = 0;
+	rstime_t age = 0;
 	for(int i = 0; i < MAX_KNOWN_PGPIDS; i++)
 	{
 		age += DUMMY_GXSID_DELAY;

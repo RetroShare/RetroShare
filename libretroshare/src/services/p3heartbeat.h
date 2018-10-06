@@ -53,7 +53,7 @@ virtual RsServiceInfo getServiceInfo();
 	/* data */
 	RsMutex mHeartMtx;
 
-	time_t mLastHeartbeat;
+	rstime_t mLastHeartbeat;
 };
 
 #endif // MRK_SERVICES_HEARTBEAT_H

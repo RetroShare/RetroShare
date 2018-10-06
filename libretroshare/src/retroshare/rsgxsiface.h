@@ -49,9 +49,9 @@ struct RsGxsGroupSummary : RsSerializable
 	RsGxsGroupId mGroupId;
 	std::string  mGroupName;
 	RsGxsId      mAuthorId;
-	time_t       mPublishTs;
+	rstime_t       mPublishTs;
 	uint32_t     mNumberOfMessages;
-	time_t       mLastMessageTs;
+	rstime_t       mLastMessageTs;
 	uint32_t     mSignFlags;
 	uint32_t     mPopularity;
 

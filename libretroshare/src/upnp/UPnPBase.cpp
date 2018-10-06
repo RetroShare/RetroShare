@@ -788,7 +788,7 @@ const std::string CUPnPService::GetStateVariable(
 #ifdef UPNP_DEBUG
 		std::cerr << "CUPnPService::GetStateVariable() pausing in case of an UPnP event incomming.";
 #endif
-		time_t begin_time = time(NULL);
+		rstime_t begin_time = time(NULL);
 		while (true) {
 		    if (time(NULL) - begin_time > 7) {
 			break;
@@ -1071,7 +1071,7 @@ bool CUPnPControlPoint::AddPortMappings(
 	// Check the number of port mappings before
 	//have a little break in case we just modified the variable, so we have to wait for an event
 //	std::cerr << "GetStateVariable pausing in case of an UPnP event incomming.";
-//	time_t begin_time = time(NULL);
+//	rstime_t begin_time = time(NULL);
 //	while (true) {
 //	   if (time(NULL) - begin_time > 7) {
 //	       break;
@@ -1101,7 +1101,7 @@ bool CUPnPControlPoint::AddPortMappings(
 #ifdef UPNP_DEBUG
 	std::cerr << "CUPnPControlPoint::AddPortMappings() GetStateVariable pausing in case of an UPnP event incomming.";
 #endif
-	time_t begin_time = time(NULL);
+	rstime_t begin_time = time(NULL);
 	while (true) {
 	   if (time(NULL) - begin_time > 4) {
 	       break;

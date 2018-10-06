@@ -48,7 +48,7 @@
 #include "ft/ftextralist.h"
 #include "retroshare/rsfiles.h"
 #include "services/p3service.h"
-
+#include "util/rstime.h"
 #include "file_sharing/hash_cache.h"
 #include "file_sharing/directory_storage.h"
 
@@ -71,7 +71,7 @@ struct PeerBannedFilesEntry
 {
     std::set<RsFileHash> mBannedHashOfHash;
     uint32_t mSessionId ;			// used for when a friend sends multiple packets in separate items.
-    time_t mLastSent;
+    rstime_t mLastSent;
 };
 
 class p3FileDatabase: public p3Service, public p3Config, public ftSearch //, public RsSharedFileService
@@ -246,11 +246,11 @@ class p3FileDatabase: public p3Service, public p3Config, public ftSearch //, pub
         struct DirSyncRequestData
         {
             RsPeerId peer_id ;
-            time_t request_TS ;
+            rstime_t request_TS ;
             uint32_t flags ;
         };
 
-        time_t mLastRemoteDirSweepTS ; // TS for friend list update
+        rstime_t mLastRemoteDirSweepTS ; // TS for friend list update
         std::map<DirSyncRequestId,DirSyncRequestData> mPendingSyncRequests ; // pending requests, waiting for an answer
         std::map<DirSyncRequestId,RsFileListsSyncResponseItem *> mPartialResponseItems;
 
@@ -265,8 +265,8 @@ class p3FileDatabase: public p3Service, public p3Config, public ftSearch //, pub
         mutable RsMutex mFLSMtx ;
         uint32_t mUpdateFlags ;
         std::string mFileSharingDir ;
-        time_t mLastCleanupTime;
-        time_t mLastDataRecvTS ;
+        rstime_t mLastCleanupTime;
+        rstime_t mLastDataRecvTS ;
 
         // File filtering. Not explicitly related to shared files, but has its place here
         //
@@ -275,10 +275,10 @@ class p3FileDatabase: public p3Service, public p3Config, public ftSearch //, pub
         std::map<RsPeerId,PeerBannedFilesEntry> mPeerBannedFiles ;   // records of which files other peers ban, stored as H(H(f))
 		std::set<RsFileHash> mBannedFileList ;	// list of banned hashes. This include original hashs and H(H(f)) when coming from friends.
         mutable std::vector<FileInfo> mExtraFilesCache;	// cache for extra files, to avoid requesting them too often.
-        mutable time_t mLastExtraFilesCacheUpdate ;
+        mutable rstime_t mLastExtraFilesCacheUpdate ;
         bool mTrustFriendNodesForBannedFiles ;
         bool mBannedFileListNeedsUpdate;
-        time_t mLastPrimaryBanListChangeTimeStamp;
+        rstime_t mLastPrimaryBanListChangeTimeStamp;
 
         void locked_sendBanInfo(const RsPeerId& pid);
         void handleBannedFilesInfo(RsFileListsBannedHashesItem *item);

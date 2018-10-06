@@ -66,7 +66,7 @@ const int PQISSL_UDP_FLAG = 0x02;
 //#define PQISSL_LOG_DEBUG2 	1
 
 static const int PQISSL_MAX_READ_ZERO_COUNT = 20;
-static const time_t PQISSL_MAX_READ_ZERO_TIME = 15; // 15 seconds of no data => reset. (atm HeartBeat pkt sent 5 secs)
+static const rstime_t PQISSL_MAX_READ_ZERO_TIME = 15; // 15 seconds of no data => reset. (atm HeartBeat pkt sent 5 secs)
 
 static const int PQISSL_SSL_CONNECT_TIMEOUT = 30;
 

@@ -33,6 +33,7 @@
 #include <retroshare/rsflags.h>
 #include <serialiser/rsserializable.h>
 #include <serialiser/rstypeserializer.h>
+#include "util/rstime.h"
 
 #define USE_NEW_CHUNK_CHECKING_CODE
 
@@ -225,7 +226,7 @@ struct FileInfo : RsSerializable
 	std::vector<TransferInfo> peers;
 
 	DwlSpeed priority;
-	time_t lastTS;
+	rstime_t lastTS;
 
 	std::list<RsNodeGroupId> parent_groups;
 

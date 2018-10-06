@@ -32,7 +32,7 @@
 #include "util/rstime.h"
 #include <stdio.h>
 #include <unistd.h>		/* for (u)sleep() */
-#include <time.h>
+#include "util/rstime.h"
 
 /******
  * #define DEBUG_ELIST	1
@@ -49,7 +49,7 @@ ftExtraList::ftExtraList()
 void ftExtraList::data_tick()
 {
     bool todo = false;
-    time_t now = time(NULL);
+    rstime_t now = time(NULL);
 
     {
         RsStackMutex stack(extMutex);
@@ -229,12 +229,12 @@ bool	ftExtraList::cleanupOldFiles()
 
 	RS_STACK_MUTEX(extMutex);
 
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 
     std::list<RsFileHash> toRemove;
 
 	for( std::map<RsFileHash, FileDetails>::iterator it = mFiles.begin(); it != mFiles.end(); ++it) /* check timestamps */
-		if ((time_t)it->second.info.age < now)
+		if ((rstime_t)it->second.info.age < now)
 			toRemove.push_back(it->first);
 
 	if (toRemove.size() > 0)
@@ -450,7 +450,7 @@ bool    ftExtraList::loadList(std::list<RsItem *>& load)
 	std::cerr << std::endl;
 #endif
 
-	time_t ts = time(NULL);
+	rstime_t ts = time(NULL);
 
 
 	std::list<RsItem *>::iterator it;
@@ -475,7 +475,7 @@ bool    ftExtraList::loadList(std::list<RsItem *>& load)
 		fclose(fd);
 		fd = NULL ;
 
-		if (ts > (time_t)fi->file.age)
+		if (ts > (rstime_t)fi->file.age)
 		{
 			/* to old */
 			cleanupEntry(fi->file.path, TransferRequestFlags(fi->flags));

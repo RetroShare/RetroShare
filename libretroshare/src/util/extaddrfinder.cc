@@ -36,7 +36,7 @@
 #include <vector>
 #include <algorithm>
 #include <stdio.h>
-#include <time.h>
+#include "util/rstime.h"
 
 const uint32_t MAX_IP_STORE =	300; /* seconds ip address timeout */
 
@@ -253,7 +253,7 @@ bool ExtAddrFinder::hasValidIP(struct sockaddr_storage &addr)
 			addr = mAddr;
 		}
 	}
-	time_t delta;
+	rstime_t delta;
 	{
 		RsStackMutex mut(mAddrMtx) ;
 		//timeout the current ip

@@ -27,9 +27,9 @@
 #include "serialiser/rsserializable.h"
 #include "util/radix64.h"
 #include "util/rsprint.h"
+#include "util/rstime.h"
 
 #include <iomanip>
-#include <time.h>
 #include <string>
 #include <typeinfo> // for typeid
 
@@ -93,7 +93,7 @@ template<> bool RsTypeSerializer::serialize(uint8_t data[], uint32_t size, uint3
 { 
 	return setRawUInt64(data,size,&offset,member);
 }
-template<> bool RsTypeSerializer::serialize(uint8_t data[], uint32_t size, uint32_t &offset, const time_t& member)
+template<> bool RsTypeSerializer::serialize(uint8_t data[], uint32_t size, uint32_t &offset, const rstime_t& member)
 {
 	return setRawTimeT(data,size,&offset,member);
 }
@@ -127,7 +127,7 @@ template<> bool RsTypeSerializer::deserialize(const uint8_t data[], uint32_t siz
 { 
 	return getRawUInt64(data,size,&offset,&member);
 }
-template<> bool RsTypeSerializer::deserialize(const uint8_t data[], uint32_t size, uint32_t &offset, time_t& member)
+template<> bool RsTypeSerializer::deserialize(const uint8_t data[], uint32_t size, uint32_t &offset, rstime_t& member)
 {
 	return getRawTimeT(data,size,&offset,member);
 }
@@ -158,7 +158,7 @@ template<> uint32_t RsTypeSerializer::serial_size(const uint64_t& /* member*/)
 { 
 	return 8;
 }
-template<> uint32_t RsTypeSerializer::serial_size(const time_t& /* member*/)
+template<> uint32_t RsTypeSerializer::serial_size(const rstime_t& /* member*/)
 {
 	return 8;
 }
@@ -187,9 +187,9 @@ template<> void RsTypeSerializer::print_data(const std::string& n, const uint64_
 {
 	std::cerr << "  [uint64_t   ] " << n << ": " << std::to_string(V) << std::endl;
 }
-template<> void RsTypeSerializer::print_data(const std::string& n, const time_t& V)
+template<> void RsTypeSerializer::print_data(const std::string& n, const rstime_t& V)
 {
-    std::cerr << "  [time_t     ] " << n << ": " << V << " (" << time(NULL)-V << " secs ago)" << std::endl;
+    std::cerr << "  [rstime_t     ] " << n << ": " << V << " (" << time(NULL)-V << " secs ago)" << std::endl;
 }
 
 #define SIMPLE_TO_JSON_DEF(T) \
@@ -210,23 +210,7 @@ template<> bool RsTypeSerializer::to_JSON( const std::string& memberName, \
 
 SIMPLE_TO_JSON_DEF(bool)
 SIMPLE_TO_JSON_DEF(int32_t)
-
-template<> bool RsTypeSerializer::to_JSON( const std::string& memberName,
-                                           const time_t& member, RsJson& jDoc )
-{
-	rapidjson::Document::AllocatorType& allocator = jDoc.GetAllocator();
-
-	rapidjson::Value key;
-	key.SetString(memberName.c_str(), memberName.length(), allocator);
-
-	// without this compilation may break depending on how time_t is defined
-	int64_t tValue = member;
-	rapidjson::Value value(tValue);
-
-	jDoc.AddMember(key, value, allocator);
-
-	return true;
-}
+SIMPLE_TO_JSON_DEF(rstime_t)
 
 SIMPLE_TO_JSON_DEF(uint8_t)
 SIMPLE_TO_JSON_DEF(uint16_t)
@@ -254,12 +238,12 @@ bool RsTypeSerializer::from_JSON( const std::string& memberName,
 }
 
 template<> /*static*/
-bool RsTypeSerializer::from_JSON( const std::string& memberName, time_t& member,
+bool RsTypeSerializer::from_JSON( const std::string& memberName, rstime_t& member,
                                   RsJson& jDoc )
 {
 	SAFE_GET_JSON_V();
-	ret = ret && v.IsInt();
-	if(ret) member = v.GetInt();
+	ret = ret && v.IsInt64();
+	if(ret) member = v.GetInt64();
 	return ret;
 }
 

@@ -101,7 +101,7 @@ virtual bool    statusPortForward(const uint32_t fwdId, PortForwardParams &param
 
 	DNSServiceRef mMappingRef;
 	uint32_t mMappingStatus; 
-	time_t mMappingStatusTS; 
+	rstime_t mMappingStatusTS; 
 };
 
 #endif /* MRK_P3_ZC_NAT_ASSIST_H */

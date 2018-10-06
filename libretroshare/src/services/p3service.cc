@@ -27,7 +27,7 @@
 #include <iomanip>
 
 #ifdef WINDOWS_SYS
-#include <time.h>
+#include "util/rstime.h"
 #endif
 
 /*****

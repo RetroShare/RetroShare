@@ -289,11 +289,11 @@ bool p3PeerMgrIMPL::setOwnVisState(uint16_t vs_disc, uint16_t vs_dht)
 
 void p3PeerMgrIMPL::tick()
 {
-    static const time_t INTERVAL_BETWEEN_LOCATION_CLEANING = 300 ; // Remove unused locations and clean IPs every 10 minutes.
+    static const rstime_t INTERVAL_BETWEEN_LOCATION_CLEANING = 300 ; // Remove unused locations and clean IPs every 10 minutes.
 
-    static time_t last_friends_check = time(NULL) ; // first cleaning after 1 hour.
+    static rstime_t last_friends_check = time(NULL) ; // first cleaning after 1 hour.
 
-    time_t now = time(NULL) ;
+    rstime_t now = time(NULL) ;
 
     if(now > INTERVAL_BETWEEN_LOCATION_CLEANING + last_friends_check )
     {
@@ -900,7 +900,7 @@ bool    p3PeerMgrIMPL::haveOnceConnected()
 /*******************************************************************/
 /*******************************************************************/
 
-bool p3PeerMgrIMPL::addFriend(const RsPeerId& input_id, const RsPgpId& input_gpg_id, uint32_t netMode, uint16_t vs_disc, uint16_t vs_dht, time_t lastContact,ServicePermissionFlags service_flags)
+bool p3PeerMgrIMPL::addFriend(const RsPeerId& input_id, const RsPgpId& input_gpg_id, uint32_t netMode, uint16_t vs_disc, uint16_t vs_dht, rstime_t lastContact,ServicePermissionFlags service_flags)
 {
 	bool notifyLinkMgr = false;
 	RsPeerId id = input_id ;
@@ -1718,7 +1718,7 @@ bool p3PeerMgrIMPL::getExtAddressReportedByFriends(sockaddr_storage &addr, uint8
 static bool cleanIpList(std::list<pqiIpAddress>& lst,const RsPeerId& pid,p3LinkMgr *link_mgr)
 {
     bool changed = false ;
-    time_t now = time(NULL) ;
+    rstime_t now = time(NULL) ;
 
     for(std::list<pqiIpAddress>::iterator it2(lst.begin());it2 != lst.end();)
     {
@@ -2963,9 +2963,9 @@ bool p3PeerMgrIMPL::removeBannedIps()
 bool p3PeerMgrIMPL::removeUnusedLocations()
 {
 	std::list<RsPeerId> toRemove;
-	std::map<RsPgpId, time_t>   mostRecentTime;
+	std::map<RsPgpId, rstime_t>   mostRecentTime;
 
-	const time_t now = time(NULL);
+	const rstime_t now = time(NULL);
 
 	std::list<RsPgpId> pgpList ;
 
@@ -2978,7 +2978,7 @@ bool p3PeerMgrIMPL::removeUnusedLocations()
         // First put a sensible number in all PGP ids
 
         for(std::list<RsPgpId>::const_iterator it = pgpList.begin(); it != pgpList.end(); ++it)
-            mostRecentTime[*it] = (time_t)0;
+            mostRecentTime[*it] = (rstime_t)0;
 
 #ifdef PEER_DEBUG
 		std::cerr << "p3PeerMgr::removeUnusedLocations()" << std::endl;
@@ -2987,7 +2987,7 @@ bool p3PeerMgrIMPL::removeUnusedLocations()
 
         for( std::map<RsPeerId, peerState>::iterator it = mFriendList.begin(); it != mFriendList.end(); ++it)
         {
-            time_t& bst(mostRecentTime[it->second.gpg_id]) ;
+            rstime_t& bst(mostRecentTime[it->second.gpg_id]) ;
             bst = std::max(bst,it->second.lastcontact) ;
         }
 

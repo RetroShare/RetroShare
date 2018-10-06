@@ -75,7 +75,7 @@ class Counter
 	static int total_rsitem_mallocs = 0 ;
 	static int total_rsitem_frees = 0 ;
 	static int total_rsitem_freed = 0 ;
-	static time_t last_time = 0 ;
+	static rstime_t last_time = 0 ;
 
 void *RsItem::operator new(size_t s)
 {
@@ -85,7 +85,7 @@ void *RsItem::operator new(size_t s)
 
 	++size_hits[ s ].v() ;
 
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 	++nb_rsitem_creations ;
 	total_rsitem_mallocs += s ;
 

@@ -50,7 +50,7 @@ class RsDiscSpace
 
 		static RsMutex _mtx ;
 
-		static time_t _last_check[RS_DIRECTORY_COUNT] ;
+		static rstime_t _last_check[RS_DIRECTORY_COUNT] ;
 		static uint32_t _size_limit_mb ;
 		static uint32_t _current_size[RS_DIRECTORY_COUNT] ;
 		static bool		_last_res[RS_DIRECTORY_COUNT] ;

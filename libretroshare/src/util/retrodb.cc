@@ -23,7 +23,7 @@
 #include <iostream>
 #include <sstream>
 #include <memory.h>
-#include <time.h>
+#include "util/rstime.h"
 #include <inttypes.h>
 
 #include "retrodb.h"
@@ -147,7 +147,7 @@ bool RetroDb::execSQL(const std::string &query){
 
 
     uint32_t delta = 3;
-    time_t stamp = time(NULL), now = 0;
+    rstime_t stamp = time(NULL), now = 0;
     bool timeOut = false, ok = false;
 
     while(!timeOut){
@@ -348,7 +348,7 @@ bool RetroDb::execSQL_bind(const std::string &query, std::list<RetroBind*> &para
     }
 
     uint32_t delta = 3;
-    time_t stamp = time(NULL), now = 0;
+    rstime_t stamp = time(NULL), now = 0;
     bool timeOut = false, ok = false;
 
     while(!timeOut){

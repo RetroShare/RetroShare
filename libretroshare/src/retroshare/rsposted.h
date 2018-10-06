@@ -119,7 +119,7 @@ class RsPostedPost
         mNewScore = 0;
 	}
 
-	bool calculateScores(time_t ref_time);
+	bool calculateScores(rstime_t ref_time);
 
 	RsMsgMetaData mMeta;
 	std::string mLink;

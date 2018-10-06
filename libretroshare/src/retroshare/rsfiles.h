@@ -30,6 +30,7 @@
 #include "rstypes.h"
 #include "serialiser/rsserializable.h"
 #include "rsturtle.h"
+#include "util/rstime.h"
 
 class RsFiles;
 
@@ -187,7 +188,7 @@ struct BannedFileEntry
 
     uint64_t size ;
     std::string filename ;
-    time_t ban_time_stamp;
+    rstime_t ban_time_stamp;
 };
 
 class RsFiles
@@ -339,7 +340,7 @@ public:
 	virtual bool turtleSearchRequest(
 	        const std::string& matchString,
 	        const std::function<void (const std::list<TurtleFileInfo>& results)>& multiCallback,
-	        std::time_t maxWait = 300 ) = 0;
+	        rstime_t maxWait = 300 ) = 0;
 
 	virtual TurtleRequestId turtleSearch(const std::string& string_to_match) = 0;
 	virtual TurtleRequestId turtleSearch(

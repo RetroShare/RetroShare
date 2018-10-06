@@ -221,7 +221,7 @@ class RsGcxs
     
         virtual bool isRecipient(const RsGxsCircleId &circleId, const RsGxsGroupId& destination_group, const RsGxsId& id) = 0;
         
-	virtual bool getLocalCircleServerUpdateTS(const RsGxsCircleId& gid,time_t& grp_server_update_TS,time_t& msg_server_update_TS) =0;
+	virtual bool getLocalCircleServerUpdateTS(const RsGxsCircleId& gid,rstime_t& grp_server_update_TS,rstime_t& msg_server_update_TS) =0;
 };
 
 
@@ -234,7 +234,7 @@ public:
 	:RsGenExchange(gds,ns,serviceSerialiser,mServType, gixs, authenPolicy)  { return; }
 	virtual ~RsGxsCircleExchange() { return; }
     
-	virtual bool getLocalCircleServerUpdateTS(const RsGxsCircleId& gid,time_t& grp_server_update_TS,time_t& msg_server_update_TS) 
+	virtual bool getLocalCircleServerUpdateTS(const RsGxsCircleId& gid,rstime_t& grp_server_update_TS,rstime_t& msg_server_update_TS) 
 	{
 		return RsGenExchange::getGroupServerUpdateTS(RsGxsGroupId(gid),grp_server_update_TS,msg_server_update_TS) ;
 	}

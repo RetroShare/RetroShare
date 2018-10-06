@@ -89,7 +89,7 @@ private:
 	uint32_t mPrivateSaveCount;
 
 	uint32_t mMaxStorageDurationSeconds ;
-	time_t mLastCleanTime ;
+	rstime_t mLastCleanTime ;
 
 	std::list<RsItem*> saveCleanupList; /* TEMPORARY LIST WHEN SAVING */
 

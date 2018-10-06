@@ -285,7 +285,7 @@ public:
 		RsMutex gpgMtxData;
 		/* Below is protected via the mutex */
 
-		time_t mStoreKeyTime;
+		rstime_t mStoreKeyTime;
 
 		RsPgpId mOwnGpgId;
 		bool gpgKeySelected;

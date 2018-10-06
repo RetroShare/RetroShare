@@ -25,7 +25,7 @@
 
 #include "rsitems/rsitem.h"
 #include "rsitems/rsserviceids.h"
-
+#include "util/rstime.h"
 #include "retroshare/rsgxsifacetypes.h"
 
 std::ostream &operator<<(std::ostream &out, const RsGroupMetaData &meta);
@@ -99,7 +99,7 @@ struct TurtleGxsInfo
 	RsGxsId      author;
 	std::string  name ;
 	std::string  description ;
-	time_t       last_post ;
+	rstime_t       last_post ;
 	uint32_t     number_of_posts ;
 };
 
