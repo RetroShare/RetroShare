@@ -26,7 +26,7 @@
 
 #include <map>
 #include <stdio.h>
-#include <time.h>
+#include "util/rstime.h"
 
 const int RS_DEBUG_STDERR 	= 1;  /* stuff goes to stderr */
 const int RS_DEBUG_LOGFILE 	= 2;  /* stuff goes to logfile */
@@ -147,8 +147,8 @@ void rslog(const RsLog::logLvl lvl, RsLog::logInfo *info, const std::string &msg
 		return;
 
 	{
-		RsStackMutex stack(logMtx); /******** LOCKED ****************/
-		time_t t = time(NULL);
+		RS_STACK_MUTEX(logMtx);
+		rstime_t t = time(NULL);
 
 		if (debugMode == RS_DEBUG_LOGCRASH)
 		{

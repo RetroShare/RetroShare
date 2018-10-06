@@ -421,7 +421,7 @@ RsServiceControl *RsPluginManager::getServiceControl() const
 	assert(_service_control);
 	return _service_control ;
 }
-void RsPluginManager::slowTickPlugins(time_t seconds)
+void RsPluginManager::slowTickPlugins(rstime_t seconds)
 {
 	for(uint32_t i=0;i<_plugins.size();++i)
 		if(_plugins[i].plugin != NULL && _plugins[i].plugin->rs_cache_service() != NULL && (seconds % _plugins[i].plugin->rs_cache_service()->tickDelay() ))

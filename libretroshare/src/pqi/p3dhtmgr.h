@@ -80,10 +80,10 @@ class dhtPeerEntry
 
         RsPeerId id;
         uint32_t state;
-        time_t lastTS;
+        rstime_t lastTS;
 
 	uint32_t notifyPending;
-	time_t   notifyTS;
+	rstime_t   notifyTS;
 
         struct sockaddr_in laddr, raddr;
 	uint32_t type;  /* ADDR_TYPE as defined above */
@@ -231,17 +231,17 @@ std::string randomBootstrapId();
 	bool     mDhtModifications; /* any user requests? */
 
 	dhtPeerEntry ownEntry;
-	time_t ownNotifyTS;
+	rstime_t ownNotifyTS;
 	std::map<RsPeerId, dhtPeerEntry> peers;
 
 	std::list<std::string> stunIds;
 	bool     mStunRequired;
 
 	uint32_t mDhtState;
-	time_t   mDhtActiveTS;
+	rstime_t   mDhtActiveTS;
 
 	bool   mBootstrapAllowed;
-	time_t mLastBootstrapListTS;
+	rstime_t mLastBootstrapListTS;
 };
 
 

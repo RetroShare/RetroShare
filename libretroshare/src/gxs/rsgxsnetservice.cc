@@ -327,7 +327,7 @@ static const uint32_t     service_to_print  = RS_SERVICE_GXS_TYPE_CHANNELS ;    
 
 class nullstream: public std::ostream {};
 
-static std::string nice_time_stamp(time_t now,time_t TS)
+static std::string nice_time_stamp(rstime_t now,rstime_t TS)
 {
     if(TS == 0)
         return "Never" ;
@@ -448,8 +448,8 @@ int RsGxsNetService::tick()
     if(should_notify)
         processObserverNotifications() ;
 
-    time_t now = time(NULL);
-    time_t elapsed = mSYNC_PERIOD + mSyncTs;
+    rstime_t now = time(NULL);
+    rstime_t elapsed = mSYNC_PERIOD + mSyncTs;
 
     if((elapsed) < now)
     {
@@ -525,20 +525,20 @@ void RsGxsNetService::rejectMessage(const RsGxsMessageId& msg_id)
 void RsGxsNetService::cleanRejectedMessages()
 {
     RS_STACK_MUTEX(mNxsMutex) ;
-    time_t now = time(NULL) ;
+    rstime_t now = time(NULL) ;
 
 #ifdef NXS_NET_DEBUG_0
     GXSNETDEBUG___ << "Cleaning rejected messages." << std::endl;
 #endif
 
-    for(std::map<RsGxsMessageId,time_t>::iterator it(mRejectedMessages.begin());it!=mRejectedMessages.end();)
+    for(std::map<RsGxsMessageId,rstime_t>::iterator it(mRejectedMessages.begin());it!=mRejectedMessages.end();)
         if(it->second + REJECTED_MESSAGE_RETRY_DELAY < now)
 	{
 #ifdef NXS_NET_DEBUG_0
 		GXSNETDEBUG___ << "  message id " << it->first << " should be re-tried. removing from list..." << std::endl;
 #endif
 
-		std::map<RsGxsMessageId,time_t>::iterator tmp = it ;
+		std::map<RsGxsMessageId,rstime_t>::iterator tmp = it ;
 		++tmp ;
 		mRejectedMessages.erase(it) ;
 		it=tmp ;
@@ -854,7 +854,7 @@ void RsGxsNetService::syncGrpStatistics()
     // Go through group statistics and groups without information are re-requested to random peers selected
     // among the ones who provided the group info.
 
-    time_t now = time(NULL) ;
+    rstime_t now = time(NULL) ;
 
     for(auto it(grpMeta.begin());it!=grpMeta.end();++it)
     {
@@ -1591,7 +1591,7 @@ bool RsGxsNetService::loadList(std::list<RsItem *> &load)
     // The delete is done in StoreHere, if necessary
 
     std::for_each(load.begin(), load.end(), StoreHere(mClientGrpUpdateMap, mClientMsgUpdateMap, mServerMsgUpdateMap, mServerGrpConfigMap, mGrpServerUpdate));
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 
     // We reset group statistics here. This is the best place since we know at this point which are all unsubscribed groups.
 
@@ -2018,7 +2018,7 @@ void RsGxsNetService::debugDump()
 {
 #ifdef NXS_NET_DEBUG_0
 	RS_STACK_MUTEX(mNxsMutex) ;
-    //time_t now = time(NULL) ;
+    //rstime_t now = time(NULL) ;
 
     GXSNETDEBUG___<< "RsGxsNetService::debugDump():" << std::endl;
 
@@ -2160,8 +2160,8 @@ void RsGxsNetService::updateServerSyncTS()
                 	// ask to the GxsNetService of circles what the server TS is for that circle. If more recent, we update the serverTS of the
                 	// local group
 
-                        time_t circle_group_server_ts ;
-                        time_t circle_msg_server_ts ;
+                        rstime_t circle_group_server_ts ;
+                        rstime_t circle_msg_server_ts ;
 
                         // This call needs to be off-mutex, because of self-restricted circles.
                         // Normally we should update as a function of MsgServerUpdateTS and the mRecvTS of the circle, not the global grpServerTS.
@@ -2653,7 +2653,7 @@ void RsGxsNetService::locked_processCompletedIncomingTrans(NxsTransaction* tr)
             GXSNETDEBUG_P_(tr->mTransaction->PeerId()) << "  type = msgs." << std::endl;
 #endif
             RsGxsGroupId grpId;
-            //time_t now = time(NULL) ;
+            //rstime_t now = time(NULL) ;
 
             while(tr->mItems.size() > 0)
             {
@@ -3106,7 +3106,7 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
     }
 }
 
-void RsGxsNetService::locked_stampPeerGroupUpdateTime(const RsPeerId& pid,const RsGxsGroupId& grpId,time_t tm,uint32_t n_messages)
+void RsGxsNetService::locked_stampPeerGroupUpdateTime(const RsPeerId& pid,const RsGxsGroupId& grpId,rstime_t tm,uint32_t n_messages)
 {
     RsGxsMsgUpdate& up(mClientMsgUpdateMap[pid]);
 
@@ -4380,7 +4380,7 @@ void RsGxsNetService::handleRecvSyncMessage(RsNxsSyncMsgReqItem *item,bool item_
     uint32_t transN = locked_getTransactionId();
     RsGxsCircleId should_encrypt_to_this_circle_id ;
 
-    time_t now = time(NULL) ;
+    rstime_t now = time(NULL) ;
 
     uint32_t max_send_delay = locked_getGrpConfig(item->grpId).msg_req_delay;	// we should use "sync" but there's only one variable used in the GUI: the req one.
 
@@ -5024,7 +5024,7 @@ void RsGxsNetService::handleRecvPublishKeys(RsNxsGroupPublishKeyItem *item)
 	}
 }
 
-bool RsGxsNetService::getGroupServerUpdateTS(const RsGxsGroupId& gid,time_t& group_server_update_TS, time_t& msg_server_update_TS)
+bool RsGxsNetService::getGroupServerUpdateTS(const RsGxsGroupId& gid,rstime_t& group_server_update_TS, rstime_t& msg_server_update_TS)
 {
     RS_STACK_MUTEX(mNxsMutex) ;
 
@@ -5112,7 +5112,7 @@ TurtleRequestId RsGxsNetService::turtleGroupRequest(const RsGxsGroupId& group_id
 {
 	RS_STACK_MUTEX(mNxsMutex) ;
 
-    time_t now = time(NULL);
+    rstime_t now = time(NULL);
     auto it = mSearchedGroups.find(group_id) ;
 
     if(mSearchedGroups.end() != it && (it->second.ts + MIN_DELAY_BETWEEN_GROUP_SEARCH > now))
@@ -5309,7 +5309,7 @@ bool RsGxsNetService::search( const std::string& substring,
 				if((rit = uQ.find("signFlags")) != uQ.end())
 					s.mSignFlags = std::stoul(rit->second);
 				if((rit = uQ.find("publishTs")) != uQ.end())
-					s.mPublishTs = static_cast<time_t>(std::stoll(rit->second));
+					s.mPublishTs = static_cast<rstime_t>(std::stoll(rit->second));
 				if((rit = uQ.find("authorId")) != uQ.end())
 					s.mAuthorId  = RsGxsId(rit->second);
 

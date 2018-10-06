@@ -25,7 +25,9 @@
 #include <string>
 #include <stdlib.h>
 #include <stdint.h>
-#include <retroshare/rsids.h>
+
+#include "retroshare/rsids.h"
+#include "util/rstime.h"
 
 /*******************************************************************
  * This is at the lowlevel packing routines. They are usually 
@@ -63,8 +65,8 @@ uint32_t getRawStringSize(const std::string &outStr);
 bool getRawString(const void *data, uint32_t size, uint32_t *offset, std::string &outStr);
 bool setRawString(void *data, uint32_t size, uint32_t *offset, const std::string &inStr);
 
-bool getRawTimeT(const void *data, uint32_t size, uint32_t *offset, time_t& outStr);
-bool setRawTimeT(void *data, uint32_t size, uint32_t *offset, const time_t& inStr);
+bool getRawTimeT(const void *data, uint32_t size, uint32_t *offset, rstime_t& outTime);
+bool setRawTimeT(void *data, uint32_t size, uint32_t *offset, const rstime_t& inTime);
 
 #endif
 

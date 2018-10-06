@@ -140,7 +140,7 @@ virtual void setGPGOperation(AuthGPGOperation *operation);
 	void updatePeers_locked(const SSLID &aboutId);
 	void sendContactInfo_locked(const PGPID &aboutId, const SSLID &toId);
 
-	time_t mLastPgpUpdate;
+	rstime_t mLastPgpUpdate;
 
 	std::map<PGPID, DiscPgpInfo> mFriendList;
 	std::map<SSLID, DiscPeerInfo> mLocationMap;

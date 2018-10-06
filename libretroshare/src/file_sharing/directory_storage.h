@@ -27,6 +27,7 @@
 
 #include "retroshare/rsids.h"
 #include "retroshare/rsfiles.h"
+#include "util/rstime.h"
 
 #define NOT_IMPLEMENTED() { std::cerr << __PRETTY_FUNCTION__ << ": not yet implemented." << std::endl; }
 
@@ -52,13 +53,13 @@ class DirectoryStorage
 
         // gets/sets the various time stamps:
         //
-        bool getDirectoryRecursModTime(EntryIndex index,time_t& recurs_max_modf_TS) const ;		// last modification time, computed recursively over all subfiles and directories
-        bool getDirectoryLocalModTime (EntryIndex index,time_t& motime_TS) const ;				// last modification time for that index only
-        bool getDirectoryUpdateTime   (EntryIndex index,time_t& update_TS) const ;				// last time the entry was updated. This is only used on the RemoteDirectoryStorage side.
+        bool getDirectoryRecursModTime(EntryIndex index,rstime_t& recurs_max_modf_TS) const ;		// last modification time, computed recursively over all subfiles and directories
+        bool getDirectoryLocalModTime (EntryIndex index,rstime_t& motime_TS) const ;				// last modification time for that index only
+        bool getDirectoryUpdateTime   (EntryIndex index,rstime_t& update_TS) const ;				// last time the entry was updated. This is only used on the RemoteDirectoryStorage side.
 
-        bool setDirectoryRecursModTime(EntryIndex index,time_t  recurs_max_modf_TS) ;
-        bool setDirectoryLocalModTime (EntryIndex index,time_t  modtime_TS) ;
-        bool setDirectoryUpdateTime   (EntryIndex index,time_t  update_TS) ;
+        bool setDirectoryRecursModTime(EntryIndex index,rstime_t  recurs_max_modf_TS) ;
+        bool setDirectoryLocalModTime (EntryIndex index,rstime_t  modtime_TS) ;
+        bool setDirectoryUpdateTime   (EntryIndex index,rstime_t  update_TS) ;
 
         uint32_t getEntryType(const EntryIndex& indx) ;	                     // WARNING: returns DIR_TYPE_*, not the internal directory storage stuff.
         virtual bool extractData(const EntryIndex& indx,DirDetails& d);
@@ -81,8 +82,8 @@ class DirectoryStorage
                 // info about the directory that is pointed by the iterator
 
                 std::string name() const ;
-                time_t last_modif_time() const ; // last time a file in this directory or in the directories below has been modified.
-                time_t last_update_time() const ; // last time this directory was updated
+                rstime_t last_modif_time() const ; // last time a file in this directory or in the directories below has been modified.
+                rstime_t last_update_time() const ; // last time this directory was updated
             private:
                 EntryIndex mParentIndex ;		// index of the parent dir.
                 uint32_t mDirTabIndex ;				// index in the vector of subdirs.
@@ -106,7 +107,7 @@ class DirectoryStorage
                 std::string name() const ;
                 uint64_t size() const ;
                 RsFileHash hash() const ;
-                time_t modtime() const ;
+                rstime_t modtime() const ;
 
             private:
                 EntryIndex mParentIndex ;		// index of the parent dir.
@@ -117,7 +118,7 @@ class DirectoryStorage
         struct FileTS
         {
             uint64_t size ;
-            time_t modtime;
+            rstime_t modtime;
         };
 
         EntryIndex root() const ;								// returns the index of the root directory entry. This is generally 0.
@@ -171,7 +172,7 @@ class DirectoryStorage
 
         InternalFileHierarchyStorage *mFileHierarchy ;
 
-		time_t mLastSavedTime ;
+		rstime_t mLastSavedTime ;
 		bool mChanged ;
 		std::string mFileName;
 };
@@ -198,7 +199,7 @@ public:
      * 			returns the last time a sweep has been done over the directory in order to check update TS.
      * \return
      */
-    time_t& lastSweepTime() { return mLastSweepTime ; }
+    rstime_t& lastSweepTime() { return mLastSweepTime ; }
 	
 	/*!
      * \brief searchHash
@@ -212,7 +213,7 @@ public:
     virtual int searchHash(const RsFileHash& hash, EntryIndex& results) const ;
 
 private:
-    time_t mLastSweepTime ;
+    rstime_t mLastSweepTime ;
 };
 
 class LocalDirectoryStorage: public DirectoryStorage

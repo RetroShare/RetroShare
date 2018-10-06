@@ -31,7 +31,7 @@
 #include <stdlib.h>
 #include "retroshare/rspeers.h"
 #include "ftchunkmap.h"
-#include <time.h>
+#include "util/rstime.h"
 
 static const uint32_t SOURCE_CHUNK_MAP_UPDATE_PERIOD	=   60 ; //! TTL for chunkmap info
 static const uint32_t INACTIVE_CHUNK_TIME_LAPSE 		= 3600 ; //! TTL for an inactive chunk
@@ -264,7 +264,7 @@ bool ChunkMap::reAskPendingChunk( const RsPeerId& peer_id,
 		if(_map[i] == FileChunksInfo::CHUNK_OUTSTANDING)
 			return false ;
 
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 
 	for(std::map<uint32_t,ChunkDownloadInfo>::iterator it(_slices_to_download.begin());it!=_slices_to_download.end();++it)
 		for(std::map<ftChunk::OffsetInFile,ChunkDownloadInfo::SliceRequestInfo >::iterator it2(it->second._slices.begin());it2!=it->second._slices.end();++it2)
@@ -400,7 +400,7 @@ bool ChunkMap::getDataChunk(const RsPeerId& peer_id,uint32_t size_hint,ftChunk& 
 void ChunkMap::removeInactiveChunks(std::vector<ftChunk::OffsetInFile>& to_remove)
 {
 	to_remove.clear() ;
-	time_t now = time(NULL) ;
+	rstime_t now = time(NULL) ;
 
 	for(std::map<ChunkNumber,ChunkDownloadInfo>::iterator it(_slices_to_download.begin());it!=_slices_to_download.end();)
 		if(now - it->second._last_data_received > (int)INACTIVE_CHUNK_TIME_LAPSE)
@@ -573,7 +573,7 @@ uint32_t ChunkMap::getAvailableChunk(const RsPeerId& peer_id,bool& map_is_too_ol
 	// useful to get a new map that will also be full, but because we need to be careful not to mislead information,
 	// we still keep asking.
 	//
-	time_t now = time(NULL) ;
+	rstime_t now = time(NULL) ;
 
 	if((!peer_chunks->is_full) && ((int)now - (int)peer_chunks->TS > (int)SOURCE_CHUNK_MAP_UPDATE_PERIOD)) 
 	{

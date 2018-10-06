@@ -19,7 +19,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
-#include <time.h>
+#include "util/rstime.h"
 #include "pqi/pqiipset.h"
 #include "util/rsstring.h"
 
@@ -193,7 +193,7 @@ void    pqiIpAddrList::loadTlv(RsTlvIpAddrSet &tlvAddrs) const
 void 	pqiIpAddrList::printIpAddressList(std::string &out) const
 {
 	std::list<pqiIpAddress>::const_iterator it;
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 	for(it = mAddrs.begin(); it != mAddrs.end(); ++it)
 	{
 		out += sockaddr_storage_tostring(it->mAddr);

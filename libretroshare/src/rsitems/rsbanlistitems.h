@@ -68,7 +68,7 @@ public:
 
 	uint32_t      banListType ;
 	RsPeerId      banListPeerId ;
-	time_t        update_time ;
+	rstime_t        update_time ;
 	RsTlvBanList  banned_peers;
 };
 

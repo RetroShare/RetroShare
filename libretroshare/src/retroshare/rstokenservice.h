@@ -103,8 +103,8 @@ struct RsTokReqOptions
 	uint32_t mSubscribeFilter, mSubscribeMask; // Only for Groups.
 
 	// Time range... again applied after Options.
-	time_t   mBefore;
-	time_t   mAfter;
+	rstime_t   mBefore;
+	rstime_t   mAfter;
 };
 
 std::ostream &operator<<(std::ostream &out, const RsGroupMetaData &meta);

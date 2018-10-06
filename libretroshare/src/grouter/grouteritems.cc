@@ -144,10 +144,10 @@ void RsGRouterRoutingInfoItem::serial_process(RsGenericSerializer::SerializeJob 
     RsTypeSerializer::serial_process          (j,ctx,peerId,"peerId") ;
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,data_status,"data_status") ;
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,tunnel_status,"tunnel_status") ;
-    RsTypeSerializer::serial_process<time_t>  (j,ctx,received_time_TS,"received_time_TS") ;
-    RsTypeSerializer::serial_process<time_t>  (j,ctx,last_sent_TS,"last_sent_TS") ;
+    RsTypeSerializer::serial_process<rstime_t>  (j,ctx,received_time_TS,"received_time_TS") ;
+    RsTypeSerializer::serial_process<rstime_t>  (j,ctx,last_sent_TS,"last_sent_TS") ;
 
-    RsTypeSerializer::serial_process<time_t>  (j,ctx,last_tunnel_request_TS,"last_tunnel_request_TS") ;
+    RsTypeSerializer::serial_process<rstime_t>  (j,ctx,last_tunnel_request_TS,"last_tunnel_request_TS") ;
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,sending_attempts,"sending_attempts") ;
 
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,client_id,"client_id") ;
@@ -215,7 +215,7 @@ void RsGRouterMatrixTrackItem::serial_process(RsGenericSerializer::SerializeJob 
 {
     RsTypeSerializer::serial_process(j,ctx,provider_id,"provider_id") ;
     RsTypeSerializer::serial_process(j,ctx,message_id,"message_id") ;
-    RsTypeSerializer::serial_process<time_t>(j,ctx,time_stamp,"time_stamp") ;
+    RsTypeSerializer::serial_process<rstime_t>(j,ctx,time_stamp,"time_stamp") ;
 }
 
 void RsGRouterMatrixCluesItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
@@ -228,7 +228,7 @@ template<> void RsTypeSerializer::serial_process(RsGenericSerializer::SerializeJ
 {
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,s.friend_id,name+":friend_id") ;
     RsTypeSerializer::serial_process<float>   (j,ctx,s.weight,name+":weight") ;
-    RsTypeSerializer::serial_process<time_t>  (j,ctx,s.time_stamp,name+":time_stamp") ;
+    RsTypeSerializer::serial_process<rstime_t>  (j,ctx,s.time_stamp,name+":time_stamp") ;
 }
 
 RsGRouterGenericDataItem *RsGRouterGenericDataItem::duplicate() const

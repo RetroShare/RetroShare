@@ -47,14 +47,14 @@ class BwCtrlData
 
 	/* Rates are floats in KB/s */
 	RsBwRates mRates; 
-	time_t    mRateUpdateTs;
+	rstime_t    mRateUpdateTs;
 
 	/* these are integers (B/s) */
 	uint32_t  mAllocated;
-	time_t    mLastSend;
+	rstime_t    mLastSend;
 
 	uint32_t  mAllowedOut;
-	time_t    mLastRecvd;
+	rstime_t    mLastRecvd;
 };
 
 
@@ -116,7 +116,7 @@ private:
 
 		int printRateInfo_locked(std::ostream &out);
 
-		time_t mLastCheck;
+		rstime_t mLastCheck;
 
 		RsBwRates mTotalRates;
 		std::map<RsPeerId, BwCtrlData> mBwMap;

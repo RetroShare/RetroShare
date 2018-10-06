@@ -116,11 +116,11 @@ public:
 
     struct DistantMessengingInvite
     {
-	    time_t time_of_validity ;
+	    rstime_t time_of_validity ;
     };
     struct DistantMessengingContact
     {
-	    time_t last_hit_time ;
+	    rstime_t last_hit_time ;
 	    RsPeerId virtual_peer_id ;
 	    uint32_t status ;
 	    bool pending_messages ;

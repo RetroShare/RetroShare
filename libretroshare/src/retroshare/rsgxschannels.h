@@ -286,7 +286,7 @@ public:
 	virtual bool turtleSearchRequest(
 	        const std::string& matchString,
 	        const std::function<void (const RsGxsGroupSummary& result)>& multiCallback,
-	        std::time_t maxWait = 300 ) = 0;
+	        rstime_t maxWait = 300 ) = 0;
 
 	//////////////////////////////////////////////////////////////////////////////
     ///                     Distant synchronisation methods                    ///

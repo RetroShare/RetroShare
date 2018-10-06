@@ -53,7 +53,7 @@ class gxp::Paper
 	std::string serialnumber;
 	std::string url;
 	std::list<std::string> authors;
-	time_t      date;
+	rstime_t      date;
 	uint32_t    startpage;
 	uint32_t    endpage;	
 	std::string language;

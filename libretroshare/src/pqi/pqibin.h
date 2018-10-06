@@ -25,6 +25,7 @@
 
 #include "pqi/pqi_base.h"
 #include "pqi/pqihash.h"
+#include "util/rstime.h"
 
 #include <stdio.h>
 
@@ -228,7 +229,7 @@ virtual RsFileHash gethash();
 	bool 	 dummyConnected;
         bool     toConnect;
 	uint32_t connectDelta;
-	time_t   connectTS;
+	rstime_t   connectTS;
 };
 
 

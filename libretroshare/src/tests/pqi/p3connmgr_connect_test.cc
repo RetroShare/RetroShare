@@ -61,7 +61,7 @@ INITTEST();
 #define MAX_TIME_SHORT_TEST 10
 #define MAX_TIME_BASIC_TEST 60
 
-int run_connect_test(time_t timeout);
+int run_connect_test(rstime_t timeout);
 
 /*******************************************************
  *
@@ -133,7 +133,7 @@ int main(int argc, char **argv)
 	REPORT("p3connmgr_connect_test() SINGLE PEER - NO Addresses");
 	/* second test, add addresses for peer */
 
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 
 	pqiIpAddrSet peer1_tst2_addrs;
 	pqiIpAddress paddr;
@@ -176,10 +176,10 @@ int main(int argc, char **argv)
 }
 
 /* Generic restart test */
-int run_connect_test(time_t timeout)
+int run_connect_test(rstime_t timeout)
 {
 	/* tick */
-	time_t start = time(NULL);
+	rstime_t start = time(NULL);
 	bool extAddr = false;
 
 	while ((start > time(NULL) - timeout) && (!extAddr))

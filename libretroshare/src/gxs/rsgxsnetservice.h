@@ -52,14 +52,14 @@ class RsGroupNetworkStatsRecord
 
         std::set<RsPeerId> suppliers ;
 	uint32_t max_visible_count ;
-    time_t update_TS ;
+    rstime_t update_TS ;
 };
 
 struct GroupRequestRecord
 {
     GroupRequestRecord(): ts(0), request_id(0) {}
 
-    time_t ts ;
+    rstime_t ts ;
     TurtleRequestId request_id;
 };
 
@@ -188,7 +188,7 @@ public:
 
     virtual void rejectMessage(const RsGxsMessageId& msg_id) ;
     
-    virtual bool getGroupServerUpdateTS(const RsGxsGroupId& gid,time_t& grp_server_update_TS,time_t& msg_server_update_TS) ;
+    virtual bool getGroupServerUpdateTS(const RsGxsGroupId& gid,rstime_t& grp_server_update_TS,rstime_t& msg_server_update_TS) ;
     virtual bool stampMsgServerUpdateTS(const RsGxsGroupId& gid) ;
     virtual bool removeGroups(const std::list<RsGxsGroupId>& groups);
     virtual bool isDistantPeer(const RsPeerId& pid);
@@ -507,7 +507,7 @@ private:
     * stamp the group info from that particular peer at the given time.
     */
 
-    void locked_stampPeerGroupUpdateTime(const RsPeerId& pid,const RsGxsGroupId& grpId,time_t tm,uint32_t n_messages) ;
+    void locked_stampPeerGroupUpdateTime(const RsPeerId& pid,const RsGxsGroupId& grpId,rstime_t tm,uint32_t n_messages) ;
 
     /*!
     * encrypts/decrypts the transaction for the destination circle id.
@@ -602,7 +602,7 @@ private:
     RsGxsServerGrpUpdate mGrpServerUpdate;
     RsServiceInfo mServiceInfo;
     
-    std::map<RsGxsMessageId,time_t> mRejectedMessages;
+    std::map<RsGxsMessageId,rstime_t> mRejectedMessages;
 
     std::vector<RsNxsGrp*> mNewGroupsToNotify ;
     std::vector<RsNxsMsg*> mNewMessagesToNotify ;
@@ -620,7 +620,7 @@ private:
     std::map<Sha1CheckSum, RsNxsGrp*> mGroupHashCache;
     std::map<TurtleRequestId,RsGxsGroupId> mSearchRequests;
     std::map<RsGxsGroupId,GroupRequestRecord> mSearchedGroups ;
-    time_t mLastCacheReloadTS ;
+    rstime_t mLastCacheReloadTS ;
 };
 
 #endif // RSGXSNETSERVICE_H

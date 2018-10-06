@@ -139,8 +139,8 @@ int	p3MsgService::tick()
 
 	incomingMsgs(); 
 
-	static time_t last_management_time = 0 ;
-	time_t now = time(NULL) ;
+	static rstime_t last_management_time = 0 ;
+	rstime_t now = time(NULL) ;
 
 	if(now > last_management_time + 5)
 	{
@@ -158,7 +158,7 @@ void p3MsgService::cleanListOfReceivedMessageHashes()
 {
 	RS_STACK_MUTEX(recentlyReceivedMutex);
 
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 
 	for( auto it = mRecentlyReceivedMessageHashes.begin();
 	     it != mRecentlyReceivedMessageHashes.end(); )

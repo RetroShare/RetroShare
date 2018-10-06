@@ -75,7 +75,7 @@ RsRtt *rsRtt = NULL;
 
 
 #ifdef WINDOWS_SYS
-#include <time.h>
+#include "util/rstime.h"
 #include <sys/timeb.h>
 #endif
 
@@ -160,8 +160,8 @@ int	p3rtt::status()
 
 int	p3rtt::sendPackets()
 {
-	time_t now = time(NULL);
-	time_t pt;
+	rstime_t now = time(NULL);
+	rstime_t pt;
 	{
 		RsStackMutex stack(mRttMtx); /****** LOCKED MUTEX *******/
 		pt = mSentPingTime;

@@ -20,7 +20,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
-#include <time.h>
+#include "util/rstime.h"
 #include <vector>
 
 #include "pqi/p3netmgr.h"
@@ -415,7 +415,7 @@ void p3NetMgrIMPL::netStartup()
 
 void p3NetMgrIMPL::tick()
 {
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 	bool doSlowTick = false;
 	{
 		RsStackMutex stack(mNetMtx);   /************** LOCK MUTEX ***************/
@@ -474,7 +474,7 @@ void p3NetMgrIMPL::netTick()
 	checkNetAddress() ;
 
 	uint32_t netStatus = 0;
-	time_t   age = 0;
+	rstime_t   age = 0;
 	{
 		RsStackMutex stack(mNetMtx);   /************** LOCK MUTEX ***************/
 
@@ -605,7 +605,7 @@ void p3NetMgrIMPL::netUpnpCheck()
 	/* grab timestamp */
 	mNetMtx.lock();   /*   LOCK MUTEX */
 
-	time_t delta = time(NULL) - mNetInitTS;
+	rstime_t delta = time(NULL) - mNetInitTS;
 
 #if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
 		std::cerr << "p3NetMgrIMPL::netUpnpCheck() age: " << delta << std::endl;
@@ -616,8 +616,8 @@ void p3NetMgrIMPL::netUpnpCheck()
 	struct sockaddr_storage extAddr;
 	int upnpState = netAssistFirewallActive();
 
-	if (((upnpState == 0) && (delta > (time_t)MAX_UPNP_INIT)) ||
-	    ((upnpState > 0) && (delta > (time_t)MAX_UPNP_COMPLETE)))
+	if (((upnpState == 0) && (delta > (rstime_t)MAX_UPNP_INIT)) ||
+	    ((upnpState > 0) && (delta > (rstime_t)MAX_UPNP_COMPLETE)))
 	{
 #if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
 		std::cerr << "p3NetMgrIMPL::netUpnpCheck() ";

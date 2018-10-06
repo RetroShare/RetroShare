@@ -287,7 +287,7 @@ bool setRawString(void *data, uint32_t size, uint32_t *offset, const std::string
 	return true;
 }
 
-bool getRawTimeT(const void *data,uint32_t size,uint32_t *offset,time_t& t)
+bool getRawTimeT(const void *data,uint32_t size,uint32_t *offset,rstime_t& t)
 {
 	uint64_t T ;
 	bool res = getRawUInt64(data,size,offset,&T) ;
@@ -295,7 +295,7 @@ bool getRawTimeT(const void *data,uint32_t size,uint32_t *offset,time_t& t)
 
 	return res ;
 }
-bool setRawTimeT(void *data, uint32_t size, uint32_t *offset, const time_t& t)
+bool setRawTimeT(void *data, uint32_t size, uint32_t *offset, const rstime_t& t)
 {
 	return setRawUInt64(data,size,offset,t) ;
 }
