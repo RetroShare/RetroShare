@@ -531,7 +531,7 @@ win32-g++ {
 
     RS_UPNP_LIB = miniupnpc
 
-    DEFINES *= NOGDI WIN32 WIN32_LEAN_AND_MEAN WINDOWS_SYS _USE_32BIT_TIME_T
+    DEFINES *= NOGDI WIN32 WIN32_LEAN_AND_MEAN WINDOWS_SYS
 
     # This defines the platform to be WinXP or later and is needed for
     #  getaddrinfo (_WIN32_WINNT_WINXP)
