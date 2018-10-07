@@ -55,7 +55,7 @@ void DisplayInfos(struct UPNPUrls * urls,
 	char lastconnerr[64];
 	unsigned int uptime;
 	unsigned int brUp, brDown;
-	rstime_t timenow, timestarted;
+	time_t timenow, timestarted;  // Don't use rstime_t here or ctime break on windows
 	int r;
 #if MINIUPNPC_API_VERSION >= -2//1.4 2010/12/09
 	const char * servicetype = data->first.servicetype;
