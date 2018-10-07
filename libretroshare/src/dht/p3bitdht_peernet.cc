@@ -1101,7 +1101,7 @@ int p3BitDht::tick()
 	minuteTick();
 
 #ifdef DEBUG_PEERNET_COMMON
-	rstime_t now = time(NULL);
+	time_t now = time(NULL);  // Don't use rstime_t here or ctime break on windows
 	std::cerr << "p3BitDht::tick() TIME: " << ctime(&now) << std::endl;
 	std::cerr.flush();
 #endif

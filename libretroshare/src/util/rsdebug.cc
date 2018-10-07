@@ -148,7 +148,7 @@ void rslog(const RsLog::logLvl lvl, RsLog::logInfo *info, const std::string &msg
 
 	{
 		RS_STACK_MUTEX(logMtx);
-		rstime_t t = time(NULL);
+		time_t t = time(NULL); // Don't use rstime_t here or ctime break on windows
 
 		if (debugMode == RS_DEBUG_LOGCRASH)
 		{
