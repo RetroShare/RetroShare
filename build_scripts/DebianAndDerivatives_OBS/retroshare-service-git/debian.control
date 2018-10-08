@@ -1,0 +1,19 @@
+Source: retroshare-service-git
+Section: devel
+Priority: standard
+Maintainer: Cyril Soler <csoler@users.sourceforge.net>
+Build-Depends: cmake, debhelper (>= 7), git, libglib2.0-dev, libupnp-dev, qtbase5-dev, qt5-default, libssl-dev, libbz2-dev, libsqlcipher-dev, libxapian-dev
+Standards-Version: 3.9.3
+Homepage: http://retroshare.net
+
+Package: retroshare-service-git
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Secure communication with friends
+ RetroShare is a Free and Open Source, private and secure decentralized 
+ communication platform. It lets you to securely chat and share files with your 
+ friends and family, using a web-of-trust to authenticate peers and OpenSSL to 
+ encrypt all communication. RetroShare provides filesharing, chat, messages, 
+ forums and channels.
+ This package provide a headless RetroShare node that can be controlled only
+ using the JSON API.
