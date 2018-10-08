@@ -181,13 +181,22 @@ public:
 	uint64_t mTotalSize ;
 };
 
-struct BannedFileEntry
+struct BannedFileEntry : RsSerializable
 {
-    BannedFileEntry() : size(0),filename(""),ban_time_stamp(0) {}
+	BannedFileEntry() : mFilename(""), mSize(0), mBanTimeStamp(0) {}
 
-    uint64_t size ;
-    std::string filename ;
-    time_t ban_time_stamp;
+	std::string mFilename;
+	uint64_t mSize;
+	time_t mBanTimeStamp; // TODO: use rstime_t
+
+	/// @see RsSerializable::serial_process
+	virtual void serial_process(RsGenericSerializer::SerializeJob j,
+	                            RsGenericSerializer::SerializeContext& ctx)
+	{
+		RS_SERIAL_PROCESS(mFilename);
+		RS_SERIAL_PROCESS(mSize);
+		RS_SERIAL_PROCESS(mBanTimeStamp);
+	}
 };
 
 class RsFiles
@@ -430,10 +439,41 @@ public:
         virtual int SearchBoolExp(RsRegularExpression::Expression * exp, std::list<DirDetails> &results,FileSearchFlags flags,const RsPeerId& peer_id) = 0;
 		virtual int getSharedDirStatistics(const RsPeerId& pid, SharedDirStats& stats) =0;
 
-		virtual int banFile(const RsFileHash& real_file_hash, const std::string& filename, uint64_t file_size) =0;
-		virtual int unbanFile(const RsFileHash& real_file_hash)=0;
-    	virtual bool getPrimaryBannedFilesList(std::map<RsFileHash,BannedFileEntry>& banned_files) =0;
-    	virtual bool isHashBanned(const RsFileHash& hash) =0;
+	/**
+	 * @brief Ban unwanted file from being, searched and forwarded by this node
+	 * @jsonapi{development}
+	 * @param[in] realFileHash this is what will really enforce banning
+	 * @param[in] filename expected name of the file, for the user to read
+	 * @param[in] fileSize expected file size, for the user to read
+	 * @return meaningless value
+	 */
+	virtual int banFile( const RsFileHash& realFileHash,
+	                     const std::string& filename, uint64_t fileSize ) = 0;
+
+	/**
+	 * @brief Remove file from unwanted list
+	 * @jsonapi{development}
+	 * @param[in] realFileHash hash of the file
+	 * @return meaningless value
+	 */
+	virtual int unbanFile(const RsFileHash& realFileHash) = 0;
+
+	/**
+	 * @brief Get list of banned files
+	 * @jsonapi{development}
+	 * @param[out] bannedFiles storage for banned files information
+	 * @return meaningless value
+	 */
+	virtual bool getPrimaryBannedFilesList(
+	        std::map<RsFileHash,BannedFileEntry>& bannedFiles ) = 0;
+
+	/**
+	 * @brief Check if a file is on banned list
+	 * @jsonapi{development}
+	 * @param[in] hash hash of the file
+	 * @return true if the hash is on the list, false otherwise
+	 */
+	virtual bool isHashBanned(const RsFileHash& hash) = 0;
 
 		/***
 		 * Utility Functions.

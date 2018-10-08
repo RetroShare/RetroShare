@@ -50,12 +50,7 @@ void RsFileListsBannedHashesConfigItem::serial_process(RsGenericSerializer::Seri
 {
     RsTypeSerializer::serial_process(j,ctx,primary_banned_files_list,"primary_banned_files_list") ;
 }
-template<> void RsTypeSerializer::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx,BannedFileEntry& entry,const std::string& /*name*/)
-{
-	RsTypeSerializer::serial_process          (j,ctx,TLV_TYPE_STR_NAME,entry.filename      ,"entry.file_name") ;
-	RsTypeSerializer::serial_process<uint64_t>(j,ctx,                  entry.size          ,"entry.size") ;
-	RsTypeSerializer::serial_process<time_t>  (j,ctx,                  entry.ban_time_stamp,"entry.ban_time_stamp") ;
-}
+
 RsItem *RsFileListsSerialiser::create_item(uint16_t service,uint8_t type) const
 {
     if(service != RS_SERVICE_TYPE_FILE_DATABASE)
