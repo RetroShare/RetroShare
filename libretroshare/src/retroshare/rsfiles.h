@@ -479,8 +479,14 @@ public:
 		 * Utility Functions.
 		 ***/
 		virtual bool ConvertSharedFilePath(std::string path, std::string &fullpath) = 0;
-		virtual void ForceDirectoryCheck() = 0;
-		virtual void updateSinceGroupPermissionsChanged() = 0;
+
+	/**
+	 * @brief Force shared directories check
+	 * @jsonapi{development}
+	 */
+	virtual void ForceDirectoryCheck() = 0;
+
+	virtual void updateSinceGroupPermissionsChanged() = 0;
 		virtual bool InDirectoryCheck() = 0;
 		virtual bool copyFile(const std::string& source,const std::string& dest) = 0;
 
