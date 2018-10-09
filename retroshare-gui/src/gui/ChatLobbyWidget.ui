@@ -95,7 +95,7 @@
          <enum>Qt::NoFocus</enum>
         </property>
         <property name="icon">
-         <iconset resource="images.qrc">
+         <iconset resource="icons.qrc">
           <normaloff>:/icons/help_64.png</normaloff>:/icons/help_64.png</iconset>
         </property>
         <property name="checkable">
@@ -119,7 +119,8 @@
        <item>
         <widget class="QFrame" name="toolBarFrame">
          <property name="styleSheet">
-          <string notr="true"/>
+          <string notr="true">color: white;
+background-color: rgb(47, 60, 76);</string>
          </property>
          <property name="frameShape">
           <enum>QFrame::StyledPanel</enum>
@@ -181,6 +182,13 @@
        </item>
        <item>
         <widget class="QTreeWidget" name="lobbyTreeWidget">
+         <property name="styleSheet">
+          <string notr="true">color: white;
+background-color: rgb(47, 60, 76);
+selection-color: rgb(255,255,255);
+selection-background-color: rgb(32, 41, 53);
+</string>
+         </property>
          <property name="iconSize">
           <size>
            <width>16</width>
@@ -429,20 +437,19 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>LineEditClear</class>
-   <extends>QLineEdit</extends>
-   <header location="global">gui/common/LineEditClear.h</header>
-  </customwidget>
-  <customwidget>
    <class>StyledLabel</class>
    <extends>QLabel</extends>
    <header>gui/common/StyledLabel.h</header>
   </customwidget>
+  <customwidget>
+   <class>LineEditClear</class>
+   <extends>QLineEdit</extends>
+   <header location="global">gui/common/LineEditClear.h</header>
+  </customwidget>
  </customwidgets>
  <resources>
-  <include location="images.qrc"/>
-  <include location="../Unseengui/unseengui.qrc"/>
   <include location="icons.qrc"/>
+  <include location="../Unseengui/unseengui.qrc"/>
  </resources>
  <connections/>
 </ui>

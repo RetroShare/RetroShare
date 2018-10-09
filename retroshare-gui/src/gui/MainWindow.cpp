@@ -1434,7 +1434,6 @@ void MainWindow::settingsChanged()
     ui->listWidget->setStyleSheet("QListWidget {background: rgb(43, 164, 220); color: rgb(255, 255, 255)}"
                                   "QListWidget::item {background: rgb(20, 141, 196); color: rgb(255, 255, 255)}");  // d: Set color of list item
 
-
     ui->toolBarPage->setVisible(Settings->getPageButtonLoc());
 	ui->toolBarAction->setVisible(Settings->getActionButtonLoc());
 	ui->listWidget->setVisible(!Settings->getPageButtonLoc() || !Settings->getActionButtonLoc());

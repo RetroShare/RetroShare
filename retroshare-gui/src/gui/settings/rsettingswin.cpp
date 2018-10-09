@@ -72,7 +72,7 @@ SettingsPage::SettingsPage(QWidget *parent)
     RSElidedItemDelegate *itemDelegate = new RSElidedItemDelegate(this);
     itemDelegate->setSpacing(QSize(0, ITEM_SPACING));
     ui.listWidget->setItemDelegate(itemDelegate);
-    ui.listWidget->setStyleSheet("QListWidget {background: rgb(47, 60, 76); color: rgb(255, 255, 255)}");   //d: style of sheet sitting
+
 
     initStackedWidget();
 
@@ -154,7 +154,7 @@ SettingsPage::initStackedWidget()
     addPage(new ChatPage()); // CHAT
     addPage(new MessagePage()); //MESSGE RENAME TO MAIL
     addPage(new TransferPage()); //FILE TRANSFER
-  //  addPage(new ChannelPage()); // CHANNELS               //d: remove this
+  //  addPage(new ChannelPage()); // CHANNELS               //d: hiden this
     addPage(new ForumPage()); // FORUMS
   //  addPage(new PostedPage()); // POSTED RENAME TO LINKS  //d: remove this
     addPage(new NotifyPage()); // NOTIFY
@@ -162,9 +162,11 @@ SettingsPage::initStackedWidget()
     addPage(new AppearancePage()); // APPEARENCE
     addPage(new SoundPage() ); // SOUND
     addPage(new ServicePermissionsPage() ); // PERMISSIONS
+/*****d:Hide Webui
 #ifdef ENABLE_WEBUI
     addPage(new WebuiPage() );
 #endif // ENABLE_WEBUI
+    */
 	 // add widgets from plugins
 
 	for(int i=0;i<rsPlugins->nbPlugins();++i)
@@ -189,6 +191,7 @@ void SettingsPage::addPage(ConfigPage *page)
 	ui.stackedWidget->addWidget(page) ;
 	QListWidgetItem *item = new QListWidgetItem(QIcon(page->iconPixmap()),page->pageName(),ui.listWidget) ;
 	QFontMetrics fontMetrics = ui.listWidget->fontMetrics();
+
     int w = ITEM_SPACING*32;
 	w += ui.listWidget->iconSize().width();
 	w += fontMetrics.width(item->text());
@@ -213,8 +216,8 @@ SettingsPage::setNewPage(int page)
 	ui.pageicon->setPixmap(pagew->iconPixmap()) ;
 
 	ui.stackedWidget->setCurrentIndex(page);
-	ui.listWidget->setCurrentRow(page);
-    ui.listWidget->setStyleSheet("QListWidget {background: rgb(47, 60, 76); color: rgb(255, 255, 255)}"); //d: tyle of sheet sitting
+    ui.listWidget->setCurrentRow(page);
+    ui.listWidget->setStyleSheet("QListWidget {color: rgb(255, 255, 255); background: rgb(47, 60, 76); selection-color: rgb(255,255,255); selection-background-color: rgb(32, 41, 53);}");   //d: style of sheet sitting
     ui.listWidget->setSpacing(0); //d
 
 	mHelpBrowser->setHelpText(pagew->helpText());
