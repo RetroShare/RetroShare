@@ -905,11 +905,11 @@ rs_jsonapi {
 
     jsonwrappersincl.target = $${WRAPPERS_INCL_FILE}
     jsonwrappersincl.commands = \
-        mkdir -p $${JSONAPI_GENERATOR_OUT}; \
-        cp $${DOXIGEN_CONFIG_SRC} $${DOXIGEN_CONFIG_OUT}; \
-        echo OUTPUT_DIRECTORY=$$shell_path($${JSONAPI_GENERATOR_OUT}) >> $${DOXIGEN_CONFIG_OUT};\
-        echo INPUT=$$shell_path($${DOXIGEN_INPUT_DIRECTORY}) >> $${DOXIGEN_CONFIG_OUT}; \
-        doxygen $${DOXIGEN_CONFIG_OUT}; \
+        mkdir -p $${JSONAPI_GENERATOR_OUT} && \
+        cp $${DOXIGEN_CONFIG_SRC} $${DOXIGEN_CONFIG_OUT} && \
+        echo OUTPUT_DIRECTORY=$$shell_path($${JSONAPI_GENERATOR_OUT}) >> $${DOXIGEN_CONFIG_OUT} && \
+        echo INPUT=$$shell_path($${DOXIGEN_INPUT_DIRECTORY}) >> $${DOXIGEN_CONFIG_OUT} && \
+        doxygen $${DOXIGEN_CONFIG_OUT} && \
         $${JSONAPI_GENERATOR_EXE} $${JSONAPI_GENERATOR_SRC} $${JSONAPI_GENERATOR_OUT};
     QMAKE_EXTRA_TARGETS += jsonwrappersincl
     libretroshare.depends += jsonwrappersincl
