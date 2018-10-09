@@ -1,5 +1,5 @@
 Name:          retroshare-service-git
-Version:       0.6.4
+Version:       0.6.9999
 Release:       0
 License:       GNU AFFERO GENERAL PUBLIC LICENSE version 3
 Summary:       Secure chat and file sharing
@@ -11,7 +11,7 @@ Source0:       RetroShare-git.tar.gz
 BuildRoot:     %{_tmppath}/%{name}
 Conflicts:     retroshare-service
 Requires:      libupnp openssl sqlcipher
-BuildRequires: cmake git libupnp-devel openssl-devel sqlcipher-devel
+BuildRequires: cmake doxygen git libupnp-devel openssl-devel sqlcipher-devel
 
 %if %{defined centos_version}
 BuildRequires: qt5-qtbase-devel qt5-qttools-devel qt5-qttools-static

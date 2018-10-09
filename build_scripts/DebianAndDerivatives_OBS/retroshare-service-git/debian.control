@@ -2,7 +2,6 @@ Source: retroshare-service-git
 Section: devel
 Priority: standard
 Maintainer: Cyril Soler <csoler@users.sourceforge.net>
-Build-Depends: cmake, debhelper (>= 7), git, libglib2.0-dev, libupnp-dev, qtbase5-dev, qt5-default, libssl-dev, libbz2-dev, libsqlcipher-dev, libxapian-dev
 Standards-Version: 3.9.3
 Homepage: http://retroshare.net
 
