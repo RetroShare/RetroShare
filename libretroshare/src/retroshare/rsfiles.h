@@ -26,6 +26,7 @@
 #include <string>
 #include <functional>
 #include <chrono>
+#include <cstdint>
 
 #include "rstypes.h"
 #include "serialiser/rsserializable.h"
@@ -423,13 +424,32 @@ public:
 		virtual bool ExtraFileStatus(std::string localpath, FileInfo &info) = 0;
 		virtual bool ExtraFileMove(std::string fname, const RsFileHash& hash, uint64_t size, std::string destpath) = 0;
 
+	/**
+	 * @brief Request directory details, subsequent multiple call may be used to
+	 * explore a whole directory tree.
+	 * @jsonapi{development}
+	 * @param[out] details Storage for directory details
+	 * @param[in] handle element handle 0 for root, pass the content of
+	 *	DirDetails::child[x].ref after first call to explore deeper, be aware
+	 *	that is not a real pointer but an index used internally by RetroShare.
+	 * @param[in] flags file search flags RS_FILE_HINTS_*
+	 * @return false if error occurred, true otherwise
+	 */
+	virtual bool requestDirDetails(
+	        DirDetails &details, std::uintptr_t handle = 0,
+	        FileSearchFlags flags = RS_FILE_HINTS_LOCAL ) = 0;
 
+	/***
+	 * Directory Listing / Search Interface
+	 */
+	/**
+	 * Kept for retrocompatibility, it was originally written for easier
+	 * interaction with Qt. As soon as you can, you should prefer to use the
+	 * version of this methodn which take `std::uintptr_t handle` as paramether.
+	 */
+	virtual int RequestDirDetails(
+	        void* handle, DirDetails& details, FileSearchFlags flags ) = 0;
 
-		/***
-		 * Directory Listing / Search Interface
-		 */
-		virtual int RequestDirDetails(const RsPeerId& uid, const std::string& path, DirDetails &details) = 0;
-		virtual int RequestDirDetails(void *ref, DirDetails &details, FileSearchFlags flags) = 0;
         virtual bool findChildPointer(void *ref, int row, void *& result, FileSearchFlags flags) =0;
         virtual uint32_t getType(void *ref,FileSearchFlags flags) = 0;
 

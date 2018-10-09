@@ -1083,16 +1083,6 @@ int p3FileDatabase::RequestDirDetails(void *ref, DirDetails& d, FileSearchFlags 
     return true;
 }
 
-int p3FileDatabase::RequestDirDetails(const RsPeerId &/*uid*/, const std::string &/*path*/, DirDetails &/*details*/) const
-{
-    NOT_IMPLEMENTED();
-    return 0;
-}
-//int p3FileDatabase::RequestDirDetails(const std::string& path, DirDetails &details) const
-//{
-//    NOT_IMPLEMENTED();
-//    return 0;
-//}
 uint32_t p3FileDatabase::getType(void *ref) const
 {
     RS_STACK_MUTEX(mFLSMtx) ;
