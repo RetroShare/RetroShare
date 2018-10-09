@@ -658,8 +658,8 @@ struct RsTypeSerializer
 			uint32_t f = 0;
 			ctx.mOk &=
 			        (ctx.mOk || ctx.mFlags & RsGenericSerializer::SERIALIZATION_FLAG_YIELDING)
-			        && from_JSON(memberName, f, ctx.mJson);
-			v = t_RsFlags32<N>(f);
+			        && from_JSON(memberName, f, ctx.mJson)
+			        && (v = t_RsFlags32<N>(f), true);
 			break;
 		}
 		default: break;
