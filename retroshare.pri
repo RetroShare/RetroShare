@@ -602,6 +602,7 @@ macx-* {
         LIB_DIR += "/usr/local/Cellar/sqlcipher/3.4.2/lib"
         LIB_DIR += "/usr/local/Cellar/miniupnpc/2.1/lib"
         CONFIG += c++11
+        INCLUDEPATH += "/usr/local/include"
     RS_UPNP_LIB = miniupnpc
 }
 
