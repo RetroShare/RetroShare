@@ -277,8 +277,14 @@ struct DirStub : RsSerializable
 	{
 		RS_SERIAL_PROCESS(type);
 		RS_SERIAL_PROCESS(name);
+#if defined(__GNUC__) && !defined(__clang__)
+#	pragma GCC diagnostic ignored "-Wstrict-aliasing"
+#endif // defined(__GNUC__) && !defined(__clang__)
 		std::uintptr_t& handle(reinterpret_cast<std::uintptr_t&>(ref));
 		RS_SERIAL_PROCESS(handle);
+#if defined(__GNUC__) && !defined(__clang__)
+#	pragma GCC diagnostic pop
+#endif // defined(__GNUC__) && !defined(__clang__)
 	}
 };
 
@@ -313,11 +319,17 @@ struct DirDetails : RsSerializable
 	void serial_process(RsGenericSerializer::SerializeJob j,
 	                    RsGenericSerializer::SerializeContext& ctx)
 	{
-		std::uintptr_t& parentHandle(reinterpret_cast<std::uintptr_t&>(parent));
-		RS_SERIAL_PROCESS(parentHandle);
-		RS_SERIAL_PROCESS(prow);
+#if defined(__GNUC__) && !defined(__clang__)
+#	pragma GCC diagnostic ignored "-Wstrict-aliasing"
+#endif // defined(__GNUC__) && !defined(__clang__)
 		std::uintptr_t& handle(reinterpret_cast<std::uintptr_t&>(ref));
 		RS_SERIAL_PROCESS(handle);
+		std::uintptr_t& parentHandle(reinterpret_cast<std::uintptr_t&>(parent));
+		RS_SERIAL_PROCESS(parentHandle);
+#if defined(__GNUC__) && !defined(__clang__)
+#	pragma GCC diagnostic pop
+#endif // defined(__GNUC__) && !defined(__clang__)
+		RS_SERIAL_PROCESS(prow);
 		RS_SERIAL_PROCESS(type);
 		RS_SERIAL_PROCESS(id);
 		RS_SERIAL_PROCESS(name);
