@@ -4,7 +4,7 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright 2012-2012 by Robert Fernie <retroshare@lunamutt.com>              *
+ * Copyright (C) 2012  Robert Fernie <retroshare@lunamutt.com>                 *
  * Copyright (C) 2018  Gioacchino Mazzurco <gio@eigenlab.org>                  *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
