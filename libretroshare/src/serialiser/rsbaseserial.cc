@@ -26,8 +26,10 @@
 #include "retroshare/rstypes.h"
 #include "serialiser/rsbaseserial.h"
 #include "util/rsnet.h"
+#include "util/rstime.h"
 
 #include <iostream>
+#include <cstdint>
 
 /* UInt8 get/set */
 
@@ -289,11 +291,15 @@ bool setRawString(void *data, uint32_t size, uint32_t *offset, const std::string
 
 bool getRawTimeT(const void *data,uint32_t size,uint32_t *offset,rstime_t& t)
 {
-	uint64_t T ;
-	bool res = getRawUInt64(data,size,offset,&T) ;
-	t = T ;
+	uint64_t T;
+	bool res = getRawUInt64(data,size,offset,&T);
+	t = T;
 
-	return res ;
+	if(t < 0) // [[unlikely]]
+		std::cerr << __PRETTY_FUNCTION__ << " got a negative time: " << t
+		          << " this seems fishy, report to the developers!" << std::endl;
+
+	return res;
 }
 bool setRawTimeT(void *data, uint32_t size, uint32_t *offset, const rstime_t& t)
 {
