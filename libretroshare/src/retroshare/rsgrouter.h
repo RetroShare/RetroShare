@@ -46,9 +46,9 @@ public:
         GRouterMsgPropagationId mid ;
         std::set<RsPeerId>      local_origin;
         GRouterKeyId            destination ;
-        time_t                  routing_time;
-        time_t                  last_tunnel_attempt_time;
-        time_t                  last_sent_time;
+        rstime_t                  routing_time;
+        rstime_t                  last_tunnel_attempt_time;
+        rstime_t                  last_sent_time;
         bool                    receipt_available ;
         uint32_t                duplication_factor ;
         uint32_t                data_status ;

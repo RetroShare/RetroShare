@@ -27,6 +27,7 @@
 //
 #include "file_sharing/hash_cache.h"
 #include "file_sharing/directory_storage.h"
+#include "util/rstime.h"
 
 class LocalDirectoryUpdater: public HashStorageClient, public RsTickingThread
 {
@@ -77,8 +78,8 @@ private:
 
     RsFileHash mHashSalt ;
 
-    time_t mLastSweepTime;
-    time_t mLastTSUpdateTime;
+    rstime_t mLastSweepTime;
+    rstime_t mLastTSUpdateTime;
 
     uint32_t mDelayBetweenDirectoryUpdates;
     bool mIsEnabled ;

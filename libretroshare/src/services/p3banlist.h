@@ -38,7 +38,7 @@ class BanList
 	public:
 	
 	RsPeerId mPeerId; /* from */
-	time_t mLastUpdate;
+	rstime_t mLastUpdate;
 	std::map<struct sockaddr_storage, BanListPeer> mBanPeers;
 };
 
@@ -111,7 +111,7 @@ public:
 	bool recvBanItem(RsBanListItem *item);
 	bool addBanEntry( const RsPeerId &peerId,
 	                  const sockaddr_storage &addr, int level, uint32_t reason,
-	                  time_t time_stamp );
+	                  rstime_t time_stamp );
     void sendBanLists();
     int  sendBanSet(const RsPeerId& peerid);
 
@@ -145,13 +145,13 @@ private:
 
     p3ServiceControl *mServiceCtrl;
     //p3NetMgr *mNetMgr;
-    time_t mSentListTime;
+    rstime_t mSentListTime;
     std::map<RsPeerId, BanList> mBanSources;
     std::map<struct sockaddr_storage, BanListPeer> mBanSet;
     std::map<struct sockaddr_storage, BanListPeer> mBanRanges;
     std::map<struct sockaddr_storage, BanListPeer> mWhiteListedRanges;
 
-    time_t mLastDhtInfoRequest ;
+    rstime_t mLastDhtInfoRequest ;
 
     uint32_t mAutoRangeLimit ;
     bool mAutoRangeIps ;

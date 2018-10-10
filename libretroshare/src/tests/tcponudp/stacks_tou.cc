@@ -259,7 +259,7 @@ int main(int argc, char **argv)
 	bdnet_fcntl(0, F_SETFL, O_NONBLOCK);
 	bdnet_fcntl(1,F_SETFL,O_NONBLOCK);
 
-	time_t lastRead = time(NULL);
+	rstime_t lastRead = time(NULL);
 	bool doneWrite = false;
 	bool doneRead  = false;
 	bool blockread = false;

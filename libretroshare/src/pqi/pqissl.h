@@ -195,14 +195,14 @@ bool  	CheckConnectionTimeout();
 	int attempt_ts;
 
 	int n_read_zero; /* a counter to determine if the connection is really dead */
-	time_t mReadZeroTS; /* timestamp of first READ_ZERO occurance */
+	rstime_t mReadZeroTS; /* timestamp of first READ_ZERO occurance */
 
 	int ssl_connect_timeout; /* timeout to ensure that we don't get stuck (can happen on udp!) */
 
 	uint32_t mConnectDelay;
-	time_t   mConnectTS;
+	rstime_t   mConnectTS;
 	uint32_t mConnectTimeout;
-	time_t   mTimeoutTS;
+	rstime_t   mTimeoutTS;
 
 private:
 	// ssl only fns.

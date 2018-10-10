@@ -745,7 +745,7 @@ bool 	p3Peers::addFriend(const RsPeerId &ssl_id, const RsPgpId &gpg_id,ServicePe
 	 * If we are adding an SSL certificate. we flag lastcontact as now. 
 	 * This will cause the SSL certificate to be retained for 30 days... and give the person a chance to connect!
 	 *  */
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 	return mPeerMgr->addFriend(ssl_id, gpg_id, RS_NET_MODE_UDP, RS_VS_DISC_FULL, RS_VS_DHT_FULL, now, perm_flags);
 }
 

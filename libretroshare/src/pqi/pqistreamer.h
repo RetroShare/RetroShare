@@ -23,7 +23,7 @@
 #define MRK_PQI_STREAMER_HEADER
 
 #include <stdint.h>               // for uint32_t
-#include <time.h>                 // for time_t
+#include "util/rstime.h"                 // for rstime_t
 #include <iostream>               // for operator<<, basic_ostream, cerr, endl
 #include <list>                   // for list
 #include <map>                    // for map
@@ -65,7 +65,7 @@ class pqistreamer: public PQInterface
 		virtual RsItem *GetItem();
 		virtual int     status();
 
-		time_t  getLastIncomingTS(); 	// Time of last data packet, for checking a connection is alive.
+		rstime_t  getLastIncomingTS(); 	// Time of last data packet, for checking a connection is alive.
 		virtual void    getRates(RsBwRates &rates);
 		virtual int     getQueueSize(bool in); // extracting data.
 		virtual int     gatherStatistics(std::list<RSTrafficClue>& outqueue_stats,std::list<RSTrafficClue>& inqueue_stats); // extracting data.
@@ -164,7 +164,7 @@ class pqistreamer: public PQInterface
 		double mAvgDtOut;	// average time diff between 2 rounds of sending data
 		double mAvgDtIn;	// average time diff between 2 rounds of receiving data
 
-		time_t mLastIncomingTs;
+		rstime_t mLastIncomingTs;
 	
         	// traffic statistics
 
@@ -172,10 +172,10 @@ class pqistreamer: public PQInterface
         	std::list<RSTrafficClue> mPreviousStatsChunk_Out ;
         	std::list<RSTrafficClue> mCurrentStatsChunk_In ;
         	std::list<RSTrafficClue> mCurrentStatsChunk_Out ;
-		time_t mStatisticsTimeStamp ;
+		rstime_t mStatisticsTimeStamp ;
 
         bool mAcceptsPacketSlicing ;
-        time_t mLastSentPacketSlicingProbe ;
+        rstime_t mLastSentPacketSlicingProbe ;
         void locked_addTrafficClue(const RsItem *pqi, uint32_t pktsize, std::list<RSTrafficClue> &lst);
         RsItem *addPartialPacket_locked(const void *block, uint32_t len, uint32_t slice_packet_id,bool packet_starting,bool packet_ending,uint32_t& total_len);
         

@@ -23,7 +23,7 @@
  * #define FT_DEBUG 1
  *****/
 
-#include <time.h>
+#include "util/rstime.h"
 
 #include "retroshare/rsturtle.h"
 #include "fttransfermodule.h"
@@ -285,7 +285,7 @@ void ftTransferModule::resetActvTimeStamp()
 	RsStackMutex stack(tfMtx); /******* STACK LOCKED ******/
 	_last_activity_time_stamp = time(NULL);
 }
-time_t ftTransferModule::lastActvTimeStamp()
+rstime_t ftTransferModule::lastActvTimeStamp()
 {
 	RsStackMutex stack(tfMtx); /******* STACK LOCKED ******/
 	return _last_activity_time_stamp ;
@@ -693,7 +693,7 @@ void ftTransferModule::adjustSpeed()
 bool ftTransferModule::locked_tickPeerTransfer(peerInfo &info)
 {
 	/* how long has it been? */
-	time_t ts = time(NULL);
+	rstime_t ts = time(NULL);
 
 	int ageRecv = ts - info.recvTS;
 	int ageReq = ts - info.lastTS;
@@ -865,7 +865,7 @@ bool ftTransferModule::locked_recvPeerData(peerInfo &info, uint64_t offset, uint
 	std::cerr << std::endl;
 #endif
 
-  time_t ts = time(NULL);
+  rstime_t ts = time(NULL);
   info.recvTS = ts;
   info.nResets = 0;
   info.state = PQIPEER_DOWNLOADING;

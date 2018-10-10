@@ -297,7 +297,7 @@ bool RsCertificate::initFromString(const std::string& instr,uint32_t& err_code)
 			unsigned char *buf2 = buf;
 			uint32_t s = PGPKeyParser::read_125Size(buf);
 
-			total_s += 1 + ((unsigned long)buf-(unsigned long)buf2) ;
+			total_s += 1 + ((size_t)buf-(size_t)buf2) ;
 
 			if(total_s > size)
 			{

@@ -25,6 +25,7 @@ static const uint32_t DELAY_BETWEEN_DIRECTORY_UPDATES           =  600 ; // 10 m
 static const uint32_t DELAY_BETWEEN_REMOTE_DIRECTORY_SYNC_REQ   =  120 ; // 2 minutes
 static const uint32_t DELAY_BETWEEN_LOCAL_DIRECTORIES_TS_UPDATE =   20 ; // 20 sec. But we only update for real if something has changed.
 static const uint32_t DELAY_BETWEEN_REMOTE_DIRECTORIES_SWEEP    =   60 ; // 60 sec.
+static const uint32_t DELAY_BETWEEN_EXTRA_FILES_CACHE_UPDATES   =    2 ; //  2 sec.
 
 static const uint32_t DELAY_BEFORE_DELETE_NON_EMPTY_REMOTE_DIR  = 60*24*86400 ; // delete non empty remoe directories after 60 days of inactivity
 static const uint32_t DELAY_BEFORE_DELETE_EMPTY_REMOTE_DIR      =  5*24*86400 ; // delete empty remote directories after 5 days of inactivity

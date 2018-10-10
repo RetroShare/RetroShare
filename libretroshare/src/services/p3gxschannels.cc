@@ -145,7 +145,7 @@ struct RsGxsForumNotifyRecordsItem: public RsItem
 
 	void clear() {}
 
-	std::map<RsGxsGroupId,time_t> records;
+	std::map<RsGxsGroupId,rstime_t> records;
 };
 
 class GxsChannelsConfigSerializer : public RsServiceSerializer
@@ -187,7 +187,7 @@ bool p3GxsChannels::loadList(std::list<RsItem *>& loadList)
 		RsItem *item = loadList.front();
 		loadList.pop_front();
 
-		time_t now = time(NULL);
+		rstime_t now = time(NULL);
 
 		RsGxsForumNotifyRecordsItem *fnr = dynamic_cast<RsGxsForumNotifyRecordsItem*>(item) ;
 
@@ -346,7 +346,7 @@ void p3GxsChannels::notifyChanges(std::vector<RsGxsNotify *> &changes)
 void	p3GxsChannels::service_tick()
 {
 
-static  time_t last_dummy_tick = 0;
+static  rstime_t last_dummy_tick = 0;
 
 	if (time(NULL) > last_dummy_tick + 5)
 	{
@@ -919,9 +919,9 @@ void p3GxsChannels::handleUnprocessedPost(const RsGxsChannelPost &msg)
 #endif
 
 		/* check the date is not too old */
-		time_t age = time(NULL) - msg.mMeta.mPublishTs;
+		rstime_t age = time(NULL) - msg.mMeta.mPublishTs;
 
-		if (age < (time_t) CHANNEL_DOWNLOAD_PERIOD )
+		if (age < (rstime_t) CHANNEL_DOWNLOAD_PERIOD )
     {
         /* start download */
         // NOTE WE DON'T HANDLE PRIVATE CHANNELS HERE.
@@ -1399,9 +1399,9 @@ bool p3GxsChannels::ExtraFileHash(const std::string& path)
 
 bool p3GxsChannels::ExtraFileRemove(const RsFileHash &hash)
 {
-	TransferRequestFlags tflags = RS_FILE_REQ_ANONYMOUS_ROUTING | RS_FILE_REQ_EXTRA;
+	//TransferRequestFlags tflags = RS_FILE_REQ_ANONYMOUS_ROUTING | RS_FILE_REQ_EXTRA;
 	RsFileHash fh = RsFileHash(hash);
-	return rsFiles->ExtraFileRemove(fh, tflags);
+	return rsFiles->ExtraFileRemove(fh);
 }
 
 
@@ -1887,7 +1887,7 @@ bool p3GxsChannels::retrieveDistantGroup(const RsGxsGroupId& group_id,RsGxsChann
 bool p3GxsChannels::turtleSearchRequest(
         const std::string& matchString,
         const std::function<void (const RsGxsGroupSummary&)>& multiCallback,
-        std::time_t maxWait )
+        rstime_t maxWait )
 {
 	if(matchString.empty())
 	{

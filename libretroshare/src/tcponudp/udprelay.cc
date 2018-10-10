@@ -21,7 +21,7 @@
  *******************************************************************************/
 #include "udprelay.h"
 #include <iostream>
-#include <time.h>
+#include "util/rstime.h"
 #include <util/rsmemory.h>
 
 /*
@@ -232,7 +232,7 @@ int UdpRelayReceiver::checkRelays()
 
 	std::list<UdpRelayAddrSet> eraseList;
 	std::map<UdpRelayAddrSet, UdpRelayProxy>::iterator rit;
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 
 #define BANDWIDTH_FILTER_K	(0.8)
 	
@@ -1088,7 +1088,7 @@ std::ostream &operator<<(std::ostream &out, const UdpRelayAddrSet &uras)
 
 std::ostream &operator<<(std::ostream &out, const UdpRelayProxy &urp)
 {
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 	out << "UdpRelayProxy for " << urp.mAddrs;
 	out << std::endl;
 	out << "\tRelayClass: " << urp.mRelayClass;

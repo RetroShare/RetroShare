@@ -20,7 +20,7 @@
  *                                                                             *
  *******************************************************************************/
 
-#include <time.h>
+#include "util/rstime.h"
 
 #include "rsgxsutil.h"
 #include "rsgxsdataaccess.h"
@@ -317,7 +317,7 @@ RsTokenService::GxsRequestStatus RsGxsDataAccess::requestStatus(uint32_t token)
 	RsTokenService::GxsRequestStatus status;
 	uint32_t reqtype;
 	uint32_t anstype;
-	time_t ts;
+	rstime_t ts;
 
 	{
 		RS_STACK_MUTEX(mDataMutex);
@@ -717,7 +717,7 @@ GxsRequest* RsGxsDataAccess::locked_retrieveRequest(const uint32_t& token)
 void RsGxsDataAccess::processRequests()
 {
 	std::list<uint32_t> toClear;
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 	std::map<uint32_t, GxsRequest*>::iterator it;
 
 	{
@@ -1124,8 +1124,8 @@ bool RsGxsDataAccess::getMsgList(const GxsMsgReq& msgIds, const RsTokReqOptions&
                     std::vector<RsGxsMsgMetaData*>::const_iterator vit = metaV.begin();
 
                     // RUN THROUGH ALL MSGS... in map origId -> TS.
-                    std::map<RsGxsMessageId, std::pair<RsGxsMessageId, time_t> > origMsgTs;
-                    std::map<RsGxsMessageId, std::pair<RsGxsMessageId, time_t> >::iterator oit;
+                    std::map<RsGxsMessageId, std::pair<RsGxsMessageId, rstime_t> > origMsgTs;
+                    std::map<RsGxsMessageId, std::pair<RsGxsMessageId, rstime_t> >::iterator oit;
 
                     for(; vit != metaV.end(); ++vit)
                     {
@@ -1402,8 +1402,8 @@ bool RsGxsDataAccess::getMsgRelatedInfo(MsgRelatedInfoReq *req)
             if (onlyChildMsgs || onlyThreadMsgs)
             {
                 // RUN THROUGH ALL MSGS... in map origId -> TS.
-                std::map<RsGxsMessageId, std::pair<RsGxsMessageId, time_t> > origMsgTs;
-                std::map<RsGxsMessageId, std::pair<RsGxsMessageId, time_t> >::iterator oit;
+                std::map<RsGxsMessageId, std::pair<RsGxsMessageId, rstime_t> > origMsgTs;
+                std::map<RsGxsMessageId, std::pair<RsGxsMessageId, rstime_t> >::iterator oit;
                 for(vit_meta = metaV.begin(); vit_meta != metaV.end(); ++vit_meta)
                 {
 
@@ -1472,7 +1472,7 @@ bool RsGxsDataAccess::getMsgRelatedInfo(MsgRelatedInfoReq *req)
             {
 
                 /* first guess is potentially better than Orig (can't be worse!) */
-                time_t latestTs = 0;
+                rstime_t latestTs = 0;
                 RsGxsMessageId latestMsgId;
                 RsGxsMsgMetaData* latestMeta=NULL;
 
@@ -1760,7 +1760,7 @@ void RsGxsDataAccess::filterGrpList(std::list<RsGxsGroupId> &grpIds, const RsTok
 
 bool RsGxsDataAccess::checkRequestStatus(
         uint32_t token, GxsRequestStatus& status, uint32_t& reqtype,
-        uint32_t& anstype, time_t& ts )
+        uint32_t& anstype, rstime_t& ts )
 {
 	RS_STACK_MUTEX(mDataMutex);
 

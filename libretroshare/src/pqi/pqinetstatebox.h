@@ -69,7 +69,7 @@ class pqiNetStateBox
 	void workoutNetworkMode();
 
 	bool mStatusOkay;
-	time_t mStatusTS;
+	rstime_t mStatusTS;
 
 	uint32_t mNetworkMode;
 	uint32_t mNatTypeMode;
@@ -80,35 +80,35 @@ class pqiNetStateBox
 	/* Parameters set externally */
 
 	bool mStunDhtSet;
-	time_t mStunDhtTS;
+	rstime_t mStunDhtTS;
 	bool mStunDhtStable;
 	struct sockaddr_storage mStunDhtAddr;
 
 	bool mStunProxySet;
-	time_t mStunProxyTS;
+	rstime_t mStunProxyTS;
 	bool mStunProxyStable;
 	bool mStunProxySemiStable;
 	struct sockaddr_storage mStunProxyAddr;
 
 	bool mDhtSet;
-	time_t mDhtTS;
+	rstime_t mDhtTS;
 	bool mDhtOn;
 	bool mDhtActive;
 
 	bool mUPnPSet;
 	struct sockaddr_storage mUPnPAddr;
 	bool mUPnPActive;
-	time_t mUPnPTS;
+	rstime_t mUPnPTS;
 
 	bool mNatPMPSet;
 	struct sockaddr_storage mNatPMPAddr;
 	bool mNatPMPActive;
-	time_t mNatPMPTS;
+	rstime_t mNatPMPTS;
 
 	bool mWebIPSet;
 	struct sockaddr_storage mWebIPAddr;
 	bool mWebIPActive;
-	time_t mWebIPTS;
+	rstime_t mWebIPTS;
 
 	bool mPortForwardSet;
 	uint16_t  mPortForwarded;

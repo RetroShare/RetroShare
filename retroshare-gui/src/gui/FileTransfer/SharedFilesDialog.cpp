@@ -76,6 +76,7 @@
 #define IMAGE_COLLOPEN       ":/images/library.png"
 #define IMAGE_EDITSHARE      ":/images/edit_16.png"
 #define IMAGE_MYFILES        ":/icons/svg/folders1.svg"
+#define IMAGE_REMOVE         ":/images/deletemail24.png"
 
 /*define viewType_CB value */
 #define VIEW_TYPE_TREE       0
@@ -228,6 +229,9 @@ SharedFilesDialog::SharedFilesDialog(RetroshareDirModel *_tree_model,RetroshareD
   connect( copylinkhtmlAct , SIGNAL( triggered() ), this, SLOT( copyLinkhtml() ) );
   sendlinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Send retroshare Links" ), this );
   connect( sendlinkAct , SIGNAL( triggered() ), this, SLOT( sendLinkTo( ) ) );
+
+  removeExtraFileAct = new QAction(QIcon(IMAGE_REMOVE), tr( "Stop sharing this file" ), this );
+  connect( removeExtraFileAct , SIGNAL( triggered() ), this, SLOT( removeExtraFile() ) );
 
 	collCreateAct= new QAction(QIcon(IMAGE_COLLCREATE), tr("Create Collection..."), this) ;
 	connect(collCreateAct,SIGNAL(triggered()),this,SLOT(collCreate())) ;
@@ -1093,7 +1097,7 @@ void LocalSharedFilesDialog::spawnCustomPopupMenu( QPoint point )
 
 	currentFile = model->data(midx, RetroshareDirModel::FileNameRole).toString() ;
 	int type = model->getType(midx) ;
-	if (type != DIR_TYPE_DIR && type != DIR_TYPE_FILE) return;
+	if (type != DIR_TYPE_DIR && type != DIR_TYPE_FILE && type != DIR_TYPE_EXTRA_FILE) return;
 
 	QMenu contextMnu(this) ;
 
@@ -1127,58 +1131,71 @@ void LocalSharedFilesDialog::spawnCustomPopupMenu( QPoint point )
 			contextMnu.addMenu(&collectionMenu) ;
 			contextMnu.addSeparator() ;//------------------------------------
 			contextMnu.addAction(QIcon(IMAGE_MSG), tr("Recommend in a message to..."), this, SLOT(recommendFilesToMsg())) ;
+        break;
+
+        case DIR_TYPE_EXTRA_FILE:
+        	contextMnu.addAction(openfileAct) ;
+			contextMnu.addSeparator() ;//------------------------------------
+			contextMnu.addAction(copylinkAct) ;
+			contextMnu.addAction(sendlinkAct) ;
+			contextMnu.addAction(removeExtraFileAct) ;
+
 		break ;
 
 		default :
 		return ;
 	}
 
-	GxsChannelDialog *channelDialog = dynamic_cast<GxsChannelDialog*>(MainWindow::getPage(MainWindow::Channels));
 	QMenu shareChannelMenu(tr("Share on channel...")) ; // added here because the shareChannelMenu QMenu object is deleted afterwards
-
-	if(channelDialog != NULL)
-	{
-		shareChannelMenu.setIcon(QIcon(IMAGE_CHANNEL));
-
-		std::map<RsGxsGroupId,RsGroupMetaData> grp_metas ;
-		channelDialog->getGroupList(grp_metas) ;
-
-		std::vector<std::pair<std::string,RsGxsGroupId> > grplist ; // I dont use a std::map because two or more channels may have the same name.
-
-		for(auto it(grp_metas.begin());it!=grp_metas.end();++it)
-			if(IS_GROUP_PUBLISHER((*it).second.mSubscribeFlags) && IS_GROUP_SUBSCRIBED((*it).second.mSubscribeFlags))
-				grplist.push_back(std::make_pair((*it).second.mGroupName, (*it).second.mGroupId));
-
-		std::sort(grplist.begin(),grplist.end(),ChannelCompare()) ;
-
-		for(auto it(grplist.begin());it!=grplist.end();++it)
-				shareChannelMenu.addAction(QString::fromUtf8((*it).first.c_str()), this, SLOT(shareOnChannel()))->setData(QString::fromStdString((*it).second.toStdString())) ;
-
-		contextMnu.addMenu(&shareChannelMenu) ;
-	}
-
-	GxsForumsDialog *forumsDialog = dynamic_cast<GxsForumsDialog*>(MainWindow::getPage(MainWindow::Forums));
 	QMenu shareForumMenu(tr("Share on forum...")) ; // added here because the shareChannelMenu QMenu object is deleted afterwards
 
-	if(forumsDialog != NULL)
+    if(type != DIR_TYPE_EXTRA_FILE)
 	{
-		shareForumMenu.setIcon(QIcon(IMAGE_FORUMS));
+		GxsChannelDialog *channelDialog = dynamic_cast<GxsChannelDialog*>(MainWindow::getPage(MainWindow::Channels));
 
-		std::map<RsGxsGroupId,RsGroupMetaData> grp_metas ;
-		forumsDialog->getGroupList(grp_metas) ;
+		if(channelDialog != NULL)
+		{
+			shareChannelMenu.setIcon(QIcon(IMAGE_CHANNEL));
 
-		std::vector<std::pair<std::string,RsGxsGroupId> > grplist ; // I dont use a std::map because two or more channels may have the same name.
+			std::map<RsGxsGroupId,RsGroupMetaData> grp_metas ;
+			channelDialog->getGroupList(grp_metas) ;
 
-		for(auto it(grp_metas.begin());it!=grp_metas.end();++it)
-			if(IS_GROUP_SUBSCRIBED((*it).second.mSubscribeFlags))
-				grplist.push_back(std::make_pair((*it).second.mGroupName, (*it).second.mGroupId));
+			std::vector<std::pair<std::string,RsGxsGroupId> > grplist ; // I dont use a std::map because two or more channels may have the same name.
 
-		std::sort(grplist.begin(),grplist.end(),ChannelCompare()) ;
+			for(auto it(grp_metas.begin());it!=grp_metas.end();++it)
+				if(IS_GROUP_PUBLISHER((*it).second.mSubscribeFlags) && IS_GROUP_SUBSCRIBED((*it).second.mSubscribeFlags))
+					grplist.push_back(std::make_pair((*it).second.mGroupName, (*it).second.mGroupId));
 
-		for(auto it(grplist.begin());it!=grplist.end();++it)
-			shareForumMenu.addAction(QString::fromUtf8((*it).first.c_str()), this, SLOT(shareInForum()))->setData(QString::fromStdString((*it).second.toStdString())) ;
+			std::sort(grplist.begin(),grplist.end(),ChannelCompare()) ;
 
-		contextMnu.addMenu(&shareForumMenu) ;
+			for(auto it(grplist.begin());it!=grplist.end();++it)
+				shareChannelMenu.addAction(QString::fromUtf8((*it).first.c_str()), this, SLOT(shareOnChannel()))->setData(QString::fromStdString((*it).second.toStdString())) ;
+
+			contextMnu.addMenu(&shareChannelMenu) ;
+		}
+
+		GxsForumsDialog *forumsDialog = dynamic_cast<GxsForumsDialog*>(MainWindow::getPage(MainWindow::Forums));
+
+		if(forumsDialog != NULL)
+		{
+			shareForumMenu.setIcon(QIcon(IMAGE_FORUMS));
+
+			std::map<RsGxsGroupId,RsGroupMetaData> grp_metas ;
+			forumsDialog->getGroupList(grp_metas) ;
+
+			std::vector<std::pair<std::string,RsGxsGroupId> > grplist ; // I dont use a std::map because two or more channels may have the same name.
+
+			for(auto it(grp_metas.begin());it!=grp_metas.end();++it)
+				if(IS_GROUP_SUBSCRIBED((*it).second.mSubscribeFlags))
+					grplist.push_back(std::make_pair((*it).second.mGroupName, (*it).second.mGroupId));
+
+			std::sort(grplist.begin(),grplist.end(),ChannelCompare()) ;
+
+			for(auto it(grplist.begin());it!=grplist.end();++it)
+				shareForumMenu.addAction(QString::fromUtf8((*it).first.c_str()), this, SLOT(shareInForum()))->setData(QString::fromStdString((*it).second.toStdString())) ;
+
+			contextMnu.addMenu(&shareForumMenu) ;
+		}
 	}
 
 	contextMnu.exec(QCursor::pos()) ;
@@ -1562,6 +1579,20 @@ void SharedFilesDialog::FilterItems()
 #ifdef DEBUG_SHARED_FILES_DIALOG
 	std::cerr << found << " results found by search." << std::endl;
 #endif
+}
+
+void SharedFilesDialog::removeExtraFile()
+{
+	std::list<DirDetails> files_info ;
+
+	model->getFileInfoFromIndexList(getSelected(),files_info);
+
+    for(auto it(files_info.begin());it!=files_info.end();++it)
+    {
+        std::cerr << "removing file " << (*it).name << ", hash = " << (*it).hash << std::endl;
+
+        rsFiles->ExtraFileRemove((*it).hash);
+    }
 }
 
 #ifdef DEPRECATED_CODE

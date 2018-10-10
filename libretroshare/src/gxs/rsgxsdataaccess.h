@@ -314,7 +314,7 @@ private:
      * @return false if token does not exist, true otherwise
      */
 	bool checkRequestStatus( uint32_t token, GxsRequestStatus &status,
-	                         uint32_t &reqtype, uint32_t &anstype, time_t &ts);
+	                         uint32_t &reqtype, uint32_t &anstype, rstime_t &ts);
 
             // special ones for testing (not in final design)
     /*!

@@ -30,6 +30,7 @@
 #include "retroshare/rsids.h"
 #include "util/rsurl.h"
 #include "util/rsdeprecate.h"
+#include "util/rstime.h"
 
 class RsPeers;
 
@@ -272,7 +273,7 @@ struct RsPeerDetails : RsSerializable
 
 	/* have we been denied */
 	bool wasDeniedConnection;
-	time_t deniedTS;
+	rstime_t deniedTS;
 
 	/* linkType */
 	uint32_t linkType;

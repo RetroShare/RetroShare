@@ -79,7 +79,7 @@ public:
 
 	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 
-    std::map<RsGxsId,time_t> mTimeStamps ;
+    std::map<RsGxsId,rstime_t> mTimeStamps ;
     std::set<RsGxsId> mContacts ;
 };
 

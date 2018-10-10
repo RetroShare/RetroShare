@@ -21,7 +21,7 @@
  *******************************************************************************/
 #pragma once
 
-#include <time.h>
+#include "util/rstime.h"
 #include <string.h>
 #include <stdint.h>
 #include <string>
@@ -236,7 +236,7 @@ class RsPluginHandler
 		virtual void allowAllPlugins(bool b) = 0 ;
 		virtual bool getAllowAllPlugins() const = 0 ;
 
-		virtual void slowTickPlugins(time_t sec) = 0 ;
+		virtual void slowTickPlugins(rstime_t sec) = 0 ;
 
 		virtual const std::string& getLocalCacheDir() const =0;
         virtual const std::string& getRemoteCacheDir() const =0;

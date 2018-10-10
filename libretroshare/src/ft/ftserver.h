@@ -149,7 +149,7 @@ public:
 	virtual bool turtleSearchRequest(
 	        const std::string& matchString,
 	        const std::function<void (const std::list<TurtleFileInfo>& results)>& multiCallback,
-	        std::time_t maxWait = 300 );
+	        rstime_t maxWait = 300 );
 
 	virtual TurtleSearchRequestId turtleSearch(const std::string& string_to_match) ;
 	virtual TurtleSearchRequestId turtleSearch(const RsRegularExpression::LinearizedExpression& expr) ;
@@ -180,7 +180,7 @@ public:
          * Extra List Access
          ***/
     virtual bool ExtraFileAdd(std::string fname, const RsFileHash& hash, uint64_t size, uint32_t period, TransferRequestFlags flags);
-    virtual bool ExtraFileRemove(const RsFileHash& hash, TransferRequestFlags flags);
+    virtual bool ExtraFileRemove(const RsFileHash& hash);
     virtual bool ExtraFileHash(std::string localpath, uint32_t period, TransferRequestFlags flags);
     virtual bool ExtraFileStatus(std::string localpath, FileInfo &info);
     virtual bool ExtraFileMove(std::string fname, const RsFileHash& hash, uint64_t size, std::string destpath);
@@ -331,7 +331,7 @@ private:
 
     std::map<RsFileHash,RsFileHash> mEncryptedHashes ; // This map is such that sha1(it->second) = it->first
     std::map<RsPeerId,RsFileHash> mEncryptedPeerIds ;  // This map holds the hash to be used with each peer id
-    std::map<RsPeerId,std::map<RsFileHash,time_t> > mUploadLimitMap ;
+    std::map<RsPeerId,std::map<RsFileHash,rstime_t> > mUploadLimitMap ;
 
 	/** Store search callbacks with timeout*/
 	std::map<

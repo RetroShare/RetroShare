@@ -334,7 +334,7 @@ void 	netStatusReset_locked();
 	uint16_t mVsDisc;
 	uint16_t mVsDht;
 
-	time_t   mNetInitTS;
+	rstime_t   mNetInitTS;
 	uint32_t mNetStatus;
 
 	bool     mStatusChanged;
@@ -349,7 +349,7 @@ void 	netStatusReset_locked();
 	// Improved NetStatusBox, which uses the Stunners!
 	pqiNetStateBox mNetStateBox;
 
-	time_t mLastSlowTickTime;
+	rstime_t mLastSlowTickTime;
 	uint32_t mOldNatType;
 	uint32_t mOldNatHole;
 

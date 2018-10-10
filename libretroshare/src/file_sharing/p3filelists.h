@@ -45,9 +45,10 @@
 #pragma once
 
 #include "ft/ftsearch.h"
+#include "ft/ftextralist.h"
 #include "retroshare/rsfiles.h"
 #include "services/p3service.h"
-
+#include "util/rstime.h"
 #include "file_sharing/hash_cache.h"
 #include "file_sharing/directory_storage.h"
 
@@ -70,7 +71,7 @@ struct PeerBannedFilesEntry
 {
     std::set<RsFileHash> mBannedHashOfHash;
     uint32_t mSessionId ;			// used for when a friend sends multiple packets in separate items.
-    time_t mLastSent;
+    rstime_t mLastSent;
 };
 
 class p3FileDatabase: public p3Service, public p3Config, public ftSearch //, public RsSharedFileService
@@ -87,9 +88,10 @@ class p3FileDatabase: public p3Service, public p3Config, public ftSearch //, pub
             // [...] more to add here
         };
 
-        explicit p3FileDatabase(p3ServiceControl *mpeers) ;
+        explicit p3FileDatabase(p3ServiceControl *mpeers);
         ~p3FileDatabase();
 
+        void setExtraList(ftExtraList *f) { mExtraFiles = f ; }
         /*!
         * \brief forceSyncWithPeers
         *
@@ -107,6 +109,9 @@ class p3FileDatabase: public p3Service, public p3Config, public ftSearch //, pub
         virtual int  SearchKeywords(const std::list<std::string>& keywords, std::list<DirDetails>& results,FileSearchFlags flags,const RsPeerId& peer_id) ;
         virtual int  SearchBoolExp(RsRegularExpression::Expression *exp, std::list<DirDetails>& results,FileSearchFlags flags,const RsPeerId& peer_id) const ;
 
+        // Extra file list
+        virtual void removeExtraFile(const RsFileHash& hash);
+
 		// Interface for browsing dir hierarchy
 		//
 
@@ -119,7 +124,7 @@ class p3FileDatabase: public p3Service, public p3Config, public ftSearch //, pub
 
         void requestDirUpdate(void *ref) ;	// triggers an update. Used when browsing.
         int RequestDirDetails(void *, DirDetails&, FileSearchFlags) const ;
-        uint32_t getType(void *) const ;
+        uint32_t getType(void *, FileSearchFlags flags) const ;
 
         // proxy method used by the web UI. Dont't delete!
         int RequestDirDetails(const RsPeerId& uid, const std::string& path, DirDetails &details)const;
@@ -169,6 +174,7 @@ class p3FileDatabase: public p3Service, public p3Config, public ftSearch //, pub
 		bool hashingProcessPaused();
 
     protected:
+		void getExtraFilesDirDetails(void *ref,DirectoryStorage::EntryIndex e,DirDetails& d) const;
 
         int filterResults(const std::list<void*>& firesults,std::list<DirDetails>& results,FileSearchFlags flags,const RsPeerId& peer_id) const;
         std::string makeRemoteFileName(const RsPeerId& pid) const;
@@ -219,8 +225,8 @@ class p3FileDatabase: public p3Service, public p3Config, public ftSearch //, pub
 
         std::vector<RemoteDirectoryStorage *> mRemoteDirectories ;
         LocalDirectoryStorage *mLocalSharedDirs ;
-
         LocalDirectoryUpdater *mLocalDirWatcher ;
+		ftExtraList *mExtraFiles;
 
         // utility functions to make/get a pointer out of an (EntryIndex,PeerId) pair. This is further documented in the .cc
 
@@ -240,11 +246,11 @@ class p3FileDatabase: public p3Service, public p3Config, public ftSearch //, pub
         struct DirSyncRequestData
         {
             RsPeerId peer_id ;
-            time_t request_TS ;
+            rstime_t request_TS ;
             uint32_t flags ;
         };
 
-        time_t mLastRemoteDirSweepTS ; // TS for friend list update
+        rstime_t mLastRemoteDirSweepTS ; // TS for friend list update
         std::map<DirSyncRequestId,DirSyncRequestData> mPendingSyncRequests ; // pending requests, waiting for an answer
         std::map<DirSyncRequestId,RsFileListsSyncResponseItem *> mPartialResponseItems;
 
@@ -259,8 +265,8 @@ class p3FileDatabase: public p3Service, public p3Config, public ftSearch //, pub
         mutable RsMutex mFLSMtx ;
         uint32_t mUpdateFlags ;
         std::string mFileSharingDir ;
-        time_t mLastCleanupTime;
-        time_t mLastDataRecvTS ;
+        rstime_t mLastCleanupTime;
+        rstime_t mLastDataRecvTS ;
 
         // File filtering. Not explicitly related to shared files, but has its place here
         //
@@ -268,9 +274,11 @@ class p3FileDatabase: public p3Service, public p3Config, public ftSearch //, pub
 		std::map<RsFileHash,BannedFileEntry> mPrimaryBanList ;	// primary list (user controlled) of files banned from FT search and forwarding. map<real hash, BannedFileEntry>
         std::map<RsPeerId,PeerBannedFilesEntry> mPeerBannedFiles ;   // records of which files other peers ban, stored as H(H(f))
 		std::set<RsFileHash> mBannedFileList ;	// list of banned hashes. This include original hashs and H(H(f)) when coming from friends.
+        mutable std::vector<FileInfo> mExtraFilesCache;	// cache for extra files, to avoid requesting them too often.
+        mutable rstime_t mLastExtraFilesCacheUpdate ;
         bool mTrustFriendNodesForBannedFiles ;
         bool mBannedFileListNeedsUpdate;
-        time_t mLastPrimaryBanListChangeTimeStamp;
+        rstime_t mLastPrimaryBanListChangeTimeStamp;
 
         void locked_sendBanInfo(const RsPeerId& pid);
         void handleBannedFilesInfo(RsFileListsBannedHashesItem *item);

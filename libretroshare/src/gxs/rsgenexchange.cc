@@ -124,7 +124,7 @@ RsGenExchange::~RsGenExchange()
 	mGrpsToPublish.clear();
 }
 
-bool RsGenExchange::getGroupServerUpdateTS(const RsGxsGroupId& gid, time_t& grp_server_update_TS, time_t& msg_server_update_TS) 
+bool RsGenExchange::getGroupServerUpdateTS(const RsGxsGroupId& gid, rstime_t& grp_server_update_TS, rstime_t& msg_server_update_TS) 
 {
     return mNetService->getGroupServerUpdateTS(gid,grp_server_update_TS,msg_server_update_TS) ;
 }
@@ -169,7 +169,7 @@ void RsGenExchange::tick()
 	// implemented service tick function
 	service_tick();
 
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
     
 	if((mLastClean + MSG_CLEANUP_PERIOD < now) || mCleaning)
 	{
@@ -259,7 +259,7 @@ bool RsGenExchange::messagePublicationTest(const RsGxsMsgMetaData& meta)
 
 	uint32_t st = mNetService->getKeepAge(meta.mGroupId);
 
-	time_t storageTimeLimit = meta.mPublishTs + st;
+	rstime_t storageTimeLimit = meta.mPublishTs + st;
 
 	return meta.mMsgStatus & GXS_SERV::GXS_MSG_STATUS_KEEP || st == 0 || storageTimeLimit >= time(NULL);
 }
@@ -2140,7 +2140,7 @@ void RsGenExchange::publishMsgs()
 
 	RS_STACK_MUTEX(mGenMtx) ;
 
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 
 	// stick back msgs pending signature
 	typedef std::map<uint32_t, GxsPendingItem<RsGxsMsgItem*, uint32_t> > PendSignMap;
@@ -2561,7 +2561,7 @@ void RsGenExchange::publishGrps()
 		    GxsGrpPendingSign& ggps = *vit;
 
 		    /* do intial checks to see if this entry has expired */
-		    time_t now = time(NULL) ;
+		    rstime_t now = time(NULL) ;
 		    uint32_t token = ggps.mToken;
 
 
@@ -2869,7 +2869,7 @@ void RsGenExchange::processRecvdMessages()
     {
 	    RS_STACK_MUTEX(mGenMtx) ;
 
-        time_t now = time(NULL);
+        rstime_t now = time(NULL);
 
 	    if(mMsgPendingValidate.empty())
 			return ;

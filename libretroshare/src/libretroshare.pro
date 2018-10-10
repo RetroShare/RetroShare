@@ -19,10 +19,6 @@
 
 TEMPLATE = lib
 CONFIG += staticlib
-!include("../../retroshare.pri"): error("Could not include file ../../retroshare.pri")
-
-TEMPLATE = lib
-CONFIG += staticlib
 CONFIG -= qt
 TARGET = retroshare
 TARGET_PRL = libretroshare
@@ -530,10 +526,9 @@ SOURCES +=	ft/ftchunkmap.cc \
             ft/ftturtlefiletransferitem.cc
 
 SOURCES += crypto/chacha20.cpp \
-			crypto/rsaes.cc \
-			crypto/hashstream.cc\
-			  crypto/hashstream.cc \
-			  crypto/rscrypto.cpp
+           crypto/hashstream.cc\
+           crypto/rsaes.cc \
+           crypto/rscrypto.cpp
 
 SOURCES += chat/distantchat.cc \
 			  chat/p3chatservice.cc \

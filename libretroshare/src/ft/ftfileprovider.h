@@ -65,7 +65,7 @@ class ftFileProvider
 
 		// Removes inactive peers from the client list. Returns true if all peers have been removed.
 		//
-		bool purgeOldPeers(time_t now,uint32_t max_duration) ;
+		bool purgeOldPeers(rstime_t now,uint32_t max_duration) ;
 
 		const RsFileHash& fileHash() const { return hash ; }
 		const std::string& fileName() const { return file_name ; }
@@ -88,12 +88,12 @@ class ftFileProvider
 				PeerUploadInfo() 
 					: req_loc(0),req_size(1),  lastTS_t(0), lastTS(0),transfer_rate(0), total_size(0), client_chunk_map_stamp(0) {}
 
-				void updateStatus(uint64_t offset,uint32_t data_size,time_t now) ;
+				void updateStatus(uint64_t offset,uint32_t data_size,rstime_t now) ;
 
 				uint64_t   req_loc;
 				uint32_t   req_size;
-				time_t    lastTS_t; 	// used for estimating transfer rate.
-				time_t    lastTS;   	// last update time (for purging)
+				rstime_t    lastTS_t; 	// used for estimating transfer rate.
+				rstime_t    lastTS;   	// last update time (for purging)
 
 				// these two are used for speed estimation
 				float 	  transfer_rate ;
@@ -101,7 +101,7 @@ class ftFileProvider
 
 				// Info about what the downloading peer already has
 				CompressedChunkMap client_chunk_map ;
-				time_t client_chunk_map_stamp ;
+				rstime_t client_chunk_map_stamp ;
 		};
 
 		// Contains statistics (speed, peer name, etc.) of all uploading peers for that file.

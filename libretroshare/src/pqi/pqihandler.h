@@ -23,7 +23,7 @@
 #define MRK_PQI_HANDLER_HEADER
 
 #include <stdint.h>              // for uint32_t
-#include <time.h>                // for time_t, NULL
+#include "util/rstime.h"                // for rstime_t, NULL
 #include <list>                  // for list
 #include <map>                   // for map
 
@@ -121,8 +121,8 @@ protected:
 		float rateTotal_out;
 
 		uint32_t nb_ticks ;
-		time_t last_m ;
-        	time_t mLastRateCapUpdate ;
+		rstime_t last_m ;
+        	rstime_t mLastRateCapUpdate ;
 		float ticks_per_sec ;
 };
 

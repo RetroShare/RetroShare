@@ -110,7 +110,7 @@ virtual bool getChannelDownloadDirectory(const RsGxsGroupId &groupId, std::strin
 	/// @see RsGxsChannels::turtleSearchRequest
 	virtual bool turtleSearchRequest(const std::string& matchString,
 	        const std::function<void (const RsGxsGroupSummary&)>& multiCallback,
-	        std::time_t maxWait = 300 );
+	        rstime_t maxWait = 300 );
 
 	/**
 	 * Receive results from turtle search @see RsGenExchange @see RsNxsObserver
@@ -252,7 +252,7 @@ bool generateGroup(uint32_t &token, std::string groupName);
 	RsGxsMessageId mGenThreadId;
 
 	p3GxsCommentService *mCommentService;
-    std::map<RsGxsGroupId,time_t> mKnownChannels;
+    std::map<RsGxsGroupId,rstime_t> mKnownChannels;
 
 	/** Store search callbacks with timeout*/
 	std::map<

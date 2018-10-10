@@ -64,7 +64,7 @@ void LocalDirectoryUpdater::setEnabled(bool b)
 
 void LocalDirectoryUpdater::data_tick()
 {
-    time_t now = time(NULL) ;
+    rstime_t now = time(NULL) ;
 
     if (mIsEnabled || mForceUpdate)
     {
@@ -190,14 +190,14 @@ void LocalDirectoryUpdater::recursUpdateSharedDir(const std::string& cumulated_p
 
     librs::util::FolderIterator dirIt(cumulated_path,mFollowSymLinks,false);	// disallow symbolic links and files from the future.
 
-    time_t dir_local_mod_time ;
+    rstime_t dir_local_mod_time ;
     if(!mSharedDirectories->getDirectoryLocalModTime(indx,dir_local_mod_time))
     {
         std::cerr << "(EE) Cannot get local mod time for dir index " << indx << std::endl;
         return;
     }
 
-    time_t now = time(NULL) ;
+    rstime_t now = time(NULL) ;
 
     if(mNeedsFullRecheck || dirIt.dir_modtime() > dir_local_mod_time)	// the > is because we may have changed the virtual name, and therefore the TS wont match.
 																		// we only want to detect when the directory has changed on the disk

@@ -22,6 +22,7 @@
 #pragma once
 
 #include "util/rsnet.h"
+#include "util/rstime.h"
 
 class RsBanList;
 extern RsBanList *rsBanList ;
@@ -70,7 +71,7 @@ public:
     uint32_t level; 			 // LOCAL, FRIEND, FoF.
     bool state ; 			// true=>active, false=>just stored but inactive
     int  connect_attempts ; 	// recorded by the BanList service
-    time_t mTs;
+    rstime_t mTs;
     std::string comment ;		//
 };
 
