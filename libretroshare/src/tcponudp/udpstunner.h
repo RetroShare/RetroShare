@@ -56,7 +56,7 @@ class TouStunPeer
 	std::string id;
 	struct sockaddr_in remote, eaddr;
 	bool response;
-	time_t lastsend;
+	rstime_t lastsend;
 	uint32_t failCount;
 };
 
@@ -89,7 +89,7 @@ bool    dropStunPeer(const struct sockaddr_in &remote);
 
 bool    getStunPeer(int idx, std::string &id,
                 struct sockaddr_in &remote, struct sockaddr_in &eaddr,
-                uint32_t &failCount, time_t &lastSend);
+                uint32_t &failCount, rstime_t &lastSend);
 
 bool	needStunPeers();
 
@@ -125,12 +125,12 @@ bool    locked_checkExternalAddress();
 
         bool eaddrKnown;
 	bool eaddrStable; /* if true then usable. if false -> Symmettric NAT */
-	time_t eaddrTime;
+	rstime_t eaddrTime;
 
-	time_t mStunLastRecvResp;
-	time_t mStunLastRecvAny;
-	time_t mStunLastSendStun;
-	time_t mStunLastSendAny;
+	rstime_t mStunLastRecvResp;
+	rstime_t mStunLastRecvAny;
+	rstime_t mStunLastSendStun;
+	rstime_t mStunLastSendAny;
 
 	std::list<TouStunPeer> mStunList; /* potentials */
 
@@ -148,7 +148,7 @@ bool    locked_checkExternalAddress();
 	double mSuccessRate;
 
 	bool mExclusiveMode; /* when this is switched on, the stunner stays silent (and extAddr is maintained) */
-	time_t mExclusiveModeTS;
+	rstime_t mExclusiveModeTS;
 	std::string mExclusiveHolder;
 	bool mForceRestun;
 

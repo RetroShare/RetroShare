@@ -25,7 +25,7 @@ static  const int kInitStreamTable = 5;
 
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
+#include "util/rstime.h"
 
 #include "udp/udpstack.h"
 #include "pqi/pqinetwork.h"

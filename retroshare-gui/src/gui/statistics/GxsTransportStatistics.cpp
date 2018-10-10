@@ -266,7 +266,7 @@ void GxsTransportStatistics::updateContent()
         groupTreeWidget->addTopLevelItem(item);
 		groupTreeWidget->setItemExpanded(item,openned_groups.find(it->first) != openned_groups.end());
 
-		QString msg_time_string = (stat.last_publish_TS>0)?QString(" (Last msg: %1)").arg(QDateTime::fromTime_t(stat.last_publish_TS).toString()):"" ;
+		QString msg_time_string = (stat.last_publish_TS>0)?QString(" (Last msg: %1)").arg(QDateTime::fromTime_t((uint)stat.last_publish_TS).toString()):"" ;
 
         item->setData(COL_GROUP_NUM_MSGS,  Qt::DisplayRole,  QString::number(stat.mNumMsgs) + msg_time_string) ;
         item->setData(COL_GROUP_GRP_ID,    Qt::DisplayRole,  QString::fromStdString(it->first.toStdString())) ;

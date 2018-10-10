@@ -44,7 +44,7 @@
 
 //#define DEBUG_AUTHGPG 1
 
-//const time_t STORE_KEY_TIMEOUT = 1 * 60 * 60; //store key is call around every hour
+//const rstime_t STORE_KEY_TIMEOUT = 1 * 60 * 60; //store key is call around every hour
 
 AuthGPG *AuthGPG::_instance = NULL ;
 

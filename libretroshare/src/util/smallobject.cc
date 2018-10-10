@@ -287,8 +287,8 @@ void *SmallObject::operator new(size_t size)
 	bool print=false ;
 	{
 		RsStackMutex m(_mtx) ;
-		static time_t last_time = 0 ;
-		time_t now = time(NULL) ;
+		static rstime_t last_time = 0 ;
+		rstime_t now = time(NULL) ;
 		if(now > last_time + 20)
 		{
 			last_time = now ;

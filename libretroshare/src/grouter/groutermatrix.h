@@ -39,13 +39,13 @@ struct RoutingMatrixHitEntry
 {
 	uint32_t friend_id ;			// not the full key. Gets too big otherwise!
 	float weight ;
-	time_t time_stamp ;
+	rstime_t time_stamp ;
 };
 
 struct RoutingTrackEntry
 {
 	RsPeerId friend_id ;			// not the full key. Gets too big otherwise!
-	time_t time_stamp ;
+	rstime_t time_stamp ;
 };
 
 class GRouterMatrix

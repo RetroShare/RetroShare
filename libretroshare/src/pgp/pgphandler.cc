@@ -601,8 +601,8 @@ const ops_keydata_t *PGPHandler::locked_getPublicKey(const RsPgpId& id,bool stam
 	{
 		if(stamp_the_key)		// Should we stamp the key as used?
 		{
-			static time_t last_update_db_because_of_stamp = 0 ;
-			time_t now = time(NULL) ;
+			static rstime_t last_update_db_because_of_stamp = 0 ;
+			rstime_t now = time(NULL) ;
 
 			res->second._time_stamp = now ;
 

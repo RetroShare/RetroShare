@@ -65,8 +65,8 @@ const uint32_t RS_NET_FLAGS_TRUSTS_ME 		= 0x0020;
  * remove locations offline since 90 days
  * stopt sending locations via discovery when offline for +30 days
  */
-const time_t RS_PEER_OFFLINE_DELETE  = (90 * 24 * 3600);
-const time_t RS_PEER_OFFLINE_NO_DISC = (30 * 24 * 3600);
+const rstime_t RS_PEER_OFFLINE_DELETE  = (90 * 24 * 3600);
+const rstime_t RS_PEER_OFFLINE_NO_DISC = (30 * 24 * 3600);
 
 class peerState
 {
@@ -85,7 +85,7 @@ class peerState
         struct sockaddr_storage serveraddr;
         std::string dyndns;
 
-        time_t lastcontact;
+        rstime_t lastcontact;
 
 	/* list of addresses from various sources */
 	pqiIpAddrSet ipAddrs;
@@ -124,7 +124,7 @@ public:
 	                        uint32_t netMode = RS_NET_MODE_UDP,
 	                        uint16_t vsDisc = RS_VS_DISC_FULL,
 	                        uint16_t vsDht = RS_VS_DHT_FULL,
-	                        time_t lastContact = 0,
+	                        rstime_t lastContact = 0,
 	                        ServicePermissionFlags = ServicePermissionFlags(RS_NODE_PERM_DEFAULT) ) = 0;
 
 	virtual bool removeFriend(const RsPeerId &ssl_id, bool removePgpId) = 0;
@@ -241,7 +241,7 @@ public:
 
     virtual bool addFriend(const RsPeerId&ssl_id, const RsPgpId&gpg_id, uint32_t netMode = RS_NET_MODE_UDP,
                               uint16_t vsDisc = RS_VS_DISC_FULL, uint16_t vsDht = RS_VS_DHT_FULL,
-                              time_t lastContact = 0,ServicePermissionFlags = ServicePermissionFlags(RS_NODE_PERM_DEFAULT));
+                              rstime_t lastContact = 0,ServicePermissionFlags = ServicePermissionFlags(RS_NODE_PERM_DEFAULT));
     virtual bool	removeFriend(const RsPeerId &ssl_id, bool removePgpId);
     virtual bool	removeFriend(const RsPgpId &pgp_id);
 

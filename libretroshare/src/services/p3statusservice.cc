@@ -28,7 +28,7 @@
 #include <map>
 #include <list>
 #include <string>
-#include <time.h>
+#include "util/rstime.h"
 
 #include "pqi/p3linkmgr.h"
 

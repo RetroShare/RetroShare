@@ -204,7 +204,7 @@ void    p3BitDht::updateDataRates()
 
 	RsStackMutex stack(dhtMtx);    /********* LOCKED *********/
 
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 	float period = now - mLastDataRateUpdate;
 
 #define RATE_FACTOR (0.75)
@@ -380,7 +380,7 @@ RsDhtRelayProxy::RsDhtRelayProxy()
         mCreateTS = 0;
 
         //uint32_t mDataSize;
-        //time_t mLastBandwidthTS;
+        //rstime_t mLastBandwidthTS;
 
 }
 

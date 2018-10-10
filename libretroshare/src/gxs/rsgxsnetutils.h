@@ -114,9 +114,9 @@ public:
 
 	static const int MSG_PEND;
 	static const int GRP_PEND;
-	static const time_t EXPIRY_PERIOD_OFFSET;
+	static const rstime_t EXPIRY_PERIOD_OFFSET;
 
-	AuthorPending(RsGixsReputation* rep, time_t timeStamp);
+	AuthorPending(RsGixsReputation* rep, rstime_t timeStamp);
 	virtual ~AuthorPending();
 	virtual int getType() const = 0 ;
 
@@ -144,7 +144,7 @@ protected:
 private:
 
 	RsGixsReputation* mRep;
-	time_t mTimeStamp;
+	rstime_t mTimeStamp;
 };
 
 class MsgAuthEntry
@@ -237,7 +237,7 @@ class GrpCircleVetting
 {
 public:
 
-	static const time_t EXPIRY_PERIOD_OFFSET;
+	static const rstime_t EXPIRY_PERIOD_OFFSET;
 	static const int GRP_ID_PEND;
 	static const int GRP_ITEM_PEND;
 	static const int MSG_ID_SEND_PEND;
@@ -255,7 +255,7 @@ protected:
 
 	RsGcxs* const mCircles;
 	PgpAuxUtils *mPgpUtils;
-	time_t mTimeStamp;
+	rstime_t mTimeStamp;
 };
 
 class GrpCircleIdRequestVetting : public GrpCircleVetting

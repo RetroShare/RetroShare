@@ -26,6 +26,7 @@
 #include "StateTokenServer.h"
 #include <retroshare/rsnotify.h>
 #include <retroshare/rsmsgs.h>
+#include "util/rstime.h"
 
 class RsPeers;
 class RsIdentity;
@@ -117,7 +118,7 @@ public:
     class LobbyParticipantsInfo{
     public:
         StateToken state_token;
-        std::map<RsGxsId, time_t> participants;
+		std::map<RsGxsId, rstime_t> participants;
     };
 
     class ChatInfo{

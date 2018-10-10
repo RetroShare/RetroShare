@@ -23,7 +23,7 @@
 #include "retroshare/rsconfig.h"
 #include "util/rsnet.h"
 #include "pqi/pqinetstatebox.h"
-#include "time.h"
+#include "util/rstime.h"
 
 #ifdef RS_USE_BITDHT
 #include "bitdht/bdiface.h"
@@ -191,7 +191,7 @@ void pqiNetStateBox::reset()
 {
 
 	mStatusOkay = false;
-	//time_t mStatusTS;
+	//rstime_t mStatusTS;
 	
 	mNetworkMode = RSNET_NETWORK_UNKNOWN;
 	mNatTypeMode = RSNET_NATTYPE_UNKNOWN;
@@ -244,7 +244,7 @@ int pqiNetStateBox::statusOkay()
 	{
 		return 0;
 	}
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 	if (now - mStatusTS > NETSTATE_TIMEOUT)
 	{
 		return 0;
@@ -268,7 +268,7 @@ void pqiNetStateBox::clearOldNetworkData()
 {
 #ifdef RS_USE_DHT_STUNNER
 	/* check if any measurements are too old to consider */
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 	if (now - mStunProxyTS > NETSTATE_PARAM_TIMEOUT)
 	{
 		mStunProxySet = false;
@@ -292,7 +292,7 @@ void pqiNetStateBox::clearOldNetworkData()
 void pqiNetStateBox::determineNetworkState()
 {
 	clearOldNetworkData();
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 
 	/* now we use the remaining valid input to determine network state */
 

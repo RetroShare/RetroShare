@@ -78,7 +78,7 @@ class RsPluginManager: public RsPluginHandler, public p3Config
         virtual void enablePlugin(const RsFileHash& hash) ;
         virtual void disablePlugin(const RsFileHash &hash) ;
 
-		virtual void slowTickPlugins(time_t sec) ;
+		virtual void slowTickPlugins(rstime_t sec) ;
 		virtual const std::string& getLocalCacheDir() const ;
 		virtual const std::string& getRemoteCacheDir() const ;
 		virtual RsServiceControl *getServiceControl() const ;

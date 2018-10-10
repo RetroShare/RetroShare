@@ -249,7 +249,7 @@ int p3BitDht::PeerCallback(const bdId *id, uint32_t status)
 
 	}
 
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 	dpd->mDhtUpdateTS = now;
 
 	return 1;
@@ -510,7 +510,7 @@ int p3BitDht::ConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId
 	 */
 
 	bdId peerId;
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 
 	switch(point)
 	{
@@ -1101,7 +1101,7 @@ int p3BitDht::tick()
 	minuteTick();
 
 #ifdef DEBUG_PEERNET_COMMON
-	time_t now = time(NULL);
+	time_t now = time(NULL);  // Don't use rstime_t here or ctime break on windows
 	std::cerr << "p3BitDht::tick() TIME: " << ctime(&now) << std::endl;
 	std::cerr.flush();
 #endif
@@ -1114,7 +1114,7 @@ int p3BitDht::tick()
 
 int p3BitDht::minuteTick()
 {
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 	int deltaT = 0;
 	
 	{
@@ -1164,7 +1164,7 @@ int p3BitDht::doActions()
 	std::cerr << "p3BitDht::doActions()" << std::endl;
 #endif
 
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 
 	while(mActions.size() > 0)
 	{
@@ -1727,7 +1727,7 @@ int p3BitDht::checkConnectionAllowed(const bdId *peerId, int mode)
 
 	RsStackMutex stack(dhtMtx); /********** LOCKED MUTEX ***************/	
 
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 
 	/* check if they are in our friend list */
 	DhtPeerDetails *dpd = findInternalDhtPeer_locked(&(peerId->id), RSDHT_PEERTYPE_FRIEND);
@@ -2171,7 +2171,7 @@ int p3BitDht::removeRelayConnection(const bdId *srcId, const bdId *destId)
 void p3BitDht::monitorConnections()
 {
 	RsStackMutex stack(dhtMtx); /********** LOCKED MUTEX ***************/	
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 
 	std::map<bdNodeId, DhtPeerDetails>::iterator it;
 

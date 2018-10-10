@@ -24,6 +24,7 @@
 
 #include "util/rsnet.h"
 #include "serialiser/rstlvaddrs.h"
+#include "util/rstime.h"
 
 #define MAX_ADDRESS_LIST_SIZE 10
 
@@ -34,7 +35,7 @@ class pqiIpAddress
 	bool validAddress() const;
 
 	struct sockaddr_storage mAddr;
-	time_t mSeenTime;
+	rstime_t mSeenTime;
 	uint32_t mSrc;
 };
 

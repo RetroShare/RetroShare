@@ -175,7 +175,7 @@ private:
 	 */
 	static const uint32_t MAX_DELAY_BETWEEN_CLEANUPS ; // every 20 mins. Could be less.
 
-    time_t mLastMsgCleanup ;
+    rstime_t mLastMsgCleanup ;
 
 	/// Define how the backend should handle authentication based on signatures
 	static uint32_t AuthenPolicy();
@@ -272,8 +272,8 @@ private:
 
 	/** @return true if has passed more then interval seconds between timeStamp
 	 * and ref. @param ref by default now is taked as reference. */
-	bool static inline olderThen(time_t timeStamp, int32_t interval,
-	                             time_t ref = time(NULL))
+	bool static inline olderThen(rstime_t timeStamp, int32_t interval,
+	                             rstime_t ref = time(NULL))
 	{ return (timeStamp + interval) < ref; }
 
 

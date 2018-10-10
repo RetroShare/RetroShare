@@ -50,7 +50,7 @@ class GRouterCacheInfo
 {
 	public:
 		GRouterCacheInfoFlags flags ;		
-		time_t last_activity ;
+		rstime_t last_activity ;
 };
 
 class GRouterCache

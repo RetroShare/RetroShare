@@ -24,7 +24,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
-#include <time.h>
+#include "util/rstime.h"
 
 #ifdef WINDOWS_SYS
 #include "util/rswin.h"
@@ -227,12 +227,12 @@ bool FolderIterator::readdir()
 #endif
 }
 
-time_t FolderIterator::dir_modtime() const { return mFolderModTime ; }
+rstime_t FolderIterator::dir_modtime() const { return mFolderModTime ; }
 
 const std::string& FolderIterator::file_fullpath() { return mFullPath ; }
 const std::string& FolderIterator::file_name()     { return mFileName ; }
 uint64_t           FolderIterator::file_size()     { return mFileSize ; }
-time_t             FolderIterator::file_modtime()  { return mFileModTime ; }
+rstime_t             FolderIterator::file_modtime()  { return mFileModTime ; }
 uint8_t            FolderIterator::file_type()     { return mType ; }
 
 bool FolderIterator::closedir()

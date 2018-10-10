@@ -93,9 +93,9 @@ class RsDhtPeer
 	int mBucket;
         std::string mDhtId;
         std::string mAddr;
-        time_t mLastSendTime;
-        time_t mLastRecvTime;
-        time_t mFoundTime;
+        rstime_t mLastSendTime;
+        rstime_t mLastRecvTime;
+        rstime_t mFoundTime;
         uint32_t mPeerFlags;
         uint32_t mExtraFlags;   
 };
@@ -132,7 +132,7 @@ class RsDhtRelayEnd
         std::string mLocalAddr;
         std::string mProxyAddr;
         std::string mRemoteAddr;
-        time_t mCreateTS;
+        rstime_t mCreateTS;
 };
 
 class RsDhtRelayProxy
@@ -145,11 +145,11 @@ class RsDhtRelayProxy
 
         double mBandwidth;
         int mRelayClass;
-        time_t mLastTS;
-        time_t mCreateTS;
+        rstime_t mLastTS;
+        rstime_t mCreateTS;
 
         //uint32_t mDataSize;
-        //time_t mLastBandwidthTS;
+        //rstime_t mLastBandwidthTS;
 
 };
 class RsDhtFilteredPeer
@@ -157,8 +157,8 @@ class RsDhtFilteredPeer
 public:
     struct sockaddr_in mAddr;
     uint32_t mFilterFlags; /* reasons why we are filtering */
-    time_t mFilterTS;
-    time_t mLastSeen;
+    rstime_t mFilterTS;
+    rstime_t mLastSeen;
 };
 
 class RsDht

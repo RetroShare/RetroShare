@@ -31,7 +31,7 @@
 #include <limits.h>
 
 #include <sys/time.h>
-#include <time.h>
+#include "util/rstime.h"
 
 /* Debugging for STATE change, and Startup SYNs */
 #include "util/rsdebug.h"
@@ -2597,7 +2597,7 @@ bool 	TcpStream::isOldSequence(uint32 tst, uint32 curr)
 }
 
 #ifdef WINDOWS_SYS
-#include <time.h>
+#include "util/rstime.h"
 #include <sys/timeb.h>
 #endif
 

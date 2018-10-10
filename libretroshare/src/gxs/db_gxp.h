@@ -157,7 +157,7 @@ class gdp::interface
 	/* query for available groups & messages */
 	int listgroups(std::list<gdb::id> &grpIds);
 	/* response from listmsgs: -1 = invalid parameters, 0 = incomplete list, 1 = all known msgs */
-	int listmsgs(const gdp::id grpId, std::list<gdb::id> &msgIds, const time_t from, const time_t to, const int maxmsgs);
+	int listmsgs(const gdp::id grpId, std::list<gdb::id> &msgIds, const rstime_t from, const rstime_t to, const int maxmsgs);
 
 	/* response from requestMsg: YES (available immediately), RETRIEVING (known to exist), 
 	 * IN_REQUEST (might exist), NOT_AVAILABLE (still might exist)
@@ -239,8 +239,8 @@ class gnp::exchange: public gdp::interface
 	/*** IMPLEMENTATION DETAILS ****/
 
 	/* Get/Send Messages */
-	getAvailableMsgs(gdp::id grpId, time_t from, time_t to); /* request over the network */
-	sendAvailableMsgs(std::string peerId, gdp::id grpId, time_t from, time_t to); /* send to peers */
+	getAvailableMsgs(gdp::id grpId, rstime_t from, rstime_t to); /* request over the network */
+	sendAvailableMsgs(std::string peerId, gdp::id grpId, rstime_t from, rstime_t to); /* send to peers */
 
 	requestMessages(std::string peerId, gdp::id grpId, std::list<gdp::id> msgIds); 	
 	sendMessages(std::string peerId, gdp::id grpId, std::list<gdp::id> msgIds);	  /* send to peer, obviously permissions have been checked first */
@@ -284,7 +284,7 @@ class gixp::profile
 	gxip::keyref mKeyId;
 
 	std::string mPseudonym;
-	time_t      mTimestamp;   /* superseded by newer timestamps */
+	rstime_t      mTimestamp;   /* superseded by newer timestamps */
 	uint32_t    mProfileType; /* ANONYMOUS (no name, self-signed), PSEUDONYM (self-signed), GPG (name=gpgname, gpgsigned), REVOCATION?? */ 
 	gpp::permissions mPermissions;
 

@@ -24,8 +24,10 @@
 #include <string>
 #include <list>
 #include <stdint.h>
+
 #include "util/rsprint.h"
 #include "retroshare/rstypes.h"
+#include "util/rstime.h"
 
 /******************************************************************************************
 Enumerations defining the Operators usable in the Boolean search expressions
@@ -113,7 +115,7 @@ class ExpFileEntry
 public:
     virtual const std::string& file_name()        const =0;
     virtual uint64_t           file_size()        const =0;
-    virtual time_t             file_modtime()     const =0;
+    virtual rstime_t             file_modtime()     const =0;
     virtual uint32_t           file_popularity()  const =0;
     virtual std::string        file_parent_path() const =0;
     virtual const RsFileHash&  file_hash()        const =0;

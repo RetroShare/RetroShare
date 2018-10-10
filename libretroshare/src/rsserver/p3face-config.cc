@@ -39,7 +39,7 @@
 #endif // ifdef RS_JSONAPI
 
 #include <sys/time.h>
-#include <time.h>
+#include "util/rstime.h"
 
 #include "pqi/p3peermgr.h"
 #include "pqi/p3netmgr.h"

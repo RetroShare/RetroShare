@@ -34,6 +34,7 @@
 #include "retroshare/rsiface.h"
 #include "retroshare/rsinit.h"
 #include "util/rsurl.h"
+#include "util/rstime.h"
 
 // Generated at compile time
 #include "jsonapi-includes.inl"

@@ -32,6 +32,7 @@
 #include "retroshare/rsids.h"
 #include "serialiser/rsserializable.h"
 #include "serialiser/rstypeserializer.h"
+#include "util/rstime.h"
 
 typedef GXSGroupId   RsGxsGroupId;
 typedef Sha1CheckSum RsGxsMessageId;
@@ -67,7 +68,7 @@ struct RsGroupMetaData : RsSerializable
 	uint32_t    mGroupFlags;  // Combination of FLAG_PRIVACY_PRIVATE | FLAG_PRIVACY_RESTRICTED | FLAG_PRIVACY_PUBLIC: diffusion
     uint32_t    mSignFlags;   // Combination of RSGXS_GROUP_SIGN_PUBLISH_MASK & RSGXS_GROUP_SIGN_AUTHOR_MASK, i.e. what signatures are required for parent and child msgs
 
-    time_t      mPublishTs; // Mandatory.
+    rstime_t      mPublishTs; // Mandatory.
     RsGxsId    mAuthorId;   // Author of the group. Left to "000....0" if anonymous
 
     // for circles
@@ -84,7 +85,7 @@ struct RsGroupMetaData : RsSerializable
 
     uint32_t    mPop; 			// Popularity = number of friend subscribers
     uint32_t    mVisibleMsgCount; 	// Max messages reported by friends
-    time_t      mLastPost; 		// Timestamp for last message. Not used yet.
+    rstime_t      mLastPost; 		// Timestamp for last message. Not used yet.
 
     uint32_t    mGroupStatus;
     std::string mServiceString; // Service Specific Free-Form extra storage.
@@ -136,7 +137,7 @@ struct RsMsgMetaData : RsSerializable
     RsGxsId    mAuthorId;
 
     std::string mMsgName;
-    time_t      mPublishTs;
+    rstime_t      mPublishTs;
 
     /// the lower 16 bits for service, upper 16 bits for GXS
     uint32_t    mMsgFlags;
@@ -147,7 +148,7 @@ struct RsMsgMetaData : RsSerializable
     /// the first 16 bits for service, last 16 for GXS
     uint32_t    mMsgStatus;
 
-    time_t      mChildTs;
+    rstime_t      mChildTs;
     std::string mServiceString; // Service Specific Free-Form extra storage.
 
 	/// @see RsSerializable

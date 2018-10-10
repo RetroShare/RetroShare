@@ -21,7 +21,7 @@
  *******************************************************************************/
 #include <list>
 #include <string>
-#include <time.h>
+#include "util/rstime.h"
 
 //#include "serialiser/rsdsdvitems.h"
 #include "services/p3dsdv.h"
@@ -105,8 +105,8 @@ int	p3Dsdv::status()
 
 int	p3Dsdv::sendTables()
 {
-	time_t now = time(NULL);
-	time_t tt, it;
+	rstime_t now = time(NULL);
+	rstime_t tt, it;
 	bool   updateRequired = false;
 	{
 		RsStackMutex stack(mDsdvMtx); /****** LOCKED MUTEX *******/
@@ -156,7 +156,7 @@ void 	p3Dsdv::advanceLocalSequenceNumbers()
 {
 	RsStackMutex stack(mDsdvMtx); /****** LOCKED MUTEX *******/
 
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 
 	std::map<std::string, RsDsdvTableEntry>::iterator it;
 	for(it = mTable.begin(); it != mTable.end(); ++it)
@@ -317,7 +317,7 @@ int p3Dsdv::handleDSDV(RsDsdvRouteItem *dsdv)
 	/* iterate over the entries */
 	RsStackMutex stack(mDsdvMtx); /****** LOCKED MUTEX *******/
 
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 	
 #ifdef	DEBUG_DSDV
 	std::cerr << "p3Dsdv::handleDSDV() Received Pkt from: " << dsdv->PeerId();
@@ -458,7 +458,7 @@ int p3Dsdv::selectStableRoutes()
 	/* iterate over the entries */
 	RsStackMutex stack(mDsdvMtx); /****** LOCKED MUTEX *******/
 
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 	
 #ifdef	DEBUG_DSDV
 	std::cerr << "p3Dsdv::selectStableRoutes()";
@@ -489,7 +489,7 @@ int p3Dsdv::selectStableRoutes()
 		RsPeerId newestId;
 		uint32_t closest = RSDSDV_MAX_DISTANCE + 1;
 		RsPeerId closestId;
-		time_t closestAge = 0;
+		rstime_t closestAge = 0;
 
 		/* find newest sequence number */
 		for(rit = tit->second.mAllRoutes.begin(); 
@@ -718,7 +718,7 @@ int p3Dsdv::addDsdvId(RsDsdvId *id, std::string realHash)
 	std::cerr << std::endl;
 #endif
 
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 	
 	/* check for duplicate */
 	std::map<std::string, RsDsdvTableEntry>::iterator it;
@@ -861,7 +861,7 @@ std::ostream &operator<<(std::ostream &out, const RsDsdvId &id)
 
 std::ostream &operator<<(std::ostream &out, const RsDsdvRoute &route)
 {
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 	out << "< Seq: " << route.mSequence << " Dist: " << route.mDistance;
 	out << " NextHop: " << route.mNextHop;
 	out << " recvd: " << now-route.mReceived;

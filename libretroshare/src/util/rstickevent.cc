@@ -33,14 +33,14 @@ void	RsTickEvent::tick_events()
 	std::cerr << std::endl;
 #endif
 
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 	{
 		RsStackMutex stack(mEventMtx); /********** STACK LOCKED MTX ******/
 
 #ifdef DEBUG_EVENTS
 		if (!mEvents.empty())
 		{
-			std::multimap<time_t, uint32_t>::iterator it;
+			std::multimap<rstime_t, uint32_t>::iterator it;
 
 			for(it = mEvents.begin(); it != mEvents.end(); ++it)
 			{
@@ -70,7 +70,7 @@ void	RsTickEvent::tick_events()
 		RsStackMutex stack(mEventMtx); /********** STACK LOCKED MTX ******/
 		while((!mEvents.empty()) && (mEvents.begin()->first <= now))
 		{
-			std::multimap<time_t, EventData>::iterator it = mEvents.begin();
+			std::multimap<rstime_t, EventData>::iterator it = mEvents.begin();
 			uint32_t event_type = it->second.mEventType;
 			toProcess.push_back(it->second);
 			mEvents.erase(it);
@@ -103,7 +103,7 @@ void RsTickEvent::schedule_now(uint32_t event_type, const std::string &elabel)
 	RsTickEvent::schedule_in(event_type, 0, elabel);
 }
 
-void RsTickEvent::schedule_event(uint32_t event_type, time_t when, const std::string &elabel)
+void RsTickEvent::schedule_event(uint32_t event_type, rstime_t when, const std::string &elabel)
 {
 	RsStackMutex stack(mEventMtx); /********** STACK LOCKED MTX ******/
 	mEvents.insert(std::make_pair(when, EventData(event_type, elabel)));
@@ -125,7 +125,7 @@ void RsTickEvent::schedule_in(uint32_t event_type, uint32_t in_secs, const std::
 	std::cerr << std::endl;
 #endif // DEBUG_EVENTS
 
-	time_t event_time = time(NULL) + in_secs;
+	rstime_t event_time = time(NULL) + in_secs;
 	RsTickEvent::schedule_event(event_type, event_time, elabel);
 }
 
@@ -156,7 +156,7 @@ int32_t RsTickEvent::event_count(uint32_t event_type)
 bool RsTickEvent::prev_event_ago(uint32_t event_type, int32_t &age)
 {
 	RsStackMutex stack(mEventMtx); /********** STACK LOCKED MTX ******/
-	std::map<uint32_t, time_t>::iterator it;
+	std::map<uint32_t, rstime_t>::iterator it;
 
 	it = mPreviousEvent.find(event_type);
 	if (it == mPreviousEvent.end())

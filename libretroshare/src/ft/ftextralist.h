@@ -58,6 +58,7 @@
 #include "util/rsthreads.h"
 #include "retroshare/rsfiles.h"
 #include "pqi/p3cfgmgr.h"
+#include "util/rstime.h"
 
 class FileDetails
 {
@@ -177,7 +178,7 @@ private:
 	std::map<RsFileHash, FileDetails> mFiles;
 	std::map<RsFileHash, RsFileHash>  mHashOfHash;	/* sha1(hash) map so as to answer requests to encrypted transfers */
 
-	time_t cleanup ;
+	rstime_t cleanup ;
 };
 
 

@@ -51,13 +51,13 @@ public:
     :mPeerId(peerId), mLatestUpdate(0), mLastQuery(0) { return; }
 
 	RsPeerId mPeerId;
-	time_t mLatestUpdate;
-	time_t mLastQuery;
+	rstime_t mLatestUpdate;
+	rstime_t mLastQuery;
 };
 
 struct BannedNodeInfo
 {
-    time_t last_activity_TS ;			// updated everytime a node or one of its former identities is required
+    rstime_t last_activity_TS ;			// updated everytime a node or one of its former identities is required
     std::set<RsGxsId> known_identities ;	// list of known identities from this node. This is kept for a while, and useful in order to avoid re-asking these keys.
 };
 
@@ -74,7 +74,7 @@ public:
 
 	std::map<RsPeerId, RsReputations::Opinion> mOpinions;
 	int32_t mOwnOpinion;
-	time_t  mOwnOpinionTs;
+	rstime_t  mOwnOpinionTs;
 
 	float mFriendAverage ;
     uint32_t mFriendsPositive ;		// number of positive vites from friends
@@ -86,7 +86,7 @@ public:
     
 	uint32_t mIdentityFlags;
 
-    time_t mLastUsedTS ;			// last time the reputation was asked. Used to keep track of activity and clean up some reputation data.
+    rstime_t mLastUsedTS ;			// last time the reputation was asked. Used to keep track of activity and clean up some reputation data.
 };
 
 
@@ -144,7 +144,7 @@ private:
 
     bool SendReputations(RsGxsReputationRequestItem *request);
     bool RecvReputations(RsGxsReputationUpdateItem *item);
-    bool updateLatestUpdate(RsPeerId peerid, time_t latest_update);
+    bool updateLatestUpdate(RsPeerId peerid, rstime_t latest_update);
 
     void updateBannedNodesProxy();
 
@@ -164,11 +164,11 @@ private:
 private:
     RsMutex mReputationMtx;
 
-    time_t mLastCleanUp;
-    time_t mRequestTime;
-    time_t mStoreTime;
-    time_t mLastBannedNodesUpdate ;
-        time_t mLastIdentityFlagsUpdate ;
+    rstime_t mLastCleanUp;
+    rstime_t mRequestTime;
+    rstime_t mStoreTime;
+    rstime_t mLastBannedNodesUpdate ;
+        rstime_t mLastIdentityFlagsUpdate ;
     bool   mReputationsUpdated;
 
     //float mAutoBanIdentitiesLimit ;
@@ -179,7 +179,7 @@ private:
     // Data for Reputation.
     std::map<RsPeerId, ReputationConfig> mConfig;
     std::map<RsGxsId, Reputation> mReputations;
-    std::multimap<time_t, RsGxsId> mUpdated;
+    std::multimap<rstime_t, RsGxsId> mUpdated;
 
     // PGP Ids auto-banned. This is updated regularly.
     std::map<RsPgpId,BannedNodeInfo> mBannedPgpIds ;
@@ -191,7 +191,7 @@ private:
     uint32_t mMaxPreventReloadBannedIds ;
 
     bool mChanged ; // slow version of IndicateConfigChanged();
-    time_t mLastReputationConfigSaved ;
+    rstime_t mLastReputationConfigSaved ;
 };
 
 #endif //SERVICE_RSGXSREPUTATION_HEADER
