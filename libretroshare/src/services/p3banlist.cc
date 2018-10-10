@@ -36,9 +36,9 @@
 #include <sstream>
 
 /****
- * #define DEBUG_BANLIST		1
- * #define DEBUG_BANLIST_CONDENSE		1
- ****/
+*#define DEBUG_BANLIST		1
+*#define DEBUG_BANLIST_CONDENSE		1
+****/
 
 
 /* DEFINE INTERFACE POINTER! */
@@ -176,6 +176,7 @@ static uint32_t getBitRange(const sockaddr_storage& addr)
 }
 static sockaddr_storage makeBitsRange(const sockaddr_storage& addr,int masked_bytes)
 {
+
     sockaddr_storage s ;
     sockaddr_storage_clear(s) ;
     sockaddr_storage_copyip(s,addr) ;
@@ -308,6 +309,8 @@ bool p3BanList::acceptedBanRanges_locked(const BanListPeer& blp)
 }
 bool p3BanList::isAddressAccepted(const sockaddr_storage &dAddr, uint32_t checking_flags,uint32_t *check_result)
 {
+    RS_STACK_MUTEX(mBanMtx) ;
+
 	sockaddr_storage addr; sockaddr_storage_copy(dAddr, addr);
 
 	if(!mIPFilteringEnabled) return true;
@@ -1039,6 +1042,7 @@ bool p3BanList::isWhiteListed_locked(const sockaddr_storage& addr)
 
 int p3BanList::condenseBanSources_locked()
 {
+     //RS_STACK_MUTEX(mBanMtx) ;
         mBanSet.clear();
 
     time_t now = time(NULL);
