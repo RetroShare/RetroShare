@@ -9,7 +9,7 @@ call "%EnvPath%\env.bat"
 if errorlevel 1 goto error_env
 
 %cecho% info "Build %SourceName%"
-call "%~dp0build\build.bat" 32 release version autologin plugins
+call "%~dp0build\build.bat" 32 release autologin plugins
 if errorlevel 1 %cecho% error "Failed to build %SourceName%." & exit /B %ERRORLEVEL%
 
 %cecho% info "Pack %SourceName%"

@@ -30,25 +30,14 @@ if not exist "%GetRsVersion%" (
 	exit /B 1
 )
 
-call "%GetRsVersion%" RS_REVISION_STRING RsRevision
-if "%RsRevision%"=="" echo Revision not found.& exit /B 1
-
 :: Get compiled version
-call "%GetRsVersion%" RS_REVISION_STRING RsRevision
+call "%GetRsVersion%"
 if "%RsRevision%"=="" echo Revision not found.& exit /B 1
-
-call "%GetRsVersion%" RS_MAJOR_VERSION RsMajorVersion
 if "%RsMajorVersion%"=="" echo Major version not found.& exit /B 1
-
-call "%GetRsVersion%" RS_MINOR_VERSION RsMinorVersion
 if "%RsMinorVersion%"=="" echo Minor version not found.& exit /B 1
-
-call "%GetRsVersion%" RS_BUILD_NUMBER RsBuildNumber
 if "%RsBuildNumber%"=="" echo Build number not found.& exit /B 1
 
-call "%GetRsVersion%" RS_BUILD_NUMBER_ADD RsBuildNumberAdd
-
-set RsVersion=%RsMajorVersion%.%RsMinorVersion%.%RsBuildNumber%%RsBuildNumberAdd%
+set RsVersion=%RsMajorVersion%.%RsMinorVersion%.%RsBuildNumber%-%RsBuildNumberAdd%
 
 :: Check WMIC is available
 wmic.exe alias /? >nul 2>&1 || echo WMIC is not available.&& exit /B 1

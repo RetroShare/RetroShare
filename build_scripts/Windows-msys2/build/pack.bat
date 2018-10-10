@@ -24,29 +24,21 @@ if exist "%RsDeployPath%" rmdir /S /Q "%RsDeployPath%"
 if not exist "%RsBuildPath%\Makefile" echo Project is not compiled.& goto error
 
 :: Get compiled revision
-set GetRsVersion=%SourcePath%\build_scripts\Windows\tools\get-rs-version.bat
+set GetRsVersion=%SourcePath%\build_scripts\Windows-msys2\tools\get-rs-version.bat
 if not exist "%GetRsVersion%" (
 	echo File not found
 	echo %GetRsVersion%
 	goto error
 )
 
-call "%GetRsVersion%" RS_REVISION_STRING RsRevision
-if "%RsRevision%"=="" echo Revision not found.& goto error
-
 :: Get compiled version
-call "%GetRsVersion%" RS_MAJOR_VERSION RsMajorVersion
+call "%GetRsVersion%"
+if "%RsRevision%"=="" echo Revision not found.& goto error
 if "%RsMajorVersion%"=="" echo Major version not found.& goto error
-
-call "%GetRsVersion%" RS_MINOR_VERSION RsMinorVersion
 if "%RsMinorVersion%"=="" echo Minor version not found.& goto error
-
-call "%GetRsVersion%" RS_BUILD_NUMBER RsBuildNumber
 if "%RsBuildNumber%"=="" echo Build number not found.& goto error
 
-call "%GetRsVersion%" RS_BUILD_NUMBER_ADD RsBuildNumberAdd
-
-set RsVersion=%RsMajorVersion%.%RsMinorVersion%.%RsBuildNumber%%RsBuildNumberAdd%
+set RsVersion=%RsMajorVersion%.%RsMinorVersion%.%RsBuildNumber%-%RsBuildNumberAdd%
 
 :: Check WMIC is available
 wmic.exe alias /? >nul 2>&1 || echo WMIC is not available.&& goto error
