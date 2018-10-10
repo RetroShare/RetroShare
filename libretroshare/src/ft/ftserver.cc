@@ -706,6 +706,11 @@ bool ftServer::findChildPointer(void *ref, int row, void *& result, FileSearchFl
 {
 	return mFileDatabase->findChildPointer(ref,row,result,flags) ;
 }
+
+bool ftServer::requestDirDetails(
+        DirDetails &details, std::uintptr_t handle, FileSearchFlags flags )
+{ return RequestDirDetails(reinterpret_cast<void*>(handle), details, flags); }
+
 int ftServer::RequestDirDetails(void *ref, DirDetails &details, FileSearchFlags flags)
 {
 	return mFileDatabase->RequestDirDetails(ref,details,flags) ;
