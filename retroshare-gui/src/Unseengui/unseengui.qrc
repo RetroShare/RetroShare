@@ -54,5 +54,7 @@
         <file>home/img/face_icon/user-shape_v_128.png</file>
         <file>home/img/face_icon/user-shape_x_128.png</file>
         <file>home/img/face_icon/group-profile-users_x_128.png</file>
+        <file>home/img/mountain_1500.jpg</file>
+        <file>home/img/mountain_1500.png</file>
     </qresource>
 </RCC>

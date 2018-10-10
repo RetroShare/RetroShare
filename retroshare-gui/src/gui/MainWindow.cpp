@@ -172,9 +172,27 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
 {
     ui = new Ui::MainWindow;
     trayIcon = NULL;
+/** d: set background for MainWindow */
+    ui->setupUi(this);
+        QPixmap bkgnd(":/home/img/mountain_1500.png");
+     //   bkgnd = bkgnd.scaled(this->size(),Qt::IgnoreAspectRatio);
+        QPalette palette;
+        palette.setBrush(QPalette::Background, bkgnd);
+        this->setPalette(palette);
+
+/** d: or use this */
+   /* QPixmap pix(":/home/img/mountain_1500.png");
+        pix.scaled(this->size(),Qt::IgnoreAspectRatio);
+        QPalette pal;
+        pal.setBrush(QPalette::Background,pix);
+        this->setPalette(pal);
+        QSize size;
+        size.setHeight(pix.height());
+        size.setWidth(pix.width());
+        this->resize(size);*/
 
     /* Invoke the Qt Designer generated QObject setup routine */
-    ui->setupUi(this);
+//    ui->setupUi(this);        //d: hide this
 
     _instance = this;
 

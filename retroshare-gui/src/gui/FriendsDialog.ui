@@ -62,7 +62,7 @@
          <string/>
         </property>
         <property name="pixmap">
-         <pixmap resource="../Unseengui/unseengui.qrc">:/home/img/face_icon/group-profile-users_x_128.png</pixmap>
+         <pixmap resource="../Unseengui/unseengui.qrc">:/home/img/face_icon/user-shape_128.png</pixmap>
         </property>
         <property name="scaledContents">
          <bool>true</bool>
@@ -71,6 +71,9 @@
       </item>
       <item>
        <widget class="StyledLabel" name="titleBarLabel">
+        <property name="styleSheet">
+         <string notr="true">color: rgb(255, 255, 255);</string>
+        </property>
         <property name="text">
          <string>Contacts</string>
         </property>
@@ -102,7 +105,7 @@
          <enum>Qt::NoFocus</enum>
         </property>
         <property name="icon">
-         <iconset resource="images.qrc">
+         <iconset resource="icons.qrc">
           <normaloff>:/icons/help_64.png</normaloff>:/icons/help_64.png</iconset>
         </property>
         <property name="checkable">
@@ -129,8 +132,7 @@
        <item>
         <widget class="QFrame" name="headFrame">
          <property name="styleSheet">
-          <string notr="true">color: white;
-background-color: rgb(43, 164, 220);</string>
+          <string notr="true"/>
          </property>
          <property name="frameShape">
           <enum>QFrame::Box</enum>
@@ -377,9 +379,10 @@ background-color: rgb(47, 60, 76);</string>
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>StyledElidedLabel</class>
-   <extends>QLabel</extends>
-   <header>gui/common/StyledElidedLabel.h</header>
+   <class>ChatWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">gui/chat/ChatWidget.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>ChatTabWidget</class>
@@ -388,19 +391,19 @@ background-color: rgb(47, 60, 76);</string>
    <container>1</container>
   </customwidget>
   <customwidget>
+   <class>StyledElidedLabel</class>
+   <extends>QLabel</extends>
+   <header>gui/common/StyledElidedLabel.h</header>
+  </customwidget>
+  <customwidget>
    <class>FriendList</class>
    <extends>QWidget</extends>
    <header>gui/common/FriendList.h</header>
    <container>1</container>
   </customwidget>
-  <customwidget>
-   <class>ChatWidget</class>
-   <extends>QWidget</extends>
-   <header location="global">gui/chat/ChatWidget.h</header>
-   <container>1</container>
-  </customwidget>
  </customwidgets>
  <resources>
+  <include location="icons.qrc"/>
   <include location="images.qrc"/>
   <include location="../Unseengui/unseengui.qrc"/>
  </resources>

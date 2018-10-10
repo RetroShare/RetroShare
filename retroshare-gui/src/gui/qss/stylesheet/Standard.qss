@@ -3,15 +3,19 @@
 /* Standard rules */
 
 QFrame#titleBarFrame, QFrame#toolBarFrame {
-        background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FEFEFE, stop:1 #E8E8E8);
-	border: 1px solid #CCCCCC;
+//        background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FEFEFE, stop:1 #E8E8E8);
+//	border: 1px solid #CCCCCC;
+        background-color: rgb(43, 164, 220);    //d:
+        border: 1px solid #ffffff;              //d:
 }
 
 /* HeaderFrame */
 
 HeaderFrame > QFrame#frame {
-	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #9BDBF9, stop:1 #1592CD);
-	border: 0px;
+//	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #9BDBF9, stop:1 #1592CD);
+//	border: 0px;
+        background-color: rgb(43, 164, 220);    //d:
+        border: 0px;                            //d:
 }
 
 HeaderFrame > QFrame#frame > QLabel#headerLabel {
@@ -22,10 +26,10 @@ HeaderFrame > QFrame#frame > QLabel#headerLabel {
 
 GenCertDialog QLabel#genprofileinfo_label, QLabel#header_label, QLabel#entropy_label
 {
-	border: 1px solid #DCDC41;
-	border-radius: 6px;
-	background: #FFFFD7;
-	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFFFD7, stop:1 #FFFFB2);
+        border: 1px solid #DCDC41;
+        border-radius: 6px;
+        background: #FFFFD7;
+        background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFFFD7, stop:1 #FFFFB2);
 }
 
 GenCertDialog QLabel#label_hiddenaddr {
@@ -102,14 +106,14 @@ ForumsDialog QLabel#forumName, ForumsDialog QLabel#threadTitle
 {
 	border: 2px solid #CCCCCC;
 	border-radius:6px;
-	background: white;
+        background: white;
 }
 
 ForumsDialog2 QLabel#forumName, ForumsDialog2 QLabel#threadTitle
 {
 	border: 2px solid #CCCCCC;
 	border-radius:6px;
-	background: white;
+        background: white;
 }
 
 CreateForumMsg > QToolBar#toolBar, CreateForumV2Msg > QToolBar#toolBar {
