@@ -290,11 +290,11 @@ struct RsTypeSerializer
 				// Use same allocator to avoid deep copy
 				RsGenericSerializer::SerializeContext kCtx(
 				            nullptr, 0, ctx.mFlags, &allocator );
-				serial_process<T>(j, kCtx, const_cast<T&>(kv.first), "key");
+				serial_process(j, kCtx, const_cast<T&>(kv.first), "key");
 
 				RsGenericSerializer::SerializeContext vCtx(
 				            nullptr, 0, ctx.mFlags, &allocator );
-				serial_process<U>(j, vCtx, const_cast<U&>(kv.second), "value");
+				serial_process(j, vCtx, const_cast<U&>(kv.second), "value");
 
 				if(kCtx.mOk && vCtx.mOk)
 				{
@@ -394,8 +394,8 @@ struct RsTypeSerializer
 			RsGenericSerializer::SerializeContext lCtx(
 			            nullptr, 0, ctx.mFlags, &allocator );
 
-			serial_process(j, ctx, p.first, "first");
-			serial_process(j, ctx, p.second, "second");
+			serial_process(j, lCtx, p.first, "first");
+			serial_process(j, lCtx, p.second, "second");
 
 			rapidjson::Value key;
 			key.SetString(memberName.c_str(), memberName.length(), allocator);
@@ -434,8 +434,8 @@ struct RsTypeSerializer
 			RsGenericSerializer::SerializeContext lCtx(nullptr, 0, ctx.mFlags);
 			lCtx.mJson.SetObject() = v; // Beware of move semantic!!
 
-			serial_process(j, ctx, p.first, "first");
-			serial_process(j, ctx, p.second, "second");
+			serial_process(j, lCtx, p.first, "first");
+			serial_process(j, lCtx, p.second, "second");
 			ctx.mOk &= lCtx.mOk;
 
 			break;
@@ -532,7 +532,7 @@ struct RsTypeSerializer
 			for(uint32_t i=0; i<n; ++i)
 			{
 				T tmp;
-				serial_process<T>(j,ctx,tmp,memberName);
+				serial_process(j,ctx,tmp,memberName);
 				v.insert(tmp);
 			}
 			break;
@@ -590,7 +590,7 @@ struct RsTypeSerializer
 			for(uint32_t i=0;i<n;++i)
 			{
 				T tmp;
-				serial_process<T>(j,ctx,tmp,memberName);
+				serial_process(j,ctx,tmp,memberName);
 				v.push_back(tmp);
 			}
 			break;
