@@ -143,6 +143,7 @@ signals:
 	void newMessage(ChatWidget*);
 	void statusChanged(int);
 	void textBrowserAskContextMenu(QMenu* contextMnu, QString anchorForPosition, const QPoint point);
+    void alreadySend(ChatWidget*);
 
 protected:
 	bool eventFilter(QObject *obj, QEvent *event);

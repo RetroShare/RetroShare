@@ -39,6 +39,7 @@
 #define COLUMN_TOPIC      2
 #define COLUMN_SUBSCRIBED 3
 #define COLUMN_COUNT      4
+#define COLUMN_RECENT_TIME      5
 #define COLUMN_DATA       0
 
 #define ROLE_SORT          Qt::UserRole
@@ -80,6 +81,10 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WindowFlags flags)
 	QObject::connect( NotifyQt::getInstance(), SIGNAL(chatLobbyEvent(qulonglong,int,const RsGxsId&,const QString&)), this, SLOT(displayChatLobbyEvent(qulonglong,int,const RsGxsId&,const QString&)));
 	QObject::connect( NotifyQt::getInstance(), SIGNAL(chatLobbyInviteReceived()), this, SLOT(readChatLobbyInvites()));
 
+    QObject::connect( NotifyQt::getInstance(), SIGNAL(alreadySendChat(const ChatId&, uint)), this, SLOT(updateRecentTime(const ChatId&, uint)));
+    QObject::connect( NotifyQt::getInstance(), SIGNAL(newChatMessageReceive(const ChatId&, uint)), this, SLOT(updateRecentTime(const ChatId&, uint)));
+
+
 	QObject::connect( ui.lobbyTreeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(lobbyTreeWidgetCustomPopupMenu(QPoint)));
 	QObject::connect( ui.lobbyTreeWidget, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)), this, SLOT(itemDoubleClicked(QTreeWidgetItem*,int)));
 	QObject::connect( ui.lobbyTreeWidget, SIGNAL(itemSelectionChanged()), this, SLOT(updateCurrentLobby()));
@@ -90,9 +95,12 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WindowFlags flags)
 
 	compareRole = new RSTreeWidgetItemCompareRole;
 	compareRole->setRole(COLUMN_NAME, ROLE_SORT);
+    compareRole->setRole(COLUMN_RECENT_TIME, ROLE_SORT);
 
 	ui.lobbyTreeWidget->setColumnCount(COLUMN_COUNT);
 	ui.lobbyTreeWidget->sortItems(COLUMN_NAME, Qt::AscendingOrder);
+
+    ui.lobbyTreeWidget->sortItems(COLUMN_RECENT_TIME, Qt::DescendingOrder);
 
 	ui.lobbyTreeWidget->setContextMenuPolicy(Qt::CustomContextMenu) ;
 
@@ -101,16 +109,19 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WindowFlags flags)
 	headerItem->setText(COLUMN_USER_COUNT, tr("Count"));
 	headerItem->setText(COLUMN_TOPIC, tr("Topic"));
 	headerItem->setText(COLUMN_SUBSCRIBED, tr("Subscribed"));
+    headerItem->setText(COLUMN_RECENT_TIME, tr("Recent time"));
 	headerItem->setTextAlignment(COLUMN_NAME, Qt::AlignHCenter | Qt::AlignVCenter);
 	headerItem->setTextAlignment(COLUMN_TOPIC, Qt::AlignHCenter | Qt::AlignVCenter);
 	headerItem->setTextAlignment(COLUMN_USER_COUNT, Qt::AlignHCenter | Qt::AlignVCenter);
 	headerItem->setTextAlignment(COLUMN_SUBSCRIBED, Qt::AlignHCenter | Qt::AlignVCenter);
+    headerItem->setTextAlignment(COLUMN_RECENT_TIME, Qt::AlignHCenter | Qt::AlignVCenter);
 
 	QHeaderView *header = ui.lobbyTreeWidget->header();
 	QHeaderView_setSectionResizeModeColumn(header, COLUMN_NAME, QHeaderView::Interactive);
 	QHeaderView_setSectionResizeModeColumn(header, COLUMN_USER_COUNT, QHeaderView::Interactive);
 	QHeaderView_setSectionResizeModeColumn(header, COLUMN_TOPIC, QHeaderView::Interactive);
 	QHeaderView_setSectionResizeModeColumn(header, COLUMN_SUBSCRIBED, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeModeColumn(header, COLUMN_RECENT_TIME, QHeaderView::Interactive);
 
         privateSubLobbyItem = new RSTreeWidgetItem(compareRole, TYPE_FOLDER);
         privateSubLobbyItem->setText(COLUMN_NAME, tr("Private Subscribed chat rooms"));
@@ -155,6 +166,7 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WindowFlags flags)
 	ui.lobbyTreeWidget->setColumnHidden(COLUMN_USER_COUNT,true) ;
 	ui.lobbyTreeWidget->setColumnHidden(COLUMN_TOPIC,true) ;
 	ui.lobbyTreeWidget->setColumnHidden(COLUMN_SUBSCRIBED,true) ;
+    ui.lobbyTreeWidget->setColumnHidden(COLUMN_RECENT_TIME,true) ;
 	ui.lobbyTreeWidget->setSortingEnabled(true) ;
 
     	float fact = QFontMetricsF(font()).height()/14.0f;
@@ -447,7 +459,8 @@ void ChatLobbyWidget::addOne2OneChatPage(PopupChatDialog *d)
 		QTreeWidgetItem *item =  new RSTreeWidgetItem(compareRole, TYPE_ONE2ONE);
 		RsPgpId pgpId = rsPeers->getGPGId(d->chatId().toPeerId());
 		std::string nickname = rsPeers->getGPGName(pgpId);
-		updateContactItem(ui.lobbyTreeWidget, item, nickname, d->chatId().toPeerId().toStdString() );
+        uint current_time = QDateTime::currentDateTime().toTime_t();
+        updateContactItem(ui.lobbyTreeWidget, item, nickname, d->chatId().toPeerId().toStdString(), current_time );
 
 		//add new contact item and select it
 		chatContactItem->addChild(item);
@@ -461,8 +474,12 @@ void ChatLobbyWidget::addOne2OneChatPage(PopupChatDialog *d)
 		  }
 		ui.stackedWidget->addWidget(d) ;
 		_chatOne2One_infos[d->chatId().toPeerId().toStdString()].dialog = d ;
-		_chatOne2One_infos[d->chatId().toPeerId().toStdString()].last_typing_event = QDateTime::currentDateTime().toTime_t();
-        }
+        _chatOne2One_infos[d->chatId().toPeerId().toStdString()].last_typing_event = current_time; //QDateTime::currentDateTime().toTime_t();
+
+        ui.lobbyTreeWidget->sortItems(COLUMN_RECENT_TIME, Qt::DescendingOrder);
+        std::cerr << "current time for this contact is " << current_time;
+
+   }
 
 
 }
@@ -1019,7 +1036,26 @@ void ChatLobbyWidget::copyItemLink()
 		QList<RetroShareLink> urls;
 		urls.push_back(link);
 		RSLinkClipboard::copyLinks(urls);
-	}
+    }
+}
+
+void ChatLobbyWidget::updateRecentTime(const ChatId & chatId, uint current_time)
+{
+       // std::cerr << "current time for this contact is " << current_time;
+       std::cerr << "we want to update the recent time now current time is " << current_time << "\n";
+       QTreeWidgetItem *item = NULL;
+       if (chatId.isLobbyId())
+       {
+           item = getTreeWidgetItem(chatId.toLobbyId());
+       }
+       else if (chatId.isPeerId())
+       {
+           item = getTreeWidgetItemForChatId(chatId);
+       }
+       if (item)
+            item->setData(COLUMN_RECENT_TIME, ROLE_SORT,current_time);
+
+       ui.lobbyTreeWidget->sortItems(COLUMN_RECENT_TIME, Qt::DescendingOrder);
 }
 
 QTreeWidgetItem *ChatLobbyWidget::getTreeWidgetItemForChatId(ChatId id)
@@ -1469,12 +1505,12 @@ void ChatLobbyWidget::openOne2OneChat(std::string rsId, std::string nickname)
     }
 }
 
-void ChatLobbyWidget::updateContactItem(QTreeWidget *treeWidget, QTreeWidgetItem *item, const std::string &nickname, const std::string &rsId)
+void ChatLobbyWidget::updateContactItem(QTreeWidget *treeWidget, QTreeWidgetItem *item, const std::string &nickname, const std::string &rsId, uint current_time)
 {
       item->setText(COLUMN_NAME, QString::fromUtf8(nickname.c_str()));
       item->setData(COLUMN_NAME, ROLE_SORT, QString::fromUtf8(nickname.c_str()));
 
       item->setData(COLUMN_DATA, ROLE_ID, QString::fromUtf8(rsId.c_str()));
-
+      item->setData(COLUMN_RECENT_TIME, ROLE_SORT,current_time);
 }
 
