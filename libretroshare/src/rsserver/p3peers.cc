@@ -1213,17 +1213,27 @@ std::string p3Peers::GetRetroshareInvite(
 
 //===========================================================================
 
-bool 	p3Peers::loadCertificateFromString(const std::string& cert, RsPeerId& ssl_id, RsPgpId& gpg_id, std::string& error_string)
+bool p3Peers::loadCertificateFromString(
+        const std::string& cert, RsPeerId& ssl_id,
+        RsPgpId& gpg_id, std::string& error_string )
 {
-	RsCertificate crt(cert) ;
-	RsPgpId gpgid ;
+	RsCertificate crt;
+	uint32_t errNum = 0;
+	if(!crt.initializeFromString(cert,errNum))
+	{
+		error_string = "RsCertificate failed with errno: "
+		        + std::to_string(errNum) + " parsing: " + cert;
+		return false;
+	}
 
-	bool res = AuthGPG::getAuthGPG()->LoadCertificateFromString(crt.armouredPGPKey(),gpgid,error_string) ;
+	RsPgpId gpgid;
+	bool res = AuthGPG::getAuthGPG()->
+	        LoadCertificateFromString(crt.armouredPGPKey(), gpgid,error_string);
 
 	gpg_id = gpgid;
-	ssl_id = crt.sslid() ;
+	ssl_id = crt.sslid();
 
-	return res ;
+	return res;
 }
 
 bool p3Peers::loadDetailsFromStringCert( const std::string &certstr,
