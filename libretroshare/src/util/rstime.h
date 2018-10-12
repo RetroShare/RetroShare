@@ -22,7 +22,11 @@
 #pragma once
 
 #include <string>
+#ifdef WINDOWS_SYS
+#include <stdint.h>
+#else
 #include <cstdint>
+#endif
 #include <ctime> // Added for comfort of users of this util header
 
 /**
