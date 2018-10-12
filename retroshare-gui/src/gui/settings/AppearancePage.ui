@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1170</width>
-    <height>897</height>
+    <height>778</height>
    </rect>
   </property>
   <property name="contextMenuPolicy">
@@ -184,8 +184,120 @@
      </property>
     </spacer>
    </item>
+   <item row="7" column="0">
+    <widget class="QGroupBox" name="grpStatus">
+     <property name="title">
+      <string>Status Bar</string>
+     </property>
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+     <layout class="QGridLayout" name="grpStatusGLayout">
+      <item row="4" column="1">
+       <widget class="QCheckBox" name="checkBoxShowToasterDisable">
+        <property name="text">
+         <string>Show Toaster Disable</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0">
+       <widget class="QCheckBox" name="checkBoxShowSoundStatus">
+        <property name="text">
+         <string>Show Sound Status</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QCheckBox" name="checkBoxShowRateStatus">
+        <property name="text">
+         <string>Show Network Rate Status</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QCheckBox" name="checkBoxShowDiscStatus">
+        <property name="text">
+         <string>Show Discovery Status</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QCheckBox" name="checkBoxShowHashingStatus">
+        <property name="text">
+         <string>Show Hashing Status</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QCheckBox" name="checkBoxShowPeerStatus">
+        <property name="text">
+         <string>Show Peer Status</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QCheckBox" name="checkBoxShowStatusStatus">
+        <property name="text">
+         <string>Show Status ComboBox</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QCheckBox" name="checkBoxStatusCompactMode">
+        <property name="toolTip">
+         <string>Remove surplus text in status bar.</string>
+        </property>
+        <property name="text">
+         <string>Compact Mode</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QCheckBox" name="checkBoxDisableSysTrayToolTip">
+        <property name="text">
+         <string>Disable SysTray ToolTip</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="2">
+       <widget class="QCheckBox" name="checkBoxShowNATStatus">
+        <property name="text">
+         <string>Show NAT Status</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2">
+       <widget class="QCheckBox" name="checkBoxShowOpModeStatus">
+        <property name="text">
+         <string>Show Operating Mode Status</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="2">
+       <widget class="QCheckBox" name="checkBoxShowDHTStatus">
+        <property name="text">
+         <string>Show DHT Status</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QCheckBox" name="checkBoxShowSystrayOnStatus">
+        <property name="text">
+         <string>Show SysTray on Status Bar</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
    <item row="6" column="0">
     <widget class="QGroupBox" name="grpToolBar">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
      <property name="minimumSize">
       <size>
        <width>0</width>
@@ -326,116 +438,12 @@
      </layout>
     </widget>
    </item>
-   <item row="7" column="0">
-    <widget class="QGroupBox" name="grpStatus">
-     <property name="title">
-      <string>Status Bar</string>
-     </property>
-     <property name="checkable">
-      <bool>true</bool>
-     </property>
-     <property name="checked">
-      <bool>true</bool>
-     </property>
-     <layout class="QGridLayout" name="grpStatusGLayout">
-      <item row="4" column="1">
-       <widget class="QCheckBox" name="checkBoxShowToasterDisable">
-        <property name="text">
-         <string>Show Toaster Disable</string>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="0">
-       <widget class="QCheckBox" name="checkBoxShowSoundStatus">
-        <property name="text">
-         <string>Show Sound Status</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="1">
-       <widget class="QCheckBox" name="checkBoxShowRateStatus">
-        <property name="text">
-         <string>Show Network Rate Status</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="0">
-       <widget class="QCheckBox" name="checkBoxShowDiscStatus">
-        <property name="text">
-         <string>Show Discovery Status</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1">
-       <widget class="QCheckBox" name="checkBoxShowHashingStatus">
-        <property name="text">
-         <string>Show Hashing Status</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QCheckBox" name="checkBoxShowPeerStatus">
-        <property name="text">
-         <string>Show Peer Status</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QCheckBox" name="checkBoxShowStatusStatus">
-        <property name="text">
-         <string>Show Status ComboBox</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="0">
-       <widget class="QCheckBox" name="checkBoxStatusCompactMode">
-        <property name="toolTip">
-         <string>Remove surplus text in status bar.</string>
-        </property>
-        <property name="text">
-         <string>Compact Mode</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QCheckBox" name="checkBoxDisableSysTrayToolTip">
-        <property name="text">
-         <string>Disable SysTray ToolTip</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="2">
-       <widget class="QCheckBox" name="checkBoxShowNATStatus">
-        <property name="text">
-         <string>Show NAT Status</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="2">
-       <widget class="QCheckBox" name="checkBoxShowOpModeStatus">
-        <property name="text">
-         <string>Show Operating Mode Status</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="2">
-       <widget class="QCheckBox" name="checkBoxShowDHTStatus">
-        <property name="text">
-         <string>Show DHT Status</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0">
-       <widget class="QCheckBox" name="checkBoxShowSystrayOnStatus">
-        <property name="text">
-         <string>Show SysTray on Status Bar</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
   </layout>
+  <zorder>grpToolBar</zorder>
+  <zorder>grpLanguage</zorder>
+  <zorder>grpStyle</zorder>
+  <zorder>grpStyleSheet</zorder>
+  <zorder>grpStatus</zorder>
  </widget>
  <resources/>
  <connections/>

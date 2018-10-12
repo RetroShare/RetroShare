@@ -26,7 +26,7 @@
 
 #include "ui_FriendsDialog.h"
 
-#define IMAGE_NETWORK         	":/icons/png/network.png"
+#define IMAGE_NETWORK         	":/home/img/face_icon/group-profile-users_128.png"  // replace icon
 
 class QAction;
 class NetworkDialog;
@@ -57,7 +57,7 @@ public:
     ~FriendsDialog ();
 
     virtual QIcon iconPixmap() const { return QIcon(IMAGE_NETWORK) ; } //MainPage
-	virtual QString pageName() const { return tr("Network") ; } //MainPage
+        virtual QString pageName() const { return tr("Contacts") ; } //MainPage
     virtual QString helpText() const { return ""; } //MainPage
 
     virtual UserNotify *getUserNotify(QObject *parent);
@@ -95,6 +95,8 @@ private slots:
     void clearChatNotify();
 
     //void newsFeedChanged(int count);
+
+    void on_addContactButton_clicked();
 
 signals:
     void notifyGroupChat(const QString&,const QString&) ;

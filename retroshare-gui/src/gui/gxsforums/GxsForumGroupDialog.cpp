@@ -96,7 +96,7 @@ void GxsForumGroupDialog::initUi()
 
 QPixmap GxsForumGroupDialog::serviceImage()
 {
-	return QPixmap(":/icons/png/forums.png");
+    return QPixmap(":/home/img/face_icon/bull-horn-announcer_128.png");
 }
 
 bool GxsForumGroupDialog::service_CreateGroup(uint32_t &token, const RsGroupMetaData &meta)

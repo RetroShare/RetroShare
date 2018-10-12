@@ -23,9 +23,9 @@ HeaderFrame {
 
 /* Customize the toolbar. */
 QToolBar#toolBarPage {
-	background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-								   stop: 0 #F55332, stop: 0.5 #C82B18, 
-								   stop: 0.51 #B71502, stop: 1 #900907);
+        background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                                                   stop: 0 #F55332, stop: 0.5 #C82B18,
+                                                                   stop: 0.51 #B71502, stop: 1 #900907);
     border: 1px solid #7A3C37;
 
 }

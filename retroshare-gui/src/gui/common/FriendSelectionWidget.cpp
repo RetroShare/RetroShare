@@ -709,7 +709,7 @@ void FriendSelectionWidget::peerStatusChanged(const QString& peerId, int status)
 	if(RsAutoUpdatePage::eventsLocked())
 		return ;
 
-    RsPeerId peerid(peerId.toStdString()) ;
+	RsPeerId peerid(peerId.toStdString()) ;
 	QString gpgId;
 	int gpgStatus = RS_STATUS_OFFLINE;
 

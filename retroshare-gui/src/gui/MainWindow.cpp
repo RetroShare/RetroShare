@@ -118,8 +118,8 @@
 #include <iomanip>
 #include <unistd.h>
 
-#define IMAGE_QUIT              ":/icons/png/exit.png"
-#define IMAGE_PREFERENCES       ":/icons/png/options.png"
+#define IMAGE_QUIT              ":/home/img/face_icon/power-button-off.png"
+#define IMAGE_PREFERENCES       ":/home/img/face_icon/cog-wheel-silhouette_128.png"
 #define IMAGE_ABOUT             ":/icons/png/info.png"
 #define IMAGE_ADDFRIEND         ":/icons/png/invite.png"
 #define IMAGE_RETROSHARE        ":/app/images/icon.png"             //D replace :/icons/logo_128.png
@@ -392,26 +392,30 @@ void MainWindow::initStackedPage()
 
   //19 Sep 2018 - meiyousixin - change the order: Chat -> Contact -> Mail -> ... -> Network -> Profile
   addPage(chatLobbyDialog = new ChatLobbyWidget(ui->stackPages), grp, &notify);
-  addPage(idDialog = new IdDialog(ui->stackPages), grp, &notify);
+  addPage(friendsDialog = new FriendsDialog(ui->stackPages), grp, &notify);
 
   addPage(messagesDialog = new MessagesDialog(ui->stackPages), grp, &notify);
   addPage(transfersDialog = new TransfersDialog(ui->stackPages), grp, &notify);
-  addPage(gxschannelDialog = new GxsChannelDialog(ui->stackPages), grp, &notify);
+  //meiyousixin - remove channels and links
+  //addPage(gxschannelDialog = new GxsChannelDialog(ui->stackPages), grp, &notify);
   addPage(gxsforumDialog = new GxsForumsDialog(ui->stackPages), grp, &notify);
-  addPage(postedDialog = new PostedDialog(ui->stackPages), grp, &notify);
+  //addPage(postedDialog = new PostedDialog(ui->stackPages), grp, &notify);
 
-  addPage(friendsDialog = new FriendsDialog(ui->stackPages), grp, &notify);
-  addPage(homePage = new HomePage(ui->stackPages), grp, NULL);
+  //meiyousixin - remove Identities dialogs for simplicity!!!
+  //addPage(idDialog = new IdDialog(ui->stackPages), grp, &notify);
 
   #ifdef RS_USE_NEW_PEOPLE_DIALOG
   PeopleDialog *peopleDialog = NULL;
   addPage(peopleDialog = new PeopleDialog(ui->stackPages), grp, &notify);
   #endif
-  addPage(newsFeed = new NewsFeed(ui->stackPages), grp, &notify);
+  //meiyousixin - remove Logs tab for simplicity!!!
+  //addPage(newsFeed = new NewsFeed(ui->stackPages), grp, &notify);
 #ifdef RS_USE_WIKI
   WikiDialog *wikiDialog = NULL;
   addPage(wikiDialog = new WikiDialog(ui->stackPages), grp, &notify);
 #endif
+
+  addPage(homePage = new HomePage(ui->stackPages), grp, NULL);
 
  std::cerr << "Looking for interfaces in existing plugins:" << std::endl;
  for(int i = 0;i<rsPlugins->nbPlugins();++i)
@@ -1423,8 +1427,11 @@ void MainWindow::statusChangedComboBox(int index)
 /*new setting*/
 void MainWindow::settingsChanged()
 {
-    ui->toolBarPage->setStyleSheet(" QToolBar {background: rgb(43, 164, 220) }"); // d: Set color of toolbar
-    ui->toolBarAction->setStyleSheet(" QToolBar {background: rgb(43, 164, 220) }"); // d: Set color of toolbar
+    ui->toolBarPage->setStyleSheet("QToolBar {background: rgb(43, 164, 220)}""QToolButton {background-color: rgb(20, 141, 196); color: rgb(255, 255, 255)}"); // d: Set color of toolbar
+    ui->toolBarAction->setStyleSheet("QToolBar {background: rgb(43, 164, 220)}""QToolButton {background-color: rgb(20, 141, 196); color: rgb(255, 255, 255)}"); // d: Set color of toolbar
+
+
+
     ui->toolBarPage->setVisible(Settings->getPageButtonLoc());
 	ui->toolBarAction->setVisible(Settings->getActionButtonLoc());
 	ui->listWidget->setVisible(!Settings->getPageButtonLoc() || !Settings->getActionButtonLoc());
@@ -1436,12 +1443,14 @@ void MainWindow::settingsChanged()
 		}
 	}
     int toolSize = Settings->getToolButtonSize();
-	ui->toolBarPage->setToolButtonStyle(Settings->getToolButtonStyle());
-	ui->toolBarPage->setIconSize(QSize(toolSize,toolSize));
+    ui->toolBarPage->setToolButtonStyle(Settings->getToolButtonStyle());
+    //ui->toolBarPage->setIconSize(QSize(toolSize,toolSize));
+    ui->toolBarPage->setIconSize(QSize(128,toolSize));
 	ui->toolBarAction->setToolButtonStyle(Settings->getToolButtonStyle());
-	ui->toolBarAction->setIconSize(QSize(toolSize,toolSize));
+    //ui->toolBarAction->setIconSize(QSize(toolSize,toolSize));
+    ui->toolBarAction->setIconSize(QSize(128,toolSize));
 	int itemSize = Settings->getListItemIconSize();
-	ui->listWidget->setIconSize(QSize(itemSize,itemSize));
+    ui->listWidget->setIconSize(QSize(itemSize,itemSize));
 }
 
 void MainWindow::externalLinkActivated(const QUrl &url)

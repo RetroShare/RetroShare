@@ -453,9 +453,9 @@ static bool findTagIcon(int tag_class, int /*tag_type*/, QIcon &icon)
  * Bring the source code from this adaptation:
  * http://francisshanahan.com/identicon5/test.html
  */
-QImage GxsIdDetails::makeDefaultIcon(const RsGxsId& id)
+    QImage GxsIdDetails::makeDefaultIcon(const RsGxsId& id)
 {
-    return  drawIdentIcon(QString::fromStdString(id.toStdString()),64*3, true);
+    return  QImage(":/app/images/unseen128.png");//update Default Icon //  drawIdentIcon(QString::fromStdString(id.toStdString()),64*3, true);
 }
 
 /**
@@ -775,69 +775,75 @@ void GxsIdDetails::drawRotatedPolygon( QPixmap *pixmap,
  * @param rotate: If the shapes could be rotated
  * @return QImage of computed hash
  */
+//Change **********************************************************************
+//Unseen Change **********************************************************************
+
 QImage GxsIdDetails::drawIdentIcon( QString hash, quint16 width, bool rotate)
 {
-	bool ok;
-	quint8 csh = hash.mid(0, 1).toInt(&ok,16);// Corner sprite shape
-	quint8 ssh = hash.mid(1, 1).toInt(&ok, 16); // Side sprite shape
-	quint8 xsh = hash.mid(2, 1).toInt(&ok, 16) & 7; // Center sprite shape
+    bool ok;
+    quint8 csh = hash.mid(0, 1).toInt(&ok,16);// Corner sprite shape
+    quint8 ssh = hash.mid(1, 1).toInt(&ok, 16); // Side sprite shape
+    quint8 xsh = hash.mid(2, 1).toInt(&ok, 16) & 7; // Center sprite shape
 
-	qreal halfPi = 90;// M_PI/2;
-	qreal cro = rotate ? halfPi * (hash.mid(3, 1).toInt(&ok, 16) & 3) : 0; // Corner sprite rotation
-	qreal sro = rotate ? halfPi * (hash.mid(4, 1).toInt(&ok, 16) & 3) : 0; // Side sprite rotation
-	quint8 xbg = hash.mid(5, 1).toInt(&ok, 16) % 2; // Center sprite background
+    qreal halfPi = 90;// M_PI/2;
+    qreal cro = rotate ? halfPi * (hash.mid(3, 1).toInt(&ok, 16) & 3) : 0; // Corner sprite rotation
+    qreal sro = rotate ? halfPi * (hash.mid(4, 1).toInt(&ok, 16) & 3) : 0; // Side sprite rotation
+    quint8 xbg = hash.mid(5, 1).toInt(&ok, 16) % 2; // Center sprite background
 
-	// Corner sprite foreground color
-	quint8 cfr = hash.mid(6, 2).toInt(&ok, 16);
-	quint8 cfg = hash.mid(8, 2).toInt(&ok, 16);
-	quint8 cfb = hash.mid(10, 2).toInt(&ok, 16);
+    // Corner sprite foreground color
+    quint8 cfr = hash.mid(6, 2).toInt(&ok, 16);
+    quint8 cfg = hash.mid(8, 2).toInt(&ok, 16);
+    quint8 cfb = hash.mid(10, 2).toInt(&ok, 16);
 
 	// Side sprite foreground color
-	quint8 sfr = hash.mid(12, 2).toInt(&ok, 16);
-	quint8 sfg = hash.mid(14, 2).toInt(&ok, 16);
-	quint8 sfb = hash.mid(16, 2).toInt(&ok, 16);
+    quint8 sfr = hash.mid(12, 2).toInt(&ok, 16);
+    quint8 sfg = hash.mid(14, 2).toInt(&ok, 16);
+    quint8 sfb = hash.mid(16, 2).toInt(&ok, 16);
 
 	// Final angle of rotation
 	// not used
 	//int angle = hash.mid(18, 2).toInt(&ok, 16);
 
 	/* Size of each sprite */
-	quint16 size = width / 3;
-	quint16 totalsize = width;
+    quint16 size = width / 3;
+    quint16 totalsize = width;
 
-	/// start with blank 3x3 identicon
-	QPixmap pixmap = QPixmap(totalsize, totalsize);
+    /// start with blank 3x3 identicon
+    QPixmap pixmap = QPixmap(totalsize, totalsize);
     pixmap.fill(QColor::fromRgb(230,230,230));
 
 	// Generate corner sprites
-	QList<qreal> corner = getSprite(csh, size);
-	QColor fillCorner = QColor( cfr, cfg, cfb );
-	drawRotatedPolygon(&pixmap, corner, 0, 0, cro, 0, size, fillCorner);
-	drawRotatedPolygon(&pixmap, corner, totalsize, 0, cro, 90, size, fillCorner);
-	drawRotatedPolygon(&pixmap, corner, totalsize, totalsize, cro, 180, size, fillCorner);
-	drawRotatedPolygon(&pixmap, corner, 0, totalsize, cro, 270, size, fillCorner);
+    QList<qreal> corner = getSprite(csh, size);
+    QColor fillCorner = QColor( cfr, cfg, cfb );
+    drawRotatedPolygon(&pixmap, corner, 0, 0, cro, 0, size, fillCorner);
+    drawRotatedPolygon(&pixmap, corner, totalsize, 0, cro, 90, size, fillCorner);
+    drawRotatedPolygon(&pixmap, corner, totalsize, totalsize, cro, 180, size, fillCorner);
+    drawRotatedPolygon(&pixmap, corner, 0, totalsize, cro, 270, size, fillCorner);
 
 	// Draw sides
-	QList<qreal> side = getSprite(ssh, size);
-	QColor fillSide = QColor( sfr, sfg, sfb);
-	drawRotatedPolygon(&pixmap, side, 0, size, sro, 0, size, fillSide);
-	drawRotatedPolygon(&pixmap, side, 2 * size, 0, sro, 90, size, fillSide);
-	drawRotatedPolygon(&pixmap, side, 3 * size, 2 * size, sro, 180, size, fillSide);
-	drawRotatedPolygon(&pixmap, side, size, 3 * size, sro, 270, size, fillSide);
+    QList<qreal> side = getSprite(ssh, size);
+    QColor fillSide = QColor( sfr, sfg, sfb);
+    drawRotatedPolygon(&pixmap, side, 0, size, sro, 0, size, fillSide);
+    drawRotatedPolygon(&pixmap, side, 2 * size, 0, sro, 90, size, fillSide);
+    drawRotatedPolygon(&pixmap, side, 3 * size, 2 * size, sro, 180, size, fillSide);
+    drawRotatedPolygon(&pixmap, side, size, 3 * size, sro, 270, size, fillSide);
 
 	// Draw center
-	QList<qreal> center = getCenter(xsh, size);
+    QList<qreal> center = getCenter(xsh, size);
 	// Make sure there's enough contrast before we use background color of side sprite
-	QColor fillCenter;
-	if (xbg > 0 && (abs(cfr - sfr) > 127 || abs(cfg - sfg) > 127 || abs(cfb - sfb) > 127)) {
-		fillCenter = QColor( sfr, sfg, sfb);
-	} else {
-		fillCenter = QColor( cfr, cfg, cfb);
-	}
-	drawRotatedPolygon(&pixmap, center, size, size, 0, 0, size, fillCenter);
+    QColor fillCenter;
+    if (xbg > 0 && (abs(cfr - sfr) > 127 || abs(cfg - sfg) > 127 || abs(cfb - sfb) > 127)) {
+        fillCenter = QColor( sfr, sfg, sfb);
+    } else {
+        fillCenter = QColor( cfr, cfg, cfb);
+    }
+    drawRotatedPolygon(&pixmap, center, size, size, 0, 0, size, fillCenter);
 
-	return pixmap.toImage();
-}
+    return pixmap.toImage();
+  }
+    //Change***********************************************************************
+
+    //Unseen Change***********************************************************************
 
 //static bool CreateIdIcon(const RsGxsId &id, QIcon &idIcon)
 //{

@@ -69,7 +69,7 @@
 #define IMAGE_OPENFILE       ":/images/fileopen.png"
 #define IMAGE_LIBRARY        ":/images/library.png"
 #define IMAGE_CHANNEL        ":/images/channels32.png"
-#define IMAGE_FORUMS         ":/icons/png/forums.png"
+#define IMAGE_FORUMS         ":/home/img/face_icon/bull-horn-announcer_128.png"
 #define IMAGE_COLLCREATE     ":/images/library_add.png"
 #define IMAGE_COLLMODIF      ":/images/library_edit.png"
 #define IMAGE_COLLVIEW       ":/images/library_view.png"

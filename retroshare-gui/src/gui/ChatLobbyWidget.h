@@ -12,7 +12,7 @@
 #include <QAbstractButton>
 #include <QTreeWidget>
 
-#define IMAGE_CHATLOBBY			    ":/icons/png/chat-lobbies.png"
+#define IMAGE_CHATLOBBY			    ":/home/img/face_icon/un_chat_icon_x_128.png"
 
 #define CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC  1
 #define CHAT_LOBBY_PRIVACY_LEVEL_PRIVATE 2
@@ -65,7 +65,7 @@ public:
 	void openOne2OneChat(std::string rsId, std::string nickname);
 	void addOne2OneChatPage(PopupChatDialog *d);
 	void setCurrentOne2OneChatPage(PopupChatDialog *d);
-	void updateContactItem(QTreeWidget *treeWidget, QTreeWidgetItem *item, const std::string &nickname, const std::string &rsId);
+    void updateContactItem(QTreeWidget *treeWidget, QTreeWidgetItem *item, const std::string &nickname, const std::string &rsId, uint current_time);
 	void fromGpgIdToChatId(const RsPgpId &gpgId,  ChatId &chatId);
 
 signals:
@@ -93,6 +93,7 @@ protected slots:
 	void updatePeerLeaving(ChatLobbyId);
 	void autoSubscribeItem();
 	void copyItemLink();
+    void updateRecentTime(const ChatId&, uint);
 
 private slots:
 	void filterColumnChanged(int);
