@@ -26,9 +26,6 @@
 #include <stdexcept>
 #include <stdlib.h>
 #include <assert.h>
-#ifdef P3TURTLE_DEBUG
-#include <assert.h>
-#endif
 
 #include "rsserver/p3face.h"
 #include "crypto/rscrypto.h"
@@ -930,6 +927,9 @@ void p3turtle::handleSearchRequest(RsTurtleSearchRequestItem *item)
             (*it)->request_id = item->request_id ;
             (*it)->PeerId(item->PeerId()) ;
 
+#ifdef P3TURTLE_DEBUG
+			std::cerr << "  sending back search result for request " << item->request_id << " to back to peer " << item->PeerId() << std::endl ;
+#endif
             sendItem(*it) ;
         }
 	}
@@ -1174,7 +1174,8 @@ void p3turtle::handleSearchResult(RsTurtleSearchResultItem *item)
 
 			if(it->second.result_count >= it->second.max_allowed_hits)
 			{
-				std::cerr << "(WW) exceeded turtle search result to forward. Req=" << std::hex << item->request_id << std::dec << ": dropping item with " << n << " elements." << std::endl;
+				std::cerr << "(WW) exceeded turtle search result to forward. Req=" << std::hex << item->request_id << std::dec
+				          << " already forwarded: " << it->second.result_count << ", max_allowed: " << it->second.max_allowed_hits << ": dropping item with " << n << " elements." << std::endl;
 				return ;
 			}
 
@@ -2099,7 +2100,7 @@ void p3turtle::monitorTunnels(const RsFileHash& hash,RsTurtleClientService *clie
 		if(_hashes_to_remove.erase(hash) > 0)
 		{
 #ifdef P3TURTLE_DEBUG
-			std::cerr << "p3turtle: File hash " << hash << " Was scheduled for removal. Canceling the removal." << std::endl ;
+			TURTLE_DEBUG() << "p3turtle: File hash " << hash << " Was scheduled for removal. Canceling the removal." << std::endl ;
 #endif
 		}
 
@@ -2108,12 +2109,12 @@ void p3turtle::monitorTunnels(const RsFileHash& hash,RsTurtleClientService *clie
 		if(_incoming_file_hashes.find(hash) != _incoming_file_hashes.end())	// download already asked.
 		{
 #ifdef P3TURTLE_DEBUG
-			std::cerr << "p3turtle: File hash " << hash << " already in pool. Returning." << std::endl ;
+			TURTLE_DEBUG() << "p3turtle: File hash " << hash << " already in pool. Returning." << std::endl ;
 #endif
 			return ;
 		}
 #ifdef P3TURTLE_DEBUG
-		std::cerr << "p3turtle: Received order for turtle download fo hash " << hash << std::endl ;
+		TURTLE_DEBUG() << "p3turtle: Received order for turtle download fo hash " << hash << std::endl ;
 #endif
 
 		// No tunnels at start, but this triggers digging new tunnels.
@@ -2128,10 +2129,6 @@ void p3turtle::monitorTunnels(const RsFileHash& hash,RsTurtleClientService *clie
 
 	IndicateConfigChanged() ;	// initiates saving of handled hashes.
 }
-
-#ifdef P3TURTLE_DEBUG
-	std::cerr << "  Returning result for search request " << HEX_PRINT(item->request_id) << " upwards." << std::endl ;
-#endif
 
 
 //    RsTurtleGxsSearchResultGroupSummaryItem *gxs_sr_gs = dynamic_cast<RsTurtleGxsSearchResultGroupSummaryItem*>(item) ;
