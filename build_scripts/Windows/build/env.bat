@@ -1,7 +1,6 @@
 :: Process commandline parameter
 set ParamRelease=0
 set ParamDebug=0
-set ParamVersion=0
 set ParamAutologin=0
 set ParamPlugins=0
 set ParamTor=0
@@ -13,8 +12,6 @@ if "%~1" NEQ "" (
 			set ParamRelease=1
 		) else if "%%~a"=="debug" (
 			set ParamDebug=1
-		) else if "%%~a"=="version" (
-			set ParamVersion=1
 		) else if "%%~a"=="autologin" (
 			set ParamAutologin=1
 		) else if "%%~a"=="plugins" (
@@ -95,7 +92,6 @@ echo Mandatory parameter
 echo release^|debug      Build release or debug version
 echo.
 echo Optional parameter (need clean when changed)
-echo version            Create version information from git
 echo autologin          Build with autologin
 echo plugins            Build plugins
 echo.
