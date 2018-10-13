@@ -10,6 +10,8 @@ set WgetUrl=https://eternallybored.org/misc/wget/1.19.4/32/wget.exe
 set WgetInstall=wget.exe
 set DependsUrl=http://www.dependencywalker.com/depends22_x86.zip
 set DependsInstall=depends22_x86.zip
+set SigcheckInstall=Sigcheck.zip
+set SigcheckUrl=https://download.sysinternals.com/files/%SigcheckInstall%
 
 if not exist "%EnvToolsPath%\wget.exe" (
 	echo Download Wget installation
@@ -68,6 +70,16 @@ if not exist "%EnvToolsPath%\depends.exe" (
 	copy "%EnvTempPath%\*" "%EnvToolsPath%"
 
 	call "%ToolsPath%\remove-dir.bat" "%EnvTempPath%"
+)
+
+if not exist "%EnvToolsPath%\sigcheck.exe" (
+	%cecho% info "Download Sigcheck installation"
+
+	if not exist "%EnvDownloadPath%\%SigcheckInstall%" call "%ToolsPath%\download-file.bat" "%SigcheckUrl%" "%EnvDownloadPath%\%SigcheckInstall%"
+	if not exist "%EnvDownloadPath%\%SigcheckInstall%" %cecho% error "Cannot download Sigcheck installation" & goto error
+
+	%cecho% info "Unpack Sigcheck"
+	"%EnvSevenZipExe%" x -o"%EnvToolsPath%" "%EnvDownloadPath%\%SigcheckInstall%" sigcheck.exe
 )
 
 :exit
