@@ -22,13 +22,12 @@ set /P LibsGCCVersion=<"%BuildLibsPath%\libs\gcc-version"
 if "%LibsGCCVersion%" NEQ "%GCCVersion%" %cecho% error "Please use correct version of external libraries. (gcc %GCCVersion% ^<^> libs %LibsGCCVersion%)." & exit /B 1
 
 :: Check git executable
-if "%ParamVersion%"=="0" goto found_git
 set GitPath=
 call "%ToolsPath%\find-in-path.bat" GitPath git.exe
-if "%GitPath%" NEQ "" goto found_git
-choice /M "Git not found in PATH. Version information cannot be calculated. Do you want to proceed?"
-if %errorlevel%==2 exit /B 1
-:found_git
+if "%GitPath%"=="" (
+	%cecho% error "Git not found in PATH. Version information cannot be determined."
+	exit /B 1
+)
 
 echo.
 echo === Version
@@ -75,7 +74,7 @@ popd
 
 title %COMSPEC%
 
-if errorlevel 1 echo.& echo Build failed& echo.
+if errorlevel 1 %cecho% error "\nBuild failed\n"
 exit /B %ERRORLEVEL%
 
 :error_env

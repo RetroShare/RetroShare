@@ -4,7 +4,7 @@
 !include ifexist.nsh
 
 # Needed defines
-;!define BUILDADD ""
+;!define REVISION ""
 ;!define RELEASEDIR ""
 ;!define QTDIR ""
 ;!define MINGWDIR ""
@@ -13,10 +13,6 @@
 ;!define OUTDIR ""
 
 # Check needed defines
-!ifndef BUILDADD
-!error "BUILDADD is not defined"
-!endif
-
 !ifndef RELEASEDIR
 !error "RELEASEDIR is not defined"
 !endif
@@ -44,7 +40,7 @@
 
 # Get version from executable
 !GetDllVersion "${RELEASEDIR}\retroshare-gui\src\release\retroshare.exe" VERSION_
-!define VERSION ${VERSION_1}.${VERSION_2}.${VERSION_3}${BUILDADD}
+!define VERSION ${VERSION_1}.${VERSION_2}.${VERSION_3}
 ;!define REVISION ${VERSION_4}
 
 # Get version of Qt
@@ -52,10 +48,6 @@
 !define QTVERSION ${QTVERSION_1}.${QTVERSION_2}.${QTVERSION_3}
 
 # Check version
-!ifndef REVISION
-!error "REVISION is not defined"
-!endif
-
 !ifndef REVISION
 !error "REVISION is not defined"
 !endif
@@ -276,7 +268,7 @@ ${!defineifexist} PLUGIN_VOIP_EXISTS "${RELEASEDIR}\plugins\VOIP\release\VOIP.dl
       File "${RELEASEDIR}\plugins\FeedReader\release\FeedReader.dll"
     SectionEnd
   !endif
-  
+
   !ifdef PLUGIN_VOIP_EXISTS
     Section $(Section_Plugin_VOIP) Section_Plugin_VOIP
       SetOutPath "$DataDir\extensions6"

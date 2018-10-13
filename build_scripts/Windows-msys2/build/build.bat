@@ -49,10 +49,8 @@ echo.
 title Build - %SourceName%-%RsBuildConfig% [qmake]
 
 set RS_QMAKE_CONFIG="CONFIG+=%RsBuildConfig%"
-if "%ParamVersion%"=="1" set RS_QMAKE_CONFIG=%RS_QMAKE_CONFIG% "CONFIG+=version_detail_bash_script"
 if "%ParamAutologin%"=="1" set RS_QMAKE_CONFIG=%RS_QMAKE_CONFIG% "CONFIG+=rs_autologin"
 if "%ParamPlugins%"=="1" set RS_QMAKE_CONFIG=%RS_QMAKE_CONFIG% "CONFIG+=retroshare_plugins"
-if "%ParamRetroTor%"=="1" set RS_QMAKE_CONFIG=%RS_QMAKE_CONFIG% "CONFIG+=retrotor"
 
 call "%ToolsPath%\msys2-path.bat" "%SourcePath%" MSYS2SourcePath
 call "%ToolsPath%\msys2-path.bat" "%EnvMSYS2Path%" MSYS2EnvMSYS2Path
