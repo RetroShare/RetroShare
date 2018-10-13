@@ -104,7 +104,7 @@ RsTurtleSearchRequestItem *RsTurtleGenericSearchRequestItem::clone() const
 }
 
 RsTurtleGenericSearchRequestItem::RsTurtleGenericSearchRequestItem(const RsTurtleGenericSearchRequestItem& it)
-		: RsTurtleSearchRequestItem(RS_TURTLE_SUBTYPE_GENERIC_SEARCH_REQUEST)
+		: RsTurtleSearchRequestItem(it)
 {
 	search_data_len = it.search_data_len ;
     search_data = (unsigned char*)rs_malloc(it.search_data_len) ;
