@@ -397,7 +397,7 @@ void RetroShareLink::fromUrl(const QUrl& url)
 		_name  = decodedQueryItemValue(urlQuery, FILE_TREE_NAME);
 		_size  = urlQuery.queryItemValue(FILE_TREE_SIZE).toULongLong(&ok);
 		_radix = decodedQueryItemValue(urlQuery, FILE_TREE_DATA);
-		_count = urlQuery.queryItemValue(FILE_TREE_COUNT).toULongLong(&ok);
+		_count = urlQuery.queryItemValue(FILE_TREE_COUNT).toUInt(&ok);
 
 #ifdef DEBUG_RSLINK
 		std::cerr << "Got a file tree link!!" << std::endl;
@@ -553,7 +553,10 @@ RetroShareLink RetroShareLink::createCertificate(const RsPeerId& ssl_id)
 	RetroShareLink link;
 	link.clear();
 
-#warning csoler 2012-08-14: This is baaaaaad code:
+#ifndef RS_NO_WARN_CPP
+#pragma message("csoler 2012-08-14: This is baaaaaad code")
+#endif
+
 	// 	- we should not need to parse and re-read a cert in old format.
 	//
 	RsPeerDetails detail;
@@ -730,10 +733,11 @@ void RetroShareLink::check()
 			if(!checkSSLId(_SSLid))
 				_valid = false;			// no break! We also test file stuff below.
 			/* fallthrough */
+			[[clang::fallthrough]];
 		case TYPE_FILE_TREE:
 			/* fallthrough */
 		case TYPE_FILE:
-			if(_size > (((uint64_t)1)<<40))	// 1TB. Who has such large files?
+			if(_size > ((static_cast<uint64_t>(1))<<40))	// 1TB. Who has such large files?
 				_valid = false;
 
 			if(!checkName(_name))
@@ -1172,9 +1176,9 @@ bool RetroShareLink::checkSSLId(const QString& ssl_id)
 
 	for(int i=0;i<qb.length();++i)
 	{
-		unsigned char b(qb[i]) ;
+		char b(qb[i]) ;
 
-		if(!((b>47 && b<58) || (b>96 && b<103)))
+		if(!((b>='0' && b<='9') || (b>='a' && b<='f')))
 			return false ;
 	}
 
@@ -1190,9 +1194,9 @@ bool RetroShareLink::checkPGPId(const QString& pgp_id)
 
 	for(int i=0;i<qb.length();++i)
 	{
-		unsigned char b(qb[i]) ;
+		char b(qb[i]) ;
 
-		if(!((b>47 && b<58) || (b>64 && b<71)))
+		if(!((b>='0' && b<='9') || (b>='A' && b<='F')))
 			return false ;
 	}
 
@@ -1205,9 +1209,9 @@ bool RetroShareLink::checkRadix64(const QString& s)
 
 	for(int i=0;i<qb.length();++i)
 	{
-		unsigned char b(qb[i]) ;
+		char b(qb[i]) ;
 
-		if(!(  (b > 46 && b < 58) || (b > 64 && b < 91) || (b > 96 && b < 123) || b=='+' || b=='='))
+		if(!(  (b >= '0' && b <= '9') || (b >= 'A' && b <= 'Z') || (b >= 'a' && b <= 'z') || b=='/' || b=='+' || b=='='))
 		{
 			std::cerr << "Character not allowed in radix: " << b << std::endl;
 			return false;
@@ -1225,9 +1229,9 @@ bool RetroShareLink::checkHash(const QString& hash)
 
 	for(int i=0;i<qb.length();++i)
 	{
-		unsigned char b(qb[i]) ;
+		char b(qb[i]) ;
 
-		if(!((b>47 && b<58) || (b>96 && b<103)))
+		if(!((b>='0' && b<='9') || (b>='a' && b<='f')))
 			return false ;
 	}
 
@@ -1504,7 +1508,7 @@ static void processList(const QStringList &list, const QString &textSingular, co
 				{
 					if(gxs_details.mFlags & RS_IDENTITY_FLAGS_IS_OWN_ID)
 					{
-						QMessageBox::warning(NULL,QString("Cannot send message to yourself"),QString("This identity is owned by you. You wouldn't want to send yourself a message right?"));
+						QMessageBox::warning(nullptr,QString("Cannot send message to yourself"),QString("This identity is owned by you. You wouldn't want to send yourself a message right?"));
 						break ;
 					}
 
@@ -1556,6 +1560,8 @@ static void processList(const QStringList &list, const QString &textSingular, co
 				}
 			}
 			//break;
+			/* fallthrough */
+			[[clang::fallthrough]];
 			case TYPE_EXTRAFILE:
 			{
 #ifdef DEBUG_RSLINK
@@ -1618,7 +1624,7 @@ static void processList(const QStringList &list, const QString &textSingular, co
 						question += QObject::tr("Before you do so, please make sure that this file does not contain malicious executable code.");
 						question += "<br><br>" + cleanname + "</body></html>";
 
-						QMessageBox mb(QObject::tr("Confirmation"), question, QMessageBox::Warning, QMessageBox::Yes, QMessageBox::No, links.size()>1 ? QMessageBox::NoToAll : 0, 0);
+						QMessageBox mb(QObject::tr("Confirmation"), question, QMessageBox::Warning, QMessageBox::Yes, QMessageBox::No, links.size()>1 ? QMessageBox::NoToAll : 0, nullptr);
 						int ret = mb.exec();
 						if(ret == QMessageBox::Yes) {
 							++countFileOpened;
@@ -1693,9 +1699,9 @@ static void processList(const QStringList &list, const QString &textSingular, co
 			case TYPE_IDENTITY:
 			{
 				if(rsIdentity->deserialiseIdentityFromMemory(link.radixGroupData().toStdString()))
-					QMessageBox::information(NULL,QObject::tr("Identity added to People"),QObject::tr("The identity was added to people. You can now chat with it, send messages to it, etc.")) ;
+					QMessageBox::information(nullptr,QObject::tr("Identity added to People"),QObject::tr("The identity was added to people. You can now chat with it, send messages to it, etc.")) ;
 				else
-					QMessageBox::warning(NULL,QObject::tr("Identity cannot be added to People"),QObject::tr("The identity was not added to people. Some error occured. The link is probably corrupted.")) ;
+					QMessageBox::warning(nullptr,QObject::tr("Identity cannot be added to People"),QObject::tr("The identity was not added to people. Some error occured. The link is probably corrupted.")) ;
 			}
 			break;
 
@@ -1739,7 +1745,7 @@ static void processList(const QStringList &list, const QString &textSingular, co
 				else
 				{
 					ChatDialog* chatDialog = ChatDialog::getChat(chatId, Settings->getChatFlags());
-					if (chatDialog != NULL) {
+					if (chatDialog) {
 						chatroomFound.append(link.name());
 					} else {
 						chatroomUnknown.append(link.name());
