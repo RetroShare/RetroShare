@@ -150,6 +150,8 @@ void PopupChatDialog::addChatMsg(const ChatMessage &msg)
 	    QString name = msg.incoming? getPeerName(msg.chat_id): getOwnName();
 
 	    cw->addChatMsg(msg.incoming, name, sendTime, recvTime, message, ChatWidget::MSGTYPE_NORMAL);
+
+        emit messageP2PReceived(msg.incoming, msg.chat_id,  sendTime, name, message) ;
 	}
 }
 

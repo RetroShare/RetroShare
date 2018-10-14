@@ -33,6 +33,8 @@
 #include <util/HandleRichText.h>
 
 #include <retroshare/rsidentity.h>
+#include "retroshare/rspeers.h"
+#include "gui/common/AvatarDefs.h"
 
 ChatLobbyUserNotify::ChatLobbyUserNotify(QObject *parent) :
     UserNotify(parent)
@@ -129,6 +131,24 @@ unsigned int ChatLobbyUserNotify::getNewCount()
         else
             ++itCL ;
 	}
+
+    /* meiyousixin - count more for p2p chat*/
+    for (p2pchat_map::iterator itCL=_listP2PMsg.begin(); itCL!=_listP2PMsg.end();)
+    {
+        iNum+=itCL->second.size();
+
+        if (itCL->second.size()==0)
+        {
+            p2pchat_map::iterator ittmp = itCL ;
+            ++ittmp ;
+
+            _listP2PMsg.erase(itCL);
+            itCL = ittmp ;
+        }
+        else
+            ++itCL ;
+    }
+
 	return iNum;
 }
 
@@ -149,7 +169,7 @@ void ChatLobbyUserNotify::iconClicked()
 	std::list<ChatLobbyId> lobbies;
 	rsMsgs->getChatLobbyList(lobbies);
 	bool doUpdate=false;
-
+    bool bFoundForLobby = false;
     for (lobby_map::iterator itCL=_listMsg.begin(); itCL!=_listMsg.end();)
     {
         /// Create a menu per lobby ///
@@ -165,6 +185,7 @@ void ChatLobbyUserNotify::iconClicked()
                     strLobbyName=QString::fromUtf8(clInfo.lobby_name.c_str()) ;
                 icoLobby=(clInfo.lobby_flags & RS_CHAT_LOBBY_FLAGS_PUBLIC) ? QIcon(":/images/chat_red24.png") : QIcon(":/images/chat_x24.png");
                 bFound=true;
+                bFoundForLobby = bFound;
                 break;
             }
         }
@@ -184,6 +205,54 @@ void ChatLobbyUserNotify::iconClicked()
         }
     }
 
+
+    /* meiyousixin - for p2p chat */
+    bool bFoundForContact = false;
+    std::list<RsPeerId> ids;
+    if (rsPeers->getFriendList(ids))
+    {
+        for (p2pchat_map::iterator itCL=_listP2PMsg.begin(); itCL!=_listP2PMsg.end();)
+        {
+            /// Create a menu per lobby ///
+            bool bFound=false;
+            QString strContactName=tr("Unknown contact");
+            QIcon iconContact=QIcon();
+            std::list<RsPeerId>::const_iterator peerIt;
+            for (peerIt = ids.begin(); peerIt != ids.end(); ++peerIt) {
+                RsPeerId clId = *peerIt;
+                if (clId==(itCL->first).toPeerId()) {
+                    RsPgpId pgpId = rsPeers->getGPGId(clId);
+                    std::string nickname = rsPeers->getGPGName(pgpId);
+                    strContactName = QString::fromStdString(nickname);
+
+                    QPixmap avatar;
+                    AvatarDefs::getAvatarFromSslId(clId, avatar);
+                    if (!avatar.isNull())
+                        iconContact = QIcon(avatar) ;
+
+                    bFoundForContact = bFound=true;
+                    break;
+                }
+            }
+
+            if (bFound)
+            {
+                makeSubMenuForP2P(trayMenu, iconContact, strContactName, itCL->first);
+                ++itCL ;
+            }
+            else
+            {
+                p2pchat_map::iterator ittmp(itCL);
+                ++ittmp ;
+                _listP2PMsg.erase(itCL);
+                itCL=ittmp ;
+                doUpdate=true;
+            }
+        }
+    }
+
+
+
 	if (notifyCombined()) {
 		QSystemTrayIcon* trayIcon=getTrayIcon();
 		if (trayIcon!=NULL) trayIcon->setContextMenu(trayMenu);
@@ -194,16 +263,33 @@ void ChatLobbyUserNotify::iconClicked()
 		}
 	}
 
-	QString strName=tr("Remove All");
-	QAction *pAction = new QAction( QIcon(), strName, trayMenu);
-	ActionTag actionTag={0x0, "", true};
-	pAction->setData(qVariantFromValue(actionTag));
-	connect(trayMenu, SIGNAL(triggered(QAction*)), this, SLOT(subMenuClicked(QAction*)));
-	connect(trayMenu, SIGNAL(hovered(QAction*)), this, SLOT(subMenuHovered(QAction*)));
-	trayMenu->addAction(pAction);
+    if (bFoundForLobby)
+    {
+        QString strName=tr("Remove all lobby unread chat");
+        QAction *pAction = new QAction( QIcon(), strName, trayMenu);
+        ActionTag actionTag={0x0, "", true};
+        pAction->setData(qVariantFromValue(actionTag));
+        connect(trayMenu, SIGNAL(triggered(QAction*)), this, SLOT(subMenuClicked(QAction*)));
+        connect(trayMenu, SIGNAL(hovered(QAction*)), this, SLOT(subMenuHovered(QAction*)));
+        trayMenu->addAction(pAction);
 
-	trayMenu->exec(QCursor::pos());
-	if (doUpdate) updateIcon();
+        trayMenu->exec(QCursor::pos());
+
+    }
+
+    if (bFoundForContact)
+    {
+        QString strName=tr("Remove all contacts unread chat");
+        QAction *pAction = new QAction( QIcon(), strName, trayMenu);
+        ActionTag2 actionTag={RsPeerId(), "", true};
+        pAction->setData(qVariantFromValue(actionTag));
+        connect(trayMenu, SIGNAL(triggered(QAction*)), this, SLOT(subMenuClickedP2P(QAction*)));
+        //connect(trayMenu, SIGNAL(hovered(QAction*)), this, SLOT(subMenuHovered(QAction*)));
+        trayMenu->addAction(pAction);
+
+        trayMenu->exec(QCursor::pos());
+    }
+    if (doUpdate) updateIcon();
 
 }
 
@@ -241,6 +327,43 @@ void ChatLobbyUserNotify::makeSubMenu(QMenu* parentMenu, QIcon icoLobby, QString
 	ActionTag actionTag={itCL->first, "", true};
 	pAction->setData(qVariantFromValue(actionTag));
 	lobbyMenu->addAction(pAction);
+
+}
+
+void ChatLobbyUserNotify::makeSubMenuForP2P(QMenu* parentMenu, QIcon iconContact, QString strContactName, ChatId id)
+{
+    p2pchat_map::iterator itCL=_listP2PMsg.find(id);
+    if (itCL==_listP2PMsg.end()) return;
+    msg_map msgMap = itCL->second;
+
+    unsigned int msgCount=msgMap.size();
+
+    if(!parentMenu) parentMenu = new QMenu(MainWindow::getInstance());
+    QMenu *contactMenu = parentMenu->addMenu(iconContact, strContactName);
+    connect(contactMenu, SIGNAL(triggered(QAction*)), this, SLOT(subMenuClickedP2P(QAction*)));
+    //connect(contactMenu, SIGNAL(hovered(QAction*)), this, SLOT(subMenuHovered(QAction*)));
+
+    contactMenu->setToolTip(getNotifyMessage(msgCount>1).arg(msgCount));
+
+    for (msg_map::iterator itMsg=msgMap.begin(); itMsg!=msgMap.end(); ++itMsg) {
+        /// initialize menu ///
+        QString strName=itMsg->first;
+        MsgData msgData=itMsg->second;
+        QTextDocument doc;
+        doc.setHtml(msgData.text);
+        strName.append(":").append(doc.toPlainText().left(30).replace(QString("\n"),QString(" ")));
+        QAction *pAction = new QAction( iconContact, strName, contactMenu);
+        pAction->setToolTip(doc.toPlainText());
+        ActionTag2 actionTag={(itCL->first).toPeerId(), itMsg->first, false};
+        pAction->setData(qVariantFromValue(actionTag));
+        contactMenu->addAction(pAction);
+    }
+
+    QString strName=tr("Remove All");
+    QAction *pAction = new QAction( iconContact, strName, contactMenu);
+    ActionTag2 actionTag={(itCL->first).toPeerId(), "", true};
+    pAction->setData(qVariantFromValue(actionTag));
+    contactMenu->addAction(pAction);
 
 }
 
@@ -282,6 +405,25 @@ void ChatLobbyUserNotify::chatLobbyNewMessage(ChatLobbyId lobby_id, QDateTime ti
 	}
 }
 
+void ChatLobbyUserNotify::chatP2PNewMessage(ChatId chatId, QDateTime time, QString senderName, QString msg)
+{
+
+    if ( _bCountUnRead)
+    {
+        QString strAnchor = time.toString(Qt::ISODate);
+        MsgData msgData;
+        //msgData.text=RsHtml::plainText(senderName) + ": " + msg;
+        msgData.text= ": " + msg;
+        //msgData.unread=!(bGetNickName || bFoundTextToNotify);
+
+        _listP2PMsg[chatId][strAnchor]=msgData;
+        emit countChangedFromP2P(chatId, _listP2PMsg[chatId].size());
+        updateIcon();
+        SoundManager::play(SOUND_NEW_CHAT_MESSAGE);
+    }
+
+}
+
 bool ChatLobbyUserNotify::checkWord(QString message, QString word)
 {
 	bool bFound = false;
@@ -303,7 +445,7 @@ void ChatLobbyUserNotify::chatLobbyCleared(ChatLobbyId lobby_id, QString anchor,
 	bool changed = anchor.isEmpty();
 	unsigned int count=0;
 	if (lobby_id==0) return;
-	lobby_map::iterator itCL=_listMsg.find(lobby_id);
+    lobby_map::iterator itCL=_listMsg.find(lobby_id);
 	if (itCL!=_listMsg.end()) {
 		if (!anchor.isEmpty()) {
 			msg_map::iterator itMsg=itCL->second.find(anchor);
@@ -320,6 +462,30 @@ void ChatLobbyUserNotify::chatLobbyCleared(ChatLobbyId lobby_id, QString anchor,
 	}
 	if (changed) emit countChanged(lobby_id, count);
 	updateIcon();
+}
+
+void ChatLobbyUserNotify::chatP2PCleared(ChatId chatId, QString anchor, bool onlyUnread /*=false*/)
+{
+    bool changed = anchor.isEmpty();
+    unsigned int count=0;
+    //if (chatId==NULL) return;
+    p2pchat_map::iterator itCL=_listP2PMsg.find(chatId);
+    if (itCL!=_listP2PMsg.end()) {
+        if (!anchor.isEmpty()) {
+            msg_map::iterator itMsg=itCL->second.find(anchor);
+            if (itMsg!=itCL->second.end()) {
+                MsgData msgData = itMsg->second;
+                if(!onlyUnread || msgData.unread) {
+                    itCL->second.erase(itMsg);
+                    changed=true;
+                }
+            }
+            count = itCL->second.size();
+        }
+        if (count==0) _listP2PMsg.erase(itCL);
+    }
+    if (changed) emit countChangedFromP2P(chatId, count);
+    updateIcon();
 }
 
 void ChatLobbyUserNotify::subMenuClicked(QAction* action)
@@ -352,6 +518,39 @@ void ChatLobbyUserNotify::subMenuClicked(QAction* action)
 	if (lobbyMenu) lobbyMenu->removeAction(action);
 
 	updateIcon();
+}
+
+void ChatLobbyUserNotify::subMenuClickedP2P(QAction* action)
+{
+    ActionTag2 actionTag=action->data().value<ActionTag2>();
+    if(!actionTag.removeALL){
+        MainWindow::showWindow(MainWindow::ChatLobby);
+        ChatLobbyWidget *chatLobbyWidget = dynamic_cast<ChatLobbyWidget*>(MainWindow::getPage(MainWindow::ChatLobby));
+        //if (chatLobbyWidget) chatLobbyWidget->showLobbyAnchor(actionTag.cli ,actionTag.timeStamp);
+        if (chatLobbyWidget) chatLobbyWidget->showContactAnchor(actionTag.cli ,actionTag.timeStamp);
+    }
+
+    p2pchat_map::iterator itCL=_listP2PMsg.find(ChatId(actionTag.cli));
+    if (itCL!=_listP2PMsg.end()) {
+        unsigned int count=0;
+        if(!actionTag.removeALL){
+            msg_map::iterator itMsg=itCL->second.find(actionTag.timeStamp);
+            if (itMsg!=itCL->second.end()) itCL->second.erase(itMsg);
+            count = itCL->second.size();
+        }
+        if (count==0) _listP2PMsg.erase(itCL);
+        emit countChangedFromP2P(ChatId(actionTag.cli), count);
+    } else if(actionTag.cli == RsPeerId()){
+        while (!_listP2PMsg.empty()) {
+            itCL = _listP2PMsg.begin();
+            emit countChangedFromP2P(itCL->first, 0);
+            _listP2PMsg.erase(itCL);
+        }
+    }
+    QMenu *lobbyMenu=dynamic_cast<QMenu*>(action->parent());
+    if (lobbyMenu) lobbyMenu->removeAction(action);
+
+    updateIcon();
 }
 
 void ChatLobbyUserNotify::subMenuHovered(QAction* action)

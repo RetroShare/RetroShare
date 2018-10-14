@@ -65,9 +65,10 @@ public:
 	void openOne2OneChat(std::string rsId, std::string nickname);
 	void addOne2OneChatPage(PopupChatDialog *d);
 	void setCurrentOne2OneChatPage(PopupChatDialog *d);
-    void updateContactItem(QTreeWidget *treeWidget, QTreeWidgetItem *item, const std::string &nickname, const std::string &rsId, uint current_time);
+    void updateContactItem(QTreeWidget *treeWidget, QTreeWidgetItem *item, const std::string &nickname, const ChatId& chatId, const std::string &rsId, uint current_time);
 	void fromGpgIdToChatId(const RsPgpId &gpgId,  ChatId &chatId);
 
+    bool showContactAnchor(RsPeerId id, QString anchor);
 signals:
 	void unreadCountChanged(uint unreadCount);
 
@@ -94,6 +95,7 @@ protected slots:
 	void autoSubscribeItem();
 	void copyItemLink();
     void updateRecentTime(const ChatId&, uint);
+    void updateP2PMessageChanged(bool incoming, const ChatId& chatId, QDateTime time, QString senderName, QString msg);
 
 private slots:
 	void filterColumnChanged(int);
@@ -104,6 +106,7 @@ private slots:
 	void setShowSubscribeColumn(bool show);
 
 	void updateNotify(ChatLobbyId id, unsigned int count) ;
+    void updateNotifyFromP2P(ChatId id, unsigned int count);
 	void idChooserCurrentIndexChanged(int index);
 
 private:
