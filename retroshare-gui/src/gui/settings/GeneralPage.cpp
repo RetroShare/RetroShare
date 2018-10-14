@@ -107,7 +107,7 @@ void GeneralPage::updateAdvancedMode()
 {
 	if (ui.checkAdvanced->isChecked())
 	{
-		std::string opt("YES");
+        std::string opt("YES");
 		rsConfig->setConfigurationOption(RS_CONFIG_ADVANCED, opt);
 	}
 	else

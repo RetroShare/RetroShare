@@ -190,7 +190,7 @@ void FriendsDialog::activatePage(FriendsDialog::Page page)
 {
 	switch(page)
 	{
-		case FriendsDialog::IdTab: ui.tabWidget->setCurrentWidget(idDialog) ;
+        case FriendsDialog::IdTab: ui.tabWidget->setCurrentWidget(idDialog) ;
 											  break ;
 #ifdef RS_USE_CIRCLES
 		case FriendsDialog::CirclesTab: ui.tabWidget->setCurrentWidget(circlesDialog) ;
@@ -200,8 +200,8 @@ void FriendsDialog::activatePage(FriendsDialog::Page page)
 											  break ;
 		case FriendsDialog::BroadcastTab: ui.tabWidget->setCurrentWidget(networkDialog) ;
 											  break ;
-		case FriendsDialog::NetworkViewTab: ui.tabWidget->setCurrentWidget(networkView) ;
-											  break ;
+        case FriendsDialog::NetworkViewTab: ui.tabWidget->setCurrentWidget(networkView) ;
+                                              break ;
 	}
 }
 

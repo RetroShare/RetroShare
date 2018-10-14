@@ -174,10 +174,10 @@ FriendList::FriendList(QWidget *parent) :
     ui->peerTreeWidget->setColumnWidth(COLUMN_LAST_CONTACT, 12 * fontWidth);
     ui->peerTreeWidget->setColumnWidth(COLUMN_IP, 15 * fontWidth);
     ui->peerTreeWidget->setColumnWidth(COLUMN_ID, 32 * fontWidth);
-   // ui->peerTreeWidget->setStyleSheet("QListWidget {selection-background-color: {rgb(32,41,53); color: rgb(255, 255, 255);}");
     int avatarHeight = fontMetrics.height() * 2;        //d: change avatar size
     ui->peerTreeWidget->setIconSize(QSize(avatarHeight, avatarHeight));
     /* Initialize display menu */
+
     createDisplayMenu();
 }
 

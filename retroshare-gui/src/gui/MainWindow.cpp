@@ -173,7 +173,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     ui = new Ui::MainWindow;
     trayIcon = NULL;
 /** d: set background for MainWindow */
-    ui->setupUi(this);
+        ui->setupUi(this);
         QPixmap bkgnd(":/home/img/mountain_1500.png");
      //   bkgnd = bkgnd.scaled(this->size(),Qt::IgnoreAspectRatio);
         QPalette palette;

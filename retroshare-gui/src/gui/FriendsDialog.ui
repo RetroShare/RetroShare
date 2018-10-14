@@ -62,7 +62,7 @@
          <string/>
         </property>
         <property name="pixmap">
-         <pixmap resource="../Unseengui/unseengui.qrc">:/home/img/face_icon/user-shape_128.png</pixmap>
+         <pixmap resource="../Unseengui/unseengui.qrc">:/home/img/face_icon/group-profile-users_128.png</pixmap>
         </property>
         <property name="scaledContents">
          <bool>true</bool>
@@ -105,7 +105,7 @@
          <enum>Qt::NoFocus</enum>
         </property>
         <property name="icon">
-         <iconset resource="icons.qrc">
+         <iconset resource="images.qrc">
           <normaloff>:/icons/help_64.png</normaloff>:/icons/help_64.png</iconset>
         </property>
         <property name="checkable">
@@ -373,6 +373,11 @@ background-color: rgb(47, 60, 76);</string>
    <header>gui/common/StyledLabel.h</header>
   </customwidget>
   <customwidget>
+   <class>StyledElidedLabel</class>
+   <extends>QLabel</extends>
+   <header>gui/common/StyledElidedLabel.h</header>
+  </customwidget>
+  <customwidget>
    <class>AvatarWidget</class>
    <extends>QLabel</extends>
    <header>gui/common/AvatarWidget.h</header>
@@ -391,11 +396,6 @@ background-color: rgb(47, 60, 76);</string>
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>StyledElidedLabel</class>
-   <extends>QLabel</extends>
-   <header>gui/common/StyledElidedLabel.h</header>
-  </customwidget>
-  <customwidget>
    <class>FriendList</class>
    <extends>QWidget</extends>
    <header>gui/common/FriendList.h</header>
@@ -403,7 +403,6 @@ background-color: rgb(47, 60, 76);</string>
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="icons.qrc"/>
   <include location="images.qrc"/>
   <include location="../Unseengui/unseengui.qrc"/>
  </resources>

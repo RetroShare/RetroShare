@@ -68,7 +68,8 @@
       <enum>Qt::CustomContextMenu</enum>
      </property>
      <property name="styleSheet">
-      <string notr="true"/>
+      <string notr="true">color: rgb(255, 255, 255);
+background-color: rgb(32, 41, 53);</string>
      </property>
      <property name="sortingEnabled">
       <bool>true</bool>

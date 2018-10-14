@@ -37,7 +37,7 @@ class CryptoPage : public ConfigPage
 
       /** Loads the settings for this page */
 
-		virtual QPixmap iconPixmap() const { return QPixmap(":/icons/settings/profile.svg") ; }
+        virtual QPixmap iconPixmap() const { return QPixmap(":/home/img/Setting/listing-option.svg") ; }
 		virtual QString pageName() const { return tr("Node") ; }
 		virtual QString helpText() const { return ""; }
 
