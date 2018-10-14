@@ -533,7 +533,7 @@ bool ChatWidget::eventFilter(QObject *obj, QEvent *event)
 			}
 		}
 
-		if (notify && chatType() == CHATTYPE_LOBBY) {
+        if (notify && (chatType() == CHATTYPE_LOBBY || chatType() == CHATTYPE_PRIVATE)) {
 			if ((event->type() == QEvent::KeyPress)
 			    || (event->type() == QEvent::MouseMove)
 			    || (event->type() == QEvent::Enter)
@@ -561,6 +561,8 @@ bool ChatWidget::eventFilter(QObject *obj, QEvent *event)
 					if (!anchors.isEmpty()){
 						for (QStringList::iterator it=anchors.begin();it!=anchors.end();++it) {
 							notify->chatLobbyCleared(chatId.toLobbyId(), *it);
+                            /* meiyousixin - add more for p2p chat*/
+                            notify->chatP2PCleared(chatId, *it);
 						}
 					}
 				}
@@ -589,6 +591,8 @@ bool ChatWidget::eventFilter(QObject *obj, QEvent *event)
 
 							for (QStringList::iterator it=anchors.begin();it!=anchors.end();++it) {
 								notify->chatLobbyCleared(chatId.toLobbyId(), *it);
+                                /* meiyousixin - add more for p2p chat*/
+                                notify->chatP2PCleared(chatId, *it);
 							}
 
 						}
@@ -939,12 +943,15 @@ void ChatWidget::setNotify(ChatLobbyUserNotify *clun)
 void ChatWidget::on_notifyButton_clicked()
 {
 	if(!notify) return;
-	if (chatType() != CHATTYPE_LOBBY) return;
+    if (chatType() != CHATTYPE_LOBBY && chatType() != CHATTYPE_PRIVATE) return;
 
 	QMenu* menu = new QMenu(MainWindow::getInstance());
 	QIcon icoLobby=(ui->notifyButton->icon());
 
-	notify->makeSubMenu(menu, icoLobby, title, chatId.toLobbyId());
+    if (chatType() == CHATTYPE_LOBBY)
+        notify->makeSubMenu(menu, icoLobby, title, chatId.toLobbyId());
+    else if (chatType() == CHATTYPE_PRIVATE)
+        notify->makeSubMenuForP2P(menu, icoLobby, title, chatId);
 	menu->exec(ui->notifyButton->mapToGlobal(QPoint(0,ui->notifyButton->geometry().height())));
 
 }

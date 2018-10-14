@@ -177,7 +177,7 @@ void UserNotify::update()
 
 	if (mTrayIcon) {
 		if (count) {
-			mTrayIcon->setToolTip("RetroShare\n" + getTrayMessage(count > 1).arg(count));
+            mTrayIcon->setToolTip("P2PUnseen\n" + getTrayMessage(count > 1).arg(count));
 			mTrayIcon->show();
 		} else {
 			mTrayIcon->hide();

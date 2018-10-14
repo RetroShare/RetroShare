@@ -16,6 +16,7 @@
 
 //meiyousixin - add more PopupChatDialog into ChatLobbyWidget
 #include "chat/PopupChatDialog.h"
+#include "gui/common/AvatarDefs.h"
 
 #include "retroshare/rsmsgs.h"
 #include "retroshare/rspeers.h"
@@ -66,6 +67,7 @@
 #define IMAGE_MESSAGE	      ":images/chat.png" 
 #define IMAGE_AUTOSUBSCRIBE   ":images/accepted16.png"
 #define IMAGE_COPYRSLINK      ":/images/copyrslink.png"
+#define IMAGE_UNSEEN          ":/app/images/unseen32.png"
 
 ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WindowFlags flags)
   : RsAutoUpdatePage(5000, parent, flags)
@@ -83,7 +85,6 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WindowFlags flags)
 
     QObject::connect( NotifyQt::getInstance(), SIGNAL(alreadySendChat(const ChatId&, uint)), this, SLOT(updateRecentTime(const ChatId&, uint)));
     QObject::connect( NotifyQt::getInstance(), SIGNAL(newChatMessageReceive(const ChatId&, uint)), this, SLOT(updateRecentTime(const ChatId&, uint)));
-
 
 	QObject::connect( ui.lobbyTreeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(lobbyTreeWidgetCustomPopupMenu(QPoint)));
 	QObject::connect( ui.lobbyTreeWidget, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)), this, SLOT(itemDoubleClicked(QTreeWidgetItem*,int)));
@@ -243,6 +244,7 @@ UserNotify *ChatLobbyWidget::getUserNotify(QObject *parent)
 	if (!myChatLobbyUserNotify){
 		myChatLobbyUserNotify = new ChatLobbyUserNotify(parent);
 		connect(myChatLobbyUserNotify, SIGNAL(countChanged(ChatLobbyId, unsigned int)), this, SLOT(updateNotify(ChatLobbyId, unsigned int)));
+        connect(myChatLobbyUserNotify, SIGNAL(countChangedFromP2P(ChatId, unsigned int)), this, SLOT(updateNotifyFromP2P(ChatId, unsigned int)));
 	}
 	return myChatLobbyUserNotify;
 }
@@ -263,6 +265,25 @@ void ChatLobbyWidget::updateNotify(ChatLobbyId id, unsigned int count)
 	} else {
 		notifyButton->setVisible(false);
 	}
+}
+
+
+void ChatLobbyWidget::updateNotifyFromP2P(ChatId id, unsigned int count)
+{
+    PopupChatDialog *dialog=NULL;
+    dialog=_chatOne2One_infos[id.toPeerId().toStdString()].dialog;
+    if(!dialog) return;
+
+    QToolButton* notifyButton=dialog->getChatWidget()->getNotifyButton();
+    if (!notifyButton) return;
+    dialog->getChatWidget()->setNotify(myChatLobbyUserNotify);
+    if (count>0){
+        notifyButton->setVisible(true);
+        //notifyButton->setIcon(_lobby_infos[id].default_icon);
+        notifyButton->setToolTip(QString("(%1)").arg(count));
+    } else {
+        notifyButton->setVisible(false);
+    }
 }
 
 static bool trimAnonIds(std::list<RsGxsId>& lst)
@@ -460,7 +481,9 @@ void ChatLobbyWidget::addOne2OneChatPage(PopupChatDialog *d)
 		RsPgpId pgpId = rsPeers->getGPGId(d->chatId().toPeerId());
 		std::string nickname = rsPeers->getGPGName(pgpId);
         uint current_time = QDateTime::currentDateTime().toTime_t();
-        updateContactItem(ui.lobbyTreeWidget, item, nickname, d->chatId().toPeerId().toStdString(), current_time );
+        updateContactItem(ui.lobbyTreeWidget, item, nickname, d->chatId(), d->chatId().toPeerId().toStdString(), current_time );
+
+        connect(d,SIGNAL(messageP2PReceived(bool,ChatId,QDateTime,QString,QString)),this,SLOT(updateP2PMessageChanged(bool,ChatId,QDateTime,QString,QString))) ;
 
 		//add new contact item and select it
 		chatContactItem->addChild(item);
@@ -812,10 +835,6 @@ void ChatLobbyWidget::showContactChat(QTreeWidgetItem *item)
 		return;
 	}
 
-//	QString id = item->data(COLUMN_DATA, ROLE_ID).toString();
-//	RsPgpId pgpId = RsPgpId(id.toStdString());
-//	ChatId cId;
-//	fromGpgIdToChatId(pgpId, cId);
 	QString chatIdStr = item->data(COLUMN_DATA, ROLE_ID).toString();
 //	ChatId chatId(chatIdStr.toStdString());
 	      if(_chatOne2One_infos.count(chatIdStr.toStdString()) > 0)
@@ -878,9 +897,9 @@ bool ChatLobbyWidget::showLobbyAnchor(ChatLobbyId id, QString anchor)
 	QTreeWidgetItem *item = getTreeWidgetItem(id) ;
 
 	if(item != NULL) {
-		if(item->type() == TYPE_LOBBY) {
+        if(item->type() == TYPE_LOBBY) {
 
-			if(_lobby_infos.find(id) == _lobby_infos.end()) {
+            if(_lobby_infos.find(id) == _lobby_infos.end()) {
 				showBlankPage(id) ;
 			} else {
 				//ChatLobbyDialog cldChatLobby =_lobby_infos[id].dialog;
@@ -896,6 +915,32 @@ bool ChatLobbyWidget::showLobbyAnchor(ChatLobbyId id, QString anchor)
 	}
 
 	return false;
+}
+
+bool ChatLobbyWidget::showContactAnchor(RsPeerId id, QString anchor)
+{
+    ChatId chatId(id);
+    QTreeWidgetItem *item = getTreeWidgetItemForChatId(chatId) ;
+
+    if(item != NULL) {
+        if(item->type() == TYPE_ONE2ONE) {
+
+            if(_chatOne2One_infos.find(id.toStdString()) == _chatOne2One_infos.end()) {
+                //showBlankPage(id) ;
+            } else {
+                //ChatLobbyDialog cldChatLobby =_lobby_infos[id].dialog;
+                ui.stackedWidget->setCurrentWidget(_chatOne2One_infos[id.toStdString()].dialog) ;
+                PopupChatDialog *cldCW=NULL ;
+                if (NULL != (cldCW = dynamic_cast<PopupChatDialog *>(ui.stackedWidget->currentWidget())))
+                    cldCW->getChatWidget()->scrollToAnchor(anchor);
+            }
+
+            ui.lobbyTreeWidget->setCurrentItem(item);
+            return true;
+        }
+    }
+
+    return false;
 }
 
 void ChatLobbyWidget::subscribeChatLobbyAtItem(QTreeWidgetItem *item)
@@ -1226,9 +1271,15 @@ void ChatLobbyWidget::updateCurrentLobby()
 		    }
 		}
 		// if this is a contact chat
-		else
+        else if (item->parent() && item->parent()->text(COLUMN_NAME) == tr("Contact chat"))
 		  {
 		      showContactChat(item);
+              QPixmap avatar;
+              QString id = item->data(COLUMN_DATA, ROLE_ID).toString();
+              RsPeerId peerId(id.toStdString());
+              AvatarDefs::getAvatarFromSslId(peerId, avatar);
+              if (!avatar.isNull())
+                item->setIcon(COLUMN_NAME,QIcon(avatar)) ;
 
 		  }
 
@@ -1264,6 +1315,25 @@ void ChatLobbyWidget::updateMessageChanged(bool incoming, ChatLobbyId id, QDateT
 		return ;
 
 	item->setIcon(COLUMN_NAME,_lobby_infos[id].default_icon) ;
+}
+
+void ChatLobbyWidget::updateP2PMessageChanged(bool incoming, const ChatId& chatId, QDateTime time, QString senderName, QString msg)
+{
+    QTreeWidgetItem *item = getTreeWidgetItemForChatId(chatId);
+    QTreeWidgetItem *current_item = ui.lobbyTreeWidget->currentItem();
+
+    if (myChatLobbyUserNotify){
+        if (incoming) myChatLobbyUserNotify->chatP2PNewMessage(chatId, time, senderName, msg);
+    }
+
+    if (item && current_item && item == current_item) return;
+    if (item)
+    {
+        if (incoming)
+        {
+            item->setIcon(COLUMN_NAME,QIcon(IMAGE_MESSAGE)) ;
+        }
+    }
 }
 
 void ChatLobbyWidget::itemDoubleClicked(QTreeWidgetItem *item, int /*column*/)
@@ -1505,9 +1575,15 @@ void ChatLobbyWidget::openOne2OneChat(std::string rsId, std::string nickname)
     }
 }
 
-void ChatLobbyWidget::updateContactItem(QTreeWidget *treeWidget, QTreeWidgetItem *item, const std::string &nickname, const std::string &rsId, uint current_time)
+void ChatLobbyWidget::updateContactItem(QTreeWidget *treeWidget, QTreeWidgetItem *item, const std::string &nickname, const ChatId& chatId, const std::string &rsId, uint current_time)
 {
       item->setText(COLUMN_NAME, QString::fromUtf8(nickname.c_str()));
+
+      QPixmap avatar;
+      AvatarDefs::getAvatarFromSslId(chatId.toPeerId(), avatar);
+      if (!avatar.isNull())
+        item->setIcon(COLUMN_NAME,QIcon(avatar)) ;
+
       item->setData(COLUMN_NAME, ROLE_SORT, QString::fromUtf8(nickname.c_str()));
 
       item->setData(COLUMN_DATA, ROLE_ID, QString::fromUtf8(rsId.c_str()));

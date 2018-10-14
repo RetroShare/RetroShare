@@ -390,15 +390,16 @@ void MainWindow::initStackedPage()
 //  addPage(circlesDialog = new CirclesDialog(ui->stackPages), grp, &notify);
 //#endif
 
-  //19 Sep 2018 - meiyousixin - change the order: Chat -> Contact -> Mail -> ... -> Network -> Profile
+  //19 Sep 2018 - meiyousixin - change the order: Chat -> Contact -> Mail -> Files -> Channels -> Forums -> Profile
   addPage(chatLobbyDialog = new ChatLobbyWidget(ui->stackPages), grp, &notify);
   addPage(friendsDialog = new FriendsDialog(ui->stackPages), grp, &notify);
 
   addPage(messagesDialog = new MessagesDialog(ui->stackPages), grp, &notify);
   addPage(transfersDialog = new TransfersDialog(ui->stackPages), grp, &notify);
-  //meiyousixin - remove channels and links
-  //addPage(gxschannelDialog = new GxsChannelDialog(ui->stackPages), grp, &notify);
+
+  addPage(gxschannelDialog = new GxsChannelDialog(ui->stackPages), grp, &notify);
   addPage(gxsforumDialog = new GxsForumsDialog(ui->stackPages), grp, &notify);
+  //meiyousixin - remove links
   //addPage(postedDialog = new PostedDialog(ui->stackPages), grp, &notify);
 
   //meiyousixin - remove Identities dialogs for simplicity!!!

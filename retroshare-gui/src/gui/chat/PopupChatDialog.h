@@ -35,12 +35,14 @@ class PopupChatDialog : public ChatDialog
 	friend class ChatDialog;
 public:
 	ChatId	chatId() const {return cId;}
+    virtual ChatWidget *getChatWidget();
 protected slots:
 	void showAvatarFrame(bool show);
 private slots:
 	void clearOfflineMessages();
 	void chatStatusChanged(const ChatId &chat_id, const QString &statusString);
-
+signals:
+    void messageP2PReceived(bool incoming, ChatId chatId, QDateTime time, QString senderName, QString msg) ;
 protected:
 	/** Default constructor */
 	PopupChatDialog(QWidget *parent = 0, Qt::WindowFlags flags = 0);
@@ -49,7 +51,7 @@ protected:
 
 	virtual void init(const ChatId &chat_id, const QString &title);
 	virtual void showDialog(uint chatflags);
-	virtual ChatWidget *getChatWidget();
+
 	virtual bool hasPeerStatus() { return true; }
 	virtual bool notifyBlink();
 

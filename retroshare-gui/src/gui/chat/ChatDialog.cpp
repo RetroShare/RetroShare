@@ -176,7 +176,8 @@ void ChatDialog::init(const ChatId &id, const QString &title)
         // play sound when recv a message
         SoundManager::play(SOUND_NEW_CHAT_MESSAGE);
 
-    ChatDialog *cd = getChat(msg.chat_id, Settings->getChatFlags());   
+        //ChatDialog *cd = getChat(msg.chat_id, Settings->getChatFlags());
+        ChatDialog *cd = getChat(msg.chat_id, RS_CHAT_OPEN);
     if(cd)
         cd->addChatMsg(msg);
     else
