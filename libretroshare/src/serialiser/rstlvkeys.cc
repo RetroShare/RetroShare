@@ -27,7 +27,7 @@
 
 #include <iostream>
 
-#define TLV_DEBUG 1
+// #define TLV_DEBUG 1
 
 // This should be removed eventually, but will break backward compatibility
 #define KEEP_OLD_SIGNATURE_SERIALISE_FORMAT

@@ -23,7 +23,7 @@
 #include "serialiser/rstlvbase.h"
 #include <iostream>
 
-#define TLV_DEBUG 1
+// #define TLV_DEBUG 1
 
 /* generic print */
 template<class T>

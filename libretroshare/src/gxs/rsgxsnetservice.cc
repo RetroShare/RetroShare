@@ -282,7 +282,7 @@
 //#define NXS_NET_DEBUG_5 	1
 //#define NXS_NET_DEBUG_6 	1
 //#define NXS_NET_DEBUG_7 	1
-#define NXS_NET_DEBUG_8 	1
+//#define NXS_NET_DEBUG_8 	1
 
 //#define NXS_FRAG
 

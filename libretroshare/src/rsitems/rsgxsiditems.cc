@@ -29,7 +29,7 @@
 
 #include "serialiser/rstypeserializer.h"
 
-#define GXSID_DEBUG	1
+// #define GXSID_DEBUG	1
 
 RsItem *RsGxsIdSerialiser::create_item(uint16_t service_id,uint8_t item_subtype) const
 {
