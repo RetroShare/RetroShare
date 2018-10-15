@@ -154,7 +154,7 @@ SettingsPage::initStackedWidget()
     addPage(new ChatPage()); // CHAT
     addPage(new MessagePage()); //MESSGE RENAME TO MAIL
     addPage(new TransferPage()); //FILE TRANSFER
-  //  addPage(new ChannelPage()); // CHANNELS               //d: hiden this
+    addPage(new ChannelPage()); // CHANNELS
     addPage(new ForumPage()); // FORUMS
   //  addPage(new PostedPage()); // POSTED RENAME TO LINKS  //d: remove this
     addPage(new NotifyPage()); // NOTIFY

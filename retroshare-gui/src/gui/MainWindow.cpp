@@ -123,9 +123,9 @@
 #define IMAGE_ABOUT             ":/icons/png/info.png"
 #define IMAGE_ADDFRIEND         ":/icons/png/invite.png"
 #define IMAGE_RETROSHARE        ":/app/images/icon.png"             //D replace :/icons/logo_128.png
-#define IMAGE_NOONLINE          ":/icons/logo_0_connected_128.png"
-#define IMAGE_ONEONLINE         ":/icons/logo_1_connected_128.png"
-#define IMAGE_TWOONLINE         ":/icons/logo_2_connected_128.png"
+#define IMAGE_NOONLINE          ":/chat/img/p2p 0.png"              //d:replace icon
+#define IMAGE_ONEONLINE         ":/chat/img/p2p 1.png"              //d:replace icon
+#define IMAGE_TWOONLINE         ":/chat/img/p2p 2.png"              //d:replace icon
 #define IMAGE_OVERLAY           ":/icons/star_overlay_128.png"
 
 #define IMAGE_BWGRAPH           ":/images/ksysguard.png"
@@ -172,16 +172,17 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
 {
     ui = new Ui::MainWindow;
     trayIcon = NULL;
+
 /** d: set background for MainWindow */
         ui->setupUi(this);
-        QPixmap bkgnd(":/home/img/mountain_1500.png");
+        QPixmap bkgnd(":/home/img/mountain_1700.jpg");
      //   bkgnd = bkgnd.scaled(this->size(),Qt::IgnoreAspectRatio);
         QPalette palette;
         palette.setBrush(QPalette::Background, bkgnd);
         this->setPalette(palette);
 
 /** d: or use this */
-   /* QPixmap pix(":/home/img/mountain_1500.png");
+   /* QPixmap pix(":/home/img/mountain_1700.jpg");
         pix.scaled(this->size(),Qt::IgnoreAspectRatio);
         QPalette pal;
         pal.setBrush(QPalette::Background,pix);
@@ -189,8 +190,8 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
         QSize size;
         size.setHeight(pix.height());
         size.setWidth(pix.width());
-        this->resize(size);*/
-
+        this->resize(size);
+*/
     /* Invoke the Qt Designer generated QObject setup routine */
 //    ui->setupUi(this);        //d: hide this
 

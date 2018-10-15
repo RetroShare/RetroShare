@@ -105,7 +105,7 @@
          <enum>Qt::NoFocus</enum>
         </property>
         <property name="icon">
-         <iconset resource="images.qrc">
+         <iconset resource="icons.qrc">
           <normaloff>:/icons/help_64.png</normaloff>:/icons/help_64.png</iconset>
         </property>
         <property name="checkable">
@@ -180,6 +180,9 @@
             <property name="toolTip">
              <string>Edit status message</string>
             </property>
+            <property name="styleSheet">
+             <string notr="true">color: rgb(255, 255, 255);</string>
+            </property>
             <property name="text">
              <string/>
             </property>
@@ -200,6 +203,9 @@
           </item>
           <item row="0" column="1" colspan="3">
            <widget class="StyledElidedLabel" name="nicknameLabel">
+            <property name="styleSheet">
+             <string notr="true">color: rgb(255, 255, 255);</string>
+            </property>
             <property name="text">
              <string notr="true">Nickname (Location)</string>
             </property>
@@ -403,8 +409,9 @@ background-color: rgb(47, 60, 76);</string>
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="images.qrc"/>
+  <include location="icons.qrc"/>
   <include location="../Unseengui/unseengui.qrc"/>
+  <include location="images.qrc"/>
  </resources>
  <connections/>
 </ui>

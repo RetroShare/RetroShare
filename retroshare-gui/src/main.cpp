@@ -400,15 +400,16 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 		}
 	}
 
-    QSplashScreen splashScreen(QPixmap(":/app/images/loading_3.gif")/* , Qt::WindowStaysOnTopHint*/); // Replace logo_splash.png of RS -> loading_3.gif
+    QSplashScreen splashScreen(QPixmap(":/app/images/Login2.png")/* , Qt::WindowStaysOnTopHint*/); // Replace logo_splash.png of RS -> Login2.png
 
-	splashScreen.show();
-	splashScreen.showMessage(rshare.translate("SplashScreen", "Load configuration"), Qt::AlignHCenter | Qt::AlignBottom);
+    splashScreen.show();
+    splashScreen.showMessage(rshare.translate("SplashScreen", "Load configuration"), Qt::AlignHCenter | Qt::AlignBottom);
 
-	QCoreApplication::processEvents();
+
+    QCoreApplication::processEvents();
 
 	/* stop Retroshare if startup fails */
-	if (!RsControl::instance()->StartupRetroShare())
+    if (!RsControl::instance()->StartupRetroShare())
 	{
 		std::cerr << "libretroshare failed to startup!" << std::endl;
 		return 1;
@@ -446,7 +447,7 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 
 	Rshare::initPlugins();
 
-	splashScreen.showMessage(rshare.translate("SplashScreen", "Create interface"), Qt::AlignHCenter | Qt::AlignBottom);
+    splashScreen.showMessage(rshare.translate("SplashScreen", "Create interface"), Qt::AlignHCenter | Qt::AlignBottom);
 	QCoreApplication::processEvents();	// forces splashscreen to show up
 
 	RsharePeerSettings::Create();
@@ -454,7 +455,7 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 	Emoticons::load();
 
 	if (Settings->value(QString::fromUtf8("FirstRun"), true).toBool()) {
-		splashScreen.hide();
+        splashScreen.hide();
 
 		Settings->setValue(QString::fromUtf8("FirstRun"), false);
 
@@ -479,7 +480,7 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 	}
 
 	MainWindow *w = MainWindow::Create ();
-	splashScreen.finish(w);
+    splashScreen.finish(w);
 
 	w->processLastArgs();
 
@@ -520,7 +521,7 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 	/* only show window, if not startMinimized */
 	if (RsInit::getStartMinimised() || Settings->getStartMinimized())
 	{
-		splashScreen.close();
+        splashScreen.close();
 	} else {
 		w->show();
 	}

@@ -70,5 +70,24 @@
         <file>home/img/Setting/shield.svg</file>
         <file>home/img/Setting/tint-drop.svg</file>
         <file>home/img/Setting/network_un.png</file>
+        <file>app/images/Login2.png</file>
+        <file>home/img/Setting/youtube-play-button.svg</file>
+        <file>app/images/statusicons/ask.png</file>
+        <file>app/images/statusicons/away.png</file>
+        <file>app/images/statusicons/dnd.png</file>
+        <file>app/images/statusicons/empty.png</file>
+        <file>app/images/statusicons/invisible.png</file>
+        <file>app/images/statusicons/newmsgnotif.png</file>
+        <file>app/images/statusicons/noauth.png</file>
+        <file>app/images/statusicons/offline.png</file>
+        <file>app/images/statusicons/online.png</file>
+        <file>chat/img/p2p 0.png</file>
+        <file>chat/img/p2p 1.png</file>
+        <file>chat/img/p2p 2.png</file>
+        <file>home/img/mountain_700.png</file>
+        <file>home/img/mountain_2000.jpg</file>
+        <file>home/img/mountain_1700.jpg</file>
+        <file>home/img/snow-mountain_800.jpg</file>
+        <file>home/img/mountain_550-.png</file>
     </qresource>
 </RCC>

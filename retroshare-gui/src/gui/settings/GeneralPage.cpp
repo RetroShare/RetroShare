@@ -37,7 +37,6 @@ GeneralPage::GeneralPage(QWidget * parent, Qt::WindowFlags flags) :
 {
     /* Invoke the Qt Designer generated object setup routine */
     ui.setupUi(this);
-
     /* Hide platform specific features */
 #ifdef Q_OS_WIN
 
