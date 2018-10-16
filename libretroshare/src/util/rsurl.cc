@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-//#include "util/rsurl.h"
+
 #include "rsurl.h"
 
 #include <cstdio>
@@ -245,7 +245,7 @@ RsUrl& RsUrl::setFragment(const std::string& fragment)
 
 		if(str[i] == '%' && i < boundary)
 		{
-			decoded << static_cast<char>(stoi(str.substr(++i, 2), 0, 16));
+			decoded << static_cast<char>(std::stoi(str.substr(++i, 2), 0, 16));
 			++i;
 		}
 		else decoded << str[i];

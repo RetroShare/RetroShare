@@ -57,8 +57,8 @@ class RsDsdvRoute
 	RsPeerId 	mNextHop;
 	uint32_t 	mSequence;
 	uint32_t 	mDistance;
-	time_t   	mReceived;
-	time_t   	mValidSince;
+	rstime_t   	mReceived;
+	rstime_t   	mValidSince;
 
 };
 

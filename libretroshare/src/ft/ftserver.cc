@@ -52,7 +52,7 @@
 #include "util/rsprint.h"
 
 #include <iostream>
-#include <time.h>
+#include "util/rstime.h"
 
 /***
  * #define SERVER_DEBUG       1
@@ -62,8 +62,8 @@
 #define FTSERVER_DEBUG() std::cerr << time(NULL) << " : FILE_SERVER : " << __FUNCTION__ << " : "
 #define FTSERVER_ERROR() std::cerr << "(EE) FILE_SERVER ERROR : "
 
-static const time_t FILE_TRANSFER_LOW_PRIORITY_TASKS_PERIOD = 5 ;           // low priority tasks handling every 5 seconds
-static const time_t FILE_TRANSFER_MAX_DELAY_BEFORE_DROP_USAGE_RECORD = 10 ; // keep usage records for 10 secs at most.
+static const rstime_t FILE_TRANSFER_LOW_PRIORITY_TASKS_PERIOD = 5 ;           // low priority tasks handling every 5 seconds
+static const rstime_t FILE_TRANSFER_MAX_DELAY_BEFORE_DROP_USAGE_RECORD = 10 ; // keep usage records for 10 secs at most.
 
 /* Setup */
 ftServer::ftServer(p3PeerMgr *pm, p3ServiceControl *sc)
@@ -702,19 +702,20 @@ bool ftServer::ExtraFileMove(std::string fname, const RsFileHash& hash, uint64_t
 /******************** Directory Listing ************************/
 /***************************************************************/
 
-int ftServer::RequestDirDetails(const RsPeerId& uid, const std::string& path, DirDetails &details)
-{
-	return mFileDatabase->RequestDirDetails(uid, path, details);
-}
-
 bool ftServer::findChildPointer(void *ref, int row, void *& result, FileSearchFlags flags)
 {
 	return mFileDatabase->findChildPointer(ref,row,result,flags) ;
 }
+
+bool ftServer::requestDirDetails(
+        DirDetails &details, std::uintptr_t handle, FileSearchFlags flags )
+{ return RequestDirDetails(reinterpret_cast<void*>(handle), details, flags); }
+
 int ftServer::RequestDirDetails(void *ref, DirDetails &details, FileSearchFlags flags)
 {
 	return mFileDatabase->RequestDirDetails(ref,details,flags) ;
 }
+
 uint32_t ftServer::getType(void *ref, FileSearchFlags flags)
 {
 	return mFileDatabase->getType(ref,flags) ;
@@ -1625,8 +1626,8 @@ int	ftServer::tick()
 	if(handleIncoming())
 		moreToTick = true;
 
-	static time_t last_law_priority_tasks_handling_time = 0 ;
-	time_t now = time(NULL) ;
+	static rstime_t last_law_priority_tasks_handling_time = 0 ;
+	rstime_t now = time(NULL) ;
 
 	if(last_law_priority_tasks_handling_time + FILE_TRANSFER_LOW_PRIORITY_TASKS_PERIOD < now)
 	{
@@ -1666,10 +1667,10 @@ bool ftServer::checkUploadLimit(const RsPeerId& pid,const RsFileHash& hash)
 
     // Find the latest records for this pid.
 
-    std::map<RsFileHash,time_t>& tmap(mUploadLimitMap[pid]) ;
-    std::map<RsFileHash,time_t>::iterator it ;
+    std::map<RsFileHash,rstime_t>& tmap(mUploadLimitMap[pid]) ;
+    std::map<RsFileHash,rstime_t>::iterator it ;
 
-	time_t now = time(NULL) ;
+	rstime_t now = time(NULL) ;
 
     // If the limit has been decresed, we arbitrarily drop some ongoing slots.
 
@@ -1694,7 +1695,7 @@ bool ftServer::checkUploadLimit(const RsPeerId& pid,const RsFileHash& hash)
     for(it = tmap.begin();it!=tmap.end() && cleaned<2;)
         if(it->second + FILE_TRANSFER_MAX_DELAY_BEFORE_DROP_USAGE_RECORD < now)
 		{
-			std::map<RsFileHash,time_t>::iterator tmp(it) ;
+			std::map<RsFileHash,rstime_t>::iterator tmp(it) ;
             ++tmp;
  			tmap.erase(it) ;
             it = tmp;
@@ -1859,7 +1860,7 @@ bool    ftServer::addConfiguration(p3ConfigMgr *cfgmgr)
 bool ftServer::turtleSearchRequest(
         const std::string& matchString,
         const std::function<void (const std::list<TurtleFileInfo>& results)>& multiCallback,
-        std::time_t maxWait )
+        rstime_t maxWait )
 {
 	if(matchString.empty())
 	{

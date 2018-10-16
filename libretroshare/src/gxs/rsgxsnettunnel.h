@@ -270,8 +270,8 @@ private:
 	  friend class RsGxsTunnelRandomBiasItem ;
 	  friend class StoreHere ;
 
-	  time_t mLastKeepAlive ;
-	  time_t mLastAutoWash ;
-	  time_t mLastDump ;
+	  rstime_t mLastKeepAlive ;
+	  rstime_t mLastAutoWash ;
+	  rstime_t mLastDump ;
 };
 

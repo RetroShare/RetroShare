@@ -30,6 +30,7 @@
 #include <pgp/pgpkeyutil.h>
 #include "rscertificate.h"
 #include "util/rsstring.h"
+#include "util/stacktrace.h"
 
 //#define DEBUG_RSCERTIFICATE
 
@@ -86,6 +87,17 @@ void RsCertificate::addPacket(uint8_t ptag, const unsigned char *mem, size_t siz
 
 	memcpy(&buf[offset], mem, size) ;
 	offset += size ;
+}
+
+const RsCertificate&RsCertificate::operator=(const RsCertificate&)
+{
+	memset(ipv4_external_ip_and_port,0,6);
+	memset(ipv4_internal_ip_and_port,0,6);
+	binary_pgp_key = nullptr;
+	binary_pgp_key_size = 0;
+	only_pgp = false;
+	hidden_node = false;
+	return *this;
 }
 
 std::string RsCertificate::toStdString() const
@@ -154,17 +166,21 @@ std::string RsCertificate::toStdString() const
 	return out2 ;
 }
 
-RsCertificate::RsCertificate(const std::string& str)
-	: 
-	location_name(""), 
-	pgp_version("Version: OpenPGP:SDK v0.9"),
-		dns_name(""),only_pgp(true)
+RsCertificate::RsCertificate(const std::string& str) :
+    location_name(""), pgp_version("Version: OpenPGP:SDK v0.9"),
+    dns_name(""), only_pgp(true)
 {
-	uint32_t err_code ;
-	binary_pgp_key = NULL ;
+	uint32_t err_code;
+	binary_pgp_key = nullptr;
 
-	if(!initFromString(str,err_code)) 
-		throw err_code ;
+	if(!initializeFromString(str, err_code))
+	{
+		std::cerr << __PRETTY_FUNCTION__ << " is deprecated because it can "
+		          << "miserably fail like this! str: " << str
+		          << " err_code: " << err_code << std::endl;
+		print_stacktrace();
+		throw err_code;
+	}
 }
 
 RsCertificate::RsCertificate(const RsPeerDetails& Detail, const unsigned char *binary_pgp_block,size_t binary_pgp_block_size)
@@ -256,7 +272,7 @@ void RsCertificate::scan_ip(const std::string& ip_string, unsigned short port,un
 	ip_and_port[5] =  port        & 0xff ;
 }
 
-bool RsCertificate::initFromString(const std::string& instr,uint32_t& err_code)
+bool RsCertificate::initializeFromString(const std::string& instr,uint32_t& err_code)
 {
 	try
 	{
@@ -297,7 +313,7 @@ bool RsCertificate::initFromString(const std::string& instr,uint32_t& err_code)
 			unsigned char *buf2 = buf;
 			uint32_t s = PGPKeyParser::read_125Size(buf);
 
-			total_s += 1 + ((unsigned long)buf-(unsigned long)buf2) ;
+			total_s += 1 + ((size_t)buf-(size_t)buf2) ;
 
 			if(total_s > size)
 			{

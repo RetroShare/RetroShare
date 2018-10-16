@@ -100,15 +100,20 @@ void RsTurtleGenericSearchRequestItem::serial_process(RsGenericSerializer::Seria
 }
 RsTurtleSearchRequestItem *RsTurtleGenericSearchRequestItem::clone() const
 {
-    RsTurtleGenericSearchRequestItem *sr = new RsTurtleGenericSearchRequestItem ;
-
-    memcpy(sr,this,sizeof(RsTurtleGenericSearchRequestItem)) ;
-
-    sr->search_data = (unsigned char*)rs_malloc(search_data_len) ;
-    memcpy(sr->search_data,search_data,search_data_len) ;
-
-    return sr ;
+    return new RsTurtleGenericSearchRequestItem(*this) ;
 }
+
+RsTurtleGenericSearchRequestItem::RsTurtleGenericSearchRequestItem(const RsTurtleGenericSearchRequestItem& it)
+		: RsTurtleSearchRequestItem(it)
+{
+	search_data_len = it.search_data_len ;
+    search_data = (unsigned char*)rs_malloc(it.search_data_len) ;
+	service_id = it.service_id ;
+	request_type = it.request_type ;
+
+    memcpy(search_data,it.search_data,it.search_data_len) ;
+}
+
 template<> uint32_t RsTypeSerializer::serial_size(const RsRegularExpression::LinearizedExpression& r)
 {
     uint32_t s = 0 ;

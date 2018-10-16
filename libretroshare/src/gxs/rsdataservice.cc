@@ -954,7 +954,7 @@ void RsDataService::locked_updateGrpMetaCache(const RsGxsGrpMetaData& meta)
 
 void RsDataService::locked_clearGrpMetaCache(const RsGxsGroupId& gid)
 {
-	time_t now = time(NULL) ;
+	rstime_t now = time(NULL) ;
     auto it = mGrpMetaDataCache.find(gid) ;
 
 	// We dont actually delete the item, because it might be used by a calling client.

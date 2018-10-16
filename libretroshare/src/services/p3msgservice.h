@@ -62,7 +62,7 @@ public:
     /* External Interface */
     bool 	getMessageSummaries(std::list<Rs::Msgs::MsgInfoSummary> &msgList);
     bool 	getMessage(const std::string &mid, Rs::Msgs::MessageInfo &msg);
-    void    getMessageCount(unsigned int *pnInbox, unsigned int *pnInboxNew, unsigned int *pnOutbox, unsigned int *pnDraftbox, unsigned int *pnSentbox, unsigned int *pnTrashbox);
+	void	getMessageCount(uint32_t &nInbox, uint32_t &nInboxNew, uint32_t &nOutbox, uint32_t &nDraftbox, uint32_t &nSentbox, uint32_t &nTrashbox);
 
     bool decryptMessage(const std::string& mid) ;
     bool    removeMsgId(const std::string &mid); 
@@ -116,11 +116,11 @@ public:
 
     struct DistantMessengingInvite
     {
-	    time_t time_of_validity ;
+	    rstime_t time_of_validity ;
     };
     struct DistantMessengingContact
     {
-	    time_t last_hit_time ;
+	    rstime_t last_hit_time ;
 	    RsPeerId virtual_peer_id ;
 	    uint32_t status ;
 	    bool pending_messages ;

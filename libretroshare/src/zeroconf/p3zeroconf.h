@@ -110,14 +110,14 @@ class zcLocationDetails
 {
 	public:
 	std::string mSslId;
-	time_t mFoundTs;
+	rstime_t mFoundTs;
 	uint32_t mStatus;
 	std::string mHostTarget;
 	std::string mFullName;
 	uint16_t mPort;
 
 	struct sockaddr_storage mAddress;
-	time_t mAddrTs;
+	rstime_t mAddrTs;
 };
 
 
@@ -262,10 +262,10 @@ virtual bool    setAttachMode(bool on);
 	uint32_t mResolveStatus;
 	uint32_t mQueryStatus;
 
-	time_t mRegisterStatusTS; 
-	time_t mBrowseStatusTS; 
-	time_t mResolveStatusTS;
-	time_t mQueryStatusTS;
+	rstime_t mRegisterStatusTS; 
+	rstime_t mBrowseStatusTS; 
+	rstime_t mResolveStatusTS;
+	rstime_t mQueryStatusTS;
 
 	std::string mQuerySslId;
 	std::string mQueryGpgId;
@@ -277,7 +277,7 @@ std::list<zcQueryResult> mQueryResults;
 
 
 
-	time_t mMinuteTS;
+	rstime_t mMinuteTS;
 
 	std::map<std::string, zcPeerDetails> mPeerDetails;
 };

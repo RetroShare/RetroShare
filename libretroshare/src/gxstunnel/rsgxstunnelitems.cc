@@ -21,7 +21,7 @@
  *******************************************************************************/
 
 #include <stdexcept>
-#include <time.h>
+#include "util/rstime.h"
 #include "serialiser/rsbaseserial.h"
 #include "serialiser/rstlvbase.h"
 #include "serialiser/rstypeserializer.h"

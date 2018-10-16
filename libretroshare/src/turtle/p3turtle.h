@@ -207,7 +207,7 @@ class TurtleHashInfo
 	public:
 		std::vector<TurtleTunnelId> tunnels ;		// list of active tunnel ids for this file hash
         TurtleRequestId last_request ;			// last request for the tunnels of this hash
-        time_t last_digg_time ;				// last time the tunnel digging happenned.
+        rstime_t last_digg_time ;				// last time the tunnel digging happenned.
         RsTurtleClientService *service ; 		// client service to which items should be sent. Never NULL.
         bool use_aggressive_mode ;			// allow to re-digg tunnels even when some are already available
 };
@@ -436,10 +436,10 @@ class p3turtle: public p3Service, public RsTurtle, public p3Config
 		/// List of client services that have regitered.
 		std::map<uint16_t,RsTurtleClientService*>						_registered_services ;
 
-		time_t _last_clean_time ;
-		time_t _last_tunnel_management_time ;
-		time_t _last_tunnel_campaign_time ;
-		time_t _last_tunnel_speed_estimate_time ;
+		rstime_t _last_clean_time ;
+		rstime_t _last_tunnel_management_time ;
+		rstime_t _last_tunnel_campaign_time ;
+		rstime_t _last_tunnel_speed_estimate_time ;
 
 		std::list<pqipeer> _online_peers;
 

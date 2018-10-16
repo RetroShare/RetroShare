@@ -103,7 +103,7 @@ virtual	bool load(const std::string &input);
 virtual	std::string save() const;
 
 	bool validatedSignature;
-	time_t lastCheckTs;
+	rstime_t lastCheckTs;
 	uint32_t checkAttempts;
 	RsPgpId pgpId;
 };
@@ -124,8 +124,8 @@ virtual	std::string save() const;
 	bool tagValid(int i) const;
 
 	uint32_t tagFlags;
-	time_t publishTs;
-	time_t lastCheckTs;
+	rstime_t publishTs;
+	rstime_t lastCheckTs;
 };
 
 
@@ -196,7 +196,7 @@ public:
     
     void updateServiceString(std::string serviceString);
 
-    time_t mPublishTs;
+    rstime_t mPublishTs;
     std::list<RsRecognTag> mRecognTags; // Only partially validated.
 
     RsIdentityDetails details;
@@ -212,7 +212,7 @@ struct SerialisedIdentityStruct
 {
     unsigned char *mMem ;
     uint32_t mSize ;
-    time_t mLastUsageTS;
+    rstime_t mLastUsageTS;
 };
 
 // Not sure exactly what should be inherited here?
@@ -282,7 +282,7 @@ public:
 	virtual bool setAsRegularContact(const RsGxsId& id,bool is_a_contact) ;
 	virtual bool isARegularContact(const RsGxsId& id) ;
 	virtual uint32_t nbRegularContacts() ;
-	virtual time_t getLastUsageTS(const RsGxsId &id) ;
+	virtual rstime_t getLastUsageTS(const RsGxsId &id) ;
 
 	/**************** RsGixs Implementation ***************/
 
@@ -527,7 +527,7 @@ private:
 	void slowIndicateConfigChanged() ;
 
 	virtual void timeStampKey(const RsGxsId& id, const RsIdentityUsage& reason) ;
-	time_t locked_getLastUsageTS(const RsGxsId& gxs_id);
+	rstime_t locked_getLastUsageTS(const RsGxsId& gxs_id);
 
 	std::string genRandomId(int len = 20);
 
@@ -570,8 +570,8 @@ private:
     {
         keyTSInfo() : TS(0) {}
 
-        time_t TS ;
-        std::map<RsIdentityUsage,time_t> usage_map ;
+        rstime_t TS ;
+        std::map<RsIdentityUsage,rstime_t> usage_map ;
     };
 	friend class IdCacheEntryCleaner;
 
@@ -593,8 +593,8 @@ private:
 
 	PgpAuxUtils *mPgpUtils;
 
-	time_t mLastKeyCleaningTime ;
-	time_t mLastConfigUpdate ;
+	rstime_t mLastKeyCleaningTime ;
+	rstime_t mLastConfigUpdate ;
 
 	bool mOwnIdsLoaded ;
     uint32_t mMaxKeepKeysBanned ;

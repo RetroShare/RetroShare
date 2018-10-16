@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
 	if(argc != 3)
 	{
 		qDebug() << "Usage: jsonapi-generator SOURCE_PATH OUTPUT_PATH";
-		return EINVAL;
+		return -EINVAL;
 	}
 
 	QString sourcePath(argv[1]);
@@ -56,17 +56,23 @@ int main(int argc, char *argv[])
 	QFile wrappersDefFile(wrappersDefFilePath);
 	wrappersDefFile.remove();
 	if(!wrappersDefFile.open(QIODevice::WriteOnly|QIODevice::Append|QIODevice::Text))
-		qFatal(QString("Can't open: " + wrappersDefFilePath).toLatin1().data());
+	{
+		qDebug() << "Can't open: " << wrappersDefFilePath;
+		return -errno;
+	}
 
 	QString cppApiIncludesFilePath(outputPath + "/jsonapi-includes.inl");
 	QFile cppApiIncludesFile(cppApiIncludesFilePath);
 	cppApiIncludesFile.remove();
 	if(!cppApiIncludesFile.open(QIODevice::WriteOnly|QIODevice::Append|QIODevice::Text))
-		qFatal(QString("Can't open: " + cppApiIncludesFilePath).toLatin1().data());
+	{
+		qDebug() << "Can't open: " << cppApiIncludesFilePath;
+		return -errno;
+	}
 	QSet<QString> cppApiIncludesSet;
 
 	auto fatalError = [&](
-	        std::initializer_list<QVariant> errors, int ernum = EINVAL )
+	        std::initializer_list<QVariant> errors, int ernum = -EINVAL )
 	{
 		QString errorMsg;
 		for(const QVariant& error: errors)
@@ -296,7 +302,7 @@ int main(int argc, char *argv[])
 					const MethodParam& mp(paramsMap[pn]);
 					paramsDeclaration += "\t\t" + mp.type + " " + mp.name;
 					if(!mp.defval.isEmpty())
-						paramsDeclaration += "(" + mp.defval + ")";
+						paramsDeclaration += " = " + mp.defval;
 					paramsDeclaration += ";\n";
 					if(mp.in)
 						inputParamsDeserialization += "\t\t\tRS_SERIAL_PROCESS("

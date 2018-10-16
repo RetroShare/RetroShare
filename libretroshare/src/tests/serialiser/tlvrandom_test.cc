@@ -38,7 +38,7 @@
  * many deserialisation as possible.
  */
 
-#include <time.h>
+#include "util/rstime.h"
 #include <string.h>
 #include <iostream>
 #include "serialiser/rstlvbase.h"
@@ -74,8 +74,8 @@ int main()
 		exit(1);
 	}
 
-	time_t startTs = time(NULL);
-	time_t endTs = startTs + TEST_LENGTH;
+	rstime_t startTs = time(NULL);
+	rstime_t endTs = startTs + TEST_LENGTH;
 
 	srand(startTs);
 	for(i = 0; i < dsize; i++)

@@ -811,7 +811,7 @@ static bool checkAccount(const std::string &accountdir, AccountDetails &account,
 	/* Use RetroShare's exe dir */
 	dataDirectory = ".";
 #elif defined(ANDROID)
-	dataDirectory = defaultBaseDirectory()+"/usr/share/retroshare";
+	dataDirectory = PathBaseDirectory()+"/usr/share/retroshare";
 #elif defined(DATA_DIR)
 	// cppcheck-suppress ConfigurationNotChecked
 	dataDirectory = DATA_DIR;

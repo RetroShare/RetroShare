@@ -30,6 +30,7 @@
 #include "retroshare/rsids.h"
 #include "util/rsurl.h"
 #include "util/rsdeprecate.h"
+#include "util/rstime.h"
 
 class RsPeers;
 
@@ -272,7 +273,7 @@ struct RsPeerDetails : RsSerializable
 
 	/* have we been denied */
 	bool wasDeniedConnection;
-	time_t deniedTS;
+	rstime_t deniedTS;
 
 	/* linkType */
 	uint32_t linkType;
@@ -527,13 +528,15 @@ public:
 	/**
 	 * @brief Get RetroShare invite of the given peer
 	 * @jsonapi{development}
-	 * @param[in] sslId Id of the peer of which we want to generate an invite
+	 * @param[in] sslId Id of the peer of which we want to generate an invite,
+	 *	a null id (all 0) is passed, an invite for own node is returned.
 	 * @param[in] includeSignatures true to add key signatures to the invite
 	 * @param[in] includeExtraLocators false to avoid to add extra locators
 	 * @return invite string
 	 */
 	virtual std::string GetRetroshareInvite(
-	        const RsPeerId& sslId, bool includeSignatures = false,
+	        const RsPeerId& sslId = RsPeerId(),
+	        bool includeSignatures = false,
 	        bool includeExtraLocators = true ) = 0;
 
 	/**
@@ -547,15 +550,6 @@ public:
 	        const std::string& invite,
 	        ServicePermissionFlags flags = RS_NODE_PERM_DEFAULT ) = 0;
 
-	/**
-	 * @brief Get RetroShare invite of our own peer
-	 * @param[in] includeSignatures true to add key signatures to the invite
-	 * @param[in] includeExtraLocators false to avoid to add extra locators
-	 * @return invite string
-	 */
-	virtual std::string GetRetroshareInvite(
-	        bool includeSignatures = false,
-	        bool includeExtraLocators = true ) = 0;
 
 	/* Auth Stuff */
 	virtual	std::string getPGPKey(const RsPgpId& pgp_id,bool include_signatures) = 0;

@@ -28,7 +28,7 @@
 
 #include <set>
 #include <string>
-#include <time.h>
+#include "util/rstime.h"
 #include <stdlib.h>
 #include <list>
 #include <map>
@@ -220,7 +220,7 @@ public:
      * \param tm	time stamp computed
      * \return 		false if the group is not found, true otherwise
      */
-    virtual bool getGroupServerUpdateTS(const RsGxsGroupId& gid,time_t& grp_server_update_TS,time_t& msg_server_update_TS) =0;
+    virtual bool getGroupServerUpdateTS(const RsGxsGroupId& gid,rstime_t& grp_server_update_TS,rstime_t& msg_server_update_TS) =0;
 
     /*!
      * \brief stampMsgServerUpdateTS

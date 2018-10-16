@@ -33,6 +33,7 @@
 #include <retroshare/rsflags.h>
 #include <serialiser/rsserializable.h>
 #include <serialiser/rstypeserializer.h>
+#include "util/rstime.h"
 
 #define USE_NEW_CHUNK_CHECKING_CODE
 
@@ -225,7 +226,7 @@ struct FileInfo : RsSerializable
 	std::vector<TransferInfo> peers;
 
 	DwlSpeed priority;
-	time_t lastTS;
+	rstime_t lastTS;
 
 	std::list<RsNodeGroupId> parent_groups;
 
@@ -258,21 +259,49 @@ struct FileInfo : RsSerializable
 
 std::ostream &operator<<(std::ostream &out, const FileInfo& info);
 
-class DirStub
+/**
+ * Pointers in this class have no real meaning as pointers, they are used as
+ * indexes, internally by retroshare.
+ */
+struct DirStub : RsSerializable
 {
-	public:
+	DirStub() : type(DIR_TYPE_UNKNOWN), ref(nullptr) {}
+
 	uint8_t type;
 	std::string name;
 	void *ref;
+
+	/// @see RsSerializable
+	void serial_process(RsGenericSerializer::SerializeJob j,
+	                    RsGenericSerializer::SerializeContext& ctx)
+	{
+		RS_SERIAL_PROCESS(type);
+		RS_SERIAL_PROCESS(name);
+#if defined(__GNUC__) && !defined(__clang__)
+#	pragma GCC diagnostic ignored "-Wstrict-aliasing"
+#endif // defined(__GNUC__) && !defined(__clang__)
+		std::uintptr_t& handle(reinterpret_cast<std::uintptr_t&>(ref));
+		RS_SERIAL_PROCESS(handle);
+#if defined(__GNUC__) && !defined(__clang__)
+#	pragma GCC diagnostic pop
+#endif // defined(__GNUC__) && !defined(__clang__)
+	}
 };
 
-class DirDetails
+/**
+ * Pointers in this class have no real meaning as pointers, they are used as
+ * indexes, internally by retroshare.
+ */
+struct DirDetails : RsSerializable
 {
-public:
-    void *parent;
-    int prow; /* parent row */
+	DirDetails() : parent(nullptr), prow(0), ref(nullptr),
+	    type(DIR_TYPE_UNKNOWN), count(0), mtime(0), max_mtime(0) {}
 
-    void *ref;
+
+	void* parent;
+	int prow; /* parent row */
+
+	void* ref;
     uint8_t type;
     RsPeerId id;
     std::string name;
@@ -285,6 +314,34 @@ public:
 
     std::vector<DirStub> children;
     std::list<RsNodeGroupId> parent_groups;	// parent groups for the shared directory
+
+	/// @see RsSerializable
+	void serial_process(RsGenericSerializer::SerializeJob j,
+	                    RsGenericSerializer::SerializeContext& ctx)
+	{
+#if defined(__GNUC__) && !defined(__clang__)
+#	pragma GCC diagnostic ignored "-Wstrict-aliasing"
+#endif // defined(__GNUC__) && !defined(__clang__)
+		std::uintptr_t& handle(reinterpret_cast<std::uintptr_t&>(ref));
+		RS_SERIAL_PROCESS(handle);
+		std::uintptr_t& parentHandle(reinterpret_cast<std::uintptr_t&>(parent));
+		RS_SERIAL_PROCESS(parentHandle);
+#if defined(__GNUC__) && !defined(__clang__)
+#	pragma GCC diagnostic pop
+#endif // defined(__GNUC__) && !defined(__clang__)
+		RS_SERIAL_PROCESS(prow);
+		RS_SERIAL_PROCESS(type);
+		RS_SERIAL_PROCESS(id);
+		RS_SERIAL_PROCESS(name);
+		RS_SERIAL_PROCESS(hash);
+		RS_SERIAL_PROCESS(path);
+		RS_SERIAL_PROCESS(count);
+		RS_SERIAL_PROCESS(mtime);
+		RS_SERIAL_PROCESS(flags);
+		RS_SERIAL_PROCESS(max_mtime);
+		RS_SERIAL_PROCESS(children);
+		RS_SERIAL_PROCESS(parent_groups);
+	}
 };
 
 std::ostream &operator<<(std::ostream &out, const DirDetails& details);

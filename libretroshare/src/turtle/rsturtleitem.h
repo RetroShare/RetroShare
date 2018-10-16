@@ -185,7 +185,7 @@ class RsTurtleGenericSearchRequestItem: public RsTurtleSearchRequestItem
 		void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 
     private:
-        RsTurtleGenericSearchRequestItem(const RsTurtleGenericSearchRequestItem&): RsTurtleSearchRequestItem(RS_TURTLE_SUBTYPE_GENERIC_SEARCH_REQUEST) {}				// make the object non copi-able.
+        RsTurtleGenericSearchRequestItem(const RsTurtleGenericSearchRequestItem&); // make the object non copi-able.
         RsTurtleGenericSearchRequestItem& operator=(const RsTurtleGenericSearchRequestItem&) { return *this;}
 };
 class RsTurtleSearchResultItem: public RsTurtleItem

@@ -33,9 +33,9 @@
 #include <iostream>
 
 #define URL_FAQ         "http://retroshare.sourceforge.net/wiki/index.php/Frequently_Asked_Questions"
-#define URL_FORUM       "http://retroshare.sourceforge.net/forum/"
-#define URL_WEBSITE     "http://retroshare.org"
-#define URL_DOWNLOAD    "http://retroshare.sourceforge.net/downloads.html"
+#define URL_FORUM       "https://github.com/RetroShare/RetroShare/issues"
+#define URL_WEBSITE     "http://retroshare.net"
+#define URL_DOWNLOAD    "http://retroshare.net/downloads.html"
 
 #define EMAIL_SUBSCRIBE "lists@retroshare.org"
 
@@ -236,7 +236,7 @@ void GetStartedDialog::inviteFriends()
 	{
 		RsAutoUpdatePage::lockAllEvents();
 
-		cert = rsPeers->GetRetroshareInvite(false);
+		cert = rsPeers->GetRetroshareInvite();
 
 		RsAutoUpdatePage::unlockAllEvents() ;
 	}

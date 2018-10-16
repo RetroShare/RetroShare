@@ -171,7 +171,7 @@ int p3FileDatabase::tick()
     tickRecv() ;
     tickSend() ;
 
-    time_t now = time(NULL) ;
+    rstime_t now = time(NULL) ;
 
     // cleanup
     // 	- remove/delete shared file lists for people who are not friend anymore
@@ -183,7 +183,7 @@ int p3FileDatabase::tick()
         mLastCleanupTime = now ;
     }
 
-    static time_t last_print_time = 0;
+    static rstime_t last_print_time = 0;
 
     if(last_print_time + 20 < now)
     {
@@ -604,15 +604,15 @@ void p3FileDatabase::cleanup()
             for(std::list<RsPeerId>::const_iterator it(friend_lst.begin());it!=friend_lst.end();++it)
                 friend_set.insert(*it) ;
         }
-        time_t now = time(NULL);
+        rstime_t now = time(NULL);
 
         for(uint32_t i=0;i<mRemoteDirectories.size();++i)
             if(mRemoteDirectories[i] != NULL)
             {
-                time_t recurs_mod_time ;
+                rstime_t recurs_mod_time ;
                 mRemoteDirectories[i]->getDirectoryRecursModTime(0,recurs_mod_time) ;
 
-                time_t last_contact = 0 ;
+                rstime_t last_contact = 0 ;
                 RsPeerDetails pd ;
                 if(rsPeers->getPeerDetails(mRemoteDirectories[i]->peerId(),pd))
                     last_contact = pd.lastConnect ;
@@ -779,10 +779,14 @@ template<> bool p3FileDatabase::convertPointerToEntryIndex<4>(const void *p, Ent
 {
     // trust me, I can do this ;-)
 
-#pragma GCC diagnostic ignored "-Wstrict-aliasing"
+#if defined(__GNUC__) && !defined(__clang__)
+#	pragma GCC diagnostic ignored "-Wstrict-aliasing"
+#endif // defined(__GNUC__) && !defined(__clang__)
     e   = EntryIndex(  *reinterpret_cast<uint32_t*>(&p) & ENTRY_INDEX_BIT_MASK_32BITS ) ;
     friend_index = (*reinterpret_cast<uint32_t*>(&p)) >> NB_ENTRY_INDEX_BITS_32BITS ;
-#pragma GCC diagnostic pop
+#if defined(__GNUC__) && !defined(__clang__)
+#	pragma GCC diagnostic pop
+#endif // defined(__GNUC__) && !defined(__clang__)
 
     if(friend_index == 0)
     {
@@ -819,10 +823,14 @@ template<> bool p3FileDatabase::convertPointerToEntryIndex<8>(const void *p, Ent
 {
     // trust me, I can do this ;-)
 
+#if defined(__GNUC__) && !defined(__clang__)
 #pragma GCC diagnostic ignored "-Wstrict-aliasing"
+#endif // defined(__GNUC__) && !defined(__clang__)
     e   = EntryIndex(  *reinterpret_cast<uint64_t*>(&p) & ENTRY_INDEX_BIT_MASK_64BITS ) ;
     friend_index = (*reinterpret_cast<uint64_t*>(&p)) >> NB_ENTRY_INDEX_BITS_64BITS ;
+#if defined(__GNUC__) && !defined(__clang__)
 #pragma GCC diagnostic pop
+#endif // defined(__GNUC__) && !defined(__clang__)
 
     if(friend_index == 0)
     {
@@ -976,7 +984,7 @@ void p3FileDatabase::getExtraFilesDirDetails(void *ref,DirectoryStorage::EntryIn
 {
     // update the cache of extra files if last requested too long ago
 
-    time_t now = time(NULL);
+    rstime_t now = time(NULL);
 
     if(mLastExtraFilesCacheUpdate + DELAY_BETWEEN_EXTRA_FILES_CACHE_UPDATES <= now)
     {
@@ -1184,16 +1192,6 @@ int p3FileDatabase::RequestDirDetails(void *ref, DirDetails& d, FileSearchFlags 
     return true;
 }
 
-int p3FileDatabase::RequestDirDetails(const RsPeerId &/*uid*/, const std::string &/*path*/, DirDetails &/*details*/) const
-{
-    NOT_IMPLEMENTED();
-    return 0;
-}
-//int p3FileDatabase::RequestDirDetails(const std::string& path, DirDetails &details) const
-//{
-//    NOT_IMPLEMENTED();
-//    return 0;
-//}
 uint32_t p3FileDatabase::getType(void *ref,FileSearchFlags flags) const
 {
     RS_STACK_MUTEX(mFLSMtx) ;
@@ -1627,7 +1625,7 @@ void p3FileDatabase::handleDirSyncRequest(RsFileListsSyncRequestItem *item)
         }
         else
         {
-            time_t local_recurs_max_time ;
+            rstime_t local_recurs_max_time ;
             mLocalSharedDirs->getDirectoryRecursModTime(entry_index,local_recurs_max_time) ;
 
             if(item->last_known_recurs_modf_TS != local_recurs_max_time)	// normally, should be "<", but since we provided the TS it should be equal, so != is more robust.
@@ -1792,7 +1790,7 @@ void p3FileDatabase::handleDirSyncResponse(RsFileListsSyncResponseItem*& sitem)
         sitem = item ;
     }
 
-    time_t now = time(NULL);
+    rstime_t now = time(NULL);
 
     // check the hash. If anything goes wrong (in the chunking for instance) the hash will not match
 
@@ -1899,7 +1897,7 @@ void p3FileDatabase::handleDirSyncResponse(RsFileListsSyncResponseItem*& sitem)
 
 void p3FileDatabase::locked_recursSweepRemoteDirectory(RemoteDirectoryStorage *rds,DirectoryStorage::EntryIndex e,int depth)
 {
-   time_t now = time(NULL) ;
+   rstime_t now = time(NULL) ;
 
    //std::string indent(2*depth,' ') ;
 
@@ -1912,7 +1910,7 @@ void p3FileDatabase::locked_recursSweepRemoteDirectory(RemoteDirectoryStorage *r
    P3FILELISTS_DEBUG() << "currently at entry index " << e << std::endl;
 #endif
 
-   time_t local_update_TS;
+   rstime_t local_update_TS;
 
    if(!rds->getDirectoryUpdateTime(e,local_update_TS))
    {
@@ -1959,9 +1957,9 @@ p3FileDatabase::DirSyncRequestId p3FileDatabase::makeDirSyncReqId(const RsPeerId
 bool p3FileDatabase::locked_generateAndSendSyncRequest(RemoteDirectoryStorage *rds,const DirectoryStorage::EntryIndex& e)
 {
     RsFileHash entry_hash ;
-    time_t now = time(NULL) ;
+    rstime_t now = time(NULL) ;
 
-    time_t max_known_recurs_modf_time ;
+    rstime_t max_known_recurs_modf_time ;
 
     if(!rds->getDirectoryRecursModTime(e,max_known_recurs_modf_time))
     {
@@ -2027,11 +2025,11 @@ bool p3FileDatabase::banFile(const RsFileHash& real_file_hash, const std::string
 		RS_STACK_MUTEX(mFLSMtx) ;
 		BannedFileEntry& entry(mPrimaryBanList[real_file_hash]) ;	// primary list (user controlled) of files banned from FT search and forwarding. map<real hash, BannedFileEntry>
 
-        if(entry.ban_time_stamp == 0)
+        if(entry.mBanTimeStamp == 0)
 		{
-			entry.filename = filename ;
-			entry.size = file_size ;
-			entry.ban_time_stamp = time(NULL);
+			entry.mFilename = filename ;
+			entry.mSize = file_size ;
+			entry.mBanTimeStamp = time(NULL);
 
 			RsFileHash hash_of_hash ;
 			ftServer::encryptHash(real_file_hash,hash_of_hash) ;
@@ -2118,7 +2116,7 @@ void p3FileDatabase::checkSendBannedFilesInfo()
     P3FILELISTS_DEBUG() << "  Checking banned files information: " << std::endl;
 #endif
 
-    time_t now = time(NULL);
+    rstime_t now = time(NULL);
     std::list<RsPeerId> online_friends ;
 	rsPeers->getOnlineList(online_friends);
 

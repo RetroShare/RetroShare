@@ -3,7 +3,8 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright 2012-2012 Robert Fernie <retroshare@lunamutt.com>                 *
+ * Copyright (C) 2012  Robert Fernie <retroshare@lunamutt.com>                 *
+ * Copyright (C) 2018  Gioacchino Mazzurco <gio@eigenlab.org>                  *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -32,10 +33,6 @@
 
 #include <map>
 #include <string>
-
-/* 
- *
- */
 
 
 class SSGxsChannelGroup
@@ -113,7 +110,7 @@ virtual bool getChannelDownloadDirectory(const RsGxsGroupId &groupId, std::strin
 	/// @see RsGxsChannels::turtleSearchRequest
 	virtual bool turtleSearchRequest(const std::string& matchString,
 	        const std::function<void (const RsGxsGroupSummary&)>& multiCallback,
-	        std::time_t maxWait = 300 );
+	        rstime_t maxWait = 300 );
 
 	/**
 	 * Receive results from turtle search @see RsGenExchange @see RsNxsObserver
@@ -182,6 +179,12 @@ virtual bool ExtraFileRemove(const RsFileHash &hash);
 	        std::vector<RsGxsChannelPost>& posts,
 	        std::vector<RsGxsComment>& comments );
 
+	/// Implementation of @see RsGxsChannels::createChannel
+	virtual bool createChannel(RsGxsChannelGroup& channel);
+
+	/// Implementation of @see RsGxsChannels::createPost
+	virtual bool createPost(RsGxsChannelPost& post);
+
 protected:
 	// Overloaded from GxsTokenQueue for Request callbacks.
 	virtual void handleResponse(uint32_t token, uint32_t req_type);
@@ -249,7 +252,7 @@ bool generateGroup(uint32_t &token, std::string groupName);
 	RsGxsMessageId mGenThreadId;
 
 	p3GxsCommentService *mCommentService;
-    std::map<RsGxsGroupId,time_t> mKnownChannels;
+    std::map<RsGxsGroupId,rstime_t> mKnownChannels;
 
 	/** Store search callbacks with timeout*/
 	std::map<

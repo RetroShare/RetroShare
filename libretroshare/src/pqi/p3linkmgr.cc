@@ -327,9 +327,9 @@ void    p3LinkMgrIMPL::statusTick()
         //std::list<std::string> dummyToRemove;
 
       {
-	time_t now = time(NULL);
-	time_t oldavail = now - MAX_AVAIL_PERIOD;
-        time_t retry = now - mRetryPeriod;
+	rstime_t now = time(NULL);
+	rstime_t oldavail = now - MAX_AVAIL_PERIOD;
+        rstime_t retry = now - mRetryPeriod;
 
       	RsStackMutex stack(mLinkMtx);  /******   LOCK MUTEX ******/
         std::map<RsPeerId, peerConnectState>::iterator it;
@@ -1080,7 +1080,7 @@ void    p3LinkMgrIMPL::peerStatus(const RsPeerId& id, const pqiIpAddrSet &addrs,
         std::map<RsPeerId, peerConnectState>::iterator it;
 	bool isFriend = true;
 
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 
 	peerAddrInfo details;
 	details.type    = type;
@@ -1658,7 +1658,7 @@ bool p3LinkMgrIMPL::retryConnectTCP(const RsPeerId &id)
 
 #define MAX_TCP_ADDR_AGE	(3600 * 24 * 14) // two weeks in seconds.
 
-bool p3LinkMgrIMPL::locked_CheckPotentialAddr(const struct sockaddr_storage &addr, time_t age)
+bool p3LinkMgrIMPL::locked_CheckPotentialAddr(const struct sockaddr_storage &addr, rstime_t age)
 {
 #ifdef LINKMGR_DEBUG
 	std::cerr << "p3LinkMgrIMPL::locked_CheckPotentialAddr("; 
@@ -1805,7 +1805,7 @@ void  p3LinkMgrIMPL::locked_ConnectAttempt_HistoricalAddresses(peerConnectState 
 	/* now try historical addresses */
 	/* try local addresses first */
 	std::list<pqiIpAddress>::const_iterator ait;
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 
 #ifdef LINKMGR_DEBUG
 	std::cerr << "p3LinkMgrIMPL::locked_ConnectAttempt_HistoricalAddresses()";
@@ -2206,7 +2206,7 @@ void p3LinkMgrIMPL::printPeerLists(std::ostream &out)
     return;
 }
 
-bool p3LinkMgrIMPL::checkPotentialAddr(const sockaddr_storage &addr, time_t age)
+bool p3LinkMgrIMPL::checkPotentialAddr(const sockaddr_storage &addr, rstime_t age)
 {
     RsStackMutex stack(mLinkMtx); /****** STACK LOCK MUTEX *******/
 

@@ -21,7 +21,7 @@
  *******************************************************************************/
 #include "tcponudp/udpstunner.h"
 #include <iostream>
-#include <time.h>
+#include "util/rstime.h"
 
 #include "util/rsrandom.h"
 #include "util/rsprint.h"
@@ -111,7 +111,7 @@ void	UdpStunner::SimSymmetricNat()
 int	UdpStunner::grabExclusiveMode(std::string holder)  /* returns seconds since last send/recv */
 {
         RsStackMutex stack(stunMtx);   /********** LOCK MUTEX *********/
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 
 
 #ifdef DEBUG_UDP_STUNNER_FILTER
@@ -187,7 +187,7 @@ int	UdpStunner::releaseExclusiveMode(std::string holder, bool forceStun)
 		return 0;
 	}
 
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 	mExclusiveMode = false;
 	if (forceStun)
 	{
@@ -330,7 +330,7 @@ bool UdpStunner::locked_handleStunPkt(void *data, int size, struct sockaddr_in &
 		if (!pkt)
 			return false;
 
-		time_t now = time(NULL);
+		rstime_t now = time(NULL);
 		mStunLastSendAny = now;
 		int sentlen = sendPkt(pkt, len, from, STUN_TTL);
 		free(pkt);
@@ -456,7 +456,7 @@ int     UdpStunner::doStun(struct sockaddr_in stun_addr)
 	{
 		RsStackMutex stack(stunMtx);   /********** LOCK MUTEX *********/
 
-		time_t now = time(NULL);
+		rstime_t now = time(NULL);
 		mStunLastSendStun = now;
 		mStunLastSendAny = now;
 	}
@@ -750,7 +750,7 @@ bool    UdpStunner::checkStunDesired()
 	std::cerr << std::endl;
 #endif
 
-	time_t now;
+	rstime_t now;
 	{
           RsStackMutex stack(stunMtx);   /********** LOCK MUTEX *********/
 
@@ -800,7 +800,7 @@ bool    UdpStunner::checkStunDesired()
 
 #define RATE_SCALE (3.0)
 	  double stunPeriod = (mTargetStunPeriod / (RATE_SCALE)) * (1.0 + mSuccessRate * (RATE_SCALE - 1.0));
-	  time_t nextStun = mStunLastRecvResp + (int) stunPeriod;
+	  rstime_t nextStun = mStunLastRecvResp + (int) stunPeriod;
 
 #ifdef DEBUG_UDP_STUNNER
 	std::cerr << "UdpStunner::checkStunDesired() TargetStunPeriod: " << mTargetStunPeriod;
@@ -834,7 +834,7 @@ bool    UdpStunner::attemptStun()
 {
 	bool found = false;
 	TouStunPeer peer;
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 
 #ifdef DEBUG_UDP_STUNNER
 	std::cerr << "UdpStunner::attemptStun()";
@@ -1000,7 +1000,7 @@ bool    UdpStunner::locked_recvdStun(const struct sockaddr_in &remote, const str
 	 
 	mSuccessRate += (1.0-TOU_SUCCESS_LPF_FACTOR); 
 
-	time_t now = time(NULL);	
+	rstime_t now = time(NULL);	
         mStunLastRecvResp = now;
         mStunLastRecvAny = now;
 
@@ -1025,7 +1025,7 @@ bool    UdpStunner::locked_checkExternalAddress()
 
 	bool found1 = false;
 	bool found2 = false;
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 	/* iterator backwards - as these are the most recent */
 
 	/********
@@ -1048,7 +1048,7 @@ bool    UdpStunner::locked_checkExternalAddress()
 		   4) recent age.
 		 */
 
-		time_t age = (now - it->lastsend);
+		rstime_t age = (now - it->lastsend);
 		if (it->response && 
 #ifdef UDPSTUN_ALLOW_LOCALNET	
 			( mAcceptLocalNet || isExternalNet(&(it->eaddr.sin_addr))) &&
@@ -1132,7 +1132,7 @@ bool    UdpStunner::locked_printStunList()
 #ifdef DEBUG_UDP_STUNNER
 	std::string out = "locked_printStunList()\n";
 
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 	rs_sprintf_append(out, "\tLastSendStun: %ld\n", now - mStunLastSendStun);
 	rs_sprintf_append(out, "\tLastSendAny: %ld\n", now - mStunLastSendAny);
 	rs_sprintf_append(out, "\tLastRecvResp: %ld\n", now - mStunLastRecvResp);
@@ -1157,7 +1157,7 @@ bool    UdpStunner::locked_printStunList()
 	
 bool    UdpStunner::getStunPeer(int idx, std::string &id,
 		struct sockaddr_in &remote, struct sockaddr_in &eaddr, 
-		uint32_t &failCount, time_t &lastSend)
+		uint32_t &failCount, rstime_t &lastSend)
 {
 	RsStackMutex stack(stunMtx);   /********** LOCK MUTEX *********/
 

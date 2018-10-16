@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <ctime>
+#include "util/rstime.h"
 #include <vector>
 #include <xapian.h>
 
@@ -261,7 +261,7 @@ private:
 		return dbDir;
 	}
 
-	static std::string timetToXapianDate(const time_t& time)
+	static std::string timetToXapianDate(const rstime_t& time)
 	{
 		char date[] = "YYYYMMDD\0";
 		std::strftime(date, 9, "%Y%m%d", std::gmtime(&time));

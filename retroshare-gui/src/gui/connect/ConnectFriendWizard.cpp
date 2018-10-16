@@ -127,7 +127,7 @@ ConnectFriendWizard::ConnectFriendWizard(QWidget *parent) :
     body = GetStartedDialog::GetInviteText();
 	
     body += "\n" + GetStartedDialog::GetCutBelowText();
-    body += "\n\n" + QString::fromUtf8(rsPeers->GetRetroshareInvite(false).c_str());
+	body += "\n\n" + QString::fromUtf8(rsPeers->GetRetroshareInvite().c_str());
 	
 	std::string advsetting;
 	if(rsConfig->getConfigurationOption(RS_CONFIG_ADVANCED, advsetting) && (advsetting == "YES"))
@@ -436,7 +436,7 @@ void ConnectFriendWizard::initializePage(int id)
 		QString body = ui->inviteTextEdit->toPlainText();
 
 		body += "\n" + GetStartedDialog::GetCutBelowText();
-		body += "\n\n" + QString::fromUtf8(rsPeers->GetRetroshareInvite(false).c_str());
+		body += "\n\n" + QString::fromUtf8(rsPeers->GetRetroshareInvite().c_str());
 
 		ui->inviteTextEdit->setPlainText(body);
 		}
@@ -797,7 +797,7 @@ bool ConnectFriendWizard::validateCurrentPage()
 			QString body = ui->inviteTextEdit->toPlainText();
 
 			body += "\n" + GetStartedDialog::GetCutBelowText();
-			body += "\n\n" + QString::fromUtf8(rsPeers->GetRetroshareInvite(false).c_str());
+			body += "\n\n" + QString::fromUtf8(rsPeers->GetRetroshareInvite().c_str());
 
 			sendMail (mailaddresses, ui->subjectEdit->text(), body);
 		}
@@ -998,7 +998,8 @@ void ConnectFriendWizard::accept()
 
 void ConnectFriendWizard::updateOwnCert()
 {
-	std::string invite = rsPeers->GetRetroshareInvite(ui->userCertIncludeSignaturesButton->isChecked());
+	std::string invite = rsPeers->GetRetroshareInvite( rsPeers->getOwnId(),
+	            ui->userCertIncludeSignaturesButton->isChecked() );
 
 	std::cerr << "TextPage() getting Invite: " << invite << std::endl;
 
@@ -1174,7 +1175,7 @@ void ConnectFriendWizard::generateCertificateCalled()
 	std::cerr << "  generateCertificateCalled" << std::endl;
 #endif
 
-	std::string cert = rsPeers->GetRetroshareInvite(false);
+	std::string cert = rsPeers->GetRetroshareInvite();
 	if (cert.empty()) {
 		QMessageBox::information(this, "RetroShare", tr("Sorry, create certificate failed"), QMessageBox::Ok, QMessageBox::Ok);
 		return;

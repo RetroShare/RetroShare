@@ -72,7 +72,7 @@
 #include <string>
 
 #include <stdlib.h>
-#include <time.h>
+#include "util/rstime.h"
 #include <inttypes.h>
 
 class PeerConnectStateBox
@@ -104,16 +104,16 @@ class PeerConnectStateBox
 
 	uint32_t mState;
 	uint32_t mNetState;
-	time_t mStateTS;
+	rstime_t mStateTS;
 	uint32_t mNoAttempts;
 	uint32_t mNoFailedAttempts;
-	time_t mNextAttemptTS;
-	time_t mAttemptLength;
+	rstime_t mNextAttemptTS;
+	rstime_t mAttemptLength;
 
 	// ProxyPort Storage.
 	uint32_t mProxyPortFlags;
 	bool     mProxyPortChoice;
-	time_t   mProxyPortTS;
+	rstime_t   mProxyPortTS;
 };
 
 

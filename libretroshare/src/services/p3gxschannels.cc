@@ -3,7 +3,8 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright 2012-2012 Robert Fernie <retroshare@lunamutt.com>                 *
+ * Copyright (C) 2012  Robert Fernie <retroshare@lunamutt.com>                 *
+ * Copyright (C) 2018  Gioacchino Mazzurco <gio@eigenlab.org>                  *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -34,17 +35,22 @@
 #include "rsserver/p3face.h"
 #include "retroshare/rsnotify.h"
 
-#include <stdio.h>
+#include <cstdio>
 
 // For Dummy Msgs.
 #include "util/rsrandom.h"
 #include "util/rsstring.h"
 
+#ifdef RS_DEEP_SEARCH
+#	include "deep_search/deep_search.h"
+#endif //  RS_DEEP_SEARCH
+
+
 /****
  * #define GXSCHANNEL_DEBUG 1
  ****/
 
-RsGxsChannels *rsGxsChannels = NULL;
+/*extern*/ RsGxsChannels *rsGxsChannels = nullptr;
 
 
 #define GXSCHANNEL_STOREPERIOD	(3600 * 24 * 30)
@@ -139,7 +145,7 @@ struct RsGxsForumNotifyRecordsItem: public RsItem
 
 	void clear() {}
 
-	std::map<RsGxsGroupId,time_t> records;
+	std::map<RsGxsGroupId,rstime_t> records;
 };
 
 class GxsChannelsConfigSerializer : public RsServiceSerializer
@@ -181,7 +187,7 @@ bool p3GxsChannels::loadList(std::list<RsItem *>& loadList)
 		RsItem *item = loadList.front();
 		loadList.pop_front();
 
-		time_t now = time(NULL);
+		rstime_t now = time(NULL);
 
 		RsGxsForumNotifyRecordsItem *fnr = dynamic_cast<RsGxsForumNotifyRecordsItem*>(item) ;
 
@@ -340,7 +346,7 @@ void p3GxsChannels::notifyChanges(std::vector<RsGxsNotify *> &changes)
 void	p3GxsChannels::service_tick()
 {
 
-static  time_t last_dummy_tick = 0;
+static  rstime_t last_dummy_tick = 0;
 
 	if (time(NULL) > last_dummy_tick + 5)
 	{
@@ -913,9 +919,9 @@ void p3GxsChannels::handleUnprocessedPost(const RsGxsChannelPost &msg)
 #endif
 
 		/* check the date is not too old */
-		time_t age = time(NULL) - msg.mMeta.mPublishTs;
+		rstime_t age = time(NULL) - msg.mMeta.mPublishTs;
 
-		if (age < (time_t) CHANNEL_DOWNLOAD_PERIOD )
+		if (age < (rstime_t) CHANNEL_DOWNLOAD_PERIOD )
     {
         /* start download */
         // NOTE WE DON'T HANDLE PRIVATE CHANNELS HERE.
@@ -1035,6 +1041,108 @@ bool p3GxsChannels::getChannelsContent(
 	        || waitToken(token) != RsTokenService::COMPLETE ) return false;
 	return getPostData(token, posts, comments);
 }
+
+bool p3GxsChannels::createChannel(RsGxsChannelGroup& channel)
+{
+	uint32_t token;
+	time_t beginCreation = time(nullptr);
+	if( !createGroup(token, channel)
+	        || waitToken(token) != RsTokenService::COMPLETE )
+		return false;
+	time_t endCreation = time(nullptr);
+
+	std::list<RsGroupMetaData> channels;
+	if(!getChannelsSummaries(channels)) return false;
+
+	/* This is ugly but after digging and doing many tries of doing it the right
+	 * way ending always into too big refactor chain reaction, I think this is
+	 * not that bad, moreover seems the last created group tend to end up near
+	 * the beginning of the list so it is fast founding it.
+	 * The shortcoming of this is that if groups with same data are created in
+	 * a burst (more then once in a second) is that the id of another similar
+	 * group can be returned, but this is a pointy case.
+	 * Order of conditions in the `if` matter for performances */
+	bool found = false;
+	for(const RsGroupMetaData& chan : channels)
+	{
+		if( IS_GROUP_ADMIN(chan.mSubscribeFlags)
+		        && IS_GROUP_SUBSCRIBED(chan.mSubscribeFlags)
+		        && chan.mPublishTs >= beginCreation
+		        && chan.mPublishTs <= endCreation
+		        && chan.mGroupFlags == channel.mMeta.mGroupFlags
+		        && chan.mSignFlags == channel.mMeta.mSignFlags
+		        && chan.mCircleType == channel.mMeta.mCircleType
+		        && chan.mAuthorId == channel.mMeta.mAuthorId
+		        && chan.mCircleId == channel.mMeta.mCircleId
+		        && chan.mServiceString == channel.mMeta.mServiceString
+		        && chan.mGroupName == channel.mMeta.mGroupName )
+		{
+			channel.mMeta = chan;
+			found = true;
+			break;
+		}
+	}
+
+#ifdef RS_DEEP_SEARCH
+	if(found) DeepSearch::indexChannelGroup(channel);
+#endif //  RS_DEEP_SEARCH
+
+	return found;
+}
+
+bool p3GxsChannels::createPost(RsGxsChannelPost& post)
+{
+	uint32_t token;
+	time_t beginCreation = time(nullptr);
+	if( !createPost(token, post)
+	        || waitToken(token) != RsTokenService::COMPLETE ) return false;
+	time_t endCreation = time(nullptr);
+
+	std::list<RsGxsGroupId> chanIds; chanIds.push_back(post.mMeta.mGroupId);
+	std::vector<RsGxsChannelPost> posts;
+	std::vector<RsGxsComment> comments;
+	if(!getChannelsContent(chanIds, posts, comments)) return false;
+
+	/* This is ugly but after digging and doing many tries of doing it the right
+	 * way ending always into too big refactor chain reaction, I think this is
+	 * not that bad.
+	 * The shortcoming of this is that if posts with same data are created in
+	 * a burst (more then once in a second) is that the id of another similar
+	 * post could be returned, but this is a pointy case.
+	 * Order of conditions in the `if` matter for performances */
+	bool found = false;
+	for(const RsGxsChannelPost& itPost : posts)
+	{
+		std::cout << __PRETTY_FUNCTION__ << " " << beginCreation << " "
+		          << itPost.mMeta.mPublishTs << " " << endCreation << " "
+		          << itPost.mMeta.mMsgId << std::endl;
+
+		if( itPost.mMeta.mPublishTs >= beginCreation
+		        && itPost.mMeta.mPublishTs <= endCreation
+		        && itPost.mMeta.mMsgFlags == post.mMeta.mMsgFlags
+		        && itPost.mMeta.mGroupId == post.mMeta.mGroupId
+		        && itPost.mMeta.mThreadId == post.mMeta.mThreadId
+		        && itPost.mMeta.mParentId == post.mMeta.mParentId
+		        && itPost.mMeta.mAuthorId == post.mMeta.mAuthorId
+		        && itPost.mMeta.mMsgName == post.mMeta.mMsgName
+		        && itPost.mFiles.size() == post.mFiles.size()
+		        && itPost.mMeta.mServiceString == post.mMeta.mServiceString
+		        && itPost.mOlderVersions == post.mOlderVersions
+		        && itPost.mMsg == post.mMsg )
+		{
+			post = itPost;
+			found = true;
+			break;
+		}
+	}
+
+#ifdef RS_DEEP_SEARCH
+	if(found) DeepSearch::indexChannelPost(post);
+#endif //  RS_DEEP_SEARCH
+
+	return found;
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 /// Blocking API implementation end
@@ -1779,7 +1887,7 @@ bool p3GxsChannels::retrieveDistantGroup(const RsGxsGroupId& group_id,RsGxsChann
 bool p3GxsChannels::turtleSearchRequest(
         const std::string& matchString,
         const std::function<void (const RsGxsGroupSummary&)>& multiCallback,
-        std::time_t maxWait )
+        rstime_t maxWait )
 {
 	if(matchString.empty())
 	{

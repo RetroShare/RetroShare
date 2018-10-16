@@ -25,7 +25,7 @@
 #include "util/rsprint.h"
 #include <iostream>
 
-#define TLV_DEBUG 1
+// #define TLV_DEBUG 1
 
 /************************************* Peer Id Set ************************************/
 

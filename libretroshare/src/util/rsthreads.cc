@@ -24,7 +24,7 @@
 #include <unistd.h>    // for usleep()
 #include <errno.h>    // for errno
 #include <iostream>
-#include <time.h>
+#include "util/rstime.h"
 
 #include "util/rstime.h"
 
@@ -265,7 +265,7 @@ void RsQueueThread::data_tick()
     {
         doneWork = true;
     }
-    time_t now = time(NULL);
+    rstime_t now = time(NULL);
     if (doneWork)
     {
         mLastWork = now;

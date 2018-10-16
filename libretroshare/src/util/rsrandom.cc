@@ -37,7 +37,7 @@ RsMutex RSRandom::rndMtx("RSRandom") ;
 // have anyway)
 //
 #ifdef WINDOWS_SYS
-#include <time.h>
+#include "util/rstime.h"
 #ifdef WIN_PTHREADS_H
 static bool auto_seed = RSRandom::seed( (time(NULL) + ((uint32_t) pthread_self())*0x1293fe)^0x18e34a12 ) ;
 #else

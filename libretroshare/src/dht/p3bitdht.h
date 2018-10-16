@@ -52,7 +52,7 @@ class DhtPeerDetails
 
 	/* direct from the DHT! */
 	uint32_t mDhtState; // One of RSDHT_PEERDHT_[...]
-	time_t   mDhtUpdateTS;
+	rstime_t   mDhtUpdateTS;
 
 	/* internal state */
 	PeerConnectStateBox mConnectLogic;
@@ -66,9 +66,9 @@ class DhtPeerDetails
 	struct sockaddr_in 	mPeerConnectAddr;
 	uint32_t 		mPeerConnectPoint;
 	
-	time_t 		mPeerConnectUdpTS;
-	time_t 		mPeerConnectTS;
-	time_t		mPeerConnectClosedTS;
+	rstime_t 		mPeerConnectUdpTS;
+	rstime_t 		mPeerConnectTS;
+	rstime_t		mPeerConnectClosedTS;
 	
 	bool 			mExclusiveProxyLock;
 
@@ -80,7 +80,7 @@ class DhtPeerDetails
 	uint32_t		mPeerReqState;
 	uint32_t		mPeerReqMode;
 	bdId			mPeerReqProxyId;
-	time_t			mPeerReqTS;
+	rstime_t			mPeerReqTS;
 
         /* Callback Info */
 	std::string		mPeerCbMsg;
@@ -88,7 +88,7 @@ class DhtPeerDetails
 	uint32_t		mPeerCbPoint;
 	bdId			mPeerCbProxyId;
 	bdId			mPeerCbDestId;
-	time_t			mPeerCbTS;
+	rstime_t			mPeerCbTS;
 
 };
 
@@ -331,7 +331,7 @@ private:
     float mDhtReadRate;
     float mDhtWriteRate;
 
-    time_t mLastDataRateUpdate;
+    rstime_t mLastDataRateUpdate;
 
 
     /***********************************************************************************************
@@ -380,7 +380,7 @@ private:
     RsPeerId mOwnRsId;
     bdNodeId    mOwnDhtId;
 
-    time_t mMinuteTS;
+    rstime_t mMinuteTS;
 
     /* translation maps */
     std::map<RsPeerId, bdNodeId> mTransToNodeId;

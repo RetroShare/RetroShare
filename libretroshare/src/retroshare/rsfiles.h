@@ -26,10 +26,12 @@
 #include <string>
 #include <functional>
 #include <chrono>
+#include <cstdint>
 
 #include "rstypes.h"
 #include "serialiser/rsserializable.h"
 #include "rsturtle.h"
+#include "util/rstime.h"
 
 class RsFiles;
 
@@ -181,13 +183,22 @@ public:
 	uint64_t mTotalSize ;
 };
 
-struct BannedFileEntry
+struct BannedFileEntry : RsSerializable
 {
-    BannedFileEntry() : size(0),filename(""),ban_time_stamp(0) {}
+	BannedFileEntry() : mFilename(""), mSize(0), mBanTimeStamp(0) {}
 
-    uint64_t size ;
-    std::string filename ;
-    time_t ban_time_stamp;
+	std::string mFilename;
+	uint64_t mSize;
+	rstime_t mBanTimeStamp;
+
+	/// @see RsSerializable::serial_process
+	virtual void serial_process(RsGenericSerializer::SerializeJob j,
+	                            RsGenericSerializer::SerializeContext& ctx)
+	{
+		RS_SERIAL_PROCESS(mFilename);
+		RS_SERIAL_PROCESS(mSize);
+		RS_SERIAL_PROCESS(mBanTimeStamp);
+	}
 };
 
 class RsFiles
@@ -339,7 +350,7 @@ public:
 	virtual bool turtleSearchRequest(
 	        const std::string& matchString,
 	        const std::function<void (const std::list<TurtleFileInfo>& results)>& multiCallback,
-	        std::time_t maxWait = 300 ) = 0;
+	        rstime_t maxWait = 300 ) = 0;
 
 	virtual TurtleRequestId turtleSearch(const std::string& string_to_match) = 0;
 	virtual TurtleRequestId turtleSearch(
@@ -414,13 +425,32 @@ public:
 		virtual bool ExtraFileStatus(std::string localpath, FileInfo &info) = 0;
 		virtual bool ExtraFileMove(std::string fname, const RsFileHash& hash, uint64_t size, std::string destpath) = 0;
 
+	/**
+	 * @brief Request directory details, subsequent multiple call may be used to
+	 * explore a whole directory tree.
+	 * @jsonapi{development}
+	 * @param[out] details Storage for directory details
+	 * @param[in] handle element handle 0 for root, pass the content of
+	 *	DirDetails::child[x].ref after first call to explore deeper, be aware
+	 *	that is not a real pointer but an index used internally by RetroShare.
+	 * @param[in] flags file search flags RS_FILE_HINTS_*
+	 * @return false if error occurred, true otherwise
+	 */
+	virtual bool requestDirDetails(
+	        DirDetails &details, std::uintptr_t handle = 0,
+	        FileSearchFlags flags = RS_FILE_HINTS_LOCAL ) = 0;
 
+	/***
+	 * Directory Listing / Search Interface
+	 */
+	/**
+	 * Kept for retrocompatibility, it was originally written for easier
+	 * interaction with Qt. As soon as you can, you should prefer to use the
+	 * version of this methodn which take `std::uintptr_t handle` as paramether.
+	 */
+	virtual int RequestDirDetails(
+	        void* handle, DirDetails& details, FileSearchFlags flags ) = 0;
 
-		/***
-		 * Directory Listing / Search Interface
-		 */
-		virtual int RequestDirDetails(const RsPeerId& uid, const std::string& path, DirDetails &details) = 0;
-		virtual int RequestDirDetails(void *ref, DirDetails &details, FileSearchFlags flags) = 0;
         virtual bool findChildPointer(void *ref, int row, void *& result, FileSearchFlags flags) =0;
         virtual uint32_t getType(void *ref,FileSearchFlags flags) = 0;
 
@@ -430,17 +460,54 @@ public:
         virtual int SearchBoolExp(RsRegularExpression::Expression * exp, std::list<DirDetails> &results,FileSearchFlags flags,const RsPeerId& peer_id) = 0;
 		virtual int getSharedDirStatistics(const RsPeerId& pid, SharedDirStats& stats) =0;
 
-		virtual int banFile(const RsFileHash& real_file_hash, const std::string& filename, uint64_t file_size) =0;
-		virtual int unbanFile(const RsFileHash& real_file_hash)=0;
-    	virtual bool getPrimaryBannedFilesList(std::map<RsFileHash,BannedFileEntry>& banned_files) =0;
-    	virtual bool isHashBanned(const RsFileHash& hash) =0;
+	/**
+	 * @brief Ban unwanted file from being, searched and forwarded by this node
+	 * @jsonapi{development}
+	 * @param[in] realFileHash this is what will really enforce banning
+	 * @param[in] filename expected name of the file, for the user to read
+	 * @param[in] fileSize expected file size, for the user to read
+	 * @return meaningless value
+	 */
+	virtual int banFile( const RsFileHash& realFileHash,
+	                     const std::string& filename, uint64_t fileSize ) = 0;
+
+	/**
+	 * @brief Remove file from unwanted list
+	 * @jsonapi{development}
+	 * @param[in] realFileHash hash of the file
+	 * @return meaningless value
+	 */
+	virtual int unbanFile(const RsFileHash& realFileHash) = 0;
+
+	/**
+	 * @brief Get list of banned files
+	 * @jsonapi{development}
+	 * @param[out] bannedFiles storage for banned files information
+	 * @return meaningless value
+	 */
+	virtual bool getPrimaryBannedFilesList(
+	        std::map<RsFileHash,BannedFileEntry>& bannedFiles ) = 0;
+
+	/**
+	 * @brief Check if a file is on banned list
+	 * @jsonapi{development}
+	 * @param[in] hash hash of the file
+	 * @return true if the hash is on the list, false otherwise
+	 */
+	virtual bool isHashBanned(const RsFileHash& hash) = 0;
 
 		/***
 		 * Utility Functions.
 		 ***/
 		virtual bool ConvertSharedFilePath(std::string path, std::string &fullpath) = 0;
-		virtual void ForceDirectoryCheck() = 0;
-		virtual void updateSinceGroupPermissionsChanged() = 0;
+
+	/**
+	 * @brief Force shared directories check
+	 * @jsonapi{development}
+	 */
+	virtual void ForceDirectoryCheck() = 0;
+
+	virtual void updateSinceGroupPermissionsChanged() = 0;
 		virtual bool InDirectoryCheck() = 0;
 		virtual bool copyFile(const std::string& source,const std::string& dest) = 0;
 

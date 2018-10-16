@@ -32,27 +32,21 @@ if not exist "%RsBuildPath%\Makefile" echo Project is not compiled.& goto error
 :: Get compiled revision
 set GetRsVersion=%SourcePath%\build_scripts\Windows\tools\get-rs-version.bat
 if not exist "%GetRsVersion%" (
-	echo File not found
+	%cecho% error "File not found"
 	echo %GetRsVersion%
 	goto error
 )
 
-call "%GetRsVersion%" RS_REVISION_STRING RsRevision
-if "%RsRevision%"=="" echo Revision not found.& goto error
-
 :: Get compiled version
-call "%GetRsVersion%" RS_MAJOR_VERSION RsMajorVersion
-if "%RsMajorVersion%"=="" echo Major version not found.& goto error
+call "%GetRsVersion%" "%RsBuildPath%\retroshare-gui\src\%RsBuildConfig%\retroshare.exe" RsVersion
+if errorlevel 1 %cecho% error "Version not found."& goto error
 
-call "%GetRsVersion%" RS_MINOR_VERSION RsMinorVersion
-if "%RsMinorVersion%"=="" echo Minor version not found.& goto error
+if "%RsVersion.Major%"=="" %cecho% error "Major version not found."& goto error
+if "%RsVersion.Minor%"=="" %cecho% error "Minor version not found."& goto error
+if "%RsVersion.Mini%"=="" %cecho% error "Mini number not found".& goto error
+if "%RsVersion.Extra%"=="" %cecho% error "Extra number not found".& goto error
 
-call "%GetRsVersion%" RS_BUILD_NUMBER RsBuildNumber
-if "%RsBuildNumber%"=="" echo Build number not found.& goto error
-
-call "%GetRsVersion%" RS_BUILD_NUMBER_ADD RsBuildNumberAdd
-
-set RsVersion=%RsMajorVersion%.%RsMinorVersion%.%RsBuildNumber%%RsBuildNumberAdd%
+set RsVersion=%RsVersion.Major%.%RsVersion.Minor%.%RsVersion.Mini%
 
 :: Check WMIC is available
 wmic.exe alias /? >nul 2>&1 || echo WMIC is not available.&& goto error
@@ -65,10 +59,7 @@ set RsDate=%RsDate:~0,4%%RsDate:~4,2%%RsDate:~6,2%
 if "%ParamTor%"=="1" (
 	:: Check for tor executable
 	if not exist "%EnvDownloadPath%\tor\Tor\tor.exe" (
-		echo Tor binary not found. Please download Tor Expert Bundle from
-		echo https://www.torproject.org/download/download.html.en
-		echo and unpack to
-		echo %EnvDownloadPath%\tor
+		%cecho% error "Tor binary not found. Please download Tor Expert Bundle from\nhttps://www.torproject.org/download/download.html.en\nand unpack to\n%EnvDownloadPath:\=\\%\\tor"
 		goto error
 	)
 )
@@ -83,9 +74,9 @@ if "%QtMainVersion%"=="4" set QtMainVersion2=4
 if "%QtMainVersion%"=="5" set QtMainVersion1=5
 
 if "%RsBuildConfig%" NEQ "release" (
-	set Archive=%RsPackPath%\RetroShare-%RsVersion%-Windows-Portable-%RsDate%-%RsRevision%-Qt-%QtVersion%%RsType%%RsArchiveAdd%-%RsBuildConfig%.7z
+	set Archive=%RsPackPath%\RetroShare-%RsVersion%-Windows-Portable-%RsDate%-%RsVersion.Extra%-Qt-%QtVersion%%RsType%%RsArchiveAdd%-%RsBuildConfig%.7z
 ) else (
-	set Archive=%RsPackPath%\RetroShare-%RsVersion%-Windows-Portable-%RsDate%-%RsRevision%-Qt-%QtVersion%%RsType%%RsArchiveAdd%.7z
+	set Archive=%RsPackPath%\RetroShare-%RsVersion%-Windows-Portable-%RsDate%-%RsVersion.Extra%-Qt-%QtVersion%%RsType%%RsArchiveAdd%.7z
 )
 
 if exist "%Archive%" del /Q "%Archive%"
@@ -98,7 +89,7 @@ title Pack - %SourceName%%RsType%-%RsBuildConfig% [copy files]
 set ExtensionsFile=%SourcePath%\libretroshare\src\rsserver\rsinit.cc
 set Extensions=
 for /f %%e in ('type "%ExtensionsFile%" ^| "%EnvSedExe%" -n "s/^.*\/\(extensions[^/]*\)\/.*$/\1/p" ^| "%EnvSedExe%" -n "1,1p"') do set Extensions=%%e
-if "%Extensions%"=="" echo Folder for extensions not found in %ExtensionsFile%& goto error
+if "%Extensions%"=="" %cecho% error "Folder for extensions not found in %ExtensionsFile%"& goto error
 
 :: Copy files
 mkdir "%RsDeployPath%\Data\%Extensions%"
