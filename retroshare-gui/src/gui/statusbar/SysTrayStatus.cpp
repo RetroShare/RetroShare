@@ -25,9 +25,9 @@
 
 #include "SysTrayStatus.h"
 
-#define IMAGE_NOONLINE          ":/icons/logo_0_connected_128.png"
-#define IMAGE_ONEONLINE         ":/icons/logo_1_connected_128.png"
-#define IMAGE_TWOONLINE         ":/icons/logo_2_connected_128.png"
+#define IMAGE_NOONLINE          ":/chat/img/p2p 0.png"              //d:replace icon
+#define IMAGE_ONEONLINE         ":/chat/img/p2p 1.png"              //d:replace icon
+#define IMAGE_TWOONLINE         ":/chat/img/p2p 2.png"              //d:replace icon
 
 SysTrayStatus::SysTrayStatus(QWidget *parent) :
   QWidget(parent)

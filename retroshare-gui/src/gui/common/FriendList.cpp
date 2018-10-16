@@ -174,11 +174,10 @@ FriendList::FriendList(QWidget *parent) :
     ui->peerTreeWidget->setColumnWidth(COLUMN_LAST_CONTACT, 12 * fontWidth);
     ui->peerTreeWidget->setColumnWidth(COLUMN_IP, 15 * fontWidth);
     ui->peerTreeWidget->setColumnWidth(COLUMN_ID, 32 * fontWidth);
-
-    int avatarHeight = fontMetrics.height() * 3;
+    int avatarHeight = fontMetrics.height() * 2;        //d: change avatar size
     ui->peerTreeWidget->setIconSize(QSize(avatarHeight, avatarHeight));
-
     /* Initialize display menu */
+
     createDisplayMenu();
 }
 
@@ -199,7 +198,6 @@ void FriendList::addToolButton(QToolButton *toolButton)
     float S = QFontMetricsF(ui->filterLineEdit->font()).height() ;
     toolButton->setIconSize(QSize(S*1.5,S*1.5));
     toolButton->setFocusPolicy(Qt::NoFocus);
-
     ui->titleBarFrame->layout()->addWidget(toolButton);
 }
 
@@ -539,6 +537,7 @@ static void getNameWidget(QTreeWidget *treeWidget, QTreeWidgetItem *item, Elided
         widget->setLayout(layout);
 
         treeWidget->setItemWidget(item, FriendList::COLUMN_NAME, widget);
+
     } else {
         nameLabel = widget->property("nameLabel").value<ElidedLabel*>();
         textLabel = widget->property("textLabel").value<ElidedLabel*>();
@@ -1021,10 +1020,8 @@ void FriendList::insertPeers()
                     if (!customStateString.isEmpty()) {
                         sslText = customStateString;
                     }
-
-                }
             }
-
+}
             QString gpgName = QString::fromUtf8(detail.name.c_str());
             QString gpgText;
             QFont gpgFont;

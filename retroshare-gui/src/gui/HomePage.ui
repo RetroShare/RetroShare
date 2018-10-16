@@ -13,6 +13,9 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true"/>
+  </property>
   <layout class="QGridLayout" name="gridLayout_2">
    <item row="4" column="1" colspan="2">
     <layout class="QGridLayout" name="gridLayout">
@@ -111,6 +114,10 @@
          <pointsize>11</pointsize>
         </font>
        </property>
+       <property name="styleSheet">
+        <string notr="true">color: rgb(255, 255, 255);
+background-color: rgb(43, 164, 220);</string>
+       </property>
        <property name="text">
         <string>The text below is your own P2PUnseen certificate. Send it to your friends</string>
        </property>
@@ -127,6 +134,9 @@
       <font>
        <pointsize>12</pointsize>
       </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color: rgb(255, 255, 255);</string>
      </property>
      <property name="text">
       <string>Open Source cross-platform, 
@@ -162,6 +172,10 @@ private and secure decentralized communication platform.
    </item>
    <item row="6" column="1">
     <widget class="QPushButton" name="runStartWizard_PB">
+     <property name="styleSheet">
+      <string notr="true">color: rgb(255, 255, 255);
+background-color: rgb(43, 164, 220);</string>
+     </property>
      <property name="text">
       <string>Launch startup wizard</string>
      </property>
@@ -185,7 +199,7 @@ private and secure decentralized communication platform.
          </font>
         </property>
         <property name="styleSheet">
-         <string notr="true"/>
+         <string notr="true">color: rgb(255, 255, 255);</string>
         </property>
         <property name="text">
          <string>Did you receive a certificate from a friend?</string>
@@ -194,6 +208,10 @@ private and secure decentralized communication platform.
       </item>
       <item>
        <widget class="QToolButton" name="addButton">
+        <property name="styleSheet">
+         <string notr="true">color: rgb(255, 255, 255);
+background-color: rgb(43, 164, 220);</string>
+        </property>
         <property name="text">
          <string>Add friends certificate</string>
         </property>
@@ -217,6 +235,10 @@ private and secure decentralized communication platform.
       </item>
       <item>
        <widget class="QToolButton" name="LoadCertFileButton">
+        <property name="styleSheet">
+         <string notr="true">color: rgb(255, 255, 255);
+background-color: rgb(43, 164, 220);</string>
+        </property>
         <property name="text">
          <string>Add certificate file</string>
         </property>
@@ -288,6 +310,10 @@ private and secure decentralized communication platform.
           <pointsize>11</pointsize>
          </font>
         </property>
+        <property name="styleSheet">
+         <string notr="true">color: rgb(255, 255, 255);
+background-color: rgb(43, 164, 220);</string>
+        </property>
         <property name="text">
          <string>Do you need help with P2PUnseen?</string>
         </property>
@@ -295,6 +321,10 @@ private and secure decentralized communication platform.
       </item>
       <item>
        <widget class="QToolButton" name="openwebhelp">
+        <property name="styleSheet">
+         <string notr="true">color: rgb(255, 255, 255);
+background-color: rgb(43, 164, 220);</string>
+        </property>
         <property name="text">
          <string>Open Web Help</string>
         </property>
@@ -326,9 +356,9 @@ private and secure decentralized communication platform.
   <zorder>helpframe</zorder>
  </widget>
  <resources>
-  <include location="../Unseengui/unseengui.qrc"/>
   <include location="images.qrc"/>
   <include location="icons.qrc"/>
+  <include location="../Unseengui/unseengui.qrc"/>
  </resources>
  <connections/>
 </ui>

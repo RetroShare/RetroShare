@@ -345,12 +345,12 @@ The current identities/locations will not be affected.</string>
   <customwidget>
    <class>LineEditClear</class>
    <extends>QLineEdit</extends>
-   <header>gui/common/LineEditClear.h</header>
+   <header location="global">gui/common/LineEditClear.h</header>
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../Unseengui/unseengui.qrc"/>
   <include location="icons.qrc"/>
+  <include location="../Unseengui/unseengui.qrc"/>
  </resources>
  <connections/>
 </ui>

@@ -73,6 +73,7 @@ SettingsPage::SettingsPage(QWidget *parent)
     itemDelegate->setSpacing(QSize(0, ITEM_SPACING));
     ui.listWidget->setItemDelegate(itemDelegate);
 
+
     initStackedWidget();
 
     /* Load window position */
@@ -146,7 +147,6 @@ SettingsPage::initStackedWidget()
 {
     ui.stackedWidget->setCurrentIndex(-1);
     ui.stackedWidget->removeWidget(ui.stackedWidget->widget(0));
-
     addPage(new GeneralPage()); // GENERAL
     addPage(new CryptoPage()); // NODE
     addPage(new ServerPage()); // NETWORK
@@ -156,21 +156,23 @@ SettingsPage::initStackedWidget()
     addPage(new TransferPage()); //FILE TRANSFER
     addPage(new ChannelPage()); // CHANNELS
     addPage(new ForumPage()); // FORUMS
-    addPage(new PostedPage()); // POSTED RENAME TO LINKS
+  //  addPage(new PostedPage()); // POSTED RENAME TO LINKS  //d: remove this
     addPage(new NotifyPage()); // NOTIFY
     addPage(new settings::PluginsPage() ); // PLUGINS
     addPage(new AppearancePage()); // APPEARENCE
     addPage(new SoundPage() ); // SOUND
     addPage(new ServicePermissionsPage() ); // PERMISSIONS
+/*****d:Hide Webui
 #ifdef ENABLE_WEBUI
     addPage(new WebuiPage() );
 #endif // ENABLE_WEBUI
+    */
 	 // add widgets from plugins
 
 	for(int i=0;i<rsPlugins->nbPlugins();++i)
 	{
 		RsPlugin *pl = rsPlugins->plugin(i) ;
-		if(pl != NULL)
+        if(pl != NULL)
 		{
 			ConfigPage* cp = pl->qt_config_page();
 			if(cp != NULL)
@@ -190,11 +192,22 @@ void SettingsPage::addPage(ConfigPage *page)
 
 	QListWidgetItem *item = new QListWidgetItem(QIcon(page->iconPixmap()),page->pageName(),ui.listWidget) ;
 	QFontMetrics fontMetrics = ui.listWidget->fontMetrics();
-	int w = ITEM_SPACING*8;
+
+    /* d: Set size for item buttons in Preferences tab */
+    ui.listWidget->setIconSize(QSize(16,16)); //d: set Icon size
+for(int i = 0; i < ui.listWidget->count(); ++i) {
+               if (ui.listWidget->item(i)->data(Qt::UserRole).toString() == "") {
+           ui.listWidget->item(i)->setSizeHint(QSize(64,34));
+               } else {
+           ui.listWidget->item(i)->setSizeHint(QSize(64,34));
+               }
+       }
+
+    int w = ITEM_SPACING*32;
 	w += ui.listWidget->iconSize().width();
-	w += fontMetrics.width(item->text());
+    w += fontMetrics.width(item->text());
 	if (w > ui.listWidget->maximumWidth())
-		ui.listWidget->setMaximumWidth(w);
+        ui.listWidget->setMaximumWidth(w);
 }
 
 void
@@ -211,10 +224,12 @@ SettingsPage::setNewPage(int page)
 		return ;
 	}
 	ui.pageName->setText(pagew->pageName());
+    ui.pageName->setStyleSheet("color: white");     //d: set color page name
 	ui.pageicon->setPixmap(pagew->iconPixmap()) ;
 
 	ui.stackedWidget->setCurrentIndex(page);
-	ui.listWidget->setCurrentRow(page);
+    ui.listWidget->setCurrentRow(page);
+    ui.listWidget->setStyleSheet("QListWidget {color: rgb(255, 255, 255); background: rgb(47, 60, 76); selection-color: rgb(255,255,255); selection-background-color: rgb(32, 41, 53);}");   //d: style of sheet sitting
 
 	mHelpBrowser->setHelpText(pagew->helpText());
 }

@@ -41,7 +41,7 @@ public:
 GxsForumsDialog::GxsForumsDialog(QWidget *parent)
 	: GxsGroupFrameDialog(rsGxsForums, parent)
 {
-	mCountChildMsgs = true;
+    mCountChildMsgs = true;
 }
 
 GxsForumsDialog::~GxsForumsDialog()
@@ -86,9 +86,10 @@ UserNotify *GxsForumsDialog::getUserNotify(QObject *parent)
 
 QString GxsForumsDialog::text(TextType type)
 {
-	switch (type) {
-	case TEXT_NAME:
-		return tr("Forums");
+    switch (type) {
+    case TEXT_NAME:
+        setStyleSheet("QLabel { color : white; font-size: 16px; }");         //d: change text color
+        return tr("Forums");
 	case TEXT_NEW:
 		return tr("Create Forum");
 	case TEXT_TODO:
@@ -99,13 +100,17 @@ QString GxsForumsDialog::text(TextType type)
 		       "</ul>";
 
 	case TEXT_YOUR_GROUP:
+        setStyleSheet("QLabel { color : white; }");         //d: change text color
 		return tr("My Forums");
 	case TEXT_SUBSCRIBED_GROUP:
+        setStyleSheet("QLabel { color : white; }");         //d: change text color
 		return tr("Subscribed Forums");
 	case TEXT_POPULAR_GROUP:
+        setStyleSheet("QLabel { color : white; }");         //d: change text color
 		return tr("Popular Forums");
 	case TEXT_OTHER_GROUP:
-		return tr("Other Forums");
+        setStyleSheet("QLabel { color : white; }");         //d: change text color
+        return tr("Other Forums");
 	}
 
 	return "";
@@ -115,7 +120,7 @@ QString GxsForumsDialog::icon(IconType type)
 {
 	switch (type) {
 	case ICON_NAME:
-        return ":/home/img/face_icon/bull-horn-announcer_x_128.png";
+        return ":/home/img/face_icon/bull-horn-announcer_128.png";
 	case ICON_NEW:
 		return ":/icons/png/add.png";
 	case ICON_YOUR_GROUP:

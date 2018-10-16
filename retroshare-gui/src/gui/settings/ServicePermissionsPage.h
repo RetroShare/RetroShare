@@ -38,7 +38,7 @@ public:
     /** Loads the settings for this page */
     virtual void load() {}
 
-    virtual QPixmap iconPixmap() const { return QPixmap(":/icons/settings/permissions.svg") ; }
+    virtual QPixmap iconPixmap() const { return QPixmap(":/home/img/Setting/shield.svg") ; }
     virtual QString pageName() const { return tr("Permissions") ; }
     virtual QString helpText() const ;
 

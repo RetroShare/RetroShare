@@ -17,7 +17,6 @@
 //meiyousixin - add more PopupChatDialog into ChatLobbyWidget
 #include "chat/PopupChatDialog.h"
 #include "gui/common/AvatarDefs.h"
-
 #include "retroshare/rsmsgs.h"
 #include "retroshare/rspeers.h"
 #include "retroshare/rsnotify.h"

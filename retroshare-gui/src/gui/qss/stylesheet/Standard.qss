@@ -3,42 +3,54 @@
 /* Standard rules */
 
 QFrame#titleBarFrame, QFrame#toolBarFrame {
+<<<<<<< HEAD
         background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FEFEFE, stop:1 #E8E8E8);
 	border: 1px solid #CCCCCC;
+=======
+//        background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FEFEFE, stop:1 #E8E8E8);
+//	border: 1px solid #CCCCCC;
+        background-color: rgb(43, 164, 220);    //d:
+        border: 1px solid #ffffff;              //d:
+>>>>>>> Test2-d
 }
 
 /* HeaderFrame */
 
 HeaderFrame > QFrame#frame {
-	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #9BDBF9, stop:1 #1592CD);
-	border: 0px;
+//	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #9BDBF9, stop:1 #1592CD);
+//	border: 0px;
+        background-color: rgb(43, 164, 220);    //d:
+        border: 0px;                            //d:
 }
 
 HeaderFrame > QFrame#frame > QLabel#headerLabel {
-	color: rgb(255, 255, 255);
+        color: rgb(255, 255, 255);
 }
 
 /* GenCertDialog */
 
 GenCertDialog QLabel#genprofileinfo_label, QLabel#header_label, QLabel#entropy_label
 {
-	border: 1px solid #DCDC41;
-	border-radius: 6px;
-	background: #FFFFD7;
-	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFFFD7, stop:1 #FFFFB2);
+//        border: 1px solid #DCDC41;
+//        border-radius: 6px;
+        background: #FFFFD7;
+//        background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFFFD7, stop:1 #FFFFB2);
+        background-color: #FFFFD7
 }
 
 GenCertDialog QLabel#label_hiddenaddr {
-	border: 1px solid #50FF5B;
-	border-radius: 6px;
+//	border: 1px solid #50FF5B;
+//	border-radius: 6px;
 	background: #CCFFCC;
-	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #CCFFCC, stop:1 #AAFFAA);
+//	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #CCFFCC, stop:1 #AAFFAA);
+        background-color: #CCFFCC
 }
 GenCertDialog QLabel#no_node_label, GenCertDialog QLabel#no_gpg_key_label {
-	border: 1px solid #FFC550;
-	border-radius: 6px;
+//	border: 1px solid #FFC550;
+//	border-radius: 6px;
 	background: #FFEECC;
-	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFEECC, stop:1 #FFE3AB);
+//	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFEECC, stop:1 #FFE3AB);
+        background-color: FFE3AB
 	padding: 4px;
 	font-size: 14px;
 }
@@ -48,8 +60,9 @@ GenCertDialog > QFrame#headerFrame > QLabel#headerLabel {
 }
 
 GenCertDialog > QFrame#frame {
-	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FEFEFE, stop:1 #E8E8E8);
-	border: 1px solid #CCCCCC;
+//	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FEFEFE, stop:1 #E8E8E8);
+        background-color: #E8E8E8
+//	border: 1px solid #CCCCCC;
 }
 
 /* ConnectFriendWizard */
@@ -65,7 +78,8 @@ ConnectFriendWizard {
 /* FriendsDialog */
 
 FriendsDialog QFrame#headFrame {
-	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #9BDBF9, stop:1 #1592CD);
+//	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #9BDBF9, stop:1 #1592CD);
+        background-color: #1592CD
 	border: 1px;
 	border-radius: 4px;
 }
@@ -75,22 +89,24 @@ FriendsDialog QFrame#headFrame > QLabel#nicknameLabel {
 }
 
 FriendsDialog QTextEdit#msgText, FriendsDialog QTextEdit#lineEdit {
-	border: 1px solid #CCCCCC;
+//	border: 1px solid #CCCCCC;
 }
 
 /* Channels */
 
 ChannelFeed QFrame#headFrame {
-	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #F2F2F2, stop:1 #E6E6E6);
-	border: 1px solid #CCCCCC;
+//	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #F2F2F2, stop:1 #E6E6E6);
+        background-color:#E6E6E6
+//	border: 1px solid #CCCCCC;
 }
 
 ChannelFeed QLabel#logoLabel, EditChanDetails QLabel#logoLabel, CreateChannel QLabel#logoLabel {
-	border: 2px solid white;
+//	border: 2px solid white;
+
 }
 
 CreateChannelMsg QFrame#fileFrame {
-	border: 2px solid black;
+//	border: 2px solid black;
 	background: white;
 }
 
@@ -100,16 +116,16 @@ CreateChannelMsg QFrame#fileFrame {
 
 ForumsDialog QLabel#forumName, ForumsDialog QLabel#threadTitle
 {
-	border: 2px solid #CCCCCC;
-	border-radius:6px;
-	background: white;
+//	border: 2px solid #CCCCCC;
+//	border-radius:6px;
+        background: white;
 }
 
 ForumsDialog2 QLabel#forumName, ForumsDialog2 QLabel#threadTitle
 {
-	border: 2px solid #CCCCCC;
-	border-radius:6px;
-	background: white;
+//	border: 2px solid #CCCCCC;
+//	border-radius:6px;
+        background: white;
 }
 
 CreateForumMsg > QToolBar#toolBar, CreateForumV2Msg > QToolBar#toolBar {
@@ -119,8 +135,9 @@ CreateForumMsg > QToolBar#toolBar, CreateForumV2Msg > QToolBar#toolBar {
 /* MessengerWindow */
 
 MessengerWindow QFrame#logoFrame { 
-	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FEFEFE, stop:1 #E8E8E8);
-	border: 1px solid #CCCCCC;
+//	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FEFEFE, stop:1 #E8E8E8);
+        background-color: #E8E8E8
+//	border: 1px solid #CCCCCC;
 }
 
 MessengerWindow QFrame#messengerframetop{	
@@ -798,3 +815,4 @@ GenCertDialog QFrame#profileframe{
   border-image: url(:/home/img/snow-mountain.jpg) 0 0 0 0 stretch stretch;
   border-width: 0px;
 }
+

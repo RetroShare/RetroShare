@@ -34,8 +34,8 @@ public:
     /** Loads the settings for this page */
     virtual void load();
 
-	 virtual QPixmap iconPixmap() const { return QPixmap(":/icons/settings/network.svg") ; }
-	 virtual QString pageName() const { return tr("Network") ; }
+     virtual QPixmap iconPixmap() const { return QPixmap(":/icons/settings/network.svg") ; }
+     virtual QString pageName() const { return tr("Network") ; }
 
 private:
     Ui::NetworkPage ui;

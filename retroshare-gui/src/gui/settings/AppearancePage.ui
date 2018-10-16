@@ -370,16 +370,6 @@
            </item>
            <item>
             <property name="text">
-             <string>Text Only</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Text Beside Icon</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
              <string>Text Under Icon</string>
             </property>
            </item>
