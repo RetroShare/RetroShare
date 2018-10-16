@@ -303,5 +303,9 @@ bool getRawTimeT(const void *data,uint32_t size,uint32_t *offset,rstime_t& t)
 }
 bool setRawTimeT(void *data, uint32_t size, uint32_t *offset, const rstime_t& t)
 {
+	if(t < 0) // [[unlikely]]
+		std::cerr << __PRETTY_FUNCTION__ << " got a negative time: " << t
+		          << " this seems fishy, report to the developers!" << std::endl;
+
 	return setRawUInt64(data,size,offset,t) ;
 }
