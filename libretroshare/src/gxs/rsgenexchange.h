@@ -242,6 +242,21 @@ public:
      */
     bool getMsgRelatedMeta(const uint32_t &token, GxsMsgRelatedMetaMap& msgMeta);
 
+    /*!
+     * Retrieves the meta data of a newly created group. The meta is kept in cache for the current session.
+     * \param token  token that was used to create the group
+     * \param meta   meta data for this group
+     * \return   false if the group is not yet created.
+     */
+    bool getPublishedGroupMeta(const uint32_t& token,RsGroupMetaData& meta);
+
+    /*!
+     * Retrieves the meta data of a newly created post. The meta is kept in cache for the current session.
+     * \param token  token that was used to create the post
+     * \param meta   meta data for this post
+     * \return   false if the group is not yet created.
+     */
+    bool getPublishedMsgMeta(const uint32_t& token,RsMsgMetaData& meta);
 
     /*!
      * Gxs services should call this for automatic handling of
@@ -882,6 +897,9 @@ private:
 
     std::vector<GxsGrpPendingSign> mGrpsToPublish;
     typedef std::vector<GxsGrpPendingSign> NxsGrpSignPendVect;
+
+    std::map<uint32_t,RsGxsGrpMetaData> mPublishedGrps ;		// keeps track of which group was created using which token
+    std::map<uint32_t,RsGxsMsgMetaData> mPublishedMsgs ;		// keeps track of which message was created using which token
 
     std::map<uint32_t, RsGxsMsgItem*> mMsgsToPublish;
 
