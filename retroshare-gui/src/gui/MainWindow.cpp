@@ -711,7 +711,7 @@ void MainWindow::displaySystrayMsg(const QString& title,const QString& msg)
 
 void MainWindow::displaySystrayMsgWithIcon(const QString& title,const QString& msg, const QIcon& icon)
 {
-    trayIcon->showMessage(title, msg, icon, 3000);
+    trayIcon->showMessage(title, msg, QSystemTrayIcon::Information, 3000);
 }
 
 void MainWindow::displayBadgeNumberOnMainApp(const int& iCount)
