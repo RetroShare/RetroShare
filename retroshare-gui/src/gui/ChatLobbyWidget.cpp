@@ -17,6 +17,7 @@
 //meiyousixin - add more PopupChatDialog into ChatLobbyWidget
 #include "chat/PopupChatDialog.h"
 #include "gui/common/AvatarDefs.h"
+#include <QPainter>
 
 #include "retroshare/rsmsgs.h"
 #include "retroshare/rspeers.h"
@@ -124,8 +125,10 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WindowFlags flags)
 	QHeaderView_setSectionResizeModeColumn(header, COLUMN_SUBSCRIBED, QHeaderView::Interactive);
     QHeaderView_setSectionResizeModeColumn(header, COLUMN_RECENT_TIME, QHeaderView::Interactive);
 
-        privateSubLobbyItem = new RSTreeWidgetItem(compareRole, TYPE_FOLDER);
-        privateSubLobbyItem->setText(COLUMN_NAME, tr("Private Subscribed chat rooms"));
+    ui.lobbyTreeWidget->setIconSize(QSize(32,32));
+
+    privateSubLobbyItem = new RSTreeWidgetItem(compareRole, TYPE_FOLDER);
+    privateSubLobbyItem->setText(COLUMN_NAME, tr("Private Subscribed chat rooms"));
 	privateSubLobbyItem->setData(COLUMN_NAME, ROLE_SORT, "1");
 	//	privateLobbyItem->setIcon(COLUMN_NAME, QIcon(IMAGE_PRIVATE));
 	privateSubLobbyItem->setData(COLUMN_DATA, ROLE_PRIVACYLEVEL, CHAT_LOBBY_PRIVACY_LEVEL_PRIVATE);
@@ -1582,8 +1585,7 @@ void ChatLobbyWidget::updateContactItem(QTreeWidget *treeWidget, QTreeWidgetItem
       QPixmap avatar;
       AvatarDefs::getAvatarFromSslId(chatId.toPeerId(), avatar);
       if (!avatar.isNull())
-        item->setIcon(COLUMN_NAME,QIcon(avatar)) ;
-
+            item->setIcon(COLUMN_NAME,QIcon(avatar)) ;
       item->setData(COLUMN_NAME, ROLE_SORT, QString::fromUtf8(nickname.c_str()));
 
       item->setData(COLUMN_DATA, ROLE_ID, QString::fromUtf8(rsId.c_str()));
