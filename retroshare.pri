@@ -604,6 +604,7 @@ macx-* {
         CONFIG += c++11
         INCLUDEPATH += "/usr/local/include"
         RS_UPNP_LIB = miniupnpc
+        QT += macextras
 }
 
 

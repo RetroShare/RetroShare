@@ -165,7 +165,8 @@ public:
     static void installGroupChatNotifier();
     static void installNotifyIcons();
     static void displayLobbySystrayMsg(const QString&,const QString&);
-
+    static void displayContactSystrayMsg(const QString&,const QString&, const QIcon&);
+    static void displayBadgeNumberOnMainApp(const int& iCount);
     static void switchVisibilityStatus(MainWindow::StatusElement e,bool b);
 
     /* initialize widget with status informations, status constant stored in data or in Qt::UserRole */
@@ -240,6 +241,7 @@ private slots:
     void showabout();
     void openShareManager();
     void displaySystrayMsg(const QString&,const QString&) ;
+    void displaySystrayMsgWithIcon(const QString&,const QString&, const QIcon& ) ;
 
     /** Displays the help browser and displays the most recently viewed help
     * topic. */

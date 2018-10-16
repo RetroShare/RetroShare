@@ -26,6 +26,7 @@
 #include "UserNotify.h"
 #include "rshare.h"
 #include "gui/settings/rsharesettings.h"
+#include "gui/MainWindow.h"
 
 UserNotify::UserNotify(QObject *parent) :
 	QObject(parent)
@@ -197,6 +198,12 @@ void UserNotify::update()
 	if (mNewCount != count) {
 		emit countChanged();
 	}
+
+#if QT_VERSION >= QT_VERSION_CHECK (5, 2, 0)
+
+     MainWindow::getInstance()->displayBadgeNumberOnMainApp(count);
+#else
+#endif
 
 	mNewCount = count;
 }

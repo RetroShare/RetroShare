@@ -76,26 +76,49 @@ SoundManager::SoundManager() : QObject()
 
 void SoundManager::soundEvents(SoundEvents &events)
 {
-	QDir baseDir = QDir(QString::fromUtf8(RsAccounts::systemDataDirectory().c_str()) + "/sounds");
+    /* meiyousixin - RS code using the systemDataDirectory for get folder of sound files
+       Using new folder (AccountDirectory) for testing only, just copy sounds folder into this directory: LOC06_0d9eee76f4d2e9bdb97060f85dc39246 */
+
+    QDir baseDir = QDir(QString::fromUtf8(RsAccounts::systemDataDirectory().c_str()) + "/sounds");
+
+    //QDir baseDir = QDir(QString::fromUtf8(RsAccounts::AccountDirectory().c_str()) + "/sounds");
+    std::string accLocalName = RsAccounts::AccountLocationName().c_str();
+    std::string accDir = RsAccounts::AccountDirectory().c_str();
+    std::string accKeysDir = RsAccounts::AccountKeysDirectory().c_str();
+    std::string accCertDir = RsAccounts::AccountPathCertFile().c_str();
+    std::string accKeyFileDir = RsAccounts::AccountPathKeyFile().c_str();
+    std::string confDir = RsAccounts::ConfigDirectory().c_str();
+    std::string PGPDir = RsAccounts::PGPDirectory().c_str();
+    std::string sysDataDir = RsAccounts::systemDataDirectory().c_str();
+
+    std::cerr << "AccountLocationName directory: <<" << accLocalName << std::endl;
+    std::cerr << "AccountDirectory directory: <<" << accDir << std::endl;
+    std::cerr << "AccountKeysDirectory directory: <<" << accKeysDir << std::endl;
+    std::cerr << "AccountPathCertFile directory: <<" << accCertDir << std::endl;
+    std::cerr << "AccountPathKeyFile directory: <<" << accKeyFileDir << std::endl;
+    std::cerr << "ConfigDirectory directory: <<" << confDir << std::endl;
+    std::cerr << "PGPDirectory directory: <<" << PGPDir << std::endl;
+    std::cerr << "systemDataDirectory directory: <<" << sysDataDir << std::endl;
+
 
 	events.mDefaultPath = baseDir.absolutePath();
 
 	/* add standard events */
 	events.addEvent(tr("Friend"), tr("Go Online"), SOUND_USER_ONLINE, QFileInfo(baseDir, "online1.wav").absoluteFilePath());
-	events.addEvent(tr("Chatmessage"), tr("New Msg"), SOUND_NEW_CHAT_MESSAGE, QFileInfo(baseDir, "incomingchat.wav").absoluteFilePath());
+    events.addEvent(tr("Chatmessage"), tr("New Msg"), SOUND_NEW_CHAT_MESSAGE, QFileInfo(baseDir, "incomingchat.wav").absoluteFilePath());
 	events.addEvent(tr("Message"), tr("Message arrived"), SOUND_MESSAGE_ARRIVED, QFileInfo(baseDir, "receive.wav").absoluteFilePath());
 	events.addEvent(tr("Download"), tr("Download complete"), SOUND_DOWNLOAD_COMPLETE, QFileInfo(baseDir, "ft_complete.wav").absoluteFilePath());
     events.addEvent(tr("Lobby"), tr("Message arrived"), SOUND_NEW_LOBBY_MESSAGE, QFileInfo(baseDir, "incomingchat.wav").absoluteFilePath());
 
 	/* add plugin events */
-	int pluginCount = rsPlugins->nbPlugins();
-	for (int i = 0; i < pluginCount; ++i) {
-		RsPlugin *plugin = rsPlugins->plugin(i);
+//	int pluginCount = rsPlugins->nbPlugins();
+//	for (int i = 0; i < pluginCount; ++i) {
+//		RsPlugin *plugin = rsPlugins->plugin(i);
 
-		if (plugin) {
-			plugin->qt_sound_events(events);
-		}
-	}
+//		if (plugin) {
+//			plugin->qt_sound_events(events);
+//		}
+//	}
 }
 
 QString SoundManager::defaultFilename(const QString &event, bool check)
@@ -121,7 +144,7 @@ QString SoundManager::defaultFilename(const QString &event, bool check)
 		return convertFilename(filename);
 	}
 
-	return "";
+    return "";
 }
 
 void SoundManager::initDefault()

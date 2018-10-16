@@ -347,6 +347,8 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 
 	SoundManager::create();
 
+
+
     bool is_hidden_node = false;
     bool is_auto_tor = false ;
     bool is_first_time = false ;
@@ -444,6 +446,8 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 		rsPeers->setProxyServer(RS_HIDDEN_TYPE_TOR, proxy_server_address.toString().toStdString(),proxy_server_port) ;
 	}
 
+    SoundManager::initDefault();
+
 	Rshare::initPlugins();
 
 	splashScreen.showMessage(rshare.translate("SplashScreen", "Create interface"), Qt::AlignHCenter | Qt::AlignBottom);
@@ -452,6 +456,7 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 	RsharePeerSettings::Create();
 
 	Emoticons::load();
+
 
 	if (Settings->value(QString::fromUtf8("FirstRun"), true).toBool()) {
 		splashScreen.hide();
