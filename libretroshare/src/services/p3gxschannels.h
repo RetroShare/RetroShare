@@ -3,7 +3,8 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright 2012-2012 Robert Fernie <retroshare@lunamutt.com>                 *
+ * Copyright (C) 2012  Robert Fernie <retroshare@lunamutt.com>                 *
+ * Copyright (C) 2018  Gioacchino Mazzurco <gio@eigenlab.org>                  *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -32,10 +33,6 @@
 
 #include <map>
 #include <string>
-
-/* 
- *
- */
 
 
 class SSGxsChannelGroup
@@ -181,6 +178,12 @@ virtual bool ExtraFileRemove(const RsFileHash &hash);
 	        const std::list<RsGxsGroupId>& chanIds,
 	        std::vector<RsGxsChannelPost>& posts,
 	        std::vector<RsGxsComment>& comments );
+
+	/// Implementation of @see RsGxsChannels::createChannel
+	virtual bool createChannel(RsGxsChannelGroup& channel);
+
+	/// Implementation of @see RsGxsChannels::createPost
+	virtual bool createPost(RsGxsChannelPost& post);
 
 protected:
 	// Overloaded from GxsTokenQueue for Request callbacks.

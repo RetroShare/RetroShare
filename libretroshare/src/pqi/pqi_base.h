@@ -31,7 +31,7 @@
 
 #include "pqi/pqinetwork.h"
 
-class RSTrafficClue ;
+struct RSTrafficClue;
 
 /*** Base DataTypes: ****/
 #include "serialiser/rsserial.h"
@@ -46,7 +46,7 @@ class RSTrafficClue ;
 int getPQIsearchId();
 int fixme(char *str, int n);
 
-class RsPeerCryptoParams ;
+struct RsPeerCryptoParams;
 
 //! controlling data rates
 /*!

@@ -1054,12 +1054,7 @@ bool p3Peers::setProxyServer(const uint32_t type, const std::string &addr_str, c
 
 //===========================================================================
 	/* Auth Stuff */
-std::string p3Peers::GetRetroshareInvite(
-        bool include_signatures, bool includeExtraLocators )
-{
-	return GetRetroshareInvite(
-	            getOwnId(), include_signatures, includeExtraLocators );
-}
+
 std::string p3Peers::getPGPKey(const RsPgpId& pgp_id,bool include_signatures)
 {
 	unsigned char *mem_block = NULL;
@@ -1176,12 +1171,13 @@ bool p3Peers::acceptInvite( const std::string& invite,
 }
 
 std::string p3Peers::GetRetroshareInvite(
-        const RsPeerId& ssl_id, bool include_signatures,
+        const RsPeerId& sslId, bool include_signatures,
         bool includeExtraLocators )
 {
 #ifdef P3PEERS_DEBUG
 	std::cerr << __PRETTY_FUNCTION__ << std::endl;
 #endif
+	const RsPeerId& ssl_id(sslId.isNull() ? getOwnId() : sslId);
 
 	//add the sslid, location, ip local and external address after the signature
 	RsPeerDetails detail;
@@ -1217,17 +1213,27 @@ std::string p3Peers::GetRetroshareInvite(
 
 //===========================================================================
 
-bool 	p3Peers::loadCertificateFromString(const std::string& cert, RsPeerId& ssl_id, RsPgpId& gpg_id, std::string& error_string)
+bool p3Peers::loadCertificateFromString(
+        const std::string& cert, RsPeerId& ssl_id,
+        RsPgpId& gpg_id, std::string& error_string )
 {
-	RsCertificate crt(cert) ;
-	RsPgpId gpgid ;
+	RsCertificate crt;
+	uint32_t errNum = 0;
+	if(!crt.initializeFromString(cert,errNum))
+	{
+		error_string = "RsCertificate failed with errno: "
+		        + std::to_string(errNum) + " parsing: " + cert;
+		return false;
+	}
 
-	bool res = AuthGPG::getAuthGPG()->LoadCertificateFromString(crt.armouredPGPKey(),gpgid,error_string) ;
+	RsPgpId gpgid;
+	bool res = AuthGPG::getAuthGPG()->
+	        LoadCertificateFromString(crt.armouredPGPKey(), gpgid,error_string);
 
 	gpg_id = gpgid;
-	ssl_id = crt.sslid() ;
+	ssl_id = crt.sslid();
 
-	return res ;
+	return res;
 }
 
 bool p3Peers::loadDetailsFromStringCert( const std::string &certstr,

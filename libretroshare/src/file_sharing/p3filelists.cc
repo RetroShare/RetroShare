@@ -779,10 +779,14 @@ template<> bool p3FileDatabase::convertPointerToEntryIndex<4>(const void *p, Ent
 {
     // trust me, I can do this ;-)
 
-#pragma GCC diagnostic ignored "-Wstrict-aliasing"
+#if defined(__GNUC__) && !defined(__clang__)
+#	pragma GCC diagnostic ignored "-Wstrict-aliasing"
+#endif // defined(__GNUC__) && !defined(__clang__)
     e   = EntryIndex(  *reinterpret_cast<uint32_t*>(&p) & ENTRY_INDEX_BIT_MASK_32BITS ) ;
     friend_index = (*reinterpret_cast<uint32_t*>(&p)) >> NB_ENTRY_INDEX_BITS_32BITS ;
-#pragma GCC diagnostic pop
+#if defined(__GNUC__) && !defined(__clang__)
+#	pragma GCC diagnostic pop
+#endif // defined(__GNUC__) && !defined(__clang__)
 
     if(friend_index == 0)
     {
@@ -819,10 +823,14 @@ template<> bool p3FileDatabase::convertPointerToEntryIndex<8>(const void *p, Ent
 {
     // trust me, I can do this ;-)
 
+#if defined(__GNUC__) && !defined(__clang__)
 #pragma GCC diagnostic ignored "-Wstrict-aliasing"
+#endif // defined(__GNUC__) && !defined(__clang__)
     e   = EntryIndex(  *reinterpret_cast<uint64_t*>(&p) & ENTRY_INDEX_BIT_MASK_64BITS ) ;
     friend_index = (*reinterpret_cast<uint64_t*>(&p)) >> NB_ENTRY_INDEX_BITS_64BITS ;
+#if defined(__GNUC__) && !defined(__clang__)
 #pragma GCC diagnostic pop
+#endif // defined(__GNUC__) && !defined(__clang__)
 
     if(friend_index == 0)
     {
@@ -1184,16 +1192,6 @@ int p3FileDatabase::RequestDirDetails(void *ref, DirDetails& d, FileSearchFlags 
     return true;
 }
 
-int p3FileDatabase::RequestDirDetails(const RsPeerId &/*uid*/, const std::string &/*path*/, DirDetails &/*details*/) const
-{
-    NOT_IMPLEMENTED();
-    return 0;
-}
-//int p3FileDatabase::RequestDirDetails(const std::string& path, DirDetails &details) const
-//{
-//    NOT_IMPLEMENTED();
-//    return 0;
-//}
 uint32_t p3FileDatabase::getType(void *ref,FileSearchFlags flags) const
 {
     RS_STACK_MUTEX(mFLSMtx) ;
@@ -2027,11 +2025,11 @@ bool p3FileDatabase::banFile(const RsFileHash& real_file_hash, const std::string
 		RS_STACK_MUTEX(mFLSMtx) ;
 		BannedFileEntry& entry(mPrimaryBanList[real_file_hash]) ;	// primary list (user controlled) of files banned from FT search and forwarding. map<real hash, BannedFileEntry>
 
-        if(entry.ban_time_stamp == 0)
+        if(entry.mBanTimeStamp == 0)
 		{
-			entry.filename = filename ;
-			entry.size = file_size ;
-			entry.ban_time_stamp = time(NULL);
+			entry.mFilename = filename ;
+			entry.mSize = file_size ;
+			entry.mBanTimeStamp = time(NULL);
 
 			RsFileHash hash_of_hash ;
 			ftServer::encryptHash(real_file_hash,hash_of_hash) ;

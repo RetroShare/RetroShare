@@ -103,7 +103,7 @@ class peerState
 };
 
 class RsNodeGroupItem;
-class RsGroupInfo;
+struct RsGroupInfo;
 
 std::string textPeerState(peerState &state);
 

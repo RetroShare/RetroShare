@@ -252,3 +252,4 @@ your work-station running
 - link:https://source.android.com/devices/tech/debug/gdb[]
 - link:https://fw4spl-org.github.io/fw4spl-blog/2015/07/27/Native-debugging-on-Android-with-QtCreator.html[]
 - link:https://fragglet.livejournal.com/19646.html[]
+- link:https://github.com/android-ndk/ndk/issues/773[How to build without using standalone toolchain?]

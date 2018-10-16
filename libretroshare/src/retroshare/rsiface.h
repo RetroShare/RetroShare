@@ -29,7 +29,7 @@
 
 class RsServer;
 class RsInit;
-class RsPeerCryptoParams;
+struct RsPeerCryptoParams;
 class RsControl;
 
 /// RsInit -> Configuration Parameters for RetroShare Startup

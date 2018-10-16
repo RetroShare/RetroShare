@@ -422,7 +422,9 @@ void PeersHandler::handleWildcard(Request &req, Response &resp)
 		{
 			if(str == "self" && !req.mPath.empty() && req.mPath.top() == "certificate")
 			{
-				resp.mDataStream << makeKeyValue("cert_string", mRsPeers->GetRetroshareInvite(false));
+				resp.mDataStream << makeKeyValue(
+				                        "cert_string",
+				                        mRsPeers->GetRetroshareInvite());
 				resp.setOk();
 				return;
 			}

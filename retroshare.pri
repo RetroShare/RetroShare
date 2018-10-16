@@ -64,6 +64,16 @@ retroshare_android_notify_service:CONFIG -= no_retroshare_android_notify_service
 CONFIG *= no_retroshare_qml_app
 retroshare_qml_app:CONFIG -= no_retroshare_qml_app
 
+# To enable RetroShare service append the following assignation to
+# qmake command line "CONFIG+=retroshare_service"
+CONFIG *= no_retroshare_service
+retroshare_service:CONFIG -= no_retroshare_service
+
+# To disable libresapi append the following assignation to qmake command line
+#"CONFIG+=no_libresapi"
+CONFIG *= libresapi
+no_libresapi:CONFIG -= libresapi
+
 # To enable libresapi via local socket (unix domain socket or windows named
 # pipes) append the following assignation to qmake command line
 #"CONFIG+=libresapilocalserver"
@@ -140,9 +150,14 @@ CONFIG *= no_rs_jsonapi
 rs_jsonapi:CONFIG -= no_rs_jsonapi
 
 # To disable deep search append the following assignation to qmake command line
-CONFIG+=no_rs_deep_search
-CONFIG *= rs_deep_search
-no_rs_deep_search:CONFIG -= rs_deep_search
+CONFIG *= no_rs_deep_search
+rs_deep_search:CONFIG -= no_rs_deep_search
+
+# Specify host precompiled jsonapi-generator path, appending the following
+# assignation to qmake command line
+# 'JSONAPI_GENERATOR_EXE=/myBuildDir/jsonapi-generator'. Required for JSON API
+# cross-compiling
+#JSONAPI_GENERATOR_EXE=/myBuildDir/jsonapi-generator
 
 # Specify RetroShare major version appending the following assignation to qmake
 # command line 'RS_MAJOR_VERSION=0'
@@ -299,6 +314,18 @@ defineReplace(linkDynamicLibs) {
 ## RS_THREAD_LIB String viariable containing the name of the multi threading
 ##   library to use (pthread, "") it usually depend on platform.
 
+isEmpty(QMAKE_HOST_SPEC):QMAKE_HOST_SPEC=$$[QMAKE_SPEC]
+isEmpty(QMAKE_TARGET_SPEC):QMAKE_TARGET_SPEC=$$[QMAKE_XSPEC]
+equals(QMAKE_HOST_SPEC, $$QMAKE_TARGET_SPEC) {
+    CONFIG *= no_rs_cross_compiling
+    CONFIG -= rs_cross_compiling
+} else {
+    CONFIG *= rs_cross_compiling
+    CONFIG -= no_rs_cross_compiling
+    message(Cross-compiling detected QMAKE_HOST_SPEC: $$QMAKE_HOST_SPEC \
+QMAKE_TARGET_SPEC: $$QMAKE_TARGET_SPEC)
+}
+
 defined(RS_MAJOR_VERSION,var):\
 defined(RS_MINOR_VERSION,var):\
 defined(RS_MINI_VERSION,var):\
@@ -408,6 +435,10 @@ rs_chatserver {
 }
 
 rs_jsonapi {
+    rs_cross_compiling:!exists($$JSONAPI_GENERATOR_EXE):error("Inconsistent \
+build configuration, cross-compiling JSON API requires JSONAPI_GENERATOR_EXE \
+to contain the path to an host executable jsonapi-generator")
+
     DEFINES *= RS_JSONAPI
 }
 

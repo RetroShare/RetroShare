@@ -77,10 +77,10 @@ void BannedFilesDialog::fillFilesList()
 
     for(auto it(banned_files.begin());it!=banned_files.end();++it)
     {
-		ui.bannedFiles_TW->setItem(row, COLUMN_FILE_NAME, new QTableWidgetItem(QIcon(),QString::fromUtf8(it->second.filename.c_str()),0));
+		ui.bannedFiles_TW->setItem(row, COLUMN_FILE_NAME, new QTableWidgetItem(QIcon(),QString::fromUtf8(it->second.mFilename.c_str()),0));
 		ui.bannedFiles_TW->setItem(row, COLUMN_FILE_HASH, new QTableWidgetItem(QIcon(),QString::fromStdString(it->first.toStdString()),0));
-		ui.bannedFiles_TW->setItem(row, COLUMN_FILE_SIZE, new QTableWidgetItem(QIcon(),QString::number(it->second.size),0));
-		ui.bannedFiles_TW->setItem(row, COLUMN_FILE_TIME, new QTableWidgetItem(QIcon(),QDateTime::fromTime_t(it->second.ban_time_stamp).toString(),0));
+		ui.bannedFiles_TW->setItem(row, COLUMN_FILE_SIZE, new QTableWidgetItem(QIcon(),QString::number(it->second.mSize),0));
+		ui.bannedFiles_TW->setItem(row, COLUMN_FILE_TIME, new QTableWidgetItem(QIcon(),QDateTime::fromTime_t(it->second.mBanTimeStamp).toString(),0));
 
 		ui.bannedFiles_TW->item(row, COLUMN_FILE_HASH)->setData(Qt::UserRole, QString::fromStdString(it->first.toStdString()));
 

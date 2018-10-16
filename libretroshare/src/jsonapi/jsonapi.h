@@ -21,6 +21,7 @@
 #include <memory>
 #include <restbed>
 #include <cstdint>
+#include <map>
 
 #include "util/rsthreads.h"
 #include "pqi/p3cfgmgr.h"
@@ -188,5 +189,14 @@ private:
 	/// Encrypted persistent storage for authorized JSON API tokens
 	JsonApiServerAuthTokenStorage mAuthTokenStorage;
 	RsMutex configMutex;
+
+	static const std::multimap<std::string, std::string> corsHeaders;
+	static const std::multimap<std::string, std::string> corsOptionsHeaders;
+	static void handleCorsOptions(const std::shared_ptr<rb::Session> session);
+
+	static bool checkRsServicePtrReady(
+	        void* serviceInstance, const std::string& serviceName,
+	        RsGenericSerializer::SerializeContext& ctx,
+	        const std::shared_ptr<restbed::Session> session );
 };
 

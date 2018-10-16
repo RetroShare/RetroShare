@@ -32,7 +32,7 @@
 #include "util/rsthreads.h"      // for RsStackMutex, RsMutex
 
 class PQInterface;
-class RSTrafficClue;
+struct RSTrafficClue;
 class RsBwRates;
 struct RsItem;
 class RsRawItem;
