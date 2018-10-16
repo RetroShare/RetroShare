@@ -110,8 +110,11 @@
 #include "settings/rsharesettings.h"
 #include "common/StatusDefs.h"
 #include "gui/notifyqt.h"
+
+#ifdef __APPLE__
 #if QT_VERSION >= QT_VERSION_CHECK(5,2,0)
 #include <QtMac>
+#endif
 #endif
 
 
@@ -713,9 +716,11 @@ void MainWindow::displaySystrayMsgWithIcon(const QString& title,const QString& m
 
 void MainWindow::displayBadgeNumberOnMainApp(const int& iCount)
 {
+#ifdef __APPLE__
 #if QT_VERSION >= QT_VERSION_CHECK(5,2,0)
     if (iCount>0) QtMac::setBadgeLabelText(QString::number(iCount));
     else QtMac::setBadgeLabelText(QString(""));
+#endif
 #endif
 }
 
