@@ -10,8 +10,8 @@ QFrame#titleBarFrame, QFrame#toolBarFrame {
 /* HeaderFrame */
 
 HeaderFrame > QFrame#frame {
-	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #9BDBF9, stop:1 #1592CD);
-	border: 0px;
+        background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #9BDBF9, stop:1 #1592CD);
+        border: 0px;
 }
 
 HeaderFrame > QFrame#frame > QLabel#headerLabel {
@@ -48,8 +48,8 @@ GenCertDialog > QFrame#headerFrame > QLabel#headerLabel {
 }
 
 GenCertDialog > QFrame#frame {
-	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FEFEFE, stop:1 #E8E8E8);
-	border: 1px solid #CCCCCC;
+        background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FEFEFE, stop:1 #E8E8E8);
+        border: 1px solid #CCCCCC;
 }
 
 /* ConnectFriendWizard */
@@ -225,8 +225,8 @@ MessageComposer QToolBar#toolBar  {
 }
 
 MessagesDialog QFrame#folderFrame, MessagesDialog QFrame#quickViewFrame {
-	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FEFEFE, stop:1 #E8E8E8);
-	border: 1px solid #CCCCCC;
+        background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FEFEFE, stop:1 #E8E8E8);
+        border: 1px solid #CCCCCC;
 }
 
 /* Profile */
