@@ -35,6 +35,7 @@
 
 #include "gui/MainWindow.h"
 #include "gui/ChatLobbyWidget.h"
+#include "gui/common/AvatarDefs.h"
 
 #define appDir QApplication::applicationDirPath()
 
@@ -152,6 +153,21 @@ void PopupChatDialog::addChatMsg(const ChatMessage &msg)
 	    cw->addChatMsg(msg.incoming, name, sendTime, recvTime, message, ChatWidget::MSGTYPE_NORMAL);
 
         emit messageP2PReceived(msg.incoming, msg.chat_id,  sendTime, name, message) ;
+
+        if (msg.incoming)
+        {
+            QTextEdit editor;
+            editor.setHtml(message);
+            QString notifyMsg =  editor.toPlainText();
+            RsPgpId pgpId = rsPeers->getGPGId(msg.chat_id.toPeerId());
+            std::string strname = rsPeers->getGPGName(pgpId);
+            QPixmap avatar;
+            AvatarDefs::getAvatarFromSslId(msg.chat_id.toPeerId(), avatar);
+            if (!avatar.isNull())
+                MainWindow::displayContactSystrayMsg(QString::fromStdString(strname), notifyMsg, QIcon(avatar));
+
+        }
+
 	}
 }
 

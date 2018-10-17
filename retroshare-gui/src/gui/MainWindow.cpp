@@ -111,6 +111,13 @@
 #include "common/StatusDefs.h"
 #include "gui/notifyqt.h"
 
+#ifdef __APPLE__
+#if QT_VERSION >= QT_VERSION_CHECK(5,2,0)
+#include <QtMac>
+#endif
+#endif
+
+
 #ifdef ENABLE_WEBUI
 #	include "settings/WebuiPage.h"
 #endif
@@ -145,6 +152,9 @@
 #define IMAGE_PLUGINS           ":/images/extension_32.png"
 #define IMAGE_BLOGS             ":/images/kblogger.png"
 #define IMAGE_DHT               ":/images/dht16.png"
+
+
+#define IMAGE_UNSEEN          ":/app/images/unseen32.png"
 
 /*static*/ bool MainWindow::hiddenmode = false;
 
@@ -662,6 +672,13 @@ const QList<UserNotify*> &MainWindow::getUserNotifyList()
 		 _instance->displaySystrayMsg(title,msg) ;
 }
 
+/*static*/ void MainWindow::displayContactSystrayMsg(const QString& title,const QString& msg, const QIcon& icon)
+{
+    if (_instance == NULL)
+        return;
+
+    _instance->displaySystrayMsgWithIcon(title,msg, icon) ;
+}
 
 /*static*/ void MainWindow::installGroupChatNotifier()
 {
@@ -691,6 +708,22 @@ void MainWindow::displaySystrayMsg(const QString& title,const QString& msg)
 {
     trayIcon->showMessage(title, msg, QSystemTrayIcon::Information, 3000);
 }
+
+void MainWindow::displaySystrayMsgWithIcon(const QString& title,const QString& msg, const QIcon& icon)
+{
+    trayIcon->showMessage(title, msg, QSystemTrayIcon::Information, 3000);
+}
+
+void MainWindow::displayBadgeNumberOnMainApp(const int& iCount)
+{
+#ifdef __APPLE__
+#if QT_VERSION >= QT_VERSION_CHECK(5,2,0)
+    if (iCount>0) QtMac::setBadgeLabelText(QString::number(iCount));
+    else QtMac::setBadgeLabelText(QString(""));
+#endif
+#endif
+}
+
 
 void MainWindow::updateTrayCombine()
 {
