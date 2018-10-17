@@ -62,7 +62,7 @@
          <string/>
         </property>
         <property name="pixmap">
-         <pixmap resource="../Unseengui/unseengui.qrc">:/home/img/face_icon/group-profile-users_x_128.png</pixmap>
+         <pixmap resource="../Unseengui/unseengui.qrc">:/home/img/face_icon/group-profile-users_128.png</pixmap>
         </property>
         <property name="scaledContents">
          <bool>true</bool>
@@ -71,6 +71,9 @@
       </item>
       <item>
        <widget class="StyledLabel" name="titleBarLabel">
+        <property name="styleSheet">
+         <string notr="true">color: rgb(255, 255, 255);</string>
+        </property>
         <property name="text">
          <string>Contacts</string>
         </property>
@@ -129,7 +132,7 @@
        <item>
         <widget class="QFrame" name="headFrame">
          <property name="styleSheet">
-          <string notr="true">background-color: rgb(43, 164, 220);</string>
+          <string notr="true"/>
          </property>
          <property name="frameShape">
           <enum>QFrame::Box</enum>
@@ -177,6 +180,9 @@
             <property name="toolTip">
              <string>Edit status message</string>
             </property>
+            <property name="styleSheet">
+             <string notr="true">color: rgb(255, 255, 255);</string>
+            </property>
             <property name="text">
              <string/>
             </property>
@@ -197,6 +203,9 @@
           </item>
           <item row="0" column="1" colspan="3">
            <widget class="StyledElidedLabel" name="nicknameLabel">
+            <property name="styleSheet">
+             <string notr="true">color: rgb(255, 255, 255);</string>
+            </property>
             <property name="text">
              <string notr="true">Nickname (Location)</string>
             </property>

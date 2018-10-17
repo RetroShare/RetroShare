@@ -24,7 +24,7 @@
 
 #include "gui/gxs/GxsGroupFrameDialog.h"
 
-#define IMAGE_GXSCHANNELS       ":/icons/png/channels.png"
+#define IMAGE_GXSCHANNELS       ":/home/img/face_icon/youtube-play-button_128.png"      //d
 
 class GxsChannelDialog : public GxsGroupFrameDialog
 {

@@ -89,5 +89,8 @@
         <file>home/img/mountain_1700.jpg</file>
         <file>home/img/snow-mountain_800.jpg</file>
         <file>home/img/mountain_550-.png</file>
+        <file>home/img/face_icon/youtube-play-button_128.png</file>
+        <file>home/img/face_icon/youtube-play-button_v_128.png</file>
+        <file>home/img/face_icon/youtube-play-button_x_128.png</file>
     </qresource>
 </RCC>

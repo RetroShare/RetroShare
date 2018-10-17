@@ -1587,5 +1587,6 @@ void ChatLobbyWidget::updateContactItem(QTreeWidget *treeWidget, QTreeWidgetItem
 
       item->setData(COLUMN_DATA, ROLE_ID, QString::fromUtf8(rsId.c_str()));
       item->setData(COLUMN_RECENT_TIME, ROLE_SORT,current_time);
+   //   int avatarHeight = fontMetrics.height() * 2;        //d: change avatar size
 }
 
