@@ -124,7 +124,8 @@ FriendList::FriendList(QWidget *parent) :
     connect(ui->peerTreeWidget, SIGNAL(itemDoubleClicked(QTreeWidgetItem *, int)), this, SLOT(chatfriend(QTreeWidgetItem *)));
     connect(ui->peerTreeWidget, SIGNAL(itemExpanded(QTreeWidgetItem *)), this, SLOT(expandItem(QTreeWidgetItem *)));
     connect(ui->peerTreeWidget, SIGNAL(itemCollapsed(QTreeWidgetItem *)), this, SLOT(collapseItem(QTreeWidgetItem *)));
-
+    ui->peerTreeWidget->setStyleSheet("background-color: rgb(47, 60, 76); color:white; "
+                                      "selection-background-color: rgb(32, 41, 53); selection-color: rgb(255, 255, 255);");     //d: set color of list
     connect(NotifyQt::getInstance(), SIGNAL(groupsChanged(int)), this, SLOT(groupsChanged()));
     connect(NotifyQt::getInstance(), SIGNAL(friendsChanged()), this, SLOT(insertPeers()));
 
@@ -138,7 +139,6 @@ FriendList::FriendList(QWidget *parent) :
 
     ui->filterLineEdit->setPlaceholderText(tr("Search")) ;
     ui->filterLineEdit->showFilterIcon();
-
     /* Add filter actions */
     QTreeWidgetItem *headerItem = ui->peerTreeWidget->headerItem();
     QString headerText = headerItem->text(COLUMN_NAME);
@@ -310,7 +310,6 @@ void FriendList::peerTreeWidgetCustomPopupMenu()
 
     QSpacerItem *spacerItem = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
     hbox->addItem(spacerItem);
-
     widget->setLayout(hbox);
 
     QWidgetAction *widgetAction = new QWidgetAction(this);
