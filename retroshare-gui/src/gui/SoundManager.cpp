@@ -111,14 +111,16 @@ void SoundManager::soundEvents(SoundEvents &events)
     events.addEvent(tr("Lobby"), tr("Message arrived"), SOUND_NEW_LOBBY_MESSAGE, QFileInfo(baseDir, "incomingchat.wav").absoluteFilePath());
 
 	/* add plugin events */
-//	int pluginCount = rsPlugins->nbPlugins();
-//	for (int i = 0; i < pluginCount; ++i) {
-//		RsPlugin *plugin = rsPlugins->plugin(i);
+    #ifdef __APPLE__
+    int pluginCount = rsPlugins->nbPlugins();
+    for (int i = 0; i < pluginCount; ++i) {
+        RsPlugin *plugin = rsPlugins->plugin(i);
 
-//		if (plugin) {
-//			plugin->qt_sound_events(events);
-//		}
-//	}
+        if (plugin) {
+            plugin->qt_sound_events(events);
+        }
+    }
+    #endif
 }
 
 QString SoundManager::defaultFilename(const QString &event, bool check)
