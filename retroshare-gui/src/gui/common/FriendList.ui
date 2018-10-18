@@ -10,6 +10,9 @@
     <height>292</height>
    </rect>
   </property>
+  <property name="styleSheet">
+   <string notr="true"/>
+  </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="spacing">
     <number>0</number>
@@ -28,6 +31,9 @@
    </property>
    <item>
     <widget class="QFrame" name="titleBarFrame">
+     <property name="styleSheet">
+      <string notr="true"/>
+     </property>
      <property name="frameShape">
       <enum>QFrame::Box</enum>
      </property>
@@ -60,6 +66,9 @@
     <widget class="RSTreeWidget" name="peerTreeWidget">
      <property name="contextMenuPolicy">
       <enum>Qt::CustomContextMenu</enum>
+     </property>
+     <property name="styleSheet">
+      <string notr="true"/>
      </property>
      <property name="sortingEnabled">
       <bool>true</bool>

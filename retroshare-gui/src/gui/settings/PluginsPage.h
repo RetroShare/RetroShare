@@ -37,7 +37,7 @@ class PluginsPage : public ConfigPage
 		/** Loads the settings for this page */
 		virtual void load();
 
-		virtual QPixmap iconPixmap() const { return QPixmap(":/icons/settings/plugins.svg") ; }
+        virtual QPixmap iconPixmap() const { return QPixmap(":/home/img/Setting/puzzle-piece-silhouette.svg") ; }
 		virtual QString pageName() const { return tr("Plugins") ; }
 		virtual QString helpText() const ;
 

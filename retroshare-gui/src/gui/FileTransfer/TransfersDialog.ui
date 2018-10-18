@@ -62,7 +62,7 @@
          <string/>
         </property>
         <property name="pixmap">
-         <pixmap resource="../../Unseengui/unseengui.qrc">:/home/img/face_icon/file_x_128.png</pixmap>
+         <pixmap resource="../../Unseengui/unseengui.qrc">:/home/img/face_icon/file _128.png</pixmap>
         </property>
         <property name="scaledContents">
          <bool>true</bool>
@@ -71,6 +71,9 @@
       </item>
       <item>
        <widget class="StyledLabel" name="titleBarLabel">
+        <property name="styleSheet">
+         <string notr="true">color: rgb(255, 255, 255);</string>
+        </property>
         <property name="text">
          <string>File Transfers</string>
         </property>

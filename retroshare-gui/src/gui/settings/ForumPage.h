@@ -36,7 +36,7 @@ public:
 	/** Loads the settings for this page */
 	virtual void load();
 
-	virtual QPixmap iconPixmap() const { return QPixmap(":/icons/settings/forums.svg") ; }
+    virtual QPixmap iconPixmap() const { return QPixmap(":/home/img/Setting/bull-horn-announcer.svg") ; }
 	virtual QString pageName() const { return tr("Forums") ; }
 	virtual QString helpText() const { return ""; }
 

@@ -40,6 +40,17 @@ StartDialog::StartDialog(QWidget *parent)
 	/* Invoke Qt Designer generated QObject setup routine */
 	ui.setupUi(this);
 
+    /* d: Set background */
+    QPixmap pix(":/home/img/mountain_550-.png");
+           pix.scaled(this->size(),Qt::IgnoreAspectRatio);
+           QPalette pal;
+           pal.setBrush(QPalette::Background,pix);
+           this->setPalette(pal);
+           QSize size;
+           size.setHeight(pix.height());
+           size.setWidth(pix.width());
+           this->resize(size);
+
 #ifdef RS_AUTOLOGIN
 	connect(ui.autologin_checkbox, SIGNAL(clicked()), this, SLOT(notSecureWarning()));
 #else

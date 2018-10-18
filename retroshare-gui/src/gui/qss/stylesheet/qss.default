@@ -138,46 +138,46 @@ PostedCreatePostDialog QLabel#info_label
 
 ForumsDialog, GxsForumThreadWidget
 {
-	qproperty-textColorRead: darkgray;
-	qproperty-textColorUnread: black; 
-	qproperty-textColorUnreadChildren: darkgray;
-	qproperty-textColorNotSubscribed: black;
-	qproperty-textColorMissing: darkRed;
+        qproperty-textColorRead: white;
+        qproperty-textColorUnread: white;
+        qproperty-textColorUnreadChildren: white;
+        qproperty-textColorNotSubscribed: white;
+        qproperty-textColorMissing: white;
 }
 
 GroupTreeWidget
 {
-	qproperty-textColorCategory: rgb(79, 79, 79);
-	qproperty-textColorPrivateKey: rgb(35,91,159);
+        qproperty-textColorCategory: white;
+        qproperty-textColorPrivateKey: white;
 }
 
 FriendSelectionWidget
 {
-        qproperty-textColorOnline: blue;
+        qproperty-textColorOnline: white;
 }
 
 MessagesDialog
 {
-	qproperty-textColorInbox: rgb(49, 106, 197);
+        qproperty-textColorInbox: white;
 }
 
 FriendList
 {
-    qproperty-textColorStatusOffline: black;
-    qproperty-textColorStatusAway: gray;
-    qproperty-textColorStatusBusy: gray;
-    qproperty-textColorStatusOnline: darkGreen;
-    qproperty-textColorStatusInactive: gray;
-	qproperty-textColorGroup: rgb(123, 123, 123);
+    qproperty-textColorStatusOffline: white;
+    qproperty-textColorStatusAway: white;
+    qproperty-textColorStatusBusy: white;
+    qproperty-textColorStatusOnline:  white;
+    qproperty-textColorStatusInactive:  white;
+        qproperty-textColorGroup: white;
 }
 
 SearchDialog
 {
-	qproperty-textColorLocal: red;
-	qproperty-textColorDownloading: green;
-	qproperty-textColorNoSources: rgb(0, 0, 19);
-	qproperty-textColorLowSources: rgb(0, 0, 38);
-	qproperty-textColorHighSources: rgb(0, 0, 228);
+        qproperty-textColorLocal: red;
+        qproperty-textColorDownloading: green;
+        qproperty-textColorNoSources: rgb(0, 0, 19);
+        qproperty-textColorLowSources: rgb(0, 0, 38);
+        qproperty-textColorHighSources: rgb(0, 0, 228);
 }
 
 NetworkDialog
@@ -191,7 +191,7 @@ NetworkDialog
 
 RSTextBrowser, MimeTextEdit
 {
-	qproperty-textColorQuote: rgb(120, 153, 34);
+        qproperty-textColorQuote: rgb(120, 153, 34);
 }
 
 QLabel#headerTextLabel_Person
@@ -226,10 +226,10 @@ GenCertDialog QLabel#entropy_label
 
 /* OpModeStatus need to be at end to overload other values*/
 OpModeStatus {
-	qproperty-opMode_Full_Color: #CCFFCC;
-	qproperty-opMode_NoTurtle_Color: #CCCCFF;
-	qproperty-opMode_Gaming_Color: #FFFFCC;
-	qproperty-opMode_Minimal_Color: #FFCCCC;
+        qproperty-opMode_Full_Color: #008dc0;
+        qproperty-opMode_NoTurtle_Color: #008dc0;
+        qproperty-opMode_Gaming_Color: #008dc0;
+        qproperty-opMode_Minimal_Color: #008dc0;
 }
 OpModeStatus[opMode="Full"] {
 	background: #CCFFCC;

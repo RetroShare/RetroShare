@@ -41,7 +41,6 @@
         <file>home/img/face_icon/envelope_128.png</file>
         <file>home/img/face_icon/envelope_v_128.png</file>
         <file>home/img/face_icon/envelope_x_128.png</file>
-        <file>home/img/face_icon/file._128png</file>
         <file>home/img/face_icon/file_v_128.png</file>
         <file>home/img/face_icon/file_x_128.png</file>
         <file>home/img/face_icon/power-button-off.png</file>
@@ -54,5 +53,44 @@
         <file>home/img/face_icon/user-shape_v_128.png</file>
         <file>home/img/face_icon/user-shape_x_128.png</file>
         <file>home/img/face_icon/group-profile-users_x_128.png</file>
+        <file>home/img/mountain_1500.jpg</file>
+        <file>home/img/mountain_1500.png</file>
+        <file>home/img/face_icon/file _128.png</file>
+        <file>home/img/Setting/bull-horn-announcer.svg</file>
+        <file>home/img/Setting/comment-black-oval-bubble-shape.svg</file>
+        <file>home/img/Setting/envelope.svg</file>
+        <file>home/img/Setting/exclamation.svg</file>
+        <file>home/img/Setting/file.svg</file>
+        <file>home/img/Setting/group-profile-users.svg</file>
+        <file>home/img/Setting/information-symbol.svg</file>
+        <file>home/img/Setting/listing-option.svg</file>
+        <file>home/img/Setting/puzzle-piece-silhouette.svg</file>
+        <file>home/img/Setting/reduced-volume.svg</file>
+        <file>home/img/Setting/settings.svg</file>
+        <file>home/img/Setting/shield.svg</file>
+        <file>home/img/Setting/tint-drop.svg</file>
+        <file>home/img/Setting/network_un.png</file>
+        <file>app/images/Login2.png</file>
+        <file>home/img/Setting/youtube-play-button.svg</file>
+        <file>app/images/statusicons/ask.png</file>
+        <file>app/images/statusicons/away.png</file>
+        <file>app/images/statusicons/dnd.png</file>
+        <file>app/images/statusicons/empty.png</file>
+        <file>app/images/statusicons/invisible.png</file>
+        <file>app/images/statusicons/newmsgnotif.png</file>
+        <file>app/images/statusicons/noauth.png</file>
+        <file>app/images/statusicons/offline.png</file>
+        <file>app/images/statusicons/online.png</file>
+        <file>chat/img/p2p 0.png</file>
+        <file>chat/img/p2p 1.png</file>
+        <file>chat/img/p2p 2.png</file>
+        <file>home/img/mountain_700.png</file>
+        <file>home/img/mountain_2000.jpg</file>
+        <file>home/img/mountain_1700.jpg</file>
+        <file>home/img/snow-mountain_800.jpg</file>
+        <file>home/img/mountain_550-.png</file>
+        <file>home/img/face_icon/youtube-play-button_128.png</file>
+        <file>home/img/face_icon/youtube-play-button_v_128.png</file>
+        <file>home/img/face_icon/youtube-play-button_x_128.png</file>
     </qresource>
 </RCC>

@@ -130,9 +130,9 @@
 #define IMAGE_ABOUT             ":/icons/png/info.png"
 #define IMAGE_ADDFRIEND         ":/icons/png/invite.png"
 #define IMAGE_RETROSHARE        ":/app/images/icon.png"             //D replace :/icons/logo_128.png
-#define IMAGE_NOONLINE          ":/icons/logo_0_connected_128.png"
-#define IMAGE_ONEONLINE         ":/icons/logo_1_connected_128.png"
-#define IMAGE_TWOONLINE         ":/icons/logo_2_connected_128.png"
+#define IMAGE_NOONLINE          ":/chat/img/p2p 0.png"              //d:replace icon
+#define IMAGE_ONEONLINE         ":/chat/img/p2p 1.png"              //d:replace icon
+#define IMAGE_TWOONLINE         ":/chat/img/p2p 2.png"              //d:replace icon
 #define IMAGE_OVERLAY           ":/icons/star_overlay_128.png"
 
 #define IMAGE_BWGRAPH           ":/images/ksysguard.png"
@@ -182,9 +182,27 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
 {
     ui = new Ui::MainWindow;
     trayIcon = NULL;
-
-    /* Invoke the Qt Designer generated QObject setup routine */
     ui->setupUi(this);
+/** d: set background for MainWindow */
+        QPixmap bkgnd(":/home/img/mountain_1700.jpg");
+     //   bkgnd = bkgnd.scaled(this->size(),Qt::IgnoreAspectRatio);
+        QPalette palette;
+        palette.setBrush(QPalette::Background, bkgnd);
+        this->setPalette(palette);
+
+/** d: or use this */
+   /* QPixmap pix(":/home/img/mountain_1700.jpg");
+        pix.scaled(this->size(),Qt::IgnoreAspectRatio);
+        QPalette pal;
+        pal.setBrush(QPalette::Background,pix);
+        this->setPalette(pal);
+        QSize size;
+        size.setHeight(pix.height());
+        size.setWidth(pix.width());
+        this->resize(size);
+*/
+    /* Invoke the Qt Designer generated QObject setup routine */
+//    ui->setupUi(this);        //d: hide this
 
     _instance = this;
 
@@ -410,6 +428,7 @@ void MainWindow::initStackedPage()
   addPage(gxschannelDialog = new GxsChannelDialog(ui->stackPages), grp, &notify);
   addPage(gxsforumDialog = new GxsForumsDialog(ui->stackPages), grp, &notify);
   //meiyousixin - remove links
+
   //addPage(postedDialog = new PostedDialog(ui->stackPages), grp, &notify);
 
   //meiyousixin - remove Identities dialogs for simplicity!!!
@@ -1461,10 +1480,12 @@ void MainWindow::statusChangedComboBox(int index)
 /*new setting*/
 void MainWindow::settingsChanged()
 {
-    ui->toolBarPage->setStyleSheet("QToolBar {background: rgb(43, 164, 220)}""QToolButton {background-color: rgb(20, 141, 196); color: rgb(255, 255, 255)}"); // d: Set color of toolbar
-    ui->toolBarAction->setStyleSheet("QToolBar {background: rgb(43, 164, 220)}""QToolButton {background-color: rgb(20, 141, 196); color: rgb(255, 255, 255)}"); // d: Set color of toolbar
-
-
+    ui->toolBarPage->setStyleSheet("QToolBar {background: rgb(43, 164, 220); color: rgb(255, 255, 255)}"
+                                   "QToolButton {background-color: rgb(20, 141, 196); color: rgb(255, 255, 255)}"); // d: Set color of toolbar
+    ui->toolBarAction->setStyleSheet("QToolBar {background: rgb(43, 164, 220); color: rgb(255, 255, 255)}"
+                                     "QToolButton {background-color: rgb(20, 141, 196); color: rgb(255, 255, 255)}"); // d: Set color of toolbar
+    ui->listWidget->setStyleSheet("QListWidget {background: rgb(43, 164, 220); color: rgb(255, 255, 255)}"
+                                  "QListWidget::item {background: rgb(20, 141, 196); color: rgb(255, 255, 255)}");  // d: Set color of list item
 
     ui->toolBarPage->setVisible(Settings->getPageButtonLoc());
 	ui->toolBarAction->setVisible(Settings->getActionButtonLoc());
@@ -1472,19 +1493,23 @@ void MainWindow::settingsChanged()
 	for(int i = 0; i < ui->listWidget->count(); ++i) {
 		if (ui->listWidget->item(i)->data(Qt::UserRole).toString() == "") {
 			ui->listWidget->item(i)->setHidden(Settings->getPageButtonLoc());
+            ui->listWidget->item(i)->setSizeHint(QSize(64,42));  //d: change size listWidget
+
 		} else {
 			ui->listWidget->item(i)->setHidden(Settings->getActionButtonLoc());
+            ui->listWidget->item(i)->setSizeHint(QSize(64,42));    //d: change size listWidget
 		}
 	}
     int toolSize = Settings->getToolButtonSize();
     ui->toolBarPage->setToolButtonStyle(Settings->getToolButtonStyle());
-    //ui->toolBarPage->setIconSize(QSize(toolSize,toolSize));
-    ui->toolBarPage->setIconSize(QSize(128,toolSize));
+    ui->toolBarPage->setIconSize(QSize(128,toolSize));      //ui->toolBarPage->setIconSize(QSize(toolSize,toolSize));
 	ui->toolBarAction->setToolButtonStyle(Settings->getToolButtonStyle());
-    //ui->toolBarAction->setIconSize(QSize(toolSize,toolSize));
-    ui->toolBarAction->setIconSize(QSize(128,toolSize));
-	int itemSize = Settings->getListItemIconSize();
-    ui->listWidget->setIconSize(QSize(itemSize,itemSize));
+    ui->toolBarAction->setIconSize(QSize(128,toolSize));        //ui->toolBarAction->setIconSize(QSize(toolSize,toolSize));
+
+   //  int itemSize = Settings->getListItemIconSize();
+    // ui->listWidget->setIconSize(QSize(itemSize,itemSize));
+    ui->listWidget->setIconSize(QSize(16,16)); //d: change size widget
+    ui->listWidget->setSpacing(8); //d: set item space
 }
 
 void MainWindow::externalLinkActivated(const QUrl &url)

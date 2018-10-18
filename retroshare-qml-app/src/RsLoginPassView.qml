@@ -136,7 +136,7 @@ Item
 				id: bottomButton
 				text: loginView.buttonText
 				onClicked: loginView.submit(nameField.text, passwordField.text)
-				iconUrl: "/icons/network.svg"
+                iconUrl: "/icons/network.svg"
 				buttonTextPixelSize: 15
 			}
 			ButtonIcon

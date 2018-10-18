@@ -32,6 +32,7 @@
 // Data Requests.
 #define IDDETAILSDIALOG_IDDETAILS  1
 #define IDDETAILSDIALOG_REPLIST    2
+
 /******
 *  #define ID_DEBUG 1
 ******/

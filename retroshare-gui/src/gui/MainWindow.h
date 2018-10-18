@@ -310,7 +310,7 @@ private:
     void setIdle(bool Idle);
     bool isIdle;
 
-	 Ui::MainWindow *ui ;
+     Ui::MainWindow *ui ;
 };
 
 #endif

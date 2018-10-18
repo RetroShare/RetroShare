@@ -101,7 +101,8 @@ QString GxsChannelDialog::text(TextType type)
 {
 	switch (type) {
 	case TEXT_NAME:
-		return tr("Channels");
+      //  this->setStyleSheet("QLabel { color : white;}"); //d: change text color
+        return tr("Channels");
 	case TEXT_NEW:
 		return tr("Create Channel");
 	case TEXT_TODO:
@@ -126,7 +127,7 @@ QString GxsChannelDialog::icon(IconType type)
 {
 	switch (type) {
 	case ICON_NAME:
-		return ":/icons/png/channels.png";
+        return ":/home/img/face_icon/youtube-play-button_128.png";      //d: update icon
 	case ICON_NEW:
 		return ":/icons/png/add.png";
 	case ICON_YOUR_GROUP:

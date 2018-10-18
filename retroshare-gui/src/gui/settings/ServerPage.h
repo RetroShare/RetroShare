@@ -56,7 +56,7 @@ public:
     /** Loads the settings for this page */
     virtual void load();
 
-    virtual QPixmap iconPixmap() const { return QPixmap(":/icons/png/network.png") ; }
+    virtual QPixmap iconPixmap() const { return QPixmap(":/home/img/Setting/network_un.png") ; }
     virtual QString pageName() const { return tr("Network") ; }
     virtual QString helpText() const { return ""; }
 

@@ -40,7 +40,7 @@ public:
     /** Loads the settings for this page */
     virtual void load();
 
-	 virtual QPixmap iconPixmap() const { return QPixmap(":/icons/settings/messages.svg") ; }
+     virtual QPixmap iconPixmap() const { return QPixmap(":/home/img/Setting/envelope.svg") ; }
 	 virtual QString pageName() const { return tr("Mail") ; }
 	 virtual QString helpText() const { return ""; }
 
