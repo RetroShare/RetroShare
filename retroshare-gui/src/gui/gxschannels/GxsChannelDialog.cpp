@@ -101,8 +101,8 @@ QString GxsChannelDialog::text(TextType type)
 {
 	switch (type) {
 	case TEXT_NAME:
-        setStyleSheet("QLabel { color : white; font-size: 16px; }"); //d: change text color
-		return tr("Channels");
+      //  this->setStyleSheet("QLabel { color : white;}"); //d: change text color
+        return tr("Channels");
 	case TEXT_NEW:
 		return tr("Create Channel");
 	case TEXT_TODO:

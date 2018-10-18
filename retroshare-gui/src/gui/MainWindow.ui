@@ -124,7 +124,7 @@
    </property>
    <property name="styleSheet">
     <string notr="true">color: white;
-background-color: rgb(43, 164, 220);</string>
+background-color: rgb(7,120,171);</string>
    </property>
    <property name="inputMethodHints">
     <set>Qt::ImhNone</set>

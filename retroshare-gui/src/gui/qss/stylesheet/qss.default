@@ -226,10 +226,10 @@ GenCertDialog QLabel#entropy_label
 
 /* OpModeStatus need to be at end to overload other values*/
 OpModeStatus {
-	qproperty-opMode_Full_Color: #CCFFCC;
-	qproperty-opMode_NoTurtle_Color: #CCCCFF;
-	qproperty-opMode_Gaming_Color: #FFFFCC;
-	qproperty-opMode_Minimal_Color: #FFCCCC;
+        qproperty-opMode_Full_Color: #008dc0;
+        qproperty-opMode_NoTurtle_Color: #008dc0;
+        qproperty-opMode_Gaming_Color: #008dc0;
+        qproperty-opMode_Minimal_Color: #008dc0;
 }
 OpModeStatus[opMode="Full"] {
 	background: #CCFFCC;

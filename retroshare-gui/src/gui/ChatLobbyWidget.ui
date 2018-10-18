@@ -122,8 +122,7 @@
        <item>
         <widget class="QFrame" name="toolBarFrame">
          <property name="styleSheet">
-          <string notr="true">color: white;
-background-color: rgb(47, 60, 76);</string>
+          <string notr="true"/>
          </property>
          <property name="frameShape">
           <enum>QFrame::StyledPanel</enum>
@@ -480,14 +479,14 @@ selection-background-color: rgb(32, 41, 53);
  </widget>
  <customwidgets>
   <customwidget>
-   <class>LineEditClear</class>
-   <extends>QLineEdit</extends>
-   <header location="global">gui/common/LineEditClear.h</header>
-  </customwidget>
-  <customwidget>
    <class>StyledLabel</class>
    <extends>QLabel</extends>
    <header>gui/common/StyledLabel.h</header>
+  </customwidget>
+  <customwidget>
+   <class>LineEditClear</class>
+   <extends>QLineEdit</extends>
+   <header location="global">gui/common/LineEditClear.h</header>
   </customwidget>
  </customwidgets>
  <resources>
