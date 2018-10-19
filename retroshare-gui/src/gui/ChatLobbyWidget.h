@@ -132,11 +132,11 @@ private:
 
 	std::map<QTreeWidgetItem*,time_t> _icon_changed_map ;
 
-        bool m_bProcessSettings;
-        void processSettings(bool bLoad);
+    bool m_bProcessSettings;
+    void processSettings(bool bLoad);
 
-        /** Defines the actions for the header context menu */
-        QAction* showUserCountAct;
+    /** Defines the actions for the header context menu */
+    QAction* showUserCountAct;
 	QAction* showTopicAct;
 	QAction* showSubscribeAct;
 	int getNumColVisible();
@@ -150,6 +150,12 @@ private:
 	Ui::ChatLobbyWidget ui;
 
 	void showContactChat(QTreeWidgetItem *item);
+    void initLocalGUIFile();
+    void getRecentListFromLocal();
+    void getUnreadFromLocal();
 
+    void updateRecentListToLocal(const std::string& , const uint);
+    std::map<std::string, uint> _recentTime;
+    void saveRecentTimeToFile(const  std::string &);
 };
 

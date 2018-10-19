@@ -18,6 +18,9 @@
 #include "chat/PopupChatDialog.h"
 #include "gui/common/AvatarDefs.h"
 #include <QPainter>
+#include "util/rsdir.h"
+#include "retroshare/rsinit.h"
+#include <stdio.h>
 
 #include "retroshare/rsmsgs.h"
 #include "retroshare/rspeers.h"
@@ -70,10 +73,17 @@
 #define IMAGE_COPYRSLINK      ":/images/copyrslink.png"
 #define IMAGE_UNSEEN          ":/app/images/unseen32.png"
 
+
+#define GUI_DIR_NAME                  "gui"
+#define RECENT_CHAT_FILENAME          "recent_chat.txt"
+#define UNREAD_CHAT_FILENAME          "unread_chat.txt"
+
 ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WindowFlags flags)
   : RsAutoUpdatePage(5000, parent, flags)
 {
 	ui.setupUi(this);
+
+    initLocalGUIFile();
 
 	m_bProcessSettings = false;
 	myChatLobbyUserNotify = NULL;
@@ -848,6 +858,148 @@ void ChatLobbyWidget::showContactChat(QTreeWidgetItem *item)
 
 }
 
+void ChatLobbyWidget::initLocalGUIFile()
+{
+    std::string base_dir = RsAccounts::AccountDirectory();
+
+    std::string mGuiDir = base_dir + "/" + GUI_DIR_NAME ;
+
+    //check if this folder exist, if not need to create the folder and empty files for being read and written later.
+    if (!RsDirUtil::checkDirectory(mGuiDir))
+    {
+        std::cerr << " There is no gui directory for access recent files and unread number file, need to create this folder " << std::endl;
+
+        if(!RsDirUtil::checkCreateDirectory(mGuiDir))
+        {
+            throw std::runtime_error("Cannot create base directory to store/access gui file.") ;
+            return;
+        }
+        std::string recent_list_filename = mGuiDir + "/" + RECENT_CHAT_FILENAME;
+
+        FILE *recent_fd = RsDirUtil::rs_fopen(recent_list_filename.c_str(),"w") ;
+        if(recent_fd == NULL)
+            std::cerr << "Could not open recent list file for writting." << std::endl ;
+        else
+            fclose(recent_fd) ;
+
+        std::string unread_chat_filename = mGuiDir + "/" + UNREAD_CHAT_FILENAME;
+
+        FILE *unread_fd = RsDirUtil::rs_fopen(unread_chat_filename.c_str(),"w") ;
+        if(unread_fd == NULL)
+            std::cerr << "Could not open unread chat file for writting." << std::endl ;
+        else
+            fclose(unread_fd) ;
+
+
+        return;
+    }
+
+    //in case of existing the "gui" folder, need to read all infos from those files
+    getRecentListFromLocal();
+    getUnreadFromLocal();
+
+}
+
+void ChatLobbyWidget::getRecentListFromLocal()
+{
+
+    std::string base_dir = RsAccounts::AccountDirectory();
+    std::string mGuiDir = base_dir + "/" + GUI_DIR_NAME ;
+    std::string recent_list_filename = mGuiDir + "/" + RECENT_CHAT_FILENAME;
+
+    //check if this file (recent_chat.txt) exist, if not need to create the folder and empty files for being read and written later.
+    if (!RsDirUtil::fileExists(recent_list_filename))
+    {
+        std::cerr << " There is no recent_chat.txt for access to read! " << std::endl;
+
+        return;
+    }
+    else
+    {
+        FILE *recent_fd = RsDirUtil::rs_fopen(recent_list_filename.c_str(),"r") ;
+        if(recent_fd == NULL)
+            std::cerr << "Could not open recent list file for reading." << std::endl ;
+        else
+        {
+            char line[100];
+            char peerid[100];
+            uint recent_time;
+
+            while(line == fgets(line, 10240, recent_fd))
+            {
+                if (2 == sscanf(line, "%s %d", peerid, &recent_time))
+                {
+                    std::cerr << "Recent time of chat " <<peerid << " : " << recent_time << std::endl ;
+                    //TODO: Need to update to the tree widget items and sort by recent time
+                    _recentTime[peerid] = recent_time;
+                }
+            }
+
+            fclose(recent_fd) ;
+        }
+
+    }
+
+}
+
+void ChatLobbyWidget::saveRecentTimeToFile(const  std::string & filename)
+{
+    FILE *recent_fd = RsDirUtil::rs_fopen(filename.c_str(),"w") ;
+    if(recent_fd != NULL)
+    {
+       std::map<std::string, uint>::iterator it;
+       for(it = _recentTime.begin(); it != _recentTime.end(); it++)
+       {
+           char strToSave[100];
+           sprintf(strToSave, "%s %d\n", (it->first).c_str(), it->second);
+           fputs(strToSave, recent_fd);
+       }
+       fclose(recent_fd);
+    }
+}
+
+void ChatLobbyWidget::updateRecentListToLocal(const std::string& peerId, const uint recent_time )
+{
+
+    std::string base_dir = RsAccounts::AccountDirectory();
+    std::string mGuiDir = base_dir + "/" + GUI_DIR_NAME ;
+    std::string recent_list_filename = mGuiDir + "/" + RECENT_CHAT_FILENAME;
+
+    //check if this file (recent_chat.txt) exist, if not need to create the folder and empty files for being read and written later.
+    if (!RsDirUtil::fileExists(recent_list_filename))
+    {
+        std::cerr << " There is no recent_chat.txt for access to write! " << std::endl;
+        return;
+    }
+    else
+    {
+        int ret;
+        FILE *recent_fd = RsDirUtil::rs_fopen(recent_list_filename.c_str(),"w") ;
+        if(recent_fd != NULL)
+        {
+            //At first, remove the old file
+            fclose(recent_fd);
+            ret = remove(recent_list_filename.c_str());
+            if(ret == 0) {
+                printf("File deleted successfully");
+                // Then save data in the same name new file
+                _recentTime[peerId] = recent_time;
+                saveRecentTimeToFile(recent_list_filename);
+            } else {
+                printf("Error: unable to delete the old file");
+            }
+
+        }
+
+    }
+
+}
+
+void ChatLobbyWidget::getUnreadFromLocal()
+{
+
+}
+
 // 22 Sep 2018 - meiyousixin - this function is for the case where we don't have any identity yet
 void ChatLobbyWidget::createIdentityAndSubscribe()
 {
@@ -1092,18 +1244,24 @@ void ChatLobbyWidget::updateRecentTime(const ChatId & chatId, uint current_time)
        // std::cerr << "current time for this contact is " << current_time;
        std::cerr << "we want to update the recent time now current time is " << current_time << "\n";
        QTreeWidgetItem *item = NULL;
+       std::string chatIdStr;
        if (chatId.isLobbyId())
        {
            item = getTreeWidgetItem(chatId.toLobbyId());
+           chatIdStr = std::to_string(chatId.toLobbyId());
        }
        else if (chatId.isPeerId())
        {
            item = getTreeWidgetItemForChatId(chatId);
+           chatIdStr = chatId.toPeerId().toStdString();
        }
        if (item)
             item->setData(COLUMN_RECENT_TIME, ROLE_SORT,current_time);
 
        ui.lobbyTreeWidget->sortItems(COLUMN_RECENT_TIME, Qt::DescendingOrder);
+
+       //Save to local file
+       updateRecentListToLocal(chatIdStr, current_time);
 }
 
 QTreeWidgetItem *ChatLobbyWidget::getTreeWidgetItemForChatId(ChatId id)
