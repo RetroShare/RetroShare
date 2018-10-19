@@ -1952,7 +1952,7 @@ void RsLoginHelper::getLocations(std::vector<RsLoginHelper::Location>& store)
 
 bool RsLoginHelper::createLocation(
         RsLoginHelper::Location& l, const std::string& password,
-        bool makeHidden, bool makeAutoTor, std::string& errorMessage )
+        std::string& errorMessage, bool makeHidden, bool makeAutoTor )
 {
 	if(isLoggedIn()) return (errorMessage="Already Running", false);
 
