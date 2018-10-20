@@ -92,7 +92,7 @@ void ProfileWidget::statusmessagedlg()
 
 void ProfileWidget::copyCert()
 {
-	std::string cert = rsPeers->GetRetroshareInvite();
+	std::string cert = rsPeers->GetRetroshareInvite(RsPeerId(),false,false);
     if (cert.empty()) {
         QMessageBox::information(this, tr("RetroShare"),
                          tr("Sorry, create certificate failed"),

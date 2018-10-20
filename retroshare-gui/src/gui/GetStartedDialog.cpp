@@ -236,7 +236,7 @@ void GetStartedDialog::inviteFriends()
 	{
 		RsAutoUpdatePage::lockAllEvents();
 
-		cert = rsPeers->GetRetroshareInvite();
+		cert = rsPeers->GetRetroshareInvite(RsPeerId(),false,false);
 
 		RsAutoUpdatePage::unlockAllEvents() ;
 	}
