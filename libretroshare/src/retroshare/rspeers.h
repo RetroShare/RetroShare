@@ -510,11 +510,55 @@ public:
 	virtual bool setHiddenNode(const RsPeerId &id, const std::string &address, uint16_t port) = 0;
 	virtual bool isHiddenNode(const RsPeerId &id) = 0;
 
-	virtual bool addPeerLocator(const RsPeerId &ssl_id, const RsUrl& locator) = 0;
-	virtual	bool setLocalAddress(const RsPeerId &ssl_id, const std::string &addr, uint16_t port) = 0;
-	virtual	bool setExtAddress(  const RsPeerId &ssl_id, const std::string &addr, uint16_t port) = 0;
-	virtual	bool setDynDNS(const RsPeerId &id, const std::string &addr) = 0;
-	virtual	bool setNetworkMode(const RsPeerId &ssl_id, uint32_t netMode) = 0;
+	/**
+	 * @brief Add URL locator for given peer
+	 * @jsonapi{development}
+	 * @param[in] sslId SSL id of the peer, own id is accepted too
+	 * @param[in] locator peer url locator
+	 * @return false if error occurred, true otherwise
+	 */
+	virtual bool addPeerLocator(const RsPeerId& sslId, const RsUrl& locator) = 0;
+
+	/**
+	 * @brief Set local IPv4 address for the given peer
+	 * @jsonapi{development}
+	 * @param[in] sslId SSL id of the peer, own id is accepted too
+	 * @param[in] addr string representation of the local IPv4 address
+	 * @param[in] port local listening port
+	 * @return false if error occurred, true otherwise
+	 */
+	virtual bool setLocalAddress(
+	        const RsPeerId& sslId, const std::string& addr, uint16_t port ) = 0;
+
+	/**
+	 * @brief Set external IPv4 address for given peer
+	 * @jsonapi{development}
+	 * @param[in] sslId SSL id of the peer, own id is accepted too
+	 * @param[in] addr string representation of the external IPv4 address
+	 * @param[in] port external listening port
+	 * @return false if error occurred, true otherwise
+	 */
+	virtual bool setExtAddress(
+	        const RsPeerId& sslId, const std::string &addr, uint16_t port ) = 0;
+
+	/**
+	 * @brief Set (dynamical) domain name associated to the given peer
+	 * @jsonapi{development}
+	 * @param[in] sslId SSL id of the peer, own id is accepted too
+	 * @param[in] addr domain name string representation
+	 * @return false if error occurred, true otherwise
+	 */
+	virtual bool setDynDNS(const RsPeerId& sslId, const std::string& addr) = 0;
+
+	/**
+	 * @brief Set network mode of the given peer
+	 * @jsonapi{development}
+	 * @param[in] sslId SSL id of the peer, own id is accepted too
+	 * @param[in] netMode one of RS_NETMODE_*
+	 * @return false if error occurred, true otherwise
+	 */
+	virtual bool setNetworkMode(const RsPeerId &sslId, uint32_t netMode) = 0;
+
 	virtual bool setVisState(const RsPeerId &ssl_id, uint16_t vs_disc, uint16_t vs_dht)	= 0;
 
 	virtual bool getProxyServer(const uint32_t type, std::string &addr, uint16_t &port,uint32_t& status_flags) = 0;
