@@ -1046,48 +1046,54 @@ bool p3GxsChannels::createChannel(RsGxsChannelGroup& channel)
 {
 	uint32_t token;
 	time_t beginCreation = time(nullptr);
-	if( !createGroup(token, channel)
-	        || waitToken(token) != RsTokenService::COMPLETE )
+	if( !createGroup(token, channel) || waitToken(token) != RsTokenService::COMPLETE )
 		return false;
-	time_t endCreation = time(nullptr);
 
-	std::list<RsGroupMetaData> channels;
-	if(!getChannelsSummaries(channels)) return false;
-
-	/* This is ugly but after digging and doing many tries of doing it the right
-	 * way ending always into too big refactor chain reaction, I think this is
-	 * not that bad, moreover seems the last created group tend to end up near
-	 * the beginning of the list so it is fast founding it.
-	 * The shortcoming of this is that if groups with same data are created in
-	 * a burst (more then once in a second) is that the id of another similar
-	 * group can be returned, but this is a pointy case.
-	 * Order of conditions in the `if` matter for performances */
-	bool found = false;
-	for(const RsGroupMetaData& chan : channels)
+	if(RsGenExchange::getPublishedGroupMeta(token,channel.mMeta))
 	{
-		if( IS_GROUP_ADMIN(chan.mSubscribeFlags)
-		        && IS_GROUP_SUBSCRIBED(chan.mSubscribeFlags)
-		        && chan.mPublishTs >= beginCreation
-		        && chan.mPublishTs <= endCreation
-		        && chan.mGroupFlags == channel.mMeta.mGroupFlags
-		        && chan.mSignFlags == channel.mMeta.mSignFlags
-		        && chan.mCircleType == channel.mMeta.mCircleType
-		        && chan.mAuthorId == channel.mMeta.mAuthorId
-		        && chan.mCircleId == channel.mMeta.mCircleId
-		        && chan.mServiceString == channel.mMeta.mServiceString
-		        && chan.mGroupName == channel.mMeta.mGroupName )
-		{
-			channel.mMeta = chan;
-			found = true;
-			break;
-		}
-	}
-
 #ifdef RS_DEEP_SEARCH
-	if(found) DeepSearch::indexChannelGroup(channel);
+		if(found) DeepSearch::indexChannelGroup(channel);
 #endif //  RS_DEEP_SEARCH
 
-	return found;
+		return true;
+	}
+    else
+        return false;
+
+// 	time_t endCreation = time(nullptr);
+//
+//
+// 	std::list<RsGroupMetaData> channels;
+// 	if(!getChannelsSummaries(channels)) return false;
+//
+// 	/* This is ugly but after digging and doing many tries of doing it the right
+// 	 * way ending always into too big refactor chain reaction, I think this is
+// 	 * not that bad, moreover seems the last created group tend to end up near
+// 	 * the beginning of the list so it is fast founding it.
+// 	 * The shortcoming of this is that if groups with same data are created in
+// 	 * a burst (more then once in a second) is that the id of another similar
+// 	 * group can be returned, but this is a pointy case.
+// 	 * Order of conditions in the `if` matter for performances */
+// 	bool found = false;
+// 	for(const RsGroupMetaData& chan : channels)
+// 	{
+// 		if( IS_GROUP_ADMIN(chan.mSubscribeFlags)
+// 		        && IS_GROUP_SUBSCRIBED(chan.mSubscribeFlags)
+// 		        && chan.mPublishTs >= beginCreation
+// 		        && chan.mPublishTs <= endCreation
+// 		        && chan.mGroupFlags == channel.mMeta.mGroupFlags
+// 		        && chan.mSignFlags == channel.mMeta.mSignFlags
+// 		        && chan.mCircleType == channel.mMeta.mCircleType
+// 		        && chan.mAuthorId == channel.mMeta.mAuthorId
+// 		        && chan.mCircleId == channel.mMeta.mCircleId
+// 		        && chan.mServiceString == channel.mMeta.mServiceString
+// 		        && chan.mGroupName == channel.mMeta.mGroupName )
+// 		{
+// 			channel.mMeta = chan;
+// 			found = true;
+// 			break;
+// 		}
+// 	}
 }
 
 bool p3GxsChannels::createPost(RsGxsChannelPost& post)
@@ -1098,49 +1104,60 @@ bool p3GxsChannels::createPost(RsGxsChannelPost& post)
 	        || waitToken(token) != RsTokenService::COMPLETE ) return false;
 	time_t endCreation = time(nullptr);
 
-	std::list<RsGxsGroupId> chanIds; chanIds.push_back(post.mMeta.mGroupId);
-	std::vector<RsGxsChannelPost> posts;
-	std::vector<RsGxsComment> comments;
-	if(!getChannelsContent(chanIds, posts, comments)) return false;
-
-	/* This is ugly but after digging and doing many tries of doing it the right
-	 * way ending always into too big refactor chain reaction, I think this is
-	 * not that bad.
-	 * The shortcoming of this is that if posts with same data are created in
-	 * a burst (more then once in a second) is that the id of another similar
-	 * post could be returned, but this is a pointy case.
-	 * Order of conditions in the `if` matter for performances */
-	bool found = false;
-	for(const RsGxsChannelPost& itPost : posts)
+	if(RsGenExchange::getPublishedMsgMeta(token,post.mMeta))
 	{
-		std::cout << __PRETTY_FUNCTION__ << " " << beginCreation << " "
-		          << itPost.mMeta.mPublishTs << " " << endCreation << " "
-		          << itPost.mMeta.mMsgId << std::endl;
-
-		if( itPost.mMeta.mPublishTs >= beginCreation
-		        && itPost.mMeta.mPublishTs <= endCreation
-		        && itPost.mMeta.mMsgFlags == post.mMeta.mMsgFlags
-		        && itPost.mMeta.mGroupId == post.mMeta.mGroupId
-		        && itPost.mMeta.mThreadId == post.mMeta.mThreadId
-		        && itPost.mMeta.mParentId == post.mMeta.mParentId
-		        && itPost.mMeta.mAuthorId == post.mMeta.mAuthorId
-		        && itPost.mMeta.mMsgName == post.mMeta.mMsgName
-		        && itPost.mFiles.size() == post.mFiles.size()
-		        && itPost.mMeta.mServiceString == post.mMeta.mServiceString
-		        && itPost.mOlderVersions == post.mOlderVersions
-		        && itPost.mMsg == post.mMsg )
-		{
-			post = itPost;
-			found = true;
-			break;
-		}
-	}
-
 #ifdef RS_DEEP_SEARCH
-	if(found) DeepSearch::indexChannelPost(post);
+		if(found) DeepSearch::indexChannelGroup(post);
 #endif //  RS_DEEP_SEARCH
 
-	return found;
+		return true;
+	}
+    else
+        return false;
+
+//	std::list<RsGxsGroupId> chanIds; chanIds.push_back(post.mMeta.mGroupId);
+//	std::vector<RsGxsChannelPost> posts;
+//	std::vector<RsGxsComment> comments;
+//	if(!getChannelsContent(chanIds, posts, comments)) return false;
+//
+//	/* This is ugly but after digging and doing many tries of doing it the right
+//	 * way ending always into too big refactor chain reaction, I think this is
+//	 * not that bad.
+//	 * The shortcoming of this is that if posts with same data are created in
+//	 * a burst (more then once in a second) is that the id of another similar
+//	 * post could be returned, but this is a pointy case.
+//	 * Order of conditions in the `if` matter for performances */
+//	bool found = false;
+//	for(const RsGxsChannelPost& itPost : posts)
+//	{
+//		std::cout << __PRETTY_FUNCTION__ << " " << beginCreation << " "
+//		          << itPost.mMeta.mPublishTs << " " << endCreation << " "
+//		          << itPost.mMeta.mMsgId << std::endl;
+//
+//		if( itPost.mMeta.mPublishTs >= beginCreation
+//		        && itPost.mMeta.mPublishTs <= endCreation
+//		        && itPost.mMeta.mMsgFlags == post.mMeta.mMsgFlags
+//		        && itPost.mMeta.mGroupId == post.mMeta.mGroupId
+//		        && itPost.mMeta.mThreadId == post.mMeta.mThreadId
+//		        && itPost.mMeta.mParentId == post.mMeta.mParentId
+//		        && itPost.mMeta.mAuthorId == post.mMeta.mAuthorId
+//		        && itPost.mMeta.mMsgName == post.mMeta.mMsgName
+//		        && itPost.mFiles.size() == post.mFiles.size()
+//		        && itPost.mMeta.mServiceString == post.mMeta.mServiceString
+//		        && itPost.mOlderVersions == post.mOlderVersions
+//		        && itPost.mMsg == post.mMsg )
+//		{
+//			post = itPost;
+//			found = true;
+//			break;
+//		}
+//	}
+//
+//#ifdef RS_DEEP_SEARCH
+//	if(found) DeepSearch::indexChannelPost(post);
+//#endif //  RS_DEEP_SEARCH
+//
+//	return found;
 }
 
 
