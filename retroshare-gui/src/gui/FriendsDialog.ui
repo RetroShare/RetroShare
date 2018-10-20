@@ -71,6 +71,9 @@
       </item>
       <item>
        <widget class="StyledLabel" name="titleBarLabel">
+        <property name="styleSheet">
+         <string notr="true"/>
+        </property>
         <property name="text">
          <string>Contacts</string>
         </property>
@@ -102,7 +105,7 @@
          <enum>Qt::NoFocus</enum>
         </property>
         <property name="icon">
-         <iconset resource="images.qrc">
+         <iconset resource="icons.qrc">
           <normaloff>:/icons/help_64.png</normaloff>:/icons/help_64.png</iconset>
         </property>
         <property name="checkable">
@@ -129,7 +132,7 @@
        <item>
         <widget class="QFrame" name="headFrame">
          <property name="styleSheet">
-          <string notr="true">background-color: rgb(43, 164, 220);</string>
+          <string notr="true"/>
          </property>
          <property name="frameShape">
           <enum>QFrame::Box</enum>
@@ -177,6 +180,9 @@
             <property name="toolTip">
              <string>Edit status message</string>
             </property>
+            <property name="styleSheet">
+             <string notr="true">color: rgb(255, 255, 255);</string>
+            </property>
             <property name="text">
              <string/>
             </property>
@@ -197,6 +203,9 @@
           </item>
           <item row="0" column="1" colspan="3">
            <widget class="StyledElidedLabel" name="nicknameLabel">
+            <property name="styleSheet">
+             <string notr="true">color: rgb(255, 255, 255);</string>
+            </property>
             <property name="text">
              <string notr="true">Nickname (Location)</string>
             </property>
@@ -361,6 +370,12 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>AvatarWidget</class>
+   <extends>QLabel</extends>
+   <header>gui/common/AvatarWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
    <class>StyledLabel</class>
    <extends>QLabel</extends>
    <header>gui/common/StyledLabel.h</header>
@@ -377,12 +392,6 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>AvatarWidget</class>
-   <extends>QLabel</extends>
-   <header>gui/common/AvatarWidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>FriendList</class>
    <extends>QWidget</extends>
    <header>gui/common/FriendList.h</header>
@@ -396,6 +405,7 @@
   </customwidget>
  </customwidgets>
  <resources>
+  <include location="icons.qrc"/>
   <include location="../Unseengui/unseengui.qrc"/>
   <include location="images.qrc"/>
  </resources>

@@ -71,6 +71,9 @@
       </item>
       <item>
        <widget class="StyledLabel" name="titleBarLabel">
+        <property name="styleSheet">
+         <string notr="true"/>
+        </property>
         <property name="text">
          <string>File Transfers</string>
         </property>
@@ -95,7 +98,7 @@
          <enum>Qt::NoFocus</enum>
         </property>
         <property name="icon">
-         <iconset resource="../images.qrc">
+         <iconset resource="../icons.qrc">
           <normaloff>:/icons/help_64.png</normaloff>:/icons/help_64.png</iconset>
         </property>
         <property name="checkable">
@@ -295,20 +298,19 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>LineEditClear</class>
-   <extends>QLineEdit</extends>
-   <header location="global">gui/common/LineEditClear.h</header>
-  </customwidget>
-  <customwidget>
    <class>StyledLabel</class>
    <extends>QLabel</extends>
    <header>gui/common/StyledLabel.h</header>
   </customwidget>
+  <customwidget>
+   <class>LineEditClear</class>
+   <extends>QLineEdit</extends>
+   <header location="global">gui/common/LineEditClear.h</header>
+  </customwidget>
  </customwidgets>
  <resources>
-  <include location="../images.qrc"/>
-  <include location="../../Unseengui/unseengui.qrc"/>
   <include location="../icons.qrc"/>
+  <include location="../../Unseengui/unseengui.qrc"/>
  </resources>
  <connections/>
 </ui>

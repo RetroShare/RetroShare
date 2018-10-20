@@ -776,8 +776,6 @@ void GxsIdDetails::drawRotatedPolygon( QPixmap *pixmap,
  * @return QImage of computed hash
  */
 //Change **********************************************************************
-//Unseen Change **********************************************************************
-
 QImage GxsIdDetails::drawIdentIcon( QString hash, quint16 width, bool rotate)
 {
     bool ok;
@@ -844,7 +842,6 @@ QImage GxsIdDetails::drawIdentIcon( QString hash, quint16 width, bool rotate)
     //Change***********************************************************************
 
     //Unseen Change***********************************************************************
-
 //static bool CreateIdIcon(const RsGxsId &id, QIcon &idIcon)
 //{
 //	QPixmap image(IconSize, IconSize);

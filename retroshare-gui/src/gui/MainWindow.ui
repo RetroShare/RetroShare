@@ -13,10 +13,22 @@
   <property name="windowTitle">
    <string notr="true">MainWindow</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true"/>
+  </property>
   <widget class="QWidget" name="centralwidget">
+   <property name="autoFillBackground">
+    <bool>false</bool>
+   </property>
+   <property name="styleSheet">
+    <string notr="true"/>
+   </property>
    <layout class="QHBoxLayout" name="horizontalLayout">
     <item>
      <widget class="QSplitter" name="splitter">
+      <property name="styleSheet">
+       <string notr="true"/>
+      </property>
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
@@ -32,6 +44,9 @@
          <width>100</width>
          <height>0</height>
         </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true"/>
        </property>
        <property name="frameShape">
         <enum>QFrame::NoFrame</enum>
@@ -95,6 +110,9 @@
          <height>100</height>
         </size>
        </property>
+       <property name="styleSheet">
+        <string notr="true"/>
+       </property>
       </widget>
      </widget>
     </item>
@@ -104,6 +122,10 @@
    <property name="autoFillBackground">
     <bool>false</bool>
    </property>
+   <property name="styleSheet">
+    <string notr="true">color: white;
+background-color: rgb(7,120,171);</string>
+   </property>
    <property name="inputMethodHints">
     <set>Qt::ImhNone</set>
    </property>
@@ -111,6 +133,12 @@
   <widget class="QToolBar" name="toolBarPage">
    <property name="contextMenuPolicy">
     <enum>Qt::CustomContextMenu</enum>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color: rgb(255, 255, 255);
+background-color: rgb(43, 164, 220);
+selection-color: rgb(255, 255, 255);
+selection-background-color: rgb(7,120,171);</string>
    </property>
    <property name="movable">
     <bool>false</bool>
@@ -122,7 +150,7 @@
     <enum>Qt::ToolButtonTextUnderIcon</enum>
    </property>
    <property name="floatable">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <attribute name="toolBarArea">
     <enum>LeftToolBarArea</enum>
@@ -138,6 +166,12 @@
    <property name="autoFillBackground">
     <bool>false</bool>
    </property>
+   <property name="styleSheet">
+    <string notr="true">color: rgb(255, 255, 255);
+background-color: rgb(43, 164, 220);
+selection-color: rgb(255, 255, 255);
+selection-background-color: rgb(7,120,171);</string>
+   </property>
    <property name="movable">
     <bool>false</bool>
    </property>
@@ -148,7 +182,7 @@
     <enum>Qt::ToolButtonTextUnderIcon</enum>
    </property>
    <property name="floatable">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <attribute name="toolBarArea">
     <enum>LeftToolBarArea</enum>

@@ -10,6 +10,9 @@
     <height>493</height>
    </rect>
   </property>
+  <property name="styleSheet">
+   <string notr="true"/>
+  </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="leftMargin">
     <number>0</number>
@@ -109,7 +112,7 @@
          <enum>Qt::NoFocus</enum>
         </property>
         <property name="icon">
-         <iconset resource="../images.qrc">
+         <iconset resource="../icons.qrc">
           <normaloff>:/icons/help_64.png</normaloff>:/icons/help_64.png</iconset>
         </property>
         <property name="checkable">
@@ -125,6 +128,9 @@
    </item>
    <item>
     <widget class="QSplitter" name="splitter">
+     <property name="styleSheet">
+      <string notr="true"/>
+     </property>
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
@@ -134,6 +140,9 @@
         <horstretch>0</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
+      </property>
+      <property name="styleSheet">
+       <string notr="true"/>
       </property>
      </widget>
      <widget class="RSTabWidget" name="messageTabWidget">
@@ -163,15 +172,15 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>StyledLabel</class>
+   <extends>QLabel</extends>
+   <header>gui/common/StyledLabel.h</header>
+  </customwidget>
+  <customwidget>
    <class>RSTabWidget</class>
    <extends>QTabWidget</extends>
    <header>gui/common/RSTabWidget.h</header>
    <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>StyledLabel</class>
-   <extends>QLabel</extends>
-   <header>gui/common/StyledLabel.h</header>
   </customwidget>
   <customwidget>
    <class>GroupTreeWidget</class>
@@ -181,6 +190,7 @@
   </customwidget>
  </customwidgets>
  <resources>
+  <include location="../icons.qrc"/>
   <include location="../images.qrc"/>
  </resources>
  <connections/>

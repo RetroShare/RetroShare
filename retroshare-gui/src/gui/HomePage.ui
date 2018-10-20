@@ -13,6 +13,9 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true"/>
+  </property>
   <layout class="QGridLayout" name="gridLayout_2">
    <item row="4" column="1" colspan="2">
     <layout class="QGridLayout" name="gridLayout">
@@ -67,8 +70,8 @@
         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Share your &lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:12pt;&quot;&gt;P2PUnseen&lt;/span&gt; Key&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <property name="icon">
-        <iconset resource="icons.qrc">
-         <normaloff>:/icons/svg/share.svg</normaloff>:/icons/svg/share.svg</iconset>
+        <iconset resource="../Unseengui/unseengui.qrc">
+         <normaloff>:/app/images/unseen32.png</normaloff>:/app/images/unseen32.png</iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -90,7 +93,7 @@
         <string>...</string>
        </property>
        <property name="icon">
-        <iconset resource="images.qrc">
+        <iconset resource="icons.qrc">
          <normaloff>:/icons/help_64.png</normaloff>:/icons/help_64.png</iconset>
        </property>
        <property name="checkable">
@@ -111,6 +114,9 @@
          <pointsize>11</pointsize>
         </font>
        </property>
+       <property name="styleSheet">
+        <string notr="true"/>
+       </property>
        <property name="text">
         <string>The text below is your own P2PUnseen certificate. Send it to your friends</string>
        </property>
@@ -127,6 +133,9 @@
       <font>
        <pointsize>12</pointsize>
       </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true"/>
      </property>
      <property name="text">
       <string>Open Source cross-platform, 
@@ -162,6 +171,9 @@ private and secure decentralized communication platform.
    </item>
    <item row="6" column="1">
     <widget class="QPushButton" name="runStartWizard_PB">
+     <property name="styleSheet">
+      <string notr="true"/>
+     </property>
      <property name="text">
       <string>Launch startup wizard</string>
      </property>
@@ -194,6 +206,9 @@ private and secure decentralized communication platform.
       </item>
       <item>
        <widget class="QToolButton" name="addButton">
+        <property name="styleSheet">
+         <string notr="true"/>
+        </property>
         <property name="text">
          <string>Add friends certificate</string>
         </property>
@@ -217,6 +232,9 @@ private and secure decentralized communication platform.
       </item>
       <item>
        <widget class="QToolButton" name="LoadCertFileButton">
+        <property name="styleSheet">
+         <string notr="true"/>
+        </property>
         <property name="text">
          <string>Add certificate file</string>
         </property>
@@ -288,6 +306,9 @@ private and secure decentralized communication platform.
           <pointsize>11</pointsize>
          </font>
         </property>
+        <property name="styleSheet">
+         <string notr="true"/>
+        </property>
         <property name="text">
          <string>Do you need help with P2PUnseen?</string>
         </property>
@@ -295,6 +316,9 @@ private and secure decentralized communication platform.
       </item>
       <item>
        <widget class="QToolButton" name="openwebhelp">
+        <property name="styleSheet">
+         <string notr="true"/>
+        </property>
         <property name="text">
          <string>Open Web Help</string>
         </property>
@@ -326,9 +350,9 @@ private and secure decentralized communication platform.
   <zorder>helpframe</zorder>
  </widget>
  <resources>
+  <include location="icons.qrc"/>
   <include location="../Unseengui/unseengui.qrc"/>
   <include location="images.qrc"/>
-  <include location="icons.qrc"/>
  </resources>
  <connections/>
 </ui>

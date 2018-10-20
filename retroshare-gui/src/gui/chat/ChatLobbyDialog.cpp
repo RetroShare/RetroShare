@@ -66,8 +66,8 @@ const static uint32_t timeToInactivity = 60 * 10;   // in seconds
 /** Default constructor */
 ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::WindowFlags flags)
         : ChatDialog(parent, flags), lobbyId(lid),
-          bullet_red_128(":/icons/bullet_red_128.png"), bullet_grey_128(":/icons/bullet_grey_128.png"),
-          bullet_green_128(":/icons/bullet_green_128.png"), bullet_yellow_128(":/icons/bullet_yellow_128.png")
+          bullet_red_128(":/app/images/statusicons/dnd.png"), bullet_grey_128(":/app/images/statusicons/bad.png"),
+          bullet_green_128(":/app/images/statusicons/online.png"), bullet_yellow_128(":/app/images/statusicons/offline.png")
 {
 	/* Invoke Qt Designer generated QObject setup routine */
 	ui.setupUi(this);

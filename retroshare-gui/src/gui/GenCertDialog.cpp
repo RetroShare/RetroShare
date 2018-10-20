@@ -132,7 +132,14 @@ GenCertDialog::GenCertDialog(bool onlyGenerateIdentity, QWidget *parent)
 {
 	/* Invoke Qt Designer generated QObject setup routine */
 	ui.setupUi(this);
-	
+
+    /* d: Set background */
+          QPixmap bkgnd(":/home/img/snow-mountain.jpg");
+          bkgnd = bkgnd.scaled(this->size(),Qt::IgnoreAspectRatio);
+          QPalette palette;
+          palette.setBrush(QPalette::Background, bkgnd);
+          this->setPalette(palette);
+
 	//ui.headerFrame->setHeaderImage(QPixmap(":/icons/svg/profile.svg"));
 	//ui.headerFrame->setHeaderText(tr("Create a new profile"));
 
@@ -165,7 +172,7 @@ GenCertDialog::GenCertDialog(bool onlyGenerateIdentity, QWidget *parent)
 
 	// Default value.
 
-	ui.node_input->setText("My computer") ;
+    ui.node_input->setText("My computer") ;
 
 #if QT_VERSION >= 0x040700
 	ui.node_input->setPlaceholderText(tr("Node name")) ;

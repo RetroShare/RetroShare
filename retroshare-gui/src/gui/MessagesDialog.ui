@@ -156,6 +156,9 @@
       </item>
       <item row="0" column="1">
        <widget class="StyledLabel" name="titleBarLabel">
+        <property name="styleSheet">
+         <string notr="true"/>
+        </property>
         <property name="text">
          <string>Messages</string>
         </property>
@@ -454,7 +457,7 @@
          <enum>Qt::NoFocus</enum>
         </property>
         <property name="icon">
-         <iconset resource="images.qrc">
+         <iconset resource="icons.qrc">
           <normaloff>:/icons/help_64.png</normaloff>:/icons/help_64.png</iconset>
         </property>
         <property name="checkable">
@@ -506,10 +509,16 @@
    </item>
    <item>
     <widget class="RSTabWidget" name="tabWidget">
+     <property name="styleSheet">
+      <string notr="true"/>
+     </property>
      <property name="tabsClosable">
       <bool>true</bool>
      </property>
      <widget class="QWidget" name="tab">
+      <property name="styleSheet">
+       <string notr="true"/>
+      </property>
       <attribute name="title">
        <string notr="true">Main Tab</string>
       </attribute>
@@ -531,10 +540,16 @@
        </property>
        <item row="0" column="0">
         <widget class="QSplitter" name="listSplitter">
+         <property name="styleSheet">
+          <string notr="true"/>
+         </property>
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
          <widget class="QFrame" name="sideBarFrame">
+          <property name="styleSheet">
+           <string notr="true"/>
+          </property>
           <layout class="QGridLayout" name="sideBarFrameGLayout">
            <property name="leftMargin">
             <number>0</number>
@@ -564,6 +579,9 @@
              </property>
              <property name="contextMenuPolicy">
               <enum>Qt::CustomContextMenu</enum>
+             </property>
+             <property name="styleSheet">
+              <string notr="true"/>
              </property>
              <item>
               <property name="text">
@@ -626,6 +644,9 @@
                <height>0</height>
               </size>
              </property>
+             <property name="styleSheet">
+              <string notr="true"/>
+             </property>
             </widget>
            </item>
            <item row="4" column="0">
@@ -636,6 +657,9 @@
                <height>18</height>
               </size>
              </property>
+             <property name="styleSheet">
+              <string notr="true"/>
+             </property>
              <property name="text">
               <string>Total Inbox:</string>
              </property>
@@ -644,7 +668,10 @@
            <item row="0" column="0">
             <widget class="QFrame" name="folderFrame">
              <property name="autoFillBackground">
-              <bool>true</bool>
+              <bool>false</bool>
+             </property>
+             <property name="styleSheet">
+              <string notr="true"/>
              </property>
              <layout class="QHBoxLayout" name="folderFrameHLayout">
               <property name="topMargin">
@@ -679,7 +706,10 @@
            <item row="2" column="0">
             <widget class="QFrame" name="quickViewFrame">
              <property name="autoFillBackground">
-              <bool>true</bool>
+              <bool>false</bool>
+             </property>
+             <property name="styleSheet">
+              <string notr="true"/>
              </property>
              <property name="frameShape">
               <enum>QFrame::StyledPanel</enum>
@@ -712,6 +742,9 @@
               </item>
               <item>
                <widget class="QLabel" name="quickViewLabel">
+                <property name="styleSheet">
+                 <string notr="true"/>
+                </property>
                 <property name="text">
                  <string>Quick View</string>
                 </property>
@@ -834,19 +867,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>LineEditClear</class>
-   <extends>QLineEdit</extends>
-   <header location="global">gui/common/LineEditClear.h</header>
-  </customwidget>
-  <customwidget>
    <class>StyledLabel</class>
    <extends>QLabel</extends>
    <header>gui/common/StyledLabel.h</header>
-  </customwidget>
-  <customwidget>
-   <class>RSTreeWidget</class>
-   <extends>QTreeWidget</extends>
-   <header>gui/common/RSTreeWidget.h</header>
   </customwidget>
   <customwidget>
    <class>RSTabWidget</class>
@@ -854,14 +877,25 @@
    <header>gui/common/RSTabWidget.h</header>
    <container>1</container>
   </customwidget>
+  <customwidget>
+   <class>LineEditClear</class>
+   <extends>QLineEdit</extends>
+   <header location="global">gui/common/LineEditClear.h</header>
+  </customwidget>
+  <customwidget>
+   <class>RSTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>gui/common/RSTreeWidget.h</header>
+  </customwidget>
  </customwidgets>
  <tabstops>
   <tabstop>replymessageButton</tabstop>
   <tabstop>listWidget</tabstop>
  </tabstops>
  <resources>
-  <include location="images.qrc"/>
+  <include location="icons.qrc"/>
   <include location="../Unseengui/unseengui.qrc"/>
+  <include location="images.qrc"/>
  </resources>
  <connections/>
 </ui>

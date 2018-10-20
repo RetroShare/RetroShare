@@ -72,8 +72,9 @@
 
 /* values for ToolButtonStyle */
 #define SETTING_VALUE_TOOLBUTTONSTYLE_ICONONLY        1
-#define SETTING_VALUE_TOOLBUTTONSTYLE_TEXTONLY        2
-#define SETTING_VALUE_TOOLBUTTONSTYLE_TEXTBESIDEICON  3
+    /*D: Remove this*/
+// #define SETTING_VALUE_TOOLBUTTONSTYLE_TEXTONLY        2
+// #define SETTING_VALUE_TOOLBUTTONSTYLE_TEXTBESIDEICON  3
 #define SETTING_VALUE_TOOLBUTTONSTYLE_TEXTUNDERICON   4
 
 // the one and only global settings object
@@ -209,10 +210,11 @@ Qt::ToolButtonStyle RshareSettings::getToolButtonStyle()
 	{
 	case SETTING_VALUE_TOOLBUTTONSTYLE_ICONONLY:
 		return Qt::ToolButtonIconOnly;
-	case SETTING_VALUE_TOOLBUTTONSTYLE_TEXTONLY:
-		return Qt::ToolButtonTextOnly;
-	case SETTING_VALUE_TOOLBUTTONSTYLE_TEXTBESIDEICON:
-		return Qt::ToolButtonTextBesideIcon;
+        /*d: Remove this*/
+//	case SETTING_VALUE_TOOLBUTTONSTYLE_TEXTONLY:
+//		return Qt::ToolButtonTextOnly;
+//	case SETTING_VALUE_TOOLBUTTONSTYLE_TEXTBESIDEICON:
+//		return Qt::ToolButtonTextBesideIcon;
 	case SETTING_VALUE_TOOLBUTTONSTYLE_TEXTUNDERICON:
 	default:
         return Qt::ToolButtonTextUnderIcon;
@@ -226,12 +228,13 @@ void RshareSettings::setToolButtonStyle(Qt::ToolButtonStyle style)
 	case Qt::ToolButtonIconOnly:
 		setValue(SETTING_TOOLBUTTONSTYLE, SETTING_VALUE_TOOLBUTTONSTYLE_ICONONLY);
 		break;
-	case Qt::ToolButtonTextOnly:
-		setValue(SETTING_TOOLBUTTONSTYLE, SETTING_VALUE_TOOLBUTTONSTYLE_TEXTONLY);
-		break;
-	case Qt::ToolButtonTextBesideIcon:
-		setValue(SETTING_TOOLBUTTONSTYLE, SETTING_VALUE_TOOLBUTTONSTYLE_TEXTBESIDEICON);
-		break;
+        /*d: Remove this*/
+//	case Qt::ToolButtonTextOnly:
+//		setValue(SETTING_TOOLBUTTONSTYLE, SETTING_VALUE_TOOLBUTTONSTYLE_TEXTONLY);
+//		break;
+//	case Qt::ToolButtonTextBesideIcon:
+//		setValue(SETTING_TOOLBUTTONSTYLE, SETTING_VALUE_TOOLBUTTONSTYLE_TEXTBESIDEICON);
+//		break;
 	case Qt::ToolButtonTextUnderIcon:
 	default:
 		setValue(SETTING_TOOLBUTTONSTYLE, SETTING_VALUE_TOOLBUTTONSTYLE_TEXTUNDERICON);

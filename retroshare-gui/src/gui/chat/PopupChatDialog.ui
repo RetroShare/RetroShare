@@ -14,7 +14,16 @@
    <string notr="true">MainWindow</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_3">
-   <property name="margin">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
     <number>0</number>
    </property>
    <item>
@@ -33,6 +42,9 @@
      </property>
      <item>
       <widget class="QFrame" name="leftsideframe">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
          <horstretch>0</horstretch>
@@ -46,7 +58,16 @@
         </size>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout">
-        <property name="margin">
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
          <number>0</number>
         </property>
         <item>
@@ -95,6 +116,9 @@
      </item>
      <item>
       <widget class="QFrame" name="avatarframe">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
        <property name="maximumSize">
         <size>
          <width>132</width>
@@ -102,7 +126,16 @@
         </size>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_2">
-        <property name="margin">
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
          <number>0</number>
         </property>
         <item>
@@ -181,15 +214,15 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>AvatarWidget</class>
-   <extends>QLabel</extends>
-   <header>gui/common/AvatarWidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>ChatWidget</class>
    <extends>QWidget</extends>
    <header location="global">gui/chat/ChatWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>AvatarWidget</class>
+   <extends>QLabel</extends>
+   <header>gui/common/AvatarWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

@@ -36,7 +36,7 @@ public:
 	/** Loads the settings for this page */
 	virtual void load();
 
-	virtual QPixmap iconPixmap() const { return QPixmap(":/icons/settings/people.svg") ; }
+    virtual QPixmap iconPixmap() const { return QPixmap(":/home/img/Setting/group-profile-users_x.svg") ; }
 	virtual QString pageName() const { return tr("People") ; }
 	virtual QString helpText() const { return ""; }
 

@@ -403,8 +403,8 @@ p, li { white-space: pre-wrap; }
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../../Unseengui/unseengui.qrc"/>
   <include location="../images.qrc"/>
+  <include location="../../Unseengui/unseengui.qrc"/>
  </resources>
  <connections/>
 </ui>

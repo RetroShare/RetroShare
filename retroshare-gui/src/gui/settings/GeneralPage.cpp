@@ -37,7 +37,6 @@ GeneralPage::GeneralPage(QWidget * parent, Qt::WindowFlags flags) :
 {
     /* Invoke the Qt Designer generated object setup routine */
     ui.setupUi(this);
-
     /* Hide platform specific features */
 #ifdef Q_OS_WIN
 
@@ -107,7 +106,7 @@ void GeneralPage::updateAdvancedMode()
 {
 	if (ui.checkAdvanced->isChecked())
 	{
-		std::string opt("YES");
+        std::string opt("YES");
 		rsConfig->setConfigurationOption(RS_CONFIG_ADVANCED, opt);
 	}
 	else

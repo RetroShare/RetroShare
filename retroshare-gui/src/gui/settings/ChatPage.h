@@ -39,7 +39,7 @@ class ChatPage : public ConfigPage
       /** Loads the settings for this page */
       virtual void load();
 
-		virtual QPixmap iconPixmap() const { return QPixmap(":/icons/settings/chat.svg") ; }
+        virtual QPixmap iconPixmap() const { return QPixmap(":/home/img/Setting/comment-black-oval-bubble-shape_x.svg") ; }
 		virtual QString pageName() const { return tr("Chats") ; }
 		virtual QString helpText() const { return ""; }
 

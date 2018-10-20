@@ -17,7 +17,9 @@
 //meiyousixin - add more PopupChatDialog into ChatLobbyWidget
 #include "chat/PopupChatDialog.h"
 #include "gui/common/AvatarDefs.h"
+
 #include <QPainter>
+
 
 #include "retroshare/rsmsgs.h"
 #include "retroshare/rspeers.h"
@@ -106,6 +108,8 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WindowFlags flags)
 
 	ui.lobbyTreeWidget->setContextMenuPolicy(Qt::CustomContextMenu) ;
 
+    ui.lobbyTreeWidget->setStyleSheet("color: white; background-color: rgb(47, 60, 76); "
+                                      "selection-color: rgb(255,255,255); selection-background-color: rgb(32, 41, 53);");
 	QTreeWidgetItem *headerItem = ui.lobbyTreeWidget->headerItem();
 	headerItem->setText(COLUMN_NAME, tr("Name"));
 	headerItem->setText(COLUMN_USER_COUNT, tr("Count"));
@@ -126,7 +130,6 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WindowFlags flags)
     QHeaderView_setSectionResizeModeColumn(header, COLUMN_RECENT_TIME, QHeaderView::Interactive);
 
     ui.lobbyTreeWidget->setIconSize(QSize(32,32));
-
     privateSubLobbyItem = new RSTreeWidgetItem(compareRole, TYPE_FOLDER);
     privateSubLobbyItem->setText(COLUMN_NAME, tr("Private Subscribed chat rooms"));
 	privateSubLobbyItem->setData(COLUMN_NAME, ROLE_SORT, "1");
@@ -1590,5 +1593,6 @@ void ChatLobbyWidget::updateContactItem(QTreeWidget *treeWidget, QTreeWidgetItem
 
       item->setData(COLUMN_DATA, ROLE_ID, QString::fromUtf8(rsId.c_str()));
       item->setData(COLUMN_RECENT_TIME, ROLE_SORT,current_time);
+   //   int avatarHeight = fontMetrics.height() * 2;        //d: change avatar size
 }
 
