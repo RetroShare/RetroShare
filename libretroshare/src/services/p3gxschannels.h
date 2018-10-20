@@ -114,10 +114,11 @@ virtual bool getChannelDownloadDirectory(const RsGxsGroupId &groupId, std::strin
 
 	/**
 	 * Receive results from turtle search @see RsGenExchange @see RsNxsObserver
+	 * @see RsGxsNetService::receiveTurtleSearchResults
 	 * @see p3turtle::handleSearchResult
 	 */
 	void receiveDistantSearchResults( TurtleRequestId id,
-	                                  const RsGxsGroupId& grpId );
+	                                  const RsGxsGroupId& grpId ) override;
 
 	/* Comment service - Provide RsGxsCommentService - redirect to p3GxsCommentService */
 	virtual bool getCommentData(uint32_t token, std::vector<RsGxsComment> &msgs)

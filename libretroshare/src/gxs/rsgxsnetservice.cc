@@ -5181,7 +5181,9 @@ bool RsGxsNetService::clearDistantSearchResults(const TurtleRequestId& id)
     mDistantSearchResults.erase(id);
     return true ;
 }
-void RsGxsNetService::receiveTurtleSearchResults(TurtleRequestId req, const std::list<RsGxsGroupSummary>& group_infos)
+
+void RsGxsNetService::receiveTurtleSearchResults(
+        TurtleRequestId req, const std::list<RsGxsGroupSummary>& group_infos )
 {
 	std::set<RsGxsGroupId> groupsToNotifyResults;
 
@@ -5192,38 +5194,42 @@ void RsGxsNetService::receiveTurtleSearchResults(TurtleRequestId req, const std:
 		std::map<RsGxsGroupId,RsGxsGroupSummary>&
 		        search_results_map(mDistantSearchResults[req]);
 
-		for(auto it(group_infos.begin());it!=group_infos.end();++it)
-			if(search_results_map.find((*it).mGroupId) == search_results_map.end())
-				grpMeta[(*it).mGroupId] = NULL;
-
+		for(const RsGxsGroupSummary& gps : group_infos)
+			if(search_results_map.find(gps.mGroupId) == search_results_map.end())
+				grpMeta[gps.mGroupId] = nullptr;
 		mDataStore->retrieveGxsGrpMetaData(grpMeta);
 
-		// only keep groups that are not locally known, and groups that are not already in the mDistantSearchResults structure
+		for (const RsGxsGroupSummary& gps : group_infos)
+		{
+#ifndef RS_DEEP_SEARCH
+			/* Only keep groups that are not locally known, and groups that are
+			 * not already in the mDistantSearchResults structure. */
+			if(grpMeta[gps.mGroupId]) continue;
+#else // ndef RS_DEEP_SEARCH
+			/* When deep search is enabled search results may bring more info
+			 * then we already have also about post that are indexed by xapian,
+			 * so we don't apply this filter in this case. */
+#endif
+			const RsGxsGroupId& grpId(gps.mGroupId);
 
-		for(auto it(group_infos.begin());it!=group_infos.end();++it)
-			if(grpMeta[(*it).mGroupId] == NULL)
+			groupsToNotifyResults.insert(grpId);
+			auto it2 = search_results_map.find(grpId);
+			if(it2 != search_results_map.end())
 			{
-				const RsGxsGroupId& grpId((*it).mGroupId);
-
-				groupsToNotifyResults.insert(grpId);
-
-				auto it2 = search_results_map.find(grpId);
-
-				if(it2 != search_results_map.end())
-				{
-					// update existing data
-
-					it2->second.mPopularity++;
-					it2->second.mNumberOfMessages = std::max(
-					            it2->second.mNumberOfMessages,
-					            (*it).mNumberOfMessages );
-				}
-				else
-				{
-					search_results_map[grpId] = *it;
-					search_results_map[grpId].mPopularity = 1; // number of results so far
-				}
+				// update existing data
+				RsGxsGroupSummary& eGpS(it2->second);
+				eGpS.mPopularity++;
+				eGpS.mNumberOfMessages = std::max(
+				            eGpS.mNumberOfMessages,
+				            gps.mNumberOfMessages );
 			}
+			else
+			{
+				search_results_map[grpId] = gps;
+				// number of results so far
+				search_results_map[grpId].mPopularity = 1;
+			}
+		}
 	} // end RS_STACK_MUTEX(mNxsMutex);
 
 	for(const RsGxsGroupId& grpId : groupsToNotifyResults)
