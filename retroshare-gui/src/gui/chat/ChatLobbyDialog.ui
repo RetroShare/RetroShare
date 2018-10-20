@@ -184,9 +184,6 @@
    <header>gui/common/RSTreeWidget.h</header>
   </customwidget>
  </customwidgets>
- <resources>
-  <include location="../icons.qrc"/>
-  <include location="../images.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

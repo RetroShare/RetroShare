@@ -138,17 +138,17 @@ PostedCreatePostDialog QLabel#info_label
 
 ForumsDialog, GxsForumThreadWidget
 {
-        qproperty-textColorRead: white;
-        qproperty-textColorUnread: white;
-        qproperty-textColorUnreadChildren: white;
-        qproperty-textColorNotSubscribed: white;
-        qproperty-textColorMissing: white;
+        qproperty-textColorRead: black;
+        qproperty-textColorUnread: black;
+        qproperty-textColorUnreadChildren: black;
+        qproperty-textColorNotSubscribed: black;
+        qproperty-textColorMissing: black;
 }
 
 GroupTreeWidget
 {
-        qproperty-textColorCategory: white;
-        qproperty-textColorPrivateKey: white;
+        qproperty-textColorCategory: black;
+        qproperty-textColorPrivateKey: black;
 }
 
 FriendSelectionWidget

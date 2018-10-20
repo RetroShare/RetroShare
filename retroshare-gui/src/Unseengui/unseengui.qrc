@@ -81,9 +81,6 @@
         <file>app/images/statusicons/noauth.png</file>
         <file>app/images/statusicons/offline.png</file>
         <file>app/images/statusicons/online.png</file>
-        <file>chat/img/p2p 0.png</file>
-        <file>chat/img/p2p 1.png</file>
-        <file>chat/img/p2p 2.png</file>
         <file>home/img/mountain_700.png</file>
         <file>home/img/mountain_2000.jpg</file>
         <file>home/img/mountain_1700.jpg</file>
@@ -92,5 +89,27 @@
         <file>home/img/face_icon/youtube-play-button_128.png</file>
         <file>home/img/face_icon/youtube-play-button_v_128.png</file>
         <file>home/img/face_icon/youtube-play-button_x_128.png</file>
+        <file>chat/img/p2p_0.png</file>
+        <file>chat/img/p2p_1.png</file>
+        <file>chat/img/p2p_2.png</file>
+        <file>app/images/statusicons/bad.png</file>
+        <file>home/img/Setting/bull-horn-announcer_x.svg</file>
+        <file>home/img/Setting/comment-black-oval-bubble-shape_x.svg</file>
+        <file>home/img/Setting/envelope_x.svg</file>
+        <file>home/img/Setting/exclamation_x.svg</file>
+        <file>home/img/Setting/file_x.svg</file>
+        <file>home/img/Setting/group-profile-users_x.svg</file>
+        <file>home/img/Setting/information-symbol_x.svg</file>
+        <file>home/img/Setting/listing-option_x.svg</file>
+        <file>home/img/Setting/network_un_x.png</file>
+        <file>home/img/Setting/puzzle-piece-silhouette_x.svg</file>
+        <file>home/img/Setting/reduced-volume_x.svg</file>
+        <file>home/img/Setting/settings_x.svg</file>
+        <file>home/img/Setting/share.svg</file>
+        <file>home/img/Setting/share_x.svg</file>
+        <file>home/img/Setting/shield_x.svg</file>
+        <file>home/img/Setting/tint-drop_x.svg</file>
+        <file>home/img/Setting/youtube-play-button_x.svg</file>
+        <file>app/images/statusicons/admin.png</file>
     </qresource>
 </RCC>

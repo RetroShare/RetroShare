@@ -498,14 +498,14 @@ static QIcon createAvatar(const QPixmap &avatar, const QPixmap &overlay)
 
 	QPixmap pixmap(avatar);
 
-	int overlaySize = (avatarWidth > avatarHeight) ? (avatarWidth/2.5) :  (avatarHeight/2.5);
-	int overlayX = avatarWidth - overlaySize;
-	int overlayY = avatarHeight - overlaySize;
+    int overlaySize = (avatarWidth > avatarHeight) ? (avatarWidth/2.5) :  (avatarHeight/2.5);
+    int overlayX = avatarWidth - overlaySize;
+    int overlayY = avatarHeight - overlaySize;
 
-	QPainter painter(&pixmap);
-	painter.drawPixmap(overlayX, overlayY, overlaySize, overlaySize, overlay);
+    QPainter painter(&pixmap);
+    painter.drawPixmap(overlayX, overlayY, overlaySize, overlaySize, overlay);
 
-	QIcon icon;
+    QIcon icon;
 	icon.addPixmap(pixmap);
 	return icon;
 }

@@ -100,8 +100,7 @@ void GxsChannelDialog::shareOnChannel(const RsGxsGroupId& channel_id,const QList
 QString GxsChannelDialog::text(TextType type)
 {
 	switch (type) {
-	case TEXT_NAME:
-      //  this->setStyleSheet("QLabel { color : white;}"); //d: change text color
+    case TEXT_NAME:
         return tr("Channels");
 	case TEXT_NEW:
 		return tr("Create Channel");
@@ -127,7 +126,7 @@ QString GxsChannelDialog::icon(IconType type)
 {
 	switch (type) {
 	case ICON_NAME:
-        return ":/home/img/face_icon/youtube-play-button_128.png";      //d: update icon
+        return ":/home/img/face_icon/youtube-play-button_x_128.png";      //d: update icon
 	case ICON_NEW:
 		return ":/icons/png/add.png";
 	case ICON_YOUR_GROUP:

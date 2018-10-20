@@ -130,9 +130,9 @@
 #define IMAGE_ABOUT             ":/icons/png/info.png"
 #define IMAGE_ADDFRIEND         ":/icons/png/invite.png"
 #define IMAGE_RETROSHARE        ":/app/images/icon.png"             //D replace :/icons/logo_128.png
-#define IMAGE_NOONLINE          ":/chat/img/p2p 0.png"              //d:replace icon
-#define IMAGE_ONEONLINE         ":/chat/img/p2p 1.png"              //d:replace icon
-#define IMAGE_TWOONLINE         ":/chat/img/p2p 2.png"              //d:replace icon
+#define IMAGE_NOONLINE          ":/chat/img/p2p_0.png"              //d:replace icon
+#define IMAGE_ONEONLINE         ":/chat/img/p2p_1.png"              //d:replace icon
+#define IMAGE_TWOONLINE         ":/chat/img/p2p_2.png"              //d:replace icon
 #define IMAGE_OVERLAY           ":/icons/star_overlay_128.png"
 
 #define IMAGE_BWGRAPH           ":/images/ksysguard.png"
@@ -184,12 +184,12 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     trayIcon = NULL;
     ui->setupUi(this);
 /** d: set background for MainWindow */
-        QPixmap bkgnd(":/home/img/mountain_1700.jpg");
+ /*       QPixmap bkgnd(":/home/img/mountain_1700.jpg");
      //   bkgnd = bkgnd.scaled(this->size(),Qt::IgnoreAspectRatio);
         QPalette palette;
         palette.setBrush(QPalette::Background, bkgnd);
         this->setPalette(palette);
-
+*/
 /** d: or use this */
    /* QPixmap pix(":/home/img/mountain_1700.jpg");
         pix.scaled(this->size(),Qt::IgnoreAspectRatio);
@@ -215,7 +215,8 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     /* Calculate only once */
     RsPeerDetails pd;
     if (rsPeers->getPeerDetails(rsPeers->getOwnId(), pd)) {
-        nameAndLocation = QString("%1 (%2)").arg(QString::fromUtf8(pd.name.c_str())).arg(QString::fromUtf8(pd.location.c_str()));
+        //nameAndLocation = QString("%1 (%2)").arg(QString::fromUtf8(pd.name.c_str())).arg(QString::fromUtf8(pd.location.c_str()));
+        nameAndLocation =QString::fromUtf8(pd.name.c_str());
         if(pd.netMode == RS_NETMODE_HIDDEN)
             hiddenmode = true;
     }

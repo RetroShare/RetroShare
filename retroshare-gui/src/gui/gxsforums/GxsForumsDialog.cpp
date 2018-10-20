@@ -88,7 +88,6 @@ QString GxsForumsDialog::text(TextType type)
 {
     switch (type) {
     case TEXT_NAME:
-        setStyleSheet("QLabel { color : white; font-size: 16px; }");         //d: change text color
         return tr("Forums");
 	case TEXT_NEW:
 		return tr("Create Forum");
@@ -99,17 +98,13 @@ QString GxsForumsDialog::text(TextType type)
 		       "<li>Remove messages"
 		       "</ul>";
 
-	case TEXT_YOUR_GROUP:
-        setStyleSheet("QLabel { color : white; }");         //d: change text color
+    case TEXT_YOUR_GROUP:
 		return tr("My Forums");
-	case TEXT_SUBSCRIBED_GROUP:
-        setStyleSheet("QLabel { color : white; }");         //d: change text color
+    case TEXT_SUBSCRIBED_GROUP:
 		return tr("Subscribed Forums");
-	case TEXT_POPULAR_GROUP:
-        setStyleSheet("QLabel { color : white; }");         //d: change text color
+    case TEXT_POPULAR_GROUP:
 		return tr("Popular Forums");
-	case TEXT_OTHER_GROUP:
-        setStyleSheet("QLabel { color : white; }");         //d: change text color
+    case TEXT_OTHER_GROUP:
         return tr("Other Forums");
 	}
 
@@ -120,7 +115,7 @@ QString GxsForumsDialog::icon(IconType type)
 {
 	switch (type) {
 	case ICON_NAME:
-        return ":/home/img/face_icon/bull-horn-announcer_128.png";
+        return ":/home/img/face_icon/bull-horn-announcer_x_128.png";        //d: change icon
 	case ICON_NEW:
 		return ":/icons/png/add.png";
 	case ICON_YOUR_GROUP:

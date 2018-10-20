@@ -172,7 +172,7 @@ GenCertDialog::GenCertDialog(bool onlyGenerateIdentity, QWidget *parent)
 
 	// Default value.
 
-	ui.node_input->setText("My computer") ;
+    ui.node_input->setText("My computer") ;
 
 #if QT_VERSION >= 0x040700
 	ui.node_input->setPlaceholderText(tr("Node name")) ;

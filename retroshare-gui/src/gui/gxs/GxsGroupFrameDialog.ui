@@ -142,10 +142,7 @@
        </sizepolicy>
       </property>
       <property name="styleSheet">
-       <string notr="true">color: white;
-background-color: rgb(47, 60, 76);
-selection-color: rgb(255, 255, 255);
-selection-background-color: rgb(32, 41, 53);</string>
+       <string notr="true"/>
       </property>
      </widget>
      <widget class="RSTabWidget" name="messageTabWidget">

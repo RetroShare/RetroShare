@@ -79,7 +79,7 @@ public:
     /** Loads the settings for this page */
     virtual void load();
 
-     virtual QPixmap iconPixmap() const { return QPixmap(":/home/img/Setting/exclamation.svg") ; }
+     virtual QPixmap iconPixmap() const { return QPixmap(":/home/img/Setting/exclamation_x.svg") ; }
 	 virtual QString pageName() const { return tr("Notify") ; }
 	 virtual QString helpText() const ;
 

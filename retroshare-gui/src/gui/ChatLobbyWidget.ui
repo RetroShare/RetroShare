@@ -62,7 +62,7 @@
          <string/>
         </property>
         <property name="pixmap">
-         <pixmap resource="../Unseengui/unseengui.qrc">:/home/img/face_icon/un_chat_icon_64.png</pixmap>
+         <pixmap resource="../Unseengui/unseengui.qrc">:/home/img/face_icon/un_chat_icon_x_128.png</pixmap>
         </property>
         <property name="scaledContents">
          <bool>true</bool>
@@ -72,7 +72,7 @@
       <item>
        <widget class="StyledLabel" name="titleBarLabel">
         <property name="styleSheet">
-         <string notr="true">color: rgb(255, 255, 255);</string>
+         <string notr="true"/>
         </property>
         <property name="text">
          <string>Chat rooms</string>
@@ -98,7 +98,7 @@
          <enum>Qt::NoFocus</enum>
         </property>
         <property name="icon">
-         <iconset resource="images.qrc">
+         <iconset resource="icons.qrc">
           <normaloff>:/icons/help_64.png</normaloff>:/icons/help_64.png</iconset>
         </property>
         <property name="checkable">
@@ -185,11 +185,7 @@
        <item>
         <widget class="QTreeWidget" name="lobbyTreeWidget">
          <property name="styleSheet">
-          <string notr="true">color: white;
-background-color: rgb(47, 60, 76);
-selection-color: rgb(255,255,255);
-selection-background-color: rgb(32, 41, 53);
-</string>
+          <string notr="true"/>
          </property>
          <property name="iconSize">
           <size>
@@ -236,7 +232,7 @@ selection-background-color: rgb(32, 41, 53);
         <item row="0" column="0">
          <widget class="QGroupBox" name="lobbyinfo_groupBox">
           <property name="styleSheet">
-           <string notr="true">color: rgb(255, 255, 255);</string>
+           <string notr="true"/>
           </property>
           <property name="title">
            <string>Selected lobby info</string>
@@ -254,9 +250,6 @@ selection-background-color: rgb(32, 41, 53);
                    <bold>true</bold>
                   </font>
                  </property>
-                 <property name="styleSheet">
-                  <string notr="true">color: rgb(255, 255, 255);</string>
-                 </property>
                  <property name="text">
                   <string>Chat room Name:</string>
                  </property>
@@ -271,7 +264,7 @@ selection-background-color: rgb(32, 41, 53);
                   </font>
                  </property>
                  <property name="styleSheet">
-                  <string notr="true">color: rgb(255, 255, 255);</string>
+                  <string notr="true"/>
                  </property>
                  <property name="text">
                   <string>Chat room Id:</string>
@@ -286,9 +279,6 @@ selection-background-color: rgb(32, 41, 53);
                    <bold>true</bold>
                   </font>
                  </property>
-                 <property name="styleSheet">
-                  <string notr="true">color: rgb(255, 255, 255);</string>
-                 </property>
                  <property name="text">
                   <string>Topic:</string>
                  </property>
@@ -301,10 +291,6 @@ selection-background-color: rgb(32, 41, 53);
                    <weight>75</weight>
                    <bold>true</bold>
                   </font>
-                 </property>
-                 <property name="styleSheet">
-                  <string notr="true">color: rgb(255, 255, 255);
-</string>
                  </property>
                  <property name="text">
                   <string>Type:</string>
@@ -319,9 +305,6 @@ selection-background-color: rgb(32, 41, 53);
                    <bold>true</bold>
                   </font>
                  </property>
-                 <property name="styleSheet">
-                  <string notr="true">color: rgb(255, 255, 255);</string>
-                 </property>
                  <property name="text">
                   <string>Security:</string>
                  </property>
@@ -334,9 +317,6 @@ selection-background-color: rgb(32, 41, 53);
                    <weight>75</weight>
                    <bold>true</bold>
                   </font>
-                 </property>
-                 <property name="styleSheet">
-                  <string notr="true">color: rgb(255, 255, 255);</string>
                  </property>
                  <property name="text">
                   <string>Peers:</string>
@@ -355,9 +335,6 @@ selection-background-color: rgb(32, 41, 53);
                    <verstretch>0</verstretch>
                   </sizepolicy>
                  </property>
-                 <property name="styleSheet">
-                  <string notr="true">color: rgb(255, 255, 255);</string>
-                 </property>
                  <property name="text">
                   <string>TextLabel</string>
                  </property>
@@ -371,9 +348,6 @@ selection-background-color: rgb(32, 41, 53);
                    <verstretch>0</verstretch>
                   </sizepolicy>
                  </property>
-                 <property name="styleSheet">
-                  <string notr="true">color: rgb(255, 255, 255);</string>
-                 </property>
                  <property name="text">
                   <string>TextLabel</string>
                  </property>
@@ -386,9 +360,6 @@ selection-background-color: rgb(32, 41, 53);
                    <horstretch>0</horstretch>
                    <verstretch>0</verstretch>
                   </sizepolicy>
-                 </property>
-                 <property name="styleSheet">
-                  <string notr="true">color: rgb(255, 255, 255);</string>
                  </property>
                  <property name="text">
                   <string>TextLabel</string>
@@ -406,9 +377,6 @@ selection-background-color: rgb(32, 41, 53);
                    <verstretch>0</verstretch>
                   </sizepolicy>
                  </property>
-                 <property name="styleSheet">
-                  <string notr="true">color: rgb(255, 255, 255);</string>
-                 </property>
                  <property name="text">
                   <string>TextLabel</string>
                  </property>
@@ -416,9 +384,6 @@ selection-background-color: rgb(32, 41, 53);
                </item>
                <item>
                 <widget class="QLabel" name="lobbysec_lineEdit">
-                 <property name="styleSheet">
-                  <string notr="true">color: rgb(255, 255, 255);</string>
-                 </property>
                  <property name="text">
                   <string>TextLabel</string>
                  </property>
@@ -432,9 +397,6 @@ selection-background-color: rgb(32, 41, 53);
                    <verstretch>0</verstretch>
                   </sizepolicy>
                  </property>
-                 <property name="styleSheet">
-                  <string notr="true">color: rgb(255, 255, 255);</string>
-                 </property>
                  <property name="text">
                   <string>TextLabel</string>
                  </property>
@@ -446,6 +408,9 @@ selection-background-color: rgb(32, 41, 53);
            </item>
            <item>
             <widget class="QLabel" name="lobbyInfoLabel">
+             <property name="styleSheet">
+              <string notr="true"/>
+             </property>
              <property name="text">
               <string notr="true">TextLabel</string>
              </property>
@@ -490,9 +455,8 @@ selection-background-color: rgb(32, 41, 53);
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="images.qrc"/>
-  <include location="../Unseengui/unseengui.qrc"/>
   <include location="icons.qrc"/>
+  <include location="../Unseengui/unseengui.qrc"/>
  </resources>
  <connections/>
 </ui>

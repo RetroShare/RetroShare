@@ -122,10 +122,10 @@
 
 #define IMAGE_EDIT                 ":/images/edit_16.png"
 #define IMAGE_CREATE               ":/icons/circle_new_128.png"
-#define IMAGE_INVITED              ":/icons/bullet_yellow_128.png"
-#define IMAGE_MEMBER               ":/icons/bullet_green_128.png"
-#define IMAGE_UNKNOWN              ":/icons/bullet_grey_128.png"
-#define IMAGE_ADMIN                ":/icons/bullet_blue_128.png"
+#define IMAGE_INVITED              ":/app/images/statusicons/offline.png"
+#define IMAGE_MEMBER               ":/app/images/statusicons/online.png"
+#define IMAGE_UNKNOWN              ":/app/images/statusicons/bad.png"
+#define IMAGE_ADMIN                ":/app/images/statusicons/admin.png"
 #define IMAGE_INFO                 ":/images/info16.png"
 #define IMAGE_UNSEEN                 ":/app/images/unseen32.png"
 

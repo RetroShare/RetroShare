@@ -46,7 +46,7 @@ DHTStatus::DHTStatus(QWidget *parent)
     hbox->addWidget(statusDHT);
     
     dhtstatusLabel = new QLabel( this );
-    dhtstatusLabel->setPixmap(QPixmap(":/icons/bullet_grey_128.png"));
+    dhtstatusLabel->setPixmap(QPixmap(":/app/images/statusicons/bad.png"));         //d: uptdate icon
     hbox->addWidget(dhtstatusLabel);
     
     spaceLabel = new QLabel( "|", this );
@@ -84,7 +84,7 @@ void DHTStatus::getDHTStatus()
 	if (!(config.DHTActive))
 	{
 		// GRAY.
-        dhtstatusLabel->setPixmap(QPixmap(":/icons/bullet_grey_128.png").scaledToHeight(S,Qt::SmoothTransformation));
+        dhtstatusLabel->setPixmap(QPixmap(":/app/images/statusicons/bad.png").scaledToHeight(S,Qt::SmoothTransformation));      //d: uptdate icon
 		dhtstatusLabel->setToolTip( text + tr("DHT Off"));
 
 		spaceLabel->setVisible(false);
@@ -102,7 +102,7 @@ void DHTStatus::getDHTStatus()
 			// YELLOW or GREEN.
 			if (config.netDhtRsNetSize < MIN_RS_NET_SIZE)
 			{
-                dhtstatusLabel->setPixmap(QPixmap(":/icons/bullet_yellow_128.png").scaledToHeight(S,Qt::SmoothTransformation));
+                dhtstatusLabel->setPixmap(QPixmap(":/app/images/statusicons/offline.png").scaledToHeight(S,Qt::SmoothTransformation));      //d: uptdate icon
                 dhtstatusLabel->setToolTip( text + tr("DHT Searching for P2PUnseen Peers"));
 
 				spaceLabel->setVisible(true);
@@ -114,7 +114,7 @@ void DHTStatus::getDHTStatus()
 			}
 			else
 			{
-                dhtstatusLabel->setPixmap(QPixmap(":/icons/bullet_green_128.png").scaledToHeight(S,Qt::SmoothTransformation));
+                dhtstatusLabel->setPixmap(QPixmap(":/app/images/statusicons/online.png").scaledToHeight(S,Qt::SmoothTransformation));       //d: uptdate icon
 				dhtstatusLabel->setToolTip( text + tr("DHT Good"));
 
 				spaceLabel->setVisible(true);
@@ -128,7 +128,7 @@ void DHTStatus::getDHTStatus()
 		else
 		{
 			// RED - some issue.
-                dhtstatusLabel->setPixmap(QPixmap(":/icons/bullet_red_128.png").scaledToHeight(S,Qt::SmoothTransformation));
+                dhtstatusLabel->setPixmap(QPixmap(":/app/images/statusicons/dnd.png").scaledToHeight(S,Qt::SmoothTransformation));      //d: uptdate icon
             dhtstatusLabel->setToolTip( text + tr("No peer found in DHT"));
 
 			spaceLabel->setVisible(false);

@@ -40,7 +40,7 @@ public:
 	/** Loads the settings for this page */
 	virtual void load();
 
-    virtual QPixmap iconPixmap() const { return QPixmap(":/home/img/Setting/reduced-volume.svg") ; }
+    virtual QPixmap iconPixmap() const { return QPixmap(":/home/img/Setting/reduced-volume_x.svg") ; }
 	virtual QString pageName() const { return tr("Sound") ; }
 	virtual QString helpText() const { return ""; }
 

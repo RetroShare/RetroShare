@@ -50,7 +50,7 @@ PopupChatDialog::PopupChatDialog(QWidget *parent, Qt::WindowFlags flags)
 
 	manualDelete = false;
 
-	connect(ui.avatarFrameButton, SIGNAL(toggled(bool)), this, SLOT(showAvatarFrame(bool)));
+    connect(ui.avatarFrameButton, SIGNAL(toggled(bool)), this, SLOT(showAvatarFrame(bool)));
 	connect(ui.actionClearOfflineMessages, SIGNAL(triggered()), this, SLOT(clearOfflineMessages()));
 	connect(NotifyQt::getInstance(), SIGNAL(chatStatusChanged(ChatId,QString)), this, SLOT(chatStatusChanged(ChatId,QString)));
 
@@ -63,7 +63,7 @@ void PopupChatDialog::init(const ChatId &chat_id, const QString &title)
         cId = chat_id;
 
         /* Hide or show the avatar frames */
-        showAvatarFrame(PeerSettings->getShowAvatarFrame(chat_id));
+        showAvatarFrame(false);         //   showAvatarFrame(PeerSettings->getShowAvatarFrame(chat_id));
 
         ui.avatarWidget->setId(chat_id);
         ui.avatarWidget->setFrameType(AvatarWidget::STATUS_FRAME);
@@ -176,8 +176,8 @@ void PopupChatDialog::addChatMsg(const ChatMessage &msg)
  */
 void PopupChatDialog::showAvatarFrame(bool show)
 {
-	ui.avatarframe->setVisible(show);
-	ui.avatarFrameButton->setChecked(show);
+    ui.avatarframe->setVisible(show);
+    ui.avatarFrameButton->setChecked(show);
 
 	if (show) {
 		ui.avatarFrameButton->setToolTip(tr("Hide Avatar"));

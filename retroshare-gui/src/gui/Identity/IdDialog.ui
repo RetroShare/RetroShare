@@ -215,6 +215,9 @@
          <property name="contextMenuPolicy">
           <enum>Qt::CustomContextMenu</enum>
          </property>
+         <property name="styleSheet">
+          <string notr="true"/>
+         </property>
          <property name="selectionMode">
           <enum>QAbstractItemView::ExtendedSelection</enum>
          </property>
@@ -1091,6 +1094,11 @@ p, li { white-space: pre-wrap; }
  </widget>
  <customwidgets>
   <customwidget>
+   <class>StyledLabel</class>
+   <extends>QLabel</extends>
+   <header>gui/common/StyledLabel.h</header>
+  </customwidget>
+  <customwidget>
    <class>LineEditClear</class>
    <extends>QLineEdit</extends>
    <header location="global">gui/common/LineEditClear.h</header>
@@ -1109,11 +1117,6 @@ p, li { white-space: pre-wrap; }
    <class>RSTextBrowser</class>
    <extends>QTextBrowser</extends>
    <header>gui/common/RSTextBrowser.h</header>
-  </customwidget>
-  <customwidget>
-   <class>StyledLabel</class>
-   <extends>QLabel</extends>
-   <header>gui/common/StyledLabel.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

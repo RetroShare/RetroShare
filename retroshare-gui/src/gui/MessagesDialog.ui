@@ -157,7 +157,7 @@
       <item row="0" column="1">
        <widget class="StyledLabel" name="titleBarLabel">
         <property name="styleSheet">
-         <string notr="true">color: rgb(255, 255, 255);</string>
+         <string notr="true"/>
         </property>
         <property name="text">
          <string>Messages</string>
@@ -327,7 +327,7 @@
          <string/>
         </property>
         <property name="pixmap">
-         <pixmap resource="../Unseengui/unseengui.qrc">:/home/img/face_icon/envelope_128.png</pixmap>
+         <pixmap resource="../Unseengui/unseengui.qrc">:/home/img/face_icon/envelope_x_128.png</pixmap>
         </property>
         <property name="scaledContents">
          <bool>true</bool>
@@ -457,7 +457,7 @@
          <enum>Qt::NoFocus</enum>
         </property>
         <property name="icon">
-         <iconset resource="images.qrc">
+         <iconset resource="icons.qrc">
           <normaloff>:/icons/help_64.png</normaloff>:/icons/help_64.png</iconset>
         </property>
         <property name="checkable">
@@ -548,10 +548,7 @@
          </property>
          <widget class="QFrame" name="sideBarFrame">
           <property name="styleSheet">
-           <string notr="true">color: white;
-background-color: rgb(47, 60, 76);
-selection-color: rgb(255, 255, 255);
-selection-background-color: rgb(32,41,53);</string>
+           <string notr="true"/>
           </property>
           <layout class="QGridLayout" name="sideBarFrameGLayout">
            <property name="leftMargin">
@@ -870,21 +867,6 @@ selection-background-color: rgb(32,41,53);</string>
  </widget>
  <customwidgets>
   <customwidget>
-   <class>LineEditClear</class>
-   <extends>QLineEdit</extends>
-   <header location="global">gui/common/LineEditClear.h</header>
-  </customwidget>
-  <customwidget>
-   <class>StyledLabel</class>
-   <extends>QLabel</extends>
-   <header>gui/common/StyledLabel.h</header>
-  </customwidget>
-  <customwidget>
-   <class>RSTreeWidget</class>
-   <extends>QTreeWidget</extends>
-   <header>gui/common/RSTreeWidget.h</header>
-  </customwidget>
-  <customwidget>
    <class>StyledLabel</class>
    <extends>QLabel</extends>
    <header>gui/common/StyledLabel.h</header>
@@ -895,14 +877,25 @@ selection-background-color: rgb(32,41,53);</string>
    <header>gui/common/RSTabWidget.h</header>
    <container>1</container>
   </customwidget>
+  <customwidget>
+   <class>LineEditClear</class>
+   <extends>QLineEdit</extends>
+   <header location="global">gui/common/LineEditClear.h</header>
+  </customwidget>
+  <customwidget>
+   <class>RSTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>gui/common/RSTreeWidget.h</header>
+  </customwidget>
  </customwidgets>
  <tabstops>
   <tabstop>replymessageButton</tabstop>
   <tabstop>listWidget</tabstop>
  </tabstops>
  <resources>
-  <include location="images.qrc"/>
+  <include location="icons.qrc"/>
   <include location="../Unseengui/unseengui.qrc"/>
+  <include location="images.qrc"/>
  </resources>
  <connections/>
 </ui>

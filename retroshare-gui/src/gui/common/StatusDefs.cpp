@@ -105,6 +105,7 @@ QString StatusDefs::tooltip(unsigned int status)
 {
 	switch (status) {
 	case RS_STATUS_OFFLINE:
+
 		return qApp->translate("StatusDefs", "Friend is offline");
 	case RS_STATUS_AWAY:
 		return qApp->translate("StatusDefs", "Friend is away");

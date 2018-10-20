@@ -40,7 +40,7 @@ public:
 	/** Loads the settings for this page */
 	virtual void load();
 
-    virtual QPixmap iconPixmap() const { return QPixmap(":/home/img/Setting/settings.svg") ; }     //d:
+    virtual QPixmap iconPixmap() const { return QPixmap(":/home/img/Setting/settings_x.svg") ; }     //d:
     virtual QString pageName() const { return tr("General") ; }
 	virtual QString helpText() const { return ""; }
 

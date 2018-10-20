@@ -46,6 +46,10 @@
 #include "gui/common/FloatingHelpBrowser.h"
 #include "gui/common/RSElidedItemDelegate.h"
 
+
+
+
+
 #ifdef ENABLE_WEBUI
 #	include "WebuiPage.h"
 #endif
@@ -53,6 +57,7 @@
 #define IMAGE_GENERAL       ":/images/kcmsystem24.png"
 
 #define ITEM_SPACING 2
+
 
 #include "rsettingswin.h"
 
@@ -150,7 +155,7 @@ SettingsPage::initStackedWidget()
     addPage(new GeneralPage()); // GENERAL
     addPage(new CryptoPage()); // NODE
     addPage(new ServerPage()); // NETWORK
-    addPage(new PeoplePage()); // PEOLPE
+  //  addPage(new PeoplePage()); // PEOLPE
     addPage(new ChatPage()); // CHAT
     addPage(new MessagePage()); //MESSGE RENAME TO MAIL
     addPage(new TransferPage()); //FILE TRANSFER
@@ -162,11 +167,11 @@ SettingsPage::initStackedWidget()
     addPage(new AppearancePage()); // APPEARENCE
     addPage(new SoundPage() ); // SOUND
     addPage(new ServicePermissionsPage() ); // PERMISSIONS
-/*****d:Hide Webui
+
 #ifdef ENABLE_WEBUI
     addPage(new WebuiPage() );
 #endif // ENABLE_WEBUI
-    */
+
 	 // add widgets from plugins
 
 	for(int i=0;i<rsPlugins->nbPlugins();++i)
@@ -194,7 +199,7 @@ void SettingsPage::addPage(ConfigPage *page)
 	QFontMetrics fontMetrics = ui.listWidget->fontMetrics();
 
     /* d: Set size for item buttons in Preferences tab */
-    ui.listWidget->setIconSize(QSize(16,16)); //d: set Icon size
+    ui.listWidget->setIconSize(QSize(24,24));       //d: set Icon size
 for(int i = 0; i < ui.listWidget->count(); ++i) {
                if (ui.listWidget->item(i)->data(Qt::UserRole).toString() == "") {
            ui.listWidget->item(i)->setSizeHint(QSize(64,34));
@@ -224,7 +229,7 @@ SettingsPage::setNewPage(int page)
 		return ;
 	}
 	ui.pageName->setText(pagew->pageName());
-    ui.pageName->setStyleSheet("color: white");     //d: set color page name
+ //   ui.pageName->setStyleSheet("color: white");     //d: set color page name
 	ui.pageicon->setPixmap(pagew->iconPixmap()) ;
 
 	ui.stackedWidget->setCurrentIndex(page);
