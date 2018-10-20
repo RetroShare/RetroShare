@@ -39,7 +39,7 @@ libresapi_settings {
 }
 
 libresapihttpserver {
-    unix {
+    linux-* {
 
         webui_files.path = "$${DATA_DIR}/webui"
         webui_files.files = webui/app.js webui/app.css webui/index.html
