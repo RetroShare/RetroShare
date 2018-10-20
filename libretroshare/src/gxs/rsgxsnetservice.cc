@@ -5140,11 +5140,13 @@ TurtleRequestId RsGxsNetService::turtleSearchRequest(const std::string& match_st
     return mGxsNetTunnel->turtleSearchRequest(match_string,this) ;
 }
 
+#ifndef RS_DEEP_SEARCH
 static bool termSearch(const std::string& src, const std::string& substring)
 {
 		/* always ignore case */
 	return src.end() != std::search( src.begin(), src.end(), substring.begin(), substring.end(), RsRegularExpression::CompareCharIC() );
 }
+#endif // ndef RS_DEEP_SEARCH
 
 bool RsGxsNetService::retrieveDistantSearchResults(TurtleRequestId req,std::map<RsGxsGroupId,RsGxsGroupSummary>& group_infos)
 {

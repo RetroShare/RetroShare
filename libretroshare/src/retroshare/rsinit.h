@@ -292,20 +292,20 @@ struct RsLoginHelper
 
 	/**
 	 * @brief Creates a new RetroShare location, and log in once is created
-	 * @jsonapi{development,unauthenticated}
+	 * @jsonapi{development,manualwrapper}
 	 * @param[inout] location provide input information to generate the location
 	 *	and storage to output the data of the generated location
 	 * @param[in] password to protect and unlock the associated PGP key
+	 * @param[out] errorMessage if some error occurred human readable error
+	 *	message
 	 * @param[in] makeHidden pass true to create an hidden location. UNTESTED!
 	 * @param[in] makeAutoTor pass true to create an automatically configured
 	 *	Tor hidden location. UNTESTED!
-	 * @param[out] errorMessage if some error occurred human readable error
-	 *	message
 	 * @return true if success, false otherwise
 	 */
 	bool createLocation( RsLoginHelper::Location& location,
-	                     const std::string& password, bool makeHidden,
-	                     bool makeAutoTor, std::string& errorMessage );
+	                     const std::string& password, std::string& errorMessage,
+	                     bool makeHidden = false, bool makeAutoTor = false );
 
 	/**
 	 * @brief Check if RetroShare is already logged in, this usually return true

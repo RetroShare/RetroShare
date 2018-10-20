@@ -1438,7 +1438,6 @@ void GxsForumThreadWidget::insertThreads()
 		GxsForumsFillThread *thread = mFillThread;
 		mFillThread = NULL;
 		thread->stop();
-		delete(thread);
 
 		mStateHelper->setLoading(mTokenTypeInsertThreads, false);
 	}

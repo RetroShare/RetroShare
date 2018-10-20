@@ -74,7 +74,6 @@ void GxsForumsFillThread::stop()
 	disconnect();
 	mStopped = true;
 	QApplication::processEvents();
-	wait();
 }
 
 void GxsForumsFillThread::calculateExpand(const RsGxsForumMsg &msg, QTreeWidgetItem *item)
@@ -125,7 +124,10 @@ void GxsForumsFillThread::run()
 		}
 
 		if (requestStatus == RsTokenService::FAILED)
+        {
+            deleteLater();
 			return;
+        }
 	}
 
     // also get the forum meta data.
@@ -154,7 +156,10 @@ void GxsForumsFillThread::run()
 		}
 
 		if (requestStatus == RsTokenService::FAILED)
+        {
+            deleteLater();
 			return;
+        }
 	}
 
 	if (wasStopped())
@@ -166,6 +171,7 @@ void GxsForumsFillThread::run()
 		/* cancel request */
 		service->cancelRequest(msg_token);
 		service->cancelRequest(grp_token);
+        deleteLater();
 		return;
 	}
 
@@ -174,7 +180,10 @@ void GxsForumsFillThread::run()
     std::vector<RsGxsForumGroup> forum_groups;
 
 	if (!rsGxsForums->getGroupData(grp_token, forum_groups) || forum_groups.size() != 1)
+    {
+        deleteLater();
         return;
+    }
 
     RsGxsForumGroup forum_group = *forum_groups.begin();
 
@@ -197,7 +206,10 @@ void GxsForumsFillThread::run()
 		std::vector<RsGxsForumMsg> msgs_array;
 
 		if (!rsGxsForums->getMsgData(msg_token, msgs_array))
+        {
+            deleteLater();
 			return;
+        }
 
 		// now put everything into a map in order to make search log(n)
 
@@ -240,6 +252,12 @@ void GxsForumsFillThread::run()
     std::list<RsGxsMessageId> msg_stack ;
 
 	for ( std::map<RsGxsMessageId,RsGxsForumMsg>::iterator msgIt = msgs.begin(); msgIt != msgs.end();++msgIt)
+    {
+        if(wasStopped())
+        {
+            deleteLater();
+            return;
+        }
         if(!msgIt->second.mMeta.mOrigMsgId.isNull() && msgIt->second.mMeta.mOrigMsgId != msgIt->second.mMeta.mMsgId)
 		{
 #ifdef DEBUG_FORUMS
@@ -271,14 +289,26 @@ void GxsForumsFillThread::run()
 
 			mPostVersions[msgIt->second.mMeta.mOrigMsgId].push_back(QPair<time_t,RsGxsMessageId>(msgIt->second.mMeta.mPublishTs,msgIt->second.mMeta.mMsgId)) ;
 		}
+    }
 
     // The following code assembles all new versions of a given post into the same array, indexed by the oldest version of the post.
 
     for(QMap<RsGxsMessageId,QVector<QPair<time_t,RsGxsMessageId> > >::iterator it(mPostVersions.begin());it!=mPostVersions.end();++it)
     {
+        if(wasStopped())
+        {
+            deleteLater();
+            return;
+        }
 		QVector<QPair<time_t,RsGxsMessageId> >& v(*it) ;
 
         for(int32_t i=0;i<v.size();++i)
+        {
+            if(wasStopped())
+            {
+                deleteLater();
+                return;
+            }
             if(v[i].second != it.key())
 			{
 				RsGxsMessageId sub_msg_id = v[i].second ;
@@ -294,6 +324,7 @@ void GxsForumsFillThread::run()
 					mPostVersions.erase(it2) ;	// it2 is never equal to it
 				}
 			}
+        }
     }
 
 
@@ -311,6 +342,11 @@ void GxsForumsFillThread::run()
 #ifdef DEBUG_FORUMS
         std::cerr << "Original post: " << it.key() << std::endl;
 #endif
+        if(wasStopped())
+        {
+            deleteLater();
+            return;
+        }
         // Finally, sort the posts from newer to older
 
         qSort((*it).begin(),(*it).end(),decreasing_time_comp) ;
@@ -320,6 +356,11 @@ void GxsForumsFillThread::run()
 #endif
         for(int32_t i=1;i<(*it).size();++i)
         {
+            if(wasStopped())
+            {
+                deleteLater();
+                return;
+            }
 			msgs.erase((*it)[i].second) ;
 
 #ifdef DEBUG_FORUMS
@@ -333,7 +374,14 @@ void GxsForumsFillThread::run()
 		// to the newest version. So we create a map of which is the most recent version of each message, so that parent messages can be searched in it.
 
         for(int i=1;i<(*it).size();++i)
+        {
+            if(wasStopped())
+            {
+                deleteLater();
+                return;
+            }
             most_recent_versions[(*it)[i].second] = (*it)[0].second ;
+        }
     }
     mPostVersions = mTmp ;
 
@@ -348,12 +396,20 @@ void GxsForumsFillThread::run()
 	for ( std::map<RsGxsMessageId,RsGxsForumMsg>::iterator msgIt = msgs.begin(); msgIt != msgs.end();++msgIt)
     {
 
+        if (wasStopped())
+        {
+            deleteLater();
+            return;
+        }
         if(mFlatView || msgIt->second.mMeta.mParentId.isNull())
 		{
 
 			/* add all threads */
 			if (wasStopped())
+            {
+                deleteLater();
 				return;
+            }
 
 			const RsGxsForumMsg& msg = msgIt->second;
 
@@ -422,7 +478,13 @@ void GxsForumsFillThread::run()
 
 	while (!threadStack.empty())
     {
-		std::pair<RsGxsMessageId, QTreeWidgetItem*> threadPair = threadStack.front();
+        if (wasStopped())
+        {
+            deleteLater();
+            return;
+        }
+
+        std::pair<RsGxsMessageId, QTreeWidgetItem*> threadPair = threadStack.front();
 		threadStack.pop_front();
 
         std::map<RsGxsMessageId, std::list<RsGxsMessageId> >::iterator it = kids_array.find(threadPair.first) ;
@@ -433,11 +495,14 @@ void GxsForumsFillThread::run()
         if(it == kids_array.end())
             continue ;
 
-		if (wasStopped())
-			return;
 
         for(std::list<RsGxsMessageId>::const_iterator it2(it->second.begin());it2!=it->second.end();++it2)
         {
+            if(wasStopped())
+            {
+                deleteLater();
+                return;
+            }
             // We iterate through the top level thread items, and look for which message has the current item as parent.
             // When found, the item is put in the thread list itself, as a potential new parent.
 
@@ -485,6 +550,8 @@ void GxsForumsFillThread::run()
 
 	std::cerr << "GxsForumsFillThread::run() stopped: " << (wasStopped() ? "yes" : "no") << std::endl;
 #endif
+    if(wasStopped())
+        deleteLater();
 }
 
 
