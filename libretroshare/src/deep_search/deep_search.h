@@ -264,7 +264,8 @@ private:
 	static std::string timetToXapianDate(const rstime_t& time)
 	{
 		char date[] = "YYYYMMDD\0";
-		std::strftime(date, 9, "%Y%m%d", std::gmtime(&time));
+		time_t tTime = static_cast<time_t>(time);
+		std::strftime(date, 9, "%Y%m%d", std::gmtime(&tTime));
 		return date;
 	}
 };

@@ -1373,7 +1373,7 @@ int RsDataService::retrieveGxsGrpMetaData(RsGxsGrpMetaTemporaryMap& grp)
     std::cerr << std::endl;
 #endif
 
-    RsStackMutex stack(mDbMutex);
+	RS_STACK_MUTEX(mDbMutex);
 
 #ifdef RS_DATA_SERVICE_DEBUG_TIME
     rstime::RsScopeTimer timer("");

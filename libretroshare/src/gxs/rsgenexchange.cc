@@ -1189,6 +1189,26 @@ bool RsGenExchange::getMsgRelatedList(const uint32_t &token, MsgRelatedIdResult 
 {
     return mDataAccess->getMsgRelatedList(token, msgIds);
 }
+bool RsGenExchange::getPublishedMsgMeta(const uint32_t& token,RsMsgMetaData& meta)
+{
+    auto it = mPublishedMsgs.find(token);
+
+    if(it == mPublishedMsgs.end())
+        return false ;
+
+    meta = it->second;
+    return true;
+}
+bool RsGenExchange::getPublishedGroupMeta(const uint32_t& token,RsGroupMetaData& meta)
+{
+    auto it = mPublishedGrps.find(token);
+
+    if(it == mPublishedGrps.end())
+        return false ;
+
+    meta = it->second;
+    return true;
+}
 
 bool RsGenExchange::getGroupMeta(const uint32_t &token, std::list<RsGroupMetaData> &groupInfo)
 {
@@ -1639,12 +1659,13 @@ void RsGenExchange::receiveNewMessages(std::vector<RsNxsMsg *>& messages)
 
 void RsGenExchange::receiveDistantSearchResults(TurtleRequestId id,const RsGxsGroupId &grpId)
 {
+	std::cerr << __PRETTY_FUNCTION__ << " received result for request "
+	          << std::hex << id << std::dec << std::endl;
+
 	RS_STACK_MUTEX(mGenMtx);
 
 	RsGxsDistantSearchResultChange* gc = new RsGxsDistantSearchResultChange(id,grpId);
 	mNotifications.push_back(gc);
-
-    std::cerr << "RsGenExchange::receiveDistantSearchResults(): received result for request " << std::hex << id << std::dec << std::endl;
 }
 
 void RsGenExchange::notifyReceivePublishKey(const RsGxsGroupId &grpId)
@@ -2164,7 +2185,7 @@ void RsGenExchange::publishMsgs()
 #endif
 
 		RsGxsMsgItem* msgItem = mit->second;
-		const uint32_t& token = mit->first;
+		uint32_t token = mit->first;
 
 		uint32_t size = mSerialiser->size(msgItem);
 		char* mData = new char[size];
@@ -2279,6 +2300,9 @@ void RsGenExchange::publishMsgs()
                 
 				computeHash(msg->msg, msg->metaData->mHash);
 				mDataAccess->addMsgData(msg);
+
+                mPublishedMsgs[token] = *msg->metaData;
+
 				delete msg ;
 
 				msgChangeMap[grpId].insert(msgId);
@@ -2669,6 +2693,7 @@ void RsGenExchange::publishGrps()
 #warning csoler: TODO: grp->meta should be renamed grp->public_meta !
 						    grp->meta.setBinData(metaData, mdSize);
 					    }
+						mPublishedGrps[ggps.mToken] = *grp->metaData ;	// save the connexion between the token and the created metadata, without private keys
 
 					    // Place back private keys for publisher and database storage
 					    grp->metaData->keys.private_keys = fullKeySet.private_keys;

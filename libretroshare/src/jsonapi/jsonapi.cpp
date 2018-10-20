@@ -118,6 +118,54 @@ JsonApiServer::JsonApiServer(uint16_t port, const std::string& bindAddress,
     mNewAccessRequestCallback(newAccessRequestCallback),
     configMutex("JsonApiServer config")
 {
+	registerHandler("/rsLoginHelper/createLocation",
+	                [this](const std::shared_ptr<rb::Session> session)
+	{
+		size_t reqSize = session->get_request()->get_header("Content-Length", 0);
+		session->fetch( reqSize, [this](
+		                const std::shared_ptr<rb::Session> session,
+		                const rb::Bytes& body )
+		{
+			INITIALIZE_API_CALL_JSON_CONTEXT;
+
+			RsLoginHelper::Location location;
+			std::string password;
+			std::string errorMessage;
+			bool makeHidden = false;
+			bool makeAutoTor = false;
+
+			// deserialize input parameters from JSON
+			{
+				RsGenericSerializer::SerializeContext& ctx(cReq);
+				RsGenericSerializer::SerializeJob j(RsGenericSerializer::FROM_JSON);
+				RS_SERIAL_PROCESS(location);
+				RS_SERIAL_PROCESS(password);
+				RS_SERIAL_PROCESS(makeHidden);
+				RS_SERIAL_PROCESS(makeAutoTor);
+			}
+
+			// call retroshare C++ API
+			bool retval = rsLoginHelper->createLocation(
+			            location, password, errorMessage, makeHidden,
+			            makeAutoTor );
+
+			if(retval)
+				authorizeToken(location.mLocationId.toStdString()+":"+password);
+
+			// serialize out parameters and return value to JSON
+			{
+				RsGenericSerializer::SerializeContext& ctx(cAns);
+				RsGenericSerializer::SerializeJob j(RsGenericSerializer::TO_JSON);
+				RS_SERIAL_PROCESS(location);
+				RS_SERIAL_PROCESS(errorMessage);
+				RS_SERIAL_PROCESS(retval);
+			}
+
+			// return them to the API caller
+			DEFAULT_API_CALL_JSON_RETURN(rb::OK);
+		} );
+	}, false);
+
 	registerHandler("/rsLoginHelper/attemptLogin",
 	                [this](const std::shared_ptr<rb::Session> session)
 	{
