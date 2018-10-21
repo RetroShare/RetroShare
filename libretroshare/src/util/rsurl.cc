@@ -18,6 +18,7 @@
 
 
 #include "rsurl.h"
+#include "serialiser/rstypeserializer.h"
 
 #include <cstdio>
 #include <algorithm>
@@ -252,6 +253,14 @@ RsUrl& RsUrl::setFragment(const std::string& fragment)
 	}
 
 	return decoded.str();
+}
+
+void RsUrl::serial_process( RsGenericSerializer::SerializeJob j,
+                            RsGenericSerializer::SerializeContext& ctx )
+{
+	std::string urlString = toString();
+	RS_SERIAL_PROCESS(urlString);
+	fromString(urlString);
 }
 
 /*static*/ const std::string RsUrl::schemeSeparator("://");

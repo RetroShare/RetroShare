@@ -151,7 +151,7 @@ public:
 	/**
 	 * @brief Get current account id. Beware that an account may be selected
 	 *	without actually logging in.
-	 * @jsonapi{development}
+	 * @jsonapi{development,unauthenticated}
 	 * @param[out] id storage for current account id
 	 * @return false if account hasn't been selected yet, true otherwise
 	 */
@@ -176,9 +176,26 @@ public:
 	static int     GetPGPLoginDetails(const RsPgpId& id, std::string &name, std::string &email);
 	static bool    GeneratePGPCertificate(const std::string&, const std::string& email, const std::string& passwd, RsPgpId &pgpId, const int keynumbits, std::string &errString);
 
-	// PGP Support Functions.
-	static bool    ExportIdentity(const std::string& fname,const RsPgpId& pgp_id) ;
-	static bool    ImportIdentity(const std::string& fname,RsPgpId& imported_pgp_id,std::string& import_error) ;
+	/**
+	 * @brief Export full encrypted PGP identity to file
+	 * @jsonapi{development}
+	 * @param[in] filePath path of certificate file
+	 * @param[in] pgpId PGP id to export
+	 * @return true on success, false otherwise
+	 */
+	static bool ExportIdentity( const std::string& filePath,
+	                            const RsPgpId& pgpId );
+
+	/**
+	 * @brief Import full encrypted PGP identity from file
+	 * @jsonapi{development,unauthenticated}
+	 * @param[in] filePath path of certificate file
+	 * @param[out] pgpId storage for the PGP fingerprint of the imported key
+	 * @param[out] errorMsg storage for eventual human readable error message
+	 * @return true on success, false otherwise
+	 */
+	static bool ImportIdentity(
+	        const std::string& filePath, RsPgpId& pgpId, std::string& errorMsg );
 
 	/**
 	 * @brief Import full encrypted PGP identity from string
@@ -188,7 +205,7 @@ public:
 	 * @param[out] errorMsg storage for eventual human readable error message
 	 * @return true on success, false otherwise
 	 */
-	static bool ImportIdentityFromString(
+	static bool importIdentityFromString(
 	        const std::string& data, RsPgpId& pgpId,
 	        std::string& errorMsg );
 
