@@ -151,7 +151,7 @@ public:
 	/**
 	 * @brief Get current account id. Beware that an account may be selected
 	 *	without actually logging in.
-	 * @jsonapi{development}
+	 * @jsonapi{development,unauthenticated}
 	 * @param[out] id storage for current account id
 	 * @return false if account hasn't been selected yet, true otherwise
 	 */
