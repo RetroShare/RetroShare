@@ -449,7 +449,7 @@ void RsControlModule::handleImportPgp(Request &req, Response &resp)
 
     RsPgpId pgp_id;
     std::string error_string;
-    if(RsAccounts::ImportIdentityFromString(key_string, pgp_id, error_string))
+    if(RsAccounts::importIdentityFromString(key_string, pgp_id, error_string))
     {
         resp.mDataStream << makeKeyValueReference("pgp_id", pgp_id);
         resp.setOk();

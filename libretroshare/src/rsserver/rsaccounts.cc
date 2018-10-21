@@ -1347,9 +1347,12 @@ bool    RsAccounts::ImportIdentity(const std::string& fname,RsPgpId& imported_pg
 	return rsAccountsDetails->importIdentity(fname,imported_pgp_id,import_error);
 }
 
-bool    RsAccounts::ImportIdentityFromString(const std::string& data,RsPgpId& imported_pgp_id,std::string& import_error)
+bool RsAccounts::importIdentityFromString(
+        const std::string& data, RsPgpId& imported_pgp_id,
+        std::string& import_error )
 {
-    return rsAccountsDetails->importIdentityFromString(data,imported_pgp_id,import_error);
+	return rsAccountsDetails->
+	        importIdentityFromString(data, imported_pgp_id, import_error);
 }
 
 /*static*/ bool RsAccounts::exportIdentityToString(
