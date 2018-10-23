@@ -130,9 +130,9 @@
 #define IMAGE_ABOUT             ":/icons/png/info.png"
 #define IMAGE_ADDFRIEND         ":/icons/png/invite.png"
 #define IMAGE_RETROSHARE        ":/app/images/icon.png"             //D replace :/icons/logo_128.png
-#define IMAGE_NOONLINE          ":/chat/img/p2p_0.png"              //d:replace icon
-#define IMAGE_ONEONLINE         ":/chat/img/p2p_1.png"              //d:replace icon
-#define IMAGE_TWOONLINE         ":/chat/img/p2p_2.png"              //d:replace icon
+#define IMAGE_NOONLINE          ":/chat/img/network-diagram_0.png"              //d:replace icon
+#define IMAGE_ONEONLINE         ":/chat/img/network-diagram_1.png"              //d:replace icon
+#define IMAGE_TWOONLINE         ":/chat/img/network-diagram_2.png"              //d:replace icon
 #define IMAGE_OVERLAY           ":/icons/star_overlay_128.png"
 
 #define IMAGE_BWGRAPH           ":/images/ksysguard.png"

@@ -111,5 +111,10 @@
         <file>home/img/Setting/tint-drop_x.svg</file>
         <file>home/img/Setting/youtube-play-button_x.svg</file>
         <file>app/images/statusicons/admin.png</file>
+        <file>chat/img/network-diagram.png</file>
+        <file>chat/img/network-diagram_0.png</file>
+        <file>chat/img/network-diagram_1.png</file>
+        <file>chat/img/network-diagram_2.png</file>
+        <file>app/images/statusicons/dht-atom-molecule_128.png</file>
     </qresource>
 </RCC>
