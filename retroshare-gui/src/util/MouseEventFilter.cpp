@@ -53,7 +53,7 @@ bool MousePressEventFilter::eventFilter(QObject * watched, QEvent * event) {
 				filter(event);
 				return false;
 			}
-		} catch (std::bad_cast) {
+		} catch (const std::bad_cast&) {
 			//LOG_FATAL("exception when casting a QEvent to a QMouseEvent");
 		}
 	}
@@ -74,7 +74,7 @@ bool MouseReleaseEventFilter::eventFilter(QObject * watched, QEvent * event) {
 				filter(event);
 				return false;
 			}
-		} catch (std::bad_cast) {
+		} catch (const std::bad_cast&) {
 			//LOG_FATAL("exception when casting a QEvent to a QMouseEvent");
 		}
 	}

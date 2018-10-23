@@ -59,7 +59,7 @@ MessagePage::MessagePage(QWidget * parent, Qt::WindowFlags flags)
 
 MessagePage::~MessagePage()
 {
-    delete(m_pTags);
+     delete(m_pTags);
 }
 
 void MessagePage::distantMsgsComboBoxChanged(int i)
@@ -83,7 +83,7 @@ void MessagePage::distantMsgsComboBoxChanged(int i)
 
 void MessagePage::updateMsgToReadOnActivate() { Settings->setMsgSetToReadOnActivate(ui.setMsgToReadOnActivate->isChecked()); }
 void MessagePage::updateLoadEmbededImages()   { Settings->setMsgLoadEmbeddedImages(ui.loadEmbeddedImages->isChecked()); }
-void MessagePage::updateMsgOpen()             { Settings->setMsgOpen((RshareSettings::enumMsgOpen) ui.openComboBox->itemData(ui.openComboBox->currentIndex()).toInt());}
+void MessagePage::updateMsgOpen()             { Settings->setMsgOpen( static_cast<RshareSettings::enumMsgOpen>(ui.openComboBox->itemData(ui.openComboBox->currentIndex()).toInt()) ); }
 void MessagePage::updateDistantMsgs()         { Settings->setValue("DistantMessages", ui.comboBox->currentIndex()); }
 
 void MessagePage::updateMsgTags()
@@ -169,11 +169,11 @@ void MessagePage::addTag()
 void MessagePage::editTag()
 {
     QListWidgetItem *pItemWidget = ui.tags_listWidget->currentItem();
-    if (pItemWidget == NULL) {
+    if (!pItemWidget) {
         return;
     }
 
-    uint32_t nId = pItemWidget->data(Qt::UserRole).toInt();
+    uint32_t nId = pItemWidget->data(Qt::UserRole).toUInt();
     if (nId == 0) {
         return;
     }
@@ -200,11 +200,11 @@ void MessagePage::editTag()
 void MessagePage::deleteTag()
 {
     QListWidgetItem *pItemWidget = ui.tags_listWidget->currentItem();
-    if (pItemWidget == NULL) {
+    if (!pItemWidget) {
         return;
     }
 
-    uint32_t nId = pItemWidget->data(Qt::UserRole).toInt();
+    uint32_t nId = pItemWidget->data(Qt::UserRole).toUInt();
     if (nId == 0) {
         return;
     }
@@ -258,7 +258,7 @@ void MessagePage::currentRowChangedTag(int row)
     if (pItemWidget) {
         bEditEnable = true;
 
-        uint32_t nId = pItemWidget->data(Qt::UserRole).toInt();
+        uint32_t nId = pItemWidget->data(Qt::UserRole).toUInt();
 
         if (nId >= RS_MSGTAGTYPE_USER) {
             bDeleteEnable = true;

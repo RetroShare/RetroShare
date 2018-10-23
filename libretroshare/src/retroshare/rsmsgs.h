@@ -167,8 +167,10 @@ class MessageInfo_v2
 
 struct MessageInfo : RsSerializable
 {
-    MessageInfo(): msgflags(0), size(0), count(0), ts(0) {}
-    std::string msgId;
+	MessageInfo(): msgflags(0), size(0), count(0), ts(0) {}
+	virtual ~MessageInfo() = default;
+
+	std::string msgId;
 
     RsPeerId rspeerid_srcId;
     RsGxsId  rsgxsid_srcId;
@@ -230,10 +232,10 @@ struct MessageInfo : RsSerializable
 	}
 };
 
-
 struct MsgInfoSummary : RsSerializable
 {
 	MsgInfoSummary() : msgflags(0), count(0), ts(0) {}
+	virtual ~MsgInfoSummary() = default;
 
 	std::string msgId;
 	RsPeerId srcId;
@@ -260,6 +262,8 @@ struct MsgInfoSummary : RsSerializable
 
 struct MsgTagInfo : RsSerializable
 {
+	virtual ~MsgTagInfo() = default;
+
 	std::string msgId;
 	std::list<uint32_t> tagIds;
 
@@ -272,6 +276,7 @@ struct MsgTagInfo : RsSerializable
 
 struct MsgTagType : RsSerializable
 {
+	virtual ~MsgTagType() = default;
 	/* map containing tagId -> pair (text, rgb color) */
 	std::map<uint32_t, std::pair<std::string, uint32_t> > types;
 
@@ -326,7 +331,9 @@ struct DistantChatPeerInfo
 class ChatId : RsSerializable
 {
 public:
-    ChatId();
+	ChatId();
+	virtual ~ChatId() = default;
+
     explicit ChatId(RsPeerId     id);
     explicit ChatId(ChatLobbyId  id);
     explicit ChatId(DistantChatPeerId id);
@@ -398,6 +405,8 @@ public:
 class ChatLobbyInvite : RsSerializable
 {
 public:
+	virtual ~ChatLobbyInvite() = default;
+
 	ChatLobbyId lobby_id ;
 	RsPeerId peer_id ;
 	std::string lobby_name ;
@@ -418,7 +427,8 @@ public:
 class VisibleChatLobbyRecord : RsSerializable
 {
 public:
-    VisibleChatLobbyRecord(): lobby_id(0), total_number_of_peers(0), last_report_time(0){}
+	VisibleChatLobbyRecord(): lobby_id(0), total_number_of_peers(0), last_report_time(0){}
+	virtual ~VisibleChatLobbyRecord() = default;
 
 	ChatLobbyId lobby_id ;						// unique id of the lobby
 	std::string lobby_name ;					// name to use for this lobby
@@ -443,10 +453,11 @@ public:
 	}
 };
 
-
 class ChatLobbyInfo : RsSerializable
 {
 public:
+	virtual ~ChatLobbyInfo() = default;
+
 	ChatLobbyId lobby_id ;						// unique id of the lobby
 	std::string lobby_name ;					// name to use for this lobby
 	std::string lobby_topic ;					// topic to use for this lobby
@@ -486,7 +497,7 @@ class RsMsgs
 public:
 
 	RsMsgs() {}
-	virtual ~RsMsgs() {}
+	virtual ~RsMsgs() = default;
 
 	/****************************************/
 	/*             Message Items            */
@@ -895,7 +906,6 @@ virtual bool getDistantChatStatus(const DistantChatPeerId& pid,DistantChatPeerIn
 virtual bool closeDistantChatConnexion(const DistantChatPeerId& pid)=0;
 
 };
-
 
 #endif
 
