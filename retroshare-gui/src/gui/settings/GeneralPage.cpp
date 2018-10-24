@@ -28,7 +28,9 @@
 #include "GeneralPage.h"
 #include <util/stringutil.h>
 #include <util/misc.h>
+#ifdef WINDOWS_SYS
 #include <QSystemTrayIcon>
+#endif
 #include "rsharesettings.h"
 
 /** Constructor */

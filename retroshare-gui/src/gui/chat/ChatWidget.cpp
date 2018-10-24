@@ -1734,7 +1734,8 @@ void ChatWidget::updateStatus(const QString &peer_id, int status)
 			    peerName = QString::fromStdString(chatId.toDistantChatId().toStdString()) ;
 	    }
 	    else
-		    peerName = QString::fromUtf8(rsPeers->getPeerName(chatId.toPeerId()).c_str());
+            //peerName = QString::fromUtf8(rsPeers->getPeerName(chatId.toPeerId()).c_str());
+            peerName = QString::fromStdString(rsPeers->getGPGName(rsPeers->getGPGId(chatId.toPeerId())));
 
 	    // is scrollbar at the end?
 	    QScrollBar *scrollbar = ui->textBrowser->verticalScrollBar();

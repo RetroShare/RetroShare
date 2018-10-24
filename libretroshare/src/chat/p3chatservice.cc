@@ -122,6 +122,7 @@ void p3ChatService::sendPublicChat(const std::string &msg)
 		    initChatMessage(ci, message);
 		    message.incoming = false;
 		    message.online = true;
+            message.unread = false;
 		    RsServer::notify()->notifyChatMessage(message);
 		    mHistoryMgr->addMessage(message);
 	    }
@@ -340,6 +341,7 @@ bool p3ChatService::sendChat(ChatId destination, std::string msg)
     initChatMessage(ci, message);
     message.incoming = false;
     message.online = true;
+    message.unread = false;
 
 	if(!isOnline(vpid))
 	{
@@ -860,6 +862,8 @@ bool p3ChatService::handleRecvChatMsgItem(RsChatMsgItem *& ci)
     initChatMessage(ci, cm);
     cm.incoming = true;
     cm.online = true;
+    cm.unread = true; //need to update this field when user already read the msg
+    std::cerr << "Msg go here first? " << std::endl;
     RsServer::notify()->notifyChatMessage(cm);
     
     // cyril: history is temporarily diabled for distant chat, since we need to store the full tunnel ID, but then

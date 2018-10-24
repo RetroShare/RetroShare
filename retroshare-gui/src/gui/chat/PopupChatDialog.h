@@ -42,7 +42,8 @@ private slots:
 	void clearOfflineMessages();
 	void chatStatusChanged(const ChatId &chat_id, const QString &statusString);
 signals:
-    void messageP2PReceived(bool incoming, ChatId chatId, QDateTime time, QString senderName, QString msg) ;
+    //void messageP2PReceived(bool incoming, ChatId chatId, QDateTime time, QString senderName, QString msg) ;
+    void messageP2PReceived(ChatMessage msg) ;
 protected:
 	/** Default constructor */
 	PopupChatDialog(QWidget *parent = 0, Qt::WindowFlags flags = 0);

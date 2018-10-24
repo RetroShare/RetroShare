@@ -326,7 +326,6 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
 
     /* Creates a tray icon with a context menu and adds it to the system's * notification area. */
     createTrayIcon();
-
     createNotifyIcons();
 
     /* calculate friend count */
@@ -591,6 +590,7 @@ void MainWindow::displayDiskSpaceWarning(int loc,int size_limit_mb)
  * notification area. */
 void MainWindow::createTrayIcon()
 {
+ #ifdef WINDOWS_SYS
     /** Tray icon Menu **/
     QMenu *trayMenu = new QMenu(this);
     if (sysTrayStatus) sysTrayStatus->trayMenu = trayMenu;
@@ -627,15 +627,19 @@ void MainWindow::createTrayIcon()
     trayMenu->addSeparator();
     trayMenu->addAction(QIcon(IMAGE_CLOSE), tr("&Quit"), this, SLOT(doQuit()));
     /** End of Icon Menu **/
+#endif
 
     // Create the tray icon
     trayIcon = new QSystemTrayIcon(this);
+#ifdef WINDOWS_SYS
     trayIcon->setToolTip(tr("Unseen.is")); //D
     trayIcon->setContextMenu(trayMenu);
     trayIcon->setIcon(QIcon(IMAGE_NOONLINE));
 
     connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(toggleVisibility(QSystemTrayIcon::ActivationReason)));
+#endif
     trayIcon->show();
+
 }
 
 void MainWindow::showBandwidthGraph()
@@ -824,7 +828,7 @@ void MainWindow::updateFriends()
 
     if (peerstatus)
         peerstatus->getPeerStatus(friendCount, onlineCount);
-
+#ifdef WINDOWS_SYS
     QString trayIconResource;
 
     if (onlineCount == 0) {
@@ -852,6 +856,7 @@ void MainWindow::updateFriends()
 
     if (trayIcon) trayIcon->setIcon(icon);
     if (sysTrayStatus) sysTrayStatus->setIcon(icon);
+    #endif
 }
 
 void MainWindow::postModDirectories(bool /*update_local*/)

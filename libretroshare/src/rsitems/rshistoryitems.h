@@ -51,6 +51,7 @@ public:
 	/* not serialised */
 	uint32_t     msgId;
 	bool         saveToDisc;
+    bool         unread;
 };
 
 class RsHistorySerialiser: public RsConfigSerializer

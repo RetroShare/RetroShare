@@ -40,7 +40,7 @@ public:
 
 	void initialize(QToolBar *mainToolBar, QAction *mainAction, QListWidgetItem *listItem);
 	void createIcons(QMenu *notifyMenu);
-	QSystemTrayIcon* getTrayIcon(){ return mTrayIcon;}
+    QSystemTrayIcon* getTrayIcon(){ return mTrayIcon;}
 	QAction* getNotifyIcon(){ return mNotifyIcon;}
 
 	virtual bool hasSetting(QString */*name*/, QString */*group*/) { return false; }
@@ -59,7 +59,6 @@ private slots:
 	void trayIconClicked(QSystemTrayIcon::ActivationReason e = QSystemTrayIcon::Trigger);
 	void trayIconHovered();
 	void blink(bool on);
-
 protected:
 	virtual void startUpdate();
 	void update();

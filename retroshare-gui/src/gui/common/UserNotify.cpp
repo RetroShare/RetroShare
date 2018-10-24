@@ -112,6 +112,7 @@ void UserNotify::createIcons(QMenu *notifyMenu)
 	/* Create systray icons or actions */
 	if (notifyEnabled()) {
 		if (notifyCombined()) {
+
 			DELETE_OBJECT(mTrayIcon);
 
 			if (mNotifyIcon == NULL) {
@@ -119,6 +120,7 @@ void UserNotify::createIcons(QMenu *notifyMenu)
 				mNotifyIcon->setVisible(false);
 				connect(mNotifyIcon, SIGNAL(hovered()), this, SLOT(trayIconHovered()));
 			}
+
 		} else {
 			DELETE_OBJECT(mNotifyIcon);
 
@@ -128,15 +130,17 @@ void UserNotify::createIcons(QMenu *notifyMenu)
 				mTrayIcon->setIcon(getIcon());
 				connect(mTrayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(trayIconClicked(QSystemTrayIcon::ActivationReason)));
 			}
+
 		}
+
 	} else {
 		DELETE_OBJECT(mTrayIcon);
+
 		DELETE_OBJECT(mNotifyIcon);
 	}
 
 #undef DELETE_OBJECT
 }
-
 void UserNotify::updateIcon()
 {
 	startUpdate();
@@ -175,7 +179,7 @@ void UserNotify::update()
 		font.setBold(count > 0);
 		mMainToolButton->setFont(font);
 	}
-
+#ifdef WINDOWS_SYS
 	if (mTrayIcon) {
 		if (count) {
             mTrayIcon->setToolTip("P2PUnseen\n" + getTrayMessage(count > 1).arg(count));
@@ -184,6 +188,7 @@ void UserNotify::update()
 			mTrayIcon->hide();
 		}
 	}
+#endif
 
 	if (mNotifyIcon) {
 		mNotifyIcon->setData(count);
@@ -227,6 +232,7 @@ void UserNotify::trayIconHovered()
 {
 	iconHovered();
 }
+
 
 void UserNotify::blink(bool on)
 {

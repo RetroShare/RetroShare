@@ -65,7 +65,7 @@ public:
 	void openOne2OneChat(std::string rsId, std::string nickname);
 	void addOne2OneChatPage(PopupChatDialog *d);
 	void setCurrentOne2OneChatPage(PopupChatDialog *d);
-    void updateContactItem(QTreeWidget *treeWidget, QTreeWidgetItem *item, const std::string &nickname, const ChatId& chatId, const std::string &rsId, uint current_time);
+    void updateContactItem(QTreeWidget *treeWidget, QTreeWidgetItem *item, const std::string &nickname, const ChatId& chatId, const std::string &rsId, uint current_time, bool unread);
 	void fromGpgIdToChatId(const RsPgpId &gpgId,  ChatId &chatId);
 
     bool showContactAnchor(RsPeerId id, QString anchor);
@@ -95,7 +95,8 @@ protected slots:
 	void autoSubscribeItem();
 	void copyItemLink();
     void updateRecentTime(const ChatId&, uint);
-    void updateP2PMessageChanged(bool incoming, const ChatId& chatId, QDateTime time, QString senderName, QString msg);
+    //void updateP2PMessageChanged(bool incoming, const ChatId& chatId, QDateTime time, QString senderName, QString msg);
+    void updateP2PMessageChanged(ChatMessage);
 
 private slots:
 	void filterColumnChanged(int);
@@ -150,12 +151,9 @@ private:
 	Ui::ChatLobbyWidget ui;
 
 	void showContactChat(QTreeWidgetItem *item);
-    void initLocalGUIFile();
-    void getRecentListFromLocal();
-    void getUnreadFromLocal();
+    void getHistoryForRecentList();
+    void resetAvatarForContactItem(const ChatId &chatId);
 
-    void updateRecentListToLocal(const std::string& , const uint);
-    std::map<std::string, uint> _recentTime;
-    void saveRecentTimeToFile(const  std::string &);
+    std::set<ChatId> recentUnreadListOfChatId;
 };
 

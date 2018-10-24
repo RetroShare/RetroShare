@@ -80,11 +80,13 @@ signals:
     void countChangedFromP2P(ChatId id, unsigned int count);
 
 private slots:
+
+#ifdef WINDOWS_SYS
 	void subMenuClicked(QAction* action);
     void subMenuClickedP2P(QAction* action);
 	void subMenuHovered(QAction* action);
-    //void subMenuHoveredP2P(QAction* action);
-
+  //void subMenuHoveredP2P(QAction* action);
+#endif
 private:
 	virtual QIcon getIcon();
 	virtual QIcon getMainIcon(bool hasNew);

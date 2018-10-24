@@ -26,6 +26,12 @@
 
 #include "PeerDefs.h"
 
+const QString PeerDefs::nameOnly(const RsPeerDetails &details)
+{
+    QString name = QString::fromUtf8(details.name.c_str());
+    return name;
+}
+
 const QString PeerDefs::nameWithLocation(const RsPeerDetails &details)
 {
     QString name = QString::fromUtf8(details.name.c_str());

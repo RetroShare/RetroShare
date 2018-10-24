@@ -252,7 +252,7 @@ void ChatLobbyUserNotify::iconClicked()
     }
 
 
-
+#ifdef WINDOWS_SYS
 	if (notifyCombined()) {
 		QSystemTrayIcon* trayIcon=getTrayIcon();
 		if (trayIcon!=NULL) trayIcon->setContextMenu(trayMenu);
@@ -265,6 +265,7 @@ void ChatLobbyUserNotify::iconClicked()
 
     if (bFoundForLobby)
     {
+
         QString strName=tr("Remove all lobby unread chat");
         QAction *pAction = new QAction( QIcon(), strName, trayMenu);
         ActionTag actionTag={0x0, "", true};
@@ -289,6 +290,7 @@ void ChatLobbyUserNotify::iconClicked()
 
         trayMenu->exec(QCursor::pos());
     }
+#endif
     if (doUpdate) updateIcon();
 
 }
@@ -303,9 +305,10 @@ void ChatLobbyUserNotify::makeSubMenu(QMenu* parentMenu, QIcon icoLobby, QString
 
 	if(!parentMenu) parentMenu = new QMenu(MainWindow::getInstance());
 	QMenu *lobbyMenu = parentMenu->addMenu(icoLobby, strLobbyName);
-	connect(lobbyMenu, SIGNAL(triggered(QAction*)), this, SLOT(subMenuClicked(QAction*)));
-	connect(lobbyMenu, SIGNAL(hovered(QAction*)), this, SLOT(subMenuHovered(QAction*)));
-
+#ifdef WINDOWS_SYS
+    connect(lobbyMenu, SIGNAL(triggered(QAction*)), this, SLOT(subMenuClicked(QAction*)));
+    connect(lobbyMenu, SIGNAL(hovered(QAction*)), this, SLOT(subMenuHovered(QAction*)));
+#endif
 	lobbyMenu->setToolTip(getNotifyMessage(msgCount>1).arg(msgCount));
 
 	for (msg_map::iterator itMsg=msgMap.begin(); itMsg!=msgMap.end(); ++itMsg) {
@@ -322,13 +325,14 @@ void ChatLobbyUserNotify::makeSubMenu(QMenu* parentMenu, QIcon icoLobby, QString
 		lobbyMenu->addAction(pAction);
 	}
 
-	QString strName=tr("Remove All");
-	QAction *pAction = new QAction( icoLobby, strName, lobbyMenu);
-	ActionTag actionTag={itCL->first, "", true};
-	pAction->setData(qVariantFromValue(actionTag));
-	lobbyMenu->addAction(pAction);
+//	QString strName=tr("Remove All");
+//	QAction *pAction = new QAction( icoLobby, strName, lobbyMenu);
+//	ActionTag actionTag={itCL->first, "", true};
+//	pAction->setData(qVariantFromValue(actionTag));
+//	lobbyMenu->addAction(pAction);
 
 }
+
 
 void ChatLobbyUserNotify::makeSubMenuForP2P(QMenu* parentMenu, QIcon iconContact, QString strContactName, ChatId id)
 {
@@ -340,9 +344,10 @@ void ChatLobbyUserNotify::makeSubMenuForP2P(QMenu* parentMenu, QIcon iconContact
 
     if(!parentMenu) parentMenu = new QMenu(MainWindow::getInstance());
     QMenu *contactMenu = parentMenu->addMenu(iconContact, strContactName);
+#ifdef WINDOWS_SYS
     connect(contactMenu, SIGNAL(triggered(QAction*)), this, SLOT(subMenuClickedP2P(QAction*)));
     //connect(contactMenu, SIGNAL(hovered(QAction*)), this, SLOT(subMenuHovered(QAction*)));
-
+#endif
     contactMenu->setToolTip(getNotifyMessage(msgCount>1).arg(msgCount));
 
     for (msg_map::iterator itMsg=msgMap.begin(); itMsg!=msgMap.end(); ++itMsg) {
@@ -359,13 +364,14 @@ void ChatLobbyUserNotify::makeSubMenuForP2P(QMenu* parentMenu, QIcon iconContact
         contactMenu->addAction(pAction);
     }
 
-    QString strName=tr("Remove All");
-    QAction *pAction = new QAction( iconContact, strName, contactMenu);
-    ActionTag2 actionTag={(itCL->first).toPeerId(), "", true};
-    pAction->setData(qVariantFromValue(actionTag));
-    contactMenu->addAction(pAction);
+//    QString strName=tr("Remove All");
+//    QAction *pAction = new QAction( iconContact, strName, contactMenu);
+//    ActionTag2 actionTag={(itCL->first).toPeerId(), "", true};
+//    pAction->setData(qVariantFromValue(actionTag));
+//    contactMenu->addAction(pAction);
 
 }
+
 
 void ChatLobbyUserNotify::iconHovered()
 {
@@ -487,7 +493,7 @@ void ChatLobbyUserNotify::chatP2PCleared(ChatId chatId, QString anchor, bool onl
     if (changed) emit countChangedFromP2P(chatId, count);
     updateIcon();
 }
-
+#ifdef WINDOWS_SYS
 void ChatLobbyUserNotify::subMenuClicked(QAction* action)
 {
 	ActionTag actionTag=action->data().value<ActionTag>();
@@ -520,6 +526,8 @@ void ChatLobbyUserNotify::subMenuClicked(QAction* action)
 	updateIcon();
 }
 
+#endif
+#ifdef WINDOWS_SYS
 void ChatLobbyUserNotify::subMenuClickedP2P(QAction* action)
 {
     ActionTag2 actionTag=action->data().value<ActionTag2>();
@@ -531,7 +539,8 @@ void ChatLobbyUserNotify::subMenuClickedP2P(QAction* action)
     }
 
     p2pchat_map::iterator itCL=_listP2PMsg.find(ChatId(actionTag.cli));
-    if (itCL!=_listP2PMsg.end()) {
+    if (itCL!=_listP2PMsg.end())
+    {
         unsigned int count=0;
         if(!actionTag.removeALL){
             msg_map::iterator itMsg=itCL->second.find(actionTag.timeStamp);
@@ -540,8 +549,11 @@ void ChatLobbyUserNotify::subMenuClickedP2P(QAction* action)
         }
         if (count==0) _listP2PMsg.erase(itCL);
         emit countChangedFromP2P(ChatId(actionTag.cli), count);
-    } else if(actionTag.cli == RsPeerId()){
-        while (!_listP2PMsg.empty()) {
+    }
+    else if(actionTag.cli == RsPeerId())
+    {
+        while (!_listP2PMsg.empty())
+        {
             itCL = _listP2PMsg.begin();
             emit countChangedFromP2P(itCL->first, 0);
             _listP2PMsg.erase(itCL);
@@ -552,9 +564,12 @@ void ChatLobbyUserNotify::subMenuClickedP2P(QAction* action)
 
     updateIcon();
 }
+#endif
 
+#ifdef WINDOWS_SYS
 void ChatLobbyUserNotify::subMenuHovered(QAction* action)
 {
 	QMenu *lobbyMenu=dynamic_cast<QMenu*>(action->parent());
 	if (lobbyMenu) lobbyMenu->setToolTip(action->toolTip());
 }
+#endif
