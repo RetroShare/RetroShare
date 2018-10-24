@@ -142,11 +142,11 @@ bool RsDiscSpace::checkForDiscSpace(RsDiscSpace::DiscLocation loc)
     if( (_partials_path == "" && loc == RS_PARTIALS_DIRECTORY) || (_download_path == "" && loc == RS_DOWNLOAD_DIRECTORY))
 		throw std::runtime_error("Download path and partial path not properly set in RsDiscSpace. Please call RsDiscSpace::setPartialsPath() and RsDiscSpace::setDownloadPath()") ;
 
-	rstime_t now = time(NULL) ;
+	rstime_t now = time(nullptr) ;
 
 	if(_last_check[loc]+DELAY_BETWEEN_CHECKS < now)
 	{
-		uint64_t free_blocks,block_size ;
+		uint64_t free_blocks = 0, block_size = 0 ;
 		int rs = false;
 
 #ifdef DEBUG_RSDISCSPACE
@@ -188,7 +188,7 @@ bool RsDiscSpace::checkForDiscSpace(RsDiscSpace::DiscLocation loc)
 
 		// Now compute the size in megabytes
 		//
-		_current_size[loc] = uint32_t(block_size * free_blocks / (uint64_t)(1024*1024)) ; // on purpose integer division 
+		_current_size[loc] = static_cast<uint32_t>(block_size * free_blocks / static_cast<uint64_t>(1024*1024)) ; // on purpose integer division
 
 #ifdef DEBUG_RSDISCSPACE
 		std::cerr << "  blocks available = " << free_blocks << std::endl ;
