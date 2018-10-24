@@ -126,7 +126,7 @@
 #include <unistd.h>
 
 #define IMAGE_QUIT              ":/home/img/face_icon/power-button-off.png"
-#define IMAGE_PREFERENCES       ":/home/img/face_icon/cog-wheel-silhouette_128.png"
+#define IMAGE_PREFERENCES       ":/home/img/face_icon/cog-wheel-silhouette_xu_128.png"
 #define IMAGE_ABOUT             ":/icons/png/info.png"
 #define IMAGE_ADDFRIEND         ":/icons/png/invite.png"
 #define IMAGE_RETROSHARE        ":/app/images/icon.png"             //D replace :/icons/logo_128.png
