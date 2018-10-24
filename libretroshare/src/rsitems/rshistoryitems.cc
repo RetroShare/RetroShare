@@ -45,6 +45,7 @@ void RsHistoryMsgItem::serial_process(RsGenericSerializer::SerializeJob j,RsGene
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,sendTime,"sendTime") ;
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,recvTime,"recvTime") ;
     RsTypeSerializer::serial_process          (j,ctx,TLV_TYPE_STR_MSG,message,"message") ;
+    RsTypeSerializer::serial_process<bool>    (j,ctx,unread,"unread") ;
 }
 
 RsItem *RsHistorySerialiser::create_item(uint8_t item_type,uint8_t item_subtype) const
@@ -66,6 +67,7 @@ RsHistoryMsgItem::RsHistoryMsgItem() : RsItem(RS_PKT_VERSION1, RS_PKT_CLASS_CONF
 	recvTime = 0;
 	msgId = 0;
 	saveToDisc = true;
+    unread = true;
 }
 
 

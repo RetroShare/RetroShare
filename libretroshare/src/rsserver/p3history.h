@@ -47,6 +47,7 @@ public:
 	virtual void setSaveCount(uint32_t chat_type, uint32_t count);
 	virtual void setMaxStorageDuration(uint32_t seconds) ;
 	virtual uint32_t getMaxStorageDuration() ;
+    virtual void updateMessageAsRead(HistoryMsg);
 
 private:
 	p3HistoryMgr* mHistoryMgr;

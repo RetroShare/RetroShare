@@ -1081,6 +1081,7 @@ bool DistributedChatService::sendLobbyChat(const ChatLobbyId& lobby_id, const st
     message.sendTime = item.sendTime;
     message.incoming = false;
     message.online = true;
+    message.unread = false;
     RsServer::notify()->notifyChatMessage(message);
     mHistMgr->addMessage(message);
 

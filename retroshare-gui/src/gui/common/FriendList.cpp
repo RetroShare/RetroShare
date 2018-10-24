@@ -363,6 +363,8 @@ void FriendList::peerTreeWidgetCustomPopupMenu()
              contextMenu->addAction(QIcon(IMAGE_FRIENDINFO), tr("Profile details"), this, SLOT(configurefriend()));
              contextMenu->addAction(QIcon(IMAGE_DENYFRIEND), tr("Deny connections"), this, SLOT(removefriend()));
 
+             contextMenu->addAction(QIcon(IMAGE_FRIENDINFO), tr("Node details"), this, SLOT(configurefriendbySSLid()));
+
              if(mShowGroups)
              {
                  QMenu* addToGroupMenu = NULL;
@@ -1510,6 +1512,27 @@ void FriendList::configurefriend()
         ConfCertDialog::showIt(RsPeerId(getRsId(getCurrentPeer())), ConfCertDialog::PageDetails);
     else if(!RsPgpId(getRsId(getCurrentPeer())).isNull())
         PGPKeyDialog::showIt(RsPgpId(getRsId(getCurrentPeer())), PGPKeyDialog::PageDetails);
+    else
+        std::cerr << "FriendList::configurefriend: id is not an SSL nor a PGP id." << std::endl;
+}
+
+void FriendList::configurefriendbySSLid()
+{
+    std::string rsId = getRsId(getCurrentPeer());
+    //convert to ssl id to get node detail
+    RsPgpId pgpId = RsPgpId(rsId);
+    std::list<RsPeerId> sslIds;
+    RsPeerId peerId;
+    rsPeers->getAssociatedSSLIds(pgpId, sslIds);
+    if (sslIds.size() == 1) {
+                    // chat with the one ssl id (online or offline)
+        peerId = sslIds.front();
+        std::cerr << " SSL id = peerId = " << peerId << std::endl;
+    }
+
+
+    if(!RsPeerId(peerId).isNull())
+        ConfCertDialog::showIt(RsPeerId(peerId), ConfCertDialog::PageDetails);
     else
         std::cerr << "FriendList::configurefriend: id is not an SSL nor a PGP id." << std::endl;
 }

@@ -117,7 +117,7 @@ void ChatDialog::init(const ChatId &id, const QString &title)
                 RsPeerDetails sslDetails;
                 if (rsPeers->getPeerDetails(id.toPeerId(), sslDetails)) {
                     PopupChatDialog* pcd = new PopupChatDialog();
-                    pcd->init(id, PeerDefs::nameWithLocation(sslDetails));
+                    pcd->init(id, PeerDefs::nameOnly(sslDetails));
                     cd = pcd;
                 }
             }

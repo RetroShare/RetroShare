@@ -19,6 +19,10 @@
 #include "gui/common/AvatarDefs.h"
 
 #include <QPainter>
+#include "util/rsdir.h"
+#include "retroshare/rsinit.h"
+#include <stdio.h>
+#include <retroshare/rshistory.h>
 
 
 #include "retroshare/rsmsgs.h"
@@ -66,11 +70,16 @@
 #define IMAGE_UNSUBSCRIBE     ":/images/cancel.png"
 #define IMAGE_PEER_ENTERING   ":images/user/add_user24.png"
 #define IMAGE_PEER_LEAVING    ":images/user/remove_user24.png"
-#define IMAGE_TYPING		      ":images/typing.png" 
+#define IMAGE_TYPING		  ":images/typing.png"
 #define IMAGE_MESSAGE	      ":images/chat.png" 
 #define IMAGE_AUTOSUBSCRIBE   ":images/accepted16.png"
 #define IMAGE_COPYRSLINK      ":/images/copyrslink.png"
 #define IMAGE_UNSEEN          ":/app/images/unseen32.png"
+
+
+#define GUI_DIR_NAME                  "gui"
+#define RECENT_CHAT_FILENAME          "recent_chat.txt"
+#define UNREAD_CHAT_FILENAME          "unread_chat.txt"
 
 ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WindowFlags flags)
   : RsAutoUpdatePage(5000, parent, flags)
@@ -89,7 +98,7 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WindowFlags flags)
     QObject::connect( NotifyQt::getInstance(), SIGNAL(alreadySendChat(const ChatId&, uint)), this, SLOT(updateRecentTime(const ChatId&, uint)));
     QObject::connect( NotifyQt::getInstance(), SIGNAL(newChatMessageReceive(const ChatId&, uint)), this, SLOT(updateRecentTime(const ChatId&, uint)));
 
-	QObject::connect( ui.lobbyTreeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(lobbyTreeWidgetCustomPopupMenu(QPoint)));
+    //QObject::connect( ui.lobbyTreeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(lobbyTreeWidgetCustomPopupMenu(QPoint)));
 	QObject::connect( ui.lobbyTreeWidget, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)), this, SLOT(itemDoubleClicked(QTreeWidgetItem*,int)));
 	QObject::connect( ui.lobbyTreeWidget, SIGNAL(itemSelectionChanged()), this, SLOT(updateCurrentLobby()));
 
@@ -176,7 +185,7 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WindowFlags flags)
     ui.lobbyTreeWidget->setColumnHidden(COLUMN_RECENT_TIME,true) ;
 	ui.lobbyTreeWidget->setSortingEnabled(true) ;
 
-    	float fact = QFontMetricsF(font()).height()/14.0f;
+    float fact = QFontMetricsF(font()).height()/14.0f;
         
 	ui.lobbyTreeWidget->adjustSize();
 	ui.lobbyTreeWidget->setColumnWidth(COLUMN_NAME,100*fact);
@@ -184,15 +193,15 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WindowFlags flags)
 	ui.lobbyTreeWidget->setColumnWidth(COLUMN_TOPIC, 50*fact);
 
 	/** Setup the actions for the header context menu */
-	showUserCountAct= new QAction(headerItem->text(COLUMN_USER_COUNT),this);
-	showUserCountAct->setCheckable(true); showUserCountAct->setToolTip(tr("Show")+" "+showUserCountAct->text()+" "+tr("column"));
-	connect(showUserCountAct,SIGNAL(triggered(bool)),this,SLOT(setShowUserCountColumn(bool))) ;
-	showTopicAct= new QAction(headerItem->text(COLUMN_TOPIC),this);
-	showTopicAct->setCheckable(true); showTopicAct->setToolTip(tr("Show")+" "+showTopicAct->text()+" "+tr("column"));
-	connect(showTopicAct,SIGNAL(triggered(bool)),this,SLOT(setShowTopicColumn(bool))) ;
-	showSubscribeAct= new QAction(headerItem->text(COLUMN_SUBSCRIBED),this);
-	showSubscribeAct->setCheckable(true); showSubscribeAct->setToolTip(tr("Show")+" "+showSubscribeAct->text()+" "+tr("column"));
-	connect(showSubscribeAct,SIGNAL(triggered(bool)),this,SLOT(setShowSubscribeColumn(bool))) ;
+//	showUserCountAct= new QAction(headerItem->text(COLUMN_USER_COUNT),this);
+//	showUserCountAct->setCheckable(true); showUserCountAct->setToolTip(tr("Show")+" "+showUserCountAct->text()+" "+tr("column"));
+//	connect(showUserCountAct,SIGNAL(triggered(bool)),this,SLOT(setShowUserCountColumn(bool))) ;
+//	showTopicAct= new QAction(headerItem->text(COLUMN_TOPIC),this);
+//	showTopicAct->setCheckable(true); showTopicAct->setToolTip(tr("Show")+" "+showTopicAct->text()+" "+tr("column"));
+//	connect(showTopicAct,SIGNAL(triggered(bool)),this,SLOT(setShowTopicColumn(bool))) ;
+//	showSubscribeAct= new QAction(headerItem->text(COLUMN_SUBSCRIBED),this);
+//	showSubscribeAct->setCheckable(true); showSubscribeAct->setToolTip(tr("Show")+" "+showSubscribeAct->text()+" "+tr("column"));
+//	connect(showSubscribeAct,SIGNAL(triggered(bool)),this,SLOT(setShowSubscribeColumn(bool))) ;
 
 	// Set initial size of the splitter
 	ui.splitter->setStretchFactor(0, 0);
@@ -208,6 +217,9 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WindowFlags flags)
 	/* add filter actions */
 	ui.filterLineEdit->addFilter(QIcon(), tr("Name"), COLUMN_NAME, tr("Search Name"));
 	ui.filterLineEdit->setCurrentFilter(COLUMN_NAME);
+
+
+    getHistoryForRecentList();
 
 	// load settings
 	processSettings(true);
@@ -289,6 +301,18 @@ void ChatLobbyWidget::updateNotifyFromP2P(ChatId id, unsigned int count)
         notifyButton->setToolTip(QString("(%1)").arg(count));
     } else {
         notifyButton->setVisible(false);
+
+        //Need to update msg as read by updating the history
+        HistoryMsg hmsg;
+        hmsg.chatPeerId = id.toPeerId();
+        rsHistory->updateMessageAsRead(hmsg);
+        //And need to update for all items on the left, return to their avatars
+        std::set<ChatId>::iterator i;
+        for (i = recentUnreadListOfChatId.begin(); i != recentUnreadListOfChatId.end(); ++i)
+        {
+            resetAvatarForContactItem(*i);
+            recentUnreadListOfChatId.erase(*i);
+        }
     }
 }
 
@@ -382,16 +406,16 @@ void ChatLobbyWidget::lobbyTreeWidgetCustomPopupMenu(QPoint)
 
         contextMnu.addSeparator();//-------------------------------------------------------------------
 
-        showUserCountAct->setChecked(!ui.lobbyTreeWidget->isColumnHidden(COLUMN_USER_COUNT));
-        showTopicAct->setChecked(!ui.lobbyTreeWidget->isColumnHidden(COLUMN_TOPIC));
-        showSubscribeAct->setChecked(!ui.lobbyTreeWidget->isColumnHidden(COLUMN_SUBSCRIBED));
+//        showUserCountAct->setChecked(!ui.lobbyTreeWidget->isColumnHidden(COLUMN_USER_COUNT));
+//        showTopicAct->setChecked(!ui.lobbyTreeWidget->isColumnHidden(COLUMN_TOPIC));
+//        showSubscribeAct->setChecked(!ui.lobbyTreeWidget->isColumnHidden(COLUMN_SUBSCRIBED));
 
-        QMenu *menu = contextMnu.addMenu(tr("Columns"));
-        menu->addAction(showUserCountAct);
-        menu->addAction(showTopicAct);
-        menu->addAction(showSubscribeAct);
+//        QMenu *menu = contextMnu.addMenu(tr("Columns"));
+//        menu->addAction(showUserCountAct);
+//        menu->addAction(showTopicAct);
+//        menu->addAction(showSubscribeAct);
 
-        contextMnu.exec(QCursor::pos());
+//        contextMnu.exec(QCursor::pos());
 }
 
 void ChatLobbyWidget::lobbyChanged()
@@ -483,29 +507,37 @@ void ChatLobbyWidget::addOne2OneChatPage(PopupChatDialog *d)
 	// check that the page does not already exist.
 	if (_chatOne2One_infos.count(d->chatId().toPeerId().toStdString()) < 1)
 	{
-		QTreeWidgetItem *item =  new RSTreeWidgetItem(compareRole, TYPE_ONE2ONE);
-		RsPgpId pgpId = rsPeers->getGPGId(d->chatId().toPeerId());
-		std::string nickname = rsPeers->getGPGName(pgpId);
+        //Check if the item already exist in the contact chat folder, if yes, just add to widget and save to _chatOne2One_infos
+        QTreeWidgetItem *checkItem = getTreeWidgetItemForChatId(d->chatId());
         uint current_time = QDateTime::currentDateTime().toTime_t();
-        updateContactItem(ui.lobbyTreeWidget, item, nickname, d->chatId(), d->chatId().toPeerId().toStdString(), current_time );
+        if (checkItem == NULL)
+        {
+            QTreeWidgetItem *item =  new RSTreeWidgetItem(compareRole, TYPE_ONE2ONE);
+            RsPgpId pgpId = rsPeers->getGPGId(d->chatId().toPeerId());
+            std::string nickname = rsPeers->getGPGName(pgpId);
+            updateContactItem(ui.lobbyTreeWidget, item, nickname, d->chatId(), d->chatId().toPeerId().toStdString(), current_time, false );
 
-        connect(d,SIGNAL(messageP2PReceived(bool,ChatId,QDateTime,QString,QString)),this,SLOT(updateP2PMessageChanged(bool,ChatId,QDateTime,QString,QString))) ;
+            //add new contact item and select it
+            chatContactItem->addChild(item);
+            chatContactItem->treeWidget()->setItemSelected(item, true);
 
-		//add new contact item and select it
-		chatContactItem->addChild(item);
-		chatContactItem->treeWidget()->setItemSelected(item, true);
+            //remove all selected items
+            QTreeWidgetItemIterator it(chatContactItem->treeWidget());
+            while (*it) {
+                if ((*it)!= item && (*it)->isSelected()) (*it)->setSelected(false) ;
+                ++it;
+              }
 
-		//remove all selected items
-		QTreeWidgetItemIterator it(chatContactItem->treeWidget());
-		while (*it) {
-		    if ((*it)!= item && (*it)->isSelected()) (*it)->setSelected(false) ;
-		    ++it;
-		  }
+        }
+
+        //connect(d,SIGNAL(messageP2PReceived(bool,ChatId,QDateTime,QString,QString)),this,SLOT(updateP2PMessageChanged(bool,ChatId,QDateTime,QString,QString))) ;
+        connect(d,SIGNAL(messageP2PReceived(ChatMessage)),this,SLOT(updateP2PMessageChanged(ChatMessage))) ;
+
 		ui.stackedWidget->addWidget(d) ;
 		_chatOne2One_infos[d->chatId().toPeerId().toStdString()].dialog = d ;
-        _chatOne2One_infos[d->chatId().toPeerId().toStdString()].last_typing_event = current_time; //QDateTime::currentDateTime().toTime_t();
+        if (checkItem == NULL) _chatOne2One_infos[d->chatId().toPeerId().toStdString()].last_typing_event = current_time; //QDateTime::currentDateTime().toTime_t();
 
-        ui.lobbyTreeWidget->sortItems(COLUMN_RECENT_TIME, Qt::DescendingOrder);
+        //ui.lobbyTreeWidget->sortItems(COLUMN_RECENT_TIME, Qt::DescendingOrder);
         std::cerr << "current time for this contact is " << current_time;
 
    }
@@ -837,18 +869,59 @@ void ChatLobbyWidget::fromGpgIdToChatId(const RsPgpId &gpgId, ChatId &chatId)
 void ChatLobbyWidget::showContactChat(QTreeWidgetItem *item)
 {
 	if (item == NULL || item->type() != TYPE_ONE2ONE) {
-		//showBlankPage(0) ;
 		return;
 	}
 
 	QString chatIdStr = item->data(COLUMN_DATA, ROLE_ID).toString();
-//	ChatId chatId(chatIdStr.toStdString());
-	      if(_chatOne2One_infos.count(chatIdStr.toStdString()) > 0)
-		{
-		      ui.stackedWidget->setCurrentWidget(_chatOne2One_infos[chatIdStr.toStdString()].dialog) ;
-		}
+    if(_chatOne2One_infos.count(chatIdStr.toStdString()) > 0)
+    {
+        ui.stackedWidget->setCurrentWidget(_chatOne2One_infos[chatIdStr.toStdString()].dialog) ;
+    }
+    else
+    {
+        //create chat dialog and add into this widget
+        RsPeerId peerId(chatIdStr.toStdString());
+        ChatId chatId(peerId);
+        ChatDialog::chatFriend(chatId);
+    }
 
 
+}
+
+void ChatLobbyWidget::getHistoryForRecentList()
+{
+    int messageCount = 1;
+    std::list<HistoryMsg> historyMsgs;
+    if (messageCount > 0)
+    {
+        std::list<RsPeerId> friendList;
+        rsPeers->getFriendList(friendList);
+        std::list<RsPeerId>::const_iterator peerIt;
+        for (peerIt = friendList.begin(); peerIt != friendList.end(); ++peerIt)
+        {
+            ChatId chatId(*peerIt);
+            rsHistory->getMessages(chatId, historyMsgs, messageCount);
+            std::list<HistoryMsg>::iterator historyIt;
+            for (historyIt = historyMsgs.begin(); historyIt != historyMsgs.end(); ++historyIt)
+            {
+                std::cerr << "history for peerId: " << chatId.toPeerId().toStdString() << ", peername: " << historyIt->peerName << ", recent time: " << (historyIt->incoming ? historyIt->recvTime :  historyIt->sendTime) << ", msg: " << historyIt->message << std::endl;
+
+                QTreeWidgetItem *item =  new RSTreeWidgetItem(compareRole, TYPE_ONE2ONE);
+                RsPgpId pgpId = rsPeers->getGPGId(chatId.toPeerId());
+                std::string nickname = rsPeers->getGPGName(pgpId);
+                uint current_time = (historyIt->incoming ? historyIt->recvTime :  historyIt->sendTime) ;
+                if (historyIt->unread)
+                {
+                    std::cerr << "unread for peerId: " << chatId.toPeerId().toStdString() << ", peername: " << historyIt->peerName << " is true" << std::endl;
+
+                }
+
+                updateContactItem(ui.lobbyTreeWidget, item, nickname, chatId, chatId.toPeerId().toStdString(), current_time, historyIt->unread );
+                chatContactItem->addChild(item);
+                ui.lobbyTreeWidget->sortItems(COLUMN_RECENT_TIME, Qt::DescendingOrder);
+            }
+        }
+    }
 }
 
 // 22 Sep 2018 - meiyousixin - this function is for the case where we don't have any identity yet
@@ -1095,13 +1168,16 @@ void ChatLobbyWidget::updateRecentTime(const ChatId & chatId, uint current_time)
        // std::cerr << "current time for this contact is " << current_time;
        std::cerr << "we want to update the recent time now current time is " << current_time << "\n";
        QTreeWidgetItem *item = NULL;
+       std::string chatIdStr;
        if (chatId.isLobbyId())
        {
            item = getTreeWidgetItem(chatId.toLobbyId());
+           chatIdStr = std::to_string(chatId.toLobbyId());
        }
        else if (chatId.isPeerId())
        {
            item = getTreeWidgetItemForChatId(chatId);
+           chatIdStr = chatId.toPeerId().toStdString();
        }
        if (item)
             item->setData(COLUMN_RECENT_TIME, ROLE_SORT,current_time);
@@ -1286,6 +1362,10 @@ void ChatLobbyWidget::updateCurrentLobby()
               AvatarDefs::getAvatarFromSslId(peerId, avatar);
               if (!avatar.isNull())
                 item->setIcon(COLUMN_NAME,QIcon(avatar)) ;
+              // Need to update msg as read here, it will mark the last msg as read
+              HistoryMsg hmsg;
+              hmsg.chatPeerId = peerId;
+              rsHistory->updateMessageAsRead(hmsg);
 
 		  }
 
@@ -1323,21 +1403,37 @@ void ChatLobbyWidget::updateMessageChanged(bool incoming, ChatLobbyId id, QDateT
 	item->setIcon(COLUMN_NAME,_lobby_infos[id].default_icon) ;
 }
 
-void ChatLobbyWidget::updateP2PMessageChanged(bool incoming, const ChatId& chatId, QDateTime time, QString senderName, QString msg)
+//void ChatLobbyWidget::updateP2PMessageChanged(bool incoming, const ChatId& chatId, QDateTime time, QString senderName, QString msg)
+void ChatLobbyWidget::updateP2PMessageChanged(ChatMessage msg)
 {
-    QTreeWidgetItem *item = getTreeWidgetItemForChatId(chatId);
+    QTreeWidgetItem *item = getTreeWidgetItemForChatId(msg.chat_id);
     QTreeWidgetItem *current_item = ui.lobbyTreeWidget->currentItem();
 
-    if (myChatLobbyUserNotify){
-        if (incoming) myChatLobbyUserNotify->chatP2PNewMessage(chatId, time, senderName, msg);
+    if (myChatLobbyUserNotify)
+    {
+        QDateTime sendTime = QDateTime::fromTime_t(msg.sendTime);
+        QString message = QString::fromUtf8(msg.msg.c_str());
+        QString ownName = QString::fromUtf8(rsPeers->getPeerName(rsPeers->getOwnId()).c_str());
+        QString name = msg.incoming? QString::fromStdString(rsPeers->getGPGName(rsPeers->getGPGId(msg.chat_id.toPeerId()))): ownName;
+        if (msg.incoming) myChatLobbyUserNotify->chatP2PNewMessage(msg.chat_id, sendTime, name, message);
     }
 
-    if (item && current_item && item == current_item) return;
+    if (item && current_item && item == current_item)
+    {
+        //TODO: need to update the message as read: When user receive new msg in the active chat window
+        std::cerr << " Msg go here first 2 (updateP2PMessageChanged) ?" << std::endl;
+        HistoryMsg hmsg;
+        hmsg.chatPeerId = msg.chat_id.toPeerId();
+        rsHistory->updateMessageAsRead(hmsg);
+        return;
+    }
     if (item)
     {
-        if (incoming)
+        if (msg.incoming)
         {
+            ui.lobbyTreeWidget->setIconSize(QSize(32,32));
             item->setIcon(COLUMN_NAME,QIcon(IMAGE_MESSAGE)) ;
+            if (recentUnreadListOfChatId.find(msg.chat_id) != recentUnreadListOfChatId.end()) recentUnreadListOfChatId.insert(msg.chat_id);
         }
     }
 }
@@ -1574,25 +1670,39 @@ void ChatLobbyWidget::openOne2OneChat(std::string rsId, std::string nickname)
   RsPeerDetails detail;
   if (rsPeers->getGPGDetails(pgpId, detail))
     {
-        QString pgpIdStr = QString::fromStdString(detail.gpg_id.toStdString());
-
         // just open a window as normal (using RS calling), add the one2one chat page will be processed in addOne2OneChatPage.
         ChatDialog::chatFriend(pgpId);
     }
 }
 
-void ChatLobbyWidget::updateContactItem(QTreeWidget *treeWidget, QTreeWidgetItem *item, const std::string &nickname, const ChatId& chatId, const std::string &rsId, uint current_time)
+void ChatLobbyWidget::updateContactItem(QTreeWidget *treeWidget, QTreeWidgetItem *item, const std::string &nickname, const ChatId& chatId, const std::string &rsId, uint current_time, bool unread)
 {
       item->setText(COLUMN_NAME, QString::fromUtf8(nickname.c_str()));
 
-      QPixmap avatar;
-      AvatarDefs::getAvatarFromSslId(chatId.toPeerId(), avatar);
-      if (!avatar.isNull())
-            item->setIcon(COLUMN_NAME,QIcon(avatar)) ;
-      item->setData(COLUMN_NAME, ROLE_SORT, QString::fromUtf8(nickname.c_str()));
+      if (unread)
+      {
+          item->setIcon(COLUMN_NAME,QIcon(IMAGE_MESSAGE)) ;
+          if (recentUnreadListOfChatId.find(chatId) != recentUnreadListOfChatId.end()) recentUnreadListOfChatId.insert(chatId);
+      }
+      else
+      {
+          QPixmap avatar;
+          AvatarDefs::getAvatarFromSslId(chatId.toPeerId(), avatar);
+          if (!avatar.isNull())
+                item->setIcon(COLUMN_NAME,QIcon(avatar)) ;
+      }
 
+      item->setData(COLUMN_NAME, ROLE_SORT, QString::fromUtf8(nickname.c_str()));
       item->setData(COLUMN_DATA, ROLE_ID, QString::fromUtf8(rsId.c_str()));
       item->setData(COLUMN_RECENT_TIME, ROLE_SORT,current_time);
    //   int avatarHeight = fontMetrics.height() * 2;        //d: change avatar size
 }
 
+void ChatLobbyWidget::resetAvatarForContactItem( const ChatId& chatId)
+{
+    QTreeWidgetItem *item = getTreeWidgetItemForChatId(chatId);
+    QPixmap avatar;
+    AvatarDefs::getAvatarFromSslId(chatId.toPeerId(), avatar);
+    if (!avatar.isNull() && item)
+          item->setIcon(COLUMN_NAME,QIcon(avatar)) ;
+}

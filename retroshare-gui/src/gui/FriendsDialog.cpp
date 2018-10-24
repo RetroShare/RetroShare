@@ -214,7 +214,8 @@ void FriendsDialog::chatMessageReceived(const ChatMessage &msg)
         QDateTime sendTime = QDateTime::fromTime_t(msg.sendTime);
         QDateTime recvTime = QDateTime::fromTime_t(msg.recvTime);
         QString message = QString::fromUtf8(msg.msg.c_str());
-        QString name = QString::fromUtf8(rsPeers->getPeerName(msg.broadcast_peer_id).c_str());
+        //QString name = QString::fromUtf8(rsPeers->getPeerName(msg.broadcast_peer_id).c_str());
+        QString name = QString::fromStdString(rsPeers->getGPGName(rsPeers->getGPGId(msg.chat_id.toPeerId())));
 
         ui.chatWidget->addChatMsg(msg.incoming, name, sendTime, recvTime, message, ChatWidget::MSGTYPE_NORMAL);
 

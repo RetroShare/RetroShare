@@ -348,6 +348,7 @@ public:
     std::string msg;
     bool incoming;
     bool online; // for outgoing messages: was this message send?
+    bool unread;
     //bool system_message;
 };
 

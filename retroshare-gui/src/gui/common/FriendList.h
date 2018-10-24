@@ -176,7 +176,8 @@ private slots:
 //	 void inviteToLobby();
 //	 void createchatlobby();
 //	 void unsubscribeToLobby();
-//	 void showLobby();
+    //	 void showLobby();
+    void configurefriendbySSLid();
 };
 
 #endif // FRIENDLIST_H

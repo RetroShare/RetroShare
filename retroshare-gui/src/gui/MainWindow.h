@@ -21,8 +21,8 @@
 
 #ifndef _MainWindow_H
 #define _MainWindow_H
-
 #include <QSystemTrayIcon>
+
 #include <set>
 
 #include "gui/common/rwindow.h"
@@ -220,7 +220,6 @@ private slots:
     void updateMenu();
     void updateStatus();
     void updateFriends();
-
     void toggleVisibility(QSystemTrayIcon::ActivationReason e);
     void toggleVisibilitycontextmenu();
 
@@ -279,7 +278,6 @@ private:
     QMap<QString, FunctionType> _functionList;
 
     QString nameAndLocation;
-
     QSystemTrayIcon *trayIcon;
     QMenu *notifyMenu;
     QString notifyToolTip;

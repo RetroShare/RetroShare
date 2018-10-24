@@ -46,6 +46,7 @@ public:
 	/******** p3HistoryMgr *********/
 
     void addMessage(const ChatMessage &cm);
+    void updateMessageAsRead(const HistoryMsg &cm);
 
 	/********* RsHistory ***********/
 
@@ -92,7 +93,8 @@ private:
 
 	std::list<RsItem*> saveCleanupList; /* TEMPORARY LIST WHEN SAVING */
 
-	RsMutex mHistoryMtx;
+    RsMutex mHistoryMtx;
+
 };
 
 #endif

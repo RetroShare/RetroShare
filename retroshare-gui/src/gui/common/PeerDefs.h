@@ -31,6 +31,7 @@ class RsPeerDetails;
 class PeerDefs
 {
 public:
+    static const QString nameOnly(const RsPeerDetails &details);
     static const QString nameWithLocation(const RsPeerDetails &details);
     static const QString nameWithLocation(const RsIdentityDetails &details);
     static const QString nameWithId(const RsIdentityDetails &details);
