@@ -56,7 +56,7 @@ DHTStatus::DHTStatus(QWidget *parent)
     dhtnetworkLabel = new QLabel( this );
     dhtnetworkLabel->setVisible(false);
     int S = QFontMetricsF(dhtnetworkLabel->font()).height();
-    dhtnetworkLabel->setPixmap(QPixmap(":/images/dht32.png").scaledToHeight(S,Qt::SmoothTransformation));
+    dhtnetworkLabel->setPixmap(QPixmap(":/app/images/statusicons/dht-atom-molecule_128.png").scaledToHeight(S,Qt::SmoothTransformation));
     hbox->addWidget(dhtnetworkLabel);
 
     dhtnetworksizeLabel = new QLabel( "0 (0) ",this );
@@ -102,7 +102,7 @@ void DHTStatus::getDHTStatus()
 			// YELLOW or GREEN.
 			if (config.netDhtRsNetSize < MIN_RS_NET_SIZE)
 			{
-                dhtstatusLabel->setPixmap(QPixmap(":/app/images/statusicons/offline.png").scaledToHeight(S,Qt::SmoothTransformation));      //d: uptdate icon
+                dhtstatusLabel->setPixmap(QPixmap(":/app/images/statusicons/away.png").scaledToHeight(S,Qt::SmoothTransformation));      //d: uptdate icon
                 dhtstatusLabel->setToolTip( text + tr("DHT Searching for P2PUnseen Peers"));
 
 				spaceLabel->setVisible(true);

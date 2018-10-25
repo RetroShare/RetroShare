@@ -63,7 +63,7 @@ void NATStatus::getNATStatus()
 		default:
 		case RSNET_NETSTATE_BAD_UNKNOWN:
 		{
-            iconLabel->setPixmap(QPixmap(":/app/images/statusicons/offline.png").scaledToHeight(S,Qt::SmoothTransformation)) ;      //d: update icon
+            iconLabel->setPixmap(QPixmap(":/app/images/statusicons/away.png").scaledToHeight(S,Qt::SmoothTransformation)) ;      //d: update icon
             iconLabel->setToolTip( text + tr("Network Status Unknown")) ;
 		}
 		break ;
@@ -93,21 +93,21 @@ void NATStatus::getNATStatus()
 // CAUTION. (ORANGE)
 		case RSNET_NETSTATE_WARNING_RESTART:
 		{
-            iconLabel->setPixmap(QPixmap(":/app/images/statusicons/offline.png").scaledToHeight(S,Qt::SmoothTransformation)) ;      //d: update icon
+            iconLabel->setPixmap(QPixmap(":/app/images/statusicons/away.png").scaledToHeight(S,Qt::SmoothTransformation)) ;      //d: update icon
             iconLabel->setToolTip( text + tr("Network Restarting")) ;
 		}
 		break ;
 
 		case RSNET_NETSTATE_WARNING_NATTED:
 		{
-            iconLabel->setPixmap(QPixmap(":/app/images/statusicons/offline.png").scaledToHeight(S,Qt::SmoothTransformation)) ;      //d: update icon
+            iconLabel->setPixmap(QPixmap(":/app/images/statusicons/away.png").scaledToHeight(S,Qt::SmoothTransformation)) ;      //d: update icon
             iconLabel->setToolTip( text + tr("Behind Firewall")) ;
 		}
 		break ;
 
 		case RSNET_NETSTATE_WARNING_NODHT:
 		{
-            iconLabel->setPixmap(QPixmap(":/app/images/statusicons/offline.png").scaledToHeight(S,Qt::SmoothTransformation)) ;      //d: update icon
+            iconLabel->setPixmap(QPixmap(":/app/images/statusicons/away.png").scaledToHeight(S,Qt::SmoothTransformation)) ;      //d: update icon
 			iconLabel->setToolTip( text + tr("DHT Disabled")) ;
 		}
 		break ;
