@@ -301,7 +301,21 @@ void    netUnreachableCheck();
 void 	updateNetStateBox_temporal();
 void 	updateNetStateBox_startup();
 void 	updateNetStateBox_reset();
-void    updateNatSetting();
+    void updateNatSetting();
+
+	/** Conservatively guess new external port, previous approach (aka always
+	 * reset it to local port) break setups where external manually
+	 * forwarded port is different then local port. A common case is having
+	 * SSLH listening on port 80 on the router with public IP forwanding
+	 * plain HTTP connections to a web server and --anyprot connections to
+	 * retroshare to make censor/BOFH/bad firewall life a little more
+	 * difficult */
+	uint16_t guessNewExtPort()
+	{
+		uint16_t newExtPort = sockaddr_storage_port(mExtAddr);
+		if(!newExtPort) newExtPort = sockaddr_storage_port(mLocalAddr);
+		return newExtPort;
+	}
 
 private:
 	// These should have there own Mutex Protection,
