@@ -1,0 +1,21 @@
+***************
+*** 35,49 ****
+  PRE_TARGETDEPS += $$pretargetStaticLibs(sLibs)
+  
+  LIBS += $$linkDynamicLibs(dLibs)
+- 
+- BIN_DIR += "/Applications/Xcode.app/Contents/Developer/usr/bin"
+- BIN_DIR += "/Users/vinh/Qt/5.11.1/clang_64/bin"
+- INC_DIR += "/usr/local/opt/openssl/include"
+- INC_DIR += "/usr/local/Cellar/miniupnpc/2.1/include"
+- INC_DIR += "/usr/local/Cellar/libmicrohttpd/0.9.59/include"
+- INC_DIR += "/usr/local/Cellar/sqlcipher/3.4.2/include"
+- LIB_DIR += "/usr/local/Cellar/miniupnpc/2.1/lib"
+- LIB_DIR += "/usr/local/opt/openssl/lib/"
+- LIB_DIR += "/usr/local/Cellar/libmicrohttpd/0.9.59/lib"
+- LIB_DIR += "/usr/local/Cellar/sqlcipher/3.4.2/lib"
+- 
+--- 35,37 ----
+  PRE_TARGETDEPS += $$pretargetStaticLibs(sLibs)
+  
+  LIBS += $$linkDynamicLibs(dLibs)
