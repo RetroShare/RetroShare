@@ -2126,8 +2126,6 @@ void p3turtle::monitorTunnels(const RsFileHash& hash,RsTurtleClientService *clie
 		_incoming_file_hashes[hash].last_digg_time = RSRandom::random_u32()%10 ;
 		_incoming_file_hashes[hash].service = client_service ;
 	}
-
-	IndicateConfigChanged() ;	// initiates saving of handled hashes.
 }
 
 
