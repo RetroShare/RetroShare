@@ -69,9 +69,9 @@ static const rstime_t FILE_TRANSFER_MAX_DELAY_BEFORE_DROP_USAGE_RECORD = 10 ; //
 ftServer::ftServer(p3PeerMgr *pm, p3ServiceControl *sc)
     :       p3Service(),RsServiceSerializer(RS_SERVICE_TYPE_TURTLE), // should be FT, but this is for backward compatibility
       mPeerMgr(pm), mServiceCtrl(sc),
-      mFileDatabase(NULL),
-      mFtController(NULL), mFtExtra(NULL),
-      mFtDataplex(NULL), mFtSearch(NULL), srvMutex("ftServer"),
+      mFileDatabase(nullptr),
+      mFtController(nullptr), mFtExtra(nullptr),
+      mFtDataplex(nullptr), mFtSearch(nullptr), srvMutex("ftServer"),
       mSearchCallbacksMapMutex("ftServer callbacks map")
 {
 	addSerialType(new RsFileTransferSerialiser()) ;
@@ -223,18 +223,18 @@ void ftServer::StopThreads()
 	mFtExtra->join();
 
 	delete (mFtDataplex);
-	mFtDataplex = NULL;
+	mFtDataplex = nullptr;
 
 	delete (mFtController);
-	mFtController = NULL;
+	mFtController = nullptr;
 
 	delete (mFtExtra);
-	mFtExtra = NULL;
+	mFtExtra = nullptr;
 
 	/* stop Monitor Thread */
 	mFileDatabase->stopThreads();
 	delete mFileDatabase;
-	mFileDatabase = NULL ;
+	mFileDatabase = nullptr ;
 }
 
 /***************************************************************/
@@ -401,7 +401,7 @@ bool ftServer::changeQueuePosition(const RsFileHash& hash, QueueMove mv)
 }
 bool ftServer::changeDownloadSpeed(const RsFileHash& hash, int speed)
 {
-	mFtController->setPriority(hash, (DwlSpeed)speed);
+	mFtController->setPriority(hash, static_cast<DwlSpeed>(speed));
 	return true ;
 }
 bool ftServer::getDownloadSpeed(const RsFileHash& hash, int & speed)
@@ -508,7 +508,7 @@ RsItem *ftServer::create_item(uint16_t service,uint8_t item_type) const
 	if (RS_SERVICE_TYPE_TURTLE != service)
 	{
 		FTSERVER_ERROR() << "  Wrong type !!" << std::endl ;
-		return NULL; /* wrong type */
+		return nullptr; /* wrong type */
 	}
 
 	try
@@ -523,14 +523,14 @@ RsItem *ftServer::create_item(uint16_t service,uint8_t item_type) const
 		case RS_TURTLE_SUBTYPE_CHUNK_CRC     			:	return new RsTurtleChunkCrcItem();
 
 		default:
-			return NULL ;
+			return nullptr ;
 		}
 	}
 	catch(std::exception& e)
 	{
 		FTSERVER_ERROR() << "(EE) deserialisation error in " << __PRETTY_FUNCTION__ << ": " << e.what() << std::endl;
 
-		return NULL ;
+		return nullptr ;
 	}
 }
 
@@ -862,7 +862,7 @@ bool ftServer::ignoreDuplicates()                  { return mFileDatabase->ignor
 int  ftServer::maxShareDepth() const               { return mFileDatabase->maxShareDepth() ; }
 
 void ftServer::setWatchEnabled(bool b)             { mFileDatabase->setWatchEnabled(b) ; }
-void ftServer::setWatchPeriod(int minutes)         { mFileDatabase->setWatchPeriod(minutes*60) ; }
+void ftServer::setWatchPeriod(int minutes)         { mFileDatabase->setWatchPeriod(static_cast<uint32_t>(minutes*60)) ; }
 void ftServer::setFollowSymLinks(bool b)           { mFileDatabase->setFollowSymLinks(b) ; }
 void ftServer::setIgnoreDuplicates(bool ignore)    { mFileDatabase->setIgnoreDuplicates(ignore); }
 void ftServer::setMaxShareDepth(int depth)         { mFileDatabase->setMaxShareDepth(depth) ; }
@@ -1151,12 +1151,12 @@ bool	ftServer::sendData(const RsPeerId& peerId, const RsFileHash& hash, uint64_t
 			item->chunk_size = chunk;
 			item->chunk_data = rs_malloc(chunk) ;
 
-			if(item->chunk_data == NULL)
+			if(!item->chunk_data)
 			{
 				delete item;
 				return false;
 			}
-			memcpy(item->chunk_data,&(((uint8_t *) data)[offset]),chunk) ;
+			memcpy(item->chunk_data,&((static_cast<uint8_t *>(data) )[offset]),chunk) ;
 
 			sendTurtleItem(peerId,hash,item) ;
 		}
@@ -1178,7 +1178,7 @@ bool	ftServer::sendData(const RsPeerId& peerId, const RsFileHash& hash, uint64_t
 			rfd->fd.file_offset = baseoffset + offset;
 
 			/* file data */
-			rfd->fd.binData.setBinData( &(((uint8_t *) data)[offset]), chunk);
+			rfd->fd.binData.setBinData( &(( static_cast<uint8_t *>(data) )[offset]), chunk);
 
 			sendItem(rfd);
 
@@ -1227,6 +1227,7 @@ void ftServer::deriveEncryptionKey(const RsFileHash& hash, uint8_t *key)
 	SHA256_Final (key, &sha_ctx);
 }
 
+#ifdef USE_NEW_METHOD
 static const uint32_t ENCRYPTED_FT_INITIALIZATION_VECTOR_SIZE = 12 ;
 static const uint32_t ENCRYPTED_FT_AUTHENTICATION_TAG_SIZE    = 16 ;
 static const uint32_t ENCRYPTED_FT_HEADER_SIZE                =  4 ;
@@ -1234,7 +1235,7 @@ static const uint32_t ENCRYPTED_FT_EDATA_SIZE                 =  4 ;
 
 static const uint8_t  ENCRYPTED_FT_FORMAT_AEAD_CHACHA20_POLY1305 = 0x01 ;
 static const uint8_t  ENCRYPTED_FT_FORMAT_AEAD_CHACHA20_SHA256   = 0x02 ;
-
+#endif
 
 bool ftServer::encryptItem(RsTurtleGenericTunnelItem *clear_item,const RsFileHash& hash,RsTurtleGenericDataItem *& encrypted_item)
 {
@@ -1243,7 +1244,7 @@ bool ftServer::encryptItem(RsTurtleGenericTunnelItem *clear_item,const RsFileHas
 
 	RsTemporaryMemory data(item_serialized_size) ;
 
-	if(data == NULL)
+	if(!data)
 		return false ;
 
     serialise(clear_item, data, &item_serialized_size);
@@ -1339,7 +1340,7 @@ bool ftServer::encryptItem(RsTurtleGenericTunnelItem *clear_item,const RsFileHas
 bool ftServer::decryptItem(const RsTurtleGenericDataItem *encrypted_item,const RsFileHash& hash,RsTurtleGenericTunnelItem *& decrypted_item)
 {
 #ifndef USE_NEW_METHOD
-	unsigned char *data = NULL ;
+	unsigned char *data = nullptr ;
 	uint32_t data_size = 0 ;
 
 	uint8_t encryption_key[32] ;
@@ -1356,7 +1357,7 @@ bool ftServer::decryptItem(const RsTurtleGenericDataItem *encrypted_item,const R
 	decrypted_item = dynamic_cast<RsTurtleGenericTunnelItem*>(deserialise(data,&data_size)) ;
 	free(data);
 
-	return (decrypted_item != NULL);
+	return (decrypted_item);
 
 #else
 	uint8_t encryption_key[32] ;
@@ -1481,16 +1482,18 @@ TurtleSearchRequestId ftServer::turtleSearch(const RsRegularExpression::Lineariz
     return mTurtleRouter->turtleSearch(expr) ;
 }
 
-#warning we should do this here, but for now it is done by turtle router.
+#ifndef RS_NO_WARN_CPP
+#pragma message("csoler 2018-06-10: We should do this here, but for now it is done by turtle router.")
+#endif
 //   // Dont delete the item. The client (p3turtle) is doing it after calling this.
 //   //
-//   void ftServer::receiveSearchResult(RsTurtleSearchResultItem *item)
+//   void ftServer::serverReceiveSearchResult(RsTurtleSearchResultItem *item)
 //   {
 //       RsTurtleFTSearchResultItem *ft_sr = dynamic_cast<RsTurtleFTSearchResultItem*>(item) ;
 //
 //       if(ft_sr == NULL)
 //       {
-//   		FTSERVER_ERROR() << "(EE) ftServer::receiveSearchResult(): item cannot be cast to a RsTurtleFTSearchResultItem" << std::endl;
+//			FTSERVER_ERROR() << "(EE) " << __PRETTY_FUNCTION__ << ": item cannot be cast to a RsTurtleFTSearchResultItem" << std::endl;
 //           return ;
 //       }
 //
@@ -1556,7 +1559,7 @@ void ftServer::receiveTurtleData(const RsTurtleGenericTunnelItem *i,
 #endif
 			getMultiplexer()->recvData(virtual_peer_id,hash,0,item->chunk_offset,item->chunk_size,item->chunk_data) ;
 
-			const_cast<RsTurtleFileDataItem*>(item)->chunk_data = NULL ;	// this prevents deletion in the destructor of RsFileDataItem, because data will be deleted
+			const_cast<RsTurtleFileDataItem*>(item)->chunk_data = nullptr ;	// this prevents deletion in the destructor of RsFileDataItem, because data will be deleted
 			// down _ft_server->getMultiplexer()->recvData()...in ftTransferModule::recvFileData
 		}
 	}
@@ -1627,7 +1630,7 @@ int	ftServer::tick()
 		moreToTick = true;
 
 	static rstime_t last_law_priority_tasks_handling_time = 0 ;
-	rstime_t now = time(NULL) ;
+	rstime_t now = time(nullptr) ;
 
 	if(last_law_priority_tasks_handling_time + FILE_TRANSFER_LOW_PRIORITY_TASKS_PERIOD < now)
 	{
@@ -1670,7 +1673,7 @@ bool ftServer::checkUploadLimit(const RsPeerId& pid,const RsFileHash& hash)
     std::map<RsFileHash,rstime_t>& tmap(mUploadLimitMap[pid]) ;
     std::map<RsFileHash,rstime_t>::iterator it ;
 
-	rstime_t now = time(NULL) ;
+	rstime_t now = time(nullptr) ;
 
     // If the limit has been decresed, we arbitrarily drop some ongoing slots.
 
@@ -1724,9 +1727,9 @@ int ftServer::handleIncoming()
 	// now File Input.
 	int nhandled = 0 ;
 
-	RsItem *item = NULL ;
+	RsItem *item = nullptr ;
 
-	while(NULL != (item = recvItem()))
+	while( (item = recvItem()) )
 	{
 		nhandled++ ;
 
@@ -1827,7 +1830,7 @@ int ftServer::handleIncoming()
  **********************************
  *********************************/
 
-void ftServer::receiveSearchResult(RsTurtleFTSearchResultItem *item)
+void ftServer::serverReceiveSearchResult(RsTurtleFTSearchResultItem *item)
 {
 	bool hasCallback = false;
 
