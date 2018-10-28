@@ -2,13 +2,15 @@
 README for RetroShare
 =======================================================================================
 
-RetroShare web site . . . . http://retroshare.sourceforge.net/
-Documentation . . . . . . . http://retroshare.sourceforge.net/doc.html
-Support . . . . . . . . . . http://retroshare.sourceforge.net/support.html
+RetroShare web site . . . . http://retroshare.net/index.html
+Developer's blog  . . . . . https://retroshareteam.wordpress.com
+Documentation . . . . . . . https://retroshare.readthedocs.io/en/latest/
+Support . . . . . . . . . . http://retroshare.net/support.html
 Forums  . . . . . . . . . . http://retroshare.sourceforge.net/forum/
-Wiki  . . . . . . . . . . . http://retroshare.sourceforge.net/wiki/
-The Developers site . . . . http://retroshare.sourceforge.net/developers.html
-Project site  . . . . . . . https://sourceforge.net/projects/retroshare
+Wiki  . . . . . . . . . . . https://github.com/RetroShare/documentation/wiki 
+Old developers site . . . . http://retroshare.sourceforge.net/wiki/index.php/Developers_Corner
+Project site  . . . . . . . https://github.com/RetroShare/RetroShare
+Relted projects/plugins . . https://github.com/RetroShare
 
 Contact:  . . . . . . . . . retroshare@lunamutt.com ,defnax@users.sourceforge.net
 
