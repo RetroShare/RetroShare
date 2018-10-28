@@ -279,11 +279,16 @@ struct DirStub : RsSerializable
 		RS_SERIAL_PROCESS(name);
 #if defined(__GNUC__) && !defined(__clang__)
 #	pragma GCC diagnostic ignored "-Wstrict-aliasing"
+#elif defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wundefined-reinterpret-cast"
 #endif // defined(__GNUC__) && !defined(__clang__)
 		std::uintptr_t& handle(reinterpret_cast<std::uintptr_t&>(ref));
 		RS_SERIAL_PROCESS(handle);
 #if defined(__GNUC__) && !defined(__clang__)
 #	pragma GCC diagnostic pop
+#elif defined(__clang__)
+#pragma clang diagnostic pop
 #endif // defined(__GNUC__) && !defined(__clang__)
 	}
 };
@@ -321,6 +326,9 @@ struct DirDetails : RsSerializable
 	{
 #if defined(__GNUC__) && !defined(__clang__)
 #	pragma GCC diagnostic ignored "-Wstrict-aliasing"
+#elif defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wundefined-reinterpret-cast"
 #endif // defined(__GNUC__) && !defined(__clang__)
 		std::uintptr_t& handle(reinterpret_cast<std::uintptr_t&>(ref));
 		RS_SERIAL_PROCESS(handle);
@@ -328,6 +336,8 @@ struct DirDetails : RsSerializable
 		RS_SERIAL_PROCESS(parentHandle);
 #if defined(__GNUC__) && !defined(__clang__)
 #	pragma GCC diagnostic pop
+#elif defined(__clang__)
+#pragma clang diagnostic pop
 #endif // defined(__GNUC__) && !defined(__clang__)
 		RS_SERIAL_PROCESS(prow);
 		RS_SERIAL_PROCESS(type);
@@ -437,12 +447,12 @@ class CompressedChunkMap : public RsSerializable
 			_map.resize(getCompressedSize(nb_chunks),value) ;
 		}
 
-		static uint32_t getCompressedSize(uint32_t size) { return (size>>5) + !!(size&31) ; }
+		static size_t getCompressedSize(size_t size) { return (size>>5) + !!(size&31) ; }
 
 		uint32_t filledChunks(uint32_t nbchks) const
 		{
 			uint32_t res = 0 ;
-			for(uint32_t i=0;i<std::min(nbchks,(uint32_t)_map.size()*32);++i)
+			for(uint32_t i=0;i<std::min(nbchks,static_cast<uint32_t>(_map.size())*32);++i)
 				res += operator[](i) ;
 			return res ;
 		}
@@ -451,13 +461,13 @@ class CompressedChunkMap : public RsSerializable
 			if(total_size == 0)
 				return 0 ;
 
-			uint32_t nbchks = (uint32_t)((total_size + (uint64_t)chunk_size - 1) / (uint64_t)chunk_size) ;
+			uint32_t nbchks = static_cast<uint32_t>((total_size + static_cast<uint64_t>(chunk_size) - 1) / static_cast<uint64_t>(chunk_size)) ;
 			uint32_t residue = total_size%chunk_size ;
 
 			if(residue && operator[](nbchks-1))
-				return (filledChunks(nbchks)-1)*(uint64_t)chunk_size + (total_size%chunk_size) ;
+				return (filledChunks(nbchks)-1)*static_cast<uint64_t>(chunk_size) + (total_size%chunk_size) ;
 			else
-				return filledChunks(nbchks)*(uint64_t)chunk_size ;
+				return filledChunks(nbchks)*static_cast<uint64_t>(chunk_size) ;
 		}
 		inline bool operator[](uint32_t i) const { return (_map[i >> 5] & (1 << (i & 31))) > 0 ; }
 

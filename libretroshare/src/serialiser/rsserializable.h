@@ -29,6 +29,7 @@
  */
 struct RsSerializable
 {
+	virtual ~RsSerializable() = default;
 	/** Process struct members to serialize in this method taking advantage of
 	 * the helper macro @see RS_SERIAL_PROCESS(I)
 	 */
