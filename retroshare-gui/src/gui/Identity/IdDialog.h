@@ -94,6 +94,7 @@ private slots:
 	void chatIdentity();
 	void sendMsg();
 	void copyRetroshareLink();
+	void copyMailtoLink();
   void on_closeInfoFrameButton_clicked();
 
 	void updateSelection();
