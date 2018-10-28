@@ -68,7 +68,7 @@ struct RsGxsNetTunnelGroupInfo
 
 	GroupPolicy    group_policy ;
 	GroupStatus    group_status ;
-	rstime_t         last_contact ;
+	rstime_t       last_contact ;
 	RsFileHash     hash ;
 	uint16_t       service_id ;
 

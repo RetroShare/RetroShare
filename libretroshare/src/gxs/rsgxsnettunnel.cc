@@ -30,7 +30,7 @@
 #include "gxs/rsnxs.h"
 #include "rsgxsnettunnel.h"
 
-// #define DEBUG_RSGXSNETTUNNEL 1
+//#define DEBUG_RSGXSNETTUNNEL 1
 
 #define GXS_NET_TUNNEL_NOT_IMPLEMENTED() { std::cerr << __PRETTY_FUNCTION__ << ": not yet implemented." << std::endl; }
 #define GXS_NET_TUNNEL_DEBUG()             std::cerr << time(NULL) << " : GXS_NET_TUNNEL: " << __FUNCTION__ << " : "
@@ -325,8 +325,6 @@ bool RsGxsNetTunnelService::sendTunnelData(uint16_t /* service_id */,unsigned ch
 		return false ;
 	}
 
-	it->second.last_contact = time(NULL) ;
-
     // 2 - encrypt and send the item.
 
 	RsTurtleGenericDataItem *encrypted_turtle_item = NULL ;
@@ -578,7 +576,13 @@ void RsGxsNetTunnelService::receiveTurtleData(const RsTurtleGenericTunnelItem *i
 
 	if(it == mTurtle2GxsPeer.end())
 	{
-		GXS_NET_TUNNEL_ERROR() << "item received by GxsNetTunnel for vpid " << turtle_virtual_peer_id << " but this vpid is unknown!" << std::endl;
+		GXS_NET_TUNNEL_ERROR() << "item received by GxsNetTunnel for vpid " << turtle_virtual_peer_id << " but this vpid is unknown! Removing this vpid from group " << group_id << std::endl;
+
+		// this situation is inconsistent: the first item that should go through the tunnel is a virtual peer info, so if we don't have one, it means that
+		// this virtual peer is dead. We should therefore remove it from the list of vpids for this group.
+
+		mGroups[group_id].virtual_peers.erase(turtle_virtual_peer_id) ;
+
 		free(data);
 		return;
 	}
@@ -593,8 +597,6 @@ void RsGxsNetTunnelService::receiveTurtleData(const RsTurtleGenericTunnelItem *i
 		free(data);
 		return;
 	}
-	it2->second.vpid_status = RsGxsNetTunnelVirtualPeerInfo::RS_GXS_NET_TUNNEL_VP_STATUS_ACTIVE ;					// status of the peer
-	it2->second.last_contact = time(NULL);					// last time some data was sent/recvd
 
 	if(service_id != it2->second.service_id && service_id != RS_SERVICE_GXS_TYPE_GXSID)
 	{
@@ -602,6 +604,10 @@ void RsGxsNetTunnelService::receiveTurtleData(const RsTurtleGenericTunnelItem *i
 		free(data);
 		return ;
 	}
+	it2->second.vpid_status = RsGxsNetTunnelVirtualPeerInfo::RS_GXS_NET_TUNNEL_VP_STATUS_ACTIVE ;					// status of the peer
+	it2->second.last_contact = time(NULL);					// last time some data was sent/recvd from this peer
+
+	mGroups[group_id].last_contact = time(NULL);			// last time some data as received for this group
 
 #ifdef DEBUG_RSGXSNETTUNNEL
 	GXS_NET_TUNNEL_DEBUG() << "item contains generic data for VPID " << gxs_vpid << ". service_id = " << std::hex << service_id << std::dec << ". Storing in incoming list" <<  std::endl;
