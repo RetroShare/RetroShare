@@ -444,7 +444,7 @@ class p3turtle: public p3Service, public RsTurtle, public p3Config
 		std::list<pqipeer> _online_peers;
 
 		/// used to force digging new tunnels
-		bool _force_digg_new_tunnels ;			
+		//bool _force_digg_new_tunnels ;
 
 		/// used as a bias to introduce randomness in a consistent way, for
 		/// altering tunnel request depths, and tunnel re-routing actions.
