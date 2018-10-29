@@ -153,6 +153,16 @@ public:
 	 */
 	virtual bool createPost(RsGxsChannelPost& post) = 0;
 
+	/**
+	 * @brief Subscrbe to a channel. Blocking API
+	 * @jsonapi{development}
+	 * @param[in] channelId Channel id
+	 * @param[in] subscribe true to subscribe, false to unsubscribe
+	 * @return false on error, true otherwise
+	 */
+	virtual bool subscribeToChannel( const RsGxsGroupId &channelId,
+	                                 bool subscribe ) = 0;
+
 
 	/* Specific Service Data
 	 * TODO: change the orrible const uint32_t &token to uint32_t token
@@ -174,24 +184,24 @@ public:
 	        uint32_t& token, const RsGxsGrpMsgIdPair& msgId, bool read) = 0;
 
 	/**
-	 * @brief Enable or disable auto-download for given channel
+	 * @brief Enable or disable auto-download for given channel. Blocking API
 	 * @jsonapi{development}
-	 * @param[in] groupId channel id
+	 * @param[in] channelId channel id
 	 * @param[in] enable true to enable, false to disable
 	 * @return false if something failed, true otherwhise
 	 */
 	virtual bool setChannelAutoDownload(
-	        const RsGxsGroupId &groupId, bool enable) = 0;
+	        const RsGxsGroupId& channelId, bool enable) = 0;
 
 	/**
 	 * @brief Get auto-download option value for given channel
 	 * @jsonapi{development}
-	 * @param[in] groupId channel id
-	 * @param[in] enabled storage for the auto-download option value
+	 * @param[in] channelId channel id
+	 * @param[out] enabled storage for the auto-download option value
 	 * @return false if something failed, true otherwhise
 	 */
 	virtual bool getChannelAutoDownload(
-	        const RsGxsGroupId &groupId, bool& enabled) = 0;
+	        const RsGxsGroupId& channelId, bool& enabled) = 0;
 
 	/**
 	 * @brief Set download directory for the given channel
@@ -228,7 +238,6 @@ public:
 	 * @brief Request subscription to a group.
 	 * The action is performed asyncronously, so it could fail in a subsequent
 	 * phase even after returning true.
-	 * @jsonapi{development}
 	 * @param[out] token Storage for RsTokenService token to track request
 	 * status.
 	 * @param[in] groupId Channel id

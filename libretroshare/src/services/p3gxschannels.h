@@ -83,7 +83,7 @@ public:
 
 virtual bool getGroupData(const uint32_t &token, std::vector<RsGxsChannelGroup> &groups);
 virtual bool getPostData(const uint32_t &token, std::vector<RsGxsChannelPost> &posts, std::vector<RsGxsComment> &cmts);
-virtual bool getPostData(const uint32_t &token, std::vector<RsGxsChannelPost> &posts) {	std::vector<RsGxsComment> cmts; return getPostData( token, posts, cmts);}
+virtual bool getPostData(const uint32_t &token, std::vector<RsGxsChannelPost> &posts);
 //Not currently used
 //virtual bool getRelatedPosts(const uint32_t &token, std::vector<RsGxsChannelPost> &posts);
 
@@ -186,6 +186,10 @@ virtual bool ExtraFileRemove(const RsFileHash &hash);
 	/// Implementation of @see RsGxsChannels::createPost
 	virtual bool createPost(RsGxsChannelPost& post);
 
+	/// Implementation of @see RsGxsChannels::subscribeToChannel
+	virtual bool subscribeToChannel( const RsGxsGroupId &groupId,
+	                                 bool subscribe );
+
 protected:
 	// Overloaded from GxsTokenQueue for Request callbacks.
 	virtual void handleResponse(uint32_t token, uint32_t req_type);
@@ -201,7 +205,7 @@ static uint32_t channelsAuthenPolicy();
 	void load_SubscribedGroups(const uint32_t &token);
 
 	void request_SpecificUnprocessedPosts(std::list<std::pair<RsGxsGroupId, RsGxsMessageId> > &ids);
-	void load_SpecificUnprocessedPosts(const uint32_t &token);
+	void load_SpecificUnprocessedPosts(uint32_t token);
 
 	void request_GroupUnprocessedPosts(const std::list<RsGxsGroupId> &grouplist);
 	void load_GroupUnprocessedPosts(const uint32_t &token);
@@ -213,11 +217,6 @@ static uint32_t channelsAuthenPolicy();
 	void clearUnsubscribedGroup(const RsGxsGroupId &id);
 	bool setAutoDownload(const RsGxsGroupId &groupId, bool enabled);
 	bool autoDownloadEnabled(const RsGxsGroupId &groupId, bool &enabled);
-
-
-
-	std::map<RsGxsGroupId, RsGroupMetaData> mSubscribedGroups;
-
 
 // DUMMY DATA,
 virtual bool generateDummyData();
@@ -246,14 +245,21 @@ bool generateGroup(uint32_t &token, std::string groupName);
 		RsGxsMessageId mMsgId;
 	};
 
+	std::map<RsGxsGroupId, RsGroupMetaData> mSubscribedGroups;
+	RsMutex mSubscribedGroupsMutex;
+
+	/** G10h4ck: Is this stuff really used? And for what? BEGIN */
 	uint32_t mGenToken;
 	bool mGenActive;
 	int mGenCount;
 	std::vector<ChannelDummyRef> mGenRefs;
 	RsGxsMessageId mGenThreadId;
+	/** G10h4ck: Is this stuff really used? And for what? END */
 
-	p3GxsCommentService *mCommentService;
-    std::map<RsGxsGroupId,rstime_t> mKnownChannels;
+	p3GxsCommentService* mCommentService;
+
+	std::map<RsGxsGroupId,rstime_t> mKnownChannels;
+	RsMutex mKnownChannelsMutex;
 
 	/** Store search callbacks with timeout*/
 	std::map<

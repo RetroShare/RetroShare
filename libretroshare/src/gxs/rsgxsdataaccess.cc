@@ -39,14 +39,16 @@ RsGxsDataAccess::~RsGxsDataAccess()
     for(std::map<uint32_t, GxsRequest*>::const_iterator it(mRequests.begin());it!=mRequests.end();++it)
 		delete it->second ;
 }
-bool RsGxsDataAccess::requestGroupInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts,
-		const std::list<RsGxsGroupId> &groupIds)
+bool RsGxsDataAccess::requestGroupInfo(
+        uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts,
+        const std::list<RsGxsGroupId> &groupIds )
 {
-    if(groupIds.empty())
-    {
-    	std::cerr << "(WW) Group Id list is empty" << std::endl;
-        return false;
-    }
+	if(groupIds.empty())
+	{
+		std::cerr << __PRETTY_FUNCTION__ << " (WW) Group Id list is empty!"
+		          << std::endl;
+		return false;
+	}
 
     GxsRequest* req = NULL;
     uint32_t reqType = opts.mReqType;
@@ -76,19 +78,19 @@ bool RsGxsDataAccess::requestGroupInfo(uint32_t &token, uint32_t ansType, const 
             req = gir;
     }
 
-    if(req == NULL)
-    {
-            std::cerr << "RsGxsDataAccess::requestGroupInfo() request type not recognised, type "
-                              << reqType << std::endl;
-            return false;
-    }else
-    {
-            generateToken(token);
+	if(!req)
+	{
+		std::cerr << __PRETTY_FUNCTION__ << " request type not recognised, "
+		          << "reqType: " << reqType << std::endl;
+		return false;
+	}
+
+	generateToken(token);
 
 #ifdef DATA_DEBUG
-            std::cerr << "RsGxsDataAccess::requestGroupInfo() gets Token: " << token << std::endl;
+	std::cerr << "RsGxsDataAccess::requestGroupInfo() gets token: " << token
+	          << std::endl;
 #endif
-    }
 
     setReq(req, token, ansType, opts);
     storeRequest(req);
@@ -130,11 +132,8 @@ bool RsGxsDataAccess::requestGroupInfo(uint32_t &token, uint32_t ansType, const 
 
 void RsGxsDataAccess::generateToken(uint32_t &token)
 {
-	RsStackMutex stack(mDataMutex); /****** LOCKED *****/
-
+	RS_STACK_MUTEX(mDataMutex);
 	token = mNextToken++;
-
-	return;
 }
 
 
