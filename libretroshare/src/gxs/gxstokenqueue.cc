@@ -36,20 +36,17 @@ bool GxsTokenQueue::queueRequest(uint32_t token, uint32_t req_type)
 void GxsTokenQueue::checkRequests()
 {
 	{
-		RsStackMutex stack(mQueueMtx); /********** STACK LOCKED MTX ******/
-		if (mQueue.empty())
-		{
-			return;
-		}
+		RS_STACK_MUTEX(mQueueMtx);
+		if (mQueue.empty()) return;
 	}
 
 	// Must check all, and move to a different list - for reentrant / good mutex behaviour.
 	std::list<GxsTokenQueueItem> toload;
 	std::list<GxsTokenQueueItem>::iterator it;
-
 	bool stuffToLoad = false;
+
 	{
-		RsStackMutex stack(mQueueMtx); /********** STACK LOCKED MTX ******/
+		RS_STACK_MUTEX(mQueueMtx);
 		for(it = mQueue.begin(); it != mQueue.end();)
 		{
 			uint32_t token = it->mToken;
@@ -62,29 +59,29 @@ void GxsTokenQueue::checkRequests()
 				stuffToLoad = true;
 
 #ifdef GXS_DEBUG
-				std::cerr << "GxsTokenQueue::checkRequests() token: " << token << " Complete";
-				std::cerr << std::endl;
+				std::cerr << "GxsTokenQueue::checkRequests() token: " << token
+				          << " Complete" << std::endl;
 #endif
 				++it;
 			}
 			else if (status == RsTokenService::FAILED)
 			{
 				// maybe we should do alternative callback?
-				std::cerr << "GxsTokenQueue::checkRequests() ERROR Request Failed: " << token;
-				std::cerr << std::endl;
+				std::cerr << __PRETTY_FUNCTION__ << " ERROR Request Failed! "
+				          << " token: " << token << std::endl;
 
 				it = mQueue.erase(it);
 			}
 			else
 			{
 #ifdef GXS_DEBUG
-				std::cerr << "GxsTokenQueue::checkRequests() token: " << token << " is unfinished, status: " << status;
-				std::cerr << std::endl;
+				std::cerr << "GxsTokenQueue::checkRequests() token: " << token
+				          << " is unfinished, status: " << status << std::endl;
 #endif
 				++it;
 			}
 		}
-	}
+	} // RS_STACK_MUTEX(mQueueMtx) END
 
 	if (stuffToLoad)
 	{
@@ -94,12 +91,4 @@ void GxsTokenQueue::checkRequests()
 		}
 	}
 }
-
-	// This must be overloaded to complete the functionality.
-void GxsTokenQueue::handleResponse(uint32_t token, uint32_t req_type)
-{
-	std::cerr << "GxsTokenQueue::handleResponse(" << token << "," << req_type << ") ERROR: NOT HANDLED";
-	std::cerr << std::endl;
-}
-
 
