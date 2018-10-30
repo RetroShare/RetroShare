@@ -6,6 +6,7 @@
 #include "chat/ChatLobbyUserNotify.h"
 #include "gui/gxs/GxsIdChooser.h"
 #include "chat/PopupChatDialog.h"
+#include "retroshare/rsstatus.h"
 
 #include <retroshare/rsmsgs.h>
 
@@ -69,8 +70,8 @@ public:
 	void setCurrentOne2OneChatPage(PopupChatDialog *d);
     void updateContactItem(QTreeWidget *treeWidget, QTreeWidgetItem *item, const std::string &nickname, const ChatId& chatId, const std::string &rsId, uint current_time, bool unread);
 	void fromGpgIdToChatId(const RsPgpId &gpgId,  ChatId &chatId);
-
     bool showContactAnchor(RsPeerId id, QString anchor);
+
 signals:
 	void unreadCountChanged(uint unreadCount);
 
@@ -112,6 +113,9 @@ private slots:
     void updateNotifyFromP2P(ChatId id, unsigned int count);
 	void idChooserCurrentIndexChanged(int index);
 
+    void UpdateStatusForAllContacts();
+    void UpdateStatusForContact(QTreeWidgetItem* gpgItem, const RsPeerId peerId);
+    void ContactStatusChanged(QString, int);
 private:
 	void autoSubscribeLobby(QTreeWidgetItem *item);
 	void subscribeChatLobby(ChatLobbyId id) ;
@@ -157,5 +161,7 @@ private:
     void resetAvatarForContactItem(const ChatId &chatId);
 
     std::set<ChatId> recentUnreadListOfChatId;
+    QPixmap currentStatusIcon(RsPeerId peerId, QFont& gpgFontOut);
+    QIcon lastIconForPeerId(RsPeerId peerId, bool unread);
 };
 
