@@ -4,7 +4,7 @@
 #include <retroshare/rsgxsifacetypes.h>
 
 class QShowEvent;
-class RsGxsIfaceHelper;
+struct RsGxsIfaceHelper;
 class RsGxsUpdateBroadcast;
 
 typedef uint32_t TurtleRequestId ;
@@ -18,7 +18,7 @@ class RsGxsUpdateBroadcastBase : public QObject
 	Q_OBJECT
 
 public:
-	RsGxsUpdateBroadcastBase(RsGxsIfaceHelper* ifaceImpl, QWidget *parent = NULL);
+	RsGxsUpdateBroadcastBase(RsGxsIfaceHelper* ifaceImpl, QWidget *parent = nullptr);
 	virtual ~RsGxsUpdateBroadcastBase();
 
 	const std::set<RsGxsGroupId> &getGrpIds() { return mGrpIds; }
