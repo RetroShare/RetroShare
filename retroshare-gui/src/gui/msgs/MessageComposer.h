@@ -19,8 +19,7 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#ifndef _MESSAGECOMPOSER_H
-#define _MESSAGECOMPOSER_H
+#pragma once
 
 #include <QMainWindow>
 #include <retroshare/rstypes.h>
@@ -31,7 +30,7 @@
 #include "gui/msgs/MessageInterface.h"
 
 class QAction;
-class RsIdentityDetails;
+struct RsIdentityDetails;
 class QComboBox;
 class QFontComboBox;
 class QTextEdit;
@@ -52,7 +51,7 @@ public:
 public:
     /** Default Constructor */
 
-    MessageComposer(QWidget *parent = 0, Qt::WindowFlags flags = 0);
+    MessageComposer(QWidget *parent = nullptr, Qt::WindowFlags flags = Qt::Widget);
     ~MessageComposer();
 
     static void msgFriend(const RsPeerId &id);
@@ -262,5 +261,3 @@ private:
 
     std::list<FileInfo> _recList ;
 };
-
-#endif
