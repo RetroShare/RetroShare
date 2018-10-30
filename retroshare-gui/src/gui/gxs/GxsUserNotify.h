@@ -26,7 +26,7 @@
 #include "gui/common/UserNotify.h"
 #include "util/TokenQueue.h"
 
-class RsGxsIfaceHelper;
+struct RsGxsIfaceHelper;
 class RsGxsUpdateBroadcastBase;
 
 class GxsUserNotify : public UserNotify, public TokenResponse
@@ -34,7 +34,7 @@ class GxsUserNotify : public UserNotify, public TokenResponse
 	Q_OBJECT
 
 public:
-	GxsUserNotify(RsGxsIfaceHelper *ifaceImpl, QObject *parent = 0);
+	GxsUserNotify(RsGxsIfaceHelper *ifaceImpl, QObject *parent = nullptr);
 	virtual ~GxsUserNotify();
 
 	/* TokenResponse */
