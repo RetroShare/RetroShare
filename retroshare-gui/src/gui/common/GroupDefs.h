@@ -20,10 +20,12 @@
  ****************************************************************/
 
 
-#ifndef _GROUPDEFS_H
-#define _GROUPDEFS_H
+#pragma once
 
-class RsGroupInfo;
+#include <list>
+
+struct RsGroupInfo;
+class QString;
 
 class GroupDefs
 {
@@ -32,6 +34,3 @@ public:
 
     static void sortByName(std::list<RsGroupInfo> &groupInfoList);
 };
-
-#endif
-
