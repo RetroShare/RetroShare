@@ -19,8 +19,7 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#ifndef _GXSGROUPFRAMEDIALOG_H
-#define _GXSGROUPFRAMEDIALOG_H
+#pragma once
 
 #include "gui/gxs/RsGxsUpdateBroadcastPage.h"
 #include "RsAutoUpdatePage.h"
@@ -42,7 +41,7 @@ class GroupTreeWidget;
 class GroupItemInfo;
 class GxsMessageFrameWidget;
 class UIStateHelper;
-class RsGxsCommentService;
+struct RsGxsCommentService;
 class GxsCommentDialog;
 
 class GxsGroupFrameDialog : public RsGxsUpdateBroadcastPage, public TokenResponse
@@ -72,7 +71,7 @@ public:
 	};
 
 public:
-	GxsGroupFrameDialog(RsGxsIfaceHelper *ifaceImpl, QWidget *parent = 0,bool allow_dist_sync=false);
+	GxsGroupFrameDialog(RsGxsIfaceHelper *ifaceImpl, QWidget *parent = nullptr,bool allow_dist_sync=false);
 	virtual ~GxsGroupFrameDialog();
 
 	bool navigate(const RsGxsGroupId &groupId, const RsGxsMessageId& msgId);
@@ -148,9 +147,9 @@ private:
 	virtual int shareKeyType() = 0;
 	virtual GxsMessageFrameWidget *createMessageFrameWidget(const RsGxsGroupId &groupId) = 0;
 	virtual void groupTreeCustomActions(RsGxsGroupId /*grpId*/, int /*subscribeFlags*/, QList<QAction*> &/*actions*/) {}
-	virtual RsGxsCommentService *getCommentService() { return NULL; }
-	virtual QWidget *createCommentHeaderWidget(const RsGxsGroupId &/*grpId*/, const RsGxsMessageId &/*msgId*/) { return NULL; }
-    virtual bool getDistantSearchResults(TurtleRequestId /* id */, std::map<RsGxsGroupId,RsGxsGroupSummary>& /* group_infos */){ return false ;}
+	virtual RsGxsCommentService *getCommentService() { return nullptr; }
+	virtual QWidget *createCommentHeaderWidget(const RsGxsGroupId &/*grpId*/, const RsGxsMessageId &/*msgId*/) { return nullptr; }
+	virtual bool getDistantSearchResults(TurtleRequestId /* id */, std::map<RsGxsGroupId,RsGxsGroupSummary>& /* group_infos */){ return false ;}
 
 	void initUi();
 
@@ -216,5 +215,3 @@ private:
     std::map<uint32_t,QTreeWidgetItem*> mSearchGroupsItems ;
     std::map<uint32_t,std::set<RsGxsGroupId> > mKnownGroups;
 };
-
-#endif
