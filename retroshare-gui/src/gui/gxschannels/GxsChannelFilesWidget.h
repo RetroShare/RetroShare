@@ -26,7 +26,7 @@
 
 #include "retroshare/rsgxsifacetypes.h"
 
-class RsGxsChannelPost;
+struct RsGxsChannelPost;
 class RSTreeWidgetItemCompareRole;
 class QTreeWidgetItem;
 class GxsFeedItem;
@@ -40,7 +40,7 @@ class GxsChannelFilesWidget : public QWidget
 	Q_OBJECT
 
 public:
-	explicit GxsChannelFilesWidget(QWidget *parent = 0);
+	explicit GxsChannelFilesWidget(QWidget *parent = nullptr);
 	~GxsChannelFilesWidget();
 
 	void addFiles(const RsGxsChannelPost &post, bool related);
