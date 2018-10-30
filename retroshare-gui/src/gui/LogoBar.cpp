@@ -43,11 +43,11 @@ void LogoBar::init() {
 	//LogoButton
 	_logoButton = new RetroStyleLabel(this);
 	_logoButton->setPixmaps(
-			QPixmap(":/images/logobar/rslogo2.png"), //Start
+            QPixmap(":/images/logobar/rslogo2.png"), //Start
 			QPixmap(), //End
 			QPixmap(), //Fill
 
-			QPixmap(":/images/logobar/rslogo2.png"), //Start
+            QPixmap(":/images/logobar/rslogo2.png"), //Start
 			QPixmap(), //End
 			QPixmap() //Fill
 			);

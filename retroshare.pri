@@ -75,12 +75,12 @@ libresapilocalserver:CONFIG -= no_libresapilocalserver
 
 # To enable libresapi settings handler in libresapi append the following
 # assignation to qmake command line "CONFIG+=libresapi_settings"
-CONFIG *= no_libresapi_settings
+CONFIG += no_libresapi_settings
 libresapi_settings:CONFIG -= no_libresapi_settings
 
 # To disable libresapi via HTTP (based on libmicrohttpd) append the following
 # assignation to qmake command line "CONFIG+=no_libresapihttpserver"
-CONFIG *= libresapihttpserver
+CONFIG += no_libresapihttpserver
 no_libresapihttpserver:CONFIG -= libresapihttpserver
 
 # To disable SQLCipher support append the following assignation to qmake
@@ -352,7 +352,7 @@ wikipoos:DEFINES *= RS_USE_WIKI
 rs_gxs:DEFINES *= RS_ENABLE_GXS
 libresapilocalserver:DEFINES *= LIBRESAPI_LOCAL_SERVER
 libresapi_settings:DEFINES *= LIBRESAPI_SETTINGS
-#libresapihttpserver:DEFINES *= ENABLE_WEBUI
+libresapihttpserver:DEFINES *= ENABLE_WEBUI
 RS_THREAD_LIB=pthread
 RS_UPNP_LIB = upnp ixml threadutil
 
