@@ -20,13 +20,12 @@
  ****************************************************************/
 
 
-#ifndef _STATUSDEFS_H
-#define _STATUSDEFS_H
+#pragma once
 
 #include <QColor>
 #include <QFont>
 
-class RsPeerDetails;
+struct RsPeerDetails;
 
 class StatusDefs
 {
@@ -44,6 +43,3 @@ public:
 	static QString     connectStateWithoutTransportTypeString(RsPeerDetails &details);
 	static QString     connectStateIpString(RsPeerDetails &details);
 };
-
-#endif
-
