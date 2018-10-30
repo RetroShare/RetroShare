@@ -25,7 +25,7 @@
 #include "gui/gxs/RsGxsUpdateBroadcastWidget.h"
 #include "util/TokenQueue.h"
 
-class RsGxsIfaceHelper;
+struct RsGxsIfaceHelper;
 class UIStateHelper;
 
 class GxsMessageFrameWidget : public RsGxsUpdateBroadcastWidget, public TokenResponse
@@ -33,7 +33,7 @@ class GxsMessageFrameWidget : public RsGxsUpdateBroadcastWidget, public TokenRes
 	Q_OBJECT
 
 public:
-	explicit GxsMessageFrameWidget(RsGxsIfaceHelper *ifaceImpl, QWidget *parent = NULL);
+	explicit GxsMessageFrameWidget(RsGxsIfaceHelper *ifaceImpl, QWidget *parent = nullptr);
 	virtual ~GxsMessageFrameWidget();
 
 	const RsGxsGroupId &groupId();
