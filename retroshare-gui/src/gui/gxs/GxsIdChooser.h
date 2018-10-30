@@ -21,8 +21,7 @@
  *
  */
 
-#ifndef _GXS_ID_CHOOSER_H
-#define _GXS_ID_CHOOSER_H
+#pragma once
 
 #include <QComboBox>
 #include <retroshare/rsgxsifacetypes.h>
@@ -31,7 +30,7 @@
 // should update regularly. They also should update only when visible, to save CPU time.
 //
 
-class RsGxsIfaceHelper;
+struct RsGxsIfaceHelper;
 class RsGxsUpdateBroadcastBase;
 
 #define IDCHOOSER_ID_REQUIRED   0x0001
@@ -44,8 +43,8 @@ class GxsIdChooser : public QComboBox
 	Q_OBJECT
 
 public:
-	GxsIdChooser(RsGxsIfaceHelper* ifaceImpl, QWidget *parent = NULL);
-	GxsIdChooser(QWidget *parent = NULL);
+	GxsIdChooser(RsGxsIfaceHelper* ifaceImpl, QWidget *parent = nullptr);
+	GxsIdChooser(QWidget *parent = nullptr);
 	virtual ~GxsIdChooser();
 
 	void setFlags(uint32_t flags) ;
@@ -89,5 +88,3 @@ private:
     std::set<RsGxsId> mConstraintIdsSet ; // leave empty if all allowed
     RsGxsUpdateBroadcastBase *mBase;
 };
-
-#endif
