@@ -41,7 +41,7 @@
 #define COLUMN_COUNT         6
 #define RETROSHARE_DIR_MODEL_FILTER_STRING "filtered"
 
-class DirDetails;
+struct DirDetails;
 
 class DirDetailsVector : public DirDetails
 {
@@ -54,7 +54,7 @@ public:
 static const uint32_t IND_LAST_DAY    = 3600*24 ;
 static const uint32_t IND_LAST_WEEK   = 3600*24*7 ;
 static const uint32_t IND_LAST_MONTH  = 3600*24*31	; // I know, this is approximate
-static const uint32_t IND_ALWAYS      = ~(uint32_t)0 ;
+static const uint32_t IND_ALWAYS      = ~static_cast<uint32_t>(0) ;
 
 class RetroshareDirModel : public QAbstractItemModel
 {
@@ -63,7 +63,7 @@ class RetroshareDirModel : public QAbstractItemModel
 	public:
 		enum Roles{ FileNameRole = Qt::UserRole+1, SortRole = Qt::UserRole+2, FilterRole = Qt::UserRole+3 };
 
-		RetroshareDirModel(bool mode, QObject *parent = 0);
+		RetroshareDirModel(bool mode, QObject *parent = nullptr);
 		virtual ~RetroshareDirModel() {}
 
 		virtual Qt::ItemFlags flags ( const QModelIndex & index ) const;
@@ -235,7 +235,7 @@ class FlatStyle_RDM: public RetroshareDirModel
 		//Overloaded from RetroshareDirModel
 		virtual void update() ;
 
-		bool isMaxRefsTableSize(size_t* maxSize = NULL);
+		bool isMaxRefsTableSize(size_t* maxSize = nullptr);
 
 	protected slots:
 		void updateRefs() ;
