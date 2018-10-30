@@ -11,7 +11,7 @@
 // widget.
 //
 
-class RsGxsIfaceHelper;
+struct RsGxsIfaceHelper;
 class RsGxsUpdateBroadcastBase;
 typedef uint32_t TurtleRequestId;
 
@@ -20,7 +20,7 @@ class RsGxsUpdateBroadcastWidget : public QWidget
 	Q_OBJECT
 
 public:
-	RsGxsUpdateBroadcastWidget(RsGxsIfaceHelper* ifaceImpl, QWidget *parent = NULL, Qt::WindowFlags flags = 0);
+	RsGxsUpdateBroadcastWidget(RsGxsIfaceHelper* ifaceImpl, QWidget *parent = nullptr, Qt::WindowFlags flags = Qt::Widget);
 	virtual ~RsGxsUpdateBroadcastWidget();
 
 	void fillComplete();
