@@ -160,6 +160,9 @@ selection-background-color: rgb(7,120,171);</string>
    </attribute>
   </widget>
   <widget class="QToolBar" name="toolBarAction">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
    <property name="contextMenuPolicy">
     <enum>Qt::CustomContextMenu</enum>
    </property>
