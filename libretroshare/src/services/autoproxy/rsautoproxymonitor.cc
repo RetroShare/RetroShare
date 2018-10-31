@@ -24,7 +24,7 @@
 #include <unistd.h>		/* for usleep() */
 #include "util/rstime.h"
 
-rsAutoProxyMonitor *rsAutoProxyMonitor::mInstance = NULL;
+rsAutoProxyMonitor *rsAutoProxyMonitor::mInstance = nullptr;
 
 rsAutoProxyMonitor::rsAutoProxyMonitor()
  : mRSShutDown(false), mLock("rs auto proxy monitor")
@@ -34,7 +34,7 @@ rsAutoProxyMonitor::rsAutoProxyMonitor()
 
 rsAutoProxyMonitor *rsAutoProxyMonitor::instance()
 {
-	if (mInstance == NULL)
+	if (!mInstance)
 		mInstance = new rsAutoProxyMonitor();
 	return mInstance;
 }
@@ -127,7 +127,7 @@ void rsAutoProxyMonitor::stopAllRSShutdown()
 bool rsAutoProxyMonitor::isEnabled(autoProxyType::autoProxyType_enum t)
 {
 	autoProxyService *s = lookUpService(t);
-	if (s == NULL)
+	if (!s)
 		return false;
 
 	return s->isEnabled();
@@ -136,7 +136,7 @@ bool rsAutoProxyMonitor::isEnabled(autoProxyType::autoProxyType_enum t)
 bool rsAutoProxyMonitor::initialSetup(autoProxyType::autoProxyType_enum t, std::string &addr, uint16_t &port)
 {
 	autoProxyService *s = lookUpService(t);
-	if (s == NULL)
+	if (!s)
 		return false;
 
 	return s->initialSetup(addr, port);
@@ -159,7 +159,7 @@ void rsAutoProxyMonitor::task(taskTicket *ticket)
 
 	for (it = ticket->types.begin(); it != ticket->types.end(); ++it) {
 		autoProxyService* s = lookUpService(*it);
-		if (s == NULL)
+		if (!s)
 			continue;
 
 		if (ticket->async) {
@@ -242,7 +242,7 @@ void rsAutoProxyMonitor::taskDone(taskTicket *t, autoProxyStatus::autoProxyStatu
 	t->result = status;
 	if (t->cb) {
 		t->cb->taskFinished(t);
-		if (t != NULL) {
+		if (t) {
 			// callack did not clean up properly
 			std::cerr << "(WW) rsAutoProxyMonitor::taskFinish callback did not clean up!" << std::endl;
 			cleanUp = true;
@@ -258,21 +258,22 @@ void rsAutoProxyMonitor::taskDone(taskTicket *t, autoProxyStatus::autoProxyStatu
 	if (cleanUp) {
 		if (t->data) {
 			std::cerr << "(WW) rsAutoProxyMonitor::taskFinish will try to delete void pointer!" << std::endl;
+#pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdelete-incomplete"
 			delete t->data;
 #pragma GCC diagnostic pop
-			t->data = NULL;
+			t->data = nullptr;
 		}
 		delete t;
-		t = NULL;
+		t = nullptr;
 	}
 }
 
 taskTicket *rsAutoProxyMonitor::getTicket()
 {
 	taskTicket *tt = new taskTicket();
-	tt->cb = NULL;
-	tt->data = NULL;
+	tt->cb = nullptr;
+	tt->data = nullptr;
 	tt->async = true;
 	tt->result = autoProxyStatus::undefined;
 	return tt;
@@ -290,13 +291,14 @@ void rsAutoProxyMonitor::taskFinished(taskTicket *&ticket)
 	// clean up
 	if (ticket->data) {
 		std::cerr << "rsAutoProxyMonitor::taskFinished data set. Will try to delete void pointer" << std::endl;
+#pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdelete-incomplete"
 		delete ticket->data;
 #pragma GCC diagnostic pop
-		ticket->data = NULL;
+		ticket->data = nullptr;
 	}
 	delete ticket;
-	ticket = NULL;
+	ticket = nullptr;
 }
 
 autoProxyService *rsAutoProxyMonitor::lookUpService(autoProxyType::autoProxyType_enum t)
@@ -307,7 +309,7 @@ autoProxyService *rsAutoProxyMonitor::lookUpService(autoProxyType::autoProxyType
 		return itService->second;
 	}
 	std::cerr << "sAutoProxyMonitor::lookUpService no service for type " << t << " found!" << std::endl;
-	return NULL;
+	return nullptr;
 }
 
 bool rsAutoProxyMonitor::isAsyncTask(autoProxyTask::autoProxyTask_enum t)
@@ -317,7 +319,6 @@ bool rsAutoProxyMonitor::isAsyncTask(autoProxyTask::autoProxyTask_enum t)
 	case autoProxyTask::stop:
 	case autoProxyTask::receiveKey:
 		return true;
-		break;
 	default:
 		break;
 	}
