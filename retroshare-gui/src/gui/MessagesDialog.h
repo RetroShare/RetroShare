@@ -27,7 +27,7 @@
 #include "mainpage.h"
 #include "ui_MessagesDialog.h"
 
-#define IMAGE_MESSAGES          ":/home/img/face_icon/envelope_128.png"
+#define IMAGE_MESSAGES          ":/home/img/face_icon/envelope_xu_128.png"
 
 class RSTreeWidgetItemCompareRole;
 class MessageWidget;

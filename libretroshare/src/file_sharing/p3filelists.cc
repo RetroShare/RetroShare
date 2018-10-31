@@ -37,7 +37,7 @@
 #define P3FILELISTS_ERROR() std::cerr << "***ERROR***" << " : FILE_LISTS : " << __FUNCTION__ << " : "
 
 //#define DEBUG_P3FILELISTS 1
-#define DEBUG_CONTENT_FILTERING 1
+//#define DEBUG_CONTENT_FILTERING 1
 
 static const uint32_t P3FILELISTS_UPDATE_FLAG_NOTHING_CHANGED     = 0x0000 ;
 static const uint32_t P3FILELISTS_UPDATE_FLAG_REMOTE_MAP_CHANGED  = 0x0001 ;
