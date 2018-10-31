@@ -70,12 +70,12 @@ retroshare_qml_app:CONFIG -= no_retroshare_qml_app
 # To enable libresapi via local socket (unix domain socket or windows named
 # pipes) append the following assignation to qmake command line
 #"CONFIG+=libresapilocalserver"
-CONFIG *= no_libresapilocalserver
+CONFIG *= libresapilocalserver
 libresapilocalserver:CONFIG -= no_libresapilocalserver
 
 # To enable libresapi settings handler in libresapi append the following
 # assignation to qmake command line "CONFIG+=libresapi_settings"
-CONFIG += no_libresapi_settings
+CONFIG += libresapi_settings
 libresapi_settings:CONFIG -= no_libresapi_settings
 
 # To disable libresapi via HTTP (based on libmicrohttpd) append the following
