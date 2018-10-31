@@ -103,9 +103,9 @@
 #define PEER_STATE_INACTIVE     5
 #define PEER_STATE_OFFLINE      6
 
-/******/
+/*****
   #define FRIENDS_DEBUG 1
- /*****/
+****/
 
 Q_DECLARE_METATYPE(ElidedLabel*)
 
