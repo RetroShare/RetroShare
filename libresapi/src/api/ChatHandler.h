@@ -29,7 +29,7 @@
 #include "util/rstime.h"
 
 class RsPeers;
-class RsIdentity;
+struct RsIdentity;
 
 namespace resource_api
 {
@@ -37,6 +37,7 @@ namespace resource_api
 class UnreadMsgNotify
 {
 public:
+	virtual ~UnreadMsgNotify() = default;
 	virtual void notifyUnreadMsgCountChanged(const RsPeerId& peer, uint32_t count) = 0;
 };
 
