@@ -523,7 +523,7 @@ void MainWindow::initStackedPage()
   // Removed About because it's now in options.
   //addAction(new QAction(QIcon(IMAGE_ABOUT), tr("About"), ui->toolBarAction), &MainWindow::showabout, SLOT(showabout()));
 
-  addAction(new QAction(QIcon(IMAGE_QUIT), tr("Quit"), ui->toolBarAction), &MainWindow::doQuit, SLOT(doQuit()));
+//  addAction(new QAction(QIcon(IMAGE_QUIT), tr("Quit"), ui->toolBarAction), &MainWindow::doQuit, SLOT(doQuit()));      //d:hide quit button
 
 }
 
@@ -540,9 +540,9 @@ QAction *MainWindow::createPageAction(const QIcon &icon, const QString &text, QA
  * Have to pass function pointer and slot, because we can't make slot of function pointer */
 void MainWindow::addAction(QAction *action, FunctionType actionFunction, const char *slot)
 {
-    ui->toolBarAction->addAction(action);
+/*    ui->toolBarAction->addAction(action);                 //d:hide quit button
     if (slot) connect(action, SIGNAL(triggered()), this, slot);
-
+*/
     QListWidgetItem *item = new QListWidgetItem(action->icon(),action->text()) ;
     item->setData(Qt::UserRole,QString(slot));
     ui->listWidget->addItem(item) ;
@@ -1488,8 +1488,8 @@ void MainWindow::settingsChanged()
 {
     ui->toolBarPage->setStyleSheet("QToolBar {background: rgb(43, 164, 220); color: rgb(255, 255, 255)}"
                                    "QToolButton {background-color: rgb(20, 141, 196); color: rgb(255, 255, 255)}"); // d: Set color of toolbar
-    ui->toolBarAction->setStyleSheet("QToolBar {background: rgb(43, 164, 220); color: rgb(255, 255, 255)}"
-                                     "QToolButton {background-color: rgb(20, 141, 196); color: rgb(255, 255, 255)}"); // d: Set color of toolbar
+//    ui->toolBarAction->setStyleSheet("QToolBar {background: rgb(43, 164, 220); color: rgb(255, 255, 255)}"        //d:hide quit button
+//                                     "QToolButton {background-color: rgb(20, 141, 196); color: rgb(255, 255, 255)}"); // d: Set color of toolbar
     ui->listWidget->setStyleSheet("QListWidget {background: rgb(43, 164, 220); color: rgb(255, 255, 255)}"
                                   "QListWidget::item {background: rgb(20, 141, 196); color: rgb(255, 255, 255)}");  // d: Set color of list item
 
@@ -1509,8 +1509,8 @@ void MainWindow::settingsChanged()
     int toolSize = Settings->getToolButtonSize();
     ui->toolBarPage->setToolButtonStyle(Settings->getToolButtonStyle());
     ui->toolBarPage->setIconSize(QSize(128,toolSize));      //ui->toolBarPage->setIconSize(QSize(toolSize,toolSize));
-	ui->toolBarAction->setToolButtonStyle(Settings->getToolButtonStyle());
-    ui->toolBarAction->setIconSize(QSize(128,toolSize));        //ui->toolBarAction->setIconSize(QSize(toolSize,toolSize));
+//	ui->toolBarAction->setToolButtonStyle(Settings->getToolButtonStyle());                              //d:hide quit button
+//  ui->toolBarAction->setIconSize(QSize(128,toolSize));        //ui->toolBarAction->setIconSize(QSize(toolSize,toolSize));       //d:hide quit button
 
    //  int itemSize = Settings->getListItemIconSize();
     // ui->listWidget->setIconSize(QSize(itemSize,itemSize));

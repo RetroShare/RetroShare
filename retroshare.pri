@@ -80,7 +80,7 @@ libresapi_settings:CONFIG -= no_libresapi_settings
 
 # To disable libresapi via HTTP (based on libmicrohttpd) append the following
 # assignation to qmake command line "CONFIG+=no_libresapihttpserver"
-CONFIG += no_libresapihttpserver
+CONFIG *= libresapihttpserver
 no_libresapihttpserver:CONFIG -= libresapihttpserver
 
 # To disable SQLCipher support append the following assignation to qmake
@@ -91,10 +91,10 @@ no_sqlcipher:CONFIG -= sqlcipher
 # To enable autologin (this is higly discouraged as it may compromise your node
 # security in multiple ways) append the following assignation to qmake command
 # line "CONFIG+=rs_autologin"
-CONFIG *= no_rs_autologin
-#CONFIG +=rs_autologin
-rs_autologin:CONFIG -= no_rs_autologin
-
+#CONFIG *= no_rs_autologin
+CONFIG +=rs_autologin
+#rs_autologin:CONFIG -= no_rs_autologin
+rs_autologin:CONFIG += rs_autologin
 # To have only hidden node generation append the following assignation
 # to qmake command line "CONFIG+=rs_onlyhiddennode"
 CONFIG *= no_rs_onlyhiddennode
