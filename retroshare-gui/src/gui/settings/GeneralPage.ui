@@ -105,6 +105,9 @@
       </item>
       <item row="2" column="0">
        <widget class="QCheckBox" name="autoLogin">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
         <property name="text">
          <string>Auto Login</string>
         </property>
