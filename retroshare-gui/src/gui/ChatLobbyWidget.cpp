@@ -17,6 +17,7 @@
 //meiyousixin - add more PopupChatDialog into ChatLobbyWidget
 #include "chat/PopupChatDialog.h"
 #include "gui/common/AvatarDefs.h"
+#include "gui/common/StatusDefs.h"
 
 #include <QPainter>
 #include "util/rsdir.h"
@@ -97,6 +98,7 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WindowFlags flags)
 
     QObject::connect( NotifyQt::getInstance(), SIGNAL(alreadySendChat(const ChatId&, uint)), this, SLOT(updateRecentTime(const ChatId&, uint)));
     QObject::connect( NotifyQt::getInstance(), SIGNAL(newChatMessageReceive(const ChatId&, uint)), this, SLOT(updateRecentTime(const ChatId&, uint)));
+
 
     //QObject::connect( ui.lobbyTreeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(lobbyTreeWidgetCustomPopupMenu(QPoint)));
 	QObject::connect( ui.lobbyTreeWidget, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)), this, SLOT(itemDoubleClicked(QTreeWidgetItem*,int)));
@@ -221,6 +223,10 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WindowFlags flags)
 
     getHistoryForRecentList();
 
+    UpdateStatusForAllContacts();
+
+    QObject::connect(NotifyQt::getInstance(), SIGNAL(peerStatusChanged(QString,int)), this, SLOT(ContactStatusChanged(QString, int)));
+
 	// load settings
 	processSettings(true);
 
@@ -310,8 +316,10 @@ void ChatLobbyWidget::updateNotifyFromP2P(ChatId id, unsigned int count)
         std::set<ChatId>::iterator i;
         for (i = recentUnreadListOfChatId.begin(); i != recentUnreadListOfChatId.end(); ++i)
         {
-            resetAvatarForContactItem(*i);
             recentUnreadListOfChatId.erase(*i);
+            QTreeWidgetItem *item = getTreeWidgetItemForChatId(*i);
+            if (item)
+                UpdateStatusForContact(item,(*i).toPeerId());
         }
     }
 }
@@ -536,9 +544,6 @@ void ChatLobbyWidget::addOne2OneChatPage(PopupChatDialog *d)
 		ui.stackedWidget->addWidget(d) ;
 		_chatOne2One_infos[d->chatId().toPeerId().toStdString()].dialog = d ;
         if (checkItem == NULL) _chatOne2One_infos[d->chatId().toPeerId().toStdString()].last_typing_event = current_time; //QDateTime::currentDateTime().toTime_t();
-
-        //ui.lobbyTreeWidget->sortItems(COLUMN_RECENT_TIME, Qt::DescendingOrder);
-        std::cerr << "current time for this contact is " << current_time;
 
    }
 
@@ -904,8 +909,6 @@ void ChatLobbyWidget::getHistoryForRecentList()
             std::list<HistoryMsg>::iterator historyIt;
             for (historyIt = historyMsgs.begin(); historyIt != historyMsgs.end(); ++historyIt)
             {
-                std::cerr << "history for peerId: " << chatId.toPeerId().toStdString() << ", peername: " << historyIt->peerName << ", recent time: " << (historyIt->incoming ? historyIt->recvTime :  historyIt->sendTime) << ", msg: " << historyIt->message << std::endl;
-
                 QTreeWidgetItem *item =  new RSTreeWidgetItem(compareRole, TYPE_ONE2ONE);
                 RsPgpId pgpId = rsPeers->getGPGId(chatId.toPeerId());
                 std::string nickname = rsPeers->getGPGName(pgpId);
@@ -1359,9 +1362,15 @@ void ChatLobbyWidget::updateCurrentLobby()
               QPixmap avatar;
               QString id = item->data(COLUMN_DATA, ROLE_ID).toString();
               RsPeerId peerId(id.toStdString());
-              AvatarDefs::getAvatarFromSslId(peerId, avatar);
-              if (!avatar.isNull())
-                item->setIcon(COLUMN_NAME,QIcon(avatar)) ;
+              ChatId chatId(peerId);
+              if (recentUnreadListOfChatId.count(chatId) != 0) recentUnreadListOfChatId.erase(chatId);
+
+              QFont gpgFont;
+              QPixmap gpgOverlayIcon = currentStatusIcon(peerId, gpgFont);
+              QIcon unreadIcon = lastIconForPeerId(peerId, false);
+              item->setIcon(COLUMN_NAME,unreadIcon) ;
+              item->setFont(COLUMN_NAME,gpgFont) ;
+
               // Need to update msg as read here, it will mark the last msg as read
               HistoryMsg hmsg;
               hmsg.chatPeerId = peerId;
@@ -1420,8 +1429,7 @@ void ChatLobbyWidget::updateP2PMessageChanged(ChatMessage msg)
 
     if (item && current_item && item == current_item)
     {
-        //TODO: need to update the message as read: When user receive new msg in the active chat window
-        std::cerr << " Msg go here first 2 (updateP2PMessageChanged) ?" << std::endl;
+        //Need to update the message as read: When user receive new msg in the active chat window
         HistoryMsg hmsg;
         hmsg.chatPeerId = msg.chat_id.toPeerId();
         rsHistory->updateMessageAsRead(hmsg);
@@ -1431,9 +1439,14 @@ void ChatLobbyWidget::updateP2PMessageChanged(ChatMessage msg)
     {
         if (msg.incoming)
         {
-            ui.lobbyTreeWidget->setIconSize(QSize(32,32));
-            item->setIcon(COLUMN_NAME,QIcon(IMAGE_MESSAGE)) ;
-            if (recentUnreadListOfChatId.find(msg.chat_id) != recentUnreadListOfChatId.end()) recentUnreadListOfChatId.insert(msg.chat_id);
+            if (recentUnreadListOfChatId.count(msg.chat_id) == 0) recentUnreadListOfChatId.insert(msg.chat_id);
+
+            QFont gpgFont;
+            QPixmap gpgOverlayIcon = currentStatusIcon(msg.chat_id.toPeerId(), gpgFont);
+
+            QIcon unreadIcon = lastIconForPeerId(msg.chat_id.toPeerId(), true);
+            item->setIcon(COLUMN_NAME,unreadIcon) ;
+            item->setFont(COLUMN_NAME,gpgFont) ;
         }
     }
 }
@@ -1675,28 +1688,7 @@ void ChatLobbyWidget::openOne2OneChat(std::string rsId, std::string nickname)
     }
 }
 
-void ChatLobbyWidget::updateContactItem(QTreeWidget *treeWidget, QTreeWidgetItem *item, const std::string &nickname, const ChatId& chatId, const std::string &rsId, uint current_time, bool unread)
-{
-      item->setText(COLUMN_NAME, QString::fromUtf8(nickname.c_str()));
 
-      if (unread)
-      {
-          item->setIcon(COLUMN_NAME,QIcon(IMAGE_MESSAGE)) ;
-          if (recentUnreadListOfChatId.find(chatId) != recentUnreadListOfChatId.end()) recentUnreadListOfChatId.insert(chatId);
-      }
-      else
-      {
-          QPixmap avatar;
-          AvatarDefs::getAvatarFromSslId(chatId.toPeerId(), avatar);
-          if (!avatar.isNull())
-                item->setIcon(COLUMN_NAME,QIcon(avatar)) ;
-      }
-
-      item->setData(COLUMN_NAME, ROLE_SORT, QString::fromUtf8(nickname.c_str()));
-      item->setData(COLUMN_DATA, ROLE_ID, QString::fromUtf8(rsId.c_str()));
-      item->setData(COLUMN_RECENT_TIME, ROLE_SORT,current_time);
-   //   int avatarHeight = fontMetrics.height() * 2;        //d: change avatar size
-}
 
 void ChatLobbyWidget::resetAvatarForContactItem( const ChatId& chatId)
 {
@@ -1705,4 +1697,156 @@ void ChatLobbyWidget::resetAvatarForContactItem( const ChatId& chatId)
     AvatarDefs::getAvatarFromSslId(chatId.toPeerId(), avatar);
     if (!avatar.isNull() && item)
           item->setIcon(COLUMN_NAME,QIcon(avatar)) ;
+}
+
+static QIcon createAvatar(const QPixmap &avatar, const QPixmap &overlay, bool unread)
+{
+    int avatarWidth = avatar.width();
+    int avatarHeight = avatar.height();
+
+    QPixmap pixmap(avatar);
+
+    int overlaySize = (avatarWidth > avatarHeight) ? (avatarWidth/2.5) :  (avatarHeight/2.5);
+    int overlayX = avatarWidth - overlaySize;
+    int overlayY = avatarHeight - overlaySize;
+
+    QPainter painter(&pixmap);
+    painter.drawPixmap(overlayX, overlayY, overlaySize, overlaySize, overlay);
+    if (unread)
+    {
+        QIcon unreadIcon = QIcon(IMAGE_MESSAGE);
+        int overlayUnreadY = avatarHeight - 2.5*overlaySize;
+        QPixmap unreadOverlay = unreadIcon.pixmap(unreadIcon.actualSize(QSize(12, 12)));
+        painter.drawPixmap(overlayX, overlayUnreadY, overlaySize, overlaySize, unreadOverlay);
+    }
+
+    QIcon icon;
+    icon.addPixmap(pixmap);
+    return icon;
+}
+QPixmap ChatLobbyWidget::currentStatusIcon(RsPeerId peerId, QFont& gpgFontOut)
+{
+    StatusInfo statusContactInfo;
+    rsStatus->getStatus(peerId,statusContactInfo);
+    QFont gpgFont;
+    QPixmap gpgOverlayIcon;
+    gpgOverlayIcon = QPixmap(StatusDefs::imageStatus(RS_STATUS_OFFLINE));
+    switch (statusContactInfo.status)
+    {
+        case RS_STATUS_INACTIVE:
+            gpgOverlayIcon = QPixmap(StatusDefs::imageStatus(RS_STATUS_OFFLINE));
+            gpgFont.setBold(false);
+            break;
+
+        case RS_STATUS_ONLINE:
+            gpgOverlayIcon = QPixmap(StatusDefs::imageStatus(RS_STATUS_ONLINE));
+            gpgFont.setBold(true);
+            break;
+
+        case RS_STATUS_AWAY:
+            gpgOverlayIcon = QPixmap(StatusDefs::imageStatus(RS_STATUS_AWAY));
+            gpgFont.setBold(true);
+            break;
+
+        case RS_STATUS_BUSY:
+            gpgOverlayIcon = QPixmap(StatusDefs::imageStatus(RS_STATUS_BUSY));
+            gpgFont.setBold(true);
+            break;
+    }
+    gpgFontOut = gpgFont;
+    return gpgOverlayIcon;
+}
+
+void ChatLobbyWidget::updateContactItem(QTreeWidget *treeWidget, QTreeWidgetItem *item, const std::string &nickname, const ChatId& chatId, const std::string &rsId, uint current_time, bool unread)
+{
+      item->setText(COLUMN_NAME, QString::fromUtf8(nickname.c_str()));
+
+      if (unread)
+      {
+          if (recentUnreadListOfChatId.count(chatId) == 0) recentUnreadListOfChatId.insert(chatId);
+      }
+      QFont gpgFont;
+      QPixmap gpgOverlayIcon = currentStatusIcon(chatId.toPeerId(), gpgFont);
+      QIcon unreadIcon = lastIconForPeerId(chatId.toPeerId(), unread);
+      item->setIcon(COLUMN_NAME, unreadIcon);
+      item->setFont(COLUMN_NAME, gpgFont);
+
+      item->setData(COLUMN_NAME, ROLE_SORT, QString::fromUtf8(nickname.c_str()));
+      item->setData(COLUMN_DATA, ROLE_ID, QString::fromUtf8(rsId.c_str()));
+      item->setData(COLUMN_RECENT_TIME, ROLE_SORT,current_time);
+}
+
+QIcon ChatLobbyWidget::lastIconForPeerId(RsPeerId peerId, bool unread)
+{
+    QPixmap bestAvatar;
+    AvatarDefs::getAvatarFromSslId(peerId, bestAvatar);
+    QFont gpgFont;
+    QPixmap gpgOverlayIcon = currentStatusIcon(peerId, gpgFont);
+    return createAvatar(bestAvatar.isNull() ? QPixmap(AVATAR_DEFAULT_IMAGE) : bestAvatar, gpgOverlayIcon, unread);
+
+}
+
+void ChatLobbyWidget::UpdateStatusForContact(QTreeWidgetItem* gpgItem , const RsPeerId peerId)
+{
+    StatusInfo statusContactInfo;
+    rsStatus->getStatus(peerId,statusContactInfo);
+    QFont gpgFont;
+    QPixmap gpgOverlayIcon;
+    gpgOverlayIcon = QPixmap(StatusDefs::imageStatus(RS_STATUS_OFFLINE));
+    switch (statusContactInfo.status)
+    {
+        case RS_STATUS_INACTIVE:
+            gpgOverlayIcon = QPixmap(StatusDefs::imageStatus(RS_STATUS_OFFLINE));
+            gpgFont.setBold(false);
+            break;
+
+        case RS_STATUS_ONLINE:
+            gpgOverlayIcon = QPixmap(StatusDefs::imageStatus(RS_STATUS_ONLINE));
+            gpgFont.setBold(true);
+            break;
+
+        case RS_STATUS_AWAY:
+            gpgOverlayIcon = QPixmap(StatusDefs::imageStatus(RS_STATUS_AWAY));
+            gpgFont.setBold(true);
+            break;
+
+        case RS_STATUS_BUSY:
+            gpgOverlayIcon = QPixmap(StatusDefs::imageStatus(RS_STATUS_BUSY));
+            gpgFont.setBold(true);
+            break;
+    }
+
+    //Need to set status Icon to avatar
+    QPixmap bestAvatar;
+    AvatarDefs::getAvatarFromSslId(peerId, bestAvatar);
+    ChatId chatId(peerId);
+    bool unread = (recentUnreadListOfChatId.count(chatId) != 0? true: false);
+    gpgItem->setIcon(COLUMN_NAME, createAvatar(bestAvatar.isNull() ? QPixmap(AVATAR_DEFAULT_IMAGE) : bestAvatar, gpgOverlayIcon, unread));
+    gpgItem->setFont(COLUMN_NAME, gpgFont);
+
+}
+
+void ChatLobbyWidget::ContactStatusChanged(QString peerIdStr, int status)
+{
+    RsPeerId peerId(peerIdStr.toStdString());
+    ChatId chatId(peerId);
+    QTreeWidgetItem* curItem = getTreeWidgetItemForChatId(chatId);
+    if (curItem)
+        UpdateStatusForContact(curItem, peerId);
+}
+
+void ChatLobbyWidget::UpdateStatusForAllContacts()
+{
+    std::list<RsPeerId> peerIds;
+    if (rsPeers->getFriendList(peerIds))
+    {
+        std::list<RsPeerId>::iterator peerId;
+        for (peerId = peerIds.begin(); peerId != peerIds.end(); ++peerId)
+        {
+            ChatId chatId(*peerId);
+            QTreeWidgetItem* curItem = getTreeWidgetItemForChatId(chatId);
+            if (curItem)
+                UpdateStatusForContact(curItem, *peerId);
+        }
+    }
 }

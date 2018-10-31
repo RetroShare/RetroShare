@@ -167,16 +167,11 @@ void p3HistoryMgr::addMessage(const ChatMessage& cm)
 void p3HistoryMgr::updateMessageAsRead(const HistoryMsg& hmsg)
 {
     std::map<RsPeerId, std::map<uint32_t, RsHistoryMsgItem*> >::iterator mit = mMessages.find(hmsg.chatPeerId);
-    //no need to change the msgId when update?
-    //item->msgId = nextMsgId++;
-
     if (mit != mMessages.end()) {
-        std::cerr << "p3HistoryMgr: Yes I can find the history msg and update msg as read" << std::endl;
         std::map<uint32_t, RsHistoryMsgItem*>::reverse_iterator lit;
         int foundCount = 0, loadCount = 2;
         for (lit = mit->second.rbegin(); lit != mit->second.rend(); ++lit)
         {
-            std::cerr << "p3HistoryMgr: message with msgId: " << lit->first << ", msg: " << lit->second->message <<" unread: " << lit->second->unread << std::endl;
             if (lit->second->unread) lit->second->unread = false;
 
             mit->second.at(lit->first) = lit->second;
