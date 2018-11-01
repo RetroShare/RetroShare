@@ -31,6 +31,9 @@ namespace RsQThreadUtils {
 
 #if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
 
+/**
+ * @brief execute given function in the QThread where given QObject belongs
+ */
 template <typename F>
 void postToObject(F &&fun, QObject *obj = qApp)
 {
@@ -46,6 +49,9 @@ void postToObject(F &&fun, QObject *obj = qApp)
 	}, Qt::QueuedConnection );
 }
 
+/**
+ * @brief execute given function in the given QThread
+ */
 template <typename F>
 void postToThread(F &&fun, QThread *thread = qApp->thread())
 {
@@ -75,11 +81,18 @@ struct FEvent : QEvent
 	    QEvent(QEvent::None), obj(obj), fun(std::forward<Fun>(fun)) {}
 	~FEvent()
 	{
+#if QT_VERSION >= QT_VERSION_CHECK(5, 7, 0)
 		// ensure that the object is not being destructed
 		if (obj->metaObject()->inherits(type)) fun();
+#else // QT_VERSION >= QT_VERSION_CHECK(5, 7, 0)
+		fun();
+#endif // QT_VERSION >= QT_VERSION_CHECK(5, 7, 0)
 	}
 };
 
+/**
+ * @brief execute given function in the QThread where given QObject belongs
+ */
 template <typename F>
 static void postToObject(F &&fun, QObject *obj = qApp)
 {
@@ -88,6 +101,9 @@ static void postToObject(F &&fun, QObject *obj = qApp)
 	QCoreApplication::postEvent(obj, new FEvent<F>(obj, std::forward<F>(fun)));
 }
 
+/**
+ * @brief execute given function in the given QThread
+ */
 template <typename F>
 static void postToThread(F &&fun, QThread *thread = qApp->thread())
 {
