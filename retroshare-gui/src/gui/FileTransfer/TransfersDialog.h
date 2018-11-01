@@ -19,8 +19,7 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#ifndef _TRANSFERSDIALOG_H
-#define _TRANSFERSDIALOG_H
+#pragma once
 
 #include <set>
 
@@ -61,7 +60,7 @@ public:
 
 
     /** Default Constructor */
-    TransfersDialog(QWidget *parent = 0);
+    TransfersDialog(QWidget *parent = nullptr);
     ~TransfersDialog();
 
     virtual QIcon iconPixmap() const { return QIcon(IMAGE_TRANSFERS) ; } //MainPage
@@ -263,7 +262,7 @@ private:
     QTreeView *downloadList;
 
     /** Adds a new action to the toolbar. */
-    void addAction(QAction *action, const char *slot = 0);
+    void addAction(QAction *action, const char *slot = nullptr);
     
       QString downloads;
       QString uploads;
@@ -297,6 +296,3 @@ public slots:
     qlonglong getPath(int row, QStandardItemModel *model);
     QString getSources(int row, QStandardItemModel *model);
 };
-
-#endif
-
