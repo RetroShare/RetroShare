@@ -50,9 +50,11 @@ HomePage::HomePage(QWidget *parent) :
 	MainPage(parent),
 	ui(new Ui::HomePage)
 {
+    mIncludeAllIPs = false;
+
     ui->setupUi(this);
 
-		updateOwnCert();
+	updateOwnCert();
 		
 	connect(ui->addButton, SIGNAL(clicked()), this, SLOT(addFriend()));
 	connect(ui->LoadCertFileButton, SIGNAL(clicked()), this, SLOT(loadCert()));
@@ -80,8 +82,6 @@ HomePage::HomePage(QWidget *parent) :
 
 	ui->runStartWizard_PB->hide(); // until future rework
 	ui->LoadCertFileButton->hide(); // duplicates functionality => not good.
-
-    mIncludeAllIPs = false;
 
     int S = QFontMetricsF(font()).height();
  QString help_str = tr(
