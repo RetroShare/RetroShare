@@ -52,7 +52,7 @@ void RsGxsUpdateBroadcastBase::securedUpdateDisplay()
 
 	/* Clear updated ids */
 	mGrpIds.clear();
-	mGrpIdsMeta.clear(),
+	mGrpIdsMeta.clear();
 	mMsgIds.clear();
 	mMsgIdsMeta.clear();
 }
