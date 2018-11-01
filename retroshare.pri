@@ -75,7 +75,7 @@ libresapilocalserver:CONFIG -= no_libresapilocalserver
 
 # To enable libresapi settings handler in libresapi append the following
 # assignation to qmake command line "CONFIG+=libresapi_settings"
-CONFIG += libresapi_settings
+CONFIG *= libresapi_settings
 libresapi_settings:CONFIG -= no_libresapi_settings
 
 # To disable libresapi via HTTP (based on libmicrohttpd) append the following
