@@ -426,9 +426,16 @@ public:
 	 * @param[in] sslId id of the peer to check
 	 * @return true if the node is trusted, false otherwise
 	 */
-	virtual bool isFriend(const RsPeerId &sslId) = 0;
+	virtual bool isFriend(const RsPeerId& sslId) = 0;
 
-	virtual bool isGPGAccepted(const RsPgpId &gpg_id_is_friend) = 0;
+	/**
+	 * @brief Check if given PGP id is trusted
+	 * @jsonapi{development}
+	 * @param[in] pgpId PGP id to check
+	 * @return true if the PGP id is trusted, false otherwise
+	 */
+	virtual bool isPgpFriend(const RsPgpId& pgpId) = 0;
+
 	virtual std::string getPeerName(const RsPeerId &ssl_id) = 0;
 	virtual std::string getGPGName(const RsPgpId& gpg_id) = 0;
 
@@ -731,6 +738,9 @@ public:
     	virtual bool setPeerMaximumRates(const RsPgpId& pid,uint32_t maxUploadRate,uint32_t maxDownloadRate) =0;
     	virtual bool getPeerMaximumRates(const RsPeerId& pid,uint32_t& maxUploadRate,uint32_t& maxDownloadRate) =0;
     	virtual bool getPeerMaximumRates(const RsPgpId& pid,uint32_t& maxUploadRate,uint32_t& maxDownloadRate) =0;
+
+	RS_DEPRECATED_FOR(isPgpFriend)
+	virtual bool isGPGAccepted(const RsPgpId &gpg_id_is_friend) = 0;
 };
 
 
