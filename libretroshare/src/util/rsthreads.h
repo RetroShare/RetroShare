@@ -265,7 +265,7 @@ public:
 	 * Execute given function on another thread without blocking the caller
 	 * execution.
 	 * This can be generalized with variadic template, ATM it is enough to wrap
-	 *	any kind of function call or job into a lamba which get no paramethers
+	 *	any kind of function call or job into a lambda which get no paramethers
 	 *	and return nothing but can capture
 	 * This can be easly optimized later by using a thread pool
 	 */
