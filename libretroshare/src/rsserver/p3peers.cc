@@ -567,11 +567,11 @@ std::string p3Peers::getGPGName(const RsPgpId &gpg_id)
         return AuthGPG::getAuthGPG()->getGPGName(gpg_id);
 }
 
+bool p3Peers::isPgpFriend(const RsPgpId& pgpId)
+{ return AuthGPG::getAuthGPG()->isGPGAccepted(pgpId); }
+
 bool p3Peers::isGPGAccepted(const RsPgpId &gpg_id_is_friend)
-{
-        /* get from mAuthMgr as it should have more peers? */
-        return AuthGPG::getAuthGPG()->isGPGAccepted(gpg_id_is_friend);
-}
+{ return isPgpFriend(gpg_id_is_friend); }
 
 std::string p3Peers::getPeerName(const RsPeerId& ssl)
 {
