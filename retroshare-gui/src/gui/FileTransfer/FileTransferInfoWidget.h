@@ -27,15 +27,15 @@
 #include "RsAutoUpdatePage.h"
 #include <retroshare/rstypes.h>
 
-class FileChunksInfo ;
-class FileInfo ;
+struct FileChunksInfo ;
+struct FileInfo ;
 
 class FileTransferInfoWidget : public RsAutoUpdatePage
 {
     Q_OBJECT
 
 public:
-    FileTransferInfoWidget(QWidget * parent = 0, Qt::WindowFlags f = 0 );
+    FileTransferInfoWidget(QWidget * parent = nullptr, Qt::WindowFlags f = nullptr );
 
      void setFileHash(const RsFileHash& hash) { _file_hash = hash ; }
 
