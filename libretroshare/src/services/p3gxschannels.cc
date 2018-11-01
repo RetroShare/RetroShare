@@ -1171,7 +1171,7 @@ bool p3GxsChannels::shareChannelKeys(
 bool p3GxsChannels::autoDownloadEnabled(const RsGxsGroupId &groupId,bool& enabled)
 {
 #ifdef GXSCHANNELS_DEBUG
-	std::cerr << "p3GxsChannels::autoDownloadEnabled(" << id << ")";
+	std::cerr << "p3GxsChannels::autoDownloadEnabled(" << groupId << ")";
 	std::cerr << std::endl;
 #endif
 
@@ -1180,8 +1180,8 @@ bool p3GxsChannels::autoDownloadEnabled(const RsGxsGroupId &groupId,bool& enable
 	it = mSubscribedGroups.find(groupId);
 	if (it == mSubscribedGroups.end())
 	{
-		std::cerr << __PRETTY_FUNCTION__ << " ERROR requested channel is not "
-		          << "subscribed" << std::endl;
+		std::cerr << __PRETTY_FUNCTION__ << " WARNING requested channel: "
+		          << groupId << " is not subscribed" << std::endl;
 		return false;
 	}
 
