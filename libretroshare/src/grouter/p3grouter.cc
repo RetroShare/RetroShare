@@ -1734,6 +1734,7 @@ void p3GRouter::handleIncomingDataItem(RsGRouterGenericDataItem *data_item)
 
         receipt_item = new RsGRouterSignedReceiptItem;
         receipt_item->data_hash = item_hash ;
+        receipt_item->service_id = data_item->service_id ;
         receipt_item->routing_id = data_item->routing_id ;
         receipt_item->destination_key = data_item->signature.keyId ;
         receipt_item->flags = 0 ;
