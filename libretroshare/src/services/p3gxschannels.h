@@ -112,6 +112,12 @@ virtual bool getChannelDownloadDirectory(const RsGxsGroupId &groupId, std::strin
 	        const std::function<void (const RsGxsGroupSummary&)>& multiCallback,
 	        rstime_t maxWait = 300 );
 
+	/// @see RsGxsChannels::turtleChannelRequest
+	virtual bool turtleChannelRequest(
+	        const RsGxsGroupId& channelId,
+	        const std::function<void (const RsGxsChannelGroup& result)>& multiCallback,
+	        rstime_t maxWait = 300 );
+
 	/**
 	 * Receive results from turtle search @see RsGenExchange @see RsNxsObserver
 	 * @see RsGxsNetService::receiveTurtleSearchResults
@@ -183,12 +189,21 @@ virtual bool ExtraFileRemove(const RsFileHash &hash);
 	/// Implementation of @see RsGxsChannels::createChannel
 	virtual bool createChannel(RsGxsChannelGroup& channel);
 
+	/// Implementation of @see RsGxsChannels::editChannel
+	virtual bool editChannel(RsGxsChannelGroup& channel);
+
 	/// Implementation of @see RsGxsChannels::createPost
 	virtual bool createPost(RsGxsChannelPost& post);
 
 	/// Implementation of @see RsGxsChannels::subscribeToChannel
 	virtual bool subscribeToChannel( const RsGxsGroupId &groupId,
 	                                 bool subscribe );
+
+	/// Implementation of @see RsGxsChannels::setPostRead
+	virtual bool markRead(const RsGxsGrpMsgIdPair& msgId, bool read);
+
+	virtual bool shareChannelKeys(
+	        const RsGxsGroupId& channelId, const std::set<RsPeerId>& peers );
 
 protected:
 	// Overloaded from GxsTokenQueue for Request callbacks.
@@ -270,8 +285,17 @@ bool generateGroup(uint32_t &token, std::string groupName);
 	 > mSearchCallbacksMap;
 	RsMutex mSearchCallbacksMapMutex;
 
-	/// Cleanup mSearchCallbacksMap
-	void cleanTimedOutSearches();
+	/** Store distant channels requests callbacks with timeout*/
+	std::map<
+	    TurtleRequestId,
+	    std::pair<
+	        std::function<void (const RsGxsChannelGroup&)>,
+	        std::chrono::system_clock::time_point >
+	 > mDistantChannelsCallbacksMap;
+	RsMutex mDistantChannelsCallbacksMapMutex;
+
+	/// Cleanup mSearchCallbacksMap and mDistantChannelsCallbacksMap
+	void cleanTimedOutCallbacks();
 };
 
 #endif 
