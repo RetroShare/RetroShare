@@ -23,7 +23,7 @@
 #include "rsitems/rsphotoitems.h"
 #include "retroshare/rsgxsflags.h"
 
-RsPhoto *rsPhoto = NULL;
+RsPhoto *rsPhoto = nullptr;
 
 
 const uint32_t RsPhoto::FLAG_MSG_TYPE_MASK          = 0x000f;
@@ -47,9 +47,9 @@ bool RsPhotoThumbnail::copyFrom(const RsPhotoThumbnail &nail)
 
         size = nail.size;
         type = nail.type;
-        data = (uint8_t *) rs_malloc(size);
+        data = static_cast<uint8_t *>(rs_malloc(size));
         
-        if(data == NULL)
+        if(!data)
             return false ;
         
         memcpy(data, nail.data, size);
@@ -62,7 +62,7 @@ bool RsPhotoThumbnail::deleteImage()
         if (data)
         {
                 free(data);
-                data = NULL;
+                data = nullptr;
                 size = 0;
                 type.clear();
         }
@@ -187,8 +187,7 @@ void p3PhotoService::groupsChanged(std::list<RsGxsGroupId>& grpIds)
 }
 
 
-void p3PhotoService::msgsChanged(
-		std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >& msgs)
+void p3PhotoService::msgsChanged(GxsMsgIdResult& msgs)
 {
     RsStackMutex stack(mPhotoMutex);
 
@@ -378,11 +377,11 @@ void p3PhotoService::notifyChanges(std::vector<RsGxsNotify*>& changes)
         RsGxsNotify* n = *vit;
         RsGxsGroupChange* gc;
         RsGxsMsgChange* mc;
-        if((mc = dynamic_cast<RsGxsMsgChange*>(n)) != NULL)
+        if( (mc = dynamic_cast<RsGxsMsgChange*>(n)) )
         {
                 mMsgChange.push_back(mc);
         }
-        else if((gc = dynamic_cast<RsGxsGroupChange*>(n)) != NULL)
+        else if( (gc = dynamic_cast<RsGxsGroupChange*>(n)) )
         {
                 mGroupChange.push_back(gc);
         }
