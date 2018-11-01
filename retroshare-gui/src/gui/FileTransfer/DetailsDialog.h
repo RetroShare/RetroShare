@@ -19,14 +19,13 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#ifndef _DETAILSDIALOG_H
-#define _DETAILSDIALOG_H
+#pragma once
 
 #include <stdint.h>
 #include "ui_DetailsDialog.h"
 #include <retroshare/rstypes.h>
 
-class FileChunksInfo ;
+struct FileChunksInfo ;
 
 class DetailsDialog : public QDialog
 {
@@ -34,7 +33,7 @@ class DetailsDialog : public QDialog
 
 public:
   /** Default constructor */
-  DetailsDialog(QWidget *parent = 0);
+  DetailsDialog(QWidget *parent = nullptr);
   /** Default destructor */
   ~DetailsDialog() {}
   
@@ -59,6 +58,3 @@ private:
   /** Qt Designer generated object */
   Ui::DetailsDialog ui;
 };
-
-#endif
-
