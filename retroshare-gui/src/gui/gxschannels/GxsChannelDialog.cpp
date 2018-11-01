@@ -34,6 +34,7 @@
 #include "gui/settings/rsharesettings.h"
 #include "gui/notifyqt.h"
 #include "gui/common/GroupTreeWidget.h"
+#include "util/qtthreadsutils.h"
 
 class GxsChannelGroupInfoData : public RsUserdata
 {
@@ -295,14 +296,17 @@ void GxsChannelDialog::toggleAutoDownload()
 			return;
 		}
 
-		QMetaObject::invokeMethod(this, [=]()
+		RsQThreadUtils::postToObject( [=]()
 		{
 			/* Here it goes any code you want to be executed on the Qt Gui
 			 * thread, for example to update the data model with new information
 			 * after a blocking call to RetroShare API complete, note that
 			 * Qt::QueuedConnection is important!
 			 */
-		}, Qt::QueuedConnection);
+
+			std::cerr << __PRETTY_FUNCTION__ << " Has been executed on GUI "
+			          << "thread but was scheduled by async thread" << std::endl;
+		}, this );
 	});
 }
 
