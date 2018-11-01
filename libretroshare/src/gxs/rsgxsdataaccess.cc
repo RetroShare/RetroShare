@@ -300,15 +300,12 @@ void RsGxsDataAccess::setReq(GxsRequest* req, uint32_t token, uint32_t ansType, 
 	req->Options = opts;
 	return;
 }
-void    RsGxsDataAccess::storeRequest(GxsRequest* req)
+void RsGxsDataAccess::storeRequest(GxsRequest* req)
 {
-	RsStackMutex stack(mDataMutex); /****** LOCKED *****/
-
-	    req->status = PENDING;
-        req->reqTime = time(NULL);
+	RS_STACK_MUTEX(mDataMutex);
+	req->status = PENDING;
+	req->reqTime = time(NULL);
 	mRequests[req->token] = req;
-
-	return;
 }
 
 RsTokenService::GxsRequestStatus RsGxsDataAccess::requestStatus(uint32_t token)

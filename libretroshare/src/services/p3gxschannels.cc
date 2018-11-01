@@ -78,7 +78,8 @@ p3GxsChannels::p3GxsChannels(
     RsGxsChannels(static_cast<RsGxsIface&>(*this)), GxsTokenQueue(this),
     mSubscribedGroupsMutex("GXS channels subscribed groups cache"),
     mKnownChannelsMutex("GXS channels known channels timestamp cache"),
-    mSearchCallbacksMapMutex("GXS channels search")
+    mSearchCallbacksMapMutex("GXS channels search callbacks map"),
+    mDistantChannelsCallbacksMapMutex("GXS channels distant channels callbacks map")
 {
 	// For Dummy Msgs.
 	mGenActive = false;
@@ -574,43 +575,50 @@ bool p3GxsChannels::getChannelAutoDownload(const RsGxsGroupId &groupId, bool& en
     return autoDownloadEnabled(groupId,enabled);
 }
 	
-bool p3GxsChannels::setChannelDownloadDirectory(const RsGxsGroupId &groupId, const std::string& directory)
+bool p3GxsChannels::setChannelDownloadDirectory(
+        const RsGxsGroupId &groupId, const std::string& directory )
 {
 #ifdef GXSCHANNELS_DEBUG
-    std::cerr << "p3GxsChannels::setDownloadDirectory() id: " << groupId << " to: " << directory << std::endl;
+	std::cerr << __PRETTY_FUNCTION__ << " id: " << groupId << " to: "
+	          << directory << std::endl;
 #endif
 
 	RS_STACK_MUTEX(mSubscribedGroupsMutex);
 
     std::map<RsGxsGroupId, RsGroupMetaData>::iterator it;
-    it = mSubscribedGroups.find(groupId);
-    if (it == mSubscribedGroups.end())
-    {
-#ifdef GXSCHANNELS_DEBUG
-        std::cerr << "p3GxsChannels::setAutoDownload() Missing Group" << std::endl;
-#endif
-        return false;
-    }
+	it = mSubscribedGroups.find(groupId);
+	if (it == mSubscribedGroups.end())
+	{
+		std::cerr << __PRETTY_FUNCTION__ << " Error! Unknown groupId: "
+		          << groupId.toStdString() << std::endl;
+		return false;
+	}
 
     /* extract from ServiceString */
     SSGxsChannelGroup ss;
     ss.load(it->second.mServiceString);
 
-    if (directory == ss.mDownloadDirectory)
-    {
-#ifdef GXSCHANNELS_DEBUG
-        std::cerr << "p3GxsChannels::setDownloadDirectory() WARNING setting looks okay already" << std::endl;
-#endif
+	if (directory == ss.mDownloadDirectory)
+	{
+		std::cerr << __PRETTY_FUNCTION__ << " Warning! groupId: " << groupId
+		          << " Was already configured to download into: " << directory
+		          << std::endl;
+		return false;
+	}
 
-    }
-
-    /* we are just going to set it anyway. */
     ss.mDownloadDirectory = directory;
     std::string serviceString = ss.save();
     uint32_t token;
 
     it->second.mServiceString = serviceString; // update Local Cache.
     RsGenExchange::setGroupServiceString(token, groupId, serviceString); // update dbase.
+
+	if(waitToken(token) != RsTokenService::COMPLETE)
+	{
+		std::cerr << __PRETTY_FUNCTION__ << " Error! Feiled setting group "
+		          << " service string" << std::endl;
+		return false;
+	}
 
     /* now reload it */
     std::list<RsGxsGroupId> groups;
@@ -631,23 +639,20 @@ bool p3GxsChannels::getChannelDownloadDirectory(const RsGxsGroupId & groupId,std
 
     std::map<RsGxsGroupId, RsGroupMetaData>::iterator it;
 
-    it = mSubscribedGroups.find(groupId);
-
-    if (it == mSubscribedGroups.end())
-    {
-#ifdef GXSCHANNELS_DEBUG
-        std::cerr << "p3GxsChannels::getChannelDownloadDirectory() No Entry" << std::endl;
-#endif
-
-        return false;
-    }
+	it = mSubscribedGroups.find(groupId);
+	if (it == mSubscribedGroups.end())
+	{
+		std::cerr << __PRETTY_FUNCTION__ << " Error! Unknown groupId: "
+		          << groupId.toStdString() << std::endl;
+		return false;
+	}
 
     /* extract from ServiceString */
     SSGxsChannelGroup ss;
     ss.load(it->second.mServiceString);
     directory = ss.mDownloadDirectory;
 
-    return true ;
+	return true;
 }
 
 void p3GxsChannels::request_AllSubscribedGroups()
@@ -1053,20 +1058,63 @@ bool p3GxsChannels::getChannelsContent(
 bool p3GxsChannels::createChannel(RsGxsChannelGroup& channel)
 {
 	uint32_t token;
-	if( !createGroup(token, channel)
-	        || waitToken(token) != RsTokenService::COMPLETE )
-		return false;
-
-	if(RsGenExchange::getPublishedGroupMeta(token, channel.mMeta))
+	if(!createGroup(token, channel))
 	{
-#ifdef RS_DEEP_SEARCH
-		DeepSearch::indexChannelGroup(channel);
-#endif //  RS_DEEP_SEARCH
-
-		return true;
+		std::cerr << __PRETTY_FUNCTION__ << "Error! Failed updating group."
+		          << std::endl;
+		return false;
 	}
 
-	return false;
+	if(waitToken(token) != RsTokenService::COMPLETE)
+	{
+		std::cerr << __PRETTY_FUNCTION__ << "Error! GXS operation failed."
+		          << std::endl;
+		return false;
+	}
+
+	if(!RsGenExchange::getPublishedGroupMeta(token, channel.mMeta))
+	{
+		std::cerr << __PRETTY_FUNCTION__ << "Error! Failure getting updated "
+		          << " group data." << std::endl;
+		return false;
+	}
+
+#ifdef RS_DEEP_SEARCH
+	DeepSearch::indexChannelGroup(channel);
+#endif //  RS_DEEP_SEARCH
+
+	return true;
+}
+
+bool p3GxsChannels::editChannel(RsGxsChannelGroup& channel)
+{
+	uint32_t token;
+	if(!updateGroup(token, channel))
+	{
+		std::cerr << __PRETTY_FUNCTION__ << "Error! Failed updating group."
+		          << std::endl;
+		return false;
+	}
+
+	if(waitToken(token) != RsTokenService::COMPLETE)
+	{
+		std::cerr << __PRETTY_FUNCTION__ << "Error! GXS operation failed."
+		          << std::endl;
+		return false;
+	}
+
+	if(!RsGenExchange::getPublishedGroupMeta(token, channel.mMeta))
+	{
+		std::cerr << __PRETTY_FUNCTION__ << "Error! Failure getting updated "
+		          << " group data." << std::endl;
+		return false;
+	}
+
+#ifdef RS_DEEP_SEARCH
+	DeepSearch::indexChannelGroup(channel);
+#endif //  RS_DEEP_SEARCH
+
+	return true;
 }
 
 bool p3GxsChannels::createPost(RsGxsChannelPost& post)
@@ -1094,6 +1142,20 @@ bool p3GxsChannels::subscribeToChannel(
 	if( !subscribeToGroup(token, groupId, subscribe)
 	        || waitToken(token) != RsTokenService::COMPLETE ) return false;
 	return true;
+}
+
+bool p3GxsChannels::markRead(const RsGxsGrpMsgIdPair& msgId, bool read)
+{
+	uint32_t token;
+	setMessageReadStatus(token, msgId, read);
+	if(waitToken(token) != RsTokenService::COMPLETE ) return false;
+	return true;
+}
+
+bool p3GxsChannels::shareChannelKeys(
+        const RsGxsGroupId& channelId, const std::set<RsPeerId>& peers)
+{
+	return groupShareKeys(channelId, peers);
 }
 
 
@@ -1609,7 +1671,7 @@ void p3GxsChannels::dummy_tick()
 
 	}
 
-	cleanTimedOutSearches();
+	cleanTimedOutCallbacks();
 }
 
 
@@ -1781,7 +1843,7 @@ TurtleRequestId p3GxsChannels::turtleGroupRequest(const RsGxsGroupId& group_id)
 }
 TurtleRequestId p3GxsChannels::turtleSearchRequest(const std::string& match_string)
 {
-    return netService()->turtleSearchRequest(match_string) ;
+	return netService()->turtleSearchRequest(match_string);
 }
 
 bool p3GxsChannels::clearDistantSearchResults(TurtleRequestId req)
@@ -1839,13 +1901,43 @@ bool p3GxsChannels::turtleSearchRequest(
 
 	TurtleRequestId sId = turtleSearchRequest(matchString);
 
+	{
 	RS_STACK_MUTEX(mSearchCallbacksMapMutex);
 	mSearchCallbacksMap.emplace(
 	            sId,
 	            std::make_pair(
 	                multiCallback,
 	                std::chrono::system_clock::now() +
-	                    std::chrono::seconds(maxWait) ) );
+	                std::chrono::seconds(maxWait) ) );
+	}
+
+	return true;
+}
+
+/// @see RsGxsChannels::turtleChannelRequest
+bool p3GxsChannels::turtleChannelRequest(
+        const RsGxsGroupId& channelId,
+        const std::function<void (const RsGxsChannelGroup& result)>& multiCallback,
+        rstime_t maxWait)
+{
+	if(channelId.isNull())
+	{
+		std::cerr << __PRETTY_FUNCTION__ << "Error! channelId can't be null!"
+		          << std::endl;
+		return false;
+	}
+
+	TurtleRequestId sId = turtleGroupRequest(channelId);
+
+	{
+	RS_STACK_MUTEX(mDistantChannelsCallbacksMapMutex);
+	mDistantChannelsCallbacksMap.emplace(
+	            sId,
+	            std::make_pair(
+	                multiCallback,
+	                std::chrono::system_clock::now() +
+	                std::chrono::seconds(maxWait) ) );
+	}
 
 	return true;
 }
@@ -1856,29 +1948,77 @@ void p3GxsChannels::receiveDistantSearchResults(
 	std::cerr << __PRETTY_FUNCTION__ << "(" << id << ", " << grpId << ")"
 	          << std::endl;
 
-	RsGenExchange::receiveDistantSearchResults(id, grpId);
-	RsGxsGroupSummary gs;
-	gs.mGroupId = grpId;
-	netService()->retrieveDistantGroupSummary(grpId, gs);
+	{
+		RsGenExchange::receiveDistantSearchResults(id, grpId);
+		RsGxsGroupSummary gs;
+		gs.mGroupId = grpId;
+		netService()->retrieveDistantGroupSummary(grpId, gs);
+
+		{
+			RS_STACK_MUTEX(mSearchCallbacksMapMutex);
+			auto cbpt = mSearchCallbacksMap.find(id);
+			if(cbpt != mSearchCallbacksMap.end())
+			{
+				cbpt->second.first(gs);
+				return;
+			}
+		} // end RS_STACK_MUTEX(mSearchCallbacksMapMutex);
+	}
+
+	{
+		RS_STACK_MUTEX(mDistantChannelsCallbacksMapMutex);
+		auto cbpt = mDistantChannelsCallbacksMap.find(id);
+		if(cbpt != mDistantChannelsCallbacksMap.end())
+		{
+			std::function<void (const RsGxsChannelGroup&)> callback =
+			        cbpt->second.first;
+			RsThread::async([this, callback, grpId]()
+			{
+				std::list<RsGxsGroupId> chanIds({grpId});
+				std::vector<RsGxsChannelGroup> channelsInfo;
+				if(!getChannelsInfo(chanIds, channelsInfo))
+				{
+					std::cerr << __PRETTY_FUNCTION__ << " Error! Received "
+					          << "distant channel result grpId: " << grpId
+					          << " but failed getting channel info"
+					          << std::endl;
+					return;
+				}
+
+				for(const RsGxsChannelGroup& chan : channelsInfo)
+					callback(chan);
+			} );
+
+			return;
+		}
+	} // RS_STACK_MUTEX(mDistantChannelsCallbacksMapMutex);
+}
+
+void p3GxsChannels::cleanTimedOutCallbacks()
+{
+	auto now = std::chrono::system_clock::now();
 
 	{
 		RS_STACK_MUTEX(mSearchCallbacksMapMutex);
-		auto cbpt = mSearchCallbacksMap.find(id);
-		if(cbpt != mSearchCallbacksMap.end())
-			cbpt->second.first(gs);
-	} // end RS_STACK_MUTEX(mSearchCallbacksMapMutex);
-}
+		for( auto cbpt = mSearchCallbacksMap.begin();
+		     cbpt != mSearchCallbacksMap.end(); )
+			if(cbpt->second.second <= now)
+			{
+				clearDistantSearchResults(cbpt->first);
+				cbpt = mSearchCallbacksMap.erase(cbpt);
+			}
+			else ++cbpt;
+	} // RS_STACK_MUTEX(mSearchCallbacksMapMutex);
 
-void p3GxsChannels::cleanTimedOutSearches()
-{
-	RS_STACK_MUTEX(mSearchCallbacksMapMutex);
-	auto now = std::chrono::system_clock::now();
-	for( auto cbpt = mSearchCallbacksMap.begin();
-	     cbpt != mSearchCallbacksMap.end(); )
-		if(cbpt->second.second <= now)
-		{
-			clearDistantSearchResults(cbpt->first);
-			cbpt = mSearchCallbacksMap.erase(cbpt);
-		}
-		else ++cbpt;
+	{
+		RS_STACK_MUTEX(mDistantChannelsCallbacksMapMutex);
+		for( auto cbpt = mDistantChannelsCallbacksMap.begin();
+		     cbpt != mDistantChannelsCallbacksMap.end(); )
+			if(cbpt->second.second <= now)
+			{
+				clearDistantSearchResults(cbpt->first);
+				cbpt = mDistantChannelsCallbacksMap.erase(cbpt);
+			}
+			else ++cbpt;
+	} // RS_STACK_MUTEX(mDistantChannelsCallbacksMapMutex)
 }
