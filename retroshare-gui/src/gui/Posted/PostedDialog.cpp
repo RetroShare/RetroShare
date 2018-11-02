@@ -112,6 +112,8 @@ QString PostedDialog::icon(IconType type)
 		return ":/images/folder_green.png";
 	case ICON_OTHER_GROUP:
 		return ":/images/folder_yellow.png";
+	case ICON_SEARCH:
+		return ":/images/find.png";
 	case ICON_DEFAULT:
 		return "";
 	}
@@ -146,7 +148,7 @@ RsGxsCommentService *PostedDialog::getCommentService()
 
 QWidget *PostedDialog::createCommentHeaderWidget(const RsGxsGroupId &grpId, const RsGxsMessageId &msgId)
 {
-	return new PostedItem(NULL, 0, grpId, msgId, true, false);
+	return new PostedItem(nullptr, 0, grpId, msgId, true, false);
 }
 
 void PostedDialog::loadGroupSummaryToken(const uint32_t &token, std::list<RsGroupMetaData> &groupInfo, RsUserdata *&userdata)
