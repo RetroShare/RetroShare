@@ -55,18 +55,7 @@ class TorManagerPrivate : public QObject
     Q_OBJECT
 
 public:
-    TorManager *q;
-    TorProcess *process;
-    TorControl *control;
-    QString dataDir;
-    QString hiddenServiceDir;
-    QStringList logMessages;
-    QString errorMessage;
-    bool configNeeded;
-
-	HiddenService *hiddenService ;
-
-    explicit TorManagerPrivate(TorManager *parent = 0);
+    explicit TorManagerPrivate(TorManager *parent = nullptr);
 
     QString torExecutablePath() const;
     bool createDataDir(const QString &path);
@@ -80,6 +69,19 @@ public slots:
     void processLogMessage(const QString &message);
     void controlStatusChanged(int status);
     void getConfFinished();
+
+public:
+	TorManager *q;
+	TorProcess *process;
+	TorControl *control;
+	HiddenService *hiddenService ;
+	QString dataDir;
+	QString hiddenServiceDir;
+	QStringList logMessages;
+	QString errorMessage;
+
+	bool configNeeded;
+	char paddingBytes[7];
 };
 
 }
@@ -92,17 +94,17 @@ TorManager::TorManager(QObject *parent)
 TorManagerPrivate::TorManagerPrivate(TorManager *parent)
     : QObject(parent)
     , q(parent)
-    , process(0)
+    , process(nullptr)
     , control(new TorControl(this))
+    , hiddenService(nullptr)
     , configNeeded(false)
-    , hiddenService(NULL)
 {
     connect(control, SIGNAL(statusChanged(int,int)), SLOT(controlStatusChanged(int)));
 }
 
 TorManager *TorManager::instance()
 {
-    static TorManager *p = 0;
+    static TorManager *p = nullptr;
     if (!p)
         p = new TorManager(qApp);
     return p;
@@ -150,7 +152,7 @@ void TorManager::setHiddenServiceDirectory(const QString &path)
 
 bool TorManager::setupHiddenService()
 {
-	if(d->hiddenService != NULL)
+	if(d->hiddenService != nullptr)
 	{
 		std::cerr << "TorManager: setupHiddenService() called twice! Not doing anything this time." << std::endl;
 		return true ;
@@ -238,8 +240,8 @@ void TorManager::hiddenServicePrivateKeyChanged()
 
 	s << "-----BEGIN RSA PRIVATE KEY-----" << endl;
 
-	for(uint32_t i=0;i<key.length();i+=64)
-	    s << key.mid(i,64) << endl ;
+	for(int i=0;i<key.length();i+=64)
+		s << key.mid(i,64) << endl ;
 
 	s << "-----END RSA PRIVATE KEY-----" << endl;
 
@@ -291,7 +293,7 @@ bool TorManager::start()
         !qEnvironmentVariableIsEmpty("TOR_CONTROL_PORT"))
     {
         QHostAddress address(settings.read("controlAddress").toString());
-        quint16 port = (quint16)settings.read("controlPort").toInt();
+        quint16 port = static_cast<quint16>(settings.read("controlPort").toInt());
         QByteArray password = settings.read("controlPassword").toString().toLatin1();
 
         if (!qEnvironmentVariableIsEmpty("TOR_CONTROL_HOST"))
@@ -378,19 +380,23 @@ bool TorManager::getHiddenServiceInfo(QString& service_id,QString& service_onion
 
 	// Only return the first one.
 
-	for(auto it(hidden_services.begin());it!=hidden_services.end();++it)
+	//for(auto it(hidden_services.begin());it!=hidden_services.end();++it)
+	auto it(hidden_services.begin());
+	if (it!=hidden_services.end())
 	{
 		service_onion_address = (*it)->hostname();
 		service_id = (*it)->privateKey().torServiceID();
 
-		for(auto it2((*it)->targets().begin());it2!=(*it)->targets().end();++it2)
+		//for(auto it2((*it)->targets().begin());it2!=(*it)->targets().end();++it2)
+		auto it2((*it)->targets().begin());
+		if(it2!=(*it)->targets().end())
 		{
 			service_port = (*it2).servicePort ;
 			service_target_address = (*it2).targetAddress ;
 			target_port = (*it2).targetPort;
-			break ;
+			//break ;
 		}
-		break ;
+		//break ;
 	}
 	return true ;
 }
