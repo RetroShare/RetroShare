@@ -57,7 +57,7 @@ bool RsGxsMessageCleanUp::clean()
 {
 	uint32_t i = 1;
 
-	rstime_t now = time(NULL);
+	rstime_t now = time(nullptr);
 
 #ifdef DEBUG_GXSUTIL
 	uint16_t service_type = mGenExchangeClient->serviceType() ;
@@ -147,8 +147,8 @@ bool RsGxsMessageCleanUp::clean()
 
 RsGxsIntegrityCheck::RsGxsIntegrityCheck(
         RsGeneralDataService* const dataService, RsGenExchange* genex,
-        RsSerialType& serializer, RsGixs* gixs ) :
-    mDs(dataService), mGenExchangeClient(genex), mSerializer(serializer),
+        RsSerialType& /*serializer*/, RsGixs* gixs ) :
+    mDs(dataService), mGenExchangeClient(genex),/* mSerializer(serializer),*/
     mDone(false), mIntegrityMutex("integrity"), mGixs(gixs) {}
 
 void RsGxsIntegrityCheck::run()
@@ -332,11 +332,11 @@ bool RsGxsIntegrityCheck::check()
 			pHash.addData(msg->msg.bin_data, msg->msg.bin_len);
 			pHash.Complete(currHash);
 
-			if(msg->metaData == NULL || currHash != msg->metaData->mHash)
+			if(msg->metaData == nullptr || currHash != msg->metaData->mHash)
 			{
 				std::cerr << __PRETTY_FUNCTION__ <<" (EE) deleting message data"
 				          << " with wrong hash or null meta data. meta="
-				          << (void*)msg->metaData << std::endl;
+				          << static_cast<void*>(msg->metaData) << std::endl;
 				msgsToDel[msg->grpId].insert(msg->msgId);
 #ifdef RS_DEEP_SEARCH
 				if(isGxsChannels)
@@ -388,7 +388,7 @@ bool RsGxsIntegrityCheck::check()
 #ifdef DEBUG_GXSUTIL
 					GXSUTIL_DEBUG() << "TimeStamping message authors' key ID " << msg->metaData->mAuthorId << " in message " << msg->msgId << ", group ID " << msg->grpId<< std::endl;
 #endif
-					if(rsReputations!=NULL && rsReputations->overallReputationLevel(msg->metaData->mAuthorId) > RsReputations::REPUTATION_LOCALLY_NEGATIVE)
+					if(rsReputations && rsReputations->overallReputationLevel(msg->metaData->mAuthorId) > RsReputations::REPUTATION_LOCALLY_NEGATIVE)
 						used_gxs_ids.insert(std::make_pair(msg->metaData->mAuthorId,RsIdentityUsage(mGenExchangeClient->serviceType(),RsIdentityUsage::MESSAGE_AUTHOR_KEEP_ALIVE,msg->metaData->mGroupId,msg->metaData->mMsgId))) ;
 				}
 			}

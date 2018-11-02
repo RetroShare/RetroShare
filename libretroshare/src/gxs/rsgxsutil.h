@@ -21,8 +21,7 @@
  *                                                                             *
  *******************************************************************************/
 
-#ifndef GXSUTIL_H_
-#define GXSUTIL_H_
+#pragma once
 
 #include <vector>
 #include "rsitems/rsnxsitems.h"
@@ -52,14 +51,14 @@ public:
         clear() ;
     }
 
-    virtual void clear()
-    {
-        for(typename t_RsGxsGenericDataTemporaryMap<IdClass,IdData>::iterator it = this->begin();it!=this->end();++it)
-            if(it->second != NULL)
-		    delete it->second ;
+	virtual void clear()
+	{
+		for(typename t_RsGxsGenericDataTemporaryMap<IdClass,IdData>::iterator it = this->begin();it!=this->end();++it)
+			if(it->second)
+				delete it->second ;
 
-        std::map<IdClass,IdData*>::clear() ;
-    }
+		std::map<IdClass,IdData*>::clear() ;
+	}
 };
 
 template<class T>
@@ -214,7 +213,7 @@ private:
 
 	RsGeneralDataService* const mDs;
 	RsGenExchange *mGenExchangeClient;
-	RsSerialType& mSerializer;
+	//RsSerialType& mSerializer;
 
 	bool mDone;
 	RsMutex mIntegrityMutex;
@@ -227,7 +226,7 @@ private:
 class GroupUpdate
 {
 public:
-	GroupUpdate() : oldGrpMeta(NULL), newGrp(NULL), validUpdate(false)
+	GroupUpdate() : oldGrpMeta(nullptr), newGrp(nullptr), validUpdate(false)
 	{}
 	const RsGxsGrpMetaData* oldGrpMeta;
 	RsNxsGrp* newGrp;
@@ -262,5 +261,3 @@ public:
 	GxsMsgReq mMsgs ;
 	uint32_t mToken;
 };
-
-#endif /* GXSUTIL_H_ */
