@@ -939,8 +939,9 @@ int 	pqissl::Basic_Connection_Complete()
 		}
 		else if ((err == EHOSTUNREACH) || (err == EHOSTDOWN))
 		{
+#ifdef PQISSL_DEBUG
 			rslog(RSL_WARNING, pqisslzone, "pqissl::Basic_Connection_Complete() EHOSTUNREACH/EHOSTDOWN: cert: " + PeerId().toStdString());
-
+#endif
 			// Then send unreachable message.
 			net_internal_close(sockfd);
 			sockfd=-1;
@@ -951,7 +952,9 @@ int 	pqissl::Basic_Connection_Complete()
 		}
 		else if (err == ECONNREFUSED)
 		{
+#ifdef PQISSL_DEBUG
 			rslog(RSL_WARNING, pqisslzone, "pqissl::Basic_Connection_Complete() ECONNREFUSED: cert: " + PeerId().toStdString());
+#endif
 
 			// Then send unreachable message.
 			net_internal_close(sockfd);

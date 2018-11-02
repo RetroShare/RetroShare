@@ -1673,6 +1673,7 @@ bool p3PeerMgrIMPL::addCandidateForOwnExternalAddress(const RsPeerId &from, cons
 
 bool p3PeerMgrIMPL::locked_computeCurrentBestOwnExtAddressCandidate(sockaddr_storage& addr, uint32_t& count)
 {
+	sockaddr_storage_clear(addr);
     std::map<sockaddr_storage, pqi::ZeroedInt> addr_counts ;
 
     for(std::map<RsPeerId,sockaddr_storage>::iterator it(mReportedOwnAddresses.begin());it!=mReportedOwnAddresses.end();++it)
@@ -1697,7 +1698,7 @@ bool p3PeerMgrIMPL::locked_computeCurrentBestOwnExtAddressCandidate(sockaddr_sto
 #endif
     }
 
-    return true ;
+    return count > 0 ;
 }
 
 bool p3PeerMgrIMPL::getExtAddressReportedByFriends(sockaddr_storage &addr, uint8_t& /*isstable*/)

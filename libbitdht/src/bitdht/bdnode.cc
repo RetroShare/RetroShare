@@ -1266,11 +1266,7 @@ void    bdNode::recvPkt(char *msg, int len, struct sockaddr_in addr)
 	/************************** handle id (all) ***************************/
         be_node *be_id = beMsgGetDictNode(be_data, "id");
 	bdNodeId id;
-	if (be_id)
-	{
-		beMsgGetNodeId(be_id, id);
-	}
-	else
+	if(!be_id || !beMsgGetNodeId(be_id, id))
 	{
 #ifdef DEBUG_NODE_PARSE
 		std::cerr << "bdNode::recvPkt() Missing Peer Id. Dropping Msg";
