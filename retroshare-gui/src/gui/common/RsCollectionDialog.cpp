@@ -132,8 +132,8 @@ RsCollectionDialog::RsCollectionDialog(const QString& collectionFileName
 {
 	ui.setupUi(this) ;
 
-	uint32_t size = colFileInfos.size();
-	for(uint32_t i=0;i<size;++i)
+	size_t size = colFileInfos.size();
+	for(size_t i=0;i<size;++i)
 	{
 		const ColFileInfo &colFileInfo = colFileInfos[i];
 		_newColFileInfos.push_back(colFileInfo);
@@ -234,7 +234,7 @@ RsCollectionDialog::RsCollectionDialog(const QString& collectionFileName
 	ui._hashBox->setDefaultTransferRequestFlags(RS_FILE_REQ_ANONYMOUS_ROUTING) ;
 
 	if(wrong_chars)
-		QMessageBox::warning(NULL,tr("Bad filenames have been cleaned"),tr("Some filenames or directory names contained forbidden characters.\nCharacters <b>\",|,/,\\,&lt;,&gt;,*,?</b> will be replaced by '_'.\n Concerned files are listed in red.")) ;
+		QMessageBox::warning(nullptr,tr("Bad filenames have been cleaned"),tr("Some filenames or directory names contained forbidden characters.\nCharacters <b>\",|,/,\\,&lt;,&gt;,*,?</b> will be replaced by '_'.\n Concerned files are listed in red.")) ;
 }
 
 void RsCollectionDialog::openDestinationDirectoryMenu()
@@ -481,8 +481,8 @@ bool RsCollectionDialog::addChild(QTreeWidgetItem* parent, const std::vector<Col
 {
 	bool wrong_chars = false ;
 
-	uint32_t childCount = child.size();
-	for(uint32_t i=0; i<childCount; ++i)
+	size_t childCount = child.size();
+	for(size_t i=0; i<childCount; ++i)
 	{
 		const ColFileInfo &colFileInfo = child[i];
 
@@ -642,7 +642,7 @@ void RsCollectionDialog::updateSizes()
 	uint64_t total_size = 0 ;
 	uint32_t total_count = 0 ;
 
-	for(uint32_t i=0;i<ui._fileEntriesTW->topLevelItemCount();++i)
+	for(int i=0;i<ui._fileEntriesTW->topLevelItemCount();++i)
 	{
 		total_size  += ui._fileEntriesTW->topLevelItem(i)->data(COLUMN_SIZE ,ROLE_SELSIZE ).toULongLong();
 		total_count += ui._fileEntriesTW->topLevelItem(i)->data(COLUMN_FILEC,ROLE_SELFILEC).toULongLong();
@@ -684,7 +684,7 @@ void RsCollectionDialog::changeFileName()
 	if(!misc::getSaveFileName(this, RshareSettings::LASTDIR_EXTRAFILE
 														, QApplication::translate("RsCollectionFile", "Create collection file")
 														, QApplication::translate("RsCollectionFile", "Collection files") + " (*." + RsCollection::ExtensionString + ")"
-														, fileName,0, QFileDialog::DontConfirmOverwrite))
+														, fileName, nullptr, QFileDialog::DontConfirmOverwrite))
 		return;
 
 	if (!fileName.endsWith("." + RsCollection::ExtensionString))
@@ -791,7 +791,7 @@ void RsCollectionDialog::addRecursive(bool recursive)
 	}
 
 	// Process Dirs
-	QTreeWidgetItem *item = NULL;
+	QTreeWidgetItem *item = nullptr;
 	if (!ui._fileEntriesTW->selectedItems().empty())
 		item= ui._fileEntriesTW->selectedItems().at(0);
 	if (item) {
@@ -868,8 +868,6 @@ bool RsCollectionDialog::addAllChild(QFileInfo &fileInfoParent
 				break;
 				case QMessageBox::No:
 					return false;
-				break;
-				break;
 				default:
 					// should never be reached
 				break;
@@ -902,7 +900,7 @@ void RsCollectionDialog::remove()
 	// First, check if selection contains directories
 	for (int curs = 0; curs < ui._fileEntriesTW->selectedItems().count(); ++curs)
 	{// Have to call ui._fileEntriesTW->selectedItems().count() each time as selected could change
-		QTreeWidgetItem *item = NULL;
+		QTreeWidgetItem *item = nullptr;
 		item= ui._fileEntriesTW->selectedItems().at(curs);
 
 		//Uncheck child directory item if parent is checked
@@ -963,7 +961,6 @@ void RsCollectionDialog::remove()
 				delete msgBox;
 				return;
 			}
-			break;
 			default:
 				// should never be reached
 			break;
@@ -1036,7 +1033,7 @@ void RsCollectionDialog::processItem(QMap<QString, QString> &dirToAdd
 		QString cleanDirName = purifyFileName(fileInfo.fileName(),bad_chars_detected);
 		newChild.name = cleanDirName;
 		newChild.filename_has_wrong_characters = bad_chars_detected;
-		newChild.size = fileInfo.isDir()? 0: fileInfo.size();
+		newChild.size = fileInfo.isDir()? 0: static_cast<qulonglong>(fileInfo.size());
 		newChild.type = fileInfo.isDir()? DIR_TYPE_DIR: DIR_TYPE_FILE ;
 		if (parent.name != "") {
 			newChild.path = parent.path + "/" + parent.name;
@@ -1098,7 +1095,6 @@ void RsCollectionDialog::makeDir()
 					break;
 					case QMessageBox::Cancel:
 						return;
-					break;
 					default:
 						// should never be reached
 					break;
@@ -1245,7 +1241,7 @@ void RsCollectionDialog::itemChanged(QTreeWidgetItem *item, int col)
 		itemParent->setData(COLUMN_SIZE, ROLE_SELSIZE, parentSize);
 		itemParent->setText(COLUMN_SIZE, misc::friendlyUnit(parentSize));
 
-		qulonglong parentFileCount = itemParent->data(COLUMN_FILEC, ROLE_SELFILEC).toULongLong() + (unchecked?0-1:1);
+		qulonglong parentFileCount = static_cast<qulonglong>(itemParent->data(COLUMN_FILEC, ROLE_SELFILEC).toLongLong() + (unchecked?0-1:1));
 		itemParent->setData(COLUMN_FILEC, ROLE_SELFILEC, parentFileCount);
 		itemParent->setText(COLUMN_FILEC, QString("%1").arg(parentFileCount));
 
@@ -1266,7 +1262,7 @@ void RsCollectionDialog::updateRemoveDuplicate(bool checked)
 		bool bRemoveAll = false;
 		QTreeWidgetItemIterator it(ui._fileEntriesTW);
 		QTreeWidgetItem *item;
-		while ((item = *it) != NULL) {
+		while ( (item = *it) ) {
 			++it;
 			if (item->data(COLUMN_HASH, ROLE_TYPE).toUInt() != DIR_TYPE_DIR) {
 				QList<QTreeWidgetItem*> founds;
@@ -1324,7 +1320,6 @@ void RsCollectionDialog::updateRemoveDuplicate(bool checked)
 								ui._removeDuplicate_CB->setChecked(false);
 								return;
 							}
-							break;
 							default:
 								// should never be reached
 							break;
@@ -1366,7 +1361,7 @@ void RsCollectionDialog::download()
 
 	QTreeWidgetItemIterator itemIterator(ui._fileEntriesTW);
 	QTreeWidgetItem *item;
-	while ((item = *itemIterator) != NULL) {
+	while( (item = *itemIterator) ) {
 		++itemIterator;
 
 		if (item->checkState(COLUMN_FILE) == Qt::Checked) {
@@ -1378,14 +1373,14 @@ void RsCollectionDialog::download()
 			colFileInfo.hash = item->text(COLUMN_HASH);
 			colFileInfo.name = item->data(COLUMN_HASH,ROLE_NAME).toString();
 			colFileInfo.path = item->data(COLUMN_HASH,ROLE_PATH).toString();
-			colFileInfo.type = item->data(COLUMN_HASH,ROLE_TYPE).toUInt();
+			colFileInfo.type = static_cast<uint8_t>(item->data(COLUMN_HASH,ROLE_TYPE).toUInt());
 			colFileInfo.size = item->data(COLUMN_SIZE,ROLE_SELSIZE).toULongLong();
 
 			QString cleanPath = dldir + colFileInfo.path ;
 			std::cerr << "making directory " << cleanPath.toStdString() << std::endl;
 
 			if(!QDir(QApplication::applicationDirPath()).mkpath(cleanPath))
-				QMessageBox::warning(NULL,QObject::tr("Unable to make path"),QObject::tr("Unable to make path:")+"<br>  "+cleanPath) ;
+				QMessageBox::warning(nullptr,QObject::tr("Unable to make path"),QObject::tr("Unable to make path:")+"<br>  "+cleanPath) ;
 
 			if (colFileInfo.type==DIR_TYPE_FILE)
 				rsFiles->FileRequest(colFileInfo.name.toUtf8().constData(),
@@ -1431,7 +1426,7 @@ void RsCollectionDialog::saveChild(QTreeWidgetItem *parentItem, ColFileInfo *par
 	parentInfo->hash = parentItem->text(COLUMN_HASH);
 	parentInfo->name = parentItem->data(COLUMN_HASH,ROLE_NAME).toString();
 	parentInfo->path = parentItem->data(COLUMN_HASH,ROLE_PATH).toString();
-	parentInfo->type = parentItem->data(COLUMN_HASH,ROLE_TYPE).toUInt();
+	parentInfo->type = static_cast<uint8_t>(parentItem->data(COLUMN_HASH,ROLE_TYPE).toUInt());
 	parentInfo->size = parentItem->data(COLUMN_SIZE,ROLE_SELSIZE).toULongLong();
 
 	for (int i=0; i<parentItem->childCount(); ++i) {
