@@ -121,8 +121,8 @@ p3PeerMgrIMPL::p3PeerMgrIMPL(const RsPeerId& ssl_own_id, const RsPgpId& gpg_own_
 	{
 		RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
-		mLinkMgr = NULL;
-		mNetMgr = NULL;
+		mLinkMgr = nullptr;
+		mNetMgr = nullptr;
 
 		/* setup basics of own state */
 		mOwnState.id = ssl_own_id ;
@@ -291,9 +291,9 @@ void p3PeerMgrIMPL::tick()
 {
     static const rstime_t INTERVAL_BETWEEN_LOCATION_CLEANING = 300 ; // Remove unused locations and clean IPs every 10 minutes.
 
-    static rstime_t last_friends_check = time(NULL) ; // first cleaning after 1 hour.
+    static rstime_t last_friends_check = time(nullptr) ; // first cleaning after 1 hour.
 
-    rstime_t now = time(NULL) ;
+    rstime_t now = time(nullptr) ;
 
     if(now > INTERVAL_BETWEEN_LOCATION_CLEANING + last_friends_check )
     {
@@ -397,17 +397,14 @@ bool	p3PeerMgrIMPL::isHidden(const uint32_t type)
 	switch (type) {
 	case RS_HIDDEN_TYPE_TOR:
 		return mOwnState.hiddenType == RS_HIDDEN_TYPE_TOR;
-		break;
 	case RS_HIDDEN_TYPE_I2P:
 		return mOwnState.hiddenType == RS_HIDDEN_TYPE_I2P;
-		break;
 	default:
 #ifdef PEER_DEBUG
 		std::cerr << "p3PeerMgrIMPL::isHidden(" << type << ") unkown type -> false";
 		std::cerr << std::endl;
 #endif
 		return false;
-		break;
 	}
 }
 
@@ -446,13 +443,10 @@ bool	p3PeerMgrIMPL::isHiddenPeer(const RsPeerId &ssl_id, const uint32_t type)
 	switch (type) {
 	case RS_HIDDEN_TYPE_TOR:
 		return (it->second).hiddenType == RS_HIDDEN_TYPE_TOR;
-		break;
 	case RS_HIDDEN_TYPE_I2P:
 		return (it->second).hiddenType == RS_HIDDEN_TYPE_I2P;
-		break;
 	default:
 		return (it->second).hiddenNode;
-		break;
 	}
 }
 
@@ -792,13 +786,13 @@ int p3PeerMgrIMPL::getFriendCount(bool ssl, bool online)
 			}
 		}
 
-		return ssl ? count : gpgIds.size();
+		return ssl ? count : static_cast<int>(gpgIds.size());
 	}
 
 	if (ssl) {
 		// count all ssl id's
 		RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
-		return mFriendList.size();
+		return static_cast<int>(mFriendList.size());
 	}
 
 	// count all gpg id's
@@ -809,7 +803,7 @@ int p3PeerMgrIMPL::getFriendCount(bool ssl, bool online)
 	std::list<RsPeerId> ownSslIds;
 	getAssociatedPeers(AuthGPG::getAuthGPG()->getGPGOwnId(), ownSslIds);
 
-	return gpgIds.size() + ((ownSslIds.size() > 0) ? 1 : 0);
+	return static_cast<int>(gpgIds.size() + ((!ownSslIds.empty()) ? 1 : 0));
 }
 
 bool p3PeerMgrIMPL::getFriendNetStatus(const RsPeerId &id, peerState &state)
@@ -1258,7 +1252,7 @@ bool p3PeerMgrIMPL::UpdateOwnAddress( const sockaddr_storage& pLocalAddr,
 		//update ip address list
 		pqiIpAddress ipAddressTimed;
 		sockaddr_storage_copy(localAddr, ipAddressTimed.mAddr);
-		ipAddressTimed.mSeenTime = time(NULL);
+		ipAddressTimed.mSeenTime = time(nullptr);
 		ipAddressTimed.mSrc = 0;
 		mOwnState.ipAddrs.updateLocalAddrs(ipAddressTimed);
 
@@ -1316,7 +1310,7 @@ bool p3PeerMgrIMPL::UpdateOwnAddress( const sockaddr_storage& pLocalAddr,
 		//update ip address list
 		pqiIpAddress ipAddressTimed;
 		sockaddr_storage_copy(extAddr, ipAddressTimed.mAddr);
-		ipAddressTimed.mSeenTime = time(NULL);
+		ipAddressTimed.mSeenTime = time(nullptr);
 		ipAddressTimed.mSrc = 0;
 		mOwnState.ipAddrs.updateExtAddrs(ipAddressTimed);
 
@@ -1368,7 +1362,7 @@ bool p3PeerMgrIMPL::addPeerLocator(const RsPeerId &sslId, const RsUrl& locator)
 	if(!locator.hasPort() || host.empty() ||
 	   !sockaddr_storage_inet_pton(ip.mAddr, host) ||
 	   !sockaddr_storage_setport(ip.mAddr, locator.port())) return false;
-	ip.mSeenTime = time(NULL);
+	ip.mSeenTime = time(nullptr);
 
 	bool changed = false;
 
@@ -1476,7 +1470,7 @@ bool p3PeerMgrIMPL::setExtAddress( const RsPeerId &id,
 	bool changed = false;
 	uint32_t check_res = 0;
 
-	if( rsBanList!=NULL && !rsBanList->isAddressAccepted(
+	if( rsBanList && !rsBanList->isAddressAccepted(
 	            addr, RSBANLIST_CHECKING_FLAGS_BLACKLIST, &check_res) )
 	{
 		std::cerr << "(SS) trying to set external contact address for peer "
@@ -1659,7 +1653,7 @@ bool p3PeerMgrIMPL::addCandidateForOwnExternalAddress(const RsPeerId &from, cons
 
     // Notify for every friend that has reported a wrong external address, except if that address is in the IP whitelist.
 
-    if((rsBanList!=NULL && !rsBanList->isAddressAccepted(addr_filtered,RSBANLIST_CHECKING_FLAGS_WHITELIST)) && (!sockaddr_storage_sameip(own_addr,addr_filtered)))
+    if((rsBanList && !rsBanList->isAddressAccepted(addr_filtered,RSBANLIST_CHECKING_FLAGS_WHITELIST)) && (!sockaddr_storage_sameip(own_addr,addr_filtered)))
     {
         std::cerr << "  Peer " << from << " reports a connection address (" << sockaddr_storage_iptostring(addr_filtered) <<") that is not your current external address (" << sockaddr_storage_iptostring(own_addr) << "). This is weird." << std::endl;
 
@@ -1690,7 +1684,7 @@ bool p3PeerMgrIMPL::locked_computeCurrentBestOwnExtAddressCandidate(sockaddr_sto
         if(uint32_t(it->second.n) > count)
         {
             addr = it->first ;
-            count = it->second.n ;
+            count = static_cast<uint32_t>(it->second.n) ;
         }
 
 #ifdef PEER_DEBUG
@@ -1719,7 +1713,7 @@ bool p3PeerMgrIMPL::getExtAddressReportedByFriends(sockaddr_storage &addr, uint8
 static bool cleanIpList(std::list<pqiIpAddress>& lst,const RsPeerId& pid,p3LinkMgr *link_mgr)
 {
     bool changed = false ;
-    rstime_t now = time(NULL) ;
+    rstime_t now = time(nullptr) ;
 
     for(std::list<pqiIpAddress>::iterator it2(lst.begin());it2 != lst.end();)
     {
@@ -1875,7 +1869,7 @@ bool    p3PeerMgrIMPL::updateLastContact(const RsPeerId& id)
 		}
 	}
 
-	it->second.lastcontact = time(NULL);
+	it->second.lastcontact = time(nullptr);
 
 	IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 
@@ -2090,7 +2084,7 @@ bool p3PeerMgrIMPL::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 	item->vs_disc = mOwnState.vs_disc;
 	item->vs_dht = mOwnState.vs_dht;
 
-	item->lastContact = mOwnState.lastcontact;
+	item->lastContact = static_cast<uint32_t>(mOwnState.lastcontact);
 
 	item->localAddrV4.addr = mOwnState.localaddr;
 	item->extAddrV4.addr = mOwnState.serveraddr;
@@ -2125,7 +2119,7 @@ bool p3PeerMgrIMPL::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 		item->vs_disc = (it->second).vs_disc;
 		item->vs_dht = (it->second).vs_dht;
 
-		item->lastContact = (it->second).lastcontact;
+		item->lastContact = static_cast<uint32_t>((it->second).lastcontact);
 
 		item->localAddrV4.addr = (it->second).localaddr;
 		item->extAddrV4.addr = (it->second).serveraddr;
@@ -2410,9 +2404,9 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
 			    }
 			    else if (kit->key == kConfigKeyProxyServerPortTor)
 			    {
-                    uint16_t p = atoi(kit->value.c_str());
+						uint16_t p = static_cast<uint16_t>(atoi(kit->value.c_str()));
 
-                    if(p >= 1024)
+						if(p >= 1024)
 						proxyPortTor = p;
 #ifdef PEER_DEBUG
 				    std::cerr << "Loaded proxyPort for Tor: " << proxyPortTor;
@@ -2429,10 +2423,10 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
 #endif
 			    }
 			    else if (kit->key == kConfigKeyProxyServerPortI2P)
-			    {
-                    uint16_t p = atoi(kit->value.c_str());
+					{
+						uint16_t p = static_cast<uint16_t>(atoi(kit->value.c_str()));
 
-                    if(p >= 1024)
+						if(p >= 1024)
 						proxyPortI2P = p;
 #ifdef PEER_DEBUG
 				    std::cerr << "Loaded proxyPort for I2P: " << proxyPortI2P;
@@ -2682,7 +2676,9 @@ bool p3PeerMgrIMPL::removeGroup(const RsNodeGroupId& groupId)
                 std::cerr << "(EE) cannot remove standard group with ID " << groupId << std::endl;
                 return false ;
             }
-#warning csoler: we need to check that the local group is not used. Otherwise deleting it is going to cause problems!
+#ifndef RS_NO_WARN_CPP
+#pragma message("csoler: we need to check that the local group is not used. Otherwise deleting it is going to cause problems!")
+#endif
 //            else if(!it->second.used_gxs_groups.empty())
 //            {
 //                std::cerr << "(EE) cannot remove standard group with ID " << groupId << " because it is used in the following groups: " << std::endl;
@@ -2915,7 +2911,7 @@ bool p3PeerMgrIMPL::removeBannedIps()
         if(cleanIpList(it->second.ipAddrs.mExt.mAddrs,it->first,mLinkMgr)) changed = true ;
         if(cleanIpList(it->second.ipAddrs.mLocal.mAddrs,it->first,mLinkMgr)) changed = true ;
 
-        if(rsBanList!=NULL && !rsBanList->isAddressAccepted(it->second.serveraddr,RSBANLIST_CHECKING_FLAGS_BLACKLIST))
+        if(rsBanList && !rsBanList->isAddressAccepted(it->second.serveraddr,RSBANLIST_CHECKING_FLAGS_BLACKLIST))
         {
             sockaddr_storage_clear(it->second.serveraddr) ;
             std::cerr << "(SS) Peer " << it->first << " has a banned server address. Wiping it out." << std::endl;
@@ -2966,7 +2962,7 @@ bool p3PeerMgrIMPL::removeUnusedLocations()
 	std::list<RsPeerId> toRemove;
 	std::map<RsPgpId, rstime_t>   mostRecentTime;
 
-	const rstime_t now = time(NULL);
+	const rstime_t now = time(nullptr);
 
 	std::list<RsPgpId> pgpList ;
 
@@ -2979,7 +2975,7 @@ bool p3PeerMgrIMPL::removeUnusedLocations()
         // First put a sensible number in all PGP ids
 
         for(std::list<RsPgpId>::const_iterator it = pgpList.begin(); it != pgpList.end(); ++it)
-            mostRecentTime[*it] = (rstime_t)0;
+            mostRecentTime[*it] = static_cast<rstime_t>(0);
 
 #ifdef PEER_DEBUG
 		std::cerr << "p3PeerMgr::removeUnusedLocations()" << std::endl;
