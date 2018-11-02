@@ -48,10 +48,9 @@
 
 HomePage::HomePage(QWidget *parent) :
 	MainPage(parent),
-	ui(new Ui::HomePage)
+	ui(new Ui::HomePage),
+    mIncludeAllIPs(false)
 {
-    mIncludeAllIPs = false;
-
     ui->setupUi(this);
 
 	updateOwnCert();
