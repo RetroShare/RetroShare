@@ -62,7 +62,7 @@
          <string/>
         </property>
         <property name="pixmap">
-         <pixmap resource="../Unseengui/unseengui.qrc">:/home/img/face_icon/un_chat_icon_x_128.png</pixmap>
+         <pixmap resource="../Unseengui/unseengui.qrc">:/home/img/face_icon/un_chat_icon_xu_128.png</pixmap>
         </property>
         <property name="scaledContents">
          <bool>true</bool>

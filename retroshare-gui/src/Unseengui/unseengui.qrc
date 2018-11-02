@@ -125,5 +125,15 @@
         <file>chat/img/identityoffline.png</file>
         <file>home/img/Setting/world.svg</file>
         <file>home/img/Setting/world_x.svg</file>
+        <file>home/img/face_icon/bull-horn-announcer_xu_128.png</file>
+        <file>home/img/face_icon/file_xu_128.png</file>
+        <file>home/img/face_icon/group-profile-users_xu_128.png</file>
+        <file>home/img/face_icon/un_chat_icon_xu_16.png</file>
+        <file>home/img/face_icon/un_chat_icon_xu_24.png</file>
+        <file>home/img/face_icon/un_chat_icon_xu_32.png</file>
+        <file>home/img/face_icon/un_chat_icon_xu_64.png</file>
+        <file>home/img/face_icon/un_chat_icon_xu_128.png</file>
+        <file>home/img/face_icon/user-shape_xu_128.png</file>
+        <file>home/img/face_icon/youtube-play-button_xu_128.png</file>
     </qresource>
 </RCC>

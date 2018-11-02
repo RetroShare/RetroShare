@@ -31,7 +31,7 @@ GenCertDialog QLabel#label_hiddenaddr {
         border: 1px solid #50FF5B;
         border-radius: 6px;
 	background: #CCFFCC;
-        background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #CCFFCC, stop:1 #AAFFAA);
+        background-color: #2ba4dc;
 }
 GenCertDialog QLabel#no_node_label, GenCertDialog QLabel#no_gpg_key_label {
         border: 1px solid #FFC550;
