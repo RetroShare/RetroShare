@@ -49,7 +49,7 @@ ftExtraList::ftExtraList()
 void ftExtraList::data_tick()
 {
     bool todo = false;
-    rstime_t now = time(NULL);
+    rstime_t now = time(nullptr);
 
     {
         RsStackMutex stack(extMutex);
@@ -111,7 +111,7 @@ void ftExtraList::hashAFile()
 #endif
 
 	/* hash it! */
-	std::string name, hash;
+	//std::string name, hash;
 	//uint64_t size;
 	if (RsDirUtil::hashFile(details.info.path, details.info.fname,  details.info.hash, details.info.size))
 	{
@@ -153,7 +153,7 @@ bool	ftExtraList::addExtraFile(std::string path, const RsFileHash& hash,
 	details.info.fname = RsDirUtil::getTopDir(path);
 	details.info.hash = hash;
 	details.info.size = size;
-	details.info.age = time(NULL) + period; /* if time > this... cleanup */
+	details.info.age = static_cast<int>(time(nullptr) + period); /* if time > this... cleanup */
 	details.info.transfer_info_flags = flags ;
 
 	/* stick it in the available queue */
@@ -229,15 +229,15 @@ bool	ftExtraList::cleanupOldFiles()
 
 	RS_STACK_MUTEX(extMutex);
 
-	rstime_t now = time(NULL);
+	rstime_t now = time(nullptr);
 
     std::list<RsFileHash> toRemove;
 
 	for( std::map<RsFileHash, FileDetails>::iterator it = mFiles.begin(); it != mFiles.end(); ++it) /* check timestamps */
-		if ((rstime_t)it->second.info.age < now)
+		if (static_cast<rstime_t>(it->second.info.age) < now)
 			toRemove.push_back(it->first);
 
-	if (toRemove.size() > 0)
+	if (!toRemove.empty())
 	{
         std::map<RsFileHash, FileDetails>::iterator it;
 
@@ -286,7 +286,7 @@ bool 	ftExtraList::hashExtraFile(std::string path, uint32_t period, TransferRequ
 	RS_STACK_MUTEX(extMutex);
 
 	FileDetails details(path, period, flags);
-	details.info.age = time(NULL) + period;
+	details.info.age = static_cast<int>(time(nullptr) + period);
 	mToHash.push_back(details);
 
 	return true;
@@ -429,7 +429,7 @@ bool ftExtraList::saveList(bool &cleanup, std::list<RsItem *>& sList)
 		fi->file.name        = (it->second).info.fname;
 		fi->file.hash        = (it->second).info.hash;
 		fi->file.filesize    = (it->second).info.size;
-		fi->file.age         = (it->second).info.age;
+		fi->file.age         = static_cast<uint32_t>((it->second).info.age);
 		fi->flags            = (it->second).info.transfer_info_flags.toUInt32();
 
 		sList.push_back(fi);
@@ -450,7 +450,7 @@ bool    ftExtraList::loadList(std::list<RsItem *>& load)
 	std::cerr << std::endl;
 #endif
 
-	rstime_t ts = time(NULL);
+	rstime_t ts = time(nullptr);
 
 
 	std::list<RsItem *>::iterator it;
@@ -466,16 +466,16 @@ bool    ftExtraList::loadList(std::list<RsItem *>& load)
 
 		/* open file */
 		FILE *fd = RsDirUtil::rs_fopen(fi->file.path.c_str(), "rb");
-		if (fd == NULL)
+		if (fd == nullptr)
 		{
 			delete (*it);
 			continue;
 		}
 
 		fclose(fd);
-		fd = NULL ;
+		fd = nullptr ;
 
-		if (ts > (rstime_t)fi->file.age)
+		if (ts > static_cast<rstime_t>(fi->file.age))
 		{
 			/* to old */
 			cleanupEntry(fi->file.path, TransferRequestFlags(fi->flags));
@@ -494,7 +494,7 @@ bool    ftExtraList::loadList(std::list<RsItem *>& load)
 		details.info.fname = fi->file.name;
 		details.info.hash = fi->file.hash;
 		details.info.size = fi->file.filesize;
-		details.info.age = fi->file.age; /* time that we remove it. */
+		details.info.age = static_cast<int>(fi->file.age); /* time that we remove it. */
 		details.info.transfer_info_flags = TransferRequestFlags(fi->flags);
 	
 		/* stick it in the available queue */
