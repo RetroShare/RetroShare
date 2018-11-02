@@ -4,7 +4,7 @@ TEMPLATE = app
 QT     += network xml 
 CONFIG += qt gui uic qrc resources idle 
 CONFIG += console
-TARGET = UnseenP2P
+TARGET = retroshare
 DEFINES += TARGET=\\\"$${TARGET}\\\"
 
 DEPENDPATH  *= $${PWD} $${RS_INCLUDE_DIR} retroshare-gui
