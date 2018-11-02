@@ -94,6 +94,7 @@ ConfCertDialog::ConfCertDialog(const RsPeerId& id, const RsPgpId &pgp_id, QWidge
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(applyDialog()));
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(close()));
     connect(ui._shouldAddSignatures_CB, SIGNAL(toggled(bool)), this, SLOT(loadInvitePage()));
+    connect(ui._includeIPHistory_CB, SIGNAL(toggled(bool)), this, SLOT(loadInvitePage()));
 
     ui.avatar->setFrameType(AvatarWidget::NORMAL_FRAME);
 
@@ -270,9 +271,14 @@ void ConfCertDialog::loadInvitePage()
 //	ui.userCertificateText_2->setFont(font);
 //	ui.userCertificateText_2->setText(QString::fromUtf8(pgp_key.c_str()));
 
-	std::string invite = rsPeers->GetRetroshareInvite(detail.id,ui._shouldAddSignatures_CB->isChecked()) ; // this needs to be a SSL id
+	std::string invite = rsPeers->GetRetroshareInvite(detail.id,
+                                                      ui._shouldAddSignatures_CB->isChecked(),
+                                                      ui._includeIPHistory_CB->isChecked()
+                                                      ) ;
 
-    QString infotext = getCertificateDescription(detail,ui._shouldAddSignatures_CB->isChecked(),true);	// true, because default parameter in GetRetroshareInvite is true
+    QString infotext = getCertificateDescription(detail,ui._shouldAddSignatures_CB->isChecked(),
+                                                      ui._includeIPHistory_CB->isChecked()
+                                                 );
 
     ui.userCertificateText->setToolTip(infotext) ;
 
