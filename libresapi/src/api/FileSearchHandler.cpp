@@ -32,8 +32,8 @@
 namespace resource_api
 {
 
-FileSearchHandler::FileSearchHandler(StateTokenServer *sts, RsNotify *notify, RsTurtle *turtle, RsFiles *files):
-    mStateTokenServer(sts), mNotify(notify), mTurtle(turtle), mRsFiles(files),
+FileSearchHandler::FileSearchHandler(StateTokenServer *sts, RsNotify *notify, RsTurtle */*turtle*/, RsFiles *files):
+    mStateTokenServer(sts), mNotify(notify)/*, mTurtle(turtle)*/, mRsFiles(files),
     mMtx("FileSearchHandler")
 {
     mNotify->registerNotifyClient(this);
@@ -50,7 +50,7 @@ FileSearchHandler::~FileSearchHandler()
     mStateTokenServer->discardToken(mSearchesStateToken);
 }
 
-void FileSearchHandler::notifyTurtleSearchResult(const RsPeerId& pid,uint32_t search_id, const std::list<TurtleFileInfo>& files)
+void FileSearchHandler::notifyTurtleSearchResult(const RsPeerId& /*pid*/,uint32_t search_id, const std::list<TurtleFileInfo>& files)
 {
 	RS_STACK_MUTEX(mMtx); // ********** LOCKED **********
     std::map<uint32_t, Search>::iterator mit = mSearches.find(search_id);
@@ -167,7 +167,7 @@ static bool dirDetailToFileDetail(const DirDetails& dir, FileDetail& fd)
         fd.hash = dir.hash;
         fd.path = dir.path;
         fd.size = dir.count;
-        fd.age 	= time(NULL) - dir.mtime;
+        fd.age 	= static_cast<uint32_t>(time(nullptr)) - dir.mtime;
         fd.rank = 0;
         return true;
     }
