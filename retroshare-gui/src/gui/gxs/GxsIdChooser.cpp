@@ -127,10 +127,13 @@ void GxsIdChooser::setDefaultId(const RsGxsId &defId)
 static void loadPrivateIdsCallback(GxsIdDetailsType type, const RsIdentityDetails &details, QObject *object, const QVariant &/*data*/)
 {
 	GxsIdChooser *chooser = dynamic_cast<GxsIdChooser*>(object);
-	if (!chooser) {
+
+	if (!chooser)
 		return;
-	}
-    
+
+	int current_index = chooser->currentIndex();
+
+	QString current_id = (current_index >= 0)? chooser->itemData(current_index).toString() : "" ;
 
     // this prevents the objects that depend on what's in the combo-box to activate and
     // perform any change.Only user-changes should cause this.
@@ -185,6 +188,16 @@ static void loadPrivateIdsCallback(GxsIdDetailsType type, const RsIdentityDetail
             chooser->setEntryEnabled(index,false) ;
         
     chooser->model()->sort(0);
+
+	// now restore the current item. Problem is, we cannot use the ID position because it may have changed.
+
+	if(!current_id.isNull())
+		for(int indx=0;indx<chooser->count();++indx)
+			if(chooser->itemData(indx).toString() == current_id)
+			{
+				chooser->setCurrentIndex(indx);
+				break;
+			}
 
     chooser->blockSignals(false) ;
 }
