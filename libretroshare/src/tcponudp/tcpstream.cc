@@ -77,39 +77,42 @@ int dumpPacket(std::ostream &out, unsigned char *pkt, uint32_t size);
 static double getCurrentTS();
 
 TcpStream::TcpStream(UdpSubReceiver *lyr)
-	: tcpMtx("TcpStream"), inSize(0), outSizeRead(0), outSizeNet(0), 
-	state(TCP_CLOSED), 
-        inStreamActive(false),
-        outStreamActive(false),
-	outSeqno(0), outAcked(0), outWinSize(0),
-	inAckno(0), inWinSize(0),
-	maxWinSize(TCP_MAX_WIN), 
-	keepAliveTimeout(TCP_ALIVE_TIMEOUT), 
-	retransTimerOn(false),
-	retransTimeout(TCP_RETRANS_TIMEOUT),
-	retransTimerTs(0),
-	keepAliveTimer(0),
-	lastIncomingPkt(0),
-	lastSentAck(0),
-	lastSentWinSize(0),
-	initOurSeqno(0),
-	initPeerSeqno(0),
-	lastWriteTF(0),lastReadTF(0),
-	wcount(0), rcount(0),
-	errorState(0),
-	/* retranmission variables - init to large */
-	rtt_est(TCP_RETRANS_TIMEOUT), 
-	rtt_dev(0),
-	congestThreshold(TCP_MAX_WIN),
-	congestWinSize(MAX_SEG),
-	congestUpdate(0),
-	ttl(0),
-        mTTL_period(0), 
-        mTTL_start(0),
-        mTTL_end(0), 
-	peerKnown(false),
-	udp(lyr)
+  : tcpMtx("TcpStream"), inSize(0), outSizeRead(0), outSizeNet(0),
+    state(TCP_CLOSED),
+    inStreamActive(false),
+    outStreamActive(false),
+    outSeqno(0), outAcked(0), outWinSize(0),
+    inAckno(0), inWinSize(0),
+    maxWinSize(TCP_MAX_WIN),
+    keepAliveTimeout(TCP_ALIVE_TIMEOUT),
+    retransTimerOn(false),
+    retransTimeout(TCP_RETRANS_TIMEOUT),
+    retransTimerTs(0),
+    keepAliveTimer(0),
+    lastIncomingPkt(0),
+    lastSentAck(0),
+    lastSentWinSize(0),
+    initOurSeqno(0),
+    initPeerSeqno(0),
+    lastWriteTF(0),lastReadTF(0),
+    wcount(0), rcount(0),
+    errorState(0),
+    /* retranmission variables - init to large */
+    rtt_est(TCP_RETRANS_TIMEOUT),
+    rtt_dev(0),
+    congestThreshold(TCP_MAX_WIN),
+    congestWinSize(MAX_SEG),
+    congestUpdate(0),
+    ttl(0),
+    mTTL_period(0),
+    mTTL_start(0),
+    mTTL_end(0),
+    peerKnown(false),
+    udp(lyr)
 {
+	inData[0] = 0;
+	outDataRead[0] = 0;
+	outDataNet[0] = 0;
 	sockaddr_clear(&peeraddr);
 
 	return;
@@ -332,8 +335,8 @@ int	TcpStream::status_locked(std::ostream &out)
 	int tmpstate = state;
 
 	// can leave the timestamp here as time()... rough but okay.
-	out << "TcpStream::status @ (" << time(NULL) << ")" << std::endl;
-	out << "TcpStream::state = " << (int) state << std::endl;
+	out << "TcpStream::status @ (" << time(nullptr) << ")" << std::endl;
+	out << "TcpStream::state = " << static_cast<int>(state) << std::endl;
 	out << std::endl;
 	out << "writeBuffer: " << inSize << " + MAX_SEG * " << inQueue.size();
 	out << " bytes Queued for transmission" << std::endl;
@@ -383,7 +386,7 @@ int     TcpStream::write_allowed()
 		return ret;
 	}
 
-	int maxwrite = (kMaxQueueSize -  inQueue.size()) * MAX_SEG;
+	int maxwrite = static_cast<int>(kMaxQueueSize -  inQueue.size()) * MAX_SEG;
 	tcpMtx.unlock(); /******** UNLOCK MUTEX *********/
 	return maxwrite;
 }
@@ -393,7 +396,7 @@ int     TcpStream::read_pending()
 	tcpMtx.lock();   /********** LOCK MUTEX *********/
 
 	/* error should be detected next time */
-	int maxread = int_read_pending();
+	int maxread = static_cast<int>(int_read_pending());
 	if (state == TCP_CLOSED)
 	{
 		errorState = EBADF;
@@ -411,14 +414,14 @@ int     TcpStream::read_pending()
 }
 
 /* INTERNAL */
-int     TcpStream::int_read_pending()
+uint32 TcpStream::int_read_pending()
 {
-	return outSizeRead + outQueue.size() * MAX_SEG + outSizeNet;
+	return (outSizeRead + static_cast<uint32>(outQueue.size()) * MAX_SEG + outSizeNet);
 }
 
 
 	/* stream Interface */
-int	TcpStream::write(char *dta, int size) /* write -> pkt -> net */
+int	TcpStream::write(char *dta, uint32 size) /* write -> pkt -> net */
 {
 	tcpMtx.lock();   /********** LOCK MUTEX *********/
 	int ret = 1; /* initial error checking */
@@ -487,13 +490,13 @@ static uint32 TMPtotalwrite = 0;
 #ifdef DEBUG_TCP_STREAM
 		std::cerr << "TcpStream::write() = " << size << std::endl;
 #endif
-		memcpy((void *) &(inData[inSize]), dta, size);
-		inSize += size;
+		memcpy(static_cast<void *>(&(inData[inSize])), dta, size);
+		inSize += static_cast<uint32>(size);
 		//std::cerr << "Small Packet - write to net:" << std::endl;
 		//std::cerr << printPkt(dta, size) << std::endl;
 	
 		tcpMtx.unlock(); /******** UNLOCK MUTEX *********/
-		return size;
+		return static_cast<int>(size);
 	}
 
 	/* otherwise must construct a dataBuffer.
@@ -508,11 +511,11 @@ static uint32 TMPtotalwrite = 0;
 
 	/* first create 1. */
 	dataBuffer *db = new dataBuffer;
-	memcpy((void *) db->data, (void *) inData, inSize);
+	memcpy(static_cast<void *>(db->data), static_cast<void *>(inData), inSize);
 
 
-	int remSize = size;
-	memcpy((void *) &(db->data[inSize]), dta, MAX_SEG - inSize);
+	uint32 remSize = size;
+	memcpy(static_cast<void *>(&(db->data[inSize])), dta, MAX_SEG - inSize);
 
 	inQueue.push_back(db);
 	remSize -= (MAX_SEG - inSize);
@@ -528,7 +531,7 @@ static uint32 TMPtotalwrite = 0;
 		std::cerr << "TcpStream::write() from dta[" << size-remSize << "]" << std::endl;
 #endif
 		db = new dataBuffer;
-		memcpy((void *) db->data, (void *) &(dta[size-remSize]), MAX_SEG);
+		memcpy(static_cast<void *>(db->data), static_cast<void *>(&(dta[size-remSize])), MAX_SEG);
 
 		inQueue.push_back(db);
 		remSize -= MAX_SEG;
@@ -546,7 +549,7 @@ static uint32 TMPtotalwrite = 0;
 		std::cerr << "TcpStream::write() from dta[" << size-remSize << "] size: ";
 		std::cerr << remSize << std::endl;
 #endif
-		memcpy((void *) inData, (void *) &(dta[size-remSize]), remSize);
+		memcpy(static_cast<void *>(inData), static_cast<void *>(&(dta[size-remSize])), remSize);
 		inSize = remSize;
 	}
 	else
@@ -559,10 +562,10 @@ static uint32 TMPtotalwrite = 0;
 	}
 
 	tcpMtx.unlock(); /******** UNLOCK MUTEX *********/
-	return size;
+	return static_cast<int>(size);
 }
 
-int	TcpStream::read(char *dta, int size) /* net ->   pkt -> read */
+int	TcpStream::read(char *dta, uint32 size) /* net ->   pkt -> read */
 {
 	tcpMtx.lock();   /********** LOCK MUTEX *********/
 
@@ -573,7 +576,7 @@ static  uint32 TMPtotalread = 0;
 	 * outDataRead + outQueue + outDataNet
 	 */
 
-	int maxread = outSizeRead + outQueue.size() * MAX_SEG + outSizeNet;
+	uint32 maxread = outSizeRead + static_cast<uint32>(outQueue.size()) * MAX_SEG + outSizeNet;
 	int ret = 1; /* used only for initial errors */
 
 	if (state == TCP_CLOSED)
@@ -625,7 +628,7 @@ static  uint32 TMPtotalread = 0;
 	}
 
 	/* if less than outDataRead size */
-	if (((unsigned) (size) < outSizeRead) && (outSizeRead))
+	if ((size < outSizeRead) && (outSizeRead))
 	{
 #ifdef DEBUG_TCP_STREAM_EXTRA
 		std::cerr << "TcpStream::read() Add Itty Bit" << std::endl;
@@ -633,9 +636,10 @@ static  uint32 TMPtotalread = 0;
 		std::cerr << " size: " << size << " remaining: " << outSizeRead - size;
 		std::cerr << std::endl;
 #endif
-		memcpy(dta,(void *) outDataRead, size);
-		memmove((void *) outDataRead, 
-		(void *) &(outDataRead[size]), outSizeRead - (size));
+		memcpy(dta,static_cast<void *>(outDataRead), size);
+		memmove(  static_cast<void *>(outDataRead)
+		        , static_cast<void *>(&(outDataRead[size]))
+		        , outSizeRead - (size));
 		outSizeRead -= size;
 
 
@@ -654,11 +658,11 @@ static  uint32 TMPtotalread = 0;
 		UpdateInWinSize();
 
 		tcpMtx.unlock(); /******** UNLOCK MUTEX *********/
-		return size;
+		return static_cast<int>(size);
 	}
 
 	/* move the whole of outDataRead. */
-	if (outSizeRead)
+	if (outSizeRead) // So size >= outSizeRead
 	{
 #ifdef DEBUG_TCP_STREAM_EXTRA
 		std::cerr << "TcpStream::read() Move All outSizeRead" << std::endl;
@@ -666,18 +670,18 @@ static  uint32 TMPtotalread = 0;
 		std::cerr << " size: " << size;
 		std::cerr << std::endl;
 #endif
-		memcpy(dta,(void *) outDataRead, outSizeRead);
+		memcpy(dta,static_cast<void *>(outDataRead), outSizeRead);
 
 	}
 
-	int remSize = size - outSizeRead;
+	uint32 remSize = size - outSizeRead;
 	outSizeRead = 0;
 
 #ifdef DEBUG_TCP_STREAM_EXTRA
 	std::cerr << "TcpStream::read() remaining size: " << remSize << std::endl;
 #endif
 
-	while((outQueue.size() > 0) && (remSize > 0))
+	while((!outQueue.empty()) && (remSize > 0))
 	{
 		dataBuffer *db = outQueue.front();
 		outQueue.pop_front(); /* remove */
@@ -696,8 +700,12 @@ static  uint32 TMPtotalread = 0;
 			std::cerr << "TcpStream::read() rest to outDataRead: " << MAX_SEG - remSize;
 			std::cerr << std::endl;
 #endif
-			memcpy((void *) &(dta[(size)-remSize]), (void *) db->data, remSize);
-			memcpy((void *) outDataRead, (void *) &(db->data[remSize]), MAX_SEG - remSize);
+			memcpy(  static_cast<void *>(&(dta[size-remSize]))
+			       , static_cast<void *>(db->data)
+			       , remSize);
+			memcpy(  static_cast<void *>(outDataRead)
+			       , static_cast<void *>(&(db->data[remSize]))
+			       , MAX_SEG - remSize);
 			outSizeRead = MAX_SEG - remSize;
 
 			delete db;
@@ -718,14 +726,17 @@ static  uint32 TMPtotalread = 0;
 			UpdateInWinSize();
 
 			tcpMtx.unlock(); /******** UNLOCK MUTEX *********/
-			return size;
+			return static_cast<int>(size);
 		}
 #ifdef DEBUG_TCP_STREAM_EXTRA
 		std::cerr << "TcpStream::read() Move Whole Segment to dta @ " << size-remSize << std::endl;
 #endif
 
 		/* else copy whole segment */
-		memcpy((void *) &(dta[(size)-remSize]), (void *) db->data, MAX_SEG);
+		//remSize >= MAX_SEG
+		memcpy(  static_cast<void *>(&(dta[(size)-remSize]))
+		       , static_cast<void *>(db->data)
+		       , MAX_SEG);
 		remSize -= MAX_SEG;
 		delete db;
 	}
@@ -741,12 +752,16 @@ static  uint32 TMPtotalread = 0;
 #endif
 
 
-		memcpy((void *) &(dta[(size)-remSize]),(void *) outDataNet, remSize);
+		memcpy(  static_cast<void *>(&(dta[(size)-remSize]))
+		       , static_cast<void *>(outDataNet)
+		       , remSize);
 		outSizeNet -= remSize;
 		if (outSizeNet > 0)
 		{
 			/* move to the outDataRead */
-			memcpy((void *) outDataRead,(void *) &(outDataNet[remSize]), outSizeNet);
+			memcpy(  static_cast<void *>(outDataRead)
+			       , static_cast<void *>(&(outDataNet[remSize]))
+			       , outSizeNet);
 			outSizeRead = outSizeNet;
 			outSizeNet = 0;
 #ifdef DEBUG_TCP_STREAM_EXTRA
@@ -773,7 +788,7 @@ static  uint32 TMPtotalread = 0;
 
 
 		tcpMtx.unlock(); /******** UNLOCK MUTEX *********/
-		return size;
+		return static_cast<int>(size);
 	}
 
 #ifdef DEBUG_TCP_STREAM_EXTRA
@@ -791,12 +806,12 @@ static  uint32 TMPtotalread = 0;
 	UpdateInWinSize();
 
 	tcpMtx.unlock(); /******** UNLOCK MUTEX *********/
-	return size;
+	return static_cast<int>(size);
 }
 
 
 	/* Callback from lower Layers */
-void 	TcpStream::recvPkt(void *data, int size)
+void 	TcpStream::recvPkt(void *data, size_t size)
 {
 #ifdef DEBUG_TCP_STREAM
 	std::cerr << "TcpStream::recvPkt()";
@@ -804,7 +819,7 @@ void 	TcpStream::recvPkt(void *data, int size)
 #endif
 
 	tcpMtx.lock();   /********** LOCK MUTEX *********/
-	uint8 *input = (uint8 *) data;
+	uint8 *input = static_cast<uint8 *>(data);
 
 #ifdef DEBUG_TCP_STREAM
 	std::cerr << "TcpStream::recvPkt() Past Lock!";
@@ -834,7 +849,7 @@ void 	TcpStream::recvPkt(void *data, int size)
 	//std::cerr << std::endl;
 #endif
 	TcpPacket *pkt = new TcpPacket();
-	if (0 < pkt -> readPacket(input, size))
+	if (0 < pkt -> readPacket(input, static_cast<int>(size)))
 	{
 		lastIncomingPkt = getCurrentTS();
 		handleIncoming(pkt);
@@ -1060,7 +1075,7 @@ int	TcpStream::cleanup()
 		delete db;
 	}
 
-	while(outPkt.size() > 0)
+	while(!outPkt.empty())
 	{
 		TcpPacket *pkt = outPkt.front();
 		outPkt.pop_front();
@@ -1078,7 +1093,7 @@ int	TcpStream::cleanup()
 		delete db;
 	}
 
-	while(inPkt.size() > 0)
+	while(!inPkt.empty())
 	{
 		TcpPacket *pkt = inPkt.front();
 		inPkt.pop_front();
@@ -1103,7 +1118,6 @@ int 	TcpStream::handleIncoming(TcpPacket *pkt)
 			 * else Discard.
 			 */
 			return incoming_Closed(pkt);
-			break;
 		case TCP_SYN_SENT:
 			/* if receive SYN 
 			 * -> respond SYN/ACK
@@ -1116,13 +1130,11 @@ int 	TcpStream::handleIncoming(TcpPacket *pkt)
 			 * else Discard.
 			 */
 			return incoming_SynSent(pkt);
-			break;
 		case TCP_SYN_RCVD:
 			/* if receive ACK 
 			 * To State: TCP_ESTABLISHED
 			 */
 			return incoming_SynRcvd(pkt);
-			break;
 		case TCP_ESTABLISHED:
 			/* if receive FIN
 			 * -> respond ACK
@@ -1130,7 +1142,6 @@ int 	TcpStream::handleIncoming(TcpPacket *pkt)
 			 * else Discard.
 			 */
 			return incoming_Established(pkt);
-			break;
 		case TCP_FIN_WAIT_1:
 			/* state entered by close() call.
 			 * if receive FIN
@@ -1148,7 +1159,6 @@ int 	TcpStream::handleIncoming(TcpPacket *pkt)
 			 */
 			return incoming_Established(pkt);
 			//return incoming_FinWait1(pkt);
-			break;
 		case TCP_FIN_WAIT_2:
 			/* if receive FIN
 			 * -> respond ACK
@@ -1156,7 +1166,6 @@ int 	TcpStream::handleIncoming(TcpPacket *pkt)
 			 */
 			return incoming_Established(pkt);
 			//return incoming_FinWait2(pkt);
-			break;
 		case TCP_CLOSING:
 			/* if receive ACK
 			 * To State: TCP_TIMED_WAIT
@@ -1164,7 +1173,6 @@ int 	TcpStream::handleIncoming(TcpPacket *pkt)
 			/* all handled in Established */
 			return incoming_Established(pkt);
 			//return incoming_Closing(pkt);
-			break;
 		case TCP_CLOSE_WAIT:
 			/* 
 			 * wait for our close to be called.
@@ -1172,7 +1180,6 @@ int 	TcpStream::handleIncoming(TcpPacket *pkt)
 			/* all handled in Established */
 			return incoming_Established(pkt);
 			//return incoming_CloseWait(pkt);
-			break;
 		case TCP_LAST_ACK:
 			/* entered by the local close() after sending FIN.
 			 * if receive ACK
@@ -1184,7 +1191,6 @@ int 	TcpStream::handleIncoming(TcpPacket *pkt)
 			return incoming_LastAck(pkt);
 			 */
 
-			break;
 			/* this is actually the only
 			 * final state where packets not expected!
 			 */
@@ -1558,12 +1564,13 @@ int TcpStream::incoming_Established(TcpPacket *pkt)
 int TcpStream::check_InPkts()
 {
 	bool found = true;
-	TcpPacket *pkt;
-	std::list<TcpPacket *>::iterator it;
 	while(found)
 	{
+		TcpPacket *pkt = nullptr;
 		found = false;
-		for(it = inPkt.begin(); (!found) && (it != inPkt.end());)
+		for( std::list<TcpPacket *>::iterator it = inPkt.begin();
+		    (!found) && (it != inPkt.end());
+		   )
 		{
 #ifdef DEBUG_TCP_STREAM
 			std::cerr << "Checking expInAck: " << std::hex << inAckno;
@@ -1618,7 +1625,7 @@ int TcpStream::check_InPkts()
 #endif
 
 			/* update ack number - let it rollover */
-			inAckno = pkt->seqno + pkt->datasize;
+			inAckno = pkt->seqno + static_cast<uint32>(pkt->datasize);
 
 #ifdef DEBUG_TCP_STREAM
 			std::cerr << " to:  " << std::hex << inAckno;
@@ -1676,13 +1683,15 @@ int TcpStream::check_InPkts()
 
 			/* push onto queue */
 
-			if (outSizeNet + pkt->datasize < MAX_SEG)
+			if (outSizeNet + static_cast<uint32>(pkt->datasize) < MAX_SEG)
 			{
 				/* move onto outSizeNet */
 				if (pkt->datasize)
 				{
-				  memcpy((void *) &(outDataNet[outSizeNet]), pkt->data, pkt->datasize);
-				  outSizeNet += pkt->datasize;
+					memcpy(  static_cast<void *>(&(outDataNet[outSizeNet]))
+					       , pkt->data
+					       , static_cast<uint32>(pkt->datasize));
+					outSizeNet += static_cast<uint32>(pkt->datasize);
 				}
 			}
 			else
@@ -1691,21 +1700,27 @@ int TcpStream::check_InPkts()
 				dataBuffer *db = new dataBuffer();
 
 				/* move outDatNet -> buffer */
-				memcpy((void *) db->data, (void *) outDataNet, outSizeNet);
+				memcpy(  static_cast<void *>(db->data)
+				       , static_cast<void *>(outDataNet)
+				       , outSizeNet);
 
 				/* fill rest of space */
-				int remSpace = MAX_SEG - outSizeNet;
-				memcpy((void *) &(db->data[outSizeNet]), (void *) pkt->data, remSpace);
+				uint32 remSpace = MAX_SEG - outSizeNet;
+				memcpy(  static_cast<void *>(&(db->data[outSizeNet]))
+				       , static_cast<void *>(pkt->data)
+				       , remSpace);
 
 				/* push packet onto queue */
 				outQueue.push_back(db);
 
 				/* any big chunks that will take up a full dataBuffer */
-				int remData = pkt->datasize - remSpace;
+				uint32 remData = static_cast<uint32>(pkt->datasize) - remSpace;
 				while(remData >= MAX_SEG)
 				{
 					db = new dataBuffer();
-					memcpy((void *) db->data,  (void *) &(pkt->data[remSpace]), MAX_SEG);
+					memcpy(  static_cast<void *>(db->data)
+					       , static_cast<void *>(&(pkt->data[remSpace]))
+					       , MAX_SEG);
 
 					remData -= MAX_SEG;
 					outQueue.push_back(db);
@@ -1715,7 +1730,9 @@ int TcpStream::check_InPkts()
 				outSizeNet = remData; 
 				if (outSizeNet > 0)
 				{
-					memcpy((void *) outDataNet, (void *) &(pkt->data[pkt->datasize - remData]), outSizeNet);
+					memcpy(  static_cast<void *>(outDataNet)
+					       , static_cast<void *>(&(pkt->data[static_cast<uint32>(pkt->datasize) - remData]))
+					       , outSizeNet);
 				}
 			}
 
@@ -1818,7 +1835,7 @@ int TcpStream::check_InPkts()
 
 /* This Fn should be called after each read, or recvd data (thats added to the buffer)
  */
-int TcpStream::UpdateInWinSize()
+uint32 TcpStream::UpdateInWinSize()
 {
 	/* InWinSize = maxWinSze - QueuedData, 
 	 * actually we can allow a lot more to queue up...
@@ -1843,7 +1860,7 @@ int TcpStream::UpdateInWinSize()
 	return inWinSize;
 }
 
-int TcpStream::sendAck()
+bool TcpStream::sendAck()
 {
 	/* simple -> toSend fills in ack/winsize 
 	 * and the rest is history
@@ -1863,10 +1880,10 @@ void TcpStream::setRemoteAddress(const struct sockaddr_in &raddr)
 }
 
 
-int TcpStream::toSend(TcpPacket *pkt, bool retrans)
+bool TcpStream::toSend(TcpPacket *pkt, bool retrans)
 {
-	int  outPktSize = MAX_SEG + TCP_PSEUDO_HDR_SIZE;
-	char tmpOutPkt[outPktSize];
+	int outPktSize = MAX_SEG + TCP_PSEUDO_HDR_SIZE;
+	char tmpOutPkt[MAX_SEG + TCP_PSEUDO_HDR_SIZE];
 
 	if (!peerKnown)
 	{
@@ -1876,13 +1893,13 @@ int TcpStream::toSend(TcpPacket *pkt, bool retrans)
 		std::cerr << std::endl;
 #endif
 		delete pkt;
-		return 0;
+		return false;
 	}
 
 	/* get accurate timestamp */
 	double cts =  getCurrentTS();
 
-	pkt -> winsize = inWinSize;
+	pkt -> winsize = static_cast<uint16>(inWinSize);
 	pkt -> seqno = outSeqno;
 
 	/* increment seq no */
@@ -1891,7 +1908,7 @@ int TcpStream::toSend(TcpPacket *pkt, bool retrans)
 #ifdef DEBUG_TCP_STREAM_EXTRA
 		checkData(pkt->data, pkt->datasize, outSeqno-initOurSeqno-1);
 #endif
-		outSeqno += pkt->datasize;
+		outSeqno += static_cast<uint32>(pkt->datasize);
 	}
 
 	if (pkt->hasSyn()) 
@@ -1911,7 +1928,7 @@ int TcpStream::toSend(TcpPacket *pkt, bool retrans)
 		pkt -> setAck(inAckno);
 	}
 
-	pkt -> winsize = inWinSize;
+	pkt -> winsize = static_cast<uint16>(inWinSize);
 
 	/* store old info */
 	lastSentAck = pkt -> ackno;
@@ -1951,7 +1968,7 @@ int TcpStream::toSend(TcpPacket *pkt, bool retrans)
 	{
 		delete pkt;
 	}
-	return 1;
+	return true;
 }
 
 
@@ -2035,10 +2052,10 @@ void TcpStream::incRetransmitTimeout()
 
 
 
-int TcpStream::retrans()
+bool TcpStream::retrans()
 {
 	int  outPktSize = MAX_SEG + TCP_PSEUDO_HDR_SIZE;
-	char tmpOutPkt[outPktSize];
+	char tmpOutPkt[MAX_SEG + TCP_PSEUDO_HDR_SIZE];
 
 	if (!peerKnown)
 	{
@@ -2047,24 +2064,24 @@ int TcpStream::retrans()
 		std::cerr << "TcpStream::retrans() peerUnknown ERROR!!!";
 		std::cerr << std::endl;
 #endif
-                return 0;
+		return false;
 	}
 
 	if (!retransTimerOn)
 	{
-		return 0;
+		return false;
 	}
 
 	double cts =  getCurrentTS();
 	if (cts - retransTimerTs < retransTimeout)
 	{
-		return 0;
+		return false;
 	}
 
 	if (outPkt.begin() == outPkt.end())
 	{
 		resetRetransmitTimer();
-		return 0;
+		return false;
 	}
 
 	TcpPacket *pkt = outPkt.front();
@@ -2072,7 +2089,7 @@ int TcpStream::retrans()
 	if (!pkt)
 	{
 		/* error */
-		return 0;
+		return false;
 	}
 	
 	/* retransmission -> adjust the congestWinSize and congestThreshold 
@@ -2098,7 +2115,7 @@ int TcpStream::retrans()
 		lastSentAck = pkt -> ackno;
 	}
 	
-	pkt->winsize = inWinSize;
+	pkt->winsize = static_cast<uint16>(inWinSize);
 	lastSentWinSize = pkt -> winsize;
 	
 	keepAliveTimer = cts;
@@ -2182,7 +2199,7 @@ int TcpStream::retrans()
 		inStreamActive = false;
 		state = TCP_CLOSED;
 		cleanup();
-		return 0;
+		return false;
 	}
 	
 	
@@ -2208,7 +2225,7 @@ int TcpStream::retrans()
 		startRetransmitTimer();
 	}
 
-	return 1;
+	return true;
 }
 
 
@@ -2445,14 +2462,14 @@ int TcpStream::send()
 	/* if inqueue empty, and enough window space, send partial stuff */
 	if ((!sent) && (inQueue.empty()) && (maxsend >= inSize) && (inSize))
 	{
-		TcpPacket *pkt = new TcpPacket(inData, inSize);
+		TcpPacket *pkt = new TcpPacket(inData, static_cast<int>(inSize));
 #ifdef DEBUG_TCP_STREAM
 		std::cerr << "TcpStream::send() Remaining ===>";
 		std::cerr << std::endl;
 #endif
 		inSize = 0;
 		sent++;
-		maxsend -= inSize;
+		//maxsend -= inSize; //Not used after
 		toSend(pkt);
 	}
 
@@ -2558,7 +2575,7 @@ int TcpStream::send()
 		std::cerr << std::endl;
 	}
 #endif
-	return 1;
+	return true;
 }
 
 
@@ -2573,8 +2590,9 @@ uint32 TcpStream::genSequenceNo()
 
 bool 	TcpStream::isOldSequence(uint32 tst, uint32 curr)
 {
-	return ((int)((tst)-(curr)) < 0);
+	return (static_cast<int>((tst)-(curr)) < 0);
 	
+#if 0
 	std::cerr << "TcpStream::isOldSequence(): Case ";
 	/* if tst < curr */
 	if ((int)((tst)-(curr)) < 0)
@@ -2594,6 +2612,7 @@ bool 	TcpStream::isOldSequence(uint32 tst, uint32 curr)
 	}
 	std::cerr << "4F: tst-curr:" << (tst-curr) << std::endl;
 	return false;
+#endif
 }
 
 #ifdef WINDOWS_SYS
@@ -2606,13 +2625,13 @@ static double getCurrentTS()
 {
 
 #ifndef WINDOWS_SYS
-        struct timeval cts_tmp;
-	gettimeofday(&cts_tmp, NULL);
-	double cts =  (cts_tmp.tv_sec) + ((double) cts_tmp.tv_usec) / 1000000.0;
+	struct timeval cts_tmp;
+	gettimeofday(&cts_tmp, nullptr);
+	double cts = (cts_tmp.tv_sec) + (static_cast<double>(cts_tmp.tv_usec)) / 1000000.0;
 #else
-        struct _timeb timebuf;
-        _ftime( &timebuf);
-	double cts =  (timebuf.time) + ((double) timebuf.millitm) / 1000.0;
+	struct _timeb timebuf;
+	_ftime( &timebuf);
+	double cts =  (timebuf.time) + (static_cast<double>(timebuf.millitm)) / 1000.0;
 #endif
 	return cts;
 }
@@ -2648,7 +2667,7 @@ int	setupBinaryCheck(std::string fname)
 /* uses seq number to track position -> ensure no rollover */
 int	checkData(uint8 *data, int size, int idx)
 {
-	if (bc_fd <= 0)
+	if (bc_fd = 0)
 	{
 		return -1;
 	}
@@ -2693,8 +2712,8 @@ int TcpStream::dumpstate_locked(std::ostream &out)
 	out << "=======================================================";
 
 	out << std::endl;
-	out << "state: " << (int) state;
-	out << " errorState: " << (int) errorState;
+	out << "state: " << static_cast<int>(state);
+	out << " errorState: " << static_cast<int>(errorState);
 	out << std::endl;
 
 	out << "(Streams) inStreamActive: " << inStreamActive;
@@ -2777,7 +2796,7 @@ int dumpPacket(std::ostream &out, unsigned char *pkt, uint32_t size)
 		{
 			out << std::endl;
 		}
-		out << std::hex << std::setfill('0') << std::setw(2) << (int) pkt[i] << ":";
+		out << std::hex << std::setfill('0') << std::setw(2) << static_cast<int>(pkt[i]) << ":";
 	}
 	if ((i - 1) % 16 != 0)
 	{

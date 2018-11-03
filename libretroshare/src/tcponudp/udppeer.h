@@ -36,9 +36,9 @@
 
 class UdpPeer
 {
-	public:
-virtual ~UdpPeer() { return; }
-virtual void recvPkt(void *data, int size) = 0;
+public:
+	virtual ~UdpPeer() {}
+	virtual void recvPkt(void *data, size_t size) = 0;
 };
 
 

@@ -74,8 +74,8 @@ class TcpStream: public UdpPeer
 	public:
 	/* Top-Level exposed */
 
-	TcpStream(UdpSubReceiver *udp);
-virtual ~TcpStream() { return; }
+	explicit TcpStream(UdpSubReceiver *udp);
+	virtual ~TcpStream() override {}
 
 	/* user interface */
 int     status(std::ostream &out);
@@ -89,8 +89,8 @@ uint8	TcpState();
 int	TcpErrorState();
 
 	/* stream Interface */
-int	write(char *dta, int size); /* write -> pkt -> net */
-int	read(char *dta, int size); /* net ->   pkt -> read */
+int	write(char *dta, uint32 size); /* write -> pkt -> net */
+int	read(char *dta, uint32 size); /* net ->   pkt -> read */
 
 	/* check ahead for allowed bytes */
 int	write_allowed();
@@ -102,7 +102,7 @@ int	close(); /* standard unix behaviour */
 int	tick(); /* check iface etc */
 
 	/* Callback Funcion from UDP Layers */
-virtual void recvPkt(void *data, int size); /* overloaded */
+virtual void recvPkt(void *data, size_t size) override;
 
 
 
@@ -146,15 +146,15 @@ int 	incoming_Closing(TcpPacket *pkt);
 int 	incoming_CloseWait(TcpPacket *pkt);
 int 	incoming_LastAck(TcpPacket *pkt);
 int 	check_InPkts();
-int 	UpdateInWinSize();
-int	int_read_pending();
+uint32 UpdateInWinSize();
+uint32 int_read_pending();
 
 /* outgoing data */
 int	send();
-int 	toSend(TcpPacket *pkt, bool retrans = true);
+bool toSend(TcpPacket *pkt, bool retrans = true);
 void 	acknowledge();
-int	retrans();
-int	sendAck();
+bool retrans();
+bool sendAck();
 void 	setRemoteAddress(const struct sockaddr_in &raddr);
 
 int	getTTL() { return ttl; }
