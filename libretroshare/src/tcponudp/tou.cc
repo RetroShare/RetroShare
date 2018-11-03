@@ -25,15 +25,15 @@ static  const int kInitStreamTable = 5;
 
 #include <stdlib.h>
 #include <string.h>
-#include "util/rstime.h"
+#include <vector>
+#include <iostream>
+#include <errno.h>
 
+#include "util/rstime.h"
 #include "udp/udpstack.h"
 #include "pqi/pqinetwork.h"
 #include "tcpstream.h"
-#include <vector>
-#include <iostream>
-
-#include <errno.h>
+#include "util/stacktrace.h"
 
 #define DEBUG_TOU_INTERFACE 1
 #define EUSERS          87
@@ -54,7 +54,7 @@ static RsMutex touMutex("touMutex");
 // Mutex is used to control addition / removals from tou_streams.
 // Lookup should be okay - as long as you stick to your allocated ID!
 
-static  std::vector<TcpOnUdp *> tou_streams;
+static std::vector<TcpOnUdp *> tou_streams;
 
 static  int tou_inited = 0;
 
@@ -171,19 +171,30 @@ int     tou_socket(uint32_t recvIdx, uint32_t type, int /*protocol*/)
 
 bool tou_stream_check(int sockfd)
 {
-	if (sockfd < 0)
+	if(sockfd < 0)
 	{
-		std::cerr << "tou_stream_check() ERROR sockfd < 0";
-		std::cerr << std::endl;
+		std::cerr << __PRETTY_FUNCTION__ << " ERROR sockfd: " << sockfd
+		          << " < 0" << std::endl;
+		print_stacktrace();
 		return false;
 	}
 
-	if (tou_streams[sockfd] == NULL)
+	if(sockfd >= tou_streams.size())
 	{
-		std::cerr << "tou_stream_check() ERROR tou_streams[sockfd] == NULL";
-		std::cerr << std::endl;
+		std::cerr << __PRETTY_FUNCTION__ << " ERROR sockfd: " << sockfd
+		          << " out of bound!" << std::endl;
+		print_stacktrace();
 		return false;
 	}
+
+	if(!tou_streams[sockfd])
+	{
+		std::cerr << __PRETTY_FUNCTION__ << " ERROR tou_streams[sockfd] == NULL"
+		          << std::endl;
+		print_stacktrace();
+		return false;
+	}
+
 	return true;
 }
 
@@ -370,62 +381,55 @@ int     tou_listen(int /* sockfd */ , int /* backlog */ )
  */
 #define DEFAULT_RELAY_CONN_PERIOD		1
 
-int 	tou_connect_via_relay(int sockfd, 
-			const struct sockaddr_in *own_addr, 
-			const struct sockaddr_in *proxy_addr, 
-			const struct sockaddr_in *dest_addr)
+int tou_connect_via_relay( int sockfd, const sockaddr_in& own_addr,
+                           const sockaddr_in& proxy_addr,
+                           const sockaddr_in& dest_addr )
 
 {
-	if (!tou_stream_check(sockfd))
-	{
-		return -1;
-	}
-	TcpOnUdp *tous = tou_streams[sockfd];
+	std::cerr << __PRETTY_FUNCTION__ << std::endl;
+
+	if (!tou_stream_check(sockfd)) return -EINVAL;
+
+	TcpOnUdp& tous = *tou_streams[sockfd];
 	
 	/* enforce that the udptype is correct */
-	if (tous -> udptype != TOU_RECEIVER_TYPE_UDPRELAY)
+	if (tous.udptype != TOU_RECEIVER_TYPE_UDPRELAY)
 	{
-		std::cerr << "tou_connect() ERROR connect method invalid for udptype";
-		std::cerr << std::endl;
-		tous -> lasterrno = EINVAL;
-		return -1;
+		std::cerr << __PRETTY_FUNCTION__ << " ERROR connect method invalid for "
+		          << "udptype" << std::endl;
+		tous.lasterrno = EINVAL;
+		return -EINVAL;
 	}
 
-#ifdef TOU_DYNAMIC_CAST_CHECK 
-	/* extra checking -> for testing purposes (dynamic cast) */
-	UdpRelayReceiver *urr = dynamic_cast<UdpRelayReceiver *>(tous->udpsr);
-	if (!urr)
+	UdpRelayReceiver* urr_ptr = dynamic_cast<UdpRelayReceiver*>(tous.udpsr);
+	if(!urr_ptr)
 	{
-		std::cerr << "tou_connect() ERROR cannot convert type to UdpRelayReceiver";
-		std::cerr << std::endl;
-		tous -> lasterrno = EINVAL;
-		return -1;
+		std::cerr << __PRETTY_FUNCTION__ << " ERROR cannot convert to "
+		          << "UdpRelayReceiver" << std::endl;
+		tous.lasterrno = EINVAL;
+		return -EINVAL;
 	}
-#else
-	UdpRelayReceiver *urr = (UdpRelayReceiver *) (tous->udpsr);
-#endif
+
+	UdpRelayReceiver& urr = *urr_ptr; urr_ptr = nullptr;
 
 	/* create a TCP stream to connect with. */
-	if (!tous->tcp)
+	if (!tous.tcp)
 	{
-		tous->tcp = new TcpStream(tous->udpsr);
+		tous.tcp = new TcpStream(tous.udpsr);
 
-		UdpRelayAddrSet addrSet(own_addr, dest_addr);
-		urr->addUdpPeer(tous->tcp, &addrSet, proxy_addr);
+		UdpRelayAddrSet addrSet(&own_addr, &dest_addr);
+		urr.addUdpPeer(tous.tcp, &addrSet, &proxy_addr);
 	}
 
 	/* We Point it at the Destination Address.
 	 * The UdpRelayReceiver wraps and re-directs the packets to the proxy
 	 */
-	tous->tcp->connect(*dest_addr, DEFAULT_RELAY_CONN_PERIOD);
-	tous->tcp->tick();
-	if (tous->tcp->isConnected())
-	{
-		return 0;	
-	}
+	tous.tcp->connect(dest_addr, DEFAULT_RELAY_CONN_PERIOD);
+	tous.tcp->tick();
+	if (tous.tcp->isConnected()) return 0;
 
-	tous -> lasterrno = EINPROGRESS;
-	return -1;
+	tous.lasterrno = EINPROGRESS;
+	return -EINPROGRESS;
 }
 
 
