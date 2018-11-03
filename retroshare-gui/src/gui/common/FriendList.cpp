@@ -863,7 +863,7 @@ void FriendList::insertPeers()
 
             rsPeers->getAssociatedSSLIds(detail.gpg_id, sslContacts);
             for (std::list<RsPeerId>::iterator sslIt = sslContacts.begin(); sslIt != sslContacts.end(); ++sslIt)
-              {
+            {
                 QTreeWidgetItem *sslItem = NULL;
                 RsPeerId sslId = *sslIt;
 
@@ -904,11 +904,13 @@ void FriendList::insertPeers()
                 QColor sslColor;
                 int peerState = 0;
                 QString connectStateString;
-                if (sslDetail.state & RS_PEER_STATE_CONNECTED) {
+                if (sslDetail.state & RS_PEER_STATE_CONNECTED)
+                {
                     // get the status info for this ssl id
                     int rsState = 0;
                     std::list<StatusInfo>::iterator it;
-                    for (it = statusInfo.begin(); it != statusInfo.end(); ++it) {
+                    for (it = statusInfo.begin(); it != statusInfo.end(); ++it)
+                    {
                         if (it->id == sslId) {
                             rsState = it->status;
                             switch (rsState) {
@@ -1021,8 +1023,8 @@ void FriendList::insertPeers()
                     if (!customStateString.isEmpty()) {
                         sslText = customStateString;
                     }
+                }
             }
-}
             QString gpgName = QString::fromUtf8(detail.name.c_str());
             QString gpgText;
             QFont gpgFont;
@@ -1031,7 +1033,8 @@ void FriendList::insertPeers()
             bool showInfoAtGpgItem = !gpgItem->isExpanded();
 
             QPixmap gpgOverlayIcon;
-            if (gpg_connected) {
+            if (gpg_connected)
+            {
                 gpgItem->setHidden(false);
 
                 ++onlineCount;
@@ -1045,7 +1048,8 @@ void FriendList::insertPeers()
                 gpgColor = mTextColorStatus[bestRSState];
                 gpgFont = StatusDefs::font(bestRSState);
 
-                if (showInfoAtGpgItem) {
+                if (showInfoAtGpgItem)
+                {
                     gpgOverlayIcon = QPixmap(StatusDefs::imageStatus(bestRSState));
 
                     if (mShowState) {
@@ -1059,7 +1063,8 @@ void FriendList::insertPeers()
                         }
                     }
                 }
-            } else if (gpg_online) {
+            } else if (gpg_online)
+            {
                 gpgItem->setHidden(mHideUnconnected);
                 ++onlineCount;
                 bestPeerState = PEER_STATE_AVAILABLE;

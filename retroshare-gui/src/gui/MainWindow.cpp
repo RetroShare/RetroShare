@@ -679,7 +679,7 @@ void MainWindow::createNotifyIcons()
         userNotify->createIcons(notifyMenu);
         userNotify->updateIcon();
     }
-    updateTrayCombine();
+  updateTrayCombine();
 }
 
 const QList<UserNotify*> &MainWindow::getUserNotifyList()
