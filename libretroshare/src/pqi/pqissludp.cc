@@ -248,54 +248,34 @@ int pqissludp::Initiate_Connection()
 	}
 	else if (mConnectFlags & RS_CB_FLAG_MODE_UDP_RELAY)
 	{
-		std::cerr << "Calling tou_connect_via_relay(";
-		std::cerr << sockaddr_storage_tostring(mConnectSrcAddr) << ",";
-		std::cerr << sockaddr_storage_tostring(mConnectProxyAddr) << ",";
-		std::cerr << sockaddr_storage_tostring(remote_addr) << ")" << std::endl;
+		std::cerr << __PRETTY_FUNCTION__ << " Calling tou_connect_via_relay("
+		          << sockaddr_storage_tostring(mConnectSrcAddr) << ","
+		          << sockaddr_storage_tostring(mConnectProxyAddr) << ","
+		          << sockaddr_storage_tostring(remote_addr) << ")" << std::endl;
 
-		
+		if(!sockaddr_storage_ipv6_to_ipv4(mConnectSrcAddr))
 		{
-			struct sockaddr_in srcaddr;
-			struct sockaddr_in proxyaddr;
-			struct sockaddr_in remoteaddr;
-
-			if(!sockaddr_storage_ipv6_to_ipv4(mConnectSrcAddr))
-			{
-				std::cerr << __PRETTY_FUNCTION__ << "Error: mConnectSrcAddr is "
-				          << "not valid IPv4!" << std::endl;
-				sockaddr_storage_dump(mConnectSrcAddr);
-				print_stacktrace();
-				return -EINVAL;
-			}
-			if(!sockaddr_storage_ipv6_to_ipv4(mConnectProxyAddr))
-			{
-				std::cerr << __PRETTY_FUNCTION__ << "Error: mConnectProxyAddr "
-				          << "is not valid IPv4!" << std::endl;
-				sockaddr_storage_dump(mConnectProxyAddr);
-				print_stacktrace();
-				return -EINVAL;
-
-			}
-
-			struct sockaddr_in *rap = (struct sockaddr_in *) &remote_addr;
-			struct sockaddr_in *pap = (struct sockaddr_in *) &mConnectProxyAddr;
-			struct sockaddr_in *sap = (struct sockaddr_in *) &mConnectSrcAddr;
-			
-			srcaddr.sin_family = AF_INET;
-			proxyaddr.sin_family = AF_INET;
-			remoteaddr.sin_family = AF_INET;
-
-			srcaddr.sin_addr = sap->sin_addr;
-			proxyaddr.sin_addr = pap->sin_addr;
-			remoteaddr.sin_addr = rap->sin_addr;
-			
-			srcaddr.sin_port = sap->sin_port;
-			proxyaddr.sin_port = pap->sin_port;
-			remoteaddr.sin_port = rap->sin_port;
-			
-			err = tou_connect_via_relay(sockfd, &srcaddr, &proxyaddr, &remoteaddr);
-			
+			std::cerr << __PRETTY_FUNCTION__ << " ERROR mConnectSrcAddr is "
+			          << "not a valid IPv4!" << std::endl;
+			sockaddr_storage_dump(mConnectSrcAddr);
+			print_stacktrace();
+			return -EINVAL;
 		}
+		if(!sockaddr_storage_ipv6_to_ipv4(mConnectProxyAddr))
+		{
+			std::cerr << __PRETTY_FUNCTION__ << " ERROR mConnectProxyAddr "
+			          << "is not a valid IPv4!" << std::endl;
+			sockaddr_storage_dump(mConnectProxyAddr);
+			print_stacktrace();
+			return -EINVAL;
+
+		}
+
+		err = tou_connect_via_relay(
+		            sockfd,
+		            reinterpret_cast<sockaddr_in&>(mConnectSrcAddr),
+		            reinterpret_cast<sockaddr_in&>(mConnectProxyAddr),
+		            reinterpret_cast<sockaddr_in&>(remote_addr) );
 
 /*** It seems that the UDP Layer sees x 1.2 the traffic of the SSL layer.
  * We need to compensate somewhere... we drop the maximum traffic to 75% of limit
