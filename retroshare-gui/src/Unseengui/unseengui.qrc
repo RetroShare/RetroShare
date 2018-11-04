@@ -135,5 +135,6 @@
         <file>home/img/face_icon/un_chat_icon_xu_128.png</file>
         <file>home/img/face_icon/user-shape_xu_128.png</file>
         <file>home/img/face_icon/youtube-play-button_xu_128.png</file>
+        <file>chat/img/chat_32.png</file>
     </qresource>
 </RCC>

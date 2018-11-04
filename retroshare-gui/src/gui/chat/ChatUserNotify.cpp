@@ -74,7 +74,7 @@ bool ChatUserNotify::hasSetting(QString *name, QString *group)
 
 QIcon ChatUserNotify::getIcon()
 {
-	return QIcon(":/images/chat.png");
+    return QIcon(":/chat/img/chat_32.png");     //d
 }
 
 QIcon ChatUserNotify::getMainIcon(bool hasNew)

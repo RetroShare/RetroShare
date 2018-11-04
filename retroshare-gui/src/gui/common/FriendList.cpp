@@ -176,6 +176,7 @@ FriendList::FriendList(QWidget *parent) :
     ui->peerTreeWidget->setColumnWidth(COLUMN_ID, 32 * fontWidth);
     int avatarHeight = fontMetrics.height() * 2;        //d: change avatar size
     ui->peerTreeWidget->setIconSize(QSize(avatarHeight, avatarHeight));
+
     /* Initialize display menu */
 
     createDisplayMenu();
@@ -1096,7 +1097,7 @@ void FriendList::insertPeers()
             }
 
             if (gpg_hasPrivateChat) {
-                gpgOverlayIcon = QPixmap(":/images/chat.png");
+                gpgOverlayIcon = QPixmap(":/chat/img/chat_32.png");         //d
             }
 
             gpgItem->setIcon(COLUMN_NAME, createAvatar(bestAvatar.isNull() ? QPixmap(AVATAR_DEFAULT_IMAGE) : bestAvatar, gpgOverlayIcon));
