@@ -20,6 +20,10 @@
  *                                                                             *
  *******************************************************************************/
 
+#include "util/stacktrace.h"
+
+CrashStackTrace gCrashStackTrace;
+
 #include <QObject>
 #include <QMessageBox>
 #include <QSplashScreen>
